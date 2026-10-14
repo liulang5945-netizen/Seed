@@ -1,0 +1,657 @@
+{
+  "generated_utc": "2026-10-14T12:36:19.573992+00:00",
+  "head": "5d217172a730ee80d992be4d868c3de77314cec8",
+  "scope": "untracked visible output landing paths; includes ignored files inside each directory; filename substring references are indicative only",
+  "entries": [
+    {
+      "path": "output/ds-bot-0.1.2.tgz",
+      "file_count": 1,
+      "bytes": 336512,
+      "latest_write_utc": "2026-10-12T10:02:38.119205+00:00",
+      "tracked_text_reference_count": 2,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/epi_smoke",
+      "file_count": 7,
+      "bytes": 29435931,
+      "latest_write_utc": "2026-10-09T05:55:18.951451+00:00",
+      "tracked_text_reference_count": 2,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/family_baseline_20261014_n105",
+      "file_count": 2,
+      "bytes": 8304,
+      "latest_write_utc": "2026-10-14T07:17:06.365616+00:00",
+      "tracked_text_reference_count": 2,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "reports/taiji_family_baseline_adjudication_20261014_n105.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/family_baseline_20261014_n107",
+      "file_count": 2,
+      "bytes": 1207,
+      "latest_write_utc": "2026-10-14T09:30:43.763216+00:00",
+      "tracked_text_reference_count": 1,
+      "reference_examples": [
+        "plans/active/roadmap/03_CURRENT_EXECUTION.md"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n3_04",
+      "file_count": 30,
+      "bytes": 215583399,
+      "latest_write_utc": "2026-10-08T07:36:37.069466+00:00",
+      "tracked_text_reference_count": 23,
+      "reference_examples": [
+        "plans/active/roadmap/03_CURRENT_EXECUTION.md",
+        "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/active/roadmap/09_NEXT_MAINLINE_PLAN.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "plans/reference/PLAN-N3-04_ADJUDICATION_20261008.md",
+        "plans/reference/PLAN-N3-04_developmental_assembly_prereg_20261008.md",
+        "plans/reference/PLAN-N3-06_ADJUDICATION_20261008.md"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n3_04_canary_factory",
+      "file_count": 5,
+      "bytes": 29417883,
+      "latest_write_utc": "2026-10-08T07:15:56.820689+00:00",
+      "tracked_text_reference_count": 6,
+      "reference_examples": [
+        "plans/active/roadmap/03_CURRENT_EXECUTION.md",
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/active/roadmap/09_NEXT_MAINLINE_PLAN.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "plans/reference/PLAN-N3-04_developmental_assembly_prereg_20261008.md",
+        "plans/reference/PLAN-N3-06_ADJUDICATION_20261008.md"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n3_09_v2",
+      "file_count": 30,
+      "bytes": 142812588,
+      "latest_write_utc": "2026-10-08T10:56:20.942425+00:00",
+      "tracked_text_reference_count": 6,
+      "reference_examples": [
+        "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "plans/reference/PLAN-N3-09_ADJUDICATION_20261008.md",
+        "plans/reference/PLAN-N3-09_tau_rule_upgrade_prereg_20261008.md",
+        "reports/taiji_n5_growth_proposal_evidence_20261008.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n3_10_smoke",
+      "file_count": 4,
+      "bytes": 12062365,
+      "latest_write_utc": "2026-10-08T11:13:27.543479+00:00",
+      "tracked_text_reference_count": 2,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n3_10_smoke_off",
+      "file_count": 4,
+      "bytes": 12062371,
+      "latest_write_utc": "2026-10-08T11:13:46.659028+00:00",
+      "tracked_text_reference_count": 2,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n3_tau_beta",
+      "file_count": 4,
+      "bytes": 26806918,
+      "latest_write_utc": "2026-10-08T14:04:51.869919+00:00",
+      "tracked_text_reference_count": 5,
+      "reference_examples": [
+        "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "reports/taiji_n3_tau_per_chain_20261008.json",
+        "reports/taiji_n5_growth_proposal_evidence_20261008.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n3_tau_circuit",
+      "file_count": 4,
+      "bytes": 27172635,
+      "latest_write_utc": "2026-10-08T14:05:23.336736+00:00",
+      "tracked_text_reference_count": 5,
+      "reference_examples": [
+        "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "reports/taiji_n3_tau_per_chain_20261008.json",
+        "reports/taiji_n5_growth_proposal_evidence_20261008.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n3a_armA",
+      "file_count": 3,
+      "bytes": 229189349,
+      "latest_write_utc": "2026-10-08T15:13:15.280530+00:00",
+      "tracked_text_reference_count": 13,
+      "reference_examples": [
+        "plans/active/roadmap/03_CURRENT_EXECUTION.md",
+        "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/active/roadmap/09_NEXT_MAINLINE_PLAN.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "plans/reference/PLAN-N3-02_scaling_probe_prereg_20261007.md",
+        "plans/reference/PLAN-N3-10_arm_b_shape_prereg_20261008.md",
+        "plans/reference/PLAN-N3-12_j_n3a_anchor_upgrade_prereg_20261008.md"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n3a_armB",
+      "file_count": 3,
+      "bytes": 229189352,
+      "latest_write_utc": "2026-10-08T16:18:56.739750+00:00",
+      "tracked_text_reference_count": 9,
+      "reference_examples": [
+        "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/active/roadmap/09_NEXT_MAINLINE_PLAN.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "plans/reference/PLAN-N3-10_arm_b_shape_prereg_20261008.md",
+        "plans/reference/PLAN-N3-13_section87_sequence_length_source_prereg_20261008.md",
+        "reports/taiji_n3a_j_n3a_prime_20261009.json",
+        "reports/taiji_n3a_scaling_probe_20261008.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n3a_control_x2",
+      "file_count": 3,
+      "bytes": 15120786,
+      "latest_write_utc": "2026-10-09T01:50:51.303355+00:00",
+      "tracked_text_reference_count": 11,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/HANDOFF_N_MAINLINE_20261009.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "plans/reference/PLAN-N3-12_j_n3a_anchor_upgrade_prereg_20261008.md",
+        "plans/reference/PLAN-N3-13_section87_sequence_length_source_prereg_20261008.md",
+        "reports/taiji_ledger_cited_reports_tracked_20261013.json",
+        "reports/taiji_ledger_cited_reports_tracked_v2_20261013.json",
+        "reports/taiji_ledger_cited_reports_tracked_v3_20261013.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n4_materials",
+      "file_count": 7,
+      "bytes": 45701543,
+      "latest_write_utc": "2026-10-09T06:16:40.655111+00:00",
+      "tracked_text_reference_count": 4,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "reports/taiji_n4_addressing_n2c1_20261009.json",
+        "reports/taiji_n4_addressing_n2c1_sparse_20261009.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n4_product_tier",
+      "file_count": 3,
+      "bytes": 184814,
+      "latest_write_utc": "2026-10-09T11:04:17.013149+00:00",
+      "tracked_text_reference_count": 21,
+      "reference_examples": [
+        "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "plans/reference/PLAN-N4-07_angle_pair_upgrade_prereg_20261009.md",
+        "reports/taiji_console_glyph_census_20261010.json",
+        "reports/taiji_console_glyph_census_20261010_v2.json",
+        "reports/taiji_console_glyph_census_20261010_v3.json",
+        "reports/taiji_console_glyph_census_20261010_v4.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n4_product_tier_a035",
+      "file_count": 4,
+      "bytes": 184026,
+      "latest_write_utc": "2026-10-09T11:20:14.219400+00:00",
+      "tracked_text_reference_count": 6,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "reports/taiji_ledger_cited_reports_tracked_20261013.json",
+        "reports/taiji_ledger_cited_reports_tracked_v2_20261013.json",
+        "reports/taiji_ledger_cited_reports_tracked_v3_20261013.json",
+        "reports/taiji_n4_product_tier_a035_20261009.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n4_product_tier_a070",
+      "file_count": 4,
+      "bytes": 183987,
+      "latest_write_utc": "2026-10-09T11:20:52.142406+00:00",
+      "tracked_text_reference_count": 2,
+      "reference_examples": [
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "reports/taiji_n4_product_tier_a070_20261009.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n4_product_tier_a105",
+      "file_count": 4,
+      "bytes": 183902,
+      "latest_write_utc": "2026-10-09T11:28:30.275731+00:00",
+      "tracked_text_reference_count": 2,
+      "reference_examples": [
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "reports/taiji_n4_product_tier_a105_20261009.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5_07",
+      "file_count": 27,
+      "bytes": 227313805,
+      "latest_write_utc": "2026-10-10T08:59:19.723769+00:00",
+      "tracked_text_reference_count": 35,
+      "reference_examples": [
+        "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/active/roadmap/09_NEXT_MAINLINE_PLAN.md",
+        "plans/reference/HANDOFF_N_MAINLINE_20261009.md",
+        "plans/reference/HANDOFF_N_MAINLINE_20261014.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "plans/reference/N_MAINLINE_COMPLETION_AUDIT_20261010.md",
+        "plans/reference/PLAN-N5-07_ADJUDICATION_20261010.md"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5_07_arms",
+      "file_count": 18,
+      "bytes": 198976218,
+      "latest_write_utc": "2026-10-10T12:07:18.394388+00:00",
+      "tracked_text_reference_count": 13,
+      "reference_examples": [
+        "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/active/roadmap/09_NEXT_MAINLINE_PLAN.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "plans/reference/PLAN-N5-07_ADJUDICATION_20261010.md",
+        "plans/reference/PLAN-N5-10_exposure_up_gain_prereg_20261011.md",
+        "reports/taiji_n5_07_gain_pair_metric_20261010.json",
+        "reports/taiji_n5_07_shadow_gate_full_20261010.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5_07_lane",
+      "file_count": 13,
+      "bytes": 549710,
+      "latest_write_utc": "2026-10-10T12:22:23.097838+00:00",
+      "tracked_text_reference_count": 10,
+      "reference_examples": [
+        "plans/active/roadmap/09_NEXT_MAINLINE_PLAN.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "plans/reference/PLAN-N5-07_ADJUDICATION_20261010.md",
+        "reports/taiji_n5_07_control_pair_20261010.json",
+        "reports/taiji_n5_07_shadow_gate_full_20261010.json",
+        "reports/taiji_n5_07_treated_pair_20261010.json",
+        "reports/taiji_n5_08_determinism_pair_20261010.json",
+        "reports/taiji_n5_08_jn5b5_first_read_20261010.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5_10_arms",
+      "file_count": 21,
+      "bytes": 265198712,
+      "latest_write_utc": "2026-10-10T16:54:51.726699+00:00",
+      "tracked_text_reference_count": 10,
+      "reference_examples": [
+        "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "plans/reference/PLAN-N1-03_chain_and_roles_prereg_20261011.md",
+        "plans/reference/PLAN-N5-10_exposure_up_gain_prereg_20261011.md",
+        "reports/taiji_n5_10_arm_tensor_diff_20261011.json",
+        "reports/taiji_n5_10_full_adjudication_20261011.json",
+        "reports/taiji_n5_10_gain_pair_metric_20261011.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5_10_lane",
+      "file_count": 12,
+      "bytes": 544798,
+      "latest_write_utc": "2026-10-11T05:45:01.704551+00:00",
+      "tracked_text_reference_count": 5,
+      "reference_examples": [
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "reports/taiji_n5_10_control_retention_pair_20261011.json",
+        "reports/taiji_n5_10_full_adjudication_20261011.json",
+        "reports/taiji_n5_10_noise_floor_retention_pair_20261011.json",
+        "reports/taiji_n5_10_treated_retention_pair_20261011.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5_20_batchC2_control",
+      "file_count": 4,
+      "bytes": 13106361,
+      "latest_write_utc": "2026-10-14T04:50:29.224978+00:00",
+      "tracked_text_reference_count": 9,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/CAP_B_G_HUMAN_REVIEW_C2_CONTROL_20261014.md",
+        "plans/reference/HANDOFF_N_MAINLINE_20261014.md",
+        "plans/reference/N_MAINLINE_COMPLETION_AUDIT_20261011.md",
+        "plans/reference/PLAN-N5-23_repeat_arm_noise_floor_prereg_20261013.md",
+        "reports/taiji_n5_23_cap0_repeat_control_20261014.json",
+        "reports/taiji_n5_23_repeat_arm_noise_floor_20261014.json",
+        "reports/taiji_n5_23_repeat_arm_noise_floor_v2_20261014.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5_20_batchC2_treated",
+      "file_count": 4,
+      "bytes": 13110075,
+      "latest_write_utc": "2026-10-13T22:03:29.293098+00:00",
+      "tracked_text_reference_count": 10,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/CAP_B_G_HUMAN_REVIEW_C2_TREATED_20261014.md",
+        "plans/reference/HANDOFF_N_MAINLINE_20261014.md",
+        "plans/reference/N_MAINLINE_COMPLETION_AUDIT_20261011.md",
+        "plans/reference/PLAN-N5-23_repeat_arm_noise_floor_prereg_20261013.md",
+        "reports/taiji_n5_23_cap0_repeat_treated_20261014.json",
+        "reports/taiji_n5_23_repeat_arm_noise_floor_20261014.json",
+        "reports/taiji_n5_23_repeat_arm_noise_floor_v2_20261014.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5_20_batchC_control",
+      "file_count": 4,
+      "bytes": 13106416,
+      "latest_write_utc": "2026-10-13T10:24:57.404539+00:00",
+      "tracked_text_reference_count": 21,
+      "reference_examples": [
+        "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/CAP_B_G_HUMAN_REVIEW_V3_CONTROL_20261014.md",
+        "plans/reference/HANDOFF_N_MAINLINE_20261014.md",
+        "plans/reference/N_MAINLINE_COMPLETION_AUDIT_20261011.md",
+        "plans/reference/PLAN-N5-22_batch_c_capability_pairing_prereg_20261013.md",
+        "reports/taiji_batch_c_moved_face_sets_20261013.json",
+        "reports/taiji_batch_c_moved_face_sets_v2_20261013.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5_20_batchC_treated",
+      "file_count": 4,
+      "bytes": 13110131,
+      "latest_write_utc": "2026-10-13T02:44:39.047452+00:00",
+      "tracked_text_reference_count": 29,
+      "reference_examples": [
+        "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/CAP_B_G_HUMAN_REVIEW_V3_TREATED_20261014.md",
+        "plans/reference/HANDOFF_N_MAINLINE_20261014.md",
+        "plans/reference/N_MAINLINE_COMPLETION_AUDIT_20261011.md",
+        "plans/reference/N_MAINLINE_COMPLETION_AUDIT_20261012.md",
+        "plans/reference/PLAN-N5-21_batch_c_attribution_prereg_20261013.md",
+        "plans/reference/PLAN-N5-22_batch_c_capability_pairing_prereg_20261013.md"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5_618_off",
+      "file_count": 6,
+      "bytes": 49303714,
+      "latest_write_utc": "2026-10-09T12:16:14.192187+00:00",
+      "tracked_text_reference_count": 4,
+      "reference_examples": [
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "plans/reference/PLAN-N5-05_position_input_wiring_prereg_20261009.md",
+        "reports/taiji_n5_pair_metric_source_618_20261009.json",
+        "reports/taiji_n5_shadow_gate_adjudication_618_20261009.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5_618_on",
+      "file_count": 6,
+      "bytes": 49303710,
+      "latest_write_utc": "2026-10-09T12:15:06.757526+00:00",
+      "tracked_text_reference_count": 3,
+      "reference_examples": [
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "reports/taiji_n5_pair_metric_source_618_20261009.json",
+        "reports/taiji_n5_shadow_gate_adjudication_618_20261009.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5_shadow_feed",
+      "file_count": 11,
+      "bytes": 57377182,
+      "latest_write_utc": "2026-10-09T08:36:15.074780+00:00",
+      "tracked_text_reference_count": 2,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5_shadow_feed2",
+      "file_count": 8,
+      "bytes": 85591498,
+      "latest_write_utc": "2026-10-09T08:43:53.294376+00:00",
+      "tracked_text_reference_count": 2,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5_shadow_feed3",
+      "file_count": 7,
+      "bytes": 73891823,
+      "latest_write_utc": "2026-10-09T08:56:22.775684+00:00",
+      "tracked_text_reference_count": 2,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5_shadow_feed4",
+      "file_count": 7,
+      "bytes": 73891819,
+      "latest_write_utc": "2026-10-09T09:15:23.392302+00:00",
+      "tracked_text_reference_count": 2,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5_shadow_feed5",
+      "file_count": 7,
+      "bytes": 73891883,
+      "latest_write_utc": "2026-10-09T09:43:05.833840+00:00",
+      "tracked_text_reference_count": 2,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5_shadow_gate_off",
+      "file_count": 7,
+      "bytes": 73892405,
+      "latest_write_utc": "2026-10-09T10:15:36.960879+00:00",
+      "tracked_text_reference_count": 5,
+      "reference_examples": [
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "plans/reference/PLAN-N5-04_retention_rebase_prereg_20261009.md",
+        "reports/taiji_n5_pair_metric_source_20261009.json",
+        "reports/taiji_n5_shadow_gate_adjudication_v2_20261009.json",
+        "reports/taiji_n5_shadow_pair_20261009.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5_shadow_gate_on",
+      "file_count": 7,
+      "bytes": 73892404,
+      "latest_write_utc": "2026-10-09T10:07:34.949705+00:00",
+      "tracked_text_reference_count": 8,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "plans/reference/PLAN-N5-02_shadow_utility_adjudication_prereg_20261009.md",
+        "plans/reference/PLAN-N5-04_retention_rebase_prereg_20261009.md",
+        "reports/taiji_n5_pair_metric_source_20261009.json",
+        "reports/taiji_n5_shadow_gate_adjudication_20261009.json",
+        "reports/taiji_n5_shadow_gate_adjudication_v2_20261009.json",
+        "reports/taiji_n5_shadow_pair_20261009.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5d_lane",
+      "file_count": 11,
+      "bytes": 309310,
+      "latest_write_utc": "2026-10-10T07:56:32.015682+00:00",
+      "tracked_text_reference_count": 7,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/active/roadmap/09_NEXT_MAINLINE_PLAN.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "reports/taiji_n5d_rebase_control_pair_20261010.json",
+        "reports/taiji_n5d_rebase_control_pair_maincorpus_20261010.json",
+        "reports/taiji_n5d_rebase_treated_pair_20261010.json",
+        "reports/taiji_n5d_rebase_treated_pair_maincorpus_20261010.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5d_rebase_control",
+      "file_count": 6,
+      "bytes": 79065920,
+      "latest_write_utc": "2026-10-10T07:12:32.745208+00:00",
+      "tracked_text_reference_count": 6,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/active/roadmap/09_NEXT_MAINLINE_PLAN.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "plans/reference/PLAN-N5-04_ADJUDICATION_20261010.md",
+        "reports/taiji_n5d_rebase_shadow_gate_20261010.json",
+        "tests/taiji_native/test_n5_18_arm_command_recipe_contract.py"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/n5d_rebase_treated",
+      "file_count": 6,
+      "bytes": 79066015,
+      "latest_write_utc": "2026-10-10T07:11:58.393065+00:00",
+      "tracked_text_reference_count": 10,
+      "reference_examples": [
+        "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/active/roadmap/09_NEXT_MAINLINE_PLAN.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "plans/reference/PLAN-N5-04_ADJUDICATION_20261010.md",
+        "reports/taiji_ledger_cited_reports_tracked_20261013.json",
+        "reports/taiji_ledger_cited_reports_tracked_v2_20261013.json",
+        "reports/taiji_ledger_cited_reports_tracked_v3_20261013.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/seed_corpus_smoke_progress_exit.json",
+      "file_count": 1,
+      "bytes": 1495,
+      "latest_write_utc": "2026-10-14T09:26:33.408175+00:00",
+      "tracked_text_reference_count": 14,
+      "reference_examples": [
+        "plans/active/roadmap/03_CURRENT_EXECUTION.md",
+        "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/archive/history/m_series_execution_20261006/03_CURRENT_EXECUTION_M.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md",
+        "plans/reference/PLAN-N1-03_chain_and_roles_prereg_20261011.md",
+        "reports/taiji_answer_source_provenance_20261012.json",
+        "reports/taiji_ledger_cited_reports_tracked_20261013.json"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/tau_smoke_off",
+      "file_count": 5,
+      "bytes": 17999031,
+      "latest_write_utc": "2026-10-08T13:26:09.799431+00:00",
+      "tracked_text_reference_count": 3,
+      "reference_examples": [
+        "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    },
+    {
+      "path": "output/tau_smoke_on",
+      "file_count": 5,
+      "bytes": 32672459,
+      "latest_write_utc": "2026-10-08T13:26:52.437078+00:00",
+      "tracked_text_reference_count": 2,
+      "reference_examples": [
+        "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+        "plans/reference/LANDING_DIR_INVENTORY_20261012.md"
+      ],
+      "disposition": "preserve_pending_archive_decision"
+    }
+  ]
+}
