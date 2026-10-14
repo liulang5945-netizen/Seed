@@ -37,6 +37,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT / "scripts" / "training") not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT / "scripts" / "training"))
 
+#: DEBT-G115 修法③：落盘走统一落盘助手（newline 由助手必备参数兜住）。
+#: 本仪器的 `sys.path` 上面已把 `scripts/training` 放进去了，助手可直接解析。
+import _taiji_report_io as report_io  # noqa: E402
 from _verify_emit import emit_and_exit  # noqa: E402
 
 DEFAULT_THRESHOLD = 60.0
@@ -144,7 +147,29 @@ def main() -> int:
     ap.add_argument("--tests", nargs="*", default=["tests"], help="测试目标，缺省全量 tests/")
     ap.add_argument("--threshold", type=float, default=DEFAULT_THRESHOLD)
     ap.add_argument("--out", default="reports/core_reasoning_coverage_20260926.json")
+    ap.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="目标读数件已存在时允许替换（DEBT-G115 修法③ 家族标准守卫；缺省拒覆写——"
+        "默认落点是在库读数件，重跑取数须显式带此旗标）",
+    )
     args = ap.parse_args()
+
+    #: 拒覆检查前置：本仪器默认会起全量 tests（约 39 分钟），把守卫放在跑之前
+    #: ⇒ 落点已存在时**立刻**响亮拒绝，不白烧机时（同 ㊵-846 那枚的精神，但这里更要紧）。
+    out_path = PROJECT_ROOT / args.out
+    if out_path.exists() and not args.overwrite:
+        print(
+            json.dumps(
+                {
+                    "format": "taiji-core-reasoning-coverage-v1",
+                    "status": "refuse_overwrite",
+                    "path": str(out_path),
+                },
+                ensure_ascii=True,
+            )
+        )
+        return 2
 
     if args.from_report:
         report_path = Path(args.from_report)
@@ -180,12 +205,8 @@ def main() -> int:
     result = summarize(raw, args.threshold)
     result["report_source"] = str(report_path)
     result["totals_pct_from_runner"] = raw.get("totals", {}).get("percent_covered")
-    out = PROJECT_ROOT / args.out
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
-    )
-    result["report"] = str(out)
+    report_io.write_json_report(out_path, result, newline="\n", overwrite=True)
+    result["report"] = str(out_path)
     return emit_and_exit("core_reasoning_coverage", result)
 
 
