@@ -31,6 +31,9 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "scripts" / "training"))
 
+#: DEBT-G115 修法③：落盘走统一落盘助手（`newline=` 由助手必备参数兜住；拒覆写由本件前置守卫承担）。
+import _taiji_report_io as report_io  # noqa: E402
+
 MANIFEST = PROJECT_ROOT / "plans/manifests/r2_copy_surface_extension_v3_position_random.json"
 #: 三条链＝两端的原始/表层，再加**只把掩码挪到原始链上**那一手——这样"掩码"与"器官"才分得开
 CHAINS = ("raw", "raw_masked", "surface")
@@ -180,7 +183,35 @@ def main() -> int:
         help="钉在 0.0 才能复现已入库读数；产品默认位（2.0）要显式点名",
     )
     parser.add_argument("--out-report", default=None)
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="目标读数件已存在时允许替换（DEBT-G115 修法③ 家族标准守卫；缺省拒覆写——"
+        "默认落点是在库读数件，重跑取数须显式带此旗标）",
+    )
     args = parser.parse_args()
+
+    out = (
+        Path(args.out_report)
+        if args.out_report
+        else PROJECT_ROOT / "reports/taiji_a30_surface_repetition_20260928.json"
+    )
+    if not out.is_absolute():
+        out = PROJECT_ROOT / out
+    #: 拒覆检查**前置**：本件每臂都要**新建载一个 runtime**并跑一遍题面（载模型＋生成），是重型取数
+    #: ⇒ 守卫放在 `run_arm` 之前，落点已存在时**立刻**响亮拒绝，不白烧机时。
+    if out.exists() and not args.overwrite:
+        print(
+            json.dumps(
+                {
+                    "format": "taiji-a30-surface-repetition-v1",
+                    "status": "refuse_overwrite",
+                    "path": str(out),
+                },
+                ensure_ascii=True,
+            )
+        )
+        return 2
 
     checkpoint = PROJECT_ROOT / args.checkpoint
     sha_before = _sha256(checkpoint)
@@ -230,17 +261,7 @@ def main() -> int:
         },
         "started_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
-    out = (
-        Path(args.out_report)
-        if args.out_report
-        else PROJECT_ROOT / "reports/taiji_a30_surface_repetition_20260928.json"
-    )
-    if not out.is_absolute():
-        out = PROJECT_ROOT / out
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
-    )
+    report_io.write_json_report(out, report, newline="\n", overwrite=True)
     print(
         json.dumps(
             {
