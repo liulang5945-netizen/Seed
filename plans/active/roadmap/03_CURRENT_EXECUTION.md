@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：**完成 C1 持久载体实施版本冻结**——按 [PLAN-N-01](../../reference/PLAN-N-01_development_revision_20261014.md) 与 [PLAN-N1-06](../../reference/PLAN-N1-06_carrier_consumer_alignment_20261014.md)，用只读核对补齐精确触点、payload版本、容量策略和取证命令；C0交付完成后才评审产品码及 ≤30 分钟 CPU 零训练面两个批次。本轮仅完成调度/接口设计修订，未授权动码、机时或训练。
+## 当前唯一下一步：**owner 决定是否批准 C1 两个批次**——C0 已冻结在 [PLAN-N1-06](../../reference/PLAN-N1-06_carrier_consumer_alignment_20261014.md) r1：精确代码触点、v1 payload、288 episodes/324 MiB 上限、固定母档/manifest 身份、独立进程审计命令均已确定。建议一次批准批⑴（载体＋守卫＋验证器实现）和批⑵（≤30 分钟本机 CPU、零训练正式面）；任一批未批则停在该批之前，不绕过既有门。
 
 ## 本轮调度修订（2026-10-14）
 
@@ -17,6 +17,8 @@
 | 整族/远端 CI | 当前零并发汇总仍欠；最近远端 eaf53e7 的根CI失败、m7-ci成功 | 先相关门，候选出版取绑定HEAD全量，采用/发布核对目标提交远端 |
 
 原 G115 第二轮队首保存于 [修订前快照](../../archive/history/n_mainline_plan_revision_20261014/EXECUTION_QUEUE_BEFORE_REVISION.md)，没有删除债或撤销守卫。历史台账与下方执行日志只证明对应批次；它们的旧队首不得覆盖本轮调度。交接以 [本轮停靠件](../../reference/HANDOFF_N_MAINLINE_PLAN_REVISION_20261014.md) 为准。
+
+【2026-10-14 · C0 载体实施规格冻结（只读核对，无代码/机时）】按 PLAN-N-01 §7 队首把 PLAN-N1-06 升为 r1：输入元数据从 `SeedRuntime.chat` 的 `InputFrame` 穿过 `Seed.generate_input` 与 `TSKV8Adapter.generate_input` 进入 `Taiji.generate`；逐字节在 boundary stop 判断后、append/observe 前记录 `cortical_cue()`，唯一 episode id 使用持久 serial＋输入 id 来源字段（不假定 `chat:{tick}` 全局唯一）；payload 选 Taiji v10 kernel 的可选键 `persistent_stepwise_carrier`，schema `taiji-persistent-stepwise-carrier-v1`，旧缺键读作空、默认关闭不增 schema，独立进程恢复沿 `SeedRuntime.save/load`。实读母档 `output/a31_chunked_self/checkpoint.pt` 区域 `[256,192,128]` ⇒ context dim 1152；冻结 manifest 前 96 items 实有 288 turns，最大容量 288×256×1152×4＝339,738,624 B（324 MiB），满载失败、不静默逐出；这只是 C1 面上限，C2 前仍需产品保留政策。测试命令、open/off 两面与恢复审计命令见 PLAN-N1-06 §2.1。容量上限还未计时验证，批⑵预算须维持 ≤30 分钟，否则回 owner 重定价；不裁短轨迹以凑时。当前即待 owner 决定批⑴＋批⑵。
 
 > **这条声明是合同要求的**：`tests/seed/test_project_identity.py` 规定活跃计划树内**只允许一条**执行项声明，且必须落在本文件、
 > 以 `## 当前唯一下一步：` 开头。它在 2026-10-06/07 把 03 改写成"N 系列执行日志"时**丢失过**（该测当时红在 `got []`＝一条都没有），

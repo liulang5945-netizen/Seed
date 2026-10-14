@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **当前调度修订（2026-10-14）**：[PLAN-N-01](../reference/PLAN-N-01_development_revision_20261014.md)为完整方案，[N1 实施附件](../reference/PLAN-N1-06_carrier_consumer_alignment_20261014.md)处理冻结合同衔接；战略同步到09、单一队首同步到03。N6按当前能力包依赖排程，不再要求清空所有工程债才验证载体。
+> **当前调度修订（2026-10-14）**：[PLAN-N-01](../reference/PLAN-N-01_development_revision_20261014.md)为完整方案，[N1 实施附件](../reference/PLAN-N1-06_carrier_consumer_alignment_20261014.md)处理冻结合同衔接；C0 r1 已冻结，C1 批⑴实现与批⑵零训练面待 owner 决策；战略同步到09、单一队首同步到03。N6按当前能力包依赖排程，不再要求清空所有工程债才验证载体。
 
 > **2026-10-14 导航校准**：本索引的编号约定继续保留；下方累积里程碑摘要含历史状态。当前队列只看 [03](roadmap/03_CURRENT_EXECUTION.md)，N 主线看 [09](roadmap/09_NEXT_MAINLINE_PLAN.md)，整个项目按 [项目地图](../../docs/README.md) 阅读。本轮收纳见 [整理记录](../reference/PROJECT_ORGANIZATION_20261014.md)。
 

@@ -1,4 +1,4 @@
-# plans/reference 索引（自动生成 2026-10-07，蒸馏收束后 49 件＋N 系列 30 件）
+# plans/reference 索引（2026-10-14 更新；蒸馏收束后的参考件与 N 系列增补）
 
 留存政策（owner 2026-10-07）＝核心设计与相关内容留档参考；实验过程文档蒸馏后删除（已删 A 支线 13 件＋M5 族 158 件＋第二批 29 件，墓碑见 [M5_DISTILLATION_TOMBSTONE.md](M5_DISTILLATION_TOMBSTONE.md) 与 [DISTILLATION_TOMBSTONE_20261007.md](DISTILLATION_TOMBSTONE_20261007.md)，git 历史可回溯）。项目收束见 [M0_M7_PROJECT_CONSOLIDATION_20261006](M0_M7_PROJECT_CONSOLIDATION_20261006.md)，下一轮主线见 [../active/roadmap/09_NEXT_MAINLINE_PLAN.md](../active/roadmap/09_NEXT_MAINLINE_PLAN.md)。
 
@@ -20,12 +20,15 @@
 
 ## N 主线与项目收束
 
+- [PLAN-N-01_development_revision_20261014](PLAN-N-01_development_revision_20261014.md)（全项目 N 主线第五版调度修订：C0 已完成；C1 持久载体批次待 owner 决策）
 - [PLAN-N1-00_s5_endpoint_falsification_prereg_20261007](PLAN-N1-00_s5_endpoint_falsification_prereg_20261007.md)（N1 第一步，S5 便宜证伪预注册，判据先冻；owner 2026-10-07 弹窗批后同日开跑）
 - [PLAN-N1-00_S5_ADJUDICATION_20261007](PLAN-N1-00_S5_ADJUDICATION_20261007.md)（S5 判读：J1 不成立 ⇒ 病在更深，P1 降级为部分成立；S1 顺延重审）
 - [PLAN-N1-02_attribution_prereg_20261007](PLAN-N1-02_attribution_prereg_20261007.md)（N1 基底归因预注册：完整计算图＋参数级预读＋F1–F5 与三带判别规则先冻；无 owner 新决策点，零训练只读诊断）
 - [PLAN-N1-02_ATTRIBUTION_ADJUDICATION_20261007](PLAN-N1-02_ATTRIBUTION_ADJUDICATION_20261007.md)（归因判读：H-A 判 **not_primary**——序贯信号在场且每步 54.9% 被跟随；损失面＝逐步位置保真（45.6% 步顶质量非后继）；S1 设计约束输出，PLAN-N1-01 重开前置达成）
 - [PLAN-N1-01_s1_readout_prereg_20261007](PLAN-N1-01_s1_readout_prereg_20261007.md)（S1 实施预注册：H-S1a 硬序贯位置掩码（零训练可证伪）与 H-S1b 再激活重放（要训练）两假设分工；主判据 J-S1a＝never-LF 拖写行 ≤118 先冻、守卫四条、预算 3 支面；**不开跑，待 owner 批**）
 - [PLAN-N1-01_ADJUDICATION_20261008](PLAN-N1-01_ADJUDICATION_20261008.md)（S1a 阶段0 判读：J-S1a **不成立**（225＞118），但 F1 0.549→0.747、F3 ×20.8 ⇒ 走第三出口"读取可修、但不充分"；守卫四条＋反向守卫全过；出口文本含糊缺陷登记 DEBT-G46）
+- [PLAN-N1-05_persistent_stepwise_carrier_prereg_20261014](PLAN-N1-05_persistent_stepwise_carrier_prereg_20261014.md)（逐步再激活持久载体预注册：载体五判据/五守卫，默认关闭，开跑与动码分批审批）
+- [PLAN-N1-06_carrier_consumer_alignment_20261014](PLAN-N1-06_carrier_consumer_alignment_20261014.md)（C0 冻结版 r1：载体代码触点、v1 checkpoint 键、来源/容量/命令；C1 批次仍待 owner 批准）
 - [PLAN-N2-01_consolidation_powerup_prereg_20261007](PLAN-N2-01_consolidation_powerup_prereg_20261007.md)（N2 巩固通电预注册：C6 六决策点现状核对（①②④⑤已在库，⑥面板行**已核＝缺**，落点三段已点名，**真未做＝organs/learn 从未在真实长跑启用**）；合取判据 J-N2a 旧能力保持 ∧ J-N2b 新收益 vs 不学对照；守卫含**回退路径必须真演示一次**；改权重半径待 owner 批）
 - [PLAN-N2-01_ADJUDICATION_20261008](PLAN-N2-01_ADJUDICATION_20261008.md)（N2 第一次通电判读：加速点① 在最小剂量档判**不成立**——CAP-0 严格命中 9→12 过、复述面 2.0 档成句 25→23 未过、J-N2b 治疗 −14.4628 ≤ 对照 −14.2791；G-N2-1 回退**双重实证**通过；当场撞出 **DEBT-G47 巩固产物装不回来**；⑥ 面板行一并落地）
 - [PLAN-N3-03_tau_definition_20261008](PLAN-N3-03_tau_definition_20261008.md)（N3 乙前置定义件：τ 是"这张面、这个装配、这条加权和"的阈值；实测五维里两维在今天训练链上结构性恒零（`fast_slow_conflict` 挂载即 `fast_is_zero`、`activity_saturation` 需 gate>0），故默认 `minimum_pressure=0.70` 在退化复合量上算术不可达（上界 0.425）；装配三选一（含"为什么不选降 τ"的出处）＋一条硬事实：学习模式不入档，每次 load 后必须重施加；本件不冻数值、不开跑）

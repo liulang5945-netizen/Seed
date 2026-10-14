@@ -1,6 +1,6 @@
-# PLAN-N1-06 · N1 载体与消费实施附件（2026-10-14，设计稿）
+# PLAN-N1-06 · N1 载体与消费实施附件（2026-10-14，C0 冻结版 r1）
 
-本附件落实 [开发计划修订](PLAN-N-01_development_revision_20261014.md) 的 C0，供批准 C1 时核对。没有新运行结果，不构成动码或机时授权。继承 [PLAN-N1-05](PLAN-N1-05_persistent_stepwise_carrier_prereg_20261014.md) 五条载体判据和默认中性守卫；消费与信用的新协议须按本附件列明的差异另冻版本，不追改 [PLAN-N1-04](PLAN-N1-04_s1b_reactivation_implementation_prereg_20261014.md)。
+本附件落实 [开发计划修订](PLAN-N-01_development_revision_20261014.md) 的 C0，冻结 C1 的实现身份供 owner 决策。本文只有代码核对和容量测算，没有新行为结果；不构成动码、计算或训练授权。继承 [PLAN-N1-05](PLAN-N1-05_persistent_stepwise_carrier_prereg_20261014.md) 五条载体判据和默认中性守卫；消费与信用的新协议须按本附件列明的差异另冻版本，不追改 [PLAN-N1-04](PLAN-N1-04_s1b_reactivation_implementation_prereg_20261014.md)。
 
 ## 1. 信息流与继承范围
 
@@ -13,14 +13,31 @@
 | 项 | 新附件约定 | 继承或替代关系 |
 | --- | --- | --- |
 | 开关 | `persistent_stepwise_carrier` 为运行时显式属性，默认关，不加入 TaijiConfig | 继承 05；04 未来消费版本同样采用运行时属性，替代原“配置开关”措辞 |
-| 写入 | 每个实际生成步记录一条维度匹配的投影，episode 独立；包含末步，长度由真实循环读数计 | 继承 J-N1e-1、G-N1e-4/5；不从模板或测试答案补造轨迹 |
-| 入档 | 开关关且无历史载体时不引入空载体键，保持旧默认 schema；有载体时保存版本与内容，旧档缺字段可载入 | 继承 G-N1e-1、J-N1e-3；默认路径逐位与 schema 不变，不放宽架构相等检查 |
-| 恢复 | 新解释器加载保存文件，逐条比较数量/shape/内容；恢复后运行开关默认关，取证需要显式开启 | 加强 J-N1e-2 取法，避免同进程缓存冒充恢复；不把运行时模式偷偷入配置 |
-| 来源反证 | 恢复的 episode 清空后，读取返回空或拒绝；另一 episode 不可自动顶替 | 继承 J-N1e-4；C1 控制读取 API 的 episode 参数，不使用评价答案选择 |
-| 维度 | 读取条目可直接输入 fabric.step 的 episodic_feedback，实际运行形状检查 | 继承 J-N1e-5；声明形状相等不能替代调用 |
-| 隔离 | 各臂用独立输出；episode 写入预算、载体条目/字节量与前后权重摘要披露 | 工程披露，具体容量上限和淘汰策略在实施前冻结；不能以无限存储替代有限记忆设计 |
+| 开关 | `Taiji.persistent_stepwise_carrier` 运行时属性只控制生成时的记录，默认 `False`；不加 `TaijiConfig` 字段，也不保存开关状态 | 继承 05；载荷恢复后记录仍关闭；只读的 episode 查询 API 可显式调用，不受记录开关隐式影响 |
+| 来源与 episode | `SeedRuntime.chat()` 已创建 `InputFrame(input_id, modality, source, timestamp, provenance, confidence)`；沿 `Seed.generate_input` → `TSKV8Adapter.generate_input` 传给 `Taiji.generate`。carrier 用已保存的单调 serial 生成唯一 episode id（`input_id` 是来源字段，不假定它全局唯一），并原样保存全部帧来源元数据 | 缺 `input_id`/来源字段或 serial 撞号时响亮拒绝；不从答案文本/题目标签补造来源 |
+| 写入 | 在 `Taiji.generate` 真实发射环 `for` 内，先处理 stop boundary；每个实际追加的答复字节，在 `observe(next_symbol)` 前记录 `cortical_cue()`，即该字节发射时的上下文；每轮暂存，正常结束时整轮提交 | 挂点 `taiji/model.py:3443-3504`；向量来自 `:779-786`，与 `fabric.step` 所需上下文同形；不记录未发射的 stop 符号，不从测试答案补造轨迹 |
+| 载荷与兼容 | 在 Taiji v10 核心 payload 里加可选顶层键 `persistent_stepwise_carrier`，值含 `format=taiji-persistent-stepwise-carrier-v1`、`version=1`、`context_dim`、持久 `next_episode_serial`、episodes、来源元数据及 float32 投影矩阵；空且关闭时不输出该键；旧载荷无键按空载体恢复 | 写入 `_checkpoint_core()`、读取 `Taiji.restore()`；`TSKV8Adapter.native_checkpoint()` 将其放入 kernel，`Seed.checkpoint()` 的兼容 payload 也同源带入。保持 `TaijiConfig` 严格相等检查不变 |
+| 读取与反证 | 按明确 `episode_id` 返回克隆的有序向量；缺项返回空/拒绝，绝不回退 `last_event`、剪贴板、缓存或现场重算 | 读取口由本载体提供；取值直接喂 `fabric.step(..., episodic_feedback=...)`，并实测空载体负反证 |
+| 保存与恢复 | `SeedRuntime.save()` 原子写；独立进程用 `SeedRuntime.load()`（`weights_only=True`）重载，逐条核数量、shape、dtype、内容；运行时记录开关恢复默认关，审计通过明确 episode id 调只读查询 | 锚点 `api/seed_runtime.py:296-340,1503-1531`；禁止同进程 restore 冒充持久性 |
+| 容量与隔离 | 基座 `output/a31_chunked_self/checkpoint.pt` 的 region sizes 为 `[256,192,128]`，故 `cortical_context_dim=1152`；正式面前 96 manifest items 实有 288 turns。冻结 C1 上限为 288 episodes × 每 episode 256 步＝73,728 vectors，float32 原始上限 339,738,624 B（324 MiB）；超出即失败，不做静默 FIFO/截断。各臂使用独立 checkpoint/output | 仅是 C1 取证上限，不是长期产品保留策略；C2 前须另定生产保留/逐出政策。每臂披露真实 episode/step/字节量及前后权重摘要 |
 
-C1 正式面保留 05 的 96 题、max_length 256 与旧档身份；在实施触点确认后，新增 payload schema、写入/读取调用点、每题 episode 绑定和容量策略必须先入库再跑。≤30 分钟 CPU 的预算不得省去新进程恢复；新标定若超预算则回到预算决策。
+C1 正式面保留 05 的 96 个 manifest items、`max_length=256` 与旧档身份；读 manifest 确认其前 96 项共 288 turns（每项最多三轮），不能再把 96 items 写成只有 96 generations。所用 manifest 为 `plans/manifests/r2_copy_surface_extension_v3_position_random.json`（SHA-256 `B162FF091630F64A8CAC986184729FF7894887F4806C923CC12B301CE5AE4FEE`），母档为 `output/a31_chunked_self/checkpoint.pt`（SHA-256 `CA2628077B21BC4C9A6F2FC06FF410D70311B1218A30B8794ECFD7E5A027D8BB`）。≤30 分钟 CPU 的预算不得省去新进程恢复；324 MiB 原始向量上限尚未实测，起跑前需做不改母档的容量/耗时核算；预计超预算则回到预算决策，不裁短轨迹来凑预算。
+
+### 2.1 C1 实施触点与取证命令
+
+1. **写入链**：输入来源从 `api/seed_runtime.py:493-513` 的 `InputFrame` 贯穿 `seed/model.py:194-217`、`taiji/adapter.py:11137-11172`，进入 `taiji/model.py:3265-3504`。`Taiji.generate` 当前 reset episode 固定为 `generation`；C1 开启时由 carrier 持久 serial 生成唯一 episode id，并把 `InputFrame` 元数据随轨迹保存，避免直接拿可能复用的 `chat:{tick}` 当唯一键。若直接调用生成环而未提供来源帧，开关打开时响亮拒绝。捕获位置在 `:3487` boundary stop 检查之后、`:3491` append 与 `:3495` observe 之前，保证投影对应这次实际发射的字节。
+2. **状态链**：`PersistentStepwiseCarrier` 记录结构落在 `taiji/memory.py`，由 `Taiji` 持有；不得复用 `EpisodicField.last_event` 的池化字段。公开只读口定名 `read_persistent_stepwise_episode(episode_id)`，只返回该 episode 的有序克隆向量，缺项返回空。核心载荷挂在 `taiji/model.py:3643-3680`，旧键缺失的默认恢复落在 `:3712` 的 `restore()`；原生 envelope 由 `taiji/adapter.py:12464-12620` 包含 kernel，Seed 信封在 `seed/model.py:225-259` 同时保留原生和兼容两条载荷。API 保存入口 `api/seed_runtime.py:1503-1531` 是原子保存，恢复入口 `:296-340` 会新建模型后调用 `Seed.from_checkpoint`。
+3. **C1 守卫与正式面命令**（下列新开关/参数由批⑴实现；本轮未运行）：
+
+   ```powershell
+   python -m pytest tests/taiji_native/test_persistent_stepwise_carrier_contract.py -q
+   python scripts/training/probe_taiji_a30_stop_failure.py --checkpoint output/a31_chunked_self/checkpoint.pt --manifest plans/manifests/r2_copy_surface_extension_v3_position_random.json --limit 96 --max-length 256 --persistent-stepwise-carrier --carrier-checkpoint-out output/n1_carrier_open/checkpoint.pt --out-report reports/taiji_n1_carrier_open_20261014.json
+   python scripts/training/probe_taiji_a30_stop_failure.py --checkpoint output/a31_chunked_self/checkpoint.pt --manifest plans/manifests/r2_copy_surface_extension_v3_position_random.json --limit 96 --max-length 256 --out-report reports/taiji_n1_carrier_off_20261014.json
+   python scripts/training/audit_taiji_n1_persistent_stepwise_carrier.py --checkpoint output/n1_carrier_open/checkpoint.pt --report reports/taiji_n1_carrier_open_20261014.json --expect-episodes 288 --expect-context-dim 1152
+   python scripts/training/audit_taiji_n1_persistent_stepwise_carrier.py --checkpoint output/a31_chunked_self/checkpoint.pt --expect-legacy-absent
+   ```
+
+   第一条钉载体合同及互斥拒绝；第二条沿既有 `runtime.chat()` 生成链开载体并另存 checkpoint；第三条同母档、同题面做默认关闭对照；第四条由独立解释器验证恢复内容、episode 清空后不回退来源、以及反馈向量可通过 `fabric.step` 形状校验；第五条检验当前旧档无载体键可加载且默认关闭。96 items 的运行还必须满足 05 的 tail/≥0.95 覆盖率条件。文件名与参数在 C1 实施中按本文冻结；改名或改变容量/数据身份须先升版本。
 
 ## 3. 生产与消费的组合边界
 
@@ -46,6 +63,6 @@ C1 正式面保留 05 的 96 题、max_length 256 与旧档身份；在实施触
 
 ## 6. 当前决策与验收范围
 
-当前先按 PLAN-N-01 的 C0 用只读核对把精确代码触点、payload 版本、容量策略与取证命令补入实施版本；这些项完成后再评审 C1 两批：载体实现及 ≤30 分钟 CPU 零训练面。没有实施版本或授权不得修改；检查点保存和独立进程恢复先过。
+PLAN-N-01 的 C0 现已完成：精确触点、payload 版本、容量上限、数据身份和复算命令均在本版冻结。下一步是 owner 决定是否批准 C1 批⑴载体实现及批⑵ ≤30 分钟 CPU 零训练面；在批文前不改产品/探针代码，不启动面。检查点保存和独立进程恢复列为先决验收，不能被同进程读回替代。
 
 C1 通过只解除“无持久载体”这一前置。C2 消费、C3 信用、权重训练、默认产品挂载和新算力不在本次建议范围。失败依原五条载体判据返回，不采用池化多步近似冒充逐步载体。
