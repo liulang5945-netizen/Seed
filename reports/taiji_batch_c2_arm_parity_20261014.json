@@ -1,0 +1,370 @@
+{
+  "format": "taiji-batch-c-arm-parity-v1",
+  "prereg": "plans/reference/PLAN-N5-20_batch_c_run_spec_and_pricing_prereg_20261012.md §2",
+  "debt": "DEBT-G127",
+  "started_utc": "2026-10-14T04:54:29Z",
+  "faces": {
+    "config": [
+      {
+        "path": "trainer",
+        "treated": "train_taiji_r2_readout_retrain",
+        "control": "train_taiji_r2_readout_retrain",
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "contract",
+        "treated": "plans/reference/M5_R2_READOUT_RETRAIN_CONTRACT_DRAFT_20260920.md",
+        "control": "plans/reference/M5_R2_READOUT_RETRAIN_CONTRACT_DRAFT_20260920.md",
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "base_checkpoint",
+        "treated": "checkpoints\\seed_a31self_with_circuit.pt",
+        "control": "checkpoints\\seed_a31self_with_circuit.pt",
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "base_checkpoint_sha256",
+        "treated": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+        "control": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "corpus.paths",
+        "treated": [
+          "E:\\Seed\\data\\p3b_all_fresh.jsonl"
+        ],
+        "control": [
+          "E:\\Seed\\data\\p3b_all_fresh.jsonl"
+        ],
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "corpus.fingerprint",
+        "treated": "[{\"name\":\"p3b_all_fresh.jsonl\",\"bytes\":53153991}]",
+        "control": "[{\"name\":\"p3b_all_fresh.jsonl\",\"bytes\":53153991}]",
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "symbols_budget",
+        "treated": 8900000,
+        "control": 8900000,
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "device",
+        "treated": "cpu",
+        "control": "cpu",
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "fresh",
+        "treated": true,
+        "control": true,
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "observe_kwargs",
+        "treated": {
+          "learn": true,
+          "readout": "predictive",
+          "learn_motor": false,
+          "learn_fabric": false,
+          "learn_predictive_context": false,
+          "learn_predictive_readout": true
+        },
+        "control": {
+          "learn": true,
+          "readout": "predictive",
+          "learn_motor": false,
+          "learn_fabric": false,
+          "learn_predictive_context": false,
+          "learn_predictive_readout": true
+        },
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "expected_write_surface",
+        "treated": [
+          "predictive_readout"
+        ],
+        "control": [
+          "predictive_readout"
+        ],
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "campaign.skip_symbols",
+        "treated": 11199800,
+        "control": 11199800,
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "skip_symbols",
+        "treated": 11199800,
+        "control": 11199800,
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "campaign.base_checkpoint_sha256",
+        "treated": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+        "control": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "campaign.symbols_budget",
+        "treated": 8900000,
+        "control": 8900000,
+        "equal": true,
+        "present": true
+      }
+    ],
+    "flag": [
+      {
+        "path": "generated_feed.every_symbols",
+        "treated": 50,
+        "control": 0,
+        "equal": false,
+        "present": true
+      },
+      {
+        "path": "generated_feed.feeds",
+        "treated": 178000,
+        "control": 0,
+        "equal": false,
+        "present": true
+      },
+      {
+        "path": "generated_feed.generated_write_count",
+        "treated": 178000,
+        "control": 0,
+        "equal": false,
+        "present": true
+      },
+      {
+        "path": "generated_feed.generated_row_weight_max_abs",
+        "treated": 1.379441381,
+        "control": 0.0,
+        "equal": false,
+        "present": true
+      },
+      {
+        "path": "generated_feed.generated_reward_sum",
+        "treated": 0.0,
+        "control": 0.0,
+        "equal": true,
+        "present": true
+      }
+    ],
+    "outcome": [
+      {
+        "path": "status",
+        "treated": "completed",
+        "control": "completed",
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "arm_description",
+        "treated": "只训读出头：运动面冻结，predictive_readout 单点写入",
+        "control": "只训读出头：运动面冻结，predictive_readout 单点写入",
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "realised_write_surface",
+        "treated": [
+          "predictive_readout"
+        ],
+        "control": [
+          "predictive_readout"
+        ],
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "write_surface_ok",
+        "treated": true,
+        "control": true,
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "symbols_consumed",
+        "treated": 8900000,
+        "control": 8900000,
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "absolute_tick",
+        "treated": 8900000,
+        "control": 8900000,
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "session.session_id",
+        "treated": "A-2026-10-13T13:08:08Z",
+        "control": "A-2026-10-13T22:03:31Z",
+        "equal": false,
+        "present": true
+      },
+      {
+        "path": "session.wall_seconds",
+        "treated": 32120.932,
+        "control": 24419.094,
+        "equal": false,
+        "present": true
+      },
+      {
+        "path": "session.seconds_per_symbol",
+        "treated": 0.003609093,
+        "control": 0.002743718,
+        "equal": false,
+        "present": true
+      },
+      {
+        "path": "session_readout.online_accuracy",
+        "treated": 0.2577822761553119,
+        "control": 0.26236070363603414,
+        "equal": false,
+        "present": true
+      },
+      {
+        "path": "session_readout.mean_surprise",
+        "treated": 7.292338228651582,
+        "control": 6.338022402771622,
+        "equal": false,
+        "present": true
+      },
+      {
+        "path": "session_readout.scored_symbols",
+        "treated": 8899999,
+        "control": 8899999,
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "generated_feed.measured_symbols_per_second",
+        "treated": 277.077887,
+        "control": 364.468882,
+        "equal": false,
+        "present": true
+      },
+      {
+        "path": "generated_feed.eta_hours_at_requested_budget",
+        "treated": 8.922,
+        "control": 6.783,
+        "equal": false,
+        "present": true
+      },
+      {
+        "path": "digests_before.motor",
+        "treated": "af421331cbef035ba1ad3ec908b450dc573e660d461a172faacf5bee0f1fd70a",
+        "control": "af421331cbef035ba1ad3ec908b450dc573e660d461a172faacf5bee0f1fd70a",
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "digests_after.motor",
+        "treated": "af421331cbef035ba1ad3ec908b450dc573e660d461a172faacf5bee0f1fd70a",
+        "control": "af421331cbef035ba1ad3ec908b450dc573e660d461a172faacf5bee0f1fd70a",
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "digests_before.predictive_readout",
+        "treated": "e82d2bf18eb4e9f6a7839a5abe878a624e9a16e9bf1a56a2b41dcc4a7ebebdde",
+        "control": "e82d2bf18eb4e9f6a7839a5abe878a624e9a16e9bf1a56a2b41dcc4a7ebebdde",
+        "equal": true,
+        "present": true
+      },
+      {
+        "path": "digests_after.predictive_readout",
+        "treated": "9b89262081f60a0090256e42195df87695f51c0e6e5c4ee97c0702f937851e16",
+        "control": "a426d841aacaf616ed4874fc0a6654758bbd36c0858d09d92a7187e60b6d3761",
+        "equal": false,
+        "present": true
+      },
+      {
+        "path": "checkpoint_sha256",
+        "treated": "09e18ae2ce0ebdb520413f2f4c5777a21798a82cc37b846939f82d12e205bb28",
+        "control": "70ceffba2bdc851f3fac778ffc480ec9adcf3cf012d1de1551f18a545a544f17",
+        "equal": false,
+        "present": true
+      },
+      {
+        "path": "campaign.wall_seconds",
+        "treated": 32121.262,
+        "control": 24419.401,
+        "equal": false,
+        "present": true
+      },
+      {
+        "path": "campaign.status",
+        "treated": "completed",
+        "control": "completed",
+        "equal": true,
+        "present": true
+      }
+    ]
+  },
+  "differing_config_keys": [],
+  "differing_flag_keys": [
+    "generated_feed.every_symbols",
+    "generated_feed.feeds",
+    "generated_feed.generated_write_count",
+    "generated_feed.generated_row_weight_max_abs"
+  ],
+  "runner_commit_per_arm": {
+    "treated": "fe39dfadef6e67103e647e00a8f6eb0bb5b04274",
+    "control": "fe39dfadef6e67103e647e00a8f6eb0bb5b04274"
+  },
+  "paths_absent_from_one_arm": [],
+  "disclosure": {
+    "paths": [
+      "generated_feed.generated_reward_sum_basis",
+      "generated_feed.entry_has_reward_parameter"
+    ],
+    "present_on_both_arms": [
+      "generated_feed.generated_reward_sum_basis",
+      "generated_feed.entry_has_reward_parameter"
+    ],
+    "absent_on_both_arms": [],
+    "one_sided_absence": [],
+    "note": "这一组不参与 verdict：两臂同缺是跑器版本面差。它记的是「件里没自述」这件事本身——引用批次 C 的零奖励时，那句依据要由引用者补，不许说成「长跑件实测奖励为 0」。"
+  },
+  "verdicts": {
+    "config_face_identical": true,
+    "no_paths_absent_from_a_single_arm": true,
+    "no_disclosure_path_is_one_sided": true,
+    "flag_face_differs": true,
+    "same_runner_commit_for_both_arms": true,
+    "j_n5r_1_control_flag_off": true,
+    "j_n5r_1_control_no_side_effects": true,
+    "j_n5r_2_treated_write_count_positive": true,
+    "j_n5r_2_treated_row_weight_positive": true,
+    "treated_feeds_match_budget_arithmetic": true,
+    "reward_sum_zero_on_both_arms": true,
+    "motor_digest_unchanged_in_both_arms": true
+  },
+  "verdict": "holds",
+  "failing_verdicts": [],
+  "reading_limit": "这台仪器证的是**可归因性**（两臂除旗标外无第二处不同）与关旗标那一臂的无副作用，不证任何能力涨点。结果面（`status`／墙钟／摘要／`online_accuracy`／`mean_surprise`……）只并排出版、绝不判等；把它判成等就是造一支永远为假的尺。",
+  "wall_clock_ms": 45.682
+}

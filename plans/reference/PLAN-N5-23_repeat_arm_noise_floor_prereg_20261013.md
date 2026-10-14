@@ -51,3 +51,21 @@
 * **史实**：㊵-824 证明 `config.seed` 是结构身份（换种子 ⇒ `ValueError: receptor channel map does not match architecture`，`taiji/organs.py:99-104`／`:162-165`），owner 十四裁 ⑴ 选「丙＝承认本管线无可用混杂档」。
 * **对 `J-N5v-3` 的影响（不改写原文，只标可走分支）**：本链（同 base、同 skip=11199800、同跑器版）上地板只有 `floor_m = 0` 那一支 ⇒ 只有 `ruler_no_spread` 可出版；`magnitude_blocked` 那一支**在本链永不成立**，因为它要求先有一个已出版的非零 `floor_m`。两种说法不许混写：批次 C 的幅度句是「无地板可依」，不是「差被地板挡住」。
 * **发表资格前置（新增一句）**：任何把批次 C 的 `not_resolved` 往「已判／已挡」任一侧改写的句子，都必须先点名它引用的是哪一支；引用不到分支名的，按不可发表处理。
+
+## §6 十五裁⑷甲 落地（2026-10-14 ㊵-833）：`J-N5v-2` 的「首四个」里第三支为何不出地板，以及本档至今没出版过地板
+
+* **口径差（不改写 §2 原文，只补）**：§2 把 `generated_write_count` 列进"首四个"进判据的指标，而仪器
+  `scripts/training/audit_taiji_n5_23_repeat_arm_noise_floor.py:39` 的 `METRICS` 只含
+  `cumulative_mean_surprise`／`cumulative_online_accuracy` 两支训练面读数，CAP 那一支走
+  `--cap-pairing-*` 入参（逐维地板见 `:185`）。⇒ 只按 §2 字面核对会得出「地板成形 2/4」的错判。
+* **为什么 `generated_write_count` 不该有地板**：它在这条链上是**预算算术决定量**
+  （8,900,000 ÷ `every_symbols=50` ＝ 178,000；对照臂 `every_symbols=0` ⇒ 0），不是观察量；
+  给它出地板等于给一条除法出散布。它的证据归属在并排仪
+  `audit_taiji_batch_c_arm_parity.py` 的 `treated_feeds_match_budget_arithmetic` 与
+  `j_n5r_2_treated_write_count_positive` 那一档（＝可归因性），不在"噪声地板"这一档。
+* **本档的出版状态（重要，防误读）**：2026-10-14 那对重复臂按 `J-N5v-1` **判红**——并排仪现读两臂
+  `runner_commit` 同为 `fe39dfadef6e…`，而批次 C 那枚在库件现读为 `9299352d439b…`（差一枚 ㊵-756 的跑器写靶补行尾）。
+  §2 原文对这一支的处置是「只许写成另一次跑、不许拿来推地板」，故本档**至今未出版过任何一枚地板**。
+* **仪器读数的引用规矩**：地板仪的资格面**不含** `runner_commit`（`:12` 那条只比基座 sha／预算／`skip_symbols`／
+  `fresh`／`every_symbols`），所以它会在跑器版差照样报 `verdict="holds"` 与 `same_configuration_within_role=true`。
+  ⇒ 引本档的地板读数必须**同时**引并排仪的 `runner_commit_per_arm` 逐臂点名；只引地板仪那一句的，按不可发表处理。
