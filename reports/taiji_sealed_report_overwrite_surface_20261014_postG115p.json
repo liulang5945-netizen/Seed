@@ -1,0 +1,490 @@
+{
+  "format": "taiji-sealed-report-overwrite-surface-v4",
+  "debts": [
+    "DEBT-G35",
+    "DEBT-G50",
+    "DEBT-G132"
+  ],
+  "face": "tracked 的 scripts/**/*.py；两张面并立——`argparse_default`＝写靶旗标的默认值，`literal_assignment`＝源码里硬编的字面路径且该变量被当写靶用过（v2 新增这一面：v1 只认 argparse 默认值，把硬编靶整面漏掉）",
+  "script_files_scanned": 1055,
+  "default_targets_on_tracked_files": 37,
+  "face_counts": {
+    "argparse_default": 21,
+    "literal_assignment": 16
+  },
+  "distinct_files": 36,
+  "category_counts": {
+    "refusal_without_override_flag": 1,
+    "refusal_with_override_flag": 33,
+    "no_refusal_found": 3
+  },
+  "exposure_targets": 3,
+  "exposure_files": 3,
+  "shared_writer_sensitivity": {
+    "rows_total": 37,
+    "count": 13,
+    "files_recognized_only_via_shared_writer": [
+      "scripts/training/measure_taiji_a30_repetition_penalty.py",
+      "scripts/training/price_taiji_r2_a25_overlap_selector.py",
+      "scripts/training/probe_taiji_a30_position_cycling.py",
+      "scripts/training/probe_taiji_a30_surface_gate_fffd_bypass.py",
+      "scripts/training/probe_taiji_a30_surface_repetition.py",
+      "scripts/training/probe_taiji_r2_a25_event_cue_separability.py",
+      "scripts/training/probe_taiji_r2_a25_selection_ceiling.py",
+      "scripts/training/probe_taiji_r2_a27_address_onpolicy.py",
+      "scripts/training/probe_taiji_r2_a27_address_separability.py",
+      "scripts/training/probe_taiji_r2_a28_tail_behavior.py",
+      "scripts/training/run_taiji_collab_handoff_entry_evidence.py",
+      "scripts/training/score_taiji_r2_copy_circuit_regression_gate.py",
+      "scripts/training/score_taiji_r2_copy_strict_cap.py"
+    ],
+    "definition": "同一棵树上跑两遍 `_written_names`（第二遍 `include_shared=False`）；`literal_assignment` 那一面里，某枚字面靶的宿主变量**只在第一遍**被认成写靶 ⇒ 该文件入列。只加键，不改 `37／36／22／21` 那组口径。"
+  },
+  "rows": [
+    {
+      "file": "scripts/training/adjudicate_taiji_n4_four_class_acceptance.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out-report"
+      ],
+      "default_target": "reports/taiji_n4_33_four_classes_20261012.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': REPORT_FORMAT, 'status': 'refuse_overwrite', 'path': str(out)}, ensure_ascii=True))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/audit_taiji_answer_source_provenance.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out-report"
+      ],
+      "default_target": "reports/taiji_answer_source_provenance_20261011.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(f'refusing to overwrite an existing report: {out}', file=sys.stderr)\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/audit_taiji_debt_table_column_shape.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out-report"
+      ],
+      "default_target": "reports/taiji_debt_table_column_shape_20261011.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': REPORT_FORMAT, 'status': 'refuse_overwrite', 'path': str(out)}))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/audit_taiji_default_reachability.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out-report"
+      ],
+      "default_target": "reports/taiji_default_reachability_20261011.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(f'refusing to overwrite an existing report: {out}', file=sys.stderr)\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/audit_taiji_episodic_read_sharing_face.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out-report"
+      ],
+      "default_target": "reports/taiji_episodic_read_sharing_face_20261011.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(f'refusing to overwrite an existing report: {out}', file=sys.stderr)\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/audit_taiji_n1_03_publication_claim_gate.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out-report"
+      ],
+      "default_target": "reports/taiji_n1_03_publication_claim_gate_20261011.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(f'refusing to overwrite an existing report: {out}', file=sys.stderr)\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/audit_taiji_n1_03_role_table_face.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out-report"
+      ],
+      "default_target": "reports/taiji_n1_03_role_table_face_20261011.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(f'refusing to overwrite an existing report: {out}', file=sys.stderr)\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/audit_taiji_sealed_report_overwrite_surface.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out-report"
+      ],
+      "default_target": "reports/taiji_sealed_report_overwrite_surface_20261011.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(f'refusing to overwrite an existing report: {out}', file=sys.stderr)\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/audit_taiji_write_only_key_face.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out-report"
+      ],
+      "default_target": "reports/taiji_write_only_key_face_20261011.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(f'refusing to overwrite an existing report: {out}', file=sys.stderr)\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/calibrate_taiji_r2_readout_retrain.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out-report"
+      ],
+      "default_target": "reports/taiji_r2_readout_retrain_step0_calibration.json",
+      "category": "refusal_without_override_flag",
+      "refusal_evidence": [
+        "parser.error(f'{report_path} already exists; this instrument never overwrites a report')"
+      ]
+    },
+    {
+      "file": "scripts/training/capture_taiji_episodic_retrieve_baseline.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out-report"
+      ],
+      "default_target": "reports/taiji_episodic_retrieve_baseline_20261011.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(f'refusing to overwrite an existing baseline: {out}', file=sys.stderr)\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/count_taiji_n2_03_attribution.py",
+      "face": "argparse_default",
+      "flags": [
+        "--arm-report"
+      ],
+      "default_target": "reports/taiji_n2b_resetarm_20261008.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': 'taiji-n2-03-attribution-v1', 'status': 'refuse_overwrite', 'path': str(out_path)}, ensure_ascii=True))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/count_taiji_n2_03_attribution.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out"
+      ],
+      "default_target": "reports/taiji_n2_03_attribution_20261008.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': 'taiji-n2-03-attribution-v1', 'status': 'refuse_overwrite', 'path': str(out_path)}, ensure_ascii=True))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/count_taiji_n2_faces.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out"
+      ],
+      "default_target": "reports/taiji_n2_face_verdict_20261008.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': 'taiji-n2-face-verdict-v2', 'status': 'refuse_overwrite', 'path': str(out)}, ensure_ascii=True))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/count_taiji_n2b_faces.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out"
+      ],
+      "default_target": "reports/taiji_n2b_face_verdict_20261008.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': 'taiji-n2b-face-verdict-v1', 'status': 'refuse_overwrite', 'path': str(out_path)}, ensure_ascii=True))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/diagnose_taiji_r2_d2_addressing.py",
+      "face": "literal_assignment",
+      "flags": [
+        "out"
+      ],
+      "default_target": "reports/r2_d2_addressing_diagnostic_20260918.json",
+      "category": "no_refusal_found",
+      "refusal_evidence": []
+    },
+    {
+      "file": "scripts/training/eval_taiji_r2_d3_matched_dev.py",
+      "face": "literal_assignment",
+      "flags": [
+        "OUT_REPORT"
+      ],
+      "default_target": "reports/r2_d3_matched_dev_20260918.json",
+      "category": "no_refusal_found",
+      "refusal_evidence": []
+    },
+    {
+      "file": "scripts/training/measure_taiji_a30_repetition_penalty.py",
+      "face": "literal_assignment",
+      "flags": [
+        "out"
+      ],
+      "default_target": "reports/taiji_a30_repetition_penalty_20260928.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': 'taiji-a30-repetition-penalty-v1', 'status': 'refuse_overwrite', 'path': str(out)}, ensure_ascii=True))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/measure_taiji_g104_capability_seed_floor.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out-report"
+      ],
+      "default_target": "reports/taiji_g104_capability_seed_floor_20261012.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(f'refusing to overwrite an existing report: {out}', file=sys.stderr)\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/measure_taiji_n5_12_wake_schedule_arms.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out-report"
+      ],
+      "default_target": "reports/taiji_n5_12_wake_schedule_arms_first_values_20261011.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(f'refusing to overwrite an existing report: {out}', file=sys.stderr)\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/price_taiji_r2_a25_overlap_selector.py",
+      "face": "literal_assignment",
+      "flags": [
+        "out"
+      ],
+      "default_target": "reports/taiji_r2_a25_overlap_selector_price_20260926.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': 'taiji-r2-a25-overlap-selector-price-v2', 'status': 'refuse_overwrite', 'path': str(out)}, ensure_ascii=True))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/probe_taiji_a27_walked_ledger.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out-report"
+      ],
+      "default_target": "reports/taiji_a27_walked_ledger_20261011.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "raise SystemExit(f'refusing to overwrite an existing report: {target}')"
+      ]
+    },
+    {
+      "file": "scripts/training/probe_taiji_a30_position_cycling.py",
+      "face": "literal_assignment",
+      "flags": [
+        "out"
+      ],
+      "default_target": "reports/taiji_a30_position_cycling_20260928.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': 'taiji-a30-position-cycling-v1', 'status': 'refuse_overwrite', 'path': str(out)}, ensure_ascii=True))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/probe_taiji_a30_surface_gate_fffd_bypass.py",
+      "face": "literal_assignment",
+      "flags": [
+        "out"
+      ],
+      "default_target": "reports/taiji_a30_surface_gate_fffd_bypass_20260930.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': 'taiji-a30-surface-gate-fffd-bypass-v2', 'status': 'refuse_overwrite', 'path': str(out)}, ensure_ascii=True))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/probe_taiji_a30_surface_repetition.py",
+      "face": "literal_assignment",
+      "flags": [
+        "out"
+      ],
+      "default_target": "reports/taiji_a30_surface_repetition_20260928.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': 'taiji-a30-surface-repetition-v1', 'status': 'refuse_overwrite', 'path': str(out)}, ensure_ascii=True))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/probe_taiji_r2_a25_event_cue_separability.py",
+      "face": "literal_assignment",
+      "flags": [
+        "out"
+      ],
+      "default_target": "reports/taiji_r2_a25_event_cue_separability_20260925.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': 'taiji-r2-a25-event-cue-separability-v1', 'status': 'refuse_overwrite', 'path': str(out)}, ensure_ascii=True))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/probe_taiji_r2_a25_selection_ceiling.py",
+      "face": "literal_assignment",
+      "flags": [
+        "out"
+      ],
+      "default_target": "reports/taiji_r2_a25_selection_ceiling_20260925.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': 'taiji-r2-a25-selection-ceiling-v1', 'status': 'refuse_overwrite', 'path': str(out)}, ensure_ascii=True))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/probe_taiji_r2_a26_emission_trace.py",
+      "face": "literal_assignment",
+      "flags": [
+        "out"
+      ],
+      "default_target": "reports/taiji_r2_a26_emission_trace_20260925.json",
+      "category": "no_refusal_found",
+      "refusal_evidence": []
+    },
+    {
+      "file": "scripts/training/probe_taiji_r2_a27_address_onpolicy.py",
+      "face": "literal_assignment",
+      "flags": [
+        "out"
+      ],
+      "default_target": "reports/taiji_r2_a27_address_onpolicy_20260926.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': 'taiji-r2-a27-address-onpolicy-v1', 'status': 'refuse_overwrite', 'path': str(out)}, ensure_ascii=True))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/probe_taiji_r2_a27_address_separability.py",
+      "face": "literal_assignment",
+      "flags": [
+        "out"
+      ],
+      "default_target": "reports/taiji_r2_a27_address_separability_20260926.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': 'taiji-r2-a27-address-separability-v1', 'status': 'refuse_overwrite', 'path': str(out)}, ensure_ascii=True))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/probe_taiji_r2_a28_tail_behavior.py",
+      "face": "literal_assignment",
+      "flags": [
+        "out"
+      ],
+      "default_target": "reports/taiji_r2_a28_tail_behavior_20260926.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': 'taiji-r2-a28-tail-behavior-v1', 'status': 'refuse_overwrite', 'path': str(out)}, ensure_ascii=True))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/read_taiji_envelope_recipe_face.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out-report"
+      ],
+      "default_target": "reports/taiji_envelope_recipe_face_20261012.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(f'refusing to overwrite an existing report: {out}', file=sys.stderr)\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/report_taiji_n3a_calibration_cost.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out-report"
+      ],
+      "default_target": "reports/taiji_n3a_calibration_cost_20261008.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': 'taiji-n3a-calibration-cost-v1', 'status': 'refuse_overwrite', 'path': str(out)}).encode('unicode_escape').decode('ascii'))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/run_taiji_collab_handoff_entry_evidence.py",
+      "face": "literal_assignment",
+      "flags": [
+        "REPORT"
+      ],
+      "default_target": "reports/taiji_collab_handoff_entry_evidence_20260919.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': REPORT_FORMAT, 'status': 'refuse_overwrite', 'path': str(REPORT)}, ensure_ascii=True))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/score_taiji_r2_copy_circuit_regression_gate.py",
+      "face": "literal_assignment",
+      "flags": [
+        "out"
+      ],
+      "default_target": "reports/taiji_r2_copy_circuit_regression_gate_20260925.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': 'taiji-r2-copy-circuit-regression-gate-v1', 'status': 'refuse_overwrite', 'path': str(out)}, ensure_ascii=True))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/score_taiji_r2_copy_strict_cap.py",
+      "face": "literal_assignment",
+      "flags": [
+        "out"
+      ],
+      "default_target": "reports/taiji_r2_copy_strict_cap_recompute_20260925.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': 'taiji-r2-copy-strict-cap-recompute-v1', 'status': 'refuse_overwrite', 'path': str(out)}, ensure_ascii=True))\nreturn 2"
+      ]
+    },
+    {
+      "file": "scripts/training/verify_core_reasoning_coverage.py",
+      "face": "argparse_default",
+      "flags": [
+        "--out"
+      ],
+      "default_target": "reports/core_reasoning_coverage_20260926.json",
+      "category": "refusal_with_override_flag",
+      "refusal_evidence": [
+        "print(json.dumps({'format': 'taiji-core-reasoning-coverage-v1', 'status': 'refuse_overwrite', 'path': str(out_path)}, ensure_ascii=True))\nreturn 2"
+      ]
+    }
+  ],
+  "categories": {
+    "refusal_without_override_flag": "写前拒绝覆写、但不给覆写口（最严；`calibrate_taiji_r2` 那一形）",
+    "refusal_with_override_flag": "写前拒绝＋`--overwrite`／`--force` 显式口子",
+    "no_refusal_found": "既没写前拒绝也没旗标 ⇒ 计入暴露面"
+  },
+  "scope_note": "只读普查：不改别人名下仪器的默认落点（改了会让既有引用失效，属别线半径）",
+  "started_utc": "2026-10-14T11:17:47Z"
+}
