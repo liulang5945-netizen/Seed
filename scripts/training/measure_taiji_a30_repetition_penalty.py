@@ -27,6 +27,9 @@ for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
     if str(entry) not in sys.path:
         sys.path.insert(0, str(entry))
 
+#: DEBT-G115 修法③：落盘走统一落盘助手（`newline=` 由助手必备参数兜住；拒覆写由本件前置守卫承担）。
+import _taiji_report_io as report_io  # noqa: E402
+
 MANIFEST = PROJECT_ROOT / "plans/manifests/r2_copy_surface_extension_v3_position_random.json"
 PENALTIES = (0.0, 0.5, 1.0, 2.0)
 
@@ -157,11 +160,39 @@ def main() -> int:
         help="要扫的 penalty 档位，逗号分隔（表层链慢，可只跑 0.0,2.0 两端）",
     )
     parser.add_argument("--out-report", default=None)
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="目标读数件已存在时允许替换（DEBT-G115 修法③ 家族标准守卫；缺省拒覆写——"
+        "默认落点是在库读数件，重跑取数须显式带此旗标）",
+    )
     args = parser.parse_args()
     penalties = [float(value) for value in args.penalties.split(",")]
     if args.no_circuit and args.circuit:
         raise SystemExit("--no-circuit 与 --circuit 不能同时给（对照臂必须确实没挂回路）")
     circuit: str | None = None if args.no_circuit else args.circuit
+
+    out = (
+        Path(args.out_report)
+        if args.out_report
+        else PROJECT_ROOT / "reports/taiji_a30_repetition_penalty_20260928.json"
+    )
+    if not out.is_absolute():
+        out = PROJECT_ROOT / out
+    #: 拒覆检查**前置**：本件每条 penalty 都要**新建载一个 runtime** 并跑一遍题面（载模型＋生成），
+    #: 是重型取数 ⇒ 守卫放在 `run_arm` 之前，落点已存在时**立刻**响亮拒绝，不白烧机时。
+    if out.exists() and not args.overwrite:
+        print(
+            json.dumps(
+                {
+                    "format": "taiji-a30-repetition-penalty-v1",
+                    "status": "refuse_overwrite",
+                    "path": str(out),
+                },
+                ensure_ascii=True,
+            )
+        )
+        return 2
 
     checkpoint = PROJECT_ROOT / args.checkpoint
     sha_before = _sha256(checkpoint)
@@ -206,17 +237,7 @@ def main() -> int:
         },
         "started_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
-    out = (
-        Path(args.out_report)
-        if args.out_report
-        else PROJECT_ROOT / "reports/taiji_a30_repetition_penalty_20260928.json"
-    )
-    if not out.is_absolute():
-        out = PROJECT_ROOT / out
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
-    )
+    report_io.write_json_report(out, report, newline="\n", overwrite=True)
     print(json.dumps(report["arms"], ensure_ascii=False, indent=1))
     print("verdict:", json.dumps(report["verdict"], ensure_ascii=False))
     print("base_unchanged:", report["base_sha256_unchanged"], "| out:", out.name)
