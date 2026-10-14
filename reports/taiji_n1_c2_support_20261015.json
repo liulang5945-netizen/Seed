@@ -1,0 +1,1187 @@
+{
+  "format": "taiji-n1-c2-support-v1",
+  "items": [
+    {
+      "id": "V023",
+      "family": "with_hard_distractor",
+      "flavour": "same_subject_marker",
+      "kind": "book",
+      "turns": [
+        "我最近在读《松窗梦语》。",
+        "我姐姐最近在读《云笈七签》。",
+        "我最近在读什么书？"
+      ],
+      "expected_contains": [
+        "松窗梦语"
+      ],
+      "answer_tell_position": 0
+    },
+    {
+      "id": "V007",
+      "family": "with_hard_distractor",
+      "flavour": "same_subject_marker",
+      "kind": "book",
+      "turns": [
+        "我姐姐最近在读《水经注疏》。",
+        "我最近在读《海客谈瀛》。",
+        "我最近在读什么书？"
+      ],
+      "expected_contains": [
+        "海客谈瀛"
+      ],
+      "answer_tell_position": 1
+    },
+    {
+      "id": "V002",
+      "family": "with_hard_distractor",
+      "flavour": "same_subject_marker",
+      "kind": "city",
+      "turns": [
+        "我住在苏州。",
+        "我表哥住在西安。",
+        "我住哪？"
+      ],
+      "expected_contains": [
+        "苏州"
+      ],
+      "answer_tell_position": 0
+    },
+    {
+      "id": "V010",
+      "family": "with_hard_distractor",
+      "flavour": "no_subject_marker",
+      "kind": "city",
+      "turns": [
+        "同事住在青岛。",
+        "我住在西安。",
+        "我住哪？"
+      ],
+      "expected_contains": [
+        "西安"
+      ],
+      "answer_tell_position": 1
+    },
+    {
+      "id": "V008",
+      "family": "with_hard_distractor",
+      "flavour": "same_subject_marker",
+      "kind": "dish",
+      "turns": [
+        "我最爱吃小笼包。",
+        "我哥哥最爱吃辣子鸡。",
+        "我最爱吃什么？"
+      ],
+      "expected_contains": [
+        "小笼包"
+      ],
+      "answer_tell_position": 0
+    },
+    {
+      "id": "V016",
+      "family": "with_hard_distractor",
+      "flavour": "no_subject_marker",
+      "kind": "dish",
+      "turns": [
+        "哥哥最爱吃羊肉泡馍。",
+        "我最爱吃辣子鸡。",
+        "我最爱吃什么？"
+      ],
+      "expected_contains": [
+        "辣子鸡"
+      ],
+      "answer_tell_position": 1
+    },
+    {
+      "id": "V005",
+      "family": "with_hard_distractor",
+      "flavour": "same_subject_marker",
+      "kind": "drink",
+      "turns": [
+        "我平时爱喝乌龙。",
+        "我爱人爱喝苏打。",
+        "我爱喝什么？"
+      ],
+      "expected_contains": [
+        "乌龙"
+      ],
+      "answer_tell_position": 0
+    },
+    {
+      "id": "V013",
+      "family": "with_hard_distractor",
+      "flavour": "no_subject_marker",
+      "kind": "drink",
+      "turns": [
+        "爱人爱喝桂花酿。",
+        "我平时爱喝苏打。",
+        "我爱喝什么？"
+      ],
+      "expected_contains": [
+        "苏打"
+      ],
+      "answer_tell_position": 1
+    },
+    {
+      "id": "V009",
+      "family": "with_hard_distractor",
+      "flavour": "no_subject_marker",
+      "kind": "name",
+      "turns": [
+        "我叫雨桐。",
+        "表哥叫承泽。",
+        "我的名字是什么？"
+      ],
+      "expected_contains": [
+        "雨桐"
+      ],
+      "answer_tell_position": 0
+    },
+    {
+      "id": "V001",
+      "family": "with_hard_distractor",
+      "flavour": "same_subject_marker",
+      "kind": "name",
+      "turns": [
+        "我表哥叫雨桐。",
+        "我叫明轩。",
+        "我的名字是什么？"
+      ],
+      "expected_contains": [
+        "明轩"
+      ],
+      "answer_tell_position": 1
+    },
+    {
+      "id": "V027",
+      "family": "with_hard_distractor",
+      "flavour": "no_subject_marker",
+      "kind": "number",
+      "turns": [
+        "我最喜欢的数字是1998。",
+        "妹妹最喜欢的数字是1024。",
+        "那个数字是多少？"
+      ],
+      "expected_contains": [
+        "1998"
+      ],
+      "answer_tell_position": 0
+    },
+    {
+      "id": "V003",
+      "family": "with_hard_distractor",
+      "flavour": "same_subject_marker",
+      "kind": "number",
+      "turns": [
+        "我妹妹最喜欢的数字是21。",
+        "我最喜欢的数字是36。",
+        "那个数字是多少？"
+      ],
+      "expected_contains": [
+        "36"
+      ],
+      "answer_tell_position": 1
+    },
+    {
+      "id": "V006",
+      "family": "with_hard_distractor",
+      "flavour": "same_subject_marker",
+      "kind": "pet",
+      "turns": [
+        "我养了一只雪鸮。",
+        "我家邻居养了一只浣熊。",
+        "我养的动物是什么？"
+      ],
+      "expected_contains": [
+        "雪鸮"
+      ],
+      "answer_tell_position": 0
+    },
+    {
+      "id": "V014",
+      "family": "with_hard_distractor",
+      "flavour": "no_subject_marker",
+      "kind": "pet",
+      "turns": [
+        "邻居养了一只树袋熊。",
+        "我养了一只浣熊。",
+        "我养的动物是什么？"
+      ],
+      "expected_contains": [
+        "浣熊"
+      ],
+      "answer_tell_position": 1
+    },
+    {
+      "id": "V004",
+      "family": "with_hard_distractor",
+      "flavour": "same_subject_marker",
+      "kind": "project",
+      "turns": [
+        "我的项目叫海图。",
+        "我同事的项目叫晨星。",
+        "我的项目叫什么？"
+      ],
+      "expected_contains": [
+        "海图"
+      ],
+      "answer_tell_position": 0
+    },
+    {
+      "id": "V012",
+      "family": "with_hard_distractor",
+      "flavour": "no_subject_marker",
+      "kind": "project",
+      "turns": [
+        "朋友的项目叫石径。",
+        "我的项目叫晨星。",
+        "我的项目叫什么？"
+      ],
+      "expected_contains": [
+        "晨星"
+      ],
+      "answer_tell_position": 1
+    }
+  ],
+  "rows": [
+    {
+      "item_id": "V023",
+      "support_index": 0,
+      "episode_id": "stepwise:000000000000:chat:273",
+      "prompt": "我最近在读《松窗梦语》。",
+      "raw_hex": "e5a5bdefbc8ce4b880e8bf99e9a696e8af97e69c89e59082e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c0a",
+      "raw_text": "好，一这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n",
+      "output_bytes": 238,
+      "final_tick": 288,
+      "output": "好，一这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "emitted_steps": 238,
+      "natural_stop": true,
+      "exhausted_budget": false,
+      "consumer": null
+    },
+    {
+      "item_id": "V023",
+      "support_index": 1,
+      "episode_id": "stepwise:000000000001:chat:288",
+      "prompt": "我姐姐最近在读《云笈七签》。",
+      "raw_hex": "e5a5bdefbc8ce4b880e8bf99e9a696e8af97e69c89e59082e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c",
+      "raw_text": "好，一这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "output_bytes": 255,
+      "final_tick": 312,
+      "output": "好，一这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "emitted_steps": 256,
+      "natural_stop": false,
+      "exhausted_budget": true,
+      "consumer": null
+    },
+    {
+      "item_id": "V007",
+      "support_index": 0,
+      "episode_id": "stepwise:000000000002:chat:312",
+      "prompt": "我姐姐最近在读《水经注疏》。",
+      "raw_hex": "e5a5bdefbc8ce4b8aae5a682e69c89efbc8ce5bf99e9a696e8af97e69c89e590820ae7ad94efbc9ae8bf99e9a696e8af97e69c89e590820ae7ad94efbc8ce5bf83e69c89e4b880e8b5b7e5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c",
+      "raw_text": "好，个如有，忙首诗有吂\n答：这首诗有吂\n答，心有一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "output_bytes": 254,
+      "final_tick": 312,
+      "output": "好，个如有，忙首诗有吂\n答：这首诗有吂\n答，心有一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "emitted_steps": 256,
+      "natural_stop": false,
+      "exhausted_budget": true,
+      "consumer": null
+    },
+    {
+      "item_id": "V007",
+      "support_index": 1,
+      "episode_id": "stepwise:000000000003:chat:312",
+      "prompt": "我最近在读《海客谈瀛》。",
+      "raw_hex": "e5908ce4bd95efbc9ae8bf99e9a696e8af97e69c89e59082e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c0ae7ad94efbc9ae8af97e69c89e590820a",
+      "raw_text": "同何：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n答：诗有吂\n",
+      "output_bytes": 254,
+      "final_tick": 304,
+      "output": "同何：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n答：诗有吂",
+      "emitted_steps": 254,
+      "natural_stop": true,
+      "exhausted_budget": false,
+      "consumer": null
+    },
+    {
+      "item_id": "V002",
+      "support_index": 0,
+      "episode_id": "stepwise:000000000004:chat:304",
+      "prompt": "我住在苏州。",
+      "raw_hex": "e59082e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7",
+      "raw_text": "吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大",
+      "output_bytes": 255,
+      "final_tick": 288,
+      "output": "吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大",
+      "emitted_steps": 256,
+      "natural_stop": false,
+      "exhausted_budget": true,
+      "consumer": null
+    },
+    {
+      "item_id": "V002",
+      "support_index": 1,
+      "episode_id": "stepwise:000000000005:chat:288",
+      "prompt": "我表哥住在西安。",
+      "raw_hex": "e8bf99e9a696e8af97e69c89e59082e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c",
+      "raw_text": "这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "output_bytes": 255,
+      "final_tick": 294,
+      "output": "这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "emitted_steps": 256,
+      "natural_stop": false,
+      "exhausted_budget": true,
+      "consumer": null
+    },
+    {
+      "item_id": "V010",
+      "support_index": 0,
+      "episode_id": "stepwise:000000000006:chat:294",
+      "prompt": "同事住在青岛。",
+      "raw_hex": "e59082e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c0ae7ad94",
+      "raw_text": "吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n答",
+      "output_bytes": 256,
+      "final_tick": 291,
+      "output": "吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n答",
+      "emitted_steps": 256,
+      "natural_stop": false,
+      "exhausted_budget": true,
+      "consumer": null
+    },
+    {
+      "item_id": "V010",
+      "support_index": 1,
+      "episode_id": "stepwise:000000000007:chat:291",
+      "prompt": "我住在西安。",
+      "raw_hex": "e5908ce4bd95efbc9ae8bf99e9a696e8af97e69c89e59082e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c0a",
+      "raw_text": "同何：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n",
+      "output_bytes": 256,
+      "final_tick": 288,
+      "output": "同何：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "emitted_steps": 256,
+      "natural_stop": false,
+      "exhausted_budget": true,
+      "consumer": null
+    },
+    {
+      "item_id": "V008",
+      "support_index": 0,
+      "episode_id": "stepwise:000000000008:chat:288",
+      "prompt": "我最爱吃小笼包。",
+      "raw_hex": "e5908cefbc9ae8bf99e9a696e8af97e69c89e59082e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c0ae7ad94efbc9ae8af97e69c89e590820a",
+      "raw_text": "同：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n答：诗有吂\n",
+      "output_bytes": 224,
+      "final_tick": 262,
+      "output": "同：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n答：诗有吂",
+      "emitted_steps": 224,
+      "natural_stop": true,
+      "exhausted_budget": false,
+      "consumer": null
+    },
+    {
+      "item_id": "V008",
+      "support_index": 1,
+      "episode_id": "stepwise:000000000009:chat:262",
+      "prompt": "我哥哥最爱吃辣子鸡。",
+      "raw_hex": "e5a5bde4b880e8b5b7e5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7",
+      "raw_text": "好一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大",
+      "output_bytes": 255,
+      "final_tick": 300,
+      "output": "好一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大",
+      "emitted_steps": 256,
+      "natural_stop": false,
+      "exhausted_budget": true,
+      "consumer": null
+    },
+    {
+      "item_id": "V016",
+      "support_index": 0,
+      "episode_id": "stepwise:000000000010:chat:300",
+      "prompt": "哥哥最爱吃羊肉泡馍。",
+      "raw_hex": "e5a5bdefbc8ce4b8aae5a4a7e5aeb6e69c89e4b880e8b5b7e5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95",
+      "raw_text": "好，个大家有一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何",
+      "output_bytes": 255,
+      "final_tick": 300,
+      "output": "好，个大家有一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何",
+      "emitted_steps": 256,
+      "natural_stop": false,
+      "exhausted_budget": true,
+      "consumer": null
+    },
+    {
+      "item_id": "V016",
+      "support_index": 1,
+      "episode_id": "stepwise:000000000011:chat:300",
+      "prompt": "我最爱吃辣子鸡。",
+      "raw_hex": "e5908ce4b880e8b5b7e5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c0ae7ad94efbc9ae8af97e69c89e590820a",
+      "raw_text": "同一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n答：诗有吂\n",
+      "output_bytes": 224,
+      "final_tick": 262,
+      "output": "同一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n答：诗有吂",
+      "emitted_steps": 224,
+      "natural_stop": true,
+      "exhausted_budget": false,
+      "consumer": null
+    },
+    {
+      "item_id": "V005",
+      "support_index": 0,
+      "episode_id": "stepwise:000000000012:chat:262",
+      "prompt": "我平时爱喝乌龙。",
+      "raw_hex": "e5908cefbc9ae8bf99e9a696e8af97e69c89e59082e4bd95efbc8ce5a4a7e5aeb6e69c89e4b880e8b5b7e5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c0a",
+      "raw_text": "同：这首诗有吂何，大家有一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n",
+      "output_bytes": 241,
+      "final_tick": 279,
+      "output": "同：这首诗有吂何，大家有一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "emitted_steps": 241,
+      "natural_stop": true,
+      "exhausted_budget": false,
+      "consumer": null
+    },
+    {
+      "item_id": "V005",
+      "support_index": 1,
+      "episode_id": "stepwise:000000000013:chat:279",
+      "prompt": "我爱人爱喝苏打。",
+      "raw_hex": "e5908cefbc9ae8bf99e9a696e8af97e69c89e5908cefbc9ae8bf99e9a696e8af97e69c89e59082e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c0a",
+      "raw_text": "同：这首诗有同：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n",
+      "output_bytes": 217,
+      "final_tick": 255,
+      "output": "同：这首诗有同：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "emitted_steps": 217,
+      "natural_stop": true,
+      "exhausted_budget": false,
+      "consumer": null
+    },
+    {
+      "item_id": "V013",
+      "support_index": 0,
+      "episode_id": "stepwise:000000000014:chat:255",
+      "prompt": "爱人爱喝桂花酿。",
+      "raw_hex": "e5908cefbc9ae8bf99e9a696e8af97e69c89e5908cefbc9ae8bf99e9a696e8af97e69c89e59082e4bd95efbc8ce5a4a7e5aeb6e69c89e4b880e8b5b7e5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95",
+      "raw_text": "同：这首诗有同：这首诗有吂何，大家有一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何",
+      "output_bytes": 255,
+      "final_tick": 294,
+      "output": "同：这首诗有同：这首诗有吂何，大家有一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何",
+      "emitted_steps": 256,
+      "natural_stop": false,
+      "exhausted_budget": true,
+      "consumer": null
+    },
+    {
+      "item_id": "V013",
+      "support_index": 1,
+      "episode_id": "stepwise:000000000015:chat:294",
+      "prompt": "我平时爱喝苏打。",
+      "raw_hex": "e5908ce4bd95efbc9ae8bf99e9a696e8af97e69c89e59082efbc8ce4b880e8b5b7e5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c0a",
+      "raw_text": "同何：这首诗有吂，一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n",
+      "output_bytes": 241,
+      "final_tick": 279,
+      "output": "同何：这首诗有吂，一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "emitted_steps": 241,
+      "natural_stop": true,
+      "exhausted_budget": false,
+      "consumer": null
+    },
+    {
+      "item_id": "V009",
+      "support_index": 0,
+      "episode_id": "stepwise:000000000016:chat:279",
+      "prompt": "我叫雨桐。",
+      "raw_hex": "e5908ce4b880e8b5b7e5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c0ae7ad94efbc9ae8af97e69c89e590820a",
+      "raw_text": "同一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n答：诗有吂\n",
+      "output_bytes": 233,
+      "final_tick": 262,
+      "output": "同一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n答：诗有吂",
+      "emitted_steps": 233,
+      "natural_stop": true,
+      "exhausted_budget": false,
+      "consumer": null
+    },
+    {
+      "item_id": "V009",
+      "support_index": 1,
+      "episode_id": "stepwise:000000000017:chat:262",
+      "prompt": "表哥叫承泽。",
+      "raw_hex": "e5908ce4bd95efbc9ae8bf99e9a696e8af97e69c89e59082efbc8ce4b880e8b5b7e5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c0a",
+      "raw_text": "同何：这首诗有吂，一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n",
+      "output_bytes": 214,
+      "final_tick": 246,
+      "output": "同何：这首诗有吂，一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "emitted_steps": 214,
+      "natural_stop": true,
+      "exhausted_budget": false,
+      "consumer": null
+    },
+    {
+      "item_id": "V001",
+      "support_index": 0,
+      "episode_id": "stepwise:000000000018:chat:246",
+      "prompt": "我表哥叫雨桐。",
+      "raw_hex": "e5908ce4bd95efbc9ae8bf99e9a696e8af97e69c89e59082e4bd95efbc8ce5a4a7e5aeb6e69c89e4b880e8b5b7e5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c0a",
+      "raw_text": "同何：这首诗有吂何，大家有一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n",
+      "output_bytes": 244,
+      "final_tick": 279,
+      "output": "同何：这首诗有吂何，大家有一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "emitted_steps": 244,
+      "natural_stop": true,
+      "exhausted_budget": false,
+      "consumer": null
+    },
+    {
+      "item_id": "V001",
+      "support_index": 1,
+      "episode_id": "stepwise:000000000019:chat:279",
+      "prompt": "我叫明轩。",
+      "raw_hex": "e5908ce4bd95efbc9ae8bf99e9a696e8af97e69c89e59082e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c0a",
+      "raw_text": "同何：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n",
+      "output_bytes": 184,
+      "final_tick": 213,
+      "output": "同何：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "emitted_steps": 184,
+      "natural_stop": true,
+      "exhausted_budget": false,
+      "consumer": null
+    },
+    {
+      "item_id": "V027",
+      "support_index": 0,
+      "episode_id": "stepwise:000000000020:chat:213",
+      "prompt": "我最喜欢的数字是1998。",
+      "raw_hex": "e5a5bdefbc8ce4b880e8b5b7e5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c",
+      "raw_text": "好，一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "output_bytes": 255,
+      "final_tick": 301,
+      "output": "好，一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "emitted_steps": 256,
+      "natural_stop": false,
+      "exhausted_budget": true,
+      "consumer": null
+    },
+    {
+      "item_id": "V027",
+      "support_index": 1,
+      "episode_id": "stepwise:000000000021:chat:301",
+      "prompt": "妹妹最喜欢的数字是1024。",
+      "raw_hex": "e5a5bdefbc9ae8bf99e9a696e8af97e69c89e59082efbc8ce4b880e8b5b7e5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c0a",
+      "raw_text": "好：这首诗有吂，一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n",
+      "output_bytes": 256,
+      "final_tick": 304,
+      "output": "好：这首诗有吂，一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "emitted_steps": 256,
+      "natural_stop": false,
+      "exhausted_budget": true,
+      "consumer": null
+    },
+    {
+      "item_id": "V003",
+      "support_index": 0,
+      "episode_id": "stepwise:000000000022:chat:304",
+      "prompt": "我妹妹最喜欢的数字是21。",
+      "raw_hex": "e5a5bdefbc9ae8bf99e9a696e8af97e69c89e59082e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7",
+      "raw_text": "好：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大",
+      "output_bytes": 255,
+      "final_tick": 305,
+      "output": "好：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大",
+      "emitted_steps": 256,
+      "natural_stop": false,
+      "exhausted_budget": true,
+      "consumer": null
+    },
+    {
+      "item_id": "V003",
+      "support_index": 1,
+      "episode_id": "stepwise:000000000023:chat:305",
+      "prompt": "我最喜欢的数字是36。",
+      "raw_hex": "e5a5bdefbc8ce4b8aae5a682e69c89efbc8ce5bf99e9a696e8af97e69c89e590820ae7ad94efbc9ae8bf99e9a696e8af97e69c89e590820ae7ad94efbc9ae8bf99e9a696e8af97e69c89e59082efbc8ce4b880e8b5b7e5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95",
+      "raw_text": "好，个如有，忙首诗有吂\n答：这首诗有吂\n答：这首诗有吂，一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何",
+      "output_bytes": 254,
+      "final_tick": 299,
+      "output": "好，个如有，忙首诗有吂\n答：这首诗有吂\n答：这首诗有吂，一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何",
+      "emitted_steps": 256,
+      "natural_stop": false,
+      "exhausted_budget": true,
+      "consumer": null
+    },
+    {
+      "item_id": "V006",
+      "support_index": 0,
+      "episode_id": "stepwise:000000000024:chat:299",
+      "prompt": "我养了一只雪鸮。",
+      "raw_hex": "e5a5bdefbc9ae8bf99e9a696e8af97e69c89e59082e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c0a",
+      "raw_text": "好：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n",
+      "output_bytes": 208,
+      "final_tick": 246,
+      "output": "好：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "emitted_steps": 208,
+      "natural_stop": true,
+      "exhausted_budget": false,
+      "consumer": null
+    },
+    {
+      "item_id": "V006",
+      "support_index": 1,
+      "episode_id": "stepwise:000000000025:chat:246",
+      "prompt": "我家邻居养了一只浣熊。",
+      "raw_hex": "e5a5bdefbc9ae8bf99e9a696e8af97e69c89e59082e4bd95efbc8ce5bf98e69c89e4b880e8b5b7e5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c",
+      "raw_text": "好：这首诗有吂何，忘有一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "output_bytes": 255,
+      "final_tick": 303,
+      "output": "好：这首诗有吂何，忘有一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "emitted_steps": 256,
+      "natural_stop": false,
+      "exhausted_budget": true,
+      "consumer": null
+    },
+    {
+      "item_id": "V014",
+      "support_index": 0,
+      "episode_id": "stepwise:000000000026:chat:303",
+      "prompt": "邻居养了一只树袋熊。",
+      "raw_hex": "e5a5bdefbc8ce4b8aae5a682e69c89efbc8ce5bf99e9a696e8af97e69c89e590820a",
+      "raw_text": "好，个如有，忙首诗有吂\n",
+      "output_bytes": 34,
+      "final_tick": 78,
+      "output": "好，个如有，忙首诗有吂",
+      "emitted_steps": 34,
+      "natural_stop": true,
+      "exhausted_budget": false,
+      "consumer": null
+    },
+    {
+      "item_id": "V014",
+      "support_index": 1,
+      "episode_id": "stepwise:000000000027:chat:78",
+      "prompt": "我养了一只浣熊。",
+      "raw_hex": "e5908ce4bd95efbc9ae8bf99e9a696e8af97e69c89e59082e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c",
+      "raw_text": "同何：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "output_bytes": 255,
+      "final_tick": 294,
+      "output": "同何：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "emitted_steps": 256,
+      "natural_stop": false,
+      "exhausted_budget": true,
+      "consumer": null
+    },
+    {
+      "item_id": "V004",
+      "support_index": 0,
+      "episode_id": "stepwise:000000000028:chat:294",
+      "prompt": "我的项目叫海图。",
+      "raw_hex": "e5908ce4b880e8b5b7e5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c0ae7ad94efbc9ae8af97e69c89e590820a",
+      "raw_text": "同一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n答：诗有吂\n",
+      "output_bytes": 224,
+      "final_tick": 262,
+      "output": "同一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n答：诗有吂",
+      "emitted_steps": 224,
+      "natural_stop": true,
+      "exhausted_budget": false,
+      "consumer": null
+    },
+    {
+      "item_id": "V004",
+      "support_index": 1,
+      "episode_id": "stepwise:000000000029:chat:262",
+      "prompt": "我同事的项目叫晨星。",
+      "raw_hex": "e5908ce4bd95efbc9ae8bf99e9a696e8af97e69c89e59082e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c0ae7ad94efbc9ae8af97e69c89e590820a",
+      "raw_text": "同何：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n答：诗有吂\n",
+      "output_bytes": 218,
+      "final_tick": 262,
+      "output": "同何：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，\n答：诗有吂",
+      "emitted_steps": 218,
+      "natural_stop": true,
+      "exhausted_budget": false,
+      "consumer": null
+    },
+    {
+      "item_id": "V012",
+      "support_index": 0,
+      "episode_id": "stepwise:000000000030:chat:262",
+      "prompt": "朋友的项目叫石径。",
+      "raw_hex": "e5908ce4b880e8b5b7e5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7",
+      "raw_text": "同一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大",
+      "output_bytes": 255,
+      "final_tick": 297,
+      "output": "同一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大",
+      "emitted_steps": 256,
+      "natural_stop": false,
+      "exhausted_budget": true,
+      "consumer": null
+    },
+    {
+      "item_id": "V012",
+      "support_index": 1,
+      "episode_id": "stepwise:000000000031:chat:297",
+      "prompt": "我的项目叫晨星。",
+      "raw_hex": "e5908ce4bd95efbc9ae8bf99e9a696e8af97e69c89e59082e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8ce5a4a7e4bd95efbc8c",
+      "raw_text": "同何：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "output_bytes": 255,
+      "final_tick": 294,
+      "output": "同何：这首诗有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+      "emitted_steps": 256,
+      "natural_stop": false,
+      "exhausted_budget": true,
+      "consumer": null
+    }
+  ],
+  "checkpoint": "E:\\Seed\\output\\n1_c2_calibration_20261015\\support.pt",
+  "checkpoint_sha256": "ac54aa6367a843b9d0d7ea30626e352b15ca3c057784a62d0a84575f85943c43",
+  "base_sha256": "ca2628077b21bc4c9a6f2fc06ff410d70311b1218a30b8794ecfd7e5a027d8bb",
+  "manifest_sha256": "b162ff091630f64a8cac986184729ff7894887f4806c923cc12b301ce5ae4fee",
+  "model_parameter_digest": "6354a0b0453a612d324f8e15567fddfe38221fbf779e6e316f804c36f5d1758f",
+  "episode_manifest": [
+    {
+      "episode_id": "stepwise:000000000000:chat:273",
+      "serial": 0,
+      "source": {
+        "input_id": "chat:273",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 273,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 238,
+      "vectors_sha256": "a55375def6144c3fde48aeaba5ec09119a156c230a3b465f3fed36e578ea49c1"
+    },
+    {
+      "episode_id": "stepwise:000000000001:chat:288",
+      "serial": 1,
+      "source": {
+        "input_id": "chat:288",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 288,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 256,
+      "vectors_sha256": "08d4dd073d48813e47b076014c7492ec7550739115d61d84476e819cb011f18b"
+    },
+    {
+      "episode_id": "stepwise:000000000002:chat:312",
+      "serial": 2,
+      "source": {
+        "input_id": "chat:312",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 312,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 256,
+      "vectors_sha256": "86b210cb5d7c74555a25058dfd7c5f986730d3c2e8797ee69fb35922828273c9"
+    },
+    {
+      "episode_id": "stepwise:000000000003:chat:312",
+      "serial": 3,
+      "source": {
+        "input_id": "chat:312",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 312,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 254,
+      "vectors_sha256": "669596cd7b685bad26aaeb69374ebd0ee25e8640e6e7658045d16f2b2839b193"
+    },
+    {
+      "episode_id": "stepwise:000000000004:chat:304",
+      "serial": 4,
+      "source": {
+        "input_id": "chat:304",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 304,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 256,
+      "vectors_sha256": "70e810400447ddd9639fc535340f670163648b5be78e19f76a6551974fabe224"
+    },
+    {
+      "episode_id": "stepwise:000000000005:chat:288",
+      "serial": 5,
+      "source": {
+        "input_id": "chat:288",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 288,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 256,
+      "vectors_sha256": "602608a0c83740e2b17fa72a8c29d0f6d2c50a16eac1ce326216d3a80e2ee865"
+    },
+    {
+      "episode_id": "stepwise:000000000006:chat:294",
+      "serial": 6,
+      "source": {
+        "input_id": "chat:294",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 294,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 256,
+      "vectors_sha256": "b25fa6b687064c728570a04c357ff59c8e91f7ffbfaadda38d29230495e00e93"
+    },
+    {
+      "episode_id": "stepwise:000000000007:chat:291",
+      "serial": 7,
+      "source": {
+        "input_id": "chat:291",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 291,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 256,
+      "vectors_sha256": "2f86a094525fc916202879c0f3b17a533f7b5e9264c6a505d1465613aa123300"
+    },
+    {
+      "episode_id": "stepwise:000000000008:chat:288",
+      "serial": 8,
+      "source": {
+        "input_id": "chat:288",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 288,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 224,
+      "vectors_sha256": "de3914e1c1432d65d5942ccb4a0eb089e572dd480d1e4909887053307a56da15"
+    },
+    {
+      "episode_id": "stepwise:000000000009:chat:262",
+      "serial": 9,
+      "source": {
+        "input_id": "chat:262",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 262,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 256,
+      "vectors_sha256": "2bf34f4281fec12349a50a546ee5f72ee86f4b6f04404d141fdcea0b16e4a7cc"
+    },
+    {
+      "episode_id": "stepwise:000000000010:chat:300",
+      "serial": 10,
+      "source": {
+        "input_id": "chat:300",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 300,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 256,
+      "vectors_sha256": "3ad1b8d43cfc2c81eb8cbb5cab1fad5501809a3874cca672aa72223d3154d3e5"
+    },
+    {
+      "episode_id": "stepwise:000000000011:chat:300",
+      "serial": 11,
+      "source": {
+        "input_id": "chat:300",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 300,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 224,
+      "vectors_sha256": "0d2c792bd3d4296166b49b8b97365837e9d387498b9917200ac3388819107b56"
+    },
+    {
+      "episode_id": "stepwise:000000000012:chat:262",
+      "serial": 12,
+      "source": {
+        "input_id": "chat:262",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 262,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 241,
+      "vectors_sha256": "2712ce6b1f98c35040b8617c876d284566b31a0247a1487acc2d1fd98614a4cc"
+    },
+    {
+      "episode_id": "stepwise:000000000013:chat:279",
+      "serial": 13,
+      "source": {
+        "input_id": "chat:279",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 279,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 217,
+      "vectors_sha256": "139b6d9eacb1fc39c34352359a283b428eac2a6f27c1e9f27a22182335f9642d"
+    },
+    {
+      "episode_id": "stepwise:000000000014:chat:255",
+      "serial": 14,
+      "source": {
+        "input_id": "chat:255",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 255,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 256,
+      "vectors_sha256": "aa88a27514ce61f4f700e2df51cccbd27289d7d4f67118f53a8d5c78896f89f9"
+    },
+    {
+      "episode_id": "stepwise:000000000015:chat:294",
+      "serial": 15,
+      "source": {
+        "input_id": "chat:294",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 294,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 241,
+      "vectors_sha256": "e70b041ef40cf82a199b56bed9a18a74ff56aa0361f6fa8e49b500fba0a5f31a"
+    },
+    {
+      "episode_id": "stepwise:000000000016:chat:279",
+      "serial": 16,
+      "source": {
+        "input_id": "chat:279",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 279,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 233,
+      "vectors_sha256": "1afe0828d9b724199905701bef5e245f20f299fac828dc1a9e5778533b190398"
+    },
+    {
+      "episode_id": "stepwise:000000000017:chat:262",
+      "serial": 17,
+      "source": {
+        "input_id": "chat:262",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 262,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 214,
+      "vectors_sha256": "6afea47473875e93568eb8972b5919e3541728376b0b53b641cb08d8c909f8c6"
+    },
+    {
+      "episode_id": "stepwise:000000000018:chat:246",
+      "serial": 18,
+      "source": {
+        "input_id": "chat:246",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 246,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 244,
+      "vectors_sha256": "f08ccb8d6f3f0c7fbaf87095efc7e36cb02bbaf85836240bed2b583a230c8f56"
+    },
+    {
+      "episode_id": "stepwise:000000000019:chat:279",
+      "serial": 19,
+      "source": {
+        "input_id": "chat:279",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 279,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 184,
+      "vectors_sha256": "f47c195a5b6c164ddcb08ba0b2e8fd8fda4705aec657727a29da75277768aa78"
+    },
+    {
+      "episode_id": "stepwise:000000000020:chat:213",
+      "serial": 20,
+      "source": {
+        "input_id": "chat:213",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 213,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 256,
+      "vectors_sha256": "4704f0c696d2c8a9f22bdf88e6d37d299ec252940ea4904005ca76ddfcaf954e"
+    },
+    {
+      "episode_id": "stepwise:000000000021:chat:301",
+      "serial": 21,
+      "source": {
+        "input_id": "chat:301",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 301,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 256,
+      "vectors_sha256": "462033b4b719cd9e406bbee7d90e8ed3ee53091941393d04951a24b86ceee504"
+    },
+    {
+      "episode_id": "stepwise:000000000022:chat:304",
+      "serial": 22,
+      "source": {
+        "input_id": "chat:304",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 304,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 256,
+      "vectors_sha256": "08a1f346e0fedd77834c9ccd65f639c4d49975ff209e8ae2019543e8cb43ad76"
+    },
+    {
+      "episode_id": "stepwise:000000000023:chat:305",
+      "serial": 23,
+      "source": {
+        "input_id": "chat:305",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 305,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 256,
+      "vectors_sha256": "88e891db6c39d1506229474b61c4c5756807510852e850eaba2cd992425c6ac6"
+    },
+    {
+      "episode_id": "stepwise:000000000024:chat:299",
+      "serial": 24,
+      "source": {
+        "input_id": "chat:299",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 299,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 208,
+      "vectors_sha256": "47a282f7a4b0c96610f3c5268242ad54ce669a4569aeb69b99070e13d6feecd5"
+    },
+    {
+      "episode_id": "stepwise:000000000025:chat:246",
+      "serial": 25,
+      "source": {
+        "input_id": "chat:246",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 246,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 256,
+      "vectors_sha256": "94a541c65b16dfa5368792b417c42474ce8cc4530668171a3a0863a03f19257f"
+    },
+    {
+      "episode_id": "stepwise:000000000026:chat:303",
+      "serial": 26,
+      "source": {
+        "input_id": "chat:303",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 303,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 34,
+      "vectors_sha256": "35de91238f18179cd0d4ec4445aaf69b4414cbcf0dc32b97bf1e704f3be076ff"
+    },
+    {
+      "episode_id": "stepwise:000000000027:chat:78",
+      "serial": 27,
+      "source": {
+        "input_id": "chat:78",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 78,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 256,
+      "vectors_sha256": "24550f4d961eea1bd402fc70edf0f0915672cffbe04acaf194515d0a63d17133"
+    },
+    {
+      "episode_id": "stepwise:000000000028:chat:294",
+      "serial": 28,
+      "source": {
+        "input_id": "chat:294",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 294,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 224,
+      "vectors_sha256": "8ccb2376907c53f80a989aba1b4b063b7d7778073c81f7f412635353b27c1557"
+    },
+    {
+      "episode_id": "stepwise:000000000029:chat:262",
+      "serial": 29,
+      "source": {
+        "input_id": "chat:262",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 262,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 218,
+      "vectors_sha256": "d1d042d494c0ad7bb0cef62cb76b3e837679af4240b90c174e6ac3cccd09f688"
+    },
+    {
+      "episode_id": "stepwise:000000000030:chat:262",
+      "serial": 30,
+      "source": {
+        "input_id": "chat:262",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 262,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 256,
+      "vectors_sha256": "d24ba2f6595694acbb579a5b39e47e504777eb16dcf2dc67d363d8a349f542dc"
+    },
+    {
+      "episode_id": "stepwise:000000000031:chat:297",
+      "serial": 31,
+      "source": {
+        "input_id": "chat:297",
+        "modality": "text",
+        "source": "seed.client.chat",
+        "timestamp": 297,
+        "provenance": "external",
+        "confidence": 1.0
+      },
+      "steps": 256,
+      "vectors_sha256": "e22c267a5f1fdb62b87f960052e0fa9f50364e7243dcf0f35e8aeb094741c682"
+    }
+  ],
+  "recording_enabled_after_save": false,
+  "timing": {
+    "cpu_seconds": 31.984375,
+    "wall_seconds": 32.336683200031985
+  }
+}

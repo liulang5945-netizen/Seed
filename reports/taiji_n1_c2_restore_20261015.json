@@ -1,0 +1,17 @@
+{
+  "format": "taiji-n1-c2-restore-v1",
+  "episodes": 32,
+  "steps": 7550,
+  "context_dim": 1152,
+  "checkpoint_sha256": "ac54aa6367a843b9d0d7ea30626e352b15ca3c057784a62d0a84575f85943c43",
+  "weights_only": true,
+  "source_and_content_equal": true,
+  "recording_disabled": true,
+  "consumer_disabled": true,
+  "missing_episode_returns_empty": true,
+  "query_episodes_absent": true,
+  "timing": {
+    "cpu_seconds": 11.03125,
+    "wall_seconds": 11.294869799981825
+  }
+}

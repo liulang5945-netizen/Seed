@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Mapping, Sequence
+from dataclasses import replace
 from typing import Any
 
 import torch
@@ -59,6 +60,7 @@ from .state import (
     TaijiState,
     TaijiStep,
 )
+from .stepwise_consumer import StepwiseConsumerRequest, select_and_prepare
 from .utf8_state import advance_utf8, trim_partial_tail, utf8_allowed
 from .workbench_boundary import (
     WorkbenchBoundaryAuthorization,
@@ -195,6 +197,8 @@ class Taiji:
             self.config.cortical_context_dim
         )
         self._persistent_stepwise_carrier_enabled = False
+        self._stepwise_consumer_request: StepwiseConsumerRequest | None = None
+        self._last_stepwise_consumer_audit: dict[str, Any] | None = None
         self.identity_organ = (
             CueIdentityOrgan(self.config, generator=self._rng, device=self.device)
             if self.config.identity_organ_enabled
@@ -267,6 +271,98 @@ class Taiji:
         """Return cloned, ordered context vectors for exactly one episode."""
 
         return self._persistent_stepwise_carrier.read_episode(episode_id)
+
+    def configure_stepwise_consumer(self, request: StepwiseConsumerRequest | None) -> None:
+        """Set an ephemeral, default-off C2 calibration request; never checkpoint it."""
+        if request is not None and not isinstance(request, StepwiseConsumerRequest):
+            raise TypeError("stepwise consumer requires a StepwiseConsumerRequest")
+        self._stepwise_consumer_request = request
+        self._last_stepwise_consumer_audit = None
+
+    @property
+    def last_stepwise_consumer_audit(self) -> dict[str, Any] | None:
+        import copy
+
+        return copy.deepcopy(self._last_stepwise_consumer_audit)
+
+    @torch.no_grad()
+    def _consume_stepwise_before_answer(self, step: TaijiStep) -> TaijiStep:
+        request = self._stepwise_consumer_request
+        if request is None:
+            return step
+        before = step.probabilities.detach().cpu()
+        if request.mode == "no-replay":
+            self._last_stepwise_consumer_audit = {
+                "mode": "no-replay",
+                "replay_steps": 0,
+                "first_probabilities_before": before.tolist(),
+                "first_probabilities_after": before.tolist(),
+            }
+            return step
+        replay, audit = select_and_prepare(
+            request,
+            self.cortical_cue(),
+            {
+                key: self.read_persistent_stepwise_episode(key)
+                for key in request.candidate_episode_ids
+            },
+        )
+        previous = self._state
+        regions = previous.regions
+        sensory = torch.zeros(self.config.alphabet_size, device=self.device)
+        for vector in replay:
+            regions, _, _ = self.fabric.step(
+                sensory,
+                regions,
+                learn=False,
+                episodic_feedback=vector,
+                restructure=False,
+                adapt_homeostasis=False,
+            )
+        context, context_trace = self.predictive_context.encode(
+            self.fabric.predictive_context(regions),
+            prior_context=previous.motor_context,
+        )
+        memory_state, recall = self.memory.recall(
+            self.fabric.cortical_context(regions),
+            previous.memory,
+            use_long_term=False,
+        )
+        evidence = (
+            self.config.consolidation_read_gain
+            * self.fabric.consolidated_decode(
+                0,
+                regions[0].trace,
+            )
+            + self.config.memory_read_gain * recall.confidence * recall.action_evidence
+        )
+        probabilities = self.predictive_readout.probabilities(
+            context,
+            episodic_evidence=evidence,
+            position_state=previous.motor_position_class,
+        )
+        self._state = replace(
+            previous,
+            tick=previous.tick + len(replay),
+            regions=regions,
+            memory=memory_state,
+            motor_context=context,
+            predictive_context_trace=context_trace,
+            motor_probabilities=probabilities,
+        )
+        audit.update(
+            {
+                "first_probabilities_before": before.tolist(),
+                "first_probabilities_after": probabilities.detach().cpu().tolist(),
+                "first_distribution_l1": float((probabilities.cpu() - before).abs().sum()),
+            }
+        )
+        self._last_stepwise_consumer_audit = audit
+        return replace(
+            step,
+            probabilities=probabilities.detach().clone(),
+            predicted_symbol=int(probabilities.argmax().item()),
+        )
 
     @property
     def last_generation_route(self) -> dict[str, Any] | None:
@@ -3326,6 +3422,25 @@ class Taiji:
 
         if length < 0:
             raise ValueError("length cannot be negative")
+        self._last_stepwise_consumer_audit = None
+        if self._stepwise_consumer_request is not None:
+            if self.persistent_stepwise_carrier:
+                raise ValueError("consumer queries must not record support episodes")
+            if (
+                use_memory
+                or boundary is not None
+                or response_start
+                or response_phase
+                or any(
+                    value is not None
+                    for value in (
+                        self._copy_circuit,
+                        self._gated_temporal_candidate,
+                        self._adaptive_residual_bridge,
+                    )
+                )
+            ):
+                raise ValueError("C2 calibration requires the unmodified native predictive route")
         if self.persistent_stepwise_carrier and not isinstance(_episode_source, Mapping):
             raise ValueError(
                 "persistent stepwise carrier requires source metadata from an InputFrame"
@@ -3418,6 +3533,7 @@ class Taiji:
         #: PLAN-A30 / DEBT-G22：**答复相从这一刻才开始数**。prompt 的每一步也走证据注入点，
         #: 不在这里复位的话 K 会被 prompt 段吃光、整条答复反而静音
         #: （2026-10-02 实测：`emitted=64／silenced=276`＝`84 prompt＋256 答复`，读数 66/72 只是"等于不挂回路"）。
+        step = self._consume_stepwise_before_answer(step)
         self.reset_copy_evidence_window()
         circuit = self._copy_circuit
         lock_state = None
@@ -3544,9 +3660,7 @@ class Taiji:
                 trace = (
                     torch.stack(carrier_vectors)
                     if carrier_vectors
-                    else torch.empty(
-                        (0, self.config.cortical_context_dim), dtype=torch.float32
-                    )
+                    else torch.empty((0, self.config.cortical_context_dim), dtype=torch.float32)
                 )
                 self._persistent_stepwise_carrier.commit_episode(carrier_episode_id, trace)
                 carrier_committed = True
@@ -3776,6 +3890,7 @@ class Taiji:
             raise ValueError("legacy checkpoint cannot contain a persistent stepwise carrier")
         self._persistent_stepwise_carrier.load_payload(carrier_payload)
         self.persistent_stepwise_carrier = False
+        self.configure_stepwise_consumer(None)
         self.clear_active_predictive_readout()
         self.fabric.load_payload(checkpoint["fabric"])
         self.motor.load_payload(checkpoint["motor"])
