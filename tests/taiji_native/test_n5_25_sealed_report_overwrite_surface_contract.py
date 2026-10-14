@@ -193,8 +193,9 @@ def test_a_write_through_the_shared_writer_still_counts_as_a_write_target() -> N
     category, _ = module.classify(ast.parse(via_helper), via_helper)
     assert category == "no_refusal_found", category
     #: 本件"看得见落点"的形式是**字面字符串**（或 argparse 的 default）。
-    #: 拼串那一形（`PROJECT_ROOT / "reports" / "x.json"`）今天看不见——这是**先于统一助手就存在**的盲点，
-    #: ㊵-790 把它钉在下面这条断言里：谁哪天扩了识别面，这一支会红并提醒他把 37 这个下界改口。
+    #: ㊵-790 曾把"拼串那一形（`PROJECT_ROOT / "reports" / "x.json"`）看不见"钉在下面那条断言里，
+    #: 本意就是"谁扩了识别面，这一支会红并提醒他改口"——㊵-870（DEBT-G137 修法①）正是来扩它的：
+    #: 扩完这条钉子按设计红了，随之改口（`37` 那枚下界也换态，v4→v5 新旧不可比，已在台账 ㊵-870 标注）。
     assert module._literal_target_names(ast.parse(via_helper)) == {
         "target": ["reports/sealed.json"]
     }
@@ -205,7 +206,16 @@ def test_a_write_through_the_shared_writer_still_counts_as_a_write_target() -> N
         "def run(text):\n    report_io.write_text_report(target, text)\n"
     )
     assert "target" in module._written_names(ast.parse(joined))
-    assert module._literal_target_names(ast.parse(joined)) == {}
+    assert module._literal_target_names(ast.parse(joined)) == {"target": ["reports/sealed.json"]}
+    #: 反面对照（G137 反复强调的"只绑不写不算"之外的第二类假阳性）：**片段只在拼串里出现**
+    #: 但没有任何一片恰好是 `reports` 时，不许被读成落点。
+    not_a_target = (
+        "from pathlib import Path\n"
+        'ROOT = Path(".")\n'
+        'target = ROOT / "my_reports" / "sealed.json"\n'
+        "def run(text):\n    target.write_text(text)\n"
+    )
+    assert module._literal_target_names(ast.parse(not_a_target)) == {}
 
     read_only = via_helper.replace(
         "    report_io.write_text_report(target, text)\n",

@@ -49,11 +49,18 @@ import _taiji_report_io as report_io  # noqa: E402
 
 #: ㊵-790：写靶识别面**变宽**（统一落盘助手的两个入口也算写入）⇒ 按"识别边界变了就升版"的规矩走 v3。
 #: ㊵-821：读出面**变宽**（新增 `shared_writer_sensitivity` 一枚披露块）⇒ 按"读出面变了就升版"走 v4。
-#: 既有七枚出版值与 `rows` 的字段集一字未动，故 v3 的在册件在新面上仍逐值可比（比较要带 `format`）。
-REPORT_FORMAT = "taiji-sealed-report-overwrite-surface-v4"
+#: ㊵-870（DEBT-G137 修法①②）：识别面**再变宽**（`PROJECT_ROOT / "reports" / "x.json"` 这种**被 `/` 拆开**的
+#: 拼接形现在读得出）＋新增 `unresolved_target_forms` 一枚披露块 ⇒ 走 v5。
+#: **`37／36／22／21` 那组数是 v4 面（旧识别面）的下界，与 v5 面**不可比**——旧引用句一律不许当现行**。
+REPORT_FORMAT = "taiji-sealed-report-overwrite-surface-v5"
 WRITE_TARGET_FLAGS = {"out", "report", "arm-report", "out-report"}
 #: 字面路径里出现这个前缀才算"落盘到读数件面"（第二张面的判据之一）。
 REPORT_MARKER = "reports/"
+#: ㊵-870（G137 修法②）：「看起来像落盘路径」的尾巴——只为让**下界本身可读**，不是判据。
+DATA_SUFFIXES = (".json", ".jsonl", ".pt", ".md", ".txt")
+#: ㊵-870：`unresolved_target_forms.rows` 的明细上限；**总数另记在 `count` 里**
+#: （被切掉的行不许伪装成「这一面没有」——本件自己的旧坑）。
+UNRESOLVED_LIST_CAP = 40
 OVERRIDE_FLAGS = ("--overwrite", "--force")
 CATEGORY_REFUSE_ONLY = "refusal_without_override_flag"
 CATEGORY_REFUSE_WITH_FLAG = "refusal_with_override_flag"
@@ -185,6 +192,68 @@ def _base_name(expr: ast.expr) -> str | None:
     return None
 
 
+def _path_parts(expr: ast.expr) -> list[str]:
+    """把 `A / "b" / "c"`（或 f-string）里的**字符串常量片段按顺序**取出来。
+
+    只走 `BinOp(Div)` 与 `JoinedStr` 两种节点，遇到别的（`Name`／`Call`／`Attribute`）就当"底座"丢掉——
+    底座（如 `PROJECT_ROOT`）本来就不进落点字符串。
+    """
+
+    if isinstance(expr, ast.BinOp) and isinstance(expr.op, ast.Div):
+        return _path_parts(expr.left) + _path_parts(expr.right)
+    if isinstance(expr, ast.Constant) and isinstance(expr.value, str):
+        return [expr.value]
+    if isinstance(expr, ast.JoinedStr):
+        return [
+            piece.value
+            for piece in expr.values
+            if isinstance(piece, ast.Constant) and isinstance(piece.value, str)
+        ]
+    return []
+
+
+def _path_shaped_hint(expr: ast.expr) -> str | None:
+    """㊵-870（G137 修法②）：这一坨**看起来像**落盘路径吗？——只为让下界本身可读，不是判据。"""
+
+    texts = [
+        piece.value
+        for piece in ast.walk(expr)
+        if isinstance(piece, ast.Constant) and isinstance(piece.value, str)
+    ]
+    if not texts:
+        return None
+    looks_like_path = any(text.endswith(DATA_SUFFIXES) for text in texts) or any(
+        "/" in text for text in texts
+    )
+    if not looks_like_path:
+        return None
+    return " / ".join(texts) if len(texts) > 1 else texts[0]
+
+
+def _unresolved_write_targets(
+    tree: ast.Module, *, written: set[str], resolved: set[str]
+) -> list[dict[str, str]]:
+    """㊵-870（G137 修法②）：**被当写靶用过**但本件读不出落点的变量——单独出一桶，让下界可读。
+
+    它是披露不是红支：把这些行藏起来，`37` 那种下界就会被读成全集——G137 记的具体后果是
+    下一轮照着一份说它安全的名单去跑别人名下的仪器，把在册历史读数件覆盖掉。
+    """
+
+    unresolved: list[dict[str, str]] = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Assign) or len(node.targets) != 1:
+            continue
+        target = node.targets[0]
+        if not isinstance(target, ast.Name):
+            continue
+        if target.id not in written or target.id in resolved:
+            continue
+        hint = _path_shaped_hint(node.value)
+        if hint is not None:
+            unresolved.append({"name": target.id, "shape": hint})
+    return unresolved
+
+
 def _literal_target_names(tree: ast.Module) -> dict[str, list[str]]:
     """变量名 → 它绑定的 `reports/` **字面**路径（含 `R / "reports/x.json"` 这种拼接形）。
 
@@ -207,6 +276,16 @@ def _literal_target_names(tree: ast.Module) -> dict[str, list[str]]:
             and isinstance(sub.value, str)
             and REPORT_MARKER in sub.value
         ]
+        #: ㊵-870（DEBT-G137 修法①）：`PROJECT_ROOT / "reports" / "x.json"` 这种**被 `/` 拆开**的拼接形，
+        #: 上面那支读不出（没有任何**单枚**常量自带 `reports/`）⇒ 把 `/` 链上的字符串片段按顺序拼回。
+        #: **只在某一片段恰好等于 `"reports"`**（marker 去掉尾斜杠）时才拼——否则 `"my_reports" / "x.json"`
+        #: 会被误读成一个落点（那是"只绑不写不算"之外的第二类假阳性）。
+        parts = _path_parts(node.value)
+        if REPORT_MARKER.rstrip("/") in parts:
+            index = parts.index(REPORT_MARKER.rstrip("/"))
+            tail = REPORT_MARKER + "/".join(parts[index + 1 :])
+            if tail != REPORT_MARKER and tail not in literals:
+                literals.append(tail)
         if literals:
             bound.setdefault(target.id, []).extend(literals)
     return bound
@@ -266,9 +345,17 @@ def classify(tree: ast.Module, source: str) -> tuple[str, list[str]]:
 
 
 def scan(
-    root: Path, tracked_set: set[str], *, dependent: list[str] | None = None
+    root: Path,
+    tracked_set: set[str],
+    *,
+    dependent: list[str] | None = None,
+    unresolved: list[dict[str, object]] | None = None,
 ) -> list[dict[str, object]]:
-    """`dependent`（㊵-821）就地收下"这一行的识别**只**来自统一落盘助手那条分支"的文件名。"""
+    """`dependent`（㊵-821）就地收下"这一行的识别**只**来自统一落盘助手那条分支"的文件名。
+
+    `unresolved`（㊵-870／G137 修法②）就地收下"**被当写靶用过、但本件读不出落点**"的变量行——
+    这是**披露面**：把下界本身出版，免得 `37` 被读成全集。
+    """
 
     rows: list[dict[str, object]] = []
     for rel in sorted(
@@ -294,7 +381,13 @@ def scan(
                 )
         written = _written_names(tree)
         written_no_shared = _written_names(tree, include_shared=False)
-        for name, literals in sorted(_literal_target_names(tree).items()):
+        literal_targets = _literal_target_names(tree)
+        if unresolved is not None:
+            for item in _unresolved_write_targets(
+                tree, written=written, resolved=set(literal_targets)
+            ):
+                unresolved.append({"file": rel, **item, "category": category})
+        for name, literals in sorted(literal_targets.items()):
             if name not in written:
                 #: 只绑过字面路径、没往里写过 ⇒ 那是读数件常量或读侧检查，不是落盘靶。
                 continue
@@ -320,7 +413,8 @@ def scan(
 def build_report(root: Path) -> dict[str, object]:
     tracked = set(_tracked(root))
     helper_dependent: list[str] = []
-    rows = scan(root, tracked, dependent=helper_dependent)
+    unresolved_rows: list[dict[str, object]] = []
+    rows = scan(root, tracked, dependent=helper_dependent, unresolved=unresolved_rows)
     if not rows:
         raise ValueError(
             "零命中：没有一枚仪器的默认写靶落在已入库件上。先确认扫描面（tracked 的 scripts/**/*.py），"
@@ -336,7 +430,7 @@ def build_report(root: Path) -> dict[str, object]:
     }
     return {
         "format": REPORT_FORMAT,
-        "debts": ["DEBT-G35", "DEBT-G50", "DEBT-G132"],
+        "debts": ["DEBT-G35", "DEBT-G50", "DEBT-G132", "DEBT-G137"],
         "face": (
             "tracked 的 scripts/**/*.py；两张面并立——`argparse_default`＝写靶旗标的默认值，"
             "`literal_assignment`＝源码里硬编的字面路径且该变量被当写靶用过"
@@ -361,8 +455,23 @@ def build_report(root: Path) -> dict[str, object]:
             "definition": (
                 "同一棵树上跑两遍 `_written_names`（第二遍 `include_shared=False`）；"
                 "`literal_assignment` 那一面里，某枚字面靶的宿主变量**只在第一遍**被认成写靶 ⇒ 该文件入列。"
-                "只加键，不改 `37／36／22／21` 那组口径。"
+                "**v5 起 `37／36／22／21` 那组口径已随识别面变宽而换态**（G137 修法①），"
+                "旧值与 v5 值**新旧不可比**——跨面比较必须带 `format`。"
             ),
+        },
+        #: ㊵-870（DEBT-G137 修法②）：把**下界本身**出版。`default_targets_on_tracked_files` 只是下界
+        #: （识别面读不出落点的那批靶既不在命中里、也不在暴露面里），这一桶登记它们的数量与文件。
+        "unresolved_target_forms": {
+            "count": len(unresolved_rows),
+            "rows_listed": min(len(unresolved_rows), UNRESOLVED_LIST_CAP),
+            "files": sorted({str(row["file"]) for row in unresolved_rows}),
+            "definition": (
+                "**被当写靶用过**（`write_text`／`open(...,'w')`／统一落盘助手的第一个实参）"
+                "但本件读不出 `reports/` 落点的变量 ⇒ `default_targets_on_tracked_files` 只算**下界**，"
+                "不把它们读成全集。这是**披露面，不是红支**（G137 记的具体后果：照一份说它安全的名单"
+                "去跑别人名下的仪器，把在册历史读数件覆盖掉）。"
+            ),
+            "rows": unresolved_rows[:UNRESOLVED_LIST_CAP],
         },
         "rows": rows,
         "categories": {
@@ -406,6 +515,7 @@ def main() -> int:
                 "category_counts": report["category_counts"],
                 "exposure_targets": report["exposure_targets"],
                 "exposure_files": report["exposure_files"],
+                "unresolved_target_forms": report["unresolved_target_forms"]["count"],
             },
             ensure_ascii=False,
         )
