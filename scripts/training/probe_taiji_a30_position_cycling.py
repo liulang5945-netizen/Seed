@@ -37,6 +37,9 @@ for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
     if str(entry) not in sys.path:
         sys.path.insert(0, str(entry))
 
+#: DEBT-G115 修法③：落盘走统一落盘助手（`newline=` 由助手必备参数兜住；拒覆写由本件前置守卫承担）。
+import _taiji_report_io as report_io  # noqa: E402
+
 MANIFEST = PROJECT_ROOT / "plans/manifests/r2_copy_surface_extension_v3_position_random.json"
 
 
@@ -180,7 +183,36 @@ def main() -> int:
     parser.add_argument("--manifest", default=str(MANIFEST))
     parser.add_argument("--limit", type=int, default=24)
     parser.add_argument("--out-report", default=None)
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="目标读数件已存在时允许替换（DEBT-G115 修法③ 家族标准守卫；缺省拒覆写——"
+        "默认落点是在库读数件，重跑取数须显式带此旗标）",
+    )
     args = parser.parse_args()
+
+    out = (
+        Path(args.out_report)
+        if args.out_report
+        else PROJECT_ROOT / "reports/taiji_a30_position_cycling_20260928.json"
+    )
+    if not out.is_absolute():
+        out = PROJECT_ROOT / out
+    #: 旧行为是「无条件静默覆写」——既不拒绝也不点名。改成家族标准形：缺省响亮拒绝，要重跑就显式
+    #: `--overwrite`。守卫放在 `SeedRuntime.load`／读 manifest 之前 ⇒ 不再往载模型、起臂。
+    #: （本件 `import torch` 在模块层 ⇒ 拒绝路径也会在 import 期载入 torch，但不会走载 checkpoint 那条路。）
+    if out.exists() and not args.overwrite:
+        print(
+            json.dumps(
+                {
+                    "format": "taiji-a30-position-cycling-v1",
+                    "status": "refuse_overwrite",
+                    "path": str(out),
+                },
+                ensure_ascii=True,
+            )
+        )
+        return 2
 
     checkpoint = PROJECT_ROOT / args.checkpoint
     sha_before = _sha256(checkpoint)
@@ -341,17 +373,7 @@ def main() -> int:
         ),
         "started_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
-    out = (
-        Path(args.out_report)
-        if args.out_report
-        else PROJECT_ROOT / "reports/taiji_a30_position_cycling_20260928.json"
-    )
-    if not out.is_absolute():
-        out = PROJECT_ROOT / out
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2, default=str) + "\n", encoding="utf-8"
-    )
+    report_io.write_json_report(out, report, newline="\n", overwrite=True)
     print(
         json.dumps(
             {k: v for k, v in report.items() if k not in ("top_periods",)}, ensure_ascii=False
