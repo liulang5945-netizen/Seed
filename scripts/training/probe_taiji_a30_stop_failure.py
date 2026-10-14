@@ -57,6 +57,20 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _parameter_digest(model: Any) -> str:
+    """Hash model-owned tensors without including runtime state or carrier rows."""
+
+    import hashlib
+
+    digest = hashlib.sha256()
+    for tensor in model.parameter_tensors():
+        value = tensor.detach().to(device="cpu").contiguous().clone()
+        digest.update(str(value.dtype).encode("ascii"))
+        digest.update(json.dumps(list(value.shape), separators=(",", ":")).encode("ascii"))
+        digest.update(bytes(value.untyped_storage()))
+    return digest.hexdigest()
+
+
 def _payload_sha(value) -> str | None:
     """回路 payload 的摘要：件里只记路径不够（`PLAN-A-24` rev22 那条复现性债）。"""
 
@@ -1096,6 +1110,16 @@ def main() -> int:
     parser.add_argument("--penalty", type=float, default=2.0)
     parser.add_argument("--penalty-window", type=int, default=8)
     parser.add_argument("--max-length", type=int, default=256)
+    parser.add_argument(
+        "--persistent-stepwise-carrier",
+        action="store_true",
+        help="C1: record generated cortical-context vectors with their InputFrame source metadata",
+    )
+    parser.add_argument(
+        "--carrier-checkpoint-out",
+        default=None,
+        help="C1: atomically save the open carrier arm to this independent checkpoint path",
+    )
     parser.add_argument("--out-report", default=None)
     parser.add_argument(
         "--evidence-content-arm",
@@ -1188,6 +1212,10 @@ def main() -> int:
         "互斥（两条都是读取形态的改动，混开就分不清是哪条把行放走的）。",
     )
     args = parser.parse_args()
+    if args.carrier_checkpoint_out and not args.persistent_stepwise_carrier:
+        parser.error("--carrier-checkpoint-out requires --persistent-stepwise-carrier")
+    if args.persistent_stepwise_carrier and not args.carrier_checkpoint_out:
+        parser.error("--persistent-stepwise-carrier requires --carrier-checkpoint-out")
 
     checkpoint = PROJECT_ROOT / args.checkpoint
     sha_before = _sha256(checkpoint)
@@ -1209,6 +1237,8 @@ def main() -> int:
     from taiji.utf8_state import advance_utf8, trim_partial_tail
 
     runtime = SeedRuntime.load(checkpoint)
+    if args.persistent_stepwise_carrier:
+        runtime.model.substrate.persistent_stepwise_carrier = True
     if args.circuit:
         runtime.enable_copy_circuit(PROJECT_ROOT / args.circuit)
     substrate = runtime.model.substrate
@@ -1229,6 +1259,9 @@ def main() -> int:
                 "——两条都是读取形态改动，混开就分不清读数是哪条路径的（PLAN-N1-01 守卫 G-S1-3）"
             )
         substrate.copy_circuit.successor_restricted_addressing = True
+    carrier_weight_digest_before = (
+        _parameter_digest(substrate) if args.persistent_stepwise_carrier else None
+    )
     #: 三位一体来自剂量探针那一个包装器：[被走到, 被下限静音, 被上限静音]（全链，含 prompt 侧）。
     alpha_calls = [0, 0, 0]
     #: 资格档的刻度：本条生成链已经走过的**环内步数**（1 步＝喂进 1 字节），每轮清零。
@@ -1703,14 +1736,62 @@ def main() -> int:
             )
 
     substrate.observe = original_observe  # type: ignore[method-assign]
+    carrier_weight_digest_after = (
+        _parameter_digest(substrate) if args.persistent_stepwise_carrier else None
+    )
+    if args.persistent_stepwise_carrier and (
+        carrier_weight_digest_before != carrier_weight_digest_after
+    ):
+        raise RuntimeError("persistent stepwise carrier face changed model parameters")
     #: v39（DEBT-G30）：门的状态**一次读自产品公开出口**，下面两处（信封三列与守卫 `evidence_gate_flag_honored`）
     #: 都取这一份，不再各自复制 config-or-override 那条式子。
     gate_state = runtime.model.substrate.copy_evidence_utf8_gate_state()
     #: v40（SPEC-A-26）：注入形状的自述与"被走到"守卫——读数取自产品公开出口
     #: `copy_evidence_injection_state()`（含 competitive 计数），一次读取、两处共用。
     injection_state = substrate.copy_evidence_injection_state()
+    carrier_checkpoint_path: str | None = None
+    carrier_manifest: list[dict[str, Any]] | None = None
+    carrier_episode_count: int | None = None
+    carrier_total_steps: int | None = None
+    carrier_raw_vector_bytes: int | None = None
+    if args.persistent_stepwise_carrier:
+        carrier = substrate._persistent_stepwise_carrier
+        if carrier.episode_count != sum(len(item["turns"]) for item in items):
+            raise RuntimeError(
+                "persistent carrier episode count does not match the evaluated turn count"
+            )
+        target = Path(args.carrier_checkpoint_out)
+        if not target.is_absolute():
+            target = PROJECT_ROOT / target
+        runtime.save(target)
+        carrier_checkpoint_path = str(target)
+        carrier_manifest = carrier.episode_manifest()
+        carrier_episode_count = carrier.episode_count
+        carrier_total_steps = carrier.total_steps
+        carrier_raw_vector_bytes = carrier_total_steps * carrier.context_dim * 4
     report = {
-        "format": "taiji-a30-stop-failure-v44",
+        "format": (
+            "taiji-a30-stop-failure-v45"
+            if args.persistent_stepwise_carrier
+            else "taiji-a30-stop-failure-v44"
+        ),
+        **(
+            {
+                "persistent_stepwise_carrier": {
+                    "enabled": True,
+                    "checkpoint": carrier_checkpoint_path,
+                    "episodes": carrier_episode_count,
+                    "steps": carrier_total_steps,
+                    "context_dim": substrate.config.cortical_context_dim,
+                    "raw_vector_bytes": carrier_raw_vector_bytes,
+                    "model_parameter_digest_before": carrier_weight_digest_before,
+                    "model_parameter_digest_after": carrier_weight_digest_after,
+                    "episode_manifest": carrier_manifest,
+                }
+            }
+            if args.persistent_stepwise_carrier
+            else {}
+        ),
         "copy_successor_restricted_addressing": bool(args.copy_successor_restricted_addressing),
         #: 回退计数必须落进件里（PLAN-N1-01 §3.1 要求"回退率随件披露"）。2026-10-08 补：四支 v44 面
         #: 是在这一行之前跑的，故**那几枚件里没有本键**，其回退率由记录臂按 `eligible − steps_in_set` 派生。
@@ -2130,6 +2211,15 @@ def main() -> int:
             "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
             #: v10 守卫：这个字段必须真的报出来（空串/缺哈希都算仪器没走到）。
             "checkpoint_sha_recorded": bool(sha_before) and len(sha_before) == 64,
+            **(
+                {
+                    "persistent_carrier_weights_unchanged": (
+                        carrier_weight_digest_before == carrier_weight_digest_after
+                    )
+                }
+                if args.persistent_stepwise_carrier
+                else {}
+            ),
         },
         "failure_examples": failure_examples[:5],
         "offender_count": len(offenders),

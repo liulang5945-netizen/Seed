@@ -223,13 +223,18 @@ class Seed:
         return self.substrate.dense_equivalent_parameter_count()
 
     def checkpoint(self) -> dict[str, Any]:
+        kernel_checkpoint = self.substrate._kernel_checkpoint_payload()
         return {
             "format": self.CHECKPOINT_FORMAT,
             "config": self.config.to_dict(),
             # Canonical v1 cognitive envelope.  ``substrate`` remains a
             # readable compatibility payload for seed-native-v1 consumers.
-            "taiji": self.substrate.native_checkpoint(),
-            "substrate": self.substrate.checkpoint(),
+            "taiji": self.substrate.native_checkpoint(
+                _kernel_checkpoint=kernel_checkpoint
+            ),
+            "substrate": self.substrate.checkpoint(
+                _kernel_checkpoint=kernel_checkpoint
+            ),
         }
 
     def restore(self, checkpoint: Mapping[str, Any]) -> None:

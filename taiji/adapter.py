@@ -11169,6 +11169,7 @@ class TSKV8Adapter(Taiji):
             utf8_strict=utf8_strict,
             repetition_penalty=repetition_penalty,
             repetition_window=repetition_window,
+            _episode_source=frame.to_payload(),
         )
 
     def act(self, available_actions: Any, *args: Any, **kwargs: Any) -> TaijiDecision:
@@ -11795,8 +11796,21 @@ class TSKV8Adapter(Taiji):
             )
         )
 
-    def checkpoint(self) -> dict[str, Any]:
-        payload = super().checkpoint()
+    def _kernel_checkpoint_payload(self) -> dict[str, Any]:
+        """Build the shared Taiji kernel snapshot used by both Seed envelopes."""
+
+        return super().checkpoint()
+
+    def checkpoint(
+        self,
+        *,
+        _kernel_checkpoint: Mapping[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        payload = dict(
+            self._kernel_checkpoint_payload()
+            if _kernel_checkpoint is None
+            else _kernel_checkpoint
+        )
         payload["adapter"] = self.ADAPTER_NAME
         payload["perception"] = self.perception.checkpoint()
         if self._world_dynamics is not None:
@@ -12461,7 +12475,11 @@ class TSKV8Adapter(Taiji):
         )
         self._recovery_memory_rebuild_count = int(payload.get("recovery_memory_rebuild_count", 0))
 
-    def native_checkpoint(self) -> dict[str, Any]:
+    def native_checkpoint(
+        self,
+        *,
+        _kernel_checkpoint: Mapping[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """Serialize the v1 cognitive state and its TSK-v8 compatibility kernel."""
 
         components: dict[str, Any] = {"perception": self.perception.checkpoint()}
@@ -12601,7 +12619,11 @@ class TSKV8Adapter(Taiji):
             else self._last_semantic_provider_evidence.to_payload()
         )
         return NativeCheckpoint(
-            kernel=super().checkpoint(),
+            kernel=(
+                self._kernel_checkpoint_payload()
+                if _kernel_checkpoint is None
+                else _kernel_checkpoint
+            ),
             cognitive_state=self.cognitive_snapshot(),
             adapter=self.ADAPTER_NAME,
             components=components,

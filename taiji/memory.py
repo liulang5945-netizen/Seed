@@ -60,6 +60,242 @@ class EpisodicReplay:
     accepted: bool
 
 
+class PersistentStepwiseCarrier:
+    """Bounded, checkpointable store for generated cortical-context traces.
+
+    This carrier is deliberately separate from ``EpisodicField``: it records
+    exact generation-time vectors and source metadata without turning those
+    vectors into learned memory or treating generated text as observed fact.
+    """
+
+    FORMAT = "taiji-persistent-stepwise-carrier-v1"
+    VERSION = 1
+    MAX_EPISODES = 288
+    MAX_STEPS_PER_EPISODE = 256
+    SOURCE_FIELDS = (
+        "input_id",
+        "modality",
+        "source",
+        "timestamp",
+        "provenance",
+        "confidence",
+    )
+
+    def __init__(
+        self,
+        context_dim: int,
+        *,
+        max_episodes: int = MAX_EPISODES,
+        max_steps_per_episode: int = MAX_STEPS_PER_EPISODE,
+    ) -> None:
+        self.context_dim = int(context_dim)
+        self.max_episodes = int(max_episodes)
+        self.max_steps_per_episode = int(max_steps_per_episode)
+        if self.context_dim <= 0:
+            raise ValueError("persistent carrier context_dim must be positive")
+        if self.max_episodes <= 0 or self.max_steps_per_episode <= 0:
+            raise ValueError("persistent carrier capacity limits must be positive")
+        self._next_episode_serial = 0
+        self._episodes: dict[str, dict[str, Any]] = {}
+        self._pending: dict[str, tuple[int, dict[str, Any]]] = {}
+
+    @property
+    def episode_ids(self) -> tuple[str, ...]:
+        return tuple(self._episodes)
+
+    @property
+    def episode_count(self) -> int:
+        return len(self._episodes)
+
+    @property
+    def total_steps(self) -> int:
+        return sum(int(episode["vectors"].shape[0]) for episode in self._episodes.values())
+
+    @property
+    def next_episode_serial(self) -> int:
+        return self._next_episode_serial
+
+    def begin_episode(self, source_metadata: Mapping[str, Any]) -> str:
+        if not isinstance(source_metadata, Mapping):
+            raise TypeError("persistent carrier source metadata must be a mapping")
+        missing = [key for key in self.SOURCE_FIELDS if key not in source_metadata]
+        if missing:
+            raise ValueError(f"persistent carrier source metadata is missing {missing}")
+        source = {
+            "input_id": str(source_metadata["input_id"]),
+            "modality": str(source_metadata["modality"]),
+            "source": str(source_metadata["source"]),
+            "timestamp": int(source_metadata["timestamp"]),
+            "provenance": str(source_metadata["provenance"]),
+            "confidence": float(source_metadata["confidence"]),
+        }
+        if any(not source[field] for field in ("input_id", "modality", "source", "provenance")):
+            raise ValueError("persistent carrier source metadata contains an empty identity")
+        if source["timestamp"] < 0:
+            raise ValueError("persistent carrier source timestamp cannot be negative")
+        if not math.isfinite(source["confidence"]) or not 0.0 <= source["confidence"] <= 1.0:
+            raise ValueError("persistent carrier source confidence must be finite and in [0, 1]")
+        if len(self._episodes) + len(self._pending) >= self.max_episodes:
+            raise RuntimeError(
+                "persistent carrier episode capacity exceeded "
+                f"({self.max_episodes} episodes)"
+            )
+        serial = self._next_episode_serial
+        self._next_episode_serial += 1
+        episode_id = f"stepwise:{serial:012d}:{source['input_id']}"
+        if episode_id in self._episodes or episode_id in self._pending:
+            raise RuntimeError(f"persistent carrier episode id collision: {episode_id}")
+        self._pending[episode_id] = (serial, source)
+        return episode_id
+
+    def commit_episode(self, episode_id: str, vectors: torch.Tensor) -> None:
+        pending = self._pending.get(str(episode_id))
+        if pending is None:
+            raise KeyError(f"persistent carrier episode is not pending: {episode_id}")
+        if not isinstance(vectors, torch.Tensor):
+            raise TypeError("persistent carrier episode vectors must be a tensor")
+        if vectors.ndim != 2 or tuple(vectors.shape[1:]) != (self.context_dim,):
+            raise ValueError(
+                "persistent carrier vectors must have shape "
+                f"[steps, {self.context_dim}] (got {tuple(vectors.shape)})"
+            )
+        if vectors.shape[0] > self.max_steps_per_episode:
+            raise RuntimeError(
+                "persistent carrier episode exceeds the step limit "
+                f"({self.max_steps_per_episode})"
+            )
+        matrix = vectors.detach().to(device="cpu", dtype=torch.float32).contiguous().clone()
+        if not torch.isfinite(matrix).all().item():
+            raise ValueError("persistent carrier vectors must be finite")
+        serial, source = pending
+        self._episodes[str(episode_id)] = {
+            "episode_id": str(episode_id),
+            "serial": serial,
+            "source": dict(source),
+            "vectors": matrix,
+        }
+        del self._pending[str(episode_id)]
+
+    def abort_episode(self, episode_id: str) -> None:
+        pending = self._pending.pop(str(episode_id), None)
+        if pending is not None and pending[0] == self._next_episode_serial - 1:
+            self._next_episode_serial -= 1
+
+    def read_episode(self, episode_id: str) -> torch.Tensor:
+        episode = self._episodes.get(str(episode_id))
+        if episode is None:
+            return torch.empty((0, self.context_dim), dtype=torch.float32)
+        return episode["vectors"].clone()
+
+    def episode_manifest(self) -> list[dict[str, Any]]:
+        """Return source and content digests without exposing stored tensors."""
+
+        return [
+            {
+                "episode_id": episode["episode_id"],
+                "serial": episode["serial"],
+                "source": dict(episode["source"]),
+                "steps": int(episode["vectors"].shape[0]),
+                "vectors_sha256": hashlib.sha256(
+                    episode["vectors"].numpy().tobytes()
+                ).hexdigest(),
+            }
+            for episode in self._episodes.values()
+        ]
+
+    def to_payload(self) -> dict[str, Any] | None:
+        if self._pending:
+            raise RuntimeError("cannot checkpoint a persistent carrier with an open episode")
+        if not self._episodes and self._next_episode_serial == 0:
+            return None
+        return {
+            "format": self.FORMAT,
+            "version": self.VERSION,
+            "context_dim": self.context_dim,
+            "next_episode_serial": self._next_episode_serial,
+            "episodes": [
+                {
+                    "episode_id": episode["episode_id"],
+                    "serial": episode["serial"],
+                    "source": dict(episode["source"]),
+                    "vectors": episode["vectors"].clone(),
+                }
+                for episode in self._episodes.values()
+            ],
+        }
+
+    def load_payload(self, payload: Mapping[str, Any] | None) -> None:
+        self._next_episode_serial = 0
+        self._episodes = {}
+        self._pending = {}
+        if payload is None:
+            return
+        if not isinstance(payload, Mapping):
+            raise ValueError("persistent carrier checkpoint payload is invalid")
+        if payload.get("format") != self.FORMAT or int(payload.get("version", -1)) != self.VERSION:
+            raise ValueError("unsupported persistent carrier checkpoint format")
+        if int(payload.get("context_dim", -1)) != self.context_dim:
+            raise ValueError("persistent carrier context dimension does not match architecture")
+        next_serial = int(payload.get("next_episode_serial", -1))
+        raw_episodes = payload.get("episodes")
+        if next_serial < 0 or not isinstance(raw_episodes, (list, tuple)):
+            raise ValueError("persistent carrier checkpoint counters are invalid")
+        if len(raw_episodes) > self.max_episodes:
+            raise ValueError("persistent carrier checkpoint exceeds its episode capacity")
+        episodes: dict[str, dict[str, Any]] = {}
+        serials: set[int] = set()
+        for raw_episode in raw_episodes:
+            if not isinstance(raw_episode, Mapping):
+                raise ValueError("persistent carrier episode entry is invalid")
+            episode_id = str(raw_episode.get("episode_id", ""))
+            serial = int(raw_episode.get("serial", -1))
+            source = raw_episode.get("source")
+            vectors = raw_episode.get("vectors")
+            if not episode_id or serial < 0 or serial >= next_serial or serial in serials:
+                raise ValueError("persistent carrier episode identity is invalid")
+            if not episode_id.startswith(f"stepwise:{serial:012d}:"):
+                raise ValueError("persistent carrier episode id does not match its serial")
+            if episode_id in episodes:
+                raise ValueError("persistent carrier episode ids must be unique")
+            if not isinstance(source, Mapping) or set(source) != set(self.SOURCE_FIELDS):
+                raise ValueError("persistent carrier episode source metadata is invalid")
+            if not isinstance(vectors, torch.Tensor) or vectors.dtype != torch.float32:
+                raise ValueError("persistent carrier episode vectors must be float32 tensors")
+            if vectors.ndim != 2 or tuple(vectors.shape[1:]) != (self.context_dim,):
+                raise ValueError("persistent carrier episode vector shape is invalid")
+            if vectors.shape[0] > self.max_steps_per_episode:
+                raise ValueError("persistent carrier episode exceeds its step capacity")
+            matrix = vectors.detach().to(device="cpu").contiguous().clone()
+            if not torch.isfinite(matrix).all().item():
+                raise ValueError("persistent carrier episode vectors must be finite")
+            validated_source = {
+                "input_id": str(source["input_id"]),
+                "modality": str(source["modality"]),
+                "source": str(source["source"]),
+                "timestamp": int(source["timestamp"]),
+                "provenance": str(source["provenance"]),
+                "confidence": float(source["confidence"]),
+            }
+            if any(
+                not validated_source[field]
+                for field in ("input_id", "modality", "source", "provenance")
+            ):
+                raise ValueError("persistent carrier episode source identity is empty")
+            if validated_source["timestamp"] < 0 or not math.isfinite(
+                validated_source["confidence"]
+            ) or not 0.0 <= validated_source["confidence"] <= 1.0:
+                raise ValueError("persistent carrier episode source metadata is out of range")
+            episodes[episode_id] = {
+                "episode_id": episode_id,
+                "serial": serial,
+                "source": validated_source,
+                "vectors": matrix,
+            }
+            serials.add(serial)
+        self._episodes = episodes
+        self._next_episode_serial = next_serial
+
+
 #: 来源归一时给"还没被写过的行"准备的对数值：`exp(-inf)=0`，所以它拿不到任何概率质量。
 BLANK_PROVENANCE_LOGIT = float("-inf")
 

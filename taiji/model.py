@@ -40,7 +40,7 @@ from .identity_organ import (
     IdentityRecall,
 )
 from .internalization import content_digest
-from .memory import EpisodicField
+from .memory import EpisodicField, PersistentStepwiseCarrier
 from .organs import (
     ByteMotor,
     BytePredictiveContext,
@@ -98,6 +98,7 @@ class Taiji:
     RESPONSE_PLAN_READOUT_KEY = "response_plan_readout"
     RESPONSE_PLAN_READOUT_SEED_OFFSET = 5933
     RESPONSE_PLAN_FACTORIZED_READOUT_SEED_OFFSET = 5935
+    PERSISTENT_STEPWISE_CARRIER_KEY = "persistent_stepwise_carrier"
     DEVELOPMENTAL_F1_KEY = "developmental_f1"
     DEVELOPMENTAL_F1_REPLAY_KEY = "developmental_f1_replay"
     DEVELOPMENTAL_F1_LEARNING_MODES = frozenset({"read_only", "fast", "slow", "fast_slow"})
@@ -190,6 +191,10 @@ class Taiji:
         self._memory_rng = torch.Generator(device="cpu")
         self._memory_rng.set_state(self._rng.get_state().clone())
         self.memory = EpisodicField(self.config, generator=self._memory_rng, device=self.device)
+        self._persistent_stepwise_carrier = PersistentStepwiseCarrier(
+            self.config.cortical_context_dim
+        )
+        self._persistent_stepwise_carrier_enabled = False
         self.identity_organ = (
             CueIdentityOrgan(self.config, generator=self._rng, device=self.device)
             if self.config.identity_organ_enabled
@@ -245,6 +250,23 @@ class Taiji:
     @property
     def tick(self) -> int:
         return self._state.tick
+
+    @property
+    def persistent_stepwise_carrier(self) -> bool:
+        """Whether generated cortical traces are recorded in the runtime carrier."""
+
+        return self._persistent_stepwise_carrier_enabled
+
+    @persistent_stepwise_carrier.setter
+    def persistent_stepwise_carrier(self, enabled: bool) -> None:
+        if not isinstance(enabled, bool):
+            raise TypeError("persistent_stepwise_carrier must be a bool")
+        self._persistent_stepwise_carrier_enabled = enabled
+
+    def read_persistent_stepwise_episode(self, episode_id: str) -> torch.Tensor:
+        """Return cloned, ordered context vectors for exactly one episode."""
+
+        return self._persistent_stepwise_carrier.read_episode(episode_id)
 
     @property
     def last_generation_route(self) -> dict[str, Any] | None:
@@ -3279,6 +3301,7 @@ class Taiji:
         repetition_penalty: float = 0.0,
         repetition_window: int = 8,
         forced_feed: bytes | None = None,
+        _episode_source: Mapping[str, Any] | None = None,
     ) -> bytes:
         """Generate from the raw-byte predictive path.
 
@@ -3303,6 +3326,10 @@ class Taiji:
 
         if length < 0:
             raise ValueError("length cannot be negative")
+        if self.persistent_stepwise_carrier and not isinstance(_episode_source, Mapping):
+            raise ValueError(
+                "persistent stepwise carrier requires source metadata from an InputFrame"
+            )
         #: PLAN-A-30 乙档（默认 0 ⇒ 逐位走现状路径）：把最近 `repetition_window` 个已发字节的质量
         #: 各除以 `1 + penalty × 出现次数`。对症的是 §2b 量到的"同一个字连发"
         #: （单位平均 1.4–2.1 字符、重复 5–20 次），**不是**"复述完一遍再从头走"——那条已被
@@ -3433,6 +3460,14 @@ class Taiji:
                 else:
                     self._copy_evidence_gated_silenced_answers += 1
         try:
+            carrier_episode_id: str | None = None
+            carrier_vectors: list[torch.Tensor] = []
+            carrier_committed = False
+            if self.persistent_stepwise_carrier:
+                assert _episode_source is not None
+                carrier_episode_id = self._persistent_stepwise_carrier.begin_episode(
+                    _episode_source
+                )
             generated = bytearray()
             response_start_pending = bool(response_start)
             response_phase_readout = self._response_phase_readout if response_phase else None
@@ -3488,6 +3523,8 @@ class Taiji:
                     break
                 if not 0 <= next_symbol <= 255:
                     next_symbol = 0
+                if carrier_episode_id is not None:
+                    carrier_vectors.append(self.cortical_cue())
                 generated.append(next_symbol)
                 if utf8_strict:
                     utf8_remaining, utf8_lead = advance_utf8(utf8_remaining, utf8_lead, next_symbol)
@@ -3502,10 +3539,21 @@ class Taiji:
                         response_phase_readout if response_phase else predictive_readout
                     ),
                 )
-            if utf8_strict:
-                return trim_partial_tail(bytes(generated))
-            return bytes(generated)
+            result = trim_partial_tail(bytes(generated)) if utf8_strict else bytes(generated)
+            if carrier_episode_id is not None:
+                trace = (
+                    torch.stack(carrier_vectors)
+                    if carrier_vectors
+                    else torch.empty(
+                        (0, self.config.cortical_context_dim), dtype=torch.float32
+                    )
+                )
+                self._persistent_stepwise_carrier.commit_episode(carrier_episode_id, trace)
+                carrier_committed = True
+            return result
         finally:
+            if carrier_episode_id is not None and not carrier_committed:
+                self._persistent_stepwise_carrier.abort_episode(carrier_episode_id)
             if circuit is not None:
                 circuit.drop_selection_lock()
 
@@ -3671,6 +3719,9 @@ class Taiji:
         replay_payload = self._developmental_f1_replay_payload()
         if replay_payload is not None:
             core[self.DEVELOPMENTAL_F1_REPLAY_KEY] = replay_payload
+        carrier_payload = self._persistent_stepwise_carrier.to_payload()
+        if carrier_payload is not None:
+            core[self.PERSISTENT_STEPWISE_CARRIER_KEY] = carrier_payload
         if self._response_start_readout is not None:
             core[self.RESPONSE_START_READOUT_KEY] = self._response_start_readout.to_payload()
         if self._response_phase_readout is not None:
@@ -3720,6 +3771,11 @@ class Taiji:
         actual = TaijiConfig.from_dict(dict(checkpoint["config"]))
         if actual != self.config:
             raise ValueError("checkpoint configuration does not match architecture")
+        carrier_payload = checkpoint.get(self.PERSISTENT_STEPWISE_CARRIER_KEY)
+        if is_legacy_checkpoint and carrier_payload is not None:
+            raise ValueError("legacy checkpoint cannot contain a persistent stepwise carrier")
+        self._persistent_stepwise_carrier.load_payload(carrier_payload)
+        self.persistent_stepwise_carrier = False
         self.clear_active_predictive_readout()
         self.fabric.load_payload(checkpoint["fabric"])
         self.motor.load_payload(checkpoint["motor"])
@@ -3950,6 +4006,9 @@ class Taiji:
                         include_response_plan_readout=(
                             self.RESPONSE_PLAN_READOUT_KEY in checkpoint
                         ),
+                        include_persistent_stepwise_carrier=(
+                            self.PERSISTENT_STEPWISE_CARRIER_KEY in checkpoint
+                        ),
                     )
                 }
             )
@@ -4070,6 +4129,7 @@ class Taiji:
         include_response_start_readout: bool = False,
         include_response_phase_readout: bool = False,
         include_response_plan_readout: bool = False,
+        include_persistent_stepwise_carrier: bool = False,
     ) -> tuple[str, ...]:
         if include_predictive_context is None:
             # Existing callers reconstructing a v8 lineage pass only
@@ -4109,6 +4169,8 @@ class Taiji:
             keys += (Taiji.RESPONSE_PHASE_READOUT_KEY,)
         if include_response_plan_readout:
             keys += (Taiji.RESPONSE_PLAN_READOUT_KEY,)
+        if include_persistent_stepwise_carrier:
+            keys += (Taiji.PERSISTENT_STEPWISE_CARRIER_KEY,)
         return (*keys, "memory", "state", "rng_state")
 
     @classmethod
