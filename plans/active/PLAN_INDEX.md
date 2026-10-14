@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **当前调度修订（2026-10-14）**：[PLAN-N-01](../reference/PLAN-N-01_development_revision_20261014.md)为完整方案，[N1 实施附件](../reference/PLAN-N1-06_carrier_consumer_alignment_20261014.md)处理冻结合同衔接；C0 r1 已冻结，C1 批⑴实现与守卫通过，批⑵ 30 分钟 CPU 预算预检外推约 52 分钟，正式面待 owner 重定价；战略同步到09、单一队首同步到03。N6按当前能力包依赖排程，不再要求清空所有工程债才验证载体。
+> **当前调度修订（2026-10-14）**：[PLAN-N-01](../reference/PLAN-N-01_development_revision_20261014.md)为完整方案，[N1 实施附件](../reference/PLAN-N1-06_carrier_consumer_alignment_20261014.md)处理冻结合同，[C2 校准预注册](../reference/PLAN-N1-07_C2_consumer_calibration_prereg_20261014.md)定义下个有界消费者面；C1 批⑴/批⑵均通过，批⑵使用 owner 批准的≤75分钟 CPU 上限并保留完整样本与独立恢复。当前唯一队首是 C2 校准是否单独批准≤10分钟 CPU，见03。N6按当前能力包依赖排程，不再要求清空所有工程债才验证载体。
 
 > **2026-10-14 导航校准**：本索引的编号约定继续保留；下方累积里程碑摘要含历史状态。当前队列只看 [03](roadmap/03_CURRENT_EXECUTION.md)，N 主线看 [09](roadmap/09_NEXT_MAINLINE_PLAN.md)，整个项目按 [项目地图](../../docs/README.md) 阅读。本轮收纳见 [整理记录](../reference/PROJECT_ORGANIZATION_20261014.md)。
 

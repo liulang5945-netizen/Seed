@@ -1,6 +1,6 @@
 # Seed / Taiji 计划与架构入口
 
-> **2026-10-14 开发计划修订与 C1 进度**：[PLAN-N-01 完整方案](reference/PLAN-N-01_development_revision_20261014.md) · [N1 实施附件](reference/PLAN-N1-06_carrier_consumer_alignment_20261014.md)。调度已改为持久载体→消费→信用→净增益→联合能力；C1 批⑴实现与守卫已通过，批⑵预检预计完整 open/off 面约 52 分钟，正式运行待预算重定价。没有训练；当前队首以 [03](active/roadmap/03_CURRENT_EXECUTION.md) 为准。
+> **2026-10-14 开发计划修订与 C1 进度**：[PLAN-N-01 完整方案](reference/PLAN-N-01_development_revision_20261014.md) · [N1 实施附件](reference/PLAN-N1-06_carrier_consumer_alignment_20261014.md) · [C2 校准预注册](reference/PLAN-N1-07_C2_consumer_calibration_prereg_20261014.md)。调度已改为持久载体→消费→信用→净增益→联合能力；C1 批⑴/批⑵均通过，完整 open/off 面、独立恢复和旧档负对照通过，没有训练或默认行为变化。C2校准预算单独待批；当前队首以 [03](active/roadmap/03_CURRENT_EXECUTION.md) 为准。
 
 > **2026-10-14 收纳导航**：[项目地图](../docs/README.md) · [全项目评估](reference/PROJECT_WIDE_ASSESSMENT_20261014.md) · [整理记录](reference/PROJECT_ORGANIZATION_20261014.md)。本页下方旧阶段摘要保留追溯；当前状态与执行顺序以 [03](active/roadmap/03_CURRENT_EXECUTION.md) 为准，架构与模型主线见 [09](active/roadmap/09_NEXT_MAINLINE_PLAN.md)。M5/M6 已批准收束，勿把下方历史“当前仍为 M5”当作现状。
 
