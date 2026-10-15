@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：对19冻结终点做全部96个词值train项的错误与内容寻址诊断，零更新、零dev/holdout；先分解来源/字节读取与实际材料消费，不直接加训练预算或启动九模型配对。19完整6144更新/CPU64.328125秒，train93/192、提取修订仅3/96，未达训练充分性门；见[19裁决](../../reference/EXP-N1-19_v3_train_sufficiency_adjudication_20261015.md)。
+## 当前唯一下一步：执行已冻结[20内容消费诊断](../../reference/SPEC-N1-20_train_content_read_diagnostic_20261015.md)，19终点全部96词值train项原始/正确来源替换/干扰来源替换共288次自由输出，零更新、零dev/holdout，独立CPU60秒。19词值3/96未达充分性，先查实际内容消费，不直接增预算重跑配对；[19裁决](../../reference/EXP-N1-19_v3_train_sufficiency_adjudication_20261015.md)。
 
 ## 本轮调度修订（2026-10-14）
 

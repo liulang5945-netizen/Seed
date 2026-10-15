@@ -46,3 +46,6 @@ PLAN-N1-06 r1 的 C1 规格已实现并按完整面通过。两臂均为96项／
 
 2026-10-15：[19裁决](EXP-N1-19_v3_train_sufficiency_adjudication_20261015.md)完整6144更新/960组train读数/两独立恢复，CPU64.328125秒；已见93/192，lookup2/revision1/transition44/unknown46（各48），训练充分性门未过，dev/holdout查询0。唯一后继为全部96词值train项的零更新内容寻址诊断，不直接九模型重跑。
 
+
+20待执行：scripts/training/audit_taiji_n1_train_content_read.py，SPEC20已冻、29项前置合同通过；0更新/留出、60秒CPU，只诊断19终点。
+

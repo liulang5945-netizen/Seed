@@ -813,3 +813,6 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 
 2026-10-15：[19训练充分性裁决](../reference/EXP-N1-19_v3_train_sufficiency_adjudication_20261015.md)：train93/192、词值3/96，CPU64.328125秒，未过充分性门；下一步train-only内容寻址诊断。
 
+
+2026-10-15：[SPEC20内容消费诊断](../reference/SPEC-N1-20_train_content_read_diagnostic_20261015.md)冻结，96词值train项三种输入，零更新/零留出，独立60秒CPU；29项前置合同通过。
+
