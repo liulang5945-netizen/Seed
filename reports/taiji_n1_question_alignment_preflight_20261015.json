@@ -1,0 +1,40 @@
+{
+  "protocol": {
+    "schema": "n1-question-alignment-preflight-v1",
+    "parameter_updates": 0,
+    "cpu_limit_seconds": 60,
+    "curriculum_queries": 0
+  },
+  "code_identity": {
+    "runner": "d2e1dd7c38b8ef9089d78058fb1deafd1513dc4e10801bb1f9afa115fe83c098",
+    "model": "7615d3768eed94eaf68340eeda10ac4eaada47228e937fd61168c614e6e89878"
+  },
+  "checks": {
+    "position_finite": true,
+    "position_writer_credit": true,
+    "terminal_finite": true,
+    "terminal_writer_credit": true,
+    "cut_finite": true,
+    "cut_writer_credit": true,
+    "no_updates": true,
+    "parameter_count": true,
+    "independent_restore": true,
+    "checkpoint_unchanged": true,
+    "code_unchanged": true
+  },
+  "checkpoint": "E:\\Seed\\data\\checkpoints\\n1_question_alignment_preflight_20261015\\zero.pt",
+  "checkpoint_sha256": "7fc5a46b551513b07cf2cabb00ec1c6b610fcc59c0842b0c9259b5487730349a",
+  "optimizer_state_entries": 0,
+  "optimizer_scope": "fresh zero-update Adam; no populated moment continuation claimed",
+  "cpu_seconds": 10.796875,
+  "prior_failed_attempt_cpu_charge_seconds": 5.0,
+  "prior_attempt_note": "Path API returns str; failed before directory/model/query creation. Prior tool wall 2.86s with one-thread environment, conservatively charged 5s; not a measured CPU reading.",
+  "parameter_count": 44085,
+  "added_parameters": 3616,
+  "parameter_updates": 0,
+  "dev_queries": 0,
+  "holdout_queries": 0,
+  "curriculum_queries": 0,
+  "can_promote": false,
+  "complete": true
+}
