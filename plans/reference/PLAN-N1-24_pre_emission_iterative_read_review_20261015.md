@@ -38,3 +38,6 @@ position/terminal/cut都能执行相同两hop；terminal仍每来源末态、相
 
 
 2026-10-15：[25校准](EXP-N1-25_iterative_read_adjudication_20261015.md)完整，6144更新/960组，CPU90.953125秒，zero/final独立恢复与全部守卫过；train115/192、词值26/96，未过充分性门，未优于22的121/192。相关62测过，0 dev/holdout。按原失败出口自动执行[SPEC26](SPEC-N1-26_iterative_content_read_diagnostic_20261015.md)同材料替换诊断，不加训练/机制；全项目能力与CI债保留。
+
+
+2026-10-15：[26内容复审](EXP-N1-26_iterative_content_read_adjudication_20261015.md)完整，CPU3.03125秒，原exact26/96、正确换词0/96、干扰换词保留7/96，正确替换局部字节100%，0更新/dev/holdout，守卫全过。24两hop未显示绑定收益，保留25失败；唯一建议[27地址干预诊断](PLAN-N1-27_address_intervention_diagnostic_review_20261015.md)，已弹出选择，实际答复前不执行新干预。全项目C1过/C2零收益/C3未见保持/C4/三器官及其余N面与CI债未齐。

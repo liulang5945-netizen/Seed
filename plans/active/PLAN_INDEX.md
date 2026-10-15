@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **当前调度（2026-10-15）**：24弹窗批准后的25两次重读校准完整，115/192未过门；当前执行[SPEC26](../reference/SPEC-N1-26_iterative_content_read_diagnostic_20261015.md)同材料替换诊断。完整项目规划见[PLAN-N-01](../reference/PLAN-N-01_development_revision_20261014.md)，唯一执行入口以[03](roadmap/03_CURRENT_EXECUTION.md)为准。
+> **当前调度（2026-10-15）**：24已执行，25校准115/192未过门，26换词0/96但局部保真100%；唯一建议[27地址干预诊断](../reference/PLAN-N1-27_address_intervention_diagnostic_review_20261015.md)已弹出方案选择，待实际答复。完整规划见[PLAN-N-01](../reference/PLAN-N-01_development_revision_20261014.md)，执行入口以[03](roadmap/03_CURRENT_EXECUTION.md)为准。
 
 > **2026-10-14 导航校准**：本索引的编号约定继续保留；下方累积里程碑摘要含历史状态。当前队列只看 [03](roadmap/03_CURRENT_EXECUTION.md)，N 主线看 [09](roadmap/09_NEXT_MAINLINE_PLAN.md)，整个项目按 [项目地图](../../docs/README.md) 阅读。本轮收纳见 [整理记录](../reference/PROJECT_ORGANIZATION_20261014.md)。
 
@@ -837,3 +837,7 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 
 
 2026-10-15：[25校准](../reference/EXP-N1-25_iterative_read_adjudication_20261015.md)完整，6144更新/960组，CPU90.953125秒，zero/final独立恢复与全部守卫过；train115/192、词值26/96，未过充分性门，未优于22的121/192。相关62测过，0 dev/holdout。按原失败出口自动执行[SPEC26](../reference/SPEC-N1-26_iterative_content_read_diagnostic_20261015.md)同材料替换诊断，不加训练/机制；全项目能力与CI债保留。
+
+2026-10-15：[26内容复审](../reference/EXP-N1-26_iterative_content_read_adjudication_20261015.md)完整，CPU3.03125秒，原exact26/96、正确换词0/96、干扰换词保留7/96，正确替换局部字节100%，0更新/dev/holdout，守卫全过。24两hop未显示绑定收益，保留25失败；唯一建议[27地址干预诊断](../reference/PLAN-N1-27_address_intervention_diagnostic_review_20261015.md)，已弹出选择，实际答复前不执行新干预。全项目C1过/C2零收益/C3未见保持/C4/三器官及其余N面与CI债未齐。
+
+2026-10-15：用户已在选择弹窗批准27，队首转为其零训练地址干预实施/原生控制验证，不再等待决定；原576序列/60秒CPU/零留出合同保持。
