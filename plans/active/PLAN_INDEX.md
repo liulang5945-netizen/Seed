@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **当前调度（2026-10-15）**：28学习型相对地址已获弹窗批准，7项工程合同过；执行[SPEC29](../reference/SPEC-N1-29_relative_read_execution_contract_20261015.md)先预检恢复后固定6144更新，不查询留出。完整项目见[PLAN-N-01](../reference/PLAN-N-01_development_revision_20261014.md)，执行入口[03](roadmap/03_CURRENT_EXECUTION.md)。
+> **当前调度（2026-10-15）**：29相对地址train190/192过已见充分性门，75相关测试过；唯一建议[30三seed三臂及首次v3留出](../reference/PLAN-N1-30_relative_paired_review_20261015.md)已弹窗待决定，未查询留出。完整项目见[PLAN-N-01](../reference/PLAN-N-01_development_revision_20261014.md)，执行入口[03](roadmap/03_CURRENT_EXECUTION.md)。
 
 > **2026-10-14 导航校准**：本索引的编号约定继续保留；下方累积里程碑摘要含历史状态。当前队列只看 [03](roadmap/03_CURRENT_EXECUTION.md)，N 主线看 [09](roadmap/09_NEXT_MAINLINE_PLAN.md)，整个项目按 [项目地图](../../docs/README.md) 阅读。本轮收纳见 [整理记录](../reference/PROJECT_ORGANIZATION_20261014.md)。
 
@@ -847,3 +847,7 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 2026-10-15：[27地址诊断](../reference/EXP-N1-27_address_intervention_adjudication_20261015.md)完整，576条gold-prefix、CPU4.5秒、0更新/自由输出/dev/holdout，原生控制/全部守卫过。22单hop六字节exact原生29/来源11/位置43，25双hop26/16/79（含原生boundary仅48）；oracle不是能力，也不证明定位唯一根因。68相关测过。唯一建议[28学习型相对地址状态](../reference/PLAN-N1-28_learned_relative_address_review_20261015.md)，新增132参数及回答内地址分布，已弹窗请求，实际答复前不实施。全项目C1过/C2严格收益零/C3未见保持/C4/三器官及其余N与CI债未齐。
 
 2026-10-15：用户通过选择弹窗批准28，Taiji隔离相对地址候选/29运行器就绪，新增132参数总40469、旧层初始化同25；7工程测通过（4.56秒），源内质量/梯度、首步及零门、问题隔离、teacher/free轨迹、信用和Adam恢复过。唯一队首[SPEC29](../reference/SPEC-N1-29_relative_read_execution_contract_20261015.md)先60秒CPU零更新独立预检，通过自动6144更新/960组/300秒CPU train-only；0 dev/holdout，原门及全项目能力/CI债保留。
+
+2026-10-15：[29相对地址校准](../reference/EXP-N1-29_relative_read_adjudication_20261015.md)完整6144更新/960组，CPU108秒，zero/final恢复及全部守卫过，train190/192、四类48/47/48/47，充分性门通过；0 dev/holdout、75相关测过。只是已见单seed，不代表未见/保持/C4或三器官过。唯一建议[30三seed三臂小试](../reference/PLAN-N1-30_relative_paired_review_20261015.md)55,296更新/独立CPU1200秒，九模型与充分性/恢复冻结后首次v3 holdout，沿14原行为门；已弹窗请求测面准入，实际答复前不启动。全项目其余N/根CI及保持债不变。
+
+2026-10-15：用户在选择弹窗批准30，实施冻结三seed三臂运行器；获准55,296更新/独立1200秒CPU，仅前置齐备后首次v3留出，dev不查、原门不变。
