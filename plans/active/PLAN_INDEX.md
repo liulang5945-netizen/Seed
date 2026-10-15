@@ -792,3 +792,5 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 8. **web 表层 lane（08 §5 第 7 条）今日净进展：红文件 40 → 32**，全部可归因到两条 fork 补丁 **H3u**（路径分隔符锚定替换，POSIX 上是恒等式、金样一字未动）与 **H3v**（会话行从位置索引改成按 basename 选，覆盖 7 个文件；`markdown-images` 不属该族、已撤回）。最小面 4 个 keyless 文件在 HEAD 上第二次独立验证 **4 文件／11 用例全绿（27.11 s）**，可当门；门前提三条已写进 08 §5：**build 与跑门互斥**、**批内不含 spawn watcher 的 lane**（`hmr-live` 会改写共享 `apps/web/dist`）、**起止 mtime 存档且取证在下一次 build 之前**。
 
 2026-10-15 N1参考工程：[SPEC11](../reference/SPEC-N1-11_position_evidence_reference_contract_20261015.md)／[EXP11](../reference/EXP-N1-11_position_evidence_reference_adjudication_20261015.md)。CPU7秒，参考信用负对照与独立恢复通过；原生能力与正式采用未通过，下一步见03。
+
+2026-10-15 N1原生候选：[SPEC12接口](../reference/SPEC-N1-12_native_evidence_candidate_contract_20261015.md)／[SPEC13恢复](../reference/SPEC-N1-13_candidate_restore_audit_20261015.md)／[EXP13结果](../reference/EXP-N1-13_native_candidate_restore_adjudication_20261015.md)。候选接口与恢复工程已验证，CPU6.75秒；训练与能力未通过。

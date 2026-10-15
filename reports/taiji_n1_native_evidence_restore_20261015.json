@@ -1,0 +1,103 @@
+{
+  "schema": "n1-native-evidence-recovery-v1",
+  "capability_claim": false,
+  "cpu_limit_seconds": 60,
+  "zero_restore_equal": true,
+  "optimizer_resume_equal": true,
+  "cpu_seconds": 6.75,
+  "passed": true,
+  "fixture_steps_parent": 2,
+  "fixture_steps_worker": 1,
+  "independent_workers": 2,
+  "initial": {
+    "parameters": "5570d9de6f9491f0f651d44b97f78189fd1e73cb5c859452ba120792d06e01f9",
+    "rng": "7624e9d6c8b84eab8fa22a37f1d3060cbc6cf148713bde3a1d3455b434ce3720",
+    "sessions": {
+      "engineering": [
+        {
+          "version": 1,
+          "modality": "text",
+          "value": "agent uses copper",
+          "timestamp": 1,
+          "source": "source",
+          "provenance": "external",
+          "confidence": 1.0
+        },
+        {
+          "version": 1,
+          "modality": "text",
+          "value": "other uses zinc",
+          "timestamp": 2,
+          "source": "second",
+          "provenance": "external",
+          "confidence": 1.0
+        }
+      ],
+      "separate": [
+        {
+          "version": 1,
+          "modality": "text",
+          "value": "agent uses silver",
+          "timestamp": 1,
+          "source": "source",
+          "provenance": "external",
+          "confidence": 1.0
+        }
+      ]
+    },
+    "logits": {
+      "engineering": "ba22380134187daa3c13584c141a42efbbb5d099141c9beccf2a50ef5189150d",
+      "separate": "d014f9c132e49f599c494dfc4d1c6e2de1fc6fb6634258eb29306b68106cd4b4"
+    }
+  },
+  "updated": {
+    "parameters": "6eeba7ab198d056901d781f2a344e6f07019dd05fb48b820111d05d73066dc31",
+    "rng": "7624e9d6c8b84eab8fa22a37f1d3060cbc6cf148713bde3a1d3455b434ce3720",
+    "sessions": {
+      "engineering": [
+        {
+          "version": 1,
+          "modality": "text",
+          "value": "agent uses copper",
+          "timestamp": 1,
+          "source": "source",
+          "provenance": "external",
+          "confidence": 1.0
+        },
+        {
+          "version": 1,
+          "modality": "text",
+          "value": "other uses zinc",
+          "timestamp": 2,
+          "source": "second",
+          "provenance": "external",
+          "confidence": 1.0
+        }
+      ],
+      "separate": [
+        {
+          "version": 1,
+          "modality": "text",
+          "value": "agent uses silver",
+          "timestamp": 1,
+          "source": "source",
+          "provenance": "external",
+          "confidence": 1.0
+        }
+      ]
+    },
+    "logits": {
+      "engineering": "2097535828d0ac53c0e32004b62e2e0c99a8fa15331fa675f6edba6704a7158d",
+      "separate": "50f3736baa1c4f8d1228bf20f3f263fbc2c5e8edb094e1653422c85ba0a7fc3f"
+    }
+  },
+  "checkpoint_sha256": {
+    "zero.pt": "c838240b7493e4cd2ab673672c037f7d3ce7d8ccc2c25422912201999943915c",
+    "one_step.pt": "0d1c193468a145790f086d3a193404227602d12fbcbab1c95ce6028462a881a7"
+  },
+  "code_sha256": {
+    "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+    "taiji\\position_evidence_reference.py": "943bf9d5ea39789e4043d105f1f9b31ac9a09c060b4168fbf551a862e63c6df3",
+    "scripts\\training\\audit_taiji_n1_native_evidence_restore.py": "5a025a6c941c29d55d7c59962465bc93021d37d0b4f780358f71ab036f073bee"
+  }
+}
