@@ -65,6 +65,7 @@ def test_relation_credit_cut_terminal_sources_and_reuse():
     logits.square().mean().backward()
     assert model.relation_sequence.weight_ih_l0.grad.abs().sum() > 0
     assert model.local_projection.weight.grad.abs().sum() > 0
+    assert model.question.weight_ih.grad.abs().sum() > 0
     blocks = model.relation_inputs(model.evidence("relation60", terminal_per_source=True), q)
     assert len(blocks) == 2
     assert all(torch.equal(b, b[:1].expand_as(b)) for b in blocks)
@@ -112,3 +113,17 @@ def test_nonzero_engineering_probe_preserves_full_rng_and_bundle():
     audit.credit_probe(model, optimizer, checks)
     assert all(checks.values())
     assert before == audit.paired.fingerprint(model.bundle(optimizer))
+
+
+def test_utf8_variable_length_relation_positions():
+    model = LocalRelationEvidenceCandidate()
+    model.observe("unicode60", Observation("text", "β uses quartz.", 1, "one"))
+    model.observe("unicode60", Observation("text", "longername uses copper.", 2, "two"))
+    tape = model.evidence("unicode60")
+    q = "material of β?".encode()
+    inputs = model.relation_inputs(tape, q)
+    assert [len(block) for block in inputs] == [len(s.content) for s in tape.sources]
+    logits, addresses = model.teacher_logits(tape, "unicode60", q, b"quartz")
+    assert logits.shape == (7, 257)
+    assert addresses.shape[-1] == sum(len(s.content) for s in tape.sources)
+    assert torch.isfinite(logits).all()
