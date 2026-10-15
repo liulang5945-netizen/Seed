@@ -19,3 +19,7 @@
 `scripts/training/audit_taiji_n1_fresh_full_history.py`、`tests/taiji_native/test_native_fresh_full_history_contract.py`、`reports/taiji_n1_fresh_full_history_preflight_20261016.json`，九零档在`data/checkpoints/n1_fresh_full_history_preflight_20261016/`。先合同和静态CI，再提交并工程执行。
 
 通过后唯一后继为另冻单seed固定剂量的train-only充分性校准；从fresh零档正常训练，不追加70/不查询已消费v4或v3留出。剂量/CPU和新确认面在校准协议中另冻，不将工程成功称能力、C4或项目出口成功。正式跨seed/控制配对和任何全新未见面仍需先冻，原71失败不回改。
+
+## 实施前验证
+
+五项artifact-free合同通过：三seed全fresh/同seed三臂逐位配对、三臂两步信用与空parent、position真实独立恢复、严格marker/phase/换seed拒绝，以及剥离moments后训练权重不能伪装fresh。默认Ruff与CI B/SIM忽略B008通过；新执行器不读取任何母档checkpoint，identity仅引用既有报告/源码。提交后执行九档工程。
