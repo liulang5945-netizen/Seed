@@ -19,12 +19,11 @@ def test_only_four_parameters_change_and_exception_restores_full_parent():
     original = audit.writer_state(state)
     donor = {n: v + 0.01 for n, v in original.items()}
     moments = audit.paired.fingerprint(optimizer.state_dict())
-    with pytest.raises(RuntimeError, match="synthetic"):
-        with audit.exchange(model, optimizer, donor):
-            for n, p in model.named_parameters():
-                assert audit.torch.equal(p, donor[n] if n in donor else state[n])
-            assert audit.paired.fingerprint(optimizer.state_dict()) == moments
-            raise RuntimeError("synthetic interrupted diagnostic")
+    with pytest.raises(RuntimeError, match="synthetic"), audit.exchange(model, optimizer, donor):
+        for n, p in model.named_parameters():
+            assert audit.torch.equal(p, donor[n] if n in donor else state[n])
+        assert audit.paired.fingerprint(optimizer.state_dict()) == moments
+        raise RuntimeError("synthetic interrupted diagnostic")
     assert audit.paired.fingerprint(model.bundle(optimizer)) == before
     assert audit.drift(original, donor)["l2"] > 0
     for bad in (
@@ -32,9 +31,8 @@ def test_only_four_parameters_change_and_exception_restores_full_parent():
         dict(donor, extra=audit.torch.zeros(1)),
         {n: v.double() for n, v in donor.items()},
     ):
-        with pytest.raises(ValueError, match="exact writer"):
-            with audit.exchange(model, optimizer, bad):
-                raise AssertionError("invalid donor entered intervention")
+        with pytest.raises(ValueError, match="exact writer"), audit.exchange(model, optimizer, bad):
+            raise AssertionError("invalid donor entered intervention")
     assert audit.paired.fingerprint(model.bundle(optimizer)) == before
 
 
