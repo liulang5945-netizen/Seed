@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **当前调度（2026-10-15）**：35工程完整；执行已批准[36固定校准](../reference/PLAN-N1-36_question_alignment_calibration_review_20261015.md)，9216更新/300秒CPU，零dev/holdout。
+> **当前调度（2026-10-15）**：36完整但训练154/192未过门；唯一建议[37残差问题对齐](../reference/PLAN-N1-37_residual_question_alignment_review_20261015.md)待决定，不追加训练。
 
 > **2026-10-14 导航校准**：本索引的编号约定继续保留；下方累积里程碑摘要含历史状态。当前队列只看 [03](roadmap/03_CURRENT_EXECUTION.md)，N 主线看 [09](roadmap/09_NEXT_MAINLINE_PLAN.md)，整个项目按 [项目地图](../../docs/README.md) 阅读。本轮收纳见 [整理记录](../reference/PROJECT_ORGANIZATION_20261014.md)。
 
@@ -865,3 +865,5 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 2026-10-15：35问题逐字节对齐工程完整，新增3616/总44085参数，34相关测过；零更新独立恢复及信用/来源守卫过，实测成功CPU5.796875秒＋首次路径类型失败保守5秒=预算10.796875<60。0课程/dev/holdout查询。唯一建议36 seed11固定9216更新、≤300秒CPU训练集校准，配方另批，当前未训练；33失败及全项目保持/C4/联合/其他N与根CI债不变。 详见[35裁决](../reference/EXP-N1-35_question_alignment_engineering_20261015.md)及[36方案](../reference/PLAN-N1-36_question_alignment_calibration_review_20261015.md)。
 
 2026-10-15：用户弹窗批准36固定训练集校准。新问题对齐候选seed11固定9216更新，300秒CPU含zero/final独立恢复，3072/6144/9216各192原train评估，原充分性门不变，零dev/holdout/34变体查询；运行器先合同验证冻结再执行，不循环补训。
+
+2026-10-15：36固定9216更新完整，CPU129.890625秒、576组train、zero/final独立恢复及非空Adam全参数moment通过；终点154/192，四类28/30/48/48，原训练门未过，0 dev/holdout/34变体。停止追加。唯一建议37保留原表示的零初始化残差问题对齐，先结构/零训练工程验证待弹窗；全项目未见/保持/C4/联合与其他N/根CI债保留。 详见[36裁决](../reference/EXP-N1-36_question_alignment_calibration_20261015.md)。
