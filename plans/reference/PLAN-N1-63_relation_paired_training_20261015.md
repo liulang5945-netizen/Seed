@@ -29,3 +29,7 @@
 ### cut优化器计账澄清（正式更新前）
 
 cut干预使writer四参数无梯度，Adam对应step和moment应保持母档18432，不能伪造为24576。其reader组因此为[18432,24576]，其他旧参数及新关系组仍按原规定推进；position/terminal全部reader24576。按参数名逐项验证，并核对cut writer参数与moment不变。此为冻结信用干预的机械结果，6144更新/四门/确认准入不变。
+
+## 完整终止裁决
+
+九模型55296更新、18独立恢复完整，CPU1798.5秒，来源/源码/计账守卫通过。seed13 position原题174/192（transition37/48）、改名156/192（transition27/48、unknown34/48）未过原门；因此64确认不准入、v4零查询，不补训或选择中点。详见[63裁决](EXP-N1-63_relation_paired_training_adjudication_20261015.md)。唯一下一步65原日志离线退化诊断，0模型查询。
