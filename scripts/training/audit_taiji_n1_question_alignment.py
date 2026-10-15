@@ -66,7 +66,9 @@ def restore(path):
 
 
 def audit():
-    directory = get_external_path("data/checkpoints") / "n1_question_alignment_preflight_20261015"
+    directory = (
+        Path(get_external_path("data/checkpoints")) / "n1_question_alignment_preflight_20261015"
+    )
     if REPORT.exists() or directory.exists():
         raise FileExistsError("exclusive preflight already exists")
     frozen = identity()
@@ -124,7 +126,7 @@ def audit():
     checks["independent_restore"] = restored["signature"] == expected
     checks["checkpoint_unchanged"] = paired.sha(path) == checkpoint_sha
     checks["code_unchanged"] = identity() == frozen
-    cpu = time.process_time() + restored["cpu_seconds"]
+    cpu = time.process_time() + restored["cpu_seconds"] + 5.0
     report = {
         "protocol": PROTOCOL,
         "code_identity": frozen,
@@ -134,6 +136,8 @@ def audit():
         "optimizer_state_entries": len(optimizer.state),
         "optimizer_scope": "fresh zero-update Adam; no populated moment continuation claimed",
         "cpu_seconds": cpu,
+        "prior_failed_attempt_cpu_charge_seconds": 5.0,
+        "prior_attempt_note": "Path API returns str; failed before directory/model/query creation. Prior tool wall 2.86s with one-thread environment, conservatively charged 5s; not a measured CPU reading.",
         "parameter_count": 44085,
         "added_parameters": 3616,
         "parameter_updates": 0,
