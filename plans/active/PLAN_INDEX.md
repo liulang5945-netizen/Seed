@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **当前调度（2026-10-15）**：32已弹窗批准，执行[SPEC33](../reference/SPEC-N1-33_fixed_continuation_execution_contract_20261015.md)九模型等量固定续接；先恢复/信用预检，总CPU≤600秒含预检，原门/首次留出前置不变。完整项目见[PLAN-N-01](../reference/PLAN-N-01_development_revision_20261014.md)，执行入口[03](roadmap/03_CURRENT_EXECUTION.md)。
+> **当前调度（2026-10-15）**：33已完整但原门未过；执行已批准[34诊断](../reference/PLAN-N1-34_entity_binding_diagnostic_review_20261015.md)，仅train、零更新。v3留出已消费。
 
 > **2026-10-14 导航校准**：本索引的编号约定继续保留；下方累积里程碑摘要含历史状态。当前队列只看 [03](roadmap/03_CURRENT_EXECUTION.md)，N 主线看 [09](roadmap/09_NEXT_MAINLINE_PLAN.md)，整个项目按 [项目地图](../../docs/README.md) 阅读。本轮收纳见 [整理记录](../reference/PROJECT_ORGANIZATION_20261014.md)。
 
@@ -857,3 +857,5 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 2026-10-15：[31裁决](../reference/EXP-N1-31_relative_paired_adjudication_20261015.md)九模型55,296更新、1728组train、18独立恢复完整，CPU939.796875秒，全部工程/源档守卫过；position190/180/180，但seed12/13 transition38/39<40，status=training-insufficient，can_advance=false。holdout/dev均未查询，报告留出0不是0/32成绩。31按原合同封存失败，不在其内补训。唯一建议[32另版九模型统一续接3072](../reference/PLAN-N1-32_fixed_paired_continuation_review_20261015.md)，额外27,648更新/独立600秒CPU，原门不变，已弹窗待决定。78相关测试过；C1工程过/C2原零收益/C3跨seed充分与未见保持/C4/三器官和其他N/根CI债仍在。
 
 2026-10-15：32已弹窗批准，[SPEC33](../reference/SPEC-N1-33_fixed_continuation_execution_contract_20261015.md)运行器完成，5相关工程测过（4.77秒）；31源报告/九final档/全Adam/RNG/来源和签名逐一恢复，新报告/档隔离。唯一队首先60秒CPU零更新工程预检并计入总600秒，过后九模型等量追加3072/额外27,648更新；原充分性/首次留出/行为门不变，不循环追加。全项目能力及根CI债仍在。
+
+2026-10-15：33完整，额外27,648更新、18次恢复，CPU493.234375秒含预检；train position191/192/191，首次v3留出18/15/16，平均领先terminal10.6667、cut10，但逐seed及类别门未过，can_advance=false。v3留出已消费，禁止循环补训或当新确认面复用。34实体绑定零训练诊断已获用户弹窗批准：三个冻结position、仅train lookup/unknown三条件864组、CPU≤60秒、0更新/dev/holdout。全项目C1工程过，C2原严格收益零，候选未见门/保持/C4/三器官及其他N与根CI债仍在。 详见[33裁决](../reference/EXP-N1-33_fixed_continuation_adjudication_20261015.md)及[34方案](../reference/PLAN-N1-34_entity_binding_diagnostic_review_20261015.md)。
