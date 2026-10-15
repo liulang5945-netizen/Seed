@@ -20,8 +20,8 @@ from seed_platform.paths import get_external_path  # noqa: E402
 from taiji.native_evidence_candidate import Observation  # noqa: E402
 
 paired = source.paired
-REPORT = ROOT / "reports/taiji_n1_local_relation_preflight_20261015.json"
-SESSIONS = ("relation60-reference", "relation60-learner")
+REPORT = ROOT / "reports/taiji_n1_local_relation_preflight_v2_20261015.json"
+SESSIONS = ("relation60-v2-reference", "relation60-v2-learner")
 QUESTIONS = (b"material of alpha?", b"material of delta?")
 
 
@@ -46,7 +46,7 @@ def signature(model, optimizer):
 
 def restore(path):
     payload = torch.load(path, map_location="cpu", weights_only=True)
-    if payload["protocol"] != "local-relation60-engineering-v1":
+    if payload["protocol"] != "local-relation60-engineering-v2":
         raise ValueError("wrong engineering checkpoint")
     model = transfer.LocalRelationEvidenceCandidate.restore_bundle(payload["candidate"])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -68,6 +68,29 @@ def identity():
             )
         },
     )
+
+
+def credit_probe(model, optimizer, checks):
+    with torch.random.fork_rng():
+        probe = transfer.LocalRelationEvidenceCandidate.restore_bundle(model.bundle(optimizer))
+        with torch.no_grad():
+            probe.relation_projection.weight.normal_(0, 0.03)
+        for cut in (False, True):
+            probe.zero_grad(set_to_none=True)
+            logits, _ = probe.teacher_logits(
+                probe.evidence(SESSIONS[0], cut_credit=cut), SESSIONS[0], QUESTIONS[0], b"quartz"
+            )
+            logits.square().mean().backward()
+            checks[f"relation_gru_{cut}"] = bool(
+                probe.relation_sequence.weight_ih_l0.grad.abs().sum() > 0
+            )
+            checks[f"local_credit_{cut}"] = bool(probe.local_projection.weight.grad.abs().sum() > 0)
+            writer = sum(
+                float(p.grad.abs().sum())
+                for n, p in probe.named_parameters()
+                if n.startswith("writer.") and p.grad is not None
+            )
+            checks[f"writer_{cut}"] = writer == 0 if cut else writer > 0
 
 
 def audit():
@@ -133,34 +156,16 @@ def audit():
         checks["zero_gru_expected"] = bool(
             model.relation_sequence.weight_ih_l0.grad.abs().sum() == 0
         )
-        probe = transfer.LocalRelationEvidenceCandidate.restore_bundle(model.bundle(optimizer))
-        with torch.no_grad():
-            probe.relation_projection.weight.normal_(0, 0.03)
-        for cut in (False, True):
-            probe.zero_grad(set_to_none=True)
-            logits, _ = probe.teacher_logits(
-                probe.evidence(SESSIONS[0], cut_credit=cut), SESSIONS[0], QUESTIONS[0], b"quartz"
-            )
-            logits.square().mean().backward()
-            checks[f"relation_gru_{cut}"] = bool(
-                probe.relation_sequence.weight_ih_l0.grad.abs().sum() > 0
-            )
-            checks[f"local_credit_{cut}"] = bool(probe.local_projection.weight.grad.abs().sum() > 0)
-            writer = sum(
-                float(p.grad.abs().sum())
-                for n, p in probe.named_parameters()
-                if n.startswith("writer.") and p.grad is not None
-            )
-            checks[f"writer_{cut}"] = writer == 0 if cut else writer > 0
+        credit_probe(model, optimizer, checks)
         checks["neutral"] = signature(model, optimizer) == before
         folder = (
-            Path(get_external_path("data/checkpoints")) / "n1_local_relation_preflight_20261015"
+            Path(get_external_path("data/checkpoints")) / "n1_local_relation_preflight_v2_20261015"
         )
         folder.mkdir(exist_ok=False)
         checkpoint = folder / "zero.pt"
         with checkpoint.open("xb") as f:
             torch.save(
-                dict(protocol="local-relation60-engineering-v1", candidate=model.bundle(optimizer)),
+                dict(protocol="local-relation60-engineering-v2", candidate=model.bundle(optimizer)),
                 f,
             )
         child = subprocess.run(
@@ -183,7 +188,8 @@ def audit():
     except Exception as error:
         result.update(status="rejected", error=f"{type(error).__name__}: {error}")
     finally:
-        result["cpu_seconds"] = time.process_time() + child_cpu
+        result["prior_cpu_seconds"] = 16.609375
+        result["cpu_seconds"] = time.process_time() + child_cpu + result["prior_cpu_seconds"]
         result["sources_unchanged"] = all(
             paired.sha(Path(p)) == h for p, h in result["source_guards"].items()
         )
@@ -205,7 +211,9 @@ if __name__ == "__main__":
         print(json.dumps(restore(args.restore)))
     elif args.execute_approved:
         output = audit()
-        print(json.dumps(output))
+        print(
+            json.dumps({k: output.get(k) for k in ("complete", "cpu_seconds", "checks", "error")})
+        )
         raise SystemExit(0 if output["complete"] else 1)
     else:
         print(json.dumps(dict(read_only=True, cpu_limit_seconds=60)))

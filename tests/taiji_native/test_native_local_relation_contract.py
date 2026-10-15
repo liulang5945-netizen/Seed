@@ -99,3 +99,16 @@ def test_relation_credit_cut_terminal_sources_and_reuse():
             else all(t.grad is not None and t.grad.abs().sum() > 0 for t in captured)
         )
     hook.remove()
+
+
+def test_nonzero_engineering_probe_preserves_full_rng_and_bundle():
+    from scripts.training import audit_taiji_n1_local_relation as audit
+
+    model = LocalRelationEvidenceCandidate()
+    audit.prepare(model)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    before = audit.paired.fingerprint(model.bundle(optimizer))
+    checks = {}
+    audit.credit_probe(model, optimizer, checks)
+    assert all(checks.values())
+    assert before == audit.paired.fingerprint(model.bundle(optimizer))

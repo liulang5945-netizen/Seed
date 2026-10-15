@@ -17,3 +17,7 @@ source之间严格重置GRU，不跨观察串联；terminal臂先逐source将观
 实现显式52→60参数与Adam按名映射，新参数无Adam状态；完整新模型/旧Adam/RNG/history独立保存恢复。单测可验证合成机械更新，不作为能力。源模型/报告/manifest/代码前后守卫，临时session唯一并仅清理自身内存，不覆盖或删除历史失败。
 
 工程通过后再冻结61正式训练配方；拟沿52原QA+0.25观察保真，不叠加55/58目标。正常训练/推理无oracle。正式多seed与新未见面仍另冻；已消费v3 holdout不再用，保持/C4/同bundle三器官及CI债未完成。不替换默认、不推送。
+
+## v2仪器修订（首次失败后冻结）
+
+v1 CPU9.40625秒，参数/Adam/session相同但随机信用探针污染全局RNG，neutral/restore/full-bundle守卫正确拒绝；原件保留。只读定位CPU7.203125秒确认仅rng不同。v2用fork_rng隔离非零探针，新增完整bundle/RNG回归合同；独立新报告/目录/session，累计CPU计入16.609375秒前耗并仍≤60秒。结构、数据、目标和训练准入不变，v1不改为通过。
