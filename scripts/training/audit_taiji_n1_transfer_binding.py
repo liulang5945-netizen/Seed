@@ -20,7 +20,7 @@ from taiji.native_residual_question_evidence_candidate import (
 
 SOURCE_SHA = "fe50c400f12d2258979238ee00105ff09e6131d7548640b3de273f34ba50f9d5"
 MANIFEST = ROOT / "plans/manifests/n1_entity_binding_diagnostic_20261015.json"
-REPORT = ROOT / "reports/taiji_n1_transfer_binding_diagnostic_20261015.json"
+REPORT = ROOT / "reports/taiji_n1_transfer_binding_diagnostic_v2_20261015.json"
 CONDITIONS = ("original", "rename", "query_switch")
 
 
@@ -42,6 +42,14 @@ def validate_inputs(inputs, train, pairs):
         if any(switched[k] != expected[k] for k in ("question", "answer", "observations")):
             raise ValueError("switch must reproduce the trained pair")
     return inputs
+
+
+def checked_payload(payload):
+    if payload["protocol"] != source.PROTOCOL or payload["completed_updates"] != 6144:
+        raise ValueError("fixed single-model transferred checkpoint protocol required")
+    if payload["protocol"]["seed"] != 11 or payload["protocol"]["arm"] != "position":
+        raise ValueError("fixed seed11 position required")
+    return payload
 
 
 def identity():
@@ -91,6 +99,13 @@ def audit():
     train = source.checked_train()
     validate_inputs(inputs, train, source.checked_pairs(train))
     manifest_sha = paired.sha(MANIFEST)
+    prior_path = ROOT / "reports/taiji_n1_transfer_binding_diagnostic_20261015.json"
+    prior_sha = "752cef26dae183bd9f0a3bf4046f3fd118b96b8a26c6e3993240c6955957f848"
+    if paired.sha(prior_path) != prior_sha:
+        raise ValueError("prior zero-query rejection changed")
+    prior = json.loads(prior_path.read_text(encoding="utf-8"))
+    if prior["complete"] or prior["teacher_queries"] or prior["free_queries"] or prior["rows"]:
+        raise ValueError("only pre-query schema rejection can be corrected in v2")
     frozen_code = identity()
     result = dict(
         schema="n1-transfer-binding-diagnostic-v1",
@@ -114,13 +129,7 @@ def audit():
             if paired.sha(path) != entry["sha256"]:
                 raise ValueError("frozen checkpoint changed")
             payload = torch.load(path, map_location="cpu", weights_only=True)
-            if (
-                payload["protocol"] != source.PROTOCOL
-                or payload["completed_updates"] != 6144
-                or payload["arm"] != "position"
-                or payload["seed"] != entry["seed"]
-            ):
-                raise ValueError("checkpoint protocol mismatch")
+            checked_payload(payload)
             model = ResidualQuestionEvidenceCandidate.restore_bundle(payload["candidate"])
             before = paired.fingerprint(model.bundle())
             original = {
@@ -136,7 +145,7 @@ def audit():
             for item in inputs:
                 predictions = {}
                 for condition in CONDITIONS:
-                    if time.process_time() >= 58:
+                    if time.process_time() + prior["cpu_seconds"] >= 58:
                         raise paired.BudgetStop("diagnostic reserve reached")
                     session = f"binding-{entry['seed']}-{item['id']}-{condition}"
                     variant = item["variants"][condition]
@@ -185,7 +194,9 @@ def audit():
     except Exception as error:
         result.update(status="failed", error=f"{type(error).__name__}: {error}")
     result.update(
-        cpu_seconds=time.process_time(),
+        cpu_seconds=time.process_time() + prior["cpu_seconds"],
+        prior_rejection_sha256=prior_sha,
+        prior_rejection_cpu_seconds=prior["cpu_seconds"],
         parameters_and_sources_unchanged=len(guards) == 1 and all(guards),
         inputs_unchanged=paired.sha(source.REPORT) == SOURCE_SHA
         and paired.sha(calibration.MANIFEST) == calibration.MANIFEST_SHA
