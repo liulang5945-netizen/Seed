@@ -172,18 +172,25 @@ def audit():
                         raise paired.BudgetStop("fusion diagnostic reserve reached")
                     captured, attentions = {}, []
 
-                    def conditioned(self, tape, states, mode=condition):
-                        conditioned_tape, alignment = native_condition(tape, states)
-                        captured.update(tape=tape, alignment=alignment)
+                    def conditioned(
+                        self,
+                        tape,
+                        states,
+                        mode=condition,
+                        function=native_condition,
+                        capture=captured,
+                    ):
+                        conditioned_tape, alignment = function(tape, states)
+                        capture.update(tape=tape, alignment=alignment)
                         return (
                             bypass(tape, alignment)
                             if mode == "bypass"
                             else (conditioned_tape, alignment)
                         )
 
-                    def stepped(self, *args):
-                        output = native_step(*args)
-                        attentions.append(output[2])
+                    def stepped(self, *args, function=native_step, collected=attentions):
+                        output = function(*args)
+                        collected.append(output[2])
                         return output
 
                     model.condition = MethodType(conditioned, model)
