@@ -1,0 +1,5595 @@
+{
+  "schema": "n1-fidelity-content-read-v1",
+  "source_sha256": "4fc604cb35065436fd77871765fd080bb4c1252da2d7d5194c651f87313401c5",
+  "checkpoint_sha256": "ffa6cbbe2da6072bfce09faed0b086d752b260dc971bd9156c015fe2189b1199",
+  "old_intervention_report_sha256": "98d55cae330e80eadfb929f7257b6dd287de6eb87b6e5bc7badfcd30cc2e3e72",
+  "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+  "code_identity": {
+    "fidelity": {
+      "protocol": {
+        "schema": "n1-observation-fidelity-train-v1",
+        "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+        "seed": 11,
+        "arm": "position",
+        "initialization": "fresh",
+        "updates": 6144,
+        "milestones": [
+          0,
+          768,
+          1536,
+          3072,
+          6144
+        ],
+        "optimizer": "Adam",
+        "learning_rate": 0.001,
+        "dimensions": {
+          "embedding": 16,
+          "hidden": 32,
+          "key": 16
+        },
+        "max_length": 64,
+        "cpu_limit_seconds": 300,
+        "dev_queries": 0,
+        "holdout_queries": 0,
+        "train_gate": {
+          "exact": 173,
+          "each_kind": 40
+        },
+        "loss_contract": "taiji-observation-byte-fidelity-v1",
+        "observation_weight": 0.25,
+        "baseline_sha256": "ab7cfe7c007c4fc2f9f6a13903bc31abb7714ba02f711949fb41a0e5d443eb20"
+      },
+      "code_sha256": {
+        "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+        "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+        "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+        "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+        "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+        "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+        "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+        "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+        "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+        "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+        "scripts\\training\\run_taiji_n1_observation_fidelity.py": "ec47cb22a978fcf1f42d1977125132c46a9b022b1bfcd52b32b49c6a7b1ca73f"
+      },
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "torch": "2.13.0+cpu"
+    },
+    "original_diagnostic_sha256": "b2af502770e51ddcbadda4442a472fe842ee632c63b2aeccd3afb45d8af16983",
+    "audit_sha256": "1bfa0d92c2383bc62d2a173bedf3eb3b69f62658780a26050861ff42b88cd813"
+  },
+  "parameter_updates": 0,
+  "dev_queries": 0,
+  "holdout_queries": 0,
+  "free_queries": 288,
+  "teacher_queries": 96,
+  "reconstruction_queries": 288,
+  "can_promote": false,
+  "rows": [
+    {
+      "id": "train-000",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6e706e767068",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "xrtxgq",
+        "distractor": "xwoekz"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.12273001670837402,
+        "target_source_mass": 0.6568431258201599,
+        "target_span_mass": 0.5186240673065186,
+        "matching_byte_address_mass": 0.2633240222930908,
+        "peak_in_target_span_fraction": 0.8333333134651184,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "636e6369676e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.4839460253715515,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "6e706e767068",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "distractor_first_tv": 0.2898811995983124,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-001",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "726a696b7178",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "ciylfi",
+        "distractor": "xilqum"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.9815636277198792,
+        "target_source_mass": 0.6098988056182861,
+        "target_span_mass": 0.21960489451885223,
+        "matching_byte_address_mass": 0.17760491371154785,
+        "peak_in_target_span_fraction": 0.1666666716337204,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "63697a6b7178",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.969585657119751,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "726a69767169",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.24060460925102234,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-004",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "686270756e70",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "coaces",
+        "distractor": "hredas"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.1511843055486679,
+        "target_source_mass": 0.7709238529205322,
+        "target_span_mass": 0.6091461181640625,
+        "matching_byte_address_mass": 0.30081281065940857,
+        "peak_in_target_span_fraction": 0.8333333134651184,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.548508882522583,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "686270756e70",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "distractor_first_tv": 0.037047408521175385,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-005",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6662626a6571",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "wfgaqh",
+        "distractor": "dqpldq"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.780001699924469,
+        "target_source_mass": 0.4794037342071533,
+        "target_span_mass": 0.2556965947151184,
+        "matching_byte_address_mass": 0.1609845906496048,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "7164626c6d61",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.6887491941452026,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "64626c6c6561",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.8634518980979919,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-008",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "797065787261",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "oleywr",
+        "distractor": "zpidpn"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.41621682047843933,
+        "target_source_mass": 0.6175776124000549,
+        "target_span_mass": 0.47821974754333496,
+        "matching_byte_address_mass": 0.27807581424713135,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "65657374",
+        "stop_reason": "boundary",
+        "generated_steps": 5,
+        "exact": false
+      },
+      "target_first_tv": 0.8887265920639038,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "7970707a6e72",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.03459581360220909,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-009",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "706978787269",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "lzvcwa",
+        "distractor": "qisynt"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.6851530075073242,
+        "target_source_mass": 0.5919030904769897,
+        "target_span_mass": 0.27682527899742126,
+        "matching_byte_address_mass": 0.17581738531589508,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "6f7a7a69696a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.7442476749420166,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "70697a7374",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.26217222213745117,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-012",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "7a75736f75",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "replacements": {
+        "target": "brdlib",
+        "distractor": "tcgcrh"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.0526599884033203,
+        "target_source_mass": 0.5998359322547913,
+        "target_span_mass": 0.35348057746887207,
+        "matching_byte_address_mass": 0.19285784661769867,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "6275676f696f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.9700947403907776,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "736f757468",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.7899906039237976,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-013",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "717a64777468",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "bafnaa",
+        "distractor": "rndidh"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.4304277002811432,
+        "target_source_mass": 0.7032777667045593,
+        "target_span_mass": 0.37906527519226074,
+        "matching_byte_address_mass": 0.19751660525798798,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "7162666168",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.2164393961429596,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "717a64777468",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.08607013523578644,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-016",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "767a7a776262",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "kfffho",
+        "distractor": "xqlaeq"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.48626232147216797,
+        "target_source_mass": 0.6304747462272644,
+        "target_span_mass": 0.32295599579811096,
+        "matching_byte_address_mass": 0.15279866755008698,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "666f7a7569",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.98701012134552,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "767a7a6c6b",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.09824549406766891,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-017",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "79776d6d6961",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "kwxhjh",
+        "distractor": "rchwjz"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.7490360140800476,
+        "target_source_mass": 0.6440741419792175,
+        "target_span_mass": 0.43608522415161133,
+        "matching_byte_address_mass": 0.23048841953277588,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "77657374",
+        "stop_reason": "boundary",
+        "generated_steps": 5,
+        "exact": false
+      },
+      "target_first_tv": 0.8611271381378174,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "79766d72696461",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.09467559307813644,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-020",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "627a756969",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "replacements": {
+        "target": "kvmcpf",
+        "distractor": "xsnxoz"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.5819907784461975,
+        "target_source_mass": 0.5193373560905457,
+        "target_span_mass": 0.2826566994190216,
+        "matching_byte_address_mass": 0.14301863312721252,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "6b677a676761",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.8141103386878967,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "637878756369",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.7648304104804993,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-021",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "666f69736e6b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "sehvcz",
+        "distractor": "btqkpp"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.3810974657535553,
+        "target_source_mass": 0.6608700156211853,
+        "target_span_mass": 0.2933100759983063,
+        "matching_byte_address_mass": 0.21270854771137238,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "736f7a7a7766",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.871328592300415,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "666f7066716b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.4750543236732483,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-024",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "656e786d6e61",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "jhbrwj",
+        "distractor": "wkguyc"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.28595349192619324,
+        "target_source_mass": 0.5430541038513184,
+        "target_span_mass": 0.3925195634365082,
+        "matching_byte_address_mass": 0.2554340064525604,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.9593226313591003,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "656e6b6d6d6f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.03438330814242363,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-025",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "61767765716b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "wiuhzi",
+        "distractor": "fbdcva"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.1197963953018188,
+        "target_source_mass": 0.48924747109413147,
+        "target_span_mass": 0.07694347947835922,
+        "matching_byte_address_mass": 0.0219037476927042,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "776973747862",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.39843717217445374,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "6662796a6378",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.7152116298675537,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-028",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "726a6e6d6b61",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "dgduar",
+        "distractor": "jdfngk"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.3373364806175232,
+        "target_source_mass": 0.6348156332969666,
+        "target_span_mass": 0.24840687215328217,
+        "matching_byte_address_mass": 0.1890740543603897,
+        "peak_in_target_span_fraction": 0.1666666716337204,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "646e7374676a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.9966175556182861,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "726a6962716e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.10517111420631409,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-029",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "7a696979776a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "knshps",
+        "distractor": "htcmjd"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.7147496938705444,
+        "target_source_mass": 0.5458136200904846,
+        "target_span_mass": 0.2817328870296478,
+        "matching_byte_address_mass": 0.10444606095552444,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "7a7a6a627564",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.006503932643681765,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "68696979776a75",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.9644266366958618,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-032",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "62736f666f6c",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "rwmjxz",
+        "distractor": "qoqsro"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.44396495819091797,
+        "target_source_mass": 0.5484380125999451,
+        "target_span_mass": 0.28659799695014954,
+        "matching_byte_address_mass": 0.16428768634796143,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "73797676727068",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.7666814923286438,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "62736f666f6c",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "distractor_first_tv": 0.1574937254190445,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-033",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "72696a6a716b61",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "replacements": {
+        "target": "ttqnjf",
+        "distractor": "nhmexd"
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.8789300322532654,
+        "target_source_mass": 0.731163501739502,
+        "target_span_mass": 0.2801419496536255,
+        "matching_byte_address_mass": 0.17076373100280762,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "6e6f727468",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.9627141952514648,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "72726a6a71636a",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.03500601649284363,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-036",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "747470746a62",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "woxweh",
+        "distractor": "zrcgch"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.3958134651184082,
+        "target_source_mass": 0.6987981796264648,
+        "target_span_mass": 0.5390723347663879,
+        "matching_byte_address_mass": 0.2526230216026306,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "736f75726968",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.7148799896240234,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "736f757468",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.8574243187904358,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-037",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "7170696b676e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "bbbmsn",
+        "distractor": "rrdsnk"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.5732136964797974,
+        "target_source_mass": 0.630613386631012,
+        "target_span_mass": 0.3095565438270569,
+        "matching_byte_address_mass": 0.13202132284641266,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "71626d6d6161",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.42486849427223206,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "7170696b676e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "distractor_first_tv": 0.07231426239013672,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-040",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6d687a736e6f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "ylrumd",
+        "distractor": "ehekbt"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.5295706987380981,
+        "target_source_mass": 0.4361940324306488,
+        "target_span_mass": 0.2149336338043213,
+        "matching_byte_address_mass": 0.13311858475208282,
+        "peak_in_target_span_fraction": 0.1666666716337204,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "79686c666177",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.9937108755111694,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "6d686a6a6275",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.05478951707482338,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-041",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "71656c62796d",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "tqcfxw",
+        "distractor": "swfhlm"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.5167850852012634,
+        "target_source_mass": 0.73929762840271,
+        "target_span_mass": 0.45394495129585266,
+        "matching_byte_address_mass": 0.09103494137525558,
+        "peak_in_target_span_fraction": 0.8333333134651184,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "77657374",
+        "stop_reason": "boundary",
+        "generated_steps": 5,
+        "exact": false
+      },
+      "target_first_tv": 0.5961343050003052,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "71656c627962",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.08321064710617065,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-044",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "776573676163",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "jgveov",
+        "distractor": "dijhxw"
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.349366307258606,
+        "target_source_mass": 0.4094306528568268,
+        "target_span_mass": 0.11770554631948471,
+        "matching_byte_address_mass": 0.044014912098646164,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "77657374",
+        "stop_reason": "boundary",
+        "generated_steps": 5,
+        "exact": false
+      },
+      "target_first_tv": 0.2746327519416809,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "6472737a6b6b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.996699333190918,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-045",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "7063787863",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "replacements": {
+        "target": "dbpnaw",
+        "distractor": "wocevr"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.2248539924621582,
+        "target_source_mass": 0.7735605239868164,
+        "target_span_mass": 0.5442906022071838,
+        "matching_byte_address_mass": 0.3589271605014801,
+        "peak_in_target_span_fraction": 0.8333333134651184,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "6462786b6e6f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.9843928813934326,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "706378786377",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "distractor_first_tv": 0.022069528698921204,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-048",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6a6b636675",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "replacements": {
+        "target": "lybrvv",
+        "distractor": "csoqez"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.7174819111824036,
+        "target_source_mass": 0.6794180274009705,
+        "target_span_mass": 0.4986070692539215,
+        "matching_byte_address_mass": 0.28665223717689514,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "79796c62636961",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.9871495366096497,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "6a6b636675",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.020241621881723404,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-049",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6377766b636a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "zdonli",
+        "distractor": "gsnlnh"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.6791874170303345,
+        "target_source_mass": 0.6876857280731201,
+        "target_span_mass": 0.3867393434047699,
+        "matching_byte_address_mass": 0.250394731760025,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "7a69646a716475",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.8615639209747314,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "63777a6a716b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.028053492307662964,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-052",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "70756470666f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "xtghnq",
+        "distractor": "xybwap"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.842524528503418,
+        "target_source_mass": 0.6909454464912415,
+        "target_span_mass": 0.40802982449531555,
+        "matching_byte_address_mass": 0.2721962630748749,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "6c6b6f6c6663",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.9841705560684204,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "70756465716f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.018901735544204712,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-053",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "7965626a6562",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "uefblv",
+        "distractor": "atkyom"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.5727943181991577,
+        "target_source_mass": 0.5697892904281616,
+        "target_span_mass": 0.2601189613342285,
+        "matching_byte_address_mass": 0.1801813393831253,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "666f62626375",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.8067281246185303,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "7965626a716278",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.08729183673858643,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-056",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "75797a69746a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "hwmsrv",
+        "distractor": "hceqda"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.30890393257141113,
+        "target_source_mass": 0.8335914611816406,
+        "target_span_mass": 0.560787558555603,
+        "matching_byte_address_mass": 0.4225550889968872,
+        "peak_in_target_span_fraction": 0.8333333134651184,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "687378757270",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.9845229983329773,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "6879756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 10,
+        "exact": false
+      },
+      "distractor_first_tv": 0.9529126882553101,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-057",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6a627272726969",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "replacements": {
+        "target": "jrehdz",
+        "distractor": "xzqjhi"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.5200166702270508,
+        "target_source_mass": 0.6787188053131104,
+        "target_span_mass": 0.3481168746948242,
+        "matching_byte_address_mass": 0.15032373368740082,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "6a6975646966",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.0598120242357254,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "6a6375636969",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.11077459156513214,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-060",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "666761707670",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "uodwwa",
+        "distractor": "cnmvfz"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.3919588625431061,
+        "target_source_mass": 0.5909062027931213,
+        "target_span_mass": 0.48340582847595215,
+        "matching_byte_address_mass": 0.2635653018951416,
+        "peak_in_target_span_fraction": 0.8333333134651184,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.9864006042480469,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.8232957720756531,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-061",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "657173617577",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "jdztue",
+        "distractor": "zhmwda"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.6876433491706848,
+        "target_source_mass": 0.713543176651001,
+        "target_span_mass": 0.3700275421142578,
+        "matching_byte_address_mass": 0.21675781905651093,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "647a737478",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.9978702068328857,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "7a6561736e",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.9886565804481506,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-064",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "79687678696e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "qnyzjt",
+        "distractor": "aslihm"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.7697350382804871,
+        "target_source_mass": 0.528829038143158,
+        "target_span_mass": 0.3441977798938751,
+        "matching_byte_address_mass": 0.18743731081485748,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "6d6e6f6c7168",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.6322829723358154,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "656e73746761",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.602110743522644,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-065",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "666961797979",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "liaaaw",
+        "distractor": "klxcvx"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.6219974160194397,
+        "target_source_mass": 0.7148019671440125,
+        "target_span_mass": 0.35184499621391296,
+        "matching_byte_address_mass": 0.23011957108974457,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "73697a797979",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.7196303606033325,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "66776a666c70",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.018583757802844048,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-068",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "706364766370",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "lsakat",
+        "distractor": "zynvra"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.3651394248008728,
+        "target_source_mass": 0.9110867381095886,
+        "target_span_mass": 0.6599523425102234,
+        "matching_byte_address_mass": 0.31774407625198364,
+        "peak_in_target_span_fraction": 0.8333333134651184,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.9906454086303711,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "706378767270",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.5774489641189575,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-069",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "786e61747170",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "icliaa",
+        "distractor": "dovqwf"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.0164419412612915,
+        "target_source_mass": 0.6076858639717102,
+        "target_span_mass": 0.25006499886512756,
+        "matching_byte_address_mass": 0.08730312436819077,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "69736e7874",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.6539809703826904,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "646e61746866",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.8439891338348389,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-072",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "72777a787468",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "gjbndb",
+        "distractor": "vglmbb"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.4393352270126343,
+        "target_source_mass": 0.5029069185256958,
+        "target_span_mass": 0.3067162036895752,
+        "matching_byte_address_mass": 0.2069716900587082,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.9848524332046509,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "676f7a766567",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.40530505776405334,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-073",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "766f6967796c",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "wxtmee",
+        "distractor": "nfqzyg"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.7270519137382507,
+        "target_source_mass": 0.7253051400184631,
+        "target_span_mass": 0.46404996514320374,
+        "matching_byte_address_mass": 0.2906041741371155,
+        "peak_in_target_span_fraction": 0.8333333134651184,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "73747a66626a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.9792681336402893,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "767a69796a",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.059653133153915405,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-076",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6c70656c7170",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "gbyzvs",
+        "distractor": "pximxp"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.3679966628551483,
+        "target_source_mass": 0.6862197518348694,
+        "target_span_mass": 0.5949358940124512,
+        "matching_byte_address_mass": 0.26781153678894043,
+        "peak_in_target_span_fraction": 1.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.8726897239685059,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "6c70707a7163",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.42382848262786865,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-077",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6774726d6b63",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "jfhwps",
+        "distractor": "vtnbug"
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.9752672910690308,
+        "target_source_mass": 0.6303629875183105,
+        "target_span_mass": 0.1683533638715744,
+        "matching_byte_address_mass": 0.06348565965890884,
+        "peak_in_target_span_fraction": 0.1666666716337204,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 49,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "7369727a62",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.7673724889755249,
+      "target_reconstruction": {
+        "observation_correct": 49,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "766f637274",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.9296554327011108,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-080",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "74746e727075",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "eanqcc",
+        "distractor": "lnfxlg"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.7520436644554138,
+        "target_source_mass": 0.7321152687072754,
+        "target_span_mass": 0.505953848361969,
+        "matching_byte_address_mass": 0.23908208310604095,
+        "peak_in_target_span_fraction": 0.8333333134651184,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "756e6e6e6f77",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.9064092040061951,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "74747374",
+        "stop_reason": "boundary",
+        "generated_steps": 5,
+        "exact": false
+      },
+      "distractor_first_tv": 0.08500636368989944,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-081",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "7a6e646571",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "replacements": {
+        "target": "uuijlb",
+        "distractor": "xffsmq"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.5557416081428528,
+        "target_source_mass": 0.6792413592338562,
+        "target_span_mass": 0.41299721598625183,
+        "matching_byte_address_mass": 0.2571071684360504,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.5029321908950806,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "7a787a71716f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.05878535658121109,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-084",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6465617374",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "replacements": {
+        "target": "dryzad",
+        "distractor": "fpnmgc"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.230737566947937,
+        "target_source_mass": 0.501602828502655,
+        "target_span_mass": 0.2305407077074051,
+        "matching_byte_address_mass": 0.09287386387586594,
+        "peak_in_target_span_fraction": 0.1666666716337204,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "64676161746a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.22470803558826447,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "6679626d7878",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.9911381006240845,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-085",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "636f7a6c7166",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "mfrzdx",
+        "distractor": "ykaigs"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.5355991721153259,
+        "target_source_mass": 0.7154070734977722,
+        "target_span_mass": 0.503696858882904,
+        "matching_byte_address_mass": 0.29767563939094543,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.631738007068634,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "6378786c716f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.11628015339374542,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-088",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "687568736f6a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "zzffkg",
+        "distractor": "qqaglk"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.9403964281082153,
+        "target_source_mass": 0.5229201912879944,
+        "target_span_mass": 0.1792898029088974,
+        "matching_byte_address_mass": 0.1521987020969391,
+        "peak_in_target_span_fraction": 0.1666666716337204,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "7a756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 9,
+        "exact": false
+      },
+      "target_first_tv": 0.9651985168457031,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "686861736265",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.024679789319634438,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-089",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6f7a70727671",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "tccked",
+        "distractor": "zrbtdy"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.7190797924995422,
+        "target_source_mass": 0.6606736183166504,
+        "target_span_mass": 0.2862887680530548,
+        "matching_byte_address_mass": 0.13434095680713654,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 48,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "6e6f7274686b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.8788981437683105,
+      "target_reconstruction": {
+        "observation_correct": 48,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "7a7a70767670",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.7083051800727844,
+      "distractor_reconstruction": {
+        "observation_correct": 48,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-092",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "79756468716f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "fibfds",
+        "distractor": "ycgvov"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.7312236428260803,
+        "target_source_mass": 0.5395366549491882,
+        "target_span_mass": 0.32338982820510864,
+        "matching_byte_address_mass": 0.2526693642139435,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.9770160913467407,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "7963647563",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.035479187965393066,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-093",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "7374756968",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "replacements": {
+        "target": "iblkdq",
+        "distractor": "tortws"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.9593214988708496,
+        "target_source_mass": 0.5389623045921326,
+        "target_span_mass": 0.2910657227039337,
+        "matching_byte_address_mass": 0.15026094019412994,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "66626c786377",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.5376362204551697,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "7474617468",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.81882643699646,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-096",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "64626a6b6f7a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "iwwwxa",
+        "distractor": "wvieuw"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.3498329818248749,
+        "target_source_mass": 0.7674301266670227,
+        "target_span_mass": 0.4442485272884369,
+        "matching_byte_address_mass": 0.29730239510536194,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "697a737467",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.9988165497779846,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "64626a6b6f7a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "distractor_first_tv": 0.009166555479168892,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-097",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6c6b6f747a62",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "kbdhru",
+        "distractor": "cbqlnx"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.9221134781837463,
+        "target_source_mass": 0.681296169757843,
+        "target_span_mass": 0.4496138393878937,
+        "matching_byte_address_mass": 0.22052277624607086,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.9588562846183777,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "6c6b6f6c6c65",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.3057236969470978,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-100",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "64736776777a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "arjofv",
+        "distractor": "kmqkdn"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.5473083257675171,
+        "target_source_mass": 0.511220395565033,
+        "target_span_mass": 0.19561557471752167,
+        "matching_byte_address_mass": 0.13167954981327057,
+        "peak_in_target_span_fraction": 0.1666666716337204,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "6173747a716b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.8443008661270142,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "647367766b6f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.13295553624629974,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-101",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6f7a7a6a6a6a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "dmrwnn",
+        "distractor": "oogjbc"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.7099185585975647,
+        "target_source_mass": 0.5694991946220398,
+        "target_span_mass": 0.18819759786128998,
+        "matching_byte_address_mass": 0.04916073754429817,
+        "peak_in_target_span_fraction": 0.1666666716337204,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "646d676a7878",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.7956555485725403,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "6f726a6a717a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.1406973898410797,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-104",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "646e61746878",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "udbzdc",
+        "distractor": "dmoguu"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.6393861770629883,
+        "target_source_mass": 0.7099757790565491,
+        "target_span_mass": 0.5543127655982971,
+        "matching_byte_address_mass": 0.32184889912605286,
+        "peak_in_target_span_fraction": 1.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.8873245120048523,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "646d67787863",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.023672955110669136,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-105",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "796a707a6e71",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "medwfx",
+        "distractor": "jzisbi"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.4928290843963623,
+        "target_source_mass": 0.7218952178955078,
+        "target_span_mass": 0.4768703281879425,
+        "matching_byte_address_mass": 0.25743892788887024,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "7369647866",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.9159900546073914,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "7969706a717a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.061799414455890656,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-108",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "79796d6d6d6363",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "replacements": {
+        "target": "txxyyr",
+        "distractor": "lequof"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.7293065190315247,
+        "target_source_mass": 0.7482776045799255,
+        "target_span_mass": 0.5533882975578308,
+        "matching_byte_address_mass": 0.31756672263145447,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "77657374",
+        "stop_reason": "boundary",
+        "generated_steps": 5,
+        "exact": false
+      },
+      "target_first_tv": 0.9605097770690918,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "79656d6d7863",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.1433081328868866,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-109",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "676f7a76696f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "pqlete",
+        "distractor": "brozhj"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.5925918221473694,
+        "target_source_mass": 0.6752592921257019,
+        "target_span_mass": 0.3796645700931549,
+        "matching_byte_address_mass": 0.13212427496910095,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.7969843149185181,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.619803249835968,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-112",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "72726969676e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "vpwvqg",
+        "distractor": "mzarxs"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.1072282791137695,
+        "target_source_mass": 0.5555885434150696,
+        "target_span_mass": 0.35746029019355774,
+        "matching_byte_address_mass": 0.25751516222953796,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "767670707671",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.8834874033927917,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "72726d6d666f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.03400357440114021,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-113",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "64626c6c6c65",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "mqnjzx",
+        "distractor": "gcumof"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.6429416537284851,
+        "target_source_mass": 0.5739192366600037,
+        "target_span_mass": 0.4353123903274536,
+        "matching_byte_address_mass": 0.2796984314918518,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "6d697a786c71",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.8148401975631714,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "64626c6c6561",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.10278888046741486,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-116",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "616e796e7979",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "zxrzcp",
+        "distractor": "cwotld"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.5950270295143127,
+        "target_source_mass": 0.6617557406425476,
+        "target_span_mass": 0.5170620679855347,
+        "matching_byte_address_mass": 0.25609090924263,
+        "peak_in_target_span_fraction": 0.8333333134651184,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "7a7a7a7374",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.9762427806854248,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "636e63796177",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.7500050663948059,
+      "distractor_reconstruction": {
+        "observation_correct": 45,
+        "observation_tokens": 46,
+        "span_correct": 5,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-117",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "676e6174716b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "hosyuu",
+        "distractor": "wjoejv"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.4978335201740265,
+        "target_source_mass": 0.5698628425598145,
+        "target_span_mass": 0.29788291454315186,
+        "matching_byte_address_mass": 0.16717542707920074,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.7335026264190674,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "6e6f63726370",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.598387598991394,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-120",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "656578626e61",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "hfiahd",
+        "distractor": "mfvoth"
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.0784614086151123,
+        "target_source_mass": 0.6492876410484314,
+        "target_span_mass": 0.4447144567966461,
+        "matching_byte_address_mass": 0.20400871336460114,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "686969736e71",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.9844803810119629,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "65756e6e6f77",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.3247949779033661,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-121",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "686469796e6e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "ozxlqq",
+        "distractor": "ewhmcs"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.9374857544898987,
+        "target_source_mass": 0.729158341884613,
+        "target_span_mass": 0.42693638801574707,
+        "matching_byte_address_mass": 0.1932484656572342,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "676f7a6c69",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.9602879285812378,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "686e61677468",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.01784004457294941,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-124",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "637a63706766",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "ryhdcb",
+        "distractor": "uhenix"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.379109650850296,
+        "target_source_mass": 0.6610984802246094,
+        "target_span_mass": 0.49787887930870056,
+        "matching_byte_address_mass": 0.26871082186698914,
+        "peak_in_target_span_fraction": 0.8333333134651184,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "726e676168",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.9470823407173157,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "637a63706966",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.10552112013101578,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-125",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "636f7a776178",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "avrygr",
+        "distractor": "btdbox"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.7434759736061096,
+        "target_source_mass": 0.5754838585853577,
+        "target_span_mass": 0.28240475058555603,
+        "matching_byte_address_mass": 0.19990171492099762,
+        "peak_in_target_span_fraction": 0.1666666716337204,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "736f7274686b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.889694333076477,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.45786014199256897,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-128",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6b666c736161",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "susrva",
+        "distractor": "hcbxby"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.6311460733413696,
+        "target_source_mass": 0.4716797173023224,
+        "target_span_mass": 0.3414134681224823,
+        "matching_byte_address_mass": 0.13777990639209747,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "62736f7a7468",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.7422919273376465,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "686673627163",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.8628994822502136,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-129",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "replacements": {
+        "target": "hnipkf",
+        "distractor": "bwasva"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.936037003993988,
+        "target_source_mass": 0.4711298644542694,
+        "target_span_mass": 0.12402573972940445,
+        "matching_byte_address_mass": 0.0728842243552208,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "6866737361",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.8372029066085815,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.06830468773841858,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-132",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "646d76666f6f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "bjtedr",
+        "distractor": "wgzaml"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.40072423219680786,
+        "target_source_mass": 0.6763688921928406,
+        "target_span_mass": 0.4779301583766937,
+        "matching_byte_address_mass": 0.36955752968788147,
+        "peak_in_target_span_fraction": 1.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.7744168043136597,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "646d76666f73",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "distractor_first_tv": 0.1829349249601364,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-133",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "697564696271",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "vzotqd",
+        "distractor": "vdhyys"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.2460608333349228,
+        "target_source_mass": 0.6102017760276794,
+        "target_span_mass": 0.4052826464176178,
+        "matching_byte_address_mass": 0.23389720916748047,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "6d756f6a6e6f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.7621621489524841,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "697564696271",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "distractor_first_tv": 0.11415461450815201,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-136",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "747465746861",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "lhicac",
+        "distractor": "opywlc"
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.9241494536399841,
+        "target_source_mass": 0.7328940033912659,
+        "target_span_mass": 0.5709227919578552,
+        "matching_byte_address_mass": 0.23067931830883026,
+        "peak_in_target_span_fraction": 0.8333333134651184,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "65747374",
+        "stop_reason": "boundary",
+        "generated_steps": 5,
+        "exact": false
+      },
+      "target_first_tv": 0.8332377672195435,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "747470657965",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.030464166775345802,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-137",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "616570757170",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "rugdzr",
+        "distractor": "jtbgxl"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.6062269806861877,
+        "target_source_mass": 0.669792652130127,
+        "target_span_mass": 0.39679965376853943,
+        "matching_byte_address_mass": 0.15144477784633636,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "616e7067666f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.40759003162384033,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "616e7062656e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.06370357424020767,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-140",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "686875786f75",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "strjjm",
+        "distractor": "tnalmp"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.35846036672592163,
+        "target_source_mass": 0.46409857273101807,
+        "target_span_mass": 0.2584661543369293,
+        "matching_byte_address_mass": 0.1564546376466751,
+        "peak_in_target_span_fraction": 0.1666666716337204,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "7374756d686f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.5256258845329285,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "687461746861",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.20400989055633545,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-141",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "7a697a786679",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "lmvthb",
+        "distractor": "upamqz"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.4641146957874298,
+        "target_source_mass": 0.8610361218452454,
+        "target_span_mass": 0.6209734082221985,
+        "matching_byte_address_mass": 0.3144109845161438,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "61766d6e6b",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.9223606586456299,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "7a6969786679",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.023407243192195892,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-144",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6d6569736378",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "jdldvd",
+        "distractor": "zaqzgh"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.4002036154270172,
+        "target_source_mass": 0.5243690609931946,
+        "target_span_mass": 0.2037314921617508,
+        "matching_byte_address_mass": 0.11174613982439041,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "64756469716f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.9419212937355042,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "7a7569697878",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.9809930324554443,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-145",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6c6c7a6f6b6d",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "dpqiro",
+        "distractor": "qvkrul"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.2647838890552521,
+        "target_source_mass": 0.8026589751243591,
+        "target_span_mass": 0.6283475756645203,
+        "matching_byte_address_mass": 0.3902560770511627,
+        "peak_in_target_span_fraction": 1.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "64697a7374",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.9816544651985168,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "6c6c7a6f6b6d",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "distractor_first_tv": 0.09242153912782669,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-148",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "64696b616f",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "replacements": {
+        "target": "ozhjsz",
+        "distractor": "jvcelh"
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.6486872434616089,
+        "target_source_mass": 0.5709080696105957,
+        "target_span_mass": 0.38540518283843994,
+        "matching_byte_address_mass": 0.29135075211524963,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "616964656561",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.9713429808616638,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "64696b616f",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.007935365661978722,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-149",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "617670636572",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "iqtppa",
+        "distractor": "wscmda"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.5895891189575195,
+        "target_source_mass": 0.6512060761451721,
+        "target_span_mass": 0.25281593203544617,
+        "matching_byte_address_mass": 0.17287491261959076,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "6f69617968",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.340384840965271,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "7771636967",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.60693359375,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-152",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "787a76666f66",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "oqwkch",
+        "distractor": "kcyiwi"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.5916091203689575,
+        "target_source_mass": 0.7576449513435364,
+        "target_span_mass": 0.48094964027404785,
+        "matching_byte_address_mass": 0.27115151286125183,
+        "peak_in_target_span_fraction": 1.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "717a6b74686b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.7124131321907043,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "717a7a74686b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.9084808230400085,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-153",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "646761707670",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "ulhrik",
+        "distractor": "xnvvuw"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.7611817121505737,
+        "target_source_mass": 0.6354982256889343,
+        "target_span_mass": 0.3860192596912384,
+        "matching_byte_address_mass": 0.26467135548591614,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.8590879440307617,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "646761707670",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.01987391524016857,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-156",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "65647a716e69",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "ybmppe",
+        "distractor": "nzlhrt"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.6346467733383179,
+        "target_source_mass": 0.5535330772399902,
+        "target_span_mass": 0.4145371913909912,
+        "matching_byte_address_mass": 0.20087744295597076,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "7965696b616f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.9573329091072083,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "6575736f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.010403498075902462,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-157",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "677469646461",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "pwxkux",
+        "distractor": "hbuves"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.31494760513305664,
+        "target_source_mass": 0.7097770571708679,
+        "target_span_mass": 0.4062133729457855,
+        "matching_byte_address_mass": 0.2199045866727829,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "6e7761787269",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.7381645441055298,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "686e646468",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.9191703796386719,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-160",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "7a6f6c6c7665",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "ngadvd",
+        "distractor": "vefvgl"
+      },
+      "read": {
+        "teacher_tokens_correct": 2,
+        "teacher_tokens": 7,
+        "teacher_ce": 2.5551257133483887,
+        "target_source_mass": 0.7602552771568298,
+        "target_span_mass": 0.6453254818916321,
+        "matching_byte_address_mass": 0.28216466307640076,
+        "peak_in_target_span_fraction": 1.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "77657374",
+        "stop_reason": "boundary",
+        "generated_steps": 5,
+        "exact": false
+      },
+      "target_first_tv": 0.9461261034011841,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "7a6a6c6c7670",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.1756884753704071,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-161",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "706d67746462",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "racnlj",
+        "distractor": "wcjnzt"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.356738805770874,
+        "target_source_mass": 0.7551056742668152,
+        "target_span_mass": 0.5127136707305908,
+        "matching_byte_address_mass": 0.29573854804039,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "6f696761626a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.9586565494537354,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "706d6362637063",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.35135510563850403,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-164",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6f7966616a6a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "mzyvvv",
+        "distractor": "fmkhca"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.5349966287612915,
+        "target_source_mass": 0.8113775849342346,
+        "target_span_mass": 0.6123287081718445,
+        "matching_byte_address_mass": 0.3569899797439575,
+        "peak_in_target_span_fraction": 0.8333333134651184,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.9207289218902588,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "667979786363",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.8285918831825256,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-165",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6d726a69766e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "ecwvqp",
+        "distractor": "jdyueq"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.8652229905128479,
+        "target_source_mass": 0.6699438095092773,
+        "target_span_mass": 0.3504253327846527,
+        "matching_byte_address_mass": 0.21921031177043915,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "65726a6e66",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.9948630332946777,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "6d72666e78",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.20163342356681824,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-168",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6d756f6a716f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "gdirrr",
+        "distractor": "wyozfx"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.2376704216003418,
+        "target_source_mass": 0.5508289337158203,
+        "target_span_mass": 0.24865777790546417,
+        "matching_byte_address_mass": 0.1499755084514618,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "627a7a78666f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.8505500555038452,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "6d756f6a716f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "distractor_first_tv": 0.04094652086496353,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-169",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "70747374716b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "kmqmkl",
+        "distractor": "edwgsk"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.38220757246017456,
+        "target_source_mass": 0.8047430515289307,
+        "target_span_mass": 0.6077083945274353,
+        "matching_byte_address_mass": 0.34899744391441345,
+        "peak_in_target_span_fraction": 1.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "716d6d6d6c6c6561",
+        "stop_reason": "boundary",
+        "generated_steps": 9,
+        "exact": false
+      },
+      "target_first_tv": 0.9711660146713257,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "707461747966",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "distractor_first_tv": 0.23368939757347107,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-172",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6e70706e676e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "qrpytq",
+        "distractor": "ekupuh"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.9599323272705078,
+        "target_source_mass": 0.656364381313324,
+        "target_span_mass": 0.4126655161380768,
+        "matching_byte_address_mass": 0.1530526727437973,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "7a6e61746861",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.862549901008606,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "6570656e6e",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.9164038896560669,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-173",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "68726a7a6464",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "rfhmie",
+        "distractor": "lbtist"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.40882477164268494,
+        "target_source_mass": 0.7643738389015198,
+        "target_span_mass": 0.49308452010154724,
+        "matching_byte_address_mass": 0.26436612010002136,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "726a6a6c726761",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.9679147601127625,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "68736f786572",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.10832054913043976,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-176",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "726970626663",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "pmxmcs",
+        "distractor": "jvurpg"
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.9569913744926453,
+        "target_source_mass": 0.5292784571647644,
+        "target_span_mass": 0.13642503321170807,
+        "matching_byte_address_mass": 0.024939218536019325,
+        "peak_in_target_span_fraction": 0.1666666716337204,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "726570626d63",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.019402507692575455,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.9714789390563965,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-177",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "656e796e6370",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "qcxfbf",
+        "distractor": "yshwvn"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.1940147578716278,
+        "target_source_mass": 0.7485116124153137,
+        "target_span_mass": 0.4364696741104126,
+        "matching_byte_address_mass": 0.29536157846450806,
+        "peak_in_target_span_fraction": 0.8333333134651184,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "616e776d6363",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.9847723841667175,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "656e796e6370",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "distractor_first_tv": 0.07109658420085907,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-180",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "737472666761",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "iydirc",
+        "distractor": "upsacw"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.613366425037384,
+        "target_source_mass": 0.6675951480865479,
+        "target_span_mass": 0.4265047013759613,
+        "matching_byte_address_mass": 0.06982380151748657,
+        "peak_in_target_span_fraction": 0.8333333134651184,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "6973736767616f",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.9917860627174377,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "737472666761",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.22273336350917816,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-181",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "776962657068",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "cjbnmq",
+        "distractor": "jeqdrt"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.8269971013069153,
+        "target_source_mass": 0.5764194130897522,
+        "target_span_mass": 0.28491806983947754,
+        "matching_byte_address_mass": 0.1456717699766159,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "636a62767063",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.9516643285751343,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "7761756e70",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.13044947385787964,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-184",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6e6f757468",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "replacements": {
+        "target": "vmrhrw",
+        "distractor": "jmqxkd"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.5679985284805298,
+        "target_source_mass": 0.37586966156959534,
+        "target_span_mass": 0.13149017095565796,
+        "matching_byte_address_mass": 0.015122213400900364,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "766e6f746861",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.8932629823684692,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.9938554763793945,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-185",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "626563696861",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "replacements": {
+        "target": "nssvxk",
+        "distractor": "bapiww"
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.41922610998153687,
+        "target_source_mass": 0.6181802749633789,
+        "target_span_mass": 0.292185515165329,
+        "matching_byte_address_mass": 0.17694348096847534,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "79726a697a776a",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.9498557448387146,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "62636369696b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.1861642599105835,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-188",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "747473766a75",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "sagzfb",
+        "distractor": "imlwfo"
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.9525790214538574,
+        "target_source_mass": 0.5609037280082703,
+        "target_span_mass": 0.38522782921791077,
+        "matching_byte_address_mass": 0.17523592710494995,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "original_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "66676c627663",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.9908106327056885,
+      "target_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "74746c767663",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.0203853826969862,
+      "distractor_reconstruction": {
+        "observation_correct": 46,
+        "observation_tokens": 46,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    },
+    {
+      "id": "train-189",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "69626d766d7a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "replacements": {
+        "target": "hpjuyt",
+        "distractor": "eglbyo"
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.6660987734794617,
+        "target_source_mass": 0.6602714657783508,
+        "target_span_mass": 0.32488957047462463,
+        "matching_byte_address_mass": 0.18157099187374115,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "original_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "target": {
+        "raw_hex": "717a6c6c6475",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.5933740735054016,
+      "target_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      },
+      "distractor": {
+        "raw_hex": "69626d6d6d78",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.42481285333633423,
+      "distractor_reconstruction": {
+        "observation_correct": 50,
+        "observation_tokens": 50,
+        "span_correct": 6,
+        "span_tokens": 6
+      }
+    }
+  ],
+  "cpu_limit_seconds": 60,
+  "status": "complete",
+  "cpu_seconds": 3.25,
+  "summary": {
+    "lookup": {
+      "items": 48,
+      "original_exact": 16,
+      "target_exact": 0,
+      "distractor_exact": 6,
+      "target_output_changed": 48,
+      "distractor_output_changed": 40,
+      "mean_target_first_tv": 0.83979859490258,
+      "mean_distractor_first_tv": 0.37630278723857674,
+      "mean_teacher_ce": 0.7167598794524869,
+      "mean_target_source_mass": 0.619050116588672,
+      "mean_target_span_mass": 0.39909974997863173,
+      "mean_matching_byte_address_mass": 0.21630879117098326,
+      "mean_peak_in_target_span_fraction": 0.5486111122493943,
+      "mean_uniform_source_mass": 0.5,
+      "mean_uniform_span_mass": 0.13043478260869565,
+      "teacher_token_accuracy": 0.8363095238095238,
+      "original_span_reconstruction_accuracy": 1.0,
+      "target_span_reconstruction_accuracy": 1.0,
+      "distractor_span_reconstruction_accuracy": 0.9965277777777778
+    },
+    "revision": {
+      "items": 48,
+      "original_exact": 13,
+      "target_exact": 0,
+      "distractor_exact": 6,
+      "target_output_changed": 48,
+      "distractor_output_changed": 41,
+      "mean_target_first_tv": 0.7543467738141771,
+      "mean_distractor_first_tv": 0.3042398791682596,
+      "mean_teacher_ce": 0.6343169451380769,
+      "mean_target_source_mass": 0.6588859384258589,
+      "mean_target_span_mass": 0.36167328090717393,
+      "mean_matching_byte_address_mass": 0.19979682110715657,
+      "mean_peak_in_target_span_fraction": 0.4930555609365304,
+      "mean_uniform_source_mass": 0.54,
+      "mean_uniform_span_mass": 0.12,
+      "teacher_token_accuracy": 0.8392857142857143,
+      "original_span_reconstruction_accuracy": 1.0,
+      "target_span_reconstruction_accuracy": 1.0,
+      "distractor_span_reconstruction_accuracy": 1.0
+    }
+  },
+  "parameters_unchanged": true,
+  "checkpoint_unchanged": true,
+  "manifest_unchanged": true,
+  "source_reports_unchanged": true,
+  "code_unchanged": true,
+  "complete": true
+}
