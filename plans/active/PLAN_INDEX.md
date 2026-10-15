@@ -819,3 +819,6 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 
 2026-10-15：[20完整诊断](../reference/EXP-N1-20_train_content_read_adjudication_20261015.md)与[21辅助目标评审](../reference/PLAN-N1-21_observation_fidelity_learning_review_20261015.md)：内容敏感但新词值0/96。唯一队首是新学习目标范围决策，非CPU预算等待。
 
+
+2026-10-15：21已批准，[SPEC22](../reference/SPEC-N1-22_observation_fidelity_execution_contract_20261015.md)实施合同与loss/运行器完成，32项前置合同通过；先工程预检，通过后自动train-only校准。
+

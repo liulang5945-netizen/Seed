@@ -3180,3 +3180,6 @@ owner 裁「那保留下来」⇒ **本轮不删任何文件**，㊵-522 的四�
 
 【2026-10-15 ㊵-891 **20内容诊断完整，形成21学习目标评审**】冻结8d6da30e9，96词值train项/288自由/96gold-prefix读数、0更新/dev/holdout，CPU2.703125秒<60，参数/源档/源码/manifest守卫通过；reports/taiji_n1_train_content_read_20261015.json SHA 98d55cae330e80eadfb929f7257b6dd287de6eb87b6e5bc7badfcd30cc2e3e72。原exact2/1，正确来源换词0/0，输出变29/29；干扰换词exact3/0、输出变27/23（各48）。目标来源注意0.5614/0.5548、均匀0.5/0.54；敏感/注意不等于可靠绑定，不证明表示不可解码。全项目C1过/C2零收益/C3未见保持/C4/三器官及其他N债保留。唯一建议21观察保真辅助目标，保持运行时/参数量但新增学习目标，属于用户保留的方案范围决策，未实施；不再问低成本CPU权限。见[20裁决](../../reference/EXP-N1-20_train_content_read_adjudication_20261015.md)及[21评审](../../reference/PLAN-N1-21_observation_fidelity_learning_review_20261015.md)。
 
+
+【2026-10-15 ㊵-892 **21获批准，22实施合同/代码就绪**】用户明确批准21并要求决策选项弹窗；以后真实决策展示影响与唯一推荐，独立工作继续，需授权部分等实际答复。Taiji观察保真loss复用原value/readout、无新增参数/推理头；QA/辅助双支cut早期信用，terminal同辅助信息，旧QA-only脚本不改。32项新合同/恢复与守卫通过、Ruff/B/SIM/Black通过；不是正式训练结果。唯一队首按[SPEC22](../../reference/SPEC-N1-22_observation_fidelity_execution_contract_20261015.md)先独立60秒CPU零更新预检+zero恢复，通过后自动6144更新/192train/300秒CPU校准，0 dev/holdout。C1过/C2零收益/C3内容与未见保持/C4/三器官及其余N债保留。
+

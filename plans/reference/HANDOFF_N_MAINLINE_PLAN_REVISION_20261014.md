@@ -52,3 +52,6 @@ PLAN-N1-06 r1 的 C1 规格已实现并按完整面通过。两臂均为96项／
 
 2026-10-15：[20内容诊断裁决](EXP-N1-20_train_content_read_adjudication_20261015.md)完整，CPU2.703125秒，288自由/96辅助读数、0更新/dev/holdout，参数/源档/代码/manifest不变。正确来源词值替换96项0正确、58项输出变；干扰来源50项输出变，不能把敏感或注意力当绑定。唯一建议[21观察保真辅助学习](PLAN-N1-21_observation_fidelity_learning_review_20261015.md)，新增目标超出QA-only范围，需用户保留的方案决策；CPU同类授权已有，不再次请求小额资源权限。全项目C1过/C2零收益/C3内容绑定与未见保持/C4/三器官及其他N债仍欠。
 
+
+2026-10-15：用户批准21观察保真辅助学习；已实现Taiji独立loss模块，不增参数/推理头，cut覆盖QA与辅助两支。按[SPEC22](SPEC-N1-22_observation_fidelity_execution_contract_20261015.md)先60秒CPU无更新工程预检和独立zero恢复，再自动执行6144更新/192train、独立300秒CPU校准，0 dev/holdout。32项前置合同通过。未来真实决策使用选项弹窗，不依赖决定的工作继续。全项目未见/保持/C4/三器官及其余N债仍欠。
+
