@@ -816,3 +816,6 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 
 2026-10-15：[SPEC20内容消费诊断](../reference/SPEC-N1-20_train_content_read_diagnostic_20261015.md)冻结，96词值train项三种输入，零更新/零留出，独立60秒CPU；29项前置合同通过。
 
+
+2026-10-15：[20完整诊断](../reference/EXP-N1-20_train_content_read_adjudication_20261015.md)与[21辅助目标评审](../reference/PLAN-N1-21_observation_fidelity_learning_review_20261015.md)：内容敏感但新词值0/96。唯一队首是新学习目标范围决策，非CPU预算等待。
+

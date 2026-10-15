@@ -20,3 +20,6 @@ dev/holdout材料词值、实体与train均不重叠，dev和holdout之间也不
 
 2026-10-15：18新课程准入完成，train/dev/holdout 192/32/32，96个不同训练目标词，正目标26字母最少15次；12项零更新预检通过，CPU1.578125秒，未查询dev/holdout。见[18裁决](EXP-N1-18_v3_curriculum_admission_20261015.md)。唯一后继为v3独立train-only充分性校准，先定学习剂量/成本再冻结新三臂配对。
 
+
+2026-10-15：[20内容诊断裁决](EXP-N1-20_train_content_read_adjudication_20261015.md)完整，CPU2.703125秒，288自由/96辅助读数、0更新/dev/holdout，参数/源档/代码/manifest不变。正确来源词值替换96项0正确、58项输出变；干扰来源50项输出变，不能把敏感或注意力当绑定。唯一建议[21观察保真辅助学习](PLAN-N1-21_observation_fidelity_learning_review_20261015.md)，新增目标超出QA-only范围，需用户保留的方案决策；CPU同类授权已有，不再次请求小额资源权限。全项目C1过/C2零收益/C3内容绑定与未见保持/C4/三器官及其他N债仍欠。
+

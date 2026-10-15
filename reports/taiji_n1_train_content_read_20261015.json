@@ -1,0 +1,3852 @@
+{
+  "schema": "n1-train-content-read-diagnostic-v1",
+  "baseline_sha256": "ab7cfe7c007c4fc2f9f6a13903bc31abb7714ba02f711949fb41a0e5d443eb20",
+  "checkpoint_sha256": "9ec27cbd1d353ca5c2ca3c88796aaad9a78efe5787232b6731dd534a09d0b1f6",
+  "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+  "code_identity": {
+    "calibration": {
+      "protocol": {
+        "schema": "n1-v3-train-sufficiency-v1",
+        "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+        "seed": 11,
+        "arm": "position",
+        "initialization": "fresh",
+        "updates": 6144,
+        "milestones": [
+          0,
+          768,
+          1536,
+          3072,
+          6144
+        ],
+        "optimizer": "Adam",
+        "learning_rate": 0.001,
+        "dimensions": {
+          "embedding": 16,
+          "hidden": 32,
+          "key": 16
+        },
+        "max_length": 64,
+        "cpu_limit_seconds": 300,
+        "dev_queries": 0,
+        "holdout_queries": 0,
+        "train_gate": {
+          "exact": 173,
+          "each_kind": 40
+        }
+      },
+      "code_sha256": {
+        "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+        "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+        "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+        "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+        "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+        "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+        "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+        "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+        "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227"
+      },
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "torch": "2.13.0+cpu"
+    },
+    "audit_sha256": "b2af502770e51ddcbadda4442a472fe842ee632c63b2aeccd3afb45d8af16983"
+  },
+  "rows": [
+    {
+      "id": "train-000",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6e706e767068",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.48844200372695923,
+        "target_source_mass": 0.7755603194236755,
+        "target_span_mass": 0.5496729016304016,
+        "matching_byte_address_mass": 0.16093088686466217,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "xrtxgq",
+        "distractor": "xwoekz"
+      },
+      "target": {
+        "raw_hex": "6e6e6b6f7275",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.007834339514374733,
+      "distractor": {
+        "raw_hex": "6e706e767068",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "distractor_first_tv": 0.0049281856045126915
+    },
+    {
+      "id": "train-001",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.1865836381912231,
+        "target_source_mass": 0.6986975073814392,
+        "target_span_mass": 0.16611984372138977,
+        "matching_byte_address_mass": 0.02729719690978527,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "ciylfi",
+        "distractor": "xilqum"
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.22093699872493744,
+      "distractor": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.018335698172450066
+    },
+    {
+      "id": "train-004",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "686470786e78",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.6263059973716736,
+        "target_source_mass": 0.8352593779563904,
+        "target_span_mass": 0.4635312855243683,
+        "matching_byte_address_mass": 0.22390206158161163,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "coaces",
+        "distractor": "hredas"
+      },
+      "target": {
+        "raw_hex": "68647a716f78",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.015771029517054558,
+      "distractor": {
+        "raw_hex": "686470696e",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.0149074736982584
+    },
+    {
+      "id": "train-005",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "64626a666f66",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.519760251045227,
+        "target_source_mass": 0.47984302043914795,
+        "target_span_mass": 0.05770297348499298,
+        "matching_byte_address_mass": 0.005500925239175558,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "wfgaqh",
+        "distractor": "dqpldq"
+      },
+      "target": {
+        "raw_hex": "64626a666f66",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.013246303424239159,
+      "distractor": {
+        "raw_hex": "64707a66666f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.14836634695529938
+    },
+    {
+      "id": "train-008",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "7970657374",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.488876461982727,
+        "target_source_mass": 0.7494643330574036,
+        "target_span_mass": 0.06576116383075714,
+        "matching_byte_address_mass": 0.009238430298864841,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "oleywr",
+        "distractor": "zpidpn"
+      },
+      "target": {
+        "raw_hex": "796564736175",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.04519278183579445,
+      "distractor": {
+        "raw_hex": "797065797361",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.12305182963609695
+    },
+    {
+      "id": "train-009",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 3,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.7999827861785889,
+        "target_source_mass": 0.5598368644714355,
+        "target_span_mass": 0.06155095621943474,
+        "matching_byte_address_mass": 0.006674636155366898,
+        "peak_in_target_span_fraction": 0.1666666716337204,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "lzvcwa",
+        "distractor": "qisynt"
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.09347324073314667,
+      "distractor": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.040248848497867584
+    },
+    {
+      "id": "train-012",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.2157825231552124,
+        "target_source_mass": 0.6812506318092346,
+        "target_span_mass": 0.07030518352985382,
+        "matching_byte_address_mass": 0.012502352707087994,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "brdlib",
+        "distractor": "tcgcrh"
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.07385478168725967,
+      "distractor": {
+        "raw_hex": "65617374",
+        "stop_reason": "boundary",
+        "generated_steps": 5,
+        "exact": false
+      },
+      "distractor_first_tv": 0.7235016822814941
+    },
+    {
+      "id": "train-013",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6f6b6f74716f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 3,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.4974784851074219,
+        "target_source_mass": 0.5566492676734924,
+        "target_span_mass": 0.14283232390880585,
+        "matching_byte_address_mass": 0.035067956894636154,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "bafnaa",
+        "distractor": "rndidh"
+      },
+      "target": {
+        "raw_hex": "6f75746867",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.21914151310920715,
+      "distractor": {
+        "raw_hex": "6f6b6e6b6f",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.13995036482810974
+    },
+    {
+      "id": "train-016",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "767a7a6b6b",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.7794486284255981,
+        "target_source_mass": 0.3820652663707733,
+        "target_span_mass": 0.03857843950390816,
+        "matching_byte_address_mass": 0.0022749307099729776,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "kfffho",
+        "distractor": "xqlaeq"
+      },
+      "target": {
+        "raw_hex": "767a7a6b6b",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.09494537115097046,
+      "distractor": {
+        "raw_hex": "767a7a6b6b",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.052038729190826416
+    },
+    {
+      "id": "train-017",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "79776d726b6a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.3185207843780518,
+        "target_source_mass": 0.5024135112762451,
+        "target_span_mass": 0.03847808763384819,
+        "matching_byte_address_mass": 0.0037401600275188684,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "kwxhjh",
+        "distractor": "rchwjz"
+      },
+      "target": {
+        "raw_hex": "79776d726b6a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.12940725684165955,
+      "distractor": {
+        "raw_hex": "79776d726b6a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.010688919574022293
+    },
+    {
+      "id": "train-020",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "717a7a76776e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.33734130859375,
+        "target_source_mass": 0.5988885760307312,
+        "target_span_mass": 0.36220356822013855,
+        "matching_byte_address_mass": 0.07739447057247162,
+        "peak_in_target_span_fraction": 1.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "kvmcpf",
+        "distractor": "xsnxoz"
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.1294390857219696,
+      "distractor": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.03656432405114174
+    },
+    {
+      "id": "train-021",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.1749769449234009,
+        "target_source_mass": 0.5522140860557556,
+        "target_span_mass": 0.11142195016145706,
+        "matching_byte_address_mass": 0.04177013412117958,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "sehvcz",
+        "distractor": "btqkpp"
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.05698294937610626,
+      "distractor": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.06672516465187073
+    },
+    {
+      "id": "train-024",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "65617374",
+        "stop_reason": "boundary",
+        "generated_steps": 5,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 3,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.9175275564193726,
+        "target_source_mass": 0.3960631191730499,
+        "target_span_mass": 0.036022040992975235,
+        "matching_byte_address_mass": 0.006061060354113579,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "jhbrwj",
+        "distractor": "wkguyc"
+      },
+      "target": {
+        "raw_hex": "65617374",
+        "stop_reason": "boundary",
+        "generated_steps": 5,
+        "exact": false
+      },
+      "target_first_tv": 0.04935969412326813,
+      "distractor": {
+        "raw_hex": "656e7374",
+        "stop_reason": "boundary",
+        "generated_steps": 5,
+        "exact": false
+      },
+      "distractor_first_tv": 0.2523239254951477
+    },
+    {
+      "id": "train-025",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "7374756e",
+        "stop_reason": "boundary",
+        "generated_steps": 5,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.9644198417663574,
+        "target_source_mass": 0.3619783818721771,
+        "target_span_mass": 0.031948965042829514,
+        "matching_byte_address_mass": 0.007725673262029886,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "wiuhzi",
+        "distractor": "fbdcva"
+      },
+      "target": {
+        "raw_hex": "7374776575",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.005758046172559261,
+      "distractor": {
+        "raw_hex": "7374756e78",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 1.800735481083393e-05
+    },
+    {
+      "id": "train-028",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.2666003704071045,
+        "target_source_mass": 0.914054811000824,
+        "target_span_mass": 0.42878708243370056,
+        "matching_byte_address_mass": 0.02572147734463215,
+        "peak_in_target_span_fraction": 0.8333333134651184,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "dgduar",
+        "distractor": "jdfngk"
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.4108293950557709,
+      "distractor": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.021695047616958618
+    },
+    {
+      "id": "train-029",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "69696e796569",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.8809353113174438,
+        "target_source_mass": 0.9832861423492432,
+        "target_span_mass": 0.947525680065155,
+        "matching_byte_address_mass": 0.20225971937179565,
+        "peak_in_target_span_fraction": 1.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "knshps",
+        "distractor": "htcmjd"
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.7256994843482971,
+      "distractor": {
+        "raw_hex": "79656e796e69",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.19489727914333344
+    },
+    {
+      "id": "train-032",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6c736f666f6c",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.9229888319969177,
+        "target_source_mass": 0.5741602182388306,
+        "target_span_mass": 0.00936201773583889,
+        "matching_byte_address_mass": 0.0019428515806794167,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "rwmjxz",
+        "distractor": "qoqsro"
+      },
+      "target": {
+        "raw_hex": "68736f666f6c",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.01686243712902069,
+      "distractor": {
+        "raw_hex": "736f7574",
+        "stop_reason": "boundary",
+        "generated_steps": 5,
+        "exact": false
+      },
+      "distractor_first_tv": 0.4319807291030884
+    },
+    {
+      "id": "train-033",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "646465716f",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.5891482830047607,
+        "target_source_mass": 0.5522962212562561,
+        "target_span_mass": 0.1020362600684166,
+        "matching_byte_address_mass": 0.014724161475896835,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "ttqnjf",
+        "distractor": "nhmexd"
+      },
+      "target": {
+        "raw_hex": "646173746a",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.02712739072740078,
+      "distractor": {
+        "raw_hex": "646465716f",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.007586657535284758
+    },
+    {
+      "id": "train-036",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "747467746a62",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.9721964597702026,
+        "target_source_mass": 0.8160062432289124,
+        "target_span_mass": 0.5621192455291748,
+        "matching_byte_address_mass": 0.12209973484277725,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "woxweh",
+        "distractor": "zrcgch"
+      },
+      "target": {
+        "raw_hex": "747467746661",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.5511392951011658,
+      "distractor": {
+        "raw_hex": "7474747474",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.02413993328809738
+    },
+    {
+      "id": "train-037",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "706373767878",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.1913468837738037,
+        "target_source_mass": 0.6437605023384094,
+        "target_span_mass": 0.2311054915189743,
+        "matching_byte_address_mass": 0.024907315149903297,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "bbbmsn",
+        "distractor": "rrdsnk"
+      },
+      "target": {
+        "raw_hex": "707a737463",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.14939279854297638,
+      "distractor": {
+        "raw_hex": "79707a72767678",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.13072887063026428
+    },
+    {
+      "id": "train-040",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "686464656e78",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.236138105392456,
+        "target_source_mass": 0.4652000367641449,
+        "target_span_mass": 0.10253405570983887,
+        "matching_byte_address_mass": 0.004349325317889452,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "ylrumd",
+        "distractor": "ehekbt"
+      },
+      "target": {
+        "raw_hex": "68647374756e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.0014201675076037645,
+      "distractor": {
+        "raw_hex": "686473716e78",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.0040208990685641766
+    },
+    {
+      "id": "train-041",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "65656c657962",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.3740160465240479,
+        "target_source_mass": 0.5153027772903442,
+        "target_span_mass": 0.018106749281287193,
+        "matching_byte_address_mass": 0.0012504322221502662,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "tqcfxw",
+        "distractor": "swfhlm"
+      },
+      "target": {
+        "raw_hex": "65656c657962",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.07194194942712784,
+      "distractor": {
+        "raw_hex": "65656c657962",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.06164801865816116
+    },
+    {
+      "id": "train-044",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "687363616162",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.101950764656067,
+        "target_source_mass": 0.2399958372116089,
+        "target_span_mass": 0.007394049316644669,
+        "matching_byte_address_mass": 0.0016876794397830963,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "jgveov",
+        "distractor": "dijhxw"
+      },
+      "target": {
+        "raw_hex": "6873636461",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.005660327151417732,
+      "distractor": {
+        "raw_hex": "647367617577",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.0738121047616005
+    },
+    {
+      "id": "train-045",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "70787878666f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.3310425281524658,
+        "target_source_mass": 0.6008463501930237,
+        "target_span_mass": 0.20719760656356812,
+        "matching_byte_address_mass": 0.013747076503932476,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "dbpnaw",
+        "distractor": "wocevr"
+      },
+      "target": {
+        "raw_hex": "707878787866",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.03346330299973488,
+      "distractor": {
+        "raw_hex": "70787878666f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.046284839510917664
+    },
+    {
+      "id": "train-048",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "7965737475",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 3,
+        "teacher_tokens": 7,
+        "teacher_ce": 2.0116846561431885,
+        "target_source_mass": 0.5280603170394897,
+        "target_span_mass": 0.0374470055103302,
+        "matching_byte_address_mass": 0.0025099420454353094,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "lybrvv",
+        "distractor": "csoqez"
+      },
+      "target": {
+        "raw_hex": "796a6d726b",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.022086402401328087,
+      "distractor": {
+        "raw_hex": "7965737475",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.00020476123609114438
+    },
+    {
+      "id": "train-049",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "646464776e7577",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.4617167711257935,
+        "target_source_mass": 0.5074535012245178,
+        "target_span_mass": 0.0129828080534935,
+        "matching_byte_address_mass": 0.0021683627273887396,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "zdonli",
+        "distractor": "gsnlnh"
+      },
+      "target": {
+        "raw_hex": "6464696b6e78",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.007584540173411369,
+      "distractor": {
+        "raw_hex": "6464696b6e78",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.006490669678896666
+    },
+    {
+      "id": "train-052",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "706d6d6d7961",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.2272573709487915,
+        "target_source_mass": 0.6830529570579529,
+        "target_span_mass": 0.06547679752111435,
+        "matching_byte_address_mass": 0.020389847457408905,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "xtghnq",
+        "distractor": "xybwap"
+      },
+      "target": {
+        "raw_hex": "706d6d6d7961",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.08099239319562912,
+      "distractor": {
+        "raw_hex": "706d70636662",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.12231036275625229
+    },
+    {
+      "id": "train-053",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "7965756e6b6e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.219693899154663,
+        "target_source_mass": 0.47143006324768066,
+        "target_span_mass": 0.06619399040937424,
+        "matching_byte_address_mass": 0.021408893167972565,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "uefblv",
+        "distractor": "atkyom"
+      },
+      "target": {
+        "raw_hex": "7965756e6b6e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.041266195476055145,
+      "distractor": {
+        "raw_hex": "7965756b6e6f77",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.2105749547481537
+    },
+    {
+      "id": "train-056",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "68736f7574",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.3661954402923584,
+        "target_source_mass": 0.7387368679046631,
+        "target_span_mass": 0.30754372477531433,
+        "matching_byte_address_mass": 0.01991749368607998,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "hwmsrv",
+        "distractor": "hceqda"
+      },
+      "target": {
+        "raw_hex": "6864697374",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.377920538187027,
+      "distractor": {
+        "raw_hex": "68736f7574",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.011837332509458065
+    },
+    {
+      "id": "train-057",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "7977726a6464",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.2250229120254517,
+        "target_source_mass": 0.52078777551651,
+        "target_span_mass": 0.05378425493836403,
+        "matching_byte_address_mass": 0.006518322508782148,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "jrehdz",
+        "distractor": "xzqjhi"
+      },
+      "target": {
+        "raw_hex": "7977726a6472",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.13814303278923035,
+      "distractor": {
+        "raw_hex": "7977726a6472",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.005158149637281895
+    },
+    {
+      "id": "train-060",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "7473677475",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 3,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.9022886753082275,
+        "target_source_mass": 0.912040650844574,
+        "target_span_mass": 0.27334919571876526,
+        "matching_byte_address_mass": 0.07317584753036499,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "uodwwa",
+        "distractor": "cnmvfz"
+      },
+      "target": {
+        "raw_hex": "74737468",
+        "stop_reason": "boundary",
+        "generated_steps": 5,
+        "exact": false
+      },
+      "target_first_tv": 0.2150065153837204,
+      "distractor": {
+        "raw_hex": "7473677475",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.12350141257047653
+    },
+    {
+      "id": "train-061",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6562656265",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.5069019794464111,
+        "target_source_mass": 0.5405132174491882,
+        "target_span_mass": 0.07612354308366776,
+        "matching_byte_address_mass": 0.012288369238376617,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "jdztue",
+        "distractor": "zhmwda"
+      },
+      "target": {
+        "raw_hex": "65616c6561",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.031125307083129883,
+      "distractor": {
+        "raw_hex": "6561617465",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.08794814348220825
+    },
+    {
+      "id": "train-064",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "79767676696b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.210343360900879,
+        "target_source_mass": 0.9281846880912781,
+        "target_span_mass": 0.19226767122745514,
+        "matching_byte_address_mass": 0.03743528947234154,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "qnyzjt",
+        "distractor": "aslihm"
+      },
+      "target": {
+        "raw_hex": "646464737475",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.27816516160964966,
+      "distractor": {
+        "raw_hex": "79767676696e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.0032342579215765
+    },
+    {
+      "id": "train-065",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "68647a737078",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.454979658126831,
+        "target_source_mass": 0.5864036679267883,
+        "target_span_mass": 0.20801806449890137,
+        "matching_byte_address_mass": 0.08060122281312943,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "liaaaw",
+        "distractor": "klxcvx"
+      },
+      "target": {
+        "raw_hex": "6871696b6f6f77",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.015052315779030323,
+      "distractor": {
+        "raw_hex": "686470737078",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.023947132751345634
+    },
+    {
+      "id": "train-068",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "707a78707066",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.008995771408081,
+        "target_source_mass": 0.7532129287719727,
+        "target_span_mass": 0.40337875485420227,
+        "matching_byte_address_mass": 0.08628618717193604,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "lsakat",
+        "distractor": "zynvra"
+      },
+      "target": {
+        "raw_hex": "61647a7374",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.2895999848842621,
+      "distractor": {
+        "raw_hex": "707a78707066",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.04965349659323692
+    },
+    {
+      "id": "train-069",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.4795325994491577,
+        "target_source_mass": 0.5493688583374023,
+        "target_span_mass": 0.07424039393663406,
+        "matching_byte_address_mass": 0.008185981772840023,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "icliaa",
+        "distractor": "dovqwf"
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.025448700413107872,
+      "distractor": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.05276913195848465
+    },
+    {
+      "id": "train-072",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "736f757468",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 3,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.5431851148605347,
+        "target_source_mass": 0.33209797739982605,
+        "target_span_mass": 0.0275135338306427,
+        "matching_byte_address_mass": 0.002876483602449298,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "gjbndb",
+        "distractor": "vglmbb"
+      },
+      "target": {
+        "raw_hex": "736f757468",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.014917079359292984,
+      "distractor": {
+        "raw_hex": "736f757468",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.04229343682527542
+    },
+    {
+      "id": "train-073",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6465736b6f",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 3,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.662942886352539,
+        "target_source_mass": 0.5635355710983276,
+        "target_span_mass": 0.18645410239696503,
+        "matching_byte_address_mass": 0.029026111587882042,
+        "peak_in_target_span_fraction": 0.1666666716337204,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "wxtmee",
+        "distractor": "nfqzyg"
+      },
+      "target": {
+        "raw_hex": "6465737361",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.11807002127170563,
+      "distractor": {
+        "raw_hex": "6464696b6f78",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.03309810161590576
+    },
+    {
+      "id": "train-076",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6c6b6f6c7170",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.6317504048347473,
+        "target_source_mass": 0.21140386164188385,
+        "target_span_mass": 0.1274813413619995,
+        "matching_byte_address_mass": 0.022860005497932434,
+        "peak_in_target_span_fraction": 0.1666666716337204,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "gbyzvs",
+        "distractor": "pximxp"
+      },
+      "target": {
+        "raw_hex": "6c656c6c65",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.029555492103099823,
+      "distractor": {
+        "raw_hex": "6c70656c7170",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "distractor_first_tv": 0.20303475856781006
+    },
+    {
+      "id": "train-077",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "736f6a736f6a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.0346802473068237,
+        "target_source_mass": 0.49956023693084717,
+        "target_span_mass": 0.05414339527487755,
+        "matching_byte_address_mass": 0.01601880043745041,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "jfhwps",
+        "distractor": "vtnbug"
+      },
+      "target": {
+        "raw_hex": "736f6a736f6a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.007134790066629648,
+      "distractor": {
+        "raw_hex": "736f757468",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.01623232290148735
+    },
+    {
+      "id": "train-080",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "74746e616661",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.071662187576294,
+        "target_source_mass": 0.9811686873435974,
+        "target_span_mass": 0.5194505453109741,
+        "matching_byte_address_mass": 0.024268992245197296,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "eanqcc",
+        "distractor": "lnfxlg"
+      },
+      "target": {
+        "raw_hex": "67756e69676e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.9341767430305481,
+      "distractor": {
+        "raw_hex": "74746e616661",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.0010278942063450813
+    },
+    {
+      "id": "train-081",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "756b6e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 9,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.1844922304153442,
+        "target_source_mass": 0.5106087923049927,
+        "target_span_mass": 0.009599768556654453,
+        "matching_byte_address_mass": 0.0011957132956013083,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "uuijlb",
+        "distractor": "xffsmq"
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.03511975333094597,
+      "distractor": {
+        "raw_hex": "756b6e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 9,
+        "exact": false
+      },
+      "distractor_first_tv": 0.006774591282010078
+    },
+    {
+      "id": "train-084",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "79736f756e69",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.643225073814392,
+        "target_source_mass": 0.2749197781085968,
+        "target_span_mass": 0.010997205041348934,
+        "matching_byte_address_mass": 0.0015942240133881569,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "dryzad",
+        "distractor": "fpnmgc"
+      },
+      "target": {
+        "raw_hex": "79736f756e69",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.053973086178302765,
+      "distractor": {
+        "raw_hex": "79737672756e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.21143899857997894
+    },
+    {
+      "id": "train-085",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6c6f7a6f6c71",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.052610158920288,
+        "target_source_mass": 0.5799272656440735,
+        "target_span_mass": 0.031895048916339874,
+        "matching_byte_address_mass": 0.006519078742712736,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "mfrzdx",
+        "distractor": "ykaigs"
+      },
+      "target": {
+        "raw_hex": "6c6f7a6f6c71",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.05965587869286537,
+      "distractor": {
+        "raw_hex": "6c6f7a6f6c71",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.0575365275144577
+    },
+    {
+      "id": "train-088",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "68756473676e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.953800618648529,
+        "target_source_mass": 0.5485396385192871,
+        "target_span_mass": 0.00787957850843668,
+        "matching_byte_address_mass": 0.001086506643332541,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "zzffkg",
+        "distractor": "qqaglk"
+      },
+      "target": {
+        "raw_hex": "68756473676e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.0015693306922912598,
+      "distractor": {
+        "raw_hex": "68626a666f66",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.00011289834947092459
+    },
+    {
+      "id": "train-089",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6f7a70727666",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.0597591400146484,
+        "target_source_mass": 0.4226928949356079,
+        "target_span_mass": 0.026208026334643364,
+        "matching_byte_address_mass": 0.005032170098274946,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "tccked",
+        "distractor": "zrbtdy"
+      },
+      "target": {
+        "raw_hex": "6f6f727464",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.2774968445301056,
+      "distractor": {
+        "raw_hex": "6f7a70727670",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.2923281192779541
+    },
+    {
+      "id": "train-092",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "64646465716b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.6823450326919556,
+        "target_source_mass": 0.17845535278320312,
+        "target_span_mass": 0.007864558137953281,
+        "matching_byte_address_mass": 0.0027089242357760668,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "fibfds",
+        "distractor": "ycgvov"
+      },
+      "target": {
+        "raw_hex": "646464657168",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.019661150872707367,
+      "distractor": {
+        "raw_hex": "646e6b6e6b",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.3838721513748169
+    },
+    {
+      "id": "train-093",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "7374756b6e6f77",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.7647919058799744,
+        "target_source_mass": 0.5078538656234741,
+        "target_span_mass": 0.02060251124203205,
+        "matching_byte_address_mass": 0.008502822369337082,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "iblkdq",
+        "distractor": "tortws"
+      },
+      "target": {
+        "raw_hex": "7374756b6e6f77",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.0008092572679743171,
+      "distractor": {
+        "raw_hex": "7374756b676e77",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.007160546723753214
+    },
+    {
+      "id": "train-096",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "64626a6b6f64",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.186947226524353,
+        "target_source_mass": 0.34129106998443604,
+        "target_span_mass": 0.06199591979384422,
+        "matching_byte_address_mass": 0.013034173287451267,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "iwwwxa",
+        "distractor": "wvieuw"
+      },
+      "target": {
+        "raw_hex": "64626a6b6f6a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.015489672310650349,
+      "distractor": {
+        "raw_hex": "64626a69736f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.008401457220315933
+    },
+    {
+      "id": "train-097",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6177656174",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.1738001108169556,
+        "target_source_mass": 0.5298255681991577,
+        "target_span_mass": 0.12433195114135742,
+        "matching_byte_address_mass": 0.027881188318133354,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "kbdhru",
+        "distractor": "cbqlnx"
+      },
+      "target": {
+        "raw_hex": "64626a7468",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.16155950725078583,
+      "distractor": {
+        "raw_hex": "797869797979",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.2201436161994934
+    },
+    {
+      "id": "train-100",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6d726a6d726b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.1141091585159302,
+        "target_source_mass": 0.30041101574897766,
+        "target_span_mass": 0.029370615258812904,
+        "matching_byte_address_mass": 0.005074683111160994,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "arjofv",
+        "distractor": "kmqkdn"
+      },
+      "target": {
+        "raw_hex": "6d726a6d726b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.020559703931212425,
+      "distractor": {
+        "raw_hex": "6d726a6d726b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.002341308631002903
+    },
+    {
+      "id": "train-101",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6f6f7a74686f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.078700065612793,
+        "target_source_mass": 0.6299171447753906,
+        "target_span_mass": 0.2407328337430954,
+        "matching_byte_address_mass": 0.03461642190814018,
+        "peak_in_target_span_fraction": 0.1666666716337204,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "dmrwnn",
+        "distractor": "oogjbc"
+      },
+      "target": {
+        "raw_hex": "6f7a7a767170",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.13146966695785522,
+      "distractor": {
+        "raw_hex": "6f6f7a74686f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.025358155369758606
+    },
+    {
+      "id": "train-104",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "646e61746e78",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "read": {
+        "teacher_tokens_correct": 7,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.6444240212440491,
+        "target_source_mass": 0.9141318798065186,
+        "target_span_mass": 0.10822349786758423,
+        "matching_byte_address_mass": 0.023064037784934044,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "udbzdc",
+        "distractor": "dmoguu"
+      },
+      "target": {
+        "raw_hex": "646e617471",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.04546549916267395,
+      "distractor": {
+        "raw_hex": "646e61746e78",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": true
+      },
+      "distractor_first_tv": 0.0035767422523349524
+    },
+    {
+      "id": "train-105",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "686470756e71",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.2942352294921875,
+        "target_source_mass": 0.8238102793693542,
+        "target_span_mass": 0.6849519610404968,
+        "matching_byte_address_mass": 0.269461989402771,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "medwfx",
+        "distractor": "jzisbi"
+      },
+      "target": {
+        "raw_hex": "687467716e7878",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.1686156988143921,
+      "distractor": {
+        "raw_hex": "687470756e78",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.057223133742809296
+    },
+    {
+      "id": "train-108",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6d726d6d736175",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.543596863746643,
+        "target_source_mass": 0.8576066493988037,
+        "target_span_mass": 0.05364462360739708,
+        "matching_byte_address_mass": 0.004587881732732058,
+        "peak_in_target_span_fraction": 0.1666666716337204,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "txxyyr",
+        "distractor": "lequof"
+      },
+      "target": {
+        "raw_hex": "6d65737361",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.007413574960082769,
+      "distractor": {
+        "raw_hex": "6d726d6d736175",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.011378565803170204
+    },
+    {
+      "id": "train-109",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "677163767670",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.8957806825637817,
+        "target_source_mass": 0.17964017391204834,
+        "target_span_mass": 0.0112241106107831,
+        "matching_byte_address_mass": 0.0018800472607836127,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "pqlete",
+        "distractor": "brozhj"
+      },
+      "target": {
+        "raw_hex": "747467767261",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.6168431639671326,
+      "distractor": {
+        "raw_hex": "67717a76777a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.3263095021247864
+    },
+    {
+      "id": "train-112",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6d6d61747468",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.0286591053009033,
+        "target_source_mass": 0.8939273357391357,
+        "target_span_mass": 0.008199358358979225,
+        "matching_byte_address_mass": 0.0008368473500013351,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "vpwvqg",
+        "distractor": "mzarxs"
+      },
+      "target": {
+        "raw_hex": "6d6d61747468",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.049120768904685974,
+      "distractor": {
+        "raw_hex": "6d6d61747468",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.017756501212716103
+    },
+    {
+      "id": "train-113",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6c6b6f6c777a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 3,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.2610598802566528,
+        "target_source_mass": 0.5154799222946167,
+        "target_span_mass": 0.01896357536315918,
+        "matching_byte_address_mass": 0.005317485425621271,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "mqnjzx",
+        "distractor": "gcumof"
+      },
+      "target": {
+        "raw_hex": "64627a666b6b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.18378376960754395,
+      "distractor": {
+        "raw_hex": "6c6b6f6c777a",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.014737329445779324
+    },
+    {
+      "id": "train-116",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "7965737463",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.9039250016212463,
+        "target_source_mass": 0.8323287963867188,
+        "target_span_mass": 0.053391601890325546,
+        "matching_byte_address_mass": 0.005811931565403938,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "zxrzcp",
+        "distractor": "cwotld"
+      },
+      "target": {
+        "raw_hex": "7965737468",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.10755565017461777,
+      "distractor": {
+        "raw_hex": "7965737472",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.02922823838889599
+    },
+    {
+      "id": "train-117",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "676e797468",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.953003466129303,
+        "target_source_mass": 0.5238295197486877,
+        "target_span_mass": 0.1770002692937851,
+        "matching_byte_address_mass": 0.0015645966632291675,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "hosyuu",
+        "distractor": "wjoejv"
+      },
+      "target": {
+        "raw_hex": "676e797468",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.13078239560127258,
+      "distractor": {
+        "raw_hex": "676e797468",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.05075842887163162
+    },
+    {
+      "id": "train-120",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "7965737478",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.7065372467041016,
+        "target_source_mass": 0.22505106031894684,
+        "target_span_mass": 0.054012104868888855,
+        "matching_byte_address_mass": 0.027223272249102592,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "hfiahd",
+        "distractor": "mfvoth"
+      },
+      "target": {
+        "raw_hex": "7965737478",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.009512275457382202,
+      "distractor": {
+        "raw_hex": "7965737478",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.0336785651743412
+    },
+    {
+      "id": "train-121",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "68736f756e69",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.8691208958625793,
+        "target_source_mass": 0.7830763459205627,
+        "target_span_mass": 0.09278151392936707,
+        "matching_byte_address_mass": 0.013662106357514858,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "ozxlqq",
+        "distractor": "ewhmcs"
+      },
+      "target": {
+        "raw_hex": "68736f756468",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.004588764626532793,
+      "distractor": {
+        "raw_hex": "68736f756e69",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.008880923502147198
+    },
+    {
+      "id": "train-124",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 2,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.2004987001419067,
+        "target_source_mass": 0.9587411284446716,
+        "target_span_mass": 0.2211296409368515,
+        "matching_byte_address_mass": 0.04340270161628723,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "ryhdcb",
+        "distractor": "uhenix"
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.16258904337882996,
+      "distractor": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.20746728777885437
+    },
+    {
+      "id": "train-125",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "79717a6b616b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.2025158405303955,
+        "target_source_mass": 0.48417702317237854,
+        "target_span_mass": 0.014004872180521488,
+        "matching_byte_address_mass": 0.002597025129944086,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "avrygr",
+        "distractor": "btdbox"
+      },
+      "target": {
+        "raw_hex": "6464696b6161",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.481553852558136,
+      "distractor": {
+        "raw_hex": "797866666b6b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.057463422417640686
+    },
+    {
+      "id": "train-128",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "646268636961",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.3274122476577759,
+        "target_source_mass": 0.16129766404628754,
+        "target_span_mass": 0.020880671218037605,
+        "matching_byte_address_mass": 0.005220722872763872,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "susrva",
+        "distractor": "hcbxby"
+      },
+      "target": {
+        "raw_hex": "646268636961",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.04014134407043457,
+      "distractor": {
+        "raw_hex": "64626a697366",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.014774481765925884
+    },
+    {
+      "id": "train-129",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "736f757468",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.0605159997940063,
+        "target_source_mass": 0.5005272030830383,
+        "target_span_mass": 0.032206956297159195,
+        "matching_byte_address_mass": 0.008968409150838852,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "hnipkf",
+        "distractor": "bwasva"
+      },
+      "target": {
+        "raw_hex": "79796d727665",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.21412938833236694,
+      "distractor": {
+        "raw_hex": "736f757468",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 9.458374552195892e-05
+    },
+    {
+      "id": "train-132",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6464647374",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.3181030750274658,
+        "target_source_mass": 0.4024386405944824,
+        "target_span_mass": 0.006434909999370575,
+        "matching_byte_address_mass": 0.000909165944904089,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "bjtedr",
+        "distractor": "wgzaml"
+      },
+      "target": {
+        "raw_hex": "64646465716f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.004647189285606146,
+      "distractor": {
+        "raw_hex": "6d61666161",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.4233524799346924
+    },
+    {
+      "id": "train-133",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.1871917247772217,
+        "target_source_mass": 0.5188174843788147,
+        "target_span_mass": 0.04183376953005791,
+        "matching_byte_address_mass": 0.0058406987227499485,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "vzotqd",
+        "distractor": "vdhyys"
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.0628381073474884,
+      "distractor": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.04205324500799179
+    },
+    {
+      "id": "train-136",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "746f65616161",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.6484678983688354,
+        "target_source_mass": 0.11816243082284927,
+        "target_span_mass": 0.050004709511995316,
+        "matching_byte_address_mass": 0.017190581187605858,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "lhicac",
+        "distractor": "opywlc"
+      },
+      "target": {
+        "raw_hex": "746f65616161",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.13029345870018005,
+      "distractor": {
+        "raw_hex": "746771696e7878",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.47032469511032104
+    },
+    {
+      "id": "train-137",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "707564707075",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.888007640838623,
+        "target_source_mass": 0.5903559327125549,
+        "target_span_mass": 0.08066418021917343,
+        "matching_byte_address_mass": 0.02620786987245083,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "rugdzr",
+        "distractor": "jtbgxl"
+      },
+      "target": {
+        "raw_hex": "616561797075",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.15563233196735382,
+      "distractor": {
+        "raw_hex": "707564707075",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.000938446493819356
+    },
+    {
+      "id": "train-140",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "68736f7574",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.1491248607635498,
+        "target_source_mass": 0.5238890647888184,
+        "target_span_mass": 0.029780888929963112,
+        "matching_byte_address_mass": 0.005713906604796648,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "strjjm",
+        "distractor": "tnalmp"
+      },
+      "target": {
+        "raw_hex": "68736f7574",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.06874831765890121,
+      "distractor": {
+        "raw_hex": "68736f757467",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.008191017434000969
+    },
+    {
+      "id": "train-141",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.6214077472686768,
+        "target_source_mass": 0.6161803603172302,
+        "target_span_mass": 0.06609922647476196,
+        "matching_byte_address_mass": 0.033097151666879654,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "lmvthb",
+        "distractor": "upamqz"
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.05651603639125824,
+      "distractor": {
+        "raw_hex": "707a7a786571",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.1417597085237503
+    },
+    {
+      "id": "train-144",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6d65626c7070",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.3137367963790894,
+        "target_source_mass": 0.7747049927711487,
+        "target_span_mass": 0.028315914794802666,
+        "matching_byte_address_mass": 0.006576743442565203,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "jdldvd",
+        "distractor": "zaqzgh"
+      },
+      "target": {
+        "raw_hex": "6d65626c7070",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.0009029085049405694,
+      "distractor": {
+        "raw_hex": "6d656c6c6578",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.0863514244556427
+    },
+    {
+      "id": "train-145",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6c6c6f6c6c71",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.2870252132415771,
+        "target_source_mass": 0.48943057656288147,
+        "target_span_mass": 0.0021688786800950766,
+        "matching_byte_address_mass": 0.0002620517334435135,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "dpqiro",
+        "distractor": "qvkrul"
+      },
+      "target": {
+        "raw_hex": "6c6c6f6c6c71",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.2307364046573639,
+      "distractor": {
+        "raw_hex": "6c6c6f6c6c71",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.018311098217964172
+    },
+    {
+      "id": "train-148",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "64627a767670",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.4777004718780518,
+        "target_source_mass": 0.33160272240638733,
+        "target_span_mass": 0.03290781006217003,
+        "matching_byte_address_mass": 0.006845878437161446,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "ozhjsz",
+        "distractor": "jvcelh"
+      },
+      "target": {
+        "raw_hex": "6464696b6e6f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.0337161086499691,
+      "distractor": {
+        "raw_hex": "64627a767670",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.0006318535306490958
+    },
+    {
+      "id": "train-149",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "7070706774",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 3,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.5048551559448242,
+        "target_source_mass": 0.7538524270057678,
+        "target_span_mass": 0.4863239526748657,
+        "matching_byte_address_mass": 0.17568211257457733,
+        "peak_in_target_span_fraction": 0.6666666865348816,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "iqtppa",
+        "distractor": "wscmda"
+      },
+      "target": {
+        "raw_hex": "616161747961",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.5625325441360474,
+      "distractor": {
+        "raw_hex": "7070706774",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.005427910480648279
+    },
+    {
+      "id": "train-152",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "696976707670",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.18524169921875,
+        "target_source_mass": 0.8356180191040039,
+        "target_span_mass": 0.4634457528591156,
+        "matching_byte_address_mass": 0.13728120923042297,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "oqwkch",
+        "distractor": "kcyiwi"
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.2967284023761749,
+      "distractor": {
+        "raw_hex": "696976706978",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.13128776848316193
+    },
+    {
+      "id": "train-153",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "79797274796f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.0748268365859985,
+        "target_source_mass": 0.12710034847259521,
+        "target_span_mass": 0.053131893277168274,
+        "matching_byte_address_mass": 0.004872009623795748,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "ulhrik",
+        "distractor": "xnvvuw"
+      },
+      "target": {
+        "raw_hex": "79797274796f",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.07950125634670258,
+      "distractor": {
+        "raw_hex": "6461666f61",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.6098088026046753
+    },
+    {
+      "id": "train-156",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6561736e78",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.2419980764389038,
+        "target_source_mass": 0.6162700653076172,
+        "target_span_mass": 0.05728429928421974,
+        "matching_byte_address_mass": 0.02478402853012085,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "ybmppe",
+        "distractor": "nzlhrt"
+      },
+      "target": {
+        "raw_hex": "656173707570",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.032029956579208374,
+      "distractor": {
+        "raw_hex": "6561736e78",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.035567738115787506
+    },
+    {
+      "id": "train-157",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "7461647274",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.8678357005119324,
+        "target_source_mass": 0.47116991877555847,
+        "target_span_mass": 0.35067883133888245,
+        "matching_byte_address_mass": 0.021624254062771797,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "pwxkux",
+        "distractor": "hbuves"
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.7860732674598694,
+      "distractor": {
+        "raw_hex": "7461646174",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.06687945127487183
+    },
+    {
+      "id": "train-160",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.1557294130325317,
+        "target_source_mass": 0.5723556876182556,
+        "target_span_mass": 0.029236482456326485,
+        "matching_byte_address_mass": 0.004277414176613092,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "ngadvd",
+        "distractor": "vefvgl"
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.04134582728147507,
+      "distractor": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.40455806255340576
+    },
+    {
+      "id": "train-161",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "706d70676161",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.1004794836044312,
+        "target_source_mass": 0.5012903213500977,
+        "target_span_mass": 0.03694825991988182,
+        "matching_byte_address_mass": 0.0024021542631089687,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "racnlj",
+        "distractor": "wcjnzt"
+      },
+      "target": {
+        "raw_hex": "706d70726461",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.08114824444055557,
+      "distractor": {
+        "raw_hex": "706d70676161",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.002865391783416271
+    },
+    {
+      "id": "train-164",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "79707a6a7264",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 3,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.4118716716766357,
+        "target_source_mass": 0.45709189772605896,
+        "target_span_mass": 0.14364828169345856,
+        "matching_byte_address_mass": 0.00340292789041996,
+        "peak_in_target_span_fraction": 0.3333333432674408,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "mzyvvv",
+        "distractor": "fmkhca"
+      },
+      "target": {
+        "raw_hex": "706364727264",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.2911299169063568,
+      "distractor": {
+        "raw_hex": "79707a6a7268",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.001594694796949625
+    },
+    {
+      "id": "train-165",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "6d726c6d726b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.0001693964004517,
+        "target_source_mass": 0.4956635534763336,
+        "target_span_mass": 0.007461232598870993,
+        "matching_byte_address_mass": 0.0009265346452593803,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "ecwvqp",
+        "distractor": "jdyueq"
+      },
+      "target": {
+        "raw_hex": "6d726c6d726b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.004537849221378565,
+      "distractor": {
+        "raw_hex": "6d726c6d726b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 1.8952889149659313e-05
+    },
+    {
+      "id": "train-168",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "646e686f68",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.085443139076233,
+        "target_source_mass": 0.13695494830608368,
+        "target_span_mass": 0.027423404157161713,
+        "matching_byte_address_mass": 0.004252408165484667,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "gdirrr",
+        "distractor": "wyozfx"
+      },
+      "target": {
+        "raw_hex": "646e686f68",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.06731440871953964,
+      "distractor": {
+        "raw_hex": "646e686f68",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "distractor_first_tv": 0.06789056956768036
+    },
+    {
+      "id": "train-169",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "617461747467",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 3,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.338119387626648,
+        "target_source_mass": 0.846099317073822,
+        "target_span_mass": 0.6912212371826172,
+        "matching_byte_address_mass": 0.09984035044908524,
+        "peak_in_target_span_fraction": 1.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "kmqmkl",
+        "distractor": "edwgsk"
+      },
+      "target": {
+        "raw_hex": "796561747161",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.25135672092437744,
+      "distractor": {
+        "raw_hex": "617461747467",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.0006858975393697619
+    },
+    {
+      "id": "train-172",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6e7070706e77",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.33925530314445496,
+        "target_source_mass": 0.6036155819892883,
+        "target_span_mass": 0.48908162117004395,
+        "matching_byte_address_mass": 0.16770343482494354,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "qrpytq",
+        "distractor": "ekupuh"
+      },
+      "target": {
+        "raw_hex": "6e6b6e6f72",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.029003754258155823,
+      "distractor": {
+        "raw_hex": "6e7070706e77",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.04313821345567703
+    },
+    {
+      "id": "train-173",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "686464647271",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.25178062915802,
+        "target_source_mass": 0.5418767333030701,
+        "target_span_mass": 0.1872856616973877,
+        "matching_byte_address_mass": 0.0498310811817646,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "rfhmie",
+        "distractor": "lbtist"
+      },
+      "target": {
+        "raw_hex": "68647a6464",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.056972235441207886,
+      "distractor": {
+        "raw_hex": "686464646161",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.04589562863111496
+    },
+    {
+      "id": "train-176",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.7299166917800903,
+        "target_source_mass": 0.5083628296852112,
+        "target_span_mass": 0.09024826437234879,
+        "matching_byte_address_mass": 0.01292554009705782,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "pmxmcs",
+        "distractor": "jvurpg"
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.06538596004247665,
+      "distractor": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.06137911230325699
+    },
+    {
+      "id": "train-177",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "656e796e7970",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.6352330446243286,
+        "target_source_mass": 0.6476622819900513,
+        "target_span_mass": 0.30464640259742737,
+        "matching_byte_address_mass": 0.11564560979604721,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "qcxfbf",
+        "distractor": "yshwvn"
+      },
+      "target": {
+        "raw_hex": "656e737475",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.027291249483823776,
+      "distractor": {
+        "raw_hex": "656e796e796e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.02340945601463318
+    },
+    {
+      "id": "train-180",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "73737472676e",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 6,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.6397334337234497,
+        "target_source_mass": 0.1676875501871109,
+        "target_span_mass": 0.11759734153747559,
+        "matching_byte_address_mass": 0.016186172142624855,
+        "peak_in_target_span_fraction": 0.1666666716337204,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "iydirc",
+        "distractor": "upsacw"
+      },
+      "target": {
+        "raw_hex": "737374686e",
+        "stop_reason": "boundary",
+        "generated_steps": 6,
+        "exact": false
+      },
+      "target_first_tv": 0.0003817694669123739,
+      "distractor": {
+        "raw_hex": "737374726761",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 2.190947998315096e-05
+    },
+    {
+      "id": "train-181",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.184308409690857,
+        "target_source_mass": 0.7841723561286926,
+        "target_span_mass": 0.07965870946645737,
+        "matching_byte_address_mass": 0.01164331566542387,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "cjbnmq",
+        "distractor": "jeqdrt"
+      },
+      "target": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.043844230473041534,
+      "distractor": {
+        "raw_hex": "756e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "distractor_first_tv": 0.08804507553577423
+    },
+    {
+      "id": "train-184",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "6e6e6b6e6f776e",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 3,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.3558895587921143,
+        "target_source_mass": 0.5234352946281433,
+        "target_span_mass": 0.030372457578778267,
+        "matching_byte_address_mass": 0.0021122952457517385,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "vmrhrw",
+        "distractor": "jmqxkd"
+      },
+      "target": {
+        "raw_hex": "6e6e6b6f726e6f",
+        "stop_reason": "boundary",
+        "generated_steps": 8,
+        "exact": false
+      },
+      "target_first_tv": 0.0024724816903471947,
+      "distractor": {
+        "raw_hex": "6e6e6b6f7377",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.1913311630487442
+    },
+    {
+      "id": "train-185",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "656170686162",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 5,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.980467677116394,
+        "target_source_mass": 0.5095983147621155,
+        "target_span_mass": 0.021423837170004845,
+        "matching_byte_address_mass": 0.0023288556840270758,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "nssvxk",
+        "distractor": "bapiww"
+      },
+      "target": {
+        "raw_hex": "656170686162",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.05845862254500389,
+      "distractor": {
+        "raw_hex": "656170686162",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.03743446618318558
+    },
+    {
+      "id": "train-188",
+      "kind": "lookup",
+      "original": {
+        "raw_hex": "746e64737461",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 4,
+        "teacher_tokens": 7,
+        "teacher_ce": 0.901362955570221,
+        "target_source_mass": 0.39137256145477295,
+        "target_span_mass": 0.28418734669685364,
+        "matching_byte_address_mass": 0.034530285745859146,
+        "peak_in_target_span_fraction": 0.5,
+        "uniform_source_mass": 0.5,
+        "uniform_span_mass": 0.13043478260869565
+      },
+      "replacements": {
+        "target": "sagzfb",
+        "distractor": "imlwfo"
+      },
+      "target": {
+        "raw_hex": "616e64647674",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.6258803606033325,
+      "distractor": {
+        "raw_hex": "746564737661",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.006788687314838171
+    },
+    {
+      "id": "train-189",
+      "kind": "revision",
+      "original": {
+        "raw_hex": "767a7a6b6b6b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "read": {
+        "teacher_tokens_correct": 3,
+        "teacher_tokens": 7,
+        "teacher_ce": 1.4823511838912964,
+        "target_source_mass": 0.49721264839172363,
+        "target_span_mass": 0.015979932621121407,
+        "matching_byte_address_mass": 0.0033332493621855974,
+        "peak_in_target_span_fraction": 0.0,
+        "uniform_source_mass": 0.54,
+        "uniform_span_mass": 0.12
+      },
+      "replacements": {
+        "target": "hpjuyt",
+        "distractor": "eglbyo"
+      },
+      "target": {
+        "raw_hex": "706576767269",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "target_first_tv": 0.18071311712265015,
+      "distractor": {
+        "raw_hex": "767a7a6b6b6b",
+        "stop_reason": "boundary",
+        "generated_steps": 7,
+        "exact": false
+      },
+      "distractor_first_tv": 0.028288356959819794
+    }
+  ],
+  "parameter_updates": 0,
+  "dev_queries": 0,
+  "holdout_queries": 0,
+  "free_queries": 288,
+  "teacher_queries": 96,
+  "cpu_limit_seconds": 60,
+  "can_promote": false,
+  "status": "complete",
+  "cpu_seconds": 2.703125,
+  "parameters_unchanged": true,
+  "checkpoint_unchanged": true,
+  "manifest_unchanged": true,
+  "code_unchanged": true,
+  "summary": {
+    "lookup": {
+      "items": 48,
+      "original_exact": 2,
+      "target_exact": 0,
+      "distractor_exact": 3,
+      "target_output_changed": 29,
+      "distractor_output_changed": 27,
+      "mean_target_first_tv": 0.12224501950974324,
+      "mean_distractor_first_tv": 0.10784373256456092,
+      "mean_teacher_ce": 1.2128336944927771,
+      "mean_target_source_mass": 0.5613789867299298,
+      "mean_target_span_mass": 0.1493278846804363,
+      "mean_matching_byte_address_mass": 0.03158673434275746,
+      "mean_peak_in_target_span_fraction": 0.16319444558272758,
+      "mean_uniform_source_mass": 0.5,
+      "mean_uniform_span_mass": 0.13043478260869565,
+      "teacher_token_accuracy": 0.6666666666666666
+    },
+    "revision": {
+      "items": 48,
+      "original_exact": 1,
+      "target_exact": 0,
+      "distractor_exact": 0,
+      "target_output_changed": 29,
+      "distractor_output_changed": 23,
+      "mean_target_first_tv": 0.15072825618699426,
+      "mean_distractor_first_tv": 0.07371434147175175,
+      "mean_teacher_ce": 1.211002657810847,
+      "mean_target_source_mass": 0.5547505437086026,
+      "mean_target_span_mass": 0.14079160092417928,
+      "mean_matching_byte_address_mass": 0.03128370427111804,
+      "mean_peak_in_target_span_fraction": 0.15625000217308602,
+      "mean_uniform_source_mass": 0.54,
+      "mean_uniform_span_mass": 0.12,
+      "teacher_token_accuracy": 0.6875
+    }
+  },
+  "complete": true
+}
