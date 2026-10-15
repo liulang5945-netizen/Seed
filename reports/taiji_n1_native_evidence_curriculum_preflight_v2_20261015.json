@@ -1,0 +1,131 @@
+{
+  "schema": "n1-curriculum-preflight-v1",
+  "counts": {
+    "train": {
+      "lookup": 24,
+      "revision": 24,
+      "transition": 24,
+      "unknown": 24
+    },
+    "dev": {
+      "lookup": 8,
+      "revision": 8,
+      "transition": 8,
+      "unknown": 8
+    },
+    "holdout": {
+      "lookup": 8,
+      "revision": 8,
+      "transition": 8,
+      "unknown": 8
+    }
+  },
+  "manifest_sha256": "e95a2e3be6a3a4abca92ea583cf35522545961280b575e5d5373857973d5e979",
+  "capability_claim": false,
+  "holdout_model_queries": 0,
+  "code_sha256": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+  "rows": [
+    {
+      "kind": "lookup",
+      "arm": "position",
+      "id": "train-000",
+      "cpu_seconds": 0.015625,
+      "first_credit": 0.006886911578476429,
+      "last_credit": 0.003309299238026142
+    },
+    {
+      "kind": "lookup",
+      "arm": "terminal",
+      "id": "train-000",
+      "cpu_seconds": 0.0,
+      "first_credit": 2.0751776901306584e-06,
+      "last_credit": 0.0732765719294548
+    },
+    {
+      "kind": "lookup",
+      "arm": "cut",
+      "id": "train-000",
+      "cpu_seconds": 0.015625,
+      "first_credit": null,
+      "last_credit": null
+    },
+    {
+      "kind": "revision",
+      "arm": "position",
+      "id": "train-001",
+      "cpu_seconds": 0.0,
+      "first_credit": 0.0036167718935757875,
+      "last_credit": 0.0017619408899918199
+    },
+    {
+      "kind": "revision",
+      "arm": "terminal",
+      "id": "train-001",
+      "cpu_seconds": 0.015625,
+      "first_credit": 7.535409167758189e-07,
+      "last_credit": 0.0481347031891346
+    },
+    {
+      "kind": "revision",
+      "arm": "cut",
+      "id": "train-001",
+      "cpu_seconds": 0.0,
+      "first_credit": null,
+      "last_credit": null
+    },
+    {
+      "kind": "transition",
+      "arm": "position",
+      "id": "train-002",
+      "cpu_seconds": 0.015625,
+      "first_credit": 0.003918040543794632,
+      "last_credit": 0.0019128737039864063
+    },
+    {
+      "kind": "transition",
+      "arm": "terminal",
+      "id": "train-002",
+      "cpu_seconds": 0.0,
+      "first_credit": 5.6119648661479e-07,
+      "last_credit": 0.04287330433726311
+    },
+    {
+      "kind": "transition",
+      "arm": "cut",
+      "id": "train-002",
+      "cpu_seconds": 0.0,
+      "first_credit": null,
+      "last_credit": null
+    },
+    {
+      "kind": "unknown",
+      "arm": "position",
+      "id": "train-003",
+      "cpu_seconds": 0.0,
+      "first_credit": 0.004150367341935635,
+      "last_credit": 0.0022799870930612087
+    },
+    {
+      "kind": "unknown",
+      "arm": "terminal",
+      "id": "train-003",
+      "cpu_seconds": 0.0,
+      "first_credit": 1.0450230547576211e-06,
+      "last_credit": 0.05300519987940788
+    },
+    {
+      "kind": "unknown",
+      "arm": "cut",
+      "id": "train-003",
+      "cpu_seconds": 0.0,
+      "first_credit": null,
+      "last_credit": null
+    }
+  ],
+  "parameters_unchanged": true,
+  "optimizer_steps": 0,
+  "cpu_seconds": 1.453125,
+  "cpu_limit_seconds": 30,
+  "passed": true,
+  "training_cost_estimate_is_upper_bound": false
+}

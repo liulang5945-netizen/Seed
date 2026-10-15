@@ -794,3 +794,5 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 2026-10-15 N1参考工程：[SPEC11](../reference/SPEC-N1-11_position_evidence_reference_contract_20261015.md)／[EXP11](../reference/EXP-N1-11_position_evidence_reference_adjudication_20261015.md)。CPU7秒，参考信用负对照与独立恢复通过；原生能力与正式采用未通过，下一步见03。
 
 2026-10-15 N1原生候选：[SPEC12接口](../reference/SPEC-N1-12_native_evidence_candidate_contract_20261015.md)／[SPEC13恢复](../reference/SPEC-N1-13_candidate_restore_audit_20261015.md)／[EXP13结果](../reference/EXP-N1-13_native_candidate_restore_adjudication_20261015.md)。候选接口与恢复工程已验证，CPU6.75秒；训练与能力未通过。
+
+2026-10-15 N1课程：[PLAN14小试提案](../reference/PLAN-N1-14_native_candidate_paired_pilot_20261015.md)／[EXP14预检](../reference/EXP-N1-14_curriculum_preflight_adjudication_20261015.md)。v2数据与无更新检查通过；训练采用/新测面准入待决，不将旧C2预算挪用。

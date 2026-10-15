@@ -43,3 +43,5 @@ VISION §7.4禁止换名重启H3.8：其prefix末态生成keys/values且联合�
 2026-10-15 最新目标修订：按N主线持续推进并依实际情况调整计划，保持Taiji核心定义。11隔离逐位置参考工程已完成：CPU7秒，前向逐位相同的信用截断与零更新/优化器独立恢复通过；不代表原生信用或能力。全项目仍为C1通过、C2无严格收益、C3原生候选/训练及C4未完成；唯一下一步是原生写入/读取/学习归属合同。详见 [11工程裁决](EXP-N1-11_position_evidence_reference_adjudication_20261015.md)。
 
 2026-10-15 连续推进补充：12原生Observation隔离候选接口落地，13候选自身两新进程恢复通过（CPU6.75秒）；候选/参考与仓库守卫27 passed。无默认替换、无能力训练或净增益结论。唯一下一步为分离课程/同信息三臂协议及无更新预检，保持N主线方向。详见 [13裁决](EXP-N1-13_native_candidate_restore_adjudication_20261015.md)。
+
+2026-10-15 14预检完整：v1两处捷径已拒绝采用，v2随机实体/每类两观察，train/dev/holdout=96/32/32；CPU1.453125秒，12条train前向/backward、参数不变、optimizer0、holdout查询0。唯一建议为14三seed/三臂共3456更新、独立300秒CPU小试；新测面与训练范围准入仍须决定，尚未训练。见[14裁决](EXP-N1-14_curriculum_preflight_adjudication_20261015.md)。

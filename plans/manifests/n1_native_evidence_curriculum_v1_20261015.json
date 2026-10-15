@@ -1,0 +1,2366 @@
+{
+  "schema": "n1-native-evidence-curriculum-v1",
+  "seed": 14,
+  "episodes": [
+    {
+      "id": "train-000",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit000",
+        "tother000"
+      ],
+      "observations": [
+        "tother000 uses iron.",
+        "tunit000 uses copper."
+      ],
+      "question": "material of tunit000?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-001",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit001",
+        "tother001"
+      ],
+      "observations": [
+        "tunit001 uses iron.",
+        "tunit001 now uses brass."
+      ],
+      "question": "material of tunit001?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-002",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit002",
+        "tother002"
+      ],
+      "observations": [
+        "tunit002 faces north.",
+        "tunit002 turns right."
+      ],
+      "question": "direction of tunit002?",
+      "answer": "east"
+    },
+    {
+      "id": "train-003",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit003",
+        "tother003"
+      ],
+      "observations": [
+        "tother003 uses iron."
+      ],
+      "question": "material of tunit003?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-004",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit004",
+        "tother004"
+      ],
+      "observations": [
+        "tother004 uses silver.",
+        "tunit004 uses brass."
+      ],
+      "question": "material of tunit004?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-005",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit005",
+        "tother005"
+      ],
+      "observations": [
+        "tunit005 uses iron.",
+        "tunit005 now uses copper."
+      ],
+      "question": "material of tunit005?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-006",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit006",
+        "tother006"
+      ],
+      "observations": [
+        "tunit006 faces south.",
+        "tunit006 turns right."
+      ],
+      "question": "direction of tunit006?",
+      "answer": "west"
+    },
+    {
+      "id": "train-007",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit007",
+        "tother007"
+      ],
+      "observations": [
+        "tother007 uses silver."
+      ],
+      "question": "material of tunit007?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-008",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit008",
+        "tother008"
+      ],
+      "observations": [
+        "tother008 uses copper.",
+        "tunit008 uses iron."
+      ],
+      "question": "material of tunit008?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-009",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit009",
+        "tother009"
+      ],
+      "observations": [
+        "tunit009 uses copper.",
+        "tunit009 now uses brass."
+      ],
+      "question": "material of tunit009?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-010",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit010",
+        "tother010"
+      ],
+      "observations": [
+        "tunit010 faces north.",
+        "tunit010 turns right."
+      ],
+      "question": "direction of tunit010?",
+      "answer": "east"
+    },
+    {
+      "id": "train-011",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit011",
+        "tother011"
+      ],
+      "observations": [
+        "tother011 uses silver."
+      ],
+      "question": "material of tunit011?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-012",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit012",
+        "tother012"
+      ],
+      "observations": [
+        "tunit012 uses brass.",
+        "tother012 uses iron."
+      ],
+      "question": "material of tunit012?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-013",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit013",
+        "tother013"
+      ],
+      "observations": [
+        "tunit013 uses copper.",
+        "tunit013 now uses iron."
+      ],
+      "question": "material of tunit013?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-014",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit014",
+        "tother014"
+      ],
+      "observations": [
+        "tunit014 faces south.",
+        "tunit014 turns left."
+      ],
+      "question": "direction of tunit014?",
+      "answer": "east"
+    },
+    {
+      "id": "train-015",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit015",
+        "tother015"
+      ],
+      "observations": [
+        "tother015 uses copper."
+      ],
+      "question": "material of tunit015?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-016",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit016",
+        "tother016"
+      ],
+      "observations": [
+        "tother016 uses iron.",
+        "tunit016 uses brass."
+      ],
+      "question": "material of tunit016?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-017",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit017",
+        "tother017"
+      ],
+      "observations": [
+        "tunit017 uses iron.",
+        "tunit017 now uses silver."
+      ],
+      "question": "material of tunit017?",
+      "answer": "silver"
+    },
+    {
+      "id": "train-018",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit018",
+        "tother018"
+      ],
+      "observations": [
+        "tunit018 faces south.",
+        "tunit018 turns right."
+      ],
+      "question": "direction of tunit018?",
+      "answer": "west"
+    },
+    {
+      "id": "train-019",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit019",
+        "tother019"
+      ],
+      "observations": [
+        "tother019 uses copper."
+      ],
+      "question": "material of tunit019?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-020",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit020",
+        "tother020"
+      ],
+      "observations": [
+        "tunit020 uses copper.",
+        "tother020 uses silver."
+      ],
+      "question": "material of tunit020?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-021",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit021",
+        "tother021"
+      ],
+      "observations": [
+        "tunit021 uses copper.",
+        "tunit021 now uses brass."
+      ],
+      "question": "material of tunit021?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-022",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit022",
+        "tother022"
+      ],
+      "observations": [
+        "tunit022 faces west.",
+        "tunit022 turns left."
+      ],
+      "question": "direction of tunit022?",
+      "answer": "south"
+    },
+    {
+      "id": "train-023",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit023",
+        "tother023"
+      ],
+      "observations": [
+        "tother023 uses copper."
+      ],
+      "question": "material of tunit023?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-024",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit024",
+        "tother024"
+      ],
+      "observations": [
+        "tother024 uses iron.",
+        "tunit024 uses brass."
+      ],
+      "question": "material of tunit024?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-025",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit025",
+        "tother025"
+      ],
+      "observations": [
+        "tunit025 uses brass.",
+        "tunit025 now uses silver."
+      ],
+      "question": "material of tunit025?",
+      "answer": "silver"
+    },
+    {
+      "id": "train-026",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit026",
+        "tother026"
+      ],
+      "observations": [
+        "tunit026 faces west.",
+        "tunit026 turns right."
+      ],
+      "question": "direction of tunit026?",
+      "answer": "north"
+    },
+    {
+      "id": "train-027",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit027",
+        "tother027"
+      ],
+      "observations": [
+        "tother027 uses brass."
+      ],
+      "question": "material of tunit027?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-028",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit028",
+        "tother028"
+      ],
+      "observations": [
+        "tunit028 uses copper.",
+        "tother028 uses silver."
+      ],
+      "question": "material of tunit028?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-029",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit029",
+        "tother029"
+      ],
+      "observations": [
+        "tunit029 uses brass.",
+        "tunit029 now uses copper."
+      ],
+      "question": "material of tunit029?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-030",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit030",
+        "tother030"
+      ],
+      "observations": [
+        "tunit030 faces west.",
+        "tunit030 turns left."
+      ],
+      "question": "direction of tunit030?",
+      "answer": "south"
+    },
+    {
+      "id": "train-031",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit031",
+        "tother031"
+      ],
+      "observations": [
+        "tother031 uses silver."
+      ],
+      "question": "material of tunit031?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-032",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit032",
+        "tother032"
+      ],
+      "observations": [
+        "tunit032 uses iron.",
+        "tother032 uses brass."
+      ],
+      "question": "material of tunit032?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-033",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit033",
+        "tother033"
+      ],
+      "observations": [
+        "tunit033 uses copper.",
+        "tunit033 now uses iron."
+      ],
+      "question": "material of tunit033?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-034",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit034",
+        "tother034"
+      ],
+      "observations": [
+        "tunit034 faces north.",
+        "tunit034 turns right."
+      ],
+      "question": "direction of tunit034?",
+      "answer": "east"
+    },
+    {
+      "id": "train-035",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit035",
+        "tother035"
+      ],
+      "observations": [
+        "tother035 uses iron."
+      ],
+      "question": "material of tunit035?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-036",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit036",
+        "tother036"
+      ],
+      "observations": [
+        "tunit036 uses iron.",
+        "tother036 uses silver."
+      ],
+      "question": "material of tunit036?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-037",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit037",
+        "tother037"
+      ],
+      "observations": [
+        "tunit037 uses silver.",
+        "tunit037 now uses copper."
+      ],
+      "question": "material of tunit037?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-038",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit038",
+        "tother038"
+      ],
+      "observations": [
+        "tunit038 faces north.",
+        "tunit038 turns right."
+      ],
+      "question": "direction of tunit038?",
+      "answer": "east"
+    },
+    {
+      "id": "train-039",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit039",
+        "tother039"
+      ],
+      "observations": [
+        "tother039 uses copper."
+      ],
+      "question": "material of tunit039?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-040",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit040",
+        "tother040"
+      ],
+      "observations": [
+        "tother040 uses brass.",
+        "tunit040 uses silver."
+      ],
+      "question": "material of tunit040?",
+      "answer": "silver"
+    },
+    {
+      "id": "train-041",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit041",
+        "tother041"
+      ],
+      "observations": [
+        "tunit041 uses copper.",
+        "tunit041 now uses iron."
+      ],
+      "question": "material of tunit041?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-042",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit042",
+        "tother042"
+      ],
+      "observations": [
+        "tunit042 faces south.",
+        "tunit042 turns right."
+      ],
+      "question": "direction of tunit042?",
+      "answer": "west"
+    },
+    {
+      "id": "train-043",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit043",
+        "tother043"
+      ],
+      "observations": [
+        "tother043 uses copper."
+      ],
+      "question": "material of tunit043?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-044",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit044",
+        "tother044"
+      ],
+      "observations": [
+        "tother044 uses copper.",
+        "tunit044 uses silver."
+      ],
+      "question": "material of tunit044?",
+      "answer": "silver"
+    },
+    {
+      "id": "train-045",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit045",
+        "tother045"
+      ],
+      "observations": [
+        "tunit045 uses silver.",
+        "tunit045 now uses brass."
+      ],
+      "question": "material of tunit045?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-046",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit046",
+        "tother046"
+      ],
+      "observations": [
+        "tunit046 faces east.",
+        "tunit046 turns left."
+      ],
+      "question": "direction of tunit046?",
+      "answer": "north"
+    },
+    {
+      "id": "train-047",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit047",
+        "tother047"
+      ],
+      "observations": [
+        "tother047 uses iron."
+      ],
+      "question": "material of tunit047?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-048",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit048",
+        "tother048"
+      ],
+      "observations": [
+        "tother048 uses copper.",
+        "tunit048 uses iron."
+      ],
+      "question": "material of tunit048?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-049",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit049",
+        "tother049"
+      ],
+      "observations": [
+        "tunit049 uses silver.",
+        "tunit049 now uses brass."
+      ],
+      "question": "material of tunit049?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-050",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit050",
+        "tother050"
+      ],
+      "observations": [
+        "tunit050 faces east.",
+        "tunit050 turns right."
+      ],
+      "question": "direction of tunit050?",
+      "answer": "south"
+    },
+    {
+      "id": "train-051",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit051",
+        "tother051"
+      ],
+      "observations": [
+        "tother051 uses iron."
+      ],
+      "question": "material of tunit051?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-052",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit052",
+        "tother052"
+      ],
+      "observations": [
+        "tunit052 uses copper.",
+        "tother052 uses brass."
+      ],
+      "question": "material of tunit052?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-053",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit053",
+        "tother053"
+      ],
+      "observations": [
+        "tunit053 uses brass.",
+        "tunit053 now uses silver."
+      ],
+      "question": "material of tunit053?",
+      "answer": "silver"
+    },
+    {
+      "id": "train-054",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit054",
+        "tother054"
+      ],
+      "observations": [
+        "tunit054 faces north.",
+        "tunit054 turns left."
+      ],
+      "question": "direction of tunit054?",
+      "answer": "west"
+    },
+    {
+      "id": "train-055",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit055",
+        "tother055"
+      ],
+      "observations": [
+        "tother055 uses silver."
+      ],
+      "question": "material of tunit055?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-056",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit056",
+        "tother056"
+      ],
+      "observations": [
+        "tunit056 uses silver.",
+        "tother056 uses copper."
+      ],
+      "question": "material of tunit056?",
+      "answer": "silver"
+    },
+    {
+      "id": "train-057",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit057",
+        "tother057"
+      ],
+      "observations": [
+        "tunit057 uses brass.",
+        "tunit057 now uses silver."
+      ],
+      "question": "material of tunit057?",
+      "answer": "silver"
+    },
+    {
+      "id": "train-058",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit058",
+        "tother058"
+      ],
+      "observations": [
+        "tunit058 faces west.",
+        "tunit058 turns left."
+      ],
+      "question": "direction of tunit058?",
+      "answer": "south"
+    },
+    {
+      "id": "train-059",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit059",
+        "tother059"
+      ],
+      "observations": [
+        "tother059 uses copper."
+      ],
+      "question": "material of tunit059?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-060",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit060",
+        "tother060"
+      ],
+      "observations": [
+        "tunit060 uses iron.",
+        "tother060 uses brass."
+      ],
+      "question": "material of tunit060?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-061",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit061",
+        "tother061"
+      ],
+      "observations": [
+        "tunit061 uses brass.",
+        "tunit061 now uses copper."
+      ],
+      "question": "material of tunit061?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-062",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit062",
+        "tother062"
+      ],
+      "observations": [
+        "tunit062 faces north.",
+        "tunit062 turns left."
+      ],
+      "question": "direction of tunit062?",
+      "answer": "west"
+    },
+    {
+      "id": "train-063",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit063",
+        "tother063"
+      ],
+      "observations": [
+        "tother063 uses silver."
+      ],
+      "question": "material of tunit063?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-064",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit064",
+        "tother064"
+      ],
+      "observations": [
+        "tother064 uses iron.",
+        "tunit064 uses copper."
+      ],
+      "question": "material of tunit064?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-065",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit065",
+        "tother065"
+      ],
+      "observations": [
+        "tunit065 uses iron.",
+        "tunit065 now uses brass."
+      ],
+      "question": "material of tunit065?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-066",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit066",
+        "tother066"
+      ],
+      "observations": [
+        "tunit066 faces west.",
+        "tunit066 turns right."
+      ],
+      "question": "direction of tunit066?",
+      "answer": "north"
+    },
+    {
+      "id": "train-067",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit067",
+        "tother067"
+      ],
+      "observations": [
+        "tother067 uses iron."
+      ],
+      "question": "material of tunit067?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-068",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit068",
+        "tother068"
+      ],
+      "observations": [
+        "tunit068 uses iron.",
+        "tother068 uses copper."
+      ],
+      "question": "material of tunit068?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-069",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit069",
+        "tother069"
+      ],
+      "observations": [
+        "tunit069 uses copper.",
+        "tunit069 now uses iron."
+      ],
+      "question": "material of tunit069?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-070",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit070",
+        "tother070"
+      ],
+      "observations": [
+        "tunit070 faces west.",
+        "tunit070 turns left."
+      ],
+      "question": "direction of tunit070?",
+      "answer": "south"
+    },
+    {
+      "id": "train-071",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit071",
+        "tother071"
+      ],
+      "observations": [
+        "tother071 uses copper."
+      ],
+      "question": "material of tunit071?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-072",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit072",
+        "tother072"
+      ],
+      "observations": [
+        "tother072 uses copper.",
+        "tunit072 uses silver."
+      ],
+      "question": "material of tunit072?",
+      "answer": "silver"
+    },
+    {
+      "id": "train-073",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit073",
+        "tother073"
+      ],
+      "observations": [
+        "tunit073 uses iron.",
+        "tunit073 now uses copper."
+      ],
+      "question": "material of tunit073?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-074",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit074",
+        "tother074"
+      ],
+      "observations": [
+        "tunit074 faces east.",
+        "tunit074 turns left."
+      ],
+      "question": "direction of tunit074?",
+      "answer": "north"
+    },
+    {
+      "id": "train-075",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit075",
+        "tother075"
+      ],
+      "observations": [
+        "tother075 uses brass."
+      ],
+      "question": "material of tunit075?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-076",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit076",
+        "tother076"
+      ],
+      "observations": [
+        "tother076 uses iron.",
+        "tunit076 uses brass."
+      ],
+      "question": "material of tunit076?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-077",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit077",
+        "tother077"
+      ],
+      "observations": [
+        "tunit077 uses iron.",
+        "tunit077 now uses copper."
+      ],
+      "question": "material of tunit077?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-078",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit078",
+        "tother078"
+      ],
+      "observations": [
+        "tunit078 faces south.",
+        "tunit078 turns left."
+      ],
+      "question": "direction of tunit078?",
+      "answer": "east"
+    },
+    {
+      "id": "train-079",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit079",
+        "tother079"
+      ],
+      "observations": [
+        "tother079 uses silver."
+      ],
+      "question": "material of tunit079?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-080",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit080",
+        "tother080"
+      ],
+      "observations": [
+        "tother080 uses silver.",
+        "tunit080 uses copper."
+      ],
+      "question": "material of tunit080?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-081",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit081",
+        "tother081"
+      ],
+      "observations": [
+        "tunit081 uses copper.",
+        "tunit081 now uses silver."
+      ],
+      "question": "material of tunit081?",
+      "answer": "silver"
+    },
+    {
+      "id": "train-082",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit082",
+        "tother082"
+      ],
+      "observations": [
+        "tunit082 faces south.",
+        "tunit082 turns right."
+      ],
+      "question": "direction of tunit082?",
+      "answer": "west"
+    },
+    {
+      "id": "train-083",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit083",
+        "tother083"
+      ],
+      "observations": [
+        "tother083 uses iron."
+      ],
+      "question": "material of tunit083?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-084",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit084",
+        "tother084"
+      ],
+      "observations": [
+        "tunit084 uses iron.",
+        "tother084 uses copper."
+      ],
+      "question": "material of tunit084?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-085",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit085",
+        "tother085"
+      ],
+      "observations": [
+        "tunit085 uses iron.",
+        "tunit085 now uses copper."
+      ],
+      "question": "material of tunit085?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-086",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit086",
+        "tother086"
+      ],
+      "observations": [
+        "tunit086 faces north.",
+        "tunit086 turns right."
+      ],
+      "question": "direction of tunit086?",
+      "answer": "east"
+    },
+    {
+      "id": "train-087",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit087",
+        "tother087"
+      ],
+      "observations": [
+        "tother087 uses iron."
+      ],
+      "question": "material of tunit087?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-088",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit088",
+        "tother088"
+      ],
+      "observations": [
+        "tunit088 uses brass.",
+        "tother088 uses iron."
+      ],
+      "question": "material of tunit088?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-089",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit089",
+        "tother089"
+      ],
+      "observations": [
+        "tunit089 uses iron.",
+        "tunit089 now uses brass."
+      ],
+      "question": "material of tunit089?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-090",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit090",
+        "tother090"
+      ],
+      "observations": [
+        "tunit090 faces north.",
+        "tunit090 turns right."
+      ],
+      "question": "direction of tunit090?",
+      "answer": "east"
+    },
+    {
+      "id": "train-091",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit091",
+        "tother091"
+      ],
+      "observations": [
+        "tother091 uses brass."
+      ],
+      "question": "material of tunit091?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-092",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tunit092",
+        "tother092"
+      ],
+      "observations": [
+        "tother092 uses iron.",
+        "tunit092 uses brass."
+      ],
+      "question": "material of tunit092?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-093",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tunit093",
+        "tother093"
+      ],
+      "observations": [
+        "tunit093 uses silver.",
+        "tunit093 now uses copper."
+      ],
+      "question": "material of tunit093?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-094",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tunit094",
+        "tother094"
+      ],
+      "observations": [
+        "tunit094 faces north.",
+        "tunit094 turns left."
+      ],
+      "question": "direction of tunit094?",
+      "answer": "west"
+    },
+    {
+      "id": "train-095",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tunit095",
+        "tother095"
+      ],
+      "observations": [
+        "tother095 uses copper."
+      ],
+      "question": "material of tunit095?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-000",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "dunit000",
+        "dother000"
+      ],
+      "observations": [
+        "dother000 uses lead.",
+        "dunit000 uses nickel."
+      ],
+      "question": "material of dunit000?",
+      "answer": "nickel"
+    },
+    {
+      "id": "dev-001",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "dunit001",
+        "dother001"
+      ],
+      "observations": [
+        "dunit001 uses lead.",
+        "dunit001 now uses nickel."
+      ],
+      "question": "material of dunit001?",
+      "answer": "nickel"
+    },
+    {
+      "id": "dev-002",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "dunit002",
+        "dother002"
+      ],
+      "observations": [
+        "dunit002 faces north.",
+        "dunit002 turns left."
+      ],
+      "question": "direction of dunit002?",
+      "answer": "west"
+    },
+    {
+      "id": "dev-003",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "dunit003",
+        "dother003"
+      ],
+      "observations": [
+        "dother003 uses nickel."
+      ],
+      "question": "material of dunit003?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-004",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "dunit004",
+        "dother004"
+      ],
+      "observations": [
+        "dunit004 uses lead.",
+        "dother004 uses nickel."
+      ],
+      "question": "material of dunit004?",
+      "answer": "lead"
+    },
+    {
+      "id": "dev-005",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "dunit005",
+        "dother005"
+      ],
+      "observations": [
+        "dunit005 uses nickel.",
+        "dunit005 now uses lead."
+      ],
+      "question": "material of dunit005?",
+      "answer": "lead"
+    },
+    {
+      "id": "dev-006",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "dunit006",
+        "dother006"
+      ],
+      "observations": [
+        "dunit006 faces south.",
+        "dunit006 turns right."
+      ],
+      "question": "direction of dunit006?",
+      "answer": "west"
+    },
+    {
+      "id": "dev-007",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "dunit007",
+        "dother007"
+      ],
+      "observations": [
+        "dother007 uses lead."
+      ],
+      "question": "material of dunit007?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-008",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "dunit008",
+        "dother008"
+      ],
+      "observations": [
+        "dunit008 uses nickel.",
+        "dother008 uses lead."
+      ],
+      "question": "material of dunit008?",
+      "answer": "nickel"
+    },
+    {
+      "id": "dev-009",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "dunit009",
+        "dother009"
+      ],
+      "observations": [
+        "dunit009 uses nickel.",
+        "dunit009 now uses lead."
+      ],
+      "question": "material of dunit009?",
+      "answer": "lead"
+    },
+    {
+      "id": "dev-010",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "dunit010",
+        "dother010"
+      ],
+      "observations": [
+        "dunit010 faces north.",
+        "dunit010 turns left."
+      ],
+      "question": "direction of dunit010?",
+      "answer": "west"
+    },
+    {
+      "id": "dev-011",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "dunit011",
+        "dother011"
+      ],
+      "observations": [
+        "dother011 uses nickel."
+      ],
+      "question": "material of dunit011?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-012",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "dunit012",
+        "dother012"
+      ],
+      "observations": [
+        "dunit012 uses lead.",
+        "dother012 uses nickel."
+      ],
+      "question": "material of dunit012?",
+      "answer": "lead"
+    },
+    {
+      "id": "dev-013",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "dunit013",
+        "dother013"
+      ],
+      "observations": [
+        "dunit013 uses lead.",
+        "dunit013 now uses nickel."
+      ],
+      "question": "material of dunit013?",
+      "answer": "nickel"
+    },
+    {
+      "id": "dev-014",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "dunit014",
+        "dother014"
+      ],
+      "observations": [
+        "dunit014 faces north.",
+        "dunit014 turns left."
+      ],
+      "question": "direction of dunit014?",
+      "answer": "west"
+    },
+    {
+      "id": "dev-015",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "dunit015",
+        "dother015"
+      ],
+      "observations": [
+        "dother015 uses nickel."
+      ],
+      "question": "material of dunit015?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-016",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "dunit016",
+        "dother016"
+      ],
+      "observations": [
+        "dunit016 uses nickel.",
+        "dother016 uses lead."
+      ],
+      "question": "material of dunit016?",
+      "answer": "nickel"
+    },
+    {
+      "id": "dev-017",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "dunit017",
+        "dother017"
+      ],
+      "observations": [
+        "dunit017 uses lead.",
+        "dunit017 now uses nickel."
+      ],
+      "question": "material of dunit017?",
+      "answer": "nickel"
+    },
+    {
+      "id": "dev-018",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "dunit018",
+        "dother018"
+      ],
+      "observations": [
+        "dunit018 faces east.",
+        "dunit018 turns right."
+      ],
+      "question": "direction of dunit018?",
+      "answer": "south"
+    },
+    {
+      "id": "dev-019",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "dunit019",
+        "dother019"
+      ],
+      "observations": [
+        "dother019 uses lead."
+      ],
+      "question": "material of dunit019?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-020",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "dunit020",
+        "dother020"
+      ],
+      "observations": [
+        "dother020 uses lead.",
+        "dunit020 uses nickel."
+      ],
+      "question": "material of dunit020?",
+      "answer": "nickel"
+    },
+    {
+      "id": "dev-021",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "dunit021",
+        "dother021"
+      ],
+      "observations": [
+        "dunit021 uses lead.",
+        "dunit021 now uses nickel."
+      ],
+      "question": "material of dunit021?",
+      "answer": "nickel"
+    },
+    {
+      "id": "dev-022",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "dunit022",
+        "dother022"
+      ],
+      "observations": [
+        "dunit022 faces east.",
+        "dunit022 turns left."
+      ],
+      "question": "direction of dunit022?",
+      "answer": "north"
+    },
+    {
+      "id": "dev-023",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "dunit023",
+        "dother023"
+      ],
+      "observations": [
+        "dother023 uses nickel."
+      ],
+      "question": "material of dunit023?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-024",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "dunit024",
+        "dother024"
+      ],
+      "observations": [
+        "dunit024 uses lead.",
+        "dother024 uses nickel."
+      ],
+      "question": "material of dunit024?",
+      "answer": "lead"
+    },
+    {
+      "id": "dev-025",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "dunit025",
+        "dother025"
+      ],
+      "observations": [
+        "dunit025 uses nickel.",
+        "dunit025 now uses lead."
+      ],
+      "question": "material of dunit025?",
+      "answer": "lead"
+    },
+    {
+      "id": "dev-026",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "dunit026",
+        "dother026"
+      ],
+      "observations": [
+        "dunit026 faces north.",
+        "dunit026 turns left."
+      ],
+      "question": "direction of dunit026?",
+      "answer": "west"
+    },
+    {
+      "id": "dev-027",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "dunit027",
+        "dother027"
+      ],
+      "observations": [
+        "dother027 uses nickel."
+      ],
+      "question": "material of dunit027?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-028",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "dunit028",
+        "dother028"
+      ],
+      "observations": [
+        "dother028 uses nickel.",
+        "dunit028 uses lead."
+      ],
+      "question": "material of dunit028?",
+      "answer": "lead"
+    },
+    {
+      "id": "dev-029",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "dunit029",
+        "dother029"
+      ],
+      "observations": [
+        "dunit029 uses nickel.",
+        "dunit029 now uses lead."
+      ],
+      "question": "material of dunit029?",
+      "answer": "lead"
+    },
+    {
+      "id": "dev-030",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "dunit030",
+        "dother030"
+      ],
+      "observations": [
+        "dunit030 faces north.",
+        "dunit030 turns left."
+      ],
+      "question": "direction of dunit030?",
+      "answer": "west"
+    },
+    {
+      "id": "dev-031",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "dunit031",
+        "dother031"
+      ],
+      "observations": [
+        "dother031 uses nickel."
+      ],
+      "question": "material of dunit031?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-000",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "hunit000",
+        "hother000"
+      ],
+      "observations": [
+        "hunit000 uses quartz.",
+        "hother000 uses amber."
+      ],
+      "question": "material of hunit000?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-001",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "hunit001",
+        "hother001"
+      ],
+      "observations": [
+        "hunit001 uses amber.",
+        "hunit001 now uses quartz."
+      ],
+      "question": "material of hunit001?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-002",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "hunit002",
+        "hother002"
+      ],
+      "observations": [
+        "hunit002 faces south.",
+        "hunit002 turns left."
+      ],
+      "question": "direction of hunit002?",
+      "answer": "east"
+    },
+    {
+      "id": "holdout-003",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "hunit003",
+        "hother003"
+      ],
+      "observations": [
+        "hother003 uses amber."
+      ],
+      "question": "material of hunit003?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-004",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "hunit004",
+        "hother004"
+      ],
+      "observations": [
+        "hunit004 uses quartz.",
+        "hother004 uses amber."
+      ],
+      "question": "material of hunit004?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-005",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "hunit005",
+        "hother005"
+      ],
+      "observations": [
+        "hunit005 uses quartz.",
+        "hunit005 now uses amber."
+      ],
+      "question": "material of hunit005?",
+      "answer": "amber"
+    },
+    {
+      "id": "holdout-006",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "hunit006",
+        "hother006"
+      ],
+      "observations": [
+        "hunit006 faces south.",
+        "hunit006 turns left."
+      ],
+      "question": "direction of hunit006?",
+      "answer": "east"
+    },
+    {
+      "id": "holdout-007",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "hunit007",
+        "hother007"
+      ],
+      "observations": [
+        "hother007 uses quartz."
+      ],
+      "question": "material of hunit007?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-008",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "hunit008",
+        "hother008"
+      ],
+      "observations": [
+        "hother008 uses amber.",
+        "hunit008 uses quartz."
+      ],
+      "question": "material of hunit008?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-009",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "hunit009",
+        "hother009"
+      ],
+      "observations": [
+        "hunit009 uses amber.",
+        "hunit009 now uses quartz."
+      ],
+      "question": "material of hunit009?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-010",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "hunit010",
+        "hother010"
+      ],
+      "observations": [
+        "hunit010 faces north.",
+        "hunit010 turns left."
+      ],
+      "question": "direction of hunit010?",
+      "answer": "west"
+    },
+    {
+      "id": "holdout-011",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "hunit011",
+        "hother011"
+      ],
+      "observations": [
+        "hother011 uses quartz."
+      ],
+      "question": "material of hunit011?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-012",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "hunit012",
+        "hother012"
+      ],
+      "observations": [
+        "hother012 uses quartz.",
+        "hunit012 uses amber."
+      ],
+      "question": "material of hunit012?",
+      "answer": "amber"
+    },
+    {
+      "id": "holdout-013",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "hunit013",
+        "hother013"
+      ],
+      "observations": [
+        "hunit013 uses amber.",
+        "hunit013 now uses quartz."
+      ],
+      "question": "material of hunit013?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-014",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "hunit014",
+        "hother014"
+      ],
+      "observations": [
+        "hunit014 faces east.",
+        "hunit014 turns right."
+      ],
+      "question": "direction of hunit014?",
+      "answer": "south"
+    },
+    {
+      "id": "holdout-015",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "hunit015",
+        "hother015"
+      ],
+      "observations": [
+        "hother015 uses quartz."
+      ],
+      "question": "material of hunit015?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-016",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "hunit016",
+        "hother016"
+      ],
+      "observations": [
+        "hother016 uses amber.",
+        "hunit016 uses quartz."
+      ],
+      "question": "material of hunit016?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-017",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "hunit017",
+        "hother017"
+      ],
+      "observations": [
+        "hunit017 uses quartz.",
+        "hunit017 now uses amber."
+      ],
+      "question": "material of hunit017?",
+      "answer": "amber"
+    },
+    {
+      "id": "holdout-018",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "hunit018",
+        "hother018"
+      ],
+      "observations": [
+        "hunit018 faces west.",
+        "hunit018 turns right."
+      ],
+      "question": "direction of hunit018?",
+      "answer": "north"
+    },
+    {
+      "id": "holdout-019",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "hunit019",
+        "hother019"
+      ],
+      "observations": [
+        "hother019 uses quartz."
+      ],
+      "question": "material of hunit019?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-020",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "hunit020",
+        "hother020"
+      ],
+      "observations": [
+        "hother020 uses amber.",
+        "hunit020 uses quartz."
+      ],
+      "question": "material of hunit020?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-021",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "hunit021",
+        "hother021"
+      ],
+      "observations": [
+        "hunit021 uses amber.",
+        "hunit021 now uses quartz."
+      ],
+      "question": "material of hunit021?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-022",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "hunit022",
+        "hother022"
+      ],
+      "observations": [
+        "hunit022 faces east.",
+        "hunit022 turns right."
+      ],
+      "question": "direction of hunit022?",
+      "answer": "south"
+    },
+    {
+      "id": "holdout-023",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "hunit023",
+        "hother023"
+      ],
+      "observations": [
+        "hother023 uses quartz."
+      ],
+      "question": "material of hunit023?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-024",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "hunit024",
+        "hother024"
+      ],
+      "observations": [
+        "hother024 uses amber.",
+        "hunit024 uses quartz."
+      ],
+      "question": "material of hunit024?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-025",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "hunit025",
+        "hother025"
+      ],
+      "observations": [
+        "hunit025 uses quartz.",
+        "hunit025 now uses amber."
+      ],
+      "question": "material of hunit025?",
+      "answer": "amber"
+    },
+    {
+      "id": "holdout-026",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "hunit026",
+        "hother026"
+      ],
+      "observations": [
+        "hunit026 faces west.",
+        "hunit026 turns left."
+      ],
+      "question": "direction of hunit026?",
+      "answer": "south"
+    },
+    {
+      "id": "holdout-027",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "hunit027",
+        "hother027"
+      ],
+      "observations": [
+        "hother027 uses quartz."
+      ],
+      "question": "material of hunit027?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-028",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "hunit028",
+        "hother028"
+      ],
+      "observations": [
+        "hother028 uses amber.",
+        "hunit028 uses quartz."
+      ],
+      "question": "material of hunit028?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-029",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "hunit029",
+        "hother029"
+      ],
+      "observations": [
+        "hunit029 uses amber.",
+        "hunit029 now uses quartz."
+      ],
+      "question": "material of hunit029?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-030",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "hunit030",
+        "hother030"
+      ],
+      "observations": [
+        "hunit030 faces west.",
+        "hunit030 turns right."
+      ],
+      "question": "direction of hunit030?",
+      "answer": "north"
+    },
+    {
+      "id": "holdout-031",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "hunit031",
+        "hother031"
+      ],
+      "observations": [
+        "hother031 uses quartz."
+      ],
+      "question": "material of hunit031?",
+      "answer": "unknown"
+    }
+  ]
+}

@@ -1,0 +1,2566 @@
+{
+  "schema": "n1-native-evidence-curriculum-v2",
+  "seed": 14,
+  "episodes": [
+    {
+      "id": "train-000",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "csqyhgtrhr",
+        "kudfxjguqd",
+        "oreqdicfzk"
+      ],
+      "observations": [
+        "kudfxjguqd uses iron.",
+        "csqyhgtrhr uses brass."
+      ],
+      "question": "material of csqyhgtrhr?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-001",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "wrcpqecwnf",
+        "lfuncvchat",
+        "cncmrnlmlp"
+      ],
+      "observations": [
+        "wrcpqecwnf uses copper.",
+        "wrcpqecwnf now uses silver."
+      ],
+      "question": "material of wrcpqecwnf?",
+      "answer": "silver"
+    },
+    {
+      "id": "train-002",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "mgwybdsoas",
+        "yljoygheqm",
+        "gkaizphyjg"
+      ],
+      "observations": [
+        "mgwybdsoas faces east.",
+        "mgwybdsoas turns left."
+      ],
+      "question": "direction of mgwybdsoas?",
+      "answer": "north"
+    },
+    {
+      "id": "train-003",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "fwggpxhtjo",
+        "pytnvjjyou",
+        "ixpgymigcf"
+      ],
+      "observations": [
+        "pytnvjjyou uses silver.",
+        "ixpgymigcf uses copper."
+      ],
+      "question": "material of fwggpxhtjo?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-004",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "glojugjldf",
+        "dsdrfqrjyr",
+        "obkgmywbry"
+      ],
+      "observations": [
+        "glojugjldf uses copper.",
+        "dsdrfqrjyr uses brass."
+      ],
+      "question": "material of glojugjldf?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-005",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "vcbqearbzx",
+        "dwmwsachhp",
+        "nousajcdjh"
+      ],
+      "observations": [
+        "vcbqearbzx uses iron.",
+        "vcbqearbzx now uses copper."
+      ],
+      "question": "material of vcbqearbzx?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-006",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "ghotifpxaq",
+        "zijpgtzzuj",
+        "sgvztvfwbu"
+      ],
+      "observations": [
+        "ghotifpxaq faces north.",
+        "ghotifpxaq turns left."
+      ],
+      "question": "direction of ghotifpxaq?",
+      "answer": "west"
+    },
+    {
+      "id": "train-007",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "evphzlxbbs",
+        "slfcjfrinz",
+        "bplxvmhbba"
+      ],
+      "observations": [
+        "slfcjfrinz uses iron.",
+        "bplxvmhbba uses silver."
+      ],
+      "question": "material of evphzlxbbs?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-008",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "jhrtdzfuzw",
+        "fwwpvvegwq",
+        "inzcbwhhuf"
+      ],
+      "observations": [
+        "jhrtdzfuzw uses silver.",
+        "fwwpvvegwq uses brass."
+      ],
+      "question": "material of jhrtdzfuzw?",
+      "answer": "silver"
+    },
+    {
+      "id": "train-009",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "pculutbvvg",
+        "pfotjndwqv",
+        "ctcofxcmmk"
+      ],
+      "observations": [
+        "pculutbvvg uses copper.",
+        "pculutbvvg now uses iron."
+      ],
+      "question": "material of pculutbvvg?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-010",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "rzjxihlzuq",
+        "blabjgcnuy",
+        "xlezlivoys"
+      ],
+      "observations": [
+        "rzjxihlzuq faces west.",
+        "rzjxihlzuq turns right."
+      ],
+      "question": "direction of rzjxihlzuq?",
+      "answer": "north"
+    },
+    {
+      "id": "train-011",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "sufsqgnbdk",
+        "cffruahgid",
+        "bheovqhmtt"
+      ],
+      "observations": [
+        "cffruahgid uses brass.",
+        "bheovqhmtt uses copper."
+      ],
+      "question": "material of sufsqgnbdk?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-012",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "lsqzyynxhd",
+        "qazilhinua",
+        "igyllykjkg"
+      ],
+      "observations": [
+        "qazilhinua uses silver.",
+        "lsqzyynxhd uses copper."
+      ],
+      "question": "material of lsqzyynxhd?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-013",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "nottmyyysl",
+        "jwmtkjashm",
+        "svyrgybkyv"
+      ],
+      "observations": [
+        "nottmyyysl uses silver.",
+        "nottmyyysl now uses iron."
+      ],
+      "question": "material of nottmyyysl?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-014",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "ebhybinfwc",
+        "czafkwiouq",
+        "vaoawaclqa"
+      ],
+      "observations": [
+        "ebhybinfwc faces south.",
+        "ebhybinfwc turns right."
+      ],
+      "question": "direction of ebhybinfwc?",
+      "answer": "west"
+    },
+    {
+      "id": "train-015",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "aoemrehhym",
+        "fmtfeqgzec",
+        "kmeplqxhui"
+      ],
+      "observations": [
+        "fmtfeqgzec uses copper.",
+        "kmeplqxhui uses silver."
+      ],
+      "question": "material of aoemrehhym?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-016",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "bnugoxinue",
+        "imtoiedzxk",
+        "fdxjbingrh"
+      ],
+      "observations": [
+        "imtoiedzxk uses copper.",
+        "bnugoxinue uses brass."
+      ],
+      "question": "material of bnugoxinue?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-017",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "ywqcxjiycq",
+        "fwfcmlthhh",
+        "odovrgmcmt"
+      ],
+      "observations": [
+        "ywqcxjiycq uses copper.",
+        "ywqcxjiycq now uses silver."
+      ],
+      "question": "material of ywqcxjiycq?",
+      "answer": "silver"
+    },
+    {
+      "id": "train-018",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "qxhirehqne",
+        "fmwfrnhkvc",
+        "omckekaouw"
+      ],
+      "observations": [
+        "qxhirehqne faces south.",
+        "qxhirehqne turns right."
+      ],
+      "question": "direction of qxhirehqne?",
+      "answer": "west"
+    },
+    {
+      "id": "train-019",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "lyhgvkhtlt",
+        "zolexwhzna",
+        "tzeyxwpzvo"
+      ],
+      "observations": [
+        "zolexwhzna uses brass.",
+        "tzeyxwpzvo uses iron."
+      ],
+      "question": "material of lyhgvkhtlt?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-020",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "fewbwdavko",
+        "emepitexgg",
+        "nfvtgnrnal"
+      ],
+      "observations": [
+        "emepitexgg uses copper.",
+        "fewbwdavko uses iron."
+      ],
+      "question": "material of fewbwdavko?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-021",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "szrxumqvsf",
+        "jxyaikphlw",
+        "akbgozohdd"
+      ],
+      "observations": [
+        "szrxumqvsf uses iron.",
+        "szrxumqvsf now uses brass."
+      ],
+      "question": "material of szrxumqvsf?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-022",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "cuyvbpwkua",
+        "ntlczvhseq",
+        "splvkbddub"
+      ],
+      "observations": [
+        "cuyvbpwkua faces east.",
+        "cuyvbpwkua turns right."
+      ],
+      "question": "direction of cuyvbpwkua?",
+      "answer": "south"
+    },
+    {
+      "id": "train-023",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "ogdbxffehy",
+        "febscvyhmu",
+        "mixzgvaviz"
+      ],
+      "observations": [
+        "febscvyhmu uses copper.",
+        "mixzgvaviz uses silver."
+      ],
+      "question": "material of ogdbxffehy?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-024",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "fknudbgcyn",
+        "figliqfrxt",
+        "cmvbyccawa"
+      ],
+      "observations": [
+        "figliqfrxt uses silver.",
+        "fknudbgcyn uses brass."
+      ],
+      "question": "material of fknudbgcyn?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-025",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "mzpakexfrl",
+        "lngqpvvcvi",
+        "zofnonkpou"
+      ],
+      "observations": [
+        "mzpakexfrl uses iron.",
+        "mzpakexfrl now uses silver."
+      ],
+      "question": "material of mzpakexfrl?",
+      "answer": "silver"
+    },
+    {
+      "id": "train-026",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "whoyucjrzc",
+        "uscrvucgru",
+        "mwmfbjtpdr"
+      ],
+      "observations": [
+        "whoyucjrzc faces west.",
+        "whoyucjrzc turns left."
+      ],
+      "question": "direction of whoyucjrzc?",
+      "answer": "south"
+    },
+    {
+      "id": "train-027",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "kresryutke",
+        "temjjqpdwf",
+        "uuotueveyb"
+      ],
+      "observations": [
+        "temjjqpdwf uses silver.",
+        "uuotueveyb uses iron."
+      ],
+      "question": "material of kresryutke?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-028",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tqthbpfltz",
+        "dxgnurjxev",
+        "zvckcikelv"
+      ],
+      "observations": [
+        "dxgnurjxev uses brass.",
+        "tqthbpfltz uses iron."
+      ],
+      "question": "material of tqthbpfltz?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-029",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "vaxdiaiylm",
+        "oatppxdtyw",
+        "bisuhnuwez"
+      ],
+      "observations": [
+        "vaxdiaiylm uses iron.",
+        "vaxdiaiylm now uses brass."
+      ],
+      "question": "material of vaxdiaiylm?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-030",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "geuigkggrb",
+        "hgxsxxngou",
+        "ztsmtspebi"
+      ],
+      "observations": [
+        "geuigkggrb faces south.",
+        "geuigkggrb turns left."
+      ],
+      "question": "direction of geuigkggrb?",
+      "answer": "east"
+    },
+    {
+      "id": "train-031",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "wznonsxxol",
+        "wrzctujaiz",
+        "tiwctozhjj"
+      ],
+      "observations": [
+        "wrzctujaiz uses brass.",
+        "tiwctozhjj uses copper."
+      ],
+      "question": "material of wznonsxxol?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-032",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "mflbqvilzv",
+        "rpzmqwjlrs",
+        "skhtsngbnx"
+      ],
+      "observations": [
+        "mflbqvilzv uses brass.",
+        "rpzmqwjlrs uses copper."
+      ],
+      "question": "material of mflbqvilzv?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-033",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "lukbwjthkn",
+        "qcyooyfxyz",
+        "iuzpefvxdm"
+      ],
+      "observations": [
+        "lukbwjthkn uses copper.",
+        "lukbwjthkn now uses brass."
+      ],
+      "question": "material of lukbwjthkn?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-034",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "exambaynwq",
+        "otafrzekro",
+        "tbgrtruuah"
+      ],
+      "observations": [
+        "exambaynwq faces north.",
+        "exambaynwq turns right."
+      ],
+      "question": "direction of exambaynwq?",
+      "answer": "east"
+    },
+    {
+      "id": "train-035",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "kwalzjrwui",
+        "lunlygsjqt",
+        "xunprtxaay"
+      ],
+      "observations": [
+        "lunlygsjqt uses copper.",
+        "xunprtxaay uses brass."
+      ],
+      "question": "material of kwalzjrwui?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-036",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "hdidsdlbkg",
+        "ogfjyzetbi",
+        "ussmlbrqjd"
+      ],
+      "observations": [
+        "ogfjyzetbi uses brass.",
+        "hdidsdlbkg uses iron."
+      ],
+      "question": "material of hdidsdlbkg?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-037",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "ejsbsmmyyh",
+        "bmytzmbrrw",
+        "gwikjkopbc"
+      ],
+      "observations": [
+        "ejsbsmmyyh uses copper.",
+        "ejsbsmmyyh now uses silver."
+      ],
+      "question": "material of ejsbsmmyyh?",
+      "answer": "silver"
+    },
+    {
+      "id": "train-038",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "rpqzyznjtw",
+        "xexljjzrbs",
+        "uqrgifbvku"
+      ],
+      "observations": [
+        "rpqzyznjtw faces south.",
+        "rpqzyznjtw turns left."
+      ],
+      "question": "direction of rpqzyznjtw?",
+      "answer": "east"
+    },
+    {
+      "id": "train-039",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "ypkriltrrh",
+        "eudadregna",
+        "ztmboxgpyl"
+      ],
+      "observations": [
+        "eudadregna uses copper.",
+        "ztmboxgpyl uses silver."
+      ],
+      "question": "material of ypkriltrrh?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-040",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "zxjfvifvbn",
+        "igwluatnsh",
+        "lfhavhfljo"
+      ],
+      "observations": [
+        "zxjfvifvbn uses iron.",
+        "igwluatnsh uses silver."
+      ],
+      "question": "material of zxjfvifvbn?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-041",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "gqhjcnqgjg",
+        "rywtukixzs",
+        "gbqcwehcue"
+      ],
+      "observations": [
+        "gqhjcnqgjg uses silver.",
+        "gqhjcnqgjg now uses copper."
+      ],
+      "question": "material of gqhjcnqgjg?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-042",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "jdbxkgetan",
+        "lojxbtdbch",
+        "mgedvxhtrw"
+      ],
+      "observations": [
+        "jdbxkgetan faces north.",
+        "jdbxkgetan turns right."
+      ],
+      "question": "direction of jdbxkgetan?",
+      "answer": "east"
+    },
+    {
+      "id": "train-043",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "nfftgdswqe",
+        "aiheofdxkd",
+        "tdqwvbvelm"
+      ],
+      "observations": [
+        "aiheofdxkd uses copper.",
+        "tdqwvbvelm uses silver."
+      ],
+      "question": "material of nfftgdswqe?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-044",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "hblfprlmzr",
+        "culxdmzuvx",
+        "wrbtmcdyaf"
+      ],
+      "observations": [
+        "culxdmzuvx uses iron.",
+        "hblfprlmzr uses brass."
+      ],
+      "question": "material of hblfprlmzr?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-045",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "dsdzjtbkzt",
+        "kvxfrfkfon",
+        "jccsbwzgpt"
+      ],
+      "observations": [
+        "dsdzjtbkzt uses iron.",
+        "dsdzjtbkzt now uses copper."
+      ],
+      "question": "material of dsdzjtbkzt?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-046",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "fskxmtqbfh",
+        "lmzhdshufx",
+        "naxlbfijsi"
+      ],
+      "observations": [
+        "fskxmtqbfh faces east.",
+        "fskxmtqbfh turns right."
+      ],
+      "question": "direction of fskxmtqbfh?",
+      "answer": "south"
+    },
+    {
+      "id": "train-047",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "yzakcspssa",
+        "wyphyoxpzn",
+        "gacghxdhom"
+      ],
+      "observations": [
+        "wyphyoxpzn uses brass.",
+        "gacghxdhom uses silver."
+      ],
+      "question": "material of yzakcspssa?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-048",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "adhwquezvl",
+        "ymisdseyqw",
+        "xrpftvlahp"
+      ],
+      "observations": [
+        "ymisdseyqw uses copper.",
+        "adhwquezvl uses iron."
+      ],
+      "question": "material of adhwquezvl?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-049",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tovatwexio",
+        "fbchrqkcrx",
+        "yppxsvnxbn"
+      ],
+      "observations": [
+        "tovatwexio uses silver.",
+        "tovatwexio now uses iron."
+      ],
+      "question": "material of tovatwexio?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-050",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "fndfwewoij",
+        "dugnvpjrwn",
+        "lodupeeuyk"
+      ],
+      "observations": [
+        "fndfwewoij faces west.",
+        "fndfwewoij turns left."
+      ],
+      "question": "direction of fndfwewoij?",
+      "answer": "south"
+    },
+    {
+      "id": "train-051",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "jeadaprkur",
+        "uzvrjjvzvg",
+        "ehyugfjyuy"
+      ],
+      "observations": [
+        "uzvrjjvzvg uses brass.",
+        "ehyugfjyuy uses silver."
+      ],
+      "question": "material of jeadaprkur?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-052",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "woqdavmruh",
+        "tezucdqiur",
+        "yfbwqghdqk"
+      ],
+      "observations": [
+        "tezucdqiur uses brass.",
+        "woqdavmruh uses iron."
+      ],
+      "question": "material of woqdavmruh?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-053",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "mjwptsbwgn",
+        "qztpfhpqwv",
+        "ysyukprspe"
+      ],
+      "observations": [
+        "mjwptsbwgn uses iron.",
+        "mjwptsbwgn now uses copper."
+      ],
+      "question": "material of mjwptsbwgn?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-054",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "eujywsdfaz",
+        "qipuusscbd",
+        "mfptflvdku"
+      ],
+      "observations": [
+        "eujywsdfaz faces west.",
+        "eujywsdfaz turns right."
+      ],
+      "question": "direction of eujywsdfaz?",
+      "answer": "north"
+    },
+    {
+      "id": "train-055",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "boblapughm",
+        "kfdjyileqt",
+        "yeefcrmzdi"
+      ],
+      "observations": [
+        "kfdjyileqt uses silver.",
+        "yeefcrmzdi uses brass."
+      ],
+      "question": "material of boblapughm?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-056",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "ncctjfpkbn",
+        "hsvjxgenfg",
+        "erbydyfeee"
+      ],
+      "observations": [
+        "hsvjxgenfg uses silver.",
+        "ncctjfpkbn uses brass."
+      ],
+      "question": "material of ncctjfpkbn?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-057",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "mhfkgfstvd",
+        "srrptgcgrl",
+        "ewhmunoemm"
+      ],
+      "observations": [
+        "mhfkgfstvd uses silver.",
+        "mhfkgfstvd now uses copper."
+      ],
+      "question": "material of mhfkgfstvd?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-058",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "vqzimunjzw",
+        "kglemrjhkm",
+        "canbggdnfa"
+      ],
+      "observations": [
+        "vqzimunjzw faces east.",
+        "vqzimunjzw turns right."
+      ],
+      "question": "direction of vqzimunjzw?",
+      "answer": "south"
+    },
+    {
+      "id": "train-059",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "kcegrasevp",
+        "xzvqwljnvi",
+        "olaretctad"
+      ],
+      "observations": [
+        "xzvqwljnvi uses silver.",
+        "olaretctad uses brass."
+      ],
+      "question": "material of kcegrasevp?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-060",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "snfuejqjpq",
+        "wdllyjaedw",
+        "vvijhvkycl"
+      ],
+      "observations": [
+        "snfuejqjpq uses brass.",
+        "wdllyjaedw uses iron."
+      ],
+      "question": "material of snfuejqjpq?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-061",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "vaotwzxudh",
+        "rztmfeotxv",
+        "thppufjzml"
+      ],
+      "observations": [
+        "vaotwzxudh uses silver.",
+        "vaotwzxudh now uses copper."
+      ],
+      "question": "material of vaotwzxudh?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-062",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "fzfezrchgl",
+        "uyuridzvpp",
+        "kisboidfhm"
+      ],
+      "observations": [
+        "fzfezrchgl faces west.",
+        "fzfezrchgl turns left."
+      ],
+      "question": "direction of fzfezrchgl?",
+      "answer": "south"
+    },
+    {
+      "id": "train-063",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "bqjdptmipf",
+        "htvitjgilx",
+        "nkafbrylvo"
+      ],
+      "observations": [
+        "htvitjgilx uses brass.",
+        "nkafbrylvo uses iron."
+      ],
+      "question": "material of bqjdptmipf?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-064",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "skgqbmvbph",
+        "fwhqmqodaw",
+        "eqnwfuyxlp"
+      ],
+      "observations": [
+        "fwhqmqodaw uses silver.",
+        "skgqbmvbph uses copper."
+      ],
+      "question": "material of skgqbmvbph?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-065",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "oyaibkvkmy",
+        "qywaexhoqu",
+        "pqdjblwjhz"
+      ],
+      "observations": [
+        "oyaibkvkmy uses brass.",
+        "oyaibkvkmy now uses copper."
+      ],
+      "question": "material of oyaibkvkmy?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-066",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "buxqhnpfqn",
+        "hbjlnodixu",
+        "oxxnmtjbzl"
+      ],
+      "observations": [
+        "buxqhnpfqn faces north.",
+        "buxqhnpfqn turns left."
+      ],
+      "question": "direction of buxqhnpfqn?",
+      "answer": "west"
+    },
+    {
+      "id": "train-067",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "eijonqxijy",
+        "laqnboawsq",
+        "jbinsqraui"
+      ],
+      "observations": [
+        "laqnboawsq uses silver.",
+        "jbinsqraui uses brass."
+      ],
+      "question": "material of eijonqxijy?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-068",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "cdkgvtyrrh",
+        "wcibwazsgd",
+        "uwdzcaxgrj"
+      ],
+      "observations": [
+        "cdkgvtyrrh uses iron.",
+        "wcibwazsgd uses copper."
+      ],
+      "question": "material of cdkgvtyrrh?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-069",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "tjbahcezaq",
+        "owvmxglyog",
+        "kpxdxpadmk"
+      ],
+      "observations": [
+        "tjbahcezaq uses brass.",
+        "tjbahcezaq now uses iron."
+      ],
+      "question": "material of tjbahcezaq?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-070",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "snqvghvajf",
+        "izxacbayqo",
+        "twpzwzueuf"
+      ],
+      "observations": [
+        "snqvghvajf faces south.",
+        "snqvghvajf turns right."
+      ],
+      "question": "direction of snqvghvajf?",
+      "answer": "west"
+    },
+    {
+      "id": "train-071",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "dklexbxfst",
+        "enfyehdynh",
+        "xjcvpvdnvc"
+      ],
+      "observations": [
+        "enfyehdynh uses brass.",
+        "xjcvpvdnvc uses copper."
+      ],
+      "question": "material of dklexbxfst?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-072",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "rrgoazafxc",
+        "esdqfjjibg",
+        "kzfzrtkxas"
+      ],
+      "observations": [
+        "rrgoazafxc uses brass.",
+        "esdqfjjibg uses silver."
+      ],
+      "question": "material of rrgoazafxc?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-073",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "lwyfqhcqus",
+        "prpqesshxm",
+        "ykxmhgqvod"
+      ],
+      "observations": [
+        "lwyfqhcqus uses iron.",
+        "lwyfqhcqus now uses brass."
+      ],
+      "question": "material of lwyfqhcqus?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-074",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "xuduefvtgd",
+        "hlzwljjyxx",
+        "kwxhnmfhnz"
+      ],
+      "observations": [
+        "xuduefvtgd faces south.",
+        "xuduefvtgd turns left."
+      ],
+      "question": "direction of xuduefvtgd?",
+      "answer": "east"
+    },
+    {
+      "id": "train-075",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "wtrnnjzjhz",
+        "wwngemplhz",
+        "bjupvyrjst"
+      ],
+      "observations": [
+        "wwngemplhz uses copper.",
+        "bjupvyrjst uses iron."
+      ],
+      "question": "material of wtrnnjzjhz?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-076",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "qqkjvowklf",
+        "lsqnuuliad",
+        "cmuxngxukn"
+      ],
+      "observations": [
+        "qqkjvowklf uses silver.",
+        "lsqnuuliad uses iron."
+      ],
+      "question": "material of qqkjvowklf?",
+      "answer": "silver"
+    },
+    {
+      "id": "train-077",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "qikdemspul",
+        "bzfbtkuofe",
+        "mufejmdcrh"
+      ],
+      "observations": [
+        "qikdemspul uses brass.",
+        "qikdemspul now uses copper."
+      ],
+      "question": "material of qikdemspul?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-078",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "diztnqlljd",
+        "txuqtdnjms",
+        "ygrhhstavt"
+      ],
+      "observations": [
+        "diztnqlljd faces west.",
+        "diztnqlljd turns left."
+      ],
+      "question": "direction of diztnqlljd?",
+      "answer": "south"
+    },
+    {
+      "id": "train-079",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "rjwoswzsyi",
+        "rzpyzbciyq",
+        "rsvzgcmcwn"
+      ],
+      "observations": [
+        "rzpyzbciyq uses brass.",
+        "rsvzgcmcwn uses iron."
+      ],
+      "question": "material of rjwoswzsyi?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-080",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "fqupejpzxc",
+        "uoxpgcszzk",
+        "djxtryoidu"
+      ],
+      "observations": [
+        "fqupejpzxc uses brass.",
+        "uoxpgcszzk uses iron."
+      ],
+      "question": "material of fqupejpzxc?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-081",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "dlfprnpsqm",
+        "wgwkuzmvnt",
+        "peyvarknkm"
+      ],
+      "observations": [
+        "dlfprnpsqm uses iron.",
+        "dlfprnpsqm now uses copper."
+      ],
+      "question": "material of dlfprnpsqm?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-082",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "pvhnxsbhmq",
+        "zenerbchst",
+        "hbzwlwfkqe"
+      ],
+      "observations": [
+        "pvhnxsbhmq faces south.",
+        "pvhnxsbhmq turns left."
+      ],
+      "question": "direction of pvhnxsbhmq?",
+      "answer": "east"
+    },
+    {
+      "id": "train-083",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tztxlwhubl",
+        "exfmjznvkl",
+        "tycrhllrxv"
+      ],
+      "observations": [
+        "exfmjznvkl uses brass.",
+        "tycrhllrxv uses copper."
+      ],
+      "question": "material of tztxlwhubl?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-084",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "uzzajiwysi",
+        "yclojlthgi",
+        "mpkymobrgi"
+      ],
+      "observations": [
+        "yclojlthgi uses brass.",
+        "uzzajiwysi uses copper."
+      ],
+      "question": "material of uzzajiwysi?",
+      "answer": "copper"
+    },
+    {
+      "id": "train-085",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "jiaufkrhrx",
+        "cydbrshnsz",
+        "bntixagrrv"
+      ],
+      "observations": [
+        "jiaufkrhrx uses silver.",
+        "jiaufkrhrx now uses brass."
+      ],
+      "question": "material of jiaufkrhrx?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-086",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "uvbqawsrgd",
+        "ckhwtgjvqa",
+        "hljjyohaae"
+      ],
+      "observations": [
+        "uvbqawsrgd faces north.",
+        "uvbqawsrgd turns right."
+      ],
+      "question": "direction of uvbqawsrgd?",
+      "answer": "east"
+    },
+    {
+      "id": "train-087",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "dmuzuobcwa",
+        "wubweghoft",
+        "rbfgfsxqbi"
+      ],
+      "observations": [
+        "wubweghoft uses iron.",
+        "rbfgfsxqbi uses copper."
+      ],
+      "question": "material of dmuzuobcwa?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-088",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "mtodlswtvd",
+        "wjiuquhmvs",
+        "iegrebavwj"
+      ],
+      "observations": [
+        "mtodlswtvd uses silver.",
+        "wjiuquhmvs uses brass."
+      ],
+      "question": "material of mtodlswtvd?",
+      "answer": "silver"
+    },
+    {
+      "id": "train-089",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "fdqpsubupb",
+        "jwpnwbheoe",
+        "wzcunilvtq"
+      ],
+      "observations": [
+        "fdqpsubupb uses copper.",
+        "fdqpsubupb now uses brass."
+      ],
+      "question": "material of fdqpsubupb?",
+      "answer": "brass"
+    },
+    {
+      "id": "train-090",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "nuyxilybgp",
+        "pyojoukesx",
+        "usipsqhykn"
+      ],
+      "observations": [
+        "nuyxilybgp faces west.",
+        "nuyxilybgp turns right."
+      ],
+      "question": "direction of nuyxilybgp?",
+      "answer": "north"
+    },
+    {
+      "id": "train-091",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "vqaocsycct",
+        "vxbkxupqmr",
+        "esnxknyuze"
+      ],
+      "observations": [
+        "vxbkxupqmr uses copper.",
+        "esnxknyuze uses silver."
+      ],
+      "question": "material of vqaocsycct?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-092",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "voyylmipby",
+        "gltbawlaco",
+        "kzutkwufuk"
+      ],
+      "observations": [
+        "gltbawlaco uses copper.",
+        "voyylmipby uses iron."
+      ],
+      "question": "material of voyylmipby?",
+      "answer": "iron"
+    },
+    {
+      "id": "train-093",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "glisxaoama",
+        "lbuiidbwqa",
+        "laxftfblej"
+      ],
+      "observations": [
+        "glisxaoama uses iron.",
+        "glisxaoama now uses silver."
+      ],
+      "question": "material of glisxaoama?",
+      "answer": "silver"
+    },
+    {
+      "id": "train-094",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "ntynarpkuh",
+        "urzggigxkg",
+        "uefhipatgj"
+      ],
+      "observations": [
+        "ntynarpkuh faces west.",
+        "ntynarpkuh turns right."
+      ],
+      "question": "direction of ntynarpkuh?",
+      "answer": "north"
+    },
+    {
+      "id": "train-095",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "cjdchtlvlo",
+        "lfysyrdeww",
+        "btracrzotg"
+      ],
+      "observations": [
+        "lfysyrdeww uses brass.",
+        "btracrzotg uses silver."
+      ],
+      "question": "material of cjdchtlvlo?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-000",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "qxsvcitajw",
+        "zyqszxrrpk",
+        "pqgrazffai"
+      ],
+      "observations": [
+        "zyqszxrrpk uses lead.",
+        "qxsvcitajw uses nickel."
+      ],
+      "question": "material of qxsvcitajw?",
+      "answer": "nickel"
+    },
+    {
+      "id": "dev-001",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "bxlupiowgo",
+        "tqvgysrehq",
+        "bpifvyzytd"
+      ],
+      "observations": [
+        "bxlupiowgo uses lead.",
+        "bxlupiowgo now uses nickel."
+      ],
+      "question": "material of bxlupiowgo?",
+      "answer": "nickel"
+    },
+    {
+      "id": "dev-002",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "dbazttcter",
+        "qpqocrvqnp",
+        "dalxcyygbl"
+      ],
+      "observations": [
+        "dbazttcter faces west.",
+        "dbazttcter turns left."
+      ],
+      "question": "direction of dbazttcter?",
+      "answer": "south"
+    },
+    {
+      "id": "dev-003",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "xybyabtlrn",
+        "pqugeuklka",
+        "eugqurstkc"
+      ],
+      "observations": [
+        "pqugeuklka uses nickel.",
+        "eugqurstkc uses lead."
+      ],
+      "question": "material of xybyabtlrn?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-004",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "lititzcgzb",
+        "xtriqqwhpe",
+        "ecygcpklqz"
+      ],
+      "observations": [
+        "xtriqqwhpe uses lead.",
+        "lititzcgzb uses nickel."
+      ],
+      "question": "material of lititzcgzb?",
+      "answer": "nickel"
+    },
+    {
+      "id": "dev-005",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "toetkdjssf",
+        "fitqcyhcbw",
+        "abrajcyohf"
+      ],
+      "observations": [
+        "toetkdjssf uses nickel.",
+        "toetkdjssf now uses lead."
+      ],
+      "question": "material of toetkdjssf?",
+      "answer": "lead"
+    },
+    {
+      "id": "dev-006",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "hneseoeeyp",
+        "xatlaykemt",
+        "habofsvjfy"
+      ],
+      "observations": [
+        "hneseoeeyp faces north.",
+        "hneseoeeyp turns left."
+      ],
+      "question": "direction of hneseoeeyp?",
+      "answer": "west"
+    },
+    {
+      "id": "dev-007",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "fwtzpravmp",
+        "rzswtmtpkv",
+        "kjemixobva"
+      ],
+      "observations": [
+        "rzswtmtpkv uses nickel.",
+        "kjemixobva uses lead."
+      ],
+      "question": "material of fwtzpravmp?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-008",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "fzucdiamqo",
+        "klbgeqtnfj",
+        "fiqqtkqnmx"
+      ],
+      "observations": [
+        "fzucdiamqo uses lead.",
+        "klbgeqtnfj uses nickel."
+      ],
+      "question": "material of fzucdiamqo?",
+      "answer": "lead"
+    },
+    {
+      "id": "dev-009",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "lyxncexrbc",
+        "byitdsrndz",
+        "vlcqwlhmvi"
+      ],
+      "observations": [
+        "lyxncexrbc uses nickel.",
+        "lyxncexrbc now uses lead."
+      ],
+      "question": "material of lyxncexrbc?",
+      "answer": "lead"
+    },
+    {
+      "id": "dev-010",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "swkbtpbocy",
+        "qkcuysnrjo",
+        "uesxmcwhro"
+      ],
+      "observations": [
+        "swkbtpbocy faces east.",
+        "swkbtpbocy turns left."
+      ],
+      "question": "direction of swkbtpbocy?",
+      "answer": "north"
+    },
+    {
+      "id": "dev-011",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "tpbryradhk",
+        "jzlgbbobvu",
+        "zjcointrqs"
+      ],
+      "observations": [
+        "jzlgbbobvu uses lead.",
+        "zjcointrqs uses nickel."
+      ],
+      "question": "material of tpbryradhk?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-012",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "nnpdiggbcx",
+        "zmulmsniyb",
+        "znacshcrkt"
+      ],
+      "observations": [
+        "nnpdiggbcx uses nickel.",
+        "zmulmsniyb uses lead."
+      ],
+      "question": "material of nnpdiggbcx?",
+      "answer": "nickel"
+    },
+    {
+      "id": "dev-013",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "jgorbjroyl",
+        "yuggbgxzbh",
+        "pdyesvfzrd"
+      ],
+      "observations": [
+        "jgorbjroyl uses nickel.",
+        "jgorbjroyl now uses lead."
+      ],
+      "question": "material of jgorbjroyl?",
+      "answer": "lead"
+    },
+    {
+      "id": "dev-014",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "msjnyzwgpd",
+        "xhylrdgimi",
+        "oxrodnqtgc"
+      ],
+      "observations": [
+        "msjnyzwgpd faces north.",
+        "msjnyzwgpd turns left."
+      ],
+      "question": "direction of msjnyzwgpd?",
+      "answer": "west"
+    },
+    {
+      "id": "dev-015",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "amoyltzhmp",
+        "cdtnnaxmds",
+        "xezjkdfzfa"
+      ],
+      "observations": [
+        "cdtnnaxmds uses nickel.",
+        "xezjkdfzfa uses lead."
+      ],
+      "question": "material of amoyltzhmp?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-016",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "mnclbwooil",
+        "ubiseeirxf",
+        "dzmimcnzsa"
+      ],
+      "observations": [
+        "ubiseeirxf uses nickel.",
+        "mnclbwooil uses lead."
+      ],
+      "question": "material of mnclbwooil?",
+      "answer": "lead"
+    },
+    {
+      "id": "dev-017",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "dyyvufgpzh",
+        "gffnwczyvn",
+        "teyhltjdfm"
+      ],
+      "observations": [
+        "dyyvufgpzh uses nickel.",
+        "dyyvufgpzh now uses lead."
+      ],
+      "question": "material of dyyvufgpzh?",
+      "answer": "lead"
+    },
+    {
+      "id": "dev-018",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "sczqucavkc",
+        "blnbtrafkw",
+        "svoswiwiuy"
+      ],
+      "observations": [
+        "sczqucavkc faces south.",
+        "sczqucavkc turns left."
+      ],
+      "question": "direction of sczqucavkc?",
+      "answer": "east"
+    },
+    {
+      "id": "dev-019",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "ygwygnszgm",
+        "eeccjyqpmh",
+        "rpoqqxpoyv"
+      ],
+      "observations": [
+        "eeccjyqpmh uses lead.",
+        "rpoqqxpoyv uses nickel."
+      ],
+      "question": "material of ygwygnszgm?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-020",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "gqdntcszek",
+        "zndjnyfqgl",
+        "ahehuchpdp"
+      ],
+      "observations": [
+        "gqdntcszek uses nickel.",
+        "zndjnyfqgl uses lead."
+      ],
+      "question": "material of gqdntcszek?",
+      "answer": "nickel"
+    },
+    {
+      "id": "dev-021",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "buiufrgsiv",
+        "vlbnfvxvic",
+        "bzdajuqrap"
+      ],
+      "observations": [
+        "buiufrgsiv uses lead.",
+        "buiufrgsiv now uses nickel."
+      ],
+      "question": "material of buiufrgsiv?",
+      "answer": "nickel"
+    },
+    {
+      "id": "dev-022",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "qzkxzjimpn",
+        "kndcytrqed",
+        "lrkevysnbf"
+      ],
+      "observations": [
+        "qzkxzjimpn faces west.",
+        "qzkxzjimpn turns right."
+      ],
+      "question": "direction of qzkxzjimpn?",
+      "answer": "north"
+    },
+    {
+      "id": "dev-023",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "tqbcurndxq",
+        "rpaesafele",
+        "gcmqeovkxe"
+      ],
+      "observations": [
+        "rpaesafele uses lead.",
+        "gcmqeovkxe uses nickel."
+      ],
+      "question": "material of tqbcurndxq?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-024",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "jgduksqpgk",
+        "ueawavjjgy",
+        "xjqubfdapz"
+      ],
+      "observations": [
+        "ueawavjjgy uses lead.",
+        "jgduksqpgk uses nickel."
+      ],
+      "question": "material of jgduksqpgk?",
+      "answer": "nickel"
+    },
+    {
+      "id": "dev-025",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "idxsaboqqz",
+        "phqynxnwec",
+        "xebpkemtar"
+      ],
+      "observations": [
+        "idxsaboqqz uses nickel.",
+        "idxsaboqqz now uses lead."
+      ],
+      "question": "material of idxsaboqqz?",
+      "answer": "lead"
+    },
+    {
+      "id": "dev-026",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "jkguhdwvlm",
+        "iujkqihida",
+        "zjpancftbv"
+      ],
+      "observations": [
+        "jkguhdwvlm faces south.",
+        "jkguhdwvlm turns right."
+      ],
+      "question": "direction of jkguhdwvlm?",
+      "answer": "west"
+    },
+    {
+      "id": "dev-027",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "hfzvhkjgpc",
+        "sgqjxjcopl",
+        "jikorgxssd"
+      ],
+      "observations": [
+        "sgqjxjcopl uses lead.",
+        "jikorgxssd uses nickel."
+      ],
+      "question": "material of hfzvhkjgpc?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-028",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "nqbfliavdk",
+        "hbgypiuhfx",
+        "cwzpdcdtcp"
+      ],
+      "observations": [
+        "hbgypiuhfx uses nickel.",
+        "nqbfliavdk uses lead."
+      ],
+      "question": "material of nqbfliavdk?",
+      "answer": "lead"
+    },
+    {
+      "id": "dev-029",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "irtjnjawlw",
+        "xmdhyjrpdx",
+        "vnexhdiwbm"
+      ],
+      "observations": [
+        "irtjnjawlw uses nickel.",
+        "irtjnjawlw now uses lead."
+      ],
+      "question": "material of irtjnjawlw?",
+      "answer": "lead"
+    },
+    {
+      "id": "dev-030",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "ilfpwbnbpc",
+        "tycvskgfdm",
+        "ayyhxirdwc"
+      ],
+      "observations": [
+        "ilfpwbnbpc faces north.",
+        "ilfpwbnbpc turns left."
+      ],
+      "question": "direction of ilfpwbnbpc?",
+      "answer": "west"
+    },
+    {
+      "id": "dev-031",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "tjnpuzbjuy",
+        "zygltpxnnd",
+        "bvgpgecqzg"
+      ],
+      "observations": [
+        "zygltpxnnd uses nickel.",
+        "bvgpgecqzg uses lead."
+      ],
+      "question": "material of tjnpuzbjuy?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-000",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "ialbmqrvax",
+        "vzqmtkxwke",
+        "byeyohwkof"
+      ],
+      "observations": [
+        "vzqmtkxwke uses amber.",
+        "ialbmqrvax uses quartz."
+      ],
+      "question": "material of ialbmqrvax?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-001",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "kwfnkhepyq",
+        "bykbbdaqqs",
+        "meejkwwjmi"
+      ],
+      "observations": [
+        "kwfnkhepyq uses quartz.",
+        "kwfnkhepyq now uses amber."
+      ],
+      "question": "material of kwfnkhepyq?",
+      "answer": "amber"
+    },
+    {
+      "id": "holdout-002",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "cvbdpqioco",
+        "bfozezvmab",
+        "jqddxcdxcm"
+      ],
+      "observations": [
+        "cvbdpqioco faces west.",
+        "cvbdpqioco turns left."
+      ],
+      "question": "direction of cvbdpqioco?",
+      "answer": "south"
+    },
+    {
+      "id": "holdout-003",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "bginzzjstu",
+        "zlwfeefrpc",
+        "vrgaueffdy"
+      ],
+      "observations": [
+        "zlwfeefrpc uses amber.",
+        "vrgaueffdy uses quartz."
+      ],
+      "question": "material of bginzzjstu?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-004",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "eupvjhcqgc",
+        "unqlrskapp",
+        "gfqeeoljqv"
+      ],
+      "observations": [
+        "eupvjhcqgc uses amber.",
+        "unqlrskapp uses quartz."
+      ],
+      "question": "material of eupvjhcqgc?",
+      "answer": "amber"
+    },
+    {
+      "id": "holdout-005",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "qeocwwdncs",
+        "qekniffnvw",
+        "wfjlwsttvn"
+      ],
+      "observations": [
+        "qeocwwdncs uses quartz.",
+        "qeocwwdncs now uses amber."
+      ],
+      "question": "material of qeocwwdncs?",
+      "answer": "amber"
+    },
+    {
+      "id": "holdout-006",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "nisvyjicnx",
+        "xapchwokgw",
+        "zydtuijijx"
+      ],
+      "observations": [
+        "nisvyjicnx faces north.",
+        "nisvyjicnx turns right."
+      ],
+      "question": "direction of nisvyjicnx?",
+      "answer": "east"
+    },
+    {
+      "id": "holdout-007",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "ljffdxwsua",
+        "vggcdgcwpv",
+        "zcybyvqtmy"
+      ],
+      "observations": [
+        "vggcdgcwpv uses amber.",
+        "zcybyvqtmy uses quartz."
+      ],
+      "question": "material of ljffdxwsua?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-008",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "wkyphjarqt",
+        "spqrfihstr",
+        "xjrhrqswul"
+      ],
+      "observations": [
+        "wkyphjarqt uses amber.",
+        "spqrfihstr uses quartz."
+      ],
+      "question": "material of wkyphjarqt?",
+      "answer": "amber"
+    },
+    {
+      "id": "holdout-009",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "nlxydvrhvx",
+        "gjmkgwnrlm",
+        "zyqyigwezm"
+      ],
+      "observations": [
+        "nlxydvrhvx uses quartz.",
+        "nlxydvrhvx now uses amber."
+      ],
+      "question": "material of nlxydvrhvx?",
+      "answer": "amber"
+    },
+    {
+      "id": "holdout-010",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "wirlxtuxem",
+        "ccbfqpfrvh",
+        "fcrpzhcaux"
+      ],
+      "observations": [
+        "wirlxtuxem faces west.",
+        "wirlxtuxem turns left."
+      ],
+      "question": "direction of wirlxtuxem?",
+      "answer": "south"
+    },
+    {
+      "id": "holdout-011",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "ghisnkdcsu",
+        "vpzheimanr",
+        "hodblshace"
+      ],
+      "observations": [
+        "vpzheimanr uses amber.",
+        "hodblshace uses quartz."
+      ],
+      "question": "material of ghisnkdcsu?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-012",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "vbqxtrzvjn",
+        "qnzitrynlk",
+        "xltnnkzowm"
+      ],
+      "observations": [
+        "qnzitrynlk uses quartz.",
+        "vbqxtrzvjn uses amber."
+      ],
+      "question": "material of vbqxtrzvjn?",
+      "answer": "amber"
+    },
+    {
+      "id": "holdout-013",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "bchsuqcces",
+        "inatolwmip",
+        "rwciiduncy"
+      ],
+      "observations": [
+        "bchsuqcces uses quartz.",
+        "bchsuqcces now uses amber."
+      ],
+      "question": "material of bchsuqcces?",
+      "answer": "amber"
+    },
+    {
+      "id": "holdout-014",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "wsxsrkqwvz",
+        "pstzofgynv",
+        "yrlyiopmhs"
+      ],
+      "observations": [
+        "wsxsrkqwvz faces east.",
+        "wsxsrkqwvz turns left."
+      ],
+      "question": "direction of wsxsrkqwvz?",
+      "answer": "north"
+    },
+    {
+      "id": "holdout-015",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "smigartgwx",
+        "ydbjwatlvd",
+        "yjdhenpfsl"
+      ],
+      "observations": [
+        "ydbjwatlvd uses amber.",
+        "yjdhenpfsl uses quartz."
+      ],
+      "question": "material of smigartgwx?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-016",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "fsjlmxtmkl",
+        "grwtqnkyxb",
+        "trsdoflsgs"
+      ],
+      "observations": [
+        "fsjlmxtmkl uses amber.",
+        "grwtqnkyxb uses quartz."
+      ],
+      "question": "material of fsjlmxtmkl?",
+      "answer": "amber"
+    },
+    {
+      "id": "holdout-017",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "qxhjltuyfn",
+        "nebvnyhemj",
+        "ceqpjdfoah"
+      ],
+      "observations": [
+        "qxhjltuyfn uses amber.",
+        "qxhjltuyfn now uses quartz."
+      ],
+      "question": "material of qxhjltuyfn?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-018",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "izhuiyknji",
+        "rxbgenjift",
+        "efwurhsqoa"
+      ],
+      "observations": [
+        "izhuiyknji faces north.",
+        "izhuiyknji turns left."
+      ],
+      "question": "direction of izhuiyknji?",
+      "answer": "west"
+    },
+    {
+      "id": "holdout-019",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "pehmzwypmq",
+        "gtgihsdafk",
+        "fqwzxhuhnh"
+      ],
+      "observations": [
+        "gtgihsdafk uses quartz.",
+        "fqwzxhuhnh uses amber."
+      ],
+      "question": "material of pehmzwypmq?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-020",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "zbzujnatnt",
+        "jqcqcporhq",
+        "phzboyehhm"
+      ],
+      "observations": [
+        "zbzujnatnt uses quartz.",
+        "jqcqcporhq uses amber."
+      ],
+      "question": "material of zbzujnatnt?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-021",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "dhdyfpgowl",
+        "eyoeeipopq",
+        "uhkcwjazjj"
+      ],
+      "observations": [
+        "dhdyfpgowl uses amber.",
+        "dhdyfpgowl now uses quartz."
+      ],
+      "question": "material of dhdyfpgowl?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-022",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "wxrewxmbep",
+        "exyluunoba",
+        "prfvrwlgdb"
+      ],
+      "observations": [
+        "wxrewxmbep faces west.",
+        "wxrewxmbep turns right."
+      ],
+      "question": "direction of wxrewxmbep?",
+      "answer": "north"
+    },
+    {
+      "id": "holdout-023",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "kkrxsnfzmi",
+        "toknxsgpcy",
+        "hmyyxmzfjm"
+      ],
+      "observations": [
+        "toknxsgpcy uses quartz.",
+        "hmyyxmzfjm uses amber."
+      ],
+      "question": "material of kkrxsnfzmi?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-024",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "reouogbsnd",
+        "lrkxtlruda",
+        "qafxbklrse"
+      ],
+      "observations": [
+        "reouogbsnd uses quartz.",
+        "lrkxtlruda uses amber."
+      ],
+      "question": "material of reouogbsnd?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-025",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "zyyuxopvyt",
+        "iatzrhuonu",
+        "ycswocljby"
+      ],
+      "observations": [
+        "zyyuxopvyt uses amber.",
+        "zyyuxopvyt now uses quartz."
+      ],
+      "question": "material of zyyuxopvyt?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-026",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "jdtjwnhlir",
+        "dggiaqewvv",
+        "yfasxepmlg"
+      ],
+      "observations": [
+        "jdtjwnhlir faces north.",
+        "jdtjwnhlir turns left."
+      ],
+      "question": "direction of jdtjwnhlir?",
+      "answer": "west"
+    },
+    {
+      "id": "holdout-027",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "pwrdhobeef",
+        "txyleadwuq",
+        "yhbgxgfhka"
+      ],
+      "observations": [
+        "txyleadwuq uses quartz.",
+        "yhbgxgfhka uses amber."
+      ],
+      "question": "material of pwrdhobeef?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-028",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "bjwecqhavm",
+        "tfvisxslfi",
+        "rfvediedze"
+      ],
+      "observations": [
+        "tfvisxslfi uses quartz.",
+        "bjwecqhavm uses amber."
+      ],
+      "question": "material of bjwecqhavm?",
+      "answer": "amber"
+    },
+    {
+      "id": "holdout-029",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "pxwtuqnryl",
+        "dfvhursssp",
+        "tgkuwunkmy"
+      ],
+      "observations": [
+        "pxwtuqnryl uses amber.",
+        "pxwtuqnryl now uses quartz."
+      ],
+      "question": "material of pxwtuqnryl?",
+      "answer": "quartz"
+    },
+    {
+      "id": "holdout-030",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "sfcpiyffwz",
+        "bsnjpewtre",
+        "ikxxobvkyj"
+      ],
+      "observations": [
+        "sfcpiyffwz faces east.",
+        "sfcpiyffwz turns right."
+      ],
+      "question": "direction of sfcpiyffwz?",
+      "answer": "south"
+    },
+    {
+      "id": "holdout-031",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "uogqtkmwrw",
+        "skgsmschxk",
+        "xthzqjpbvp"
+      ],
+      "observations": [
+        "skgsmschxk uses amber.",
+        "xthzqjpbvp uses quartz."
+      ],
+      "question": "material of uogqtkmwrw?",
+      "answer": "unknown"
+    }
+  ]
+}
