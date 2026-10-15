@@ -23,3 +23,7 @@ checkpoint位于`data/checkpoints/n1_relation_update_replay_20261015/`；脚本`
 ## 执行前工程验证
 
 观察器直接包装63原Adam.step，训练函数及所有损失沿用原实现；两步合成train对照完整bundle逐位相同，zero/final保存恢复与非train拒绝通过。两项合同与仓库两套Ruff通过；提交后执行本固定正式重放，尚无重放结果。独立保存沿用原63载荷协议以供原恢复worker检验，66诊断身份及来源在自身报告中明确，不冒充新63模型。
+
+## 完整裁决
+
+CPU212.734375秒，6144更新与1728评分逐项复现，最终完整bundle/signature同63；两恢复与全部守卫通过。观察到local扰动后持续多步实际Adam位移及后程多组放大，但尚未证明干预有效。见[66裁决](EXP-N1-66_relation_update_replay_adjudication_20261015.md)。唯一下一步67五组相对实际位移约束工程，正式校准另冻，v4保持零查询。
