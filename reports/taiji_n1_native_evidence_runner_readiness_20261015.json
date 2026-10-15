@@ -1,0 +1,66 @@
+{
+  "identity": {
+    "recipe": {
+      "schema": "n1-native-evidence-paired-v1",
+      "manifest_sha256": "e95a2e3be6a3a4abca92ea583cf35522545961280b575e5d5373857973d5e979",
+      "seeds": [
+        11,
+        12,
+        13
+      ],
+      "arms": [
+        "position",
+        "terminal",
+        "cut"
+      ],
+      "updates_per_model": 384,
+      "learning_rate": 0.001,
+      "optimizer": "Adam",
+      "max_length": 64,
+      "dimensions": {
+        "embedding": 16,
+        "hidden": 32,
+        "key": 16
+      },
+      "cpu_limit_seconds": 300.0,
+      "gates": {
+        "position_each_seed_exact": 16,
+        "position_each_kind": 2,
+        "mean_advantage_each_control": 4
+      }
+    },
+    "code_sha256": {
+      "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+      "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+      "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+      "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+      "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+      "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c"
+    },
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu"
+  },
+  "counts": {
+    "train": {
+      "lookup": 24,
+      "revision": 24,
+      "transition": 24,
+      "unknown": 24
+    },
+    "dev": {
+      "lookup": 8,
+      "revision": 8,
+      "transition": 8,
+      "unknown": 8
+    },
+    "holdout": {
+      "lookup": 8,
+      "revision": 8,
+      "transition": 8,
+      "unknown": 8
+    }
+  },
+  "formal_execution": false,
+  "optimizer_steps": 0,
+  "model_queries": 0
+}

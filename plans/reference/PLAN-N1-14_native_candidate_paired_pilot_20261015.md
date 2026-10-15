@@ -23,3 +23,7 @@ v2预检CPU1.453125秒，12条train前向/backward、参数完全不变、optimi
 确定性生成manifest（seed14）并结构审计：split实体及episode身份分离、四类分母、source/timestamp/provenance合法、目标不进入问题/来源字段、转移答案不可直接复制。采用train内每类首项，仅三臂各一次前向+backward，零optimizer创建/更新，CPU上限30秒，Torch单线程。每臂从同一参数初值构图，前后参数摘要相同；输出成本和首/末写入梯度，不把它当实际训练总成本，checkpoint成本另计。复用13通过的候选保存合同，正式训练前仍核对相同代码/hash及零更新恢复。
 
 manifest仅放plans/manifests，预检报告放reports，独占写入拒覆写。完整真实训练成本在首次少量已批准更新后才可校准，不以backward成本保证CPU预算。预检完成后提交材料，路线采用及首次训练范围决定是下一决策点；低成本实现与检查不再逐项请求。
+
+## 用户批准与机械执行补充（2026-10-15）
+
+用户直接引用本件的三种子/三臂/3456更新/独立5分钟CPU建议并明确授权此类低成本方案今后自行开展。因此本14隔离研究小试准入已通过，原采用/范围待决状态在本范围内关闭；不是默认采用或能力通过。执行细节见[SPEC15](SPEC-N1-15_paired_runner_execution_contract_20261015.md)，行为门、v2数据与配方不变。运行器已检查：新增natural-boundary/cap trace（旧generate仍返回同bytes），防止UTF8截尾掩盖cap；检查全部三臂真实路径、train-only更新、源/模型/optimizer/RNG独立恢复、计时完整性与全分母门。正式结果另记，不把readiness当训练已跑。

@@ -56,6 +56,15 @@ class EvidenceTape:
     values: torch.Tensor
 
 
+@dataclass(frozen=True)
+class ByteGenerationTrace:
+    output: bytes
+    raw: bytes
+    stop_reason: str
+    generated_steps: int
+    utf8_remaining: int
+
+
 class PositionEvidenceReference(nn.Module):
     FORMAT = "taiji-position-evidence-reference-v1"
     BOUNDARY = 256
@@ -135,6 +144,10 @@ class PositionEvidenceReference(nn.Module):
 
     @torch.no_grad()
     def generate(self, tape: EvidenceTape, session: str, question: bytes, max_length=256):
+        return self.generate_trace(tape, session, question, max_length).output
+
+    @torch.no_grad()
+    def generate_trace(self, tape: EvidenceTape, session: str, question: bytes, max_length=256):
         if tape.session != session:
             raise ValueError("cross-session evidence access")
         if max_length < 0:
@@ -142,7 +155,9 @@ class PositionEvidenceReference(nn.Module):
         hidden, previous = self.question_state(question), self.BOUNDARY
         remaining = lead = 0
         output = bytearray()
+        reason, steps = "cap", 0
         for _ in range(max_length):
+            steps += 1
             logits, hidden, _ = self.step(tape, session, hidden, previous)
             allowed = utf8_allowed(remaining, lead)
             if remaining == 0:
@@ -151,10 +166,12 @@ class PositionEvidenceReference(nn.Module):
             mask[allowed] = logits[allowed]
             previous = int(mask.argmax())
             if previous == self.BOUNDARY:
+                reason = "boundary"
                 break
             output.append(previous)
             remaining, lead = advance_utf8(remaining, lead, previous)
-        return trim_partial_tail(bytes(output))
+        raw = bytes(output)
+        return ByteGenerationTrace(trim_partial_tail(raw), raw, reason, steps, remaining)
 
     def checkpoint(self, sources: tuple[ObservedSource, ...], optimizer: Any = None):
         return {

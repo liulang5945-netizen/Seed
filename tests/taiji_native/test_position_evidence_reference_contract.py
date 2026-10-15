@@ -55,11 +55,16 @@ def test_utf8_boundary_and_truncated_character():
         model.readout.bias.fill_(-100)
         model.readout.bias[256] = 100
     assert model.generate(tape, "session", b"?") == b""
+    trace = model.generate_trace(tape, "session", b"?")
+    assert trace.stop_reason == "boundary" and trace.generated_steps == 1
     with torch.no_grad():
         model.readout.bias[256] = -100
         model.readout.bias[0xE4] = 100
         model.readout.bias[0xB8] = 50
     assert model.generate(tape, "session", b"?", max_length=1) == b""
+    trace = model.generate_trace(tape, "session", b"?", max_length=1)
+    assert trace.raw == b"\xe4" and trace.output == b""
+    assert trace.stop_reason == "cap" and trace.utf8_remaining == 2
     model.generate(tape, "session", b"?", max_length=9).decode("utf-8")
 
 
