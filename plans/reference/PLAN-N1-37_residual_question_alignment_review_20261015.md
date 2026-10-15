@@ -1,6 +1,6 @@
 # PLAN-N1-37 保留原表示的问题残差对齐
 
-状态：待弹窗批准，未实施。依据[36裁决](EXP-N1-36_question_alignment_calibration_20261015.md)，固定9216终点154/192，lookup28/revision30未过40；不循环加训。
+状态：2026-10-15用户选择弹窗已批准37，实施独立残差候选及零更新工程验证；不含正式训练。依据[36裁决](EXP-N1-36_question_alignment_calibration_20261015.md)，固定9216终点154/192，lookup28/revision30未过40；不循环加训。
 
 唯一推荐：保留35逐问题字节软对齐，但把fused=tanh(fusion([state,context]))改为fused=state+tanh(fusion([state,context]))，融合层权重/bias初始化为零。参数仍44,085（新增3616不变），先保留原模型所有共享层seed11初始化。第一轮乃至多轮输出在新支路为零时必须逐位等同旧相对地址模型；新融合梯度可学，后续question key/value应在非零融合权重下具有信用。观察保真不变，双hop/相对地址及自由边界不变，任意字节可对齐，无硬编码实体/来源/gold模板或教师。
 
