@@ -128,4 +128,7 @@
 
 
 - [08状态流裁决](PLAN-N1-08_C2_state_flow_adjudication_20261015.md)：48对完整、无干扰、状态差传到读出，无能力通过。
-- [09等剂量补零位置协议](PLAN-N1-09_C2_padding_placement_prereg_20261015.md)：低成本自主推进的下一因果诊断。
+- [09等剂量补零位置协议](PLAN-N1-09_C2_padding_placement_prereg_20261015.md)：低成本自主执行已完成，77.5秒CPU、48臂严格命中均0/16。
+
+- [09补零位置裁决](EXP-N1-09_C2_padding_placement_adjudication_20261015.md)：同N/来源/恢复守卫全过，没有恢复严格收益。
+- [10核心证据/信用路线评审](PLAN-N1-10_native_evidence_credit_route_review_20261015.md)：唯一下一主线方案决策，低成本诊断无需逐次询问。

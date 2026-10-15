@@ -1,0 +1,60 @@
+{
+  "format": "taiji-n1-c2-padding-placement-final-v1",
+  "status": "complete",
+  "command": [
+    "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+    "scripts/training/run_taiji_n1_c2_padding_placement.py"
+  ],
+  "report": "reports\\taiji_n1_c2_padding_placement_20261015.json",
+  "report_sha256": "78725802029b8420fc48cacf05ef3fccc8b431aa4403abe6b2eb315919621c5e",
+  "cpu_limit_seconds": 180.0,
+  "total_cpu_seconds": 77.5,
+  "timing_by_process": {
+    "audit": {
+      "cpu_seconds": 2.5625,
+      "wall_seconds": 2.554973099999188
+    },
+    "query": {
+      "cpu_seconds": 73.5,
+      "wall_seconds": 73.59584220000033
+    },
+    "orchestrator": {
+      "cpu_seconds": 1.4375,
+      "wall_seconds": 78.21992330000285
+    }
+  },
+  "guards": {
+    "complete_surface": true,
+    "equal_dose": true,
+    "zero_and_unpadded_unchanged": true,
+    "weights_unchanged": true,
+    "support_unchanged": true,
+    "independent_restore": true,
+    "query_episodes_absent": true,
+    "cpu_within_limit": true
+  },
+  "summary": {
+    "oracle-correct": {
+      "count": 16,
+      "strict_hits": 0,
+      "raw_strict_hits": 0,
+      "raw_changes_from_tail": 6,
+      "natural_stops": 6
+    },
+    "wrong-episode": {
+      "count": 16,
+      "strict_hits": 0,
+      "raw_strict_hits": 0,
+      "raw_changes_from_tail": 3,
+      "natural_stops": 7
+    },
+    "zero-replay": {
+      "count": 16,
+      "strict_hits": 0,
+      "raw_strict_hits": 0,
+      "raw_changes_from_tail": 0,
+      "natural_stops": 8
+    }
+  },
+  "reading_limit": "Descriptive padding-placement intervention; no semantic preservation, capability, credit or training verdict"
+}

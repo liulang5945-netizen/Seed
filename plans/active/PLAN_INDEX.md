@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **当前调度修订（2026-10-15）**：[PLAN-N-01](../reference/PLAN-N-01_development_revision_20261014.md)为完整方案；C1两批通过；C2校准完整112臂，CPU601.91秒，选择8/16、七臂严格命中均0/16。[完整裁决](../reference/PLAN-N1-07_C2_calibration_result_adjudication_20261015.md)已入库；状态流48对诊断已完成，CPU155.08秒；按最新低成本自主授权执行09补零位置因果诊断，执行以03为准。既定批次按长期授权自动推进，方案或不可逆决策仍保留；N6按当前能力包依赖排程。
+> **当前调度修订（2026-10-15）**：[PLAN-N-01](../reference/PLAN-N-01_development_revision_20261014.md)为完整方案；C1两批通过；C2校准完整112臂，CPU601.91秒，选择8/16、七臂严格命中均0/16。[完整裁决](../reference/PLAN-N1-07_C2_calibration_result_adjudication_20261015.md)已入库；状态流48对诊断已完成，CPU155.08秒；09补零位置48臂也已完成，CPU77.5秒、严格命中均0/16；当前 [10核心路线](../reference/PLAN-N1-10_native_evidence_credit_route_review_20261015.md) 待决定，执行以03为准。既定批次按长期授权自动推进，方案或不可逆决策仍保留；N6按当前能力包依赖排程。
 
 > **2026-10-14 导航校准**：本索引的编号约定继续保留；下方累积里程碑摘要含历史状态。当前队列只看 [03](roadmap/03_CURRENT_EXECUTION.md)，N 主线看 [09](roadmap/09_NEXT_MAINLINE_PLAN.md)，整个项目按 [项目地图](../../docs/README.md) 阅读。本轮收纳见 [整理记录](../reference/PROJECT_ORGANIZATION_20261014.md)。
 

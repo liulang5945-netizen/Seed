@@ -1,0 +1,110 @@
+{
+  "format": "taiji-n1-actual-credit-source-audit-v1",
+  "model_runs": 0,
+  "training_updates": 0,
+  "locations": [
+    {
+      "file": "taiji/model.py",
+      "line": 289,
+      "text": "def _consume_stepwise_before_answer(self, step: TaijiStep) -> TaijiStep:"
+    },
+    {
+      "file": "taiji/model.py",
+      "line": 313,
+      "text": "for vector in replay:"
+    },
+    {
+      "file": "taiji/model.py",
+      "line": 2020,
+      "text": "def observe("
+    },
+    {
+      "file": "taiji/model.py",
+      "line": 2339,
+      "text": "previous.predictive_context_trace,"
+    },
+    {
+      "file": "taiji/model.py",
+      "line": 2366,
+      "text": "context_trace=previous.predictive_context_trace,"
+    },
+    {
+      "file": "taiji/model.py",
+      "line": 2395,
+      "text": "previous.predictive_context_trace,"
+    },
+    {
+      "file": "taiji/model.py",
+      "line": 3141,
+      "text": "def learn_bytes("
+    },
+    {
+      "file": "taiji/model.py",
+      "line": 3643,
+      "text": "carrier_vectors.append(self.cortical_cue())"
+    },
+    {
+      "file": "taiji/fabric.py",
+      "line": 250,
+      "text": "def step("
+    },
+    {
+      "file": "taiji/organs.py",
+      "line": 302,
+      "text": "class BytePredictiveContext:"
+    },
+    {
+      "file": "taiji/organs.py",
+      "line": 401,
+      "text": "trace = prior_context.detach().to(self.device).clone()"
+    },
+    {
+      "file": "taiji/organs.py",
+      "line": 577,
+      "text": "prior_context = prior_context.detach().to(self.device).clone()"
+    },
+    {
+      "file": "taiji/organs.py",
+      "line": 608,
+      "text": "prior_context = prior_context.detach().to(self.device).clone()"
+    },
+    {
+      "file": "taiji/organs.py",
+      "line": 800,
+      "text": "def context_feedback("
+    },
+    {
+      "file": "taiji/organs.py",
+      "line": 1162,
+      "text": "def context_feedback(self, error: torch.Tensor, **kwargs: Any) -> torch.Tensor:"
+    },
+    {
+      "file": "taiji/organs.py",
+      "line": 658,
+      "text": "class BytePredictiveReadout:"
+    },
+    {
+      "file": "taiji/memory.py",
+      "line": 63,
+      "text": "class PersistentStepwiseCarrier:"
+    }
+  ],
+  "source_sha256": {
+    "taiji/model.py": "d06ba0fecdf01b2451130bd0345ff2ea745693440556f58078a19165c183af67",
+    "taiji/fabric.py": "e3c5fff6e597a88eb0249e7358c7d756af89453e5a772345561a33bb61508ea5",
+    "taiji/organs.py": "3e52554e6d254022ac05b82b86bcf6326c6b8ba133d94546514e42bc7bb68a69",
+    "taiji/memory.py": "f306c2e67e246fb2163f280c4895dd457094bea368abb27be7ccfccf398f2290"
+  },
+  "observations": [
+    "Native fabric.step and Taiji.observe are torch.no_grad; saved trajectories and prior predictive context are detached.",
+    "Current diagnostic consumer replays complete episodes before first emitted byte, with learn/restructure/homeostasis all false.",
+    "Existing F1 error updates predictive readout using previous.motor_context; private context update uses prior predictive_context_trace local eligibility. This is not evidence of answer loss credit reaching saved episode start.",
+    "Generation records pre-emission cues after prompt ingestion; source metadata alone does not demonstrate external fact semantic preservation."
+  ],
+  "unmeasured": [
+    "long-range native local eligibility effectiveness",
+    "actual gradient to early fact encoding in a trainable candidate",
+    "three-organ behavior and retention gains"
+  ],
+  "reading_limit": "Source inspection establishes current computational boundaries, not mechanism impossibility or zero measured gradient."
+}
