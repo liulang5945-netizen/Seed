@@ -1,0 +1,54 @@
+{
+  "schema": "n1-position-reference-audit-v1",
+  "capability_claim": false,
+  "controls": {
+    "forward_bitwise_equal": true,
+    "early_and_last_credit_finite_nonzero": true,
+    "cut_write_credit_unreachable": true,
+    "answer_steps_reread": true
+  },
+  "first_last_gradient_norms": [
+    0.026602258905768394,
+    0.012864980846643448
+  ],
+  "zero_restore_equal": true,
+  "optimizer_resume_equal": true,
+  "independent_workers": 2,
+  "fixture_steps_parent": 2,
+  "fixture_steps_worker": 1,
+  "cpu_seconds": 7.0,
+  "cpu_limit_seconds": 60.0,
+  "checkpoint_sha256": {
+    "zero.pt": "f38f8b0a43b9749059fafeb9481dd99c404a4a946815e812362f31ea612e556f",
+    "one_step.pt": "2be2475f9a6ffbf495d8e46b5c33116ac4ed2dc21e119b481a800e205b0669f6"
+  },
+  "source_sha256": "943bf9d5ea39789e4043d105f1f9b31ac9a09c060b4168fbf551a862e63c6df3",
+  "initial": {
+    "parameters": "e76a69cdadc4c72f570d31e83215b2777a06d81a1b64e60ac81f8e8825cb0343",
+    "logits": "6951d03871d88ae4f6fa9d233b4ce0321f79b89d4769ad413b9c713198a45400",
+    "rng": "81455e91544464b98fcb916ad70dadbc60b39f0bef2184ed54fc372bab159ad7",
+    "sources": [
+      [
+        "engineering",
+        "observation",
+        "external",
+        "6167656e74207573657320636f70706572"
+      ]
+    ]
+  },
+  "updated": {
+    "parameters": "92f0bd71b8be35b1d4ae34d79d4dd993e7854d4474c849f3b1d19ec682583dc9",
+    "logits": "6777b92b9fb8b2290e0bdb4e1a97fb6b01b59286b9375d27660a9f7014d2803a",
+    "rng": "81455e91544464b98fcb916ad70dadbc60b39f0bef2184ed54fc372bab159ad7",
+    "sources": [
+      [
+        "engineering",
+        "observation",
+        "external",
+        "6167656e74207573657320636f70706572"
+      ]
+    ]
+  },
+  "native_credit_validated": false,
+  "passed": true
+}

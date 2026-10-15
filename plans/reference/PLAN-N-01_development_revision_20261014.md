@@ -100,3 +100,5 @@ C1 已解除“无持久载体”前置。C2 实施和32条支持保存/独立�
 计划/台账文档守卫补测：`test_project_identity.py` 与 `test_n6_09_ledger_marker_uniqueness_contract.py` 通过；合跑 `test_n5_38_ledger_cited_reports_contract.py` 为 16 passed／2 failed，红项仍是 ㊵-870 已登记的合成 `reports/sealed` 引用被计作缺失（当前 08 原有行，C1 仅追加新日志，未新增该引用）。未删守卫、伪造证据或改写旧台账来消红。
 
 2026-10-15 C2完整结果：累计12分钟批准已落实，详情与原读数见 [完整裁决](PLAN-N1-07_C2_calibration_result_adjudication_20261015.md)；当时待决为逐节点状态流；随后已获低成本自主授权并完成08/09，当前待决为10核心路线，原10→12分钟决策已关闭。
+
+2026-10-15 最新目标修订：按N主线持续推进并依实际情况调整计划，保持Taiji核心定义。11隔离逐位置参考工程已完成：CPU7秒，前向逐位相同的信用截断与零更新/优化器独立恢复通过；不代表原生信用或能力。全项目仍为C1通过、C2无严格收益、C3原生候选/训练及C4未完成；唯一下一步是原生写入/读取/学习归属合同。详见 [11工程裁决](EXP-N1-11_position_evidence_reference_adjudication_20261015.md)。
