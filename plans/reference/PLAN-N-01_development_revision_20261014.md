@@ -157,3 +157,6 @@ C1 已解除“无持久载体”前置。C2 实施和32条支持保存/独立�
 
 
 2026-10-15：[27地址诊断](EXP-N1-27_address_intervention_adjudication_20261015.md)完整，576条gold-prefix、CPU4.5秒、0更新/自由输出/dev/holdout，原生控制/全部守卫过。22单hop六字节exact原生29/来源11/位置43，25双hop26/16/79（含原生boundary仅48）；oracle不是能力，也不证明定位唯一根因。68相关测过。唯一建议[28学习型相对地址状态](PLAN-N1-28_learned_relative_address_review_20261015.md)，新增132参数及回答内地址分布，已弹窗请求，实际答复前不实施。全项目C1过/C2严格收益零/C3未见保持/C4/三器官及其余N与CI债未齐。
+
+
+2026-10-15：用户通过选择弹窗批准28，Taiji隔离相对地址候选/29运行器就绪，新增132参数总40469、旧层初始化同25；7工程测通过（4.56秒），源内质量/梯度、首步及零门、问题隔离、teacher/free轨迹、信用和Adam恢复过。唯一队首[SPEC29](SPEC-N1-29_relative_read_execution_contract_20261015.md)先60秒CPU零更新独立预检，通过自动6144更新/960组/300秒CPU train-only；0 dev/holdout，原门及全项目能力/CI债保留。
