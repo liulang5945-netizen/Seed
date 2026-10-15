@@ -804,3 +804,6 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 2026-10-15 N1已见拟合：[SPEC16](../reference/SPEC-N1-16_train_fit_diagnostic_20261015.md)／[EXP16](../reference/EXP-N1-16_train_fit_adjudication_20261015.md)。864项完整、CPU4.171875秒、零更新，已见0—9/96；下一步单模型train-only学习曲线。
 
 2026-10-15 N1学习充分性：[SPEC17](../reference/SPEC-N1-17_train_only_learning_curve_20261015.md)／[EXP17](../reference/EXP-N1-17_train_only_learning_curve_adjudication_20261015.md)；已见90/96、CPU35.3125秒，非能力晋级。[PLAN18新课程](../reference/PLAN-N1-18_fresh_content_curriculum_20261015.md)为当前唯一执行方向。
+
+2026-10-15：[18新课程准入](../reference/EXP-N1-18_v3_curriculum_admission_20261015.md)完成，零更新预检通过；当前后继为v3 train-only学习充分性校准。
+

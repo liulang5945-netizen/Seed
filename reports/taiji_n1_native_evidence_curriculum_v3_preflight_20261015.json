@@ -1,0 +1,203 @@
+{
+  "schema": "n1-content-curriculum-v3-preflight-v1",
+  "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+  "admission": {
+    "counts": {
+      "train": {
+        "lookup": 48,
+        "revision": 48,
+        "transition": 48,
+        "unknown": 48
+      },
+      "dev": {
+        "lookup": 8,
+        "revision": 8,
+        "transition": 8,
+        "unknown": 8
+      },
+      "holdout": {
+        "lookup": 8,
+        "revision": 8,
+        "transition": 8,
+        "unknown": 8
+      }
+    },
+    "positive_target_letter_counts": {
+      "a": 38,
+      "b": 24,
+      "c": 22,
+      "d": 25,
+      "e": 50,
+      "f": 19,
+      "g": 20,
+      "h": 42,
+      "i": 26,
+      "j": 20,
+      "k": 67,
+      "l": 16,
+      "m": 15,
+      "n": 187,
+      "o": 93,
+      "p": 38,
+      "q": 21,
+      "r": 31,
+      "s": 56,
+      "t": 70,
+      "u": 83,
+      "v": 20,
+      "w": 77,
+      "x": 22,
+      "y": 20,
+      "z": 26
+    },
+    "distinct_train_material_targets": 96
+  },
+  "generator_sha256": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+  "model_identity": {
+    "recipe": {
+      "schema": "n1-native-evidence-paired-v1",
+      "manifest_sha256": "e95a2e3be6a3a4abca92ea583cf35522545961280b575e5d5373857973d5e979",
+      "seeds": [
+        11,
+        12,
+        13
+      ],
+      "arms": [
+        "position",
+        "terminal",
+        "cut"
+      ],
+      "updates_per_model": 384,
+      "learning_rate": 0.001,
+      "optimizer": "Adam",
+      "max_length": 64,
+      "dimensions": {
+        "embedding": 16,
+        "hidden": 32,
+        "key": 16
+      },
+      "cpu_limit_seconds": 300.0,
+      "gates": {
+        "position_each_seed_exact": 16,
+        "position_each_kind": 2,
+        "mean_advantage_each_control": 4
+      }
+    },
+    "code_sha256": {
+      "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+      "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+      "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+      "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+      "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+      "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c"
+    },
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu"
+  },
+  "holdout_model_queries": 0,
+  "dev_model_queries": 0,
+  "rows": [
+    {
+      "kind": "lookup",
+      "arm": "position",
+      "id": "train-000",
+      "cpu_seconds": 0.0,
+      "first_credit": 0.004216606728732586,
+      "last_credit": 0.001783382729627192
+    },
+    {
+      "kind": "lookup",
+      "arm": "terminal",
+      "id": "train-000",
+      "cpu_seconds": 0.015625,
+      "first_credit": 4.173579668531602e-07,
+      "last_credit": 0.0413699746131897
+    },
+    {
+      "kind": "lookup",
+      "arm": "cut",
+      "id": "train-000",
+      "cpu_seconds": 0.0,
+      "first_credit": null,
+      "last_credit": null
+    },
+    {
+      "kind": "revision",
+      "arm": "position",
+      "id": "train-001",
+      "cpu_seconds": 0.015625,
+      "first_credit": 0.003638017689809203,
+      "last_credit": 0.0016765703912824392
+    },
+    {
+      "kind": "revision",
+      "arm": "terminal",
+      "id": "train-001",
+      "cpu_seconds": 0.015625,
+      "first_credit": 5.771501605522644e-07,
+      "last_credit": 0.0460602268576622
+    },
+    {
+      "kind": "revision",
+      "arm": "cut",
+      "id": "train-001",
+      "cpu_seconds": 0.0,
+      "first_credit": null,
+      "last_credit": null
+    },
+    {
+      "kind": "transition",
+      "arm": "position",
+      "id": "train-002",
+      "cpu_seconds": 0.015625,
+      "first_credit": 0.005012185778468847,
+      "last_credit": 0.0024379990063607693
+    },
+    {
+      "kind": "transition",
+      "arm": "terminal",
+      "id": "train-002",
+      "cpu_seconds": 0.0,
+      "first_credit": 9.80956201601657e-07,
+      "last_credit": 0.05343571677803993
+    },
+    {
+      "kind": "transition",
+      "arm": "cut",
+      "id": "train-002",
+      "cpu_seconds": 0.015625,
+      "first_credit": null,
+      "last_credit": null
+    },
+    {
+      "kind": "unknown",
+      "arm": "position",
+      "id": "train-003",
+      "cpu_seconds": 0.0,
+      "first_credit": 0.004704988561570644,
+      "last_credit": 0.002300978172570467
+    },
+    {
+      "kind": "unknown",
+      "arm": "terminal",
+      "id": "train-003",
+      "cpu_seconds": 0.015625,
+      "first_credit": 1.007235141514684e-06,
+      "last_credit": 0.053180184215307236
+    },
+    {
+      "kind": "unknown",
+      "arm": "cut",
+      "id": "train-003",
+      "cpu_seconds": 0.0,
+      "first_credit": null,
+      "last_credit": null
+    }
+  ],
+  "parameters_unchanged": true,
+  "optimizer_steps": 0,
+  "cpu_seconds": 1.578125,
+  "cpu_limit_seconds": 30,
+  "passed": true,
+  "training_cost_estimate_is_upper_bound": false
+}

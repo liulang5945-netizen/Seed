@@ -1,0 +1,4102 @@
+{
+  "schema": "n1-native-evidence-curriculum-v3",
+  "seed": 18,
+  "episodes": [
+    {
+      "id": "train-000",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "erifmmmlgg",
+        "riruwyggto",
+        "frwvfhazfs"
+      ],
+      "observations": [
+        "riruwyggto uses cmxdrq.",
+        "erifmmmlgg uses npnvph."
+      ],
+      "question": "material of erifmmmlgg?",
+      "answer": "npnvph"
+    },
+    {
+      "id": "train-001",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "equdnoxfgv",
+        "uvrmmmmgcj",
+        "yukpntazuw"
+      ],
+      "observations": [
+        "equdnoxfgv uses ckkkds.",
+        "equdnoxfgv now uses rjispx."
+      ],
+      "question": "material of equdnoxfgv?",
+      "answer": "rjispx"
+    },
+    {
+      "id": "train-002",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "lswxltquxa",
+        "ovoapgtmow",
+        "vvufwejqmu"
+      ],
+      "observations": [
+        "lswxltquxa faces south.",
+        "lswxltquxa turns left."
+      ],
+      "question": "direction of lswxltquxa?",
+      "answer": "east"
+    },
+    {
+      "id": "train-003",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "pbipyskknt",
+        "zayubghfed",
+        "rlcvvgvunc"
+      ],
+      "observations": [
+        "zayubghfed uses swxyez.",
+        "rlcvvgvunc uses cjoqnx."
+      ],
+      "question": "material of pbipyskknt?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-004",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "uwrlaqyeza",
+        "ktsphgdqad",
+        "slalyngdmg"
+      ],
+      "observations": [
+        "ktsphgdqad uses hzhxar.",
+        "uwrlaqyeza uses hbpunp."
+      ],
+      "question": "material of uwrlaqyeza?",
+      "answer": "hbpunp"
+    },
+    {
+      "id": "train-005",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "azhveboelq",
+        "ltvmelqldj",
+        "qtsogzfrtq"
+      ],
+      "observations": [
+        "azhveboelq uses xdbmzj.",
+        "azhveboelq now uses fbbjia."
+      ],
+      "question": "material of azhveboelq?",
+      "answer": "fbbjia"
+    },
+    {
+      "id": "train-006",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "jahvypiqaa",
+        "oyidguehou",
+        "inpwhjzjkv"
+      ],
+      "observations": [
+        "jahvypiqaa faces south.",
+        "jahvypiqaa turns right."
+      ],
+      "question": "direction of jahvypiqaa?",
+      "answer": "west"
+    },
+    {
+      "id": "train-007",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "xmfoszftyk",
+        "ncrbutvvbw",
+        "syxmwfzrvo"
+      ],
+      "observations": [
+        "ncrbutvvbw uses ogunft.",
+        "syxmwfzrvo uses plukro."
+      ],
+      "question": "material of xmfoszftyk?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-008",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "jjpeeiseti",
+        "ycwvvqhyfs",
+        "kbkiufvacq"
+      ],
+      "observations": [
+        "jjpeeiseti uses ypexra.",
+        "ycwvvqhyfs uses dknovp."
+      ],
+      "question": "material of jjpeeiseti?",
+      "answer": "ypexra"
+    },
+    {
+      "id": "train-009",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "kirxlbjfxi",
+        "lqbcngbttp",
+        "dvzcrbcizl"
+      ],
+      "observations": [
+        "kirxlbjfxi uses oxkhcg.",
+        "kirxlbjfxi now uses pwzgri."
+      ],
+      "question": "material of kirxlbjfxi?",
+      "answer": "pwzgri"
+    },
+    {
+      "id": "train-010",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "oayutqjvnr",
+        "hesibhkeds",
+        "mnsbnzhsej"
+      ],
+      "observations": [
+        "oayutqjvnr faces east.",
+        "oayutqjvnr turns right."
+      ],
+      "question": "direction of oayutqjvnr?",
+      "answer": "south"
+    },
+    {
+      "id": "train-011",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "mlguzsaucg",
+        "lrnbyytwii",
+        "gcdrppxwgi"
+      ],
+      "observations": [
+        "lrnbyytwii uses blvkxz.",
+        "gcdrppxwgi uses qewgyl."
+      ],
+      "question": "material of mlguzsaucg?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-012",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "ejgjofgmnx",
+        "uklleromwj",
+        "beoejsbmed"
+      ],
+      "observations": [
+        "ejgjofgmnx uses zuscue.",
+        "uklleromwj uses agrvmg."
+      ],
+      "question": "material of ejgjofgmnx?",
+      "answer": "zuscue"
+    },
+    {
+      "id": "train-013",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "aevtwpxaja",
+        "zwqonphcwv",
+        "glktirdxrj"
+      ],
+      "observations": [
+        "aevtwpxaja uses nrodec.",
+        "aevtwpxaja now uses qzdwtg."
+      ],
+      "question": "material of aevtwpxaja?",
+      "answer": "qzdwtg"
+    },
+    {
+      "id": "train-014",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "mcvmvllouo",
+        "qkegvavnjl",
+        "kstymqfsaw"
+      ],
+      "observations": [
+        "mcvmvllouo faces west.",
+        "mcvmvllouo turns left."
+      ],
+      "question": "direction of mcvmvllouo?",
+      "answer": "south"
+    },
+    {
+      "id": "train-015",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "scsgsjwbbw",
+        "vidnnkvckq",
+        "nlpenbgahb"
+      ],
+      "observations": [
+        "vidnnkvckq uses zyadyy.",
+        "nlpenbgahb uses yznzzh."
+      ],
+      "question": "material of scsgsjwbbw?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-016",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "mmzqiuiphl",
+        "nbrwbfqjbh",
+        "fyucmwkggk"
+      ],
+      "observations": [
+        "mmzqiuiphl uses vzzwbr.",
+        "nbrwbfqjbh uses rdamhw."
+      ],
+      "question": "material of mmzqiuiphl?",
+      "answer": "vzzwbr"
+    },
+    {
+      "id": "train-017",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "kxnqutewcn",
+        "lrzrchrszd",
+        "mpqiogotji"
+      ],
+      "observations": [
+        "kxnqutewcn uses tdvjzf.",
+        "kxnqutewcn now uses ywmrid."
+      ],
+      "question": "material of kxnqutewcn?",
+      "answer": "ywmrid"
+    },
+    {
+      "id": "train-018",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "ytsllzfchx",
+        "sthwcikqve",
+        "omahoahclv"
+      ],
+      "observations": [
+        "ytsllzfchx faces south.",
+        "ytsllzfchx turns right."
+      ],
+      "question": "direction of ytsllzfchx?",
+      "answer": "west"
+    },
+    {
+      "id": "train-019",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "ukctpfczly",
+        "uceafziauw",
+        "rozduthtph"
+      ],
+      "observations": [
+        "uceafziauw uses ptxpjp.",
+        "rozduthtph uses ktszvx."
+      ],
+      "question": "material of ukctpfczly?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-020",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "xcafjrliys",
+        "cvpharhprs",
+        "lieclpudhq"
+      ],
+      "observations": [
+        "cvpharhprs uses muieio.",
+        "xcafjrliys uses bxunig."
+      ],
+      "question": "material of xcafjrliys?",
+      "answer": "bxunig"
+    },
+    {
+      "id": "train-021",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "latnkfqzbx",
+        "gdnbbvwflm",
+        "iddteblrrj"
+      ],
+      "observations": [
+        "latnkfqzbx uses lgtrde.",
+        "latnkfqzbx now uses fqiknh."
+      ],
+      "question": "material of latnkfqzbx?",
+      "answer": "fqiknh"
+    },
+    {
+      "id": "train-022",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "ajincnbhik",
+        "qxonrdntli",
+        "oitjkzllnb"
+      ],
+      "observations": [
+        "ajincnbhik faces west.",
+        "ajincnbhik turns left."
+      ],
+      "question": "direction of ajincnbhik?",
+      "answer": "south"
+    },
+    {
+      "id": "train-023",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "yqgihunaox",
+        "gfhusgmlpe",
+        "tgjbgsnavq"
+      ],
+      "observations": [
+        "gfhusgmlpe uses mnshwb.",
+        "tgjbgsnavq uses fjgfkp."
+      ],
+      "question": "material of yqgihunaox?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-024",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "jskgyshius",
+        "hfyyrsquzm",
+        "wfqrbeysvm"
+      ],
+      "observations": [
+        "jskgyshius uses enxmga.",
+        "hfyyrsquzm uses unhopm."
+      ],
+      "question": "material of jskgyshius?",
+      "answer": "enxmga"
+    },
+    {
+      "id": "train-025",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "ynijyywpzj",
+        "pkcyqiekso",
+        "hnivqkrcpd"
+      ],
+      "observations": [
+        "ynijyywpzj uses hmtien.",
+        "ynijyywpzj now uses svwanb."
+      ],
+      "question": "material of ynijyywpzj?",
+      "answer": "svwanb"
+    },
+    {
+      "id": "train-026",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "qkzcajchze",
+        "vvfihpqbpa",
+        "niuttjznnz"
+      ],
+      "observations": [
+        "qkzcajchze faces west.",
+        "qkzcajchze turns left."
+      ],
+      "question": "direction of qkzcajchze?",
+      "answer": "south"
+    },
+    {
+      "id": "train-027",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "pwwitztdny",
+        "ewmwzhligv",
+        "yvtyksrzox"
+      ],
+      "observations": [
+        "ewmwzhligv uses gyhacc.",
+        "yvtyksrzox uses sbbzbf."
+      ],
+      "question": "material of pwwitztdny?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-028",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "sghxnplqwm",
+        "bqyzljtioq",
+        "zrhidysnsd"
+      ],
+      "observations": [
+        "sghxnplqwm uses rjnmka.",
+        "bqyzljtioq uses kwbhps."
+      ],
+      "question": "material of sghxnplqwm?",
+      "answer": "rjnmka"
+    },
+    {
+      "id": "train-029",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "bocjujgdzt",
+        "jbazmnwflx",
+        "vikhuwzxsz"
+      ],
+      "observations": [
+        "bocjujgdzt uses zoucmh.",
+        "bocjujgdzt now uses iinywe."
+      ],
+      "question": "material of bocjujgdzt?",
+      "answer": "iinywe"
+    },
+    {
+      "id": "train-030",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "sinmxmldfo",
+        "tdejwfumev",
+        "zaxvdstvvp"
+      ],
+      "observations": [
+        "sinmxmldfo faces south.",
+        "sinmxmldfo turns left."
+      ],
+      "question": "direction of sinmxmldfo?",
+      "answer": "east"
+    },
+    {
+      "id": "train-031",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "qynkgkszzf",
+        "zcvfotxpfa",
+        "mswwbeqsep"
+      ],
+      "observations": [
+        "zcvfotxpfa uses cfmmhi.",
+        "mswwbeqsep uses yrnnph."
+      ],
+      "question": "material of qynkgkszzf?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-032",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "fvyyteboxm",
+        "bcrrtkgymf",
+        "gfmocvijdz"
+      ],
+      "observations": [
+        "bcrrtkgymf uses yvghlp.",
+        "fvyyteboxm uses bsofol."
+      ],
+      "question": "material of fvyyteboxm?",
+      "answer": "bsofol"
+    },
+    {
+      "id": "train-033",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "cyolalwrvk",
+        "sjydlpgiuq",
+        "lxjsokiwbh"
+      ],
+      "observations": [
+        "cyolalwrvk uses azagde.",
+        "cyolalwrvk now uses rcjeqh."
+      ],
+      "question": "material of cyolalwrvk?",
+      "answer": "rcjeqh"
+    },
+    {
+      "id": "train-034",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "qgsukpkwgl",
+        "tacvdqtqup",
+        "agzthpkqnp"
+      ],
+      "observations": [
+        "qgsukpkwgl faces east.",
+        "qgsukpkwgl turns left."
+      ],
+      "question": "direction of qgsukpkwgl?",
+      "answer": "north"
+    },
+    {
+      "id": "train-035",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "qjlxhudkbz",
+        "iakzdkmhfh",
+        "tidpjyfvbf"
+      ],
+      "observations": [
+        "iakzdkmhfh uses mhqasj.",
+        "tidpjyfvbf uses jznewq."
+      ],
+      "question": "material of qjlxhudkbz?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-036",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "dihvfpxchr",
+        "lomejeopgb",
+        "nluuinlpmh"
+      ],
+      "observations": [
+        "lomejeopgb uses erpvtw.",
+        "dihvfpxchr uses ttptjb."
+      ],
+      "question": "material of dihvfpxchr?",
+      "answer": "ttptjb"
+    },
+    {
+      "id": "train-037",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "jhmpoystdm",
+        "zeqflfkzad",
+        "xgrttulcle"
+      ],
+      "observations": [
+        "jhmpoystdm uses chzvec.",
+        "jhmpoystdm now uses qpikgn."
+      ],
+      "question": "material of jhmpoystdm?",
+      "answer": "qpikgn"
+    },
+    {
+      "id": "train-038",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "bigxdsmtgj",
+        "tpytnlurzx",
+        "fakemdwdaq"
+      ],
+      "observations": [
+        "bigxdsmtgj faces north.",
+        "bigxdsmtgj turns left."
+      ],
+      "question": "direction of bigxdsmtgj?",
+      "answer": "west"
+    },
+    {
+      "id": "train-039",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "wbxnnfwjah",
+        "ujfmemvaxv",
+        "bieqfbnuak"
+      ],
+      "observations": [
+        "ujfmemvaxv uses dkoedq.",
+        "bieqfbnuak uses ftwwnw."
+      ],
+      "question": "material of wbxnnfwjah?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-040",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "wnyajebchw",
+        "jrpanskrmr",
+        "hhecjhaipx"
+      ],
+      "observations": [
+        "wnyajebchw uses mhzsnn.",
+        "jrpanskrmr uses hifsej."
+      ],
+      "question": "material of wnyajebchw?",
+      "answer": "mhzsnn"
+    },
+    {
+      "id": "train-041",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "fxislfjsny",
+        "ujgldhhcpa",
+        "hxyhyaubyx"
+      ],
+      "observations": [
+        "fxislfjsny uses hwzqdt.",
+        "fxislfjsny now uses qelbym."
+      ],
+      "question": "material of fxislfjsny?",
+      "answer": "qelbym"
+    },
+    {
+      "id": "train-042",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "kgucenjypo",
+        "voacomqmwv",
+        "wxhrlzfbtq"
+      ],
+      "observations": [
+        "kgucenjypo faces west.",
+        "kgucenjypo turns left."
+      ],
+      "question": "direction of kgucenjypo?",
+      "answer": "south"
+    },
+    {
+      "id": "train-043",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "umhmckwrlx",
+        "vpgpbqtcri",
+        "jbrspkzahs"
+      ],
+      "observations": [
+        "vpgpbqtcri uses jdbhdi.",
+        "jbrspkzahs uses shtwqd."
+      ],
+      "question": "material of umhmckwrlx?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-044",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "fkmuakroeq",
+        "pgtravjzjx",
+        "shuxaijhfn"
+      ],
+      "observations": [
+        "pgtravjzjx uses twbcjz.",
+        "fkmuakroeq uses csgabb."
+      ],
+      "question": "material of fkmuakroeq?",
+      "answer": "csgabb"
+    },
+    {
+      "id": "train-045",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "kglpynodfk",
+        "ajrpokbnvz",
+        "doqywaacyf"
+      ],
+      "observations": [
+        "kglpynodfk uses iuuzgg.",
+        "kglpynodfk now uses pcxxcw."
+      ],
+      "question": "material of kglpynodfk?",
+      "answer": "pcxxcw"
+    },
+    {
+      "id": "train-046",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "wcosrsydop",
+        "awiwgxaijn",
+        "axcygjfiyf"
+      ],
+      "observations": [
+        "wcosrsydop faces east.",
+        "wcosrsydop turns right."
+      ],
+      "question": "direction of wcosrsydop?",
+      "answer": "south"
+    },
+    {
+      "id": "train-047",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "agvjnfmgqs",
+        "bdlikqwqli",
+        "sdcxcnohyt"
+      ],
+      "observations": [
+        "bdlikqwqli uses lzezth.",
+        "sdcxcnohyt uses djpuhg."
+      ],
+      "question": "material of agvjnfmgqs?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-048",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "ysiajewayy",
+        "ncxgudwgad",
+        "vijdyfpohh"
+      ],
+      "observations": [
+        "ncxgudwgad uses adgedb.",
+        "ysiajewayy uses jkcfuw."
+      ],
+      "question": "material of ysiajewayy?",
+      "answer": "jkcfuw"
+    },
+    {
+      "id": "train-049",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "vjreucngwo",
+        "ylkdtjvrqj",
+        "yllwtvvnmz"
+      ],
+      "observations": [
+        "vjreucngwo uses chhyqd.",
+        "vjreucngwo now uses cwvkuj."
+      ],
+      "question": "material of vjreucngwo?",
+      "answer": "cwvkuj"
+    },
+    {
+      "id": "train-050",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "yxrfawbhqt",
+        "mbbnyqzegw",
+        "cxyzwggdab"
+      ],
+      "observations": [
+        "yxrfawbhqt faces north.",
+        "yxrfawbhqt turns right."
+      ],
+      "question": "direction of yxrfawbhqt?",
+      "answer": "east"
+    },
+    {
+      "id": "train-051",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "cmojhddnsg",
+        "birprnlgas",
+        "ubanbhshkk"
+      ],
+      "observations": [
+        "birprnlgas uses lpmnjz.",
+        "ubanbhshkk uses klemti."
+      ],
+      "question": "material of cmojhddnsg?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-052",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "pteffibeof",
+        "kwvoanxcti",
+        "ygfdzsaxsf"
+      ],
+      "observations": [
+        "kwvoanxcti uses lyyojc.",
+        "pteffibeof uses pudpxe."
+      ],
+      "question": "material of pteffibeof?",
+      "answer": "pudpxe"
+    },
+    {
+      "id": "train-053",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "nlmxqfkbca",
+        "ndmvzipavj",
+        "lkgfidmojp"
+      ],
+      "observations": [
+        "nlmxqfkbca uses tjmiui.",
+        "nlmxqfkbca now uses yebxph."
+      ],
+      "question": "material of nlmxqfkbca?",
+      "answer": "yebxph"
+    },
+    {
+      "id": "train-054",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "iasbpddnkj",
+        "yvnjsgybln",
+        "jryeltexio"
+      ],
+      "observations": [
+        "iasbpddnkj faces north.",
+        "iasbpddnkj turns right."
+      ],
+      "question": "direction of iasbpddnkj?",
+      "answer": "east"
+    },
+    {
+      "id": "train-055",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "atulmqgofl",
+        "iefmecctyq",
+        "beusibunxi"
+      ],
+      "observations": [
+        "iefmecctyq uses yiwwaf.",
+        "beusibunxi uses pnfjsj."
+      ],
+      "question": "material of atulmqgofl?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-056",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "fvpurstnzt",
+        "rvpoeoqawo",
+        "uliozunhuy"
+      ],
+      "observations": [
+        "fvpurstnzt uses uyzitj.",
+        "rvpoeoqawo uses xqreva."
+      ],
+      "question": "material of fvpurstnzt?",
+      "answer": "uyzitj"
+    },
+    {
+      "id": "train-057",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "ssicxjifma",
+        "usnttvacer",
+        "basspcakph"
+      ],
+      "observations": [
+        "ssicxjifma uses mxjchu.",
+        "ssicxjifma now uses jbrdri."
+      ],
+      "question": "material of ssicxjifma?",
+      "answer": "jbrdri"
+    },
+    {
+      "id": "train-058",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "gbziffgkkc",
+        "yyuikjgiin",
+        "hiwljovnmb"
+      ],
+      "observations": [
+        "gbziffgkkc faces south.",
+        "gbziffgkkc turns right."
+      ],
+      "question": "direction of gbziffgkkc?",
+      "answer": "west"
+    },
+    {
+      "id": "train-059",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "jtbzgiazri",
+        "kgasxjomwb",
+        "lkvgealtxp"
+      ],
+      "observations": [
+        "kgasxjomwb uses gamygl.",
+        "lkvgealtxp uses rbbrxv."
+      ],
+      "question": "material of jtbzgiazri?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-060",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "gatjwagdgc",
+        "glfsmebnbv",
+        "ugknqnziop"
+      ],
+      "observations": [
+        "gatjwagdgc uses fgapvp.",
+        "glfsmebnbv uses qwdxwh."
+      ],
+      "question": "material of gatjwagdgc?",
+      "answer": "fgapvp"
+    },
+    {
+      "id": "train-061",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "qmtmxyaduf",
+        "gqcjfkcfzr",
+        "zopcivbsrg"
+      ],
+      "observations": [
+        "qmtmxyaduf uses uikffg.",
+        "qmtmxyaduf now uses eqbepc."
+      ],
+      "question": "material of qmtmxyaduf?",
+      "answer": "eqbepc"
+    },
+    {
+      "id": "train-062",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "mlyhnvghgj",
+        "pythximftc",
+        "bifgpugedz"
+      ],
+      "observations": [
+        "mlyhnvghgj faces north.",
+        "mlyhnvghgj turns left."
+      ],
+      "question": "direction of mlyhnvghgj?",
+      "answer": "west"
+    },
+    {
+      "id": "train-063",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "nzrznhdfah",
+        "hmzngatztf",
+        "hujqjadcth"
+      ],
+      "observations": [
+        "hmzngatztf uses pcdwug.",
+        "hujqjadcth uses iwniwl."
+      ],
+      "question": "material of nzrznhdfah?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-064",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "yvgjwjjbtq",
+        "pvmzyufwlo",
+        "wmzhjhnekv"
+      ],
+      "observations": [
+        "pvmzyufwlo uses mluzat.",
+        "yvgjwjjbtq uses yhvxin."
+      ],
+      "question": "material of yvgjwjjbtq?",
+      "answer": "yhvxin"
+    },
+    {
+      "id": "train-065",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "giqvdryyxa",
+        "eklvpzpaxw",
+        "auvymwuxlt"
+      ],
+      "observations": [
+        "giqvdryyxa uses ihzogn.",
+        "giqvdryyxa now uses fwjfvp."
+      ],
+      "question": "material of giqvdryyxa?",
+      "answer": "fwjfvp"
+    },
+    {
+      "id": "train-066",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "ndgtwpyvmb",
+        "zxollymyto",
+        "hsonktxcjo"
+      ],
+      "observations": [
+        "ndgtwpyvmb faces north.",
+        "ndgtwpyvmb turns right."
+      ],
+      "question": "direction of ndgtwpyvmb?",
+      "answer": "east"
+    },
+    {
+      "id": "train-067",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "ibujnaroub",
+        "qrsgksrano",
+        "xyptbwbngz"
+      ],
+      "observations": [
+        "qrsgksrano uses rwkhll.",
+        "xyptbwbngz uses jxfcvp."
+      ],
+      "question": "material of ibujnaroub?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-068",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "kkparaptls",
+        "vrbgtyoeyv",
+        "ejeawwdwfk"
+      ],
+      "observations": [
+        "vrbgtyoeyv uses uqbehy.",
+        "kkparaptls uses pdcvpp."
+      ],
+      "question": "material of kkparaptls?",
+      "answer": "pdcvpp"
+    },
+    {
+      "id": "train-069",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "azptocfiar",
+        "lfntdptcsw",
+        "hdmrlfccjm"
+      ],
+      "observations": [
+        "azptocfiar uses uaclmy.",
+        "azptocfiar now uses xndeqo."
+      ],
+      "question": "material of azptocfiar?",
+      "answer": "xndeqo"
+    },
+    {
+      "id": "train-070",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "fxxmwtjhrk",
+        "rgbwlkrswx",
+        "iwsckufpgq"
+      ],
+      "observations": [
+        "fxxmwtjhrk faces north.",
+        "fxxmwtjhrk turns left."
+      ],
+      "question": "direction of fxxmwtjhrk?",
+      "answer": "west"
+    },
+    {
+      "id": "train-071",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "lzxhrixkil",
+        "foipgzwvqd",
+        "fhnctfzozz"
+      ],
+      "observations": [
+        "foipgzwvqd uses ryxvzz.",
+        "fhnctfzozz uses glezxb."
+      ],
+      "question": "material of lzxhrixkil?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-072",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "mempsjatpb",
+        "cjqnoeyslw",
+        "gqorsjsazq"
+      ],
+      "observations": [
+        "cjqnoeyslw uses sjftly.",
+        "mempsjatpb uses rwlqah."
+      ],
+      "question": "material of mempsjatpb?",
+      "answer": "rwlqah"
+    },
+    {
+      "id": "train-073",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "lrrjtmyqjx",
+        "aylwaxvvrj",
+        "dusfycougt"
+      ],
+      "observations": [
+        "lrrjtmyqjx uses enfybg.",
+        "lrrjtmyqjx now uses voicyl."
+      ],
+      "question": "material of lrrjtmyqjx?",
+      "answer": "voicyl"
+    },
+    {
+      "id": "train-074",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "cdrorukrpl",
+        "mkneitukbh",
+        "zzfdjfcndl"
+      ],
+      "observations": [
+        "cdrorukrpl faces east.",
+        "cdrorukrpl turns left."
+      ],
+      "question": "direction of cdrorukrpl?",
+      "answer": "north"
+    },
+    {
+      "id": "train-075",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "mxunfdvmoi",
+        "nwcgxwtzlp",
+        "ldhnyjolpe"
+      ],
+      "observations": [
+        "nwcgxwtzlp uses fusieq.",
+        "ldhnyjolpe uses nahbdm."
+      ],
+      "question": "material of mxunfdvmoi?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-076",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tbbkdcegue",
+        "fxfnjizdoc",
+        "qyfnmesklh"
+      ],
+      "observations": [
+        "fxfnjizdoc uses enzxma.",
+        "tbbkdcegue uses lpelqp."
+      ],
+      "question": "material of tbbkdcegue?",
+      "answer": "lpelqp"
+    },
+    {
+      "id": "train-077",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "rtqobbmxon",
+        "idymdwbmxr",
+        "ggrkyejmub"
+      ],
+      "observations": [
+        "rtqobbmxon uses sorvrw.",
+        "rtqobbmxon now uses sqrslj."
+      ],
+      "question": "material of rtqobbmxon?",
+      "answer": "sqrslj"
+    },
+    {
+      "id": "train-078",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "bfpxhalbfg",
+        "nyqcvkbnpv",
+        "zfayxwevqe"
+      ],
+      "observations": [
+        "bfpxhalbfg faces south.",
+        "bfpxhalbfg turns left."
+      ],
+      "question": "direction of bfpxhalbfg?",
+      "answer": "east"
+    },
+    {
+      "id": "train-079",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "truiwbhgtt",
+        "seydguzjac",
+        "optqkdqqnp"
+      ],
+      "observations": [
+        "seydguzjac uses lnhnjo.",
+        "optqkdqqnp uses kddajb."
+      ],
+      "question": "material of truiwbhgtt?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-080",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "xipbuxjpgp",
+        "waqmcqaiuh",
+        "smpznonvbc"
+      ],
+      "observations": [
+        "waqmcqaiuh uses cqscnt.",
+        "xipbuxjpgp uses ttnrfu."
+      ],
+      "question": "material of xipbuxjpgp?",
+      "answer": "ttnrfu"
+    },
+    {
+      "id": "train-081",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "gxvjeamozh",
+        "ypbdjisgox",
+        "ivmgoqjhxo"
+      ],
+      "observations": [
+        "gxvjeamozh uses zboocw.",
+        "gxvjeamozh now uses zxdfko."
+      ],
+      "question": "material of gxvjeamozh?",
+      "answer": "zxdfko"
+    },
+    {
+      "id": "train-082",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "wmefkkqfvv",
+        "wsncwhilwd",
+        "ytouanxxtn"
+      ],
+      "observations": [
+        "wmefkkqfvv faces south.",
+        "wmefkkqfvv turns right."
+      ],
+      "question": "direction of wmefkkqfvv?",
+      "answer": "west"
+    },
+    {
+      "id": "train-083",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "nwjvyuweoa",
+        "viharpoggb",
+        "airlfxtfmt"
+      ],
+      "observations": [
+        "viharpoggb uses szanza.",
+        "airlfxtfmt uses btrbci."
+      ],
+      "question": "material of nwjvyuweoa?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-084",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "dgtekjtuxo",
+        "nkkxnwvnhz",
+        "youepmyjos"
+      ],
+      "observations": [
+        "dgtekjtuxo uses kyoeve.",
+        "nkkxnwvnhz uses dpoqii."
+      ],
+      "question": "material of dgtekjtuxo?",
+      "answer": "kyoeve"
+    },
+    {
+      "id": "train-085",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "ugsgioyioh",
+        "derbqdfrwu",
+        "eoxlwfstii"
+      ],
+      "observations": [
+        "ugsgioyioh uses julrgv.",
+        "ugsgioyioh now uses cxolqp."
+      ],
+      "question": "material of ugsgioyioh?",
+      "answer": "cxolqp"
+    },
+    {
+      "id": "train-086",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "uwapjvjlwl",
+        "dqnjqdfyvx",
+        "grpwjzobfe"
+      ],
+      "observations": [
+        "uwapjvjlwl faces west.",
+        "uwapjvjlwl turns right."
+      ],
+      "question": "direction of uwapjvjlwl?",
+      "answer": "north"
+    },
+    {
+      "id": "train-087",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "xfmnpdkazy",
+        "gvtfmqqsoi",
+        "rqnzkpcebu"
+      ],
+      "observations": [
+        "gvtfmqqsoi uses bwcjme.",
+        "rqnzkpcebu uses tcdiuh."
+      ],
+      "question": "material of xfmnpdkazy?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-088",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "rdrcbqjmdn",
+        "piaisxfnjp",
+        "ypuujysvhz"
+      ],
+      "observations": [
+        "piaisxfnjp uses lmkfyv.",
+        "rdrcbqjmdn uses huhsao."
+      ],
+      "question": "material of rdrcbqjmdn?",
+      "answer": "huhsao"
+    },
+    {
+      "id": "train-089",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "hqpjfwjotl",
+        "xurkpohzvs",
+        "mkqfvuebax"
+      ],
+      "observations": [
+        "hqpjfwjotl uses qtaguu.",
+        "hqpjfwjotl now uses ozprvf."
+      ],
+      "question": "material of hqpjfwjotl?",
+      "answer": "ozprvf"
+    },
+    {
+      "id": "train-090",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "xkbmzktdrd",
+        "rsyfsgukeh",
+        "lilqrirrio"
+      ],
+      "observations": [
+        "xkbmzktdrd faces west.",
+        "xkbmzktdrd turns left."
+      ],
+      "question": "direction of xkbmzktdrd?",
+      "answer": "south"
+    },
+    {
+      "id": "train-091",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "nipcglucvv",
+        "kzbjqfwvbb",
+        "zospgrhijq"
+      ],
+      "observations": [
+        "kzbjqfwvbb uses hbbtwv.",
+        "zospgrhijq uses dvciki."
+      ],
+      "question": "material of nipcglucvv?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-092",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "kexpxswybs",
+        "camvnwanqg",
+        "mnalvuzwwq"
+      ],
+      "observations": [
+        "kexpxswybs uses yudhwx.",
+        "camvnwanqg uses ugpiry."
+      ],
+      "question": "material of kexpxswybs?",
+      "answer": "yudhwx"
+    },
+    {
+      "id": "train-093",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "jngdpecrho",
+        "kqtxsrijre",
+        "ihvinszllk"
+      ],
+      "observations": [
+        "jngdpecrho uses fmxnrf.",
+        "jngdpecrho now uses stukcg."
+      ],
+      "question": "material of jngdpecrho?",
+      "answer": "stukcg"
+    },
+    {
+      "id": "train-094",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "tkfyvudhqd",
+        "fmkitbwjvj",
+        "vijszkjyxz"
+      ],
+      "observations": [
+        "tkfyvudhqd faces south.",
+        "tkfyvudhqd turns right."
+      ],
+      "question": "direction of tkfyvudhqd?",
+      "answer": "west"
+    },
+    {
+      "id": "train-095",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "wrwklkcopu",
+        "xqoqsvbies",
+        "kvdqkatcvd"
+      ],
+      "observations": [
+        "xqoqsvbies uses ablxpo.",
+        "kvdqkatcvd uses rqxdem."
+      ],
+      "question": "material of wrwklkcopu?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-096",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "wgekkxnoem",
+        "hturaigprv",
+        "hvberstuyb"
+      ],
+      "observations": [
+        "hturaigprv uses xiatzn.",
+        "wgekkxnoem uses dbjkoz."
+      ],
+      "question": "material of wgekkxnoem?",
+      "answer": "dbjkoz"
+    },
+    {
+      "id": "train-097",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "sucshxtekk",
+        "rjqshxonka",
+        "fdiakvlnfx"
+      ],
+      "observations": [
+        "sucshxtekk uses utmavq.",
+        "sucshxtekk now uses lkotzt."
+      ],
+      "question": "material of sucshxtekk?",
+      "answer": "lkotzt"
+    },
+    {
+      "id": "train-098",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "ggivnjhatc",
+        "udpylzenti",
+        "slqvcgsulr"
+      ],
+      "observations": [
+        "ggivnjhatc faces west.",
+        "ggivnjhatc turns left."
+      ],
+      "question": "direction of ggivnjhatc?",
+      "answer": "south"
+    },
+    {
+      "id": "train-099",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "ahrdiixinl",
+        "nfabenitxj",
+        "ytczgwmrue"
+      ],
+      "observations": [
+        "nfabenitxj uses ingtbt.",
+        "ytczgwmrue uses xwfker."
+      ],
+      "question": "material of ahrdiixinl?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-100",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "etgnycopwd",
+        "jxnakkvuzb",
+        "ngypurerpr"
+      ],
+      "observations": [
+        "etgnycopwd uses dsgvwz.",
+        "jxnakkvuzb uses pzubys."
+      ],
+      "question": "material of etgnycopwd?",
+      "answer": "dsgvwz"
+    },
+    {
+      "id": "train-101",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "pxkyxwtohd",
+        "achxrrguay",
+        "rqqzafhvwo"
+      ],
+      "observations": [
+        "pxkyxwtohd uses uzwecq.",
+        "pxkyxwtohd now uses okgrjt."
+      ],
+      "question": "material of pxkyxwtohd?",
+      "answer": "okgrjt"
+    },
+    {
+      "id": "train-102",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "cvvdkmmddh",
+        "cnpgqegbbj",
+        "jopvdwpksz"
+      ],
+      "observations": [
+        "cvvdkmmddh faces east.",
+        "cvvdkmmddh turns right."
+      ],
+      "question": "direction of cvvdkmmddh?",
+      "answer": "south"
+    },
+    {
+      "id": "train-103",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "lkpmahhbdk",
+        "uqkvynrdlq",
+        "lxxcjuetyc"
+      ],
+      "observations": [
+        "uqkvynrdlq uses juzgrn.",
+        "lxxcjuetyc uses sekigk."
+      ],
+      "question": "material of lkpmahhbdk?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-104",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "axhrgksefx",
+        "wvlezhgccs",
+        "ksvuypfrwa"
+      ],
+      "observations": [
+        "wvlezhgccs uses xxeoxu.",
+        "axhrgksefx uses dnatnx."
+      ],
+      "question": "material of axhrgksefx?",
+      "answer": "dnatnx"
+    },
+    {
+      "id": "train-105",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "gthtwevaaa",
+        "thvlisdfut",
+        "pdoutsqtan"
+      ],
+      "observations": [
+        "gthtwevaaa uses lsopzq.",
+        "gthtwevaaa now uses yjpznq."
+      ],
+      "question": "material of gthtwevaaa?",
+      "answer": "yjpznq"
+    },
+    {
+      "id": "train-106",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "zaairohoaq",
+        "ngakhoglbj",
+        "hiduyczenr"
+      ],
+      "observations": [
+        "zaairohoaq faces west.",
+        "zaairohoaq turns right."
+      ],
+      "question": "direction of zaairohoaq?",
+      "answer": "north"
+    },
+    {
+      "id": "train-107",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "tmyaaegbtv",
+        "miozzpwfkw",
+        "aubldxnugc"
+      ],
+      "observations": [
+        "miozzpwfkw uses jqohxx.",
+        "aubldxnugc uses kancmd."
+      ],
+      "question": "material of tmyaaegbtv?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-108",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "kjlifcftxv",
+        "uchojujbej",
+        "nwarndoscv"
+      ],
+      "observations": [
+        "kjlifcftxv uses yjmudc.",
+        "uchojujbej uses uyotnm."
+      ],
+      "question": "material of kjlifcftxv?",
+      "answer": "yjmudc"
+    },
+    {
+      "id": "train-109",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "dlwbmdzuqp",
+        "lhcvpsflzl",
+        "uutjqnvtau"
+      ],
+      "observations": [
+        "dlwbmdzuqp uses qvgtap.",
+        "dlwbmdzuqp now uses gqzvvc."
+      ],
+      "question": "material of dlwbmdzuqp?",
+      "answer": "gqzvvc"
+    },
+    {
+      "id": "train-110",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "sinsokgvgz",
+        "ufrlbnpcxz",
+        "mvttvpvdpg"
+      ],
+      "observations": [
+        "sinsokgvgz faces west.",
+        "sinsokgvgz turns right."
+      ],
+      "question": "direction of sinsokgvgz?",
+      "answer": "north"
+    },
+    {
+      "id": "train-111",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "mpohiwarst",
+        "ovjnuuvzvq",
+        "hqmqhebpfj"
+      ],
+      "observations": [
+        "ovjnuuvzvq uses rbdeds.",
+        "hqmqhebpfj uses hwawjw."
+      ],
+      "question": "material of mpohiwarst?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-112",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "owtpebuyrq",
+        "thzfltaqnr",
+        "khkynrxzed"
+      ],
+      "observations": [
+        "thzfltaqnr uses vivcdz.",
+        "owtpebuyrq uses rmafth."
+      ],
+      "question": "material of owtpebuyrq?",
+      "answer": "rmafth"
+    },
+    {
+      "id": "train-113",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "kuolesdakq",
+        "zlbtbddsbm",
+        "stbpmakqjg"
+      ],
+      "observations": [
+        "kuolesdakq uses oqzkld.",
+        "kuolesdakq now uses dbzlle."
+      ],
+      "question": "material of kuolesdakq?",
+      "answer": "dbzlle"
+    },
+    {
+      "id": "train-114",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "nvgoblhcvq",
+        "ifvsvvbueh",
+        "apkvpzhccf"
+      ],
+      "observations": [
+        "nvgoblhcvq faces west.",
+        "nvgoblhcvq turns left."
+      ],
+      "question": "direction of nvgoblhcvq?",
+      "answer": "south"
+    },
+    {
+      "id": "train-115",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "vpqmpbkclj",
+        "jvpsvgkdnp",
+        "eqajnbgbub"
+      ],
+      "observations": [
+        "jvpsvgkdnp uses ixrxjb.",
+        "eqajnbgbub uses ackxwo."
+      ],
+      "question": "material of vpqmpbkclj?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-116",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "jxnmbwasbf",
+        "gwftoejxii",
+        "krwjbwjtvt"
+      ],
+      "observations": [
+        "gwftoejxii uses fwafzw.",
+        "jxnmbwasbf uses anynyk."
+      ],
+      "question": "material of jxnmbwasbf?",
+      "answer": "anynyk"
+    },
+    {
+      "id": "train-117",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "qpocoqvyjg",
+        "prbzfsbqoa",
+        "cvwtbxxqbo"
+      ],
+      "observations": [
+        "qpocoqvyjg uses zwcuvp.",
+        "qpocoqvyjg now uses gnatqk."
+      ],
+      "question": "material of qpocoqvyjg?",
+      "answer": "gnatqk"
+    },
+    {
+      "id": "train-118",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "ioktnxvczg",
+        "kudaaahagq",
+        "htvaqvldgy"
+      ],
+      "observations": [
+        "ioktnxvczg faces north.",
+        "ioktnxvczg turns right."
+      ],
+      "question": "direction of ioktnxvczg?",
+      "answer": "east"
+    },
+    {
+      "id": "train-119",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "pwxzfgkorh",
+        "jjdmawslqy",
+        "zsqjdeqvyw"
+      ],
+      "observations": [
+        "jjdmawslqy uses cxdcop.",
+        "zsqjdeqvyw uses pmbqfq."
+      ],
+      "question": "material of pwxzfgkorh?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-120",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "osadlbvwcb",
+        "ylskfouhsk",
+        "sjeycahdtf"
+      ],
+      "observations": [
+        "osadlbvwcb uses epzben.",
+        "ylskfouhsk uses ixhoaf."
+      ],
+      "question": "material of osadlbvwcb?",
+      "answer": "epzben"
+    },
+    {
+      "id": "train-121",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "rohyuyuoua",
+        "juacfkrsni",
+        "qkwhzekuly"
+      ],
+      "observations": [
+        "rohyuyuoua uses rdiseu.",
+        "rohyuyuoua now uses hdneni."
+      ],
+      "question": "material of rohyuyuoua?",
+      "answer": "hdneni"
+    },
+    {
+      "id": "train-122",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "oquwfjxbhw",
+        "mqdsfdfuah",
+        "cxcjuvahvn"
+      ],
+      "observations": [
+        "oquwfjxbhw faces west.",
+        "oquwfjxbhw turns left."
+      ],
+      "question": "direction of oquwfjxbhw?",
+      "answer": "south"
+    },
+    {
+      "id": "train-123",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "ltflqsxqou",
+        "wkzzqnendy",
+        "vonflsqrsp"
+      ],
+      "observations": [
+        "wkzzqnendy uses uvluyf.",
+        "vonflsqrsp uses jbzarp."
+      ],
+      "question": "material of ltflqsxqou?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-124",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "uutpqgsrtv",
+        "hogvzaznrq",
+        "ukakqstudf"
+      ],
+      "observations": [
+        "uutpqgsrtv uses czcpgf.",
+        "hogvzaznrq uses jrmhua."
+      ],
+      "question": "material of uutpqgsrtv?",
+      "answer": "czcpgf"
+    },
+    {
+      "id": "train-125",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "oesxsbknjx",
+        "cnzgrxrcqp",
+        "bsabvkjwcz"
+      ],
+      "observations": [
+        "oesxsbknjx uses ktveyo.",
+        "oesxsbknjx now uses cfgkax."
+      ],
+      "question": "material of oesxsbknjx?",
+      "answer": "cfgkax"
+    },
+    {
+      "id": "train-126",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "vdzjeuzbcs",
+        "cuettrlati",
+        "cykwdsshrf"
+      ],
+      "observations": [
+        "vdzjeuzbcs faces west.",
+        "vdzjeuzbcs turns right."
+      ],
+      "question": "direction of vdzjeuzbcs?",
+      "answer": "north"
+    },
+    {
+      "id": "train-127",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "jhndndgxuz",
+        "zakqdcglev",
+        "rfoujjkjfd"
+      ],
+      "observations": [
+        "zakqdcglev uses cgcmwh.",
+        "rfoujjkjfd uses pcdikp."
+      ],
+      "question": "material of jhndndgxuz?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-128",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "vcouegcihn",
+        "rihsupmqnl",
+        "njydxhsknu"
+      ],
+      "observations": [
+        "rihsupmqnl uses btwfje.",
+        "vcouegcihn uses kflsxa."
+      ],
+      "question": "material of vcouegcihn?",
+      "answer": "kflsxa"
+    },
+    {
+      "id": "train-129",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "jfamgmlewy",
+        "pclzkcfbnw",
+        "gfeytmcohk"
+      ],
+      "observations": [
+        "jfamgmlewy uses holfgf.",
+        "jfamgmlewy now uses uewsbu."
+      ],
+      "question": "material of jfamgmlewy?",
+      "answer": "uewsbu"
+    },
+    {
+      "id": "train-130",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "bfwxdtnufb",
+        "kdasdrjnmt",
+        "ymgarbuyio"
+      ],
+      "observations": [
+        "bfwxdtnufb faces north.",
+        "bfwxdtnufb turns right."
+      ],
+      "question": "direction of bfwxdtnufb?",
+      "answer": "east"
+    },
+    {
+      "id": "train-131",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "wcvsndhwlc",
+        "ntzqgzpuis",
+        "zkzezykefr"
+      ],
+      "observations": [
+        "ntzqgzpuis uses dztggh.",
+        "zkzezykefr uses kdfpxs."
+      ],
+      "question": "material of wcvsndhwlc?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-132",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tadjqbnsom",
+        "pxaqvxoqmc",
+        "rlfuptficz"
+      ],
+      "observations": [
+        "tadjqbnsom uses dmvfos.",
+        "pxaqvxoqmc uses vgjdwo."
+      ],
+      "question": "material of tadjqbnsom?",
+      "answer": "dmvfos"
+    },
+    {
+      "id": "train-133",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "anpxdzxhdi",
+        "czpuhpccoy",
+        "bgtepiforh"
+      ],
+      "observations": [
+        "anpxdzxhdi uses mxkrrj.",
+        "anpxdzxhdi now uses iudibq."
+      ],
+      "question": "material of anpxdzxhdi?",
+      "answer": "iudibq"
+    },
+    {
+      "id": "train-134",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "dztmmgwnsy",
+        "xpkrlluepb",
+        "vxbfwerjjf"
+      ],
+      "observations": [
+        "dztmmgwnsy faces west.",
+        "dztmmgwnsy turns left."
+      ],
+      "question": "direction of dztmmgwnsy?",
+      "answer": "south"
+    },
+    {
+      "id": "train-135",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "sjiqttmiqy",
+        "gzcvhkfgzr",
+        "qqrdejfist"
+      ],
+      "observations": [
+        "gzcvhkfgzr uses vfnvbm.",
+        "qqrdejfist uses dsqbby."
+      ],
+      "question": "material of sjiqttmiqy?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-136",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tumbdegghx",
+        "xomvfyogmh",
+        "uorjinnxpi"
+      ],
+      "observations": [
+        "xomvfyogmh uses atnxrh.",
+        "tumbdegghx uses toewaa."
+      ],
+      "question": "material of tumbdegghx?",
+      "answer": "toewaa"
+    },
+    {
+      "id": "train-137",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "oqmfzfwjpj",
+        "rwnjzcqlld",
+        "slandiaaud"
+      ],
+      "observations": [
+        "oqmfzfwjpj uses dcfcbx.",
+        "oqmfzfwjpj now uses aepuyp."
+      ],
+      "question": "material of oqmfzfwjpj?",
+      "answer": "aepuyp"
+    },
+    {
+      "id": "train-138",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "eewnsesrov",
+        "exrjportdp",
+        "cihxqheufg"
+      ],
+      "observations": [
+        "eewnsesrov faces south.",
+        "eewnsesrov turns left."
+      ],
+      "question": "direction of eewnsesrov?",
+      "answer": "east"
+    },
+    {
+      "id": "train-139",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "yhepdhzyip",
+        "jxlmcgvczi",
+        "exzwfrdkrd"
+      ],
+      "observations": [
+        "jxlmcgvczi uses hhkwbe.",
+        "exzwfrdkrd uses bfupor."
+      ],
+      "question": "material of yhepdhzyip?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-140",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "gtnvxhwdvo",
+        "qybgolnztj",
+        "gwbrtjazkj"
+      ],
+      "observations": [
+        "qybgolnztj uses moodad.",
+        "gtnvxhwdvo uses hsuxou."
+      ],
+      "question": "material of gtnvxhwdvo?",
+      "answer": "hsuxou"
+    },
+    {
+      "id": "train-141",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "dyueqbpuvc",
+        "gsyvjuvglr",
+        "tscvretigf"
+      ],
+      "observations": [
+        "dyueqbpuvc uses aygier.",
+        "dyueqbpuvc now uses zizxfy."
+      ],
+      "question": "material of dyueqbpuvc?",
+      "answer": "zizxfy"
+    },
+    {
+      "id": "train-142",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "bxkgmlayvv",
+        "slwjiueiqz",
+        "hwigcuange"
+      ],
+      "observations": [
+        "bxkgmlayvv faces west.",
+        "bxkgmlayvv turns right."
+      ],
+      "question": "direction of bxkgmlayvv?",
+      "answer": "north"
+    },
+    {
+      "id": "train-143",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "znbttenkph",
+        "prjjeqzpcs",
+        "vhwppbipha"
+      ],
+      "observations": [
+        "prjjeqzpcs uses qpfuvc.",
+        "vhwppbipha uses oqlfds."
+      ],
+      "question": "material of znbttenkph?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-144",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "iwqdufoebl",
+        "wfhzueaecd",
+        "lxirmkaqdt"
+      ],
+      "observations": [
+        "iwqdufoebl uses meiscx.",
+        "wfhzueaecd uses bmykip."
+      ],
+      "question": "material of iwqdufoebl?",
+      "answer": "meiscx"
+    },
+    {
+      "id": "train-145",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "xniuhpocae",
+        "mbaelbaggj",
+        "cjgwhorgpr"
+      ],
+      "observations": [
+        "xniuhpocae uses wwlhct.",
+        "xniuhpocae now uses llzokm."
+      ],
+      "question": "material of xniuhpocae?",
+      "answer": "llzokm"
+    },
+    {
+      "id": "train-146",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "dxsewzpjuv",
+        "uavbxydhrx",
+        "fhkfozwxqm"
+      ],
+      "observations": [
+        "dxsewzpjuv faces east.",
+        "dxsewzpjuv turns left."
+      ],
+      "question": "direction of dxsewzpjuv?",
+      "answer": "north"
+    },
+    {
+      "id": "train-147",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "iluvrjropi",
+        "peienfzqll",
+        "rhyiavnflr"
+      ],
+      "observations": [
+        "peienfzqll uses yyrxqf.",
+        "rhyiavnflr uses xuvrri."
+      ],
+      "question": "material of iluvrjropi?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-148",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "ysrksktuiv",
+        "hnrmepcnje",
+        "kcyoaymngq"
+      ],
+      "observations": [
+        "hnrmepcnje uses mxsucd.",
+        "ysrksktuiv uses dikwpu."
+      ],
+      "question": "material of ysrksktuiv?",
+      "answer": "dikwpu"
+    },
+    {
+      "id": "train-149",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "uftyndqchm",
+        "zmtlygxutl",
+        "wetvvgubhn"
+      ],
+      "observations": [
+        "uftyndqchm uses ohmewu.",
+        "uftyndqchm now uses avpcer."
+      ],
+      "question": "material of uftyndqchm?",
+      "answer": "avpcer"
+    },
+    {
+      "id": "train-150",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "vqsnirkdsg",
+        "kapbhnbcht",
+        "cvmvykwhxa"
+      ],
+      "observations": [
+        "vqsnirkdsg faces east.",
+        "vqsnirkdsg turns left."
+      ],
+      "question": "direction of vqsnirkdsg?",
+      "answer": "north"
+    },
+    {
+      "id": "train-151",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "rdcxsfdgch",
+        "prvlzpspoo",
+        "ockulumgzh"
+      ],
+      "observations": [
+        "prvlzpspoo uses xxuinm.",
+        "ockulumgzh uses dpsdsb."
+      ],
+      "question": "material of rdcxsfdgch?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-152",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "fuxpueeiit",
+        "tkottgmhbz",
+        "hxqkpjexdc"
+      ],
+      "observations": [
+        "fuxpueeiit uses xuvpif.",
+        "tkottgmhbz uses zqcnrr."
+      ],
+      "question": "material of fuxpueeiit?",
+      "answer": "xuvpif"
+    },
+    {
+      "id": "train-153",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "rxvcsndvzp",
+        "zbvaagotzw",
+        "pnmfptfitr"
+      ],
+      "observations": [
+        "rxvcsndvzp uses xwpjbm.",
+        "rxvcsndvzp now uses daytho."
+      ],
+      "question": "material of rxvcsndvzp?",
+      "answer": "daytho"
+    },
+    {
+      "id": "train-154",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "fsrnzvhdqa",
+        "unzbpjchmi",
+        "czzqlencjq"
+      ],
+      "observations": [
+        "fsrnzvhdqa faces east.",
+        "fsrnzvhdqa turns right."
+      ],
+      "question": "direction of fsrnzvhdqa?",
+      "answer": "south"
+    },
+    {
+      "id": "train-155",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "minelwxvje",
+        "jbidzrwhlk",
+        "cpqybmcsvr"
+      ],
+      "observations": [
+        "jbidzrwhlk uses vgkpvo.",
+        "cpqybmcsvr uses idubdk."
+      ],
+      "question": "material of minelwxvje?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-156",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "yledwxpsgn",
+        "ipfkeavjhe",
+        "prfjfvhtuk"
+      ],
+      "observations": [
+        "ipfkeavjhe uses wfoysv.",
+        "yledwxpsgn uses edzqni."
+      ],
+      "question": "material of yledwxpsgn?",
+      "answer": "edzqni"
+    },
+    {
+      "id": "train-157",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "zvrhvrobyg",
+        "akvswgfzbq",
+        "ayrqyheueb"
+      ],
+      "observations": [
+        "zvrhvrobyg uses rhjnxd.",
+        "zvrhvrobyg now uses gtidda."
+      ],
+      "question": "material of zvrhvrobyg?",
+      "answer": "gtidda"
+    },
+    {
+      "id": "train-158",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "rvrehrtbay",
+        "jcqwqifxfk",
+        "ckbhwbcfqg"
+      ],
+      "observations": [
+        "rvrehrtbay faces south.",
+        "rvrehrtbay turns left."
+      ],
+      "question": "direction of rvrehrtbay?",
+      "answer": "east"
+    },
+    {
+      "id": "train-159",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "sitsawlgut",
+        "goflfybbpp",
+        "xewcjcrzkc"
+      ],
+      "observations": [
+        "goflfybbpp uses ypmrrd.",
+        "xewcjcrzkc uses yewkza."
+      ],
+      "question": "material of sitsawlgut?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-160",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "nwfqnwdlou",
+        "zxlawmaufz",
+        "dyozllvhhi"
+      ],
+      "observations": [
+        "zxlawmaufz uses tmjrxt.",
+        "nwfqnwdlou uses zjlvro."
+      ],
+      "question": "material of nwfqnwdlou?",
+      "answer": "zjlvro"
+    },
+    {
+      "id": "train-161",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "bkoyapcbad",
+        "ogyittvpun",
+        "qgiulrkhdu"
+      ],
+      "observations": [
+        "bkoyapcbad uses rutosb.",
+        "bkoyapcbad now uses pmgtdb."
+      ],
+      "question": "material of bkoyapcbad?",
+      "answer": "pmgtdb"
+    },
+    {
+      "id": "train-162",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "yrabiydxsc",
+        "ghuzbgissc",
+        "wqyhyyythq"
+      ],
+      "observations": [
+        "yrabiydxsc faces south.",
+        "yrabiydxsc turns left."
+      ],
+      "question": "direction of yrabiydxsc?",
+      "answer": "east"
+    },
+    {
+      "id": "train-163",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "xzolwpxvqq",
+        "rpdzqfyquh",
+        "mnrvicawrl"
+      ],
+      "observations": [
+        "rpdzqfyquh uses ekovtn.",
+        "mnrvicawrl uses fezeuc."
+      ],
+      "question": "material of xzolwpxvqq?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-164",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "uqzadfppyc",
+        "pcncvxdzbg",
+        "dtuthuwapt"
+      ],
+      "observations": [
+        "uqzadfppyc uses oyfakj.",
+        "pcncvxdzbg uses qcfnex."
+      ],
+      "question": "material of uqzadfppyc?",
+      "answer": "oyfakj"
+    },
+    {
+      "id": "train-165",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "llnwafrrcb",
+        "gkwsiafumc",
+        "zflgsjxidd"
+      ],
+      "observations": [
+        "llnwafrrcb uses xbbvmm.",
+        "llnwafrrcb now uses mrlphq."
+      ],
+      "question": "material of llnwafrrcb?",
+      "answer": "mrlphq"
+    },
+    {
+      "id": "train-166",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "jgpanvtixl",
+        "ibkrpivmxh",
+        "tozjxcmtsv"
+      ],
+      "observations": [
+        "jgpanvtixl faces east.",
+        "jgpanvtixl turns left."
+      ],
+      "question": "direction of jgpanvtixl?",
+      "answer": "north"
+    },
+    {
+      "id": "train-167",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "jqmgizovir",
+        "jzxhjjtmgx",
+        "nadcrcypns"
+      ],
+      "observations": [
+        "jzxhjjtmgx uses swxavm.",
+        "nadcrcypns uses zdctjr."
+      ],
+      "question": "material of jqmgizovir?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-168",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "ovvktkhinj",
+        "mxzpxdrnxf",
+        "znxrcovqcy"
+      ],
+      "observations": [
+        "ovvktkhinj uses muojqo.",
+        "mxzpxdrnxf uses bzalws."
+      ],
+      "question": "material of ovvktkhinj?",
+      "answer": "muojqo"
+    },
+    {
+      "id": "train-169",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "kywllewjzy",
+        "olpqcfpiyz",
+        "tnegrvyjnj"
+      ],
+      "observations": [
+        "kywllewjzy uses uabqlo.",
+        "kywllewjzy now uses ptatyf."
+      ],
+      "question": "material of kywllewjzy?",
+      "answer": "ptatyf"
+    },
+    {
+      "id": "train-170",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "slptvmplht",
+        "hypaztwljn",
+        "xzwwfueanc"
+      ],
+      "observations": [
+        "slptvmplht faces north.",
+        "slptvmplht turns right."
+      ],
+      "question": "direction of slptvmplht?",
+      "answer": "east"
+    },
+    {
+      "id": "train-171",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "cdiwwgudrv",
+        "kpshafeqft",
+        "zfuvbykguw"
+      ],
+      "observations": [
+        "kpshafeqft uses ugfztm.",
+        "zfuvbykguw uses gigylm."
+      ],
+      "question": "material of cdiwwgudrv?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-172",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "zecudgnevs",
+        "wnchnyuzdw",
+        "yrvcymjpjm"
+      ],
+      "observations": [
+        "wnchnyuzdw uses zqwaoe.",
+        "zecudgnevs uses nppgnw."
+      ],
+      "question": "material of zecudgnevs?",
+      "answer": "nppgnw"
+    },
+    {
+      "id": "train-173",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "kbtrboxvtn",
+        "loaxvnrgwt",
+        "kkqayzassr"
+      ],
+      "observations": [
+        "kbtrboxvtn uses ulgetc.",
+        "kbtrboxvtn now uses hrjzdd."
+      ],
+      "question": "material of kbtrboxvtn?",
+      "answer": "hrjzdd"
+    },
+    {
+      "id": "train-174",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "fayizjqgcl",
+        "zcixkbvffs",
+        "gzjqpngqmc"
+      ],
+      "observations": [
+        "fayizjqgcl faces east.",
+        "fayizjqgcl turns left."
+      ],
+      "question": "direction of fayizjqgcl?",
+      "answer": "north"
+    },
+    {
+      "id": "train-175",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "qntajkifsi",
+        "bmqwdjwfqj",
+        "bfvjhbhpzb"
+      ],
+      "observations": [
+        "bmqwdjwfqj uses msopdf.",
+        "bfvjhbhpzb uses enrwvk."
+      ],
+      "question": "material of qntajkifsi?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-176",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "limzhlctfl",
+        "ryuqnnpfkn",
+        "ybaluyerem"
+      ],
+      "observations": [
+        "limzhlctfl uses gixbqz.",
+        "ryuqnnpfkn uses rljqpb."
+      ],
+      "question": "material of limzhlctfl?",
+      "answer": "gixbqz"
+    },
+    {
+      "id": "train-177",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "fjwmccftsr",
+        "txadeshsjf",
+        "jrgjnzwmnc"
+      ],
+      "observations": [
+        "fjwmccftsr uses gymadn.",
+        "fjwmccftsr now uses enyncp."
+      ],
+      "question": "material of fjwmccftsr?",
+      "answer": "enyncp"
+    },
+    {
+      "id": "train-178",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "zkgfoeeqtn",
+        "eklxpnbhgt",
+        "oodfhjnyfv"
+      ],
+      "observations": [
+        "zkgfoeeqtn faces north.",
+        "zkgfoeeqtn turns right."
+      ],
+      "question": "direction of zkgfoeeqtn?",
+      "answer": "east"
+    },
+    {
+      "id": "train-179",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "mcagmqrvxh",
+        "iiczsrfdst",
+        "wgsqlwboij"
+      ],
+      "observations": [
+        "iiczsrfdst uses scehxq.",
+        "wgsqlwboij uses qzvxdf."
+      ],
+      "question": "material of mcagmqrvxh?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-180",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tgscsfxegr",
+        "ddekvztrnx",
+        "ngtdqnvgez"
+      ],
+      "observations": [
+        "tgscsfxegr uses sstrzg.",
+        "ddekvztrnx uses sadeyj."
+      ],
+      "question": "material of tgscsfxegr?",
+      "answer": "sstrzg"
+    },
+    {
+      "id": "train-181",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "ltksxwepvh",
+        "uiliwlczby",
+        "dpgpdkzveo"
+      ],
+      "observations": [
+        "ltksxwepvh uses mpvjej.",
+        "ltksxwepvh now uses wqmnxi."
+      ],
+      "question": "material of ltksxwepvh?",
+      "answer": "wqmnxi"
+    },
+    {
+      "id": "train-182",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "kptkismtme",
+        "ribvbtlkce",
+        "yctwchonva"
+      ],
+      "observations": [
+        "kptkismtme faces north.",
+        "kptkismtme turns left."
+      ],
+      "question": "direction of kptkismtme?",
+      "answer": "west"
+    },
+    {
+      "id": "train-183",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "fqxciermmv",
+        "fquqctxytw",
+        "adntksuvzi"
+      ],
+      "observations": [
+        "fquqctxytw uses kccnma.",
+        "adntksuvzi uses faftzw."
+      ],
+      "question": "material of fqxciermmv?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-184",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "brjytqhljh",
+        "gvtqehmxsy",
+        "yjxzoqnrlv"
+      ],
+      "observations": [
+        "brjytqhljh uses ngqbcw.",
+        "gvtqehmxsy uses twogib."
+      ],
+      "question": "material of brjytqhljh?",
+      "answer": "ngqbcw"
+    },
+    {
+      "id": "train-185",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "ptblkitqcf",
+        "xnjrgzrstv",
+        "tdnxzntwfz"
+      ],
+      "observations": [
+        "ptblkitqcf uses yqrsbv.",
+        "ptblkitqcf now uses beciha."
+      ],
+      "question": "material of ptblkitqcf?",
+      "answer": "beciha"
+    },
+    {
+      "id": "train-186",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "brbgsupnnf",
+        "hgmqkyskyy",
+        "prxovugoif"
+      ],
+      "observations": [
+        "brbgsupnnf faces north.",
+        "brbgsupnnf turns left."
+      ],
+      "question": "direction of brbgsupnnf?",
+      "answer": "west"
+    },
+    {
+      "id": "train-187",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "kcgbtxuuzk",
+        "apbxkubcvk",
+        "mvfmhtfqfu"
+      ],
+      "observations": [
+        "apbxkubcvk uses viasww.",
+        "mvfmhtfqfu uses saktwe."
+      ],
+      "question": "material of kcgbtxuuzk?",
+      "answer": "unknown"
+    },
+    {
+      "id": "train-188",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "vekqwllsyt",
+        "lvjkarllyc",
+        "rplvdxxgzm"
+      ],
+      "observations": [
+        "vekqwllsyt uses tnsvjd.",
+        "lvjkarllyc uses fjufmz."
+      ],
+      "question": "material of vekqwllsyt?",
+      "answer": "tnsvjd"
+    },
+    {
+      "id": "train-189",
+      "split": "train",
+      "kind": "revision",
+      "entities": [
+        "iduufljlnd",
+        "mxsnpykjbk",
+        "npvtqxslms"
+      ],
+      "observations": [
+        "iduufljlnd uses zoxigo.",
+        "iduufljlnd now uses ibvmzk."
+      ],
+      "question": "material of iduufljlnd?",
+      "answer": "ibvmzk"
+    },
+    {
+      "id": "train-190",
+      "split": "train",
+      "kind": "transition",
+      "entities": [
+        "pswqndblpa",
+        "yqyhczepku",
+        "frrxqjcmdy"
+      ],
+      "observations": [
+        "pswqndblpa faces north.",
+        "pswqndblpa turns right."
+      ],
+      "question": "direction of pswqndblpa?",
+      "answer": "east"
+    },
+    {
+      "id": "train-191",
+      "split": "train",
+      "kind": "unknown",
+      "entities": [
+        "plyvegdgwt",
+        "rmfwonlbja",
+        "zqzsgvuann"
+      ],
+      "observations": [
+        "rmfwonlbja uses epzolg.",
+        "zqzsgvuann uses lyvjqe."
+      ],
+      "question": "material of plyvegdgwt?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-000",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "gvmrlujobx",
+        "ikizftchij",
+        "hzkqmbitab"
+      ],
+      "observations": [
+        "ikizftchij uses zlzkgq.",
+        "gvmrlujobx uses zfmgpa."
+      ],
+      "question": "material of gvmrlujobx?",
+      "answer": "zfmgpa"
+    },
+    {
+      "id": "dev-001",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "clleoqdola",
+        "ohxhslviax",
+        "tvywactuxs"
+      ],
+      "observations": [
+        "clleoqdola uses mwacbw.",
+        "clleoqdola now uses llqmzf."
+      ],
+      "question": "material of clleoqdola?",
+      "answer": "llqmzf"
+    },
+    {
+      "id": "dev-002",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "sfolvcigib",
+        "fbhmjvlwgm",
+        "jewrpjbrpw"
+      ],
+      "observations": [
+        "sfolvcigib faces east.",
+        "sfolvcigib turns right."
+      ],
+      "question": "direction of sfolvcigib?",
+      "answer": "south"
+    },
+    {
+      "id": "dev-003",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "kdwfxisrvp",
+        "exuklmtnkj",
+        "llnnlwtqin"
+      ],
+      "observations": [
+        "exuklmtnkj uses yxwswr.",
+        "llnnlwtqin uses gikksf."
+      ],
+      "question": "material of kdwfxisrvp?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-004",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "tclzpklkhv",
+        "ilbwwdjbgr",
+        "oakoxegngk"
+      ],
+      "observations": [
+        "ilbwwdjbgr uses akutbq.",
+        "tclzpklkhv uses wnirfm."
+      ],
+      "question": "material of tclzpklkhv?",
+      "answer": "wnirfm"
+    },
+    {
+      "id": "dev-005",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "ltniuqqhxc",
+        "uwjqtwhfzf",
+        "gxwetuhnxt"
+      ],
+      "observations": [
+        "ltniuqqhxc uses emjrvj.",
+        "ltniuqqhxc now uses qrthuh."
+      ],
+      "question": "material of ltniuqqhxc?",
+      "answer": "qrthuh"
+    },
+    {
+      "id": "dev-006",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "znxcdyocpn",
+        "etviuxfgfn",
+        "rkijjeddxg"
+      ],
+      "observations": [
+        "znxcdyocpn faces west.",
+        "znxcdyocpn turns right."
+      ],
+      "question": "direction of znxcdyocpn?",
+      "answer": "north"
+    },
+    {
+      "id": "dev-007",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "aazktwqjpz",
+        "ptopvyisde",
+        "daktkdnemb"
+      ],
+      "observations": [
+        "ptopvyisde uses muvkte.",
+        "daktkdnemb uses dheoga."
+      ],
+      "question": "material of aazktwqjpz?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-008",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "jgbckdqjkd",
+        "augyduwjge",
+        "jkaabgkipe"
+      ],
+      "observations": [
+        "jgbckdqjkd uses hsmzgz.",
+        "augyduwjge uses hxsbpd."
+      ],
+      "question": "material of jgbckdqjkd?",
+      "answer": "hsmzgz"
+    },
+    {
+      "id": "dev-009",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "rgppnmvave",
+        "glbyhbtdct",
+        "uargbrucox"
+      ],
+      "observations": [
+        "rgppnmvave uses qzdpob.",
+        "rgppnmvave now uses ldatse."
+      ],
+      "question": "material of rgppnmvave?",
+      "answer": "ldatse"
+    },
+    {
+      "id": "dev-010",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "aykelwkylm",
+        "fkkkrhbtkn",
+        "hdyeywfxww"
+      ],
+      "observations": [
+        "aykelwkylm faces west.",
+        "aykelwkylm turns right."
+      ],
+      "question": "direction of aykelwkylm?",
+      "answer": "north"
+    },
+    {
+      "id": "dev-011",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "gwdnskjprk",
+        "biqzhlduqx",
+        "nvvuykjask"
+      ],
+      "observations": [
+        "biqzhlduqx uses qnjlxw.",
+        "nvvuykjask uses qwqwdq."
+      ],
+      "question": "material of gwdnskjprk?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-012",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "wnocohyzbx",
+        "kesiutpymm",
+        "ngbqylpoak"
+      ],
+      "observations": [
+        "kesiutpymm uses trfubu.",
+        "wnocohyzbx uses miramd."
+      ],
+      "question": "material of wnocohyzbx?",
+      "answer": "miramd"
+    },
+    {
+      "id": "dev-013",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "zaxgjemjom",
+        "qkiyqtccpv",
+        "tfvdzltjtr"
+      ],
+      "observations": [
+        "zaxgjemjom uses isaumc.",
+        "zaxgjemjom now uses ntcedr."
+      ],
+      "question": "material of zaxgjemjom?",
+      "answer": "ntcedr"
+    },
+    {
+      "id": "dev-014",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "ywtgzfbmcq",
+        "eqbxzcqyst",
+        "ovsrztxnhi"
+      ],
+      "observations": [
+        "ywtgzfbmcq faces east.",
+        "ywtgzfbmcq turns left."
+      ],
+      "question": "direction of ywtgzfbmcq?",
+      "answer": "north"
+    },
+    {
+      "id": "dev-015",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "xeocnmwrwz",
+        "jyhbvdhdqs",
+        "rilootzlyd"
+      ],
+      "observations": [
+        "jyhbvdhdqs uses wgpnla.",
+        "rilootzlyd uses kxsxtc."
+      ],
+      "question": "material of xeocnmwrwz?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-016",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "awiwtlnodv",
+        "hcjeccueha",
+        "lvfekogguq"
+      ],
+      "observations": [
+        "hcjeccueha uses cpuzre.",
+        "awiwtlnodv uses yanknz."
+      ],
+      "question": "material of awiwtlnodv?",
+      "answer": "yanknz"
+    },
+    {
+      "id": "dev-017",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "gbdczwwqhf",
+        "yqszgecjso",
+        "btvfkvxvkv"
+      ],
+      "observations": [
+        "gbdczwwqhf uses xgdcsx.",
+        "gbdczwwqhf now uses hpjiqq."
+      ],
+      "question": "material of gbdczwwqhf?",
+      "answer": "hpjiqq"
+    },
+    {
+      "id": "dev-018",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "hoekdbpoga",
+        "pliaemwhkj",
+        "cbgjjayzki"
+      ],
+      "observations": [
+        "hoekdbpoga faces north.",
+        "hoekdbpoga turns left."
+      ],
+      "question": "direction of hoekdbpoga?",
+      "answer": "west"
+    },
+    {
+      "id": "dev-019",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "crjmyhuywg",
+        "mevebhursp",
+        "xbkaoijyqo"
+      ],
+      "observations": [
+        "mevebhursp uses khygei.",
+        "xbkaoijyqo uses hqhyjn."
+      ],
+      "question": "material of crjmyhuywg?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-020",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "bwlmgzfwpg",
+        "vpyknaqzze",
+        "bpomhtpvfm"
+      ],
+      "observations": [
+        "bwlmgzfwpg uses gaplkt.",
+        "vpyknaqzze uses fkmrew."
+      ],
+      "question": "material of bwlmgzfwpg?",
+      "answer": "gaplkt"
+    },
+    {
+      "id": "dev-021",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "alltlpbndt",
+        "qogpprxmqs",
+        "xtsswihzru"
+      ],
+      "observations": [
+        "alltlpbndt uses tszlaq.",
+        "alltlpbndt now uses brkcmb."
+      ],
+      "question": "material of alltlpbndt?",
+      "answer": "brkcmb"
+    },
+    {
+      "id": "dev-022",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "nzlsjveqcr",
+        "zaozcbgvtt",
+        "relmlihkgu"
+      ],
+      "observations": [
+        "nzlsjveqcr faces west.",
+        "nzlsjveqcr turns right."
+      ],
+      "question": "direction of nzlsjveqcr?",
+      "answer": "north"
+    },
+    {
+      "id": "dev-023",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "qzsmavbuex",
+        "drcmgocdfl",
+        "rachiuuzxz"
+      ],
+      "observations": [
+        "drcmgocdfl uses iitfqz.",
+        "rachiuuzxz uses kyvyyv."
+      ],
+      "question": "material of qzsmavbuex?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-024",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "flvptwsgwl",
+        "jgtoffqath",
+        "vodekymyfx"
+      ],
+      "observations": [
+        "jgtoffqath uses eabdyb.",
+        "flvptwsgwl uses oxwztp."
+      ],
+      "question": "material of flvptwsgwl?",
+      "answer": "oxwztp"
+    },
+    {
+      "id": "dev-025",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "vkdzwxllvw",
+        "qgfnvgfqky",
+        "mftfotpjyj"
+      ],
+      "observations": [
+        "vkdzwxllvw uses orfjrj.",
+        "vkdzwxllvw now uses vuzaff."
+      ],
+      "question": "material of vkdzwxllvw?",
+      "answer": "vuzaff"
+    },
+    {
+      "id": "dev-026",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "nabfppmexi",
+        "cbuwfwtszx",
+        "jcqabfmhah"
+      ],
+      "observations": [
+        "nabfppmexi faces west.",
+        "nabfppmexi turns right."
+      ],
+      "question": "direction of nabfppmexi?",
+      "answer": "north"
+    },
+    {
+      "id": "dev-027",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "lxnvnxuhlp",
+        "zzilddjbqq",
+        "isiuvruadm"
+      ],
+      "observations": [
+        "zzilddjbqq uses rqcsil.",
+        "isiuvruadm uses pakfbv."
+      ],
+      "question": "material of lxnvnxuhlp?",
+      "answer": "unknown"
+    },
+    {
+      "id": "dev-028",
+      "split": "dev",
+      "kind": "lookup",
+      "entities": [
+        "jziioezpba",
+        "txanjuwvnk",
+        "wuryeafzbk"
+      ],
+      "observations": [
+        "txanjuwvnk uses lfpexe.",
+        "jziioezpba uses rwdazh."
+      ],
+      "question": "material of jziioezpba?",
+      "answer": "rwdazh"
+    },
+    {
+      "id": "dev-029",
+      "split": "dev",
+      "kind": "revision",
+      "entities": [
+        "jdgrtjstvm",
+        "waupeqetfx",
+        "vyrlsqsgzc"
+      ],
+      "observations": [
+        "jdgrtjstvm uses jlnsav.",
+        "jdgrtjstvm now uses agavhb."
+      ],
+      "question": "material of jdgrtjstvm?",
+      "answer": "agavhb"
+    },
+    {
+      "id": "dev-030",
+      "split": "dev",
+      "kind": "transition",
+      "entities": [
+        "wdnbhqybnm",
+        "ohsngxgzub",
+        "savmlrgaaa"
+      ],
+      "observations": [
+        "wdnbhqybnm faces east.",
+        "wdnbhqybnm turns left."
+      ],
+      "question": "direction of wdnbhqybnm?",
+      "answer": "north"
+    },
+    {
+      "id": "dev-031",
+      "split": "dev",
+      "kind": "unknown",
+      "entities": [
+        "hfzomxprhr",
+        "mxmnjgtylp",
+        "zkdpchtjdq"
+      ],
+      "observations": [
+        "mxmnjgtylp uses mxsywb.",
+        "zkdpchtjdq uses vptfcr."
+      ],
+      "question": "material of hfzomxprhr?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-000",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "itwlevnkfb",
+        "fyvbotcecl",
+        "jrwvrwuuki"
+      ],
+      "observations": [
+        "itwlevnkfb uses pszjou.",
+        "fyvbotcecl uses tykaix."
+      ],
+      "question": "material of itwlevnkfb?",
+      "answer": "pszjou"
+    },
+    {
+      "id": "holdout-001",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "whnimncnje",
+        "btkxltnutu",
+        "aohvxybrzl"
+      ],
+      "observations": [
+        "whnimncnje uses lsyfoq.",
+        "whnimncnje now uses bczroz."
+      ],
+      "question": "material of whnimncnje?",
+      "answer": "bczroz"
+    },
+    {
+      "id": "holdout-002",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "wmymvkpcco",
+        "zzxkneyrqc",
+        "fpdeuwmuyf"
+      ],
+      "observations": [
+        "wmymvkpcco faces west.",
+        "wmymvkpcco turns left."
+      ],
+      "question": "direction of wmymvkpcco?",
+      "answer": "south"
+    },
+    {
+      "id": "holdout-003",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "hzftmdgspg",
+        "zqwkvqxgsk",
+        "bvnixzvuli"
+      ],
+      "observations": [
+        "zqwkvqxgsk uses jwhewq.",
+        "bvnixzvuli uses padvya."
+      ],
+      "question": "material of hzftmdgspg?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-004",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "gozydpgwaw",
+        "yectwffplw",
+        "juytsktdjr"
+      ],
+      "observations": [
+        "gozydpgwaw uses wrblsg.",
+        "yectwffplw uses pbgqne."
+      ],
+      "question": "material of gozydpgwaw?",
+      "answer": "wrblsg"
+    },
+    {
+      "id": "holdout-005",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "kcejwhjvkm",
+        "eccakwaifi",
+        "zjmozznidm"
+      ],
+      "observations": [
+        "kcejwhjvkm uses dcvahd.",
+        "kcejwhjvkm now uses mwnwfz."
+      ],
+      "question": "material of kcejwhjvkm?",
+      "answer": "mwnwfz"
+    },
+    {
+      "id": "holdout-006",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "rtjuvtifgz",
+        "tkxwvjhdsr",
+        "ehkapryvxp"
+      ],
+      "observations": [
+        "rtjuvtifgz faces east.",
+        "rtjuvtifgz turns right."
+      ],
+      "question": "direction of rtjuvtifgz?",
+      "answer": "south"
+    },
+    {
+      "id": "holdout-007",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "crvcalvfsf",
+        "smenumtnrn",
+        "biwuwuedvk"
+      ],
+      "observations": [
+        "smenumtnrn uses gdqtcq.",
+        "biwuwuedvk uses khaeka."
+      ],
+      "question": "material of crvcalvfsf?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-008",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "qdjtrqtpyn",
+        "xpuwccdbvy",
+        "qjrahbvyoz"
+      ],
+      "observations": [
+        "xpuwccdbvy uses atwquq.",
+        "qdjtrqtpyn uses ujwkno."
+      ],
+      "question": "material of qdjtrqtpyn?",
+      "answer": "ujwkno"
+    },
+    {
+      "id": "holdout-009",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "glyfaakidr",
+        "ifgjblhgfp",
+        "vxqnaoxcnl"
+      ],
+      "observations": [
+        "glyfaakidr uses mhctcd.",
+        "glyfaakidr now uses nflcuq."
+      ],
+      "question": "material of glyfaakidr?",
+      "answer": "nflcuq"
+    },
+    {
+      "id": "holdout-010",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "zuwhkvbhrj",
+        "epspqaosif",
+        "wfcbhxrurr"
+      ],
+      "observations": [
+        "zuwhkvbhrj faces east.",
+        "zuwhkvbhrj turns right."
+      ],
+      "question": "direction of zuwhkvbhrj?",
+      "answer": "south"
+    },
+    {
+      "id": "holdout-011",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "gqqntznjue",
+        "yrzjfehpex",
+        "dfbpdrwlzc"
+      ],
+      "observations": [
+        "yrzjfehpex uses pkopkx.",
+        "dfbpdrwlzc uses vnhhwt."
+      ],
+      "question": "material of gqqntznjue?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-012",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "etahgqlzbs",
+        "upzmwflxxx",
+        "hpyqqxggkv"
+      ],
+      "observations": [
+        "upzmwflxxx uses mosfzj.",
+        "etahgqlzbs uses gojrlx."
+      ],
+      "question": "material of etahgqlzbs?",
+      "answer": "gojrlx"
+    },
+    {
+      "id": "holdout-013",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "vxxvzephwr",
+        "zgccxcjyxj",
+        "udbhrjckem"
+      ],
+      "observations": [
+        "vxxvzephwr uses tkccly.",
+        "vxxvzephwr now uses veghgk."
+      ],
+      "question": "material of vxxvzephwr?",
+      "answer": "veghgk"
+    },
+    {
+      "id": "holdout-014",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "jkwkysxwrm",
+        "meeyogmazj",
+        "gmpmlslqcc"
+      ],
+      "observations": [
+        "jkwkysxwrm faces west.",
+        "jkwkysxwrm turns left."
+      ],
+      "question": "direction of jkwkysxwrm?",
+      "answer": "south"
+    },
+    {
+      "id": "holdout-015",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "hffispatbz",
+        "ldfslirhyh",
+        "bdddyqwiao"
+      ],
+      "observations": [
+        "ldfslirhyh uses pujpfd.",
+        "bdddyqwiao uses qtomnb."
+      ],
+      "question": "material of hffispatbz?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-016",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "gbljxufizw",
+        "tfbdvihlue",
+        "goyoncuzsk"
+      ],
+      "observations": [
+        "tfbdvihlue uses asnqkb.",
+        "gbljxufizw uses veqlmv."
+      ],
+      "question": "material of gbljxufizw?",
+      "answer": "veqlmv"
+    },
+    {
+      "id": "holdout-017",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "btbueefipz",
+        "bmnxrhflgu",
+        "unpiqikoeh"
+      ],
+      "observations": [
+        "btbueefipz uses igugvd.",
+        "btbueefipz now uses rjsahy."
+      ],
+      "question": "material of btbueefipz?",
+      "answer": "rjsahy"
+    },
+    {
+      "id": "holdout-018",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "ffzcqhmysp",
+        "qvtafdcppl",
+        "jqrcwvzsnv"
+      ],
+      "observations": [
+        "ffzcqhmysp faces south.",
+        "ffzcqhmysp turns left."
+      ],
+      "question": "direction of ffzcqhmysp?",
+      "answer": "east"
+    },
+    {
+      "id": "holdout-019",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "sttrvzgarw",
+        "armomfprug",
+        "qugsflhmhl"
+      ],
+      "observations": [
+        "armomfprug uses ruqsre.",
+        "qugsflhmhl uses iwjnhf."
+      ],
+      "question": "material of sttrvzgarw?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-020",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "juabjqxvac",
+        "jzhwbqpwox",
+        "ablpprjdze"
+      ],
+      "observations": [
+        "juabjqxvac uses ajayjl.",
+        "jzhwbqpwox uses pkltrc."
+      ],
+      "question": "material of juabjqxvac?",
+      "answer": "ajayjl"
+    },
+    {
+      "id": "holdout-021",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "eljklgnejw",
+        "ivukcojxhy",
+        "rungfgzmuz"
+      ],
+      "observations": [
+        "eljklgnejw uses pofbnw.",
+        "eljklgnejw now uses xpwjbz."
+      ],
+      "question": "material of eljklgnejw?",
+      "answer": "xpwjbz"
+    },
+    {
+      "id": "holdout-022",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "nhzfcxqpfa",
+        "jxrqafspod",
+        "zgqqmernim"
+      ],
+      "observations": [
+        "nhzfcxqpfa faces east.",
+        "nhzfcxqpfa turns right."
+      ],
+      "question": "direction of nhzfcxqpfa?",
+      "answer": "south"
+    },
+    {
+      "id": "holdout-023",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "kohogfbzwh",
+        "huuzhasmbq",
+        "tcfmcauktl"
+      ],
+      "observations": [
+        "huuzhasmbq uses wjpqhn.",
+        "tcfmcauktl uses rkliqm."
+      ],
+      "question": "material of kohogfbzwh?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-024",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "znwomrutum",
+        "tejduhlbvx",
+        "epzjyciqsp"
+      ],
+      "observations": [
+        "znwomrutum uses kfmfql.",
+        "tejduhlbvx uses xzwajk."
+      ],
+      "question": "material of znwomrutum?",
+      "answer": "kfmfql"
+    },
+    {
+      "id": "holdout-025",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "hbwypkdkla",
+        "erjojvqlcq",
+        "pjcpkifwob"
+      ],
+      "observations": [
+        "hbwypkdkla uses kvretc.",
+        "hbwypkdkla now uses pklfbv."
+      ],
+      "question": "material of hbwypkdkla?",
+      "answer": "pklfbv"
+    },
+    {
+      "id": "holdout-026",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "bidluqsiyb",
+        "liecdcqvct",
+        "yjoyghcepg"
+      ],
+      "observations": [
+        "bidluqsiyb faces east.",
+        "bidluqsiyb turns right."
+      ],
+      "question": "direction of bidluqsiyb?",
+      "answer": "south"
+    },
+    {
+      "id": "holdout-027",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "zbgxkvtpeo",
+        "xpyesqpnbh",
+        "nvyadamkjl"
+      ],
+      "observations": [
+        "xpyesqpnbh uses icrbgg.",
+        "nvyadamkjl uses rbqnvj."
+      ],
+      "question": "material of zbgxkvtpeo?",
+      "answer": "unknown"
+    },
+    {
+      "id": "holdout-028",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "xitejtalyg",
+        "ifoamxertg",
+        "jrwlgugmzt"
+      ],
+      "observations": [
+        "xitejtalyg uses pakijm.",
+        "ifoamxertg uses izhbcf."
+      ],
+      "question": "material of xitejtalyg?",
+      "answer": "pakijm"
+    },
+    {
+      "id": "holdout-029",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "llmhqykcti",
+        "quomuvrlsh",
+        "mspuhunzlo"
+      ],
+      "observations": [
+        "llmhqykcti uses ktcxsa.",
+        "llmhqykcti now uses oqfoxc."
+      ],
+      "question": "material of llmhqykcti?",
+      "answer": "oqfoxc"
+    },
+    {
+      "id": "holdout-030",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "pynochkqhb",
+        "mhciqopwqe",
+        "khosakeyhl"
+      ],
+      "observations": [
+        "pynochkqhb faces south.",
+        "pynochkqhb turns right."
+      ],
+      "question": "direction of pynochkqhb?",
+      "answer": "west"
+    },
+    {
+      "id": "holdout-031",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "jzrrgxcgxn",
+        "znxokelsaw",
+        "kjfqitqsdz"
+      ],
+      "observations": [
+        "znxokelsaw uses rvyjil.",
+        "kjfqitqsdz uses wnkglg."
+      ],
+      "question": "material of jzrrgxcgxn?",
+      "answer": "unknown"
+    }
+  ]
+}

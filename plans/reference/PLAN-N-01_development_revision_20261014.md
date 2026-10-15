@@ -114,3 +114,6 @@ C1 已解除“无持久载体”前置。C2 实施和32条支持保存/独立�
 2026-10-15 16已见拟合完整诊断：九模型×96train，CPU4.171875秒，原档与参数不变，0新增dev/holdout；已见exact0—9/96，条件字节准确53.78%—68.44%，尚未学好已见样本。唯一下一步是同架构/Adam/lr、单seed11逐位置副本追加3072步的有界train-only学习曲线，不重评旧holdout。见[16裁决](EXP-N1-16_train_fit_adjudication_20261015.md)。
 
 2026-10-15 17固定学习曲线完整：同架构/lr/Adam、单seed11逐位置隔离副本追加3072更新，CPU35.3125秒，480组train-only，原档/源码不变、两恢复通过。已见exact0→24→35→53→90/96，末端条件字节99.03%，不计未见或对照优势。静态课程审计发现train仅9答案类，dev的d/holdout的m/q/z无正目标监督；不删除困难字符，下一步按[18](PLAN-N1-18_fresh_content_curriculum_20261015.md)扩训练词值/字母覆盖及新独立留出面。见[17裁决](EXP-N1-17_train_only_learning_curve_adjudication_20261015.md)。
+
+2026-10-15：18新课程准入完成，train/dev/holdout 192/32/32，96个不同训练目标词，正目标26字母最少15次；12项零更新预检通过，CPU1.578125秒，未查询dev/holdout。见[18裁决](EXP-N1-18_v3_curriculum_admission_20261015.md)。唯一后继为v3独立train-only充分性校准，先定学习剂量/成本再冻结新三臂配对。
+
