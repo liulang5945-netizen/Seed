@@ -120,3 +120,6 @@ C1 已解除“无持久载体”前置。C2 实施和32条支持保存/独立�
 
 19校准已冻结：新初始化seed11逐位置、v3全部192train、6144固定更新、CPU≤300秒，五节点960组，只校准学习充分性。终点≥173/192且各类≥40/48才支持讨论新配对剂量，否则先错误分解；见[SPEC19](SPEC-N1-19_v3_train_sufficiency_calibration_20261015.md)。
 
+
+2026-10-15：[19裁决](EXP-N1-19_v3_train_sufficiency_adjudication_20261015.md)完整6144更新/960组train读数/两独立恢复，CPU64.328125秒；已见93/192，lookup2/revision1/transition44/unknown46（各48），训练充分性门未过，dev/holdout查询0。唯一后继为全部96词值train项的零更新内容寻址诊断，不直接九模型重跑。
+

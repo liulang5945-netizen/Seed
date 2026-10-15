@@ -3171,3 +3171,6 @@ owner 裁「那保留下来」⇒ **本轮不删任何文件**，㊵-522 的四�
 
 【2026-10-15 ㊵-888 **19训练充分性校准冻结**】v3全192train、新初始化seed11 position、Adam0.001/16-32-16、6144更新/独立CPU300秒；节点0/768/1536/3072/6144全train评测，0 dev/holdout。先zero独立恢复再训练、final再恢复；预定充分性≥173/192且各类≥40/48，仅剂量校准而非能力。26项前置合同及Ruff/B/SIM/Black通过。全项目欠账保留，唯一队首先执行19，见[SPEC19](../../reference/SPEC-N1-19_v3_train_sufficiency_calibration_20261015.md)。
 
+
+【2026-10-15 ㊵-889 **19完整、训练充分性未过**】冻结54530a3ec，6144更新/960组train-only/zero与final两独立恢复全齐，CPU64.328125秒<300、计量/代码/manifest守卫完整；reports/taiji_n1_v3_train_calibration_20261015.json SHA ab7cfe7c007c4fc2f9f6a13903bc31abb7714ba02f711949fb41a0e5d443eb20。exact0/44/60/80/93（各192）；终点四类2/1/44/46（各48），词值仅3/96，预注册总173且各类40门未过。0 dev/holdout，不直接九模型或加预算。全项目C1过/C2零收益/C3内容绑定与未见保持/C4及三器官和其余N债未齐；最新远端根CI eaf53e7红/m7-ci绿。唯一后继零更新词值错误与内容寻址诊断，见[19裁决](../../reference/EXP-N1-19_v3_train_sufficiency_adjudication_20261015.md)。
+
