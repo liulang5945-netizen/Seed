@@ -1,6 +1,6 @@
 # N 主线调度修订交接（2026-10-14）
 
-> **2026-10-15 当前调度**：44完整1152条teacher复现，CPU9.84375秒、所有守卫过；地址/表示差异仅相关，唯一下一步45冻结第二hop地址/value交叉干预2880条teacher/60秒CPU，0训练/自由/dev/holdout。
+> **2026-10-15 当前调度**：45交叉干预工具与原生逐位等价/身份回放/完整2880分母等26项合同通过，下一步执行冻结60秒CPU诊断，0更新/自由/dev/holdout。
 本件用于接续用户“根据项目了解修订开发计划”的成果。动态队首只看 [03](../active/roadmap/03_CURRENT_EXECUTION.md)，调度看 [09](../active/roadmap/09_NEXT_MAINLINE_PLAN.md)，完整修订看 [PLAN-N-01](PLAN-N-01_development_revision_20261014.md)。先现读 Git HEAD 与工作区，不能把本件时点当作新实验身份。
 
 ## 已完成
