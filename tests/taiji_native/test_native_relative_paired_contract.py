@@ -32,6 +32,8 @@ def readiness():
 
 
 def test_all_seeds_arms_rows_and_restores_before_any_holdout():
+    assert not {"seed", "arm", "updates", "milestones", "holdout_queries"} & runner.PROTOCOL.keys()
+    assert runner.PROTOCOL["holdout_rows_if_sufficient"] == 288
     training, rows, restores = readiness()
     assert runner.training_ready(training, rows, restores)
     assert not runner.training_ready(training[:-1], rows, restores)

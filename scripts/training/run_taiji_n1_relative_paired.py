@@ -24,12 +24,17 @@ from taiji.native_evidence_fidelity import learning_loss  # noqa: E402
 from taiji.native_relative_evidence_candidate import RelativeEvidenceCandidate  # noqa: E402
 
 REPORT = ROOT / "reports/taiji_n1_relative_paired_20261015.json"
-PREFLIGHT = ROOT / "reports/taiji_n1_relative_paired_preflight_20261015.json"
+PRIOR_PREFLIGHT = ROOT / "reports/taiji_n1_relative_paired_preflight_20261015.json"
+PREFLIGHT = ROOT / "reports/taiji_n1_relative_paired_preflight_v2_20261015.json"
 BASELINE = pilot.REPORT
 BASELINE_SHA = "12499936af3b0941acff083e67ec13e4f5a95c29d8c7674cb98aec3f5458a1fe"
 RUN_ID = "n1_relative_paired_20261015"
 PROTOCOL = {
-    **pilot.PROTOCOL,
+    **{
+        key: value
+        for key, value in pilot.PROTOCOL.items()
+        if key not in ("seed", "arm", "updates", "milestones", "holdout_queries")
+    },
     "schema": "n1-relative-paired-v1",
     "seeds": list(paired.SEEDS),
     "arms": list(paired.ARMS),
@@ -38,6 +43,7 @@ PROTOCOL = {
     "cpu_limit_seconds": 1200,
     "dev_queries": 0,
     "holdout_requires_all_training_sufficient": True,
+    "holdout_rows_if_sufficient": 288,
     "baseline_sha256": BASELINE_SHA,
     "holdout_gates": {"each_seed": 16, "each_kind": 2, "total_gap_each_control": 12},
 }
@@ -226,6 +232,10 @@ def preflight():
     if PREFLIGHT.exists():
         raise FileExistsError("paired preflight exists; no repeat")
     budget = paired.CpuBudget(limit=60)
+    prior = json.loads(PRIOR_PREFLIGHT.read_text(encoding="utf-8"))
+    if not prior["passed"] or not prior["cpu_accounting_complete"]:
+        raise ValueError("prior engineering evidence must be preserved and CPU-accountable")
+    budget.children += prior["cpu_seconds"]
     train = pilot.checked_train()
     result = {
         "identity": identity(),
@@ -234,6 +244,8 @@ def preflight():
         "dev_queries": 0,
         "holdout_queries": 0,
         "status": "running",
+        "prior_preflight_sha256": paired.sha(PRIOR_PREFLIGHT),
+        "prior_cpu_seconds": prior["cpu_seconds"],
     }
     try:
         for seed in paired.SEEDS:
@@ -275,7 +287,7 @@ def preflight():
             if paired.fingerprint(model.state_dict()) != before:
                 raise ValueError("engineering preflight changed parameters")
         model, optimizer = fresh(11, train)
-        folder = Path(get_external_path("data/checkpoints")) / f"{RUN_ID}_preflight"
+        folder = Path(get_external_path("data/checkpoints")) / f"{RUN_ID}_preflight_v2"
         folder.mkdir(exist_ok=False)
         path = folder / "zero.pt"
         payload = save(model, optimizer, path, 11, "position", 0)
