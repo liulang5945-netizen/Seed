@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **当前调度（2026-10-15）**：24已执行，25校准115/192未过门，26换词0/96但局部保真100%；唯一建议[27地址干预诊断](../reference/PLAN-N1-27_address_intervention_diagnostic_review_20261015.md)已弹出方案选择，待实际答复。完整规划见[PLAN-N-01](../reference/PLAN-N-01_development_revision_20261014.md)，执行入口以[03](roadmap/03_CURRENT_EXECUTION.md)为准。
+> **当前调度（2026-10-15）**：27地址干预完成，双hop正确位置oracle六字节26→79/96（含boundary48），仍非模型能力；唯一建议[28学习型相对地址状态](../reference/PLAN-N1-28_learned_relative_address_review_20261015.md)已弹出方案选择，待实际答复。完整项目见[PLAN-N-01](../reference/PLAN-N-01_development_revision_20261014.md)，执行入口[03](roadmap/03_CURRENT_EXECUTION.md)。
 
 > **2026-10-14 导航校准**：本索引的编号约定继续保留；下方累积里程碑摘要含历史状态。当前队列只看 [03](roadmap/03_CURRENT_EXECUTION.md)，N 主线看 [09](roadmap/09_NEXT_MAINLINE_PLAN.md)，整个项目按 [项目地图](../../docs/README.md) 阅读。本轮收纳见 [整理记录](../reference/PROJECT_ORGANIZATION_20261014.md)。
 
@@ -843,3 +843,5 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 2026-10-15：用户已在选择弹窗批准27，队首转为其零训练地址干预实施/原生控制验证，不再等待决定；原576序列/60秒CPU/零留出合同保持。
 
 2026-10-15：27已弹窗批准；离线地址干预运行器完成，6项工程合同通过（2.68秒），覆盖单/双hop原生逐位一致、源mask和one-hot、boundary原生、gold previous与留出拒绝。即按冻结576条序列/CPU≤60秒执行，不训练、不更改候选。
+
+2026-10-15：[27地址诊断](../reference/EXP-N1-27_address_intervention_adjudication_20261015.md)完整，576条gold-prefix、CPU4.5秒、0更新/自由输出/dev/holdout，原生控制/全部守卫过。22单hop六字节exact原生29/来源11/位置43，25双hop26/16/79（含原生boundary仅48）；oracle不是能力，也不证明定位唯一根因。68相关测过。唯一建议[28学习型相对地址状态](../reference/PLAN-N1-28_learned_relative_address_review_20261015.md)，新增132参数及回答内地址分布，已弹窗请求，实际答复前不实施。全项目C1过/C2严格收益零/C3未见保持/C4/三器官及其余N与CI债未齐。
