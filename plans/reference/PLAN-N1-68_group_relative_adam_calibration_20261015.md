@@ -29,3 +29,7 @@
 ## 执行器提交前验证
 
 原63 seed13零档SHA `0f1cbc2d606d5a26a155216dec17061972ce18ad87d5c80768264a857ef78293`直接绑定，协议将52 checkpoint保留为祖先字段而非直接起点。零档完整bundle/下一步规则恢复通过；67工程协议、partial阶段和缺失/错误marker均拒绝。一项专项合同与两套仓库Ruff通过，提交后固定执行，不追加。
+
+## 完整裁决
+
+6144更新/9216 QA、1728项评分完整，CPU220.828125秒，两独立恢复与全部守卫通过。终点原192/192、pair96/96、改名190/192、改名pair96/96，四门通过；不作未见或三seed结论。见[68裁决](EXP-N1-68_group_relative_adam_adjudication_20261015.md)。唯一下一步[69配对更新器工程](PLAN-N1-69_group_relative_paired_engineering_20261015.md)，保持v4零查询。
