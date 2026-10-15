@@ -35,3 +35,6 @@ position/terminal/cut都能执行相同两hop；terminal仍每来源末态、相
 
 2026-10-15：用户通过选择弹窗批准24，独立Taiji两hop候选及[SPEC25](SPEC-N1-25_iterative_read_execution_contract_20261015.md)运行器就绪，参数40337不变；中间hop无输出/来源写入，格式明确two-hop，旧one-hop不能静默恢复。31项前置合同通过，Ruff/B/SIM/Black通过。唯一队首先60秒CPU零更新工程预检/zero恢复，通过自动6144更新/独立300秒CPU train-only，0 dev/holdout。全项目尚未能力收官。
 
+
+
+2026-10-15：[25校准](EXP-N1-25_iterative_read_adjudication_20261015.md)完整，6144更新/960组，CPU90.953125秒，zero/final独立恢复与全部守卫过；train115/192、词值26/96，未过充分性门，未优于22的121/192。相关62测过，0 dev/holdout。按原失败出口自动执行[SPEC26](SPEC-N1-26_iterative_content_read_diagnostic_20261015.md)同材料替换诊断，不加训练/机制；全项目能力与CI债保留。

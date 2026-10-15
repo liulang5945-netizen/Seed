@@ -1,0 +1,170 @@
+{
+  "schema": "n1-iterative-evidence-preflight-v1",
+  "code_identity": {
+    "protocol": {
+      "schema": "n1-iterative-evidence-train-v1",
+      "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+      "seed": 11,
+      "arm": "position",
+      "initialization": "fresh",
+      "updates": 6144,
+      "milestones": [
+        0,
+        768,
+        1536,
+        3072,
+        6144
+      ],
+      "optimizer": "Adam",
+      "learning_rate": 0.001,
+      "dimensions": {
+        "embedding": 16,
+        "hidden": 32,
+        "key": 16
+      },
+      "max_length": 64,
+      "cpu_limit_seconds": 300,
+      "dev_queries": 0,
+      "holdout_queries": 0,
+      "train_gate": {
+        "exact": 173,
+        "each_kind": 40
+      },
+      "read_hops": 2,
+      "candidate_format": "taiji-native-iterative-evidence-candidate-v1",
+      "loss_contract": "taiji-observation-byte-fidelity-v1",
+      "observation_weight": 0.25,
+      "baseline_sha256": "4fc604cb35065436fd77871765fd080bb4c1252da2d7d5194c651f87313401c5"
+    },
+    "code_sha256": {
+      "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+      "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+      "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+      "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+      "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+      "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+      "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+      "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+      "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+      "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+      "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+      "scripts\\training\\run_taiji_n1_iterative_read.py": "fe3bec75431013b41520a31b36f9873c2b0ec52f6d84e2c00bd2c94b5376a031"
+    },
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu"
+  },
+  "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+  "rows": [
+    {
+      "kind": "lookup",
+      "arm": "position",
+      "early_grad_norm": 0.0049265967682003975,
+      "total_loss": 6.953150749206543,
+      "observation_loss": 5.516779899597168
+    },
+    {
+      "kind": "lookup",
+      "arm": "terminal",
+      "early_grad_norm": 0.0031555111054331064,
+      "total_loss": 6.935026168823242,
+      "observation_loss": 5.516779899597168
+    },
+    {
+      "kind": "lookup",
+      "arm": "cut",
+      "early_grad_norm": null,
+      "total_loss": 6.953150749206543,
+      "observation_loss": 5.516779899597168
+    },
+    {
+      "kind": "revision",
+      "arm": "position",
+      "early_grad_norm": 0.004744026809930801,
+      "total_loss": 6.872147083282471,
+      "observation_loss": 5.5702128410339355
+    },
+    {
+      "kind": "revision",
+      "arm": "terminal",
+      "early_grad_norm": 0.0029875459149479866,
+      "total_loss": 6.874273777008057,
+      "observation_loss": 5.5702128410339355
+    },
+    {
+      "kind": "revision",
+      "arm": "cut",
+      "early_grad_norm": null,
+      "total_loss": 6.872147083282471,
+      "observation_loss": 5.5702128410339355
+    },
+    {
+      "kind": "transition",
+      "arm": "position",
+      "early_grad_norm": 0.006736316252499819,
+      "total_loss": 6.811684608459473,
+      "observation_loss": 5.530600547790527
+    },
+    {
+      "kind": "transition",
+      "arm": "terminal",
+      "early_grad_norm": 0.002998274052515626,
+      "total_loss": 6.813652992248535,
+      "observation_loss": 5.530600547790527
+    },
+    {
+      "kind": "transition",
+      "arm": "cut",
+      "early_grad_norm": null,
+      "total_loss": 6.811684608459473,
+      "observation_loss": 5.530600547790527
+    },
+    {
+      "kind": "unknown",
+      "arm": "position",
+      "early_grad_norm": 0.005455770529806614,
+      "total_loss": 7.0609588623046875,
+      "observation_loss": 5.547671318054199
+    },
+    {
+      "kind": "unknown",
+      "arm": "terminal",
+      "early_grad_norm": 0.0030616081785410643,
+      "total_loss": 7.059918403625488,
+      "observation_loss": 5.547671318054199
+    },
+    {
+      "kind": "unknown",
+      "arm": "cut",
+      "early_grad_norm": null,
+      "total_loss": 7.0609588623046875,
+      "observation_loss": 5.547671318054199
+    }
+  ],
+  "optimizer_updates": 0,
+  "dev_queries": 0,
+  "holdout_queries": 0,
+  "status": "complete",
+  "baseline_initial_match": {
+    "path": "E:\\Seed\\data\\checkpoints\\n1_observation_fidelity_train_20261015\\zero.pt",
+    "sha256": "3db65a9262c52728ff881adb8e3abdf7136d7aae41eaed8b309f17f744fc4cea",
+    "equal": true
+  },
+  "parameter_count": 40337,
+  "restore": {
+    "path": "E:\\Seed\\data\\checkpoints\\n1_iterative_read_preflight_20261015\\zero.pt",
+    "sha256": "da6e6fdd71f5240077ffe886be09efeba22d3c1448016c5d5b85db45a221ac16",
+    "signature": {
+      "candidate": "5bb2a5eaf408ce089380872331018c2030122a91e213dea374d27265aab30e69",
+      "first_logits": "52598b320634166e416ad97c8ba9f103243330954f8ed7ae9beeb0ce08bb190d",
+      "observation_logits": "398bd19d4153faa46787b60f54515d997463ba0638e6d420da1fe9a0ba54ec7d",
+      "targets": "782c79050c79df6136c274b24cfdc6847ae0793a31b6daf3e257654e31e072c4"
+    },
+    "cpu_seconds": 3.59375,
+    "equal": true
+  },
+  "parameters_unchanged": true,
+  "cpu_seconds": 7.28125,
+  "cpu_accounting_complete": true,
+  "code_unchanged": true,
+  "passed": true
+}

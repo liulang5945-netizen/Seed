@@ -3192,3 +3192,6 @@ owner 裁「那保留下来」⇒ **本轮不删任何文件**，㊵-522 的四�
 
 【2026-10-15 ㊵-895 **24弹窗获批准，25两hop工程就绪**】用户已选批准24，不再询问同类CPU权限。新增Taiji独立two-hop候选：每输出前两次同参数读取/decoder更新，中间不输出/停止/写来源；参数40337不增，保持21固定辅助目标，新format显式read_hops=2，不静默改旧one-hop档语义。31项前置合同覆盖手动双步一致、teacher/free调用次数、来源不变、cut与Adam/格式恢复，Ruff/B/SIM/Black过。全项目C1过/C2零收益/C3精确与未见保持/C4/三器官及其余N债保留。唯一队首[SPEC25](../../reference/SPEC-N1-25_iterative_read_execution_contract_20261015.md)先60秒CPU零更新工程预检/zero恢复，过后自动6144更新/192train/300秒CPU，不查询dev/holdout。
 
+
+
+【2026-10-15 ㊵-896 **25两hop校准完整但未过门，执行26同材料复审**】2026-10-15：[25校准](../../reference/EXP-N1-25_iterative_read_adjudication_20261015.md)完整，6144更新/960组，CPU90.953125秒，zero/final独立恢复与全部守卫过；train115/192、词值26/96，未过充分性门，未优于22的121/192。相关62测过，0 dev/holdout。按原失败出口自动执行[SPEC26](../../reference/SPEC-N1-26_iterative_content_read_diagnostic_20261015.md)同材料替换诊断，不加训练/机制；全项目能力与CI债保留。
