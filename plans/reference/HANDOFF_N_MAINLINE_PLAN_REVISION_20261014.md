@@ -64,3 +64,6 @@ PLAN-N1-06 r1 的 C1 规格已实现并按完整面通过。两臂均为96项／
 
 用户已在选择弹窗批准24，无需重复确认；57项相关验证通过，提交23证据后直接进入两hop候选实现和恢复预检。
 
+
+2026-10-15：用户通过选择弹窗批准24，独立Taiji两hop候选及[SPEC25](SPEC-N1-25_iterative_read_execution_contract_20261015.md)运行器就绪，参数40337不变；中间hop无输出/来源写入，格式明确two-hop，旧one-hop不能静默恢复。31项前置合同通过，Ruff/B/SIM/Black通过。唯一队首先60秒CPU零更新工程预检/zero恢复，通过自动6144更新/独立300秒CPU train-only，0 dev/holdout。全项目尚未能力收官。
+

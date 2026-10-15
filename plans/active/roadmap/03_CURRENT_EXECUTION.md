@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：实施用户已通过选择弹窗批准的[24输出前两次内部重读](../../reference/PLAN-N1-24_pre_emission_iterative_read_review_20261015.md)，先独立版本/信用/来源/恢复零更新预检，再按原提案6144更新train-only校准，独立CPU300秒、不查dev/holdout。23复审完整且57项相关检查通过；[23裁决](../../reference/EXP-N1-23_fidelity_content_read_adjudication_20261015.md)。
+## 当前唯一下一步：执行用户已通过弹窗批准24的[SPEC25两次重读工程预检与训练](../../reference/SPEC-N1-25_iterative_read_execution_contract_20261015.md)，先独立60秒CPU零更新信用/版本化恢复预检，通过后自动6144更新/192train、独立300秒CPU校准，0 dev/holdout；31项前置合同通过，参数仍40337。原19/22失败与门保留。
 
 ## 本轮调度修订（2026-10-14）
 

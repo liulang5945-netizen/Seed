@@ -3189,3 +3189,6 @@ owner 裁「那保留下来」⇒ **本轮不删任何文件**，㊵-522 的四�
 
 【2026-10-15 ㊵-894 **23内容寻址复审完整，24通过选择弹窗审议**】冻结956a88922，沿20同96词值train及替换词，288自由/96gold-prefix/288保真读数，CPU3.25秒<60、0更新/dev/holdout，原输出与22终点逐项一致，参数/源档/manifest/源码/原报告守卫全过。reports/taiji_n1_fidelity_content_read_20261015.json SHA 66701478e790b9a540c35ef23d3f66e58fa03dac536a071a2efbe848aaab8649。原exact16/13、正确换词0/0但输出48/48项变，干扰换词exact6/6；正确替换词位置重构均100%，局部内容可读不等于问答绑定，不证明单次读次数是唯一根因。全项目C1过/C2零收益/C3精确/未见保持/C4/三器官及其余N债保留。唯一建议[24两次内部重读](../../reference/PLAN-N1-24_pre_emission_iterative_read_review_20261015.md)，保持参数/21目标、改变读取语义，已按用户要求弹出选择；等实际答复才实施，独立测试/证据/提交继续。
 
+
+【2026-10-15 ㊵-895 **24弹窗获批准，25两hop工程就绪**】用户已选批准24，不再询问同类CPU权限。新增Taiji独立two-hop候选：每输出前两次同参数读取/decoder更新，中间不输出/停止/写来源；参数40337不增，保持21固定辅助目标，新format显式read_hops=2，不静默改旧one-hop档语义。31项前置合同覆盖手动双步一致、teacher/free调用次数、来源不变、cut与Adam/格式恢复，Ruff/B/SIM/Black过。全项目C1过/C2零收益/C3精确与未见保持/C4/三器官及其余N债保留。唯一队首[SPEC25](../../reference/SPEC-N1-25_iterative_read_execution_contract_20261015.md)先60秒CPU零更新工程预检/zero恢复，过后自动6144更新/192train/300秒CPU，不查询dev/holdout。
+
