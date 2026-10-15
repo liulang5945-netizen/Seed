@@ -42,14 +42,14 @@ from taiji.native_residual_question_evidence_candidate import (
 BASELINE = ROOT / "reports/taiji_n1_residual_question_preflight_20261015.json"
 BASELINE_SHA = "50155a01e1159aad3d78ed49dc9d6b8c177e4a48ab3c1c33e09219e3a4f0e1bd"
 PREFLIGHT = BASELINE
-REPORT = ROOT / "reports/taiji_n1_renaming_train_20261015.json"
+REPORT = ROOT / "reports/taiji_n1_renaming_train_v2_20261015.json"
 PAIR_MANIFEST = ROOT / "plans/manifests/n1_paired_questions_20261015.json"
 PAIR_MANIFEST_SHA = "1c3857b1ae66c227503d443ea13051a4dbaa0b65707f4fb259a3fe64c222fddb"
 CURRICULUM = ROOT / "plans/manifests/n1_renaming_curriculum_20261015.json"
 CURRICULUM_SHA = "c44ea78f40d7255688013eb4054ae803bd04ee97dc5ba2e0c02b82e301ce6fdd"
 PROTOCOL = {
     **calibration.PROTOCOL,
-    "schema": "n1-renaming-train-v1",
+    "schema": "n1-renaming-train-v2",
     "updates": 6144,
     "milestones": [0, 3072, 6144],
     "question_mechanism": ResidualQuestionEvidenceCandidate.QUESTION_MECHANISM,
@@ -350,6 +350,10 @@ def observe_metrics(model, session):
     }
 
 
+def session_name(view, step, identity):
+    return f"renaming-v2-{view}-{step}-{identity}"
+
+
 def audit():
     if REPORT.exists():
         raise FileExistsError("fidelity training report exists; no overwrite or repeat")
@@ -367,11 +371,26 @@ def audit():
     model, optimizer = fresh(train)
     source_record, _, source_path = transfer_source()
     initial = baseline_initial_match(model)
-    folder = Path(get_external_path("data/checkpoints")) / "n1_renaming_train_20261015"
+    folder = Path(get_external_path("data/checkpoints")) / "n1_renaming_train_v2_20261015"
     folder.mkdir(exist_ok=False)
+    prior_path = ROOT / "reports/taiji_n1_renaming_train_20261015.json"
+    prior_sha = "31582b5cdf575486d56a997cf7c13a3cb5c2d9423eb7f67fe021b04e892ea035"
+    if paired.sha(prior_path) != prior_sha:
+        raise ValueError("pre-query session rejection changed")
+    prior = json.loads(prior_path.read_text(encoding="utf-8"))
+    if (
+        prior["completed_updates"]
+        or prior["rows"]
+        or prior["losses"]
+        or not prior["cpu_accounting_complete"]
+    ):
+        raise ValueError("only zero-query zero-update mechanical rejection can continue in v2")
     budget = paired.CpuBudget(limit=300)
+    budget.children += prior["cpu_seconds"]
     result = {
         "protocol": PROTOCOL,
+        "prior_rejection_sha256": prior_sha,
+        "prior_rejection_cpu_seconds": prior["cpu_seconds"],
         "code_identity": code_identity(),
         "preflight_sha256": paired.sha(PREFLIGHT),
         "paired_manifest_sha256": PAIR_MANIFEST_SHA,
@@ -397,7 +416,7 @@ def audit():
                 rows = []
                 for item in train:
                     budget.guard()
-                    session = f"question-alignment-eval-{step}-{item['id']}"
+                    session = session_name("original", step, item["id"])
                     row = measure(model, item, "position", session)
                     rows.append(
                         dict(
@@ -420,9 +439,7 @@ def audit():
                 paired_rows = []
                 for item in pairs:
                     budget.guard()
-                    row = measure(
-                        model, item, "position", f"paired-question-eval-{step}-{item['id']}"
-                    )
+                    row = measure(model, item, "position", session_name("pair", step, item["id"]))
                     paired_rows.append(
                         dict(
                             row,
@@ -447,7 +464,7 @@ def audit():
                     for item in selected:
                         budget.guard()
                         row = measure(
-                            model, item, "position", f"renaming-eval-{step}-{subset}-{item['id']}"
+                            model, item, "position", session_name(subset, step, item["id"])
                         )
                         destination.append(
                             dict(
@@ -480,7 +497,7 @@ def audit():
             budget.guard()
             item, second = renaming.train_item(step, train, curriculum)
             result["losses"].append(
-                train_step(model, optimizer, item, f"renaming-train-{step}", second)
+                train_step(model, optimizer, item, f"renaming-v2-train-{step}", second)
             )
             result["completed_updates"] += 1
         result["final_optimizer_steps"] = sorted({int(v["step"]) for v in optimizer.state.values()})

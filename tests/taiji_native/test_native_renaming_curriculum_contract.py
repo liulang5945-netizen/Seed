@@ -71,3 +71,15 @@ def test_complete_trained_adam_restore_and_initial_controls(tmp_path):
         assert runner.transfer_equal(rows, record, subset)
         rows[0]["raw_hex"] = "00"
         assert not runner.transfer_equal(rows, record, subset)
+
+
+def test_new_batch_sessions_do_not_collide_with_restored_history():
+    model, _ = runner.fresh(runner.checked_train())
+    names = [
+        runner.session_name(view, step, f"train-{i:03d}")
+        for view in ("original", "pair", "rename", "rename_pair")
+        for step in (0, 3072, 6144)
+        for i in range(192)
+    ]
+    assert len(names) == len(set(names))
+    assert all(name not in model._observations for name in names)
