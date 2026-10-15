@@ -1,6 +1,6 @@
 # N 主线调度修订交接（2026-10-14）
 
-> **2026-10-15 最新调度**：08状态流48对/96查询完成，CPU155.078125秒；09补零位置48臂完成，CPU77.5秒，三臂严格命中仍均0/16。低成本诊断自主推进，当前唯一待决为10的核心证据/信用学习路线；非几分钟预算审批。见 [09裁决](EXP-N1-09_C2_padding_placement_adjudication_20261015.md) 与 [10路线评审](PLAN-N1-10_native_evidence_credit_route_review_20261015.md)。
+> **2026-10-15 当前调度**：44读取轨迹工具完成：23项相关合同/仓库守卫通过，完整1152条teacher分母、采集语义中性与train-only已验证；下一步执行冻结诊断，0训练/自由/dev/holdout。43失败与全项目保持/C4/三器官出口保留。
 本件用于接续用户“根据项目了解修订开发计划”的成果。动态队首只看 [03](../active/roadmap/03_CURRENT_EXECUTION.md)，调度看 [09](../active/roadmap/09_NEXT_MAINLINE_PLAN.md)，完整修订看 [PLAN-N-01](PLAN-N-01_development_revision_20261014.md)。先现读 Git HEAD 与工作区，不能把本件时点当作新实验身份。
 
 ## 已完成
