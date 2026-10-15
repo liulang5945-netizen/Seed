@@ -1,0 +1,186 @@
+{
+  "identity": {
+    "protocol": {
+      "schema": "n1-relative-paired-v1",
+      "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+      "initialization": "fresh",
+      "optimizer": "Adam",
+      "learning_rate": 0.001,
+      "dimensions": {
+        "embedding": 16,
+        "hidden": 32,
+        "key": 16
+      },
+      "max_length": 64,
+      "cpu_limit_seconds": 1200,
+      "dev_queries": 0,
+      "train_gate": {
+        "exact": 173,
+        "each_kind": 40
+      },
+      "read_hops": 2,
+      "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+      "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+      "parameter_count": 40469,
+      "loss_contract": "taiji-observation-byte-fidelity-v1",
+      "observation_weight": 0.25,
+      "baseline_sha256": "12499936af3b0941acff083e67ec13e4f5a95c29d8c7674cb98aec3f5458a1fe",
+      "seeds": [
+        11,
+        12,
+        13
+      ],
+      "arms": [
+        "position",
+        "terminal",
+        "cut"
+      ],
+      "updates_per_model": 6144,
+      "total_updates": 55296,
+      "holdout_requires_all_training_sufficient": true,
+      "holdout_rows_if_sufficient": 288,
+      "holdout_gates": {
+        "each_seed": 16,
+        "each_kind": 2,
+        "total_gap_each_control": 12
+      }
+    },
+    "pilot_code": {
+      "protocol": {
+        "schema": "n1-relative-evidence-train-v1",
+        "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+        "seed": 11,
+        "arm": "position",
+        "initialization": "fresh",
+        "updates": 6144,
+        "milestones": [
+          0,
+          768,
+          1536,
+          3072,
+          6144
+        ],
+        "optimizer": "Adam",
+        "learning_rate": 0.001,
+        "dimensions": {
+          "embedding": 16,
+          "hidden": 32,
+          "key": 16
+        },
+        "max_length": 64,
+        "cpu_limit_seconds": 300,
+        "dev_queries": 0,
+        "holdout_queries": 0,
+        "train_gate": {
+          "exact": 173,
+          "each_kind": 40
+        },
+        "read_hops": 2,
+        "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+        "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+        "parameter_count": 40469,
+        "loss_contract": "taiji-observation-byte-fidelity-v1",
+        "observation_weight": 0.25,
+        "baseline_sha256": "874d06d0452b7e09305232eed3c7d7d95a62f9de82b1971ee35bc1f49f1dff4b"
+      },
+      "code_sha256": {
+        "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+        "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+        "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+        "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+        "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+        "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+        "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+        "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+        "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+        "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+        "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+        "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+        "scripts\\training\\run_taiji_n1_relative_read.py": "4e6ca287770a44e9a7aaf36d47fbc01622bb89e3fe57d6fd2d1405d06fd0489b"
+      },
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "torch": "2.13.0+cpu"
+    },
+    "runner_sha256": "01f040674f2570edf3bc17330564bc2c299d7c255b082a9c0c5f1ab61322e59b"
+  },
+  "rows": [
+    {
+      "seed": 11,
+      "arm": "position",
+      "loss": 6.953147888183594,
+      "early_grad_norm": 0.004929279908537865
+    },
+    {
+      "seed": 11,
+      "arm": "terminal",
+      "loss": 6.935022354125977,
+      "early_grad_norm": 0.0031555111054331064
+    },
+    {
+      "seed": 11,
+      "arm": "cut",
+      "loss": 6.953147888183594,
+      "early_grad_norm": null
+    },
+    {
+      "seed": 12,
+      "arm": "position",
+      "loss": 6.975749969482422,
+      "early_grad_norm": 0.005307978484779596
+    },
+    {
+      "seed": 12,
+      "arm": "terminal",
+      "loss": 6.996217727661133,
+      "early_grad_norm": 0.0032124104909598827
+    },
+    {
+      "seed": 12,
+      "arm": "cut",
+      "loss": 6.975749969482422,
+      "early_grad_norm": null
+    },
+    {
+      "seed": 13,
+      "arm": "position",
+      "loss": 6.939896583557129,
+      "early_grad_norm": 0.005871322471648455
+    },
+    {
+      "seed": 13,
+      "arm": "terminal",
+      "loss": 6.955977439880371,
+      "early_grad_norm": 0.0033860853873193264
+    },
+    {
+      "seed": 13,
+      "arm": "cut",
+      "loss": 6.939896583557129,
+      "early_grad_norm": null
+    }
+  ],
+  "optimizer_updates": 0,
+  "dev_queries": 0,
+  "holdout_queries": 0,
+  "status": "complete",
+  "prior_preflight_sha256": "caeb2e3ea8b8bb5ba0f4bcadf34c53ab6c8c25db3460a199b53a125b6fb7e141",
+  "prior_cpu_seconds": 6.78125,
+  "restore": {
+    "path": "E:\\Seed\\data\\checkpoints\\n1_relative_paired_20261015_preflight_v2\\zero.pt",
+    "sha256": "e3b02c53f097d3e41e11a9737cf2245f2a48215f208556945d99dcb5e15e4458",
+    "signature": {
+      "candidate": "2b3977c23bc93312c4137bb54c25409c709da1a6ab17abf8be9a1ecb0fc59c03",
+      "first_logits": "52598b320634166e416ad97c8ba9f103243330954f8ed7ae9beeb0ce08bb190d",
+      "observation_logits": "398bd19d4153faa46787b60f54515d997463ba0638e6d420da1fe9a0ba54ec7d",
+      "targets": "782c79050c79df6136c274b24cfdc6847ae0793a31b6daf3e257654e31e072c4",
+      "second_logits": "f89fda4dad59863ac4cf5fc0a8a6f7af81132333b2420b41dc067f24e9e07e2a",
+      "address_state": "a50eab4138f39f9f924b0c8ec8f2ea8e68c5cbbba5845482ca2e157f93e728cc"
+    },
+    "cpu_seconds": 3.46875,
+    "equal": true
+  },
+  "cpu_seconds": 14.0625,
+  "cpu_accounting_complete": true,
+  "code_unchanged": true,
+  "passed": true
+}
