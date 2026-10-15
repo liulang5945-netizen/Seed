@@ -3385,3 +3385,10 @@ Ruff默认与CI B/SIM忽略B008、改动Black和项目身份合同核对；历�
 71完整288组/CPU31.4375秒/零更新与全部守卫通过；position32/30/29合计91，terminal20、cut92，原14的cut优势门失败。v4已消费，不重试/补训/改门。唯一下一步72同576已知面三seed四条件writer交换，6912组、CPU≤180秒、零训练/dev/holdout/v4，先定位最后阶段writer使用与协同。
 
 结果SHA eaee44f6eb980d9b0a3632a39a32c3898d6eecae72e869cc5fff33c45160250e。每种子/每类及terminal优势过门，不抵消cut优势失门；cut继承已训练母writer，共享embedding仍学习，不推断全部历史信用无效。唯一后继见PLAN-N1-72，绝不把v4改成新训练材料。全项目出口与历史CI债保留。
+
+
+### ㊵-975 · 2026-10-16 · 72冻结writer交换执行器就绪
+
+72两项合成交换/恢复/部分行/holdout拒绝合同及10导航通过，默认Ruff与CI B/SIM/Black通过。唯一下一步运行已冻三seed四条件6912组已知面writer交换，CPU≤180秒、零更新/新测面/v4；native逐项复现70、每条件完整parent恢复后才判完整。
+
+四个writer参数精确键/shape/dtype检查，异常完整恢复、optimizer与其他参数中性、train-only诊断旧守卫保持；不把holdout改标。原71 cut优势门失败不改，全项目保持/C4/三器官/N系列出口及历史CI债仍欠。
