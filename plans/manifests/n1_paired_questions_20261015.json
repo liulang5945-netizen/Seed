@@ -1,0 +1,1734 @@
+{
+  "schema": "n1-paired-question-train-v1",
+  "source_manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+  "pairs": [
+    {
+      "id": "pair-train-000",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "erifmmmlgg",
+        "riruwyggto",
+        "frwvfhazfs"
+      ],
+      "observations": [
+        "riruwyggto uses cmxdrq.",
+        "erifmmmlgg uses npnvph."
+      ],
+      "question": "material of riruwyggto?",
+      "answer": "cmxdrq",
+      "parent_id": "train-000",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-003",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "pbipyskknt",
+        "zayubghfed",
+        "rlcvvgvunc"
+      ],
+      "observations": [
+        "zayubghfed uses swxyez.",
+        "rlcvvgvunc uses cjoqnx."
+      ],
+      "question": "material of zayubghfed?",
+      "answer": "swxyez",
+      "parent_id": "train-003",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-004",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "uwrlaqyeza",
+        "ktsphgdqad",
+        "slalyngdmg"
+      ],
+      "observations": [
+        "ktsphgdqad uses hzhxar.",
+        "uwrlaqyeza uses hbpunp."
+      ],
+      "question": "material of ktsphgdqad?",
+      "answer": "hzhxar",
+      "parent_id": "train-004",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-007",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "xmfoszftyk",
+        "ncrbutvvbw",
+        "syxmwfzrvo"
+      ],
+      "observations": [
+        "ncrbutvvbw uses ogunft.",
+        "syxmwfzrvo uses plukro."
+      ],
+      "question": "material of ncrbutvvbw?",
+      "answer": "ogunft",
+      "parent_id": "train-007",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-008",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "jjpeeiseti",
+        "ycwvvqhyfs",
+        "kbkiufvacq"
+      ],
+      "observations": [
+        "jjpeeiseti uses ypexra.",
+        "ycwvvqhyfs uses dknovp."
+      ],
+      "question": "material of ycwvvqhyfs?",
+      "answer": "dknovp",
+      "parent_id": "train-008",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-011",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "mlguzsaucg",
+        "lrnbyytwii",
+        "gcdrppxwgi"
+      ],
+      "observations": [
+        "lrnbyytwii uses blvkxz.",
+        "gcdrppxwgi uses qewgyl."
+      ],
+      "question": "material of lrnbyytwii?",
+      "answer": "blvkxz",
+      "parent_id": "train-011",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-012",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "ejgjofgmnx",
+        "uklleromwj",
+        "beoejsbmed"
+      ],
+      "observations": [
+        "ejgjofgmnx uses zuscue.",
+        "uklleromwj uses agrvmg."
+      ],
+      "question": "material of uklleromwj?",
+      "answer": "agrvmg",
+      "parent_id": "train-012",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-015",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "scsgsjwbbw",
+        "vidnnkvckq",
+        "nlpenbgahb"
+      ],
+      "observations": [
+        "vidnnkvckq uses zyadyy.",
+        "nlpenbgahb uses yznzzh."
+      ],
+      "question": "material of vidnnkvckq?",
+      "answer": "zyadyy",
+      "parent_id": "train-015",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-016",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "mmzqiuiphl",
+        "nbrwbfqjbh",
+        "fyucmwkggk"
+      ],
+      "observations": [
+        "mmzqiuiphl uses vzzwbr.",
+        "nbrwbfqjbh uses rdamhw."
+      ],
+      "question": "material of nbrwbfqjbh?",
+      "answer": "rdamhw",
+      "parent_id": "train-016",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-019",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "ukctpfczly",
+        "uceafziauw",
+        "rozduthtph"
+      ],
+      "observations": [
+        "uceafziauw uses ptxpjp.",
+        "rozduthtph uses ktszvx."
+      ],
+      "question": "material of uceafziauw?",
+      "answer": "ptxpjp",
+      "parent_id": "train-019",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-020",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "xcafjrliys",
+        "cvpharhprs",
+        "lieclpudhq"
+      ],
+      "observations": [
+        "cvpharhprs uses muieio.",
+        "xcafjrliys uses bxunig."
+      ],
+      "question": "material of cvpharhprs?",
+      "answer": "muieio",
+      "parent_id": "train-020",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-023",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "yqgihunaox",
+        "gfhusgmlpe",
+        "tgjbgsnavq"
+      ],
+      "observations": [
+        "gfhusgmlpe uses mnshwb.",
+        "tgjbgsnavq uses fjgfkp."
+      ],
+      "question": "material of gfhusgmlpe?",
+      "answer": "mnshwb",
+      "parent_id": "train-023",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-024",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "jskgyshius",
+        "hfyyrsquzm",
+        "wfqrbeysvm"
+      ],
+      "observations": [
+        "jskgyshius uses enxmga.",
+        "hfyyrsquzm uses unhopm."
+      ],
+      "question": "material of hfyyrsquzm?",
+      "answer": "unhopm",
+      "parent_id": "train-024",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-027",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "pwwitztdny",
+        "ewmwzhligv",
+        "yvtyksrzox"
+      ],
+      "observations": [
+        "ewmwzhligv uses gyhacc.",
+        "yvtyksrzox uses sbbzbf."
+      ],
+      "question": "material of ewmwzhligv?",
+      "answer": "gyhacc",
+      "parent_id": "train-027",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-028",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "sghxnplqwm",
+        "bqyzljtioq",
+        "zrhidysnsd"
+      ],
+      "observations": [
+        "sghxnplqwm uses rjnmka.",
+        "bqyzljtioq uses kwbhps."
+      ],
+      "question": "material of bqyzljtioq?",
+      "answer": "kwbhps",
+      "parent_id": "train-028",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-031",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "qynkgkszzf",
+        "zcvfotxpfa",
+        "mswwbeqsep"
+      ],
+      "observations": [
+        "zcvfotxpfa uses cfmmhi.",
+        "mswwbeqsep uses yrnnph."
+      ],
+      "question": "material of zcvfotxpfa?",
+      "answer": "cfmmhi",
+      "parent_id": "train-031",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-032",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "fvyyteboxm",
+        "bcrrtkgymf",
+        "gfmocvijdz"
+      ],
+      "observations": [
+        "bcrrtkgymf uses yvghlp.",
+        "fvyyteboxm uses bsofol."
+      ],
+      "question": "material of bcrrtkgymf?",
+      "answer": "yvghlp",
+      "parent_id": "train-032",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-035",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "qjlxhudkbz",
+        "iakzdkmhfh",
+        "tidpjyfvbf"
+      ],
+      "observations": [
+        "iakzdkmhfh uses mhqasj.",
+        "tidpjyfvbf uses jznewq."
+      ],
+      "question": "material of iakzdkmhfh?",
+      "answer": "mhqasj",
+      "parent_id": "train-035",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-036",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "dihvfpxchr",
+        "lomejeopgb",
+        "nluuinlpmh"
+      ],
+      "observations": [
+        "lomejeopgb uses erpvtw.",
+        "dihvfpxchr uses ttptjb."
+      ],
+      "question": "material of lomejeopgb?",
+      "answer": "erpvtw",
+      "parent_id": "train-036",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-039",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "wbxnnfwjah",
+        "ujfmemvaxv",
+        "bieqfbnuak"
+      ],
+      "observations": [
+        "ujfmemvaxv uses dkoedq.",
+        "bieqfbnuak uses ftwwnw."
+      ],
+      "question": "material of ujfmemvaxv?",
+      "answer": "dkoedq",
+      "parent_id": "train-039",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-040",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "wnyajebchw",
+        "jrpanskrmr",
+        "hhecjhaipx"
+      ],
+      "observations": [
+        "wnyajebchw uses mhzsnn.",
+        "jrpanskrmr uses hifsej."
+      ],
+      "question": "material of jrpanskrmr?",
+      "answer": "hifsej",
+      "parent_id": "train-040",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-043",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "umhmckwrlx",
+        "vpgpbqtcri",
+        "jbrspkzahs"
+      ],
+      "observations": [
+        "vpgpbqtcri uses jdbhdi.",
+        "jbrspkzahs uses shtwqd."
+      ],
+      "question": "material of vpgpbqtcri?",
+      "answer": "jdbhdi",
+      "parent_id": "train-043",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-044",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "fkmuakroeq",
+        "pgtravjzjx",
+        "shuxaijhfn"
+      ],
+      "observations": [
+        "pgtravjzjx uses twbcjz.",
+        "fkmuakroeq uses csgabb."
+      ],
+      "question": "material of pgtravjzjx?",
+      "answer": "twbcjz",
+      "parent_id": "train-044",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-047",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "agvjnfmgqs",
+        "bdlikqwqli",
+        "sdcxcnohyt"
+      ],
+      "observations": [
+        "bdlikqwqli uses lzezth.",
+        "sdcxcnohyt uses djpuhg."
+      ],
+      "question": "material of bdlikqwqli?",
+      "answer": "lzezth",
+      "parent_id": "train-047",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-048",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "ysiajewayy",
+        "ncxgudwgad",
+        "vijdyfpohh"
+      ],
+      "observations": [
+        "ncxgudwgad uses adgedb.",
+        "ysiajewayy uses jkcfuw."
+      ],
+      "question": "material of ncxgudwgad?",
+      "answer": "adgedb",
+      "parent_id": "train-048",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-051",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "cmojhddnsg",
+        "birprnlgas",
+        "ubanbhshkk"
+      ],
+      "observations": [
+        "birprnlgas uses lpmnjz.",
+        "ubanbhshkk uses klemti."
+      ],
+      "question": "material of birprnlgas?",
+      "answer": "lpmnjz",
+      "parent_id": "train-051",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-052",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "pteffibeof",
+        "kwvoanxcti",
+        "ygfdzsaxsf"
+      ],
+      "observations": [
+        "kwvoanxcti uses lyyojc.",
+        "pteffibeof uses pudpxe."
+      ],
+      "question": "material of kwvoanxcti?",
+      "answer": "lyyojc",
+      "parent_id": "train-052",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-055",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "atulmqgofl",
+        "iefmecctyq",
+        "beusibunxi"
+      ],
+      "observations": [
+        "iefmecctyq uses yiwwaf.",
+        "beusibunxi uses pnfjsj."
+      ],
+      "question": "material of iefmecctyq?",
+      "answer": "yiwwaf",
+      "parent_id": "train-055",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-056",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "fvpurstnzt",
+        "rvpoeoqawo",
+        "uliozunhuy"
+      ],
+      "observations": [
+        "fvpurstnzt uses uyzitj.",
+        "rvpoeoqawo uses xqreva."
+      ],
+      "question": "material of rvpoeoqawo?",
+      "answer": "xqreva",
+      "parent_id": "train-056",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-059",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "jtbzgiazri",
+        "kgasxjomwb",
+        "lkvgealtxp"
+      ],
+      "observations": [
+        "kgasxjomwb uses gamygl.",
+        "lkvgealtxp uses rbbrxv."
+      ],
+      "question": "material of kgasxjomwb?",
+      "answer": "gamygl",
+      "parent_id": "train-059",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-060",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "gatjwagdgc",
+        "glfsmebnbv",
+        "ugknqnziop"
+      ],
+      "observations": [
+        "gatjwagdgc uses fgapvp.",
+        "glfsmebnbv uses qwdxwh."
+      ],
+      "question": "material of glfsmebnbv?",
+      "answer": "qwdxwh",
+      "parent_id": "train-060",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-063",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "nzrznhdfah",
+        "hmzngatztf",
+        "hujqjadcth"
+      ],
+      "observations": [
+        "hmzngatztf uses pcdwug.",
+        "hujqjadcth uses iwniwl."
+      ],
+      "question": "material of hmzngatztf?",
+      "answer": "pcdwug",
+      "parent_id": "train-063",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-064",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "yvgjwjjbtq",
+        "pvmzyufwlo",
+        "wmzhjhnekv"
+      ],
+      "observations": [
+        "pvmzyufwlo uses mluzat.",
+        "yvgjwjjbtq uses yhvxin."
+      ],
+      "question": "material of pvmzyufwlo?",
+      "answer": "mluzat",
+      "parent_id": "train-064",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-067",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "ibujnaroub",
+        "qrsgksrano",
+        "xyptbwbngz"
+      ],
+      "observations": [
+        "qrsgksrano uses rwkhll.",
+        "xyptbwbngz uses jxfcvp."
+      ],
+      "question": "material of qrsgksrano?",
+      "answer": "rwkhll",
+      "parent_id": "train-067",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-068",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "kkparaptls",
+        "vrbgtyoeyv",
+        "ejeawwdwfk"
+      ],
+      "observations": [
+        "vrbgtyoeyv uses uqbehy.",
+        "kkparaptls uses pdcvpp."
+      ],
+      "question": "material of vrbgtyoeyv?",
+      "answer": "uqbehy",
+      "parent_id": "train-068",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-071",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "lzxhrixkil",
+        "foipgzwvqd",
+        "fhnctfzozz"
+      ],
+      "observations": [
+        "foipgzwvqd uses ryxvzz.",
+        "fhnctfzozz uses glezxb."
+      ],
+      "question": "material of foipgzwvqd?",
+      "answer": "ryxvzz",
+      "parent_id": "train-071",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-072",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "mempsjatpb",
+        "cjqnoeyslw",
+        "gqorsjsazq"
+      ],
+      "observations": [
+        "cjqnoeyslw uses sjftly.",
+        "mempsjatpb uses rwlqah."
+      ],
+      "question": "material of cjqnoeyslw?",
+      "answer": "sjftly",
+      "parent_id": "train-072",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-075",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "mxunfdvmoi",
+        "nwcgxwtzlp",
+        "ldhnyjolpe"
+      ],
+      "observations": [
+        "nwcgxwtzlp uses fusieq.",
+        "ldhnyjolpe uses nahbdm."
+      ],
+      "question": "material of nwcgxwtzlp?",
+      "answer": "fusieq",
+      "parent_id": "train-075",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-076",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tbbkdcegue",
+        "fxfnjizdoc",
+        "qyfnmesklh"
+      ],
+      "observations": [
+        "fxfnjizdoc uses enzxma.",
+        "tbbkdcegue uses lpelqp."
+      ],
+      "question": "material of fxfnjizdoc?",
+      "answer": "enzxma",
+      "parent_id": "train-076",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-079",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "truiwbhgtt",
+        "seydguzjac",
+        "optqkdqqnp"
+      ],
+      "observations": [
+        "seydguzjac uses lnhnjo.",
+        "optqkdqqnp uses kddajb."
+      ],
+      "question": "material of seydguzjac?",
+      "answer": "lnhnjo",
+      "parent_id": "train-079",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-080",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "xipbuxjpgp",
+        "waqmcqaiuh",
+        "smpznonvbc"
+      ],
+      "observations": [
+        "waqmcqaiuh uses cqscnt.",
+        "xipbuxjpgp uses ttnrfu."
+      ],
+      "question": "material of waqmcqaiuh?",
+      "answer": "cqscnt",
+      "parent_id": "train-080",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-083",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "nwjvyuweoa",
+        "viharpoggb",
+        "airlfxtfmt"
+      ],
+      "observations": [
+        "viharpoggb uses szanza.",
+        "airlfxtfmt uses btrbci."
+      ],
+      "question": "material of viharpoggb?",
+      "answer": "szanza",
+      "parent_id": "train-083",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-084",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "dgtekjtuxo",
+        "nkkxnwvnhz",
+        "youepmyjos"
+      ],
+      "observations": [
+        "dgtekjtuxo uses kyoeve.",
+        "nkkxnwvnhz uses dpoqii."
+      ],
+      "question": "material of nkkxnwvnhz?",
+      "answer": "dpoqii",
+      "parent_id": "train-084",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-087",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "xfmnpdkazy",
+        "gvtfmqqsoi",
+        "rqnzkpcebu"
+      ],
+      "observations": [
+        "gvtfmqqsoi uses bwcjme.",
+        "rqnzkpcebu uses tcdiuh."
+      ],
+      "question": "material of gvtfmqqsoi?",
+      "answer": "bwcjme",
+      "parent_id": "train-087",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-088",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "rdrcbqjmdn",
+        "piaisxfnjp",
+        "ypuujysvhz"
+      ],
+      "observations": [
+        "piaisxfnjp uses lmkfyv.",
+        "rdrcbqjmdn uses huhsao."
+      ],
+      "question": "material of piaisxfnjp?",
+      "answer": "lmkfyv",
+      "parent_id": "train-088",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-091",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "nipcglucvv",
+        "kzbjqfwvbb",
+        "zospgrhijq"
+      ],
+      "observations": [
+        "kzbjqfwvbb uses hbbtwv.",
+        "zospgrhijq uses dvciki."
+      ],
+      "question": "material of kzbjqfwvbb?",
+      "answer": "hbbtwv",
+      "parent_id": "train-091",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-092",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "kexpxswybs",
+        "camvnwanqg",
+        "mnalvuzwwq"
+      ],
+      "observations": [
+        "kexpxswybs uses yudhwx.",
+        "camvnwanqg uses ugpiry."
+      ],
+      "question": "material of camvnwanqg?",
+      "answer": "ugpiry",
+      "parent_id": "train-092",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-095",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "wrwklkcopu",
+        "xqoqsvbies",
+        "kvdqkatcvd"
+      ],
+      "observations": [
+        "xqoqsvbies uses ablxpo.",
+        "kvdqkatcvd uses rqxdem."
+      ],
+      "question": "material of xqoqsvbies?",
+      "answer": "ablxpo",
+      "parent_id": "train-095",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-096",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "wgekkxnoem",
+        "hturaigprv",
+        "hvberstuyb"
+      ],
+      "observations": [
+        "hturaigprv uses xiatzn.",
+        "wgekkxnoem uses dbjkoz."
+      ],
+      "question": "material of hturaigprv?",
+      "answer": "xiatzn",
+      "parent_id": "train-096",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-099",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "ahrdiixinl",
+        "nfabenitxj",
+        "ytczgwmrue"
+      ],
+      "observations": [
+        "nfabenitxj uses ingtbt.",
+        "ytczgwmrue uses xwfker."
+      ],
+      "question": "material of nfabenitxj?",
+      "answer": "ingtbt",
+      "parent_id": "train-099",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-100",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "etgnycopwd",
+        "jxnakkvuzb",
+        "ngypurerpr"
+      ],
+      "observations": [
+        "etgnycopwd uses dsgvwz.",
+        "jxnakkvuzb uses pzubys."
+      ],
+      "question": "material of jxnakkvuzb?",
+      "answer": "pzubys",
+      "parent_id": "train-100",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-103",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "lkpmahhbdk",
+        "uqkvynrdlq",
+        "lxxcjuetyc"
+      ],
+      "observations": [
+        "uqkvynrdlq uses juzgrn.",
+        "lxxcjuetyc uses sekigk."
+      ],
+      "question": "material of uqkvynrdlq?",
+      "answer": "juzgrn",
+      "parent_id": "train-103",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-104",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "axhrgksefx",
+        "wvlezhgccs",
+        "ksvuypfrwa"
+      ],
+      "observations": [
+        "wvlezhgccs uses xxeoxu.",
+        "axhrgksefx uses dnatnx."
+      ],
+      "question": "material of wvlezhgccs?",
+      "answer": "xxeoxu",
+      "parent_id": "train-104",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-107",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tmyaaegbtv",
+        "miozzpwfkw",
+        "aubldxnugc"
+      ],
+      "observations": [
+        "miozzpwfkw uses jqohxx.",
+        "aubldxnugc uses kancmd."
+      ],
+      "question": "material of miozzpwfkw?",
+      "answer": "jqohxx",
+      "parent_id": "train-107",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-108",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "kjlifcftxv",
+        "uchojujbej",
+        "nwarndoscv"
+      ],
+      "observations": [
+        "kjlifcftxv uses yjmudc.",
+        "uchojujbej uses uyotnm."
+      ],
+      "question": "material of uchojujbej?",
+      "answer": "uyotnm",
+      "parent_id": "train-108",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-111",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "mpohiwarst",
+        "ovjnuuvzvq",
+        "hqmqhebpfj"
+      ],
+      "observations": [
+        "ovjnuuvzvq uses rbdeds.",
+        "hqmqhebpfj uses hwawjw."
+      ],
+      "question": "material of ovjnuuvzvq?",
+      "answer": "rbdeds",
+      "parent_id": "train-111",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-112",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "owtpebuyrq",
+        "thzfltaqnr",
+        "khkynrxzed"
+      ],
+      "observations": [
+        "thzfltaqnr uses vivcdz.",
+        "owtpebuyrq uses rmafth."
+      ],
+      "question": "material of thzfltaqnr?",
+      "answer": "vivcdz",
+      "parent_id": "train-112",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-115",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "vpqmpbkclj",
+        "jvpsvgkdnp",
+        "eqajnbgbub"
+      ],
+      "observations": [
+        "jvpsvgkdnp uses ixrxjb.",
+        "eqajnbgbub uses ackxwo."
+      ],
+      "question": "material of jvpsvgkdnp?",
+      "answer": "ixrxjb",
+      "parent_id": "train-115",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-116",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "jxnmbwasbf",
+        "gwftoejxii",
+        "krwjbwjtvt"
+      ],
+      "observations": [
+        "gwftoejxii uses fwafzw.",
+        "jxnmbwasbf uses anynyk."
+      ],
+      "question": "material of gwftoejxii?",
+      "answer": "fwafzw",
+      "parent_id": "train-116",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-119",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "pwxzfgkorh",
+        "jjdmawslqy",
+        "zsqjdeqvyw"
+      ],
+      "observations": [
+        "jjdmawslqy uses cxdcop.",
+        "zsqjdeqvyw uses pmbqfq."
+      ],
+      "question": "material of jjdmawslqy?",
+      "answer": "cxdcop",
+      "parent_id": "train-119",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-120",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "osadlbvwcb",
+        "ylskfouhsk",
+        "sjeycahdtf"
+      ],
+      "observations": [
+        "osadlbvwcb uses epzben.",
+        "ylskfouhsk uses ixhoaf."
+      ],
+      "question": "material of ylskfouhsk?",
+      "answer": "ixhoaf",
+      "parent_id": "train-120",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-123",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "ltflqsxqou",
+        "wkzzqnendy",
+        "vonflsqrsp"
+      ],
+      "observations": [
+        "wkzzqnendy uses uvluyf.",
+        "vonflsqrsp uses jbzarp."
+      ],
+      "question": "material of wkzzqnendy?",
+      "answer": "uvluyf",
+      "parent_id": "train-123",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-124",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "uutpqgsrtv",
+        "hogvzaznrq",
+        "ukakqstudf"
+      ],
+      "observations": [
+        "uutpqgsrtv uses czcpgf.",
+        "hogvzaznrq uses jrmhua."
+      ],
+      "question": "material of hogvzaznrq?",
+      "answer": "jrmhua",
+      "parent_id": "train-124",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-127",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "jhndndgxuz",
+        "zakqdcglev",
+        "rfoujjkjfd"
+      ],
+      "observations": [
+        "zakqdcglev uses cgcmwh.",
+        "rfoujjkjfd uses pcdikp."
+      ],
+      "question": "material of zakqdcglev?",
+      "answer": "cgcmwh",
+      "parent_id": "train-127",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-128",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "vcouegcihn",
+        "rihsupmqnl",
+        "njydxhsknu"
+      ],
+      "observations": [
+        "rihsupmqnl uses btwfje.",
+        "vcouegcihn uses kflsxa."
+      ],
+      "question": "material of rihsupmqnl?",
+      "answer": "btwfje",
+      "parent_id": "train-128",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-131",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "wcvsndhwlc",
+        "ntzqgzpuis",
+        "zkzezykefr"
+      ],
+      "observations": [
+        "ntzqgzpuis uses dztggh.",
+        "zkzezykefr uses kdfpxs."
+      ],
+      "question": "material of ntzqgzpuis?",
+      "answer": "dztggh",
+      "parent_id": "train-131",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-132",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tadjqbnsom",
+        "pxaqvxoqmc",
+        "rlfuptficz"
+      ],
+      "observations": [
+        "tadjqbnsom uses dmvfos.",
+        "pxaqvxoqmc uses vgjdwo."
+      ],
+      "question": "material of pxaqvxoqmc?",
+      "answer": "vgjdwo",
+      "parent_id": "train-132",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-135",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "sjiqttmiqy",
+        "gzcvhkfgzr",
+        "qqrdejfist"
+      ],
+      "observations": [
+        "gzcvhkfgzr uses vfnvbm.",
+        "qqrdejfist uses dsqbby."
+      ],
+      "question": "material of gzcvhkfgzr?",
+      "answer": "vfnvbm",
+      "parent_id": "train-135",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-136",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tumbdegghx",
+        "xomvfyogmh",
+        "uorjinnxpi"
+      ],
+      "observations": [
+        "xomvfyogmh uses atnxrh.",
+        "tumbdegghx uses toewaa."
+      ],
+      "question": "material of xomvfyogmh?",
+      "answer": "atnxrh",
+      "parent_id": "train-136",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-139",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "yhepdhzyip",
+        "jxlmcgvczi",
+        "exzwfrdkrd"
+      ],
+      "observations": [
+        "jxlmcgvczi uses hhkwbe.",
+        "exzwfrdkrd uses bfupor."
+      ],
+      "question": "material of jxlmcgvczi?",
+      "answer": "hhkwbe",
+      "parent_id": "train-139",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-140",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "gtnvxhwdvo",
+        "qybgolnztj",
+        "gwbrtjazkj"
+      ],
+      "observations": [
+        "qybgolnztj uses moodad.",
+        "gtnvxhwdvo uses hsuxou."
+      ],
+      "question": "material of qybgolnztj?",
+      "answer": "moodad",
+      "parent_id": "train-140",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-143",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "znbttenkph",
+        "prjjeqzpcs",
+        "vhwppbipha"
+      ],
+      "observations": [
+        "prjjeqzpcs uses qpfuvc.",
+        "vhwppbipha uses oqlfds."
+      ],
+      "question": "material of prjjeqzpcs?",
+      "answer": "qpfuvc",
+      "parent_id": "train-143",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-144",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "iwqdufoebl",
+        "wfhzueaecd",
+        "lxirmkaqdt"
+      ],
+      "observations": [
+        "iwqdufoebl uses meiscx.",
+        "wfhzueaecd uses bmykip."
+      ],
+      "question": "material of wfhzueaecd?",
+      "answer": "bmykip",
+      "parent_id": "train-144",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-147",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "iluvrjropi",
+        "peienfzqll",
+        "rhyiavnflr"
+      ],
+      "observations": [
+        "peienfzqll uses yyrxqf.",
+        "rhyiavnflr uses xuvrri."
+      ],
+      "question": "material of peienfzqll?",
+      "answer": "yyrxqf",
+      "parent_id": "train-147",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-148",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "ysrksktuiv",
+        "hnrmepcnje",
+        "kcyoaymngq"
+      ],
+      "observations": [
+        "hnrmepcnje uses mxsucd.",
+        "ysrksktuiv uses dikwpu."
+      ],
+      "question": "material of hnrmepcnje?",
+      "answer": "mxsucd",
+      "parent_id": "train-148",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-151",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "rdcxsfdgch",
+        "prvlzpspoo",
+        "ockulumgzh"
+      ],
+      "observations": [
+        "prvlzpspoo uses xxuinm.",
+        "ockulumgzh uses dpsdsb."
+      ],
+      "question": "material of prvlzpspoo?",
+      "answer": "xxuinm",
+      "parent_id": "train-151",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-152",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "fuxpueeiit",
+        "tkottgmhbz",
+        "hxqkpjexdc"
+      ],
+      "observations": [
+        "fuxpueeiit uses xuvpif.",
+        "tkottgmhbz uses zqcnrr."
+      ],
+      "question": "material of tkottgmhbz?",
+      "answer": "zqcnrr",
+      "parent_id": "train-152",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-155",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "minelwxvje",
+        "jbidzrwhlk",
+        "cpqybmcsvr"
+      ],
+      "observations": [
+        "jbidzrwhlk uses vgkpvo.",
+        "cpqybmcsvr uses idubdk."
+      ],
+      "question": "material of jbidzrwhlk?",
+      "answer": "vgkpvo",
+      "parent_id": "train-155",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-156",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "yledwxpsgn",
+        "ipfkeavjhe",
+        "prfjfvhtuk"
+      ],
+      "observations": [
+        "ipfkeavjhe uses wfoysv.",
+        "yledwxpsgn uses edzqni."
+      ],
+      "question": "material of ipfkeavjhe?",
+      "answer": "wfoysv",
+      "parent_id": "train-156",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-159",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "sitsawlgut",
+        "goflfybbpp",
+        "xewcjcrzkc"
+      ],
+      "observations": [
+        "goflfybbpp uses ypmrrd.",
+        "xewcjcrzkc uses yewkza."
+      ],
+      "question": "material of goflfybbpp?",
+      "answer": "ypmrrd",
+      "parent_id": "train-159",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-160",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "nwfqnwdlou",
+        "zxlawmaufz",
+        "dyozllvhhi"
+      ],
+      "observations": [
+        "zxlawmaufz uses tmjrxt.",
+        "nwfqnwdlou uses zjlvro."
+      ],
+      "question": "material of zxlawmaufz?",
+      "answer": "tmjrxt",
+      "parent_id": "train-160",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-163",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "xzolwpxvqq",
+        "rpdzqfyquh",
+        "mnrvicawrl"
+      ],
+      "observations": [
+        "rpdzqfyquh uses ekovtn.",
+        "mnrvicawrl uses fezeuc."
+      ],
+      "question": "material of rpdzqfyquh?",
+      "answer": "ekovtn",
+      "parent_id": "train-163",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-164",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "uqzadfppyc",
+        "pcncvxdzbg",
+        "dtuthuwapt"
+      ],
+      "observations": [
+        "uqzadfppyc uses oyfakj.",
+        "pcncvxdzbg uses qcfnex."
+      ],
+      "question": "material of pcncvxdzbg?",
+      "answer": "qcfnex",
+      "parent_id": "train-164",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-167",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "jqmgizovir",
+        "jzxhjjtmgx",
+        "nadcrcypns"
+      ],
+      "observations": [
+        "jzxhjjtmgx uses swxavm.",
+        "nadcrcypns uses zdctjr."
+      ],
+      "question": "material of jzxhjjtmgx?",
+      "answer": "swxavm",
+      "parent_id": "train-167",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-168",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "ovvktkhinj",
+        "mxzpxdrnxf",
+        "znxrcovqcy"
+      ],
+      "observations": [
+        "ovvktkhinj uses muojqo.",
+        "mxzpxdrnxf uses bzalws."
+      ],
+      "question": "material of mxzpxdrnxf?",
+      "answer": "bzalws",
+      "parent_id": "train-168",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-171",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "cdiwwgudrv",
+        "kpshafeqft",
+        "zfuvbykguw"
+      ],
+      "observations": [
+        "kpshafeqft uses ugfztm.",
+        "zfuvbykguw uses gigylm."
+      ],
+      "question": "material of kpshafeqft?",
+      "answer": "ugfztm",
+      "parent_id": "train-171",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-172",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "zecudgnevs",
+        "wnchnyuzdw",
+        "yrvcymjpjm"
+      ],
+      "observations": [
+        "wnchnyuzdw uses zqwaoe.",
+        "zecudgnevs uses nppgnw."
+      ],
+      "question": "material of wnchnyuzdw?",
+      "answer": "zqwaoe",
+      "parent_id": "train-172",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-175",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "qntajkifsi",
+        "bmqwdjwfqj",
+        "bfvjhbhpzb"
+      ],
+      "observations": [
+        "bmqwdjwfqj uses msopdf.",
+        "bfvjhbhpzb uses enrwvk."
+      ],
+      "question": "material of bmqwdjwfqj?",
+      "answer": "msopdf",
+      "parent_id": "train-175",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-176",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "limzhlctfl",
+        "ryuqnnpfkn",
+        "ybaluyerem"
+      ],
+      "observations": [
+        "limzhlctfl uses gixbqz.",
+        "ryuqnnpfkn uses rljqpb."
+      ],
+      "question": "material of ryuqnnpfkn?",
+      "answer": "rljqpb",
+      "parent_id": "train-176",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-179",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "mcagmqrvxh",
+        "iiczsrfdst",
+        "wgsqlwboij"
+      ],
+      "observations": [
+        "iiczsrfdst uses scehxq.",
+        "wgsqlwboij uses qzvxdf."
+      ],
+      "question": "material of iiczsrfdst?",
+      "answer": "scehxq",
+      "parent_id": "train-179",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-180",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "tgscsfxegr",
+        "ddekvztrnx",
+        "ngtdqnvgez"
+      ],
+      "observations": [
+        "tgscsfxegr uses sstrzg.",
+        "ddekvztrnx uses sadeyj."
+      ],
+      "question": "material of ddekvztrnx?",
+      "answer": "sadeyj",
+      "parent_id": "train-180",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-183",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "fqxciermmv",
+        "fquqctxytw",
+        "adntksuvzi"
+      ],
+      "observations": [
+        "fquqctxytw uses kccnma.",
+        "adntksuvzi uses faftzw."
+      ],
+      "question": "material of fquqctxytw?",
+      "answer": "kccnma",
+      "parent_id": "train-183",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-184",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "brjytqhljh",
+        "gvtqehmxsy",
+        "yjxzoqnrlv"
+      ],
+      "observations": [
+        "brjytqhljh uses ngqbcw.",
+        "gvtqehmxsy uses twogib."
+      ],
+      "question": "material of gvtqehmxsy?",
+      "answer": "twogib",
+      "parent_id": "train-184",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-187",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "kcgbtxuuzk",
+        "apbxkubcvk",
+        "mvfmhtfqfu"
+      ],
+      "observations": [
+        "apbxkubcvk uses viasww.",
+        "mvfmhtfqfu uses saktwe."
+      ],
+      "question": "material of apbxkubcvk?",
+      "answer": "viasww",
+      "parent_id": "train-187",
+      "original_kind": "unknown"
+    },
+    {
+      "id": "pair-train-188",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "vekqwllsyt",
+        "lvjkarllyc",
+        "rplvdxxgzm"
+      ],
+      "observations": [
+        "vekqwllsyt uses tnsvjd.",
+        "lvjkarllyc uses fjufmz."
+      ],
+      "question": "material of lvjkarllyc?",
+      "answer": "fjufmz",
+      "parent_id": "train-188",
+      "original_kind": "lookup"
+    },
+    {
+      "id": "pair-train-191",
+      "split": "train",
+      "kind": "lookup",
+      "entities": [
+        "plyvegdgwt",
+        "rmfwonlbja",
+        "zqzsgvuann"
+      ],
+      "observations": [
+        "rmfwonlbja uses epzolg.",
+        "zqzsgvuann uses lyvjqe."
+      ],
+      "question": "material of rmfwonlbja?",
+      "answer": "epzolg",
+      "parent_id": "train-191",
+      "original_kind": "unknown"
+    }
+  ]
+}
