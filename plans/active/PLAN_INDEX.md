@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **当前调度（2026-10-15）**：40完整但原题127/192、pair26/96未过门；唯一建议[41读取器迁移配对适应](../reference/PLAN-N1-41_reader_transfer_paired_review_20261015.md)待决定。
+> **当前调度（2026-10-15）**：执行已批准[41读取器迁移](../reference/PLAN-N1-41_reader_transfer_paired_review_20261015.md)，先192逐项等价，再6144配对更新，原门与pair≥87/96不变。
 
 > **2026-10-14 导航校准**：本索引的编号约定继续保留；下方累积里程碑摘要含历史状态。当前队列只看 [03](roadmap/03_CURRENT_EXECUTION.md)，N 主线看 [09](roadmap/09_NEXT_MAINLINE_PLAN.md)，整个项目按 [项目地图](../../docs/README.md) 阅读。本轮收纳见 [整理记录](../reference/PROJECT_ORGANIZATION_20261014.md)。
 
@@ -883,3 +883,5 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 2026-10-15：用户弹窗批准40完整配方（新同观察双QA目标＋96训练pair＋原门及新增pair≥87/96），manifest SHA1c3857b1ae66c227503d443ea13051a4dbaa0b65707f4fb259a3fe64c222fddb已冻结，3新合同通过。fresh seed11固定9216更新、13824训练QA序列、CPU≤300秒含zero/final完整恢复，三个里程碑各原192+pair96，零dev/holdout。先冻结运行器再执行，不循环追加。
 
 2026-10-15：40完整9216更新/13824训练QA/864组评估，CPU219.375秒、zero/final恢复及全部守卫通过；终点原127/192、四类8/32/47/40、pair26/96，两门未过，零dev/holdout，停止追加。唯一建议41固定33 seed11读取器迁入37零残差，先全192逐项等价，再fresh Adam固定6144配对适应/300秒，待弹窗；原失败及全项目未闭合债保留。 详见[40裁决](../reference/EXP-N1-40_paired_question_calibration_20261015.md)。
+
+2026-10-15：41固定读取器迁移配方已弹窗批准。source33 seed11 position SHA及全部40469共有参数绑定，37新3616参数seed11/零融合，fresh Adam与新RNG明确不续接旧优化器。2新合同通过；先zero独立恢复和原192逐项复现191，再固定6144更新/300秒CPU，原门＋pair87不变，零dev/holdout。
