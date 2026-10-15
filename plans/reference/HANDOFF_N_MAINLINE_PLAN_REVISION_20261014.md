@@ -120,3 +120,5 @@ PLAN-N1-06 r1 的 C1 规格已实现并按完整面通过。两臂均为96项／
 2026-10-15：37结构及零训练工程验证已获弹窗批准。独立残差候选总44085参数，共有层与旧relative同seed初始化，零残差多步logits/attention逐位等同；残差融合初始可学，非零融合时问题投影可得信用，cut无writer旁路。训练仍未批准。
 
 2026-10-15：37残差问题对齐工程完整，34相关测过，CPU6.265625秒，0更新/课程/dev/holdout；旧relative共有参数和多步logits/attention逐位等价，新融合梯度/cut/teacher-free/来源隔离与独立zero恢复过。唯一建议38原36固定9216/seed11/300秒训练集校准，仅更换残差候选，待弹窗批准；无新训练能力结论，所有原失败及全项目出口债保留。 详见[37裁决](EXP-N1-37_residual_question_engineering_20261015.md)及[38方案](PLAN-N1-38_residual_question_calibration_review_20261015.md)。
+
+2026-10-15：38固定残差校准已获用户弹窗批准，fresh seed11、9216更新/300秒CPU，原36样本/目标/门与里程碑保持，zero/final完整独立恢复，零dev/holdout/34变体。先验证运行器并冻结再正式执行，不从36续接、不循环追加。
