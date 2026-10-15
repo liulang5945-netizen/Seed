@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **当前调度（2026-10-15）**：执行已批准[38残差固定校准](../reference/PLAN-N1-38_residual_question_calibration_review_20261015.md)，9216更新/300秒CPU；36失败保留。
+> **当前调度（2026-10-15）**：38完整但140/192未过门；唯一建议[39冻结融合消融](../reference/PLAN-N1-39_question_fusion_ablation_review_20261015.md)待决定，不追加训练。
 
 > **2026-10-14 导航校准**：本索引的编号约定继续保留；下方累积里程碑摘要含历史状态。当前队列只看 [03](roadmap/03_CURRENT_EXECUTION.md)，N 主线看 [09](roadmap/09_NEXT_MAINLINE_PLAN.md)，整个项目按 [项目地图](../../docs/README.md) 阅读。本轮收纳见 [整理记录](../reference/PROJECT_ORGANIZATION_20261014.md)。
 
@@ -873,3 +873,5 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 2026-10-15：37残差问题对齐工程完整，34相关测过，CPU6.265625秒，0更新/课程/dev/holdout；旧relative共有参数和多步logits/attention逐位等价，新融合梯度/cut/teacher-free/来源隔离与独立zero恢复过。唯一建议38原36固定9216/seed11/300秒训练集校准，仅更换残差候选，待弹窗批准；无新训练能力结论，所有原失败及全项目出口债保留。 详见[37裁决](../reference/EXP-N1-37_residual_question_engineering_20261015.md)及[38方案](../reference/PLAN-N1-38_residual_question_calibration_review_20261015.md)。
 
 2026-10-15：38固定残差校准已获用户弹窗批准，fresh seed11、9216更新/300秒CPU，原36样本/目标/门与里程碑保持，zero/final完整独立恢复，零dev/holdout/34变体。先验证运行器并冻结再正式执行，不从36续接、不循环追加。
+
+2026-10-15：38完整9216更新/576组、CPU178.75秒，zero/final完整恢复与非空Adam守卫过，终点140/192、四类25/19/48/48，原门未过；0 dev/holdout/34变体。36/38均封存失败，不追加。唯一建议39冻结两个终点、原生/旁路融合768组训练集零更新诊断，CPU≤60秒，待弹窗；全项目原未见/保持/C4/三器官及其他N/根CI债不变。 详见[38裁决](../reference/EXP-N1-38_residual_question_calibration_20261015.md)。
