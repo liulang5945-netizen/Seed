@@ -11,3 +11,6 @@
 新协议updates_per_model/total_updates计**追加**3072/27,648，同时明确starting6144/cumulative9216；training记录updates计该模型累计9216，并另报additional_updates3072。报告completed_updates计本批追加，cumulative_updates计九模型历史55,296加本批；zero恢复的completed_updates=6144表示零追加，不误称fresh零训练。
 
 CPU≤600秒含工程报告已用CPU、正式父及18worker。触边保存partial与实际累计更新，不缩分母、不重跑；源码/数据/31报告/输入九档及新final档前后SHA守卫，冻结pre_holdout后才查询。工程/预算/来源缺口不放行。相关CI/全项目保持/联合能力债保留，不默认采用、不推送、不删除数据。
+
+
+2026-10-15：33源码冻结8f53d4b6a，九输入/三臂零更新信用与新zero独立恢复预检通过，CPU13.15625秒计入总600秒。正式固定续接已启动，首个seed11 position终点191/192，累计CPU77.09秒（含预检）；80相关合同通过（8.04秒）。尚无九模型续接或首次v3留出结论。
