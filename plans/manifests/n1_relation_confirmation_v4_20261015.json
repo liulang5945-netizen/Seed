@@ -1,0 +1,523 @@
+{
+  "schema": "n1-relation-confirmation-v4",
+  "seed": 62,
+  "excluded_source_sha256": [
+    "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+    "572a270bcb5e292baee7577b5c0ec2d3f313bd93ae338fa6d5984a646a2fe9c6",
+    "c44ea78f40d7255688013eb4054ae803bd04ee97dc5ba2e0c02b82e301ce6fdd"
+  ],
+  "episodes": [
+    {
+      "id": "v4-confirm-000",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "yezgmxjney",
+        "zedmnuipef",
+        "cooqyhimyh"
+      ],
+      "observations": [
+        "yezgmxjney uses hlrhet.",
+        "zedmnuipef uses opagcj."
+      ],
+      "question": "material of yezgmxjney?",
+      "answer": "hlrhet"
+    },
+    {
+      "id": "v4-confirm-001",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "zwjoxiksim",
+        "jvncaqdrfn",
+        "irdkrgzzzy"
+      ],
+      "observations": [
+        "zwjoxiksim uses yovkby.",
+        "zwjoxiksim now uses xgjgse."
+      ],
+      "question": "material of zwjoxiksim?",
+      "answer": "xgjgse"
+    },
+    {
+      "id": "v4-confirm-002",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "vakumdarbh",
+        "piauspcmzn",
+        "gyjnewrnmi"
+      ],
+      "observations": [
+        "vakumdarbh faces south.",
+        "vakumdarbh turns left."
+      ],
+      "question": "direction of vakumdarbh?",
+      "answer": "east"
+    },
+    {
+      "id": "v4-confirm-003",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "poopxwxrtt",
+        "trtbeqlfqf",
+        "tixiziudnj"
+      ],
+      "observations": [
+        "trtbeqlfqf uses wsocng.",
+        "tixiziudnj uses csozvb."
+      ],
+      "question": "material of poopxwxrtt?",
+      "answer": "unknown"
+    },
+    {
+      "id": "v4-confirm-004",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "ynzimsgkii",
+        "onwgghaijc",
+        "ncuypfdbew"
+      ],
+      "observations": [
+        "ynzimsgkii uses twjosr.",
+        "onwgghaijc uses qazphi."
+      ],
+      "question": "material of ynzimsgkii?",
+      "answer": "twjosr"
+    },
+    {
+      "id": "v4-confirm-005",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "yafbqpqekw",
+        "iffugspvbh",
+        "ymccericgu"
+      ],
+      "observations": [
+        "yafbqpqekw uses smgccw.",
+        "yafbqpqekw now uses pauykx."
+      ],
+      "question": "material of yafbqpqekw?",
+      "answer": "pauykx"
+    },
+    {
+      "id": "v4-confirm-006",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "iiknjgchow",
+        "snkesujtvj",
+        "avnbpqqqob"
+      ],
+      "observations": [
+        "iiknjgchow faces south.",
+        "iiknjgchow turns right."
+      ],
+      "question": "direction of iiknjgchow?",
+      "answer": "west"
+    },
+    {
+      "id": "v4-confirm-007",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "dhbbkyeqts",
+        "basfuqzkue",
+        "gjjohdmmvo"
+      ],
+      "observations": [
+        "basfuqzkue uses lfswbh.",
+        "gjjohdmmvo uses tgbgzd."
+      ],
+      "question": "material of dhbbkyeqts?",
+      "answer": "unknown"
+    },
+    {
+      "id": "v4-confirm-008",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "crdvhmnxyf",
+        "hcdwgnohba",
+        "gwfhyxbtll"
+      ],
+      "observations": [
+        "crdvhmnxyf uses vanwzu.",
+        "hcdwgnohba uses nhzach."
+      ],
+      "question": "material of crdvhmnxyf?",
+      "answer": "vanwzu"
+    },
+    {
+      "id": "v4-confirm-009",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "flmvgvupen",
+        "qqkdxonvhl",
+        "fcdvuvkgvd"
+      ],
+      "observations": [
+        "flmvgvupen uses ieemih.",
+        "flmvgvupen now uses gaywaa."
+      ],
+      "question": "material of flmvgvupen?",
+      "answer": "gaywaa"
+    },
+    {
+      "id": "v4-confirm-010",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "zmahxjllng",
+        "orcfpklcni",
+        "veihojbmdn"
+      ],
+      "observations": [
+        "zmahxjllng faces south.",
+        "zmahxjllng turns left."
+      ],
+      "question": "direction of zmahxjllng?",
+      "answer": "east"
+    },
+    {
+      "id": "v4-confirm-011",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "pujfobjgof",
+        "tilggyoqrr",
+        "smzavvemrx"
+      ],
+      "observations": [
+        "tilggyoqrr uses yoinkc.",
+        "smzavvemrx uses gfdsth."
+      ],
+      "question": "material of pujfobjgof?",
+      "answer": "unknown"
+    },
+    {
+      "id": "v4-confirm-012",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "jugnicrxbo",
+        "hpnolpfqrr",
+        "iuotfueinb"
+      ],
+      "observations": [
+        "jugnicrxbo uses cuftcq.",
+        "hpnolpfqrr uses yhhgmh."
+      ],
+      "question": "material of jugnicrxbo?",
+      "answer": "cuftcq"
+    },
+    {
+      "id": "v4-confirm-013",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "fxypvwdjmv",
+        "cwlugfeeuf",
+        "glblqrsddk"
+      ],
+      "observations": [
+        "fxypvwdjmv uses jwencp.",
+        "fxypvwdjmv now uses nohwov."
+      ],
+      "question": "material of fxypvwdjmv?",
+      "answer": "nohwov"
+    },
+    {
+      "id": "v4-confirm-014",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "krjcncqnya",
+        "uqgkzprlzv",
+        "hejmmsihqf"
+      ],
+      "observations": [
+        "krjcncqnya faces north.",
+        "krjcncqnya turns right."
+      ],
+      "question": "direction of krjcncqnya?",
+      "answer": "east"
+    },
+    {
+      "id": "v4-confirm-015",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "ifkhhsdhez",
+        "kgbiyjzujl",
+        "izeurudugr"
+      ],
+      "observations": [
+        "kgbiyjzujl uses ohmzoe.",
+        "izeurudugr uses wnfglg."
+      ],
+      "question": "material of ifkhhsdhez?",
+      "answer": "unknown"
+    },
+    {
+      "id": "v4-confirm-016",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "lhtlarvkty",
+        "bmsbxlwmqe",
+        "ccsljtubuj"
+      ],
+      "observations": [
+        "bmsbxlwmqe uses ahkgii.",
+        "lhtlarvkty uses emmllu."
+      ],
+      "question": "material of lhtlarvkty?",
+      "answer": "emmllu"
+    },
+    {
+      "id": "v4-confirm-017",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "twedzramfy",
+        "wxgfdsgeeo",
+        "bbhzewqbyh"
+      ],
+      "observations": [
+        "twedzramfy uses ycahwa.",
+        "twedzramfy now uses rpfuyj."
+      ],
+      "question": "material of twedzramfy?",
+      "answer": "rpfuyj"
+    },
+    {
+      "id": "v4-confirm-018",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "fxtsvnrrru",
+        "pzwadatuwh",
+        "xbdluwtbsp"
+      ],
+      "observations": [
+        "fxtsvnrrru faces north.",
+        "fxtsvnrrru turns right."
+      ],
+      "question": "direction of fxtsvnrrru?",
+      "answer": "east"
+    },
+    {
+      "id": "v4-confirm-019",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "pdysrlgirg",
+        "lznzwgrcaz",
+        "ttxvqtpoou"
+      ],
+      "observations": [
+        "lznzwgrcaz uses zlkvgx.",
+        "ttxvqtpoou uses wtwzzq."
+      ],
+      "question": "material of pdysrlgirg?",
+      "answer": "unknown"
+    },
+    {
+      "id": "v4-confirm-020",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "xfkhywbyvs",
+        "pnuyqjhnbb",
+        "qeorioazda"
+      ],
+      "observations": [
+        "pnuyqjhnbb uses myyyym.",
+        "xfkhywbyvs uses lvlhyr."
+      ],
+      "question": "material of xfkhywbyvs?",
+      "answer": "lvlhyr"
+    },
+    {
+      "id": "v4-confirm-021",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "idpkdhsuyy",
+        "ppnrzcvcvv",
+        "dgahsqbfmq"
+      ],
+      "observations": [
+        "idpkdhsuyy uses jozihj.",
+        "idpkdhsuyy now uses pdaxwx."
+      ],
+      "question": "material of idpkdhsuyy?",
+      "answer": "pdaxwx"
+    },
+    {
+      "id": "v4-confirm-022",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "hrouzibnqf",
+        "umlkfbwvrc",
+        "bpxakctoad"
+      ],
+      "observations": [
+        "hrouzibnqf faces west.",
+        "hrouzibnqf turns left."
+      ],
+      "question": "direction of hrouzibnqf?",
+      "answer": "south"
+    },
+    {
+      "id": "v4-confirm-023",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "oylsdoxrsi",
+        "djmammbvad",
+        "bxakbtppve"
+      ],
+      "observations": [
+        "djmammbvad uses zmvajp.",
+        "bxakbtppve uses ddiywv."
+      ],
+      "question": "material of oylsdoxrsi?",
+      "answer": "unknown"
+    },
+    {
+      "id": "v4-confirm-024",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "opvpvgyrcs",
+        "jzbocvuwwl",
+        "dnnphlpjdr"
+      ],
+      "observations": [
+        "opvpvgyrcs uses qzkody.",
+        "jzbocvuwwl uses wqavbr."
+      ],
+      "question": "material of opvpvgyrcs?",
+      "answer": "qzkody"
+    },
+    {
+      "id": "v4-confirm-025",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "jvcrrtcqez",
+        "xxswfbxcag",
+        "ztatqohxzb"
+      ],
+      "observations": [
+        "jvcrrtcqez uses cwdikx.",
+        "jvcrrtcqez now uses tioajk."
+      ],
+      "question": "material of jvcrrtcqez?",
+      "answer": "tioajk"
+    },
+    {
+      "id": "v4-confirm-026",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "hrupxdasvz",
+        "exsfgdjxil",
+        "uskxvgcsss"
+      ],
+      "observations": [
+        "hrupxdasvz faces west.",
+        "hrupxdasvz turns right."
+      ],
+      "question": "direction of hrupxdasvz?",
+      "answer": "north"
+    },
+    {
+      "id": "v4-confirm-027",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "hkkwtxengb",
+        "vkwusaizqy",
+        "nwfydzdktt"
+      ],
+      "observations": [
+        "vkwusaizqy uses umyjmu.",
+        "nwfydzdktt uses lozzhn."
+      ],
+      "question": "material of hkkwtxengb?",
+      "answer": "unknown"
+    },
+    {
+      "id": "v4-confirm-028",
+      "split": "holdout",
+      "kind": "lookup",
+      "entities": [
+        "pbbyagvhvn",
+        "uwheyjxggn",
+        "vodbazotch"
+      ],
+      "observations": [
+        "uwheyjxggn uses zzyacq.",
+        "pbbyagvhvn uses ermflt."
+      ],
+      "question": "material of pbbyagvhvn?",
+      "answer": "ermflt"
+    },
+    {
+      "id": "v4-confirm-029",
+      "split": "holdout",
+      "kind": "revision",
+      "entities": [
+        "ezprdtmjmd",
+        "htygldnhej",
+        "saongpkfau"
+      ],
+      "observations": [
+        "ezprdtmjmd uses dsaqhx.",
+        "ezprdtmjmd now uses xjjrhr."
+      ],
+      "question": "material of ezprdtmjmd?",
+      "answer": "xjjrhr"
+    },
+    {
+      "id": "v4-confirm-030",
+      "split": "holdout",
+      "kind": "transition",
+      "entities": [
+        "caedjyibqv",
+        "xyfmdcppio",
+        "jjgoruzhyi"
+      ],
+      "observations": [
+        "caedjyibqv faces north.",
+        "caedjyibqv turns right."
+      ],
+      "question": "direction of caedjyibqv?",
+      "answer": "east"
+    },
+    {
+      "id": "v4-confirm-031",
+      "split": "holdout",
+      "kind": "unknown",
+      "entities": [
+        "wkvhjtywxj",
+        "xuwqgtgxsl",
+        "eqatsqotww"
+      ],
+      "observations": [
+        "xuwqgtgxsl uses uxeovm.",
+        "eqatsqotww uses gcjvxi."
+      ],
+      "question": "material of wkvhjtywxj?",
+      "answer": "unknown"
+    }
+  ]
+}

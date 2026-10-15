@@ -1,0 +1,26 @@
+{
+  "schema": "n1-v4-face-freeze-v1",
+  "manifest_sha256": "a148dbf6c65812b08b3f25103b014da82b97796c18134724dc2f03dcb6f12529",
+  "code_sha256": "1773914e28f1b3bf3083f9cd7ef15c99825c9ccbaefbd72d16fe037a6278814a",
+  "source_sha256": [
+    "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+    "572a270bcb5e292baee7577b5c0ec2d3f313bd93ae338fa6d5984a646a2fe9c6",
+    "c44ea78f40d7255688013eb4054ae803bd04ee97dc5ba2e0c02b82e301ce6fdd"
+  ],
+  "summary": {
+    "items": 32,
+    "by_kind": {
+      "lookup": 8,
+      "revision": 8,
+      "transition": 8,
+      "unknown": 8
+    },
+    "entities": 96,
+    "materials": 48,
+    "model_queries": 0,
+    "training_items": 0,
+    "dev_items": 0
+  },
+  "cpu_seconds": 0.046875,
+  "complete": true
+}

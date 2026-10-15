@@ -69,3 +69,36 @@ def test_seed_initialization_preserves_old_parameters_and_moments():
     assert len(set(shared)) == 1 and len(set(new[:3])) == 3
     with pytest.raises(ValueError, match="seeds"):
         transfer.migrate(payload, 14)
+
+
+def test_each_seed_terminal_and_cut_observation_branch():
+    transfer.torch.set_num_threads(1)
+    _, payload, _ = transfer.source_payload()
+    for seed in (11, 12, 13):
+        model, _ = transfer.migrate(payload, seed)
+        engineering.prepare(model)
+        session = engineering.SESSIONS[0]
+        question = engineering.QUESTIONS[0]
+        blocks = model.relation_inputs(model.evidence(session, terminal_per_source=True), question)
+        assert all(transfer.torch.equal(block, block[:1].expand_as(block)) for block in blocks)
+        captured = []
+
+        def retain(module, args, out, captured=captured):
+            if args[0].ndim == 1 and len(args[0]) == len(b"alpha uses quartz."):
+                out.retain_grad()
+                captured.append(out)
+
+        hook = model.embedding.register_forward_hook(retain)
+        for cut in (False, True):
+            captured.clear()
+            model.zero_grad(set_to_none=True)
+            blocks = model.relation_inputs(model.evidence(session, cut_credit=cut), question)
+            transfer.torch.cat(blocks).square().mean().backward()
+            assert len(captured) == 2
+            if cut:
+                assert all(value.grad is None for value in captured)
+            else:
+                assert all(
+                    value.grad is not None and value.grad.abs().sum() > 0 for value in captured
+                )
+        hook.remove()
