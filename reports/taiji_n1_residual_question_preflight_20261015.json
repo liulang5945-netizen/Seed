@@ -1,0 +1,40 @@
+{
+  "protocol": {
+    "schema": "n1-residual-question-preflight-v1",
+    "parameter_updates": 0,
+    "cpu_limit_seconds": 60,
+    "curriculum_queries": 0
+  },
+  "code_identity": {
+    "runner": "5f8c946a43935d586574252f9eaa7ca4589ac63a3a3d4f31db71365c87a27f9a",
+    "model": "896ff8ec6d3c8c42526237e546872942c19ac1b26a10c253b19dce7c1267397e"
+  },
+  "checks": {
+    "shared_parameters_equal": true,
+    "native_multistep_equal": true,
+    "position_finite": true,
+    "position_writer_credit": true,
+    "terminal_finite": true,
+    "terminal_writer_credit": true,
+    "cut_finite": true,
+    "cut_writer_credit": true,
+    "no_updates": true,
+    "parameter_count": true,
+    "independent_restore": true,
+    "checkpoint_unchanged": true,
+    "code_unchanged": true
+  },
+  "checkpoint": "E:\\Seed\\data\\checkpoints\\n1_residual_question_preflight_20261015\\zero.pt",
+  "checkpoint_sha256": "292c9bba97df2c02e6080784a07c9d4b7b63b22425396442c7dc00284958701b",
+  "optimizer_state_entries": 0,
+  "optimizer_scope": "fresh zero-update Adam; no populated moment continuation claimed",
+  "cpu_seconds": 6.265625,
+  "parameter_count": 44085,
+  "added_parameters": 3616,
+  "parameter_updates": 0,
+  "dev_queries": 0,
+  "holdout_queries": 0,
+  "curriculum_queries": 0,
+  "can_promote": false,
+  "complete": true
+}

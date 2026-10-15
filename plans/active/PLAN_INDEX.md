@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **当前调度（2026-10-15）**：实施已批准[37残差问题对齐](../reference/PLAN-N1-37_residual_question_alignment_review_20261015.md)，仅结构及零更新工程验证；36失败保留。
+> **当前调度（2026-10-15）**：37残差工程完整；唯一建议[38固定训练集校准](../reference/PLAN-N1-38_residual_question_calibration_review_20261015.md)待决定，尚未训练。
 
 > **2026-10-14 导航校准**：本索引的编号约定继续保留；下方累积里程碑摘要含历史状态。当前队列只看 [03](roadmap/03_CURRENT_EXECUTION.md)，N 主线看 [09](roadmap/09_NEXT_MAINLINE_PLAN.md)，整个项目按 [项目地图](../../docs/README.md) 阅读。本轮收纳见 [整理记录](../reference/PROJECT_ORGANIZATION_20261014.md)。
 
@@ -869,3 +869,5 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 2026-10-15：36固定9216更新完整，CPU129.890625秒、576组train、zero/final独立恢复及非空Adam全参数moment通过；终点154/192，四类28/30/48/48，原训练门未过，0 dev/holdout/34变体。停止追加。唯一建议37保留原表示的零初始化残差问题对齐，先结构/零训练工程验证待弹窗；全项目未见/保持/C4/联合与其他N/根CI债保留。 详见[36裁决](../reference/EXP-N1-36_question_alignment_calibration_20261015.md)。
 
 2026-10-15：37结构及零训练工程验证已获弹窗批准。独立残差候选总44085参数，共有层与旧relative同seed初始化，零残差多步logits/attention逐位等同；残差融合初始可学，非零融合时问题投影可得信用，cut无writer旁路。训练仍未批准。
+
+2026-10-15：37残差问题对齐工程完整，34相关测过，CPU6.265625秒，0更新/课程/dev/holdout；旧relative共有参数和多步logits/attention逐位等价，新融合梯度/cut/teacher-free/来源隔离与独立zero恢复过。唯一建议38原36固定9216/seed11/300秒训练集校准，仅更换残差候选，待弹窗批准；无新训练能力结论，所有原失败及全项目出口债保留。 详见[37裁决](../reference/EXP-N1-37_residual_question_engineering_20261015.md)及[38方案](../reference/PLAN-N1-38_residual_question_calibration_review_20261015.md)。
