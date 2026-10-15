@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **当前调度修订（2026-10-15）**：[PLAN-N-01](../reference/PLAN-N-01_development_revision_20261014.md)为完整方案；C1两批通过，C2消费者/32条支持保存恢复已完成，完整消费面停在44/112臂。当前只决定累计C2预算10→12分钟，见 [预算裁决](../reference/PLAN-N1-07_C2_calibration_budget_adjudication_20261015.md) 和03。既定批次按长期授权自动推进，方案或不可逆决策仍保留；N6按当前能力包依赖排程。
+> **当前调度修订（2026-10-15）**：[PLAN-N-01](../reference/PLAN-N-01_development_revision_20261014.md)为完整方案；C1两批通过；C2校准完整112臂，CPU601.91秒，选择8/16、七臂严格命中均0/16。[完整裁决](../reference/PLAN-N1-07_C2_calibration_result_adjudication_20261015.md)已入库；当前待决定 [状态流诊断](../reference/PLAN-N1-08_C2_state_flow_diagnostic_prereg_20261015.md) 新测面和独立5分钟CPU预算，执行以03为准。既定批次按长期授权自动推进，方案或不可逆决策仍保留；N6按当前能力包依赖排程。
 
 > **2026-10-14 导航校准**：本索引的编号约定继续保留；下方累积里程碑摘要含历史状态。当前队列只看 [03](roadmap/03_CURRENT_EXECUTION.md)，N 主线看 [09](roadmap/09_NEXT_MAINLINE_PLAN.md)，整个项目按 [项目地图](../../docs/README.md) 阅读。本轮收纳见 [整理记录](../reference/PROJECT_ORGANIZATION_20261014.md)。
 

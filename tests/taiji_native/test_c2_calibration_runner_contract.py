@@ -97,3 +97,17 @@ def test_resume_preserves_once_only_surface_and_unchanged_weights() -> None:
         )
     with pytest.raises(ValueError, match="one mechanical"):
         validate_resume(dict(report, mechanical_repair={"count": 1}), selected, "frozen")
+
+
+def test_approved_budget_continuation_preserves_repair_count(monkeypatch) -> None:
+    from scripts.training import run_taiji_n1_c2_calibration as runner
+
+    previous = json.loads(runner.paths("20261015_r1")["final"].read_text(encoding="utf-8"))
+    monkeypatch.setattr(runner, "BUDGET_CONTINUATION", True)
+    runner.validate_resume(previous, items(), previous["support"]["model_parameter_digest"])
+    with pytest.raises(ValueError, match="existing one repair"):
+        runner.validate_resume(
+            dict(previous, mechanical_repair={"count": 2}),
+            items(),
+            previous["support"]["model_parameter_digest"],
+        )

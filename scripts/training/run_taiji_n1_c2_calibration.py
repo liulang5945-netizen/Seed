@@ -47,6 +47,7 @@ ITEM_IDS = (
     "V012",
 )
 CPU_LIMIT = 600.0
+BUDGET_CONTINUATION = False
 
 
 def sha(path: Path) -> str:
@@ -296,8 +297,15 @@ def validate_resume(report: dict[str, Any], selected: list[dict[str, Any]], dige
         if row["parameters_before"] != digest or row["parameters_after"] != digest:
             raise ValueError("resume contains a measurement from different weights")
         seen.add(key)
-    if report.get("mechanical_repair"):
+    if report.get("mechanical_repair") and not BUDGET_CONTINUATION:
         raise ValueError("only one mechanical repair is permitted")
+    if BUDGET_CONTINUATION and (
+        report.get("mechanical_repair", {}).get("count") != 1
+        or report.get("cpu_limit_seconds") != 600.0
+    ):
+        raise ValueError(
+            "budget continuation must retain the existing one repair and 600-second source"
+        )
 
 
 def query_phase(
@@ -503,6 +511,10 @@ def run(
         previous = json.loads(resume_report.read_text(encoding="utf-8"))
         validate_resume(previous, selected, previous["support"]["model_parameter_digest"])
         prior_run_cpu = float(previous["total_cpu_seconds"])
+        if BUDGET_CONTINUATION:
+            tail = json.loads(original["events"].read_text(encoding="utf-8").splitlines()[-1])
+            prior_run_cpu = max(prior_run_cpu, float(tail["total_cpu_seconds"]))
+            original = paths("20261015")
         if not 0 <= prior_run_cpu < CPU_LIMIT:
             raise ValueError("resume must use the remaining original CPU budget")
         for key in ("support", "audit", "checkpoint"):
@@ -528,6 +540,8 @@ def run(
             "--prior-cpu-seconds",
             str(child_cpu + timing()["cpu_seconds"]),
         ]
+        if BUDGET_CONTINUATION:
+            command.append("--budget-continuation")
         if resume_report is not None:
             command.extend(
                 ["--resume-report", str(resume_report), "--resume-run-id", resume_run_id]
@@ -591,7 +605,19 @@ def run(
         total_wall_seconds=phases["orchestrator"]["wall_seconds"],
         cpu_measurement="sum process_time of orchestrator and three phase processes; includes startup/imports and phase serialization; endpoint before final report serialization",
     )
-    if resume_report is not None:
+    if resume_report is not None and BUDGET_CONTINUATION:
+        final["mechanical_repair"] = previous["mechanical_repair"]
+        final["budget_continuation"] = {
+            "approved_date": "2026-10-15",
+            "old_cpu_limit_seconds": 600.0,
+            "new_cpu_limit_seconds": CPU_LIMIT,
+            "prior_report": str(resume_report),
+            "prior_report_sha256": sha(resume_report),
+            "prior_run_cpu_seconds": prior_run_cpu,
+            "prior_completed_arms": len(previous["rows"]),
+            "duplicate_measurements": 0,
+        }
+    elif resume_report is not None:
         final["mechanical_repair"] = {
             "count": 1,
             "reason": "replace Python storage-byte iteration with byte-identical native extraction",
@@ -628,20 +654,27 @@ def run(
 
 
 def main() -> int:
+    global CPU_LIMIT, BUDGET_CONTINUATION
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--phase", choices=("run", "support", "audit", "query"), default="run")
     parser.add_argument("--run-id", required=True)
     parser.add_argument("--prior-cpu-seconds", type=float, default=0.0)
     parser.add_argument("--resume-run-id")
     parser.add_argument("--resume-report", type=Path)
+    parser.add_argument("--budget-continuation", action="store_true")
     args = parser.parse_args()
+    if args.budget_continuation:
+        if args.resume_run_id != "20261015_r1":
+            parser.error("approved budget continuation must resume 20261015_r1")
+        CPU_LIMIT = 720.0
+        BUDGET_CONTINUATION = True
     torch.set_num_threads(1)
     files = paths(args.run_id)
     selected = items()
     if args.phase == "run":
         return run(selected, files, args.run_id, args.resume_run_id)
     if args.resume_report is not None:
-        original = paths(args.resume_run_id)
+        original = paths("20261015" if BUDGET_CONTINUATION else args.resume_run_id)
         for key in ("support", "audit", "checkpoint"):
             files[key] = original[key]
     try:

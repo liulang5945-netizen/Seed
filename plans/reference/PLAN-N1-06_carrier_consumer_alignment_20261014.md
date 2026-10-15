@@ -1,5 +1,6 @@
 # PLAN-N1-06 · N1 载体与消费实施附件（2026-10-14，C0 冻结版 r1）
 
+> **2026-10-15 最新执行状态**：累计12分钟预算已批准并完成112臂，CPU尾端601.90625秒；严格命中七臂均0/16。现行结果与唯一下一步见 [完整裁决](PLAN-N1-07_C2_calibration_result_adjudication_20261015.md)，原预算申请已关闭；新增状态流取数测面仍须owner决定。
 本附件落实 [开发计划修订](PLAN-N-01_development_revision_20261014.md) 的 C0，冻结 C1 的实现身份供 owner 决策。本文只有代码核对和容量测算，没有新行为结果；不构成动码、计算或训练授权。继承 [PLAN-N1-05](PLAN-N1-05_persistent_stepwise_carrier_prereg_20261014.md) 五条载体判据和默认中性守卫；消费与信用的新协议须按本附件列明的差异另冻版本，不追改 [PLAN-N1-04](PLAN-N1-04_s1b_reactivation_implementation_prereg_20261014.md)。
 
 ## 1. 信息流与继承范围
