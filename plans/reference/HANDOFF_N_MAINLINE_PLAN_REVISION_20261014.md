@@ -40,3 +40,6 @@ PLAN-N1-06 r1 的 C1 规格已实现并按完整面通过。两臂均为96项／
 
 2026-10-15：18新课程准入完成，train/dev/holdout 192/32/32，96个不同训练目标词，正目标26字母最少15次；12项零更新预检通过，CPU1.578125秒，未查询dev/holdout。见[18裁决](EXP-N1-18_v3_curriculum_admission_20261015.md)。唯一后继为v3独立train-only充分性校准，先定学习剂量/成本再冻结新三臂配对。
 
+
+19待执行：SPEC-N1-19_v3_train_sufficiency_calibration_20261015.md、scripts/training/run_taiji_n1_v3_train_calibration.py，6144更新/独立300秒CPU、0 dev/holdout；26项前置合同通过。无需重复请求同类低成本权限。
+

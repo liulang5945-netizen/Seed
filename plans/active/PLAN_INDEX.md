@@ -807,3 +807,6 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 
 2026-10-15：[18新课程准入](../reference/EXP-N1-18_v3_curriculum_admission_20261015.md)完成，零更新预检通过；当前后继为v3 train-only学习充分性校准。
 
+
+2026-10-15：[SPEC19](../reference/SPEC-N1-19_v3_train_sufficiency_calibration_20261015.md)冻结v3新初始化seed11、6144更新/300秒CPU、train-only五节点；26项前置合同通过，尚无训练结果。
+
