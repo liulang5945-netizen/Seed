@@ -1,0 +1,2555 @@
+{
+  "schema": "bound-consistency54-preflight-v1",
+  "parameter_updates": 0,
+  "curriculum_queries": 0,
+  "free_queries": 0,
+  "dev_queries": 0,
+  "holdout_queries": 0,
+  "code_identity": {
+    "source": {
+      "protocol": {
+        "schema": "n1-contextual-question-train-v1",
+        "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+        "seed": 11,
+        "arm": "position",
+        "initialization": "explicit51-all49-adam-new-context-seed11",
+        "updates": 6144,
+        "milestones": [
+          0,
+          3072,
+          6144
+        ],
+        "optimizer": "Adam",
+        "learning_rate": 0.001,
+        "dimensions": {
+          "embedding": 16,
+          "hidden": 32,
+          "key": 16
+        },
+        "max_length": 64,
+        "cpu_limit_seconds": 300,
+        "dev_queries": 0,
+        "holdout_queries": 0,
+        "train_gate": {
+          "exact": 173,
+          "each_kind": 40
+        },
+        "question_mechanism": "ordered-local-context-question-gate-v1",
+        "new_parameter_count": 8000,
+        "local_question_mechanism": "shared-five-byte-cosine-question-residual-v1",
+        "new_parameter_final_adam_step": 6144,
+        "reader_final_adam_step": 18432,
+        "local_final_adam_step": 12288,
+        "context_final_adam_step": 6144,
+        "context_question_mechanism": "byte-context-confidence-gru-zero-channel-gate-v1",
+        "source_updates": 6144,
+        "source_historical_updates": 21504,
+        "final_historical_updates": 27648,
+        "source_report_sha256": "7347b34b7a987fc1014aaac91e2168f9532e1dba4e607f5b50d6650f69b93af3",
+        "source_checkpoint_sha256": "6bee31b7fe0c5ffe384172a365d65b84071f76c8c96c07ce8aee308ebd0b157e",
+        "read_hops": 2,
+        "candidate_format": "taiji-native-contextual-question-evidence-candidate-v1",
+        "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+        "parameter_count": 55480,
+        "loss_contract": "taiji-paired-question-observation-fidelity-v1",
+        "prior_loss_contract": "taiji-observation-byte-fidelity-v1",
+        "paired_manifest_sha256": "1c3857b1ae66c227503d443ea13051a4dbaa0b65707f4fb259a3fe64c222fddb",
+        "qa_sequences": 9216,
+        "pair_gate": 87,
+        "curriculum_sha256": "c44ea78f40d7255688013eb4054ae803bd04ee97dc5ba2e0c02b82e301ce6fdd",
+        "rename_gate": {
+          "exact": 173,
+          "each_kind": 40,
+          "pair_exact": 87
+        },
+        "observation_weight": 0.25,
+        "baseline_sha256": "c052081286d31a98caf63e5a74f7b37fdd6b5b5fdea0a2604507c0c008198c74"
+      },
+      "code_sha256": {
+        "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+        "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+        "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+        "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+        "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+        "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+        "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+        "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+        "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+        "taiji/native_contextual_question_evidence_candidate.py": "eea76d2fe540a3a22c6441b525df235801995914a421903cb30bd26c94dee70d",
+        "taiji/native_local_question_evidence_candidate.py": "2fb13f271ceab7880966a03702a12e9a9d35bd306b05dd3c1c593d84e84fba74",
+        "scripts/training/_taiji_n1_contextual_question_transfer.py": "6da537a81d3f655db0d6ff0e23256ea8f67797ac78e69dd7bd124646c44cdd10",
+        "scripts/training/_taiji_n1_renaming_curriculum.py": "b586b2458cddaf0e46f834a2700cdd75c7687f6fe072685d1c1b44feefa7fa23",
+        "taiji/native_paired_question_learning.py": "3f44c934feb2bb2cb935c46dd87f565a89c63df2360fa32e1dad27ab22536656",
+        "taiji/native_residual_question_evidence_candidate.py": "896ff8ec6d3c8c42526237e546872942c19ac1b26a10c253b19dce7c1267397e",
+        "taiji/native_question_aligned_evidence_candidate.py": "7615d3768eed94eaf68340eeda10ac4eaada47228e937fd61168c614e6e89878",
+        "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+        "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+        "scripts/training/audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+        "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+        "scripts\\training\\run_taiji_n1_contextual_question.py": "8078ef43a8854bd5205deb5df822903e79c145b5c0562d7c7742f58097e62ba9"
+      },
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "torch": "2.13.0+cpu",
+      "pretrained_source_code": {
+        "protocol": {
+          "schema": "n1-reader-transfer-train-v1",
+          "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+          "seed": 11,
+          "arm": "position",
+          "initialization": "transfer-fixed-s11-relative-9216-fresh-adam-new-rng",
+          "updates": 6144,
+          "milestones": [
+            0,
+            3072,
+            6144
+          ],
+          "optimizer": "Adam",
+          "learning_rate": 0.001,
+          "dimensions": {
+            "embedding": 16,
+            "hidden": 32,
+            "key": 16
+          },
+          "max_length": 64,
+          "cpu_limit_seconds": 300,
+          "dev_queries": 0,
+          "holdout_queries": 0,
+          "train_gate": {
+            "exact": 173,
+            "each_kind": 40
+          },
+          "question_mechanism": "all-question-byte-zero-initialized-residual-v1",
+          "source_updates": 9216,
+          "source_report_sha256": "871f054fcff6a72f713849de2a8b3b1ae6680e4581bccad317fef65a3c133045",
+          "source_checkpoint_sha256": "e274c81914ccc86dacaf9cf3b7690bc8126f671b24b104e8e153f793eb422747",
+          "read_hops": 2,
+          "candidate_format": "taiji-native-residual-question-evidence-candidate-v1",
+          "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+          "parameter_count": 44085,
+          "loss_contract": "taiji-paired-question-observation-fidelity-v1",
+          "prior_loss_contract": "taiji-observation-byte-fidelity-v1",
+          "paired_manifest_sha256": "1c3857b1ae66c227503d443ea13051a4dbaa0b65707f4fb259a3fe64c222fddb",
+          "qa_sequences": 9216,
+          "pair_gate": 87,
+          "observation_weight": 0.25,
+          "baseline_sha256": "50155a01e1159aad3d78ed49dc9d6b8c177e4a48ab3c1c33e09219e3a4f0e1bd"
+        },
+        "code_sha256": {
+          "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+          "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+          "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+          "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+          "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+          "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+          "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+          "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+          "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+          "taiji/native_paired_question_learning.py": "3f44c934feb2bb2cb935c46dd87f565a89c63df2360fa32e1dad27ab22536656",
+          "taiji/native_residual_question_evidence_candidate.py": "896ff8ec6d3c8c42526237e546872942c19ac1b26a10c253b19dce7c1267397e",
+          "taiji/native_question_aligned_evidence_candidate.py": "7615d3768eed94eaf68340eeda10ac4eaada47228e937fd61168c614e6e89878",
+          "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+          "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+          "scripts/training/audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+          "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+          "scripts\\training\\run_taiji_n1_reader_transfer.py": "ae00dbce2bce493e27ca9732f1a75a7545c8b466a0c951fccf7442dcdf9a2905"
+        },
+        "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+        "torch": "2.13.0+cpu",
+        "pretrained_source_code": {
+          "protocol": {
+            "schema": "n1-relative-continuation-v1",
+            "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+            "initialization": "restore-all-nine-final-adam-rng",
+            "optimizer": "Adam",
+            "learning_rate": 0.001,
+            "dimensions": {
+              "embedding": 16,
+              "hidden": 32,
+              "key": 16
+            },
+            "max_length": 64,
+            "cpu_limit_seconds": 600,
+            "dev_queries": 0,
+            "train_gate": {
+              "exact": 173,
+              "each_kind": 40
+            },
+            "read_hops": 2,
+            "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+            "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+            "parameter_count": 40469,
+            "loss_contract": "taiji-observation-byte-fidelity-v1",
+            "observation_weight": 0.25,
+            "baseline_sha256": "b10fe3092c9fa6abd08f64fed48f02e59c4261a20c58a49a85f9702d0c5e06dd",
+            "seeds": [
+              11,
+              12,
+              13
+            ],
+            "arms": [
+              "position",
+              "terminal",
+              "cut"
+            ],
+            "updates_per_model": 3072,
+            "total_updates": 27648,
+            "holdout_requires_all_training_sufficient": true,
+            "holdout_rows_if_sufficient": 288,
+            "holdout_gates": {
+              "each_seed": 16,
+              "each_kind": 2,
+              "total_gap_each_control": 12
+            },
+            "starting_updates_per_model": 6144,
+            "cumulative_updates_per_model": 9216,
+            "cpu_includes_engineering_preflight": true
+          },
+          "pilot_code": {
+            "protocol": {
+              "schema": "n1-relative-evidence-train-v1",
+              "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+              "seed": 11,
+              "arm": "position",
+              "initialization": "fresh",
+              "updates": 6144,
+              "milestones": [
+                0,
+                768,
+                1536,
+                3072,
+                6144
+              ],
+              "optimizer": "Adam",
+              "learning_rate": 0.001,
+              "dimensions": {
+                "embedding": 16,
+                "hidden": 32,
+                "key": 16
+              },
+              "max_length": 64,
+              "cpu_limit_seconds": 300,
+              "dev_queries": 0,
+              "holdout_queries": 0,
+              "train_gate": {
+                "exact": 173,
+                "each_kind": 40
+              },
+              "read_hops": 2,
+              "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+              "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+              "parameter_count": 40469,
+              "loss_contract": "taiji-observation-byte-fidelity-v1",
+              "observation_weight": 0.25,
+              "baseline_sha256": "874d06d0452b7e09305232eed3c7d7d95a62f9de82b1971ee35bc1f49f1dff4b"
+            },
+            "code_sha256": {
+              "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+              "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+              "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+              "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+              "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+              "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+              "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+              "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+              "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+              "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+              "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+              "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+              "scripts\\training\\run_taiji_n1_relative_read.py": "4e6ca287770a44e9a7aaf36d47fbc01622bb89e3fe57d6fd2d1405d06fd0489b"
+            },
+            "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+            "torch": "2.13.0+cpu"
+          },
+          "source_code": {
+            "protocol": {
+              "schema": "n1-relative-paired-v1",
+              "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+              "initialization": "fresh",
+              "optimizer": "Adam",
+              "learning_rate": 0.001,
+              "dimensions": {
+                "embedding": 16,
+                "hidden": 32,
+                "key": 16
+              },
+              "max_length": 64,
+              "cpu_limit_seconds": 1200,
+              "dev_queries": 0,
+              "train_gate": {
+                "exact": 173,
+                "each_kind": 40
+              },
+              "read_hops": 2,
+              "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+              "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+              "parameter_count": 40469,
+              "loss_contract": "taiji-observation-byte-fidelity-v1",
+              "observation_weight": 0.25,
+              "baseline_sha256": "12499936af3b0941acff083e67ec13e4f5a95c29d8c7674cb98aec3f5458a1fe",
+              "seeds": [
+                11,
+                12,
+                13
+              ],
+              "arms": [
+                "position",
+                "terminal",
+                "cut"
+              ],
+              "updates_per_model": 6144,
+              "total_updates": 55296,
+              "holdout_requires_all_training_sufficient": true,
+              "holdout_rows_if_sufficient": 288,
+              "holdout_gates": {
+                "each_seed": 16,
+                "each_kind": 2,
+                "total_gap_each_control": 12
+              }
+            },
+            "pilot_code": {
+              "protocol": {
+                "schema": "n1-relative-evidence-train-v1",
+                "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                "seed": 11,
+                "arm": "position",
+                "initialization": "fresh",
+                "updates": 6144,
+                "milestones": [
+                  0,
+                  768,
+                  1536,
+                  3072,
+                  6144
+                ],
+                "optimizer": "Adam",
+                "learning_rate": 0.001,
+                "dimensions": {
+                  "embedding": 16,
+                  "hidden": 32,
+                  "key": 16
+                },
+                "max_length": 64,
+                "cpu_limit_seconds": 300,
+                "dev_queries": 0,
+                "holdout_queries": 0,
+                "train_gate": {
+                  "exact": 173,
+                  "each_kind": 40
+                },
+                "read_hops": 2,
+                "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                "parameter_count": 40469,
+                "loss_contract": "taiji-observation-byte-fidelity-v1",
+                "observation_weight": 0.25,
+                "baseline_sha256": "874d06d0452b7e09305232eed3c7d7d95a62f9de82b1971ee35bc1f49f1dff4b"
+              },
+              "code_sha256": {
+                "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+                "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+                "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+                "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+                "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+                "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+                "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+                "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+                "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+                "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+                "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+                "scripts\\training\\run_taiji_n1_relative_read.py": "4e6ca287770a44e9a7aaf36d47fbc01622bb89e3fe57d6fd2d1405d06fd0489b"
+              },
+              "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+              "torch": "2.13.0+cpu"
+            },
+            "runner_sha256": "01f040674f2570edf3bc17330564bc2c299d7c255b082a9c0c5f1ab61322e59b"
+          },
+          "runner_sha256": "490daade112a75d5ab97527f8ba9dcadad2de4875d0dae100eb3452db1d473b1"
+        }
+      },
+      "engineering_code": {
+        "source": {
+          "protocol": {
+            "schema": "n1-local-question-train-v1",
+            "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+            "seed": 11,
+            "arm": "position",
+            "initialization": "explicit48-shared41-adam-new-heads-seed11",
+            "updates": 6144,
+            "milestones": [
+              0,
+              3072,
+              6144
+            ],
+            "optimizer": "Adam",
+            "learning_rate": 0.001,
+            "dimensions": {
+              "embedding": 16,
+              "hidden": 32,
+              "key": 16
+            },
+            "max_length": 64,
+            "cpu_limit_seconds": 300,
+            "dev_queries": 0,
+            "holdout_queries": 0,
+            "train_gate": {
+              "exact": 173,
+              "each_kind": 40
+            },
+            "question_mechanism": "local-byte-window-observation-conditioned-residual-v1",
+            "new_parameter_count": 3395,
+            "local_question_mechanism": "shared-five-byte-cosine-question-residual-v1",
+            "new_parameter_final_adam_step": 6144,
+            "shared_parameter_final_adam_step": 12288,
+            "source_updates": 6144,
+            "source_historical_updates": 15360,
+            "final_historical_updates": 21504,
+            "source_report_sha256": "fe50c400f12d2258979238ee00105ff09e6131d7548640b3de273f34ba50f9d5",
+            "source_checkpoint_sha256": "f500f49e5b5d75ea5c30701f73312050a0bb44b47c4c10fbf8aedc85a155090c",
+            "read_hops": 2,
+            "candidate_format": "taiji-native-local-question-evidence-candidate-v1",
+            "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+            "parameter_count": 47480,
+            "loss_contract": "taiji-paired-question-observation-fidelity-v1",
+            "prior_loss_contract": "taiji-observation-byte-fidelity-v1",
+            "paired_manifest_sha256": "1c3857b1ae66c227503d443ea13051a4dbaa0b65707f4fb259a3fe64c222fddb",
+            "qa_sequences": 9216,
+            "pair_gate": 87,
+            "curriculum_sha256": "c44ea78f40d7255688013eb4054ae803bd04ee97dc5ba2e0c02b82e301ce6fdd",
+            "rename_gate": {
+              "exact": 173,
+              "each_kind": 40,
+              "pair_exact": 87
+            },
+            "observation_weight": 0.25,
+            "baseline_sha256": "f75336a2cacfd35c18ca8743202c868df04cfa0aa0ab4d004e4d7d6889e9e719"
+          },
+          "code_sha256": {
+            "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+            "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+            "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+            "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+            "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+            "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+            "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+            "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+            "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+            "taiji/native_local_question_evidence_candidate.py": "2fb13f271ceab7880966a03702a12e9a9d35bd306b05dd3c1c593d84e84fba74",
+            "scripts/training/_taiji_n1_local_question_transfer.py": "e1d0e211fcc36289233161b3424ad0819020bfa7d4269fc8ea4ec4215e52e74f",
+            "scripts/training/_taiji_n1_renaming_curriculum.py": "b586b2458cddaf0e46f834a2700cdd75c7687f6fe072685d1c1b44feefa7fa23",
+            "taiji/native_paired_question_learning.py": "3f44c934feb2bb2cb935c46dd87f565a89c63df2360fa32e1dad27ab22536656",
+            "taiji/native_residual_question_evidence_candidate.py": "896ff8ec6d3c8c42526237e546872942c19ac1b26a10c253b19dce7c1267397e",
+            "taiji/native_question_aligned_evidence_candidate.py": "7615d3768eed94eaf68340eeda10ac4eaada47228e937fd61168c614e6e89878",
+            "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+            "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+            "scripts/training/audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+            "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+            "scripts\\training\\run_taiji_n1_local_question.py": "f1fb4530954f545eb06cfe5d1b06c01f60332192ae78bfa5b2166d3b8a6ba77a"
+          },
+          "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+          "torch": "2.13.0+cpu",
+          "pretrained_source_code": {
+            "protocol": {
+              "schema": "n1-reader-transfer-train-v1",
+              "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+              "seed": 11,
+              "arm": "position",
+              "initialization": "transfer-fixed-s11-relative-9216-fresh-adam-new-rng",
+              "updates": 6144,
+              "milestones": [
+                0,
+                3072,
+                6144
+              ],
+              "optimizer": "Adam",
+              "learning_rate": 0.001,
+              "dimensions": {
+                "embedding": 16,
+                "hidden": 32,
+                "key": 16
+              },
+              "max_length": 64,
+              "cpu_limit_seconds": 300,
+              "dev_queries": 0,
+              "holdout_queries": 0,
+              "train_gate": {
+                "exact": 173,
+                "each_kind": 40
+              },
+              "question_mechanism": "all-question-byte-zero-initialized-residual-v1",
+              "source_updates": 9216,
+              "source_report_sha256": "871f054fcff6a72f713849de2a8b3b1ae6680e4581bccad317fef65a3c133045",
+              "source_checkpoint_sha256": "e274c81914ccc86dacaf9cf3b7690bc8126f671b24b104e8e153f793eb422747",
+              "read_hops": 2,
+              "candidate_format": "taiji-native-residual-question-evidence-candidate-v1",
+              "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+              "parameter_count": 44085,
+              "loss_contract": "taiji-paired-question-observation-fidelity-v1",
+              "prior_loss_contract": "taiji-observation-byte-fidelity-v1",
+              "paired_manifest_sha256": "1c3857b1ae66c227503d443ea13051a4dbaa0b65707f4fb259a3fe64c222fddb",
+              "qa_sequences": 9216,
+              "pair_gate": 87,
+              "observation_weight": 0.25,
+              "baseline_sha256": "50155a01e1159aad3d78ed49dc9d6b8c177e4a48ab3c1c33e09219e3a4f0e1bd"
+            },
+            "code_sha256": {
+              "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+              "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+              "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+              "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+              "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+              "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+              "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+              "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+              "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+              "taiji/native_paired_question_learning.py": "3f44c934feb2bb2cb935c46dd87f565a89c63df2360fa32e1dad27ab22536656",
+              "taiji/native_residual_question_evidence_candidate.py": "896ff8ec6d3c8c42526237e546872942c19ac1b26a10c253b19dce7c1267397e",
+              "taiji/native_question_aligned_evidence_candidate.py": "7615d3768eed94eaf68340eeda10ac4eaada47228e937fd61168c614e6e89878",
+              "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+              "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+              "scripts/training/audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+              "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+              "scripts\\training\\run_taiji_n1_reader_transfer.py": "ae00dbce2bce493e27ca9732f1a75a7545c8b466a0c951fccf7442dcdf9a2905"
+            },
+            "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+            "torch": "2.13.0+cpu",
+            "pretrained_source_code": {
+              "protocol": {
+                "schema": "n1-relative-continuation-v1",
+                "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                "initialization": "restore-all-nine-final-adam-rng",
+                "optimizer": "Adam",
+                "learning_rate": 0.001,
+                "dimensions": {
+                  "embedding": 16,
+                  "hidden": 32,
+                  "key": 16
+                },
+                "max_length": 64,
+                "cpu_limit_seconds": 600,
+                "dev_queries": 0,
+                "train_gate": {
+                  "exact": 173,
+                  "each_kind": 40
+                },
+                "read_hops": 2,
+                "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                "parameter_count": 40469,
+                "loss_contract": "taiji-observation-byte-fidelity-v1",
+                "observation_weight": 0.25,
+                "baseline_sha256": "b10fe3092c9fa6abd08f64fed48f02e59c4261a20c58a49a85f9702d0c5e06dd",
+                "seeds": [
+                  11,
+                  12,
+                  13
+                ],
+                "arms": [
+                  "position",
+                  "terminal",
+                  "cut"
+                ],
+                "updates_per_model": 3072,
+                "total_updates": 27648,
+                "holdout_requires_all_training_sufficient": true,
+                "holdout_rows_if_sufficient": 288,
+                "holdout_gates": {
+                  "each_seed": 16,
+                  "each_kind": 2,
+                  "total_gap_each_control": 12
+                },
+                "starting_updates_per_model": 6144,
+                "cumulative_updates_per_model": 9216,
+                "cpu_includes_engineering_preflight": true
+              },
+              "pilot_code": {
+                "protocol": {
+                  "schema": "n1-relative-evidence-train-v1",
+                  "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                  "seed": 11,
+                  "arm": "position",
+                  "initialization": "fresh",
+                  "updates": 6144,
+                  "milestones": [
+                    0,
+                    768,
+                    1536,
+                    3072,
+                    6144
+                  ],
+                  "optimizer": "Adam",
+                  "learning_rate": 0.001,
+                  "dimensions": {
+                    "embedding": 16,
+                    "hidden": 32,
+                    "key": 16
+                  },
+                  "max_length": 64,
+                  "cpu_limit_seconds": 300,
+                  "dev_queries": 0,
+                  "holdout_queries": 0,
+                  "train_gate": {
+                    "exact": 173,
+                    "each_kind": 40
+                  },
+                  "read_hops": 2,
+                  "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                  "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                  "parameter_count": 40469,
+                  "loss_contract": "taiji-observation-byte-fidelity-v1",
+                  "observation_weight": 0.25,
+                  "baseline_sha256": "874d06d0452b7e09305232eed3c7d7d95a62f9de82b1971ee35bc1f49f1dff4b"
+                },
+                "code_sha256": {
+                  "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+                  "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+                  "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+                  "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+                  "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+                  "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+                  "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+                  "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+                  "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                  "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+                  "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+                  "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+                  "scripts\\training\\run_taiji_n1_relative_read.py": "4e6ca287770a44e9a7aaf36d47fbc01622bb89e3fe57d6fd2d1405d06fd0489b"
+                },
+                "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+                "torch": "2.13.0+cpu"
+              },
+              "source_code": {
+                "protocol": {
+                  "schema": "n1-relative-paired-v1",
+                  "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                  "initialization": "fresh",
+                  "optimizer": "Adam",
+                  "learning_rate": 0.001,
+                  "dimensions": {
+                    "embedding": 16,
+                    "hidden": 32,
+                    "key": 16
+                  },
+                  "max_length": 64,
+                  "cpu_limit_seconds": 1200,
+                  "dev_queries": 0,
+                  "train_gate": {
+                    "exact": 173,
+                    "each_kind": 40
+                  },
+                  "read_hops": 2,
+                  "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                  "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                  "parameter_count": 40469,
+                  "loss_contract": "taiji-observation-byte-fidelity-v1",
+                  "observation_weight": 0.25,
+                  "baseline_sha256": "12499936af3b0941acff083e67ec13e4f5a95c29d8c7674cb98aec3f5458a1fe",
+                  "seeds": [
+                    11,
+                    12,
+                    13
+                  ],
+                  "arms": [
+                    "position",
+                    "terminal",
+                    "cut"
+                  ],
+                  "updates_per_model": 6144,
+                  "total_updates": 55296,
+                  "holdout_requires_all_training_sufficient": true,
+                  "holdout_rows_if_sufficient": 288,
+                  "holdout_gates": {
+                    "each_seed": 16,
+                    "each_kind": 2,
+                    "total_gap_each_control": 12
+                  }
+                },
+                "pilot_code": {
+                  "protocol": {
+                    "schema": "n1-relative-evidence-train-v1",
+                    "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                    "seed": 11,
+                    "arm": "position",
+                    "initialization": "fresh",
+                    "updates": 6144,
+                    "milestones": [
+                      0,
+                      768,
+                      1536,
+                      3072,
+                      6144
+                    ],
+                    "optimizer": "Adam",
+                    "learning_rate": 0.001,
+                    "dimensions": {
+                      "embedding": 16,
+                      "hidden": 32,
+                      "key": 16
+                    },
+                    "max_length": 64,
+                    "cpu_limit_seconds": 300,
+                    "dev_queries": 0,
+                    "holdout_queries": 0,
+                    "train_gate": {
+                      "exact": 173,
+                      "each_kind": 40
+                    },
+                    "read_hops": 2,
+                    "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                    "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                    "parameter_count": 40469,
+                    "loss_contract": "taiji-observation-byte-fidelity-v1",
+                    "observation_weight": 0.25,
+                    "baseline_sha256": "874d06d0452b7e09305232eed3c7d7d95a62f9de82b1971ee35bc1f49f1dff4b"
+                  },
+                  "code_sha256": {
+                    "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+                    "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+                    "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+                    "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+                    "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+                    "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+                    "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+                    "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+                    "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                    "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+                    "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+                    "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+                    "scripts\\training\\run_taiji_n1_relative_read.py": "4e6ca287770a44e9a7aaf36d47fbc01622bb89e3fe57d6fd2d1405d06fd0489b"
+                  },
+                  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+                  "torch": "2.13.0+cpu"
+                },
+                "runner_sha256": "01f040674f2570edf3bc17330564bc2c299d7c255b082a9c0c5f1ab61322e59b"
+              },
+              "runner_sha256": "490daade112a75d5ab97527f8ba9dcadad2de4875d0dae100eb3452db1d473b1"
+            }
+          },
+          "engineering_code": {
+            "source": {
+              "protocol": {
+                "schema": "n1-renaming-train-v2",
+                "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                "seed": 11,
+                "arm": "position",
+                "initialization": "restore-complete-frozen-41-adam-rng",
+                "updates": 6144,
+                "milestones": [
+                  0,
+                  3072,
+                  6144
+                ],
+                "optimizer": "Adam",
+                "learning_rate": 0.001,
+                "dimensions": {
+                  "embedding": 16,
+                  "hidden": 32,
+                  "key": 16
+                },
+                "max_length": 64,
+                "cpu_limit_seconds": 300,
+                "dev_queries": 0,
+                "holdout_queries": 0,
+                "train_gate": {
+                  "exact": 173,
+                  "each_kind": 40
+                },
+                "question_mechanism": "all-question-byte-zero-initialized-residual-v1",
+                "source_updates": 6144,
+                "source_historical_updates": 15360,
+                "final_historical_updates": 21504,
+                "source_report_sha256": "fe50c400f12d2258979238ee00105ff09e6131d7548640b3de273f34ba50f9d5",
+                "source_checkpoint_sha256": "f500f49e5b5d75ea5c30701f73312050a0bb44b47c4c10fbf8aedc85a155090c",
+                "read_hops": 2,
+                "candidate_format": "taiji-native-residual-question-evidence-candidate-v1",
+                "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                "parameter_count": 44085,
+                "loss_contract": "taiji-paired-question-observation-fidelity-v1",
+                "prior_loss_contract": "taiji-observation-byte-fidelity-v1",
+                "paired_manifest_sha256": "1c3857b1ae66c227503d443ea13051a4dbaa0b65707f4fb259a3fe64c222fddb",
+                "qa_sequences": 9216,
+                "pair_gate": 87,
+                "curriculum_sha256": "c44ea78f40d7255688013eb4054ae803bd04ee97dc5ba2e0c02b82e301ce6fdd",
+                "rename_gate": {
+                  "exact": 173,
+                  "each_kind": 40,
+                  "pair_exact": 87
+                },
+                "observation_weight": 0.25,
+                "baseline_sha256": "50155a01e1159aad3d78ed49dc9d6b8c177e4a48ab3c1c33e09219e3a4f0e1bd"
+              },
+              "code_sha256": {
+                "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+                "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+                "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+                "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+                "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+                "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+                "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+                "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+                "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                "scripts/training/_taiji_n1_renaming_curriculum.py": "b586b2458cddaf0e46f834a2700cdd75c7687f6fe072685d1c1b44feefa7fa23",
+                "taiji/native_paired_question_learning.py": "3f44c934feb2bb2cb935c46dd87f565a89c63df2360fa32e1dad27ab22536656",
+                "taiji/native_residual_question_evidence_candidate.py": "896ff8ec6d3c8c42526237e546872942c19ac1b26a10c253b19dce7c1267397e",
+                "taiji/native_question_aligned_evidence_candidate.py": "7615d3768eed94eaf68340eeda10ac4eaada47228e937fd61168c614e6e89878",
+                "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+                "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+                "scripts/training/audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+                "scripts\\training\\run_taiji_n1_renaming.py": "b5b861f1f79bd20c1b4a6a2c39bc02250dc9f5c4ca526189f288c5e14cb767b5"
+              },
+              "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+              "torch": "2.13.0+cpu",
+              "pretrained_source_code": {
+                "protocol": {
+                  "schema": "n1-reader-transfer-train-v1",
+                  "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                  "seed": 11,
+                  "arm": "position",
+                  "initialization": "transfer-fixed-s11-relative-9216-fresh-adam-new-rng",
+                  "updates": 6144,
+                  "milestones": [
+                    0,
+                    3072,
+                    6144
+                  ],
+                  "optimizer": "Adam",
+                  "learning_rate": 0.001,
+                  "dimensions": {
+                    "embedding": 16,
+                    "hidden": 32,
+                    "key": 16
+                  },
+                  "max_length": 64,
+                  "cpu_limit_seconds": 300,
+                  "dev_queries": 0,
+                  "holdout_queries": 0,
+                  "train_gate": {
+                    "exact": 173,
+                    "each_kind": 40
+                  },
+                  "question_mechanism": "all-question-byte-zero-initialized-residual-v1",
+                  "source_updates": 9216,
+                  "source_report_sha256": "871f054fcff6a72f713849de2a8b3b1ae6680e4581bccad317fef65a3c133045",
+                  "source_checkpoint_sha256": "e274c81914ccc86dacaf9cf3b7690bc8126f671b24b104e8e153f793eb422747",
+                  "read_hops": 2,
+                  "candidate_format": "taiji-native-residual-question-evidence-candidate-v1",
+                  "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                  "parameter_count": 44085,
+                  "loss_contract": "taiji-paired-question-observation-fidelity-v1",
+                  "prior_loss_contract": "taiji-observation-byte-fidelity-v1",
+                  "paired_manifest_sha256": "1c3857b1ae66c227503d443ea13051a4dbaa0b65707f4fb259a3fe64c222fddb",
+                  "qa_sequences": 9216,
+                  "pair_gate": 87,
+                  "observation_weight": 0.25,
+                  "baseline_sha256": "50155a01e1159aad3d78ed49dc9d6b8c177e4a48ab3c1c33e09219e3a4f0e1bd"
+                },
+                "code_sha256": {
+                  "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+                  "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+                  "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+                  "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+                  "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+                  "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+                  "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+                  "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+                  "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                  "taiji/native_paired_question_learning.py": "3f44c934feb2bb2cb935c46dd87f565a89c63df2360fa32e1dad27ab22536656",
+                  "taiji/native_residual_question_evidence_candidate.py": "896ff8ec6d3c8c42526237e546872942c19ac1b26a10c253b19dce7c1267397e",
+                  "taiji/native_question_aligned_evidence_candidate.py": "7615d3768eed94eaf68340eeda10ac4eaada47228e937fd61168c614e6e89878",
+                  "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+                  "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+                  "scripts/training/audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                  "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+                  "scripts\\training\\run_taiji_n1_reader_transfer.py": "ae00dbce2bce493e27ca9732f1a75a7545c8b466a0c951fccf7442dcdf9a2905"
+                },
+                "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+                "torch": "2.13.0+cpu",
+                "pretrained_source_code": {
+                  "protocol": {
+                    "schema": "n1-relative-continuation-v1",
+                    "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                    "initialization": "restore-all-nine-final-adam-rng",
+                    "optimizer": "Adam",
+                    "learning_rate": 0.001,
+                    "dimensions": {
+                      "embedding": 16,
+                      "hidden": 32,
+                      "key": 16
+                    },
+                    "max_length": 64,
+                    "cpu_limit_seconds": 600,
+                    "dev_queries": 0,
+                    "train_gate": {
+                      "exact": 173,
+                      "each_kind": 40
+                    },
+                    "read_hops": 2,
+                    "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                    "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                    "parameter_count": 40469,
+                    "loss_contract": "taiji-observation-byte-fidelity-v1",
+                    "observation_weight": 0.25,
+                    "baseline_sha256": "b10fe3092c9fa6abd08f64fed48f02e59c4261a20c58a49a85f9702d0c5e06dd",
+                    "seeds": [
+                      11,
+                      12,
+                      13
+                    ],
+                    "arms": [
+                      "position",
+                      "terminal",
+                      "cut"
+                    ],
+                    "updates_per_model": 3072,
+                    "total_updates": 27648,
+                    "holdout_requires_all_training_sufficient": true,
+                    "holdout_rows_if_sufficient": 288,
+                    "holdout_gates": {
+                      "each_seed": 16,
+                      "each_kind": 2,
+                      "total_gap_each_control": 12
+                    },
+                    "starting_updates_per_model": 6144,
+                    "cumulative_updates_per_model": 9216,
+                    "cpu_includes_engineering_preflight": true
+                  },
+                  "pilot_code": {
+                    "protocol": {
+                      "schema": "n1-relative-evidence-train-v1",
+                      "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                      "seed": 11,
+                      "arm": "position",
+                      "initialization": "fresh",
+                      "updates": 6144,
+                      "milestones": [
+                        0,
+                        768,
+                        1536,
+                        3072,
+                        6144
+                      ],
+                      "optimizer": "Adam",
+                      "learning_rate": 0.001,
+                      "dimensions": {
+                        "embedding": 16,
+                        "hidden": 32,
+                        "key": 16
+                      },
+                      "max_length": 64,
+                      "cpu_limit_seconds": 300,
+                      "dev_queries": 0,
+                      "holdout_queries": 0,
+                      "train_gate": {
+                        "exact": 173,
+                        "each_kind": 40
+                      },
+                      "read_hops": 2,
+                      "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                      "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                      "parameter_count": 40469,
+                      "loss_contract": "taiji-observation-byte-fidelity-v1",
+                      "observation_weight": 0.25,
+                      "baseline_sha256": "874d06d0452b7e09305232eed3c7d7d95a62f9de82b1971ee35bc1f49f1dff4b"
+                    },
+                    "code_sha256": {
+                      "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+                      "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+                      "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+                      "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+                      "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+                      "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+                      "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+                      "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+                      "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                      "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+                      "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+                      "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+                      "scripts\\training\\run_taiji_n1_relative_read.py": "4e6ca287770a44e9a7aaf36d47fbc01622bb89e3fe57d6fd2d1405d06fd0489b"
+                    },
+                    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+                    "torch": "2.13.0+cpu"
+                  },
+                  "source_code": {
+                    "protocol": {
+                      "schema": "n1-relative-paired-v1",
+                      "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                      "initialization": "fresh",
+                      "optimizer": "Adam",
+                      "learning_rate": 0.001,
+                      "dimensions": {
+                        "embedding": 16,
+                        "hidden": 32,
+                        "key": 16
+                      },
+                      "max_length": 64,
+                      "cpu_limit_seconds": 1200,
+                      "dev_queries": 0,
+                      "train_gate": {
+                        "exact": 173,
+                        "each_kind": 40
+                      },
+                      "read_hops": 2,
+                      "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                      "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                      "parameter_count": 40469,
+                      "loss_contract": "taiji-observation-byte-fidelity-v1",
+                      "observation_weight": 0.25,
+                      "baseline_sha256": "12499936af3b0941acff083e67ec13e4f5a95c29d8c7674cb98aec3f5458a1fe",
+                      "seeds": [
+                        11,
+                        12,
+                        13
+                      ],
+                      "arms": [
+                        "position",
+                        "terminal",
+                        "cut"
+                      ],
+                      "updates_per_model": 6144,
+                      "total_updates": 55296,
+                      "holdout_requires_all_training_sufficient": true,
+                      "holdout_rows_if_sufficient": 288,
+                      "holdout_gates": {
+                        "each_seed": 16,
+                        "each_kind": 2,
+                        "total_gap_each_control": 12
+                      }
+                    },
+                    "pilot_code": {
+                      "protocol": {
+                        "schema": "n1-relative-evidence-train-v1",
+                        "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                        "seed": 11,
+                        "arm": "position",
+                        "initialization": "fresh",
+                        "updates": 6144,
+                        "milestones": [
+                          0,
+                          768,
+                          1536,
+                          3072,
+                          6144
+                        ],
+                        "optimizer": "Adam",
+                        "learning_rate": 0.001,
+                        "dimensions": {
+                          "embedding": 16,
+                          "hidden": 32,
+                          "key": 16
+                        },
+                        "max_length": 64,
+                        "cpu_limit_seconds": 300,
+                        "dev_queries": 0,
+                        "holdout_queries": 0,
+                        "train_gate": {
+                          "exact": 173,
+                          "each_kind": 40
+                        },
+                        "read_hops": 2,
+                        "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                        "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                        "parameter_count": 40469,
+                        "loss_contract": "taiji-observation-byte-fidelity-v1",
+                        "observation_weight": 0.25,
+                        "baseline_sha256": "874d06d0452b7e09305232eed3c7d7d95a62f9de82b1971ee35bc1f49f1dff4b"
+                      },
+                      "code_sha256": {
+                        "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+                        "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+                        "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+                        "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+                        "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+                        "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+                        "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+                        "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+                        "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                        "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+                        "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+                        "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+                        "scripts\\training\\run_taiji_n1_relative_read.py": "4e6ca287770a44e9a7aaf36d47fbc01622bb89e3fe57d6fd2d1405d06fd0489b"
+                      },
+                      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+                      "torch": "2.13.0+cpu"
+                    },
+                    "runner_sha256": "01f040674f2570edf3bc17330564bc2c299d7c255b082a9c0c5f1ab61322e59b"
+                  },
+                  "runner_sha256": "490daade112a75d5ab97527f8ba9dcadad2de4875d0dae100eb3452db1d473b1"
+                }
+              }
+            },
+            "code_sha256": {
+              "scripts\\training\\audit_taiji_n1_local_question_binding.py": "c65a86df1a1a87d7c59b097cb0fc4719093c09b48d9ab214ed934caef4c3a1f0",
+              "scripts\\training\\_taiji_n1_local_question_transfer.py": "e1d0e211fcc36289233161b3424ad0819020bfa7d4269fc8ea4ec4215e52e74f",
+              "taiji\\native_local_question_evidence_candidate.py": "2fb13f271ceab7880966a03702a12e9a9d35bd306b05dd3c1c593d84e84fba74"
+            }
+          },
+          "prior_code": {
+            "protocol": {
+              "schema": "n1-renaming-train-v2",
+              "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+              "seed": 11,
+              "arm": "position",
+              "initialization": "restore-complete-frozen-41-adam-rng",
+              "updates": 6144,
+              "milestones": [
+                0,
+                3072,
+                6144
+              ],
+              "optimizer": "Adam",
+              "learning_rate": 0.001,
+              "dimensions": {
+                "embedding": 16,
+                "hidden": 32,
+                "key": 16
+              },
+              "max_length": 64,
+              "cpu_limit_seconds": 300,
+              "dev_queries": 0,
+              "holdout_queries": 0,
+              "train_gate": {
+                "exact": 173,
+                "each_kind": 40
+              },
+              "question_mechanism": "all-question-byte-zero-initialized-residual-v1",
+              "source_updates": 6144,
+              "source_historical_updates": 15360,
+              "final_historical_updates": 21504,
+              "source_report_sha256": "fe50c400f12d2258979238ee00105ff09e6131d7548640b3de273f34ba50f9d5",
+              "source_checkpoint_sha256": "f500f49e5b5d75ea5c30701f73312050a0bb44b47c4c10fbf8aedc85a155090c",
+              "read_hops": 2,
+              "candidate_format": "taiji-native-residual-question-evidence-candidate-v1",
+              "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+              "parameter_count": 44085,
+              "loss_contract": "taiji-paired-question-observation-fidelity-v1",
+              "prior_loss_contract": "taiji-observation-byte-fidelity-v1",
+              "paired_manifest_sha256": "1c3857b1ae66c227503d443ea13051a4dbaa0b65707f4fb259a3fe64c222fddb",
+              "qa_sequences": 9216,
+              "pair_gate": 87,
+              "curriculum_sha256": "c44ea78f40d7255688013eb4054ae803bd04ee97dc5ba2e0c02b82e301ce6fdd",
+              "rename_gate": {
+                "exact": 173,
+                "each_kind": 40,
+                "pair_exact": 87
+              },
+              "observation_weight": 0.25,
+              "baseline_sha256": "50155a01e1159aad3d78ed49dc9d6b8c177e4a48ab3c1c33e09219e3a4f0e1bd"
+            },
+            "code_sha256": {
+              "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+              "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+              "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+              "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+              "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+              "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+              "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+              "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+              "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+              "scripts/training/_taiji_n1_renaming_curriculum.py": "b586b2458cddaf0e46f834a2700cdd75c7687f6fe072685d1c1b44feefa7fa23",
+              "taiji/native_paired_question_learning.py": "3f44c934feb2bb2cb935c46dd87f565a89c63df2360fa32e1dad27ab22536656",
+              "taiji/native_residual_question_evidence_candidate.py": "896ff8ec6d3c8c42526237e546872942c19ac1b26a10c253b19dce7c1267397e",
+              "taiji/native_question_aligned_evidence_candidate.py": "7615d3768eed94eaf68340eeda10ac4eaada47228e937fd61168c614e6e89878",
+              "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+              "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+              "scripts/training/audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+              "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+              "scripts\\training\\run_taiji_n1_renaming.py": "b5b861f1f79bd20c1b4a6a2c39bc02250dc9f5c4ca526189f288c5e14cb767b5"
+            },
+            "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+            "torch": "2.13.0+cpu",
+            "pretrained_source_code": {
+              "protocol": {
+                "schema": "n1-reader-transfer-train-v1",
+                "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                "seed": 11,
+                "arm": "position",
+                "initialization": "transfer-fixed-s11-relative-9216-fresh-adam-new-rng",
+                "updates": 6144,
+                "milestones": [
+                  0,
+                  3072,
+                  6144
+                ],
+                "optimizer": "Adam",
+                "learning_rate": 0.001,
+                "dimensions": {
+                  "embedding": 16,
+                  "hidden": 32,
+                  "key": 16
+                },
+                "max_length": 64,
+                "cpu_limit_seconds": 300,
+                "dev_queries": 0,
+                "holdout_queries": 0,
+                "train_gate": {
+                  "exact": 173,
+                  "each_kind": 40
+                },
+                "question_mechanism": "all-question-byte-zero-initialized-residual-v1",
+                "source_updates": 9216,
+                "source_report_sha256": "871f054fcff6a72f713849de2a8b3b1ae6680e4581bccad317fef65a3c133045",
+                "source_checkpoint_sha256": "e274c81914ccc86dacaf9cf3b7690bc8126f671b24b104e8e153f793eb422747",
+                "read_hops": 2,
+                "candidate_format": "taiji-native-residual-question-evidence-candidate-v1",
+                "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                "parameter_count": 44085,
+                "loss_contract": "taiji-paired-question-observation-fidelity-v1",
+                "prior_loss_contract": "taiji-observation-byte-fidelity-v1",
+                "paired_manifest_sha256": "1c3857b1ae66c227503d443ea13051a4dbaa0b65707f4fb259a3fe64c222fddb",
+                "qa_sequences": 9216,
+                "pair_gate": 87,
+                "observation_weight": 0.25,
+                "baseline_sha256": "50155a01e1159aad3d78ed49dc9d6b8c177e4a48ab3c1c33e09219e3a4f0e1bd"
+              },
+              "code_sha256": {
+                "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+                "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+                "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+                "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+                "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+                "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+                "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+                "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+                "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                "taiji/native_paired_question_learning.py": "3f44c934feb2bb2cb935c46dd87f565a89c63df2360fa32e1dad27ab22536656",
+                "taiji/native_residual_question_evidence_candidate.py": "896ff8ec6d3c8c42526237e546872942c19ac1b26a10c253b19dce7c1267397e",
+                "taiji/native_question_aligned_evidence_candidate.py": "7615d3768eed94eaf68340eeda10ac4eaada47228e937fd61168c614e6e89878",
+                "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+                "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+                "scripts/training/audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+                "scripts\\training\\run_taiji_n1_reader_transfer.py": "ae00dbce2bce493e27ca9732f1a75a7545c8b466a0c951fccf7442dcdf9a2905"
+              },
+              "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+              "torch": "2.13.0+cpu",
+              "pretrained_source_code": {
+                "protocol": {
+                  "schema": "n1-relative-continuation-v1",
+                  "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                  "initialization": "restore-all-nine-final-adam-rng",
+                  "optimizer": "Adam",
+                  "learning_rate": 0.001,
+                  "dimensions": {
+                    "embedding": 16,
+                    "hidden": 32,
+                    "key": 16
+                  },
+                  "max_length": 64,
+                  "cpu_limit_seconds": 600,
+                  "dev_queries": 0,
+                  "train_gate": {
+                    "exact": 173,
+                    "each_kind": 40
+                  },
+                  "read_hops": 2,
+                  "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                  "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                  "parameter_count": 40469,
+                  "loss_contract": "taiji-observation-byte-fidelity-v1",
+                  "observation_weight": 0.25,
+                  "baseline_sha256": "b10fe3092c9fa6abd08f64fed48f02e59c4261a20c58a49a85f9702d0c5e06dd",
+                  "seeds": [
+                    11,
+                    12,
+                    13
+                  ],
+                  "arms": [
+                    "position",
+                    "terminal",
+                    "cut"
+                  ],
+                  "updates_per_model": 3072,
+                  "total_updates": 27648,
+                  "holdout_requires_all_training_sufficient": true,
+                  "holdout_rows_if_sufficient": 288,
+                  "holdout_gates": {
+                    "each_seed": 16,
+                    "each_kind": 2,
+                    "total_gap_each_control": 12
+                  },
+                  "starting_updates_per_model": 6144,
+                  "cumulative_updates_per_model": 9216,
+                  "cpu_includes_engineering_preflight": true
+                },
+                "pilot_code": {
+                  "protocol": {
+                    "schema": "n1-relative-evidence-train-v1",
+                    "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                    "seed": 11,
+                    "arm": "position",
+                    "initialization": "fresh",
+                    "updates": 6144,
+                    "milestones": [
+                      0,
+                      768,
+                      1536,
+                      3072,
+                      6144
+                    ],
+                    "optimizer": "Adam",
+                    "learning_rate": 0.001,
+                    "dimensions": {
+                      "embedding": 16,
+                      "hidden": 32,
+                      "key": 16
+                    },
+                    "max_length": 64,
+                    "cpu_limit_seconds": 300,
+                    "dev_queries": 0,
+                    "holdout_queries": 0,
+                    "train_gate": {
+                      "exact": 173,
+                      "each_kind": 40
+                    },
+                    "read_hops": 2,
+                    "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                    "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                    "parameter_count": 40469,
+                    "loss_contract": "taiji-observation-byte-fidelity-v1",
+                    "observation_weight": 0.25,
+                    "baseline_sha256": "874d06d0452b7e09305232eed3c7d7d95a62f9de82b1971ee35bc1f49f1dff4b"
+                  },
+                  "code_sha256": {
+                    "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+                    "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+                    "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+                    "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+                    "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+                    "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+                    "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+                    "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+                    "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                    "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+                    "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+                    "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+                    "scripts\\training\\run_taiji_n1_relative_read.py": "4e6ca287770a44e9a7aaf36d47fbc01622bb89e3fe57d6fd2d1405d06fd0489b"
+                  },
+                  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+                  "torch": "2.13.0+cpu"
+                },
+                "source_code": {
+                  "protocol": {
+                    "schema": "n1-relative-paired-v1",
+                    "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                    "initialization": "fresh",
+                    "optimizer": "Adam",
+                    "learning_rate": 0.001,
+                    "dimensions": {
+                      "embedding": 16,
+                      "hidden": 32,
+                      "key": 16
+                    },
+                    "max_length": 64,
+                    "cpu_limit_seconds": 1200,
+                    "dev_queries": 0,
+                    "train_gate": {
+                      "exact": 173,
+                      "each_kind": 40
+                    },
+                    "read_hops": 2,
+                    "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                    "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                    "parameter_count": 40469,
+                    "loss_contract": "taiji-observation-byte-fidelity-v1",
+                    "observation_weight": 0.25,
+                    "baseline_sha256": "12499936af3b0941acff083e67ec13e4f5a95c29d8c7674cb98aec3f5458a1fe",
+                    "seeds": [
+                      11,
+                      12,
+                      13
+                    ],
+                    "arms": [
+                      "position",
+                      "terminal",
+                      "cut"
+                    ],
+                    "updates_per_model": 6144,
+                    "total_updates": 55296,
+                    "holdout_requires_all_training_sufficient": true,
+                    "holdout_rows_if_sufficient": 288,
+                    "holdout_gates": {
+                      "each_seed": 16,
+                      "each_kind": 2,
+                      "total_gap_each_control": 12
+                    }
+                  },
+                  "pilot_code": {
+                    "protocol": {
+                      "schema": "n1-relative-evidence-train-v1",
+                      "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                      "seed": 11,
+                      "arm": "position",
+                      "initialization": "fresh",
+                      "updates": 6144,
+                      "milestones": [
+                        0,
+                        768,
+                        1536,
+                        3072,
+                        6144
+                      ],
+                      "optimizer": "Adam",
+                      "learning_rate": 0.001,
+                      "dimensions": {
+                        "embedding": 16,
+                        "hidden": 32,
+                        "key": 16
+                      },
+                      "max_length": 64,
+                      "cpu_limit_seconds": 300,
+                      "dev_queries": 0,
+                      "holdout_queries": 0,
+                      "train_gate": {
+                        "exact": 173,
+                        "each_kind": 40
+                      },
+                      "read_hops": 2,
+                      "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                      "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                      "parameter_count": 40469,
+                      "loss_contract": "taiji-observation-byte-fidelity-v1",
+                      "observation_weight": 0.25,
+                      "baseline_sha256": "874d06d0452b7e09305232eed3c7d7d95a62f9de82b1971ee35bc1f49f1dff4b"
+                    },
+                    "code_sha256": {
+                      "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+                      "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+                      "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+                      "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+                      "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+                      "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+                      "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+                      "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+                      "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                      "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+                      "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+                      "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+                      "scripts\\training\\run_taiji_n1_relative_read.py": "4e6ca287770a44e9a7aaf36d47fbc01622bb89e3fe57d6fd2d1405d06fd0489b"
+                    },
+                    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+                    "torch": "2.13.0+cpu"
+                  },
+                  "runner_sha256": "01f040674f2570edf3bc17330564bc2c299d7c255b082a9c0c5f1ab61322e59b"
+                },
+                "runner_sha256": "490daade112a75d5ab97527f8ba9dcadad2de4875d0dae100eb3452db1d473b1"
+              }
+            }
+          }
+        },
+        "code_sha256": {
+          "scripts\\training\\audit_taiji_n1_contextual_question.py": "3285b55e539e7734ddbdc31fc539859101da83e9b4efc56cb800627d1f2b7ed9",
+          "scripts\\training\\_taiji_n1_contextual_question_transfer.py": "6da537a81d3f655db0d6ff0e23256ea8f67797ac78e69dd7bd124646c44cdd10",
+          "taiji\\native_contextual_question_evidence_candidate.py": "eea76d2fe540a3a22c6441b525df235801995914a421903cb30bd26c94dee70d"
+        }
+      },
+      "prior_code": {
+        "protocol": {
+          "schema": "n1-local-question-train-v1",
+          "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+          "seed": 11,
+          "arm": "position",
+          "initialization": "explicit48-shared41-adam-new-heads-seed11",
+          "updates": 6144,
+          "milestones": [
+            0,
+            3072,
+            6144
+          ],
+          "optimizer": "Adam",
+          "learning_rate": 0.001,
+          "dimensions": {
+            "embedding": 16,
+            "hidden": 32,
+            "key": 16
+          },
+          "max_length": 64,
+          "cpu_limit_seconds": 300,
+          "dev_queries": 0,
+          "holdout_queries": 0,
+          "train_gate": {
+            "exact": 173,
+            "each_kind": 40
+          },
+          "question_mechanism": "local-byte-window-observation-conditioned-residual-v1",
+          "new_parameter_count": 3395,
+          "local_question_mechanism": "shared-five-byte-cosine-question-residual-v1",
+          "new_parameter_final_adam_step": 6144,
+          "shared_parameter_final_adam_step": 12288,
+          "source_updates": 6144,
+          "source_historical_updates": 15360,
+          "final_historical_updates": 21504,
+          "source_report_sha256": "fe50c400f12d2258979238ee00105ff09e6131d7548640b3de273f34ba50f9d5",
+          "source_checkpoint_sha256": "f500f49e5b5d75ea5c30701f73312050a0bb44b47c4c10fbf8aedc85a155090c",
+          "read_hops": 2,
+          "candidate_format": "taiji-native-local-question-evidence-candidate-v1",
+          "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+          "parameter_count": 47480,
+          "loss_contract": "taiji-paired-question-observation-fidelity-v1",
+          "prior_loss_contract": "taiji-observation-byte-fidelity-v1",
+          "paired_manifest_sha256": "1c3857b1ae66c227503d443ea13051a4dbaa0b65707f4fb259a3fe64c222fddb",
+          "qa_sequences": 9216,
+          "pair_gate": 87,
+          "curriculum_sha256": "c44ea78f40d7255688013eb4054ae803bd04ee97dc5ba2e0c02b82e301ce6fdd",
+          "rename_gate": {
+            "exact": 173,
+            "each_kind": 40,
+            "pair_exact": 87
+          },
+          "observation_weight": 0.25,
+          "baseline_sha256": "f75336a2cacfd35c18ca8743202c868df04cfa0aa0ab4d004e4d7d6889e9e719"
+        },
+        "code_sha256": {
+          "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+          "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+          "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+          "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+          "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+          "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+          "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+          "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+          "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+          "taiji/native_local_question_evidence_candidate.py": "2fb13f271ceab7880966a03702a12e9a9d35bd306b05dd3c1c593d84e84fba74",
+          "scripts/training/_taiji_n1_local_question_transfer.py": "e1d0e211fcc36289233161b3424ad0819020bfa7d4269fc8ea4ec4215e52e74f",
+          "scripts/training/_taiji_n1_renaming_curriculum.py": "b586b2458cddaf0e46f834a2700cdd75c7687f6fe072685d1c1b44feefa7fa23",
+          "taiji/native_paired_question_learning.py": "3f44c934feb2bb2cb935c46dd87f565a89c63df2360fa32e1dad27ab22536656",
+          "taiji/native_residual_question_evidence_candidate.py": "896ff8ec6d3c8c42526237e546872942c19ac1b26a10c253b19dce7c1267397e",
+          "taiji/native_question_aligned_evidence_candidate.py": "7615d3768eed94eaf68340eeda10ac4eaada47228e937fd61168c614e6e89878",
+          "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+          "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+          "scripts/training/audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+          "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+          "scripts\\training\\run_taiji_n1_local_question.py": "f1fb4530954f545eb06cfe5d1b06c01f60332192ae78bfa5b2166d3b8a6ba77a"
+        },
+        "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+        "torch": "2.13.0+cpu",
+        "pretrained_source_code": {
+          "protocol": {
+            "schema": "n1-reader-transfer-train-v1",
+            "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+            "seed": 11,
+            "arm": "position",
+            "initialization": "transfer-fixed-s11-relative-9216-fresh-adam-new-rng",
+            "updates": 6144,
+            "milestones": [
+              0,
+              3072,
+              6144
+            ],
+            "optimizer": "Adam",
+            "learning_rate": 0.001,
+            "dimensions": {
+              "embedding": 16,
+              "hidden": 32,
+              "key": 16
+            },
+            "max_length": 64,
+            "cpu_limit_seconds": 300,
+            "dev_queries": 0,
+            "holdout_queries": 0,
+            "train_gate": {
+              "exact": 173,
+              "each_kind": 40
+            },
+            "question_mechanism": "all-question-byte-zero-initialized-residual-v1",
+            "source_updates": 9216,
+            "source_report_sha256": "871f054fcff6a72f713849de2a8b3b1ae6680e4581bccad317fef65a3c133045",
+            "source_checkpoint_sha256": "e274c81914ccc86dacaf9cf3b7690bc8126f671b24b104e8e153f793eb422747",
+            "read_hops": 2,
+            "candidate_format": "taiji-native-residual-question-evidence-candidate-v1",
+            "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+            "parameter_count": 44085,
+            "loss_contract": "taiji-paired-question-observation-fidelity-v1",
+            "prior_loss_contract": "taiji-observation-byte-fidelity-v1",
+            "paired_manifest_sha256": "1c3857b1ae66c227503d443ea13051a4dbaa0b65707f4fb259a3fe64c222fddb",
+            "qa_sequences": 9216,
+            "pair_gate": 87,
+            "observation_weight": 0.25,
+            "baseline_sha256": "50155a01e1159aad3d78ed49dc9d6b8c177e4a48ab3c1c33e09219e3a4f0e1bd"
+          },
+          "code_sha256": {
+            "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+            "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+            "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+            "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+            "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+            "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+            "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+            "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+            "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+            "taiji/native_paired_question_learning.py": "3f44c934feb2bb2cb935c46dd87f565a89c63df2360fa32e1dad27ab22536656",
+            "taiji/native_residual_question_evidence_candidate.py": "896ff8ec6d3c8c42526237e546872942c19ac1b26a10c253b19dce7c1267397e",
+            "taiji/native_question_aligned_evidence_candidate.py": "7615d3768eed94eaf68340eeda10ac4eaada47228e937fd61168c614e6e89878",
+            "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+            "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+            "scripts/training/audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+            "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+            "scripts\\training\\run_taiji_n1_reader_transfer.py": "ae00dbce2bce493e27ca9732f1a75a7545c8b466a0c951fccf7442dcdf9a2905"
+          },
+          "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+          "torch": "2.13.0+cpu",
+          "pretrained_source_code": {
+            "protocol": {
+              "schema": "n1-relative-continuation-v1",
+              "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+              "initialization": "restore-all-nine-final-adam-rng",
+              "optimizer": "Adam",
+              "learning_rate": 0.001,
+              "dimensions": {
+                "embedding": 16,
+                "hidden": 32,
+                "key": 16
+              },
+              "max_length": 64,
+              "cpu_limit_seconds": 600,
+              "dev_queries": 0,
+              "train_gate": {
+                "exact": 173,
+                "each_kind": 40
+              },
+              "read_hops": 2,
+              "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+              "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+              "parameter_count": 40469,
+              "loss_contract": "taiji-observation-byte-fidelity-v1",
+              "observation_weight": 0.25,
+              "baseline_sha256": "b10fe3092c9fa6abd08f64fed48f02e59c4261a20c58a49a85f9702d0c5e06dd",
+              "seeds": [
+                11,
+                12,
+                13
+              ],
+              "arms": [
+                "position",
+                "terminal",
+                "cut"
+              ],
+              "updates_per_model": 3072,
+              "total_updates": 27648,
+              "holdout_requires_all_training_sufficient": true,
+              "holdout_rows_if_sufficient": 288,
+              "holdout_gates": {
+                "each_seed": 16,
+                "each_kind": 2,
+                "total_gap_each_control": 12
+              },
+              "starting_updates_per_model": 6144,
+              "cumulative_updates_per_model": 9216,
+              "cpu_includes_engineering_preflight": true
+            },
+            "pilot_code": {
+              "protocol": {
+                "schema": "n1-relative-evidence-train-v1",
+                "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                "seed": 11,
+                "arm": "position",
+                "initialization": "fresh",
+                "updates": 6144,
+                "milestones": [
+                  0,
+                  768,
+                  1536,
+                  3072,
+                  6144
+                ],
+                "optimizer": "Adam",
+                "learning_rate": 0.001,
+                "dimensions": {
+                  "embedding": 16,
+                  "hidden": 32,
+                  "key": 16
+                },
+                "max_length": 64,
+                "cpu_limit_seconds": 300,
+                "dev_queries": 0,
+                "holdout_queries": 0,
+                "train_gate": {
+                  "exact": 173,
+                  "each_kind": 40
+                },
+                "read_hops": 2,
+                "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                "parameter_count": 40469,
+                "loss_contract": "taiji-observation-byte-fidelity-v1",
+                "observation_weight": 0.25,
+                "baseline_sha256": "874d06d0452b7e09305232eed3c7d7d95a62f9de82b1971ee35bc1f49f1dff4b"
+              },
+              "code_sha256": {
+                "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+                "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+                "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+                "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+                "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+                "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+                "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+                "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+                "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+                "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+                "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+                "scripts\\training\\run_taiji_n1_relative_read.py": "4e6ca287770a44e9a7aaf36d47fbc01622bb89e3fe57d6fd2d1405d06fd0489b"
+              },
+              "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+              "torch": "2.13.0+cpu"
+            },
+            "source_code": {
+              "protocol": {
+                "schema": "n1-relative-paired-v1",
+                "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                "initialization": "fresh",
+                "optimizer": "Adam",
+                "learning_rate": 0.001,
+                "dimensions": {
+                  "embedding": 16,
+                  "hidden": 32,
+                  "key": 16
+                },
+                "max_length": 64,
+                "cpu_limit_seconds": 1200,
+                "dev_queries": 0,
+                "train_gate": {
+                  "exact": 173,
+                  "each_kind": 40
+                },
+                "read_hops": 2,
+                "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                "parameter_count": 40469,
+                "loss_contract": "taiji-observation-byte-fidelity-v1",
+                "observation_weight": 0.25,
+                "baseline_sha256": "12499936af3b0941acff083e67ec13e4f5a95c29d8c7674cb98aec3f5458a1fe",
+                "seeds": [
+                  11,
+                  12,
+                  13
+                ],
+                "arms": [
+                  "position",
+                  "terminal",
+                  "cut"
+                ],
+                "updates_per_model": 6144,
+                "total_updates": 55296,
+                "holdout_requires_all_training_sufficient": true,
+                "holdout_rows_if_sufficient": 288,
+                "holdout_gates": {
+                  "each_seed": 16,
+                  "each_kind": 2,
+                  "total_gap_each_control": 12
+                }
+              },
+              "pilot_code": {
+                "protocol": {
+                  "schema": "n1-relative-evidence-train-v1",
+                  "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                  "seed": 11,
+                  "arm": "position",
+                  "initialization": "fresh",
+                  "updates": 6144,
+                  "milestones": [
+                    0,
+                    768,
+                    1536,
+                    3072,
+                    6144
+                  ],
+                  "optimizer": "Adam",
+                  "learning_rate": 0.001,
+                  "dimensions": {
+                    "embedding": 16,
+                    "hidden": 32,
+                    "key": 16
+                  },
+                  "max_length": 64,
+                  "cpu_limit_seconds": 300,
+                  "dev_queries": 0,
+                  "holdout_queries": 0,
+                  "train_gate": {
+                    "exact": 173,
+                    "each_kind": 40
+                  },
+                  "read_hops": 2,
+                  "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                  "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                  "parameter_count": 40469,
+                  "loss_contract": "taiji-observation-byte-fidelity-v1",
+                  "observation_weight": 0.25,
+                  "baseline_sha256": "874d06d0452b7e09305232eed3c7d7d95a62f9de82b1971ee35bc1f49f1dff4b"
+                },
+                "code_sha256": {
+                  "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+                  "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+                  "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+                  "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+                  "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+                  "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+                  "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+                  "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+                  "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                  "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+                  "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+                  "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+                  "scripts\\training\\run_taiji_n1_relative_read.py": "4e6ca287770a44e9a7aaf36d47fbc01622bb89e3fe57d6fd2d1405d06fd0489b"
+                },
+                "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+                "torch": "2.13.0+cpu"
+              },
+              "runner_sha256": "01f040674f2570edf3bc17330564bc2c299d7c255b082a9c0c5f1ab61322e59b"
+            },
+            "runner_sha256": "490daade112a75d5ab97527f8ba9dcadad2de4875d0dae100eb3452db1d473b1"
+          }
+        },
+        "engineering_code": {
+          "source": {
+            "protocol": {
+              "schema": "n1-renaming-train-v2",
+              "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+              "seed": 11,
+              "arm": "position",
+              "initialization": "restore-complete-frozen-41-adam-rng",
+              "updates": 6144,
+              "milestones": [
+                0,
+                3072,
+                6144
+              ],
+              "optimizer": "Adam",
+              "learning_rate": 0.001,
+              "dimensions": {
+                "embedding": 16,
+                "hidden": 32,
+                "key": 16
+              },
+              "max_length": 64,
+              "cpu_limit_seconds": 300,
+              "dev_queries": 0,
+              "holdout_queries": 0,
+              "train_gate": {
+                "exact": 173,
+                "each_kind": 40
+              },
+              "question_mechanism": "all-question-byte-zero-initialized-residual-v1",
+              "source_updates": 6144,
+              "source_historical_updates": 15360,
+              "final_historical_updates": 21504,
+              "source_report_sha256": "fe50c400f12d2258979238ee00105ff09e6131d7548640b3de273f34ba50f9d5",
+              "source_checkpoint_sha256": "f500f49e5b5d75ea5c30701f73312050a0bb44b47c4c10fbf8aedc85a155090c",
+              "read_hops": 2,
+              "candidate_format": "taiji-native-residual-question-evidence-candidate-v1",
+              "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+              "parameter_count": 44085,
+              "loss_contract": "taiji-paired-question-observation-fidelity-v1",
+              "prior_loss_contract": "taiji-observation-byte-fidelity-v1",
+              "paired_manifest_sha256": "1c3857b1ae66c227503d443ea13051a4dbaa0b65707f4fb259a3fe64c222fddb",
+              "qa_sequences": 9216,
+              "pair_gate": 87,
+              "curriculum_sha256": "c44ea78f40d7255688013eb4054ae803bd04ee97dc5ba2e0c02b82e301ce6fdd",
+              "rename_gate": {
+                "exact": 173,
+                "each_kind": 40,
+                "pair_exact": 87
+              },
+              "observation_weight": 0.25,
+              "baseline_sha256": "50155a01e1159aad3d78ed49dc9d6b8c177e4a48ab3c1c33e09219e3a4f0e1bd"
+            },
+            "code_sha256": {
+              "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+              "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+              "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+              "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+              "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+              "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+              "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+              "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+              "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+              "scripts/training/_taiji_n1_renaming_curriculum.py": "b586b2458cddaf0e46f834a2700cdd75c7687f6fe072685d1c1b44feefa7fa23",
+              "taiji/native_paired_question_learning.py": "3f44c934feb2bb2cb935c46dd87f565a89c63df2360fa32e1dad27ab22536656",
+              "taiji/native_residual_question_evidence_candidate.py": "896ff8ec6d3c8c42526237e546872942c19ac1b26a10c253b19dce7c1267397e",
+              "taiji/native_question_aligned_evidence_candidate.py": "7615d3768eed94eaf68340eeda10ac4eaada47228e937fd61168c614e6e89878",
+              "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+              "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+              "scripts/training/audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+              "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+              "scripts\\training\\run_taiji_n1_renaming.py": "b5b861f1f79bd20c1b4a6a2c39bc02250dc9f5c4ca526189f288c5e14cb767b5"
+            },
+            "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+            "torch": "2.13.0+cpu",
+            "pretrained_source_code": {
+              "protocol": {
+                "schema": "n1-reader-transfer-train-v1",
+                "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                "seed": 11,
+                "arm": "position",
+                "initialization": "transfer-fixed-s11-relative-9216-fresh-adam-new-rng",
+                "updates": 6144,
+                "milestones": [
+                  0,
+                  3072,
+                  6144
+                ],
+                "optimizer": "Adam",
+                "learning_rate": 0.001,
+                "dimensions": {
+                  "embedding": 16,
+                  "hidden": 32,
+                  "key": 16
+                },
+                "max_length": 64,
+                "cpu_limit_seconds": 300,
+                "dev_queries": 0,
+                "holdout_queries": 0,
+                "train_gate": {
+                  "exact": 173,
+                  "each_kind": 40
+                },
+                "question_mechanism": "all-question-byte-zero-initialized-residual-v1",
+                "source_updates": 9216,
+                "source_report_sha256": "871f054fcff6a72f713849de2a8b3b1ae6680e4581bccad317fef65a3c133045",
+                "source_checkpoint_sha256": "e274c81914ccc86dacaf9cf3b7690bc8126f671b24b104e8e153f793eb422747",
+                "read_hops": 2,
+                "candidate_format": "taiji-native-residual-question-evidence-candidate-v1",
+                "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                "parameter_count": 44085,
+                "loss_contract": "taiji-paired-question-observation-fidelity-v1",
+                "prior_loss_contract": "taiji-observation-byte-fidelity-v1",
+                "paired_manifest_sha256": "1c3857b1ae66c227503d443ea13051a4dbaa0b65707f4fb259a3fe64c222fddb",
+                "qa_sequences": 9216,
+                "pair_gate": 87,
+                "observation_weight": 0.25,
+                "baseline_sha256": "50155a01e1159aad3d78ed49dc9d6b8c177e4a48ab3c1c33e09219e3a4f0e1bd"
+              },
+              "code_sha256": {
+                "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+                "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+                "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+                "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+                "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+                "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+                "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+                "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+                "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                "taiji/native_paired_question_learning.py": "3f44c934feb2bb2cb935c46dd87f565a89c63df2360fa32e1dad27ab22536656",
+                "taiji/native_residual_question_evidence_candidate.py": "896ff8ec6d3c8c42526237e546872942c19ac1b26a10c253b19dce7c1267397e",
+                "taiji/native_question_aligned_evidence_candidate.py": "7615d3768eed94eaf68340eeda10ac4eaada47228e937fd61168c614e6e89878",
+                "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+                "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+                "scripts/training/audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+                "scripts\\training\\run_taiji_n1_reader_transfer.py": "ae00dbce2bce493e27ca9732f1a75a7545c8b466a0c951fccf7442dcdf9a2905"
+              },
+              "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+              "torch": "2.13.0+cpu",
+              "pretrained_source_code": {
+                "protocol": {
+                  "schema": "n1-relative-continuation-v1",
+                  "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                  "initialization": "restore-all-nine-final-adam-rng",
+                  "optimizer": "Adam",
+                  "learning_rate": 0.001,
+                  "dimensions": {
+                    "embedding": 16,
+                    "hidden": 32,
+                    "key": 16
+                  },
+                  "max_length": 64,
+                  "cpu_limit_seconds": 600,
+                  "dev_queries": 0,
+                  "train_gate": {
+                    "exact": 173,
+                    "each_kind": 40
+                  },
+                  "read_hops": 2,
+                  "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                  "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                  "parameter_count": 40469,
+                  "loss_contract": "taiji-observation-byte-fidelity-v1",
+                  "observation_weight": 0.25,
+                  "baseline_sha256": "b10fe3092c9fa6abd08f64fed48f02e59c4261a20c58a49a85f9702d0c5e06dd",
+                  "seeds": [
+                    11,
+                    12,
+                    13
+                  ],
+                  "arms": [
+                    "position",
+                    "terminal",
+                    "cut"
+                  ],
+                  "updates_per_model": 3072,
+                  "total_updates": 27648,
+                  "holdout_requires_all_training_sufficient": true,
+                  "holdout_rows_if_sufficient": 288,
+                  "holdout_gates": {
+                    "each_seed": 16,
+                    "each_kind": 2,
+                    "total_gap_each_control": 12
+                  },
+                  "starting_updates_per_model": 6144,
+                  "cumulative_updates_per_model": 9216,
+                  "cpu_includes_engineering_preflight": true
+                },
+                "pilot_code": {
+                  "protocol": {
+                    "schema": "n1-relative-evidence-train-v1",
+                    "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                    "seed": 11,
+                    "arm": "position",
+                    "initialization": "fresh",
+                    "updates": 6144,
+                    "milestones": [
+                      0,
+                      768,
+                      1536,
+                      3072,
+                      6144
+                    ],
+                    "optimizer": "Adam",
+                    "learning_rate": 0.001,
+                    "dimensions": {
+                      "embedding": 16,
+                      "hidden": 32,
+                      "key": 16
+                    },
+                    "max_length": 64,
+                    "cpu_limit_seconds": 300,
+                    "dev_queries": 0,
+                    "holdout_queries": 0,
+                    "train_gate": {
+                      "exact": 173,
+                      "each_kind": 40
+                    },
+                    "read_hops": 2,
+                    "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                    "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                    "parameter_count": 40469,
+                    "loss_contract": "taiji-observation-byte-fidelity-v1",
+                    "observation_weight": 0.25,
+                    "baseline_sha256": "874d06d0452b7e09305232eed3c7d7d95a62f9de82b1971ee35bc1f49f1dff4b"
+                  },
+                  "code_sha256": {
+                    "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+                    "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+                    "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+                    "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+                    "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+                    "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+                    "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+                    "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+                    "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                    "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+                    "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+                    "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+                    "scripts\\training\\run_taiji_n1_relative_read.py": "4e6ca287770a44e9a7aaf36d47fbc01622bb89e3fe57d6fd2d1405d06fd0489b"
+                  },
+                  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+                  "torch": "2.13.0+cpu"
+                },
+                "source_code": {
+                  "protocol": {
+                    "schema": "n1-relative-paired-v1",
+                    "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                    "initialization": "fresh",
+                    "optimizer": "Adam",
+                    "learning_rate": 0.001,
+                    "dimensions": {
+                      "embedding": 16,
+                      "hidden": 32,
+                      "key": 16
+                    },
+                    "max_length": 64,
+                    "cpu_limit_seconds": 1200,
+                    "dev_queries": 0,
+                    "train_gate": {
+                      "exact": 173,
+                      "each_kind": 40
+                    },
+                    "read_hops": 2,
+                    "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                    "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                    "parameter_count": 40469,
+                    "loss_contract": "taiji-observation-byte-fidelity-v1",
+                    "observation_weight": 0.25,
+                    "baseline_sha256": "12499936af3b0941acff083e67ec13e4f5a95c29d8c7674cb98aec3f5458a1fe",
+                    "seeds": [
+                      11,
+                      12,
+                      13
+                    ],
+                    "arms": [
+                      "position",
+                      "terminal",
+                      "cut"
+                    ],
+                    "updates_per_model": 6144,
+                    "total_updates": 55296,
+                    "holdout_requires_all_training_sufficient": true,
+                    "holdout_rows_if_sufficient": 288,
+                    "holdout_gates": {
+                      "each_seed": 16,
+                      "each_kind": 2,
+                      "total_gap_each_control": 12
+                    }
+                  },
+                  "pilot_code": {
+                    "protocol": {
+                      "schema": "n1-relative-evidence-train-v1",
+                      "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                      "seed": 11,
+                      "arm": "position",
+                      "initialization": "fresh",
+                      "updates": 6144,
+                      "milestones": [
+                        0,
+                        768,
+                        1536,
+                        3072,
+                        6144
+                      ],
+                      "optimizer": "Adam",
+                      "learning_rate": 0.001,
+                      "dimensions": {
+                        "embedding": 16,
+                        "hidden": 32,
+                        "key": 16
+                      },
+                      "max_length": 64,
+                      "cpu_limit_seconds": 300,
+                      "dev_queries": 0,
+                      "holdout_queries": 0,
+                      "train_gate": {
+                        "exact": 173,
+                        "each_kind": 40
+                      },
+                      "read_hops": 2,
+                      "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                      "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                      "parameter_count": 40469,
+                      "loss_contract": "taiji-observation-byte-fidelity-v1",
+                      "observation_weight": 0.25,
+                      "baseline_sha256": "874d06d0452b7e09305232eed3c7d7d95a62f9de82b1971ee35bc1f49f1dff4b"
+                    },
+                    "code_sha256": {
+                      "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+                      "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+                      "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+                      "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+                      "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+                      "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+                      "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+                      "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+                      "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                      "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+                      "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+                      "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+                      "scripts\\training\\run_taiji_n1_relative_read.py": "4e6ca287770a44e9a7aaf36d47fbc01622bb89e3fe57d6fd2d1405d06fd0489b"
+                    },
+                    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+                    "torch": "2.13.0+cpu"
+                  },
+                  "runner_sha256": "01f040674f2570edf3bc17330564bc2c299d7c255b082a9c0c5f1ab61322e59b"
+                },
+                "runner_sha256": "490daade112a75d5ab97527f8ba9dcadad2de4875d0dae100eb3452db1d473b1"
+              }
+            }
+          },
+          "code_sha256": {
+            "scripts\\training\\audit_taiji_n1_local_question_binding.py": "c65a86df1a1a87d7c59b097cb0fc4719093c09b48d9ab214ed934caef4c3a1f0",
+            "scripts\\training\\_taiji_n1_local_question_transfer.py": "e1d0e211fcc36289233161b3424ad0819020bfa7d4269fc8ea4ec4215e52e74f",
+            "taiji\\native_local_question_evidence_candidate.py": "2fb13f271ceab7880966a03702a12e9a9d35bd306b05dd3c1c593d84e84fba74"
+          }
+        },
+        "prior_code": {
+          "protocol": {
+            "schema": "n1-renaming-train-v2",
+            "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+            "seed": 11,
+            "arm": "position",
+            "initialization": "restore-complete-frozen-41-adam-rng",
+            "updates": 6144,
+            "milestones": [
+              0,
+              3072,
+              6144
+            ],
+            "optimizer": "Adam",
+            "learning_rate": 0.001,
+            "dimensions": {
+              "embedding": 16,
+              "hidden": 32,
+              "key": 16
+            },
+            "max_length": 64,
+            "cpu_limit_seconds": 300,
+            "dev_queries": 0,
+            "holdout_queries": 0,
+            "train_gate": {
+              "exact": 173,
+              "each_kind": 40
+            },
+            "question_mechanism": "all-question-byte-zero-initialized-residual-v1",
+            "source_updates": 6144,
+            "source_historical_updates": 15360,
+            "final_historical_updates": 21504,
+            "source_report_sha256": "fe50c400f12d2258979238ee00105ff09e6131d7548640b3de273f34ba50f9d5",
+            "source_checkpoint_sha256": "f500f49e5b5d75ea5c30701f73312050a0bb44b47c4c10fbf8aedc85a155090c",
+            "read_hops": 2,
+            "candidate_format": "taiji-native-residual-question-evidence-candidate-v1",
+            "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+            "parameter_count": 44085,
+            "loss_contract": "taiji-paired-question-observation-fidelity-v1",
+            "prior_loss_contract": "taiji-observation-byte-fidelity-v1",
+            "paired_manifest_sha256": "1c3857b1ae66c227503d443ea13051a4dbaa0b65707f4fb259a3fe64c222fddb",
+            "qa_sequences": 9216,
+            "pair_gate": 87,
+            "curriculum_sha256": "c44ea78f40d7255688013eb4054ae803bd04ee97dc5ba2e0c02b82e301ce6fdd",
+            "rename_gate": {
+              "exact": 173,
+              "each_kind": 40,
+              "pair_exact": 87
+            },
+            "observation_weight": 0.25,
+            "baseline_sha256": "50155a01e1159aad3d78ed49dc9d6b8c177e4a48ab3c1c33e09219e3a4f0e1bd"
+          },
+          "code_sha256": {
+            "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+            "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+            "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+            "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+            "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+            "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+            "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+            "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+            "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+            "scripts/training/_taiji_n1_renaming_curriculum.py": "b586b2458cddaf0e46f834a2700cdd75c7687f6fe072685d1c1b44feefa7fa23",
+            "taiji/native_paired_question_learning.py": "3f44c934feb2bb2cb935c46dd87f565a89c63df2360fa32e1dad27ab22536656",
+            "taiji/native_residual_question_evidence_candidate.py": "896ff8ec6d3c8c42526237e546872942c19ac1b26a10c253b19dce7c1267397e",
+            "taiji/native_question_aligned_evidence_candidate.py": "7615d3768eed94eaf68340eeda10ac4eaada47228e937fd61168c614e6e89878",
+            "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+            "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+            "scripts/training/audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+            "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+            "scripts\\training\\run_taiji_n1_renaming.py": "b5b861f1f79bd20c1b4a6a2c39bc02250dc9f5c4ca526189f288c5e14cb767b5"
+          },
+          "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+          "torch": "2.13.0+cpu",
+          "pretrained_source_code": {
+            "protocol": {
+              "schema": "n1-reader-transfer-train-v1",
+              "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+              "seed": 11,
+              "arm": "position",
+              "initialization": "transfer-fixed-s11-relative-9216-fresh-adam-new-rng",
+              "updates": 6144,
+              "milestones": [
+                0,
+                3072,
+                6144
+              ],
+              "optimizer": "Adam",
+              "learning_rate": 0.001,
+              "dimensions": {
+                "embedding": 16,
+                "hidden": 32,
+                "key": 16
+              },
+              "max_length": 64,
+              "cpu_limit_seconds": 300,
+              "dev_queries": 0,
+              "holdout_queries": 0,
+              "train_gate": {
+                "exact": 173,
+                "each_kind": 40
+              },
+              "question_mechanism": "all-question-byte-zero-initialized-residual-v1",
+              "source_updates": 9216,
+              "source_report_sha256": "871f054fcff6a72f713849de2a8b3b1ae6680e4581bccad317fef65a3c133045",
+              "source_checkpoint_sha256": "e274c81914ccc86dacaf9cf3b7690bc8126f671b24b104e8e153f793eb422747",
+              "read_hops": 2,
+              "candidate_format": "taiji-native-residual-question-evidence-candidate-v1",
+              "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+              "parameter_count": 44085,
+              "loss_contract": "taiji-paired-question-observation-fidelity-v1",
+              "prior_loss_contract": "taiji-observation-byte-fidelity-v1",
+              "paired_manifest_sha256": "1c3857b1ae66c227503d443ea13051a4dbaa0b65707f4fb259a3fe64c222fddb",
+              "qa_sequences": 9216,
+              "pair_gate": 87,
+              "observation_weight": 0.25,
+              "baseline_sha256": "50155a01e1159aad3d78ed49dc9d6b8c177e4a48ab3c1c33e09219e3a4f0e1bd"
+            },
+            "code_sha256": {
+              "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+              "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+              "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+              "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+              "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+              "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+              "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+              "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+              "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+              "taiji/native_paired_question_learning.py": "3f44c934feb2bb2cb935c46dd87f565a89c63df2360fa32e1dad27ab22536656",
+              "taiji/native_residual_question_evidence_candidate.py": "896ff8ec6d3c8c42526237e546872942c19ac1b26a10c253b19dce7c1267397e",
+              "taiji/native_question_aligned_evidence_candidate.py": "7615d3768eed94eaf68340eeda10ac4eaada47228e937fd61168c614e6e89878",
+              "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+              "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+              "scripts/training/audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+              "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+              "scripts\\training\\run_taiji_n1_reader_transfer.py": "ae00dbce2bce493e27ca9732f1a75a7545c8b466a0c951fccf7442dcdf9a2905"
+            },
+            "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+            "torch": "2.13.0+cpu",
+            "pretrained_source_code": {
+              "protocol": {
+                "schema": "n1-relative-continuation-v1",
+                "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                "initialization": "restore-all-nine-final-adam-rng",
+                "optimizer": "Adam",
+                "learning_rate": 0.001,
+                "dimensions": {
+                  "embedding": 16,
+                  "hidden": 32,
+                  "key": 16
+                },
+                "max_length": 64,
+                "cpu_limit_seconds": 600,
+                "dev_queries": 0,
+                "train_gate": {
+                  "exact": 173,
+                  "each_kind": 40
+                },
+                "read_hops": 2,
+                "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                "parameter_count": 40469,
+                "loss_contract": "taiji-observation-byte-fidelity-v1",
+                "observation_weight": 0.25,
+                "baseline_sha256": "b10fe3092c9fa6abd08f64fed48f02e59c4261a20c58a49a85f9702d0c5e06dd",
+                "seeds": [
+                  11,
+                  12,
+                  13
+                ],
+                "arms": [
+                  "position",
+                  "terminal",
+                  "cut"
+                ],
+                "updates_per_model": 3072,
+                "total_updates": 27648,
+                "holdout_requires_all_training_sufficient": true,
+                "holdout_rows_if_sufficient": 288,
+                "holdout_gates": {
+                  "each_seed": 16,
+                  "each_kind": 2,
+                  "total_gap_each_control": 12
+                },
+                "starting_updates_per_model": 6144,
+                "cumulative_updates_per_model": 9216,
+                "cpu_includes_engineering_preflight": true
+              },
+              "pilot_code": {
+                "protocol": {
+                  "schema": "n1-relative-evidence-train-v1",
+                  "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                  "seed": 11,
+                  "arm": "position",
+                  "initialization": "fresh",
+                  "updates": 6144,
+                  "milestones": [
+                    0,
+                    768,
+                    1536,
+                    3072,
+                    6144
+                  ],
+                  "optimizer": "Adam",
+                  "learning_rate": 0.001,
+                  "dimensions": {
+                    "embedding": 16,
+                    "hidden": 32,
+                    "key": 16
+                  },
+                  "max_length": 64,
+                  "cpu_limit_seconds": 300,
+                  "dev_queries": 0,
+                  "holdout_queries": 0,
+                  "train_gate": {
+                    "exact": 173,
+                    "each_kind": 40
+                  },
+                  "read_hops": 2,
+                  "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                  "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                  "parameter_count": 40469,
+                  "loss_contract": "taiji-observation-byte-fidelity-v1",
+                  "observation_weight": 0.25,
+                  "baseline_sha256": "874d06d0452b7e09305232eed3c7d7d95a62f9de82b1971ee35bc1f49f1dff4b"
+                },
+                "code_sha256": {
+                  "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+                  "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+                  "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+                  "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+                  "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+                  "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+                  "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+                  "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+                  "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                  "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+                  "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+                  "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+                  "scripts\\training\\run_taiji_n1_relative_read.py": "4e6ca287770a44e9a7aaf36d47fbc01622bb89e3fe57d6fd2d1405d06fd0489b"
+                },
+                "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+                "torch": "2.13.0+cpu"
+              },
+              "source_code": {
+                "protocol": {
+                  "schema": "n1-relative-paired-v1",
+                  "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                  "initialization": "fresh",
+                  "optimizer": "Adam",
+                  "learning_rate": 0.001,
+                  "dimensions": {
+                    "embedding": 16,
+                    "hidden": 32,
+                    "key": 16
+                  },
+                  "max_length": 64,
+                  "cpu_limit_seconds": 1200,
+                  "dev_queries": 0,
+                  "train_gate": {
+                    "exact": 173,
+                    "each_kind": 40
+                  },
+                  "read_hops": 2,
+                  "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                  "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                  "parameter_count": 40469,
+                  "loss_contract": "taiji-observation-byte-fidelity-v1",
+                  "observation_weight": 0.25,
+                  "baseline_sha256": "12499936af3b0941acff083e67ec13e4f5a95c29d8c7674cb98aec3f5458a1fe",
+                  "seeds": [
+                    11,
+                    12,
+                    13
+                  ],
+                  "arms": [
+                    "position",
+                    "terminal",
+                    "cut"
+                  ],
+                  "updates_per_model": 6144,
+                  "total_updates": 55296,
+                  "holdout_requires_all_training_sufficient": true,
+                  "holdout_rows_if_sufficient": 288,
+                  "holdout_gates": {
+                    "each_seed": 16,
+                    "each_kind": 2,
+                    "total_gap_each_control": 12
+                  }
+                },
+                "pilot_code": {
+                  "protocol": {
+                    "schema": "n1-relative-evidence-train-v1",
+                    "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+                    "seed": 11,
+                    "arm": "position",
+                    "initialization": "fresh",
+                    "updates": 6144,
+                    "milestones": [
+                      0,
+                      768,
+                      1536,
+                      3072,
+                      6144
+                    ],
+                    "optimizer": "Adam",
+                    "learning_rate": 0.001,
+                    "dimensions": {
+                      "embedding": 16,
+                      "hidden": 32,
+                      "key": 16
+                    },
+                    "max_length": 64,
+                    "cpu_limit_seconds": 300,
+                    "dev_queries": 0,
+                    "holdout_queries": 0,
+                    "train_gate": {
+                      "exact": 173,
+                      "each_kind": 40
+                    },
+                    "read_hops": 2,
+                    "candidate_format": "taiji-native-relative-evidence-candidate-v1",
+                    "address_mechanism": "source-local-learned-shift-minus1-zero-plus1-clamp-v1",
+                    "parameter_count": 40469,
+                    "loss_contract": "taiji-observation-byte-fidelity-v1",
+                    "observation_weight": 0.25,
+                    "baseline_sha256": "874d06d0452b7e09305232eed3c7d7d95a62f9de82b1971ee35bc1f49f1dff4b"
+                  },
+                  "code_sha256": {
+                    "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+                    "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+                    "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+                    "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+                    "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+                    "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+                    "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+                    "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+                    "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+                    "taiji/native_relative_evidence_candidate.py": "e85b7f99c0c0ab2fbbdbd6d102463b590d5d60058fa5220b9ba43f83c0ecb656",
+                    "taiji/native_iterative_evidence_candidate.py": "a1f8b9bc0303eab6b4ac0c2e697b760ed783fa62f4da518b8963e0849265dfe3",
+                    "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+                    "scripts\\training\\run_taiji_n1_relative_read.py": "4e6ca287770a44e9a7aaf36d47fbc01622bb89e3fe57d6fd2d1405d06fd0489b"
+                  },
+                  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+                  "torch": "2.13.0+cpu"
+                },
+                "runner_sha256": "01f040674f2570edf3bc17330564bc2c299d7c255b082a9c0c5f1ab61322e59b"
+              },
+              "runner_sha256": "490daade112a75d5ab97527f8ba9dcadad2de4875d0dae100eb3452db1d473b1"
+            }
+          }
+        }
+      }
+    },
+    "code": {
+      "scripts\\training\\audit_taiji_n1_bound_question_consistency.py": "76551f5ba2e6e9c42759858a7bfe6706a60d66c0f153f755d54457298e785978",
+      "taiji\\native_bound_question_consistency.py": "7bc8231b1a60eace49f3ed025cf707701c0ed59a683d59e17e4f0e3f947caa87"
+    }
+  },
+  "source_guards": {
+    "E:\\Seed\\reports\\taiji_n1_contextual_question_train_20261015.json": "cb26c88e8dab98819a3dbcd48348f7737230872f5444039d460af77e7d00809f",
+    "E:\\Seed\\data\\checkpoints\\n1_contextual_question_train_20261015\\final.pt": "81bff9166fe684db1ade5eaec2e136a17a1fac51e574572e61e4fb72c073ef81",
+    "E:\\Seed\\plans\\manifests\\n1_native_evidence_curriculum_v3_20261015.json": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+    "E:\\Seed\\plans\\manifests\\n1_paired_questions_20261015.json": "1c3857b1ae66c227503d443ea13051a4dbaa0b65707f4fb259a3fe64c222fddb",
+    "E:\\Seed\\plans\\manifests\\n1_renaming_curriculum_20261015.json": "c44ea78f40d7255688013eb4054ae803bd04ee97dc5ba2e0c02b82e301ce6fdd"
+  },
+  "checks": {
+    "parameters": true,
+    "full_adam": true,
+    "finite_False": true,
+    "credit_question._False": true,
+    "credit_context_question._False": true,
+    "credit_local_projection._False": true,
+    "writer_False": true,
+    "finite_True": true,
+    "credit_question._True": true,
+    "credit_context_question._True": true,
+    "credit_local_projection._True": true,
+    "writer_True": true,
+    "neutral": true,
+    "independent_restore": true,
+    "source_bundle_unchanged": true
+  },
+  "complete": true,
+  "status": "complete",
+  "can_promote": false,
+  "restore_check": {
+    "path": "E:\\Seed\\data\\checkpoints\\n1_bound_consistency_preflight_20261015\\zero.pt",
+    "sha256": "4678a45b29c2299c82f638306c129eaebee0160d0d534776b9e3c7cb4e486304"
+  },
+  "cpu_seconds": 12.484375,
+  "sources_unchanged": true,
+  "code_unchanged": true
+}
