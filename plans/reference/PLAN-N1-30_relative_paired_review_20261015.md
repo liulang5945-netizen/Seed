@@ -42,3 +42,6 @@ terminal每来源末态且相同位置/来源/辅助目标；cut在QA及辅助�
 
 
 2026-10-15：31正式启动前修正继承的单模型协议元数据，去掉seed/arm/updates/milestones/holdout_queries并明确门后288留出组；原v1预检6.78125秒保留，v2预检累计旧CPU且总工程限60秒。训练/留出尚0。自动审批服务曾报用量错误未执行校验；用量查询可用后沿原审批路径重试成功，没有绕过审批；继续已批准30范围。
+
+
+2026-10-15：[31裁决](EXP-N1-31_relative_paired_adjudication_20261015.md)九模型55,296更新、1728组train、18独立恢复完整，CPU939.796875秒，全部工程/源档守卫过；position190/180/180，但seed12/13 transition38/39<40，status=training-insufficient，can_advance=false。holdout/dev均未查询，报告留出0不是0/32成绩。31按原合同封存失败，不在其内补训。唯一建议[32另版九模型统一续接3072](PLAN-N1-32_fixed_paired_continuation_review_20261015.md)，额外27,648更新/独立600秒CPU，原门不变，已弹窗待决定。78相关测试过；C1工程过/C2原零收益/C3跨seed充分与未见保持/C4/三器官和其他N/根CI债仍在。

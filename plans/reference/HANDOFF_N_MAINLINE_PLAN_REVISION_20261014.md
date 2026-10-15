@@ -97,3 +97,6 @@ PLAN-N1-06 r1 的 C1 规格已实现并按完整面通过。两臂均为96项／
 
 
 2026-10-15：31协议元数据修正冻结9d200a42c，v2预检passed，累计CPU14.0625秒含v1的6.78125秒，零更新/留出；正式九模型已启动。首个seed11 position终点190/192，独立恢复完成，累计CPU97.67秒。78相关合同通过（7.13秒）；尚未取得九模型对照或v3留出结果。
+
+
+2026-10-15：[31裁决](EXP-N1-31_relative_paired_adjudication_20261015.md)九模型55,296更新、1728组train、18独立恢复完整，CPU939.796875秒，全部工程/源档守卫过；position190/180/180，但seed12/13 transition38/39<40，status=training-insufficient，can_advance=false。holdout/dev均未查询，报告留出0不是0/32成绩。31按原合同封存失败，不在其内补训。唯一建议[32另版九模型统一续接3072](PLAN-N1-32_fixed_paired_continuation_review_20261015.md)，额外27,648更新/独立600秒CPU，原门不变，已弹窗待决定。78相关测试过；C1工程过/C2原零收益/C3跨seed充分与未见保持/C4/三器官和其他N/根CI债仍在。
