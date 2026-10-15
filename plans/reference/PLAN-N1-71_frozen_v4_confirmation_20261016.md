@@ -19,3 +19,7 @@
 ## 产物
 
 执行器`scripts/training/eval_taiji_n1_frozen_v4_confirmation.py`，合同`tests/taiji_native/test_native_frozen_v4_confirmation_contract.py`；attempt `reports/taiji_n1_frozen_v4_confirmation_attempt_20261016.json`；结果`reports/taiji_n1_frozen_v4_confirmation_20261016.json`，裁决在plans/reference。若原门未过，唯一后继为从冻结结果定位主要泛化/信用缺口的train-only有界诊断；不再次查询v4，不把它改成新训练材料。
+
+## 实施前检验
+
+三个纯合成合同通过：原14门的边界/完整配对、明确holdout路径/全状态中性/异常留存及清理、attempt存在时在readiness前拒绝重试；另10导航、两Ruff及新文件Black通过。只读readiness核64来源守卫/九终点/32项，0真实模型查询。提交执行器后一次执行。
