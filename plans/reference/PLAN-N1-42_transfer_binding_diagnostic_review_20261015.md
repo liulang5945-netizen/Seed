@@ -1,6 +1,6 @@
 # PLAN-N1-42 迁移配对模型的实体绑定复审
 
-状态：待弹窗批准，未执行。依据[41裁决](EXP-N1-41_reader_transfer_calibration_20261015.md)，原题191/192、已训练pair96/96，训练充分性通过但实体重命名稳定性未证明。
+状态：2026-10-15用户弹窗已批准42；随后用户授权直接执行推荐的本地主线迭代，无须逐项询问。先验证冻结工具再执行。依据[41裁决](EXP-N1-41_reader_transfer_calibration_20261015.md)，原题191/192、已训练pair96/96，训练充分性通过但实体重命名稳定性未证明。
 
 唯一推荐：仅41固定seed11 final，复用34已冻结plans/manifests/n1_entity_binding_diagnostic_20261015.json的96个train lookup/unknown及原始/一致实体重命名/query切换三条件，共288组teacher＋自由，独立CPU≤60秒（58预留收尾），0更新/dev/holdout。不生成新变体、不挑样本、不更新任何参数，不重复34模型查询。
 
