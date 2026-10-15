@@ -391,10 +391,9 @@ def scan(
             if name not in written:
                 #: 只绑过字面路径、没往里写过 ⇒ 那是读数件常量或读侧检查，不是落盘靶。
                 continue
-            if dependent is not None and name not in written_no_shared:
+            if dependent is not None and name not in written_no_shared and rel not in dependent:
                 #: 摘掉助手那条分支就看不见这个靶 ⇒ 本行的识别**依赖**助手识别。
-                if rel not in dependent:
-                    dependent.append(rel)
+                dependent.append(rel)
             for literal in sorted(set(literals)):
                 if literal in tracked_set:
                     rows.append(

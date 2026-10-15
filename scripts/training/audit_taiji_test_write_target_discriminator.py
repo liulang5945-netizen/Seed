@@ -233,10 +233,13 @@ def string_or_bound(element: ast.expr, constants: dict[str, str]) -> str | None:
 def module_string_constants(tree: ast.Module) -> dict[str, str]:
     out: dict[str, str] = {}
     for node in tree.body:
-        if isinstance(node, ast.Assign) and isinstance(node.value, ast.Constant):
-            if isinstance(node.value.value, str):
-                for tid in target_names(node.targets[0] if node.targets else ast.Name(id="")):
-                    out[tid] = node.value.value
+        if (
+            isinstance(node, ast.Assign)
+            and isinstance(node.value, ast.Constant)
+            and isinstance(node.value.value, str)
+        ):
+            for tid in target_names(node.targets[0] if node.targets else ast.Name(id="")):
+                out[tid] = node.value.value
     return out
 
 
