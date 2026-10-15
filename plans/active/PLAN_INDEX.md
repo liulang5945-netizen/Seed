@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **当前调度（2026-10-15）**：42名称诊断不足；按最新授权直接执行[43重命名课程](../reference/PLAN-N1-43_renaming_curriculum_execution_20261015.md)，先冻结，保留原门，零v3 dev/holdout。
+> **当前调度（2026-10-15）**：43完整四门未过，停止追加；直接执行[44读取等价性诊断](../reference/PLAN-N1-44_read_equivariance_diagnostic_20261015.md)，冻结终点/teacher-only。
 
 > **2026-10-14 导航校准**：本索引的编号约定继续保留；下方累积里程碑摘要含历史状态。当前队列只看 [03](roadmap/03_CURRENT_EXECUTION.md)，N 主线看 [09](roadmap/09_NEXT_MAINLINE_PLAN.md)，整个项目按 [项目地图](../../docs/README.md) 阅读。本轮收纳见 [整理记录](../reference/PROJECT_ORGANIZATION_20261014.md)。
 
@@ -893,3 +893,5 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 2026-10-15：42v2完整288组，CPU7.546875含零查询拒收2.78125，原题95/96、已训练切换96/96控制复现，rename仅lookup19/48/unknown10/48，名称稳定性不足。按用户最新推荐直接执行授权，唯一下一步43逐次一致重命名课程，保留41完整Adam/RNG与37结构，固定6144更新/300秒CPU，原门保留并新增训练衍生重命名门，先冻后跑，零v3 dev/holdout。 详见[42裁决](../reference/EXP-N1-42_transfer_binding_adjudication_20261015.md)。
 
 2026-10-15：43课程manifest已冻结SHA c44ea78f40d7255688013eb4054ae803bd04ee97dc5ba2e0c02b82e301ce6fdd，3072逐次新名称映射＋192独立训练衍生校准映射，全9792实体互异并避开v3/34名称；2新合同通过，source41完整Adam6144/RNG/来源/signature恢复及新zero保存恢复验证过。下一步冻结源码后执行固定6144更新/300秒CPU，四门按合同合取，零v3 dev/holdout。
+
+2026-10-15：43v2完整6144更新/9216训练QA/1728组评估，CPU119.515625含首版6.84375，完整Adam续接到12288与独立恢复/全部守卫过。终点原166/192、pair86/96、rename108/192及pair43/96，四门未过，不追加。唯一下一步44冻结41/43读取等价性teacher诊断1152条/60秒CPU，0更新/自由/v3 dev/holdout，按最新授权自动执行，所有原门/失败及项目债保留。 详见[43裁决](../reference/EXP-N1-43_renaming_curriculum_adjudication_20261015.md)。
