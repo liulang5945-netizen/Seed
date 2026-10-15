@@ -1,0 +1,96 @@
+{
+  "schema": "n1-curriculum-target-support-v1",
+  "manifest_sha256": "e95a2e3be6a3a4abca92ea583cf35522545961280b575e5d5373857973d5e979",
+  "model_queries": 0,
+  "optimizer_steps": 0,
+  "coverage": {
+    "train_answer_classes": [
+      "brass",
+      "copper",
+      "east",
+      "iron",
+      "north",
+      "silver",
+      "south",
+      "unknown",
+      "west"
+    ],
+    "train_positive_target_byte_counts": {
+      "97": 22,
+      "98": 15,
+      "99": 13,
+      "101": 33,
+      "104": 12,
+      "105": 20,
+      "107": 24,
+      "108": 8,
+      "110": 89,
+      "111": 61,
+      "112": 26,
+      "114": 53,
+      "115": 57,
+      "116": 24,
+      "117": 31,
+      "118": 8,
+      "119": 29
+    },
+    "by_split": {
+      "dev": {
+        "items": 32,
+        "unseen_target_bytes": [
+          100
+        ],
+        "unseen_target_characters": "d",
+        "affected_ids": [
+          "dev-005",
+          "dev-008",
+          "dev-009",
+          "dev-013",
+          "dev-016",
+          "dev-017",
+          "dev-025",
+          "dev-028",
+          "dev-029"
+        ],
+        "new_answer_classes": [
+          "lead",
+          "nickel"
+        ]
+      },
+      "holdout": {
+        "items": 32,
+        "unseen_target_bytes": [
+          109,
+          113,
+          122
+        ],
+        "unseen_target_characters": "mqz",
+        "affected_ids": [
+          "holdout-000",
+          "holdout-001",
+          "holdout-004",
+          "holdout-005",
+          "holdout-008",
+          "holdout-009",
+          "holdout-012",
+          "holdout-013",
+          "holdout-016",
+          "holdout-017",
+          "holdout-020",
+          "holdout-021",
+          "holdout-024",
+          "holdout-025",
+          "holdout-028",
+          "holdout-029"
+        ],
+        "new_answer_classes": [
+          "amber",
+          "quartz"
+        ]
+      }
+    }
+  },
+  "code_sha256": "7b8b0722cd027e6911e37a996f6640168e7487baa8c3977c834dda4ce5e2a226",
+  "cpu_seconds": 1.546875,
+  "reading_limit": "Missing positive target support is a curriculum confound, not proof of impossible generation or the unique cause of failure. Expand training support rather than remove hard evaluation bytes; use a fresh independently frozen surface."
+}
