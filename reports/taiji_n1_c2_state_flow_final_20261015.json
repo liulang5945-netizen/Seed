@@ -1,0 +1,39 @@
+{
+  "format": "taiji-n1-c2-state-flow-final-v1",
+  "status": "complete",
+  "command": [
+    "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+    "scripts/training/run_taiji_n1_c2_state_flow.py"
+  ],
+  "report": "reports\\taiji_n1_c2_state_flow_20261015.json",
+  "report_sha256": "0e5559ca34848993d6e49be565f42fd1228e7051cbe8b87702117a88bee25280",
+  "snapshots_sha256": "8f0ae264c2b1807ca5774ad07333ace1b08152bbc5c22293bff1fe701bbeefe3",
+  "completed_pairs": 48,
+  "queries": 96,
+  "cpu_limit_seconds": 300.0,
+  "total_cpu_seconds": 155.078125,
+  "timing_by_process": {
+    "audit": {
+      "cpu_seconds": 2.578125,
+      "wall_seconds": 2.558536299999105
+    },
+    "query": {
+      "cpu_seconds": 150.953125,
+      "wall_seconds": 151.18301090000023
+    },
+    "orchestrator": {
+      "cpu_seconds": 1.546875,
+      "wall_seconds": 155.81769089999943
+    }
+  },
+  "guards": {
+    "complete_surface": true,
+    "noninterference": true,
+    "weights_unchanged": true,
+    "support_unchanged": true,
+    "query_episodes_absent": true,
+    "independent_restore": true,
+    "cpu_within_limit": true
+  },
+  "reading_limit": "numerical state transfer only; no semantic preservation, capability or credit verdict"
+}

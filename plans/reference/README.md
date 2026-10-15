@@ -2,7 +2,7 @@
 
 
 - [C2完整结果裁决](PLAN-N1-07_C2_calibration_result_adjudication_20261015.md)：112臂、约602秒CPU，七臂严格命中0/16，非能力通过。
-- [C2状态流诊断预注册（待批准）](PLAN-N1-08_C2_state_flow_diagnostic_prereg_20261015.md)：同16项，新增取数测面与独立5分钟CPU预算建议。
+- [C2状态流诊断预注册（已执行）](PLAN-N1-08_C2_state_flow_diagnostic_prereg_20261015.md)：同16项，48对已完整，155.078125秒CPU；按新授权自主执行。
 
 留存政策（owner 2026-10-07）＝核心设计与相关内容留档参考；实验过程文档蒸馏后删除（已删 A 支线 13 件＋M5 族 158 件＋第二批 29 件，墓碑见 [M5_DISTILLATION_TOMBSTONE.md](M5_DISTILLATION_TOMBSTONE.md) 与 [DISTILLATION_TOMBSTONE_20261007.md](DISTILLATION_TOMBSTONE_20261007.md)，git 历史可回溯）。项目收束见 [M0_M7_PROJECT_CONSOLIDATION_20261006](M0_M7_PROJECT_CONSOLIDATION_20261006.md)，下一轮主线见 [../active/roadmap/09_NEXT_MAINLINE_PLAN.md](../active/roadmap/09_NEXT_MAINLINE_PLAN.md)。
 
@@ -126,3 +126,6 @@
 - [README](README.md)
 - [VISION_FUTURE_TECHNOLOGY](VISION_FUTURE_TECHNOLOGY.md)
 
+
+- [08状态流裁决](PLAN-N1-08_C2_state_flow_adjudication_20261015.md)：48对完整、无干扰、状态差传到读出，无能力通过。
+- [09等剂量补零位置协议](PLAN-N1-09_C2_padding_placement_prereg_20261015.md)：低成本自主推进的下一因果诊断。

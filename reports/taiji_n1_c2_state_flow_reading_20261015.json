@@ -1,0 +1,1014 @@
+{
+  "format": "taiji-n1-c2-state-flow-derived-v1",
+  "source_report_sha256": "0e5559ca34848993d6e49be565f42fd1228e7051cbe8b87702117a88bee25280",
+  "snapshots_sha256": "8f0ae264c2b1807ca5774ad07333ace1b08152bbc5c22293bff1fe701bbeefe3",
+  "new_model_runs": 0,
+  "original_48_control_outputs_and_consumer_audits_equal": true,
+  "query_snapshots_equal_all_arms": true,
+  "cpu_final_seconds": 155.078125,
+  "rows": [
+    {
+      "item_id": "V023",
+      "replay_steps": 256,
+      "correct_steps": 238,
+      "padding_steps": 18,
+      "oracle_zero_region_l2": 0.00015007946898063586,
+      "oracle_zero_context_l2": 0.015858453346724533,
+      "oracle_zero_probability_l1": 0.0023955208203005895,
+      "oracle_zero_snapshots": {
+        "1": 0.1341706468331334,
+        "64": 0.01220747966378643,
+        "128": 0.004344005635874912,
+        "192": 0.006115213384532458,
+        "256": 0.00015007946898063586
+      },
+      "oracle_wrong_region_l2": 0.008984459826320242,
+      "oracle_wrong_context_l2": 0.5622919374775054,
+      "same_emitted_prefix_up_to_16": 16,
+      "same_input_prefix_trace": [
+        {
+          "input_index": 0,
+          "context_l2": 0.006366206962337228,
+          "probability_l1": 0.0006758287988759548
+        },
+        {
+          "input_index": 1,
+          "context_l2": 0.0027960898987565725,
+          "probability_l1": 7.774708910801564e-05
+        },
+        {
+          "input_index": 2,
+          "context_l2": 0.0011748850553508856,
+          "probability_l1": 0.0002236806230939692
+        },
+        {
+          "input_index": 3,
+          "context_l2": 0.0005805100291082234,
+          "probability_l1": 0.0001457081502849178
+        },
+        {
+          "input_index": 4,
+          "context_l2": 0.017421436102993265,
+          "probability_l1": 0.005502725331069769
+        },
+        {
+          "input_index": 5,
+          "context_l2": 0.006062907462549631,
+          "probability_l1": 0.0033900687858476886
+        },
+        {
+          "input_index": 6,
+          "context_l2": 0.001810401500540071,
+          "probability_l1": 0.0004282566275151112
+        },
+        {
+          "input_index": 7,
+          "context_l2": 0.0016238422977071815,
+          "probability_l1": 0.0005949928184918463
+        },
+        {
+          "input_index": 8,
+          "context_l2": 0.0015376630137620493,
+          "probability_l1": 0.0002942611622529512
+        },
+        {
+          "input_index": 9,
+          "context_l2": 0.0012395419409720243,
+          "probability_l1": 4.237513186211572e-05
+        },
+        {
+          "input_index": 10,
+          "context_l2": 0.0009510942978409275,
+          "probability_l1": 0.0002627906010843617
+        },
+        {
+          "input_index": 11,
+          "context_l2": 0.0005583648371114971,
+          "probability_l1": 0.00018818533521880454
+        },
+        {
+          "input_index": 12,
+          "context_l2": 0.00029260234731384927,
+          "probability_l1": 2.557047127993428e-05
+        },
+        {
+          "input_index": 13,
+          "context_l2": 0.00035977106748062595,
+          "probability_l1": 6.80966472828004e-05
+        },
+        {
+          "input_index": 14,
+          "context_l2": 0.0004286564868058412,
+          "probability_l1": 0.0001198996900484417
+        },
+        {
+          "input_index": 15,
+          "context_l2": 0.00027093428579900227,
+          "probability_l1": 4.4569887791112706e-05
+        }
+      ],
+      "oracle_raw_equals_zero": true
+    },
+    {
+      "item_id": "V007",
+      "replay_steps": 256,
+      "correct_steps": 254,
+      "padding_steps": 2,
+      "oracle_zero_region_l2": 0.026356443605103776,
+      "oracle_zero_context_l2": 2.1167116975475757,
+      "oracle_zero_probability_l1": 0.8010024975931174,
+      "oracle_zero_snapshots": {
+        "1": 0.12242246030932419,
+        "64": 0.012464481056218312,
+        "128": 0.0043747521834969745,
+        "192": 0.00604921376414583,
+        "256": 0.026356443605103776
+      },
+      "oracle_wrong_region_l2": 0.027788490466052758,
+      "oracle_wrong_context_l2": 2.1397399696215205,
+      "same_emitted_prefix_up_to_16": 0,
+      "same_input_prefix_trace": [],
+      "oracle_raw_equals_zero": false
+    },
+    {
+      "item_id": "V002",
+      "replay_steps": 256,
+      "correct_steps": 256,
+      "padding_steps": 0,
+      "oracle_zero_region_l2": 0.021948673111025777,
+      "oracle_zero_context_l2": 1.7688685377923232,
+      "oracle_zero_probability_l1": 0.41031534140165604,
+      "oracle_zero_snapshots": {
+        "1": 0.10785480733309433,
+        "64": 0.01590862695316213,
+        "128": 0.01890742457380137,
+        "192": 0.015294234535792199,
+        "256": 0.021948673111025777
+      },
+      "oracle_wrong_region_l2": 0.02111371032766497,
+      "oracle_wrong_context_l2": 1.7860251567944605,
+      "same_emitted_prefix_up_to_16": 0,
+      "same_input_prefix_trace": [],
+      "oracle_raw_equals_zero": false
+    },
+    {
+      "item_id": "V010",
+      "replay_steps": 256,
+      "correct_steps": 256,
+      "padding_steps": 0,
+      "oracle_zero_region_l2": 0.014348359065555302,
+      "oracle_zero_context_l2": 1.070283863474501,
+      "oracle_zero_probability_l1": 0.33126341305342066,
+      "oracle_zero_snapshots": {
+        "1": 0.1103677149571378,
+        "64": 0.029140114135037427,
+        "128": 0.018552345295787472,
+        "192": 0.014028287710952344,
+        "256": 0.014348359065555302
+      },
+      "oracle_wrong_region_l2": 0.08828163865418033,
+      "oracle_wrong_context_l2": 3.583155227500809,
+      "same_emitted_prefix_up_to_16": 0,
+      "same_input_prefix_trace": [],
+      "oracle_raw_equals_zero": false
+    },
+    {
+      "item_id": "V008",
+      "replay_steps": 256,
+      "correct_steps": 224,
+      "padding_steps": 32,
+      "oracle_zero_region_l2": 5.612206538222947e-05,
+      "oracle_zero_context_l2": 0.005851019857786772,
+      "oracle_zero_probability_l1": 0.001203676093609829,
+      "oracle_zero_snapshots": {
+        "1": 0.10272347929408257,
+        "64": 0.022590314903672536,
+        "128": 0.0190546380151846,
+        "192": 0.01699644934765565,
+        "256": 5.612206538222947e-05
+      },
+      "oracle_wrong_region_l2": 0.026699985956532724,
+      "oracle_wrong_context_l2": 2.112009693777388,
+      "same_emitted_prefix_up_to_16": 16,
+      "same_input_prefix_trace": [
+        {
+          "input_index": 0,
+          "context_l2": 0.0025386012957939502,
+          "probability_l1": 0.000978809852995255
+        },
+        {
+          "input_index": 1,
+          "context_l2": 0.0014675813283231394,
+          "probability_l1": 0.00028074177498638164
+        },
+        {
+          "input_index": 2,
+          "context_l2": 0.0008845827585840346,
+          "probability_l1": 0.00036546299674000693
+        },
+        {
+          "input_index": 3,
+          "context_l2": 0.0007248447582030416,
+          "probability_l1": 6.997466726943458e-06
+        },
+        {
+          "input_index": 4,
+          "context_l2": 0.00037863704274893295,
+          "probability_l1": 1.0807489616126986e-05
+        },
+        {
+          "input_index": 5,
+          "context_l2": 0.0002494805275185482,
+          "probability_l1": 5.8760172805705224e-05
+        },
+        {
+          "input_index": 6,
+          "context_l2": 0.06306789769844862,
+          "probability_l1": 0.010964552629957325
+        },
+        {
+          "input_index": 7,
+          "context_l2": 0.029773535366275625,
+          "probability_l1": 0.010999195885005975
+        },
+        {
+          "input_index": 8,
+          "context_l2": 0.01872082062463496,
+          "probability_l1": 0.0037187745561766405
+        },
+        {
+          "input_index": 9,
+          "context_l2": 0.01412627089648964,
+          "probability_l1": 0.001167268885581052
+        },
+        {
+          "input_index": 10,
+          "context_l2": 0.010520233588537648,
+          "probability_l1": 0.001405049805384806
+        },
+        {
+          "input_index": 11,
+          "context_l2": 0.01161866938142371,
+          "probability_l1": 0.0021180128306923507
+        },
+        {
+          "input_index": 12,
+          "context_l2": 0.01050275675725793,
+          "probability_l1": 0.0026975736422230057
+        },
+        {
+          "input_index": 13,
+          "context_l2": 0.008284346724437992,
+          "probability_l1": 0.0010942979628225658
+        },
+        {
+          "input_index": 14,
+          "context_l2": 0.005998349422895988,
+          "probability_l1": 0.002235841553613227
+        },
+        {
+          "input_index": 15,
+          "context_l2": 0.004991094509637709,
+          "probability_l1": 0.0011674699005652656
+        }
+      ],
+      "oracle_raw_equals_zero": true
+    },
+    {
+      "item_id": "V016",
+      "replay_steps": 256,
+      "correct_steps": 224,
+      "padding_steps": 32,
+      "oracle_zero_region_l2": 5.6290118657665465e-05,
+      "oracle_zero_context_l2": 0.005845711301141559,
+      "oracle_zero_probability_l1": 0.00122796096275124,
+      "oracle_zero_snapshots": {
+        "1": 0.10036020747729943,
+        "64": 0.0190163625342375,
+        "128": 0.01948744871003721,
+        "192": 0.016802825446734095,
+        "256": 5.6290118657665465e-05
+      },
+      "oracle_wrong_region_l2": 0.02672498831304813,
+      "oracle_wrong_context_l2": 2.1629030926184702,
+      "same_emitted_prefix_up_to_16": 16,
+      "same_input_prefix_trace": [
+        {
+          "input_index": 0,
+          "context_l2": 0.0025386400771054995,
+          "probability_l1": 0.0009934439904100145
+        },
+        {
+          "input_index": 1,
+          "context_l2": 0.0015010359374238167,
+          "probability_l1": 0.00029104034956617397
+        },
+        {
+          "input_index": 2,
+          "context_l2": 0.0009060821594826166,
+          "probability_l1": 0.0003507585919351186
+        },
+        {
+          "input_index": 3,
+          "context_l2": 0.0007397562290993323,
+          "probability_l1": 6.87782240049728e-06
+        },
+        {
+          "input_index": 4,
+          "context_l2": 0.00038879723731326157,
+          "probability_l1": 1.1901056822694045e-05
+        },
+        {
+          "input_index": 5,
+          "context_l2": 0.00025637128556346066,
+          "probability_l1": 5.9234267780539085e-05
+        },
+        {
+          "input_index": 6,
+          "context_l2": 0.06306551660211436,
+          "probability_l1": 0.01096487811651059
+        },
+        {
+          "input_index": 7,
+          "context_l2": 0.029773084418217136,
+          "probability_l1": 0.010999312297826691
+        },
+        {
+          "input_index": 8,
+          "context_l2": 0.018721663365421973,
+          "probability_l1": 0.003721725153894795
+        },
+        {
+          "input_index": 9,
+          "context_l2": 0.014126504655919117,
+          "probability_l1": 0.001166978561684573
+        },
+        {
+          "input_index": 10,
+          "context_l2": 0.010519696899388536,
+          "probability_l1": 0.001405734184800167
+        },
+        {
+          "input_index": 11,
+          "context_l2": 0.011618286066939225,
+          "probability_l1": 0.002119692750596869
+        },
+        {
+          "input_index": 12,
+          "context_l2": 0.010502764796061624,
+          "probability_l1": 0.002697605575946227
+        },
+        {
+          "input_index": 13,
+          "context_l2": 0.008284642489129636,
+          "probability_l1": 0.0010942238095594803
+        },
+        {
+          "input_index": 14,
+          "context_l2": 0.00599828420467042,
+          "probability_l1": 0.0022365401090382875
+        },
+        {
+          "input_index": 15,
+          "context_l2": 0.004991250862051944,
+          "probability_l1": 0.00116755019428183
+        }
+      ],
+      "oracle_raw_equals_zero": true
+    },
+    {
+      "item_id": "V005",
+      "replay_steps": 241,
+      "correct_steps": 241,
+      "padding_steps": 0,
+      "oracle_zero_region_l2": 0.01441721856030891,
+      "oracle_zero_context_l2": 0.7969389623433351,
+      "oracle_zero_probability_l1": 0.12103087469222373,
+      "oracle_zero_snapshots": {
+        "1": 0.12166462725937353,
+        "61": 0.02281096813877902,
+        "121": 0.018620132163438625,
+        "181": 0.018365600064688063,
+        "241": 0.01441721856030891
+      },
+      "oracle_wrong_region_l2": 0.014384027409702753,
+      "oracle_wrong_context_l2": 0.7952692765117981,
+      "same_emitted_prefix_up_to_16": 1,
+      "same_input_prefix_trace": [
+        {
+          "input_index": 0,
+          "context_l2": 0.3650115915273954,
+          "probability_l1": 0.0899302138720941
+        }
+      ],
+      "oracle_raw_equals_zero": false
+    },
+    {
+      "item_id": "V013",
+      "replay_steps": 256,
+      "correct_steps": 241,
+      "padding_steps": 15,
+      "oracle_zero_region_l2": 0.0006709310341282684,
+      "oracle_zero_context_l2": 0.06485090398221745,
+      "oracle_zero_probability_l1": 0.009048374427038652,
+      "oracle_zero_snapshots": {
+        "1": 0.13610425589598468,
+        "64": 0.04989847000135036,
+        "128": 0.016407960980220293,
+        "192": 0.012380619510623284,
+        "256": 0.0006709310341282684
+      },
+      "oracle_wrong_region_l2": 0.015297311234826111,
+      "oracle_wrong_context_l2": 1.1124286476000547,
+      "same_emitted_prefix_up_to_16": 16,
+      "same_input_prefix_trace": [
+        {
+          "input_index": 0,
+          "context_l2": 0.026014888695181457,
+          "probability_l1": 0.004894723773304577
+        },
+        {
+          "input_index": 1,
+          "context_l2": 0.009657026010095073,
+          "probability_l1": 0.0027512612983855433
+        },
+        {
+          "input_index": 2,
+          "context_l2": 0.005050966582062574,
+          "probability_l1": 0.001337576799414819
+        },
+        {
+          "input_index": 3,
+          "context_l2": 0.0029884230935387068,
+          "probability_l1": 0.000485913937808391
+        },
+        {
+          "input_index": 4,
+          "context_l2": 0.002051486430616818,
+          "probability_l1": 0.0003547171788795822
+        },
+        {
+          "input_index": 5,
+          "context_l2": 0.0022057511014556054,
+          "probability_l1": 0.0006361541142894112
+        },
+        {
+          "input_index": 6,
+          "context_l2": 0.0019175503806436271,
+          "probability_l1": 9.130802803269944e-05
+        },
+        {
+          "input_index": 7,
+          "context_l2": 0.0013647520057701484,
+          "probability_l1": 0.0002645746557163875
+        },
+        {
+          "input_index": 8,
+          "context_l2": 0.0010170475980336483,
+          "probability_l1": 0.0001257032397461444
+        },
+        {
+          "input_index": 9,
+          "context_l2": 0.0007087351478114039,
+          "probability_l1": 0.0001701111445981951
+        },
+        {
+          "input_index": 10,
+          "context_l2": 0.0006638002818945862,
+          "probability_l1": 2.8985158451177995e-05
+        },
+        {
+          "input_index": 11,
+          "context_l2": 0.0007180173811512657,
+          "probability_l1": 0.00011515959792518515
+        },
+        {
+          "input_index": 12,
+          "context_l2": 0.0004157904893816511,
+          "probability_l1": 6.250826550058264e-05
+        },
+        {
+          "input_index": 13,
+          "context_l2": 0.00043151724816845337,
+          "probability_l1": 2.5315107109236124e-05
+        },
+        {
+          "input_index": 14,
+          "context_l2": 0.00041039447788303725,
+          "probability_l1": 5.256627036942518e-05
+        },
+        {
+          "input_index": 15,
+          "context_l2": 0.0003976137344968565,
+          "probability_l1": 2.840353346300617e-05
+        }
+      ],
+      "oracle_raw_equals_zero": true
+    },
+    {
+      "item_id": "V009",
+      "replay_steps": 233,
+      "correct_steps": 233,
+      "padding_steps": 0,
+      "oracle_zero_region_l2": 0.05909647293846099,
+      "oracle_zero_context_l2": 2.2016595823985416,
+      "oracle_zero_probability_l1": 0.7033430321432661,
+      "oracle_zero_snapshots": {
+        "1": 0.0936042609318274,
+        "59": 0.02540576857424674,
+        "117": 0.015820916306968233,
+        "175": 0.028832784838383658,
+        "233": 0.05909647293846099
+      },
+      "oracle_wrong_region_l2": 0.059023986723479784,
+      "oracle_wrong_context_l2": 2.1953923262332884,
+      "same_emitted_prefix_up_to_16": 0,
+      "same_input_prefix_trace": [],
+      "oracle_raw_equals_zero": false
+    },
+    {
+      "item_id": "V001",
+      "replay_steps": 244,
+      "correct_steps": 184,
+      "padding_steps": 60,
+      "oracle_zero_region_l2": 1.8259037668312875e-07,
+      "oracle_zero_context_l2": 1.8028674902684856e-05,
+      "oracle_zero_probability_l1": 4.468573933991138e-06,
+      "oracle_zero_snapshots": {
+        "1": 0.10237713561404514,
+        "61": 0.0390478622570037,
+        "122": 0.02332885928351134,
+        "183": 0.0160106867789196,
+        "244": 1.8259037668312875e-07
+      },
+      "oracle_wrong_region_l2": 0.01948366611287823,
+      "oracle_wrong_context_l2": 0.8923905454225283,
+      "same_emitted_prefix_up_to_16": 16,
+      "same_input_prefix_trace": [
+        {
+          "input_index": 0,
+          "context_l2": 6.677290792404978e-06,
+          "probability_l1": 1.6395676993852248e-06
+        },
+        {
+          "input_index": 1,
+          "context_l2": 2.701707557350208e-06,
+          "probability_l1": 8.135241387208225e-07
+        },
+        {
+          "input_index": 2,
+          "context_l2": 1.677325143241334e-06,
+          "probability_l1": 3.883717454300495e-07
+        },
+        {
+          "input_index": 3,
+          "context_l2": 1.8881612752558956e-06,
+          "probability_l1": 5.476381375046913e-07
+        },
+        {
+          "input_index": 4,
+          "context_l2": 1.1514680381965299e-06,
+          "probability_l1": 1.4819124771747738e-07
+        },
+        {
+          "input_index": 5,
+          "context_l2": 1.1218205664632597e-06,
+          "probability_l1": 2.366546141274739e-07
+        },
+        {
+          "input_index": 6,
+          "context_l2": 6.968267592184162e-07,
+          "probability_l1": 1.8077855656883912e-08
+        },
+        {
+          "input_index": 7,
+          "context_l2": 6.79462212014481e-07,
+          "probability_l1": 5.200317900744267e-07
+        },
+        {
+          "input_index": 8,
+          "context_l2": 1.0462679626529176e-06,
+          "probability_l1": 1.8104461219081713e-07
+        },
+        {
+          "input_index": 9,
+          "context_l2": 6.998584354977613e-07,
+          "probability_l1": 5.303189141159237e-07
+        },
+        {
+          "input_index": 10,
+          "context_l2": 4.83602505955286e-07,
+          "probability_l1": 8.139181773003656e-09
+        },
+        {
+          "input_index": 11,
+          "context_l2": 3.5417727317724574e-07,
+          "probability_l1": 7.825440206943313e-08
+        },
+        {
+          "input_index": 12,
+          "context_l2": 6.322509161932073e-07,
+          "probability_l1": 2.1654369675161433e-07
+        },
+        {
+          "input_index": 13,
+          "context_l2": 4.408418751714262e-07,
+          "probability_l1": 5.2991879329056246e-08
+        },
+        {
+          "input_index": 14,
+          "context_l2": 5.13385180893253e-07,
+          "probability_l1": 4.3742420530179515e-07
+        },
+        {
+          "input_index": 15,
+          "context_l2": 4.384054493755225e-07,
+          "probability_l1": 5.290974058880238e-08
+        }
+      ],
+      "oracle_raw_equals_zero": true
+    },
+    {
+      "item_id": "V027",
+      "replay_steps": 256,
+      "correct_steps": 256,
+      "padding_steps": 0,
+      "oracle_zero_region_l2": 0.013177153689971757,
+      "oracle_zero_context_l2": 1.083454018482404,
+      "oracle_zero_probability_l1": 0.23928160342302363,
+      "oracle_zero_snapshots": {
+        "1": 0.09150217379842207,
+        "64": 0.01725702995687481,
+        "128": 0.01615737977247009,
+        "192": 0.014685092707494086,
+        "256": 0.013177153689971757
+      },
+      "oracle_wrong_region_l2": 0.00533677460309578,
+      "oracle_wrong_context_l2": 0.5554705669372509,
+      "same_emitted_prefix_up_to_16": 1,
+      "same_input_prefix_trace": [
+        {
+          "input_index": 0,
+          "context_l2": 0.6173157731830762,
+          "probability_l1": 0.0847400407681107
+        }
+      ],
+      "oracle_raw_equals_zero": true
+    },
+    {
+      "item_id": "V003",
+      "replay_steps": 256,
+      "correct_steps": 256,
+      "padding_steps": 0,
+      "oracle_zero_region_l2": 0.015869689646021347,
+      "oracle_zero_context_l2": 1.6202220562974377,
+      "oracle_zero_probability_l1": 0.4470526505288035,
+      "oracle_zero_snapshots": {
+        "1": 0.08997047205645053,
+        "64": 0.012582206383268141,
+        "128": 0.019696697924994903,
+        "192": 0.02037849398558038,
+        "256": 0.015869689646021347
+      },
+      "oracle_wrong_region_l2": 0.016744240895209043,
+      "oracle_wrong_context_l2": 1.674975950661316,
+      "same_emitted_prefix_up_to_16": 1,
+      "same_input_prefix_trace": [
+        {
+          "input_index": 0,
+          "context_l2": 1.0111180043410788,
+          "probability_l1": 0.22346083790648663
+        }
+      ],
+      "oracle_raw_equals_zero": true
+    },
+    {
+      "item_id": "V006",
+      "replay_steps": 256,
+      "correct_steps": 208,
+      "padding_steps": 48,
+      "oracle_zero_region_l2": 5.16633910749954e-07,
+      "oracle_zero_context_l2": 6.59973933568589e-05,
+      "oracle_zero_probability_l1": 1.652866603762959e-05,
+      "oracle_zero_snapshots": {
+        "1": 0.0994049124469886,
+        "64": 0.012887019176264836,
+        "128": 0.011814759750882638,
+        "192": 0.010192638053343679,
+        "256": 5.16633910749954e-07
+      },
+      "oracle_wrong_region_l2": 0.0106251359341442,
+      "oracle_wrong_context_l2": 0.6070595332602612,
+      "same_emitted_prefix_up_to_16": 16,
+      "same_input_prefix_trace": [
+        {
+          "input_index": 0,
+          "context_l2": 3.204778889774354e-05,
+          "probability_l1": 8.419237246926059e-06
+        },
+        {
+          "input_index": 1,
+          "context_l2": 1.273427788599915e-05,
+          "probability_l1": 2.8719506417473895e-06
+        },
+        {
+          "input_index": 2,
+          "context_l2": 5.700335279875914e-06,
+          "probability_l1": 1.1490110978229495e-06
+        },
+        {
+          "input_index": 3,
+          "context_l2": 3.0389938478477494e-06,
+          "probability_l1": 8.734986067793216e-08
+        },
+        {
+          "input_index": 4,
+          "context_l2": 1.834448132501899e-06,
+          "probability_l1": 1.4352565358421998e-07
+        },
+        {
+          "input_index": 5,
+          "context_l2": 1.8712961384558506e-06,
+          "probability_l1": 1.0410993240839161e-06
+        },
+        {
+          "input_index": 6,
+          "context_l2": 1.5486754415537815e-06,
+          "probability_l1": 4.173500656179385e-08
+        },
+        {
+          "input_index": 7,
+          "context_l2": 1.176519331164353e-06,
+          "probability_l1": 4.1756482005439466e-07
+        },
+        {
+          "input_index": 8,
+          "context_l2": 1.0928187528193161e-06,
+          "probability_l1": 6.240011316549499e-07
+        },
+        {
+          "input_index": 9,
+          "context_l2": 1.0593790192524675e-06,
+          "probability_l1": 4.0333770812139846e-07
+        },
+        {
+          "input_index": 10,
+          "context_l2": 9.125036611763141e-07,
+          "probability_l1": 1.1692890211634221e-07
+        },
+        {
+          "input_index": 11,
+          "context_l2": 9.427469169077234e-07,
+          "probability_l1": 3.2576329545008775e-07
+        },
+        {
+          "input_index": 12,
+          "context_l2": 7.026760935494925e-07,
+          "probability_l1": 2.380352270847652e-08
+        },
+        {
+          "input_index": 13,
+          "context_l2": 6.395416243831669e-07,
+          "probability_l1": 3.6989490581618156e-08
+        },
+        {
+          "input_index": 14,
+          "context_l2": 7.183211384838889e-07,
+          "probability_l1": 2.1854100396012655e-07
+        },
+        {
+          "input_index": 15,
+          "context_l2": 9.792565453187964e-07,
+          "probability_l1": 3.632374045992037e-08
+        }
+      ],
+      "oracle_raw_equals_zero": true
+    },
+    {
+      "item_id": "V014",
+      "replay_steps": 256,
+      "correct_steps": 256,
+      "padding_steps": 0,
+      "oracle_zero_region_l2": 0.012631466432842272,
+      "oracle_zero_context_l2": 0.8491150620328862,
+      "oracle_zero_probability_l1": 0.16112910479023412,
+      "oracle_zero_snapshots": {
+        "1": 0.11356710701927085,
+        "64": 0.014900517959298623,
+        "128": 0.007797480959167338,
+        "192": 0.0061957276748440555,
+        "256": 0.012631466432842272
+      },
+      "oracle_wrong_region_l2": 0.012631466143320731,
+      "oracle_wrong_context_l2": 0.8491150654676817,
+      "same_emitted_prefix_up_to_16": 16,
+      "same_input_prefix_trace": [
+        {
+          "input_index": 0,
+          "context_l2": 0.3611012526922441,
+          "probability_l1": 0.1328144888057068
+        },
+        {
+          "input_index": 1,
+          "context_l2": 0.1716214478241631,
+          "probability_l1": 0.036243846361628584
+        },
+        {
+          "input_index": 2,
+          "context_l2": 0.169448359915929,
+          "probability_l1": 0.031586544359356594
+        },
+        {
+          "input_index": 3,
+          "context_l2": 0.15050465587570708,
+          "probability_l1": 0.010072232697950767
+        },
+        {
+          "input_index": 4,
+          "context_l2": 0.07895866439993968,
+          "probability_l1": 0.011109946455235331
+        },
+        {
+          "input_index": 5,
+          "context_l2": 0.062286420076738604,
+          "probability_l1": 0.02671399573932831
+        },
+        {
+          "input_index": 6,
+          "context_l2": 0.15276817074020826,
+          "probability_l1": 0.004833847861505092
+        },
+        {
+          "input_index": 7,
+          "context_l2": 0.06597936824151916,
+          "probability_l1": 0.008388441706415506
+        },
+        {
+          "input_index": 8,
+          "context_l2": 0.10526146299868978,
+          "probability_l1": 0.010100249805645944
+        },
+        {
+          "input_index": 9,
+          "context_l2": 0.07430395790928895,
+          "probability_l1": 0.013927082045597672
+        },
+        {
+          "input_index": 10,
+          "context_l2": 0.07911572245869669,
+          "probability_l1": 0.005100474928553922
+        },
+        {
+          "input_index": 11,
+          "context_l2": 0.044371293755496595,
+          "probability_l1": 0.008969496510388808
+        },
+        {
+          "input_index": 12,
+          "context_l2": 0.13835719221173043,
+          "probability_l1": 0.03711992721855495
+        },
+        {
+          "input_index": 13,
+          "context_l2": 0.12532683492290494,
+          "probability_l1": 0.017168810322914396
+        },
+        {
+          "input_index": 14,
+          "context_l2": 0.2929911207074699,
+          "probability_l1": 0.06011309764960515
+        },
+        {
+          "input_index": 15,
+          "context_l2": 0.1480923869219898,
+          "probability_l1": 0.007791584435949517
+        }
+      ],
+      "oracle_raw_equals_zero": true
+    },
+    {
+      "item_id": "V004",
+      "replay_steps": 224,
+      "correct_steps": 224,
+      "padding_steps": 0,
+      "oracle_zero_region_l2": 0.08552364653442766,
+      "oracle_zero_context_l2": 3.269874270791164,
+      "oracle_zero_probability_l1": 0.6377591463524368,
+      "oracle_zero_snapshots": {
+        "1": 0.1058140958731952,
+        "56": 0.027303870775903568,
+        "112": 0.034246759627053654,
+        "168": 0.021564971040769043,
+        "224": 0.08552364653442766
+      },
+      "oracle_wrong_region_l2": 0.07796395856464133,
+      "oracle_wrong_context_l2": 2.7593626660874913,
+      "same_emitted_prefix_up_to_16": 0,
+      "same_input_prefix_trace": [],
+      "oracle_raw_equals_zero": false
+    },
+    {
+      "item_id": "V012",
+      "replay_steps": 256,
+      "correct_steps": 256,
+      "padding_steps": 0,
+      "oracle_zero_region_l2": 0.01569612560689076,
+      "oracle_zero_context_l2": 1.0113338611152247,
+      "oracle_zero_probability_l1": 0.2656625628915208,
+      "oracle_zero_snapshots": {
+        "1": 0.11011624041816816,
+        "64": 0.04130146415054085,
+        "128": 0.01828791056599629,
+        "192": 0.014596448243300992,
+        "256": 0.01569612560689076
+      },
+      "oracle_wrong_region_l2": 0.024693021299453985,
+      "oracle_wrong_context_l2": 1.7828432596437445,
+      "same_emitted_prefix_up_to_16": 16,
+      "same_input_prefix_trace": [
+        {
+          "input_index": 0,
+          "context_l2": 0.5053033106905498,
+          "probability_l1": 0.02471644137074236
+        },
+        {
+          "input_index": 1,
+          "context_l2": 0.2253021581729302,
+          "probability_l1": 0.028474116951429096
+        },
+        {
+          "input_index": 2,
+          "context_l2": 0.15236005446890988,
+          "probability_l1": 0.05723058701238415
+        },
+        {
+          "input_index": 3,
+          "context_l2": 0.18346531218297785,
+          "probability_l1": 0.04019064717579113
+        },
+        {
+          "input_index": 4,
+          "context_l2": 0.13075719732640126,
+          "probability_l1": 0.01837691172056566
+        },
+        {
+          "input_index": 5,
+          "context_l2": 0.08938343693947483,
+          "probability_l1": 0.01599527962704883
+        },
+        {
+          "input_index": 6,
+          "context_l2": 0.08663894219855867,
+          "probability_l1": 0.021458801891242274
+        },
+        {
+          "input_index": 7,
+          "context_l2": 0.06233162094201196,
+          "probability_l1": 0.014034262044447132
+        },
+        {
+          "input_index": 8,
+          "context_l2": 0.15293788796728575,
+          "probability_l1": 0.05557502733813635
+        },
+        {
+          "input_index": 9,
+          "context_l2": 0.1836642884804572,
+          "probability_l1": 0.025473390793251838
+        },
+        {
+          "input_index": 10,
+          "context_l2": 0.12079715737512621,
+          "probability_l1": 0.011175476064835266
+        },
+        {
+          "input_index": 11,
+          "context_l2": 0.10568895552490767,
+          "probability_l1": 0.03148738294760278
+        },
+        {
+          "input_index": 12,
+          "context_l2": 0.0670770601580026,
+          "probability_l1": 0.001544958530040219
+        },
+        {
+          "input_index": 13,
+          "context_l2": 0.15555242875788924,
+          "probability_l1": 0.016608497725087545
+        },
+        {
+          "input_index": 14,
+          "context_l2": 0.18850084180883692,
+          "probability_l1": 0.049747596180004905
+        },
+        {
+          "input_index": 15,
+          "context_l2": 0.17719278961932006,
+          "probability_l1": 0.04516021779795665
+        }
+      ],
+      "oracle_raw_equals_zero": true
+    }
+  ],
+  "reading_limit": "Exact numerical transfer; no semantic preservation or answer benefit claim. Generation distances compare only identical observed byte prefixes; no threshold, floor or noise inference."
+}
