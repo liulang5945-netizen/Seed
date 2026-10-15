@@ -798,3 +798,5 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 2026-10-15 N1课程：[PLAN14小试提案](../reference/PLAN-N1-14_native_candidate_paired_pilot_20261015.md)／[EXP14预检](../reference/EXP-N1-14_curriculum_preflight_adjudication_20261015.md)。v2数据与无更新检查通过；训练采用/新测面准入待决，不将旧C2预算挪用。
 
 2026-10-15 N1已批准14小试：[SPEC15执行合同](../reference/SPEC-N1-15_paired_runner_execution_contract_20261015.md)与运行器就绪；三seed/三臂/3456更新、独立300秒CPU，readiness不算正式训练结果。
+
+2026-10-15 N1配对小试：[EXP15完整裁决](../reference/EXP-N1-15_paired_pilot_adjudication_20261015.md)。CPU81.796875秒，完整3456更新/576题/18恢复，holdout三臂三seed皆0/32。下一步train-only拟合诊断；没有能力采用。

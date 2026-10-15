@@ -27,3 +27,5 @@ manifest仅放plans/manifests，预检报告放reports，独占写入拒覆写�
 ## 用户批准与机械执行补充（2026-10-15）
 
 用户直接引用本件的三种子/三臂/3456更新/独立5分钟CPU建议并明确授权此类低成本方案今后自行开展。因此本14隔离研究小试准入已通过，原采用/范围待决状态在本范围内关闭；不是默认采用或能力通过。执行细节见[SPEC15](SPEC-N1-15_paired_runner_execution_contract_20261015.md)，行为门、v2数据与配方不变。运行器已检查：新增natural-boundary/cap trace（旧generate仍返回同bytes），防止UTF8截尾掩盖cap；检查全部三臂真实路径、train-only更新、源/模型/optimizer/RNG独立恢复、计时完整性与全分母门。正式结果另记，不把readiness当训练已跑。
+
+2026-10-15 15完整负结果：3456更新、576题与18次实际新进程恢复全齐，CPU81.796875秒<300；三seed/三臂holdout均0/32，全部自然停止。原门不放行，不据CE下降声称能力。唯一下一步为九模型×96训练项零更新拟合诊断，不新增dev/holdout查询。见[15裁决](EXP-N1-15_paired_pilot_adjudication_20261015.md)。
