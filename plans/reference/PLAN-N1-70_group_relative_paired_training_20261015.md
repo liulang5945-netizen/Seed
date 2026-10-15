@@ -27,3 +27,7 @@
 执行器`scripts/training/run_taiji_n1_group_relative_paired.py`，合同`tests/taiji_native/test_native_group_relative_paired_training_contract.py`；checkpoint目录`data/checkpoints/n1_group_relative_paired_train_20261015/`，exclusive完整报告`reports/taiji_n1_group_relative_paired_train_20261015.json`。逐步完整读数采用无损紧凑JSON保存，不删字段或样本，另写可读裁决。
 
 共享52母档的新关系初始化三seed不是端到端独立训练。C4、旧能力保持、同bundle三器官、N系列其他出口和CI历史债保留；不推送、删除数据或推广默认，不作开放域/AGI或项目收官主张。
+
+## 2026-10-16 执行前工程记录
+
+69-CI提交15bf07683，机械合同29项在屏蔽本机档后仍全执行通过；本机另2项真实档集成通过。70新增五合同通过，包括zero及synthetic final全恢复、terminal独立进程同臂下一步、拒绝partial/工程protocol/改规则，以及完整历史与逐参数step检查、无损exclusive报告。10导航合同、两Ruff和改动Black通过；45来源守卫和两份v4严格seal通过。提交执行器后按上述冻结配方一次启动，尚无正式结果。
