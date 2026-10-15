@@ -1,5 +1,6 @@
 # N 主线调度修订交接（2026-10-14）
 
+> **2026-10-15 最新裁决**：52固定6144更新完整，CPU197.09375秒；原题187/192、pair93/96过门，改名153/192（lookup17/48）、改名pair65/96未过，不追加。唯一下一步53冻结writer与绑定后问题状态交叉，1440条teacher、CPU≤60秒，0更新/free/dev/holdout。 详见EXP-N1-52与PLAN-N1-53；旧段落为历史。
 > **2026-10-15 当前调度**：52固定训练工具与25合同通过：初态完整bundle同51零档，reader/local/context三组Adam推进及保存恢复已验；下一步先zero独立恢复/576项49终点控制，再固定6144更新/300秒CPU，四门不变。
 本件用于接续用户“根据项目了解修订开发计划”的成果。动态队首只看 [03](../active/roadmap/03_CURRENT_EXECUTION.md)，调度看 [09](../active/roadmap/09_NEXT_MAINLINE_PLAN.md)，完整修订看 [PLAN-N-01](PLAN-N-01_development_revision_20261014.md)。先现读 Git HEAD 与工作区，不能把本件时点当作新实验身份。
 

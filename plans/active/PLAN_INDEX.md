@@ -1,5 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
+> **2026-10-15 最新裁决**：52固定6144更新完整，CPU197.09375秒；原题187/192、pair93/96过门，改名153/192（lookup17/48）、改名pair65/96未过，不追加。唯一下一步53冻结writer与绑定后问题状态交叉，1440条teacher、CPU≤60秒，0更新/free/dev/holdout。 详见EXP-N1-52与PLAN-N1-53；旧段落为历史。
 > **2026-10-15 当前调度**：52固定训练工具与25合同通过：初态完整bundle同51零档，reader/local/context三组Adam推进及保存恢复已验；下一步先zero独立恢复/576项49终点控制，再固定6144更新/300秒CPU，四门不变。
 
 > **2026-10-14 导航校准**：本索引的编号约定继续保留；下方累积里程碑摘要含历史状态。当前队列只看 [03](roadmap/03_CURRENT_EXECUTION.md)，N 主线看 [09](roadmap/09_NEXT_MAINLINE_PLAN.md)，整个项目按 [项目地图](../../docs/README.md) 阅读。本轮收纳见 [整理记录](../reference/PROJECT_ORGANIZATION_20261014.md)。
