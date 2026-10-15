@@ -17,3 +17,7 @@
 针对相关合同，先正常合跑，再以只读拦截data/checkpoints读取的方式模拟无本机资产并运行artifact-free合同；临时pytest checkpoint不受拦截。检查核心测试实际执行/通过与集成跳过数量，不能只看退出码。两套仓库Ruff、改动文件Black及项目导航合同必跑；历史全Black/CI债独立保留，不声称全CI绿。
 
 完成后提交修复与证据，唯一下一步70已冻结正式配对训练。69工程完成状态保持，不重跑任何研究批；全项目出口与新确认面边界不变。
+
+## 完成证据
+
+正常31 passed；屏蔽data/checkpoints访问并模拟资产缺失：29 passed、2 skipped，ignored_checkpoint_read_attempts=0。独立真实档集成在本机实际执行通过。第一次合成fixture漏zero-probe由恢复合同直接检出，补齐测试会话后上述结果通过；冻结源代码未改。Ruff/Black/导航检查见本批提交。

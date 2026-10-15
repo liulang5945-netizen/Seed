@@ -5,6 +5,7 @@ from copy import deepcopy
 import pytest
 
 from scripts.training import audit_taiji_n1_group_relative_adam as audit
+from tests.taiji_native._native_relation_fixtures import relation_zero
 
 runner = audit.runner
 bounded = audit.bounded
@@ -13,8 +14,7 @@ bounded = audit.bounded
 @pytest.fixture(scope="module")
 def source():
     runner.torch.set_num_threads(1)
-    _, _, paths = audit.readiness()
-    return runner.torch.load(paths["zero"], map_location="cpu", weights_only=True)["candidate"]
+    return relation_zero()
 
 
 def restored(source):

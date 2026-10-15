@@ -6,10 +6,11 @@ import pytest
 import torch
 
 from scripts.training import audit_taiji_n1_contextual_question as audit
+from tests.taiji_native._native_relation_fixtures import local_parent
 
 
 def migrated():
-    _, payload, _ = audit.transfer.source_payload()
+    payload = local_parent()
     model, optimizer = audit.transfer.migrate(payload)
     audit.prepare(model)
     return model, optimizer, payload

@@ -5,12 +5,12 @@ from copy import deepcopy
 import pytest
 
 from scripts.training import run_taiji_n1_relation_paired as runner
+from tests.taiji_native._native_relation_fixtures import paired_sources
 
 
 def test_all_arms_two_steps_and_full_restore(tmp_path):
     runner.torch.set_num_threads(1)
-    ready, _ = runner.readiness()
-    _, payload, _ = runner.transfer.source_payload()
+    ready, payload = paired_sources()
     item = dict(
         id="synthetic63",
         kind="lookup",
@@ -80,8 +80,7 @@ def test_four_gates_and_no_confirmation_entry():
 
 def test_evaluation_is_history_neutral_and_labels_control_arm():
     runner.torch.set_num_threads(1)
-    ready, _ = runner.readiness()
-    _, payload, _ = runner.transfer.source_payload()
+    ready, payload = paired_sources()
     model, optimizer = runner.fresh(payload, 12, ready)
     item = dict(
         id="synthetic-eval63",

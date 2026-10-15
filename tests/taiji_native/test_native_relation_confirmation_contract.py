@@ -7,6 +7,7 @@ import pytest
 from scripts.training import _taiji_n1_relation_paired_transfer as transfer
 from scripts.training import audit_taiji_n1_local_relation as engineering
 from scripts.training import build_taiji_n1_confirmation_v4 as face
+from tests.taiji_native._native_relation_fixtures import contextual_parent
 
 
 def test_face_disjoint_complete_deterministic_and_exclusive(tmp_path, monkeypatch):
@@ -29,7 +30,7 @@ def test_face_disjoint_complete_deterministic_and_exclusive(tmp_path, monkeypatc
 
 def test_seed_initialization_preserves_old_parameters_and_moments():
     transfer.torch.set_num_threads(1)
-    _, payload, _ = transfer.source_payload()
+    payload = contextual_parent()
     signatures = []
     shared = []
     new = []
@@ -53,18 +54,6 @@ def test_seed_initialization_preserves_old_parameters_and_moments():
             payload["candidate"]["optimizer"]
             | {"param_groups": bundle["optimizer"]["param_groups"]}
         )
-        if seed == 11:
-            ready = transfer.json.loads(engineering.REPORT.read_text(encoding="utf-8"))
-            expected = deepcopy(
-                transfer.torch.load(
-                    ready["restore_check"]["path"], map_location="cpu", weights_only=True
-                )["candidate"]
-            )
-            for session in engineering.SESSIONS:
-                del expected["sessions"][session]
-            assert transfer.source.paired.fingerprint(bundle) == transfer.source.paired.fingerprint(
-                expected
-            )
     assert signatures[0] == signatures[3]
     assert len(set(shared)) == 1 and len(set(new[:3])) == 3
     with pytest.raises(ValueError, match="seeds"):
@@ -73,7 +62,7 @@ def test_seed_initialization_preserves_old_parameters_and_moments():
 
 def test_each_seed_terminal_and_cut_observation_branch():
     transfer.torch.set_num_threads(1)
-    _, payload, _ = transfer.source_payload()
+    payload = contextual_parent()
     for seed in (11, 12, 13):
         model, _ = transfer.migrate(payload, seed)
         engineering.prepare(model)

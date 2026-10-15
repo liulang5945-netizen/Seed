@@ -5,12 +5,12 @@ from copy import deepcopy
 import pytest
 
 from scripts.training import run_taiji_n1_group_relative_adam as train
+from tests.taiji_native._native_relation_fixtures import relation_zero
 
 
 def test_original_zero_full_recovery_and_reject_wrong_phase_or_rule(tmp_path):
     train.torch.set_num_threads(1)
-    _, _, paths = train.readiness()
-    source = train.torch.load(paths["zero"], map_location="cpu", weights_only=True)
+    source = {"candidate": relation_zero()}
     model = train.runner.transfer.LocalRelationEvidenceCandidate.restore_bundle(source["candidate"])
     optimizer = train.torch.optim.Adam(model.parameters(), lr=0.001)
     optimizer.load_state_dict(deepcopy(source["candidate"]["optimizer"]))

@@ -3,6 +3,7 @@
 import pytest
 
 from scripts.training import audit_taiji_n1_group_relative_paired as audit
+from tests.taiji_native._native_relation_fixtures import paired_sources
 
 runner = audit.runner
 
@@ -10,8 +11,7 @@ runner = audit.runner
 @pytest.fixture(scope="module")
 def sources():
     audit.torch.set_num_threads(1)
-    ready, _, _ = audit.readiness()
-    _, source, _ = runner.transfer.source_payload()
+    ready, source = paired_sources()
     return ready, source
 
 

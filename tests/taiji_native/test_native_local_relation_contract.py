@@ -8,6 +8,7 @@ import torch
 from scripts.training import _taiji_n1_local_relation_transfer as transfer
 from taiji.native_evidence_candidate import Observation
 from taiji.native_local_relation_evidence_candidate import LocalRelationEvidenceCandidate
+from tests.taiji_native._native_relation_fixtures import contextual_parent
 
 
 def prepare(model):
@@ -17,7 +18,7 @@ def prepare(model):
 
 def test_source_migration_zero_behavior_and_restore():
     torch.set_num_threads(1)
-    _, payload, _ = transfer.source_payload()
+    payload = contextual_parent()
     old = transfer.source.ContextualQuestionEvidenceCandidate.restore_bundle(payload["candidate"])
     model, optimizer = transfer.migrate(payload)
     assert sum(p.numel() for p in model.parameters()) == 62056

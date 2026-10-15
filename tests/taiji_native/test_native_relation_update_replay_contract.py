@@ -6,13 +6,13 @@ from copy import deepcopy
 import pytest
 
 from scripts.training import audit_taiji_n1_relation_update_replay as audit
+from tests.taiji_native._native_relation_fixtures import paired_sources
 
 
 def test_update_observer_is_bitwise_neutral_and_recoverable(tmp_path):
     runner = audit.runner
     runner.torch.set_num_threads(1)
-    ready, _ = runner.readiness()
-    _, source, _ = runner.transfer.source_payload()
+    ready, source = paired_sources()
     initial, initial_optimizer = runner.fresh(source, 13, ready)
     payload = deepcopy(initial.bundle(initial_optimizer))
     item = dict(
