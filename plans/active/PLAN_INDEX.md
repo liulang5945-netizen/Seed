@@ -822,3 +822,6 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 
 2026-10-15：21已批准，[SPEC22](../reference/SPEC-N1-22_observation_fidelity_execution_contract_20261015.md)实施合同与loss/运行器完成，32项前置合同通过；先工程预检，通过后自动train-only校准。
 
+
+2026-10-15：[22保真校准](../reference/EXP-N1-22_observation_fidelity_adjudication_20261015.md)完整，QA121/192未过充分性门，下一步[SPEC23](../reference/SPEC-N1-23_fidelity_content_read_diagnostic_20261015.md)零更新内容寻址复审。
+

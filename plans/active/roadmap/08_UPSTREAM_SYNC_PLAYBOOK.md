@@ -3183,3 +3183,6 @@ owner 裁「那保留下来」⇒ **本轮不删任何文件**，㊵-522 的四�
 
 【2026-10-15 ㊵-892 **21获批准，22实施合同/代码就绪**】用户明确批准21并要求决策选项弹窗；以后真实决策展示影响与唯一推荐，独立工作继续，需授权部分等实际答复。Taiji观察保真loss复用原value/readout、无新增参数/推理头；QA/辅助双支cut早期信用，terminal同辅助信息，旧QA-only脚本不改。32项新合同/恢复与守卫通过、Ruff/B/SIM/Black通过；不是正式训练结果。唯一队首按[SPEC22](../../reference/SPEC-N1-22_observation_fidelity_execution_contract_20261015.md)先独立60秒CPU零更新预检+zero恢复，通过后自动6144更新/192train/300秒CPU校准，0 dev/holdout。C1过/C2零收益/C3内容与未见保持/C4/三器官及其余N债保留。
 
+
+【2026-10-15 ㊵-893 **22工程与保真校准完整，充分性未过**】冻结ba9b408a5；预检12项双支cut/terminal同辅助、zero恢复/19初始参数一致，CPU5.046875秒，参数40337无增加。正式6144更新/960组train-only/zero与final独立恢复，CPU67.328125秒<300，计量及代码/manifest/源报告守卫完整；reports/taiji_n1_observation_fidelity_train_20261015.json SHA 4fc604cb35065436fd77871765fd080bb4c1252da2d7d5194c651f87313401c5。QA0/55/65/63/121（各192）、终点16/13/46/46（各48），词值3→29/96；保真99.9666%，不能替代173且各40门。单seed同初始化/更新非同CPU，不发优势或未见结论。全项目C1过/C2零收益/C3未见保持/C4/三器官及其余N债未齐；远端根CI eaf53e7红/m7-ci绿。唯一下一步[SPEC23](../../reference/SPEC-N1-23_fidelity_content_read_diagnostic_20261015.md)零更新同词替换寻址复审；真实决策用弹窗。
+

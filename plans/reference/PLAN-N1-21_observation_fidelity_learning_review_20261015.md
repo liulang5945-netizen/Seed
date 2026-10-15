@@ -39,3 +39,6 @@
 
 2026-10-15 决策记录：用户明确批准21，实施按[SPEC22](SPEC-N1-22_observation_fidelity_execution_contract_20261015.md)。以后需讨论时用选择弹窗，说明选择影响及唯一推荐；独立工作持续，需授权步骤等待实际答复。本轮6项新学习/恢复合同及相关守卫合计32 passed，Ruff/B/SIM/Black通过。尚未执行正式6144更新。
 
+
+2026-10-15：[22裁决](EXP-N1-22_observation_fidelity_adjudication_20261015.md)完整6144更新/960组/两恢复，CPU67.328125秒；QA121/192（16/13/46/46）、词值29/96，保真99.9666%，未达173及各类40门。0 dev/holdout；与19同初始化/材料/更新但非同CPU，单seed不证明优势。唯一后继[SPEC23](SPEC-N1-23_fidelity_content_read_diagnostic_20261015.md)复用20替换词复审内容寻址，零更新/留出，独立60秒CPU。全项目其余欠账仍在。
+

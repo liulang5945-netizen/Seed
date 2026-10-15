@@ -1,0 +1,167 @@
+{
+  "schema": "n1-observation-fidelity-preflight-v1",
+  "code_identity": {
+    "protocol": {
+      "schema": "n1-observation-fidelity-train-v1",
+      "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+      "seed": 11,
+      "arm": "position",
+      "initialization": "fresh",
+      "updates": 6144,
+      "milestones": [
+        0,
+        768,
+        1536,
+        3072,
+        6144
+      ],
+      "optimizer": "Adam",
+      "learning_rate": 0.001,
+      "dimensions": {
+        "embedding": 16,
+        "hidden": 32,
+        "key": 16
+      },
+      "max_length": 64,
+      "cpu_limit_seconds": 300,
+      "dev_queries": 0,
+      "holdout_queries": 0,
+      "train_gate": {
+        "exact": 173,
+        "each_kind": 40
+      },
+      "loss_contract": "taiji-observation-byte-fidelity-v1",
+      "observation_weight": 0.25,
+      "baseline_sha256": "ab7cfe7c007c4fc2f9f6a13903bc31abb7714ba02f711949fb41a0e5d443eb20"
+    },
+    "code_sha256": {
+      "scripts\\training\\run_taiji_n1_native_evidence_paired.py": "a6cd807bfdda2609cf0e6ac39559d3be51ad2d79baf4094b0a68a6c6427846d0",
+      "taiji\\native_evidence_candidate.py": "8b3639afb1484e794e25ccfe71b80a8306ec3dbbe3bcfd445daade7c640eb2d2",
+      "taiji\\position_evidence_reference.py": "b5fc36b0373fc8c0942566f729e657dd7ab06491a276d1fc0625f90ee755c604",
+      "taiji\\contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+      "taiji\\utf8_state.py": "9f9091b800861e0617f09b3a750abc15fe6a8ecc47a4606174357216fcd4d686",
+      "scripts\\training\\build_taiji_n1_evidence_curriculum.py": "509ce6625bdbbd6f6f691f54438f6fd6f497e268d371bebd60f8e8b4b860889c",
+      "scripts\\training\\run_taiji_n1_v3_train_calibration.py": "fdfd05f08ceff96bde64b73f4bd8f1e7a8ddfee6e6ea92282b56ed822e9877d3",
+      "scripts\\training\\build_taiji_n1_content_curriculum_v3.py": "1a6e9e6e13d7a71e3b2d4f5587b3fcd0136de9262111d0cae036971c49218574",
+      "scripts\\training\\audit_taiji_n1_native_evidence_train_fit.py": "0713f7e116d9259829ca33756fa7e8a15e71fec161e70298d74b3d2def77c227",
+      "taiji/native_evidence_fidelity.py": "bd4f27e035dda0962129f0b87c67f5ee3c78f25566eb2267bc7e164e248a2d96",
+      "scripts\\training\\run_taiji_n1_observation_fidelity.py": "ec47cb22a978fcf1f42d1977125132c46a9b022b1bfcd52b32b49c6a7b1ca73f"
+    },
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu"
+  },
+  "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+  "rows": [
+    {
+      "kind": "lookup",
+      "arm": "position",
+      "early_grad_norm": 0.004815457854419947,
+      "total_loss": 6.9580278396606445,
+      "observation_loss": 5.516779899597168
+    },
+    {
+      "kind": "lookup",
+      "arm": "terminal",
+      "early_grad_norm": 0.003155497834086418,
+      "total_loss": 6.9419097900390625,
+      "observation_loss": 5.516779899597168
+    },
+    {
+      "kind": "lookup",
+      "arm": "cut",
+      "early_grad_norm": null,
+      "total_loss": 6.9580278396606445,
+      "observation_loss": 5.516779899597168
+    },
+    {
+      "kind": "revision",
+      "arm": "position",
+      "early_grad_norm": 0.004718579817563295,
+      "total_loss": 6.870461463928223,
+      "observation_loss": 5.5702128410339355
+    },
+    {
+      "kind": "revision",
+      "arm": "terminal",
+      "early_grad_norm": 0.002987534971907735,
+      "total_loss": 6.873211860656738,
+      "observation_loss": 5.5702128410339355
+    },
+    {
+      "kind": "revision",
+      "arm": "cut",
+      "early_grad_norm": null,
+      "total_loss": 6.870461463928223,
+      "observation_loss": 5.5702128410339355
+    },
+    {
+      "kind": "transition",
+      "arm": "position",
+      "early_grad_norm": 0.006534012034535408,
+      "total_loss": 6.838723182678223,
+      "observation_loss": 5.530600547790527
+    },
+    {
+      "kind": "transition",
+      "arm": "terminal",
+      "early_grad_norm": 0.002998294774442911,
+      "total_loss": 6.845633506774902,
+      "observation_loss": 5.530600547790527
+    },
+    {
+      "kind": "transition",
+      "arm": "cut",
+      "early_grad_norm": null,
+      "total_loss": 6.838723182678223,
+      "observation_loss": 5.530600547790527
+    },
+    {
+      "kind": "unknown",
+      "arm": "position",
+      "early_grad_norm": 0.0054884920828044415,
+      "total_loss": 7.066318511962891,
+      "observation_loss": 5.547671318054199
+    },
+    {
+      "kind": "unknown",
+      "arm": "terminal",
+      "early_grad_norm": 0.0030616112053394318,
+      "total_loss": 7.065524101257324,
+      "observation_loss": 5.547671318054199
+    },
+    {
+      "kind": "unknown",
+      "arm": "cut",
+      "early_grad_norm": null,
+      "total_loss": 7.066318511962891,
+      "observation_loss": 5.547671318054199
+    }
+  ],
+  "optimizer_updates": 0,
+  "dev_queries": 0,
+  "holdout_queries": 0,
+  "status": "complete",
+  "baseline_initial_match": {
+    "path": "E:\\Seed\\data\\checkpoints\\n1_v3_train_calibration_20261015\\zero.pt",
+    "sha256": "53cebb40eee907b3dccb4b5a8943d060d14b706719135e0e0e3565279cfa8c72",
+    "equal": true
+  },
+  "parameter_count": 40337,
+  "restore": {
+    "path": "E:\\Seed\\data\\checkpoints\\n1_observation_fidelity_preflight_20261015\\zero.pt",
+    "sha256": "3db65a9262c52728ff881adb8e3abdf7136d7aae41eaed8b309f17f744fc4cea",
+    "signature": {
+      "candidate": "7e85bf5784971cef6134faa71033adcf5673fee124180e2f6dd956ce6a4c7447",
+      "first_logits": "f17dc1d866a908d465751e8fb3efd9570194aaf65357428362926e4a102693c1",
+      "observation_logits": "398bd19d4153faa46787b60f54515d997463ba0638e6d420da1fe9a0ba54ec7d",
+      "targets": "782c79050c79df6136c274b24cfdc6847ae0793a31b6daf3e257654e31e072c4"
+    },
+    "cpu_seconds": 2.53125,
+    "equal": true
+  },
+  "parameters_unchanged": true,
+  "cpu_seconds": 5.046875,
+  "cpu_accounting_complete": true,
+  "code_unchanged": true,
+  "passed": true
+}
