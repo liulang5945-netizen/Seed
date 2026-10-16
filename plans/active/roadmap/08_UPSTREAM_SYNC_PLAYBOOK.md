@@ -3629,3 +3629,7 @@ run86c正式训练尚未启动。唯一下一步提交实现、回归测试、�
 ### 2026-10-16 · run86c首个position完整封存
 
 同一PID6428/OS Running，seed11/position无损分片已封存：complete=true、training_sufficient=true，24576更新、55296QA、43008会话、4800评分；zero/final两次独立恢复equal=true，合计8签名副本步。终点original192/192、pair96/96、rename191/192（revision47/48）、rename_pair96/96；原始/重命名四条件联合均48/48。上述为训练面及首个模型结果，不等于整批或v5确认通过。运行器已进入seed11/terminal零态评分，CPU1200.328125秒（OS主进程读数，不替代最终含子进程总账），错误日志为空。继续原协议其余八模型，不改门/补训/查询留出。
+
+### 2026-10-16 · run86c seed11 terminal完整封存
+
+terminal分片complete=true、training_sufficient=false；24576更新、55296QA、43008会话、4800评分，zero/final两次独立恢复equal=true，8副本签名步。终点original134/192（18/28/48/40）、pair38/96、rename123/192（15/26/48/34）、rename_pair36/96；两组四条件联合均48/48。对照不要求通过position能力门，不因此补训/停批或改门。同一PID6428继续Running并进入cut零态；主进程CPU2329.65625秒，不替代最终累计CPU总账。整批已完成2/9，v5仍未准入。
