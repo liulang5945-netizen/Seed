@@ -13,7 +13,7 @@ run86c工程完整但seed12/position在末点未过六门。PLAN-N1-87在不加�
 - 五阶段0/6144/12288/18432/24576；每模型4800评分行，视图仍为original/pair/rename/rename_pair及原/改名四条件。 前18432步loss、五组measurement及0/6144/12288/18432评分行必须与run86c同seed position封存轨迹逐项完全相等，证明仅改变最后周期。
 - 正式训练总计73728更新、165888 QA序列、129024训练会话、14400评分行、6次独立恢复、24副本签名步、96合成QA。正式训练前的三seed零态保存/独立恢复另记3次恢复、12副本步和48合成QA；全部前置CPU也计入4800秒上限。
 - 独立本机CPU上限4800秒，包含zero/final完整保存及独立恢复；串行单线程。训练前先执行三fresh零态checkpoint格式保存/恢复预检，预检不通过则不得训练。
-- 正式输出使用独立run88b报告/任务/checkpoint族；隔离执行并校验sources/code/hash，禁止自动重试或覆盖。
+- 正式输出使用独立run88c报告/任务/checkpoint族；隔离执行并校验sources/code/hash，禁止自动重试或覆盖。
 
 ## 冻结验收
 
@@ -37,10 +37,10 @@ v5、dev、v3 holdout、v4及其他未见集查询一律为0；`TRAIN_SHA=None`�
 
 ## 实施身份（冻结，2026-10-16）
 
-- run88b控制器SHA256：`4b210607c5cbb2047b6e580f3f489f86e8cdd1734149a67aaaeff96402250462b`。
-- run88b Task Scheduler启动器SHA256：`b39b1de662e811bea81bb9cc3efa37bae8546d8dfddc6d5950737bccd8686be4`。
+- run88c控制器SHA256：`801073f6eec312eb8e147a98700e4130ec9f856eda4402fcb18ec2568a38e350`。
+- run88c Task Scheduler启动器SHA256：`36bb48ae495de0962feeb1fc3c31de54aac62f47bb260ae6ff43d37ec3862434`。
 - 冻结84训练器SHA256：`38018dbe08b9eb4c35d0b5c97196727b34f94efee68d68113e80269b8d3c9491`。
-- 相关文件：`scripts/training/run_taiji_n1_transition_factorial_lr_decay_run88.py`、`scripts/training/launch_taiji_n1_transition_factorial_lr_decay_run88b.ps1`。
+- 相关文件：`scripts/training/run_taiji_n1_transition_factorial_lr_decay_run88.py`、`scripts/training/launch_taiji_n1_transition_factorial_lr_decay_run88c.ps1`。
 
 
 ## 首次checkpoint前置失败与处理
@@ -65,3 +65,10 @@ run88的preflight_attempt_02在seed11 zero checkpoint独立签名恢复时失败
 ## run88b独立输出族与历史前置保留
 
 前两个零态前置尝试均发生在任何正式更新前：attempt_01在control结果解包失败；attempt_02在多线程父进程/单线程restore worker之间签名不一致，根因为父进程未强制单线程。两份report、attempt和run88下已保存的s11零态checkpoint全部保留。最终候选预检与训练使用新的run88b报告/任务/checkpoint族，父进程和restore worker统一单线程；run88b不得加载或续接run88的零态文件。为前置调试中的未单独计量CPU预留300秒，仍包含在4800秒总限内。当前唯一下一步为run88b三seed零态checkpoint保存/独立恢复前置。
+
+
+## run88b形式启动失败与run88c隔离族（2026-10-16）
+
+run88b Task Scheduler任务已启动后，worker在来源守卫拼装时因把不存在的可选`preflight_attempt_02`文件无条件纳入哈希列表而退出；OS退出码1，PID14620已消失，正式`attempt`、model/checkpoint加载、评分和optimizer更新均未发生。精确失败记录`reports/taiji_n1_transition_factorial_lr_decay_run88b_startup_failure.json`、launcher/worker/completion回执保留；精确临时任务已注销。run88b三zero预检报告和零态checkpoint亦保留。
+
+控制器现将可选attempt文件按存在性纳入来源守卫，正式运行切换到新隔离族run88c，仅从冻结83 fresh zero source重新保存零态checkpoint；不反序列化、复制或续接run88b模型文件。仅按hash将旧run88b preflight零态文件纳入历史来源清单。父/子进程均单线程，预留既往未计量CPU 300秒并计入4800秒总限。唯一下一步先执行run88c三seed零态保存/独立恢复前置，成功且提交回执后再启动正式训练。

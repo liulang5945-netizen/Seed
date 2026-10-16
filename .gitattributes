@@ -39,3 +39,4 @@ scripts/training/run_taiji_n1_transition_factorial_lr_decay_run88.py text eol=lf
 scripts/training/launch_taiji_n1_transition_factorial_lr_decay_run88.ps1 text eol=lf
 plans/reference/PLAN-N1-88_position_final_cycle_lr_decay_review_20261016.md text eol=lf
 scripts/training/launch_taiji_n1_transition_factorial_lr_decay_run88b.ps1 text eol=lf
+scripts/training/launch_taiji_n1_transition_factorial_lr_decay_run88c.ps1 text eol=lf

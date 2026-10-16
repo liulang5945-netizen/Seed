@@ -1,0 +1,7 @@
+{
+  "schema": "n1-transition-factorial-lr-decay-run88-task-return-v1",
+  "task_name": "Seed-N1-LRDecay-Run88B-20261016",
+  "start_succeeded": true,
+  "start_requested_utc": "2026-10-16T15:00:00.5311477Z",
+  "launcher_returning_utc": "2026-10-16T15:00:00.5465781Z"
+}
