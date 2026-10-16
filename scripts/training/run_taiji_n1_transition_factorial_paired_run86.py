@@ -1,4 +1,4 @@
-"""Run the frozen N1-84 training protocol as an on-demand run86 task."""
+"""Run the frozen N1-84 training protocol as an on-demand run86b task."""
 
 from __future__ import annotations
 
@@ -20,16 +20,16 @@ LAUNCHER = ROOT / "scripts/training/launch_taiji_n1_transition_factorial_run86.p
 FROZEN_ATTEMPT = ROOT / "reports/taiji_n1_transition_factorial_paired_train_20261016_attempt.json"
 FROZEN_ATTEMPT_SHA256 = "6a3124a1293c33dcbdc45bc55fb34971200236cb4673e52c9c981335e0bc6234"
 
-REPORT = ROOT / "reports/taiji_n1_transition_factorial_run86.json"
-ATTEMPT = ROOT / "reports/taiji_n1_transition_factorial_run86_attempt.json"
-LAUNCH_MANIFEST = ROOT / "reports/taiji_n1_transition_factorial_run86_launcher.json"
-LAUNCH_RETURNED = ROOT / "reports/taiji_n1_transition_factorial_run86_launcher_returned.json"
-WORKER_MANIFEST = ROOT / "reports/taiji_n1_transition_factorial_run86_worker.json"
-RUN86_STDOUT = ROOT / "reports/taiji_n1_transition_factorial_run86.stdout.log"
-RUN86_STDERR = ROOT / "reports/taiji_n1_transition_factorial_run86.stderr.log"
-COMPLETION = ROOT / "reports/taiji_n1_transition_factorial_run86_completion.json"
+REPORT = ROOT / "reports/taiji_n1_transition_factorial_run86b.json"
+ATTEMPT = ROOT / "reports/taiji_n1_transition_factorial_run86b_attempt.json"
+LAUNCH_MANIFEST = ROOT / "reports/taiji_n1_transition_factorial_run86b_launcher.json"
+LAUNCH_RETURNED = ROOT / "reports/taiji_n1_transition_factorial_run86b_launcher_returned.json"
+WORKER_MANIFEST = ROOT / "reports/taiji_n1_transition_factorial_run86b_worker.json"
+RUN86_STDOUT = ROOT / "reports/taiji_n1_transition_factorial_run86b.stdout.log"
+RUN86_STDERR = ROOT / "reports/taiji_n1_transition_factorial_run86b.stderr.log"
+COMPLETION = ROOT / "reports/taiji_n1_transition_factorial_run86b_completion.json"
 
-PREFLIGHT_STEM = ROOT / "reports/taiji_n1_transition_factorial_run86_runtime_preflight_scheduled"
+PREFLIGHT_STEM = ROOT / "reports/taiji_n1_transition_factorial_run86_runtime_preflight_scheduled_retry2"
 PREFLIGHT_REPORT = PREFLIGHT_STEM.with_suffix(".json")
 PREFLIGHT_HEARTBEATS = PREFLIGHT_STEM.with_suffix(".jsonl")
 PREFLIGHT_LAUNCH_MANIFEST = PREFLIGHT_STEM.with_name(
@@ -41,10 +41,18 @@ PREFLIGHT_LAUNCH_RETURNED = PREFLIGHT_STEM.with_name(
 PREFLIGHT_WORKER = PREFLIGHT_STEM.with_name(PREFLIGHT_STEM.name + "_worker.json")
 PREFLIGHT_STDOUT = PREFLIGHT_STEM.with_name(PREFLIGHT_STEM.name + ".stdout.log")
 PREFLIGHT_STDERR = PREFLIGHT_STEM.with_name(PREFLIGHT_STEM.name + ".stderr.log")
+HANDOFF_STEM = ROOT / "reports/taiji_n1_transition_factorial_run86b_return_preflight"
+HANDOFF_REPORT = HANDOFF_STEM.with_suffix(".json")
+HANDOFF_LAUNCH_MANIFEST = HANDOFF_STEM.with_name(HANDOFF_STEM.name + "_launcher.json")
+HANDOFF_LAUNCH_RETURNED = HANDOFF_STEM.with_name(HANDOFF_STEM.name + "_launcher_returned.json")
+HANDOFF_WORKER = HANDOFF_STEM.with_name(HANDOFF_STEM.name + "_worker.json")
+HANDOFF_STDOUT = HANDOFF_STEM.with_name(HANDOFF_STEM.name + ".stdout.log")
+HANDOFF_STDERR = HANDOFF_STEM.with_name(HANDOFF_STEM.name + ".stderr.log")
 
 TASK_PROBE = "Seed-N1-Run86-Probe-20261016"
-TASK_RUN = "Seed-N1-Run86-20261016"
-CHECKPOINTS = ROOT / "data/checkpoints/run86"
+TASK_HANDOFF = "Seed-N1-Run86B-Handoff-20261016"
+TASK_RUN = "Seed-N1-Run86B-20261016"
+CHECKPOINTS = ROOT / "data/checkpoints/run86b"
 PREFLIGHT_CPU_LIMIT_SECONDS = 60
 
 
@@ -68,8 +76,14 @@ def write_new_json(path: Path, value: dict) -> None:
         os.fsync(stream.fileno())
 
 
-def configure_stdio(probe: bool) -> None:
-    paths = (PREFLIGHT_STDOUT, PREFLIGHT_STDERR) if probe else (RUN86_STDOUT, RUN86_STDERR)
+def configure_stdio(probe: bool, handoff: bool = False) -> None:
+    paths = (
+        (PREFLIGHT_STDOUT, PREFLIGHT_STDERR)
+        if probe
+        else (HANDOFF_STDOUT, HANDOFF_STDERR)
+        if handoff
+        else (RUN86_STDOUT, RUN86_STDERR)
+    )
     for path in paths:
         if path.exists():
             raise FileExistsError(f"run86 log already exists: {path}")
@@ -77,12 +91,31 @@ def configure_stdio(probe: bool) -> None:
     sys.stderr = paths[1].open("x", encoding="utf-8", buffering=1)
 
 
-def task_receipts(probe: bool) -> tuple[dict, dict, Path]:
-    manifest_path, returned_path, worker_path, task_name = (
-        (PREFLIGHT_LAUNCH_MANIFEST, PREFLIGHT_LAUNCH_RETURNED, PREFLIGHT_WORKER, TASK_PROBE)
-        if probe
-        else (LAUNCH_MANIFEST, LAUNCH_RETURNED, WORKER_MANIFEST, TASK_RUN)
-    )
+def task_receipts(probe: bool, handoff: bool = False) -> tuple[dict, dict, Path]:
+    if probe:
+        manifest_path, returned_path, worker_path, task_name = (
+            PREFLIGHT_LAUNCH_MANIFEST,
+            PREFLIGHT_LAUNCH_RETURNED,
+            PREFLIGHT_WORKER,
+            TASK_PROBE,
+        )
+        expected_mode = "probe"
+    elif handoff:
+        manifest_path, returned_path, worker_path, task_name = (
+            HANDOFF_LAUNCH_MANIFEST,
+            HANDOFF_LAUNCH_RETURNED,
+            HANDOFF_WORKER,
+            TASK_HANDOFF,
+        )
+        expected_mode = "handoff"
+    else:
+        manifest_path, returned_path, worker_path, task_name = (
+            LAUNCH_MANIFEST,
+            LAUNCH_RETURNED,
+            WORKER_MANIFEST,
+            TASK_RUN,
+        )
+        expected_mode = "run"
     deadline = time.monotonic() + 60
     while (
         (not manifest_path.exists() or not returned_path.exists())
@@ -95,7 +128,7 @@ def task_receipts(probe: bool) -> tuple[dict, dict, Path]:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     returned = json.loads(returned_path.read_text(encoding="utf-8"))
     if (
-        manifest.get("mode") != ("probe" if probe else "run")
+        manifest.get("mode") != expected_mode
         or manifest.get("task_name") != task_name
         or manifest.get("trigger_count") != 0
         or manifest.get("principal_logon_type") != "Interactive"
@@ -124,6 +157,43 @@ def task_receipts(probe: bool) -> tuple[dict, dict, Path]:
         ),
     )
     return manifest, returned, worker_path
+
+
+def synthetic_run_handoff_probe() -> int:
+    for path in (HANDOFF_REPORT, HANDOFF_WORKER):
+        if path.exists():
+            raise FileExistsError(f"run86b handoff preflight artifact already exists: {path}")
+    started = utc_now()
+    cpu_start = time.process_time()
+    _, returned, worker_path = task_receipts(probe=False, handoff=True)
+    worker = json.loads(worker_path.read_text(encoding="utf-8"))
+    report = dict(
+        schema="n1-transition-factorial-run86b-return-preflight-v1",
+        complete=True,
+        synthetic_only=True,
+        task_name=TASK_HANDOFF,
+        process_id=os.getpid(),
+        launcher_returning_utc=returned["launcher_returning_utc"],
+        worker_started_utc=worker["started_utc"],
+        started_utc=started,
+        completed_utc=utc_now(),
+        launcher_return_sha256=sha256(HANDOFF_LAUNCH_RETURNED),
+        launcher_manifest_sha256=sha256(HANDOFF_LAUNCH_MANIFEST),
+        controller_sha256=sha256(Path(__file__).resolve()),
+        launcher_sha256=sha256(LAUNCHER),
+        runner_sha256=sha256(RUNNER),
+        candidate_loaded=False,
+        training_material_loaded=False,
+        optimizer_updates=0,
+        curriculum_queries=0,
+        dev_queries=0,
+        holdout_queries=0,
+        process_cpu_seconds=time.process_time() - cpu_start,
+        handoff_only=True,
+    )
+    write_new_json(HANDOFF_REPORT, report)
+    print(json.dumps(report, ensure_ascii=False, sort_keys=True), flush=True)
+    return 0
 
 
 def synthetic_heartbeat() -> int:
@@ -266,12 +336,15 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--synthetic-heartbeat", action="store_true")
+    mode.add_argument("--run-handoff-probe", action="store_true")
     mode.add_argument("--execute-approved", action="store_true")
     args = parser.parse_args()
-    configure_stdio(probe=args.synthetic_heartbeat)
+    configure_stdio(probe=args.synthetic_heartbeat, handoff=args.run_handoff_probe)
     try:
         if args.synthetic_heartbeat:
             return synthetic_heartbeat()
+        if args.run_handoff_probe:
+            return synthetic_run_handoff_probe()
         started_utc = utc_now()
         cpu_start = time.process_time()
         try:

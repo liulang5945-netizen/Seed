@@ -34,7 +34,13 @@ seed11/12/13 × position/terminal/cut，共九个模型，每个24576更新、55
 
 首轮Seed-N1-Run86-20261016的Task Scheduler任务已启动，但启动器写reports/taiji_n1_transition_factorial_run86_returned.json，控制器等待reports/taiji_n1_transition_factorial_run86_launcher_returned.json。60秒后worker在task_receipts阶段抛FileNotFoundError，OS LastTaskResult=1。失败发生在冻结attempt读取与readiness()来源/材料加载前；没有worker manifest、attempt、主报告或checkpoint，候选更新/dev/holdout查询均为0。该启动任务已精确注销；manifest、实际return、completion、错误日志及reports/taiji_n1_transition_factorial_run86_startup_failure.json保留，不覆盖。
 
-修正版在launch_taiji_n1_transition_factorial_run86.ps1中令formal return文件名与控制器一致，并使用新输出族run86b、新任务Seed-N1-Run86B-20261016和独立checkpoint根data/checkpoints/run86b。再次正式运行前必须先用新文件族完成Task Scheduler心跳与run86b路径checkpoint保存/独立恢复预检，提交修正版及回执；训练协议与原六门、样本、更新数、预算、测面禁区均不变。
+修正版在launch_taiji_n1_transition_factorial_run86.ps1中令formal return文件名与控制器一致，并使用新输出族run86b、新任务Seed-N1-Run86B-20261016和独立checkpoint根data/checkpoints/run86b。再次正式运行前必须先完成静态检查、Task Scheduler独立心跳、run86b正式return文件名的receipt-only交接探针，以及run86b路径checkpoint保存/独立恢复预检；提交修正版及回执后才启动训练。心跳与交接探针均不得载入候选或训练材料，必须核对manifest/worker PID、任务LastTaskResult=0、启动器返回先于worker继续运行及更新/查询计数为0。训练协议与原六门、样本、更新数、预算、测面禁区均不变。
+
+## 修正版预检结论（㊵-1009）
+
+最终控制器/启动器源码静态检查通过，`tests/seed/test_project_identity.py` 4项通过。scheduled heartbeat复验：worker PID 15656与清单和全部6条心跳一致，6条均晚于启动器返回，`LastTaskResult=0`，CPU 0.015625秒，`model_loaded=false`、`training_material_loaded=false`，更新/课程/dev/holdout查询均为0。正式回执路径receipt-only交接：worker PID 29512一致、正式`*_launcher_returned.json`存在且SHA经核对、无触发器、`LastTaskResult=0`，CPU 0.015625秒；候选/训练材料未加载、更新和查询均为0。两项任务均已注销。
+
+run86b正式检查点路径的保存/独立进程恢复预检完整：fresh seed11/position zero、77来源守卫、checkpoint 269989字节、SHA256 `7cac570a0575c0edde56ebb7baf96b679edf19ff7989a6232ce826564ad70e4f`、bundle独立恢复相同、空Adam/0主模型更新、CPU 11.46875秒，临时测试目录已清理；回执为`reports/taiji_n1_transition_factorial_run86b_checkpoint_preflight.json`。当前尚未启动run86b正式训练。唯一下一步是提交控制器、启动器、计划和预检证据，然后启动本计划冻结的九fresh模型任务。
 
 ## 预声明产物
 
@@ -42,9 +48,14 @@ seed11/12/13 × position/terminal/cut，共九个模型，每个24576更新、55
 - 当前用户交互任务启动器：`scripts/training/launch_taiji_n1_transition_factorial_run86.ps1`
 - 两次Start-Process探针（启动失败并保留）：`reports/taiji_n1_transition_factorial_run86_runtime_preflight_launcher.json`、`_runtime_preflight.stdout.log`、`_runtime_preflight.stderr.log`、`_runtime_preflight_retry_launcher.json`、`_runtime_preflight_retry.stdout.log`、`_runtime_preflight_retry.stderr.log`
 - checkpoint路径保存/独立恢复预检回执：`reports/taiji_n1_transition_factorial_run86_checkpoint_preflight.json`
+- 修正版Task Scheduler心跳预检：reports/taiji_n1_transition_factorial_run86_runtime_preflight_scheduled_retry.json、_scheduled_retry.jsonl、_scheduled_retry_launcher.json、_scheduled_retry_returned.json、_scheduled_retry_worker.json、_scheduled_retry.stdout.log、_scheduled_retry.stderr.log
+- 最终修正版Task Scheduler心跳复验（在本计划预声明后执行）：reports/taiji_n1_transition_factorial_run86_runtime_preflight_scheduled_retry2.json、_scheduled_retry2.jsonl、_scheduled_retry2_launcher.json、_scheduled_retry2_returned.json、_scheduled_retry2_worker.json、_scheduled_retry2.stdout.log、_scheduled_retry2.stderr.log
+- run86b正式return路径的receipt-only交接预检（仅验证启动器交接，不加载模型或训练材料）：reports/taiji_n1_transition_factorial_run86b_return_preflight.json、_launcher.json、_launcher_returned.json、_worker.json、.stdout.log、.stderr.log
+- run86b checkpoint路径保存/独立恢复预检：reports/taiji_n1_transition_factorial_run86b_checkpoint_preflight.json（由冻结84训练器独立保存/恢复，0主模型更新；随后新增的receipt-only handoff分支未更改checkpoint路径或读写逻辑）
 - breakaway失败记录留在命令输出；有限权限Task Scheduler探针：`reports/taiji_n1_transition_factorial_run86_runtime_preflight_scheduled.json`、`_runtime_preflight_scheduled.jsonl`、`_runtime_preflight_scheduled_launcher.json`、`_runtime_preflight_scheduled_returned.json`、`_runtime_preflight_scheduled_worker.json`、`_runtime_preflight_scheduled.stdout.log`、`_runtime_preflight_scheduled.stderr.log`
 - 首轮正式启动失败产物（保留）：reports/taiji_n1_transition_factorial_run86_launcher.json、run86_returned.json、run86_completion.json、run86.stderr.log、run86_startup_failure.json
 - 修正版run86b attempt、主报告和九无损分片：reports/taiji_n1_transition_factorial_run86b_attempt.json、run86b.json、run86b_s{11,12,13}_{position,terminal,cut}.json.gz
+- 修正版run86b正式任务清单/日志/完成回执：reports/taiji_n1_transition_factorial_run86b_launcher.json、run86b_launcher_returned.json、run86b_worker.json、run86b.stdout.log、run86b.stderr.log、run86b_completion.json
 - 修正版独立检查点：忽略目录data/checkpoints/run86b/n1_transition_factorial_paired_train_20261016/
 - 结果裁决：`plans/reference/EXP-N1-86_detached_factorial_execution_adjudication_20261016.md`
 

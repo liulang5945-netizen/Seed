@@ -1,0 +1,9 @@
+{
+  "controller_sha256": "8fafb49853de279b18da0fd747435ca6d19e8f59efdea63882fa50c02113261b",
+  "launcher_sha256": "a3f1137210b1175832818d98105087f1fb53ec79161f7fc0128e6c1009deeba9",
+  "process_id": 22288,
+  "runner_sha256": "38018dbe08b9eb4c35d0b5c97196727b34f94efee68d68113e80269b8d3c9491",
+  "schema": "n1-transition-factorial-run86-worker-v1",
+  "started_utc": "2026-10-16T09:09:22.352330+00:00",
+  "task_name": "Seed-N1-Run86-Probe-20261016"
+}

@@ -3581,3 +3581,9 @@ Task Scheduler合成探针PID 24408在启动器返回后写完6/6心跳；6条�
 Task Scheduler启动器成功注册并启动Seed-N1-Run86-20261016，但PowerShell写出的返回清单为reports/taiji_n1_transition_factorial_run86_returned.json，控制器等待的是reports/taiji_n1_transition_factorial_run86_launcher_returned.json。等待60秒后控制器以FileNotFoundError退出；OS记录任务Ready、LastTaskResult=1。调用顺序证明失败先于冻结attempt读取、83来源加载和真实课程读取：无worker/attempt/主报告/checkpoint，0候选更新、0dev/holdout查询。故这是启动器回执路径缺陷，非训练结果。启动任务已精确注销；launcher/return/completion/错误日志及裁决JSON保留。
 
 唯一下一步修复formal return路径，并把后续执行产物隔离到run86b；使用新scheduled preflight文件族复验心跳，再对86b checkpoint路径复验保存/独立恢复。两项通过并提交后才按完全相同的九fresh、221184更新/497664 QA/≤14400 CPU秒/原六position门协议启动；不查询dev/v3 holdout/v4/v5。详细裁决见EXP-N1-86_detached_factorial_execution_adjudication_20261016.md。
+
+### ㊵-1009 · 2026-10-16 · run86b独立心跳、回执交接与checkpoint预检通过
+
+修正版最终源码静态检查及4项项目身份测试通过。新的scheduled heartbeat worker PID 15656与worker清单/心跳一致，启动器返回后写完6/6，Task Scheduler `LastTaskResult=0`，CPU 0.015625秒；没有模型/训练材料加载，0更新、0课程/dev/holdout查询。为精确验证正式命名的`run86b_launcher_returned.json`，另跑receipt-only handoff任务：worker PID 29512与清单一致，回执与SHA核对通过、无触发器、`LastTaskResult=0`、CPU 0.015625秒，仍为0加载/更新/查询。两个精确临时任务均已注销。
+
+run86b独立checkpoint路径保存与跨进程恢复通过：fresh seed11/position zero、77来源守卫、269989字节、SHA256 `7cac570a0575c0edde56ebb7baf96b679edf19ff7989a6232ce826564ad70e4f`，恢复bundle相同、空Adam、0主模型更新、CPU 11.46875秒且临时测试目录清理。当前没有启动run86b正式训练。唯一下一步提交控制器、启动器、计划与预检证据，再启动冻结的fresh九模型/221184更新/497664 QA批次，CPU≤14400秒，保留原六position门，零dev/v3 holdout/v4/v5。84是Codex客户端更新重启造成的外部中断，实际进度未知，不续接、不覆盖；86首轮启动路径失败保留且不并入训练结果。85 `TRAIN_SHA=None`，v5未消费；保持/C4/三器官/其他N面/完整HEAD CI债照旧。

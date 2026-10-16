@@ -1,0 +1,20 @@
+{
+    "schema":  "n1-transition-factorial-run86-task-launch-v1",
+    "mode":  "probe",
+    "task_name":  "Seed-N1-Run86-Probe-20261016",
+    "trigger_count":  0,
+    "principal_logon_type":  "Interactive",
+    "run_level":  "Limited",
+    "python_path":  "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\pythonw.exe",
+    "arguments":  "-u \"E:\\Seed\\scripts\\training\\run_taiji_n1_transition_factorial_paired_run86.py\" --synthetic-heartbeat",
+    "repository_root":  "E:\\Seed",
+    "registered_utc":  "2026-10-16T09:17:28.8040337Z",
+    "controller_path":  "E:\\Seed\\scripts\\training\\run_taiji_n1_transition_factorial_paired_run86.py",
+    "controller_sha256":  "036ac53212b62b13a387d4e931622d4fb7cfe31b97afbef3a9c78fc2259840eb",
+    "runner_path":  "E:\\Seed\\scripts\\training\\run_taiji_n1_transition_factorial_paired.py",
+    "runner_sha256":  "38018dbe08b9eb4c35d0b5c97196727b34f94efee68d68113e80269b8d3c9491",
+    "launcher_path":  "E:\\Seed\\scripts\\training\\launch_taiji_n1_transition_factorial_run86.ps1",
+    "launcher_sha256":  "4404e3fcdae10f82a4fc3ed7c3606073bf8ed11a3737526cd52e53fee1b036b3",
+    "stdout_path":  "E:\\Seed\\reports\\taiji_n1_transition_factorial_run86_runtime_preflight_scheduled_retry2.stdout.log",
+    "stderr_path":  "E:\\Seed\\reports\\taiji_n1_transition_factorial_run86_runtime_preflight_scheduled_retry2.stderr.log"
+}

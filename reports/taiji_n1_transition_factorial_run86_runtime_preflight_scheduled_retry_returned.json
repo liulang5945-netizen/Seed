@@ -1,0 +1,7 @@
+{
+    "schema":  "n1-transition-factorial-run86-task-return-v1",
+    "task_name":  "Seed-N1-Run86-Probe-20261016",
+    "start_succeeded":  true,
+    "start_requested_utc":  "2026-10-16T09:09:22.2846074Z",
+    "launcher_returning_utc":  "2026-10-16T09:09:22.2968107Z"
+}

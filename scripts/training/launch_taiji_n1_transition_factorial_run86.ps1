@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory = $true)]
-    [ValidateSet('probe', 'run')]
+    [ValidateSet('probe', 'handoff', 'run')]
     [string]$Mode
 )
 
@@ -11,14 +11,14 @@ $FrozenRunner = Join-Path $RepositoryRoot 'scripts\training\run_taiji_n1_transit
 $Python = (Get-Command python.exe -ErrorAction Stop).Source
 $Pythonw = Join-Path (Split-Path -Parent $Python) 'pythonw.exe'
 $ReportRoot = Join-Path $RepositoryRoot 'reports'
-$CheckpointRoot = Join-Path $RepositoryRoot 'data\checkpoints\run86'
+$CheckpointRoot = Join-Path $RepositoryRoot 'data\checkpoints\run86b'
 
 if (-not (Test-Path -LiteralPath $Pythonw -PathType Leaf)) {
     throw "pythonw.exe missing beside Python interpreter: $Pythonw"
 }
 
 if ($Mode -eq 'probe') {
-    $Stem = Join-Path $ReportRoot 'taiji_n1_transition_factorial_run86_runtime_preflight_scheduled'
+    $Stem = Join-Path $ReportRoot 'taiji_n1_transition_factorial_run86_runtime_preflight_scheduled_retry2'
     $TaskName = 'Seed-N1-Run86-Probe-20261016'
     $Arguments = "-u `"$Controller`" --synthetic-heartbeat"
     $Artifacts = @(
@@ -31,9 +31,22 @@ if ($Mode -eq 'probe') {
         "${Stem}.stderr.log"
     )
 }
+elseif ($Mode -eq 'handoff') {
+    $Stem = Join-Path $ReportRoot 'taiji_n1_transition_factorial_run86b_return_preflight'
+    $TaskName = 'Seed-N1-Run86B-Handoff-20261016'
+    $Arguments = '-u ' + [char]34 + $Controller + [char]34 + ' --run-handoff-probe'
+    $Artifacts = @(
+        "${Stem}.json",
+        "${Stem}_launcher.json",
+        "${Stem}_launcher_returned.json",
+        "${Stem}_worker.json",
+        "${Stem}.stdout.log",
+        "${Stem}.stderr.log"
+    )
+}
 else {
-    $Stem = Join-Path $ReportRoot 'taiji_n1_transition_factorial_run86'
-    $TaskName = 'Seed-N1-Run86-20261016'
+    $Stem = Join-Path $ReportRoot 'taiji_n1_transition_factorial_run86b'
+    $TaskName = 'Seed-N1-Run86B-20261016'
     $Arguments = "-u `"$Controller`" --execute-approved"
     $Artifacts = @(
         "${Stem}_attempt.json",
@@ -94,7 +107,12 @@ try {
     }
 
     $Manifest = "${Stem}_launcher.json"
-    $Returned = "${Stem}_returned.json"
+    if ($Mode -eq 'probe') {
+        $Returned = "${Stem}_returned.json"
+    }
+    else {
+        $Returned = "${Stem}_launcher_returned.json"
+    }
     $Record = [ordered]@{
         schema = 'n1-transition-factorial-run86-task-launch-v1'
         mode = $Mode
