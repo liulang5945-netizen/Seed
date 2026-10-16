@@ -2,8 +2,8 @@
 
 The 89 family exists to make nine checkpoints differ by readout arm only, so every
 risk here is a naming or boundary mistake that would silently mix two recipes. Both
-sides of each guard are walked in-process, and nothing is written: no report, no
-checkpoint, no query.
+sides of each guard are walked in-process, and nothing is written in the repo: no
+report, no checkpoint, no query.
 
 * position is refused - the family trains control arms only, run88c owns position;
 * the DEBT-G144 fix is pinned, the score-row prefix set is derived from the same
@@ -85,9 +85,10 @@ def test_the_two_families_do_not_share_receipt_paths() -> None:
 def test_prefix_boundary_is_one_constant_and_strictly_contains_the_milestone() -> None:
     run89.configure("terminal")
     assert run89.PREFIX_UPDATES == run89.DECAY_START
-    assert tuple(
-        step for step in run89.MILESTONES if step <= run89.DECAY_START
-    ) == run89.PREFIX_ROW_STEPS
+    assert (
+        tuple(step for step in run89.MILESTONES if step <= run89.DECAY_START)
+        == run89.PREFIX_ROW_STEPS
+    )
     assert run89.DECAY_START in run89.PREFIX_ROW_STEPS
     strict_below = {step for step in run89.MILESTONES if step < run89.DECAY_START}
     assert strict_below < set(run89.PREFIX_ROW_STEPS)
@@ -213,8 +214,17 @@ def test_prefix_readings_answer_true_for_equal_and_false_for_moved_milestone(
 
 
 def test_verifier_output_name_follows_the_configured_family(tmp_path: Path) -> None:
-    run89.configure("cut")
-    expected = f"taiji_n1_transition_factorial_lr_decay_{run89.RUN_STEM}_batch_verification.json"
-    assert expected == "taiji_n1_transition_factorial_lr_decay_run89b_batch_verification.json"
-    assert not (run89.ROOT / "reports" / expected).exists()
-    assert tmp_path.is_dir()
+    prefix = "taiji_n1_transition_factorial_lr_decay_"
+    targets = {}
+    for arm, stem, _task in FAMILIES:
+        run89.configure(arm)
+        name = f"{prefix}{run89.RUN_STEM}_batch_verification.json"
+        assert name == f"{prefix}{stem}_batch_verification.json"
+        targets[stem] = name
+    assert targets["run89a"] != targets["run89b"], "two families would share one target"
+
+    sealed = tmp_path / targets["run89b"]
+    sealed.write_text("{}", encoding="utf-8")
+    with pytest.raises(verify89.Guard, match="single attempt file"):
+        verify89.execute("cut", sealed)
+    assert sealed.read_text(encoding="utf-8") == "{}", "refusal must not rewrite the sealed file"
