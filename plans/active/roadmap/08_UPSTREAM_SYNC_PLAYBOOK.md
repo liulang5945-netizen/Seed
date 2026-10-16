@@ -3659,3 +3659,8 @@ seed13/position complete=true、training_sufficient=true：固定24576更新、5
 ### 2026-10-16 · run86c seed13 terminal完整封存
 
 terminal complete=true、training_sufficient=false：固定24576更新、55296QA、43008会话、4800评分、zero/final两次独立恢复equal=true及8签名副本步。终点original116/192（8/33/48/27）、pair32/96、rename108/192（6/32/48/22）、rename_pair25/96；原始/重命名四条件联合均48/48。工程完成8/9，累计16次独立恢复通过；同一PID6428（18:36:33启动）继续Running并进入最后seed13/cut零态，错误日志为空。85准入仍因seed12/position失败而不成立，TRAIN_SHA=None、v5未消费。继续最后固定模型，完整工程、来源与CPU总账待自然结束后统一核验。
+
+
+### 2026-10-16 · run88c seed12 position完整封存
+
+seed12 complete=true、training_sufficient=true：24576更新、55296 QA、43008会话、4800评分，zero/final独立恢复均equal=true，8签名副本步。末点四项192/96/192/96，四类均48/48，原/改名四条件joint均48/48；实际LR为18432步0.001及6144步0.00025。离线逐项复核前18432步loss/measurement、含18432评分行完全同run86c，旧配方末点176/192、joint24/24仍保留。当前2/3模型完整，同一PID27320进入seed13，OS CPU2090.11秒、stderr空；整批completion尚无、v5未查询。不以两个seed结果替代三seed总账或未见能力。
