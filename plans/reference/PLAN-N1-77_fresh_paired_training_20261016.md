@@ -23,3 +23,13 @@ position/terminal全部41 Adam步数等于完成数；cut writer4无Adam且逐�
 | position | 186 | 96 | 184 | 96 | 04cb12e90e01e4bd649a8c3b3bacf8bdd633c29d98f50b69ca009267732253af |
 | terminal | 123 | 31 | 105 | 26 | ead9b27391ce3da64a00679fce85145278871e0e3574ae7917a3c5a79122120e |
 | cut | 192 | 96 | 189 | 96 | 0d741c004b33c84ec4fc26f40db89928cf554bc49c1301668b15233fa39939ef |
+
+## 第二组已得证据（整批仍运行）
+
+77 seed12三臂完整，各24576更新/2880行/两独立恢复；position192/96/192/96原四门通过，terminal122/19/105/17，cut186/96/176/96、改名transition32/48照实保留。六份已完模型累计12恢复，全部分片计数/主摘要/Adam布局核验通过；同会话73963已进入seed13 position，起点评分累计CPU4531.48秒。唯一下一步完成最后三模型并统一判读，78未绑定终端SHA且v5零查询，全项目出口仍欠。
+
+| seed12臂 | 原题/192 | 原pair/96 | 改名/192 | 改名pair/96 | 分片SHA256 |
+| --- | --- | --- | --- | --- | --- |
+| position | 192 | 96 | 192 | 96 | dffd7c03712b94cd534f011714bc53c0eb004aa441508e09f9f5789a1bd81bea |
+| terminal | 122 | 19 | 105 | 17 | b8b84528c3122170f5bd9f2cd1bfd1a7571d8e722e15a860ee6b94a55e8b5c1d |
+| cut | 186 | 96 | 176 | 96 | aedb746e63c279b48a35b4df96f2afdc237204e775c1c7eba7d2929729fd8ec4 |
