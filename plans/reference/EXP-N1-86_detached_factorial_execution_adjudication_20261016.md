@@ -50,3 +50,8 @@ seed11/position与seed13/position均通过六门。seed12/position未通过：�
 seed12/position在18432步原题/配对/改名/改名配对均为192/96/192/96，原始与改名四条件联合均48/48；24576步变为176/96/181/96和24/24。每步loss日志显示QA均值从cycle3的0.000250升至cycle4的0.004688，而observation均值从0.000248降到0.000029；QA波峰出现在20992–22016及24064–24576。末点错误落在原题transition 6项与unknown 10项。它们是已记录量之间的关联，不能单独证明是何种Adam位移造成回退，也不能定位两评分点之间的首次错误步。
 
 唯一建议的下一步是先审议[PLAN-N1-87](PLAN-N1-87_run86c_offline_trajectory_audit_review_20261016.md)：在60秒CPU内只分析九个已封存分片，不加载模型/checkpoint、不做新评分或留出查询、0更新；重点按计划对齐末周期loss、五组实际位移及失败项。该新增诊断待所有者批准；它不授权新训练配方或改变任何门。
+
+
+## PLAN-N1-87首次离线诊断执行状态（2026-10-16）
+
+所有者已批准PLAN-N1-87。首次执行在Python顶层导入阶段因入口未配置仓库根`sys.path`而失败，未读取报告/分片/训练样本，未加载模型或checkpoint，未执行评估/查询/更新；CPU时间未由该失败预检单独计量，正式分析报告不存在。错误与零副作用回执见`reports/taiji_n1_transition_factorial_run86c_offline_trajectory_audit_attempt.json`。已修复导入入口。因原批准方案规定仅一次且不重试，未擅自再次运行；已根据所有者对可撤销范围调整的明确授权，按[PLAN-N1-87R](PLAN-N1-87R_run86c_offline_audit_retry_review_20261016.md)在原60秒上限及全部只读边界下额外重跑一次。

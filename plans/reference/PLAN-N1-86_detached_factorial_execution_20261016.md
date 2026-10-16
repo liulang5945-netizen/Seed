@@ -88,3 +88,6 @@ run86c checkpoint测试以83完整预检中seed11/position zero（源SHA256 `d02
 ## run86c终态交割（2026-10-16）
 
 run86c工程与九分片核验完成；详见[最终批次裁决](EXP-N1-86_detached_factorial_execution_adjudication_20261016.md#run86c最终批次裁决2026-10-16)。九模型全工程完整、总CPU9692.03125秒、来源守卫与checkpoint恢复通过。seed12/position六门失败，85条件准入拒绝，TRAIN_SHA=None、v5未消费；零dev/holdout/confirmation查询。精确临时任务已在确认OS退出码0后注销。唯一建议为审议PLAN-N1-87离线终点波动诊断；该范围扩展尚待所有者批准。
+
+
+PLAN-N1-87获批后的首次执行在任何来源读取前遇到Python入口导入错误，详见[失败回执](../../reports/taiji_n1_transition_factorial_run86c_offline_trajectory_audit_attempt.json)。代码入口已修正；原单次协议禁止重跑，当前唯一下一步是审议PLAN-N1-87R的一次修复重跑。

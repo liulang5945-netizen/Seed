@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：审议并批准 [PLAN-N1-87](../../reference/PLAN-N1-87_run86c_offline_trajectory_audit_review_20261016.md)，对已封存轨迹做零模型加载、零查询的离线失稳诊断。run86c已自然结束：OS LastTaskResult=0，PID6428退出，精确临时任务已注销；九模型工程完整，221184更新/497664 QA/387072会话/43200评分/18次独立恢复/72副本步/288合成QA全部核实，CPU 9692.03/14400秒，83项来源守卫与代码未变，18个checkpoint哈希匹配，report SHA与completion一致。position仅seed11、13通过；seed12原题unknown38/48且原始与改名四条件联合均24/48，因此85前置失败，TRAIN_SHA=None、v5未消费，dev/holdout/confirmation均零查询。保留原终点和所有失败，不补训、不选中点、不改门。封存报告及九分片已完成；C1已过，N1消费/信用、保持、C4净增益、三器官/同bundle和N系列其余出口仍未闭环。
+## 当前唯一下一步：按已授权的 [PLAN-N1-87R](../../reference/PLAN-N1-87R_run86c_offline_audit_retry_review_20261016.md)，允许修复Python入口后额外执行一次已批准的run86c离线轨迹审计（CPU≤60秒，CPU资源无需另行请示）。PLAN-N1-87首次执行在导入阶段遇到ModuleNotFoundError，发生于读取任何来源前：0报告/分片/训练样本读取、0模型或checkpoint加载、0推理/评分/查询/更新，CPU时间未单独计量；失败回执已封存，分析报告尚不存在。入口已修复，但原方案规定单次不重试，现按最新授权执行这一次额外尝试。run86c正式九模型工程完整、CPU9692.03/14400秒；seed12/position六门失败，85拒入、TRAIN_SHA=None、v5未消费；正式任务已注销。N1消费/信用、保持、C4及三器官/同bundle等全项目出口仍未闭环。
 
 ## 本轮调度修订（2026-10-14）
 
