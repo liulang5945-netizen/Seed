@@ -29,3 +29,6 @@ reports/taiji_n1_fresh_paired_train_20261016.json -text !eol
 
 # PLAN80 deterministic training-only counterfactual manifest.
 plans/manifests/n1_fresh_transition_factorial_20261016.json text eol=lf
+
+# PLAN84 lossless full-trajectory shards remain byte-exact binary gzip.
+reports/taiji_n1_transition_factorial_paired_train_20261016_s*.json.gz binary

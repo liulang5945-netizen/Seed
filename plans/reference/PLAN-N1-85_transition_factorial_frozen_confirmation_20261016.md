@@ -17,3 +17,7 @@
 全部准入守卫通过后、首题前独占写attempt，写入即v5已消费，即使中断也不能重新查询/选择重跑。完整保留partial行/查询计数与恢复/源链/代码/CPU状态。报告只在288行/九完整加载/状态中性和守卫齐备时判工程完整。
 
 预声明：`scripts/training/eval_taiji_n1_transition_factorial_confirmation.py`；`tests/taiji_native/test_native_transition_factorial_confirmation_contract.py`；`reports/taiji_n1_transition_factorial_frozen_confirmation_20261016.json`与`_attempt.json`；结果裁决`plans/reference/EXP-N1-85_transition_factorial_confirmation_adjudication_20261016.md`。84receipt helper为共享准入，不改旧77/78/82/83源码。准备实现不加载真实模型、不查询任何确认题；运行另受以上SHA绑定前置。
+
+## 实施前置记录
+
+84/85共30项artifact-free合同通过，两根Ruff通过；84真实来源只读预检77来源守卫与九完整零态路径通过，0更新/查询。逐步QA调度/有限损失与五组实际位移、五阶段六view精确目标/原始复现/汇总逐项一致、无损双SHA、cut状态与全历史恢复均有合同；85 TRAIN_SHA保持None，未准入/未查询。共享代码提交后冻结并开始84，不能在训练运行中改执行器/目标/原门。完整HEAD CI债仍保留。

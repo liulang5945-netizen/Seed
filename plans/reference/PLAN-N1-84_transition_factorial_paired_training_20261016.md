@@ -21,3 +21,7 @@ seed11/12/13×position/terminal/cut九fresh模型，每模型从对应83完整�
 `scripts/training/run_taiji_n1_transition_factorial_paired.py`；`scripts/training/_taiji_n1_transition_factorial_training_receipt.py`；`tests/taiji_native/test_native_transition_factorial_paired_training_contract.py`；`tests/taiji_native/test_native_transition_factorial_training_receipt_contract.py`；`reports/taiji_n1_transition_factorial_paired_train_20261016.json`、`_attempt.json`及`_s{11,12,13}_{position,terminal,cut}.json.gz`（精确族binary属性）；忽略目录`data/checkpoints/n1_transition_factorial_paired_train_20261016/s{seed}_{arm}_{zero,final,partial}.pt`；结果裁决`plans/reference/EXP-N1-84_transition_factorial_paired_training_adjudication_20261016.md`。
 
 先完成84/85准备实现、artifact-free合同/根Ruff/相关计划导航检查并提交，然后独占训练；运行时冻结所有共享代码。85执行器TRAIN_SHA初始None，84全终点后仅在前置全部成立时另提交精确SHA绑定。不能运行旧78绕过新目标准入。所有旧实验/报告/模型不改、不删、不推远端。五计划保持实时，N1消费/保持/C4/同bundle三器官/N系列/完整HEAD CI债仍欠。
+
+## 实施前置记录
+
+84/85共30项artifact-free合同通过，两根Ruff通过；84真实来源只读预检77来源守卫与九完整零态路径通过，0更新/查询。逐步QA调度/有限损失与五组实际位移、五阶段六view精确目标/原始复现/汇总逐项一致、无损双SHA、cut状态与全历史恢复均有合同；85 TRAIN_SHA保持None，未准入/未查询。共享代码提交后冻结并开始84，不能在训练运行中改执行器/目标/原门。完整HEAD CI债仍保留。
