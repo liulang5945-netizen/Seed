@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：运行 [PLAN-N1-88](../../reference/PLAN-N1-88_position_final_cycle_lr_decay_review_20261016.md) 的三fresh零态checkpoint保存/独立恢复前置。run88控制器与Task Scheduler启动器已实现并提交，Ruff、Python编译和PowerShell解析通过；执行器与冻结84来源隔离，唯一变化为最后6144步学习率0.00025。前置须验证三seed零态与run86c初始bundle相同、独立恢复及调度边界；CPU纳入全批4800秒。只有前置成功并提交回执后启动三seed正式训练；训练中失门不追加，不查询dev/v3holdout/v4/v5。
+## 当前唯一下一步：修正run88 checkpoint前置解包错误后执行唯一的preflight_attempt_02。首次前置只读了三份run86c封存分片，零run88模型/检查点反序列化、零保存/更新/查询；失败回执已留，run88 checkpoint目录确认为空。现已更正控制字典解包并版本化记录，不删首轮证据，第二次前置需重新核验三seed零态、独立恢复、调度边界和CPU总预算。成功并提交回执后才启动正式三seed训练。run86c结论不变：九模型工程完整但seed12 position六门失败，85拒入、v5未消费。
 
 ## 本轮调度修订（2026-10-14）
 

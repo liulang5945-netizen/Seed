@@ -37,7 +37,19 @@ v5、dev、v3 holdout、v4及其他未见集查询一律为0；`TRAIN_SHA=None`�
 
 ## 实施身份（冻结，2026-10-16）
 
-- run88控制器SHA256：`e2865f60d2ab1c9a54af20aaabcc7fb63a9f9f1e89f52b94bde61df1f64392e3`。
+- run88控制器SHA256：`f53fdfd2c42d116b1f73c775343981f092e1c5e4e45f1adbdffdc5c4116e1b74`。
 - Task Scheduler启动器SHA256：`5dd7ec6293a2d184f709b2ec3cef44c30060e0cd8bf0398c8857012a1117e517`。
 - 冻结84训练器SHA256：`38018dbe08b9eb4c35d0b5c97196727b34f94efee68d68113e80269b8d3c9491`。
 - 相关文件：`scripts/training/run_taiji_n1_transition_factorial_lr_decay_run88.py`、`scripts/training/launch_taiji_n1_transition_factorial_lr_decay_run88.ps1`。
+
+
+## 首次checkpoint前置失败与处理
+
+2026-10-16首次checkpoint前置在读取三份run86c position封存分片后，因将control_records的二项返回误解包为两个嵌套结果而停止；发生在run88零态/模型/checkpoint反序列化前。运行更新/optimizer/model query均为0；run88 checkpoint根目录已创建但文件数为0，失败回执`reports/taiji_n1_transition_factorial_lr_decay_run88_preflight_failure.json`保留。已修正解包逻辑，并在原目录为空这一可验证条件下，按所有者授权另开`preflight_attempt_02`，保留第一次attempt与失败回执；不删除或覆盖任何文件。再次核验三seed zero saves、独立恢复及调度边界；成功前不得训练。
+
+此处只新增一次checkpoint前置重试，不增加正式训练尝试数、不改变4800秒上限或任何训练/能力判据。
+
+
+## 前置执行记录（2026-10-16）
+
+preflight_attempt_01在读取3个run86c position封存分片后，误将(control report, model map)二项返回再次按二项嵌套结构解包，停止于零态模型加载前。没有run88候选模型/checkpoint反序列化、保存、optimizer更新、评分或查询；run88 checkpoint根目录已创建但经核验为空。精确失败记录见`reports/taiji_n1_transition_factorial_lr_decay_run88_preflight_failure.json`，attempt_01和空目录保留。已修复解包逻辑；依所有者最新持续授权，唯一下一步是对空根执行`preflight_attempt_02`，生成新attempt并再次完整核验。成功前不启动正式训练。
