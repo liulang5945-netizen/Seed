@@ -41,6 +41,8 @@
 
 前置＝89a 与 89b 两批各自的核验件为真；本件在 §1 全部通过前不得加载任何模型（`readiness` 先行，缺任一枚即响亮失败、attempt 不写、v5 不消费）。执行预算 ≤180 秒 CPU 单批，与两批训练预算各自独立；零外部配额、零远端动作。
 
+〔2026-10-17 落盘前的零算力自测，逐条实跑而非推断〕①拒入支在真实代码上出 **rc=2** 且点名缺件（`terminal batch report is missing: taiji_n1_transition_factorial_lr_decay_run89a.json`），不是 traceback 的 rc=1；②v5 面现读＝32 题、四类各 8、`split` 全为 `holdout`、id 全唯一，字节 SHA `22ba37976bc6eaaa…` 等于 76 准入件里那枚封条，`face.validate` 不抛 ⇒ §1 的题集那一半已为真；③§4.2 那句"三族同源"今天可机检：run88c 报告 110 枚守卫、89a 与 89b 预检各 107 枚，**三族交集 98 枚且逐枚摘要相同（不一致 0 枚）**，交集里含 `n1_paired_questions_20261015.json`／`n1_native_evidence_curriculum_v3_20261015.json`／`n1_fresh_transition_factorial_20261016.json`／v5 题集本体与九枚 fresh 零态档；④跨族装载补丁在真实 89a 零态档上验过：该档 `protocol.schema` 与 84 默认 protocol 不同名，`load_with_family_protocol` 仍装载成功且把 `train.PROTOCOL` 复原、`_observations` 为 0。合同测 18 passed（含 rc=2 与"拒入时 attempt 不落盘"两支）。
+
 ## 6. 出口
 
 本件只有一格产出：`reports/taiji_n1_transition_factorial_confirmation_run89.json` 与判读件 `plans/reference/EXP-N1-90_*`。发表资格前置不变——未见读数之外仍需保持集、C4 净增益、三器官各自行为证据；本件不结 N1，也不开 N2/N3/N5。
