@@ -19,3 +19,7 @@
 ## 预声明产物
 
 `scripts/training/run_taiji_n1_transition_factorial_calibration.py`；`tests/taiji_native/test_native_transition_factorial_calibration_contract.py`；`reports/taiji_n1_transition_factorial_calibration_20261016.json`、`_attempt.json`；忽略目录`data/checkpoints/n1_transition_factorial_calibration_20261016/{zero,final,partial}.pt`；结果裁决`plans/reference/EXP-N1-82_transition_factorial_calibration_adjudication_20261016.md`。81工程结果直接封入既有81计划；77/79/80/81既有代码和原报告不改。完成后五计划同步并只推荐一个下一步。全项目保持/C4/三器官/N系列及全HEAD CI债仍欠。
+
+## 固定中点运行记录
+
+执行器提交733b51a31；同一会话8895/PID36128，zero实际保存及独立恢复后才开始更新。6144：77/0/76/0，CPU351.98秒；12288：134/37/128/38，CPU668.28秒（依次原/pair/改名/改名pair）。这些只是固定检查点，不选点、不提前判门，后续联合四条件和完整恢复以终点报告为准。执行器/学习器未修改。
