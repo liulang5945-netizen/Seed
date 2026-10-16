@@ -2,6 +2,8 @@
 
 > **2026-10-16 run86b预检完成（㊵-1009）**：修正版最终源码静态检查通过，项目身份测试4项通过。Task Scheduler心跳6/6均发生在启动器返回后、worker PID一致、LastTaskResult=0；CPU0.015625秒，0模型/训练材料加载、0更新/课程/dev/holdout查询。正式return文件名的receipt-only交接探针亦通过，LastTaskResult=0、CPU0.015625秒，0加载/更新/查询；run86b独立checkpoint保存/恢复预检CPU11.46875秒、77守卫通过、bundle独立恢复相同、0模型更新，临时目录清理。两个临时任务均已注销。唯一下一步提交这批启动器、计划与回执，然后启动原冻结的run86b九fresh模型训练；协议/六position门/≤14400秒CPU/零dev、v3 holdout、v4、v5不变。84是Codex客户端更新重启导致的外部中断，实际步数未知、保留不续接；86首轮启动路径失败证据保留。85未准入、v5未消费，全项目其他出口债不变。
 
+> **2026-10-16 run86b启动失败裁决（㊵-1010）**：任务在`audit()`独占输出守卫退出，LastTaskResult=1、CPU2.25秒；runpy返回字典与函数`__globals__`分离，导致守卫仍看到84 attempt和原检查点目录。源码顺序证明readiness/训练材料/候选/训练均未开始；无run86b attempt/报告/分片，0更新/查询。stderr、completion、manifest、worker与JSON裁决均保留；精确失败任务已注销，run86b检查点根留空不删。唯一下一步修正函数globals注入及错误checkpoint后缀，新增针对runpy globals的回归测试，以run86c独立族复做全套预检；实验配方、六门、预算和测面边界不变。run86b与84均保留为失败/外部中断证据；85未准入、v5未消费。
+
 > **2026-10-16 86首轮启动失败裁决（㊵-1008）**：正式任务启动器把回执写为 *_returned.json，控制器等待 *_launcher_returned.json；60秒后FileNotFoundError，Task Scheduler LastTaskResult=1。失败发生在训练材料加载前，无attempt/worker/checkpoint/更新，精确任务已注销，证据保留。下一步修复路径并用独立86b产物族重做后台及checkpoint预检，再按同一冻结九模型配方启动；样本、门、预算和未见查询禁区不变。85未准入、v5未消费。
 
 > **2026-10-16 Task Scheduler策略核验（㊵-1005）**：默认shell对Task Scheduler服务与COM访问均返回`Access denied (0x80070005)`；用户级任务是否可注册仍未验证。按已有本地持续授权，仅为无触发器/Interactive/Limited的合成探针请求一次策略审核的提权执行；若审核拒绝即停止正式86。通过后跑约5秒心跳、核对OS `LastTaskResult` 并移除精确探针任务；随后才考虑同协议fresh九模型/≤14400秒正式86。84失败证据保留，85 TRAIN_SHA=None，v5未消费，项目保持/C4/三器官/其他N与完整HEAD CI债不变。

@@ -1,0 +1,7 @@
+{
+    "schema":  "n1-transition-factorial-run86-task-return-v1",
+    "task_name":  "Seed-N1-Run86B-20261016",
+    "start_succeeded":  true,
+    "start_requested_utc":  "2026-10-16T09:23:53.9726917Z",
+    "launcher_returning_utc":  "2026-10-16T09:23:53.9807833Z"
+}

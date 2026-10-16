@@ -1,0 +1,11 @@
+{
+  "completed_utc": "2026-10-16T09:24:01.793963+00:00",
+  "engineering_complete": false,
+  "error": "FileExistsError: exclusive fixed nine-model batch; no restart",
+  "exit_code": 1,
+  "process_cpu_seconds": 2.25,
+  "process_id": 29816,
+  "schema": "n1-transition-factorial-run86-completion-v1",
+  "started_utc": "2026-10-16T09:23:54.279877+00:00",
+  "task_name": "Seed-N1-Run86B-20261016"
+}
