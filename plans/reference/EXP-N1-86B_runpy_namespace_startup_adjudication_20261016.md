@@ -12,6 +12,6 @@ stderr栈落在冻结runner的`audit()`首个独占批次检查（`run_taiji_n1_
 
 同时发现控制器的外部checkpoint路由尾段仍硬编码为`run86`。它不是本次守卫报错的直接原因（函数globals未被覆盖使该闭包未生效），但若只修globals，会把模型检查点导向错误目录，因此必须同批修为新的唯一族`run86c`。
 
-## 后续冻结动作
+## 修复与当前状态
 
-保留run86b全部失败证据与空检查点目录，不覆盖或删除。修正控制器以更新`audit.__globals__`实际使用的命名空间，并把report、attempt、checkpoint和source guards逐项验证为run86c；新增针对runpy函数globals绑定的回归测试。用全新run86c文件族完成静态/单测、生命周期与正式回执交接预检、fresh零态保存/独立恢复预检，提交修订与证据后才启动run86c。训练样本、九fresh模型、每模型24576更新、总221184更新、CPU≤14400秒、原六position门和零dev/v3 holdout/v4/v5边界完全不变。
+run86b全部失败证据与空检查点目录保留，不覆盖或删除。控制器现直接更新`audit.__globals__`，并把report、attempt、checkpoint和source guards路由至run86c；runpy globals/checkpoint路径回归测试及目标检查均通过。run86c心跳与正式回执交接任务LastTaskResult=0，fresh零态在run86c正式checkpoint位置保存且由独立进程恢复一致；对应机器回执列于[PLAN-N1-86](PLAN-N1-86_detached_factorial_execution_20261016.md)㊵-1011。目前唯一下一步是提交修复与证据，再启动同一冻结实验。训练样本、九fresh模型、每模型24576更新、总221184更新、CPU≤14400秒、原六position门和零dev/v3 holdout/v4/v5边界完全不变。

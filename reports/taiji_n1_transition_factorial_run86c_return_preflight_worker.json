@@ -1,0 +1,9 @@
+{
+  "controller_sha256": "927e79d3740305c1d8f55752acf18921fcd2330d7eb59d69bba894b3c41f76a9",
+  "launcher_sha256": "43e1300f1741bc058130b84c4d9b25bf0076bb5aa05ef67bc59be5849b7168ff",
+  "process_id": 23940,
+  "runner_sha256": "38018dbe08b9eb4c35d0b5c97196727b34f94efee68d68113e80269b8d3c9491",
+  "schema": "n1-transition-factorial-run86-worker-v1",
+  "started_utc": "2026-10-16T09:45:53.924330+00:00",
+  "task_name": "Seed-N1-Run86C-Handoff-20261016"
+}

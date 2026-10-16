@@ -1,4 +1,4 @@
-"""Run the frozen N1-84 training protocol as an on-demand run86b task."""
+"""Run the frozen N1-84 training protocol as an on-demand run86c task."""
 
 from __future__ import annotations
 
@@ -20,16 +20,16 @@ LAUNCHER = ROOT / "scripts/training/launch_taiji_n1_transition_factorial_run86.p
 FROZEN_ATTEMPT = ROOT / "reports/taiji_n1_transition_factorial_paired_train_20261016_attempt.json"
 FROZEN_ATTEMPT_SHA256 = "6a3124a1293c33dcbdc45bc55fb34971200236cb4673e52c9c981335e0bc6234"
 
-REPORT = ROOT / "reports/taiji_n1_transition_factorial_run86b.json"
-ATTEMPT = ROOT / "reports/taiji_n1_transition_factorial_run86b_attempt.json"
-LAUNCH_MANIFEST = ROOT / "reports/taiji_n1_transition_factorial_run86b_launcher.json"
-LAUNCH_RETURNED = ROOT / "reports/taiji_n1_transition_factorial_run86b_launcher_returned.json"
-WORKER_MANIFEST = ROOT / "reports/taiji_n1_transition_factorial_run86b_worker.json"
-RUN86_STDOUT = ROOT / "reports/taiji_n1_transition_factorial_run86b.stdout.log"
-RUN86_STDERR = ROOT / "reports/taiji_n1_transition_factorial_run86b.stderr.log"
-COMPLETION = ROOT / "reports/taiji_n1_transition_factorial_run86b_completion.json"
+REPORT = ROOT / "reports/taiji_n1_transition_factorial_run86c.json"
+ATTEMPT = ROOT / "reports/taiji_n1_transition_factorial_run86c_attempt.json"
+LAUNCH_MANIFEST = ROOT / "reports/taiji_n1_transition_factorial_run86c_launcher.json"
+LAUNCH_RETURNED = ROOT / "reports/taiji_n1_transition_factorial_run86c_launcher_returned.json"
+WORKER_MANIFEST = ROOT / "reports/taiji_n1_transition_factorial_run86c_worker.json"
+RUN86_STDOUT = ROOT / "reports/taiji_n1_transition_factorial_run86c.stdout.log"
+RUN86_STDERR = ROOT / "reports/taiji_n1_transition_factorial_run86c.stderr.log"
+COMPLETION = ROOT / "reports/taiji_n1_transition_factorial_run86c_completion.json"
 
-PREFLIGHT_STEM = ROOT / "reports/taiji_n1_transition_factorial_run86_runtime_preflight_scheduled_retry2"
+PREFLIGHT_STEM = ROOT / "reports/taiji_n1_transition_factorial_run86_runtime_preflight_scheduled_run86c"
 PREFLIGHT_REPORT = PREFLIGHT_STEM.with_suffix(".json")
 PREFLIGHT_HEARTBEATS = PREFLIGHT_STEM.with_suffix(".jsonl")
 PREFLIGHT_LAUNCH_MANIFEST = PREFLIGHT_STEM.with_name(
@@ -41,7 +41,7 @@ PREFLIGHT_LAUNCH_RETURNED = PREFLIGHT_STEM.with_name(
 PREFLIGHT_WORKER = PREFLIGHT_STEM.with_name(PREFLIGHT_STEM.name + "_worker.json")
 PREFLIGHT_STDOUT = PREFLIGHT_STEM.with_name(PREFLIGHT_STEM.name + ".stdout.log")
 PREFLIGHT_STDERR = PREFLIGHT_STEM.with_name(PREFLIGHT_STEM.name + ".stderr.log")
-HANDOFF_STEM = ROOT / "reports/taiji_n1_transition_factorial_run86b_return_preflight"
+HANDOFF_STEM = ROOT / "reports/taiji_n1_transition_factorial_run86c_return_preflight"
 HANDOFF_REPORT = HANDOFF_STEM.with_suffix(".json")
 HANDOFF_LAUNCH_MANIFEST = HANDOFF_STEM.with_name(HANDOFF_STEM.name + "_launcher.json")
 HANDOFF_LAUNCH_RETURNED = HANDOFF_STEM.with_name(HANDOFF_STEM.name + "_launcher_returned.json")
@@ -49,10 +49,10 @@ HANDOFF_WORKER = HANDOFF_STEM.with_name(HANDOFF_STEM.name + "_worker.json")
 HANDOFF_STDOUT = HANDOFF_STEM.with_name(HANDOFF_STEM.name + ".stdout.log")
 HANDOFF_STDERR = HANDOFF_STEM.with_name(HANDOFF_STEM.name + ".stderr.log")
 
-TASK_PROBE = "Seed-N1-Run86-Probe-20261016"
-TASK_HANDOFF = "Seed-N1-Run86B-Handoff-20261016"
-TASK_RUN = "Seed-N1-Run86B-20261016"
-CHECKPOINTS = ROOT / "data/checkpoints/run86b"
+TASK_PROBE = "Seed-N1-Run86C-Probe-20261016"
+TASK_HANDOFF = "Seed-N1-Run86C-Handoff-20261016"
+TASK_RUN = "Seed-N1-Run86C-20261016"
+CHECKPOINTS = ROOT / "data/checkpoints/run86c"
 PREFLIGHT_CPU_LIMIT_SECONDS = 60
 
 
@@ -76,6 +76,27 @@ def write_new_json(path: Path, value: dict) -> None:
         os.fsync(stream.fileno())
 
 
+def install_runner_globals(module: dict, overrides: dict) -> dict:
+    """Apply overrides to globals used by functions from a runpy-loaded module."""
+    audit = module.get("audit")
+    runner_globals = getattr(audit, "__globals__", None)
+    if not isinstance(runner_globals, dict):
+        raise TypeError("frozen runner audit function has no writable globals")
+    for name in ("identity", "readiness", "known_views", "train_one"):
+        function = module.get(name)
+        function_globals = getattr(function, "__globals__", runner_globals)
+        if function_globals is not runner_globals:
+            raise RuntimeError(f"frozen runner function {name} has a separate globals namespace")
+    runner_globals.update(overrides)
+    if any(runner_globals.get(key) is not value for key, value in overrides.items()):
+        raise RuntimeError("frozen runner globals override did not stick")
+    return runner_globals
+
+
+def run86c_external_path(original_external_path, relative_path: str) -> Path:
+    return Path(original_external_path(relative_path)) / "run86c"
+
+
 def configure_stdio(probe: bool, handoff: bool = False) -> None:
     paths = (
         (PREFLIGHT_STDOUT, PREFLIGHT_STDERR)
@@ -86,7 +107,7 @@ def configure_stdio(probe: bool, handoff: bool = False) -> None:
     )
     for path in paths:
         if path.exists():
-            raise FileExistsError(f"run86 log already exists: {path}")
+            raise FileExistsError(f"run86c log already exists: {path}")
     sys.stdout = paths[0].open("x", encoding="utf-8", buffering=1)
     sys.stderr = paths[1].open("x", encoding="utf-8", buffering=1)
 
@@ -123,7 +144,7 @@ def task_receipts(probe: bool, handoff: bool = False) -> tuple[dict, dict, Path]
     ):
         time.sleep(0.05)
     if not manifest_path.exists() or not returned_path.exists():
-        raise FileNotFoundError("run86 task registration/return receipts are missing")
+        raise FileNotFoundError("run86c task registration/return receipts are missing")
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     returned = json.loads(returned_path.read_text(encoding="utf-8"))
@@ -136,14 +157,14 @@ def task_receipts(probe: bool, handoff: bool = False) -> tuple[dict, dict, Path]
         or returned.get("task_name") != task_name
         or not returned.get("start_succeeded")
     ):
-        raise ValueError("run86 task receipts do not match the frozen local task settings")
+        raise ValueError("run86c task receipts do not match the frozen local task settings")
     for key, path in (
         ("controller_sha256", Path(__file__).resolve()),
         ("runner_sha256", RUNNER),
         ("launcher_sha256", LAUNCHER),
     ):
         if manifest.get(key) != sha256(path):
-            raise ValueError(f"run86 source hash changed: {key}")
+            raise ValueError(f"run86c source hash changed: {key}")
     write_new_json(
         worker_path,
         dict(
@@ -162,13 +183,13 @@ def task_receipts(probe: bool, handoff: bool = False) -> tuple[dict, dict, Path]
 def synthetic_run_handoff_probe() -> int:
     for path in (HANDOFF_REPORT, HANDOFF_WORKER):
         if path.exists():
-            raise FileExistsError(f"run86b handoff preflight artifact already exists: {path}")
+            raise FileExistsError(f"run86c handoff preflight artifact already exists: {path}")
     started = utc_now()
     cpu_start = time.process_time()
     _, returned, worker_path = task_receipts(probe=False, handoff=True)
     worker = json.loads(worker_path.read_text(encoding="utf-8"))
     report = dict(
-        schema="n1-transition-factorial-run86b-return-preflight-v1",
+        schema="n1-transition-factorial-run86c-return-preflight-v1",
         complete=True,
         synthetic_only=True,
         task_name=TASK_HANDOFF,
@@ -252,12 +273,12 @@ def synthetic_heartbeat() -> int:
     return 0 if result["complete"] else 1
 
 
-def execute_run86() -> dict:
+def execute_run86c() -> dict:
     for path in (REPORT, ATTEMPT, COMPLETION, WORKER_MANIFEST):
         if path.exists():
-            raise FileExistsError(f"run86 artifact already exists: {path}")
+            raise FileExistsError(f"run86c artifact already exists: {path}")
     if CHECKPOINTS.exists() or list(REPORT.parent.glob(f"{REPORT.stem}_s*.json.gz")):
-        raise FileExistsError("run86 checkpoint or shard family already exists")
+        raise FileExistsError("run86c checkpoint or shard family already exists")
     if sha256(FROZEN_ATTEMPT) != FROZEN_ATTEMPT_SHA256:
         raise ValueError("frozen incomplete84 attempt bytes changed")
 
@@ -267,22 +288,20 @@ def execute_run86() -> dict:
         or launch.get("runner_sha256") != sha256(RUNNER)
         or launch.get("launcher_sha256") != sha256(LAUNCHER)
     ):
-        raise ValueError("run86 source differs from registered task")
+        raise ValueError("run86c source differs from registered task")
 
     frozen = json.loads(FROZEN_ATTEMPT.read_text(encoding="utf-8"))
     module = runpy.run_path(str(RUNNER), run_name="_taiji_n1_run86_frozen84")
     if module["PROTOCOL"] != frozen["protocol"] or module["identity"]() != frozen["code_identity"]:
-        raise ValueError("run86 protocol or frozen84 code identity changed")
+        raise ValueError("run86c protocol or frozen84 code identity changed")
 
-    module["REPORT"] = REPORT
-    module["ATTEMPT"] = ATTEMPT
-    original_external_path = module["get_external_path"]
+    runner_globals = module["audit"].__globals__
+    original_external_path = runner_globals["get_external_path"]
 
     def external_path(path: str) -> Path:
-        return Path(original_external_path(path)) / "run86"
+        return run86c_external_path(original_external_path, path)
 
-    module["get_external_path"] = external_path
-    original_readiness = module["readiness"]
+    original_readiness = runner_globals["readiness"]
 
     def guarded_readiness():
         guards, sources = original_readiness()
@@ -297,26 +316,40 @@ def execute_run86() -> dict:
             guards[str(path.resolve())] = sha256(path)
         return guards, sources
 
-    module["readiness"] = guarded_readiness
     original_print = builtins.print
 
     def print_run86(*args, **kwargs):
         if args and isinstance(args[0], str):
-            args = (args[0].replace("factorial84", "factorial86"), *args[1:])
+            args = (args[0].replace("factorial84", "factorial86c"), *args[1:])
         original_print(*args, **kwargs)
 
-    module["print"] = print_run86
+    runner_globals = install_runner_globals(
+        module,
+        {
+            "REPORT": REPORT,
+            "ATTEMPT": ATTEMPT,
+            "get_external_path": external_path,
+            "readiness": guarded_readiness,
+            "print": print_run86,
+        },
+    )
     module["torch"].set_num_threads(1)
     CHECKPOINTS.mkdir(exist_ok=False)
-    result = module["audit"]()
+    if (
+        runner_globals["REPORT"] != REPORT
+        or runner_globals["ATTEMPT"] != ATTEMPT
+        or Path(runner_globals["get_external_path"]("data/checkpoints")) != CHECKPOINTS
+    ):
+        raise RuntimeError("run86c runner output/checkpoint routing did not resolve to its isolated family")
+    result = runner_globals["audit"]()
     return dict(result=result, worker_path=worker_path, returned=returned)
 
 
-def complete_run86(result: dict, started_utc: str, cpu_start: float) -> int:
+def complete_run86c(result: dict, started_utc: str, cpu_start: float) -> int:
     report = result["result"]
     exit_code = 0 if report.get("complete") else 1
     completion = dict(
-        schema="n1-transition-factorial-run86-completion-v1",
+        schema="n1-transition-factorial-run86c-completion-v1",
         task_name=TASK_RUN,
         process_id=os.getpid(),
         started_utc=started_utc,
@@ -348,13 +381,13 @@ def main() -> int:
         started_utc = utc_now()
         cpu_start = time.process_time()
         try:
-            result = execute_run86()
+            result = execute_run86c()
         except BaseException as error:
             if not COMPLETION.exists():
                 write_new_json(
                     COMPLETION,
                     dict(
-                        schema="n1-transition-factorial-run86-completion-v1",
+                        schema="n1-transition-factorial-run86c-completion-v1",
                         task_name=TASK_RUN,
                         process_id=os.getpid(),
                         started_utc=started_utc,
@@ -366,7 +399,7 @@ def main() -> int:
                     ),
                 )
             raise
-        return complete_run86(result, started_utc, cpu_start)
+        return complete_run86c(result, started_utc, cpu_start)
     except BaseException:
         traceback.print_exc(file=sys.stderr)
         raise

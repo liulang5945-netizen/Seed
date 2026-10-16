@@ -11,15 +11,15 @@ $FrozenRunner = Join-Path $RepositoryRoot 'scripts\training\run_taiji_n1_transit
 $Python = (Get-Command python.exe -ErrorAction Stop).Source
 $Pythonw = Join-Path (Split-Path -Parent $Python) 'pythonw.exe'
 $ReportRoot = Join-Path $RepositoryRoot 'reports'
-$CheckpointRoot = Join-Path $RepositoryRoot 'data\checkpoints\run86b'
+$CheckpointRoot = Join-Path $RepositoryRoot 'data\checkpoints\run86c'
 
 if (-not (Test-Path -LiteralPath $Pythonw -PathType Leaf)) {
     throw "pythonw.exe missing beside Python interpreter: $Pythonw"
 }
 
 if ($Mode -eq 'probe') {
-    $Stem = Join-Path $ReportRoot 'taiji_n1_transition_factorial_run86_runtime_preflight_scheduled_retry2'
-    $TaskName = 'Seed-N1-Run86-Probe-20261016'
+    $Stem = Join-Path $ReportRoot 'taiji_n1_transition_factorial_run86_runtime_preflight_scheduled_run86c'
+    $TaskName = 'Seed-N1-Run86C-Probe-20261016'
     $Arguments = "-u `"$Controller`" --synthetic-heartbeat"
     $Artifacts = @(
         "${Stem}.json",
@@ -32,8 +32,8 @@ if ($Mode -eq 'probe') {
     )
 }
 elseif ($Mode -eq 'handoff') {
-    $Stem = Join-Path $ReportRoot 'taiji_n1_transition_factorial_run86b_return_preflight'
-    $TaskName = 'Seed-N1-Run86B-Handoff-20261016'
+    $Stem = Join-Path $ReportRoot 'taiji_n1_transition_factorial_run86c_return_preflight'
+    $TaskName = 'Seed-N1-Run86C-Handoff-20261016'
     $Arguments = '-u ' + [char]34 + $Controller + [char]34 + ' --run-handoff-probe'
     $Artifacts = @(
         "${Stem}.json",
@@ -45,8 +45,8 @@ elseif ($Mode -eq 'handoff') {
     )
 }
 else {
-    $Stem = Join-Path $ReportRoot 'taiji_n1_transition_factorial_run86b'
-    $TaskName = 'Seed-N1-Run86B-20261016'
+    $Stem = Join-Path $ReportRoot 'taiji_n1_transition_factorial_run86c'
+    $TaskName = 'Seed-N1-Run86C-20261016'
     $Arguments = "-u `"$Controller`" --execute-approved"
     $Artifacts = @(
         "${Stem}_attempt.json",
@@ -59,20 +59,20 @@ else {
         "${Stem}.stderr.log"
     )
     if (Test-Path -LiteralPath $CheckpointRoot) {
-        throw "run86 checkpoint root already exists: $CheckpointRoot"
+        throw "run86c checkpoint root already exists: $CheckpointRoot"
     }
-    if (Get-ChildItem -LiteralPath $ReportRoot -Filter 'taiji_n1_transition_factorial_run86_s*.json.gz' -ErrorAction SilentlyContinue) {
-        throw 'run86 shard family already exists'
+    if (Get-ChildItem -LiteralPath $ReportRoot -Filter 'taiji_n1_transition_factorial_run86c_s*.json.gz' -ErrorAction SilentlyContinue) {
+        throw 'run86c shard family already exists'
     }
 }
 
 foreach ($Path in $Artifacts) {
     if (Test-Path -LiteralPath $Path) {
-        throw "run86 artifact already exists: $Path"
+        throw "run86c artifact already exists: $Path"
     }
 }
 if (Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue) {
-    throw "run86 task already exists and will not be overwritten: $TaskName"
+    throw "run86c task already exists and will not be overwritten: $TaskName"
 }
 
 $RegisteredUtc = [DateTime]::UtcNow.ToString('o')
@@ -97,13 +97,13 @@ try {
         -Action $Action `
         -Principal $Principal `
         -Settings $Settings `
-        -Description 'On-demand N1 run86 worker; no triggers; local interactive token.' `
+        -Description 'On-demand N1 run86c worker; no triggers; local interactive token.' `
         -ErrorAction Stop | Out-Null
     $Registered = $true
     $Task = Get-ScheduledTask -TaskName $TaskName -ErrorAction Stop
     $TriggerCount = if ($null -eq $Task.Triggers) { 0 } else { @($Task.Triggers).Count }
     if ($TriggerCount -ne 0) {
-        throw "run86 task unexpectedly has $TriggerCount triggers"
+        throw "run86c task unexpectedly has $TriggerCount triggers"
     }
 
     $Manifest = "${Stem}_launcher.json"

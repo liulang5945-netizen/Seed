@@ -3593,3 +3593,15 @@ run86b独立checkpoint路径保存与跨进程恢复通过：fresh seed11/positi
 正式任务Seed-N1-Run86B-20261016注册和启动成功，但runner在独占输出检查处以`FileExistsError: exclusive fixed nine-model batch; no restart`退出，OS `LastTaskResult=1`，worker PID 29816，CPU2.25秒。无run86b attempt、主报告或分片。冻结runner的检查顺序表明错误早于`readiness()`、训练材料读取、样本构造与训练循环，候选未加载、0更新、0课程/dev/holdout查询；精确任务已注销，manifest/return/worker/completion/stderr和结构化裁决保留，`data/checkpoints/run86b`仅留下空目录。
 
 根因已复现：`runpy.run_path()`返回的映射不是`audit.__globals__`；controller只覆写返回映射，runner函数仍读取84的原始attempt和checkpoint目录并拒绝重启。另有硬编码`run86`后缀的潜在错路由。唯一下一步改为直接修订runner函数globals并把全套输出路由到run86c，增加回归测试；重新完成run86c静态、心跳、正式return receipt-only、fresh zero checkpoint跨进程保存恢复预检，提交后才运行相同冻结实验。九fresh、221184更新/497664 QA、CPU≤14400秒、六position门及零dev/v3 holdout/v4/v5不变。详细裁决见[EXP-N1-86B](../../reference/EXP-N1-86B_runpy_namespace_startup_adjudication_20261016.md)。84 Codex客户端重启中断及86/86b启动失败均完整保留；85未准入，v5未消费，全项目其他债务不变。
+
+### ㊵-1011 · 2026-10-16 · run86c globals与checkpoint隔离修复通过
+
+run86c将覆写安装到runpy训练函数实际使用的`__globals__`，并将报告、attempt和checkpoint统一指向run86c；新增回归测试同时覆盖runpy函数globals与实际冻结runner输出守卫。静态检查通过，路由/项目身份目标测试7 passed。heartbeat PID 22876在启动器返回后写完6/6，LastTaskResult=0，0加载/更新/查询；正式return路径receipt-only handoff PID 23940通过SHA与无触发器核验，LastTaskResult=0、CPU0.015625秒，0加载/更新/查询；精确临时任务均已注销。
+
+零态checkpoint按已冻结83 source manifest选seed11/position并核对67项原始guard哈希（源SHA `d0279c81ce70cb1d3533b2b43a6447473e81d2b3cdeed0476742de2a698b96d8`）；run86c训练器格式保存后独立进程恢复相同，269989字节、SHA `7cac570a0575c0edde56ebb7baf96b679edf19ff7989a6232ce826564ad70e4f`、空Adam/0更新，CPU5.984375秒，测试目录清理。首个临时复验选到旧full-history路径而被严格loader拒于写入之前，改用冻结83 source后通过，未降低标准。最终checkpoint回执`reports/taiji_n1_transition_factorial_run86c_checkpoint_preflight.json`。
+
+run86c正式训练尚未启动。唯一下一步提交实现、回归测试、计划和所有run86c预检证据，然后启动相同九fresh/221184更新/497664 QA/≤14400秒CPU/六position门任务；零dev/v3 holdout/v4/v5。84 Codex更新重启中断、86回执问题、86b globals问题分别封存；85未准入、v5未消费，全项目其他债不变。
+
+### 2026-10-16 · 用户调整执行顺序
+
+先提交推送当前已完成工程，再修订README并整合重复目录职责；整理期间暂停正式训练启动，不改变冻结实验协议。数据、检查点和历史失败证据保留。
