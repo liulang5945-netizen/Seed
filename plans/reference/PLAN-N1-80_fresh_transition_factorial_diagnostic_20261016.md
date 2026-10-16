@@ -21,3 +21,7 @@
 scripts/training/diagnose_taiji_n1_fresh_transition_factorial.py；tests/taiji_native/test_native_fresh_transition_factorial_contract.py；plans/manifests/n1_fresh_transition_factorial_20261016.json（192项固定LF，精确路径LF属性，不重抽/覆盖）；reports/taiji_n1_fresh_transition_factorial_20261016.json及对应_attempt.json，固定LF，完整来源/代码/CPU计数。先合成合同验证四条件代数/元数据不泄露/完整状态中性/原始复现/部分行/拒覆盖，静态检查与提交后才执行。原77/79文件和模型不改。
 
 完成后只提出一个与因果因素使用结果相符、上限更高的机制或学习目标新预注册，绝不在80内追加训练。保持/C4/同bundle三器官与N系列/CI出口仍欠。
+
+## 实施前置记录
+
+15项artifact-free合同通过，实际fresh合成模型核验完整参数/Adam/RNG/history中性与故障清理；两根Ruff通过。提交仪器后独占执行一次，不追加训练。
