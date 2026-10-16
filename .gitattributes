@@ -26,3 +26,6 @@ reports/taiji_n1_fresh_paired_train_20261016_s*.json.gz binary
 
 # PLAN77 running writer emits a final CRLF: preserve its first sealed bytes verbatim.
 reports/taiji_n1_fresh_paired_train_20261016.json -text !eol
+
+# PLAN80 deterministic training-only counterfactual manifest.
+plans/manifests/n1_fresh_transition_factorial_20261016.json text eol=lf
