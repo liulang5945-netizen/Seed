@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：运行隔离族run88b的三seed fresh零态checkpoint保存/独立恢复前置。run88两次前置错误及其s11零态checkpoint全部保留；根因是control unpack错误及父/子PyTorch线程数12/1不一致。run88b统一父/子单线程、不加载run88权重，额外CPU预留300秒仍计入4800秒总限。新控制器与Task Scheduler启动器通过Ruff、Python编译和PowerShell解析；前置成功并提交后才启动三seed训练，未过不得训练。run86c判断仍是seed12 position六门失败、85拒入、v5未消费。
+## 当前唯一下一步：提交run88b零态checkpoint前置回执后，通过Task Scheduler启动唯一的三seed position正式批次。前置attempt1完整：CPU14.875秒，预留既往未单独计量的300秒后总上界314.875/4800秒；seed11/12/13 run88b零态均与run86c position起始bundle相同，三次独立恢复equal=true，Adam空态/参数/RNG/历史由冻结validate_state与签名复算，90项来源守卫匹配，学习率边界0.001→0.00025正确。preflight及binding哈希已封存，运行前先提交；成功后CPU≤4800秒。run88及两次失败checkpoint证据保留，不复用或删除。run86c正式批次仍未过seed12六门，85拒入、v5未消费。
 
 ## 本轮调度修订（2026-10-14）
 

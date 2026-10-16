@@ -8,7 +8,7 @@ Seed 托管并对外提供 **Taiji**：探索持续状态、记忆、局部学�
 
 活动研究为 **N 主线**，N1 正在研究学习型读取、实体绑定和状态转移。已有结果属于限定实验；训练、未见评估、保持和消费者行为分别记账，尚不足以证明通用对话、AGI 或自主进化能力。
 
-截至 2026-10-16，run86c 九个 fresh 模型已完成，工程、来源、分片、checkpoint 与恢复核验通过。三个 position 种子中有一个未过冻结训练门，因此 v5 确认面仍未消费，候选不能晋升。零查询离线轨迹诊断的首次导入预检未读取输入即停止；修正入口后审计完成。读数显示seed相关的末周期QA loss回升、主要出现在transition，但不能证明原因。唯一下一项实验是在三个 fresh position seed 的最后训练周期将学习率降为四分之一；训练前先核验 checkpoint 保存与恢复。原run88两次前置均在正式训练前失败，记录及已有零态checkpoint均保留。新隔离run88b统一父/子单线程，并在4800秒总CPU中为既往未单独计量的诊断预留300秒。详见[最终裁决](plans/reference/EXP-N1-86_detached_factorial_execution_adjudication_20261016.md)、[当前执行计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)和[全项目评估](plans/reference/PROJECT_WIDE_ASSESSMENT_20261014.md)。产品阶段交付与研究能力验收分别判断。
+截至 2026-10-16，run86c 九个 fresh 模型已完成，工程、来源、分片、checkpoint 与恢复核验通过。三个 position 种子中有一个未过冻结训练门，因此 v5 确认面仍未消费，候选不能晋升。零查询离线轨迹诊断的首次导入预检未读取输入即停止；修正入口后审计完成。读数显示seed相关的末周期QA loss回升、主要出现在transition，但不能证明原因。唯一下一项实验是在三个 fresh position seed 的最后训练周期将学习率降为四分之一；run88b三seed零态checkpoint保存/独立恢复前置现已通过，回执正提交后再启动隔离训练。原run88两次前置均在正式训练前失败，记录及已有零态checkpoint均保留。新隔离run88b统一父/子单线程，并在4800秒总CPU中为既往未单独计量的诊断预留300秒。详见[最终裁决](plans/reference/EXP-N1-86_detached_factorial_execution_adjudication_20261016.md)、[当前执行计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)和[全项目评估](plans/reference/PROJECT_WIDE_ASSESSMENT_20261014.md)。产品阶段交付与研究能力验收分别判断。
 
 ## 架构与学习
 
