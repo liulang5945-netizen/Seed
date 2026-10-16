@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：修正run88 checkpoint前置解包错误后执行唯一的preflight_attempt_02。首次前置只读了三份run86c封存分片，零run88模型/检查点反序列化、零保存/更新/查询；失败回执已留，run88 checkpoint目录确认为空。现已更正控制字典解包并版本化记录，不删首轮证据，第二次前置需重新核验三seed零态、独立恢复、调度边界和CPU总预算。成功并提交回执后才启动正式三seed训练。run86c结论不变：九模型工程完整但seed12 position六门失败，85拒入、v5未消费。
+## 当前唯一下一步：运行隔离族run88b的三seed fresh零态checkpoint保存/独立恢复前置。run88两次前置错误及其s11零态checkpoint全部保留；根因是control unpack错误及父/子PyTorch线程数12/1不一致。run88b统一父/子单线程、不加载run88权重，额外CPU预留300秒仍计入4800秒总限。新控制器与Task Scheduler启动器通过Ruff、Python编译和PowerShell解析；前置成功并提交后才启动三seed训练，未过不得训练。run86c判断仍是seed12 position六门失败、85拒入、v5未消费。
 
 ## 本轮调度修订（2026-10-14）
 

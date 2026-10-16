@@ -13,7 +13,7 @@ run86c工程完整但seed12/position在末点未过六门。PLAN-N1-87在不加�
 - 五阶段0/6144/12288/18432/24576；每模型4800评分行，视图仍为original/pair/rename/rename_pair及原/改名四条件。 前18432步loss、五组measurement及0/6144/12288/18432评分行必须与run86c同seed position封存轨迹逐项完全相等，证明仅改变最后周期。
 - 正式训练总计73728更新、165888 QA序列、129024训练会话、14400评分行、6次独立恢复、24副本签名步、96合成QA。正式训练前的三seed零态保存/独立恢复另记3次恢复、12副本步和48合成QA；全部前置CPU也计入4800秒上限。
 - 独立本机CPU上限4800秒，包含zero/final完整保存及独立恢复；串行单线程。训练前先执行三fresh零态checkpoint格式保存/恢复预检，预检不通过则不得训练。
-- 正式输出使用独立run88报告/checkpoint族；隔离执行并校验sources/code/hash，禁止自动重试或覆盖。
+- 正式输出使用独立run88b报告/任务/checkpoint族；隔离执行并校验sources/code/hash，禁止自动重试或覆盖。
 
 ## 冻结验收
 
@@ -37,10 +37,10 @@ v5、dev、v3 holdout、v4及其他未见集查询一律为0；`TRAIN_SHA=None`�
 
 ## 实施身份（冻结，2026-10-16）
 
-- run88控制器SHA256：`f53fdfd2c42d116b1f73c775343981f092e1c5e4e45f1adbdffdc5c4116e1b74`。
-- Task Scheduler启动器SHA256：`5dd7ec6293a2d184f709b2ec3cef44c30060e0cd8bf0398c8857012a1117e517`。
+- run88b控制器SHA256：`4b210607c5cbb2047b6e580f3f489f86e8cdd1734149a67aaaeff96402250462b`。
+- run88b Task Scheduler启动器SHA256：`b39b1de662e811bea81bb9cc3efa37bae8546d8dfddc6d5950737bccd8686be4`。
 - 冻结84训练器SHA256：`38018dbe08b9eb4c35d0b5c97196727b34f94efee68d68113e80269b8d3c9491`。
-- 相关文件：`scripts/training/run_taiji_n1_transition_factorial_lr_decay_run88.py`、`scripts/training/launch_taiji_n1_transition_factorial_lr_decay_run88.ps1`。
+- 相关文件：`scripts/training/run_taiji_n1_transition_factorial_lr_decay_run88.py`、`scripts/training/launch_taiji_n1_transition_factorial_lr_decay_run88b.ps1`。
 
 
 ## 首次checkpoint前置失败与处理
@@ -53,3 +53,15 @@ v5、dev、v3 holdout、v4及其他未见集查询一律为0；`TRAIN_SHA=None`�
 ## 前置执行记录（2026-10-16）
 
 preflight_attempt_01在读取3个run86c position封存分片后，误将(control report, model map)二项返回再次按二项嵌套结构解包，停止于零态模型加载前。没有run88候选模型/checkpoint反序列化、保存、optimizer更新、评分或查询；run88 checkpoint根目录已创建但经核验为空。精确失败记录见`reports/taiji_n1_transition_factorial_lr_decay_run88_preflight_failure.json`，attempt_01和空目录保留。已修复解包逻辑；依所有者最新持续授权，唯一下一步是对空根执行`preflight_attempt_02`，生成新attempt并再次完整核验。成功前不启动正式训练。
+
+
+## run88前置失败与run88b隔离处理（2026-10-16）
+
+run88的preflight_attempt_02在seed11 zero checkpoint独立签名恢复时失败。诊断确认父进程PyTorch线程数为12，而restore worker的OMP/MKL/OPENBLAS环境固定为1；以12/1配置可复现签名差异，同线程时签名匹配序列化的zero checkpoint。run88 root保留seed11零态checkpoint（SHA256 `c0522ce292b632113d032044d2aded407744bdba2e5609cbd2b0cc85d26126f9`）及两次attempt/失败记录，不会读作run88b训练源或删除。失败证据为`reports/taiji_n1_transition_factorial_lr_decay_run88_preflight_failure_02.json`。
+
+最终训练与checkpoint preflight迁至隔离族run88b；controller在载入任何run88b状态前将父进程设置为单线程，子进程也维持单线程。对run88两次前置与签名诊断未单独计量的CPU预留300秒；总预算仍≤4800秒，run88b正式预算相应扣减。run88b不得复用run88 checkpoint，只用冻结83的fresh零态来源。唯一下一步是提交修复并执行三seed run88b零态保存/独立恢复前置；成功前不训练。
+
+
+## run88b独立输出族与历史前置保留
+
+前两个零态前置尝试均发生在任何正式更新前：attempt_01在control结果解包失败；attempt_02在多线程父进程/单线程restore worker之间签名不一致，根因为父进程未强制单线程。两份report、attempt和run88下已保存的s11零态checkpoint全部保留。最终候选预检与训练使用新的run88b报告/任务/checkpoint族，父进程和restore worker统一单线程；run88b不得加载或续接run88的零态文件。为前置调试中的未单独计量CPU预留300秒，仍包含在4800秒总限内。当前唯一下一步为run88b三seed零态checkpoint保存/独立恢复前置。

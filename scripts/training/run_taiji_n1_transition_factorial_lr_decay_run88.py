@@ -22,30 +22,39 @@ sys.path.insert(0, str(ROOT))
 from scripts.training import _taiji_n1_transition_factorial_training_receipt as receipt
 
 FROZEN_RUNNER = ROOT / "scripts/training/run_taiji_n1_transition_factorial_paired.py"
-LAUNCHER = ROOT / "scripts/training/launch_taiji_n1_transition_factorial_lr_decay_run88.ps1"
+LAUNCHER = ROOT / "scripts/training/launch_taiji_n1_transition_factorial_lr_decay_run88b.ps1"
 PLAN = ROOT / "plans/reference/PLAN-N1-88_position_final_cycle_lr_decay_review_20261016.md"
 BASE_REPORT = ROOT / "reports/taiji_n1_transition_factorial_run86c.json"
 AUDIT_REPORT = ROOT / "reports/taiji_n1_transition_factorial_run86c_offline_trajectory_audit.json"
-PREFLIGHT = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88_preflight.json"
-PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88_preflight_attempt.json"
-ATTEMPT = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88_attempt.json"
-REPORT = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88.json"
-COMPLETION = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88_completion.json"
-LAUNCH_MANIFEST = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88_launcher.json"
-LAUNCH_RETURNED = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88_launcher_returned.json"
-WORKER_MANIFEST = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88_worker.json"
-STDOUT = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88.stdout.log"
-STDERR = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88.stderr.log"
+PREFLIGHT = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88b_preflight.json"
+PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88b_preflight_attempt.json"
+PREFLIGHT_ATTEMPT_2 = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88b_preflight_attempt_02.json"
+PREFLIGHT_FAILURE = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88b_preflight_failure.json"
+ATTEMPT = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88b_attempt.json"
+REPORT = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88b.json"
+COMPLETION = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88b_completion.json"
+LAUNCH_MANIFEST = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88b_launcher.json"
+LAUNCH_RETURNED = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88b_launcher_returned.json"
+WORKER_MANIFEST = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88b_worker.json"
+STDOUT = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88b.stdout.log"
+STDERR = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88b.stderr.log"
 CHECKPOINT_ROOT = (
-    ROOT / "data/checkpoints/run88/n1_transition_factorial_lr_decay_20261016"
+    ROOT / "data/checkpoints/run88b/n1_transition_factorial_lr_decay_20261016"
 )
 
-TASK_RUN = "Seed-N1-LRDecay-Run88-20261016"
+TASK_RUN = "Seed-N1-LRDecay-Run88B-20261016"
 BASE_REPORT_SHA256 = "0a8fc62e9aa00577d67001c70008773e6e5cee54cebad4115956e0360446d785"
 AUDIT_REPORT_SHA256 = "c5b21641de584d6e871ad4747ce8e181205e790a886c7b58bbb1305c9e46b2a0"
 FROZEN_RUNNER_SHA256 = "38018dbe08b9eb4c35d0b5c97196727b34f94efee68d68113e80269b8d3c9491"
 FRESH_ATTEMPT = ROOT / "reports/taiji_n1_transition_factorial_paired_train_20261016_attempt.json"
 FRESH_ATTEMPT_SHA256 = "6a3124a1293c33dcbdc45bc55fb34971200236cb4673e52c9c981335e0bc6234"
+PRIOR_RUN88_FAILURES = (
+    ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88_preflight_attempt.json",
+    ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88_preflight_failure.json",
+    ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88_preflight_attempt_02.json",
+    ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88_preflight_failure_02.json",
+    ROOT / "data/checkpoints/run88/n1_transition_factorial_lr_decay_20261016/s11_position_zero.pt",
+)
 
 SEEDS = (11, 12, 13)
 ARM = "position"
@@ -55,6 +64,7 @@ DECAY_START = 18432
 BASE_LR = 0.001
 FINAL_LR = 0.00025
 CPU_LIMIT_SECONDS = 4800
+PRIOR_CPU_RESERVE_SECONDS = 300
 ACTIVE_RATE_LOG: dict[int, float] | None = None
 ACTIVE_BASELINE: dict[tuple[int, str], dict] | None = None
 
@@ -127,6 +137,7 @@ def run_protocol(base_protocol: dict) -> dict:
         signature_clone_updates=len(SEEDS) * 8,
         synthetic_qa_sequences=len(SEEDS) * 8 * 4,
         cpu_limit_seconds=CPU_LIMIT_SECONDS,
+        prior_cpu_reserve_seconds=PRIOR_CPU_RESERVE_SECONDS,
         learning_rate_schedule={
             "schema": "n1-final-cycle-step-decay-v1",
             "base_lr": BASE_LR,
@@ -144,8 +155,10 @@ def run_protocol(base_protocol: dict) -> dict:
 
 
 def code_identity(protocol: dict) -> dict:
+    if any(not path.is_file() for path in PRIOR_RUN88_FAILURES):
+        raise FileNotFoundError("preserved run88 preflight history is incomplete")
     return {
-        "schema": "n1-transition-factorial-lr-decay-run88-code-identity-v1",
+        "schema": "n1-transition-factorial-lr-decay-run88b-code-identity-v1",
         "protocol": protocol,
         "controller_sha256": sha256(Path(__file__).resolve()),
         "launcher_sha256": sha256(LAUNCHER),
@@ -153,6 +166,7 @@ def code_identity(protocol: dict) -> dict:
         "plan_sha256": sha256(PLAN),
         "control_report_sha256": sha256(BASE_REPORT),
         "offline_audit_sha256": sha256(AUDIT_REPORT),
+        "prior_run88_failures": {str(path): sha256(path) for path in PRIOR_RUN88_FAILURES},
     }
 
 
@@ -166,7 +180,8 @@ def make_module() -> tuple[dict, dict, dict]:
     if sha256(FRESH_ATTEMPT) != FRESH_ATTEMPT_SHA256:
         raise ValueError("frozen run84 source attempt hash changed")
 
-    loaded = runpy.run_path(str(FROZEN_RUNNER), run_name="_taiji_n1_run88_frozen84")
+    loaded = runpy.run_path(str(FROZEN_RUNNER), run_name="_taiji_n1_run88b_frozen84")
+    loaded["torch"].set_num_threads(1)
     audit_function = loaded.get("audit")
     globals_dict = getattr(audit_function, "__globals__", None)
     if not isinstance(globals_dict, dict):
@@ -181,7 +196,7 @@ def make_module() -> tuple[dict, dict, dict]:
     original_external_path = globals_dict["get_external_path"]
 
     def external_path(relative_path: str) -> Path:
-        return Path(original_external_path(relative_path)) / "run88"
+        return Path(original_external_path(relative_path)) / "run88b"
 
     def identity() -> dict:
         return code_identity(protocol)
@@ -198,7 +213,7 @@ def make_module() -> tuple[dict, dict, dict]:
         lr = apply_learning_rate(optimizer, completed)
         if ACTIVE_RATE_LOG is not None and kwargs.get("audit") is not True:
             if completed in ACTIVE_RATE_LOG:
-                raise ValueError(f"duplicate run88 learning-rate step {completed}")
+                raise ValueError(f"duplicate run88b learning-rate step {completed}")
             ACTIVE_RATE_LOG[completed] = lr
         return original_train_step(model, optimizer, *args, **kwargs)
 
@@ -221,7 +236,7 @@ def make_module() -> tuple[dict, dict, dict]:
         path = Path(path)
         if path.exists():
             if completed != 0 or path.name not in preflight_checkpoints:
-                raise FileExistsError(f"unexpected existing run88 checkpoint: {path}")
+                raise FileExistsError(f"unexpected existing run88b checkpoint: {path}")
             payload = globals_dict["torch"].load(path, map_location="cpu", weights_only=True)
             if (
                 payload.get("protocol") != protocol
@@ -242,7 +257,7 @@ def make_module() -> tuple[dict, dict, dict]:
 
     def seal_with_paired_control(record):
         if ACTIVE_BASELINE is None or ACTIVE_RATE_LOG is None:
-            raise RuntimeError("run88 paired baseline and rate log must be active during training")
+            raise RuntimeError("run88b paired baseline and rate log must be active during training")
         seed = record["seed"]
         baseline = ACTIVE_BASELINE[seed, ARM]
         observed_schedule = {
@@ -307,7 +322,7 @@ def make_module() -> tuple[dict, dict, dict]:
         budget.children += restored["cpu_seconds"]
         budget.guard()
         if restored["signature"] != expected or restored["signature_clone_updates"] != 2:
-            raise ValueError("independent run88 checkpoint restore signature differs")
+            raise ValueError("independent run88b checkpoint restore signature differs")
         return dict(path=str(path), sha256=sha256(Path(path)), equal=True, **restored)
 
     globals_dict["independent"] = independent
@@ -330,9 +345,9 @@ def source_guards(globals_dict: dict, readiness_guards: dict, extra: list[Path])
     for raw_path, expected in guards.items():
         path = Path(raw_path)
         if not path.is_file() or sha256(path) != expected:
-            raise ValueError(f"run88 guarded input changed: {raw_path}")
+            raise ValueError(f"run88b guarded input changed: {raw_path}")
     if globals_dict["identity"]()["controller_sha256"] != sha256(Path(__file__).resolve()):
-        raise ValueError("run88 controller identity changed")
+        raise ValueError("run88b controller identity changed")
     return guards
 
 
@@ -366,41 +381,60 @@ def validate_preflight(report: dict, binding: dict, identity: dict) -> tuple[flo
     ):
         raise ValueError("complete PLAN-N1-88 zero checkpoint preflight and binding required")
     preflight_cpu = float(report["cpu_seconds"])
-    if not 0 <= preflight_cpu < CPU_LIMIT_SECONDS:
-        raise ValueError("run88 preflight exhausted the complete CPU budget")
+    if not 0 <= preflight_cpu + PRIOR_CPU_RESERVE_SECONDS < CPU_LIMIT_SECONDS:
+        raise ValueError("run88b preflight exhausted the complete CPU budget")
     known = {entry["path_name"]: entry for entry in report["zero_checkpoints"]}
     if set(known) != {f"s{seed}_{ARM}_zero.pt" for seed in SEEDS}:
         raise ValueError("one preflight zero checkpoint for each seed required")
     for name, entry in known.items():
         path = CHECKPOINT_ROOT / name
         if not path.is_file() or sha256(path) != entry["sha256"]:
-            raise ValueError(f"run88 preflight checkpoint changed: {name}")
+            raise ValueError(f"run88b preflight checkpoint changed: {name}")
     return preflight_cpu, known
 
 
 def checkpoint_preflight() -> dict:
     started = time.process_time()
-    if PREFLIGHT.exists() or PREFLIGHT_ATTEMPT.exists() or CHECKPOINT_ROOT.exists():
-        raise FileExistsError("run88 checkpoint preflight is exclusive and cannot be overwritten")
+    if PREFLIGHT.exists():
+        raise FileExistsError("run88b checkpoint preflight report already exists")
+    if PREFLIGHT_ATTEMPT.exists():
+        if (
+            not PREFLIGHT_FAILURE.is_file()
+            or not CHECKPOINT_ROOT.is_dir()
+            or any(CHECKPOINT_ROOT.iterdir())
+            or PREFLIGHT_ATTEMPT_2.exists()
+        ):
+            raise FileExistsError("run88b preflight retry requires the recorded empty-root first failure")
+        attempt_path = PREFLIGHT_ATTEMPT_2
+        attempt_number = 2
+    else:
+        if CHECKPOINT_ROOT.exists() or PREFLIGHT_ATTEMPT_2.exists():
+            raise FileExistsError("run88b checkpoint preflight path already exists")
+        attempt_path = PREFLIGHT_ATTEMPT
+        attempt_number = 1
     _, g, checkpoint_records = make_module()
     guards, sources = g["readiness"]()
-    baseline_report, baseline_records = control_records()
+    baseline_report, baseline_by_seed = control_records()
     extra = [
         Path(__file__).resolve(),
         LAUNCHER,
         FROZEN_RUNNER,
         BASE_REPORT,
         AUDIT_REPORT,
+        *PRIOR_RUN88_FAILURES,
         *(Path(entry["shard"]["path"]) for entry in baseline_report["models"] if entry["arm"] == ARM),
     ]
+    if attempt_number == 2:
+        extra.extend((PREFLIGHT_ATTEMPT, PREFLIGHT_FAILURE))
     guards = source_guards(g, guards, extra)
     identity = g["identity"]()
     protocol = g["PROTOCOL"]
     write_new(
-        PREFLIGHT_ATTEMPT,
+        attempt_path,
         {
-            "schema": "n1-transition-factorial-lr-decay-run88-preflight-attempt-v1",
+            "schema": "n1-transition-factorial-lr-decay-run88b-preflight-attempt-v1",
             "status": "started",
+            "attempt_number": attempt_number,
             "started_utc": utc_now(),
             "protocol": protocol,
             "code_identity": identity,
@@ -411,9 +445,9 @@ def checkpoint_preflight() -> dict:
             "confirmation_queries": 0,
         },
     )
-    CHECKPOINT_ROOT.mkdir(parents=True, exist_ok=False)
-    budget = g["paired"].CpuBudget(CPU_LIMIT_SECONDS)
-    _, baseline_by_seed = baseline_records
+    if attempt_number == 1:
+        CHECKPOINT_ROOT.mkdir(parents=True, exist_ok=False)
+    budget = g["paired"].CpuBudget(CPU_LIMIT_SECONDS - PRIOR_CPU_RESERVE_SECONDS)
     zero_checkpoints = []
     for seed in SEEDS:
         source = g["torch"].load(sources[seed, ARM], map_location="cpu", weights_only=True)
@@ -427,7 +461,7 @@ def checkpoint_preflight() -> dict:
         saved = g["save"](model, optimizer, path, 0, seed, ARM)
         restore = g["independent"](path, saved["expected_signature"], budget)
         if not restore["equal"]:
-            raise ValueError(f"run88 zero checkpoint recovery failed for seed {seed}")
+            raise ValueError(f"run88b zero checkpoint recovery failed for seed {seed}")
         entry = {
             "seed": seed,
             "arm": ARM,
@@ -444,14 +478,15 @@ def checkpoint_preflight() -> dict:
         budget.guard()
 
     if any(sha256(Path(path)) != digest for path, digest in guards.items()):
-        raise ValueError("run88 preflight source guards changed")
+        raise ValueError("run88b preflight source guards changed")
     identity_after = g["identity"]()
     if identity_after != identity:
-        raise ValueError("run88 preflight source identity changed")
+        raise ValueError("run88b preflight source identity changed")
     cpu_seconds = time.process_time() - started + budget.children
     report = {
-        "schema": "n1-transition-factorial-lr-decay-run88-checkpoint-preflight-v1",
+        "schema": "n1-transition-factorial-lr-decay-run88b-checkpoint-preflight-v1",
         "complete": True,
+        "attempt_number": attempt_number,
         "protocol": protocol,
         "code_identity": identity,
         "source_guards": guards,
@@ -472,17 +507,18 @@ def checkpoint_preflight() -> dict:
         },
         "cpu_seconds": round(cpu_seconds, 6),
         "cpu_limit_seconds": CPU_LIMIT_SECONDS,
+        "prior_cpu_reserve_seconds": PRIOR_CPU_RESERVE_SECONDS,
         "dev_queries": 0,
         "holdout_queries": 0,
         "confirmation_queries": 0,
         "can_promote": False,
         "completed_utc": utc_now(),
     }
-    if not report["learning_rate_contract"]["optimizer_group_rates_verified"] or cpu_seconds >= CPU_LIMIT_SECONDS:
-        raise ValueError("run88 checkpoint preflight or schedule contract did not pass")
+    if not report["learning_rate_contract"]["optimizer_group_rates_verified"] or cpu_seconds + PRIOR_CPU_RESERVE_SECONDS >= CPU_LIMIT_SECONDS:
+        raise ValueError("run88b checkpoint preflight or schedule contract did not pass")
     write_new(PREFLIGHT, report)
     binding = {
-        "schema": "n1-transition-factorial-lr-decay-run88-preflight-binding-v1",
+        "schema": "n1-transition-factorial-lr-decay-run88b-preflight-binding-v1",
         "preflight_report_sha256": sha256(PREFLIGHT),
         "code_identity": identity,
         "protocol_sha256": hashlib.sha256(
@@ -501,7 +537,7 @@ def task_receipts(identity: dict) -> tuple[dict, Path]:
     while (not LAUNCH_MANIFEST.exists() or not LAUNCH_RETURNED.exists()) and time.monotonic() < deadline:
         time.sleep(0.05)
     if not LAUNCH_MANIFEST.exists() or not LAUNCH_RETURNED.exists():
-        raise FileNotFoundError("run88 task manifest or launcher return is missing")
+        raise FileNotFoundError("run88b task manifest or launcher return is missing")
     launch = read_json(LAUNCH_MANIFEST)
     returned = read_json(LAUNCH_RETURNED)
     if (
@@ -519,11 +555,11 @@ def task_receipts(identity: dict) -> tuple[dict, Path]:
         or launch.get("preflight_binding_sha256")
         != sha256(PREFLIGHT.with_name(PREFLIGHT.stem + "_binding.json"))
     ):
-        raise ValueError("run88 task receipts do not match frozen launch identity")
+        raise ValueError("run88b task receipts do not match frozen launch identity")
     if WORKER_MANIFEST.exists():
         raise FileExistsError("run88 worker manifest already exists")
     worker = {
-        "schema": "n1-transition-factorial-lr-decay-run88-worker-v1",
+        "schema": "n1-transition-factorial-lr-decay-run88b-worker-v1",
         "task_name": TASK_RUN,
         "process_id": os.getpid(),
         "started_utc": utc_now(),
@@ -538,7 +574,7 @@ def task_receipts(identity: dict) -> tuple[dict, Path]:
 def training_audit() -> dict:
     setup_started = time.process_time()
     if any(path.exists() for path in (REPORT, ATTEMPT, COMPLETION)):
-        raise FileExistsError("run88 formal batch is exclusive and cannot restart")
+        raise FileExistsError("run88b formal batch is exclusive and cannot restart")
     _, g, checkpoint_records = make_module()
     identity = g["identity"]()
     preflight = read_json(PREFLIGHT)
@@ -547,9 +583,9 @@ def training_audit() -> dict:
     preflight_cpu, known_checkpoints = validate_preflight(preflight, binding, identity)
     checkpoint_records.update(known_checkpoints)
     setup_cpu = time.process_time() - setup_started
-    remaining_cpu = CPU_LIMIT_SECONDS - preflight_cpu - setup_cpu
+    remaining_cpu = CPU_LIMIT_SECONDS - PRIOR_CPU_RESERVE_SECONDS - preflight_cpu - setup_cpu
     if remaining_cpu <= 0:
-        raise ValueError("run88 setup and checkpoint preflight exhausted the CPU budget")
+        raise ValueError("run88b setup and checkpoint preflight exhausted the CPU budget")
     budget = g["paired"].CpuBudget(remaining_cpu)
     launch, worker_path = task_receipts(identity)
 
@@ -563,8 +599,11 @@ def training_audit() -> dict:
         FROZEN_RUNNER,
         BASE_REPORT,
         AUDIT_REPORT,
+        *PRIOR_RUN88_FAILURES,
         PREFLIGHT,
         PREFLIGHT_ATTEMPT,
+        PREFLIGHT_ATTEMPT_2,
+        PREFLIGHT_FAILURE,
         binding_path,
         LAUNCH_MANIFEST,
         LAUNCH_RETURNED,
@@ -575,7 +614,7 @@ def training_audit() -> dict:
     guards = source_guards(g, readiness_guards, extra)
     items, curriculum, views = g["known_views"]()
     if len(items) != 192 or any(item.get("split") != "train" for item in items):
-        raise ValueError("run88 requires the unchanged complete train-only source")
+        raise ValueError("run88b requires the unchanged complete train-only source")
     budget.guard()
     result = {
         "protocol": g["PROTOCOL"],
@@ -592,7 +631,7 @@ def training_audit() -> dict:
     write_new(
         ATTEMPT,
         {
-            "schema": "n1-transition-factorial-lr-decay-run88-attempt-v1",
+            "schema": "n1-transition-factorial-lr-decay-run88b-attempt-v1",
             "protocol": result["protocol"],
             "code_identity": identity,
             "source_guards": guards,
@@ -622,10 +661,10 @@ def training_audit() -> dict:
                 "base_lr": BASE_LR,
                 "final_cycle_lr": FINAL_LR,
             }:
-                raise ValueError(f"run88 learning-rate schedule evidence differs for seed {seed}")
+                raise ValueError(f"run88b learning-rate schedule evidence differs for seed {seed}")
             ACTIVE_RATE_LOG = None
             if not record["complete"]:
-                raise ValueError(f"run88 seed {seed} training record incomplete")
+                raise ValueError(f"run88b seed {seed} training record incomplete")
             result["models"].append(record)
             budget.guard(reserve=15)
 
@@ -649,7 +688,8 @@ def training_audit() -> dict:
         preflight_cpu_seconds=preflight_cpu,
         setup_cpu_seconds=round(setup_cpu, 6),
         training_cpu_seconds=budget.used(),
-        cpu_seconds=round(preflight_cpu + setup_cpu + budget.used(), 6),
+        prior_cpu_reserve_seconds=PRIOR_CPU_RESERVE_SECONDS,
+        cpu_seconds=round(PRIOR_CPU_RESERVE_SECONDS + preflight_cpu + setup_cpu + budget.used(), 6),
         cpu_accounting_complete=budget.accounting_complete,
         sources_unchanged=all(sha256(Path(path)) == digest for path, digest in guards.items()),
         code_unchanged=g["identity"]() == identity,
@@ -693,14 +733,14 @@ def training_audit() -> dict:
 def configure_stdio() -> None:
     for path in (STDOUT, STDERR):
         if path.exists():
-            raise FileExistsError(f"run88 log already exists: {path}")
+            raise FileExistsError(f"run88b log already exists: {path}")
     sys.stdout = STDOUT.open("x", encoding="utf-8", buffering=1)
     sys.stderr = STDERR.open("x", encoding="utf-8", buffering=1)
 
 
 def complete(exit_code: int, started: str, cpu_start: float, report_sha: str | None, error: str | None = None) -> int:
     receipt_value = {
-        "schema": "n1-transition-factorial-lr-decay-run88-completion-v1",
+        "schema": "n1-transition-factorial-lr-decay-run88b-completion-v1",
         "task_name": TASK_RUN,
         "process_id": os.getpid(),
         "started_utc": started,
