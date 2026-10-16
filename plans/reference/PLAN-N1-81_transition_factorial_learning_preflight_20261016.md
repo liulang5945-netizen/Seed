@@ -15,3 +15,7 @@ fresh seed13 position，严格等于74相同seed全新初始化，空Adam/历史
 `scripts/training/_taiji_n1_transition_factorial_learning.py`；`scripts/training/audit_taiji_n1_transition_factorial_learning.py`；`tests/taiji_native/test_native_transition_factorial_learning_contract.py`；`reports/taiji_n1_transition_factorial_preflight_20261016.json`及`_attempt.json`；忽略目录`data/checkpoints/n1_transition_factorial_preflight_20261016/s13_position_zero.pt`。旧77/79/80代码和结果均不改。先artifact-free测试、静态检查、提交，再独占运行。所有实际合成更新单列，不算模型能力。
 
 通过后另冻82：fresh seed13固定24576更新训练集校准，沿77父题/改名调度；转向题四条件平均目标，共55296QA及43008训练会话，独立CPU≤30分钟含零/终点恢复与评分。原四训练门不变，新增原名及已知改名48项各四条件联合≥44/48的前置，仅训练充分性，非未见能力门。不选中点/补训/自动追加，不查dev/v3holdout/v4/v5；正式多种子及首次未见准入另冻。此处只说明下一配方方向，82正式运行必须先有自己的冻结实现与提交。
+
+## 工程裁决
+
+完整，CPU8.703125秒，独立恢复及两次四条件更新签名逐位一致，原零态不变。报告SHA ac9e5cb95eb8beda998cc12b37d9036963c275083e7008d7f8018571056f3c21；零态SHA c8579e7e8ea360d21cd10ecc4f5b393a19e53306a8567a507edaa199f5e4485a。4副本步16合成QA，不算训练或能力。进入另冻82。
