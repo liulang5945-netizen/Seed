@@ -9,3 +9,7 @@
 产物：scripts/training/diagnose_taiji_n1_fresh_training_logs.py、tests/taiji_native/test_native_fresh_training_log_diagnostic_contract.py、reports/taiji_n1_fresh_training_log_diagnostic_20261016.json及plans/reference裁决。独占写入、固定LF、完整来源SHA和CPU/零查询计数；先合成合同/静态检查/提交，再一次执行。无新训练或结构改动混入79。完成后据单一主要失效提出一个高上限机制/训练方案的新预注册，不追加77，不消费仍未见v5。
 
 全项目保持/C4/同bundle三器官、N2–N6和绑定HEAD全量CI仍欠；失败本身不缩减目标，也不默认采用候选。
+
+## 实施合同完成
+
+79纯日志诊断器实施及15项artifact-free合同通过：九模型完整性与失败门分开、2880行/五阶段/四view精确对齐、逐题gain/loss/teacher-free、八格transition、四完整6144窗口与末1024步、非有限值/错位/缺行拒绝；两根Ruff通过。77原会话73963仍运行剩余控制，79 TRAIN_SHA=None，正式诊断尚未执行；78拒入、v5未消费。唯一下一步完成77整批封存后绑定79终端SHA，提交并执行CPU≤30秒零加载/更新/查询诊断，全项目出口债不变。
