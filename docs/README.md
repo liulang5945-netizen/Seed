@@ -30,9 +30,16 @@
 | `plans/active/` | 根需求、架构、活动调度 | 当前执行以 03 为准 |
 | `plans/reference/` | 预注册、批准书、判读、专题评估 | 文件日期是证据时点，不自动等于失效 |
 | `plans/archive/` | 历史计划与被替代设计 | 保留追溯，旧下一步不生效 |
-| `reports/`、`artifacts/`、`design/` | 原始报告、证据资产、设计记录 | 不覆盖或删除冻结证据 |
-| `output/`、`outputs/` | 已跟踪证据和本地运行产物混合 | 逐项登记；不可整体忽略、移动或删除 |
+| `reports/` | 新入库机器报告唯一入口，旧散落报告归并至 legacy/ | [报告导航](../reports/README.md) |
+| `design/` | 品牌资产及生成工具 | 与研究报告分开 |
+| `artifacts/` | 历史本地诊断状态 | 不新增入库报告，现有数据保留 |
+| `output/` | 历史运行输出、截图和人工验收资产 | 不再新增入库机器报告 |
+| `outputs/` | 历史实验目录、冷归档及恢复导航 | 不再新开实验，归档不搬动 |
 | `checkpoints/`、`data/`、`taiji_data/` | 权重、训练及运行数据 | 清理前确认恢复与引用关系 |
 | `security/`、`.local/`、`.workbuddy/` | 凭据、会话与项目记忆 | 保留，不作为普通缓存清理 |
 
 目录规范的权威清单见 [FOLDER_STRUCTURE_RULES](FOLDER_STRUCTURE_RULES.md)，凭据及 Git 卫生见 [REPO_HYGIENE_RULES](REPO_HYGIENE_RULES.md)。
+
+## 2026-10-16 职责收敛
+
+三个历史输出根的7份已跟踪JSON统一归入reports，内容逐字节保留。[迁移清单](../plans/reference/PROJECT_LAYOUT_MIGRATION_20261016.json)用于解析历史路径。源码模块名称相近但职责不同：seed是API边界、seed_platform是平台服务、taiji是认知实现；docs负责用法，plans负责决策，design负责视觉资产。按职责分层保留这些模块，避免引入跨层依赖。

@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-16",
+  "purpose": "Consolidate tracked machine-readable evidence under reports; preserve original bytes.",
+  "entries": [
+    {
+      "old_path": "artifacts/verify/taiji_m6_endogenous_replay.json",
+      "new_path": "reports/legacy/artifacts/verify/taiji_m6_endogenous_replay.json",
+      "sha256": "c4d27d491f776b687348380e0288107b1b6f1aedc3e4f19b81a4895999ef2f7f",
+      "bytes": 10653,
+      "lf_sha256": "9eace49a4afb97ca5c5af2f95cf1f6328768d16028f2a3b03d69267305d84d00",
+      "lf_bytes": 10332
+    },
+    {
+      "old_path": "output/a30_self_answers/smoke_report.json",
+      "new_path": "reports/legacy/output/a30_self_answers/smoke_report.json",
+      "sha256": "9e4679ac8bc4729acb44fcad983d16a9539a19ab963d03c8fdb885accb73dd47",
+      "bytes": 629,
+      "lf_sha256": "c6e6039940bcfecf829e26fdaff3ae6d700728b0b2645a86e9265e9f040731b6",
+      "lf_bytes": 609
+    },
+    {
+      "old_path": "output/a31_onpolicy_20261003/progress_exit.json",
+      "new_path": "reports/legacy/output/a31_onpolicy_20261003/progress_exit.json",
+      "sha256": "40c695332c5309343e2d27868cb4b50cb6376fce4632134ba0cd901ff6f99f61",
+      "bytes": 528,
+      "lf_sha256": "40c695332c5309343e2d27868cb4b50cb6376fce4632134ba0cd901ff6f99f61",
+      "lf_bytes": 528
+    },
+    {
+      "old_path": "outputs/project-improvement-20260915/baseline-commands.json",
+      "new_path": "reports/legacy/outputs/project-improvement-20260915/baseline-commands.json",
+      "sha256": "d66e6d1cc3f725f10a1b9bf171ed504af1575ad436b0c32505541e2b17c6d480",
+      "bytes": 349,
+      "lf_sha256": "6d5986e1098c2c66fc9495d9271f2287061aae48ac5cfa881c33bd035064650f",
+      "lf_bytes": 327
+    },
+    {
+      "old_path": "outputs/r2_h3_7b_repair_20260917/byte_aligned/report.json",
+      "new_path": "reports/legacy/outputs/r2_h3_7b_repair_20260917/byte_aligned/report.json",
+      "sha256": "10557ee6ca28ab9cd346e9449bef37f1bb8a62b2e9f59f673a5f4b20f28955a7",
+      "bytes": 358,
+      "lf_sha256": "9977bc5112f908e8db47c23c207557ba59f58d0283c0fbad3bbdfc37247ef4be",
+      "lf_bytes": 348
+    },
+    {
+      "old_path": "outputs/r2_h3_7b_repair_20260917/byte_aligned_retry1/report.json",
+      "new_path": "reports/legacy/outputs/r2_h3_7b_repair_20260917/byte_aligned_retry1/report.json",
+      "sha256": "ad14be48f4f51228315653cc8ce29f7f622785b4de1da1babd4eb8529546584e",
+      "bytes": 13876,
+      "lf_sha256": "09f20323cd7de5eda3f08083b7e3f7686407a518b1ac1c568ae8558c53f885fb",
+      "lf_bytes": 13585
+    },
+    {
+      "old_path": "outputs/r2_h3_7b_repair_20260917/legacy_target/report.json",
+      "new_path": "reports/legacy/outputs/r2_h3_7b_repair_20260917/legacy_target/report.json",
+      "sha256": "3e60743bbf58c62e291d1b403380bad7bd829a1b1b06b1fdc60720abdb6ec177",
+      "bytes": 13820,
+      "lf_sha256": "81a9cb890738bc12479c80ba9a2267a4f26fa0157b7add7fad7542a12939a332",
+      "lf_bytes": 13529
+    }
+  ],
+  "historical_references": "Resolve old paths in frozen records using this mapping.",
+  "local_data": "Untracked runtime files, checkpoints and cold archives are unchanged.",
+  "hash_policy": "sha256/bytes record original local bytes; lf_sha256/lf_bytes validate Git text across LF and CRLF checkouts."
+}

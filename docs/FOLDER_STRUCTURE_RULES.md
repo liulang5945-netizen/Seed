@@ -39,20 +39,19 @@
 
 ### B 账本与证据（tracked，不可删）
 `plans/`（**只追加**）· `docs/` · `reports/`（注意 `!reports/_gate_*.log` 白名单例外，见 R4）·
-`artifacts/` · `design/` · `eval-r5b-s1-20260830/` · `.playwright-mcp/` · `.workbuddy/`（memory 随仓库保留）·
+`design/` · `eval-r5b-s1-20260830/` · `.playwright-mcp/` · `.workbuddy/`（memory 随仓库保留）·
 `seed-logo_assets/`（Seed 品牌 logo 定稿资产，2026-09-28 owner 认可；路径已被记忆/物料锚定，不挪动）
 
 ### C 运行时产物（ignored；**可删 ≠ 全都可删**）
+- `artifacts/`：历史本地诊断状态；唯一已跟踪报告迁至 `reports/legacy/artifacts/`。不新增入库报告，不据此删除本地文件。
 - 随时可删：`logs/` · `rag_data/` · `user_data/` · `agent_workspace/` ·
   `.seed_test_tmp/` · `_pytest_*/` · `update_frontend/`（空的前端热替换层）
 - **不删**：`data/` —— dev 模式的运行数据根（S6），实测 **63.5 GB**，内含训练数据
 - **不删**：`security/` —— 运行凭据在内部（文件本体已被 `**/security/*` 覆盖，见 R3）
 - **谨慎**：`checkpoints/`（实测 767 MB）—— `*.pt` 按 R3 不入库，但**产品基座在此**
 - **谨慎**：`taiji_data/` —— 训练/检查点侧的数据根，体积大（旧桌面打包规格曾以此为 datas 来源，该规格已随 2026-09-23 旧线退役）
-- **按命名族管理**：`output/` 与 `outputs/` —— 混合体：既有**有意入库**的验收证据
-  （`output/manual-r5-*/README.md`、`output/playwright/*.png`，见 R4 反向钉住），
-  又有大量按命名约定 ignore 的运行目录（`output/taiji_r2_*/`、`output/*-packaged-data/`）。
-  **不能整体 ignore，也不能整体删除**；新增运行目录必须按命名约定进 `.gitignore`（R1）。
+- **单一写入职责**：`reports/` 是新入库机器报告唯一入口；`output/` 仅承接历史运行输出和已钉住的截图/人工验收资产；`outputs/` 保留历史实验目录和冷归档恢复入口，停止新增实验写入。两者不再作为新报告存储根，也不新增近义根。
+- **历史兼容例外**：`output/` 与 `outputs/` 仍有本地实验状态和冻结记录中的旧路径，不能整体忽略、删除或批量改名。7份已跟踪JSON按摘要迁入 `reports/legacy/`，映射见[迁移清单](../plans/reference/PROJECT_LAYOUT_MIGRATION_20261016.json)；旧证据文本不回写。历史资产例外不授权新增混放。
 
 ### D 构建产物（ignored，随时可删）
 `build/` · `dist/`

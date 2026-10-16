@@ -22,12 +22,38 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 import subprocess
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 DOC = REPO / "docs" / "FOLDER_STRUCTURE_RULES.md"
+
+
+def test_legacy_report_migration_preserves_evidence():
+    manifest = json.loads(
+        (REPO / "plans/reference/PROJECT_LAYOUT_MIGRATION_20261016.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    for entry in manifest["entries"]:
+        target = REPO / entry["new_path"]
+        assert target.resolve().is_relative_to(REPO / "reports")
+        payload = target.read_bytes().replace(b"\r\n", b"\n")
+        assert len(payload) == entry["lf_bytes"]
+        assert hashlib.sha256(payload).hexdigest() == entry["lf_sha256"]
+
+
+def test_tracked_machine_reports_have_one_home():
+    tracked = subprocess.check_output(
+        ["git", "ls-files", "--", "artifacts", "output", "outputs"],
+        cwd=REPO,
+        text=True,
+    ).splitlines()
+    misplaced = [name for name in tracked if name.endswith(".json")]
+    assert not misplaced, f"Machine reports belong in reports/: {misplaced}"
 
 #: 命名族：匹配即视为已知（无需进台账），但删除仍须走 clean_worktree 的豁免逻辑。
 #: `_pytest_*` / `.pytest-*` 与 `direct-*` 分别对应 .gitignore 既有规则与 S2「特殊」节。

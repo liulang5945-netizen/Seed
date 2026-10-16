@@ -61,7 +61,7 @@ python -m uvicorn api.app:app --host 127.0.0.1 --port 8000
 | `reports/` | 机器可读研究证据 |
 | `design/` | 品牌资产与生成工具 |
 | `data/`、`checkpoints/`、`taiji_data/` | 本地数据集和模型状态，迁移前须保护 |
-| `output/`、`outputs/`、`artifacts/` | 历史运行与证据路径，使用前查项目地图 |
+| `output/`、`outputs/`、`artifacts/` | 历史运行及归档路径；已跟踪JSON归入 `reports/legacy/` |
 
 遵守[目录规范](docs/FOLDER_STRUCTURE_RULES.md)和[仓库卫生规则](docs/REPO_HYGIENE_RULES.md)。训练须遵循对应冻结协议及预算，并先通过 checkpoint 保存恢复检查。历史失败实验保留为证据。
 

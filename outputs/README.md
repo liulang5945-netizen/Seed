@@ -1,6 +1,6 @@
 # 本地产物与冷归档导航
 
-`outputs/` 是历史运行产物与本地归档的存放区，不是模型源码。目录规则见 [项目地图](../docs/README.md) 和 [目录规范](../docs/FOLDER_STRUCTURE_RULES.md)。
+`outputs/` 仅保留历史运行产物、本地冷归档及恢复入口，不再新增实验或入库报告。已跟踪的历史JSON迁至 `reports/legacy/outputs/`，映射见[迁移清单](../plans/reference/PROJECT_LAYOUT_MIGRATION_20261016.json)。目录规则见 [项目地图](../docs/README.md) 和 [目录规范](../docs/FOLDER_STRUCTURE_RULES.md)。
 
 ## 2026-10-14 冷归档
 
