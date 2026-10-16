@@ -29,3 +29,17 @@
 ## 5. 出口与前置
 
 本件只有一格产出：上述报告与这份判读件。发表资格前置不变（保持集、C4 净增益、三器官各自行为证据三样都还没做）；本件不结 N1，不开 N2/N3/N5，也不撤销任何已登记的训练充分结论。相关更正与同族读数：EXP-N1-90（臂差判否）、DEBT-G147（口径混用）、DEBT-G148（状态钉死断言）、DEBT-G149（black 面与 PINNED 定值 4 枚＝执法型 2／披露型 2）。
+
+## 6. 〔2026-10-17 ㊵-1024 追记〕下一格的定价取自读码与一枚已封存的旧 oracle 读数，不是估算
+
+三条现取（全部读码或读在库件，零查询）：
+
+1. **臂只作用在证据磁带，不作用在解码头**：`scripts/training/run_taiji_n1_native_evidence_paired.py:128-131` 把 arm 映射成 `model.evidence(session, cut_credit=…, terminal_per_source=…)` 一条调用，读出与答案头两侧都不分支 ⇒ 本件 §1 的"失败在选择侧"与"臂改的只是证据构造"这两句同向，且与 EXP-N1-90 §2 的"79/96 逐字相同"不矛盾。
+2. **仓里已经有一台 oracle 注入仪**：`scripts/training/audit_taiji_n1_address_intervention.py`——`MODES=("native","source","position")` 在 `:24`，`weights()`（`:61-76`）把注意力权重整体换成"oracle 位置 one-hot"或"oracle 源掩码"，`teacher()`（`:79-97`）按替换后的权重重放解码环。它的拒绝面在 `addresses()`（`:44`）：非 `train` 或非 lookup/revision 直接 ValueError。
+3. **该仪的旧封存读数就是这条假设的先验**：`reports/taiji_n1_address_intervention_20261015.json`（`cpu_seconds=4.5`、上限 60 秒、96 题 × 3 模式 × 2 候选枚＝576 条 teacher 序列、`oracle_is_capability=false`、`parameter_updates=0`）。度量定义现读自同文件 `profile()`（`:100-112`）：逐步 argmax 对金标，`six_exact`＝答案各步全对（不含末位边界符），`seven_exact`＝含末位边界符全对，`byte_correct[i]`＝第 i 步答对的题数。按这两条线读数：oracle **位置** 把 `six_exact` 从 native 的 29／26（single／double 两候选枚）抬到 **43／79**（`paired_six_gains` 27／58），而 oracle **源** 反向降到 11／16；但把末位边界符算进来就缩水——`seven_exact` 为 43→**29**（single，与 native 齐平）与 79→**48**（double），第 6 步那一列的 `byte_correct` 从 native 的 95 掉到 62／63。⇒ 旧读数的准确说法是"**把注意力钉到正确磁带位置能显著抬起答案各步的逐步命中，但末位停下决定那一步不吃这个红利**"，不是"oracle 下模型就答对了"。这一格与本件 §1 同轴（native 侧同样是 teacher-forced），所以它直接对着 `selection_side=96/96` 那一问。
+
+
+由此给下一格的价：同形状扩到九枚端点 × 32 题 × 三模式＝864 条 teacher 序列（旧件 576 条），按旧件 4.5 秒线性外推 **约 6.8 秒**，与 90 那次实测 34.34 秒同档；零训练、零参数更新、零外部配额。两条限制必须与它一起写死：①该仪现有拒绝面只放 train 题，若要把那 32 题喂进去必须先经 owner 允许该面以"已知面上的机制探针"身份使用，**不得再冠"未见"**（v5 已消费、`retry_allowed=false`）；②oracle 抬起来**不是能力**（旧件里 `oracle_is_capability=false` 已钉过这一语义），它只证"候选／地址供给是瓶颈"，不证模型会答题。
+
+同轮另量出一条债：协议里那枚 `max_generated_bytes` 全仓无消费处，真正生效的 64 是两处硬编码字面量 ⇒ **DEBT-G150**（今天同值零影响，风险在未来"改了协议而行为不变"）。
+
