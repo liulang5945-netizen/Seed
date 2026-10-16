@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：继续同一run88c Task Scheduler任务`Seed-N1-LRDecay-Run88C-20261016`（PID27320，23:14:39启动）直至三seed终态。seed11/position已封存：24576更新/55296 QA/43008会话/4800评分，zero/final两次独立恢复equal=true、8签名副本步，LR为前18432步0.001/末6144步0.00025；六门通过，原/配对/改名/改名配对192/96/192/96，四条件joint原/改名48/48。前18432逐步loss/五组measurement及所有评分与run86c seed11完全一致。累计正式训练CPU计数1016.84秒（总账另含300秒预留和15.47秒前置），OS任务仍Running、stderr空；已进入seed12 position零态。末周期处理已开始但其效应尚未判定。run86c seed12失败、v5未消费；本批六门和零dev/holdout/v3/v4/v5查询不变。
+## 当前唯一下一步：继续同一run88c三seed position固定批次至终态。Task Scheduler `Seed-N1-LRDecay-Run88C-20261016`，PID27320，23:14:39本地启动，仍Running。seed11完整24576步且六门通过；seed12已到18432步，原/配对/改名/改名配对均192/96/192/96，与run86c同阶段评分一致，现进入最终6144步LR0.00025。当前正式训练预算CPU约1782.88秒（worker OS累计1822.77秒），stderr空、completion尚不存在；总账还含15.47秒preflight与300秒既往CPU保守预留，仍受4800秒上限约束。固定73728更新/14400评分、配对轨迹复现、原六门及零dev/holdout/v3/v4/v5边界不变；最终核验三seed完整恢复和总账，不挑中间点、不自动重试。
 
 ## 本轮调度修订（2026-10-14）
 
