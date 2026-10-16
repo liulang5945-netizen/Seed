@@ -16,7 +16,7 @@ from scripts.training import _taiji_n1_fresh_training_receipt as receipt  # noqa
 
 train = receipt.train
 REPORT = ROOT / "reports/taiji_n1_fresh_training_log_diagnostic_20261016.json"
-TRAIN_SHA = None  # Bind only the terminal nine-model report, never an intermediate.
+TRAIN_SHA = "dbfecdfbebe46cdd1401f8946020e2d7415eda9ffa0be523a7659d0cbf6fe2c3"  # Frozen complete77 terminal bytes.
 PROTOCOL = dict(
     schema="n1-fresh-training-log-diagnostic-v1",
     source_report_sha256=TRAIN_SHA,
