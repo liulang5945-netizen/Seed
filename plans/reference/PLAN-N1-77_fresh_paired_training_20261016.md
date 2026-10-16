@@ -13,3 +13,13 @@ position/terminal全部41 Adam步数等于完成数；cut writer4无Adam且逐�
 ## 实施前置完成
 
 8项artifact-free合同通过：三种臂分别零档独立进程两步签名恢复、三臂synthetic final完整恢复/切步计数拒绝、cut writer逐位不变/无Adam、partial无损分片/缺计数拒绝、固定四周期与已存在批次拒绝。31来源与九74零档只读守卫验证，v5未查询；两根Ruff与改动Black通过。为避免Windows checkout改变封存SHA，v5精确路径固定eol=lf，九gzip命名族声明binary；未重写任何旧档。
+
+## 首组已得证据（不代表整批完成）
+
+77 seed11三臂完整封存，各24576更新/2880已知行/两独立恢复；position原186/改名184、terminal123/105、cut192/189，position/cut配对均96/96，cut四writer无Adam且不变。三片完整计数与原门核验通过；同会话73963已自动进入seed12 position。唯一下一步完成其余六模型并统一核验，78仍未绑定最终SHA、v5零查询，全项目出口债保持。
+
+| seed11臂 | 原题/192 | 原pair/96 | 改名/192 | 改名pair/96 | 分片SHA256 |
+| --- | --- | --- | --- | --- | --- |
+| position | 186 | 96 | 184 | 96 | 04cb12e90e01e4bd649a8c3b3bacf8bdd633c29d98f50b69ca009267732253af |
+| terminal | 123 | 31 | 105 | 26 | ead9b27391ce3da64a00679fce85145278871e0e3574ae7917a3c5a79122120e |
+| cut | 192 | 96 | 189 | 96 | 0d741c004b33c84ec4fc26f40db89928cf554bc49c1301668b15233fa39939ef |
