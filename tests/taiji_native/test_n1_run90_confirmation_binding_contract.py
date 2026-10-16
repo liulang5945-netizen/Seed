@@ -291,6 +291,46 @@ def test_loader_wrapper_swaps_and_restores_the_family_protocol() -> None:
         run90.ORIGINAL_LOAD = original
 
 
+def test_readiness_mode_maps_refusal_to_rc_two_and_success_to_zero(monkeypatch) -> None:
+    def refuse() -> tuple:
+        raise run90.Refuse("nine frozen final endpoints required")
+
+    monkeypatch.setattr(run90, "readiness", refuse)
+    assert run90.run_readiness() == 2
+
+    monkeypatch.setattr(
+        run90,
+        "readiness",
+        lambda: (
+            {"p": "d"},
+            {"v5": {"sha256": "2" * 64}, "readiness_cpu_seconds": 0.5},
+            {(11, "cut"): Path("x")},
+            [{"id": 1}],
+        ),
+    )
+    assert run90.run_readiness() == 0
+
+
+def test_approved_mode_refuses_without_writing_the_attempt(tmp_path: Path, monkeypatch) -> None:
+    def refuse() -> dict:
+        raise run90.Refuse("exact frozen v5 bytes required")
+
+    pretend = tmp_path / "run90_attempt.json"
+    monkeypatch.setattr(run90, "ATTEMPT", pretend)
+    assert pretend.exists() is False
+    monkeypatch.setattr(run90.base85, "audit", refuse)
+    assert run90.run_approved() == 2
+    assert pretend.exists() is False
+
+    monkeypatch.setattr(
+        run90.base85,
+        "audit",
+        lambda: {"complete": True, "passed": False, "cpu_seconds": 1.0, "gates": {}, "error": None},
+    )
+    assert run90.run_approved() == 0
+    assert pretend.exists() is False
+
+
 def test_install_patches_the_reused_evaluators_binding_globals() -> None:
     snapshot = (
         __import__(

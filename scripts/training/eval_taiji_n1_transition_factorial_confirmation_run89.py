@@ -275,35 +275,56 @@ def install() -> None:
     train.load = load_with_family_protocol
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--readiness-only", action="store_true")
-    parser.add_argument("--execute-approved", action="store_true")
-    arguments = parser.parse_args()
-    train.torch.set_num_threads(1)
-    install()
-    if arguments.readiness_only:
+def run_readiness() -> int:
+    """Refusal is rc=2 with a named reason; an unexpected error stays rc=1."""
+    try:
         guards, seals, paths, episodes = readiness()
+    except Refuse as refusal:
+        print(
+            json.dumps(
+                {"complete": False, "refused": True, "reason": str(refusal)},
+                sort_keys=True,
+            ),
+            flush=True,
+        )
+        return 2
+    print(
+        json.dumps(
+            {
+                "complete": True,
+                "endpoints": len(paths),
+                "episodes": len(episodes),
+                "guarded_inputs": len(guards),
+                "v5_sha256": seals["v5"]["sha256"],
+                "readiness_cpu_seconds": seals["readiness_cpu_seconds"],
+                "model_loads": 0,
+                "confirmation_queries": 0,
+            },
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+def run_approved() -> int:
+    """A refused binding must not write the attempt, so the face stays unconsumed."""
+    try:
+        result = base85.audit()
+    except Refuse as refusal:
         print(
             json.dumps(
                 {
-                    "complete": True,
-                    "endpoints": len(paths),
-                    "episodes": len(episodes),
-                    "guarded_inputs": len(guards),
-                    "v5_sha256": seals["v5"]["sha256"],
-                    "readiness_cpu_seconds": seals["readiness_cpu_seconds"],
-                    "model_loads": 0,
+                    "complete": False,
+                    "refused": True,
+                    "reason": str(refusal),
+                    "attempt_written": ATTEMPT.exists(),
                     "confirmation_queries": 0,
                 },
                 sort_keys=True,
-            )
+            ),
+            flush=True,
         )
-        return 0
-    if not arguments.execute_approved:
-        print(json.dumps(dict(read_only=True, protocol=protocol()), sort_keys=True))
-        return 0
-    result = base85.audit()
+        return 2
     print(
         json.dumps(
             {
@@ -314,6 +335,21 @@ def main() -> int:
         )
     )
     return 0 if result["complete"] else 1
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--readiness-only", action="store_true")
+    parser.add_argument("--execute-approved", action="store_true")
+    arguments = parser.parse_args()
+    train.torch.set_num_threads(1)
+    install()
+    if arguments.readiness_only:
+        return run_readiness()
+    if not arguments.execute_approved:
+        print(json.dumps(dict(read_only=True, protocol=protocol()), sort_keys=True))
+        return 0
+    return run_approved()
 
 
 if __name__ == "__main__":
