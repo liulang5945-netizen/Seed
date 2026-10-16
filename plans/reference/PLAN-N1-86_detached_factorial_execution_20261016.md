@@ -28,7 +28,13 @@ seed11/12/13 × position/terminal/cut，共九个模型，每个24576更新、55
 
 合成Task Scheduler任务通过：worker PID 24408与OS运行记录一致，启动器返回后完成6/6心跳，CPU 0.0秒，报告`complete=true`；仅合成代码，未载入候选或训练材料，0更新/课程/dev/holdout查询。`LastTaskResult=0`已独立核实，精确探针任务已注销。正式86检查点路径另以fresh seed11/position zero执行保存和独立Python进程恢复：从83预检加载器`engineering.load`载入来源，77来源守卫通过，检查点269989字节、SHA256 `7cac570a0575c0edde56ebb7baf96b679edf19ff7989a6232ce826564ad70e4f`，恢复bundle相同、空Adam、0主模型更新，CPU含子进程7.46875秒；临时测试目录已清理。哈希回执在`reports/taiji_n1_transition_factorial_run86_checkpoint_preflight.json`。首次临时检查误将83来源传给仅接受84保存格式的`train.load`，在任何测试写入前被拒；对照真实训练路径修正为`engineering.load`后完整通过，冻结训练器未修改。回执helper`validate(receipt)`按传入报告对象和分片seal路径工作，不依赖84固定主报告路径，最终完整运行后调用。
 
-唯一下一步是提交86实现、计划和本批预检证据，然后启动正式任务。正式批次仍为fresh九模型、221184更新、497664 QA、CPU≤14400秒、原六position训练门、零dev/v3 holdout/v4/v5；85仍未准入，v5未消费。
+㊵-1007当时计划在提交86实现、计划和预检证据后启动正式任务；随后㊵-1008记录了首轮启动阶段失败，未进入训练。正式批次的fresh九模型、221184更新、497664 QA、CPU≤14400秒、原六position训练门与零dev/v3 holdout/v4/v5边界保持冻结；85仍未准入，v5未消费。
+
+## 首轮正式任务启动失败裁决（㊵-1008）
+
+首轮Seed-N1-Run86-20261016的Task Scheduler任务已启动，但启动器写reports/taiji_n1_transition_factorial_run86_returned.json，控制器等待reports/taiji_n1_transition_factorial_run86_launcher_returned.json。60秒后worker在task_receipts阶段抛FileNotFoundError，OS LastTaskResult=1。失败发生在冻结attempt读取与readiness()来源/材料加载前；没有worker manifest、attempt、主报告或checkpoint，候选更新/dev/holdout查询均为0。该启动任务已精确注销；manifest、实际return、completion、错误日志及reports/taiji_n1_transition_factorial_run86_startup_failure.json保留，不覆盖。
+
+修正版在launch_taiji_n1_transition_factorial_run86.ps1中令formal return文件名与控制器一致，并使用新输出族run86b、新任务Seed-N1-Run86B-20261016和独立checkpoint根data/checkpoints/run86b。再次正式运行前必须先用新文件族完成Task Scheduler心跳与run86b路径checkpoint保存/独立恢复预检，提交修正版及回执；训练协议与原六门、样本、更新数、预算、测面禁区均不变。
 
 ## 预声明产物
 
@@ -37,12 +43,12 @@ seed11/12/13 × position/terminal/cut，共九个模型，每个24576更新、55
 - 两次Start-Process探针（启动失败并保留）：`reports/taiji_n1_transition_factorial_run86_runtime_preflight_launcher.json`、`_runtime_preflight.stdout.log`、`_runtime_preflight.stderr.log`、`_runtime_preflight_retry_launcher.json`、`_runtime_preflight_retry.stdout.log`、`_runtime_preflight_retry.stderr.log`
 - checkpoint路径保存/独立恢复预检回执：`reports/taiji_n1_transition_factorial_run86_checkpoint_preflight.json`
 - breakaway失败记录留在命令输出；有限权限Task Scheduler探针：`reports/taiji_n1_transition_factorial_run86_runtime_preflight_scheduled.json`、`_runtime_preflight_scheduled.jsonl`、`_runtime_preflight_scheduled_launcher.json`、`_runtime_preflight_scheduled_returned.json`、`_runtime_preflight_scheduled_worker.json`、`_runtime_preflight_scheduled.stdout.log`、`_runtime_preflight_scheduled.stderr.log`
-- 正式任务注册/返回/worker清单、日志和结束回执：`reports/taiji_n1_transition_factorial_run86_launcher.json`、`_launcher_returned.json`、`_worker.json`、`.stdout.log`、`.stderr.log`、`_completion.json`
-- attempt、主报告和九无损分片：`reports/taiji_n1_transition_factorial_run86_attempt.json`、`reports/taiji_n1_transition_factorial_run86.json`、`reports/taiji_n1_transition_factorial_run86_s{11,12,13}_{position,terminal,cut}.json.gz`
-- 独立检查点：忽略目录`data/checkpoints/run86/n1_transition_factorial_paired_train_20261016/`
+- 首轮正式启动失败产物（保留）：reports/taiji_n1_transition_factorial_run86_launcher.json、run86_returned.json、run86_completion.json、run86.stderr.log、run86_startup_failure.json
+- 修正版run86b attempt、主报告和九无损分片：reports/taiji_n1_transition_factorial_run86b_attempt.json、run86b.json、run86b_s{11,12,13}_{position,terminal,cut}.json.gz
+- 修正版独立检查点：忽略目录data/checkpoints/run86b/n1_transition_factorial_paired_train_20261016/
 - 结果裁决：`plans/reference/EXP-N1-86_detached_factorial_execution_adjudication_20261016.md`
 
-探针使用独立任务名`Seed-N1-Run86-Probe-20261016`，正式训练任务名`Seed-N1-Run86-20261016`；两者都没有触发器，只能由当前用户显式启动。每个文件只允许首次创建。启动前检查全部预声明路径不存在；已有文件立即拒绝，不清理、不覆盖。完整运行报告须由84现有独立receipt逻辑逐字段核验，再与任务注册/worker清单、进程日志及CPU读数交叉核对。只在全部来源和产物字节验收后裁决训练门。之后按结论推进85条件准入或冻结单一下一步。
+探针使用独立任务名Seed-N1-Run86-Probe-20261016，修正版正式训练任务名Seed-N1-Run86B-20261016；二者均无触发器，由当前用户显式启动。
 
 ## 全项目边界
 

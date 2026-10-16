@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **2026-10-16 86后台与checkpoint预检通过（㊵-1007）**：Task Scheduler合成探针由PID 24408在启动器返回后写完6/6心跳，OS `LastTaskResult=0`，0更新/数据查询，精确探针已注销。正式86路径的s11/position/zero保存并独立进程恢复一致，77来源守卫、0训练更新、CPU 7.46875秒；临时checkpoint目录已清理，哈希回执入库。唯一下一步先提交86实现/计划/回执，再启动固定fresh九模型同协议训练，CPU≤14400秒；85未准入、v5未消费。
+> **2026-10-16 86首轮启动失败裁决（㊵-1008）**：正式任务启动器把回执写为 *_returned.json，控制器等待 *_launcher_returned.json；60秒后FileNotFoundError，Task Scheduler LastTaskResult=1。失败发生在训练材料加载前，无attempt/worker/checkpoint/更新，精确任务已注销，证据保留。下一步修复路径并用独立86b产物族重做后台及checkpoint预检，再按同一冻结九模型配方启动；样本、门、预算和未见查询禁区不变。85未准入、v5未消费。
 
 > **2026-10-16 Task Scheduler策略核验（㊵-1005）**：默认shell对Task Scheduler服务与COM访问均返回`Access denied (0x80070005)`；用户级任务是否可注册仍未验证。按已有本地持续授权，仅为无触发器/Interactive/Limited的合成探针请求一次策略审核的提权执行；若审核拒绝即停止正式86。通过后跑约5秒心跳、核对OS `LastTaskResult` 并移除精确探针任务；随后才考虑同协议fresh九模型/≤14400秒正式86。84失败证据保留，85 TRAIN_SHA=None，v5未消费，项目保持/C4/三器官/其他N与完整HEAD CI债不变。
 

@@ -1,0 +1,20 @@
+{
+    "schema":  "n1-transition-factorial-run86-task-launch-v1",
+    "mode":  "run",
+    "task_name":  "Seed-N1-Run86-20261016",
+    "trigger_count":  0,
+    "principal_logon_type":  "Interactive",
+    "run_level":  "Limited",
+    "python_path":  "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\pythonw.exe",
+    "arguments":  "-u \"E:\\Seed\\scripts\\training\\run_taiji_n1_transition_factorial_paired_run86.py\" --execute-approved",
+    "repository_root":  "E:\\Seed",
+    "registered_utc":  "2026-10-16T08:55:54.7418338Z",
+    "controller_path":  "E:\\Seed\\scripts\\training\\run_taiji_n1_transition_factorial_paired_run86.py",
+    "controller_sha256":  "4d860ad83922c85fb7f3d1fb85ee81475820a2a3198e737f964d33f6d7917b80",
+    "runner_path":  "E:\\Seed\\scripts\\training\\run_taiji_n1_transition_factorial_paired.py",
+    "runner_sha256":  "38018dbe08b9eb4c35d0b5c97196727b34f94efee68d68113e80269b8d3c9491",
+    "launcher_path":  "E:\\Seed\\scripts\\training\\launch_taiji_n1_transition_factorial_run86.ps1",
+    "launcher_sha256":  "798d75ec6f2e5f1b9f9a8ceb20cb44b8818158cb9a1b679f2a8878c57fbe2015",
+    "stdout_path":  "E:\\Seed\\reports\\taiji_n1_transition_factorial_run86.stdout.log",
+    "stderr_path":  "E:\\Seed\\reports\\taiji_n1_transition_factorial_run86.stderr.log"
+}

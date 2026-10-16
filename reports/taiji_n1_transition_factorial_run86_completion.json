@@ -1,0 +1,11 @@
+{
+  "completed_utc": "2026-10-16T08:56:55.600507+00:00",
+  "engineering_complete": false,
+  "error": "FileNotFoundError: run86 task registration/return receipts are missing",
+  "exit_code": 1,
+  "process_cpu_seconds": 0.40625,
+  "process_id": 34848,
+  "schema": "n1-transition-factorial-run86-completion-v1",
+  "started_utc": "2026-10-16T08:55:55.567944+00:00",
+  "task_name": "Seed-N1-Run86-20261016"
+}

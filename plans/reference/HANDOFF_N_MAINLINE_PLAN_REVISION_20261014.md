@@ -1,6 +1,6 @@
 # N 主线调度修订交接（2026-10-14）
 
-> **2026-10-16 86后台与checkpoint预检通过（㊵-1007）**：Task Scheduler合成探针由PID 24408在启动器返回后写完6/6心跳，OS `LastTaskResult=0`，0更新/数据查询，精确探针已注销。正式86路径的s11/position/zero保存并由独立进程恢复一致，77来源守卫、0训练更新、CPU 7.46875秒；临时checkpoint目录已清理，哈希回执入库。唯一下一步先提交86实现/计划/回执，再启动固定fresh九模型同协议训练，CPU≤14400秒；84不续接，85 TRAIN_SHA=None、v5未消费，保持/C4/三器官/其他N面和完整HEAD CI债仍在。
+> **2026-10-16 86首轮启动失败裁决（㊵-1008）**：Task Scheduler启动器与控制器对formal return回执文件名不一致，60秒后worker在训练材料加载前以FileNotFoundError退出，LastTaskResult=1；无attempt/worker/checkpoint/更新，精确任务已注销，错误manifest及日志保留。下一步修正回执路径，生成新86b输出族并重做合成心跳及checkpoint预检；通过并提交后才重跑同一fresh九模型协议。样本/更新/QA/门/CPU/holdout边界不变。84不续接，85 TRAIN_SHA=None、v5未消费，保持/C4/三器官/其他N面和完整HEAD CI债仍在。
 
 > **2026-10-16 Task Scheduler策略核验（㊵-1005）**：84在客户端更新重启时中断，步数未知，最后可验证s11/position/zero；85 TRAIN_SHA=None、v5未消费。默认shell访问Task Scheduler服务/COM受拒。唯一下一步对无触发器、Interactive/Limited的5秒合成探针请求一次策略审核的提权执行；拒绝则停止正式86。成功后核对实际任务结果并清理精确探针任务，再fresh重跑同协议九模型，CPU≤14400秒、原门槛、零未见查询。保持/C4/三器官/其他N面和完整HEAD CI债仍在。
 

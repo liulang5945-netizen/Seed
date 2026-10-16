@@ -3575,3 +3575,9 @@ v5精确路径固定LF、gzip声明binary，防止checkout改字节；旧证据�
 ### ㊵-1007 · 2026-10-16 · 86后台与正式checkpoint路径预检通过
 
 Task Scheduler合成探针PID 24408在启动器返回后写完6/6心跳；6条均晚于返回时间，worker清单PID一致，OS查询的`LastTaskResult=0`。报告SHA `90c3ad1359d4ddedfe99c5f7dc1e33ad59eb8895a6656c0a351a83030edc30b7`，仅合成探针，候选/训练材料未载入，0更新、0课程/dev/holdout查询；精确探针任务已注销。另将83已验收fresh s11/position/zero经84真实`engineering.load`载入，保存至86正式检查点路径并由独立Python进程恢复；77来源守卫通过、空Adam/0主模型更新、bundle指纹相同、CPU 7.46875秒。checkpoint SHA `7cac570a0575c0edde56ebb7baf96b679edf19ff7989a6232ce826564ad70e4f`、269989字节；临时测试目录清理，报告`taiji_n1_transition_factorial_run86_checkpoint_preflight.json`入库。receipt helper静态核对确认接受报告对象并按分片seal路径读取，无固定84主报告路径。唯一下一步只提交已声明86代码、导航计划和预检证据，再启动正式任务；九fresh模型、原221184更新/497664 QA/六position门/≤14400 CPU秒及零dev/v3 holdout/v4/v5均不变。84不续接、85 TRAIN_SHA=None、v5未消费，全项目出口债不变。
+
+### ㊵-1008 · 2026-10-16 · 86首轮正式启动在训练前失败
+
+Task Scheduler启动器成功注册并启动Seed-N1-Run86-20261016，但PowerShell写出的返回清单为reports/taiji_n1_transition_factorial_run86_returned.json，控制器等待的是reports/taiji_n1_transition_factorial_run86_launcher_returned.json。等待60秒后控制器以FileNotFoundError退出；OS记录任务Ready、LastTaskResult=1。调用顺序证明失败先于冻结attempt读取、83来源加载和真实课程读取：无worker/attempt/主报告/checkpoint，0候选更新、0dev/holdout查询。故这是启动器回执路径缺陷，非训练结果。启动任务已精确注销；launcher/return/completion/错误日志及裁决JSON保留。
+
+唯一下一步修复formal return路径，并把后续执行产物隔离到run86b；使用新scheduled preflight文件族复验心跳，再对86b checkpoint路径复验保存/独立恢复。两项通过并提交后才按完全相同的九fresh、221184更新/497664 QA/≤14400 CPU秒/原六position门协议启动；不查询dev/v3 holdout/v4/v5。详细裁决见EXP-N1-86_detached_factorial_execution_adjudication_20261016.md。

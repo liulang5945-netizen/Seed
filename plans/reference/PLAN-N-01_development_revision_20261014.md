@@ -1,6 +1,6 @@
 # PLAN-N-01 · Seed / Taiji 开发计划修订（2026-10-14）
 
-> **2026-10-16 86后台与checkpoint预检通过（㊵-1007）**：PID 24408在启动器返回后写完6/6合成心跳，Task Scheduler `LastTaskResult=0`，0训练更新/数据查询，精确探针已注销。正式86检查点目录完成s11/position/zero保存与独立进程恢复，77守卫、CPU 7.46875秒；临时目录已清理且SHA回执保存。唯一下一步先提交86实现/计划/回执，再启动固定fresh九模型同协议：221184更新/497664 QA/≤14400秒/原六门，零未见查询。84步数未知且不续接，85 TRAIN_SHA=None，v5未消费；C1/C2/C3/C4/C5、保持、三器官、其他N面和完整HEAD CI出口继续保留。
+> **2026-10-16 86首轮启动失败裁决（㊵-1008）**：正式worker等待run86_launcher_returned.json，而启动器成功写run86_returned.json，60秒后任务以FileNotFoundError退出，LastTaskResult=1；失败在训练材料加载前，0更新、无attempt/worker/checkpoint，精确任务已注销，回执与错误日志封存。修复路径后将以独立86b输出族重做合成生命周期和正式checkpoint往返预检；前置通过并提交才启动同一fresh九模型协议，221184更新/497664 QA/≤14400秒/原六门/零未见查询全不变。84实际步数未知、不续接；85 TRAIN_SHA=None、v5未消费；C1/C2/C3/C4/C5、保持、三器官、其他N面和完整HEAD CI出口继续保留。
 
 > **2026-10-16 Task Scheduler策略核验（㊵-1005）**：84由用户确认因客户端更新重启而中断，实际步数未知，最后可验证为s11/position/zero。当前exec job禁止breakaway，默认shell也无Task Scheduler服务/COM访问。仅对无触发器、Interactive/Limited的5秒合成探针请求一次策略审核；若拒绝则不执行正式86。通过后核实OS任务结果并清理精确任务，再执行全fresh九模型原221184更新/497664 QA/≤14400秒协议与原六门，零未见查询。85仍TRAIN_SHA=None，C1/C2/C3/C4/C5、保持、三器官、其他N面和完整HEAD CI出口逐项保留。
 
