@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **2026-10-16 run86c正式启动**：已完成源码/77来源守卫/九fresh零态复核；18:36:33本地启动唯一任务，worker PID6428已由OS确认存活，首个zero checkpoint及attempt落盘。实时进度以03和正式报告为准，原门和禁区不变。
+> **2026-10-16 run86c终态裁决**：九fresh模型工程完整：221184更新、497664 QA、387072会话、43200评分、18独立恢复/72副本步、CPU9692.03/14400秒；83来源守卫与18 checkpoint SHA核验通过。position seed12终点unknown38/48、原/改名四条件联合24/48，违反原六门。85拒入，TRAIN_SHA=None、v5未消费，零dev/holdout/confirmation查询。唯一下一步审议PLAN-N1-87零模型加载/零查询离线轨迹诊断（≤60秒CPU），待批准。完整裁决见[EXP-N1-86](../reference/EXP-N1-86_detached_factorial_execution_adjudication_20261016.md)；03为唯一实时状态源。
 > **2026-10-16 目录整合**：双语README已刷新；机器报告统一归入reports。[迁移清单](../reference/PROJECT_LAYOUT_MIGRATION_20261016.json)保留7份报告摘要及历史路径，数据/checkpoint不动。
 > **2026-10-16 run86b预检完成（㊵-1009）**：修正版最终源码静态检查通过，项目身份测试4项通过。Task Scheduler心跳6/6均发生在启动器返回后、worker PID一致、LastTaskResult=0；CPU0.015625秒，0模型/训练材料加载、0更新/课程/dev/holdout查询。正式return文件名的receipt-only交接探针亦通过，LastTaskResult=0、CPU0.015625秒，0加载/更新/查询；run86b独立checkpoint保存/恢复预检CPU11.46875秒、77守卫通过、bundle独立恢复相同、0模型更新，临时目录清理。两个临时任务均已注销。唯一下一步提交这批启动器、计划与回执，然后启动原冻结的run86b九fresh模型训练；协议/六position门/≤14400秒CPU/零dev、v3 holdout、v4、v5不变。84是Codex客户端更新重启导致的外部中断，实际步数未知、保留不续接；86首轮启动路径失败证据保留。85未准入、v5未消费，全项目其他出口债不变。
 

@@ -1,6 +1,6 @@
 # 09 下一轮主线规划：架构与模型（N 系列，2026-10-06 开线；2026-10-14 第五版调度修订）
 
-> **2026-10-16 最新调度**：N1已推进到冻结run86c三种子三臂正式训练（每模型24576更新，累计221184，CPU≤14400秒），当前同一任务运行中。此前10路线讨论已被后继实施与诊断取代，不再是待决队首。C1载体已过；C2消费/信用候选须先完成本批工程及三position原六训练门，再按[85条件准入](../../reference/PLAN-N1-85_transition_factorial_frozen_confirmation_20261016.md)决定能否绑定首次v5确认；当前TRAIN_SHA=None，v5未消费。保持、C4净增益、三器官/同bundle联合出口及其他N面仍各自欠验，不能以训练完成替代。唯一实时调度仍看[03](03_CURRENT_EXECUTION.md)。
+> **2026-10-16 最新裁决**：run86c九fresh模型批次已工程完整并逐分片核验（221184更新，CPU9692.03/14400秒），但seed12/position终点违反原六门，故85不准入、TRAIN_SHA=None、v5未消费。run86c最终判读见[裁决](../../reference/EXP-N1-86_detached_factorial_execution_adjudication_20261016.md)。唯一下一步是审议待批准的[PLAN-N1-87](../../reference/PLAN-N1-87_run86c_offline_trajectory_audit_review_20261016.md)离线轨迹诊断；保持、C4净增益、三器官/同bundle联合出口及N系列其余面仍各自欠验。实时调度仍看[03](03_CURRENT_EXECUTION.md)。
 > **来源与效力**：本文把 [VISION §19.13](../../reference/VISION_FUTURE_TECHNOLOGY.md)（2026-10-05 A 支线收官判读，owner 指示"架构与模型最先"）转化为可执行主线规划；owner 2026-10-06 裁"M0–M7 收束、VISION 转下一轮主线"（[M0_M7_PROJECT_CONSOLIDATION_20261006](../../reference/M0_M7_PROJECT_CONSOLIDATION_20261006.md)）。**2026-10-07 重订（第四版，双层计划结构）**：owner 裁定 N 主线采用**双层承载**——本文保持主线调度层（排序/泳道/决策点/收官）；VISION 的设计条款**不复制进本文**（单一事实源防漂移），以 **§1.3 设计条款对账表**（V-01…V-41 逐条入册）保证不遗漏，以每个 N 项开工前落的 **PLAN-Nxx 实施计划**（VISION 对应条款完整展开为实现设计）保证内容充足，以 **SPEC-Nxx 判据预注册**保证判据先冻。本文 §2 各 N 项的"实施设计"块是**调度摘要**（供排程与决策点的最小信息），完整实施设计以 PLAN-Nxx 为准。N1–N6 阶段划分与排序不变（引用兼容）。**效力**：阶段结构与顺序冻结；开工前置件流程见 §2 开头。M7 发布面与 M8 维持挂起（重启条件在收束文档 §2/§3），不属于本主线。
 
 

@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：监测正在运行的冻结run86c九模型训练（Task Scheduler Seed-N1-Run86C-20261016，worker PID6428，2026-10-16 18:36:33本地启动）。77项来源守卫、九个fresh零态及最终源码哈希复核通过；OS任务Running且PID存活、CPU递增，已完整封存8/9：seed11、seed12三臂及seed13/position、terminal均工程完整，每模型两次独立恢复通过；seed11/position、seed13/position六门通过，seed12/position终点unknown38/48、两组四条件联合24/48，原六门失败，因此本批不能满足85三position均充分的准入前置。保留固定终点，不选中间checkpoint/补训/消费v5；同一PID按冻结协议继续最后的seed13/cut，整批completion尚不存在。不重复启动、不改训练中的源码或来源；自然结束后核验九模型完整样本、18次独立恢复、221184更新、原六position门及CPU≤14400秒，再裁决后继。零dev/v3 holdout/v4/v5；85未准入，整理及双语README修订已提交推送。
+## 当前唯一下一步：审议并批准 [PLAN-N1-87](../../reference/PLAN-N1-87_run86c_offline_trajectory_audit_review_20261016.md)，对已封存轨迹做零模型加载、零查询的离线失稳诊断。run86c已自然结束：OS LastTaskResult=0，PID6428退出，精确临时任务已注销；九模型工程完整，221184更新/497664 QA/387072会话/43200评分/18次独立恢复/72副本步/288合成QA全部核实，CPU 9692.03/14400秒，83项来源守卫与代码未变，18个checkpoint哈希匹配，report SHA与completion一致。position仅seed11、13通过；seed12原题unknown38/48且原始与改名四条件联合均24/48，因此85前置失败，TRAIN_SHA=None、v5未消费，dev/holdout/confirmation均零查询。保留原终点和所有失败，不补训、不选中点、不改门。封存报告及九分片已完成；C1已过，N1消费/信用、保持、C4净增益、三器官/同bundle和N系列其余出口仍未闭环。
 
 ## 本轮调度修订（2026-10-14）
 

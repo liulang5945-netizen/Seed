@@ -83,3 +83,8 @@ run86c checkpoint测试以83完整预检中seed11/position zero（源SHA256 `d02
 ## 2026-10-16 整理后正式启动
 
 仓库整理已提交推送至cec0153aa。控制器/启动器/冻结运行器三个源码SHA逐项复现最终handoff回执；readiness只读复核77项来源守卫及九fresh零态通过。无既存正式任务/attempt/分片/checkpoint根后，于2026-10-16 18:36:33启动Seed-N1-Run86C-20261016（无触发器、Interactive/Limited）。worker PID6428由OS确认存活，累计CPU24.69秒；Task Scheduler为Running、LastTaskResult267009（运行中，非失败退出码）。正式attempt及s11_position_zero.pt已生成，completion尚无。仅监测同一worker，不重启，不修改运行中源码/来源。自然结束后核对完整报告和OS退出结果，再移除精确任务。
+
+
+## run86c终态交割（2026-10-16）
+
+run86c工程与九分片核验完成；详见[最终批次裁决](EXP-N1-86_detached_factorial_execution_adjudication_20261016.md#run86c最终批次裁决2026-10-16)。九模型全工程完整、总CPU9692.03125秒、来源守卫与checkpoint恢复通过。seed12/position六门失败，85条件准入拒绝，TRAIN_SHA=None、v5未消费；零dev/holdout/confirmation查询。精确临时任务已在确认OS退出码0后注销。唯一建议为审议PLAN-N1-87离线终点波动诊断；该范围扩展尚待所有者批准。

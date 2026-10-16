@@ -1,0 +1,12 @@
+{
+  "completed_utc": "2026-10-16T13:18:37.981943+00:00",
+  "engineering_complete": true,
+  "exit_code": 0,
+  "process_cpu_seconds": 9626.390625,
+  "process_id": 6428,
+  "report_sha256": "0a8fc62e9aa00577d67001c70008773e6e5cee54cebad4115956e0360446d785",
+  "schema": "n1-transition-factorial-run86c-completion-v1",
+  "started_utc": "2026-10-16T10:36:33.761289+00:00",
+  "task_name": "Seed-N1-Run86C-20261016",
+  "training_sufficient": false
+}
