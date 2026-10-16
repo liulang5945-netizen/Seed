@@ -8,7 +8,7 @@ Seed 托管并对外提供 **Taiji**：探索持续状态、记忆、局部学�
 
 活动研究为 **N 主线**，N1 正在研究学习型读取、实体绑定和状态转移。已有结果属于限定实验；训练、未见评估、保持和消费者行为分别记账，尚不足以证明通用对话、AGI 或自主进化能力。
 
-截至 2026-10-16，run86c 九个 fresh 模型已完成，工程、来源、分片、checkpoint 与恢复核验通过。三个 position 种子中有一个未过冻结训练门，因此 v5 确认面仍未消费，候选不能晋升。零查询离线轨迹诊断的首次导入预检未读取输入即停止；修正入口后审计完成。读数显示seed相关的末周期QA loss回升、主要出现在transition，但不能证明原因。唯一下一项实验是在三个 fresh position seed 的最后训练周期将学习率降为四分之一；run88c三seed前置已通过。seed11 position已完成24576步、训练门通过且两份checkpoint独立恢复；前18432步loss/measurement与run86c基线逐项相同，末周期处理效果仍在评估。原run88两次前置均在正式训练前失败，记录及已有零态checkpoint均保留。新隔离run88c统一父/子单线程，并在4800秒总CPU中为既往未单独计量的诊断预留300秒。详见[最终裁决](plans/reference/EXP-N1-86_detached_factorial_execution_adjudication_20261016.md)、[当前执行计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)和[全项目评估](plans/reference/PROJECT_WIDE_ASSESSMENT_20261014.md)。产品阶段交付与研究能力验收分别判断。
+截至 2026-10-17，run88c 的三个 fresh position 种子已在"末周期学习率衰减"（前 18432 步 0.001、末 6144 步 0.00025）配方下跑完，并由一台零算力复核仪从封存分片独立复算出：三种子全部通过冻结的六训练门；至 18432 步（含该里程碑）为止的 loss、五组更新读数与各 960 行评分逐项复现 run86c 基线；正式 6 次加预检 3 次独立恢复均 equal、110 枚来源守卫未变、CPU 3385.578125 秒在 4800 秒上限内。训练充分不等于能力：候选仍不可晋升、`TRAIN_SHA` 保持 None、v5 确认面仍未消费；判读件同时记下反向读数——同一衰减使 seed13 少 1 题，而被修好的失败原本只出现在三个种子中的一个。现按同一配方依次补训 terminal 与 cut 两条对照臂，使九枚检查点之间只剩读取臂这一个自变量，再由已冻的绑定件对 v5 只查询一次。详见 [run88c 整批评判](plans/reference/EXP-N1-88_run88c_batch_adjudication_20261017.md)、[对照臂与确认计划](plans/reference/PLAN-N1-89_lr_decay_control_arms_and_v5_confirmation_20261017.md) 与[当前执行计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)。产品阶段交付与研究能力验收分别判断。
 
 ## 架构与学习
 

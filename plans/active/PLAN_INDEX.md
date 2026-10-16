@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **2026-10-16 run88c已封存2/3**：seed11/12均完整且六门通过；seed12终点192/96/192/96、joint48/48，前18432轨迹及全部同期评分逐项同run86c，零/终点恢复通过。旧seed12失败保留；当前PID27320继续seed13，整批结论及v5准入尚未成立。唯一下一步监测同一任务至完整终态；03为实时状态源。
+> **2026-10-17 run88c 整批已结清、89 两批接续**：run88c 三 seed position 全过原六门，由零算力复核仪从封存分片独立复算（六门逐项、至 18432 含该里程碑的各 960 行评分前缀等同、正式 6＋预检 3 次独立恢复、110 枚守卫未变、CPU 3385.578125≤4800 秒），判读见 [EXP-N1-88](../reference/EXP-N1-88_run88c_batch_adjudication_20261017.md)。owner 2026-10-17 裁甲：同末周期衰减配方补 terminal（89a，已起跑）与 cut（89b，预检 9.640625 秒已过）两批，九枚同协议终端再按 [PLAN-N1-90](../reference/PLAN-N1-90_three_family_binding_v5_confirmation_20261017.md) 对 v5 只查询一次；规格见 [PLAN-N1-89](../reference/PLAN-N1-89_lr_decay_control_arms_and_v5_confirmation_20261017.md)。训练充分不等于能力：`can_promote=false`、`TRAIN_SHA=None`、v5 未消费，保持/C4/三器官仍各自欠验。（本行取代下一条旧队首陈述；㊵-1012 已接管整批读数，旧行里的 seed 级数字保留作批次出处。）
 > **2026-10-16 目录整合**：双语README已刷新；机器报告统一归入reports。[迁移清单](../reference/PROJECT_LAYOUT_MIGRATION_20261016.json)保留7份报告摘要及历史路径，数据/checkpoint不动。
 > **2026-10-16 run86b预检完成（㊵-1009）**：修正版最终源码静态检查通过，项目身份测试4项通过。Task Scheduler心跳6/6均发生在启动器返回后、worker PID一致、LastTaskResult=0；CPU0.015625秒，0模型/训练材料加载、0更新/课程/dev/holdout查询。正式return文件名的receipt-only交接探针亦通过，LastTaskResult=0、CPU0.015625秒，0加载/更新/查询；run86b独立checkpoint保存/恢复预检CPU11.46875秒、77守卫通过、bundle独立恢复相同、0模型更新，临时目录清理。两个临时任务均已注销。唯一下一步提交这批启动器、计划与回执，然后启动原冻结的run86b九fresh模型训练；协议/六position门/≤14400秒CPU/零dev、v3 holdout、v4、v5不变。84是Codex客户端更新重启导致的外部中断，实际步数未知、保留不续接；86首轮启动路径失败证据保留。85未准入、v5未消费，全项目其他出口债不变。
 

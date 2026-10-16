@@ -63,7 +63,7 @@ def test_position_arm_is_refused() -> None:
 @pytest.mark.parametrize("arm,stem,task", FAMILIES)
 def test_family_paths_are_derived_from_the_arm(arm: str, stem: str, task: str) -> None:
     run89.configure(arm)
-    assert run89.ARM == arm and run89.RUN_STEM == stem and run89.TASK_RUN == task
+    assert arm == run89.ARM and stem == run89.RUN_STEM and task == run89.TASK_RUN
     assert Path(run89.REPORT).name == f"taiji_n1_transition_factorial_lr_decay_{stem}.json"
     assert (
         Path(run89.PREFLIGHT).name
@@ -85,9 +85,9 @@ def test_the_two_families_do_not_share_receipt_paths() -> None:
 def test_prefix_boundary_is_one_constant_and_strictly_contains_the_milestone() -> None:
     run89.configure("terminal")
     assert run89.PREFIX_UPDATES == run89.DECAY_START
-    assert run89.PREFIX_ROW_STEPS == tuple(
+    assert tuple(
         step for step in run89.MILESTONES if step <= run89.DECAY_START
-    )
+    ) == run89.PREFIX_ROW_STEPS
     assert run89.DECAY_START in run89.PREFIX_ROW_STEPS
     strict_below = {step for step in run89.MILESTONES if step < run89.DECAY_START}
     assert strict_below < set(run89.PREFIX_ROW_STEPS)
