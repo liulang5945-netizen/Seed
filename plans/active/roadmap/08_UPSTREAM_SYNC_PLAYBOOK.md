@@ -3549,3 +3549,29 @@ v5精确路径固定LF、gzip声明binary，防止checkout改字节；旧证据�
 ### ㊵-1002 · 2026-10-16 · 84/85执行器与完整证据准入合同通过
 
 84/85准备实现与30项artifact-free合同通过：九fresh固定主轨迹/同臂零终点恢复、4800行六view逐项与原始复现、完整loss/五组测量/双SHA无损分片/六门准入，85显式holdout中性/原14边界/partial行/未绑定SHA拒绝；两根Ruff通过，真实来源只读预检77守卫/九zero通过，0更新/题目查询。唯一下一步提交后启动84固定九模型221184更新/497664QA，CPU≤14400秒含全部恢复与评分，运行时冻结共享代码。85 TRAIN_SHA=None，三position六训练门及九模型全工程完整前不准入；v5未消费，原门/全项目出口债不变。
+
+
+### ㊵-1003 · 2026-10-16 · 84客户端重启中断与86隔离重跑冻结
+
+用户确认84在更新并重启Codex客户端时中断。attempt文件仅记录protocol/code_identity/source_guards，无训练进度；最后可验证检查点是seed11/position/zero，SHA `7cac570a0575c0edde56ebb7baf96b679edf19ff7989a6232ce826564ad70e4f`，且当前无Python训练进程。故84为工程不完整，不能推断中断前实际更新数；原attempt/zero保留，不续接、不覆盖。85 `TRAIN_SHA=None`，v5未消费。
+
+唯一下一步PLAN-N1-86：实施并验证隐藏独立进程及唯一输出路由，随后用fresh九模型重复84完全相同的221184更新/497664 QA/原六position训练门，CPU≤14400秒；新报告、日志与checkpoint使用独立86族。零dev/v3 holdout/v4/v5；80—83的证据和77/78失败保留，保持/C4/三器官/其他N面/完整HEAD CI债不变。详细裁决与运行合同见[EXP-N1-84](../../reference/EXP-N1-84_transition_factorial_paired_training_adjudication_20261016.md)和[PLAN-N1-86](../../reference/PLAN-N1-86_detached_factorial_execution_20261016.md)。
+
+
+### ㊵-1004 · 2026-10-16 · 86改用无触发器Task Scheduler隔离
+
+两次Start-Process短探针退出但没有心跳、报告或stdout/stderr；第三次显式`CREATE_BREAKAWAY_FROM_JOB`返回WinError5，当前exec作业不准脱离。86工程适配为本机无触发器、当前交互用户、Limited权限Task Scheduler任务；用户不必重新登录即可在客户端更新时继续运行。独立任务的存活与实际LastTaskResult尚未验证，正式模型训练尚未启动。唯一下一步运行一次约5秒合成心跳、核对PID/时间/任务退出码，随后移除精确探针任务；通过后再从fresh状态执行同一固定训练协议。85未准入，v5未消费，原门与项目全局收束债不变。
+
+
+### ㊵-1005 · 2026-10-16 · Task Scheduler默认权限被拒，申请一次受控策略审核
+
+默认shell经服务控制器与Task Scheduler COM访问本机服务均被拒（`Access denied (0x80070005)`）；命令模块可导入不代表服务可访问。唯一下一步仅对无触发器、当前交互用户/Interactive、Limited权限的合成探针任务申请一次提权策略审核，不含模型或训练材料。审核成功才执行心跳并核对LastTaskResult，随后清理准确任务项；审核拒绝则停止正式86并说明环境阻断。原84 incomplete保留、85未准入、v5未消费，其他项目出口债不变。
+
+
+### ㊵-1006 · 2026-10-16 · 86 Task Scheduler启动器空触发器计数修复
+
+策略审核创建了`Seed-N1-Run86-Probe-20261016`，但PowerShell把null `Triggers`误计为1，在`Start-ScheduledTask`前抛错。独立查询显示Ready、LastRunTime=1999-11-30、LastTaskResult=267011，确认任务未运行；没有生成心跳、worker或报告。精确任务已注销，唯一预检文件族未消费。启动器把null按0计数并初始化启动前回滚状态后，唯一下一步用同一预声明文件族运行合成心跳，核worker PID、六条心跳、至少三条晚于启动器返回、Task Scheduler `LastTaskResult=0`，然后清理精确探针任务。正式86训练尚未启动；84中断步数未知且保留原证据，85 TRAIN_SHA=None、v5未消费，全项目出口债不变。
+
+### ㊵-1007 · 2026-10-16 · 86后台与正式checkpoint路径预检通过
+
+Task Scheduler合成探针PID 24408在启动器返回后写完6/6心跳；6条均晚于返回时间，worker清单PID一致，OS查询的`LastTaskResult=0`。报告SHA `90c3ad1359d4ddedfe99c5f7dc1e33ad59eb8895a6656c0a351a83030edc30b7`，仅合成探针，候选/训练材料未载入，0更新、0课程/dev/holdout查询；精确探针任务已注销。另将83已验收fresh s11/position/zero经84真实`engineering.load`载入，保存至86正式检查点路径并由独立Python进程恢复；77来源守卫通过、空Adam/0主模型更新、bundle指纹相同、CPU 7.46875秒。checkpoint SHA `7cac570a0575c0edde56ebb7baf96b679edf19ff7989a6232ce826564ad70e4f`、269989字节；临时测试目录清理，报告`taiji_n1_transition_factorial_run86_checkpoint_preflight.json`入库。receipt helper静态核对确认接受报告对象并按分片seal路径读取，无固定84主报告路径。唯一下一步只提交已声明86代码、导航计划和预检证据，再启动正式任务；九fresh模型、原221184更新/497664 QA/六position门/≤14400 CPU秒及零dev/v3 holdout/v4/v5均不变。84不续接、85 TRAIN_SHA=None、v5未消费，全项目出口债不变。

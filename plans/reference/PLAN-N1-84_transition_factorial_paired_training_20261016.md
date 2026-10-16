@@ -22,6 +22,10 @@ seed11/12/13×position/terminal/cut九fresh模型，每模型从对应83完整�
 
 先完成84/85准备实现、artifact-free合同/根Ruff/相关计划导航检查并提交，然后独占训练；运行时冻结所有共享代码。85执行器TRAIN_SHA初始None，84全终点后仅在前置全部成立时另提交精确SHA绑定。不能运行旧78绕过新目标准入。所有旧实验/报告/模型不改、不删、不推远端。五计划保持实时，N1消费/保持/C4/同bundle三器官/N系列/完整HEAD CI债仍欠。
 
+## 最新执行状态（2026-10-16）
+
+本批已于Codex客户端更新重启时中断。唯一可验证检查点为seed11/position/zero；attempt不含进度字段，因此中断前实际更新数未知。结果裁决见[EXP-N1-84](EXP-N1-84_transition_factorial_paired_training_adjudication_20261016.md)。84不续接、不覆盖；同一固定实验转由全新执行尝试86采用fresh初始化和独立产物族运行，见[PLAN-N1-86](PLAN-N1-86_detached_factorial_execution_20261016.md)。85保持未准入、训练SHA未绑定、v5未消费。
+
 ## 实施前置记录
 
 84/85共30项artifact-free合同通过，两根Ruff通过；84真实来源只读预检77来源守卫与九完整零态路径通过，0更新/查询。逐步QA调度/有限损失与五组实际位移、五阶段六view精确目标/原始复现/汇总逐项一致、无损双SHA、cut状态与全历史恢复均有合同；85 TRAIN_SHA保持None，未准入/未查询。共享代码提交后冻结并开始84，不能在训练运行中改执行器/目标/原门。完整HEAD CI债仍保留。
