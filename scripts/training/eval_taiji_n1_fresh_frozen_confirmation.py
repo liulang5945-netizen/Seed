@@ -41,6 +41,13 @@ PROTOCOL = dict(
 )
 
 
+def write_new(path, record):
+    """Exclusive exact LF receipts, independent of the host newline convention."""
+    with path.open("x", encoding="utf-8", newline="\n") as stream:
+        json.dump(record, stream, ensure_ascii=False, separators=(",", ":"), allow_nan=False)
+        stream.write("\n")
+
+
 def identity():
     return dict(
         protocol=PROTOCOL,
@@ -192,7 +199,7 @@ def audit():
         confirmation_face_consumed=True,
         can_promote=False,
     )
-    train.engineering.train.write_new(
+    write_new(
         ATTEMPT,
         dict(
             protocol=PROTOCOL,
@@ -259,7 +266,7 @@ def audit():
             and result["code_unchanged"]
         )
         result["passed"] = result["complete"] and result.get("behavioral_pass", False)
-        train.engineering.train.write_new(REPORT, result)
+        write_new(REPORT, result)
     return result
 
 

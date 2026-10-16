@@ -122,3 +122,12 @@ def test_unbound_terminal_sha_refuses_before_model_or_face_reads(monkeypatch):
     monkeypatch.setattr(evaluation.torch, "load", forbidden)
     with pytest.raises(ValueError, match="not yet bound"):
         evaluation.readiness()
+
+
+def test_receipts_are_exact_lf_and_exclusive(tmp_path):
+    target = tmp_path / "receipt.json"
+    evaluation.write_new(target, dict(synthetic=True))
+    assert target.read_bytes() == b'{"synthetic":true}\n'
+    with pytest.raises(FileExistsError):
+        evaluation.write_new(target, dict(synthetic=False))
+    assert target.read_bytes() == b'{"synthetic":true}\n'

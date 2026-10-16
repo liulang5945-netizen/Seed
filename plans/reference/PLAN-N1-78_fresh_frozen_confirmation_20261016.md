@@ -11,3 +11,7 @@
 条件评估器的artifact-free合同置于tests/taiji_native/test_native_fresh_frozen_confirmation_contract.py；只用合成holdout项，绝不读取v5进行推理。未绑定77最终SHA时先拒绝，已存在attempt先拒绝，原14门边界/部分行保留/完整状态中性验证后再提交。
 
 18项条件评估/receipt合同和两Ruff/改动Black通过，TRAIN_SHA=None故绝不准入；77完整后才绑定一次最终SHA并复验。当前仅首个position完整，不足以确认准入。
+
+## 封存字节前置修正（不改77训练）
+
+实测77沿用write_new在Windows末尾写CRLF，而通用reports/*.json属性会归一化LF。77运行器身份不可改，也不重写任何已封存报告；故精确路径reports/taiji_n1_fresh_paired_train_20261016.json声明-text，保留首次实际报告全部字节。78尚未启动，改为本地独占newline=LF写入并加入精确字节/拒覆盖合同；确认面原始LF封存及全部原门/CPU预算不变。

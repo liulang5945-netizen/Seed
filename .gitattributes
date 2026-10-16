@@ -23,3 +23,6 @@ reports/*.json text eol=lf
 # PLAN76 v5 is sealed as exact LF bytes; training shards are binary gzip.
 plans/manifests/n1_fresh_confirmation_v5_20261016.json text eol=lf
 reports/taiji_n1_fresh_paired_train_20261016_s*.json.gz binary
+
+# PLAN77 running writer emits a final CRLF: preserve its first sealed bytes verbatim.
+reports/taiji_n1_fresh_paired_train_20261016.json -text !eol
