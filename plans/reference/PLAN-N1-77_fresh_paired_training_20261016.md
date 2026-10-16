@@ -33,3 +33,7 @@ position/terminal全部41 Adam步数等于完成数；cut writer4无Adam且逐�
 | position | 192 | 96 | 192 | 96 | dffd7c03712b94cd534f011714bc53c0eb004aa441508e09f9f5789a1bd81bea |
 | terminal | 122 | 19 | 105 | 17 | b8b84528c3122170f5bd9f2cd1bfd1a7571d8e722e15a860ee6b94a55e8b5c1d |
 | cut | 186 | 96 | 176 | 96 | aedb746e63c279b48a35b4df96f2afdc237204e775c1c7eba7d2929729fd8ec4 |
+
+## seed13固定终点裁决（整批控制仍运行）
+
+77 seed13 position固定终点167/95/165/94未过原门，错误集中transition原23/48、改名21/48，其余三类各48；两恢复/完整分片核验通过。78不准入，TRAIN_SHA仍未绑定，v5未消费。原会话继续剩余terminal/cut固定次数，不补训/改门/选中点；唯一下一步完成九模型封存后执行79纯日志诊断（CPU≤30秒、0加载/更新/模型查询），再据证据修订。全项目出口仍欠。
