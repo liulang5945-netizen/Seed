@@ -1,5 +1,7 @@
 # N 主线调度修订交接（2026-10-14）
 
+> **2026-10-17 停靠现状（08 ㊵-1012…1016）**：run88c 三 seed position **全过原六门**，读数由零算力复核仪从封存分片独立复算（六门逐项、至 18432 含该里程碑的各 960 行评分前缀等同 run86c、正式 6＋预检 3 次独立恢复、110 枚来源守卫未变、CPU 3385.578125≤4800 秒），判读件 [EXP-N1-88](EXP-N1-88_run88c_batch_adjudication_20261017.md)；反向读数同场登记（seed13 因衰减少 1 题；被修的失败原本只在一 seed ⇒ n=1 修复证据）。owner 已裁**甲**：同配方补 terminal（89a 在跑，PID 26332）与 cut（89b 预检 9.640625 秒已过）两批，两批核验后按 [PLAN-N1-90](PLAN-N1-90_three_family_binding_v5_confirmation_20261017.md) 把九枚同协议终端对 v5 **只查询一次**。仍然成立：85 未准入、v5 未消费、`TRAIN_SHA=None`、`can_promote=false`、保持/C4/三器官与同 bundle 联合出口各自欠验。本机累计 10 条提交未推（远端读数与"不声称 CI 绿"见 08 ㊵-1016）。**下面各条 2026-10-16 的"唯一下一步"是批次内历史**；其中 PLAN-N1-88 与其判读件尾句因 SHA 被在库回执绑定而**不可就地改写**，现行队首一律以 [03](../active/roadmap/03_CURRENT_EXECUTION.md) 首行为准。
+
 > **2026-10-16 86首轮启动失败裁决（㊵-1008）**：Task Scheduler启动器与控制器对formal return回执文件名不一致，60秒后worker在训练材料加载前以FileNotFoundError退出，LastTaskResult=1；无attempt/worker/checkpoint/更新，精确任务已注销，错误manifest及日志保留。下一步修正回执路径，生成新86b输出族并重做合成心跳及checkpoint预检；通过并提交后才重跑同一fresh九模型协议。样本/更新/QA/门/CPU/holdout边界不变。84不续接，85 TRAIN_SHA=None、v5未消费，保持/C4/三器官/其他N面和完整HEAD CI债仍在。
 
 > **2026-10-16 Task Scheduler策略核验（㊵-1005）**：84在客户端更新重启时中断，步数未知，最后可验证s11/position/zero；85 TRAIN_SHA=None、v5未消费。默认shell访问Task Scheduler服务/COM受拒。唯一下一步对无触发器、Interactive/Limited的5秒合成探针请求一次策略审核的提权执行；拒绝则停止正式86。成功后核对实际任务结果并清理精确探针任务，再fresh重跑同协议九模型，CPU≤14400秒、原门槛、零未见查询。保持/C4/三器官/其他N面和完整HEAD CI债仍在。
