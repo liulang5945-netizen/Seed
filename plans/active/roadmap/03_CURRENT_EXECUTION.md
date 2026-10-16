@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：实施并冻结 [PLAN-N1-88](../../reference/PLAN-N1-88_position_final_cycle_lr_decay_review_20261016.md)：三fresh position seeds，仅最后6144步将学习率0.001降至0.00025，原样本、更新数、目标、六门和零留出边界不变。PLAN-N1-87离线轨迹审计已完成（9分片/216窗口，CPU3.015625秒、0模型/检查点加载/查询/更新）；seed12/position末周期QA loss升18.8倍、transition为主、五组位移未越限，末点错项loss较高但相关性非因果。run86c九模型工程完整但seed12六门失败，85拒入、TRAIN_SHA=None、v5未消费。按项目规则先实施代码、独立零态checkpoint保存/恢复预检并提交，再执行一次新recipe三seed训练；CPU≤4800秒，训练前置未过不得启动。N1消费/信用、保持、C4、三器官/同bundle及其余N系列出口仍未闭环。
+## 当前唯一下一步：运行 [PLAN-N1-88](../../reference/PLAN-N1-88_position_final_cycle_lr_decay_review_20261016.md) 的三fresh零态checkpoint保存/独立恢复前置。run88控制器与Task Scheduler启动器已实现并提交，Ruff、Python编译和PowerShell解析通过；执行器与冻结84来源隔离，唯一变化为最后6144步学习率0.00025。前置须验证三seed零态与run86c初始bundle相同、独立恢复及调度边界；CPU纳入全批4800秒。只有前置成功并提交回执后启动三seed正式训练；训练中失门不追加，不查询dev/v3holdout/v4/v5。
 
 ## 本轮调度修订（2026-10-14）
 

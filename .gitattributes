@@ -35,3 +35,6 @@ reports/taiji_n1_transition_factorial_paired_train_20261016_s*.json.gz binary
 
 # PLAN-N1-87R binds the offline auditor by byte hash across platforms.
 scripts/training/audit_taiji_n1_transition_factorial_run86c_offline_trajectory.py text eol=lf
+scripts/training/run_taiji_n1_transition_factorial_lr_decay_run88.py text eol=lf
+scripts/training/launch_taiji_n1_transition_factorial_lr_decay_run88.ps1 text eol=lf
+plans/reference/PLAN-N1-88_position_final_cycle_lr_decay_review_20261016.md text eol=lf
