@@ -79,3 +79,7 @@ run86c checkpoint测试以83完整预检中seed11/position zero（源SHA256 `d02
 ## 全项目边界
 
 86只修复N1已验证的长任务受客户端生命周期影响这一工程缺口，不改变能力声明或其他主线队列。Task Scheduler注册只创建无触发器、有限权限、唯一命名的本地用户任务；探针验收后、正式任务报告核验后分别清理对应精确任务项。只有本地默认策略拒绝注册时才对合成探针提交一次自动策略审核；审核拒绝则停止，不启动正式86。C1载体、C2消费、C3信用、C4净增益、C5联合能力、保持、三器官出口与其他N系列/整族CI仍逐项独立核验。完整HEAD CI债未清；本地工程结果不能宣称远端CI通过。不得推远端、删档或更改既有门槛。
+
+## 2026-10-16 整理后正式启动
+
+仓库整理已提交推送至cec0153aa。控制器/启动器/冻结运行器三个源码SHA逐项复现最终handoff回执；readiness只读复核77项来源守卫及九fresh零态通过。无既存正式任务/attempt/分片/checkpoint根后，于2026-10-16 18:36:33启动Seed-N1-Run86C-20261016（无触发器、Interactive/Limited）。worker PID6428由OS确认存活，累计CPU24.69秒；Task Scheduler为Running、LastTaskResult267009（运行中，非失败退出码）。正式attempt及s11_position_zero.pt已生成，completion尚无。仅监测同一worker，不重启，不修改运行中源码/来源。自然结束后核对完整报告和OS退出结果，再移除精确任务。

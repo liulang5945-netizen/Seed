@@ -8,7 +8,7 @@ Seed hosts and exposes **Taiji**, a research architecture exploring persistent s
 
 The active research program is the **N mainline**, with N1 investigating learned reading, entity binding and state transitions. Results are bounded experiments, with training, unseen evaluation, retention and consumer behavior recorded separately. They do not establish general dialogue, AGI or autonomous self-improvement.
 
-As of 2026-10-16, the run86c launcher and checkpoint preflights have passed; its formal nine-model training batch has not started. Repository organization takes priority. The [execution plan](plans/active/roadmap/03_CURRENT_EXECUTION.md) owns live scheduling; the [project assessment](plans/reference/PROJECT_WIDE_ASSESSMENT_20261014.md) explains the broader capability gaps. Product delivery history is separate from research capability acceptance.
+As of 2026-10-16, the run86c launcher and checkpoint preflights have passed; its formal nine-model training batch started at 18:36 local time. Results remain pending. The [execution plan](plans/active/roadmap/03_CURRENT_EXECUTION.md) owns live scheduling; the [project assessment](plans/reference/PROJECT_WIDE_ASSESSMENT_20261014.md) explains the broader capability gaps. Product delivery history is separate from research capability acceptance.
 
 ## Architecture and learning
 

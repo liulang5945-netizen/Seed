@@ -8,7 +8,7 @@ Seed 托管并对外提供 **Taiji**：探索持续状态、记忆、局部学�
 
 活动研究为 **N 主线**，N1 正在研究学习型读取、实体绑定和状态转移。已有结果属于限定实验；训练、未见评估、保持和消费者行为分别记账，尚不足以证明通用对话、AGI 或自主进化能力。
 
-截至 2026-10-16，run86c 启动器及 checkpoint 前置验证通过，正式九模型训练尚未启动，当前优先整理仓库。实时工作顺序由[当前执行计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)维护；[全项目评估](plans/reference/PROJECT_WIDE_ASSESSMENT_20261014.md)解释整体能力缺口。产品阶段交付与研究能力验收分别判断。
+截至 2026-10-16，run86c 启动器及 checkpoint 前置验证通过，正式九模型训练已于本地18:36启动，结果待核验。实时工作顺序由[当前执行计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)维护；[全项目评估](plans/reference/PROJECT_WIDE_ASSESSMENT_20261014.md)解释整体能力缺口。产品阶段交付与研究能力验收分别判断。
 
 ## 架构与学习
 
