@@ -9,3 +9,7 @@ position/terminal全部41 Adam步数等于完成数；cut writer4无Adam且逐�
 产物为76声明的reports/taiji_n1_fresh_paired_train_20261016*.json[.gz]及data/checkpoints/n1_fresh_paired_train_20261016/，执行器scripts/training/run_taiji_n1_fresh_paired_training.py、对应artifact-free合同；不改冻结74/75和模型。错误/预算触顶保存全部已得证据与partial，整批停止，不自动重启。
 
 训练0dev/v3holdout/v4/v5查询，仅封存字节守卫。全部九模型/18恢复完整、三个position终点原四门通过后，另版78才一次288项v5查询；14原优势门不变，每seed≥16/32、每类≥2/8，position分别领先terminal/cut各≥12/96。否则不查询，保留失败并按训练证据诊断。保持/C4/三器官/N系列其他出口不替代。
+
+## 实施前置完成
+
+8项artifact-free合同通过：三种臂分别零档独立进程两步签名恢复、三臂synthetic final完整恢复/切步计数拒绝、cut writer逐位不变/无Adam、partial无损分片/缺计数拒绝、固定四周期与已存在批次拒绝。31来源与九74零档只读守卫验证，v5未查询；两根Ruff与改动Black通过。为避免Windows checkout改变封存SHA，v5精确路径固定eol=lf，九gzip命名族声明binary；未重写任何旧档。

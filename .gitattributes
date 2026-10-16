@@ -20,3 +20,6 @@
 # Scoped to reports/*.json because that is where the byte-exact seals live.  The blobs
 # are already LF, so this introduces no content change -- only reproducibility.
 reports/*.json text eol=lf
+# PLAN76 v5 is sealed as exact LF bytes; training shards are binary gzip.
+plans/manifests/n1_fresh_confirmation_v5_20261016.json text eol=lf
+reports/taiji_n1_fresh_paired_train_20261016_s*.json.gz binary
