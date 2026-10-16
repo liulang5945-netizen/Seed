@@ -1,0 +1,372 @@
+{
+  "acceptance": {
+    "axis1_total_96": true,
+    "axis2_complete_and_exclusive": true,
+    "axis3_exhaustive": true,
+    "axis5_denominator_matches": true,
+    "guards_B1_B4_true": true
+  },
+  "accepted": true,
+  "axis1_agreement": {
+    "all_three_right": 33,
+    "all_three_wrong": 16,
+    "exactly_one_right": 1,
+    "exactly_two_right": 46,
+    "other": 0
+  },
+  "axis1_agreement_by_seed": {
+    "11": {
+      "all_three_right": 12,
+      "all_three_wrong": 0,
+      "exactly_one_right": 1,
+      "exactly_two_right": 19,
+      "other": 0
+    },
+    "12": {
+      "all_three_right": 11,
+      "all_three_wrong": 0,
+      "exactly_one_right": 0,
+      "exactly_two_right": 21,
+      "other": 0
+    },
+    "13": {
+      "all_three_right": 10,
+      "all_three_wrong": 16,
+      "exactly_one_right": 0,
+      "exactly_two_right": 6,
+      "other": 0
+    }
+  },
+  "axis1_exactly_one_right_by_arm": {
+    "cut": 1
+  },
+  "axis1_exactly_two_right_missing_arm": {
+    "terminal": 46
+  },
+  "axis1_groups_total": 96,
+  "axis2_free_wrong_rows": 96,
+  "axis2_no_boundary_cap": 1,
+  "axis2_shape_classes": {
+    "empty_output": 0,
+    "equal_output_not_exact": 0,
+    "first_symbol_wrong": 69,
+    "overshoot": 0,
+    "prefix_then_diverge": 27,
+    "truncated_prefix": 0
+  },
+  "axis2_shapes_by_kind": {
+    "lookup": {
+      "first_symbol_wrong": 25,
+      "prefix_then_diverge": 15
+    },
+    "revision": {
+      "first_symbol_wrong": 29,
+      "prefix_then_diverge": 11
+    },
+    "unknown": {
+      "first_symbol_wrong": 15,
+      "prefix_then_diverge": 1
+    }
+  },
+  "axis2_unclassified": 0,
+  "axis3_compounding_only": 0,
+  "axis3_selection_side": 96,
+  "axis3_teacher_tokens_missing_histogram": {
+    "1": 15,
+    "2": 10,
+    "3": 13,
+    "4": 6,
+    "5": 21,
+    "6": 22,
+    "7": 9
+  },
+  "axis4_kind_seed_arm": {
+    "11_cut": {
+      "lookup": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      },
+      "revision": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      },
+      "transition": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      },
+      "unknown": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      }
+    },
+    "11_position": {
+      "lookup": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      },
+      "revision": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      },
+      "transition": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      },
+      "unknown": {
+        "free_exact": 7,
+        "items": 8,
+        "teacher_exact": 7
+      }
+    },
+    "11_terminal": {
+      "lookup": {
+        "free_exact": 0,
+        "items": 8,
+        "teacher_exact": 0
+      },
+      "revision": {
+        "free_exact": 0,
+        "items": 8,
+        "teacher_exact": 0
+      },
+      "transition": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      },
+      "unknown": {
+        "free_exact": 4,
+        "items": 8,
+        "teacher_exact": 4
+      }
+    },
+    "12_cut": {
+      "lookup": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      },
+      "revision": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      },
+      "transition": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      },
+      "unknown": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      }
+    },
+    "12_position": {
+      "lookup": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      },
+      "revision": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      },
+      "transition": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      },
+      "unknown": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      }
+    },
+    "12_terminal": {
+      "lookup": {
+        "free_exact": 0,
+        "items": 8,
+        "teacher_exact": 0
+      },
+      "revision": {
+        "free_exact": 0,
+        "items": 8,
+        "teacher_exact": 0
+      },
+      "transition": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      },
+      "unknown": {
+        "free_exact": 3,
+        "items": 8,
+        "teacher_exact": 3
+      }
+    },
+    "13_cut": {
+      "lookup": {
+        "free_exact": 0,
+        "items": 8,
+        "teacher_exact": 0
+      },
+      "revision": {
+        "free_exact": 0,
+        "items": 8,
+        "teacher_exact": 0
+      },
+      "transition": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      },
+      "unknown": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      }
+    },
+    "13_position": {
+      "lookup": {
+        "free_exact": 0,
+        "items": 8,
+        "teacher_exact": 0
+      },
+      "revision": {
+        "free_exact": 0,
+        "items": 8,
+        "teacher_exact": 0
+      },
+      "transition": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      },
+      "unknown": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      }
+    },
+    "13_terminal": {
+      "lookup": {
+        "free_exact": 0,
+        "items": 8,
+        "teacher_exact": 0
+      },
+      "revision": {
+        "free_exact": 0,
+        "items": 8,
+        "teacher_exact": 0
+      },
+      "transition": {
+        "free_exact": 8,
+        "items": 8,
+        "teacher_exact": 8
+      },
+      "unknown": {
+        "free_exact": 2,
+        "items": 8,
+        "teacher_exact": 2
+      }
+    }
+  },
+  "axis5_all_three_wrong_groups": 16,
+  "axis5_all_wrong_items": [
+    "seed13:v5-confirm-000",
+    "seed13:v5-confirm-001",
+    "seed13:v5-confirm-004",
+    "seed13:v5-confirm-005",
+    "seed13:v5-confirm-008",
+    "seed13:v5-confirm-009",
+    "seed13:v5-confirm-012",
+    "seed13:v5-confirm-013",
+    "seed13:v5-confirm-016",
+    "seed13:v5-confirm-017",
+    "seed13:v5-confirm-020",
+    "seed13:v5-confirm-021",
+    "seed13:v5-confirm-024",
+    "seed13:v5-confirm-025",
+    "seed13:v5-confirm-028",
+    "seed13:v5-confirm-029"
+  ],
+  "axis5_identical_outputs_within_all_wrong": {},
+  "claims_forbidden_by_preregistration": [
+    "任何臂更强",
+    "机制已查明",
+    "训练不足或训练充分",
+    "C3 或 C4 或三器官某一格已达成"
+  ],
+  "confirmation_queries": 0,
+  "cpu_seconds": 0.0156,
+  "format": "taiji-n1-91-per-item-error-attribution-v1",
+  "guards": {
+    "B1_shape": {
+      "arms": [
+        "cut",
+        "position",
+        "terminal"
+      ],
+      "ids_equal_face": true,
+      "rows": 288,
+      "seeds": [
+        11,
+        12,
+        13
+      ]
+    },
+    "B2_face_seal": {
+      "bytes": 11972,
+      "crlf_normalized_to_lf": "22ba37976bc6eaaaf2425b84714a6efa6e95e7e5aa05f32eb3a7c0c10d9ffc2d",
+      "matched_convention": [
+        "raw",
+        "crlf_normalized_to_lf"
+      ],
+      "raw": "22ba37976bc6eaaaf2425b84714a6efa6e95e7e5aa05f32eb3a7c0c10d9ffc2d",
+      "recorded": "22ba37976bc6eaaaf2425b84714a6efa6e95e7e5aa05f32eb3a7c0c10d9ffc2d"
+    },
+    "B3_aggregates": {
+      "per_arm_free_exact": {
+        "cut": 80,
+        "position": 79,
+        "terminal": 33
+      },
+      "per_cell_checked": 9,
+      "sealed_per_arm_free_exact": {
+        "cut": 80,
+        "position": 79,
+        "terminal": 33
+      }
+    },
+    "B4_field_semantics": {
+      "boundary_rows_incoherent": 0,
+      "cap_generated_steps_values": [
+        64
+      ],
+      "cap_rows": 1,
+      "observed_max_generated_steps": 64,
+      "protocol_max_generated_bytes": 64
+    }
+  },
+  "inputs": {
+    "face": "E:\\Seed\\plans\\manifests\\n1_fresh_confirmation_v5_20261016.json",
+    "report": "E:\\Seed\\reports\\taiji_n1_transition_factorial_confirmation_run89.json",
+    "report_sha256_crlf_normalized_to_lf": "3b4fc7f3fb387de8a615f23c6eeb2657e205508614de9629e972865ae5e61015",
+    "report_sha256_raw": "3b4fc7f3fb387de8a615f23c6eeb2657e205508614de9629e972865ae5e61015"
+  },
+  "not_a_capability_reading": true,
+  "not_an_arm_advantage_reading": true,
+  "plan": "E:\\Seed\\plans\\reference\\PLAN-N1-91_per_item_error_attribution_run89_20261017.md",
+  "plan_sha256": "88b938f59e16937ee566e829411d8733f40eaecf3ddac3610899d9cc40626b30",
+  "status": "published",
+  "training_updates": 0
+}
