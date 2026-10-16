@@ -3641,3 +3641,7 @@ cut分片complete=true、training_sufficient=false：24576更新、55296QA、430
 ### 2026-10-16 · run86c seed12 position终点不足，v5前置无法成立
 
 seed12/position完整分片：complete=true、training_sufficient=false，24576更新、55296QA、43008会话、4800评分、两次独立恢复equal=true及8签名副本步。终点original176/192（48/48/42/38）、pair96/96、rename181/192（48/48/42/43）、rename_pair96/96；原始/重命名四条件联合均24/48（原门44）。12,288/18,432步四项主评分满分不替代冻结终点，不选中途结果。工程完成4/9，能力准入已因seed12原门失败不能成立；85 TRAIN_SHA保持None，v5不消费，不自动追加训练。原audit只因工程失败停批，故同一worker继续固定九模型收集完整对照，已进入seed12/terminal，主进程CPU4416.46875秒，错误日志为空。自然结束后统一核验工程与来源总账，再提出单一后继修订；不在运行中改源码/目标/判据。
+
+### 2026-10-16 · run86c seed12 terminal完整封存
+
+terminal complete=true、training_sufficient=false，固定24576更新、55296QA、43008会话、4800评分、两次独立恢复equal=true及8签名副本步。终点original132/192（9/36/48/39）、pair33/96、rename122/192（7/35/48/32）、rename_pair26/96；两组四条件联合均48/48。工程完成5/9，同一PID6428继续Running并进入seed12/cut，主进程CPU5563.671875秒，错误日志为空。seed12/position原门失败的准入结论不变，85 TRAIN_SHA=None、v5未消费；继续固定余下四模型，不补训或选中间结果。
