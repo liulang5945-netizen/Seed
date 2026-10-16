@@ -1,0 +1,22 @@
+{
+  "schema": "n1-transition-factorial-lr-decay-run88-task-launch-v1",
+  "mode": "run",
+  "task_name": "Seed-N1-LRDecay-Run88C-20261016",
+  "trigger_count": 0,
+  "principal_logon_type": "Interactive",
+  "run_level": "Limited",
+  "python_path": "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\pythonw.exe",
+  "arguments": "-u \"E:\\Seed\\scripts\\training\\run_taiji_n1_transition_factorial_lr_decay_run88.py\" --execute-approved",
+  "repository_root": "E:\\Seed",
+  "registered_utc": "2026-10-16T15:14:39.5440873Z",
+  "controller_path": "E:\\Seed\\scripts\\training\\run_taiji_n1_transition_factorial_lr_decay_run88.py",
+  "controller_sha256": "801073f6eec312eb8e147a98700e4130ec9f856eda4402fcb18ec2568a38e350",
+  "frozen_runner_path": "E:\\Seed\\scripts\\training\\run_taiji_n1_transition_factorial_paired.py",
+  "frozen_runner_sha256": "38018dbe08b9eb4c35d0b5c97196727b34f94efee68d68113e80269b8d3c9491",
+  "launcher_path": "E:\\Seed\\scripts\\training\\launch_taiji_n1_transition_factorial_lr_decay_run88c.ps1",
+  "launcher_sha256": "36bb48ae495de0962feeb1fc3c31de54aac62f47bb260ae6ff43d37ec3862434",
+  "preflight_report_sha256": "4837eef2e1f6e9b8f3b255ace39f7b74d7f6444afd30316b9c1473d6acfe4245",
+  "preflight_binding_sha256": "c68aeef25de81aaefeec07c2bd646794e5709db4511e522da6abff01a21e7911",
+  "stdout_path": "E:\\Seed\\reports\\taiji_n1_transition_factorial_lr_decay_run88c.stdout.log",
+  "stderr_path": "E:\\Seed\\reports\\taiji_n1_transition_factorial_lr_decay_run88c.stderr.log"
+}
