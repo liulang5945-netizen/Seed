@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：执行隔离族run88c的三seed fresh零态checkpoint保存/独立恢复前置。run88/88b的两个preflight失败与run88b启动失败已留存；run88b正式任务因可选attempt来源路径被无条件守卫而退出，OS码1、0正式attempt/模型加载/更新，精确任务已注销。该守卫已修正，run88c使用全新输出族和83 fresh零态来源，绝不读取/续接run88b权重；单线程父/子一致，既往未计CPU预留300秒且仍含于4800秒。通过且提交前置后才启动正式三seed位置训练。run86c未过seed12六门，85仍拒入、v5未消费。
+## 当前唯一下一步：提交run88c三seed zero-checkpoint前置回执和binding，然后通过Task Scheduler启动唯一正式批次。前置attempt1通过：CPU15.46875秒+300秒既往诊断预留，90项来源守卫无差异；seed11/12/13 zero均独立恢复equal=true且bundle与run86c逐seed相同；空Adam/参数/RNG/历史校验通过，LR边界0.001→0.00025正确。run88/88b失败记录与旧零态均保留且不复用；新run88c checkpoint路径隔离。正式更新73728、六门不变、CPU≤4800秒、0dev/holdout/v3/v4/v5。run86c seed12能力门失败和85拒入结论不变。
 
 ## 本轮调度修订（2026-10-14）
 

@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **2026-10-16 run88c前置准备**：run88b的Task Scheduler worker在数据读取/模型加载前被来源守卫缺失路径拒绝，退出码1、正式训练0更新，临时任务已注销，日志/回执保留。路径过滤已修复，run88c独立隔离族避免覆盖；唯一下一步先验证三fresh零态checkpoint保存/独立恢复与单线程签名，CPU≤4800秒含300秒历史诊断预留；过后才训练。03为唯一实时状态源。
+> **2026-10-16 run88c checkpoint前置通过**：CPU15.46875秒，另预留此前未单独计量诊断300秒；3 fresh zero均独立恢复与run86c初始化签名相同，90守卫/学习率边界通过。唯一下一步先提交preflight/binding，再Task Scheduler启动固定三seed位置训练，CPU≤4800秒、原六门、零未见查询。run88/88b失败和零态证据保留；03为唯一状态源。
 > **2026-10-16 目录整合**：双语README已刷新；机器报告统一归入reports。[迁移清单](../reference/PROJECT_LAYOUT_MIGRATION_20261016.json)保留7份报告摘要及历史路径，数据/checkpoint不动。
 > **2026-10-16 run86b预检完成（㊵-1009）**：修正版最终源码静态检查通过，项目身份测试4项通过。Task Scheduler心跳6/6均发生在启动器返回后、worker PID一致、LastTaskResult=0；CPU0.015625秒，0模型/训练材料加载、0更新/课程/dev/holdout查询。正式return文件名的receipt-only交接探针亦通过，LastTaskResult=0、CPU0.015625秒，0加载/更新/查询；run86b独立checkpoint保存/恢复预检CPU11.46875秒、77守卫通过、bundle独立恢复相同、0模型更新，临时目录清理。两个临时任务均已注销。唯一下一步提交这批启动器、计划与回执，然后启动原冻结的run86b九fresh模型训练；协议/六position门/≤14400秒CPU/零dev、v3 holdout、v4、v5不变。84是Codex客户端更新重启导致的外部中断，实际步数未知、保留不续接；86首轮启动路径失败证据保留。85未准入、v5未消费，全项目其他出口债不变。
 
