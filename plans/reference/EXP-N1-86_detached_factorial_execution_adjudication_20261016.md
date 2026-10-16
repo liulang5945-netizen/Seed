@@ -55,3 +55,12 @@ seed12/position在18432步原题/配对/改名/改名配对均为192/96/192/96�
 ## PLAN-N1-87首次离线诊断执行状态（2026-10-16）
 
 所有者已批准PLAN-N1-87。首次执行在Python顶层导入阶段因入口未配置仓库根`sys.path`而失败，未读取报告/分片/训练样本，未加载模型或checkpoint，未执行评估/查询/更新；CPU时间未由该失败预检单独计量，正式分析报告不存在。错误与零副作用回执见`reports/taiji_n1_transition_factorial_run86c_offline_trajectory_audit_attempt.json`。已修复导入入口。因原批准方案规定仅一次且不重试，未擅自再次运行；已根据所有者对可撤销范围调整的明确授权，按[PLAN-N1-87R](PLAN-N1-87R_run86c_offline_audit_retry_review_20261016.md)在原60秒上限及全部只读边界下额外重跑一次。
+
+
+## PLAN-N1-87 / 87R离线轨迹审计结项（2026-10-16）
+
+审计一次成功，CPU3.015625秒，9/9分片、216个512步窗口；模型/checkpoint加载、模型评分/查询、训练更新和任何未见集查询均为0。报告SHA256 `c5b21641de584d6e871ad4747ce8e181205e790a886c7b58bbb1305c9e46b2a0`。详细统计见[机器报告](../../reports/taiji_n1_transition_factorial_run86c_offline_trajectory_audit.json)。
+
+重点读数：seed12/position cycle4 QA loss均值0.004687574，cycle3为0.000249594；transition QA loss0.000626488→0.013793352，observation loss0.000248035→0.000029176。cycle4五组更新的actual-to-cap平均比为7.3%–10.7%，cycle3为1.3%–2.3%；未发现越限。末点原题16个错项、改名11个错项以transition/unknown为主；错误项平均loss较高，但存在高loss仍答对的条目。此为关联性证据，不证明因果。seed11/13 position cycle4误差不增，且update ratio回落，显示种子轨迹差异。
+
+唯一下一步已按最新授权自动进入[PLAN-N1-88](PLAN-N1-88_position_final_cycle_lr_decay_review_20261016.md)：fresh三seed position，仅末6144步学习率降至0.00025，以检验晚期回退；保持原六门、样本和零留出测面。训练前先完成独立检查点保存/恢复验证。即使训练门通过，也不会自动消费v5或晋升候选。

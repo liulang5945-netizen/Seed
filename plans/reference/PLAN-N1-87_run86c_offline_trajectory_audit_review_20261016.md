@@ -39,3 +39,14 @@ run86c 的九模型训练工程已完整，但三种子 position 只有 seed11 �
 ## 首次执行处置（2026-10-16）
 
 已获所有者批准后尝试一次。执行器在顶层导入阶段因未加入仓库根路径而失败；在读取任何批准输入前终止，0报告/分片/训练样本读取、0模型与checkpoint加载、0评分/查询/更新，CPU时间未在本次预检中单独计量。机器回执为`reports/taiji_n1_transition_factorial_run86c_offline_trajectory_audit_attempt.json`。本计划的单次/不重试限制已消耗，因此未自动重跑。唯一下一步为审议[PLAN-N1-87R](PLAN-N1-87R_run86c_offline_audit_retry_review_20261016.md)，申请修复导入路径后额外执行一次；该提案保持60秒CPU上限及全部分析/数据边界。
+
+
+## PLAN-N1-87R执行结论（2026-10-16）
+
+所有者明确授权一次额外重跑后，离线审计完成：9/9封存分片、216个512步窗口，独立CPU 3.015625秒/60秒；0模型与checkpoint加载、0评分/查询/训练更新、0dev/holdout/v3/v4/v5。输入报告SHA256 `0a8fc62e9aa00577d67001c70008773e6e5cee54cebad4115956e0360446d785`与completion一致；分析报告SHA256 `c5b21641de584d6e871ad4747ce8e181205e790a886c7b58bbb1305c9e46b2a0`，详见`reports/taiji_n1_transition_factorial_run86c_offline_trajectory_audit.json`。
+
+seed12/position cycle4平均QA loss 0.004687574，对比cycle3的0.000249594，约18.8倍；transition QA loss 由0.000626488升至0.013793352。observation loss由0.000248035降至0.000029176。末周期最尖的transition窗口为20992–22016；24064–24576另有lookup/revision/unknown loss升高。五组actual-to-cap平均比在cycle3为1.3%–2.3%，cycle4为7.3%–10.7%，仍都未越过既有位移上限；cycle4可见少量触发裁剪。
+
+seed12/position末点评分错误为原题16项（transition6、unknown10）、改名11项（transition6、unknown5）；原题/改名失败项的周期均值loss分别约为正确项的3.4倍/2.8倍，但部分最高loss样本末点仍正确，因此只能说明关联，不确定参数更新的因果作用。seed11/13 position在cycle4的QA loss与五组位移反而下降且六门通过，说明回退主要出现在特定种子轨迹，不能归咎于所有位置臂或单一更新组。
+
+唯一后继为[PLAN-N1-88](PLAN-N1-88_position_final_cycle_lr_decay_review_20261016.md)：三seed fresh position重跑，仅最后6144步学习率从0.001固定降至0.00025，原目标/样本/六门/测面不变；先做检查点保存与恢复前置，再训练。
