@@ -3418,3 +3418,10 @@ Ruff默认与CI B/SIM忽略B008、改动Black和项目身份合同核对；历�
 74全fresh九零档/九独立恢复完整，CPU30.765625秒，18次两步签名共36副本步/72QA，0正式课程查询；同seed三臂逐位配对、从头cut无writer Adam，全部守卫通过。唯一下一步75 seed11 position固定24576更新/CPU≤20分钟train-only校准，原6144步流重复四遍，2880已知评分、两完整独立恢复，原四门不变、零新未见查询。
 
 74报告SHA 24c62ecf659555792d8193bf420da160f0cbf5e90ac2b0e3be93ce780d733760；五合同/两Ruff/改动Black通过。没有母档参数/Adam/历史迁移，没有正式学习或能力结论。全项目保持/C4/三器官/N系列其余出口和完整CI债仍欠；旧档/旧强候选保留。
+
+
+### ㊵-980 · 2026-10-16 · 75固定fresh校准执行器就绪
+
+75执行器及三项artifact-free合同通过：真实zero独立恢复、synthetic final完整恢复/计步/历史、严格partial/工程protocol/规则marker拒绝、四周期边界。唯一下一步提交后一次运行seed11 fresh固定24576更新/CPU≤1200秒，2880已知评分/两独立恢复/完整loss位移，原四门不变，零dev/holdout/v4。
+
+两Ruff/改动Black及项目导航核对；不改74严格zero工程加载器，75新schema独立处理训练zero/final及拒绝partial。正式8副本机械步/16合成QA单列，source/history/RNG守卫保持。全项目保持/C4/同bundle三器官与N系列其他出口仍欠。

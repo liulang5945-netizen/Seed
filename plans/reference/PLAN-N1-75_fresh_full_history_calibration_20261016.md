@@ -23,3 +23,7 @@
 执行器`scripts/training/run_taiji_n1_fresh_full_history_calibration.py`，合同`tests/taiji_native/test_native_fresh_full_history_calibration_contract.py`；checkpoint在`data/checkpoints/n1_fresh_full_history_calibration_20261016/`；报告`reports/taiji_n1_fresh_full_history_calibration_20261016.json`采用完整无损紧凑JSON，裁决放plans/reference。先检查保存/恢复合同并提交，再一次执行固定包。
 
 保持旧强候选，不覆盖默认、不推送/删除数据，不将隔离候选表现替代C1/C2原三器官协议或C4、保持与N系列其余出口。目标仍是可持续学习、真实联合能力的高上限模型。
+
+## 执行前合同
+
+三项artifact-free合同通过：实际fresh zero新进程同两步恢复、明确synthetic final布局的全部状态/会话/计步恢复与错误拒绝、四周期取模边界及固定范围。两Ruff通过。partial独立phase只保存全量状态用于审计，严格加载器拒绝自动续训；74代码不改。提交执行器后按冻结配方一次执行。
