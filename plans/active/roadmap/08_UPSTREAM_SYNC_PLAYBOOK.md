@@ -4376,3 +4376,13 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 同一形状的未咬人处：`carriers` 也带 `[:12]`（今天 `carrier_count`＝2，暂时不触发），本轮不动它，但把形状记在这条里，避免下次又拿样本当全集。
 - 读数与边界：`python -m pytest tests/taiji_native/test_n1_07_answer_source_provenance_contract.py` 现取 **13 passed／6.52s**，`ruff check` 与 `black --check` 两件 rc=0；本轮零模型查询、零参数更新，改动面＝1 台仪器＋1 支测＋债表 DEBT-G163 行的成因就地更正（原句不删，按日期戳改判）。
 - 算式而非读数：整面应从 8 枚降到 6 枚（run90 那枚已随 0b42b911 结清、本枚刚结清，余下 n5_38 两枚属并发腿的前向引用、b0_n2 与 prereg 棘轮两枚由 owner 裁"维持红"、plan110 一枚并发腿、sequence_content 一枚顺序依赖）。**这个 6 要等下一次干净整面现取才算数**，本条只登记算式，不当读数引用。
+
+### ㊵-1113 【2026-10-18 · 干净整面第三次现取：6 failed／3221 passed（同一条命令，前两次 20／3206 与 8／3219）】
+
+- 读数（现取、单跑、零并发写树）：`python -m pytest tests/taiji_native -q --tb=line -p no:cacheprovider` = **6 failed／3221 passed／9 skipped／1 xfailed in 1838.26s**，`RC_PYTEST=1`（日志 `face7.log`）。**三个数都从这趟日志的汇总行抄，不做手算**；与 ㊵-1107（20）、㊵-1111（8）同一条命令才可比，跨面不推。
+- 逐枚点名（本脚本从 `FAILED` 行按文件聚合，实测）：`test_b0_n2_stop_reason_disposition_contract.py` 1 枚；`test_n1_plan110_length_balanced_runner_contract.py` 1 枚；`test_n5_38_ledger_cited_reports_contract.py` 2 枚；`test_prereg_wording_corpus_ratchet_contract.py` 1 枚；`test_sequence_content_workspace_v1_contract.py` 1 枚。
+- 判读：㊵-1112 写下的"预期 6"到这一趟兑现——收集总数（failed＋passed）＝3227，与 ㊵-1111 那趟同形，所以这 2 枚是**红转绿**、不是分母变化。CpuBudget 一族（12 枚）、`install()` 还原集（1 枚）、截断样本假缺席（1 枚）三件全部消失，剩下的每一枚都已归到**具体责任格**：并发腿的 plan110 与它的一次性写靶前向引用（拖 n5_38 两枚）、owner 裁"维持红"的两枚（措辞门适用范围 G162、N2 审阅面名单漂移 G164）、以及一枚顺序依赖（sequence_content，单跑绿）。**没有一个还挂着"原因未定"**，这本身就是这一轮买到东西：判门器可信度从"整面读数不可解释"回到"每条红都有归属与半径"。
+- 能力侧没有新增读数：本轮零模型查询、零参数更新；C2 仍是 ㊵-1111／PLAN-N-04 §8 的甲档口径（位移列合取为真、严格命中列仍无范围），C3/C4 的现行格等并发腿的 v11 四门。收回句继续生效：不许写"C3 成立"、不许写"C2 已通过所以可以开 C4"。
+- 边界：不动 `taiji/`、不动任何已封存读数件、不动并发腿在飞的两个文件；未推数与 HEAD 见下一行现取。
+
+- 现取锚点：HEAD＝57bf794f5，未推数＝90。
