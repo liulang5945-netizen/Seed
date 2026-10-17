@@ -4178,3 +4178,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - `plans/reference/PLAN-N1-109_train_answer_length_coverage_audit_20261017.md` SHA-256 `60704ef0802319dd742849c41c5eb19f057fbbf451d4cb8da3a86e53a47c6dd4`已冻结。读取仅限PLAN-N1-100 3,072项train-derived schedule（SHA `dc3a96ad17d43bd898e403ecd119c12c781317a71ab06ba39cdab6db24c40d50`）与v10已消费248题face（SHA `2d912941baecaa4811266ace64b56fa9bb2ace65d657691834911db16ed369d8`）；验证每个嵌套样本split=train及schedule dev/holdout/query/update计数为0，不读原v3 manifest、不碰dev/holdout。
 - analyzer `scripts/training/audit_taiji_n1_answer_length_coverage.py` SHA-256 `efb85ebea2f936fd4d6e2398f4dd199ea479ebd26d0c133985c2805e884e953b`，合同测试 `tests/taiji_native/test_n1_run109_answer_length_coverage_contract.py` SHA-256 `b8ae265993114d60a3d1d3b58d04d2f79f42711092582dd79d17317325c6bcb8`。五项测试、Ruff/Black/py_compile通过；write-once report尚未生成，CPU≤15秒，0 model/checkpoint、queries、updates。
 - 当前唯一下一步：提交PLAN-N1-109、analyzer/test与active status，复核固定hash后运行一次。只报告schedule暴露与诊断长度的覆盖，不自动启动训练。
+
+### ㊵-1083 · 2026-10-17 · PLAN-N1-109 train-only答案长度审计完成
+
+- 已静态核对PLAN-N1-100 schedule 3,072项及v10 face 248题，CPU0.015625秒；report SHA-256 `43d2e75989d42571a36ff7038b137c3d03c7ff764aa95a2990f54344564d4d9b`，schedule/face输入hash前后相等。每个schedule item/second_question均标为train；dev/holdout/query/update计数为0，无模型/checkpoint加载或查询。write-once报告在显式CLI运行步骤前已存在；计划/来源/analyzer/test哈希及结果全覆盖均匹配冻结凭据，因此未覆盖或重跑，披露见EXP-N1-109。
+- Known lookup/revision训练目标均只有6字符：分别768/768和768/768；lookup second-question也是768/768长度6。v10新诊断lookup为48×6+48×7，revision为44×6+44×7。literal `unknown`虽7字符但属弃权标签，不计入known material答案长度。长度缺口可解释部分seed11/12七字符局部错误，却不能解释seed13在两种长度上的广泛失败（均有2–7编辑距离）。详见[EXP-N1-109](../../reference/EXP-N1-109_train_answer_length_coverage_adjudication_20261017.md)。
+- 当前唯一下一步建议：制定一份matched length-balanced retraining + fresh confirmation计划，固定更新数/原有训练及确认门，比较PLAN-N1-100九枚旧端点和九枚新长度平衡候选。它会改变训练schedule并创建v11新确认面，属于计划范围决策；完成具体草案后请owner批准，再实施。
