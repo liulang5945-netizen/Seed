@@ -3961,3 +3961,8 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - `kind=unknown` 且 `output_hex` 解码恰为 `b"unknown"`：v6 position 0/15、terminal 4/15、cut 2/15；v5 position 23/24、terminal 9/24、cut 24/24。v6 position 三个 seed 各 0/5；v5 position 分别为 7/8、8/8、8/8。
 - 结论限定为“同一终端组在两个已消费题面上出现强烈面间差异”。这否证“position 一概不会弃权”的全局表述，但不定位原因、不证明能力或臂差，也不支持直接改权重、解码器或产品默认行为；N1 C3 仍未达成、两张面都不可重测、`can_promote=false`。完整判读见 [EXP-N1-97](../../reference/EXP-N1-97_unknown_abstention_cross_face_census_20261017.md)。
 - 03、09、索引及中英 README 已同步。本轮唯一下步建议是对两份**已消费清单**中的 unknown 输入字段做静态交叉对照；它超出交接页的“只读报告行”范围，尚未开始，须 owner 裁定。起点锚点为 `HEAD=377d1bb45`、`origin/main..HEAD=26`（本条与后续同步提交不包含在该历史读数内）。N5 报告改动及 `output/` 未跟踪目录均保留未动。
+### ㊵-1047 · 2026-10-17 · owner 批准静态清单审计，PLAN-N1-98 冻结后待执行
+
+- owner 已批准只读比对已消费 v5/v6 清单中 unknown 项的提问、实体名、候选观测与顺序，并连接既有报告行；不加载模型、不生成或查询新题、不训练、不改判据。
+- 在读取清单内容之前先冻结 [PLAN-N1-98](../../reference/PLAN-N1-98_static_cross_face_unknown_audit_20261017.md)：绑定 v5 SHA `22ba37976bc6eaaaf2425b84714a6efa6e95e7e5aa05f32eb3a7c0c10d9ffc2d`、v6 原始 SHA `7dddf00f3f2e24381728855b218e67bc8160fd6badeb1a7a933937d999766d49`；规定只汇总 unknown 子集和四组输入描述字段，摘要或 ID 错配即停止。
+- PLAN-N1-98 是本轮唯一工作范围；不开始任何训练或新面测量。读数与判读将在审计实际完成后另行提交。

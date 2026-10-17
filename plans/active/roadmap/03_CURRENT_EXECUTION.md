@@ -2,7 +2,7 @@
 
 ## 当前唯一下一步：裁定是否授权已消费 v5／v6 清单的静态交叉审计
 
-交接页甲路的报告行普查已完成，结果见 [EXP-N1-97](../../reference/EXP-N1-97_unknown_abstention_cross_face_census_20261017.md)：同一组九个终端 checkpoint 的 position 臂在 v5 unknown 题上精确输出 `unknown` 为 23/24，在 v6 为 0/15。这个反转说明缺口随题面变化，但尚未指出具体输入因素；C3 仍未达成，v5/v6 均不可重测。建议只读两份已消费题面清单，对 unknown 题的提问、实体名、观测候选及顺序做静态对照，不加载 checkpoint、不生成／查询新题、不训练、不改判据。它将交接页原先限定的“只读报告行”扩到清单输入，因此先等 owner 裁定。普查起点锚点：`HEAD=377d1bb45`、`origin/main..HEAD=26`；该数字是本轮分析起点，不含本页后续提交。别人在飞的 N5 报告修改和 output 未跟踪目录均未触碰。
+静态清单审计已获 owner 批准并冻结于 [PLAN-N1-98](../../reference/PLAN-N1-98_static_cross_face_unknown_audit_20261017.md)。下一步按该件先核对 v5/v6 报告绑定摘要，再只读分析两份清单中的 unknown 项；不加载 checkpoint/模型，不生成或查询新题，不训练、不改判据。任一 ID 或摘要错配即停止。完整性通过后产出结构普查 JSON 与 EXP-N1-98 判读。v5/v6 不可重测，N1 C3 仍未达成。
 
 ## ㊵-1045 时点的历史队首（保留原文，已由㊵-1046更新）
 
