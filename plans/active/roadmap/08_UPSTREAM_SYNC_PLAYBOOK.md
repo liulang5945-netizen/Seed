@@ -4189,3 +4189,8 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 
 - 草案见[PLAN-N1-110](../../reference/PLAN-N1-110_length_balanced_training_and_v11_confirmation_draft_20261017.md)。它提出同一 run100 train-only来源下，把lookup/revision material values按父项、条件及周期平衡为6/7字符；原结构、24,576更新/模型、训练门与四项确认门照旧。固定旧九端点作control，训练新的9候选；若新模型过原训练门，再建立seed111新v11面，先走6/9范围门，过线后只对旧baseline9＋候选9查询一次360行；CPU总上限18,000秒。
 - **此项是训练配方和测面范围变更，尚未获批。** 当前未改训练代码/清单，未保存checkpoint，未训练，未构造v11 face，未查询新确认面。需owner批准或拒绝该完整方案；不因routine CPU预算另行询问。
+
+### ㊵-1085 · 2026-10-17 · PLAN-N1-110 runner采样路径核实与草案修正
+
+- 只读检查run100训练runner确认：每6144步周期中偶数步从192项原始train流取16次/parent，奇数步才从3072项hard schedule取16次/parent；所以只把hard schedule改成6/7平衡会漏掉一半训练暴露。草案已改为同时冻结raw-slot和hard-slot长度分配，每个lookup/revision/unknown父项在两条路径各8×6字符、8×7字符；hard-view原obs×distance分母、revision stale/current顺序、unknown拒答与transition均保持。
+- 该修正只改草案，不改runner、数据、checkpoint或训练计划状态。PLAN-N1-110仍是DRAFT，训练配方和v11 face范围均等待owner裁定。
