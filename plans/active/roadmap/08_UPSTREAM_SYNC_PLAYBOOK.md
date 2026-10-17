@@ -4010,3 +4010,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 固定seed107构造 `plans/manifests/n1_hard_neighbor_v7_20261017.json`，SHA-256 `c5a7ef0bc18bf9376e5038348204e838bbc11d88ad6784605c858b12f6d992dc`；construction report `reports/taiji_n1_hard_neighbor_v7_face_checks_20261017.json` SHA-256 `d0f1c8866557e2433d6d4d9d289ca6d71163907e4e23871ccb80938c3ac0a7bd`。40题、四类各10、sacrifice/confirm各20且每类各5，110个干扰实体距离恰为d=1；150实体名、120材料值对v3 train/v5/v6排除集交集为0，13项构造机检全过。
 - 造面与构造检查使用0模型加载、0更新、0模型查询；v3 dev/holdout字段未读取，v7 confirm未查询。v5/v6只作为去重词典来源。Face已冻结，不能重抽或覆盖。
 - 唯一下一步是 `eval_taiji_n1_hard_neighbor_v7.py --range-readiness` 的只读准备核验，通过后一次运行20项sacrifice范围测量（CPU≤180秒）；若不足6/9，confirm不解封。达到6/9后执行一次360条confirm比较，四门不改；N5与`output/`仍保持原状。
+
+### ㊵-1055 · 2026-10-17 · v7范围面有效但动态范围不达6/9；confirm未消费
+
+- 范围报告 `reports/taiji_n1_hard_neighbor_v7_range_check_20261017.json` SHA-256 `c0bf9e588b3785240c61a0a90907f4849de64b1027546a749d00a8e2768c30eb`，attempt SHA-256 `f45062b2abb8cb43ee026b379f64b7caca610c03923b927a933d7cc1e5f4529c`。一次运行180条sacrifice查询，CPU38.171875/180秒，来源/代码守卫未变、0更新；仅4/9端点达到≥6/15 addressable errors，判`range_not_met`。可用端点是3个terminal控制加seed13/position；position seed11/12和三个cut端点均不足。逐类读数与边界见 [EXP-N1-100-v7-range](../../reference/EXP-N1-100_v7_range_adjudication_20261017.md)。
+- confirm attempt/report均不存在，20项confirm未查询；v7面不重抽、不改线。训练candidate的position门虽全过，C3仍未判，`can_promote=false`。
+- 下一步建议草案 [PLAN-N1-101](../../reference/PLAN-N1-101_v8_hard_neighbor_range_recovery_draft_20261017.md)：新seed108 v8 face将观察数增至8、保留d=1；冻结6/9 range门与原四确认门不变，范围失败则停止。该提案改变测面形状并将已消费v7 sacrifice词名纳入去重源，属owner需要决定的范围/数据边界变化，尚未实施。N5更改及`output/`保留未动。

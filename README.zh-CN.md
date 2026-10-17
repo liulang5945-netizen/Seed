@@ -6,7 +6,7 @@ Seed 托管并对外提供 **Taiji**：探索持续状态、记忆、局部学�
 
 ## 当前状态
 
-N1 最新诊断在同九枚 checkpoint 上，对5道已消费的v6 `unknown`题测试了观测数和实体名距离。position 臂逐字输出 `unknown`：d=1 为0/15，d=2 为1/15；观测数2或4没有改变命中。run88来源守卫绑定的v3 train流中，48个unknown训练项没有d≤2近邻样本。N1 C3仍未达成。PLAN-N1-100九模型训练通过冻结的position门；全新v7面已生成且结构检查通过，尚未查询任何模型。下一步仅在20项sacrifice上测动态范围；若至少6/9端点过线才查询confirm。`can_promote=false`。详见[PLAN-N1-99判读](plans/reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md)、[PLAN-N1-100训练判读](plans/reference/EXP-N1-100_hard_neighbor_training_adjudication_20261017.md)与[PLAN-N1-100](plans/reference/PLAN-N1-100_balanced_hard_neighbor_training_and_v7_20261017.md)。
+N1 最新诊断在同九枚 checkpoint 上，对5道已消费的v6 `unknown`题测试了观测数和实体名距离。position 臂逐字输出 `unknown`：d=1 为0/15，d=2 为1/15；观测数2或4没有改变命中。run88来源守卫绑定的v3 train流中，48个unknown训练项没有d≤2近邻样本。PLAN-N1-100九模型训练通过冻结的position门，但v7 sacrifice范围门仅4/9端点可用（冻结线6/9），因此confirm保持未查询，`can_promote=false`。建议的新8观测d=1 v8面会改变测面范围，等待owner批准。详见[PLAN-N1-100训练判读](plans/reference/EXP-N1-100_hard_neighbor_training_adjudication_20261017.md)、[v7范围判读](plans/reference/EXP-N1-100_v7_range_adjudication_20261017.md)、[PLAN-N1-101草案](plans/reference/PLAN-N1-101_v8_hard_neighbor_range_recovery_draft_20261017.md)与[PLAN-N1-100](plans/reference/PLAN-N1-100_balanced_hard_neighbor_training_and_v7_20261017.md)。
 
 活动研究为 **N 主线**，N1 正在研究学习型读取、实体绑定和状态转移。已有结果属于限定实验；训练、未见评估、保持和消费者行为分别记账，尚不足以证明通用对话、AGI 或自主进化能力。
 
