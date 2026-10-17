@@ -4033,4 +4033,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 
 - v8一次性范围报告`reports/taiji_n1_hard_neighbor_v8_range_check_20261017.json` SHA-256 `0e983c31338c00536dfdbe1250c1ea57e5489536d7015391288b80517adbd406`，attempt SHA-256 `c63ca8997a6263e32635d1b8a944b0047521c1a1026c1601ba71e25d26e61e81`。180条查询、CPU36.671875/180秒，`complete=true`、来源与代码守卫全真、0更新；只有4/9端点达到≥6/15可答题错误。范围报告逐端点与类读数见[EXP-N1-101](../../reference/EXP-N1-101_v8_range_adjudication_20261017.md)。
 - 可用端点为11/terminal、12/terminal、13/position、13/terminal；position 11/12为0和2错误，三个cut皆4。v7也为4/9且可用集合相同；这是两张不同题面的描述比较，不作因果解读。v7/v8 confirmation attempt与report均不存在，confirm模型查询均为0，`can_promote=false`。
-- 按冻结PLAN-N1-101，range未达6/9即停；不解封confirm、不重跑或重抽v8。唯一建议草案[PLAN-N1-102](../../reference/PLAN-N1-102_v12_observation_range_probe_draft_20261017.md)拟用固定seed109、12观测/d=1新面，门值与一次性顺序不变。它是新测面，尚未批准；待owner裁定前不写代码、不造面、不查询。N5、`output/`与DSH文件均保留未改。
+- 按冻结PLAN-N1-101，range未达6/9即停；不解封confirm、不重跑或重抽v8。此处登记的提案后来由owner在㊵-1059批准并冻结为[PLAN-N1-102](../../reference/PLAN-N1-102_v12_observation_range_probe_20261017.md)；后续状态见下条。N5、`output/`与DSH文件均保留未改。
+
+### ㊵-1059 · 2026-10-17 · owner批准PLAN-N1-102新测面
+
+- owner通过弹窗明确批准PLAN-N1-102。现已冻结seed109、40题四类平衡、12观测/d=1的新面；只从v7/v8已查询sacrifice题读取实体/材料值用于排除，confirm内容不读取、不使用、不查询。原6/9范围线和PLAN-N1-94四项确认门不变，不训练、不访问v3 dev/holdout。
+- 当前唯一下一步：实现`build_taiji_n1_hard_neighbor_v9.py`、`eval_taiji_n1_hard_neighbor_v9.py`及合同测试，固定造面并提交后做零加载readiness；之后只跑一次180条sacrifice范围检验。若不足6/9则停止，不解封confirm、不重抽。此前v7/v8 confirm都保持未查询。

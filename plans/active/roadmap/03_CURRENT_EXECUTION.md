@@ -1,8 +1,8 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：owner裁定是否启动PLAN-N1-102新测面
+## 当前唯一下一步：实现并合同验证已批准的PLAN-N1-102
 
-[EXP-N1-99](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md) 的d=1/d=2诊断仍未提供能力证据。PLAN-N1-100九模型训练完整，position三seed全过原训练门；v7四观测与v8八观测sacrifice范围均为4/9 usable，低于冻结6/9线。v7和v8 confirm均未查询，v8不重抽、不重跑、不改门。[PLAN-N1-101](../../reference/PLAN-N1-101_v8_hard_neighbor_range_recovery_20261017.md)已按`range_not_met`关闭，完整读数见[EXP-N1-101](../../reference/EXP-N1-101_v8_range_adjudication_20261017.md)。同一组4个端点在两面过线，8观测未增加范围。本轮唯一提案[PLAN-N1-102](../../reference/PLAN-N1-102_v12_observation_range_probe_draft_20261017.md)拟在固定seed109下建12观测/d=1新面，保留6/9范围线、四项确认门和一击停止规则；这是新测面，尚待owner裁定。未批准前不实现、不造面、不查询。PLAN-N1-99偏差仍按[判读](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md)披露。
+[EXP-N1-99](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md) 的d=1/d=2诊断仍未提供能力证据。PLAN-N1-100九模型训练完整，position三seed全过原训练门；v7四观测与v8八观测sacrifice范围均为4/9 usable，低于冻结6/9线。v7和v8 confirm均未查询，v8不重抽、不重跑、不改门。[PLAN-N1-101](../../reference/PLAN-N1-101_v8_hard_neighbor_range_recovery_20261017.md)已按`range_not_met`关闭，完整读数见[EXP-N1-101](../../reference/EXP-N1-101_v8_range_adjudication_20261017.md)。同一组4个端点在两面过线，8观测未增加范围。owner已批准并冻结[PLAN-N1-102](../../reference/PLAN-N1-102_v12_observation_range_probe_20261017.md)。当前唯一下一步是实现seed109、12 observations/d=1的v9 builder/evaluator与合同测试；排除源仅使用v7/v8已查询sacrifice，confirm payload均不读取。提交冻结实现与面、并通过零加载readiness后，才执行一次180条范围查询；未过6/9即停，不查confirm。PLAN-N1-99偏差仍按[判读](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md)披露。
 
 ## ㊵-1045 时点的历史队首（保留原文，已由㊵-1046更新）
 
