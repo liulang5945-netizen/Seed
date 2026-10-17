@@ -35,6 +35,6 @@ position 在 v5 三 seed 分别为 7/8、8/8、8/8；在 v6 三 seed 都是 0/5�
 
 ## 4. 后续建议与边界
 
-最有信息量的下一步是一个已知题面上的 2×2 机制探针：固定 v6 confirm 的 5 个 unknown 问题和 9 枚终端，交叉改变观测数（2／4）与名称距离（Hamming d=1／d=2）；原始 4-observation/d=1 cell 复用 v6 已出版行，另三格各 5 题 × 9 枚端点，共 135 条新诊断查询。该探针能分开本轮发现的两个候选因素，但会创建新的诊断测面，结果只能称“已知题面的机制探针”，不能称未见确认或能力晋升证据。具体约束已写入 [PLAN-N1-99 草案](PLAN-N1-99_unknown_abstention_factorial_diagnostic_draft_20261017.md)，尚未获准执行。
+最有信息量的下一步是一个已知题面上的 2×2 机制探针：固定 v6 confirm 的 5 个 unknown 问题和 9 枚终端，交叉改变观测数（2／4）与名称距离（Hamming d=1／d=2）；原始 4-observation/d=1 cell 复用 v6 已出版行，另三格各 5 题 × 9 枚端点，共 135 条新诊断查询。该探针能分开本轮发现的两个候选因素，但会创建新的诊断测面，结果只能称“已知题面的机制探针”，不能称未见确认或能力晋升证据。具体约束见 [PLAN-N1-99](PLAN-N1-99_unknown_abstention_factorial_diagnostic_20261017.md)；owner 已批准，尚未执行。
 
 N1 C3 仍未达成，v5/v6 均已消费且不可重测，`can_promote=false`。本件不启动训练，不改变 gate，不替换默认模型，也不抵扣保持集、C4 净增益或三器官出口。

@@ -3970,5 +3970,10 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 
 - 只读审计按 owner 批准的 PLAN-N1-98 执行，读数件 `reports/taiji_n1_unknown_face_structure_audit_20261017.json` SHA-256 `f6f84877960f9c40341fa58d8330290c8822c913d550b9f3d8980d6e85e89239`；判读为 [EXP-N1-98](../../reference/EXP-N1-98_static_cross_face_unknown_audit_adjudication_20261017.md)。v5／v6 输入清单 SHA 与封条相同，9/9 checkpoint SHA 逐枚一致，ID／报告行连接 0 缺失／重复。
 - 结构读数：归一问题模板相同、问题均 23 UTF-8 字节；v5 unknown 题每题 2 条候选观测／3 个实体，v6 每题 4 条／5 个；目标实体在两面均不出现在观测里，候选值均 6 字节，全部 entity name 在两面间无精确重用。position unknown 仍为 23/24 对 0/15。PLAN-N1-98 禁止新算名称距离，本件不推断名称相似度。
-- 观测数、实体数和题面身份同步变化，无法在现有读数中拆因。唯一推荐是 [PLAN-N1-99 草案](../../reference/PLAN-N1-99_unknown_abstention_factorial_diagnostic_draft_20261017.md)：同 5 个已知 v6 unknown 题和 9 个终端，交叉 2/4 条观测与 Hamming d=1/2；A 格复用旧报告，B/C/D 共 135 条新查询，不训练、不改判据。因会创建新的诊断测面，草案尚未执行，待 owner 裁定。
+- 观测数、实体数和题面身份同步变化，无法在现有读数中拆因。唯一推荐是 [PLAN-N1-99 草案](../../reference/PLAN-N1-99_unknown_abstention_factorial_diagnostic_20261017.md)：同 5 个已知 v6 unknown 题和 9 个终端，交叉 2/4 条观测与 Hamming d=1/2；A 格复用旧报告，B/C/D 共 135 条新查询，不训练、不改判据。因会创建新的诊断测面，草案尚未执行，待 owner 裁定。
 - README 中英、03、09、索引已同步。N1 C3 未达成，v5/v6 仍不可重测，N5 在途文件与 output 目录继续保持未触碰。
+### ㊵-1049 · 2026-10-17 · owner 批准 PLAN-N1-99：执行已知 v6 unknown 题面的 2×2 机制诊断
+
+- owner 弹窗明确批准 [PLAN-N1-99](../../reference/PLAN-N1-99_unknown_abstention_factorial_diagnostic_20261017.md)；批准范围与原草案相同：同 v6 confirm 的 5 个 unknown 基础题、同九枚终端，观测数 2/4 × Hamming d=1/2。A 格复用既有 v6 rows，B/C/D 共 135 条新诊断查询，CPU≤300 秒；不训练、不改 gate、不查询其他未见面。
+- 顺序已冻结：实现专用执行器及合同测试并提交 → readiness（不得加载模型/checkpoint、不得查询）→ 通过后一次发射；拒绝支不落 attempt，首题后任何中断均保留 partial 且不重跑。
+- 这是已知题面机制探针，不是 C3 确认或晋级证据。当前唯一工作为实现与合同测试；readiness 和正式查询尚未开始。
