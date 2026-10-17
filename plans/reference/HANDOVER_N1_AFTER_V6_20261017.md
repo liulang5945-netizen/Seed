@@ -6,6 +6,7 @@ owner 在 v6 出值后的弹窗里裁：**先写交接、停一停**（未选甲
 
 - `git rev-parse --short HEAD` ⇒ **`48b508d67`**；`git rev-list --count origin/main..HEAD` ⇒ **24 条未推**；远端 `origin/main` 停在 `69f7b5254`。
 - 工作树里有**别人**的在飞件：`reports/taiji_n5_07_*.json` 六枚被改、`plans/reference/DSH_*` 两枚未跟踪、`output/**` 若干未跟踪目录（现取 `git status --porcelain` 去掉 `output/` 后 9 行）⇒ 接手者**不要** `git add -A`，也**不要** `git checkout HEAD --` 整树回退。
+- 一句自指：本页与台账落笔后又各自入库，上表两个锚点会各加一（"本轮我的提交"那一行的笔数同样只到落笔时）⇒ 任何数字都以你机器上现取的那条命令为准。
 - 本轮我的提交共四笔：`cd4632d26`（签署＋G152 文句）、`d0e6b24a4`（v6 三步＋判读＋仪器修口）、`4cbfd9a1c`＋`48b508d67`（未推清单页与它的自指更正）。
 
 ## 1. 不可逆事实：两张未见面都已消费
