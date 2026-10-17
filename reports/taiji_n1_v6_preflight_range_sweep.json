@@ -1,0 +1,490 @@
+{
+  "chain_extension_ruled_out_by": [
+    "scripts/training/build_taiji_n1_evidence_curriculum.py:53",
+    "scripts/training/build_taiji_n1_content_curriculum_v3.py:45"
+  ],
+  "confirm_subset_queried": false,
+  "consumes_confirmation_face": false,
+  "face_bytes_independent_of_schema_label": true,
+  "format": "taiji-n1-95-v6-preflight-range-sweep-v1",
+  "gate_lines": {
+    "confirmation_gates": {
+      "advantage_cut": 12,
+      "advantage_terminal": 12,
+      "each_position_kind": 2,
+      "each_position_seed": 10
+    },
+    "min_usable_endpoints": 6,
+    "triple_error_floor": 6
+  },
+  "instruments": {
+    "builder": "scripts/training/build_taiji_n1_fresh_confirmation_v6.py",
+    "confirmation": "scripts/training/eval_taiji_n1_transition_factorial_confirmation_v6.py",
+    "range_check": "scripts/training/verify_taiji_n1_v6_range_check.py",
+    "range_report_format": "taiji-n1-93-v6-range-check-v2"
+  },
+  "parameter_updates": 0,
+  "preflight_is_not_confirmation": true,
+  "purpose": "PLAN-N1-93 §1 签署前的预飞：走通三台 v6 仪器的成功支，并实测草稿参数的动态范围",
+  "range_check_is_capability_claim": false,
+  "repo_write_targets_untouched": {
+    "plans/manifests/n1_fresh_confirmation_v6_20261017.json": false,
+    "reports/taiji_n1_transition_factorial_confirmation_v6.json": false,
+    "reports/taiji_n1_v6_face_construction_checks_20261017.json": false,
+    "reports/taiji_n1_v6_range_check.json": false
+  },
+  "runs": [
+    {
+      "addressable_errors": {
+        "11-cut": 1,
+        "11-position": 1,
+        "11-terminal": 12,
+        "12-cut": 0,
+        "12-position": 0,
+        "12-terminal": 12,
+        "13-cut": 11,
+        "13-position": 11,
+        "13-terminal": 13
+      },
+      "below_floor_endpoints": [
+        "11-cut",
+        "11-position",
+        "12-cut",
+        "12-position"
+      ],
+      "cpu_seconds": 98.3906,
+      "decodable_items_per_endpoint": 15,
+      "face_sha256": "25c51c8e58378ce082bee00d38091f4fdb6eb749f1c2d13386b63959fc56b19d",
+      "observations_per_item": 4,
+      "per_class_mean_errors": {
+        "lookup": 2.8889,
+        "revision": 2.7778,
+        "transition": 1.1111,
+        "unknown": 0.5556
+      },
+      "range_check_passed": false,
+      "sacrifice_half_free_exact": {
+        "11-cut": 19,
+        "11-position": 19,
+        "11-terminal": 8,
+        "12-cut": 20,
+        "12-position": 20,
+        "12-terminal": 6,
+        "13-cut": 9,
+        "13-position": 9,
+        "13-terminal": 4
+      },
+      "sampling_seed": 91,
+      "usable_by_arm": {
+        "cut": 1,
+        "position": 1,
+        "terminal": 3
+      },
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    },
+    {
+      "addressable_errors": {
+        "11-cut": 1,
+        "11-position": 1,
+        "11-terminal": 13,
+        "12-cut": 0,
+        "12-position": 0,
+        "12-terminal": 14,
+        "13-cut": 12,
+        "13-position": 12,
+        "13-terminal": 13
+      },
+      "below_floor_endpoints": [
+        "11-cut",
+        "11-position",
+        "12-cut",
+        "12-position"
+      ],
+      "cpu_seconds": 109.6406,
+      "decodable_items_per_endpoint": 15,
+      "face_sha256": "949f023f922e8846a665d2df6febecbfbc3f8bb342ba3f97748a4c10370c5175",
+      "observations_per_item": 6,
+      "per_class_mean_errors": {
+        "lookup": 2.7778,
+        "revision": 2.7778,
+        "transition": 1.7778,
+        "unknown": 0.8889
+      },
+      "range_check_passed": false,
+      "sacrifice_half_free_exact": {
+        "11-cut": 19,
+        "11-position": 19,
+        "11-terminal": 6,
+        "12-cut": 20,
+        "12-position": 20,
+        "12-terminal": 3,
+        "13-cut": 8,
+        "13-position": 8,
+        "13-terminal": 3
+      },
+      "sampling_seed": 91,
+      "usable_by_arm": {
+        "cut": 1,
+        "position": 1,
+        "terminal": 3
+      },
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    },
+    {
+      "addressable_errors": {
+        "11-cut": 2,
+        "11-position": 3,
+        "11-terminal": 15,
+        "12-cut": 6,
+        "12-position": 0,
+        "12-terminal": 13,
+        "13-cut": 13,
+        "13-position": 11,
+        "13-terminal": 14
+      },
+      "below_floor_endpoints": [
+        "11-cut",
+        "11-position",
+        "12-position"
+      ],
+      "cpu_seconds": 114.9688,
+      "decodable_items_per_endpoint": 15,
+      "face_sha256": "feb3b1f6bbd8d9f5c4cc128464624a2fbfee0dc52ee2b89849b9130f46f098f2",
+      "observations_per_item": 8,
+      "per_class_mean_errors": {
+        "lookup": 3.0,
+        "revision": 2.8889,
+        "transition": 2.6667,
+        "unknown": 0.6667
+      },
+      "range_check_passed": true,
+      "sacrifice_half_free_exact": {
+        "11-cut": 18,
+        "11-position": 17,
+        "11-terminal": 4,
+        "12-cut": 14,
+        "12-position": 20,
+        "12-terminal": 6,
+        "13-cut": 7,
+        "13-position": 9,
+        "13-terminal": 2
+      },
+      "sampling_seed": 91,
+      "usable_by_arm": {
+        "cut": 2,
+        "position": 1,
+        "terminal": 3
+      },
+      "usable_competent_endpoints": 3,
+      "usable_endpoints": 6
+    },
+    {
+      "addressable_errors": {
+        "11-cut": 4,
+        "11-position": 2,
+        "11-terminal": 13,
+        "12-cut": 1,
+        "12-position": 0,
+        "12-terminal": 14,
+        "13-cut": 12,
+        "13-position": 10,
+        "13-terminal": 13
+      },
+      "below_floor_endpoints": [
+        "11-cut",
+        "11-position",
+        "12-cut",
+        "12-position"
+      ],
+      "cpu_seconds": 125.1875,
+      "decodable_items_per_endpoint": 15,
+      "face_sha256": "892718324407e81ca567a04a2c88d4d46467f7e11d21ac7f929700b646632a10",
+      "observations_per_item": 10,
+      "per_class_mean_errors": {
+        "lookup": 2.7778,
+        "revision": 2.8889,
+        "transition": 2.0,
+        "unknown": 0.3333
+      },
+      "range_check_passed": false,
+      "sacrifice_half_free_exact": {
+        "11-cut": 16,
+        "11-position": 18,
+        "11-terminal": 7,
+        "12-cut": 19,
+        "12-position": 20,
+        "12-terminal": 5,
+        "13-cut": 8,
+        "13-position": 10,
+        "13-terminal": 5
+      },
+      "sampling_seed": 91,
+      "usable_by_arm": {
+        "cut": 1,
+        "position": 1,
+        "terminal": 3
+      },
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    },
+    {
+      "addressable_errors": {
+        "11-cut": 3,
+        "11-position": 3,
+        "11-terminal": 14,
+        "12-cut": 3,
+        "12-position": 0,
+        "12-terminal": 14,
+        "13-cut": 13,
+        "13-position": 11,
+        "13-terminal": 13
+      },
+      "below_floor_endpoints": [
+        "11-cut",
+        "11-position",
+        "12-cut",
+        "12-position"
+      ],
+      "cpu_seconds": 136.4688,
+      "decodable_items_per_endpoint": 15,
+      "face_sha256": "65c6f111dc9b5d1ace6d02498b5221916126bbbe005062d6bb90d677fc4426f2",
+      "observations_per_item": 12,
+      "per_class_mean_errors": {
+        "lookup": 2.8889,
+        "revision": 3.0,
+        "transition": 2.3333,
+        "unknown": 0.4444
+      },
+      "range_check_passed": false,
+      "sacrifice_half_free_exact": {
+        "11-cut": 17,
+        "11-position": 17,
+        "11-terminal": 5,
+        "12-cut": 17,
+        "12-position": 20,
+        "12-terminal": 4,
+        "13-cut": 7,
+        "13-position": 9,
+        "13-terminal": 6
+      },
+      "sampling_seed": 91,
+      "usable_by_arm": {
+        "cut": 1,
+        "position": 1,
+        "terminal": 3
+      },
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    },
+    {
+      "addressable_errors": {
+        "11-cut": 0,
+        "11-position": 2,
+        "11-terminal": 14,
+        "12-cut": 0,
+        "12-position": 0,
+        "12-terminal": 13,
+        "13-cut": 13,
+        "13-position": 11,
+        "13-terminal": 13
+      },
+      "below_floor_endpoints": [
+        "11-cut",
+        "11-position",
+        "12-cut",
+        "12-position"
+      ],
+      "cpu_seconds": 102.3594,
+      "decodable_items_per_endpoint": 15,
+      "face_sha256": "661b0e5e81aa647bd7129380403205cad7094b9a21a2a039b728693263a4817c",
+      "observations_per_item": 4,
+      "per_class_mean_errors": {
+        "lookup": 2.7778,
+        "revision": 2.7778,
+        "transition": 1.7778,
+        "unknown": 0.7778
+      },
+      "range_check_passed": false,
+      "sacrifice_half_free_exact": {
+        "11-cut": 20,
+        "11-position": 18,
+        "11-terminal": 4,
+        "12-cut": 20,
+        "12-position": 20,
+        "12-terminal": 6,
+        "13-cut": 7,
+        "13-position": 9,
+        "13-terminal": 3
+      },
+      "sampling_seed": 92,
+      "usable_by_arm": {
+        "cut": 1,
+        "position": 1,
+        "terminal": 3
+      },
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    },
+    {
+      "addressable_errors": {
+        "11-cut": 0,
+        "11-position": 2,
+        "11-terminal": 14,
+        "12-cut": 1,
+        "12-position": 0,
+        "12-terminal": 11,
+        "13-cut": 12,
+        "13-position": 11,
+        "13-terminal": 14
+      },
+      "below_floor_endpoints": [
+        "11-cut",
+        "11-position",
+        "12-cut",
+        "12-position"
+      ],
+      "cpu_seconds": 101.7812,
+      "decodable_items_per_endpoint": 15,
+      "face_sha256": "b87972ad1dc15d95dbcfc5b0db8a3dc504b7aae82edd9df39931face3f1db54a",
+      "observations_per_item": 4,
+      "per_class_mean_errors": {
+        "lookup": 2.7778,
+        "revision": 2.7778,
+        "transition": 1.6667,
+        "unknown": 0.4444
+      },
+      "range_check_passed": false,
+      "sacrifice_half_free_exact": {
+        "11-cut": 20,
+        "11-position": 18,
+        "11-terminal": 5,
+        "12-cut": 19,
+        "12-position": 20,
+        "12-terminal": 8,
+        "13-cut": 8,
+        "13-position": 9,
+        "13-terminal": 4
+      },
+      "sampling_seed": 93,
+      "usable_by_arm": {
+        "cut": 1,
+        "position": 1,
+        "terminal": 3
+      },
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    },
+    {
+      "addressable_errors": {
+        "11-cut": 2,
+        "11-position": 4,
+        "11-terminal": 15,
+        "12-cut": 3,
+        "12-position": 0,
+        "12-terminal": 14,
+        "13-cut": 12,
+        "13-position": 12,
+        "13-terminal": 14
+      },
+      "below_floor_endpoints": [
+        "11-cut",
+        "11-position",
+        "12-cut",
+        "12-position"
+      ],
+      "cpu_seconds": 117.3906,
+      "decodable_items_per_endpoint": 15,
+      "face_sha256": "81cf7e81a00f576453c4dfb00eee7d5876bd917255fa9094dfedd37c61ee3d2f",
+      "observations_per_item": 8,
+      "per_class_mean_errors": {
+        "lookup": 2.8889,
+        "revision": 2.7778,
+        "transition": 2.7778,
+        "unknown": 0.7778
+      },
+      "range_check_passed": false,
+      "sacrifice_half_free_exact": {
+        "11-cut": 18,
+        "11-position": 16,
+        "11-terminal": 4,
+        "12-cut": 17,
+        "12-position": 20,
+        "12-terminal": 3,
+        "13-cut": 8,
+        "13-position": 8,
+        "13-terminal": 3
+      },
+      "sampling_seed": 92,
+      "usable_by_arm": {
+        "cut": 1,
+        "position": 1,
+        "terminal": 3
+      },
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    },
+    {
+      "addressable_errors": {
+        "11-cut": 3,
+        "11-position": 2,
+        "11-terminal": 15,
+        "12-cut": 3,
+        "12-position": 0,
+        "12-terminal": 14,
+        "13-cut": 13,
+        "13-position": 10,
+        "13-terminal": 12
+      },
+      "below_floor_endpoints": [
+        "11-cut",
+        "11-position",
+        "12-cut",
+        "12-position"
+      ],
+      "cpu_seconds": 117.8594,
+      "decodable_items_per_endpoint": 15,
+      "face_sha256": "9151eab68d2bfd0a7f544c7bbc9d1607e99e3a7236a573f3240972a18264cc00",
+      "observations_per_item": 8,
+      "per_class_mean_errors": {
+        "lookup": 2.8889,
+        "revision": 2.8889,
+        "transition": 2.2222,
+        "unknown": 1.0
+      },
+      "range_check_passed": false,
+      "sacrifice_half_free_exact": {
+        "11-cut": 17,
+        "11-position": 18,
+        "11-terminal": 4,
+        "12-cut": 17,
+        "12-position": 20,
+        "12-terminal": 2,
+        "13-cut": 7,
+        "13-position": 10,
+        "13-terminal": 4
+      },
+      "sampling_seed": 93,
+      "usable_by_arm": {
+        "cut": 1,
+        "position": 1,
+        "terminal": 3
+      },
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    }
+  ],
+  "scratch_dir": "C:\\Users\\23747\\AppData\\Local\\Temp\\n1_v6_preflight",
+  "success_branch_walk": {
+    "builder_execute_signed_rc": 0,
+    "confirmation_readiness_rc": 2,
+    "confirmation_readiness_refusal": "the ruler was never shown to have range: no confirmation query is allowed",
+    "range_execute_approved_rc": 1,
+    "range_readiness_rc": 0,
+    "static_qualified_reference_checks": {
+      "refs": 19,
+      "unresolved": 0
+    }
+  }
+}

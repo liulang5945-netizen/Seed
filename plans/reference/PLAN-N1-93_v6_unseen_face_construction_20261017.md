@@ -23,6 +23,12 @@ owner 于 2026-10-17 在 EXP-N1-92 §4 的三条里裁定**甲＝转乙路**：v
 
 生成 40 题后按 id 切成两个不重叠子集：`sacrifice`（20 题，只用于范围检验，永久不得用于能力主张）与 `confirm`（20 题，在 §3 通过之前不得查询）。范围检验＝九枚端点 × 20 题 × 仅 native 解码，读每 (arm, class) 的 native 错误数；**通过条件：三臂在四类中的每一类上平均 native 错误 ≥ 3/20，且至少 6/9 枚端点在 `lookup`／`revision`／`transition` 三类合计错误 ≥ 6/20**。不达线 ⇒ 面不可用，本件出版 `range_not_met` 并回到 §1 调难度旋钮（增大 observations 或加长答案），**不消费 confirm 子集**。价＝180 条 native 序列，按 ㊵-1028 实测 432 条 132.7969 秒外推约 55 秒，上限设 180 秒。
 
+〔㊵-1034 本段的三处更正，全部由仓外预飞实测得出，读数见 `reports/taiji_n1_v6_preflight_range_sweep.json` 与 EXP-N1-95〕
+
+- **分母口径**："三类合计错误 ≥ 6/20"里的分母应为 **15**——牺牲半 20 题按四类各 5 题构成，`unknown` 那 5 题不进"三类合计"。仪器自始按 15 取数（`kind != "unknown"`），是文句把两处分母混进了一句；件里现出版 `decodable_items_per_endpoint` 与逐枚 `addressable_errors` 以免再被读成 20。同理"每类平均 ≥3/20"应为"每类平均 ≥3/**5**"。
+- **哪条线真的 gate**：本段列了两条线，而仪器 `passed` **只取"端点枚数"这一条**；"每类平均"这条从未强制过（现仅出版 `per_class`，并在件里点名 `reported_not_enforced`）。若按本段现文把它强制进去，九次预飞读数**全红**（每类平均最高 3.00，`transition` 1.11～2.67、`unknown` 0.33～1.00）。这两条到底哪条算判据是**口径变更**，须 owner 裁定后才能定案，我不在原句上自行改写。
+- **"回到 §1 调 observations"这条出口已被否证**：五档（4／6／8／10／12）× 三次抽样（91／92／93）共九次读数，`usable` 恒为 5/9，唯一一次 6/9 是 `8/91` 且同档换抽样即消失；机制在生成器里可读——加大 `observations_per_item` 加的是**别的实体的干扰行**（`distractor_slots = slots - SUBJECT_ROWS[kind]`），主体任务深度一维没动。加长答案那一维**未测**（草稿只轮转 6／7 两值）。多步更新链曾被当作候选维，已由课程生成器只发单步这条证据否决（EXP-N1-95 §4），本段不再把它当可选项。
+
 ## 4. 一次性消费纪律
 
 `sacrifice` 可反复重跑（它不承载任何主张）；`confirm` 子集只有六件齐时才允许一次 `--execute-approved`，attempt 写入即视为消费，之后不得重跑、不得换 seed、不得改线值。确认查询的判据沿用 PLAN-N1-90 §5（85 的四门原样）并加一条本件独有的前置：`range_check_passed=true` 必须出现在同一枚报告里，否则四门即使全绿也只记 `range_unverified`，不得写成 C3 达成。
@@ -44,5 +50,7 @@ owner 于 2026-10-17 在 EXP-N1-92 §4 的三条里裁定**甲＝转乙路**：v
 ## 7. 实现状态（2026-10-17 ㊵-1030 现取）
 
 造面器 `scripts/training/build_taiji_n1_fresh_confirmation_v6.py` 已落盘并自证：`--check-draft` 在内存造 40 题、出版全部机检、rc=0 且 `accepted=true`（现读值：`oldest 5`、`newest 4`、形状上界 6；`answer_position_counts` lookup `[3,3,2,2]`／revision `[2,3,3,2]`；`items_with_repeated_material=0`、`frequency_strategy_defined_items=0`；常量方向 3 ≤ 上界 4；与先前所有题集的实体／材质交集 0）。生成链**复用** `build_taiji_n1_confirmation_v4.exclusions()`（含其"三枚冻结源未变"检查），并把 v4、v5 两张已用面并入排除全集，题面的 `excluded_source_sha256` 因此是五枚来源指纹。未签参数时 `--execute-signed` 走 `Refuse`（rc=2）且不写任何文件。守卫测 `tests/taiji_native/test_n1_run93_v6_face_builder_contract.py` 4 passed，含四条"必须为假"的构造（答案全放位置 0、同题复制一份材质、把四类打平成一类、把全部题塞进牺牲半）。**〔㊵-1031 更新本段末句〕范围检验仪已落盘**：`scripts/training/verify_taiji_n1_v6_range_check.py`＋测 `test_n1_run93_v6_range_check_contract.py` 6 passed——`queried_ids()` 是硬守卫（确认子集任一 id 泄漏即 rc=2 且零查询），题面与机检报告必须同源且自述 `accepted=true`／`queries=0`，测量链复用 85 的 `evaluate`（含会话清理与参数／RNG／历史未变的收尾核验）与 90 的族端点装载器，两条线不达线即 `status=range_not_met` 且 rc=1，短跑（端点少于九枚）也判不通过。题面现在自带 `subset` 字段与 manifest 顶部的两枚 id 清单，机检加了 **J93_5_subset_split**（两半各 20、交集空、每类在两半各 5），`--check-draft` 仍 `accepted=true`。签署后只剩三步：`--execute-signed` 落题面 → 范围检验（上限 180 秒）→ 达线才谈一次确认查询。
+
+〔㊵-1034 更正本段末句〕"签署后只剩三步"这句在**取数路径**上仍然成立，但它隐含的"三步跑完就能达线"已被预飞否证：草稿参数下范围检验实测 `range_not_met`（5/9 < 6/9，九次读数），所以签字之后**第一步就会停在 `range_not_met`**，除非 owner 同时按 EXP-N1-95 §6 的三件事改了旋钮值或线口径。本轮同时把这台仪器补了两处自己的缺陷：件里加 `errors_by_kind`／`addressable_errors`（此前 `usable` 无法从发布列复算）与 `usable_by_arm`／`enforced_conditions`／`reported_not_enforced`，删掉一枚从没被引用的装饰常量 `GENERATION_CAP = 64` 改为点名生效位；`format` 升 `…-v2`；测 6→8 passed（新增两条：发布列能复算出 `usable`、行里出现 `KINDS` 之外的类别时守卫必红）。
 
 

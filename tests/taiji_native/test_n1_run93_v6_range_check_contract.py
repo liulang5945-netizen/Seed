@@ -109,3 +109,89 @@ def test_cli_modes_are_exclusive(tmp_path: Path, monkeypatch) -> None:
     monkeypatch.setattr(gate, "OUT", sealed)
     assert gate.main(["--execute-approved"]) == 2
     assert sealed.read_bytes() == before, "refusal must not rewrite the sealed output"
+
+
+def signed_face(tmp_path: Path, monkeypatch) -> None:
+    """一份最小自洽的已签题面：40 题、两半不重叠、检查件与题面指纹同源。"""
+    episodes = [
+        {"id": f"v6-{index:03d}", "kind": KINDS[index % 4], "split": "holdout"}
+        for index in range(40)
+    ]
+    ids = [episode["id"] for episode in episodes]
+    face = tmp_path / "face.json"
+    face.write_text(
+        json.dumps(
+            {"episodes": episodes, "subsets": {"sacrifice": ids[:20], "confirm": ids[20:]}},
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    checks = tmp_path / "checks.json"
+    checks.write_text(
+        json.dumps({"face_sha256": gate.sha(face), "accepted": True, "queries": 0}),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(gate, "FACE", face)
+    monkeypatch.setattr(gate, "CHECKS", checks)
+    monkeypatch.setattr(gate, "OUT", tmp_path / "range.json")
+
+
+def stub_measure(monkeypatch, rows_for) -> None:
+    endpoints = {(seed, arm): Path("endpoint.pt") for seed in gate.SEEDS for arm in gate.ARMS}
+    monkeypatch.setattr(gate.bind, "family_receipts", lambda: {})
+    monkeypatch.setattr(gate.bind, "endpoints", lambda receipts: (endpoints, {}))
+
+    def fake(seed, arm, path, items, budget):
+        return {"seed": seed, "arm": arm, "rows": rows_for(seed, arm, len(items))}
+
+    monkeypatch.setattr(gate, "measure_endpoint", fake)
+
+
+def synthetic_rows(seed: int, arm: str, count: int) -> list:
+    wrong_by_kind = {"lookup": 3, "revision": 2, "transition": 2, "unknown": 1}
+    return [
+        {
+            "id": f"v6-{index:03d}",
+            "kind": KINDS[index % 4],
+            "free_exact": (index // 4) >= wrong_by_kind[KINDS[index % 4]],
+        }
+        for index in range(count)
+    ]
+
+
+def test_the_published_columns_reproduce_the_adjudication(tmp_path: Path, monkeypatch) -> None:
+    """判读用的逐类错误必须进件：否则 `usable` 只能由件外的内存态算出，复算仪无从独立复算。"""
+    signed_face(tmp_path, monkeypatch)
+    stub_measure(monkeypatch, synthetic_rows)
+    assert gate.run_approved() == 0
+    reading = json.loads((tmp_path / "range.json").read_text(encoding="utf-8"))
+    assert reading["format"] == "taiji-n1-93-v6-range-check-v2"
+    assert reading["generation_cap_site"].endswith(".py:114")
+    for entry in reading["endpoints"]:
+        split = entry["errors_by_kind"]
+        assert sum(split.values()) == entry["errors"], entry
+        assert entry["addressable_errors"] == entry["errors"] - split["unknown"], entry
+        assert entry["free_exact"] + entry["errors"] == 20, entry
+    usable = sum(
+        1
+        for entry in reading["endpoints"]
+        if entry["addressable_errors"] >= gate.TRIPLE_ERROR_FLOOR
+    )
+    assert usable == reading["adjudication"]["endpoints_with_triple_errors"], reading
+
+
+def test_an_unlisted_kind_breaks_the_split_guard(tmp_path: Path, monkeypatch) -> None:
+    """守卫要能为假：一行落在 KINDS 之外时，逐类拆分漏计错误，本件必须拒绝出版。"""
+
+    def rows_with_stray_kind(seed, arm, count):
+        rows = synthetic_rows(seed, arm, count)
+        if (seed, arm) == (gate.SEEDS[0], gate.ARMS[0]):
+            rows[0]["kind"] = "reasoning"
+            rows[0]["free_exact"] = False
+        return rows
+
+    signed_face(tmp_path, monkeypatch)
+    stub_measure(monkeypatch, rows_with_stray_kind)
+    with pytest.raises(gate.Refuse, match="class split misses an error"):
+        gate.run_approved()
+    assert not (tmp_path / "range.json").exists(), "a refused run must not leave a report behind"

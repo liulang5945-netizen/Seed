@@ -32,11 +32,13 @@ CHECKS = ROOT / "reports/taiji_n1_v6_face_construction_checks_20261017.json"
 OUT = ROOT / "reports/taiji_n1_v6_range_check.json"
 ARMS = ("position", "terminal", "cut")
 SEEDS = (11, 12, 13)
+KINDS = ("lookup", "revision", "transition", "unknown")
 CLASS_ERROR_FLOOR = 3
 TRIPLE_ERROR_FLOOR = 6
 MIN_USABLE_ENDPOINTS = 6
 CPU_LIMIT_SECONDS = 180
-GENERATION_CAP = 64
+#: 本件不控制生成预算：真正生效的那一位住在 `measure()` 里，点名它而不是再造一个同名常量。
+GENERATION_CAP_SITE = "scripts/training/eval_taiji_n1_transition_factorial_confirmation.py:114"
 
 
 class Refuse(Exception):
@@ -95,9 +97,9 @@ def queried_ids(face: dict) -> list:
 
 
 def range_lines(results: list) -> dict:
-    """§3 的两条线：三臂在每类的平均 native 错误，与"三类合计错误够多"的端点枚数。"""
+    """只有"合计错误够多的端点枚数"这一条 gate `passed`；逐类那条现仅出版，不 gate（PLAN-N1-93 §3 文句与仪器口径待 owner 裁定）。"""
     per_class = {}
-    for kind in ("lookup", "revision", "transition", "unknown"):
+    for kind in KINDS:
         errors = [
             sum(1 for row in entry["rows"] if row["kind"] == kind and not row["free_exact"])
             for entry in results
@@ -106,19 +108,35 @@ def range_lines(results: list) -> dict:
             "mean_errors": round(sum(errors) / len(errors), 4) if errors else None,
             "endpoints_over_floor": sum(1 for value in errors if value >= CLASS_ERROR_FLOOR),
         }
-    triple = [
-        sum(1 for row in entry["rows"] if row["kind"] != "unknown" and not row["free_exact"])
+    triple = {
+        (entry["seed"], entry["arm"]): sum(
+            1 for row in entry["rows"] if row["kind"] != "unknown" and not row["free_exact"]
+        )
         for entry in results
-    ]
-    usable = sum(1 for value in triple if value >= TRIPLE_ERROR_FLOOR)
+    }
+    decodable = sum(1 for row in results[0]["rows"] if row["kind"] != "unknown") if results else 0
+    over = {key: value for key, value in triple.items() if value >= TRIPLE_ERROR_FLOOR}
+    usable = len(over)
     passed = (
         bool(results) and len(results) == len(SEEDS) * len(ARMS) and usable >= MIN_USABLE_ENDPOINTS
     )
+    by_arm = {
+        arm: sum(1 for (_seed, a) in over if a == arm) for arm in ("position", "terminal", "cut")
+    }
     return {
         "per_class": per_class,
         "endpoints_with_triple_errors": usable,
         "endpoints_total": len(results),
+        "decodable_items_per_endpoint": decodable,
         "range_check_passed": passed,
+        "usable_by_arm": by_arm,
+        "usable_competent_endpoints": by_arm["position"] + by_arm["cut"],
+        "enforced_conditions": [
+            f"endpoints with >= {TRIPLE_ERROR_FLOOR}/{decodable} decodable errors must number >= {MIN_USABLE_ENDPOINTS} of {len(SEEDS) * len(ARMS)}"
+        ],
+        "reported_not_enforced": [
+            f"per-class mean native errors >= {CLASS_ERROR_FLOOR} on {decodable // 3 if decodable else 0} items per class"
+        ],
         "lines": {
             "class_error_floor": CLASS_ERROR_FLOOR,
             "triple_error_floor": TRIPLE_ERROR_FLOOR,
@@ -188,8 +206,38 @@ def run_approved() -> int:
     for seed in SEEDS:
         for arm in ARMS:
             results.append(measure_endpoint(seed, arm, endpoints[(seed, arm)], items, budget))
+    endpoints_payload = []
+    for entry in results:
+        errors = sum(1 for row in entry["rows"] if not row["free_exact"])
+        by_kind = {
+            kind: sum(1 for row in entry["rows"] if row["kind"] == kind and not row["free_exact"])
+            for kind in KINDS
+        }
+        require(
+            sum(by_kind.values()) == errors,
+            f"seed {entry['seed']} {entry['arm']}: the class split misses an error",
+        )
+        endpoints_payload.append(
+            {
+                "seed": entry["seed"],
+                "arm": entry["arm"],
+                "free_exact": len(entry["rows"]) - errors,
+                "errors": errors,
+                "errors_by_kind": by_kind,
+                "addressable_errors": errors - by_kind["unknown"],
+            }
+        )
+    adjudication = range_lines(results)
+    recomputed = sum(
+        1 for item in endpoints_payload if item["addressable_errors"] >= TRIPLE_ERROR_FLOOR
+    )
+    require(
+        recomputed == adjudication["endpoints_with_triple_errors"],
+        f"the published columns reproduce {recomputed} usable endpoints while the "
+        f"adjudication says {adjudication['endpoints_with_triple_errors']}",
+    )
     payload = {
-        "format": "taiji-n1-93-v6-range-check-v1",
+        "format": "taiji-n1-93-v6-range-check-v2",
         "face": str(FACE),
         "face_sha256": sha(FACE),
         "subsets_queried": ["sacrifice"],
@@ -199,16 +247,9 @@ def run_approved() -> int:
         "items_queried": len(items) * len(results),
         "cpu_limit_seconds": CPU_LIMIT_SECONDS,
         "cpu_seconds": round(time.process_time() - started, 4),
-        "endpoints": [
-            {
-                "seed": entry["seed"],
-                "arm": entry["arm"],
-                "free_exact": sum(1 for row in entry["rows"] if row["free_exact"]),
-                "errors": sum(1 for row in entry["rows"] if not row["free_exact"]),
-            }
-            for entry in results
-        ],
-        "adjudication": range_lines(results),
+        "generation_cap_site": GENERATION_CAP_SITE,
+        "endpoints": endpoints_payload,
+        "adjudication": adjudication,
     }
     payload["status"] = (
         "passed" if payload["adjudication"]["range_check_passed"] else "range_not_met"

@@ -3849,4 +3849,14 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 
 真树冒烟两支出题面缺失的响亮拒绝：`verify_..._range_check.py --readiness` 与 `eval_..._v6.py --readiness` 都 rc=2 且 `reports/` 里**没有新增任何 v6 读数件**（现取 `git status --porcelain`，只有两枚新代码文件未入库）。同轮修掉一处我自己的形状错：本想在 v6 里另立一个 `Refuse` 类，先写成"继承范围仪的 Refuse"——那是**漏接**（raise 父类实例、except 子类接不住，会一路逃成 traceback 而不是声明的 rc=2），改成两器共用同一枚 `Refuse` 并在注释里写下为什么不能做父子两个同名类。另两处也是同一族：一条前置被我写成 `... or True`（恒真＝零判别力，删掉，同源核验已由 `load_face` 把守）、一处 `if False else` 死支（清掉）。
 
-队列不变＝等 owner 签 PLAN-N1-93 §1 形状参数；签后三步＝`--execute-signed` 落题面 → 范围检验（≤180 秒）→ 达线才发射 94 的一次确认查询。本机未推提交现读 9 条（本轮入库后），推送仍待 owner 执行或明确授权。
+队列不变＝等 owner 签 PLAN-N1-93 §1 形状参数；签后三步＝`--execute-signed` 落题面 → 范围检验（≤180 秒）→ 达线才发射 94 的一次确认查询。本机未推提交现读 9 条（本轮入库后）〔㊵-1034 取代：现读 11 条〕，推送仍待 owner 执行或明确授权。
+
+### ㊵-1034 · 2026-10-17 · v6 预飞：三台仪器的成功支走通，草稿 §1 参数的动态范围九次实测恒为 5/9
+
+- 队首仍是 owner 签 PLAN-N1-93 §1。签字之前有一格我可自办却一直没做：三台 v6 仪器**只测过拒绝支**。本轮用仓外 scratch 题面把成功支真走一遍（`C:/Users/23747/AppData/Local/Temp/n1_v6_preflight/`，九枚冻结端点、`parameter_updates=0`、确认子集零查询、仓内四枚真写靶前后双向复核为"不存在"）。四步 rc＝0／0／1／2，范围检验 95～137 CPU 秒（上限 180 有余量）。动手前先过静态面：三台仪器 19 处限定引用（`bind.`／`base85.`／`paired.`／`v4.`）按 AST 逐个解析到持有模块的真实定义，`UNRESOLVED=0`。
+- 抓到并当场修掉我自己两处缺陷：① v1 件的 `endpoints` 只有含 `unknown` 的 `errors` 与 `free_exact`，而判据取的是"三类合计错误 ≥6" ⇒ **`usable` 无法从已发布列复算**，零算力复核仪拿到件只能信我。升 `format=taiji-n1-93-v6-range-check-v2`，加 `errors_by_kind`／`addressable_errors`／`decodable_items_per_endpoint`／`usable_by_arm`／`usable_competent_endpoints`／`enforced_conditions`／`reported_not_enforced`，并加两条守卫（逐类求和必须等于总错误；发布列必须复算出 `adjudication` 里的 usable，不等则 rc=2 且不出版）。测 6→**8 passed**，含一条"行里出现 `KINDS` 之外的类别时守卫必红"。② `GENERATION_CAP = 64` 是一枚从没被引用的装饰常量（生效位在 `eval_taiji_n1_transition_factorial_confirmation.py:114`），与 DEBT-G150 同族，删掉并改为 `GENERATION_CAP_SITE` 点名生效位随件出版。
+- 读数面（入库件 `reports/taiji_n1_v6_preflight_range_sweep.json`，九次）：观测数 4／6／8／10／12 在抽样 91 上给 usable **5,5,6,5,5**；再补 4 与 8 两档 × 抽样 92／93，四次全为 **5/9** ⇒ 跨抽样幅度与跨旋钮幅度同量级（都是 ±1），**"把旋钮调到 8 就开出动态范围"这句不成立**；6/9 只在 `8/91` 这一面出现，且完全由 `12-cut` 一枚从其余配置的 0～3 跨到 6 决定。卡在线下的永远是同样四枚（seed 11/12 的 position 与 cut）；过线那 5 枚里 3 枚是 terminal 臂（12～15/15 错，与题面难度无关，属白送），`12-position` 九次里 0 错。
+- 一条我自己想出来的"更难"被证据否掉、一行代码没写：多步更新链。训练课程生成器 `build_taiji_n1_evidence_curriculum.py:53` 与 `build_taiji_n1_content_curriculum_v3.py:45` 固定只发**单步**（`uses first.` + `now uses second.`）⇒ 多步链是分布外结构，端点失败测的是"没见过这句式"而不是能力，与 ㊵-1028 那次"oracle 抬升不是能力"同形。
+- 顺带用牺牲半预测确认四门（预测≠确证，不得用于任何 C3 主张）：`each_position_seed ≥10/20` 对 **seed 13 的 position 九次全为 9**（差一枚）；`advantage_terminal` 与 `advantage_cut` 在 knob 4 的 seed 11 为 +11、seed 13 为 +5 皆红 ⇒ 即使范围线被打开，这次一次性消费**预计落在出口 ⑵**，且卡口在"差一枚"这种最容易事后放宽的地方。这一条要在签字之前看见，不是消费之后。
+- PLAN-N1-93 就地更正三处（原句划掉不删）：§3 的分母（"三类合计 ≥6/20"应为 **6/15**、"每类平均 ≥3/20"应为 **≥3/5**）；§3 那条"每类平均"线**仪器从未强制**，只出版不 gate（按现文强制则九次全红），属口径待裁；§7 末句"签署后只剩三步"补一句"第一步就会停在 `range_not_met`，除非同时按 EXP-N1-95 §6 改旋钮值或线口径"。判读件 `plans/reference/EXP-N1-95_v6_preflight_range_sweep_20261017.md`。
+- 队列不变＝等 owner 三裁（难度旋钮签什么值／范围线是否改按"能力端点"重述／§3 两条线以文句还是仪器为准）；确认查询仍未发射。本笔入库后未推提交现读 11 条（`git rev-list --count origin/main..HEAD`），推送仍待 owner 执行或明确授权。
