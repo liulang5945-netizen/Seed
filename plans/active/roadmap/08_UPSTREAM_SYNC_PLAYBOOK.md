@@ -4154,3 +4154,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - `plans/reference/PLAN-N1-107_v10_output_geometry_and_position_stability_20261017.md` SHA-256 `9504cce61f748ce4cad748d39762be1ef0cfe12b51ec698a20d852768ad818ac`已冻结；仅消费v10 face/result，绑定已知hash、全2232行、matched family内容及位置覆盖。输出字符长度/目标编辑距离、最近已观察值来源和matched template跨位置输出稳定性全部列出分母；CPU≤30秒，0加载、查询、训练或更新。
 - analyzer `scripts/training/audit_taiji_n1_v10_output_geometry.py` SHA-256 `a8c834f840fa30ba451161b0ecdc715e740d1e97cf6498a17c7ec5139ece94e7`，合同测试 `tests/taiji_native/test_n1_run107_v10_output_geometry_contract.py` SHA-256 `cc26c6b6150711c68a4a38544fe28a3ce7765bc66ac9272b32513d93fd2786b9`。六项测试通过，Ruff/Black/py_compile通过；测试已用官方face/result逐题验证2,232条与180个位置×长度template family。
 - 当前唯一下一步：提交冻结计划、工具、合同测试和active status后运行一次。报告只能解释输出相似度/位置稳定性；不重算任何门、不用于晋升。
+
+### ㊵-1079 · 2026-10-17 · PLAN-N1-107输出距离与位置稳定性完成
+
+- 离线分析完成2,232行、180个匹配position/length模板组，CPU0.15625秒；报告SHA-256 `402d58d663c2359a7c23f69cad635cfe335675572f742be50488382014185675`，source/input hashes全部匹配且前后不变，模型/checkpoint加载、查询和参数更新均0。
+- 180/180模板组的所有位置均输出同一个字符串。position seed11七字符lookup的一组12位置全输出`unknown`；seed12的七字符lookup与revision各有单一模板全位置一字符差错，revision输出长度短一字符；seed13的全部lookup/revision模板均全位置稳定错误，与目标编辑距离2–7，position为0/96和0/88。该差异位于seed/模板/答案长度层，不表现为同模板逐位置变化；不能据此断言内部完全不使用地址。
+- 当前唯一下一步：只读汇总v10已存`teacher_exact`与`free_exact`的一致/分歧表，判断错误是否在gold-prefix条件下同样存在；仅消费原face/result，不加载模型、不查询、不训练、不改门，之后提出唯一训练/结构方案供owner裁定。
