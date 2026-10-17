@@ -34,6 +34,11 @@ from scripts.training import (  # noqa: E402
 from scripts.training import (  # noqa: E402
     run_taiji_n1_v3_train_calibration as calibration,
 )
+from taiji.native_evidence_candidate import NativeEvidenceCandidate  # noqa: E402
+from taiji.native_question_aligned_evidence_candidate import (  # noqa: E402
+    QuestionReadState,
+)
+from taiji.native_relative_evidence_candidate import RelativeReadState  # noqa: E402
 
 PLAN = ROOT / "plans/reference/PLAN-N1-92_oracle_address_probe_run92_20261017.md"
 V5 = ROOT / "plans/manifests/n1_fresh_confirmation_v5_20261016.json"
@@ -70,6 +75,97 @@ def sha(path: Path) -> str:
 
 def read_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def forced_weights(model, conditioned, hop_hidden, mode, source, position):
+    """注意力替换只走 `tape.keys` 与 `positions` 两枚公开量（PLAN-N1-92 §1 升版条件②）。"""
+    scores = conditioned.keys @ model.query(hop_hidden) / model.config.key**0.5
+    if mode == "position":
+        forced = torch.zeros_like(scores)
+        forced[position] = 1.0
+        return forced
+    if mode == "source":
+        mask = torch.tensor(
+            [entry[0] == source for entry in conditioned.positions], device=scores.device
+        )
+        if not bool(mask.any()):
+            raise ValueError("oracle source absent from the conditioned tape")
+        return torch.softmax(scores.masked_fill(~mask, float("-inf")), dim=0)
+    raise ValueError(f"unsupported oracle mode {mode}")
+
+
+def prepare_state(model, tape, question):
+    """只调用产品自己的 bind_question／condition／relation_tape，不重写它们的算法。"""
+    state = model.question_state(question)
+    if state.conditioned_tape is not None:
+        return state, state.conditioned_tape
+    bound, _, _ = model.bind_question(tape, state)
+    conditioned, alignment = model.condition(tape, bound.question_states)
+    conditioned = model.relation_tape(tape, conditioned, question)
+    return (
+        QuestionReadState(bound.relative, bound.question_states, tape, conditioned, alignment),
+        conditioned,
+    )
+
+
+def adapter_step(model, tape, session, state, previous, forced):
+    """native 支（forced=None）必须与 `model.step` 逐位相同；oracle 支只换注意力。"""
+    conditioned = state.conditioned_tape
+    require(conditioned is not None, "the conditioned tape must be materialised first")
+    _, hop_hidden, _ = NativeEvidenceCandidate.step(
+        model, conditioned, session, state.relative.hidden, previous
+    )
+    if forced is None:
+        weights = torch.softmax(
+            conditioned.keys @ model.query(hop_hidden) / model.config.key**0.5, dim=0
+        )
+    else:
+        weights = forced
+    read = weights @ conditioned.values
+    hidden = model.decoder(torch.cat((model.symbol(previous), read)), hop_hidden)
+    logits = model.readout(torch.cat((hidden, read)))
+    return (
+        logits,
+        QuestionReadState(
+            RelativeReadState(hidden, None, conditioned),
+            state.question_states,
+            tape,
+            conditioned,
+            state.alignment,
+        ),
+        weights,
+    )
+
+
+def oracle_teacher(model, tape, session, question, target, mode, source, positions):
+    """teacher-forced 重放：末位边界那一步一律走产品自己的 step（与封存件同形）。"""
+    if mode not in oracle.MODES:
+        raise ValueError(f"unknown oracle mode {mode}")
+    state, _conditioned = prepare_state(model, tape, question)
+    previous = model.BOUNDARY
+    outputs = []
+    for index, byte in enumerate((*target, model.BOUNDARY)):
+        if index == len(target):
+            logits, state, _weights = model.step(tape, session, state, previous)
+        elif mode == "native":
+            logits, state, _weights = adapter_step(model, tape, session, state, previous, None)
+        else:
+            conditioned = state.conditioned_tape
+            _, hop_hidden, _ = NativeEvidenceCandidate.step(
+                model, conditioned, session, state.relative.hidden, previous
+            )
+            forced = forced_weights(model, conditioned, hop_hidden, mode, source, positions[index])
+            logits, state, _weights = adapter_step(model, tape, session, state, previous, forced)
+        outputs.append(logits)
+        previous = byte
+    return torch.stack(outputs)
+
+
+def native_anchor(model, tape, session, question, target) -> bool:
+    """§1 升版条件①：适配器 native 支必须逐位复现 `teacher_logits`。"""
+    expected, _attention = model.teacher_logits(tape, session, question, target)
+    actual = oracle_teacher(model, tape, session, question, target, "native", None, [])
+    return bool(torch.equal(expected, actual))
 
 
 def oracle_addresses(item: dict, tape) -> tuple[str, list[int]]:
@@ -171,6 +267,8 @@ def probe_endpoint(seed: int, arm: str, path: Path, items: list, budget: float) 
     last_step: dict = {mode: 0 for mode in oracle.MODES}
     gains = 0
     losses = 0
+    anchor_equal = 0
+    anchor_unequal = 0
     rows = []
     with torch.no_grad():
         for item in items:
@@ -184,12 +282,15 @@ def probe_endpoint(seed: int, arm: str, path: Path, items: list, budget: float) 
             source, positions = oracle_addresses(item, tape)
             target = item["answer"].encode()
             question = item["question"].encode()
+            matches = native_anchor(model, tape, session, question, target)
+            anchor_equal += int(matches)
+            anchor_unequal += int(not matches)
             observed = {}
             for mode in oracle.MODES:
                 if mode == "native":
                     logits, _ = model.teacher_logits(tape, session, question, target)
                 else:
-                    logits = oracle.teacher(
+                    logits = oracle_teacher(
                         model, tape, session, question, target, mode, source, positions
                     )
                 observed[mode] = oracle.profile(logits, target)
@@ -225,6 +326,8 @@ def probe_endpoint(seed: int, arm: str, path: Path, items: list, budget: float) 
         "seed": seed,
         "arm": arm,
         "items": len(items),
+        "anchor_equal": anchor_equal,
+        "anchor_unequal": anchor_unequal,
         "modes": per_mode,
         "last_step_byte_correct": last_step,
         "position_paired_gains": gains,
@@ -367,7 +470,22 @@ def run_approved() -> int:
         "error": error,
     }
     if results:
-        payload["adjudication"] = adjudicate(results, covered["addressable"])
+        anchor_unequal = sum(entry["anchor_unequal"] for entry in results)
+        anchor_checked = sum(entry["anchor_equal"] + entry["anchor_unequal"] for entry in results)
+        payload["anchor_pairs_checked"] = anchor_checked
+        payload["anchor_pairs_diverged"] = anchor_unequal
+        if anchor_unequal:
+            status = "stopped"
+            error = (
+                f"the adapter's native branch diverged on {anchor_unequal}/{anchor_checked} pairs"
+            )
+            payload["status"] = status
+            payload["error"] = error
+        else:
+            payload["adjudication"] = adjudicate(results, covered["addressable"])
+    else:
+        payload["anchor_pairs_checked"] = 0
+        payload["anchor_pairs_diverged"] = None
     REPORT.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",

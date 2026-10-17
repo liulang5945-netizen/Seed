@@ -3788,3 +3788,13 @@ owner 在本轮 AskUserQuestion 的三个问题上分别选定了如下选项，
 `--execute-approved` 在**第一枚端点的第一条 oracle 支**崩：`TypeError: linear(): argument 'input' (position 1) must be Tensor, not LocalQuestionReadState`，出处＝`audit_taiji_n1_address_intervention.py:62` 那句 `tape.keys @ model.query(hidden)`——它假设 `model.question_state(...)` 返回张量，而九枚端点的类别是 `taiji/native_local_relation_evidence_candidate.py:15` 的 `LocalRelationEvidenceCandidate`（经 `ContextualQuestionEvidenceCandidate` 继承 `taiji/native_question_aligned_evidence_candidate.py:66/:105` 的 `question_state`／`step`，读状态是复合对象），装载点见 `run_taiji_n1_transition_factorial_paired.py:208`。⇒ **§1 原文"import 那两枚函数所以不重抄生成链"这条复用假设被否证**，本件的机制那半条链必须写类别专用适配器；PLAN-N1-92 §1 已就地打日期戳升版，新增两条准入替换原句：①适配器 **native 支必须在 16 题 × 9 端点上逐位复现 `model.teacher_logits(...)`**（不等数入件、非 0 整件拒），这是"我只替换了注意力"的唯一证人；②注入只许走 `tape.keys` 与 `positions` 两枚公开量，不许读写入器或参数。
 
 纪律两笔如实登记：①崩溃发生在写 attempt 之后、写报告之前，那份 attempt **字节未动**、按不可覆盖方式改名留存为 `reports/taiji_n1_oracle_address_probe_run92_attempt.failed-1.json`，报告槽位仍空；②§5 原本承诺"任何中断都如实出版 partial 行"，而我的 `except` 只列了三种类型 ⇒ TypeError 直接逃逸、报告没落——这是预注册与实现的差额，已把捕获改成 `Exception` 并保留 error 类型名。队列：下一件＝写适配器＋native 逐位锚点（评测类、零训练、上限 ≤120 秒 CPU），完成前本件不出任何机制结论。本轮新增未推提交；v5 面仍处已消费态，三批训练结论不撤。
+
+### ㊵-1027 · 2026-10-17 · 适配器已跑通形状但 **native 逐位锚点判 False**：漏掉了 `RelativeReadState.address` 那条混合支，报告槽位仍未使用
+
+按 ㊵-1026 升版后的准入写了类别专用适配器（`forced_weights`／`prepare_state`／`adapter_step`／`oracle_teacher`／`native_anchor` 五枚函数进 `probe_taiji_n1_oracle_address_run92.py`，只调用产品自己的 `bind_question`／`condition`／`relation_tape`／`NativeEvidenceCandidate.step`，不重写其算法）。仪器 `black --check`、`ruff --select B,SIM`、合同测 6 passed 全绿；readiness 仍全真（锚点面 96/0、覆盖 16/32、九枚端点齐备）。
+
+**首模验证在仓外跑，没有动仓库里任何产物**（`--execute-approved` 未发射，报告槽位保持未用）：类确实是 `LocalRelationEvidenceCandidate`（MRO 深 11），oracle 两支都能算出读数（sample 三题 `position_exact` 全 True、`source_exact` 全 False、attention 形状 (7,46)／(7,50)），但 **`native_anchor_equal` 三题全 False** ⇒ §1 升版的那条"native 支必须逐位复现 `teacher_logits`"当场把这版适配器拒了——这正是它该有的作用。
+
+成因已定位到行：`taiji/native_relative_evidence_candidate.py:21` 的 `RelativeReadState(hidden, address, tape)` 第二字段名字是 **address**，而 `:89` 构造时传的是上一步的 **weights** ⇒ 从第二跳起 `:80 if state.address is not None` 那条混合支是**活路不是死路**（`location`＋`transport`＋`gate` 按 `controls[:3]`/`controls[3]` 参与权重）。我第一版只复现了 `:78-79` 与 `:85-91`，把 `:80-84` 整段略过 ⇒ 分歧可解释，且不是数值噪声而是少了一级机制。修法照抄该方法的完整 `:78-91`（含地址混合支），唯一改动仍是"用 forced 替换 :79 的 softmax 结果"，并且**再用 native 锚点作证**：native 支走原式，若与 `teacher_logits` 逐位相同才允许使用 oracle 支。
+
+本轮不发射正式探针，也不出任何机制结论——`oracle_exact` 那三题的 True/False 现在**不许引用**，因为它们来自一条被自己的锚点拒掉的适配器。队列：补地址支＋重跑仓外首模验证，两次锚点都为真才进 `--execute-approved`。三批训练结论与"衰减修末周期"的配方事实不撤；v5 面仍已消费、`retry_allowed=false`；本机在 ㊵-1026 那次提交后未推累计 2 条（`git rev-list --count origin/main..HEAD` 现读），本轮改动入库后再计，推送需 owner 另行裁定。
