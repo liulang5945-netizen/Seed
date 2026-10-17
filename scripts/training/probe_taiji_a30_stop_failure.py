@@ -1800,6 +1800,14 @@ def main() -> int:
             if (args.copy_successor_restricted_addressing and substrate.copy_circuit is not None)
             else None
         ),
+        "format_note_v45": "v45（2026-10-14，`887b95e2f`）：新增持久逐步载体一档——旗标 "
+        "`--persistent-stepwise-carrier` 与 `--carrier-checkpoint-out` 互为必需（缺其一即 "
+        "`parser.error`），开旗标时报告加出 `persistent_stepwise_carrier` 块"
+        "（enabled／checkpoint／episodes／steps／context_dim／raw_vector_bytes／"
+        "model_parameter_digest_before／model_parameter_digest_after／episode_manifest）。"
+        "关旗标时自述仍取 v44 且 v44 的每一列、每个比较公式与计数列**原样不动**；"
+        "本条注记是 ㊵-1104 补的：升版那一笔没同步留注，合同测按 DEBT-G57 的规矩报了 "
+        "`format_note_v45` 缺失——这条守卫第一次跑就抓住了它存在的理由。",
         "format_note_v44": "v44（2026-10-08）：PLAN-N1-01（S1a 硬序贯读取档）加旗标 "
         "--copy-successor-restricted-addressing，置电路的 successor_restricted_addressing；"
         "升版理由＝件里多了两个自述键（旗标态与本注），行为学按惯例 bump format；因此 PLAN-N1-02 那台 "

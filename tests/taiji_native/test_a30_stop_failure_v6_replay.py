@@ -89,37 +89,66 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     #: **DEBT-G57 修法①：版本号同源取，不再人肉钉某一枚字面量。**
     #: 旧写法钉着 `"…-v41"`，而探针升到 v44 时没人同步改这条测 ⇒ 一条与产品无关的常驻红
     #: （引入点是已推送的 `726a0a75`：升版那一笔没同批改测，四道提交前的门盖不到）。
-    #: 现在把"件里自述的第几版"读出来当基准，历史注记仍逐版硬要求，且**只许一枚自述版本**。
+    #: 现在把"件里自述的第几版"读出来当基准，历史注记仍逐版硬要求。
+    #: 〔㊵-1104 取法第二次被现场形状推翻并就地重推（判据未动）：`887b95e2f`（2026-10-14，
+    #: "add persistent stepwise carrier"）把自述改成**条件式**——`"format": (v45 if 旗标 else v44)`，
+    #: 于是旧正则要求 `"format": ` 紧跟一枚引号字面量，实得 **0 枚** ⇒ 这条守卫红了三天没人报。
+    #: 新取法：收全部自述版本号，要求**不重复、构成连续区间、每一枚都带 `format_note_vN`**；
+    #: 判据仍是"升版必须同时留该版注记"，只是不再假设自述写在同一行。
     def _version_and_missing_notes(text: str) -> tuple[int, list[int]]:
-        versions = re.findall(r'"format": "taiji-a30-stop-failure-v(\d+)"', text)
-        if len(versions) != 1:
+        versions = sorted({int(n) for n in re.findall(r'"taiji-a30-stop-failure-v(\d+)"', text)})
+        if not versions:
+            raise AssertionError("探针里一枚格式自述都没有 ⇒ 取法又失效了，先确认读的是哪份件")
+        if versions != list(range(versions[0], versions[-1] + 1)):
+            high = versions[-1]
             raise AssertionError(
-                f"探针的格式自述应当**恰好一枚**，实得 {len(versions)} 枚：{versions}"
+                f"自述版本必须构成连续区间（条件式两枚应为 v{high - 1}／v{high}），实得 {versions}"
             )
-        current = int(versions[0])
-        missing = [v for v in range(6, current + 1) if f"format_note_v{v}" not in text]
-        return current, missing
+        current = versions[-1]
+        #: 认**键的引号形状**而不是裸串：注记正文里提到自己的键名不能反过来把键缺失掩盖
+        #: （本轮 v45 注记就自指了一次，第一次跑就红——这条控制写正确了）。
+        missing = [v for v in versions if f'"format_note_v{v}"' not in text]
+        missing += [
+            v
+            for v in range(6, current + 1)
+            if f'"format_note_v{v}"' not in text and v not in missing
+        ]
+        return current, sorted(set(missing))
 
     current_version, missing_notes = _version_and_missing_notes(source)
     assert (
         current_version >= 41
     ), f"件里自述的格式版本 {current_version} 低于本轮已认定的最低在案版本 41"
     assert not missing_notes, f"升版只许加列，历史说明必须逐版留在件里；缺：{missing_notes}"
-    #: 能为假的两面（同一条逻辑的负对照，不靠"看代码应该会拒"）：
-    #: ①只挪探针的自述版本、不同步注记 ⇒ 必须报缺；②自述出现两枚 ⇒ 必须响亮拒绝。
-    bumped = source.replace(
-        f'"format": "taiji-a30-stop-failure-v{current_version}"',
-        f'"format": "taiji-a30-stop-failure-v{current_version + 1}"',
-    )
+    #: 能为假的三面（同一条逻辑的负对照，不靠"看代码应该会拒"）：
+    #: ①整支自述一起升版、不同步注记 ⇒ 必须报缺；②只挪条件式里的高号（跳号）⇒ 必须响亮拒绝；
+    #: ③删掉当前版注记 ⇒ 必须报缺（旧②"两枚必拒"已被现场形状否证——条件式合法地写两枚）。
+    all_versions = sorted({int(n) for n in re.findall(r'"taiji-a30-stop-failure-v(\d+)"', source)})
+    bumped = source
+    for old in sorted(all_versions, reverse=True):
+        bumped = bumped.replace(
+            f'"taiji-a30-stop-failure-v{old}"', f'"taiji-a30-stop-failure-v{old + 1}"'
+        )
     bumped_version, bumped_missing = _version_and_missing_notes(bumped)
     assert bumped_version == current_version + 1
     assert bumped_missing == [current_version + 1], bumped_missing
     try:
-        _version_and_missing_notes(bumped + source[bumped.index('"format": "taiji-a30') :])
+        _version_and_missing_notes(
+            source.replace(
+                f'"taiji-a30-stop-failure-v{current_version}"',
+                f'"taiji-a30-stop-failure-v{current_version + 3}"',
+                1,
+            )
+        )
     except AssertionError as reject:
-        assert "恰好一枚" in str(reject), str(reject)
+        assert "连续区间" in str(reject), str(reject)
     else:
-        raise AssertionError("自述出现两枚版本却没被拒 ⇒ 这条守卫是恒真的")
+        raise AssertionError("自述跳号没被拒 ⇒ 这条守卫是恒真的")
+    stripped = source.replace(
+        f'"format_note_v{current_version}"', '"format_note_removed_marker"', 1
+    )
+    _, stripped_missing = _version_and_missing_notes(stripped)
+    assert current_version in stripped_missing, stripped_missing
 
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source

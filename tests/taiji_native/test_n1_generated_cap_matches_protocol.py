@@ -23,7 +23,11 @@ FACE = REPO / "scripts" / "training"
 
 # 现读于本册第一次实跑；改动任何一条都要同轮更新 05 债表的 DEBT-G150 行。
 PAIRED_FILES = 3
-CAP_ONLY_FILES = 9
+#: 〔㊵-1104 复测抬成 10〕本枚常数是"扫到的形状计数"，不是白名单：第 10 枚是 2026-10-17
+#: `5aea3fbef` 新建的 `eval_taiji_n1_input_factorial_diagnostic.py`（`:344` 处 `generate_trace(..., 64)`），
+#: 落在 DEBT-G150"字面量仍是真源头、协议键仍无消费处"那半未覆盖段里 ⇒ 计数照实抬，件名写在这里，
+#: 谁把它改成读协议键就把它从这一档里减掉（减了这条测会红，那是正确的红，见 test 里的负对照）。
+CAP_ONLY_FILES = 10
 PROTOCOL_ONLY_FILES = 1
 LITERAL_CAP_VALUES = {8, 32, 64}
 

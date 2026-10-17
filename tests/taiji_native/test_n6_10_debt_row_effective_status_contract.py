@@ -85,8 +85,9 @@ def test_the_real_register_parses_and_the_two_counts_reconcile() -> None:
     assert counts["strict_rows"] == counts["distinct_ids"], counts
     assert counts["prefix_lines"] > counts["strict_rows"], counts
     assert counts["extra_lines_with_a_repeated_id"] == ["DEBT-G48", "DEBT-G49", "DEBT-G50"], counts
-    # 空验收防空转：这台仪器存在的理由就是它必须抓到 G125 那一形。
-    assert "DEBT-G125" in result["stale_head"], result["stale_head"][:5]
+    #: 棘轮（㊵-1104 改写）：债表自 08 ㊵-1097 起 stale_head 为空，今后再出现
+    #: "状态列比本行行尾戳旧"的行，这条测必须红；判别力本身改由下面的合成夹具钉住。
+    assert result["stale_head"] == [], result["stale_head"][:5]
     assert counts["rows_with_stamps"] > 0 and counts["max_stamps_in_one_row"] >= 5, counts
     flagged = (
         set(result["stale_head"])
@@ -103,3 +104,23 @@ def test_cli_writes_once_and_has_no_default_repo_target(tmp_path: Path) -> None:
     assert census.main(["--out-report", str(out)]) == 2
     assert out.read_bytes() == first, "refusal must not rewrite the sealed report"
     assert census.main([]) == 0, "无旗标只印 stdout，不得有默认写靶"
+
+
+def test_a_stale_head_against_its_own_row_end_stamp_is_detected_on_a_synthetic_row() -> None:
+    """判别力改由合成人行钉：DEBT-G125 那一形（头部说还欠、行尾戳说已结清）必须在夹具上被抓到。
+
+    〔㊵-1104〕本测的存在理由原先写在"真表里 G125 必须出现在 stale_head"上；08 ㊵-1097 把
+    那 27 行清完之后，真表读数变成空 ⇒ 拿现场读数当判别力证据是错的形状（DEBT-G148 同族：
+    盘面状态不许当判据）。判据不变，取证方式换成夹具。
+    """
+    text = (
+        "| 编号 | 缺陷 | 影响 | 修法 | 状态 |\n"
+        "| --- | --- | --- | --- | --- |\n"
+        "| DEBT-G900 | 示例缺陷 | 示例影响 | 示例修法 | 待 owner 裁定（㊵-1） "
+        "〔㊵-2 裁定落地：本行结清〕 |\n"
+        "| DEBT-G901 | 示例缺陷二 | 示例影响 | 示例修法 | 只登记，未修（㊵-3） |\n"
+    )
+    result = census.measure(text)
+    assert result["stale_head"] == ["DEBT-G900"], result["stale_head"]
+    assert result["reopened_by_stamp"] == [], result["reopened_by_stamp"]
+    assert "DEBT-G901" not in result["stale_head"]
