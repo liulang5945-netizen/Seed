@@ -22,6 +22,8 @@ For seed13, position is correct on 0/5 lookup items and 0/5 revision items at bo
 - Analysis code SHA-256: `fa658ab9a8de4519cb7e072d8039d0b6fae48d138be80ee32ac494b8dfb3da9d`
 - v9 builder SHA-256 (static code inspection only): `90c1c88a7f5cca931611bfbd9a5b348f474b8dae0333baba7ec32d9e9c001293`
 
+The exact executed analyzer source is preserved in commit `2b044a186` and matches the report's code SHA. A subsequent Black-only line-wrap change left its behavior unchanged; the current formatted source SHA-256 is `07be1706980591adc9dc82885903b812ac7daa54f1f6023e42be9afe08e2ac63`.
+
 This is an exploratory description of already-consumed confirmation results. It does not establish causality, unseen capability, C3/C4, retention, three-organ behavior, or promotion readiness.
 
 ## Next step

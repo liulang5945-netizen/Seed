@@ -4091,3 +4091,4 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 16个联合特征单元中，lookup/revision各5个位置1–5的单题格，答案长度依序7/6/7/6/7；transition每个位置为单题格，unknown为5题无目标行。seed13的lookup/revision position分别在6/7字符长度组均0正确；各长度组`n=2/3`，且题目身份与位置共线，不能区分长度效应、位置效应或题目难度。
 - 静态检查v9 builder（SHA `90c1c88a7f5cca931611bfbd9a5b348f474b8dae0333baba7ec32d9e9c001293`）确认：confirm ordinal为5–9，答案长度按`ordinal % 2`轮换，target start按`ordinal % 5`生成，故目标位置/长度与item ordinal确定性绑定。
 - 四门旧裁决不变：position对terminal +29/60、对cut −5/60，`can_promote=false`。唯一提案[PLAN-N1-105](../../reference/PLAN-N1-105_counterbalanced_input_feature_diagnostic_draft_20261017.md)将使用同九枚冻结端点做全可行位置×答案长度正交诊断（124题、1116查询、CPU≤10分钟）；因新测面尚未获批，未造面或查询。
+- 报告绑定的执行源码SHA `fa658ab9a8de4519cb7e072d8039d0b6fae48d138be80ee32ac494b8dfb3da9d`由提交`2b044a186`原样保存。之后只做Black换行格式化，当前源码SHA `07be1706980591adc9dc82885903b812ac7daa54f1f6023e42be9afe08e2ac63`；pytest 6项、Ruff、Black与py_compile均通过。

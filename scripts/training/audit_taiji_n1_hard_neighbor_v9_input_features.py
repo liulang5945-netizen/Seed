@@ -542,8 +542,12 @@ def group_outcomes(items: dict[str, dict], rows: list[dict]) -> dict:
 
     if len(rows) != 180 or any(ids != expected_ids for ids in endpoint_ids.values()):
         raise ValueError("each of nine endpoints must contain the same 20 v9 confirmation items")
-    if any(len(cell["outcomes"].get((seed, arm), [])) != len(cell["item_ids"])
-           for cell in cells.values() for seed in SEEDS for arm in ARMS):
+    if any(
+        len(cell["outcomes"].get((seed, arm), [])) != len(cell["item_ids"])
+        for cell in cells.values()
+        for seed in SEEDS
+        for arm in ARMS
+    ):
         raise ValueError("feature cell has incomplete seed/arm outcome coverage")
 
     grouped = []
