@@ -73,3 +73,5 @@
 〔㊵-1069 PLAN-N1-105草案修订〕兼容性审查确认v9确认运行器固定20题并会查询旧描述控制，不能承载新诊断。未执行模型操作；草案已改为独立diagnostic split/builder/evaluator，四个匹配模板，248题、2232次查询、CPU≤20分钟。新测面仍待owner裁定。
 
 〔㊵-1070 PLAN-N1-105冻结〕owner批准新版方案，允许seed110、248题（lookup96/revision88/transition44/unknown20）、九枚PLAN-N1-100 checkpoint总计2232次diagnostic查询，CPU≤1200秒。使用独立builder/evaluator与`split=diagnostic`，禁止调用v9固定20题的确认入口；先完成源码/数据合同、建面和九端点完整bundle恢复，再一次运行。禁止训练、改门、读v7/v8确认payload或宣称能力晋升。冻结协议SHA-256 `02176b8915344540cd67faa90e96e0d36a1696e804cb16d59cda12de15eb07f9`。
+
+〔㊵-1071 PLAN-N1-105建面合同澄清〕测试表明同一subject若每个position/length变体都生成全新d=1 distractor，会超过单个subject可用近邻数。于是同一template固定复用干扰实体/事实，模板间仍唯一；不改题数/格子/门/预算。更新后冻结计划SHA-256 `af6eebc3e3fb01fc8c409f762176aefa8b91f246e9ea7325f42c5fa3267537ca`，尚未实际造面或查询。
