@@ -3953,3 +3953,11 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 停靠锚点现取（这三格会过期，页内已写明"下一次开工第一个动作是回读它们"）：`git rev-parse --short HEAD`＝`48b508d67`；`git rev-list --count origin/main..HEAD`＝**24**；`git status --porcelain` 去掉 `output/` 后 **9 行**属别人在飞（`reports/taiji_n5_07_*.json` 六枚被改＋`plans/reference/DSH_*` 两枚未跟踪等）⇒ 接手者不许 `git add -A`、不许整树 `git checkout HEAD --`。
 - 写页时抓到自己的两处不实引用并当场改：把面 SHA 头段抄成 `7dddf00f3f2438…`（真值 `7dddf00f3f2e2438…66d49`，`2e` 被我打成 `24`），以及把本轮自己的提交数写成"三笔"（实为四笔 `cd4632d26`／`d0e6b24a4`／`4cbfd9a1c`／`48b508d67`）。两句都在落盘前按工具输出重取替换（同 [[never-report-unobserved-numbers]]）。
 - 收尾门全绿面（同轮现取）：链接器 rc=0／451 件／2193 链／活动坏链 0；`ruff check .` rc=0；B/SIM 11 枚我名下 0；`black --check .` 18 枚我名下 0；债表列形门 rc=0（155 行）；普查仪 rc=0（`stale_head` 27、`reopened_by_stamp` 0）；v6 三测册 28 passed；identity＋台账唯一性 10 passed；措辞门 PLAN-N1-93 与 EXP-N1-96 各 rc=0。**全族 `pytest tests/` 仍没跑到**（被拦、不硬重试）⇒ 那个数字是继承的，不是现取的。
+
+### ㊵-1046 · 2026-10-17 · handover 甲路的只读普查：unknown 输出随已消费题面反转，下一格需裁定是否扩展清单审计
+
+- owner 本轮明确要求从交接文档继续，并授予机时权限。依 [HANDOVER_N1_AFTER_V6_20261017.md](../../reference/HANDOVER_N1_AFTER_V6_20261017.md) §2 甲，只对已经出版的 v6 180 行与 run89/v5 288 行做逐题普查；未加载 checkpoint、未进行模型推理、训练、更新或新题查询。
+- 输入原始 SHA-256：v6 `reports/taiji_n1_transition_factorial_confirmation_v6.json`＝`3d924e19d97b59ea12505111603b7d562ada8e8d9bdac71351a51c24c5918849`；run89/v5 `reports/taiji_n1_transition_factorial_confirmation_run89.json`＝`3b4fc7f3fb387de8a615f23c6eeb2657e205508614de9629e972865ae5e61015`。两件九枚最终端点的逐文件 checkpoint 摘要匹配数 9/9。
+- `kind=unknown` 且 `output_hex` 解码恰为 `b"unknown"`：v6 position 0/15、terminal 4/15、cut 2/15；v5 position 23/24、terminal 9/24、cut 24/24。v6 position 三个 seed 各 0/5；v5 position 分别为 7/8、8/8、8/8。
+- 结论限定为“同一终端组在两个已消费题面上出现强烈面间差异”。这否证“position 一概不会弃权”的全局表述，但不定位原因、不证明能力或臂差，也不支持直接改权重、解码器或产品默认行为；N1 C3 仍未达成、两张面都不可重测、`can_promote=false`。完整判读见 [EXP-N1-97](../../reference/EXP-N1-97_unknown_abstention_cross_face_census_20261017.md)。
+- 03、09、索引及中英 README 已同步。本轮唯一下步建议是对两份**已消费清单**中的 unknown 输入字段做静态交叉对照；它超出交接页的“只读报告行”范围，尚未开始，须 owner 裁定。起点锚点为 `HEAD=377d1bb45`、`origin/main..HEAD=26`（本条与后续同步提交不包含在该历史读数内）。N5 报告改动及 `output/` 未跟踪目录均保留未动。
