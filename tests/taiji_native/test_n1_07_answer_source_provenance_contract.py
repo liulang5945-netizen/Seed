@@ -208,6 +208,9 @@ def test_real_face_reproduces_today_reading() -> None:
         assert row["answer_source"] in module.VALID_SOURCES, row
         if row["answer_source"] == "self":
             assert row["self_answers_path"], row
+    #: 能红的守卫：这一列必须是**全集**而不是样本——上一版仪器把它截成 12 枚，
+    #: 于是下面那句成员断言按字母序失败，读起来却像"来源面今天少了一枚审计式提及"。
+    assert len(carrier["name_mental_only_files_list"]) == carrier["name_mental_only_files"]
     mentions = set(carrier["name_mental_only_files_list"])
     assert {
         "reports/taiji_default_reachability_20261011.json",

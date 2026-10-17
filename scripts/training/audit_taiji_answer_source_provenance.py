@@ -204,7 +204,10 @@ def scan_carrier_face(root: Path) -> dict[str, object]:
         # 点名**是哪几枚**：本件自己的落盘文件也算一枚"提及"（它含 `answer_source` 字样却没有那个字段），
         # 所以这个计数会随每次复算自增——它不是载体数，列出名字才可检查。
         "name_mental_only_files": len(mention_list),
-        "name_mental_only_files_list": sorted(mention_list)[:12],
+        #: 不截断：上一版 `[:12]` 把 39 枚压成 12 枚样本，而上面那句注释要的正事是"列出名字才可检查"——
+        #: 样本形状让一句"某枚在不在提及名单里"的断言按**字母序**失败（不是按行为），
+        #: 这就是 `test_real_face_reproduces_today_reading` 整面红、单跑也红的真因（2026-10-18 ㊵-1111／DEBT-G163）。
+        "name_mental_only_files_list": sorted(mention_list),
         "mismatches": mismatch_rows,
         "verdict": (
             "answer_source_mismatch"
