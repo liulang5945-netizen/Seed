@@ -13,7 +13,7 @@ owner 于 2026-10-17 在 EXP-N1-92 §4 的三条里裁定**甲＝转乙路**：v
 - 答案：6 字符小写 ASCII 材质词，从新词池抽样（**机检**：v6 答案集 ∩ v5 答案集＝∅，且与 v5 训练词表交集亦为∅，逐枚现取）。
 - 难度旋钮：每题 observations＝4 条（v5 为 2），其中恰 1 条含答案（` uses <answer>.`），其余 3 条用同谓词绑不同材质（这是 v5 上没有的干扰密度）。
 - 四类定义沿用 v5 的语义：`lookup`／`revision`／`transition`／`unknown`；`unknown` 的答案仍是 7 字符字面 `unknown`，且**无**含答案的观测（这保证 §4 的可寻址性与 ㊵-1028 的读数口径一致）。
-- 平凡策略线：`挑最旧观测的材质`／`挑最新观测的材质`／`挑出现次数最多的材质` 三条策略在 v6 上的期望各 ≤ 2/40（机检断言，超线即重造，不消费）。
+- 平凡策略线〔㊵-1030 实测更正〕：原先我写的"三条策略期望各 ≤2/40"**在这张面的形状下不可能成立**——可答题 20 枚、每题 4 条观测 ⇒ 纯位置猜测的机会水平就是 20/4＝5，首版 `--check-draft` 实测 oldest 4／newest 8／most_frequent 5，正是我自己手算判据的老错（"判据的算术一旦手算就是债"）。现行规则改两条，都由件的形状导出并被造面器强制：①**答案行位置轮转**⇒ 每类答案位置计数极差 ≤1，位置类策略命中数 ≤ ⌈可答题数／观测条数⌉＋1＝6；②**同题材质不重复**⇒"挑最频繁"这条策略无定义样本（`frequency_strategy_defined_items=0`），它压根不是捷径而是噪声。常量方向猜测同理由答案方向轮转约束，上界 ⌈transition 题数／4⌉＋1＝4。
 
 ## 2. 机检（生成器必须自证，任一红即不出版题面）
 
@@ -35,8 +35,13 @@ owner 于 2026-10-17 在 EXP-N1-92 §4 的三条里裁定**甲＝转乙路**：v
 
 - J－93-1（题面结构）：40 题＝4 类 × 10，`split` 全为 holdout，id 唯一，每题 observations＝4。
 - J－93-2（与 v5 隔离）：v6 实体集 ∩ v5 实体集＝∅，v6 答案集 ∩ v5 答案集＝∅，且与 v5 训练词表交集亦为∅（三条逐枚现取，命中数入件）。
-- J－93-3（反捷径）：`挑最旧`／`挑最新`／`挑最频繁` 三条平凡策略在 v6 上的期望分各 ≤ 2/40；任一条超线 ⇒ 题面不出版，重造而不消费。
+- J－93-3（反捷径，形状导出而非手拍）：答案位置计数每类极差 ≤1；`oldest`／`newest` 命中 ≤ ⌈可答题／观测条数⌉＋1（现算＝6）；`items_with_repeated_material` 必须为 0 且 `frequency_strategy_defined_items` 必须为 0（⇒ 频次策略无定义样本）；常量方向命中 ≤ ⌈transition 题数／4⌉＋1（现算＝4）。任一条超线 ⇒ 题面不出版，重造而不消费。
 - J－93-4（可寻址性口径）：`lookup`／`revision` 每题恰 1 条含答案观测；`unknown`／`transition` 为 0 条，与 ㊵-1028 的排除原因码同形。
 - J－93-5（动态范围，先测尺）：牺牲子集上三臂在四类中每一类的平均 native 错误 ≥ 3/20，且至少 6/9 枚端点在 `lookup`＋`revision`＋`transition` 合计错误 ≥ 6/20；不达线 ⇒ `range_not_met`。
 - J－93-6（消费纪律）：确认查询报告中 `range_check_passed=true` 与四门读数必须同枚在场，缺前者则四门全绿也只记 `range_unverified`；attempt 写入即视为该子集已消费。
+
+## 7. 实现状态（2026-10-17 ㊵-1030 现取）
+
+造面器 `scripts/training/build_taiji_n1_fresh_confirmation_v6.py` 已落盘并自证：`--check-draft` 在内存造 40 题、出版全部机检、rc=0 且 `accepted=true`（现读值：`oldest 5`、`newest 4`、形状上界 6；`answer_position_counts` lookup `[3,3,2,2]`／revision `[2,3,3,2]`；`items_with_repeated_material=0`、`frequency_strategy_defined_items=0`；常量方向 3 ≤ 上界 4；与先前所有题集的实体／材质交集 0）。生成链**复用** `build_taiji_n1_confirmation_v4.exclusions()`（含其"三枚冻结源未变"检查），并把 v4、v5 两张已用面并入排除全集，题面的 `excluded_source_sha256` 因此是五枚来源指纹。未签参数时 `--execute-signed` 走 `Refuse`（rc=2）且不写任何文件。守卫测 `tests/taiji_native/test_n1_run93_v6_face_builder_contract.py` 3 passed，含三条"必须为假"的构造（答案全放位置 0、同题复制一份材质、把四类打平成一类）。**尚未做**：牺牲子集的范围检验仪——它要装载九枚端点，按 §5 在 owner 签署 shape 参数之前不查询；届时复用 92 那台探针的端点装载与 `prepare_state`，不重抄证据带与解码路径。
+
 
