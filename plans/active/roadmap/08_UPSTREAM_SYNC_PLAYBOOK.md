@@ -4200,3 +4200,12 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 用户最新指示要求持续推进N主线，并依据实际结果灵活修订计划。结合此前对低风险连续推进的长期授权，我据此把PLAN-N1-110从草案冻结为执行计划，SHA-256 `dea88bdb0c61551c4ff5e0fda4c8b50d0b2cae05a945311bbcb8fb2fb6ced70c`。计划保留原训练/确认门、每模型24,576更新、总CPU≤18,000秒；长度分配覆盖raw与hard路径，九个新候选与PLAN-N1-100旧九端点作同面比较。
 - 下一步实施专用length-balanced schedule builder/runner合同、raw/hard逐父项6/7分配审计和zero checkpoint独立保存/恢复前置。所有训练和新v11测面必须在来源与恢复合同通过后，按本计划范围执行；不放宽门、不补训、不重试已消费面。
 - 当前零步状态：尚未改training source、未生成candidate schedule、未保存checkpoint、未训练、未生成v11 face或查询模型。N5本地报告改动继续保留。
+
+### ㊵-1087 · 2026-10-17 · PLAN-N1-110长度变体映射与平衡面细化
+
+- 实施前静态审查补全了length-7材料变换合同：对每个train-only六字符`uses`值生成一个fresh、全局唯一的七字符值，固定一对一映射并在raw/hard/revision/unknown distractor/paired question的所有出现中一致替换；实体—材料关系及目标是否存在不变。mapping与raw/hard slots在首更前冻结并哈希。
+- PLAN-N1-110仍保留原seed/arms/更新数/CPU/原门和v11一次确认条件，不改变能力判据。计划SHA-256更新为`832faba0740a847df4c35b56a1dce15fcdca9c07a8946eb96c018fc1be9e17ee`。当前下一步实现length-balanced train schedule builder及完整构造/信用合同，零模型更新，尚不训练。
+
+### ㊵-1088 · 2026-10-17 · PLAN-N1-110可复现随机流冻结
+
+- 为避免实现选择漂移，length/slot分配seed固定11010，six-to-seven material bijection seed固定11011，v11 builder seed固定111。raw与hard slot、值映射、面构造均按seed与源SHA确定，且在首更前以manifest/checks绑定。计划SHA-256 `16d0cecb325af6463c107973fc0e741478140134a7642cd64c86e045c6069783`。下一步开始实现schedule builder与合同测试，零模型操作。
