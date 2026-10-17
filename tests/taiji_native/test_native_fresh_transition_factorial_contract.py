@@ -125,7 +125,7 @@ def test_real_synthetic_model_queries_state_neutral_even_on_failure(monkeypatch,
             "position",
             d.variants(item),
             {item["id"]: native},
-            d.train.paired.CpuBudget(60),
+            d.train.paired.CpuBudget(60, clock=lambda: 0),
             result,
         )
 

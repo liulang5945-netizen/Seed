@@ -13,7 +13,9 @@ def test_frozen_cache_loss_credit_and_restore(tmp_path):
     model, optimizer = runner.fresh(train)
     record, _, _ = runner.transfer_source()
     before = runner.paired.fingerprint(model.bundle(optimizer))
-    cache = runner.build_cache(model, train[:1], record, runner.paired.CpuBudget(300))
+    cache = runner.build_cache(
+        model, train[:1], record, runner.paired.CpuBudget(300, clock=lambda: 0)
+    )
     assert before == runner.paired.fingerprint(model.bundle(optimizer))
     assert all(not cache[train[0]["id"]][k].requires_grad for k in ("logits", "addresses"))
     curriculum = runner.checked_curriculum(train)
@@ -58,7 +60,9 @@ def test_original_preservation_identity_and_train_only():
     train = runner.checked_train()
     model, optimizer = runner.fresh(train)
     record, _, _ = runner.transfer_source()
-    cache = runner.build_cache(model, train[:1], record, runner.paired.CpuBudget(300))
+    cache = runner.build_cache(
+        model, train[:1], record, runner.paired.CpuBudget(300, clock=lambda: 0)
+    )
     item = train[0]
     runner.paired.observe(model, runner.paired.project(item), "original-loss")
     losses = address_consistency_loss(
@@ -71,6 +75,8 @@ def test_original_preservation_identity_and_train_only():
     assert abs(float(losses["address"].detach())) < 1e-6
     assert abs(float(losses["preservation"].detach())) < 1e-6
     with pytest.raises(ValueError, match="train"):
-        runner.build_cache(model, [dict(item, split="dev")], record, runner.paired.CpuBudget(300))
+        runner.build_cache(
+            model, [dict(item, split="dev")], record, runner.paired.CpuBudget(300, clock=lambda: 0)
+        )
     with pytest.raises(ValueError, match="train"):
         runner.train_step(model, optimizer, dict(item, split="holdout"), "bad", cache, True)

@@ -20,7 +20,9 @@ def test_zero_restore_and_phase_policy_rejection(tmp_path, arm):
     assert train.restore(path)["signature"] == saved["expected_signature"]
     assert train.paired.fingerprint(model.bundle(optimizer)) == before
     if arm == "terminal":
-        result = train.independent(path, saved["expected_signature"], train.paired.CpuBudget(2400))
+        result = train.independent(
+            path, saved["expected_signature"], train.paired.CpuBudget(2400, clock=lambda: 0)
+        )
         assert result["equal"] and result["signature_clone_updates"] == 1
     for changed in (
         dict(saved, completed_updates=2),

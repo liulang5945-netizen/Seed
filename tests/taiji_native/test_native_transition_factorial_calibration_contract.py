@@ -109,7 +109,7 @@ def test_failed_scoring_retains_first_row_and_attempt_count(monkeypatch):
             optimizer,
             0,
             dict(original=[item, item]),
-            calibration.paired.CpuBudget(60),
+            calibration.paired.CpuBudget(60, clock=lambda: 0),
             result,
         )
     assert result["score_queries"] == 2 and len(result["rows"]) == 1
@@ -160,7 +160,7 @@ def test_complete_score_assembly_reproduces_native_rows_without_artifacts(monkey
         optimizer,
         0,
         dict(original=items, pair=pairs, rename=items, rename_pair=pairs),
-        calibration.paired.CpuBudget(60),
+        calibration.paired.CpuBudget(60, clock=lambda: 0),
         evidence,
     )
     assert len(rows) == len(evidence["rows"]) == evidence["score_queries"] == 960

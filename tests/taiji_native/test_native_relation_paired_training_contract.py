@@ -93,7 +93,9 @@ def test_evaluation_is_history_neutral_and_labels_control_arm():
     second = runner.core.renaming.second_question(item)
     before = runner.paired.fingerprint(model.bundle(optimizer))
     views = dict(original=[item], pair=[second], rename=[item], rename_pair=[second])
-    rows, summary = runner.evaluate(model, 12, "terminal", 0, views, runner.paired.CpuBudget(2400))
+    rows, summary = runner.evaluate(
+        model, 12, "terminal", 0, views, runner.paired.CpuBudget(2400, clock=lambda: 0)
+    )
     assert len(rows) == 4 and all(r["seed"] == 12 and r["arm"] == "terminal" for r in rows)
     assert summary["items"] == 1
     assert all(

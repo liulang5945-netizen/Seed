@@ -138,7 +138,7 @@ def test_generic_scoring_six_views_with_exact_native_reproduction(monkeypatch, s
     record = dict(rows=[], score_queries=0)
     before = train.paired.fingerprint(model.bundle(optimizer))
     rows, summary = train.evaluate(
-        model, optimizer, seed, arm, 0, views, train.paired.CpuBudget(60), record
+        model, optimizer, seed, arm, 0, views, train.paired.CpuBudget(60, clock=lambda: 0), record
     )
     assert len(rows) == len(record["rows"]) == record["score_queries"] == 960
     assert all(r["seed"] == seed and r["arm"] == arm for r in rows)
