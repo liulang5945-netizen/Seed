@@ -4221,6 +4221,24 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - checks accepted且errors为空，40项来源守卫包含PLAN、builder/test、v10 face、v3 train和既往材料/名称排除源；v7/v8 confirmation payload未读。检查结果0 checkpoint load、0 model query、0 parameter update、dev/holdout access=false。未保存candidate checkpoint、未训练、未造v11面。
 - 当前唯一下一步：实现专用candidate runner，将原始与hard schedule精确接入24,576步轨迹并在每端点核验length ledger；随后先做九枚zero checkpoint独立保存/恢复前置，不通过即不得开始训练。
 
+### ㊵-1091 · 2026-10-18 · PLAN-N1-110 candidate runner zero-step validation实现完成
+
+- runner `scripts/training/run_taiji_n1_length_balanced_training.py` SHA-256 `635a2640a09e3ccb4ba385b21f981ce68be5ba0cb3d007dadc249b7705c76bf7`，runner合同测试 `tests/taiji_native/test_n1_plan110_length_balanced_runner_contract.py` SHA-256 `a9620dd7622c7644b02d9b76b2256283a0143f2eb5e0fd700aa17524e868a544`。6项测试、Ruff/Black/py_compile通过；full 24,576 callback cycle逐步检查raw/hard账本，候选子进程restore路径固定。
+- candidate runner预校验pin了run100 baseline final endpoints九枚SHA，并检查原训练报告为complete/充分；已验证其当前字节哈希全部匹配，尚未加载baseline或candidate checkpoint。新增`--validate-only`会模拟24,576个schedule callback、检查40项来源链和长度ledger并输出write-once readiness，严格0模型/权重加载和0更新。
+- 当前未运行`--validate-only`，无candidate readiness/preflight/zero checkpoint。当前唯一下一步：提交runner/test与active status后运行`--validate-only`；只有readiness通过才进行保存并跨进程恢复九枚fresh-zero candidate checkpoint。
+
+### ㊵-1091 · 2026-10-18 · PLAN-N1-110候选训练runner与length账本实现
+
+- runner `scripts/training/run_taiji_n1_length_balanced_training.py` SHA-256 `635a2640a09e3ccb4ba385b21f981ce68be5ba0cb3d007dadc249b7705c76bf7`，合同测试 `tests/taiji_native/test_n1_plan110_length_balanced_runner_contract.py` SHA-256 `a9620dd7622c7644b02d9b76b2256283a0143f2eb5e0fd700aa17524e868a544`。6项测试、Ruff/Black/py_compile通过。固定PLAN100 baseline报告及九枚final checkpoint SHA均在runner静态入口逐一核对；raw/hard 24,576更新路径都有累计长度账本，恢复worker指向同一候选runner，避免run100参数签名误配。
+- 新增`--validate-only`纯调度模拟模式：run100冻结loader构建图、完整跑过24,576个schedule callback、检查每种task raw/hard的slot数及cycle/condition计数，但不会创建模型或读取权重。readiness输出write-once，成功后才允许zero-checkpoint preflight。
+- 当前未提交runner/test、未生成runner readiness、未保存candidate checkpoint、未更新参数。下一步提交代码/tests/active记录后运行一次`--validate-only`；readiness通过后再独立保存恢复九枚candidate zero checkpoints。
+
+### ㊵-1091 · 2026-10-18 · PLAN-N1-110 candidate training runner实现完成
+
+- runner `scripts/training/run_taiji_n1_length_balanced_training.py` SHA-256 `635a2640a09e3ccb4ba385b21f981ce68be5ba0cb3d007dadc249b7705c76bf7`，合同测试 `tests/taiji_native/test_n1_plan110_length_balanced_runner_contract.py` SHA-256 `a9620dd7622c7644b02d9b76b2256283a0143f2eb5e0fd700aa17524e868a544`。6项测试通过，Ruff/Black/py_compile通过。
+- runner复用冻结PLAN-N1-100优化/恢复控制器，按candidate manifest提供raw/hard views；逐endpoint核验24576步中raw/hard各12288，并按kind统计6/7长度账本；以子进程调用候选runner自身做独立checkpoint恢复。它固定绑定run100 baseline训练报告及9枚final checkpoint SHA，旧基线不覆盖。
+- 当前仍0 model load/optimizer update；candidate runner 尚未运行`--validate-only`，无readiness/preflight/新checkpoint。下一步提交runner/test并执行纯schedule模拟readiness；该模式模拟整24,576步但不创建模型，生成write-once零更新回执后才做zero-save/restore preflight。
+
 ### ㊵-1090 · 2026-10-18 · PLAN-N1-110 length-balanced candidate schedule正式构造
 
 - write-once manifest `plans/manifests/n1_hard_neighbor_length_balanced_schedule_v1_20261018.json` SHA-256 `b2d637fcc1e096d40bba35bbc91bc66b0c27257cd74a4bcac5f5f488f55b6d4c`，construction checks `reports/taiji_n1_length_balanced_schedule_checks_20261018.json` SHA-256 `51cb205b17a1319b86c7f73c4f0158957cbeaf73b933aa9a942aba52cfabf0d9`。3072 hard＋3072 materialized raw views；每父项/条件按6/7各半，lookup/revision/unknown的raw和hard各384×6+384×7，transition 768项保持不变；six→seven映射288个值、一对一且排除过往评估词。

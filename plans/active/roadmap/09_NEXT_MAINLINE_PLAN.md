@@ -1,6 +1,6 @@
 # 09 下一轮主线规划：架构与模型（N 系列，2026-10-06 开线；2026-10-14 第五版调度修订）
 
-> **2026-10-18 N1下一阶梯（㊵-1090）**：PLAN-N1-110正式schedule/checks已write-once生成并通过40项source guards；manifest SHA `b2d637fcc1e096d40bba35bbc91bc66b0c27257cd74a4bcac5f5f488f55b6d4c`，3072 raw＋3072 hard，288项映射，lookup/revision/unknown各条件6/7平衡，0模型/查询/更新。当前唯一下一步实现candidate runner和zero-checkpoint preflight，训练前保持0步。
+> **2026-10-18 N1下一阶梯（㊵-1091）**：length-balanced schedule manifest/checks已提交，40来源守卫与raw/hard 6/7平衡通过。candidate runner及6项合同已完成，旧九端点SHA固定，runner已设计逐步长度账本与同模块子进程恢复。下一步zero-update验证runner，随后9枚fresh-zero checkpoint保存/独立恢复，任何失败均不启动optimizer update。
 
 
 
