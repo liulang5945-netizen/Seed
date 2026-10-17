@@ -1,0 +1,37 @@
+{
+  "anchor": {
+    "checked_equal": 96,
+    "checked_unequal": 0,
+    "rejected_by_pinned_guard": 0
+  },
+  "coverage": {
+    "addressable": 16,
+    "addressable_ids": [
+      "v5-confirm-000",
+      "v5-confirm-001",
+      "v5-confirm-004",
+      "v5-confirm-005",
+      "v5-confirm-008",
+      "v5-confirm-009",
+      "v5-confirm-012",
+      "v5-confirm-013",
+      "v5-confirm-016",
+      "v5-confirm-017",
+      "v5-confirm-020",
+      "v5-confirm-021",
+      "v5-confirm-024",
+      "v5-confirm-025",
+      "v5-confirm-028",
+      "v5-confirm-029"
+    ],
+    "excluded_reasons": {
+      "answer_is_the_literal_unknown_with_no_source": 8,
+      "no_unique_uses_answer_observation": 8
+    },
+    "items_total": 32
+  },
+  "first_model_loaded_after_this_file": true,
+  "format": "taiji-n1-92-oracle-attempt-v1",
+  "started_process_time": 1.203125,
+  "unseen_claim_allowed": false
+}
