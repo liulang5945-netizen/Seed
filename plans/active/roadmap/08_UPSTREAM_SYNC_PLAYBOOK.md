@@ -4194,3 +4194,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 
 - 只读检查run100训练runner确认：每6144步周期中偶数步从192项原始train流取16次/parent，奇数步才从3072项hard schedule取16次/parent；所以只把hard schedule改成6/7平衡会漏掉一半训练暴露。草案已改为同时冻结raw-slot和hard-slot长度分配，每个lookup/revision/unknown父项在两条路径各8×6字符、8×7字符；hard-view原obs×distance分母、revision stale/current顺序、unknown拒答与transition均保持。
 - 该修正只改草案，不改runner、数据、checkpoint或训练计划状态。PLAN-N1-110仍是DRAFT，训练配方和v11 face范围均等待owner裁定。
+
+### ㊵-1086 · 2026-10-17 · PLAN-N1-110按用户最新主线指示冻结，进入零步工程准备
+
+- 用户最新指示要求持续推进N主线，并依据实际结果灵活修订计划。结合此前对低风险连续推进的长期授权，我据此把PLAN-N1-110从草案冻结为执行计划，SHA-256 `dea88bdb0c61551c4ff5e0fda4c8b50d0b2cae05a945311bbcb8fb2fb6ced70c`。计划保留原训练/确认门、每模型24,576更新、总CPU≤18,000秒；长度分配覆盖raw与hard路径，九个新候选与PLAN-N1-100旧九端点作同面比较。
+- 下一步实施专用length-balanced schedule builder/runner合同、raw/hard逐父项6/7分配审计和zero checkpoint独立保存/恢复前置。所有训练和新v11测面必须在来源与恢复合同通过后，按本计划范围执行；不放宽门、不补训、不重试已消费面。
+- 当前零步状态：尚未改training source、未生成candidate schedule、未保存checkpoint、未训练、未生成v11 face或查询模型。N5本地报告改动继续保留。
