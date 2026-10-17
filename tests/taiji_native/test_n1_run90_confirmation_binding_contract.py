@@ -331,28 +331,31 @@ def test_approved_mode_refuses_without_writing_the_attempt(tmp_path: Path, monke
     assert pretend.exists() is False
 
 
+#: `install()` 往复用件上打了五样补丁（REPORT／ATTEMPT／PROTOCOL／identity／readiness）＋
+#: 一处 `train.load`。还原必须按名做**全集**：漏一样，后面同进程的守卫测就会静默改判——
+#: 2026-10-18 实测漏掉 `readiness` 时，确认腿那条"未绑定必须先拒"的 fail-closed 测整面必红
+#: （`DID NOT RAISE ValueError`），而它单跑全绿，红的只是别人的补丁没还原。
+PATCHED_GLOBALS = ("REPORT", "ATTEMPT", "PROTOCOL", "identity", "readiness")
+
+
 def test_install_patches_the_reused_evaluators_binding_globals() -> None:
-    snapshot = (
-        __import__(
-            "scripts.training.eval_taiji_n1_transition_factorial_confirmation", fromlist=["x"]
-        ).REPORT,
-        sys.modules["scripts.training.eval_taiji_n1_transition_factorial_confirmation"].PROTOCOL,
+    module = __import__(
+        "scripts.training.eval_taiji_n1_transition_factorial_confirmation", fromlist=["x"]
     )
+    snapshot = {name: getattr(module, name) for name in PATCHED_GLOBALS}
+    original_load = train.load
     try:
         run90.install()
-        assert snapshot[0] is not run90.REPORT
+        assert snapshot["REPORT"] is not run90.REPORT
+        assert module.REPORT == run90.REPORT
         assert (
-            sys.modules["scripts.training.eval_taiji_n1_transition_factorial_confirmation"].REPORT
-            == run90.REPORT
-        )
-        assert (
-            sys.modules[
-                "scripts.training.eval_taiji_n1_transition_factorial_confirmation"
-            ].PROTOCOL["schema"]
-            == "n1-transition-factorial-three-family-v5-confirmation-v1"
+            module.PROTOCOL["schema"] == "n1-transition-factorial-three-family-v5-confirmation-v1"
         )
     finally:
-        module = sys.modules["scripts.training.eval_taiji_n1_transition_factorial_confirmation"]
-        module.REPORT = snapshot[0]
-        module.PROTOCOL = snapshot[1]
-        train.load = run90.ORIGINAL_LOAD
+        for name, value in snapshot.items():
+            setattr(module, name, value)
+        train.load = original_load
+    #: 还原要能为假：少还原任何一样，这一行就红。
+    leaked = [name for name in PATCHED_GLOBALS if getattr(module, name) is not snapshot[name]]
+    assert leaked == [], leaked
+    assert module.readiness.__module__ == module.__name__, "复用件自己的 readiness 没还回来"

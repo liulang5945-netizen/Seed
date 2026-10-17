@@ -36,4 +36,4 @@
 
 ## 5. 工程验证和 CI
 
-工程验证共 **50 passed**：消费者／载体／运行器合同19项、输入／序列／预测上下文／默认检查点隔离回归21项、项目与台账守卫10项。引用合同另为 **6 passed／2 failed**，仍由历史 `reports/sealed.json` 缺失导致，本次新增引用均已入版本。修改文件常规 Ruff、B/SIM ratchet、Black、`git diff --check` 通过；未运行全量 CI。远端最新仍是 `eaf53e7`：m7-ci 成功，根 CI 38521073885 失败于 Ruff B/SIM ratchet，Windows 作业取消；不是当前本地代码的 CI。修改文件需同时跑常规 Ruff 和 `--select B,SIM --ignore B008`，不把局部检查写为全量或远端全绿。
+工程验证共 **50 passed**：消费者／载体／运行器合同19项、输入／序列／预测上下文／默认检查点隔离回归21项、项目与台账守卫10项。引用合同另为 **6 passed／2 failed**，仍由历史 `sealed.json（该件从未落盘；2026-10-18 ㊵-1111 就地更正，逐枚处置见那一条）` 缺失导致，本次新增引用均已入版本。修改文件常规 Ruff、B/SIM ratchet、Black、`git diff --check` 通过；未运行全量 CI。远端最新仍是 `eaf53e7`：m7-ci 成功，根 CI 38521073885 失败于 Ruff B/SIM ratchet，Windows 作业取消；不是当前本地代码的 CI。修改文件需同时跑常规 Ruff 和 `--select B,SIM --ignore B008`，不把局部检查写为全量或远端全绿。

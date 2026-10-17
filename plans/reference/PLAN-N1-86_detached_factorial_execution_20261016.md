@@ -32,7 +32,7 @@ seed11/12/13 × position/terminal/cut，共九个模型，每个24576更新、55
 
 ## 首轮正式任务启动失败裁决（㊵-1008）
 
-首轮Seed-N1-Run86-20261016的Task Scheduler任务已启动，但启动器写reports/taiji_n1_transition_factorial_run86_returned.json，控制器等待reports/taiji_n1_transition_factorial_run86_launcher_returned.json。60秒后worker在task_receipts阶段抛FileNotFoundError，OS LastTaskResult=1。失败发生在冻结attempt读取与readiness()来源/材料加载前；没有worker manifest、attempt、主报告或checkpoint，候选更新/dev/holdout查询均为0。该启动任务已精确注销；manifest、实际return、completion、错误日志及reports/taiji_n1_transition_factorial_run86_startup_failure.json保留，不覆盖。
+首轮Seed-N1-Run86-20261016的Task Scheduler任务已启动，但启动器写reports/taiji_n1_transition_factorial_run86_returned.json，控制器等待taiji_n1_transition_factorial_run86_launcher_returned.json（该件从未落盘；2026-10-18 ㊵-1111 就地更正，逐枚处置见那一条）。60秒后worker在task_receipts阶段抛FileNotFoundError，OS LastTaskResult=1。失败发生在冻结attempt读取与readiness()来源/材料加载前；没有worker manifest、attempt、主报告或checkpoint，候选更新/dev/holdout查询均为0。该启动任务已精确注销；manifest、实际return、completion、错误日志及reports/taiji_n1_transition_factorial_run86_startup_failure.json保留，不覆盖。
 
 修正版在launch_taiji_n1_transition_factorial_run86.ps1中令formal return文件名与控制器一致，并使用新输出族run86b、新任务Seed-N1-Run86B-20261016和独立checkpoint根data/checkpoints/run86b。再次正式运行前必须先完成静态检查、Task Scheduler独立心跳、run86b正式return文件名的receipt-only交接探针，以及run86b路径checkpoint保存/独立恢复预检；提交修正版及回执后才启动训练。心跳与交接探针均不得载入候选或训练材料，必须核对manifest/worker PID、任务LastTaskResult=0、启动器返回先于worker继续运行及更新/查询计数为0。训练协议与原六门、样本、更新数、预算、测面禁区均不变。
 

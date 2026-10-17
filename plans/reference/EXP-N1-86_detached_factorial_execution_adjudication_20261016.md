@@ -6,7 +6,7 @@
 
 ## 根因与证据边界
 
-PowerShell启动器将启动返回记录写入reports/taiji_n1_transition_factorial_run86_returned.json，控制器却等待reports/taiji_n1_transition_factorial_run86_launcher_returned.json。因此worker清单未写出。失败发生在控制器验证Task Scheduler清单阶段，早于读取84冻结attempt、调用runpy加载训练器、调用readiness()核验并加载83来源模型或课程样本。
+PowerShell启动器将启动返回记录写入reports/taiji_n1_transition_factorial_run86_returned.json，控制器却等待taiji_n1_transition_factorial_run86_launcher_returned.json（该件从未落盘；2026-10-18 ㊵-1111 就地更正，逐枚处置见那一条）。因此worker清单未写出。失败发生在控制器验证Task Scheduler清单阶段，早于读取84冻结attempt、调用runpy加载训练器、调用readiness()核验并加载83来源模型或课程样本。
 
 失败目录内没有worker、attempt、主报告或checkpoint；主模型更新、dev和holdout查询均为零。现存launcher/return/completion/error日志保留，精确失败任务已注销。84中断产物未改，85 TRAIN_SHA=None，v5未查询。
 
