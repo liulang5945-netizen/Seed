@@ -4044,3 +4044,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 
 - v9 builder/evaluator与4项合同模块已实现；7项新测试、Ruff、Black、py_compile通过。对真实v3/v5/v6/v7-sacrifice/v8-sacrifice排除源进行零查询预演：16项构造门全真，面内470个实体/360个材料值，来源重叠0；v7 sacrifice排除75个实体，v8排除155个实体，两个confirm面内容解码数均0。seed109、12观测/d=1，20/20子集平衡，目标行位置分 subset 平衡。
 - 当前唯一下一步为正式运行一次face builder，输出固定v9 manifest、checks与attempt；核验后选择性提交，再运行range-readiness。builder不加载模型/权重、不查询或更新；readiness只核9个冻结终端身份。代码、面与收据提交后才运行一次180条sacrifice范围检查。未过6/9就停，不查询v9 confirm；历史失败及未消费v7/v8 confirm均保留。
+
+### ㊵-1061 · 2026-10-17 · PLAN-N1-102 seed109 v9测面固定
+
+- 固定v9 manifest `plans/manifests/n1_hard_neighbor_v9_20261017.json` SHA-256 `d93dd6c6e0d98125ef1c91ed7ad8aec07a46f6621fb597dbffa6e889f29ac60f`；40项四类各10、sacrifice/confirm各20、12 observations/d=1。16项构造机检全真，470实体/360材料，来源实体/材料交集均0。
+- construction checks SHA-256 `157422b6534c7b723f76c49ec589bf75600d2e0ed82687141711b90393a5beb8`，一次性attempt SHA-256 `17e1785bf9b623345e191236b269ab8b1dd01b70929a7bef127f9cc2282d1f75`。v7/v8排除源各读取20个sacrifice episode；两面各20个confirm仅读ID/split/subset，其余字段不解码。建面model_loads/model_queries/parameter_updates均0。
+- 当前唯一下一步为提交面与构造收据；提交后通过零模型/checkpoint加载的range-readiness，之后仅执行一次180条sacrifice范围查询。若不足6/9，即止于`range_not_met`，不查询v9 confirm、不重抽；v7/v8 confirm继续未消费。
