@@ -3824,3 +3824,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 能为假那一侧同轮实测：守卫测的三条构造（答案全放位置 0、同题复制一份材质、四类打平成一类）让 `audit()` 三次都判 `accepted=false`；未签参数时 `--execute-signed` 走 `Refuse` rc=2 且零写盘，草稿只进 stdout 不进仓。收尾面现取：`black --check`、`ruff check .` 与 `--select B,SIM` 我名下零命中，链接门 rc=0，四册合同测合跑全绿。
 
 队列不变＝owner 签署 PLAN-N1-93 §1 的 shape 参数（现签的是形状：40 题 4 类×10、每题 4 条观测、实体 10 字符、答案 6 字符、seed 91）；签后下一件＝牺牲子集范围检验仪（九端点 × 20 题 native，复用 92 探针的端点装载与 `prepare_state`，按 432 条／132.7969 秒外推约 55 秒、上限 180 秒），不达线即出版 `range_not_met` 且确认子集一次都不查。本机未推提交现读 6 条（含本轮两笔）——上一轮 `git push` 被权限层拦下我没有硬重试，推送请 owner 自行执行或再次明确授权；三批训练结论与配方事实不撤，v5 面仍已消费。
+
+### ㊵-1031 · 2026-10-17 · v6 题面切成"牺牲／确认"两半并落盘范围检验仪：确认子集在代码里就查不到
+
+签字前的路又往前推了一格。①造面器现在给每题打 `subset`：每类前 5 题进 `sacrifice`、后 5 题进 `confirm`，manifest 顶部出版两枚 id 清单，机检新增 **J93_5_subset_split** 并要求"两半各 20 题、交集为空、每类在两半里各 5 题"——`--check-draft` 复跑仍 `accepted=true`（现读 sizes 20/20、overlap []、kinds 每格 5）。②新落盘 `scripts/training/verify_taiji_n1_v6_range_check.py`：`queried_ids()` 里有一条硬守卫，**任何落在确认子集的 id 都让仪器 rc=2 且一次都不查询**（不是纪律句，是代码）；题面与机检报告不同源、或机检报告自述 `queries≠0`／`accepted≠true` 也拒；`--execute-approved` 写靶存在即拒。③测量链全部复用 85 的 `evaluate`（含会话清理与"参数／优化器／RNG／历史未变"的收尾核验）与 90 的族端点装载器，本件只写两条线的算法：每类平均 native 错误 ≥3/20 与"非 unknown 三类合计错误 ≥6/20 的端点 ≥6 枚"，不达线 ⇒ `status=range_not_met` 且 rc=1，绝不把"没通过"读成"通过"。
+
+守卫测 `tests/taiji_native/test_n1_run93_v6_range_check_contract.py` 6 passed，两支都走：`range_lines` 在富错误面判 passed=True、在全对面判 False、在只跑 5 枚端点时也判 False（**短跑不算通过**，这条正是 92 那轮"partial 不能当结论"的形状）；另一支把单枚端点抹平到 0 错误后计数从 9 掉到 8，证明线是按端点逐枚数、不是按比例四舍五入；另有"确认子集泄漏即拒"、"题面与机检报告不同源即拒"、截止守卫两支、模式互斥与写靶已存在不覆盖各一支。造面器测同轮扩到 4 passed（新增"全部题塞进牺牲半 ⇒ J93_5 必须假"）。收尾面现取：`ruff check .` rc=0、`--select B,SIM` 命中集合仍为既有 11 枚且**没有一枚是我本轮的文件**、`black --check` 四枚新件全部 unchanged、两册合同测 10 passed。队列不变＝等 owner 签 PLAN-N1-93 §1 的 shape 参数；签后顺序＝`--execute-signed` 落题面 → 范围检验（九端点 × 20 题，上限 180 秒）→ 只有 `range_check_passed=true` 才允许一次确认查询。本机未推提交现读 7 条（本轮两笔入库后），推送仍待 owner 执行或明确授权。

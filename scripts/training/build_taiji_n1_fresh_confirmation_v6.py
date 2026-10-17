@@ -33,6 +33,8 @@ REPORT = ROOT / "reports/taiji_n1_v6_face_construction_checks_20261017.json"
 DIRECTIONS = v4.DIRECTIONS
 KINDS = v4.KINDS
 SUBJECT_ROWS = {"lookup": 1, "revision": 2, "transition": 2, "unknown": 0}
+#: 前半为牺牲子集（只做动态范围检验，永久不得承载能力主张），后半为确认子集（签署前一次都不查）。
+SUBSETS = ("sacrifice", "confirm")
 POSITIONAL_MARGIN = 1
 DIRECTION_MARGIN = 1
 
@@ -152,6 +154,7 @@ def build(params: dict):
                 "id": f"{params['id_prefix']}{index:03d}",
                 "split": "holdout",
                 "kind": kind,
+                "subset": SUBSETS[own < params["items_per_kind"] // 2],
                 "entities": [subject, *distractors],
                 "observations": [str(row) for row in rows],
                 "question": question,
@@ -265,6 +268,16 @@ def audit(episodes: list, params: dict, exclusions_pair) -> dict:
             & words
         ),
     }
+    subsets = {name: sorted(e["id"] for e in episodes if e["subset"] == name) for name in SUBSETS}
+    subset_kinds = {
+        name: {
+            kind: sum(1 for e in episodes if e["subset"] == name and e["kind"] == kind)
+            for kind in KINDS
+        }
+        for name in SUBSETS
+    }
+    half = params["items_per_kind"] // 2
+    kinds_balanced = all(subset_kinds[name][kind] == half for name in SUBSETS for kind in KINDS)
     checks = {
         "J93_1_class_balance": {
             "per_kind": per_kind,
@@ -315,6 +328,18 @@ def audit(episodes: list, params: dict, exclusions_pair) -> dict:
             "unknown_without_answer_source": orphan_clean,
             "ok": unique_source == len(addressable) and orphan_clean == len(orphan),
         },
+        "J93_5_subset_split": {
+            "sizes": {name: len(ids) for name, ids in subsets.items()},
+            "kinds_per_subset": subset_kinds,
+            "overlap": sorted(set(subsets["sacrifice"]) & set(subsets["confirm"])),
+            "half": half,
+            "ok": (
+                len(subsets["sacrifice"]) == len(episodes) // 2
+                and len(subsets["confirm"]) == len(episodes) // 2
+                and not (set(subsets["sacrifice"]) & set(subsets["confirm"]))
+                and kinds_balanced
+            ),
+        },
     }
     return {"checks": checks, "accepted": all(block["ok"] for block in checks.values())}
 
@@ -355,6 +380,10 @@ def execute_signed(out_path: Path) -> int:
         "schema": params["schema"],
         "seed": params["seed"],
         "excluded_source_sha256": [digest for _path, digest in sources],
+        "subsets": {
+            name: sorted(episode["id"] for episode in episodes if episode["subset"] == name)
+            for name in SUBSETS
+        },
         "episodes": episodes,
     }
     out_path.write_text(

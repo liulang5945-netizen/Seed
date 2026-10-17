@@ -64,6 +64,22 @@ def test_checks_are_able_to_go_red() -> None:
         episode["kind"] = "lookup"
     assert v6.audit(unbalanced, params, pair)["accepted"] is False
 
+    merged = copy.deepcopy(episodes)
+    for episode in merged:
+        episode["subset"] = "sacrifice"
+    assert v6.audit(merged, params, pair)["accepted"] is False
+
+
+def test_the_two_subsets_are_balanced_and_disjoint() -> None:
+    params, episodes, pair = draft()
+    reading = v6.audit(episodes, params, pair)
+    split = reading["checks"]["J93_5_subset_split"]
+    assert split["sizes"] == {"sacrifice": 20, "confirm": 20}
+    assert split["overlap"] == []
+    counts = split["kinds_per_subset"]
+    assert [counts[name][kind] for name in v6.SUBSETS for kind in v6.KINDS] == [5] * 8
+    assert {episode["subset"] for episode in episodes} == set(v6.SUBSETS)
+
 
 def test_unsigned_parameters_refuse_without_writing(tmp_path: Path) -> None:
     face = tmp_path / "v6.json"
