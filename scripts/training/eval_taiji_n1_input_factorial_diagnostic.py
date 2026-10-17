@@ -31,6 +31,9 @@ PLAN = face_builder.PLAN
 FACE = face_builder.FACE
 CHECKS = face_builder.CHECKS
 READINESS = ROOT / "reports/taiji_n1_hard_neighbor_v10_factorial_diagnostic_readiness_20261017.json"
+REPAIR_RECEIPT = (
+    ROOT / "reports/taiji_n1_hard_neighbor_v10_factorial_diagnostic_preflight_repair_20261017.json"
+)
 ATTEMPT = ROOT / "reports/taiji_n1_hard_neighbor_v10_factorial_diagnostic_attempt_20261017.json"
 REPORT = ROOT / "reports/taiji_n1_hard_neighbor_v10_factorial_diagnostic_20261017.json"
 
@@ -75,7 +78,56 @@ def _absent_confirmation_artifacts() -> bool:
     )
 
 
-def validate_face_and_sources() -> tuple[dict, dict, dict, dict[str, str]]:
+def _verify_preflight_repair(
+    construction_guards: dict[str, str],
+    current_guards: dict[str, str],
+    *,
+    face_sha256: str,
+    checks_sha256: str,
+) -> dict | None:
+    changed = sorted(
+        path
+        for path in set(construction_guards) | set(current_guards)
+        if construction_guards.get(path) != current_guards.get(path)
+    )
+    evaluator_path = str(Path(__file__).resolve())
+    test_path = str(face_builder.CONTRACT_TEST.resolve())
+    expected_changes = sorted((evaluator_path, test_path))
+    if not changed and not REPAIR_RECEIPT.exists():
+        return None
+    if not REPAIR_RECEIPT.is_file():
+        raise ValueError(
+            "construction-time source hashes changed without a preflight repair receipt"
+        )
+    receipt = read_json(REPAIR_RECEIPT)
+    if (
+        receipt.get("schema") != "n1-hard-neighbor-v10-factorial-preflight-repair-v1"
+        or receipt.get("status") != "implemented_preflight_assertion_repair"
+        or receipt.get("plan_sha256") != PLAN_SHA256
+        or receipt.get("face_sha256") != face_sha256
+        or receipt.get("checks_sha256") != checks_sha256
+        or receipt.get("construction_source_guards") != construction_guards
+        or receipt.get("repaired_source_guards") != current_guards
+        or receipt.get("changed_paths") != expected_changes
+        or changed != expected_changes
+        or receipt.get("failed_preflight_checkpoint_loads") != 1
+        or receipt.get("failed_preflight_readiness_written") is not False
+        or receipt.get("failed_preflight_attempt_written") is not False
+        or receipt.get("diagnostic_model_queries") != 0
+        or receipt.get("parameter_updates") != 0
+        or receipt.get("optimizer_steps") != 0
+        or receipt.get("failed_preflight_bundle_restore_passed") is not True
+        or receipt.get("failure_was_empty_history_assertion") is not True
+        or type(receipt.get("failed_preflight_cpu_upper_bound_seconds")) not in (int, float)
+        or not 0 <= receipt.get("failed_preflight_cpu_upper_bound_seconds", -1) <= 10
+    ):
+        raise ValueError(
+            "preflight repair receipt does not authorize the exact evaluator/test-only change"
+        )
+    return receipt
+
+
+def validate_face_and_sources() -> tuple[dict, dict, dict, dict[str, str], dict | None]:
     if sha256(PLAN) != PLAN_SHA256:
         raise ValueError("PLAN-N1-105 bytes differ from its frozen SHA")
     if not FACE.is_file() or not CHECKS.is_file():
@@ -103,20 +155,25 @@ def validate_face_and_sources() -> tuple[dict, dict, dict, dict[str, str]]:
         raise ValueError("diagnostic face/check receipt differs from the frozen contract")
     exclusions, excluded_words, provenance, current_guards = face_builder.collect_exclusions()
     if (
-        current_guards != checks.get("source_guards")
-        or provenance != face.get("exclusion_sources")
+        provenance != face.get("exclusion_sources")
         or provenance != checks.get("exclusion_sources")
         or provenance.get("v7_v8_confirmation_payload_fields_decoded") is not False
         or provenance.get("v7_v8_confirmation_artifacts_absent") is not True
         or not _absent_confirmation_artifacts()
     ):
         raise ValueError("exclusion sources changed or a prohibited confirmation artifact appeared")
+    repair = _verify_preflight_repair(
+        checks["source_guards"],
+        current_guards,
+        face_sha256=sha256(FACE),
+        checks_sha256=sha256(CHECKS),
+    )
     audit = face_builder.audit_face(face, excluded_names=exclusions, excluded_words=excluded_words)
     if not audit.get("accepted"):
         raise ValueError(
             f"diagnostic face no longer satisfies construction contract: {audit['errors']}"
         )
-    return face, checks, audit, current_guards
+    return face, checks, audit, current_guards, repair
 
 
 def _evaluation_source_guards(base_guards: dict[str, str]) -> dict[str, str]:
@@ -140,6 +197,8 @@ def _evaluation_source_guards(base_guards: dict[str, str]) -> dict[str, str]:
         Path(training.REPORT),
         *training.source_paths(),
     ]
+    if REPAIR_RECEIPT.is_file():
+        paths.append(REPAIR_RECEIPT)
     for path in paths:
         if not Path(path).is_file():
             raise FileNotFoundError(f"evaluation source is missing: {path}")
@@ -161,7 +220,9 @@ def _runtime() -> tuple[dict, dict]:
     return loaded, g
 
 
-def _restore_endpoints(g: dict, paths: dict[tuple[int, str], Path]) -> list[dict]:
+def _restore_endpoints(
+    g: dict, paths: dict[tuple[int, str], Path], items: list[dict]
+) -> list[dict]:
     restores = []
     expected_endpoints = {(seed, arm) for seed in SEEDS for arm in ARMS}
     if set(paths) != expected_endpoints:
@@ -170,9 +231,13 @@ def _restore_endpoints(g: dict, paths: dict[tuple[int, str], Path]) -> list[dict
         for arm in ARMS:
             path = paths[seed, arm]
             model, optimizer = v9_evaluator._new_model(g, path, seed, arm)
-            if model._observations:
-                raise ValueError(f"endpoint {seed}/{arm} retained session history on restore")
+            if not isinstance(model._observations, dict):
+                raise ValueError(f"endpoint {seed}/{arm} restored an invalid observation history")
+            diagnostic_sessions = {f"n1-v10-diagnostic-{seed}-{arm}-{item['id']}" for item in items}
+            if diagnostic_sessions & set(model._observations):
+                raise ValueError(f"endpoint {seed}/{arm} already contains a diagnostic session")
             bundle_fingerprint = g["paired"].fingerprint(model.bundle(optimizer))
+            history_keys = sorted(str(key) for key in model._observations)
             restores.append(
                 {
                     "seed": seed,
@@ -180,7 +245,11 @@ def _restore_endpoints(g: dict, paths: dict[tuple[int, str], Path]) -> list[dict
                     "checkpoint_sha256": sha256(path),
                     "full_bundle_fingerprint": bundle_fingerprint,
                     "full_bundle_equal": True,
-                    "initial_history_empty": True,
+                    "initial_history_entries": len(model._observations),
+                    "initial_history_keys_sha256": hashlib.sha256(
+                        "\n".join(history_keys).encode("utf-8")
+                    ).hexdigest(),
+                    "diagnostic_session_collisions": 0,
                 }
             )
             del model, optimizer
@@ -192,24 +261,31 @@ def run_readiness() -> dict:
     if READINESS.exists() or ATTEMPT.exists() or REPORT.exists():
         raise FileExistsError("PLAN-N1-105 readiness and evaluation artifacts are write-once")
     started = time.process_time()
-    face, checks, face_audit, source_guards = validate_face_and_sources()
+    face, checks, face_audit, source_guards, repair = validate_face_and_sources()
     source_identity = _evaluation_source_guards(source_guards)
     training_report, checkpoint_paths, checkpoint_guards = v9_evaluator.training_endpoints()
+    if repair is not None and repair.get("checkpoint_guards_after_failure") != checkpoint_guards:
+        raise ValueError("checkpoint bytes changed after the failed query-free preflight")
     loaded, g = _runtime()
     runtime_identity = g["identity"]()
-    restores = _restore_endpoints(g, checkpoint_paths)
+    restores = _restore_endpoints(g, checkpoint_paths, face["episodes"])
     code_identity_unchanged = g["identity"]() == runtime_identity
     sources_unchanged = _sources_unchanged(source_identity)
     checkpoints_unchanged = _sources_unchanged(checkpoint_guards)
     cpu_seconds = time.process_time() - started
     build_cpu_seconds = checks.get("cpu_seconds")
+    repair_cpu_upper_bound = (
+        float(repair.get("failed_preflight_cpu_upper_bound_seconds", 0.0))
+        if repair is not None
+        else 0.0
+    )
     complete = (
         len(restores) == 9
         and code_identity_unchanged
         and sources_unchanged
         and checkpoints_unchanged
         and type(build_cpu_seconds) in (int, float)
-        and build_cpu_seconds + cpu_seconds <= CPU_LIMIT_SECONDS
+        and build_cpu_seconds + repair_cpu_upper_bound + cpu_seconds <= CPU_LIMIT_SECONDS
     )
     result = {
         "schema": "n1-hard-neighbor-v10-factorial-diagnostic-readiness-v1",
@@ -218,6 +294,7 @@ def run_readiness() -> dict:
         "plan_sha256": PLAN_SHA256,
         "face_sha256": sha256(FACE),
         "checks_sha256": sha256(CHECKS),
+        "preflight_repair_receipt_sha256": sha256(REPAIR_RECEIPT) if repair else None,
         "training_report_sha256": sha256(training.REPORT),
         "training_report_complete": training_report.get("complete") is True,
         "training_sufficient": training_report.get("training_sufficient") is True,
@@ -225,6 +302,8 @@ def run_readiness() -> dict:
         "source_guards": source_identity,
         "runtime_identity": runtime_identity,
         "restore_checks": restores,
+        "prior_failed_preflight_checkpoint_loads": 1 if repair else 0,
+        "prior_failed_preflight_model_queries": 0,
         "construction_audit": face_audit,
         "items": len(face["episodes"]),
         "seed_order": list(SEEDS),
@@ -239,9 +318,12 @@ def run_readiness() -> dict:
         "checkpoints_unchanged": checkpoints_unchanged,
         "code_identity_unchanged": code_identity_unchanged,
         "build_cpu_seconds": round(float(build_cpu_seconds), 6),
+        "prior_failed_preflight_cpu_upper_bound_seconds": round(repair_cpu_upper_bound, 6),
         "preflight_cpu_seconds": round(cpu_seconds, 6),
         "cpu_limit_seconds": CPU_LIMIT_SECONDS,
-        "total_cpu_before_query_seconds": round(float(build_cpu_seconds) + cpu_seconds, 6),
+        "total_cpu_before_query_seconds": round(
+            float(build_cpu_seconds) + repair_cpu_upper_bound + cpu_seconds, 6
+        ),
         "can_promote": False,
     }
     write_new(READINESS, result)
@@ -499,11 +581,13 @@ def run_execute() -> dict:
     ):
         raise ValueError("diagnostic readiness receipt is incomplete or not query-free")
 
-    face, checks, audit, source_guards = validate_face_and_sources()
+    face, checks, audit, source_guards, repair = validate_face_and_sources()
     _, checkpoint_paths, checkpoint_guards = v9_evaluator.training_endpoints()
+    repair_sha256 = sha256(REPAIR_RECEIPT) if repair is not None else None
     if (
         readiness.get("face_sha256") != sha256(FACE)
         or readiness.get("checks_sha256") != sha256(CHECKS)
+        or readiness.get("preflight_repair_receipt_sha256") != repair_sha256
         or readiness.get("checkpoint_guards") != checkpoint_guards
         or readiness.get("source_guards") != _evaluation_source_guards(source_guards)
     ):
@@ -513,8 +597,16 @@ def run_execute() -> dict:
 
     build_cpu_seconds = checks["cpu_seconds"]
     readiness_cpu_seconds = readiness["preflight_cpu_seconds"]
+    repair_cpu_upper_bound = (
+        float(repair.get("failed_preflight_cpu_upper_bound_seconds", 0.0))
+        if repair is not None
+        else 0.0
+    )
     if (
-        build_cpu_seconds + readiness_cpu_seconds + (time.process_time() - started)
+        build_cpu_seconds
+        + repair_cpu_upper_bound
+        + readiness_cpu_seconds
+        + (time.process_time() - started)
         >= CPU_LIMIT_SECONDS
     ):
         raise TimeoutError("construction and recovery preflight consumed the full CPU ceiling")
@@ -532,6 +624,7 @@ def run_execute() -> dict:
         "face_sha256": sha256(FACE),
         "checks_sha256": sha256(CHECKS),
         "readiness_sha256": sha256(READINESS),
+        "preflight_repair_receipt_sha256": repair_sha256,
         "source_guards": source_identity,
         "checkpoint_guards": checkpoint_guards,
         "seed_order": list(SEEDS),
@@ -547,6 +640,7 @@ def run_execute() -> dict:
     remaining_before_attempt = (
         CPU_LIMIT_SECONDS
         - build_cpu_seconds
+        - repair_cpu_upper_bound
         - readiness_cpu_seconds
         - (time.process_time() - started)
     )
@@ -562,6 +656,7 @@ def run_execute() -> dict:
         remaining = (
             CPU_LIMIT_SECONDS
             - build_cpu_seconds
+            - repair_cpu_upper_bound
             - readiness_cpu_seconds
             - (time.process_time() - started)
         )
@@ -574,6 +669,7 @@ def run_execute() -> dict:
                 remaining = (
                     CPU_LIMIT_SECONDS
                     - build_cpu_seconds
+                    - repair_cpu_upper_bound
                     - readiness_cpu_seconds
                     - (time.process_time() - started)
                 )
@@ -622,7 +718,9 @@ def run_execute() -> dict:
     except BaseException as exc:
         error = error or f"summary_error:{type(exc).__name__}: {exc}"
         status = "stopped"
-    total_cpu_seconds = build_cpu_seconds + readiness_cpu_seconds + cpu_seconds
+    total_cpu_seconds = (
+        build_cpu_seconds + repair_cpu_upper_bound + readiness_cpu_seconds + cpu_seconds
+    )
     complete = (
         status == "complete"
         and rows_valid
@@ -644,6 +742,7 @@ def run_execute() -> dict:
         "checks_sha256": sha256(CHECKS),
         "readiness_sha256": sha256(READINESS),
         "attempt_sha256": sha256(ATTEMPT),
+        "preflight_repair_receipt_sha256": repair_sha256,
         "source_guards": source_identity,
         "checkpoint_guards": checkpoint_guards,
         "seed_order": list(SEEDS),
@@ -666,6 +765,7 @@ def run_execute() -> dict:
         "gate_recomputed": False,
         "cpu_limit_seconds": CPU_LIMIT_SECONDS,
         "build_cpu_seconds": round(build_cpu_seconds, 6),
+        "prior_failed_preflight_cpu_upper_bound_seconds": round(repair_cpu_upper_bound, 6),
         "readiness_cpu_seconds": round(readiness_cpu_seconds, 6),
         "evaluation_cpu_seconds": round(cpu_seconds, 6),
         "total_cpu_seconds": round(total_cpu_seconds, 6),

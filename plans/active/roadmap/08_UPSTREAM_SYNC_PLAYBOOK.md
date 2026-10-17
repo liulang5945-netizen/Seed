@@ -4117,3 +4117,10 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 来源审计集合1522个排除实体名、1001个排除材料值；v7/v8各仅读20道已查询sacrifice题，confirm载荷字段均未解码且确认产物仍缺席；完整v9 face按批准范围用于排除。36个源码/数据守卫全匹配，source_overlap_names/materials均0；builder报告model/checkpoint_loads、queries、updates均0。
 - **顺序偏差披露**：代码与合同测试于提交5aea3fbef冻结后再运行官方builder；构造时36个守卫匹配，0 checkpoint/model加载与查询。建面后我将㊵-1072进度误加到PLAN-N1-100守卫文件，导致单项哈希漂移；我已撤销该自加内容并恢复构造时SHA，36/36守卫重新匹配。现在提交面/checks后再做完整bundle预检；此文档顺序偏差已入账。
 - 当前唯一队首：提交完全匹配的诊断源码/测试/face/checks，然后运行`--readiness`（9次完整恢复、0查询）；readiness receipt核验后另行提交，方可执行`--execute`。
+
+### ㊵-1073 · 2026-10-17 · PLAN-N1-105恢复前置断言修复，尚未发查询
+
+- 首次`--readiness`在seed11/position停止：冻结`_new_model`载入器已恢复checkpoint并匹配完整bundle fingerprint，后续我加的“history必须为空”检查拒绝了合法训练history。第一次前置实际加载1枚checkpoint，诊断model_queries/parameter_updates/optimizer_steps均0；没有readiness、attempt或result报告，也未写checkpoint。该额外断言与PLAN-N1-105的完整bundle恢复要求不一致。
+- 评测器现保留并指纹验证恢复时完整history，只拒绝与248个新diagnostic session ID冲突；逐题清理新session，并在每个seed/arm端点前后比较完整model/optimizer/RNG/history bundle。合同测试新增“保留既有history”和“检测session冲突”两支；共13项测试、Ruff/Black/py_compile通过。
+- repair receipt `reports/taiji_n1_hard_neighbor_v10_factorial_diagnostic_preflight_repair_20261017.json` SHA-256 `d4880db26c3fa910ff3a786bc5af08a358ad87fb71702ce1bac687f2d7cd5133`绑定construction-time与修复后36项源码守卫，仅评测器与合同测试源码改变；九枚checkpoint hash在失败后仍与封存收据一致。失败调用wall上限10秒以CPU上限保守计入；总预算仍≤1200秒。
+- 当前唯一下一步：提交修复评测器/测试/凭据，随后重新执行9枚full-bundle readiness。若readiness完成且所有源/权重守卫匹配，另提交readiness receipt后才执行唯一一次2232-query diagnostic。

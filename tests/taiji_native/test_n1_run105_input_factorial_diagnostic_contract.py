@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 from collections import Counter
+from types import SimpleNamespace
 
 import pytest
 
@@ -190,10 +191,69 @@ def test_diagnostic_scorer_refuses_to_relabel_holdout_items():
         evaluator.measure_diagnostic(None, {"split": "holdout"}, "position", "session")
 
 
+def test_restore_preflight_accepts_frozen_training_history_without_session_collisions(
+    tmp_path, monkeypatch
+):
+    class FakeModel:
+        def __init__(self):
+            self._observations = {"training-session": {"step": 24}}
+
+        def bundle(self, optimizer):
+            return {"observations": dict(self._observations), "weight": 17}
+
+    paths = {}
+    for seed in evaluator.SEEDS:
+        for arm in evaluator.ARMS:
+            path = tmp_path / f"{seed}-{arm}.pt"
+            path.write_bytes(f"{seed}/{arm}".encode())
+            paths[(seed, arm)] = path
+
+    monkeypatch.setattr(
+        evaluator.v9_evaluator,
+        "_new_model",
+        lambda g, path, seed, arm: (FakeModel(), object()),
+    )
+    result = evaluator._restore_endpoints(
+        {"paired": SimpleNamespace(fingerprint=lambda bundle: str(bundle))},
+        paths,
+        [{"id": "item-01"}],
+    )
+    assert len(result) == 9
+    assert all(item["full_bundle_equal"] is True for item in result)
+    assert all(item["initial_history_entries"] == 1 for item in result)
+    assert all(item["diagnostic_session_collisions"] == 0 for item in result)
+
+
+def test_restore_preflight_rejects_a_diagnostic_session_collision(tmp_path, monkeypatch):
+    class FakeModel:
+        _observations = {"n1-v10-diagnostic-11-position-item-01": {"step": 1}}
+
+        def bundle(self, optimizer):
+            return {"observations": dict(self._observations)}
+
+    paths = {}
+    for seed in evaluator.SEEDS:
+        for arm in evaluator.ARMS:
+            path = tmp_path / f"{seed}-{arm}.pt"
+            path.write_bytes(b"endpoint")
+            paths[(seed, arm)] = path
+    monkeypatch.setattr(
+        evaluator.v9_evaluator,
+        "_new_model",
+        lambda g, path, seed, arm: (FakeModel(), object()),
+    )
+    with pytest.raises(ValueError, match="diagnostic session"):
+        evaluator._restore_endpoints(
+            {"paired": SimpleNamespace(fingerprint=lambda bundle: str(bundle))},
+            paths,
+            [{"id": "item-01"}],
+        )
+
+
 def test_endpoint_scorer_removes_each_session_and_checks_the_full_bundle(monkeypatch):
     class FakeModel:
         def __init__(self):
-            self._observations = {}
+            self._observations = {"training-session": {"step": 24}}
             self.weight = 17
 
         def bundle(self, optimizer):
@@ -219,7 +279,7 @@ def test_endpoint_scorer_removes_each_session_and_checks_the_full_bundle(monkeyp
         accounting=accounting,
     )
     assert len(rows) == accounting["model_queries"] == 2
-    assert model._observations == {}
+    assert model._observations == {"training-session": {"step": 24}}
 
 
 def test_endpoint_scorer_fails_if_a_query_mutates_the_bundle(monkeypatch):
