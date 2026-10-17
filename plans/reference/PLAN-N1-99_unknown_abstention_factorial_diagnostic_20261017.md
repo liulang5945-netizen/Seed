@@ -9,6 +9,7 @@
 ## 1. 固定端点与题目
 
 - 只使用 v6 confirm 子集中的 5 个 unknown 问题，绑定 `plans/manifests/n1_fresh_confirmation_v6_20261017.json` 的原始 SHA-256 `7dddf00f3f2e24381728855b218e67bc8160fd6badeb1a7a933937d999766d49`。
+- v6 已出版报告 `reports/taiji_n1_transition_factorial_confirmation_v6.json` 的原始 SHA-256 固定为 `3d924e19d97b59ea12505111603b7d562ada8e8d9bdac71351a51c24c5918849`；A 格只从这枚件读取 45 条 unknown 基线行。
 - 使用 run88c position、run89a terminal、run89b cut 共 9 枚已验证终端；按 PLAN-N1-90 与 v6 报告中的原始 checkpoint 摘要绑定。
 - 不访问牺牲子集、v5 以外的新清单、dev、任何未见确认集或其他留出面。v6 的原始 4 观测／d=1 单元直接复用已出版报告行，不重新查询。
 
@@ -22,6 +23,8 @@
 | D | 2 | d=2 | C 条件下按原序保留前两条观测 |
 
 问题文本、unknown 答案、问题实体名和 5 个基础题 ID 固定；B/D 只删去后两条观测；C/D 只对干扰实体名作确定性替换。候选值、陈列顺序、实体名长度和其余格式保持不变。d=2 沿用 PLAN-N1-93 的距离口径与构造器，不另发明距离定义。任何生成校验不通过即在首题之前拒绝。
+
+实施固定值：d=2 干扰名复用 PLAN-N1-93 的 `confusable` 逐字符替换算法，使用独立确定性 `random.Random(9902)`；名字须与本次 5 个基础题的已有实体名不重复，且每个都与该题查询实体恰差 2 个字符。构造完成后以全量变体机检逐条确认，种子及生成摘要随报告出版。
 
 ## 3. 执行与判读
 
