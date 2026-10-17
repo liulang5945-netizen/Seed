@@ -36,6 +36,9 @@ RANGE_REPORT = ROOT / "reports/taiji_n1_hard_neighbor_v9_range_check_20261017.js
 RANGE_ATTEMPT = RANGE_REPORT.with_name(RANGE_REPORT.stem + "_attempt.json")
 CONFIRM_REPORT = ROOT / "reports/taiji_n1_hard_neighbor_v9_confirmation_20261017.json"
 CONFIRM_ATTEMPT = CONFIRM_REPORT.with_name(CONFIRM_REPORT.stem + "_attempt.json")
+CONFIRM_PREFLIGHT_REPAIR = (
+    ROOT / "reports/taiji_n1_hard_neighbor_v9_confirmation_preflight_repair_20261017.json"
+)
 SEEDS = (11, 12, 13)
 ARMS = ("position", "terminal", "cut")
 KINDS = ("lookup", "revision", "transition", "unknown")
@@ -180,6 +183,10 @@ def _old_endpoints() -> tuple[dict, dict]:
     if set(paths) != expected:
         raise ValueError("the frozen run88c/run89a/run89b nine-endpoint family is incomplete")
     return paths, guards
+
+
+def _old_family_report_hashes() -> dict[str, str]:
+    return {arm: receipt["report_sha256"] for arm, receipt in old_bind.family_receipts().items()}
 
 
 def _score(
@@ -398,8 +405,33 @@ def run_confirmation() -> dict:
     old_paths, old_guards = _old_endpoints()
     _, g, _ = training.make_runner(load_inputs=False)
     budget = CpuDeadline(CONFIRM_CPU_LIMIT_SECONDS)
+    range_evaluator_sha256 = range_report.get("source_guards", {}).get("evaluator_sha256")
+    confirmation_evaluator_sha256 = sha256(Path(__file__).resolve())
+    if not CONFIRM_PREFLIGHT_REPAIR.is_file():
+        raise FileNotFoundError("the pre-attempt confirmation repair receipt is required")
+    repair = read_json(CONFIRM_PREFLIGHT_REPAIR)
+    if (
+        repair.get("status") != "pre_attempt_failure_repaired"
+        or repair.get("range_report_sha256") != sha256(RANGE_REPORT)
+        or repair.get("range_evaluator_sha256") != range_evaluator_sha256
+        or repair.get("repaired_confirmation_evaluator_sha256") != confirmation_evaluator_sha256
+        or repair.get("confirm_attempt_written") is not False
+        or repair.get("confirm_report_written") is not False
+        or repair.get("model_loads") != 0
+        or repair.get("model_queries") != 0
+        or repair.get("parameter_updates") != 0
+        or repair.get("range_rerun") is not False
+    ):
+        raise ValueError(
+            "confirmation repair receipt does not match the sealed pre-attempt failure"
+        )
     code_identity = {
-        "evaluator_sha256": sha256(Path(__file__).resolve()),
+        "evaluator_sha256": confirmation_evaluator_sha256,
+        "range_evaluator_sha256": range_evaluator_sha256,
+        "evaluator_changed_after_range": (
+            range_report.get("source_guards", {}).get("evaluator_sha256")
+            != sha256(Path(__file__).resolve())
+        ),
         "face_builder_sha256": sha256(Path(face_builder.__file__).resolve()),
         "training_controller_sha256": sha256(Path(training.__file__).resolve()),
         "training_code_identity": train_report["code_identity"],
@@ -410,14 +442,14 @@ def run_confirmation() -> dict:
         "training_report_sha256": sha256(training.REPORT),
         "plan_sha256": sha256(face_builder.PLAN),
         "range_report_sha256": sha256(RANGE_REPORT),
+        "confirmation_preflight_repair_sha256": sha256(CONFIRM_PREFLIGHT_REPAIR),
+        "range_evaluator_sha256": range_evaluator_sha256,
+        "confirmation_evaluator_sha256": confirmation_evaluator_sha256,
         "face_sha256": sha256(FACE),
         "face_checks_sha256": sha256(FACE_CHECKS),
         "new_checkpoints": new_checkpoint_guards,
         "old_endpoint_guards": old_guards,
-        "old_family_reports": {
-            arm: receipts[arm]["report_sha256"]
-            for arm, receipts in old_bind.family_receipts().items()
-        },
+        "old_family_reports": _old_family_report_hashes(),
     }
     raw_guards = {
         str(path.resolve()): sha256(path)
@@ -425,6 +457,7 @@ def run_confirmation() -> dict:
             training.REPORT,
             training.SCHEDULE,
             RANGE_REPORT,
+            CONFIRM_PREFLIGHT_REPAIR,
             FACE,
             FACE_CHECKS,
             Path(__file__).resolve(),

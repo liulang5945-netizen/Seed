@@ -4050,3 +4050,8 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 固定v9 manifest `plans/manifests/n1_hard_neighbor_v9_20261017.json` SHA-256 `d93dd6c6e0d98125ef1c91ed7ad8aec07a46f6621fb597dbffa6e889f29ac60f`；40项四类各10、sacrifice/confirm各20、12 observations/d=1。16项构造机检全真，470实体/360材料，来源实体/材料交集均0。
 - construction checks SHA-256 `157422b6534c7b723f76c49ec589bf75600d2e0ed82687141711b90393a5beb8`，一次性attempt SHA-256 `17e1785bf9b623345e191236b269ab8b1dd01b70929a7bef127f9cc2282d1f75`。v7/v8排除源各读取20个sacrifice episode；两面各20个confirm仅读ID/split/subset，其余字段不解码。建面model_loads/model_queries/parameter_updates均0。
 - 当前唯一下一步为提交面与构造收据；提交后通过零模型/checkpoint加载的range-readiness，之后仅执行一次180条sacrifice范围查询。若不足6/9，即止于`range_not_met`，不查询v9 confirm、不重抽；v7/v8 confirm继续未消费。
+
+### ㊵-1062 · 2026-10-17 · v9确认前置收据错误在零查询处修复
+
+- v9 range 6/9 passed（180条、CPU35.53125秒、来源/代码守卫完整、0更新）；`--confirm-readiness`通过。首次`--confirm`调用在确认attempt写入前报`KeyError('position')`，定位于旧控制组receipt的SHA摘要映射；无checkpoint权重加载、无model query/update，confirm attempt/report均未创建。
+- 修复为按`arm -> receipt['report_sha256']`取值，加入回归合同；确认attempt/report会显式绑定range runner SHA、当前confirmation runner SHA与repair receipt SHA，保留两阶段代码变化。修复前置记录`reports/taiji_n1_hard_neighbor_v9_confirmation_preflight_repair_20261017.json` SHA-256 `e807c144d2ac9e9c21c4af5b98926175d83a785423aa5cce85e06e7b07f64936`。提交修复后重新做confirm-readiness，然后执行原授权的唯一确认查询；不重跑范围、不改变门或面。v7/v8 confirm仍不读取。

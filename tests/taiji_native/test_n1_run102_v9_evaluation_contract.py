@@ -82,3 +82,20 @@ def test_confirmation_attempt_is_not_written_before_range_eligibility(tmp_path, 
     with pytest.raises(ValueError, match="range gate has not passed"):
         evaluator.run_confirmation()
     assert not attempt.exists()
+
+
+def test_old_family_report_hashes_use_each_family_receipt(monkeypatch):
+    monkeypatch.setattr(
+        evaluator.old_bind,
+        "family_receipts",
+        lambda: {
+            "position": {"report_sha256": "position-report"},
+            "terminal": {"report_sha256": "terminal-report"},
+            "cut": {"report_sha256": "cut-report"},
+        },
+    )
+    assert evaluator._old_family_report_hashes() == {
+        "position": "position-report",
+        "terminal": "terminal-report",
+        "cut": "cut-report",
+    }
