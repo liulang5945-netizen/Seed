@@ -4184,3 +4184,8 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 已静态核对PLAN-N1-100 schedule 3,072项及v10 face 248题，CPU0.015625秒；report SHA-256 `43d2e75989d42571a36ff7038b137c3d03c7ff764aa95a2990f54344564d4d9b`，schedule/face输入hash前后相等。每个schedule item/second_question均标为train；dev/holdout/query/update计数为0，无模型/checkpoint加载或查询。write-once报告在显式CLI运行步骤前已存在；计划/来源/analyzer/test哈希及结果全覆盖均匹配冻结凭据，因此未覆盖或重跑，披露见EXP-N1-109。
 - Known lookup/revision训练目标均只有6字符：分别768/768和768/768；lookup second-question也是768/768长度6。v10新诊断lookup为48×6+48×7，revision为44×6+44×7。literal `unknown`虽7字符但属弃权标签，不计入known material答案长度。长度缺口可解释部分seed11/12七字符局部错误，却不能解释seed13在两种长度上的广泛失败（均有2–7编辑距离）。详见[EXP-N1-109](../../reference/EXP-N1-109_train_answer_length_coverage_adjudication_20261017.md)。
 - 当前唯一下一步建议：制定一份matched length-balanced retraining + fresh confirmation计划，固定更新数/原有训练及确认门，比较PLAN-N1-100九枚旧端点和九枚新长度平衡候选。它会改变训练schedule并创建v11新确认面，属于计划范围决策；完成具体草案后请owner批准，再实施。
+
+### ㊵-1084 · 2026-10-17 · PLAN-N1-110长度平衡重训与v11确认草案已备妥，等待owner裁定
+
+- 草案见[PLAN-N1-110](../../reference/PLAN-N1-110_length_balanced_training_and_v11_confirmation_draft_20261017.md)。它提出同一 run100 train-only来源下，把lookup/revision material values按父项、条件及周期平衡为6/7字符；原结构、24,576更新/模型、训练门与四项确认门照旧。固定旧九端点作control，训练新的9候选；若新模型过原训练门，再建立seed111新v11面，先走6/9范围门，过线后只对旧baseline9＋候选9查询一次360行；CPU总上限18,000秒。
+- **此项是训练配方和测面范围变更，尚未获批。** 当前未改训练代码/清单，未保存checkpoint，未训练，未构造v11 face，未查询新确认面。需owner批准或拒绝该完整方案；不因routine CPU预算另行询问。
