@@ -3830,3 +3830,13 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 签字前的路又往前推了一格。①造面器现在给每题打 `subset`：每类前 5 题进 `sacrifice`、后 5 题进 `confirm`，manifest 顶部出版两枚 id 清单，机检新增 **J93_5_subset_split** 并要求"两半各 20 题、交集为空、每类在两半里各 5 题"——`--check-draft` 复跑仍 `accepted=true`（现读 sizes 20/20、overlap []、kinds 每格 5）。②新落盘 `scripts/training/verify_taiji_n1_v6_range_check.py`：`queried_ids()` 里有一条硬守卫，**任何落在确认子集的 id 都让仪器 rc=2 且一次都不查询**（不是纪律句，是代码）；题面与机检报告不同源、或机检报告自述 `queries≠0`／`accepted≠true` 也拒；`--execute-approved` 写靶存在即拒。③测量链全部复用 85 的 `evaluate`（含会话清理与"参数／优化器／RNG／历史未变"的收尾核验）与 90 的族端点装载器，本件只写两条线的算法：每类平均 native 错误 ≥3/20 与"非 unknown 三类合计错误 ≥6/20 的端点 ≥6 枚"，不达线 ⇒ `status=range_not_met` 且 rc=1，绝不把"没通过"读成"通过"。
 
 守卫测 `tests/taiji_native/test_n1_run93_v6_range_check_contract.py` 6 passed，两支都走：`range_lines` 在富错误面判 passed=True、在全对面判 False、在只跑 5 枚端点时也判 False（**短跑不算通过**，这条正是 92 那轮"partial 不能当结论"的形状）；另一支把单枚端点抹平到 0 错误后计数从 9 掉到 8，证明线是按端点逐枚数、不是按比例四舍五入；另有"确认子集泄漏即拒"、"题面与机检报告不同源即拒"、截止守卫两支、模式互斥与写靶已存在不覆盖各一支。造面器测同轮扩到 4 passed（新增"全部题塞进牺牲半 ⇒ J93_5 必须假"）。收尾面现取：`ruff check .` rc=0、`--select B,SIM` 命中集合仍为既有 11 枚且**没有一枚是我本轮的文件**、`black --check` 四枚新件全部 unchanged、两册合同测 10 passed。队列不变＝等 owner 签 PLAN-N1-93 §1 的 shape 参数；签后顺序＝`--execute-signed` 落题面 → 范围检验（九端点 × 20 题，上限 180 秒）→ 只有 `range_check_passed=true` 才允许一次确认查询。本机未推提交现读 7 条（本轮两笔入库后），推送仍待 owner 执行或明确授权。
+
+### ㊵-1032 · 2026-10-17 · v6 加一条反泄漏机检（答案长度），并把确认查询的判据在题面存在之前就冻死
+
+两件事都是在"还没有数据"的时候做的，目的是让签字之后没有任何一步需要临场判断。
+
+①机检多一条 **J93_6_answer_length_leak**。原设计里弃权答案恒为字面 `unknown`（7 字符），而其他类答案都是 6 字符——这让"答案长度"本身成为类别线索，与 v1/v2 那两版"答案恒排第一 ⇒ 挑最旧就满分"是同族的构造泄漏（旧教训：题集的构造约束可能就是捷径本身）。改法＝材质答案长度在 6／7 之间轮转（每类 10 题里 5 题取 7 字符），并把 `unknown` 这个字面词排除出自造材质词池以免撞字。现读 `length_to_classes`＝`{4:[transition], 5:[transition], 6:[lookup,revision], 7:[lookup,revision,unknown]}` ⇒ 弃权长度由三类共享，机检判 ok；同轮加一条能为假的测（把 7 字符答案截回 6 字符 ⇒ 该格必须判假）。仍如实披露残留：方向词只有 4／5 字符，这两档在数据上唯一对应 `transition`——但类别本就由问句模板定义（"material of…?" 对 "direction of…?"），模型必须先生成才能知道长度，长度不构成可先验利用的通道；这条我写下而不隐藏，是为将来有人复核时不必重新发现。
+
+②新冻 [PLAN-N1-94](../../reference/PLAN-N1-94_v6_confirmation_query_20261017.md)：v6 确认子集那 20 题的**一次性**查询件。它现在就把四道门的执行值写死为**不缩放的原绝对值**（`advantage_*` 各 ≥12/60 而非按 20/32 比例折成 8/60），并把"比例照搬会得到什么"并排出版，注明"未经 owner 另签一律按左列执行"；`each_position_seed` 与 `each_position_kind` 两条在同比例下与绝对值同形，因此无需另裁。它另外预先处理了我自己咬过我的那一格：来源摘要**同时出版 `sha_raw` 与 `sha_json_normalized` 并各自命名，判据只取 raw、另一枚仅披露**——这样 DEBT-G147 那种"两套口径把一次有效执行判成工程不完整"的假阴性不会再发生，也不会反向地把真实改动抹平。前置 P1–P5（含"确认半未被查询过"这一条要由范围报告自证）任一缺失即 rc=2 且 attempt 不落盘。
+
+收尾面现取：造面器与范围仪两册合同测 11 passed，`--check-draft` 仍 `accepted=true`，`ruff check .` rc=0、`--select B,SIM` 命中集合仍为既有 11 枚且无一枚属本轮文件，`black --check` 新件 unchanged。队列不变＝等 owner 签 PLAN-N1-93 §1（现在多了答案长度 6／7 轮转这一项）；未推提交现读 8 条。

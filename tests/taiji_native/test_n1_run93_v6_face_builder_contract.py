@@ -69,6 +69,21 @@ def test_checks_are_able_to_go_red() -> None:
         episode["subset"] = "sacrifice"
     assert v6.audit(merged, params, pair)["accepted"] is False
 
+    short_answers = copy.deepcopy(episodes)
+    for episode in short_answers:
+        if episode["kind"] in ("lookup", "revision") and len(episode["answer"]) == 7:
+            episode["answer"] = episode["answer"][:6]
+    leak = v6.audit(short_answers, params, pair)["checks"]["J93_6_answer_length_leak"]
+    assert leak["ok"] is False, leak
+
+
+def test_the_abstention_answer_shape_is_not_unique() -> None:
+    params, episodes, pair = draft()
+    leak = v6.audit(episodes, params, pair)["checks"]["J93_6_answer_length_leak"]
+    assert leak["ok"] is True
+    assert len(leak["classes_sharing_abstention_length"]) >= 2
+    assert v6.ABSTENTION in {episode["answer"] for episode in episodes}
+
 
 def test_the_two_subsets_are_balanced_and_disjoint() -> None:
     params, episodes, pair = draft()

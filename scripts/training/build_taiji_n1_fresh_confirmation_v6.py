@@ -33,6 +33,8 @@ REPORT = ROOT / "reports/taiji_n1_v6_face_construction_checks_20261017.json"
 DIRECTIONS = v4.DIRECTIONS
 KINDS = v4.KINDS
 SUBJECT_ROWS = {"lookup": 1, "revision": 2, "transition": 2, "unknown": 0}
+#: 弃权答案的字面值；它同时被排除在自造材质词池之外，免得与某题的正确答案撞字。
+ABSTENTION = "unknown"
 #: 前半为牺牲子集（只做动态范围检验，永久不得承载能力主张），后半为确认子集（签署前一次都不查）。
 SUBSETS = ("sacrifice", "confirm")
 POSITIONAL_MARGIN = 1
@@ -77,7 +79,8 @@ def draft_distribution() -> dict:
         "items_per_kind": 10,
         "observations_per_item": 4,
         "entity_length": 10,
-        "answer_length": 6,
+        #: 答案长度轮转 6／7：避免"7 字符"这个形状本身成为弃权类别的线索。
+        "answer_lengths": [6, 7],
         "seed": 91,
         "schema": "n1-fresh-confirmation-v6",
         "id_prefix": "v6-confirm-",
@@ -89,7 +92,7 @@ def build(params: dict):
     names, words, sources = exclusions()
     rng = random.Random(params["seed"])
     used_names = set(names)
-    used_words = set(words)
+    used_words = set(words) | {ABSTENTION}
     slots_per_item = params["observations_per_item"]
 
     def novel(length: int, pool: set) -> str:
@@ -108,15 +111,19 @@ def build(params: dict):
         distractor_slots = slots_per_item - SUBJECT_ROWS[kind]
         require(distractor_slots >= 0, f"{kind} needs more observations than the face provides")
         subject = novel(params["entity_length"], used_names)
+        answer_length = params["answer_lengths"][own % len(params["answer_lengths"])]
         distractors = [novel(params["entity_length"], used_names) for _ in range(distractor_slots)]
-        materials = [novel(params["answer_length"], used_words) for _ in range(distractor_slots)]
+        materials = [
+            novel(params["answer_lengths"][0], used_words) for _ in range(distractor_slots)
+        ]
         rows: list[str | None]
         if kind == "lookup":
-            answer = novel(params["answer_length"], used_words)
+            answer = novel(answer_length, used_words)
             answer_rows = [f"{subject} uses {answer}."]
             question = f"material of {subject}?"
         elif kind == "revision":
-            stale, answer = (novel(params["answer_length"], used_words) for _ in range(2))
+            stale = novel(params["answer_lengths"][0], used_words)
+            answer = novel(answer_length, used_words)
             answer_rows = [f"{subject} uses {stale}.", f"{subject} now uses {answer}."]
             question = f"material of {subject}?"
         elif kind == "transition":
@@ -127,7 +134,7 @@ def build(params: dict):
             answer_rows = [f"{subject} faces {DIRECTIONS[start]}.", f"{subject} turns {word}."]
             question = f"direction of {subject}?"
         else:
-            answer = "unknown"
+            answer = ABSTENTION
             answer_rows = []
             question = f"material of {subject}?"
         rows = [None] * slots_per_item
@@ -278,7 +285,21 @@ def audit(episodes: list, params: dict, exclusions_pair) -> dict:
     }
     half = params["items_per_kind"] // 2
     kinds_balanced = all(subset_kinds[name][kind] == half for name in SUBSETS for kind in KINDS)
+    length_classes: dict = {}
+    for episode in episodes:
+        length_classes.setdefault(len(episode["answer"]), set()).add(episode["kind"])
+    abstention_length = len(ABSTENTION)
     checks = {
+        "J93_6_answer_length_leak": {
+            "length_to_classes": {
+                str(length): sorted(kinds) for length, kinds in sorted(length_classes.items())
+            },
+            "abstention_length": abstention_length,
+            "classes_sharing_abstention_length": sorted(
+                length_classes.get(abstention_length, set())
+            ),
+            "ok": len(length_classes.get(abstention_length, set())) >= 2,
+        },
         "J93_1_class_balance": {
             "per_kind": per_kind,
             "ok": all(count == params["items_per_kind"] for count in per_kind.values()),
