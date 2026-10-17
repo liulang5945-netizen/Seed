@@ -1,0 +1,48 @@
+# N 主线完成度对照（2026-10-17，台账 ㊵-1021…1040 之后）
+
+**这份件回答同一个问题**：目标"按最新 N 主线计划推进到内容与目标完成"离达成还差什么。判据不另立，仍取 09 自己写的两处：**§2 各节的「出口交付」**与 **§1.3 的 VISION 条款对账表**；阶梯侧取 [PLAN-N-01](PLAN-N-01_development_revision_20261014.md) §3 的 C0→C5 行与 [PLAN-N-02](PLAN-N-02_c4_net_gain_package_prereg_20261017.md)。前一份对照件是 [20261012 版](N_MAINLINE_COMPLETION_AUDIT_20261012.md)，**它未被改写**——本件是并列的新时点读数，两件的差就是这五天的进展与退步。
+
+**取法声明**（沿用前件）：每条要么给在盘件名＋现取时刻，要么给可复算命令；拿不到就写"未兑现"；**凡从前件继承的判定，本件逐条点名"今天未重取"**，不冒充现读。状态三档：`已判定`／`未兑现-可自办`／`未兑现-需批文`。
+
+**本件今天现取的读数（五枚，全部只读）**：
+
+* 债表形状：`rows`／`distinct_ids`／`max_debt_id` ＝ **153／153／153**，转义敏感分布只剩 `{"5": 153}`，`declared_is_the_majority_shape` ＝ 真，`started_utc = 2026-10-17T06:15:23Z`（前件 125／125／125 ⇒ 这五天净挂 28 枚）。
+* §1.3 对账：`clause_rows_parsed` 41、`clauses_required_now` 19、**`clauses_with_id_citation` 11**、`clauses_with_section_citation` 19、`clauses_unmapped_both` 0、`clauses_global_or_post_or_optional` 22 ⇒ 第三条 verdict（每条必款都有 id 级引用）**仍假（11＜19）**，但 id 级引用从前件的 8 推进到 11（＋3），锚命中 19 不变、unmapped 仍 0。
+* v6 预飞三件：`reports/taiji_n1_v6_preflight_range_sweep.json`（九次）、`reports/taiji_n1_v6_preflight_confusability_sweep.json`（八次）、`reports/taiji_n1_v6_preflight_gate_forecast.json`（十六次判级，判级字段来自执行器 `evaluate_gates`）。
+* C4 判读器首件：`reports/taiji_n02_c4_net_gain_readiness_20261017.json`，`status = range_unverified`、`models_loaded = 0`、`is_capability_claim = false`。
+* 定向测（今天重取的部分）：`tests/seed/test_project_identity.py`＋`tests/taiji_native/test_n6_09_ledger_marker_uniqueness_contract.py` ＝ 10 passed；`test_n02_c4_net_gain_reader_contract.py` ＝ 7 passed；v6 三台仪器测 8／8／7 passed、造面器 8 passed。
+
+**未重取的（照实说）**：整族同面（前件三次为 `3127 → 3131 → 3136 passed`，恒 `1 failed`＝DEBT-G103 的 OpenAPI 金样）。今天**一次全库跑被本机权限层拦下**（分类器判为"未点名的长操作"），我没有重试 ⇒ 整族数**继承前件、标记未重取**；`disk_load_face`、`capability_seed_floor`、`envelope_recipe_face` 三面今天也未重取。
+
+## 1. §2 各节「出口交付」逐条（今天变化在 N1 与"净增益阶段"两处）
+
+| N | 出口交付拆项 | 在盘证据 | 状态 |
+|---|---|---|---|
+| **N1** | ①S5 判读报告入库 | `PLAN-N1-00_S5_ADJUDICATION_20261007.md`（J1＝209＞118 不成立） | **已判定**（今天未重取） |
+| | ②读取通路＋三器官读数 | 仍只有阶段 0（H-S1a 零训练）判不成立；阶段 1 未跑 | **未兑现-需批文**（今天无变化） |
+| | ③v5 未见确认＝C3 那一格 | 89 两批＋九枚同协议端点：四门合取**不成立**（`advantage_cut` 79 对 80；`each_position_kind` seed13 lookup/revision 各 0/8）；v5 面 `retry_allowed=false` 已消费 ⇒ 转 v6。今天三段预飞把 v6 的**形状**钉住：观测数那条维开不出尺（五档×三抽样恒 5/9）；`name_neighbor_distance=1` 开得出了（四个独立抽样 7／7／7／8，knob 8 给 9/9）；按仪器 `evaluate_gates` 重算十六次 ⇒ **四门合取 0 次全绿、`advantage_cut` 0 次过（−3～＋7）、`each_position_kind` 0 次过（seed13 两类每张面 0/5）**，且我上一轮那句"范围门与四门互斥"已收回（DEBT-G153） | **未兑现-需批文**＝等 owner 在 [EXP-N1-95](EXP-N1-95_v6_preflight_range_sweep_20261017.md) §11 的**甲／乙／丙／丁**里裁定 ＋ 签 PLAN-N1-93 §1（现含两枚待签维）；今天新增一条硬事实：**出口 ⑴（范围过且四门全绿）在这九枚端点上没有出现过**，已写进 PLAN-N1-93 §5 供签字时知情 |
+| **N2** | ①真实长跑＋离线巩固完整读数 | 两次通电各带判读件，合取＝持久化成立／`J-N2a′` 不成立／`J-N2b′` 不成立 | **已判定**（今天未重取） |
+| | ②能力增量／单位经验 | `reports/taiji_n2_05_experience_rate_20261011.json`＝每 cycle −0.138577625，`J-N2e_3 = cost_not_gain` | **已判定＝代价不是增益**（今天未重取） |
+| | ③保持集（PLAN-N2-04 三档） | A 档㊵-530、B 档㊵-564…567 已跑；同次通电前后 **4 列跌（全是 `replay_well_formed` 四档）**⇒ `cost_persists`；今天这台 C4 判读器把它读成 `J_N02_2=cost_persists` 并原样出版列名 | **已判定**；C 档（保持切片进 `spec.datasets`）仍**未兑现-需批文**（产品码＋改权重两条） |
+| **N3** | ①容量决定＋对应读数 | 甲＝`J_N3a′ = not_holds`；乙＝`J-N3b-在场` 成立／`J-N3b-阈` 不成立 | **已判定（两半都负）**（今天未重取） |
+| | ②R4 首轮真实生长读数 | 触发侧打通、准入从未执行 | **未兑现-需批文**（今天未重取） |
+| **N4** | S3 轨迹态＋§3.3 四类验收 | 前件 ㊵-744/746 换态后：四类里 `J-N4g-4(a)/(b)`、`J-N4g-2` 有值，`J-N4g-3` 属性交换仍 `no_field_to_swap` | **未兑现-需批文**（今天整行未重取；欠属性值位与 S3 轨迹态） |
+| **N5** | 首轮真实生长五面＋§10 唤醒约束 | 五面齐；`j_n5b_6 = not_established`；`J-N5l-1..4` 全不成立；批次 B 已把来源/掩码做到"能装、能判、中性" | **已判定＝不成立**（今天未重取）；批次 C 只剩**机时与排窗**（预算 19 h＋12 h 已批） |
+| **N6** | 工程债随实施项清 | 现取 **153／153／153**、单型 `{"5":153}`（前件 125／125／125）；今天这三天里挂的与这条线直接相关：**G147／G148／G149／G150／G151／G152／G153**（G151／G153 已修、G152 待 owner） | **按定义持续中**；**零批文可自办的一格仍在＝G125**（两台真正重写债表的仪器没有契约册，且兜住数据丢失的那份字节守恒复核器还住在仓外一次性脚本里） |
+
+## 2. 净增益阶段（C4）与联合出口（C5）这一维——本件今天的新增
+
+前件没有这一维，因为当时仓内**没有任何 C4/C5 规格**。今天落了 [PLAN-N-02](PLAN-N-02_c4_net_gain_package_prereg_20261017.md)（四条合取判据＋六条守卫＋前置真值表）与 [PLAN-N-03](PLAN-N-03_c4_resource_quality_curve_prereg_20261017.md)（交付件③的曲线口径），并按交付四件逐件核对有没有真面：
+
+* ①新/旧能力矩阵 ⇒ **两侧都有真面**（旧＝CAP-0 `cap0_eval_set_v2.json` 机评列 C 2/14、D 9/16、E 1/20＋复述 `arms[]`；新＝批次 C 配对器与通电读数 `j_n2b_prime_delta_quality 2.4829673663245373`、`…_accuracy 0.0`）。
+* ②来源与保持 ⇒ **已出负值**（`cost_persists`）。③资源与质量曲线 ⇒ **没有现行真面**（带 resource 那台是 `CapabilityRegistry` 合成 canary，`cpu_ms` 是入参；M 时代语料规模扫描属历史、不得引用为现行）。④可比重复 ⇒ 有形状（噪声地板件＋"1 项粒度不是噪声"纪律）。
+* 判读器首件把"C4 还缺什么"从散文换成**三个点名字段**：增益面缺 `usable_endpoints`（P-尺挡住合取）、缺与增益同量纲的 `noise_floor_delta_quality_abs`（现成地板是计数级，故 Δ 在场也 `not_judged`）、保持侧照实 `cost_persists`；而**可比性与分离两条今天就是绿的** ⇒ C4 缺的是输入契约字段＋一次有界训练（PLAN-N-03 §5 已按现读 0.041640 秒/更新算到 ≈7445 秒 ≈2.07 CPU 小时、拆两批），**不是**再来一台仪器。
+* C5 的硬前置（"C4 至少一个净增益机制成立"）今天**仍不满足**，且本件不把它说成"快满足了"。
+
+## 3. 结论：目标**未达成**
+
+* 六项出口里：`已判定` 6 处（N1①、N2①②③、N3①、N5 五面与 §10），`未兑现-需批文` 7 处（N1②③、N2 C 档、N3 C 形状与准入、N4 全部、N5 批次 C 机时、C4 画点），`未兑现-可自办` **1 处＝DEBT-G125**。
+* 今天我这侧做的三件事全部在**登记与判读可信层**：预飞买到"该签什么"的事实、C4 买到规格与缺口字段、对照表刷新。**本日能力读数净新增＝零**（这条是本件最该被引用的一句，引用它时请连分层口径一起引：产品码／能力读数／判读可信度是三件事，仪器更完善不等于涨点）。
+* 需要 owner 的（我不会自己动）：EXP-N1-95 §11 的甲／乙／丙／丁 ＋ PLAN-N1-93 §1 签署 ＋ DEBT-G152 两处口径 ＋ C4 B 档改权重批文（价在 PLAN-N-03 §5） ＋ N5 批次 C 排窗 ＋ N4 属性值位与 S3 载体 ＋ DEBT-G149 那 14 枚"要不要连引用一起改" ＋ 未推提交的推送（本笔入库后现取 **18 条**，`git rev-list --count origin/main..HEAD`；`git push origin main` 被权限层拦下，我不硬重试——引用这条之前请再现取）。
+* 我这侧接下来的**唯一零批文格**＝DEBT-G125：给 `unify_taiji_debt_table_columns.py` 与台账圈号普查仪各补契约册，并把"写盘后独立字节守恒复核"从仓外一次性脚本做成入库仪器＋负对照。它不涨能力，它让"下次再并形／再补号时没人能悄悄改坏数据"。
+* 明确不做的：不把"仪器完善"报成"能力涨点"；不在 owner 未批前动 `taiji/`、跑新权重、开新算力；不为让门变绿而改已冻判据；不把 v6 预飞的牺牲半读数说成确证（正式件未出版）；不引用历史面（v5、M 时代语料扫描、`seed_n2_candidate_20261008.pt`）作现行结论；不再犯"判级靠手算"（DEBT-G153 的规矩：判级必须由判门函数出）。
