@@ -1,0 +1,803 @@
+{
+  "confirm_subset_queried": false,
+  "consumes_confirmation_face": false,
+  "correction": "EXP-N1-95 §5 与 §8 表里「预测红格数」那一列取自我的手算：我拿每个 seed 的 advantage 去和 12 比，而 PLAN-N1-94 冻的是 12/60＝三 seed 合计。本件用仪器自身的 evaluate_gates 重算，以本件为准。",
+  "forecast_is_confirmation": false,
+  "format": "taiji-n1-95-v6-preflight-gate-forecast-v1",
+  "gate_function": "scripts/training/eval_taiji_n1_transition_factorial_confirmation_v6.py:evaluate_gates",
+  "items_per_model": 20,
+  "lines": {
+    "advantage_cut": 12,
+    "advantage_terminal": 12,
+    "each_position_kind": 2,
+    "each_position_seed": 10
+  },
+  "purpose": "把两份预飞读数按 PLAN-N1-94 执行器自己的判门函数重算成四门预测（口径更正件）",
+  "readings": [
+    {
+      "all_four_gates_forecast": false,
+      "face_sha256": "217c07ec825afbc5cfab3d5d30b5c845e1077b0b91059786c67513ef454da9d3",
+      "forecast": {
+        "advantage_cut": {
+          "line": 12,
+          "passed": false,
+          "values": -3
+        },
+        "advantage_terminal": {
+          "line": 12,
+          "passed": false,
+          "values": 11
+        },
+        "each_position_kind": {
+          "line": 2,
+          "passed": false,
+          "values": {
+            "11_position:lookup": 2,
+            "11_position:revision": 5,
+            "11_position:transition": 1,
+            "11_position:unknown": 0,
+            "12_position:lookup": 0,
+            "12_position:revision": 5,
+            "12_position:transition": 2,
+            "12_position:unknown": 0,
+            "13_position:lookup": 0,
+            "13_position:revision": 0,
+            "13_position:transition": 2,
+            "13_position:unknown": 0
+          }
+        },
+        "each_position_seed": {
+          "line": 10,
+          "passed": false,
+          "values": {
+            "11": 8,
+            "12": 7,
+            "13": 2
+          }
+        }
+      },
+      "name_neighbor_distance": 1,
+      "observations_per_item": 8,
+      "range_check_passed": true,
+      "sampling_seed": 91,
+      "usable_competent_endpoints": 6,
+      "usable_endpoints": 9
+    },
+    {
+      "all_four_gates_forecast": false,
+      "face_sha256": "b170775e0cb1f9490ce9ae213d56963e575407642838e90ce3c860942dcba782",
+      "forecast": {
+        "advantage_cut": {
+          "line": 12,
+          "passed": false,
+          "values": -3
+        },
+        "advantage_terminal": {
+          "line": 12,
+          "passed": true,
+          "values": 13
+        },
+        "each_position_kind": {
+          "line": 2,
+          "passed": false,
+          "values": {
+            "11_position:lookup": 1,
+            "11_position:revision": 5,
+            "11_position:transition": 1,
+            "11_position:unknown": 1,
+            "12_position:lookup": 2,
+            "12_position:revision": 5,
+            "12_position:transition": 3,
+            "12_position:unknown": 0,
+            "13_position:lookup": 0,
+            "13_position:revision": 0,
+            "13_position:transition": 2,
+            "13_position:unknown": 0
+          }
+        },
+        "each_position_seed": {
+          "line": 10,
+          "passed": false,
+          "values": {
+            "11": 8,
+            "12": 10,
+            "13": 2
+          }
+        }
+      },
+      "name_neighbor_distance": 1,
+      "observations_per_item": 4,
+      "range_check_passed": true,
+      "sampling_seed": 94,
+      "usable_competent_endpoints": 5,
+      "usable_endpoints": 8
+    },
+    {
+      "all_four_gates_forecast": false,
+      "face_sha256": "cf3e287cb6e7765c8b2d825935770446838f64e632d3e3cbe784b3f4e0eec03d",
+      "forecast": {
+        "advantage_cut": {
+          "line": 12,
+          "passed": false,
+          "values": 3
+        },
+        "advantage_terminal": {
+          "line": 12,
+          "passed": true,
+          "values": 13
+        },
+        "each_position_kind": {
+          "line": 2,
+          "passed": false,
+          "values": {
+            "11_position:lookup": 3,
+            "11_position:revision": 5,
+            "11_position:transition": 2,
+            "11_position:unknown": 1,
+            "12_position:lookup": 2,
+            "12_position:revision": 5,
+            "12_position:transition": 4,
+            "12_position:unknown": 0,
+            "13_position:lookup": 0,
+            "13_position:revision": 0,
+            "13_position:transition": 3,
+            "13_position:unknown": 0
+          }
+        },
+        "each_position_seed": {
+          "line": 10,
+          "passed": false,
+          "values": {
+            "11": 11,
+            "12": 11,
+            "13": 3
+          }
+        }
+      },
+      "name_neighbor_distance": 1,
+      "observations_per_item": 4,
+      "range_check_passed": true,
+      "sampling_seed": 91,
+      "usable_competent_endpoints": 4,
+      "usable_endpoints": 7
+    },
+    {
+      "all_four_gates_forecast": false,
+      "face_sha256": "1c5dabb829c64ff4002b2f83892493a69c14703137c8d0c6521fcfc8704833f2",
+      "forecast": {
+        "advantage_cut": {
+          "line": 12,
+          "passed": false,
+          "values": 7
+        },
+        "advantage_terminal": {
+          "line": 12,
+          "passed": true,
+          "values": 14
+        },
+        "each_position_kind": {
+          "line": 2,
+          "passed": false,
+          "values": {
+            "11_position:lookup": 4,
+            "11_position:revision": 5,
+            "11_position:transition": 2,
+            "11_position:unknown": 0,
+            "12_position:lookup": 2,
+            "12_position:revision": 5,
+            "12_position:transition": 5,
+            "12_position:unknown": 0,
+            "13_position:lookup": 0,
+            "13_position:revision": 0,
+            "13_position:transition": 2,
+            "13_position:unknown": 0
+          }
+        },
+        "each_position_seed": {
+          "line": 10,
+          "passed": false,
+          "values": {
+            "11": 11,
+            "12": 12,
+            "13": 2
+          }
+        }
+      },
+      "name_neighbor_distance": 1,
+      "observations_per_item": 4,
+      "range_check_passed": true,
+      "sampling_seed": 92,
+      "usable_competent_endpoints": 4,
+      "usable_endpoints": 7
+    },
+    {
+      "all_four_gates_forecast": false,
+      "face_sha256": "e2ae029124c52622023169e7c1c5d6574f11ae371c6ec96d7ffb4d6d192b0823",
+      "forecast": {
+        "advantage_cut": {
+          "line": 12,
+          "passed": false,
+          "values": 7
+        },
+        "advantage_terminal": {
+          "line": 12,
+          "passed": true,
+          "values": 15
+        },
+        "each_position_kind": {
+          "line": 2,
+          "passed": false,
+          "values": {
+            "11_position:lookup": 4,
+            "11_position:revision": 5,
+            "11_position:transition": 1,
+            "11_position:unknown": 0,
+            "12_position:lookup": 2,
+            "12_position:revision": 5,
+            "12_position:transition": 3,
+            "12_position:unknown": 0,
+            "13_position:lookup": 0,
+            "13_position:revision": 0,
+            "13_position:transition": 3,
+            "13_position:unknown": 0
+          }
+        },
+        "each_position_seed": {
+          "line": 10,
+          "passed": false,
+          "values": {
+            "11": 10,
+            "12": 10,
+            "13": 3
+          }
+        }
+      },
+      "name_neighbor_distance": 1,
+      "observations_per_item": 4,
+      "range_check_passed": true,
+      "sampling_seed": 93,
+      "usable_competent_endpoints": 4,
+      "usable_endpoints": 7
+    },
+    {
+      "all_four_gates_forecast": false,
+      "face_sha256": "feb3b1f6bbd8d9f5c4cc128464624a2fbfee0dc52ee2b89849b9130f46f098f2",
+      "forecast": {
+        "advantage_cut": {
+          "line": 12,
+          "passed": false,
+          "values": 7
+        },
+        "advantage_terminal": {
+          "line": 12,
+          "passed": true,
+          "values": 34
+        },
+        "each_position_kind": {
+          "line": 2,
+          "passed": false,
+          "values": {
+            "11_position:lookup": 5,
+            "11_position:revision": 5,
+            "11_position:transition": 2,
+            "11_position:unknown": 5,
+            "12_position:lookup": 5,
+            "12_position:revision": 5,
+            "12_position:transition": 5,
+            "12_position:unknown": 5,
+            "13_position:lookup": 0,
+            "13_position:revision": 0,
+            "13_position:transition": 4,
+            "13_position:unknown": 5
+          }
+        },
+        "each_position_seed": {
+          "line": 10,
+          "passed": false,
+          "values": {
+            "11": 17,
+            "12": 20,
+            "13": 9
+          }
+        }
+      },
+      "name_neighbor_distance": null,
+      "observations_per_item": 8,
+      "range_check_passed": true,
+      "sampling_seed": 91,
+      "usable_competent_endpoints": 3,
+      "usable_endpoints": 6
+    },
+    {
+      "all_four_gates_forecast": false,
+      "face_sha256": "fd416bc41839f37cfd3084c1358aa7d9919effdbbae07bc18e86f4a8bffee607",
+      "forecast": {
+        "advantage_cut": {
+          "line": 12,
+          "passed": false,
+          "values": 0
+        },
+        "advantage_terminal": {
+          "line": 12,
+          "passed": true,
+          "values": 17
+        },
+        "each_position_kind": {
+          "line": 2,
+          "passed": false,
+          "values": {
+            "11_position:lookup": 4,
+            "11_position:revision": 5,
+            "11_position:transition": 3,
+            "11_position:unknown": 0,
+            "12_position:lookup": 5,
+            "12_position:revision": 5,
+            "12_position:transition": 4,
+            "12_position:unknown": 0,
+            "13_position:lookup": 0,
+            "13_position:revision": 0,
+            "13_position:transition": 3,
+            "13_position:unknown": 1
+          }
+        },
+        "each_position_seed": {
+          "line": 10,
+          "passed": false,
+          "values": {
+            "11": 12,
+            "12": 14,
+            "13": 4
+          }
+        }
+      },
+      "name_neighbor_distance": 2,
+      "observations_per_item": 4,
+      "range_check_passed": false,
+      "sampling_seed": 91,
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    },
+    {
+      "all_four_gates_forecast": false,
+      "face_sha256": "f7a9993ee7beff07b0291b1d1563b9258051057235993188cde8476210a1a2de",
+      "forecast": {
+        "advantage_cut": {
+          "line": 12,
+          "passed": false,
+          "values": 1
+        },
+        "advantage_terminal": {
+          "line": 12,
+          "passed": true,
+          "values": 23
+        },
+        "each_position_kind": {
+          "line": 2,
+          "passed": false,
+          "values": {
+            "11_position:lookup": 5,
+            "11_position:revision": 5,
+            "11_position:transition": 2,
+            "11_position:unknown": 0,
+            "12_position:lookup": 4,
+            "12_position:revision": 5,
+            "12_position:transition": 5,
+            "12_position:unknown": 0,
+            "13_position:lookup": 0,
+            "13_position:revision": 0,
+            "13_position:transition": 3,
+            "13_position:unknown": 0
+          }
+        },
+        "each_position_seed": {
+          "line": 10,
+          "passed": false,
+          "values": {
+            "11": 12,
+            "12": 14,
+            "13": 3
+          }
+        }
+      },
+      "name_neighbor_distance": 2,
+      "observations_per_item": 8,
+      "range_check_passed": false,
+      "sampling_seed": 91,
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    },
+    {
+      "all_four_gates_forecast": false,
+      "face_sha256": "25c51c8e58378ce082bee00d38091f4fdb6eb749f1c2d13386b63959fc56b19d",
+      "forecast": {
+        "advantage_cut": {
+          "line": 12,
+          "passed": false,
+          "values": 0
+        },
+        "advantage_terminal": {
+          "line": 12,
+          "passed": true,
+          "values": 30
+        },
+        "each_position_kind": {
+          "line": 2,
+          "passed": false,
+          "values": {
+            "11_position:lookup": 5,
+            "11_position:revision": 5,
+            "11_position:transition": 4,
+            "11_position:unknown": 5,
+            "12_position:lookup": 5,
+            "12_position:revision": 5,
+            "12_position:transition": 5,
+            "12_position:unknown": 5,
+            "13_position:lookup": 0,
+            "13_position:revision": 0,
+            "13_position:transition": 4,
+            "13_position:unknown": 5
+          }
+        },
+        "each_position_seed": {
+          "line": 10,
+          "passed": false,
+          "values": {
+            "11": 19,
+            "12": 20,
+            "13": 9
+          }
+        }
+      },
+      "name_neighbor_distance": null,
+      "observations_per_item": 4,
+      "range_check_passed": false,
+      "sampling_seed": 91,
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    },
+    {
+      "all_four_gates_forecast": false,
+      "face_sha256": "949f023f922e8846a665d2df6febecbfbc3f8bb342ba3f97748a4c10370c5175",
+      "forecast": {
+        "advantage_cut": {
+          "line": 12,
+          "passed": false,
+          "values": 0
+        },
+        "advantage_terminal": {
+          "line": 12,
+          "passed": true,
+          "values": 35
+        },
+        "each_position_kind": {
+          "line": 2,
+          "passed": false,
+          "values": {
+            "11_position:lookup": 5,
+            "11_position:revision": 5,
+            "11_position:transition": 4,
+            "11_position:unknown": 5,
+            "12_position:lookup": 5,
+            "12_position:revision": 5,
+            "12_position:transition": 5,
+            "12_position:unknown": 5,
+            "13_position:lookup": 0,
+            "13_position:revision": 0,
+            "13_position:transition": 3,
+            "13_position:unknown": 5
+          }
+        },
+        "each_position_seed": {
+          "line": 10,
+          "passed": false,
+          "values": {
+            "11": 19,
+            "12": 20,
+            "13": 8
+          }
+        }
+      },
+      "name_neighbor_distance": null,
+      "observations_per_item": 6,
+      "range_check_passed": false,
+      "sampling_seed": 91,
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    },
+    {
+      "all_four_gates_forecast": false,
+      "face_sha256": "892718324407e81ca567a04a2c88d4d46467f7e11d21ac7f929700b646632a10",
+      "forecast": {
+        "advantage_cut": {
+          "line": 12,
+          "passed": false,
+          "values": 5
+        },
+        "advantage_terminal": {
+          "line": 12,
+          "passed": true,
+          "values": 31
+        },
+        "each_position_kind": {
+          "line": 2,
+          "passed": false,
+          "values": {
+            "11_position:lookup": 5,
+            "11_position:revision": 5,
+            "11_position:transition": 3,
+            "11_position:unknown": 5,
+            "12_position:lookup": 5,
+            "12_position:revision": 5,
+            "12_position:transition": 5,
+            "12_position:unknown": 5,
+            "13_position:lookup": 0,
+            "13_position:revision": 0,
+            "13_position:transition": 5,
+            "13_position:unknown": 5
+          }
+        },
+        "each_position_seed": {
+          "line": 10,
+          "passed": true,
+          "values": {
+            "11": 18,
+            "12": 20,
+            "13": 10
+          }
+        }
+      },
+      "name_neighbor_distance": null,
+      "observations_per_item": 10,
+      "range_check_passed": false,
+      "sampling_seed": 91,
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    },
+    {
+      "all_four_gates_forecast": false,
+      "face_sha256": "65c6f111dc9b5d1ace6d02498b5221916126bbbe005062d6bb90d677fc4426f2",
+      "forecast": {
+        "advantage_cut": {
+          "line": 12,
+          "passed": false,
+          "values": 5
+        },
+        "advantage_terminal": {
+          "line": 12,
+          "passed": true,
+          "values": 31
+        },
+        "each_position_kind": {
+          "line": 2,
+          "passed": false,
+          "values": {
+            "11_position:lookup": 5,
+            "11_position:revision": 5,
+            "11_position:transition": 2,
+            "11_position:unknown": 5,
+            "12_position:lookup": 5,
+            "12_position:revision": 5,
+            "12_position:transition": 5,
+            "12_position:unknown": 5,
+            "13_position:lookup": 0,
+            "13_position:revision": 0,
+            "13_position:transition": 4,
+            "13_position:unknown": 5
+          }
+        },
+        "each_position_seed": {
+          "line": 10,
+          "passed": false,
+          "values": {
+            "11": 17,
+            "12": 20,
+            "13": 9
+          }
+        }
+      },
+      "name_neighbor_distance": null,
+      "observations_per_item": 12,
+      "range_check_passed": false,
+      "sampling_seed": 91,
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    },
+    {
+      "all_four_gates_forecast": false,
+      "face_sha256": "661b0e5e81aa647bd7129380403205cad7094b9a21a2a039b728693263a4817c",
+      "forecast": {
+        "advantage_cut": {
+          "line": 12,
+          "passed": false,
+          "values": 0
+        },
+        "advantage_terminal": {
+          "line": 12,
+          "passed": true,
+          "values": 34
+        },
+        "each_position_kind": {
+          "line": 2,
+          "passed": false,
+          "values": {
+            "11_position:lookup": 5,
+            "11_position:revision": 5,
+            "11_position:transition": 3,
+            "11_position:unknown": 5,
+            "12_position:lookup": 5,
+            "12_position:revision": 5,
+            "12_position:transition": 5,
+            "12_position:unknown": 5,
+            "13_position:lookup": 0,
+            "13_position:revision": 0,
+            "13_position:transition": 4,
+            "13_position:unknown": 5
+          }
+        },
+        "each_position_seed": {
+          "line": 10,
+          "passed": false,
+          "values": {
+            "11": 18,
+            "12": 20,
+            "13": 9
+          }
+        }
+      },
+      "name_neighbor_distance": null,
+      "observations_per_item": 4,
+      "range_check_passed": false,
+      "sampling_seed": 92,
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    },
+    {
+      "all_four_gates_forecast": false,
+      "face_sha256": "b87972ad1dc15d95dbcfc5b0db8a3dc504b7aae82edd9df39931face3f1db54a",
+      "forecast": {
+        "advantage_cut": {
+          "line": 12,
+          "passed": false,
+          "values": 0
+        },
+        "advantage_terminal": {
+          "line": 12,
+          "passed": true,
+          "values": 30
+        },
+        "each_position_kind": {
+          "line": 2,
+          "passed": false,
+          "values": {
+            "11_position:lookup": 5,
+            "11_position:revision": 5,
+            "11_position:transition": 3,
+            "11_position:unknown": 5,
+            "12_position:lookup": 5,
+            "12_position:revision": 5,
+            "12_position:transition": 5,
+            "12_position:unknown": 5,
+            "13_position:lookup": 0,
+            "13_position:revision": 0,
+            "13_position:transition": 4,
+            "13_position:unknown": 5
+          }
+        },
+        "each_position_seed": {
+          "line": 10,
+          "passed": false,
+          "values": {
+            "11": 18,
+            "12": 20,
+            "13": 9
+          }
+        }
+      },
+      "name_neighbor_distance": null,
+      "observations_per_item": 4,
+      "range_check_passed": false,
+      "sampling_seed": 93,
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    },
+    {
+      "all_four_gates_forecast": false,
+      "face_sha256": "81cf7e81a00f576453c4dfb00eee7d5876bd917255fa9094dfedd37c61ee3d2f",
+      "forecast": {
+        "advantage_cut": {
+          "line": 12,
+          "passed": false,
+          "values": 1
+        },
+        "advantage_terminal": {
+          "line": 12,
+          "passed": true,
+          "values": 34
+        },
+        "each_position_kind": {
+          "line": 2,
+          "passed": false,
+          "values": {
+            "11_position:lookup": 4,
+            "11_position:revision": 5,
+            "11_position:transition": 2,
+            "11_position:unknown": 5,
+            "12_position:lookup": 5,
+            "12_position:revision": 5,
+            "12_position:transition": 5,
+            "12_position:unknown": 5,
+            "13_position:lookup": 0,
+            "13_position:revision": 0,
+            "13_position:transition": 3,
+            "13_position:unknown": 5
+          }
+        },
+        "each_position_seed": {
+          "line": 10,
+          "passed": false,
+          "values": {
+            "11": 16,
+            "12": 20,
+            "13": 8
+          }
+        }
+      },
+      "name_neighbor_distance": null,
+      "observations_per_item": 8,
+      "range_check_passed": false,
+      "sampling_seed": 92,
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    },
+    {
+      "all_four_gates_forecast": false,
+      "face_sha256": "9151eab68d2bfd0a7f544c7bbc9d1607e99e3a7236a573f3240972a18264cc00",
+      "forecast": {
+        "advantage_cut": {
+          "line": 12,
+          "passed": false,
+          "values": 7
+        },
+        "advantage_terminal": {
+          "line": 12,
+          "passed": true,
+          "values": 38
+        },
+        "each_position_kind": {
+          "line": 2,
+          "passed": false,
+          "values": {
+            "11_position:lookup": 5,
+            "11_position:revision": 5,
+            "11_position:transition": 3,
+            "11_position:unknown": 5,
+            "12_position:lookup": 5,
+            "12_position:revision": 5,
+            "12_position:transition": 5,
+            "12_position:unknown": 5,
+            "13_position:lookup": 0,
+            "13_position:revision": 0,
+            "13_position:transition": 5,
+            "13_position:unknown": 5
+          }
+        },
+        "each_position_seed": {
+          "line": 10,
+          "passed": true,
+          "values": {
+            "11": 18,
+            "12": 20,
+            "13": 10
+          }
+        }
+      },
+      "name_neighbor_distance": null,
+      "observations_per_item": 8,
+      "range_check_passed": false,
+      "sampling_seed": 93,
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    }
+  ],
+  "rows_rebuilt_from": "reports/taiji_n1_v6_preflight_range_sweep.json 与 confusability 同件所对应的牺牲半 v2 读数（逐枚 errors_by_kind）"
+}
