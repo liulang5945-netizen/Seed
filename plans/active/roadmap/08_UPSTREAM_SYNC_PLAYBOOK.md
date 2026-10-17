@@ -3997,3 +3997,10 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 预检件 `reports/taiji_n1_hard_neighbor_training_20261017_checkpoint_preflight.json` SHA-256 `5dec355d765d1b5b3de98c680f8392990d6363dde1e035c56fb3db71db27d492`，绑定件为同名 `_binding.json`。run83九个seed/arm source各加载一次，生成九枚专用zero checkpoint，再由九个独立进程逐枚重读；9/9 full bundle和两步signature恢复均相等，86项来源守卫未变，CPU50.390625/300秒预检上限，accounting完整。
 - 预检训练更新0、dev/holdout/confirmation查询0、`can_promote=false`。输出checkpoint保存在 `data/checkpoints/n1_hard_neighbor_training_v1_20261017/`，后续正式训练必须复用这些精确zero bytes，偏差即停止。
 - 下一步按 PLAN-N1-100 执行九模型×24,576固定更新，含恢复前置总CPU上限18,000秒（预检已耗50.390625秒）；原训练门不改。正式训练全门通过后才生成v7，范围线没过则不查询confirm。既有N5报告改动与`output/`未跟踪目录均未触碰。
+
+### ㊵-1053 · 2026-10-17 · PLAN-N1-100 九模型训练完成；position三seed训练门全过
+
+- 主报告 `reports/taiji_n1_hard_neighbor_training_20261017.json` SHA-256 `dad10ec72c605367f99da035bab07d522ce1793154915ebcc3c7f1022f411909`；9/9模型完整，各24,576更新，总221,184；hard views共110,592次；QA497,664、训练sessions387,072、固定评分43,200行。训练CPU9,916.734375秒＋预检50.390625秒＝总9,967.125/18,000秒。
+- 三个position seed原题/改名各192/192，类别均48/48；pair为96/96、96/96、94/96；改名pair为96/96、96/96、92/96；原/改名quartet joint均48/48。position三个seed原六训练门及joint门全部通过。对照terminal低于position，cut接近position；对照仅描述，不放宽或替代后续确认门。
+- 九模型hard schedule审计与学习率轨迹均有效，zero/final独立恢复18/18通过，98项来源守卫和代码身份未变，CPU accounting完整。v3 dev/holdout、确认查询均0，未生成/查询v7，`can_promote=false`、`TRAIN_SHA=None`。判读见 [EXP-N1-100](../../reference/EXP-N1-100_hard_neighbor_training_adjudication_20261017.md)。
+- 唯一下一步：固定seed107生成v7 face并机检，只在20项sacrifice上进行范围检查；≥6/9才查询confirm 20项与九旧端点配对的360条面。确认四门沿PLAN-N1-94不改。此前N5工作树更改和`output/`目录继续未触碰。
