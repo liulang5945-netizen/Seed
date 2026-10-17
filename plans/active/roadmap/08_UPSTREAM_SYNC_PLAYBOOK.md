@@ -4264,3 +4264,8 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 复跑两把门（不是只看台账）：列形门 `audit_taiji_debt_table_column_shape.py` rc=0（`strict_rows`=`distinct_ids`=`max_debt_id`=156、`rows_not_expected_cells`=0）；普查仪 rc=0 且 **`stale_head` 27→0**、`reopened_by_stamp` 0、`unclassified_stamp` 36→35（少的那一枚是同步后进入了可分类档）。逐行读数留在普查件里，谁怀疑这次清账都可以重放同一条命令。
 - 顺手给 DEBT-G154 补了一句"本仪器第一次挣到饭钱"的注，注里**保留 ③ 未做**（接进提交前门这一半确实还没做），使该行的状态列与戳同向而不是反向；③ 若要真做，属动共享管线，另裁。
 - 边界如实写下：这次同步只改**状态列的措辞**，没有重判任何一行的技术结论；如果哪一行的行尾戳本身是错的，这次同步会把那个错抬成"现状"。防线是仪器里那条公开词表＋`unclassified_stamp` 不猜的规矩，以及"引用某行前先跑普查"这条流程（仍属 ③，未接门）。
+### ㊵-1098 · 2026-10-18 · 队首行"冻结并生成 PLAN-N1-110 schedule"已过期两格，按现盘改成"提交在飞件 → 跑 --validate-only → 九枚 fresh-zero checkpoint"
+
+- 这格是 03 里唯一被所有人当"此刻该干什么"读的那一行（`tests/seed/test_project_identity.py` 就是守它的存在与唯一）。现读盘：schedule manifest `plans/manifests/n1_hard_neighbor_length_balanced_schedule_v1_20261018.json` 与 checks `reports/taiji_n1_length_balanced_schedule_checks_20261018.json` **都在盘上**（㊵-1090／㊵-1094 已登记入库），runner 与 6 项合同测也已提交（`ec4db0264`）⇒ 队首那句"冻结并生成 schedule"落后两格。按记忆 `table-status-column-goes-stale` 第 8 条（交接／停靠段本身就是最高危的状态列），当轮改写并留下原句作为历史。
+- 新队首的三个前置都取实现读，不抄叙述：①工作区里 runner 与合同测是**未提交的再改**（sha256 前缀 `a7819d84…`／`bf9de7ba…`，而台账三枚条目钉的是 HEAD 字节 `635a2640…`／`a9620dd7…`）⇒ 先提交再测量，否则 readiness 会钉在一枚与后续提交不同源的字节上；②`--validate-only` 的写靶 `reports/taiji_n1_length_balanced_training_20261018_runner_readiness.json` **此刻不存在**，且脚本对它是一次性纪律（`RUNNER_READINESS.exists()` 抛错＋`open(..., "x")`），所以这一步**只能跑一次**、跑之前必须先把源冻住；③`data/checkpoints/` 下按 length／candidate／v11 三个关键词过滤为**空**，v11 面未造 ⇒ "九枚 fresh-zero candidate checkpoint 保存＋跨进程独立恢复"确实是下一道门，而不是已做的事。
+- 归属照旧：这条腿由并发会话持有，我只改队首文字与登记读数，**没有**跑 `--validate-only`、没有动那两个在飞文件、没有发射任何查询。谁接谁先提交再测量。
