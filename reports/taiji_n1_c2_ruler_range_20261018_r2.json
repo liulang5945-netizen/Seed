@@ -1,0 +1,43 @@
+{
+  "can_be_cited_as_capability_falsification": false,
+  "control_arm": "zero-replay",
+  "dose_arm": "oracle-correct",
+  "falsification_blocked_because": "上界诊断臂 oracle-correct 的严格命中为 0，尺在该面取不到非零值；0/16 只描述尺，不描述能力",
+  "forbidden_sentence": "七臂严格命中各 0/16 证明 C2 能力不通过",
+  "format": "taiji-n1-c2-ruler-range-v2",
+  "inputs": {
+    "E:\\Seed\\reports\\taiji_n1_c2_final_20261015_r2.json": "82cfde7d0f62606310a96f5a30db16ac13d6e52ff98e09b14d4b41a5f80b7184",
+    "E:\\Seed\\reports\\taiji_n1_c2_padding_placement_final_20261015.json": "af09e11f269988706ba833f7e57b90d388a35f190cb50d8e2c5132e907695cad"
+  },
+  "mechanism_moves": true,
+  "model_queries": 0,
+  "models_loaded": 0,
+  "option_a_column": "raw_changes_from_tail",
+  "option_a_conjunction_holds": true,
+  "option_a_control_is_zero": true,
+  "option_a_dose_gt_control": true,
+  "parameter_updates": 0,
+  "placement_raw_changes": {
+    "oracle-correct": 6,
+    "wrong-episode": 3,
+    "zero-replay": 0
+  },
+  "placement_ruler_has_dynamic_range": true,
+  "reading_limit": "本件只判『这把尺有没有范围』与『换剂量后生成是否位移』，不判能力、不判信用、不替 PLAN-N-01 的阶梯改口径；改判据或改阶梯归 owner。",
+  "ruler_has_dynamic_range": false,
+  "started_utc": "2026-10-17T19:59:53Z",
+  "status": "ruler_no_range_mechanism_moves",
+  "strict_hit_ruler_has_dynamic_range": false,
+  "strict_hits_by_arm": {
+    "model-top1": 0,
+    "no-replay": 0,
+    "oracle-correct": 0,
+    "pooled-correct": 0,
+    "shuffle-correct": 0,
+    "wrong-episode": 0,
+    "zero-replay": 0
+  },
+  "upper_bound_arm": "oracle-correct",
+  "upper_bound_strict_hits": 0,
+  "writes_any_face": false
+}

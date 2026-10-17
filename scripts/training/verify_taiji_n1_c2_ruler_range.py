@@ -12,6 +12,12 @@ owner 于 2026-10-17 弹窗裁**甲＝先修尺**（08 ㊵-1100 登记）。本�
 不描述能力 ⇒ `can_be_cited_as_capability_falsification` 必须为 `false`。
 
 `models_loaded=0`、`model_queries=0`、`parameter_updates=0`、`writes_any_face=false`；写靶一次性。
+
+v2（2026-10-18）把"有没有范围"**按列**出版：`ruler_has_dynamic_range` 沿用 v1 语义＝严格命中列，
+新增 `strict_hit_ruler_has_dynamic_range`（同值具名）与 `placement_ruler_has_dynamic_range`
+（`raw_changes_from_tail` 列）。原因是 PLAN-N-04 §2 的 J-04-1 要"由复核仪出版该列有范围"，而一个
+不分列的布尔键无法指出它说的是哪一列——甲档要用的正是位移列，v1 那枚 `false` 说的是严格命中列。
+同时出版 `option_a_*` 三条合取项，让甲档的判据可以在件里逐臂回查，不靠散文对齐。
 """
 
 from __future__ import annotations
@@ -25,7 +31,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 FINAL = ROOT / "reports/taiji_n1_c2_final_20261015_r2.json"
 PLACEMENT = ROOT / "reports/taiji_n1_c2_padding_placement_final_20261015.json"
-FORMAT = "taiji-n1-c2-ruler-range-v1"
+FORMAT = "taiji-n1-c2-ruler-range-v2"
 #: 上界诊断臂的名字是本判决的支点：它改名或不在场，本件必须响亮拒绝而不是猜。
 UPPER_BOUND_ARM = "oracle-correct"
 CONTROL_ARM = "zero-replay"
@@ -90,6 +96,12 @@ def measure(final: dict, placement: dict) -> dict:
     dose = arm_field(place_summary, UPPER_BOUND_ARM, "raw_changes_from_tail", PLACEMENT)
     control = arm_field(place_summary, CONTROL_ARM, "raw_changes_from_tail", PLACEMENT)
     moved = dose > control
+    #: 位移列的"有没有范围"单独判：任一臂非零即有范围（存在性判据，无阈值）。
+    placement_values = {
+        arm: arm_field(place_summary, arm, "raw_changes_from_tail", PLACEMENT)
+        for arm in sorted(place_summary)
+    }
+    placement_has_range = any(value > 0 for value in placement_values.values())
     if has_range and strict.get(UPPER_BOUND_ARM, 0) > 0:
         status = "ruler_has_range_and_upper_bound_moves"
         falsifiable = True
@@ -110,10 +122,13 @@ def measure(final: dict, placement: dict) -> dict:
         "upper_bound_arm": UPPER_BOUND_ARM,
         "upper_bound_strict_hits": strict[UPPER_BOUND_ARM],
         "ruler_has_dynamic_range": has_range,
-        "placement_raw_changes": {
-            arm: arm_field(place_summary, arm, "raw_changes_from_tail", PLACEMENT)
-            for arm in sorted(place_summary)
-        },
+        "strict_hit_ruler_has_dynamic_range": has_range,
+        "placement_ruler_has_dynamic_range": placement_has_range,
+        "placement_raw_changes": placement_values,
+        "option_a_column": "raw_changes_from_tail",
+        "option_a_dose_gt_control": bool(dose > control),
+        "option_a_control_is_zero": bool(control == 0),
+        "option_a_conjunction_holds": bool(dose > control and control == 0),
         "dose_arm": UPPER_BOUND_ARM,
         "control_arm": CONTROL_ARM,
         "mechanism_moves": moved,

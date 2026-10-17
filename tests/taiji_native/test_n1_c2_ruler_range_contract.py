@@ -189,3 +189,38 @@ def test_the_sealed_pair_still_reads_no_range_with_a_live_mechanism(tmp_path: Pa
         and entry["parameter_updates"] == 0
     )
     assert entry["can_be_cited_as_capability_falsification"] is False
+    #: 甲档要的两条合取项必须能在真件里逐臂回查，不能只写在 PLAN 的散文里。
+    assert entry["format"] == "taiji-n1-c2-ruler-range-v2"
+    assert entry["strict_hit_ruler_has_dynamic_range"] is False
+    assert entry["placement_ruler_has_dynamic_range"] is True
+    assert entry["option_a_conjunction_holds"] is True
+
+
+def test_the_two_columns_are_judged_separately(tmp_path: Path) -> None:
+    """v2 的支点：`ruler_has_dynamic_range` 说的是严格命中列，甲档用的是位移列。
+
+    两列必须能为反向（今天真件就反向：严格全 0、位移 6/3/0），也能为同向零——位移列全零时
+    甲档合取必须落假，而不是靠"机制看起来动过"。
+    """
+    diverging = rr.measure(
+        final_case({arm: 0 for arm in ARMS}),
+        placement_case({rr.UPPER_BOUND_ARM: 6, "wrong-episode": 3, rr.CONTROL_ARM: 0}),
+    )
+    assert diverging["format"] == "taiji-n1-c2-ruler-range-v2"
+    assert diverging["strict_hit_ruler_has_dynamic_range"] is False
+    assert diverging["placement_ruler_has_dynamic_range"] is True
+    assert diverging["ruler_has_dynamic_range"] is diverging["strict_hit_ruler_has_dynamic_range"]
+    assert diverging["option_a_column"] == "raw_changes_from_tail"
+    assert diverging["option_a_dose_gt_control"] is True
+    assert diverging["option_a_control_is_zero"] is True
+    assert diverging["option_a_conjunction_holds"] is True
+
+    flat = rr.measure(
+        final_case({arm: 0 for arm in ARMS}),
+        placement_case({rr.UPPER_BOUND_ARM: 0, "wrong-episode": 0, rr.CONTROL_ARM: 0}),
+    )
+    assert flat["placement_ruler_has_dynamic_range"] is False
+    assert flat["option_a_dose_gt_control"] is False
+    assert flat["option_a_control_is_zero"] is True
+    assert flat["option_a_conjunction_holds"] is False
+    assert flat["mechanism_moves"] is False
