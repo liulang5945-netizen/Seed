@@ -96,16 +96,58 @@ def test_the_two_subsets_are_balanced_and_disjoint() -> None:
     assert {episode["subset"] for episode in episodes} == set(v6.SUBSETS)
 
 
-def test_unsigned_parameters_refuse_without_writing(tmp_path: Path) -> None:
+#: 08 ㊵-1042 登记的那一次签署生效形状：草稿形状 ＋ `name_neighbor_distance = 1`。
+#: 这一份字面量是"签名"的副本，把它写死在测里，任何静默改动（换成 8 或 2、观测数挪一格）
+#: 都会在这里红，而不是等到题面已经落盘才发现。
+SIGNED_SHAPE = {
+    "items": 40,
+    "items_per_kind": 10,
+    "observations_per_item": 4,
+    "entity_length": 10,
+    "answer_lengths": [6, 7],
+    "seed": 91,
+    "schema": "n1-fresh-confirmation-v6",
+    "id_prefix": "v6-confirm-",
+    "name_neighbor_distance": 1,
+}
+
+
+def test_the_signed_shape_is_exactly_the_ruled_one() -> None:
+    assert v6.SIGNED_DISTRIBUTION == SIGNED_SHAPE, v6.SIGNED_DISTRIBUTION
+    assert v6.SIGNED_DISTRIBUTION == {**v6.draft_distribution(), "name_neighbor_distance": 1}
+    episodes, pair, _sources = v6.build(dict(v6.SIGNED_DISTRIBUTION))
+    reading = v6.audit(episodes, v6.SIGNED_DISTRIBUTION, pair)
+    assert reading["accepted"] is True, reading["checks"]
+    block = reading["checks"]["J93_8_name_confusability"]
+    assert (block["requested_distance"], block["min_hamming"], block["max_hamming"]) == (1, 1, 1)
+
+
+def test_an_unsigned_signature_refuses_without_writing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     face = tmp_path / "v6.json"
-    report = tmp_path / "checks.json"
-    assert v6.SIGNED_DISTRIBUTION is None, "signature must not be filled by a test"
-    monkey_out = tmp_path / "nothing.json"
-    assert v6.main(["--check-draft", "--execute-signed"]) == 2
+    monkeypatch.setattr(v6, "SIGNED_DISTRIBUTION", None)
     with pytest.raises(v6.Refuse, match="尚未由 owner 签署"):
-        v6.execute_signed(monkey_out)
-    assert not face.exists() and not report.exists() and not monkey_out.exists()
+        v6.execute_signed(face)
+    assert not face.exists()
+    assert not v6.REPORT.exists(), "签字未落地时检查报告也不许在仓里出现"
+
+
+def test_a_second_run_refuses_because_the_face_already_exists(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """写靶已存在那一支也要能为假——否则重跑会覆盖掉第一次的题面。"""
+    face = tmp_path / "v6.json"
+    face.write_text("{}", encoding="utf-8", newline="\n")
+    monkeypatch.setattr(v6, "REPORT", tmp_path / "checks.json")
+    with pytest.raises(v6.Refuse, match="already exists"):
+        v6.execute_signed(face)
+
+
+def test_the_cli_still_refuses_on_a_shape_conflict(tmp_path: Path) -> None:
+    assert v6.main(["--check-draft", "--execute-signed"]) == 2
     assert v6.main([]) == 2
+    assert not list(tmp_path.iterdir())
 
 
 def hamming(left: str, right: str) -> int:

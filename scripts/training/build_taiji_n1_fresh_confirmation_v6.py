@@ -42,7 +42,22 @@ POSITIONAL_MARGIN = 1
 DIRECTION_MARGIN = 1
 
 #: owner 签署 §1 的 shape 参数后替换成本件字典；None 即"未签"，造面器不得落盘。
-SIGNED_DISTRIBUTION = None
+#: 2026-10-17 owner 弹窗裁 **甲＝签 d=1 并跑那一次确认查询**（08 ㊵-1042 登记）。
+#: 签字生效的形状＝草稿形状 ＋ `name_neighbor_distance = 1`；观测数维持 4（那条维被五档 × 三抽样
+#: 否证：`usable` 恒 5/9），d=1 是预飞里唯一稳定打开范围线的取值（四个独立抽样 7／7／7／8，门 6）。
+#: 出处：EXP-N1-95 §2／§8 与 `reports/taiji_n1_v6_preflight_confusability_sweep.json`。
+SIGNED_DISTRIBUTION = {
+    "items": 40,
+    "items_per_kind": 10,
+    "observations_per_item": 4,
+    "entity_length": 10,
+    #: 答案长度轮转 6／7：避免"7 字符"这个形状本身成为弃权类别的线索。
+    "answer_lengths": [6, 7],
+    "seed": 91,
+    "schema": "n1-fresh-confirmation-v6",
+    "id_prefix": "v6-confirm-",
+    "name_neighbor_distance": 1,
+}
 
 
 class Refuse(Exception):
