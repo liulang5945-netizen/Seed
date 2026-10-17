@@ -3840,3 +3840,13 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 ②新冻 [PLAN-N1-94](../../reference/PLAN-N1-94_v6_confirmation_query_20261017.md)：v6 确认子集那 20 题的**一次性**查询件。它现在就把四道门的执行值写死为**不缩放的原绝对值**（`advantage_*` 各 ≥12/60 而非按 20/32 比例折成 8/60），并把"比例照搬会得到什么"并排出版，注明"未经 owner 另签一律按左列执行"；`each_position_seed` 与 `each_position_kind` 两条在同比例下与绝对值同形，因此无需另裁。它另外预先处理了我自己咬过我的那一格：来源摘要**同时出版 `sha_raw` 与 `sha_json_normalized` 并各自命名，判据只取 raw、另一枚仅披露**——这样 DEBT-G147 那种"两套口径把一次有效执行判成工程不完整"的假阴性不会再发生，也不会反向地把真实改动抹平。前置 P1–P5（含"确认半未被查询过"这一条要由范围报告自证）任一缺失即 rc=2 且 attempt 不落盘。
 
 收尾面现取：造面器与范围仪两册合同测 11 passed，`--check-draft` 仍 `accepted=true`，`ruff check .` rc=0、`--select B,SIM` 命中集合仍为既有 11 枚且无一枚属本轮文件，`black --check` 新件 unchanged。队列不变＝等 owner 签 PLAN-N1-93 §1（现在多了答案长度 6／7 轮转这一项）；未推提交现读 8 条。
+
+### ㊵-1033 · 2026-10-17 · PLAN-N1-94 的执行器与合同测落地：一次性消费的那台机器在题面存在之前先备好
+
+签字之前还能做的最后一件自办事项做完了：`scripts/training/eval_taiji_n1_transition_factorial_confirmation_v6.py`＋`tests/taiji_native/test_n1_run94_v6_confirmation_contract.py` 7 passed。它只做 94 里那三件新东西——分母适配后的四门（`each_position_seed` ≥10/20、`each_position_kind` ≥2/5、`advantage_*` ≥12/60 的**不缩放原值**）、双口径来源摘要、一次性记账；装载走 90 的族回执与 `load_with_family_protocol`，逐题解码走 85 的 `evaluate`（会话清理与"参数／优化器／RNG／历史未变"由它把守），本文件不重抄任何生成链。
+
+四道门各自单独能为假：测里逐门打破一次（seed 门掉到线上减一、类门把某类的命中清零、臂差门把 cut 抬到线上减一），另有"恰好等于线算过、差一算不过"的一支，和"某枚端点只查了 19 题就必须拒绝而不是按比例折算"的一支。双口径那支实测我现在真正拆开了三件事：按各路径所属批次的登记口径判（`.json` 走 CRLF 归一、其余走原始字节）、把"只有 raw 不等"计成 `convention_only_count`、把"两口径都不等"才计成 `real_change_count`——这正是 DEBT-G147 那格假阴性的解法，反向也守住：谁为了让它变绿而统一改口径，`real_change_count` 会顶上去。
+
+真树冒烟两支出题面缺失的响亮拒绝：`verify_..._range_check.py --readiness` 与 `eval_..._v6.py --readiness` 都 rc=2 且 `reports/` 里**没有新增任何 v6 读数件**（现取 `git status --porcelain`，只有两枚新代码文件未入库）。同轮修掉一处我自己的形状错：本想在 v6 里另立一个 `Refuse` 类，先写成"继承范围仪的 Refuse"——那是**漏接**（raise 父类实例、except 子类接不住，会一路逃成 traceback 而不是声明的 rc=2），改成两器共用同一枚 `Refuse` 并在注释里写下为什么不能做父子两个同名类。另两处也是同一族：一条前置被我写成 `... or True`（恒真＝零判别力，删掉，同源核验已由 `load_face` 把守）、一处 `if False else` 死支（清掉）。
+
+队列不变＝等 owner 签 PLAN-N1-93 §1 形状参数；签后三步＝`--execute-signed` 落题面 → 范围检验（≤180 秒）→ 达线才发射 94 的一次确认查询。本机未推提交现读 9 条（本轮入库后），推送仍待 owner 执行或明确授权。
