@@ -4060,10 +4060,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 
 - v9确认报告`reports/taiji_n1_hard_neighbor_v9_confirmation_20261017.json` SHA-256 `7b9b7e7cccf27a5e9ba6f9e002b1b4df09347fb7264b3827f9eb6cdab44a1802`，one-shot attempt SHA-256 `78e8d9d13e90ba235688a4731385255682ee4075afb08ab94c13b172eda149a3`。一次查询360行，CPU83.0625/600秒，18次恢复检查通过、sources_unchanged=true、0更新；`passed=false`、`can_promote=false`、`TRAIN_SHA=None`。
 - 执行器四门读数：position seed11/12/13＝20/20、14/20、5/20；`each_position_kind`因seed12 transition 1/5、seed13 lookup/revision各0/5失败；terminal优势+29/60通过；cut优势−5/60失败。详见[EXP-N1-102](../../reference/EXP-N1-102_v9_confirmation_adjudication_20261017.md)。range/confirm evaluator SHA不同（前置收据错误后只修receipt hash读法与审计绑定，未改评分/门），两者及repair receipt均在确认件中绑定。v7/v8 confirm仍未消费。
-- 唯一下一步提案[PLAN-N1-103](../../reference/PLAN-N1-103_v9_item_level_error_attribution_draft_20261017.md)拟只读分解已消费v9行的position/cut/terminal逐题重合与类分布；零训练、零模型加载/查询/更新，不改门。它是新诊断范围，未获批准前不实施；没有新的确认面或promotion授权。
+- 当时的下一步提案[PLAN-N1-103](../../reference/PLAN-N1-103_v9_item_level_error_attribution_20261017.md)拟只读分解已消费v9行的position/cut/terminal逐题重合与类分布；零训练、零模型加载/查询/更新，不改门。该提案后来于㊵-1064获批冻结，当前状态见下条；没有新的确认面或promotion授权。
 
-### ㊵-1063 · 2026-10-17 · v9确认完整但四门合取失败
+### ㊵-1064 · 2026-10-17 · owner批准PLAN-N1-103只读归因
 
-- v9确认报告`reports/taiji_n1_hard_neighbor_v9_confirmation_20261017.json` SHA-256 `7b9b7e7cccf27a5e9ba6f9e002b1b4df09347fb7264b3827f9eb6cdab44a1802`，one-shot attempt SHA-256 `78e8d9d13e90ba235688a4731385255682ee4075afb08ab94c13b172eda149a3`。一次查询360行，CPU83.0625/600秒，18次恢复检查通过、sources_unchanged=true、0更新；`passed=false`、`can_promote=false`、`TRAIN_SHA=None`。
-- 执行器四门读数：position seed11/12/13＝20/20、14/20、5/20；`each_position_kind`因seed12 transition 1/5、seed13 lookup/revision各0/5失败；terminal优势+29/60通过；cut优势−5/60失败（−5/60）。详见[EXP-N1-102](../../reference/EXP-N1-102_v9_confirmation_adjudication_20261017.md)。range/confirm evaluator SHA不同（前置收据错误后只修receipt hash读法与审计绑定，未改评分/门），两者及repair receipt均在确认件中绑定。v7/v8 confirm仍未消费。
-- 唯一下一步提案[PLAN-N1-103](../../reference/PLAN-N1-103_v9_item_level_error_attribution_draft_20261017.md)拟只读分解已消费v9行的position/cut/terminal逐题重合与类分布；零训练、零模型加载/查询/更新，不改门。它是新诊断范围，未获批准前不实施；没有新的确认面或promotion授权。
+- owner批准对已消费v9确认报告做逐题误差重合归因。冻结计划[PLAN-N1-103](../../reference/PLAN-N1-103_v9_item_level_error_attribution_20261017.md)只读180条`hard_neighbor_v9`行，按seed/kind归纳position vs cut/terminal的逐题正确性与`output_hex`一致性；CPU≤30秒，0 checkpoint/model加载、查询、训练、更新、holdout访问或gate修改。
+- 当前唯一下一步为实现一次性归因器与合同测试，绑定确认报告SHA，生成探索性报告。结果只用于选下一个机制假设，不构成因果/能力/C3证据；不得读其它family行或补发任何门。N5/output/DSH未改。
