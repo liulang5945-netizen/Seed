@@ -1,8 +1,8 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：实现、验证并执行已批准的 PLAN-N1-99
+## 当前唯一下一步：执行 PLAN-N1-100 平衡近邻训练与 v7 确认
 
-owner 已批准 [PLAN-N1-99](../../reference/PLAN-N1-99_unknown_abstention_factorial_diagnostic_20261017.md)。先实现执行器和合同测试，再做不加载 checkpoint、不查询的 readiness；全部通过后发射 B/C/D 三格共 135 条诊断查询（CPU≤300秒，A格复用 v6 已出版行）。不训练、不改 gate、不访问其他留出面；任何完整性错配在首题前拒绝，执行中断则保留 attempt/partial、不重跑。
+[EXP-N1-99](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md) 已出值：position 的 d=1 两格都是0/15，d=2 两格各1/15；同面unknown结果仍很弱。run88锁定的v3 native-evidence train流中，48个unknown样本全部2观测/3实体、近邻距离8–10，没有d≤2样本。owner已明确授予最高自主权；当前唯一下一步是按 [PLAN-N1-100](../../reference/PLAN-N1-100_balanced_hard_neighbor_training_and_v7_20261017.md) 实现平衡近邻训练流、做合同与checkpoint预检，训练9 fresh模型后在未见v7面一次范围门和一次确认。训练门与确认四门沿用冻结线，CPU≤18000秒训练；不访问旧dev/holdout。Plan99的离线元数据越界和逐行hash补记详见EXP-N1-99，本轮后续分析只用train。
 
 ## ㊵-1045 时点的历史队首（保留原文，已由㊵-1046更新）
 

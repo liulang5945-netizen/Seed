@@ -1,0 +1,106 @@
+{
+  "analyzed_split": "train_only",
+  "by_kind": {
+    "lookup": {
+      "entity_count": {
+        "3": 48
+      },
+      "items": 48,
+      "items_with_nearest_d1_or_d2": 0,
+      "nearest_distractor_hamming": {
+        "8": 8,
+        "9": 22,
+        "10": 18
+      },
+      "observation_count": {
+        "2": 48
+      },
+      "target_entity_observation_count": {
+        "1": 48
+      }
+    },
+    "revision": {
+      "entity_count": {
+        "3": 48
+      },
+      "items": 48,
+      "items_with_nearest_d1_or_d2": 0,
+      "nearest_distractor_hamming": {
+        "6": 1,
+        "8": 6,
+        "9": 19,
+        "10": 22
+      },
+      "observation_count": {
+        "2": 48
+      },
+      "target_entity_observation_count": {
+        "2": 48
+      }
+    },
+    "transition": {
+      "entity_count": {
+        "3": 48
+      },
+      "items": 48,
+      "items_with_nearest_d1_or_d2": 0,
+      "nearest_distractor_hamming": {
+        "7": 2,
+        "8": 7,
+        "9": 20,
+        "10": 19
+      },
+      "observation_count": {
+        "2": 48
+      },
+      "target_entity_observation_count": {
+        "2": 48
+      }
+    },
+    "unknown": {
+      "entity_count": {
+        "3": 48
+      },
+      "items": 48,
+      "items_with_nearest_d1_or_d2": 0,
+      "nearest_distractor_hamming": {
+        "8": 4,
+        "9": 18,
+        "10": 26
+      },
+      "observation_count": {
+        "2": 48
+      },
+      "target_entity_observation_count": {
+        "0": 48
+      }
+    }
+  },
+  "checkpoint_loads": 0,
+  "dev_or_holdout_summaries_included": false,
+  "manifest_path": "plans/manifests/n1_native_evidence_curriculum_v3_20261015.json",
+  "manifest_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+  "manifest_sha_is_guarded_by_run88_attempt": true,
+  "model_loads": 0,
+  "model_queries": 0,
+  "parameter_updates": 0,
+  "run88_training_attempt_path": "reports/taiji_n1_transition_factorial_paired_train_20261016_attempt.json",
+  "run88_training_attempt_sha256": "6a3124a1293c33dcbdc45bc55fb34971200236cb4673e52c9c981335e0bc6234",
+  "schema": "taiji-n1-hard-neighbor-train-exposure-audit-v1",
+  "status": "verified",
+  "train_d1_or_d2_entity_pairs": 0,
+  "train_items": 192,
+  "train_kind_counts": {
+    "lookup": 48,
+    "revision": 48,
+    "transition": 48,
+    "unknown": 48
+  },
+  "train_target_to_distractor_hamming": {
+    "6": 1,
+    "7": 2,
+    "8": 25,
+    "9": 93,
+    "10": 263
+  }
+}

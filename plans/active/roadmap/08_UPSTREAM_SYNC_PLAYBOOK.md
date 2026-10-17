@@ -3977,3 +3977,10 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - owner 弹窗明确批准 [PLAN-N1-99](../../reference/PLAN-N1-99_unknown_abstention_factorial_diagnostic_20261017.md)；批准范围与原草案相同：同 v6 confirm 的 5 个 unknown 基础题、同九枚终端，观测数 2/4 × Hamming d=1/2。A 格复用既有 v6 rows，B/C/D 共 135 条新诊断查询，CPU≤300 秒；不训练、不改 gate、不查询其他未见面。
 - 顺序已冻结：实现专用执行器及合同测试并提交 → readiness（不得加载模型/checkpoint、不得查询）→ 通过后一次发射；拒绝支不落 attempt，首题后任何中断均保留 partial 且不重跑。
 - 这是已知题面机制探针，不是 C3 确认或晋级证据。当前唯一工作为实现与合同测试；readiness 和正式查询尚未开始。
+### ㊵-1050 · 2026-10-17 · PLAN-N1-99 完成：d=1 position 未弃权，d=2 仅1/15；train-only 暴露缺口指向新 curriculum
+
+- PLAN-N1-99 2×2 known-face diagnostic 完成：v6 A格复用45行，B/C/D新查135行；总CPU51.796875秒≤300，9/9 bundle neutrality、160项来源守卫及源码身份通过，零更新、零dev/holdout新查询。主报告 `reports/taiji_n1_unknown_abstention_factorial_diagnostic_20261017.json` SHA `ff9c6aa78e543bf61dafe6de7a04152dc29ea416ab389d4da3e9be8b3256a6e8`。
+- A/B/C/D的position exact-unknown分别0/15、0/15、1/15、1/15；terminal为4/15、3/15、4/15、3/15；cut为2/15、0/15、2/15、1/15。观测数单独未救position，d2仅提高一个seed/item，不足以形成能力主张。
+- 新近只读核验run88 attempt实际守卫的v3 train子集：192项、四类各48，unknown的48项全为2观测/3实体且query subject缺席，最近干扰名距离8–10，d≤2训练实体对为0。train-only摘要见 `reports/taiji_n1_hard_neighbor_train_exposure_audit_20261017.json` SHA `a40d2866e31a844a61619a44084d05570682e645501bb54a34875a0c4a748dff`。全任务数据来源不等于该单一component，不作扩大结论。
+- **两项执行偏差已披露在EXP-N1-99**：①主执行器未记录计划要求的逐行输入摘要，之后用冻结代码、manifest与`name_rng_seed=9902`离线重建，补件 `reports/taiji_n1_unknown_abstention_factorial_binding_verification_20261017.json` SHA `efcc48b7c8b1a7d9d646f149e72687ee11f6ea6e2e50dd049565d69395c9fada`（180行、20输入、9端点、0新查询）；②执行后一次静态脚本误把v3 dev/holdout聚合元数据纳入统计，未加载模型/评分/查询/训练，相关数值不用于本判读或下轮方案。后续数据审计限定train。
+- owner 2026-10-17 最新指示“最高权限按最合适下一步推进”据此启动 [PLAN-N1-100](../../reference/PLAN-N1-100_balanced_hard_neighbor_training_and_v7_20261017.md)：train-only平衡d=1/d=2近邻视图，9 fresh模型，训练与确认门原值不改，完成后对全新v7面一次范围检查及一次确认。当前尚未开始实现、训练或新测面生成。

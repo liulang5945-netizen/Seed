@@ -6,7 +6,7 @@ Seed hosts and exposes **Taiji**, a research architecture exploring persistent s
 
 ## Current status
 
-The latest N1 audit compared two already-consumed confirmation faces using the same nine checkpoints. On `unknown` items, the position arm emitted the exact answer on 23/24 v5 rows and 0/15 v6 rows. The normalized question template and 23-byte question length match; v5 has two observations and three entities per item, while v6 has four observations and five entities. Those input changes are confounded, so the cause is unresolved and C3 remains unmet; see the [cross-face adjudication](plans/reference/EXP-N1-98_static_cross_face_unknown_audit_adjudication_20261017.md).
+The latest N1 diagnostic tested observation count and entity-name distance on five already-consumed v6 `unknown` items using the same nine checkpoints. The position arm produced exact `unknown` on 0/15 d=1 rows and 1/15 d=2 rows, with no change between two and four observations. The run88-guarded v3 training stream contains no d≤2 neighbor pairs among its 48 train-only `unknown` examples. N1 C3 remains unmet; the next plan adds balanced near-neighbor training and a fresh v7 confirmation without changing the frozen gates. See the [PLAN-N1-99 adjudication](plans/reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md) and [PLAN-N1-100](plans/reference/PLAN-N1-100_balanced_hard_neighbor_training_and_v7_20261017.md).
 
 The active research program is the **N mainline**, with N1 investigating learned reading, entity binding and state transitions. Results are bounded experiments, with training, unseen evaluation, retention and consumer behavior recorded separately. They do not establish general dialogue, AGI or autonomous self-improvement.
 
