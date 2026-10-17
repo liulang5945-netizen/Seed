@@ -62,6 +62,19 @@ PLAN-N-01 §3 给 C4 的合格交付原文是**四件**：`新能力/旧能力�
 | B | 一次同时读 ①②④ 的有界包（治疗/对照双臂，剂量同 run-1/2） | 与 N2 B 档同量级（≈45–60 分钟 CPU） | **会改权重 ⇒ 回 owner** |
 | C | 甲层保持切片进 `spec.datasets`（真·候选版本隔离，才可能改"代价"本身） | 与 B 同量级 | 产品码批文＋改权重批文，两条都要 |
 
+### 6bis. A 档的判读器已落地并跑过一次（㊵-1038 现取）
+
+仪器 `scripts/training/adjudicate_taiji_n02_c4_net_gain.py`（只读三枚已封存件，`models_loaded=0`、`parameter_updates=0`、`writes_any_face=false`、`is_capability_claim=false`），合同测 `tests/taiji_native/test_n02_c4_net_gain_reader_contract.py` **7 passed**（四条判据各有真假两支、"恰好等于地板"那一支单独钉住、分离守卫跑过一次**已知-good** 并配两条负对照、面被换字节必须响亮拒绝、写靶一次性）。
+
+拿今天的真件跑一次，出版 `reports/taiji_n02_c4_net_gain_readiness_20261017.json`，读数就是 C4 的**输入契约缺口清单**（不是任何能力主张）：
+
+* `status = range_unverified`，`ruler_precondition.state = absent` ⇒ **增益面缺 `usable_endpoints` 那一列**（P-尺）。这一条挡住合取进入判级，正是设计意图。
+* `J_N02_1_gain.verdict = not_judged`：`delta_quality = 2.4829673663245373` 在场，但 `noise_floor = null` ⇒ 缺**与增益同量纲**的地板字段 `noise_floor_delta_quality_abs`；现成的 N5-10 噪声地板件给的是**计数级**极差，量纲不同，本件按守卫拒绝代答（G-N-02-3）。
+* `J_N02_2_retention.verdict = cost_persists`：4 列跌（全是 `replay_well_formed:0.0/0.5/1.0/2.0`），照实出版。
+* `J_N02_3_comparability.passed = true`、`J_N02_4_separation`＝`measured`／`overlap 0`／`windows 116` ⇒ **可比性与分离这两条今天就是绿的**，不需要新实验。
+
+一句边界：本件的判级字段是仪器的输出，判读件与台账引用 C4 状态时**必须引用这份件里的值**，不得手对齐（P-门）。另记一次自己的缺陷：第一版把分离守卫写成 `status == "ok"`，而封存件的成功词汇是 `"measured"`——那条守卫会惩罚它自己要测的成功行为，是"新写的守卫必须先跑一次已知-good"的又一次实测；发现时该产物尚未入库，已删除并以修正后的仪器重出（无读者被误导面）。
+
 ## 7. 出口（四条互斥，先写死）＋ 判红即收回的句子
 
 * ⑴ 四条件全真 ⇒ 才可写"C4 有一个净增益机制成立"，且仍 `can_promote=false`、C5 另立件。
