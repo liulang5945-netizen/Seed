@@ -61,3 +61,5 @@
 〔㊵-1063 PLAN-N1-102确认判读〕提交修复后confirm-readiness通过，唯一确认运行完整：360行（v9新家族180＋旧家族描述对照180）、CPU83.0625/600秒、18次整包恢复相等、sources_unchanged=true、0参数更新。执行器四门：position每seed 20/20、14/20、5/20（失败）；position逐seed逐类有seed12 transition=1/5、seed13 lookup/revision=0/5（失败）；terminal优势+29/60（通过）；cut优势−5/60（失败）。`all_four_gates=false`、`passed=false`、`can_promote=false`、`TRAIN_SHA=None`。runner在range与confirm间的变化及attempt前修复收据均随件绑定，范围未重跑；v7/v8 confirm继续未消费。完整表与哈希见[EXP-N1-102](EXP-N1-102_v9_confirmation_adjudication_20261017.md)。当时唯一提案[PLAN-N1-103](PLAN-N1-103_v9_item_level_error_attribution_20261017.md)拟基于已消费v9行做只读逐题归因；owner随后于㊵-1064批准。
 
 〔㊵-1064 批准PLAN-N1-103〕owner明确批准对v9已消费新家族180行做只读逐题归因。冻结计划[PLAN-N1-103](PLAN-N1-103_v9_item_level_error_attribution_20261017.md)要求按seed/kind统计position-only、control-only、both-correct、both-wrong及输出字节一致；只读确认报告行，不读checkpoint/manifest、不查询、不训练、不改门。当前唯一下一步是实施归因器和合同测试，之后按报告SHA一次生成探索性结果；不得把归因写成因果或C3/能力结论。
+
+〔㊵-1065 PLAN-N1-103实现〕归因器拟从已封存报告字段`family/seed/arm/id/kind/free_exact/output_hex`计算每个seed/kind五题的两两正确性四分类和输出字节一致率，先验校验确认报告SHA、180行唯一性及每格5行；不重算四门。代码与合同通过后只生成一份≤30秒探索性报告，`model_loads/queries/updates=0`。当前唯一下一步：实现脚本/合同测试并按冻结SHA执行。

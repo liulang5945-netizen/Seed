@@ -4066,3 +4066,8 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 
 - owner批准对已消费v9确认报告做逐题误差重合归因。冻结计划[PLAN-N1-103](../../reference/PLAN-N1-103_v9_item_level_error_attribution_20261017.md)只读180条`hard_neighbor_v9`行，按seed/kind归纳position vs cut/terminal的逐题正确性与`output_hex`一致性；CPU≤30秒，0 checkpoint/model加载、查询、训练、更新、holdout访问或gate修改。
 - 当前唯一下一步为实现一次性归因器与合同测试，绑定确认报告SHA，生成探索性报告。结果只用于选下一个机制假设，不构成因果/能力/C3证据；不得读其它family行或补发任何门。N5/output/DSH未改。
+
+### ㊵-1065 · 2026-10-17 · PLAN-N1-103归因器合同通过
+
+- 只读归因器与5项合同测试通过。输入边界已机检：streaming reader只把180条`hard_neighbor_v9`逐题行交给分析器；180条prior-family control行仅读取`family`标签后跳过其余字段。逐题分析计算position-only correct、control-only correct、both correct、both wrong、`output_hex`解码后的byte equality，seed/kind分母固定为20/5；四门结果从不重算。
+- 当前唯一下一步：运行一次`audit_taiji_n1_hard_neighbor_v9_item_errors.py --execute`，绑定v9 confirmation report SHA `7b9b7e7cccf27a5e9ba6f9e002b1b4df09347fb7264b3827f9eb6cdab44a1802`与PLAN-N1-103 SHA；预算≤30 CPU秒，0模型/权重加载、0查询/更新。仅产探索性结果，不作因果/C3/C4/能力/晋升主张。
