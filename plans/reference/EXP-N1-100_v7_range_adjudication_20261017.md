@@ -30,6 +30,6 @@ v7 sacrifice 范围执行完整，但未过冻结门：只有4/9端点在15道�
 - 端点、来源和代码守卫未变；完成报告为`range_not_met`，`confirm_subset_queried=false`，`v7_confirm_model_queries=0`，`parameter_updates=0`，`can_promote=false`。
 - v7 confirm保留为未查询数据，不能基于本结果宣称C3，不得重抽或把阈值从6/9降为4/9。
 
-## 下一项方案提议（未批准、未执行）
+## 后续处置（PLAN-N1-101已获批准）
 
-建议另立[PLAN-N1-101 draft](PLAN-N1-101_v8_hard_neighbor_range_recovery_draft_20261017.md)及全新v8 face，保持6/9范围线和原v7四项确认门不变，只将每题观测数由4提高到8并保留d=1、40题/四类平衡及一次性sacrifice→confirm次序。理由是此前PLAN-N1-95/㊵-1035的仓外d=1预飞中，8条观测曾给旧九端点9/9的范围动态；该结果不能预测本轮新模型，v8仍须从零验证，失败则停下，不循环调参。草案只排除v7已查询的sacrifice项，v7 confirm payload继续不读、不查。新face及范围设计属测面变更，等待owner批准；此草案未冻结、未执行。
+owner于2026-10-17批准并冻结[PLAN-N1-101](PLAN-N1-101_v8_hard_neighbor_range_recovery_20261017.md)：固定seed108构建全新8-observation、d=1 v8 face，保留40题四类平衡、6/9范围线与原四项确认门；排除v3 train、v5/v6及已查询v7 sacrifice的实体/材料值。v7 confirm字段保持不读、不用、不查。PLAN-N1-95的8观测结果只作提出新面动机，不能预测本轮新模型；v8须按冻结一次性流程独立验证。

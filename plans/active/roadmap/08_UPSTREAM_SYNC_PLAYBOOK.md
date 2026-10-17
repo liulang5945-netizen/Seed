@@ -4015,4 +4015,10 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 
 - 范围报告 `reports/taiji_n1_hard_neighbor_v7_range_check_20261017.json` SHA-256 `c0bf9e588b3785240c61a0a90907f4849de64b1027546a749d00a8e2768c30eb`，attempt SHA-256 `f45062b2abb8cb43ee026b379f64b7caca610c03923b927a933d7cc1e5f4529c`。一次运行180条sacrifice查询，CPU38.171875/180秒，来源/代码守卫未变、0更新；仅4/9端点达到≥6/15 addressable errors，判`range_not_met`。可用端点是3个terminal控制加seed13/position；position seed11/12和三个cut端点均不足。逐类读数与边界见 [EXP-N1-100-v7-range](../../reference/EXP-N1-100_v7_range_adjudication_20261017.md)。
 - confirm attempt/report均不存在，20项confirm未查询；v7面不重抽、不改线。训练candidate的position门虽全过，C3仍未判，`can_promote=false`。
-- 下一步建议草案 [PLAN-N1-101](../../reference/PLAN-N1-101_v8_hard_neighbor_range_recovery_draft_20261017.md)：新seed108 v8 face将观察数增至8、保留d=1；冻结6/9 range门与原四确认门不变，范围失败则停止。该提案改变测面形状并将已消费v7 sacrifice词名纳入去重源，属owner需要决定的范围/数据边界变化，尚未实施。N5更改及`output/`保留未动。
+- 下一步建议草案 [PLAN-N1-101](../../reference/PLAN-N1-101_v8_hard_neighbor_range_recovery_20261017.md)：新seed108 v8 face将观察数增至8、保留d=1；冻结6/9 range门与原四确认门不变，范围失败则停止。该提案当时改变测面形状并将已消费v7 sacrifice词名纳入去重源，需owner决定；owner随后已于㊵-1056批准并冻结，执行状态见本文件末尾。N5更改及`output/`保留未动。
+
+### ㊵-1056 · 2026-10-17 · owner批准PLAN-N1-101，冻结v8范围恢复
+
+- owner通过选择弹窗批准PLAN-N1-101。冻结方案为seed108、40项四类平衡、每题8 observations、d=1；使用v3 train、v5/v6及v7已查询sacrifice题的实体/材料值作排除，不读取、不使用、不查询v7 confirm字段。原6/9 range门及PLAN-N1-94四项确认门保持不变。
+- 项目入口与中英文README、PLAN_INDEX、当前执行页、路线页、N1-100计划和v7 adjudication均已同步；N1-101状态从草案改为已批准并冻结。PLAN-N1-100训练/v7阶段已结清，未过v7范围门的历史记录保留。
+- 当前唯一下一步：实现v8 builder/evaluator及合同测试，随后固定面与代码提交；零模型加载的readiness通过后才运行一次180条sacrifice范围查询。范围若低于6/9即停，不访问confirm；只有达线才运行一次360条确认。无训练、promotion、远端推送或删除动作。工作区的N5 reports、`output/`和DSH文件均保持未改动。

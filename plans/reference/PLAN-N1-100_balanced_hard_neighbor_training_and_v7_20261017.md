@@ -1,6 +1,6 @@
 # PLAN-N1-100 · 平衡近邻实体训练与全新 v7 确认 · 2026-10-17
 
-**状态：由 owner 2026-10-17“最高权限按最合适下一步推进”的持续授权覆盖；已冻结，执行中。**目标是让模型在新实体名与近邻干扰下学会依据目标实体是否有证据作答，同时保留 lookup、revision 与 transition 的已有行为。此计划保留原训练充分门、v6/PLAN94 四门和动态范围门，不降阈值，不晋升默认模型。
+**状态：训练、v7造面及v7范围阶段均已完成；v7 range未过，confirm依约未查询。**目标是让模型在新实体名与近邻干扰下学会依据目标实体是否有证据作答，同时保留 lookup、revision 与 transition 的已有行为。此计划保留原训练充分门、v6/PLAN94 四门和动态范围门，不降阈值，不晋升默认模型；v8续行由单独冻结的PLAN-N1-101负责。
 
 ## 0. 证据与问题
 
@@ -42,4 +42,6 @@
 
 〔㊵-1054 更正执行进度〕固定seed107的v7 manifest已生成并通过13项构造机检：40项、四类各10、sacrifice/confirm各20且各类5；110个干扰实体全部精确d=1；实体与材料值相对v3 train/v5/v6分别零重叠。face SHA-256 `c5a7ef0bc18bf9376e5038348204e838bbc11d88ad6784605c858b12f6d992dc`，construction checks SHA-256 `d0f1c8866557e2433d6d4d9d289ca6d71163907e4e23871ccb80938c3ac0a7bd`。造面阶段没有加载模型、训练或查询。当前唯一下一步是按唯一attempt执行20项sacrifice范围检验，CPU≤180秒；confirm仍未查询，只有≥6/9端点达到≥6/15可答题错误才解锁一次确认。
 
-〔㊵-1055 更正范围结果〕v7 sacrifice范围已完整执行：180条查询、CPU38.171875秒，`usable_endpoints=4/9`，低于冻结6/9。按原协议不查询confirm、不重抽face、不改门。范围报告见[EXP-N1-100-v7-range](EXP-N1-100_v7_range_adjudication_20261017.md)。唯一待决事项是是否批准新的8-observation d=1测面草案 [PLAN-N1-101](PLAN-N1-101_v8_hard_neighbor_range_recovery_draft_20261017.md)；未获批准前不冻结或执行，不读取v7 confirm payload。
+〔㊵-1055 更正范围结果〕v7 sacrifice范围已完整执行：180条查询、CPU38.171875秒，`usable_endpoints=4/9`，低于冻结6/9。按原协议不查询confirm、不重抽face、不改门。范围报告见[EXP-N1-100-v7-range](EXP-N1-100_v7_range_adjudication_20261017.md)。当时唯一待决事项是是否批准新的8-observation d=1测面；后由㊵-1056批准并冻结PLAN-N1-101，见下条。
+
+〔㊵-1056 后续计划批准〕owner明确批准PLAN-N1-101新v8测面：固定seed108、每题8 observations、d=1，使用v7已查询sacrifice题的实体/材料值作排除；不读取或使用v7 confirm字段。保留6/9范围门和原四项确认门，不训练、不改模型、不读v3 dev/holdout。v8实现、合同测试、冻结造面和零查询readiness通过前，不运行endpoint；一次sacrifice范围未过即停止，只有通过才执行一次confirm。唯一下一步：实现并合同验证v8 builder/evaluator。
