@@ -1,8 +1,8 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：提交确认前置收据修复，再执行一次确认
+## 当前唯一下一步：owner裁定是否批准PLAN-N1-103只读归因
 
-[EXP-N1-99](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md) 的d=1/d=2诊断仍未提供能力证据。PLAN-N1-100九模型训练完整，position三seed全过原训练门；v7/v8范围均4/9失败，PLAN-N1-101关闭。owner批准的PLAN-N1-102 v9范围一次过6/9（180条，CPU35.53125秒），confirm readiness通过。首次confirm调用在写attempt前发现旧控制收据哈希键错误，确认查询、权重加载、更新均为0，confirm attempt/report仍不存在。只修了收据摘要构造并增加回归测试；修复、零查询故障记录和计划更新提交后，重新做confirm-readiness，再执行授权的一次360条确认。范围门/四项确认门不改，范围不重跑，v7/v8 confirm仍未访问。详见[v8范围判读](../../reference/EXP-N1-101_v8_range_adjudication_20261017.md)及[PLAN-N1-102](../../reference/PLAN-N1-102_v12_observation_range_probe_20261017.md)。
+[EXP-N1-99](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md) 的d=1/d=2诊断仍未提供能力证据。PLAN-N1-100九模型训练完整，position三seed全过原训练门；v7/v8范围均4/9失败，PLAN-N1-101关闭。owner批准的PLAN-N1-102 v9范围一次过6/9，确认查询360条完整结束（新家族180、描述对照180，CPU83.0625秒、18恢复相等、守卫全真、0更新）；四门合取失败：position相对terminal +29/60但相对cut −5/60，seed13 position 5/20。完整判读[EXP-N1-102](../../reference/EXP-N1-102_v9_confirmation_adjudication_20261017.md)。本轮唯一提案[PLAN-N1-103](../../reference/PLAN-N1-103_v9_item_level_error_attribution_draft_20261017.md)拟对已消费v9行做零查询逐题归因，判断seed13和position/cut差异的题类分布；这是新的诊断范围，等待owner裁定。未批准前不分析报告或发射新面。
 
 ## ㊵-1045 时点的历史队首（保留原文，已由㊵-1046更新）
 
