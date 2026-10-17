@@ -4022,3 +4022,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - owner通过选择弹窗批准PLAN-N1-101。冻结方案为seed108、40项四类平衡、每题8 observations、d=1；使用v3 train、v5/v6及v7已查询sacrifice题的实体/材料值作排除，不读取、不使用、不查询v7 confirm字段。原6/9 range门及PLAN-N1-94四项确认门保持不变。
 - 项目入口与中英文README、PLAN_INDEX、当前执行页、路线页、N1-100计划和v7 adjudication均已同步；N1-101状态从草案改为已批准并冻结。PLAN-N1-100训练/v7阶段已结清，未过v7范围门的历史记录保留。
 - 当前唯一下一步：实现v8 builder/evaluator及合同测试，随后固定面与代码提交；零模型加载的readiness通过后才运行一次180条sacrifice范围查询。范围若低于6/9即停，不访问confirm；只有达线才运行一次360条确认。无训练、promotion、远端推送或删除动作。工作区的N5 reports、`output/`和DSH文件均保持未改动。
+
+### ㊵-1057 · 2026-10-17 · v8实现、造面与零加载readiness通过
+
+- PLAN-N1-101实现位于`build_taiji_n1_hard_neighbor_v8.py`、`eval_taiji_n1_hard_neighbor_v8.py`，合同位于`test_n1_run101_v8_face_contract.py`与`test_n1_run101_v8_evaluation_contract.py`。7项新增合同测试与5项v7回归通过；Ruff、Black、py_compile通过。
+- seed108 v8 manifest SHA-256 `85d417eb387e1c985c9b5665ade0536dd74b13b52126d7601ed5af225dbdc3fc`；40题、四类各10、20/20子集、8观测、d=1，15项机检全过。构造报告SHA `dce7efd03f4051afd7df690b4f7db5c79066ffd4dfb239ce781f940021858474`，attempt SHA `0505886c19604ad14043b8051ad7a760a157bbc37d60a9ac4c8dd7731e1cdc68`。v3/v5/v6/v7-sacrifice来源交集均0；v7 confirm payload未解码；模型加载、模型查询、参数更新均0。
+- `--range-readiness`通过，确认20 sacrifice、20 confirm、9 endpoint。当前唯一下一步为选择性提交冻结实现与面，再提交后复核readiness并执行一次180条sacrifice范围查询；若usable低于6/9，立即停止，不查询v8 confirm。原范围与四项确认门不变；N5更改、`output/`、DSH文件均未触碰。
