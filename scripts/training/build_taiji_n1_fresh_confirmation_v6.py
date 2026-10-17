@@ -33,6 +33,7 @@ REPORT = ROOT / "reports/taiji_n1_v6_face_construction_checks_20261017.json"
 DIRECTIONS = v4.DIRECTIONS
 KINDS = v4.KINDS
 SUBJECT_ROWS = {"lookup": 1, "revision": 2, "transition": 2, "unknown": 0}
+LETTERS = "abcdefghijklmnopqrstuvwxyz"
 #: 弃权答案的字面值；它同时被排除在自造材质词池之外，免得与某题的正确答案撞字。
 ABSTENTION = "unknown"
 #: 前半为牺牲子集（只做动态范围检验，永久不得承载能力主张），后半为确认子集（签署前一次都不查）。
@@ -94,13 +95,30 @@ def build(params: dict):
     used_names = set(names)
     used_words = set(words) | {ABSTENTION}
     slots_per_item = params["observations_per_item"]
+    distance = params.get("name_neighbor_distance")
+    require(
+        distance is None or 0 < distance <= params["entity_length"],
+        f"name_neighbor_distance must be within 1..{params['entity_length']}, got {distance}",
+    )
 
     def novel(length: int, pool: set) -> str:
         while True:
-            value = "".join(rng.choices("abcdefghijklmnopqrstuvwxyz", k=length))
+            value = "".join(rng.choices(LETTERS, k=length))
             if value not in pool:
                 pool.add(value)
                 return value
+
+    def confusable(name: str, pool: set) -> str:
+        """同长度、恰差 `distance` 个字符的干扰实体名：句式一维不动，只压寻址。"""
+        for _attempt in range(200):
+            chars = list(name)
+            for spot in rng.sample(range(len(chars)), distance):
+                chars[spot] = rng.choice(LETTERS.replace(chars[spot], ""))
+            value = "".join(chars)
+            if value not in pool:
+                pool.add(value)
+                return value
+        raise Refuse("could not draw a confusable entity name")
 
     seen = {kind: 0 for kind in KINDS}
     episodes = []
@@ -112,7 +130,14 @@ def build(params: dict):
         require(distractor_slots >= 0, f"{kind} needs more observations than the face provides")
         subject = novel(params["entity_length"], used_names)
         answer_length = params["answer_lengths"][own % len(params["answer_lengths"])]
-        distractors = [novel(params["entity_length"], used_names) for _ in range(distractor_slots)]
+        distractors = [
+            (
+                confusable(subject, used_names)
+                if distance
+                else novel(params["entity_length"], used_names)
+            )
+            for _ in range(distractor_slots)
+        ]
         materials = [
             novel(params["answer_lengths"][0], used_words) for _ in range(distractor_slots)
         ]
@@ -289,7 +314,21 @@ def audit(episodes: list, params: dict, exclusions_pair) -> dict:
     for episode in episodes:
         length_classes.setdefault(len(episode["answer"]), set()).add(episode["kind"])
     abstention_length = len(ABSTENTION)
+    distances = [
+        sum(a != b for a, b in zip(episode["entities"][0], other, strict=True))
+        for episode in episodes
+        for other in episode["entities"][1:]
+    ]
+    requested_distance = params.get("name_neighbor_distance")
     checks = {
+        "J93_8_name_confusability": {
+            "requested_distance": requested_distance,
+            "pairs": len(distances),
+            "min_hamming": min(distances, default=None),
+            "max_hamming": max(distances, default=None),
+            "ok": requested_distance is None
+            or (bool(distances) and set(distances) == {requested_distance}),
+        },
         "J93_6_answer_length_leak": {
             "length_to_classes": {
                 str(length): sorted(kinds) for length, kinds in sorted(length_classes.items())

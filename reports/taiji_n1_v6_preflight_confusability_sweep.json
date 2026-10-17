@@ -1,0 +1,468 @@
+{
+  "axis_rationale": "加大 observations_per_item 只加干扰行数、不加寻址负担；本件把干扰实体名收到与主体名只差 d 个字符，句式与类别定义一维不动。",
+  "confirm_subset_queried": false,
+  "consumes_confirmation_face": false,
+  "d1_knob4_across_draws": [
+    {
+      "passed": true,
+      "sampling_seed": 91,
+      "usable": 7
+    },
+    {
+      "passed": true,
+      "sampling_seed": 92,
+      "usable": 7
+    },
+    {
+      "passed": true,
+      "sampling_seed": 93,
+      "usable": 7
+    },
+    {
+      "passed": true,
+      "sampling_seed": 94,
+      "usable": 8
+    }
+  ],
+  "d1_knob4_usable_values": [
+    7,
+    7,
+    7,
+    8
+  ],
+  "format": "taiji-n1-95-v6-preflight-confusability-v1",
+  "gate_lines": {
+    "advantage_cut": 12,
+    "advantage_terminal": 12,
+    "each_position_seed": 10
+  },
+  "parameter_updates": 0,
+  "preflight_is_not_confirmation": true,
+  "purpose": "同分布的另一条难度维（干扰实体名与主体名的汉明距离）能否开出动态范围，以及它把确认四门推到哪一侧",
+  "range_and_forecast_pairs": [
+    {
+      "forecast_red_cells_of_nine": 5,
+      "range_check_passed": false,
+      "run": "s4-dNone-draw91"
+    },
+    {
+      "forecast_red_cells_of_nine": 7,
+      "range_check_passed": true,
+      "run": "s4-d1-draw91"
+    },
+    {
+      "forecast_red_cells_of_nine": 7,
+      "range_check_passed": true,
+      "run": "s4-d1-draw92"
+    },
+    {
+      "forecast_red_cells_of_nine": 7,
+      "range_check_passed": true,
+      "run": "s4-d1-draw93"
+    },
+    {
+      "forecast_red_cells_of_nine": 8,
+      "range_check_passed": true,
+      "run": "s4-d1-draw94"
+    },
+    {
+      "forecast_red_cells_of_nine": 9,
+      "range_check_passed": true,
+      "run": "s8-d1-draw91"
+    },
+    {
+      "forecast_red_cells_of_nine": 7,
+      "range_check_passed": false,
+      "run": "s4-d2-draw91"
+    },
+    {
+      "forecast_red_cells_of_nine": 4,
+      "range_check_passed": false,
+      "run": "s8-d2-draw91"
+    }
+  ],
+  "range_check_is_capability_claim": false,
+  "runs": [
+    {
+      "cpu_seconds": 98.3906,
+      "face_sha256": "25c51c8e58378ce082bee00d38091f4fdb6eb749f1c2d13386b63959fc56b19d",
+      "forecast_red_cells_of_nine": 5,
+      "name_neighbor_distance": null,
+      "observations_per_item": 4,
+      "per_class_mean_errors": {
+        "lookup": 2.8889,
+        "revision": 2.7778,
+        "transition": 1.1111,
+        "unknown": 0.5556
+      },
+      "range_check_passed": false,
+      "sacrifice_half_gate_forecast": {
+        "seed11": {
+          "advantage_cut": 11,
+          "advantage_cut_pass": false,
+          "advantage_terminal": 11,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "PASS",
+          "position_free_exact": 19
+        },
+        "seed12": {
+          "advantage_cut": 14,
+          "advantage_cut_pass": true,
+          "advantage_terminal": 14,
+          "advantage_terminal_pass": true,
+          "each_position_seed": "PASS",
+          "position_free_exact": 20
+        },
+        "seed13": {
+          "advantage_cut": 5,
+          "advantage_cut_pass": false,
+          "advantage_terminal": 5,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "RED",
+          "position_free_exact": 9
+        }
+      },
+      "sampling_seed": 91,
+      "usable_by_arm": null,
+      "usable_competent_endpoints": null,
+      "usable_endpoints": 5
+    },
+    {
+      "cpu_seconds": 100.2344,
+      "face_sha256": "cf3e287cb6e7765c8b2d825935770446838f64e632d3e3cbe784b3f4e0eec03d",
+      "forecast_red_cells_of_nine": 7,
+      "name_neighbor_distance": 1,
+      "observations_per_item": 4,
+      "per_class_mean_errors": {
+        "lookup": 4.1111,
+        "revision": 2.8889,
+        "transition": 2.5556,
+        "unknown": 3.8889
+      },
+      "range_check_passed": true,
+      "sacrifice_half_gate_forecast": {
+        "seed11": {
+          "advantage_cut": 6,
+          "advantage_cut_pass": false,
+          "advantage_terminal": 7,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "PASS",
+          "position_free_exact": 11
+        },
+        "seed12": {
+          "advantage_cut": 7,
+          "advantage_cut_pass": false,
+          "advantage_terminal": 8,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "PASS",
+          "position_free_exact": 11
+        },
+        "seed13": {
+          "advantage_cut": -3,
+          "advantage_cut_pass": false,
+          "advantage_terminal": -2,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "RED",
+          "position_free_exact": 3
+        }
+      },
+      "sampling_seed": 91,
+      "usable_by_arm": {
+        "cut": 3,
+        "position": 1,
+        "terminal": 3
+      },
+      "usable_competent_endpoints": 4,
+      "usable_endpoints": 7
+    },
+    {
+      "cpu_seconds": 106.1094,
+      "face_sha256": "1c5dabb829c64ff4002b2f83892493a69c14703137c8d0c6521fcfc8704833f2",
+      "forecast_red_cells_of_nine": 7,
+      "name_neighbor_distance": 1,
+      "observations_per_item": 4,
+      "per_class_mean_errors": {
+        "lookup": 4.2222,
+        "revision": 2.7778,
+        "transition": 2.7778,
+        "unknown": 4.2222
+      },
+      "range_check_passed": true,
+      "sacrifice_half_gate_forecast": {
+        "seed11": {
+          "advantage_cut": 4,
+          "advantage_cut_pass": false,
+          "advantage_terminal": 8,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "PASS",
+          "position_free_exact": 11
+        },
+        "seed12": {
+          "advantage_cut": 7,
+          "advantage_cut_pass": false,
+          "advantage_terminal": 9,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "PASS",
+          "position_free_exact": 12
+        },
+        "seed13": {
+          "advantage_cut": -4,
+          "advantage_cut_pass": false,
+          "advantage_terminal": -3,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "RED",
+          "position_free_exact": 2
+        }
+      },
+      "sampling_seed": 92,
+      "usable_by_arm": {
+        "cut": 3,
+        "position": 1,
+        "terminal": 3
+      },
+      "usable_competent_endpoints": 4,
+      "usable_endpoints": 7
+    },
+    {
+      "cpu_seconds": 105.2969,
+      "face_sha256": "e2ae029124c52622023169e7c1c5d6574f11ae371c6ec96d7ffb4d6d192b0823",
+      "forecast_red_cells_of_nine": 7,
+      "name_neighbor_distance": 1,
+      "observations_per_item": 4,
+      "per_class_mean_errors": {
+        "lookup": 4.0,
+        "revision": 2.8889,
+        "transition": 3.3333,
+        "unknown": 4.5556
+      },
+      "range_check_passed": true,
+      "sacrifice_half_gate_forecast": {
+        "seed11": {
+          "advantage_cut": 8,
+          "advantage_cut_pass": false,
+          "advantage_terminal": 9,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "PASS",
+          "position_free_exact": 10
+        },
+        "seed12": {
+          "advantage_cut": 3,
+          "advantage_cut_pass": false,
+          "advantage_terminal": 7,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "PASS",
+          "position_free_exact": 10
+        },
+        "seed13": {
+          "advantage_cut": -3,
+          "advantage_cut_pass": false,
+          "advantage_terminal": -1,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "RED",
+          "position_free_exact": 3
+        }
+      },
+      "sampling_seed": 93,
+      "usable_by_arm": {
+        "cut": 3,
+        "position": 1,
+        "terminal": 3
+      },
+      "usable_competent_endpoints": 4,
+      "usable_endpoints": 7
+    },
+    {
+      "cpu_seconds": 108.75,
+      "face_sha256": "b170775e0cb1f9490ce9ae213d56963e575407642838e90ce3c860942dcba782",
+      "forecast_red_cells_of_nine": 8,
+      "name_neighbor_distance": 1,
+      "observations_per_item": 4,
+      "per_class_mean_errors": {
+        "lookup": 4.2222,
+        "revision": 2.8889,
+        "transition": 3.3333,
+        "unknown": 4.0
+      },
+      "range_check_passed": true,
+      "sacrifice_half_gate_forecast": {
+        "seed11": {
+          "advantage_cut": 11,
+          "advantage_cut_pass": false,
+          "advantage_terminal": 8,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "RED",
+          "position_free_exact": 8
+        },
+        "seed12": {
+          "advantage_cut": 6,
+          "advantage_cut_pass": false,
+          "advantage_terminal": 6,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "PASS",
+          "position_free_exact": 10
+        },
+        "seed13": {
+          "advantage_cut": -1,
+          "advantage_cut_pass": false,
+          "advantage_terminal": -1,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "RED",
+          "position_free_exact": 2
+        }
+      },
+      "sampling_seed": 94,
+      "usable_by_arm": {
+        "cut": 3,
+        "position": 2,
+        "terminal": 3
+      },
+      "usable_competent_endpoints": 5,
+      "usable_endpoints": 8
+    },
+    {
+      "cpu_seconds": 131.4219,
+      "face_sha256": "217c07ec825afbc5cfab3d5d30b5c845e1077b0b91059786c67513ef454da9d3",
+      "forecast_red_cells_of_nine": 9,
+      "name_neighbor_distance": 1,
+      "observations_per_item": 8,
+      "per_class_mean_errors": {
+        "lookup": 4.6667,
+        "revision": 3.0,
+        "transition": 3.4444,
+        "unknown": 4.1111
+      },
+      "range_check_passed": true,
+      "sacrifice_half_gate_forecast": {
+        "seed11": {
+          "advantage_cut": 7,
+          "advantage_cut_pass": false,
+          "advantage_terminal": 5,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "RED",
+          "position_free_exact": 8
+        },
+        "seed12": {
+          "advantage_cut": 7,
+          "advantage_cut_pass": false,
+          "advantage_terminal": 6,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "RED",
+          "position_free_exact": 7
+        },
+        "seed13": {
+          "advantage_cut": 0,
+          "advantage_cut_pass": false,
+          "advantage_terminal": 0,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "RED",
+          "position_free_exact": 2
+        }
+      },
+      "sampling_seed": 91,
+      "usable_by_arm": {
+        "cut": 3,
+        "position": 3,
+        "terminal": 3
+      },
+      "usable_competent_endpoints": 6,
+      "usable_endpoints": 9
+    },
+    {
+      "cpu_seconds": 100.2344,
+      "face_sha256": "fd416bc41839f37cfd3084c1358aa7d9919effdbbae07bc18e86f4a8bffee607",
+      "forecast_red_cells_of_nine": 7,
+      "name_neighbor_distance": 2,
+      "observations_per_item": 4,
+      "per_class_mean_errors": {
+        "lookup": 3.0,
+        "revision": 2.7778,
+        "transition": 1.8889,
+        "unknown": 4.2222
+      },
+      "range_check_passed": false,
+      "sacrifice_half_gate_forecast": {
+        "seed11": {
+          "advantage_cut": 8,
+          "advantage_cut_pass": false,
+          "advantage_terminal": 7,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "PASS",
+          "position_free_exact": 12
+        },
+        "seed12": {
+          "advantage_cut": 11,
+          "advantage_cut_pass": false,
+          "advantage_terminal": 10,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "PASS",
+          "position_free_exact": 14
+        },
+        "seed13": {
+          "advantage_cut": -2,
+          "advantage_cut_pass": false,
+          "advantage_terminal": 0,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "RED",
+          "position_free_exact": 4
+        }
+      },
+      "sampling_seed": 91,
+      "usable_by_arm": {
+        "cut": 1,
+        "position": 1,
+        "terminal": 3
+      },
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    },
+    {
+      "cpu_seconds": 116.6719,
+      "face_sha256": "f7a9993ee7beff07b0291b1d1563b9258051057235993188cde8476210a1a2de",
+      "forecast_red_cells_of_nine": 4,
+      "name_neighbor_distance": 2,
+      "observations_per_item": 8,
+      "per_class_mean_errors": {
+        "lookup": 3.3333,
+        "revision": 2.7778,
+        "transition": 2.8889,
+        "unknown": 4.0
+      },
+      "range_check_passed": false,
+      "sacrifice_half_gate_forecast": {
+        "seed11": {
+          "advantage_cut": 13,
+          "advantage_cut_pass": true,
+          "advantage_terminal": 12,
+          "advantage_terminal_pass": true,
+          "each_position_seed": "PASS",
+          "position_free_exact": 12
+        },
+        "seed12": {
+          "advantage_cut": 11,
+          "advantage_cut_pass": false,
+          "advantage_terminal": 12,
+          "advantage_terminal_pass": true,
+          "each_position_seed": "PASS",
+          "position_free_exact": 14
+        },
+        "seed13": {
+          "advantage_cut": -2,
+          "advantage_cut_pass": false,
+          "advantage_terminal": -1,
+          "advantage_terminal_pass": false,
+          "each_position_seed": "RED",
+          "position_free_exact": 3
+        }
+      },
+      "sampling_seed": 91,
+      "usable_by_arm": {
+        "cut": 1,
+        "position": 1,
+        "terminal": 3
+      },
+      "usable_competent_endpoints": 2,
+      "usable_endpoints": 5
+    }
+  ],
+  "tension_reading": "范围门与臂差门在这条维上反向：过 range 的那些次读数里牺牲半预测的红格数最多，而预测红格数最少的次数恰恰过不了 range——见 range_and_forecast_pairs 逐枚对照。"
+}
