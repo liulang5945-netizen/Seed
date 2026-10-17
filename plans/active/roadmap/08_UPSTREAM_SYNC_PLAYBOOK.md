@@ -4142,3 +4142,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 计划`plans/reference/PLAN-N1-106_v10_output_error_attribution_20261017.md`已冻结，SHA-256 `556e73501143cea141138ced44e3e2ff52c2521150a9461a0a362d32331880fc`。输入仅为已消费的v10 face和complete result，固定2,232行全覆盖，CPU≤30秒；报告write-once，不读取模型/checkpoint，不查询、不训练、不改gate。
 - analyzer `scripts/training/audit_taiji_n1_v10_output_error_attribution.py` SHA-256 `0a999ef38ace3bbdc0709b154e17c73c434d9aea93492801b17a33d07a6a782c`，合同测试 `tests/taiji_native/test_n1_run106_v10_output_error_attribution_contract.py` SHA-256 `18b9d44180147d4dc5060ee348042a132b8ac1e9ffd0477c69f7e30912a5448e`。五项测试通过，Ruff/Black/py_compile通过；完整端点×题面身份、分母与exact标记一致性均有断言。
 - lexical类别仅描述输出与题面中材料字串的匹配，不作为内部读出路径的证据。当前唯一下一步：提交冻结计划、analyzer/test和此状态记录后执行一次只读归因；若source hash或完整行校验失败则不写报告。
+
+### ㊵-1077 · 2026-10-17 · PLAN-N1-106错答字串归因完成
+
+- 只读分类完整覆盖v10结果2,232行，CPU0.03125秒，report SHA-256 `3823b7e6add0d415b3e42413635fe4ab693b2ebfd8718298186c2f9beac5f796`，输入前后hash相等；0模型/checkpoint加载、查询、更新或optimizer step。981条精确；错答中576条输出`unknown`，672条未匹配本题显式`uses`材料值，3条复制了干扰实体材料（全部是unknown题）；stale revision=0，空/非文本=0。位置seed13的lookup 0/96（36 unknown、60未见材料串），revision 0/88（11 unknown、77未见材料串），其中cut revision为88/88。
+- `other_unobserved_output`按PLAN-N1-106仅指没有匹配显式`uses`材料值；transition中的`faces/turns`关系词不在此材料分类中。该限制已在裁决文档中披露，因此不把transition分类解释为完整语义词审计。读数不改变v9失败门，也不支持晋升。
+- 当前唯一下一步：在同一已消费v10 face/result上做只读字符串距离与模板内输出稳定性分析，区分位置失误更像近邻字节偏差、拒答，还是位置变化下稳定输出；不加载模型、不查询、不训练、不改gate。若结果仍显示与目标无关的错误字串，则停止离线诊断并提出单一训练/结构计划供owner决定。
