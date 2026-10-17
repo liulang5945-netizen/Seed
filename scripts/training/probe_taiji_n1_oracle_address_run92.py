@@ -77,21 +77,55 @@ def read_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def forced_weights(model, conditioned, hop_hidden, mode, source, position):
-    """注意力替换只走 `tape.keys` 与 `positions` 两枚公开量（PLAN-N1-92 §1 升版条件②）。"""
+def adapter_step(model, tape, session, state, previous, mode, source, positions, index):
+    """复现 `RelativeEvidenceCandidate.step` 的末段（`:78-91`，含地址混合支）。
+
+    native 支必须原样走完那一段，包括 `:80-84` 的地址混合——`RelativeReadState`
+    的第二字段名是 address，而该类在 `:89` 把上一步的 weights 塞了进去，所以从第二跳
+    起这条支路是活路。oracle 支替换的是**最终注意力**（混合之后的那一份），因此跳过混合；
+    这一语义选择写在 PLAN-N1-92 §1 的 ㊵-1027 注里。
+    """
+    conditioned = state.conditioned_tape
+    require(conditioned is not None, "the conditioned tape must be materialised first")
+    require(
+        mode in oracle.MODES,
+        f"unknown oracle mode {mode}",
+    )
+    _, hop_hidden, _ = NativeEvidenceCandidate.step(
+        model, conditioned, session, state.relative.hidden, previous
+    )
     scores = conditioned.keys @ model.query(hop_hidden) / model.config.key**0.5
-    if mode == "position":
-        forced = torch.zeros_like(scores)
-        forced[position] = 1.0
-        return forced
-    if mode == "source":
+    if mode == "native":
+        weights = torch.softmax(scores, dim=0)
+        address = state.relative.address
+        if address is not None:
+            controls = model.location(hop_hidden)
+            location = model.transport(conditioned, address, torch.softmax(controls[:3], dim=0))
+            gate = torch.sigmoid(controls[3])
+            weights = (1 - gate) * weights + gate * location
+    elif mode == "position":
+        weights = torch.zeros_like(scores)
+        weights[positions[index]] = 1.0
+    else:
         mask = torch.tensor(
             [entry[0] == source for entry in conditioned.positions], device=scores.device
         )
         if not bool(mask.any()):
             raise ValueError("oracle source absent from the conditioned tape")
-        return torch.softmax(scores.masked_fill(~mask, float("-inf")), dim=0)
-    raise ValueError(f"unsupported oracle mode {mode}")
+        weights = torch.softmax(scores.masked_fill(~mask, float("-inf")), dim=0)
+    read = weights @ conditioned.values
+    hidden = model.decoder(torch.cat((model.symbol(previous), read)), hop_hidden)
+    return (
+        model.readout(torch.cat((hidden, read))),
+        QuestionReadState(
+            RelativeReadState(hidden, weights, conditioned),
+            state.question_states,
+            tape,
+            conditioned,
+            state.alignment,
+        ),
+        weights,
+    )
 
 
 def prepare_state(model, tape, question):
@@ -108,54 +142,18 @@ def prepare_state(model, tape, question):
     )
 
 
-def adapter_step(model, tape, session, state, previous, forced):
-    """native 支（forced=None）必须与 `model.step` 逐位相同；oracle 支只换注意力。"""
-    conditioned = state.conditioned_tape
-    require(conditioned is not None, "the conditioned tape must be materialised first")
-    _, hop_hidden, _ = NativeEvidenceCandidate.step(
-        model, conditioned, session, state.relative.hidden, previous
-    )
-    if forced is None:
-        weights = torch.softmax(
-            conditioned.keys @ model.query(hop_hidden) / model.config.key**0.5, dim=0
-        )
-    else:
-        weights = forced
-    read = weights @ conditioned.values
-    hidden = model.decoder(torch.cat((model.symbol(previous), read)), hop_hidden)
-    logits = model.readout(torch.cat((hidden, read)))
-    return (
-        logits,
-        QuestionReadState(
-            RelativeReadState(hidden, None, conditioned),
-            state.question_states,
-            tape,
-            conditioned,
-            state.alignment,
-        ),
-        weights,
-    )
-
-
 def oracle_teacher(model, tape, session, question, target, mode, source, positions):
     """teacher-forced 重放：末位边界那一步一律走产品自己的 step（与封存件同形）。"""
-    if mode not in oracle.MODES:
-        raise ValueError(f"unknown oracle mode {mode}")
     state, _conditioned = prepare_state(model, tape, question)
     previous = model.BOUNDARY
     outputs = []
     for index, byte in enumerate((*target, model.BOUNDARY)):
         if index == len(target):
             logits, state, _weights = model.step(tape, session, state, previous)
-        elif mode == "native":
-            logits, state, _weights = adapter_step(model, tape, session, state, previous, None)
         else:
-            conditioned = state.conditioned_tape
-            _, hop_hidden, _ = NativeEvidenceCandidate.step(
-                model, conditioned, session, state.relative.hidden, previous
+            logits, state, _weights = adapter_step(
+                model, tape, session, state, previous, mode, source, positions, index
             )
-            forced = forced_weights(model, conditioned, hop_hidden, mode, source, positions[index])
-            logits, state, _weights = adapter_step(model, tape, session, state, previous, forced)
         outputs.append(logits)
         previous = byte
     return torch.stack(outputs)
@@ -337,6 +335,15 @@ def probe_endpoint(seed: int, arm: str, path: Path, items: list, budget: float) 
     }
 
 
+def anchor_decision(results: list) -> tuple[int, int]:
+    """逐位锚点的合计数：checked 为对数、unequal 为不等数；unequal 非 0 时整件不得出版结论。"""
+    unequal = sum(entry.get("anchor_unequal", 0) for entry in results)
+    checked = sum(
+        entry.get("anchor_equal", 0) + entry.get("anchor_unequal", 0) for entry in results
+    )
+    return checked, unequal
+
+
 def adjudicate(results: list, covered: int) -> dict:
     usable = [entry for entry in results if entry["ruler_usable"]]
     lifted = [
@@ -406,7 +413,7 @@ def run_readiness() -> int:
     return 0
 
 
-def run_approved() -> int:
+def run_approved(cpu_limit_seconds: int = CPU_LIMIT_SECONDS) -> int:
     started = time.process_time()
     require(not REPORT.exists(), f"probe output already exists: {REPORT}")
     require(not ATTEMPT.exists(), f"probe attempt already exists: {ATTEMPT}")
@@ -435,7 +442,7 @@ def run_approved() -> int:
         newline="\n",
     )
     results = []
-    budget = started + CPU_LIMIT_SECONDS
+    budget = started + cpu_limit_seconds
     status = "published"
     error = None
     try:
@@ -464,14 +471,13 @@ def run_approved() -> int:
         "coverage": covered,
         "endpoints": results,
         "teacher_sequences": len(results) * len(items) * len(oracle.MODES),
-        "cpu_limit_seconds": CPU_LIMIT_SECONDS,
+        "cpu_limit_seconds": cpu_limit_seconds,
         "cpu_seconds": round(time.process_time() - started, 4),
         "status": status,
         "error": error,
     }
     if results:
-        anchor_unequal = sum(entry["anchor_unequal"] for entry in results)
-        anchor_checked = sum(entry["anchor_equal"] + entry["anchor_unequal"] for entry in results)
+        anchor_checked, anchor_unequal = anchor_decision(results)
         payload["anchor_pairs_checked"] = anchor_checked
         payload["anchor_pairs_diverged"] = anchor_unequal
         if anchor_unequal:
@@ -514,6 +520,12 @@ def main(argv: list[str] | None = None) -> int:
         "--readiness", action="store_true", help="锚点、覆盖与九枚端点齐备性，不读检查点"
     )
     parser.add_argument("--execute-approved", action="store_true", help="出版单枚探针报告")
+    parser.add_argument(
+        "--cpu-limit-seconds",
+        type=int,
+        default=CPU_LIMIT_SECONDS,
+        help="本批 CPU 窗口；PLAN-N1-92 §2 的 120 秒估计已被 ㊵-1028 实测否证（8 枚端点用了 125.44 秒）",
+    )
     arguments = parser.parse_args(argv)
     try:
         require(
@@ -522,7 +534,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         if arguments.readiness:
             return run_readiness()
-        return run_approved()
+        return run_approved(arguments.cpu_limit_seconds)
     except Refuse as refusal:
         print(f"REFUSE: {refusal}")
         return 2

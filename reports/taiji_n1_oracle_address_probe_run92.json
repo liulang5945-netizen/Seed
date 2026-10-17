@@ -1,0 +1,3089 @@
+{
+  "adjudication": {
+    "arm_indistinguishable": false,
+    "arm_spread_by_seed": {
+      "11": null,
+      "12": null,
+      "13": 11
+    },
+    "endpoints_lifted": 1,
+    "endpoints_usable": 5,
+    "exit_named": "⑷ ruler_unusable",
+    "lines": {
+      "addressable_items_per_endpoint": 16,
+      "arm_spread_limit": 1,
+      "gain_floor": 4,
+      "loss_ceiling": 2,
+      "native_ceiling": 12
+    },
+    "oracle_lift_supported": false,
+    "ruler_unusable": true
+  },
+  "anchor": {
+    "checked_equal": 96,
+    "checked_unequal": 0,
+    "rejected_by_pinned_guard": 0
+  },
+  "anchor_face_sha256": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+  "anchor_pairs_checked": 144,
+  "anchor_pairs_diverged": 0,
+  "consumed_face_use": "known_face_mechanism_probe_only",
+  "coverage": {
+    "addressable": 16,
+    "addressable_ids": [
+      "v5-confirm-000",
+      "v5-confirm-001",
+      "v5-confirm-004",
+      "v5-confirm-005",
+      "v5-confirm-008",
+      "v5-confirm-009",
+      "v5-confirm-012",
+      "v5-confirm-013",
+      "v5-confirm-016",
+      "v5-confirm-017",
+      "v5-confirm-020",
+      "v5-confirm-021",
+      "v5-confirm-024",
+      "v5-confirm-025",
+      "v5-confirm-028",
+      "v5-confirm-029"
+    ],
+    "excluded_reasons": {
+      "answer_is_the_literal_unknown_with_no_source": 8,
+      "no_unique_uses_answer_observation": 8
+    },
+    "items_total": 32
+  },
+  "cpu_limit_seconds": 420,
+  "cpu_seconds": 132.7969,
+  "endpoints": [
+    {
+      "anchor_equal": 16,
+      "anchor_unequal": 0,
+      "arm": "position",
+      "items": 16,
+      "last_step_byte_correct": {
+        "native": 16,
+        "position": 16,
+        "source": 0
+      },
+      "modes": {
+        "native": {
+          "seven_exact": 16,
+          "six_exact": 16
+        },
+        "position": {
+          "seven_exact": 16,
+          "six_exact": 16
+        },
+        "source": {
+          "seven_exact": 0,
+          "six_exact": 0
+        }
+      },
+      "position_paired_gains": 0,
+      "position_paired_losses": 0,
+      "rows": [
+        {
+          "id": "v5-confirm-000",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-001",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-004",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          }
+        },
+        {
+          "id": "v5-confirm-005",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-008",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-009",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-012",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-013",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-016",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-017",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-020",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-021",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-024",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-025",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-028",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-029",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        }
+      ],
+      "ruler_usable": false,
+      "seed": 11
+    },
+    {
+      "anchor_equal": 16,
+      "anchor_unequal": 0,
+      "arm": "terminal",
+      "items": 16,
+      "last_step_byte_correct": {
+        "native": 7,
+        "position": 10,
+        "source": 10
+      },
+      "modes": {
+        "native": {
+          "seven_exact": 0,
+          "six_exact": 0
+        },
+        "position": {
+          "seven_exact": 0,
+          "six_exact": 0
+        },
+        "source": {
+          "seven_exact": 0,
+          "six_exact": 0
+        }
+      },
+      "position_paired_gains": 0,
+      "position_paired_losses": 0,
+      "rows": [
+        {
+          "id": "v5-confirm-000",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-001",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          }
+        },
+        {
+          "id": "v5-confirm-004",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-005",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-008",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-009",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-012",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-013",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-016",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          }
+        },
+        {
+          "id": "v5-confirm-017",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-020",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-021",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-024",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          }
+        },
+        {
+          "id": "v5-confirm-025",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-028",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          }
+        },
+        {
+          "id": "v5-confirm-029",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        }
+      ],
+      "ruler_usable": true,
+      "seed": 11
+    },
+    {
+      "anchor_equal": 16,
+      "anchor_unequal": 0,
+      "arm": "cut",
+      "items": 16,
+      "last_step_byte_correct": {
+        "native": 16,
+        "position": 16,
+        "source": 0
+      },
+      "modes": {
+        "native": {
+          "seven_exact": 16,
+          "six_exact": 16
+        },
+        "position": {
+          "seven_exact": 16,
+          "six_exact": 16
+        },
+        "source": {
+          "seven_exact": 0,
+          "six_exact": 0
+        }
+      },
+      "position_paired_gains": 0,
+      "position_paired_losses": 0,
+      "rows": [
+        {
+          "id": "v5-confirm-000",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-001",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-004",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-005",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-008",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-009",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-012",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-013",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-016",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-017",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-020",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-021",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-024",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-025",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-028",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-029",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        }
+      ],
+      "ruler_usable": false,
+      "seed": 11
+    },
+    {
+      "anchor_equal": 16,
+      "anchor_unequal": 0,
+      "arm": "position",
+      "items": 16,
+      "last_step_byte_correct": {
+        "native": 16,
+        "position": 16,
+        "source": 0
+      },
+      "modes": {
+        "native": {
+          "seven_exact": 16,
+          "six_exact": 16
+        },
+        "position": {
+          "seven_exact": 16,
+          "six_exact": 16
+        },
+        "source": {
+          "seven_exact": 0,
+          "six_exact": 0
+        }
+      },
+      "position_paired_gains": 0,
+      "position_paired_losses": 0,
+      "rows": [
+        {
+          "id": "v5-confirm-000",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-001",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-004",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-005",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-008",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-009",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-012",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-013",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-016",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-017",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-020",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-021",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-024",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-025",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-028",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-029",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        }
+      ],
+      "ruler_usable": false,
+      "seed": 12
+    },
+    {
+      "anchor_equal": 16,
+      "anchor_unequal": 0,
+      "arm": "terminal",
+      "items": 16,
+      "last_step_byte_correct": {
+        "native": 15,
+        "position": 14,
+        "source": 14
+      },
+      "modes": {
+        "native": {
+          "seven_exact": 0,
+          "six_exact": 0
+        },
+        "position": {
+          "seven_exact": 0,
+          "six_exact": 0
+        },
+        "source": {
+          "seven_exact": 0,
+          "six_exact": 0
+        }
+      },
+      "position_paired_gains": 0,
+      "position_paired_losses": 0,
+      "rows": [
+        {
+          "id": "v5-confirm-000",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-001",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-004",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          }
+        },
+        {
+          "id": "v5-confirm-005",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-008",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-009",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-012",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-013",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-016",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          }
+        },
+        {
+          "id": "v5-confirm-017",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-020",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-021",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-024",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-025",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-028",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-029",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        }
+      ],
+      "ruler_usable": true,
+      "seed": 12
+    },
+    {
+      "anchor_equal": 16,
+      "anchor_unequal": 0,
+      "arm": "cut",
+      "items": 16,
+      "last_step_byte_correct": {
+        "native": 16,
+        "position": 16,
+        "source": 6
+      },
+      "modes": {
+        "native": {
+          "seven_exact": 16,
+          "six_exact": 16
+        },
+        "position": {
+          "seven_exact": 16,
+          "six_exact": 16
+        },
+        "source": {
+          "seven_exact": 0,
+          "six_exact": 0
+        }
+      },
+      "position_paired_gains": 0,
+      "position_paired_losses": 0,
+      "rows": [
+        {
+          "id": "v5-confirm-000",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-001",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-004",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-005",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-008",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-009",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-012",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-013",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-016",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-017",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-020",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-021",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-024",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-025",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-028",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-029",
+          "kind": "revision",
+          "native": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        }
+      ],
+      "ruler_usable": false,
+      "seed": 12
+    },
+    {
+      "anchor_equal": 16,
+      "anchor_unequal": 0,
+      "arm": "position",
+      "items": 16,
+      "last_step_byte_correct": {
+        "native": 16,
+        "position": 16,
+        "source": 10
+      },
+      "modes": {
+        "native": {
+          "seven_exact": 0,
+          "six_exact": 0
+        },
+        "position": {
+          "seven_exact": 2,
+          "six_exact": 2
+        },
+        "source": {
+          "seven_exact": 0,
+          "six_exact": 0
+        }
+      },
+      "position_paired_gains": 2,
+      "position_paired_losses": 0,
+      "rows": [
+        {
+          "id": "v5-confirm-000",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 5
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 6
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          }
+        },
+        {
+          "id": "v5-confirm-001",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 5
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 5
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          }
+        },
+        {
+          "id": "v5-confirm-004",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 6
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 6
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          }
+        },
+        {
+          "id": "v5-confirm-005",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 4
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 6
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-008",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 6
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-009",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 5
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 6
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-012",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 5
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 6
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          }
+        },
+        {
+          "id": "v5-confirm-013",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 5
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 6
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-016",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 4
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          }
+        },
+        {
+          "id": "v5-confirm-017",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 6
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-020",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 4
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 6
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          }
+        },
+        {
+          "id": "v5-confirm-021",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 6
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-024",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 4
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-025",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 6
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          }
+        },
+        {
+          "id": "v5-confirm-028",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 5
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 4
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-029",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 6
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        }
+      ],
+      "ruler_usable": true,
+      "seed": 13
+    },
+    {
+      "anchor_equal": 16,
+      "anchor_unequal": 0,
+      "arm": "terminal",
+      "items": 16,
+      "last_step_byte_correct": {
+        "native": 11,
+        "position": 11,
+        "source": 11
+      },
+      "modes": {
+        "native": {
+          "seven_exact": 0,
+          "six_exact": 0
+        },
+        "position": {
+          "seven_exact": 0,
+          "six_exact": 0
+        },
+        "source": {
+          "seven_exact": 0,
+          "six_exact": 0
+        }
+      },
+      "position_paired_gains": 0,
+      "position_paired_losses": 0,
+      "rows": [
+        {
+          "id": "v5-confirm-000",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          }
+        },
+        {
+          "id": "v5-confirm-001",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-004",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-005",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          }
+        },
+        {
+          "id": "v5-confirm-008",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          }
+        },
+        {
+          "id": "v5-confirm-009",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 4
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          }
+        },
+        {
+          "id": "v5-confirm-012",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          }
+        },
+        {
+          "id": "v5-confirm-013",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-016",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-017",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-020",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-021",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-024",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-025",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 0
+          }
+        },
+        {
+          "id": "v5-confirm-028",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-029",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        }
+      ],
+      "ruler_usable": true,
+      "seed": 13
+    },
+    {
+      "anchor_equal": 16,
+      "anchor_unequal": 0,
+      "arm": "cut",
+      "items": 16,
+      "last_step_byte_correct": {
+        "native": 15,
+        "position": 16,
+        "source": 10
+      },
+      "modes": {
+        "native": {
+          "seven_exact": 0,
+          "six_exact": 0
+        },
+        "position": {
+          "seven_exact": 11,
+          "six_exact": 11
+        },
+        "source": {
+          "seven_exact": 0,
+          "six_exact": 0
+        }
+      },
+      "position_paired_gains": 11,
+      "position_paired_losses": 0,
+      "rows": [
+        {
+          "id": "v5-confirm-000",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 4
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 6
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          }
+        },
+        {
+          "id": "v5-confirm-001",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 5
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          }
+        },
+        {
+          "id": "v5-confirm-004",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          }
+        },
+        {
+          "id": "v5-confirm-005",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 6
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-008",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 6
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-009",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 5
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-012",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 4
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-013",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 4
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-016",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 6
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          }
+        },
+        {
+          "id": "v5-confirm-017",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 5
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-020",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 5
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          }
+        },
+        {
+          "id": "v5-confirm-021",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 4
+          },
+          "position": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 6
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-024",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 4
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        },
+        {
+          "id": "v5-confirm-025",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 3
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 2
+          }
+        },
+        {
+          "id": "v5-confirm-028",
+          "kind": "lookup",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 4
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 5
+          }
+        },
+        {
+          "id": "v5-confirm-029",
+          "kind": "revision",
+          "native": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 4
+          },
+          "position": {
+            "seven_exact": true,
+            "six_exact": true,
+            "teacher_tokens_correct": 7
+          },
+          "source": {
+            "seven_exact": false,
+            "six_exact": false,
+            "teacher_tokens_correct": 1
+          }
+        }
+      ],
+      "ruler_usable": true,
+      "seed": 13
+    }
+  ],
+  "error": null,
+  "format": "taiji-n1-92-oracle-address-probe-v1",
+  "oracle_is_capability": false,
+  "parameter_updates": 0,
+  "plan": "E:\\Seed\\plans\\reference\\PLAN-N1-92_oracle_address_probe_run92_20261017.md",
+  "plan_sha256": "758c4f8d6d0ddc8bd9815d5a29b066a6d43a66314ce28fbf899b16d90ba8076c",
+  "probe_sha256": "1b3b17f8bcf79f444d06606b85f1cfe76fe33ca95a8888486a781c31edb43a82",
+  "reused_oracle_instrument_sha256": "c34d699ac3e3d89e0316b41d6c359acd76b4f5f60ecc7b6f8cfecf1e0f8bdfb3",
+  "status": "published",
+  "teacher_sequences": 432,
+  "training_queries": 0,
+  "unseen_claim_allowed": false,
+  "v5_sha256": "22ba37976bc6eaaaf2425b84714a6efa6e95e7e5aa05f32eb3a7c0c10d9ffc2d"
+}

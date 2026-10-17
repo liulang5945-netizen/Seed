@@ -197,3 +197,12 @@ def test_cli_modes_are_exclusive_and_refuse_an_existing_output(tmp_path: Path, m
     monkeypatch.setattr(probe, "REPORT", sealed)
     assert probe.main(["--execute-approved"]) == 2
     assert sealed.read_bytes() == before, "refusal must not rewrite the sealed output"
+
+
+def test_native_anchor_decision_sums_and_can_produce_a_stop() -> None:
+    assert probe.anchor_decision([]) == (0, 0)
+    clean = [{"anchor_equal": 16, "anchor_unequal": 0} for _ in probe.SEEDS]
+    assert probe.anchor_decision(clean) == (48, 0)
+    dirty = clean[:1] + [{"anchor_equal": 15, "anchor_unequal": 1}]
+    checked, unequal = probe.anchor_decision(dirty)
+    assert (checked, unequal) == (32, 1), "a diverged pair must be counted, not dropped"
