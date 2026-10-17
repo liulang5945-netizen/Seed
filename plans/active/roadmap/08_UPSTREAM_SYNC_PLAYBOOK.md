@@ -4311,3 +4311,12 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
   4. **`test_n1_generated_cap_matches_protocol.py`** 报 10 == 9：第 10 枚是 2026-10-17 `5aea3fbef` 新建的 `eval_taiji_n1_input_factorial_diagnostic.py:344` 的 `generate_trace(..., 64)`——守卫**正常工作**，不是它坏了。按"计数照实抬＋件名写死"处理（抬数同时点名来源与所属未覆盖半段 DEBT-G150，谁改成读协议键谁就把它减掉，减了会红是正确的红）。3 passed。
 - 剩下的 21 枚**不在我这一笔的射程内**，归属照实写：`test_native_*` 训练合同（11 枚）与 `test_sequence_content_workspace_v1` 属并发会话两条腿（其工作区文件仍在飞）；`test_prereg_wording_corpus_ratchet`（新计划件 PLAN-N1-98／100／101 判据面薄）与 `test_n6_10_tracked_report_line_endings`（新 `.gz` 件抬计数）属"新件未同步基线"族；`test_n5_38_ledger_cited_reports_contract` 2 枚未查。**引用整族数之前必须现取**这一条仍未进门（DEBT-G158 的③）。
 - 一句自指：我这一轮的多次并发写盘（05／08 与这面跑重叠）本身就可能污染个别读数，所以上面四枚都是在**跑完之后单册复跑**确认的，不是拿那趟整面里的旧帧下结论。
+### ㊵-1105 · 2026-10-18 · 台账引用完整性现取：5 枚幽灵引用＋1 枚前向引用＋2 枚畸形串，立案 DEBT-G159；我自己那处前向引用已改成写靶旗标形式
+
+- 这是 DEBT-G158 那次整族现取带出来的第二条：`test_n5_38_ledger_cited_reports_contract.py` 两枚红不是测试坏，而是**仪器真的查出文档在引用不存在的读数件**。逐枚取数（`audit_taiji_ledger_cited_reports_are_tracked.py`，`tracked_reports_total` 2162／`cited_reports_total` 443，verdict `violated`）：
+  - 幽灵引用 5 枚：`reports/sealed.json`（08＋PLAN-N1-07 的 budget 判读件引）、`taiji_n1_fresh_frozen_confirmation_20261016.json`（PLAN-N1-78 引）、`taiji_n1_transition_factorial_frozen_confirmation_20261016.json`（PLAN-N1-85 引）、`taiji_n1_transition_factorial_paired_train_20261016.json`（PLAN-N1-84 引）、`taiji_n1_transition_factorial_run86_launcher_returned.json`（08＋EXP-N1-86＋PLAN-N1-86 引）。
+  - 前向引用 1 枚：`taiji_n1_length_balanced_training_20261018_runner_readiness.json`——它由 03 与 08 各引一处，指的是那条腿**将来**要落的写靶，等 `--validate-only` 跑过就自愈。
+  - 畸形串 2 枚：`reports/..._attempt.failed-1.json`、`reports/...json`（带省略号的通配写法，仪器按畸形单列）。
+- 我自己那处已就地改：03 队首里那句从"引用件名"改成写靶旗标形式（`--out-report reports/…runner_readiness.json`）。**规则现读清楚**：仪器要求"该件名每一处提及的前 90 字里都出现输出旗标"才落 `planned_output`，所以只改 03 不足以让这一枚变绿——08 那处在并发会话的条目里，我不替它改写（留给那条腿，或后续按修法②处理）。
+- 处置通道是现成的而不是新造的：仪器的 `supersede_map` 已能用（现读 `supersede_map_fully_verified=true`、已含 1 条映射），所以幽灵引用要么给出**真实后继**的映射、要么就地标注"该件从未落盘／已删，此句只作历史"。成因本轮**不定**：改名未回查与 2026-10-03 收束连带删件两条候选都还缺证据（记忆 `artifact-curation-scan-by-basename` 讲的正是删件前必须按裸文件名回查全仓引用）。
+- 本轮没有改动这些历史判读件本身；登记在案等逐枚处置。门：列形 rc=0（159 行）、普查 rc=0、唯一性 rc=0、链接器 rc=0；我改的 03 那句由 `test_project_identity` 与措辞门复跑确认仍绿（该册 4 passed）。
