@@ -4039,3 +4039,8 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 
 - owner通过弹窗明确批准PLAN-N1-102。现已冻结seed109、40题四类平衡、12观测/d=1的新面；只从v7/v8已查询sacrifice题读取实体/材料值用于排除，confirm内容不读取、不使用、不查询。原6/9范围线和PLAN-N1-94四项确认门不变，不训练、不访问v3 dev/holdout。
 - 当前唯一下一步：实现`build_taiji_n1_hard_neighbor_v9.py`、`eval_taiji_n1_hard_neighbor_v9.py`及合同测试，固定造面并提交后做零加载readiness；之后只跑一次180条sacrifice范围检验。若不足6/9则停止，不解封confirm、不重抽。此前v7/v8 confirm都保持未查询。
+
+### ㊵-1060 · 2026-10-17 · PLAN-N1-102实现合同和真实来源预演通过
+
+- v9 builder/evaluator与4项合同模块已实现；7项新测试、Ruff、Black、py_compile通过。对真实v3/v5/v6/v7-sacrifice/v8-sacrifice排除源进行零查询预演：16项构造门全真，面内470个实体/360个材料值，来源重叠0；v7 sacrifice排除75个实体，v8排除155个实体，两个confirm面内容解码数均0。seed109、12观测/d=1，20/20子集平衡，目标行位置分 subset 平衡。
+- 当前唯一下一步为正式运行一次face builder，输出固定v9 manifest、checks与attempt；核验后选择性提交，再运行range-readiness。builder不加载模型/权重、不查询或更新；readiness只核9个冻结终端身份。代码、面与收据提交后才运行一次180条sacrifice范围检查。未过6/9就停，不查询v9 confirm；历史失败及未消费v7/v8 confirm均保留。

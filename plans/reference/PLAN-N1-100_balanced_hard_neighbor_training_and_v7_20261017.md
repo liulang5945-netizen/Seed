@@ -51,3 +51,5 @@
 〔㊵-1058 v8范围失败〕提交后readiness复核通过，v8一次性运行180条，CPU36.671875/180秒，完整通过来源/代码守卫、0更新；`usable_endpoints=4/9`未过6/9。可用端点为11/terminal=15、12/terminal=14、13/position=13、13/terminal=13；position 11/12为0/2，所有cut为4，且unknown列不入门。v7也恰为4/9，过线端点集合相同；不能据此作因果结论，但8观测没有新增可用端点。v8 confirm的attempt/report均不存在，`v8_confirm_model_queries=0`、`can_promote=false`。判读见[EXP-N1-101](EXP-N1-101_v8_range_adjudication_20261017.md)，PLAN-N1-101按原规则关闭。后续提案由owner在㊵-1059批准并冻结为[PLAN-N1-102](PLAN-N1-102_v12_observation_range_probe_20261017.md)。
 
 〔㊵-1059 批准PLAN-N1-102〕owner通过弹窗明确答复“批准 PLAN-N1-102（推荐）”。固定协议已转为[PLAN-N1-102](PLAN-N1-102_v12_observation_range_probe_20261017.md)：seed109、40题平衡、12 observations、d=1，v7/v8只使用已查询sacrifice值作排除，confirm字段不读取；原6/9范围门和四项确认门不改，不训练。当前唯一下一步为实现v9 builder/evaluator与合同测试，代码和面提交后做零加载readiness，再执行一次sacrifice范围；未过即停止。
+
+〔㊵-1060 PLAN-N1-102实现合同〕v9 builder/evaluator与4项合同测试已实现；7项测试通过，Ruff/Black/py_compile全过。真实v3 train、v5/v6及v7/v8 sacrifice输入的零查询预演通过全部16项构造检查，生成参数为seed109、12 observations/d=1；读取v7/v8面时仅解码20个sacrifice episode，并对confirm episode只检索ID/split/subset后跳过。预演未落面/报告、未加载模型或checkpoint、未查询或更新。唯一下一步为运行正式one-shot face builder，随后核验并提交面与构造收据；提交后复核range-readiness，才允许一次180条范围查询。
