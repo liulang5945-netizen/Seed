@@ -4214,3 +4214,15 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 
 - builder `scripts/training/build_taiji_n1_length_balanced_training_schedule.py` SHA-256 `94d5abc2f53660d5d8f8e15f41b7c2ad87ca76849d9d55d911b68d9b8238c600`，合同测试 `tests/taiji_native/test_n1_plan110_length_balanced_schedule_contract.py` SHA-256 `41c408aa290edcf8cc3e6006fe71cde7746eb9dd89e1eb174d7f9f9f286cc37b`。五项测试通过，Ruff/Black/py_compile通过；实际train-only来源dry-run接受，3072 hard＋3072 raw view、288个六→七字符一对一材料映射，0 model/checkpoint/query/update。
 - builder沿用PLAN-N1-100 hard条件分母，另存每父项16个raw slots并在原始和困难两路径都均分6/7。source exclusions绑定v3 train、v5/v6、v7/v8已查询sacrifice、v9与v10；v7/v8确认payload未读取。当前唯一下一步：提交builder/test冻结，再执行一次`--write`生成candidate schedule和checks；数据文件未写，checkpoint未保存，training未启动。
+
+### ㊵-1090 · 2026-10-18 · PLAN-N1-110 length-balanced candidate schedule正式构造
+
+- write-once manifest `plans/manifests/n1_hard_neighbor_length_balanced_schedule_v1_20261018.json` SHA-256 `b2d637fcc1e096d40bba35bbc91bc66b0c27257cd74a4bcac5f5f488f55b6d4c`，construction checks `reports/taiji_n1_length_balanced_schedule_checks_20261018.json` SHA-256 `51cb205b17a1319b86c7f73c4f0158957cbeaf73b933aa9a942aba52cfabf0d9`。3072 hard＋3072 raw views；每父项/条件6/7等量，lookup/revision/unknown各384×6＋384×7，transition768项不变；六→七映射288项一对一。
+- checks accepted且errors为空，40项来源守卫包含PLAN、builder/test、v10 face、v3 train和既往材料/名称排除源；v7/v8 confirmation payload未读。检查结果0 checkpoint load、0 model query、0 parameter update、dev/holdout access=false。未保存candidate checkpoint、未训练、未造v11面。
+- 当前唯一下一步：实现专用candidate runner，将原始与hard schedule精确接入24,576步轨迹并在每端点核验length ledger；随后先做九枚zero checkpoint独立保存/恢复前置，不通过即不得开始训练。
+
+### ㊵-1090 · 2026-10-18 · PLAN-N1-110 length-balanced candidate schedule正式构造
+
+- write-once manifest `plans/manifests/n1_hard_neighbor_length_balanced_schedule_v1_20261018.json` SHA-256 `b2d637fcc1e096d40bba35bbc91bc66b0c27257cd74a4bcac5f5f488f55b6d4c`，construction checks `reports/taiji_n1_length_balanced_schedule_checks_20261018.json` SHA-256 `51cb205b17a1319b86c7f73c4f0158957cbeaf73b933aa9a942aba52cfabf0d9`。3072 hard＋3072 materialized raw views；每父项/条件按6/7各半，lookup/revision/unknown的raw和hard各384×6+384×7，transition 768项保持不变；six→seven映射288个值、一对一且排除过往评估词。
+- 40项source guards全真，包含PLAN-N1-110、builder/test、v3 train源、v5/v6、v7/v8 sacrifice、v9与v10；v7/v8确认payload字段未解码。造表/检查0 model/checkpoint load、0 query、0 update，dev/holdout计数0；未创建任何candidate checkpoint或v11 face。
+- 当前唯一下一步：实现独立candidate training runner，让raw/hard slot仅消费此冻结manifest，完整核验每步length账本、source/code guard、训练充分门与zero/final bundle保存恢复；完成前不启动optimizer updates。
