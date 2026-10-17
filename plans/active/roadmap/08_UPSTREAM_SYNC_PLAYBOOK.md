@@ -3991,3 +3991,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - `scripts/training/run_taiji_n1_hard_neighbor_training.py` 复用冻结84 runner的目标、Adam、bounded-update和原评分门，仅替换调度、固定末周期LR及计数；九枚起始bundle来自run83 preflight的run11/12/13×三臂full-fresh零态，run88c仅有position三枚，不能当九模型统一源。总CPU合同仍为18,000秒。
 - v7 builder只在训练九端全过后才读v5/v6名单与材料词作排除；`uses`材料答案新词与v3 train/v5/v6分离，方向/`unknown`作为任务标签。评估器强制先查20项sacrifice，只在范围≥6/9通过后才允许创建confirm attempt。没有修改任何训练或确认门。
 - 四组PLAN-N1-100合同测试15项通过；Ruff、Black、py_compile通过。此前仅静态读取源码和train数据，尚未加载checkpoint、做optimizer更新、生成v7 face或进行模型查询；N5工作树文件和`output/`目录未触碰。九枚zero保存恢复预检为唯一下一步；其通过后再按18,000秒总上限执行固定九模型训练。
+
+### ㊵-1052 · 2026-10-17 · PLAN-N1-100 九枚 fresh-zero checkpoint 保存恢复预检通过
+
+- 预检件 `reports/taiji_n1_hard_neighbor_training_20261017_checkpoint_preflight.json` SHA-256 `5dec355d765d1b5b3de98c680f8392990d6363dde1e035c56fb3db71db27d492`，绑定件为同名 `_binding.json`。run83九个seed/arm source各加载一次，生成九枚专用zero checkpoint，再由九个独立进程逐枚重读；9/9 full bundle和两步signature恢复均相等，86项来源守卫未变，CPU50.390625/300秒预检上限，accounting完整。
+- 预检训练更新0、dev/holdout/confirmation查询0、`can_promote=false`。输出checkpoint保存在 `data/checkpoints/n1_hard_neighbor_training_v1_20261017/`，后续正式训练必须复用这些精确zero bytes，偏差即停止。
+- 下一步按 PLAN-N1-100 执行九模型×24,576固定更新，含恢复前置总CPU上限18,000秒（预检已耗50.390625秒）；原训练门不改。正式训练全门通过后才生成v7，范围线没过则不查询confirm。既有N5报告改动与`output/`未跟踪目录均未触碰。

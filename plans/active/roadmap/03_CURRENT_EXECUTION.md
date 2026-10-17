@@ -1,8 +1,8 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：执行 PLAN-N1-100 九枚 zero checkpoint 独立恢复预检
+## 当前唯一下一步：执行 PLAN-N1-100 固定九模型训练
 
-[EXP-N1-99](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md) 已出值：position 的 d=1 两格都是0/15，d=2 两格各1/15；同面unknown结果仍很弱。run88锁定的v3 native-evidence train流中，48个unknown样本全部2观测/3实体、近邻距离8–10，没有d≤2样本。owner已明确授予最高自主权。PLAN-N1-100 的schedule、训练控制器、v7 builder、范围及确认执行器已实现，15项合同测试和Ruff/Black/py_compile通过；schedule仅含3072项train-derived hard view（SHA `dc3a96ad17d43bd898e403ecd119c12c781317a71ab06ba39cdab6db24c40d50`）。零态来源已纠正为run83提供的九枚full-fresh checkpoint；train reader只解析train episode，非train只看`id`/`split`以跳过对象。当前唯一下一步是九枚zero checkpoint保存与独立恢复预检；过后固定训练九模型，训练门与确认四门沿用冻结值，累计CPU≤18000秒。本阶段未加载checkpoint、未训练、未生成v7面或查询模型。PLAN-N1-99的离线元数据越界和hash补记仍按[判读](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md)披露，后续仅使用train数据。
+[EXP-N1-99](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md) 已出值：position 的 d=1 两格都是0/15，d=2 两格各1/15；同面unknown结果仍很弱。run88锁定的v3 native-evidence train流中，48个unknown样本全部2观测/3实体、近邻距离8–10，没有d≤2样本。owner已明确授予最高自主权。PLAN-N1-100 的schedule、训练控制器、v7 builder、范围及确认执行器已实现，15项合同测试、Ruff/Black/py_compile通过；schedule SHA `dc3a96ad17d43bd898e403ecd119c12c781317a71ab06ba39cdab6db24c40d50`。九枚run83 fresh-zero checkpoint保存与跨进程恢复前置已过：9/9 equal、86项来源守卫未变、CPU50.390625秒，0 optimizer更新、0 v3 dev/holdout/确认查询。现在唯一下一步是固定训练九个模型；原训练门与确认四门不改，总CPU上限18,000秒（含已耗50.390625秒）。train reader仅解码train episode，不解析dev/holdout载荷。PLAN-N1-99偏差仍按[判读](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md)披露，后续仅使用train数据。
 
 ## ㊵-1045 时点的历史队首（保留原文，已由㊵-1046更新）
 
