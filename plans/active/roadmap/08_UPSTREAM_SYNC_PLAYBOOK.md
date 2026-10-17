@@ -4160,3 +4160,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 离线分析完成2,232行、180个匹配position/length模板组，CPU0.15625秒；报告SHA-256 `402d58d663c2359a7c23f69cad635cfe335675572f742be50488382014185675`，source/input hashes全部匹配且前后不变，模型/checkpoint加载、查询和参数更新均0。
 - 180/180模板组的所有位置均输出同一个字符串。position seed11七字符lookup的一组12位置全输出`unknown`；seed12的七字符lookup与revision各有单一模板全位置一字符差错，revision输出长度短一字符；seed13的全部lookup/revision模板均全位置稳定错误，与目标编辑距离2–7，position为0/96和0/88。该差异位于seed/模板/答案长度层，不表现为同模板逐位置变化；不能据此断言内部完全不使用地址。
 - 当前唯一下一步：只读汇总v10已存`teacher_exact`与`free_exact`的一致/分歧表，判断错误是否在gold-prefix条件下同样存在；仅消费原face/result，不加载模型、不查询、不训练、不改门，之后提出唯一训练/结构方案供owner裁定。
+
+### ㊵-1080 · 2026-10-17 · PLAN-N1-108教师强制/自由输出一致性工具冻结
+
+- 计划`plans/reference/PLAN-N1-108_v10_teacher_free_agreement_20261017.md` SHA-256 `e07641a038c27b91b229312dfe45685606d27c5e1623e5cbdbcee627d3f31960`已冻结。只汇总已保存的`teacher_exact`/`free_exact`与face identity，不重跑评分。全2232行及seed/arm/kind/length/position分母完整列出，CPU≤15秒，不加载模型/checkpoint、不查询、不训练、不改门。
+- analyzer `scripts/training/audit_taiji_n1_v10_teacher_free_agreement.py` SHA-256 `daac0cf99c8313794e65b738d640bb242c7dbaf45f1ec4ed3b30fb5704afac9f`，合同测试 `tests/taiji_native/test_n1_run108_v10_teacher_free_agreement_contract.py` SHA-256 `8ab9d183ef2af425acf329a314c0c9b52e245bd32f3bccf4b92d8db8591a1e8a`；5项测试、Ruff/Black/py_compile通过。初步内存计数发现0行分歧，此报告将独立验证并留下可审计分层。
+- 当前唯一下一步：提交计划、实现、测试和active status，再校验冻结哈希后只运行一次；报告不会改变任何能力门或能力状态。
