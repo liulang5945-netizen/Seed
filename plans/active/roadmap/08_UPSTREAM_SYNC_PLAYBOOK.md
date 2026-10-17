@@ -4092,3 +4092,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 静态检查v9 builder（SHA `90c1c88a7f5cca931611bfbd9a5b348f474b8dae0333baba7ec32d9e9c001293`）确认：confirm ordinal为5–9，答案长度按`ordinal % 2`轮换，target start按`ordinal % 5`生成，故目标位置/长度与item ordinal确定性绑定。
 - 四门旧裁决不变：position对terminal +29/60、对cut −5/60，`can_promote=false`。唯一提案[PLAN-N1-105](../../reference/PLAN-N1-105_counterbalanced_input_feature_diagnostic_draft_20261017.md)将使用同九枚冻结端点做全可行位置×答案长度正交诊断（124题、1116查询、CPU≤10分钟）；因新测面尚未获批，未造面或查询。
 - 报告绑定的执行源码SHA `fa658ab9a8de4519cb7e072d8039d0b6fae48d138be80ee32ac494b8dfb3da9d`由提交`2b044a186`原样保存。之后只做Black换行格式化，当前源码SHA `07be1706980591adc9dc82885903b812ac7daa54f1f6023e42be9afe08e2ac63`；pytest 6项、Ruff、Black与py_compile均通过。
+
+### ㊵-1069 · 2026-10-17 · PLAN-N1-105草案通过运行器兼容性审查修订
+
+- 只读审查`eval_taiji_n1_hard_neighbor_v9.py`发现`run_confirmation`固定20题且同时查询旧描述对照；不可原样用于新增正交诊断。基础单题测评路径逐题移除观察状态，并验证model/optimizer/RNG/history bundle未变。故草案要求独立`split=diagnostic`构造器/评估器，不把新诊断冒充holdout，也不调用v9确认入口。
+- 为提高分层重复数，提案采用四套匹配模板：lookup 96题、revision 88题、transition 44题、unknown 20题，共248题；每个lookup/revision位置×长度格4题，每个transition位置4题。九端点共2232次查询，独立CPU≤20分钟；计划仍未获批，代码/测面均未创建或查询。
+- 当前唯一下一步仍是owner裁定是否更换测面。若批准，先冻结独立builder/evaluator及来源排除、checkpoint恢复和一次性查询守卫，再生成面；若未批准，v9四门失败结论保持不变。
