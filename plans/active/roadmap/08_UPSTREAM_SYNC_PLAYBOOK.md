@@ -4209,3 +4209,8 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 ### ㊵-1088 · 2026-10-17 · PLAN-N1-110可复现随机流冻结
 
 - 为避免实现选择漂移，length/slot分配seed固定11010，six-to-seven material bijection seed固定11011，v11 builder seed固定111。raw与hard slot、值映射、面构造均按seed与源SHA确定，且在首更前以manifest/checks绑定。计划SHA-256 `16d0cecb325af6463c107973fc0e741478140134a7642cd64c86e045c6069783`。下一步开始实现schedule builder与合同测试，零模型操作。
+
+### ㊵-1089 · 2026-10-18 · PLAN-N1-110 raw/hard长度平衡schedule builder dry-run通过
+
+- builder `scripts/training/build_taiji_n1_length_balanced_training_schedule.py` SHA-256 `94d5abc2f53660d5d8f8e15f41b7c2ad87ca76849d9d55d911b68d9b8238c600`，合同测试 `tests/taiji_native/test_n1_plan110_length_balanced_schedule_contract.py` SHA-256 `41c408aa290edcf8cc3e6006fe71cde7746eb9dd89e1eb174d7f9f9f286cc37b`。五项测试通过，Ruff/Black/py_compile通过；实际train-only来源dry-run接受，3072 hard＋3072 raw view、288个六→七字符一对一材料映射，0 model/checkpoint/query/update。
+- builder沿用PLAN-N1-100 hard条件分母，另存每父项16个raw slots并在原始和困难两路径都均分6/7。source exclusions绑定v3 train、v5/v6、v7/v8已查询sacrifice、v9与v10；v7/v8确认payload未读取。当前唯一下一步：提交builder/test冻结，再执行一次`--write`生成candidate schedule和checks；数据文件未写，checkpoint未保存，training未启动。
