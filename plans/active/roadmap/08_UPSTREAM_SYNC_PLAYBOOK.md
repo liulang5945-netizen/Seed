@@ -4028,3 +4028,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - PLAN-N1-101实现位于`build_taiji_n1_hard_neighbor_v8.py`、`eval_taiji_n1_hard_neighbor_v8.py`，合同位于`test_n1_run101_v8_face_contract.py`与`test_n1_run101_v8_evaluation_contract.py`。7项新增合同测试与5项v7回归通过；Ruff、Black、py_compile通过。
 - seed108 v8 manifest SHA-256 `85d417eb387e1c985c9b5665ade0536dd74b13b52126d7601ed5af225dbdc3fc`；40题、四类各10、20/20子集、8观测、d=1，15项机检全过。构造报告SHA `dce7efd03f4051afd7df690b4f7db5c79066ffd4dfb239ce781f940021858474`，attempt SHA `0505886c19604ad14043b8051ad7a760a157bbc37d60a9ac4c8dd7731e1cdc68`。v3/v5/v6/v7-sacrifice来源交集均0；v7 confirm payload未解码；模型加载、模型查询、参数更新均0。
 - `--range-readiness`通过，确认20 sacrifice、20 confirm、9 endpoint。当前唯一下一步为选择性提交冻结实现与面，再提交后复核readiness并执行一次180条sacrifice范围查询；若usable低于6/9，立即停止，不查询v8 confirm。原范围与四项确认门不变；N5更改、`output/`、DSH文件均未触碰。
+
+### ㊵-1058 · 2026-10-17 · v8范围门未过，confirm未消费
+
+- v8一次性范围报告`reports/taiji_n1_hard_neighbor_v8_range_check_20261017.json` SHA-256 `0e983c31338c00536dfdbe1250c1ea57e5489536d7015391288b80517adbd406`，attempt SHA-256 `c63ca8997a6263e32635d1b8a944b0047521c1a1026c1601ba71e25d26e61e81`。180条查询、CPU36.671875/180秒，`complete=true`、来源与代码守卫全真、0更新；只有4/9端点达到≥6/15可答题错误。范围报告逐端点与类读数见[EXP-N1-101](../../reference/EXP-N1-101_v8_range_adjudication_20261017.md)。
+- 可用端点为11/terminal、12/terminal、13/position、13/terminal；position 11/12为0和2错误，三个cut皆4。v7也为4/9且可用集合相同；这是两张不同题面的描述比较，不作因果解读。v7/v8 confirmation attempt与report均不存在，confirm模型查询均为0，`can_promote=false`。
+- 按冻结PLAN-N1-101，range未达6/9即停；不解封confirm、不重跑或重抽v8。唯一建议草案[PLAN-N1-102](../../reference/PLAN-N1-102_v12_observation_range_probe_draft_20261017.md)拟用固定seed109、12观测/d=1新面，门值与一次性顺序不变。它是新测面，尚未批准；待owner裁定前不写代码、不造面、不查询。N5、`output/`与DSH文件均保留未改。
