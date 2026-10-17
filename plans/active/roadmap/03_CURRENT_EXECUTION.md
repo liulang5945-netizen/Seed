@@ -2,7 +2,7 @@
 
 ## 当前唯一下一步：owner裁定是否批准PLAN-N1-101新v8测面
 
-[EXP-N1-99](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md) 的d=1/d=2诊断仍未提供能力证据。PLAN-N1-100九模型训练完整，position三seed全过原训练门；v7 sacrifice范围查询180条、CPU38.171875秒，但只有4/9端点达到≥6/15可答题错误，未过冻结6/9线。confirm仍未查询，v7不重抽、不重跑、不改门。当前唯一待决事项是是否批准新的8-observation d=1 v8测面草案 [PLAN-N1-101](../../reference/PLAN-N1-101_v8_hard_neighbor_range_recovery_draft_20261017.md)。该草案不改范围线和四项确认门；未获批准前不生成新面，不读取v7 confirm payload，也不做新模型查询。范围判读：[EXP-N1-100-v7-range](../../reference/EXP-N1-100_v7_range_adjudication_20261017.md)。PLAN-N1-99偏差仍按[判读](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md)披露。
+[EXP-N1-99](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md) 的d=1/d=2诊断仍未提供能力证据。PLAN-N1-100九模型训练完整，position三seed全过原训练门；v7 sacrifice范围查询180条、CPU38.171875秒，但只有4/9端点达到≥6/15可答题错误，未过冻结6/9线。confirm仍未查询，v7不重抽、不重跑、不改门。当前唯一待决事项是是否批准新的8-observation d=1 v8测面草案 [PLAN-N1-101](../../reference/PLAN-N1-101_v8_hard_neighbor_range_recovery_draft_20261017.md)。该草案不改范围线和四项确认门；未获批准前不生成新面、不使用v7 confirm行做去重/分析、不做新模型查询。范围判读：[EXP-N1-100-v7-range](../../reference/EXP-N1-100_v7_range_adjudication_20261017.md)。PLAN-N1-99偏差仍按[判读](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md)披露。
 
 ## ㊵-1045 时点的历史队首（保留原文，已由㊵-1046更新）
 
