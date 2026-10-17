@@ -125,7 +125,17 @@ def test_the_two_faces_disagree_on_the_real_repo(instrument, tmp_path) -> None:
     #: 不钉死枚数（下一批加一枚读数件就会推翻它）；钉的是"桶里的总数必须等于逐枚求和"与
     #: "索引面上没有一枚是 `\r\n`"——后者才是"两面必须分开"的实证。
     buckets = report["buckets_index_face"]
-    assert buckets["crlf_pairs"] == 0
+    #: 〔㊵-1106 取法修口〕原句 `crlf_pairs == 0` 把"那两枚豁免件都只是散 CR"这一**现场观察**
+    #: 当成了判据；本轮新入册的封存件（`taiji_n1_fresh_paired_train_20261016.json`，SHA 被 45 枚
+    #: 件引用、不可改写）里确有 1 对 `\r\n` ⇒ 换成同一条意图的版本化形式：
+    #: **索引面上带 CRLF 对的那些件必须是豁免集的子集**（新来一枚带 CRLF 的照样当场红）。
+    crlf_names = sorted(
+        row["path"] for row in report["cr_bearing_tracked_files"] if row["crlf_pairs"]
+    )
+    assert set(crlf_names) <= set(instrument.GRANDFATHERED), crlf_names
+    assert buckets["crlf_pairs"] == sum(
+        row["crlf_pairs"] for row in report["cr_bearing_tracked_files"]
+    )
     assert buckets["lone_cr"] == sum(row["lone_cr"] for row in report["cr_bearing_tracked_files"])
     assert buckets["lone_cr"] > 0
 

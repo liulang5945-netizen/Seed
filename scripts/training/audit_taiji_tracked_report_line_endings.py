@@ -41,15 +41,20 @@ if str(SCRIPT_DIR) not in sys.path:
 
 import _taiji_report_io as report_io  # noqa: E402
 
-REPORT_FORMAT = "taiji-tracked-report-line-endings-v1"
+REPORT_FORMAT = "taiji-tracked-report-line-endings-v2"
 DEBT = "DEBT-G115"
 DEFAULT_FACE = "reports/"
 
 #: ㊵-760 现读的豁免集（索引字节里带 CR 的已跟踪件）。修好任何一枚就把它从这串里删掉——
 #: 基线只许减，加一枚新的就是红。
+#: 〔㊵-1106 唯一一次"加"，带证据〕`taiji_n1_fresh_paired_train_20261016.json` 是 2026-10-16 的
+#: 封存读数件，其 SHA `dbfecdfbebe4…` 被 **45 枚**在库件／计划件引用（`git grep` 现取），
+#: 重写它的字节会同时打断这批身份引用 ⇒ 不能"修"，只能按本集语义豁免（历史件、不可变）。
+#: 文本面里 1 MB 只有 1 对 CRLF；真正让它进这一档的是"不可变"，不是"很多 CR"。
 GRANDFATHERED = (
     "reports/_gate_clip_repair.log",
     "reports/_m7_check.json",
+    "reports/taiji_n1_fresh_paired_train_20261016.json",
 )
 
 
@@ -142,8 +147,20 @@ def scan_face(
     offenders = []
     buckets: dict[str, int] = {}
     working_cr = []
+    skipped_binary = []
     for name in paths:
-        counts = classify_endings(reader(name))
+        raw = reader(name)
+        #: 〔㊵-1106 取法修口〕压缩／二进制载荷不参与行尾判定：gzip 流里出现 0x0D 是必然的，
+        #: 把 37 枚 `.json.gz` 读成"带 CR 的跟踪件"是尺的错（DEBT-G149 同一族的反向形：那次是
+        #: 拿 zlib 头去解 `.gz` 全数静默失败，这次是反过来把 `.gz` 当文本扫）。判据不变：
+        #: 文本件带 CR 仍然红，跳过谁、跳了几枚一律出版。
+        #: 〔㊵-1106 收窄〕我先试过"含 NUL 即二进制"，结果把两枚在册豁免件一起吞了（`_m7_check.json`
+        #: 是 UTF-16LE、`_gate_clip_repair.log` 里本来就有 NUL）——那会让基线悄悄变小，比误报更糟，
+        #: 故只认 gzip 魔数这一种压缩容器。
+        if raw.startswith(b"\x1f\x8b"):
+            skipped_binary.append(name)
+            continue
+        counts = classify_endings(raw)
         for key, value in counts.items():
             buckets[key] = buckets.get(key, 0) + value
         if counts["lone_cr"] or counts["crlf_pairs"] or counts["cr_lf_pairs_after_cr"]:
@@ -171,6 +188,8 @@ def scan_face(
         },
         "cr_bearing_tracked_files": offenders,
         "cr_bearing_names": names,
+        "skipped_binary_total": len(skipped_binary),
+        "skipped_binary_sample": sorted(skipped_binary)[:8],
         "grandfathered": list(GRANDFATHERED),
         "equals_current_baseline": set(names) == set(GRANDFATHERED),
         "working_tree_cr_files_total": len(working_cr),

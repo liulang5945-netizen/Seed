@@ -37,10 +37,13 @@ OLD_HELPER = "_reject_position_input_without_learning_path"
 OLD_MESSAGE = "not wired to the developmental F1"
 #: 甲之后的闸：重放事件没带位置类 ⇒ 不许按零学。
 HELPER = "_reject_position_stateless_replay"
-#: 现读：定义点 `taiji/model.py:1123`；唯一调用点在 `replay_developmental_f1` 的事件循环里（:1462）。
-#: 钉行号是 ㊵-635 的规矩——数量对而位置漂＝有人把它挪进了别的分支。
-EXPECTED_DEF_LINE = 1123
-EXPECTED_CALL_SITES = [1462]
+#: 现读：定义在 `Taiji` 类里（`taiji/model.py:1241`），唯一调用点在方法 `replay_developmental_f1` 内。
+#: 〔㊵-1106 取法修口〕原先钉的是**行号**（㊵-635 的规矩），但行号会因无关改动漂移
+#: （1123→1241 就红了三天）⇒ 换成同一条意图的内容形："挪进别的类／别的方法"必须当场红，
+#: 而在同一位置上方加代码不再误红。
+EXPECTED_DEF_CLASS = "Taiji"
+EXPECTED_CALL_METHOD = "replay_developmental_f1"
+EXPECTED_CALL_SITES = [1462]  # 只取其**数量**（一枚调用点），行号不再参与判定
 #: 钉着"该抛"的两册改动后必须仍钉着某个拒绝点，不许被顺手删成"没抛是默认正确"。
 GUARD_FILES = (
     "tests/taiji_native/test_n3_04_developmental_flags_contract.py",
@@ -167,7 +170,17 @@ def test_the_new_guard_is_defined_once_at_the_inventoried_site_and_still_raises(
         node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef) and node.name == HELPER
     ]
     assert len(defs) == 1, [d.lineno for d in defs]
-    assert defs[0].lineno == EXPECTED_DEF_LINE, defs[0].lineno
+    #: 〔㊵-1106 取法修口〕这里原先钉 `lineno == EXPECTED_DEF_LINE`（1123→现在 1241），
+    #: 把"行号"当身份用：任何人在它上面加一段代码，这条与产品无关的测就红。
+    #: 换成两条内容形不变量——定义仍在 `Taiji` 类里、唯一调用点仍在 `replay_developmental_f1` 里；
+    #: 两条都能为假（挪出类／挪进别的方法＝当场红），且不受无关增删的行号漂移影响。
+    owners = [
+        node.name
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ClassDef)
+        and any(isinstance(st, ast.FunctionDef) and st.name == HELPER for st in node.body)
+    ]
+    assert owners == [EXPECTED_DEF_CLASS], owners
     body = ast.dump(defs[0])
     assert "position_input_enabled" in body, "新闸不再看位置列是否在场＝它已经不是那道闸"
     assert "ValueError" in body, "新闸不再抛＝清单过期，须重钉而不是让本测静默放行"
@@ -176,7 +189,14 @@ def test_the_new_guard_is_defined_once_at_the_inventoried_site_and_still_raises(
         for index, line in enumerate(text.split(chr(10)), start=1)
         if f"self.{HELPER}(" in line
     ]
-    assert sites == EXPECTED_CALL_SITES, sites
+    assert len(sites) == len(EXPECTED_CALL_SITES), sites
+    callers = [
+        node.name
+        for node in ast.walk(tree)
+        if isinstance(node, ast.FunctionDef)
+        and (ast.get_source_segment(text, node) or "").count(f"self.{HELPER}(") > 0
+    ]
+    assert callers == [EXPECTED_CALL_METHOD], callers
 
 
 def test_the_pinned_guards_still_reference_a_position_rejection() -> None:

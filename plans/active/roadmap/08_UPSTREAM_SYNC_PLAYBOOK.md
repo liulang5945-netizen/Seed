@@ -4320,3 +4320,14 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 我自己那处已就地改：03 队首里那句从"引用件名"改成写靶旗标形式（`--out-report reports/…runner_readiness.json`）。**规则现读清楚**：仪器要求"该件名每一处提及的前 90 字里都出现输出旗标"才落 `planned_output`，所以只改 03 不足以让这一枚变绿——08 那处在并发会话的条目里，我不替它改写（留给那条腿，或后续按修法②处理）。
 - 处置通道是现成的而不是新造的：仪器的 `supersede_map` 已能用（现读 `supersede_map_fully_verified=true`、已含 1 条映射），所以幽灵引用要么给出**真实后继**的映射、要么就地标注"该件从未落盘／已删，此句只作历史"。成因本轮**不定**：改名未回查与 2026-10-03 收束连带删件两条候选都还缺证据（记忆 `artifact-curation-scan-by-basename` 讲的正是删件前必须按裸文件名回查全仓引用）。
 - 本轮没有改动这些历史判读件本身；登记在案等逐枚处置。门：列形 rc=0（159 行）、普查 rc=0、唯一性 rc=0、链接器 rc=0；我改的 03 那句由 `test_project_identity` 与措辞门复跑确认仍绿（该册 4 passed）。
+### ㊵-1106 · 2026-10-18 · 把"清单过期型"红逐枚按"改取法不改判据"处理：整族 25 红现降至 20，其余 20 枚逐枚归属登记
+
+- 承接 ㊵-1104 那趟整面现取（25 failed／3200 passed）。本轮挑的是**不需要 owner 签、也不撞并发会话写靶**的一类：红因是"守卫把现场观察当判据"或"被审清单被新件撑大"。三枚修到绿、一枚收窄自己引入的过头修法，另有四族登记不代处置。
+- 修口明细（每处都写明原句为什么错）：
+  1. `test_n5_11_position_wiring_call_sites_contract.py`：原钉"定义在第 1123 行"，现读 1241 ⇒ **把行号当身份**，无关增删就误红。换成两条内容形：定义仍在 `Taiji` 类内、唯一调用点仍在 `replay_developmental_f1` 方法内（都保留能为假：挪出类／挪进别的方法当场红）。
+  2. `audit_taiji_tracked_report_line_endings.py` 升 `format=…-v2`：它把 37 枚 `.json.gz` 当"带 CR 的跟踪件"报红（DEBT-G149 同一族的反向形——那次是拿 zlib 头解 `.gz` 全数静默失败，这次是反过来把 `.gz` 当文本扫）。修法只认 gzip 魔数并新增 `skipped_binary_total`/`skipped_binary_sample` 两列出版。**我先试的是"含 NUL 即二进制"，当场过头**：把两枚在册豁免件（`_m7_check.json` 是 UTF-16LE、`_gate_clip_repair.log` 本就有 NUL）一起吞了，等于让基线悄悄变小——比误报更糟，已收窄并在码注释里写下这次误修。
+  3. 该测的 `crlf_pairs == 0` 同样是"现场观察当判据"：新入册的封存件里有 1 对 `\r\n`（其 SHA `dbfecdfbebe4…` 被 45 枚件引用 ⇒ 不可改写，只能按语义豁免），故判据换成"带 CRLF 对的索引件 ⊆ 豁免集"，新来一枚带 CRLF 的照样红。
+  4. 同轮把该件加进 `GRANDFATHERED` 并写明理由是不可变而非 CR 多——这是本仓"基线只许减"的一次**有证据的例外**，例外本身进台账。
+- 复跑：这五册合测 **65 passed**（`test_a30_stop_failure_v6_replay`／`test_n6_10_debt_row_effective_status`／`test_n1_generated_cap_matches_protocol`／`test_n5_11_position_wiring_call_sites`／`test_n6_10_tracked_report_line_endings`），`ruff` 与单文件 `black --check` 全清。整面计数由 25 红降到 **20 红**。
+- 剩下 20 红逐枚归属（不代处置的理由写在括号里）：`test_native_*` 训练合同 13 枚＋`test_n1_plan110_length_balanced_runner_contract` 1 枚属并发会话两条腿（工作区未提交，改了会撞它的写靶）；`test_n5_38_ledger_cited_reports_contract` 2 枚＝㊵-1105 的幽灵引用（DEBT-G159，通道是 supersede 映射或就地标注历史）；`test_b0_n2_stop_reason_disposition_contract` 1 枚＝stop_reason 消费清单被新件撑大（`audit_taiji_n1_native_evidence_train_fit.py`、`diagnose_taiji_n1_fresh_transition_factorial.py` 及三册 `test_native_*` 合同测），要逐枚写处置表才算清；`test_prereg_wording_corpus_ratchet` 1 枚＝新计划件（PLAN-N1-98／100／101）判据面薄；`test_n1_07_answer_source_provenance_contract` 1 枚＝它引用的真件正被并发会话改动（工作区那 6 枚 `taiji_n5_07_*.json`）。
+- 边界：以上全部零算力、零模型加载、未发射任何查询；队首那条腿照 owner 裁定等它自己提交并跑。
