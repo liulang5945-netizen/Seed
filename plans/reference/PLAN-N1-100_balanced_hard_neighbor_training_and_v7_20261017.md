@@ -68,6 +68,8 @@
 
 〔㊵-1067 PLAN-N1-104输入审计〕owner在批准PLAN-N1-103时补充授权常规推进计划。PLAN-N1-104据此冻结：streaming只解码v9已消费confirmation的20道题，按目标观察位置、类别及材料答案长度分层；不读v9 sacrifice fields，不读v7/v8 confirm、不加载checkpoint、不查询、不训练、不改门。唯一下一步为实现输入读取/结果归并合同并按冻结SHA一击出版，报告绑定两个来源SHA。
 
-〔㊵-1068 PLAN-N1-104读数〕审计报告SHA-256 `c0cf0ab7163ec62be7f2ffc76f78e573917bbbbf785d6da7a2923400c6ce1c5e`，20道confirm输入/180行结果、CPU0.5625秒、无加载/查询/更新。准备阶段整行预览单行manifest，误解码20道sacrifice载荷；报告披露该偏差，分析未使用这些字段。lookup/revision的位置1–5各只有单题，答案长度按7/6交替；v9 builder静态ordinal规则确认位置、长度与题目身份共线。seed13 position在lookup/revision两种长度组均0正确，但每格仅2或3题，不能识别原因；原四门仍失败且`can_promote=false`。唯一提案为新测面计划[PLAN-N1-105](PLAN-N1-105_counterbalanced_input_feature_diagnostic_draft_20261017.md)，未批准、未造面或查询。
+〔㊵-1068 PLAN-N1-104读数〕审计报告SHA-256 `c0cf0ab7163ec62be7f2ffc76f78e573917bbbbf785d6da7a2923400c6ce1c5e`，20道confirm输入/180行结果、CPU0.5625秒、无加载/查询/更新。准备阶段整行预览单行manifest，误解码20道sacrifice载荷；报告披露该偏差，分析未使用这些字段。lookup/revision的位置1–5各只有单题，答案长度按7/6交替；v9 builder静态ordinal规则确认位置、长度与题目身份共线。seed13 position在lookup/revision两种长度组均0正确，但每格仅2或3题，不能识别原因；原四门仍失败且`can_promote=false`。唯一提案为新测面计划[PLAN-N1-105](PLAN-N1-105_counterbalanced_input_feature_diagnostic_20261017.md)，未批准、未造面或查询。
 
 〔㊵-1069 PLAN-N1-105草案修订〕兼容性审查确认v9确认运行器固定20题并会查询旧描述控制，不能承载新诊断。未执行模型操作；草案已改为独立diagnostic split/builder/evaluator，四个匹配模板，248题、2232次查询、CPU≤20分钟。新测面仍待owner裁定。
+
+〔㊵-1070 PLAN-N1-105冻结〕owner批准新版方案，允许seed110、248题（lookup96/revision88/transition44/unknown20）、九枚PLAN-N1-100 checkpoint总计2232次diagnostic查询，CPU≤1200秒。使用独立builder/evaluator与`split=diagnostic`，禁止调用v9固定20题的确认入口；先完成源码/数据合同、建面和九端点完整bundle恢复，再一次运行。禁止训练、改门、读v7/v8确认payload或宣称能力晋升。冻结协议SHA-256 `02176b8915344540cd67faa90e96e0d36a1696e804cb16d59cda12de15eb07f9`。

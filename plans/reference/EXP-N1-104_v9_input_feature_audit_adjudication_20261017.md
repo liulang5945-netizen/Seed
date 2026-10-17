@@ -26,6 +26,6 @@ The exact executed analyzer source is preserved in commit `2b044a186` and matche
 
 This is an exploratory description of already-consumed confirmation results. It does not establish causality, unseen capability, C3/C4, retention, three-organ behavior, or promotion readiness.
 
-## Next step
+## Follow-up decision
 
-The single proposed next step is the draft [PLAN-N1-105](PLAN-N1-105_counterbalanced_input_feature_diagnostic_draft_20261017.md): one new, counterbalanced diagnostic face using the same nine frozen endpoints, with target position and material-answer length independently crossed. This changes the measurement face, so the plan remains unapproved and no face has been generated or queried.
+The single proposed next step was [PLAN-N1-105](PLAN-N1-105_counterbalanced_input_feature_diagnostic_20261017.md), a counterbalanced diagnostic face using the same nine frozen endpoints. On 2026-10-17, the owner approved and froze that plan. Implementation is authorized; at the time this record was updated, the diagnostic face had not yet been generated or queried.

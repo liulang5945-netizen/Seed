@@ -4090,7 +4090,7 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - **偏差披露**：实现前为检查单行紧凑清单而预览了整行，导致20道sacrifice题目的载荷进入分析上下文，违反PLAN-N1-104的跳过边界。代码审计随后只解码confirm题，且这些sacrifice字段未参与计算；报告将偏差固定记录。不得称本次审计“协议完全合规”。v7/v8或v3/v5/v6源未读。
 - 16个联合特征单元中，lookup/revision各5个位置1–5的单题格，答案长度依序7/6/7/6/7；transition每个位置为单题格，unknown为5题无目标行。seed13的lookup/revision position分别在6/7字符长度组均0正确；各长度组`n=2/3`，且题目身份与位置共线，不能区分长度效应、位置效应或题目难度。
 - 静态检查v9 builder（SHA `90c1c88a7f5cca931611bfbd9a5b348f474b8dae0333baba7ec32d9e9c001293`）确认：confirm ordinal为5–9，答案长度按`ordinal % 2`轮换，target start按`ordinal % 5`生成，故目标位置/长度与item ordinal确定性绑定。
-- 四门旧裁决不变：position对terminal +29/60、对cut −5/60，`can_promote=false`。唯一提案[PLAN-N1-105](../../reference/PLAN-N1-105_counterbalanced_input_feature_diagnostic_draft_20261017.md)将使用同九枚冻结端点做全可行位置×答案长度正交诊断（124题、1116查询、CPU≤10分钟）；因新测面尚未获批，未造面或查询。
+- 四门旧裁决不变：position对terminal +29/60、对cut −5/60，`can_promote=false`。唯一提案[PLAN-N1-105](../../reference/PLAN-N1-105_counterbalanced_input_feature_diagnostic_20261017.md)将使用同九枚冻结端点做全可行位置×答案长度正交诊断（124题、1116查询、CPU≤10分钟）；因新测面尚未获批，未造面或查询。
 - 报告绑定的执行源码SHA `fa658ab9a8de4519cb7e072d8039d0b6fae48d138be80ee32ac494b8dfb3da9d`由提交`2b044a186`原样保存。之后只做Black换行格式化，当前源码SHA `07be1706980591adc9dc82885903b812ac7daa54f1f6023e42be9afe08e2ac63`；pytest 6项、Ruff、Black与py_compile均通过。
 
 ### ㊵-1069 · 2026-10-17 · PLAN-N1-105草案通过运行器兼容性审查修订
@@ -4098,3 +4098,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 只读审查`eval_taiji_n1_hard_neighbor_v9.py`发现`run_confirmation`固定20题且同时查询旧描述对照；不可原样用于新增正交诊断。基础单题测评路径逐题移除观察状态，并验证model/optimizer/RNG/history bundle未变。故草案要求独立`split=diagnostic`构造器/评估器，不把新诊断冒充holdout，也不调用v9确认入口。
 - 为提高分层重复数，提案采用四套匹配模板：lookup 96题、revision 88题、transition 44题、unknown 20题，共248题；每个lookup/revision位置×长度格4题，每个transition位置4题。九端点共2232次查询，独立CPU≤20分钟；计划仍未获批，代码/测面均未创建或查询。
 - 当前唯一下一步仍是owner裁定是否更换测面。若批准，先冻结独立builder/evaluator及来源排除、checkpoint恢复和一次性查询守卫，再生成面；若未批准，v9四门失败结论保持不变。
+
+### ㊵-1070 · 2026-10-17 · PLAN-N1-105新测面获批并冻结
+
+- owner在更新版弹窗选择“批准新版方案（推荐）”，授权一张248题正交诊断面与一次2,232查询运行；不训练、不更新权重、不改gate、不作能力晋升。PLAN-N1-105现为冻结执行协议，seed110、split=`diagnostic`、12观察、d=1；四模板全位置×答案长度，lookup/revision格内各4题。
+- 源码对齐后，endpoint查询顺序冻结为seed11/12/13，arm `position`/`terminal`/`cut`（与已有训练运行器tuple一致）。全局没有v10题面/报告；当前HEAD只读检查确认仍位于实现前。v9 evaluator固定20题并加载旧控制，禁止调用其`run_confirmation`，需独立stateless scorer和全bundle不变守卫。
+- 构造器必须排除v3 train、v5/v6、v7/v8已查询sacrifice和整个已消费v9 face；严禁读取v7/v8 confirmation payload。面与代码冻结、9枚endpoint完整恢复预检通过后才可运行一次，CPU≤1200秒；任何preflight失败均不查询，consumed attempt不重试。当前队首：实现builder/evaluator/合同测试，再按冻结顺序构造和预检。冻结协议SHA-256 `02176b8915344540cd67faa90e96e0d36a1696e804cb16d59cda12de15eb07f9`。
