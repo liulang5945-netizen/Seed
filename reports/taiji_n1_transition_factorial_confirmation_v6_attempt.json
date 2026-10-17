@@ -1,0 +1,8 @@
+{
+  "confirm_items": 20,
+  "consumed_on_write": true,
+  "face_sha256_raw": "7dddf00f3f2e24381728855b218e67bc8160fd6badeb1a7a933937d999766d49",
+  "format": "taiji-n1-94-v6-confirmation-attempt-v1",
+  "range_report_sha256_raw": "1084677c186bed6860662ff496e6f294de33a435f7bd94a36560a0d1d830fec6",
+  "started_process_time": 1.25
+}

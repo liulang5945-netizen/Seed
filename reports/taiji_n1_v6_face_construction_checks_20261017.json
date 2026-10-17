@@ -1,0 +1,148 @@
+{
+  "accepted": true,
+  "checks": {
+    "J93_1_class_balance": {
+      "ok": true,
+      "per_kind": {
+        "lookup": 10,
+        "revision": 10,
+        "transition": 10,
+        "unknown": 10
+      }
+    },
+    "J93_1_identity": {
+      "all_holdout": true,
+      "ids_unique": true,
+      "observations_per_item": [
+        4
+      ],
+      "ok": true
+    },
+    "J93_2_disjoint_from_prior_faces": {
+      "entities_with_prior_faces": 0,
+      "materials_with_prior_faces": 0,
+      "ok": true
+    },
+    "J93_3_trivial_strategies": {
+      "answer_bearing_items": 20,
+      "answer_position_counts": {
+        "lookup": [
+          3,
+          3,
+          2,
+          2
+        ],
+        "revision": [
+          2,
+          3,
+          3,
+          2
+        ]
+      },
+      "frequency_strategy_defined_items": 0,
+      "items_with_repeated_material": 0,
+      "most_frequent_hits_where_defined": 0,
+      "newest": 4,
+      "ok": true,
+      "oldest": 5,
+      "positional_ceiling_from_shape": 6
+    },
+    "J93_3b_constant_direction": {
+      "best_direction": "north",
+      "ceiling_from_shape": 4,
+      "hits": 3,
+      "ok": true,
+      "transition_items": 10
+    },
+    "J93_4_addressability": {
+      "addressable_items": 20,
+      "ok": true,
+      "unique_source_items": 20,
+      "unknown_items": 10,
+      "unknown_without_answer_source": 10
+    },
+    "J93_5_subset_split": {
+      "half": 5,
+      "kinds_per_subset": {
+        "confirm": {
+          "lookup": 5,
+          "revision": 5,
+          "transition": 5,
+          "unknown": 5
+        },
+        "sacrifice": {
+          "lookup": 5,
+          "revision": 5,
+          "transition": 5,
+          "unknown": 5
+        }
+      },
+      "ok": true,
+      "overlap": [],
+      "sizes": {
+        "confirm": 20,
+        "sacrifice": 20
+      }
+    },
+    "J93_6_answer_length_leak": {
+      "abstention_length": 7,
+      "classes_sharing_abstention_length": [
+        "lookup",
+        "revision",
+        "unknown"
+      ],
+      "length_to_classes": {
+        "4": [
+          "transition"
+        ],
+        "5": [
+          "transition"
+        ],
+        "6": [
+          "lookup",
+          "revision"
+        ],
+        "7": [
+          "lookup",
+          "revision",
+          "unknown"
+        ]
+      },
+      "ok": true
+    },
+    "J93_8_name_confusability": {
+      "max_hamming": 1,
+      "min_hamming": 1,
+      "ok": true,
+      "pairs": 110,
+      "requested_distance": 1
+    }
+  },
+  "consumes_confirmation_face": false,
+  "exclusion_sources": {
+    "E:/Seed/plans/manifests/n1_entity_binding_diagnostic_20261015.json": "572a270bcb5e292baee7577b5c0ec2d3f313bd93ae338fa6d5984a646a2fe9c6",
+    "E:/Seed/plans/manifests/n1_fresh_confirmation_v5_20261016.json": "22ba37976bc6eaaaf2425b84714a6efa6e95e7e5aa05f32eb3a7c0c10d9ffc2d",
+    "E:/Seed/plans/manifests/n1_native_evidence_curriculum_v3_20261015.json": "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+    "E:/Seed/plans/manifests/n1_relation_confirmation_v4_20261015.json": "a148dbf6c65812b08b3f25103b014da82b97796c18134724dc2f03dcb6f12529",
+    "E:/Seed/plans/manifests/n1_renaming_curriculum_20261015.json": "c44ea78f40d7255688013eb4054ae803bd04ee97dc5ba2e0c02b82e301ce6fdd"
+  },
+  "face": "E:\\Seed\\plans\\manifests\\n1_fresh_confirmation_v6_20261017.json",
+  "face_sha256": "7dddf00f3f2e24381728855b218e67bc8160fd6badeb1a7a933937d999766d49",
+  "format": "taiji-n1-93-v6-face-construction-v1",
+  "model_loads": 0,
+  "params": {
+    "answer_lengths": [
+      6,
+      7
+    ],
+    "entity_length": 10,
+    "id_prefix": "v6-confirm-",
+    "items": 40,
+    "items_per_kind": 10,
+    "name_neighbor_distance": 1,
+    "observations_per_item": 4,
+    "schema": "n1-fresh-confirmation-v6",
+    "seed": 91
+  },
+  "queries": 0
+}

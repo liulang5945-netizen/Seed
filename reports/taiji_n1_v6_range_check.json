@@ -1,0 +1,176 @@
+{
+  "adjudication": {
+    "decodable_items_per_endpoint": 15,
+    "endpoints_total": 9,
+    "endpoints_with_triple_errors": 7,
+    "enforced_conditions": [
+      "endpoints with >= 6/15 decodable errors must number >= 6 of 9"
+    ],
+    "lines": {
+      "class_error_floor": 3,
+      "min_usable_endpoints": 6,
+      "triple_error_floor": 6
+    },
+    "per_class": {
+      "lookup": {
+        "endpoints_over_floor": 8,
+        "mean_errors": 4.1111
+      },
+      "revision": {
+        "endpoints_over_floor": 5,
+        "mean_errors": 2.8889
+      },
+      "transition": {
+        "endpoints_over_floor": 6,
+        "mean_errors": 2.5556
+      },
+      "unknown": {
+        "endpoints_over_floor": 8,
+        "mean_errors": 3.8889
+      }
+    },
+    "range_check_passed": true,
+    "reported_not_enforced": [
+      "per-class mean native errors >= 3 on 5 items per class"
+    ],
+    "usable_by_arm": {
+      "cut": 3,
+      "position": 1,
+      "terminal": 3
+    },
+    "usable_competent_endpoints": 4
+  },
+  "confirm_subset_queried": false,
+  "cpu_limit_seconds": 180,
+  "cpu_seconds": 98.2188,
+  "endpoints": [
+    {
+      "addressable_errors": 5,
+      "arm": "position",
+      "errors": 9,
+      "errors_by_kind": {
+        "lookup": 2,
+        "revision": 0,
+        "transition": 3,
+        "unknown": 4
+      },
+      "free_exact": 11,
+      "seed": 11
+    },
+    {
+      "addressable_errors": 13,
+      "arm": "terminal",
+      "errors": 16,
+      "errors_by_kind": {
+        "lookup": 5,
+        "revision": 5,
+        "transition": 3,
+        "unknown": 3
+      },
+      "free_exact": 4,
+      "seed": 11
+    },
+    {
+      "addressable_errors": 7,
+      "arm": "cut",
+      "errors": 10,
+      "errors_by_kind": {
+        "lookup": 4,
+        "revision": 1,
+        "transition": 2,
+        "unknown": 3
+      },
+      "free_exact": 10,
+      "seed": 11
+    },
+    {
+      "addressable_errors": 4,
+      "arm": "position",
+      "errors": 9,
+      "errors_by_kind": {
+        "lookup": 3,
+        "revision": 0,
+        "transition": 1,
+        "unknown": 5
+      },
+      "free_exact": 11,
+      "seed": 12
+    },
+    {
+      "addressable_errors": 13,
+      "arm": "terminal",
+      "errors": 17,
+      "errors_by_kind": {
+        "lookup": 5,
+        "revision": 5,
+        "transition": 3,
+        "unknown": 4
+      },
+      "free_exact": 3,
+      "seed": 12
+    },
+    {
+      "addressable_errors": 6,
+      "arm": "cut",
+      "errors": 10,
+      "errors_by_kind": {
+        "lookup": 3,
+        "revision": 0,
+        "transition": 3,
+        "unknown": 4
+      },
+      "free_exact": 10,
+      "seed": 12
+    },
+    {
+      "addressable_errors": 12,
+      "arm": "position",
+      "errors": 17,
+      "errors_by_kind": {
+        "lookup": 5,
+        "revision": 5,
+        "transition": 2,
+        "unknown": 5
+      },
+      "free_exact": 3,
+      "seed": 13
+    },
+    {
+      "addressable_errors": 13,
+      "arm": "terminal",
+      "errors": 15,
+      "errors_by_kind": {
+        "lookup": 5,
+        "revision": 5,
+        "transition": 3,
+        "unknown": 2
+      },
+      "free_exact": 5,
+      "seed": 13
+    },
+    {
+      "addressable_errors": 13,
+      "arm": "cut",
+      "errors": 18,
+      "errors_by_kind": {
+        "lookup": 5,
+        "revision": 5,
+        "transition": 3,
+        "unknown": 5
+      },
+      "free_exact": 2,
+      "seed": 13
+    }
+  ],
+  "face": "E:\\Seed\\plans\\manifests\\n1_fresh_confirmation_v6_20261017.json",
+  "face_sha256": "7dddf00f3f2e24381728855b218e67bc8160fd6badeb1a7a933937d999766d49",
+  "format": "taiji-n1-93-v6-range-check-v2",
+  "generation_cap_site": "scripts/training/eval_taiji_n1_transition_factorial_confirmation.py:114",
+  "items_queried": 180,
+  "parameter_updates": 0,
+  "range_check_is_capability_claim": false,
+  "status": "passed",
+  "subsets_queried": [
+    "sacrifice"
+  ]
+}

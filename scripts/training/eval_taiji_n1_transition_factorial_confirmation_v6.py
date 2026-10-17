@@ -231,6 +231,20 @@ def evaluate_gates(rows: list) -> dict:
     }
 
 
+def unseen_claim(status: str, rows: list, queries: int, restore_checks: list) -> bool:
+    """DEBT-G155 修法：这一列原先是字面量 `True`，而 `status=interrupted` 那支同样写报告 ⇒
+    一次行数不满或端点未复原的跑会自称"允许把这张面当作未见题集引用"。现在由完成性四件推导，
+    所以它能为假；负对照见 `test_n1_run94_v6_confirmation_contract.py`。
+    """
+    return bool(
+        status == "published"
+        and len(rows) == ITEMS_PER_MODEL * len(SEEDS) * len(ARMS)
+        and queries == len(rows)
+        and restore_checks
+        and all(entry["unchanged"] for entry in restore_checks)
+    )
+
+
 def run_readiness() -> int:
     started = time.process_time()
     context = preconditions()
@@ -324,11 +338,13 @@ def run_approved() -> int:
         "endpoint_neutrality": restore_checks,
         "cpu_limit_seconds": CPU_LIMIT_SECONDS,
         "cpu_seconds": round(time.process_time() - started, 4),
-        "unseen_claim_allowed": True,
         "consumed_face": "v6-confirm-20",
         "retry_allowed": False,
     }
     payload.update(source_guard_digests(context["guards"]))
+    payload["unseen_claim_allowed"] = unseen_claim(
+        status, rows, accounting["confirmation_queries"], restore_checks
+    )
     if rows:
         payload.update(evaluate_gates(rows))
         complete = {

@@ -1,0 +1,849 @@
+{
+  "episodes": [
+    {
+      "answer": "xvfgby",
+      "entities": [
+        "cereyvtmvg",
+        "cereyvtmvm",
+        "cereyvtgvg",
+        "cernyvtmvg"
+      ],
+      "id": "v6-confirm-000",
+      "kind": "lookup",
+      "observations": [
+        "cereyvtmvg uses xvfgby.",
+        "cereyvtmvm uses ttczlo.",
+        "cereyvtgvg uses hoyjtu.",
+        "cernyvtmvg uses wrlijj."
+      ],
+      "question": "material of cereyvtmvg?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "ayxexp",
+      "entities": [
+        "bkefylqvnv",
+        "bkufylqvnv",
+        "bkefylqvno"
+      ],
+      "id": "v6-confirm-001",
+      "kind": "revision",
+      "observations": [
+        "bkefylqvnv uses wfpopk.",
+        "bkefylqvnv now uses ayxexp.",
+        "bkufylqvnv uses rixvyr.",
+        "bkefylqvno uses ljqess."
+      ],
+      "question": "material of bkefylqvnv?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "north",
+      "entities": [
+        "aqhjcvqgok",
+        "aqhncvqgok",
+        "aqhjrvqgok"
+      ],
+      "id": "v6-confirm-002",
+      "kind": "transition",
+      "observations": [
+        "aqhjcvqgok faces east.",
+        "aqhjcvqgok turns left.",
+        "aqhncvqgok faces north.",
+        "aqhjrvqgok faces east."
+      ],
+      "question": "direction of aqhjcvqgok?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "unknown",
+      "entities": [
+        "mnfggtqboy",
+        "mxfggtqboy",
+        "mnhggtqboy",
+        "mnfggtqbny",
+        "mnfggkqboy"
+      ],
+      "id": "v6-confirm-003",
+      "kind": "unknown",
+      "observations": [
+        "mxfggtqboy uses mzgift.",
+        "mnhggtqboy uses clusie.",
+        "mnfggtqbny uses vvqpci.",
+        "mnfggkqboy uses hnhpmz."
+      ],
+      "question": "material of mnfggtqboy?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "zunepdp",
+      "entities": [
+        "gaderootsf",
+        "gaoerootsf",
+        "gyderootsf",
+        "naderootsf"
+      ],
+      "id": "v6-confirm-004",
+      "kind": "lookup",
+      "observations": [
+        "gaoerootsf uses yfjnij.",
+        "gaderootsf uses zunepdp.",
+        "gyderootsf uses znkcpn.",
+        "naderootsf uses sohdyf."
+      ],
+      "question": "material of gaderootsf?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "nxbxbpj",
+      "entities": [
+        "stlpqawxjf",
+        "selpqawxjf",
+        "stlpqawxjv"
+      ],
+      "id": "v6-confirm-005",
+      "kind": "revision",
+      "observations": [
+        "selpqawxjf uses vfuezc.",
+        "stlpqawxjf uses wiards.",
+        "stlpqawxjf now uses nxbxbpj.",
+        "stlpqawxjv uses dvkbgw."
+      ],
+      "question": "material of stlpqawxjf?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "east",
+      "entities": [
+        "ogynrmuwcz",
+        "ogyngmuwcz",
+        "ogynrmuwcq"
+      ],
+      "id": "v6-confirm-006",
+      "kind": "transition",
+      "observations": [
+        "ogyngmuwcz faces east.",
+        "ogynrmuwcz faces south.",
+        "ogynrmuwcz turns left.",
+        "ogynrmuwcq faces south."
+      ],
+      "question": "direction of ogynrmuwcz?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "unknown",
+      "entities": [
+        "wlymnrrocg",
+        "wlymnrrozg",
+        "wlymnrrocx",
+        "wlymbrrocg",
+        "wlymnrbocg"
+      ],
+      "id": "v6-confirm-007",
+      "kind": "unknown",
+      "observations": [
+        "wlymnrrozg uses fvkfxo.",
+        "wlymnrrocx uses ozquin.",
+        "wlymbrrocg uses htghex.",
+        "wlymnrbocg uses jwnesw."
+      ],
+      "question": "material of wlymnrrocg?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "aovwnz",
+      "entities": [
+        "lyrmvryfyv",
+        "lyrmvrvfyv",
+        "lyrmvrytyv",
+        "lyrmvryfgv"
+      ],
+      "id": "v6-confirm-008",
+      "kind": "lookup",
+      "observations": [
+        "lyrmvrvfyv uses cmztrd.",
+        "lyrmvrytyv uses vgylfo.",
+        "lyrmvryfyv uses aovwnz.",
+        "lyrmvryfgv uses bwqosu."
+      ],
+      "question": "material of lyrmvryfyv?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "yqwxoq",
+      "entities": [
+        "ktukyvxrby",
+        "ktukyvyrby",
+        "ktukynxrby"
+      ],
+      "id": "v6-confirm-009",
+      "kind": "revision",
+      "observations": [
+        "ktukyvyrby uses chtmxp.",
+        "ktukynxrby uses csmubb.",
+        "ktukyvxrby uses nleknh.",
+        "ktukyvxrby now uses yqwxoq."
+      ],
+      "question": "material of ktukyvxrby?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "south",
+      "entities": [
+        "cockkrrlhy",
+        "cdckkrrlhy",
+        "cocbkrrlhy"
+      ],
+      "id": "v6-confirm-010",
+      "kind": "transition",
+      "observations": [
+        "cdckkrrlhy faces south.",
+        "cocbkrrlhy faces west.",
+        "cockkrrlhy faces east.",
+        "cockkrrlhy turns right."
+      ],
+      "question": "direction of cockkrrlhy?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "unknown",
+      "entities": [
+        "zhgsadchqj",
+        "zhgsanchqj",
+        "zhgsadshqj",
+        "zhgsadvhqj",
+        "zhgsadkhqj"
+      ],
+      "id": "v6-confirm-011",
+      "kind": "unknown",
+      "observations": [
+        "zhgsanchqj uses rlchqv.",
+        "zhgsadshqj uses zgopfl.",
+        "zhgsadvhqj uses jrrhxi.",
+        "zhgsadkhqj uses hvfbap."
+      ],
+      "question": "material of zhgsadchqj?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "qoxvmva",
+      "entities": [
+        "rizgufriov",
+        "rizgufviov",
+        "rizgufriom",
+        "rizpufriov"
+      ],
+      "id": "v6-confirm-012",
+      "kind": "lookup",
+      "observations": [
+        "rizgufviov uses ugloqi.",
+        "rizgufriom uses fnhdmc.",
+        "rizpufriov uses phhqaz.",
+        "rizgufriov uses qoxvmva."
+      ],
+      "question": "material of rizgufriov?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "vdcvkeq",
+      "entities": [
+        "wzkopodroe",
+        "wpkopodroe",
+        "wzkopodeoe"
+      ],
+      "id": "v6-confirm-013",
+      "kind": "revision",
+      "observations": [
+        "wzkopodroe now uses vdcvkeq.",
+        "wpkopodroe uses blltie.",
+        "wzkopodeoe uses dofjoo.",
+        "wzkopodroe uses eljqqu."
+      ],
+      "question": "material of wzkopodroe?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "west",
+      "entities": [
+        "kwubapvxqa",
+        "kwubapvxqb",
+        "pwubapvxqa"
+      ],
+      "id": "v6-confirm-014",
+      "kind": "transition",
+      "observations": [
+        "kwubapvxqa turns right.",
+        "kwubapvxqb faces west.",
+        "pwubapvxqa faces north.",
+        "kwubapvxqa faces south."
+      ],
+      "question": "direction of kwubapvxqa?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "unknown",
+      "entities": [
+        "vfthkwidli",
+        "vfthkjidli",
+        "vfshkwidli",
+        "vfthkwidhi",
+        "vftrkwidli"
+      ],
+      "id": "v6-confirm-015",
+      "kind": "unknown",
+      "observations": [
+        "vfthkjidli uses tmcskd.",
+        "vfshkwidli uses fkujiy.",
+        "vfthkwidhi uses zdyncv.",
+        "vftrkwidli uses qmcvdn."
+      ],
+      "question": "material of vfthkwidli?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "dzxldw",
+      "entities": [
+        "iwztaxbxqt",
+        "awztaxbxqt",
+        "iwzuaxbxqt",
+        "ijztaxbxqt"
+      ],
+      "id": "v6-confirm-016",
+      "kind": "lookup",
+      "observations": [
+        "iwztaxbxqt uses dzxldw.",
+        "awztaxbxqt uses oqyiwa.",
+        "iwzuaxbxqt uses xknwni.",
+        "ijztaxbxqt uses pxvjyb."
+      ],
+      "question": "material of iwztaxbxqt?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "inkmzn",
+      "entities": [
+        "reqtzlbode",
+        "reqtolbode",
+        "oeqtzlbode"
+      ],
+      "id": "v6-confirm-017",
+      "kind": "revision",
+      "observations": [
+        "reqtzlbode uses vevaeb.",
+        "reqtzlbode now uses inkmzn.",
+        "reqtolbode uses zcpxdi.",
+        "oeqtzlbode uses vnopra."
+      ],
+      "question": "material of reqtzlbode?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "north",
+      "entities": [
+        "fjavkuixuc",
+        "fjavkuaxuc",
+        "fjadkuixuc"
+      ],
+      "id": "v6-confirm-018",
+      "kind": "transition",
+      "observations": [
+        "fjavkuixuc faces east.",
+        "fjavkuixuc turns left.",
+        "fjavkuaxuc faces north.",
+        "fjadkuixuc faces east."
+      ],
+      "question": "direction of fjavkuixuc?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "unknown",
+      "entities": [
+        "erxbaasfiw",
+        "erxbhasfiw",
+        "erxbaahfiw",
+        "erxbaasfjw",
+        "erxbaasfiz"
+      ],
+      "id": "v6-confirm-019",
+      "kind": "unknown",
+      "observations": [
+        "erxbhasfiw uses gxmmzp.",
+        "erxbaahfiw uses nzjekw.",
+        "erxbaasfjw uses krszna.",
+        "erxbaasfiz uses amsmlp."
+      ],
+      "question": "material of erxbaasfiw?",
+      "split": "holdout",
+      "subset": "confirm"
+    },
+    {
+      "answer": "qcrionl",
+      "entities": [
+        "ugkvuqvimm",
+        "urkvuqvimm",
+        "ugkvuqvimf",
+        "ugqvuqvimm"
+      ],
+      "id": "v6-confirm-020",
+      "kind": "lookup",
+      "observations": [
+        "urkvuqvimm uses fgxyes.",
+        "ugkvuqvimm uses qcrionl.",
+        "ugkvuqvimf uses ltqizc.",
+        "ugqvuqvimm uses oasbnv."
+      ],
+      "question": "material of ugkvuqvimm?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "cotgnzd",
+      "entities": [
+        "crqhixsrdt",
+        "crqhixsrst",
+        "crqhixsrxt"
+      ],
+      "id": "v6-confirm-021",
+      "kind": "revision",
+      "observations": [
+        "crqhixsrst uses vhcpsy.",
+        "crqhixsrdt uses fusbfg.",
+        "crqhixsrdt now uses cotgnzd.",
+        "crqhixsrxt uses mejamp."
+      ],
+      "question": "material of crqhixsrdt?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "east",
+      "entities": [
+        "ysgyodhjze",
+        "ysgwodhjze",
+        "ysgyodwjze"
+      ],
+      "id": "v6-confirm-022",
+      "kind": "transition",
+      "observations": [
+        "ysgwodhjze faces east.",
+        "ysgyodhjze faces north.",
+        "ysgyodhjze turns right.",
+        "ysgyodwjze faces south."
+      ],
+      "question": "direction of ysgyodhjze?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "unknown",
+      "entities": [
+        "vzatrznjkj",
+        "vzawrznjkj",
+        "vzazrznjkj",
+        "vzatrnnjkj",
+        "vzatrznykj"
+      ],
+      "id": "v6-confirm-023",
+      "kind": "unknown",
+      "observations": [
+        "vzawrznjkj uses mxyxlw.",
+        "vzazrznjkj uses sdvhuc.",
+        "vzatrnnjkj uses wqwogt.",
+        "vzatrznykj uses fhcmbh."
+      ],
+      "question": "material of vzatrznjkj?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "qhwhwo",
+      "entities": [
+        "gkhrfllimb",
+        "gkzrfllimb",
+        "gkhrfllkmb",
+        "gkhrfllijb"
+      ],
+      "id": "v6-confirm-024",
+      "kind": "lookup",
+      "observations": [
+        "gkzrfllimb uses jwdrhv.",
+        "gkhrfllkmb uses veerpv.",
+        "gkhrfllimb uses qhwhwo.",
+        "gkhrfllijb uses sssoki."
+      ],
+      "question": "material of gkhrfllimb?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "yzaabv",
+      "entities": [
+        "ivkayxzvey",
+        "ivkayxzvek",
+        "ivkaymzvey"
+      ],
+      "id": "v6-confirm-025",
+      "kind": "revision",
+      "observations": [
+        "ivkayxzvek uses tykdoc.",
+        "ivkaymzvey uses tpbzoz.",
+        "ivkayxzvey uses jqyzic.",
+        "ivkayxzvey now uses yzaabv."
+      ],
+      "question": "material of ivkayxzvey?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "south",
+      "entities": [
+        "yzhrrhduvo",
+        "yzhrrzduvo",
+        "yzhrlhduvo"
+      ],
+      "id": "v6-confirm-026",
+      "kind": "transition",
+      "observations": [
+        "yzhrrzduvo faces south.",
+        "yzhrlhduvo faces west.",
+        "yzhrrhduvo faces east.",
+        "yzhrrhduvo turns right."
+      ],
+      "question": "direction of yzhrrhduvo?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "unknown",
+      "entities": [
+        "ujylwlovqq",
+        "ujylwlovqx",
+        "ujylwlovsq",
+        "ujylwlovuq",
+        "ujylwlovfq"
+      ],
+      "id": "v6-confirm-027",
+      "kind": "unknown",
+      "observations": [
+        "ujylwlovqx uses indkgz.",
+        "ujylwlovsq uses zqzbkm.",
+        "ujylwlovuq uses xqludg.",
+        "ujylwlovfq uses ubjdbi."
+      ],
+      "question": "material of ujylwlovqq?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "kivlszk",
+      "entities": [
+        "lqwwjbmmnx",
+        "lqwwjbmmux",
+        "lqwwebmmnx",
+        "lqwwjbamnx"
+      ],
+      "id": "v6-confirm-028",
+      "kind": "lookup",
+      "observations": [
+        "lqwwjbmmux uses svugug.",
+        "lqwwebmmnx uses dtimut.",
+        "lqwwjbamnx uses gtrzju.",
+        "lqwwjbmmnx uses kivlszk."
+      ],
+      "question": "material of lqwwjbmmnx?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "zipfmat",
+      "entities": [
+        "opgdyohlwd",
+        "oegdyohlwd",
+        "bpgdyohlwd"
+      ],
+      "id": "v6-confirm-029",
+      "kind": "revision",
+      "observations": [
+        "opgdyohlwd now uses zipfmat.",
+        "oegdyohlwd uses wzmida.",
+        "bpgdyohlwd uses ajojpt.",
+        "opgdyohlwd uses hgfhot."
+      ],
+      "question": "material of opgdyohlwd?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "west",
+      "entities": [
+        "pfuorygpji",
+        "pfuorygpti",
+        "pfuorygpai"
+      ],
+      "id": "v6-confirm-030",
+      "kind": "transition",
+      "observations": [
+        "pfuorygpji turns left.",
+        "pfuorygpti faces west.",
+        "pfuorygpai faces north.",
+        "pfuorygpji faces north."
+      ],
+      "question": "direction of pfuorygpji?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "unknown",
+      "entities": [
+        "mkfrxmyduy",
+        "mkfrxlyduy",
+        "pkfrxmyduy",
+        "mkfrvmyduy",
+        "mkfrhmyduy"
+      ],
+      "id": "v6-confirm-031",
+      "kind": "unknown",
+      "observations": [
+        "mkfrxlyduy uses dadbsj.",
+        "pkfrxmyduy uses ondtcw.",
+        "mkfrvmyduy uses uumjct.",
+        "mkfrhmyduy uses uewzwo."
+      ],
+      "question": "material of mkfrxmyduy?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "gtczbm",
+      "entities": [
+        "ieldhyutyf",
+        "iejdhyutyf",
+        "ibldhyutyf",
+        "ielphyutyf"
+      ],
+      "id": "v6-confirm-032",
+      "kind": "lookup",
+      "observations": [
+        "ieldhyutyf uses gtczbm.",
+        "iejdhyutyf uses ciciss.",
+        "ibldhyutyf uses jdhith.",
+        "ielphyutyf uses mbkcea."
+      ],
+      "question": "material of ieldhyutyf?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "ltnwrj",
+      "entities": [
+        "vtmzvqnldq",
+        "vtmzvqdldq",
+        "vtmlvqnldq"
+      ],
+      "id": "v6-confirm-033",
+      "kind": "revision",
+      "observations": [
+        "vtmzvqnldq uses faafvu.",
+        "vtmzvqnldq now uses ltnwrj.",
+        "vtmzvqdldq uses ptdbfz.",
+        "vtmlvqnldq uses gxovfp."
+      ],
+      "question": "material of vtmzvqnldq?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "north",
+      "entities": [
+        "lxaudncvvd",
+        "zxaudncvvd",
+        "lxaudnnvvd"
+      ],
+      "id": "v6-confirm-034",
+      "kind": "transition",
+      "observations": [
+        "lxaudncvvd faces west.",
+        "lxaudncvvd turns right.",
+        "zxaudncvvd faces north.",
+        "lxaudnnvvd faces east."
+      ],
+      "question": "direction of lxaudncvvd?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "unknown",
+      "entities": [
+        "uwhyrqoiqg",
+        "uwhyrqxiqg",
+        "uwhykqoiqg",
+        "uwayrqoiqg",
+        "uwhyrqoifg"
+      ],
+      "id": "v6-confirm-035",
+      "kind": "unknown",
+      "observations": [
+        "uwhyrqxiqg uses gddsuq.",
+        "uwhykqoiqg uses nsvcnj.",
+        "uwayrqoiqg uses eftlqz.",
+        "uwhyrqoifg uses rjriue."
+      ],
+      "question": "material of uwhyrqoiqg?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "fjoujja",
+      "entities": [
+        "rfmhwgsfqj",
+        "rfmhwgsfqi",
+        "rfmfwgsfqj",
+        "rlmhwgsfqj"
+      ],
+      "id": "v6-confirm-036",
+      "kind": "lookup",
+      "observations": [
+        "rfmhwgsfqi uses ldgjqc.",
+        "rfmhwgsfqj uses fjoujja.",
+        "rfmfwgsfqj uses vgwmuu.",
+        "rlmhwgsfqj uses gkwaxc."
+      ],
+      "question": "material of rfmhwgsfqj?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "hnceftl",
+      "entities": [
+        "gzigtkpirc",
+        "gzigtkpiri",
+        "gzigtkeirc"
+      ],
+      "id": "v6-confirm-037",
+      "kind": "revision",
+      "observations": [
+        "gzigtkpiri uses eyimuu.",
+        "gzigtkpirc uses yheaki.",
+        "gzigtkpirc now uses hnceftl.",
+        "gzigtkeirc uses qzugqq."
+      ],
+      "question": "material of gzigtkpirc?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "east",
+      "entities": [
+        "zutwncnyyu",
+        "zutwncnyys",
+        "zuswncnyyu"
+      ],
+      "id": "v6-confirm-038",
+      "kind": "transition",
+      "observations": [
+        "zutwncnyys faces east.",
+        "zutwncnyyu faces south.",
+        "zutwncnyyu turns left.",
+        "zuswncnyyu faces south."
+      ],
+      "question": "direction of zutwncnyyu?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    },
+    {
+      "answer": "unknown",
+      "entities": [
+        "udkyvcfnxw",
+        "uddyvcfnxw",
+        "udkyvcfnxs",
+        "uskyvcfnxw",
+        "sdkyvcfnxw"
+      ],
+      "id": "v6-confirm-039",
+      "kind": "unknown",
+      "observations": [
+        "uddyvcfnxw uses ydkhjs.",
+        "udkyvcfnxs uses gvslkm.",
+        "uskyvcfnxw uses rodoqm.",
+        "sdkyvcfnxw uses iltvlh."
+      ],
+      "question": "material of udkyvcfnxw?",
+      "split": "holdout",
+      "subset": "sacrifice"
+    }
+  ],
+  "excluded_source_sha256": [
+    "ac56fb0aba2ef602779f58749e6f8c35324c40c433fd16ce55b89689235b0604",
+    "572a270bcb5e292baee7577b5c0ec2d3f313bd93ae338fa6d5984a646a2fe9c6",
+    "c44ea78f40d7255688013eb4054ae803bd04ee97dc5ba2e0c02b82e301ce6fdd",
+    "a148dbf6c65812b08b3f25103b014da82b97796c18134724dc2f03dcb6f12529",
+    "22ba37976bc6eaaaf2425b84714a6efa6e95e7e5aa05f32eb3a7c0c10d9ffc2d"
+  ],
+  "schema": "n1-fresh-confirmation-v6",
+  "seed": 91,
+  "subsets": {
+    "confirm": [
+      "v6-confirm-000",
+      "v6-confirm-001",
+      "v6-confirm-002",
+      "v6-confirm-003",
+      "v6-confirm-004",
+      "v6-confirm-005",
+      "v6-confirm-006",
+      "v6-confirm-007",
+      "v6-confirm-008",
+      "v6-confirm-009",
+      "v6-confirm-010",
+      "v6-confirm-011",
+      "v6-confirm-012",
+      "v6-confirm-013",
+      "v6-confirm-014",
+      "v6-confirm-015",
+      "v6-confirm-016",
+      "v6-confirm-017",
+      "v6-confirm-018",
+      "v6-confirm-019"
+    ],
+    "sacrifice": [
+      "v6-confirm-020",
+      "v6-confirm-021",
+      "v6-confirm-022",
+      "v6-confirm-023",
+      "v6-confirm-024",
+      "v6-confirm-025",
+      "v6-confirm-026",
+      "v6-confirm-027",
+      "v6-confirm-028",
+      "v6-confirm-029",
+      "v6-confirm-030",
+      "v6-confirm-031",
+      "v6-confirm-032",
+      "v6-confirm-033",
+      "v6-confirm-034",
+      "v6-confirm-035",
+      "v6-confirm-036",
+      "v6-confirm-037",
+      "v6-confirm-038",
+      "v6-confirm-039"
+    ]
+  }
+}

@@ -126,11 +126,14 @@ def test_an_unsigned_signature_refuses_without_writing(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     face = tmp_path / "v6.json"
+    report = tmp_path / "checks.json"
     monkeypatch.setattr(v6, "SIGNED_DISTRIBUTION", None)
+    #: 写靶必须一起指到 tmp：原写法断言"仓里那枚报告还不存在"，而题面一落盘它就自己变红
+    #: ——这正是 DEBT-G148 记过的那族（盘面状态不进合同测试），我这轮又踩了一次。
+    monkeypatch.setattr(v6, "REPORT", report)
     with pytest.raises(v6.Refuse, match="尚未由 owner 签署"):
         v6.execute_signed(face)
-    assert not face.exists()
-    assert not v6.REPORT.exists(), "签字未落地时检查报告也不许在仓里出现"
+    assert not face.exists() and not report.exists()
 
 
 def test_a_second_run_refuses_because_the_face_already_exists(

@@ -229,3 +229,31 @@ def test_cli_refusals(tmp_path: Path, monkeypatch) -> None:
     monkeypatch.setattr(v6, "REPORT", sealed)
     assert v6.main(["--execute-approved"]) == 2
     assert sealed.read_bytes() == before, "refusal must not rewrite the sealed report"
+
+
+def test_the_unseen_claim_column_is_derived_and_can_go_false() -> None:
+    """DEBT-G155 修法：这一列原先是字面量 `True`，`status=interrupted` 那支也照出版它。"""
+    full = rows_for(passing_cells())
+    neutral = [{"unchanged": True} for _ in v6.SEEDS]
+    assert v6.unseen_claim("published", full, len(full), neutral) is True
+    assert v6.unseen_claim("interrupted", full, len(full), neutral) is False
+    assert v6.unseen_claim("published", full[:-1], len(full) - 1, neutral) is False
+    assert v6.unseen_claim("published", full, len(full) - 5, neutral) is False
+    assert v6.unseen_claim("published", full, len(full), []) is False
+    broken = [{"unchanged": True}, {"unchanged": False}]
+    assert v6.unseen_claim("published", full, len(full), broken) is False
+
+
+def test_today_s_published_face_still_reads_true_under_the_derivation() -> None:
+    """换算法之后先打在真件上：已出版的那一枚读数不因修法而翻。"""
+    entry = json.loads(v6.REPORT.read_text(encoding="utf-8"))
+    assert (
+        v6.unseen_claim(
+            entry["status"],
+            entry["rows"],
+            entry["confirmation_queries"],
+            entry["endpoint_neutrality"],
+        )
+        is True
+    )
+    assert entry["retry_allowed"] is False and entry["parameter_updates"] == 0

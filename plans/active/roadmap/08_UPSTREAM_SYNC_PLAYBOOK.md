@@ -3923,3 +3923,26 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 修正后的真实分栏：**我这侧已无零批文的能力格，也无零批文的登记格**（PLAN-N-02 §6 A 档两半今日落地＝判读器 ㊵-1038 ＋ 曲线口径 ㊵-1039；G125 三件事 2026-10-13 完成）。因此按 20261012 件 §3 自己那条规矩——**"之后若再无零批文格，就停在'等 owner 排窗口'这一状态，不做看起来像进展的加件"**——本线不再由我加件，等的是 owner 那七项（EXP-N1-95 §11 四裁／PLAN-N1-93 §1 签署／DEBT-G152 两处口径／C4 B 档与 N2 C 档的改权重批文／N5 批次 C 排窗／N4 属性值位与 S3 载体／G149 那 14 枚并档／18 条未推的推送）。
 - 等裁期间我这侧只剩一件**读数保鲜**是诚实且必要的：整族面（前件 3136 passed／1 failed）今天没取到（全库 `pytest tests/` 被权限分类器拦下，按规矩不硬重试）⇒ **下一次要报"门绿"必须重取**，不得引用 20261012 那个数当现行。
 - 本条自己的教训已并入记忆 `table-status-column-goes-stale`：那一行的形状是"**同一行的第 5 格与行尾日期戳互相过期**"，所以读债表必须**读整行**，不能按列取状态。
+### ㊵-1042 · 2026-10-17 · owner 四裁落地并跑完 v6 三步：范围准入首次成立（7/9 ≥ 6），四门合取不成立 ⇒ 落预注册出口 ⑵
+
+- 弹窗四裁逐条登记（同一次弹窗）：**①甲＝签 `name_neighbor_distance=1` 并跑那一次确认查询**（PLAN-N1-93 §1 的形状参数由此生效，观测数维持 4）；**②DEBT-G152 裁"以仪器为准、更正文句"**（⇒ 仪器零改动，改的是 PLAN-N1-93 §3／§6 的文句：唯一 gate 的线写死为"≥6/9 枚端点在三类合计错误 ≥6/15"，"每类平均 ≥3/20"那句作废并降级为披露列 `per_class`）；**③再试一次推送、允许被拦**（已试一次，权限分类器仍拦 ⇒ 未推，不硬重试，报数现取）；**④C4 B 档与 N2 甲层的算力先停下，等判据与 v6 都裁完**（本条之后 v6 已裁完，那两格仍等裁）。
+- 落地次序（先入库再消费，避免"签字在产物之后"）：先提交签署与口径更正 `cd4632d26`，再跑三步。造面器合同测同步改写：原先那支 `assert SIGNED_DISTRIBUTION is None` 会被签字本身判红，换成"钉住签署形状"（逐字段等于草稿形状＋d=1、且 J93_8 的 `min_hamming=max_hamming=1`／`pairs=110`），未签与"写靶已存在"两支仍各有一支负对照 ⇒ 7→11 passed。
+- 三步实测（全部 rc=0）：①`--execute-signed` 落 `plans/manifests/n1_fresh_confirmation_v6_20261017.json`，面 SHA `7dddf00f3f2e2438…66d49`，两半各 20、`overlap=[]`；②范围检验（只跑牺牲半）`status=passed`，逐枚 `addressable_errors`＝11 号 5/13/7、12 号 4/13/6、13 号 12/13/13（顺序 position/terminal/cut），过线枚数 **7 ≥ 6**，CPU 98.2188 s（上限 180）、墙钟 30.2 s；③确认查询（确认半，一次性）`status=published`、180 条查询、CPU 151.7344 s、墙钟 42.7 s、`sources_unchanged=true`、`parameter_updates=0`、九枚端点复原检查全真。
+- 判级由执行器自身的 `evaluate_gates` 出版，本条不手算：`each_position_seed` 12/12/**1** 对线 10 ⇒ 假；`each_position_kind` 假（三枚 `unknown` 格全 0）；`advantage_terminal` **17/60 对线 12 ⇒ 真**；`advantage_cut` **0/60**（position 25 对 cut 25）⇒ 假。`all_four_gates=false`、`retry_allowed=false`。
+- 一次预飞没测到、这次由我自己新写的守卫当场抓到的形：把 `unseen_claim_allowed` 抽成推导函数时，第一版把总行数写成 20×3＝60，而真面是 20×3 seed×3 臂＝180 ⇒ 新测的两支立刻红（7→9 passed 之前先 2 failed）。若那两支测没跑，这就是一条永不生效的守卫（同 [[guard-must-be-able-to-fail]]）。DEBT-G155 已登记并同轮修口。
+
+### ㊵-1043 · 2026-10-17 · EXP-N1-96 判读件落盘：卡口点名到两格（seed13 塌方 与 位置臂从不弃权），PLAN-N1-94 页刻意不加戳
+
+- 判读件 `plans/reference/EXP-N1-96_v6_confirmation_adjudication_20261017.md`：§1 三步读数、§2 逐枚范围表、§3 四门判级、§4 两格卡口、§5 可说／永久不许写、§6 口径来源（G152 已裁）、§7 DEBT-G155、§8 下一格三候选（甲攻弃权行为／乙 v7／丙 C4-B 仍等批文）。
+- 卡口一 **seed13 不是解码形状问题**：该 seed 的 position 臂 20 题全部 `stop_reason=boundary`、长度 5～7（均值 6.55，seed11 同臂 6.7），错的是内容；跨臂同错的题数 11 号 4/20、12 号 4/20、**13 号 14/20**，且三个 seed 里"三臂同对"的题数都是 **0** ⇒ 缺口在那枚检查点，不在臂。
+- 卡口二 **位置臂从不弃权**（这是本轮唯一新增的行为级事实）：`unknown` 类 5 题 × 3 seed，position 臂给出 `unknown` 的次数 **0/15**（逐题吐 6 字符材质词，例 `vvqpii`、`jrrhxi`），terminal 4/15、cut 2/15 ⇒ `each_position_seed` 那两枚 12/20 的达标端点仍然过不了 `each_position_kind`，唯一破格就是弃权类那一格。同一张面上另两臂能答对该类 ⇒ **不许写"弃权类是尺的问题"**。
+- 一句必须现在写住的收回句：**"位置读出臂在未见集上领先"永久不许出现**（`advantage_cut` 为 0、合取为假）；单门过线只许写成"`advantage_terminal` 这一门 17/60 过线"。`advantage_cut` 的 0 与 v5 那次的 0 **不同形**：v5 是两臂逐字输出相同，v6 是总数相等而逐格不等（13 号 cut 3 对 position 1、11 号 position 12 对 cut 10）⇒ 这次不能写"两条臂是同一件事"。
+- **PLAN-N1-94 页不加判读戳，理由要登记**：那枚确认报告按字节钉住了它（`plan_sha256` 现读 `1a5822995683…8426`），改一字就作废这次消费的可复现引用；出口点名因此落在 EXP-N1-96 §0／§5，而不是判据页本身（同 [[table-status-column-goes-stale]] 第 6 条"签署件不修改"的处理形）。
+- 盘面状态：v5 与 v6 两张未见面**都已消费**（各自 `retry_allowed=false`），N1 侧在"不新建面"的前提下没有可发射的一次性查询；C3 未达成。未推提交现取 22 条（本笔入库后 `git rev-list --count origin/main..HEAD`）。
+### ㊵-1044 · 2026-10-17 · v6 消费证据入库、两台仪器各自抓到我自己的错（一次 60 对 180、一次盘面状态进测），普查复跑 155 行
+
+- 一次性消费的**双件证据**已在盘上：`reports/taiji_n1_transition_factorial_confirmation_v6_attempt.json` 自述 `consumed_on_write=true`、`confirm_items=20`，并钉住面 SHA `7dddf00f3f2e2438…66d49` 与范围件 SHA `1084677c186bed68…30fec6`；正式件 `reports/taiji_n1_transition_factorial_confirmation_v6.json` 里 `consumed_face="v6-confirm-20"`、`retry_allowed=false`、`parameter_updates=0`。⇒ 后来者若试图再发射一次，会先撞 attempt 已存在那条拒绝支，而不是先花钱。
+- 我自己新写的守卫**当场抓到自己的两个错**（都属老账的形，不是新形）：①DEBT-G155 修法里把"行数满"写成 `ITEMS_PER_MODEL × len(SEEDS)`＝60，而真面是 20×3 seed×3 臂＝180 ⇒ 新测两支立刻红（7→9 passed 之前先 2 failed）；②造面器合同测新增的那支断言"仓里那枚 v6 检查报告还不存在"，题面一落盘它就红（1 failed／27 passed）⇒ 这正是 DEBT-G148 记过的那族，已在该行就地追加 ㊵-1044 复发记录并把写靶 monkeypatch 到 tmp。**两句合起来的教训**：写守卫时"成功支"必须由一条真跑过的测代表，而盘面状态永远不能当判据——两次都是同一轮里自己写的测替自己发现的，说明这套做法有效，也说明我仍会犯。
+- 债表普查复跑（`census_taiji_debt_row_effective_status.py`，读数写仓外）：`strict_rows`=`distinct_ids`=`rows`=**155**、`prefix_lines` 158（重复编号仍是 G48／G49／G50 那三枚追加行）、带戳行 77、单行最多 8 枚戳、`stale_head` **27** 行（历史遗留那批，DEBT-G154 已登记、本行不代修）、`reopened_by_stamp` **0**、`unclassified_stamp` 36。本轮新改的 G152 与新增的 G155 两支**都不在 stale 名单里**（按编号现查），⇒ 状态列与行尾戳一致。
+- 列形门与表面门全绿：`audit_taiji_debt_table_column_shape.py` rc=0（155 行、`rows_not_expected_cells=0`；中途我自己造过一次红——把新行粘到上一行尾巴上，rc=1／`rows_not_expected_cells=1`，按"锚点运行时取数＋计数为 1 才写"的守卫拆开重写后复验），`check_plans_markdown_links.py` rc=0（449 件／2189 条链／活动坏链 0），措辞门对 PLAN-N1-93 与 EXP-N1-96 各 rc=0（`criterion_lines` 16 与 8、含糊词 0），`ruff check .` rc=0、`--select B,SIM` 仍 11 枚且我名下 0，`black --check .` 仍 18 枚且我名下 0，identity＋台账圈号唯一性 10 passed。
+- 未推提交现取 **21** 条（`git rev-list --count origin/main..HEAD` 于本条落笔前一条命令实测，不含本笔与后续提交）；推送按裁定试过并被拦，不硬重试。N1 队首＝owner 在 EXP-N1-96 §8 三候选里裁；C4-B 与 N2 甲层的算力仍按"先停下"未动。
