@@ -4110,3 +4110,10 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 新合同测试发现若把每个d=1干扰名称在所有题目间都设为全局唯一，同一 lookup 模板跨24变体会耗尽可用的250个单字符近邻。尚未创建官方面或读取真实排除源。
 - owner已批准的匹配设计据此明确：同一模板的实体、问题、干扰实体和干扰事实跨位置/长度条件固定，只有目标行位置和当前答案长度改变；干扰实体/材料值可在同模板变体中复用，但模板之间保持唯一。因子格、四模板重复、248题、2232查询、原出口门和CPU≤1200秒均不变。
 - 冻结计划已更新，SHA-256 `af6eebc3e3fb01fc8c409f762176aefa8b91f246e9ea7325f42c5fa3267537ca`。在此合同下继续实现、测试和实际排除源校验；题面仍未生成、模型仍0查询。
+
+### ㊵-1072 · 2026-10-17 · PLAN-N1-105官方诊断面构造完成
+
+- 官方manifest `plans/manifests/n1_hard_neighbor_v10_factorial_diagnostic_20261017.json` SHA-256 `2d912941baecaa4811266ace64b56fa9bb2ace65d657691834911db16ed369d8`，construction checks `reports/taiji_n1_hard_neighbor_v10_factorial_diagnostic_checks_20261017.json` SHA-256 `db3b77437c2f6d11c0fad84c459e44219851452888e5bfcf706cd3d225d95836`，248题按96/88/44/20正确分层，CPU0.15625秒。
+- 来源审计集合1522个排除实体名、1001个排除材料值；v7/v8各仅读20道已查询sacrifice题，confirm载荷字段均未解码且确认产物仍缺席；完整v9 face按批准范围用于排除。36个源码/数据守卫全匹配，source_overlap_names/materials均0；builder报告model/checkpoint_loads、queries、updates均0。
+- **顺序偏差披露**：代码与合同测试于提交5aea3fbef冻结后再运行官方builder；构造时36个守卫匹配，0 checkpoint/model加载与查询。建面后我将㊵-1072进度误加到PLAN-N1-100守卫文件，导致单项哈希漂移；我已撤销该自加内容并恢复构造时SHA，36/36守卫重新匹配。现在提交面/checks后再做完整bundle预检；此文档顺序偏差已入账。
+- 当前唯一队首：提交完全匹配的诊断源码/测试/face/checks，然后运行`--readiness`（9次完整恢复、0查询）；readiness receipt核验后另行提交，方可执行`--execute`。
