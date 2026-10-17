@@ -360,6 +360,11 @@ def test_gate9_roundtrip_and_tamper_rejection(vocab, rows, tmp_path) -> None:
 
 
 def test_gate9_fresh_process_restore_continues_identically(vocab, rows, tmp_path) -> None:
+    #: 这条测比的是"同一份 checkpoint，进程内续一步 与 新进程续一步 必须逐位相同"。
+    #: 同批别的合同测会把**整进程** torch 线程数改成 1 并且不还原，归约顺序一变，父侧摘要就变了，
+    #: 而子进程按默认线程起——两侧不再是同配置，红的是环境的先后，不是恢复语义（2026-10-18 实测：
+    #: 与 `test_native_evidence_paired_runner_contract.py` 合跑必红，单跑绿）。所以两侧一起钉死线程数。
+    torch.set_num_threads(1)
     arm_b = SequenceContentWorkspace(vocab, SequenceContentConfig(arm="B", seed=13))
     item = _fact_item(rows)
     batch = [
@@ -380,7 +385,7 @@ def test_gate9_fresh_process_restore_continues_identically(vocab, rows, tmp_path
     continued_digest = str(uninterrupted.checkpoint()["checkpoint_digest"])
     script = (
         f"import sys, json; sys.path.insert(0, r'{PROJECT_ROOT}');\n"
-        "import torch\n"
+        "import torch\ntorch.set_num_threads(1)\n"
         "from taiji.sequence_content_workspace import SequenceContentTrainer\n"
         f"payload = torch.load(r'{path}', map_location='cpu', weights_only=False)\n"
         "trainer = SequenceContentTrainer.from_checkpoint(payload)\n"
