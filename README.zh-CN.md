@@ -6,7 +6,7 @@ Seed 托管并对外提供 **Taiji**：探索持续状态、记忆、局部学�
 
 ## 当前状态
 
-N1 最新诊断在同九枚 checkpoint 上，对5道已消费的v6 `unknown`题测试了观测数和实体名距离。position 臂逐字输出 `unknown`：d=1 为0/15，d=2 为1/15；观测数2或4没有改变命中。run88来源守卫绑定的v3 train流中，48个unknown训练项没有d≤2近邻样本。N1 C3仍未达成；下一计划在不改冻结门槛的前提下加入平衡近邻训练，并用全新v7面复核。详见[PLAN-N1-99判读](plans/reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md)与[PLAN-N1-100](plans/reference/PLAN-N1-100_balanced_hard_neighbor_training_and_v7_20261017.md)。
+N1 最新诊断在同九枚 checkpoint 上，对5道已消费的v6 `unknown`题测试了观测数和实体名距离。position 臂逐字输出 `unknown`：d=1 为0/15，d=2 为1/15；观测数2或4没有改变命中。run88来源守卫绑定的v3 train流中，48个unknown训练项没有d≤2近邻样本。N1 C3仍未达成；PLAN-N1-100在不改冻结门槛的前提下加入平衡近邻训练，并用全新v7面复核。训练调度、九模型控制器、v7造面器与评估器已实现，15项专项合同测试通过；本计划尚未加载checkpoint、更新参数或查询v7模型。当前唯一下一步是对九个seed/arm执行zero checkpoint保存与独立恢复预检。详见[PLAN-N1-99判读](plans/reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md)与[PLAN-N1-100](plans/reference/PLAN-N1-100_balanced_hard_neighbor_training_and_v7_20261017.md)。
 
 活动研究为 **N 主线**，N1 正在研究学习型读取、实体绑定和状态转移。已有结果属于限定实验；训练、未见评估、保持和消费者行为分别记账，尚不足以证明通用对话、AGI 或自主进化能力。
 

@@ -3984,3 +3984,10 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 新近只读核验run88 attempt实际守卫的v3 train子集：192项、四类各48，unknown的48项全为2观测/3实体且query subject缺席，最近干扰名距离8–10，d≤2训练实体对为0。train-only摘要见 `reports/taiji_n1_hard_neighbor_train_exposure_audit_20261017.json` SHA `a40d2866e31a844a61619a44084d05570682e645501bb54a34875a0c4a748dff`。全任务数据来源不等于该单一component，不作扩大结论。
 - **两项执行偏差已披露在EXP-N1-99**：①主执行器未记录计划要求的逐行输入摘要，之后用冻结代码、manifest与`name_rng_seed=9902`离线重建，补件 `reports/taiji_n1_unknown_abstention_factorial_binding_verification_20261017.json` SHA `efcc48b7c8b1a7d9d646f149e72687ee11f6ea6e2e50dd049565d69395c9fada`（180行、20输入、9端点、0新查询）；②执行后一次静态脚本误把v3 dev/holdout聚合元数据纳入统计，未加载模型/评分/查询/训练，相关数值不用于本判读或下轮方案。后续数据审计限定train。
 - owner 2026-10-17 最新指示“最高权限按最合适下一步推进”据此启动 [PLAN-N1-100](../../reference/PLAN-N1-100_balanced_hard_neighbor_training_and_v7_20261017.md)：train-only平衡d=1/d=2近邻视图，9 fresh模型，训练与确认门原值不改，完成后对全新v7面一次范围检查及一次确认。当前尚未开始实现、训练或新测面生成。
+
+### ㊵-1051 · 2026-10-17 · PLAN-N1-100 静态实现与训练前置合同完成
+
+- `scripts/training/build_taiji_n1_hard_neighbor_training_schedule.py` 仅解码v3的192条train episode，按同一6144步周期内偶数原始视图/奇数hard view生成3072项schedule；非train记录只提取`id`与`split`前缀用于跳过，其余字段不解析、不汇总。schedule SHA-256 `dc3a96ad17d43bd898e403ecd119c12c781317a71ab06ba39cdab6db24c40d50`；四类各768项，lookup/unknown四格各192，revision两距离格各384，transition保留两事实rename输入；revision目标行起点为240/288/240。
+- `scripts/training/run_taiji_n1_hard_neighbor_training.py` 复用冻结84 runner的目标、Adam、bounded-update和原评分门，仅替换调度、固定末周期LR及计数；九枚起始bundle来自run83 preflight的run11/12/13×三臂full-fresh零态，run88c仅有position三枚，不能当九模型统一源。总CPU合同仍为18,000秒。
+- v7 builder只在训练九端全过后才读v5/v6名单与材料词作排除；`uses`材料答案新词与v3 train/v5/v6分离，方向/`unknown`作为任务标签。评估器强制先查20项sacrifice，只在范围≥6/9通过后才允许创建confirm attempt。没有修改任何训练或确认门。
+- 四组PLAN-N1-100合同测试15项通过；Ruff、Black、py_compile通过。此前仅静态读取源码和train数据，尚未加载checkpoint、做optimizer更新、生成v7 face或进行模型查询；N5工作树文件和`output/`目录未触碰。九枚zero保存恢复预检为唯一下一步；其通过后再按18,000秒总上限执行固定九模型训练。

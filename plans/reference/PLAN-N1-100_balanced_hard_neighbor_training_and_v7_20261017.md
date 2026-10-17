@@ -9,7 +9,7 @@
 
 ## 1. 固定训练数据与变换
 
-- 只从 v3 curriculum 的 `split=train` 取192项；不得读取 dev/holdout。原 v3 manifest、run88 zero checkpoints、paired-question 与 renaming 来源按 SHA 逐项绑定，原始文件不改。
+- 只从 v3 curriculum 的 `split=train` 取192项；不得读取 dev/holdout 内容。提取器只解码 `train` episode；对其他 episode 仅读 `id` 与 `split` 前缀以跳过对象，其余字段不解析、不使用、不汇总。原 v3 manifest、run88 source attempt、run83 preflight 提供的九枚 full-fresh zero checkpoints、paired-question 与 renaming 来源按 SHA 逐项绑定，原始文件不改。run88c 只有 position 三枚 zero，不能作为九模型的统一初始化来源。
 - 训练每6144步保持现有偶／奇配对节奏：偶数步直接用原始 train 项；奇数步用同一 parent 的近邻实体 hard view。每24,576步共12,288次原始视图与12,288次 hard view；同一个确定性3072项 hard schedule 循环4次。
 - 每个 parent 在每个6144步周期有16个 hard-view slot。lookup 与 unknown 的16个 slot 各4次覆盖完整2×2：观测数2/4 × Hamming d=1/2。revision 使用4观测且 d=1/2 各8次。transition 保留当前两观测 renaming 输入，因为其冻结 quartet 学习器要求该二事实结构。
 - hard view 先使用现有 train-only renaming stream 提供新的 query entity；其余干扰实体按 PLAN-N1-93 同一逐字符替换方式生成，名字长度10、距离精确为指定 d，生成随机种子固定为10002。未知 query 的目标实体在任何观测中都不出现；lookup 保留一条正确目标观测，revision 保留 stale→current 两条目标观测且顺序不变；相应类别再加入足够干扰观测达到4条。hard views 的实体身份和 observation slots 必须与其 parent 一一绑定。
@@ -26,13 +26,14 @@
 
 ## 3. 全新 v7 面与一次性确认
 
-- 训练结束、九个最终端点冻结之后，才生成 v7；40项，四类各10，sacrifice/confirm 各20，4 observations，干扰实体 Hamming d=1。builder 使用固定独立 seed 107；query 实体与答案词必须分别与 v3 train、v5、v6 的实体/答案词集合交集为0。面构造只在内存/新唯一 manifest 发生，不向模型查询。
+- 训练结束、九个最终端点冻结之后，才生成 v7；40项，四类各10，sacrifice/confirm 各20，4 observations，干扰实体 Hamming d=1。builder 使用固定独立 seed 107；query 实体与 material-answer 词（`uses` 值）必须分别与 v3 train、v5、v6 的实体/材料词集合交集为0。固定方向词和`unknown`是任务标签，不作为新材料词计入隔离集合。面构造只在内存/新唯一 manifest 发生，不向模型查询。
 - 在 sacrifice 子集上对9个新 hard-neighbor 终端跑范围检查，沿 PLAN-N1-93 冻门 `usable_endpoints≥6/9`。不达线则不查 confirm。
 - 达线后，在同一 v7 confirm 子集一次性同时评估9个新终端和旧九端点（run88c position + run89a terminal + run89b cut），共360行。旧家族仅作同面描述性基线；原 v6/PLAN94 四门只应用于9个新 hard-neighbor 终端，绝对值和分母一个不改。CPU范围检验≤180秒、确认查询≤600秒。
-- 新家族沿用 PLAN-N1-94 原四门：每个position seed `free_exact≥10/20`；每个(seed,kind) `free_exact≥2/5`；三seed合计position相对terminal优势≥12/60；相对cut优势≥12/60。不得据range或控制臂表现改写四条线。
 - 新家族沿用 PLAN-N1-94 原四门：每个position seed `free_exact≥10/20`；每个(seed,kind) `free_exact≥2/5`；三seed合计position相对terminal优势≥12/60；相对cut优势≥12/60。不得据range或控制臂表现改写四条线。
 - v7 attempt 写入即消费；中断、判红或边界故障均不重试、不重抽、不改 seed、不改门。原 C3/C4/保持集/三器官证据边界保持；`TRAIN_SHA=None`、`can_promote=false`。
 
 ## 4. 执行顺序
 
-先完成 hard schedule 生成器、训练控制器、checkpoint 零态预检器、v7 builder、范围及确认执行器与合同测试；静态数据审计和保存恢复预检通过后，提交冻结实现；随后进行九模型训练，全部训练门通过且源守卫冻结后生成 v7，再按 sacrifice→confirm 顺序执行。每一阶段单独保存报告并提交；本计划内不推送远端、不删除数据。
+〔2026-10-17 实施状态〕hard schedule、九模型控制器、v7 builder、sacrifice 范围与 confirm 执行器已实现；四组 PLAN-N1-100 合同测试 15 项通过，Ruff、Black、py_compile 通过。仅冻结训练输入 manifest 已生成，SHA-256 `dc3a96ad17d43bd898e403ecd119c12c781317a71ab06ba39cdab6db24c40d50`，含3072项、每parent16槽、四类各768；lookup/unknown四格各192、revision两个距离格各384、transition仍为两事实改名输入。revision目标对行起点汇总为240/288/240。train manifest 提取器对非train对象仅读`id`/`split`以跳过，其余字段不解码；合同测试用不可解析的dev/holdout后缀验证该隔离。静态阶段未加载任何模型或checkpoint、未训练、未生成v7面或查询模型。实现审计纠正了初稿的两个路径误差：九枚full-fresh zero来自run83 preflight，run88c只有position三枚；材料答案隔离按`uses`词池定义，方向和弃权标签保留为任务常量。
+
+唯一下一步：提交冻结实现、合同、schedule和本计划/路线图更新；随后运行九个seed/arm的独立zero checkpoint保存恢复预检。预检过后提交预检证据，再按18,000秒总CPU上限进行九模型固定训练；全部原训练门通过后生成v7，依次执行sacrifice范围门与一次性confirm。任一预检或训练工程守卫失败，保留partial并停止，不覆盖、不自动重跑、不查询其他面。本计划不推送远端、不删除数据。
