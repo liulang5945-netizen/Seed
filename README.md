@@ -6,7 +6,7 @@ Seed hosts and exposes **Taiji**, a research architecture exploring persistent s
 
 ## Current status
 
-The latest N1 audit compared two already-consumed confirmation faces using the same nine checkpoints. On `unknown` items, the position arm emitted the exact answer on 23/24 v5 rows and 0/15 v6 rows. This face-sensitive result leaves C3 unmet and does not justify changing the model or product default; see the [cross-face census](plans/reference/EXP-N1-97_unknown_abstention_cross_face_census_20261017.md).
+The latest N1 audit compared two already-consumed confirmation faces using the same nine checkpoints. On `unknown` items, the position arm emitted the exact answer on 23/24 v5 rows and 0/15 v6 rows. The normalized question template and 23-byte question length match; v5 has two observations and three entities per item, while v6 has four observations and five entities. Those input changes are confounded, so the cause is unresolved and C3 remains unmet; see the [cross-face adjudication](plans/reference/EXP-N1-98_static_cross_face_unknown_audit_adjudication_20261017.md).
 
 The active research program is the **N mainline**, with N1 investigating learned reading, entity binding and state transitions. Results are bounded experiments, with training, unseen evaluation, retention and consumer behavior recorded separately. They do not establish general dialogue, AGI or autonomous self-improvement.
 

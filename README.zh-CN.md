@@ -6,7 +6,7 @@ Seed 托管并对外提供 **Taiji**：探索持续状态、记忆、局部学�
 
 ## 当前状态
 
-N1 最新只读普查比较了同九枚 checkpoint 在两张已消费确认面上的表现：position 臂对 `unknown` 题逐字输出正确答案，v5 为 23/24，v6 为 0/15。该读数随题面变化，C3 仍未达成，也不足以直接修改模型或产品默认行为。详见[跨面普查](plans/reference/EXP-N1-97_unknown_abstention_cross_face_census_20261017.md)。
+N1 最新只读审计比较了同九枚 checkpoint 在两张已消费确认面上的表现：position 臂对 `unknown` 题逐字输出正确答案，v5 为 23/24，v6 为 0/15。两面问题模板和 23 字节长度相同；v5 每题有 2 条观测、3 个实体，v6 有 4 条观测、5 个实体。这些差异与题面身份混杂，原因仍未定位，C3 仍未达成。详见[跨面判读](plans/reference/EXP-N1-98_static_cross_face_unknown_audit_adjudication_20261017.md)。
 
 活动研究为 **N 主线**，N1 正在研究学习型读取、实体绑定和状态转移。已有结果属于限定实验；训练、未见评估、保持和消费者行为分别记账，尚不足以证明通用对话、AGI 或自主进化能力。
 

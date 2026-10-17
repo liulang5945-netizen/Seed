@@ -1,6 +1,6 @@
 # PLAN-N1-98 · 已消费 v5/v6 unknown 题面的静态结构审计 · 2026-10-17
 
-**状态：owner 已批准范围；只读审计待执行。**授权只覆盖本件 §1–§5。它落实 [HANDOVER-N1-AFTER-V6 §2 甲](HANDOVER_N1_AFTER_V6_20261017.md) 后续的静态题面核查；不重开任何已消费确认面，也不修改此前冻结的训练目标、确认判据或产品默认。
+**状态：owner 已批准范围；审计已完成，判读见 [EXP-N1-98](EXP-N1-98_static_cross_face_unknown_audit_adjudication_20261017.md)。**本件只覆盖 §1–§5。它落实 [HANDOVER-N1-AFTER-V6 §2 甲](HANDOVER_N1_AFTER_V6_20261017.md) 后续的静态题面核查；未重开任何已消费确认面，也未修改此前冻结的训练目标、确认判据或产品默认。
 
 ## 0. 问题与边界
 

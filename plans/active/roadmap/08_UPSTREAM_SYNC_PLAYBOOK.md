@@ -3966,3 +3966,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - owner 已批准只读比对已消费 v5/v6 清单中 unknown 项的提问、实体名、候选观测与顺序，并连接既有报告行；不加载模型、不生成或查询新题、不训练、不改判据。
 - 在读取清单内容之前先冻结 [PLAN-N1-98](../../reference/PLAN-N1-98_static_cross_face_unknown_audit_20261017.md)：绑定 v5 SHA `22ba37976bc6eaaaf2425b84714a6efa6e95e7e5aa05f32eb3a7c0c10d9ffc2d`、v6 原始 SHA `7dddf00f3f2e24381728855b218e67bc8160fd6badeb1a7a933937d999766d49`；规定只汇总 unknown 子集和四组输入描述字段，摘要或 ID 错配即停止。
 - PLAN-N1-98 是本轮唯一工作范围；不开始任何训练或新面测量。读数与判读将在审计实际完成后另行提交。
+### ㊵-1048 · 2026-10-17 · PLAN-N1-98 清单结构审计出值；两个候选因素仍混杂
+
+- 只读审计按 owner 批准的 PLAN-N1-98 执行，读数件 `reports/taiji_n1_unknown_face_structure_audit_20261017.json` SHA-256 `f6f84877960f9c40341fa58d8330290c8822c913d550b9f3d8980d6e85e89239`；判读为 [EXP-N1-98](../../reference/EXP-N1-98_static_cross_face_unknown_audit_adjudication_20261017.md)。v5／v6 输入清单 SHA 与封条相同，9/9 checkpoint SHA 逐枚一致，ID／报告行连接 0 缺失／重复。
+- 结构读数：归一问题模板相同、问题均 23 UTF-8 字节；v5 unknown 题每题 2 条候选观测／3 个实体，v6 每题 4 条／5 个；目标实体在两面均不出现在观测里，候选值均 6 字节，全部 entity name 在两面间无精确重用。position unknown 仍为 23/24 对 0/15。PLAN-N1-98 禁止新算名称距离，本件不推断名称相似度。
+- 观测数、实体数和题面身份同步变化，无法在现有读数中拆因。唯一推荐是 [PLAN-N1-99 草案](../../reference/PLAN-N1-99_unknown_abstention_factorial_diagnostic_draft_20261017.md)：同 5 个已知 v6 unknown 题和 9 个终端，交叉 2/4 条观测与 Hamming d=1/2；A 格复用旧报告，B/C/D 共 135 条新查询，不训练、不改判据。因会创建新的诊断测面，草案尚未执行，待 owner 裁定。
+- README 中英、03、09、索引已同步。N1 C3 未达成，v5/v6 仍不可重测，N5 在途文件与 output 目录继续保持未触碰。

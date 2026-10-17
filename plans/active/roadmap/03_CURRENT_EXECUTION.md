@@ -1,8 +1,8 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：裁定是否授权已消费 v5／v6 清单的静态交叉审计
+## 当前唯一下一步：裁定是否执行 PLAN-N1-99 的已知面 2×2 诊断
 
-静态清单审计已获 owner 批准并冻结于 [PLAN-N1-98](../../reference/PLAN-N1-98_static_cross_face_unknown_audit_20261017.md)。下一步按该件先核对 v5/v6 报告绑定摘要，再只读分析两份清单中的 unknown 项；不加载 checkpoint/模型，不生成或查询新题，不训练、不改判据。任一 ID 或摘要错配即停止。完整性通过后产出结构普查 JSON 与 EXP-N1-98 判读。v5/v6 不可重测，N1 C3 仍未达成。
+PLAN-N1-98 已按批准范围完成，判读见 [EXP-N1-98](../../reference/EXP-N1-98_static_cross_face_unknown_audit_adjudication_20261017.md)，机器读数 SHA `f6f84877960f9c40341fa58d8330290c8822c913d550b9f3d8980d6e85e89239`。同九枚 checkpoint、同一归一问题模板下，v5 有 2 条观测／3 个实体且 position unknown 为 23/24；v6 有 4 条／5 个且为 0/15。观测数、实体数和题面身份混杂，尚不能定位原因。唯一建议是批准 [PLAN-N1-99 草案](../../reference/PLAN-N1-99_unknown_abstention_factorial_diagnostic_draft_20261017.md)：同 5 个已知 v6 unknown 问题与 9 枚端点做 2×2（2/4 条观测 × Hamming d=1/2），复用 A 格，仅新查 135 条，不训练、不改 gate、不声称未见能力。它会产生新的诊断测面，现停在该范围裁定。
 
 ## ㊵-1045 时点的历史队首（保留原文，已由㊵-1046更新）
 
