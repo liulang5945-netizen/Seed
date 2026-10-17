@@ -4166,3 +4166,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 计划`plans/reference/PLAN-N1-108_v10_teacher_free_agreement_20261017.md` SHA-256 `e07641a038c27b91b229312dfe45685606d27c5e1623e5cbdbcee627d3f31960`已冻结。只汇总已保存的`teacher_exact`/`free_exact`与face identity，不重跑评分。全2232行及seed/arm/kind/length/position分母完整列出，CPU≤15秒，不加载模型/checkpoint、不查询、不训练、不改门。
 - analyzer `scripts/training/audit_taiji_n1_v10_teacher_free_agreement.py` SHA-256 `daac0cf99c8313794e65b738d640bb242c7dbaf45f1ec4ed3b30fb5704afac9f`，合同测试 `tests/taiji_native/test_n1_run108_v10_teacher_free_agreement_contract.py` SHA-256 `8ab9d183ef2af425acf329a314c0c9b52e245bd32f3bccf4b92d8db8591a1e8a`；5项测试、Ruff/Black/py_compile通过。初步内存计数发现0行分歧，此报告将独立验证并留下可审计分层。
 - 当前唯一下一步：提交计划、实现、测试和active status，再校验冻结哈希后只运行一次；报告不会改变任何能力门或能力状态。
+
+### ㊵-1081 · 2026-10-17 · PLAN-N1-108 teacher/free一致性核对完成
+
+- 2,232行结果完整复核，CPU0.015625秒；报告SHA-256 `5807948dd23cf21b1ecdade74bafe14ffce72f229b10b318dc9985fb3a948661`，面/结果/计划/源码哈希均匹配，输入前后未变。981行teacher/free两者同对，1,251行两者同错，0行只有一侧精确；所有seed/arm/kind/长度/位置分层也均一致。0模型或checkpoint加载、查询、更新、训练和gate重算。
+- v10错误已存在于存储的gold-prefix逐字评分，不是只在free generation中出现。此读数支持答案预测/content mismatch这一描述，不推断具体因果机制；v9门失败及`can_promote=false`保持。
+- 当前唯一下一步：静态核对PLAN-N1-100冻结的train-derived hard schedule中lookup/revision已知答案长度，与v10诊断长度交叉；只读该train-only schedule和已消费v10 face，跳过dev/holdout，不加载、不查询、不训练、不改门。该读数将判定七字符诊断值是否超出已有已知答案长度暴露，再决定是否值得改训练目标。
