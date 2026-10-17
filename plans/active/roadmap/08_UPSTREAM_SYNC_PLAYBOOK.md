@@ -4227,20 +4227,27 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - candidate runner预校验pin了run100 baseline final endpoints九枚SHA，并检查原训练报告为complete/充分；已验证其当前字节哈希全部匹配，尚未加载baseline或candidate checkpoint。新增`--validate-only`会模拟24,576个schedule callback、检查40项来源链和长度ledger并输出write-once readiness，严格0模型/权重加载和0更新。
 - 当前未运行`--validate-only`，无candidate readiness/preflight/zero checkpoint。当前唯一下一步：提交runner/test与active status后运行`--validate-only`；只有readiness通过才进行保存并跨进程恢复九枚fresh-zero candidate checkpoint。
 
-### ㊵-1091 · 2026-10-18 · PLAN-N1-110候选训练runner与length账本实现
+### ㊵-1092 · 2026-10-18 · PLAN-N1-110候选训练runner与length账本实现〔㊵-1095 复核改号：本条与上方同号条目是同一事实的重复登记，落盘时撞号；引用一律以首枚为准〕
 
 - runner `scripts/training/run_taiji_n1_length_balanced_training.py` SHA-256 `635a2640a09e3ccb4ba385b21f981ce68be5ba0cb3d007dadc249b7705c76bf7`，合同测试 `tests/taiji_native/test_n1_plan110_length_balanced_runner_contract.py` SHA-256 `a9620dd7622c7644b02d9b76b2256283a0143f2eb5e0fd700aa17524e868a544`。6项测试、Ruff/Black/py_compile通过。固定PLAN100 baseline报告及九枚final checkpoint SHA均在runner静态入口逐一核对；raw/hard 24,576更新路径都有累计长度账本，恢复worker指向同一候选runner，避免run100参数签名误配。
 - 新增`--validate-only`纯调度模拟模式：run100冻结loader构建图、完整跑过24,576个schedule callback、检查每种task raw/hard的slot数及cycle/condition计数，但不会创建模型或读取权重。readiness输出write-once，成功后才允许zero-checkpoint preflight。
 - 当前未提交runner/test、未生成runner readiness、未保存candidate checkpoint、未更新参数。下一步提交代码/tests/active记录后运行一次`--validate-only`；readiness通过后再独立保存恢复九枚candidate zero checkpoints。
 
-### ㊵-1091 · 2026-10-18 · PLAN-N1-110 candidate training runner实现完成
+### ㊵-1093 · 2026-10-18 · PLAN-N1-110 candidate training runner实现完成〔㊵-1095 复核改号：本条与上方同号条目是同一事实的重复登记，落盘时撞号；引用一律以首枚为准〕
 
 - runner `scripts/training/run_taiji_n1_length_balanced_training.py` SHA-256 `635a2640a09e3ccb4ba385b21f981ce68be5ba0cb3d007dadc249b7705c76bf7`，合同测试 `tests/taiji_native/test_n1_plan110_length_balanced_runner_contract.py` SHA-256 `a9620dd7622c7644b02d9b76b2256283a0143f2eb5e0fd700aa17524e868a544`。6项测试通过，Ruff/Black/py_compile通过。
 - runner复用冻结PLAN-N1-100优化/恢复控制器，按candidate manifest提供raw/hard views；逐endpoint核验24576步中raw/hard各12288，并按kind统计6/7长度账本；以子进程调用候选runner自身做独立checkpoint恢复。它固定绑定run100 baseline训练报告及9枚final checkpoint SHA，旧基线不覆盖。
 - 当前仍0 model load/optimizer update；candidate runner 尚未运行`--validate-only`，无readiness/preflight/新checkpoint。下一步提交runner/test并执行纯schedule模拟readiness；该模式模拟整24,576步但不创建模型，生成write-once零更新回执后才做zero-save/restore preflight。
 
-### ㊵-1090 · 2026-10-18 · PLAN-N1-110 length-balanced candidate schedule正式构造
+### ㊵-1094 · 2026-10-18 · PLAN-N1-110 length-balanced candidate schedule正式构造〔㊵-1095 复核改号：本条与上方同号条目是同一事实的重复登记，落盘时撞号；引用一律以首枚为准〕
 
 - write-once manifest `plans/manifests/n1_hard_neighbor_length_balanced_schedule_v1_20261018.json` SHA-256 `b2d637fcc1e096d40bba35bbc91bc66b0c27257cd74a4bcac5f5f488f55b6d4c`，construction checks `reports/taiji_n1_length_balanced_schedule_checks_20261018.json` SHA-256 `51cb205b17a1319b86c7f73c4f0158957cbeaf73b933aa9a942aba52cfabf0d9`。3072 hard＋3072 materialized raw views；每父项/条件按6/7各半，lookup/revision/unknown的raw和hard各384×6+384×7，transition 768项保持不变；six→seven映射288个值、一对一且排除过往评估词。
 - 40项source guards全真，包含PLAN-N1-110、builder/test、v3 train源、v5/v6、v7/v8 sacrifice、v9与v10；v7/v8确认payload字段未解码。造表/检查0 model/checkpoint load、0 query、0 update，dev/holdout计数0；未创建任何candidate checkpoint或v11 face。
 - 当前唯一下一步：实现独立candidate training runner，让raw/hard slot仅消费此冻结manifest，完整核验每步length账本、source/code guard、训练充分门与zero/final bundle保存恢复；完成前不启动optimizer updates。
+### ㊵-1095 · 2026-10-18 · 台账四枚重号改号并给唯一性门补上"标题形"这一档：门原先对当前主形零判别力却报绿
+
+- 起点是接手时的现读盘面（`git rev-parse --short HEAD`＝`ec4db0264`、未推 74 条、N1-110 那条腿有别人在飞的两个文件）。核队首时发现 08 尾部**同一枚号出现多次**：`㊵-1090` 两行（4218／4242，同一枚 schedule manifest SHA `b2d637fc…`）、`㊵-1091` 三行（4224／4230／4236，同一枚 runner SHA `635a2640…`＋同一枚合同测 SHA `a9620dd7…`）＝四枚重复登记，而 09 与 PLAN_INDEX 的横幅都在写"㊵-1091"，读者分不出指哪一枚。
+- 为什么门没拦：`audit_taiji_ledger_marker_uniqueness.py` v1 的取行规则是"以「【」开头"，而 2026-10-17 之后 08 的主形是 `### ㊵-N · 日期 · 标题`。真册复算（同一轮）：**中括号形 594 行全distinct、标题形 125 行整档不在眼前**，v1 报的是 `rows_counted=594, duplicates={}, rc=0`＝绿。这是"门绿但没扫到本次改动的面"的又一形，也是守卫能为假的一次失守 ⇒ 修口见 DEBT-G156：升 v2 两档并列计数，取号规则不变（每行第一枚圈号），跨档同枚号也算重号（历史交集实测 0 枚 ⇒ 不会误伤旧账）。合同测 6→8 passed，新增两支负对照（标题形重号必须 rc=1 并点名行号；两档撞同一枚号必须红）。
+- 修台账侧的手法按记忆里那条老规矩：**改号而不搬正文**。落盘较晚的三枚改成 ㊵-1092／1093／1094，标题尾部就地加"〔㊵-1095 复核改号：本条与上方同号条目是同一事实的重复登记，引用以首枚为准〕"；首枚（4218 的 1090、4224 的 1091）号不变，所以横幅引用仍然落得到。改号后真册复跑 rc=0：`bracket_rows` 594／`heading_rows` 125／`rows_counted` 719／`duplicates` 空／`max_marker` 1094／`nonmonotonic_runs` 15（回落只出版，不判红）。
+- 第二条易碎证据也要登记，因为它会误导下一轮：㊵-1091／1092／1093 钉的 runner 与合同测 SHA 等于 **HEAD 的字节**，而工作区当前是 `a7819d84…`／`bf9de7ba…`（别人未提交的再改）⇒ 台账里那句 SHA 描述的是已提交状态、不是此刻的树。谁提交那两件，必须同轮把这两枚 SHA 重新出版，不许沿用（同记忆第 16 条"构建输入没变过"这类证据易碎）。
+- 我自己这一轮也当场红了两次并如实记：①第一版改号脚本把 bytes 模式用在 str 上（TypeError，零写入，文件未被改）；②`Path.read_text(newline=…)` 在本机 Python 3.12 不存在（TypeError ⇒ 该册 8 支全红），改回默认读法后 8 passed；黑面格式化随后单文件跑净，`ruff check` rc=0。

@@ -106,6 +106,44 @@ def test_bracket_rows_without_a_marker_are_counted_separately(tmp_path: Path) ->
     assert report["max_marker"] == 7
 
 
+def test_a_heading_face_duplicate_turns_the_instrument_red(tmp_path: Path) -> None:
+    """DEBT-G156：首版只数「【」形，标题形 `### ㊵-N ·` 整档隐形——四枚重号就是这样入库的。"""
+
+    module = _load()
+    text = (
+        f"### {MARKER}-500 · 2026-10-18 · 第一条标题登记】正文。\n"
+        f"### {MARKER}-501 · 2026-10-18 · 第二条标题登记】正文里引用 {MARKER}-500 那句历史号。\n"
+    )
+    report = module.scan(_write(tmp_path, text))
+    assert report["heading_rows"] == 2 and report["rows_counted"] == 2, report
+    assert report["duplicates"] == {}, report
+    again = text + f"### {MARKER}-500 · 2026-10-18 · 又一个五百号】重号。\n"
+    dup = tmp_path / "dup.md"
+    dup.write_text(again, encoding="utf-8", newline="\n")
+    doubled = module.scan(dup)
+    assert doubled["duplicates"] == {"500": 2}, doubled
+    assert doubled["duplicate_lines"]["500"] == [1, 3], doubled["duplicate_lines"]
+    assert doubled["verdicts"]["ledger_markers_unique"] is False
+    out = tmp_path / "report.json"
+    assert module.main(["--playbook", str(dup), "--out-report", str(out)]) == 1
+
+
+def test_the_two_faces_share_one_numbering_and_a_cross_face_collision_is_red(
+    tmp_path: Path,
+) -> None:
+    """中括号形与标题形共用一套号：同一枚号在两档各出现一次也算重号（现测 0 枚历史交集）。"""
+
+    module = _load()
+    text = (
+        f"{BRACKET}2026-10-13 {MARKER}-610 · 中括号登记】正文。\n"
+        f"### {MARKER}-610 · 2026-10-18 · 标题登记撞了同一枚号】正文。\n"
+    )
+    report = module.scan(_write(tmp_path, text))
+    assert report["bracket_rows"] == 1 and report["heading_rows"] == 1, report
+    assert report["duplicates"] == {"610": 2}, report
+    assert "v2 起两档并列计数" in report["reading_limit"]
+
+
 def test_the_refusal_to_overwrite_a_tracked_report_is_a_third_exit(tmp_path: Path) -> None:
     """落盘护栏：目标已存在而未给 `--overwrite` ⇒ rc=2，且不碰原文件（DEBT-G35 那一族）。"""
 
