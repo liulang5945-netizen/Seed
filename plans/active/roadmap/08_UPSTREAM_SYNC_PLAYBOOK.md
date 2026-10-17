@@ -4124,3 +4124,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 评测器现保留并指纹验证恢复时完整history，只拒绝与248个新diagnostic session ID冲突；逐题清理新session，并在每个seed/arm端点前后比较完整model/optimizer/RNG/history bundle。合同测试新增“保留既有history”和“检测session冲突”两支；共13项测试、Ruff/Black/py_compile通过。
 - repair receipt `reports/taiji_n1_hard_neighbor_v10_factorial_diagnostic_preflight_repair_20261017.json` SHA-256 `d4880db26c3fa910ff3a786bc5af08a358ad87fb71702ce1bac687f2d7cd5133`绑定construction-time与修复后36项源码守卫，仅评测器与合同测试源码改变；九枚checkpoint hash在失败后仍与封存收据一致。失败调用wall上限10秒以CPU上限保守计入；总预算仍≤1200秒。
 - 当前唯一下一步：提交修复评测器/测试/凭据，随后重新执行9枚full-bundle readiness。若readiness完成且所有源/权重守卫匹配，另提交readiness receipt后才执行唯一一次2232-query diagnostic。
+
+### ㊵-1074 · 2026-10-17 · PLAN-N1-105九端点完整恢复预检通过
+
+- repair receipt已提交后，`python -m scripts.training.eval_taiji_n1_input_factorial_diagnostic --readiness`完整结束，readiness报告SHA-256 `aa436bc63fb1e06a3dcc7c082c0556b6fdee940c83736949d3b20a4e1324fdb0`。9/9 endpoint依冻结加载器完整恢复，bundle签名相等；每端保存的43008条训练history原样保留，248个diagnostic session均无碰撞。
+- 构造/来源checks、36项source guards、9枚checkpoint SHA和runtime code identity均未变；repair receipt bound且v7/v8确认payload fields未解码。全步骤累计CPU38.25秒，已含builder 0.15625秒及首次失败preflight的10秒保守CPU上界；本次readiness 0 query、0 update、0 optimizer step，`can_promote=false`。
+- 当前唯一下一步：先提交readiness报告和本条状态，再运行冻结的`--execute`一次，共2232条，CPU总上限1200秒。结果只作跨位置×长度的探索性诊断，不重算PLAN-N1-94门、不晋升；若attempt已写则绝不重试。
