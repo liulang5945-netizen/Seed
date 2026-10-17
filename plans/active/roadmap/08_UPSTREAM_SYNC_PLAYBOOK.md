@@ -4071,3 +4071,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 
 - 只读归因器与5项合同测试通过。输入边界已机检：streaming reader只把180条`hard_neighbor_v9`逐题行交给分析器；180条prior-family control行仅读取`family`标签后跳过其余字段。逐题分析计算position-only correct、control-only correct、both correct、both wrong、`output_hex`解码后的byte equality，seed/kind分母固定为20/5；四门结果从不重算。
 - 当前唯一下一步：运行一次`audit_taiji_n1_hard_neighbor_v9_item_errors.py --execute`，绑定v9 confirmation report SHA `7b9b7e7cccf27a5e9ba6f9e002b1b4df09347fb7264b3827f9eb6cdab44a1802`与PLAN-N1-103 SHA；预算≤30 CPU秒，0模型/权重加载、0查询/更新。仅产探索性结果，不作因果/C3/C4/能力/晋升主张。
+
+### ㊵-1066 · 2026-10-17 · PLAN-N1-103只读归因完成
+
+- `reports/taiji_n1_hard_neighbor_v9_item_error_attribution_20261017.json` SHA-256 `293b8fbb73f71cd592014396d38365f0229443dfd51d39c7fe18199084870ead`：180条新家族行分析、prior-family 180行仅读family标签后跳过、CPU0.5秒；confirmation report SHA与PLAN SHA绑定，全程0模型/checkpoint加载、0查询/训练/更新，无gate重算。
+- position vs cut：60个item pairs中34 both-correct、5 position-only、10 cut-only、11 both-wrong，output bytes identical 35/60。seed11为3/0 position-only/cut-only，seed12为2/2，seed13为0/8；seed13的revision类cut-only 5/5。position vs terminal总体position-only 31、terminal-only 2。结论仅为描述性，非机制因果。
+- 唯一建议PLAN-N1-104拟对已消费v9确认输入做target位置/答案长度分层，以查seed13 revision/position表现是否与题面特征共变；这扩展读取v9 confirm manifest边界，尚待owner裁定。未批准前不读输入字段、不训练、不查询或变更测面/判据。

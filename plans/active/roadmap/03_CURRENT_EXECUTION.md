@@ -1,8 +1,8 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：生成PLAN-N1-103的一次性只读归因报告
+## 当前唯一下一步：owner裁定是否批准PLAN-N1-104输入特征审计
 
-[EXP-N1-99](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md) 的d=1/d=2诊断仍未提供能力证据。PLAN-N1-100九模型训练完整，position三seed全过原训练门；v7/v8范围均4/9失败，PLAN-N1-101关闭。owner批准的PLAN-N1-102 v9范围一次过6/9，确认查询360条完整结束（新家族180、描述对照180，CPU83.0625秒、18恢复相等、守卫全真、0更新）；四门合取失败：position相对terminal +29/60但相对cut −5/60，seed13 position 5/20。完整判读[EXP-N1-102](../../reference/EXP-N1-102_v9_confirmation_adjudication_20261017.md)。owner已批准并冻结[PLAN-N1-103](../../reference/PLAN-N1-103_v9_item_level_error_attribution_20261017.md)，归因器与5项合同测试通过。当前唯一下一步是绑定确认报告SHA，只读执行一次归因并生成报告；不得加载模型、访问清单、查询、训练或改门。结果只用于选择后续机制方向，不补发C3或能力结论。
+[EXP-N1-99](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md) 的d=1/d=2诊断仍未提供能力证据。PLAN-N1-100九模型训练完整，position三seed全过原训练门；v7/v8范围均4/9失败，PLAN-N1-101关闭。owner批准的PLAN-N1-102 v9范围一次过6/9，确认查询360条完整结束（新家族180、描述对照180，CPU83.0625秒、18恢复相等、守卫全真、0更新）；四门合取失败：position相对terminal +29/60但相对cut −5/60，seed13 position 5/20。完整判读[EXP-N1-102](../../reference/EXP-N1-102_v9_confirmation_adjudication_20261017.md)。PLAN-N1-103已完成并通过来源SHA/零查询合同：position/cut差额集中于seed13（8 cut-only、0 position-only），其中revision 5题；详细读数见[EXP-N1-103](../../reference/EXP-N1-103_v9_item_error_attribution_adjudication_20261017.md)，不作因果解释。当前唯一提案[PLAN-N1-104](../../reference/PLAN-N1-104_v9_confirmation_input_feature_audit_draft_20261017.md)将把只读分析边界扩到v9已消费确认面中的题类/目标位置/答案长度特征。此为新的数据读取范围，尚待裁定；未批准前不读manifest或改变路线。
 
 ## ㊵-1045 时点的历史队首（保留原文，已由㊵-1046更新）
 

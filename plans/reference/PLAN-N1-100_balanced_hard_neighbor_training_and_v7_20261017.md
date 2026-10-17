@@ -63,3 +63,5 @@
 〔㊵-1064 批准PLAN-N1-103〕owner明确批准对v9已消费新家族180行做只读逐题归因。冻结计划[PLAN-N1-103](PLAN-N1-103_v9_item_level_error_attribution_20261017.md)要求按seed/kind统计position-only、control-only、both-correct、both-wrong及输出字节一致；只读确认报告行，不读checkpoint/manifest、不查询、不训练、不改门。当前唯一下一步是实施归因器和合同测试，之后按报告SHA一次生成探索性结果；不得把归因写成因果或C3/能力结论。
 
 〔㊵-1065 PLAN-N1-103实现〕归因器拟从已封存报告字段`family/seed/arm/id/kind/free_exact/output_hex`计算每个seed/kind五题的两两正确性四分类和输出字节一致率，先验校验确认报告SHA、180行唯一性及每格5行；不重算四门。代码与合同通过后只生成一份≤30秒探索性报告，`model_loads/queries/updates=0`。当前唯一下一步：实现脚本/合同测试并按冻结SHA执行。
+
+〔㊵-1066 PLAN-N1-103读数〕输出报告`taiji_n1_hard_neighbor_v9_item_error_attribution_20261017.json` SHA-256 `293b8fbb73f71cd592014396d38365f0229443dfd51d39c7fe18199084870ead`，180行、CPU0.5秒，确认输入SHA和PLAN SHA均匹配，prior-family 180行payload未解码，0加载/查询/更新，0 gate重算。position vs cut：60题中34两臂同对、5 position-only、10 cut-only、11两臂同错；按seed，seed11 position-only3/cut-only0，seed12 2/2，seed13 0/8。seed13 cut-only的8题中revision 5；position vs terminal仍为position-only31、terminal-only2。以上仅描述相关误差分布，不构成因果或能力证明。唯一提案[PLAN-N1-104](PLAN-N1-104_v9_confirmation_input_feature_audit_draft_20261017.md)将读取已消费v9确认输入特征做分层，属新数据边界，等待owner裁定。
