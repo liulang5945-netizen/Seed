@@ -4136,3 +4136,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 冻结的`--execute`完整返回：2,232/2,232查询，累计CPU116.921875秒（构造0.15625、成功readiness 28.09375、失败preflight保守计10、正式评估78.671875），结果SHA-256 `287cc5c4a38693d8e055f1290d801b1ec6494768386ff3ad1963e3059852a822`。九枚checkpoint、源守卫和code identity不变；0更新、0 optimizer step、0 dev/既有确认面查询、未重算gate，`can_promote=false`。
 - 三seed精确数：position 444/744、terminal 52/744、cut 485/744。position分seed为236/248、179/248、29/248；seed13的position lookup/revision分别0/96、0/88，而同seed cut revision为88/88。种子11/12的position lookup在6字符答案均48/48，在7字符答案均36/48；seed13两长度均0/48。按PLAN-N1-105解释边界，这些是匹配合成模板上的描述性读数，不归因为因果机制、不替换v9失败门、不支持晋升。详见[EXP-N1-105](../../reference/EXP-N1-105_counterbalanced_input_diagnostic_adjudication_20261017.md)。
 - 当前唯一下一步：对已消费v10逐题输出做只读错因分类（target/current、revision stale、已观察到的其他值、unknown/空/其他），绑定face/result SHA和完整分母；不加载模型、不查询、不训练、不改gate。其目的在于判明seed13 position崩落主要输出成何种内容，并检查长度关联是否表现为整词来源错误或字节级偏差。
+
+### ㊵-1076 · 2026-10-17 · PLAN-N1-106只读归因工具冻结
+
+- 计划`plans/reference/PLAN-N1-106_v10_output_error_attribution_20261017.md`已冻结，SHA-256 `556e73501143cea141138ced44e3e2ff52c2521150a9461a0a362d32331880fc`。输入仅为已消费的v10 face和complete result，固定2,232行全覆盖，CPU≤30秒；报告write-once，不读取模型/checkpoint，不查询、不训练、不改gate。
+- analyzer `scripts/training/audit_taiji_n1_v10_output_error_attribution.py` SHA-256 `0a999ef38ace3bbdc0709b154e17c73c434d9aea93492801b17a33d07a6a782c`，合同测试 `tests/taiji_native/test_n1_run106_v10_output_error_attribution_contract.py` SHA-256 `18b9d44180147d4dc5060ee348042a132b8ac1e9ffd0477c69f7e30912a5448e`。五项测试通过，Ruff/Black/py_compile通过；完整端点×题面身份、分母与exact标记一致性均有断言。
+- lexical类别仅描述输出与题面中材料字串的匹配，不作为内部读出路径的证据。当前唯一下一步：提交冻结计划、analyzer/test和此状态记录后执行一次只读归因；若source hash或完整行校验失败则不写报告。
