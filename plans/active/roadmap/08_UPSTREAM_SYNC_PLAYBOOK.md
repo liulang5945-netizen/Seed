@@ -4130,3 +4130,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - repair receipt已提交后，`python -m scripts.training.eval_taiji_n1_input_factorial_diagnostic --readiness`完整结束，readiness报告SHA-256 `aa436bc63fb1e06a3dcc7c082c0556b6fdee940c83736949d3b20a4e1324fdb0`。9/9 endpoint依冻结加载器完整恢复，bundle签名相等；每端保存的43008条训练history原样保留，248个diagnostic session均无碰撞。
 - 构造/来源checks、36项source guards、9枚checkpoint SHA和runtime code identity均未变；repair receipt bound且v7/v8确认payload fields未解码。全步骤累计CPU38.25秒，已含builder 0.15625秒及首次失败preflight的10秒保守CPU上界；本次readiness 0 query、0 update、0 optimizer step，`can_promote=false`。
 - 当前唯一下一步：先提交readiness报告和本条状态，再运行冻结的`--execute`一次，共2232条，CPU总上限1200秒。结果只作跨位置×长度的探索性诊断，不重算PLAN-N1-94门、不晋升；若attempt已写则绝不重试。
+
+### ㊵-1075 · 2026-10-17 · PLAN-N1-105诊断完成
+
+- 冻结的`--execute`完整返回：2,232/2,232查询，累计CPU116.921875秒（构造0.15625、成功readiness 28.09375、失败preflight保守计10、正式评估78.671875），结果SHA-256 `287cc5c4a38693d8e055f1290d801b1ec6494768386ff3ad1963e3059852a822`。九枚checkpoint、源守卫和code identity不变；0更新、0 optimizer step、0 dev/既有确认面查询、未重算gate，`can_promote=false`。
+- 三seed精确数：position 444/744、terminal 52/744、cut 485/744。position分seed为236/248、179/248、29/248；seed13的position lookup/revision分别0/96、0/88，而同seed cut revision为88/88。种子11/12的position lookup在6字符答案均48/48，在7字符答案均36/48；seed13两长度均0/48。按PLAN-N1-105解释边界，这些是匹配合成模板上的描述性读数，不归因为因果机制、不替换v9失败门、不支持晋升。详见[EXP-N1-105](../../reference/EXP-N1-105_counterbalanced_input_diagnostic_adjudication_20261017.md)。
+- 当前唯一下一步：对已消费v10逐题输出做只读错因分类（target/current、revision stale、已观察到的其他值、unknown/空/其他），绑定face/result SHA和完整分母；不加载模型、不查询、不训练、不改gate。其目的在于判明seed13 position崩落主要输出成何种内容，并检查长度关联是否表现为整词来源错误或字节级偏差。
