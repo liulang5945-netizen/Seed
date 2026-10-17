@@ -3768,3 +3768,13 @@ owner 在弹窗里一并裁定三件：①N1 下一格走**甲**（零查询逐�
 下一格的价格：同形状扩到九枚端点 × 32 题 × 三模式＝864 条 teacher 序列，按 4.5 秒／576 条线性外推**约 6.8 秒**，与 90 那次实测 34.34 秒同档；零训练、零参数更新、零外部配额。两条限制必须与它同冻：①若要把那 32 题喂进去，需 owner 先允许该面以"已知面上的机制探针"身份使用且**不得再冠"未见"**（v5 已消费、`retry_allowed=false`）；②oracle 抬起来不是能力（旧件用 `oracle_is_capability=false` 钉过这一语义），它只证"候选／地址供给是瓶颈"，不证模型会答题。以上整段已写进 [EXP-N1-91](../../reference/EXP-N1-91_run91_error_attribution_adjudication_20261017.md) §6。
 
 现行队首＝owner 在"读通路侧那一格"的三条候选里裁定：甲′＝沿用那台 oracle 仪、只在 **train 面**上对九枚端点重做（零新面、约 6.8 秒外推）；乙′＝同一仪器扩到那 32 题并按"已知面机制探针"出版（需 owner 明示允许复用已消费面）；丙′＝先不花机时，只用已封存读数做**错在第几步**的分布分析（这条的能力上限已现取：`rows` 每行只有 `teacher_ce`／`teacher_tokens_correct`／`teacher_symbols`／`output_hex` 这类末态读数，**没有 logits 也没有逐步 CE 向量**，所以它答不了"候选分布"那一问，只答"首符号错与后半程错各占哪几题"）。本轮未推送提交＝1 条（`5c0cf0e77`，推送须另行裁定）；三批训练工程结论与"衰减修末周期"的配方事实不撤，v5 不重跑、不换 seed、不改线值。
+
+### ㊵-1025 · 2026-10-17 · owner 三裁（答复原文抄录）落地：乙′获准开工、推送成功、DEBT-G150 按甲落成守卫形态
+
+owner 在本轮 AskUserQuestion 的三个问题上分别选定了如下选项，原文抄录在此作为出处：①"读通路那格"＝**"乙′：在失败发生的那 32 题上做 oracle 探针（推荐）"**；②DEBT-G150＝**"甲：改两处字面量去读协议"**；③推送＝**"现在就推"**。据此三件各自执行与登记如下。
+
+推送已实跑：`git push origin main` rc=0，远端 `b0e4cc858..69f7b5254`，`git rev-list --count origin/main..HEAD` 现读 0。
+
+甲那一件执行时撞到一个可机检的不可能，读数先摆出来：两处硬编码 64 所在的件都被在库报告按字节钉住——`eval_taiji_n1_transition_factorial_confirmation.py` 的字节 SHA 就是 90 确认报告的 `code_identity.base_evaluator`（现读命中 2 枚＝该报告与它的 attempt），`audit_taiji_n1_native_evidence_train_fit.py` 的字节 SHA 命中 **75 枚** 2026-10-15 在库报告，其中就包括 oracle 注入仪那份，而乙′正要复用它 ⇒ 改字节等于让这批读数的身份复算全灭。所以按**最大可行绑定**落地：新守卫 `tests/taiji_native/test_n1_generated_cap_matches_protocol.py` 用 AST 扫 `scripts/training/*.py`（面 800 枚），出版"两侧同值"3 枚／"只有字面量"9 枚／"只有协议定义"1 枚／"实参非字面量"0 枚，并自带合成负对照（协议那一侧挪一格 ⇒ mismatch 必须非空）；3 passed，`black --check` 与 `ruff check --select B,SIM` 两支都 rc=0。未覆盖的一半写进债行而不是抹掉：字面量仍是真源头、协议键仍无消费处，要做到"协议驱动"必须由 owner 先裁定放弃这批封存件的字节可复现性（或为新族另建读协议的件），不许静默替换。
+
+乙′的开工前置按裁定排好（尚未发射）：先冻 PLAN-N1-92（分类轴、禁令、出口三件先写死再跑），仪器**复用** `audit_taiji_n1_address_intervention.py` 的 `weights()` 与 `teacher()`，不重抄解码环（旧教训：重抄＝换条链）；九枚端点的装载走 90 那台族协议加载器与回执校验，不另起装载路径。三条限制与读数同件写死：①`unknown` 类没有可指认的源 ⇒ oracle 位置对其构造上不可定义，本探针只覆盖 lookup／revision 那 80/96 失败行；②oracle 抬起来不是能力（旧件已用 `oracle_is_capability=false` 钉过这一语义），它只答"候选／地址供给是不是瓶颈"；③读数一律标"机制"，不得进 C3／C4／三器官任何一格的证据链。价＝九枚端点 × 32 题 × 三模式＝864 条 teacher 序列，按旧件 4.5 秒／576 条线性外推约 6.8 秒，上限仍设 ≤60 秒 CPU。当前无进行中训练任务；三批训练工程结论与"衰减修末周期"的配方事实不撤，v5 不重跑、不换 seed、不改线值。
