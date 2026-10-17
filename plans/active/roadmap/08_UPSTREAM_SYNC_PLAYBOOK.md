@@ -4172,3 +4172,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 2,232行结果完整复核，CPU0.015625秒；报告SHA-256 `5807948dd23cf21b1ecdade74bafe14ffce72f229b10b318dc9985fb3a948661`，面/结果/计划/源码哈希均匹配，输入前后未变。981行teacher/free两者同对，1,251行两者同错，0行只有一侧精确；所有seed/arm/kind/长度/位置分层也均一致。0模型或checkpoint加载、查询、更新、训练和gate重算。
 - v10错误已存在于存储的gold-prefix逐字评分，不是只在free generation中出现。此读数支持答案预测/content mismatch这一描述，不推断具体因果机制；v9门失败及`can_promote=false`保持。
 - 当前唯一下一步：静态核对PLAN-N1-100冻结的train-derived hard schedule中lookup/revision已知答案长度，与v10诊断长度交叉；只读该train-only schedule和已消费v10 face，跳过dev/holdout，不加载、不查询、不训练、不改门。该读数将判定七字符诊断值是否超出已有已知答案长度暴露，再决定是否值得改训练目标。
+
+### ㊵-1082 · 2026-10-17 · PLAN-N1-109训练答案长度审计工具冻结
+
+- `plans/reference/PLAN-N1-109_train_answer_length_coverage_audit_20261017.md` SHA-256 `60704ef0802319dd742849c41c5eb19f057fbbf451d4cb8da3a86e53a47c6dd4`已冻结。读取仅限PLAN-N1-100 3,072项train-derived schedule（SHA `dc3a96ad17d43bd898e403ecd119c12c781317a71ab06ba39cdab6db24c40d50`）与v10已消费248题face（SHA `2d912941baecaa4811266ace64b56fa9bb2ace65d657691834911db16ed369d8`）；验证每个嵌套样本split=train及schedule dev/holdout/query/update计数为0，不读原v3 manifest、不碰dev/holdout。
+- analyzer `scripts/training/audit_taiji_n1_answer_length_coverage.py` SHA-256 `efb85ebea2f936fd4d6e2398f4dd199ea479ebd26d0c133985c2805e884e953b`，合同测试 `tests/taiji_native/test_n1_run109_answer_length_coverage_contract.py` SHA-256 `b8ae265993114d60a3d1d3b58d04d2f79f42711092582dd79d17317325c6bcb8`。五项测试、Ruff/Black/py_compile通过；write-once report尚未生成，CPU≤15秒，0 model/checkpoint、queries、updates。
+- 当前唯一下一步：提交PLAN-N1-109、analyzer/test与active status，复核固定hash后运行一次。只报告schedule暴露与诊断长度的覆盖，不自动启动训练。
