@@ -4076,4 +4076,18 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 
 - `reports/taiji_n1_hard_neighbor_v9_item_error_attribution_20261017.json` SHA-256 `293b8fbb73f71cd592014396d38365f0229443dfd51d39c7fe18199084870ead`：180条新家族行分析、prior-family 180行仅读family标签后跳过、CPU0.5秒；confirmation report SHA与PLAN SHA绑定，全程0模型/checkpoint加载、0查询/训练/更新，无gate重算。
 - position vs cut：60个item pairs中34 both-correct、5 position-only、10 cut-only、11 both-wrong，output bytes identical 35/60。seed11为3/0 position-only/cut-only，seed12为2/2，seed13为0/8；seed13的revision类cut-only 5/5。position vs terminal总体position-only 31、terminal-only 2。结论仅为描述性，非机制因果。
-- 唯一建议PLAN-N1-104拟对已消费v9确认输入做target位置/答案长度分层，以查seed13 revision/position表现是否与题面特征共变；这扩展读取v9 confirm manifest边界，尚待owner裁定。未批准前不读输入字段、不训练、不查询或变更测面/判据。
+- owner按常规推进计划授权冻结了PLAN-N1-104：只读分层已消费v9 confirm输入，不造新测面、不查询或训练。当前实现streaming读取与合同测试。
+
+### ㊵-1067 · 2026-10-17 · PLAN-N1-104输入特征审计冻结
+
+- owner在批准PLAN-N1-103时授权常规推进计划。依据其seed13/revision描述读数，PLAN-N1-104冻结为v9已消费confirmation输入的只读特征分层：streaming只解码20个confirm episode的kind、target-row位置与材料答案长度；其余v9 sacrifice episode仅读ID/split/subset后跳过；v7/v8 confirm内容不读。
+- 无新测面、model/checkpoint加载、模型查询、训练或门改动；将20条confirm输入与已消费v9新家族结果按ID关联，CPU≤30秒，绑定v9 manifest与confirmation report固定SHA。当前唯一下一步实现streaming读取器、归因和合同测试，完成后一次性出版探索性报告。
+
+### ㊵-1068 · 2026-10-17 · PLAN-N1-104只读分层完成并披露协议偏差
+
+- `scripts/training/audit_taiji_n1_hard_neighbor_v9_input_features.py`与6项合同测试通过。由于pytest默认临时路径在沙箱外，测试以任务可写临时工作区为`--basetemp`运行；`python -m pytest tests/taiji_native/test_n1_run104_v9_input_feature_audit_contract.py -q`为6 passed。
+- 一次执行`--execute`完成，CPU0.5625秒；绑定manifest SHA `d93dd6c6e0d98125ef1c91ed7ad8aec07a46f6621fb597dbffa6e889f29ac60f`、confirmation SHA `7b9b7e7cccf27a5e9ba6f9e002b1b4df09347fb7264b3827f9eb6cdab44a1802`、PLAN SHA `5943bd3f0f167ca8287a14dd4c7ff56196fda2b70e8d4bc3157c7f9045bacc0a`。分析20个confirm输入、180行新家族结果；分析器跳过20个sacrifice payload与180个prior-family payload；0模型/checkpoint加载、0查询/训练/更新、0新面、0门重算。报告`reports/taiji_n1_hard_neighbor_v9_input_feature_audit_20261017.json` SHA `c0cf0ab7163ec62be7f2ffc76f78e573917bbbbf785d6da7a2923400c6ce1c5e`，状态`complete_with_protocol_deviation`。
+- **偏差披露**：实现前为检查单行紧凑清单而预览了整行，导致20道sacrifice题目的载荷进入分析上下文，违反PLAN-N1-104的跳过边界。代码审计随后只解码confirm题，且这些sacrifice字段未参与计算；报告将偏差固定记录。不得称本次审计“协议完全合规”。v7/v8或v3/v5/v6源未读。
+- 16个联合特征单元中，lookup/revision各5个位置1–5的单题格，答案长度依序7/6/7/6/7；transition每个位置为单题格，unknown为5题无目标行。seed13的lookup/revision position分别在6/7字符长度组均0正确；各长度组`n=2/3`，且题目身份与位置共线，不能区分长度效应、位置效应或题目难度。
+- 静态检查v9 builder（SHA `90c1c88a7f5cca931611bfbd9a5b348f474b8dae0333baba7ec32d9e9c001293`）确认：confirm ordinal为5–9，答案长度按`ordinal % 2`轮换，target start按`ordinal % 5`生成，故目标位置/长度与item ordinal确定性绑定。
+- 四门旧裁决不变：position对terminal +29/60、对cut −5/60，`can_promote=false`。唯一提案[PLAN-N1-105](../../reference/PLAN-N1-105_counterbalanced_input_feature_diagnostic_draft_20261017.md)将使用同九枚冻结端点做全可行位置×答案长度正交诊断（124题、1116查询、CPU≤10分钟）；因新测面尚未获批，未造面或查询。
