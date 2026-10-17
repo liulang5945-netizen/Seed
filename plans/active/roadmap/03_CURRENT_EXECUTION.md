@@ -1,8 +1,8 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：生成PLAN-N1-100全新v7 face并做sacrifice范围检验
+## 当前唯一下一步：执行PLAN-N1-100 v7 sacrifice范围检验
 
-[EXP-N1-99](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md) 的d=1/d=2诊断仍未提供能力证据。PLAN-N1-100 的九模型训练完整：221,184更新、110,592 hard-view更新、CPU9,967.125/18,000秒，所有源码守卫、hard schedule、学习率轨迹和18次zero/final独立恢复通过；三个position seed全部满足原训练门。`can_promote=false`，v3 dev/holdout与确认查询均为0。当前唯一下一步是按seed107构造40项v7 face并机检，然后仅查询20项sacrifice范围门；至少6/9可用端点才一次查询confirm。训练判读：[EXP-N1-100](../../reference/EXP-N1-100_hard_neighbor_training_adjudication_20261017.md)。PLAN-N1-99偏差仍按[判读](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md)披露，后续训练数据审计仅使用train。
+[EXP-N1-99](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md) 的d=1/d=2诊断仍未提供能力证据。PLAN-N1-100 的九模型训练完整：221,184更新、110,592 hard-view更新、CPU9,967.125/18,000秒，所有源码守卫、hard schedule、学习率轨迹和18次zero/final独立恢复通过；三个position seed全部满足原训练门。固定seed107生成的40项v7 face通过13项构造机检：四类各10、两半各20且每类5、d=1实体、v3 train/v5/v6实体及材料值零重叠；0模型加载、0查询。`can_promote=false`。当前唯一下一步是对20项sacrifice做范围检验；至少6/9可用端点才允许查询confirm。训练判读：[EXP-N1-100](../../reference/EXP-N1-100_hard_neighbor_training_adjudication_20261017.md)。PLAN-N1-99偏差仍按[判读](../../reference/EXP-N1-99_unknown_abstention_factorial_diagnostic_adjudication_20261017.md)披露。
 
 ## ㊵-1045 时点的历史队首（保留原文，已由㊵-1046更新）
 

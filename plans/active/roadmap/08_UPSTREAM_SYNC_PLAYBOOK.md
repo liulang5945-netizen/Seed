@@ -4004,3 +4004,9 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 三个position seed原题/改名各192/192，类别均48/48；pair为96/96、96/96、94/96；改名pair为96/96、96/96、92/96；原/改名quartet joint均48/48。position三个seed原六训练门及joint门全部通过。对照terminal低于position，cut接近position；对照仅描述，不放宽或替代后续确认门。
 - 九模型hard schedule审计与学习率轨迹均有效，zero/final独立恢复18/18通过，98项来源守卫和代码身份未变，CPU accounting完整。v3 dev/holdout、确认查询均0，未生成/查询v7，`can_promote=false`、`TRAIN_SHA=None`。判读见 [EXP-N1-100](../../reference/EXP-N1-100_hard_neighbor_training_adjudication_20261017.md)。
 - 唯一下一步：固定seed107生成v7 face并机检，只在20项sacrifice上进行范围检查；≥6/9才查询confirm 20项与九旧端点配对的360条面。确认四门沿PLAN-N1-94不改。此前N5工作树更改和`output/`目录继续未触碰。
+
+### ㊵-1054 · 2026-10-17 · v7 face 构造通过，confirm仍封存
+
+- 固定seed107构造 `plans/manifests/n1_hard_neighbor_v7_20261017.json`，SHA-256 `c5a7ef0bc18bf9376e5038348204e838bbc11d88ad6784605c858b12f6d992dc`；construction report `reports/taiji_n1_hard_neighbor_v7_face_checks_20261017.json` SHA-256 `d0f1c8866557e2433d6d4d9d289ca6d71163907e4e23871ccb80938c3ac0a7bd`。40题、四类各10、sacrifice/confirm各20且每类各5，110个干扰实体距离恰为d=1；150实体名、120材料值对v3 train/v5/v6排除集交集为0，13项构造机检全过。
+- 造面与构造检查使用0模型加载、0更新、0模型查询；v3 dev/holdout字段未读取，v7 confirm未查询。v5/v6只作为去重词典来源。Face已冻结，不能重抽或覆盖。
+- 唯一下一步是 `eval_taiji_n1_hard_neighbor_v7.py --range-readiness` 的只读准备核验，通过后一次运行20项sacrifice范围测量（CPU≤180秒）；若不足6/9，confirm不解封。达到6/9后执行一次360条confirm比较，四门不改；N5与`output/`仍保持原状。
