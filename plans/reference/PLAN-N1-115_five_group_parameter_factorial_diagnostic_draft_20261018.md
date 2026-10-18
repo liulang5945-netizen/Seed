@@ -20,7 +20,7 @@
 - r1 group-factorial runner 已实现并受 `状态：已批准执行` 闸门保护；可将每组参数从 baseline/candidate 两枚权重源组合为32态，复用 mask0/mask31 两组 PLAN-N1-112 已有输出，真实查询仅发给30个 hybrid。
 - 4项合同测试通过：二元空间/11,520预算、混合 state 组映射、交互 Shapley 计算、无训练/优化器/保存调用。Ruff、Black、Python 编译通过。
 - `--validate-only` readiness 报告：[`report`](../../reports/taiji_n1_position_five_group_parameter_factorial_s13_20261018_readiness.json)，SHA-256 `d0e61b1b6f1b28edeefcabb273b3d5fe6d512d29a416c320e749b225b56d6f209`；32项 source guards、768锚点行复用、30个hybrid state/11,520新查询。checkpoint payload reads、model loads/constructions、model queries、updates 均为0；checkpoint在预检中只做哈希核验，没有解码。
-- 本 readiness 对应的提案快照 SHA-256 为 `74de3c24ce641427997db53cd2a005ff5e528d457ce2acc06fda5a394281339d`；本段预检记录后附加，不改变冻结设计。真实checkpoint restore与输出查询仍需 owner 裁定后再做。
+- 本 readiness 对应的提案快照 SHA-256 为 `74de3c24ce641427997db53cd2a005ff5e528d457ce2acc06fda5a394281339d`；本段预检记录后附加，不改变冻结设计。该段记录授权前的readiness快照；真实恢复与输出查询后续已在下文一次性完成。
 
 ## 执行结果（2026-10-18）
 
@@ -29,6 +29,13 @@
 - 单因素候选参数替换落在baseline背景上时，reader、writer、local分别为0/48、0/48、0/48 joint-four；context为48/48，relation为40/48 original、36/48 rename。完整candidate为5/48、4/48。Shapley joint-four分解在original/rename上分别给reader、writer、local各−14.5/−14.47，context +1.25/+1.20，relation −0.75/−1.80；这些组效应存在交互与抵消，不能将退化归为单一参数组。以上仅描述这个已消费train transition面的混合参数干预，不代表泛化、因果性或能力通过。
 - 4项PLAN-N1-115合同测试通过；执行期间来源代码和checkpoint未变，`can_promote=false`，留出与确认面未触碰。
 
+## 后续逐父项交互归因（2026-10-18）
+
+- 离线报告：[`itemwise interaction attribution`](../../reports/taiji_n1_position_five_group_itemwise_interactions_s13_20261018.json)，SHA-256 `13a33426260dcaeb72a12871fed29aad29f73c65068d0b9615d0a030770603f2`；仅读取本方案封存的12,288行，CPU0.109375秒，摘要与原报告32态×2视图的逐条件及joint-four总数完全一致。
+- 对每个视图、每个父项，在16个匹配背景中汇总候选组相对baseline组的joint-four变化：reader、writer、local分别使全部48个父项的净值下降；context净下降1/2个父项，relation净下降8/14个父项。reader/writer/local的受损父项集合在每个视图均完全重合（Jaccard=1.0）。
+- 二阶joint-four交互显示reader×writer、reader×local、writer×local均只有非负交互项：original分别在186/384、186/384、186/384个匹配父项×背景上为正；rename分别180/384，且均无负项。这些正交互与各组的负向净效果同时存在，说明人工混合状态下有明显补偿/非加性交互；不能把结果归结为某个单组缺陷或解释为训练收益。
+- 此步骤未读取checkpoint、构造/加载模型、发出查询、更新参数或访问dev/holdout/confirmation。上述读数限于已消费train transition父项。
+
 ## 唯一建议的下一步
 
-对本报告已封存的12,288行做零模型访问的逐题组交互归因，核实reader/writer/local的负向分解是由同一批父项共同驱动，还是不同父项/条件间的抵消。此分析不读取checkpoint、不产生新输出、不训练或改门；结果用于起草共享读出保持修复方案。
+起草并静态验证一版协调式读出保持训练契约：在不放宽44/48原训练门、不换测面、不查询dev/holdout的前提下，让reader/writer/local作为耦合组接受功能保持约束，并保留context/relation的适配能力。先核查目标梯度路由、独立checkpoint保存/恢复与来源隔离，再决定一次固定配方校准；此处不自动追加训练。

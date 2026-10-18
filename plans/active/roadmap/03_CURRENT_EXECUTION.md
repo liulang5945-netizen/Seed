@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：对 PLAN-N1-115 封存行做逐父项交互归因
+## 当前唯一下一步：静态核验协调式读出保持训练契约
 
 ### 最新状态（2026-10-18）
 
@@ -10,9 +10,9 @@ PLAN-N1-110 九模型长度平衡训练已完整结束：221,184 次更新、CPU
 
 PLAN-N1-111 已获批准，但唯一一次 runner 在候选恢复处停止：baseline 完整恢复，N1-110 candidate 被 run100 专用 protocol loader 拒绝；未发出模型查询、未更新参数，两枚 checkpoint 哈希未变。执行报告与计数澄清见 [PLAN-N1-111](../../reference/PLAN-N1-111_position_weight_history_crossover_diagnostic_draft_20261018.md) 和 [restore erratum](../../../reports/taiji_n1_position_weight_history_crossover_s13_20261018_restore_erratum.json)。该方案的 retry_allowed=false 已遵守。
 
-PLAN-N1-112 已完成：CPU 24.015625秒、1,536条 train transition 查询、两个原生锚点768/768逐行复现；baseline权重下两种history均48/48，candidate权重下均5/4。固定权重时384/384预测行跨history相同；代码审计表明 fresh-session evaluator 只读当前 session key。PLAN-N1-113/114参数差异与训练轨迹归因完成：终态差异平方范数85.0%在reader组、64.6%来自readout.weight；7字符材料QA loss偏高，均为描述性读数。
+PLAN-N1-112 已完成：CPU 24.015625秒、1,536条 train transition 查询、两个原生锚点768/768逐行复现；baseline权重下两种history均48/48，candidate权重下均5/4。固定权重时384/384预测行跨history相同；fresh-session evaluator只读当前 session key。PLAN-N1-113/114参数差异与轨迹归因完成：终态差异平方范数85.0%在reader组、64.6%来自readout.weight；candidate七字符任务QA loss偏高，均为描述性读数。
 
-PLAN-N1-115 已完成：11,520条新 train-only 查询、CPU 85.984375秒；768/768原生锚点逐行复现，来源守卫全匹配，checkpoint哈希不变，0参数/优化器更新、保存、dev、holdout或confirmation查询。Baseline joint-four在original/rename均48/48，完整candidate为5/48、4/48。Baseline背景上的reader、writer、local单组替换均为0/48，context为48/48，relation为40/48和36/48；Shapley把joint-four整体退化近似平均分配给reader/writer/local，提示强组间交互，不支持单一参数组归因。报告见[PLAN-N1-115结果](../../../reports/taiji_n1_position_five_group_parameter_factorial_s13_20261018.json)，`can_promote=false`。当前唯一下一步是只对这12,288行封存结果做逐父项参数交互归因；不加载模型、不查询新输出、不训练、不改gate。
+PLAN-N1-115 已完成：11,520条新 train-only 查询、CPU85.984375秒；768/768原生锚点复现，来源守卫全匹配，checkpoint哈希不变，0参数/优化器更新、保存、dev、holdout或confirmation查询。Baseline joint-four原始/改名均48/48，candidate为5/48、4/48。对12,288行做的离线逐父项归因显示，reader、writer、local分别在16个匹配背景上净损害同一批48个父项；三组两两joint-four交互均非负，提示存在补偿性非加性交互，不能单归因。详见[全因子报告](../../../reports/taiji_n1_position_five_group_parameter_factorial_s13_20261018.json)和[逐父项报告](../../../reports/taiji_n1_position_five_group_itemwise_interactions_s13_20261018.json)。当前唯一下一步是静态核验协调式reader/writer/local功能保持训练契约，训练前先验证梯度路由、独立checkpoint保存恢复和来源隔离。
 
 N02/C4 remains unresolved: the material-floor adjudicator reports `cost_persists` (`J_N02_1=not_resolved`, `J_N02_2=cost_persists`); this result does not authorize new training or C5. See [the C4 report](../../../reports/taiji_n02_c4_net_gain_with_material_floor_c4g1_20261018.json).
 

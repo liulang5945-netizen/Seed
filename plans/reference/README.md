@@ -84,7 +84,7 @@
 - [PLAN-N1-112 恢复契约修订](PLAN-N1-112_position_weight_history_crossover_restore_revision_draft_20261018.md)：train-only r1 完成，权重来源对应退化；cell 更正与session范围审计另列于执行记录。
 - [PLAN-N1-113 参数组差异归因](PLAN-N1-113_position_checkpoint_parameter_delta_attribution_20261018.md)：reader/readout 组终态差异最大，描述性读数。
 - [PLAN-N1-114 更新轨迹归因](PLAN-N1-114_seed13_parameter_update_trajectory_attribution_20261018.md)：已有 shard 的 task/path/length 更新统计，不访问模型。
-- [PLAN-N1-115 五组参数全因子诊断](PLAN-N1-115_five_group_parameter_factorial_diagnostic_draft_20261018.md)：已完成11,520条train-only交叉查询（CPU85.984秒），锚点768/768复现，0更新/留出查询；reader/writer/local变化共同对应joint-four退化。唯一后续为基于封存行的逐父项交互归因。
+- [PLAN-N1-115 五组参数全因子诊断](PLAN-N1-115_five_group_parameter_factorial_diagnostic_draft_20261018.md)：11,520条train-only查询完成，CPU85.984秒；逐父项离线归因显示reader/writer/local净损害同一批48项，且有正向两两交互；未训练/未查留出。下一步静态核验协调式读出保持契约。
 
 ## M5 蒸馏层（20 件收口/批准/宣言/设计＋墓碑）
 
