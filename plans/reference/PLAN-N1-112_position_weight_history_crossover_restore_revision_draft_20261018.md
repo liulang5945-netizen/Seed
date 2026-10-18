@@ -34,4 +34,10 @@
 - readiness 生成时合同测试 7 项通过；随后新增合成 bundle 恢复测试，当前 8 项通过。readiness 报告绑定的 27 项 sources guards 仍全部与工作区匹配；checkpoint payload reads、model loads/queries、参数更新、optimizer steps、checkpoint saves 均为 0。Ruff、Black 与编译通过。
 - 此预检只验证来源和设计准备度；它没有解码 checkpoint，因此未验证候选 bundle 的真实恢复，也没有产生 2×2 模型读数。
 
+## 周边 N1 合同回归记录
+
+- 运行 12 个相关 N1 合同文件，115 项通过、1 项失败：`test_n1_plan110_length_balanced_runner_contract.py::test_frozen_candidate_inputs_and_checkpoint_root_are_safe_before_preflight`。
+- 失败来自该 preflight-only 测试在 2026-10-18 的已完成批次后仍要求 checkpoint 根目录、preflight 和训练报告不存在。当前 N1-110 报告完整，18 枚 zero/final checkpoint 均由封存报告标记为恢复相等；根目录文件集正好是该 18 枚。这里没有发现 r1 runner 回归。
+- 该测试的 SHA-256 `8ba902d9d613b7c755ee19796443f2c15e3e0b21299d6a01c983171f658d4060` 被已结案 PLAN-N1-110 runner 固定来源守卫引用。尝试调整测试会被守卫拒绝；已将测试恢复到封存哈希，没有修改 N1-110 runner、checkpoint 或训练证据。本地失败记录保留，clean CI 环境结果尚未核验。
+
 批准或终止本修订。批准只允许上述一次修正恢复契约后的同面诊断；它不会恢复 PLAN-N1-111 已关闭的 attempt，也不会授权训练或任何留出查询。
