@@ -84,7 +84,7 @@
 - [PLAN-N1-112 恢复契约修订](PLAN-N1-112_position_weight_history_crossover_restore_revision_draft_20261018.md)：train-only r1 完成，权重来源对应退化；cell 更正与session范围审计另列于执行记录。
 - [PLAN-N1-113 参数组差异归因](PLAN-N1-113_position_checkpoint_parameter_delta_attribution_20261018.md)：reader/readout 组终态差异最大，描述性读数。
 - [PLAN-N1-114 更新轨迹归因](PLAN-N1-114_seed13_parameter_update_trajectory_attribution_20261018.md)：已有 shard 的 task/path/length 更新统计，不访问模型。
-- [PLAN-N1-115 五组参数全因子诊断](PLAN-N1-115_five_group_parameter_factorial_diagnostic_draft_20261018.md)：r1 runner与4项合同、32项来源守卫的零查询 readiness 已通过；拟复用768行锚点并新增11,520条五组参数交叉查询。新干预测面待 owner 裁定；不改门或训练配方。
+- [PLAN-N1-115 五组参数全因子诊断](PLAN-N1-115_five_group_parameter_factorial_diagnostic_draft_20261018.md)：已按 owner 持续推进授权准入；r1 runner与4项合同、32项来源守卫的零查询 readiness 已通过。当前按冻结协议复用768行锚点、对30个hybrid状态执行11,520条train-only查询；不训练、不改门、不查dev/holdout/confirmation。
 
 ## M5 蒸馏层（20 件收口/批准/宣言/设计＋墓碑）
 

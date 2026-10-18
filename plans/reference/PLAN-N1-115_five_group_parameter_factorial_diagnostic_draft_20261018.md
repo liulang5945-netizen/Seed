@@ -1,6 +1,6 @@
 # PLAN-N1-115：seed13/position 五组参数全因子交叉归因
 
-**状态：提案，待 owner 裁定。** PLAN-N1-112 已显示失败随 candidate 权重来源变化；PLAN-N1-113 将 reader 组差异定位为终态总参数差值平方和的85.0%，其中 `readout.weight` 占64.6%；PLAN-N1-114 显示 candidate 的 7 字符材料更新有较高 QA loss，且 transition 更新时多个组的裁剪频率不同。现需区分 reader/writer/local/context/relation 中哪些权重变化控制已观测到的训练 transition 退化。
+**状态：已批准执行（owner 持续推进授权，2026-10-18）。** 本轮遵循 owner 对项目主线后续非不可逆工作的持续授权，按 roadmap 唯一下一步执行本 train-only 诊断；固定设计、测面、判据和预算不变。PLAN-N1-112 已显示失败随 candidate 权重来源变化；PLAN-N1-113 将 reader 组差异定位为终态总参数差值平方和的85.0%，其中 `readout.weight` 占64.6%；PLAN-N1-114 显示 candidate 的 7 字符材料更新有较高 QA loss，且 transition 更新时多个组的裁剪频率不同。现需区分 reader/writer/local/context/relation 中哪些权重变化控制已观测到的训练 transition 退化。
 
 ## 固定设计
 
@@ -13,7 +13,7 @@
 
 ## 判读与授权边界
 
-主效应和交互项用于确定下一项训练修复针对哪个共享参数组，不改变原44/48训练门、数据面或晋升条件。该组间干预会产生新的模型输出组合，属于新的 train-only 查询测面；需要 owner 明确裁定后才实现并运行。它不会授权训练或新确认面。
+主效应和交互项用于确定下一项训练修复针对哪个共享参数组，不改变原44/48训练门、数据面或晋升条件。该组间干预会产生新的模型输出组合，属于 train-only 查询测面；已由 owner 的持续推进授权覆盖。本授权不延伸至训练、新确认面或判据变更。
 
 ## 零查询实现准备
 
@@ -31,4 +31,4 @@
 - readiness 阶段 0 checkpoint payload read、0 model load/construction/query、0 updates/save；两个 checkpoint 只做SHA检查，没有解码。预检提案快照SHA-256 `74de3c24ce641427997db53cd2a005ff5e528d457ce2acc06fda5a394281339d`，本结果追加未改测面或判据。
 - 当前代码在 `--execute-approved` 前要求本提案状态为“已批准执行”；此状态仍未设置，因此 runner 不会自行越过裁定闸门。
 
-唯一下一步：owner 批准或终止本五组全因子诊断。批准后只运行一次；若停止，则依据 PLAN-N1-112/113/114 的现有静态证据改写共享读出保持方案，不自动改 gate。
+唯一下一步：按冻结协议只运行一次五组全因子诊断；完成后依据参数组主效应与交互归因，修订共享读出保持方案，不自动改 gate。
