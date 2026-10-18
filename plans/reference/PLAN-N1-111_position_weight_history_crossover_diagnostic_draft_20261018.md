@@ -47,4 +47,4 @@
 
 ## 唯一建议的下一步
 
-审议[PLAN-N1-112 修订提案](PLAN-N1-112_position_weight_history_crossover_restore_revision_draft_20261018.md)。r1 合同与来源预检已通过并留存 readiness 报告，但没有解码 checkpoint 或发出模型查询。提案保持相同训练题项、四格与 1,536 条查询，只修正候选 bundle 恢复契约并使用独立 write-once 输出。因为本方案明确 `retry_allowed=false`，该新批次需 owner 裁定后才可执行。
+PLAN-N1-112 已按 owner 长期授权启动：它保持同一题项、四格、1,536 条查询和判据，只修正查询前失败的候选 bundle 恢复契约，并使用独立 write-once 输出。PLAN-N1-111 的 `retry_allowed=false` 仍按原样结案，本次不是其重试；r1 批次本身也只运行一次。

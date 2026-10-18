@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：等待 owner 对 PLAN-N1-112 恢复契约修订作裁定
+## 当前唯一下一步：执行已授权的 PLAN-N1-112 r1 交叉诊断
 
 ### 最新状态（2026-10-18）
 
@@ -10,7 +10,7 @@ PLAN-N1-110 九模型长度平衡训练已完整结束：221,184 次更新、CPU
 
 PLAN-N1-111 已获批准，但唯一一次 runner 在候选恢复处停止：baseline 完整恢复，N1-110 candidate 被 run100 专用 protocol loader 拒绝；未发出模型查询、未更新参数，两枚 checkpoint 哈希未变。执行报告与计数澄清见 [PLAN-N1-111](../../reference/PLAN-N1-111_position_weight_history_crossover_diagnostic_draft_20261018.md) 和 [restore erratum](../../../reports/taiji_n1_position_weight_history_crossover_s13_20261018_restore_erratum.json)。该方案的 retry_allowed=false 已遵守。
 
-当前唯一待裁草案：[PLAN-N1-112](../../reference/PLAN-N1-112_position_weight_history_crossover_restore_revision_draft_20261018.md) 保持相同的两枚 checkpoint、48 个已消费 train transition 父项、四条件及 original/rename 视图，仅改为按各 checkpoint 自身报告核验协议并恢复共享 bundle 格式；原生锚点逐行复现后才运行两个 hybrid。9项合同测试和零查询来源预检已通过：27项 source guards、原生封存门值 baseline 48/48 与 candidate 5/4 一致，readiness 报告确认 0 checkpoint payload read/load、0 model query/update；合成 bundle 与 fake reader 测试覆盖参数、历史、Adam、协议和恢复计数。真实 checkpoint 恢复尚未测，拟执行的 1,536 次模型查询仍需 owner 对 PLAN-N1-112 单独裁定；CPU≤600秒，0更新/留出查询。
+PLAN-N1-112 已依 owner 长期授权进入唯一执行队列：方案保持两枚 checkpoint、48 个已消费 train transition 父项、四条件与 original/rename 视图，只修正恢复契约。9项合同测试和零查询来源预检已通过，27项 source guards 全匹配；准备阶段 0 checkpoint payload read/load、0 model query/update。现在执行一次 1,536 条 r1 交叉诊断，CPU≤600秒、0更新、0 dev/holdout/confirmation。原生锚点必须先逐行复现；否则立即停止且不跑 hybrid。
 
 N02/C4 remains unresolved: the material-floor adjudicator reports `cost_persists` (`J_N02_1=not_resolved`, `J_N02_2=cost_persists`); this result does not authorize new training or C5. See [the C4 report](../../../reports/taiji_n02_c4_net_gain_with_material_floor_c4g1_20261018.json).
 
