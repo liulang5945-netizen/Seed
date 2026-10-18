@@ -32,4 +32,4 @@
 
 ## 唯一建议的下一步
 
-PLAN-N1-111 已获批准，但 runner 在候选 checkpoint 恢复时因复用 baseline 专用 protocol loader 而停止；model query=0，checkpoint 未修改，且不在该一次性方案内重试。详见[PLAN-N1-111执行记录](PLAN-N1-111_position_weight_history_crossover_diagnostic_draft_20261018.md)及[计数澄清](../../reports/taiji_n1_position_weight_history_crossover_s13_20261018_restore_erratum.json)。唯一建议的下一步是裁定[PLAN-N1-112恢复契约修订提案](PLAN-N1-112_position_weight_history_crossover_restore_revision_draft_20261018.md)：它保留相同的训练集诊断题面和判据，只使用格式级 bundle 恢复并分配新的 write-once 输出；该独立一次性 runner 尚未获准。
+PLAN-N1-111 已获批准，但 runner 在候选 checkpoint 恢复时因复用 baseline 专用 protocol loader 而停止；model query=0，checkpoint 未修改，且不在该一次性方案内重试。详见[PLAN-N1-111执行记录](PLAN-N1-111_position_weight_history_crossover_diagnostic_draft_20261018.md)及[计数澄清](../../reports/taiji_n1_position_weight_history_crossover_s13_20261018_restore_erratum.json)。唯一建议的下一步是裁定[PLAN-N1-112恢复契约修订提案](PLAN-N1-112_position_weight_history_crossover_restore_revision_draft_20261018.md)：r1 runner、7项合同和零查询来源预检已经就绪，readiness 报告证明模型/参数/checkpoint payload 均未加载；真实 candidate bundle restore 和 1,536 条同面诊断仍未执行，且该独立一次性 runner 尚未获准。

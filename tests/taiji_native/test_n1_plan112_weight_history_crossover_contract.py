@@ -109,7 +109,7 @@ def test_contract_freezes_scope_and_has_no_training_or_checkpoint_write_calls() 
     }
 
     assert module.PROTOCOL["model_queries"] == 1_536
-    assert module.PROTOCOL["checkpoint_loads"] == 2
+    assert module.PROTOCOL["checkpoint_payload_reads"] == 2
     assert module.PROTOCOL["parameter_updates"] == 0
     assert module.PROTOCOL["optimizer_steps"] == 0
     assert module.PROTOCOL["checkpoint_saves"] == 0
@@ -120,3 +120,60 @@ def test_contract_freezes_scope_and_has_no_training_or_checkpoint_write_calls() 
     assert "measure" in calls
     assert not calls.intersection({"train_step", "backward", "step", "save", "save_pretrained"})
     assert "torch.save" not in source
+
+
+def test_checkpoint_envelope_accepts_each_endpoint_own_protocol() -> None:
+    module = _module()
+    for schema in (
+        "n1-hard-neighbor-fresh-paired-training-v1",
+        "n1-hard-neighbor-length-balanced-training-v1",
+    ):
+        protocol = {"schema": schema, "seed": module.SEED, "arm": module.ARM}
+        payload = {
+            "schema": "n1-transition-factorial-paired-training-checkpoint-v1",
+            "seed": module.SEED,
+            "arm": module.ARM,
+            "completed_updates": module.UPDATES,
+            "phase": "final",
+            "protocol": protocol,
+            "initialization": "full-fresh-no-inheritance-v1",
+            "candidate": {},
+            "expected_signature": {},
+        }
+        report_model = {"shard": {"identity": {"protocol": protocol}}}
+        module.validate_checkpoint_envelope(payload, report_model)
+
+
+def test_checkpoint_envelope_rejects_protocol_report_disagreement() -> None:
+    module = _module()
+    payload_protocol = {"schema": "n1-hard-neighbor-length-balanced-training-v1"}
+    report_protocol = {"schema": "n1-hard-neighbor-fresh-paired-training-v1"}
+    payload = {
+        "schema": "n1-transition-factorial-paired-training-checkpoint-v1",
+        "seed": module.SEED,
+        "arm": module.ARM,
+        "completed_updates": module.UPDATES,
+        "phase": "final",
+        "protocol": payload_protocol,
+        "initialization": "full-fresh-no-inheritance-v1",
+        "candidate": {},
+        "expected_signature": {},
+    }
+    report_model = {"shard": {"identity": {"protocol": report_protocol}}}
+
+    try:
+        module.validate_checkpoint_envelope(payload, report_model)
+    except ValueError as exc:
+        assert "own sealed endpoint report" in str(exc)
+    else:
+        raise AssertionError("checkpoint and its own sealed report must agree")
+
+
+def test_revision_restores_the_shared_bundle_without_baseline_protocol_loader() -> None:
+    source = SCRIPT.read_text(encoding="utf-8")
+
+    assert 'base["load"](payload)' not in source
+    assert 'model_type = base["engineering"].LocalRelationEvidenceCandidate' in source
+    assert 'model = model_type.restore_bundle(payload["candidate"])' in source
+    assert 'payload["expected_signature"].get("bundle")' in source
+    assert "n1-crossover112-" in source

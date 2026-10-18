@@ -1,4 +1,4 @@
-"""PLAN-N1-111: frozen weight/history crossover on consumed train transitions."""
+"""PLAN-N1-112: frozen weight/history crossover with format-level restore."""
 
 from __future__ import annotations
 
@@ -14,10 +14,13 @@ sys.path.insert(0, str(ROOT))
 
 PLAN = (
     ROOT
-    / "plans/reference/PLAN-N1-111_position_weight_history_crossover_diagnostic_draft_20261018.md"
+    / "plans/reference/PLAN-N1-112_position_weight_history_crossover_restore_revision_draft_20261018.md"
 )
-REPORT = ROOT / "reports/taiji_n1_position_weight_history_crossover_s13_20261018.json"
+REPORT = ROOT / "reports/taiji_n1_position_weight_history_crossover_s13_r1_20261018.json"
 ATTEMPT = REPORT.with_name(REPORT.stem + "_attempt.json")
+READINESS = (
+    ROOT / "reports/taiji_n1_position_weight_history_crossover_s13_r1_readiness_20261018.json"
+)
 BASELINE_REPORT = ROOT / "reports/taiji_n1_hard_neighbor_training_20261017.json"
 CANDIDATE_REPORT = ROOT / "reports/taiji_n1_length_balanced_training_20261018.json"
 BASELINE_CHECKPOINT = (
@@ -29,14 +32,23 @@ CANDIDATE_CHECKPOINT = (
 )
 FACTORIAL_MANIFEST = ROOT / "plans/manifests/n1_fresh_transition_factorial_20261016.json"
 ATTRIBUTION_REPORT = ROOT / "reports/taiji_n1_length_balance_failure_attribution_20261018.json"
+PREVIOUS_REPORT = ROOT / "reports/taiji_n1_position_weight_history_crossover_s13_20261018.json"
+PREVIOUS_ATTEMPT = (
+    ROOT / "reports/taiji_n1_position_weight_history_crossover_s13_20261018_attempt.json"
+)
+PREVIOUS_ERRATUM = (
+    ROOT / "reports/taiji_n1_position_weight_history_crossover_s13_20261018_restore_erratum.json"
+)
 
-PLAN_APPROVAL_SHA256 = "2072eec6d9be795d6245826d3fe267ea5eeceebc79bb2fc6fd1bdec8ce238c74"
 BASELINE_REPORT_SHA256 = "dad10ec72c605367f99da035bab07d522ce1793154915ebcc3c7f1022f411909"
 CANDIDATE_REPORT_SHA256 = "e848433de597d378e9e1dc52bf488f296f90c5ce67f3855e19bcfe49268aaa0c"
 BASELINE_CHECKPOINT_SHA256 = "09df1d47eb490ef9afc5d563d08b40eca6b51951096875d016a67f133f7ed653"
 CANDIDATE_CHECKPOINT_SHA256 = "d215a51d571976f216af43d0b7372f3cb702b6258237a7144252df4609f3b881"
 FACTORIAL_MANIFEST_SHA256 = "266afd908ee6ae09ac26a1b208a1a16c4d9f793d1f10443888862a2f353a63a3"
 ATTRIBUTION_REPORT_SHA256 = "08e80702f0b217e117094c28879f4a62e6f99d6a2315ee38556383afa7d31f4a"
+PREVIOUS_REPORT_SHA256 = "388e8ebe7717e5086e1dc8feb746c69854dad88411d152a10fe5c84f731d3a00"
+PREVIOUS_ATTEMPT_SHA256 = "3dcca6b75656ff1fec061db1296160f6ed783ccd3ca86920d7e7edbe7d56d61e"
+PREVIOUS_ERRATUM_SHA256 = "2ae46031052e5cc5498c427126b8f04591cac97dc0cc9ffd6cd11d74a4c41991"
 
 CPU_LIMIT_SECONDS = 600.0
 SEED = 13
@@ -81,7 +93,7 @@ BASE_FIELDS = (
 ROW_IDENTITY_FIELDS = ("parent_id", "condition", "initial_direction", "turn")
 
 PROTOCOL = {
-    "schema": "n1-position-weight-history-crossover-diagnostic-v1",
+    "schema": "n1-position-weight-history-crossover-diagnostic-r1-v1",
     "seed": SEED,
     "arm": ARM,
     "updates": UPDATES,
@@ -95,7 +107,7 @@ PROTOCOL = {
     "model_queries": 1_536,
     "native_anchor_queries": 768,
     "native_reproductions_required": 768,
-    "checkpoint_loads": 2,
+    "checkpoint_payload_reads": 2,
     "parameter_updates": 0,
     "optimizer_steps": 0,
     "checkpoint_saves": 0,
@@ -146,7 +158,7 @@ class CpuBudget:
 
     def guard(self, reserve: float = 0.0) -> None:
         if self.used() + reserve >= self.limit:
-            raise TimeoutError("PLAN-N1-111 cumulative CPU limit reached")
+            raise TimeoutError("PLAN-N1-112 cumulative CPU limit reached")
 
 
 def expected_file_hashes() -> dict[Path, str]:
@@ -157,6 +169,9 @@ def expected_file_hashes() -> dict[Path, str]:
         CANDIDATE_CHECKPOINT: CANDIDATE_CHECKPOINT_SHA256,
         FACTORIAL_MANIFEST: FACTORIAL_MANIFEST_SHA256,
         ATTRIBUTION_REPORT: ATTRIBUTION_REPORT_SHA256,
+        PREVIOUS_REPORT: PREVIOUS_REPORT_SHA256,
+        PREVIOUS_ATTEMPT: PREVIOUS_ATTEMPT_SHA256,
+        PREVIOUS_ERRATUM: PREVIOUS_ERRATUM_SHA256,
     }
 
 
@@ -171,7 +186,7 @@ def source_guards(extra_paths: list[Path] | None = None) -> dict[str, str]:
         guards[str(path)] = sha256_file(path)
     for path, expected in expected_file_hashes().items():
         if guards[str(path.resolve())] != expected:
-            raise ValueError(f"frozen PLAN-N1-111 input changed: {path}")
+            raise ValueError(f"frozen PLAN-N1-112 input changed: {path}")
     return guards
 
 
@@ -224,7 +239,7 @@ def selected_model(report: dict, *, sufficient: bool) -> dict:
         raise ValueError("sealed final training milestone required")
     for view, count in expected_joint.items():
         if milestone.get("factorial", {}).get(view, {}).get("joint_four_exact") != count:
-            raise ValueError("sealed anchor joint-four score differs from PLAN-N1-111")
+            raise ValueError("sealed anchor joint-four score differs from PLAN-N1-112")
     return model
 
 
@@ -374,24 +389,51 @@ def report_entry(rows, *, weight_source: str, history_source: str):
     ]
 
 
-def load_model(path: Path, expected_sha: str, *, base, torch, report_model: dict):
-    if sha256_file(path) != expected_sha:
-        raise ValueError(f"frozen endpoint checkpoint hash mismatch: {path}")
-    payload = torch.load(path, map_location="cpu", weights_only=True)
+def validate_checkpoint_envelope(payload: dict, report_model: dict) -> None:
+    protocol = report_model.get("shard", {}).get("identity", {}).get("protocol")
     if (
-        payload.get("seed") != SEED
+        payload.get("schema") != "n1-transition-factorial-paired-training-checkpoint-v1"
+        or payload.get("seed") != SEED
         or payload.get("arm") != ARM
         or payload.get("completed_updates") != UPDATES
         or payload.get("phase") != "final"
-        or payload.get("protocol")
-        != report_model.get("shard", {}).get("identity", {}).get("protocol")
+        or not isinstance(protocol, dict)
+        or payload.get("protocol") != protocol
+        or payload.get("initialization") != "full-fresh-no-inheritance-v1"
+        or not isinstance(payload.get("candidate"), dict)
+        or not isinstance(payload.get("expected_signature"), dict)
     ):
-        raise ValueError("checkpoint marker/protocol does not match its sealed report")
-    model, optimizer = base["load"](payload)
-    if len(model._observations) != TRAINING_SESSIONS or base["paired"].fingerprint(
-        model.bundle(optimizer)
-    ) != base["paired"].fingerprint(payload["candidate"]):
+        raise ValueError("checkpoint envelope does not match its own sealed endpoint report")
+
+
+def load_model(
+    path: Path,
+    expected_sha: str,
+    *,
+    base,
+    torch,
+    report_model: dict,
+    result: dict,
+):
+    if sha256_file(path) != expected_sha:
+        raise ValueError(f"frozen endpoint checkpoint hash mismatch: {path}")
+    payload = torch.load(path, map_location="cpu", weights_only=True)
+    result["checkpoint_payload_reads"] += 1
+    validate_checkpoint_envelope(payload, report_model)
+    model_type = base["engineering"].LocalRelationEvidenceCandidate
+    model = model_type.restore_bundle(payload["candidate"])
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    optimizer.load_state_dict(payload["candidate"]["optimizer"])
+    restored_bundle = base["paired"].fingerprint(model.bundle(optimizer))
+    if (
+        len(model._observations) != TRAINING_SESSIONS
+        or len(optimizer.state) != 41
+        or any(int(state["step"]) != UPDATES for state in optimizer.state.values())
+        or restored_bundle != base["paired"].fingerprint(payload["candidate"])
+        or restored_bundle != payload["expected_signature"].get("bundle")
+    ):
         raise ValueError("complete checkpoint bundle/history restoration differs")
+    result["model_loads"] += 1
     return payload, model
 
 
@@ -422,7 +464,7 @@ def evaluate_combination(
             for entry in entries_by_view[view]:
                 budget.guard(reserve=2)
                 session = (
-                    f"n1-crossover111-{weight_source}-{history_source}-{view}-{entry['case_id']}"
+                    f"n1-crossover112-{weight_source}-{history_source}-{view}-{entry['case_id']}"
                 )
                 if session in model._observations:
                     raise ValueError("crossover measurement session collides with frozen history")
@@ -491,14 +533,35 @@ def check_anchor(
 
 def execute() -> dict:
     if REPORT.exists() or ATTEMPT.exists():
-        raise FileExistsError("PLAN-N1-111 is one-shot; report or attempt already exists")
+        raise FileExistsError("PLAN-N1-112 is one-shot; report or attempt already exists")
+    if "状态：已批准执行" not in PLAN.read_text(encoding="utf-8"):
+        raise PermissionError("a frozen, explicitly approved PLAN-N1-112 snapshot is required")
+    if not READINESS.is_file():
+        raise FileNotFoundError("successful PLAN-N1-112 zero-query readiness report is required")
+    readiness = json.loads(READINESS.read_text(encoding="utf-8"))
+    if (
+        readiness.get("schema") != "n1-position-weight-history-crossover-r1-readiness-v1"
+        or readiness.get("ready") is not True
+        or any(
+            readiness.get(key) != 0
+            for key in (
+                "checkpoint_payload_reads",
+                "model_loads",
+                "model_queries",
+                "parameter_updates",
+            )
+        )
+        or not isinstance(readiness.get("source_guards"), dict)
+        or not guards_unchanged(readiness["source_guards"])
+    ):
+        raise ValueError("complete zero-query PLAN-N1-112 readiness evidence required")
     budget = CpuBudget(CPU_LIMIT_SECONDS)
     current_plan_sha = sha256_file(PLAN)
     guards = source_guards()
     attempt = {
-        "schema": "n1-position-weight-history-crossover-attempt-v1",
+        "schema": "n1-position-weight-history-crossover-r1-attempt-v1",
         "status": "running",
-        "approved_plan_sha256": PLAN_APPROVAL_SHA256,
+        "approved_plan_sha256": current_plan_sha,
         "plan_sha256_at_execution_start": current_plan_sha,
         "protocol": PROTOCOL,
         "source_guards": guards,
@@ -509,14 +572,14 @@ def execute() -> dict:
         "schema": PROTOCOL["schema"],
         "status": "running",
         "protocol": PROTOCOL,
-        "approved_plan_sha256": PLAN_APPROVAL_SHA256,
+        "approved_plan_sha256": current_plan_sha,
         "plan_sha256_at_execution_start": current_plan_sha,
         "source_guards": guards,
         "rows": [],
         "summaries": {},
         "anchors": [],
         "model_loads": 0,
-        "checkpoint_loads": 0,
+        "checkpoint_payload_reads": 0,
         "model_queries": 0,
         "native_reproductions": 0,
         "parameter_updates": 0,
@@ -606,18 +669,16 @@ def execute() -> dict:
             base=globals_dict,
             torch=torch,
             report_model=baseline_model_record,
+            result=result,
         )
-        result["checkpoint_loads"] += 1
-        result["model_loads"] += 1
         candidate_payload, candidate_model = load_model(
             CANDIDATE_CHECKPOINT,
             CANDIDATE_CHECKPOINT_SHA256,
             base=globals_dict,
             torch=torch,
             report_model=candidate_model_record,
+            result=result,
         )
-        result["checkpoint_loads"] += 1
-        result["model_loads"] += 1
         if list(baseline_model.state_dict()) != list(candidate_model.state_dict()) or any(
             baseline_model.state_dict()[key].shape != candidate_model.state_dict()[key].shape
             or baseline_model.state_dict()[key].dtype != candidate_model.state_dict()[key].dtype
@@ -725,7 +786,7 @@ def execute() -> dict:
         result["status"] == "complete"
         and len(result["rows"]) == 1_536
         and result["model_queries"] == 1_536
-        and result["checkpoint_loads"] == 2
+        and result["checkpoint_payload_reads"] == 2
         and result["model_loads"] == 2
         and result["native_reproductions"] == 768
         and len(result["anchors"]) == 2
@@ -753,10 +814,21 @@ def validate_only() -> dict:
         if not path.is_file() or sha256_file(path) != expected:
             raise ValueError(f"frozen source check failed: {path}")
     if REPORT.exists() or ATTEMPT.exists():
-        raise FileExistsError("PLAN-N1-111 diagnostic output path is already occupied")
+        raise FileExistsError("PLAN-N1-112 diagnostic output path is already occupied")
     plan_text = PLAN.read_text(encoding="utf-8")
-    if PLAN_APPROVAL_SHA256 not in plan_text or "已批准" not in plan_text:
-        raise ValueError("approved PLAN-N1-111 snapshot/status is not recorded")
+    if "PLAN-N1-112" not in plan_text:
+        raise ValueError("PLAN-N1-112 proposal is missing")
+    predecessor = json.loads(PREVIOUS_REPORT.read_text(encoding="utf-8"))
+    erratum = json.loads(PREVIOUS_ERRATUM.read_text(encoding="utf-8"))
+    if (
+        predecessor.get("status") != "stopped"
+        or predecessor.get("model_queries") != 0
+        or predecessor.get("parameter_updates") != 0
+        or predecessor.get("checkpoint_hashes_before") != predecessor.get("checkpoint_hashes_after")
+        or erratum.get("query_surface_consumed") is not False
+        or erratum.get("execution", {}).get("model_queries") != 0
+    ):
+        raise ValueError("PLAN-N1-111 predecessor must prove a pre-query stop")
     from scripts.training import run_taiji_n1_hard_neighbor_training as base
 
     loaded, globals_dict, inputs = base.make_runner(load_inputs=True)
@@ -798,14 +870,21 @@ def validate_only() -> dict:
         for source in ("baseline", "candidate")
     }
     guards = source_guards([sealed[source][1] for source in sealed])
-    return {
+    readiness = {
+        "schema": "n1-position-weight-history-crossover-r1-readiness-v1",
         "ready": True,
         "report": str(REPORT.relative_to(ROOT)),
-        "approved_plan_sha256": PLAN_APPROVAL_SHA256,
+        "readiness_report": str(READINESS.relative_to(ROOT)),
+        "plan_path": str(PLAN.relative_to(ROOT)),
+        "plan_sha256_at_preflight": sha256_file(PLAN),
+        "predecessor_report_sha256": PREVIOUS_REPORT_SHA256,
+        "protocol": PROTOCOL,
         "model_loads": 0,
-        "checkpoint_loads": 0,
+        "checkpoint_payload_reads": 0,
         "model_queries": 0,
         "parameter_updates": 0,
+        "optimizer_steps": 0,
+        "checkpoint_saves": 0,
         "view_entries": counts,
         "sealed_anchor_joint_four": {
             "baseline": EXPECTED_JOINT["baseline_weights+baseline_history"],
@@ -816,8 +895,16 @@ def validate_only() -> dict:
             for source in sealed
         },
         "source_guard_count": len(guards),
+        "source_guards": guards,
         "torch_version": loaded["torch"].__version__,
     }
+    if READINESS.exists():
+        existing = json.loads(READINESS.read_text(encoding="utf-8"))
+        if existing != readiness:
+            raise FileExistsError("existing readiness report differs; never overwrite")
+    else:
+        write_new(READINESS, readiness)
+    return readiness
 
 
 if __name__ == "__main__":
