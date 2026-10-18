@@ -1,6 +1,6 @@
 # PLAN-N1-116：协调式 reader/writer/local 更新保持
 
-**状态：按 owner 持续推进授权进入工程与训练批次。** 本计划沿用 N1-110 的训练面与充分性门，只改变 RWL 三组参数的步幅约束。它不授权新确认面、dev/holdout 查询、门槛修改或能力晋升。
+**状态：工程前置停止，训练未开始（2026-10-18；`can_promote=false`）。** 本计划沿用 N1-110 的训练面与充分性门，只改变 RWL 三组参数的步幅约束。zero-checkpoint preflight 在读取来源模型时被旧 update-policy identity 守卫拒绝；保留失败 attempt 与空目标目录，不在 N1-116 下重试。
 
 ## 依据与假设
 
@@ -22,6 +22,12 @@
 - 本批只用既有 train schedule 与 N1-110 train-only评分。dev、holdout、confirmation查询均为0；不生成或查询新面，不改变能力或晋升状态。全部通过只表示这项训练配方过原训练门，不能宣称未见泛化。
 - 新代码、plan、schedule、初始化来源和输入报告全部纳入 SHA-256 source guards；输出checkpoint不覆盖任一既有目录。
 
+## N1-116 前置结案
+
+- `--validate-only` readiness已通过：模拟24,576个schedule位置，CPU4.40625秒，0模型/checkpoint加载、0查询/参数更新；耦合投影4项合同测试通过。
+- checkpoint-preflight attempt [`receipt`](../../reports/taiji_n1_coupled_rwl_length_balanced_training_20261018_checkpoint_preflight_attempt.json)，SHA-256 `5d3034853bed21cfcca6e962af2f9a5482d69419188a2f673c3544e7a056518c`。它在读取首个run83 zero来源时，以`strict fresh initialization marker, phase, rule and identity required`停止；新checkpoint保存数0、训练更新0、已知模型查询0，目标目录为空。
+- 独立离线故障报告 [`failure audit`](../../reports/taiji_n1_coupled_rwl_length_balanced_training_20261018_checkpoint_preflight_failure.json)，SHA-256 `731cedcdfe8e0ccd7be97d22cc81eefab20be6bb3f5d7d1ac78cd54f2d20914e`。根因是加载旧run83 zero时，旧loader将其update-policy与已切换的coupled policy比较；不是模型/optimizer/RNG恢复不等。
+
 ## 唯一下一步
 
-实现并静态验证耦合 RWL optimizer 与九端点runner；通过纯计算合同和 `--validate-only` 后，先做九个zero checkpoint的独立保存恢复前置。只有该前置完整通过才执行固定221,184更新；训练后按上述原门停止或进入新的单独计划，不查询留出。
+由[PLAN-N1-117](PLAN-N1-117_coupled_rwl_source_loader_revision_draft_20261018.md)使用独立report/checkpoint路径，针对legacy zero schema临时桥接旧policy完成来源校验；新的coupled checkpoint仍严格用新policy恢复。其静态schedule readiness与source binding已通过；下一步执行九个zero checkpoint保存及独立恢复前置，成功后运行固定221,184更新批次。
