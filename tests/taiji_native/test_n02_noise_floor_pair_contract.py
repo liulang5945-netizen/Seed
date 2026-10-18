@@ -51,6 +51,7 @@ def _base_run(gain: float, *, digest: str, pass_id: str) -> dict:
         "night_pool_size": 200,
         "projection_records": 200,
         "pass_id": pass_id,
+        "mother_digest": "mother",
         "treated_digest": digest,
         "weight_changed_by_powerup": True,
         "j_persistence": True,
@@ -240,3 +241,78 @@ def test_shape_mismatch_with_the_sealed_pair_is_published_not_silently_dropped(t
         == 0
     )
     assert json.loads(out.read_text(encoding="utf-8"))["shape_matches_sealed_pair"] is False
+
+
+def _material_pair_args(tmp_path, run_a, run_b, sealed, dimension):
+    a, b, s = _pair(tmp_path, run_a, run_b, sealed)
+    out = tmp_path / "floor.json"
+    argv = [
+        "--run-a",
+        str(a),
+        "--run-b",
+        str(b),
+        "--sealed",
+        str(s),
+        "--floor-dimension",
+        dimension,
+        "--out-report",
+        str(out),
+    ]
+    return argv, out
+
+
+def test_material_dimension_publishes_a_floor_from_two_distinct_piles(tmp_path) -> None:
+    """§9.2 的材料维：同码同起始权重、两份**不同**材料 ⇒ 极差才配当地板。"""
+    run_a = _base_run(0.4, digest="w1", pass_id="p1")
+    run_b = _base_run(0.1, digest="w2", pass_id="p2")
+    run_b["material_fingerprint"] = dict(run_b["material_fingerprint"], source_sha256="e" * 64)
+    argv, out = _material_pair_args(
+        tmp_path, run_a, run_b, _base_run(0.2, digest="w0", pass_id="p0"), "material"
+    )
+    assert _module().main(argv) == 0
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["floor_dimension"] == "material"
+    assert payload[FLOOR_KEY] == 0.30000000000000004
+    assert payload["identity"]["material_fingerprint"]["source_sha256"] == "c" * 64
+    assert payload["identity"]["material_fingerprint_b"]["source_sha256"] == "e" * 64
+    assert payload["j_n02_1_two_batch_inputs"]["both_gains_exceed_floor"] is False
+    assert payload["guards"]["pair_material_fingerprint_differs"] is True
+    assert payload["guards"]["pair_material_fingerprint_equal"] is False
+
+
+def test_material_dimension_refuses_the_same_material(tmp_path) -> None:
+    run_a = _base_run(0.4, digest="w1", pass_id="p1")
+    run_b = _base_run(0.1, digest="w2", pass_id="p2")
+    argv, out = _material_pair_args(
+        tmp_path, run_a, run_b, _base_run(0.2, digest="w0", pass_id="p0"), "material"
+    )
+    assert _module().main(argv) == 2
+    assert out.exists() is False
+
+
+def test_material_dimension_refuses_different_starting_weights(tmp_path) -> None:
+    """两批材料必须从**同一枚母档权重**起，否则极差里混的是起点差。"""
+    run_a = _base_run(0.4, digest="w1", pass_id="p1")
+    run_b = _base_run(0.1, digest="w2", pass_id="p2")
+    run_b["material_fingerprint"] = dict(run_b["material_fingerprint"], source_sha256="e" * 64)
+    run_b["mother_digest"] = "a_different_mother"
+    argv, _out = _material_pair_args(
+        tmp_path, run_a, run_b, _base_run(0.2, digest="w0", pass_id="p0"), "material"
+    )
+    assert _module().main(argv) == 2
+
+
+def test_material_dimension_publishes_even_when_the_two_batches_sleep_to_the_same_weights(
+    tmp_path,
+) -> None:
+    """材料维不许拿"权重逐位相同"当拒绝：那是「这批材料不影响权重」的合法读数，要出版成披露列。"""
+    run_a = _base_run(0.4, digest="same", pass_id="p1")
+    run_b = _base_run(0.4, digest="same", pass_id="p2")
+    run_b["material_fingerprint"] = dict(run_b["material_fingerprint"], source_sha256="e" * 64)
+    argv, out = _material_pair_args(
+        tmp_path, run_a, run_b, _base_run(0.2, digest="w0", pass_id="p0"), "material"
+    )
+    assert _module().main(argv) == 0
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["weights_identical_across_the_pair"] is True
+    assert payload[FLOOR_KEY] == 0.0
