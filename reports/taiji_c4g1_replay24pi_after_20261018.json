@@ -1,0 +1,1536 @@
+{
+  "format": "taiji-a30-repetition-penalty-v1",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md 乙档",
+  "chain": "base_raw_bytes_with_product_mask",
+  "checkpoint": "checkpoints/seed_n2b_candidate_20261008_c4g1.pt",
+  "circuit": null,
+  "circuit_sha256": null,
+  "items": 24,
+  "item_offset": 0,
+  "first_item": "V001",
+  "limit": 24,
+  "items_sha256": "d6e3f3f1f530888d845ab9c4a1c721e6d2b607acf65c3e095a36f425ae8830dd",
+  "manifest_path": "plans/manifests/r2_copy_surface_extension_v3_position_random.json",
+  "base_sha256_unchanged": true,
+  "arms": [
+    {
+      "repetition_penalty": 0.0,
+      "gate_effective": true,
+      "items": 24,
+      "texts": 72,
+      "strict_hits": 6,
+      "well_formed_texts": 26,
+      "cyclic_texts": 20,
+      "cyclic_rate": 0.2778,
+      "mean_longest_run": 7.597,
+      "max_longest_run": 64,
+      "per_item": [
+        {
+          "id": "V001",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "明轩"
+          ],
+          "text_range": [
+            0,
+            3
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V002",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "苏州"
+          ],
+          "text_range": [
+            3,
+            6
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V003",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "36"
+          ],
+          "text_range": [
+            6,
+            9
+          ],
+          "texts": 3,
+          "formed_texts": 2,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V004",
+          "hit": true,
+          "cyclic": false,
+          "expected_contains": [
+            "海图"
+          ],
+          "text_range": [
+            9,
+            12
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V005",
+          "hit": true,
+          "cyclic": false,
+          "expected_contains": [
+            "乌龙"
+          ],
+          "text_range": [
+            12,
+            15
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V006",
+          "hit": true,
+          "cyclic": true,
+          "expected_contains": [
+            "雪鸮"
+          ],
+          "text_range": [
+            15,
+            18
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V007",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "海客谈瀛"
+          ],
+          "text_range": [
+            18,
+            21
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V008",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "小笼包"
+          ],
+          "text_range": [
+            21,
+            24
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V009",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "雨桐"
+          ],
+          "text_range": [
+            24,
+            27
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V010",
+          "hit": true,
+          "cyclic": true,
+          "expected_contains": [
+            "西安"
+          ],
+          "text_range": [
+            27,
+            30
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V011",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "21"
+          ],
+          "text_range": [
+            30,
+            33
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V012",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "晨星"
+          ],
+          "text_range": [
+            33,
+            36
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V013",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "苏打"
+          ],
+          "text_range": [
+            36,
+            39
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V014",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "浣熊"
+          ],
+          "text_range": [
+            39,
+            42
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V015",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "水经注疏"
+          ],
+          "text_range": [
+            42,
+            45
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V016",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "辣子鸡"
+          ],
+          "text_range": [
+            45,
+            48
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V017",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "承泽"
+          ],
+          "text_range": [
+            48,
+            51
+          ],
+          "texts": 3,
+          "formed_texts": 2,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V018",
+          "hit": true,
+          "cyclic": false,
+          "expected_contains": [
+            "青岛"
+          ],
+          "text_range": [
+            51,
+            54
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V019",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "77"
+          ],
+          "text_range": [
+            54,
+            57
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V020",
+          "hit": true,
+          "cyclic": false,
+          "expected_contains": [
+            "石径"
+          ],
+          "text_range": [
+            57,
+            60
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V021",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "桂花酿"
+          ],
+          "text_range": [
+            60,
+            63
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V022",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "树袋熊"
+          ],
+          "text_range": [
+            63,
+            66
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V023",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "松窗梦语"
+          ],
+          "text_range": [
+            66,
+            69
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V024",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "羊肉泡馍"
+          ],
+          "text_range": [
+            69,
+            72
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        }
+      ]
+    },
+    {
+      "repetition_penalty": 0.5,
+      "gate_effective": true,
+      "items": 24,
+      "texts": 72,
+      "strict_hits": 5,
+      "well_formed_texts": 24,
+      "cyclic_texts": 28,
+      "cyclic_rate": 0.3889,
+      "mean_longest_run": 6.889,
+      "max_longest_run": 64,
+      "per_item": [
+        {
+          "id": "V001",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "明轩"
+          ],
+          "text_range": [
+            0,
+            3
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V002",
+          "hit": true,
+          "cyclic": false,
+          "expected_contains": [
+            "苏州"
+          ],
+          "text_range": [
+            3,
+            6
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V003",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "36"
+          ],
+          "text_range": [
+            6,
+            9
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V004",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "海图"
+          ],
+          "text_range": [
+            9,
+            12
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V005",
+          "hit": true,
+          "cyclic": false,
+          "expected_contains": [
+            "乌龙"
+          ],
+          "text_range": [
+            12,
+            15
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V006",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "雪鸮"
+          ],
+          "text_range": [
+            15,
+            18
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V007",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "海客谈瀛"
+          ],
+          "text_range": [
+            18,
+            21
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V008",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "小笼包"
+          ],
+          "text_range": [
+            21,
+            24
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V009",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "雨桐"
+          ],
+          "text_range": [
+            24,
+            27
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V010",
+          "hit": true,
+          "cyclic": true,
+          "expected_contains": [
+            "西安"
+          ],
+          "text_range": [
+            27,
+            30
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V011",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "21"
+          ],
+          "text_range": [
+            30,
+            33
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V012",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "晨星"
+          ],
+          "text_range": [
+            33,
+            36
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V013",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "苏打"
+          ],
+          "text_range": [
+            36,
+            39
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V014",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "浣熊"
+          ],
+          "text_range": [
+            39,
+            42
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V015",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "水经注疏"
+          ],
+          "text_range": [
+            42,
+            45
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V016",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "辣子鸡"
+          ],
+          "text_range": [
+            45,
+            48
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V017",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "承泽"
+          ],
+          "text_range": [
+            48,
+            51
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V018",
+          "hit": true,
+          "cyclic": true,
+          "expected_contains": [
+            "青岛"
+          ],
+          "text_range": [
+            51,
+            54
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V019",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "77"
+          ],
+          "text_range": [
+            54,
+            57
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V020",
+          "hit": true,
+          "cyclic": false,
+          "expected_contains": [
+            "石径"
+          ],
+          "text_range": [
+            57,
+            60
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V021",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "桂花酿"
+          ],
+          "text_range": [
+            60,
+            63
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V022",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "树袋熊"
+          ],
+          "text_range": [
+            63,
+            66
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V023",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "松窗梦语"
+          ],
+          "text_range": [
+            66,
+            69
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V024",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "羊肉泡馍"
+          ],
+          "text_range": [
+            69,
+            72
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        }
+      ]
+    },
+    {
+      "repetition_penalty": 1.0,
+      "gate_effective": true,
+      "items": 24,
+      "texts": 72,
+      "strict_hits": 5,
+      "well_formed_texts": 24,
+      "cyclic_texts": 22,
+      "cyclic_rate": 0.3056,
+      "mean_longest_run": 6.625,
+      "max_longest_run": 64,
+      "per_item": [
+        {
+          "id": "V001",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "明轩"
+          ],
+          "text_range": [
+            0,
+            3
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V002",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "苏州"
+          ],
+          "text_range": [
+            3,
+            6
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V003",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "36"
+          ],
+          "text_range": [
+            6,
+            9
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V004",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "海图"
+          ],
+          "text_range": [
+            9,
+            12
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V005",
+          "hit": true,
+          "cyclic": false,
+          "expected_contains": [
+            "乌龙"
+          ],
+          "text_range": [
+            12,
+            15
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V006",
+          "hit": true,
+          "cyclic": false,
+          "expected_contains": [
+            "雪鸮"
+          ],
+          "text_range": [
+            15,
+            18
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V007",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "海客谈瀛"
+          ],
+          "text_range": [
+            18,
+            21
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V008",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "小笼包"
+          ],
+          "text_range": [
+            21,
+            24
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V009",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "雨桐"
+          ],
+          "text_range": [
+            24,
+            27
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V010",
+          "hit": true,
+          "cyclic": true,
+          "expected_contains": [
+            "西安"
+          ],
+          "text_range": [
+            27,
+            30
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V011",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "21"
+          ],
+          "text_range": [
+            30,
+            33
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V012",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "晨星"
+          ],
+          "text_range": [
+            33,
+            36
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V013",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "苏打"
+          ],
+          "text_range": [
+            36,
+            39
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V014",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "浣熊"
+          ],
+          "text_range": [
+            39,
+            42
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V015",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "水经注疏"
+          ],
+          "text_range": [
+            42,
+            45
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V016",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "辣子鸡"
+          ],
+          "text_range": [
+            45,
+            48
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V017",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "承泽"
+          ],
+          "text_range": [
+            48,
+            51
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V018",
+          "hit": true,
+          "cyclic": false,
+          "expected_contains": [
+            "青岛"
+          ],
+          "text_range": [
+            51,
+            54
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V019",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "77"
+          ],
+          "text_range": [
+            54,
+            57
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V020",
+          "hit": true,
+          "cyclic": false,
+          "expected_contains": [
+            "石径"
+          ],
+          "text_range": [
+            57,
+            60
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V021",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "桂花酿"
+          ],
+          "text_range": [
+            60,
+            63
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V022",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "树袋熊"
+          ],
+          "text_range": [
+            63,
+            66
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V023",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "松窗梦语"
+          ],
+          "text_range": [
+            66,
+            69
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V024",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "羊肉泡馍"
+          ],
+          "text_range": [
+            69,
+            72
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        }
+      ]
+    },
+    {
+      "repetition_penalty": 2.0,
+      "gate_effective": true,
+      "items": 24,
+      "texts": 72,
+      "strict_hits": 5,
+      "well_formed_texts": 23,
+      "cyclic_texts": 27,
+      "cyclic_rate": 0.375,
+      "mean_longest_run": 6.167,
+      "max_longest_run": 64,
+      "per_item": [
+        {
+          "id": "V001",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "明轩"
+          ],
+          "text_range": [
+            0,
+            3
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V002",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "苏州"
+          ],
+          "text_range": [
+            3,
+            6
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V003",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "36"
+          ],
+          "text_range": [
+            6,
+            9
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V004",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "海图"
+          ],
+          "text_range": [
+            9,
+            12
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V005",
+          "hit": true,
+          "cyclic": false,
+          "expected_contains": [
+            "乌龙"
+          ],
+          "text_range": [
+            12,
+            15
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V006",
+          "hit": true,
+          "cyclic": false,
+          "expected_contains": [
+            "雪鸮"
+          ],
+          "text_range": [
+            15,
+            18
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V007",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "海客谈瀛"
+          ],
+          "text_range": [
+            18,
+            21
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V008",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "小笼包"
+          ],
+          "text_range": [
+            21,
+            24
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V009",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "雨桐"
+          ],
+          "text_range": [
+            24,
+            27
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V010",
+          "hit": true,
+          "cyclic": true,
+          "expected_contains": [
+            "西安"
+          ],
+          "text_range": [
+            27,
+            30
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 3
+        },
+        {
+          "id": "V011",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "21"
+          ],
+          "text_range": [
+            30,
+            33
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V012",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "晨星"
+          ],
+          "text_range": [
+            33,
+            36
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V013",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "苏打"
+          ],
+          "text_range": [
+            36,
+            39
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V014",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "浣熊"
+          ],
+          "text_range": [
+            39,
+            42
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V015",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "水经注疏"
+          ],
+          "text_range": [
+            42,
+            45
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V016",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "辣子鸡"
+          ],
+          "text_range": [
+            45,
+            48
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V017",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "承泽"
+          ],
+          "text_range": [
+            48,
+            51
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V018",
+          "hit": true,
+          "cyclic": true,
+          "expected_contains": [
+            "青岛"
+          ],
+          "text_range": [
+            51,
+            54
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V019",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "77"
+          ],
+          "text_range": [
+            54,
+            57
+          ],
+          "texts": 3,
+          "formed_texts": 0,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V020",
+          "hit": true,
+          "cyclic": true,
+          "expected_contains": [
+            "石径"
+          ],
+          "text_range": [
+            57,
+            60
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        },
+        {
+          "id": "V021",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "桂花酿"
+          ],
+          "text_range": [
+            60,
+            63
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V022",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "树袋熊"
+          ],
+          "text_range": [
+            63,
+            66
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2
+        },
+        {
+          "id": "V023",
+          "hit": false,
+          "cyclic": false,
+          "expected_contains": [
+            "松窗梦语"
+          ],
+          "text_range": [
+            66,
+            69
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 0
+        },
+        {
+          "id": "V024",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "羊肉泡馍"
+          ],
+          "text_range": [
+            69,
+            72
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1
+        }
+      ]
+    }
+  ],
+  "verdict": {
+    "0.0": {
+      "cyclic_delta_vs_base": 0,
+      "hits_delta_vs_base": 0,
+      "formed_delta_vs_base": 0
+    },
+    "0.5": {
+      "cyclic_delta_vs_base": 8,
+      "hits_delta_vs_base": -1,
+      "formed_delta_vs_base": -2
+    },
+    "1.0": {
+      "cyclic_delta_vs_base": 2,
+      "hits_delta_vs_base": -1,
+      "formed_delta_vs_base": -2
+    },
+    "2.0": {
+      "cyclic_delta_vs_base": 7,
+      "hits_delta_vs_base": -1,
+      "formed_delta_vs_base": -3
+    }
+  },
+  "started_utc": "2026-10-18T05:36:30Z"
+}

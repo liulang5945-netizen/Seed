@@ -1,0 +1,410 @@
+{
+  "after_checkpoint": "checkpoints/seed_n2b_candidate_20261008_c4g1.pt",
+  "before_checkpoint": "checkpoints/seed_n2b_mother_20261008_c4g1.pt",
+  "debt": "DEBT-G174",
+  "format": "taiji-n02-replay-item-moves-v1",
+  "items_sha256": "d6e3f3f1f530888d845ab9c4a1c721e6d2b607acf65c3e095a36f425ae8830dd",
+  "pair": [
+    "reports\\taiji_c4g1_replay24pi_before_20261018.json",
+    "reports\\taiji_c4g1_replay24pi_after_20261018.json"
+  ],
+  "per_penalty": [
+    {
+      "aggregate": {
+        "cyclic_texts": [
+          38,
+          20
+        ],
+        "strict_hits": [
+          5,
+          6
+        ],
+        "well_formed_texts": [
+          24,
+          26
+        ]
+      },
+      "formed_down": [],
+      "formed_up": [
+        {
+          "cyclic_tail_texts": [
+            2,
+            2
+          ],
+          "expected_contains": [
+            "36"
+          ],
+          "formed_texts": [
+            1,
+            2
+          ],
+          "hit": [
+            false,
+            false
+          ],
+          "id": "V003",
+          "texts": [
+            3,
+            3
+          ]
+        },
+        {
+          "cyclic_tail_texts": [
+            0,
+            0
+          ],
+          "expected_contains": [
+            "承泽"
+          ],
+          "formed_texts": [
+            1,
+            2
+          ],
+          "hit": [
+            false,
+            false
+          ],
+          "id": "V017",
+          "texts": [
+            3,
+            3
+          ]
+        }
+      ],
+      "hit_gained": [
+        {
+          "cyclic_tail_texts": [
+            3,
+            1
+          ],
+          "expected_contains": [
+            "雪鸮"
+          ],
+          "formed_texts": [
+            1,
+            1
+          ],
+          "hit": [
+            false,
+            true
+          ],
+          "id": "V006",
+          "texts": [
+            3,
+            3
+          ]
+        }
+      ],
+      "hit_lost": [],
+      "items": 24,
+      "repetition_penalty": 0.0
+    },
+    {
+      "aggregate": {
+        "cyclic_texts": [
+          36,
+          28
+        ],
+        "strict_hits": [
+          5,
+          5
+        ],
+        "well_formed_texts": [
+          24,
+          24
+        ]
+      },
+      "formed_down": [],
+      "formed_up": [],
+      "hit_gained": [
+        {
+          "cyclic_tail_texts": [
+            1,
+            0
+          ],
+          "expected_contains": [
+            "苏州"
+          ],
+          "formed_texts": [
+            1,
+            1
+          ],
+          "hit": [
+            false,
+            true
+          ],
+          "id": "V002",
+          "texts": [
+            3,
+            3
+          ]
+        },
+        {
+          "cyclic_tail_texts": [
+            1,
+            0
+          ],
+          "expected_contains": [
+            "石径"
+          ],
+          "formed_texts": [
+            1,
+            1
+          ],
+          "hit": [
+            false,
+            true
+          ],
+          "id": "V020",
+          "texts": [
+            3,
+            3
+          ]
+        }
+      ],
+      "hit_lost": [
+        {
+          "cyclic_tail_texts": [
+            1,
+            1
+          ],
+          "expected_contains": [
+            "雪鸮"
+          ],
+          "formed_texts": [
+            1,
+            1
+          ],
+          "hit": [
+            true,
+            false
+          ],
+          "id": "V006",
+          "texts": [
+            3,
+            3
+          ]
+        },
+        {
+          "cyclic_tail_texts": [
+            1,
+            2
+          ],
+          "expected_contains": [
+            "浣熊"
+          ],
+          "formed_texts": [
+            1,
+            1
+          ],
+          "hit": [
+            true,
+            false
+          ],
+          "id": "V014",
+          "texts": [
+            3,
+            3
+          ]
+        }
+      ],
+      "items": 24,
+      "repetition_penalty": 0.5
+    },
+    {
+      "aggregate": {
+        "cyclic_texts": [
+          35,
+          22
+        ],
+        "strict_hits": [
+          6,
+          5
+        ],
+        "well_formed_texts": [
+          24,
+          24
+        ]
+      },
+      "formed_down": [],
+      "formed_up": [],
+      "hit_gained": [
+        {
+          "cyclic_tail_texts": [
+            1,
+            0
+          ],
+          "expected_contains": [
+            "石径"
+          ],
+          "formed_texts": [
+            1,
+            1
+          ],
+          "hit": [
+            false,
+            true
+          ],
+          "id": "V020",
+          "texts": [
+            3,
+            3
+          ]
+        }
+      ],
+      "hit_lost": [
+        {
+          "cyclic_tail_texts": [
+            1,
+            1
+          ],
+          "expected_contains": [
+            "海图"
+          ],
+          "formed_texts": [
+            1,
+            1
+          ],
+          "hit": [
+            true,
+            false
+          ],
+          "id": "V004",
+          "texts": [
+            3,
+            3
+          ]
+        },
+        {
+          "cyclic_tail_texts": [
+            1,
+            2
+          ],
+          "expected_contains": [
+            "浣熊"
+          ],
+          "formed_texts": [
+            1,
+            1
+          ],
+          "hit": [
+            true,
+            false
+          ],
+          "id": "V014",
+          "texts": [
+            3,
+            3
+          ]
+        }
+      ],
+      "items": 24,
+      "repetition_penalty": 1.0
+    },
+    {
+      "aggregate": {
+        "cyclic_texts": [
+          37,
+          27
+        ],
+        "strict_hits": [
+          6,
+          5
+        ],
+        "well_formed_texts": [
+          25,
+          23
+        ]
+      },
+      "formed_down": [
+        {
+          "cyclic_tail_texts": [
+            0,
+            0
+          ],
+          "expected_contains": [
+            "乌龙"
+          ],
+          "formed_texts": [
+            2,
+            1
+          ],
+          "hit": [
+            true,
+            true
+          ],
+          "id": "V005",
+          "texts": [
+            3,
+            3
+          ]
+        },
+        {
+          "cyclic_tail_texts": [
+            2,
+            2
+          ],
+          "expected_contains": [
+            "77"
+          ],
+          "formed_texts": [
+            1,
+            0
+          ],
+          "hit": [
+            false,
+            false
+          ],
+          "id": "V019",
+          "texts": [
+            3,
+            3
+          ]
+        }
+      ],
+      "formed_up": [],
+      "hit_gained": [],
+      "hit_lost": [
+        {
+          "cyclic_tail_texts": [
+            2,
+            2
+          ],
+          "expected_contains": [
+            "浣熊"
+          ],
+          "formed_texts": [
+            1,
+            1
+          ],
+          "hit": [
+            true,
+            false
+          ],
+          "id": "V014",
+          "texts": [
+            3,
+            3
+          ]
+        }
+      ],
+      "items": 24,
+      "repetition_penalty": 2.0
+    }
+  ],
+  "prereg": "plans/reference/PLAN-N-02_c4_net_gain_package_prereg_20261017.md",
+  "reading_limit": "本题面只覆盖 X 维那 24 题 × 每档罚分，且 `hit` 是按**最后一轮**回答判的（生成器原样）；它不判 cap0 面，也不判'剂量该不该减'——那句属 owner 裁的射程变更。",
+  "verdict": "hit_only",
+  "verdict_meanings": {
+    "formed_only": "没有命中翻转，只有成句条数变化 ⇒ 代价是'不成句'那一半",
+    "hit_only": "有题从命中变不命中，但那些题的成句条数没动 ⇒ 代价是'答不出'那一半",
+    "hit_with_formed": "同一题既掉命中又掉成句 ⇒ 两句要一起写，不许只引一个",
+    "no_moves": "没有任何一题**变差**（变好仍单独出版在 hit_gained／formed_up 两列）⇒ 复述面的聚合跌不是题级损失，须回到配对件查切片"
+  },
+  "verdict_vocabulary": [
+    "no_moves",
+    "hit_only",
+    "formed_only",
+    "hit_with_formed"
+  ]
+}
