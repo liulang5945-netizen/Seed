@@ -1,0 +1,81 @@
+{
+  "conjunction_note": "四条同枚为真才谈『净增益机制成立』，这也是 C5 的硬前置",
+  "criteria": {
+    "J_N02_1_gain": {
+      "delta_accuracy": -0.0390625,
+      "delta_quality": 0.8949958795371575,
+      "denominator": "与 §1① 那块面同一次运行的窗口均值，非题数",
+      "molecule": "治疗臂 - 对照臂 的新能力读数（Δquality 同窗口径）",
+      "noise_floor": null,
+      "passed": null,
+      "reason": "地板缺失或与增益不同量纲：判读需 noise_floor_delta_quality_abs",
+      "verdict": "not_judged"
+    },
+    "J_N02_2_retention": {
+      "columns_compared": 7,
+      "columns_expected": 7,
+      "denominator": 7,
+      "dropped_columns": [
+        "replay_strict_hits:1.0",
+        "replay_strict_hits:2.0",
+        "replay_well_formed:2.0"
+      ],
+      "molecule": "逐列 after - before（不是合计，不是均值）",
+      "passed": false,
+      "verdict": "cost_persists"
+    },
+    "J_N02_3_comparability": {
+      "conflicts": [],
+      "denominator": "cap0 与 replay 两组守卫",
+      "molecule": "两侧是否同题集同偏移（本件只复核，不重算）",
+      "passed": true,
+      "rechecked_face_digests": [
+        "cap0_before_sha256",
+        "cap0_after_sha256",
+        "replay_before_sha256",
+        "replay_after_sha256"
+      ]
+    },
+    "J_N02_4_separation": {
+      "denominator": "保持集探针窗口全集",
+      "molecule": "巩固材料与保持集的字节级交集（探针窗口命中训练语料的条数）",
+      "overlap": 0,
+      "passed": true,
+      "skipped_short_rows": 35,
+      "state": "measured",
+      "windows": 116
+    }
+  },
+  "exit": "not_judged",
+  "format": "taiji-n02-01-c4-net-gain-v1",
+  "instrument": "adjudicate_taiji_n02_c4_net_gain.py",
+  "is_capability_claim": false,
+  "models_loaded": 0,
+  "parameter_updates": 0,
+  "prereg": "PLAN-N-02 §3/§4",
+  "reads": {
+    "gain": "reports\\taiji_n2b_powerup_20261008_c4g1.json",
+    "gain_face": "reports\\taiji_n02_gain_ruler_range_20261018.json",
+    "gain_sha256": "e1ac8a871d32678dab20bb9ed0ce90beff66a1232dab10197ee07dae7e8baa2d",
+    "noise_floor": "reports\\taiji_n02_repeat_determinism_c4g_20261018.json",
+    "retention_pair": "reports\\taiji_n2_04_retention_pair_c4g1_20261018.json",
+    "retention_pair_sha256": "7597f81a584f5c038c581c11675b47acf4fb6ddc7f56fb3fbf60a028100d3a0d"
+  },
+  "ruler_precondition": {
+    "checked_face": "taiji_n02_gain_ruler_range_20261018.json",
+    "key": "usable_endpoints",
+    "state": "present",
+    "value": 1
+  },
+  "status": "not_judged",
+  "status_meanings": {
+    "cost_persists": "J-2 假：保持集有列跌幅 ≥1",
+    "net_gain_candidate": "J-1∧J-2∧J-3∧J-4 同枚成立",
+    "no_gain": "J-1 假：Δ ≤ 0",
+    "not_judged": "G-N-02-3：增益量没有同量纲的噪声地板，两侧都不得代答",
+    "not_resolved": "J-1 不可判：0 < Δ ≤ 地板",
+    "range_unverified": "G-N-02-4：增益面缺动态范围列，禁止进入合取",
+    "separation_unverified": "G-N-02-1／J-4：来源与保持的字节级交集未取到数"
+  },
+  "writes_any_face": false
+}
