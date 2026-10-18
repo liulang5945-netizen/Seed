@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 import time
@@ -40,6 +41,32 @@ CANDIDATE_PATH = PROJECT_ROOT / "checkpoints" / "seed_n2b_candidate_20261008.pt"
 ROLLBACK_PATH = PROJECT_ROOT / "checkpoints" / "seed_n2b_rollback_20261008.pt"
 POWERUP2_REPORT = REPORT_DIR / "taiji_n2b_powerup_20261008.json"
 GUARD2_REPORT = REPORT_DIR / "taiji_n2b_guard_default_20261008.json"
+
+#: 两趟读数要被当"同配置重复"用之前，必须先能证明**代码同一版本**——
+#: 2026-10-08 与 `_n2c1` 两枚件参数逐项相等而 Δquality 差 3.59，件里又没有身份列，
+#: 于是那 3.59 到底是噪声还是代码变化，永远判不了（PLAN-N-02 §6ter 第 5 条／DEBT-G168）。
+#: 这里取的是**工作区字节**的 sha256：与 DEBT-G161 同一条口径（行尾翻牌会换摘要），
+#: 所以复现比较必须在同一检出状态下做。
+CODE_IDENTITY_FILES = (
+    "scripts/training/run_taiji_n2b_powerup.py",
+    "scripts/training/run_taiji_n2_powerup.py",
+)
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def code_identity() -> dict[str, str]:
+    """点名"哪几个文件的字节产出了这枚读数"，缺文件即抛而不是静默少一列。"""
+
+    identity: dict[str, str] = {}
+    for rel in CODE_IDENTITY_FILES:
+        path = PROJECT_ROOT / rel
+        if not path.is_file():
+            raise RuntimeError(f"code identity source is missing: {rel}")
+        identity[rel] = _sha256(path)
+    return identity
 
 
 def _window_rows(model: Any, texts: list[str], dose: int) -> dict[str, float]:
@@ -77,6 +104,7 @@ def phase_guard2() -> int:
     payload = {
         "format": "taiji-n2b-guard-v1",
         "prereg": "plans/reference/PLAN-N2-02_second_powerup_dosewindow_prereg_20261008.md",
+        "code_identity": code_identity(),
         "digest_before": before,
         "digest_after": after,
         "organs": organs,
@@ -102,6 +130,7 @@ def phase_powerup2() -> int:
     payload: dict[str, Any] = {
         "format": "taiji-n2b-powerup-v1",
         "prereg": "plans/reference/PLAN-N2-02_second_powerup_dosewindow_prereg_20261008.md",
+        "code_identity": code_identity(),
         "loaded_checkpoint": str(DEFAULT_CHECKPOINT),
         "started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(started)),
         "stage": "start",

@@ -89,3 +89,29 @@ def test_guard_report_no_longer_hardcodes_its_literal_at_the_call_site() -> None
     call_sites = [line for line in source.splitlines() if "_write_report(REPORT_DIR /" in line]
     assert not call_sites, call_sites
     assert "    _write_report(GUARD2_REPORT, payload)" in source
+
+
+def test_code_identity_names_the_files_that_produced_the_reading(monkeypatch) -> None:
+    """DEBT-G168：两枚同参数旧件给不出代码身份 ⇒ 那 3.59 的极差不配当噪声地板。
+
+    三条都能为假：①自述摘要必须逐字等于被点名文件的当前字节（换行尾翻牌就红，
+    与 DEBT-G161 同一条口径）；②**装载这台驱动的自己必须在名单里**（漏掉自己＝最难查的
+    一种自述）；③名单里缺文件必须响亮抛错，而不是静默少一列。
+    """
+    import hashlib
+
+    runner = _module()
+    identity = runner.code_identity()
+    assert set(identity) == set(runner.CODE_IDENTITY_FILES)
+    for rel, digest in identity.items():
+        assert len(digest) == 64, rel
+        assert digest == hashlib.sha256((REPO / rel).read_bytes()).hexdigest(), rel
+    assert str(RUNNER.relative_to(REPO)).replace("\\", "/") in identity
+
+    monkeypatch.setattr(runner, "CODE_IDENTITY_FILES", ("scripts/training/no_such_driver.py",))
+    try:
+        runner.code_identity()
+    except RuntimeError as missing:
+        assert "no_such_driver" in str(missing), str(missing)
+    else:
+        raise AssertionError("名单缺文件却静默出版 ⇒ 这条守卫是恒真的")
