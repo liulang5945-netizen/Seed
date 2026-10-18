@@ -1,0 +1,172 @@
+{
+  "format": "taiji-a30-repetition-penalty-v1",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md 乙档",
+  "chain": "base_raw_bytes_with_product_mask",
+  "checkpoint": "checkpoints/seed_n2b_candidate_20261008_c4g1.pt",
+  "circuit": null,
+  "circuit_sha256": null,
+  "items": 1,
+  "item_offset": 13,
+  "first_item": "V014",
+  "limit": 1,
+  "items_sha256": "c0031b5da5742a2c037139ab9cbf1c1a832d1b37d979e745f1138a7cb1530c65",
+  "manifest_path": "plans/manifests/r2_copy_surface_extension_v3_position_random.json",
+  "base_sha256_unchanged": true,
+  "arms": [
+    {
+      "repetition_penalty": 0.0,
+      "gate_effective": true,
+      "items": 1,
+      "texts": 3,
+      "strict_hits": 0,
+      "well_formed_texts": 1,
+      "cyclic_texts": 1,
+      "cyclic_rate": 0.3333,
+      "mean_longest_run": 1.333,
+      "max_longest_run": 2,
+      "per_item": [
+        {
+          "id": "V014",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "浣熊"
+          ],
+          "answer_chars": 21,
+          "answer_text": "养一养一养一养一养一养一养一养一养一养一养",
+          "text_range": [
+            0,
+            3
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1,
+          "answer_formed": false,
+          "answer_cyclic_tail": true
+        }
+      ]
+    },
+    {
+      "repetition_penalty": 0.5,
+      "gate_effective": true,
+      "items": 1,
+      "texts": 3,
+      "strict_hits": 0,
+      "well_formed_texts": 1,
+      "cyclic_texts": 2,
+      "cyclic_rate": 0.6667,
+      "mean_longest_run": 1.333,
+      "max_longest_run": 2,
+      "per_item": [
+        {
+          "id": "V014",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "浣熊"
+          ],
+          "answer_chars": 21,
+          "answer_text": "养一养一养一养一养一养一养一养一养一养一养",
+          "text_range": [
+            0,
+            3
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2,
+          "answer_formed": false,
+          "answer_cyclic_tail": true
+        }
+      ]
+    },
+    {
+      "repetition_penalty": 1.0,
+      "gate_effective": true,
+      "items": 1,
+      "texts": 3,
+      "strict_hits": 0,
+      "well_formed_texts": 1,
+      "cyclic_texts": 2,
+      "cyclic_rate": 0.6667,
+      "mean_longest_run": 2.0,
+      "max_longest_run": 4,
+      "per_item": [
+        {
+          "id": "V014",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "浣熊"
+          ],
+          "answer_chars": 21,
+          "answer_text": "养一养一养一养一养一养一养一养一养一养一养",
+          "text_range": [
+            0,
+            3
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2,
+          "answer_formed": false,
+          "answer_cyclic_tail": true
+        }
+      ]
+    },
+    {
+      "repetition_penalty": 2.0,
+      "gate_effective": true,
+      "items": 1,
+      "texts": 3,
+      "strict_hits": 0,
+      "well_formed_texts": 1,
+      "cyclic_texts": 2,
+      "cyclic_rate": 0.6667,
+      "mean_longest_run": 2.667,
+      "max_longest_run": 6,
+      "per_item": [
+        {
+          "id": "V014",
+          "hit": false,
+          "cyclic": true,
+          "expected_contains": [
+            "浣熊"
+          ],
+          "answer_chars": 21,
+          "answer_text": "养一养一养一养一养一养一养一养一养一养一养",
+          "text_range": [
+            0,
+            3
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 2,
+          "answer_formed": false,
+          "answer_cyclic_tail": true
+        }
+      ]
+    }
+  ],
+  "verdict": {
+    "0.0": {
+      "cyclic_delta_vs_base": 0,
+      "hits_delta_vs_base": 0,
+      "formed_delta_vs_base": 0
+    },
+    "0.5": {
+      "cyclic_delta_vs_base": 1,
+      "hits_delta_vs_base": 0,
+      "formed_delta_vs_base": 0
+    },
+    "1.0": {
+      "cyclic_delta_vs_base": 1,
+      "hits_delta_vs_base": 0,
+      "formed_delta_vs_base": 0
+    },
+    "2.0": {
+      "cyclic_delta_vs_base": 1,
+      "hits_delta_vs_base": 0,
+      "formed_delta_vs_base": 0
+    }
+  },
+  "started_utc": "2026-10-18T06:01:58Z"
+}
