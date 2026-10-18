@@ -87,7 +87,7 @@
 - [PLAN-N1-115 五组参数全因子诊断](PLAN-N1-115_five_group_parameter_factorial_diagnostic_draft_20261018.md)：11,520条train-only查询完成，CPU85.984秒；逐父项离线归因显示reader/writer/local净损害同一批48项，且有正向两两交互；未训练/未查留出。下一步静态核验协调式读出保持契约。
 - [PLAN-N1-116 协调式RWL信任半径训练](PLAN-N1-116_coupled_rwl_trust_region_training_draft_20261018.md)：静态runner验证通过，但legacy zero载入policy守卫失败；0新checkpoint/更新，保留失败回执并关闭此attempt。
 - [PLAN-N1-117 legacy来源加载修订](PLAN-N1-117_coupled_rwl_source_loader_revision_draft_20261018.md)：九端点训练完成、18/18恢复相等；seed13 joint-four 24/23未过44门。离线归因发现reader主导共享绝对半径、writer/local clip大幅减少，QA loss下降更慢；下一步采用归一化RWL联合半径。
-- [PLAN-N1-118 归一化耦合RWL信任半径](PLAN-N1-118_normalized_coupled_rwl_trust_region_draft_20261018.md)：按各组relative cap归一化三组位移并设置共享半径√3；合同与24,576步schedule readiness、46项source binding通过。下一步九个zero checkpoint保存与独立恢复前置。
+- [PLAN-N1-118 归一化耦合RWL信任半径](PLAN-N1-118_normalized_coupled_rwl_trust_region_draft_20261018.md)：按各组relative cap归一化三组位移并设置共享半径√3；合同与24,576步schedule readiness、46项source binding通过；九个fresh-zero bundle已保存且独立恢复9/9相等（CPU56.546875秒）。221,184更新批次正在执行，沿用原训练门、不查留出。
 
 ## M5 蒸馏层（20 件收口/批准/宣言/设计＋墓碑）
 
