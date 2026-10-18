@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：执行已授权的 PLAN-N1-112 r1 交叉诊断
+## 当前唯一下一步：裁定 PLAN-N1-115 五组参数全因子诊断
 
 ### 最新状态（2026-10-18）
 
@@ -10,7 +10,7 @@ PLAN-N1-110 九模型长度平衡训练已完整结束：221,184 次更新、CPU
 
 PLAN-N1-111 已获批准，但唯一一次 runner 在候选恢复处停止：baseline 完整恢复，N1-110 candidate 被 run100 专用 protocol loader 拒绝；未发出模型查询、未更新参数，两枚 checkpoint 哈希未变。执行报告与计数澄清见 [PLAN-N1-111](../../reference/PLAN-N1-111_position_weight_history_crossover_diagnostic_draft_20261018.md) 和 [restore erratum](../../../reports/taiji_n1_position_weight_history_crossover_s13_20261018_restore_erratum.json)。该方案的 retry_allowed=false 已遵守。
 
-PLAN-N1-112 已依 owner 长期授权进入唯一执行队列：方案保持两枚 checkpoint、48 个已消费 train transition 父项、四条件与 original/rename 视图，只修正恢复契约。9项合同测试和零查询来源预检已通过，27项 source guards 全匹配；准备阶段 0 checkpoint payload read/load、0 model query/update。现在执行一次 1,536 条 r1 交叉诊断，CPU≤600秒、0更新、0 dev/holdout/confirmation。原生锚点必须先逐行复现；否则立即停止且不跑 hybrid。
+PLAN-N1-112 已完成：CPU 24.015625秒、1,536条 train transition 查询、两个原生锚点768/768逐行复现；baseline权重下两种history均48/48，candidate权重下均5/4。固定权重时384/384预测行跨history相同；代码审计表明 fresh-session evaluator 只读当前 session key。cell摘要已离线更正，checkpoint未变、0更新/留出查询、`can_promote=false`。PLAN-N1-113参数差异与PLAN-N1-114训练轨迹归因也已完成：终态差异平方范数85.0%在reader组、64.6%来自readout.weight；新增7字符任务伴随lookup/revision QA loss高值，而共享更新组的裁剪轨迹也有变化，均为描述性读数。当前唯一待裁的是[PLAN-N1-115](../../reference/PLAN-N1-115_five_group_parameter_factorial_diagnostic_draft_20261018.md)：在相同已消费训练项上对reader/writer/local/context/relation做完整2^5参数交叉、11,520次查询，以分离主效应和交互；这是新的模型查询组合，未裁定前不执行。
 
 N02/C4 remains unresolved: the material-floor adjudicator reports `cost_persists` (`J_N02_1=not_resolved`, `J_N02_2=cost_persists`); this result does not authorize new training or C5. See [the C4 report](../../../reports/taiji_n02_c4_net_gain_with_material_floor_c4g1_20261018.json).
 

@@ -1,0 +1,51 @@
+{
+  "schema": "n1-position-weight-history-crossover-r1-postrun-source-erratum-v1",
+  "source_r1_report": {
+    "path": "reports/taiji_n1_position_weight_history_crossover_s13_r1_20261018.json",
+    "sha256": "e38b08a857ffe69acb8fbf57e040ed672df538b88988dc333e1182e58ffb16bf"
+  },
+  "source_readiness_report": {
+    "path": "reports/taiji_n1_position_weight_history_crossover_s13_r1_readiness_20261018.json",
+    "sha256": "b9ad33fb787b30bcc93f42ec3ea4d1c936f92eff35363a7d3436d67110d9a759"
+  },
+  "runner_source": {
+    "path": "scripts/training/diagnose_taiji_n1_position_weight_history_crossover.py",
+    "execution_commit": "4ee1ae5cd",
+    "sha256_at_r1_execution": "0bbfa2721b452a77555cbffe4a34062a8d2af18e961b2fba87b3baca45946c0a",
+    "sha256_after_cell_summary_fix": "31da65f155e345221ed5af7bfb4c772ed3d2c5f31dfe00c867f28692ddfc4298",
+    "change": "Post-run fix assigns each parent to its original-condition direction/turn cell before aggregating the four counterfactual rows. The executed report is preserved unchanged; its overall joint and condition totals remain valid, while its cell field is superseded by the cell-summary correction."
+  },
+  "analysis_sources": {
+    "cell_summary_analyzer": {
+      "path": "scripts/training/analyze_taiji_n1_position_weight_history_crossover_cells.py",
+      "sha256": "94205e94170979d029cd49b75b7b68de18ca42117f8bc8c9f34fc4e548ddadd5"
+    },
+    "session_scope_analyzer": {
+      "path": "scripts/training/analyze_taiji_n1_position_weight_history_crossover_session_scope.py",
+      "sha256": "b2f7a319edeeb2729811f2761bf9bb83f4021fee68fa149463678494cb6f6ea71"
+    }
+  },
+  "correction_reports": {
+    "cell_summary": {
+      "path": "reports/taiji_n1_position_weight_history_crossover_s13_r1_cell_summary_correction_20261018.json",
+      "sha256": "cf5e18243411c7314beeb8fac8d1f7e44cc3e6c7cdd5577de5d89ad5d709203e"
+    },
+    "session_scope": {
+      "path": "reports/taiji_n1_position_weight_history_crossover_s13_r1_session_scope_20261018.json",
+      "sha256": "0453d8154fb70e9dbd2cbfc2e1ee7b7813a205c7ae91fee5b225b698bd566811"
+    }
+  },
+  "postrun_activity": {
+    "model_loads": 0,
+    "checkpoint_payload_reads": 0,
+    "model_queries": 0,
+    "parameter_updates": 0,
+    "optimizer_steps": 0,
+    "checkpoint_saves": 0,
+    "checkpoint_hashes_unchanged": true,
+    "r1_report_rows_modified": false,
+    "source_guards_unchanged_at_r1_completion": true,
+    "one_of_27_current_source_guards_differs_after_the_summary_fix": true,
+    "other_r1_source_guards_still_match": 26
+  }
+}

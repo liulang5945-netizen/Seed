@@ -8,10 +8,37 @@ from types import SimpleNamespace
 
 REPO = Path(__file__).resolve().parents[2]
 SCRIPT = REPO / "scripts" / "training" / "diagnose_taiji_n1_position_weight_history_crossover.py"
+CELL_ANALYZER = (
+    REPO / "scripts" / "training" / "analyze_taiji_n1_position_weight_history_crossover_cells.py"
+)
+SCOPE_AUDIT = (
+    REPO
+    / "scripts"
+    / "training"
+    / "analyze_taiji_n1_position_weight_history_crossover_session_scope.py"
+)
 
 
 def _module():
     spec = importlib.util.spec_from_file_location("n1_plan111_weight_history_crossover", SCRIPT)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def _cell_analyzer():
+    spec = importlib.util.spec_from_file_location("n1_r1_cell_summary_correction", CELL_ANALYZER)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def _scope_audit():
+    spec = importlib.util.spec_from_file_location("n1_r1_session_scope_audit", SCOPE_AUDIT)
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
@@ -30,6 +57,16 @@ def _rows(*, failing_parent: int | None = None):
             direction = directions[parent % len(directions)]
             turn = turns[(parent // len(directions)) % len(turns)]
             for condition in module.CONDITIONS:
+                condition_direction = (
+                    directions[(directions.index(direction) + 2) % len(directions)]
+                    if condition in ("direction_opposite", "both")
+                    else direction
+                )
+                condition_turn = (
+                    ("right" if turn == "left" else "left")
+                    if condition in ("turn_flip", "both")
+                    else turn
+                )
                 exact = not (parent == failing_parent and condition == "both")
                 rows.append(
                     {
@@ -37,8 +74,8 @@ def _rows(*, failing_parent: int | None = None):
                         "case_id": f"{parent_id}:{condition}",
                         "parent_id": parent_id,
                         "condition": condition,
-                        "initial_direction": direction,
-                        "turn": turn,
+                        "initial_direction": condition_direction,
+                        "turn": condition_turn,
                         "free_exact": exact,
                         "teacher_exact": exact,
                         "output_hex": ("north" if exact else "south").encode().hex(),
@@ -48,10 +85,10 @@ def _rows(*, failing_parent: int | None = None):
 
 
 def test_four_condition_summary_preserves_views_cells_and_joint_parent_counts() -> None:
-    module = _module()
+    analyzer = _cell_analyzer()
     rows = _rows(failing_parent=0)
 
-    summary = module.summarize_combination(rows)
+    summary = analyzer.summarize_combination(rows)
 
     assert len(rows) == 384
     assert set(summary) == {"original", "rename"}
@@ -64,7 +101,7 @@ def test_four_condition_summary_preserves_views_cells_and_joint_parent_counts() 
 
 
 def test_incomplete_duplicate_and_mixed_parent_rows_are_refused() -> None:
-    module = _module()
+    module = _cell_analyzer()
     rows = _rows()
     try:
         module.summarize_combination(rows[:-1])
@@ -77,7 +114,7 @@ def test_incomplete_duplicate_and_mixed_parent_rows_are_refused() -> None:
     try:
         module.summarize_combination(duplicate)
     except ValueError as exc:
-        assert "unique" in str(exc)
+        assert "duplicate" in str(exc)
     else:
         raise AssertionError("duplicate crossover cases must be refused")
 
@@ -287,3 +324,44 @@ def test_load_model_uses_endpoint_protocol_and_counts_partial_restore(tmp_path) 
 
     assert isinstance(restored, Model)
     assert result == {"checkpoint_payload_reads": 1, "model_loads": 1}
+
+
+def test_history_invariance_comparison_checks_raw_and_teacher_outputs() -> None:
+    audit = _scope_audit()
+    rows = []
+    for weight_source in audit.WEIGHT_SOURCES:
+        for history_source in audit.HISTORY_SOURCES:
+            combination = f"{weight_source}+{history_source}"
+            for view in audit.VIEWS:
+                for index in range(192):
+                    rows.append(
+                        {
+                            "combination": combination,
+                            "view": view,
+                            "case_id": f"train-{index:03d}:original",
+                            **{
+                                field: (
+                                    (index + len(weight_source))
+                                    if field == "teacher_ce"
+                                    else f"{weight_source}:{index}:{field}"
+                                )
+                                for field in audit.PREDICTION_FIELDS
+                            },
+                        }
+                    )
+
+    summary = audit.compare_history_predictions(rows)
+
+    assert all(entry["all_rows_identical"] for entry in summary.values())
+    assert all(
+        entry["identical_prediction_rows_by_view"] == {"original": 192, "rename": 192}
+        for entry in summary.values()
+    )
+    rows[-1] = dict(rows[-1], teacher_ce=999)
+    changed = audit.compare_history_predictions(rows)
+    assert changed["candidate_weights"]["all_rows_identical"] is False
+    assert changed["candidate_weights"]["identical_prediction_rows_by_view"]["rename"] == 191
+
+
+def test_session_scope_audit_finds_exact_keyed_history_and_fresh_evaluation_sessions() -> None:
+    assert all(_scope_audit().session_scope_facts().values())

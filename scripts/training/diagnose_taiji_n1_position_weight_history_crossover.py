@@ -327,32 +327,42 @@ def summarize_combination(rows: list[dict]) -> dict:
     for view in VIEWS:
         view_rows = [row for row in rows if row["view"] == view]
         summary = factorial_quartet_summary(view_rows)
+        parent_rows: dict[str, dict[str, dict]] = {}
+        for row in view_rows:
+            parent_rows.setdefault(row["parent_id"], {})[row["condition"]] = row
+        if len(parent_rows) != PARENTS or any(
+            set(group) != set(CONDITIONS) for group in parent_rows.values()
+        ):
+            raise ValueError("all48 parent condition groups required for cell attribution")
+        source_cells = {}
+        for parent, group in parent_rows.items():
+            source = group["original"]
+            direction, turn = source["initial_direction"], source["turn"]
+            if direction not in ("north", "east", "south", "west") or turn not in (
+                "left",
+                "right",
+            ):
+                raise ValueError("original condition must define each parent direction-turn cell")
+            source_cells.setdefault(f"{direction}/{turn}", set()).add(parent)
         cell_summaries = {}
         for direction in ("north", "east", "south", "west"):
             for turn in ("left", "right"):
-                cell = [
-                    row
-                    for row in view_rows
-                    if row["initial_direction"] == direction and row["turn"] == turn
-                ]
-                cell_parents = {row["parent_id"] for row in cell}
-                grouped = {
-                    parent: {
-                        row["condition"]: row for row in view_rows if row["parent_id"] == parent
-                    }
-                    for parent in cell_parents
-                }
+                cell_parents = source_cells.get(f"{direction}/{turn}", set())
                 cell_summaries[f"{direction}/{turn}"] = {
-                    "items": len(cell),
+                    "items": len(cell_parents) * len(CONDITIONS),
                     "parents": len(cell_parents),
                     "by_condition": {
                         condition: sum(
-                            row["free_exact"] for row in cell if row["condition"] == condition
+                            parent_rows[parent][condition]["free_exact"]
+                            for parent in cell_parents
                         )
                         for condition in CONDITIONS
                     },
                     "joint_four_exact": sum(
-                        all(grouped[parent][condition]["free_exact"] for condition in CONDITIONS)
+                        all(
+                            parent_rows[parent][condition]["free_exact"]
+                            for condition in CONDITIONS
+                        )
                         for parent in cell_parents
                     ),
                 }

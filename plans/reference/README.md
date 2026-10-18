@@ -77,6 +77,15 @@
 - [DISTILLATION_TOMBSTONE_20261007](DISTILLATION_TOMBSTONE_20261007.md)
 - [M0_M7_PROJECT_CONSOLIDATION_20261006](M0_M7_PROJECT_CONSOLIDATION_20261006.md)
 
+### N1 最新证据与裁定
+
+- [PLAN-N1-110 执行结案](PLAN-N1-110_execution_closeout_20261018.md)：长度平衡九模型训练完成，但 seed13 position gate 失败；不生成 v11。
+- [PLAN-N1-111 权重—历史交叉归因](PLAN-N1-111_position_weight_history_crossover_diagnostic_draft_20261018.md)：首个 runner 在查询前恢复失败，依 no-retry 关闭。
+- [PLAN-N1-112 恢复契约修订](PLAN-N1-112_position_weight_history_crossover_restore_revision_draft_20261018.md)：train-only r1 完成，权重来源对应退化；cell 更正与session范围审计另列于执行记录。
+- [PLAN-N1-113 参数组差异归因](PLAN-N1-113_position_checkpoint_parameter_delta_attribution_20261018.md)：reader/readout 组终态差异最大，描述性读数。
+- [PLAN-N1-114 更新轨迹归因](PLAN-N1-114_seed13_parameter_update_trajectory_attribution_20261018.md)：已有 shard 的 task/path/length 更新统计，不访问模型。
+- [PLAN-N1-115 五组参数全因子诊断](PLAN-N1-115_five_group_parameter_factorial_diagnostic_draft_20261018.md)：同一已消费训练面上的新参数干预组合，待 owner 裁定；不改门或训练配方。
+
 ## M5 蒸馏层（20 件收口/批准/宣言/设计＋墓碑）
 
 - [M5_B0_CLOSEOUT_AND_PLAN_REVISION_20260914](M5_B0_CLOSEOUT_AND_PLAN_REVISION_20260914.md)
