@@ -71,7 +71,9 @@ See [Taiji Harness contribution instructions](taiji-harness/CONTRIBUTING.md) for
 | `reports/` | Machine-readable research evidence |
 | `design/` | Brand assets and their generators |
 | `data/`, `checkpoints/`, `taiji_data/` | Local datasets and model state; preserve before migration |
-| `output/`, `outputs/`, `artifacts/` | Legacy runtime/archive locations; tracked JSON evidence moved to `reports/legacy/` |
+| `output/` | Historical local run output plus pinned screenshots/manual acceptance assets; not a new report root |
+| `outputs/` | Cold archive and recovery paths for older experiments; no new writes |
+| `artifacts/` | Local diagnostic state; tracked JSON evidence has moved to `reports/legacy/` |
 
 Follow the [folder rules](docs/FOLDER_STRUCTURE_RULES.md) and [repository hygiene rules](docs/REPO_HYGIENE_RULES.md). Training requires the applicable frozen protocol, budget and successful checkpoint save/restore checks. Historical failed experiments remain evidence.
 
