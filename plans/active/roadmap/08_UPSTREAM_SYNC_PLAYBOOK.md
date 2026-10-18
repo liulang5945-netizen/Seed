@@ -4403,3 +4403,12 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 两把尺前置照 §2 纪律写进单里：①噪声地板必须同量纲（`noise_floor_delta_quality_abs`），缺则 J-1 落 `not_resolved`、**不许**写成"无收益"；②增益面必须出版 `usable_endpoints`，否则判读器 `range_column` 报 `state=absent`——**这一条今天就是要红的**（现取的 N2B 件里没有逐端点范围列），所以要么先给治疗臂仪器补范围列（补仪器、不动判据），要么本包照实停在"尺未证"。
 - 没做的事：**没有发射**。owner 这次裁的是"选①"，P5 改权重批文仍未给；算力那栏"≈45–60 分钟"是台账既有估计、本轮未复测，单里明写"发射后以件自述为准"。§7 四条互斥出口与判红收回句原样引用，不重述、不放宽。
 - 边界：零模型查询、零参数更新、零权重改动；本轮只动 PLAN-N-02（真值表三格＋§6ter 一节，并补回我插入时误删的 `## 7.` 标题）与本条台账。
+
+### ㊵-1116 【2026-10-18 · C4 的尺先量了：新只读仪出版 `usable_endpoints=1`（single_channel_only）、双臂分母各 8 项、accuracy 那列 Δ 恰为 0.0——B 档的 `--gain-face` 从此有真件可指，而它同时说清了这条面的上限】
+
+- 为什么先做这台仪而不是先发射：§6ter 第 4 条的两把前置尺里，噪声地板有现成件，**范围列没有生产者**——判读器 `adjudicate_taiji_n02_c4_net_gain.py --gain-face` 要吃的 `usable_endpoints` 全仓只有 N1 那条腿（`verify_taiji_n1_v6_range_check.py`／`eval_taiji_n1_hard_neighbor_v7..v9.py`）出版过。不补这一格，B 档那 45–60 分钟跑完也只能落在 `state=absent` 上判"尺未证"，白花机时。所以走的是**补仪器、不动判据**那条路（本仓唯一允许的两种修法之一）。
+- 现取读数（`reports/taiji_n02_gain_ruler_range_20261018.json`，`format=taiji-n02-gain-ruler-range-v1`，`models_loaded=0`／`model_queries=0`／`parameter_updates=0`／`writes_any_face=false`／`is_capability_claim=false`）：`usable_endpoints`＝**1**、`range_verdict`＝`single_channel_only`；通道原样出版 `interactions=200`、`constraints=0`、`workbench_capabilities=0`；双臂分母 `material_treated_whole.items`＝`material_control_whole.items`＝**8.0**；`j_n2b_prime_delta_quality`＝2.4829673663245373、`j_n2b_prime_delta_accuracy`＝**0.0**（原样出版，不相减、不重算）。
+- 读数说的是什么、不是什么：**是**——今天这条增益面的来源归因只有一条通道活着，accuracy 列在封存那次没有位移，双臂各只有 8 项；**不是**——它不判净增益、不判能力，也不推翻 §3 的四条合取。它把"跑完能声称到哪"在花钱之前先钉住：即便 Δquality 再次为正，**跨来源归因与逐列保持的声称幅度受这一列限制**。这正是"先量尺再量能力"（P-尺）要买的东西。
+- 仪器形状（六条守卫都能为假，合同测 7 passed）：判级词是**封闭表**（0／1／2 条活通道各有词，三条全活直接 `Refuse`，不许现造"三通道"）；对照臂必须 `guard_pass` 且 `digest_before==digest_after`（对照改了权重就不是对照）；双臂分母不等即拒（分子分母同集合）；缺 `stage`／`fail_closed_pass`／母档往返恒等／`by_source`／非数值 Δ 一律 rc=2 不落盘；写靶一次性（第二次 `rc=2` 且原字节不动）。`ruff check` 与 `black --check` 两件 rc=0。
+- 母档那条仍然生效且**不由本件判**：仪只出版封存件自述的 `mother_digest`／`tick`，`historical_delta_transferable=false` 的理由指向 ㊵-1115 现取的"同 tick 273、摘要不同"。⇒ 历史 Δ 与今天的数不可相减，这条限制不因换了仪器而松开。
+- 边界与下一步：**仍未发射**（P5 改权重批文未给）；本轮零模型查询、零参数更新、不动 `taiji/`；新增在册件＝1 台仪＋1 支合同测＋1 枚读数件，另在 §6ter 第 4 条就地打了这一格的日期戳。

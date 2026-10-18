@@ -1,0 +1,41 @@
+{
+  "channels": {
+    "constraints": 0,
+    "interactions": 200,
+    "workbench_capabilities": 0
+  },
+  "deltas": {
+    "j_n2b_prime_delta_accuracy": 0.0,
+    "j_n2b_prime_delta_quality": 2.4829673663245373
+  },
+  "denominator_items_per_arm": {
+    "material_control_whole": 8.0,
+    "material_treated_whole": 8.0
+  },
+  "format": "taiji-n02-gain-ruler-range-v1",
+  "historical_delta_transferable": false,
+  "inputs": {
+    "guard": {
+      "guard_pass": true,
+      "path": "E:\\Seed\\reports\\taiji_n2b_guard_default_20261008_n2c1.json"
+    },
+    "powerup": {
+      "path": "E:\\Seed\\reports\\taiji_n2b_powerup_20261008_n2c1.json",
+      "stage": "done"
+    }
+  },
+  "is_capability_claim": false,
+  "model_queries": 0,
+  "models_loaded": 0,
+  "parameter_updates": 0,
+  "range_verdict": "single_channel_only",
+  "reading_limit": "本件只判『增益面这把尺有没有分辨率』，不判净增益、不判能力、不替 §3 的四条合取改口径；`usable_endpoints` 是给判读器 `--gain-face` 的输入列，取值定义＝非零来源通道数（存在性判据，无阈值）。",
+  "sealed_mother": {
+    "digest": "3e00bafc6298ac8462c352b4bfd31d4fbbd8c79ff3cafd3c95f867ecd7243060",
+    "tick": 273
+  },
+  "started_utc": "2026-10-18T00:02:01Z",
+  "transfer_blocked_because": "本件只出版封存件自述的母档摘要；今天 `DEFAULT_CHECKPOINT` 用同一支 `_digest()` 现取为 `3d812715bd76…`、`tick=273`（08 ㊵-1115）⇒ 同 tick 不同权重，跨母档相减不合法，Δ 只能在同一次运行的双臂之间读。",
+  "usable_endpoints": 1,
+  "writes_any_face": false
+}
