@@ -67,6 +67,21 @@ def _payload_sha(value) -> str | None:
     return _sha256(path)
 
 
+def assert_rows_tile(rows: list[dict[str, Any]], items: int, texts: int) -> None:
+    """逐条列必须**恰好铺满**文本表：每条文本被一个 item 认领一次，不多不少。
+
+    这一格之所以要单独成函数，是因为 `--emit-per-item` 出版的就是这张表；表与聚合列
+    一旦不同分母，"掉的是哪一题"这句就是错的，而件面上看不出来。
+    """
+
+    claimed = [index for row in rows for index in range(row["text_range"][0], row["text_range"][1])]
+    if len(rows) != items or sorted(claimed) != list(range(texts)):
+        raise RuntimeError(
+            f"per-item rows do not tile the text list: rows={len(rows)} items={items} "
+            f"claimed={len(claimed)} texts={texts}"
+        )
+
+
 def run_arm(
     items: list[dict[str, Any]],
     checkpoint: Path,
@@ -93,6 +108,7 @@ def run_arm(
     for item in items:
         history: list[tuple[str, str]] = []
         answer = ""
+        start = len(texts)
         turn_list = [str(t) for t in item["turns"]]
         for index, turn in enumerate(turn_list):
             answer = (
@@ -109,10 +125,28 @@ def run_arm(
         hit = any(token in answer for token in tokens)
         hits += int(hit)
         period = best_partial_period(answer)
-        rows.append({"id": item["id"], "hit": hit, "cyclic": bool(period["cyclic_tail"])})
+        rows.append(
+            {
+                "id": item["id"],
+                "hit": hit,
+                "cyclic": bool(period["cyclic_tail"]),
+                "expected_contains": tokens,
+                "text_range": [start, len(texts)],
+            }
+        )
 
-    formed = sum(1 for t in texts if well_formed(t, ngram))
-    cyclic = sum(1 for t in texts if best_partial_period(t)["cyclic_tail"])
+    formed_flags = [bool(well_formed(t, ngram)) for t in texts]
+    cyclic_flags = [bool(best_partial_period(t)["cyclic_tail"]) for t in texts]
+    formed = sum(formed_flags)
+    cyclic = sum(cyclic_flags)
+    #: 逐条列要和聚合列同分母才配出版：先证"每条文本恰好被一个 item 认领一次"，
+    #: 否则 per_item 加起来与 strict_hits／well_formed_texts 不是一回事（分子分母不同集合）。
+    assert_rows_tile(rows, len(items), len(texts))
+    for row in rows:
+        low, high = row["text_range"]
+        row["texts"] = high - low
+        row["formed_texts"] = sum(formed_flags[low:high])
+        row["cyclic_tail_texts"] = sum(cyclic_flags[low:high])
     runs = []
     for text in texts:
         chars = [c for c in text if not c.isspace()]
@@ -134,6 +168,18 @@ def run_arm(
         "max_longest_run": max(runs) if runs else 0,
         "per_item": rows,
     }
+
+
+def published_arms(arms: list[dict[str, Any]], emit_per_item: bool) -> list[dict[str, Any]]:
+    """默认出版形状必须与今天**逐字节相同**：`per_item` 只在显式旗标下出门（DEBT-G174）。
+
+    这一格之所以要是函数而不是内联字典推导，是为了能在进程内测两支——内联写法让"忘了旗标"
+    与"旗标不生效"在件面上看不出区别。
+    """
+
+    if emit_per_item:
+        return [dict(arm) for arm in arms]
+    return [{k: v for k, v in arm.items() if k != "per_item"} for arm in arms]
 
 
 def main() -> int:
@@ -160,6 +206,12 @@ def main() -> int:
         help="要扫的 penalty 档位，逗号分隔（表层链慢，可只跑 0.0,2.0 两端）",
     )
     parser.add_argument("--out-report", default=None)
+    parser.add_argument(
+        "--emit-per-item",
+        action="store_true",
+        help="把每档的逐条 hit/循环/成句列写进件里（DEBT-G174）。不给时出版形状与今天逐字节相同；"
+        "给了才能回答「掉的那一题是没答出还是不成句」。",
+    )
     parser.add_argument(
         "--overwrite",
         action="store_true",
@@ -224,7 +276,7 @@ def main() -> int:
         "items_sha256": _items_sha(items),
         "manifest_path": str(manifest.relative_to(PROJECT_ROOT)).replace("\\", "/"),
         "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
-        "arms": [{k: v for k, v in arm.items() if k != "per_item"} for arm in arms],
+        "arms": published_arms(arms, args.emit_per_item),
         #: 判读线（先看线再看数）：循环率要降，**且**严格命中不许掉过 ≥3 条的分辨率线；
         #: 只满足前者＝把输出打成另一种东西，不算修。
         "verdict": {
