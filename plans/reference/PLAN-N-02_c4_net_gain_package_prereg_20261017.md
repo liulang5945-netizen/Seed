@@ -92,6 +92,12 @@ PLAN-N-01 §3 给 C4 的合格交付原文是**四件**：`新能力/旧能力�
    ② **我在确认首趟完成之前又发了一趟**（把 `alive=0` 读成"进程被杀"），第二趟按同一 tag 覆写了那枚报告 ⇒ **首趟带数字的件被销毁**，只剩 stdout 里的判决词行。根因是驱动多阶段落盘**不是一次性写**（`stage` 从 `pass_done` 推进到 `done` 期间同名反复覆写），登记 DEBT-G169；**错在我这边**，不在仪器。
    ③ 第二趟自己也 fail-closed：`RuntimeError: 通电没有真的改权重：organs={'ran': False, 'reason': 'no texts to sleep on'}` ⇒ **材料池会被一趟成功的通电耗尽**，同一工作树里的第二趟根本不是"同配置重复"；它拒绝继续是对的行为，登记 DEBT-G170。
    ⇒ 因此地板的前置从"再跑一趟"改成"**跑之前能把材料池恢复到同一状态**"；在拿到那个恢复手段之前，本包 J-N-02-1 **不判**（既不判增益也不判无增益），P5 那句"批一趟"到此已用掉且未产出可用样本。〔2026-10-18 ㊵-1121：该前置已落地为 `--material-snapshot`（开局恢复、抛错也恢复，合同测 9 passed）⇒ 现在缺的只是**执行那对配对跑**，不再是仪器能力。〕
+8. **配对跑执行完了，答案不是地板而是"这条链是确定的"（2026-10-18 ㊵-1122；同时更正第 7 条①那句"≈80 秒"）**：owner 批"一对"后我跑了 `--run-tag c4g1`／`c4g2`，同一份人工基线快照（当日 live 状态副本、只把 `projected` 由 1288 清空为 0，其余四键逐字保留）。
+   ① **成本**：两趟自述 `seconds`＝**1586.9** 与 **1601.8**（≈26.5 分钟／趟，一对 ≈53 分钟）。第 7 条①那句"首趟约 80 秒"是**失败趟**的读数（它 12 秒 fail-closed，只证失败路径不证耗时），该句作废；我在申请配对时给的"共 ≈3 分钟"报价同样作废，正确做法是只引用同一条命令产出件里的 `seconds`。
+   ② **读数**：两趟 `code_identity` 逐字相同（`run_taiji_n2b_powerup.py` 字节摘要 `8165ccbb…`）、`material_fingerprint` 逐字相同（`source_sha256 63ce5627…`、200 条／夜选 8 条 `d8c6a245…`）、`by_source` 相同（constraints 32／interactions 168）；而 `mother_digest`／`treated_digest`／`candidate_digest_after_load`、治疗与对照的窗口及整件读数、`surprise_modulation`、三枚增益列**全部逐位相同**（`j_n2b_prime_delta_quality`＝**＋0.8949958795371575** 两趟一样，`delta_accuracy`＝−0.0390625，`whole_text_delta_quality`＝＋0.4448227729278571）。三列必须不同才配叫两趟：`pass_id`（`c844a76be870`／`9aff0ac73480`）、`started_utc`（差 27 分 21 秒）、`seconds`。存档 `.pt` 文件字节不同（信封里带 pass_id 与时刻），所以确定性只看张量摘要列。
+   ③ **判据后果**：G-N-02-3 把地板定义为"同代码同面的重复读数极差"，而这条链在同材料下极差**恒为 0** ⇒ 按现定义填 floor=0 会让任何 Δ>0 直接判 `gain_holds`，判据失去判别力。地板必须换成**材料维**（同代码同权重、两份不同 `source_sha256`），这属于改判据 ⇒ 待 owner 裁（DEBT-G171）。同材料那一对改当**可复现性门**用，它今天为真，且是有内容的事实：**通电是材料集的确定函数**。
+   ④ **同面判级第一次跑到"有判据"**：`reports/taiji_n02_c4_net_gain_readiness_20261018.json`（gain 与 retention 同取 n2c1 那一档的件、`--gain-face` 指 20261018 范围件、`--noise-floor` 指针指向确定性件＝它故意不含 `noise_floor_delta_quality_abs`）⇒ `status` 从昨天的 `range_unverified` 进到 **`not_judged`**；四条里 J-3 passed、J-4 passed（116 窗／overlap 0）、J-1 passed=null、**J-2 passed=false（7 列里 4 列跌，全是 `replay_well_formed` 的四个罚档）**。⇒ 现在**绑住合取的是保持侧代价**，不是尺子；§7 的四条出口没有覆盖"J-1 因地板定义退化而不可判"这一格，本件把它记成出口缺口，等 owner 裁地板口径时一并裁这条。
+   ⑤ 顺带结清与新增：DEBT-G170 第②步端到端兑现（跑中 `passes 10→11`、`projected 0→200`，跑完含抛错支都还原回快照内容）；新增 DEBT-G172（判读器不校验 gain 与 retention 是否同一候选档——本轮是同一档，但没人守）。
 
 
 
