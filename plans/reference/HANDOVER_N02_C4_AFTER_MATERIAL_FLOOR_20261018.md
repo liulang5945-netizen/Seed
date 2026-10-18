@@ -3,7 +3,7 @@
 ## 0. 三个锚点（**落笔时现取**，下一次开工的第一个动作是重取这三行再复用本页）
 
 - `git log --oneline -1` → `300215790 docs(n02): publish the material floor verdict and close DEBT-G171`（本窗口共 11 笔提交，从 `713cedd50` 起）
-- `git rev-list --count origin/main..HEAD` → **113**（未推；owner 本窗口裁"暂不推"，推送一事不许自行执行）
+- `git rev-list --count origin/main..HEAD` → **113**（未推；owner 本窗口裁"暂不推"，推送一事不许自行执行。注意：本页自己还要再入库一笔，所以重取时会读到 **114**——这不是别人推了或丢了什么，是本腿把交接件提交进去的那一笔）
 - 别人在飞的件（**不要提交、不要 checkout、不要抢它的写靶**）：`scripts/training/run_taiji_n1_length_balanced_training.py`、`tests/taiji_native/test_n1_plan110_length_balanced_runner_contract.py`、`scripts/training/run_taiji_n1_native_evidence_paired.py`（现取为 ` M`）；另有 6 枚 `reports/taiji_n5_07_*.json` 是 autocrlf/stat 幻影（`git diff --numstat` 空、盘与 HEAD 的 `b'\r'` 都是 0）。
 - 本腿自己的写靶状态：`reports/taiji_n2b_powerup_20261008_c4g1.json`／`…_c4g2.json`／`…_c4gb1.json` 三枚都已入库；**同 tag 复跑会被驱动的 `_refuse_completed_target` 拒**（DEBT-G169），要再跑必须换 tag。
 
