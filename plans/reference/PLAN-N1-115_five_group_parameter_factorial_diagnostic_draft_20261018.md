@@ -38,4 +38,4 @@
 
 ## 唯一建议的下一步
 
-[PLAN-N1-116](PLAN-N1-116_coupled_rwl_trust_region_training_draft_20261018.md) 与来源修订[PLAN-N1-117](PLAN-N1-117_coupled_rwl_source_loader_revision_draft_20261018.md)已完成固定九端点训练，但seed13/position joint-four 24/23未过原44门。唯一下一步为对这次共享RWL scale与N1-110独立组scale做零模型访问轨迹和父项错误归因。
+N1-117逐父项与轨迹归因显示共享绝对半径被reader的大参数范数主导，早期几乎消除了writer/local的逐组clip。[PLAN-N1-118](PLAN-N1-118_normalized_coupled_rwl_trust_region_draft_20261018.md) 已完成更新器合同、九端点schedule readiness和source binding；唯一下一步是九个zero checkpoint保存/独立恢复前置，随后按原训练门运行。

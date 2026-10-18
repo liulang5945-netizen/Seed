@@ -34,4 +34,4 @@
 
 ## 唯一下一步
 
-对N1-117 position seed13已封存训练报告做只读轨迹和父项错误归因，比较RWL共享scale与N1-110独立组scale；不加载模型/checkpoint、不新增模型查询、不训练。
+[N1-117 trajectory attribution](../../reports/taiji_n1_coupled_rwl_trajectory_attribution_20261018.json)发现原共享绝对半径被reader的大参数范数主导，seed13的writer/local clipping几乎消失，QA loss也下降更慢。按[PLAN-N1-118](PLAN-N1-118_normalized_coupled_rwl_trust_region_draft_20261018.md)把共同半径改为RWL各组relative cap归一化后平方和≤3；合同与schedule静态验证、source binding已通过，下一步执行九个zero bundle保存/独立恢复，再按原门训练。
