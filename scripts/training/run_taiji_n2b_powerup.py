@@ -94,7 +94,7 @@ def _material_fingerprint(source: list[str], selected: list[str]) -> dict[str, A
     """把"这两趟是不是同一堆材料"变成可比字段（DEBT-G170 的第①步）。
 
     材料是从 sleep pass 自述的语料回读的，跑过一次就可能变空 ⇒ 光看参数相等不算同配置；
-    跨趟配对比这两个摘要，不同就拒判地板，而不是拿它当噪声。
+    跨趟配对先比这两个摘要，不同就拒判地板，而不是把材料差异当噪声。
     """
 
     def _join_sha(texts: list[str]) -> str:
@@ -106,6 +106,67 @@ def _material_fingerprint(source: list[str], selected: list[str]) -> dict[str, A
         "night_selected_count": len(selected),
         "night_selected_sha256": _join_sha(selected),
     }
+
+
+#: 快照/恢复用的落点名；与产品内部名绑定，产品改名时合同测先红，不悄悄快照错路径。
+SNAPSHOT_FILE = "sleep_state.json"
+
+
+def _sleep_state_file(store_dir: Path) -> Path:
+    """睡眠舱记"哪些材料已经投影过"的那枚状态文件（DEBT-G170 第②步要恢复的就是它）。"""
+
+    from seed_platform import sleep_pass
+
+    return Path(sleep_pass._consolidation_dir()) / sleep_pass._STATE_FILE  # noqa: SLF001
+
+
+def snapshot_material_state(store_dir: Path, source: Path) -> dict[str, Any]:
+    """把状态收进 `store_dir`；本来不存在也记成"应回到不存在"，否则恢复会留下影子文件。"""
+
+    store_dir.mkdir(parents=True, exist_ok=True)
+    present = source.is_file()
+    payload: Any = json.loads(source.read_text(encoding="utf-8")) if present else {"absent": True}
+    (store_dir / SNAPSHOT_FILE).write_text(
+        json.dumps(payload, ensure_ascii=False, sort_keys=True) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    return {"present": present}
+
+
+def restore_material_state(store_dir: Path, source: Path) -> None:
+    """回到快照那一刻：快照记着"当时没有"就删掉，否则逐字写回。"""
+
+    saved_path = store_dir / SNAPSHOT_FILE
+    if not saved_path.is_file():
+        raise RuntimeError(f"no material snapshot to restore from: {saved_path}")
+    saved = json.loads(saved_path.read_text(encoding="utf-8"))
+    if saved.get("absent") is True:
+        if source.is_file():
+            source.unlink()
+        return
+    source.parent.mkdir(parents=True, exist_ok=True)
+    source.write_text(
+        json.dumps(saved, ensure_ascii=False, sort_keys=True) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+
+
+def run_powerup2_with_material_reset(snapshot_dir: Path) -> int:
+    """带受控材料态的一趟：开局恢复到快照，收局（含抛错）再恢复到快照。
+
+    两趟都用同一个 `--material-snapshot` 目录 ⇒ 两趟从**同一份投影状态**起，
+    `material_fingerprint` 才配当"同配置"的证据，两趟的 Δ 之差才是噪声而不是材料差。
+    """
+
+    source = _sleep_state_file(snapshot_dir)
+    snapshot_material_state(snapshot_dir, source)
+    try:
+        restore_material_state(snapshot_dir, source)
+        return phase_powerup2()
+    finally:
+        restore_material_state(snapshot_dir, source)
 
 
 def _window_rows(model: Any, texts: list[str], dose: int) -> dict[str, float]:
@@ -346,10 +407,23 @@ def main(argv: list[str] | None = None) -> int:
         default="",
         help="给落点名统一追加 _<tag> 后缀（G-N2c-2 要求治疗档落新名；默认空＝沿用今天的名字）",
     )
+    parser.add_argument(
+        "--material-snapshot",
+        type=Path,
+        default=None,
+        help=(
+            "治疗档的受控材料态目录（DEBT-G170）：给定时先快照该目录、开局恢复、收局（含抛错）再恢复；"
+            "两趟用同一目录才是同配置重复，两趟的 Δ 之差才配叫噪声地板"
+        ),
+    )
     args = parser.parse_args(argv)
     _apply_run_tag(args.run_tag)
     if args.phase == "guard2":
+        if args.material_snapshot is not None:
+            parser.error("--material-snapshot 只服务治疗档的重复配对；guard2 不改权重")
         return phase_guard2()
+    if args.material_snapshot is not None:
+        return run_powerup2_with_material_reset(args.material_snapshot)
     return phase_powerup2()
 
 

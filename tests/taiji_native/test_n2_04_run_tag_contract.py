@@ -14,6 +14,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -157,3 +158,40 @@ def test_material_fingerprint_detects_a_different_pile_not_just_a_different_size
         a["night_selected_sha256"]
         != runner._material_fingerprint(["x", "y"], ["y"])["night_selected_sha256"]
     )
+
+
+def test_snapshot_of_an_absent_state_leaves_no_shadow_file(tmp_path) -> None:
+    """快照必须能表达"当时根本没有状态文件"，否则恢复会在产品目录里留一枚影子件。"""
+    runner = _module()
+    store = tmp_path / "snap"
+    state = tmp_path / "nested" / "sleep_state.json"
+    assert runner.snapshot_material_state(store, state) == {"present": False}
+    state.parent.mkdir(parents=True, exist_ok=True)
+    state.write_text('{"passes": 9}', encoding="utf-8")  # 一趟跑完后产品自己写出来的
+    runner.restore_material_state(store, state)
+    assert state.exists() is False
+
+
+def test_material_reset_restores_even_when_the_phase_raises(tmp_path, monkeypatch) -> None:
+    """两趟配对的成立前提：抛错也必须把投影状态还回去。
+
+    三条断言都能为假——①开局恢复到快照、②治疗档把状态清空后必须被还原、③异常照常外抛
+    （不许把 fail-closed 吞成"跑成功了"）。
+    """
+    runner = _module()
+    store = tmp_path / "snap"
+    state = tmp_path / "data" / "sleep_state.json"
+    state.parent.mkdir(parents=True)
+    state.write_text('{"passes": 1, "projected": ["a"]}', encoding="utf-8")
+    monkeypatch.setattr(runner, "_sleep_state_file", lambda _store: state)
+
+    def draining_phase() -> int:
+        data = json.loads(state.read_text(encoding="utf-8"))
+        data["projected"] = []  # 模拟"材料已被这趟投影掉"
+        state.write_text(json.dumps(data), encoding="utf-8")
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr(runner, "phase_powerup2", draining_phase)
+    with pytest.raises(RuntimeError, match="boom"):
+        runner.run_powerup2_with_material_reset(store)
+    assert json.loads(state.read_text(encoding="utf-8"))["projected"] == ["a"]
