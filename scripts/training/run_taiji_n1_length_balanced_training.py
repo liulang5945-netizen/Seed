@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import importlib
+import importlib.util
 import json
 import os
 import subprocess
@@ -56,7 +57,7 @@ SCHEDULE_SHA256 = "b2d637fcc1e096d40bba35bbc91bc66b0c27257cd74a4bcac5f5f488f55b6
 CHECKS_SHA256 = "51cb205b17a1319b86c7f73c4f0158957cbeaf73b933aa9a942aba52cfabf0d9"
 BUILDER_SHA256 = "94d5abc2f53660d5d8f8e15f41b7c2ad87ca76849d9d55d911b68d9b8238c600"
 CONTRACT_TEST_SHA256 = "41c408aa290edcf8cc3e6006fe71cde7746eb9dd89e1eb174d7f9f9f286cc37b"
-RUNNER_TEST_SHA256 = "a9620dd7622c7644b02d9b76b2256283a0143f2eb5e0fd700aa17524e868a544"
+RUNNER_TEST_SHA256 = "8ba902d9d613b7c755ee19796443f2c15e3e0b21299d6a01c983171f658d4060"
 BASE_CONTROLLER_SHA256 = "8d161c0f2d6c5b275d0aaa88ac5709bbef4db6087359594f65515d868636857b"
 BASE_SCHEDULE_BUILDER_SHA256 = "efa81a0bbc87f84db11e46cc40bc33e986fcfb6185c12b0404e9fccea4489d79"
 BASE_PLAN_SHA256 = "3a02e7395f2e91c4ea654cb37e076472c697efb09d2a0a2c8d534d3c6975b773"
@@ -85,6 +86,7 @@ EXPECTED_PER_PATH = {
 
 _BASE_MODULE = None
 _LENGTH_AUDITS: dict[tuple[int, str], dict] = {}
+_ISOLATED_BASE_MODULE_NAME = "_seed_plan110_isolated_run100_controller"
 
 
 def sha256_file(path: Path) -> str:
@@ -265,6 +267,29 @@ def _source_paths(base_module, original_source_paths) -> list[Path]:
     return list(dict.fromkeys(Path(path).resolve() for path in paths))
 
 
+def _load_isolated_base_controller():
+    existing = sys.modules.get(_ISOLATED_BASE_MODULE_NAME)
+    if existing is not None:
+        return existing
+    spec = importlib.util.spec_from_file_location(_ISOLATED_BASE_MODULE_NAME, BASE_CONTROLLER)
+    if spec is None or spec.loader is None:
+        raise ImportError("could not create an isolated PLAN-N1-100 controller module")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[_ISOLATED_BASE_MODULE_NAME] = module
+    try:
+        spec.loader.exec_module(module)
+    except BaseException:
+        sys.modules.pop(_ISOLATED_BASE_MODULE_NAME, None)
+        raise
+    for name in ("make_runner", "training_audit", "checkpoint_preflight"):
+        function = getattr(module, name, None)
+        if getattr(function, "__globals__", None) is not module.__dict__:
+            raise RuntimeError(
+                f"isolated controller function {name} has a shared globals namespace"
+            )
+    return module
+
+
 def _build_training_inputs():
     items, manifest_sha = candidate_schedule.train_items_from_frozen_manifest()
     if manifest_sha != candidate_schedule.MANIFEST_SHA256:
@@ -292,7 +317,7 @@ def configure_candidate_runner():
     if _BASE_MODULE is not None:
         return _BASE_MODULE
     verify_candidate_sources()
-    base = importlib.import_module("scripts.training.run_taiji_n1_hard_neighbor_training")
+    base = _load_isolated_base_controller()
     original_make_runner = base.make_runner
     original_source_paths = base.source_paths
     original_protocol = base.protocol
@@ -380,6 +405,7 @@ def configure_candidate_runner():
         schedule, _ = verify_candidate_sources()
         parent_items = inputs["items"] if inputs is not None else None
         ledger: Counter = Counter()
+        globals_dict["length_ledger"] = ledger
         globals_dict["scheduled"] = make_candidate_scheduler(base, schedule, parent_items, ledger)
         if inputs is not None:
             original_train_one = globals_dict["train_one"]

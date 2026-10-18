@@ -59,6 +59,15 @@ def test_scheduler_consumes_every_raw_and_hard_slot_four_times_without_model_cal
     assert sum(base_state.ACTIVE_HARD_COUNTS.values()) == 12_288
 
 
+def test_wrapped_runner_exposes_the_length_ledger_to_static_readiness():
+    candidate_base = runner.configure_candidate_runner()
+    _, globals_dict, inputs = candidate_base.make_runner(load_inputs=True)
+
+    assert inputs is not None
+    assert isinstance(globals_dict["length_ledger"], Counter)
+    assert globals_dict["length_ledger"] == Counter()
+
+
 def test_frozen_candidate_inputs_and_checkpoint_root_are_safe_before_preflight():
     schedule, checks = runner.verify_candidate_sources()
     assert checks["accepted"] is True
@@ -88,3 +97,15 @@ def test_candidate_plan_and_frozen_length_seeds_match_protocol():
     assert runner.VALUE_MAP_SEED == schedule_builder.VALUE_MAP_SEED == 11011
     assert runner.UPDATES_PER_MODEL == 24_576
     assert runner.CPU_LIMIT_SECONDS == 18_000
+
+
+def test_z_candidate_controller_namespace_does_not_mutate_v9_baseline_module():
+    from scripts.training import build_taiji_n1_hard_neighbor_v9 as v9
+    from scripts.training import run_taiji_n1_hard_neighbor_training as shared_base
+
+    report_path = shared_base.REPORT
+    candidate_base = runner.configure_candidate_runner()
+    assert v9.training is shared_base
+    assert candidate_base is not shared_base
+    assert shared_base.REPORT == report_path
+    assert v9.training.REPORT == report_path
