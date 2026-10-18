@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import contextlib
 import os
+import stat
 import subprocess
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -70,6 +71,7 @@ NESTED_DELETABLE = (
 
 # 只报告、永不删除：体积大或语义特殊，删不删由所有者决定
 OWNER_DECISION = ["data", ".codex", "taiji_data", ".local", "checkpoints", "security"]
+PRESERVE_EMPTY_ROOTS = frozenset(OWNER_DECISION) | {"output", "outputs", "artifacts"}
 
 
 def git_ignored(rel: str) -> bool:
@@ -145,10 +147,13 @@ def plan_empty_dirs(apply: bool) -> list[str]:
     留下的父目录一并列出，故 dry-run 的清单可能略多于实际可删数。"""
     empty: list[str] = []
     for dp, dn, fn in os.walk(ROOT, topdown=True):
-        dn[:] = [d for d in dn if d not in SKIP_FOREVER]
+        rel = os.path.relpath(dp, ROOT)
+        if rel == ".":
+            dn[:] = [d for d in dn if d not in SKIP_FOREVER and d not in PRESERVE_EMPTY_ROOTS]
+        else:
+            dn[:] = [d for d in dn if d not in SKIP_FOREVER]
         if fn or dn:
             continue
-        rel = os.path.relpath(dp, ROOT)
         if exempt(rel):
             continue
         empty.append(rel)
@@ -161,7 +166,12 @@ def remove_dir(rel: str) -> bool:
     full = os.path.join(ROOT, rel)
     if not os.path.isdir(full):
         return False
-    shutil.rmtree(full, ignore_errors=True)
+
+    def _retry_readonly(func, path, _exc_info):
+        os.chmod(path, stat.S_IWRITE)
+        func(path)
+
+    shutil.rmtree(full, onerror=_retry_readonly)
     return not os.path.isdir(full)
 
 
