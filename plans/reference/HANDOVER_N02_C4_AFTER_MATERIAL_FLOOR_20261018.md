@@ -2,8 +2,8 @@
 
 ## 0. 三个锚点（**落笔时现取**，下一次开工的第一个动作是重取这三行再复用本页）
 
-- `git log --oneline -1` → `300215790 docs(n02): publish the material floor verdict and close DEBT-G171`（本窗口共 11 笔提交，从 `713cedd50` 起）
-- `git rev-list --count origin/main..HEAD` → **113**（未推；owner 本窗口裁"暂不推"，推送一事不许自行执行。注意：本页自己还要再入库一笔，所以重取时会读到 **114**——这不是别人推了或丢了什么，是本腿把交接件提交进去的那一笔）
+- `git log --oneline -1` → `622aedbce feat(taiji): census the retention damage on the cap0 face, item by item`（**05:10Z 刷新**：本页首次落笔后本腿又做完了 §1 第 8 条那格；本窗口累计 13 笔提交，从 `713cedd50` 起）
+- `git rev-list --count origin/main..HEAD` → **116**（未推；owner 本窗口裁"暂不推"，推送一事不许自行执行。注意：本窗口的每一笔提交都会让这个数变大，所以引用它必须现取）
 - 别人在飞的件（**不要提交、不要 checkout、不要抢它的写靶**）：`scripts/training/run_taiji_n1_length_balanced_training.py`、`tests/taiji_native/test_n1_plan110_length_balanced_runner_contract.py`、`scripts/training/run_taiji_n1_native_evidence_paired.py`（现取为 ` M`）；另有 6 枚 `reports/taiji_n5_07_*.json` 是 autocrlf/stat 幻影（`git diff --numstat` 空、盘与 HEAD 的 `b'\r'` 都是 0）。
 - 本腿自己的写靶状态：`reports/taiji_n2b_powerup_20261008_c4g1.json`／`…_c4g2.json`／`…_c4gb1.json` 三枚都已入库；**同 tag 复跑会被驱动的 `_refuse_completed_target` 拒**（DEBT-G169），要再跑必须换 tag。
 
@@ -16,22 +16,23 @@
 5. **保持侧代价落到了现行候选档**（提交 `512bfaca3`／`2c8b5197d`）：四张同面读数 280.1／262.1／346.9／336.0 秒全 rc=0，配成 `reports/taiji_n2_04_retention_pair_c4g1_20261018.json`＝**3 列跌**（`replay_strict_hits:1.0` 6→5、`…:2.0` 6→5、`replay_well_formed:2.0` 25→23），而 `replay_well_formed:0.0` **24→26（涨）**。⇒ 旧档 n2c1 那"四列全跌全是 well_formed"的形状**不是现行机制**，别再引用它当现行。
 6. **两枚新仪器进门**：`emit_taiji_n02_noise_floor_from_pair.py`（地板仪，五列准入＋两档维度）与 `emit_taiji_n02_repeat_determinism.py`（确定性件），合同测现取 **18＋6＝24 passed**；`black`／`ruff`／六项台账与文书门 rc=0（`audit_taiji_ledger_cited_reports_are_tracked` 仍有 1 枚外来红，见 §5）。
 7. **判据升版已签完并落文**：`PLAN-N-02 §9`（9.1–9.7，提交 `43db4c5db`／`388833136`），owner 两次弹窗：一签"改成材料维配对"、二签"反选账本"＋"两批都要超过地板才算真"。§9.3 里留了**甲案被预飞否证**的原地更正（未投影条数实测 0 ⇒ 甲案的 B 会 12 秒 fail-closed；预飞约 2 秒，省掉一趟 26.5 分钟）。
+8. **保持侧代价的机制普查（零算力，提交 `622aedbce`）**：新只读仪 `census_taiji_n02_retention_output_shape.py` 对母档／候选档的 cap0 两张件做逐条对量（先核 `eval_set_sha256`＋`chain`＋`declared_mode`＋`trained_during_eval`，再核**件自述的检查点摘要＝盘上 `.pt` 字节摘要**：`7470e2ea…`／`da695447…`）。结论两条否证：**①cap0 这一面没掉分、净涨 1 项（D 6→7）**，所以"巩固让模型普遍答不好"这句不成立；**②三条分数翻转项（D03／D04 涨、D09 跌）的输出一律 255／256 字节、前后逐位相同** ⇒ "掉分是因为变短"在 cap0 上被当场否证——D09 掉的是期望子串 `42`，候选档吐的是 `2` 的连续重复段（"换了字"而不是"变短"）。同时形态确实在动：99/100 条文本被改写、循环样输出 61→40、字节总量 −18%、`replacement_chars` 0→0（不是编码坏）。合同测 9 passed／1.55s，三支判读值各有真走过的一支，测还抓住过两条仪器自身缺陷（默认拿读数件 sha 比检查点 sha ⇒ 真件第一跑就被自己拒；少一维时消息点名"找到了哪几维"而不是"缺了哪一维"）。
 
 ## 2. 结论边界（可说／不可说）
 
-- **可说**：①现行配方（`sleep_pass.run(organs=True, learn=True)` 现行默认四参数、64 字节窗、k=8）的窗口增益**落在它自己的材料维噪声带内**（0.895 ≤ 1.243），且**符号随材料翻**（最旧那批是 −0.348）；②同材料重复是确定的，可复现性门为真；③保持侧在现行档确实掉分（3／7 列），来源与保持集字节级交集为 0（116 窗全测），两侧同题集同偏移；④旧那对 2026-08 件的极差 3.5916 是**材料差**，DEBT-G168 当年列的第三种可能（版本差）不再是首选解释。
-- **不可说**：**"C4 净增益成立"**（合取里 J-1 不可判、J-2 假）；**"通电没有增益"**（A 是正的，符号不稳不是零效应）；**"地板＝0"**（那是同材料档的确定性，不是噪声）；**"两批 Δ 相减＝效应量"**（是极差）；**"现行代价形状＝well_formed 四罚档全跌"**（那是旧档）；**"C5 可开工"**（C4 未成立，C5 硬前置没满足）。
+- **可说**：①现行配方（`sleep_pass.run(organs=True, learn=True)` 现行默认四参数、64 字节窗、k=8）的窗口增益**落在它自己的材料维噪声带内**（0.895 ≤ 1.243），且**符号随材料翻**（最旧那批是 −0.348）；②同材料重复是确定的，可复现性门为真；③保持侧在现行档确实掉分（3／7 列），来源与保持集字节级交集为 0（116 窗全测），两侧同题集同偏移；④旧那对 2026-10-08 件的极差 3.5916 是**材料差**，DEBT-G168 当年列的第三种可能（版本差）不再是首选解释；⑤代价**不是普遍输出退化**——cap0 那一面净涨 1 项，而三条分数翻转项的字节长度相同（㊵-1125），所以它是复述面题集分布特有的，且"变短"这一支在 cap0 上已被否证。
+- **不可说**：**"C4 净增益成立"**（合取里 J-1 不可判、J-2 假）；**"通电没有增益"**（A 是正的，符号不稳不是零效应）；**"地板＝0"**（那是同材料档的确定性，不是噪声）；**"两批 Δ 相减＝效应量"**（是极差）；**"现行代价形状＝well_formed 四罚档全跌"**（那是旧档）；**"巩固让模型普遍答得更好/更差"**（cap0 净＋1 只覆盖 cap0 那一面，复述面才是负的，两面不同源）；**"掉分是因为输出变短"**（cap0 上字节相同，复述面还没逐条数据，见 DEBT-G174）；**"C5 可开工"**（C4 未成立，C5 硬前置没满足）。
 - **一次性仪器口径**：c4g1／c4g2／c4gb1 三个 tag 都已消费，同 tag 复跑会被拒；再跑必须换新 tag，且 `--material-snapshot` 要指向新目录（否则 capture-once 会回到**旧基线**——那正是配对要的，但别误当成"新的一天"）。
 
 ## 3. 下一格（owner 已裁方向：**先治保持侧代价**）
 
-**队首（本腿）**：把"巩固为什么让保持侧掉分"当**能力问题**定位，不是仪器问题。现成的入口形状：
+**队首（本腿）**：把"巩固为什么让保持侧掉分"当**能力问题**定位，不是仪器问题。**第一步已在 05:10Z 做完**（§1 第 8 条）：cap0 那一面不但没掉分还净涨 1 项，且三条分数翻转项的字节长度逐位相同 ⇒ 问题被收窄成一句——**代价只在复述面，而复述面的件没有逐条数据**。
 
-1. 先做一次只读的**形态对照**：cap0 前后两张件里逐条取 `raw_output`（`reports/taiji_c4g1_cap0_before_20261018.json` 对 `…_after_…`），按字节数 U+FFFD 与 CJK 运行数（本仓那条"先按字节验编码"的纪律），并数 `strict_hits` 掉的那 1 题（penalty 1.0／2.0 两档各 −1）到底是"答不出"还是"答得不成句"。零算力，命令：
-   `python -c "import json;d=json.load(open('reports/taiji_c4g1_cap0_after_20261018.json',encoding='utf-8'));print(sorted(d['dimensions'].keys()))"`
-   然后按维写一台只读普查仪（新文件名，别改在飞件）。
-2. 若要判"这代价是否可修"，最小实验是**减剂量**而不是加判据：`window_bytes` 由 pass 自述（`organs.max_symbols`），改动属**剂量/口径变更 ⇒ 要 owner 批**，且必须双臂同窗。
-3. 想给 B 档候选也补同面保持侧四张读数：命令形状与本轮逐字相同，只把 checkpoint 换成 `checkpoints/seed_n2b_{mother,candidate}_20261008_c4gb1.pt`、落点名换成 `…_c4gb1_…`。单价现取：cap0 约 262–280 秒／趟、replay 约 337–347 秒／趟（≈20 分钟四张）。**这不是必需的**——J-1 的地板已经拿到，缺的是"代价的机制"，而机制可以先用 A 档的件回答。
+1. **下一步＝DEBT-G174，这是唯一挡路的一格**：`measure_taiji_a30_repetition_penalty.py` 的 `:112` 已经算出逐条 `{"id","hit","cyclic"}`，但 `:227` 写盘时用 `{k: v for k, v in arm.items() if k != "per_item"}` 把它剥掉 ⇒ 公开件只有聚合列。修法是加一档 **opt-in `--emit-per-item`**，默认输出必须逐字节不变并配一条守卫（参照 DEBT-G155 的推导式改法，别让默认支变形）。改完重跑母档与候选档各一趟（实测 346.9／336.0 秒，两趟 ≈12 分钟 CPU、零权重改动），命令形状（换新落点名，别覆写本轮件；`--limit 24 --offset 0 --manifest` 一律保持默认，否则与已封存的配对件不同面）：
+   `python scripts/training/measure_taiji_a30_repetition_penalty.py --checkpoint checkpoints/seed_n2b_mother_20261008_c4g1.pt --emit-per-item --out-report reports/taiji_c4g1_replay24pi_before_20261018.json`
+   ——只有拿到逐条列，才答得出"跌的那 1 个 strict_hit 与那 2 条 well_formed 是哪几题、是答不出还是不成句"。
+2. **拿到逐条列之后才谈修法**：若跌的是同一题从命中变不命中，最小实验是**减剂量**（`organs.max_symbols`）而不是加判据——那属射程变更 ⇒ 要 owner 批、且双臂同窗；若是 `well_formed` 那条 ngram 尺对短输出更严（cap0 已否证"变短"这一支在 cap0 上成立，但复述面是另一个分布），要先量这把尺的长度敏感度，不许改判据凑绿。
+3. **可选（不挡路）**：给 B 档候选也补同面保持侧四张读数——命令与本轮逐字相同，只把 checkpoint 换成 `…_c4gb1.pt`、落点名换成 `…_c4gb1_…`；单价现取 cap0 ≈262–280 秒／趟、replay ≈337–347 秒／趟（四张 ≈20 分钟）。今天的 `cost_persists` 只覆盖 A 这一档。
 
 **并行（不归本腿，别抢）**：03 的"当前唯一下一步"仍是并发会话的 PLAN-N1-110 readiness 那一格（它的 write-once 件 `reports/taiji_n1_length_balanced_training_20261018_runner_readiness.json` 至今不在盘上，也正是那枚外来红的来源）。
 
@@ -44,7 +45,8 @@
 
 ## 5. 债与仪器缺口（新增／更新）
 
-- **DEBT-G171 结清**（地板换维并取到数）；**DEBT-G172** 待开工（判读器不校验四条是否同一候选档）；**DEBT-G173** 待开工且已扩一条同族缺陷：`gain_judgement` 把 `floor_source` 写死成"同代码同面重复读数极差"，而 20261018 的地板是材料维 ⇒ 那句话与件内 `floor_dimension` 不同源；改法是读地板件的维度列，**不重跑任何一趟**（数值不受影响）。
+- **DEBT-G171 结清**（地板换维并取到数）；**DEBT-G174 是当前挡路的一格**（复述仪写盘时剥掉 `per_item` ⇒ 保持侧代价点不到题；修法与跑价见 §3 第 1 条）；**DEBT-G172** 待开工（判读器不校验四条是否同一候选档）；**DEBT-G173** 待开工且已扩一条同族缺陷：`gain_judgement` 把 `floor_source` 写死成"同代码同面重复读数极差"，而 20261018 的地板是材料维 ⇒ 那句话与件内 `floor_dimension` 不同源；改法是读地板件的维度列，**不重跑任何一趟**（数值不受影响）。
+- 普查仪自身的两条缺陷由它自己的合同测抓出并已改（05:10Z，提交 `622aedbce`）：①第一版拿**读数件文件**的 sha 去比**检查点**的 sha，结构上不可能相等 ⇒ 真件第一跑就被自己拒（DEBT-G155 那一族的第四次）；②少一维时拒绝消息点名的是"找到了哪几维"而不是"缺了哪一维"，读的人要反推 ⇒ 已改成 `missing: G` 并把这句话钉进测。
 - 外来红一枚（不是我造成的）：`audit_taiji_ledger_cited_reports_are_tracked` 现取 `violated`，唯一 offenders＝`reports/taiji_n1_length_balanced_training_20261018_runner_readiness.json`（并发腿的 write-once 件，03 与 08 里共 4 处引用，早于本窗口存在——已按 `git show HEAD:` 对账）。它 `malformed_citations` 两条也是历史省略式写法，本轮未增。
 - `tests/seed/test_platform_boundary.py::test_source_face_is_the_git_face_not_the_whole_disk` 仍红（`.seed_test_tmp/` 残留目录），是登记过的常态红，本轮未处置。
 
