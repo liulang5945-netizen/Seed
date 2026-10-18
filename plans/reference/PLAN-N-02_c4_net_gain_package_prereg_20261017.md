@@ -113,3 +113,13 @@ PLAN-N-01 §3 给 C4 的合格交付原文是**四件**：`新能力/旧能力�
 ## 8. 不变项
 
 M6 收官、M8 挂起；`TRAIN_SHA=None`、`can_promote=false`、v5 面已消费（`retry_allowed=false`）、v6 题面未生成未查询；`taiji/**` 与 `seed/**` 本件未动；产品默认位（含 `sleep_pass` 的 `organs/learn`）不改；N1 队首仍是 owner 的四裁，本件不与之竞争队首。
+
+## 9. 地板换维的预注册（2026-10-18 owner 裁"改成材料维配对"；§9.3 的参数待签才发射）
+
+* **9.1 为什么必须换维**：㊵-1122 实测——同一份材料基线上两趟的权重摘要与全部读数逐位相同，而 `pass_id`／`started_utc`／`seconds` 三列都不同。这证明通电是**材料集的确定函数**，于是 §3/§6ter 里"同代码同面的重复读数极差"这枚地板在本链上**恒等于 0**；填 0 会让任何正 Δ 直接判过，判据失去判别力（DEBT-G171）。
+* **9.2 新地板定义（只改这一枚键的取法）**：`noise_floor_delta_quality_abs = |Δq(A) − Δq(B)|`，两趟必须同时满足①`code_identity` 逐字相同；②`mother_digest` 逐字相同（同一母档权重起步）；③`material_fingerprint.source_sha256` **必须不同**（相同即 REFUSE）；④`window_bytes`／`night_k`／`night_pool_size` 相同；⑤两趟各自 `stage=done`、`errors=[]`、四条 fail-closed 真。⇒ 这一枚数从此**一物两用**：既是 J-N-02-1 的地板，也是"材料敏感性"的读数，两列一起出版，不许只引一个（引地板时必须同引 Δq(A) 与 Δq(B) 两个末段）。
+* **9.3 第二份材料基线 B 的构造法（待 owner 签的唯一参数）**：B 的快照＝当日 live 状态的副本，`projected` 取 **原来的 1288 条 ∪ A 投影掉的 200 条** digest（digest 由 `sleep_pass._digest(_clip(text))` 从 A 那枚 corpus 文件 `data/consolidated/corpus-20261018T023653Z-c844a76be870.jsonl` 逐条现算，不手抄），其余四键与 A 的快照逐字相同。⇒ B 投影的是同一材料库里"下一批 newest-first、200 条封顶"，**不是当日新写入的交互**；这句必须与读数一起披露为"人工推进投影账本"，与 A 的"人工清空投影账本"同一档。备选（若 owner 要真·新材料）：等 journal 自然涨出足量交互再跑，代价是日历时间而不是机时，且两趟的 `passes`/`last_pass_at` 不再同构。
+* **9.4 只花一趟**：A 已跑完且链是确定的（9.1），`Δq(A)=+0.8949958795371575` 可直接复用 ⇒ 发射清单只列 **B 一趟**，实测单价取件自述 `seconds≈1587`（≈26.5 分钟）。**不许**重跑 A 来"凑第三趟"：同材料重复不增加信息（㊵-1122 已证）。
+* **9.5 出口（三条互斥，把 §7 缺的"不可判"那一格补全）**：⑴ floor 取到 **且** `Δq(A) > floor` **且** `Δq(B) > floor` ⇒ 才可写"增益在两批材料上都可复现"；⑵ floor 取到但任一批 `Δq ≤ floor` ⇒ J-1 落 `not_resolved`，"无收益"与"有收益"两句都不许写；⑶ B 趟 fail-closed 或五列准入任一不齐 ⇒ 地板未取到，J-1 照旧 `not_judged`，且必须点名缺哪一列。§7 原⑷（J-3/J-4 红＝仪器红）不变。
+* **9.6 永久不许写**：**"地板＝0 所以增益成立"**；**"两批材料的 Δ 相减＝效应量"**（那是极差，不是效应）；**"同材料可复现所以机制成立"**（可复现不排除材料特异性）。
+* **9.7 落地方式与签字前置**：地板仪 `emit_taiji_n02_noise_floor_from_pair.py` 加一档 `--floor-dimension {same_material,material}`——`same_material` 支保持今天"逐位相同即拒"，`material` 支把材料指纹那一列的**相等**要求换成**不等**要求；两支各自**真跑成功支一次**才许签字（DEBT-G151 的形状），合同测须同时钉住"material 支遇到相同材料指纹必须红"。判级仍只从 `adjudicate_taiji_n02_c4_net_gain.py` 出，本件不改它的四条合取。
