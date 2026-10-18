@@ -1,0 +1,177 @@
+{
+  "format": "taiji-n2b-powerup-v1",
+  "prereg": "plans/reference/PLAN-N2-02_second_powerup_dosewindow_prereg_20261008.md",
+  "code_identity": {
+    "scripts/training/run_taiji_n2b_powerup.py": "8165ccbb5f1398329916afed3f51b96adfd51a1e029465e6f9fcc6541871f377",
+    "scripts/training/run_taiji_n2_powerup.py": "355ad4e3dd5cdeacab7956b212d7b054cf861a82d542b87af94dcc2d3d764144"
+  },
+  "loaded_checkpoint": "E:\\Seed\\checkpoints\\seed_a31self_with_circuit.pt",
+  "started_utc": "2026-10-18T03:04:13Z",
+  "stage": "done",
+  "errors": [],
+  "mother_digest": "3d812715bd766b2cd0db19f81e728cd20cfabd4156ce6f2bd9e5e8cf5905b02f",
+  "mother_tick": 273,
+  "mother_saved_path": "checkpoints\\seed_n2b_mother_20261008_c4g2.pt",
+  "mother_anchor_digest": "3d812715bd766b2cd0db19f81e728cd20cfabd4156ce6f2bd9e5e8cf5905b02f",
+  "g_n2_5_mother_roundtrip_identical": true,
+  "pass_id": "9aff0ac73480",
+  "projection_records": 200,
+  "by_source": {
+    "constraints": 32,
+    "interactions": 168,
+    "workbench_capabilities": 0
+  },
+  "organs": {
+    "ran": true,
+    "learn": true,
+    "cycles_per_text": 1,
+    "max_symbols": 64,
+    "texts": 8,
+    "wake_episode": "wake-after-sleep",
+    "wake_error": "",
+    "stats": {
+      "texts": 8.0,
+      "cycles": 8.0,
+      "accepted": 8.0,
+      "mean_priority": 0.23473122746205854,
+      "mean_confidence": 0.6141569650396057,
+      "mean_error_norm": 2.0404366460934398
+    }
+  },
+  "treated_digest": "a0fc61386a558fe8a22b0c899806af72652f1751610eea2ac7567816ff6948ad",
+  "weight_changed_by_powerup": true,
+  "candidate_saved_path": "checkpoints\\seed_n2b_candidate_20261008_c4g2.pt",
+  "candidate_saved_bytes": 6269735,
+  "candidate_digest_after_load": "a0fc61386a558fe8a22b0c899806af72652f1751610eea2ac7567816ff6948ad",
+  "j_persistence": true,
+  "material_fingerprint": {
+    "source_count": 200,
+    "source_sha256": "63ce5627b1db666945c52a4d689ebcbde25c83242c3af4d0ff15e34e417e5bd1",
+    "night_selected_count": 8,
+    "night_selected_sha256": "d8c6a2459054c31ae5764c9c9b085d8cadd43fef9abd6a165fccd25d906eaa48"
+  },
+  "window_bytes": 64,
+  "night_pool_size": 200,
+  "night_k": 8,
+  "scheduler_agrees_with_weighted_sort": true,
+  "surprise_modulation": {
+    "selected_before_modulation": [
+      {
+        "sha16": "35ab95d2cc450a7a",
+        "chars": 1751,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "9f591f66f2c32731",
+        "chars": 1751,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "82ef4bc6aadea189",
+        "chars": 434,
+        "preview": "问：CONTINUOUS_CHAT_USER_002 Continue this same conversation through turn 2.\n答：CONTINUOUS_CH"
+      },
+      {
+        "sha16": "b45e9e83671df6b0",
+        "chars": 434,
+        "preview": "问：CONTINUOUS_CHAT_USER_005 Continue this same conversation through turn 5.\n答：CONTINUOUS_CH"
+      },
+      {
+        "sha16": "742e47e162a09ef4",
+        "chars": 434,
+        "preview": "问：CONTINUOUS_CHAT_USER_008 Continue this same conversation through turn 8.\n答：CONTINUOUS_CH"
+      },
+      {
+        "sha16": "ead1f6a9b438698d",
+        "chars": 434,
+        "preview": "问：CONTINUOUS_CHAT_USER_006 Continue this same conversation through turn 6.\n答：CONTINUOUS_CH"
+      },
+      {
+        "sha16": "635de936400bc6a6",
+        "chars": 434,
+        "preview": "问：CONTINUOUS_CHAT_USER_007 Continue this same conversation through turn 7.\n答：CONTINUOUS_CH"
+      },
+      {
+        "sha16": "efda3a3beece222d",
+        "chars": 435,
+        "preview": "问：CONTINUOUS_CHAT_USER_011 Continue this same conversation through turn 11.\n答：CONTINUOUS_C"
+      }
+    ],
+    "selected_after_modulation": [
+      {
+        "sha16": "35ab95d2cc450a7a",
+        "chars": 1751,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "9f591f66f2c32731",
+        "chars": 1751,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "e23432d22bcbe54d",
+        "chars": 1722,
+        "preview": "问：<goal_complete>\nObjective: \"做两个turn，每个turn输出随机一个包的文件结构。注意你做完一个turn之后，直接输出内容，停止，我们的系统会帮你再"
+      },
+      {
+        "sha16": "e023940a0a0b127c",
+        "chars": 1090,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "7efa3c5300a8fec3",
+        "chars": 55,
+        "preview": "问：你有哪些必须遵守的行为约束？\n答：你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。"
+      },
+      {
+        "sha16": "e3cd3cd9a520c561",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      },
+      {
+        "sha16": "35c442c671b9167c",
+        "chars": 1090,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "fb8089b4ac0b7dab",
+        "chars": 74,
+        "preview": "问：Unsent draft across a server restart\n答：Persisted server restart fixture."
+      }
+    ],
+    "quality_mean": -12.956116217369715,
+    "mean_surprise_mean": 12.896924292786851
+  },
+  "material_treated_window": {
+    "items": 8.0,
+    "quality_mean": -12.368249004016253,
+    "accuracy_mean": 0.05859375,
+    "mean_surprise_mean": 12.297247006475601
+  },
+  "material_treated_whole": {
+    "items": 8.0,
+    "quality_mean": -13.996513811846757,
+    "accuracy_mean": 0.05686689021861889,
+    "mean_surprise_mean": 13.92273886714271
+  },
+  "restore_matches_mother": true,
+  "rollback_disk_matches_mother": true,
+  "material_control_window": {
+    "items": 8.0,
+    "quality_mean": -13.26324488355341,
+    "accuracy_mean": 0.09765625,
+    "mean_surprise_mean": 13.209219184190461
+  },
+  "material_control_whole": {
+    "items": 8.0,
+    "quality_mean": -14.441336584774614,
+    "accuracy_mean": 0.06346550702164004,
+    "mean_surprise_mean": 14.372050819375483
+  },
+  "j_n2b_prime_delta_quality": 0.8949958795371575,
+  "j_n2b_prime_delta_accuracy": -0.0390625,
+  "j_n2b_prime": "not_resolved",
+  "whole_text_delta_quality": 0.4448227729278571,
+  "fail_closed_pass": true,
+  "seconds": 1601.8
+}

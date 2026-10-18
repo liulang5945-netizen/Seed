@@ -48,7 +48,7 @@ class Refuse(Exception):
     """一条准入条件不成立：rc=2，不出件。"""
 
 
-def _name(path: Path) -> str:
+def display_name(path: Path) -> str:
     """仓库内出相对名（可引用），仓库外的预飞件出绝对名（不把仓外路径伪装成在库件）。"""
 
     try:
@@ -156,7 +156,7 @@ def build_payload(run_a_path: Path, run_b_path: Path, sealed_path: Path) -> dict
     payload = {
         "format": FLOOR_FORMAT,
         "prereg": "plans/reference/PLAN-N-02_c4_net_gain_package_prereg_20261017.md",
-        "pair": [_name(run_a_path), _name(run_b_path)],
+        "pair": [display_name(run_a_path), display_name(run_b_path)],
         "pair_size": 2,
         "measured_gain_key": GAIN_QUALITY_KEY,
         "run_a_gain": delta_a,
@@ -168,7 +168,7 @@ def build_payload(run_a_path: Path, run_b_path: Path, sealed_path: Path) -> dict
         "weights_changed": bool(run_a.get("weight_changed_by_powerup")),
         "run_a_seconds": run_a.get("seconds"),
         "run_b_seconds": run_b.get("seconds"),
-        "sealed_reference": _name(sealed_path),
+        "sealed_reference": display_name(sealed_path),
         "shape_matches_sealed_pair": shape_matches_sealed(run_a, sealed),
         "gains": {"run_a": run_a.get("j_n2b_prime"), "run_b": run_b.get("j_n2b_prime")},
         "material_note": (

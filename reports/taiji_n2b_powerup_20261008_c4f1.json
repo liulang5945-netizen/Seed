@@ -1,0 +1,33 @@
+{
+  "format": "taiji-n2b-powerup-v1",
+  "prereg": "plans/reference/PLAN-N2-02_second_powerup_dosewindow_prereg_20261008.md",
+  "code_identity": {
+    "scripts/training/run_taiji_n2b_powerup.py": "903ccc961bc895e9805b4d4ff5f8127cfa98b6059d3b0af5e3c9fbdfa0496470",
+    "scripts/training/run_taiji_n2_powerup.py": "355ad4e3dd5cdeacab7956b212d7b054cf861a82d542b87af94dcc2d3d764144"
+  },
+  "loaded_checkpoint": "E:\\Seed\\checkpoints\\seed_a31self_with_circuit.pt",
+  "started_utc": "2026-10-18T02:29:12Z",
+  "stage": "pass_done",
+  "errors": [
+    "RuntimeError: 通电没有真的改权重：organs={'ran': False, 'reason': 'no texts to sleep on'}"
+  ],
+  "mother_digest": "3d812715bd766b2cd0db19f81e728cd20cfabd4156ce6f2bd9e5e8cf5905b02f",
+  "mother_tick": 273,
+  "mother_saved_path": "checkpoints\\seed_n2b_mother_20261008_c4f1.pt",
+  "mother_anchor_digest": "3d812715bd766b2cd0db19f81e728cd20cfabd4156ce6f2bd9e5e8cf5905b02f",
+  "g_n2_5_mother_roundtrip_identical": true,
+  "pass_id": "a90991dfaacc",
+  "projection_records": 0,
+  "by_source": {
+    "constraints": 0,
+    "interactions": 0,
+    "workbench_capabilities": 0
+  },
+  "organs": {
+    "ran": false,
+    "reason": "no texts to sleep on"
+  },
+  "treated_digest": "3d812715bd766b2cd0db19f81e728cd20cfabd4156ce6f2bd9e5e8cf5905b02f",
+  "weight_changed_by_powerup": false,
+  "seconds": 1.7
+}

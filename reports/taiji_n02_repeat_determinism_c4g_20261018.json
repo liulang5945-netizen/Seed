@@ -1,0 +1,104 @@
+{
+  "archive_note": "存档 `.pt` 文件字节可以不同（信封里有 pass_id 与时刻）；判定确定性只看张量摘要列，文件字节差不能反证'两趟不同'。",
+  "archived_bytes": [
+    {
+      "bytes_identical": false,
+      "key": "mother_saved_path"
+    },
+    {
+      "bytes_identical": false,
+      "key": "candidate_saved_path"
+    }
+  ],
+  "chain_is_deterministic_on_this_material": true,
+  "degenerate_reason": "同材料、同起始权重、同剂量下这条链给出逐位相同的权重摘要与读数 ⇒ 极差 0 证的是确定性，不是'抖动很小'。J-N-02-1 要的地板必须来自**材料维**重复。",
+  "floor_informative_for_j_n02_1": false,
+  "format": "taiji-n02-same-material-repeat-v1",
+  "guards": {
+    "pair_identity_equal": true,
+    "pair_is_two_runs": true,
+    "pair_stage_done_and_error_free": true
+  },
+  "historical_reference": {
+    "admissible_as_j_n02_1_floor": false,
+    "delta_quality_spread": 3.5915883649632896,
+    "reports": [
+      {
+        "by_source": {
+          "constraints": 0,
+          "interactions": 200,
+          "workbench_capabilities": 0
+        },
+        "code_identified": false,
+        "delta_quality": -1.1086209986387523,
+        "material_fingerprinted": false,
+        "report": "taiji_n2b_powerup_20261008.json"
+      },
+      {
+        "by_source": {
+          "constraints": 0,
+          "interactions": 200,
+          "workbench_capabilities": 0
+        },
+        "code_identified": false,
+        "delta_quality": 2.4829673663245373,
+        "material_fingerprinted": false,
+        "report": "taiji_n2b_powerup_20261008_n2c1.json"
+      }
+    ],
+    "why_not": "这两趟既无代码身份也无材料指纹，极差里混着版本差与材料差，无法归因（DEBT-G168）"
+  },
+  "identical_columns": {
+    "candidate_digest_after_load": true,
+    "j_n2b_prime_delta_accuracy": true,
+    "j_n2b_prime_delta_quality": true,
+    "material_control_whole": true,
+    "material_control_window": true,
+    "material_treated_whole": true,
+    "material_treated_window": true,
+    "mother_digest": true,
+    "surprise_modulation": true,
+    "treated_digest": true,
+    "whole_text_delta_quality": true
+  },
+  "identity": {
+    "code_identity": {
+      "scripts/training/run_taiji_n2_powerup.py": "355ad4e3dd5cdeacab7956b212d7b054cf861a82d542b87af94dcc2d3d764144",
+      "scripts/training/run_taiji_n2b_powerup.py": "8165ccbb5f1398329916afed3f51b96adfd51a1e029465e6f9fcc6541871f377"
+    },
+    "material_fingerprint": {
+      "night_selected_count": 8,
+      "night_selected_sha256": "d8c6a2459054c31ae5764c9c9b085d8cadd43fef9abd6a165fccd25d906eaa48",
+      "source_count": 200,
+      "source_sha256": "63ce5627b1db666945c52a4d689ebcbde25c83242c3af4d0ff15e34e417e5bd1"
+    },
+    "night_k": 8,
+    "night_pool_size": 200,
+    "window_bytes": 64
+  },
+  "material_snapshot": "hand-authored baseline with projected=[] (the pile was re-projected, not new)",
+  "pair": [
+    "reports\\taiji_n2b_powerup_20261008_c4g1.json",
+    "reports\\taiji_n2b_powerup_20261008_c4g2.json"
+  ],
+  "pass_ids": {
+    "run_a": "c844a76be870",
+    "run_b": "9aff0ac73480"
+  },
+  "prereg": "plans/reference/PLAN-N-02_c4_net_gain_package_prereg_20261017.md",
+  "proves_two_runs": {
+    "pass_id": true,
+    "seconds": true,
+    "started_utc": true
+  },
+  "required_next_face": "same code identity + same mother weight + two different material baselines",
+  "same_material_repeat_floor_delta_quality_abs": 0.0,
+  "seconds": {
+    "run_a": 1586.9,
+    "run_b": 1601.8
+  },
+  "started_utc": {
+    "run_a": "2026-10-18T02:36:52Z",
+    "run_b": "2026-10-18T03:04:13Z"
+  }
+}
