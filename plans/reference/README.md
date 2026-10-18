@@ -85,6 +85,7 @@
 - [PLAN-N1-113 参数组差异归因](PLAN-N1-113_position_checkpoint_parameter_delta_attribution_20261018.md)：reader/readout 组终态差异最大，描述性读数。
 - [PLAN-N1-114 更新轨迹归因](PLAN-N1-114_seed13_parameter_update_trajectory_attribution_20261018.md)：已有 shard 的 task/path/length 更新统计，不访问模型。
 - [PLAN-N1-115 五组参数全因子诊断](PLAN-N1-115_five_group_parameter_factorial_diagnostic_draft_20261018.md)：11,520条train-only查询完成，CPU85.984秒；逐父项离线归因显示reader/writer/local净损害同一批48项，且有正向两两交互；未训练/未查留出。下一步静态核验协调式读出保持契约。
+- [PLAN-N1-116 协调式RWL信任半径训练](PLAN-N1-116_coupled_rwl_trust_region_training_draft_20261018.md)：耦合Adam投影、四项合同测试和九端点runner静态验证已完成；24,576步schedule模拟通过，0模型/ checkpoint加载、查询/更新。下一步做九个zero checkpoint独立保存恢复前置，再执行固定训练批次。
 
 ## M5 蒸馏层（20 件收口/批准/宣言/设计＋墓碑）
 

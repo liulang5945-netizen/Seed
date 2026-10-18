@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：静态核验协调式读出保持训练契约
+## 当前唯一下一步：执行 PLAN-N1-116 九端点zero checkpoint恢复前置
 
 ### 最新状态（2026-10-18）
 
@@ -12,7 +12,7 @@ PLAN-N1-111 已获批准，但唯一一次 runner 在候选恢复处停止：bas
 
 PLAN-N1-112 已完成：CPU 24.015625秒、1,536条 train transition 查询、两个原生锚点768/768逐行复现；baseline权重下两种history均48/48，candidate权重下均5/4。固定权重时384/384预测行跨history相同；fresh-session evaluator只读当前 session key。PLAN-N1-113/114参数差异与轨迹归因完成：终态差异平方范数85.0%在reader组、64.6%来自readout.weight；candidate七字符任务QA loss偏高，均为描述性读数。
 
-PLAN-N1-115 已完成：11,520条新 train-only 查询、CPU85.984375秒；768/768原生锚点复现，来源守卫全匹配，checkpoint哈希不变，0参数/优化器更新、保存、dev、holdout或confirmation查询。Baseline joint-four原始/改名均48/48，candidate为5/48、4/48。对12,288行做的离线逐父项归因显示，reader、writer、local分别在16个匹配背景上净损害同一批48个父项；三组两两joint-four交互均非负，提示存在补偿性非加性交互，不能单归因。详见[全因子报告](../../../reports/taiji_n1_position_five_group_parameter_factorial_s13_20261018.json)和[逐父项报告](../../../reports/taiji_n1_position_five_group_itemwise_interactions_s13_20261018.json)。当前唯一下一步是静态核验协调式reader/writer/local功能保持训练契约，训练前先验证梯度路由、独立checkpoint保存恢复和来源隔离。
+PLAN-N1-115 已完成：11,520条新 train-only 查询、CPU85.984375秒；768/768原生锚点复现，来源守卫全匹配，checkpoint哈希不变，0参数/优化器更新、保存、dev、holdout或confirmation查询。Baseline joint-four原始/改名均48/48，candidate为5/48、4/48。对12,288行做的离线逐父项归因显示，reader、writer、local分别在16个匹配背景上净损害同一批48个父项；三组两两joint-four交互均非负，提示存在补偿性非加性交互，不能单归因。详见[全因子报告](../../../reports/taiji_n1_position_five_group_parameter_factorial_s13_20261018.json)和[逐父项报告](../../../reports/taiji_n1_position_five_group_itemwise_interactions_s13_20261018.json)。PLAN-N1-116 已把 reader/writer/local 三组放入同一相对Adam位移半径；context/relation仍保持独立既有上限，数据、更新次数及原训练门未变。新耦合更新器4项合同测试通过，九端点runner静态模拟24,576步并通过来源/长度/恢复协议检查，CPU4.40625秒，0模型或checkpoint加载、0查询/更新；readiness与source binding已封存。当前唯一下一步：保存九个fresh zero checkpoint并在独立进程恢复完整模型/Adam/RNG/history；全部相等后执行固定221,184更新训练，预算18,000秒、原44/48与40/48门不变，不查询dev/holdout/confirmation。
 
 N02/C4 remains unresolved: the material-floor adjudicator reports `cost_persists` (`J_N02_1=not_resolved`, `J_N02_2=cost_persists`); this result does not authorize new training or C5. See [the C4 report](../../../reports/taiji_n02_c4_net_gain_with_material_floor_c4g1_20261018.json).
 

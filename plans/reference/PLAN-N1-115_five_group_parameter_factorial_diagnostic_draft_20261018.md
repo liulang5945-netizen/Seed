@@ -38,4 +38,4 @@
 
 ## 唯一建议的下一步
 
-起草并静态验证一版协调式读出保持训练契约：在不放宽44/48原训练门、不换测面、不查询dev/holdout的前提下，让reader/writer/local作为耦合组接受功能保持约束，并保留context/relation的适配能力。先核查目标梯度路由、独立checkpoint保存/恢复与来源隔离，再决定一次固定配方校准；此处不自动追加训练。
+[PLAN-N1-116](PLAN-N1-116_coupled_rwl_trust_region_training_draft_20261018.md) 已将协调式reader/writer/local更新保持写成固定配方；耦合更新器、合同测试和九端点runner的静态验证已通过（24,576步计划模拟，CPU4.40625秒，0模型/ checkpoint加载、0查询/更新）。唯一下一步是九个zero checkpoint完整保存和独立恢复前置；通过后按原训练门执行，不查dev/holdout/confirmation。
