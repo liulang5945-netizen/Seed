@@ -20,6 +20,16 @@
 
 这项结果关闭的是本次固定长度平衡配方，不是否定 N 主线。不能追加训练、重跑或放松门槛来补救该批。
 
+## 训练分片归因
+
+只读归因报告：`reports/taiji_n1_length_balance_failure_attribution_20261018.json`，SHA-256 `08e80702f0b217e117094c28879f4a62e6f99d6a2315ee38556383afa7d31f4a`；CPU 1.96875 秒，复用 1,152 条终点 factorial 评分行，0 checkpoint/model load、0 model query、0 update、0 dev/holdout/confirmation。
+
+- 匹配基线 `reports/taiji_n1_hard_neighbor_training_20261017.json`（SHA `dad10ec72c605367f99da035bab07d522ce1793154915ebcc3c7f1022f411909`）的 seed13/position 在原始与改名 factorial 上均为 **48/48 joint-four**，position 训练充分门通过。N1-110 候选 seed13/position 对应为 **5/48 与 4/48**；free exact=184/192、改名=182/192，改名 transition=38/48。seed11/12 在 N1-110 仍是 48/48。
+- seed13 的 48 个父组中，原始视图 43 个恰好四条件中对三项、5 个四项全对；改名视图 44 个三项对、4 个四项全对。原始与改名四项全对的父组交集为 **0**。
+- 四条件每一行的 `free_exact` 与 `teacher_exact` 完全相同；错误输出均为合法方向词，非格式/循环文本。错误集中于 `turn_flip`（原始32/48、改名36/48），且 west/left 的 turn_flip 为 0/9、east/left 的 both 为 0/6（按各自实际分母）。
+
+这些是已消费训练面上的 matched 对照，不是未见能力或因果证明。N1-110 只改变 lookup/revision/unknown 的材料长度曝光，transition 训练输入和方向目标保持不变；读数提示新的长度训练可能干扰共享关系表征，但需单独诊断确认。
+
 ## 唯一建议的下一步
 
-对九枚已封存训练 shard 做一次只读逐题归因，重点比较 seed13/position 与 seed11/12 的 48 个四条件父组，定位 joint-four 与 rename-transition 的错误集中在哪些题型/条件；仅分析既有训练评分行，不加载 checkpoint、不生成新答案、不训练、不读 dev/holdout。用报告摘要 SHA 和三个 shard SHA 绑定结果，再据证据提出下一版训练方案。
+先审查 [PLAN-N1-111](PLAN-N1-111_position_weight_history_crossover_diagnostic_draft_20261018.md)：在 baseline 与 N1-110 seed13/position 两枚冻结终点间，做零训练的 network-state × observation-history 2×2 交叉归因。它只查询已消费的 48 个 train transition 父组及其四条件原始/改名视图，用以区分错误主要跟随学习权重还是存储的训练观察历史。该项会新增模型查询测面；草案尚未批准，未实现或运行前必须等 owner 选择。
