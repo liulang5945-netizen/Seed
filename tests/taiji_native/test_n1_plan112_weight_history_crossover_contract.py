@@ -177,3 +177,37 @@ def test_revision_restores_the_shared_bundle_without_baseline_protocol_loader() 
     assert 'model = model_type.restore_bundle(payload["candidate"])' in source
     assert 'payload["expected_signature"].get("bundle")' in source
     assert "n1-crossover112-" in source
+
+
+def test_shared_checkpoint_bundle_restores_parameters_history_and_adam_without_updates() -> None:
+    import torch
+
+    from taiji.contracts import Observation
+    from taiji.native_local_relation_evidence_candidate import LocalRelationEvidenceCandidate
+
+    with torch.random.fork_rng():
+        torch.manual_seed(10112)
+        model = LocalRelationEvidenceCandidate()
+        model.observe("synthetic-history", Observation("text", "A fox faces north.", 1, "source-1"))
+        optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+        for parameter in model.parameters():
+            optimizer.state[parameter] = {
+                "step": torch.tensor(float(_module().UPDATES)),
+                "exp_avg": torch.zeros_like(parameter),
+                "exp_avg_sq": torch.zeros_like(parameter),
+            }
+        bundle = model.bundle(optimizer)
+        state_before = {name: value.detach().clone() for name, value in model.state_dict().items()}
+
+        restored = LocalRelationEvidenceCandidate.restore_bundle(bundle)
+        restored_optimizer = torch.optim.Adam(restored.parameters(), lr=0.001)
+        restored_optimizer.load_state_dict(bundle["optimizer"])
+
+    assert all(
+        torch.equal(state_before[name], value) for name, value in restored.state_dict().items()
+    )
+    assert restored.bundle()["sessions"] == bundle["sessions"]
+    assert len(restored_optimizer.state) == len(tuple(restored.parameters())) == 41
+    assert all(
+        int(state["step"]) == _module().UPDATES for state in restored_optimizer.state.values()
+    )
