@@ -41,20 +41,28 @@ def _arm() -> dict:
                 "hit": True,
                 "cyclic": False,
                 "expected_contains": ["42"],
+                "answer_chars": 9,
+                "answer_text": "回答42内容",
                 "text_range": [0, 2],
                 "texts": 2,
                 "formed_texts": 2,
                 "cyclic_tail_texts": 0,
+                "answer_formed": True,
+                "answer_cyclic_tail": False,
             },
             {
                 "id": "V002",
                 "hit": False,
                 "cyclic": True,
                 "expected_contains": ["17"],
+                "answer_chars": 9,
+                "answer_text": "回答17内容",
                 "text_range": [2, 4],
                 "texts": 2,
                 "formed_texts": 1,
                 "cyclic_tail_texts": 1,
+                "answer_formed": False,
+                "answer_cyclic_tail": True,
             },
         ],
     }
@@ -135,10 +143,18 @@ def test_the_per_item_rows_carry_the_fields_the_mechanism_question_needs() -> No
         "hit",
         "cyclic",
         "expected_contains",
+        "answer_chars",
+        "answer_text",
         "text_range",
         "texts",
         "formed_texts",
         "cyclic_tail_texts",
+        "answer_formed",
+        "answer_cyclic_tail",
     }
     row_fields = set(module.published_arms([_arm()], True)[0]["per_item"][0])
     assert fields <= row_fields, f"缺字段: {sorted(fields - row_fields)}"
+    #: 夹具的字段集必须与生产者一致，否则"件里有原文"这件事会只剩测在自说自话。
+    source = SCRIPT.read_text(encoding="utf-8")
+    for key in ("answer_chars", "answer_text", "answer_formed", "answer_cyclic_tail"):
+        assert f'"{key}"' in source, f"生产者不再出版 {key}，夹具要同步"

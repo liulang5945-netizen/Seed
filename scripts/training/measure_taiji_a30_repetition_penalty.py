@@ -131,6 +131,8 @@ def run_arm(
                 "hit": hit,
                 "cyclic": bool(period["cyclic_tail"]),
                 "expected_contains": tokens,
+                "answer_chars": len(answer),
+                "answer_text": answer,
                 "text_range": [start, len(texts)],
             }
         )
@@ -147,6 +149,9 @@ def run_arm(
         row["texts"] = high - low
         row["formed_texts"] = sum(formed_flags[low:high])
         row["cyclic_tail_texts"] = sum(cyclic_flags[low:high])
+        #: `hit` 判的是**最后一轮**的回答，所以"这题是不成句还是答不出"也只能看最后一轮那一条。
+        row["answer_formed"] = bool(formed_flags[high - 1]) if high > low else False
+        row["answer_cyclic_tail"] = bool(cyclic_flags[high - 1]) if high > low else False
     runs = []
     for text in texts:
         chars = [c for c in text if not c.isspace()]
