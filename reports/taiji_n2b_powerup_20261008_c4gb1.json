@@ -1,0 +1,177 @@
+{
+  "format": "taiji-n2b-powerup-v1",
+  "prereg": "plans/reference/PLAN-N2-02_second_powerup_dosewindow_prereg_20261008.md",
+  "code_identity": {
+    "scripts/training/run_taiji_n2b_powerup.py": "8165ccbb5f1398329916afed3f51b96adfd51a1e029465e6f9fcc6541871f377",
+    "scripts/training/run_taiji_n2_powerup.py": "355ad4e3dd5cdeacab7956b212d7b054cf861a82d542b87af94dcc2d3d764144"
+  },
+  "loaded_checkpoint": "E:\\Seed\\checkpoints\\seed_a31self_with_circuit.pt",
+  "started_utc": "2026-10-18T04:13:12Z",
+  "stage": "done",
+  "errors": [],
+  "mother_digest": "3d812715bd766b2cd0db19f81e728cd20cfabd4156ce6f2bd9e5e8cf5905b02f",
+  "mother_tick": 273,
+  "mother_saved_path": "checkpoints\\seed_n2b_mother_20261008_c4gb1.pt",
+  "mother_anchor_digest": "3d812715bd766b2cd0db19f81e728cd20cfabd4156ce6f2bd9e5e8cf5905b02f",
+  "g_n2_5_mother_roundtrip_identical": true,
+  "pass_id": "13ea3de89a1a",
+  "projection_records": 200,
+  "by_source": {
+    "constraints": 32,
+    "interactions": 168,
+    "workbench_capabilities": 0
+  },
+  "organs": {
+    "ran": true,
+    "learn": true,
+    "cycles_per_text": 1,
+    "max_symbols": 64,
+    "texts": 8,
+    "wake_episode": "wake-after-sleep",
+    "wake_error": "",
+    "stats": {
+      "texts": 8.0,
+      "cycles": 8.0,
+      "accepted": 7.0,
+      "mean_priority": 0.21893100362327972,
+      "mean_confidence": 0.6018456906601769,
+      "mean_error_norm": 1.8648130909341616
+    }
+  },
+  "treated_digest": "c0a4f1680c70ac852733265a7d44cc5ae50e8943cd2efbda3bfa5457466c73b6",
+  "weight_changed_by_powerup": true,
+  "candidate_saved_path": "checkpoints\\seed_n2b_candidate_20261008_c4gb1.pt",
+  "candidate_saved_bytes": 6269915,
+  "candidate_digest_after_load": "c0a4f1680c70ac852733265a7d44cc5ae50e8943cd2efbda3bfa5457466c73b6",
+  "j_persistence": true,
+  "material_fingerprint": {
+    "source_count": 200,
+    "source_sha256": "1aff1f1eb80ff87fc9b59b6fa636078743fbbc3daf9183ac31035d2d453099f8",
+    "night_selected_count": 8,
+    "night_selected_sha256": "a1d80d675d8c5eb9e571441a469a4df58e421b7c95ab0f852c57ace80d3528e9"
+  },
+  "window_bytes": 64,
+  "night_pool_size": 200,
+  "night_k": 8,
+  "scheduler_agrees_with_weighted_sort": true,
+  "surprise_modulation": {
+    "selected_before_modulation": [
+      {
+        "sha16": "7efa3c5300a8fec3",
+        "chars": 55,
+        "preview": "问：你有哪些必须遵守的行为约束？\n答：你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。"
+      },
+      {
+        "sha16": "9a5f989fe44e7d7e",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      },
+      {
+        "sha16": "d5428a4dc305af48",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      },
+      {
+        "sha16": "34f79b5accdaddf5",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      },
+      {
+        "sha16": "2a17b322994da876",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      },
+      {
+        "sha16": "39d714f0d03a3d50",
+        "chars": 2507,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "8bcbd358478761ec",
+        "chars": 2507,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "e6fb70e275abf12a",
+        "chars": 2507,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      }
+    ],
+    "selected_after_modulation": [
+      {
+        "sha16": "7efa3c5300a8fec3",
+        "chars": 55,
+        "preview": "问：你有哪些必须遵守的行为约束？\n答：你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。"
+      },
+      {
+        "sha16": "9a5f989fe44e7d7e",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      },
+      {
+        "sha16": "34f79b5accdaddf5",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      },
+      {
+        "sha16": "2a17b322994da876",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      },
+      {
+        "sha16": "d5428a4dc305af48",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      },
+      {
+        "sha16": "4195d63957568e38",
+        "chars": 757,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "8a1a3efde313d2c1",
+        "chars": 2018,
+        "preview": "问：<system-reminder>\nA skill is a reusable set of task-specific instructions. The following"
+      },
+      {
+        "sha16": "768d07cb41f03b4e",
+        "chars": 762,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      }
+    ],
+    "quality_mean": -12.895532850910467,
+    "mean_surprise_mean": 12.837256082819259
+  },
+  "material_treated_window": {
+    "items": 8.0,
+    "quality_mean": -14.007684538077902,
+    "accuracy_mean": 0.05859375,
+    "mean_surprise_mean": 13.929105556302668
+  },
+  "material_treated_whole": {
+    "items": 8.0,
+    "quality_mean": -13.673170863076638,
+    "accuracy_mean": 0.06481936705715352,
+    "mean_surprise_mean": 13.607882853334392
+  },
+  "restore_matches_mother": true,
+  "rollback_disk_matches_mother": true,
+  "material_control_window": {
+    "items": 8.0,
+    "quality_mean": -13.659322706107508,
+    "accuracy_mean": 0.068359375,
+    "mean_surprise_mean": 13.592117900514559
+  },
+  "material_control_whole": {
+    "items": 8.0,
+    "quality_mean": -13.821167471354038,
+    "accuracy_mean": 0.06256535602679383,
+    "mean_surprise_mean": 13.757487768478912
+  },
+  "j_n2b_prime_delta_quality": -0.3483618319703936,
+  "j_n2b_prime_delta_accuracy": -0.009765625,
+  "j_n2b_prime": "not_holds",
+  "whole_text_delta_quality": 0.14799660827739913,
+  "fail_closed_pass": true,
+  "seconds": 1614.2
+}

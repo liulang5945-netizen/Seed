@@ -1,0 +1,83 @@
+{
+  "by_source": {
+    "run_a": {
+      "constraints": 32,
+      "interactions": 168,
+      "workbench_capabilities": 0
+    },
+    "run_b": {
+      "constraints": 32,
+      "interactions": 168,
+      "workbench_capabilities": 0
+    }
+  },
+  "criteria": {
+    "J_N02_1_denominator": "两趟各自的 8 条夜选文本窗口均值，不是题数",
+    "J_N02_1_direction": "材料维极差是两批材料上的位移幅度，引用时不得当「这一档效应很小」的下界",
+    "J_N02_1_floor_units": "Δquality 同窗口径（治疗 - 对照的窗口均值差），单位与增益列一致"
+  },
+  "floor_dimension": "material",
+  "floor_kind": "absolute range of two controlled runs on materially distinct piles (not a sigma)",
+  "format": "taiji-n02-noise-floor-v1",
+  "gains": {
+    "run_a": "not_resolved",
+    "run_b": "not_holds"
+  },
+  "guards": {
+    "pair_code_identity_equal": true,
+    "pair_errors_empty": true,
+    "pair_material_fingerprint_differs": true,
+    "pair_material_fingerprint_equal": false,
+    "pair_mother_digest_equal": true,
+    "pair_stage_done": true,
+    "pair_weights_actually_differ": false
+  },
+  "identity": {
+    "code_identity": {
+      "scripts/training/run_taiji_n2_powerup.py": "355ad4e3dd5cdeacab7956b212d7b054cf861a82d542b87af94dcc2d3d764144",
+      "scripts/training/run_taiji_n2b_powerup.py": "8165ccbb5f1398329916afed3f51b96adfd51a1e029465e6f9fcc6541871f377"
+    },
+    "floor_dimension": "material",
+    "material_fingerprint": {
+      "night_selected_count": 8,
+      "night_selected_sha256": "d8c6a2459054c31ae5764c9c9b085d8cadd43fef9abd6a165fccd25d906eaa48",
+      "source_count": 200,
+      "source_sha256": "63ce5627b1db666945c52a4d689ebcbde25c83242c3af4d0ff15e34e417e5bd1"
+    },
+    "material_fingerprint_b": {
+      "night_selected_count": 8,
+      "night_selected_sha256": "a1d80d675d8c5eb9e571441a469a4df58e421b7c95ab0f852c57ace80d3528e9",
+      "source_count": 200,
+      "source_sha256": "1aff1f1eb80ff87fc9b59b6fa636078743fbbc3daf9183ac31035d2d453099f8"
+    },
+    "mother_digest": "3d812715bd766b2cd0db19f81e728cd20cfabd4156ce6f2bd9e5e8cf5905b02f",
+    "night_k": 8,
+    "night_pool_size": 200,
+    "window_bytes": 64
+  },
+  "j_n02_1_two_batch_inputs": {
+    "both_gains_exceed_floor": false,
+    "floor": 1.2433577115075511,
+    "note": "本件不判 J-N-02-1；§9.5⑴（owner 2026-10-18 签「两批都要过地板」）要的两批增益与地板三枚数在这里",
+    "run_a_gain": 0.8949958795371575,
+    "run_b_gain": -0.3483618319703936
+  },
+  "material_note": "两趟的材料基线都是人工构造：A 把快照里的投影账本清空（projected=[]），睡的是全库最新那 200 条；B 反选账本（除最旧 168 条去重交互与 32 枚约束种子外全部标为已投影），睡的是最旧那批。两批的交集实测为 0 条（构造时现算），来源配比逐列相同（32/168/0）。",
+  "measured_gain_key": "j_n2b_prime_delta_quality",
+  "noise_floor_delta_accuracy_abs": 0.029296875,
+  "noise_floor_delta_quality_abs": 1.2433577115075511,
+  "pair": [
+    "reports\\taiji_n2b_powerup_20261008_c4g1.json",
+    "reports\\taiji_n2b_powerup_20261008_c4gb1.json"
+  ],
+  "pair_size": 2,
+  "prereg": "plans/reference/PLAN-N-02_c4_net_gain_package_prereg_20261017.md",
+  "run_a_gain": 0.8949958795371575,
+  "run_a_seconds": 1586.9,
+  "run_b_gain": -0.3483618319703936,
+  "run_b_seconds": 1614.2,
+  "sealed_reference": "reports\\taiji_n2b_powerup_20261008.json",
+  "shape_matches_sealed_pair": true,
+  "weights_changed": true,
+  "weights_identical_across_the_pair": false
+}
