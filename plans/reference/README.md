@@ -89,7 +89,7 @@
 - [PLAN-N1-117 legacy来源加载修订](PLAN-N1-117_coupled_rwl_source_loader_revision_draft_20261018.md)：九端点训练完成、18/18恢复相等；seed13 joint-four 24/23未过44门。离线归因发现reader主导共享绝对半径、writer/local clip大幅减少，QA loss下降更慢；下一步采用归一化RWL联合半径。
 - [PLAN-N1-118 归一化耦合RWL信任半径](PLAN-N1-118_normalized_coupled_rwl_trust_region_draft_20261018.md)：九端点固定训练完成（221,184更新、CPU9,416.53125秒、18/18恢复相等）。原运行报告保留`stopped`，因旧校验器误用逐组cap；[结案](PLAN-N1-118_execution_closeout_20261019.md)与[只读回执复核](../../reports/taiji_n1_normalized_coupled_rwl_length_balanced_20261018_receipt_revalidation.json)确认9/9分片、18/18恢复有效，0新查询/更新。seed13 joint-four 24/23未过44门，不生成确认面。唯一下一步为[PLAN-N1-119](PLAN-N1-119_seed13_normalized_rwl_itemwise_attribution_draft_20261019.md)。
 - [PLAN-N1-119 N1-117/N1-118 position逐父项归因](PLAN-N1-119_seed13_normalized_rwl_itemwise_attribution_draft_20261019.md)：六个封存position shard、11,520行重算完成，CPU2.59375秒、0模型/checkpoint加载/查询/更新。seed13 joint-four仍24/23，但正确父项原始视图重合0、改名重合1；报告与[结案](PLAN-N1-119_execution_closeout_20261019.md)记录了条件间交换，描述性且不作因果主张。
-- [PLAN-N1-120 扩大归一化RWL半径训练](PLAN-N1-120_expanded_normalized_rwl_radius_training_draft_20261019.md)：固定2√3 radius测试早期shared clipping是否限制适应；保留数据、目标、更新数与原门，不查dev/holdout/confirmation。
+- [PLAN-N1-120 扩大归一化RWL半径训练](PLAN-N1-120_expanded_normalized_rwl_radius_training_draft_20261019.md)：`2√3`半径版本已实现；24,576步readiness通过（CPU4.578125秒、54项source hash、0加载/查询/更新），九枚zero bundle独立恢复9/9通过（CPU56.75秒，18次checkpoint读取、0训练更新）。现在执行221,184次更新，仍用原训练门，不查dev/holdout/confirmation。
 
 ## M5 蒸馏层（20 件收口/批准/宣言/设计＋墓碑）
 
