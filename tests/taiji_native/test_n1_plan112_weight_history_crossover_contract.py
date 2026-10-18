@@ -4,6 +4,7 @@ import ast
 import importlib.util
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 REPO = Path(__file__).resolve().parents[2]
 SCRIPT = REPO / "scripts" / "training" / "diagnose_taiji_n1_position_weight_history_crossover.py"
@@ -211,3 +212,78 @@ def test_shared_checkpoint_bundle_restores_parameters_history_and_adam_without_u
     assert all(
         int(state["step"]) == _module().UPDATES for state in restored_optimizer.state.values()
     )
+
+
+def test_load_model_uses_endpoint_protocol_and_counts_partial_restore(tmp_path) -> None:
+    module = _module()
+    protocol = {"schema": "n1-hard-neighbor-length-balanced-training-v1"}
+    candidate = {"optimizer": {"synthetic": True}}
+    payload = {
+        "schema": "n1-transition-factorial-paired-training-checkpoint-v1",
+        "seed": module.SEED,
+        "arm": module.ARM,
+        "completed_updates": module.UPDATES,
+        "phase": "final",
+        "protocol": protocol,
+        "initialization": "full-fresh-no-inheritance-v1",
+        "candidate": candidate,
+        "expected_signature": {"bundle": "sealed-full-bundle"},
+    }
+
+    class History:
+        def __len__(self):
+            return module.TRAINING_SESSIONS
+
+    parameters = tuple(range(41))
+
+    class Optimizer:
+        def __init__(self, _parameters, lr):
+            assert lr == 0.001
+            self.state = {}
+
+        def load_state_dict(self, _state):
+            self.state = {parameter: {"step": module.UPDATES} for parameter in parameters}
+
+    class Model:
+        _observations = History()
+
+        @staticmethod
+        def parameters():
+            return parameters
+
+        @staticmethod
+        def bundle(_optimizer):
+            return candidate
+
+    class ModelType:
+        @staticmethod
+        def restore_bundle(bundle):
+            assert bundle is candidate
+            return Model()
+
+    def fingerprint(_value):
+        return "sealed-full-bundle"
+
+    base = {
+        "engineering": SimpleNamespace(LocalRelationEvidenceCandidate=ModelType),
+        "paired": SimpleNamespace(fingerprint=fingerprint),
+    }
+    fake_torch = SimpleNamespace(
+        load=lambda *_args, **_kwargs: payload,
+        optim=SimpleNamespace(Adam=Optimizer),
+    )
+    fake_checkpoint = tmp_path / "synthetic.pt"
+    fake_checkpoint.write_bytes(b"synthetic payload marker")
+    result = {"checkpoint_payload_reads": 0, "model_loads": 0}
+
+    _payload, restored = module.load_model(
+        fake_checkpoint,
+        module.sha256_file(fake_checkpoint),
+        base=base,
+        torch=fake_torch,
+        report_model={"shard": {"identity": {"protocol": protocol}}},
+        result=result,
+    )
+
+    assert isinstance(restored, Model)
+    assert result == {"checkpoint_payload_reads": 1, "model_loads": 1}

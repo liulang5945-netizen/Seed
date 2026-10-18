@@ -20,7 +20,7 @@
 ## 零查询实施准备
 
 - r1 runner 已改为将 payload protocol 与 checkpoint 自身 sealed shard identity 核对，并通过 `LocalRelationEvidenceCandidate.restore_bundle()` 恢复模型；Adam 与完整 bundle fingerprint 核验仍在加载路径中。run100 专用 `load()` 不再用于候选恢复。
-- 合同测试 8 项通过：除协议分歧接受/拒绝、四条件汇总与无训练调用外，另以合成模型 bundle 在内存中验证参数、单条观察历史和 Adam 状态的恢复；无 checkpoint 文件读取、模型推理或参数更新。Ruff、Black、编译均通过。
+- 合同测试 9 项通过：除协议分歧接受/拒绝、四条件汇总与无训练调用外，还以合成模型 bundle 验证参数、观察历史和 Adam 状态恢复，并用 fake checkpoint reader 覆盖 `load_model()` 协议、签名与计数路径；无冻结 checkpoint 文件读取、模型推理或参数更新。Ruff、Black、编译均通过。
 - `--validate-only` 仅检查冻结来源、已消费 factorial shards、前次 pre-query stop 和目录占用；将写入独立 readiness 报告 `reports/taiji_n1_position_weight_history_crossover_s13_r1_readiness_20261018.json`。预检设定为 0 checkpoint payload read、0 model load/query、0 update。
 - 上述静态预检不解码 checkpoint。候选 bundle 的实际恢复、两枚 checkpoint 完整 signature 对账，以及模型查询均尚未验证，须在 PLAN-N1-112 获准后按同一次 runner 执行完成。
 
@@ -31,7 +31,7 @@
 - `--validate-only` 通过，报告为 [`r1 readiness`](../../reports/taiji_n1_position_weight_history_crossover_s13_r1_readiness_20261018.json)，SHA-256 `b9ad33fb787b30bcc93f42ec3ea4d1c936f92eff35363a7d3436d67110d9a759`。
 - 预检时读取的提案快照 SHA-256 为 `28235cd07e0bd540278f6c6f4cdf62dd08739fdc2abd11c251c236c751ae7844`；本执行记录在预检后追加，未改动冻结的诊断范围或判据。
 - 核实 27 项 source guards、48 个原始与改名 transition 父项、两份 384 行 sealed shard，原生门值仍为 baseline 48/48、48/48，candidate 5/48、4/48。
-- readiness 生成时合同测试 7 项通过；随后新增合成 bundle 恢复测试，当前 8 项通过。readiness 报告绑定的 27 项 sources guards 仍全部与工作区匹配；checkpoint payload reads、model loads/queries、参数更新、optimizer steps、checkpoint saves 均为 0。Ruff、Black 与编译通过。
+- readiness 生成时合同测试 7 项通过；随后新增两项纯合成恢复测试，当前 9 项通过。readiness 报告绑定的 27 项 sources guards 仍全部与工作区匹配；checkpoint payload reads、model loads/queries、参数更新、optimizer steps、checkpoint saves 均为 0。Ruff、Black 与编译通过。
 - 此预检只验证来源和设计准备度；它没有解码 checkpoint，因此未验证候选 bundle 的真实恢复，也没有产生 2×2 模型读数。
 
 ## 周边 N1 合同回归记录
