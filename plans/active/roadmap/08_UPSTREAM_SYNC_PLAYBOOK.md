@@ -4430,3 +4430,12 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 边界：零权重改动、零模型查询、不动 `taiji/`、不动并发腿在飞的两个文件；本轮只动台账这一条。未推数与 HEAD 由下一行现取。
 
 - 现取锚点：HEAD＝fd1e875d4，未推数＝97。
+
+### ㊵-1119 【2026-10-18 · 被批的那趟 powerup2 跑了，结论是"地板拿不到"，而且两件事是我自己造成的：同 tag 重发吃掉了首趟报告（G169）、第二趟因材料池耗尽 fail-closed（G170）；成本也从照抄的 24 分钟改成实测 ≈80 秒】
+
+- 时间线与现取读数（全部同一小时内的实测，`START_UTC=2026-10-18T01:07:52Z`，HEAD＝51713a01e）：预飞三项干净（`python_procs=0`、`cpu_busy_pct=3`、`free_GB=436.7`；四个 `_c4r1` 落点 `exists=no tracked=0`）⇒ 发射 `--phase powerup2 --run-tag c4r1`。**首趟约 80 秒跑完**，stdout 出 `stage=done errors=[]`、`j_persistence=True`、`weight_changed_by_powerup=True`、`g_n2_5_mother_roundtrip_identical=True`、`restore_matches_mother=True`、`rollback_disk_matches_mother=True`、`j_n2b_prime=holds`、`fail_closed_pass=True`。今天母档现取 `3d812715bd76…`／`tick=273`，与旧件 `3e00bafc…` 不同权重，且现行代码路径不再记 `night_k`／`night_pool_size` 两列。
+- **我的第一个错误**：60 秒后探到 `alive=0`，我把它读成"后台进程被工具回收"（第一次 `nohup &` 确实会随调用结束被回收，这个判读本身没错），但没有先去读日志确认它已经**正常跑完**就又发了一趟 ⇒ 第二趟以同一 tag 覆写报告，**首趟那枚含 Δquality／Δseconds 的件从此没了**。根因是驱动的 `_write_report` 在多阶段之间反复覆写、没有一次性守卫（DEBT-G169）；触发它的是我的操作顺序（应先读日志末行 `report -> …` 判完成，这正是本仓那条"等生产者完成记账，别等文件出现/消失"的老纪律）。
+- **第二个发现不是我造成的**：第二趟自己停在 `RuntimeError: 通电没有真的改权重：organs={'ran': False, 'reason': 'no texts to sleep on'}`（`seed_platform/sleep_pass.py:536` 的 fail-closed 出口）⇒ 材料池被首趟消耗，同树第二趟**不是同配置重复**，它拒绝继续是对的行为（DEBT-G170）。⇒ 地板的正确前置从"再跑一趟"变成"**跑之前能把材料池恢复到同一状态**＋报告一次性"，在拿到这两件之前本包 **J-N-02-1 不判**；owner 批的那一趟已用掉且未产出可用样本，我不把它算成"地板已有"。
+- 被第 5–6 条纠正的两句我自己的话：`≈45–60 分钟` 与 `一次双臂配对 ≈24 分钟` 都是照抄旧件 `seconds`（1389.6／1411.6），对**现行代码＋现行母档不成立**（实测 ≈80 秒）；§6ter 第 7 条就地以实测替换，并注明旧数字来自哪两枚件。这不改变"先量尺再发射"的顺序，只改变代价估计（便宜了一个量级）。
+- 现场处置：失败的第二趟中间件已**移出仓外**（`C:/Users/…/n1_v6_sign/run_b_partial.json`），不作为读数入库；三枚 tagged checkpoint（`seed_n2b_{mother,candidate,rollback}_20261008_c4r1.pt`，首趟产物）留在 `checkpoints/` 未跟踪，作为"首趟确实通电成功"的物证；本轮仓库改动＝PLAN-N-02 §5 的 P5 真值与 §6ter 第 7 条、债表两行（G169／G170）、本条台账。**没有再发射第三趟**——在材料池恢复手段到位之前，多跑只会再造一个不可比的样本。
+- 边界：零面测试跑动期间无写树；本轮实际机时约 2.5 分钟（两趟之和）；未动 `taiji/` 与产品默认位，未动并发腿在飞的文件。
