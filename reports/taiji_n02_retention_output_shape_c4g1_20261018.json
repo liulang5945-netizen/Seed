@@ -1,0 +1,237 @@
+{
+  "format": "taiji-n02-retention-output-shape-v1",
+  "items_compared": 100,
+  "lineage": {
+    "after_checkpoint": "checkpoints\\seed_n2b_candidate_20261008_c4g1.pt",
+    "after_checkpoint_sha256": "da6954472c0411b55710d247aa9ba6d28a979213bb780e7aaeb0d0e3ff27c557",
+    "after_sha_matches_self_report": true,
+    "before_checkpoint": "checkpoints\\seed_n2b_mother_20261008_c4g1.pt",
+    "before_checkpoint_sha256": "7470e2ea49aa60ae96002bc32d72ed15bb81050e437f893e682118333aa98e83",
+    "before_sha_matches_self_report": true
+  },
+  "pair": [
+    "reports\\taiji_c4g1_cap0_before_20261018.json",
+    "reports\\taiji_c4g1_cap0_after_20261018.json"
+  ],
+  "per_dimension": [
+    {
+      "aggregate_after": {
+        "bytes_sum": 3549,
+        "cjk_longest_run_sum": 20,
+        "cyclic_like": 6,
+        "replacement_chars": 0
+      },
+      "aggregate_before": {
+        "bytes_sum": 4625,
+        "cjk_longest_run_sum": 20,
+        "cyclic_like": 14,
+        "replacement_chars": 0
+      },
+      "dimension": "B",
+      "flip_detail": [],
+      "items_compared": 20,
+      "items_only_after": [],
+      "items_only_before": [],
+      "machine_scored": {
+        "after": 0,
+        "before": 0
+      },
+      "score_gained": [],
+      "score_lost": [],
+      "shape_columns_moved": true,
+      "texts_changed": 20
+    },
+    {
+      "aggregate_after": {
+        "bytes_sum": 4076,
+        "cjk_longest_run_sum": 17,
+        "cyclic_like": 11,
+        "replacement_chars": 0
+      },
+      "aggregate_before": {
+        "bytes_sum": 4823,
+        "cjk_longest_run_sum": 17,
+        "cyclic_like": 13,
+        "replacement_chars": 0
+      },
+      "dimension": "C",
+      "flip_detail": [],
+      "items_compared": 20,
+      "items_only_after": [],
+      "items_only_before": [],
+      "machine_scored": {
+        "after": 2,
+        "before": 2
+      },
+      "score_gained": [],
+      "score_lost": [],
+      "shape_columns_moved": true,
+      "texts_changed": 19
+    },
+    {
+      "aggregate_after": {
+        "bytes_sum": 4820,
+        "cjk_longest_run_sum": 19,
+        "cyclic_like": 12,
+        "replacement_chars": 0
+      },
+      "aggregate_before": {
+        "bytes_sum": 5102,
+        "cjk_longest_run_sum": 20,
+        "cyclic_like": 13,
+        "replacement_chars": 0
+      },
+      "dimension": "D",
+      "flip_detail": [
+        {
+          "bytes": [
+            255,
+            255
+          ],
+          "expected_contains": [
+            "是",
+            "符合",
+            "简短"
+          ],
+          "id": "D03",
+          "matched_after": [
+            "简短"
+          ],
+          "matched_before": [],
+          "score": [
+            0,
+            1
+          ]
+        },
+        {
+          "bytes": [
+            256,
+            256
+          ],
+          "expected_contains": [
+            "17"
+          ],
+          "id": "D04",
+          "matched_after": [
+            "17"
+          ],
+          "matched_before": [],
+          "score": [
+            0,
+            1
+          ]
+        },
+        {
+          "bytes": [
+            256,
+            256
+          ],
+          "expected_contains": [
+            "42"
+          ],
+          "id": "D09",
+          "matched_after": [],
+          "matched_before": [
+            "42"
+          ],
+          "score": [
+            1,
+            0
+          ]
+        }
+      ],
+      "items_compared": 20,
+      "items_only_after": [],
+      "items_only_before": [],
+      "machine_scored": {
+        "after": 7,
+        "before": 6
+      },
+      "score_gained": [
+        "D03",
+        "D04"
+      ],
+      "score_lost": [
+        "D09"
+      ],
+      "shape_columns_moved": true,
+      "texts_changed": 20
+    },
+    {
+      "aggregate_after": {
+        "bytes_sum": 4106,
+        "cjk_longest_run_sum": 20,
+        "cyclic_like": 4,
+        "replacement_chars": 0
+      },
+      "aggregate_before": {
+        "bytes_sum": 4561,
+        "cjk_longest_run_sum": 20,
+        "cyclic_like": 10,
+        "replacement_chars": 0
+      },
+      "dimension": "E",
+      "flip_detail": [],
+      "items_compared": 20,
+      "items_only_after": [],
+      "items_only_before": [],
+      "machine_scored": {
+        "after": 1,
+        "before": 1
+      },
+      "score_gained": [],
+      "score_lost": [],
+      "shape_columns_moved": true,
+      "texts_changed": 20
+    },
+    {
+      "aggregate_after": {
+        "bytes_sum": 2578,
+        "cjk_longest_run_sum": 20,
+        "cyclic_like": 7,
+        "replacement_chars": 0
+      },
+      "aggregate_before": {
+        "bytes_sum": 4304,
+        "cjk_longest_run_sum": 20,
+        "cyclic_like": 11,
+        "replacement_chars": 0
+      },
+      "dimension": "G",
+      "flip_detail": [],
+      "items_compared": 20,
+      "items_only_after": [],
+      "items_only_before": [],
+      "machine_scored": {
+        "after": 0,
+        "before": 0
+      },
+      "score_gained": [],
+      "score_lost": [],
+      "shape_columns_moved": true,
+      "texts_changed": 20
+    }
+  ],
+  "prereg": "plans/reference/PLAN-N-02_c4_net_gain_package_prereg_20261017.md",
+  "reading_limit": "本件只回答'cap0 这一面上分数与形态各自动没动'。保持侧那三列跌住在复述面（a30 那台的件写盘时剥掉 per_item），所以本件**不能**指认那几题是哪一题；那要先给复述仪补一档逐条出版再跑。",
+  "totals": {
+    "cyclic_like_after": 40,
+    "cyclic_like_before": 61,
+    "replacement_chars_after": 0,
+    "replacement_chars_before": 0,
+    "score_gained": 2,
+    "score_lost": 1,
+    "texts_changed": 99
+  },
+  "verdict": "scores_moved",
+  "verdict_meanings": {
+    "identical_face": "两侧逐条输出与分数都相同 ⇒ cap0 这一面测不到代价，代价是复述面特有",
+    "scores_moved": "有项分数翻转 ⇒ 代价落在这一面，点名到 item id",
+    "shape_moved_scores_stable": "输出内容或形态列动了、机器分没动 ⇒ 形态差异没转化成 cap0 侧掉分"
+  },
+  "verdict_vocabulary": [
+    "identical_face",
+    "shape_moved_scores_stable",
+    "scores_moved"
+  ]
+}
