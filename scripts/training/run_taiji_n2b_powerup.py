@@ -69,6 +69,45 @@ def code_identity() -> dict[str, str]:
     return identity
 
 
+def _refuse_completed_target(path: Path, *, require_absent: bool = False) -> None:
+    """同 tag 的第二趟不许吃掉上一趟已出版的读数（DEBT-G169）。
+
+    一次运行内部把 `stage` 从中间态推进到 `done` 期间反复覆写自己那枚文件是可以的；
+    不可接受的是**新起一趟**去覆写一个已经 `stage=done` 的成品（我 2026-10-18 就这么丢掉一趟
+    80 秒的样本）。`require_absent=True` 给只写一次的门（guard2）：它没有阶段推进，存在即已出版。
+    """
+
+    if not path.is_file():
+        return
+    if require_absent:
+        raise RuntimeError(
+            f"refusing to overwrite a published guard2 report: {path}; use --run-tag"
+        )
+    prior = json.loads(path.read_text(encoding="utf-8"))
+    if prior.get("stage") == "done":
+        raise RuntimeError(
+            f"refusing to overwrite a published report at stage=done: {path}; use --run-tag"
+        )
+
+
+def _material_fingerprint(source: list[str], selected: list[str]) -> dict[str, Any]:
+    """把"这两趟是不是同一堆材料"变成可比字段（DEBT-G170 的第①步）。
+
+    材料是从 sleep pass 自述的语料回读的，跑过一次就可能变空 ⇒ 光看参数相等不算同配置；
+    跨趟配对比这两个摘要，不同就拒判地板，而不是拿它当噪声。
+    """
+
+    def _join_sha(texts: list[str]) -> str:
+        return hashlib.sha256("\n".join(texts).encode("utf-8")).hexdigest()
+
+    return {
+        "source_count": len(source),
+        "source_sha256": _join_sha(source),
+        "night_selected_count": len(selected),
+        "night_selected_sha256": _join_sha(selected),
+    }
+
+
 def _window_rows(model: Any, texts: list[str], dose: int) -> dict[str, float]:
     """剂量同窗的材料读数：每条只取前 `dose` 个字节，`dose` 来自 pass 自己的自述。"""
 
@@ -88,6 +127,8 @@ def _window_rows(model: Any, texts: list[str], dose: int) -> dict[str, float]:
 
 def phase_guard2() -> int:
     """G-N2-2 在第二次里的重跑：默认参数 pass 不碰器官也不碰权重。"""
+
+    _refuse_completed_target(GUARD2_REPORT, require_absent=True)
 
     from api.seed_runtime import DEFAULT_CHECKPOINT, SeedRuntime
     from seed_platform import sleep_pass
@@ -127,6 +168,7 @@ def phase_powerup2() -> int:
     from seed_platform import sleep_pass
 
     started = time.time()
+    _refuse_completed_target(POWERUP2_REPORT)
     payload: dict[str, Any] = {
         "format": "taiji-n2b-powerup-v1",
         "prereg": "plans/reference/PLAN-N2-02_second_powerup_dosewindow_prereg_20261008.md",
@@ -196,6 +238,8 @@ def phase_powerup2() -> int:
             )
         night = _night_selection(mother_anchor.model, material, k=k)
         selected = night["selected_texts"]
+        #: 跨趟配对先比这一列：材料不同就拒判地板（DEBT-G170）。
+        payload["material_fingerprint"] = _material_fingerprint(material, selected)
         payload["window_bytes"] = dose
         payload["night_pool_size"] = night["pool_size"]
         payload["night_k"] = night["k"]

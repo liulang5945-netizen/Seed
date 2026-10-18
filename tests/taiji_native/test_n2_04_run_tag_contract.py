@@ -18,6 +18,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 REPO = Path(__file__).resolve().parents[2]
 RUNNER = REPO / "scripts" / "training" / "run_taiji_n2b_powerup.py"
 
@@ -115,3 +117,43 @@ def test_code_identity_names_the_files_that_produced_the_reading(monkeypatch) ->
         assert "no_such_driver" in str(missing), str(missing)
     else:
         raise AssertionError("名单缺文件却静默出版 ⇒ 这条守卫是恒真的")
+
+
+def test_a_published_report_cannot_be_clobbered_by_a_second_run(tmp_path) -> None:
+    """DEBT-G169：我在 2026-10-18 用同一 tag 重发一趟，把首趟 `stage=done` 的件覆写掉了。
+
+    三条都能为假：已出版的（`stage=done`）必须拒；一次运行自己的中间快照必须允许续写
+    （否则把合法阶段推进也堵死）；只写一次的门（guard2）存在即拒。
+    """
+    runner = _module()
+    done = tmp_path / "done.json"
+    done.write_text('{"stage": "done"}', encoding="utf-8")
+    try:
+        runner._refuse_completed_target(done)
+    except RuntimeError as refused:
+        assert "stage=done" in str(refused), str(refused)
+    else:
+        raise AssertionError("已出版的件可以被覆写 ⇒ 这条守卫是恒真的")
+
+    interim = tmp_path / "interim.json"
+    interim.write_text('{"stage": "pass_done"}', encoding="utf-8")
+    runner._refuse_completed_target(interim)  # 同一次运行的阶段快照，允许续写
+
+    missing = tmp_path / "absent.json"
+    runner._refuse_completed_target(missing)
+    with pytest.raises(RuntimeError, match="guard2"):
+        runner._refuse_completed_target(interim, require_absent=True)
+
+
+def test_material_fingerprint_detects_a_different_pile_not_just_a_different_size() -> None:
+    """DEBT-G170 第①步：材料集必须可比，光看条数会漏"同条数不同内容"。"""
+    runner = _module()
+    a = runner._material_fingerprint(["x", "y"], ["x"])
+    assert a["source_count"] == 2 and a["night_selected_count"] == 1
+    assert a == runner._material_fingerprint(["x", "y"], ["x"]), "同材料必须同摘要"
+    assert a["source_sha256"] != runner._material_fingerprint(["y", "x"], ["x"])["source_sha256"]
+    assert a["source_sha256"] != runner._material_fingerprint(["x", "z"], ["x"])["source_sha256"]
+    assert (
+        a["night_selected_sha256"]
+        != runner._material_fingerprint(["x", "y"], ["y"])["night_selected_sha256"]
+    )
