@@ -1,0 +1,165 @@
+{
+  "format": "taiji-a30-repetition-penalty-v1",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md 乙档",
+  "chain": "base_raw_bytes_with_product_mask",
+  "checkpoint": "checkpoints/seed_n2b_mother_20261008_c4g1.pt",
+  "circuit": null,
+  "circuit_sha256": null,
+  "items": 1,
+  "item_offset": 13,
+  "first_item": "V014",
+  "limit": 1,
+  "items_sha256": "c0031b5da5742a2c037139ab9cbf1c1a832d1b37d979e745f1138a7cb1530c65",
+  "manifest_path": "plans/manifests/r2_copy_surface_extension_v3_position_random.json",
+  "base_sha256_unchanged": true,
+  "arms": [
+    {
+      "repetition_penalty": 1.0,
+      "gate_effective": true,
+      "items": 1,
+      "texts": 3,
+      "strict_hits": 1,
+      "well_formed_texts": 1,
+      "cyclic_texts": 1,
+      "cyclic_rate": 0.3333,
+      "mean_longest_run": 1.667,
+      "max_longest_run": 3,
+      "per_item": [
+        {
+          "id": "V014",
+          "hit": true,
+          "cyclic": false,
+          "expected_contains": [
+            "浣熊"
+          ],
+          "answer_chars": 21,
+          "answer_text": "养一养一养一养一养一养一养一养一养浣熊。一",
+          "text_range": [
+            0,
+            3
+          ],
+          "turn_trace": [
+            {
+              "turn": 1,
+              "answer_chars": 11,
+              "answer_text": "好，个如有，忙首诗有吂",
+              "target_hit": false,
+              "answer_formed": true,
+              "answer_cyclic_tail": false
+            },
+            {
+              "turn": 2,
+              "answer_chars": 21,
+              "answer_text": "居居居养一居养一居养一居养一居养一居养一居",
+              "target_hit": false,
+              "answer_formed": false,
+              "answer_cyclic_tail": true
+            },
+            {
+              "turn": 3,
+              "answer_chars": 21,
+              "answer_text": "养一养一养一养一养一养一养一养一养浣熊。一",
+              "target_hit": true,
+              "answer_formed": false,
+              "answer_cyclic_tail": false
+            }
+          ],
+          "texts": 3,
+          "formed_texts": 1,
+          "cyclic_tail_texts": 1,
+          "answer_formed": false,
+          "answer_cyclic_tail": false
+        }
+      ]
+    }
+  ],
+  "verdict": {
+    "1.0": {
+      "cyclic_delta_vs_base": 0,
+      "hits_delta_vs_base": 0,
+      "formed_delta_vs_base": 0
+    }
+  },
+  "started_utc": "2026-10-18T09:09:26Z",
+  "trace_protocol": "n02-v014-turn-trace-v1",
+  "checkpoint_sha256_before": "7470e2ea49aa60ae96002bc32d72ed15bb81050e437f893e682118333aa98e83",
+  "checkpoint_sha256_after": "7470e2ea49aa60ae96002bc32d72ed15bb81050e437f893e682118333aa98e83",
+  "manifest_sha256": "b162ff091630f64a8cac986184729ff7894887f4806c923cc12b301ce5ae4fee",
+  "measurement_script_sha256": "f934a655e713b7c096c4e6f63b8ea2dcfa536e82933a2a053c17ff43fe5ce6bc",
+  "cpu_seconds": 105.796875,
+  "cpu_limit_seconds": 180,
+  "cpu_limit_passed": true,
+  "turn_generations": 6,
+  "parameter_updates": 0,
+  "dev_queries": 0,
+  "holdout_queries": 0,
+  "confirmation_queries": 0,
+  "comparison": {
+    "checkpoint": "checkpoints/seed_n2b_candidate_20261008_c4g1.pt",
+    "checkpoint_sha256_before": "da6954472c0411b55710d247aa9ba6d28a979213bb780e7aaeb0d0e3ff27c557",
+    "checkpoint_sha256_after": "da6954472c0411b55710d247aa9ba6d28a979213bb780e7aaeb0d0e3ff27c557",
+    "base_sha256_unchanged": true,
+    "arms": [
+      {
+        "repetition_penalty": 1.0,
+        "gate_effective": true,
+        "items": 1,
+        "texts": 3,
+        "strict_hits": 0,
+        "well_formed_texts": 1,
+        "cyclic_texts": 2,
+        "cyclic_rate": 0.6667,
+        "mean_longest_run": 2.0,
+        "max_longest_run": 4,
+        "per_item": [
+          {
+            "id": "V014",
+            "hit": false,
+            "cyclic": true,
+            "expected_contains": [
+              "浣熊"
+            ],
+            "answer_chars": 21,
+            "answer_text": "养一养一养一养一养一养一养一养一养一养一养",
+            "text_range": [
+              0,
+              3
+            ],
+            "turn_trace": [
+              {
+                "turn": 1,
+                "answer_chars": 22,
+                "answer_text": "吂，个大家有一赁忙首诗有吂\n答？这首诗一起大",
+                "target_hit": false,
+                "answer_formed": true,
+                "answer_cyclic_tail": false
+              },
+              {
+                "turn": 2,
+                "answer_chars": 21,
+                "answer_text": "居居养一居养一居居养一居养一居养一居居居居",
+                "target_hit": false,
+                "answer_formed": false,
+                "answer_cyclic_tail": true
+              },
+              {
+                "turn": 3,
+                "answer_chars": 21,
+                "answer_text": "养一养一养一养一养一养一养一养一养一养一养",
+                "target_hit": false,
+                "answer_formed": false,
+                "answer_cyclic_tail": true
+              }
+            ],
+            "texts": 3,
+            "formed_texts": 1,
+            "cyclic_tail_texts": 2,
+            "answer_formed": false,
+            "answer_cyclic_tail": true
+          }
+        ]
+      }
+    ]
+  },
+  "checkpoints_unchanged": true
+}

@@ -15,6 +15,7 @@ import importlib.util
 import json
 import pathlib
 import sys
+import types
 
 REPO = pathlib.Path(__file__).resolve().parents[2]
 SCRIPT = REPO / "scripts" / "training" / "measure_taiji_a30_repetition_penalty.py"
@@ -127,11 +128,12 @@ def test_the_report_assembly_calls_the_function_instead_of_re_inlining_the_strip
     """源码钉：有人把 `arms` 改回内联剥列，旗标就会静默失效，这条测必须红。"""
 
     source = SCRIPT.read_text(encoding="utf-8")
-    assert '"arms": published_arms(arms, args.emit_per_item)' in source
+    assert '"arms": published_arms(arms, args.emit_per_item, args.emit_turn_trace)' in source
     assert (
         '"arms": [{k: v for k, v in arm.items() if k != "per_item"} for arm in arms]' not in source
     )
     assert '"--emit-per-item"' in source
+    assert '"--emit-turn-trace"' in source
 
 
 def test_the_per_item_rows_carry_the_fields_the_mechanism_question_needs() -> None:
@@ -158,3 +160,160 @@ def test_the_per_item_rows_carry_the_fields_the_mechanism_question_needs() -> No
     source = SCRIPT.read_text(encoding="utf-8")
     for key in ("answer_chars", "answer_text", "answer_formed", "answer_cyclic_tail"):
         assert f'"{key}"' in source, f"生产者不再出版 {key}，夹具要同步"
+
+
+def test_turn_trace_records_each_answer_and_its_quality_flags(monkeypatch) -> None:
+    module = _module()
+    outputs = iter(("draft target", "loop", "final target"))
+
+    class FakeRuntime:
+        model = types.SimpleNamespace(substrate=types.SimpleNamespace())
+
+        @classmethod
+        def load(cls, checkpoint):
+            return cls()
+
+    readout = types.ModuleType("eval_taiji_r2_readout_retrain")
+    readout.build_ngram_model = lambda: "ngram"
+    readout.well_formed = lambda text, ngram: text != "loop"
+    cycling = types.ModuleType("probe_taiji_a30_position_cycling")
+    cycling.best_partial_period = lambda text: {"cyclic_tail": text == "loop"}
+    scorer = types.ModuleType("score_taiji_r2_copy_circuit_chat_cap")
+    scorer._answer_raw = lambda *args, **kwargs: next(outputs)
+    api = types.ModuleType("api")
+    api.__path__ = []
+    seed_runtime = types.ModuleType("api.seed_runtime")
+    seed_runtime.SeedRuntime = FakeRuntime
+    for name, value in (
+        ("eval_taiji_r2_readout_retrain", readout),
+        ("probe_taiji_a30_position_cycling", cycling),
+        ("score_taiji_r2_copy_circuit_chat_cap", scorer),
+        ("api", api),
+        ("api.seed_runtime", seed_runtime),
+    ):
+        monkeypatch.setitem(sys.modules, name, value)
+
+    arm = module.run_arm(
+        [{"id": "V014", "turns": ["turn 1", "turn 2", "turn 3"], "expected_contains": ["target"]}],
+        checkpoint=pathlib.Path("unused.pt"),
+        circuit=None,
+        penalty=1.0,
+        emit_turn_trace=True,
+    )
+    row = module.published_arms([arm], False, True)[0]["per_item"][0]
+
+    assert [turn["answer_text"] for turn in row["turn_trace"]] == [
+        "draft target",
+        "loop",
+        "final target",
+    ]
+    assert [turn["target_hit"] for turn in row["turn_trace"]] == [True, False, True]
+    assert [turn["answer_formed"] for turn in row["turn_trace"]] == [True, False, True]
+    assert [turn["answer_cyclic_tail"] for turn in row["turn_trace"]] == [False, True, False]
+
+
+def test_paired_trace_publishes_both_checkpoints_in_one_write_once_report(
+    monkeypatch, tmp_path
+) -> None:
+    module = _module()
+    monkeypatch.setattr(module, "PROJECT_ROOT", tmp_path)
+    mother = tmp_path / "mother.pt"
+    candidate = tmp_path / "candidate.pt"
+    mother.write_bytes(b"mother checkpoint")
+    candidate.write_bytes(b"candidate checkpoint")
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "dimensions": {
+                    "X": {
+                        "items": [
+                            {
+                                "id": "V014",
+                                "turns": ["turn 1", "turn 2", "turn 3"],
+                                "expected_contains": ["target"],
+                            }
+                        ]
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    calls = []
+
+    def fake_run_arm(items, checkpoint, circuit, penalty, chain, *, emit_turn_trace=False):
+        calls.append((pathlib.Path(checkpoint).name, penalty, emit_turn_trace))
+        return {
+            "repetition_penalty": penalty,
+            "items": 1,
+            "texts": 3,
+            "strict_hits": 1,
+            "well_formed_texts": 2,
+            "cyclic_texts": 1,
+            "cyclic_rate": 1 / 3,
+            "mean_longest_run": 1.0,
+            "max_longest_run": 1,
+            "per_item": [
+                {
+                    "id": "V014",
+                    "turn_trace": [
+                        {"turn": 1, "answer_text": "one"},
+                        {"turn": 2, "answer_text": "two"},
+                        {"turn": 3, "answer_text": "three"},
+                    ],
+                }
+            ],
+        }
+
+    monkeypatch.setattr(module, "run_arm", fake_run_arm)
+    out = tmp_path / "paired.json"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "measure_taiji_a30_repetition_penalty.py",
+            "--checkpoint",
+            str(mother),
+            "--compare-checkpoint",
+            str(candidate),
+            "--manifest",
+            str(manifest),
+            "--limit",
+            "1",
+            "--offset",
+            "0",
+            "--penalties",
+            "1.0",
+            "--emit-turn-trace",
+            "--out-report",
+            str(out),
+        ],
+    )
+    rc = module.main()
+
+    report = json.loads(out.read_text(encoding="utf-8"))
+    assert rc == 0
+    assert calls == [("mother.pt", 1.0, True), ("candidate.pt", 1.0, True)]
+    assert len(report["arms"][0]["per_item"][0]["turn_trace"]) == 3
+    assert report["comparison"]["checkpoint"] == str(candidate)
+    assert len(report["comparison"]["arms"][0]["per_item"][0]["turn_trace"]) == 3
+    assert report["turn_generations"] == 6
+    assert report["checkpoints_unchanged"] is True
+    assert report["base_sha256_unchanged"] is True
+    assert report["cpu_limit_passed"] is True
+
+
+def test_compare_checkpoint_is_refused_without_explicit_turn_trace(monkeypatch) -> None:
+    module = _module()
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["measure_taiji_a30_repetition_penalty.py", "--compare-checkpoint", "candidate.pt"],
+    )
+    try:
+        module.main()
+    except SystemExit as exc:
+        assert "requires --emit-turn-trace" in str(exc)
+    else:
+        raise AssertionError("paired checkpoint comparison must require the approved trace flag")

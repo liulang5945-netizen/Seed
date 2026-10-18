@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import time
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -32,6 +33,7 @@ import _taiji_report_io as report_io  # noqa: E402
 
 MANIFEST = PROJECT_ROOT / "plans/manifests/r2_copy_surface_extension_v3_position_random.json"
 PENALTIES = (0.0, 0.5, 1.0, 2.0)
+TURN_TRACE_CPU_LIMIT_SECONDS = 180
 
 
 def _sha256(path: Path) -> str:
@@ -88,6 +90,7 @@ def run_arm(
     circuit: str | None,
     penalty: float,
     chain: str = "raw_masked",
+    emit_turn_trace: bool = False,
 ) -> dict[str, Any]:
     from eval_taiji_r2_readout_retrain import build_ngram_model, well_formed
     from probe_taiji_a30_position_cycling import best_partial_period
@@ -110,6 +113,8 @@ def run_arm(
         answer = ""
         start = len(texts)
         turn_list = [str(t) for t in item["turns"]]
+        tokens = [str(t) for t in item["expected_contains"]]
+        turn_trace: list[dict[str, Any]] = []
         for index, turn in enumerate(turn_list):
             answer = (
                 runtime.chat(turn, history=history, learn=False, repetition_penalty=penalty)
@@ -119,23 +124,35 @@ def run_arm(
                 )
             )
             texts.append(answer)
+            if emit_turn_trace:
+                period = best_partial_period(answer)
+                turn_trace.append(
+                    {
+                        "turn": index + 1,
+                        "answer_chars": len(answer),
+                        "answer_text": answer,
+                        "target_hit": any(token in answer for token in tokens),
+                        "answer_formed": bool(well_formed(answer, ngram)),
+                        "answer_cyclic_tail": bool(period["cyclic_tail"]),
+                    }
+                )
             if index + 1 < len(turn_list):
                 history.append((turn, answer))
-        tokens = [str(t) for t in item["expected_contains"]]
         hit = any(token in answer for token in tokens)
         hits += int(hit)
         period = best_partial_period(answer)
-        rows.append(
-            {
-                "id": item["id"],
-                "hit": hit,
-                "cyclic": bool(period["cyclic_tail"]),
-                "expected_contains": tokens,
-                "answer_chars": len(answer),
-                "answer_text": answer,
-                "text_range": [start, len(texts)],
-            }
-        )
+        row = {
+            "id": item["id"],
+            "hit": hit,
+            "cyclic": bool(period["cyclic_tail"]),
+            "expected_contains": tokens,
+            "answer_chars": len(answer),
+            "answer_text": answer,
+            "text_range": [start, len(texts)],
+        }
+        if emit_turn_trace:
+            row["turn_trace"] = turn_trace
+        rows.append(row)
 
     formed_flags = [bool(well_formed(t, ngram)) for t in texts]
     cyclic_flags = [bool(best_partial_period(t)["cyclic_tail"]) for t in texts]
@@ -175,14 +192,16 @@ def run_arm(
     }
 
 
-def published_arms(arms: list[dict[str, Any]], emit_per_item: bool) -> list[dict[str, Any]]:
+def published_arms(
+    arms: list[dict[str, Any]], emit_per_item: bool, emit_turn_trace: bool = False
+) -> list[dict[str, Any]]:
     """默认出版形状必须与今天**逐字节相同**：`per_item` 只在显式旗标下出门（DEBT-G174）。
 
     这一格之所以要是函数而不是内联字典推导，是为了能在进程内测两支——内联写法让"忘了旗标"
     与"旗标不生效"在件面上看不出区别。
     """
 
-    if emit_per_item:
+    if emit_per_item or emit_turn_trace:
         return [dict(arm) for arm in arms]
     return [{k: v for k, v in arm.items() if k != "per_item"} for arm in arms]
 
@@ -190,6 +209,11 @@ def published_arms(arms: list[dict[str, Any]], emit_per_item: bool) -> list[dict
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", default="checkpoints/seed_beta.pt")
+    parser.add_argument(
+        "--compare-checkpoint",
+        default=None,
+        help="optional second checkpoint for an approved paired turn trace; requires --emit-turn-trace",
+    )
     parser.add_argument("--circuit", default=None)
     parser.add_argument(
         "--no-circuit",
@@ -218,12 +242,20 @@ def main() -> int:
         "给了才能回答「掉的那一题是没答出还是不成句」。",
     )
     parser.add_argument(
+        "--emit-turn-trace",
+        action="store_true",
+        help="额外逐回合出版回答文本与目标命中/成句/循环标记；只用于已批准的逐题追踪，默认报告不变。",
+    )
+    parser.add_argument(
         "--overwrite",
         action="store_true",
         help="目标读数件已存在时允许替换（DEBT-G115 修法③ 家族标准守卫；缺省拒覆写——"
         "默认落点是在库读数件，重跑取数须显式带此旗标）",
     )
     args = parser.parse_args()
+    started_cpu = time.process_time()
+    if args.compare_checkpoint and not args.emit_turn_trace:
+        raise SystemExit("--compare-checkpoint requires --emit-turn-trace")
     penalties = [float(value) for value in args.penalties.split(",")]
     if args.no_circuit and args.circuit:
         raise SystemExit("--no-circuit 与 --circuit 不能同时给（对照臂必须确实没挂回路）")
@@ -253,6 +285,12 @@ def main() -> int:
 
     checkpoint = PROJECT_ROOT / args.checkpoint
     sha_before = _sha256(checkpoint)
+    comparison_checkpoint = (
+        PROJECT_ROOT / args.compare_checkpoint if args.compare_checkpoint else None
+    )
+    comparison_sha_before = (
+        _sha256(comparison_checkpoint) if comparison_checkpoint is not None else None
+    )
     manifest = Path(args.manifest)
     if not manifest.is_absolute():
         manifest = PROJECT_ROOT / manifest
@@ -261,7 +299,32 @@ def main() -> int:
     #: 才撑得住"默认位"这种要写进产品默认的结论（一次取数只能记指示）。
     items = all_items[args.offset : args.offset + args.limit]
 
-    arms = [run_arm(items, checkpoint, circuit, penalty, args.chain) for penalty in penalties]
+    arms = [
+        run_arm(
+            items,
+            checkpoint,
+            circuit,
+            penalty,
+            args.chain,
+            emit_turn_trace=args.emit_turn_trace,
+        )
+        for penalty in penalties
+    ]
+    comparison_arms = (
+        [
+            run_arm(
+                items,
+                comparison_checkpoint,
+                circuit,
+                penalty,
+                args.chain,
+                emit_turn_trace=True,
+            )
+            for penalty in penalties
+        ]
+        if comparison_checkpoint is not None
+        else None
+    )
     label = (
         "product_surface_chat" if args.chain == "surface" else "base_raw_bytes_with_product_mask"
     )
@@ -281,7 +344,7 @@ def main() -> int:
         "items_sha256": _items_sha(items),
         "manifest_path": str(manifest.relative_to(PROJECT_ROOT)).replace("\\", "/"),
         "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
-        "arms": published_arms(arms, args.emit_per_item),
+        "arms": published_arms(arms, args.emit_per_item, args.emit_turn_trace),
         #: 判读线（先看线再看数）：循环率要降，**且**严格命中不许掉过 ≥3 条的分辨率线；
         #: 只满足前者＝把输出打成另一种东西，不算修。
         "verdict": {
@@ -294,6 +357,41 @@ def main() -> int:
         },
         "started_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
+    if args.emit_turn_trace:
+        checkpoint_sha_after = _sha256(checkpoint)
+        comparison_sha_after = (
+            _sha256(comparison_checkpoint) if comparison_checkpoint is not None else None
+        )
+        report.update(
+            trace_protocol="n02-v014-turn-trace-v1",
+            checkpoint_sha256_before=sha_before,
+            checkpoint_sha256_after=checkpoint_sha_after,
+            manifest_sha256=_sha256(manifest),
+            measurement_script_sha256=_sha256(Path(__file__).resolve()),
+            cpu_seconds=round(time.process_time() - started_cpu, 6),
+            cpu_limit_seconds=TURN_TRACE_CPU_LIMIT_SECONDS,
+            cpu_limit_passed=time.process_time() - started_cpu <= TURN_TRACE_CPU_LIMIT_SECONDS,
+            turn_generations=sum(
+                len(row.get("turn_trace", []))
+                for arm in [*arms, *(comparison_arms or [])]
+                for row in arm.get("per_item", [])
+            ),
+            parameter_updates=0,
+            dev_queries=0,
+            holdout_queries=0,
+            confirmation_queries=0,
+        )
+        if comparison_checkpoint is not None and comparison_arms is not None:
+            report["comparison"] = {
+                "checkpoint": args.compare_checkpoint,
+                "checkpoint_sha256_before": comparison_sha_before,
+                "checkpoint_sha256_after": comparison_sha_after,
+                "base_sha256_unchanged": comparison_sha_before == comparison_sha_after,
+                "arms": published_arms(comparison_arms, args.emit_per_item, True),
+            }
+            report["checkpoints_unchanged"] = (
+                sha_before == checkpoint_sha_after and comparison_sha_before == comparison_sha_after
+            )
     report_io.write_json_report(out, report, newline="\n", overwrite=True)
     print(json.dumps(report["arms"], ensure_ascii=False, indent=1))
     print("verdict:", json.dumps(report["verdict"], ensure_ascii=False))
