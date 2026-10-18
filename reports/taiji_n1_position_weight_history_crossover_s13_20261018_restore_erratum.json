@@ -1,0 +1,35 @@
+{
+  "schema": "n1-position-weight-history-crossover-prequery-restore-erratum-v1",
+  "source_report": {
+    "path": "reports/taiji_n1_position_weight_history_crossover_s13_20261018.json",
+    "sha256": "388e8ebe7717e5086e1dc8feb746c69854dad88411d152a10fe5c84f731d3a00"
+  },
+  "source_attempt": {
+    "path": "reports/taiji_n1_position_weight_history_crossover_s13_20261018_attempt.json",
+    "sha256": "3dcca6b75656ff1fec061db1296160f6ed783ccd3ca86920d7e7edbe7d56d61e"
+  },
+  "execution": {
+    "status": "stopped_before_model_queries",
+    "cpu_seconds": 9.703125,
+    "checkpoint_payload_reads": 2,
+    "successfully_restored_models": 1,
+    "model_queries": 0,
+    "parameter_updates": 0,
+    "optimizer_steps": 0,
+    "checkpoint_saves": 0,
+    "dev_queries": 0,
+    "holdout_queries": 0,
+    "confirmation_queries": 0,
+    "checkpoint_hashes_unchanged": true,
+    "can_promote": false
+  },
+  "counter_clarification": "The source report records checkpoint_loads=1, counting only a checkpoint whose full model restore returned successfully. Both checkpoint payloads were decoded: the baseline model restored; the N1-110 payload was rejected before model construction by the run100 loader's training-protocol identity check.",
+  "root_cause": {
+    "loader_expected_protocol_schema": "n1-hard-neighbor-fresh-paired-training-v1",
+    "candidate_report_protocol_schema": "n1-hard-neighbor-length-balanced-training-v1",
+    "error": "ValueError: fixed fresh training marker, identity, phase and rule required"
+  },
+  "query_surface_consumed": false,
+  "retry_allowed_by_plan111": false,
+  "no_dev_holdout_or_confirmation_access": true
+}

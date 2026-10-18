@@ -1,6 +1,6 @@
-# PLAN-N1-111：seed13/position 权重—观察历史交叉归因（待批准）
+# PLAN-N1-111：seed13/position 权重—观察历史交叉归因（执行结案）
 
-**状态：提案，尚未实现或查询。** 这是一个新的训练面交叉诊断；需 owner 明确批准后才可实施。
+**状态：已停止，未发出模型查询。** Owner 于 2026-10-18 批准本方案。批准时方案快照 SHA-256：`2072eec6d9be795d6245826d3fe267ea5eeceebc79bb2fc6fd1bdec8ce238c74`。首次 runner 在恢复候选 checkpoint 时触发协议校验错误；依本文单次执行约束，不在 PLAN-N1-111 下重试。
 
 ## 依据与问题
 
@@ -37,3 +37,14 @@
 - 若候选权重配基线历史仍失败，而基线权重配候选历史通过，证据将指向网络参数变化一侧；相反则指向历史内容一侧。
 - 若两个混合都失败或都通过，结果说明存在交互或该 2×2 对照不足以分离来源；不得把单一混合结果包装成因果结论。
 - 即使原生锚点复现且混合出现明显差异，该训练面结果也不替代新未见确认面；任何新训练 recipe、架构变化或新确认面均需另立冻结计划。
+
+## 执行记录（2026-10-18）
+
+- 合同测试 4 项通过；Ruff、Black、Python 编译通过；来源预检复现了原生锚点的封存门值：baseline 48/48、48/48，N1-110 candidate 5/48、4/48。预检未加载 checkpoint、未查询模型。
+- 一次正式 runner CPU 9.703125 秒后停止。baseline checkpoint 完整恢复 1 枚；候选 payload 解码后，被 run100 专用 `load()` 拒绝：该加载器要求 `n1-hard-neighbor-fresh-paired-training-v1`，N1-110 candidate 使用 `n1-hard-neighbor-length-balanced-training-v1`。这是恢复契约不兼容，checkpoint/source hashes 未漂移。
+- 查询与更新均为 0；两个 checkpoint 前后哈希一致；dev、holdout、confirmation 均为 0。两个 native anchor 与 hybrid 都没有运行。本报告字段 `checkpoint_loads=1` 统计完整恢复成功数；另见[计数澄清](../../reports/taiji_n1_position_weight_history_crossover_s13_20261018_restore_erratum.json)：实际两个 payload 均已解码，但只有 baseline 完整恢复。
+- 执行报告：[`报告`](../../reports/taiji_n1_position_weight_history_crossover_s13_20261018.json)，SHA-256 `388e8ebe7717e5086e1dc8feb746c69854dad88411d152a10fe5c84f731d3a00`。
+
+## 唯一建议的下一步
+
+审议[PLAN-N1-112 修订提案](PLAN-N1-112_position_weight_history_crossover_restore_revision_draft_20261018.md)。它保持相同模型、训练题项、四格与 1,536 条查询，只修正候选 checkpoint 的 bundle 恢复契约，并使用新的 write-once 输出。因为本方案明确 `retry_allowed=false`，该独立批次需 owner 裁定后才可执行。

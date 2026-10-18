@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：等待 owner 对 PLAN-N1-111 新查询测面作裁定
+## 当前唯一下一步：等待 owner 对 PLAN-N1-112 恢复契约修订作裁定
 
 ### 最新状态（2026-10-18）
 
@@ -8,7 +8,9 @@ PLAN-N1-110 九模型长度平衡训练已完整结束：221,184 次更新、CPU
 
 只读归因显示 run100 seed13/position 基线四条件联合为 48/48，而长度平衡候选降至 5/4；free 与 teacher 评分一致，错答均为合法方向词。V014 的单题逐轮追踪也已完成，报告见 [V014 turn trace](../../../reports/taiji_c4g1_replay_pi_V014_turn_trace_20261018.json)；该单题不支持因果或泛化主张。
 
-当前待裁草案：[PLAN-N1-111](../../reference/PLAN-N1-111_position_weight_history_crossover_diagnostic_draft_20261018.md) 提议在两枚 seed13/position 冻结 checkpoint 间做网络状态×观察历史 2×2 交叉归因，共 1,536 条已消费训练面查询、CPU≤600秒，不训练、不读 dev/holdout、不造 v11 面。此项是新的查询测面；批准前不得实现或运行。
+PLAN-N1-111 已获批准，但唯一一次 runner 在候选恢复处停止：baseline 完整恢复，N1-110 candidate 被 run100 专用 protocol loader 拒绝；未发出模型查询、未更新参数，两枚 checkpoint 哈希未变。执行报告与计数澄清见 [PLAN-N1-111](../../reference/PLAN-N1-111_position_weight_history_crossover_diagnostic_draft_20261018.md) 和 [restore erratum](../../../reports/taiji_n1_position_weight_history_crossover_s13_20261018_restore_erratum.json)。该方案的 retry_allowed=false 已遵守。
+
+当前唯一待裁草案：[PLAN-N1-112](../../reference/PLAN-N1-112_position_weight_history_crossover_restore_revision_draft_20261018.md) 保持相同的两枚 checkpoint、48 个已消费 train transition 父项、四条件及 original/rename 视图，仅改为按各 checkpoint 自身报告核验协议并恢复共享 bundle 格式；原生锚点逐行复现后才运行两个 hybrid。它拟使用独立 write-once 输出，共 1,536 次查询、CPU≤600秒，0更新/留出查询；本提案尚未获准。
 
 N02/C4 remains unresolved: the material-floor adjudicator reports `cost_persists` (`J_N02_1=not_resolved`, `J_N02_2=cost_persists`); this result does not authorize new training or C5. See [the C4 report](../../../reports/taiji_n02_c4_net_gain_with_material_floor_c4g1_20261018.json).
 
