@@ -4420,3 +4420,13 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 顺带把成本从台账估计改成实测：两趟 `seconds`＝1389.6／1411.6（≈23.2／23.5 分钟），对照臂 `guard2` 只投影（`projection_records=200`）⇒ 一次双臂配对 ≈24 分钟量级。§6 表那句"≈45–60 分钟"原本无出处，已在 §6ter 第 6 条就地替换为实测参考。
 - 这一步在主线里的位置（不是拖，是排错顺序）：owner 已裁 C4 选①，但 P5 改权重批文未给；本轮把 B 档的**输入链**逐格试到底——`--gain`（已有真件）→ `--gain-face`（本轮补出新只读仪，现读 `usable_endpoints=1`／`single_channel_only`）→ `--noise-floor`（这一格给不出可辩护来源）。结论是：**先补代码身份列＋一趟重复地板，再花那 24 分钟**，否则跑完仍停在"尺未证"，白花机时；这也是 §2 的 P-尺纪律对本包的直接约束。
 - 边界：零模型查询、零参数更新、不动权重、不动 `taiji/`；本轮只动 PLAN-N-02（§6ter 加两条）与债表一行（G168）。判据一个字没动——我改的是**地板的生产条件**，不是 J-N-02-1 的形状。
+
+### ㊵-1118 【2026-10-18 · 整面第三次现取＝5 failed／3230 passed（前两次 20／3206、8／3219）；㊵-1112 那笔算式今天升成读数，且收集总数 3227→3235 的差额恰等于本轮新增的 8 条测】
+
+- 读数（现取、单跑、跑期间零写树）：`python -m pytest tests/taiji_native -q --tb=line -p no:cacheprovider` = **5 failed／3230 passed／9 skipped／1 xfailed in 1840.20s**，`RC_PYTEST=1`（日志 `face8.log`）。**交叉核对**：失败＋通过＝3235，上一趟（㊵-1113）为 3227，差额 8 恰等于本轮新增合同测条数（增益面尺仪 7 条＋N2B 代码身份 1 条）⇒ 没有用例被静默挤出去，也没有分母漂移；这条核对由脚本自己算，不靠我心算。
+- 本轮四处修正在**同一进程**里全部得到证实（不是只在 5 秒小面里绿）：CpuBudget 一族 12 枚、`install()` 还原集 1 枚、截断样本假缺席 1 枚、父子进程线程数 1 枚，共 15 枚顺序/取法红全部消失；小面曾漏掉的那枚（`test_native_transition_factorial_confirmation_contract::test_unbound_terminal_sha_refuses_before_model_or_face_reads`）在大面里也不再红——这正是"守卫在真实运行形态里是否为假"的差别。
+- 剩下的 5 枚逐枚有主（脚本按文件聚合实测）：`test_b0_n2_stop_reason_disposition_contract.py` 1 枚；`test_n1_plan110_length_balanced_runner_contract.py` 1 枚；`test_n5_38_ledger_cited_reports_contract.py` 2 枚；`test_prereg_wording_corpus_ratchet_contract.py` 1 枚。归属＝`test_n5_38_ledger_cited_reports_contract` 两枚挂在并发腿那枚**尚未出版的一次性写靶**（DEBT-G166，它自己跑 `--validate-only` 即消）；`test_b0_n2_stop_reason_disposition_contract` 一枚是 owner 裁"维持红、等逐条裁"的 N2 审阅面（DEBT-G164）；`test_prereg_wording_corpus_ratchet_contract` 一枚同为裁"维持红"的措辞门适用范围（DEBT-G162）；`test_n1_plan110_length_balanced_runner_contract` 一枚属并发腿自己的 runner 守卫。**整面已无"成因未定"也无"我这一侧待修"的红。**
+- C4 那条腿这一轮的实质推进（全部零模型查询）：`--gain` 有真件；`--gain-face` 由新仪补出并现读 `usable_endpoints=1`／`single_channel_only`；`--noise-floor` 这格**判不了**——两枚同参数 N2B 件的 Δquality 为 −1.1086209986387523 与 ＋2.4829673663245373（极差 3.5915883649632896）而两枚都不自述代码身份 ⇒ 已把代码身份列落进生产仪（`code_identity()`，合同测 5 passed），成本也从无出处估计改成实测（单臂 `seconds` 1389.6／1411.6 ⇒ 一次双臂配对 ≈24 分钟）。发射顺序钉死为"带身份的重复 → 接地板 → 才跑 B 档"，P5 改权重批文仍未给。
+- 边界：零权重改动、零模型查询、不动 `taiji/`、不动并发腿在飞的两个文件；本轮只动台账这一条。未推数与 HEAD 由下一行现取。
+
+- 现取锚点：HEAD＝fd1e875d4，未推数＝97。
