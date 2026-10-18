@@ -121,17 +121,24 @@ def _sleep_state_file(store_dir: Path) -> Path:
 
 
 def snapshot_material_state(store_dir: Path, source: Path) -> dict[str, Any]:
-    """把状态收进 `store_dir`；本来不存在也记成"应回到不存在"，否则恢复会留下影子文件。"""
+    """把状态收进 `store_dir`；本来不存在也记成"应回到不存在"，否则恢复会留下影子文件。
+
+    **快照只收一次**：目录里已有快照时不再用当前状态覆盖它。配对的第二趟必须回到与第一趟
+    同一个基线（跑完之后状态是被前一趟消耗过的那份），静默重抓会把"同配置"这件事悄悄作废。
+    """
 
     store_dir.mkdir(parents=True, exist_ok=True)
+    target = store_dir / SNAPSHOT_FILE
+    if target.is_file():
+        return {"present": source.is_file(), "reused_existing": True}
     present = source.is_file()
     payload: Any = json.loads(source.read_text(encoding="utf-8")) if present else {"absent": True}
-    (store_dir / SNAPSHOT_FILE).write_text(
+    target.write_text(
         json.dumps(payload, ensure_ascii=False, sort_keys=True) + "\n",
         encoding="utf-8",
         newline="\n",
     )
-    return {"present": present}
+    return {"present": present, "reused_existing": False}
 
 
 def restore_material_state(store_dir: Path, source: Path) -> None:

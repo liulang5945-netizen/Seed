@@ -165,7 +165,10 @@ def test_snapshot_of_an_absent_state_leaves_no_shadow_file(tmp_path) -> None:
     runner = _module()
     store = tmp_path / "snap"
     state = tmp_path / "nested" / "sleep_state.json"
-    assert runner.snapshot_material_state(store, state) == {"present": False}
+    assert runner.snapshot_material_state(store, state) == {
+        "present": False,
+        "reused_existing": False,
+    }
     state.parent.mkdir(parents=True, exist_ok=True)
     state.write_text('{"passes": 9}', encoding="utf-8")  # 一趟跑完后产品自己写出来的
     runner.restore_material_state(store, state)
@@ -194,4 +197,23 @@ def test_material_reset_restores_even_when_the_phase_raises(tmp_path, monkeypatc
     monkeypatch.setattr(runner, "phase_powerup2", draining_phase)
     with pytest.raises(RuntimeError, match="boom"):
         runner.run_powerup2_with_material_reset(store)
+    assert json.loads(state.read_text(encoding="utf-8"))["projected"] == ["a"]
+
+
+def test_an_existing_snapshot_is_not_silently_recaptured(tmp_path) -> None:
+    """配对的两趟必须回到同一个基线：目录里已有快照时，不许拿「被前一趟消耗过」的状态覆盖它。"""
+    runner = _module()
+    store = tmp_path / "snap"
+    state = tmp_path / "data" / "state.json"
+    state.parent.mkdir(parents=True)
+    state.write_text('{"passes": 1, "projected": ["a"]}', encoding="utf-8")
+    assert runner.snapshot_material_state(store, state) == {
+        "present": True,
+        "reused_existing": False,
+    }
+    first = (store / runner.SNAPSHOT_FILE).read_bytes()
+    state.write_text('{"passes": 2, "projected": []}', encoding="utf-8")
+    assert runner.snapshot_material_state(store, state)["reused_existing"] is True
+    assert (store / runner.SNAPSHOT_FILE).read_bytes() == first, "快照被静默重抓 ⇒ 两趟不同基线"
+    runner.restore_material_state(store, state)
     assert json.loads(state.read_text(encoding="utf-8"))["projected"] == ["a"]
