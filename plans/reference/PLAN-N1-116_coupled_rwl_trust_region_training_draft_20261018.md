@@ -28,6 +28,10 @@
 - checkpoint-preflight attempt [`receipt`](../../reports/taiji_n1_coupled_rwl_length_balanced_training_20261018_checkpoint_preflight_attempt.json)，SHA-256 `5d3034853bed21cfcca6e962af2f9a5482d69419188a2f673c3544e7a056518c`。它在读取首个run83 zero来源时，以`strict fresh initialization marker, phase, rule and identity required`停止；新checkpoint保存数0、训练更新0、已知模型查询0，目标目录为空。
 - 独立离线故障报告 [`failure audit`](../../reports/taiji_n1_coupled_rwl_length_balanced_training_20261018_checkpoint_preflight_failure.json)，SHA-256 `731cedcdfe8e0ccd7be97d22cc81eefab20be6bb3f5d7d1ac78cd54f2d20914e`。根因是加载旧run83 zero时，旧loader将其update-policy与已切换的coupled policy比较；不是模型/optimizer/RNG恢复不等。
 
+## N1-117 训练结案
+
+[PLAN-N1-117](PLAN-N1-117_coupled_rwl_source_loader_revision_draft_20261018.md) 已完成固定训练批次：九端点221,184次更新，CPU9,396.21875秒，18/18 zero/final独立恢复相等。seed13/position joint-four仅24/48 original、23/48 rename，未过原44门；rename transition 41/48通过40门。门失败后不追加、不查询确认面。
+
 ## 唯一下一步
 
-由[PLAN-N1-117](PLAN-N1-117_coupled_rwl_source_loader_revision_draft_20261018.md)使用独立report/checkpoint路径，针对legacy zero schema临时桥接旧policy完成来源校验；新的coupled checkpoint仍严格用新policy恢复。其静态schedule readiness与source binding已通过；下一步执行九个zero checkpoint保存及独立恢复前置，成功后运行固定221,184更新批次。
+对N1-117 position seed13已封存训练报告做只读轨迹和父项错误归因，比较RWL共享scale与N1-110独立组scale；不加载模型/checkpoint、不新增模型查询、不训练。

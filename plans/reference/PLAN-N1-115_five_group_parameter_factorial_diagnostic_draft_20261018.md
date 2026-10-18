@@ -38,4 +38,4 @@
 
 ## 唯一建议的下一步
 
-[PLAN-N1-116](PLAN-N1-116_coupled_rwl_trust_region_training_draft_20261018.md) 将协调式reader/writer/local更新保持写成固定配方；静态runner验证通过，但zero-checkpoint来源加载被旧policy身份守卫拒绝，保留结案。针对兼容边界的独立一次性修订见[PLAN-N1-117](PLAN-N1-117_coupled_rwl_source_loader_revision_draft_20261018.md)；其零查询readiness和source binding已通过，唯一下一步是九个zero checkpoint完整保存及独立恢复前置。
+[PLAN-N1-116](PLAN-N1-116_coupled_rwl_trust_region_training_draft_20261018.md) 与来源修订[PLAN-N1-117](PLAN-N1-117_coupled_rwl_source_loader_revision_draft_20261018.md)已完成固定九端点训练，但seed13/position joint-four 24/23未过原44门。唯一下一步为对这次共享RWL scale与N1-110独立组scale做零模型访问轨迹和父项错误归因。

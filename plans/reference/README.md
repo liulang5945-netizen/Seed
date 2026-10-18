@@ -86,7 +86,7 @@
 - [PLAN-N1-114 更新轨迹归因](PLAN-N1-114_seed13_parameter_update_trajectory_attribution_20261018.md)：已有 shard 的 task/path/length 更新统计，不访问模型。
 - [PLAN-N1-115 五组参数全因子诊断](PLAN-N1-115_five_group_parameter_factorial_diagnostic_draft_20261018.md)：11,520条train-only查询完成，CPU85.984秒；逐父项离线归因显示reader/writer/local净损害同一批48项，且有正向两两交互；未训练/未查留出。下一步静态核验协调式读出保持契约。
 - [PLAN-N1-116 协调式RWL信任半径训练](PLAN-N1-116_coupled_rwl_trust_region_training_draft_20261018.md)：静态runner验证通过，但legacy zero载入policy守卫失败；0新checkpoint/更新，保留失败回执并关闭此attempt。
-- [PLAN-N1-117 legacy来源加载修订](PLAN-N1-117_coupled_rwl_source_loader_revision_draft_20261018.md)：九个zero bundle保存及独立恢复全部通过（CPU56.656秒，9/9 source match、9/9 restore equal）；固定221,184更新批次正在执行，沿用原训练门，不查询dev/holdout/confirmation。
+- [PLAN-N1-117 legacy来源加载修订](PLAN-N1-117_coupled_rwl_source_loader_revision_draft_20261018.md)：九端点训练完成、CPU9,396.22秒、18/18恢复相等；seed13/position joint-four 24/23未过44门，transition 41过40门；无留出查询/晋升。下一步离线归因共享scale轨迹与父项错误。
 
 ## M5 蒸馏层（20 件收口/批准/宣言/设计＋墓碑）
 
