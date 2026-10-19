@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **2026-10-19 N1当前队首（取代下列N1快照）**：[N1-126](../reference/PLAN-N1-126_execution_closeout_20261019.md)至[N1-132](../reference/PLAN-N1-132_execution_closeout_20261019.md)已完成：N126–128只在已消费面做金标准目标行干预，N129–131确认目标行信号存在但剩余cut转向错误属于seed13 inverse-turn；这些均非自主能力证据。N1-132三个position seed在原192 train gate全部通过，无dev/v13/v14/confirmation查询，`can_promote=false`。N1-133已修订为评估N1-132 continuation package的泛化，不作`L_bind`单独因果主张；12/12计划endpoint哈希核验通过但未生成新面。当前唯一队首是讨论该测试的estimand与范围，再决定是否申请新v15测面；详见[N1-133草案](../reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)、[核验报告](../../reports/taiji_n1_plan133_pre_authorization_endpoint_integrity_20261019.json)和[03](roadmap/03_CURRENT_EXECUTION.md)。
+> **2026-10-19 N1当前队首（取代下列N1快照）**：[N1-126](../reference/PLAN-N1-126_execution_closeout_20261019.md)至[N1-132](../reference/PLAN-N1-132_execution_closeout_20261019.md)已结案。N126–128是金标准目标行oracle干预，N129–131把剩余oracle cut误差定位为seed13反向转向；N1-132三seed原192 train gate全部通过，但无dev/v13/v14/确认查询，`can_promote=false`。N1-133已获批准，目标是验证N1-132续训包的v15泛化，不作`L_bind`单独因果主张；来源并集静态核验7,308实体名/5,808词值，12个endpoint哈希已核对。当前唯一下一步为完成零查询readiness与12个完整bundle恢复；通过前不生成题面。详见[N1-133计划](../reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)、[来源并集预检](../../reports/taiji_n1_plan133_source_union_precheck_v2_20261019.json)、[终点核验](../../reports/taiji_n1_plan133_pre_authorization_endpoint_integrity_20261019.json)和[03](roadmap/03_CURRENT_EXECUTION.md)。
 
 > 历史 N1-123 队首快照，已由上方 N1-127 结案与当前 N1-128 队首取代。
 

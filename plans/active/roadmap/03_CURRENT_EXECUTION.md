@@ -1,12 +1,12 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：讨论并冻结 PLAN-N1-133 的测试估计目标
+## 当前唯一下一步：完成 N1-133 零查询readiness与12个endpoint bundle恢复
 
 ### 最新状态（2026-10-19）
 
 **N1-126至N1-132已结案。** 126–128在同一已消费v13/v14面上显示gold-target行限制可恢复位置臂全部样本、cut臂至86/90，但这是oracle干预；129–130发现原生alignment已有目标事实质量，却不能区分正确/错误；131将剩余cut错误定位为seed13的inverse-turn。132加入`0.25 * L_bind`并对三个N1-120 position parent各续训9,216步；三seed原train门均通过，2,880条全为train-only评分。总更新27,648，执行CPU980.40625秒、累计1,006.421875秒；dev/v13/v14/confirmation均0，`can_promote=false`。因此训练拟合已收束，但自主泛化未验证，且没有matched no-bind续训臂来单独归因`L_bind`。完整对账见[N1-132结案](../../reference/PLAN-N1-132_execution_closeout_20261019.md)。
 
-经修订的[PLAN-N1-133](../../reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)将回答限定为“N1-132 continuation package是否在新v15家族泛化”，不声称`L_bind`单独带来因果增益。面规模和数值门不变：seed115，40题、16 observations、d=1；12个planned endpoint哈希已核验12/12，见[预授权audit](../../../reports/taiji_n1_plan133_pre_authorization_endpoint_integrity_20261019.json)。若讨论后批准，先在9个主端点对20题做180条sacrifice；仅当至少6/9端点在15个lookup/revision/transition题中各错≥6题，才在12端点上做240条confirm，总上限420条。确认门沿用N1-121数值（N132每seed≥10/20、每类≥2/5、聚合position比terminal和cut各高≥12/60）；同seed N1-120 position parent差值按种子/类别报配对增减但不另设门。CPU≤1,200秒，不训练、不查dev、不重抽、不晋升。当前待讨论的关键是这个package-level estimand是否满足需要；若要隔离`L_bind`作用，必须另加匹配无`L_bind`续训臂，属于新训练方案，当前不含。讨论并冻结测验目标前不生成或查询新面。
+经修订的[PLAN-N1-133](../../reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)已获owner批准，估计目标为“N1-132续训包是否在新v15家族泛化”，不声称`L_bind`单独带来因果增益。面规模和数值门冻结：seed115，40题、16条观测、d=1；来源排除并集7,308个实体名/5,808个词值，88个旧来源哈希均匹配；12个planned endpoint哈希核验12/12。当前先跑零查询来源readiness并重读恢复所有12个完整bundle。全部通过后才生成面，随后在9个主端点查20题sacrifice（180条）；15道lookup/revision/transition题中至少6/9端点各错≥6题才对12个端点查20题confirm（240条，总上限420）。确认门沿用N1-121数值：N132每seed≥10/20、每类≥2/5、聚合position比terminal和cut各高≥12/60；position母档配对差值只作描述。CPU≤1,200秒，不训练、不查dev、不重抽、不晋升。此包级测试不隔离绑定损失的单独因果作用。
 
 以下N1-123及更早段落为历史证据与队首快照，不取代上方当前状态。
 
