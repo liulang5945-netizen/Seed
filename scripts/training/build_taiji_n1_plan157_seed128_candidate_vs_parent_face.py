@@ -7,6 +7,7 @@ import hashlib
 import json
 import sys
 import time
+from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -25,6 +26,8 @@ from scripts.training import run_taiji_n1_v27_length_robust_training_after_n149 
 
 PLAN = ROOT / "plans/reference/PLAN-N1-157_seed128_candidate_vs_parent_fresh_diagnostic_20261020.md"
 PLAN_SHA256 = "ad097dc74c03d9df49a1101d4af3b7159c1ab4741e586b73557cf8e4f6f50e44"
+CORRECTION_ADDENDUM = ROOT / "plans/reference/PLAN-N1-157A_remaining_endpoint_continuation_20261020.md"
+CORRECTION_SHA256 = "54e854274d33153a5379ad5a3cf004be65cd3fcceddd0f431359f6026296934e"
 N150_RESULT = n150.RESULT
 N150_RESULT_SHA256 = n155_builder.N150_RESULT_SHA256
 N155A_RESULT = n155_builder.RESULT
@@ -34,25 +37,42 @@ N155A_PROGRESS_SHA256 = "83e951930272d30ab3b70a0164dba0ef628d8876a8138708be08a97
 N156_REPORT = n156.REPORT
 N156_REPORT_SHA256 = "8952b96d41a2380a7325f691f211e4d63bfff0d4543e38665a39e30c9cd51a75"
 
-SOURCE_AUDIT = ROOT / "reports/taiji_n1_plan157_candidate_parent_source_audit_20261020.json"
-READINESS = ROOT / "reports/taiji_n1_plan157_candidate_parent_readiness_20261020.json"
-READINESS_ATTEMPT = ROOT / "reports/taiji_n1_plan157_candidate_parent_readiness_attempt_20261020.json"
-SOURCE_BINDING = ROOT / "reports/taiji_n1_plan157_candidate_parent_source_binding_20261020.json"
-PREFLIGHT = ROOT / "reports/taiji_n1_plan157_candidate_parent_preflight_20261020.json"
-PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_plan157_candidate_parent_preflight_attempt_20261020.json"
-PREFLIGHT_BINDING = ROOT / "reports/taiji_n1_plan157_candidate_parent_preflight_binding_20261020.json"
+PRIOR_SOURCE_AUDIT = ROOT / "reports/taiji_n1_plan157_candidate_parent_source_audit_20261020.json"
+PRIOR_READINESS = ROOT / "reports/taiji_n1_plan157_candidate_parent_readiness_20261020.json"
+PRIOR_READINESS_ATTEMPT = ROOT / "reports/taiji_n1_plan157_candidate_parent_readiness_attempt_20261020.json"
+PRIOR_SOURCE_BINDING = ROOT / "reports/taiji_n1_plan157_candidate_parent_source_binding_20261020.json"
+PRIOR_PREFLIGHT = ROOT / "reports/taiji_n1_plan157_candidate_parent_preflight_20261020.json"
+PRIOR_PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_plan157_candidate_parent_preflight_attempt_20261020.json"
+PRIOR_PREFLIGHT_BINDING = ROOT / "reports/taiji_n1_plan157_candidate_parent_preflight_binding_20261020.json"
+PRIOR_ATTEMPT = ROOT / "reports/taiji_n1_plan157_candidate_parent_attempt_20261020.json"
+PRIOR_PROGRESS = ROOT / "reports/taiji_n1_plan157_candidate_parent_progress_20261020.jsonl"
+PRIOR_RESULT = ROOT / "reports/taiji_n1_plan157_candidate_parent_result_20261020.json"
+PRIOR_RESULT_SHA256 = "137d822768b6d75405dfa8a521bd6e0754e6632200e8cb674416a20464aa912d"
+PRIOR_ATTEMPT_SHA256 = "59ac9c47bde0835c7dd2a02d22bd42e130e1d8c24a1e886cd094fb898350b492"
+PRIOR_PROGRESS_SHA256 = "7619efac685175e87968e58bdcc362ea9c5bb38ebdb0d8cff0dad6af0980809a"
+PRIOR_FACE_SHA256 = "cf34e7de874b316581c4c6520786e2bf6406d328d4989b869901eb667e9c9a2f"
+PRIOR_FACE_AUDIT_SHA256 = "6372edd97bb3434b7d15004ff517521c0580ce2a844bce46e6e94e2044e96664"
+PRIOR_FACE_CHECKS_SHA256 = "d5e2df062a8912c07b172a1db08e94ac3835c7a1b1bc459b6ecfeb38519b2404"
+PRIOR_LINKED_CPU_SECONDS = 9_502.03125
+PRIOR_QUERIES = 480
+SOURCE_AUDIT = ROOT / "reports/taiji_n1_plan157a_candidate_parent_source_audit_20261020.json"
+READINESS = ROOT / "reports/taiji_n1_plan157a_candidate_parent_readiness_20261020.json"
+READINESS_ATTEMPT = ROOT / "reports/taiji_n1_plan157a_candidate_parent_readiness_attempt_20261020.json"
+SOURCE_BINDING = ROOT / "reports/taiji_n1_plan157a_candidate_parent_source_binding_20261020.json"
+PREFLIGHT = ROOT / "reports/taiji_n1_plan157a_candidate_parent_preflight_20261020.json"
+PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_plan157a_candidate_parent_preflight_attempt_20261020.json"
+PREFLIGHT_BINDING = ROOT / "reports/taiji_n1_plan157a_candidate_parent_preflight_binding_20261020.json"
 FACE = ROOT / "plans/manifests/n1_plan157_v30_candidate_vs_parent_seed128_20261020.json"
 FACE_AUDIT = ROOT / "reports/taiji_n1_plan157_v30_candidate_vs_parent_face_audit_20261020.json"
 FACE_CHECKS = ROOT / "reports/taiji_n1_plan157_v30_candidate_vs_parent_face_checks_20261020.json"
-ATTEMPT = ROOT / "reports/taiji_n1_plan157_candidate_parent_attempt_20261020.json"
-PROGRESS = ROOT / "reports/taiji_n1_plan157_candidate_parent_progress_20261020.jsonl"
-RESULT = ROOT / "reports/taiji_n1_plan157_candidate_parent_result_20261020.json"
+ATTEMPT = ROOT / "reports/taiji_n1_plan157a_candidate_parent_attempt_20261020.json"
+PROGRESS = ROOT / "reports/taiji_n1_plan157a_candidate_parent_progress_20261020.jsonl"
+RESULT = ROOT / "reports/taiji_n1_plan157a_candidate_parent_result_20261020.json"
 TEST = ROOT / "tests/taiji_native/test_n1_plan157_seed128_candidate_vs_parent_diagnostic_contract.py"
 
 SEEDS = (11, 12, 13)
 BRANCHES = ("unknown8_rebalanced", "length_mixed_parent")
 ENDPOINTS = tuple((seed, branch) for seed in SEEDS for branch in BRANCHES)
-PRIOR_LINKED_CPU_SECONDS = 9_328.078125
 CPU_LIMIT_SECONDS = 3_600.0
 LINKED_CPU_LIMIT_SECONDS = 18_000.0
 ITEMS_PER_KIND = 40
@@ -80,12 +100,6 @@ def sha256(path: Path) -> str:
         for block in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
-
-
-def canonical_sha(value: object) -> str:
-    return hashlib.sha256(
-        json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
-    ).hexdigest()
 
 
 def digest_strings(values: set[str]) -> str:
@@ -125,9 +139,18 @@ def _result_rows(result: dict, branch: str) -> dict[int, dict]:
 def source_context() -> tuple[list[dict], dict[str, str], dict]:
     if sha256(PLAN) != PLAN_SHA256:
         raise Refuse("PLAN-N1-157 plan SHA changed")
+    if sha256(CORRECTION_ADDENDUM) != CORRECTION_SHA256:
+        raise Refuse("PLAN-N1-157A correction addendum SHA changed")
     n150_result = read_json(N150_RESULT)
     n155a_result = read_json(N155A_RESULT)
     n156_report = read_json(N156_REPORT)
+    prior_result = read_json(PRIOR_RESULT)
+    prior_attempt = read_json(PRIOR_ATTEMPT)
+    prior_readiness = read_json(PRIOR_READINESS)
+    prior_preflight = read_json(PRIOR_PREFLIGHT)
+    prior_face = read_json(FACE)
+    prior_face_audit = read_json(FACE_AUDIT)
+    prior_face_checks = read_json(FACE_CHECKS)
     require(sha256(N150_RESULT) == N150_RESULT_SHA256, "N1-150 result SHA changed")
     require(sha256(N155A_RESULT) == N155A_RESULT_SHA256, "N1-155A result SHA changed")
     require(sha256(N155A_PROGRESS) == N155A_PROGRESS_SHA256, "N1-155A progress SHA changed")
@@ -156,6 +179,57 @@ def source_context() -> tuple[list[dict], dict[str, str], dict]:
         and n156_report.get("source_hashes_unchanged") is True
         and n156_report.get("can_promote") is False,
         "N1-156 attribution/source binding is incomplete",
+    )
+    prior_rows = prior_result.get("fresh_diagnostic_rows", [])
+    prior_progress_rows = [
+        json.loads(line)
+        for line in PRIOR_PROGRESS.open(encoding="utf-8")
+    ]
+    prior_strata = Counter(
+        (int(row.get("context_length", -1)), str(row.get("kind")))
+        for row in prior_rows
+        if int(row.get("seed", -1)) == 11 and row.get("branch") == "unknown8_rebalanced"
+    )
+    require(
+        sha256(PRIOR_RESULT) == PRIOR_RESULT_SHA256
+        and sha256(PRIOR_ATTEMPT) == PRIOR_ATTEMPT_SHA256
+        and sha256(PRIOR_PROGRESS) == PRIOR_PROGRESS_SHA256
+        and sha256(FACE) == PRIOR_FACE_SHA256
+        and sha256(FACE_AUDIT) == PRIOR_FACE_AUDIT_SHA256
+        and sha256(FACE_CHECKS) == PRIOR_FACE_CHECKS_SHA256
+        and prior_result.get("status") == "stopped"
+        and prior_result.get("complete") is False
+        and prior_result.get("fresh_queries") == PRIOR_QUERIES
+        and prior_result.get("parameter_updates") == 0
+        and prior_result.get("dev_queries") == 0
+        and prior_result.get("holdout_queries") == 0
+        and prior_result.get("confirmation_queries") == 0
+        and len(prior_rows) == PRIOR_QUERIES
+        and prior_progress_rows == prior_rows
+        and all(row.get("event") == "fresh_diagnostic_row" for row in prior_progress_rows)
+        and {int(row.get("seed", -1)) for row in prior_rows} == {11}
+        and {str(row.get("branch")) for row in prior_rows} == {"unknown8_rebalanced"}
+        and prior_strata == Counter({(length, kind): ITEMS_PER_KIND for length in LENGTHS for kind in KINDS})
+        and prior_result.get("errors")
+        == ["Refuse: PLAN-N1-157 fresh score stratum mismatch: 11/length_mixed_parent/8/lookup"]
+        and prior_result.get("source_hashes_unchanged") is True
+        and prior_result.get("progress_integrity", {}).get("complete") is True
+        and prior_result.get("progress_integrity", {}).get("line_count") == PRIOR_QUERIES
+        and prior_result.get("progress_integrity", {}).get("progress_sha256") == PRIOR_PROGRESS_SHA256
+        and prior_result.get("cumulative_linked_cpu_seconds") == PRIOR_LINKED_CPU_SECONDS
+        and prior_attempt.get("status") == "started"
+        and prior_attempt.get("face_sha256") == PRIOR_FACE_SHA256
+        and prior_attempt.get("planned_queries") == TOTAL_QUERIES
+        and prior_attempt.get("model_queries") == 0
+        and prior_attempt.get("parameter_updates") == 0
+        and prior_readiness.get("complete") is True
+        and prior_preflight.get("complete") is True
+        and prior_preflight.get("independent_restore_count") == 6
+        and prior_face.get("seed") == 128
+        and prior_face.get("total_queries") == TOTAL_QUERIES
+        and prior_face_audit.get("status") == "complete"
+        and prior_face_checks.get("status") == "complete",
+        "PLAN-N1-157A requires the sealed 480-row endpoint and intact face/preflight evidence",
     )
     parents = _result_rows(n150_result, "length_mixed")
     candidates = _result_rows(n155a_result, "unknown8_rebalanced")
@@ -196,6 +270,20 @@ def source_context() -> tuple[list[dict], dict[str, str], dict]:
         N155A_RESULT,
         N155A_PROGRESS,
         N156_REPORT,
+        CORRECTION_ADDENDUM,
+        PRIOR_RESULT,
+        PRIOR_ATTEMPT,
+        PRIOR_PROGRESS,
+        PRIOR_SOURCE_AUDIT,
+        PRIOR_READINESS,
+        PRIOR_READINESS_ATTEMPT,
+        PRIOR_SOURCE_BINDING,
+        PRIOR_PREFLIGHT,
+        PRIOR_PREFLIGHT_ATTEMPT,
+        PRIOR_PREFLIGHT_BINDING,
+        FACE,
+        FACE_AUDIT,
+        FACE_CHECKS,
         N155A_RESULT.parent / "taiji_n1_plan155a_unknown8_rebalance_attempt_20261020.json",
         n153_builder.FACE,
         n153_builder.FACE_CHECKS,
@@ -253,9 +341,18 @@ def source_context() -> tuple[list[dict], dict[str, str], dict]:
 
 
 def source_readiness() -> dict:
-    outputs = (SOURCE_AUDIT, READINESS, READINESS_ATTEMPT, SOURCE_BINDING, PREFLIGHT,
-               PREFLIGHT_ATTEMPT, PREFLIGHT_BINDING, FACE, FACE_AUDIT, FACE_CHECKS,
-               ATTEMPT, PROGRESS, RESULT)
+    outputs = (
+        SOURCE_AUDIT,
+        READINESS,
+        READINESS_ATTEMPT,
+        SOURCE_BINDING,
+        PREFLIGHT,
+        PREFLIGHT_ATTEMPT,
+        PREFLIGHT_BINDING,
+        ATTEMPT,
+        PROGRESS,
+        RESULT,
+    )
     if any(path.exists() for path in outputs):
         raise FileExistsError("PLAN-N1-157 readiness/face/diagnostic outputs are write-once")
     started = time.process_time()
@@ -270,9 +367,14 @@ def source_readiness() -> dict:
         and cumulative <= LINKED_CPU_LIMIT_SECONDS
     )
     audit = {
-        "schema": "n1-plan157-candidate-parent-source-audit-v1",
+        "schema": "n1-plan157a-candidate-parent-source-audit-v1",
         "status": "complete" if complete else "stopped",
         "plan_sha256": PLAN_SHA256,
+        "correction_addendum_sha256": CORRECTION_SHA256,
+        "prior_result_sha256": PRIOR_RESULT_SHA256,
+        "prior_progress_sha256": PRIOR_PROGRESS_SHA256,
+        "prior_consumed_queries": PRIOR_QUERIES,
+        "remaining_queries": TOTAL_QUERIES - PRIOR_QUERIES,
         "n155a_result_sha256": N155A_RESULT_SHA256,
         "n155a_progress_sha256": N155A_PROGRESS_SHA256,
         "n156_report_sha256": N156_REPORT_SHA256,
@@ -304,10 +406,15 @@ def source_readiness() -> dict:
     prepared = dict(sources)
     prepared[str(SOURCE_AUDIT.resolve())] = sha256(SOURCE_AUDIT)
     readiness = {
-        "schema": "n1-plan157-candidate-parent-readiness-v1",
+        "schema": "n1-plan157a-candidate-parent-readiness-v1",
         "status": "ready_for_six_bundle_preflight" if complete else "stopped",
         "complete": complete,
         "plan_sha256": PLAN_SHA256,
+        "correction_addendum_sha256": CORRECTION_SHA256,
+        "prior_result_sha256": PRIOR_RESULT_SHA256,
+        "prior_progress_sha256": PRIOR_PROGRESS_SHA256,
+        "prior_consumed_queries": PRIOR_QUERIES,
+        "remaining_queries": TOTAL_QUERIES - PRIOR_QUERIES,
         "source_audit_sha256": sha256(SOURCE_AUDIT),
         "source_hashes": prepared,
         "source_hashes_unchanged": n150_builder.verify_hashes(prepared),
@@ -327,9 +434,11 @@ def source_readiness() -> dict:
         "can_promote": False,
     }
     write_new(READINESS_ATTEMPT, {
-        "schema": "n1-plan157-readiness-attempt-v1",
+        "schema": "n1-plan157a-readiness-attempt-v1",
         "status": "started",
         "plan_sha256": PLAN_SHA256,
+        "correction_addendum_sha256": CORRECTION_SHA256,
+        "prior_result_sha256": PRIOR_RESULT_SHA256,
         "cpu_seconds": round(cpu, 6),
         "model_loads": 0,
         "model_queries": 0,
@@ -337,9 +446,10 @@ def source_readiness() -> dict:
     })
     write_new(READINESS, readiness)
     write_new(SOURCE_BINDING, {
-        "schema": "n1-plan157-source-binding-v1",
+        "schema": "n1-plan157a-source-binding-v1",
         "status": "complete" if complete else "stopped",
         "plan_sha256": PLAN_SHA256,
+        "correction_addendum_sha256": CORRECTION_SHA256,
         "readiness_sha256": sha256(READINESS),
         "source_hashes": prepared,
         "can_promote": False,
@@ -348,97 +458,7 @@ def source_readiness() -> dict:
 
 
 def prepare_face() -> dict:
-    if any(path.exists() for path in (FACE, FACE_AUDIT, FACE_CHECKS)):
-        raise FileExistsError("PLAN-N1-157 seed128 face outputs are write-once")
-    if not READINESS.is_file() or read_json(READINESS).get("complete") is not True:
-        raise Refuse("PLAN-N1-157 readiness is required before face generation")
-    if not PREFLIGHT.is_file() or not PREFLIGHT_BINDING.is_file():
-        raise Refuse("PLAN-N1-157 six-bundle restore preflight is required before face generation")
-    preflight = read_json(PREFLIGHT)
-    preflight_binding = read_json(PREFLIGHT_BINDING)
-    if (
-        preflight.get("complete") is not True
-        or preflight.get("plan_sha256") != PLAN_SHA256
-        or preflight.get("independent_restore_count") != 6
-        or preflight_binding.get("status") != "complete"
-        or preflight_binding.get("preflight_sha256") != sha256(PREFLIGHT)
-        or preflight_binding.get("source_hashes") != preflight.get("source_hashes")
-        or not n150_builder.verify_hashes(preflight.get("source_hashes", {}))
-    ):
-        raise Refuse("PLAN-N1-157 full-bundle restore preflight/source binding is stale")
-    started = time.process_time()
-    endpoints, sources, exclusions = source_context()
-    readiness = read_json(READINESS)
-    ready_sources = dict(sources)
-    ready_sources[str(SOURCE_AUDIT.resolve())] = sha256(SOURCE_AUDIT)
-    if readiness.get("source_hashes") != ready_sources or not n150_builder.verify_hashes(ready_sources):
-        raise Refuse("PLAN-N1-157 readiness/source hashes changed before face generation")
-    base_face, generator_summary = n153_builder.build_face(
-        exclusions["excluded_entities"], exclusions["excluded_words"], seed=128
-    )
-    for item in base_face["items"]:
-        item["id"] = item["id"].replace("v28-", "v30-", 1)
-        item["parent_id"] = item["id"]
-    checks = n153_builder.validate_face(
-        base_face,
-        exclusions["excluded_entities"],
-        exclusions["excluded_words"],
-    )
-    face = {
-        **base_face,
-        "plan157_schema": "n1-plan157-v30-candidate-vs-parent-face-v1",
-        "plan_sha256": PLAN_SHA256,
-        "seed": 128,
-        "endpoint_count": 6,
-        "queries_per_endpoint": QUERIES_PER_ENDPOINT,
-        "total_queries": TOTAL_QUERIES,
-        "source_exclusion_summary": exclusions["exclusion_summary"],
-        "candidate_endpoints": [row for row in endpoints if row["branch"] == "unknown8_rebalanced"],
-        "parent_endpoints": [row for row in endpoints if row["branch"] == "length_mixed_parent"],
-        "can_promote": False,
-    }
-    face_digest = canonical_sha(face)
-    face_hashes = dict(ready_sources)
-    for path in (READINESS, SOURCE_BINDING, PREFLIGHT, PREFLIGHT_ATTEMPT, PREFLIGHT_BINDING):
-        face_hashes[str(Path(path).resolve())] = sha256(path)
-    for row in endpoints:
-        face_hashes[row["checkpoint_path"]] = row["checkpoint_sha256"]
-    write_new(FACE, face)
-    face_hashes[str(FACE.resolve())] = sha256(FACE)
-    face_hashes[str(READINESS.resolve())] = sha256(READINESS)
-    face_audit = {
-        "schema": "n1-plan157-v30-candidate-parent-face-audit-v1",
-        "status": "complete",
-        "plan_sha256": PLAN_SHA256,
-        "face_sha256": sha256(FACE),
-        "face_canonical_sha256": face_digest,
-        "source_hashes": face_hashes,
-        "source_hashes_unchanged": n150_builder.verify_hashes(face_hashes),
-        "source_exclusion_summary": exclusions["exclusion_summary"],
-        "face_contract": checks,
-        "generator_summary": generator_summary,
-        "endpoint_count": len(endpoints),
-        "total_queries": TOTAL_QUERIES,
-        "cpu_seconds": round(time.process_time() - started, 6),
-        "can_promote": False,
-    }
-    write_new(FACE_AUDIT, face_audit)
-    face_checks = {
-        "schema": "n1-plan157-v30-candidate-parent-face-checks-v1",
-        "status": "complete" if face_audit["source_hashes_unchanged"] and checks["accepted"] else "stopped",
-        "plan_sha256": PLAN_SHA256,
-        "face_sha256": sha256(FACE),
-        "face_audit_sha256": sha256(FACE_AUDIT),
-        "source_hashes_unchanged": face_audit["source_hashes_unchanged"],
-        "face_contract": checks,
-        "query_count_per_endpoint": QUERIES_PER_ENDPOINT,
-        "total_queries": TOTAL_QUERIES,
-        "can_promote": False,
-    }
-    write_new(FACE_CHECKS, face_checks)
-    if face_checks["status"] != "complete":
-        raise Refuse("PLAN-N1-157 generated face/source contract failed; face is sealed")
-    return face_checks
+    raise Refuse("PLAN-N1-157A must reuse the sealed seed128 face; it cannot regenerate it")
 
 
 def main() -> int:

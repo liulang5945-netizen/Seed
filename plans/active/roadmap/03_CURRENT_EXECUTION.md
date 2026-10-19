@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前执行：PLAN-N1-157 seed128 candidate–parent fresh诊断
+## 当前执行：PLAN-N1-157A 完成fresh face剩余endpoint评分
 
 ### 最新状态（2026-10-20）
 
@@ -12,7 +12,7 @@ N1-153A已完整结束：同一seed127 fresh face上2,880条逐题结果完成�
 
 N1-154已完成2,880行fresh诊断的逐题paired分析，CPU0.03125秒，0加载/查询/更新；candidate已知命中8/16/32行360/360、359/360、356/360，control为353/360、340/360、302/360；unknown弃答candidate76/120、91/120、103/120，control109/120、115/120、120/120。结果为描述性synthetic face归因，见[N1-154结案](../../reference/PLAN-N1-154_execution_closeout_20261020.md)。
 
-N1-155A已完整结束：55,296/55,296次更新、7,488/7,488条train-only评分，六个final bundle独立恢复6/6，progress 62,784行完整；累计CPU9,325.219/18,000秒（含首轮130.922秒），`can_promote=false`。三个candidate原门均通过，seed12 uniform control transition 30/48导致原六端点门失败，seed128面未生成/未查询。N1-156逐题配对归因CPU2.859秒完成：seed12 candidate在transition original/rename各48/48，control各30/48（各18条candidate-only、0条反向）；unknown短长度8行合计67/72对66/72，16/32行均为69/72与71/72，未见稳定长度特异优势。详见[N1-155A结案](../../reference/PLAN-N1-155A_execution_closeout_20261020.md)、[N1-156结案](../../reference/PLAN-N1-156_execution_closeout_20261020.md)与[归因报告](../../../reports/taiji_n1_plan156_plan155a_train_score_itemwise_attribution_20261020.json)。依据用户授予的执行计划批准权，已批准唯一下一步[N1-157](../../reference/PLAN-N1-157_seed128_candidate_vs_parent_fresh_diagnostic_20261020.md)：首次生成并消费seed128 fresh face，比较N1-155A三个candidate与对应N1-150 `length_mixed`父模型，共2,880条查询、N1-157 CPU≤3,600秒（累计仍≤上位18,000秒）；0训练/dev/holdout/confirmation，不改门、不晋级。
+N1-157首次执行在seed11 candidate的480条查询后停止：旧汇总器误要求不存在的uniform control分支；失败面、480条原始行和checkpoint均保留，source哈希不变，0参数更新/dev/holdout/confirmation，关联累计CPU9,502.031秒。依据用户授予的执行计划批准权，已批准[N1-157A](../../reference/PLAN-N1-157A_remaining_endpoint_continuation_20261020.md)：修正按当前endpoint汇总，复用已保存的480条与同一seed128 face，只查询未消费的五个endpoint共2,400条；独立路径重新做ready与六bundle恢复，不重生成面、不重测seed11 candidate。新阶段CPU≤3,600秒且关联累计仍≤18,000秒。详见[N1-157失败回执](../../../reports/taiji_n1_plan157_candidate_parent_result_20261020.json)、[原seed128 face](../../manifests/n1_plan157_v30_candidate_vs_parent_seed128_20261020.json)和[原N1-157计划](../../reference/PLAN-N1-157_seed128_candidate_vs_parent_fresh_diagnostic_20261020.md)。
 
 
 ### 历史状态（截至2026-10-19；后由N1-150结案取代）
