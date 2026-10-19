@@ -8,7 +8,11 @@ N1-150已完整结束：55,296/55,296次更新、7,488/7,488条train-only计分�
 
 N1-152已完成1,728条长度分层逐题离线归因，CPU0.046875秒，0模型/checkpoint加载、0查询、0更新；candidate 32行已知类215/216，control 190/216，差异主要来自lookup；unknown弃答8/16/32行candidate为42/72、60/72、65/72，control为72/72、69/72、70/72。详见[N1-152结案](../../reference/PLAN-N1-152_execution_closeout_20261020.md)与[完整配对归因](../../../reports/taiji_n1_plan152_length_itemwise_attribution_20261020.json)。均为同一train集描述读数，不作泛化或能力晋级。
 
-N1-153A已完整结束：同一seed127 fresh face上完成2,880条，计入原失败attempt共3,360条；逐题结果和72个分层完整，六个final checkpoint恢复/指纹核验通过，CPU累计350.609/3,600秒，0训练/更新/dev/holdout/confirmation，can_promote=false。结案见[N1-153A](../../reference/PLAN-N1-153A_execution_closeout_20261020.md)与[完整result](../../../reports/taiji_n1_plan153a_fresh_context_result_binding_recovery_result_20261020.json)。
+N1-153A已完整结束：同一seed127 fresh face上2,880条逐题结果完成，计入失败attempt累计3,360条；六endpoint逐题行及72个分层齐全，checkpoint/fingerprint/source哈希均通过，CPU350.609/3,600秒，0训练/更新/dev/holdout/confirmation，can_promote=false。结案见[N1-153A](../../reference/PLAN-N1-153A_execution_closeout_20261020.md)与[完整result](../../../reports/taiji_n1_plan153a_fresh_context_result_binding_recovery_result_20261020.json)。
+
+N1-154已完成2,880行fresh诊断的逐题paired分析，CPU0.03125秒，0加载/查询/更新；candidate已知命中8/16/32行360/360、359/360、356/360，control为353/360、340/360、302/360；unknown弃答candidate76/120、91/120、103/120，control109/120、115/120、120/120。结果为描述性synthetic face归因，见[N1-154结案](../../reference/PLAN-N1-154_execution_closeout_20261020.md)。
+
+N1-155已批准并冻结，当前进入实现：candidate从N1-150 length_mixed final分叉，唯一改变是unknown任务的长度slot重配（8/16/32=24/48、12/48、12/48），与均匀长度replay匹配；总55,296更新、7,488 train-only评分，原门六endpoint全通过后再查询新seed128 fresh face，最多2,880条。CPU≤18,000秒，0 dev/holdout/confirmation，不晋级。详见[PLAN-N1-155](../../reference/PLAN-N1-155_short_context_unknown_rebalance_and_fresh_diagnostic_20261020.md)。
 
 
 ### 历史状态（截至2026-10-19；后由N1-150结案取代）

@@ -6,7 +6,8 @@
 
 - 每seed以N1-150的`length_mixed` final full bundle（seed11/12/13）为共同父模型；每seed分叉`unknown8_rebalanced` candidate与`uniform_length_replay` control，zero bundle逐位相等。恢复完整模型、41个Adam状态、RNG和history。
 - 六endpoint×9,216追加更新=55,296总更新。继续使用原192条v3 train父任务、N1-132原objective（包括原binding辅助项）、优化器、学习率与训练门；不把fresh face题目用于训练。
-- 两支每父项固定48更新（raw/hard各24）。control延续原8/16/32各16/48的均匀schedule。candidate的lookup/revision/transition每种仍各16/48/16/16/16（8/16/32）；只有unknown父项改为24/48、12/48、12/48。raw/hard拆分分别为candidate 12/6/6，control 8/8/8。
+- 两支每父项固定48更新（raw/hard各24）。control延续原8/16/32各16次的均匀schedule。candidate的lookup/revision/transition每种也各16次/长度（共48次）；只有unknown父项改为8行24次、16行12次、32行12次。raw/hard拆分分别为candidate 12/6/6，control 8/8/8。
+- N1-132的unknown父项仍包含原配对known lookup第二问题；当unknown父项slot分配到8/16/32行时，这两个既有问题继续共享同一观察带。此短上下文再平衡按原有每slot query结构计数，不增添问题或训练目标。
 - 单模型候选分布：每种known类8/16/32各768步；unknown分别1,152/576/576步。总schedule为8行3,456步、16行2,880步、32行2,880步；类别、父项、raw/hard路径、上下文行内容、目标和答案均保持配平。
 
 ## 保存恢复、计分与新fresh面
@@ -26,7 +27,7 @@
 
 - Schedule builder：`scripts/training/build_taiji_n1_plan155_short_unknown_context_length.py`
 - Training runner：`scripts/training/run_taiji_n1_plan155_short_unknown_context_length_training.py`
-- Fresh-face builder/evaluator：`scripts/training/build_taiji_n1_plan155_v29_short_unknown_length_face.py`、`scripts/training/run_taiji_n1_plan155_v29_short_unknown_length_diagnostic.py`
+- Fresh-face generation and diagnostic scoring are implemented as explicit phases in the same plan builder/runner above, avoiding duplicate wrapper modules.
 - 合同测试：`tests/taiji_native/test_n1_plan155_short_unknown_context_length_contract.py`
 - seed128 face：`plans/manifests/n1_plan155_v29_short_unknown_length_seed128_20261020.json`
 - write-once checkpoints：`data/checkpoints/n1_plan155_v29_short_unknown_rebalance_20261020/`
