@@ -1,12 +1,14 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：审阅并批准 PLAN-N1-135 上下文长度匹配测面
+## 当前唯一下一步：审阅并批准 PLAN-N1-136 固定长度目标位置对照面
 
 ### 最新状态（2026-10-19）
 
-**N1-126至N1-132已结案。** 126–128在同一已消费v13/v14面上显示gold-target行限制可恢复位置臂全部样本、cut臂至86/90，但这是oracle干预；129–130发现原生alignment已有目标事实质量，却不能区分正确/错误；131将剩余cut错误定位为seed13的inverse-turn。132加入`0.25 * L_bind`并对三个N1-120 position parent各续训9,216步；三seed原train门均通过，2,880条全为train-only评分。总更新27,648，执行CPU980.40625秒、累计1,006.421875秒；dev/v13/v14/confirmation均0，`can_promote=false`。因此训练拟合已收束，但自主泛化未验证，且没有matched no-bind续训臂来单独归因`L_bind`。完整对账见[N1-132结案](../../reference/PLAN-N1-132_execution_closeout_20261019.md)。
+**N1-126至N1-132已结案。** N1-132三seed原train门通过，但泛化尚未验证；v15确认门N1-133未通过并保持关闭。N1-134已完成480条方向×位置描述性诊断：候选position 45/120、position父档43/120，不能隔离上下文长度效应。[N1-134结案](../../reference/PLAN-N1-134_execution_closeout_20261019.md)
 
-[PLAN-N1-133]的v15确认门仍未通过。用户批准的[PLAN-N1-134](../../reference/PLAN-N1-134_transition_direction_position_counterbalance_diagnostic_draft_20261019.md)已完成：480条查询、累计CPU195.625秒，12个endpoint与来源守卫完整，0参数更新/0dev。候选position为45/120，position父档43/120；seed13三臂在16行条件下正确项都在west答案格。N134报告只有方向×位置格的汇总，没有逐题输出文本，不能归因具体turn错误。结合训练覆盖审计的2行train上下文与历史2行v5读数（不同checkpoint，仅作背景），当前唯一建议为[PLAN-N1-135草案](../../reference/PLAN-N1-135_matched_context_length_transition_diagnostic_draft_20261019.md)：同模板配对2/8/16行上下文，固定目标事实于早位，12个冻结endpoint最多288条查询、CPU≤600秒，要求报告逐题生成方向。该方案会创建新测面，尚待owner批准；批准前不构面、不查询、不训练。N1-134中文结案见[执行结案](../../reference/PLAN-N1-134_execution_closeout_20261019.md)，原始读数见[诊断报告](../../../reports/taiji_n1_plan134_transition_direction_position_diagnostic_20261019.json)。
+用户批准的[N1-135](../../reference/PLAN-N1-135_matched_context_length_transition_diagnostic_draft_20261019.md)已按冻结协议完整结束：12个endpoint共288条查询，零训练/更新/dev，227项来源哈希不变；readiness独立恢复12/12个完整bundle。累计CPU164.8125/600秒，`can_promote=false`。全endpoint合计精确命中从2行的92/96降至8行31/96、16行29/96；96组2→8匹配中61组由正确转错、0组错转对，而8→16只有3组下降和1组恢复。288条输出全部正常生成合法方向词并以boundary结束。读数支持“加入目标事实之后的干扰行时发生明显退化”，但不能归因单一内部机制；详细逐题原始/输出字节见[诊断报告](../../../reports/taiji_n1_plan135_matched_context_length_diagnostic_20261019.json)与[N1-135中文结案](../../reference/PLAN-N1-135_execution_closeout_20261019.md)。
+
+当前唯一建议为[N1-136草案](../../reference/PLAN-N1-136_target_position_context_order_diagnostic_draft_20261019.md)：在固定8/16行数、相同目标与干扰事实下，匹配比较目标事实置于开头或结尾；含2行共同基线，共40题、12个冻结endpoint最多480次查询、CPU≤600秒，0训练/更新/dev。它会生成并消费新测面，须先获用户批准；当前不构面、不查询、不训练。
 
 以下N1-123及更早段落为历史证据与队首快照，不取代上方当前状态。
 

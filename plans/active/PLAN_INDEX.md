@@ -1,10 +1,10 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **2026-10-19 N1当前队首（取代下列N1快照）**：[N1-126](../reference/PLAN-N1-126_execution_closeout_20261019.md)至[N1-132](../reference/PLAN-N1-132_execution_closeout_20261019.md)已结案。N126–128是金标准目标行oracle干预，N129–131把剩余oracle cut误差定位为seed13反向转向；N1-132三seed原192 train gate全部通过，但无dev/v13/v14/确认查询，`can_promote=false`。N1-133已获批准，目标是验证N1-132续训包的v15泛化，不作`L_bind`单独因果主张；来源并集静态核验7,308实体名/5,808词值，12个endpoint哈希已核对。当前唯一下一步为完成零查询readiness与12个完整bundle恢复；通过前不生成题面。详见[N1-133计划](../reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)、[来源并集预检](../../reports/taiji_n1_plan133_source_union_precheck_v2_20261019.json)、[终点核验](../../reports/taiji_n1_plan133_pre_authorization_endpoint_integrity_20261019.json)和[03](roadmap/03_CURRENT_EXECUTION.md)。
+> **2026-10-19 N1当前队首（取代下列N1快照）**：N1-133 v15确认未通过并关闭，N1-134为描述性诊断。用户批准的[N1-135](../reference/PLAN-N1-135_matched_context_length_transition_diagnostic_draft_20261019.md)已完整执行：288查询、累计CPU164.8125秒、12/12完整bundle恢复、227项来源哈希不变，0训练/更新/dev，`can_promote=false`。命中为2行92/96、8行31/96、16行29/96；2→8行出现61组配对下降，8→16行变化较小。唯一下一步为待批准的[N1-136目标位置对照](../reference/PLAN-N1-136_target_position_context_order_diagnostic_draft_20261019.md)：固定上下文长度和事实内容，对照目标事实开头/结尾位置，40题、最多480查询、CPU≤600秒，不训练、不查dev；新测面批准前不生成或查询。详见[N1-135结案](../reference/PLAN-N1-135_execution_closeout_20261019.md)、[诊断报告](../../reports/taiji_n1_plan135_matched_context_length_diagnostic_20261019.json)与[03](roadmap/03_CURRENT_EXECUTION.md)。
 
 > 历史 N1-123 队首快照，已由上方 N1-127 结案与当前 N1-128 队首取代。
 
-> **2026-10-19 N1最新队首（取代上一行）**：PLAN-N1-124已完整结案，范围门6/9恰好通过但确认四门未合取：candidate position 38/60、cut 37/60、terminal 14/60，相对cut仅+1/60；seed11 transition 1/5、seed13 lookup 0/5。累计CPU139.15625/600秒、540查询、无训练或dev查询，`can_promote=false`。v13与v14跨面只读比较仍显示position相对cut无独立收益；当前唯一待裁是[PLAN-N1-125](../reference/PLAN-N1-125_content_binding_revision_draft_20261019.md)，转向问题条件内容绑定修订，先做零训练工程/保存恢复预检。
+> **历史快照（2026-10-19 N1-124阶段，已由上方N1-135状态取代）**：PLAN-N1-124范围门6/9、确认四门未合取：candidate position 38/60、cut 37/60、terminal 14/60；相对cut仅+1/60。累计CPU139.15625/600秒、540查询、无训练或dev查询，`can_promote=false`。该时点建议为PLAN-N1-125；本段仅保留历史，不代表当前队首。
 
 > **历史快照（2026-10-18 N1阶段队首，已由2026-10-19最新结案取代）**：PLAN-N1-110 candidate runner及6项合同已实现/通过；9枚PLAN100 final基线SHA已固定，runner逐步核对raw/hard 24,576 slot长度账本并用候选runner子进程独立恢复。当前唯一下一步：提交后运行zero-update `--validate-only`生成readiness回执，再检查9枚zero checkpoint保存/独立恢复，之后才训练。
 
