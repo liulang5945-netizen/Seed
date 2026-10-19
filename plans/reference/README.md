@@ -1,6 +1,6 @@
 # plans/reference 索引（2026-10-14 更新；蒸馏收束后的参考件与 N 系列增补）
 
-> **2026-10-19 N1当前**：[N1-126](PLAN-N1-126_execution_closeout_20261019.md)至[N1-132](PLAN-N1-132_execution_closeout_20261019.md)已闭环；N1-132 train-only三seed全部通过原门，但未做新确认、`can_promote=false`。result回执引用初始/失败preflight的字段差异由[只读对账](../../reports/taiji_n1_plan132_provenance_reconciliation_20261019.json)补充。唯一待决[N1-133](PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)为seed115新holdout面，等待owner授权；详见[03](../active/roadmap/03_CURRENT_EXECUTION.md)。
+> **2026-10-19 N1当前**：[N1-126](PLAN-N1-126_execution_closeout_20261019.md)至[N1-132](PLAN-N1-132_execution_closeout_20261019.md)已闭环。N1-126–128的金标准目标行干预恢复了已消费v13/v14错误，但不证明自主检索；N1-129–131将剩余cut误差定位为seed13 inverse-turn读出；N1-132三seed train-only通过原门，未做新确认，`can_promote=false`。N1-133现作为N1-132 continuation package的v15泛化测试草案讨论；它不能单独归因于`L_bind`，因为无matched no-bind continuation。12个endpoint哈希只读核验12/12，未生成新面。详见[方案](PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)、[预授权核验](../../reports/taiji_n1_plan133_pre_authorization_endpoint_integrity_20261019.json)与[03](../active/roadmap/03_CURRENT_EXECUTION.md)。
 
 > 历史 N1-123 队首快照保留作追溯；当前计划以本页首条和[03_CURRENT_EXECUTION](../active/roadmap/03_CURRENT_EXECUTION.md)为准。
 
