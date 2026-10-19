@@ -21,6 +21,9 @@ from scripts.training import run_taiji_n1_v27_length_robust_training_after_n149 
 
 PLAN = ROOT / "plans/reference/PLAN-N1-151_train_score_ledger_recovery_draft_20261020.md"
 PLAN_SHA256 = "fdab96decd468f94820c6ab33abbd5c18e78ca78c599e7521a27db74cef1f9a7"
+REPAIR_PLAN = ROOT / "plans/reference/PLAN-N1-151A_source_binding_return_correction_20261020.md"
+REPAIR_PLAN_SHA256 = "4892cc62f197689e0437a104bd2e592696ed67863a7746d4a7cb36a3ca0bc965"
+FAILURE_RECEIPT = ROOT / "reports/taiji_n1_plan151_preflight_binding_failure_20261020.json"
 N150_RESULT = n150.RESULT
 N150_RESULT_SHA256 = "e50e4b5aaf244ced4b5ef6232eb08a09206a5957f7d8f85abb1b3d841860ef0b"
 N150_CLOSEOUT = ROOT / "plans/reference/PLAN-N1-150_execution_closeout_20261020.md"
@@ -33,14 +36,14 @@ TOTAL_QUERIES_PER_ENDPOINT = ORIGINAL_GATE_QUERIES_PER_ENDPOINT + LENGTH_QUERIES
 ENDPOINTS = tuple((seed, branch) for seed in n150_builder.SEEDS for branch in n150_builder.BRANCHES)
 EXPECTED_TOTAL_QUERIES = TOTAL_QUERIES_PER_ENDPOINT * len(ENDPOINTS)
 
-READINESS = ROOT / "reports/taiji_n1_plan151_train_score_ledger_recovery_readiness_20261020.json"
-READINESS_ATTEMPT = ROOT / "reports/taiji_n1_plan151_train_score_ledger_recovery_readiness_attempt_20261020.json"
-SOURCE_BINDING = ROOT / "reports/taiji_n1_plan151_train_score_ledger_recovery_source_binding_20261020.json"
-PREFLIGHT = ROOT / "reports/taiji_n1_plan151_train_score_ledger_recovery_preflight_20261020.json"
-PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_plan151_train_score_ledger_recovery_preflight_attempt_20261020.json"
-PREFLIGHT_BINDING = ROOT / "reports/taiji_n1_plan151_train_score_ledger_recovery_preflight_binding_20261020.json"
-ATTEMPT = ROOT / "reports/taiji_n1_plan151_train_score_ledger_recovery_attempt_20261020.json"
-RESULT = ROOT / "reports/taiji_n1_plan151_train_score_ledger_recovery_result_20261020.json"
+READINESS = ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_readiness_20261020.json"
+READINESS_ATTEMPT = ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_readiness_attempt_20261020.json"
+SOURCE_BINDING = ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_source_binding_20261020.json"
+PREFLIGHT = ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_preflight_20261020.json"
+PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_preflight_attempt_20261020.json"
+PREFLIGHT_BINDING = ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_preflight_binding_20261020.json"
+ATTEMPT = ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_attempt_20261020.json"
+RESULT = ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_result_20261020.json"
 TEST = ROOT / "tests/taiji_native/test_n1_plan151_train_score_ledger_recovery_contract.py"
 
 GATE_PARITY_KEYS = (
@@ -110,8 +113,9 @@ def _endpoint_records(result: dict) -> dict[tuple[int, str], dict]:
 
 
 def _load_n150_source_context() -> tuple[dict, dict, dict, dict, dict]:
-    readiness, preflight, _binding, bound, schedule = n150._verify_preflight()
+    parts = n150._verify_preflight()
     result = read_json(N150_RESULT)
+    readiness, preflight, _binding, result, bound, schedule = unpack_n150_preflight(parts, result)
     require(sha256(N150_RESULT) == N150_RESULT_SHA256, "N1-150 result hash changed")
     require(
         result.get("complete") is True
@@ -126,6 +130,14 @@ def _load_n150_source_context() -> tuple[dict, dict, dict, dict, dict]:
     require(sha256(n150.PROGRESS) == result.get("progress_sha256"), "N1-150 progress SHA changed")
     _endpoint_records(result)
     return readiness, preflight, result, bound, schedule
+
+
+def unpack_n150_preflight(parts: tuple, result_report: dict) -> tuple[dict, dict, dict, dict, dict, dict]:
+    """Keep the third N1-150 return value as its binding; load result separately."""
+    if len(parts) != 5:
+        raise Refuse("N1-150 frozen preflight return arity changed")
+    readiness, preflight, binding, bound, schedule = parts
+    return readiness, preflight, binding, result_report, bound, schedule
 
 
 def collect_source_hashes(result: dict) -> dict[str, str]:
@@ -144,6 +156,8 @@ def collect_source_hashes(result: dict) -> dict[str, str]:
             str(N150_CLOSEOUT.resolve()): sha256(N150_CLOSEOUT),
             str(N150_AUDIT.resolve()): sha256(N150_AUDIT),
             str(PLAN.resolve()): sha256(PLAN),
+            str(REPAIR_PLAN.resolve()): sha256(REPAIR_PLAN),
+            str(FAILURE_RECEIPT.resolve()): sha256(FAILURE_RECEIPT),
             str(Path(__file__).resolve()): sha256(Path(__file__).resolve()),
             str(TEST.resolve()): sha256(TEST),
         },
@@ -151,7 +165,7 @@ def collect_source_hashes(result: dict) -> dict[str, str]:
     for path, digest in result.get("new_checkpoint_hashes", {}).items():
         _merge_hashes(sources, {path: digest})
     if not verify_hashes(sources):
-        raise Refuse("N1-150/N1-151 source, result, progress, or checkpoint hash changed")
+        raise Refuse("N1-150/N1-151A source, result, progress, or checkpoint hash changed")
     return dict(sorted(sources.items()))
 
 
@@ -206,10 +220,11 @@ def source_readiness() -> dict:
     cpu = time.process_time() - started
     complete = cpu <= CPU_LIMIT_SECONDS and len(sources) >= 12
     report = {
-        "schema": "n1-plan151-train-score-ledger-readiness-v1",
+        "schema": "n1-plan151a-train-score-ledger-readiness-v1",
         "status": "ready_for_final_checkpoint_preflight" if complete else "stopped",
         "complete": complete,
         "plan_sha256": PLAN_SHA256,
+        "repair_addendum_sha256": REPAIR_PLAN_SHA256,
         "n150_result_sha256": sha256(N150_RESULT),
         "n150_result_status": n150_result["status"],
         "n150_final_endpoint_count": len(n150_result["models"]),
@@ -239,9 +254,10 @@ def source_readiness() -> dict:
         "summary_zh": "N1-150来源、六枚final checkpoint、train-only题目与7,488条重复评分分母核验通过；0模型/checkpoint加载、0查询、0更新。",
     }
     write_new(READINESS_ATTEMPT, {
-        "schema": "n1-plan151-readiness-attempt-v1",
+        "schema": "n1-plan151a-readiness-attempt-v1",
         "status": "started",
         "plan_sha256": PLAN_SHA256,
+        "repair_addendum_sha256": REPAIR_PLAN_SHA256,
         "source_hash_count": len(sources),
         "cpu_seconds": round(cpu, 6),
         "model_loads": 0,
@@ -250,9 +266,10 @@ def source_readiness() -> dict:
     })
     write_new(READINESS, report)
     write_new(SOURCE_BINDING, {
-        "schema": "n1-plan151-readiness-source-binding-v1",
+        "schema": "n1-plan151a-readiness-source-binding-v1",
         "status": "complete" if complete else "stopped",
         "plan_sha256": PLAN_SHA256,
+        "repair_addendum_sha256": REPAIR_PLAN_SHA256,
         "readiness_sha256": sha256(READINESS),
         "source_hashes": sources,
         "can_promote": False,
@@ -269,14 +286,16 @@ def _verify_readiness() -> tuple[dict, dict, dict, dict, dict, dict[str, str]]:
         report.get("status") != "ready_for_final_checkpoint_preflight"
         or report.get("complete") is not True
         or report.get("plan_sha256") != PLAN_SHA256
+        or report.get("repair_addendum_sha256") != REPAIR_PLAN_SHA256
         or report.get("source_hashes_unchanged") is not True
         or binding.get("status") != "complete"
         or binding.get("plan_sha256") != PLAN_SHA256
+        or binding.get("repair_addendum_sha256") != REPAIR_PLAN_SHA256
         or binding.get("readiness_sha256") != sha256(READINESS)
         or binding.get("source_hashes") != report.get("source_hashes")
     ):
         raise Refuse("N1-151 readiness binding is stale or incomplete")
-    n150_readiness, n150_preflight, n150_result, bound, schedule = n150._verify_preflight()
+    n150_readiness, n150_preflight, n150_result, bound, schedule = _load_n150_source_context()
     sources = collect_source_hashes(n150_result)
     if sources != report.get("source_hashes") or not verify_hashes(sources):
         raise Refuse("N1-151 bound source/checkpoint hashes changed")
@@ -299,9 +318,10 @@ def checkpoint_preflight() -> dict:
     budget = n132.CpuBudget(remaining)
     budget.guard(reserve=30)
     write_new(PREFLIGHT_ATTEMPT, {
-        "schema": "n1-plan151-checkpoint-preflight-attempt-v1",
+        "schema": "n1-plan151a-checkpoint-preflight-attempt-v1",
         "status": "started",
         "plan_sha256": PLAN_SHA256,
+        "repair_addendum_sha256": REPAIR_PLAN_SHA256,
         "final_checkpoint_count": len(ENDPOINTS),
         "model_queries": 0,
         "parameter_updates": 0,
@@ -335,10 +355,11 @@ def checkpoint_preflight() -> dict:
     all_sources[str(SOURCE_BINDING.resolve())] = sha256(SOURCE_BINDING)
     all_sources[str(PREFLIGHT_ATTEMPT.resolve())] = sha256(PREFLIGHT_ATTEMPT)
     report = {
-        "schema": "n1-plan151-final-checkpoint-preflight-v1",
+        "schema": "n1-plan151a-final-checkpoint-preflight-v1",
         "status": "complete" if complete else "stopped",
         "complete": complete,
         "plan_sha256": PLAN_SHA256,
+        "repair_addendum_sha256": REPAIR_PLAN_SHA256,
         "readiness_sha256": sha256(READINESS),
         "preflight_attempt_sha256": sha256(PREFLIGHT_ATTEMPT),
         "source_hashes": all_sources,
@@ -359,9 +380,10 @@ def checkpoint_preflight() -> dict:
     report["summary_zh"] = "六个N1-150 final full bundle已再次独立恢复6/6；0模型查询、0参数更新，可进入逐题计分。" if complete else "final bundle恢复前置停止；不计分、不重试。"
     write_new(PREFLIGHT, report)
     write_new(PREFLIGHT_BINDING, {
-        "schema": "n1-plan151-final-checkpoint-preflight-binding-v1",
+        "schema": "n1-plan151a-final-checkpoint-preflight-binding-v1",
         "status": "complete" if complete else "stopped",
         "plan_sha256": PLAN_SHA256,
+        "repair_addendum_sha256": REPAIR_PLAN_SHA256,
         "preflight_sha256": sha256(PREFLIGHT),
         "source_hashes": all_sources,
         "can_promote": False,
@@ -446,23 +468,27 @@ def _verify_preflight() -> tuple[dict, dict, dict, dict, dict, dict, dict[str, s
     if (
         readiness.get("complete") is not True
         or readiness.get("plan_sha256") != PLAN_SHA256
+        or readiness.get("repair_addendum_sha256") != REPAIR_PLAN_SHA256
         or source_binding.get("status") != "complete"
+        or source_binding.get("repair_addendum_sha256") != REPAIR_PLAN_SHA256
         or source_binding.get("readiness_sha256") != sha256(READINESS)
         or source_binding.get("source_hashes") != readiness.get("source_hashes")
         or preflight.get("complete") is not True
         or preflight.get("independent_restore_count") != 6
         or preflight.get("plan_sha256") != PLAN_SHA256
+        or preflight.get("repair_addendum_sha256") != REPAIR_PLAN_SHA256
         or preflight.get("source_hashes_unchanged") is not True
         or preflight.get("model_queries") != 0
         or preflight.get("parameter_updates") != 0
         or preflight_binding.get("status") != "complete"
+        or preflight_binding.get("repair_addendum_sha256") != REPAIR_PLAN_SHA256
         or preflight_binding.get("preflight_sha256") != sha256(PREFLIGHT)
         or preflight_binding.get("source_hashes") != preflight.get("source_hashes")
     ):
         raise Refuse("N1-151 readiness/final restore preflight is incomplete or stale")
     if not verify_hashes(preflight.get("source_hashes", {})):
         raise Refuse("N1-151 bound source/checkpoint hashes changed before scoring")
-    n150_readiness, n150_preflight, n150_result, bound, schedule = n150._verify_preflight()
+    n150_readiness, n150_preflight, n150_result, bound, schedule = _load_n150_source_context()
     sources = collect_source_hashes(n150_result)
     return readiness, preflight, n150_readiness, n150_preflight, n150_result, {"bound": bound, "schedule": schedule}, sources
 
@@ -484,9 +510,10 @@ def execute_approved() -> dict:
     if not verify_hashes(input_hashes):
         raise Refuse("N1-151 source/checkpoint hashes differ before scoring")
     attempt = {
-        "schema": "n1-plan151-train-score-ledger-attempt-v1",
+        "schema": "n1-plan151a-train-score-ledger-attempt-v1",
         "status": "started",
         "plan_sha256": PLAN_SHA256,
+        "repair_addendum_sha256": REPAIR_PLAN_SHA256,
         "readiness_sha256": sha256(READINESS),
         "preflight_sha256": sha256(PREFLIGHT),
         "n150_result_sha256": sha256(N150_RESULT),
@@ -535,10 +562,11 @@ def execute_approved() -> dict:
         and cumulative <= CPU_LIMIT_SECONDS
     )
     report = {
-        "schema": "n1-plan151-train-score-ledger-recovery-result-v1",
+        "schema": "n1-plan151a-train-score-ledger-recovery-result-v1",
         "status": "complete" if complete else "stopped",
         "complete": complete,
         "plan_sha256": PLAN_SHA256,
+        "repair_addendum_sha256": REPAIR_PLAN_SHA256,
         "n150_result_sha256": sha256(N150_RESULT),
         "readiness_sha256": sha256(READINESS),
         "preflight_sha256": sha256(PREFLIGHT),
@@ -567,14 +595,14 @@ def execute_approved() -> dict:
         "cpu_limit_seconds": CPU_LIMIT_SECONDS,
         "errors": errors,
         "can_promote": False,
-        "summary_zh": f"N1-151逐题评分台账{('完整' if complete else '停止')}：{query_count}/7,488条train-only重复评分；与N1-150聚合一致={all(row.get('aggregate_parity_with_n150') is True for row in endpoints)}，0更新/dev/holdout/confirmation，can_promote=false。",
+        "summary_zh": f"N1-151A逐题评分台账{('完整' if complete else '停止')}：{query_count}/7,488条train-only重复评分；与N1-150聚合一致={all(row.get('aggregate_parity_with_n150') is True for row in endpoints)}，0更新/dev/holdout/confirmation，can_promote=false。",
     }
     write_new(RESULT, report)
     return report
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PLAN-N1-151 train-only score ledger recovery")
+    parser = argparse.ArgumentParser(description="PLAN-N1-151A source-binding repair and score ledger recovery")
     modes = parser.add_mutually_exclusive_group(required=True)
     modes.add_argument("--validate-only", action="store_true")
     modes.add_argument("--checkpoint-preflight", action="store_true")

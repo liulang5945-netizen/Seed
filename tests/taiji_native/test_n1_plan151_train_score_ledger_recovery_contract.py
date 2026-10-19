@@ -48,6 +48,30 @@ def test_frozen_repeated_scoring_denominators() -> None:
     assert recovery.TOTAL_QUERIES_PER_ENDPOINT == 1_248
     assert recovery.EXPECTED_TOTAL_QUERIES == 7_488
     assert recovery.CPU_LIMIT_SECONDS == 3_600
+    assert recovery.REPAIR_PLAN_SHA256 == "4892cc62f197689e0437a104bd2e592696ed67863a7746d4a7cb36a3ca0bc965"
+
+
+def test_n150_preflight_binding_is_not_mistaken_for_its_result_report() -> None:
+    n150_readiness = {"stage": "readiness"}
+    n150_preflight = {"stage": "preflight"}
+    source_binding = {"stage": "binding"}
+    train_context = {"stage": "train_context"}
+    schedule = {"stage": "schedule"}
+    result_report = {"models": [{"seed": 11}]}
+
+    unpacked = recovery.unpack_n150_preflight(
+        (n150_readiness, n150_preflight, source_binding, train_context, schedule),
+        result_report,
+    )
+
+    assert unpacked == (
+        n150_readiness,
+        n150_preflight,
+        source_binding,
+        result_report,
+        train_context,
+        schedule,
+    )
 
 
 def test_gate_parity_covers_integer_and_factorial_summaries() -> None:

@@ -1,12 +1,12 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前执行：PLAN-N1-151 N1-150 train-only逐题评分台账补齐
+## 当前执行：PLAN-N1-151A N1-151来源绑定返回值修正
 
 ### 最新状态（2026-10-20）
 
 N1-150已完整结束：55,296/55,296次更新、7,488/7,488条train-only计分，六个final bundle独立恢复6/6，六个N1-132原门全部通过；累计CPU6,956.094/18,000秒，0 dev/holdout/confirmation，`can_promote=false`。长度混合candidate在8/16/32行的已知类合计命中216/216、216/216、215/216，8行control为215/216、210/216、190/216；均为同一train集上的描述性读数。详见[N1-150中文结案](../../reference/PLAN-N1-150_execution_closeout_20261020.md)和[完整结果](../../../reports/taiji_n1_plan150_v27_length_result_20261020.json)。
 
-N1-150完整计分仍有逐题台账缺口：训练progress文件中55,296条更新可解析，评分逐题行只保留seed13/eight_row_control的1,248条；六个endpoint的评分分母和聚合摘要已保存在result JSON。按用户授予的执行计划批准权，已批准冻结[N1-151](../../reference/PLAN-N1-151_train_score_ledger_recovery_draft_20261020.md)：对同六枚final bundle重复原有960+288条train-only评分，共7,488条；只补齐逐题结果并核对原聚合，不训练、不增加题目、不查询dev/holdout/confirmation、不改变门或晋级状态。下一步先实现独立runner/合同测试并提交，再做readiness和六枚final bundle恢复前置。
+N1-151原计划已完成无查询readiness（494项来源哈希、六枚final checkpoint、7,488条计分分母核验通过，CPU7.484秒），但checkpoint前置在任何checkpoint加载前停止：读取N1-150 preflight返回值时把第三项source binding误当成结果报告，导致重算集合漏掉六枚final checkpoint；0 checkpoint/model加载、0查询、0更新。失败回执见[报告](../../../reports/taiji_n1_plan151_preflight_binding_failure_20261020.json)，N1-151原readiness与binding保留。依据执行计划批准权，已批准[N1-151A](../../reference/PLAN-N1-151A_source_binding_return_correction_20261020.md)：只修正返回值绑定并使用独立write-once输出路径，仍按同样7,488条train-only计分、CPU≤3,600秒，0训练/新题/dev/holdout/confirmation，不改门或晋级状态。
 
 ### 历史状态（截至2026-10-19；后由N1-150结案取代）
 
