@@ -1,8 +1,14 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前执行：PLAN-N1-150 匹配长上下文训练续接
+## 当前执行：PLAN-N1-151 N1-150 train-only逐题评分台账补齐
 
-### 最新状态（2026-10-19）
+### 最新状态（2026-10-20）
+
+N1-150已完整结束：55,296/55,296次更新、7,488/7,488条train-only计分，六个final bundle独立恢复6/6，六个N1-132原门全部通过；累计CPU6,956.094/18,000秒，0 dev/holdout/confirmation，`can_promote=false`。长度混合candidate在8/16/32行的已知类合计命中216/216、216/216、215/216，8行control为215/216、210/216、190/216；均为同一train集上的描述性读数。详见[N1-150中文结案](../../reference/PLAN-N1-150_execution_closeout_20261020.md)和[完整结果](../../../reports/taiji_n1_plan150_v27_length_result_20261020.json)。
+
+N1-150完整计分仍有逐题台账缺口：训练progress文件中55,296条更新可解析，评分逐题行只保留seed13/eight_row_control的1,248条；六个endpoint的评分分母和聚合摘要已保存在result JSON。按用户授予的执行计划批准权，已批准冻结[N1-151](../../reference/PLAN-N1-151_train_score_ledger_recovery_draft_20261020.md)：对同六枚final bundle重复原有960+288条train-only评分，共7,488条；只补齐逐题结果并核对原聚合，不训练、不增加题目、不查询dev/holdout/confirmation、不改变门或晋级状态。下一步先实现独立runner/合同测试并提交，再做readiness和六枚final bundle恢复前置。
+
+### 历史状态（截至2026-10-19；后由N1-150结案取代）
 
 **N1-126至N1-132已结案。** N1-132三seed原train门通过，但泛化尚未验证；v15确认门N1-133未通过并保持关闭。N1-134已完成480条方向×位置描述性诊断：候选position 45/120、position父档43/120，不能隔离上下文长度效应。[N1-134结案](../../reference/PLAN-N1-134_execution_closeout_20261019.md)
 
