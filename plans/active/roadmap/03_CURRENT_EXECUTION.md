@@ -1,12 +1,15 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前执行：PLAN-N1-153 fresh内容上下文长度配对诊断
+## 当前执行：PLAN-N1-153A fresh结果绑定修复与同面完成
 
 ### 最新状态（2026-10-20）
 
 N1-150已完整结束：55,296/55,296次更新、7,488/7,488条train-only计分，六个final bundle独立恢复6/6，六个N1-132原门全部通过；累计CPU6,956.094/18,000秒，0 dev/holdout/confirmation，`can_promote=false`。长度混合candidate在8/16/32行的已知类合计命中216/216、216/216、215/216，8行control为215/216、210/216、190/216；均为同一train集上的描述性读数。详见[N1-150中文结案](../../reference/PLAN-N1-150_execution_closeout_20261020.md)和[完整结果](../../../reports/taiji_n1_plan150_v27_length_result_20261020.json)。
 
 N1-152已完成1,728条长度分层逐题离线归因，CPU0.046875秒，0模型/checkpoint加载、0查询、0更新；candidate 32行已知类215/216，control 190/216，差异主要来自lookup；unknown弃答8/16/32行candidate为42/72、60/72、65/72，control为72/72、69/72、70/72。详见[N1-152结案](../../reference/PLAN-N1-152_execution_closeout_20261020.md)与[完整配对归因](../../../reports/taiji_n1_plan152_length_itemwise_attribution_20261020.json)。均为同一train集描述读数，不作泛化或能力晋级。
+
+N1-153 fresh face已准备并过来源/语义审计，但一次性评分在seed11/length_mixed的480条查询后因endpoint summary错误停止；原JSON记录0逐题行，六枚final restore 6/6、source/checkpoint未变。失败详见[原结果](../../../reports/taiji_n1_plan153_v28_fresh_context_length_confirmation_result_20261020.json)。依据执行计划批准权，已批准[N1-153A](../../reference/PLAN-N1-153A_fresh_context_result_binding_recovery_20261020.md)：保留原face/失败结果，逐endpoint绑定summary后重跑全2,880条（其中480条重复、2,400条此前未执行），总计3360次诊断查询；累计CPU≤3,600秒，不训练、不改题面/判据、不查dev/holdout。
+
 
 ### 历史状态（截至2026-10-19；后由N1-150结案取代）
 
