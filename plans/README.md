@@ -1,6 +1,6 @@
 # Seed / Taiji 计划与架构入口
 
-> **2026-10-19 N1队首**：[PLAN-N1-126](reference/PLAN-N1-126_execution_closeout_20261019.md)、[PLAN-N1-127](reference/PLAN-N1-127_execution_closeout_20261019.md)与[PLAN-N1-128](reference/PLAN-N1-128_execution_closeout_20261019.md)已完成。Full-context target-only question binding匹配source-pruned结果：position90/90、cut86/90；唯一残差是seed13/cut的两条transition。均为消费题oracle诊断，0训练、0 dev/unknown、`can_promote=false`。当前唯一下一步是[PLAN-N1-129](reference/PLAN-N1-129_native_question_binding_mass_audit_draft_20261019.md)，测量native问题绑定在目标行和干扰行的注意力质量。
+> **2026-10-19 N1队首**：[PLAN-N1-126](reference/PLAN-N1-126_execution_closeout_20261019.md)至[PLAN-N1-129](reference/PLAN-N1-129_execution_closeout_20261019.md)已完成。全上下文question-binding oracle达到position90/90、cut86/90；native绑定总目标质量仅比字节占比高约1.15–1.50倍，且不能稳定区分正确与错误输出。N1-129只读激活审计，0答案生成、0训练、0 dev/unknown，`can_promote=false`。当前唯一下一步是[PLAN-N1-130](reference/PLAN-N1-130_native_relation_row_binding_mass_audit_draft_20261019.md)，按关系行拆分native alignment质量。
 
 > 历史 N1-123 进展记录保留作追溯；当前状态以本页首条与[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准。本页只同步N1研究队首，不改写项目整体M0–M8状态。
 

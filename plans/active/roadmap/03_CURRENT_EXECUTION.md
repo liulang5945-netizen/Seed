@@ -1,12 +1,12 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：PLAN-N1-129 native question-binding mass audit
+## 当前唯一下一步：PLAN-N1-130 native relation-row binding mass audit
 
 ### 最新状态（2026-10-19）
 
-**N1-126/N1-127/N1-128已按授权完成。** [N1-126](../../reference/PLAN-N1-126_execution_closeout_20261019.md)目标行裁剪达到position90/90、cut86/90，但同时缩短上下文；[N1-127](../../reference/PLAN-N1-127_execution_closeout_20261019.md)保留完整上下文并只mask decoder，position82/90、cut78/90；[N1-128](../../reference/PLAN-N1-128_execution_closeout_20261019.md)再对native local question alignment与context confidence做gold target-row mask，完整上下文下达到position90/90、cut86/90，与裁剪读数相同。剩余错误只有seed13/cut的两个transition方向词，gold为west/north，输出east/south。三项均为已消费题oracle干预；0训练、0 dev/unknown、0判据修改，checkpoint与来源hash未变，`can_promote=false`。N1-128 CPU累计54.53125秒；teacher-forced路径不mask，180条teacher输出与封存值一致，79条free/teacher exactness差异来自路径不同，不作同路径比较。
+**N1-126至N1-129已按授权完成。** [N1-126](../../reference/PLAN-N1-126_execution_closeout_20261019.md) source pruning达到position90/90、cut86/90；[N1-127](../../reference/PLAN-N1-127_execution_closeout_20261019.md)完整上下文decoder mask为82/90、78/90；[N1-128](../../reference/PLAN-N1-128_execution_closeout_20261019.md)再加question-binding mask后回到90/90、86/90。 [N1-129](../../reference/PLAN-N1-129_execution_closeout_20261019.md)对六端点做180条原生binding activation read，CPU累计43.46875秒；没有生成答案、teacher评分、参数更新、dev或unknown查询。目标alignment总质量约为目标字节占比的1.15–1.50倍，但在正确/错误样本间没有稳定方向，表明总量不足以解释残差。所有结果均不改变原门或能力结论，`can_promote=false`。
 
-当前唯一下一步为[PLAN-N1-129](../../reference/PLAN-N1-129_native_question_binding_mass_audit_draft_20261019.md)：在同一180个已消费输入/端点上只运行冻结模型原生question-state与bind路径，不生成答案，量化每个问题字节分配给target rows和distractors的alignment mass，并与native、N1-127及N1-128已存结果连接。该审计可辨别模型是否已学到正确来源但在后续写出/组合失败，或原生绑定仍被干扰分散。180条activation read、CPU≤600秒累计，0 autoregressive output、0更新、0新面/dev/unknown、无门改动；已按用户授权进入只读实现与零查询预检。
+当前唯一下一步为[PLAN-N1-130](../../reference/PLAN-N1-130_native_relation_row_binding_mass_audit_draft_20261019.md)：在相同180输入/端点上，仅运行native question-state和bind，按单条relation事实拆分每个问题字节的alignment mass，尤其transition的`faces`与`turns`。该审计可查明错误时是未绑定某一必需事实，还是已有目标事实但后续方向组合出错。CPU≤600秒累计、0输出/teacher/更新/新样本/dev/unknown，不改判据；已按用户授权继续实现与零查询预检。
 
 以下N1-123及更早段落为历史证据与队首快照，不取代上方当前状态。
 

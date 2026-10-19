@@ -1,6 +1,6 @@
 # plans/reference 索引（2026-10-14 更新；蒸馏收束后的参考件与 N 系列增补）
 
-> **2026-10-19 N1当前**：[N1-126](PLAN-N1-126_execution_closeout_20261019.md)、[N1-127](PLAN-N1-127_execution_closeout_20261019.md)和[N1-128](PLAN-N1-128_execution_closeout_20261019.md)已完成。Full-context target-only question binding达到position90/90、cut86/90，与source pruning相同；剩余仅seed13/cut两个transition错误。当前唯一下一步[N1-129](PLAN-N1-129_native_question_binding_mass_audit_draft_20261019.md)将量化native binder的目标/干扰行注意力，不生成答案；详见[03](../active/roadmap/03_CURRENT_EXECUTION.md)。
+> **2026-10-19 N1当前**：[N1-126](PLAN-N1-126_execution_closeout_20261019.md)至[N1-129](PLAN-N1-129_execution_closeout_20261019.md)已完成。N1-128 full-context oracle binding与source pruning准确数一致；N1-129 native target alignment只有约1.15–1.50倍字节占比富集，且总mass不稳定区分正确性。当前唯一下一步[N1-130](PLAN-N1-130_native_relation_row_binding_mass_audit_draft_20261019.md)按单条关系事实拆分对齐质量，不生成答案；详见[03](../active/roadmap/03_CURRENT_EXECUTION.md)。
 
 > 历史 N1-123 队首快照保留作追溯；当前计划以本页首条和[03_CURRENT_EXECUTION](../active/roadmap/03_CURRENT_EXECUTION.md)为准。
 
