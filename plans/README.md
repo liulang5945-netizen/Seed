@@ -1,6 +1,6 @@
 # Seed / Taiji 计划与架构入口
 
-> **2026-10-19 N1队首**：N1-133确认门未通过并保持关闭；N1-134结论为描述性。N1-135至N1-137均已结案；N1-137完成480查询、累计CPU192.046875秒、12/12 bundle恢复、253项来源哈希不变，0训练/更新/dev，`can_promote=false`。d=2相对d=1在8/16行分别多命中9/96，仍有多数项目答错。唯一建议为[PLAN-N1-138草案](reference/PLAN-N1-138_neighbor_distance_dose_curve_diagnostic_draft_20261019.md)：同一新面匹配d=1/2/4，56题、最多672查询、CPU≤600秒，零训练/更新/dev；新测面待批准。详见[N1-137中文结案](reference/PLAN-N1-137_execution_closeout_20261019.md)、[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)及[逐题诊断报告](../reports/taiji_n1_plan137_neighbor_distance_context_interference_diagnostic_20261019.json)。
+> **2026-10-19 N1队首**：N1-133确认门未通过并保持关闭；N1-134结论为描述性。N1-135至N1-137均已结案；N1-137完成480查询、累计CPU192.046875秒、12/12 bundle恢复、253项来源哈希不变，0训练/更新/dev，`can_promote=false`。d=2相对d=1在8/16行分别多命中9/96，仍有多数项目答错。用户已批准[PLAN-N1-138](reference/PLAN-N1-138_neighbor_distance_dose_curve_diagnostic_draft_20261019.md)：同一新面匹配d=1/2/4，56题、最多672查询、CPU≤600秒，零训练/更新/dev。当前进行零查询readiness，恢复通过前不构面。详见[N1-137中文结案](reference/PLAN-N1-137_execution_closeout_20261019.md)、[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)及[逐题诊断报告](../reports/taiji_n1_plan137_neighbor_distance_context_interference_diagnostic_20261019.json)。
 
 > 历史 N1-123 进展记录保留作追溯；当前状态以本页首条与[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准。本页只同步N1研究队首，不改写项目整体M0–M8状态。
 
