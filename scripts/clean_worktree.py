@@ -57,8 +57,9 @@ DELETABLE_DIRS = [
     "agent_workspace",
     "update_frontend",
 ]
-# 前缀族：.tmp-<主题>/（S3 命名约定）；.m0-checkpoint-*/ 在 EXEMPT 中保守保留
-DELETABLE_PREFIXES = (".tmp-",)
+# 前缀族：.tmp-<主题>/（S3 命名约定）和历史 pytest basetemp 残留；
+# .m0-checkpoint-*/ 在 EXEMPT 中保守保留
+DELETABLE_PREFIXES = (".tmp-", ".pytest-tmp-", ".pytest-final-")
 
 # 子树内的本机运行产物（2026-09-30，H19）。上一版只扫仓库根，而按 R2「目录规则不覆盖子目录」，
 # `.gitignore` 的 `/.dsh-sbx*/` 锚在根、对 `taiji-harness/.dsh-sbx2/` 不生效——于是 fork 子目录里的

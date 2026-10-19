@@ -52,3 +52,19 @@ def test_remove_dir_retries_readonly_runtime_files(tmp_path) -> None:
 
     assert module.remove_dir("scratch") is True
     assert not target.parent.exists()
+
+
+def test_pytest_basetemp_families_are_included_but_cache_is_not(tmp_path, monkeypatch) -> None:
+    module = _module()
+    module.ROOT = str(tmp_path)
+    for name in (
+        ".pytest-tmp-n1-run100-contracts",
+        ".pytest-final-all",
+        ".pytest_cache",
+    ):
+        (tmp_path / name).mkdir()
+    monkeypatch.setattr(module, "git_ignored", lambda _rel: True)
+
+    planned = {rel for rel, _count, _mb, verdict in module.plan_dirs() if verdict == "删除"}
+
+    assert planned == {".pytest-tmp-n1-run100-contracts", ".pytest-final-all"}

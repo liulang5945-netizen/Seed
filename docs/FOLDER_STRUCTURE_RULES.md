@@ -45,7 +45,8 @@
 ### C 运行时产物（ignored；**可删 ≠ 全都可删**）
 - `artifacts/`：历史本地诊断状态；唯一已跟踪报告迁至 `reports/legacy/artifacts/`。不新增入库报告，不据此删除本地文件。
 - 随时可删：`logs/` · `rag_data/` · `user_data/` · `agent_workspace/` ·
-  `.seed_test_tmp/` · `_pytest_*/` · `update_frontend/`（空的前端热替换层）
+  `.seed_test_tmp/` · `_pytest_*/` · 仓库根的 `.pytest-tmp-*/`、`.pytest-final-*/` ·
+  `update_frontend/`（空的前端热替换层）
 - **不删**：`data/` —— dev 模式的运行数据根（S6），实测 **63.5 GB**，内含训练数据
 - **不删**：`security/` —— 运行凭据在内部（文件本体已被 `**/security/*` 覆盖，见 R3）
 - **谨慎**：`checkpoints/`（实测 767 MB）—— `*.pt` 按 R3 不入库，但**产品基座在此**
@@ -88,6 +89,9 @@ HOME，内含其会话日志与凭据，全为本机运行态）
    挪进 `scripts/`，然后删目录——**目录本身不是结论的存放地**。
 3. **不得**在根目录新造第四种前缀（`.scratch-`、`work-`、`新建文件夹`）。
    看到不在台账里的根级目录，按 S5 清理或按本条改名。
+4. Pytest 的 `tmp_path` / `tmp_path_factory` 默认使用系统临时目录。不要把 `--basetemp`
+   指向仓库根，也不要创建 `pytest_tmp_*` 根目录；确需仓库内的隔离临时区时，统一放在
+   `.seed_test_tmp/<用途>/`。历史遗留的 `.pytest-tmp-*` 与 `.pytest-final-*` 由清理工具识别。
 
 ---
 
@@ -134,7 +138,8 @@ git 不跟踪空目录，所以**空目录不可能有版本价值**。运行时
 
 - `api/`、`neuroplex/`、`taiji/`、`seed/`、`seed_platform/`、`instruments/`：产品源码；
   运行期生成的文件一律走 S6 的数据根，不落模块目录
-- `tests/`：只放测试与其 fixture；运行期临时目录进系统 temp 或 `.seed_test_tmp/`
+- `tests/`：只放测试与其 fixture；运行期临时目录默认进系统 temp，需要仓库内临时区时放
+  `.seed_test_tmp/`，不得在根目录自建 pytest 临时目录
 - `scripts/`：可复用脚本；一次性数据修复脚本按既有约定 `scripts/download_*` 忽略或归档
 - `docs/`：治理与规范文档（`REPO_HYGIENE_RULES.md`、本文件）
 - `plans/`：计划与结项账本，**只追加**（见各计划文件的冻结纪律）
