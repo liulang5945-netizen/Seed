@@ -1,0 +1,1 @@
+{"can_promote":false,"dev_queries":0,"parameter_updates":0,"plan_sha256":"bed528c5fe76ccc865b73724e52a807cf7e9e2b8c66883faf26e9cb3ee3e8f2f","planned_endpoints":12,"planned_items_per_endpoint":40,"planned_queries":480,"schema":"n1-plan136-target-position-diagnostic-attempt-v1","status":"started","说明_zh":"对12个冻结endpoint各评估40题，并保存逐题目标位置与生成字节；只执行一次，不重试。"}
