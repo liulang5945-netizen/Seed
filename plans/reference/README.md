@@ -1,5 +1,7 @@
 # plans/reference 索引（2026-10-14 更新；蒸馏收束后的参考件与 N 系列增补）
 
+> **2026-10-19 N1最新**： [PLAN-N1-123结案](PLAN-N1-123_execution_closeout_20261019.md) 记录 v13长上下文面已用540查询完整结束、确认四门未合取且不晋升；[逐题归因](../../reports/taiji_n1_v13_after_n122_itemwise_attribution_20261019.json)显示目标证据只覆盖上下文早段。当前唯一待裁提案为 [PLAN-N1-124](PLAN-N1-124_v14_full_context_evidence_position_probe_draft_20261019.md)，详细执行入口以 [03_CURRENT_EXECUTION](../active/roadmap/03_CURRENT_EXECUTION.md) 为准。
+
 
 - [C2完整结果裁决](PLAN-N1-07_C2_calibration_result_adjudication_20261015.md)：112臂、约602秒CPU，七臂严格命中0/16，非能力通过。
 - [C2状态流诊断预注册（已执行）](PLAN-N1-08_C2_state_flow_diagnostic_prereg_20261015.md)：同16项，48对已完整，155.078125秒CPU；按新授权自主执行。

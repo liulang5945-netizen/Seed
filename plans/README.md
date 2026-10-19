@@ -1,5 +1,7 @@
 # Seed / Taiji 计划与架构入口
 
+> **2026-10-19 N1进展**：[PLAN-N1-123结案](reference/PLAN-N1-123_execution_closeout_20261019.md)记录540次查询完整结束，v13长上下文确认门未通过、`can_promote=false`；当前唯一待批准建议为[PLAN-N1-124](reference/PLAN-N1-124_v14_full_context_evidence_position_probe_draft_20261019.md)，以[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准。此处只同步N1研究队首，不改写项目整体M0–M8状态。
+
 > **2026-10-15 主线进度**：[PLAN-N-01](reference/PLAN-N-01_development_revision_20261014.md) · [C2 校准预注册](reference/PLAN-N1-07_C2_consumer_calibration_prereg_20261014.md) · [C2 预算裁决](reference/PLAN-N1-07_C2_calibration_budget_adjudication_20261015.md)。C1完整面通过；C2单器官校准112/112臂完成，累计601.91秒CPU；选择8/16，七臂严格命中均0/16。完整结果见 [C2裁决](reference/PLAN-N1-07_C2_calibration_result_adjudication_20261015.md)；状态流诊断48对/96查询已完成，CPU155.08秒，见 [08裁决](reference/PLAN-N1-08_C2_state_flow_adjudication_20261015.md)。09补零位置48臂也已完成，CPU77.5秒、三臂严格命中仍0/16；当前唯一建议为 [10核心学习路线评审](reference/PLAN-N1-10_native_evidence_credit_route_review_20261015.md)。低成本诊断无需逐步审批。已批准长期连续推进；当前唯一队首以 [03](active/roadmap/03_CURRENT_EXECUTION.md) 为准。
 
 > **2026-10-14 收纳导航**：[项目地图](../docs/README.md) · [全项目评估](reference/PROJECT_WIDE_ASSESSMENT_20261014.md) · [整理记录](reference/PROJECT_ORGANIZATION_20261014.md)。本页下方旧阶段摘要保留追溯；当前状态与执行顺序以 [03](active/roadmap/03_CURRENT_EXECUTION.md) 为准，架构与模型主线见 [09](active/roadmap/09_NEXT_MAINLINE_PLAN.md)。M5/M6 已批准收束，勿把下方历史“当前仍为 M5”当作现状。

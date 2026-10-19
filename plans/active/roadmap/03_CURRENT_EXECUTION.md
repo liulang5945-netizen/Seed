@@ -1,8 +1,10 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：批准并执行 PLAN-N1-123 v13长上下文确认面
+## 当前唯一下一步：批准 PLAN-N1-124 v14全上下文证据位置探针
 
 ### 最新状态（2026-10-19）
+
+**最新 N1 结案取代本文下方较早的队首文字：** PLAN-N1-123 seed113长上下文面已完整执行，CPU 118.046875/600秒、540/540查询、36个checkpoint哈希与来源链均未变。范围门8/9通过，但确认四门合取失败：候选position 41/60、cut 36/60、terminal 18/60；相对cut仅+5，且seed12 lookup 1/5、seed13 transition 1/5。未训练、未查询dev、未重抽，`can_promote=false`。零查询逐题归因发现16条上下文中的目标证据起点仅覆盖0–4（双行任务实际证据行0–5），未覆盖后半上下文；因此这次压力测不能说明晚位证据读取。完整绑定证据见 [PLAN-N1-123结案](../../reference/PLAN-N1-123_execution_closeout_20261019.md) 与[逐题归因](../../../reports/taiji_n1_v13_after_n122_itemwise_attribution_20261019.json)。唯一建议为[PLAN-N1-124](../../reference/PLAN-N1-124_v14_full_context_evidence_position_probe_draft_20261019.md)：只改变新面中的目标证据位置分布，覆盖早/中/晚；其余样本规模、来源排除、端点、范围门与确认门不变。这是新的测面，当前仅为草案，待批准后才实施。
 
 PLAN-N1-110 九模型长度平衡训练已完整结束：221,184 次更新、CPU 9,499.359375 秒，18 次零点/终点恢复、来源守卫与长度账本均通过。但原 position 训练充分性门在 seed13 失败（四条件联合原始/改名为 5/48、4/48；改名 transition 为 38/48），所以没有生成 v11 范围/确认面，没有 dev/holdout/confirmation 查询，也没有模型晋升。结案与分片归因见 [PLAN-N1-110 closeout](../../reference/PLAN-N1-110_execution_closeout_20261018.md)。
 

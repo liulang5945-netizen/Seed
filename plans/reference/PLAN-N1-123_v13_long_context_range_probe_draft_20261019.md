@@ -1,6 +1,6 @@
 # PLAN-N1-123 — v13 long-context hard-neighbor range probe
 
-**Status: draft awaiting approval for a new measurement surface.** PLAN-N1-122 stopped at 3/9 usable endpoints on its four-observation face. This proposal tests one fresh sixteen-observation face on the same frozen model cohorts, with the same item classes, `d=1` name confusability, length balance, and gates. No N1-123 face or attempt currently exists.
+**Status: approved for one-shot execution on 2026-10-19.** User approved the frozen proposal. PLAN-N1-122 stopped at 3/9 usable endpoints on its four-observation face. This plan tests one fresh sixteen-observation face on the same frozen model cohorts, with the same item classes, `d=1` name confusability, length balance, and gates. No N1-123 face or attempt existed at approval.
 
 ## Why sixteen observations
 
