@@ -160,10 +160,9 @@ def _generate_context_bank(
         used_words.update(words)
     initial_entities = set(used_entities)
     initial_words = set(used_words)
-    views = {}
-    source_digests = {}
-    ordered_keys = sorted(source_items)
-    for offset, key in enumerate(ordered_keys):
+    descriptors = {}
+    required_fillers = Counter()
+    for key in sorted(source_items):
         item = source_items[key]
         if item.get("split") != "train" or item.get("kind") not in TRAIN_KINDS:
             raise Refuse(f"context source is not a supported train item: {item.get('id')}")
@@ -173,10 +172,15 @@ def _generate_context_bank(
         base_rows = _base_context_rows(item)
         if not base_rows or len(base_rows) >= max(LENGTHS):
             raise Refuse(f"unexpected original context length for {item.get('id')}: {len(base_rows)}")
-        seed_part = int(key[:16], 16)
-        rng = random.Random(seed ^ seed_part ^ offset)
+        descriptors[key] = (item, subject, base_rows)
+        required_fillers[subject] = max(required_fillers[subject], max(LENGTHS) - len(base_rows))
+
+    filler_banks = {}
+    for subject in sorted(required_fillers):
+        subject_seed = int(hashlib.sha256(subject.encode("utf-8")).hexdigest()[:16], 16)
+        rng = random.Random(seed ^ subject_seed)
         filler_rows = []
-        for filler_index in range(max(LENGTHS) - len(base_rows)):
+        for filler_index in range(required_fillers[subject]):
             entity_count_before = len(used_entities)
             neighbor = n149_builder.n148_builder.n147_builder._confusable(subject, used_entities, rng)
             if (
@@ -184,13 +188,19 @@ def _generate_context_bank(
                 or sum(first != second for first, second in zip(subject, neighbor, strict=True)) != DISTANCE
                 or len(used_entities) != entity_count_before + 1
             ):
-                raise Refuse(f"generated distractor is not a unique d={DISTANCE} neighbor: {item.get('id')}")
-            material_length = 6 if (filler_index + offset) % 2 == 0 else 7
+                raise Refuse(f"generated distractor is not a unique d={DISTANCE} neighbor: {subject}")
+            material_length = 6 if filler_index % 2 == 0 else 7
             word_count_before = len(used_words)
             material = n149_builder.n148_builder.n147_builder._novel(material_length, used_words, rng)
             if len(material) != material_length or len(used_words) != word_count_before + 1:
-                raise Refuse(f"generated training material is not unique or has wrong length: {item.get('id')}")
+                raise Refuse(f"generated training material is not unique or has wrong length: {subject}")
             filler_rows.append(f"{neighbor} uses {material}.")
+        filler_banks[subject] = filler_rows
+
+    views = {}
+    source_digests = {}
+    for key, (item, subject, base_rows) in descriptors.items():
+        filler_rows = filler_banks[subject]
         views[key] = {
             length: [*base_rows, *filler_rows[:length - len(base_rows)]]
             for length in LENGTHS
@@ -204,6 +214,7 @@ def _generate_context_bank(
         raise Refuse("generated training distractors overlap an excluded evaluation source")
     summary = {
         "context_source_count": len(source_items),
+        "unique_question_subject_count": len(filler_banks),
         "generated_distractor_entity_count": len(generated_entities),
         "generated_distractor_word_count": len(generated_words),
         "context_view_count": len(views) * len(LENGTHS),
@@ -248,7 +259,6 @@ def build_schedule(g: dict, inputs: dict, excluded_entities: set[str], excluded_
         second_key = None
         if second is not None:
             second_key = _context_key(second)
-            source_items.setdefault(second_key, second)
         slots.append(
             {
                 "step": step,

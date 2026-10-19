@@ -123,18 +123,26 @@ def test_context_bank_is_nested_target_first_and_exclusion_safe() -> None:
         source_names.update(names)
         source_words.update(words)
 
+    filler_banks = {}
+    generated_entity_owner = {}
+    generated_word_owner = {}
     for key, item in schedule["source_items"].items():
         base = builder._base_context_rows(item)
         views = schedule["views"][key]
         assert views[8] == views[16][:8] == views[32][:8]
         assert views[8][: len(base)] == base
         subject = builder.n132._query_subject(item["question"])
-        for row in views[32][len(base) :]:
+        filler_rows = views[32][len(base) :]
+        previous = filler_banks.setdefault(subject, filler_rows)
+        assert previous[: min(len(previous), len(filler_rows))] == filler_rows[: min(len(previous), len(filler_rows))]
+        for row in filler_rows:
             name, _, word = row.removesuffix(".").split()
             assert len(name) == builder.ENTITY_LENGTH
             assert builder.n149_builder.n148_builder.n147_builder._hamming(subject, name) == builder.DISTANCE
             assert name not in source_names | excluded_entities
             assert word not in source_words | excluded_words
+            assert generated_entity_owner.setdefault(name, subject) == subject
+            assert generated_word_owner.setdefault(word, subject) == subject
 
     assert len(inputs["items"]) == 192
     assert schedule["manifest"]["context_bank"]["context_view_count"] == len(schedule["views"]) * 3
