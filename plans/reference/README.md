@@ -1,6 +1,6 @@
 # plans/reference 索引（2026-10-14 更新；蒸馏收束后的参考件与 N 系列增补）
 
-> **2026-10-19 N1当前**：N1-139已完整执行，55,296次更新、7,488条train-only计分、12/12 zero/final checkpoint恢复、270项来源哈希不变；累计CPU 3,493.89/3,600秒。原N1-132训练门5/6通过；seed13候选transition由48/48降至28/48，候选增强上下文840/864、两行控制411/864，can_promote=false，未查询dev/holdout。结案见[PLAN-N1-139](PLAN-N1-139_execution_closeout_20261019.md)，逐题归因见[报告](../../reports/taiji_n1_plan139_itemwise_retention_context_attribution_20261019.json)。当前下一步是待批准草案[PLAN-N1-140](PLAN-N1-140_baseline_retention_balanced_matched_continuation_draft_20261019.md)，未授权训练。
+> **2026-10-19 N1当前**：N1-139已完整结案：55,296次更新、7,488条train-only计分、12/12 bundle恢复，270项来源哈希不变；CPU累计3,493.890/3,600秒。原门5/6通过，seed13候选transition从48/48降至28/48；候选增强上下文840/864、控制411/864，can_promote=false。结案见[报告](PLAN-N1-139_execution_closeout_20261019.md)，逐题归因见[报告](../../reports/taiji_n1_plan139_itemwise_retention_context_attribution_20261019.json)。用户已批准[N1-140](PLAN-N1-140_baseline_retention_balanced_matched_continuation_draft_20261019.md)：baseline 24/48、每种增强4/48、55,296次更新、7,488条train-only计分、CPU≤7,200秒。当前先执行来源/schedule核验和六个zero bundle独立保存恢复；不访问dev/holdout，不晋升。
 
 > 历史 N1-123 队首快照保留作追溯；当前计划以本页首条和[03_CURRENT_EXECUTION](../active/roadmap/03_CURRENT_EXECUTION.md)为准。
 

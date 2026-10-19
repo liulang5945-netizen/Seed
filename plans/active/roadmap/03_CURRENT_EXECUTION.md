@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：审批 PLAN-N1-140 基线保持型匹配续训
+## 当前唯一下一步：执行 PLAN-N1-140 基线保持型匹配续训
 
 ### 最新状态（2026-10-19）
 
@@ -14,7 +14,7 @@
 
 用户批准的[N1-138](../../reference/PLAN-N1-138_neighbor_distance_dose_curve_diagnostic_draft_20261019.md)已完整结束：672条查询、累计CPU218.984375/600秒、12/12 bundle恢复、266项来源哈希不变，0训练/更新/dev，`can_promote=false`。同面d=1/2/4在8行命中33/96、40/96、54/96，在16行命中26/96、36/96、48/96；两种长度的96组逐项剂量模式全都随距离不下降。逐题输出见[诊断报告](../../../reports/taiji_n1_plan138_neighbor_distance_dose_curve_diagnostic_20261019.json)，结案见[中文执行结案](../../reference/PLAN-N1-138_execution_closeout_20261019.md)。
 
-用户批准的[N1-139](../../reference/PLAN-N1-139_context_robust_matched_continuation_calibration_draft_20261019.md)已完整执行：55,296次更新、7,488条train-only计分、12/12个zero/final bundle恢复、270项来源哈希不变；CPU累计3,493.890/3,600秒。原N1-132训练门5/6 endpoint通过；唯一失败为seed13候选，transition从48/48降至28/48。候选在增强上下文合计840/864，对照411/864；未查询dev/holdout，can_promote=false。结案见[中文报告](../../reference/PLAN-N1-139_execution_closeout_20261019.md)，逐题配对见[离线归因](../../../reports/taiji_n1_plan139_itemwise_retention_context_attribution_20261019.json)。下一步是审批[N1-140草案](../../reference/PLAN-N1-140_baseline_retention_balanced_matched_continuation_draft_20261019.md)：候选两行baseline比例改为24/48，六种增强条件各4/48，固定更新数与原门不变，CPU上限提至7,200秒。该训练配方及预算调整未获批准前不做checkpoint预检或训练。
+N1-139已完整结束：55,296次更新、7,488条train-only计分、12/12 bundle恢复、来源哈希不变，累计CPU 3,493.890/3,600秒。原N1-132门5/6通过；seed13候选transition从48/48降至28/48，增强上下文840/864、两行控制411/864，未查询dev/holdout，can_promote=false。详见[N1-139结案](../../reference/PLAN-N1-139_execution_closeout_20261019.md)与[逐题归因](../../../reports/taiji_n1_plan139_itemwise_retention_context_attribution_20261019.json)。用户已批准[N1-140](../../reference/PLAN-N1-140_baseline_retention_balanced_matched_continuation_draft_20261019.md)：候选每父项24/48两行baseline、六种增强条件各4/48，六分支55,296次更新、7,488条train-only计分、CPU≤7,200秒。当前执行来源/schedule核验与六个zero bundle独立恢复；通过前不训练，不访问dev/holdout。
 
 以下N1-123及更早段落为历史证据与队首快照，不取代上方当前状态。
 
