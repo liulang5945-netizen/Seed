@@ -1,12 +1,12 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：生成并合同核验 PLAN-N1-134 seed116 诊断面
+## 当前唯一下一步：执行 PLAN-N1-134 的480条方向×位置诊断
 
 ### 最新状态（2026-10-19）
 
 **N1-126至N1-132已结案。** 126–128在同一已消费v13/v14面上显示gold-target行限制可恢复位置臂全部样本、cut臂至86/90，但这是oracle干预；129–130发现原生alignment已有目标事实质量，却不能区分正确/错误；131将剩余cut错误定位为seed13的inverse-turn。132加入`0.25 * L_bind`并对三个N1-120 position parent各续训9,216步；三seed原train门均通过，2,880条全为train-only评分。总更新27,648，执行CPU980.40625秒、累计1,006.421875秒；dev/v13/v14/confirmation均0，`can_promote=false`。因此训练拟合已收束，但自主泛化未验证，且没有matched no-bind续训臂来单独归因`L_bind`。完整对账见[N1-132结案](../../reference/PLAN-N1-132_execution_closeout_20261019.md)。
 
-[PLAN-N1-133](../../reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)已结案且确认门未通过。后续train-only覆盖审计发现N1-132的48条transition源样本全为2行观测，目标行只在索引0/1；9,216步排程未出现16行或晚位目标。用户已批准[PLAN-N1-134](../../reference/PLAN-N1-134_transition_direction_position_counterbalance_diagnostic_draft_20261019.md)：40道16行transition题，四方向×五目标位置×每格两模板，在12个冻结endpoint上最多480条查询、CPU≤600秒，零训练/更新/dev，不改门。N134 readiness已通过来源并集7,938实体名/6,288词值核验及12/12完整bundle恢复，CPU 69.28125秒，0查询/更新。当前先一次生成并合同核验seed116题面；通过后才执行批准的480条查询。训练覆盖审计见[报告](../../../reports/taiji_n1_plan132_transition_training_coverage_audit_20261019.json)，readiness见[报告](../../../reports/taiji_n1_plan134_transition_diagnostic_readiness_20261019.json)。
+[PLAN-N1-133](../../reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)已结案且确认门未通过，`can_promote=false`。train-only覆盖审计发现N1-132转向训练总是2行观测、目标索引0/1。用户已批准[PLAN-N1-134](../../reference/PLAN-N1-134_transition_direction_position_counterbalance_diagnostic_draft_20261019.md)：seed116、40题、四方向×五目标位置×每格2个模板，12个冻结endpoint各评估40题，最多480条、CPU≤600秒；零训练/更新/dev，不改门。N134零查询readiness已恢复12/12完整bundle，来源并集为7,938实体名/6,288词值；seed116面已生成并通过全部合同检查（四方向各10题、每位置8题、每格一左一右、16行/题），构面0查询/更新。现在执行唯一一次480条计分；结果只描述16行条件下方向×位置分布，不作上下文长度因果解释或能力晋升。证据见[中文结案](../../reference/PLAN-N1-133_execution_closeout_20261019.md)、[训练覆盖审计](../../../reports/taiji_n1_plan132_transition_training_coverage_audit_20261019.json)、[readiness](../../../reports/taiji_n1_plan134_transition_diagnostic_readiness_20261019.json)、[v16题面](../../manifests/n1_hard_neighbor_v16_transition_direction_position_seed116_20261019.json)及[合同报告](../../../reports/taiji_n1_plan134_transition_face_checks_20261019.json)。
 
 以下N1-123及更早段落为历史证据与队首快照，不取代上方当前状态。
 

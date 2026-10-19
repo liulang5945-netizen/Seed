@@ -1,6 +1,6 @@
 # Seed / Taiji 计划与架构入口
 
-> **2026-10-19 N1队首**：N1-126至[N1-132](reference/PLAN-N1-132_execution_closeout_20261019.md)已完成；N1-133已结案但v15确认门未通过。N1-132训练覆盖静态审计发现transition训练仅2行观测、目标索引0/1。用户已批准[N1-134](reference/PLAN-N1-134_transition_direction_position_counterbalance_diagnostic_draft_20261019.md)，其零查询readiness通过：7,938个实体名、6,288个词值、12/12完整bundle恢复、CPU 69.28125秒，0查询/更新。唯一下一步为生成并合同核验seed116的40题方向×位置面，再按批准范围最多480条查询、CPU≤600秒；不训练、不改既有门。当前状态见[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)、[readiness报告](../reports/taiji_n1_plan134_transition_diagnostic_readiness_20261019.json)和[覆盖审计](../reports/taiji_n1_plan132_transition_training_coverage_audit_20261019.json)。
+> **2026-10-19 N1队首**：N1-126至[N1-132](reference/PLAN-N1-132_execution_closeout_20261019.md)已完成；N1-133 v15确认门未通过，保持`can_promote=false`。训练覆盖审计发现N1-132 transition只用2行观测、目标索引0/1。用户批准的[N1-134](reference/PLAN-N1-134_transition_direction_position_counterbalance_diagnostic_draft_20261019.md)readiness通过（12/12完整bundle、7,938个实体名/6,288个词值）；seed116 40题方向×位置面也已通过合同，构面0查询/更新。唯一下一步是在12个冻结endpoint上各查询40题，最多480条、CPU≤600秒；不训练、不查dev、不改既有门或晋升状态。当前状态见[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)、[readiness报告](../reports/taiji_n1_plan134_transition_diagnostic_readiness_20261019.json)及[题面合同](../reports/taiji_n1_plan134_transition_face_checks_20261019.json)。
 
 > 历史 N1-123 进展记录保留作追溯；当前状态以本页首条与[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准。本页只同步N1研究队首，不改写项目整体M0–M8状态。
 
