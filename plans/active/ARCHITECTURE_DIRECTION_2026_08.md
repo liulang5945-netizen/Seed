@@ -13,11 +13,12 @@
 | 规范名 | 指代 | 当前代码/文档事实 |
 |---|---|---|
 | **Seed** | 项目、产品、分发与运行时 | `seed/`、`api/`、`frontend/`、`desktop/`；承载 Taiji，不拥有隐藏认知 |
-| **Taiji** | 完整原生认知架构与模型 | 目标合同为 [TAIJI_NATIVE_ARCHITECTURE_V1.md](TAIJI_NATIVE_ARCHITECTURE_V1.md)；当前尚未完整实现 |
+| **Taiji（态极）** | 完整原生认知架构与模型 | 目标合同为 [TAIJI_NATIVE_ARCHITECTURE_V1.md](TAIJI_NATIVE_ARCHITECTURE_V1.md)；当前尚未完整实现 |
 | **Taiji Substrate Kernel v8（TSK-v8）** | 当前可执行低层研究 kernel | 顶层 `taiji/` 现有 byte/fabric/memory/motor 实现；精确历史规范见归档 |
 | **Legacy NeuroPlex** | 冻结的 Transformer 基线 | `neuroplex/`；只用于离线比较和显式兼容，不进入 Taiji cognition |
 | **`taiji.*` 历史别名** | Legacy NeuroPlex 的旧 pickle/import 路径 | 只在受控兼容和 `scripts/archive/` 中解释，不指当前 Taiji |
-| ~~态极~~ | Legacy NeuroPlex 的旧中文称呼 | 冻结历史可保留，新代码与新文档不使用 |
+
+2026-10-19 用户更正：当前 Taiji 的中文名为“态极”，撤销此前禁止新代码与文档使用该中文名的约定。历史 Legacy NeuroPlex 记录中的同名不改变其冻结对照身份；当前介绍以“态极原生认知模型”为定位，认知架构描述模型的组织方式，Seed 仍是产品与运行时。
 
 “Taiji Predictive Fabric（TPF）”从完整架构名降为 TSK-v8 中 predictive dynamics 的历史/候选内核名，不再代表 Taiji 全部。
 

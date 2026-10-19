@@ -1,10 +1,10 @@
-# Seed — Runtime for the Taiji Native Cognitive Architecture
+# Seed — Runtime for the Taiji Native Cognitive Model
 
 [简体中文](README.zh-CN.md) · [Project map](docs/README.md) · [Contributing](CONTRIBUTING.md)
 
-**Seed is a research and development project for persistent, learning cognitive systems.** Its cognitive architecture, **Taiji**, explores how perception, memory, world models, reasoning and action can work together in a system that develops through experience. Seed provides the runtime, experiments, APIs and product interface around that architecture.
+**Taiji (态极) is the native cognitive model being developed in this project.** Its architecture explores how perception, memory, world models, reasoning and action can work together in a model that develops through experience. **Seed** provides the runtime, experiments, APIs and product interface around the model.
 
-The long-term goal is a system that carries knowledge and internal state across interactions, learns from the consequences of its actions, and acquires new skills while retaining existing abilities. The repository brings the cognitive mechanisms and the infrastructure needed to study them into one place.
+The long-term goal is a model that carries knowledge and internal state across interactions, learns from the consequences of its actions, and acquires new skills while retaining existing abilities. The repository brings the cognitive mechanisms and the infrastructure needed to study them into one place.
 
 ## What Taiji explores
 

@@ -8,7 +8,7 @@
   2. taiji/ 是自足认知命名空间：不导入 seed、neuroplex 或 transformers（含子包）
   3. neuroplex/ 不反向依赖 seed/ 或 taiji/：冻结基线保持独立
   4. Transformer 底层的 live 消费点是封闭且已知的：新增消费点必须显式改这里
-  5. taiji/ 内禁止出现"态极"：新基底不复用 Legacy NeuroPlex 的旧中文称呼
+  5. 当前 Taiji 中文名为"态极"，文档明确其原生认知模型身份
 """
 
 from __future__ import annotations
@@ -177,15 +177,15 @@ def test_legacy_transformer_block_consumers_stay_closed() -> None:
     )
 
 
-def test_new_substrate_does_not_reuse_the_legacy_chinese_name() -> None:
-    """ "态极"是 Legacy NeuroPlex 的旧称，冻结代码内保留但新基底禁止使用。"""
-    offenders = [
-        path.relative_to(REPO).as_posix()
-        for path in _iter_python_files("taiji")
-        if "态极" in _read(path)
-    ]
+def test_taiji_chinese_name_and_model_identity_are_consistent() -> None:
+    """用户于 2026-10-19 更正名称；品牌名称不改变认知所有权和旧基线边界。"""
+    direction = _read(REPO / "plans/active/ARCHITECTURE_DIRECTION_2026_08.md")
+    english = _read(REPO / "README.md")
+    chinese = _read(REPO / "README.zh-CN.md")
 
-    assert not offenders, (
-        '"态极"指 Legacy NeuroPlex，与替代 Transformer 的新基底无关；'
-        f'taiji/ 内请写 "Taiji" 或 "NeuroPlex"：{offenders}'
-    )
+    assert "**Taiji（态极）** | 完整原生认知架构与模型" in direction
+    assert "Taiji (态极)" in english
+    assert "native cognitive model" in english
+    assert "态极（Taiji）" in chinese
+    assert "原生认知模型" in chinese
+    assert "太极" not in chinese
