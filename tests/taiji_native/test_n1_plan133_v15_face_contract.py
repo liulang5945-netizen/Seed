@@ -58,6 +58,9 @@ def test_v15_source_union_revalidates_consumed_v14_inputs_and_endpoint_set() -> 
     assert len(names) == 7308
     assert len(words) == 5808
     assert counts["source_hash_count"] == len(sources)
+    assert counts["prior_stopped_readiness_count"] == 2
+    assert sources[str(v15.INITIAL_READINESS.resolve())] == v15.INITIAL_READINESS_SHA256
+    assert sources[str(v15.SECOND_READINESS.resolve())] == v15.SECOND_READINESS_SHA256
     assert len(endpoints) == 12
     assert sum(endpoint["source"] == "N1-120" for endpoint in endpoints) == 9
     assert sum(endpoint["source"] == "N1-132" for endpoint in endpoints) == 3

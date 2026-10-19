@@ -1,0 +1,1 @@
+{"checked_at_utc":"2026-10-19T06:38:07Z","face_generated":false,"model_queries":0,"parameter_updates":0,"plan_sha256":"f885ee89e485fc042d9394bd0659714d118134625853afa4bbfb64643d5ba6f2","schema":"n1-plan133-v15-readiness-attempt-v1","status":"started","说明_zh":"开始来源、endpoint恢复和零查询readiness；若失败，本计划不重试。"}

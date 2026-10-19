@@ -1,6 +1,6 @@
 # Seed / Taiji 计划与架构入口
 
-> **2026-10-19 N1队首**：N1-126至[N1-132](reference/PLAN-N1-132_execution_closeout_20261019.md)已完成。N1-132 train-only calibration完成27,648更新，三seed全部通过原训练门（original192/192、pair96/96、rename192/192、rename-pair96/96），无dev/v13/v14/新确认查询，`can_promote=false`。唯一下一步为[N1-133](reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)：生成并一次性评估全新v15确认面；该新测面等待owner授权。
+> **2026-10-19 N1队首**：N1-126至[N1-132](reference/PLAN-N1-132_execution_closeout_20261019.md)已完成。N1-132 train-only calibration完成27,648更新，三seed全部通过原训练门（original192/192、pair96/96、rename192/192、rename-pair96/96），无dev/v13/v14/新确认查询，`can_promote=false`。[N1-133](reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)已获准执行，零查询readiness复验通过（12/12完整bundle恢复、7,308个实体名/5,808个词值、CPU 40.921875秒）；此前两次停止由校验器计数缺陷导致，均保留原报告。唯一下一步为生成seed115 v15题面并完成合同核验，再按冻结门执行sacrifice。当前状态与顺序见[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)及[readiness复验报告](../reports/taiji_n1_v15_after_n132_confirmation_readiness_revalidation2_20261019.json)。
 
 > 历史 N1-123 进展记录保留作追溯；当前状态以本页首条与[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准。本页只同步N1研究队首，不改写项目整体M0–M8状态。
 

@@ -68,10 +68,42 @@ N132_CLOSEOUT = ROOT / "plans/reference/PLAN-N1-132_execution_closeout_20261019.
 N132_RESULT = ROOT / "reports/taiji_n1_plan132_binding_supervision_calibration_result_20261019.json"
 N132_RECONCILIATION = ROOT / "reports/taiji_n1_plan132_provenance_reconciliation_20261019.json"
 
-SOURCE_EXCLUSIONS = ROOT / "plans/manifests/n1_v15_after_n132_source_exclusions_20261019.json"
-READINESS = ROOT / "reports/taiji_n1_v15_after_n132_confirmation_readiness_20261019.json"
-READINESS_ATTEMPT = (
+INITIAL_SOURCE_EXCLUSIONS = (
+    ROOT / "plans/manifests/n1_v15_after_n132_source_exclusions_20261019.json"
+)
+INITIAL_SOURCE_EXCLUSIONS_SHA256 = (
+    "60bd29c04a50d8e6ee920816878eef426789c8e5cddf9ec69906789a40574d1c"
+)
+INITIAL_READINESS = ROOT / "reports/taiji_n1_v15_after_n132_confirmation_readiness_20261019.json"
+INITIAL_READINESS_SHA256 = "31d5b07d7076de343ddb73cf1d09620ceb577b7cb8312a430e12fa1394777140"
+INITIAL_READINESS_ATTEMPT = (
     ROOT / "reports/taiji_n1_v15_after_n132_confirmation_readiness_attempt_20261019.json"
+)
+INITIAL_READINESS_ATTEMPT_SHA256 = (
+    "539808df918e7a9ab2fa05c3d17b8352be14d99f33aad8b33db96603ebc7222d"
+)
+SECOND_SOURCE_EXCLUSIONS = (
+    ROOT / "plans/manifests/n1_v15_after_n132_source_exclusions_revalidation_20261019.json"
+)
+SECOND_SOURCE_EXCLUSIONS_SHA256 = "59de058b878d85bb9d3fb2b2de50a497fd744781905b0177beac966f823e7365"
+SECOND_READINESS = (
+    ROOT / "reports/taiji_n1_v15_after_n132_confirmation_readiness_revalidation_20261019.json"
+)
+SECOND_READINESS_SHA256 = "f51c96d651e1f66f7420cc70cace315a33b8ac69f17ca4f26a2a6dec3d1d79a3"
+SECOND_READINESS_ATTEMPT = (
+    ROOT
+    / "reports/taiji_n1_v15_after_n132_confirmation_readiness_revalidation_attempt_20261019.json"
+)
+SECOND_READINESS_ATTEMPT_SHA256 = "9cc9c518506870bae5a108be077807247fc6bd6b06d3204abb97311b0325094d"
+SOURCE_EXCLUSIONS = (
+    ROOT / "plans/manifests/n1_v15_after_n132_source_exclusions_revalidation2_20261019.json"
+)
+READINESS = (
+    ROOT / "reports/taiji_n1_v15_after_n132_confirmation_readiness_revalidation2_20261019.json"
+)
+READINESS_ATTEMPT = (
+    ROOT
+    / "reports/taiji_n1_v15_after_n132_confirmation_readiness_revalidation2_attempt_20261019.json"
 )
 FACE = ROOT / "plans/manifests/n1_hard_neighbor_v15_confirmation_seed115_20261019.json"
 FACE_ATTEMPT = FACE.with_name(FACE.stem + "_attempt.json")
@@ -214,6 +246,62 @@ def _prior_sources_and_union() -> tuple[set[str], set[str], dict[str, str], dict
             f"v15来源并集数量改变：entities={len(excluded_names)}, words={len(excluded_words)}"
         )
 
+    initial_manifest = read_json(INITIAL_SOURCE_EXCLUSIONS)
+    initial_readiness = read_json(INITIAL_READINESS)
+    initial_attempt = read_json(INITIAL_READINESS_ATTEMPT)
+    initial_errors = initial_readiness.get("errors", [])
+    if (
+        sha256(INITIAL_SOURCE_EXCLUSIONS) != INITIAL_SOURCE_EXCLUSIONS_SHA256
+        or sha256(INITIAL_READINESS) != INITIAL_READINESS_SHA256
+        or sha256(INITIAL_READINESS_ATTEMPT) != INITIAL_READINESS_ATTEMPT_SHA256
+        or initial_manifest.get("entity_count") != EXPECTED_EXCLUDED_ENTITIES
+        or initial_manifest.get("word_value_count") != EXPECTED_EXCLUDED_WORDS
+        or set(initial_manifest.get("excluded_entities", [])) != excluded_names
+        or set(initial_manifest.get("excluded_word_values", [])) != excluded_words
+        or initial_readiness.get("status") != "stopped"
+        or initial_readiness.get("complete") is not False
+        or initial_readiness.get("face_generated") is not False
+        or initial_readiness.get("model_queries") != 0
+        or initial_readiness.get("parameter_updates") != 0
+        or initial_attempt.get("status") != "started"
+        or initial_attempt.get("plan_sha256") != PLAN_SHA256
+        or not any("s11_cut_final.pt" in error for error in initial_errors)
+    ):
+        raise ValueError("初次readiness停止回执不符合已记录的Adam状态数校验问题")
+
+    second_manifest = read_json(SECOND_SOURCE_EXCLUSIONS)
+    second_readiness = read_json(SECOND_READINESS)
+    second_attempt = read_json(SECOND_READINESS_ATTEMPT)
+    second_errors = second_readiness.get("errors", [])
+    if (
+        sha256(SECOND_SOURCE_EXCLUSIONS) != SECOND_SOURCE_EXCLUSIONS_SHA256
+        or sha256(SECOND_READINESS) != SECOND_READINESS_SHA256
+        or sha256(SECOND_READINESS_ATTEMPT) != SECOND_READINESS_ATTEMPT_SHA256
+        or second_manifest.get("schema") != "n1-plan133-v15-source-exclusions-revalidation-v1"
+        or second_manifest.get("status") != "ready_for_approved_execution"
+        or second_manifest.get("plan_sha256") != PLAN_SHA256
+        or second_manifest.get("entity_count") != EXPECTED_EXCLUDED_ENTITIES
+        or second_manifest.get("word_value_count") != EXPECTED_EXCLUDED_WORDS
+        or set(second_manifest.get("excluded_entities", [])) != excluded_names
+        or set(second_manifest.get("excluded_word_values", [])) != excluded_words
+        or second_manifest.get("supersedes_initial_manifest_sha256")
+        != INITIAL_SOURCE_EXCLUSIONS_SHA256
+        or second_readiness.get("status") != "stopped"
+        or second_readiness.get("complete") is not False
+        or second_readiness.get("face_generated") is not False
+        or second_readiness.get("model_queries") != 0
+        or second_readiness.get("parameter_updates") != 0
+        or second_readiness.get("supersedes_initial_readiness_sha256") != INITIAL_READINESS_SHA256
+        or second_attempt.get("status") != "started"
+        or second_attempt.get("plan_sha256") != PLAN_SHA256
+        or second_attempt.get("model_queries") != 0
+        or second_attempt.get("parameter_updates") != 0
+        or second_attempt.get("face_generated") is not False
+        or second_attempt.get("supersedes_initial_readiness_sha256") != INITIAL_READINESS_SHA256
+        or not any("s11_cut_final.pt" in error for error in second_errors)
+    ):
+        raise ValueError("第二次readiness停止回执与Adam步数去重校验问题不符")
+
     source_hashes = dict(old.get("source_hashes", {}))
     for raw_path, expected in source_hashes.items():
         path = Path(raw_path)
@@ -251,6 +339,12 @@ def _prior_sources_and_union() -> tuple[set[str], set[str], dict[str, str], dict
         N132_CLOSEOUT: "7eb28ef60810de18a9524c09d0f6f880838721f96234d293bd2801a07b497bd3",
         N132_RESULT: "9c9b6a89aa1e6b006469bda8a310fa9cc57cbb3478956482bebf1828000f7fcc",
         N132_RECONCILIATION: "895c3ede4c84e7d57ced3c7bd62727330eb2cbc6b51a9ab5cd0aa4e93bc0e87e",
+        INITIAL_SOURCE_EXCLUSIONS: INITIAL_SOURCE_EXCLUSIONS_SHA256,
+        INITIAL_READINESS: INITIAL_READINESS_SHA256,
+        INITIAL_READINESS_ATTEMPT: INITIAL_READINESS_ATTEMPT_SHA256,
+        SECOND_SOURCE_EXCLUSIONS: SECOND_SOURCE_EXCLUSIONS_SHA256,
+        SECOND_READINESS: SECOND_READINESS_SHA256,
+        SECOND_READINESS_ATTEMPT: SECOND_READINESS_ATTEMPT_SHA256,
         SOURCE_UNION_PRECHECK: SOURCE_UNION_PRECHECK_SHA256,
         ENDPOINT_PRECHECK: ENDPOINT_PRECHECK_SHA256,
         PLAN: PLAN_SHA256,
@@ -314,6 +408,15 @@ def _prior_sources_and_union() -> tuple[set[str], set[str], dict[str, str], dict
             "v14_answer_overlap": v14_answer_overlap,
             "excluded_entities": len(excluded_names),
             "excluded_words": len(excluded_words),
+            "initial_readiness_status": initial_readiness.get("status"),
+            "initial_readiness_errors": initial_errors,
+            "initial_readiness_sha256": INITIAL_READINESS_SHA256,
+            "initial_source_exclusions_sha256": INITIAL_SOURCE_EXCLUSIONS_SHA256,
+            "second_readiness_status": second_readiness.get("status"),
+            "second_readiness_errors": second_errors,
+            "second_readiness_sha256": SECOND_READINESS_SHA256,
+            "second_source_exclusions_sha256": SECOND_SOURCE_EXCLUSIONS_SHA256,
+            "prior_stopped_readiness_count": 2,
             "source_hash_count": len(source_hashes),
         },
     )
@@ -487,10 +590,11 @@ def _verify_current_sources(source_hashes: dict[str, str]) -> None:
             raise ValueError(f"readiness后来源已变化：{path}")
 
 
-def _restore_endpoints(endpoints: list[dict]) -> list[dict]:
+def _restore_endpoints(endpoints: list[dict], restore_rows: list[dict] | None = None) -> list[dict]:
     n120.configure()
     _, n120_globals, _ = n120._BASE.make_runner(load_inputs=False)
-    restore_rows = []
+    if restore_rows is None:
+        restore_rows = []
     for endpoint in endpoints:
         path = Path(endpoint["path"])
         if sha256(path) != endpoint["sha256"]:
@@ -512,9 +616,11 @@ def _restore_endpoints(endpoints: list[dict]) -> list[dict]:
                 if "step" in state
             }
             states = len(optimizer.state)
+            state_step_entries = sum("step" in state for state in optimizer.state.values())
             if (
                 fingerprint != endpoint["expected_bundle_fingerprint"]
-                or states != 41
+                or states == 0
+                or state_step_entries != states
                 or steps != {expected_step}
                 or history != endpoint["expected_history_count"]
             ):
@@ -532,12 +638,14 @@ def _restore_endpoints(endpoints: list[dict]) -> list[dict]:
                 if "step" in state
             }
             states = len(optimizer.state)
+            state_step_entries = sum("step" in state for state in optimizer.state.values())
             if (
                 payload.get("seed") != endpoint["seed"]
                 or payload.get("plan_sha256") != n132.PLAN_SHA256
                 or payload.get("arm") != n132.ARM
                 or fingerprint != endpoint["expected_bundle_fingerprint"]
                 or states != 41
+                or state_step_entries != states
                 or steps != {expected_step}
                 or history != endpoint["expected_history_count"]
             ):
@@ -551,6 +659,7 @@ def _restore_endpoints(endpoints: list[dict]) -> list[dict]:
                 "bundle_fingerprint_restored": fingerprint,
                 "restore_matches": True,
                 "optimizer_parameter_states": states,
+                "optimizer_step_entries": state_step_entries,
                 "optimizer_steps": expected_step,
                 "history_count": history,
             }
@@ -579,14 +688,19 @@ def source_readiness() -> dict:
     write_new(
         READINESS_ATTEMPT,
         {
-            "schema": "n1-plan133-v15-readiness-attempt-v1",
+            "schema": "n1-plan133-v15-readiness-revalidation-attempt-v1",
             "status": "started",
             "plan_sha256": PLAN_SHA256,
             "checked_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "face_generated": False,
             "model_queries": 0,
             "parameter_updates": 0,
-            "说明_zh": "开始来源、endpoint恢复和零查询readiness；若失败，本计划不重试。",
+            "supersedes_prior_readiness_sha256": SECOND_READINESS_SHA256,
+            "preserved_stopped_readiness_sha256": [
+                INITIAL_READINESS_SHA256,
+                SECOND_READINESS_SHA256,
+            ],
+            "说明_zh": "针对首次readiness的校验器缺陷进行独立复验；保留首次停止回执，不生成题面、不查询模型、不更新参数。",
         },
     )
     report = None
@@ -599,22 +713,27 @@ def source_readiness() -> dict:
         write_new(
             SOURCE_EXCLUSIONS,
             {
-                "schema": "n1-plan133-v15-source-exclusions-v1",
+                "schema": "n1-plan133-v15-source-exclusions-revalidation-v2",
                 "status": "ready_for_approved_execution",
                 "plan_sha256": PLAN_SHA256,
+                "supersedes_prior_manifest_sha256": SECOND_SOURCE_EXCLUSIONS_SHA256,
+                "preserved_stopped_readiness_sha256": [
+                    INITIAL_READINESS_SHA256,
+                    SECOND_READINESS_SHA256,
+                ],
                 "excluded_entities": inventory["excluded_entities"],
                 "excluded_word_values": inventory["excluded_word_values"],
                 "entity_count": inventory["counts"]["excluded_entities"],
                 "word_value_count": inventory["counts"]["excluded_words"],
                 "provenance": inventory["counts"],
                 "source_hashes": source_hashes,
-                "摘要_zh": "完整排除v3训练、v5-v14已消费面、N1-95 scratch及派生manifest中的实体与材料/答案词值。",
+                "摘要_zh": "保留前两次readiness停止收据后重新核验来源排除；完整排除v3训练、v5-v14已消费面、N1-95 scratch及派生manifest中的实体与材料/答案词值。",
                 "can_promote": False,
             },
         )
         source_hashes[str(SOURCE_EXCLUSIONS.resolve())] = sha256(SOURCE_EXCLUSIONS)
         source_hashes[str(READINESS_ATTEMPT.resolve())] = sha256(READINESS_ATTEMPT)
-        endpoint_restores = _restore_endpoints(inventory["endpoints"])
+        _restore_endpoints(inventory["endpoints"], endpoint_restores)
         _verify_current_sources(
             {k: v for k, v in source_hashes.items() if k != str(SOURCE_EXCLUSIONS.resolve())}
         )
@@ -626,10 +745,19 @@ def source_readiness() -> dict:
             and time.process_time() - started <= CPU_LIMIT_SECONDS
         )
         report = {
-            "schema": "n1-plan133-v15-confirmation-readiness-v1",
+            "schema": "n1-plan133-v15-confirmation-readiness-revalidation-v2",
             "status": "ready_for_approved_execution" if complete else "stopped",
             "complete": complete,
             "plan_sha256": PLAN_SHA256,
+            "supersedes_prior_readiness_sha256": SECOND_READINESS_SHA256,
+            "preserved_stopped_readiness_sha256": [
+                INITIAL_READINESS_SHA256,
+                SECOND_READINESS_SHA256,
+            ],
+            "prior_stop_reasons_zh": [
+                "第一次校验把N1-120 Adam状态数误固定为41；seed11/cut实际37个活动状态。",
+                "第二次校验误将唯一步数值集合的大小与活动状态数比较；只读复核确认37/37状态均有24576步，history与bundle指纹匹配。",
+            ],
             "source_exclusion_manifest_sha256": sha256(SOURCE_EXCLUSIONS),
             "source_hashes": source_hashes,
             "endpoint_count": len(endpoint_restores),
@@ -646,16 +774,25 @@ def source_readiness() -> dict:
             "cpu_seconds": round(time.process_time() - started, 6),
             "cpu_limit_seconds": CPU_LIMIT_SECONDS,
             "can_promote": False,
-            "summary_zh": "来源排除与12个完整checkpoint bundle恢复均已核验；本阶段0模型查询、0参数更新、未生成题面。",
+            "summary_zh": "修正Adam状态数与步数字段计数校验后，来源排除与12个完整checkpoint bundle恢复均已核验；本阶段0模型查询、0参数更新、未生成题面。",
             "errors": [],
         }
     except BaseException as exc:
         error = f"{type(exc).__name__}: {exc}"
         report = {
-            "schema": "n1-plan133-v15-confirmation-readiness-v1",
+            "schema": "n1-plan133-v15-confirmation-readiness-revalidation-v2",
             "status": "stopped",
             "complete": False,
             "plan_sha256": PLAN_SHA256,
+            "supersedes_prior_readiness_sha256": SECOND_READINESS_SHA256,
+            "preserved_stopped_readiness_sha256": [
+                INITIAL_READINESS_SHA256,
+                SECOND_READINESS_SHA256,
+            ],
+            "prior_stop_reasons_zh": [
+                "第一次校验把N1-120 Adam状态数误固定为41；seed11/cut实际37个活动状态。",
+                "第二次校验误将唯一步数值集合的大小与活动状态数比较；只读复核确认37/37状态均有24576步，history与bundle指纹匹配。",
+            ],
             "source_hashes": source_hashes,
             "endpoint_count": len(endpoint_restores),
             "endpoint_restores": endpoint_restores,
@@ -665,7 +802,7 @@ def source_readiness() -> dict:
             "cpu_seconds": round(time.process_time() - started, 6),
             "cpu_limit_seconds": CPU_LIMIT_SECONDS,
             "can_promote": False,
-            "summary_zh": "readiness失败；按一次性协议停止，不重试、不生成题面。",
+            "summary_zh": "第二次独立复验失败；保留本次回执并停止，不生成题面、不查询模型、不更新参数。",
             "errors": [error],
         }
     report["readiness_attempt_sha256"] = sha256(READINESS_ATTEMPT)
@@ -682,11 +819,13 @@ def _verify_readiness() -> dict:
         report.get("complete") is not True
         or report.get("status") != "ready_for_approved_execution"
         or report.get("plan_sha256") != PLAN_SHA256
+        or report.get("supersedes_prior_readiness_sha256") != SECOND_READINESS_SHA256
         or report.get("source_exclusion_manifest_sha256") != sha256(SOURCE_EXCLUSIONS)
         or report.get("endpoint_count") != 12
         or report.get("model_queries") != 0
         or report.get("parameter_updates") != 0
         or report.get("face_generated") is not False
+        or exclusions.get("supersedes_prior_manifest_sha256") != SECOND_SOURCE_EXCLUSIONS_SHA256
         or exclusions.get("entity_count") != EXPECTED_EXCLUDED_ENTITIES
         or exclusions.get("word_value_count") != EXPECTED_EXCLUDED_WORDS
     ):
