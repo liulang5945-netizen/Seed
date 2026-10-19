@@ -92,7 +92,8 @@
 - [PLAN-N1-120 扩大归一化RWL半径训练](PLAN-N1-120_expanded_normalized_rwl_radius_training_draft_20261019.md)：221,184更新、CPU9,465.765625秒、18/18恢复相等。原receipt停在通用validator，已由[只读复核](../../reports/taiji_n1_expanded_normalized_rwl_length_balanced_20261019_receipt_revalidation.json)验证9/9分片和三seed position训练门全通过；未生成/查询确认面。
 - [PLAN-N1-121 source-exclusion correction](PLAN-N1-121_source_exclusion_correction_20261019.md)：加入全部288个N1-110/N1-120七字符映射值的排除，确保新确认面与实际训练输入不重叠。
 - [PLAN-N1-121 v11范围阶段结案](PLAN-N1-121_execution_closeout_20261019.md)：seed111面一次生成，180条sacrifice查询后仅5/9端点过范围错数线；按协议停止，confirm为0。CPU38.390625秒、累计83.1875秒、`can_promote=false`。同180行只读归因及N1-95 scratch面输入边界审计见[range attribution](../../reports/taiji_n1_v11_after_n120_range_attribution_20261019.json)、[source-overlap audit](../../reports/taiji_n1_v11_after_n120_source_overlap_audit_20261019.json)与[旧scratch排除清单](../manifests/n1_v6_preflight_consumed_face_exclusions_20261019.json)。
-- [PLAN-N1-122 v12新面草案](PLAN-N1-122_v12_hard_neighbor_range_recovery_draft_20261019.md)：建议seed112、4条观测、d=1；原六错/6端点范围门与四项确认门不变。将完整排除N1-121面及16张N1-95 scratch面，未生成新面；等待owner批准后才构面和查询。
+- [PLAN-N1-122 v12范围阶段结案](PLAN-N1-122_execution_closeout_20261019.md)：seed112四观测、d=1面完成180条sacrifice查询后3/9端点过范围错数线，confirm为0。CPU35.46875秒，累计CPU对账38.6875/600秒；[归因](../../reports/taiji_n1_v12_after_n121_range_attribution_20261019.json)显示position/cut各37/45可解码题正确，[CPU校正](../../reports/taiji_n1_v12_after_n121_cpu_reconciliation_20261019.json)记录原累计字段少计0.1875秒。
+- [PLAN-N1-123 v13长上下文范围探针草案](PLAN-N1-123_v13_long_context_range_probe_draft_20261019.md)：seed113、16条观测、d=1，保持原范围/确认门，排除N1-121/N1-122完整面及全部N1-95 scratch输入。16条观测是训练上下文的8倍；新面尚未生成，等待owner批准。
 
 ## M5 蒸馏层（20 件收口/批准/宣言/设计＋墓碑）
 
