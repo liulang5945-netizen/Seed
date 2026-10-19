@@ -1,12 +1,12 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：审阅并批准 PLAN-N1-134 新测面
+## 当前唯一下一步：执行 PLAN-N1-134 零查询来源与恢复readiness
 
 ### 最新状态（2026-10-19）
 
 **N1-126至N1-132已结案。** 126–128在同一已消费v13/v14面上显示gold-target行限制可恢复位置臂全部样本、cut臂至86/90，但这是oracle干预；129–130发现原生alignment已有目标事实质量，却不能区分正确/错误；131将剩余cut错误定位为seed13的inverse-turn。132加入`0.25 * L_bind`并对三个N1-120 position parent各续训9,216步；三seed原train门均通过，2,880条全为train-only评分。总更新27,648，执行CPU980.40625秒、累计1,006.421875秒；dev/v13/v14/confirmation均0，`can_promote=false`。因此训练拟合已收束，但自主泛化未验证，且没有matched no-bind续训臂来单独归因`L_bind`。完整对账见[N1-132结案](../../reference/PLAN-N1-132_execution_closeout_20261019.md)。
 
-经修订的[PLAN-N1-133](../../reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)已按冻结停止规则完整结案：零查询readiness恢复12/12完整bundle；seed115 v15题面合同通过；180条sacrifice有7/9主端点达到范围门；240条confirm完整执行，正式批次CPU 161.859375秒。N1-132 position 41/60，terminal 15/60，cut 45/60；每seed总分门通过，但seed12/13 transition分别0/5与1/5，且position相对cut落后4/60，原四项合取门失败。无训练、参数更新或dev查询，`can_promote=false`。逐题离线归因显示N1-132 transition仅3/15；`south@索引4`与`north@索引11`两题在三seed上均错。五道transition题仅覆盖五个位置各一题，答案方向、位置与题目模板未交叉，现有读数无法分离这些因素。完整中文结案见[N1-133执行结案](../../reference/PLAN-N1-133_execution_closeout_20261019.md)，原始确认结果见[确认报告](../../../reports/taiji_n1_v15_after_n132_confirmation_20261019.json)，逐题掩码见[离线归因](../../../reports/taiji_n1_v15_after_n132_itemwise_attribution_20261019.json)。唯一建议为[PLAN-N1-134草案](../../reference/PLAN-N1-134_transition_direction_position_counterbalance_diagnostic_draft_20261019.md)：四方向×五目标位置×每格两个模板，共40道transition题；对12个冻结endpoint各查询一次，共480条，CPU≤600秒，0训练/更新/dev，不改变既有门或晋升状态。它会生成一张新测面，需先获批准；批准前不构面、不查询。N1-133失败结论保持关闭。
+[PLAN-N1-133](../../reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)已完整结案：readiness恢复12/12 bundle，v15合同通过，180条sacrifice范围门7/9通过，240条confirm全部执行。N1-132 position为41/60，terminal 15/60、cut 45/60；四项门失败，`can_promote=false`。零查询train覆盖审计发现48个训练transition方向频数east14/south13/north11/west10，9,216步排程相同地重复48轮；训练始终是2行观测，目标行只在索引0/1。v15新面是16行，transition错误3/15，其中`south@4`和`north@11`两题三seed全错。该诊断建议只研究16行条件内方向×位置，不声称隔离上下文长度。用户已批准冻结[PLAN-N1-134](../../reference/PLAN-N1-134_transition_direction_position_counterbalance_diagnostic_draft_20261019.md)：40题、四方向×五目标位置×每格两个模板，seed116；12个冻结endpoint各查询40题，最多480条、CPU≤600秒，零训练/更新/dev，不改门。现在执行零查询来源并集与12个完整bundle恢复检查；全部通过后才一次生成题面并执行诊断。训练覆盖与已消费结果见[静态审计报告](../../../reports/taiji_n1_plan132_transition_training_coverage_audit_20261019.json)、[N1-133结案](../../reference/PLAN-N1-133_execution_closeout_20261019.md)和[逐题归因](../../../reports/taiji_n1_v15_after_n132_itemwise_attribution_20261019.json)。
 
 以下N1-123及更早段落为历史证据与队首快照，不取代上方当前状态。
 
