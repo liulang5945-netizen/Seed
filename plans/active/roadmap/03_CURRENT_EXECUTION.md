@@ -1,12 +1,12 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前执行：PLAN-N1-151A N1-151来源绑定返回值修正
+## 当前执行：PLAN-N1-152 N1-150长度响应逐题配对归因
 
 ### 最新状态（2026-10-20）
 
 N1-150已完整结束：55,296/55,296次更新、7,488/7,488条train-only计分，六个final bundle独立恢复6/6，六个N1-132原门全部通过；累计CPU6,956.094/18,000秒，0 dev/holdout/confirmation，`can_promote=false`。长度混合candidate在8/16/32行的已知类合计命中216/216、216/216、215/216，8行control为215/216、210/216、190/216；均为同一train集上的描述性读数。详见[N1-150中文结案](../../reference/PLAN-N1-150_execution_closeout_20261020.md)和[完整结果](../../../reports/taiji_n1_plan150_v27_length_result_20261020.json)。
 
-N1-151原计划已完成无查询readiness（494项来源哈希、六枚final checkpoint、7,488条计分分母核验通过，CPU7.484秒），但checkpoint前置在任何checkpoint加载前停止：读取N1-150 preflight返回值时把第三项source binding误当成结果报告，导致重算集合漏掉六枚final checkpoint；0 checkpoint/model加载、0查询、0更新。失败回执见[报告](../../../reports/taiji_n1_plan151_preflight_binding_failure_20261020.json)，N1-151原readiness与binding保留。依据执行计划批准权，已批准[N1-151A](../../reference/PLAN-N1-151A_source_binding_return_correction_20261020.md)：只修正返回值绑定并使用独立write-once输出路径，仍按同样7,488条train-only计分、CPU≤3,600秒，0训练/新题/dev/holdout/confirmation，不改门或晋级状态。
+N1-151A已完整结束：逐题评分7,488/7,488，六endpoint原门/长度聚合与N1-150逐项一致；六final bundle恢复6/6、fingerprint评分前后不变，CPU累计285.0625/3,600秒，0更新/dev/holdout/confirmation，can_promote=false。完整逐题结果见[报告](../../../reports/taiji_n1_plan151a_train_score_ledger_recovery_result_20261020.json)，中文结案见[PLAN-N1-151A](../../reference/PLAN-N1-151A_execution_closeout_20261020.md)。原N1-151 preflight source-binding错误已保留失败回执，N1-151A修正已提交。依据执行计划批准权，已批准[N1-152](../../reference/PLAN-N1-152_length_itemwise_attribution_20261020.md)：只读1,728条已评分长度分层行，计算候选/control逐题变化与8→16→32行转移，0模型/checkpoint加载、0查询、0更新，CPU≤30秒；不作泛化或能力主张。
 
 ### 历史状态（截至2026-10-19；后由N1-150结案取代）
 
