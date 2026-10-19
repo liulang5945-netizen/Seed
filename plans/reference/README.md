@@ -1,6 +1,6 @@
 # plans/reference 索引（2026-10-14 更新；蒸馏收束后的参考件与 N 系列增补）
 
-> **2026-10-19 N1当前**：N1-133确认门未通过并关闭；N1-134为描述性诊断。N1-135至N1-138均已完整结案。N1-138完成672/672查询、累计CPU218.984375秒、12/12 bundle恢复、266项来源哈希不变，0训练/更新/dev，`can_promote=false`；d=1/2/4呈逐项非回退命中梯度。逐题输出见[诊断报告](../../reports/taiji_n1_plan138_neighbor_distance_dose_curve_diagnostic_20261019.json)，结案见[N1-138执行结案](PLAN-N1-138_execution_closeout_20261019.md)。N1-139训练配方已获批准，但原N1-132训练门为960行/endpoint，需把train-only计分从2,880修订为7,488；确认前不预检checkpoint、不训练。
+> **2026-10-19 N1当前**：N1-133确认门未通过并关闭；N1-134为描述性诊断。N1-135至N1-138均已完整结案。N1-138完成672/672查询、累计CPU218.984375秒、12/12 bundle恢复、266项来源哈希不变，0训练/更新/dev，`can_promote=false`；d=1/2/4呈逐项非回退命中梯度。逐题输出见[诊断报告](../../reports/taiji_n1_plan138_neighbor_distance_dose_curve_diagnostic_20261019.json)，结案见[N1-138执行结案](PLAN-N1-138_execution_closeout_20261019.md)。N1-139及7,488条train-only计分口径已获批准，当前先核验来源、schedule与6个zero bundle独立保存恢复；通过前不训练。
 
 > 历史 N1-123 队首快照保留作追溯；当前计划以本页首条和[03_CURRENT_EXECUTION](../active/roadmap/03_CURRENT_EXECUTION.md)为准。
 

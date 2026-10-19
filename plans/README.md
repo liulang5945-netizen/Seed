@@ -1,6 +1,6 @@
 # Seed / Taiji 计划与架构入口
 
-> **2026-10-19 N1队首**：N1-133确认门未通过并保持关闭；N1-134结论为描述性。N1-135至N1-138均已结案；N1-138完成672查询、累计CPU218.984375秒、12/12 bundle恢复、266项来源哈希不变，0训练/更新/dev，`can_promote=false`。同面d=1/2/4命中随距离逐级上升，但d=4仍低于六成。用户已批准[PLAN-N1-139训练配方](reference/PLAN-N1-139_context_robust_matched_continuation_calibration_draft_20261019.md)，执行前发现原N1-132训练门实际为960行/endpoint；维持原门需把train-only评估修正为7,488条。训练量、CPU预算、训练变量和原门不变；计分数量修订待确认，确认前不做checkpoint预检或训练。详见[N1-138中文结案](reference/PLAN-N1-138_execution_closeout_20261019.md)、[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)及[逐题诊断报告](../reports/taiji_n1_plan138_neighbor_distance_dose_curve_diagnostic_20261019.json)。
+> **2026-10-19 N1队首**：N1-133确认门未通过并保持关闭；N1-134结论为描述性。N1-135至N1-138均已结案；N1-138完成672查询、累计CPU218.984375秒、12/12 bundle恢复、266项来源哈希不变，0训练/更新/dev，`can_promote=false`。同面d=1/2/4命中随距离逐级上升，但d=4仍低于六成。用户已批准[PLAN-N1-139](reference/PLAN-N1-139_context_robust_matched_continuation_calibration_draft_20261019.md)及修订后的7,488条train-only计分；3 seed候选/两行控制各续训9,216步、CPU≤3,600秒，保持N1-132原门、不访问dev/holdout。当前执行来源、schedule与checkpoint保存恢复前置检查；通过六个zero bundle独立恢复前不训练。详见[N1-138中文结案](reference/PLAN-N1-138_execution_closeout_20261019.md)、[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)及[逐题诊断报告](../reports/taiji_n1_plan138_neighbor_distance_dose_curve_diagnostic_20261019.json)。
 
 > 历史 N1-123 进展记录保留作追溯；当前状态以本页首条与[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准。本页只同步N1研究队首，不改写项目整体M0–M8状态。
 
