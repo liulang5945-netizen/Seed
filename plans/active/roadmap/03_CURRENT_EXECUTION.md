@@ -1,12 +1,12 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：生成并核验 N1-133 的 v15 新确认面
+## 当前唯一下一步：执行 N1-133 的 sacrifice 范围门
 
 ### 最新状态（2026-10-19）
 
 **N1-126至N1-132已结案。** 126–128在同一已消费v13/v14面上显示gold-target行限制可恢复位置臂全部样本、cut臂至86/90，但这是oracle干预；129–130发现原生alignment已有目标事实质量，却不能区分正确/错误；131将剩余cut错误定位为seed13的inverse-turn。132加入`0.25 * L_bind`并对三个N1-120 position parent各续训9,216步；三seed原train门均通过，2,880条全为train-only评分。总更新27,648，执行CPU980.40625秒、累计1,006.421875秒；dev/v13/v14/confirmation均0，`can_promote=false`。因此训练拟合已收束，但自主泛化未验证，且没有matched no-bind续训臂来单独归因`L_bind`。完整对账见[N1-132结案](../../reference/PLAN-N1-132_execution_closeout_20261019.md)。
 
-经修订的[PLAN-N1-133](../../reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)已获批准，估计目标为“N1-132续训包是否在新v15家族泛化”，不声称`L_bind`单独带来因果增益。面规模和数值门冻结：seed115，40题、16条观测、d=1；来源排除并集7,308个实体名/5,808个词值，88个旧来源哈希均匹配。此前两次readiness停止均由校验器误设N1-120 Adam状态数/步数计数引起，报告与来源清单均原样保留；第三次独立复验已通过12/12完整bundle恢复、来源并集复核，CPU 40.921875秒，模型查询/参数更新为0，尚未生成题面。报告见[readiness复验](../../../reports/taiji_n1_v15_after_n132_confirmation_readiness_revalidation2_20261019.json)及[来源排除清单](../../manifests/n1_v15_after_n132_source_exclusions_revalidation2_20261019.json)。现在只生成一次v15题面并完成合同核验；通过后在9个主端点查询20题sacrifice（180条），15道lookup/revision/transition题中至少6/9端点各错≥6题时才对12个端点查询20题confirm（240条，总上限420）。确认门沿用N1-121：N132每seed≥10/20、每类≥2/5、聚合position相对terminal和cut各领先≥12/60；position母档配对差值只作描述。CPU≤1,200秒，不训练、不查dev、不重抽、不晋升。此包级测试不隔离绑定损失的单独因果作用。
+经修订的[PLAN-N1-133](../../reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)已获批准，估计目标为“N1-132续训包是否在新v15家族泛化”，不声称`L_bind`单独带来因果增益。面规模和数值门冻结：seed115，40题、16条观测、d=1；来源排除并集7,308个实体名/5,808个词值，88个旧来源哈希均匹配。此前两次readiness停止均由校验器误设N1-120 Adam状态数/步数计数引起，报告与来源清单均原样保留；第三次独立复验已通过12/12完整bundle恢复、来源并集复核，CPU 40.921875秒，模型查询/参数更新为0。seed115 v15题面现已生成并通过全部合同检查（40题、四类各10题、每题16条观测、d=1、196个来源哈希），构面查询/更新均为0。报告见[readiness复验](../../../reports/taiji_n1_v15_after_n132_confirmation_readiness_revalidation2_20261019.json)、[来源排除清单](../../manifests/n1_v15_after_n132_source_exclusions_revalidation2_20261019.json)、[v15题面](../../manifests/n1_hard_neighbor_v15_confirmation_seed115_20261019.json)及[题面合同报告](../../../reports/taiji_n1_v15_after_n132_face_checks_20261019.json)。现在对9个主端点查询20题sacrifice（180条）；15道lookup/revision/transition题中至少6/9端点各错≥6题时才对12个端点查询20题confirm（240条，总上限420）。确认门沿用N1-121：N132每seed≥10/20、每类≥2/5、聚合position相对terminal和cut各领先≥12/60；position母档配对差值只作描述。CPU≤1,200秒，不训练、不查dev、不重抽、不晋升。此包级测试不隔离绑定损失的单独因果作用。
 
 以下N1-123及更早段落为历史证据与队首快照，不取代上方当前状态。
 
