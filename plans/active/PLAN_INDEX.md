@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **2026-10-19 N1当前队首（取代下列N1快照）**：[N1-126](../reference/PLAN-N1-126_execution_closeout_20261019.md)与[N1-127](../reference/PLAN-N1-127_execution_closeout_20261019.md)已完成同一已消费v13/v14确认项的source-pruning与full-context decoder-mask诊断。结果分别为position90/90与82/90、cut86/90与78/90；decoder mask相对native无回退，剩余错误均为transition方向。零训练、零dev/unknown、`can_promote=false`。当前唯一下一步是[N1-128](../reference/PLAN-N1-128_full_context_question_binding_mask_diagnostic_draft_20261019.md)，继续隔离full-context问题绑定影响；详见[03](roadmap/03_CURRENT_EXECUTION.md)。
+> **2026-10-19 N1当前队首（取代下列N1快照）**：[N1-126](../reference/PLAN-N1-126_execution_closeout_20261019.md)、[N1-127](../reference/PLAN-N1-127_execution_closeout_20261019.md)、[N1-128](../reference/PLAN-N1-128_execution_closeout_20261019.md)已完成。Full-context oracle question-binding mask达到position90/90、cut86/90，与source pruning一致；残差仅seed13/cut两个transition。零训练、零dev/unknown、`can_promote=false`。当前唯一下一步是[N1-129](../reference/PLAN-N1-129_native_question_binding_mass_audit_draft_20261019.md)：只读量化native问题对齐在目标行/干扰行的mass，不生成答案；详见[03](roadmap/03_CURRENT_EXECUTION.md)。
 
 > 历史 N1-123 队首快照，已由上方 N1-127 结案与当前 N1-128 队首取代。
 

@@ -1,6 +1,6 @@
 # plans/reference 索引（2026-10-14 更新；蒸馏收束后的参考件与 N 系列增补）
 
-> **2026-10-19 N1当前**：[N1-126结案](PLAN-N1-126_execution_closeout_20261019.md)与[N1-127结案](PLAN-N1-127_execution_closeout_20261019.md)完成：source pruning position90/90、cut86/90；full-context decoder mask position82/90、cut78/90，未造成native回退。剩余失败为transition方向词。唯一下一步是[N1-128](PLAN-N1-128_full_context_question_binding_mask_diagnostic_draft_20261019.md)，复用同一消费面隔离问题绑定阶段；详见[03](../active/roadmap/03_CURRENT_EXECUTION.md)。
+> **2026-10-19 N1当前**：[N1-126](PLAN-N1-126_execution_closeout_20261019.md)、[N1-127](PLAN-N1-127_execution_closeout_20261019.md)和[N1-128](PLAN-N1-128_execution_closeout_20261019.md)已完成。Full-context target-only question binding达到position90/90、cut86/90，与source pruning相同；剩余仅seed13/cut两个transition错误。当前唯一下一步[N1-129](PLAN-N1-129_native_question_binding_mass_audit_draft_20261019.md)将量化native binder的目标/干扰行注意力，不生成答案；详见[03](../active/roadmap/03_CURRENT_EXECUTION.md)。
 
 > 历史 N1-123 队首快照保留作追溯；当前计划以本页首条和[03_CURRENT_EXECUTION](../active/roadmap/03_CURRENT_EXECUTION.md)为准。
 
