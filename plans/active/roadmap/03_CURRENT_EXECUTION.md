@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前执行：PLAN-N1-156 N1-155A train-only 逐题配对归因
+## 当前执行：PLAN-N1-157 seed128 candidate–parent fresh诊断
 
 ### 最新状态（2026-10-20）
 
@@ -12,7 +12,7 @@ N1-153A已完整结束：同一seed127 fresh face上2,880条逐题结果完成�
 
 N1-154已完成2,880行fresh诊断的逐题paired分析，CPU0.03125秒，0加载/查询/更新；candidate已知命中8/16/32行360/360、359/360、356/360，control为353/360、340/360、302/360；unknown弃答candidate76/120、91/120、103/120，control109/120、115/120、120/120。结果为描述性synthetic face归因，见[N1-154结案](../../reference/PLAN-N1-154_execution_closeout_20261020.md)。
 
-N1-155A已完整结束：55,296/55,296次更新、7,488/7,488条train-only评分，六个final bundle独立恢复6/6，progress账本62,784行全部有效；累计CPU9,325.219/18,000秒（已计入首轮130.922秒）。三个candidate原门均通过；seed12 uniform control的transition仅30/48，令六端点合取门失败，因此按协议跳过seed128 fresh面，0 fresh/dev/holdout/confirmation查询，`can_promote=false`。详见[N1-155A结案](../../reference/PLAN-N1-155A_execution_closeout_20261020.md)与[完整结果](../../../reports/taiji_n1_plan155a_unknown8_rebalance_result_20261020.json)。依据用户授予的执行计划批准权，已批准唯一下一步[N1-156](../../reference/PLAN-N1-156_plan155a_train_score_itemwise_attribution_20261020.md)：对已消费的7,488条train-only评分做逐题配对归因，CPU≤60秒，0模型/checkpoint加载、推理、查询或更新，不访问dev/holdout/confirmation、不改门或晋级状态。
+N1-155A已完整结束：55,296/55,296次更新、7,488/7,488条train-only评分，六个final bundle独立恢复6/6，progress 62,784行完整；累计CPU9,325.219/18,000秒（含首轮130.922秒），`can_promote=false`。三个candidate原门均通过，seed12 uniform control transition 30/48导致原六端点门失败，seed128面未生成/未查询。N1-156逐题配对归因CPU2.859秒完成：seed12 candidate在transition original/rename各48/48，control各30/48（各18条candidate-only、0条反向）；unknown短长度8行合计67/72对66/72，16/32行均为69/72与71/72，未见稳定长度特异优势。详见[N1-155A结案](../../reference/PLAN-N1-155A_execution_closeout_20261020.md)、[N1-156结案](../../reference/PLAN-N1-156_execution_closeout_20261020.md)与[归因报告](../../../reports/taiji_n1_plan156_plan155a_train_score_itemwise_attribution_20261020.json)。依据用户授予的执行计划批准权，已批准唯一下一步[N1-157](../../reference/PLAN-N1-157_seed128_candidate_vs_parent_fresh_diagnostic_20261020.md)：首次生成并消费seed128 fresh face，比较N1-155A三个candidate与对应N1-150 `length_mixed`父模型，共2,880条查询、N1-157 CPU≤3,600秒（累计仍≤上位18,000秒）；0训练/dev/holdout/confirmation，不改门、不晋级。
 
 
 ### 历史状态（截至2026-10-19；后由N1-150结案取代）
