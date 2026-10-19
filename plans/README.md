@@ -1,6 +1,6 @@
 # Seed / Taiji 计划与架构入口
 
-> **2026-10-19 N1队首**：N1-133确认门未通过并保持关闭；N1-134结论为描述性。用户批准的N1-135已完成288条同模板2/8/16行查询，累计CPU164.8125/600秒，12/12完整bundle恢复、227项来源哈希不变，0训练/更新/dev，`can_promote=false`。总体精确命中为92/96、31/96、29/96；2→8行的96组配对中61组下降、0组恢复，8→16行变化较小。唯一建议为[PLAN-N1-136草案](reference/PLAN-N1-136_target_position_context_order_diagnostic_draft_20261019.md)：固定8/16行与同一事实内容，匹配比较目标事实开头/结尾位置；40题、最多480次查询、CPU≤600秒，0训练/更新/dev。新测面需获批准。详见[N1-135中文结案](reference/PLAN-N1-135_execution_closeout_20261019.md)、[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)及[逐题诊断报告](../reports/taiji_n1_plan135_matched_context_length_diagnostic_20261019.json)。
+> **2026-10-19 N1队首**：N1-133确认门未通过并保持关闭；N1-134结论为描述性。用户批准的N1-135已完成288条同模板2/8/16行查询，累计CPU164.8125/600秒，12/12完整bundle恢复、227项来源哈希不变，0训练/更新/dev，`can_promote=false`。总体精确命中为92/96、31/96、29/96；2→8行的96组配对中61组下降、0组恢复，8→16行变化较小。用户已批准[PLAN-N1-136](reference/PLAN-N1-136_target_position_context_order_diagnostic_draft_20261019.md)：固定8/16行与同一事实内容，匹配比较目标事实开头/结尾位置；40题、最多480次查询、CPU≤600秒，0训练/更新/dev。当前进行零查询readiness，恢复通过前不构面。详见[N1-135中文结案](reference/PLAN-N1-135_execution_closeout_20261019.md)、[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)及[逐题诊断报告](../reports/taiji_n1_plan135_matched_context_length_diagnostic_20261019.json)。
 
 > 历史 N1-123 进展记录保留作追溯；当前状态以本页首条与[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准。本页只同步N1研究队首，不改写项目整体M0–M8状态。
 

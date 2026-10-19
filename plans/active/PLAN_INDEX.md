@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **2026-10-19 N1当前队首（取代下列N1快照）**：N1-133 v15确认未通过并关闭，N1-134为描述性诊断。用户批准的[N1-135](../reference/PLAN-N1-135_matched_context_length_transition_diagnostic_draft_20261019.md)已完整执行：288查询、累计CPU164.8125秒、12/12完整bundle恢复、227项来源哈希不变，0训练/更新/dev，`can_promote=false`。命中为2行92/96、8行31/96、16行29/96；2→8行出现61组配对下降，8→16行变化较小。唯一下一步为待批准的[N1-136目标位置对照](../reference/PLAN-N1-136_target_position_context_order_diagnostic_draft_20261019.md)：固定上下文长度和事实内容，对照目标事实开头/结尾位置，40题、最多480查询、CPU≤600秒，不训练、不查dev；新测面批准前不生成或查询。详见[N1-135结案](../reference/PLAN-N1-135_execution_closeout_20261019.md)、[诊断报告](../../reports/taiji_n1_plan135_matched_context_length_diagnostic_20261019.json)与[03](roadmap/03_CURRENT_EXECUTION.md)。
+> **2026-10-19 N1当前队首（取代下列N1快照）**：N1-133 v15确认未通过并关闭，N1-134为描述性诊断。用户批准的[N1-135](../reference/PLAN-N1-135_matched_context_length_transition_diagnostic_draft_20261019.md)已完整执行：288查询、累计CPU164.8125秒、12/12完整bundle恢复、227项来源哈希不变，0训练/更新/dev，`can_promote=false`。命中为2行92/96、8行31/96、16行29/96；2→8行出现61组配对下降，8→16行变化较小。用户已批准并开始执行[N1-136目标位置对照](../reference/PLAN-N1-136_target_position_context_order_diagnostic_draft_20261019.md)：40题、最多480查询、CPU≤600秒，零训练/更新/dev；当前先做零查询readiness，恢复通过前不构面或查询。详见[N1-135结案](../reference/PLAN-N1-135_execution_closeout_20261019.md)、[诊断报告](../../reports/taiji_n1_plan135_matched_context_length_diagnostic_20261019.json)与[03](roadmap/03_CURRENT_EXECUTION.md)。
 
 > 历史 N1-123 队首快照，已由上方 N1-127 结案与当前 N1-128 队首取代。
 

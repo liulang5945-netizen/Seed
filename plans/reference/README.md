@@ -1,6 +1,6 @@
 # plans/reference 索引（2026-10-14 更新；蒸馏收束后的参考件与 N 系列增补）
 
-> **2026-10-19 N1当前**：N1-133确认门未通过并关闭；N1-134完成方向×位置描述性诊断。用户批准的[N1-135](PLAN-N1-135_matched_context_length_transition_diagnostic_draft_20261019.md)已完成：288/288查询、累计CPU164.8125秒、12/12完整bundle恢复、227项来源哈希不变，0训练/更新/dev，`can_promote=false`。同模板精确命中为2行92/96、8行31/96、16行29/96；命中主要在2→8行下降，8→16行差异较小。逐题原始/输出字节保存在[诊断报告](../../reports/taiji_n1_plan135_matched_context_length_diagnostic_20261019.json)，解释边界见[N1-135结案](PLAN-N1-135_execution_closeout_20261019.md)。唯一下一步为待批准的[N1-136目标位置对照草案](PLAN-N1-136_target_position_context_order_diagnostic_draft_20261019.md)，不训练、不查询dev。
+> **2026-10-19 N1当前**：N1-133确认门未通过并关闭；N1-134完成方向×位置描述性诊断。用户批准的[N1-135](PLAN-N1-135_matched_context_length_transition_diagnostic_draft_20261019.md)已完成：288/288查询、累计CPU164.8125秒、12/12完整bundle恢复、227项来源哈希不变，0训练/更新/dev，`can_promote=false`。同模板精确命中为2行92/96、8行31/96、16行29/96；命中主要在2→8行下降，8→16行差异较小。用户已批准[N1-136目标位置对照](PLAN-N1-136_target_position_context_order_diagnostic_draft_20261019.md)，当前执行零查询readiness；恢复通过前不构面、不查询。N1-135逐题报告见[诊断报告](../../reports/taiji_n1_plan135_matched_context_length_diagnostic_20261019.json)，解释边界见[N1-135结案](PLAN-N1-135_execution_closeout_20261019.md)。
 
 > 历史 N1-123 队首快照保留作追溯；当前计划以本页首条和[03_CURRENT_EXECUTION](../active/roadmap/03_CURRENT_EXECUTION.md)为准。
 
@@ -86,7 +86,7 @@
 ### N1 最新证据与裁定
 
 - [PLAN-N1-135 同题匹配上下文长度诊断](PLAN-N1-135_matched_context_length_transition_diagnostic_draft_20261019.md)：seed117面和288条冻结endpoint查询已完整执行；命中由2行92/96降至8行31/96、16行29/96，0训练/更新/dev，描述性结案见[执行记录](PLAN-N1-135_execution_closeout_20261019.md)与[逐题报告](../../reports/taiji_n1_plan135_matched_context_length_diagnostic_20261019.json)。
-- [PLAN-N1-136 固定长度目标事实前置/后置位置诊断草案](PLAN-N1-136_target_position_context_order_diagnostic_draft_20261019.md)：拟用新seed118，在同事实和固定8/16行数下对照目标事实开头/结尾位置；新测面待批准，未构面、未查询。
+- [PLAN-N1-136 固定长度目标事实前置/后置位置诊断](PLAN-N1-136_target_position_context_order_diagnostic_draft_20261019.md)：新seed118，在同事实和固定8/16行数下对照目标事实开头/结尾位置；已批准，正在零查询readiness，尚未构面、未查询。
 - [PLAN-N1-110 执行结案](PLAN-N1-110_execution_closeout_20261018.md)：长度平衡九模型训练完成，但 seed13 position gate 失败；不生成 v11。
 - [PLAN-N1-111 权重—历史交叉归因](PLAN-N1-111_position_weight_history_crossover_diagnostic_draft_20261018.md)：首个 runner 在查询前恢复失败，依 no-retry 关闭。
 - [PLAN-N1-112 恢复契约修订](PLAN-N1-112_position_weight_history_crossover_restore_revision_draft_20261018.md)：train-only r1 完成，权重来源对应退化；cell 更正与session范围审计另列于执行记录。
