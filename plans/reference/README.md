@@ -1,6 +1,6 @@
 # plans/reference 索引（2026-10-14 更新；蒸馏收束后的参考件与 N 系列增补）
 
-> **2026-10-19 N1当前**：[N1-126](PLAN-N1-126_execution_closeout_20261019.md)至[N1-131](PLAN-N1-131_execution_closeout_20261019.md)诊断已完成。N1-131确认四条N1-128 cut残差全部为seed13 inverse-turn输出，position在同一oracle mask下transition30/30正确。唯一待决提案[N1-132](PLAN-N1-132_trainable_question_binding_supervision_calibration_draft_20261019.md)新增训练loss，需owner决定后才执行；详见[03](../active/roadmap/03_CURRENT_EXECUTION.md)。
+> **2026-10-19 N1当前**：[N1-126](PLAN-N1-126_execution_closeout_20261019.md)至[N1-132](PLAN-N1-132_execution_closeout_20261019.md)已闭环；N1-132 train-only三seed全部通过原门，但未做新确认、`can_promote=false`。result回执引用初始/失败preflight的字段差异由[只读对账](../../reports/taiji_n1_plan132_provenance_reconciliation_20261019.json)补充。唯一待决[N1-133](PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)为seed115新holdout面，等待owner授权；详见[03](../active/roadmap/03_CURRENT_EXECUTION.md)。
 
 > 历史 N1-123 队首快照保留作追溯；当前计划以本页首条和[03_CURRENT_EXECUTION](../active/roadmap/03_CURRENT_EXECUTION.md)为准。
 

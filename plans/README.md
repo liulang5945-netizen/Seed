@@ -1,6 +1,6 @@
 # Seed / Taiji 计划与架构入口
 
-> **2026-10-19 N1队首**：[PLAN-N1-126](reference/PLAN-N1-126_execution_closeout_20261019.md)至[PLAN-N1-131](reference/PLAN-N1-131_execution_closeout_20261019.md)诊断均已结束。N1-128 full-context oracle binding position90/90、cut86/90；N1-131显示四条剩余cut错误全部是seed13的inverse-turn输出，而position在同一mask下30/30正确。无训练或门变更，`can_promote=false`。当前拟议[N1-132](reference/PLAN-N1-132_trainable_question_binding_supervision_calibration_draft_20261019.md)会改optimizer objective，需owner决定后才训练。
+> **2026-10-19 N1队首**：N1-126至[N1-132](reference/PLAN-N1-132_execution_closeout_20261019.md)已完成。N1-132 train-only calibration完成27,648更新，三seed全部通过原训练门（original192/192、pair96/96、rename192/192、rename-pair96/96），无dev/v13/v14/新确认查询，`can_promote=false`。唯一下一步为[N1-133](reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)：生成并一次性评估全新v15确认面；该新测面等待owner授权。
 
 > 历史 N1-123 进展记录保留作追溯；当前状态以本页首条与[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准。本页只同步N1研究队首，不改写项目整体M0–M8状态。
 

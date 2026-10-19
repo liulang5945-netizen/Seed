@@ -1,12 +1,12 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：决定是否启动 PLAN-N1-132 trainable question-binding supervision calibration
+## 当前唯一下一步：决定是否授权 PLAN-N1-133 v15 new-family confirmation face
 
 ### 最新状态（2026-10-19）
 
-**N1-126至N1-131的诊断均已结束。** Source pruning position90/90、cut86/90；full-context decoder mask position82/90、cut78/90；再加target-only question-binding mask后恢复position90/90、cut86/90。[N1-129/N1-130](../../reference/PLAN-N1-129_execution_closeout_20261019.md)分别测了native总/逐行alignment mass，发现target事实已有高于字节占比的mass，增加mass本身不能解释方向错误。[N1-131](../../reference/PLAN-N1-131_execution_closeout_20261019.md)离线分类240条保存输出：N1-128下剩余四条cut错误全部是seed13 inverse-turn；position在同一oracle mask下30/30正确。零新增查询，0训练/dev/unknown，所有原gate不变，`can_promote=false`。
+**N1-126至N1-132已按连续推进授权完成。** N1-132在三个N1-120 position parent上加入`0.25 * L_bind`，每seed固定9,216更新，共27,648；原N1-120 train gate三seed全部通过：original192/192、pair96/96、rename192/192、rename-pair96/96，两个transition factorial视图均48/48。训练及train-only评分CPU 980.40625秒，累计报告1,006.421875秒，2,880 train score rows；dev/v13/v14/confirmation均0，`can_promote=false`。每seedfinal bundle独立恢复，保持全量Adam/RNG/history。两次早期checkpoint-preflight wrapper失败都在0模型/检查点加载、0更新处停止且记录保留；后续v2来源复核及三枚zero-copy独立恢复通过。result顶层误指初始readiness/失败preflight的路径字段已由[只读来源对账](../../../reports/taiji_n1_plan132_provenance_reconciliation_20261019.json)补齐，不影响训练行数或哈希完整性。结案见[N1-132](../../reference/PLAN-N1-132_execution_closeout_20261019.md)。
 
-当前唯一建议为[N1-132](../../reference/PLAN-N1-132_trainable_question_binding_supervision_calibration_draft_20261019.md)：在N1-120三个position endpoint上继续固定9,216更新/seed，仅对现有question-byte alignment加target-fact mass loss，`L_total=L_QA+0.25*L_bind`；完整保留Adam/RNG/history，训练前先过zero/final独立bundle恢复。只用原192 train项，沿用原position sufficiency gate；CPU≤2,400秒，0 dev/v13/v14/new-confirm查询，can_promote始终false。这会改变optimizer objective与continuation recipe，属于计划范围决策；草案已完成，当前等待owner决定，未开始实现或训练。
+当前唯一下一步为[PLAN-N1-133](../../reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)：构建seed115、40题、16 observations、d=1的v15新面，来源排除所有既有消费与scratch实体/材料值；在N1-132三个position候选、同seed N1-120 position parent、terminal/cut controls共12 endpoints上先做20题sacrifice（240 queries），至少6/9主比较端点达到range error floor才查询20题confirm（再240 queries）。confirm沿N1-121 position门：每seed≥10/20、每kind≥2/5、聚合position领先terminal和cut各≥12；N1-120 position parent差值作配对描述读数。累计CPU≤1,200秒，无训练/dev，can_promote保持false。此方案会生成并消费新holdout测面；在这项范围授权明确前不生成或查询。
 
 以下N1-123及更早段落为历史证据与队首快照，不取代上方当前状态。
 
