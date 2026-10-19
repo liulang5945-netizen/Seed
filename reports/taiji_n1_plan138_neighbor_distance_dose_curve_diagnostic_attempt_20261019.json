@@ -1,0 +1,1 @@
+{"can_promote":false,"dev_queries":0,"parameter_updates":0,"plan_sha256":"a2a91579a00518dc9bb1e0c67a847a849d221ff3ce89b98f55a1c45e7dad024f","planned_endpoints":12,"planned_items_per_endpoint":56,"planned_queries":672,"schema":"n1-plan138-neighbor-distance-dose-attempt-v1","status":"started","说明_zh":"对12个冻结endpoint各评估56题，并保存逐题近邻距离与生成字节；只执行一次，不重试。"}

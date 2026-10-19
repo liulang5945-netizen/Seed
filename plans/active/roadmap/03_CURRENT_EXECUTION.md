@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：执行 PLAN-N1-138 近邻距离剂量曲线测面
+## 当前唯一下一步：审阅并批准 PLAN-N1-139 上下文鲁棒续训校准
 
 ### 最新状态（2026-10-19）
 
@@ -12,7 +12,9 @@
 
 用户批准的[N1-137](../../reference/PLAN-N1-137_neighbor_distance_context_interference_diagnostic_draft_20261019.md)已完整结束：480条查询、累计CPU192.046875/600秒、12/12 bundle恢复、253项来源哈希不变，0训练/更新/dev，`can_promote=false`。全endpoint d=1/d=2命中在8行是32/96与41/96，在16行是28/96与37/96；配对显示8行9组只在d=2转对，16行11组只在d=2转对、2组反向变化。逐题输出见[诊断报告](../../../reports/taiji_n1_plan137_neighbor_distance_context_interference_diagnostic_20261019.json)，结案见[中文执行结案](../../reference/PLAN-N1-137_execution_closeout_20261019.md)。
 
-用户已批准[N1-138](../../reference/PLAN-N1-138_neighbor_distance_dose_curve_diagnostic_draft_20261019.md)，当前进入零查询readiness：在同一新面中匹配比较d=1、d=2、d=4，含2行基线及8/16行条件；56题、12个冻结endpoint最多672次查询、CPU≤600秒，零训练/更新/dev。seed120尚待账本核验；12个完整bundle恢复通过前不构面、不查询、不训练。
+用户批准的[N1-138](../../reference/PLAN-N1-138_neighbor_distance_dose_curve_diagnostic_draft_20261019.md)已完整结束：672条查询、累计CPU218.984375/600秒、12/12 bundle恢复、266项来源哈希不变，0训练/更新/dev，`can_promote=false`。同面d=1/2/4在8行命中33/96、40/96、54/96，在16行命中26/96、36/96、48/96；两种长度的96组逐项剂量模式全都随距离不下降。逐题输出见[诊断报告](../../../reports/taiji_n1_plan138_neighbor_distance_dose_curve_diagnostic_20261019.json)，结案见[中文执行结案](../../reference/PLAN-N1-138_execution_closeout_20261019.md)。
+
+当前唯一建议为[N1-139草案](../../reference/PLAN-N1-139_context_robust_matched_continuation_calibration_draft_20261019.md)：从N1-132三个position终点各分叉候选/两行控制，按固定配方各续训9,216步（共55,296更新），只改变transition上下文分布；训练后做2,880条train-only评估，CPU≤3,600秒，原训练集门不变，不访问dev/holdout。该方案改变训练配方，尚待用户批准；批准前不预检保存、不训练、不更新参数。
 
 以下N1-123及更早段落为历史证据与队首快照，不取代上方当前状态。
 
