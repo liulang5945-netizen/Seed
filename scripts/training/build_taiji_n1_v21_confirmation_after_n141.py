@@ -6,9 +6,13 @@ import argparse
 import hashlib
 import json
 import random
+import sys
 import time
 from collections import Counter
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
 
 from scripts.training import build_taiji_n1_v20_neighbor_distance_dose_curve as v20
 from scripts.training import (
@@ -21,7 +25,6 @@ from scripts.training import (
     run_taiji_n1_plan141_interleaved_context_schedule_matched_continuation as n141,
 )
 
-ROOT = Path(__file__).resolve().parents[2]
 PLAN = ROOT / "plans/reference/PLAN-N1-142_v21_fresh_confirmation_after_n141_draft_20261019.md"
 PLAN_SHA256 = "6bed0e31a250b01b4a4664f34e904749788dd4d3e07089fb9b84320fa2afad54"
 SOURCE_PRECHECK = ROOT / "reports/taiji_n1_v21_source_union_precheck_20261019.json"
