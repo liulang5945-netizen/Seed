@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **2026-10-19 N1当前队首（取代下列N1快照）**：[N1-126](../reference/PLAN-N1-126_execution_closeout_20261019.md)至[N1-132](../reference/PLAN-N1-132_execution_closeout_20261019.md)已完成。N1-132三个position seed在原192 train gate全部通过，无dev/v13/v14/confirmation查询，`can_promote=false`；训练来源与检查点身份见[来源对账](../../reports/taiji_n1_plan132_provenance_reconciliation_20261019.json)。当前唯一待决为[N1-133](../reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)：新seed115 v15 holdout确认面，未获授权前不生成、不查询；详见[03](roadmap/03_CURRENT_EXECUTION.md)。
+> **2026-10-19 N1当前队首（取代下列N1快照）**：[N1-126](../reference/PLAN-N1-126_execution_closeout_20261019.md)至[N1-132](../reference/PLAN-N1-132_execution_closeout_20261019.md)已完成。N1-132三个position seed在原192 train gate全部通过，无dev/v13/v14/confirmation查询，`can_promote=false`；训练来源与检查点身份见[来源对账](../../reports/taiji_n1_plan132_provenance_reconciliation_20261019.json)。N1-133预授权只读审计已核对12/12计划终点hash，无模型查询、更新或新测面，见[endpoint audit](../../reports/taiji_n1_plan133_pre_authorization_endpoint_integrity_20261019.json)。当前唯一待决仍为[N1-133](../reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md)：新seed115 v15 holdout确认面，未获授权前不生成、不查询；详见[03](roadmap/03_CURRENT_EXECUTION.md)。
 
 > 历史 N1-123 队首快照，已由上方 N1-127 结案与当前 N1-128 队首取代。
 

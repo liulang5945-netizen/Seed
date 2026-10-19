@@ -8,6 +8,12 @@
 - Exclude all entities and material/answer values from v3 training, consumed v5/v6/v7-v14 faces, N1-95 scratch faces, and their derived source-exclusion manifests. Bind the full exclusion union and regenerate the face deterministically before any model query.
 - Freeze twelve endpoints before face generation: N1-132 position candidates for seeds 11–13; their same-seed N1-120 position parents; and N1-120 terminal/cut controls for seeds 11–13. Verify all twelve full bundles, checkpoint hashes, and the N1-132 provenance reconciliation.
 
+## Pre-authorization checkpoint integrity
+
+A read-only audit verified the current final-checkpoint SHA-256 values for all twelve planned endpoints against their existing restore receipts: nine N1-120 endpoints and three N1-132 position candidates. The N1-120 receipt revalidation is complete with all 18 zero/final restore checks equal and the three position seeds meeting the position training gate; terminal/cut are comparison controls and are not required to meet that gate. The N1-120 training result itself remains `stopped` because its generic receipt validator requested finite Adam-proposal evidence; the separate bound revalidation closes that receipt issue without changing checkpoint bytes. The N1-132 reconciliation is complete and its three final bundles match their recorded hashes. See [pre-authorization endpoint audit](../../reports/taiji_n1_plan133_pre_authorization_endpoint_integrity_20261019.json).
+
+This preflight only hashed checkpoint files and cross-checked existing reports. It loaded no checkpoints or models, made no model queries or updates, and generated no v15 face. The twelve-bundle restore/hash readiness will be rechecked within the approved execution before any face generation.
+
 ## One-shot evaluation
 
 - First query the twenty sacrifice items on the nine main endpoints (three N1-132 position candidates plus three N1-120 terminal and three cut controls): 180 queries. Continue only if at least six of these nine endpoints have at least six errors among the fifteen decodable sacrifice items. The three same-seed N1-120 position parents are paired descriptive anchors and do not count toward this unchanged range gate.

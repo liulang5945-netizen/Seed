@@ -1,0 +1,196 @@
+{
+  "schema": "n1-plan133-preauthorization-endpoint-integrity-v1",
+  "status": "complete",
+  "checked_at_utc": "2026-10-19T05:56:58.105575+00:00",
+  "plan_ref": "plans/reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md",
+  "scope": "Read-only endpoint artifact hash and prior restore-receipt cross-check. No model/checkpoint loads, model queries, updates, or face generation.",
+  "source_artifacts": {
+    "n120_result": {
+      "path": "reports/taiji_n1_expanded_normalized_rwl_length_balanced_20261019.json",
+      "sha256": "873c237623fa7b97de0f4d8d95edaf4a5d8f9bf944c8af301468bd1d0f19ab2f"
+    },
+    "n120_receipt_revalidation": {
+      "path": "reports/taiji_n1_expanded_normalized_rwl_length_balanced_20261019_receipt_revalidation.json",
+      "sha256": "22055b74784e7c35891098595928af238561405a52cbfb4b94eb87491ba7e03d"
+    },
+    "n132_result": {
+      "path": "reports/taiji_n1_plan132_binding_supervision_calibration_result_20261019.json",
+      "sha256": "9c9b6a89aa1e6b006469bda8a310fa9cc57cbb3478956482bebf1828000f7fcc"
+    },
+    "n132_provenance_reconciliation": {
+      "path": "reports/taiji_n1_plan132_provenance_reconciliation_20261019.json",
+      "sha256": "895c3ede4c84e7d57ced3c7bd62727330eb2cbc6b51a9ab5cd0aa4e93bc0e87e"
+    }
+  },
+  "n120_source_report_status": "stopped",
+  "n120_source_report_error": "ValueError: finite bounded actual Adam proposal evidence required",
+  "n120_revalidation": {
+    "status": "complete",
+    "complete": true,
+    "position_training_sufficient_all_seeds": true,
+    "independent_restore_checks": 18,
+    "all_restore_checks_equal": true
+  },
+  "n132_reconciliation": {
+    "status": "complete",
+    "complete": true,
+    "source_hashes_current": true,
+    "training_sufficient_all_seeds": true,
+    "training_result_sha256": "9c9b6a89aa1e6b006469bda8a310fa9cc57cbb3478956482bebf1828000f7fcc"
+  },
+  "candidate_training_unseen_queries": {
+    "dev": 0,
+    "v13": 0,
+    "v14": 0,
+    "confirmation": 0
+  },
+  "endpoints_hash_verified": 12,
+  "endpoints": [
+    {
+      "source": "N1-120",
+      "seed": 11,
+      "arm": "cut",
+      "role": "cut control",
+      "final_checkpoint_path": "E:\\Seed\\data\\checkpoints\\n1_expanded_normalized_rwl_length_balanced_20261019\\s11_cut_final.pt",
+      "sha256_expected": "3e49d0d5179045d350d862d2f509dfffd22446521f981162e58b5694a6de5a08",
+      "sha256_current": "3e49d0d5179045d350d862d2f509dfffd22446521f981162e58b5694a6de5a08",
+      "independent_restore_checks": 2,
+      "restore_checks_equal": true,
+      "training_sufficient_in_n120_gate": true
+    },
+    {
+      "source": "N1-120",
+      "seed": 11,
+      "arm": "position",
+      "role": "same-seed position parent",
+      "final_checkpoint_path": "E:\\Seed\\data\\checkpoints\\n1_expanded_normalized_rwl_length_balanced_20261019\\s11_position_final.pt",
+      "sha256_expected": "d3648e3f6f5295a1dc384953bb6b95b3dd429fea63696753335a1033730678ad",
+      "sha256_current": "d3648e3f6f5295a1dc384953bb6b95b3dd429fea63696753335a1033730678ad",
+      "independent_restore_checks": 2,
+      "restore_checks_equal": true,
+      "training_sufficient_in_n120_gate": true
+    },
+    {
+      "source": "N1-120",
+      "seed": 11,
+      "arm": "terminal",
+      "role": "terminal control",
+      "final_checkpoint_path": "E:\\Seed\\data\\checkpoints\\n1_expanded_normalized_rwl_length_balanced_20261019\\s11_terminal_final.pt",
+      "sha256_expected": "5e0585db09c3e7d4c7a22439b278499df9b89640b958d2838b99ef7cb3d17049",
+      "sha256_current": "5e0585db09c3e7d4c7a22439b278499df9b89640b958d2838b99ef7cb3d17049",
+      "independent_restore_checks": 2,
+      "restore_checks_equal": true,
+      "training_sufficient_in_n120_gate": false
+    },
+    {
+      "source": "N1-120",
+      "seed": 12,
+      "arm": "cut",
+      "role": "cut control",
+      "final_checkpoint_path": "E:\\Seed\\data\\checkpoints\\n1_expanded_normalized_rwl_length_balanced_20261019\\s12_cut_final.pt",
+      "sha256_expected": "ed4b037a301a111a4ad579b0dd2d34227882509700cc40b2fd639b2cbcf90090",
+      "sha256_current": "ed4b037a301a111a4ad579b0dd2d34227882509700cc40b2fd639b2cbcf90090",
+      "independent_restore_checks": 2,
+      "restore_checks_equal": true,
+      "training_sufficient_in_n120_gate": true
+    },
+    {
+      "source": "N1-120",
+      "seed": 12,
+      "arm": "position",
+      "role": "same-seed position parent",
+      "final_checkpoint_path": "E:\\Seed\\data\\checkpoints\\n1_expanded_normalized_rwl_length_balanced_20261019\\s12_position_final.pt",
+      "sha256_expected": "3b1fe039a26fdbea92a9203695d4fcaeb8d3e87a722cb8d71346e797ad66461e",
+      "sha256_current": "3b1fe039a26fdbea92a9203695d4fcaeb8d3e87a722cb8d71346e797ad66461e",
+      "independent_restore_checks": 2,
+      "restore_checks_equal": true,
+      "training_sufficient_in_n120_gate": true
+    },
+    {
+      "source": "N1-120",
+      "seed": 12,
+      "arm": "terminal",
+      "role": "terminal control",
+      "final_checkpoint_path": "E:\\Seed\\data\\checkpoints\\n1_expanded_normalized_rwl_length_balanced_20261019\\s12_terminal_final.pt",
+      "sha256_expected": "f5e96ea4e66c4f321cc836fb357ee0afc29b8be261915501b7e877be7d45de2b",
+      "sha256_current": "f5e96ea4e66c4f321cc836fb357ee0afc29b8be261915501b7e877be7d45de2b",
+      "independent_restore_checks": 2,
+      "restore_checks_equal": true,
+      "training_sufficient_in_n120_gate": false
+    },
+    {
+      "source": "N1-120",
+      "seed": 13,
+      "arm": "cut",
+      "role": "cut control",
+      "final_checkpoint_path": "E:\\Seed\\data\\checkpoints\\n1_expanded_normalized_rwl_length_balanced_20261019\\s13_cut_final.pt",
+      "sha256_expected": "a5cce0f32f8d92ac3f4e551da73ca4baac681f9cca85857579b00575d968b6ea",
+      "sha256_current": "a5cce0f32f8d92ac3f4e551da73ca4baac681f9cca85857579b00575d968b6ea",
+      "independent_restore_checks": 2,
+      "restore_checks_equal": true,
+      "training_sufficient_in_n120_gate": false
+    },
+    {
+      "source": "N1-120",
+      "seed": 13,
+      "arm": "position",
+      "role": "same-seed position parent",
+      "final_checkpoint_path": "E:\\Seed\\data\\checkpoints\\n1_expanded_normalized_rwl_length_balanced_20261019\\s13_position_final.pt",
+      "sha256_expected": "6cbe6e1e34a0b11aa789bf1cc8c52e1a25784a55e4f6dd8c1c4c984e2e6669ef",
+      "sha256_current": "6cbe6e1e34a0b11aa789bf1cc8c52e1a25784a55e4f6dd8c1c4c984e2e6669ef",
+      "independent_restore_checks": 2,
+      "restore_checks_equal": true,
+      "training_sufficient_in_n120_gate": true
+    },
+    {
+      "source": "N1-120",
+      "seed": 13,
+      "arm": "terminal",
+      "role": "terminal control",
+      "final_checkpoint_path": "E:\\Seed\\data\\checkpoints\\n1_expanded_normalized_rwl_length_balanced_20261019\\s13_terminal_final.pt",
+      "sha256_expected": "f1723fa9018c62b45fdd20358d3a3504065bd0690f1c5bcd0c075b34bbcfda2f",
+      "sha256_current": "f1723fa9018c62b45fdd20358d3a3504065bd0690f1c5bcd0c075b34bbcfda2f",
+      "independent_restore_checks": 2,
+      "restore_checks_equal": true,
+      "training_sufficient_in_n120_gate": false
+    },
+    {
+      "source": "N1-132",
+      "seed": 11,
+      "arm": "position",
+      "role": "binding-supervised candidate",
+      "final_checkpoint_path": "E:\\Seed\\data\\checkpoints\\n1_plan132_binding_supervision_calibration_20261019\\s11_position_final.pt",
+      "sha256_expected": "3b8da0988e039bed63f64ffc51e7c5bdd252065a39cfebecf07e4d23a031d292",
+      "sha256_current": "3b8da0988e039bed63f64ffc51e7c5bdd252065a39cfebecf07e4d23a031d292",
+      "independent_restore": true,
+      "restore_signature_matches": true
+    },
+    {
+      "source": "N1-132",
+      "seed": 12,
+      "arm": "position",
+      "role": "binding-supervised candidate",
+      "final_checkpoint_path": "E:\\Seed\\data\\checkpoints\\n1_plan132_binding_supervision_calibration_20261019\\s12_position_final.pt",
+      "sha256_expected": "a2430d8ec6a439890224476c4c7b6078abdbce8901adede694a3680351d62899",
+      "sha256_current": "a2430d8ec6a439890224476c4c7b6078abdbce8901adede694a3680351d62899",
+      "independent_restore": true,
+      "restore_signature_matches": true
+    },
+    {
+      "source": "N1-132",
+      "seed": 13,
+      "arm": "position",
+      "role": "binding-supervised candidate",
+      "final_checkpoint_path": "E:\\Seed\\data\\checkpoints\\n1_plan132_binding_supervision_calibration_20261019\\s13_position_final.pt",
+      "sha256_expected": "9ab0d63ce0580cf1d96372c53806a592e76c2b1cd68fd712b51c9d2ed1b96d36",
+      "sha256_current": "9ab0d63ce0580cf1d96372c53806a592e76c2b1cd68fd712b51c9d2ed1b96d36",
+      "independent_restore": true,
+      "restore_signature_matches": true
+    }
+  ],
+  "new_face_generated": false,
+  "new_model_queries": 0,
+  "updates": 0,
+  "can_promote": false,
+  "note": "Pre-authorization integrity only; PLAN-N1-133 face construction and queries remain pending owner authorization. N1-120 training_sufficient is a position-only predicate; terminal/cut are controls and are not required to pass it."
+}
