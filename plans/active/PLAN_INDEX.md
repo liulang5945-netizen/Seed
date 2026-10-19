@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **2026-10-19 N1当前队首（取代下列N1快照）**：N1-133 v15确认未通过并关闭，N1-134为描述性诊断。N1-135至N1-138均已结案；N1-138完成672查询、累计CPU218.984375秒、12/12 bundle恢复、266项来源哈希不变，0训练/更新/dev，`can_promote=false`。d=1/2/4在8行命中33/40/54、16行命中26/36/48，逐项配对无距离增加后回退。N1-139训练配方与修订后的7,488条train-only计分均已获批；保持原N1-132门，3 seed候选/两行控制各9,216步、CPU≤3,600秒。当前执行来源、schedule与checkpoint保存恢复前置检查，通过六个zero bundle独立恢复前不训练。详见[N1-138结案](../reference/PLAN-N1-138_execution_closeout_20261019.md)、[诊断报告](../../reports/taiji_n1_plan138_neighbor_distance_dose_curve_diagnostic_20261019.json)与[03](roadmap/03_CURRENT_EXECUTION.md)。
+> **2026-10-19 N1当前队首（取代下列N1快照）**：N1-139已完整执行，55,296次更新、7,488条train-only计分、12/12 zero/final checkpoint恢复、270项来源哈希不变；累计CPU 3,493.89/3,600秒。原N1-132训练门5/6通过；seed13候选transition由48/48降至28/48，候选增强上下文840/864、两行控制411/864，can_promote=false，未查询dev/holdout。结案见[PLAN-N1-139](../reference/PLAN-N1-139_execution_closeout_20261019.md)，逐题归因见[报告](../../reports/taiji_n1_plan139_itemwise_retention_context_attribution_20261019.json)。当前唯一下一步为待批准草案[PLAN-N1-140](../reference/PLAN-N1-140_baseline_retention_balanced_matched_continuation_draft_20261019.md)：候选每父项两行baseline由6/48提高到24/48、六种增强条件各4/48，保持原门与7,488条计分；CPU上限7,200秒。此草案尚未授权执行。
 
 > 历史 N1-123 队首快照，已由上方 N1-127 结案与当前 N1-128 队首取代。
 

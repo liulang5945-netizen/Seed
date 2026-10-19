@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：执行 PLAN-N1-139 上下文鲁棒续训校准
+## 当前唯一下一步：审批 PLAN-N1-140 基线保持型匹配续训
 
 ### 最新状态（2026-10-19）
 
@@ -14,7 +14,7 @@
 
 用户批准的[N1-138](../../reference/PLAN-N1-138_neighbor_distance_dose_curve_diagnostic_draft_20261019.md)已完整结束：672条查询、累计CPU218.984375/600秒、12/12 bundle恢复、266项来源哈希不变，0训练/更新/dev，`can_promote=false`。同面d=1/2/4在8行命中33/96、40/96、54/96，在16行命中26/96、36/96、48/96；两种长度的96组逐项剂量模式全都随距离不下降。逐题输出见[诊断报告](../../../reports/taiji_n1_plan138_neighbor_distance_dose_curve_diagnostic_20261019.json)，结案见[中文执行结案](../../reference/PLAN-N1-138_execution_closeout_20261019.md)。
 
-用户已批准[N1-139](../../reference/PLAN-N1-139_context_robust_matched_continuation_calibration_draft_20261019.md)，并批准把train-only计分修正为7,488条，以完整保留N1-132冻结门（每endpoint 960条）；其中原门5,760条、六种增强上下文1,728条。训练量55,296、CPU≤3,600秒、模型/数据变量及原门判据均不变。当前执行来源与schedule核验和6个zero bundle独立恢复；全部通过后才训练。不访问dev/holdout。
+用户批准的[N1-139](../../reference/PLAN-N1-139_context_robust_matched_continuation_calibration_draft_20261019.md)已完整执行：55,296次更新、7,488条train-only计分、12/12个zero/final bundle恢复、270项来源哈希不变；CPU累计3,493.890/3,600秒。原N1-132训练门5/6 endpoint通过；唯一失败为seed13候选，transition从48/48降至28/48。候选在增强上下文合计840/864，对照411/864；未查询dev/holdout，can_promote=false。结案见[中文报告](../../reference/PLAN-N1-139_execution_closeout_20261019.md)，逐题配对见[离线归因](../../../reports/taiji_n1_plan139_itemwise_retention_context_attribution_20261019.json)。下一步是审批[N1-140草案](../../reference/PLAN-N1-140_baseline_retention_balanced_matched_continuation_draft_20261019.md)：候选两行baseline比例改为24/48，六种增强条件各4/48，固定更新数与原门不变，CPU上限提至7,200秒。该训练配方及预算调整未获批准前不做checkpoint预检或训练。
 
 以下N1-123及更早段落为历史证据与队首快照，不取代上方当前状态。
 
