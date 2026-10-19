@@ -1,0 +1,1 @@
+{"checked_at_utc":"2026-10-19T07:37:40Z","model_queries":0,"new_face_generated":false,"parameter_updates":0,"plan_sha256":"845d0b32e623a8f64fff812ea57fe6620d2316a9edc6ec493d51559c119de6e9","schema":"n1-plan134-readiness-attempt-v1","status":"started","说明_zh":"只核验来源、endpoint哈希与完整bundle恢复；若失败保留回执，不生成题面、不查询模型。"}
