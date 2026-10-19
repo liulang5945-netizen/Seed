@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **2026-10-19 N1当前队首（取代下列N1快照）**：[N1-126](../reference/PLAN-N1-126_execution_closeout_20261019.md)至[N1-129](../reference/PLAN-N1-129_execution_closeout_20261019.md)已完成。N1-128 full-context oracle binding为position90/90、cut86/90；N1-129显示native target alignment总质量约为目标字节占比的1.15–1.50倍，但无稳定的正确性区分。它仅做180条activation read，0答案生成/teacher/更新/dev/unknown，`can_promote=false`。当前唯一下一步[N1-130](../reference/PLAN-N1-130_native_relation_row_binding_mass_audit_draft_20261019.md)：把mass按`faces`/`turns`等单条关系事实拆开；详见[03](roadmap/03_CURRENT_EXECUTION.md)。
+> **2026-10-19 N1当前队首（取代下列N1快照）**：[N1-126](../reference/PLAN-N1-126_execution_closeout_20261019.md)至[N1-130](../reference/PLAN-N1-130_execution_closeout_20261019.md)已完成。N1-128 oracle binding达到position90/90、cut86/90；N1-129/130原生alignment对目标事实的mass高于字节占比，但正确与错误输出之间没有支持“缺少事实”的分离。无新数据/训练/dev/unknown，`can_promote=false`。当前唯一下一步[N1-131](../reference/PLAN-N1-131_transition_operator_error_attribution_draft_20261019.md)：离线将保存的transition输出分为inverse-turn、no-turn或其他方向；详见[03](roadmap/03_CURRENT_EXECUTION.md)。
 
 > 历史 N1-123 队首快照，已由上方 N1-127 结案与当前 N1-128 队首取代。
 
