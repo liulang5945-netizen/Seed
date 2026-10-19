@@ -55,6 +55,16 @@ def test_cumulative_retry_budget_is_frozen_to_one_lost_endpoint() -> None:
     assert recovery.CPU_LIMIT_SECONDS == 3_600
 
 
+def test_source_audit_uses_flattened_persisted_summary_fields() -> None:
+    summary = {"excluded_entity_count": 10, "excluded_word_value_count": 20}
+    hashes = {"E:/Seed/input.json": "a" * 64}
+    audit = {**summary, "source_hashes": hashes}
+    recovery.validate_exclusion_audit(audit, summary, hashes)
+
+    with pytest.raises(recovery.Refuse, match="summary changed"):
+        recovery.validate_exclusion_audit({**audit, "excluded_entity_count": 11}, summary, hashes)
+
+
 def test_all_six_endpoint_rows_are_required_for_combined_completion() -> None:
     rows = _all_rows()
     assert len(rows) == 2_880

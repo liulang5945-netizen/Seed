@@ -113,6 +113,16 @@ def _validate_failed_n153(result: dict) -> dict:
     return result
 
 
+def validate_exclusion_audit(
+    audit: dict, exclusion_summary: dict, source_hashes: dict[str, str]
+) -> None:
+    for key, value in exclusion_summary.items():
+        if audit.get(key) != value:
+            raise Refuse(f"N1-153 source exclusion summary changed: {key}")
+    if audit.get("source_hashes") != source_hashes:
+        raise Refuse("N1-153 source audit hash map changed")
+
+
 def _source_context() -> tuple[dict, dict, dict, dict, dict, dict, dict[str, str]]:
     n150_readiness, n150_preflight, _binding, bound, schedule = n150._verify_preflight()
     n150_result = read_json(n150.RESULT)
@@ -176,11 +186,7 @@ def _source_context() -> tuple[dict, dict, dict, dict, dict, dict, dict[str, str
     excluded_entities, excluded_words, exclusion_summary, inherited, _runtime = (
         builder.collect_n150_exclusions()
     )
-    require(
-        audit.get("source_exclusion_summary") == exclusion_summary,
-        "N1-153 source exclusion summary changed",
-    )
-    require(audit.get("source_hashes") == inherited, "N1-153 source audit hash map changed")
+    validate_exclusion_audit(audit, exclusion_summary, inherited)
     rebuilt_face, _summary = builder.build_face(excluded_entities, excluded_words)
     require(rebuilt_face == face, "N1-153 face cannot be reconstructed deterministically")
     sources = dict(inherited)
