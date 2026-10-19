@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前执行：PLAN-N1-155A schedule 上下文传递更正
+## 当前执行：PLAN-N1-156 N1-155A train-only 逐题配对归因
 
 ### 最新状态（2026-10-20）
 
@@ -12,7 +12,7 @@ N1-153A已完整结束：同一seed127 fresh face上2,880条逐题结果完成�
 
 N1-154已完成2,880行fresh诊断的逐题paired分析，CPU0.03125秒，0加载/查询/更新；candidate已知命中8/16/32行360/360、359/360、356/360，control为353/360、340/360、302/360；unknown弃答candidate76/120、91/120、103/120，control109/120、115/120、120/120。结果为描述性synthetic face归因，见[N1-154结案](../../reference/PLAN-N1-154_execution_closeout_20261020.md)。
 
-N1-155首轮在第一个训练slot前因schedule漏传`views`停止：0更新、0 train-only评分、0模型输出查询；空进度文件及失败回执已保留，累计CPU 130.921875秒，`can_promote=false`。根因已复现为运行schedule未保留N1-150上下文视图。依据用户授予的执行计划批准权，已批准[N1-155A](../../reference/PLAN-N1-155A_runtime_views_handoff_correction_20261020.md)：仅修复视图透传，不改N1-155训练配方、评分分母、原训练门或seed128 fresh面，所有运行产物使用独立write-once路径；新执行累计CPU继续计入原18,000秒上限，已用130.921875秒。代码契约7/7直接断言、Ruff、py_compile及560项来源只读预检已通过；下一步提交更正实现与失败回执，再生成N1-155A readiness和六个zero bundle独立恢复前置。详见[首次失败回执](../../../reports/taiji_n1_plan155_unknown8_rebalance_result_20261020.json)与[上位方案](../../reference/PLAN-N1-155_short_context_unknown_rebalance_and_fresh_diagnostic_20261020.md)。
+N1-155A已完整结束：55,296/55,296次更新、7,488/7,488条train-only评分，六个final bundle独立恢复6/6，progress账本62,784行全部有效；累计CPU9,325.219/18,000秒（已计入首轮130.922秒）。三个candidate原门均通过；seed12 uniform control的transition仅30/48，令六端点合取门失败，因此按协议跳过seed128 fresh面，0 fresh/dev/holdout/confirmation查询，`can_promote=false`。详见[N1-155A结案](../../reference/PLAN-N1-155A_execution_closeout_20261020.md)与[完整结果](../../../reports/taiji_n1_plan155a_unknown8_rebalance_result_20261020.json)。依据用户授予的执行计划批准权，已批准唯一下一步[N1-156](../../reference/PLAN-N1-156_plan155a_train_score_itemwise_attribution_20261020.md)：对已消费的7,488条train-only评分做逐题配对归因，CPU≤60秒，0模型/checkpoint加载、推理、查询或更新，不访问dev/holdout/confirmation、不改门或晋级状态。
 
 
 ### 历史状态（截至2026-10-19；后由N1-150结案取代）
