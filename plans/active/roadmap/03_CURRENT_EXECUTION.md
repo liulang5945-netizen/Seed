@@ -1,10 +1,14 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：批准 PLAN-N1-126 已知题 source-pruning 诊断
+## 当前唯一下一步：PLAN-N1-128 full-context question-binding mask 诊断
 
 ### 最新状态（2026-10-19）
 
-**最新 N1 结案取代本文下方较早的队首文字：** PLAN-N1-125 已完成零查询源代码与已保存输出审计。现有 position reader 已包含局部问题—观察字节匹配、观察条件问题GRU与写入key/value的关系残差；错误主要表现为lookup误拒答和transition输出错误方向词，尚不足以判定根因。[审计报告](../../../reports/taiji_n1_existing_binding_error_audit_20261019.json)绑定了模型结果和现有实现源码，结案见[PLAN-N1-125](../../reference/PLAN-N1-125_content_binding_revision_draft_20261019.md)。当前唯一建议为[PLAN-N1-126](../../reference/PLAN-N1-126_source_pruned_saved_error_diagnostic_draft_20261019.md)：对v13/v14已消费confirm题，仅保留每题目标实体的事实行，在6个position/cut端点上做180条oracle source-pruning诊断，直接测干扰证据对原错误的影响。这是新增模型查询干预，尚待批准；不包含训练或新样本。
+**N1-126/N1-127已按授权完成。** [N1-126](../../reference/PLAN-N1-126_execution_closeout_20261019.md)在v13/v14消费项上只保留目标事实行，position90/90、cut86/90；该oracle干预同时缩短上下文。 [N1-127](../../reference/PLAN-N1-127_execution_closeout_20261019.md)保留16行全上下文、只屏蔽decoder两处内容读取和相对地址，position82/90、cut78/90；相对原生position52/90、cut45/90均无回退。lookup/revision全部正确，差异全部落在transition方向词。N1-127 teacher-forced路径不加mask，读数与已封存teacher输出180/180一致；63条free/teacher exactness差异来自两条评分路径的干预不同，不能混读。两项CPU分别为53.484375秒累计和52.890625秒累计；无训练、无dev/unknown查询、检查点不变，`can_promote=false`。
+
+当前唯一建议为[PLAN-N1-128](../../reference/PLAN-N1-128_full_context_question_binding_mask_diagnostic_draft_20261019.md)：继续复用同一15项/面及六端点，保留full tape与N1-127 decoder mask，再对目标行以外的question-to-observation alignment和context confidence加oracle mask，判断N1-126与N1-127之间的四条transition差距是否来自上游问题绑定。180条查询、CPU≤600秒累计、0训练/新样本/dev/unknown、无判据变化；已按用户授权进入实现与零查询预检。
+
+以下N1-123及更早段落为历史证据与队首快照，不取代上方当前状态。
 
 **最新 N1 结案取代本文下方较早的队首文字：** PLAN-N1-123 seed113长上下文面已完整执行，CPU 118.046875/600秒、540/540查询、36个checkpoint哈希与来源链均未变。范围门8/9通过，但确认四门合取失败：候选position 41/60、cut 36/60、terminal 18/60；相对cut仅+5，且seed12 lookup 1/5、seed13 transition 1/5。未训练、未查询dev、未重抽，`can_promote=false`。零查询逐题归因发现16条上下文中的目标证据起点仅覆盖0–4（双行任务实际证据行0–5），未覆盖后半上下文；因此这次压力测不能说明晚位证据读取。完整绑定证据见 [PLAN-N1-123结案](../../reference/PLAN-N1-123_execution_closeout_20261019.md) 与[逐题归因](../../../reports/taiji_n1_v13_after_n122_itemwise_attribution_20261019.json)。唯一建议为[PLAN-N1-124](../../reference/PLAN-N1-124_v14_full_context_evidence_position_probe_draft_20261019.md)：只改变新面中的目标证据位置分布，覆盖早/中/晚；其余样本规模、来源排除、端点、范围门与确认门不变。这是新的测面，当前仅为草案，待批准后才实施。
 

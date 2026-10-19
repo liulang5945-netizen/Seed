@@ -1,8 +1,8 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **2026-10-19 N1当前队首（取代下列N1快照）**：N1-124 v14已完整完成，candidate position38/60、cut37/60，确认门未过；N1-125只读审计发现问题对齐、观察条件编码及key/value关系残差已在当前position候选中，错误以lookup误拒答、transition错误方向词为主。详见[N1-125审计结案](../reference/PLAN-N1-125_content_binding_revision_draft_20261019.md)。当前唯一待批为[N1-126](../reference/PLAN-N1-126_source_pruned_saved_error_diagnostic_draft_20261019.md)：在同一已消费confirm题上进行source-pruning干预，180查询、0训练、CPU≤600秒；完整状态见[03](roadmap/03_CURRENT_EXECUTION.md)。
+> **2026-10-19 N1当前队首（取代下列N1快照）**：[N1-126](../reference/PLAN-N1-126_execution_closeout_20261019.md)与[N1-127](../reference/PLAN-N1-127_execution_closeout_20261019.md)已完成同一已消费v13/v14确认项的source-pruning与full-context decoder-mask诊断。结果分别为position90/90与82/90、cut86/90与78/90；decoder mask相对native无回退，剩余错误均为transition方向。零训练、零dev/unknown、`can_promote=false`。当前唯一下一步是[N1-128](../reference/PLAN-N1-128_full_context_question_binding_mask_diagnostic_draft_20261019.md)，继续隔离full-context问题绑定影响；详见[03](roadmap/03_CURRENT_EXECUTION.md)。
 
-> **2026-10-19 N1最新队首**：PLAN-N1-123已完整结案，8/9范围门通过但确认四门未合取：candidate position 41/60，对cut仅+5/60（门为+12），seed12 lookup 1/5、seed13 transition 1/5；累计CPU118.046875/600秒、540查询、无训练或dev查询，`can_promote=false`。零查询归因确认目标证据只在16条上下文的早段（起点0–4；双行证据占0–5）。当前唯一待裁是新测面草案[PLAN-N1-124](../reference/PLAN-N1-124_v14_full_context_evidence_position_probe_draft_20261019.md)；绑定结案见[PLAN-N1-123](../reference/PLAN-N1-123_execution_closeout_20261019.md)。
+> 历史 N1-123 队首快照，已由上方 N1-127 结案与当前 N1-128 队首取代。
 
 > **2026-10-19 N1最新队首（取代上一行）**：PLAN-N1-124已完整结案，范围门6/9恰好通过但确认四门未合取：candidate position 38/60、cut 37/60、terminal 14/60，相对cut仅+1/60；seed11 transition 1/5、seed13 lookup 0/5。累计CPU139.15625/600秒、540查询、无训练或dev查询，`can_promote=false`。v13与v14跨面只读比较仍显示position相对cut无独立收益；当前唯一待裁是[PLAN-N1-125](../reference/PLAN-N1-125_content_binding_revision_draft_20261019.md)，转向问题条件内容绑定修订，先做零训练工程/保存恢复预检。
 

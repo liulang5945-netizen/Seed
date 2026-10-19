@@ -1,6 +1,6 @@
 # PLAN-N1-126 — source-pruned saved-error diagnostic
 
-**Status: draft awaiting approval for a new model-query intervention.** PLAN-N1-123 and PLAN-N1-124 both failed the preregistered position-over-cut margin: +5/60 and +1/60. A read-only output audit found zero free-versus-teacher exactness disagreements. Position errors were chiefly lookup false abstentions and valid-but-wrong transition directions; revision was 15/15 exact on both faces. The active reader already contains question-byte alignment, contextual question encoding, and question-conditioned key/value residuals, so another generic alignment module is not supported by current evidence.
+**Status: approved for one-shot execution on 2026-10-19.** PLAN-N1-123 and PLAN-N1-124 both failed the preregistered position-over-cut margin: +5/60 and +1/60. A read-only output audit found zero free-versus-teacher exactness disagreements. Position errors were chiefly lookup false abstentions and valid-but-wrong transition directions; revision was 15/15 exact on both faces. The active reader already contains question-byte alignment, contextual question encoding, and question-conditioned key/value residuals, so another generic alignment module is not supported by current evidence.
 
 ## Question
 

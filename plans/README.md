@@ -1,8 +1,8 @@
 # Seed / Taiji 计划与架构入口
 
-> **2026-10-19 N1进展**：v14全上下文面确认门未过；随后只读审计发现当前position候选已有问题—观察对齐与关系key/value残差，错误以lookup误拒答、transition错误方向为主。当前唯一待批准方案为[PLAN-N1-126](reference/PLAN-N1-126_source_pruned_saved_error_diagnostic_draft_20261019.md)，先用已消费题诊断干扰源，不训练、不扩样本。
+> **2026-10-19 N1队首**：[PLAN-N1-126](reference/PLAN-N1-126_execution_closeout_20261019.md)与[PLAN-N1-127](reference/PLAN-N1-127_execution_closeout_20261019.md)已完成。输入裁剪 position90/90、cut86/90；完整上下文 decoder mask position82/90、cut78/90，均提升原生输出且未造成回退，剩余错误集中于transition方向词。两项均为已消费题oracle诊断，0训练、0 dev/unknown、`can_promote=false`。当前唯一下一步是[PLAN-N1-128](reference/PLAN-N1-128_full_context_question_binding_mask_diagnostic_draft_20261019.md)：保留full tape与decoder mask，进一步隔离问题绑定阶段。
 
-> **2026-10-19 N1进展**：[PLAN-N1-123结案](reference/PLAN-N1-123_execution_closeout_20261019.md)记录540次查询完整结束，v13长上下文确认门未通过、`can_promote=false`；当前唯一待批准建议为[PLAN-N1-124](reference/PLAN-N1-124_v14_full_context_evidence_position_probe_draft_20261019.md)，以[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准。此处只同步N1研究队首，不改写项目整体M0–M8状态。
+> 历史 N1-123 进展记录保留作追溯；当前状态以本页首条与[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准。本页只同步N1研究队首，不改写项目整体M0–M8状态。
 
 > **2026-10-19 N1进展更新**：v14全上下文位置面已结案，candidate position38/60、cut37/60，确认门未通过；只读审计发现当前模型已包含问题对齐及关系残差机制，错误主要是lookup误拒答和transition错方向。当前唯一待批准建议为[PLAN-N1-126](reference/PLAN-N1-126_source_pruned_saved_error_diagnostic_draft_20261019.md)，用已消费题测试干扰证据影响，0训练、180查询、CPU≤600秒。此处只同步N1研究队首，不改写项目整体M0–M8状态。
 
