@@ -1,6 +1,6 @@
 # PLAN-N1-139：匹配对照的上下文鲁棒续训校准
 
-**状态：已批准，执行中。** 用户于2026-10-19批准本方案；随后批准将train-only计分数量修正为7,488。当前依次进行来源与schedule核验、6个zero bundle独立保存/恢复预检、固定续训、train-only评估和final bundle恢复。N1-133至N1-138历史判读保持原样。
+**状态：执行方案已批准并冻结。** 用户于2026-10-19批准本方案及7,488条train-only计分修订；执行进展与最终读数以当前执行页及独立结案报告为准。N1-133至N1-138历史判读保持原样。
 
 **批准记录：** 2026-10-19，用户先回复“批准并执行（推荐）”，后批准本页7,488条train-only计分修订。原批准草案SHA-256：`bf64a126d927708b02f283d6e68357e1d054d358e4c74bf50c42927946298e5e`。
 
@@ -18,7 +18,7 @@ N1-138在同面同模板中观察到单调的距离读数：d=1/2/4在8行命中
 - 固定每模型9,216次更新，共6模型、55,296次更新。优化器、学习率schedule、目标函数与`0.25 * L_bind`保持N1-132不变；唯一训练变量是transition样本附加的干扰上下文。
 - 每seed沿用原schedule中的2,304个transition更新slot。控制臂全部使用原2行输入。候选臂的48个transition父项各出现48次：每项6次使用2行基线，每项在8/16行×d=1/2/4的六种条件中各出现7次。每seed因此有288个基线slot及每种增强条件336个slot；其他任务类别和slot在两臂逐项相同。
 - 候选transition输入保持同一目标事实与答案，目标事实位于索引0/1；8行版使用6条指定距离干扰事实，16行版保留相同6条并追加8条。对48个train transition父项的raw/hard两种路径分别构造14个d=1、14个d=2及14个d=4全新实体名，严格按目标实体长度及字符Hamming距离生成，并在所有路径/距离间全局唯一；名称排除v3训练及已消费v5-v20面（来源绑定N1-138 v20排除清单）。同一父项/路径的三种距离使用相同方向值序列。只用train父项构造，不读取dev/holdout。
-- 六个新checkpoint写入`data/checkpoints/n1_plan139_context_robust_matched_continuation_20261019/`。开训前完成6个zero checkpoint独立保存/恢复预检；训练后完成6个final独立恢复，完整校验模型、Adam、RNG和history。所有目标文件采用write-once；任一目标已存在即停止，不覆盖。
+- 十二个专属checkpoint写入`data/checkpoints/n1_plan139_context_robust_matched_continuation_20261019/`：开训前6个zero bundle独立保存/恢复预检；训练后6个final bundle独立恢复，完整校验模型、Adam、RNG和history。所有目标文件采用write-once；任一目标已存在即停止，不覆盖。失败时仅为当前分支保留partial bundle，不允许自动续跑。
 - 训练后只做train-only计分：6个终点各运行原N1-132冻结计分器的960行门（5,760条），再各评估48个transition父项×6种增强上下文（1,728条），合计7,488条。原门的数字与合取规则原样保留；增强上下文按长度/d值/方向报告描述性命中，不新增通过线。
 - CPU总上限3,600秒，包含来源核验、6分支zero预检、55,296次更新、train-only评估与final恢复。超限立即停止并保留已写checkpoint与失败回执。
 
