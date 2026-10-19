@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前执行：PLAN-N1-154 fresh内容长度诊断逐题归因
+## 当前执行：PLAN-N1-155 短上下文unknown再平衡训练与fresh诊断
 
 ### 最新状态（2026-10-20）
 
@@ -8,7 +8,7 @@ N1-150已完整结束：55,296/55,296次更新、7,488/7,488条train-only计分�
 
 N1-152已完成1,728条长度分层逐题离线归因，CPU0.046875秒，0模型/checkpoint加载、0查询、0更新；candidate 32行已知类215/216，control 190/216，差异主要来自lookup；unknown弃答8/16/32行candidate为42/72、60/72、65/72，control为72/72、69/72、70/72。详见[N1-152结案](../../reference/PLAN-N1-152_execution_closeout_20261020.md)与[完整配对归因](../../../reports/taiji_n1_plan152_length_itemwise_attribution_20261020.json)。均为同一train集描述读数，不作泛化或能力晋级。
 
-N1-153原attempt在seed11/length_mixed完成480条后因endpoint汇总错误停止，未保留逐题行；失败结果保留。N1-153A复用同一face完整完成2,880条：计入前次attempt共3,360条，六endpoint逐题行完整、source SHA不变、六个final bundle恢复6/6，累计CPU350.609/3,600秒；0训练/更新/dev/holdout/confirmation，can_promote=false。详见[N1-153A中文结案](../../reference/PLAN-N1-153A_execution_closeout_20261020.md)与[完整逐题结果](../../../reports/taiji_n1_plan153a_fresh_context_result_binding_recovery_result_20261020.json)。依据执行计划批准权，已批准[N1-154](../../reference/PLAN-N1-154_fresh_context_itemwise_attribution_20261020.md)：只读2,880条fresh diagnostic结果做按seed/类别/长度的candidate-control和8→16→32配对转移归因，CPU≤30秒，0模型/checkpoint加载、0查询、0更新，不作晋级。
+N1-153A已完整结束：同一seed127 fresh face上完成2,880条，计入原失败attempt共3,360条；逐题结果和72个分层完整，六个final checkpoint恢复/指纹核验通过，CPU累计350.609/3,600秒，0训练/更新/dev/holdout/confirmation，can_promote=false。结案见[N1-153A](../../reference/PLAN-N1-153A_execution_closeout_20261020.md)与[完整result](../../../reports/taiji_n1_plan153a_fresh_context_result_binding_recovery_result_20261020.json)。
 
 
 ### 历史状态（截至2026-10-19；后由N1-150结案取代）
