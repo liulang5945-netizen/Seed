@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：执行 PLAN-N1-137 近邻距离干扰测面
+## 当前唯一下一步：审阅并批准 PLAN-N1-138 近邻距离剂量曲线测面
 
 ### 最新状态（2026-10-19）
 
@@ -10,7 +10,9 @@
 
 用户批准的[N1-136](../../reference/PLAN-N1-136_target_position_context_order_diagnostic_draft_20261019.md)已完整结束：480条查询、累计CPU180.328125/600秒、12/12 bundle恢复、240项来源哈希不变，0训练/更新/dev，`can_promote=false`。2行基线91/96，8行前置/后置均33/96，16行前置/后置均27/96；每个endpoint×模板的前置/后置配对在8行和16行均逐字节相同，合计192/192对相同输出。位置未解释本批错误；增多d=1干扰事实后命中仍下降。逐题输出见[诊断报告](../../../reports/taiji_n1_plan136_target_position_context_order_diagnostic_20261019.json)，结案见[中文执行结案](../../reference/PLAN-N1-136_execution_closeout_20261019.md)。
 
-用户已批准[N1-137](../../reference/PLAN-N1-137_neighbor_distance_context_interference_diagnostic_draft_20261019.md)，当前进入零查询readiness：固定目标事实和8/16行数，对照d=1与d=2近邻干扰，含2行共同基线；40题、12个冻结endpoint最多480次查询、CPU≤600秒，零训练/更新/dev。seed119尚待账本核验；12个完整bundle恢复通过前不构面、不查询、不训练。
+用户批准的[N1-137](../../reference/PLAN-N1-137_neighbor_distance_context_interference_diagnostic_draft_20261019.md)已完整结束：480条查询、累计CPU192.046875/600秒、12/12 bundle恢复、253项来源哈希不变，0训练/更新/dev，`can_promote=false`。全endpoint d=1/d=2命中在8行是32/96与41/96，在16行是28/96与37/96；配对显示8行9组只在d=2转对，16行11组只在d=2转对、2组反向变化。逐题输出见[诊断报告](../../../reports/taiji_n1_plan137_neighbor_distance_context_interference_diagnostic_20261019.json)，结案见[中文执行结案](../../reference/PLAN-N1-137_execution_closeout_20261019.md)。
+
+当前唯一建议为[N1-138草案](../../reference/PLAN-N1-138_neighbor_distance_dose_curve_diagnostic_draft_20261019.md)：在同一新面中匹配比较d=1、d=2、d=4，含2行基线及8/16行条件；56题、12个冻结endpoint最多672次查询、CPU≤600秒，零训练/更新/dev。它会消费新测面，尚待用户批准；批准前不构面、不查询、不训练。
 
 以下N1-123及更早段落为历史证据与队首快照，不取代上方当前状态。
 

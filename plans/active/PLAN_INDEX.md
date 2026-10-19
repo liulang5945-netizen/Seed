@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **2026-10-19 N1当前队首（取代下列N1快照）**：N1-133 v15确认未通过并关闭，N1-134为描述性诊断。N1-135与N1-136均已完整结案；N1-136完成480查询、累计CPU180.328125秒、12/12 bundle恢复、240项来源哈希不变，0训练/更新/dev，`can_promote=false`。同模板目标事实前置/后置在8行和16行条件下均96/96逐字节相同，不能解释这批上下文退化。用户已批准并开始执行[N1-137近邻距离对照](../reference/PLAN-N1-137_neighbor_distance_context_interference_diagnostic_draft_20261019.md)：保持目标事实、目标位置与观测数，比较d=1/d=2，40题、最多480查询、CPU≤600秒，不训练、不查dev；当前先做零查询readiness。详见[N1-136结案](../reference/PLAN-N1-136_execution_closeout_20261019.md)、[诊断报告](../../reports/taiji_n1_plan136_target_position_context_order_diagnostic_20261019.json)与[03](roadmap/03_CURRENT_EXECUTION.md)。
+> **2026-10-19 N1当前队首（取代下列N1快照）**：N1-133 v15确认未通过并关闭，N1-134为描述性诊断。N1-135至N1-137均已结案；N1-137完成480查询、累计CPU192.046875秒、12/12 bundle恢复、253项来源哈希不变，0训练/更新/dev，`can_promote=false`。d=2相对d=1在8/16行的命中分别多9/96，仍有大量残错。唯一下一步为待批准的[N1-138近邻距离剂量曲线](../reference/PLAN-N1-138_neighbor_distance_dose_curve_diagnostic_draft_20261019.md)：同一新面匹配d=1/2/4，56题、最多672查询、CPU≤600秒，不训练、不查dev。详见[N1-137结案](../reference/PLAN-N1-137_execution_closeout_20261019.md)、[诊断报告](../../reports/taiji_n1_plan137_neighbor_distance_context_interference_diagnostic_20261019.json)与[03](roadmap/03_CURRENT_EXECUTION.md)。
 
 > 历史 N1-123 队首快照，已由上方 N1-127 结案与当前 N1-128 队首取代。
 

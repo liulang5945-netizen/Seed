@@ -1,6 +1,6 @@
 # plans/reference 索引（2026-10-14 更新；蒸馏收束后的参考件与 N 系列增补）
 
-> **2026-10-19 N1当前**：N1-133确认门未通过并关闭；N1-134为描述性诊断。用户批准的N1-135与N1-136均已完整结案。N1-136完成480/480查询、累计CPU180.328125秒、12/12 bundle恢复、240项来源哈希不变，0训练/更新/dev，`can_promote=false`；目标位置前置/后置在8行和16行条件下全部逐字节相同。逐题输出见[诊断报告](../../reports/taiji_n1_plan136_target_position_context_order_diagnostic_20261019.json)，结案及解释边界见[N1-136执行结案](PLAN-N1-136_execution_closeout_20261019.md)。用户已批准[N1-137近邻距离对照](PLAN-N1-137_neighbor_distance_context_interference_diagnostic_draft_20261019.md)，当前执行零查询readiness；恢复通过前不构面、不查询。
+> **2026-10-19 N1当前**：N1-133确认门未通过并关闭；N1-134为描述性诊断。N1-135至N1-137均已完整结案。N1-137完成480/480查询、累计CPU192.046875秒、12/12 bundle恢复、253项来源哈希不变，0训练/更新/dev，`can_promote=false`；d=2相对d=1在8/16行均多命中9/96。逐题输出见[诊断报告](../../reports/taiji_n1_plan137_neighbor_distance_context_interference_diagnostic_20261019.json)，结案及边界见[N1-137执行结案](PLAN-N1-137_execution_closeout_20261019.md)。唯一下一步为待批准的[N1-138近邻距离剂量曲线草案](PLAN-N1-138_neighbor_distance_dose_curve_diagnostic_draft_20261019.md)，不训练、不查dev。
 
 > 历史 N1-123 队首快照保留作追溯；当前计划以本页首条和[03_CURRENT_EXECUTION](../active/roadmap/03_CURRENT_EXECUTION.md)为准。
 
@@ -87,7 +87,8 @@
 
 - [PLAN-N1-135 同题匹配上下文长度诊断](PLAN-N1-135_matched_context_length_transition_diagnostic_draft_20261019.md)：seed117面和288条冻结endpoint查询已完整执行；命中由2行92/96降至8行31/96、16行29/96，0训练/更新/dev，描述性结案见[执行记录](PLAN-N1-135_execution_closeout_20261019.md)与[逐题报告](../../reports/taiji_n1_plan135_matched_context_length_diagnostic_20261019.json)。
 - [PLAN-N1-136 固定长度目标事实前置/后置位置诊断](PLAN-N1-136_target_position_context_order_diagnostic_draft_20261019.md)：seed118面40题、480条冻结endpoint查询已完成；前置/后置条件下同模板输出逐字节相同，详见[执行结案](PLAN-N1-136_execution_closeout_20261019.md)。
-- [PLAN-N1-137 固定上下文近邻距离干扰](PLAN-N1-137_neighbor_distance_context_interference_diagnostic_draft_20261019.md)：seed119新测面已获批准，当前进行零查询readiness；未构面、未查询。
+- [PLAN-N1-137 固定上下文近邻距离干扰](PLAN-N1-137_neighbor_distance_context_interference_diagnostic_draft_20261019.md)：seed119面40题、480条冻结endpoint查询已完成；d=2在8/16行总体多命中9/96，详见[执行结案](PLAN-N1-137_execution_closeout_20261019.md)。
+- [PLAN-N1-138 固定上下文近邻距离剂量曲线草案](PLAN-N1-138_neighbor_distance_dose_curve_diagnostic_draft_20261019.md)：拟在一张新面内比较d=1/2/4并保留8/16行条件；新测面待批准，未构面、未查询。
 - [PLAN-N1-110 执行结案](PLAN-N1-110_execution_closeout_20261018.md)：长度平衡九模型训练完成，但 seed13 position gate 失败；不生成 v11。
 - [PLAN-N1-111 权重—历史交叉归因](PLAN-N1-111_position_weight_history_crossover_diagnostic_draft_20261018.md)：首个 runner 在查询前恢复失败，依 no-retry 关闭。
 - [PLAN-N1-112 恢复契约修订](PLAN-N1-112_position_weight_history_crossover_restore_revision_draft_20261018.md)：train-only r1 完成，权重来源对应退化；cell 更正与session范围审计另列于执行记录。
