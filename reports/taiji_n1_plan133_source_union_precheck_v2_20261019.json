@@ -1,0 +1,52 @@
+{
+  "schema": "n1-plan133-v15-source-union-precheck-v2",
+  "status": "complete",
+  "checked_at_utc": "2026-10-19T06:19:13.870788+00:00",
+  "plan_sha256": "f885ee89e485fc042d9394bd0659714d118134625853afa4bbfb64643d5ba6f2",
+  "previous_source_exclusion": {
+    "path": "plans/manifests/n1_v14_after_n123_source_exclusions_20261019.json",
+    "sha256": "2b965382173c9c7aae83358434de0f375aa94a24bdfe3c573fc871b93c01a9fd",
+    "entities": 6678,
+    "word_values": 5328,
+    "bound_source_hashes": 88,
+    "all_bound_sources_current": true
+  },
+  "consumed_v14_face": {
+    "path": "plans/manifests/n1_hard_neighbor_v14_confirmation_seed114_20261019.json",
+    "sha256": "de507d2dbcfdf9d3a9aeb836d3308f1dc02c535b7ea06eee5a994bfbf9306ba1",
+    "face_checks_path": "reports/taiji_n1_v14_after_n123_face_checks_20261019.json",
+    "checks_sha256": "08d4dc9e048b136fe48f716b6287c90699b7a4e006beef3b04b7418c297039c2",
+    "face_contract_passed": true,
+    "range_report_path": "reports/taiji_n1_v14_after_n123_range_20261019.json",
+    "range_status": "complete",
+    "range_queries": 180,
+    "confirmation_report_path": "reports/taiji_n1_v14_after_n123_confirmation_20261019.json",
+    "confirmation_status": "complete",
+    "confirmation_queries": 360,
+    "can_promote": false
+  },
+  "v14_values_added_to_union": {
+    "entity_names": 630,
+    "observation_material_values": 480,
+    "answer_values": 25,
+    "entity_overlap": 0,
+    "material_overlap": 0,
+    "answer_values_already_excluded": 5
+  },
+  "expected_v15_exclusion_union": {
+    "entity_names": 7308,
+    "word_values": 5808
+  },
+  "construction_inheritance_zh": {
+    "answer_lengths": "lookup/revision: sacrifice 6-char=3, 7-char=2; confirm 6-char=2, 7-char=3",
+    "target_start_indices": "lookup [0,4,8,12,15]; revision/transition [0,4,7,11,14]; unknown has none"
+  },
+  "output_paths_absent": true,
+  "summary_zh": "按N124已消费v14面的构造方案固定答案长度与目标行位置。N1-124既有排除集合含6,678个实体名、5,328个词值，88个来源哈希当前全部匹配。v14面增加630个实体名、480个观测材料值和25个答案值；5个答案值已在旧排除集合。因此v15排除并集应为7,308个实体名和5,808个词值。构面/执行回执完整，v14虽完成确认查询但未通过确认门，can_promote=false。",
+  "scope_zh": "只读取既有v14来源manifest、已消费v14面及回执；核对来源哈希和预计排除数量。不加载模型/checkpoint，不生成v15面，不训练、不查询。",
+  "new_face_generated": false,
+  "new_model_queries": 0,
+  "model_loads": 0,
+  "parameter_updates": 0,
+  "can_promote": false
+}
