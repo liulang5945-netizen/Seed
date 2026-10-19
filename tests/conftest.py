@@ -20,6 +20,30 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
+def _pytest_basetemp_error(basetemp: str | Path | None) -> str | None:
+    if basetemp is None:
+        return None
+
+    resolved = Path(basetemp).resolve()
+    try:
+        relative = resolved.relative_to(REPO_ROOT.resolve())
+    except ValueError:
+        return None
+
+    if len(relative.parts) >= 2 and relative.parts[0].casefold() == ".seed_test_tmp":
+        return None
+    return (
+        "pytest --basetemp must be outside the repository or under "
+        f".seed_test_tmp/<purpose>; got {relative}"
+    )
+
+
+def pytest_configure(config) -> None:
+    error = _pytest_basetemp_error(config.option.basetemp)
+    if error is not None:
+        raise pytest.UsageError(error)
+
+
 def pytest_collection_modifyitems(config, items):
     """Skip tests whose module declares local-only artifacts this checkout lacks.
 

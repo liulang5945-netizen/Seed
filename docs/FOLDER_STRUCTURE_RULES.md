@@ -91,7 +91,8 @@ HOME，内含其会话日志与凭据，全为本机运行态）
    看到不在台账里的根级目录，按 S5 清理或按本条改名。
 4. Pytest 的 `tmp_path` / `tmp_path_factory` 默认使用系统临时目录。不要把 `--basetemp`
    指向仓库根，也不要创建 `pytest_tmp_*` 根目录；确需仓库内的隔离临时区时，统一放在
-   `.seed_test_tmp/<用途>/`。历史遗留的 `.pytest-tmp-*` 与 `.pytest-final-*` 由清理工具识别。
+   `.seed_test_tmp/<用途>/`。`tests/conftest.py` 会拒绝仓库内的其他 `--basetemp` 路径。
+   历史遗留的 `.pytest-tmp-*` 与 `.pytest-final-*` 由清理工具识别。
 
 ---
 

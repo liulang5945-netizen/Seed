@@ -219,3 +219,14 @@ def test_scratch_family_ignore_rules_bite_on_hypothetical_names():
         + " —— .gitignore 的 /.tmp-*/ 、/.m0-checkpoint-*/ 、_pytest_*/ 、.pytest-*/ 或"
         "工具缓存规则被改坏，见 docs/FOLDER_STRUCTURE_RULES.md S3。"
     )
+
+
+def test_pytest_basetemp_cannot_create_runtime_folders_in_repository():
+    from conftest import _pytest_basetemp_error
+
+    assert _pytest_basetemp_error(None) is None
+    assert _pytest_basetemp_error(REPO.parent / "seed-pytest-policy") is None
+    assert _pytest_basetemp_error(REPO) is not None
+    assert _pytest_basetemp_error(REPO / ".pytest-tmp-future") is not None
+    assert _pytest_basetemp_error(REPO / "output" / "pytest-future") is not None
+    assert _pytest_basetemp_error(REPO / ".seed_test_tmp" / "pytest-future") is None
