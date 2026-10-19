@@ -98,6 +98,7 @@ def _verify_inputs() -> tuple[dict, dict, dict, dict, dict]:
     source_hashes[str(FACE.resolve())] = sha256(FACE)
     source_hashes[str(FACE_CHECKS.resolve())] = sha256(FACE_CHECKS)
     source_hashes[str(FACE_ATTEMPT.resolve())] = sha256(FACE_ATTEMPT)
+    source_hashes[str(Path(__file__).resolve())] = sha256(Path(__file__).resolve())
     builder._verify_source_hashes(source_hashes)
     return readiness, face, checks, manifest, source_hashes
 
