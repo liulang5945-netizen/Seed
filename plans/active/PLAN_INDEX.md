@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **2026-10-19 N1当前队首（取代下列N1快照）**：N1-133 v15确认未通过并关闭，N1-134为描述性诊断。N1-135至N1-138均已结案；N1-138完成672查询、累计CPU218.984375秒、12/12 bundle恢复、266项来源哈希不变，0训练/更新/dev，`can_promote=false`。d=1/2/4在8行命中33/40/54、16行命中26/36/48，逐项配对无距离增加后回退。唯一下一步为待批准的[N1-139匹配续训校准](../reference/PLAN-N1-139_context_robust_matched_continuation_calibration_draft_20261019.md)：3 seed候选/两行控制各9,216步、2,880条train-only评估、CPU≤3,600秒；新训练配方获批前不预检、不训练。详见[N1-138结案](../reference/PLAN-N1-138_execution_closeout_20261019.md)、[诊断报告](../../reports/taiji_n1_plan138_neighbor_distance_dose_curve_diagnostic_20261019.json)与[03](roadmap/03_CURRENT_EXECUTION.md)。
+> **2026-10-19 N1当前队首（取代下列N1快照）**：N1-133 v15确认未通过并关闭，N1-134为描述性诊断。N1-135至N1-138均已结案；N1-138完成672查询、累计CPU218.984375秒、12/12 bundle恢复、266项来源哈希不变，0训练/更新/dev，`can_promote=false`。d=1/2/4在8行命中33/40/54、16行命中26/36/48，逐项配对无距离增加后回退。用户已批准并开始执行[N1-139匹配续训校准](../reference/PLAN-N1-139_context_robust_matched_continuation_calibration_draft_20261019.md)：3 seed候选/两行控制各9,216步、2,880条train-only评估、CPU≤3,600秒；当前先核验来源、schedule与checkpoint独立保存恢复，通过前不训练。详见[N1-138结案](../reference/PLAN-N1-138_execution_closeout_20261019.md)、[诊断报告](../../reports/taiji_n1_plan138_neighbor_distance_dose_curve_diagnostic_20261019.json)与[03](roadmap/03_CURRENT_EXECUTION.md)。
 
 > 历史 N1-123 队首快照，已由上方 N1-127 结案与当前 N1-128 队首取代。
 
