@@ -1,8 +1,10 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：批准 PLAN-N1-124 v14全上下文证据位置探针
+## 当前唯一下一步：批准 PLAN-N1-126 已知题 source-pruning 诊断
 
 ### 最新状态（2026-10-19）
+
+**最新 N1 结案取代本文下方较早的队首文字：** PLAN-N1-125 已完成零查询源代码与已保存输出审计。现有 position reader 已包含局部问题—观察字节匹配、观察条件问题GRU与写入key/value的关系残差；错误主要表现为lookup误拒答和transition输出错误方向词，尚不足以判定根因。[审计报告](../../../reports/taiji_n1_existing_binding_error_audit_20261019.json)绑定了模型结果和现有实现源码，结案见[PLAN-N1-125](../../reference/PLAN-N1-125_content_binding_revision_draft_20261019.md)。当前唯一建议为[PLAN-N1-126](../../reference/PLAN-N1-126_source_pruned_saved_error_diagnostic_draft_20261019.md)：对v13/v14已消费confirm题，仅保留每题目标实体的事实行，在6个position/cut端点上做180条oracle source-pruning诊断，直接测干扰证据对原错误的影响。这是新增模型查询干预，尚待批准；不包含训练或新样本。
 
 **最新 N1 结案取代本文下方较早的队首文字：** PLAN-N1-123 seed113长上下文面已完整执行，CPU 118.046875/600秒、540/540查询、36个checkpoint哈希与来源链均未变。范围门8/9通过，但确认四门合取失败：候选position 41/60、cut 36/60、terminal 18/60；相对cut仅+5，且seed12 lookup 1/5、seed13 transition 1/5。未训练、未查询dev、未重抽，`can_promote=false`。零查询逐题归因发现16条上下文中的目标证据起点仅覆盖0–4（双行任务实际证据行0–5），未覆盖后半上下文；因此这次压力测不能说明晚位证据读取。完整绑定证据见 [PLAN-N1-123结案](../../reference/PLAN-N1-123_execution_closeout_20261019.md) 与[逐题归因](../../../reports/taiji_n1_v13_after_n122_itemwise_attribution_20261019.json)。唯一建议为[PLAN-N1-124](../../reference/PLAN-N1-124_v14_full_context_evidence_position_probe_draft_20261019.md)：只改变新面中的目标证据位置分布，覆盖早/中/晚；其余样本规模、来源排除、端点、范围门与确认门不变。这是新的测面，当前仅为草案，待批准后才实施。
 
