@@ -1,6 +1,6 @@
 # Seed / Taiji 计划与架构入口
 
-> **2026-10-19 N1队首**：[PLAN-N1-126](reference/PLAN-N1-126_execution_closeout_20261019.md)至[PLAN-N1-130](reference/PLAN-N1-130_execution_closeout_20261019.md)已完成。N1-128 oracle绑定达到position90/90、cut86/90；N1-129/130显示native问题编码会给目标facts更高于字节占比的mass，但行质量不能解释seed13/cut残余transition错误。全部为已消费样本诊断，N1-129/130无答案生成，无训练/dev/unknown，`can_promote=false`。当前唯一下一步是[PLAN-N1-131](reference/PLAN-N1-131_transition_operator_error_attribution_draft_20261019.md)：离线分类保存的transition输出，不加载模型或发查询。
+> **2026-10-19 N1队首**：[PLAN-N1-126](reference/PLAN-N1-126_execution_closeout_20261019.md)至[PLAN-N1-131](reference/PLAN-N1-131_execution_closeout_20261019.md)诊断均已结束。N1-128 full-context oracle binding position90/90、cut86/90；N1-131显示四条剩余cut错误全部是seed13的inverse-turn输出，而position在同一mask下30/30正确。无训练或门变更，`can_promote=false`。当前拟议[N1-132](reference/PLAN-N1-132_trainable_question_binding_supervision_calibration_draft_20261019.md)会改optimizer objective，需owner决定后才训练。
 
 > 历史 N1-123 进展记录保留作追溯；当前状态以本页首条与[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准。本页只同步N1研究队首，不改写项目整体M0–M8状态。
 

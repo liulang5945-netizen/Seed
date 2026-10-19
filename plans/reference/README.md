@@ -1,6 +1,6 @@
 # plans/reference 索引（2026-10-14 更新；蒸馏收束后的参考件与 N 系列增补）
 
-> **2026-10-19 N1当前**：[N1-126](PLAN-N1-126_execution_closeout_20261019.md)至[N1-130](PLAN-N1-130_execution_closeout_20261019.md)已完成。Full-context oracle binding达到position90/90、cut86/90；N1-129/130原生事实行mass高于字节占比，但不区分正确与错误输出。当前唯一下一步[N1-131](PLAN-N1-131_transition_operator_error_attribution_draft_20261019.md)只读分类保存的transition输出，不加载模型或发查询；详见[03](../active/roadmap/03_CURRENT_EXECUTION.md)。
+> **2026-10-19 N1当前**：[N1-126](PLAN-N1-126_execution_closeout_20261019.md)至[N1-131](PLAN-N1-131_execution_closeout_20261019.md)诊断已完成。N1-131确认四条N1-128 cut残差全部为seed13 inverse-turn输出，position在同一oracle mask下transition30/30正确。唯一待决提案[N1-132](PLAN-N1-132_trainable_question_binding_supervision_calibration_draft_20261019.md)新增训练loss，需owner决定后才执行；详见[03](../active/roadmap/03_CURRENT_EXECUTION.md)。
 
 > 历史 N1-123 队首快照保留作追溯；当前计划以本页首条和[03_CURRENT_EXECUTION](../active/roadmap/03_CURRENT_EXECUTION.md)为准。
 

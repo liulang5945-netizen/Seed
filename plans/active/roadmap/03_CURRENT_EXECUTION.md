@@ -1,12 +1,12 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前唯一下一步：PLAN-N1-131 saved transition-operator error attribution
+## 当前唯一下一步：决定是否启动 PLAN-N1-132 trainable question-binding supervision calibration
 
 ### 最新状态（2026-10-19）
 
-**N1-126至N1-130已按授权完成。** [N1-126](../../reference/PLAN-N1-126_execution_closeout_20261019.md)输入裁剪达到position90/90、cut86/90；[N1-127](../../reference/PLAN-N1-127_execution_closeout_20261019.md)完整上下文decoder mask为82/90、78/90；[N1-128](../../reference/PLAN-N1-128_execution_closeout_20261019.md)再限制question binding后匹配裁剪结果90/90、86/90。[N1-129](../../reference/PLAN-N1-129_execution_closeout_20261019.md)和[N1-130](../../reference/PLAN-N1-130_execution_closeout_20261019.md)进行了360条原生bind activation read，无生成、teacher、更新、dev/unknown，累计CPU约91.796875秒。目标facts各自获得高于字节占比的alignment mass，但总mass/行mass不解释seed13/cut剩下的两个transition方向错误；这仍是描述性而非因果证据，`can_promote=false`。
+**N1-126至N1-131的诊断均已结束。** Source pruning position90/90、cut86/90；full-context decoder mask position82/90、cut78/90；再加target-only question-binding mask后恢复position90/90、cut86/90。[N1-129/N1-130](../../reference/PLAN-N1-129_execution_closeout_20261019.md)分别测了native总/逐行alignment mass，发现target事实已有高于字节占比的mass，增加mass本身不能解释方向错误。[N1-131](../../reference/PLAN-N1-131_execution_closeout_20261019.md)离线分类240条保存输出：N1-128下剩余四条cut错误全部是seed13 inverse-turn；position在同一oracle mask下30/30正确。零新增查询，0训练/dev/unknown，所有原gate不变，`can_promote=false`。
 
-当前唯一下一步为[PLAN-N1-131](../../reference/PLAN-N1-131_transition_operator_error_attribution_draft_20261019.md)：离线对四个已存条件的transition输出按base facing与turn relation分类，判断残差是否应用反向turn、漏掉turn或产生其他方向。仅读已消费面和封存结果，不加载模型/checkpoint，不查询、不训练，CPU≤30秒，0新数据/dev/unknown、无判据修改；按用户授权直接执行。
+当前唯一建议为[N1-132](../../reference/PLAN-N1-132_trainable_question_binding_supervision_calibration_draft_20261019.md)：在N1-120三个position endpoint上继续固定9,216更新/seed，仅对现有question-byte alignment加target-fact mass loss，`L_total=L_QA+0.25*L_bind`；完整保留Adam/RNG/history，训练前先过zero/final独立bundle恢复。只用原192 train项，沿用原position sufficiency gate；CPU≤2,400秒，0 dev/v13/v14/new-confirm查询，can_promote始终false。这会改变optimizer objective与continuation recipe，属于计划范围决策；草案已完成，当前等待owner决定，未开始实现或训练。
 
 以下N1-123及更早段落为历史证据与队首快照，不取代上方当前状态。
 

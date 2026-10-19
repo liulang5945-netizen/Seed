@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **2026-10-19 N1当前队首（取代下列N1快照）**：[N1-126](../reference/PLAN-N1-126_execution_closeout_20261019.md)至[N1-130](../reference/PLAN-N1-130_execution_closeout_20261019.md)已完成。N1-128 oracle binding达到position90/90、cut86/90；N1-129/130原生alignment对目标事实的mass高于字节占比，但正确与错误输出之间没有支持“缺少事实”的分离。无新数据/训练/dev/unknown，`can_promote=false`。当前唯一下一步[N1-131](../reference/PLAN-N1-131_transition_operator_error_attribution_draft_20261019.md)：离线将保存的transition输出分为inverse-turn、no-turn或其他方向；详见[03](roadmap/03_CURRENT_EXECUTION.md)。
+> **2026-10-19 N1当前队首（取代下列N1快照）**：[N1-126](../reference/PLAN-N1-126_execution_closeout_20261019.md)至[N1-131](../reference/PLAN-N1-131_execution_closeout_20261019.md)已完成。N1-131将N1-128剩余四条cut transition错答全部归类为seed13的inverse-turn；position在oracle binding下30/30 transition正确。现有gate和能力结论不变，`can_promote=false`。当前唯一待决的是[N1-132](../reference/PLAN-N1-132_trainable_question_binding_supervision_calibration_draft_20261019.md)：新增目标行监督loss改变训练目标；未获决定前不启动训练。详见[03](roadmap/03_CURRENT_EXECUTION.md)。
 
 > 历史 N1-123 队首快照，已由上方 N1-127 结案与当前 N1-128 队首取代。
 
