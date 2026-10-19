@@ -101,8 +101,9 @@ def _fingerprint(model, optimizer) -> str:
 def _checkpoint_payload(model, optimizer, *, seed: int, branch: str, parent_path: Path, parent_hash: str, parent_total: int, additional_updates: int) -> dict:
     bundle = copy.deepcopy(model.bundle(optimizer))
     return {
-        "schema": "n1-plan155-v28-unknown8-rebalance-checkpoint-v1",
+        "schema": "n1-plan155a-v28-unknown8-rebalance-checkpoint-v1",
         "plan_sha256": PLAN_SHA256,
+        "correction_addendum_sha256": builder.CORRECTION_SHA256,
         "parent_plan_sha256": n150.PLAN_SHA256,
         "seed": seed,
         "arm": "position",
@@ -130,8 +131,9 @@ def _save_checkpoint(model, optimizer, path: Path, **metadata) -> dict:
 
 def _restore_payload(payload: dict):
     if (
-        payload.get("schema") != "n1-plan155-v28-unknown8-rebalance-checkpoint-v1"
+        payload.get("schema") != "n1-plan155a-v28-unknown8-rebalance-checkpoint-v1"
         or payload.get("plan_sha256") != PLAN_SHA256
+        or payload.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
         or payload.get("parent_plan_sha256") != n150.PLAN_SHA256
         or payload.get("arm") != "position"
         or payload.get("branch") not in BRANCHES
@@ -292,11 +294,20 @@ def _verify_readiness() -> tuple[dict, dict, dict, dict, dict[str, str]]:
         readiness.get("complete") is not True
         or readiness.get("status") != "ready_for_zero_checkpoint_preflight"
         or readiness.get("plan_sha256") != PLAN_SHA256
+        or readiness.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
+        or readiness.get("prior_failed_attempt_cpu_seconds") != builder.PRIOR_FAILED_CPU_SECONDS
+        or readiness.get("cumulative_cpu_seconds") != round(
+            builder.PRIOR_FAILED_CPU_SECONDS + float(readiness.get("cpu_seconds", -1)), 6
+        )
         or binding.get("status") != "complete"
+        or binding.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
         or binding.get("readiness_sha256") != sha256(READINESS)
         or binding.get("source_hashes") != readiness.get("source_hashes")
         or readiness.get("schedule_sha256") != sha256(SCHEDULE)
         or audit.get("status") != "complete"
+        or audit.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
+        or audit.get("prior_failed_attempt_result_sha256") != builder.PRIOR_FAILED_RESULT_SHA256
+        or audit.get("prior_failed_attempt_cpu_seconds") != builder.PRIOR_FAILED_CPU_SECONDS
     ):
         raise Refuse("N1-155 readiness/source binding is stale")
     if not n150_builder.verify_hashes(readiness.get("source_hashes", {})):
@@ -328,7 +339,8 @@ def checkpoint_preflight() -> dict:
     started = time.process_time()
     readiness, _audit, _context, runtime, sources = _verify_readiness()
     validation_cpu = time.process_time() - started
-    remaining = CPU_LIMIT_SECONDS - float(readiness["cpu_seconds"]) - validation_cpu
+    prior_cpu = float(readiness["prior_failed_attempt_cpu_seconds"])
+    remaining = CPU_LIMIT_SECONDS - prior_cpu - float(readiness["cpu_seconds"]) - validation_cpu
     if remaining <= 0:
         raise TimeoutError("N1-155 CPU budget exhausted during readiness revalidation")
     budget = n132.CpuBudget(remaining)
@@ -337,9 +349,11 @@ def checkpoint_preflight() -> dict:
         raise FileExistsError(f"N1-155 checkpoint root already exists: {CHECKPOINT_ROOT}")
     CHECKPOINT_ROOT.mkdir(parents=True, exist_ok=False)
     write_new(PREFLIGHT_ATTEMPT, {
-        "schema": "n1-plan155-zero-preflight-attempt-v1",
+        "schema": "n1-plan155a-zero-preflight-attempt-v1",
         "status": "started",
         "plan_sha256": PLAN_SHA256,
+        "correction_addendum_sha256": builder.CORRECTION_SHA256,
+        "prior_failed_attempt_cpu_seconds": prior_cpu,
         "readiness_sha256": sha256(READINESS),
         "zero_checkpoint_count_planned": 6,
         "parameter_updates": 0,
@@ -407,13 +421,15 @@ def checkpoint_preflight() -> dict:
     except BaseException as exc:
         errors.append(f"{type(exc).__name__}: {exc}")
     cpu = time.process_time() - started + budget.children
-    cumulative = float(readiness["cpu_seconds"]) + cpu
+    cumulative = prior_cpu + float(readiness["cpu_seconds"]) + cpu
     complete = not errors and len(zero_rows) == 6 and len(restores) == 6 and cumulative <= CPU_LIMIT_SECONDS
     report = {
-        "schema": "n1-plan155-zero-checkpoint-preflight-v1",
+        "schema": "n1-plan155a-zero-checkpoint-preflight-v1",
         "status": "complete" if complete else "stopped",
         "complete": complete,
         "plan_sha256": PLAN_SHA256,
+        "correction_addendum_sha256": builder.CORRECTION_SHA256,
+        "prior_failed_attempt_cpu_seconds": prior_cpu,
         "readiness_sha256": sha256(READINESS),
         "preflight_attempt_sha256": sha256(PREFLIGHT_ATTEMPT),
         "source_hashes": source_hashes,
@@ -436,9 +452,10 @@ def checkpoint_preflight() -> dict:
     report["summary_zh"] = "六个zero full bundle保存并独立恢复6/6，candidate/control按seed fingerprint一致；0训练/查询。" if complete else "N1-155 zero bundle前置停止；不训练、不查询、不重试。"
     write_new(PREFLIGHT, report)
     write_new(PREFLIGHT_BINDING, {
-        "schema": "n1-plan155-zero-preflight-binding-v1",
+        "schema": "n1-plan155a-zero-preflight-binding-v1",
         "status": "complete" if complete else "stopped",
         "plan_sha256": PLAN_SHA256,
+        "correction_addendum_sha256": builder.CORRECTION_SHA256,
         "preflight_sha256": sha256(PREFLIGHT),
         "source_hashes": source_hashes,
         "zero_checkpoint_hashes": {row["path"]: row["sha256"] for row in zero_rows},
@@ -458,12 +475,27 @@ def _verify_preflight() -> tuple[dict, dict, dict, dict, dict, dict[str, str]]:
     if (
         readiness.get("complete") is not True
         or readiness.get("plan_sha256") != PLAN_SHA256
+        or readiness.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
+        or readiness.get("prior_failed_attempt_cpu_seconds") != builder.PRIOR_FAILED_CPU_SECONDS
+        or readiness.get("cumulative_cpu_seconds") != round(
+            builder.PRIOR_FAILED_CPU_SECONDS + float(readiness.get("cpu_seconds", -1)), 6
+        )
         or source_binding.get("status") != "complete"
         or source_binding.get("plan_sha256") != PLAN_SHA256
+        or source_binding.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
         or source_binding.get("readiness_sha256") != sha256(READINESS)
         or source_binding.get("source_hashes") != readiness.get("source_hashes")
         or preflight.get("complete") is not True
         or preflight.get("plan_sha256") != PLAN_SHA256
+        or preflight.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
+        or preflight.get("prior_failed_attempt_cpu_seconds") != builder.PRIOR_FAILED_CPU_SECONDS
+        or preflight.get("cumulative_cpu_seconds")
+        != round(
+            builder.PRIOR_FAILED_CPU_SECONDS
+            + float(readiness.get("cpu_seconds", -1))
+            + float(preflight.get("cpu_seconds", -1)),
+            6,
+        )
         or preflight.get("zero_checkpoint_count") != 6
         or preflight.get("independent_restore_count") != 6
         or preflight.get("source_hashes_unchanged") is not True
@@ -472,6 +504,7 @@ def _verify_preflight() -> tuple[dict, dict, dict, dict, dict, dict[str, str]]:
         or preflight.get("optimizer_steps") != 0
         or preflight_binding.get("status") != "complete"
         or preflight_binding.get("plan_sha256") != PLAN_SHA256
+        or preflight_binding.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
         or preflight_binding.get("preflight_sha256") != sha256(PREFLIGHT)
         or preflight_binding.get("source_hashes") != preflight.get("source_hashes")
     ):
@@ -593,9 +626,11 @@ def execute_approved() -> dict:
     if not n150_builder.verify_hashes(input_hashes):
         raise Refuse("N1-155 source/zero bundle hash mismatch before training")
     attempt = {
-        "schema": "n1-plan155-v28-unknown8-rebalance-attempt-v1",
+        "schema": "n1-plan155a-v28-unknown8-rebalance-attempt-v1",
         "status": "started",
         "plan_sha256": PLAN_SHA256,
+        "correction_addendum_sha256": builder.CORRECTION_SHA256,
+        "prior_failed_attempt_result_sha256": builder.PRIOR_FAILED_RESULT_SHA256,
         "readiness_sha256": sha256(READINESS),
         "preflight_sha256": sha256(PREFLIGHT),
         "schedule_sha256": sha256(SCHEDULE),
@@ -898,10 +933,13 @@ def execute_approved() -> dict:
         and not errors
     )
     report = {
-        "schema": "n1-plan155-v28-unknown8-rebalance-result-v1",
+        "schema": "n1-plan155a-v28-unknown8-rebalance-result-v1",
         "status": "complete" if protocol_complete else "stopped",
         "complete": protocol_complete,
         "plan_sha256": PLAN_SHA256,
+        "correction_addendum_sha256": builder.CORRECTION_SHA256,
+        "prior_failed_attempt_result_sha256": builder.PRIOR_FAILED_RESULT_SHA256,
+        "prior_failed_attempt_cpu_seconds": builder.PRIOR_FAILED_CPU_SECONDS,
         "readiness_sha256": sha256(READINESS),
         "source_binding_sha256": sha256(SOURCE_BINDING),
         "preflight_sha256": sha256(PREFLIGHT),

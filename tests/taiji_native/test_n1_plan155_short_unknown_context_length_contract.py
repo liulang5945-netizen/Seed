@@ -39,6 +39,7 @@ def _base_schedule() -> dict:
                 step += 1
     return {
         "slots": slots,
+        "views": {8: ("short-context-view",), 16: ("medium-context-view",), 32: ("long-context-view",)},
         "manifest": {
             "answerable_binding_queries_per_model": 11_520,
             "schedule_sha256": "base-schedule-hash",
@@ -48,6 +49,20 @@ def _base_schedule() -> dict:
 
 def test_plan_digest_matches_frozen_builder_binding() -> None:
     assert hashlib.sha256(builder.PLAN.read_bytes()).hexdigest() == builder.PLAN_SHA256
+    assert hashlib.sha256(builder.CORRECTION_ADDENDUM.read_bytes()).hexdigest() == builder.CORRECTION_SHA256
+
+
+def test_corrected_schedule_retains_bound_context_views() -> None:
+    base = _base_schedule()
+    schedule = builder.build_schedule(base)
+    assert schedule["views"] is base["views"]
+
+
+def test_corrective_run_keeps_prior_one_shot_outputs_separate() -> None:
+    assert runner.ATTEMPT != builder.PRIOR_FAILED_ATTEMPT
+    assert runner.PROGRESS != builder.PRIOR_FAILED_PROGRESS
+    assert runner.RESULT != builder.PRIOR_FAILED_RESULT
+    assert builder.CHECKPOINT_ROOT != builder.PRIOR_CHECKPOINT_ROOT
 
 
 def test_unknown_only_short_context_rebalance_matches_frozen_counts() -> None:
