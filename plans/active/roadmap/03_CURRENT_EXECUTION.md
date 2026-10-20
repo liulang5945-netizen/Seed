@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前执行：PLAN-N1-157A2 readiness binding元数据更正
+## 当前执行：PLAN-N1-158 N1-157A2 fresh face逐题归因
 
 ### 最新状态（2026-10-20）
 
@@ -12,7 +12,7 @@ N1-153A已完整结束：同一seed127 fresh face上2,880条逐题结果完成�
 
 N1-154已完成2,880行fresh诊断的逐题paired分析，CPU0.03125秒，0加载/查询/更新；candidate已知命中8/16/32行360/360、359/360、356/360，control为353/360、340/360、302/360；unknown弃答candidate76/120、91/120、103/120，control109/120、115/120、120/120。结果为描述性synthetic face归因，见[N1-154结案](../../reference/PLAN-N1-154_execution_closeout_20261020.md)。
 
-N1-157首轮在seed11 candidate的480条查询后因汇总器误要求uniform分支停止；原行与seed128 face保留。N1-157A更正轮的readiness及绑定通过，但checkpoint-preflight在任何恢复前又因binding缺少`prior_result_sha256`和`prior_consumed_queries`两项元数据停止；readiness SHA/source map一致，恢复/查询/更新0，直接守卫复测CPU0秒，预算另保守预留5秒。依据用户授予的执行计划批准权，已批准[N1-157A2](../../reference/PLAN-N1-157A2_readiness_binding_metadata_correction_20261020.md)：仅补齐binding字段，使用新readiness/preflight/attempt路径；保留并复用同一face与首endpoint已保存的480条，只查询剩余2,400条，不重生成面、不重测任何已消费题目。N157A2新增CPU≤3,600秒，关联累计CPU按9,507.031秒起算，仍受18,000秒总上限约束。静态检查和5项契约断言通过，当前待生成新readiness与六bundle恢复前置。详见[N1-157首轮停止报告](../../../reports/taiji_n1_plan157_candidate_parent_result_20261020.json)、[N1-157A binding失败回执](../../../reports/taiji_n1_plan157a_preflight_binding_failure_20261020.json)和[已消费seed128 face](../../manifests/n1_plan157_v30_candidate_vs_parent_seed128_20261020.json)。
+N1-157A2已完成：复用seed128 face与首轮480条，只新增五个未消费endpoint的2,400条查询；合并2,880行完整，source哈希稳定，0训练/dev/holdout/confirmation，can_promote=false。关联累计CPU9,771.531/18,000秒。seed11/12/13 candidate总命中457/480、478/480、466/480；对应N1-150父模型415/480、472/480、454/480；unknown的8/16/32行分别candidate96/120、110/120、119/120，父模型65/120、93/120、105/120。详见[N1-157A2结案](../../reference/PLAN-N1-157A2_execution_closeout_20261020.md)和[完整结果](../../../reports/taiji_n1_plan157a2_candidate_parent_result_20261020.json)。依据用户授予的执行计划批准权，已批准唯一下一步[N1-158](../../reference/PLAN-N1-158_plan157a2_fresh_face_itemwise_attribution_20261020.md)：对2,880条已消费结果做离线逐题配对归因，CPU≤30秒，0模型/检查点加载、0推理/新查询/训练/更新，不访问dev/holdout/confirmation、不改判据或晋级状态。
 
 
 ### 历史状态（截至2026-10-19；后由N1-150结案取代）
