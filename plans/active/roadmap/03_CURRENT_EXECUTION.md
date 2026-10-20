@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前执行：PLAN-N1-161问句句式迁移诊断（已批准）
+## 当前执行：PLAN-N1-161A逐题错误来源归因（已批准）
 
 ### 最新状态（2026-10-20）
 
@@ -15,9 +15,13 @@ N1-154已完成2,880行fresh诊断的逐题paired分析，CPU0.03125秒，0加�
 N1-159A已完成seed129 face，详见[N1-159A结案](../../reference/PLAN-N1-159A_execution_closeout_20261020.md)。N1-160首轮在seed11 candidate完成480/2,880条后因汇总器缺陷停止，保留失败回执；N1-160A复用这480条与封存seed130 face，补完其余2,400条。六bundle恢复6/6、675项来源绑定稳定，新增CPU160.859秒，本阶段累计278.953/3,600秒，关联累计10,700.172/18,000秒；0训练/更新/dev/holdout/confirmation，`can_promote=false`。candidate相对parent总命中1,387/1,440对1,328/1,440；已知类1,070/1,080对1,077/1,080；unknown 8/16/32行98/103/116对67/85/99。N1-157A2、159A、160A三面unknown净增分别+62/+59/+66，已知类净差−2/+1/−7；逐题及限制见[N1-160A结案](../../reference/PLAN-N1-160A_execution_closeout_20261020.md)和[完整结果](../../../reports/taiji_n1_plan160a_candidate_parent_result_20261020.json)。
 
 
+### N1-161最新结案
+
+N1-161完成2,880条未见问句句式诊断，144个endpoint×类别×长度×模板分层齐全，六模型均加载成功，source哈希稳定，0训练/更新/dev/holdout/confirmation；CPU190.125秒，本阶段累计358.172/3,600秒，关联累计11,058.344/18,000秒。candidate 441/1,440、parent460/1,440；unknown 109/360对85/360，已知332/1,080对375/1,080。增益只出现在seed13的unknown，seed11持平、seed12下降；结果只支持模板敏感性诊断，`can_promote=false`。结案见[N1-161](../../reference/PLAN-N1-161_execution_closeout_20261020.md)和[完整result](../../../reports/taiji_n1_plan161_question_surface_result_20261020.json)。
+
 ### 当前唯一下一步
 
-PLAN-N1-161静态验证、来源核验与六bundle独立恢复均通过：Ruff/py_compile/4项契约全通过；352条绑定训练题对四种模板匹配均为0；6/6 checkpoint恢复fingerprint一致。readiness CPU20.578秒、六bundle预检103.984秒、face生成/审计43.484秒，本阶段累计168.046/3,600秒、关联累计10,868.219/18,000秒；0模型查询/参数更新。seed131面160题已生成，合同、来源排除、类别×模板20题平衡及8/16/32行嵌套检查通过。为确认前一条长命令状态，发生一次重复`--prepare-face`调用，被write-once守卫拒绝，未覆盖任何文件、未查询。
+执行已批准的[PLAN-N1-161A](../../reference/PLAN-N1-161A_question_surface_itemwise_attribution_20261020.md)：只读seed131逐题结果与face，把错误输出按literal unknown、旧revision值、其他观测材料、direction/turn及其他输出分类，并按模板/类别/长度/endpoint配对。CPU≤30秒，0模型/checkpoint加载、0新查询、0更新/dev/holdout。
 
 ### 历史状态（截至2026-10-19；后由N1-150结案取代）
 
