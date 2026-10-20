@@ -1,6 +1,6 @@
 # 09 下一轮主线规划：架构与模型（N 系列，2026-10-06 开线；2026-10-14 第五版调度修订）
 
-> **2026-10-20 N1现状**：N1-160A三面synthetic复制已结案，但自然语言泛化和真实能力仍未验证。已批准[PLAN-N1-161](../../reference/PLAN-N1-161_unseen_question_surface_diagnostic_20261020.md)：seed131未见问句句式、6个冻结candidate/parent endpoint共2,880条，零训练/留出查询。builder/runner和4项契约已通过，训练题模式审计无重叠；当前未生成face或查询。最新队首是提交冻结实现、readiness和六bundle独立恢复，之后才建面评分。最新调度以[03](03_CURRENT_EXECUTION.md)为准。
+> **2026-10-20 N1现状**：N1-160A三面synthetic复制已结案，但自然语言泛化和真实能力仍未验证。已批准[PLAN-N1-161](../../reference/PLAN-N1-161_unseen_question_surface_diagnostic_20261020.md)：seed131未见问句句式、6个冻结candidate/parent endpoint共2,880条，零训练/留出查询。实现静态4项通过，训练清单352题模板重叠0，来源readiness CPU20.578秒通过；当前下一步是六bundle独立恢复预检，随后才允许一次生成新面并评分。最新调度以[03](03_CURRENT_EXECUTION.md)为准。
 
 > **历史快照（2026-10-18，㊵-1091）**：length-balanced schedule manifest/checks已提交，40来源守卫与raw/hard 6/7平衡通过。candidate runner及6项合同已完成，旧九端点SHA固定，runner已设计逐步长度账本与同模块子进程恢复。下一步zero-update验证runner，随后9枚fresh-zero checkpoint保存/独立恢复，任何失败均不启动optimizer update。
 
