@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前执行：PLAN-N1-160A 完成seed130 face剩余endpoint续接
+## 当前执行：N1证据路线修订（N1-160A已结案）
 
 ### 最新状态（2026-10-20）
 
@@ -12,8 +12,12 @@ N1-153A已完整结束：同一seed127 fresh face上2,880条逐题结果完成�
 
 N1-154已完成2,880行fresh诊断的逐题paired分析，CPU0.03125秒，0加载/查询/更新；candidate已知命中8/16/32行360/360、359/360、356/360，control为353/360、340/360、302/360；unknown弃答candidate76/120、91/120、103/120，control109/120、115/120、120/120。结果为描述性synthetic face归因，见[N1-154结案](../../reference/PLAN-N1-154_execution_closeout_20261020.md)。
 
-N1-159A已完整续接seed129 face：保留原480条，只新增其余五endpoint 2,400条，共2,880行；source哈希稳定，六模型门前置通过，0训练/dev/holdout/confirmation，can_promote=false，关联CPU10,229.453/18,000秒。candidate对parent总命中seed11/12/13为451/480、470/480、463/480，对应406/480、466/480、452/480；unknown 8/16/32行为93/120、103/120、118/120，对应66/120、88/120、101/120。详见[N1-159A结案](../../reference/PLAN-N1-159A_execution_closeout_20261020.md)与[完整结果](../../../reports/taiji_n1_plan159a_candidate_parent_result_20261020.json)。N1-160首次执行在seed11 candidate完成480/2,880条后，因汇总器错误要求同轮包含全部endpoint而停止；无训练、更新、dev/holdout/confirmation，face和来源未变，原始错误回执已封存。依据用户授予的执行计划批准权，N1-160A已批准：复用这480条与既有seed130 face，只查询剩余五endpoint的2,400条，CPU≤3,600秒、关联CPU≤18,000秒，不训练、不访问留出、不晋升。当前修复按实际存在endpoint汇总，新增单endpoint回归测试，且移除错误覆盖的关联CPU基线；静态契约5项、Ruff与py_compile均通过，尚未生成N1-160A readiness或发起续测。
+N1-159A已完成seed129 face，详见[N1-159A结案](../../reference/PLAN-N1-159A_execution_closeout_20261020.md)。N1-160首轮在seed11 candidate完成480/2,880条后因汇总器缺陷停止，保留失败回执；N1-160A复用这480条与封存seed130 face，补完其余2,400条。六bundle恢复6/6、675项来源绑定稳定，新增CPU160.859秒，本阶段累计278.953/3,600秒，关联累计10,700.172/18,000秒；0训练/更新/dev/holdout/confirmation，`can_promote=false`。candidate相对parent总命中1,387/1,440对1,328/1,440；已知类1,070/1,080对1,077/1,080；unknown 8/16/32行98/103/116对67/85/99。N1-157A2、159A、160A三面unknown净增分别+62/+59/+66，已知类净差−2/+1/−7；逐题及限制见[N1-160A结案](../../reference/PLAN-N1-160A_execution_closeout_20261020.md)和[完整结果](../../../reports/taiji_n1_plan160a_candidate_parent_result_20261020.json)。
 
+
+### 当前唯一下一步
+
+基于三张互斥synthetic face的重复读数，修订N1证据路线：把unknown精确弃答提升登记为可复现的合成诊断结果，把自然语言泛化、真实能力和N系列出口继续留在未验证状态；下一阶段计划必须预先写明更高证据级别、独立题面来源及原判据。完成这次方案修订前，不再消费新测面或启动训练。
 
 ### 历史状态（截至2026-10-19；后由N1-150结案取代）
 

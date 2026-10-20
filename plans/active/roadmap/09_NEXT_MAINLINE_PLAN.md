@@ -1,6 +1,8 @@
 # 09 下一轮主线规划：架构与模型（N 系列，2026-10-06 开线；2026-10-14 第五版调度修订）
 
-> **2026-10-18 N1下一阶梯（㊵-1091）**：length-balanced schedule manifest/checks已提交，40来源守卫与raw/hard 6/7平衡通过。candidate runner及6项合同已完成，旧九端点SHA固定，runner已设计逐步长度账本与同模块子进程恢复。下一步zero-update验证runner，随后9枚fresh-zero checkpoint保存/独立恢复，任何失败均不启动optimizer update。
+> **2026-10-20 N1现状**：N1-160A完成seed130 face续接；seed128/129/130三张独立synthetic face的unknown正确弃答净增为+62/+59/+66，已知类总差−2/+1/−7。该复制不证明自然语言泛化、真实能力或N系列出口，`can_promote=false`。当前唯一下一步：修订N1证据路线，并预注册高于synthetic复制的独立泛化证据边界；在该修订完成前不启动新训练或新测面。执行与最新读数以[03当前执行](03_CURRENT_EXECUTION.md)及[N1-160A结案](../../reference/PLAN-N1-160A_execution_closeout_20261020.md)为准。
+
+> **历史快照（2026-10-18，㊵-1091）**：length-balanced schedule manifest/checks已提交，40来源守卫与raw/hard 6/7平衡通过。candidate runner及6项合同已完成，旧九端点SHA固定，runner已设计逐步长度账本与同模块子进程恢复。下一步zero-update验证runner，随后9枚fresh-zero checkpoint保存/独立恢复，任何失败均不启动optimizer update。
 
 
 
