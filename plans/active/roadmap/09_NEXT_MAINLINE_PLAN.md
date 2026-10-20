@@ -1,6 +1,6 @@
 # 09 下一轮主线规划：架构与模型（N 系列，2026-10-06 开线；2026-10-14 第五版调度修订）
 
-> **2026-10-20 N1现状**：N1-161A完成零查询逐题归因，发现主动式revision候选7/180、parent32/180，候选47个错误输出复现旧revision值；问句形式迁移仍是主要不确定性。已批准[N1-162](../../reference/PLAN-N1-162_question_surface_matched_continuation_20261020.md)：同一N1-155A candidate full bundle分叉原问句control与模板增强treatment，沿用任务与N1-132门；训练通过后才评估另一组独立问法。当前下一步是实现并验证checkpoint保存恢复，最新调度以[03](03_CURRENT_EXECUTION.md)为准。
+> **2026-10-20 N1现状**：N1-162B完成55,296次配对续训和7,488条train-only计分，final bundle恢复6/6；原N1-132门仅2/6通过，seed132题面未生成或查询，`can_promote=false`。N1-162C/D/E训练集离线归因确认：transition表面增强导致seed11/12大幅退化，seed12以反向turn输出为主；N1-155A→control续训本身主要影响unknown及少量factorial读数。当前唯一下一步已批准为[N1-162F](../../reference/PLAN-N1-162F_transition_template_crossover_train_diagnostic_20261020.md)：在九个冻结endpoint上交叉查询两种已用过的after-turn问句，6,912条train-only诊断、CPU≤1,200秒；独立恢复9/9后执行，0训练/更新/dev/holdout/confirmation。实时执行以[03](03_CURRENT_EXECUTION.md)为准。
 
 > **历史快照（2026-10-18，㊵-1091）**：length-balanced schedule manifest/checks已提交，40来源守卫与raw/hard 6/7平衡通过。candidate runner及6项合同已完成，旧九端点SHA固定，runner已设计逐步长度账本与同模块子进程恢复。下一步zero-update验证runner，随后9枚fresh-zero checkpoint保存/独立恢复，任何失败均不启动optimizer update。
 

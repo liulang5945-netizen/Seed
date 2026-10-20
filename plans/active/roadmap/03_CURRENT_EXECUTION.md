@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前执行：PLAN-N1-162问句表面配对续训（已批准）
+## 当前执行：PLAN-N1-162F transition问句模板交叉探针（已批准）
 
 ### 最新状态（2026-10-20）
 
@@ -19,9 +19,15 @@ N1-159A已完成seed129 face，详见[N1-159A结案](../../reference/PLAN-N1-159
 
 N1-161完成2,880条未见问句句式诊断，144个endpoint×类别×长度×模板分层齐全，六模型均加载成功，source哈希稳定，0训练/更新/dev/holdout/confirmation；CPU190.125秒，本阶段累计358.172/3,600秒，关联累计11,058.344/18,000秒。candidate 441/1,440、parent460/1,440；unknown 109/360对85/360，已知332/1,080对375/1,080。增益只出现在seed13的unknown，seed11持平、seed12下降；结果只支持模板敏感性诊断，`can_promote=false`。结案见[N1-161](../../reference/PLAN-N1-161_execution_closeout_20261020.md)和[完整result](../../../reports/taiji_n1_plan161_question_surface_result_20261020.json)。
 
+### N1-162B最新执行与离线归因
+
+N1-162B完成55,296/55,296次更新、7,488/7,488条train-only评分，六个final full bundle独立恢复6/6；progress 62,784行完整、来源哈希不变。stage累计CPU10,186.594/12,000秒，关联累计21,244.938/24,000秒。N1-132原门仅seed11/surface_control与seed13/surface_augmented通过（2/6），因此按冻结协议未生成seed132面，0新面查询，`can_promote=false`。结案见[N1-162B](../../reference/PLAN-N1-162B_execution_closeout_20261020.md)。
+
+N1-162C/D/E均为离线训练集归因，依次完成arm标签恢复及N1-132门复算、transition输出类型分类、N1-155A parent/control/augmented三方漂移分解；CPU分别6.094、8.891、6.313秒，0模型/checkpoint加载、0查询/更新。D显示seed12 augmented factorial transition中反向turn输出占主导；E显示base original/rename transition在parent→control保持48/48，而control→augmented在seed11/12大幅退化；seed12 unknown下降可部分被augmented恢复。结案见[N1-162C](../../reference/PLAN-N1-162C_execution_closeout_20261020.md)、[N1-162D](../../reference/PLAN-N1-162D_execution_closeout_20261020.md)、[N1-162E](../../reference/PLAN-N1-162E_execution_closeout_20261020.md)。
+
 ### 当前唯一下一步
 
-按已批准的[PLAN-N1-162](../../reference/PLAN-N1-162_question_surface_matched_continuation_20261020.md)实现配对问句表面续训：先完成builder/runner与契约静态验证、六个zero bundle写入/独立恢复；恢复6/6之前不启动更新。续训与原N1-132 gate均通过后，才生成全新seed132 heldout模板面。保留既有判据，0 dev/holdout/confirmation，不晋级。
+按已批准的[PLAN-N1-162F](../../reference/PLAN-N1-162F_transition_template_crossover_train_diagnostic_20261020.md)，在N1-155A candidate与N1-162B control/augmented九个冻结checkpoint上，对同一批train transition原题、rename和factorial上下文，查询两种已用过的after-turn问句，共6,912条train-only生成；原v3问句基线复用封存输出。先独立恢复9/9，再计分并复核fingerprint；CPU≤1,200秒，0训练/更新/dev/holdout/confirmation，不晋级。后续只依据该模板差异证据决定是否重排transition训练surface，保持原训练门。
 
 
 N1-161A已完整归因2,880行输出，CPU报告0.03125秒，独立复算另0.046875秒，0模型/查询/更新；逐项分类与parent配对复算一致。主动式revision候选7/180、parent32/180，其中候选47条错答逐字等于旧材料；被动式revision51/180对49/180。结果支持问句表面迁移脆弱，仍为合成诊断。结案见[N1-161A](../../reference/PLAN-N1-161A_execution_closeout_20261020.md)与[归因报告](../../../reports/taiji_n1_plan161_question_surface_itemwise_attribution_20261020.json)。

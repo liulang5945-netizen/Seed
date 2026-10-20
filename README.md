@@ -79,7 +79,7 @@ Client setup and build instructions are in [Taiji Harness contributing](taiji-ha
 
 ## Recent research
 
-As of 2026-10-19, the N mainline is studying learned reading, entity binding and state transitions. Its latest completed N1-141 experiment passed the original training gates on all six endpoints, with independent zero/final checkpoint restores. This is training evidence; unseen generalization remains to be tested and no N-series model has been promoted. See the [experiment closeout](plans/reference/PLAN-N1-141_execution_closeout_20261019.md) for the result and [current execution](plans/active/roadmap/03_CURRENT_EXECUTION.md) for live progress.
+As of 2026-10-20, the N mainline is studying learned reading, entity binding, state transitions and question-surface robustness. N1-162B completed 55,296 matched continuation updates and 7,488 train-only scores with all six final bundles independently restored. Only two of six endpoints passed the original training gate, so no new face was queried and no N-series model was promoted. Offline attribution found that transition errors in two seeds often became the inverse-turn answer under question-surface training. See the [N1-162B closeout](plans/reference/PLAN-N1-162B_execution_closeout_20261020.md) and [current execution](plans/active/roadmap/03_CURRENT_EXECUTION.md) for the evidence and next step.
 
 ## Read more
 

@@ -79,7 +79,7 @@ python -m uvicorn api.app:app --host 127.0.0.1 --port 8000
 
 ## 近期成果
 
-截至 2026-10-19，N 主线正在研究学习型读取、实体绑定与状态转移。最近完成的 N1-141 实验中，六个端点全部通过原训练门，zero/final checkpoint 均独立恢复成功。这属于训练集证据，新题泛化仍待验证，当前没有 N 系列模型获准晋升。成果细节见[实验结案](plans/reference/PLAN-N1-141_execution_closeout_20261019.md)，实时进展见[当前执行计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)。
+截至 2026-10-20，N 主线正在研究学习型读取、实体绑定、状态转移和问句表面稳健性。N1-162B 完成55,296次配对续训和7,488条训练集评分，六个 final bundle 均独立恢复成功；原训练门仅2/6通过，因此没有查询新题面，也没有任何 N 系列模型获准晋升。逐题归因发现两个 seed 的增强臂常把转向题答成反向方向。详见[N1-162B结案](plans/reference/PLAN-N1-162B_execution_closeout_20261020.md)和[当前执行计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)。
 
 ## 进一步了解
 
