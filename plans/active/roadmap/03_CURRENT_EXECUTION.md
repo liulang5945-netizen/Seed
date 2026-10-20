@@ -1,8 +1,30 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前执行：N1-163结案，推进中间剂量续训
+## 当前执行：N1-165A结案；R2自然多轮对话能力主线
 
-### 最新状态（2026-10-20）
+### N1-165A及N1-166状态（2026-10-21）
+
+[N1-165A](../../reference/PLAN-N1-165A_execution_closeout_20261021.md)已完整执行：seed12/13各完成18,432更新，seed11评分复算1,248/1,248一致，seed12前7,564步与旧进度逐行一致；final full bundle独立恢复3/3。N1-165三个终点原训练充分性门仅2/3通过（seed13失败），`can_promote=false`；无新面、dev、holdout或confirmation查询。恢复CPU5,483.6875秒，关联CPU上界47,737.484375/50,000秒。
+
+未执行的[N1-166](../../reference/PLAN-N1-166_compositional_transfer_confirmation_20261020.md)因不满足N1-165全seed训练前置而不准入，确认面未生成或消费。
+
+### R2-DIALOGUE-01至03R1结案（2026-10-21）
+
+[R2-DIALOGUE-01](../../reference/PLAN-R2-DAILY-DIALOGUE-01_execution_closeout_20261021.md)以OASST2 525 train episode配对训练candidate/control各2 epoch，12个未见自然对话tree上做48次自由生成；停止标记改善但样例不连贯。首次attempt和retry1在训练前恢复worker失败，retry2修复后完整完成。
+
+[R2-DIALOGUE-02](../../reference/PLAN-R2-DAILY-DIALOGUE-ATTRIBUTION_20261021_execution_closeout.md)离线复核发现父档在6/6有历史样本上因历史变化改变输出，candidate/control在6对同输入中4对不同；这证明状态/训练改变了输出，不证明语义能力。
+
+[R2-DIALOGUE-03R1](../../reference/PLAN-R2-DAILY-DIALOGUE-CONTINUATION-RECOVERY1_execution_closeout_20261021.md)完成两臂各6个额外epoch（累计8个epoch），每臂679,254次响应字节更新；两臂checkpoint恢复及6端点独立恢复均通过。70个未消费family×6端点共保存420条自由生成，累计CPU5,536.859375/30,000秒，0 reference评分、0 dev查询、`can_promote=false`。停止标记率升至90%/100%，但人工样例连贯贴题回复0/12。恢复前日志故障和6次未落盘输出都如实保留，未覆盖partial。
+
+### R2-DIALOGUE-04/05R1架构与材料审计（2026-10-21）
+
+只读审计证实所谓“H3.7B”是byte-aligned目标几何标记，当前checkpoint约278,010 active scalar；validation runner从Taiji配置新建，仅在12个任务episode上训练两轮，未加载通用预训练语言模型。OASST2清点找到3,762条安全过滤后的train-family全轮消息（1,780,881 UTF-8字节）、508个可用family；当前回复式builder只选525条assistant样本。39个dev family未查询，82个final family已全部消费。初稿材料清点因为源码绑定与盲区解析问题作废；有效recovery1报告不读取dev/final正文。详见[架构审计结案](../../reference/PLAN-R2-DAILY-DIALOGUE-ARCHITECTURE-AUDIT_20261021_execution_closeout.md)与[材料清点结案](../../reference/PLAN-R2-DAILY-DIALOGUE-MATERIAL-INVENTORY-RECOVERY1_execution_closeout_20261021.md)。
+
+### 当前唯一下一步：R2-DIALOGUE-06全轮预训练
+
+按[冻结计划](../../reference/PLAN-R2-DAILY-DIALOGUE-FULL-TURN-PRETRAINING_20261021.md)，fresh初始化1M capacity Taiji，以508个安全train family的全部user/assistant消息做8 epoch角色感知byte预训练，再以精选525条assistant回复校准1 epoch；39个未触碰dev family只用于一次性自由生成审阅，0 reference评分，CPU≤240,000秒。正式训练前必须完成新语料合同、zero-save和独立完整恢复门；结果不自动晋升。
+
+### N1历史快照（2026-10-20）
 
 N1-150已完整结束：55,296/55,296次更新、7,488/7,488条train-only计分，六个final bundle独立恢复6/6，六个N1-132原门全部通过；累计CPU6,956.094/18,000秒，0 dev/holdout/confirmation，`can_promote=false`。长度混合candidate在8/16/32行的已知类合计命中216/216、216/216、215/216，8行control为215/216、210/216、190/216；均为同一train集上的描述性读数。详见[N1-150中文结案](../../reference/PLAN-N1-150_execution_closeout_20261020.md)和[完整结果](../../../reports/taiji_n1_plan150_v27_length_result_20261020.json)。
 
@@ -39,15 +61,15 @@ N1-162G2完成8/16/32行上下文混合吞吐复核：每次测量96/80/80槽，
 
 N1-163 runner在写出完整result后终端摘要因字段名`training_updates`/`total_updates`不一致而退出码为1；报告状态仍为complete、`errors=[]`。逐题progress的原门arm标签也被父档标签覆盖；N1-164按固定输出顺序分块并经六个摘要复算校验，旧runner与原始证据保持不变。新训练runner须直接修正这两类报告问题。
 
-### 当前阶段定位（2026-10-20讨论同步）
+### 当前阶段定位（2026-10-21优先级调整）
 
-当前主线优先推进**有明确假设的训练配方与验证闭环**：已有长上下文训练带来可复现改善，但N1-161问句迁移不稳、N1-162B原训练门仅2/6通过，说明数据覆盖、优化稳定性和旧能力保持仍是直接瓶颈。每批固定候选/对照、更新量和停止门，完成后复核逐题结果；训练充分与新题泛化分别验证，不以更多更新或训练集高分替代能力证据。
+当前优先提高**自然中文多轮对话与自由生成**。之前的`dialogue_extended_clean.jsonl`主要是单轮`问/答`指令数据，不适合作为日常对话主料；新的[N1-165A结案](../../reference/PLAN-N1-165A_execution_closeout_20261021.md)也表明合成训练题上的充分性不能替代真实对话生成。下一批改用固定版本的人类生成OASST2中文对话树，以整树切分，比较保留多轮历史和同源单轮对照，在held-out自然对话上只做自由生成、不按参考答案精确匹配。所有结论限于本批语料与模型，不自动晋级。
 
-长上下文干扰和模板敏感与循环模型的风险相容，但现有实验未做预算匹配的架构对照，不能归因为RNN固有缺陷。当前不据此另开架构替换主线；若后续需要架构归因，须另冻可区分训练配方与结构影响的对照方案。
+继续保留N系列旧结果和失败记录，后续若重开N1-166须根据对话生成结果和原方案前置重新决策；当前不消费未见合成确认面。
 
 ### 当前唯一下一步
 
-执行已冻结的[PLAN-N1-165](../../reference/PLAN-N1-165_transition_template_mid_dose_calibration_20261020.md)：从三枚共同N1-162B父checkpoint各训练一个中间模板剂量candidate（每48个transition槽：24 original、18 preferred、6保留模板），固定18,432更新/endpoint、共55,296更新；与N1-163同seed的control和全量preferred候选并列，沿用原训练门和长度评分。先完成三个zero bundle独立保存恢复与schedule/source readiness，再训练；不查询新面，不晋级。
+执行已冻结的[R2-DIALOGUE-03匹配续训扩展](../../reference/PLAN-R2-DAILY-DIALOGUE-CONTINUATION_20261021.md)：以retry2的多轮candidate和单轮control final bundle分别续训6个epoch（总计8个），其余数据、模型与解码保持不变；zero/final full bundle均fresh-process恢复。首次12树生成面已消费，排除这12棵树后，在剩余70棵final树上对parent、retry2旧终点和两个新终点各生成一次，共420次自由生成；不读reference answer，不评exact-match、不查询dev。固定CPU≤30,000秒；输出语义仍不通顺则不在同一course上追加epoch，`can_promote=false`。
 
 
 N1-161A已完整归因2,880行输出，CPU报告0.03125秒，独立复算另0.046875秒，0模型/查询/更新；逐项分类与parent配对复算一致。主动式revision候选7/180、parent32/180，其中候选47条错答逐字等于旧材料；被动式revision51/180对49/180。结果支持问句表面迁移脆弱，仍为合成诊断。结案见[N1-161A](../../reference/PLAN-N1-161A_execution_closeout_20261020.md)与[归因报告](../../../reports/taiji_n1_plan161_question_surface_itemwise_attribution_20261020.json)。

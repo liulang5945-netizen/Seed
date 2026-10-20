@@ -7,19 +7,19 @@
 
 ## 假设
 
-N1-163从共同N1-162B父checkpoint做了两个匹配剂量：control在transition槽中使用24/48 original、12/48 `direction_after_turn`、12/48 `direction_after_turning`；全量preferred candidate使用24/48 original、24/48 `direction_after_turn`。逐题归因显示全量preferred在seed11较control多出transition回退，seed12持平，seed13少量回退。下一步只测试两者之间的中间剂量，确认preferred比例从25%升至37.5%时能否保留跨seed稳定性。
+N1-163从共同N1-162B父checkpoint做了两个匹配剂量：control的transition监督比例为50% original、25% `direction_after_turn`、25% `direction_after_turning`；全量preferred candidate为50% original、50% `direction_after_turn`。逐题归因显示全量preferred在seed11较control多出transition回退，seed12持平，seed13少量回退。下一步只测试两者之间的中间剂量，确认preferred比例从25%升至37.5%时能否保留跨seed稳定性。schedule每个`parent_id/route/context_length`八槽块固定4 original、3 preferred、1保留变体。
 
 本实验是训练配方剂量校准，结果仍限于现有train题。若三seed原门全部过线，也只代表训练充分；新题泛化另行准入，不自动生成或查询确认面。
 
 ## 冻结训练设计
 
 - **父checkpoint：** seed11/12/13各自N1-162B `surface_augmented_final.pt` 完整bundle；每个新candidate从对应父checkpoint的model、Adam、RNG和history独立分叉。与N1-163 control/full-preferred两剂量使用相同逐seed父SHA、课程和评分器。
-- **唯一新增剂量：** 每48个transition更新槽使用24 original、18 `direction_after_turn`、6 `direction_after_turning`。相较N1-163 control，只将6个较弱模板槽改为preferred；相较N1-163 full-preferred保留6个原变体槽。其他任务、问句、上下文长度、slot顺序、loss与系数、优化器和1线程设置不变。
+- **唯一新增剂量：** transition监督总体比例固定为50% original、37.5% `direction_after_turn`、12.5% `direction_after_turning`。每个`parent_id/route/context_length`八槽块由N1-163 control的4 original/2 preferred/2原变体改为4/3/1；同一对原变体槽按冻结的step顺序与平衡奇偶规则只替换其中一个。每个上下文长度合计384 original、288 preferred、96保留变体。其他任务、问句、slot顺序、loss与系数、优化器和1线程设置不变。
 - **训练量：** 每seed固定18,432更新（同一9,216槽N1-162B schedule顺序重复两遍）；3 seeds共55,296更新。只新建三个mid-dose endpoint；N1-163的control和full-preferred结果作为同seed、同父checkpoint、同更新量锚点，不重跑旧臂。
 - **评分：** 每endpoint沿用N1-132原192项训练门（960条评分）和N1-163同一288项长度评分，共3,744条train-only评分。原门及分母不变；逐seed同时报告三剂量的正确转错/错误转对、旧能力保持和长度分层结果。
 - **边界：** 训练开始前完成三个zero full bundle的write-once保存和fresh process独立恢复3/3；final bundle同样独立恢复3/3。任何来源、schedule、保存恢复、step/history、评分状态或预算守卫失败即停止，保留失败回执，不自动重跑。
 - **禁止项：** 不生成新题面，0 dev/holdout/confirmation/fresh-face查询，不改变N1-132训练门，不自动晋级；`can_promote=false`。
-- **预算：** 本阶段CPU≤10,500秒；关联N1-162/163 CPU累计≤50,000秒。N1-163已用38,251.734375秒，故本批按上限仍保留至少1,248.265625秒总余量。评分与独立恢复CPU均计入本批。
+- **预算：** 本阶段CPU≤10,500秒；关联N1-162/163/164 CPU累计≤50,000秒。N1-163已用38,251.734375秒，N1-164归因另用2.0625秒，故本批按上限仍保留至少1,246.203125秒总余量。评分与独立恢复CPU均计入本批。
 
 ## 必须修正的执行记录问题
 
