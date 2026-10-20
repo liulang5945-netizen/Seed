@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前执行：N1-163转向问句模板配对续训进行中
+## 当前执行：N1-163结案，推进中间剂量续训
 
 ### 最新状态（2026-10-20）
 
@@ -31,11 +31,13 @@ N1-162G/G1线程基准已完成：首轮G因源码校验函数模块别名错误
 
 N1-162G2完成8/16/32行上下文混合吞吐复核：每次测量96/80/80槽，覆盖全部4类任务；六次完整bundle独立恢复，1,728次内存更新，0 checkpoint写入，CPU899.688/1,200秒，来源与checkpoint SHA不变。单线程中位7.005更新/秒；2/4线程分别5.217/4.926（0.745×/0.703×），有效占用约2/4核但均更慢，故本配方保持1线程。结果只回答速度，不代表学习质量；详见[G2结案](../../reference/PLAN-N1-162G2_execution_closeout_20261020.md)与[完整报告](../../../reports/taiji_n1_plan162g2_mixed_context_thread_scaling_20261020.json)。runner在报告成功落盘后终端摘要抛出字段`KeyError`，不影响完整result；按closeout记录，不覆盖或重跑。
 
-### N1-163当前执行
+### N1-163/164结案状态
 
-[N1-163](../../reference/PLAN-N1-163_transition_template_rebalanced_matched_continuation_20261020.md)已批准冻结并开始执行；[N1-163A](../../reference/PLAN-N1-163A_readiness_source_rebinding_20261020.md)以新路径补全runner来源绑定，重建schedule与原版逐槽一致，732项来源核验通过。六枚zero完整bundle已在训练前独立保存恢复6/6；每seed两臂从同一N1-162B augmented父bundle的model/Adam/RNG/history分叉，继续已有模型的训练。
+[N1-163](../../reference/PLAN-N1-163_transition_template_rebalanced_matched_continuation_20261020.md)完成110,592次配对续训、7,488条train-only评分；zero/final full bundle独立恢复均6/6，来源守卫稳定，阶段CPU17,006.797/25,000秒、关联累计CPU38,251.734/50,000秒。原N1-132门4/6通过：seed12与seed13的两臂通过，seed11两臂均失败；全seed candidate/control充分性均为false，`can_promote=false`，0新面/dev/holdout/confirmation查询。完整结案见[N1-163](../../reference/PLAN-N1-163_execution_closeout_20261020.md)。
 
-本批固定3 seeds×2 arms×18,432＝110,592次更新、7,488条train-only评分，单线程执行。截至本次状态同步，seed11/12四个endpoint已完成固定更新及final保存恢复，seed13两臂正在依次推进；整批训练门与配对结论以最终result为准。仍为0 dev/holdout/confirmation，不生成新测面，`can_promote=false`。
+[N1-164](../../reference/PLAN-N1-164_plan163_itemwise_pair_attribution_20261020.md)以只读方式完成逐题配对归因，CPU2.0625秒，0模型/checkpoint加载、查询、更新和写入。六个result gate分块复算全匹配。seed11 candidate的transition配对改对16项、改错59项；seed12无transition变化；seed13有4项factorial transition回退。8/16/32行candidate-control净差随seed变化，结果不支持稳定剂量效果。
+
+N1-163 runner在写出完整result后终端摘要因字段名`training_updates`/`total_updates`不一致而退出码为1；报告状态仍为complete、`errors=[]`。逐题progress的原门arm标签也被父档标签覆盖；N1-164按固定输出顺序分块并经六个摘要复算校验，旧runner与原始证据保持不变。新训练runner须直接修正这两类报告问题。
 
 ### 当前阶段定位（2026-10-20讨论同步）
 
@@ -45,7 +47,7 @@ N1-162G2完成8/16/32行上下文混合吞吐复核：每次测量96/80/80槽，
 
 ### 当前唯一下一步
 
-完成正在运行的N1-163六个endpoint及全部保存恢复、原门和长度分层评分，按冻结判据汇总候选/对照的三seed差异与旧能力保持，形成中文结案并同步计划。整批结果落盘前不追加训练量或改变配方；后续步骤依据本批证据另行冻结。
+执行已冻结的[PLAN-N1-165](../../reference/PLAN-N1-165_transition_template_mid_dose_calibration_20261020.md)：从三枚共同N1-162B父checkpoint各训练一个中间模板剂量candidate（每48个transition槽：24 original、18 preferred、6保留模板），固定18,432更新/endpoint、共55,296更新；与N1-163同seed的control和全量preferred候选并列，沿用原训练门和长度评分。先完成三个zero bundle独立保存恢复与schedule/source readiness，再训练；不查询新面，不晋级。
 
 
 N1-161A已完整归因2,880行输出，CPU报告0.03125秒，独立复算另0.046875秒，0模型/查询/更新；逐项分类与parent配对复算一致。主动式revision候选7/180、parent32/180，其中候选47条错答逐字等于旧材料；被动式revision51/180对49/180。结果支持问句表面迁移脆弱，仍为合成诊断。结案见[N1-161A](../../reference/PLAN-N1-161A_execution_closeout_20261020.md)与[归因报告](../../../reports/taiji_n1_plan161_question_surface_itemwise_attribution_20261020.json)。
