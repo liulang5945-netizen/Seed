@@ -12,7 +12,7 @@ N1-153A已完整结束：同一seed127 fresh face上2,880条逐题结果完成�
 
 N1-154已完成2,880行fresh诊断的逐题paired分析，CPU0.03125秒，0加载/查询/更新；candidate已知命中8/16/32行360/360、359/360、356/360，control为353/360、340/360、302/360；unknown弃答candidate76/120、91/120、103/120，control109/120、115/120、120/120。结果为描述性synthetic face归因，见[N1-154结案](../../reference/PLAN-N1-154_execution_closeout_20261020.md)。
 
-N1-157A2已完成：复用seed128 face与首轮480条，只新增五个未消费endpoint的2,400条查询；合并2,880行完整，source哈希稳定，0训练/dev/holdout/confirmation，can_promote=false，关联CPU9,771.531/18,000秒。N1-158离线逐题归因CPU1.656秒完成：candidate overall 1,401/1,440、父模型1,341/1,440；差异集中在unknown，8/16/32行candidate96/120、110/120、119/120，父模型65/120、93/120、105/120；已知类candidate低2项。详见[N1-157A2结案](../../reference/PLAN-N1-157A2_execution_closeout_20261020.md)、[N1-158结案](../../reference/PLAN-N1-158_execution_closeout_20261020.md)与[逐题归因](../../../reports/taiji_n1_plan158_plan157a2_fresh_face_itemwise_attribution_20261020.json)。依据用户授予的执行计划批准权，已批准唯一下一步[N1-159](../../reference/PLAN-N1-159_seed129_candidate_parent_fresh_replication_20261020.md)：独立seed129 fresh面复制candidate与N1-150父模型比较，最多2,880条查询、CPU≤3,600秒且关联累计≤18,000秒；0训练/dev/holdout/confirmation，不晋级。
+N1-159首次执行在seed11 candidate的480条查询后因汇总器再次要求全部endpoint而停止；source/checkpoint未变，0训练/dev/holdout/confirmation，关联CPU9,956.422秒。失败result、attempt、progress与seed129 face均保留。依据用户授予的计划批准权，已批准[N1-159A](../../reference/PLAN-N1-159A_remaining_endpoint_continuation_20261020.md)：修正逐endpoint汇总，复用原face与480条，仅查询剩余五个endpoint共2,400条，CPU≤3,600秒且关联累计≤18,000秒。代码静态检查、4项契约测试及642项来源只读预检已通过；下一步提交更正和失败回执，再做新readiness/六bundle恢复。详见[N1-159失败回执](../../../reports/taiji_n1_plan159_candidate_parent_result_20261020.json)与[seed129 face](../../manifests/n1_plan159_v31_candidate_parent_seed129_20261020.json)。
 
 
 ### 历史状态（截至2026-10-19；后由N1-150结案取代）
