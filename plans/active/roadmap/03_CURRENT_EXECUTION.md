@@ -17,7 +17,7 @@ N1-159A已完成seed129 face，详见[N1-159A结案](../../reference/PLAN-N1-159
 
 ### 当前唯一下一步
 
-落实已批准的[PLAN-N1-161](../../reference/PLAN-N1-161_unseen_question_surface_diagnostic_20261020.md)：实现并静态验证seed131未见问句面构造/计分器，提交冻结代码后完成来源readiness和六bundle独立恢复；仅当全数通过才生成新面并对六端点查询2,880条。0训练、0更新、0 dev/holdout/confirmation，`can_promote=false`；新问法结果只作同一程序生成任务内的模板迁移诊断。
+PLAN-N1-161 builder、runner与契约测试已实现并通过静态验证：Ruff、py_compile及4项直接契约测试均通过；绑定的v3训练题清单未出现四种新问句模式。当前未生成source readiness、seed131 face或任何模型查询。唯一下一步：冻结实现提交后运行0查询source readiness与六bundle独立恢复；全部通过才建面并执行2,880条诊断。
 
 ### 历史状态（截至2026-10-19；后由N1-150结案取代）
 
