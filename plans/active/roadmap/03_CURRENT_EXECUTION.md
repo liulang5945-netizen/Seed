@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前执行：PLAN-N1-161A逐题错误来源归因（已批准）
+## 当前执行：PLAN-N1-162问句表面配对续训（已批准）
 
 ### 最新状态（2026-10-20）
 
@@ -21,7 +21,10 @@ N1-161完成2,880条未见问句句式诊断，144个endpoint×类别×长度×�
 
 ### 当前唯一下一步
 
-已批准的[N1-161A分析器](../../reference/PLAN-N1-161A_question_surface_itemwise_attribution_20261020.md)及脚本/契约测试已实现，Ruff、py_compile与3项直接测试通过；尚未生成N1-161A报告。下一步先提交冻结分析器，再对N1-161 result/face做一次离线分类：literal unknown、旧revision值、其他观测材料、direction/turn及其他输出，并按模板/类别/长度/endpoint配对。CPU≤30秒，0模型/checkpoint加载、0新查询、0更新/dev/holdout。
+按已批准的[PLAN-N1-162](../../reference/PLAN-N1-162_question_surface_matched_continuation_20261020.md)实现配对问句表面续训：先完成builder/runner与契约静态验证、六个zero bundle写入/独立恢复；恢复6/6之前不启动更新。续训与原N1-132 gate均通过后，才生成全新seed132 heldout模板面。保留既有判据，0 dev/holdout/confirmation，不晋级。
+
+
+N1-161A已完整归因2,880行输出，CPU报告0.03125秒，独立复算另0.046875秒，0模型/查询/更新；逐项分类与parent配对复算一致。主动式revision候选7/180、parent32/180，其中候选47条错答逐字等于旧材料；被动式revision51/180对49/180。结果支持问句表面迁移脆弱，仍为合成诊断。结案见[N1-161A](../../reference/PLAN-N1-161A_execution_closeout_20261020.md)与[归因报告](../../../reports/taiji_n1_plan161_question_surface_itemwise_attribution_20261020.json)。
 
 ### 历史状态（截至2026-10-19；后由N1-150结案取代）
 

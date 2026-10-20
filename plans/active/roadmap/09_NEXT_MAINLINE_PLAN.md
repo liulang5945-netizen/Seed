@@ -1,6 +1,6 @@
 # 09 下一轮主线规划：架构与模型（N 系列，2026-10-06 开线；2026-10-14 第五版调度修订）
 
-> **2026-10-20 N1现状**：N1-161未见问句面已完成2,880条；candidate 441/1,440、parent 460/1,440，unknown净增只出现在seed13，已知类低43。已批准[N1-161A](../../reference/PLAN-N1-161A_question_surface_itemwise_attribution_20261020.md)做只读逐题归因；分析器实现及3项契约验证通过，当前还未写报告。下一步一次分析错误输出类型，不加载模型、不查询、不训练、不触留出。最新调度以[03](03_CURRENT_EXECUTION.md)为准。
+> **2026-10-20 N1现状**：N1-161A完成零查询逐题归因，发现主动式revision候选7/180、parent32/180，候选47个错误输出复现旧revision值；问句形式迁移仍是主要不确定性。已批准[N1-162](../../reference/PLAN-N1-162_question_surface_matched_continuation_20261020.md)：同一N1-155A candidate full bundle分叉原问句control与模板增强treatment，沿用任务与N1-132门；训练通过后才评估另一组独立问法。当前下一步是实现并验证checkpoint保存恢复，最新调度以[03](03_CURRENT_EXECUTION.md)为准。
 
 > **历史快照（2026-10-18，㊵-1091）**：length-balanced schedule manifest/checks已提交，40来源守卫与raw/hard 6/7平衡通过。candidate runner及6项合同已完成，旧九端点SHA固定，runner已设计逐步长度账本与同模块子进程恢复。下一步zero-update验证runner，随后9枚fresh-zero checkpoint保存/独立恢复，任何失败均不启动optimizer update。
 
