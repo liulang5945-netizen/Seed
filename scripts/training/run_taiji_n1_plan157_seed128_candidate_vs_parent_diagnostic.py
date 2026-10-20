@@ -153,16 +153,25 @@ def _verify_readiness() -> tuple[dict, dict[str, str]]:
         or readiness.get("prior_result_sha256") != builder.PRIOR_RESULT_SHA256
         or readiness.get("prior_consumed_queries") != builder.PRIOR_QUERIES
         or readiness.get("remaining_queries") != TOTAL_QUERIES - builder.PRIOR_QUERIES
+        or readiness.get("prior_n157a_readiness_sha256") != sha256(builder.PRIOR_N157A_READINESS)
+        or readiness.get("binding_failure_receipt_sha256") != builder.PRIOR_BINDING_FAILURE_SHA256
+        or readiness.get("remaining_queries") != TOTAL_QUERIES - builder.PRIOR_QUERIES
         or audit.get("status") != "complete"
         or audit.get("plan_sha256") != PLAN_SHA256
         or audit.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
         or audit.get("prior_result_sha256") != builder.PRIOR_RESULT_SHA256
         or audit.get("prior_consumed_queries") != builder.PRIOR_QUERIES
         or audit.get("remaining_queries") != TOTAL_QUERIES - builder.PRIOR_QUERIES
+        or audit.get("prior_n157a_readiness_sha256") != sha256(builder.PRIOR_N157A_READINESS)
+        or audit.get("binding_failure_receipt_sha256") != builder.PRIOR_BINDING_FAILURE_SHA256
+        or audit.get("binding_failure_cpu_reserve_seconds") != builder.BINDING_FAILURE_CPU_RESERVE_SECONDS
         or binding.get("status") != "complete"
         or binding.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
         or binding.get("prior_result_sha256") != builder.PRIOR_RESULT_SHA256
         or binding.get("prior_consumed_queries") != builder.PRIOR_QUERIES
+        or binding.get("remaining_queries") != TOTAL_QUERIES - builder.PRIOR_QUERIES
+        or binding.get("prior_n157a_readiness_sha256") != sha256(builder.PRIOR_N157A_READINESS)
+        or binding.get("binding_failure_receipt_sha256") != builder.PRIOR_BINDING_FAILURE_SHA256
         or binding.get("readiness_sha256") != sha256(READINESS)
         or binding.get("source_hashes") != readiness.get("source_hashes")
     ):
@@ -187,13 +196,14 @@ def checkpoint_preflight() -> dict:
     budget = n132.CpuBudget(remaining)
     budget.guard(reserve=45)
     write_new(PREFLIGHT_ATTEMPT, {
-        "schema": "n1-plan157a-candidate-parent-preflight-attempt-v1",
+        "schema": "n1-plan157a2-candidate-parent-preflight-attempt-v1",
         "status": "started",
         "plan_sha256": PLAN_SHA256,
         "correction_addendum_sha256": builder.CORRECTION_SHA256,
         "prior_result_sha256": builder.PRIOR_RESULT_SHA256,
         "prior_consumed_queries": builder.PRIOR_QUERIES,
         "remaining_queries": TOTAL_QUERIES - builder.PRIOR_QUERIES,
+        "binding_failure_receipt_sha256": builder.PRIOR_BINDING_FAILURE_SHA256,
         "readiness_sha256": sha256(READINESS),
         "endpoint_count": len(ENDPOINTS),
         "independent_restores_planned": len(ENDPOINTS),
@@ -225,7 +235,7 @@ def checkpoint_preflight() -> dict:
         and linked_cumulative <= LINKED_CPU_LIMIT_SECONDS
     )
     report = {
-        "schema": "n1-plan157a-candidate-parent-preflight-v1",
+        "schema": "n1-plan157a2-candidate-parent-preflight-v1",
         "status": "complete" if complete else "stopped",
         "complete": complete,
         "plan_sha256": PLAN_SHA256,
@@ -233,6 +243,8 @@ def checkpoint_preflight() -> dict:
         "prior_result_sha256": builder.PRIOR_RESULT_SHA256,
         "prior_consumed_queries": builder.PRIOR_QUERIES,
         "remaining_queries": TOTAL_QUERIES - builder.PRIOR_QUERIES,
+        "prior_n157a_readiness_sha256": sha256(builder.PRIOR_N157A_READINESS),
+        "binding_failure_receipt_sha256": builder.PRIOR_BINDING_FAILURE_SHA256,
         "readiness_sha256": sha256(READINESS),
         "preflight_attempt_sha256": sha256(PREFLIGHT_ATTEMPT),
         "source_hashes": source_hashes,
@@ -253,13 +265,15 @@ def checkpoint_preflight() -> dict:
     }
     write_new(PREFLIGHT, report)
     write_new(PREFLIGHT_BINDING, {
-        "schema": "n1-plan157a-candidate-parent-preflight-binding-v1",
+        "schema": "n1-plan157a2-candidate-parent-preflight-binding-v1",
         "status": "complete" if complete else "stopped",
         "plan_sha256": PLAN_SHA256,
         "correction_addendum_sha256": builder.CORRECTION_SHA256,
         "prior_result_sha256": builder.PRIOR_RESULT_SHA256,
         "prior_consumed_queries": builder.PRIOR_QUERIES,
         "remaining_queries": TOTAL_QUERIES - builder.PRIOR_QUERIES,
+        "prior_n157a_readiness_sha256": sha256(builder.PRIOR_N157A_READINESS),
+        "binding_failure_receipt_sha256": builder.PRIOR_BINDING_FAILURE_SHA256,
         "preflight_sha256": sha256(PREFLIGHT),
         "source_hashes": source_hashes,
         "can_promote": False,
@@ -284,14 +298,20 @@ def _verify_preflight_and_face() -> tuple[dict, dict, list[dict], dict[str, str]
         or readiness.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
         or readiness.get("prior_result_sha256") != builder.PRIOR_RESULT_SHA256
         or readiness.get("prior_consumed_queries") != builder.PRIOR_QUERIES
+        or readiness.get("prior_n157a_readiness_sha256") != sha256(builder.PRIOR_N157A_READINESS)
+        or readiness.get("binding_failure_receipt_sha256") != builder.PRIOR_BINDING_FAILURE_SHA256
         or preflight.get("complete") is not True
         or preflight.get("plan_sha256") != PLAN_SHA256
         or preflight.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
         or preflight.get("prior_result_sha256") != builder.PRIOR_RESULT_SHA256
         or preflight.get("prior_consumed_queries") != builder.PRIOR_QUERIES
+        or preflight.get("prior_n157a_readiness_sha256") != sha256(builder.PRIOR_N157A_READINESS)
+        or preflight.get("binding_failure_receipt_sha256") != builder.PRIOR_BINDING_FAILURE_SHA256
         or preflight_binding.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
         or preflight_binding.get("prior_result_sha256") != builder.PRIOR_RESULT_SHA256
         or preflight_binding.get("prior_consumed_queries") != builder.PRIOR_QUERIES
+        or preflight_binding.get("prior_n157a_readiness_sha256") != sha256(builder.PRIOR_N157A_READINESS)
+        or preflight_binding.get("binding_failure_receipt_sha256") != builder.PRIOR_BINDING_FAILURE_SHA256
         or preflight.get("independent_restore_count") != 6
         or preflight.get("source_hashes_unchanged") is not True
         or preflight_binding.get("status") != "complete"
@@ -345,27 +365,27 @@ def _fresh_summary(rows: list[dict]) -> list[dict]:
 
 def execute_approved() -> dict:
     if any(path.exists() for path in (ATTEMPT, PROGRESS, RESULT)):
-        raise FileExistsError("PLAN-N1-157A continuation attempt is write-once")
+        raise FileExistsError("PLAN-N1-157A2 continuation attempt is write-once")
     started = time.process_time()
     readiness, preflight, endpoints, base_sources = _verify_preflight_and_face()
     validation_cpu = time.process_time() - started
     prior_plan157a_cpu = float(readiness["cpu_seconds"]) + float(preflight["cpu_seconds"])
     remaining = CPU_LIMIT_SECONDS - prior_plan157a_cpu - validation_cpu
     if remaining <= 0:
-        raise TimeoutError("PLAN-N1-157A CPU ceiling exhausted before continuation")
+        raise TimeoutError("PLAN-N1-157A2 CPU ceiling exhausted before continuation")
     budget = n132.CpuBudget(remaining)
     if PRIOR_LINKED_CPU_SECONDS + prior_plan157a_cpu + validation_cpu >= LINKED_CPU_LIMIT_SECONDS:
-        raise TimeoutError("PLAN-N1-157A linked CPU ceiling exhausted before continuation")
+        raise TimeoutError("PLAN-N1-157A2 linked CPU ceiling exhausted before continuation")
     prior_result = read_json(builder.PRIOR_RESULT)
     prior_rows = list(prior_result.get("fresh_diagnostic_rows", []))
     prior_endpoint_keys = {
         (int(row["seed"]), str(row["branch"])) for row in prior_rows
     }
     if len(prior_rows) != builder.PRIOR_QUERIES or prior_endpoint_keys != {(11, "unknown8_rebalanced")}:
-        raise Refuse("PLAN-N1-157A partial face rows are not exactly the sealed first endpoint")
+        raise Refuse("PLAN-N1-157A2 partial face rows are not exactly the sealed first endpoint")
     prior_summaries = _fresh_summary(prior_rows)
     attempt = {
-        "schema": "n1-plan157a-candidate-parent-attempt-v1",
+        "schema": "n1-plan157a2-candidate-parent-attempt-v1",
         "status": "started",
         "plan_sha256": PLAN_SHA256,
         "correction_addendum_sha256": builder.CORRECTION_SHA256,
@@ -414,9 +434,9 @@ def execute_approved() -> dict:
                 for length in LENGTHS:
                     budget.guard(reserve=5)
                     item = n153._face_from_manifest_item(base_item, length)
-                    session = f"n1-plan157a-fresh-{endpoint['seed']}-{endpoint['branch']}-{item['parent_id']}-l{length}"
+                    session = f"n1-plan157a2-fresh-{endpoint['seed']}-{endpoint['branch']}-{item['parent_id']}-l{length}"
                     if session in model._observations:
-                        raise Refuse(f"PLAN-N1-157A session collision: {session}")
+                        raise Refuse(f"PLAN-N1-157A2 session collision: {session}")
                     query_count += 1
                     try:
                         scored = n155._measure_fresh_diagnostic(model, item, session)
@@ -435,10 +455,10 @@ def execute_approved() -> dict:
                     if query_count % 64 == 0:
                         progress.flush()
             if len(endpoint_rows) != QUERIES_PER_ENDPOINT:
-                raise Refuse(f"PLAN-N1-157A endpoint query denominator differs: {endpoint['seed']}/{endpoint['branch']}")
+                raise Refuse(f"PLAN-N1-157A2 endpoint query denominator differs: {endpoint['seed']}/{endpoint['branch']}")
             summaries.extend(_fresh_summary(endpoint_rows))
             if _fingerprint(model, optimizer) != before:
-                raise Refuse(f"PLAN-N1-157A diagnostic changed checkpoint bundle: {endpoint['seed']}/{endpoint['branch']}")
+                raise Refuse(f"PLAN-N1-157A2 diagnostic changed checkpoint bundle: {endpoint['seed']}/{endpoint['branch']}")
             del model, optimizer, payload
         progress.flush()
         progress.close()
@@ -470,7 +490,7 @@ def execute_approved() -> dict:
             or query_count > TOTAL_QUERIES - builder.PRIOR_QUERIES
         ):
             raise Refuse(
-                "PLAN-N1-157A continuation progress ledger mismatch: "
+                "PLAN-N1-157A2 continuation progress ledger mismatch: "
                 f"{count}/{len(rows)}/{query_count}"
             )
         progress_integrity = {
@@ -505,7 +525,7 @@ def execute_approved() -> dict:
         and not errors
     )
     report = {
-        "schema": "taiji-n1-plan157a-candidate-parent-fresh-diagnostic-v1",
+        "schema": "taiji-n1-plan157a2-candidate-parent-fresh-diagnostic-v1",
         "status": "complete" if complete else "stopped",
         "complete": complete,
         "plan_sha256": PLAN_SHA256,
@@ -545,7 +565,7 @@ def execute_approved() -> dict:
         "errors": errors,
         "can_promote": False,
         "summary_zh": (
-            f"PLAN-N1-157A fresh candidate-vs-parent续接{'完整' if complete else '停止'}："
+            f"PLAN-N1-157A2 fresh candidate-vs-parent续接{'完整' if complete else '停止'}："
             f"新增{query_count}/{TOTAL_QUERIES-builder.PRIOR_QUERIES}条查询，连同已完成的{builder.PRIOR_QUERIES}条共{total_face_queries}/{TOTAL_QUERIES}条；"
             f"更正阶段累计CPU{plan157a_cumulative:.3f}/{CPU_LIMIT_SECONDS:.0f}秒，"
             f"关联累计CPU{linked_cumulative:.3f}/{LINKED_CPU_LIMIT_SECONDS:.0f}秒；"

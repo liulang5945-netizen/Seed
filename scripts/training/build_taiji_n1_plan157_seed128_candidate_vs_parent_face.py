@@ -26,8 +26,10 @@ from scripts.training import run_taiji_n1_v27_length_robust_training_after_n149 
 
 PLAN = ROOT / "plans/reference/PLAN-N1-157_seed128_candidate_vs_parent_fresh_diagnostic_20261020.md"
 PLAN_SHA256 = "ad097dc74c03d9df49a1101d4af3b7159c1ab4741e586b73557cf8e4f6f50e44"
-CORRECTION_ADDENDUM = ROOT / "plans/reference/PLAN-N1-157A_remaining_endpoint_continuation_20261020.md"
-CORRECTION_SHA256 = "54e854274d33153a5379ad5a3cf004be65cd3fcceddd0f431359f6026296934e"
+PRIOR_CORRECTION_ADDENDUM = ROOT / "plans/reference/PLAN-N1-157A_remaining_endpoint_continuation_20261020.md"
+PRIOR_CORRECTION_SHA256 = "54e854274d33153a5379ad5a3cf004be65cd3fcceddd0f431359f6026296934e"
+CORRECTION_ADDENDUM = ROOT / "plans/reference/PLAN-N1-157A2_readiness_binding_metadata_correction_20261020.md"
+CORRECTION_SHA256 = "04017cf4422f73431d489fd3e4fb16168414e239b26102658de4bc70a190ef2c"
 N150_RESULT = n150.RESULT
 N150_RESULT_SHA256 = n155_builder.N150_RESULT_SHA256
 N155A_RESULT = n155_builder.RESULT
@@ -53,21 +55,32 @@ PRIOR_PROGRESS_SHA256 = "7619efac685175e87968e58bdcc362ea9c5bb38ebdb0d8cff0dad6a
 PRIOR_FACE_SHA256 = "cf34e7de874b316581c4c6520786e2bf6406d328d4989b869901eb667e9c9a2f"
 PRIOR_FACE_AUDIT_SHA256 = "6372edd97bb3434b7d15004ff517521c0580ce2a844bce46e6e94e2044e96664"
 PRIOR_FACE_CHECKS_SHA256 = "d5e2df062a8912c07b172a1db08e94ac3835c7a1b1bc459b6ecfeb38519b2404"
-PRIOR_LINKED_CPU_SECONDS = 9_502.03125
+PRIOR_N157A_SOURCE_AUDIT = ROOT / "reports/taiji_n1_plan157a_candidate_parent_source_audit_20261020.json"
+PRIOR_N157A_READINESS = ROOT / "reports/taiji_n1_plan157a_candidate_parent_readiness_20261020.json"
+PRIOR_N157A_READINESS_ATTEMPT = ROOT / "reports/taiji_n1_plan157a_candidate_parent_readiness_attempt_20261020.json"
+PRIOR_N157A_SOURCE_BINDING = ROOT / "reports/taiji_n1_plan157a_candidate_parent_source_binding_20261020.json"
+PRIOR_N157A_PREFLIGHT = ROOT / "reports/taiji_n1_plan157a_candidate_parent_preflight_20261020.json"
+PRIOR_N157A_PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_plan157a_candidate_parent_preflight_attempt_20261020.json"
+PRIOR_N157A_PREFLIGHT_BINDING = ROOT / "reports/taiji_n1_plan157a_candidate_parent_preflight_binding_20261020.json"
+PRIOR_BINDING_FAILURE = ROOT / "reports/taiji_n1_plan157a_preflight_binding_failure_20261020.json"
+PRIOR_BINDING_FAILURE_SHA256 = "3f8983fdb259d5799defc76ab7c602bdec384dc161c2fc79036854f54b3a522a"
+PRIOR_RESULT_LINKED_CPU_SECONDS = 9_502.03125
+BINDING_FAILURE_CPU_RESERVE_SECONDS = 5.0
+PRIOR_LINKED_CPU_SECONDS = PRIOR_RESULT_LINKED_CPU_SECONDS + BINDING_FAILURE_CPU_RESERVE_SECONDS
 PRIOR_QUERIES = 480
-SOURCE_AUDIT = ROOT / "reports/taiji_n1_plan157a_candidate_parent_source_audit_20261020.json"
-READINESS = ROOT / "reports/taiji_n1_plan157a_candidate_parent_readiness_20261020.json"
-READINESS_ATTEMPT = ROOT / "reports/taiji_n1_plan157a_candidate_parent_readiness_attempt_20261020.json"
-SOURCE_BINDING = ROOT / "reports/taiji_n1_plan157a_candidate_parent_source_binding_20261020.json"
-PREFLIGHT = ROOT / "reports/taiji_n1_plan157a_candidate_parent_preflight_20261020.json"
-PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_plan157a_candidate_parent_preflight_attempt_20261020.json"
-PREFLIGHT_BINDING = ROOT / "reports/taiji_n1_plan157a_candidate_parent_preflight_binding_20261020.json"
+SOURCE_AUDIT = ROOT / "reports/taiji_n1_plan157a2_candidate_parent_source_audit_20261020.json"
+READINESS = ROOT / "reports/taiji_n1_plan157a2_candidate_parent_readiness_20261020.json"
+READINESS_ATTEMPT = ROOT / "reports/taiji_n1_plan157a2_candidate_parent_readiness_attempt_20261020.json"
+SOURCE_BINDING = ROOT / "reports/taiji_n1_plan157a2_candidate_parent_source_binding_20261020.json"
+PREFLIGHT = ROOT / "reports/taiji_n1_plan157a2_candidate_parent_preflight_20261020.json"
+PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_plan157a2_candidate_parent_preflight_attempt_20261020.json"
+PREFLIGHT_BINDING = ROOT / "reports/taiji_n1_plan157a2_candidate_parent_preflight_binding_20261020.json"
 FACE = ROOT / "plans/manifests/n1_plan157_v30_candidate_vs_parent_seed128_20261020.json"
 FACE_AUDIT = ROOT / "reports/taiji_n1_plan157_v30_candidate_vs_parent_face_audit_20261020.json"
 FACE_CHECKS = ROOT / "reports/taiji_n1_plan157_v30_candidate_vs_parent_face_checks_20261020.json"
-ATTEMPT = ROOT / "reports/taiji_n1_plan157a_candidate_parent_attempt_20261020.json"
-PROGRESS = ROOT / "reports/taiji_n1_plan157a_candidate_parent_progress_20261020.jsonl"
-RESULT = ROOT / "reports/taiji_n1_plan157a_candidate_parent_result_20261020.json"
+ATTEMPT = ROOT / "reports/taiji_n1_plan157a2_candidate_parent_attempt_20261020.json"
+PROGRESS = ROOT / "reports/taiji_n1_plan157a2_candidate_parent_progress_20261020.jsonl"
+RESULT = ROOT / "reports/taiji_n1_plan157a2_candidate_parent_result_20261020.json"
 TEST = ROOT / "tests/taiji_native/test_n1_plan157_seed128_candidate_vs_parent_diagnostic_contract.py"
 
 SEEDS = (11, 12, 13)
@@ -141,6 +154,8 @@ def source_context() -> tuple[list[dict], dict[str, str], dict]:
         raise Refuse("PLAN-N1-157 plan SHA changed")
     if sha256(CORRECTION_ADDENDUM) != CORRECTION_SHA256:
         raise Refuse("PLAN-N1-157A correction addendum SHA changed")
+    if sha256(PRIOR_CORRECTION_ADDENDUM) != PRIOR_CORRECTION_SHA256:
+        raise Refuse("PLAN-N1-157A correction addendum SHA changed")
     n150_result = read_json(N150_RESULT)
     n155a_result = read_json(N155A_RESULT)
     n156_report = read_json(N156_REPORT)
@@ -148,6 +163,10 @@ def source_context() -> tuple[list[dict], dict[str, str], dict]:
     prior_attempt = read_json(PRIOR_ATTEMPT)
     prior_readiness = read_json(PRIOR_READINESS)
     prior_preflight = read_json(PRIOR_PREFLIGHT)
+    prior_n157a_readiness = read_json(PRIOR_N157A_READINESS)
+    prior_n157a_source_audit = read_json(PRIOR_N157A_SOURCE_AUDIT)
+    prior_n157a_binding = read_json(PRIOR_N157A_SOURCE_BINDING)
+    binding_failure = read_json(PRIOR_BINDING_FAILURE)
     prior_face = read_json(FACE)
     prior_face_audit = read_json(FACE_AUDIT)
     prior_face_checks = read_json(FACE_CHECKS)
@@ -216,7 +235,7 @@ def source_context() -> tuple[list[dict], dict[str, str], dict]:
         and prior_result.get("progress_integrity", {}).get("complete") is True
         and prior_result.get("progress_integrity", {}).get("line_count") == PRIOR_QUERIES
         and prior_result.get("progress_integrity", {}).get("progress_sha256") == PRIOR_PROGRESS_SHA256
-        and prior_result.get("cumulative_linked_cpu_seconds") == PRIOR_LINKED_CPU_SECONDS
+        and prior_result.get("cumulative_linked_cpu_seconds") == PRIOR_RESULT_LINKED_CPU_SECONDS
         and prior_attempt.get("status") == "started"
         and prior_attempt.get("face_sha256") == PRIOR_FACE_SHA256
         and prior_attempt.get("planned_queries") == TOTAL_QUERIES
@@ -230,6 +249,38 @@ def source_context() -> tuple[list[dict], dict[str, str], dict]:
         and prior_face_audit.get("status") == "complete"
         and prior_face_checks.get("status") == "complete",
         "PLAN-N1-157A requires the sealed 480-row endpoint and intact face/preflight evidence",
+    )
+    require(
+        sha256(PRIOR_BINDING_FAILURE) == PRIOR_BINDING_FAILURE_SHA256
+        and prior_n157a_readiness.get("complete") is True
+        and prior_n157a_readiness.get("plan_sha256") == PLAN_SHA256
+        and prior_n157a_readiness.get("correction_addendum_sha256") == PRIOR_CORRECTION_SHA256
+        and prior_n157a_readiness.get("prior_result_sha256") == PRIOR_RESULT_SHA256
+        and prior_n157a_readiness.get("prior_consumed_queries") == PRIOR_QUERIES
+        and prior_n157a_readiness.get("source_hashes_unchanged") is True
+        and prior_n157a_source_audit.get("status") == "complete"
+        and prior_n157a_source_audit.get("source_hashes_unchanged") is True
+        and prior_n157a_source_audit.get("prior_result_sha256") == PRIOR_RESULT_SHA256
+        and prior_n157a_binding.get("status") == "complete"
+        and prior_n157a_binding.get("readiness_sha256") == sha256(PRIOR_N157A_READINESS)
+        and prior_n157a_binding.get("source_hashes") == prior_n157a_readiness.get("source_hashes")
+        and "prior_result_sha256" not in prior_n157a_binding
+        and "prior_consumed_queries" not in prior_n157a_binding
+        and binding_failure.get("status") == "stopped"
+        and binding_failure.get("correction_addendum_sha256") == PRIOR_CORRECTION_SHA256
+        and binding_failure.get("readiness_sha256") == sha256(PRIOR_N157A_READINESS)
+        and binding_failure.get("source_binding_sha256") == sha256(PRIOR_N157A_SOURCE_BINDING)
+        and binding_failure.get("checkpoint_restores") == 0
+        and binding_failure.get("model_queries") == 0
+        and binding_failure.get("model_updates") == 0
+        and binding_failure.get("readiness_source_map_matches_binding") is True
+        and binding_failure.get("cpu_reserve_seconds") == BINDING_FAILURE_CPU_RESERVE_SECONDS
+        and binding_failure.get("missing_binding_fields")
+        == ["prior_result_sha256", "prior_consumed_queries"]
+        and not PRIOR_N157A_PREFLIGHT.exists()
+        and not PRIOR_N157A_PREFLIGHT_ATTEMPT.exists()
+        and not PRIOR_N157A_PREFLIGHT_BINDING.exists(),
+        "PLAN-N1-157A2 requires the sealed metadata-binding failure and untouched preflight outputs",
     )
     parents = _result_rows(n150_result, "length_mixed")
     candidates = _result_rows(n155a_result, "unknown8_rebalanced")
@@ -281,6 +332,12 @@ def source_context() -> tuple[list[dict], dict[str, str], dict]:
         PRIOR_PREFLIGHT,
         PRIOR_PREFLIGHT_ATTEMPT,
         PRIOR_PREFLIGHT_BINDING,
+        PRIOR_CORRECTION_ADDENDUM,
+        PRIOR_N157A_SOURCE_AUDIT,
+        PRIOR_N157A_READINESS,
+        PRIOR_N157A_READINESS_ATTEMPT,
+        PRIOR_N157A_SOURCE_BINDING,
+        PRIOR_BINDING_FAILURE,
         FACE,
         FACE_AUDIT,
         FACE_CHECKS,
@@ -367,12 +424,15 @@ def source_readiness() -> dict:
         and cumulative <= LINKED_CPU_LIMIT_SECONDS
     )
     audit = {
-        "schema": "n1-plan157a-candidate-parent-source-audit-v1",
+        "schema": "n1-plan157a2-candidate-parent-source-audit-v1",
         "status": "complete" if complete else "stopped",
         "plan_sha256": PLAN_SHA256,
         "correction_addendum_sha256": CORRECTION_SHA256,
         "prior_result_sha256": PRIOR_RESULT_SHA256,
         "prior_progress_sha256": PRIOR_PROGRESS_SHA256,
+        "prior_n157a_readiness_sha256": sha256(PRIOR_N157A_READINESS),
+        "binding_failure_receipt_sha256": PRIOR_BINDING_FAILURE_SHA256,
+        "binding_failure_cpu_reserve_seconds": BINDING_FAILURE_CPU_RESERVE_SECONDS,
         "prior_consumed_queries": PRIOR_QUERIES,
         "remaining_queries": TOTAL_QUERIES - PRIOR_QUERIES,
         "n155a_result_sha256": N155A_RESULT_SHA256,
@@ -406,13 +466,16 @@ def source_readiness() -> dict:
     prepared = dict(sources)
     prepared[str(SOURCE_AUDIT.resolve())] = sha256(SOURCE_AUDIT)
     readiness = {
-        "schema": "n1-plan157a-candidate-parent-readiness-v1",
+        "schema": "n1-plan157a2-candidate-parent-readiness-v1",
         "status": "ready_for_six_bundle_preflight" if complete else "stopped",
         "complete": complete,
         "plan_sha256": PLAN_SHA256,
         "correction_addendum_sha256": CORRECTION_SHA256,
         "prior_result_sha256": PRIOR_RESULT_SHA256,
         "prior_progress_sha256": PRIOR_PROGRESS_SHA256,
+        "prior_n157a_readiness_sha256": sha256(PRIOR_N157A_READINESS),
+        "binding_failure_receipt_sha256": PRIOR_BINDING_FAILURE_SHA256,
+        "binding_failure_cpu_reserve_seconds": BINDING_FAILURE_CPU_RESERVE_SECONDS,
         "prior_consumed_queries": PRIOR_QUERIES,
         "remaining_queries": TOTAL_QUERIES - PRIOR_QUERIES,
         "source_audit_sha256": sha256(SOURCE_AUDIT),
@@ -434,11 +497,14 @@ def source_readiness() -> dict:
         "can_promote": False,
     }
     write_new(READINESS_ATTEMPT, {
-        "schema": "n1-plan157a-readiness-attempt-v1",
+        "schema": "n1-plan157a2-readiness-attempt-v1",
         "status": "started",
         "plan_sha256": PLAN_SHA256,
         "correction_addendum_sha256": CORRECTION_SHA256,
         "prior_result_sha256": PRIOR_RESULT_SHA256,
+        "prior_consumed_queries": PRIOR_QUERIES,
+        "remaining_queries": TOTAL_QUERIES - PRIOR_QUERIES,
+        "binding_failure_receipt_sha256": PRIOR_BINDING_FAILURE_SHA256,
         "cpu_seconds": round(cpu, 6),
         "model_loads": 0,
         "model_queries": 0,
@@ -446,10 +512,15 @@ def source_readiness() -> dict:
     })
     write_new(READINESS, readiness)
     write_new(SOURCE_BINDING, {
-        "schema": "n1-plan157a-source-binding-v1",
+        "schema": "n1-plan157a2-source-binding-v1",
         "status": "complete" if complete else "stopped",
         "plan_sha256": PLAN_SHA256,
         "correction_addendum_sha256": CORRECTION_SHA256,
+        "prior_result_sha256": PRIOR_RESULT_SHA256,
+        "prior_consumed_queries": PRIOR_QUERIES,
+        "remaining_queries": TOTAL_QUERIES - PRIOR_QUERIES,
+        "prior_n157a_readiness_sha256": sha256(PRIOR_N157A_READINESS),
+        "binding_failure_receipt_sha256": PRIOR_BINDING_FAILURE_SHA256,
         "readiness_sha256": sha256(READINESS),
         "source_hashes": prepared,
         "can_promote": False,

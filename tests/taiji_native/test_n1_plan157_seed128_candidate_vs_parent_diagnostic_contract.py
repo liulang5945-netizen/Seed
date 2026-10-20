@@ -14,7 +14,9 @@ def test_plan_digest_and_query_denominator_are_frozen() -> None:
     assert len(builder.ENDPOINTS) == 6
     assert builder.QUERIES_PER_ENDPOINT == 480
     assert builder.TOTAL_QUERIES == 2_880
-    assert builder.PRIOR_LINKED_CPU_SECONDS == 9_502.03125
+    assert builder.PRIOR_RESULT_LINKED_CPU_SECONDS == 9_502.03125
+    assert builder.BINDING_FAILURE_CPU_RESERVE_SECONDS == 5.0
+    assert builder.PRIOR_LINKED_CPU_SECONDS == 9_507.03125
     assert builder.LINKED_CPU_LIMIT_SECONDS == 18_000.0
     assert builder.PRIOR_QUERIES == 480
     assert builder.TOTAL_QUERIES - builder.PRIOR_QUERIES == 2_400
@@ -23,7 +25,8 @@ def test_plan_digest_and_query_denominator_are_frozen() -> None:
 def test_partial_face_continuation_reuses_exactly_the_sealed_endpoint() -> None:
     endpoints, sources, exclusions = builder.source_context()
     assert len(endpoints) == 6
-    assert builder.PRIOR_LINKED_CPU_SECONDS == 9_502.03125
+    assert builder.PRIOR_LINKED_CPU_SECONDS == 9_507.03125
+    assert builder.BINDING_FAILURE_CPU_RESERVE_SECONDS == 5.0
     assert builder.PRIOR_QUERIES == 480
     assert len(sources) >= 590
     assert exclusions["exclusion_summary"]["prior_n153_face_sha256"] == builder.sha256(

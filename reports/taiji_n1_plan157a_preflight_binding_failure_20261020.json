@@ -1,0 +1,28 @@
+{
+  "can_promote": false,
+  "checkpoint_restores": 0,
+  "confirmation_queries": 0,
+  "correction_addendum_sha256": "54e854274d33153a5379ad5a3cf004be65cd3fcceddd0f431359f6026296934e",
+  "cpu_reserve_seconds": 5.0,
+  "dev_queries": 0,
+  "error": "PLAN-N1-157 readiness/source binding is stale",
+  "face_sha256": "cf34e7de874b316581c4c6520786e2bf6406d328d4989b869901eb667e9c9a2f",
+  "failed_preflight_command_cpu_seconds": null,
+  "linked_cpu_before_failure": 9502.03125,
+  "missing_binding_fields": [
+    "prior_result_sha256",
+    "prior_consumed_queries"
+  ],
+  "model_queries": 0,
+  "model_updates": 0,
+  "preflight_outputs_created": false,
+  "readiness_sha256": "da987304546f202341cef44210a1f31c0b3eed02aa0337661cadca020a3b4fbe",
+  "readiness_source_map_matches_binding": true,
+  "schema": "taiji-n1-plan157a-preflight-binding-failure-v1",
+  "source_binding_sha256": "1d19eb363156e30e13af27ec8372578a90a76e54a8a48da1266366ea140d1ac8",
+  "source_guard_reproduction_cpu_seconds": 0.0,
+  "source_hashes_unchanged": true,
+  "status": "stopped",
+  "summary_zh": "N1-157A preflight在任何checkpoint恢复前因source binding缺少两项冗余计数元数据停止；readiness SHA与source map均匹配。模型/检查点恢复、查询、更新均为0。",
+  "updates": 0
+}
