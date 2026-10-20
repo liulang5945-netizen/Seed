@@ -21,7 +21,7 @@ N1-161完成2,880条未见问句句式诊断，144个endpoint×类别×长度×�
 
 ### 当前唯一下一步
 
-执行已批准的[PLAN-N1-161A](../../reference/PLAN-N1-161A_question_surface_itemwise_attribution_20261020.md)：只读seed131逐题结果与face，把错误输出按literal unknown、旧revision值、其他观测材料、direction/turn及其他输出分类，并按模板/类别/长度/endpoint配对。CPU≤30秒，0模型/checkpoint加载、0新查询、0更新/dev/holdout。
+已批准的[N1-161A分析器](../../reference/PLAN-N1-161A_question_surface_itemwise_attribution_20261020.md)及脚本/契约测试已实现，Ruff、py_compile与3项直接测试通过；尚未生成N1-161A报告。下一步先提交冻结分析器，再对N1-161 result/face做一次离线分类：literal unknown、旧revision值、其他观测材料、direction/turn及其他输出，并按模板/类别/长度/endpoint配对。CPU≤30秒，0模型/checkpoint加载、0新查询、0更新/dev/holdout。
 
 ### 历史状态（截至2026-10-19；后由N1-150结案取代）
 

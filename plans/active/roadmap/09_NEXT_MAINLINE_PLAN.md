@@ -1,6 +1,6 @@
 # 09 下一轮主线规划：架构与模型（N 系列，2026-10-06 开线；2026-10-14 第五版调度修订）
 
-> **2026-10-20 N1现状**：N1-161未见问句面已完成2,880条；candidate总命中441/1,440，parent460/1,440。unknown提升只出现在seed13，已知任务在新主动式材料问法下明显退化，说明此前same-template复制没有跨越问句表面。`can_promote=false`。已批准[N1-161A](../../reference/PLAN-N1-161A_question_surface_itemwise_attribution_20261020.md)做0查询逐题输出归因；之后据此修订N1路线。最新调度以[03](03_CURRENT_EXECUTION.md)为准。
+> **2026-10-20 N1现状**：N1-161未见问句面已完成2,880条；candidate 441/1,440、parent 460/1,440，unknown净增只出现在seed13，已知类低43。已批准[N1-161A](../../reference/PLAN-N1-161A_question_surface_itemwise_attribution_20261020.md)做只读逐题归因；分析器实现及3项契约验证通过，当前还未写报告。下一步一次分析错误输出类型，不加载模型、不查询、不训练、不触留出。最新调度以[03](03_CURRENT_EXECUTION.md)为准。
 
 > **历史快照（2026-10-18，㊵-1091）**：length-balanced schedule manifest/checks已提交，40来源守卫与raw/hard 6/7平衡通过。candidate runner及6项合同已完成，旧九端点SHA固定，runner已设计逐步长度账本与同模块子进程恢复。下一步zero-update验证runner，随后9枚fresh-zero checkpoint保存/独立恢复，任何失败均不启动optimizer update。
 
