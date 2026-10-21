@@ -12,7 +12,7 @@ R2对话方案的新恢复runner已通过Phase7审查、25项基础/runner合同
 
 v2三臂zero/full-turn bundle与assistant-canary均完成写盘并fresh-process恢复2/2；readiness CPU分别125.90625、45.828125、44.859375秒，三臂均`can_promote=false`。启动时内存约28GiB，双CPU样本为full_turn_1m 3.7%/2.0%、warm_start 9.4%/8.7%、fresh_same_capacity 6.2%/4.7%。结案与路径见[v2 readiness handoff](../../reference/PLAN-R2-DAILY-DIALOGUE-RECOVERY_V2_READINESS_20261021.md)。
 
-三臂于2026-10-21 19:06并发启动。最新已落盘进度：full_turn_1m 96/30,096 episodes、36,753 target-byte updates、总CPU382.140625秒；warm_start 32/30,096、15,037 updates、134.484375秒；fresh_same_capacity 32/30,096、15,037 updates、132.84375秒。每32 episodes提交不可变checkpoint并新进程核验，当前commit已验证；reserved dev仍未访问。零点与模型前置身份见各arm progress/attempt、checkpoint latest manifest。
+三臂于2026-10-21 19:06并发启动。最新已落盘进度：full_turn_1m 160/30,096 episodes、73,090 target-byte updates、总CPU647.953125秒；warm_start 128/30,096、57,435 updates、342.40625秒；fresh_same_capacity 128/30,096、57,435 updates、340.78125秒。三臂每32 episodes提交不可变checkpoint并新进程核验，latest receipts均有效；reserved dev仍未访问。零点与模型前置身份见各arm progress/attempt、checkpoint latest manifest。
 
 **唯一下一步：继续监测三臂并发训练与每32 episode checkpoint提交，直至全轮预训练和助手校准均到固定分母、终点独立恢复通过。** 中断时按对应arm `--resume` 恢复，只读取latest已验证bundle；不消费39-family评价面，不因格式或损失读数声称语言能力成立。
 
