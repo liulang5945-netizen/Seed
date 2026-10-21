@@ -1,7 +1,7 @@
 # N 主线交付黑板
 
 - 运行目录: E:\Seed\plans\reference\delivery-runs\20261021-n-mainline
-- 当前阶段: Phase 5 实现（07独立评测器；真实执行阻断）
+- 当前阶段: Phase 8 测试/执行监控（三臂v2固定训练进行中；终点恢复前的留出评测仍阻断）
 - 任务一句话: 延续当前R2-06/07冻结训练，补齐终点评测与证据闭环，依据结果推进N主线。
 
 ## 阶段记录
@@ -16,6 +16,7 @@
 ## 决策记录
 - 2026-10-21: 用户授权持续推进；本次新建交付编排，不伪造旧交付进度。遵循仓库目录规范，将技能运行目录放在plans/reference下，不新增根级目录。
 - 训练合同及源码绑定保持原样；评测器为独立新增交付，先静态验证，三候选训练结束且独立恢复后才查询保留prompt。
+- 2026-10-21 23:33：根据Phase 8中途审计及三臂最新durable receipts，原Phase 5指针已过时，现对齐到Phase 8执行监控；此次对齐不代表训练/评测通过或项目晋级，继续遵守终点恢复前不查询留出面。
 
 ## 回流记录
 
@@ -102,3 +103,19 @@
 - Ubuntu Ruff I001已在本地修复，当前全仓ruff通过；Windows全回归141项collection error均因测试job漏装psutil，workflow已补依赖。
 - Startup smoke与docker-build通过；Windows/Ubuntu详细日志已从GitHub connector取证，CLI 403不再阻断归因。
 - 当前修复尚未推送，远端重跑仍待代码发布；不声称CI整体全绿。
+
+### Phase 8 v2 三臂训练中途证据审计（2026-10-21 23:32 Asia/Shanghai）
+- 结论：三臂仍在固定全轮预训练；latest receipt / bundle 哈希和记录的恢复digest关系自洽，但没有终点报告，Phase 8 不可结案。
+- 产物：artifacts/08-execution-status-20261021.md。
+- 当前durable进度：full_turn_1m 4,320/30,096、2,069,142 target-byte updates、CPU15,516.546875秒；warm_start 6,528/30,096、3,168,217 updates、CPU15,127.40625秒；fresh_same_capacity 6,528/30,096、3,168,217 updates、CPU15,131.671875秒。
+- 验证范围：三条latest指针所列receipt文件SHA均匹配，receipt所指bundle文件SHA均匹配，receipt的verification.digest均等于digest；attempt均为training、dev_queries=0、can_promote=false。此审计未重新运行fresh-process worker；恢复字段引用runner写入的receipt。
+- 缺失门：每臂全轮30,096与assistant 525 episode固定分母、final report/checkpoint、final fresh-process恢复及后续独立一次性留出面评测均未完成。
+- 唯一下一步：继续监测同三臂v2训练与每32 episode durable commits；不得查询dev/reference，直至三个固定终点及最终恢复门全部完成。
+- 状态：中途更新；不表示Phase 8通过或项目可晋级。
+
+### Phase 8 v2 进度刷新（2026-10-21 23:33 Asia/Shanghai）
+- 结论：三臂仍在固定预训练，耐久提交继续增长；1M臂4,320/30,096，对照两臂各6,560/30,096。
+- 最新durable状态：full_turn_1m 2,069,142 updates、CPU15,516.546875秒；warm_start 3,187,955 updates、CPU15,220.0625秒；fresh_same_capacity 3,187,955 updates、CPU15,224.421875秒。
+- 最新receipt核验：三臂progress、latest与receipt一致；receipt SHA及bundle SHA均匹配，恢复digest与receipt digest相同。此前23:32的审计产物保留其当时快照；本次按23:33实际写盘状态更新路线图。
+- 唯一下一步：继续监测同三臂至固定分母和final fresh-process恢复完成；期间不查询dev/reference，不判定能力晋级。
+- 状态：执行中，Phase 8未结案。
