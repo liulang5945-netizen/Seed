@@ -24,7 +24,7 @@
 ## 回流记录
 
 ### 回流 1 · Phase 7 评测审查 → Phase 6 AI实现
-- 门禁：code-reviewer / 目标：ai-integration / 预算：2（已用1）/ 状态：进行中。
+- 门禁：code-reviewer / 目标：ai-integration / 预算：2（已用2）/ 状态：未解决（预算用尽；剩余P1待主理人安排定向处理）。
 - 原因：P1共6项：restore-worker可绕attempt/预算；子进程直接脚本启动缺仓库import root；restore与generation无硬deadline；prompt selector前未复核source/result/readiness；attempt/ledger仅fsync文件，Windows目录项durability未证明。P2共3项：最终CPU/wall成本低报final写盘；岗位reserve计算错误；selector前缺耐久意图事件。
 - 复检范围：全部P1/P2，新增负向/中断测试；不得访问dev/reference或运行模型/真实selector/`--execute`。
 - 当前先决：P1-06已由architecture-reviewer补充合同并提交`75cba6ec5`；Phase 6 AI实现可开始六项P1/三项P2返工，Phase 8三臂训练指针维持不变。
@@ -187,3 +187,11 @@
 - 验证范围：静态审查；引用Phase6报告的synthetic 12/12但本次未重跑；0真实模型/selector/dev/reference/--execute。
 - 给下游：P1逐项返工并补失败注入覆盖后复审；三臂Phase8训练继续独立推进，真实39面仍冻结。当前主阶段指针保持Phase8。
 - 回流判定：打回ai-integration；若Windows目录durability无可验证实现，先交architecture-reviewer修订平台合同。
+
+### Phase 7 第二轮独立复审：R2 recovery v2评测器（2026-10-22）
+- 结论：不放行；P0=0、P1=1、P2=1。首轮问题中P1-01..06与P2-01..03均已关闭；残留P1-07为`SupervisedWorker.request()`在deadline loop前同步写入完整generation IPC，worker未读取且payload超过管道缓冲时可阻塞父进程并越过14,400秒wall门。P2-04为Job assignment前CPU采样窗口及Job对象未建立或树终止无法确认时的整树退出证据缺口；当前路径fail closed、不进入IPC/selector。
+- 产物：`artifacts/07-evaluation-review-rework.md`。
+- 验证：根任务独立报告新增synthetic测试37/37通过、Ruff与py_compile通过；本审查未读dev/reference、加载模型、运行worker、selector或`--execute`。
+- 风险与待办：Phase 7复审预算已用尽（2/2）；selector与真实156调用继续冻结，待主理人安排剩余P1定向修复及后续门禁。
+- 回流判定：P1-07未关闭；本次不放行，也不将返工预算外的新复审视为已授权。
+- 阶段指针：保持Phase 8三臂训练/执行监控；不代表训练通过、模型晋级或W5b解锁。
