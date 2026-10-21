@@ -110,7 +110,7 @@ def _validate_inputs() -> tuple[Any, Any, dict[str, Any], dict[str, Any], dict[s
         baseline.get("checkpoint_digest") != baseline_digest
         or baseline.get("checkpoint_digest") != "1a77364a42633686dc9e1e9ee6a13a7e09b4f07770e3841d873bacd9eadaeaeb"
         or baseline.get("corpus_digest") != base._read_json(base.ASSISTANT_MANIFEST).get("corpus_digest")
-        or base._sha256(base.BASELINE_CHECKPOINT) != base.BASELINE_CHECKPOINT_SHA256
+        or base.sha256(base.BASELINE_CHECKPOINT) != base.BASELINE_CHECKPOINT_SHA256
     ):
         raise Refuse("warm-start parent checkpoint provenance differs")
     config = baseline.get("model", {}).get("config")
