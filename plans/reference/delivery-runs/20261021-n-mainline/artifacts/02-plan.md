@@ -28,4 +28,4 @@
 
 ## Phase 7 首轮审查回流（2026-10-22）
 
-首轮独立代码审查结论为打回（P0=0、P1=6、P2=3）；W5a尚未通过，不得进入真实评测。返工顺序为：架构岗先裁定Windows attempt/ledger目录项durability门；随后AI集成岗修复六项P1（worker只能由有效attempt/restore事件授权、子进程模块启动、restore与generation预算deadline、prompt selector前复核来源、支持平台的durable one-shot文件发布）并处理三项P2（完整成本报告口径、reserve算术、selector阶段意图记录），增加对应的合成失败注入。返工结束后重跑定向测试并由code-reviewer复审。三臂W4训练继续，不访问dev/reference，不启动真实restore、selector或generation。
+首轮独立代码审查结论为打回（P0=0、P1=6、P2=3）；W5a尚未通过，不得进入真实评测。P1-06平台合同已由架构岗补充裁决并提交：仅支持Windows本地固定NTFS，以同目录exclusive-temp写入、文件刷新后经`MoveFileExW(MOVEFILE_WRITE_THROUGH)`无覆盖发布attempt和initial ledger；UNC/网络、ReFS、可移动或未验证文件系统必须fail closed。AI集成岗据此修复六项P1（worker只能由有效attempt/restore事件授权、子进程模块启动、restore与generation预算deadline、prompt selector前复核来源、支持平台的durable one-shot文件发布）并处理三项P2（完整成本报告口径、reserve算术、selector阶段意图记录），增加对应的合成失败注入。返工结束后重跑定向测试并由code-reviewer复审。三臂W4训练继续，不访问dev/reference，不启动真实restore、selector或generation。

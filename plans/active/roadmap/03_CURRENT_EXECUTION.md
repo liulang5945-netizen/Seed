@@ -2,7 +2,7 @@
 
 ## 当前执行：N1-165A结案；R2自然中文多轮对话v2三臂重做
 
-## 当前唯一下一步：先冻结Windows attempt/ledger耐久策略，再关闭W5a代码审查的P1/P2并复审；训练持续，留出面保持冻结
+## 当前唯一下一步：按已冻结的Windows本地NTFS耐久合同关闭W5a代码审查P1/P2并通过复审；训练持续，留出面保持冻结
 
 ### 最新事实与主线进展（2026-10-22 00:10 Asia/Shanghai）
 
@@ -17,6 +17,8 @@ v2三臂zero/full-turn bundle与assistant-canary均完成写盘并fresh-process�
 评测器与12项synthetic测试已实现，但Phase7独立审查打回（P0=0、P1=6、P2=3），暂不放行。阻断涉及restore-worker绕过attempt/预算、restore与generation无硬deadline、selector前来源复核缺失、Windows目录项durability未证明，以及restore子进程启动导入路径。审查报告见[07-evaluation-review.md](../../reference/delivery-runs/20261021-n-mainline/artifacts/07-evaluation-review.md)。根任务独立定向复跑在仓库内basetemp下12/12通过（5.99秒），新增文件Ruff、py_compile和模块形式CLI `--help`通过；默认Windows TEMP不可写，直接脚本路径的`--help`不适用。
 
 评测仍按 [v2四端点架构](../../reference/delivery-runs/20261021-n-mainline/artifacts/04-v2-evaluation-architecture.md)、[修订计划](../../reference/delivery-runs/20261021-n-mainline/artifacts/02-plan.md) 与 [v2需求](../../reference/delivery-runs/20261021-n-mainline/artifacts/03-requirements.md)执行：parent+三臂、39×4=156新调用；14,400 process-CPU秒/14,400 wall秒双门。全部P1关闭且Phase7复审通过、三臂final与fresh-process恢复齐备前，不运行真实restore、selector、`--execute`或读取保留prompt。
+
+P1-06平台合同已由Phase4架构补充裁决并提交`75cba6ec5`：仅支持本地固定NTFS，attempt与initial ledger用独占临时文件、刷新后通过`MoveFileExW(MOVEFILE_WRITE_THROUGH)`无覆盖发布；UNC/网络、ReFS、可移动介质和其他未验证文件系统fail closed。
 
 **唯一下一步：按Phase7回流先由架构岗定稿Windows耐久发布门，再由AI集成岗关闭P1/P2并接受独立复审。** 三臂训练保持现有会话运行；中断时按对应arm `--resume` 恢复，只读取latest已验证bundle；不消费39-family评价面，不因格式或损失读数声称语言能力成立。
 

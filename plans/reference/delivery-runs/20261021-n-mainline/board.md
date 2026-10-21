@@ -18,6 +18,7 @@
 - 训练合同及源码绑定保持原样；评测器为独立新增交付，先静态验证，三候选训练结束且独立恢复后才查询保留prompt。
 - 2026-10-21 23:33：根据Phase 8中途审计及三臂最新durable receipts，原Phase 5指针已过时，现对齐到Phase 8执行监控；此次对齐不代表训练/评测通过或项目晋级，继续遵守终点恢复前不查询留出面。
 - 2026-10-21：Phase 3需求岗新增R2 recovery v2评测需求补充，因旧06未保存39面generation且v2 result schema不同；只替代v2评测调用与验收口径，不改训练合同、N1-166冻结门或旧R2-07历史。下游实现与测试按R2V2-01..07执行。
+- 2026-10-22：为关闭P7的P1-06，architecture-reviewer裁决仅支持Windows本地固定NTFS，以exclusive-temp写入/刷新后`MoveFileExW(MOVEFILE_WRITE_THROUGH)`无覆盖发布attempt和initial ledger；网络、ReFS、可移动及未验证文件系统拒绝。架构补充已提交`75cba6ec5`；Phase6可按该边界返工，Phase8主训练指针不变。
 
 ## 回流记录
 
@@ -25,7 +26,7 @@
 - 门禁：code-reviewer / 目标：ai-integration / 预算：2（已用1）/ 状态：进行中。
 - 原因：P1共6项：restore-worker可绕attempt/预算；子进程直接脚本启动缺仓库import root；restore与generation无硬deadline；prompt selector前未复核source/result/readiness；attempt/ledger仅fsync文件，Windows目录项durability未证明。P2共3项：最终CPU/wall成本低报final写盘；岗位reserve计算错误；selector前缺耐久意图事件。
 - 复检范围：全部P1/P2，新增负向/中断测试；不得访问dev/reference或运行模型/真实selector/`--execute`。
-- 当前先决：P1-06的Windows文件名耐久策略先由architecture-reviewer补充合同；Phase 8三臂训练指针维持不变。
+- 当前先决：P1-06已由architecture-reviewer补充合同并提交`75cba6ec5`；Phase 6 AI实现可开始六项P1/三项P2返工，Phase 8三臂训练指针维持不变。
 
 ## 风险与待办
 - 训练中不读取dev/reference，不写训练checkpoint，不把格式统计当成语言能力。
