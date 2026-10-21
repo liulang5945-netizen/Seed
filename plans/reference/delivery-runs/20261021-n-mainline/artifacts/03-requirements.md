@@ -47,3 +47,21 @@ AC-R-04 无训练更新；原checkpoint文件hash保持不变；执行预算明�
 - 回流目标：无。
 - 返工原因：无。
 - 给下游：按R2V2-01至R2V2-07实现与synthetic验证；真实prompt访问须等所有门通过。
+
+## R2 recovery v2运行时预算澄清（2026-10-22）
+
+本补充将 `artifacts/04-v2-evaluation-architecture.md` 中“父进程监督的长驻worker、逐条授权与有限期限/进程树终止”细化为可验收要求。它补充R2V2-01..07的运行时边界，保留39×4=156调用分母、14,400 process-CPU秒与14,400 wall秒双预算及此前其余门；不改变训练合同、N1-166冻结状态，也不形成新的能力主张。
+
+### 新增运行时要求
+
+|编号|需求|优先级 / 依赖|验收标准|
+|---|---|---|---|
+|R2V2-08|评测由一个新启动且受父进程监督的长驻worker承载四端点恢复与模型驻留；恢复全部完成前不得选择prompt。之后worker只能处理父进程逐条授权的单个query，不具备selector、批量预取、重试或自行取prompt能力。|P0；R2V2-01、R2V2-03|AC-R2V2-08：给定synthetic运行，当四个endpoint都在该worker中fresh-process恢复并把回执交给父进程，则父进程先逐项durable记录四个成功回执，之后才可调用selector。每条query须由父进程在`query_started`耐久落盘后单独IPC授权；worker未收到该授权不得生成，处理完单条后等待下一授权。测试证明worker无法自行调用selector、读取prompt源、预取下一题或重试。|
+|R2V2-09|每个restore与generation均有有限deadline，且整棵受监督进程树的CPU/wall、取消、终止和失败落账成本计入原14,400秒双预算。父进程必须能在deadline或预算门触发时有界终止worker及所有后代。|P0；R2V2-03、R2V2-05|AC-R2V2-09：给定restore/generation任务，当准备启动worker时，必须存在有限的单次deadline、有限采样间隔、有限终止宽限、强制终止/wait确认路径及足够的failure-finalization reserve；父进程按全局剩余CPU/wall预算扣除这些reserve后逐任务授权。给定永久阻塞、CPU忙循环或创建后代的synthetic worker，当deadline/CPU门触发，则父进程停止派发并在有界时间内终止整棵树、记入实际进程树CPU/wall和超时失败事件、消费attempt且不重试。|
+|R2V2-10|预算、deadline或整树取消能力有一项无法在prompt访问前证明时，评测必须fail closed。|P0；R2V2-08、R2V2-09|AC-R2V2-10：给定缺失/非有限的budget、deadline或终止证明，或平台无法确认worker树及其后代会被终止，当真实执行预检，则拒绝启动评测worker/selector，记录拒绝原因，`selector_calls=0`且`generation_calls=0`。任务中途超时、CPU/wall触限或整树终止失败时，保留已耐久attempt/query账本，消费attempt并禁止续跑或第二次执行；不得超过14,400秒任一预算门。|
+
+### 边界
+
+- 本修订仅澄清v2评测实现和合成验收。parent只读基线、三条v2 `assistant_sft` final、source/checkpoint核验、旧输出不可冒充复用、156分母、reference/exact scoring为0、training/optimizer updates为0、`can_promote=false`及固定12-family人工审阅全部保持原要求。
+- 若单worker内存/资源门或进程树取消能力不成立，不允许退回父进程同步生成、逐query重载模型或任何未审查拓扑；应在selector前拒绝并保留证据。任何替代拓扑须先由架构岗审查，且重新证明同样的预算、deadline、耐久账本和156分母。
+- 真实selector和生成仍等待Phase8三臂final结果及全部恢复门通过；此运行时澄清不授权读取真实prompt、运行模型或训练。

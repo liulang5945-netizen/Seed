@@ -19,6 +19,7 @@
 - 2026-10-21 23:33：根据Phase 8中途审计及三臂最新durable receipts，原Phase 5指针已过时，现对齐到Phase 8执行监控；此次对齐不代表训练/评测通过或项目晋级，继续遵守终点恢复前不查询留出面。
 - 2026-10-21：Phase 3需求岗新增R2 recovery v2评测需求补充，因旧06未保存39面generation且v2 result schema不同；只替代v2评测调用与验收口径，不改训练合同、N1-166冻结门或旧R2-07历史。下游实现与测试按R2V2-01..07执行。
 - 2026-10-22：为关闭P7的P1-06，architecture-reviewer裁决仅支持Windows本地固定NTFS，以exclusive-temp写入/刷新后`MoveFileExW(MOVEFILE_WRITE_THROUGH)`无覆盖发布attempt和initial ledger；网络、ReFS、可移动及未验证文件系统拒绝。架构补充已提交`75cba6ec5`；Phase6可按该边界返工，Phase8主训练指针不变。
+- 2026-10-22：Phase 3需求岗按最新Phase 4长驻worker/deadline合同新增R2V2-08..10运行时预算验收，不改R2V2-01..07、156分母、训练合同或能力边界；若预算/有限deadline/进程树取消能力无法证明，selector与generation均须为0。
 
 ## 回流记录
 
@@ -151,6 +152,14 @@
 - 风险：任何source、checkpoint、prompt face、账本或budget证据不完整均须在留出prompt读取前拒绝；用户能力目标不能由此小样本自动判定。
 - 给下游：按R2V2需求实现synthetic测试；待Phase8终点独立恢复通过后才运行真实评测。
 - 回流判定：通过；无需求缺口需要退回Phase2。本补充不改变Phase8主指针。
+
+### Phase 3补充：R2 recovery v2运行时预算澄清（2026-10-22）
+- 结论：通过；将最新Phase 4长驻worker、逐条授权、单次deadline与进程树终止约束转为R2V2-08..10及AC-R2V2-08..10。
+- 产物：artifacts/03-requirements.md（追加“R2 recovery v2运行时预算澄清”）。
+- 关键要点：单个父进程监督长驻worker；四endpoint durable restore前selector为0；query逐条fsync授权；所有restore/generation有有限期限；进程树CPU/wall和终止/落账计入14,400双门。
+- 风险：取消树、预算或期限任一不可证明时，执行在selector前fail closed；不改变156次分母和已冻结训练来源。
+- 给下游：Phase6实现与Phase7审查按R2V2-08..10补synthetic timeout/进程树/预算测试，主Phase8指针保持不变。
+- 回流判定：通过；架构已明确可实现合同，无上游返工。
 
 ### Phase 6 补充：R2 recovery v2独立评测实现（2026-10-21）
 - 结论：W5a实现完成；端点固定parent基线加三条v2 `assistant_sft` final，39×4=156次新生成。Phase8主阶段指针保持不变。
