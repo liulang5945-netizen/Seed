@@ -78,3 +78,4 @@
 - 验证：联合25 passed（41.01秒），四文件ruff通过；0真实prepare/正式训练/dev。
 - 产物：artifacts/06-implementation-backend.md追加；回流判定通过。
 - Phase 7 source失败尾账最终复审通过: preparation_journal在校验前继承attempt及全部事件并保持历史charged地板，连续3次失败不归零；独立runner15/15通过，P0/P1均0。可进入真实zero准备与恢复验证；未执行真实prepare/训练/dev。
+- Phase 7最终P2审查通过: 启动双CPU采样/8GiB门及失败账本、final同目录fsync/write-once rename已落实；独立runner18/18通过，P0/P1仍0。可放行三arm真实zero准备验证；正式训练前仍核对预算reserve充分性。未真实prepare/execute/dev。

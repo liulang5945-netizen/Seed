@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 
 import pytest
+import torch
 
 from scripts.training import run_taiji_r2_daily_dialogue_recovery as recovery
 
@@ -73,6 +74,33 @@ def test_formal_recovery_budget_does_not_inherit_old_attempt_as_zero() -> None:
     assert recovery.Budget("warm_start").limit == 120_000
     assert recovery.Budget("fresh_same_capacity").limit == 120_000
     assert recovery.ARMS == ("full_turn_1m", "warm_start", "fresh_same_capacity")
+
+
+def test_start_resource_guard_requires_two_cpu_samples_and_memory(monkeypatch) -> None:
+    samples = iter((30.0, 80.0))
+    monkeypatch.setattr(recovery.psutil, "cpu_percent", lambda *, interval: next(samples))
+    monkeypatch.setattr(recovery.psutil, "virtual_memory", lambda: type("Mem", (), {"available": 16 * 1024**3})())
+    result = recovery.resource_snapshot()
+    assert result["cpu_percent_samples"] == [30.0, 80.0]
+    assert result["available_memory_gib"] == 16
+
+
+def test_start_resource_guard_rejects_overloaded_cpu(monkeypatch) -> None:
+    samples = iter((20.0, 86.0))
+    monkeypatch.setattr(recovery.psutil, "cpu_percent", lambda *, interval: next(samples))
+    monkeypatch.setattr(recovery.psutil, "virtual_memory", lambda: type("Mem", (), {"available": 16 * 1024**3})())
+    with pytest.raises(recovery.base.Refuse, match="CPU start samples"):
+        recovery.resource_snapshot()
+
+
+def test_final_export_is_fsync_published_and_write_once(tmp_path) -> None:
+    path = tmp_path / "final.pt"
+    checkpoint = {"probe": torch.tensor([1, 2, 3])}
+    recovery.atomic_save_final(path, checkpoint)
+    loaded = torch.load(path, weights_only=True)
+    assert torch.equal(loaded["probe"], checkpoint["probe"])
+    with pytest.raises(FileExistsError):
+        recovery.atomic_save_final(path, checkpoint)
 
 
 def test_resume_uses_latest_training_stage_only(tmp_path) -> None:

@@ -82,3 +82,12 @@ boot identity与active CPU差仍存在，异boot回退wall×core；prepare_owner
 - 结论：通过
 - 回流目标：无
 - 返工原因：无；source-validation连续失败的尾账单调缺口已修并合成验证
+
+## 最后P2增量审查：启动资源与final导出
+已静态确认resource_snapshot在真实zero准备工作前及训练stage循环前各取两次1秒全机CPU样本，任一样本>85%或可用内存<8GiB即拒绝；准备失败进入已有不可变失败事件/CPU账本，训练失败进入progress失败账本。准备与训练成功记录各自资源快照，禁止把一次prepare通过当成未来训练资源永久通过。
+
+atomic_save_final使用目标同目录唯一tmp、torch.save后flush/fsync、目标存在拒绝、os.rename发布、finally清理tmp；训练stage final已改用此入口。Windows下rename不覆盖既有目标，且root lease避免本实现双写；随后独立恢复仍是有效性门。此变更解决原普通导出未fsync的P2；不额外承诺磁盘硬件/文件系统在任意断电下的目录元数据持久性。
+
+本轮独立离线runner契约18/18通过（--basetemp=.seed_test_tmp/recovery_review_20261021/pytest_resource_final）。主理人提供联合28测试及四Python文件Ruff通过证据。本轮未真实prepare/execute/dev，P0/P1继续为0，可放行三arm真实zero准备与独立恢复验证。
+
+原固定120秒reserve的充分性仍需真实准备成本/最坏episode证据后再作为正式训练前门禁核对，此项不阻断当前只做zero准备。当前有效Phase7结论：通过。

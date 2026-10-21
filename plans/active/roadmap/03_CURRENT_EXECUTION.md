@@ -6,7 +6,7 @@
 
 用户确认：客户端更新导致训练中断；沙箱外进程清单与CIM均未发现Python训练进程；三条run没有result、partial或训练终点checkpoint，仅保留zero/canary。06最后落盘14,880/30,096 episode、7,195,482 target-byte updates；07 warm-start最后汇总9,984 episode/4,798,480 updates，fresh-same-capacity最后汇总9,856 episode/4,718,755 updates。07每128条才汇总，因此只是最后已记录下界。旧attempt仍为started/training，不能继续视作存活。退出原因为用户确认的客户端更新；见[中断审计](../../../reports/taiji_r2_daily_dialogue_interruption_audit_20261021.json)。本次0模型加载、0训练、0dev/reference查询。
 
-**唯一下一步：先完成周期checkpoint与精确恢复合同及等价性验证，再以新路径从已存zero bundle重建三臂训练。** 已消失的训练权重不能从progress还原，不把重建写成续接14,880/9,984/9,856步；旧失败证据与CPU消耗必须保留并保守计账。新恢复方案需单独记录预算、训练前保存恢复前置、原配方不变和失败停止线。07缺失的独立配对评测器合同继续审查，但在恢复训练三终点齐备前禁止执行。专家团本次编排见[黑板](../../reference/delivery-runs/20261021-n-mainline/board.md)。
+**唯一下一步：依次对full_turn_1m、warm_start、fresh_same_capacity执行`--prepare-only`，在新路径保存zero envelope并做fresh-process独立恢复核验。** 三臂准备全部通过后，才进入有资源/预算守卫的从zero正式重做；先前的恢复合同、逐位合成测试和P0/P1代码审查已经通过。 已消失的训练权重不能从progress还原，不把重建写成续接14,880/9,984/9,856步；旧失败证据与CPU消耗必须保留并保守计账。新恢复计划已单独记录新增预算、训练前保存恢复前置、原配方与失败停止线。07缺失的独立配对评测器合同继续审查，但在恢复训练三终点齐备前禁止执行。专家团本次编排见[黑板](../../reference/delivery-runs/20261021-n-mainline/board.md)。
 
 远端最近CI（run 39537675979，HEAD 02e82d9）为failure，m7-ci成功；日志API返回403 rate limit，当前不能归因或声称CI全绿。
 

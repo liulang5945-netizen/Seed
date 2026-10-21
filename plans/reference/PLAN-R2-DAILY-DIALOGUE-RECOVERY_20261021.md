@@ -46,15 +46,15 @@
 每臂终点须核对全轮30096 episode/14517912目标字节更新、校准525/113209；两阶段global_step、history与恢复回执一致；三臂总量分别14631121。full_turn_1m保持旧06 zero配置，07两臂保持278010 active parameters，不能在恢复里扩架构或切任务。
 
 ## 终点评测及证据边界
-三臂训练全终点、独立恢复通过后才允许生成。当前旧06尚无已保存39条dev generation报告；因此本任务修订07原评测合同的“复用06输出”前提，因此原“复用旧06两端输出”条件未成立：新恢复评测需一次选择与旧06同冻结规则的39个保留family，每family唯一prompt/history，绝不读reference；同次write-once报告对旧8epoch只读baseline与新三臂各生成一次，共156调用。若发现旧06完整合法generation已存在则复用其旧baseline及同面输入、严格按已存输出身份决定新增调用，不重复生成任何已消费端点。
+三臂训练全终点、独立恢复通过后才允许生成。当前旧06尚无已保存39条dev generation报告，故旧评测“复用06两端输出”前提未成立：新恢复评测需一次选择与旧06同冻结规则的39个保留family，每family唯一prompt/history，绝不读reference；同次write-once报告对旧8epoch只读baseline与新三臂各生成一次，共156调用。若发现旧06完整合法generation已存在则复用其旧baseline及同面输入、严格按已存输出身份决定新增调用，不重复生成任何已消费端点。
 
 评测入口需独立版本化架构补充及契约测试后才可运行；不得把旧07评测器默默改成恢复评测。预算14400包含所有评测恢复、来源/face校验、失败调用与持久化。attempt在首次prompt访问前独占创建，query_started先持久化、输出逐条fsync、失败留证不静默重试；合成测试先验证计数。人工样例固定同一39面前12 families，四端并列中文可读性/贴题/历史连贯/重复；表面指标只作描述，can_promote=false，不作为新独立确认或自动晋升。
 
 ## 执行顺序与收官
 1. 新runner、CPU账本与合成等价/故障测试实现，审查并通过定向验证后提交。
-2. 三臂zero envelope保存及fresh-process恢复前置，通过并记录资源/预算后提交readiness。
+2. 三臂zero envelope保存及fresh-process恢复前置，通过并记录资源/预算后提交readiness。准备与训练启动均要求两次CPU采样≤85%、可用内存≥8GiB；最终导出同目录临时写入后fsync并write-once rename，交易envelope仍为权威恢复源。
 3. 资源允许并发从zero重做，监测事务checkpoint；终点核对与独立恢复。
 4. 评测补充合同通过后一次39面比较、固定12样例人工复核，保留失败历史。
 5. 同步active当前执行与N主线计划、交付黑板、报告及结案，提交；依据真实结果决定下一研究节点，不预先宣布能力收官。
 
-唯一下一步：实现并验证带事务式周期checkpoint的独立恢复runner及CPU账本；当前不启动正式训练、不读取真实dev。
+唯一下一步：依次对full_turn_1m、warm_start、fresh_same_capacity执行--prepare-only，完成zero envelope保存和fresh-process恢复核验；全臂ready后再启动正式训练。当前不启动正式训练、不读取真实dev。

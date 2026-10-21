@@ -58,6 +58,16 @@ def host_cpu_seconds() -> float:
     )
 
 
+def resource_snapshot() -> dict[str, Any]:
+    samples = [psutil.cpu_percent(interval=1.0), psutil.cpu_percent(interval=1.0)]
+    available_gib = psutil.virtual_memory().available / 1024**3
+    if available_gib < 8.0:
+        raise base.Refuse(f"available memory below 8 GiB: {available_gib:.2f}")
+    if any(sample > 85.0 for sample in samples):
+        raise base.Refuse(f"system CPU start samples exceed 85%: {samples}")
+    return {"cpu_percent_samples": samples, "available_memory_gib": round(available_gib, 3)}
+
+
 def paths(arm: str) -> dict[str, Path]:
     if arm not in ARMS:
         raise ValueError("unknown recovery arm")
@@ -185,6 +195,21 @@ def restore_final(path: Path, stage: str, budget: Budget) -> dict[str, Any]:
     except BaseException:
         budget.child_seconds += max(0.0, host_cpu_seconds() - host_before)
         raise
+
+
+def atomic_save_final(path: Path, payload: dict[str, Any]) -> None:
+    """Publish a final export only after its file contents reach durable storage."""
+    temporary = path.with_name(path.name + "." + uuid.uuid4().hex + ".tmp")
+    try:
+        with temporary.open("xb") as stream:
+            torch.save(payload, stream)
+            stream.flush()
+            os.fsync(stream.fileno())
+        if path.exists():
+            raise FileExistsError(path)
+        os.rename(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 @contextmanager
@@ -326,6 +351,7 @@ def prepare(arm: str, *, resume: bool = False) -> dict[str, Any]:
     try:
         bindings = source_bindings(arm)
         pretrain, assistant, _ = base._validate_sources()
+        resources = resource_snapshot()
         if resume:
             budget.resume_from(
                 {
@@ -384,6 +410,7 @@ def prepare(arm: str, *, resume: bool = False) -> dict[str, Any]:
                 "status": "ready",
                 "arm": arm,
                 "bindings": bindings,
+                "resources_at_prepare": resources,
                 "zero_restore": zero_receipt,
                 "assistant_canary_restore": canary_receipt,
                 "cpu_seconds": budget.used(),
@@ -423,6 +450,7 @@ def execute(arm: str, *, resume: bool = False) -> dict[str, Any]:
     if output["result"].exists():
         raise base.Refuse("recovery result exists; do not retry")
     readiness = base._read_json(output["readiness"])
+    budget = Budget(arm, float(readiness.get("cpu_seconds", 0.0)))
     bindings = source_bindings(arm)
     if readiness.get("status") != "ready" or readiness.get("bindings") != bindings:
         raise base.Refuse("recovery readiness/source binding differs")
@@ -439,13 +467,13 @@ def execute(arm: str, *, resume: bool = False) -> dict[str, Any]:
                 "status": "training",
                 "arm": arm,
                 "started_utc": utc_now(),
+                "cpu_seconds_before_training": budget.used(),
                 "bindings": bindings,
                 "restart_from_zero": True,
                 "dev_queries": 0,
                 "can_promote": False,
             },
         )
-    budget = Budget(arm, float(readiness["cpu_seconds"]))
     receipts: dict[str, Any] = {}
     final_payload: dict[str, Any] | None = None
     run_context = open_store(
@@ -453,6 +481,7 @@ def execute(arm: str, *, resume: bool = False) -> dict[str, Any]:
     )
     run_context.__enter__()
     progress = None
+    resources = None
     try:
         progress = output["progress"].open("a" if resume else "x", encoding="utf-8", newline="\n")
         if resume:
@@ -465,6 +494,12 @@ def execute(arm: str, *, resume: bool = False) -> dict[str, Any]:
             )
             _, _, envelope = resume_store.load_latest(restore_rng=False)
             budget.resume_from(envelope)
+        resources = resource_snapshot()
+        base.write_jsonl(
+            progress,
+            {"event": "training_resource_preflight_passed", "arm": arm,
+             "cpu_seconds": budget.used(), "resources": resources},
+        )
         for stage, corpus, epochs, expected_episodes, expected_updates in (
             ("pretraining", pretrain, 8, 30_096, 14_517_912),
             ("assistant_sft", assistant, 1, 525, 113_209),
@@ -519,7 +554,7 @@ def execute(arm: str, *, resume: bool = False) -> dict[str, Any]:
                 final_payload = trainer.checkpoint()
                 final_path = output["root"] / f"{stage}_final.pt"
                 if not final_path.exists():
-                    base._atomic_save(final_payload, final_path)
+                    atomic_save_final(final_path, final_payload)
                 elif (
                     torch.load(final_path, map_location="cpu", weights_only=True)[
                         "checkpoint_digest"
@@ -546,6 +581,7 @@ def execute(arm: str, *, resume: bool = False) -> dict[str, Any]:
             "bindings": bindings,
             "stages": receipts,
             "cpu_seconds": budget.used(),
+            "resources_at_training_start": resources,
             "dev_queries": 0,
             "generation_queries": 0,
             "can_promote": False,
