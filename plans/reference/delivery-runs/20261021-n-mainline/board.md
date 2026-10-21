@@ -17,6 +17,7 @@
 - 2026-10-21: 用户授权持续推进；本次新建交付编排，不伪造旧交付进度。遵循仓库目录规范，将技能运行目录放在plans/reference下，不新增根级目录。
 - 训练合同及源码绑定保持原样；评测器为独立新增交付，先静态验证，三候选训练结束且独立恢复后才查询保留prompt。
 - 2026-10-21 23:33：根据Phase 8中途审计及三臂最新durable receipts，原Phase 5指针已过时，现对齐到Phase 8执行监控；此次对齐不代表训练/评测通过或项目晋级，继续遵守终点恢复前不查询留出面。
+- 2026-10-21：Phase 3需求岗新增R2 recovery v2评测需求补充，因旧06未保存39面generation且v2 result schema不同；只替代v2评测调用与验收口径，不改训练合同、N1-166冻结门或旧R2-07历史。下游实现与测试按R2V2-01..07执行。
 
 ## 回流记录
 
@@ -135,3 +136,11 @@
 - 风险：真实数据面必须等四端点恢复和账本完整；attempt/CPU ledger须在首个restore前耐久落盘，失败消费attempt且禁止重跑。
 - 给下游：AI集成岗按04-v2架构实现合成验证；Phase 8主训练指针不变，不访问dev/reference，不改训练合同。
 - 状态：计划补充完成；不推进主阶段指针，不表示评测或训练通过。
+
+### Phase 3 补充：R2 recovery v2评测需求（2026-10-21）
+- 结论：通过；旧R-01..04保留历史，R2V2-01..07定义本次v2评测的可验收行为。
+- 产物：artifacts/03-requirements.md（追加“R2 recovery v2需求修订”）。
+- 关键要点：parent+三v2终点；39×4=156新生成；restore前write-once预算账本；CPU/wall各14,400秒；零reference/答案评分/训练更新；can_promote=false。
+- 风险：任何source、checkpoint、prompt face、账本或budget证据不完整均须在留出prompt读取前拒绝；用户能力目标不能由此小样本自动判定。
+- 给下游：按R2V2需求实现synthetic测试；待Phase8终点独立恢复通过后才运行真实评测。
+- 回流判定：通过；无需求缺口需要退回Phase2。本补充不改变Phase8主指针。
