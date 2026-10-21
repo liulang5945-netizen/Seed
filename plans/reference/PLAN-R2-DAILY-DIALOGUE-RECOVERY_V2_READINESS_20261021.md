@@ -29,4 +29,4 @@ Original per-arm hard caps remain 240,000 CPU seconds for `full_turn_1m` and 120
 
 ## Next step
 
-The three `--execute` arms started concurrently at 2026-10-21 19:06 Asia/Shanghai. Latest durable checkpoints: full_turn_1m 3,456/30,096 episodes、1,687,913更新、CPU12,497.0625秒；warm_start 5,376/30,096、2,577,302更新、CPU12,193.171875秒；fresh_same_capacity 5,344/30,096、2,565,343更新、CPU12,115.890625秒。 Receipts restore successfully. Continue training to fixed budgets and final restore; keep can_promote=false and leave dev/reference untouched.
+The three `--execute` arms started concurrently at 2026-10-21 19:06 Asia/Shanghai. Latest durable checkpoints: full_turn_1m=3,552/30,096 episodes and 1,742,800 target bytes at 12,887.78125 CPU seconds; warm_start=5,536/30,096 and 2,649,492 bytes at 12,568.0625 CPU seconds; fresh_same_capacity=5,536/30,096 and 2,649,492 bytes at 12,570.1875 CPU seconds. Receipts restore successfully; all arms remain in training with zero dev/reference access. Continue through fixed denominator/final restore, can_promote=false.
