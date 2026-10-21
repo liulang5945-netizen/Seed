@@ -2,6 +2,8 @@
 
 ## 当前执行：N1-165A结案；R2-06/07中断取证与持久化恢复
 
+## 当前唯一下一步：R2-06/07 三臂 v2 `--prepare-only` ＋ fresh-process 恢复核验（详见下行）
+
 ### 最新事实与唯一下一步（2026-10-21 17:10 核验）
 
 用户确认：客户端更新导致训练中断；沙箱外进程清单与CIM均未发现Python训练进程；三条run没有result、partial或训练终点checkpoint，仅保留zero/canary。06最后落盘14,880/30,096 episode、7,195,482 target-byte updates；07 warm-start最后汇总9,984 episode/4,798,480 updates，fresh-same-capacity最后汇总9,856 episode/4,718,755 updates。07每128条才汇总，因此只是最后已记录下界。旧attempt仍为started/training，不能继续视作存活。退出原因为用户确认的客户端更新；见[中断审计](../../../reports/taiji_r2_daily_dialogue_interruption_audit_20261021.json)。本次0模型加载、0训练、0dev/reference查询。
