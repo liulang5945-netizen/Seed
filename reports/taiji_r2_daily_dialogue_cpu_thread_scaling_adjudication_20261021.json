@@ -1,0 +1,178 @@
+{
+  "adjudication_complete": true,
+  "attempt_cpu_seconds": 948.4375,
+  "attempt_error": "TimeoutError: thread benchmark exceeded 900 CPU seconds",
+  "attempt_omitted_cpu_limit_field": true,
+  "attempt_runner_sha256": "d1e8b0b6613927d879dbb139cfabd69b6a842bb320164b500f20a0ecf571c528",
+  "attempt_status": "failed",
+  "can_promote": false,
+  "checkpoint_writes": 0,
+  "completed_trials": 7,
+  "cpu_budget_overrun_seconds": 48.4375,
+  "cpu_limit_seconds": 900.0,
+  "dev_queries": 0,
+  "deviation_zh": "第7个trial后总CPU达到948.4375秒，超过900秒上限48.4375秒。旧runner只在trial边界检查预算，未为trial预留最坏CPU；没有重跑。父checkpoint SHA前后相同，0 dev/reference，0 checkpoint写入。随后runner已加入每个trial前300秒reserve守卫，修复仅防止未来再越界，不改变本次历史attempt。",
+  "diagnostic_plan_sha256_at_attempt": "88fc09397b6a346cc89b1bbfa26329a81426fbca27a67d87123092b77d7a2478",
+  "episodes_per_trial": 16,
+  "formal_model_updates": 0,
+  "interpretation_zh": "三个正式训练runner均将OMP/MKL/OpenBLAS及PyTorch intra-op线程固定为1，因此并行增加的是独立任务数，不会让单个模型自动占满24逻辑核。七个副本试验显示2/4/8线程的wall吞吐相对单线程仅有小幅变化，而process-CPU成本显著上升；R2-08在计划CPU上限前停止，且1线程只有一次重复，读数仅作方向性诊断，不足以更改正式训练配方。",
+  "model_queries": 0,
+  "parent_checkpoint_sha256_after_closeout": "9389f17575a6b29185684605949a309bd1673ca7046730ade7d301601d2c6e06",
+  "parent_checkpoint_sha256_before": "9389f17575a6b29185684605949a309bd1673ca7046730ade7d301601d2c6e06",
+  "parent_checkpoint_unchanged": true,
+  "planned_trials": 8,
+  "reference_queries": 0,
+  "runner_sha256_after_budget_guard_and_attempt_metadata_fix": "64535888402f384485e76ef9949c054b61ee2e57b2443a453723cf02aa105dfe",
+  "runner_sha256_after_guard_fix": "b1737c5d954f78141091f407439832f6a0cfaf78f1902d8b1f64fea2cb6e3aef",
+  "schema": "taiji-r2-thread-scaling-adjudication-v1",
+  "status": "partial_budget_stop",
+  "target_byte_updates_per_trial": 6643,
+  "temporary_copy_target_byte_updates": 46501,
+  "thread_order": [
+    1,
+    8,
+    2,
+    4,
+    4,
+    2,
+    8,
+    1
+  ],
+  "thread_results": {
+    "1": {
+      "completed_repeats": 1,
+      "cpu_cost_ratio_vs_1_thread": 1.0,
+      "median_target_byte_updates_per_cpu_second": 200.449,
+      "median_target_byte_updates_per_wall_second": 199.158,
+      "median_training_process_cpu_seconds": 33.140625,
+      "median_training_wall_seconds": 33.35542,
+      "trial_rows": [
+        {
+          "actual_intraop_threads": 1,
+          "episodes": 16,
+          "event": "trial_complete",
+          "requested_intraop_threads": 1,
+          "restore_cpu_seconds": 0.375,
+          "target_byte_updates": 6643,
+          "training_cpu_seconds": 33.140625,
+          "training_wall_seconds": 33.35542,
+          "trial": 1,
+          "updates_per_cpu_second": 200.449,
+          "updates_per_wall_second": 199.158
+        }
+      ],
+      "wall_speed_change_vs_1_thread_percent": 0.0
+    },
+    "2": {
+      "completed_repeats": 2,
+      "cpu_cost_ratio_vs_1_thread": 1.97,
+      "median_target_byte_updates_per_cpu_second": 101.96,
+      "median_target_byte_updates_per_wall_second": 202.779,
+      "median_training_process_cpu_seconds": 65.15625,
+      "median_training_wall_seconds": 32.762127,
+      "trial_rows": [
+        {
+          "actual_intraop_threads": 2,
+          "episodes": 16,
+          "event": "trial_complete",
+          "requested_intraop_threads": 2,
+          "restore_cpu_seconds": 1.875,
+          "target_byte_updates": 6643,
+          "training_cpu_seconds": 65.609375,
+          "training_wall_seconds": 33.037477,
+          "trial": 3,
+          "updates_per_cpu_second": 101.251,
+          "updates_per_wall_second": 201.075
+        },
+        {
+          "actual_intraop_threads": 2,
+          "episodes": 16,
+          "event": "trial_complete",
+          "requested_intraop_threads": 2,
+          "restore_cpu_seconds": 1.140625,
+          "target_byte_updates": 6643,
+          "training_cpu_seconds": 64.703125,
+          "training_wall_seconds": 32.486776,
+          "trial": 6,
+          "updates_per_cpu_second": 102.669,
+          "updates_per_wall_second": 204.483
+        }
+      ],
+      "wall_speed_change_vs_1_thread_percent": 1.82
+    },
+    "4": {
+      "completed_repeats": 2,
+      "cpu_cost_ratio_vs_1_thread": 3.82,
+      "median_target_byte_updates_per_cpu_second": 52.513,
+      "median_target_byte_updates_per_wall_second": 209.168,
+      "median_training_process_cpu_seconds": 126.507812,
+      "median_training_wall_seconds": 31.76002,
+      "trial_rows": [
+        {
+          "actual_intraop_threads": 4,
+          "episodes": 16,
+          "event": "trial_complete",
+          "requested_intraop_threads": 4,
+          "restore_cpu_seconds": 0.890625,
+          "target_byte_updates": 6643,
+          "training_cpu_seconds": 125.671875,
+          "training_wall_seconds": 31.590403,
+          "trial": 4,
+          "updates_per_cpu_second": 52.86,
+          "updates_per_wall_second": 210.285
+        },
+        {
+          "actual_intraop_threads": 4,
+          "episodes": 16,
+          "event": "trial_complete",
+          "requested_intraop_threads": 4,
+          "restore_cpu_seconds": 1.265625,
+          "target_byte_updates": 6643,
+          "training_cpu_seconds": 127.34375,
+          "training_wall_seconds": 31.929638,
+          "trial": 5,
+          "updates_per_cpu_second": 52.166,
+          "updates_per_wall_second": 208.051
+        }
+      ],
+      "wall_speed_change_vs_1_thread_percent": 5.03
+    },
+    "8": {
+      "completed_repeats": 2,
+      "cpu_cost_ratio_vs_1_thread": 7.86,
+      "median_target_byte_updates_per_cpu_second": 25.498,
+      "median_target_byte_updates_per_wall_second": 203.012,
+      "median_training_process_cpu_seconds": 260.546875,
+      "median_training_wall_seconds": 32.724431,
+      "trial_rows": [
+        {
+          "actual_intraop_threads": 8,
+          "episodes": 16,
+          "event": "trial_complete",
+          "requested_intraop_threads": 8,
+          "restore_cpu_seconds": 1.703125,
+          "target_byte_updates": 6643,
+          "training_cpu_seconds": 258.53125,
+          "training_wall_seconds": 32.460589,
+          "trial": 2,
+          "updates_per_cpu_second": 25.695,
+          "updates_per_wall_second": 204.648
+        },
+        {
+          "actual_intraop_threads": 8,
+          "episodes": 16,
+          "event": "trial_complete",
+          "requested_intraop_threads": 8,
+          "restore_cpu_seconds": 1.453125,
+          "target_byte_updates": 6643,
+          "training_cpu_seconds": 262.5625,
+          "training_wall_seconds": 32.988273,
+          "trial": 7,
+          "updates_per_cpu_second": 25.301,
+          "updates_per_wall_second": 201.375
+        }
+      ],
+      "wall_speed_change_vs_1_thread_percent": 1.94
+    }
+  }
+}
