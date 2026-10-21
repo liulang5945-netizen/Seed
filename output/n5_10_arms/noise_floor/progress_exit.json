@@ -1,0 +1,52 @@
+{
+  "epoch": 0,
+  "ticks": 16150000,
+  "window_ticks": 0,
+  "online_accuracy": null,
+  "mean_surprise": null,
+  "holdout_surprise": 2.6770320564169623,
+  "holdout_surprise_v2": 3.1078977181103635,
+  "elapsed_seconds": 775.876129699871,
+  "exit_reason": "max_symbols_reached",
+  "base_ticks": 16000000,
+  "budget_max_symbols": 150000,
+  "ticks_at_exit": 16150000,
+  "reached_budget": true,
+  "unique_documents": 186,
+  "document_visits": 186,
+  "mean_revisits": 1.0,
+  "sequence_length": {
+    "documents_counted": 186,
+    "min": 84,
+    "median": 626.0,
+    "max": 2858,
+    "mean": 808.494624
+  },
+  "checkpoint_path": "output\\n5_10_arms\\noise_floor\\checkpoint.pt",
+  "checkpoint_sha256": "b4741175ad23bc88c20de6b143269cfdd6169970ba21f07060d46b8d0faafa05",
+  "corpus_fingerprint": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]",
+  "machine_load": {
+    "status": "ok",
+    "logical_cpus": 24,
+    "system_cpu_percent": 10.6,
+    "python_process_count": 73,
+    "python_processes_burning_cpu": 2,
+    "hottest_python_pids": [
+      {
+        "pid": 39300,
+        "cpu_seconds": 586959.3
+      },
+      {
+        "pid": 10112,
+        "cpu_seconds": 117183.4
+      },
+      {
+        "pid": 24336,
+        "cpu_seconds": 8740.9
+      }
+    ]
+  },
+  "history_files": 3,
+  "history_bytes": 66164507,
+  "history_pruned": 0
+}

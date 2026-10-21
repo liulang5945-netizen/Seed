@@ -26,4 +26,4 @@ N1-162D/E表明seed12增强模型在转向factorial中大量输出反向turn结�
 
 - 诊断器：`scripts/training/run_taiji_n1_plan162f_transition_template_crossover_diagnostic.py`
 - 契约测试：`tests/taiji_native/test_n1_plan162f_transition_template_crossover_contract.py`
-- 一次性progress/result写入`reports/taiji_n1_plan162f_transition_template_crossover_20261020.jsonl`及`.json`。
+- 一次性attempt/progress/result写入`reports/taiji_n1_plan162f_transition_template_crossover_attempt_20261020.json`、`reports/taiji_n1_plan162f_transition_template_crossover_20261020.jsonl`及`reports/taiji_n1_plan162f_transition_template_crossover_20261020.json`。

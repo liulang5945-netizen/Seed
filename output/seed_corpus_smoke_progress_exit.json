@@ -1,0 +1,55 @@
+{
+  "epoch": 0,
+  "ticks": 5000,
+  "window_ticks": 4999,
+  "online_accuracy": 0.2436487297459492,
+  "mean_surprise": 3.377818925081993,
+  "holdout_surprise": 3.116746113045274,
+  "holdout_surprise_v2": 3.3358601637231753,
+  "elapsed_seconds": 16.357471199997235,
+  "exit_reason": "max_symbols_reached",
+  "base_ticks": 0,
+  "budget_max_symbols": 5000,
+  "ticks_at_exit": 5000,
+  "reached_budget": true,
+  "unique_documents": 4,
+  "document_visits": 4,
+  "mean_revisits": 1.0,
+  "sequence_length": {
+    "documents_counted": 4,
+    "min": 223,
+    "median": 1217.0,
+    "max": 2643,
+    "mean": 1325.0
+  },
+  "checkpoint_path": "C:\\Users\\23747\\AppData\\Local\\Temp\\pytest-of-23747\\pytest-9875\\test_envelope_metadata_records0\\smoke.pt",
+  "checkpoint_sha256": "bfafe2d1dcf2df800c3bb5cc91fc1a82c2282b05e5c849f3aa7744b1a267d88a",
+  "corpus_fingerprint": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]",
+  "answer_source": "corpus",
+  "self_answers_path": null,
+  "answer_chunking": "stream",
+  "machine_load": {
+    "status": "ok",
+    "logical_cpus": 24,
+    "system_cpu_percent": 1.0,
+    "python_process_count": 3,
+    "python_processes_burning_cpu": 0,
+    "hottest_python_pids": [
+      {
+        "pid": 36268,
+        "cpu_seconds": 197.5
+      },
+      {
+        "pid": 28204,
+        "cpu_seconds": 49.7
+      },
+      {
+        "pid": 23476,
+        "cpu_seconds": 0.3
+      }
+    ]
+  },
+  "history_files": 1,
+  "history_bytes": 3470737,
+  "history_pruned": 0
+}

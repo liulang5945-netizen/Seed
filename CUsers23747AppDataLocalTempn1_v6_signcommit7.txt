@@ -1,0 +1,3 @@
+│  No config files with names ["lefthook" ".lefthook" ".config\\lefthook"] have been found in "E:/Seed"
+[main ebdf8a067] docs(taiji): log the last unnamed face red and the parent/subprocess config rule
+ 2 files changed, 9 insertions(+)

@@ -1,0 +1,137 @@
+{
+  "format": "taiji-n5-shadow-gate-adjudication-v1",
+  "prereg": "PLAN-N5-02 §2 J-N5b-1／J-N5b-2／J-N5b-3 前半",
+  "arms": {
+    "treated": {
+      "arm": "treated",
+      "checkpoint": "output\\n5_10_arms\\treated\\checkpoint.pt",
+      "j_n5b_1": "present",
+      "missing_self_report_keys": [],
+      "gate": 1.0,
+      "shadow_gate_requested": 1.0,
+      "candidate_gate": 0.2507399022579193,
+      "candidate_utility": -8.192984387278557e-05,
+      "candidate_counterfactual_utility": 8.50618401648795e-06,
+      "candidate_id": "r4-candidate:4560036c50e6e7ce35df145b5df8b1a3a3577d57f14a5a1c76bbb0decfbc6990",
+      "presence_counters": {
+        "status": "present",
+        "missing": [],
+        "values": {
+          "shadow_forward_hits": 149762,
+          "shadow_learn_hits": 149762,
+          "shadow_branch_hits": 299524
+        }
+      },
+      "shadow_request": {
+        "state": "requested_with_gate",
+        "flag": true,
+        "gate_requested": 1.0
+      },
+      "walked": {
+        "state": "walked",
+        "forward_hits": 149762,
+        "walked": true
+      },
+      "j_n5b_2": "shadow_learned"
+    },
+    "control": {
+      "arm": "control",
+      "checkpoint": "output\\n5_10_arms\\control\\checkpoint.pt",
+      "j_n5b_1": "present",
+      "missing_self_report_keys": [],
+      "gate": 0.0,
+      "shadow_gate_requested": null,
+      "candidate_gate": 0.5,
+      "candidate_utility": 0.0,
+      "candidate_counterfactual_utility": 0.0,
+      "candidate_id": "r4-candidate:4560036c50e6e7ce35df145b5df8b1a3a3577d57f14a5a1c76bbb0decfbc6990",
+      "presence_counters": {
+        "status": "present",
+        "missing": [],
+        "values": {
+          "shadow_forward_hits": 0,
+          "shadow_learn_hits": 0,
+          "shadow_branch_hits": 0
+        }
+      },
+      "shadow_request": {
+        "state": "requested_without_gate",
+        "flag": true,
+        "gate_requested": null
+      },
+      "walked": {
+        "state": "not_walked",
+        "forward_hits": 0,
+        "walked": false
+      },
+      "j_n5b_2": "not_powered"
+    }
+  },
+  "pairing": {
+    "treated_requested": 1.0,
+    "control_requested": null,
+    "quadruple": {
+      "seed": {
+        "treated": 20260822,
+        "control": 20260822
+      },
+      "tau": {
+        "treated": 0.64,
+        "control": 0.64
+      },
+      "readout": {
+        "treated": "predictive",
+        "control": "predictive"
+      },
+      "fast_slow": {
+        "treated": true,
+        "control": true
+      },
+      "bridge_gate": {
+        "treated": 1.0,
+        "control": 1.0
+      }
+    },
+    "status": "pairing_valid_on_quadruple",
+    "j_n5b_3": "valid"
+  },
+  "metric_lane": {
+    "j_n5b_4": "unverified_no_metric_file",
+    "line": 0.02
+  },
+  "j_n5b_4": "unverified_no_metric_file",
+  "j_n5b_5": "unverified_retention_lane_not_run",
+  "j_n5b_6": "unverified",
+  "conjunction": {
+    "prereg": "PLAN-N5-09 §3 J-N5h-1／J-N5h-2／J-N5h-3",
+    "branches": {
+      "j_n5b_2": {
+        "criterion": "J-N5b-2",
+        "value": "shadow_learned",
+        "state": "established"
+      },
+      "j_n5b_3": {
+        "criterion": "J-N5b-3",
+        "value": "valid",
+        "state": "established"
+      },
+      "j_n5b_4": {
+        "criterion": "J-N5b-4",
+        "value": "unverified_no_metric_file",
+        "state": "unmeasured"
+      },
+      "j_n5b_5": {
+        "criterion": "J-N5b-5",
+        "value": "unverified_retention_lane_not_run",
+        "state": "unmeasured"
+      }
+    },
+    "missing": [],
+    "unmeasured": [
+      "J-N5b-4",
+      "J-N5b-5"
+    ],
+    "unknown_values": []
+  },
+  "rc": 0
+}

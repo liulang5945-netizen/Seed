@@ -1,0 +1,144 @@
+{
+  "format": "taiji-n2-04-retention-pair-v1",
+  "prereg": "PLAN-N2-04 §2/§3/§4",
+  "cap0_before_path": "E:\\Seed\\reports\\taiji_n5_07_base_beta_cap0_20261010.json",
+  "cap0_before_sha256": "39e66eca57c11d05de0f483ac10777967747730cb910d18ff0bf4f314598a692",
+  "cap0_after_path": "E:\\Seed\\output\\n5_07_lane\\control_cap0_after.json",
+  "cap0_after_sha256": "c1a07138ac297697d93d05bebeb9c11dc5eee994f9e5094c39d81b41bfdf9d1c",
+  "replay_before_path": "E:\\Seed\\reports\\taiji_n5_07_base_beta_replay24_20261010.json",
+  "replay_before_sha256": "ead608a6ff26b19d5d58f5df7700986dac11c74be651ee082ef11c1c53f0195c",
+  "replay_after_path": "E:\\Seed\\output\\n5_07_lane\\control_replay_after.json",
+  "replay_after_sha256": "c28764aaf46179d649e3be750da4cc63aa270ac0e896a0d912db4448ecc0f7a0",
+  "status": "ok",
+  "per_column": {
+    "cap0:E": {
+      "before": 3,
+      "after": 1,
+      "delta": -2,
+      "dropped": true
+    },
+    "replay_strict_hits:1.0": {
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "dropped": false
+    },
+    "replay_strict_hits:2.0": {
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "dropped": false
+    },
+    "replay_well_formed:0.0": {
+      "before": 34,
+      "after": 15,
+      "delta": -19,
+      "dropped": true
+    },
+    "replay_well_formed:0.5": {
+      "before": 51,
+      "after": 35,
+      "delta": -16,
+      "dropped": true
+    },
+    "replay_well_formed:1.0": {
+      "before": 54,
+      "after": 42,
+      "delta": -12,
+      "dropped": true
+    },
+    "replay_well_formed:2.0": {
+      "before": 60,
+      "after": 32,
+      "delta": -28,
+      "dropped": true
+    }
+  },
+  "criteria": {
+    "columns_compared": 7,
+    "columns_dropped": [
+      "cap0:E",
+      "replay_well_formed:0.0",
+      "replay_well_formed:0.5",
+      "replay_well_formed:1.0",
+      "replay_well_formed:2.0"
+    ],
+    "J_N2c_retention": "cost_persists",
+    "J_N2c_gain": "not_judged_here",
+    "conjunction_note": "收益侧沿用 N2-02 同窗判读器，本件不代答；两侧都成立才谈『保持集有效』"
+  },
+  "verdict": "cost_persists",
+  "guards": {
+    "G_N2c_3_cap0_same_source": {
+      "status": "ok",
+      "checked": [
+        "eval_set_sha256"
+      ],
+      "conflicts": [],
+      "cross_layer": [],
+      "took": {
+        "eval_set_sha256": "identity->identity"
+      }
+    },
+    "G_N2c_3_replay_same_source": {
+      "status": "ok",
+      "checked": [
+        "first_item",
+        "item_offset",
+        "items_sha256",
+        "limit"
+      ],
+      "conflicts": []
+    },
+    "G_N2c_4_disjointness": {
+      "status": "measured",
+      "manifest_shape": "dimensions_items",
+      "retention_windows": 116,
+      "result": {
+        "probe_windows": 116,
+        "windows_found_in_corpus": 0,
+        "hit_rate": 0.0,
+        "window_bytes": 24
+      },
+      "skipped_short_rows": 35,
+      "skipped_short_detail": [
+        "B03:15B",
+        "B17:15B",
+        "C02:18B",
+        "C03:18B",
+        "C04:18B",
+        "C06:18B",
+        "C12:20B",
+        "D01:15B",
+        "D02:18B",
+        "D02:12B",
+        "D05:23B",
+        "D06:15B",
+        "D07:18B",
+        "D07:20B",
+        "D07:15B",
+        "D08:18B",
+        "D08:21B",
+        "D09:21B",
+        "D09:18B",
+        "D10:15B",
+        "D11:18B",
+        "D11:15B",
+        "D12:18B",
+        "D14:15B",
+        "D14:9B",
+        "D15:21B",
+        "D15:9B",
+        "D16:9B",
+        "D17:15B",
+        "D17:9B",
+        "D18:15B",
+        "D18:18B",
+        "D18:21B",
+        "D19:23B",
+        "E20:21B"
+      ],
+      "matched_rows": []
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "epoch": 0,
+  "ticks": 16000200,
+  "window_ticks": 199,
+  "online_accuracy": 0.19597989949748743,
+  "mean_surprise": 3.239255947118445,
+  "holdout_surprise": 3.0904760392553348,
+  "elapsed_seconds": 2.3162963001523167,
+  "exit_reason": "max_symbols_reached",
+  "base_ticks": 16000000,
+  "budget_max_symbols": 200,
+  "ticks_at_exit": 16000200,
+  "reached_budget": true,
+  "checkpoint_path": "output\\n3_04_canary_factory\\checkpoint.pt",
+  "checkpoint_sha256": "a0e3cb8f4529cb8488b66fcaab8001079493cd712ae980b9e496129619c03c88",
+  "corpus_fingerprint": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]",
+  "history_files": 1,
+  "history_bytes": 14651769,
+  "history_pruned": 0
+}

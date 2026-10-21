@@ -1,0 +1,32 @@
+{
+ "treated": {
+  "arm": "treated",
+  "files": [
+   "data\\consolidated\\corpus-20261009T035904Z-8e1c02165ec4.jsonl"
+  ],
+  "night_timestamps_utc": {
+   "corpus-20261009T035904Z-8e1c02165ec4.jsonl": "2026-10-09T03:59:04+00:00"
+  },
+  "run_window_utc": [
+   "2026-10-10T08:04:40.154067+00:00",
+   "2026-10-10T10:10:50.792558+00:00"
+  ],
+  "provenance": "substituted",
+  "newest_material_before_run_utc": "2026-10-09T03:59:04+00:00"
+ },
+ "control": {
+  "arm": "control",
+  "files": [
+   "data\\consolidated\\corpus-20261009T035900Z-d320f24def65.jsonl"
+  ],
+  "night_timestamps_utc": {
+   "corpus-20261009T035900Z-d320f24def65.jsonl": "2026-10-09T03:59:00+00:00"
+  },
+  "run_window_utc": [
+   "2026-10-10T08:10:52.546931+00:00",
+   "2026-10-10T10:16:06.892967+00:00"
+  ],
+  "provenance": "substituted",
+  "newest_material_before_run_utc": "2026-10-09T03:59:00+00:00"
+ }
+}

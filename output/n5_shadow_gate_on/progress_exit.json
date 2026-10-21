@@ -1,0 +1,31 @@
+{
+  "epoch": 0,
+  "ticks": 60000,
+  "window_ticks": 0,
+  "online_accuracy": null,
+  "mean_surprise": null,
+  "holdout_surprise": 5.514821172480688,
+  "holdout_surprise_v2": 5.5336073022033405,
+  "elapsed_seconds": 396.80334510002285,
+  "exit_reason": "max_symbols_reached",
+  "base_ticks": 0,
+  "budget_max_symbols": 60000,
+  "ticks_at_exit": 60000,
+  "reached_budget": true,
+  "unique_documents": 76,
+  "document_visits": 76,
+  "mean_revisits": 1.0,
+  "sequence_length": {
+    "documents_counted": 76,
+    "min": 106,
+    "median": 626.0,
+    "max": 2643,
+    "mean": 790.157895
+  },
+  "checkpoint_path": "output\\n5_shadow_gate_on\\checkpoint.pt",
+  "checkpoint_sha256": "24bebf0dfc90f65e088422d64f9c0fc979bdd4bfc7504c6fdad17a267231371d",
+  "corpus_fingerprint": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]",
+  "history_files": 2,
+  "history_bytes": 49124518,
+  "history_pruned": 0
+}

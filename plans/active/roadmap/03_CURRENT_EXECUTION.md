@@ -1,6 +1,6 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前执行：N1-165A结案；R2自然多轮对话能力主线
+## 当前执行：N1-165A结案；R2自然多轮对话能力主线（06/07并发）
 
 ### N1-165A及N1-166状态（2026-10-21）
 
@@ -20,9 +20,17 @@
 
 只读审计证实所谓“H3.7B”是byte-aligned目标几何标记，当前checkpoint约278,010 active scalar；validation runner从Taiji配置新建，仅在12个任务episode上训练两轮，未加载通用预训练语言模型。OASST2清点找到3,762条安全过滤后的train-family全轮消息（1,780,881 UTF-8字节）、508个可用family；当前回复式builder只选525条assistant样本。39个dev family未查询，82个final family已全部消费。初稿材料清点因为源码绑定与盲区解析问题作废；有效recovery1报告不读取dev/final正文。详见[架构审计结案](../../reference/PLAN-R2-DAILY-DIALOGUE-ARCHITECTURE-AUDIT_20261021_execution_closeout.md)与[材料清点结案](../../reference/PLAN-R2-DAILY-DIALOGUE-MATERIAL-INVENTORY-RECOVERY1_execution_closeout_20261021.md)。
 
-### 当前唯一下一步：R2-DIALOGUE-06全轮预训练
+### R2-DIALOGUE-06/07当前并发执行（2026-10-21）
 
-按[冻结计划](../../reference/PLAN-R2-DAILY-DIALOGUE-FULL-TURN-PRETRAINING_20261021.md)，fresh初始化1M capacity Taiji，以508个安全train family的全部user/assistant消息做8 epoch角色感知byte预训练，再以精选525条assistant回复校准1 epoch；39个未触碰dev family只用于一次性自由生成审阅，0 reference评分，CPU≤240,000秒。正式训练前必须完成新语料合同、zero-save和独立完整恢复门；结果不自动晋升。
+[R2-DIALOGUE-06](../../reference/PLAN-R2-DAILY-DIALOGUE-FULL-TURN-PRETRAINING_20261021.md)的1M fresh候选仍在全轮预训练：最近记录8,475/30,096 episode，epoch 2/8，attempt=`started`；全机CPU采样9.7%、24逻辑核、可用内存25.4 GiB。进度持续更新，正式终点checkpoint尚未写出。
+
+用户要求在资源允许时并发对照。已新增并冻结[R2-DIALOGUE-07同规模热启动/随机初始化配对计划](../../reference/PLAN-R2-DAILY-DIALOGUE-WARMSTART-MATCHED_20261021.md)：从旧R2语言模型原生结构建立warm-start与fresh-same-capacity两臂，训练数据、更新量、架构相同；两臂各CPU≤120,000秒，增量合计≤240,000秒，与06关联上限≤480,000秒。独立runner的契约测试3/3通过，Ruff与py_compile通过；两个arm的zero bundle保存/恢复及信用预检尚待执行，正式更新尚未开始。
+
+06/07并发训练期间不查询dev或reference。三候选训练终点齐备后，在06保留的39个dev-family同一prompt面上给07两臂各生成一次，并并列已保存的06两端输出；结果只用于同面配对的人类可读性、贴题、连贯与重复审阅，`can_promote=false`。N1-166仍因N1-165充分性门2/3而不准入，不绕过其冻结前置。
+
+### 当前唯一下一步：完成R2-06与R2-07配对训练的保存恢复前置并启动两臂并发
+
+启动前复核资源余量、旧父checkpoint来源、同规模初始化和fresh-process恢复；通过后并发训练warm-start与fresh-same-capacity，且不改写正在运行的06源文件。三候选均结束后执行同面自由生成审阅，再据证据决定N主线后续。没有新确认面、reference答案评分或自动晋升。
 
 ### N1历史快照（2026-10-20）
 

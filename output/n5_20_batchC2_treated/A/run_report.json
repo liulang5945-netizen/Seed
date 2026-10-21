@@ -1,0 +1,94 @@
+{
+  "status": "completed",
+  "stop_reason": null,
+  "arm": "A",
+  "arm_description": "只训读出头：运动面冻结，predictive_readout 单点写入",
+  "observe_kwargs": {
+    "learn": true,
+    "readout": "predictive",
+    "learn_motor": false,
+    "learn_fabric": false,
+    "learn_predictive_context": false,
+    "learn_predictive_readout": true
+  },
+  "expected_write_surface": [
+    "predictive_readout"
+  ],
+  "realised_write_surface": [
+    "predictive_readout"
+  ],
+  "write_surface_ok": true,
+  "written_at_utc": "2026-10-13T22:03:29Z",
+  "trainer": "train_taiji_r2_readout_retrain",
+  "contract": "plans/reference/M5_R2_READOUT_RETRAIN_CONTRACT_DRAFT_20260920.md",
+  "base_checkpoint": "checkpoints\\seed_a31self_with_circuit.pt",
+  "base_checkpoint_sha256": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+  "base_sources": [
+    "checkpoints\\seed_a31self_with_circuit.pt"
+  ],
+  "resumed_from": null,
+  "fresh": true,
+  "archived_previous_report": null,
+  "symbols_budget": 8900000,
+  "symbols_consumed": 8900000,
+  "skip_symbols": 11199800,
+  "corpus": {
+    "paths": [
+      "E:\\Seed\\data\\p3b_all_fresh.jsonl"
+    ],
+    "fingerprint": "[{\"name\":\"p3b_all_fresh.jsonl\",\"bytes\":53153991}]"
+  },
+  "device": "cpu",
+  "absolute_tick": 8900000,
+  "session": {
+    "session_id": "A-2026-10-13T13:08:08Z",
+    "wall_seconds": 32120.932,
+    "seconds_per_symbol": 0.003609093,
+    "symbols": 8900000
+  },
+  "session_readout": {
+    "scored_symbols": 8899999,
+    "online_accuracy": 0.2577822761553119,
+    "mean_surprise": 7.292338228651582,
+    "comparable_across_arms": false,
+    "note": "臂内趋势读数；A 走读出头、B 走运动面，两臂这个数来自不同的头，不可直接互比"
+  },
+  "generated_feed": {
+    "every_symbols": 50,
+    "feeds": 178000,
+    "generated_write_count": 178000,
+    "generated_row_weight_max_abs": 1.379441381,
+    "generated_reward_sum": 0.0,
+    "generated_reward_sum_basis": "literal_by_construction; not a measurement",
+    "entry_has_reward_parameter": false,
+    "measured_symbols_per_second": 277.077887,
+    "eta_hours_at_requested_budget": 8.922
+  },
+  "last_progress": {
+    "arm": "A",
+    "session_id": "A-2026-10-13T13:08:08Z",
+    "written_at_utc": "2026-10-13T22:03:29Z",
+    "symbols_consumed": 8900000,
+    "symbols_budget": 8900000,
+    "absolute_tick": 8900000,
+    "session_symbols": 8900000,
+    "window_symbols": 150000,
+    "online_accuracy": 0.24764666666666665,
+    "mean_surprise": 7.4060344970269005,
+    "cumulative_online_accuracy": 0.2577822761553119,
+    "cumulative_mean_surprise": 7.292338228651582,
+    "elapsed_seconds": 32120.75,
+    "final": true
+  },
+  "digests_before": {
+    "motor": "af421331cbef035ba1ad3ec908b450dc573e660d461a172faacf5bee0f1fd70a",
+    "predictive_readout": "e82d2bf18eb4e9f6a7839a5abe878a624e9a16e9bf1a56a2b41dcc4a7ebebdde"
+  },
+  "digests_after": {
+    "motor": "af421331cbef035ba1ad3ec908b450dc573e660d461a172faacf5bee0f1fd70a",
+    "predictive_readout": "9b89262081f60a0090256e42195df87695f51c0e6e5c4ee97c0702f937851e16"
+  },
+  "checkpoint_path": "E:\\Seed\\output\\n5_20_batchC2_treated\\A\\checkpoint.pt",
+  "checkpoint_sha256": "09e18ae2ce0ebdb520413f2f4c5777a21798a82cc37b846939f82d12e205bb28",
+  "report_path": "E:\\Seed\\output\\n5_20_batchC2_treated\\A\\run_report.json"
+}

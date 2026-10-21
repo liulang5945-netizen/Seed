@@ -1,0 +1,21 @@
+{
+  "epoch": 0,
+  "ticks": 16004000,
+  "window_ticks": 3999,
+  "online_accuracy": 0.16879219804951237,
+  "mean_surprise": 3.7289199642343123,
+  "holdout_surprise": 3.080493564444871,
+  "holdout_surprise_v2": 3.511670072668758,
+  "elapsed_seconds": 27.21856590011157,
+  "exit_reason": "max_symbols_reached",
+  "base_ticks": 16000000,
+  "budget_max_symbols": 4000,
+  "ticks_at_exit": 16004000,
+  "reached_budget": true,
+  "checkpoint_path": "output\\n3_09_v2\\beta_gate100_v2\\checkpoint.pt",
+  "checkpoint_sha256": "b3742a5893991c128dad83ed4f982b38756d22d48b052715a646eb2be75c1f89",
+  "corpus_fingerprint": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]",
+  "history_files": null,
+  "history_bytes": null,
+  "history_pruned": null
+}

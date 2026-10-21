@@ -1,0 +1,55 @@
+{
+  "schema": "n1-plan133-v15-source-union-precheck-v1",
+  "status": "complete",
+  "checked_at_utc": "2026-10-19T06:17:13.487342+00:00",
+  "plan_sha256": "c01ccd842f5087329f08b27ee9bf960e052d0c073c5ef084e0ae6f6819e30bfb",
+  "prior_v14_exclusion_manifest": {
+    "path": "plans/manifests/n1_v14_after_n123_source_exclusions_20261019.json",
+    "sha256": "2b965382173c9c7aae83358434de0f375aa94a24bdfe3c573fc871b93c01a9fd",
+    "schema": "n1-plan124-v14-source-exclusions-v1",
+    "status": "ready_for_approved_execution",
+    "entity_count": 6678,
+    "word_value_count": 5328,
+    "source_hash_count": 88
+  },
+  "prior_source_hashes_current": true,
+  "missing_sources": [],
+  "changed_sources": [],
+  "v14_consumed_face": {
+    "path": "plans/manifests/n1_hard_neighbor_v14_confirmation_seed114_20261019.json",
+    "sha256": "de507d2dbcfdf9d3a9aeb836d3308f1dc02c535b7ea06eee5a994bfbf9306ba1",
+    "checks_path": "reports/taiji_n1_v14_after_n123_face_checks_20261019.json",
+    "checks_sha256": "08d4dc9e048b136fe48f716b6287c90699b7a4e006beef3b04b7418c297039c2",
+    "checks_accepted": true,
+    "range_path": "reports/taiji_n1_v14_after_n123_range_20261019.json",
+    "range_status": "complete",
+    "range_queries": 180,
+    "confirmation_path": "reports/taiji_n1_v14_after_n123_confirmation_20261019.json",
+    "confirmation_status": "complete",
+    "confirmation_queries": 360,
+    "total_model_queries": 540,
+    "can_promote": false
+  },
+  "v14_face_source_values": {
+    "entity_names": 630,
+    "observed_material_values": 480,
+    "answer_values": 25,
+    "entity_overlap_with_prior": 0,
+    "material_overlap_with_prior": 0,
+    "answer_overlap_with_prior": 5
+  },
+  "expected_v15_source_union": {
+    "entity_names": 7308,
+    "word_values": 5808
+  },
+  "v15_seed_already_in_ledger": [],
+  "planned_output_paths_absent": true,
+  "scope_zh": "只读核对N1-124已冻结来源排除清单、已消费v14面及其执行回执；不生成v15题面，不加载模型或checkpoint，不训练、不查询。",
+  "summary_zh": "N1-124前的排除并集为6,678个实体名、5,328个词值，88个来源文件哈希均匹配。v14面含630个实体名、480个观测材料值和25个答案值，其中5个通用答案值已被排除，因此v15面构建前应绑定7,308个实体名和5,808个词值。v14构面检查通过，范围与确认阶段均按一次性协议完成；v14确认门失败、未晋升。",
+  "note_zh": "这些是从既有面和回执计算出的静态预期值。正式readiness仍须重新核验所有来源与12个endpoint；任一哈希、数量或输出路径状态不符即停止。",
+  "new_face_generated": false,
+  "new_queries": 0,
+  "model_loads": 0,
+  "parameter_updates": 0,
+  "can_promote": false
+}

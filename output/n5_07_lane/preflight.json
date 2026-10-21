@@ -1,0 +1,45 @@
+{
+  "status": "ok",
+  "format": "taiji-n5-pairing-preflight-v1",
+  "prereg": "PLAN-N5-04 §3 G-N5d-1",
+  "faces_used": {
+    "cap0": "E:\\Seed\\reports\\taiji_n5_07_base_beta_cap0_20261010.json",
+    "replay": "E:\\Seed\\reports\\taiji_n5_07_base_beta_replay24_20261010.json"
+  },
+  "cap0": {
+    "declared_eval_set_sha256": "538835f6627a87c3faba84dbfd1138b5d8296a5dff37870bd258fdf2a3979c27",
+    "declared_layer": "identity",
+    "manifest_path": "plans/manifests/cap0_eval_set_v2.json",
+    "manifest_present": true,
+    "recomputed_manifest_sha256": "538835f6627a87c3faba84dbfd1138b5d8296a5dff37870bd258fdf2a3979c27",
+    "cap0_identity": "verified"
+  },
+  "base_checkpoint": {
+    "declared_checkpoint_sha256": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793",
+    "checkpoint_path": "checkpoints/seed_beta.pt",
+    "checkpoint_present": true,
+    "declared_git_head": "aa648c8b2bdd1d21e4ed63f46eae75b41575fc3d",
+    "recomputed_checkpoint_sha256": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793",
+    "cap0_checkpoint_identity": "verified"
+  },
+  "replay": {
+    "keys_present": [
+      "items_sha256",
+      "item_offset",
+      "first_item",
+      "limit"
+    ],
+    "keys_the_adjudicator_compares": [
+      "items_sha256",
+      "item_offset",
+      "first_item",
+      "limit"
+    ],
+    "replay_identity": "content_hash_available"
+  },
+  "checkpoint_of_before_faces": {
+    "cap0_checkpoint": "checkpoints\\seed_beta.pt",
+    "replay_checkpoint": "checkpoints/seed_beta.pt"
+  },
+  "reading_limit": "this is a pre-flight on the committed before-faces only; it does not measure whether the after-faces will be produced successfully"
+}

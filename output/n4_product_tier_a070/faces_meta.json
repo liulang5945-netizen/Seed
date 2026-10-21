@@ -1,0 +1,20 @@
+{
+  "format": "taiji-n4-product-tier-faces-v1",
+  "mount_layer": "product",
+  "product_default_mounted": true,
+  "write_trigger": "settle_action",
+  "cue_source": "percept.features 优先，缺则 cognitive_state.world.latent",
+  "j_n4e_1_check": "AST-based; grep 会假命中本文档提法（本轮实测）",
+  "store_write_call_sites_this_file": 0,
+  "episodic_writes": 120,
+  "cue_dim": 32,
+  "episodes_requested": 120,
+  "symbols_per_episode": 20,
+  "jitter_seed": 20261009,
+  "observed_record_shapes": [
+    32
+  ],
+  "cue_sources_seen": [
+    "percept.features"
+  ]
+}

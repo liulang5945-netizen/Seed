@@ -2,8 +2,8 @@
 
 ## 0. 三个锚点（**落笔时现取**，下一次开工的第一个动作是重取这三行再复用本页）
 
-- `git log --oneline -1` → `6d7869e9a feat(taiji): name the rehearsal retention cost at item level - it is answer loss, not sentence loss`（**05:42Z 刷新**：本页首次落笔后本腿又做完 §1 第 8、9 两格；本窗口累计 16 笔提交，从 `713cedd50` 起）
-- `git rev-list --count origin/main..HEAD` → **120**（05:42Z 现取；这个数每提交一次就变，引用前必须重取。owner 本窗口裁"暂不推"，推送一事不许自行执行）
+- `git log --oneline -1` → `61bed8d25 feat(taiji): take the V014 mother-side answer probe the reader can now show`（**05:50Z 刷新**：本页首次落笔后本腿又做完 §1 第 8、9、10 三格；本窗口累计 18 笔提交，从 `713cedd50` 起）
+- `git rev-list --count origin/main..HEAD` → **123**（05:50Z 现取；每提交一次就变，引用前必须重取。owner 本窗口裁"暂不推"，推送一事不许自行执行）
 - 别人在飞的件（**不要提交、不要 checkout、不要抢它的写靶**）：`scripts/training/run_taiji_n1_length_balanced_training.py`、`tests/taiji_native/test_n1_plan110_length_balanced_runner_contract.py`、`scripts/training/run_taiji_n1_native_evidence_paired.py`（现取为 ` M`）；另有 6 枚 `reports/taiji_n5_07_*.json` 是 autocrlf/stat 幻影（`git diff --numstat` 空、盘与 HEAD 的 `b'\r'` 都是 0）。
 - 本腿自己的写靶状态：`reports/taiji_n2b_powerup_20261008_c4g1.json`／`…_c4g2.json`／`…_c4gb1.json` 三枚都已入库；**同 tag 复跑会被驱动的 `_refuse_completed_target` 拒**（DEBT-G169），要再跑必须换 tag。
 
@@ -20,19 +20,22 @@
 
 9. **保持侧代价已经点到题（05:41Z，提交 `89e2d427e`／`7bd3f0fe8`／`6d7869e9a`）**：复述仪加了 opt-in `--emit-per-item`（默认出版形状与旧推导逐字节相同，且**用真面复现证了一次**——同一对 checkpoint 重取两趟，聚合列与 04:12Z 那两张件逐档全等），新判读器 `adjudicate_taiji_n02_replay_item_moves.py` 出版 `reports/taiji_n02_replay_item_moves_c4g1_20261018.json`：`verdict=hit_only`——四档罚分共 5 次命中翻转，**每一次的 `texts`／`formed_texts` 都原地不动**，其中 **V014 独占 0.5／1.0／2.0 三档**、且它在 pen0.0 母档本来就没命中；pen0.5 是"丢 2 得 2、净 0"（聚合列把它完全藏住）。⇒ 代价是**答不出期望子串**（不是"不成句"），且高度集中在一题 + 换血，不是普遍退化。合同测现取 6＋11 passed（含"四个判读值都可达且等于词表"那一支）。
 
+10. **逐条列现在带"被判的那一条回答"原文，并已取到 V014 的母档半对**（05:49Z，提交 `3f3c7e47d`／`61bed8d25`）：`per_item` 加 `answer_chars`／`answer_text`／`answer_formed`／`answer_cyclic_tail`（`hit` 判的就是最后一轮，所以这四列必须按最后一轮出，不能按整题计数），默认出版仍逐字节不变、合同测 17 passed。V014 只取母档一趟（`--limit 1 --offset 13`，`items_sha256 c0031b5da574`、`base_sha256_unchanged True`）：期望子串是 **「浣熊」**，而母档四档的回答**全是同一条 21 字的退化循环**——pen0.0 `"养一养一养一…养"`（无子串 ⇒ miss）、pen0.5／1.0 `"养一…养一养一浣熊。一"`（子串在循环末端漏出来 ⇒ hit）、pen2.0 `"养一养一浣浣熊。一养一养…"`（⇒ hit）；**四档的 `answer_formed` 全为 False**，整题 `formed_texts` 恒 1/3。
+    ⇒ 这一格里"命中"本来就不是"答得成句"，而是**退化循环末端偶然带出目标字**；所以 `hit_only` 那一句要被限定：它说的是"整题成句条数没动"，**不是**"V014 原先答得成句、现在才坏"。
+
 ## 2. 结论边界（可说／不可说）
 
 - **可说**：①现行配方（`sleep_pass.run(organs=True, learn=True)` 现行默认四参数、64 字节窗、k=8）的窗口增益**落在它自己的材料维噪声带内**（0.895 ≤ 1.243），且**符号随材料翻**（最旧那批是 −0.348）；②同材料重复是确定的，可复现性门为真；③保持侧在现行档确实掉分（3／7 列），来源与保持集字节级交集为 0（116 窗全测），两侧同题集同偏移；④旧那对 2026-10-08 件的极差 3.5916 是**材料差**，DEBT-G168 当年列的第三种可能（版本差）不再是首选解释；⑤代价**不是普遍输出退化**——cap0 那一面净涨 1 项，而三条分数翻转项的字节长度相同（㊵-1125），所以它是复述面题集分布特有的，且"变短"这一支在 cap0 上已被否证；⑥复述面的跌已**点到题**并判成 `hit_only`（㊵-1126）：四档共 5 次命中翻转，每一次的 `texts`／`formed_texts` 原地不动，V014 独占三档、且它在 pen0.0 母档本来就不命中 ⇒ 是"期望子串答不出"，且高度集中而非普遍。
-- **不可说**：**"C4 净增益成立"**（合取里 J-1 不可判、J-2 假）；**"通电没有增益"**（A 是正的，符号不稳不是零效应）；**"地板＝0"**（那是同材料档的确定性，不是噪声）；**"两批 Δ 相减＝效应量"**（是极差）；**"现行代价形状＝well_formed 四罚档全跌"**（那是旧档）；**"巩固让模型普遍答得更好/更差"**（cap0 净＋1 只覆盖 cap0 那一面，复述面才是负的，两面不同源）；**"掉分是因为输出变短"**（cap0 上字节相同；复述面上逐题 `texts` 也原地不动）；**"代价是成句能力退化"**（`hit_only`：掉命中的题成句条数没动；pen2.0 那两条成句跌住在别的题上，与命中不同题）；**"循环文本减少所以输出更干净"**（聚合层为真、题级可反向：V014 的 `cyclic_tail_texts` 在 0.5／1.0 由 1→2）；**"两列 strict_hits 各跌 1 ⇒ 有两题坏了"**（pen0.5 是"丢 2 得 2、净 0"，聚合列把 4 次翻转全藏住）；**"C5 可开工"**（C4 未成立，C5 硬前置没满足）。
+- **不可说**：**"C4 净增益成立"**（合取里 J-1 不可判、J-2 假）；**"通电没有增益"**（A 是正的，符号不稳不是零效应）；**"地板＝0"**（那是同材料档的确定性，不是噪声）；**"两批 Δ 相减＝效应量"**（是极差）；**"现行代价形状＝well_formed 四罚档全跌"**（那是旧档）；**"巩固让模型普遍答得更好/更差"**（cap0 净＋1 只覆盖 cap0 那一面，复述面才是负的，两面不同源）；**"掉分是因为输出变短"**（cap0 上字节相同；复述面上逐题 `texts` 也原地不动）；**"代价是成句能力退化"**（`hit_only`：掉命中的题成句条数没动；pen2.0 那两条成句跌住在别的题上，与命中不同题）；**"循环文本减少所以输出更干净"**（聚合层为真、题级可反向：V014 的 `cyclic_tail_texts` 在 0.5／1.0 由 1→2）；**"两列 strict_hits 各跌 1 ⇒ 有两题坏了"**（pen0.5 是"丢 2 得 2、净 0"，聚合列把 4 次翻转全藏住）；**"V014 在母档本来答得成句、是巩固把它弄坏"**（§1 第 10 条：母档四档 `answer_formed` 全 False，命中只是退化循环末端偶然带出「浣熊」）；**"`hit_only` 等于'答案质量没变'"**（它只说整题 `formed_texts` 计数没动，末轮回答的质量要看 `answer_formed` 这一列，两者不同轴）；**"C5 可开工"**（C4 未成立，C5 硬前置没满足）。
 - **一次性仪器口径**：c4g1／c4g2／c4gb1 三个 tag 都已消费，同 tag 复跑会被拒；再跑必须换新 tag，且 `--material-snapshot` 要指向新目录（否则 capture-once 会回到**旧基线**——那正是配对要的，但别误当成"新的一天"）。
 
 ## 3. 下一格（owner 已裁方向：**先治保持侧代价**）
 
 **队首（本腿）**：把"巩固为什么让保持侧掉分"当**能力问题**定位。**两步已做完**：cap0 那面净涨 1 项且翻转项字节相同（㊵-1125）；复述面已点到题并判成 `hit_only`（㊵-1126）⇒ 问题现在收窄成一个具体对象：**为什么 V014 的期望子串在巩固后不出现了，而同一题在 pen0.0 母档本来也不出现。**
 
-1. **下一步＝看 V014 的原文对照（秒级，不需新预算）**：`per_item` 现在只有计数、没有原文，所以要么(a)给 `--emit-per-item` 再出一档"答案首若干字节＋长度"（同一函数里加键，默认仍逐字节不变，配一条新合同测），要么(b)先只取那一题把成本压到秒级——题位已机检：`plans/manifests/r2_copy_surface_extension_v3_position_random.json` 的 `dimensions.X.items` 里 `V014` 的下标是 **13**（现取 `ids.index('V014')==13`，全集 104 题），故
-   `python scripts/training/measure_taiji_a30_repetition_penalty.py --checkpoint checkpoints/seed_n2b_mother_20261008_c4g1.pt --limit 1 --offset 13 --emit-per-item --out-report reports/taiji_c4g1_replay_pi_V014_before_20261018.json`
-   （after 侧换 candidate）。看清"母档答里有的子串在候选档答里被什么取代"之后，才谈得上修法。
+1. **只欠半对的第二半（秒级，不需新预算，也别重跑前半）**：母档那半已入库（`reports/taiji_c4g1_replay_pi_V014_before_20261018.json`，见 §1 第 10 条），要取的是候选档那一半：
+   `python scripts/training/measure_taiji_a30_repetition_penalty.py --checkpoint checkpoints/seed_n2b_candidate_20261008_c4g1.pt --limit 1 --offset 13 --emit-per-item --out-report reports/taiji_c4g1_replay_pi_V014_after_20261018.json`
+   要比的三件事：①四档的 `answer_text` 里「浣熊」还在不在、位置是否仍在末端循环缝里；②`answer_formed` 有没有从 False 变 True（那才是"变好"）；③`items_sha256` 与母档那半同为 `c0031b5da574…`（切片没变），且**这一趟的计数列必须与 24 题那趟的 V014 行逐列相符**（`hit`／`formed_texts`／`cyclic_tail_texts`）——不相符就是切片影响了行为，要先查这条再谈机制。**注意取数会加载模型、约 40–90 秒，零权重改动（件自述 `base_sha256_unchanged`）。**
 2. **修法候选（要 owner 批文的那一格）**：如果 V014 的失败形态是"巩固把该子串挤成循环尾巴"（现有旁证：V014 在 0.5／1.0 的 `cyclic_tail_texts` 1→2 **涨**，而聚合 `cyclic_texts` 四档全降 ⇒ 聚合方向会掩盖题级反向变化，引用"循环减少"必须限定在聚合层），最小干预是**减剂量**（`organs.max_symbols`）或改夜选权重——两者都属射程/剂量变更 ⇒ 要 owner 批、且双臂同窗，不许用改判据把它抹平。
 3. **可选（不挡路）**：给 B 档候选也补同面保持侧四张读数——命令与本轮逐字相同，只把 checkpoint 换成 `…_c4gb1.pt`、落点名换成 `…_c4gb1_…`；单价现取 cap0 ≈262–280 秒／趟、replay ≈337–347 秒／趟（四张 ≈20 分钟）。今天的 `cost_persists` 只覆盖 A 这一档。
 

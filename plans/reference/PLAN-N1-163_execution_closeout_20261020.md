@@ -31,4 +31,4 @@ runner在完整result成功写出后，终端摘要索引了不存在的`trainin
 
 将`direction_after_turning`槽位全部替换为`direction_after_turn`，未实现跨seed稳定改善：seed11显著落后于同预算control，seed12持平，seed13略有回退。现有结果支持模板比例存在seed敏感性，不能证明模板名称本身具有普遍因果收益，也不能证明RNN固有局限。
 
-唯一下一步是[PLAN-N1-165中等剂量续训](PLAN-N1-165_transition_template_mid_dose_calibration_20261020.md)：从同一N1-162B父checkpoint增加18/48 preferred与6/48原变体的中间比例，在三seed各训练一个candidate，与N1-163同seed的25%和50% preferred剂量锚点比较；保留原门，不查询新面。
+唯一下一步是[PLAN-N1-165中等剂量续训](PLAN-N1-165_transition_template_mid_dose_calibration_20261020.md)：从同一N1-162B父checkpoint测试50% original、37.5% preferred、12.5%保留变体；每个parent/route/长度八槽块为4/3/1，三seed各训练一个candidate，与N1-163同seed的25%和50% preferred剂量锚点比较；保留原门，不查询新面。

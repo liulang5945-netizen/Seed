@@ -1,0 +1,22 @@
+{
+  "trainer": "train_taiji_r2_readout_retrain",
+  "contract": "plans/reference/M5_R2_READOUT_RETRAIN_CONTRACT_DRAFT_20260920.md",
+  "written_at_utc": "2026-10-13T22:03:29Z",
+  "arms": [
+    "A"
+  ],
+  "arms_status": {
+    "A": "completed"
+  },
+  "arms_pending": [],
+  "resume_command": null,
+  "symbols_budget": 8900000,
+  "skip_symbols": 11199800,
+  "base_checkpoint": "checkpoints\\seed_a31self_with_circuit.pt",
+  "base_checkpoint_sha256": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+  "base_checkpoint_unchanged": true,
+  "out_dir": "E:\\Seed\\output\\n5_20_batchC2_treated",
+  "wall_seconds": 32121.262,
+  "failed_arms": [],
+  "status": "completed"
+}

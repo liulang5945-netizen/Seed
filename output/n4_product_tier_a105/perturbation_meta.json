@@ -1,0 +1,9 @@
+{
+  "perturbation": "rotate_toward_donor",
+  "angle_nominal_rad": 1.05,
+  "queries": 120,
+  "achieved_angle_min": 1.0499999999999998,
+  "achieved_angle_max": 1.0500000000000003,
+  "achieved_angle_mean": 1.05,
+  "achieved_within_0p02_of_nominal": true
+}

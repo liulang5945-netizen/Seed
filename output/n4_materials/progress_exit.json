@@ -1,0 +1,31 @@
+{
+  "epoch": 0,
+  "ticks": 100000,
+  "window_ticks": 0,
+  "online_accuracy": null,
+  "mean_surprise": null,
+  "holdout_surprise": 2.5040799235598703,
+  "holdout_surprise_v2": 2.7669372597764847,
+  "elapsed_seconds": 444.89183030021377,
+  "exit_reason": "max_symbols_reached",
+  "base_ticks": 0,
+  "budget_max_symbols": 100000,
+  "ticks_at_exit": 100000,
+  "reached_budget": true,
+  "unique_documents": 124,
+  "document_visits": 124,
+  "mean_revisits": 1.0,
+  "sequence_length": {
+    "documents_counted": 124,
+    "min": 84,
+    "median": 612.0,
+    "max": 2858,
+    "mean": 811.895161
+  },
+  "checkpoint_path": "output\\n4_materials\\ck.pt",
+  "checkpoint_sha256": "ecd1c3fcb34d49c2957b2e4965490d772e6d3bddc7890fbd7fe134c23f5433fe",
+  "corpus_fingerprint": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]",
+  "history_files": 2,
+  "history_bytes": 30418194,
+  "history_pruned": 0
+}

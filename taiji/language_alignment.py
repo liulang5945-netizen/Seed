@@ -146,6 +146,7 @@ class LanguageEpisode:
     required_terms: tuple[str, ...] = ()
     forbidden_terms: tuple[str, ...] = ()
     unknown_markers: tuple[str, ...] = ()
+    target_role: str = "assistant"
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "episode_id", _identifier(self.episode_id, "episode_id"))
@@ -155,7 +156,22 @@ class LanguageEpisode:
         if split not in LANGUAGE_ALIGNMENT_SPLITS:
             raise ValueError(f"unsupported language episode split: {split}")
         object.__setattr__(self, "split", split)
-        object.__setattr__(self, "user_input", _text(self.user_input, "user_input"))
+        target_role = _text(self.target_role, "target_role")
+        if target_role not in {"user", "assistant"}:
+            raise ValueError("target_role must be user or assistant")
+        object.__setattr__(self, "target_role", target_role)
+        object.__setattr__(
+            self,
+            "user_input",
+            _text(
+                self.user_input,
+                "user_input",
+                allow_empty=(
+                    target_role == "user"
+                    or self.task_family in {"dialogue_pretraining", "full_turn_pretraining"}
+                ),
+            ),
+        )
         object.__setattr__(self, "response", _text(self.response, "response"))
         object.__setattr__(self, "context", _text(self.context, "context", allow_empty=True))
         object.__setattr__(self, "system", _text(self.system, "system"))
@@ -189,10 +205,11 @@ class LanguageEpisode:
             required_terms=payload.get("required_terms", ()),
             forbidden_terms=payload.get("forbidden_terms", ()),
             unknown_markers=payload.get("unknown_markers", ()),
+            target_role=payload.get("target_role", "assistant"),
         )
 
     def to_payload(self) -> dict[str, Any]:
-        return {
+        payload = {
             "episode_id": self.episode_id,
             "family_id": self.family_id,
             "task_family": self.task_family,
@@ -207,6 +224,9 @@ class LanguageEpisode:
             "forbidden_terms": list(self.forbidden_terms),
             "unknown_markers": list(self.unknown_markers),
         }
+        if self.target_role != "assistant":
+            payload["target_role"] = self.target_role
+        return payload
 
     @property
     def prefix_text(self) -> str:
@@ -220,7 +240,10 @@ class LanguageEpisode:
         ]
         for user, assistant in self.history:
             parts.extend(("<|history_user|>", user, "<|history_assistant|>", assistant))
-        parts.extend(("<|user|>", self.user_input, "<|assistant|>"))
+        if self.target_role == "assistant":
+            parts.extend(("<|user|>", self.user_input or "<|none|>", "<|assistant|>"))
+        else:
+            parts.append("<|user|>")
         return "\n".join(parts) + "\n"
 
     @property
@@ -257,9 +280,12 @@ class LanguageEpisodeCorpus:
 
     episodes: tuple[LanguageEpisode, ...]
     source_files: tuple[tuple[str, str], ...] = ()
+    require_eval_splits: bool = True
 
     def __post_init__(self) -> None:
         episodes = tuple(self.episodes)
+        if not isinstance(self.require_eval_splits, bool):
+            raise TypeError("require_eval_splits must be a bool")
         if not episodes:
             raise ValueError("language alignment corpus cannot be empty")
         if any(not isinstance(item, LanguageEpisode) for item in episodes):
@@ -277,10 +303,11 @@ class LanguageEpisodeCorpus:
             raise ValueError(f"language episode family crosses splits: {leaking}")
         if not any(item.split == "train" for item in episodes):
             raise ValueError("language alignment corpus needs a train split")
-        if not any(item.split == "dev" for item in episodes):
-            raise ValueError("language alignment corpus needs a dev split")
-        if not any(item.split == "final" for item in episodes):
-            raise ValueError("language alignment corpus needs a final split")
+        if self.require_eval_splits:
+            if not any(item.split == "dev" for item in episodes):
+                raise ValueError("language alignment corpus needs a dev split")
+            if not any(item.split == "final" for item in episodes):
+                raise ValueError("language alignment corpus needs a final split")
         normalized_sources = tuple(
             (str(path).strip(), str(digest).strip()) for path, digest in self.source_files
         )
@@ -290,7 +317,12 @@ class LanguageEpisodeCorpus:
         object.__setattr__(self, "source_files", normalized_sources)
 
     @classmethod
-    def from_jsonl(cls, paths: Iterable[str | Path]) -> LanguageEpisodeCorpus:
+    def from_jsonl(
+        cls,
+        paths: Iterable[str | Path],
+        *,
+        require_eval_splits: bool = True,
+    ) -> LanguageEpisodeCorpus:
         normalized_paths = tuple(Path(path) for path in paths)
         if not normalized_paths:
             raise ValueError("language alignment corpus needs at least one JSONL path")
@@ -313,7 +345,7 @@ class LanguageEpisodeCorpus:
                         raise ValueError(
                             f"invalid language episode at {path}:{line_number}: {exc}"
                         ) from exc
-        return cls(tuple(episodes), tuple(sources))
+        return cls(tuple(episodes), tuple(sources), require_eval_splits=require_eval_splits)
 
     @property
     def digest(self) -> str:
@@ -346,6 +378,7 @@ class LanguageEpisodeCorpus:
             "serialization": LANGUAGE_ALIGNMENT_SERIALIZATION,
             "digest": self.digest,
             "source_files": [list(item) for item in self.source_files],
+            "require_eval_splits": self.require_eval_splits,
             "sample_counts": self.sample_counts,
             "episode_ids": [item.episode_id for item in self.episodes],
         }
