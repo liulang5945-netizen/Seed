@@ -32,7 +32,15 @@
 
 ## Prompt、生成与持久化顺序
 
-执行顺序固定为：只读metadata/source preflight → 核验三臂final receipts与基线 → 四端点fresh-process restore → 创建write-once attempt → 用冻结的 `_select_dev_prompts()` 规则选39个family并写入规范化prompt face/SHA → 对每个未被精确证明已消费的endpoint逐条生成并持久化 → 汇总及人工审阅。该selector只将 `episode_id/family_id/split/system/context/history/user_input/unknown_policy` 映射为 `PromptOnlyEpisode`；评测结果不得包含reference answer、assistant target或exact-response评分。
+执行顺序固定为：只读metadata/source preflight → 核验三臂final receipts与基线 → 预算余量和CPU/内存资源门 → 创建并fsync write-once attempt及初始预算账本 → 按端点逐个fresh-process restore并逐笔记账 → **全部四端点恢复通过后**才用冻结的 `_select_dev_prompts()` 规则选39个family并写入规范化prompt face/SHA → 对每个未被精确证明已消费的endpoint逐条生成并持久化 → 汇总及人工审阅。该selector只将 `episode_id/family_id/split/system/context/history/user_input/unknown_policy` 映射为 `PromptOnlyEpisode`；评测结果不得包含reference answer、assistant target或exact-response评分。
+
+### 执行账本的关键顺序门
+
+- metadata/source preflight与CPU/资源门只读固定结果、readiness、源文件及checkpoint字节；不启动恢复子进程、不选择或读取prompt。门通过后才用独占写入创建write-once attempt及初始预算账本，记录输入绑定、固定CPU/wall上限、执行起点和已耗预检CPU；两个文件均flush/fsync后才能启动第一个恢复worker。
+- 每个fresh-process restore前，先向追加式账本写入并fsync `restore_started(endpoint, checkpoint_sha256, cpu_before, boot_identity, timestamp)`；worker返回或失败后写入其restore receipt、child CPU、parent/host CPU差额与新的累计charge。restore CPU必须进入14,400秒上限，不能把预算从prompt selector时才开始计。
+- attempt/账本若已存在、独占创建失败、source/resource/budget门失败、事件写盘/目录fsync失败，必须在启动任何restore或读取prompt前拒绝。恢复worker返回失败、预算耗尽、进程崩溃或强杀均消费该attempt；不得resume、重试、删除账本或用新的attempt名再次运行同一评测合同。
+- 强杀发生在 `restore_started` 之后时，保留未闭合事件并把此次CPU尾账标为unknown；若能用同boot主机CPU计数核实就计实际保守delta，若不能则记录wall×logical-core条件上界与 `unknown_tail=true`。预算守卫须先为当前恢复及后续失败留出合同余量；无法证明剩余预算充足则不启动worker。禁止以“没有final result”把已运行的restore成本归零。
+- prompt selector严格位于四个fresh-process恢复成功和完整receipt持久化之后。任何模型无法恢复、receipt/hash不匹配、账本出现unknown未闭合restore或累计CPU达到上限，均在读取39-family prompt之前停止；仅元数据 `--validate-only` 可重复运行，其不得加载模型、启动worker、选prompt或生成，且不构成正式执行attempt。
 
 每条generation先持久化 `query_started(index, arm, prompt_sha256)` 并flush/fsync，再开始该次调用；生成结果返回后立即持久化输出并fsync。每端点最多39次；当前无历史合法输出分支下 `query_attempts=generation_outputs=persisted_generation_outputs=156`。发生异常、强杀、部分写盘或恢复失败即保留attempt和已落盘行，消费本次attempt并停止；任何情况下不自动重试、不跳过family、不从最后一条继续。使用与既有全轮脚本一致的 `_generate_readonly` 语义：`constrained_decode=true`、sampling关闭、`max_generation_bytes=512`，生成前后恢复/比对模型摘要且正式/优化器更新均为0。
 

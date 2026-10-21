@@ -127,3 +127,11 @@
 - 风险：source或endpoint身份漂移、缺少final report、旧generation存在但无法逐端点严格匹配时必须在读prompt前拒绝；评测预算使用恢复计划单列14,400 CPU秒，不沿用旧7,200上限。
 - 给下游：评测runner与synthetic契约测试可和Phase 8训练并行开发；真实39面读取/生成仍须等待三臂final与独立恢复全部完成。
 - 回流判定：通过，无返工；本补充不阻塞Phase 8训练。
+
+### Phase 2 补充：R2 recovery v2 W5计划修订（2026-10-21）
+- 结论：旧计划中的78次新增/复用旧06输出仅作历史；W5按v2四端点和新终点接口执行。
+- 产物：artifacts/02-plan.md（追加“R2 recovery v2 W5修订计划”）。
+- 关键要点：parent只读baseline+三条v2 assistant_sft final；39×4=156新调用；14,400 process-CPU秒与14,400 wall秒双门；合成实现/测试可并行训练。
+- 风险：真实数据面必须等四端点恢复和账本完整；attempt/CPU ledger须在首个restore前耐久落盘，失败消费attempt且禁止重跑。
+- 给下游：AI集成岗按04-v2架构实现合成验证；Phase 8主训练指针不变，不访问dev/reference，不改训练合同。
+- 状态：计划补充完成；不推进主阶段指针，不表示评测或训练通过。
