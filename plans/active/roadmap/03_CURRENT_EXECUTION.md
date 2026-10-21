@@ -22,15 +22,15 @@
 
 ### R2-DIALOGUE-06/07当前并发执行（2026-10-21）
 
-[R2-DIALOGUE-06](../../reference/PLAN-R2-DAILY-DIALOGUE-FULL-TURN-PRETRAINING_20261021.md)的1M fresh候选仍在全轮预训练：最近记录约9,692/30,096 episode，epoch 2/8，attempt=`started`；正式终点checkpoint尚未写出。
+[R2-DIALOGUE-06](../../reference/PLAN-R2-DAILY-DIALOGUE-FULL-TURN-PRETRAINING_20261021.md)的1M fresh候选仍在全轮预训练：最近记录约9,789/30,096 episode，epoch 2/8，attempt=`started`；正式终点checkpoint尚未写出。
 
-用户要求在资源允许时并发对照。已新增并冻结[R2-DIALOGUE-07同规模热启动/随机初始化配对计划](../../reference/PLAN-R2-DAILY-DIALOGUE-WARMSTART-MATCHED_20261021.md)：从旧R2语言模型原生结构建立warm-start与fresh-same-capacity两臂，训练数据、更新量、架构相同；两臂各CPU≤120,000秒，增量合计≤240,000秒，与06关联上限≤480,000秒。独立runner的契约测试3/3通过，Ruff与py_compile通过。两个arm均为278,010 active parameters；zero full bundle和助手校准canary均已新进程恢复，单episode信用探针通过；预检CPU分别50.90625秒与32.84375秒。两臂已正式并发训练，各1,664/30,096 full-turn episodes、778,483 target-byte updates、attempt=`training`；全机CPU采样17.1%、可用内存26.1 GiB。
+用户要求在资源允许时并发对照。已新增并冻结[R2-DIALOGUE-07同规模热启动/随机初始化配对计划](../../reference/PLAN-R2-DAILY-DIALOGUE-WARMSTART-MATCHED_20261021.md)：从旧R2语言模型原生结构建立warm-start与fresh-same-capacity两臂，训练数据、更新量、架构相同；两臂各CPU≤120,000秒，增量合计≤240,000秒，与06关联上限≤480,000秒。独立runner的契约测试3/3通过，Ruff与py_compile通过。两个arm均为278,010 active parameters；zero full bundle和助手校准canary均已新进程恢复，单episode信用探针通过；预检CPU分别50.90625秒与32.84375秒。两臂已正式并发训练，各1,792/30,096 full-turn episodes、849,371 target-byte updates、attempt=`training`；全机CPU采样18.2%、可用内存26.1 GiB。
 
 06/07并发训练期间不查询dev或reference。三候选训练终点齐备后，在06保留的39个dev-family同一prompt面上给07两臂各生成一次，并并列已保存的06两端输出；结果只用于同面配对的人类可读性、贴题、连贯与重复审阅，`can_promote=false`。N1-166仍因N1-165充分性门2/3而不准入，不绕过其冻结前置。
 
 ### 当前唯一下一步：在资源守卫通过后启动R2-07两臂并发训练
 
-R2-07两臂zero/checkpoint恢复与信用门均已通过，现与R2-06并发运行；最近总CPU采样17.1%，24逻辑核、可用内存26.1 GiB。持续监测三进程的训练记录和资源；三候选均结束后执行同面自由生成审阅，再据证据决定N主线后续。没有新确认面、reference答案评分或自动晋升。
+R2-07两臂zero/checkpoint恢复与信用门均已通过，现与R2-06并发运行；最近总CPU采样18.2%，24逻辑核、可用内存26.1 GiB。持续监测三进程的训练记录和资源；三候选均结束后执行同面自由生成审阅，再据证据决定N主线后续。没有新确认面、reference答案评分或自动晋升。
 
 ### N1历史快照（2026-10-20）
 
