@@ -161,6 +161,14 @@
 - 给下游：Phase6实现与Phase7审查按R2V2-08..10补synthetic timeout/进程树/预算测试，主Phase8指针保持不变。
 - 回流判定：通过；架构已明确可实现合同，无上游返工。
 
+### Phase 2 补充：W5a Phase 7返工设计澄清（2026-10-22）
+- 结论：计划已补齐单父进程监督的长驻worker、durable restore门与逐query IPC授权顺序；旧P7打回结论仍有效，尚未返工通过。
+- 产物：artifacts/02-plan.md（追加“Phase 2 W5a返工设计澄清”）。
+- 关键要点：四endpoint回执durable完成后才可selector；worker没有selector/预取/重试权限；每条query父进程先fsync授权。
+- 风险：restore/generation需有限deadline和整棵worker tree有界终止；CPU/wall、取消与finalization共用原14,400秒双门；attempt/ledger只允许已验证的Windows本地固定NTFS write-through发布。
+- 给下游：关闭全部6项P1、3项P2并通过对应synthetic故障测试后再回P7；W5b仍等待三臂终点及独立恢复，Phase 8主指针保持不变。
+- 状态：Phase 2计划澄清完成；未修改代码或读取真实数据。
+
 ### Phase 6 补充：R2 recovery v2独立评测实现（2026-10-21）
 - 结论：W5a实现完成；端点固定parent基线加三条v2 `assistant_sft` final，39×4=156次新生成。Phase8主阶段指针保持不变。
 - 产物：artifacts/06-implementation-ai.md；新增`evaluate_taiji_r2_daily_dialogue_recovery_v2.py`与对应synthetic契约测试。

@@ -29,3 +29,15 @@
 ## Phase 7 首轮审查回流（2026-10-22）
 
 首轮独立代码审查结论为打回（P0=0、P1=6、P2=3）；W5a尚未通过，不得进入真实评测。P1-06平台合同已由架构岗补充裁决并提交：仅支持Windows本地固定NTFS，以同目录exclusive-temp写入、文件刷新后经`MoveFileExW(MOVEFILE_WRITE_THROUGH)`无覆盖发布attempt和initial ledger；UNC/网络、ReFS、可移动或未验证文件系统必须fail closed。AI集成岗据此修复六项P1（worker只能由有效attempt/restore事件授权、子进程模块启动、restore与generation预算deadline、prompt selector前复核来源、支持平台的durable one-shot文件发布）并处理三项P2（完整成本报告口径、reserve算术、selector阶段意图记录），增加对应的合成失败注入。返工结束后重跑定向测试并由code-reviewer复审。三臂W4训练继续，不访问dev/reference，不启动真实restore、selector或generation。
+
+## Phase 2 W5a返工设计澄清（2026-10-22）
+
+本节将R2V2-08..10与04-v2架构新增合同落实为Phase 6可直接执行的返工顺序；旧W5a职责与Phase 7打回结论保留，不视为返工已完成。
+
+1. **durable one-shot入口：**仅支持Windows本地固定卷NTFS，实际报告目录必须预先存在；在同一目录创建exclusive temp，写后`FlushFileBuffers`，再用`MoveFileExW(MOVEFILE_WRITE_THROUGH)`无覆盖发布attempt与initial ledger。文件系统资格探测、attempt/ledger任一发布或内容核验失败时，在启动worker、restore或selector前拒绝。UNC/网络、ReFS、可移动介质及未验证文件系统fail closed。
+2. **单父进程与长驻worker：**父进程拥有attempt、CPU/wall账本和全部授权；一个受监督长驻worker顺序完成四端点fresh-process restore并驻留模型。worker不持有selector、dev路径或预取/重试权限。每个restore前先fsync唯一授权事件，返回后由父进程核验并durable记录完整restore回执；四端点回执全部持久化后，才允许父进程调用一次prompt selector。
+3. **逐条授权与有限期限：**selector完成后，父进程对每条生成先fsync `query_started`，再通过IPC只授权一个(endpoint,prompt SHA)工作项；worker完成后等待下一条授权。restore和generation各有有限deadline与有界采样间隔；deadline或预算门触发时停止派发，父进程在有限软/硬终止宽限内终止整棵worker进程树并等待退出，记录CPU/wall尾账与失败事件。终止/退出不可证明时不得继续或运行selector。
+4. **原双预算全额记账：**父进程与整棵worker树的启动、模型/语料加载、restore、生成、IPC、超时/取消、进程树终止、ledger及result最终化成本，全部计入原14,400 process-CPU秒和14,400 wall秒双门；不新增预算。每项授权前扣除剩余query、取消、终止与finalization reserve。已触门或无法证明余量时不再授权；保留已写attempt、query和失败/unknown-tail证据，消费attempt且不可重试/续跑。
+5. **回P7门禁：**P0必须为0、六项P1和三项P2全部关闭；相应synthetic故障测试均通过后才退回Phase 7独立复审。至少覆盖：worker无父attempt/伪造endpoint授权拒绝；模块方式启动与安全导入；restore/generation hang、CPU忙循环、worker后代及整树强制终止；selector前来源漂移保持selector调用为0；NTFS资格/flush/rename/第二marker失败时restore启动为0；最终CPU/wall包含finalization；reserve算术正确；selector意图事件先行fsync。只做synthetic/本地NTFS验证，不读取dev/reference、不运行真实模型、restore、selector或generation。
+
+W5b仍以Phase 7复审通过及三臂W4固定终点、result/readiness/checkpoint与fresh-process恢复齐备为前置；任一未满足均不启动真实评测。该返工设计不改变Phase 8主训练指针、冻结训练合同、156次分母或`can_promote=false`边界。
