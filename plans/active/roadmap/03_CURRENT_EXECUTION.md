@@ -2,7 +2,7 @@
 
 ## 当前执行：N1-165A结案；R2自然中文多轮对话v2三臂重做
 
-## 当前唯一下一步：监测并维持三臂v2训练至终点恢复
+## 当前唯一下一步：完成v2独立评测器与合成契约验证；三臂训练持续运行，终点恢复前不读取保留prompt
 
 ### 最新事实与主线进展（2026-10-21）
 
@@ -12,7 +12,9 @@ R2对话方案的新恢复runner已通过Phase7审查、25项基础/runner合同
 
 v2三臂zero/full-turn bundle与assistant-canary均完成写盘并fresh-process恢复2/2；readiness CPU分别125.90625、45.828125、44.859375秒，三臂均`can_promote=false`。启动时内存约28GiB，双CPU样本为full_turn_1m 3.7%/2.0%、warm_start 9.4%/8.7%、fresh_same_capacity 6.2%/4.7%。结案与路径见[v2 readiness handoff](../../reference/PLAN-R2-DAILY-DIALOGUE-RECOVERY_V2_READINESS_20261021.md)。
 
-三臂于2026-10-21 19:06并发启动。2026-10-21 23:33（Asia/Shanghai）重新核对的durable进度：full_turn_1m 4,320/30,096 episodes、2,069,142 target-byte updates、累计CPU15,516.546875秒；warm_start 6,560/30,096、3,187,955 updates、15,220.0625秒；fresh_same_capacity 6,560/30,096、3,187,955 updates、15,224.421875秒。三臂最新progress、latest指针、receipt SHA、checkpoint bundle SHA及receipt恢复digest相互吻合；训练仍在进行，三臂尚未到终点，无final report，`can_promote=false`，0dev/reference查询。
+三臂于2026-10-21 19:06并发启动。2026-10-21 23:46（Asia/Shanghai）最新durable进度：full_turn_1m 4,544/30,096 episodes、2,170,672 target-byte updates、累计CPU16,354.59375秒；warm_start 6,848/30,096、3,334,546 updates、15,973.015625秒；fresh_same_capacity 6,848/30,096、3,334,546 updates、15,981.34375秒。23:33曾独立核对三臂progress、latest指针、receipt SHA、checkpoint bundle SHA及receipt恢复digest一致；本次进度读取未重新hash最新receipt。训练仍在进行，三臂尚未到终点，无final report，`can_promote=false`，0dev/reference查询。
+
+评测路径已按 [v2四端点架构](../../reference/delivery-runs/20261021-n-mainline/artifacts/04-v2-evaluation-architecture.md)、[修订计划](../../reference/delivery-runs/20261021-n-mainline/artifacts/02-plan.md) 与 [v2需求](../../reference/delivery-runs/20261021-n-mainline/artifacts/03-requirements.md)转为parent+三臂、39×4=156新调用；实现和synthetic契约测试与训练并行，14,400 process-CPU秒/14,400 wall秒双门，所有final及fresh-process恢复完成前不读取prompt。
 
 **唯一下一步：继续监测三臂并发训练与每32 episode checkpoint提交，直至全轮预训练和助手校准均到固定分母、终点独立恢复通过。** 中断时按对应arm `--resume` 恢复，只读取latest已验证bundle；不消费39-family评价面，不因格式或损失读数声称语言能力成立。
 
