@@ -119,3 +119,11 @@
 - 最新receipt核验：三臂progress、latest与receipt一致；receipt SHA及bundle SHA均匹配，恢复digest与receipt digest相同。此前23:32的审计产物保留其当时快照；本次按23:33实际写盘状态更新路线图。
 - 唯一下一步：继续监测同三臂至固定分母和final fresh-process恢复完成；期间不查询dev/reference，不判定能力晋级。
 - 状态：执行中，Phase 8未结案。
+
+### Phase 4 补充：R2 recovery v2 四端点评测架构（2026-10-21）
+- 结论：通过；旧04架构仅适用于旧06/07接口及78新查询/156组合输出，不能直接用于恢复v2结果。
+- 产物：artifacts/04-v2-evaluation-architecture.md。
+- 关键要点：当前默认比较旧parent只读baseline + `full_turn_1m`、`warm_start`、`fresh_same_capacity`三条assistant_sft final，共39 family×4 endpoint=156新调用；v2最终result schema为`taiji-r2-dialogue-recovery-result-v1`，校验`bindings`/阶段计数/恢复receipt/所有源和checkpoint SHA。
+- 风险：source或endpoint身份漂移、缺少final report、旧generation存在但无法逐端点严格匹配时必须在读prompt前拒绝；评测预算使用恢复计划单列14,400 CPU秒，不沿用旧7,200上限。
+- 给下游：评测runner与synthetic契约测试可和Phase 8训练并行开发；真实39面读取/生成仍须等待三臂final与独立恢复全部完成。
+- 回流判定：通过，无返工；本补充不阻塞Phase 8训练。
