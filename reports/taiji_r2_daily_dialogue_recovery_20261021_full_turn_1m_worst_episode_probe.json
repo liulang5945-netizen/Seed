@@ -1,0 +1,29 @@
+{
+  "schema": "taiji-r2-dialogue-worst-train-episode-probe-v1",
+  "status": "complete",
+  "arm": "full_turn_1m",
+  "started_utc": "2026-10-21T10:04:24.592771+00:00",
+  "episode_id": "oasst2-turn:1fe64d49a22c7167393445b3",
+  "target_bytes": 14536,
+  "updates_completed_in_copy": 14536,
+  "target_pass_calls": 1,
+  "cpu_seconds": 597.796875,
+  "cpu_ceiling": 1200.0,
+  "memory_available_gib": 29.714,
+  "zero_sha256_before": "666239ae0a6ca04e0227165297b3782a28ef85b3c4e2c1fa0521a376488393ab",
+  "zero_sha256_after": "666239ae0a6ca04e0227165297b3782a28ef85b3c4e2c1fa0521a376488393ab",
+  "zero_parent_unchanged": true,
+  "checkpoint_digest_before": "412760a85829d90e9642255b295d764d48c15b2192637ce6ea6d28282e5a7bc9",
+  "probe_updates": 14536,
+  "formal_updates": 0,
+  "dev_queries": 0,
+  "reference_queries": 0,
+  "can_promote": false,
+  "error": null,
+  "source_hashes": {
+    "E:\\Seed\\scripts\\training\\run_taiji_r2_daily_dialogue_full_turn_pretraining.py": "4065f25ed47d3c823abc0cafeeb6f6d4a055986078f93fdd107cfa16b78aebef",
+    "E:\\Seed\\taiji\\language_alignment.py": "a2a3b692ed081e77344f82b01082535904bc62e841120fde002f57e1ce18773b",
+    "E:\\Seed\\taiji\\model.py": "d06ba0fecdf01b2451130bd0345ff2ea745693440556f58078a19165c183af67",
+    "E:\\Seed\\plans\\reference\\PLAN-R2-DAILY-DIALOGUE-RECOVERY_20261021.md": "ff88db57a03650387cfd858f74f504dde33ad1b9f6f2e54c8492960001d11528"
+  }
+}

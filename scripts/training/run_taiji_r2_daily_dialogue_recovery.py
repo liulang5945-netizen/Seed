@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import sys
 import time
@@ -41,9 +42,16 @@ from taiji import LanguageAlignmentTrainer, Taiji
 
 ARMS = ("full_turn_1m", "warm_start", "fresh_same_capacity")
 PLAN = ROOT / "plans/reference/PLAN-R2-DAILY-DIALOGUE-RECOVERY_20261021.md"
-CHECKPOINT_ROOT = ROOT / "data/checkpoints/r2_daily_dialogue_recovery_20261021"
-PREFIX = ROOT / "reports/taiji_r2_daily_dialogue_recovery_20261021"
+CHECKPOINT_ROOT = ROOT / "data/checkpoints/r2_daily_dialogue_recovery_v2_20261021"
+PREFIX = ROOT / "reports/taiji_r2_daily_dialogue_recovery_v2_20261021"
 SAVE_INTERVAL = 32
+WORST_EPISODE_PROBES = {
+    arm: (
+        ROOT / "reports" / f"taiji_r2_daily_dialogue_recovery_20261021_{arm}_worst_episode_probe.json",
+        ROOT / "reports" / f"taiji_r2_daily_dialogue_recovery_20261021_{arm}_worst_assistant_episode_probe.json",
+    )
+    for arm in ARMS
+}
 
 
 def utc_now() -> str:
@@ -106,19 +114,60 @@ def source_bindings(arm: str) -> dict[str, Any]:
         ROOT / "scripts/training/taiji_r2_dialogue_recovery.py",
         ROOT / "tests/taiji_native/test_r2_dialogue_recovery_contract.py",
         ROOT / "tests/taiji_native/test_r2_daily_dialogue_recovery_contract.py",
+        *WORST_EPISODE_PROBES[arm],
     ):
         hashes[str(filename.resolve())] = base.sha256(filename)
+    expected_zero_sha = base.sha256(zero_path(arm))
+    for probe_path in WORST_EPISODE_PROBES[arm]:
+        probe = base._read_json(probe_path)
+        if probe.get("zero_sha256_before") != expected_zero_sha:
+            raise base.Refuse(f"worst-episode probe belongs to a different zero parent: {probe_path.name}")
     return {
-        "run": "r2_daily_dialogue_recovery_20261021",
+        "run": "r2_daily_dialogue_recovery_v2_20261021",
         "arm": arm,
-        "zero_sha256": base.sha256(zero_path(arm)),
+        "zero_sha256": expected_zero_sha,
         "source_hashes": hashes,
     }
+
+
+def validate_probe_face(arm: str, pretrain, assistant) -> None:
+    expected_faces = (
+        (WORST_EPISODE_PROBES[arm][0], max(pretrain.episodes, key=lambda row: len(row.target_bytes))),
+        (WORST_EPISODE_PROBES[arm][1], max(assistant.episodes, key=lambda row: len(row.target_bytes))),
+    )
+    for path, episode in expected_faces:
+        probe = base._read_json(path)
+        if probe.get("episode_id") != episode.episode_id or int(probe.get("target_bytes", 0)) != len(episode.target_bytes):
+            raise base.Refuse(f"worst-episode probe does not match longest frozen train message: {path.name}")
+
+
+def episode_cpu_reserve(arm: str) -> tuple[float, dict[str, str]]:
+    cpu_costs = []
+    hashes = {}
+    for path in WORST_EPISODE_PROBES[arm]:
+        report = base._read_json(path)
+        if (
+            report.get("status") != "complete"
+            or report.get("arm") != arm
+            or report.get("formal_updates") != 0
+            or report.get("dev_queries") != 0
+            or report.get("reference_queries") != 0
+            or report.get("zero_parent_unchanged") is not True
+            or report.get("zero_sha256_before") != report.get("zero_sha256_after")
+            or int(report.get("copy_updates", report.get("updates_completed_in_copy", 0)))
+            != int(report.get("target_bytes", 0)) * int(report.get("response_repeats", 1))
+        ):
+            raise base.Refuse(f"invalid worst-episode CPU probe: {path.name}")
+        cpu_costs.append(float(report["cpu_seconds"]))
+        hashes[str(path.resolve())] = base.sha256(path)
+    reserve = math.ceil((2 * max(cpu_costs) + 120.0) / 60.0) * 60.0
+    return reserve, hashes
 
 
 class Budget:
     def __init__(self, arm: str, charged: float = 0.0) -> None:
         self.limit = 240_000.0 if arm == "full_turn_1m" else 120_000.0
+        self.episode_reserve, self.probe_hashes = episode_cpu_reserve(arm)
         self.started = time.process_time()
         self.charged = charged + max(0.0, self.started - PROCESS_START_CPU)
         self.child_seconds = 0.0
@@ -126,7 +175,9 @@ class Budget:
     def used(self) -> float:
         return self.charged + time.process_time() - self.started + self.child_seconds
 
-    def guard(self, reserve: float = 120.0) -> None:
+    def guard(self, reserve: float | None = None) -> None:
+        if reserve is None:
+            reserve = self.episode_reserve
         if self.used() + reserve >= self.limit:
             raise base.Refuse("recovery CPU allocation exhausted; no implicit retry")
         if psutil.virtual_memory().available < 8 * 1024**3:
@@ -139,6 +190,8 @@ class Budget:
             "host_cpu_seconds": host_cpu_seconds(),
             "logical_cpu_upper": os.cpu_count(),
             "host_boot_time": psutil.boot_time(),
+            "episode_cpu_reserve": self.episode_reserve,
+            "worst_episode_probe_hashes": self.probe_hashes,
             "cpu_limit": self.limit,
         }
 
@@ -351,6 +404,7 @@ def prepare(arm: str, *, resume: bool = False) -> dict[str, Any]:
     try:
         bindings = source_bindings(arm)
         pretrain, assistant, _ = base._validate_sources()
+        validate_probe_face(arm, pretrain, assistant)
         resources = resource_snapshot()
         if resume:
             budget.resume_from(
@@ -414,6 +468,8 @@ def prepare(arm: str, *, resume: bool = False) -> dict[str, Any]:
                 "zero_restore": zero_receipt,
                 "assistant_canary_restore": canary_receipt,
                 "cpu_seconds": budget.used(),
+                "per_episode_cpu_reserve": budget.episode_reserve,
+                "worst_episode_probe_hashes": budget.probe_hashes,
                 "formal_updates": 0,
                 "dev_queries": 0,
                 "can_promote": False,
@@ -459,6 +515,7 @@ def execute(arm: str, *, resume: bool = False) -> dict[str, Any]:
     if not resume and (output["progress"].exists() or output["attempt"].exists()):
         raise base.Refuse("recovery attempt already exists; pass --resume explicitly")
     pretrain, assistant, _ = base._validate_sources()
+    validate_probe_face(arm, pretrain, assistant)
     if not resume:
         base.write_new_json(
             output["attempt"],
@@ -468,6 +525,7 @@ def execute(arm: str, *, resume: bool = False) -> dict[str, Any]:
                 "arm": arm,
                 "started_utc": utc_now(),
                 "cpu_seconds_before_training": budget.used(),
+                "per_episode_cpu_reserve": budget.episode_reserve,
                 "bindings": bindings,
                 "restart_from_zero": True,
                 "dev_queries": 0,
@@ -581,6 +639,8 @@ def execute(arm: str, *, resume: bool = False) -> dict[str, Any]:
             "bindings": bindings,
             "stages": receipts,
             "cpu_seconds": budget.used(),
+            "per_episode_cpu_reserve": budget.episode_reserve,
+            "worst_episode_probe_hashes": budget.probe_hashes,
             "resources_at_training_start": resources,
             "dev_queries": 0,
             "generation_queries": 0,

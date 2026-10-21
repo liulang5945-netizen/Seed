@@ -76,6 +76,13 @@ def test_formal_recovery_budget_does_not_inherit_old_attempt_as_zero() -> None:
     assert recovery.ARMS == ("full_turn_1m", "warm_start", "fresh_same_capacity")
 
 
+def test_episode_reserves_cover_twice_the_measured_longest_probe() -> None:
+    assert recovery.episode_cpu_reserve("full_turn_1m")[0] == 1_320
+    assert recovery.episode_cpu_reserve("warm_start")[0] == 240
+    assert recovery.episode_cpu_reserve("fresh_same_capacity")[0] == 240
+    assert all(len(recovery.episode_cpu_reserve(arm)[1]) == 2 for arm in recovery.ARMS)
+
+
 def test_start_resource_guard_requires_two_cpu_samples_and_memory(monkeypatch) -> None:
     samples = iter((30.0, 80.0))
     monkeypatch.setattr(recovery.psutil, "cpu_percent", lambda *, interval: next(samples))

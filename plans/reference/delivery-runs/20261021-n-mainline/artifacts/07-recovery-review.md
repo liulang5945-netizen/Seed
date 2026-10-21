@@ -91,3 +91,19 @@ atomic_save_final使用目标同目录唯一tmp、torch.save后flush/fsync、目
 本轮独立离线runner契约18/18通过（--basetemp=.seed_test_tmp/recovery_review_20261021/pytest_resource_final）。主理人提供联合28测试及四Python文件Ruff通过证据。本轮未真实prepare/execute/dev，P0/P1继续为0，可放行三arm真实zero准备与独立恢复验证。
 
 原固定120秒reserve的充分性仍需真实准备成本/最坏episode证据后再作为正式训练前门禁核对，此项不阻断当前只做zero准备。当前有效Phase7结论：通过。
+
+## v2动态预算reserve增量复审
+已确认checkpoint与报告切换独立recovery_v2_20261021根，旧产物保留。每臂source_bindings绑定该臂全轮及助手最长episode两份probe报告SHA（合计六份），并验证probe zero_sha256_before等于本地旧zero实际SHA；reserve验证complete、arm、0正式更新/0 dev/reference、父zero前后SHA不变、copy更新量等于target_bytes×response_repeats。prepare与execute均在实际工作前对照冻结train corpus中最大target的episode_id和字节数，避免probe来自错误题目。
+
+只读检查六份probe的元数据：full_turn_1m全轮597.796875秒、助手4.8125秒；warm32.9375/3.0625；fresh32.8125/2.984375，状态均complete、formal_updates=0、父zero不变。ceil((2×maxCPU+120)/60)×60对应reserve1320/240/240秒。Budget默认guard改用此值，episode前与commit前后守卫保留；ledger/readiness/结果记录reserve和报告hash。正式恢复source binding包含probe，避免在已准备/已训练期间静默改测量。
+
+本轮独立离线runner合同19/19通过（--basetemp=.seed_test_tmp/recovery_review_20261021/pytest_v2_reserve）；联合29、Ruff和py_compile为主理人已有证据。未加载模型或运行真实prepare/训练/dev。P0/P1仍为0，允许进入v2三arm真实zero checkpoint准备与独立恢复验证。
+
+边界：最长target测量加2倍余量是有来源的工程预留，不是所有未来状态运行时间的数学上界。120秒保存恢复余量应随真实zero提交/恢复成本核对；若实际接近或超过余量，停止正式启动并版本化修订，不宣称硬实时保证。该限制不阻断当前zero准备验证。
+
+当前有效Phase7判定：通过；下一步仅v2真实zero准备/恢复验证，正式训练仍待其readiness通过。
+
+## v2最终计划与测量绑定确认
+最新静态核对与上次动态reserve复审一致：source_bindings逐臂核验两份probe的本地zero父SHA并绑定报告SHA，六份在三arm合计完整；prepare/execute均exact-match冻结train最大target的episode_id与target_bytes；run身份及checkpoint/reports根均为v2。计划已把v1成功zero准备标为保留历史、不被v2接受，并同步1320/240/240动态reserve与“先三arm v2准备、全ready再训练”的顺序。
+
+无新增finding，P0=0/P1=0。沿用本轮前次独立19/19与主理人联合29/Ruff/py_compile证据，不无故重复测试。Phase7通过，放行v2三arm真实zero准备及fresh-process恢复验证；未执行真实prepare/训练/dev。

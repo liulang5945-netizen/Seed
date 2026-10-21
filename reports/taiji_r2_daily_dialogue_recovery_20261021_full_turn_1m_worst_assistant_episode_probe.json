@@ -1,0 +1,17 @@
+{
+  "schema": "taiji-r2-dialogue-worst-assistant-episode-probe-v1",
+  "status": "complete",
+  "arm": "full_turn_1m",
+  "episode_id": "oasst2:6f7ff284-a2a5-4a7f-ada9-fd0b72882bd7",
+  "target_bytes": 489,
+  "copy_updates": 489,
+  "response_repeats": 1,
+  "cpu_seconds": 4.8125,
+  "zero_sha256_before": "666239ae0a6ca04e0227165297b3782a28ef85b3c4e2c1fa0521a376488393ab",
+  "zero_sha256_after": "666239ae0a6ca04e0227165297b3782a28ef85b3c4e2c1fa0521a376488393ab",
+  "zero_parent_unchanged": true,
+  "formal_updates": 0,
+  "dev_queries": 0,
+  "reference_queries": 0,
+  "can_promote": false
+}

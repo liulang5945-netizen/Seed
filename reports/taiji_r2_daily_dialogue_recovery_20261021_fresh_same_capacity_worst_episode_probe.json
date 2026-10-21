@@ -1,0 +1,17 @@
+{
+  "schema": "taiji-r2-dialogue-worst-train-episode-probe-v1",
+  "status": "complete",
+  "arm": "fresh_same_capacity",
+  "episode_id": "oasst2-turn:1fe64d49a22c7167393445b3",
+  "target_bytes": 14536,
+  "copy_updates": 14536,
+  "response_repeats": 1,
+  "cpu_seconds": 32.8125,
+  "zero_sha256_before": "a678081e0f39e2e50575bc2b0af333dc3f85fe0bfc1cde57f8154564cf79760a",
+  "zero_sha256_after": "a678081e0f39e2e50575bc2b0af333dc3f85fe0bfc1cde57f8154564cf79760a",
+  "zero_parent_unchanged": true,
+  "formal_updates": 0,
+  "dev_queries": 0,
+  "reference_queries": 0,
+  "can_promote": false
+}

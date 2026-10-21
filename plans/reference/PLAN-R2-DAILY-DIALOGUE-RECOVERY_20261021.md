@@ -7,8 +7,8 @@
 
 ## 路径与身份
 - 新runner：scripts/training/run_taiji_r2_daily_dialogue_recovery.py；基础层契约测试：tests/taiji_native/test_r2_dialogue_recovery_contract.py；正式runner契约测试：tests/taiji_native/test_r2_daily_dialogue_recovery_contract.py。
-- 新checkpoint根：data/checkpoints/r2_daily_dialogue_recovery_20261021/{full_turn_1m,warm_start,fresh_same_capacity}/。
-- 新报告：reports/taiji_r2_daily_dialogue_recovery_20261021_*，各臂独立readiness/attempt/progress/result与提交回执。
+- 新checkpoint根（v2预算修订）：data/checkpoints/r2_daily_dialogue_recovery_v2_20261021/{full_turn_1m,warm_start,fresh_same_capacity}/。v1 zero准备结果留作历史证据，不被此版接受。
+- 新报告：reports/taiji_r2_daily_dialogue_recovery_v2_20261021_*，各臂独立readiness/attempt/progress/result与提交回执。
 - 原zero：data/checkpoints/r2_daily_dialogue_full_turn_20261021/full_turn_zero.pt；data/checkpoints/r2_daily_dialogue_warmstart_matched_20261021/{warm_start,fresh_same_capacity}/full_turn_zero.pt。只读、SHA绑定；禁止重建新seed假称旧zero。
 - 新计划、runner、基础层测试、runner测试、旧冻结计划与旧绑定源分别hash；旧zero原code_revision保持原样，新代码身份独立记录。
 
@@ -32,7 +32,13 @@
 ## 新增预算与授权
 用户持续推进指示允许项目据实际修订，本计划明确增加一次从zero重做的额度：full_turn_1m≤240000、warm_start≤120000、fresh_same_capacity≤120000 process-CPU秒，三臂合计≤480000新增秒；此额度包含各臂启动/来源校验、保存恢复子进程、周期checkpoint、失败尝试与回滚重算，不重复收取既有data build。
 
-另列共享恢复等价性与故障验证≤7200 CPU秒、真实zero保存恢复readiness≤1800 CPU秒、最终同面自由生成评测≤14400 CPU秒（最多4端点×39=156调用，见下节），辅助合计≤23400。新执行总增量上限503400 CPU秒。生命周期总账表达为旧实际未知损失+新增实测≤503400；若采用有证据支撑的条件极宽旧上界则另列该上界+503400，绝不写成已花费或实际预测。
+另列共享恢复等价性与故障验证≤7200 CPU秒、三臂zero保存恢复与最长train episode校准≤1800 CPU秒、最终同面自由生成评测≤14400 CPU秒（最多4端点×39=156调用，见下节），辅助合计≤23400。新执行总增量上限503400 CPU秒。生命周期总账表达为旧实际未知损失+新增实测≤503400；若采用有证据支撑的条件极宽旧上界则另列该上界+503400，绝不写成已花费或实际预测。
+
+### 最长单episode CPU预留（2026-10-21实测）
+
+在v1 zero权重的独立副本上，选固定train split中最长消息实测：3,762条全轮消息的最大target为14,536 bytes；助手校准最大target为489 bytes。zero parent hash前后均不变，全部探针`formal_updates=0`、`dev/reference queries=0`。CPU：full_turn_1m全轮597.796875秒、助手4.8125秒；warm_start全轮32.9375秒、助手3.0625秒；fresh_same_capacity全轮32.8125秒、助手2.984375秒。完整机器报告：`reports/taiji_r2_daily_dialogue_recovery_20261021_{full_turn_1m,warm_start,fresh_same_capacity}_worst_episode_probe.json`与各臂`_worst_assistant_episode_probe.json`。
+
+原通用120秒余量小于1M最长episode实测597.8秒，因此v2执行器绑定上述六份探针报告SHA，按`ceil((2×最大探针CPU+120)/60)×60`秒为每臂每step与checkpoint共同预留：full_turn_1m=1320秒，warm_start=240秒，fresh_same_capacity=240秒。两倍实测留出模型状态/运行波动余量，另保留120秒保存与恢复；每个episode开始前、每个commit前后检查该预留。不满足则留partial停止，不声称完成固定配方。
 
 不得以旧损耗未知阻止工程实现；正式训练按新增限额计费并持续保存完整进程树CPU。新增额度耗尽即留partial停止；不得自动开启第二轮重做。资源守卫：CPU/torch及BLAS均单线程；可用内存≥8GiB、全机CPU连续两次1秒采样≤85%才启动新臂；允许资源足够时三臂并行。同臂单writer锁，PID与create_time双验。每次episode预留实测最坏episode+checkpoint+restore CPU，父监督器记全部子树CPU，避免只记成功退出子进程。
 
@@ -57,4 +63,4 @@
 4. 评测补充合同通过后一次39面比较、固定12样例人工复核，保留失败历史。
 5. 同步active当前执行与N主线计划、交付黑板、报告及结案，提交；依据真实结果决定下一研究节点，不预先宣布能力收官。
 
-唯一下一步：依次对full_turn_1m、warm_start、fresh_same_capacity执行--prepare-only，完成zero envelope保存和fresh-process恢复核验；全臂ready后再启动正式训练。当前不启动正式训练、不读取真实dev。
+唯一下一步：依次在v2独立路径对full_turn_1m、warm_start、fresh_same_capacity执行--prepare-only，完成zero envelope保存和fresh-process恢复核验；全臂ready后再启动正式训练。当前不启动正式训练、不读取真实dev。
