@@ -76,6 +76,7 @@
 ### 支持边界
 
 - 当前支持：Windows上的本地固定卷NTFS；目标目录必须已存在，attempt、initial ledger和临时文件位于同一目录/卷。启动前核验目标路径所属卷为本地固定卷、文件系统名为`NTFS`，并核验temp与final解析到同一卷。
+- 本次审查环境的只读资格证据：根任务通过`GetVolumeInformationW`核验`E:\Seed`卷的filesystem name为`NTFS`，`GetDriveTypeW`返回`3`（`DRIVE_FIXED`）。这只确认当前工作区满足本次本地NTFS裁决；实现必须对每次实际attempt所在报告根动态探测，不能硬编码当前盘符或探测结果。
 - 当前拒绝：UNC/mapped/network/SMB路径、CSVFS/集群共享、可移动介质、ReFS、FAT/exFAT、第三方/加密/overlay/cloud-sync或无法识别的文件系统。`MoveFileExW`的支持列表表示API可用，不足以证明此应用的server、failover或过滤层具有相同durability语义；这些平台需单独架构裁决与故障验证后才能加入。
 - 不创建尚未耐久确认的新父目录来放attempt/ledger；当前报告根`reports/`须预先存在。若未来要创建目录，须另为目录树建立已审查的发布协议，否则拒绝。
 
@@ -100,3 +101,35 @@
 - 结论：通过；Windows本地NTFS采用MoveFileExW write-through，不需要未记录的目录handle flush，也不再整体fail closed。
 - 条件：Phase 6必须落实上述路径/卷门、写入与MoveFileExW flags、marker发布顺序和故障注入；网络及未资格化文件系统仍拒绝。
 - 不阻塞：Phase 8训练及已冻结source合同。
+
+## Phase 4补充：P7生成调用的deadline与父进程取消边界
+
+### 裁决
+
+**通过架构补充，P1不接受父进程内无界同步调用。** 所有恢复及生成模型工作必须运行在父进程可观察、可取消、可强制终止的受监督worker进程边界内。父进程必须在生成前持久化`query_started`，用单次IPC请求授权恰好一个(endpoint, prompt)工作项；生成调用中的`_generate_readonly`即使阻塞，也不能阻塞预算监督器。超时或CPU预算将尽时，父进程终止worker（包含其子进程树），收齐已消耗CPU/wall账目，持久化该query的失败结果并消费attempt；不重试、不继续下一个query。
+
+为避免按每个endpoint×prompt反复启动Python并重新加载模型损害吞吐，默认拓扑是一支父进程监督的长驻worker：在prompt selector之前于worker中完成四endpoint fresh restore并把各restore回执逐项交回父进程，父进程耐久写入全部四个restore成功事件后才选择prompt；worker保持已恢复模型驻留，之后仅按父进程逐条授权生成。工作进程没有自主selector、重试或批量预取prompt的权限。若单worker内存门不满足，不得退化成父进程同步生成或156次模型重载；该运行在prompt访问前fail closed，任何替代拓扑必须先由架构门审查且仍满足相同吞吐预算/边界。
+
+worker不能通过公开CLI脱离attempt/ledger自行恢复或生成。父进程以私有IPC/一次性run授权绑定attempt id、source manifest、endpoint、query id与prompt SHA；worker仅接受当前已耐久记账的单个任务。父进程逐个发送任务，不得预发完整39×4 query队列。Windows上worker及任何后代必须属于同一可终止进程树；若平台无法证明worker结束后不存在仍在运行的后代，评测preflight拒绝。
+
+### CPU/wall硬门
+
+- 执行总CPU和总wall上限分别仍为14,400秒，worker启动/restore/模型驻留期间计算、所有生成、IPC、失败调用、终止、ledger写入和最终report均计入原预算，不新增长预算。父进程使用单调wall时钟并轮询worker进程CPU；CPU累计为父进程与worker树的CPU总和，不能只依赖worker成功回执。
+- 每个restore/generation等待均有有限deadline。generation deadline取“冻结的单次上限”与“剩余全局wall预算扣除取消/终止及failure-finalization reserve后、按尚未开始的query数分摊额度”二者较小值；CPU门按相同方式从剩余CPU预算扣除保留额度并分摊。剩余额度、冻结上限或终止/失败落账reserve任一非有限、缺失或不足时，不得发送任务。由此单次调用不可能获得整段未封顶等待时间。
+- 监督器按有界间隔采样；其采样延迟、软终止宽限、强制终止与wait确认的最坏耗时必须作为固定reserve计入14,400秒，而非事后估算。先到单次deadline、CPU分享额度或全局停止阈值时，父进程停止发新任务、发起取消并在有界宽限后强制终止worker树；随后记录实际可读的进程树CPU及wall尾账。此规则适用于checkpoint restore、模型/语料加载和生成，不得把任何模型工作留在父进程同步等待。
+- 只有worker树已确认退出、父进程写入`query_timeout`/`restore_timeout`失败事件并fsync，且剩余finalization reserve仍足够时，才写出失败结果。若外部强杀父进程导致该失败行未能落盘，已有`query_started`会被判作状态unknown；attempt仍已消费，下一次执行必须拒绝。
+
+### 必须具备的synthetic验证
+
+1. 假generator永久阻塞：父进程在单次deadline内取消并强制结束worker，worker树无遗留；ledger含同一query的`query_started`与唯一`query_timeout`，attempt/result为失败，调用数和CPU/wall均计入。
+2. 假worker执行CPU忙循环：父进程监测到本次分享CPU额度或全局停止阈值前停止新工作并终止worker；14,400 CPU/wall上限中保留取消和最终落账余量，不允许`budget.guard`等到同步函数返回后才执行。
+3. 假worker忽略软取消或创建后代：强制终止覆盖整个进程树；测试确认无残留PID、无后续任务处理。无法终止整棵树时验证execute fail closed。
+4. 在budget只剩finalization reserve、单次预算为零或期限配置缺失时，确认父进程不向worker发送新query；prompt selector仅在四个restore成功回执已fsync后调用。
+5. 在query完成与deadline同时到达的竞争场景，状态机只允许一个终态（已持久化output或timeout），不得重复计数；timeout后的二次`--execute`必须在selector和worker启动前拒绝。
+6. 测试断言restore/生成worker均由父进程创建、所有查询先有durable intent、timeout失败写入能在预留预算内完成，且1支长驻模型worker不会因逐query重载改变156分母或训练/评测source binding。
+
+### 回流判定
+
+- 结论：通过；所有restore/生成调用须在父进程可取消的有界worker中运行。
+- 条件：以单个长驻worker保持四端点模型已加载以维持吞吐；一次只授权一个已落账query；deadline、轮询/终止/落账reserve须在冻结manifest中有限且受14,400秒总门约束。
+- 给下游：Phase 6实现父监督IPC、进程树取消、CPU/wall实时记账和上述synthetic timeout测试；在Phase 7复审通过前，真实selector和生成继续禁止。
