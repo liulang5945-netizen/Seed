@@ -22,17 +22,17 @@
 
 ### R2-DIALOGUE-06/07当前并发执行（2026-10-21）
 
-[R2-DIALOGUE-06](../../reference/PLAN-R2-DAILY-DIALOGUE-FULL-TURN-PRETRAINING_20261021.md)的1M fresh候选仍在全轮预训练：最近记录14,188/30,096 episode，attempt=`started`；正式终点checkpoint尚未写出。
+[R2-DIALOGUE-06](../../reference/PLAN-R2-DAILY-DIALOGUE-FULL-TURN-PRETRAINING_20261021.md)的1M fresh候选仍在全轮预训练：最近记录14,682/30,096 episode（48.8%），attempt=`started`；磁盘目前只有`full_turn_zero.pt`与助手校准canary，没有中途或终点训练checkpoint。
 
-用户要求在资源允许时并发对照。已新增并冻结[R2-DIALOGUE-07同规模热启动/随机初始化配对计划](../../reference/PLAN-R2-DAILY-DIALOGUE-WARMSTART-MATCHED_20261021.md)：从旧R2语言模型原生结构建立warm-start与fresh-same-capacity两臂，训练数据、更新量、架构相同；两臂各CPU≤120,000秒，增量合计≤240,000秒，与06关联上限≤480,000秒。独立runner的契约测试3/3通过，Ruff与py_compile通过。两个arm均为278,010 active parameters；zero full bundle和助手校准canary均已新进程恢复，单episode信用探针通过；预检CPU分别50.90625秒与32.84375秒。两臂已正式并发训练，各8,832/30,096 episode、4,247,474 target-byte updates、attempt=`training`。全机CPU采样17.5%、可用内存24.8 GiB。
+用户要求在资源允许时并发对照。已新增并冻结[R2-DIALOGUE-07同规模热启动/随机初始化配对计划](../../reference/PLAN-R2-DAILY-DIALOGUE-WARMSTART-MATCHED_20261021.md)：从旧R2语言模型原生结构建立warm-start与fresh-same-capacity两臂，训练数据、更新量、架构相同；两臂各CPU≤120,000秒，增量合计≤240,000秒，与06关联上限≤480,000秒。独立runner的契约测试3/3通过，Ruff与py_compile通过。两个arm均为278,010 active parameters；zero full bundle和助手校准canary均已新进程恢复，单episode信用探针通过；预检CPU分别50.90625秒与32.84375秒。两臂正式训练均到9,728/30,096 episode（32.3%）、4,657,600 target-byte updates、attempt=`training`。磁盘目前每臂只有zero full bundle和助手校准canary，尚无训练终点checkpoint；最新臂内资源记录显示可用内存22.7/23.6 GiB。
 
 [R2-DIALOGUE-08线程扩展诊断](../../reference/EXP-R2-THREAD-SCALING-ADJUDICATION_20261021.md)部分结案：7/8 trial后CPU超限48.4375秒，失败attempt与progress保留、不重跑；父checkpoint未变，0 dev/reference/checkpoint写入。副本实测多线程仅带来小幅wall吞吐变化、process-CPU成本显著增加，且单线程重复不足；R2-06/07继续使用冻结的单线程设置。预算reserve守卫已修复并通过契约测试。
 
-06/07并发训练期间不查询dev或reference。三候选训练终点齐备后，在06保留的39个dev-family同一prompt面上给07两臂各生成一次，并并列已保存的06两端输出；结果只用于同面配对的人类可读性、贴题、连贯与重复审阅，`can_promote=false`。N1-166仍因N1-165充分性门2/3而不准入，不绕过其冻结前置。
+06/07并发训练期间不查询dev或reference。Codex官方文档未保证桌面客户端重启会保留这类本地执行会话，故按可能中断处理：06只在完整预训练阶段结束时保存训练checkpoint；07 runner捕获到异常时会尝试保存partial checkpoint，但强制结束进程不保证触发保存逻辑。优先等三条run完成并写出最终产物后再重启；若更早重启，当前训练进度可能无法从磁盘恢复。三候选训练终点齐备后，在06保留的39个dev-family同一prompt面上给07两臂各生成一次，并并列已保存的06两端输出；结果只用于同面配对的人类可读性、贴题、连贯与重复审阅，`can_promote=false`。N1-166仍因N1-165充分性门2/3而不准入，不绕过其冻结前置。
 
 ### 当前唯一下一步：继续完成R2-06/07并发训练与终点恢复
 
-R2-07两臂zero/checkpoint恢复与信用门均已通过，现与R2-06并发运行；最近总CPU采样17.5%，24逻辑核、可用内存24.8 GiB。继续监测三进程直至固定训练量完成并独立恢复终点checkpoint；随后按计划在保留的同一39个dev-family prompt面做一次自由生成对照，再据证据决定N主线后续。没有新确认面、reference答案评分或自动晋升。
+R2-07两臂zero/checkpoint恢复与信用门均已通过，现与R2-06并发运行；最近确认进度分别为06 14,682/30,096、07两臂各9,728/30,096 episode。当前只有zero/canary checkpoint；客户端更新重启可能中断本地执行且没有官方保活保证。继续监测三进程直至固定训练量完成并独立恢复终点checkpoint；随后按计划在保留的同一39个dev-family prompt面做一次自由生成对照，再据证据决定N主线后续。没有新确认面、reference答案评分或自动晋升。
 
 ### N1历史快照（2026-10-20）
 
