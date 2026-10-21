@@ -558,7 +558,10 @@ jobs:
         # the lint job so both legs agree on formatter behaviour.  Skipping the test was the
         # alternative and the worse one: line-ending handling is exactly where a frozen
         # marker breaks, so this is the leg that should run it.
-        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography numpy black==26.5.1
+        # H19x (2026-10-21): the Windows full-suite leg uses `pip install -e . --no-deps`,
+        # but collected N1 training runners import psutil directly. Without an explicit
+        # install, 141 test modules failed collection with ModuleNotFoundError: psutil.
+        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography numpy "psutil>=5.9.0,<7.0.0" black==26.5.1
 
       - name: Install package (editable)
         run: pip install -e . --no-deps

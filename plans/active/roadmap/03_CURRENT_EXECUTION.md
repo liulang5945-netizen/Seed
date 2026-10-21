@@ -16,7 +16,7 @@ v2三臂zero/full-turn bundle与assistant-canary均完成写盘并fresh-process�
 
 **唯一下一步：继续监测三臂并发训练与每32 episode checkpoint提交，直至全轮预训练和助手校准均到固定分母、终点独立恢复通过。** 中断时按对应arm `--resume` 恢复，只读取latest已验证bundle；不消费39-family评价面，不因格式或损失读数声称语言能力成立。
 
-远端最近CI（run 39537675979，HEAD 02e82d9）为failure，m7-ci成功；日志API 403 rate limit，失败原因仍未能归属，当前不声称CI全绿。
+远端CI run 39537675979（HEAD 02e82d9）有两项失败：Ubuntu `test (3.12)`的`ruff check .`因`audit_taiji_n1_plan163_itemwise_attribution.py` import排序I001失败；Windows full regression的141项collection error均为`ModuleNotFoundError: psutil`。I001已修，本地全仓`python -m ruff check .`全绿；Windows workflow测试依赖已补装psutil。其它startup smoke和docker-build成功。修复尚未推送，远端重跑验证待代码发布，不声称CI整体全绿。
 
 ### N1-165A及N1-166状态（2026-10-21）
 

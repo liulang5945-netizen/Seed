@@ -97,3 +97,8 @@
 - Phase 7最终P2审查通过: 启动双CPU采样/8GiB门及失败账本、final同目录fsync/write-once rename已落实；独立runner18/18通过，P0/P1仍0。可放行三arm真实zero准备验证；正式训练前仍核对预算reserve充分性。未真实prepare/execute/dev。
 - Phase7 v2动态reserve复审通过: probe零父档/最长train episode及SHA绑定有效，reserve1320/240/240；独立runner19/19，P0/P1仍0。放行v2三arm真实zero准备验证；120秒恢复余量随真实成本核对，未真实prepare/训练/dev。
 - Phase7 v2最终同步确认: 计划已标v1准备被v2取代、动态reserve及新路径；本地zero/probe SHA和最大train题目exact-match保持。P0/P1=0，允许v2真实zero准备验证，无新增测试/真实训练/dev操作。
+
+### CI审查更新（远端run 39537675979）
+- Ubuntu Ruff I001已在本地修复，当前全仓ruff通过；Windows全回归141项collection error均因测试job漏装psutil，workflow已补依赖。
+- Startup smoke与docker-build通过；Windows/Ubuntu详细日志已从GitHub connector取证，CLI 403不再阻断归因。
+- 当前修复尚未推送，远端重跑仍待代码发布；不声称CI整体全绿。

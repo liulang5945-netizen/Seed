@@ -9,7 +9,6 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
-
 ROOT = Path(__file__).resolve().parents[2]
 RESULT = ROOT / "reports/taiji_n1_plan163_transition_template_rebalanced_result_20261020.json"
 PROGRESS = ROOT / "reports/taiji_n1_plan163_transition_template_rebalanced_progress_20261020.jsonl"
