@@ -1,0 +1,107 @@
+{
+  "schema": "taiji-r2-dialogue-interruption-audit-v1",
+  "observed_at_utc": "2026-10-21T09:11:56.584258+00:00",
+  "process_check": "Unsandboxed Get-Process python* returned no entries; unsandboxed Win32_Process query showed no python.",
+  "termination_cause": "client update (user-confirmed)",
+  "conclusion": "interrupted_without_trained_checkpoint",
+  "arms": [
+    {
+      "arm": "full_turn_1m",
+      "attempt_status": "started",
+      "progress_sha256": "b0f4fc21f217ad8bd6d39661dce36ee155052022b609e3c3c87d2291580131a5",
+      "last_record": {
+        "episode_id": "oasst2-turn:49615203b163cd924c0ec368",
+        "episode_index": 14880,
+        "epoch": 3,
+        "event": "full_turn_pretraining_episode",
+        "family_id": "oasst2-tree:f45364bbb910bced1d539870",
+        "observations": 66,
+        "prefix_bytes": 150,
+        "response_mean_surprise": 2.4384625908775184,
+        "target_bytes": 66,
+        "target_role": "user"
+      },
+      "completed_episodes_logged": 14880,
+      "target_updates_logged": 7195482,
+      "progress_mtime_utc": "2026-10-21T08:57:10.122257+00:00",
+      "result_exists": false,
+      "checkpoints": [
+        {
+          "path": "E:\\Seed\\data\\checkpoints\\r2_daily_dialogue_full_turn_20261021\\assistant_sft_canary_zero.pt",
+          "sha256": "21c318a1ba2fa975485f26a3b7e3e26afa92094bfa0e85f03eb7b9f64da89077",
+          "bytes": 7712247
+        },
+        {
+          "path": "E:\\Seed\\data\\checkpoints\\r2_daily_dialogue_full_turn_20261021\\full_turn_zero.pt",
+          "sha256": "666239ae0a6ca04e0227165297b3782a28ef85b3c4e2c1fa0521a376488393ab",
+          "bytes": 7425338
+        }
+      ]
+    },
+    {
+      "arm": "warm_start",
+      "attempt_status": "training",
+      "progress_sha256": "fc193730ec5a8803adcdd4947a5377e95486b8003a5e874e34f29958eaa3c475",
+      "last_record": {
+        "available_memory_gib": 23.386,
+        "cpu_seconds": 19922.141,
+        "episode": 9984,
+        "episodes_planned": 30096,
+        "event": "full_turn_pretraining_progress",
+        "target_byte_updates": 4798480
+      },
+      "completed_episodes_logged": 9984,
+      "target_updates_logged": 4798480,
+      "progress_mtime_utc": "2026-10-21T08:56:08.956973+00:00",
+      "result_exists": false,
+      "checkpoints": [
+        {
+          "path": "E:\\Seed\\data\\checkpoints\\r2_daily_dialogue_warmstart_matched_20261021\\warm_start\\assistant_sft_canary_zero.pt",
+          "sha256": "49d1a8446e58756de86cf89bf73f75192bbce97b45a2bf5a19a2dea370bd6427",
+          "bytes": 2505263
+        },
+        {
+          "path": "E:\\Seed\\data\\checkpoints\\r2_daily_dialogue_warmstart_matched_20261021\\warm_start\\full_turn_zero.pt",
+          "sha256": "9389f17575a6b29185684605949a309bd1673ca7046730ade7d301601d2c6e06",
+          "bytes": 2217692
+        }
+      ]
+    },
+    {
+      "arm": "fresh_same_capacity",
+      "attempt_status": "training",
+      "progress_sha256": "073bb76f8e6b7efc1ef50e71b4c3329ebf453ff18d184a43f5219006185da423",
+      "last_record": {
+        "available_memory_gib": 23.576,
+        "cpu_seconds": 19690.328,
+        "episode": 9856,
+        "episodes_planned": 30096,
+        "event": "full_turn_pretraining_progress",
+        "target_byte_updates": 4718755
+      },
+      "completed_episodes_logged": 9856,
+      "target_updates_logged": 4718755,
+      "progress_mtime_utc": "2026-10-21T08:52:35.050731+00:00",
+      "result_exists": false,
+      "checkpoints": [
+        {
+          "path": "E:\\Seed\\data\\checkpoints\\r2_daily_dialogue_warmstart_matched_20261021\\fresh_same_capacity\\assistant_sft_canary_zero.pt",
+          "sha256": "7e410cbbdaf46af70317f72376acbfb6f830df2a465ca21eacb35dbc3508fd24",
+          "bytes": 2504183
+        },
+        {
+          "path": "E:\\Seed\\data\\checkpoints\\r2_daily_dialogue_warmstart_matched_20261021\\fresh_same_capacity\\full_turn_zero.pt",
+          "sha256": "a678081e0f39e2e50575bc2b0af333dc3f85fe0bfc1cde57f8154564cf79760a",
+          "bytes": 2216762
+        }
+      ]
+    }
+  ],
+  "training_updates_performed_by_audit": 0,
+  "model_loads": 0,
+  "dev_queries": 0,
+  "reference_queries": 0,
+  "can_promote": false,
+  "budget_note": "Observed CPU readings are lower bounds only; do not treat unavailable terminal CPU usage as zero.",
+  "termination_cause_source": "The user directly clarified that the Codex client update interrupted the training processes."
+}
