@@ -90,7 +90,7 @@
 
 ### Phase 8 v2三臂训练执行中（2026-10-21 19:06启动）
 - 三臂在资源样本通过后并发启动，使用v2新恢复根；每32 episode写不可变bundle、fresh-process恢复、receipt后推进latest。
-- 最新durable receipts：full_turn_1m 960/30,096 episode、440,776字节更新、总CPU3,236.46875秒；warm_start与fresh_same_capacity各1,344/30,096 episode、642,288字节更新、CPU2,973.65625/2,969.453125秒。
+- 最新durable receipts：full_turn_1m 1,024/30,096 episode、474,035字节更新、总CPU3,491.40625秒；warm_start与fresh_same_capacity各1,440/30,096 episode、676,467字节更新、CPU3,147.296875/3,140.109375秒。
 - full_turn_1m首个32-episode checkpoint与两个300K臂的zero checkpoint均有恢复receipt；仍在训练，0 dev/reference查询。
 - 唯一下一步：继续监测并发训练及durable checkpoints，按固定预算完成后验证最终checkpoint与分母。
 - can_promote=false；不消费39-family留出面。端点齐备且独立恢复通过后再进入一次性自由生成评测。
