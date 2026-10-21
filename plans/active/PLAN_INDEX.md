@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **2026-10-21 R2并发配对更新**：R2-DIALOGUE-06的1M fresh全轮预训练最近14,682/30,096 episode（48.8%）；R2-DIALOGUE-07 warm-start/fresh-same-capacity两臂均为9,728/30,096 episode（32.3%）、各4,657,600 target-byte updates。07两臂各使用旧R2原生300k结构、相同全轮语料与固定更新量，两个zero full bundle、两个助手校准canary均通过新进程恢复与单episode信用探针，预检CPU分别50.90625/32.84375秒。当前checkpoint目录只有zero与canary，没有训练终点；Codex官方文档未保证桌面客户端重启会保留本地执行会话，因此先按可能中断处理，优先等训练完成后再重启。R2-08线程诊断7/8 trial后按attempt停止，CPU超限48.4375秒；父checkpoint不变、0 dev/reference/checkpoint写入，见[线程诊断裁定](../reference/EXP-R2-THREAD-SCALING-ADJUDICATION_20261021.md)。配对runner契约测试3/3、Ruff、py_compile通过。N1-166仍因N1-165前置门仅2/3未准入，保持原判据与未消费状态。
+> **2026-10-21 R2并发配对更新**：R2-DIALOGUE-06的1M fresh全轮预训练最近14,789/30,096 episode（49.1%）；R2-DIALOGUE-07 warm-start/fresh-same-capacity两臂均为9,856/30,096 episode（32.7%）、各4,718,755 target-byte updates。07两臂各使用旧R2原生300k结构、相同全轮语料与固定更新量，两个zero full bundle、两个助手校准canary均通过新进程恢复与单episode信用探针，预检CPU分别50.90625/32.84375秒。当前checkpoint目录只有zero与canary，没有训练终点；Codex官方文档未保证桌面客户端重启会保留本地执行会话，因此先按可能中断处理，优先等训练完成后再重启。R2-08线程诊断7/8 trial后按attempt停止，CPU超限48.4375秒；父checkpoint不变、0 dev/reference/checkpoint写入，见[线程诊断裁定](../reference/EXP-R2-THREAD-SCALING-ADJUDICATION_20261021.md)。配对runner契约测试3/3、Ruff、py_compile通过。N1-166仍因N1-165前置门仅2/3未准入，保持原判据与未消费状态。
 
 > **2026-10-19 名称与定位更正**：用户明确 Taiji 中文名为“态极”；现行架构原本即将其定义为原生认知架构与模型。双语 README 改用“态极原生认知模型”定位，Seed 继续负责承载和产品运行时；“系统”用于整体工程或机制描述，不能模糊模型主体。同步更新规范词表和命名守卫，撤销旧中文名禁令；不改动历史实验记录、认知所有权或 N 主线执行顺序。
 

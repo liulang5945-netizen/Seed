@@ -22,9 +22,9 @@
 
 ### R2-DIALOGUE-06/07当前并发执行（2026-10-21）
 
-[R2-DIALOGUE-06](../../reference/PLAN-R2-DAILY-DIALOGUE-FULL-TURN-PRETRAINING_20261021.md)的1M fresh候选仍在全轮预训练：最近记录14,682/30,096 episode（48.8%），attempt=`started`；磁盘目前只有`full_turn_zero.pt`与助手校准canary，没有中途或终点训练checkpoint。
+[R2-DIALOGUE-06](../../reference/PLAN-R2-DAILY-DIALOGUE-FULL-TURN-PRETRAINING_20261021.md)的1M fresh候选仍在全轮预训练：最近记录14,789/30,096 episode（49.1%），attempt=`started`；磁盘目前只有`full_turn_zero.pt`与助手校准canary，没有中途或终点训练checkpoint。
 
-用户要求在资源允许时并发对照。已新增并冻结[R2-DIALOGUE-07同规模热启动/随机初始化配对计划](../../reference/PLAN-R2-DAILY-DIALOGUE-WARMSTART-MATCHED_20261021.md)：从旧R2语言模型原生结构建立warm-start与fresh-same-capacity两臂，训练数据、更新量、架构相同；两臂各CPU≤120,000秒，增量合计≤240,000秒，与06关联上限≤480,000秒。独立runner的契约测试3/3通过，Ruff与py_compile通过。两个arm均为278,010 active parameters；zero full bundle和助手校准canary均已新进程恢复，单episode信用探针通过；预检CPU分别50.90625秒与32.84375秒。两臂正式训练均到9,728/30,096 episode（32.3%）、4,657,600 target-byte updates、attempt=`training`。磁盘目前每臂只有zero full bundle和助手校准canary，尚无训练终点checkpoint；最新臂内资源记录显示可用内存22.7/23.6 GiB。
+用户要求在资源允许时并发对照。已新增并冻结[R2-DIALOGUE-07同规模热启动/随机初始化配对计划](../../reference/PLAN-R2-DAILY-DIALOGUE-WARMSTART-MATCHED_20261021.md)：从旧R2语言模型原生结构建立warm-start与fresh-same-capacity两臂，训练数据、更新量、架构相同；两臂各CPU≤120,000秒，增量合计≤240,000秒，与06关联上限≤480,000秒。独立runner的契约测试3/3通过，Ruff与py_compile通过。两个arm均为278,010 active parameters；zero full bundle和助手校准canary均已新进程恢复，单episode信用探针通过；预检CPU分别50.90625秒与32.84375秒。两臂正式训练均到9,856/30,096 episode（32.7%）、4,718,755 target-byte updates、attempt=`training`。磁盘目前每臂只有zero full bundle和助手校准canary，尚无训练终点checkpoint；最新臂内资源记录显示可用内存23.7/23.6 GiB。
 
 [R2-DIALOGUE-08线程扩展诊断](../../reference/EXP-R2-THREAD-SCALING-ADJUDICATION_20261021.md)部分结案：7/8 trial后CPU超限48.4375秒，失败attempt与progress保留、不重跑；父checkpoint未变，0 dev/reference/checkpoint写入。副本实测多线程仅带来小幅wall吞吐变化、process-CPU成本显著增加，且单线程重复不足；R2-06/07继续使用冻结的单线程设置。预算reserve守卫已修复并通过契约测试。
 
@@ -32,7 +32,7 @@
 
 ### 当前唯一下一步：继续完成R2-06/07并发训练与终点恢复
 
-R2-07两臂zero/checkpoint恢复与信用门均已通过，现与R2-06并发运行；最近确认进度分别为06 14,682/30,096、07两臂各9,728/30,096 episode。当前只有zero/canary checkpoint；客户端更新重启可能中断本地执行且没有官方保活保证。继续监测三进程直至固定训练量完成并独立恢复终点checkpoint；随后按计划在保留的同一39个dev-family prompt面做一次自由生成对照，再据证据决定N主线后续。没有新确认面、reference答案评分或自动晋升。
+R2-07两臂zero/checkpoint恢复与信用门均已通过，现与R2-06并发运行；最近确认进度分别为06 14,789/30,096、07两臂各9,856/30,096 episode。当前只有zero/canary checkpoint；客户端更新重启可能中断本地执行且没有官方保活保证。继续监测三进程直至固定训练量完成并独立恢复终点checkpoint；随后按计划在保留的同一39个dev-family prompt面做一次自由生成对照，再据证据决定N主线后续。没有新确认面、reference答案评分或自动晋升。
 
 ### N1历史快照（2026-10-20）
 
