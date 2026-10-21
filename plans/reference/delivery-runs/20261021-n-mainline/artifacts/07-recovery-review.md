@@ -103,6 +103,13 @@ atomic_save_final使用目标同目录唯一tmp、torch.save后flush/fsync、目
 
 当前有效Phase7判定：通过；下一步仅v2真实zero准备/恢复验证，正式训练仍待其readiness通过。
 
+## v2零点准备与单episode reserve证据闭合
+主理人完成三arm v2 `--prepare-only`：full_turn_1m/warm_start/fresh_same_capacity分别125.90625/45.828125/44.859375 CPU秒；zero与assistant-canary各自fresh-process恢复成功，资源启动门通过。用户确认中断原因与动态预算合同已入v2 readiness handoff。
+
+为复核reserve，最长full-turn train message为14,536 bytes，在1M model copy中CPU597.796875秒；assistant最长489 bytes/4.8125秒。两个300K copy对应全轮32.9375/32.8125秒、助手3.0625/2.984375秒。zero SHA前后不变，copy外正式更新/dev/reference均0。v2 reserve1320/240/240秒。探针和readiness源码身份均进source binding。
+
+v2三臂已于2026-10-21 19:06并发启动。最新提交checkpoint：1M臂96 episodes；两个300K臂各32 episodes。三臂第一个独立恢复门通过；没有dev/reference请求。本次审查止于训练中进度检查，训练完成与语义能力结论仍待后续门禁。
+
 ## v2三arm真实zero准备结果（主理人执行，2026-10-21）
 Phase7放行的准备操作已完成。三臂zero与assistant canary独立fresh-process恢复均通过，准备CPU分别125.90625/45.828125/44.859375秒，episode reserve为1320/240/240秒；双CPU样本与内存门均通过。三臂正式更新和dev/reference查询均为0，can_promote=false。结果见v2 readiness报告及`PLAN-R2-DAILY-DIALOGUE-RECOVERY_V2_READINESS_20261021.md`。这仅关闭checkpoint保存/恢复门；正式训练尚未启动。
 

@@ -1,16 +1,22 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前执行：N1-165A结案；R2-06/07中断取证与持久化恢复
+## 当前执行：N1-165A结案；R2自然中文多轮对话v2三臂重做
 
-## 当前唯一下一步：R2-06/07 三臂 v2 `--prepare-only` ＋ fresh-process 恢复核验（详见下行）
+## 当前唯一下一步：监测并维持三臂v2训练至终点恢复
 
-### 最新事实与唯一下一步（2026-10-21，v2 zero准备核验后）
+### 最新事实与主线进展（2026-10-21）
 
-用户确认：客户端更新导致训练中断；沙箱外进程清单与CIM均未发现Python训练进程；三条run没有result、partial或训练终点checkpoint，仅保留zero/canary。06最后落盘14,880/30,096 episode、7,195,482 target-byte updates；07 warm-start最后汇总9,984 episode/4,798,480 updates，fresh-same-capacity最后汇总9,856 episode/4,718,755 updates。07每128条才汇总，因此只是最后已记录下界。旧attempt仍为started/training，不能继续视作存活。退出原因为用户确认的客户端更新；见[中断审计](../../../reports/taiji_r2_daily_dialogue_interruption_audit_20261021.json)。本次0模型加载、0训练、0dev/reference查询。
+用户确认首轮训练因Codex客户端更新而中断。旧06/07没有训练partial/final checkpoint，日志所记权重更新不可恢复；旧损失CPU仍标unknown并保留。首轮训练不得当作已完成能力。
 
-**唯一下一步：依次在v2隔离路径对full_turn_1m、warm_start、fresh_same_capacity执行`--prepare-only`，保存zero envelope并做fresh-process恢复核验。** v1三臂zero+canary都已fresh-process恢复，CPU113.953/41.234/41.438秒；但其120秒reserve被最长消息探针否证（1M为597.797秒），这些readiness只保留checkpoint保存恢复证据，不能放行训练。v2按实测绑定六份探针报告，设置1320/240/240秒动态余量。 v2训练硬上限仍为240000/120000/120000 process-CPU秒；旧中断损失单独保留unknown，v2有新增重做额度；先前恢复合同、逐位合成测试和P0/P1代码审查已经通过。 已消失的训练权重不能从progress还原，不把重建写成续接14,880/9,984/9,856步；旧失败证据与CPU消耗必须保留并保守计账。新恢复计划已单独记录新增预算、训练前保存恢复前置、原配方与失败停止线。07缺失的独立配对评测器合同继续审查，但在恢复训练三终点齐备前禁止执行。专家团本次编排见[黑板](../../reference/delivery-runs/20261021-n-mainline/board.md)。
+R2对话方案的新恢复runner已通过Phase7审查、25项基础/runner合同测试与Ruff；最长train episode探针证实原120秒余量不足，v2按实测采用full_turn_1m=1320、warm_start=240、fresh_same_capacity=240 CPU秒reserve。六枚train-only max-episode探针均在zero副本运行，zero父档SHA不变；0正式更新、0dev/reference查询。旧v1 zero readiness通过checkpoint保存/恢复，但因未绑定动态reserve只作为历史保存证据，不可启动训练。
 
-远端最近CI（run 39537675979，HEAD 02e82d9）为failure，m7-ci成功；日志API返回403 rate limit，当前不能归因或声称CI全绿。
+v2三臂zero/full-turn bundle与assistant-canary均完成写盘并fresh-process恢复2/2；readiness CPU分别125.90625、45.828125、44.859375秒，三臂均`can_promote=false`。启动时内存约28GiB，双CPU样本为full_turn_1m 3.7%/2.0%、warm_start 9.4%/8.7%、fresh_same_capacity 6.2%/4.7%。结案与路径见[v2 readiness handoff](../../reference/PLAN-R2-DAILY-DIALOGUE-RECOVERY_V2_READINESS_20261021.md)。
+
+三臂于2026-10-21 19:06并发启动。最新已落盘进度：full_turn_1m 96/30,096 episodes、36,753 target-byte updates、总CPU382.140625秒；warm_start 32/30,096、15,037 updates、134.484375秒；fresh_same_capacity 32/30,096、15,037 updates、132.84375秒。每32 episodes提交不可变checkpoint并新进程核验，当前commit已验证；reserved dev仍未访问。零点与模型前置身份见各arm progress/attempt、checkpoint latest manifest。
+
+**唯一下一步：继续监测三臂并发训练与每32 episode checkpoint提交，直至全轮预训练和助手校准均到固定分母、终点独立恢复通过。** 中断时按对应arm `--resume` 恢复，只读取latest已验证bundle；不消费39-family评价面，不因格式或损失读数声称语言能力成立。
+
+远端最近CI（run 39537675979，HEAD 02e82d9）为failure，m7-ci成功；日志API 403 rate limit，失败原因仍未能归属，当前不声称CI全绿。
 
 ### N1-165A及N1-166状态（2026-10-21）
 

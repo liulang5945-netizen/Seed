@@ -87,6 +87,13 @@
 - v1 readiness已由max-episode校准合同取代，不用于训练；v2 readiness/零包是当前唯一训练入口。
 - 唯一下一步：资源允许时并发执行三臂v2 fixed training，监测32-episode durable commits，先不查询reserved dev。
 - 产物：plans/reference/PLAN-R2-DAILY-DIALOGUE-RECOVERY_V2_READINESS_20261021.md；对应v2 readiness及六份probe报告。
+
+### Phase 8 v2三臂训练执行中（2026-10-21 19:06启动）
+- 三臂在资源样本通过后并发启动，使用v2新恢复根；每32 episode写不可变bundle、fresh-process恢复、receipt后推进latest。
+- 最新durable receipts：full_turn_1m 96/30,096 episode、36,753字节更新、总CPU382.140625秒；warm_start与fresh_same_capacity各32/30,096 episode、15,037字节更新、CPU134.484375/132.84375秒。
+- full_turn_1m首个32-episode checkpoint与两个300K臂的zero checkpoint均有恢复receipt；仍在训练，0 dev/reference查询。
+- 唯一下一步：继续监测并发训练及durable checkpoints，按固定预算完成后验证最终checkpoint与分母。
+- can_promote=false；不消费39-family留出面。端点齐备且独立恢复通过后再进入一次性自由生成评测。
 - Phase 7最终P2审查通过: 启动双CPU采样/8GiB门及失败账本、final同目录fsync/write-once rename已落实；独立runner18/18通过，P0/P1仍0。可放行三arm真实zero准备验证；正式训练前仍核对预算reserve充分性。未真实prepare/execute/dev。
 - Phase7 v2动态reserve复审通过: probe零父档/最长train episode及SHA绑定有效，reserve1320/240/240；独立runner19/19，P0/P1仍0。放行v2三arm真实zero准备验证；120秒恢复余量随真实成本核对，未真实prepare/训练/dev。
 - Phase7 v2最终同步确认: 计划已标v1准备被v2取代、动态reserve及新路径；本地zero/probe SHA和最大train题目exact-match保持。P0/P1=0，允许v2真实zero准备验证，无新增测试/真实训练/dev操作。
