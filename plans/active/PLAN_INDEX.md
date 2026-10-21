@@ -1,6 +1,6 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> **2026-10-21 R2并发配对更新**：R2-DIALOGUE-06的1M fresh全轮预训练仍在运行，最近约9,533/30,096 episode；按用户要求利用CPU/内存余量，已准入[R2-DIALOGUE-07同结构热启动/随机初始化配对训练](../reference/PLAN-R2-DAILY-DIALOGUE-WARMSTART-MATCHED_20261021.md)。两臂各使用旧R2原生300k结构、相同全轮语料与固定更新量，两个zero full bundle、两个助手校准canary均通过新进程恢复与单episode信用探针，预检CPU分别50.90625/32.84375秒；两臂正式训练各1,408/30,096 episode、671,818 target-byte updates。全机CPU采样20.7%、可用内存26.1 GiB。训练中0 dev/reference查询，最后与06候选同面自由生成比较。配对runner契约测试3/3、Ruff、py_compile通过。N1-166仍因N1-165前置门仅2/3未准入，保持原判据与未消费状态。
+> **2026-10-21 R2并发配对更新**：R2-DIALOGUE-06的1M fresh全轮预训练仍在运行，最近约9,602/30,096 episode；按用户要求利用CPU/内存余量，已准入[R2-DIALOGUE-07同结构热启动/随机初始化配对训练](../reference/PLAN-R2-DAILY-DIALOGUE-WARMSTART-MATCHED_20261021.md)。两臂各使用旧R2原生300k结构、相同全轮语料与固定更新量，两个zero full bundle、两个助手校准canary均通过新进程恢复与单episode信用探针，预检CPU分别50.90625/32.84375秒；两臂正式训练各1,536/30,096 episode、727,967 target-byte updates。全机CPU采样18.2%、可用内存26.1 GiB。训练中0 dev/reference查询，最后与06候选同面自由生成比较。配对runner契约测试3/3、Ruff、py_compile通过。N1-166仍因N1-165前置门仅2/3未准入，保持原判据与未消费状态。
 
 > **2026-10-19 名称与定位更正**：用户明确 Taiji 中文名为“态极”；现行架构原本即将其定义为原生认知架构与模型。双语 README 改用“态极原生认知模型”定位，Seed 继续负责承载和产品运行时；“系统”用于整体工程或机制描述，不能模糊模型主体。同步更新规范词表和命名守卫，撤销旧中文名禁令；不改动历史实验记录、认知所有权或 N 主线执行顺序。
 
