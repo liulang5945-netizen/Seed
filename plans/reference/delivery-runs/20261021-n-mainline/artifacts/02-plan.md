@@ -25,3 +25,7 @@
 关键依赖为W4→W5b→W6；W5a的实现、合成测试、代码审查可在W4训练期间并行。真实selector访问39-family面必须等待全部四个端点（parent baseline、full_turn_1m、warm_start、fresh_same_capacity）fresh-process恢复成功且执行账本完整。预算/资源门之后、首个恢复worker之前先write-once落盘attempt及CPU账本；逐个restore前后fsync记账。任何restore失败/强杀/账本不明均消费attempt并拒绝重跑，prompt仍零读取。
 
 验证边界：使用synthetic prompts和虚拟result/receipt验证，不读取dev/reference、不运行真实模型或训练；source/result/readiness/checkpoint SHA漂移、固定分母不符、路径越界、资源或双预算门失败均应fail closed。评测为局部描述性研究，不构成语言能力晋级或N1-166准入。
+
+## Phase 7 首轮审查回流（2026-10-22）
+
+首轮独立代码审查结论为打回（P0=0、P1=6、P2=3）；W5a尚未通过，不得进入真实评测。返工顺序为：架构岗先裁定Windows attempt/ledger目录项durability门；随后AI集成岗修复六项P1（worker只能由有效attempt/restore事件授权、子进程模块启动、restore与generation预算deadline、prompt selector前复核来源、支持平台的durable one-shot文件发布）并处理三项P2（完整成本报告口径、reserve算术、selector阶段意图记录），增加对应的合成失败注入。返工结束后重跑定向测试并由code-reviewer复审。三臂W4训练继续，不访问dev/reference，不启动真实restore、selector或generation。

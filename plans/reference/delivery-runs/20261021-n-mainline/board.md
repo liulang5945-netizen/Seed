@@ -21,6 +21,12 @@
 
 ## 回流记录
 
+### 回流 1 · Phase 7 评测审查 → Phase 6 AI实现
+- 门禁：code-reviewer / 目标：ai-integration / 预算：2（已用1）/ 状态：进行中。
+- 原因：P1共6项：restore-worker可绕attempt/预算；子进程直接脚本启动缺仓库import root；restore与generation无硬deadline；prompt selector前未复核source/result/readiness；attempt/ledger仅fsync文件，Windows目录项durability未证明。P2共3项：最终CPU/wall成本低报final写盘；岗位reserve计算错误；selector前缺耐久意图事件。
+- 复检范围：全部P1/P2，新增负向/中断测试；不得访问dev/reference或运行模型/真实selector/`--execute`。
+- 当前先决：P1-06的Windows文件名耐久策略先由architecture-reviewer补充合同；Phase 8三臂训练指针维持不变。
+
 ## 风险与待办
 - 训练中不读取dev/reference，不写训练checkpoint，不把格式统计当成语言能力。
 - 当前任务不能承诺“完美”或能力晋升；收官需真实实验、可读性审阅和有效门槛证据。
@@ -144,3 +150,22 @@
 - 风险：任何source、checkpoint、prompt face、账本或budget证据不完整均须在留出prompt读取前拒绝；用户能力目标不能由此小样本自动判定。
 - 给下游：按R2V2需求实现synthetic测试；待Phase8终点独立恢复通过后才运行真实评测。
 - 回流判定：通过；无需求缺口需要退回Phase2。本补充不改变Phase8主指针。
+
+### Phase 6 补充：R2 recovery v2独立评测实现（2026-10-21）
+- 结论：W5a实现完成；端点固定parent基线加三条v2 `assistant_sft` final，39×4=156次新生成。Phase8主阶段指针保持不变。
+- 产物：artifacts/06-implementation-ai.md；新增`evaluate_taiji_r2_daily_dialogue_recovery_v2.py`与对应synthetic契约测试。
+- 关键要点：metadata-only readiness与source/checkpoint SHA核验；restore前write-once attempt和fsync预算账本；每个restore前写durable事件；四个restore全部通过后才选prompt；generation每条先记`query_started`再落盘输出；失败消费attempt且禁止重试/续跑。
+- 验证：定向契约12/12通过（5.76秒），新增文件Ruff、py_compile与CLI `--help`通过；另有restore失败与generation失败二次调用的独立拒绝复测各1通过。
+- 风险：真实三臂final/readiness/checkpoint与独立恢复仍未齐；本轮未运行真实validate、restore、selector或generation。Phase7代码审查是W5b之前门禁。
+- 给下游：先独立代码审查；只有所有三臂终点restore齐备后才可真实`--validate-only`，再执行一次性156调用。结果保持`can_promote=false`，不打分reference答案。
+- 调试留痕：初次synthetic 8/10中的两项根因和逐项复测顺序见artifacts/06-implementation-ai.md；后续二次执行断言改为明确的consumed/refuse语义，runner保持fail closed。
+- 回流判定：通过；架构与需求充分，无上游返工。本岗位完成不代表Phase8通过或模型晋级。
+
+### Phase 7 补充：R2 recovery v2评测代码审查（2026-10-22）
+- 结论：打回；P0=0、P1=6、P2=3，W5a暂不放行Phase 7合入门。
+- 产物：artifacts/07-evaluation-review.md。
+- 关键阻断：公开restore-worker可绕attempt/预算；子进程路径启动缺repo import root；restore与generation均无硬deadline；prompt selector前未重验source；attempt/ledger仅fsync文件、缺架构要求的父目录durability（Windows本地目录fsync实测PermissionError 13）。
+- 其他问题：最终CPU/wall total低报final result写盘成本；initial reserve说明算术不符；selector访问前缺耐久阶段事件。
+- 验证范围：静态审查；引用Phase6报告的synthetic 12/12但本次未重跑；0真实模型/selector/dev/reference/--execute。
+- 给下游：P1逐项返工并补失败注入覆盖后复审；三臂Phase8训练继续独立推进，真实39面仍冻结。当前主阶段指针保持Phase8。
+- 回流判定：打回ai-integration；若Windows目录durability无可验证实现，先交architecture-reviewer修订平台合同。
