@@ -78,6 +78,15 @@
 - 验证：联合25 passed（41.01秒），四文件ruff通过；0真实prepare/正式训练/dev。
 - 产物：artifacts/06-implementation-backend.md追加；回流判定通过。
 - Phase 7 source失败尾账最终复审通过: preparation_journal在校验前继承attempt及全部事件并保持历史charged地板，连续3次失败不归零；独立runner15/15通过，P0/P1均0。可进入真实zero准备与恢复验证；未执行真实prepare/训练/dev。
+
+### Phase 8 v2真实zero准备验证通过（2026-10-21）
+- 三arm均通过`--prepare-only`，zero full-turn与assistant canary分别fresh-process恢复2/2；父zero SHA不变。
+- full_turn_1m readiness CPU125.90625秒，reserve1320；warm_start 45.828125秒，reserve240；fresh_same_capacity 44.859375秒，reserve240。
+- 三arm正式更新/dev/reference查询均0，can_promote=false；可用内存约28GiB，CPU启动双采样均通过。
+- 六份最长消息probe绑定source SHA：1M最大全轮14,536 bytes/597.796875CPU秒、assistant489 bytes/4.8125秒；warm/fresh全轮32.9375/32.8125秒、assistant3.0625/2.984375秒。零点checkpoint未改变。
+- v1 readiness已由max-episode校准合同取代，不用于训练；v2 readiness/零包是当前唯一训练入口。
+- 唯一下一步：资源允许时并发执行三臂v2 fixed training，监测32-episode durable commits，先不查询reserved dev。
+- 产物：plans/reference/PLAN-R2-DAILY-DIALOGUE-RECOVERY_V2_READINESS_20261021.md；对应v2 readiness及六份probe报告。
 - Phase 7最终P2审查通过: 启动双CPU采样/8GiB门及失败账本、final同目录fsync/write-once rename已落实；独立runner18/18通过，P0/P1仍0。可放行三arm真实zero准备验证；正式训练前仍核对预算reserve充分性。未真实prepare/execute/dev。
 - Phase7 v2动态reserve复审通过: probe零父档/最长train episode及SHA绑定有效，reserve1320/240/240；独立runner19/19，P0/P1仍0。放行v2三arm真实zero准备验证；120秒恢复余量随真实成本核对，未真实prepare/训练/dev。
 - Phase7 v2最终同步确认: 计划已标v1准备被v2取代、动态reserve及新路径；本地zero/probe SHA和最大train题目exact-match保持。P0/P1=0，允许v2真实zero准备验证，无新增测试/真实训练/dev操作。

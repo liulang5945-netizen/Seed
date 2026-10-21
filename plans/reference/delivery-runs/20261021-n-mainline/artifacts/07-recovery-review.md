@@ -103,6 +103,9 @@ atomic_save_final使用目标同目录唯一tmp、torch.save后flush/fsync、目
 
 当前有效Phase7判定：通过；下一步仅v2真实zero准备/恢复验证，正式训练仍待其readiness通过。
 
+## v2三arm真实zero准备结果（主理人执行，2026-10-21）
+Phase7放行的准备操作已完成。三臂zero与assistant canary独立fresh-process恢复均通过，准备CPU分别125.90625/45.828125/44.859375秒，episode reserve为1320/240/240秒；双CPU样本与内存门均通过。三臂正式更新和dev/reference查询均为0，can_promote=false。结果见v2 readiness报告及`PLAN-R2-DAILY-DIALOGUE-RECOVERY_V2_READINESS_20261021.md`。这仅关闭checkpoint保存/恢复门；正式训练尚未启动。
+
 ## v2最终计划与测量绑定确认
 最新静态核对与上次动态reserve复审一致：source_bindings逐臂核验两份probe的本地zero父SHA并绑定报告SHA，六份在三arm合计完整；prepare/execute均exact-match冻结train最大target的episode_id与target_bytes；run身份及checkpoint/reports根均为v2。计划已把v1成功zero准备标为保留历史、不被v2接受，并同步1320/240/240动态reserve与“先三arm v2准备、全ready再训练”的顺序。
 
