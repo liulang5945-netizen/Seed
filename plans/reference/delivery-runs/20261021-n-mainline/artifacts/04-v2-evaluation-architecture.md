@@ -62,3 +62,41 @@
 - 结论：通过；不需要上游返工，也不阻塞Phase 8训练。
 - 回流目标：无。
 - 给下游：按此v2接口实现独立评测runner和synthetic契约测试；先代码审查和定向验证，所有v2训练终点齐备后才可开启一次真实39面评测。
+
+## P1-06 平台耐久裁决：Windows本地NTFS write-through发布
+
+### 裁决
+
+**接受同目录exclusive-temp → 写完并`FlushFileBuffers(temp_handle)` → `MoveFileExW(temp, final, MOVEFILE_WRITE_THROUGH)`作为Windows本地NTFS上的耐久目录项发布等价；Windows不再因缺少POSIX式目录`fsync`而整体unsupported。** 该裁决限定为同目录、同卷、目标不存在、成功返回的Win32发布。不要再尝试以`CreateFile(FILE_FLAG_BACKUP_SEMANTICS)`打开目录后调用`FlushFileBuffers`来补门：Microsoft文档把该标志定义为取得目录handle的方式，但列出的可接收directory handle函数不含`FlushFileBuffers`；后者文档描述的是有`GENERIC_WRITE`权限的打开文件handle。
+
+依据是：`MoveFileExW`的`MOVEFILE_WRITE_THROUGH`合同是函数等待文件实际移到磁盘；同卷、同目录时不需要也不得启用copy/delete fallback。Windows NTFS的`FILE_FLAG_WRITE_THROUGH`说明也明确将rename列为需刷到磁盘的metadata变更。对本任务，temp文件先刷净内容，随后write-through rename成功返回后才允许启动restore worker，因此durable marker在昂贵执行开始前已发布。目录handle打开成功本身不算durability证据。
+
+此保证表达Windows API/本地NTFS的成功返回语义，不声称超越OS、文件系统和设备flush契约；不能承诺故障硬件/控制器虚报flush、介质损坏或未验证文件系统上的物理持久性。
+
+### 支持边界
+
+- 当前支持：Windows上的本地固定卷NTFS；目标目录必须已存在，attempt、initial ledger和临时文件位于同一目录/卷。启动前核验目标路径所属卷为本地固定卷、文件系统名为`NTFS`，并核验temp与final解析到同一卷。
+- 当前拒绝：UNC/mapped/network/SMB路径、CSVFS/集群共享、可移动介质、ReFS、FAT/exFAT、第三方/加密/overlay/cloud-sync或无法识别的文件系统。`MoveFileExW`的支持列表表示API可用，不足以证明此应用的server、failover或过滤层具有相同durability语义；这些平台需单独架构裁决与故障验证后才能加入。
+- 不创建尚未耐久确认的新父目录来放attempt/ledger；当前报告根`reports/`须预先存在。若未来要创建目录，须另为目录树建立已审查的发布协议，否则拒绝。
+
+### Phase 6实现与测试验收
+
+1. 通过Windows原生API（例如`ctypes`封装）在预先存在的目录使用独占创建随机temp；写完整payload后对文件handle调用`FlushFileBuffers`并检查返回值，再关闭handle。
+2. 使用`MoveFileExW`只传`MOVEFILE_WRITE_THROUGH`；不得传`MOVEFILE_REPLACE_EXISTING`、`MOVEFILE_COPY_ALLOWED`或`MOVEFILE_DELAY_UNTIL_REBOOT`。目标已存在、跨卷、API返回失败或flags不符均fail closed。
+3. attempt和initial ledger分别执行上述publish；两者都成功返回且最终文件SHA/内容核验通过之前，不得启动任何restore。若attempt已发布而ledger发布失败，则attempt已消费，严禁删除marker、换attempt名或重跑。
+4. Windows集成测试在本地NTFS临时目录核验：调用flags/同目录同卷、目标不覆盖、成功后新进程可读取相同SHA；注入flush失败、rename失败、目录类型拒绝和ledger第二步失败时restore启动数均为0；模拟在write、flush后、rename前和rename返回后的进程终止，验证只有两个durable marker都发布后才准许worker。测试严禁访问dev/reference或加载模型。
+5. CI/运行时必须在attempt之前执行文件系统资格探测；任何探测API失败、不是本地NTFS或无法证明同卷时，preflight返回明确`DURABILITY_UNSUPPORTED`并不创建attempt、不启动worker。Windows本地NTFS契约通过后，append现有ledger记录仍须`FlushFileBuffers`；若该刷新失败，停止并消费已创建attempt。
+6. 故障注入验证API和进程崩溃边界，不冒充断电/硬件断电测试；文档只报告NTFS与WriteFile/FlushFileBuffers/MoveFileExW公开合同覆盖的范围。
+
+### Microsoft依据
+
+- [Directory Handles](https://learn.microsoft.com/en-us/windows/win32/fileio/obtaining-a-handle-to-a-directory)：`FILE_FLAG_BACKUP_SEMANTICS`可取得目录handle，列出可接受该handle的API。
+- [FlushFileBuffers](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-flushfilebuffers)：刷新打开文件handle；要求`GENERIC_WRITE`。
+- [MoveFileExW](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-movefileexw)：`MOVEFILE_WRITE_THROUGH`等待文件实际移到磁盘；不设置`MOVEFILE_REPLACE_EXISTING`时保持write-once拒绝覆盖。
+- [CreateFileW](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew)：`FILE_FLAG_WRITE_THROUGH`部分说明NTFS会刷写rename等metadata变化；文档也提示硬件不一定支持write-through。
+
+### 回流判定
+
+- 结论：通过；Windows本地NTFS采用MoveFileExW write-through，不需要未记录的目录handle flush，也不再整体fail closed。
+- 条件：Phase 6必须落实上述路径/卷门、写入与MoveFileExW flags、marker发布顺序和故障注入；网络及未资格化文件系统仍拒绝。
+- 不阻塞：Phase 8训练及已冻结source合同。
