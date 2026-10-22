@@ -4,11 +4,11 @@
 
 ## 当前唯一下一步：实现并独立审查版本化 R2 continuation extension runner 与单调 CPU 账本；代码/源码/父checkpoint门通过前不启动训练
 
-### 最新进度补充（2026-10-22 15:20 Asia/Shanghai）
+### 最新进度补充（2026-10-22 17:12 Asia/Shanghai）
 
 N主线仍聚焦态极的自然中文多轮对话能力。用户在原批准额度基础上将本版本化续训窗口累计上限提高到每臂1,200,000、三臂合计3,600,000 process-CPU秒；原账与未知尾账继续计入，不重置。三臂仍分别从自己的最后一个已验证durable checkpoint续训，不从零重训、不合并权重。此额度只授权本窗口，不代表模型能力晋级。
 
-15:20附近只读复核父checkpoint的保守累计上界为full_turn_1m=937,951.469、warm_start=937,416.609、fresh_same_capacity=936,544.407 CPU秒，合计2,811,912.485秒；按新额度每臂分别剩262,048.531、262,583.391、263,455.593秒，聚合剩788,087.515秒。该值按冻结规则动态增长，启动前必须重算。续训runner当前独立审查发现启动/终结恢复、prepare中断修复、来源SHA绑定、NTFS write-through覆盖范围、deadline、预算拒绝耐久记录、吞吐门与端到端恢复测试等P1验收项未清零；因此训练和prepare-only仍不启动。唯一下一步是关闭这些实现P1并由独立审查复核，随后才运行无训练的prepare-only耐久门，再依实时预算/速率门并发续训。
+17:12只读复核父checkpoint的保守累计上界为full_turn_1m=1,098,577.619、warm_start=1,098,127.719、fresh_same_capacity=1,097,340.395 CPU秒，合计3,294,045.733秒；按新额度每臂分别剩101,422.381、101,872.281、102,659.605秒，聚合剩305,954.267秒。parent source/checkpoint/cursor审计通过，分别核验26/29/29个绑定文件，其中每臂6个未进Git的父绑定data工件SHA精确匹配。源码、耐久publisher、父副本和prepare恢复子门已有11项定向测试通过；终点幂等结算、预算触顶停止、最终restore硬deadline、吞吐投影、端到端恢复和独立代码审查仍未通过。按冻结wall×24规则，启动前必须再次重算。训练与真实prepare-only暂不启动；唯一下一步是清零剩余实现P1并完成独立审查，随后立即做prepare-only耐久门并在可用预算内并发续训。
 
 计划、需求和架构中的当前额度以[续训扩展计划](../../reference/delivery-runs/20261021-n-mainline/artifacts/02-continuation-extension-plan.md)、[续训扩展架构审查](../../reference/delivery-runs/20261021-n-mainline/artifacts/04-continuation-extension-architecture.md)和[R2EXT需求](../../reference/delivery-runs/20261021-n-mainline/artifacts/03-requirements.md)的2026-10-22额度修订为准；旧1M/3M表述保留为此前决策历史。
 

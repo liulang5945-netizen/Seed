@@ -16,7 +16,7 @@ N 主线当前能力目标仍是自然中文多轮对话。此工作只把 R2 re
 
 ## 历史审批快照与当前只读账本
 
-以下第一张表是2026-10-22 13:30:50 Asia/Shanghai按此前1M/3M额度记录的历史审查快照；第二张表是15:20附近按新1.2M/3.6M额度复核的当前父checkpoint上界。两个时点均不是实际新增CPU。执行前仍必须重算，不能直接当作启动账值。boot identity 已改变，冻结 `tail_charge` 使用检查点 ledger 的已记账值加 `elapsed wall × max(saved logical CPU, current logical CPU)`；本次取24核上界。
+以下三张表依次记录13:30原1M/3M窗口历史审批、15:20旧快照和17:12当前父checkpoint上界；均不是实际新增CPU。执行前仍必须重算，不能直接当作启动账值。boot identity已改变，冻结`tail_charge`使用检查点ledger已记账值加`elapsed wall × max(saved logical CPU, current logical CPU)`；本次取24核上界。
 
 | 实验臂 | 父 attempt SHA256 | 最后 durable episodes / cursor | 最后 durable CPU 秒 | 父 latest receipt SHA256 | 保守尾账上界 | 1M 下剩余额度 |
 |---|---|---:|---:|---|---:|---:|
@@ -27,7 +27,7 @@ N 主线当前能力目标仍是自然中文多轮对话。此工作只把 R2 re
 
 `full_turn_1m` 曾记录 `recovery_stopped`，CPU 值为 748,972.986107；当前按父 checkpoint 重新计算的尾账更高，启动账本必须取二者及其他已记录费用的最大值。warm/fresh 仍无终点 result，三臂 attempt 都不能单凭 `status=training` 被视为仍在运行或完成。上一轮独立预算评审按训练吞吐估算剩余模型计算约 148,000 CPU 秒（full-turn 约 75,000、另两臂各约 36,500）；这是预测而非上界。冻结尾账规则每增加一小时会给每臂增加最多 86,400 CPU 秒，因此本快照不保证可以无限期等待后再启动。
 
-15:20附近只读复核沿用同一父attempt、receipt与durable cursor；只更新按冻结尾账公式随时间增长的累计上界：
+15:20附近只读复核沿用同一父attempt、receipt与durable cursor；只更新按冻结尾账公式随时间增长的累计上界（历史）：
 
 | 实验臂 | 保守累计上界 CPU 秒 | 新1.2M额度余额 CPU 秒 |
 |---|---:|---:|
@@ -37,6 +37,19 @@ N 主线当前能力目标仍是自然中文多轮对话。此工作只把 R2 re
 | **聚合** | **2,811,912.485** | **788,087.515** |
 
 这是动态保守上界，不是已发生训练CPU；准备、恢复与续训开始前必须重新采样。
+
+### 17:12当前只读父checkpoint快照
+
+独立只读审计已核验三个parent attempt、latest receipt/bundle、cursor和绑定来源；来源表分别26/29/29项，含每臂6个未跟踪的父绑定数据工件，SHA均与parent记录精确相符。
+
+| arm | 当前保守累计上界 CPU 秒 | 到1.2M的当前余额 CPU 秒 |
+|---|---:|---:|
+| `full_turn_1m` | 1,098,577.619 | 101,422.381 |
+| `warm_start` | 1,098,127.719 | 101,872.281 |
+| `fresh_same_capacity` | 1,097,340.395 | 102,659.605 |
+| **aggregate** | **3,294,045.733** | **305,954.267** |
+
+父checkpoint来源门已通过，但当前剩余空间仅略高于此前预计续训CPU（约75,000/36,500/36,500秒）；尚未计入实际恢复、checkpoint写入与最终化开销。该门槛随等待继续收紧，启动前必须刷新并证明吞吐投影、每臂和aggregate headroom均覆盖剩余工作。
 
 ## 源码绑定与准入
 

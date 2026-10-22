@@ -308,3 +308,34 @@
 - 风险：13:30预算快照随wall×24继续增长；任何启动须重算，且source、durability、fresh-process restore及资源门未通过前不恢复训练。
 - 给下游：依架构合同实现extension runner/账本并由独立code reviewer复核；W5b/真实dev/reference/selector/`--execute`保持冻结，`can_promote=false`、N1-166冻结。
 - 主阶段指针：保持Phase 8；本补充仅为需求门记录，不代表实现、训练或评测通过。
+
+### Phase 6 补充：R2 continuation extension backend账本实现（2026-10-22）
+- 结论：预算账本后端子项完成；不放行真实训练。
+- 产物：`scripts/training/taiji_r2_dialogue_continuation_extension.py`、`tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py`、`artifacts/06-implementation-backend.md`。
+- 关键要点：全局合同只写一次，父三臂charge与tail状态必须完整；每个work unit先在跨进程锁内write-through预留CPU并返回token；settlement必须用同token原子入账实际CPU并释放reserve。`latest_charges()`把未结reserve按上界计入，resume可用`continuation_resumed`显式结算。
+- 预算门：每臂1M与聚合3M同时检查`charges+reservations`；同臂只允许一个active reservation；重复、错token与未结reserve直接拒绝下一工作单元。编号JSON事件write-through追加，summary仅是可重建派生索引。
+- 验证：合同测试8/8通过，含两个独立进程并发争用同一aggregate余量（仅一个reservation获批、序号唯一）；Ruff、format、py_compile通过。Durability adapter为合成注入，真实运行仍需现场确认本地固定NTFS。
+- 风险/给下游：AI runner在任何parent restore前初始化全局合同；每个恢复/新进程启动先full-chain `latest_charges()`/`latest_reservations()`，resume时将未结reserve按上界结算；每个restore/episode用`guard`并以token调用`append_charge`结算。runner集成和独立代码审查通过前不启动训练。
+- 主阶段指针：保持Phase 8；该后端子项不代表runner、fresh-process checkpoint恢复或训练放行。
+
+### Phase 6 补充：R2 continuation extension AI runner实现（2026-10-22）
+- 结论：versioned continuation runner与合成验证完成；真实恢复和训练仍未放行。
+- 产物：`scripts/training/run_taiji_r2_daily_dialogue_continuation_extension.py`、`tests/taiji_native/test_r2_dialogue_continuation_extension_runner_contract.py`、`artifacts/06-implementation-ai-continuation-extension.md`。
+- 关键要点：全局`--prepare-only`一次准备三臂；`--run/--resume`逐臂显式执行；旧证据保持只读，新checkpoint位于版本化root。每个bounded work unit使用后端token reservation；fresh-process restore按120秒deadline+2秒ledger settlement reserve保护。失败/超时计入host CPU delta，并在停止或resume时按实际charge与未结reservation上界较大值结算。
+- 验证：runner与backend synthetic合同测试20/20通过；`py_compile`、Ruff check/format、Black check及CLI帮助验证通过。未加载/恢复真实checkpoint、未训练、未访问dev/reference/selector、未运行`--execute`。
+- 风险/给下游：runner与ledger仍需独立代码审查；后续准入必须重算wall×24未知尾账并复核固定NTFS durability、源码兼容性、资源与预算。review与执行门通过前不启动真实续训；工程结果不代表能力提升，`can_promote=false`与N1-166冻结保持。
+- 主阶段指针：保持Phase 8；该AI runner子项不代表训练或W5b放行。
+
+### Phase 8 续训额度修订与实现审查回流（2026-10-22）
+- 决策：用户批准将当前版本化续训窗口由此前每臂1,000,000/聚合3,000,000 CPU秒提高至累计每臂1,200,000/聚合3,600,000秒。旧实耗、未知尾账、准备/恢复/训练/失败开销全计入；不清零、不重置。各臂仍从自身父checkpoint续接。
+- 只读账本：15:20附近父checkpoint保守累计上界为937,951.469/937,416.609/936,544.407秒，聚合2,811,912.485秒；新窗口剩余额度为262,048.531/262,583.391/263,455.593秒，聚合788,087.515秒。该值按wall×24动态增加，任何执行前重算。
+- 复审回流：独立runner审查发现source SHA/Git provenance、启动与最终化崩溃恢复、部分prepare恢复、NTFS write-through覆盖、cap拒绝耐久记录、final restore deadline、端到端恢复与吞吐门等P1未清零。后端durable publisher正在接入runner；当前不运行prepare-only、parent restore或训练。
+- 唯一下一步：关闭实现P1并由独立审查复核；全部通过后做NTFS写入prepare-only门，再按实时预算、资源和速率准入三臂并发续训。W5b/真实dev/reference/selector/`--execute`继续冻结，`can_promote=false`、N1-166冻结。
+- 主阶段指针：Phase 8；本额度修订不改变自然中文多轮对话主线，不代表模型能力提升。
+
+### Phase 6 补充：R2 extension来源/准备/最终恢复实现（2026-10-22 17:12）
+- 预算：当前窗口每臂累计1,200,000、三臂合计3,600,000 process-CPU秒，旧实耗与冻结未知尾账全计入，不重置。
+- 父checkpoint只读审计通过：full_turn_1m/warm_start/fresh_same_capacity保守累计上界为1,098,577.619/1,098,127.719/1,097,340.395秒，合计3,294,045.733秒；剩余额度101,422.381/101,872.281/102,659.605秒，聚合305,954.267秒。parent attempt、latest receipt/bundle、cursor与source lineage均通过核验。
+- 来源证明：tracked源文件含Git commit/blob；每臂6个未跟踪`data/`工件要求当前SHA等于parent SHA并绑定parent attempt/receipt/bundle；Windows行尾只在Git clean-filter OID精确匹配时认定为规范化。来源/准备/父副本门定向11/11通过，final restore成功与timeout测试2/2通过；后两者为合成验证，未加载真实checkpoint。
+- 剩余门：结果已发布但completion账本未闭合时的幂等恢复、预算触顶时耐久停止事件、吞吐/剩余工作量投影、端到端cursor/RNG/32-episode提交与中断续跑测试，以及独立代码审查仍未完成。当前尚未运行真实`prepare-only`、父checkpoint恢复或训练。
+- 唯一下一步：关闭上述实现P1并交独立复审；通过后立即重采样预算/吞吐，执行固定NTFS `prepare-only` 耐久门，再按headroom并发续训。W5b、真实dev/reference、selector与`--execute`继续冻结，`can_promote=false`、N1-166冻结。

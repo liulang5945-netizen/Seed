@@ -1,6 +1,6 @@
 # Seed / Taiji 计划与架构入口
 
-> **2026-10-22 当前队首**：N主线继续优先提升态极的自然中文多轮对话能力。R2三臂应各自从最近的有效durable checkpoint续训；用户批准当前窗口累计上限每臂1,200,000、合计3,600,000 process-CPU秒，旧实际成本与冻结未知尾账全部计入。父账本当前保守上界约为937,951/937,417/936,544秒；启动前必须重新计算。extension实现的独立复审仍有P1未关闭，唯一下一步为完成这些恢复、耐久性、预算停机、源码和端到端测试门并复审通过；此之前不做prepare-only、恢复或训练。W5b与N1-166继续冻结，`can_promote=false`。完整动态状态以[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准。
+> **2026-10-22 当前队首**：N主线继续优先提升态极的自然中文多轮对话能力。R2三臂应各自从最近的有效durable checkpoint续训；用户批准当前窗口累计上限每臂1,200,000、合计3,600,000 process-CPU秒，旧实际成本与冻结未知尾账全部计入。17:12父账本保守上界约为1,098,578/1,098,128/1,097,340秒；source/receipt/bundle/cursor只读审计通过，但每臂仅余约101k CPU秒，启动前必须重新计算。extension runner剩余P1和独立复审仍未闭合，唯一下一步为完成终点恢复、预算停机、吞吐和端到端测试并复审通过；随后立即做prepare-only durability门并在预算内续训。W5b与N1-166继续冻结，`can_promote=false`。完整动态状态以[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准。
 
 > **2026-10-21 历史快照**：N1-165A恢复批结案，原训练充分性门2/3通过、`can_promote=false`；N1-166未执行、未消费确认面。用户优先转向自然多轮中文对话：R2-DIALOGUE-01/02/03R1均已结案。03R1完成两臂各6个续训epoch、70棵新family×6端点共420条自由生成；end-marker率升至90%，但人工审阅0/12连贯贴题回复。04/05R1只读审计发现父档从Taiji配置新建、约278k active参数、先前只在12个小任务episode上训练；当前 OASST2 可扩展到3,762条train-family全轮消息、1.78M UTF-8字节，仍保留39个未查询dev family。历史唯一下一步为[PLAN-R2-DIALOGUE-06全轮自然对话预训练](reference/PLAN-R2-DAILY-DIALOGUE-FULL-TURN-PRETRAINING_20261021.md)：fresh 1M-capacity Taiji、8 epoch角色感知byte预训练＋1 epoch assistant回复校准，保留39个family作一次性自由生成检查，CPU≤240,000秒、0能力晋升。详细状态以[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准，N1-165A结案见[中文记录](reference/PLAN-N1-165A_execution_closeout_20261021.md)。
 
