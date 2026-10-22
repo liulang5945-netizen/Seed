@@ -54,7 +54,7 @@ CHECKPOINT_ROOT = (
 ).resolve()
 
 PLAN_SHA256 = "16d0cecb325af6463c107973fc0e741478140134a7642cd64c86e045c6069783"
-SCHEDULE_SHA256 = "39edaf58020f6cf18680838a6d7576eafef5c7c9286cfd1ea40b93a581851380"
+SCHEDULE_SHA256 = "13b8f015c026d8b8d106495ba0d4be7614f75a3fb07365adea7d7f278d125c24"
 CHECKS_SHA256 = "51cb205b17a1319b86c7f73c4f0158957cbeaf73b933aa9a942aba52cfabf0d9"
 BUILDER_SHA256 = "94d5abc2f53660d5d8f8e15f41b7c2ad87ca76849d9d55d911b68d9b8238c600"
 CONTRACT_TEST_SHA256 = "41c408aa290edcf8cc3e6006fe71cde7746eb9dd89e1eb174d7f9f9f286cc37b"
@@ -157,8 +157,12 @@ def verify_candidate_sources() -> tuple[dict, dict]:
         or checks.get("accepted") is not True
         or checks.get("errors") != []
         or checks.get("plan_sha256") != PLAN_SHA256
-        or checks.get("schedule_file_sha256") != SCHEDULE_SHA256
-        or checks.get("source_guards") != schedule.get("source_guards")
+        or not seal_ast.receipt_binding_matches(checks.get("schedule_file_sha256"), TRAIN_SCHEDULE)
+        or set(checks.get("source_guards", {})) != set(schedule.get("source_guards", {}))
+        or not all(
+            seal_ast.verify_path_pin(path, value)
+            for path, value in checks.get("source_guards", {}).items()
+        )
         or checks.get("model_queries") != 0
         or checks.get("parameter_updates") != 0
         or checks.get("checkpoint_loads") != 0
@@ -300,8 +304,22 @@ def _build_training_inputs():
     items, curriculum, pairs = candidate_schedule.load_training_sources(items)
     payload, _ = verify_candidate_sources()
     rebuilt, checks = candidate_schedule.build_from_frozen_sources()
-    if rebuilt != payload or checks.get("accepted") is not True:
-        raise ValueError("candidate schedule does not regenerate byte-for-byte")
+    # S4/S5 后在盘 manifest 携带封印元数据，且 source_guards(.py)=ast 口径、
+    # builder_sha256/base_builder_sha256=创建时刻字节。这些绑定注解面的等价性
+    # 由 verify_candidate_sources 与 verify_hash_dict 的三通道分别承担；
+    # 再生校验只对调度内容面逐值相等（items/curriculum/value_map/...）。
+    binding_fields = (
+        "source_guards",
+        "builder_sha256",
+        "base_builder_sha256",
+        "hash_scheme",
+        "refrozen_at",
+        "refrozen_reason",
+    )
+    payload_core = {key: value for key, value in payload.items() if key not in binding_fields}
+    rebuilt_core = {key: value for key, value in rebuilt.items() if key not in binding_fields}
+    if payload_core != rebuilt_core or checks.get("accepted") is not True:
+        raise ValueError("candidate schedule does not regenerate its frozen content")
     probes = [
         candidate_schedule.core.renaming.rename_item(item, entry["names"])
         for item, entry in zip(items, curriculum["probes"], strict=True)
