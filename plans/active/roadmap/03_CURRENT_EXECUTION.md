@@ -411,3 +411,11 @@ v1.1 amendment成功write-once发布；三臂`--run`都进入真实runtime，CPU
 ## 20:40 用户预算修订已批准
 
 用户批准将同一累计续训窗口从每臂1.45M/aggregate4.2M提高至每臂1.5M/aggregate4.3M process-CPU秒。旧账、失败启动与保守未知尾账全部继续累计，不重置。唯一下一步是完成v1.2 append-only source/budget amendment并在4.3M窗口实时门通过后立即三臂并发续训；当前账本仍4,028,211.891916秒，未有checkpoint restore或training commit。
+
+## v1.2真实恢复与boot identity缺陷（22:00附近）
+
+用户批准的1.5M/臂、4.3M修订已成功发布，实际`--resume`已运行；三臂均无episode_completed或durable_training_commit。full/warm被吞吐投影拒绝，fresh在开跑前被累计臂上限拒绝。进程均返回exit1；两个遗留22秒reservation已按其保守上界全额结算并写入continuation_stopped，当前pending为空。最新durable charge为1,343,557.907691/1,455,709.397772/1,376,064.517384，总计4,175,331.822847秒。
+
+已确认近期extension快照boot_identity有1792002779.5610702与1792002779.56107两种值，仅差约0.0000002秒。严格float相等把它们当成跨boot，触发wall×24未知尾账，使实际闲置等待抬高预算。parent boot值为1792002780.622641，与当前相差1.06157秒，不能把原parent未知尾账一并当作该微小抖动退款。
+
+唯一下一步：修正extension boot身份的浮点稳定性，并对v1.2新窗口内已证实的误分类尾账形成独立、追加的审计校正方案。原历史event/contract保留；不得删除或清零原parent未知费用。已批准cap保持1.5M/4.3M，修复后先核验同boot host-CPU上界，再恢复训练。当前不能声称权重已有更新。
