@@ -264,3 +264,10 @@
 - 验证：根任务完整45项合同、Ruff/Black/py_compile/CLI及提交门禁通过；本轮未重跑，不读取真实dev/reference、不restore模型、不运行selector/`--execute`。
 - 回流判定：P2-06需在started intent ledger durable后立即建立active task身份，或为progress失败路径写唯一terminal；补restore/query intent progress失败注入测试。此前2/2历史预算和复审记录保持原样。
 - 阶段指针：保持Phase 8；P7/W5a当前不放行，真实评测继续冻结。
+
+### Phase 7 第七轮独立复审：提交 c7411a688（2026-10-22）
+- 结论：通过代码审查门；P0=0、P1=0、P2=0。task-start身份在ledger intent写入前建立，intent耐久后再更新intent状态/query_attempts；progress失败时task identity与unknown尾账完整。成功terminal ledger append后同步置位且不重复写失败terminal；false→true writer竞态及P2-04/旧门禁无回归。
+- 产物：`artifacts/07-evaluation-review-c7411a688.md`。
+- 验证：根任务完整47项合同、Ruff/Black/py_compile/CLI/提交门禁通过；本审查另做synthetic restore_started ledger append失败复核，task identity/intent_unverified/unknown均符合预期；未读取真实dev/reference或运行真实评测。
+- 放行边界：仅Phase 7评测器代码审查门通过；真实W5b仍等待Phase 8训练终点、readiness与独立恢复，未授权selector或`--execute`。
+- 阶段指针：Phase 8顶部主指针不变；历史2/2预算及此前结论保留。
