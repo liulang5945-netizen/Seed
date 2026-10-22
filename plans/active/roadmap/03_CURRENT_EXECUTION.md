@@ -2,7 +2,15 @@
 
 ## 当前执行：N1-165A结案；R2自然中文多轮对话v2三臂续训与终点评测
 
-## 当前唯一下一步：修复真实执行暴露的冻结来源校验衔接，版本化绑定新来源并复审后续训
+## 当前唯一下一步：监测三条现有训练句柄到原定终点，再核验extension终点证据
+
+### 当前状态（2026-10-22 22:33附近）
+
+三臂实际训练持续运行：full句柄22331、warm句柄58323、fresh句柄96103均已轮询确认存活。最新已保存episode进度为{'full_turn_1m': {'durable': 9824, 'latest': 9827}, 'warm_start': {'durable': 14816, 'latest': 14820}, 'fresh_same_capacity': {'durable': 15048, 'latest': 15069}}。批准上限1.5M/臂、4.3M总额；v1.3审计校正保留全部prepared基线与旧event，receipt祖先链适配器允许warm从14,624继续。目标仍为30,096 pretraining及525 SFT，每臂完成后fresh restore并绑定唯一completion ledger事件。
+
+已新增metadata-only extension endpoint validator，8项synthetic contract通过；旧评测器仍只接受recovery-v1 schema，因此后续须将新endpoint记录明确接入版本化评测入口。当前不访问dev/reference、不运行selector/--execute、不晋级。
+
+### 历史进度（以下记录保留）
 
 ### 最新进度补充（2026-10-22 18:02 Asia/Shanghai）
 

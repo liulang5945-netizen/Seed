@@ -1,7 +1,7 @@
 # N 主线交付黑板
 
 - 运行目录: E:\Seed\plans\reference\delivery-runs\20261021-n-mainline
-- 当前阶段: Phase 8 测试/执行监控（续训扩展实现与执行前门禁待完成；真实训练未启动，W5b仍阻断）
+- 当前阶段: Phase 8 执行监控（三臂真实训练中；已保存新增checkpoint；W5b等待完整终点）
 - 任务一句话: 延续当前R2-06/07冻结训练，补齐终点评测与证据闭环，依据结果推进N主线。
 
 ## 阶段记录
@@ -423,3 +423,8 @@ exec 80306（warm-start）已确认exit1，错误为剩余吞吐投影超过预�
 manifest绑定的checkpoint验证适配器ad4f8c7ef已对receipt祖先链、bundle SHA和全部原来源/预算门通过验证，warm从14,624恢复。新句柄warm=58323，full=22331、fresh=96103；三条均已轮询确认存活。最新已验证耐久episode数为{'full_turn_1m': 9728, 'warm_start': 14688, 'fresh_same_capacity': 14912}。warm新增14,656 checkpoint后继续训练，未重算已提交episodes。
 
 适配器launch manifest位于reports/taiji_r2_checkpoint_adapter_warm_start_*.json，绑定adapter/test SHA、v1.3 source revision SHA、attempt SHA和恢复latest pointer。唯一下一步是监测这三条现有句柄至30,096预训练+525 SFT原终点；失败时先核实句柄和最后耐久receipt再处理，不能依据旧status重复启动。
+
+
+## 训练等待期间的终点接口准备
+
+三条exec句柄已确认存活，继续训练；新validate_taiji_r2_continuation_endpoint.py以extension schema独立验证父谱系、最终文件SHA、完整分母、独立restore及completion event SHA绑定，不导入模型/语料/selector。8项正向和漂移拒绝检查通过，尚未接入真实评测或解锁W5b。唯一下一步仍是监测现有训练并在全部终点后做元数据闭环。
