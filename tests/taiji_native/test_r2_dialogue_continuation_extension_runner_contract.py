@@ -189,6 +189,72 @@ def test_exact_source_compatibility_accepts_git_clean_filter_for_windows_eol(
     ]
 
 
+def test_exact_source_compatibility_stays_pinned_to_prepare_commit_after_head_moves(
+    tmp_path: Path, monkeypatch
+) -> None:
+    relative = "training.py"
+    source = tmp_path / relative
+    parent_bytes = b"source bytes captured by the prepared attempt\n"
+    source.write_bytes(parent_bytes)
+    report = tmp_path / "architecture.md"
+    report.write_text("reviewed source compatibility\n", encoding="utf-8")
+    prepare_commit = "a" * 40
+    current_head = {"sha": "b" * 40}
+    blob_oid = _git_blob_oid(parent_bytes)
+    commands: list[list[str]] = []
+    monkeypatch.setattr(runner, "ROOT", tmp_path)
+    monkeypatch.setattr(runner, "ARCHITECTURE_REPORT", report)
+    monkeypatch.setattr(runner, "SOURCE_COMPATIBILITY", {})
+
+    def run(args, **kwargs):
+        commands.append(args)
+        if args[1] == "rev-parse" and args[2] == "--verify":
+            ref = args[3]
+            if ref == f"{prepare_commit}^{{commit}}":
+                return SimpleNamespace(returncode=0, stdout=f"{prepare_commit}\n".encode())
+            if ref == "HEAD^{commit}":
+                return SimpleNamespace(returncode=0, stdout=f"{current_head['sha']}\n".encode())
+            pytest.fail(f"unexpected commit ref: {ref}")
+        if args[1] == "rev-parse":
+            revision, path = args[2].split(":", maxsplit=1)
+            assert path == relative
+            assert revision in {prepare_commit, current_head["sha"]}
+            return SimpleNamespace(returncode=0, stdout=f"{blob_oid}\n".encode())
+        if args[1] == "show":
+            revision, path = args[2].split(":", maxsplit=1)
+            assert path == relative
+            assert revision in {prepare_commit, current_head["sha"]}
+            return SimpleNamespace(returncode=0, stdout=parent_bytes)
+        assert args[1] == "hash-object"
+        return SimpleNamespace(returncode=0, stdout=f"{blob_oid}\n".encode())
+
+    monkeypatch.setattr(runner.subprocess, "run", run)
+    parent_hashes = {str(source): _sha(parent_bytes)}
+    first = runner.validate_source_compatibility(
+        "full_turn_1m", parent_hashes, exact_revision=prepare_commit
+    )
+    current_head["sha"] = "c" * 40
+    second = runner.validate_source_compatibility(
+        "full_turn_1m", parent_hashes, exact_revision=prepare_commit
+    )
+
+    assert first["files"] == second["files"]
+    assert first["files"][0]["git_revision"] == prepare_commit
+    assert first["files"][0]["git_blob_oid"] == blob_oid
+    assert first["files"][0]["current_sha256"] == _sha(parent_bytes)
+    assert all(
+        command[3] == f"{prepare_commit}^{{commit}}"
+        for command in commands
+        if command[1] == "rev-parse" and command[2] == "--verify"
+    )
+
+    source.write_bytes(b"unreviewed source byte drift\n")
+    with pytest.raises(runner.Refuse, match="unreviewed source drift"):
+        runner.validate_source_compatibility(
+            "full_turn_1m", parent_hashes, exact_revision=prepare_commit
+        )
+
+
 def test_untracked_data_source_is_bound_to_parent_lineage_without_git_blob_case_a(
     tmp_path: Path, monkeypatch
 ) -> None:
