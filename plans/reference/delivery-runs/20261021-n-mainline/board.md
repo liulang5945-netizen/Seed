@@ -248,3 +248,11 @@
 - 状态：最新修复尚未提交、待独立Phase 7复审；第五轮报告的P2未关闭结论只针对提交`aed03128a`，不预判新修复。
 - 训练三臂last durable仍为9,472/14,528/14,528 episodes、attempt=`training`且无final；未确认外部会话，不重启、不覆盖。
 - 方向仍为先提升自然中文多轮对话；评测门禁代码不等同模型能力证据，`can_promote=false`、N1-166冻结及W5b冻结保持。
+
+### Phase 7 第六轮独立复审：提交 8e4c736e2（2026-10-22）
+- 结论：不放行；P0=0、P1=0、P2=1。正常restore/query terminal耐久写入后立即置位；progress后续失败不会重复failed terminal。上一轮false→true writer竞态仍保持task身份和unknown尾账；P2-04及旧门禁无回归。
+- 新发现：写入restore/query started ledger intent后，progress intent追加成功前，active_task才赋值；若progress追加失败，outer可能遗漏已打开ledger task的task id与unknown尾账。
+- 产物：`artifacts/07-evaluation-review-8e4c736e2.md`。
+- 验证：根任务完整45项合同、Ruff/Black/py_compile/CLI及提交门禁通过；本轮未重跑，不读取真实dev/reference、不restore模型、不运行selector/`--execute`。
+- 回流判定：P2-06需在started intent ledger durable后立即建立active task身份，或为progress失败路径写唯一terminal；补restore/query intent progress失败注入测试。此前2/2历史预算和复审记录保持原样。
+- 阶段指针：保持Phase 8；P7/W5a当前不放行，真实评测继续冻结。
