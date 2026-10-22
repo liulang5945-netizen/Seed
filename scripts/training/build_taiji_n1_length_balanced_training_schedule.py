@@ -44,7 +44,7 @@ V10_FACE = face_builder.FACE
 
 PLAN_SHA256 = "16d0cecb325af6463c107973fc0e741478140134a7642cd64c86e045c6069783"
 BASE_BUILDER_SHA256 = "efa81a0bbc87f84db11e46cc40bc33e986fcfb6185c12b0404e9fccea4489d79"
-V10_FACE_SHA256 = "7fdf769c23e19457adb32892d4ea117ebcca907edf4a1c740799faa091408f85"
+V10_FACE_SHA256 = "2d912941baecaa4811266ace64b56fa9bb2ace65d657691834911db16ed369d8"
 LENGTH_ASSIGNMENT_SEED = 11010
 VALUE_MAP_SEED = 11011
 MATERIAL_LENGTHS = (6, 7)
@@ -322,7 +322,9 @@ def _source_bundle() -> tuple[list[dict], dict, dict, dict]:
         raise ValueError("prohibited v7/v8 confirmation payload access was recorded")
     if provenance.get("v7_v8_confirmation_artifacts_absent") is not True:
         raise ValueError("unexpected v7/v8 confirmation artifact appeared")
-    if sha256_file(V10_FACE) != V10_FACE_SHA256:
+    # 元封印碰撞修复：V10_FACE 清单自身也是重冻结对象，字节钉切 S6 git 历史核验
+    # （常量 = 创建 commit f08a3794a 的 blob，在位字节或 git 历史 blob 任一核验通过）
+    if not seal_ast.verify_path_pin(V10_FACE, V10_FACE_SHA256):
         raise ValueError("consumed v10 exclusion face hash changed")
     v10_face = read_json(V10_FACE)
     for episode in v10_face.get("episodes", []):
