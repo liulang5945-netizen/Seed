@@ -351,3 +351,20 @@
 - 17:50只读父账本上界为1,155,726.983/1,155,263.650/1,154,476.359秒，聚合3,465,466.992秒；新窗口余额144,273.017/144,736.350/145,523.641秒，aggregate434,533.008秒。准备和训练启动前按冻结公式重算。
 - 实现状态：来源、durable publisher、prepare恢复与final restore deadline已实现；结果完成事件恢复、预算拒绝停机、滚动吞吐投影、32 episode/cursor/RNG续跑等最终测试与独立复审仍在收敛。未运行真实prepare/restore/训练。
 - 唯一下一步：完成剩余合成验证及独立审查，随后立即运行durable `prepare-only`并在预算内三臂并发续训；W5b与能力晋级仍冻结。
+
+### Phase 7 补充：R2 continuation extension v1 最终独立代码审查（2026-10-22）
+- 冻结runner/backend/两份合同测试SHA分别为58A96D63186681E7CDAAA1034F4E0A68EE14B20C22050BAD214CD12EEC3EF18F、5BC1787499BEE803A8E5310349672E40B038205CED35F55D28B0C7A7893C72D9、3B25E646E1F823C025FB51FF89DE0FB3DE930E396B8AB9FA8834176E025CD39A和09E67815752B23D9DB1797B1EE640056D931F80168A851954F78E4DA68488469。
+- 结论：P0=0、P1=0、P2=0；独立合同测试72/72通过（33.60秒），py_compile、Ruff、Black、CLI帮助和目标文件diff-check通过。
+- 复核覆盖锁优先/死owner恢复、reservation账本与1.45M/臂及4.2M aggregate、parent/source/cursor与copy-only lineage、bounded restore、terminal stop reserve、吞吐投影和finalization reconciliation。
+- 主任务随后报告真实固定NTFS prepare-only exit 0，三臂status=prepared；准备后账本累计1,317,124.782691/1,316,636.232466/1,315,811.157573秒，aggregate 3,949,572.172730秒。未执行真实父checkpoint恢复或训练。
+- 剩余训练投影186,719.457141秒，aggregate headroom约250,427.827270秒。19:41:41 CPU/内存样本早于prepare；各run仍须实时复核资源、预算与吞吐。
+- 唯一下一步：各臂实时门通过后启动run入口，由根锁、reservation、bounded父checkpoint恢复与逐episode预算守卫把关；任一门失败即停止。主阶段指针保持Phase 8，W5b/能力晋级仍冻结。
+
+
+## 19:44真实执行门失败与修复方向
+
+NTFS prepare-only成功，三臂prepared；累计账本分别1,317,124.782691/1,316,636.232466/1,315,811.157573秒。准备后资源门CPU15.3/14.0%、RAM27.655GiB通过，aggregate余量250,427.827270秒，剩余训练预测186,719.457141秒。
+
+三臂真实--run随后均exit1：base._validate_sources拒绝`full-turn dialogue source changed: scripts/data_prep/build_taiji_r2_daily_dialogue_full_turn_pretraining_corpus.py`。拒绝发生在root writer lock、start intent与权重更新之前；无真实续训进展。扩展source compatibility已通过，但旧base validator仍按原raw SHA检查已审查版本，合成测试未覆盖此实际衔接，保留本失败作为回归证据。
+
+唯一下一步：实现严格来源证明下的extension专用训练数据校验，并建立显式版本化来源修订绑定；v1已prepared的合同、sidecar、父checkpoint和CPU账本不得改写或清零。新修订须红绿回归和独立审查，通过实际来源门后再续训。04架构报告已被v1绑定，保持原字节；新修订另记版本化补充。W5b、dev/reference、selector与晋级冻结。

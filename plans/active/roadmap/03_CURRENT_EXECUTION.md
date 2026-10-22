@@ -2,9 +2,19 @@
 
 ## 当前执行：N1-165A结案；R2自然中文多轮对话v2三臂续训与终点评测
 
-## 当前唯一下一步：最终独立复审后运行NTFS prepare-only保存门，随后在1.45M/臂、4.2M总预算内并发续训
+## 当前唯一下一步：修复真实执行暴露的冻结来源校验衔接，版本化绑定新来源并复审后续训
 
 ### 最新进度补充（2026-10-22 18:02 Asia/Shanghai）
+
+
+
+## 19:44真实执行门失败与修复方向
+
+NTFS prepare-only成功，三臂prepared；累计账本分别1,317,124.782691/1,316,636.232466/1,315,811.157573秒。准备后资源门CPU15.3/14.0%、RAM27.655GiB通过，aggregate余量250,427.827270秒，剩余训练预测186,719.457141秒。
+
+三臂真实--run随后均exit1：base._validate_sources拒绝`full-turn dialogue source changed: scripts/data_prep/build_taiji_r2_daily_dialogue_full_turn_pretraining_corpus.py`。拒绝发生在root writer lock、start intent与权重更新之前；无真实续训进展。扩展source compatibility已通过，但旧base validator仍按原raw SHA检查已审查版本，合成测试未覆盖此实际衔接，保留本失败作为回归证据。
+
+唯一下一步：实现严格来源证明下的extension专用训练数据校验，并建立显式版本化来源修订绑定；v1已prepared的合同、sidecar、父checkpoint和CPU账本不得改写或清零。新修订须红绿回归和独立审查，通过实际来源门后再续训。04架构报告已被v1绑定，保持原字节；新修订另记版本化补充。W5b、dev/reference、selector与晋级冻结。
 
 N主线仍聚焦态极的自然中文多轮对话能力。用户将本版本化续训窗口累计上限修订为每臂1,450,000、三臂合计4,200,000 process-CPU秒；所有旧账与未知尾账继续计入，不重置。三臂仍分别从自己的最后一个已验证durable checkpoint续训，不从零重训、不合并权重。该额度只授权本窗口，不代表模型能力晋级。
 
