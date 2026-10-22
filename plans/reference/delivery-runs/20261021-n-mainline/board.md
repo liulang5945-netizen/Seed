@@ -339,3 +339,15 @@
 - 来源证明：tracked源文件含Git commit/blob；每臂6个未跟踪`data/`工件要求当前SHA等于parent SHA并绑定parent attempt/receipt/bundle；Windows行尾只在Git clean-filter OID精确匹配时认定为规范化。来源/准备/父副本门定向11/11通过，final restore成功与timeout测试2/2通过；后两者为合成验证，未加载真实checkpoint。
 - 剩余门：结果已发布但completion账本未闭合时的幂等恢复、预算触顶时耐久停止事件、吞吐/剩余工作量投影、端到端cursor/RNG/32-episode提交与中断续跑测试，以及独立代码审查仍未完成。当前尚未运行真实`prepare-only`、父checkpoint恢复或训练。
 - 唯一下一步：关闭上述实现P1并交独立复审；通过后立即重采样预算/吞吐，执行固定NTFS `prepare-only` 耐久门，再按headroom并发续训。W5b、真实dev/reference、selector与`--execute`继续冻结，`can_promote=false`、N1-166冻结。
+
+### Phase 8 预算上限修订与代码门复核准备（2026-10-22 18:02）
+- 用户批准当前累计额度由1.2M/臂、3.6M总额提高至1.3M/臂、3.9M总额；旧实耗和未知尾账继续计入、不重置。
+- 18:02只读尾账为1,170,919.559/1,170,469.115/1,169,679.911秒，聚合3,511,068.585秒；当前余额129,080.441/129,530.885/130,320.089秒，聚合388,931.415秒。
+- source、durable publisher、prepare恢复、final restore deadline、终点幂等结算、预算stop reserve、滚动吞吐投影和32-episode/cursor/RNG synthetic续跑均已覆盖。账本+runner合成测试58项通过；Ruff、format/Black、py_compile、CLI和diff检查通过。
+- 唯一下一步：以冻结SHA交独立code review；通过后立即运行真实目录的NTFS `prepare-only`，校验checkpoint父副本与durability，再按刷新预算和吞吐门并发恢复。训练/W5b未启动，N1-166冻结，`can_promote=false`。
+
+### Phase 8 续训窗口预算修订（2026-10-22 17:50）
+- 用户批准将当前累计上限从1.2M/臂、3.6M总额提高至1.3M/臂、3.9M总额；旧实耗与未知尾账继续计入、不重置。三臂仍各自从原durable checkpoint续训。
+- 17:50只读父账本上界为1,155,726.983/1,155,263.650/1,154,476.359秒，聚合3,465,466.992秒；新窗口余额144,273.017/144,736.350/145,523.641秒，aggregate434,533.008秒。准备和训练启动前按冻结公式重算。
+- 实现状态：来源、durable publisher、prepare恢复与final restore deadline已实现；结果完成事件恢复、预算拒绝停机、滚动吞吐投影、32 episode/cursor/RNG续跑等最终测试与独立复审仍在收敛。未运行真实prepare/restore/训练。
+- 唯一下一步：完成剩余合成验证及独立审查，随后立即运行durable `prepare-only`并在预算内三臂并发续训；W5b与能力晋级仍冻结。

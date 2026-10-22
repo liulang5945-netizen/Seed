@@ -7,7 +7,7 @@
 
 架构方向通过，可按本文件进入版本化 extension runner、账本和合成测试实现。训练仍未获本架构报告放行：实现必须通过独立代码审查、精确来源/兼容性核验、parent checkpoint fresh-process 恢复、预算与资源预检后，才可启动。
 
-续训含义已固定为：三个 arm 分别从自己的最后一个已验证 durable checkpoint 继续，保留既有权重、游标、RNG 和训练计划，不从 zero 重训、不合并三臂权重。用户于2026-10-22 15:19将原批准的1,000,000 CPU秒/arm、3,000,000 aggregate修订为当前窗口每臂累计1,200,000秒、三臂累计3,600,000秒。额度包含各臂旧实际账与未知尾账，不是旧账之上的新增额度；此修订只改变预算ceiling，不重置charge、父来源或checkpoint谱系。
+续训含义已固定为：三个arm分别从自己的最后一个已验证durable checkpoint继续，保留既有权重、游标、RNG和训练计划，不从zero重训、不合并三臂权重。当前窗口累计上限于15:19从每臂1,000,000/聚合3,000,000修订为1,200,000/3,600,000，并于17:50再修订为每臂1,300,000、三臂合计3,900,000 process-CPU秒。额度包含各臂旧实际账与未知尾账，不是旧账之上的新增额度；修订只改变预算ceiling，不重置charge、父来源或checkpoint谱系。
 
 本补充取代此前计划在当前冻结 480,000 秒旧上限内继续的执行假设，也取代“从 zero 重新开始”对本次续训窗口的适用性；旧合同、旧账本与失败记录原样保留，不回写或伪装为从未发生。
 
@@ -17,7 +17,7 @@
 
 旧 attempt 没有独立 `attempt_id` 字段，因此以 `run + arm + 原 attempt 文件 SHA-256` 作为不可歧义的 parent identity。旧 attempt 仍显示 `training` 并不是成功证明；extension 自己的状态、停止原因与终点结果必须单独记录。旧 result 缺失时，新终点只能写入 extension result；之后评测器必须通过新显式 parent/extension manifest 识别端点，不能把结果伪写回旧 attempt。
 
-不采用覆盖旧 `latest.json`/progress/result 的方案，因为它会混淆之前训练与本次续训的证据边界；不采用修改旧 `source_hashes`、将 CPU 账重置为零、或把3.6M解释为新增预算的方案，因为这些会丢失已知成本与来源身份。也不直接 monkeypatch 旧 runner 的 budget/path 常量；旧 runner 的 cap 和产物路径是冻结的，应由新版本 runner 明确实现扩展合同。
+不采用覆盖旧 `latest.json`/progress/result 的方案，因为它会混淆之前训练与本次续训的证据边界；不采用修改旧 `source_hashes`、将CPU账重置为零、或把3.9M解释为新增预算的方案，因为这些会丢失已知成本与来源身份。也不直接monkeypatch旧runner的budget/path常量；旧runner的cap和产物路径是冻结的，应由新版本runner明确实现扩展合同。
 
 ## 版本化接口与数据合同
 
@@ -28,7 +28,7 @@
 | `extension_id`, `schema`, `arm` | 字符串；schema 固定 v1 | 新窗口身份，不与旧 attempt ID 混用 |
 | `parent_attempt` | 路径、schema、原状态、文件 SHA-256 | 指向旧 attempt；原文件不改写 |
 | `parent_checkpoint` | stage、cursor、episode/global step、bundle SHA、checkpoint digest、receipt 名称与 SHA、parent source-binding 摘要 | 指向该 arm 的最后已验证 durable checkpoint |
-| `approved_budget` | `per_arm_cpu_seconds=1200000`、`aggregate_cpu_seconds=3600000`、2026-10-22修订批准来源 | 明确为累计 ceiling，包含旧账、保守尾账、预检、训练、子进程、保存/恢复及失败开销 |
+| `approved_budget` | `per_arm_cpu_seconds=1300000`、`aggregate_cpu_seconds=3900000`、2026-10-22 17:50修订批准来源 | 明确为累计ceiling，包含旧账、保守尾账、预检、训练、子进程、保存/恢复及失败开销 |
 | `accounting_start` | UTC 时间、boot identity、host CPU 秒、逻辑 CPU 上界、parent charged 值、未知尾账上界、初始累计上界及剩余额度 | 启动时的耐久 CPU 基线；审查快照不得代替该字段 |
 | `continuation_sources` | 当前 runner/module/test/source hash 与兼容性报告 SHA | 新版本独立绑定；旧 parent source hash 保留且不重写 |
 | `status` | `prepared/running/stopped/complete/failed_unknown` | 只描述该 extension，不改写旧 attempt 状态 |
@@ -37,7 +37,7 @@
 
 ## 预算、尾账与谱系账本
 
-旧冻结上限为 full_turn_1m 240,000、warm_start 与 fresh_same_capacity 各 120,000 process-CPU 秒，合计480,000秒。先前批准的1M/3M窗口已于15:19修订为当前每arm 1,200,000、三臂聚合3,600,000秒；旧余额不足的原因是boot identity变化后恢复规则必须对未知时间使用 `elapsed_wall × max(previous_logical_cpu_upper, current_logical_cpu_count)`。这一规则保持不变。
+旧冻结上限为full_turn_1m 240,000、warm_start与fresh_same_capacity各120,000 process-CPU秒，合计480,000秒。预算先后修订为1M/3M、1.2M/3.6M，17:50再批准当前1.3M/3.9M窗口；旧余额不足的原因是boot identity变化后恢复规则必须对未知时间使用`elapsed_wall × max(previous_logical_cpu_upper, current_logical_cpu_count)`。这一规则保持不变。
 
 只读审查基线（2026-10-22 13:30:50 Asia/Shanghai；UTC 05:30:50.602314）：
 
@@ -51,20 +51,29 @@
 
 ### 15:20附近当前只读快照
 
-新批准窗口的当前累计ceiling为1.2M/arm、3.6M aggregate。只读parent audit确认parent receipt/bundle/cursor仍是上表所列同一组；按冻结尾账规则重算：
+17:12历史快照按1.2M/3.6M记录；17:50后当前累计ceiling为1.3M/arm、3.9M aggregate。最新只读parent audit确认receipt/bundle/cursor仍是上表所列同一组；当时尾账为：
 
-| arm | 当前保守累计上界 CPU 秒 | 到1.2M的当前余额 CPU 秒 |
+| arm | 17:12保守累计上界 CPU 秒 | 到1.2M历史额度的余额 CPU 秒 |
 |---|---:|---:|
 | `full_turn_1m` | 937,951.469 | 262,048.531 |
 | `warm_start` | 937,416.609 | 262,583.391 |
 | `fresh_same_capacity` | 936,544.407 | 263,455.593 |
 | **aggregate** | **2,811,912.485** | **788,087.515** |
 
-这是时间敏感的未知尾账上界，不是已发生的新增训练CPU；所有执行前门必须重新采样。
+这是17:12时间敏感的未知尾账历史快照，不是已发生的新增训练CPU；更新的17:50快照见续训扩展计划。
+
+| arm | 17:50当前保守累计上界 CPU 秒 | 到1.3M的当前余额 CPU 秒 |
+|---|---:|---:|
+| `full_turn_1m` | 1,155,726.983 | 144,273.017 |
+| `warm_start` | 1,155,263.650 | 144,736.350 |
+| `fresh_same_capacity` | 1,154,476.359 | 145,523.641 |
+| **aggregate** | **3,465,466.992** | **434,533.008** |
+
+该快照是未知尾账上界，不是已发生新增训练CPU；所有执行前门必须重新采样。
 
 首次 continuation 的 `charged_start` 必须至少取 max(已知 parent CPU 事件、parent checkpoint ledger 的 charged CPU 加冻结尾账规则所得的当前未知尾账上界)，并在 intent 中耐久记录新的 boot/host CPU/wall snapshot，以免首个 extension checkpoint 前强杀后继续从更早 parent 时间重复推算或清零。后续每次恢复都以 `max(previous_cumulative_charge, latest_extension_ledger_tail_charge)` 计费；episode 内未提交的重算、准备、restore、验证子进程、checkpoint 保存和失败收敛开销均计入。每臂在剩余 headroom 不足以覆盖最坏单 episode 与失败收敛 reserve 时，不得启动下一 episode。
 
-执行器必须有共享的、耐久且串行化的aggregate guard；并发启动要原子读取/记账三臂当前上界，并证明 `sum(charged_upper_by_arm) ≤ 3,600,000`，单臂还需满足 `charged_upper < 1,200,000`。单臂ceiling不能替代aggregate检查。该预算是一个续训窗口，不提供任意次数重启后重新获得的额度；若再次中断并触及ceiling，应停止并提交证据，任何新预算都需另行决策。
+执行器必须有共享的、耐久且串行化的aggregate guard；并发启动要原子读取/记账三臂当前上界，并证明`sum(charged_upper_by_arm) ≤ 3,900,000`，单臂还需满足`charged_upper < 1,300,000`。单臂ceiling不能替代aggregate检查。该预算是一个续训窗口，不提供任意次数重启后重新获得的额度；若再次中断并触及ceiling，应停止并提交证据，任何新预算都需另行决策。
 
 尾账增长具有时间敏感性：本机24个逻辑CPU下，若boot identity仍不匹配，wall每增加一小时，每臂上界最多增加86,400 CPU秒。因此13:30与15:20附近的余额都不能静态沿用；执行前必须重算。既有吞吐推算只是预计值，不能替代ceiling证明。
 
@@ -108,13 +117,13 @@
 |---|---|---|---|
 | 训练入口 | 新版本 extension runner + sidecar manifest | 预算与来源合同发生版本变化，必须有独立身份与审查 | 修改/monkeypatch 旧固定 cap runner 的常量和路径 |
 | checkpoint 谱系 | 版本化 extension checkpoint root，以 parent receipt SHA 锚定 | 保留旧 latest 指针与全部旧 bundle/receipt，不混淆两次执行 | 在旧 root 覆盖 `latest.json` 或删除旧提交 |
-| CPU 累计 | 含旧实耗与未知尾账的 monotonic cumulative ledger | 恢复后不重置；预算缺口可被保守尾账解释 | 将当前1.2M预算视为额外额度、重置CPU、用progress episode推算CPU |
+| CPU累计 | 含旧实耗与未知尾账的monotonic cumulative ledger | 恢复后不重置；预算缺口可被保守尾账解释 | 将当前1.3M预算视为额外额度、重置CPU、用progress episode推算CPU |
 | 来源漂移 | 父 hash 不变；extension 单独记录 source compatibility 和自身 hash | 可证明训练图连续，也保留历史来源身份 | 重写旧 hash、忽略 mismatch 或隐式 overlay |
 | 能力与评测边界 | 训练结束后仍需 readiness、独立恢复与冻结 W5b 评测 | 工程继续执行不等于能力提升 | 把训练完成或保存恢复通过视为晋级证据 |
 
 ## 遗留风险
 
-- 审查基线到实际执行之间尾账会随wall×24增长；当前预算上限固定为1.2M/arm，超过即没有余量，不能靠隐式追加解决。
+- 审查基线到实际执行之间尾账会随wall×24增长；当前预算上限固定为1.3M/arm，超过即没有余量，不能靠隐式追加解决。
 - source hash mismatch 虽然当前 diff 未见训练语义变化，仍须由实现与独立审查记录精确兼容证据。
 - 三臂终点尚无结果；本合同不能预测或承诺自然对话能力、保持性、泛化、模型上限或晋级结论。
 - 旧 attempt 状态字段和历史 `recovery_stopped` 只描述旧窗口；不能清理、覆盖或被新结果误标成功。
