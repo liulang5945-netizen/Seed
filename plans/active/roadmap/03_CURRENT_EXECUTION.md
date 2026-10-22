@@ -2,7 +2,13 @@
 
 ## 当前执行：N1-165A结案；R2自然中文多轮对话v2三臂重做
 
-## 当前唯一下一步：按已冻结的Windows本地NTFS耐久合同关闭W5a代码审查P1/P2并通过复审；训练持续，留出面保持冻结
+## 当前唯一下一步：对已补齐的IPC deadline与worker启动隔离实施独立Phase 7代码复审；复审通过且三臂终点恢复齐备后，才进入W5b
+
+### 最新进度补充（2026-10-22 11:52 Asia/Shanghai）
+
+当前主攻方向仍是提升态极的自然中文多轮对话能力，执行R2 recovery v2三臂配对路线。三臂progress文件最后耐久提交分别为2026-10-22 04:52:46（full_turn_1m：9,472/30,096 episodes、4,549,963 target-byte updates、34,465.78125 CPU秒）、04:52:51（warm_start：14,528/30,096、7,054,531 updates、34,039.859375 CPU秒）及04:53:28（fresh_same_capacity：14,528/30,096、7,054,531 updates、34,066.109375 CPU秒）。attempt仍记为`training`，当前无final结果，progress自上述时间后未再增长。Codex客户端更新是本次中断原因；沙箱进程列表不能判定外部会话是否存活，因此不据此重启或宣称完成，先保留durable状态与历史账本。
+
+W5a评测器已按P1-07/P2-04补入2 KiB有界IPC、只传持久prompt face路径/index/SHA、受deadline监督的写入线程，以及`CREATE_SUSPENDED`后先分配并验证Job Object再恢复worker。40项评估器合同测试通过；Ruff、py_compile、模块CLI帮助与diff检查通过。Phase 7历史复审预算2/2已用尽，依据用户“持续推进直至收官”的明确授权，安排一次针对新补丁的独立复审；该复审尚未完成，故W5a仍不视为通过。真实dev/reference、模型restore、selector、`--execute`和`can_promote`晋级均保持冻结，N1-166既有冻结门不变。
 
 ### 最新事实与主线进展（2026-10-22 00:10 Asia/Shanghai）
 

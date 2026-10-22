@@ -41,3 +41,11 @@
 5. **回P7门禁：**P0必须为0、六项P1和三项P2全部关闭；相应synthetic故障测试均通过后才退回Phase 7独立复审。至少覆盖：worker无父attempt/伪造endpoint授权拒绝；模块方式启动与安全导入；restore/generation hang、CPU忙循环、worker后代及整树强制终止；selector前来源漂移保持selector调用为0；NTFS资格/flush/rename/第二marker失败时restore启动为0；最终CPU/wall包含finalization；reserve算术正确；selector意图事件先行fsync。只做synthetic/本地NTFS验证，不读取dev/reference、不运行真实模型、restore、selector或generation。
 
 W5b仍以Phase 7复审通过及三臂W4固定终点、result/readiness/checkpoint与fresh-process恢复齐备为前置；任一未满足均不启动真实评测。该返工设计不改变Phase 8主训练指针、冻结训练合同、156次分母或`can_promote=false`边界。
+
+## Phase 6 IPC与worker启动硬化补充（2026-10-22）
+
+Phase 7第二轮复审指出的P1-07/P2-04已落实到实现与合成测试：IPC JSON帧硬限制为2 KiB，generation只传已持久prompt face的路径、index与SHA；父进程通过独立写线程发送并在同一CPU/wall deadline循环中监督，超时先终止Job整树并在有限宽限内确认写线程退出。worker以`CREATE_SUSPENDED`创建，只有Job Object分配和成员验证通过后才恢复执行；启动失败不进入授权或selector。旧复审结论仍保留，Phase 7未因此自动通过。
+
+定向IPC/Job测试4/4通过，完整评估器合同40/40通过，Ruff、py_compile、模块`--help`及diff检查通过。完整测试首次发现一条测试仍断言旧ledger字段`worker_startup_cpu_seconds_before_job_assignment`；根因是实现按新启动顺序改为`worker_startup_cpu_seconds_charged_total`，只同步断言字段后精确复测1/1通过，再次全量40/40通过。未访问真实dev/reference、未restore模型、未调用selector或`--execute`。
+
+第二轮审查仍判不放行（P0=0、P1=1、P2=1），原定回流预算2/2已用尽。按用户持续推进至收官的明确授权，新增一次独立Phase 7复审作为本次新补丁的后续门禁；结果未出前，W5a仍标记未解决，W5b不得开始。R2-06/07的最后durable进度、attempt=`training`且无final已同步至活动路线图；因外部进程状态无法从沙箱确认，不重启或覆盖任何训练状态。

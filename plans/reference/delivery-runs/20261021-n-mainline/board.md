@@ -195,3 +195,10 @@
 - 风险与待办：Phase 7复审预算已用尽（2/2）；selector与真实156调用继续冻结，待主理人安排剩余P1定向修复及后续门禁。
 - 回流判定：P1-07未关闭；本次不放行，也不将返工预算外的新复审视为已授权。
 - 阶段指针：保持Phase 8三臂训练/执行监控；不代表训练通过、模型晋级或W5b解锁。
+
+### Phase 6 追加返工：IPC deadline与worker启动隔离完成（2026-10-22）
+- 修改：2 KiB IPC上限、generation仅传持久prompt face path/index/SHA；独立writer线程受父进程deadline监督；worker suspended启动，Job Object分配及成员验证后才resume。
+- 验证：针对性IPC/Job合同4/4通过；评估器模块全套40/40通过；Ruff、py_compile、模块`--help`与diff检查通过。一次全套运行出现的1条失败是测试仍读取实现已替换的旧ledger键，更新断言后精准复测1/1及最终全套40/40均通过。
+- 复审状态：第二轮P7原结论和预算2/2保留为历史；用户已明确要求持续推进至收官，故对这份新补丁安排额外独立复审。当前P7仍未通过，W5b仍锁定。
+- 训练证据：最后durable进度04:52:46-04:53:28；full_turn_1m 9,472/30,096，warm_start与fresh_same_capacity各14,528/30,096；三attempt仍标`training`但无新progress/final。沙箱进程清单不足以确认外部会话，未重启、未覆盖、未读取dev/reference。
+- 主线边界：N主线仍以自然中文多轮对话为当前能力目标；本补丁只修评估门禁，不构成能力提升或晋级证据，`can_promote=false`及N1-166冻结保持不变。
