@@ -240,3 +240,11 @@
 - 验证：根任务已验证44项合同、Ruff/Black/py_compile/CLI和提交门禁；本轮未重跑。未读dev/reference、restore模型、运行selector或`--execute`。
 - 回流判定：P2-05需在正常成功terminal ledger append后更新状态，并补terminal已durable但后续progress失败的故障注入；此前2/2历史预算与复审结论保持原样。
 - 阶段指针：保持Phase 8；P7/W5a当前不放行，真实评测继续冻结。
+
+### Phase 6 追加返工：正常terminal状态同步（2026-10-22）
+- 第五轮复审`2bd90c39d`针对`aed03128a`判P0=0/P1=0/P2=1：成功`restore_completed`/`query_output_persisted`已durable写入后，状态位没有同步更新；后续progress故障可误报task terminal missing。
+- 红测在restore ledger terminal成功、progress append失败的场景下观察到重复terminal（`restore_completed`+`restore_failed`）。修复在成功terminal ledger append后立即置位；后续故障保留已有terminal并进入外层失败收敛。
+- 验证：该失败注入1/1通过；完整评估器合同45/45、Ruff、Black、py_compile、CLI帮助和diff检查通过。
+- 状态：最新修复尚未提交、待独立Phase 7复审；第五轮报告的P2未关闭结论只针对提交`aed03128a`，不预判新修复。
+- 训练三臂last durable仍为9,472/14,528/14,528 episodes、attempt=`training`且无final；未确认外部会话，不重启、不覆盖。
+- 方向仍为先提升自然中文多轮对话；评测门禁代码不等同模型能力证据，`can_promote=false`、N1-166冻结及W5b冻结保持。

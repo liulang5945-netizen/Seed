@@ -67,3 +67,11 @@ Phase 7第二轮复审指出的P1-07/P2-04已落实到实现与合成测试：IP
 实现现在显式维护`active_task_terminal_written`，只有ledger的restore/query终态事件耐久追加成功后才置true。任何异常结束时，只要当前`active_task`尚未写terminal，就在`evaluation_stopped`及failure receipt记录task id/operation、`task_terminal_missing=true`和`unknown_tail=true`，不受外层二次writer清理结果影响。false→true竞态单测1/1通过；模块全套44/44（9.14秒），Ruff、Black、py_compile、CLI `--help`和diff检查通过。
 
 修复尚未提交、也未独立复审。第四轮报告仅针对提交`1dabdc963`，结论P0=0/P1=1/P2=0继续有效；W5b、真实restore、dev/reference、selector与`--execute`仍冻结。用户持续推进授权支持对新提交继续独立复审；历史2/2回流预算按原样保留。
+
+## Phase 6 成功terminal状态同步（2026-10-22）
+
+第五轮复审针对`aed03128a`发现成功terminal写入ledger后，状态位仍false；restore的progress append随后失败时会重复生成`restore_failed`，并把已有的`restore_completed`误报为task terminal缺失。新增synthetic故障注入验证了该重复terminal。
+
+修复在`restore_completed`与`query_output_persisted`各自的durable ledger append成功后立即置`active_task_terminal_written=true`。若同一执行区间的后续操作抛错，catch路径不再创建第二条失败terminal，而由外层记录`evaluation_stopped`，保留当前task身份且不把已落盘terminal误判为missing。失败注入单测1/1通过，完整模块合同45/45（9.42秒），Ruff、Black、py_compile、CLI `--help`及diff检查通过。
+
+该补丁尚未提交或复审。第五轮结论P0=0/P1=0/P2=1对提交`aed03128a`有效；P2按Phase 7门槛必须独立关闭后才可放行。真实W5b、restore、dev/reference、selector和`--execute`继续冻结。

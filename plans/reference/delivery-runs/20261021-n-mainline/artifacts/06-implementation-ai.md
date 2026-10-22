@@ -130,3 +130,11 @@ git diff --check
 - 修复：新增`active_task_terminal_written`，只有durable ledger restore/query terminal写入成功后才置true。异常收敛时若当前task仍无terminal，则写`task_terminal_missing=true`、`unknown_tail=true`，并保留task_id/operation；后续writer退出不能抹去未闭合task事实。
 - 验证：false→true二次清理竞态测试1/1通过；模块完整合同44/44通过（9.14秒）；Ruff、Black、py_compile、模块CLI帮助与diff检查通过。未运行模型、restore、selector、`--execute`或真实dev/reference访问。
 - 门禁：第四轮报告`07-evaluation-review-1dabdc963.md`对旧提交仍判P0=0/P1=1/P2=0；此处修改未提交、未复核，W5a继续不放行。
+
+### Phase 6 追加：成功terminal状态同步（2026-10-22）
+
+- 根因：第五轮复审针对提交`aed03128a`发现，`active_task_terminal_written`只在`failed_task()`写失败terminal后置true；正常`restore_completed`/`query_output_persisted`落账成功后仍false。若restore ledger成功但progress append失败，catch会再调用`failed_task()`写`restore_failed`，造成同一task两个terminal并误报missing。
+- 红测：`test_durable_restore_terminal_is_not_duplicated_when_progress_append_fails`让restore terminal ledger append成功、后续progress append抛`OSError`；旧代码断言发现两个terminal事件（`restore_completed`与`restore_failed`）。
+- 修复：两个正常terminal事件完成durable ledger append后立即置terminal状态；后续progress/清理故障保留已存在的唯一terminal，由外层写evaluation-stopped记录，不再伪造第二条query/restore失败terminal。
+- 验证：专项单测1/1通过；评估器合同45/45通过（9.42秒）；Ruff、Black、py_compile、CLI `--help`与diff检查通过。未访问真实dev/reference或运行模型、restore、selector、`--execute`。
+- 门禁：第五轮复审对旧提交报告P0=0/P1=0/P2=1；当前补丁尚未提交/复审，W5a/P7仍未放行。

@@ -1831,3 +1831,53 @@ def test_writer_stopping_on_outer_cleanup_keeps_unwritten_query_terminal_unknown
     assert stopped["task_terminal_missing"] is True
     assert stopped["unknown_tail"] is True
     assert not any(event["event"] == "query_timeout" for event in events)
+
+
+def test_durable_restore_terminal_is_not_duplicated_when_progress_append_fails(
+    tmp_path, monkeypatch
+):
+    _, _, preflight = _valid_records(tmp_path)
+    paths = _output_paths(tmp_path / "reports-terminal-before-progress-failure")
+    paths["readiness"].parent.mkdir(parents=True)
+    _write_readiness(paths, preflight)
+    receipts = _restore_receipts(preflight["endpoints"])
+    worker = _FakeSupervisedWorker(receipts, preflight["endpoints"])
+    selector_calls = []
+    original_append = evaluation._append_jsonl
+
+    def fail_after_restore_terminal(path, payload, *, flush_file=None):
+        if (
+            Path(path).resolve() == paths["progress"].resolve()
+            and payload.get("event") == "restore_completed"
+        ):
+            raise OSError("synthetic progress append failure after durable restore terminal")
+        return original_append(path, payload, flush_file=flush_file)
+
+    monkeypatch.setattr(evaluation, "_append_jsonl", fail_after_restore_terminal)
+    with pytest.raises(evaluation.Refuse, match="one-shot evaluation attempt is consumed"):
+        evaluation.execute(
+            **_execute_kwargs(
+                paths,
+                preflight,
+                lambda **_kwargs: worker,
+                _DurabilityApi(),
+                prompt_selector=lambda: selector_calls.append(True) or _prompts(),
+            )
+        )
+
+    events = [json.loads(line) for line in paths["ledger"].read_text(encoding="utf-8").splitlines()]
+    task_id = next(event["task_id"] for event in events if event["event"] == "restore_started")
+    restore_terminals = [
+        event
+        for event in events
+        if event.get("operation") == "restore"
+        and event.get("task_id") == task_id
+        and event.get("event") in {"restore_completed", "restore_timeout", "restore_failed"}
+    ]
+    assert len(restore_terminals) == 1
+    assert restore_terminals[0]["event"] == "restore_completed"
+    assert selector_calls == []
+    stopped = next(event for event in events if event["event"] == "evaluation_stopped")
+    assert stopped["task_terminal_missing"] is False
+    assert stopped["unknown_tail"] is False
+    assert stopped["operation"] == "restore"

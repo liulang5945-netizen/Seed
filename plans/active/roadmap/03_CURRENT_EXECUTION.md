@@ -2,7 +2,13 @@
 
 ## 当前执行：N1-165A结案；R2自然中文多轮对话v2三臂重做
 
-## 当前唯一下一步：独立复审提交中的task终态缺失修复；通过且三臂终点恢复齐备后，才进入W5b
+## 当前唯一下一步：独立复审成功terminal记账修复；P7通过且三臂终点恢复齐备后，才进入W5b
+
+### 最新进度补充（2026-10-22 12:34 Asia/Shanghai）
+
+第五轮复审针对提交`aed03128a`判P0=0/P1=0/P2=1：false→true writer竞态已关闭，但成功restore/query terminal写入ledger后，`active_task_terminal_written`未同步更新，progress故障可能误报缺终态。新增失败注入先复现重复terminal（`restore_completed`后progress append失败，旧代码再写`restore_failed`）；修复在ledger terminal append成功后即标记已完成，restore/generation catch若之后再故障则保留唯一terminal并进入外层失败收敛。专门测试1/1通过，完整合同45/45通过，Ruff、Black、py_compile、CLI帮助和diff检查通过。修复尚未提交/复核，Phase 7仍不放行。
+
+R2三臂最后durable progress仍为04:52:46-04:53:28，attempt=`training`且无final，未发现新结果。训练会话由外部客户端状态承载，当前沙箱无法确认是否仍活动；不自动重启或覆盖。W5b和真实dev/reference评测继续冻结，N主线对话方向及`can_promote=false`、N1-166冻结均不变。
 
 ### 最新进度补充（2026-10-22 12:25 Asia/Shanghai）
 

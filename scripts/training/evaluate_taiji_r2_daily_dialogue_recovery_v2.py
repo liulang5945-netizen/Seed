@@ -3157,6 +3157,7 @@ def execute(
                     "timestamp_utc": datetime.now(UTC).isoformat(),
                 }
                 durable_append(ledger_path, event)
+                active_task_terminal_written = True
                 durable_append(progress_path, event)
             except BaseException as exc:
                 if not isinstance(exc, WorkerTaskFailure):
@@ -3166,6 +3167,8 @@ def execute(
                         worker_tree_stopped=False,
                         cpu_measurement_valid=child_measurement_valid,
                     )
+                if active_task_terminal_written:
+                    raise
                 failed_task("restore", task_id, endpoint_id, payload, exc)
                 active_task = None
                 raise Refuse(
@@ -3364,6 +3367,7 @@ def execute(
                             "timestamp_utc": datetime.now(UTC).isoformat(),
                         },
                     )
+                    active_task_terminal_written = True
                     persisted += 1
                 except BaseException as exc:
                     if not isinstance(exc, WorkerTaskFailure):
@@ -3373,6 +3377,8 @@ def execute(
                             worker_tree_stopped=False,
                             cpu_measurement_valid=child_measurement_valid,
                         )
+                    if active_task_terminal_written:
+                        raise
                     failed_task("generate", task_id, endpoint_id, payload, exc)
                     active_task = None
                     raise Refuse(
