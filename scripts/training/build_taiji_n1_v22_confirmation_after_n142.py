@@ -203,7 +203,8 @@ def _collect_source_union() -> tuple[set[str], set[str], dict[str, str], dict]:
 
     source_hashes = dict(n142_result.get("source_hashes", {}))
     for path, digest in n142_result.get("source_hashes", {}).items():
-        if not Path(path).is_file() or sha256(Path(path)) != digest:
+        # 回执绑定: 记录值 == 在位字节或 git 历史 blob（S4 重冻结后 manifest 当前字节已变）
+        if not seal_ast.verify_path_pin(path, digest):
             raise Refuse(f"N1-142 source hash mismatch: {path}")
     for path in (
         PLAN,

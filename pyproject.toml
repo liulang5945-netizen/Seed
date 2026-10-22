@@ -132,17 +132,10 @@ select = ["E", "F", "W", "I", "UP"]
 ignore = ["E501", "E402", "E741", "B008"]
 
 [tool.ruff.lint.per-file-ignores]
-# 2026-10-22（打通 CI cut）：PLAN-N1-100/110 字节封存链 7 文件——B/SIM 违规为 HEAD 既有，
-# 文件字节被 source_guards（40 条）+ 基线训练报告 controller 绑定钉死，禁止触碰
-# （J12 先例：封印冲突时文件退出度量面，而不是改封印）。主门禁 E,F,W,I,UP 仍生效；
-# 链条重冻结后同步移除。
-"scripts/training/build_taiji_n1_hard_neighbor_training_schedule.py" = ["B", "SIM"]
-"scripts/training/build_taiji_n1_hard_neighbor_v9.py" = ["B", "SIM"]
-"scripts/training/build_taiji_n1_length_balanced_training_schedule.py" = ["B", "SIM"]
-"scripts/training/run_taiji_n1_hard_neighbor_training.py" = ["B", "SIM"]
-"scripts/training/run_taiji_n1_length_balanced_training.py" = ["B", "SIM"]
-"tests/taiji_native/test_n1_plan110_length_balanced_schedule_contract.py" = ["B", "SIM"]
-"tests/taiji_native/test_n1_plan110_length_balanced_runner_contract.py" = ["B", "SIM"]
+# 2026-10-22 Phase 11 S7：PLAN-N1-100/110 封存链 7 文件的 B/SIM 豁免已按计划移除——
+# 链条完成 ast-canonical-v1 重冻结后，13 处 B/SIM 违规已逐点清零（B007 改名 ×3、
+# SIM102 合并 ×2、SIM114 合并 ×2、SIM300 换位 ×5、SIM115 结构性误报 noqa ×1），
+# 文件语义经对应契约测试全绿背书。
 # R6: neuroplex 冻结模块（0% 覆盖，无回归兜底）——与 [tool.mypy.overrides] 名单一致，
 # 解冻时同步移除两处豁免。
 "neuroplex/life/*" = ["B", "SIM"]
@@ -179,12 +172,10 @@ target-version = ["py312"]
 # un-excludes the fixtures.  Verified with
 # `scripts/training/audit_frozen_marker_formatter_conflict.py`, which fails if this
 # exclusion stops applying.
-# 2026-10-22（打通 CI cut）：PLAN-N1-100/110 字节封存链的 7 个文件同款处置——它们被
-# plans/manifests/n1_hard_neighbor_length_balanced_schedule_v1_20261018.json 的
-# source_guards（40 条）与基线训练报告（reports/taiji_n1_hard_neighbor_training_20261017.json）
-# 的 controller 绑定钉住字节，任何重排都会打断「报告↔控制器↔构建器↔回执」证据链。
-# 契约测试与封印审计仍是它们的守卫；链条重冻结后同步移除这些豁免。
-extend-exclude = "/(_libs|build|dist|node_modules|scripts/archive|taiji-harness|output|direct-[^/]+)/|/scripts/training/run_taiji_unified_entry_evidence\\.py$|/scripts/training/build_taiji_n1_hard_neighbor_training_schedule\\.py$|/scripts/training/build_taiji_n1_hard_neighbor_v9\\.py$|/scripts/training/build_taiji_n1_length_balanced_training_schedule\\.py$|/scripts/training/run_taiji_n1_hard_neighbor_training\\.py$|/scripts/training/run_taiji_n1_length_balanced_training\\.py$|/tests/taiji_native/test_n1_plan110_length_balanced_schedule_contract\\.py$|/tests/taiji_native/test_n1_plan110_length_balanced_runner_contract\\.py$"
+# 2026-10-22 Phase 11 S7：PLAN-N1-100/110 封存链 7 文件的 extend-exclude 分支已按计划
+# 移除（B/SIM 违规清零 + black 重排完成，语义经契约测试背书）；J12 的
+# run_taiji_unified_entry_evidence 分支保留不变。
+extend-exclude = "/(_libs|build|dist|node_modules|scripts/archive|taiji-harness|output|direct-[^/]+)/|/scripts/training/run_taiji_unified_entry_evidence\\.py$"
 
 [tool.coverage.run]
 source = ["seed", "taiji", "seed_platform", "neuroplex", "api"]

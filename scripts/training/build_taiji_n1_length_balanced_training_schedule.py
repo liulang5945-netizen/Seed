@@ -251,7 +251,7 @@ def _hard_length_assignments(
         )
         grouped[key].append(row)
 
-    for (parent_id, kind, observation_count, distance), group in sorted(
+    for (_parent_id, kind, _observation_count, _distance), group in sorted(
         grouped.items(), key=lambda entry: tuple(str(part) for part in entry[0])
     ):
         expected_slots = 8 if kind == "revision" else 4
@@ -594,12 +594,11 @@ def audit_schedule(schedule: dict, items: list[dict], excluded_values: set[str])
             errors.append(f"hard known answer length mismatch: {item['id']}")
         if row["parent_kind"] == "unknown" and item["answer"] != "unknown":
             errors.append(f"unknown abstention label changed: {item['id']}")
-        if row["parent_kind"] in {"lookup", "unknown"}:
-            if (
-                row.get("second_question") is None
-                or len(row["second_question"].get("answer", "")) != length
-            ):
-                errors.append(f"paired question answer length mismatch: {item['id']}")
+        if row["parent_kind"] in {"lookup", "unknown"} and (
+            row.get("second_question") is None
+            or len(row["second_question"].get("answer", "")) != length
+        ):
+            errors.append(f"paired question answer length mismatch: {item['id']}")
 
     for key, counts in hard_by_parent_condition.items():
         expected = (

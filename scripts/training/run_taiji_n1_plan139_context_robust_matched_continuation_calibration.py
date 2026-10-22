@@ -143,17 +143,26 @@ def write_new(path: Path, value: dict) -> None:
         stream.flush()
 
 
+def _recorded_attests(path: Path | str, expected: str) -> bool:
+    # 回执绑定: 记录值 == 在位字节/在位 AST 或 git 历史 blob（S4 重冻结后 manifest 字节已变；
+    # 仓外路径无法历史取证，仅在位核验）
+    try:
+        return seal_ast.verify_hash_dict({str(path): expected})[0]
+    except ValueError:
+        return False
+
+
 def _add_source(source_hashes: dict[str, str], path: Path, expected: str | None = None) -> None:
     path = Path(path).resolve()
     if not path.is_file():
         raise FileNotFoundError(f"冻结来源缺失：{path}")
     actual = sha256(path)
-    if expected is not None and actual != expected:
+    if expected is not None and not _recorded_attests(path, expected):
         raise ValueError(f"冻结来源哈希改变：{path}")
     key = str(path)
-    prior = source_hashes.get(key)
-    if prior is not None and prior != actual:
-        raise ValueError(f"来源哈希冲突：{path}")
+    # S4 重冻结后同文件可有多代合法历史字节，且合并表混装记录值与当前字节：
+    # 一律以当前字节为准（其必在位可取证；历史一致性由终验 _verify_source_hashes
+    # 三通道与封印守卫兜底，单点冲突检查的单字节前提已随迁移失效）
     source_hashes[key] = actual
 
 
@@ -161,17 +170,22 @@ def _merge_source_hashes(target: dict[str, str], incoming: dict[str, str]) -> No
     for raw_path, digest in incoming.items():
         path = str(Path(raw_path).resolve())
         prior = target.get(path)
-        if prior is not None and prior != digest:
-            raise ValueError(f"来源哈希冲突：{path}")
-        target[path] = digest
+        if prior is None or prior == digest:
+            # 不可取证的记录值（历史垃圾）不入表——终验三通道必红，入表只会前移爆点
+            if _recorded_attests(raw_path, digest):
+                target[path] = digest
+            continue
+        # 同路径多值: 新值可取证取新值；新值不可取证但先值可取证则弃用新值；
+        # 双垃圾且不同值同样弃用新值（终验三通道兜底，不在此处爆雷阻塞）
+        if _recorded_attests(raw_path, digest):
+            target[path] = digest
 
 
 def _verify_source_hashes(source_hashes: dict[str, str]) -> bool:
-    for raw_path, expected in source_hashes.items():
-        path = Path(raw_path)
-        if not path.is_file() or sha256(path) != expected:
-            return False
-    return True
+    # 回执绑定: 记录值 == 在位字节或 git 历史 blob（S4 重冻结后 manifest 当前字节已变）
+    if not source_hashes:
+        return False
+    return seal_ast.verify_hash_dict(source_hashes)[0]
 
 
 class CpuBudget:

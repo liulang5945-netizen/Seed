@@ -560,8 +560,8 @@ def validate_candidate_runner() -> dict:
         expected_hard[(kind, observations, distance_value, condition)] = count * 4
     if (
         not length_audit["valid"]
-        or base.ACTIVE_HARD_COUNTS != expected_hard
-        or base.ACTIVE_CYCLE_COUNTS != Counter({0: 3072, 1: 3072, 2: 3072, 3: 3072})
+        or expected_hard != base.ACTIVE_HARD_COUNTS
+        or Counter({0: 3072, 1: 3072, 2: 3072, 3: 3072}) != base.ACTIVE_CYCLE_COUNTS
     ):
         raise ValueError("candidate scheduler failed raw/hard length or condition ledger")
     if not base.source_guards_unchanged(guards):

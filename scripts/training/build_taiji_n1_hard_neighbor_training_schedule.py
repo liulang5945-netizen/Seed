@@ -126,9 +126,10 @@ def validate_train_items(items: list[dict]) -> None:
         ):
             raise ValueError("train-only source entity/observation shape changed")
         subject = item["question"].removeprefix("material of ").removesuffix("?")
-        if item["kind"] in ("lookup", "revision", "unknown"):
-            if subject not in entities or item["answer"] in item["question"]:
-                raise ValueError("train-only material question target is malformed")
+        if item["kind"] in ("lookup", "revision", "unknown") and (
+            subject not in entities or item["answer"] in item["question"]
+        ):
+            raise ValueError("train-only material question target is malformed")
         if item["kind"] == "lookup":
             exact = [
                 line

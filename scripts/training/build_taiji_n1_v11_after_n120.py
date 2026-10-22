@@ -18,6 +18,7 @@ from scripts.training import (
     build_taiji_n1_hard_neighbor_training_schedule as train_data,
 )  # noqa: E402
 from scripts.training import build_taiji_n1_hard_neighbor_v9 as v9  # noqa: E402
+from scripts.training import seal_ast  # noqa: E402
 
 N100_REPORT = ROOT / "reports/taiji_n1_hard_neighbor_training_20261017.json"
 N100_REPORT_SHA256 = "dad10ec72c605367f99da035bab07d522ce1793154915ebcc3c7f1022f411909"
@@ -27,7 +28,7 @@ N110_PLAN = (
 )
 N110_PLAN_SHA256 = "16d0cecb325af6463c107973fc0e741478140134a7642cd64c86e045c6069783"
 N110_SCHEDULE = ROOT / "plans/manifests/n1_hard_neighbor_length_balanced_schedule_v1_20261018.json"
-N110_SCHEDULE_SHA256 = "39edaf58020f6cf18680838a6d7576eafef5c7c9286cfd1ea40b93a581851380"
+N110_SCHEDULE_SHA256 = "b2d637fcc1e096d40bba35bbc91bc66b0c27257cd74a4bcac5f5f488f55b6d4c"
 N110_VALUE_MAP_SHA256 = "dba1d9eb8fec6d60e6b1ceca496bce3b3386b05d1539ad88696177db0b9e9ba8"
 N110_VALUE_MAP_ENTRIES = 288
 N121_PLAN = (
@@ -109,7 +110,8 @@ def write_new(path: Path, value: dict) -> None:
 
 
 def _bound(path: Path, expected: str) -> dict:
-    if not path.is_file() or sha256(path) != expected:
+    # 元封印碰撞修复: 清单自身也是重冻结对象，字节钉切 git 历史核验
+    if not seal_ast.verify_path_pin(path, expected):
         raise ValueError(f"frozen N1-121 source hash mismatch: {path}")
     return read_json(path)
 

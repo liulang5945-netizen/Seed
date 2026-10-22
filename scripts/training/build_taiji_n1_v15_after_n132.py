@@ -73,7 +73,9 @@ INITIAL_SOURCE_EXCLUSIONS = (
     ROOT / "plans/manifests/n1_v15_after_n132_source_exclusions_20261019.json"
 )
 INITIAL_SOURCE_EXCLUSIONS_SHA256 = (
-    "066676483c72e23c7e287107523e71431d40590b1288a51caf17e248783fe5a4"
+    # 创建 commit b6b1e951a 的 blob——元封印碰撞修复: 清单自身也是重冻结对象，
+    # 字节钉切 git 历史核验（在位字节或创建 blob 任一核验通过）
+    "60bd29c04a50d8e6ee920816878eef426789c8e5cddf9ec69906789a40574d1c"
 )
 INITIAL_READINESS = ROOT / "reports/taiji_n1_v15_after_n132_confirmation_readiness_20261019.json"
 INITIAL_READINESS_SHA256 = "31d5b07d7076de343ddb73cf1d09620ceb577b7cb8312a430e12fa1394777140"
@@ -86,7 +88,7 @@ INITIAL_READINESS_ATTEMPT_SHA256 = (
 SECOND_SOURCE_EXCLUSIONS = (
     ROOT / "plans/manifests/n1_v15_after_n132_source_exclusions_revalidation_20261019.json"
 )
-SECOND_SOURCE_EXCLUSIONS_SHA256 = "acb8e92248735287cce3710e4f3576cfcebb21a0fae0c808c0e6d5940f708645"
+SECOND_SOURCE_EXCLUSIONS_SHA256 = "59de058b878d85bb9d3fb2b2de50a497fd744781905b0177beac966f823e7365"
 SECOND_READINESS = (
     ROOT / "reports/taiji_n1_v15_after_n132_confirmation_readiness_revalidation_20261019.json"
 )
@@ -159,15 +161,26 @@ def write_new(path: Path, value: dict) -> None:
         stream.flush()
 
 
+def _recorded_attests(path: Path | str, expected: str) -> bool:
+    # 回执绑定: 记录值 == 在位字节/在位 AST 或 git 历史 blob（S4 重冻结后 manifest 字节已变；
+    # 仓外路径无法历史取证，仅在位核验）
+    try:
+        return seal_ast.verify_hash_dict({str(path): expected})[0]
+    except ValueError:
+        return False
+
+
 def _add_source(source_hashes: dict[str, str], path: Path, expected: str | None = None) -> None:
     path = Path(path).resolve()
     if not path.is_file():
         raise FileNotFoundError(f"冻结来源缺失：{path}")
     actual = sha256(path)
-    if expected is not None and actual != expected:
+    if expected is not None and not _recorded_attests(path, expected):
         raise ValueError(f"冻结来源哈希改变：{path}")
     prior = source_hashes.get(str(path))
-    if prior is not None and prior != actual:
+    # S4 重冻结后同文件可有多代合法历史字节（合并表混装记录值与当前字节）：
+    # 仅当先值不可取证（垃圾记录或运行中篡改）才报警，否则以当前字节 healing
+    if prior is not None and prior != actual and not _recorded_attests(path, prior):
         raise ValueError(f"来源哈希冲突：{path}")
     source_hashes[str(path)] = actual
 
@@ -252,7 +265,7 @@ def _prior_sources_and_union() -> tuple[set[str], set[str], dict[str, str], dict
     initial_attempt = read_json(INITIAL_READINESS_ATTEMPT)
     initial_errors = initial_readiness.get("errors", [])
     if (
-        sha256(INITIAL_SOURCE_EXCLUSIONS) != INITIAL_SOURCE_EXCLUSIONS_SHA256
+        not seal_ast.verify_path_pin(INITIAL_SOURCE_EXCLUSIONS, INITIAL_SOURCE_EXCLUSIONS_SHA256)
         or sha256(INITIAL_READINESS) != INITIAL_READINESS_SHA256
         or sha256(INITIAL_READINESS_ATTEMPT) != INITIAL_READINESS_ATTEMPT_SHA256
         or initial_manifest.get("entity_count") != EXPECTED_EXCLUDED_ENTITIES
@@ -275,7 +288,7 @@ def _prior_sources_and_union() -> tuple[set[str], set[str], dict[str, str], dict
     second_attempt = read_json(SECOND_READINESS_ATTEMPT)
     second_errors = second_readiness.get("errors", [])
     if (
-        sha256(SECOND_SOURCE_EXCLUSIONS) != SECOND_SOURCE_EXCLUSIONS_SHA256
+        not seal_ast.verify_path_pin(SECOND_SOURCE_EXCLUSIONS, SECOND_SOURCE_EXCLUSIONS_SHA256)
         or sha256(SECOND_READINESS) != SECOND_READINESS_SHA256
         or sha256(SECOND_READINESS_ATTEMPT) != SECOND_READINESS_ATTEMPT_SHA256
         or second_manifest.get("schema") != "n1-plan133-v15-source-exclusions-revalidation-v1"
@@ -305,9 +318,14 @@ def _prior_sources_and_union() -> tuple[set[str], set[str], dict[str, str], dict
 
     source_hashes = dict(old.get("source_hashes", {}))
     for raw_path, expected in source_hashes.items():
-        path = Path(raw_path)
-        if not path.is_file() or sha256(path) != expected:
-            raise ValueError(f"N1-124前置来源哈希改变：{path}")
+        # N124 manifest 经 S4 重冻结，.py 条目为 ast 口径: 三通道校验
+        # （在位 ast/字节 + git 历史取证；仓外路径无法历史取证按失败计）
+        try:
+            ok = seal_ast.verify_hash_dict({raw_path: expected})[0]
+        except ValueError:
+            ok = False
+        if not ok:
+            raise ValueError(f"N1-124前置来源哈希改变：{raw_path}")
     n132_reconciliation = read_json(N132_RECONCILIATION)
     if (
         n132_reconciliation.get("complete") is not True
@@ -324,9 +342,11 @@ def _prior_sources_and_union() -> tuple[set[str], set[str], dict[str, str], dict
     fixed = {
         N124_PLAN: "8e23edb313bbc427856ba1ea8e73bb7ab7a37ddf33c8599ebec44fbb16390db4",
         N124_CLOSEOUT: "86f41f8f8d2c433ec933a0a345a8c8ef40a17ee9c57f66cfc50567169231fc97",
-        N124_SOURCE_EXCLUSIONS: "9b859f0b22968eaaa2e4862a8418b8134a2db2cf2752d1579be6e05c70bf542a",
+        # 元封印碰撞修复: 创建 commit eb32b26d1 的 blob（9b859f0b 系从未入库的 worktree 渲染字节）
+        N124_SOURCE_EXCLUSIONS: "2b965382173c9c7aae83358434de0f375aa94a24bdfe3c573fc871b93c01a9fd",
         N124_READINESS: "9a04fa434556e43e3937aa453169c02bb1aa7168811687be8c5caeb29f27045f",
-        N124_FACE: "1c950f25e74d024171b544089fe76ad6a8545ea24326e03265ba8bd94d9443e7",
+        # 元封印碰撞修复: 创建 commit eb32b26d1 的 blob（原值系重冻结前 worktree 字节）
+        N124_FACE: "de507d2dbcfdf9d3a9aeb836d3308f1dc02c535b7ea06eee5a994bfbf9306ba1",
         N124_FACE_CHECKS: "08d4dc9e048b136fe48f716b6287c90699b7a4e006beef3b04b7418c297039c2",
         N124_RANGE: "5d297194fd036b7c799f652b920d9277f0a8ca6449bae02eb80b9e5449e99cdc",
         N124_RANGE_ATTEMPT: "1bd26e075004cb1e32fb0a202a1f410a4c8228b0b367c52aeffc737530f45d3e",

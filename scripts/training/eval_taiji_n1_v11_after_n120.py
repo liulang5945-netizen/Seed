@@ -167,7 +167,7 @@ def _read_bound_inputs(
         or face_readiness.get("excluded_entity_count") != 1918
         or face_readiness.get("excluded_material_count") != 1633
         or face_readiness.get("exclusion_provenance", {}).get("n110_schedule_sha256")
-        != "39edaf58020f6cf18680838a6d7576eafef5c7c9286cfd1ea40b93a581851380"
+        != "b2d637fcc1e096d40bba35bbc91bc66b0c27257cd74a4bcac5f5f488f55b6d4c"
         or face_readiness.get("exclusion_provenance", {}).get("n110_material_value_map_sha256")
         != "dba1d9eb8fec6d60e6b1ceca496bce3b3386b05d1539ad88696177db0b9e9ba8"
         or face_readiness.get("exclusion_provenance", {}).get("n110_material_value_map_entries")
@@ -193,9 +193,9 @@ def _read_bound_inputs(
     ):
         raise ValueError("v11 seed111 face must remain absent until owner approval")
     for raw_path, expected in face_readiness.get("source_hashes", {}).items():
-        path = Path(raw_path)
-        if not path.is_file() or sha256(path) != expected:
-            raise ValueError(f"v11 face source changed after source readiness: {path}")
+        # 回执绑定: 记录值 == 在位字节或 git 历史 blob（S4 重冻结后 manifest 当前字节已变）
+        if not seal_ast.verify_path_pin(raw_path, expected):
+            raise ValueError(f"v11 face source changed after source readiness: {raw_path}")
     if require_face_absent and any(
         path.exists()
         for path in (
@@ -372,7 +372,7 @@ def _verify_scorer_readiness() -> dict:
         or report.get("n110_material_value_map_sha256")
         != "dba1d9eb8fec6d60e6b1ceca496bce3b3386b05d1539ad88696177db0b9e9ba8"
         or report.get("n110_schedule_sha256")
-        != "39edaf58020f6cf18680838a6d7576eafef5c7c9286cfd1ea40b93a581851380"
+        != "b2d637fcc1e096d40bba35bbc91bc66b0c27257cd74a4bcac5f5f488f55b6d4c"
         or report.get("n110_material_value_map_entries") != 288
         or report.get("n110_mapped_training_values_excluded") != 288
         or report.get("n121_source_correction_sha256")

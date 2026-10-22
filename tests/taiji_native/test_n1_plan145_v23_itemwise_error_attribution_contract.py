@@ -5,6 +5,7 @@ import copy
 import pytest
 
 from scripts.training import analyze_taiji_n1_v23_itemwise_errors_after_n144 as analyzer
+from scripts.training import seal_ast
 
 
 def _synthetic_inputs() -> tuple[list[dict], dict]:
@@ -131,5 +132,6 @@ def test_join_refuses_face_position_that_is_outside_the_frozen_schedule() -> Non
 def test_plan_and_consumed_report_hash_constants_are_current() -> None:
     assert analyzer.sha256(analyzer.PLAN) == analyzer.PLAN_SHA256
     assert analyzer.sha256(analyzer.N144_PLAN) == analyzer.N144_PLAN_SHA256
-    assert analyzer.sha256(analyzer.FACE) == analyzer.FACE_SHA256
+    # 元封印碰撞修复: FACE 清单自身也是重冻结对象，字节钉切 git 历史核验
+    assert seal_ast.verify_path_pin(analyzer.FACE, analyzer.FACE_SHA256)
     assert analyzer.sha256(analyzer.RESULT) == analyzer.RESULT_SHA256

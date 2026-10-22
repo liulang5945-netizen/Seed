@@ -78,7 +78,9 @@ class _JsonStream:
     """Small streaming JSON scanner that can skip an object tail without decoding it."""
 
     def __init__(self, path: Path):
-        self._stream = Path(path).open("r", encoding="utf-8")
+        # 流式扫描器: 句柄生命周期跨越多个方法（mark/seek/close），无法收敛进
+        # 单个 with 块——SIM115 在此为结构性误报
+        self._stream = Path(path).open("r", encoding="utf-8")  # noqa: SIM115
         self._lookahead: str | None = None
         self._lookahead_cookie = None
 

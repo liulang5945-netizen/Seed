@@ -11,11 +11,7 @@ def _item(kind: str, answer: str, observations: list[str]) -> dict:
     target = "targetname"
     question = f"material of {target}?" if kind != "transition" else f"direction of {target}?"
     entities = [target, "othername"]
-    if kind == "lookup":
-        entities = [target, "othername"]
-    elif kind == "revision":
-        entities = [target, "othername"]
-    elif kind == "unknown":
+    if kind in ("lookup", "revision", "unknown"):
         entities = [target, "othername"]
     else:
         entities = [target, "othername"]

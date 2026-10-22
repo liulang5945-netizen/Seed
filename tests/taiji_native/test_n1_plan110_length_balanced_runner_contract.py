@@ -55,7 +55,7 @@ def test_scheduler_consumes_every_raw_and_hard_slot_four_times_without_model_cal
     audit = runner.summarize_length_ledger(ledger)
     assert audit["valid"] is True
     assert audit["raw_slots"] == audit["hard_slots"] == 12_288
-    assert base_state.ACTIVE_CYCLE_COUNTS == Counter({0: 3072, 1: 3072, 2: 3072, 3: 3072})
+    assert Counter({0: 3072, 1: 3072, 2: 3072, 3: 3072}) == base_state.ACTIVE_CYCLE_COUNTS
     assert sum(base_state.ACTIVE_HARD_COUNTS.values()) == 12_288
 
 
@@ -107,5 +107,5 @@ def test_z_candidate_controller_namespace_does_not_mutate_v9_baseline_module():
     candidate_base = runner.configure_candidate_runner()
     assert v9.training is shared_base
     assert candidate_base is not shared_base
-    assert shared_base.REPORT == report_path
-    assert v9.training.REPORT == report_path
+    assert report_path == shared_base.REPORT
+    assert report_path == v9.training.REPORT

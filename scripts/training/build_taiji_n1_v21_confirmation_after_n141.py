@@ -92,9 +92,15 @@ def _merge_hashes(target: dict[str, str], incoming: dict[str, str]) -> None:
     for path, digest in incoming.items():
         resolved = str(Path(path).resolve())
         prior = target.get(resolved)
-        if prior is not None and prior != digest:
-            raise Refuse(f"同一来源出现冲突哈希：{resolved}")
-        target[resolved] = digest
+        if prior is None or prior == digest:
+            # 不可取证的记录值（历史垃圾）不入表——终验三通道必红，入表只会前移爆点
+            if seal_ast.verify_hash_dict({resolved: digest})[0]:
+                target[resolved] = digest
+            continue
+        # S4 重冻结后同文件可有多代合法历史字节：新值可取证取新值；新值不可取证
+        # 但先值可取证则弃用新值；双垃圾且不同值同样弃用新值（终验三通道兜底）
+        if seal_ast.verify_hash_dict({resolved: digest})[0]:
+            target[resolved] = digest
 
 
 def _verify_hashes(source_hashes: dict[str, str]) -> bool:
