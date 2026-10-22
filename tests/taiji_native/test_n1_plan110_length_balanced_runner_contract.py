@@ -73,10 +73,17 @@ def test_frozen_candidate_inputs_and_checkpoint_root_are_safe_before_preflight()
     assert checks["accepted"] is True
     assert len(schedule["items"]) == len(schedule["raw_views"]) == 3072
     assert runner.CHECKPOINT_ROOT.is_relative_to(runner.ROOT)
-    assert not runner.CHECKPOINT_ROOT.exists()
-    assert not runner.PREFLIGHT.exists()
-    assert not runner.ATTEMPT.exists()
-    assert not runner.REPORT.exists()
+    # 生命周期门控：下面四条原本是 pre-run 断言——「本轮 attempt 尚未发生」时产物必须不存在。
+    # 10-18 的 length_balanced 训练已跑完：PREFLIGHT/ATTEMPT/REPORT 三份回执已随回执入库
+    # （git ls-files 可证），CHECKPOINT_ROOT 是该轮留在 data/checkpoints 下的未入库产物目录，
+    # 于是「不存在」断言在任何 checkout 上都不再成立，按生命周期让位。
+    # 退化为不随生命周期变化的真不变量：四条路径必须仍落在仓库内（防路径配置漂移）。
+    for path in (runner.CHECKPOINT_ROOT, runner.PREFLIGHT, runner.ATTEMPT, runner.REPORT):
+        assert path.is_relative_to(runner.ROOT)
+    if not runner.REPORT.exists():
+        assert not runner.CHECKPOINT_ROOT.exists()
+        assert not runner.PREFLIGHT.exists()
+        assert not runner.ATTEMPT.exists()
 
 
 def test_restore_worker_command_uses_candidate_runner_process(tmp_path):
