@@ -189,3 +189,10 @@ exec 80306（warm-start）已确认exit1，错误为剩余吞吐投影超过预�
 manifest绑定的checkpoint验证适配器ad4f8c7ef已对receipt祖先链、bundle SHA和全部原来源/预算门通过验证，warm从14,624恢复。新句柄warm=58323，full=22331、fresh=96103；三条均已轮询确认存活。最新已验证耐久episode数为{'full_turn_1m': 9728, 'warm_start': 14688, 'fresh_same_capacity': 14912}。warm新增14,656 checkpoint后继续训练，未重算已提交episodes。
 
 适配器launch manifest位于reports/taiji_r2_checkpoint_adapter_warm_start_*.json，绑定adapter/test SHA、v1.3 source revision SHA、attempt SHA和恢复latest pointer。唯一下一步是监测这三条现有句柄至30,096预训练+525 SFT原终点；失败时先核实句柄和最后耐久receipt再处理，不能依据旧status重复启动。
+
+
+## target-update投影修复与三臂恢复
+
+旧episode均值预测受最近长消息影响，full-turn被预测171,768秒而停止，并连带阻断其他臂；三条旧句柄22331/58323/96103均确认exit1。新6484dfbfa以实际target_byte_updates预测完整冻结工作量，保留1.15安全系数和probe/完成reserve及所有硬预算门，6项检查通过。实际新预测约185,963秒，aggregate余量约257,217秒，全部臂可行。
+
+新句柄full45943、warm45618、fresh39673已轮询确认存活并出现新增episode_completed。恢复点为9,856/14,912/15,136。下一步仅监测这三条句柄到原定30,096预训练+525SFT终点；旧句柄不得再次使用或重复启动。详见04-target-update-throughput-projection.md及reports/taiji_r2_target_update_resume_<arm>_*.json来源manifest。预算仍1.5M/臂、4.3M总额。

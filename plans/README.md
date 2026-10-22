@@ -1,6 +1,6 @@
 # Seed / Taiji 计划与架构入口
 
-> **2026-10-22 当前队首**：N主线三臂已从原checkpoint恢复并实际训练，首个新增耐久点为9,504/14,560/14,560 episodes，bundle SHA、receipt及fresh-process digest通过。v1.3校正已保留旧账和prepared基线，预算为1.5M/臂、4.3M总额。下一步监测现有训练进程直到冻结终点；W5b和晋级继续冻结。动态状态以[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准。
+> **2026-10-22 当前队首**：N主线三臂实际训练中，target-update投影修复后新增耐久点9,888/14,976/15,200，三条新句柄已确认存活。预算1.5M/臂、4.3M总额；原训练目标和1.15安全系数不变。下一步持续监测到完整终点，W5b和晋级冻结。动态状态以[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准。
 
 > **2026-10-21 历史快照**：N1-165A恢复批结案，原训练充分性门2/3通过、`can_promote=false`；N1-166未执行、未消费确认面。用户优先转向自然多轮中文对话：R2-DIALOGUE-01/02/03R1均已结案。03R1完成两臂各6个续训epoch、70棵新family×6端点共420条自由生成；end-marker率升至90%，但人工审阅0/12连贯贴题回复。04/05R1只读审计发现父档从Taiji配置新建、约278k active参数、先前只在12个小任务episode上训练；当前 OASST2 可扩展到3,762条train-family全轮消息、1.78M UTF-8字节，仍保留39个未查询dev family。历史唯一下一步为[PLAN-R2-DIALOGUE-06全轮自然对话预训练](reference/PLAN-R2-DAILY-DIALOGUE-FULL-TURN-PRETRAINING_20261021.md)：fresh 1M-capacity Taiji、8 epoch角色感知byte预训练＋1 epoch assistant回复校准，保留39个family作一次性自由生成检查，CPU≤240,000秒、0能力晋升。详细状态以[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准，N1-165A结案见[中文记录](reference/PLAN-N1-165A_execution_closeout_20261021.md)。
 

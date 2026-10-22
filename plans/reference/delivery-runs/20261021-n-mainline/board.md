@@ -428,3 +428,10 @@ manifest绑定的checkpoint验证适配器ad4f8c7ef已对receipt祖先链、bund
 ## 训练等待期间的终点接口准备
 
 三条exec句柄已确认存活，继续训练；新validate_taiji_r2_continuation_endpoint.py以extension schema独立验证父谱系、最终文件SHA、完整分母、独立restore及completion event SHA绑定，不导入模型/语料/selector。8项正向和漂移拒绝检查通过，尚未接入真实评测或解锁W5b。唯一下一步仍是监测现有训练并在全部终点后做元数据闭环。
+
+
+## target-update投影修复与三臂恢复
+
+旧episode均值预测受最近长消息影响，full-turn被预测171,768秒而停止，并连带阻断其他臂；三条旧句柄22331/58323/96103均确认exit1。新6484dfbfa以实际target_byte_updates预测完整冻结工作量，保留1.15安全系数和probe/完成reserve及所有硬预算门，6项检查通过。实际新预测约185,963秒，aggregate余量约257,217秒，全部臂可行。
+
+新句柄full45943、warm45618、fresh39673已轮询确认存活并出现新增episode_completed。恢复点为9,856/14,912/15,136。下一步仅监测这三条句柄到原定30,096预训练+525SFT终点；旧句柄不得再次使用或重复启动。详见04-target-update-throughput-projection.md及reports/taiji_r2_target_update_resume_<arm>_*.json来源manifest。预算仍1.5M/臂、4.3M总额。
