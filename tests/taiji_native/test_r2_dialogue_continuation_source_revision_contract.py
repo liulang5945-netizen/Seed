@@ -443,6 +443,93 @@ def test_prepare_source_revision_rejects_invalid_candidate_checkpoint_before_pub
     assert not runner._source_revision_path().exists()
 
 
+def _mock_source_revision_ledger_history(
+    tmp_path: Path, monkeypatch, event_names: list[str]
+) -> tuple[dict[str, Any], dict[str, float]]:
+    charges = {arm: 1_317_000.0 + index for index, arm in enumerate(runner.ARMS)}
+    event_files = []
+    for sequence, event_name in enumerate(event_names):
+        event_path = tmp_path / f"ledger.{sequence:08d}.json"
+        event_path.write_bytes(_json_bytes({"event": event_name, "sequence": sequence}))
+        event_files.append((sequence, event_path))
+
+    lock_state: dict[str, Any] = {"held": False, "ledger_reads": 0, "event_reads": 0}
+
+    @contextmanager
+    def mock_aggregate_lock(path: Path):
+        assert path == runner.continuation_budget.LOCK_PATH
+        assert not lock_state["held"]
+        lock_state["held"] = True
+        try:
+            yield
+        finally:
+            lock_state["held"] = False
+
+    def mock_read_ledger_full():
+        assert lock_state["held"], "ledger must be replayed under aggregate lock"
+        lock_state["ledger_reads"] += 1
+        return {}, dict(charges), {}, "ledger-event-chain-sha"
+
+    def mock_event_files(prefix: Path):
+        assert lock_state["held"], "ledger events must be checked under aggregate lock"
+        assert prefix == runner.continuation_budget.AGGREGATE_LEDGER_PREFIX
+        lock_state["event_reads"] += 1
+        return list(event_files)
+
+    monkeypatch.setattr(runner.continuation_budget, "_aggregate_lock", mock_aggregate_lock)
+    monkeypatch.setattr(runner.continuation_budget, "_read_ledger_full", mock_read_ledger_full)
+    monkeypatch.setattr(runner.continuation_budget, "_event_files", mock_event_files)
+    return lock_state, charges
+
+
+@pytest.mark.parametrize(
+    "settled_runtime_event",
+    ["continuation_started", "continuation_stopped"],
+)
+def test_source_revision_budget_gate_rejects_settled_runtime_history(
+    tmp_path: Path, monkeypatch, settled_runtime_event: str
+) -> None:
+    lock_state, _charges = _mock_source_revision_ledger_history(
+        tmp_path,
+        monkeypatch,
+        ["extension_budget_initialized", "work_unit_reserved", settled_runtime_event],
+    )
+
+    with (
+        pytest.raises(runner.Refuse, match="ledger contains execution history"),
+        runner._source_revision_budget_snapshot(),
+    ):
+        pytest.fail("runtime history must be rejected before yielding a budget snapshot")
+
+    assert not lock_state["held"]
+    assert lock_state["ledger_reads"] == 1
+    assert lock_state["event_reads"] == 1
+
+
+def test_source_revision_budget_gate_allows_settled_prepare_only_history(
+    tmp_path: Path, monkeypatch
+) -> None:
+    lock_state, charges = _mock_source_revision_ledger_history(
+        tmp_path,
+        monkeypatch,
+        [
+            "extension_budget_initialized",
+            "work_unit_reserved",
+            "continuation_prepare_tail_reconciled",
+            "work_unit_reserved",
+            "continuation_prepared",
+        ],
+    )
+
+    with runner._source_revision_budget_snapshot() as snapshot:
+        assert snapshot == charges
+        assert lock_state["held"]
+
+    assert not lock_state["held"]
+    assert lock_state["ledger_reads"] == 1
+    assert lock_state["event_reads"] == 1
+
+
 @pytest.mark.parametrize(
     "blocked_state",
     [
