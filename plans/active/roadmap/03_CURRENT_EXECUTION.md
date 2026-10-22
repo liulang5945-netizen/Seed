@@ -2,7 +2,13 @@
 
 ## 当前执行：N1-165A结案；R2自然中文多轮对话v2三臂重做
 
-## 当前唯一下一步：独立复审task-start intent尾账修复；P7通过且三臂终点恢复齐备后，才进入W5b
+## 当前唯一下一步：按冻结`--resume`合同恢复R2三臂训练；全部终点与独立恢复齐备后才进入W5b
+
+### 最新进度补充（2026-10-22 12:52 Asia/Shanghai）
+
+Phase 7评测器代码门已由提交`928d4b8e6`独立审查通过（P0=0/P1=0/P2=0）。该门只代表评估器静态/合成代码审查合格，不解锁真实W5b评测。R2三臂last durable progress仍是full_turn_1m 9,472/30,096（34,465.78125 CPU秒）、warm_start 14,528/30,096（34,039.859375秒）、fresh_same_capacity 14,528/30,096（34,066.109375秒）；attempt=`training`、无final。
+
+我已读取三臂root及pretraining的全部`writer.lock`身份，记录PID 35200、26248、35196对应进程均不存在；没有改动这些lock/checkpoint文件。按冻结恢复runner，显式`--resume`会在确认dead owner后安全归档stale lock、加载latest已提交checkpoint，不新建attempt。当前资源预检为CPU [10.9%, 9.6%]、可用内存26.298 GiB，满足计划的≤85% CPU和≥8 GiB门。**唯一下一步是三臂并发`--resume`并监测各自新durable commits**；不读dev/reference、不运行评测selector/`--execute`，W5b仍须等待三臂final与fresh-process恢复。`can_promote=false`、N1-166冻结不变。
 
 ### 最新进度补充（2026-10-22 12:41 Asia/Shanghai）
 

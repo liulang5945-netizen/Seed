@@ -146,3 +146,9 @@ git diff --check
 - 修复：构造intent事件后、首次ledger append前即记录active task与未完成状态；ledger append确认后即标记intent durable。query_attempts在同一确认点递增。故progress append失败会保留task_id/operation，`task_intent_unverified=false`、`task_terminal_missing=true`、`unknown_tail=true`；若ledger intent自身未确认，则记录intent unverified并仍设unknown。
 - 验证：restore与generation两个intent-progress故障注入2/2通过；完整合同47/47（10.08秒）；Ruff、Black、py_compile、模块CLI帮助及diff检查通过。没有运行真实数据/模型/selector/`--execute`。
 - 门禁：第六轮审查对旧提交的P2-06结论保持有效；当前补丁尚未提交/复审，Phase 7仍不放行。
+
+### Phase 7 代码审查门通过（2026-10-22）
+
+- 独立报告：`07-evaluation-review-c7411a688.md`；提交`928d4b8e6`，P0=0/P1=0/P2=0。writer取消、正常/失败terminal记账、task intent、false→true race及旧门禁均通过。
+- 放行范围：只允许将W5a评估器代码审查标为通过；未进行真实模型restore、selector、dev/reference读取或`--execute`。W5b仍依赖三臂final、readiness与fresh-process恢复，`can_promote=false`。
+- W4状态：三臂因Codex客户端更新后无durable增长，锁owner PID已只读核验不存在；资源CPU 10.9%/9.6%、内存26.298 GiB过门。按计划对原attempt显式`--resume`恢复，不开新attempt、不丢弃stale lock，进度后续写入active roadmap/board。

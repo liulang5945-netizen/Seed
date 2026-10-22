@@ -83,3 +83,11 @@ Phase 7第二轮复审指出的P1-07/P2-04已落实到实现与合成测试：IP
 修复将当前task身份和terminal/intention状态初始化移动到ledger intent append之前。ledger intent耐久append返回成功后立即置`active_task_intent_written=true`；query intent同一时点递增`query_attempts`。progress append失败时外层分别区分`task_intent_unverified`与`task_terminal_missing`，保留task id/operation并设`unknown_tail=true`。restore/query两种progress故障注入2/2通过；模块合同47/47（10.08秒），Ruff、Black、py_compile、CLI `--help`与diff检查通过。
 
 此补丁尚未提交/独立复审。第六轮P0=0/P1=0/P2=1对提交`8e4c736e2`有效，P2-06须按Phase 7全P2闭合门槛独立确认；W5b、真实restore、dev/reference、selector与`--execute`仍冻结。
+
+## Phase 8 按durable checkpoint恢复三臂（2026-10-22）
+
+Phase 7评测器代码门由独立复审提交`928d4b8e6`通过（P0/P1/P2=0）；这不代表模型能力提升，也不解锁W5b。三臂attempt仍=`training`，没有final；最近durable进度为9,472/14,528/14,528 episodes，详见active roadmap。
+
+根任务只读核验了六个训练`writer.lock`：记录的PID 35200/26248/35196均已不存在；当前CPU双样本10.9%/9.6%、可用内存26.298 GiB。冻结恢复runner的`--resume`会在训练执行前校验sources/readiness/latest transaction，并由`reclaim_writer_lock`安全归档dead-owner lock；不创建新attempt、不采用无receipt孤立bundle。按用户持续推进授权，下一步恢复三臂原attempt并并发继续W4；若任一source、latest receipt、CPU或内存门失败，runner须fail closed并保留attempt证据。
+
+所有三臂达到固定训练终点且fresh-process恢复通过之前，W5b仍不启动，不读取真实dev/reference、不调用selector或`--execute`。对照读数及人工复核最终仍只作研究证据，`can_promote=false`，N1-166冻结不变。

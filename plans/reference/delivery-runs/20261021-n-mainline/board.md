@@ -271,3 +271,10 @@
 - 验证：根任务完整47项合同、Ruff/Black/py_compile/CLI/提交门禁通过；本审查另做synthetic restore_started ledger append失败复核，task identity/intent_unverified/unknown均符合预期；未读取真实dev/reference或运行真实评测。
 - 放行边界：仅Phase 7评测器代码审查门通过；真实W5b仍等待Phase 8训练终点、readiness与独立恢复，未授权selector或`--execute`。
 - 阶段指针：Phase 8顶部主指针不变；历史2/2预算及此前结论保留。
+
+### Phase 8 中断后恢复核验（2026-10-22）
+- Phase 7评测器代码门已通过（P0/P1/P2=0），依据报告`07-evaluation-review-c7411a688.md`；真实W5b依赖仍未满足。
+- 三臂attempt保持`training`且无final；progress末次分别为9,472/14,528/14,528 episodes。六个`writer.lock`记录的root与pretraining PID均已核验不存在：full_turn_1m 35200、warm_start 26248、fresh_same_capacity 35196。
+- 当前资源预检CPU双采样10.9%/9.6%、可用内存26.298 GiB；均满足冻结runner的启动门。
+- 决策：按原attempt执行显式`--resume`，从latest已提交并带verification receipt的bundle继续，不新开attempt、不清除或覆盖checkpoint；stale writer lock由runner在死PID确认后安全归档。
+- 约束：只恢复训练并监控durable commits；不读取dev/reference，不selector，不运行`--execute`。三臂final与fresh-process独立恢复前W5b仍冻结，能力状态未知、`can_promote=false`、N1-166冻结不变。
