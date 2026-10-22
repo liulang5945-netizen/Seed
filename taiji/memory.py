@@ -12,7 +12,7 @@ import hashlib
 import math
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, TypedDict
 
 import torch
 
@@ -25,6 +25,17 @@ from .config import (
 from .organs import SparseReceptorBank
 from .sparse import SparseSynapses, bound_norm
 from .state import MemoryRecall, MemoryState
+
+
+class CarrierSourceMetadata(TypedDict):
+    """Persistent carrier source metadata after per-field type coercion."""
+
+    input_id: str
+    modality: str
+    source: str
+    timestamp: int
+    provenance: str
+    confidence: float
 
 
 @dataclass(frozen=True)
@@ -97,7 +108,7 @@ class PersistentStepwiseCarrier:
             raise ValueError("persistent carrier capacity limits must be positive")
         self._next_episode_serial = 0
         self._episodes: dict[str, dict[str, Any]] = {}
-        self._pending: dict[str, tuple[int, dict[str, Any]]] = {}
+        self._pending: dict[str, tuple[int, CarrierSourceMetadata]] = {}
 
     @property
     def episode_ids(self) -> tuple[str, ...]:
@@ -121,7 +132,7 @@ class PersistentStepwiseCarrier:
         missing = [key for key in self.SOURCE_FIELDS if key not in source_metadata]
         if missing:
             raise ValueError(f"persistent carrier source metadata is missing {missing}")
-        source = {
+        source: CarrierSourceMetadata = {
             "input_id": str(source_metadata["input_id"]),
             "modality": str(source_metadata["modality"]),
             "source": str(source_metadata["source"]),
@@ -137,8 +148,7 @@ class PersistentStepwiseCarrier:
             raise ValueError("persistent carrier source confidence must be finite and in [0, 1]")
         if len(self._episodes) + len(self._pending) >= self.max_episodes:
             raise RuntimeError(
-                "persistent carrier episode capacity exceeded "
-                f"({self.max_episodes} episodes)"
+                "persistent carrier episode capacity exceeded " f"({self.max_episodes} episodes)"
             )
         serial = self._next_episode_serial
         self._next_episode_serial += 1
@@ -185,7 +195,8 @@ class PersistentStepwiseCarrier:
         episode = self._episodes.get(str(episode_id))
         if episode is None:
             return torch.empty((0, self.context_dim), dtype=torch.float32)
-        return episode["vectors"].clone()
+        vectors: torch.Tensor = episode["vectors"]
+        return vectors.clone()
 
     def episode_manifest(self) -> list[dict[str, Any]]:
         """Return source and content digests without exposing stored tensors."""
@@ -196,9 +207,7 @@ class PersistentStepwiseCarrier:
                 "serial": episode["serial"],
                 "source": dict(episode["source"]),
                 "steps": int(episode["vectors"].shape[0]),
-                "vectors_sha256": hashlib.sha256(
-                    episode["vectors"].numpy().tobytes()
-                ).hexdigest(),
+                "vectors_sha256": hashlib.sha256(episode["vectors"].numpy().tobytes()).hexdigest(),
             }
             for episode in self._episodes.values()
         ]
@@ -268,7 +277,7 @@ class PersistentStepwiseCarrier:
             matrix = vectors.detach().to(device="cpu").contiguous().clone()
             if not torch.isfinite(matrix).all().item():
                 raise ValueError("persistent carrier episode vectors must be finite")
-            validated_source = {
+            validated_source: CarrierSourceMetadata = {
                 "input_id": str(source["input_id"]),
                 "modality": str(source["modality"]),
                 "source": str(source["source"]),
@@ -281,9 +290,11 @@ class PersistentStepwiseCarrier:
                 for field in ("input_id", "modality", "source", "provenance")
             ):
                 raise ValueError("persistent carrier episode source identity is empty")
-            if validated_source["timestamp"] < 0 or not math.isfinite(
-                validated_source["confidence"]
-            ) or not 0.0 <= validated_source["confidence"] <= 1.0:
+            if (
+                validated_source["timestamp"] < 0
+                or not math.isfinite(validated_source["confidence"])
+                or not 0.0 <= validated_source["confidence"] <= 1.0
+            ):
                 raise ValueError("persistent carrier episode source metadata is out of range")
             episodes[episode_id] = {
                 "episode_id": episode_id,

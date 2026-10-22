@@ -65,7 +65,9 @@ def select_and_prepare(
         raise ValueError("no-replay bypasses selection and fabric steps")
     if query.ndim != 1 or not torch.isfinite(query).all().item():
         raise ValueError("query cue must be a finite vector")
-    ranking = []
+    # 行结构是异构键值（str/float/str），显式声明为 dict[str, Any]：
+    # mypy 需要知道 score 可取负、episode_id 可作 candidates 的键。
+    ranking: list[dict[str, Any]] = []
     for episode_id in request.candidate_episode_ids:
         vectors = candidates[episode_id]
         if (

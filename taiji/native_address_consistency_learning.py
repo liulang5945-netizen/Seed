@@ -16,7 +16,11 @@ def address_consistency_loss(model, session, questions, references, *, preserve_
     if len(questions) not in (1, 2) or len(questions) != len(references):
         raise ValueError("one or two complete frozen question references required")
     tape = model.evidence(session)
-    qa, address, preservation = [], [], []
+    # 三个累积器先收 Tensor，循环后统一 stack.mean() 重绑为标量 Tensor（显式注解，
+    # mypy 才能同时接受 51 行的重绑与 57 行的算术）。
+    qa: list[torch.Tensor] = []
+    address: list[torch.Tensor] = []
+    preservation: list[torch.Tensor] = []
     for (question, target), reference in zip(questions, references, strict=True):
         if (
             tape.positions != reference["positions"]
@@ -48,18 +52,18 @@ def address_consistency_loss(model, session, questions, references, *, preserve_
             if preserve_logits
             else logits.new_zeros(())
         )
-    qa, address, preservation = [
-        torch.stack(values).mean() for values in (qa, address, preservation)
-    ]
+    qa_mean = torch.stack(qa).mean()
+    address_mean = torch.stack(address).mean()
+    preservation_mean = torch.stack(preservation).mean()
     logits, labels = observation_logits(model, tape, session)
     observation = torch.nn.functional.cross_entropy(logits, labels)
     return dict(
-        total=qa
+        total=qa_mean
         + AUXILIARY_WEIGHT * observation
-        + ADDRESS_WEIGHT * address
-        + PRESERVATION_WEIGHT * preservation,
-        qa=qa,
+        + ADDRESS_WEIGHT * address_mean
+        + PRESERVATION_WEIGHT * preservation_mean,
+        qa=qa_mean,
         observation=observation,
-        address=address,
-        preservation=preservation,
+        address=address_mean,
+        preservation=preservation_mean,
     )
