@@ -424,3 +424,10 @@ v1.1 amendment成功write-once发布；三臂`--run`都进入真实runtime，CPU
 ## extension尾账校正核算完成
 
 已新增boot-accounting helper与4项定向回归。原prepared基线3,949,572.172730完整保留，读取当前全部host CPU得到新的可证明上界4,034,133.407105；现账4,175,331.822847。proposal已write-once保存在reports的boot_accounting_audit_v1，尚未应用credit。原parent boot差1.06秒，不纳入微秒级修正。下一步按04-continuation-boot-accounting-v1-3.md追加来源/会计修订与可复算校正event，然后在已批准预算内续训。
+
+
+## 三臂真实训练与首个新增checkpoint已确认
+
+boot审计校正已按v1.3追加到原账本，旧event及prepared基线完整保留。三臂实际恢复后均出现episode_completed与durable_training_commit。首个耐久点：full_turn_1m=9,504、warm_start=14,560、fresh_same_capacity=14,560；bundle SHA、receipt及独立恢复digest核对通过，previous_receipt仍链接各臂原parent。
+
+存活exec句柄：full=22331、warm=80306、fresh=96103（本次已轮询确认仍运行）。下一步仅轮询这些现有句柄和新增durable progress，持续训练到30,096预训练+525 SFT终点；不重复启动。预算仍1.5M/臂、4.3M总额，W5b和晋级冻结。

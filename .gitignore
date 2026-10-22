@@ -324,3 +324,6 @@ focused-before.xml
 # 只放行忽略规则，不动目录内容，也不删任何人的落点（删除属不可逆动作，归 owner 自己排期）。
 /.fork-sync/
 /.workbuddy/
+
+# Local continuation source records bind absolute workspace paths.
+reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_source_revision_v1_*.json
