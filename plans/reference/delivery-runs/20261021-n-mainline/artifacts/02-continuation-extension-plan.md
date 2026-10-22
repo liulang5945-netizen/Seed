@@ -10,9 +10,9 @@ N 主线当前能力目标仍是自然中文多轮对话。此工作只把 R2 re
 
 ## 用户决策与预算语义
 
-用户先批准1M/臂、3M总额，15:19将同一窗口修订为1.2M/臂、3.6M总额；17:50又批准当前累计上限为每臂 **1,300,000 process-CPU 秒**、三臂合计 **3,900,000 process-CPU 秒**。当前上限包含旧attempt已记录CPU、冻结规则未知尾账和本次续训消耗，不是新增额度；恢复或中断不能重置。超过当前上限需再次决策。
+用户先批准1M/臂、3M总额，15:19将同一窗口修订为1.2M/臂、3.6M总额；17:50又批准当时累计上限为每臂 **1,300,000 process-CPU 秒**、三臂合计 **3,900,000 process-CPU 秒**；最新用户批准每臂 **1,450,000**、三臂 **4,200,000 process-CPU秒**，覆盖中间1.38M/4.05M审批。当前上限包含旧attempt已记录CPU、冻结规则未知尾账和本次续训消耗，不是新增额度；恢复或中断不能重置。超过当前上限需再次决策。
 
-旧 attempt、progress、已有 receipt、checkpoint bundle 与原冻结 source hash 均保留原样。扩展使用新的版本化 attempt/progress/result 记录；旧 checkpoint 树保持只读，新 checkpoint 写入独立版本化目录并在新 receipt/manifest 中明确链接父 receipt SHA。新全局账本须用原子串行化方式同时检查各臂 1M 上限和 3M 聚合上限。
+旧 attempt、progress、已有 receipt、checkpoint bundle 与原冻结 source hash 均保留原样。扩展使用新的版本化 attempt/progress/result 记录；旧 checkpoint 树保持只读，新 checkpoint 写入独立版本化目录并在新 receipt/manifest 中明确链接父 receipt SHA。新全局账本须用原子串行化方式同时检查各臂1.45M上限和4.2M聚合上限。
 
 ## 历史审批快照与当前只读账本
 
@@ -66,7 +66,7 @@ N 主线当前能力目标仍是自然中文多轮对话。此工作只把 R2 re
 
 ### 18:02当前checkpoint/预算快照
 
-当前窗口累计ceiling为1.3M/arm、3.9M aggregate。parent source、attempt、latest receipt/bundle与cursor只读审计再次通过；完整来源计数26/29/29，包含每臂6个未跟踪数据工件，均以parent SHA和parent lineage绑定。当前保守上界与余额为：
+18:02历史窗口累计ceiling为1.3M/arm、3.9M aggregate。parent source、attempt、latest receipt/bundle与cursor只读审计再次通过；完整来源计数26/29/29，包含每臂6个未跟踪数据工件，均以parent SHA和parent lineage绑定。当前保守上界与余额为：
 
 | arm | 当前保守累计上界 CPU 秒 | 到1.3M的当前余额 CPU 秒 |
 |---|---:|---:|
@@ -84,17 +84,44 @@ N 主线当前能力目标仍是自然中文多轮对话。此工作只把 R2 re
 ## 实施与验收顺序
 
 1. 实现版本化 extension runner、manifest、全局 CPU 账本及版本化 checkpoint 分支。初始化时先耐久写入父 attempt SHA、父 checkpoint/receipt SHA、原累计 CPU、当前未知尾账和 boot/CPU/wall 快照，再恢复或训练；每次后续 checkpoint 将累计 charge 与新尾账取最大，严格单调。
-2. 用合成状态验证父 receipt 分叉、各臂 1M 与聚合 3M 守卫、并发额度竞争、旧文件不变、首 checkpoint 前中断、checkpoint 事务半途失败、恢复后不重算已提交 episodes。测试不得访问真实 dev/reference 或启动正式训练。
+2. 用合成状态验证父 receipt 分叉、各臂1.45M与聚合4.2M守卫、并发额度竞争、旧文件不变、首 checkpoint 前中断、checkpoint 事务半途失败、恢复后不重算已提交 episodes。测试不得访问真实 dev/reference 或启动正式训练。
 3. 对 extension runner 做独立代码审查；逐臂确认原 source binding/兼容性证据、parent bundle 与新进程恢复、stale lock owner、启动 CPU/内存和剩余预算。真实训练仅在所有门均通过后开始；临启动重新计算尾账，并且只在资源与实测速率允许时并发三臂。
 4. 从各臂独立父 checkpoint 与游标继续，累计到原定 30,096 预训练 episodes 和 525 assistant-SFT episodes；完成后 fresh-process 恢复并生成版本化终点证据，再由评测门审查是否允许 W5b。
 
 ### 完成判据
 
 - 旧 attempt/progress/result/checkpoint 的 SHA 与内容保持不变，新 extension 记录能回溯父 lineage。
-- CPU账本从旧成本与尾账连续累计；当前批准窗口每臂不超过1,300,000秒、三臂合计不超过3,900,000秒；预算不足时停止并保留账目，不自动扩容或重试。
+- CPU账本从旧成本与尾账连续累计；当前批准窗口每臂不超过1,450,000秒、三臂合计不超过4,200,000秒；预算不足时停止并保留账目，不自动扩容或重试。
 - 三臂都达到冻结 episode/byte 分母，新终点 receipt、readiness 与 fresh-process restore 通过；没有未闭合写入或未知尾账。
 - 训练、恢复与静态门禁不被写成语言能力结论；W5b 仍需单独评测和人工审阅，能力晋级门保持关闭。
 
 ## 唯一下一步
 
-当前唯一下一步是将已通过58项合成测试的runner/账本稳定SHA提交独立code-reviewer复核；通过后立即运行本地NTFS `prepare-only`耐久门，再按刷新后的预算/速率门并发恢复三臂训练。W5b、真实dev/reference、selector、`--execute`和能力晋级继续冻结。
+当前唯一下一步是冻结本轮runner/backend/tests与架构SHA并完成独立代码复审；复审无阻断后，重新核验预算/资源并运行本地NTFS `prepare-only`耐久门。只有`prepare-only`、父checkpoint恢复和开跑时CPU/内存/每臂及aggregate投影全部通过，才可并发续训三臂。W5b、真实dev/reference、selector、`--execute`和能力晋级继续冻结。
+
+## 最新预算修订与续训准入快照（2026-10-22）
+
+用户最新明确批准本窗口累计上限为每臂 **1,450,000 process-CPU秒**、三臂合计 **4,200,000 process-CPU秒**；该上限覆盖并取代此前1.38M/4.05M及所有更低窗口。旧实耗、冻结未知尾账、准备、恢复、训练、写盘、失败收敛均继续累计，不重置、不作为旧成本之外的新增额度。两个上限同时生效；聚合4.2M低于三臂各1.45M之和4.35M，因此任一单臂或总额先触即停。
+
+19:19历史账本快照的aggregate保守累计上界为3,805,047.806345秒，剩余模型训练预测186,719.457141秒；该预测不是上界或实耗，执行前须用最新ledger重算。19:31:42刷新如下：
+
+| arm | 保守累计上界 CPU 秒 | 到1.45M的账本 headroom CPU 秒 |
+|---|---:|---:|
+| `full_turn_1m` | 1,300,114.326747 | 149,885.673253 |
+| `warm_start` | 1,299,649.842946 | 150,350.157054 |
+| `fresh_same_capacity` | 1,298,841.390844 | 151,158.609156 |
+| **aggregate** | **3,898,605.560537** | **301,394.439463** |
+
+本次剩余训练预测仍为186,719.457141秒；19:31:42滚动投影显示每臂与aggregate可行（`feasible=true`），但不得替代开跑时复核，所有active reservation仍须计入预算守卫。CPU字段语义统一如下：result/readiness的累计CPU是各自发布时的下界；终点必须以已验证append-only ledger中唯一的`continuation_completed`事件作为完成凭据，并匹配`extension_id`、`arm`、`parent_attempt_sha256`及`details.result_sha256`/`details.readiness_sha256`。该事件的`charged_cpu_seconds`是更晚的累计下界，仍不含事件自身写入与进程退出成本；`reserved_cpu_seconds`只是预留上界，不是已消耗CPU，也不得与charged混称。
+
+续训执行状态：前一次正式资源门仅采到7.50GiB可用内存，低于8GiB而拒绝，保留为历史失败；19:31:42最新`resource_snapshot`已通过，CPU双样本15.9%/18.5%、可用内存27.669GiB。该快照不等于训练已启动，当前仍未记录真实续训训练启动；开跑前必须再次刷新resource/budget snapshot。联合backend+runner合成测试72/72 passed（33.09秒），Ruff通过。架构评审最新无P1/P2阻断；这不取代执行前NTFS `prepare-only`、来源、父恢复与实时预算门。
+
+## Lock-first writer与死锁归档恢复补充（2026-10-22）
+
+runner必须先在同一arm根目录以固定本地NTFS write-through原子发布`writer.lock`，之后才可读取并调和可变progress/ledger、预留CPU或启动恢复/训练工作；锁文件含PID、process create time与token，路径为symlink、owner存活或身份不可核验时fail closed。`writer.lock`、`reclaim.guard`及archive记录都使用同目录temporary、flush/write-through发布，不允许以覆盖或删除历史锁替代恢复。
+
+显式resume遇到dead writer时，先write-through发布`reclaim.guard`，核验owner身份（仅死reclaim.guard恢复由OS byte-range recovery lock串行化）；dead writer锁必须原字节耐久归档到`stale-locks/writer-lock-<token>.json`并确认源锁未变化后才能清理当前锁，再原子发布替代writer。若reclaim期间中断或替代writer发布失败，必须保留guard/archive证据；后续空resume只有在guard owner确认为dead、archive schema/SHA/owner身份相互吻合、没有活writer时才可恢复。任何锁发布、归档、证据核验失败都不得进入账本调和、恢复或训练。
+
+已有组合回归覆盖“dead writer归档成功→replacement writer原子发布失败→guard清理→仅依赖archive evidence的空resume成功”；活owner拒绝不改ledger/progress。历史资源拒绝和最新资源通过均保留，不据此写成训练已启动。
+
+最新19:31:42预算、资源与恢复合同见04架构末节；真实训练尚未启动。

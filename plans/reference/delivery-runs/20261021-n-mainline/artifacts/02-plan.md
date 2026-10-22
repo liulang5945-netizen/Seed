@@ -1,7 +1,7 @@
 # 当前增量工程计划
 
 ## 结论
-Phase 7评测器代码门已通过，但真实W5b仍锁定。R2三臂版本化续训上限先后为1M/3M、1.2M/3.6M；用户17:50批准当前累计每臂1,300,000/聚合3,900,000 process-CPU秒。先关闭extension runner独立审查P1，再从三臂原durable checkpoint续训。不得覆盖旧attempt、progress、result、checkpoint或冻结source hash。
+Phase 7评测器代码门已通过，但真实W5b仍锁定。R2三臂版本化续训上限先后为1M/3M、1.2M/3.6M；用户最新批准当前累计每臂1,450,000/聚合4,200,000 process-CPU秒（包含旧实耗与未知尾账）。72项合成测试通过；独立复审后从三臂原durable checkpoint续训。不得覆盖旧attempt、progress、result、checkpoint或冻结source hash。
 
 ## 产物与依赖
 续训扩展合同 → versioned runner/CPU ledger及合成故障测试 → 独立代码审查 → 逐臂source/parent-checkpoint/readiness/资源门 → 三臂续训 → 三臂终点fresh-process恢复 → W5b评测门。真实生成仍须等所有训练终点和恢复门通过。
@@ -130,3 +130,8 @@ Phase 7评测器代码门由独立复审提交`928d4b8e6`通过（P0/P1/P2=0）�
 ### 18:02 checkpoint审计与实现验证
 
 三臂parent source/receipt/bundle/cursor只读审计再次通过；当前保守尾账为1,170,919.559/1,170,469.115/1,169,679.911秒，合计3,511,068.585秒，按1.3M/臂、3.9M总额还剩129,080.441/129,530.885/130,320.089秒，合计388,931.415秒。续训runner/账本联合合成测试58项、Ruff/format/Black/py_compile/CLI/diff检查通过。独立复审待完成；通过后立即刷新资源/预算/速率并运行prepare-only，随后恢复三臂。
+
+
+## 最新授权与执行门刷新
+
+用户最新批准每臂1.45M、合计4.2M process-CPU秒，覆盖此前1.38M/4.05M等较小审批；不重置旧成本。19:31:42只读累计上界聚合3,898,605.560537秒，剩余训练预测186,719.457141秒，当前余量301,394.439463秒，所有臂与aggregate投影可行。资源正式门CPU15.9/18.5%、可用内存27.669GiB通过；72项合成测试通过。唯一下一步为独立审查通过后立即运行NTFS prepare-only保存门，再在刷新门内并发续训。真实训练、W5b和能力晋级尚未放行。
