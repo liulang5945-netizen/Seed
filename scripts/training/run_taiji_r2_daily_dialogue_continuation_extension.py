@@ -944,6 +944,18 @@ def _source_revision_budget_snapshot():
         _, charges, reservations, _ = continuation_budget._read_ledger_full()
         if reservations:
             raise Refuse("source revision requires no active CPU reservation")
+        allowed_events = {
+            "extension_budget_initialized",
+            "work_unit_reserved",
+            "continuation_prepare_tail_reconciled",
+            "continuation_prepared",
+            "continuation_prepare_reconciled",
+        }
+        for _sequence, event_path in continuation_budget._event_files(
+            continuation_budget.AGGREGATE_LEDGER_PREFIX
+        ):
+            if read_json(event_path).get("event") not in allowed_events:
+                raise Refuse("source revision ledger contains execution history")
         yield dict(charges)
 
 

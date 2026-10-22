@@ -11,3 +11,5 @@ extension训练校验完整覆盖base原12项来源：builder只接受已验证c
 真实run必须在当前来源/版本化绑定、资源、预算、吞吐和计费父checkpoint fresh-process恢复门依次通过后才能更新权重。W5b、dev/reference、selector与晋级保持冻结。独立审查和实际来源衔接回归通过前不得发布amendment或启动训练。
 
 发布前必须在同一aggregate OS byte-range锁保护下全链回放账本，确认三臂完整、各臂≤1.45M、aggregate≤4.2M且无reservation；使用candidate amendment完整验证prepared sidecars、source绑定与checkpoint/receipt/bundle后才发布，锁保持到write-once发布完成。校验失败不得留下修订文件。prepared_progress_sha256是发布时审计锚，后续训练progress按原append-only合同延续。
+
+同锁内还须检查已验证全量账本历史：仅允许初始化、work_unit_reserved与三类prepare结算事件。即使reservation已结清、progress尚未写入start，也必须拒绝包含start/restore/training/stop/final或未知事件的历史，防止真实执行故障窗口被误收为prepared。
