@@ -411,3 +411,8 @@ v1.1 amendment成功write-once发布；三臂`--run`都进入真实runtime，CPU
 boot审计校正已按v1.3追加到原账本，旧event及prepared基线完整保留。三臂实际恢复后均出现episode_completed与durable_training_commit。首个耐久点：full_turn_1m=9,504、warm_start=14,560、fresh_same_capacity=14,560；bundle SHA、receipt及独立恢复digest核对通过，previous_receipt仍链接各臂原parent。
 
 存活exec句柄：full=22331、warm=80306、fresh=96103（本次已轮询确认仍运行）。下一步仅轮询这些现有句柄和新增durable progress，持续训练到30,096预训练+525 SFT终点；不重复启动。预算仍1.5M/臂、4.3M总额，W5b和晋级冻结。
+
+
+### 训练运行状态修正
+
+exec 80306（warm-start）已确认exit1，错误为剩余吞吐投影超过预算；最后耐久checkpoint为14,624 episodes（已新增96）。full-turn exec22331与fresh exec96103已再次轮询确认仍活跃，继续运行。warm无pending reservation；不据旧锁或最后progress推断其仍活跃，不重复启动另两臂。唯一下一步是在监测两条存活句柄的同时，核查warm本次投影拒绝及14,624 checkpoint恢复条件；预算仍1.5M/臂、4.3M。
