@@ -72,6 +72,8 @@
 
 旧 attempt 的 parent source hash map 必须作为 lineage 原样保存；不得编辑旧 SHA 或把当前 SHA 冒充旧 SHA。当前源码与 parent hash 之间仍有待处理的绑定差异：
 
+来源证明按文件性质区分。Git-tracked训练代码、构建代码、配置与合同测试必须记录精确parent/current SHA以及验证过的Git commit和blob OID/SHA；parent SHA仍来自当前绑定时，不得只凭工作区内容声称Git来源。父attempt绑定的`data/`输入或checkpoint工件若未进入Git，只有当前字节SHA逐字节等于parent SHA且parent attempt、receipt、bundle三者SHA完整一致时，才可分类为`parent_bound_external_artifact`，并在兼容性报告中绑定这三项父谱系；任何外部工件SHA变化、非`data/`代码文件无Git对象、或谱系缺项均fail closed。此分类只解决已精确绑定的数据工件没有Git对象的情况，不豁免源码哈希或语义差异审查。
+
 | 文件 | parent SHA-256 | 当前 SHA-256 | parent 精确 Git 源 | arm |
 |---|---|---|---|---|
 | `scripts/data_prep/build_taiji_r2_daily_dialogue_full_turn_pretraining_corpus.py` | `d88b126ffd3caeccddfc6094d182403e052af8dbde80358871a6378034e0dfd8` | `0173946126a4fdd304b5c55f6aa73342f7455205236cdc2bd08a9544cfc3116b` | `02e82d921d14782fca511276020957220910a5c6` | all |
@@ -82,7 +84,7 @@
 | `scripts/training/run_taiji_r2_daily_dialogue_warmstart_matched.py` | `266ea28b5b4af8381a7633eb7aaa2be8cc75d7b758e1ab620dc4a281b3328e44` | `2aac78a86a5509dee6baf66b80a993d297c67758ba7668a760be64c0a9e74a02` | `b6bb45b52702479ad20f91502bed1cb34766d324` | warm/fresh |
 | `tests/taiji_native/test_r2_daily_dialogue_warmstart_matched_contract.py` | `b12861083031c31646df19ee3d52c5626b98d7c7ded9399ade28719e94d6d041` | `827db17d6b014c6167230f329771d46d9d156b399b7ad3a63b5f57e0a4cce1cf` | `b6bb45b52702479ad20f91502bed1cb34766d324` | warm/fresh |
 
-审查了对应 Git source diff：所列训练/数据构建与测试差异为格式换行/缩进、未使用 `line_number` 改为 `_`、显式 `strict=False` 和等价语法/比较表达式改写；未见训练循环、超参、数据顺序或目标更新分母的实质变化。**这不表示 parent SHA 与当前 SHA 相同，也不构成自动豁免。** 新 runner 必须逐项把 parent SHA、实际运行时当前 SHA、对应 Git blob/commit、source compatibility report SHA 与新 runner/test SHA 写入 extension manifest，并固定审查报告；如无法证明当前训练图与 parent checkpoint 来源兼容，则使用经 SHA 验证的精确历史字节，或 fail closed。不得直接绕过旧 gate、只跳过报错文件或通过临时修改 parent hash 继续。
+审查了对应Git source diff：所列训练/数据构建与测试差异为格式换行/缩进、未使用`line_number`改为`_`、显式`strict=False`和等价语法/比较表达式改写；未见训练循环、超参、数据顺序或目标更新分母的实质变化。**这不表示parent SHA与当前SHA相同，也不构成自动豁免。** 新runner必须逐项把Git-tracked源码的parent/current SHA、Git blob/commit、source compatibility report SHA与新runner/helper/test SHA写入extension manifest；Git未跟踪的父绑定训练数据则仅在精确SHA匹配时用parent attempt/receipt/bundle SHA建立`parent_bound_external_artifact`谱系。任一来源无法按对应类别证明时都拒绝执行。不得直接绕过旧gate、只跳过报错文件或通过临时修改parent hash继续。
 
 正式训练前需全部满足：
 
