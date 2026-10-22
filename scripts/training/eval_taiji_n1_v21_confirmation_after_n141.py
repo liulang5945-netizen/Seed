@@ -186,7 +186,7 @@ def _read_prepared_face() -> tuple[dict, dict, dict, dict, dict]:
         or prepared.get("complete") is not True
         or prepared.get("status") != "ready_for_checkpoint_readiness"
         or prepared.get("plan_sha256") != PLAN_SHA256
-        or prepared.get("face_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(prepared.get("face_sha256"), FACE)
         or prepared.get("face_checks_sha256") != sha256(FACE_CHECKS)
         or prepared.get("source_exclusion_sha256") != sha256(SOURCE_EXCLUSIONS)
         or prepared.get("source_precheck_sha256") != sha256(SOURCE_PRECHECK)

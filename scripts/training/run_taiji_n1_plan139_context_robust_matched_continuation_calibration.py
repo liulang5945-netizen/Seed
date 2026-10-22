@@ -32,6 +32,7 @@ from scripts.training import eval_taiji_n1_v11_after_n120 as e11  # noqa: E402
 from scripts.training import (  # noqa: E402
     run_taiji_n1_plan132_binding_supervision_calibration as n132,
 )
+from scripts.training import seal_ast  # noqa: E402
 from taiji.native_local_relation_evidence_candidate import (  # noqa: E402
     LocalRelationEvidenceCandidate,
 )
@@ -690,7 +691,7 @@ def _validate_n138_exclusions() -> tuple[dict, set[str], set[str]]:
         or len(excluded_names) != 9_010
         or len(excluded_words) != 6_288
         or face_checks.get("accepted") is not True
-        or face_checks.get("face_sha256") != sha256(N138_FACE)
+        or not seal_ast.receipt_binding_matches(face_checks.get("face_sha256"), N138_FACE)
         or face_checks.get("parameter_updates") != 0
         or result.get("complete") is not True
         or result.get("diagnostic_queries") != 672

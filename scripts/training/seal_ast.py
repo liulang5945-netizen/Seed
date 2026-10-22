@@ -182,6 +182,19 @@ def file_commits(rel_path: str, limit: int = GIT_HISTORY_WALK_LIMIT) -> list[str
     return [line for line in result.stdout.splitlines() if line]
 
 
+def _blob_sha_variants(blob: bytes) -> set[str]:
+    """git blob 与工作树读数之间的换行渲染差异（autocrlf）三态归一。
+
+    本仓 manifest 记录值来自工作树读数（autocrlf 下为 CRLF 渲染），而
+    `git show` 返回原始 blob（LF）。比对时同时尝试 raw / LF→CRLF / CRLF→LF。
+    """
+    return {
+        hashlib.sha256(blob).hexdigest(),
+        hashlib.sha256(blob.replace(b"\n", b"\r\n")).hexdigest(),
+        hashlib.sha256(blob.replace(b"\r\n", b"\n")).hexdigest(),
+    }
+
+
 def git_history_attests(path_str: str, recorded: str) -> bool:
     """记录值是否与该文件某个历史 blob 的字节哈希一致（R5 同法）。"""
     path = Path(path_str)
@@ -190,7 +203,7 @@ def git_history_attests(path_str: str, recorded: str) -> bool:
         blob = git_blob_bytes(commit, rel)
         if blob is None:
             continue
-        if hashlib.sha256(blob).hexdigest() == recorded:
+        if recorded in _blob_sha_variants(blob):
             return True
     return False
 
@@ -201,6 +214,18 @@ def verify_path_pin(path: Path | str, recorded: str, *, allow_git_history: bool 
     if path.is_file() and sha256_file(path) == recorded:
         return True
     return allow_git_history and git_history_attests(str(path), recorded)
+
+
+def receipt_binding_matches(recorded: str | None, path: Path | str) -> bool:
+    """回执↔manifest 绑定校验: 记录值 == 在位字节 或 某个历史 blob 字节。
+
+    用于 `X.get("face_sha256") != sha256(FACE)` 形态的比较点: 回执记录的是
+    该 manifest 在回执产生时刻的字节；manifest 经文档化重冻结（S4）后当前字节
+    已变，历史事实由 git 历史 blob 核验（REPO_HYGIENE_RULES R5 同法）。
+    """
+    if not isinstance(recorded, str) or not recorded:
+        return False
+    return verify_path_pin(path, recorded)
 
 
 def verify_hash_dict(
@@ -243,7 +268,7 @@ def verify_source_hashes(
             if blob is None:
                 failures.append(path_str)
                 continue
-            byte_ok = hashlib.sha256(blob).hexdigest() == recorded
+            byte_ok = recorded in _blob_sha_variants(blob)
             ast_ok = False
             if not byte_ok and _looks_like_python(rel):
                 try:

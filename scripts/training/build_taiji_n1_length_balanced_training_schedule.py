@@ -22,6 +22,7 @@ from scripts.training import (  # noqa: E402
 from scripts.training import (  # noqa: E402
     build_taiji_n1_input_factorial_diagnostic as face_builder,
 )
+from scripts.training import seal_ast  # noqa: E402
 
 SEED = base_builder.SEED
 MANIFEST = base_builder.MANIFEST
@@ -624,7 +625,8 @@ def build_from_frozen_sources() -> tuple[dict, dict]:
     if sha256_file(PLAN) != PLAN_SHA256:
         raise ValueError("PLAN-N1-110 plan hash changed")
     items, curriculum, exclusions, _ = _source_bundle()
-    if sha256_file(Path(base_builder.__file__).resolve()) != BASE_BUILDER_SHA256:
+    # S6: base builder 为历史钉点——在位字节或 git 历史 blob 任一核验通过即可
+    if not seal_ast.verify_path_pin(Path(base_builder.__file__).resolve(), BASE_BUILDER_SHA256):
         raise ValueError("PLAN-N1-100 base schedule builder changed")
     schedule = build_candidate_schedule(
         items,

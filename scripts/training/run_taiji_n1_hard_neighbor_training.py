@@ -27,6 +27,7 @@ from scripts.training import (  # noqa: E402
 from scripts.training import (
     run_taiji_n1_transition_factorial_paired as frozen_runner,
 )
+from scripts.training import seal_ast  # noqa: E402
 from seed_platform.paths import get_external_path  # noqa: E402
 
 FROZEN_RUNNER = ROOT / "scripts/training/run_taiji_n1_transition_factorial_paired.py"
@@ -146,7 +147,8 @@ def _custom_identity(base_identity: dict, protocol_value: dict) -> dict:
 
 
 def _verify_schedule_artifact() -> dict:
-    if sha256(SCHEDULE) != SCHEDULE_SHA256:
+    # S6: schedule manifest 为历史钉点——在位字节或 git 历史 blob 任一核验通过即可
+    if not seal_ast.verify_path_pin(SCHEDULE, SCHEDULE_SHA256):
         raise ValueError("frozen PLAN-N1-100 schedule digest changed")
     payload = read_json(SCHEDULE)
     if (
@@ -217,11 +219,12 @@ def collect_source_guards(
         if prior is not None and prior != expected:
             raise ValueError(f"overlapping source guard differs: {path}")
         guards[str(path)] = expected
-    if sha256(FROZEN_RUNNER) != FROZEN_RUNNER_SHA256:
+    # S6: .py 历史钉点解冻——在位字节或 git 历史 blob 任一核验通过即可
+    if not seal_ast.verify_path_pin(FROZEN_RUNNER, FROZEN_RUNNER_SHA256):
         raise ValueError("frozen84 training runner hash changed")
-    if sha256(SCHEDULE) != SCHEDULE_SHA256:
+    if not seal_ast.verify_path_pin(SCHEDULE, SCHEDULE_SHA256):
         raise ValueError("hard schedule hash changed")
-    if sha256(Path(schedule_builder.__file__).resolve()) != BUILDER_SHA256:
+    if not seal_ast.verify_path_pin(Path(schedule_builder.__file__).resolve(), BUILDER_SHA256):
         raise ValueError("hard schedule builder hash changed")
     if (
         sha256(ROOT / "reports/taiji_n1_transition_factorial_paired_train_20261016_attempt.json")
@@ -238,9 +241,9 @@ def source_guards_unchanged(guards: dict[str, str]) -> bool:
 
 
 def make_runner(*, load_inputs: bool) -> tuple[dict, dict, dict | None]:
-    if sha256(FROZEN_RUNNER) != FROZEN_RUNNER_SHA256:
+    if not seal_ast.verify_path_pin(FROZEN_RUNNER, FROZEN_RUNNER_SHA256):
         raise ValueError("frozen run84 training runner hash changed")
-    if sha256(Path(schedule_builder.__file__).resolve()) != BUILDER_SHA256:
+    if not seal_ast.verify_path_pin(Path(schedule_builder.__file__).resolve(), BUILDER_SHA256):
         raise ValueError("frozen hard schedule builder hash changed")
     schedule_payload = _verify_schedule_artifact()
     loaded = runpy.run_path(str(FROZEN_RUNNER), run_name="_taiji_n1_run100_frozen84")

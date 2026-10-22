@@ -13,6 +13,7 @@ from scripts.training import build_taiji_n1_v18_target_position_context_order as
 from scripts.training import eval_taiji_n1_v11_after_n120 as n120_eval
 from scripts.training import eval_taiji_n1_v15_after_n132 as n133_evaluator
 from scripts.training import run_taiji_n1_expanded_normalized_rwl_length_balanced as n120
+from scripts.training import seal_ast  # noqa: E402
 
 ROOT = builder.ROOT
 FACE = builder.FACE
@@ -60,7 +61,7 @@ def _verify_inputs() -> tuple[dict, dict, dict, dict, dict]:
     manifest = read_json(SOURCE_EXCLUSIONS)
     if (
         checks.get("accepted") is not True
-        or checks.get("face_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(checks.get("face_sha256"), FACE)
         or checks.get("plan_sha256") != builder.PLAN_SHA256
         or checks.get("readiness_sha256") != sha256(READINESS)
         or checks.get("source_exclusion_manifest_sha256") != sha256(SOURCE_EXCLUSIONS)

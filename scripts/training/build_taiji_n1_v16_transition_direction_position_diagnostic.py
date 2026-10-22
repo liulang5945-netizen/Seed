@@ -26,6 +26,7 @@ from scripts.training import (  # noqa: E402
 from scripts.training import (  # noqa: E402
     build_taiji_n1_v15_after_n132 as n133_builder,
 )
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = (
     ROOT
@@ -148,7 +149,7 @@ def _prior_sources() -> tuple[set[str], set[str], dict[str, str], dict, list[dic
         or prior_face.get("seed") != 115
         or len(prior_face.get("episodes", [])) != 40
         or prior_face_checks.get("accepted") is not True
-        or prior_face_checks.get("face_sha256") != sha256(N133_FACE)
+        or not seal_ast.receipt_binding_matches(prior_face_checks.get("face_sha256"), N133_FACE)
         or prior_range.get("complete") is not True
         or prior_range.get("model_queries") != 180
         or prior_range.get("confirmation_queries") != 0

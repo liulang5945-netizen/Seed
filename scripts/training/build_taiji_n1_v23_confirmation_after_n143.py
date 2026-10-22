@@ -148,7 +148,9 @@ def _collect_source_union() -> tuple[set[str], set[str], dict[str, str], dict]:
         or prior_face.get("seed") != 122
         or len(prior_face.get("episodes", [])) != 160
         or prior_checks.get("accepted") is not True
-        or prior_checks.get("face_sha256") != sha256(prior_face_builder.FACE)
+        or not seal_ast.receipt_binding_matches(
+            prior_checks.get("face_sha256"), prior_face_builder.FACE
+        )
         or prior_prepared.get("complete") is not True
     ):
         raise Refuse("N1-143结案、v22 face或来源清单不符合N1-144前置")

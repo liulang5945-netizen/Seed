@@ -9,6 +9,12 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+import sys as _sys
+
+_sys.path.insert(0, str(ROOT))
+
+from scripts.training import seal_ast  # noqa: E402
+
 PLAN = (
     ROOT / "plans/reference/PLAN-N1-124_v14_full_context_evidence_position_probe_draft_20261019.md"
 )
@@ -72,18 +78,18 @@ def build_report() -> dict:
         or face.get("observations_per_item") != 16
         or len(face.get("episodes", [])) != 40
         or checks.get("accepted") is not True
-        or checks.get("face_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(checks.get("face_sha256"), FACE)
         or range_report.get("complete") is not True
         or range_report.get("range_gate", {}).get("range_check_passed") is not True
         or range_report.get("model_queries") != 180
-        or range_report.get("face_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(range_report.get("face_sha256"), FACE)
         or range_report.get("readiness_sha256") != sha256(READINESS)
         or confirmation.get("complete") is not True
         or confirmation.get("confirmation_queries") != 360
         or confirmation.get("total_model_queries") != 540
         or confirmation.get("source_hashes_unchanged") is not True
         or confirmation.get("can_promote") is not False
-        or confirmation.get("face_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(confirmation.get("face_sha256"), FACE)
         or confirmation.get("face_checks_sha256") != sha256(FACE_CHECKS)
         or confirmation.get("range_report_sha256") != sha256(RANGE_REPORT)
         or confirmation.get("readiness_sha256") != sha256(READINESS)

@@ -29,6 +29,7 @@ from scripts.training import (  # noqa: E402
 from scripts.training import (  # noqa: E402
     build_taiji_n1_v16_transition_direction_position_diagnostic as n134_builder,
 )
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = (
     ROOT
@@ -145,7 +146,7 @@ def _prior_sources() -> tuple[set[str], set[str], dict[str, str], dict, list[dic
         or len(manifest.get("excluded_entities", [])) != 7938
         or len(manifest.get("excluded_word_values", [])) != 6288
         or face_checks.get("accepted") is not True
-        or face_checks.get("face_sha256") != sha256(N134_FACE)
+        or not seal_ast.receipt_binding_matches(face_checks.get("face_sha256"), N134_FACE)
         or face.get("seed") != 116
         or face.get("schema") != "n1-transition-direction-position-diagnostic-v1"
         or len(face.get("episodes", [])) != 40

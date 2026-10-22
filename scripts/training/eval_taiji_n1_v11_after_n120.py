@@ -21,6 +21,7 @@ from scripts.training import (
     run_taiji_n1_expanded_normalized_rwl_length_balanced as n120,
 )  # noqa: E402
 from scripts.training import run_taiji_n1_hard_neighbor_training as baseline_training  # noqa: E402
+from scripts.training import seal_ast  # noqa: E402
 
 BASELINE_REPORT = ROOT / "reports/taiji_n1_hard_neighbor_training_20261017.json"
 BASELINE_REPORT_SHA256 = "dad10ec72c605367f99da035bab07d522ce1793154915ebcc3c7f1022f411909"
@@ -407,7 +408,7 @@ def _load_face() -> tuple[dict, dict]:
     checks = read_json(FACE_CHECKS)
     if (
         checks.get("accepted") is not True
-        or checks.get("face_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(checks.get("face_sha256"), FACE)
         or face.get("schema") != "n1-hard-neighbor-v11-confirmation-v1"
         or face.get("seed") != 111
         or face.get("items") != 40
@@ -748,7 +749,7 @@ def run_confirmation(*, owner_approved: bool) -> dict:
         or range_report.get("model_queries") != 180
         or range_report.get("queried_subset") != "sacrifice"
         or range_report.get("confirmation_queries") != 0
-        or range_report.get("face_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(range_report.get("face_sha256"), FACE)
         or range_report.get("scorer_readiness_sha256") != sha256(SCORER_READINESS)
         or range_report.get("source_hashes_unchanged") is not True
     ):

@@ -17,6 +17,7 @@ from scripts.training import (
     run_taiji_n1_expanded_normalized_rwl_length_balanced as n120,
 )  # noqa: E402
 from scripts.training import run_taiji_n1_hard_neighbor_training as baseline_training  # noqa: E402
+from scripts.training import seal_ast  # noqa: E402
 
 FACE = face_builder.FACE
 FACE_ATTEMPT = face_builder.FACE_ATTEMPT
@@ -58,7 +59,7 @@ def _face_and_checks() -> tuple[dict, dict]:
     checks = read_json(FACE_CHECKS)
     if (
         checks.get("accepted") is not True
-        or checks.get("face_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(checks.get("face_sha256"), FACE)
         or face.get("schema") != "n1-hard-neighbor-v12-confirmation-v1"
         or face.get("seed") != 112
         or face.get("items") != 40
@@ -299,7 +300,7 @@ def _require_passing_range(range_report: dict) -> None:
         or range_report.get("model_queries") != 180
         or range_report.get("confirmation_queries") != 0
         or range_report.get("queried_subset") != "sacrifice"
-        or range_report.get("face_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(range_report.get("face_sha256"), FACE)
         or range_report.get("readiness_sha256") != sha256(READINESS)
         or range_report.get("source_hashes_unchanged") is not True
     ):

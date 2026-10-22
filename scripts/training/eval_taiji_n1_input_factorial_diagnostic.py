@@ -26,6 +26,7 @@ from scripts.training import (  # noqa: E402
     eval_taiji_n1_transition_factorial_confirmation as base_evaluator,
 )
 from scripts.training import run_taiji_n1_hard_neighbor_training as training  # noqa: E402
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = face_builder.PLAN
 FACE = face_builder.FACE
@@ -143,7 +144,7 @@ def validate_face_and_sources() -> tuple[dict, dict, dict, dict[str, str], dict 
         or checks.get("optimizer_steps") != 0
         or checks.get("plan_sha256") != PLAN_SHA256
         or checks.get("face_file_sha256") != sha256(FACE)
-        or checks.get("face_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(checks.get("face_sha256"), FACE)
         or face.get("schema") != face_builder.SCHEMA
         or face.get("split") != "diagnostic"
         or len(face.get("episodes", [])) != EXPECTED_ITEMS
@@ -585,7 +586,7 @@ def run_execute() -> dict:
     _, checkpoint_paths, checkpoint_guards = v9_evaluator.training_endpoints()
     repair_sha256 = sha256(REPAIR_RECEIPT) if repair is not None else None
     if (
-        readiness.get("face_sha256") != sha256(FACE)
+        not seal_ast.receipt_binding_matches(readiness.get("face_sha256"), FACE)
         or readiness.get("checks_sha256") != sha256(CHECKS)
         or readiness.get("preflight_repair_receipt_sha256") != repair_sha256
         or readiness.get("checkpoint_guards") != checkpoint_guards

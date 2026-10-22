@@ -19,6 +19,7 @@ sys.path.insert(0, str(ROOT))
 from scripts.training import (  # noqa: E402
     build_taiji_n1_length_balanced_training_schedule as candidate_schedule,
 )
+from scripts.training import seal_ast  # noqa: E402
 from seed_platform.paths import get_external_path  # noqa: E402
 
 PLAN = (
@@ -130,7 +131,8 @@ def verify_candidate_sources() -> tuple[dict, dict]:
     for path, digest in expected.items():
         if not Path(path).is_file():
             raise FileNotFoundError(f"candidate source missing: {path}")
-        if sha256_file(Path(path)) != digest:
+        # S6: .py 钉点为历史事实——在位字节或 git 历史 blob 任一核验通过即可（当前文件解冻）
+        if not seal_ast.verify_path_pin(path, digest):
             raise ValueError(f"candidate source hash mismatch: {path}")
     if not CHECKPOINT_ROOT.resolve().is_relative_to(ROOT.resolve()):
         raise ValueError("candidate checkpoint root escaped the authorized workspace")
@@ -162,10 +164,11 @@ def verify_candidate_sources() -> tuple[dict, dict]:
         or checks.get("checkpoint_loads") != 0
     ):
         raise ValueError("candidate schedule/check receipt differs from frozen PLAN-N1-110")
-    for raw_path, digest in schedule.get("source_guards", {}).items():
-        path = Path(raw_path)
-        if not path.is_file() or sha256_file(path) != digest:
-            raise ValueError(f"candidate schedule source guard changed: {path}")
+    guards_ok, guard_failures = seal_ast.verify_hash_dict(
+        schedule.get("source_guards", {}), allow_git_history=True
+    )
+    if not guards_ok:
+        raise ValueError(f"candidate schedule source guard changed: {guard_failures[:3]}")
     return schedule, checks
 
 

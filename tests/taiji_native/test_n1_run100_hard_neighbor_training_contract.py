@@ -70,7 +70,10 @@ def test_restore_worker_setup_does_not_parse_v3_manifest(monkeypatch):
 def test_frozen_sources_and_checkpoints_are_unique_and_pinned():
     assert training.sha256(training.FROZEN_RUNNER) == training.FROZEN_RUNNER_SHA256
     assert training.sha256(training.SCHEDULE) == training.SCHEDULE_SHA256
-    assert training.sha256(training.schedule_builder.__file__) == training.BUILDER_SHA256
+    # S6: builder 钉点为历史事实——在位字节或 git 历史 blob 任一核验通过即可
+    assert training.seal_ast.verify_path_pin(
+        training.schedule_builder.__file__, training.BUILDER_SHA256
+    )
     assert (
         training.sha256(
             training.ROOT

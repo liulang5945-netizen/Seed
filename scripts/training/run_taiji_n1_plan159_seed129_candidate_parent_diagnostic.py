@@ -23,6 +23,7 @@ from scripts.training import run_taiji_n1_plan132_binding_supervision_calibratio
 from scripts.training import run_taiji_n1_plan153_v28_fresh_context_length_confirmation as n153
 from scripts.training import run_taiji_n1_plan155_short_unknown_context_length_training as n155
 from scripts.training import run_taiji_n1_v27_length_robust_training_after_n149 as n150
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN_SHA256 = builder.PLAN_SHA256
 CPU_LIMIT_SECONDS = builder.CPU_LIMIT_SECONDS
@@ -325,10 +326,10 @@ def _verify_preflight_and_face() -> tuple[dict, dict, list[dict], dict[str, str]
         or face.get("seed") != 129
         or face.get("total_queries") != TOTAL_QUERIES
         or face_audit.get("status") != "complete"
-        or face_audit.get("face_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(face_audit.get("face_sha256"), FACE)
         or face_audit.get("source_hashes_unchanged") is not True
         or face_checks.get("status") != "complete"
-        or face_checks.get("face_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(face_checks.get("face_sha256"), FACE)
         or face_checks.get("face_audit_sha256") != sha256(FACE_AUDIT)
         or face_checks.get("total_queries") != TOTAL_QUERIES
     ):

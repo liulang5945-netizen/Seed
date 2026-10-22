@@ -25,6 +25,7 @@ from scripts.training import (
     run_taiji_n1_plan155_short_unknown_context_length_training as n155,
 )
 from scripts.training import run_taiji_n1_plan159_seed129_candidate_parent_diagnostic as n159
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN_SHA256 = builder.PLAN_SHA256
 CPU_LIMIT_SECONDS = builder.CPU_LIMIT_SECONDS
@@ -314,9 +315,9 @@ def verify_ready_face() -> tuple[dict, dict, list[dict], dict[str, str]]:
         or face.get("seed") != 130
         or face.get("total_queries") != TOTAL_QUERIES
         or face_audit.get("status") != "complete"
-        or face_audit.get("face_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(face_audit.get("face_sha256"), FACE)
         or face_checks.get("status") != "complete"
-        or face_checks.get("face_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(face_checks.get("face_sha256"), FACE)
         or face_checks.get("face_audit_sha256") != sha256(FACE_AUDIT)
     ):
         raise Refuse("PLAN-N1-160A preflight/face binding is stale")

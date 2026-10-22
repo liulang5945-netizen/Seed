@@ -15,6 +15,7 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.training import build_taiji_n1_v24_abstention_after_n146 as face_builder
 from scripts.training import eval_taiji_n1_v23_confirmation_after_n143 as frozen_eval
+from scripts.training import seal_ast  # noqa: E402
 
 CONDITIONS = ("known", "unknown")
 PLAN = face_builder.PLAN
@@ -109,7 +110,7 @@ def _read_prepared_face() -> tuple[dict, dict, dict]:
         or checks.get("parameter_updates") != 0
         or prepared.get("complete") is not True
         or prepared.get("plan_sha256") != PLAN_SHA256
-        or prepared.get("face_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(prepared.get("face_sha256"), FACE)
         or prepared.get("face_checks_sha256") != sha256(FACE_CHECKS)
         or prepared.get("source_exclusion_sha256") != sha256(SOURCE_EXCLUSIONS)
         or prepared.get("source_precheck_sha256") != sha256(SOURCE_PRECHECK)
@@ -284,7 +285,7 @@ def _verify_readiness() -> tuple[dict, dict, dict, list[dict]]:
         readiness.get("status") != "ready_for_diagnostic"
         or readiness.get("complete") is not True
         or readiness.get("plan_sha256") != PLAN_SHA256
-        or readiness.get("face_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(readiness.get("face_sha256"), FACE)
         or readiness.get("endpoint_count") != 12
         or readiness.get("independent_full_bundle_restores") != 12
         or readiness.get("all_full_bundles_equal") is not True

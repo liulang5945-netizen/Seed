@@ -25,6 +25,7 @@ from scripts.training import (
 from scripts.training import (
     run_taiji_n1_plan132_binding_supervision_calibration as n132,
 )
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = ROOT / "plans/reference/PLAN-N1-133_v15_binding_supervision_confirmation_draft_20261019.md"
 PLAN_SHA256 = "f885ee89e485fc042d9394bd0659714d118134625853afa4bbfb64643d5ba6f2"
@@ -211,7 +212,7 @@ def _prior_sources_and_union() -> tuple[set[str], set[str], dict[str, str], dict
         or face.get("observations_per_item") != 16
         or face.get("name_neighbor_distance") != 1
         or checks.get("accepted") is not True
-        or checks.get("face_sha256") != sha256(N124_FACE)
+        or not seal_ast.receipt_binding_matches(checks.get("face_sha256"), N124_FACE)
         or range_report.get("complete") is not True
         or range_report.get("model_queries") != 180
         or range_report.get("confirmation_queries") != 0

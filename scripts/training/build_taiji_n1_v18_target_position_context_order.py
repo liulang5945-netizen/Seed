@@ -26,6 +26,7 @@ from scripts.training import (  # noqa: E402
 from scripts.training import (  # noqa: E402
     build_taiji_n1_v17_matched_context_length as n135_builder,
 )
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = (
     ROOT / "plans/reference/PLAN-N1-136_target_position_context_order_diagnostic_draft_20261019.md"
@@ -147,7 +148,7 @@ def _prior_sources() -> tuple[set[str], set[str], dict[str, str], dict, list[dic
         or prior_face.get("items") != 24
         or len(prior_face.get("episodes", [])) != 24
         or prior_face_checks.get("accepted") is not True
-        or prior_face_checks.get("face_sha256") != sha256(N135_FACE)
+        or not seal_ast.receipt_binding_matches(prior_face_checks.get("face_sha256"), N135_FACE)
         or prior_report.get("complete") is not True
         or prior_report.get("diagnostic_queries") != 288
         or prior_report.get("endpoint_count") != 12

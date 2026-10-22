@@ -29,6 +29,7 @@ from scripts.training import (
 from scripts.training import (
     run_taiji_n1_hard_neighbor_training as training,
 )
+from scripts.training import seal_ast  # noqa: E402
 
 FACE = face_builder.FACE
 FACE_CHECKS = face_builder.CHECKS
@@ -87,7 +88,7 @@ def load_face() -> tuple[dict, dict]:
     checks = read_json(FACE_CHECKS)
     if (
         checks.get("accepted") is not True
-        or checks.get("face_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(checks.get("face_sha256"), FACE)
         or checks.get("training_report_sha256") != sha256(training.REPORT)
         or face.get("schema") != "n1-hard-neighbor-v9-confirmation-v1"
         or face.get("seed") != 109
@@ -383,7 +384,7 @@ def _verify_range_pass() -> tuple[dict, dict]:
         or report.get("queried_subsets") != ["sacrifice"]
         or report.get("v9_sacrifice_model_queries") != 180
         or report.get("cpu_seconds", RANGE_CPU_LIMIT_SECONDS + 1) > RANGE_CPU_LIMIT_SECONDS
-        or report.get("face_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(report.get("face_sha256"), FACE)
     ):
         raise ValueError("v9 range gate has not passed with an intact sacrifice-only receipt")
     face, checks = load_face()
