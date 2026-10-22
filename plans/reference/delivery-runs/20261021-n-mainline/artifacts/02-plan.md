@@ -1,7 +1,7 @@
 # 当前增量工程计划
 
 ## 结论
-Phase 7评测器代码门已通过，但真实W5b仍锁定。用户已批准R2三臂版本化续训上限（累计每臂1,000,000、聚合3,000,000 process-CPU秒）；先实现并独立审查extension runner/账本，再从三臂原durable checkpoint续训。不得覆盖旧attempt、progress、result、checkpoint或冻结source hash。
+Phase 7评测器代码门已通过，但真实W5b仍锁定。用户先批准R2三臂版本化续训上限每臂1,000,000/聚合3,000,000，后于2026-10-22 15:19修订为累计每臂1,200,000/聚合3,600,000 process-CPU秒；先关闭extension runner与账本独立审查P1，再从三臂原durable checkpoint续训。不得覆盖旧attempt、progress、result、checkpoint或冻结source hash。
 
 ## 产物与依赖
 续训扩展合同 → versioned runner/CPU ledger及合成故障测试 → 独立代码审查 → 逐臂source/parent-checkpoint/readiness/资源门 → 三臂续训 → 三臂终点fresh-process恢复 → W5b评测门。真实生成仍须等所有训练终点和恢复门通过。
@@ -115,3 +115,7 @@ Phase 7评测器代码门由独立复审提交`928d4b8e6`通过（P0/P1/P2=0）�
 用户已明确批准每臂累计1,000,000、三臂累计3,000,000 process-CPU秒。上节预算草案中“等待批准”已完成；早期临时source overlay并直接续原attempt的做法被新版本extension合同取代。额度是包含原attempt已记账CPU与冻结规则未知尾账的总累计上限，不是每臂新增1M或中断后重置。13:30:50快照的当前tail及每臂剩余额度见[续训扩展计划](02-continuation-extension-plan.md)，启动前需按冻结公式重新计算。
 
 唯一下步为实现独立版本化extension runner、checkpoint分支谱系与单调CPU账本，并通过合成中断/恢复/并发聚合上限测试；由独立code-reviewer复核通过且三臂source兼容性与fresh-process parent checkpoint门通过后，才允许恢复训练。真实训练继续使用各自原checkpoint；旧attempt/progress/result/checkpoint/source hashes保持不可变。训练完成且三臂新终点readiness与恢复检查全过前，W5b、真实dev/reference、selector与`--execute`保持冻结，`can_promote=false`，N1-166继续冻结。
+
+### 额度修订（2026-10-22 15:19 Asia/Shanghai）
+
+用户批准将本窗口累计上限由每臂1,000,000/聚合3,000,000提高为每臂1,200,000/聚合3,600,000 process-CPU秒；历史账与未知尾账继续计入，不清零。15:20附近的只读尾账快照为937,951.469/937,416.609/936,544.407秒，聚合2,811,912.485秒；剩余额度约262,048.531/262,583.391/263,455.593秒，聚合788,087.515秒。旧预算决策作为历史保留。当前唯一下一步是关闭extension实现P1并完成独立复审，未通过前不运行prepare-only、restore或训练。

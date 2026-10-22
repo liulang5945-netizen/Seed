@@ -10,13 +10,13 @@ N 主线当前能力目标仍是自然中文多轮对话。此工作只把 R2 re
 
 ## 用户决策与预算语义
 
-用户已批准版本化续训上限：每臂最多 **1,000,000 process-CPU 秒**，三臂累计最多 **3,000,000 process-CPU 秒**。这是一轮当前续训窗口的累计总上限，包含旧 attempt 已记录 CPU、冻结规则下的未知尾账和本次续训 CPU；不是在旧额度之上额外增加 1M/臂。恢复或再次中断不能重置上限。超过该上限的后续续训须重新决策。
+用户先批准每臂1,000,000、三臂3,000,000 process-CPU秒，随后于2026-10-22 15:19批准将同一续训窗口的累计总上限修订为每臂 **1,200,000 process-CPU 秒**、三臂合计 **3,600,000 process-CPU 秒**。新上限包含旧 attempt 已记录 CPU、冻结规则下的未知尾账和本次续训 CPU；不是在旧额度之上额外增加1.2M/臂。恢复或再次中断不能重置上限。超过该上限的后续续训须重新决策。
 
 旧 attempt、progress、已有 receipt、checkpoint bundle 与原冻结 source hash 均保留原样。扩展使用新的版本化 attempt/progress/result 记录；旧 checkpoint 树保持只读，新 checkpoint 写入独立版本化目录并在新 receipt/manifest 中明确链接父 receipt SHA。新全局账本须用原子串行化方式同时检查各臂 1M 上限和 3M 聚合上限。
 
-## 当前只读账本快照
+## 历史审批快照与当前只读账本
 
-以下是 2026-10-22 13:30:50 Asia/Shanghai 的审查快照，执行前必须重算，不能直接当作启动账值。boot identity 已改变，冻结 `tail_charge` 使用检查点 ledger 的已记账值加 `elapsed wall × max(saved logical CPU, current logical CPU)`；本次取 24 核上界。
+以下第一张表是2026-10-22 13:30:50 Asia/Shanghai按此前1M/3M额度记录的历史审查快照；第二张表是15:20附近按新1.2M/3.6M额度复核的当前父checkpoint上界。两个时点均不是实际新增CPU。执行前仍必须重算，不能直接当作启动账值。boot identity 已改变，冻结 `tail_charge` 使用检查点 ledger 的已记账值加 `elapsed wall × max(saved logical CPU, current logical CPU)`；本次取24核上界。
 
 | 实验臂 | 父 attempt SHA256 | 最后 durable episodes / cursor | 最后 durable CPU 秒 | 父 latest receipt SHA256 | 保守尾账上界 | 1M 下剩余额度 |
 |---|---|---:|---:|---|---:|---:|
@@ -26,6 +26,17 @@ N 主线当前能力目标仍是自然中文多轮对话。此工作只把 R2 re
 | **聚合** |  |  | **102,571.750** |  | **2,339,907.098** | **660,092.902** |
 
 `full_turn_1m` 曾记录 `recovery_stopped`，CPU 值为 748,972.986107；当前按父 checkpoint 重新计算的尾账更高，启动账本必须取二者及其他已记录费用的最大值。warm/fresh 仍无终点 result，三臂 attempt 都不能单凭 `status=training` 被视为仍在运行或完成。上一轮独立预算评审按训练吞吐估算剩余模型计算约 148,000 CPU 秒（full-turn 约 75,000、另两臂各约 36,500）；这是预测而非上界。冻结尾账规则每增加一小时会给每臂增加最多 86,400 CPU 秒，因此本快照不保证可以无限期等待后再启动。
+
+15:20附近只读复核沿用同一父attempt、receipt与durable cursor；只更新按冻结尾账公式随时间增长的累计上界：
+
+| 实验臂 | 保守累计上界 CPU 秒 | 新1.2M额度余额 CPU 秒 |
+|---|---:|---:|
+| `full_turn_1m` | 937,951.469 | 262,048.531 |
+| `warm_start` | 937,416.609 | 262,583.391 |
+| `fresh_same_capacity` | 936,544.407 | 263,455.593 |
+| **聚合** | **2,811,912.485** | **788,087.515** |
+
+这是动态保守上界，不是已发生训练CPU；准备、恢复与续训开始前必须重新采样。
 
 ## 源码绑定与准入
 
@@ -41,7 +52,7 @@ N 主线当前能力目标仍是自然中文多轮对话。此工作只把 R2 re
 ### 完成判据
 
 - 旧 attempt/progress/result/checkpoint 的 SHA 与内容保持不变，新 extension 记录能回溯父 lineage。
-- CPU 账本从旧成本与尾账连续累计；每臂不超过 1,000,000 秒，三臂合计不超过 3,000,000 秒；预算不足时停止且保留账目，不自动扩容或重试。
+- CPU 账本从旧成本与尾账连续累计；当前批准窗口每臂不超过1,200,000秒，三臂合计不超过3,600,000秒；预算不足时停止且保留账目，不自动扩容或重试。
 - 三臂都达到冻结 episode/byte 分母，新终点 receipt、readiness 与 fresh-process restore 通过；没有未闭合写入或未知尾账。
 - 训练、恢复与静态门禁不被写成语言能力结论；W5b 仍需单独评测和人工审阅，能力晋级门保持关闭。
 
