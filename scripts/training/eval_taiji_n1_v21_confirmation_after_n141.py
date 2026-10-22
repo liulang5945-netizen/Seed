@@ -20,6 +20,7 @@ from scripts.training import (
 from scripts.training import (
     run_taiji_n1_plan141_interleaved_context_schedule_matched_continuation as n141,
 )
+from scripts.training import seal_ast
 
 ROOT = Path(__file__).resolve().parents[2]
 PLAN = face_builder.PLAN
@@ -113,10 +114,8 @@ def _merge_hashes(target: dict[str, str], incoming: dict[str, str]) -> None:
 
 
 def _verify_hashes(source_hashes: dict[str, str]) -> bool:
-    return all(
-        Path(path).is_file() and sha256(Path(path)) == digest
-        for path, digest in source_hashes.items()
-    )
+    """S3 切换: 经 seal_ast 三通道校验（在位字节 / 在位 AST / git 历史取证）。"""
+    return seal_ast.verify_hash_dict(source_hashes)[0]
 
 
 def _frozen_reports() -> tuple[dict, dict, dict]:

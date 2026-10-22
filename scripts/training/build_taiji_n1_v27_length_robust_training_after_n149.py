@@ -18,6 +18,7 @@ sys.path.insert(0, str(ROOT))
 from scripts.training import build_taiji_n1_v26_abstention_length_after_n148 as n149_builder
 from scripts.training import eval_taiji_n1_v26_abstention_length_after_n148 as n149_eval
 from scripts.training import run_taiji_n1_plan132_binding_supervision_calibration as n132
+from scripts.training import seal_ast
 
 PLAN = (
     ROOT
@@ -397,10 +398,8 @@ def validate_schedule_manifest(manifest: dict) -> dict:
 
 
 def verify_hashes(source_hashes: dict[str, str]) -> bool:
-    return all(
-        Path(path).is_file() and sha256(Path(path)) == digest
-        for path, digest in source_hashes.items()
-    )
+    """S3 切换: 经 seal_ast 三通道校验（在位字节 / 在位 AST / git 历史取证）。"""
+    return seal_ast.verify_hash_dict(source_hashes)[0]
 
 
 def parent_checkpoints() -> tuple[dict[int, dict], dict[str, str]]:

@@ -16,6 +16,7 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.training import build_taiji_n1_v21_confirmation_after_n141 as prior_face_builder
 from scripts.training import eval_taiji_n1_v21_confirmation_after_n141 as n142_eval
+from scripts.training import seal_ast
 
 PLAN = ROOT / "plans/reference/PLAN-N1-143_v22_fresh_confirmation_after_n142_closeout_20261019.md"
 PLAN_SHA256 = "d32fdda71f74877fa8e6e28ff1cb54ff76d1531c776d7de8998c8e53e509805f"
@@ -90,10 +91,8 @@ def _merge_hashes(target: dict[str, str], incoming: dict[str, str]) -> None:
 
 
 def _verify_hashes(source_hashes: dict[str, str]) -> bool:
-    return all(
-        Path(path).is_file() and sha256(Path(path)) == expected
-        for path, expected in source_hashes.items()
-    )
+    """S3 切换: 经 seal_ast 三通道校验（在位字节 / 在位 AST / git 历史取证）。"""
+    return seal_ast.verify_hash_dict(source_hashes)[0]
 
 
 def _filler_names(bound: dict) -> set[str]:
