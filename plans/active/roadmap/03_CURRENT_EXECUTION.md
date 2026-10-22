@@ -2,7 +2,13 @@
 
 ## 当前执行：N1-165A结案；R2自然中文多轮对话v2三臂重做
 
-## 当前唯一下一步：对已补齐的IPC deadline与worker启动隔离实施独立Phase 7代码复审；复审通过且三臂终点恢复齐备后，才进入W5b
+## 当前唯一下一步：对IPC writer可取消与失败尾账修复提交独立Phase 7复审；复审通过且三臂终点恢复齐备后，才进入W5b
+
+### 最新进度补充（2026-10-22 12:12 Asia/Shanghai）
+
+Phase 7第三轮已判P0=0/P1=1/P2=0：P2-04启动隔离关闭，P1-07残留为超时后writer仍存活时失败收敛丢失writer状态、task标识和unknown尾账，报告/黑板提交`2b65b7e30`。根任务先以synthetic失败注入复现账本缺`ipc_writer_exit_unverified`，随后增加专用writer的Windows `CancelSynchronousIo`取消和有界join；即使仍无法退出，也保留task_id/operation、记录writer未确认并设`unknown_tail=true`，fail closed。原生同步管道取消、deadline writer退出、失败尾账测试通过；模块合同43/43、Ruff、py_compile、CLI帮助和diff检查通过。新补丁尚待独立复审，P7仍未放行。
+
+R2三臂最后durable progress仍为04:52:46-04:53:28的既有快照，attempt=`training`、没有final；未发现新回执。客户端更新的中断原因已记录，但当前沙箱无附属训练终端且进程清单不能确认外部会话，所以不重启、不覆盖、不宣称训练结束。W5b、真实dev/reference、恢复/selector/`--execute`继续冻结；N1-166门及`can_promote=false`不变。
 
 ### 最新进度补充（2026-10-22 11:52 Asia/Shanghai）
 

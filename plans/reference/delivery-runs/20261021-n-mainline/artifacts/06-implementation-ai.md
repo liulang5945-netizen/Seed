@@ -114,3 +114,11 @@ git diff --check
 - 根因修复留痕：第一次完整模块复跑39 passed、1 failed。唯一失败是现有合同测试仍读取旧ledger键`worker_startup_cpu_seconds_before_job_assignment`；实现已将字段改为`worker_startup_cpu_seconds_charged_total`以表达启动CPU总记账，测试断言未随实现同步。更新断言后精确单测1 passed，再跑模块全套40 passed（9.05秒）。
 - 验证：IPC阻塞、oversized frame、Job分配失败与先分配后resume定向测试4/4通过；Ruff、py_compile、`python -m scripts.training.evaluate_taiji_r2_daily_dialogue_recovery_v2 --help`及`git diff --check`通过。
 - 边界：此前P7第二轮报告保留为不放行；复审预算原为2/2，本次硬化不构成审查通过。根据用户持续推进授权，提交补丁后安排新的独立代码复审。在新复审前不运行真实restore、dev/reference、selector或`--execute`；N1-166冻结状态不变。
+
+### Phase 6 追加：writer取消与失败尾账（2026-10-22）
+
+- 根因：第三轮审查发现writer超时仍存活时`failed_task()`会抛普通`Refuse`；外层失去`ipc_write_thread_stopped`，且generation/restore catch先清除`active_task`，因此最终事件可能遗漏writer状态与task id，并把`unknown_tail`误记为false。
+- 红测：新增`test_unstopped_ipc_writer_state_is_preserved_in_failure_tail`后首次复跑失败，精确异常为`KeyError: 'ipc_writer_exit_unverified'`，证实终态字段缺失。
+- 修复：专用writer使用Win32 `CancelSynchronousIo`请求取消当前同步I/O，随后有界join并检查真实线程状态；成功响应前也要求writer线程已退出。失败仍未退出时保留带状态的`WorkerTaskFailure`，不清空`active_task`；终态明确记录`ipc_writer_exit_unverified`、`unknown_tail`、task id/operation及取消错误，并消费attempt。
+- 验证：原生Win32匿名管道阻塞读取取消集成测、deadline取消并join、writer未确认尾账测试均通过；定向4/4通过；完整模块43/43通过（8.97秒）；Ruff、py_compile、模块CLI `--help`、diff检查通过。微软文档说明该API向指定线程的待处理同步I/O发出取消请求，因此实现仍等待并核验线程终态，不把API返回当作退出证明。
+- 门禁：第三轮复审P0=0/P1=1/P2=0仍是有效历史结论；本补丁尚未独立审查，Phase 7/W5a未通过，W5b及真实数据读取保持冻结。

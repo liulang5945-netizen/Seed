@@ -49,3 +49,13 @@ Phase 7第二轮复审指出的P1-07/P2-04已落实到实现与合成测试：IP
 定向IPC/Job测试4/4通过，完整评估器合同40/40通过，Ruff、py_compile、模块`--help`及diff检查通过。完整测试首次发现一条测试仍断言旧ledger字段`worker_startup_cpu_seconds_before_job_assignment`；根因是实现按新启动顺序改为`worker_startup_cpu_seconds_charged_total`，只同步断言字段后精确复测1/1通过，再次全量40/40通过。未访问真实dev/reference、未restore模型、未调用selector或`--execute`。
 
 第二轮审查仍判不放行（P0=0、P1=1、P2=1），原定回流预算2/2已用尽。按用户持续推进至收官的明确授权，新增一次独立Phase 7复审作为本次新补丁的后续门禁；结果未出前，W5a仍标记未解决，W5b不得开始。R2-06/07的最后durable进度、attempt=`training`且无final已同步至活动路线图；因外部进程状态无法从沙箱确认，不重启或覆盖任何训练状态。
+
+## Phase 6 writer取消与失败尾账修正（2026-10-22）
+
+第三轮独立审查确认P2-04关闭，但指出IPC writer即使未退出，也可能在普通`Refuse`传播时丢掉writer状态和活动query身份。合成失败注入已复现：`evaluation_stopped`没有`ipc_writer_exit_unverified`且task为空。修复按以下顺序落实：
+
+1. 超时先终止Job Object进程树，再用Windows `CancelSynchronousIo`针对专用writer线程请求取消同步管道I/O；之后有界join并核验线程实际退出。该API只发出取消请求，故成功关闭worker树不能代替writer线程退出确认。参见[Microsoft Learn: CancelSynchronousIo](https://learn.microsoft.com/en-us/windows/win32/api/ioapiset/nf-ioapiset-cancelsynchronousio)。
+2. writer仍活时保留`WorkerTaskFailure`属性，不降格为普通`Refuse`；`active_task`在失败账本提交前保持有效。终态写`ipc_writer_exit_unverified=true`与`unknown_tail=true`并包含task_id/operation；如果终态不能证明writer停下，attempt仍消费且不允许恢复执行。
+3. 新增真实Windows管道同步I/O取消集成测试、超时后writer join测试、writer未确认时保留task和unknown尾账的synthetic测试。完整评估器合同43/43、定向IPC与失败尾账4/4、Ruff、py_compile、模块`--help`及diff检查通过。
+
+修正未获得Phase 7独立复审，不改变第三轮P7不放行结论；据用户持续推进授权，补丁提交后再安排独立审查。三臂训练及W5b边界不变。

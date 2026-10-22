@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ctypes
 import hashlib
 import io
 import json
@@ -765,11 +766,20 @@ class _DurabilityApi:
 
 
 class _FakeSupervisedWorker:
-    def __init__(self, receipts, endpoints, *, fail_operation=None, startup_cpu_seconds=0.0):
+    def __init__(
+        self,
+        receipts,
+        endpoints,
+        *,
+        fail_operation=None,
+        startup_cpu_seconds=0.0,
+        ipc_write_thread_stopped=True,
+    ):
         self.receipts = receipts
         self.endpoints = {item["endpoint_id"]: item for item in endpoints}
         self.fail_operation = fail_operation
         self.initial_child_cpu_seconds = startup_cpu_seconds
+        self.ipc_write_thread_stopped = ipc_write_thread_stopped
         self.requests = []
         self.closed = False
 
@@ -783,6 +793,7 @@ class _FakeSupervisedWorker:
                 observed_child_cpu_seconds=0.2,
                 timed_out=True,
                 worker_tree_stopped=True,
+                ipc_write_thread_stopped=self.ipc_write_thread_stopped,
             )
         if operation == "restore":
             return (
@@ -989,7 +1000,15 @@ def test_private_worker_module_entrypoint_refuses_missing_parent_markers_before_
     assert "worker requires an existing parent attempt and ledger" in result.stderr
 
 
-def _fake_supervised_worker_for_blocking_ipc(tmp_path, writer_release, write_started, write_calls):
+def _fake_supervised_worker_for_blocking_ipc(
+    tmp_path,
+    writer_release,
+    write_started,
+    write_calls,
+    *,
+    release_writer_on_terminate=True,
+    cancel_synchronous_io_fn=None,
+):
     class FakeProcess:
         pid = 234_567
         _handle = 88
@@ -1039,7 +1058,8 @@ def _fake_supervised_worker_for_blocking_ipc(tmp_path, writer_release, write_sta
             return 0.0
 
         def terminate_and_confirm(self, *, timeout_seconds):
-            writer_release.set()
+            if release_writer_on_terminate:
+                writer_release.set()
             process.kill()
             self.active = 0
             return True
@@ -1057,6 +1077,8 @@ def _fake_supervised_worker_for_blocking_ipc(tmp_path, writer_release, write_sta
         process_api=FakeProcessApi(),
         job_factory=lambda *_args, **_kwargs: job,
         resume_fn=lambda _pid: None,
+        cancel_synchronous_io_fn=cancel_synchronous_io_fn
+        or evaluation._cancel_synchronous_thread_io,
         poll_interval_seconds=0.005,
     )
     return worker, process, job
@@ -1089,6 +1111,113 @@ def test_ipc_pipe_write_is_supervised_and_cancellable_by_job_deadline(tmp_path):
     assert job.active == 0
     assert process.poll() is not None
     assert elapsed < 0.25
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows synchronous IPC cancellation contract")
+def test_ipc_deadline_cancels_and_joins_writer_after_job_termination(tmp_path):
+    release, write_started = threading.Event(), threading.Event()
+    write_calls, cancel_calls = [], []
+
+    def cancel_writer(thread_id):
+        cancel_calls.append(thread_id)
+        release.set()
+        return True
+
+    worker, process, job = _fake_supervised_worker_for_blocking_ipc(
+        tmp_path,
+        release,
+        write_started,
+        write_calls,
+        release_writer_on_terminate=False,
+        cancel_synchronous_io_fn=cancel_writer,
+    )
+    started = time.monotonic()
+    with pytest.raises(evaluation.WorkerTaskFailure) as caught:
+        worker.request(
+            {"operation": "probe", "task_id": "cancel-writer", "endpoint_id": "worker"},
+            budget=evaluation.EvaluationBudget(),
+            task_cpu_limit_seconds=5.0,
+            task_wall_limit_seconds=0.05,
+            future_cpu_reserve_seconds=0.0,
+            future_wall_reserve_seconds=0.0,
+        )
+    elapsed = time.monotonic() - started
+
+    assert write_started.is_set()
+    assert cancel_calls and cancel_calls[0] > 0
+    assert caught.value.timed_out is True
+    assert caught.value.worker_tree_stopped is True
+    assert caught.value.ipc_write_thread_stopped is True
+    assert worker.ipc_write_thread_stopped is True
+    assert job.active == 0
+    assert process.poll() is not None
+    assert elapsed < 0.25
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows synchronous pipe cancellation integration")
+def test_cancel_synchronous_thread_io_unblocks_a_native_pipe_read():
+    from ctypes import wintypes
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel32.CreatePipe.argtypes = [
+        ctypes.POINTER(wintypes.HANDLE),
+        ctypes.POINTER(wintypes.HANDLE),
+        ctypes.c_void_p,
+        wintypes.DWORD,
+    ]
+    kernel32.CreatePipe.restype = wintypes.BOOL
+    kernel32.ReadFile.argtypes = [
+        wintypes.HANDLE,
+        ctypes.c_void_p,
+        wintypes.DWORD,
+        ctypes.POINTER(wintypes.DWORD),
+        ctypes.c_void_p,
+    ]
+    kernel32.ReadFile.restype = wintypes.BOOL
+    kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
+    kernel32.CloseHandle.restype = wintypes.BOOL
+    read_handle, write_handle = wintypes.HANDLE(), wintypes.HANDLE()
+    assert kernel32.CreatePipe(ctypes.byref(read_handle), ctypes.byref(write_handle), None, 0)
+    started = threading.Event()
+    result = []
+
+    def blocked_read():
+        buffer = ctypes.create_string_buffer(1)
+        bytes_read = wintypes.DWORD()
+        started.set()
+        succeeded = kernel32.ReadFile(
+            read_handle,
+            buffer,
+            1,
+            ctypes.byref(bytes_read),
+            None,
+        )
+        result.append((bool(succeeded), ctypes.get_last_error()))
+
+    reader = threading.Thread(target=blocked_read, name="r2-sync-read-test", daemon=True)
+    try:
+        reader.start()
+        assert started.wait(timeout=1.0)
+        deadline = time.monotonic() + 1.0
+        while reader.is_alive() and time.monotonic() < deadline:
+            try:
+                evaluation._cancel_synchronous_thread_io(reader.native_id or 0)
+            except OSError as exc:
+                if getattr(exc, "winerror", None) not in {87, 1168}:
+                    raise
+            reader.join(timeout=0.02)
+        assert not reader.is_alive()
+        assert result and result[0][0] is False
+        assert result[0][1] == 995  # ERROR_OPERATION_ABORTED
+    finally:
+        if reader.is_alive():
+            kernel32.CloseHandle(write_handle)
+            write_handle = wintypes.HANDLE()
+            reader.join(timeout=1.0)
+        if read_handle:
+            kernel32.CloseHandle(read_handle)
+        if write_handle:
+            kernel32.CloseHandle(write_handle)
 
 
 @pytest.mark.skipif(os.name != "nt", reason="Windows bounded IPC frame contract")
@@ -1624,3 +1753,37 @@ def test_supervised_worker_timeout_is_one_shot_and_stops_tree(
     assert sum(event["event"] == "restore_started" for event in events) == (
         1 if fail_operation == "restore" else 4
     )
+
+
+def test_unstopped_ipc_writer_state_is_preserved_in_failure_tail(tmp_path):
+    _, _, preflight = _valid_records(tmp_path)
+    paths = _output_paths(tmp_path / "reports-unjoined-ipc-writer")
+    paths["readiness"].parent.mkdir(parents=True)
+    _write_readiness(paths, preflight)
+    receipts = _restore_receipts(preflight["endpoints"])
+    worker = _FakeSupervisedWorker(
+        receipts,
+        preflight["endpoints"],
+        fail_operation="generate",
+        ipc_write_thread_stopped=False,
+    )
+
+    with pytest.raises(evaluation.Refuse, match="one-shot evaluation attempt is consumed"):
+        evaluation.execute(
+            **_execute_kwargs(
+                paths,
+                preflight,
+                lambda **_kwargs: worker,
+                _DurabilityApi(),
+                prompt_selector=_prompts,
+            )
+        )
+
+    events = [json.loads(line) for line in paths["ledger"].read_text(encoding="utf-8").splitlines()]
+    stopped = next(event for event in events if event["event"] == "evaluation_stopped")
+    assert stopped["worker_tree_exit_unverified"] is False
+    assert stopped["ipc_writer_exit_unverified"] is True
+    assert stopped["unknown_tail"] is True
+    assert stopped["task_id"] is not None
+    assert stopped["operation"] == "generate"
+    assert not any(event["event"] == "query_timeout" for event in events)

@@ -209,3 +209,11 @@
 - 验证：根任务40项synthetic测试通过；本次独立定向复跑8项通过（32项deselected，6.07秒）；未读取dev/reference、加载模型、运行selector或`--execute`。
 - 回流判定：P1-07未关闭；需保留writer退出状态、把未闭合query明确记为unknown，并补Job已终止但writer仍存活的synthetic故障测试。历史回流预算2/2及第二轮打回原样保留；本轮新提交复审不等于预先放行。
 - 阶段指针：仍为Phase 8；真实156次评测/W5b继续冻结。
+
+### Phase 6 追加返工：writer取消与失败尾账修复（2026-10-22）
+- 第三轮P7结论由`2b65b7e30`记录：P0=0/P1=1/P2=0，P2-04关闭，P1-07仍因writer退出状态可能丢失而不放行。
+- 根因复现：合成writer未停止时，原失败终态缺`ipc_writer_exit_unverified`，且generation task会被清空。修复在Job终止后调用`CancelSynchronousIo`，有界join并核验线程；仍不确定则保留task/operation，写`unknown_tail=true`和writer未确认字段，不再抛弃异常属性。
+- 验证：原生Windows同步管道取消、deadline writer退出及unknown尾账故障测试通过；完整合同43/43，Ruff、py_compile、CLI帮助、diff检查通过。
+- 状态：本修复待新一轮独立Phase 7审查。历史预算2/2与第三轮不放行仍保留；复审前不运行真实restore/dev/reference/selector/`--execute`。
+- 训练：三臂最新durable进度仍为4:52-4:53快照、attempt记`training`且无final；未从沙箱确认外部训练会话状态，不重启、不覆盖。
+- 主线边界：目标仍为自然中文多轮对话能力。本修复只改善监督与证据链，不作为模型能力证据；`can_promote=false`和N1-166冻结不变。

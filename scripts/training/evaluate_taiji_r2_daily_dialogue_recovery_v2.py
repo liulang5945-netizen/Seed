@@ -99,6 +99,7 @@ JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x00002000
 JOB_OBJECT_EXTENDED_LIMIT_INFORMATION = 9
 JOB_OBJECT_BASIC_ACCOUNTING_INFORMATION = 1
 CREATE_SUSPENDED = 0x00000004
+THREAD_TERMINATE = 0x0001
 THREAD_SUSPEND_RESUME = 0x0002
 TH32CS_SNAPTHREAD = 0x00000004
 
@@ -1675,6 +1676,32 @@ def _resume_suspended_primary_thread(process_id: int) -> None:
             raise ctypes.WinError(ctypes.get_last_error())
 
 
+def _cancel_synchronous_thread_io(thread_id: int) -> None:
+    """Cancel a dedicated writer thread's pending synchronous pipe I/O."""
+    if os.name != "nt":
+        raise Refuse("IPC writer cancellation requires Windows")
+    if type(thread_id) is not int or thread_id <= 0:
+        raise Refuse("IPC writer has no Windows thread identity")
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel32.OpenThread.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+    kernel32.OpenThread.restype = wintypes.HANDLE
+    kernel32.CancelSynchronousIo.argtypes = [wintypes.HANDLE]
+    kernel32.CancelSynchronousIo.restype = wintypes.BOOL
+    kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
+    kernel32.CloseHandle.restype = wintypes.BOOL
+    thread = kernel32.OpenThread(THREAD_TERMINATE, False, thread_id)
+    if not thread:
+        raise ctypes.WinError(ctypes.get_last_error())
+    try:
+        if not kernel32.CancelSynchronousIo(thread):
+            error = ctypes.get_last_error()
+            if error != 1168:  # ERROR_NOT_FOUND: the writer may have just completed.
+                raise ctypes.WinError(error)
+    finally:
+        if not kernel32.CloseHandle(thread):
+            raise ctypes.WinError(ctypes.get_last_error())
+
+
 def _worker_command(attempt_path: Path, ledger_path: Path, job_name: str) -> list[str]:
     return [
         sys.executable,
@@ -1795,6 +1822,7 @@ class SupervisedWorker:
         process_api: Any = psutil,
         job_factory: Callable[..., WindowsJobObject] = WindowsJobObject,
         resume_fn: Callable[[int], None] = _resume_suspended_primary_thread,
+        cancel_synchronous_io_fn: Callable[[int], Any] = _cancel_synchronous_thread_io,
         budget: EvaluationBudget | None = None,
         startup_cpu_limit_seconds: float = MAX_SINGLE_RESTORE_CPU_SECONDS,
         startup_wall_limit_seconds: float = MAX_SINGLE_RESTORE_WALL_SECONDS,
@@ -1807,7 +1835,10 @@ class SupervisedWorker:
         self.popen_factory = popen_factory
         self.process_api = process_api
         self.resume_fn = resume_fn
+        self.cancel_synchronous_io_fn = cancel_synchronous_io_fn
         self._closed = False
+        self._active_ipc_writer: threading.Thread | None = None
+        self._ipc_writer_cancel_error: str | None = None
         self._cpu_by_pid: dict[int, float] = {}
         self._last_worker_cpu_total = 0.0
         self._final_job_cpu_total: float | None = None
@@ -1918,6 +1949,28 @@ class SupervisedWorker:
         finally:
             self.responses.put(None)
 
+    @property
+    def ipc_write_thread_stopped(self) -> bool:
+        writer = self._active_ipc_writer
+        return writer is None or not writer.is_alive()
+
+    def _cancel_and_join_ipc_writer(self) -> bool:
+        writer = self._active_ipc_writer
+        if writer is None:
+            return True
+        if writer.is_alive():
+            thread_id = writer.native_id
+            if thread_id is not None:
+                try:
+                    self.cancel_synchronous_io_fn(thread_id)
+                except BaseException as exc:
+                    self._ipc_writer_cancel_error = f"{type(exc).__name__}: {exc}"
+            writer.join(timeout=SUPERVISOR_TERMINATE_GRACE_SECONDS)
+        stopped = not writer.is_alive()
+        if stopped:
+            self._active_ipc_writer = None
+        return stopped
+
     def _await_ready(
         self,
         *,
@@ -2023,6 +2076,7 @@ class SupervisedWorker:
                 f"Windows Job Object CPU sampling failed: {exc}",
                 worker_tree_stopped=stopped,
                 cpu_measurement_valid=False,
+                ipc_write_thread_stopped=self.ipc_write_thread_stopped,
             ) from exc
 
     def request(
@@ -2107,10 +2161,13 @@ class SupervisedWorker:
 
         writer = threading.Thread(target=write_frame, name=f"r2-ipc-{task_id}", daemon=True)
         writer.start()
+        self._active_ipc_writer = writer
 
         response_line: str | None = None
         child_total_after = child_total_before
         while response_line is None or not write_done.is_set():
+            if write_done.is_set() and write_errors:
+                break
             child_total_after = self.sample_tree_cpu_seconds()
             child_delta = max(0.0, child_total_after - child_total_before)
             parent_delta = max(0.0, cpu_now() - start_parent_cpu)
@@ -2124,7 +2181,6 @@ class SupervisedWorker:
                 > EVALUATION_WALL_LIMIT_SECONDS
             ):
                 stopped = self.terminate_tree()
-                writer.join(timeout=SUPERVISOR_TERMINATE_GRACE_SECONDS)
                 observed = max(0.0, self.sample_tree_cpu_seconds() - child_total_before)
                 raise WorkerTaskFailure(
                     f"worker task {task_id} exceeded its CPU/wall deadline "
@@ -2133,7 +2189,7 @@ class SupervisedWorker:
                     observed_child_cpu_seconds=observed,
                     timed_out=True,
                     worker_tree_stopped=stopped,
-                    ipc_write_thread_stopped=not writer.is_alive(),
+                    ipc_write_thread_stopped=self.ipc_write_thread_stopped,
                 )
             if response_line is None:
                 try:
@@ -2146,13 +2202,12 @@ class SupervisedWorker:
                 write_done.wait(timeout=self.poll_interval_seconds)
         if write_errors:
             stopped = self.terminate_tree()
-            writer.join(timeout=SUPERVISOR_TERMINATE_GRACE_SECONDS)
             observed = max(0.0, self.sample_tree_cpu_seconds() - child_total_before)
             raise WorkerTaskFailure(
                 f"worker IPC write failed for {task_id}: {write_errors[0]}",
                 observed_child_cpu_seconds=observed,
                 worker_tree_stopped=stopped,
-                ipc_write_thread_stopped=not writer.is_alive(),
+                ipc_write_thread_stopped=self.ipc_write_thread_stopped,
             )
         if response_line is None:
             stopped = self.terminate_tree()
@@ -2161,7 +2216,19 @@ class SupervisedWorker:
                 f"worker exited before responding to {task_id}",
                 observed_child_cpu_seconds=observed,
                 worker_tree_stopped=stopped,
+                ipc_write_thread_stopped=self.ipc_write_thread_stopped,
             )
+        writer.join(timeout=min(0.05, self.poll_interval_seconds * 2))
+        if writer.is_alive():
+            stopped = self.terminate_tree()
+            observed = max(0.0, self.sample_tree_cpu_seconds() - child_total_before)
+            raise WorkerTaskFailure(
+                f"worker IPC writer did not stop after sending {task_id}",
+                observed_child_cpu_seconds=observed,
+                worker_tree_stopped=stopped,
+                ipc_write_thread_stopped=self.ipc_write_thread_stopped,
+            )
+        self._active_ipc_writer = None
         try:
             response = json.loads(response_line)
         except json.JSONDecodeError as exc:
@@ -2218,6 +2285,7 @@ class SupervisedWorker:
 
     def terminate_tree(self) -> bool:
         if self._closed:
+            self._cancel_and_join_ipc_writer()
             return True
         known_pids = {self.process.pid, *self._cpu_by_pid.keys()}
         try:
@@ -2226,6 +2294,7 @@ class SupervisedWorker:
             )
             self.process.wait(timeout=max(0.05, SUPERVISOR_TERMINATE_GRACE_SECONDS))
         except subprocess.TimeoutExpired:
+            self._cancel_and_join_ipc_writer()
             return False
         except BaseException:
             try:
@@ -2241,6 +2310,7 @@ class SupervisedWorker:
                 self.process.wait(timeout=max(0.05, SUPERVISOR_TERMINATE_GRACE_SECONDS))
             except BaseException:
                 pass
+            self._cancel_and_join_ipc_writer()
             return False
         try:
             self._final_job_cpu_total = self.initial_child_cpu_seconds + max(
@@ -2253,6 +2323,7 @@ class SupervisedWorker:
         self._closed = stopped and active == 0 and not survivors and self.process.poll() is not None
         if self._closed:
             self.job.close()
+        self._cancel_and_join_ipc_writer()
         return self._closed
 
     def shutdown(
@@ -2837,10 +2908,22 @@ def execute(
         budget.charge_child_cpu(child)
         stopped = bool(getattr(exc, "worker_tree_stopped", False))
         ipc_write_stopped = bool(getattr(exc, "ipc_write_thread_stopped", True))
-        if worker is not None and not stopped:
+        if worker is not None and (not stopped or not ipc_write_stopped):
             stopped = bool(worker.terminate_tree())
+            ipc_write_stopped = bool(getattr(worker, "ipc_write_thread_stopped", ipc_write_stopped))
         if not stopped or not ipc_write_stopped:
-            raise Refuse("worker tree or IPC writer termination could not be proven")
+            if isinstance(exc, WorkerTaskFailure):
+                exc.worker_tree_stopped = stopped
+                exc.ipc_write_thread_stopped = ipc_write_stopped
+                raise exc
+            raise WorkerTaskFailure(
+                f"worker tree or IPC writer termination could not be proven: {exc}",
+                observed_child_cpu_seconds=child,
+                timed_out=bool(getattr(exc, "timed_out", False)),
+                worker_tree_stopped=stopped,
+                cpu_measurement_valid=bool(getattr(exc, "cpu_measurement_valid", False)),
+                ipc_write_thread_stopped=ipc_write_stopped,
+            ) from exc
         budget.guard(
             reserve_cpu_seconds=FINALIZATION_RESERVE_CPU_SECONDS,
             reserve_wall_seconds=FINALIZATION_RESERVE_WALL_SECONDS,
@@ -2877,6 +2960,7 @@ def execute(
             "worker_tree_stopped": True,
             "unknown_tail": True,
             "ipc_write_thread_stopped": ipc_write_stopped,
+            "ipc_writer_cancel_error": getattr(worker, "_ipc_writer_cancel_error", None),
             "timestamp_utc": datetime.now(UTC).isoformat(),
         }
         durable_append(ledger_path, event)
@@ -2897,6 +2981,8 @@ def execute(
                 "cpu_seconds_total_at_failure": budget.cpu_seconds(),
                 "wall_seconds_at_failure": budget.wall_seconds(),
                 "unknown_tail": True,
+                "ipc_writer_exit_unverified": not ipc_write_stopped,
+                "ipc_writer_cancel_error": getattr(worker, "_ipc_writer_cancel_error", None),
                 "can_promote": False,
             },
         )
@@ -3077,8 +3163,8 @@ def execute(
                         worker_tree_stopped=False,
                         cpu_measurement_valid=child_measurement_valid,
                     )
-                active_task = None
                 failed_task("restore", task_id, endpoint_id, payload, exc)
+                active_task = None
                 raise Refuse(
                     f"{endpoint_id} restore failed; this one-shot evaluation attempt is consumed"
                 ) from exc
@@ -3283,8 +3369,8 @@ def execute(
                             worker_tree_stopped=False,
                             cpu_measurement_valid=child_measurement_valid,
                         )
-                    active_task = None
                     failed_task("generate", task_id, endpoint_id, payload, exc)
+                    active_task = None
                     raise Refuse(
                         "generation failed; this one-shot evaluation attempt is consumed"
                     ) from exc
@@ -3468,12 +3554,18 @@ def execute(
         worker_tree_exit_verified = not (
             isinstance(exc, WorkerTaskFailure) and not exc.worker_tree_stopped
         )
+        ipc_writer_exit_verified = not (
+            isinstance(exc, WorkerTaskFailure) and not exc.ipc_write_thread_stopped
+        )
         if worker is not None:
             sample = getattr(worker, "sample_tree_cpu_seconds", None)
             before = float(sample()) if callable(sample) else 0.0
             stopped = worker.terminate_tree()
+            worker_tree_exit_verified = bool(stopped)
+            ipc_writer_exit_verified = bool(
+                getattr(worker, "ipc_write_thread_stopped", ipc_writer_exit_verified)
+            )
             if not stopped:
-                worker_tree_exit_verified = False
                 exc = Refuse(f"worker process tree termination could not be proven: {exc}")
             elif callable(sample):
                 budget.charge_child_cpu(max(0.0, float(sample()) - before))
@@ -3503,8 +3595,12 @@ def execute(
                 "cpu_seconds_worker_tree": budget.child_cpu_seconds,
                 "cpu_seconds_total": budget.cpu_seconds(),
                 "wall_seconds_total": budget.wall_seconds(),
-                "unknown_tail": bool(selector_started and not face_persisted),
+                "unknown_tail": bool(selector_started and not face_persisted)
+                or not worker_tree_exit_verified
+                or not ipc_writer_exit_verified,
                 "worker_tree_exit_unverified": not worker_tree_exit_verified,
+                "ipc_writer_exit_unverified": not ipc_writer_exit_verified,
+                "ipc_writer_cancel_error": getattr(worker, "_ipc_writer_cancel_error", None),
                 "cpu_measurement_valid": bool(getattr(exc, "cpu_measurement_valid", False)),
                 "timestamp_utc": datetime.now(UTC).isoformat(),
             }
@@ -3527,8 +3623,11 @@ def execute(
                     "cpu_seconds_total_at_failure": budget.cpu_seconds(),
                     "wall_seconds_at_failure": budget.wall_seconds(),
                     "unknown_tail": bool(selector_started and not face_persisted)
-                    or not worker_tree_exit_verified,
+                    or not worker_tree_exit_verified
+                    or not ipc_writer_exit_verified,
                     "worker_tree_exit_unverified": not worker_tree_exit_verified,
+                    "ipc_writer_exit_unverified": not ipc_writer_exit_verified,
+                    "ipc_writer_cancel_error": getattr(worker, "_ipc_writer_cancel_error", None),
                     "can_promote": False,
                 },
             )
