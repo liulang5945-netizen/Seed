@@ -217,3 +217,10 @@
 - 状态：本修复待新一轮独立Phase 7审查。历史预算2/2与第三轮不放行仍保留；复审前不运行真实restore/dev/reference/selector/`--execute`。
 - 训练：三臂最新durable进度仍为4:52-4:53快照、attempt记`training`且无final；未从沙箱确认外部训练会话状态，不重启、不覆盖。
 - 主线边界：目标仍为自然中文多轮对话能力。本修复只改善监督与证据链，不作为模型能力证据；`can_promote=false`和N1-166冻结不变。
+
+### Phase 7 第四轮独立复审：提交 1dabdc963（2026-10-22）
+- 结论：不放行；P0=0、P1=1、P2=0。P2-04关闭；取消同步writer、join核验、失败task身份保留和成功响应前writer检查均已落实。残留P1为writer第一次join仍存活、外层二次清理才退出时，`failed_task()`此前未写query terminal，而`evaluation_stopped`可能按当前writer已停记`unknown_tail=false`。
+- 产物：`artifacts/07-evaluation-review-1dabdc963.md`。
+- 验证：提交对应记录为完整合同43/43与Win32匿名管道取消集成测试通过；本轮按要求未重跑。未读取真实dev/reference、restore模型、运行selector或`--execute`。
+- 回流判定：需显式保存task terminal缺失状态，并补false→true writer竞态测试；历史预算2/2和第三轮不放行结论保持原样。
+- 阶段指针：保持Phase 8；真实评测仍冻结。
