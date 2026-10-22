@@ -397,3 +397,12 @@ N02/C4 remains unresolved: the material-floor adjudicator reports `cost_persists
 extension专用validator保留12项来源与manifest/readiness/分母校验，仅builder允许精确审查兼容证明；新validator已对三臂真实只读载入与probe face通过，每臂3762预训练/525 assistant episodes。原72合同与新增9来源测试合计81通过（36.25s）；source-revision独立测试与Phase7复审进行中。没有发布amendment、没有恢复真实训练。
 
 唯一下一步：修订合同回归及独立复审通过后，write-once发布v1.1 amendment，刷新同账本预算/资源门，再执行计费父恢复与续训；不重新prepare或重置旧费用。
+
+
+## 20:38 真实开跑结果与预算决策
+
+v1.1 amendment成功write-once发布；三臂`--run`都进入真实runtime，CPU/RAM资源门通过并写入start与`training_resource_preflight_passed`。随后统一被冻结的全任务吞吐门拒绝，原因`throughput_projection_exceeds_remaining_budget`。fresh restore次数0、durable training commit次数0，权重没有更新，reservation已全部settle。
+
+20:38只读开跑尾账为full_turn_1m=1,328,948.048316、warm_start=1,328,462.169966、fresh_same_capacity=1,394,373.538816 CPU秒，合4,051,783.757098；剩余预算148,216.242902秒。滚动训练投影186,719.457141秒，超过现总上限28,503.214239秒。单臂最低ceiling投影为1,420,653.296396/1,375,970.695677/1,441,879.222166，fresh臂在1.45M下仅余8,120.778秒缓冲；预算保守尾账还随wall时长增长。
+
+当前唯一决策点：如要在保留训练终点、15%吞吐安全系数和故障尾账的前提下继续三臂，需要用户将同一累计窗口修订至每臂1,500,000、aggregate4,300,000 process-CPU秒。按20:38快照，总投影后保留约61,496.786秒聚合缓冲，fresh臂保留约58,120.778秒臂内缓冲；所有旧charge和未知尾账继续计入、不重置。维持1.45M/4.2M则不应再次启动；将保留v1.1合同及全部失败/准备证据等待预算决策。

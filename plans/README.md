@@ -1,6 +1,6 @@
 # Seed / Taiji 计划与架构入口
 
-> **2026-10-22 当前队首**：N主线优先提升态极自然中文多轮对话。最新累计预算1.45M/臂、4.2M总额。72项合成测试与NTFS prepare-only已通过；真实run被旧来源SHA校验拒绝，尚无权重更新。唯一下一步是修复来源校验衔接并建立显式版本化来源绑定，经回归与复审后续训。旧checkpoint和累计账保留；W5b与能力晋级冻结。动态状态以[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准。
+> **2026-10-22 当前队首**：N主线聚焦态极自然中文多轮对话。v1.1来源修订与NTFS准备门已通过；三臂真实开跑进入资源门后被累计预算投影拒绝，0 checkpoint restore、0 training commit。按4.2M总上限尚缺28,503 process-CPU秒才能覆盖冻结工作预测；唯一下一步是由用户决策是否修订为1.5M/臂、4.3M总额，旧账和尾账继续计入。等待期间不重启训练。W5b与能力晋级冻结。动态状态以[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准。
 
 > **2026-10-21 历史快照**：N1-165A恢复批结案，原训练充分性门2/3通过、`can_promote=false`；N1-166未执行、未消费确认面。用户优先转向自然多轮中文对话：R2-DIALOGUE-01/02/03R1均已结案。03R1完成两臂各6个续训epoch、70棵新family×6端点共420条自由生成；end-marker率升至90%，但人工审阅0/12连贯贴题回复。04/05R1只读审计发现父档从Taiji配置新建、约278k active参数、先前只在12个小任务episode上训练；当前 OASST2 可扩展到3,762条train-family全轮消息、1.78M UTF-8字节，仍保留39个未查询dev family。历史唯一下一步为[PLAN-R2-DIALOGUE-06全轮自然对话预训练](reference/PLAN-R2-DAILY-DIALOGUE-FULL-TURN-PRETRAINING_20261021.md)：fresh 1M-capacity Taiji、8 epoch角色感知byte预训练＋1 epoch assistant回复校准，保留39个family作一次性自由生成检查，CPU≤240,000秒、0能力晋升。详细状态以[03当前执行](active/roadmap/03_CURRENT_EXECUTION.md)为准，N1-165A结案见[中文记录](reference/PLAN-N1-165A_execution_closeout_20261021.md)。
 
