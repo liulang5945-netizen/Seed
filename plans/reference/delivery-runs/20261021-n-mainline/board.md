@@ -278,3 +278,10 @@
 - 当前资源预检CPU双采样10.9%/9.6%、可用内存26.298 GiB；均满足冻结runner的启动门。
 - 决策：按原attempt执行显式`--resume`，从latest已提交并带verification receipt的bundle继续，不新开attempt、不清除或覆盖checkpoint；stale writer lock由runner在死PID确认后安全归档。
 - 约束：只恢复训练并监控durable commits；不读取dev/reference，不selector，不运行`--execute`。三臂final与fresh-process独立恢复前W5b仍冻结，能力状态未知、`can_promote=false`、N1-166冻结不变。
+
+### Phase 8 source-bound resume拒绝（2026-10-22）
+- Phase7代码门已通过；三臂PID从lock身份核验不存在、CPU与内存资源门通过。
+- 三臂各一次`--resume`均在source hash校验处拒绝，原因是5个工作区源码版本偏离attempt冻结哈希。拒绝发生在writer lock reclaim/open_store之前，未改attempt、checkpoint、progress或锁；最后durable进度仍为9,472/14,528/14,528，三个final均缺。
+- 精确冻结源码的Git对象已找到：`02e82d921`、`85bfc59c8`、`0669123d`。当前文件均有index中暂存的用户改动，保留不覆盖。
+- 调整：以字节级备份+Git历史原文短时source overlay启动原attempt；全部arm通过hash/readiness/latest receipt门后恢复当前工作树字节。失败即停，不改attempt source hash，不用当前偏移源码恢复。
+- W5b、dev/reference、selector/`--execute`仍冻结；N主线对话方向、`can_promote=false`和N1-166冻结不变。

@@ -91,3 +91,13 @@ Phase 7评测器代码门由独立复审提交`928d4b8e6`通过（P0/P1/P2=0）�
 根任务只读核验了六个训练`writer.lock`：记录的PID 35200/26248/35196均已不存在；当前CPU双样本10.9%/9.6%、可用内存26.298 GiB。冻结恢复runner的`--resume`会在训练执行前校验sources/readiness/latest transaction，并由`reclaim_writer_lock`安全归档dead-owner lock；不创建新attempt、不采用无receipt孤立bundle。按用户持续推进授权，下一步恢复三臂原attempt并并发继续W4；若任一source、latest receipt、CPU或内存门失败，runner须fail closed并保留attempt证据。
 
 所有三臂达到固定训练终点且fresh-process恢复通过之前，W5b仍不启动，不读取真实dev/reference、不调用selector或`--execute`。对照读数及人工复核最终仍只作研究证据，`can_promote=false`，N1-166冻结不变。
+
+## Phase 8 source-bound resume处置（2026-10-22）
+
+只读核实三个原attempt的writer.lock owner PID均不存在，且资源采样10.9%/9.6% CPU、可用内存26.298 GiB符合冻结门。对三臂分别执行一次显式`--resume`后，runner在`source_bindings()`处拒绝：current `build_taiji_r2_daily_dialogue_full_turn_pretraining_corpus.py`的SHA与attempt不符。三臂均未进入`open_store`或训练、未回收锁、未改progress/checkpoint/attempt，因此没有新训练更新。
+
+逐个比较后，5个当前哈希不符源码文件的精确attempt版本都存在于Git历史：2个在`02e82d921`、2个在`85bfc59c8`、1个在`0669123d`；当前用户版本已暂存在Git index（总计163项暂存改动），需保留。继续使用重写source hash或直接resume当前代码均不符合原冻结合同。
+
+调整后的安全步骤：先对这5个当前文件做字节级临时备份并验证其与index一致，再按上述历史对象恢复attempt绑定的精确字节；只在同一仓库根与原数据目录下运行三臂`--resume`，等待三臂均通过source/readiness/latest-receipt恢复门并写出`training_resource_preflight_passed`后，立即按备份恢复工作区当前字节并核验index/worktree哈希不变。任何源快照、receipt或preflight不一致均fail closed；不重写attempt/checkpoint绑定、不创建新训练attempt、不碰未相关暂存改动。此步骤保留原source identity和checkpoint lineage。
+
+训练完成、终点fresh-process恢复通过之前不启动W5b，保持0 dev/reference、0 selector/`--execute`、`can_promote=false`与N1-166冻结。

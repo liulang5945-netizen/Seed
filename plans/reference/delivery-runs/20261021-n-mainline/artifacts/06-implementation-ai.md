@@ -152,3 +152,10 @@ git diff --check
 - 独立报告：`07-evaluation-review-c7411a688.md`；提交`928d4b8e6`，P0=0/P1=0/P2=0。writer取消、正常/失败terminal记账、task intent、false→true race及旧门禁均通过。
 - 放行范围：只允许将W5a评估器代码审查标为通过；未进行真实模型restore、selector、dev/reference读取或`--execute`。W5b仍依赖三臂final、readiness与fresh-process恢复，`can_promote=false`。
 - W4状态：三臂因Codex客户端更新后无durable增长，锁owner PID已只读核验不存在；资源CPU 10.9%/9.6%、内存26.298 GiB过门。按计划对原attempt显式`--resume`恢复，不开新attempt、不丢弃stale lock，进度后续写入active roadmap/board。
+
+### Phase 8 resume阻断与源码对齐计划（2026-10-22）
+
+- 三次显式`--resume`在训练开始前均被冻结source hash门拒绝；无新attempt、checkpoint、progress或lock改动。
+- attempt中5个不匹配的源码版本均可从Git历史精确取回；current worktree版本对应163项已有暂存改动中的文件，不能丢弃或覆盖。
+- 计划：字节备份current/index一致文件，短时恢复attempt绑定的Git对象启动resume；三臂均通过启动/receipt/source门后即时恢复current worktree字节。全过程不改source hash、不迁移checkpoint lineage。任何门失败都停，不绕过runner。
+- 此次阻断不改变P7通过结论，但三臂训练/结果仍未完成，W5b继续冻结。

@@ -2,7 +2,15 @@
 
 ## 当前执行：N1-165A结案；R2自然中文多轮对话v2三臂重做
 
-## 当前唯一下一步：按冻结`--resume`合同恢复R2三臂训练；全部终点与独立恢复齐备后才进入W5b
+## 当前唯一下一步：用attempt绑定的精确源码快照安全启动三臂`--resume`，随后恢复工作区并监测durable进度
+
+### 最新进度补充（2026-10-22 12:59 Asia/Shanghai）
+
+在只读确认三臂lock owner PID均不存在、资源门通过、Phase 7代码门通过后，根任务对原attempt各调用了一次显式`--resume`。三次都在`source_bindings()`阶段fail closed，拒绝首个不匹配的corpus builder SHA；没有创建新attempt、没有进入`open_store`、没有回收/改写stale lock或checkpoint，三臂progress/final状态未变。
+
+工作区相对attempt绑定的源码有5个不匹配文件，但所有原始精确版本都可从Git历史恢复：corpus builder与full-turn runner来自`02e82d921`，recovery runner及其契约测试来自`85bfc59c8`，恢复基础契约测试来自`0669123d`。当前版本仍在Git index内；根任务不会重写来源哈希或移除这些用户暂存改动。下一步是在临时目录备份当前文件，短时恢复绑定的精确源码，使runner通过既有哈希/receipt门后立即把工作区文件原样还回；不更改attempt、checkpoint、训练计划或绑定。若精确快照无法验证或runner仍拒绝，则停止训练并保留状态，不绕过门禁。
+
+W5b仍等待三臂final、readiness与fresh-process独立恢复；训练恢复只延续原实验，不能当作模型能力结果。真实dev/reference、selector、`--execute`保持冻结，`can_promote=false`及N1-166冻结不变。
 
 ### 最新进度补充（2026-10-22 12:52 Asia/Shanghai）
 
