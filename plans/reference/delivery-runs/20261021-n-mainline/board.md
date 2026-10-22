@@ -285,3 +285,9 @@
 - 精确冻结源码的Git对象已找到：`02e82d921`、`85bfc59c8`、`0669123d`。当前文件均有index中暂存的用户改动，保留不覆盖。
 - 调整：以字节级备份+Git历史原文短时source overlay启动原attempt；全部arm通过hash/readiness/latest receipt门后恢复当前工作树字节。失败即停，不改attempt source hash，不用当前偏移源码恢复。
 - W5b、dev/reference、selector/`--execute`仍冻结；N主线对话方向、`can_promote=false`和N1-166冻结不变。
+
+### Phase 8 冻结CPU预算阻断（2026-10-22）
+- 在exact-source overlay下，full_turn_1m通过source、latest bundle/fresh-process与资源门，随后按旧CPU限写`recovery_stopped`并因budget exhausted停止；无新checkpoint。warm_start/fresh_same_capacity仍被额外source hash差异拒绝，未进入open_store/训练。
+- boot identity改变后tail_charge上界为full_turn_1m 764,220.402、warm_start 763,673.331、fresh_same_capacity 762,788.250 CPU秒；旧限分别240k/120k/120k，均超限。数值是安全上界，非实际新增训练CPU。
+- 决策点：任何继续训练均需新版本continuation合同、budget与独立审查。推荐提案上限每臂1M、总3M，原partial/unknown tail/hash保持只读。未经用户明确选择，不改预算、不再启动；保留旧attempt/source及最新checkpoint。
+- 方向仍是对话能力优先，但本节点先等预算决策；W5b、真实dev/reference、selector/`--execute`继续冻结。

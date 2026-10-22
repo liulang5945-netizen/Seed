@@ -2,7 +2,13 @@
 
 ## 当前执行：N1-165A结案；R2自然中文多轮对话v2三臂重做
 
-## 当前唯一下一步：用attempt绑定的精确源码快照安全启动三臂`--resume`，随后恢复工作区并监测durable进度
+## 当前唯一下一步：决定是否批准一版新的R2 continuation CPU上限；旧attempt已按冻结门fail closed
+
+### 最新进度补充（2026-10-22 13:20 Asia/Shanghai）
+
+Phase 7评测器代码门已通过（`928d4b8e6`，P0/P1/P2=0）。原三臂恢复再次核验后发现冻结CPU预算也无法续行：系统boot identity已改变，恢复账本按冻结规则采用wall time×logical CPU作为未知尾账上界；full_turn_1m/warm_start/fresh_same_capacity当前上界分别约764,220/763,673/762,788 process-CPU秒，对应旧上限240,000/120,000/120,000，三臂均超限。full-turn准确恢复了绑定源码、通过fresh-process latest bundle与资源预检，但随后写入`recovery_stopped`并以`recovery CPU allocation exhausted; no implicit retry`停止；warm/fresh的精确绑定还另需`run_taiji_r2_daily_dialogue_warmstart_matched.py`版本`b6bb45b5`，未进入checkpoint写入。
+
+上述数值是boot-change后的保守尾账上界，不是实际新增训练CPU；末次durable训练量仍为9,472/14,528/14,528，三个final均缺。将原480,000合计上限扩大到每臂1,000,000、总计3,000,000 process-CPU秒，可覆盖当前上界并为固定训练剩余量保留空间；这是约6.25倍的上限变更，必须先做版本化续训合同/恢复实现复核，再执行。旧attempt、checkpoint与失败尾账均保留；不伪造hash、不清零未知尾账、不放行W5b。当前唯一待决事项：是否批准这项新版本预算上限。
 
 ### 最新进度补充（2026-10-22 12:59 Asia/Shanghai）
 

@@ -101,3 +101,11 @@ Phase 7评测器代码门由独立复审提交`928d4b8e6`通过（P0/P1/P2=0）�
 调整后的安全步骤：先对这5个当前文件做字节级临时备份并验证其与index一致，再按上述历史对象恢复attempt绑定的精确字节；只在同一仓库根与原数据目录下运行三臂`--resume`，等待三臂均通过source/readiness/latest-receipt恢复门并写出`training_resource_preflight_passed`后，立即按备份恢复工作区当前字节并核验index/worktree哈希不变。任何源快照、receipt或preflight不一致均fail closed；不重写attempt/checkpoint绑定、不创建新训练attempt、不碰未相关暂存改动。此步骤保留原source identity和checkpoint lineage。
 
 训练完成、终点fresh-process恢复通过之前不启动W5b，保持0 dev/reference、0 selector/`--execute`、`can_promote=false`与N1-166冻结。
+
+## Phase 8 CPU预算扩展决策草案（2026-10-22）
+
+完整源码overlay尝试中，full_turn_1m恢复成功越过source/readiness/latest bundle门，但随后runner按冻结规则写`recovery_stopped`并报`recovery CPU allocation exhausted; no implicit retry`；其`Budget.used()`约748,973秒，旧限240,000秒。warm_start/fresh_same_capacity未启动训练，先被额外绑定的`run_taiji_r2_daily_dialogue_warmstart_matched.py`源码差异拒绝；该精确快照位于`b6bb45b5`。三臂都未写新checkpoint，旧attempt不改。
+
+13:19 Asia/Shanghai按checkpoint ledger计算，boot identity改变后冻结的`tail_charge`采用elapsed wall×24 logical CPUs，上界full_turn_1m 764,220.402秒、warm_start 763,673.331秒、fresh_same_capacity 762,788.250秒；分别超过旧240,000/120,000/120,000秒上限。合计保守尾账2,290,682秒，不等同于实际新增训练消耗。按近期吞吐粗略外推剩余训练约150,000秒，但实际会受训练速率影响。
+
+为保留三个verified partial checkpoint并延续同一对话路线，建议另立版本化continuation attempt，旧attempt/receipt/hash保持只读；新runner先由架构/代码审查，再让每臂CPU上限提高到1,000,000秒（总上限3,000,000秒），完整携带上述unknown tail，额外训练不得超新上限。warm/fresh也必须加载`b6bb45b5`的精确绑定源码；W5b仍在三臂终点与独立恢复通过前禁止。此上限相对旧480,000秒约为6.25倍，虽为保守上界而非预计实耗，属于新的资源决策。当前先等待用户明确选择；未批准前不做预算override、不再启动训练。
