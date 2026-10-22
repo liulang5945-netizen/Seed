@@ -388,3 +388,12 @@ N02/C4 remains unresolved: the material-floor adjudicator reports `cost_persists
 【2026-10-15 · 52工具冻结】52固定训练工具与25合同通过：初态完整bundle同51零档，reader/local/context三组Adam推进及保存恢复已验；下一步先zero独立恢复/576项49终点控制，再固定6144更新/300秒CPU，四门不变。0 dev/holdout，旧失败和所有项目出口不变。
 
 2026-10-15维护对账（㊵-948）：两处SIM102以等价条件合并修复，相关24合同通过（87.60秒），本机全仓Ruff默认及CI同款B/SIM规则均过。首次沙箱临时目录权限错误后以授权环境重跑通过。远端未推送，不能据此称远端CI绿；14历史Black格式债保留。主线队首仍为53，未执行新训练或查询。
+
+
+## v1.1 来源修订实现进展（20:00）
+
+采用独立架构复核推荐的append-only amendment：原v1合同、sidecar、progress、04报告及checkpoint副本保持原字节，同CPU账本连续累计；新增来源修订绑定原合同/attempt/readiness/receipt与新runner/validator/tests/补充报告。仅prepared、无执行事件、无pending reservation/写锁/terminal时允许发布。
+
+extension专用validator保留12项来源与manifest/readiness/分母校验，仅builder允许精确审查兼容证明；新validator已对三臂真实只读载入与probe face通过，每臂3762预训练/525 assistant episodes。原72合同与新增9来源测试合计81通过（36.25s）；source-revision独立测试与Phase7复审进行中。没有发布amendment、没有恢复真实训练。
+
+唯一下一步：修订合同回归及独立复审通过后，write-once发布v1.1 amendment，刷新同账本预算/资源门，再执行计费父恢复与续训；不重新prepare或重置旧费用。

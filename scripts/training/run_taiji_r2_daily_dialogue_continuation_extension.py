@@ -38,6 +38,7 @@ import torch
 from scripts.training import run_taiji_r2_daily_dialogue_full_turn_pretraining as base
 from scripts.training import run_taiji_r2_daily_dialogue_recovery as frozen
 from scripts.training import taiji_r2_dialogue_continuation_extension as continuation_budget
+from scripts.training import taiji_r2_dialogue_continuation_source_validation as source_validation
 from scripts.training import taiji_r2_dialogue_recovery as recovery
 from scripts.training.taiji_r2_dialogue_continuation_extension import (
     AGGREGATE_CPU_LIMIT,
@@ -831,6 +832,26 @@ def validate_source_compatibility(
     }
 
 
+V1_RUNNER_SHA256 = "58a96d63186681e7cdaaa1034f4e0a68ee14b20c22050bad214cd12eec3ef18f"
+V1_SOURCE_HASHES = {
+    "runner": V1_RUNNER_SHA256,
+    "budget_helper": "5bc1787499bee803a8e5310349672e40b038205ced35f55d28b0c7a7893c72d9",
+    "runner_contract_test": "3b25e646e1f823c025fb51ff89de0fb3de930e396b8ab9fa8834176e025cd39a",
+    "budget_contract_test": "09e67815752b23d9db1797b1ee640056d931f80168a851954f78e4da68488469",
+}
+SOURCE_REVISION_REPORT = (
+    ROOT
+    / "plans/reference/delivery-runs/20261021-n-mainline/artifacts/04-continuation-source-revision-v1-1.md"
+)
+
+
+def _source_revision_path() -> Path:
+    return (
+        REPORTS_DIR
+        / "taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_source_revision_v1_1.json"
+    )
+
+
 def _continuation_source_files() -> dict[str, Path]:
     return {
         "runner": Path(__file__).resolve(),
@@ -840,6 +861,13 @@ def _continuation_source_files() -> dict[str, Path]:
         ).resolve(),
         "budget_contract_test": (
             ROOT / "tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py"
+        ).resolve(),
+        "source_validator": Path(source_validation.__file__).resolve(),
+        "source_validator_contract_test": (
+            ROOT / "tests/taiji_native/test_r2_dialogue_continuation_source_validation_contract.py"
+        ).resolve(),
+        "source_revision_contract_test": (
+            ROOT / "tests/taiji_native/test_r2_dialogue_continuation_source_revision_contract.py"
         ).resolve(),
     }
 
@@ -857,6 +885,120 @@ def _continuation_source_binding(source_report_sha256: str) -> dict[str, Any]:
         "report_path": str(ARCHITECTURE_REPORT.resolve()),
         "report_sha256": source_report_sha256,
     }
+
+
+def _effective_attempt(attempt: dict[str, Any], source_report_sha256: str) -> dict[str, Any]:
+    expected = _continuation_source_binding(source_report_sha256)
+    if attempt.get("continuation_sources") == expected:
+        return attempt
+    revision_path = _source_revision_path()
+    if not revision_path.is_file() or revision_path.is_symlink():
+        raise Refuse("continuation source binding changed without a versioned source revision")
+    revision = read_json(revision_path)
+    arm = attempt.get("arm")
+    if arm not in ARMS:
+        raise Refuse("source revision arm is invalid")
+    location = _expected_parent_paths(arm)
+    old = revision.get("original_attempts", {}).get(arm, {})
+    old_sources = attempt.get("continuation_sources", {})
+    if (
+        revision.get("schema") != "taiji-r2-continuation-source-revision-v1.1"
+        or revision.get("current_continuation_sources") != expected
+        or revision.get("contract_sha256") != sha256_file(location["contract_path"])
+        or revision.get("review_report_sha256") != sha256_file(SOURCE_REVISION_REPORT)
+        or revision.get("approved_budget")
+        != {"per_arm": PER_ARM_CPU_LIMIT, "aggregate": AGGREGATE_CPU_LIMIT}
+        or old.get("attempt_sha256") != sha256_file(location["extension_attempt"])
+        or old.get("parent_readiness_sha256") != sha256_file(location["parent_readiness"])
+        or old.get("parent_receipt_sha256") != PARENT_RECEIPT_SHA256[arm]
+        or old_sources.get("runner_sha256") != V1_RUNNER_SHA256
+        or {name: row.get("sha256") for name, row in old_sources.get("files", {}).items()}
+        != V1_SOURCE_HASHES
+        or old_sources.get("report_sha256") != source_report_sha256
+        or attempt.get("source_compatibility", {}).get("runner_sha256") != V1_RUNNER_SHA256
+    ):
+        raise Refuse("source revision does not exactly bind original and current sources")
+    effective = dict(attempt)
+    effective["continuation_sources"] = expected
+    effective["source_compatibility"] = {
+        **attempt["source_compatibility"],
+        "runner_sha256": expected["runner_sha256"],
+    }
+    effective["source_revision_sha256"] = sha256_file(revision_path)
+    return effective
+
+
+def prepare_source_revision() -> dict[str, Any]:
+    # A source revision adopts prepared evidence; it must never reinitialize CPU.
+    _configure_prepared_storage()
+    source_report_sha = sha256_file(ARCHITECTURE_REPORT)
+    if latest_reservations():
+        raise Refuse("source revision requires no active CPU reservation")
+    original_attempts = {}
+    for arm in ARMS:
+        context = _parent_context(arm)
+        location = context["locations"]
+        attempt = read_json(location["extension_attempt"])
+        old_sources = attempt.get("continuation_sources", {})
+        compatible = dict(context["source_compatibility"])
+        compatible["runner_sha256"] = V1_RUNNER_SHA256
+        if (
+            attempt.get("schema") != "taiji-r2-dialogue-continuation-extension-attempt-v1"
+            or attempt.get("arm") != arm
+            or attempt.get("source_compatibility_report_sha256") != source_report_sha
+            or attempt.get("parent_checkpoint", {}).get("receipt_sha256")
+            != context["parent_receipt_sha256"]
+            or old_sources.get("runner_sha256") != V1_RUNNER_SHA256
+            or {name: row.get("sha256") for name, row in old_sources.get("files", {}).items()}
+            != V1_SOURCE_HASHES
+            or old_sources.get("report_sha256") != source_report_sha
+            or attempt.get("source_compatibility") != compatible
+            or attempt.get("parent", {}).get("attempt_sha256") != context["parent_attempt_sha256"]
+        ):
+            raise Refuse("source revision requires exact reviewed v1 prepared sources")
+        events = read_jsonl(location["extension_progress"])
+        allowed = {
+            "continuation_prepare_intent",
+            "continuation_prepare_tail_reconciled",
+            "continuation_prepared",
+            "continuation_prepare_reconciled",
+        }
+        if not any(e.get("event") == "continuation_prepared" for e in events) or any(
+            e.get("event") not in allowed for e in events
+        ):
+            raise Refuse("source revision is only allowed before any execution event")
+        for directory in (
+            location["extension_checkpoint_root"],
+            location["extension_checkpoint_root"] / "pretraining",
+            location["extension_checkpoint_root"] / "assistant_sft",
+        ):
+            if (directory / "writer.lock").exists() or (directory / "reclaim.guard").exists():
+                raise Refuse("source revision requires quiescent checkpoint writers")
+        if (
+            location["extension_result"].exists()
+            or _readiness_path(location["extension_result"]).exists()
+        ):
+            raise Refuse("source revision cannot adopt terminal artifacts")
+        _expected, missing = _parent_copy_state(context)
+        if missing:
+            raise Refuse("source revision parent fork is incomplete")
+        original_attempts[arm] = {
+            "attempt_sha256": sha256_file(location["extension_attempt"]),
+            "parent_readiness_sha256": sha256_file(location["parent_readiness"]),
+            "parent_receipt_sha256": context["parent_receipt_sha256"],
+            "prepared_progress_sha256": sha256_file(location["extension_progress"]),
+        }
+    payload = {
+        "schema": "taiji-r2-continuation-source-revision-v1.1",
+        "contract_sha256": sha256_file(_expected_parent_paths(ARMS[0])["contract_path"]),
+        "original_attempts": original_attempts,
+        "current_continuation_sources": _continuation_source_binding(source_report_sha),
+        "review_report_sha256": sha256_file(SOURCE_REVISION_REPORT),
+        "approved_budget": {"per_arm": PER_ARM_CPU_LIMIT, "aggregate": AGGREGATE_CPU_LIMIT},
+        "reason": "reviewed builder compatibility was rejected by frozen raw-SHA validator before execution",
+    }
+    _write_json_once(_source_revision_path(), payload)
+    return _validate_prepared()
 
 
 def _require_continuation_source_bindings(
@@ -1306,7 +1448,7 @@ def _validate_prepared(*, allow_terminal_artifacts: bool = False) -> dict[str, A
     for arm in ARMS:
         context = _parent_context(arm)
         location = context["locations"]
-        attempt = read_json(location["extension_attempt"])
+        attempt = _effective_attempt(read_json(location["extension_attempt"]), source_report_sha)
         if (
             attempt.get("schema") != "taiji-r2-dialogue-continuation-extension-attempt-v1"
             or attempt.get("arm") != arm
@@ -2184,6 +2326,7 @@ def _validate_final_readiness(
         or ready.get("cpu_seconds_cumulative_boundary")
         != "measured_before_final_result_publication"
         or ready.get("completion_cpu_source") != "continuation_completed_ledger_event"
+        or ready.get("source_revision_sha256") != attempt.get("source_revision_sha256")
     ):
         raise Refuse("terminal readiness identity or capability boundary is invalid")
     stages = ready.get("stages")
@@ -2243,6 +2386,7 @@ def _validate_final_result(
         or result.get("cpu_seconds_cumulative_is_lower_bound") is not True
         or result.get("cpu_seconds_cumulative_boundary") != ready["cpu_seconds_cumulative_boundary"]
         or result.get("completion_cpu_source") != ready["completion_cpu_source"]
+        or result.get("source_revision_sha256") != attempt.get("source_revision_sha256")
     ):
         raise Refuse("terminal result identity or readiness binding is invalid")
     return result
@@ -2285,6 +2429,7 @@ def _reconcile_finalization(
             "extension_attempt_sha256": ready["extension_attempt_sha256"],
             "readiness_path": str(readiness_path.resolve()),
             "readiness_sha256": sha256_file(readiness_path),
+            "source_revision_sha256": attempt.get("source_revision_sha256"),
             "stages": ready["stages"],
             "cpu_seconds_cumulative": ready["cpu_seconds_cumulative"],
             "cpu_seconds_cumulative_is_lower_bound": ready["cpu_seconds_cumulative_is_lower_bound"],
@@ -2587,7 +2732,9 @@ def execute_arm(arm: str, *, resume: bool) -> dict[str, Any]:
     prepared = _validate_prepared(allow_terminal_artifacts=True)
     context = prepared["parents"][arm]
     location = context["locations"]
-    attempt = read_json(location["extension_attempt"])
+    attempt = _effective_attempt(
+        read_json(location["extension_attempt"]), prepared["source_report_sha256"]
+    )
     if attempt.get("continuation_sources", {}).get("runner_sha256") != sha256_file(
         Path(__file__).resolve()
     ):
@@ -2597,7 +2744,11 @@ def execute_arm(arm: str, *, resume: bool) -> dict[str, Any]:
     has_terminal_artifacts = location["extension_result"].exists() or readiness_path.exists()
     if has_terminal_artifacts and not resume:
         raise Refuse("terminal artifacts already exist; use --resume to reconcile only")
-    pretrain, assistant, _manifest = base._validate_sources()
+    validated_training = source_validation.validate_training_sources(
+        context["source_compatibility"]
+    )
+    pretrain = validated_training.pretrain_corpus
+    assistant = validated_training.assistant_corpus
     frozen.validate_probe_face(arm, pretrain, assistant)
     root_context = _open_extension_store(
         location["extension_checkpoint_root"],
@@ -2836,6 +2987,7 @@ def execute_arm(arm: str, *, resume: bool) -> dict[str, Any]:
             "parent_receipt_sha256": context["parent_receipt_sha256"],
             "extension_attempt_sha256": sha256_file(location["extension_attempt"]),
             "extension_runner_sha256": attempt["continuation_sources"]["runner_sha256"],
+            "source_revision_sha256": attempt.get("source_revision_sha256"),
             "source_compatibility_report_sha256": attempt["source_compatibility_report_sha256"],
             "stages": receipts,
             "cpu_seconds_cumulative": final_charge,
@@ -2861,6 +3013,7 @@ def execute_arm(arm: str, *, resume: bool) -> dict[str, Any]:
             "extension_attempt_sha256": ready["extension_attempt_sha256"],
             "readiness_path": str(ready_path.resolve()),
             "readiness_sha256": sha256_file(ready_path),
+            "source_revision_sha256": attempt.get("source_revision_sha256"),
             "stages": receipts,
             "cpu_seconds_cumulative": final_charge,
             "cpu_seconds_cumulative_is_lower_bound": True,
@@ -2906,16 +3059,17 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--prepare-only", action="store_true")
+    mode.add_argument("--prepare-source-revision", action="store_true")
     mode.add_argument("--run", action="store_true")
     mode.add_argument("--resume", action="store_true")
     parser.add_argument("--arm", choices=ARMS)
     args = parser.parse_args(argv)
     torch.set_num_threads(1)
     try:
-        if args.prepare_only:
+        if args.prepare_only or args.prepare_source_revision:
             if args.arm is not None:
                 raise Refuse("--prepare-only is global; omit --arm")
-            record = prepare_only()
+            record = prepare_source_revision() if args.prepare_source_revision else prepare_only()
             print(
                 json.dumps({"status": "prepared", "arms": list(ARMS), "charges": record["charges"]})
             )

@@ -134,3 +134,12 @@ NTFS prepare-only成功，三臂prepared；累计账本分别1,317,124.782691/1,
 三臂真实--run随后均exit1：base._validate_sources拒绝`full-turn dialogue source changed: scripts/data_prep/build_taiji_r2_daily_dialogue_full_turn_pretraining_corpus.py`。拒绝发生在root writer lock、start intent与权重更新之前；无真实续训进展。扩展source compatibility已通过，但旧base validator仍按原raw SHA检查已审查版本，合成测试未覆盖此实际衔接，保留本失败作为回归证据。
 
 唯一下一步：实现严格来源证明下的extension专用训练数据校验，并建立显式版本化来源修订绑定；v1已prepared的合同、sidecar、父checkpoint和CPU账本不得改写或清零。新修订须红绿回归和独立审查，通过实际来源门后再续训。04架构报告已被v1绑定，保持原字节；新修订另记版本化补充。W5b、dev/reference、selector与晋级冻结。
+
+
+## v1.1 来源修订实现进展（20:00）
+
+采用独立架构复核推荐的append-only amendment：原v1合同、sidecar、progress、04报告及checkpoint副本保持原字节，同CPU账本连续累计；新增来源修订绑定原合同/attempt/readiness/receipt与新runner/validator/tests/补充报告。仅prepared、无执行事件、无pending reservation/写锁/terminal时允许发布。
+
+extension专用validator保留12项来源与manifest/readiness/分母校验，仅builder允许精确审查兼容证明；新validator已对三臂真实只读载入与probe face通过，每臂3762预训练/525 assistant episodes。原72合同与新增9来源测试合计81通过（36.25s）；source-revision独立测试与Phase7复审进行中。没有发布amendment、没有恢复真实训练。
+
+唯一下一步：修订合同回归及独立复审通过后，write-once发布v1.1 amendment，刷新同账本预算/资源门，再执行计费父恢复与续训；不重新prepare或重置旧费用。

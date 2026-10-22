@@ -363,13 +363,15 @@ def test_continuation_claims_writer_lock_before_durable_start(tmp_path: Path, mo
         },
         "parent_attempt_sha256": "a" * 64,
         "parent_receipt_sha256": "b" * 64,
+        "source_compatibility": {},
         "parent_bindings": {"source_hashes": {"synthetic": "f" * 64}},
     }
     attempt = {"continuation_sources": {"runner_sha256": runner.sha256_file(Path(runner.__file__))}}
+    monkeypatch.setattr(runner, "_effective_attempt", lambda attempt, _sha: attempt)
     monkeypatch.setattr(
         runner,
         "_validate_prepared",
-        lambda **_kwargs: {"parents": {arm: context}},
+        lambda **_kwargs: {"parents": {arm: context}, "source_report_sha256": "a" * 64},
     )
 
     def read_json(path):
@@ -391,7 +393,11 @@ def test_continuation_claims_writer_lock_before_durable_start(tmp_path: Path, mo
             tmp_path / "synthetic-parent.pt",
         ),
     )
-    monkeypatch.setattr(runner.base, "_validate_sources", lambda: (object(), object(), {}))
+    monkeypatch.setattr(
+        runner.source_validation,
+        "validate_training_sources",
+        lambda _proof: SimpleNamespace(pretrain_corpus=object(), assistant_corpus=object()),
+    )
     monkeypatch.setattr(runner.frozen, "validate_probe_face", lambda *args: None)
     monkeypatch.setattr(runner.frozen, "episode_cpu_reserve", lambda _arm: (5.0, {}))
     monkeypatch.setattr(
@@ -511,12 +517,14 @@ def test_live_writer_rejects_second_resume_without_settling_owner_token(
         },
         "parent_attempt_sha256": "b" * 64,
         "parent_receipt_sha256": "c" * 64,
+        "source_compatibility": {},
         "parent_bindings": {"source_hashes": {"synthetic": "d" * 64}},
     }
+    monkeypatch.setattr(runner, "_effective_attempt", lambda attempt, _sha: attempt)
     monkeypatch.setattr(
         runner,
         "_validate_prepared",
-        lambda **_kwargs: {"parents": {arm: context}},
+        lambda **_kwargs: {"parents": {arm: context}, "source_report_sha256": "a" * 64},
     )
     from taiji import LanguageEpisode, LanguageEpisodeCorpus
 
@@ -534,7 +542,11 @@ def test_live_writer_rejects_second_resume_without_settling_owner_token(
         ),
         require_eval_splits=False,
     )
-    monkeypatch.setattr(runner.base, "_validate_sources", lambda: (corpus, object(), {}))
+    monkeypatch.setattr(
+        runner.source_validation,
+        "validate_training_sources",
+        lambda _proof: SimpleNamespace(pretrain_corpus=corpus, assistant_corpus=object()),
+    )
     monkeypatch.setattr(runner.frozen, "validate_probe_face", lambda *_args: None)
     reservation_reads: list[str] = []
     monkeypatch.setattr(
@@ -620,12 +632,14 @@ def test_empty_resume_recovers_dead_reclaim_guard_after_interruption(
         },
         "parent_attempt_sha256": "f" * 64,
         "parent_receipt_sha256": "1" * 64,
+        "source_compatibility": {},
         "parent_bindings": {"source_hashes": {"synthetic": "2" * 64}},
     }
+    monkeypatch.setattr(runner, "_effective_attempt", lambda attempt, _sha: attempt)
     monkeypatch.setattr(
         runner,
         "_validate_prepared",
-        lambda **_kwargs: {"parents": {arm: context}},
+        lambda **_kwargs: {"parents": {arm: context}, "source_report_sha256": "a" * 64},
     )
     from taiji import LanguageEpisode, LanguageEpisodeCorpus
 
@@ -643,7 +657,11 @@ def test_empty_resume_recovers_dead_reclaim_guard_after_interruption(
         ),
         require_eval_splits=False,
     )
-    monkeypatch.setattr(runner.base, "_validate_sources", lambda: (corpus, object(), {}))
+    monkeypatch.setattr(
+        runner.source_validation,
+        "validate_training_sources",
+        lambda _proof: SimpleNamespace(pretrain_corpus=corpus, assistant_corpus=object()),
+    )
     monkeypatch.setattr(runner.frozen, "validate_probe_face", lambda *_args: None)
     monkeypatch.setattr(runner.frozen, "episode_cpu_reserve", lambda _arm: (5.0, {}))
     monkeypatch.setattr(
@@ -730,12 +748,14 @@ def test_empty_resume_without_reclaimed_writer_lock_stays_refused(
         },
         "parent_attempt_sha256": "a" * 64,
         "parent_receipt_sha256": "b" * 64,
+        "source_compatibility": {},
         "parent_bindings": {"source_hashes": {"synthetic": "c" * 64}},
     }
+    monkeypatch.setattr(runner, "_effective_attempt", lambda attempt, _sha: attempt)
     monkeypatch.setattr(
         runner,
         "_validate_prepared",
-        lambda **_kwargs: {"parents": {arm: context}},
+        lambda **_kwargs: {"parents": {arm: context}, "source_report_sha256": "a" * 64},
     )
     from taiji import LanguageEpisode, LanguageEpisodeCorpus
 
@@ -753,7 +773,11 @@ def test_empty_resume_without_reclaimed_writer_lock_stays_refused(
         ),
         require_eval_splits=False,
     )
-    monkeypatch.setattr(runner.base, "_validate_sources", lambda: (corpus, object(), {}))
+    monkeypatch.setattr(
+        runner.source_validation,
+        "validate_training_sources",
+        lambda _proof: SimpleNamespace(pretrain_corpus=corpus, assistant_corpus=object()),
+    )
     monkeypatch.setattr(runner.frozen, "validate_probe_face", lambda *_args: None)
 
     class NewWriter:
@@ -1006,12 +1030,14 @@ def test_start_ceiling_refusal_is_durably_recorded_before_training(
         },
         "parent_attempt_sha256": "a" * 64,
         "parent_receipt_sha256": "b" * 64,
+        "source_compatibility": {},
         "parent_bindings": {"source_hashes": {"synthetic": "c" * 64}},
     }
+    monkeypatch.setattr(runner, "_effective_attempt", lambda attempt, _sha: attempt)
     monkeypatch.setattr(
         runner,
         "_validate_prepared",
-        lambda **_kwargs: {"parents": {arm: context}},
+        lambda **_kwargs: {"parents": {arm: context}, "source_report_sha256": "a" * 64},
     )
     from taiji import LanguageEpisode, LanguageEpisodeCorpus
 
@@ -1029,7 +1055,11 @@ def test_start_ceiling_refusal_is_durably_recorded_before_training(
         ),
         require_eval_splits=False,
     )
-    monkeypatch.setattr(runner.base, "_validate_sources", lambda: (corpus, object(), {}))
+    monkeypatch.setattr(
+        runner.source_validation,
+        "validate_training_sources",
+        lambda _proof: SimpleNamespace(pretrain_corpus=corpus, assistant_corpus=object()),
+    )
     monkeypatch.setattr(runner.frozen, "validate_probe_face", lambda *_args: None)
     monkeypatch.setattr(runner.frozen, "episode_cpu_reserve", lambda _arm: (5.0, {}))
     monkeypatch.setattr(runner, "_reconcile_start_progress", lambda *_args: [])
