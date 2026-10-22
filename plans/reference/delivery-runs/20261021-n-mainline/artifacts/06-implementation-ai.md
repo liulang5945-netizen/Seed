@@ -122,3 +122,11 @@ git diff --check
 - 修复：专用writer使用Win32 `CancelSynchronousIo`请求取消当前同步I/O，随后有界join并检查真实线程状态；成功响应前也要求writer线程已退出。失败仍未退出时保留带状态的`WorkerTaskFailure`，不清空`active_task`；终态明确记录`ipc_writer_exit_unverified`、`unknown_tail`、task id/operation及取消错误，并消费attempt。
 - 验证：原生Win32匿名管道阻塞读取取消集成测、deadline取消并join、writer未确认尾账测试均通过；定向4/4通过；完整模块43/43通过（8.97秒）；Ruff、py_compile、模块CLI `--help`、diff检查通过。微软文档说明该API向指定线程的待处理同步I/O发出取消请求，因此实现仍等待并核验线程终态，不把API返回当作退出证明。
 - 门禁：第三轮复审P0=0/P1=1/P2=0仍是有效历史结论；本补丁尚未独立审查，Phase 7/W5a未通过，W5b及真实数据读取保持冻结。
+
+### Phase 6 追加：task terminal缺失显式记账（2026-10-22）
+
+- 根因：第四轮审查针对提交`1dabdc963`发现false→true时序：`failed_task()`第一次取消/join仍未确认writer，未写query terminal；outer cleanup第二次才确认writer退出后，会把writer状态刷新为true，但既有`query_started`仍未闭合，且旧`unknown_tail`不检查活动task。
+- 红测：`test_writer_stopping_on_outer_cleanup_keeps_unwritten_query_terminal_unknown`先按旧实现运行，失败于`KeyError: task_terminal_missing`，证明终态遗漏。
+- 修复：新增`active_task_terminal_written`，只有durable ledger restore/query terminal写入成功后才置true。异常收敛时若当前task仍无terminal，则写`task_terminal_missing=true`、`unknown_tail=true`，并保留task_id/operation；后续writer退出不能抹去未闭合task事实。
+- 验证：false→true二次清理竞态测试1/1通过；模块完整合同44/44通过（9.14秒）；Ruff、Black、py_compile、模块CLI帮助与diff检查通过。未运行模型、restore、selector、`--execute`或真实dev/reference访问。
+- 门禁：第四轮报告`07-evaluation-review-1dabdc963.md`对旧提交仍判P0=0/P1=1/P2=0；此处修改未提交、未复核，W5a继续不放行。

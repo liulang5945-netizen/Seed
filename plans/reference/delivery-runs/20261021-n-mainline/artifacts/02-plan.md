@@ -59,3 +59,11 @@ Phase 7第二轮复审指出的P1-07/P2-04已落实到实现与合成测试：IP
 3. 新增真实Windows管道同步I/O取消集成测试、超时后writer join测试、writer未确认时保留task和unknown尾账的synthetic测试。完整评估器合同43/43、定向IPC与失败尾账4/4、Ruff、py_compile、模块`--help`及diff检查通过。
 
 修正未获得Phase 7独立复审，不改变第三轮P7不放行结论；据用户持续推进授权，补丁提交后再安排独立审查。三臂训练及W5b边界不变。
+
+## Phase 6 task terminal缺失与unknown尾账修正（2026-10-22）
+
+第四轮独立审查指出false→true的writer退出竞态：`failed_task()`第一次取消/join仍未确认writer，因而拒写query terminal；外层第二次清理后若writer退出，原状态可能把`unknown_tail`清成false。已新增红测`test_writer_stopping_on_outer_cleanup_keeps_unwritten_query_terminal_unknown`，旧代码首次失败于缺`task_terminal_missing`字段。
+
+实现现在显式维护`active_task_terminal_written`，只有ledger的restore/query终态事件耐久追加成功后才置true。任何异常结束时，只要当前`active_task`尚未写terminal，就在`evaluation_stopped`及failure receipt记录task id/operation、`task_terminal_missing=true`和`unknown_tail=true`，不受外层二次writer清理结果影响。false→true竞态单测1/1通过；模块全套44/44（9.14秒），Ruff、Black、py_compile、CLI `--help`和diff检查通过。
+
+修复尚未提交、也未独立复审。第四轮报告仅针对提交`1dabdc963`，结论P0=0/P1=1/P2=0继续有效；W5b、真实restore、dev/reference、selector与`--execute`仍冻结。用户持续推进授权支持对新提交继续独立复审；历史2/2回流预算按原样保留。

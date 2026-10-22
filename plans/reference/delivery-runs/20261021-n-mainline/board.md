@@ -224,3 +224,11 @@
 - 验证：提交对应记录为完整合同43/43与Win32匿名管道取消集成测试通过；本轮按要求未重跑。未读取真实dev/reference、restore模型、运行selector或`--execute`。
 - 回流判定：需显式保存task terminal缺失状态，并补false→true writer竞态测试；历史预算2/2和第三轮不放行结论保持原样。
 - 阶段指针：保持Phase 8；真实评测仍冻结。
+
+### Phase 6 追加返工：task terminal缺失显式记账（2026-10-22）
+- 第四轮审查`7859f7b1e`针对`1dabdc963`仍判P0=0/P1=1/P2=0：writer第二次清理才停止时，真实线程状态虽已确认，query terminal仍未写，旧`unknown_tail`可能误记false。
+- 红测复现`KeyError: task_terminal_missing`。修复新增durable terminal状态位；仅在ledger terminal落盘后置true；异常收敛时未闭合task总是记`task_terminal_missing=true`与`unknown_tail=true`，保留task id/operation。
+- 验证：false→true writer退出竞态测1/1、模块合同44/44；Ruff、Black、py_compile、CLI帮助与diff检查通过。
+- 状态：新修复尚未提交、待独立Phase 7复审；第四轮不放行结论仍是对旧提交的有效历史证据。真实评测及W5b继续冻结。
+- 训练快照未变：三臂last durable分别为9,472、14,528、14,528 episodes，attempt仍标training且无final；沙箱不能证明外部会话存活，不重启、不覆盖。
+- 方向与能力边界：继续以自然中文多轮对话为N主线当前目标；门禁修补不代表模型能力提升，`can_promote=false`及N1-166冻结不变。

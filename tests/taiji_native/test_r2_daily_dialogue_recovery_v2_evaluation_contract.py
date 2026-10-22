@@ -774,12 +774,15 @@ class _FakeSupervisedWorker:
         fail_operation=None,
         startup_cpu_seconds=0.0,
         ipc_write_thread_stopped=True,
+        writer_stops_after_terminate_calls=None,
     ):
         self.receipts = receipts
         self.endpoints = {item["endpoint_id"]: item for item in endpoints}
         self.fail_operation = fail_operation
         self.initial_child_cpu_seconds = startup_cpu_seconds
         self.ipc_write_thread_stopped = ipc_write_thread_stopped
+        self.writer_stops_after_terminate_calls = writer_stops_after_terminate_calls
+        self.terminate_calls = 0
         self.requests = []
         self.closed = False
 
@@ -835,6 +838,12 @@ class _FakeSupervisedWorker:
 
     def terminate_tree(self):
         self.closed = True
+        self.terminate_calls += 1
+        if (
+            self.writer_stops_after_terminate_calls is not None
+            and self.terminate_calls >= self.writer_stops_after_terminate_calls
+        ):
+            self.ipc_write_thread_stopped = True
         return True
 
 
@@ -1786,4 +1795,39 @@ def test_unstopped_ipc_writer_state_is_preserved_in_failure_tail(tmp_path):
     assert stopped["unknown_tail"] is True
     assert stopped["task_id"] is not None
     assert stopped["operation"] == "generate"
+    assert not any(event["event"] == "query_timeout" for event in events)
+
+
+def test_writer_stopping_on_outer_cleanup_keeps_unwritten_query_terminal_unknown(tmp_path):
+    _, _, preflight = _valid_records(tmp_path)
+    paths = _output_paths(tmp_path / "reports-late-writer-stop")
+    paths["readiness"].parent.mkdir(parents=True)
+    _write_readiness(paths, preflight)
+    receipts = _restore_receipts(preflight["endpoints"])
+    worker = _FakeSupervisedWorker(
+        receipts,
+        preflight["endpoints"],
+        fail_operation="generate",
+        ipc_write_thread_stopped=False,
+        writer_stops_after_terminate_calls=2,
+    )
+
+    with pytest.raises(evaluation.Refuse, match="one-shot evaluation attempt is consumed"):
+        evaluation.execute(
+            **_execute_kwargs(
+                paths,
+                preflight,
+                lambda **_kwargs: worker,
+                _DurabilityApi(),
+                prompt_selector=_prompts,
+            )
+        )
+
+    events = [json.loads(line) for line in paths["ledger"].read_text(encoding="utf-8").splitlines()]
+    stopped = next(event for event in events if event["event"] == "evaluation_stopped")
+    assert stopped["task_id"] is not None
+    assert stopped["operation"] == "generate"
+    assert stopped["ipc_writer_exit_unverified"] is False
+    assert stopped["task_terminal_missing"] is True
+    assert stopped["unknown_tail"] is True
     assert not any(event["event"] == "query_timeout" for event in events)

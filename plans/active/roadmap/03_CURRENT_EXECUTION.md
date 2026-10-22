@@ -2,7 +2,13 @@
 
 ## 当前执行：N1-165A结案；R2自然中文多轮对话v2三臂重做
 
-## 当前唯一下一步：对IPC writer可取消与失败尾账修复提交独立Phase 7复审；复审通过且三臂终点恢复齐备后，才进入W5b
+## 当前唯一下一步：独立复审提交中的task终态缺失修复；通过且三臂终点恢复齐备后，才进入W5b
+
+### 最新进度补充（2026-10-22 12:25 Asia/Shanghai）
+
+第四轮独立复核已对提交`1dabdc963`判P0=0/P1=1/P2=0：同步I/O取消与writer退出核验有效，但outer cleanup第二次才停writer时，query仍无terminal事件而`unknown_tail`可能误为false。该报告由`7859f7b1e`提交，严格针对旧提交。根任务按红测修复并通过新回归：持久记录`active_task_terminal_written`，仅在task terminal已耐久写入后标记完成；outer failure若当前task没有terminal，无论writer后续状态如何，写`task_terminal_missing=true`与`unknown_tail=true`并保留task id/operation。false→true cleanup测试先失败于缺少该字段，修复后1/1通过；完整合同44/44通过，Black、Ruff、py_compile、CLI帮助与diff检查通过。修复尚未提交，待计划同步与独立复审。
+
+训练三臂的durable进度仍止于04:52:46-04:53:28的既有快照，attempt记`training`且没有final；没有新回执。客户端更新中断原因、外部进程状态无法由沙箱验证、因此不自动重启/覆盖的边界不变。W5b与真实数据评测仍冻结，`can_promote=false`及N1-166冻结保持。
 
 ### 最新进度补充（2026-10-22 12:12 Asia/Shanghai）
 

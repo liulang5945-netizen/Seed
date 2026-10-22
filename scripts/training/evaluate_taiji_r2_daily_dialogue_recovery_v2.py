@@ -2848,6 +2848,7 @@ def execute(
     endpoint_cpu = {row["endpoint_id"]: 0.0 for row in endpoints}
     query_attempts = persisted = 0
     active_task: dict[str, Any] | None = None
+    active_task_terminal_written = False
     selector_started = face_persisted = failure_written = False
     worker: Any | None = None
 
@@ -2881,7 +2882,7 @@ def execute(
     def failed_task(
         op: str, task_id: str, endpoint_id: str, payload: Mapping[str, Any], exc: BaseException
     ) -> None:
-        nonlocal failure_written
+        nonlocal active_task_terminal_written, failure_written
         child_observed = max(0.0, float(getattr(exc, "observed_child_cpu_seconds", 0.0)))
         host_after, boot_after = host_cpu_fn(), boot_time_fn()
         boot_before = payload.get("boot_identity_before")
@@ -2964,6 +2965,7 @@ def execute(
             "timestamp_utc": datetime.now(UTC).isoformat(),
         }
         durable_append(ledger_path, event)
+        active_task_terminal_written = True
         durable_append(progress_path, event)
         _write_failure(
             output,
@@ -3108,6 +3110,7 @@ def execute(
             }
             durable_append(ledger_path, intent)
             durable_append(progress_path, intent)
+            active_task_terminal_written = False
             active_task = {"operation": "restore", "task_id": task_id, "endpoint_id": endpoint_id}
             child = 0.0
             child_measurement_valid = False
@@ -3281,6 +3284,7 @@ def execute(
                 durable_append(ledger_path, intent)
                 durable_append(progress_path, intent)
                 query_attempts += 1
+                active_task_terminal_written = False
                 active_task = {
                     "operation": "generate",
                     "task_id": task_id,
@@ -3551,6 +3555,7 @@ def execute(
         _write_new_json(Path(output["result"]), result)
         return result
     except BaseException as exc:
+        task_terminal_missing = active_task is not None and not active_task_terminal_written
         worker_tree_exit_verified = not (
             isinstance(exc, WorkerTaskFailure) and not exc.worker_tree_stopped
         )
@@ -3596,8 +3601,10 @@ def execute(
                 "cpu_seconds_total": budget.cpu_seconds(),
                 "wall_seconds_total": budget.wall_seconds(),
                 "unknown_tail": bool(selector_started and not face_persisted)
+                or task_terminal_missing
                 or not worker_tree_exit_verified
                 or not ipc_writer_exit_verified,
+                "task_terminal_missing": task_terminal_missing,
                 "worker_tree_exit_unverified": not worker_tree_exit_verified,
                 "ipc_writer_exit_unverified": not ipc_writer_exit_verified,
                 "ipc_writer_cancel_error": getattr(worker, "_ipc_writer_cancel_error", None),
@@ -3623,8 +3630,10 @@ def execute(
                     "cpu_seconds_total_at_failure": budget.cpu_seconds(),
                     "wall_seconds_at_failure": budget.wall_seconds(),
                     "unknown_tail": bool(selector_started and not face_persisted)
+                    or task_terminal_missing
                     or not worker_tree_exit_verified
                     or not ipc_writer_exit_verified,
+                    "task_terminal_missing": task_terminal_missing,
                     "worker_tree_exit_unverified": not worker_tree_exit_verified,
                     "ipc_writer_exit_unverified": not ipc_writer_exit_verified,
                     "ipc_writer_cancel_error": getattr(worker, "_ipc_writer_cancel_error", None),
