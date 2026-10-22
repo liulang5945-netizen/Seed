@@ -435,3 +435,8 @@ manifest绑定的checkpoint验证适配器ad4f8c7ef已对receipt祖先链、bund
 旧episode均值预测受最近长消息影响，full-turn被预测171,768秒而停止，并连带阻断其他臂；三条旧句柄22331/58323/96103均确认exit1。新6484dfbfa以实际target_byte_updates预测完整冻结工作量，保留1.15安全系数和probe/完成reserve及所有硬预算门，6项检查通过。实际新预测约185,963秒，aggregate余量约257,217秒，全部臂可行。
 
 新句柄full45943、warm45618、fresh39673已轮询确认存活并出现新增episode_completed。恢复点为9,856/14,912/15,136。下一步仅监测这三条句柄到原定30,096预训练+525SFT终点；旧句柄不得再次使用或重复启动。详见04-target-update-throughput-projection.md及reports/taiji_r2_target_update_resume_<arm>_*.json来源manifest。预算仍1.5M/臂、4.3M总额。
+
+
+## 完训前元数据入口准备
+
+新增prepare_taiji_r2_continuation_endpoints.py，5项检查通过。默认实际运行仅返回三臂仍缺final的training状态，dev_queries=0；--prepare必须等三臂完整result/readiness、唯一全链completion事件、关闭writer和父来源/最终checkpoint绑定全部通过，才发布独立manifest，can_query_dev/can_promote仍false。当前仍仅监测45943/45618/39673现有训练句柄，不访问保留面。22:48最近耐久进度为9,952/15,136/15,328，预算剩余约250,632 CPU秒。

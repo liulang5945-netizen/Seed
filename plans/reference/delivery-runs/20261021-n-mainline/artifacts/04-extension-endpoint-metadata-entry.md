@@ -1,0 +1,9 @@
+# Extension终点元数据入口
+
+新增prepare_taiji_r2_continuation_endpoints.py，入口只读取已存在的JSON与文件SHA，不导入模型、corpus或prompt selector。默认检查若任一extension result/readiness缺失，仅返回training和缺失arm列表，不写就绪文件。
+
+只有全部终点齐全时才全链验证aggregate ledger，要求无pending reservation且每臂唯一continuation_completed事件。逐臂要求checkpoint writer/reclaim锁已关闭，原sidecar、parent attempt/readiness/receipt/bundle SHA和source compatibility当前字节仍匹配，验证最终stage分母、checkpoint SHA、fresh restore、result/readiness/completion字节绑定和批准上限。
+
+--prepare仅write-once发布独立endpoint manifest；其can_query_dev与can_promote仍为false，不将extension结果伪装为旧restart-from-zero schema，不运行W5b或generation。下一阶段仍需专门的评测合同适配和执行准入。
+
+5项synthetic preflight检查通过：三臂完整元数据的正例、终点缺失先于ledger访问拒绝、重复completion拒绝、未关闭writer拒绝、parent SHA漂移拒绝。实际默认检查返回三个missing_final_arms与dev_queries=0，未创建终点就绪工件。
