@@ -7,6 +7,13 @@ repos:
     hooks:
       - id: ruff
         args: [--fix]
+      # 2026-10-22（项目审查 P0-3）：本地 B/SIM 棘轮口径，与 ci.yml「ratchet, baseline 0」
+      # 步同源。**刻意不带 --fix**：B023（闭包晚绑定）是唯一真 bug 类、必须逐点判语义；
+      # SIM114 合并同臂曾被裁定为"掩盖不同失败原因"（H19e 以带理由 noqa 处置）。
+      # 守卫只许红，不许静默改写。
+      - id: ruff
+        name: ruff (B/SIM ratchet, baseline 0)
+        args: [--select, B,SIM, --ignore, B008]
 
   - repo: https://github.com/psf/black
     rev: 26.5.1
