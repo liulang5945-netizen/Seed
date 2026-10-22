@@ -1,0 +1,145 @@
+# 历史快照：02-plan.md
+
+归档日期：2026-10-22。原路径：`plans/reference/delivery-runs/20261021-n-mainline/artifacts/02-plan.md`。原始内容 SHA-256：`cd8359cc969d218aa0daef126fc47ec0098f3849a4d6366d741a27113226f7b3`。
+
+本文件保留当时的决策、失败和审批记录；相对链接已换算为归档位置。历史“当前/下一步/额度”不再是执行授权，当前入口见[03当前执行](../../active/roadmap/03_CURRENT_EXECUTION.md)。
+
+---
+
+# 当前增量工程计划
+
+## 结论
+Phase 7评测器代码门已通过，但真实W5b仍锁定。R2三臂版本化续训上限先后为1M/3M、1.2M/3.6M；用户最新批准当前累计每臂1,450,000/聚合4,200,000 process-CPU秒（包含旧实耗与未知尾账）。72项合成测试通过；独立复审后从三臂原durable checkpoint续训。不得覆盖旧attempt、progress、result、checkpoint或冻结source hash。
+
+## 产物与依赖
+续训扩展合同 → versioned runner/CPU ledger及合成故障测试 → 独立代码审查 → 逐臂source/parent-checkpoint/readiness/资源门 → 三臂续训 → 三臂终点fresh-process恢复 → W5b评测门。真实生成仍须等所有训练终点和恢复门通过。
+
+## 遗留风险
+训练耗时可能跨会话；本交付完成不等于训练或N主线收官。
+
+## 给下游
+原R2-07旧计划保留为历史；v2真实评测按156次固定新生成要求执行。当前续训按[02-continuation-extension-plan.md](../../reference/delivery-runs/20261021-n-mainline/artifacts/02-continuation-extension-plan.md)推进；每臂额度包含全部旧actual/unknown-tail，不得重置。启动前重算尾账与资源，超过批准额度则停止并重新决策。
+
+## R2 recovery v2 W5 修订计划（2026-10-21）
+
+本增量补充保留以上旧R2-07计划作为历史；旧“78次新增/复用06两端输出”不适用于客户端更新后从zero恢复的v2三臂。后续实现与验收以 `artifacts/04-v2-evaluation-architecture.md` 为准，不改训练合同、runner或checkpoint。
+
+|工作包|负责人|输入|输出|完成标准|依赖|
+|---|---|---|---|---|---|
+|W5a v2独立评测实现|ai-integration|v2架构补充、固定06生成/restore接口|独立评测runner与synthetic契约测试|严格校验parent+3个v2 assistant_sft终点；restore前write-once计账；所有restore成功前不选prompt；测试证明156分母与fail-closed、不重试|架构补充；可与W4三臂训练并行|
+|W5b 真实一次性执行|执行岗|三臂final result/readiness/checkpoint及恢复回执、W5a审查通过|同面generation/result/attempt及CPU账本|四端点×39 family共156次新生成；CPU≤14,400秒且wall≤14,400秒，任一先到即停；0 reference/exact-match评分，can_promote=false|W4所有终点和独立恢复通过；W5a通过|
+|W6 人工审阅与结案|评审/文档岗|完整v2评测结果及生成|固定12-family四端点审阅、计划/报告同步与提交|可读性、贴题、历史连贯、重复逐项记录；仅据证据决定下一轮方向，不自动晋级|W5b完整且结果来源核验通过|
+
+关键依赖为W4→W5b→W6；W5a的实现、合成测试、代码审查可在W4训练期间并行。真实selector访问39-family面必须等待全部四个端点（parent baseline、full_turn_1m、warm_start、fresh_same_capacity）fresh-process恢复成功且执行账本完整。预算/资源门之后、首个恢复worker之前先write-once落盘attempt及CPU账本；逐个restore前后fsync记账。任何restore失败/强杀/账本不明均消费attempt并拒绝重跑，prompt仍零读取。
+
+验证边界：使用synthetic prompts和虚拟result/receipt验证，不读取dev/reference、不运行真实模型或训练；source/result/readiness/checkpoint SHA漂移、固定分母不符、路径越界、资源或双预算门失败均应fail closed。评测为局部描述性研究，不构成语言能力晋级或N1-166准入。
+
+## Phase 7 首轮审查回流（2026-10-22）
+
+首轮独立代码审查结论为打回（P0=0、P1=6、P2=3）；W5a尚未通过，不得进入真实评测。P1-06平台合同已由架构岗补充裁决并提交：仅支持Windows本地固定NTFS，以同目录exclusive-temp写入、文件刷新后经`MoveFileExW(MOVEFILE_WRITE_THROUGH)`无覆盖发布attempt和initial ledger；UNC/网络、ReFS、可移动或未验证文件系统必须fail closed。AI集成岗据此修复六项P1（worker只能由有效attempt/restore事件授权、子进程模块启动、restore与generation预算deadline、prompt selector前复核来源、支持平台的durable one-shot文件发布）并处理三项P2（完整成本报告口径、reserve算术、selector阶段意图记录），增加对应的合成失败注入。返工结束后重跑定向测试并由code-reviewer复审。三臂W4训练继续，不访问dev/reference，不启动真实restore、selector或generation。
+
+## Phase 2 W5a返工设计澄清（2026-10-22）
+
+本节将R2V2-08..10与04-v2架构新增合同落实为Phase 6可直接执行的返工顺序；旧W5a职责与Phase 7打回结论保留，不视为返工已完成。
+
+1. **durable one-shot入口：**仅支持Windows本地固定卷NTFS，实际报告目录必须预先存在；在同一目录创建exclusive temp，写后`FlushFileBuffers`，再用`MoveFileExW(MOVEFILE_WRITE_THROUGH)`无覆盖发布attempt与initial ledger。文件系统资格探测、attempt/ledger任一发布或内容核验失败时，在启动worker、restore或selector前拒绝。UNC/网络、ReFS、可移动介质及未验证文件系统fail closed。
+2. **单父进程与长驻worker：**父进程拥有attempt、CPU/wall账本和全部授权；一个受监督长驻worker顺序完成四端点fresh-process restore并驻留模型。worker不持有selector、dev路径或预取/重试权限。每个restore前先fsync唯一授权事件，返回后由父进程核验并durable记录完整restore回执；四端点回执全部持久化后，才允许父进程调用一次prompt selector。
+3. **逐条授权与有限期限：**selector完成后，父进程对每条生成先fsync `query_started`，再通过IPC只授权一个(endpoint,prompt SHA)工作项；worker完成后等待下一条授权。restore和generation各有有限deadline与有界采样间隔；deadline或预算门触发时停止派发，父进程在有限软/硬终止宽限内终止整棵worker进程树并等待退出，记录CPU/wall尾账与失败事件。终止/退出不可证明时不得继续或运行selector。
+4. **原双预算全额记账：**父进程与整棵worker树的启动、模型/语料加载、restore、生成、IPC、超时/取消、进程树终止、ledger及result最终化成本，全部计入原14,400 process-CPU秒和14,400 wall秒双门；不新增预算。每项授权前扣除剩余query、取消、终止与finalization reserve。已触门或无法证明余量时不再授权；保留已写attempt、query和失败/unknown-tail证据，消费attempt且不可重试/续跑。
+5. **回P7门禁：**P0必须为0、六项P1和三项P2全部关闭；相应synthetic故障测试均通过后才退回Phase 7独立复审。至少覆盖：worker无父attempt/伪造endpoint授权拒绝；模块方式启动与安全导入；restore/generation hang、CPU忙循环、worker后代及整树强制终止；selector前来源漂移保持selector调用为0；NTFS资格/flush/rename/第二marker失败时restore启动为0；最终CPU/wall包含finalization；reserve算术正确；selector意图事件先行fsync。只做synthetic/本地NTFS验证，不读取dev/reference、不运行真实模型、restore、selector或generation。
+
+W5b仍以Phase 7复审通过及三臂W4固定终点、result/readiness/checkpoint与fresh-process恢复齐备为前置；任一未满足均不启动真实评测。该返工设计不改变Phase 8主训练指针、冻结训练合同、156次分母或`can_promote=false`边界。
+
+## Phase 6 IPC与worker启动硬化补充（2026-10-22）
+
+Phase 7第二轮复审指出的P1-07/P2-04已落实到实现与合成测试：IPC JSON帧硬限制为2 KiB，generation只传已持久prompt face的路径、index与SHA；父进程通过独立写线程发送并在同一CPU/wall deadline循环中监督，超时先终止Job整树并在有限宽限内确认写线程退出。worker以`CREATE_SUSPENDED`创建，只有Job Object分配和成员验证通过后才恢复执行；启动失败不进入授权或selector。旧复审结论仍保留，Phase 7未因此自动通过。
+
+定向IPC/Job测试4/4通过，完整评估器合同40/40通过，Ruff、py_compile、模块`--help`及diff检查通过。完整测试首次发现一条测试仍断言旧ledger字段`worker_startup_cpu_seconds_before_job_assignment`；根因是实现按新启动顺序改为`worker_startup_cpu_seconds_charged_total`，只同步断言字段后精确复测1/1通过，再次全量40/40通过。未访问真实dev/reference、未restore模型、未调用selector或`--execute`。
+
+第二轮审查仍判不放行（P0=0、P1=1、P2=1），原定回流预算2/2已用尽。按用户持续推进至收官的明确授权，新增一次独立Phase 7复审作为本次新补丁的后续门禁；结果未出前，W5a仍标记未解决，W5b不得开始。R2-06/07的最后durable进度、attempt=`training`且无final已同步至活动路线图；因外部进程状态无法从沙箱确认，不重启或覆盖任何训练状态。
+
+## Phase 6 writer取消与失败尾账修正（2026-10-22）
+
+第三轮独立审查确认P2-04关闭，但指出IPC writer即使未退出，也可能在普通`Refuse`传播时丢掉writer状态和活动query身份。合成失败注入已复现：`evaluation_stopped`没有`ipc_writer_exit_unverified`且task为空。修复按以下顺序落实：
+
+1. 超时先终止Job Object进程树，再用Windows `CancelSynchronousIo`针对专用writer线程请求取消同步管道I/O；之后有界join并核验线程实际退出。该API只发出取消请求，故成功关闭worker树不能代替writer线程退出确认。参见[Microsoft Learn: CancelSynchronousIo](https://learn.microsoft.com/en-us/windows/win32/api/ioapiset/nf-ioapiset-cancelsynchronousio)。
+2. writer仍活时保留`WorkerTaskFailure`属性，不降格为普通`Refuse`；`active_task`在失败账本提交前保持有效。终态写`ipc_writer_exit_unverified=true`与`unknown_tail=true`并包含task_id/operation；如果终态不能证明writer停下，attempt仍消费且不允许恢复执行。
+3. 新增真实Windows管道同步I/O取消集成测试、超时后writer join测试、writer未确认时保留task和unknown尾账的synthetic测试。完整评估器合同43/43、定向IPC与失败尾账4/4、Ruff、py_compile、模块`--help`及diff检查通过。
+
+修正未获得Phase 7独立复审，不改变第三轮P7不放行结论；据用户持续推进授权，补丁提交后再安排独立审查。三臂训练及W5b边界不变。
+
+## Phase 6 task terminal缺失与unknown尾账修正（2026-10-22）
+
+第四轮独立审查指出false→true的writer退出竞态：`failed_task()`第一次取消/join仍未确认writer，因而拒写query terminal；外层第二次清理后若writer退出，原状态可能把`unknown_tail`清成false。已新增红测`test_writer_stopping_on_outer_cleanup_keeps_unwritten_query_terminal_unknown`，旧代码首次失败于缺`task_terminal_missing`字段。
+
+实现现在显式维护`active_task_terminal_written`，只有ledger的restore/query终态事件耐久追加成功后才置true。任何异常结束时，只要当前`active_task`尚未写terminal，就在`evaluation_stopped`及failure receipt记录task id/operation、`task_terminal_missing=true`和`unknown_tail=true`，不受外层二次writer清理结果影响。false→true竞态单测1/1通过；模块全套44/44（9.14秒），Ruff、Black、py_compile、CLI `--help`和diff检查通过。
+
+修复尚未提交、也未独立复审。第四轮报告仅针对提交`1dabdc963`，结论P0=0/P1=1/P2=0继续有效；W5b、真实restore、dev/reference、selector与`--execute`仍冻结。用户持续推进授权支持对新提交继续独立复审；历史2/2回流预算按原样保留。
+
+## Phase 6 成功terminal状态同步（2026-10-22）
+
+第五轮复审针对`aed03128a`发现成功terminal写入ledger后，状态位仍false；restore的progress append随后失败时会重复生成`restore_failed`，并把已有的`restore_completed`误报为task terminal缺失。新增synthetic故障注入验证了该重复terminal。
+
+修复在`restore_completed`与`query_output_persisted`各自的durable ledger append成功后立即置`active_task_terminal_written=true`。若同一执行区间的后续操作抛错，catch路径不再创建第二条失败terminal，而由外层记录`evaluation_stopped`，保留当前task身份且不把已落盘terminal误判为missing。失败注入单测1/1通过，完整模块合同45/45（9.42秒），Ruff、Black、py_compile、CLI `--help`及diff检查通过。
+
+该补丁尚未提交或复审。第五轮结论P0=0/P1=0/P2=1对提交`aed03128a`有效；P2按Phase 7门槛必须独立关闭后才可放行。真实W5b、restore、dev/reference、selector和`--execute`继续冻结。
+
+## Phase 6 task-start intent尾账修正（2026-10-22）
+
+第六轮复审对提交`8e4c736e2`发现task-start窗口：`restore_started/query_started` ledger append已成功，但progress append失败时，`active_task`尚未赋值；outer stopping event因此可能丢task_id/operation、漏掉query_attempt计数并将unknown尾账误记为已知。
+
+修复将当前task身份和terminal/intention状态初始化移动到ledger intent append之前。ledger intent耐久append返回成功后立即置`active_task_intent_written=true`；query intent同一时点递增`query_attempts`。progress append失败时外层分别区分`task_intent_unverified`与`task_terminal_missing`，保留task id/operation并设`unknown_tail=true`。restore/query两种progress故障注入2/2通过；模块合同47/47（10.08秒），Ruff、Black、py_compile、CLI `--help`与diff检查通过。
+
+此补丁尚未提交/独立复审。第六轮P0=0/P1=0/P2=1对提交`8e4c736e2`有效，P2-06须按Phase 7全P2闭合门槛独立确认；W5b、真实restore、dev/reference、selector与`--execute`仍冻结。
+
+## Phase 8 按durable checkpoint恢复三臂（2026-10-22）
+
+Phase 7评测器代码门由独立复审提交`928d4b8e6`通过（P0/P1/P2=0）；这不代表模型能力提升，也不解锁W5b。三臂attempt仍=`training`，没有final；最近durable进度为9,472/14,528/14,528 episodes，详见active roadmap。
+
+根任务只读核验了六个训练`writer.lock`：记录的PID 35200/26248/35196均已不存在；当前CPU双样本10.9%/9.6%、可用内存26.298 GiB。冻结恢复runner的`--resume`会在训练执行前校验sources/readiness/latest transaction，并由`reclaim_writer_lock`安全归档dead-owner lock；不创建新attempt、不采用无receipt孤立bundle。按用户持续推进授权，下一步恢复三臂原attempt并并发继续W4；若任一source、latest receipt、CPU或内存门失败，runner须fail closed并保留attempt证据。
+
+所有三臂达到固定训练终点且fresh-process恢复通过之前，W5b仍不启动，不读取真实dev/reference、不调用selector或`--execute`。对照读数及人工复核最终仍只作研究证据，`can_promote=false`，N1-166冻结不变。
+
+## Phase 8 source-bound resume处置（2026-10-22）
+
+只读核实三个原attempt的writer.lock owner PID均不存在，且资源采样10.9%/9.6% CPU、可用内存26.298 GiB符合冻结门。对三臂分别执行一次显式`--resume`后，runner在`source_bindings()`处拒绝：current `build_taiji_r2_daily_dialogue_full_turn_pretraining_corpus.py`的SHA与attempt不符。三臂均未进入`open_store`或训练、未回收锁、未改progress/checkpoint/attempt，因此没有新训练更新。
+
+逐个比较后，5个当前哈希不符源码文件的精确attempt版本都存在于Git历史：2个在`02e82d921`、2个在`85bfc59c8`、1个在`0669123d`；当前用户版本已暂存在Git index（总计163项暂存改动），需保留。继续使用重写source hash或直接resume当前代码均不符合原冻结合同。
+
+调整后的安全步骤：先对这5个当前文件做字节级临时备份并验证其与index一致，再按上述历史对象恢复attempt绑定的精确字节；只在同一仓库根与原数据目录下运行三臂`--resume`，等待三臂均通过source/readiness/latest-receipt恢复门并写出`training_resource_preflight_passed`后，立即按备份恢复工作区当前字节并核验index/worktree哈希不变。任何源快照、receipt或preflight不一致均fail closed；不重写attempt/checkpoint绑定、不创建新训练attempt、不碰未相关暂存改动。此步骤保留原source identity和checkpoint lineage。
+
+训练完成、终点fresh-process恢复通过之前不启动W5b，保持0 dev/reference、0 selector/`--execute`、`can_promote=false`与N1-166冻结。
+
+## Phase 8 CPU预算扩展决策草案（2026-10-22）
+
+完整源码overlay尝试中，full_turn_1m恢复成功越过source/readiness/latest bundle门，但随后runner按冻结规则写`recovery_stopped`并报`recovery CPU allocation exhausted; no implicit retry`；其`Budget.used()`约748,973秒，旧限240,000秒。warm_start/fresh_same_capacity未启动训练，先被额外绑定的`run_taiji_r2_daily_dialogue_warmstart_matched.py`源码差异拒绝；该精确快照位于`b6bb45b5`。三臂都未写新checkpoint，旧attempt不改。
+
+13:19 Asia/Shanghai按checkpoint ledger计算，boot identity改变后冻结的`tail_charge`采用elapsed wall×24 logical CPUs，上界full_turn_1m 764,220.402秒、warm_start 763,673.331秒、fresh_same_capacity 762,788.250秒；分别超过旧240,000/120,000/120,000秒上限。合计保守尾账2,290,682秒，不等同于实际新增训练消耗。按近期吞吐粗略外推剩余训练约150,000秒，但实际会受训练速率影响。
+
+为保留三个verified partial checkpoint并延续同一对话路线，建议另立版本化continuation attempt，旧attempt/receipt/hash保持只读；新runner先由架构/代码审查，再让每臂CPU上限提高到1,000,000秒（总上限3,000,000秒），完整携带上述unknown tail，额外训练不得超新上限。warm/fresh也必须加载`b6bb45b5`的精确绑定源码；W5b仍在三臂终点与独立恢复通过前禁止。此上限相对旧480,000秒约为6.25倍，虽为保守上界而非预计实耗，属于新的资源决策。当前先等待用户明确选择；未批准前不做预算override、不再启动训练。
+
+## Phase 8 版本化续训预算决策与计划修订（2026-10-22）
+
+用户已明确批准每臂累计1,000,000、三臂累计3,000,000 process-CPU秒。上节预算草案中“等待批准”已完成；早期临时source overlay并直接续原attempt的做法被新版本extension合同取代。额度是包含原attempt已记账CPU与冻结规则未知尾账的总累计上限，不是每臂新增1M或中断后重置。13:30:50快照的当前tail及每臂剩余额度见[续训扩展计划](../../reference/delivery-runs/20261021-n-mainline/artifacts/02-continuation-extension-plan.md)，启动前需按冻结公式重新计算。
+
+唯一下步为实现独立版本化extension runner、checkpoint分支谱系与单调CPU账本，并通过合成中断/恢复/并发聚合上限测试；由独立code-reviewer复核通过且三臂source兼容性与fresh-process parent checkpoint门通过后，才允许恢复训练。真实训练继续使用各自原checkpoint；旧attempt/progress/result/checkpoint/source hashes保持不可变。训练完成且三臂新终点readiness与恢复检查全过前，W5b、真实dev/reference、selector与`--execute`保持冻结，`can_promote=false`，N1-166继续冻结。
+
+### 额度修订（2026-10-22 15:19 Asia/Shanghai）
+
+用户批准将本窗口累计上限由每臂1,000,000/聚合3,000,000提高为每臂1,200,000/聚合3,600,000 process-CPU秒；历史账与未知尾账继续计入，不清零。15:20附近的只读尾账快照为937,951.469/937,416.609/936,544.407秒，聚合2,811,912.485秒；剩余额度约262,048.531/262,583.391/263,455.593秒，聚合788,087.515秒。旧预算决策作为历史保留。当前唯一下一步是关闭extension实现P1并完成独立复审，未通过前不运行prepare-only、restore或训练。
+
+### 17:12父checkpoint与预算复核
+
+
+### 17:50续训预算再次修订
+
+用户批准将本窗口累计上限由每臂1.2M/聚合3.6M提高为每臂1.3M/聚合3.9M process-CPU秒；旧实耗和未知尾账继续计入、不重置。17:50只读尾账为1,155,726.983/1,155,263.650/1,154,476.359秒，聚合3,465,466.992秒；新窗口余额144,273.017/144,736.350/145,523.641秒，聚合434,533.008秒。剩余工作预计约148k CPU秒，实测速率投影与开跑时重算仍是必过门。唯一下一步是完成独立审查，随后立即运行durable prepare-only并在批准额度内并发续训。
+
+### 18:02 checkpoint审计与实现验证
+
+三臂parent source/receipt/bundle/cursor只读审计再次通过；当前保守尾账为1,170,919.559/1,170,469.115/1,169,679.911秒，合计3,511,068.585秒，按1.3M/臂、3.9M总额还剩129,080.441/129,530.885/130,320.089秒，合计388,931.415秒。续训runner/账本联合合成测试58项、Ruff/format/Black/py_compile/CLI/diff检查通过。独立复审待完成；通过后立即刷新资源/预算/速率并运行prepare-only，随后恢复三臂。
+
+
+## 最新授权与执行门刷新
+
+用户最新批准每臂1.45M、合计4.2M process-CPU秒，覆盖此前1.38M/4.05M等较小审批；不重置旧成本。19:31:42只读累计上界聚合3,898,605.560537秒，剩余训练预测186,719.457141秒，当前余量301,394.439463秒，所有臂与aggregate投影可行。资源正式门CPU15.9/18.5%、可用内存27.669GiB通过；72项合成测试通过。唯一下一步为独立审查通过后立即运行NTFS prepare-only保存门，再在刷新门内并发续训。真实训练、W5b和能力晋级尚未放行。

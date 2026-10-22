@@ -1,5 +1,8 @@
 # 09 下一轮主线规划：架构与模型（N 系列，2026-10-06 开线；2026-10-14 第五版调度修订）
 
+> **2026-10-22 当前调度修订**：当前优先级为态极原生中文多轮对话，三臂已实际续训；批准累计上限1.5M CPU秒/臂、4.3M总额。当前唯一下一步是监测现有训练到完整终点，再核验extension证据并接入配对评测，详见[03当前执行](03_CURRENT_EXECUTION.md)。N1-166仍不准入；后继N2–N5保留设计与依赖，不因本文旧队首插队。本页以下带日期状态作为历史依据，旧预算与旧“下一步”不覆盖03。
+
+
 > **2026-10-21 用户优先级调整**：N1-165A已结案但原训练充分性门仅2/3通过，N1-166未准入、确认面未消费。R2-DIALOGUE-01至03R1已完成两臂配对续训和70个未消费family自由生成；停止标记改善但自然回复0/12连贯贴题。只读架构审计发现H3.7B并非37亿参数预训练模型，而是约278k active scalar的Taiji byte-aligned变体，从配置新建后只在12个任务episode上短训。材料inventory确认OASST2 train split内有3,762条安全消息、1.78M UTF-8字节、508个可用family；dev39 family未查询，旧final82全消费。当前唯一下一步是[PLAN-R2-DIALOGUE-06全轮自然对话预训练](../../reference/PLAN-R2-DAILY-DIALOGUE-FULL-TURN-PRETRAINING_20261021.md)：fresh 1M-capacity Taiji，8 epoch角色感知全轮预训练＋1 epoch assistant校准，CPU≤240,000秒；完成新语料与zero-save/独立恢复门后训练，在39个未触碰dev family上做一次自由生成审阅。执行以[03](03_CURRENT_EXECUTION.md)为准，不改写N系列历史结果或整体M0–M8状态。
 
 > **2026-10-20 N1现状**：N1-162B完成55,296次配对续训和7,488条train-only计分，final bundle恢复6/6；原N1-132门仅2/6通过，seed132题面未生成或查询，`can_promote=false`。N1-162C/D/E训练集离线归因确认：transition表面增强导致seed11/12大幅退化，seed12以反向turn输出为主；N1-155A→control续训本身主要影响unknown及少量factorial读数。当前唯一下一步已批准为[N1-162F](../../reference/PLAN-N1-162F_transition_template_crossover_train_diagnostic_20261020.md)：在九个冻结endpoint上交叉查询两种已用过的after-turn问句，6,912条train-only诊断、CPU≤1,200秒；独立恢复9/9后执行，0训练/更新/dev/holdout/confirmation。实时执行以[03](03_CURRENT_EXECUTION.md)为准。
