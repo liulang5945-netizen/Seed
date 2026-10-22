@@ -416,3 +416,10 @@ boot审计校正已按v1.3追加到原账本，旧event及prepared基线完整�
 ### 训练运行状态修正
 
 exec 80306（warm-start）已确认exit1，错误为剩余吞吐投影超过预算；最后耐久checkpoint为14,624 episodes（已新增96）。full-turn exec22331与fresh exec96103已再次轮询确认仍活跃，继续运行。warm无pending reservation；不据旧锁或最后progress推断其仍活跃，不重复启动另两臂。唯一下一步是在监测两条存活句柄的同时，核查warm本次投影拒绝及14,624 checkpoint恢复条件；预算仍1.5M/臂、4.3M。
+
+
+## 三臂持续训练已恢复
+
+manifest绑定的checkpoint验证适配器ad4f8c7ef已对receipt祖先链、bundle SHA和全部原来源/预算门通过验证，warm从14,624恢复。新句柄warm=58323，full=22331、fresh=96103；三条均已轮询确认存活。最新已验证耐久episode数为{'full_turn_1m': 9728, 'warm_start': 14688, 'fresh_same_capacity': 14912}。warm新增14,656 checkpoint后继续训练，未重算已提交episodes。
+
+适配器launch manifest位于reports/taiji_r2_checkpoint_adapter_warm_start_*.json，绑定adapter/test SHA、v1.3 source revision SHA、attempt SHA和恢复latest pointer。唯一下一步是监测这三条现有句柄至30,096预训练+525 SFT原终点；失败时先核实句柄和最后耐久receipt再处理，不能依据旧status重复启动。
