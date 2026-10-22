@@ -13,3 +13,5 @@ extension训练校验完整覆盖base原12项来源：builder只接受已验证c
 发布前必须在同一aggregate OS byte-range锁保护下全链回放账本，确认三臂完整、各臂≤1.45M、aggregate≤4.2M且无reservation；使用candidate amendment完整验证prepared sidecars、source绑定与checkpoint/receipt/bundle后才发布，锁保持到write-once发布完成。校验失败不得留下修订文件。prepared_progress_sha256是发布时审计锚，后续训练progress按原append-only合同延续。
 
 同锁内还须检查已验证全量账本历史：仅允许初始化、work_unit_reserved与三类prepare结算事件。即使reservation已结清、progress尚未写入start，也必须拒绝包含start/restore/training/stop/final或未知事件的历史，防止真实执行故障窗口被误收为prepared。
+
+exact-parent-byte的Git provenance固定使用v1 prepare时提交ad18ce7c7add64ea444f7f78c678e5d19a459cb9；仍验证该提交blob OID、blob SHA及当前文件clean-filter OID。后续无关提交不得改变既有来源证明元数据。已审builder差异继续使用各自冻结兼容表commit。

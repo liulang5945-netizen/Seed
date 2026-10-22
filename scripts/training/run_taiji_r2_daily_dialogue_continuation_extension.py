@@ -747,6 +747,8 @@ def validate_source_compatibility(
     arm: str,
     parent_source_hashes: dict[str, str],
     parent_identity: dict[str, str] | None = None,
+    *,
+    exact_revision: str = "HEAD",
 ) -> dict[str, Any]:
     if arm not in ARMS:
         raise Refuse(f"unknown arm: {arm}")
@@ -794,7 +796,7 @@ def validate_source_compatibility(
             try:
                 row.update(
                     _source_blob_provenance(
-                        "HEAD",
+                        exact_revision,
                         relative,
                         str(parent_sha),
                         worktree_path=source_path,
@@ -1105,6 +1107,7 @@ def _parent_context(arm: str) -> dict[str, Any]:
             "parent_receipt_sha256": PARENT_RECEIPT_SHA256[arm],
             "parent_bundle_sha256": PARENT_BUNDLE_SHA256[arm],
         },
+        exact_revision="ad18ce7c7add64ea444f7f78c678e5d19a459cb9",
     )
     progress_records = read_jsonl(location["parent_progress"])
     durable = [
