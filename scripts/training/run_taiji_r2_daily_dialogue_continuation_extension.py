@@ -887,14 +887,19 @@ def _continuation_source_binding(source_report_sha256: str) -> dict[str, Any]:
     }
 
 
-def _effective_attempt(attempt: dict[str, Any], source_report_sha256: str) -> dict[str, Any]:
+def _effective_attempt(
+    attempt: dict[str, Any],
+    source_report_sha256: str,
+    *,
+    candidate_revision: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     expected = _continuation_source_binding(source_report_sha256)
     if attempt.get("continuation_sources") == expected:
         return attempt
     revision_path = _source_revision_path()
-    if not revision_path.is_file() or revision_path.is_symlink():
+    if revision_path.is_symlink() or (candidate_revision is None and not revision_path.is_file()):
         raise Refuse("continuation source binding changed without a versioned source revision")
-    revision = read_json(revision_path)
+    revision = candidate_revision if candidate_revision is not None else read_json(revision_path)
     arm = attempt.get("arm")
     if arm not in ARMS:
         raise Refuse("source revision arm is invalid")
@@ -924,8 +929,22 @@ def _effective_attempt(attempt: dict[str, Any], source_report_sha256: str) -> di
         **attempt["source_compatibility"],
         "runner_sha256": expected["runner_sha256"],
     }
-    effective["source_revision_sha256"] = sha256_file(revision_path)
+    effective["source_revision_sha256"] = (
+        sha256_bytes((json.dumps(revision, sort_keys=True, separators=(",", ":")) + "\n").encode())
+        if candidate_revision is not None
+        else sha256_file(revision_path)
+    )
     return effective
+
+
+@contextmanager
+def _source_revision_budget_snapshot():
+    # Hold the shared budget serialization point until amendment publication.
+    with continuation_budget._aggregate_lock(continuation_budget.LOCK_PATH):
+        _, charges, reservations, _ = continuation_budget._read_ledger_full()
+        if reservations:
+            raise Refuse("source revision requires no active CPU reservation")
+        yield dict(charges)
 
 
 def prepare_source_revision() -> dict[str, Any]:
@@ -997,7 +1016,9 @@ def prepare_source_revision() -> dict[str, Any]:
         "approved_budget": {"per_arm": PER_ARM_CPU_LIMIT, "aggregate": AGGREGATE_CPU_LIMIT},
         "reason": "reviewed builder compatibility was rejected by frozen raw-SHA validator before execution",
     }
-    _write_json_once(_source_revision_path(), payload)
+    with _source_revision_budget_snapshot() as charges:
+        _validate_prepared(source_revision_candidate=payload, ledger_snapshot=charges)
+        _write_json_once(_source_revision_path(), payload)
     return _validate_prepared()
 
 
@@ -1436,19 +1457,28 @@ def _has_any_extension_artifact() -> bool:
     return first["contract_path"].exists()
 
 
-def _validate_prepared(*, allow_terminal_artifacts: bool = False) -> dict[str, Any]:
+def _validate_prepared(
+    *,
+    allow_terminal_artifacts: bool = False,
+    source_revision_candidate: dict[str, Any] | None = None,
+    ledger_snapshot: dict[str, float] | None = None,
+) -> dict[str, Any]:
     source_report_sha = sha256_file(ARCHITECTURE_REPORT)
     if not _expected_parent_paths(ARMS[0])["contract_path"].is_file():
         raise Refuse("global continuation contract is missing; run --prepare-only")
     _configure_prepared_storage()
-    charges = latest_charges()
+    charges = latest_charges() if ledger_snapshot is None else dict(ledger_snapshot)
     if set(charges) != set(ARMS):
         raise Refuse("aggregate ledger does not contain all three prepared arms")
     records: dict[str, Any] = {}
     for arm in ARMS:
         context = _parent_context(arm)
         location = context["locations"]
-        attempt = _effective_attempt(read_json(location["extension_attempt"]), source_report_sha)
+        attempt = _effective_attempt(
+            read_json(location["extension_attempt"]),
+            source_report_sha,
+            candidate_revision=source_revision_candidate,
+        )
         if (
             attempt.get("schema") != "taiji-r2-dialogue-continuation-extension-attempt-v1"
             or attempt.get("arm") != arm
@@ -1487,6 +1517,8 @@ def _validate_prepared(*, allow_terminal_artifacts: bool = False) -> dict[str, A
         ):
             raise Refuse(f"parent receipt fork changed: {arm}")
         records[arm] = context
+    if any(not 0 <= float(charges[arm]) <= PER_ARM_CPU_LIMIT for arm in ARMS):
+        raise Refuse("per-arm CPU ledger exceeds the approved ceiling")
     if sum(float(charges[arm]) for arm in ARMS) > AGGREGATE_CPU_LIMIT:
         raise Refuse("aggregate CPU ledger exceeds the approved ceiling")
     return {"source_report_sha256": source_report_sha, "charges": charges, "parents": records}

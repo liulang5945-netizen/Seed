@@ -9,3 +9,5 @@
 extension训练校验完整覆盖base原12项来源：builder只接受已验证compatibility report中精确parent/current SHA与Git provenance证明；其余数据、plan、manifest、readiness、reports和baseline checkpoint保持冻结原SHA。继续复用base corpus加载器、manifest/readiness的episode/family/role/target-byte不变量，仍执行frozen probe face。旧base validator及其常量不改，不monkeypatch。
 
 真实run必须在当前来源/版本化绑定、资源、预算、吞吐和计费父checkpoint fresh-process恢复门依次通过后才能更新权重。W5b、dev/reference、selector与晋级保持冻结。独立审查和实际来源衔接回归通过前不得发布amendment或启动训练。
+
+发布前必须在同一aggregate OS byte-range锁保护下全链回放账本，确认三臂完整、各臂≤1.45M、aggregate≤4.2M且无reservation；使用candidate amendment完整验证prepared sidecars、source绑定与checkpoint/receipt/bundle后才发布，锁保持到write-once发布完成。校验失败不得留下修订文件。prepared_progress_sha256是发布时审计锚，后续训练progress按原append-only合同延续。

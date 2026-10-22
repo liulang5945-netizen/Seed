@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
@@ -328,6 +329,16 @@ def _prepared_arms_fixture(tmp_path: Path, monkeypatch) -> dict[str, Any]:
     )
     monkeypatch.setattr(runner, "_configure_prepared_storage", lambda: {})
     monkeypatch.setattr(runner, "latest_reservations", lambda: {})
+    default_charges = {arm: 1_317_000.0 + index for index, arm in enumerate(runner.ARMS)}
+    monkeypatch.setattr(runner, "latest_charges", lambda: dict(default_charges))
+
+    @contextmanager
+    def mock_source_revision_budget_snapshot():
+        yield runner.latest_charges()
+
+    monkeypatch.setattr(
+        runner, "_source_revision_budget_snapshot", mock_source_revision_budget_snapshot
+    )
     monkeypatch.setattr(runner, "_parent_context", lambda arm: contexts[arm])
     monkeypatch.setattr(runner, "_parent_copy_state", lambda _context: ({}, []))
     monkeypatch.setattr(runner, "_write_json_once", _write_once)
@@ -379,6 +390,57 @@ def test_prepare_source_revision_is_append_only_and_does_not_reset_ledger(
         assert revision["original_attempts"][arm]["prepared_progress_sha256"] == _sha(
             progress_bytes[arm]
         )
+
+
+@pytest.mark.parametrize(
+    "charges, message",
+    [
+        ({"warm_start": 1_317_000.0}, "does not contain all three prepared arms"),
+        (
+            {
+                "full_turn_1m": 0.0,
+                "warm_start": runner.PER_ARM_CPU_LIMIT + 1.0,
+                "fresh_same_capacity": 0.0,
+            },
+            "per-arm CPU ledger exceeds",
+        ),
+        (
+            {
+                "full_turn_1m": runner.AGGREGATE_CPU_LIMIT / 3 + 1.0,
+                "warm_start": runner.AGGREGATE_CPU_LIMIT / 3 + 1.0,
+                "fresh_same_capacity": runner.AGGREGATE_CPU_LIMIT / 3 + 1.0,
+            },
+            "aggregate CPU ledger exceeds",
+        ),
+    ],
+)
+def test_prepare_source_revision_rejects_invalid_ledger_before_publishing(
+    tmp_path: Path, monkeypatch, charges: dict[str, float], message: str
+) -> None:
+    _prepared_arms_fixture(tmp_path, monkeypatch)
+    monkeypatch.setattr(runner, "latest_charges", lambda: dict(charges))
+
+    with pytest.raises(runner.Refuse, match=message):
+        runner.prepare_source_revision()
+
+    assert not runner._source_revision_path().exists()
+
+
+def test_prepare_source_revision_rejects_invalid_candidate_checkpoint_before_publishing(
+    tmp_path: Path, monkeypatch
+) -> None:
+    fixture = _prepared_arms_fixture(tmp_path, monkeypatch)
+    copied_latest = (
+        fixture["contexts"]["warm_start"]["locations"]["extension_checkpoint_root"]
+        / "pretraining"
+        / "latest.json"
+    )
+    copied_latest.write_bytes(_json_bytes({"receipt": "drifted.json"}))
+
+    with pytest.raises(runner.Refuse, match="parent receipt fork changed"):
+        runner.prepare_source_revision()
+
+    assert not runner._source_revision_path().exists()
 
 
 @pytest.mark.parametrize(
