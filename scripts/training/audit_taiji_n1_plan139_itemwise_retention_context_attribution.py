@@ -9,10 +9,19 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-PLAN = ROOT / "plans/reference/PLAN-N1-139_context_robust_matched_continuation_calibration_draft_20261019.md"
+PLAN = (
+    ROOT
+    / "plans/reference/PLAN-N1-139_context_robust_matched_continuation_calibration_draft_20261019.md"
+)
 N132_RESULT = ROOT / "reports/taiji_n1_plan132_binding_supervision_calibration_result_20261019.json"
-N139_RESULT = ROOT / "reports/taiji_n1_plan139_context_robust_matched_continuation_calibration_result_20261019.json"
-RUNNER = ROOT / "scripts/training/run_taiji_n1_plan139_context_robust_matched_continuation_calibration.py"
+N139_RESULT = (
+    ROOT
+    / "reports/taiji_n1_plan139_context_robust_matched_continuation_calibration_result_20261019.json"
+)
+RUNNER = (
+    ROOT
+    / "scripts/training/run_taiji_n1_plan139_context_robust_matched_continuation_calibration.py"
+)
 REPORT = ROOT / "reports/taiji_n1_plan139_itemwise_retention_context_attribution_20261019.json"
 CONDITIONS = ("8/d1", "8/d2", "8/d4", "16/d1", "16/d2", "16/d4")
 KINDS = ("lookup", "revision", "transition", "unknown")
@@ -55,8 +64,12 @@ def _paired(first: dict[str, bool], second: dict[str, bool]) -> dict:
         "second_only_correct": cells[(False, True)],
         "both_wrong": cells[(False, False)],
         "second_minus_first": sum(second.values()) - sum(first.values()),
-        "first_only_correct_ids": sorted(item for item in first if first[item] and not second[item]),
-        "second_only_correct_ids": sorted(item for item in first if not first[item] and second[item]),
+        "first_only_correct_ids": sorted(
+            item for item in first if first[item] and not second[item]
+        ),
+        "second_only_correct_ids": sorted(
+            item for item in first if not first[item] and second[item]
+        ),
     }
 
 
@@ -84,9 +97,7 @@ def analyze() -> dict:
         raise ValueError("完整N1-132/N1-139 train-only结果且无留出查询为前置")
 
     parent_by_seed = {
-        int(row["seed"]): row
-        for row in n132["models"]
-        if row.get("arm") == "position"
+        int(row["seed"]): row for row in n132["models"] if row.get("arm") == "position"
     }
     if set(parent_by_seed) != {11, 12, 13}:
         raise ValueError("N1-132须提供三个position父终点")
@@ -105,12 +116,8 @@ def analyze() -> dict:
         final_map = _score_map(final_original)
         by_kind = {}
         for kind in KINDS:
-            first = _score_map(
-                [row for row in parent_original if row.get("kind") == kind]
-            )
-            second = _score_map(
-                [row for row in final_original if row.get("kind") == kind]
-            )
+            first = _score_map([row for row in parent_original if row.get("kind") == kind])
+            second = _score_map([row for row in final_original if row.get("kind") == kind])
             by_kind[kind] = _paired(first, second)
         endpoint_sufficient = model.get("training_sufficient") is True
         original_gate_passes += int(endpoint_sufficient)
@@ -118,17 +125,12 @@ def analyze() -> dict:
         baseline_transition = {
             key: value
             for key, value in final_map.items()
-            if any(
-                row["id"] == key and row.get("kind") == "transition"
-                for row in final_original
-            )
+            if any(row["id"] == key and row.get("kind") == "transition" for row in final_original)
         }
         context_pairs = {}
         for condition in CONDITIONS:
             context_rows = [
-                row
-                for row in model["augmented_context_rows"]
-                if row.get("condition") == condition
+                row for row in model["augmented_context_rows"] if row.get("condition") == condition
             ]
             context_map = _score_map(context_rows, key="parent_id")
             paired = _paired(baseline_transition, context_map)
@@ -153,10 +155,7 @@ def analyze() -> dict:
     for condition in CONDITIONS:
         candidate_maps = candidate_context[condition]
         control_maps = control_context[condition]
-        by_seed = {
-            seed: _paired(candidate_maps[seed], control_maps[seed])
-            for seed in (11, 12, 13)
-        }
+        by_seed = {seed: _paired(candidate_maps[seed], control_maps[seed]) for seed in (11, 12, 13)}
         combined_candidate = {
             f"seed{seed}/{item}": value
             for seed in (11, 12, 13)
@@ -185,7 +184,10 @@ def analyze() -> dict:
         str(RUNNER.resolve()): sha256(RUNNER),
         str(Path(__file__).resolve()): sha256(Path(__file__)),
     }
-    unchanged = all(Path(path).is_file() and sha256(Path(path)) == digest for path, digest in source_hashes.items())
+    unchanged = all(
+        Path(path).is_file() and sha256(Path(path)) == digest
+        for path, digest in source_hashes.items()
+    )
     if not unchanged:
         raise ValueError("N1-139离线归因来源在分析期间改变")
 

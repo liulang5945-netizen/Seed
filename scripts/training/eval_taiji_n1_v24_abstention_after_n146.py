@@ -89,8 +89,10 @@ def _read_prepared_face() -> tuple[dict, dict, dict]:
         or manifest.get("word_value_count") != 13_968
         or len(set(manifest.get("excluded_entities", []))) != 36_802
         or len(set(manifest.get("excluded_word_values", []))) != 13_968
-        or face_builder.digest_strings(set(manifest.get("excluded_entities", []))) != manifest.get("entity_exclusion_sha256")
-        or face_builder.digest_strings(set(manifest.get("excluded_word_values", []))) != manifest.get("word_exclusion_sha256")
+        or face_builder.digest_strings(set(manifest.get("excluded_entities", [])))
+        != manifest.get("entity_exclusion_sha256")
+        or face_builder.digest_strings(set(manifest.get("excluded_word_values", [])))
+        != manifest.get("word_exclusion_sha256")
         or face.get("schema") != "n1-v24-matched-abstention-diagnostic-face-v1"
         or face.get("seed") != 124
         or face.get("plan_sha256") != PLAN_SHA256
@@ -237,7 +239,8 @@ def validate_only() -> dict:
         "endpoints": restore_checks,
         "endpoint_count": len(restore_checks),
         "independent_full_bundle_restores": len(restore_checks),
-        "all_full_bundles_equal": len(restore_checks) == 12 and all(row["equal"] for row in restore_checks),
+        "all_full_bundles_equal": len(restore_checks) == 12
+        and all(row["equal"] for row in restore_checks),
         "checkpoint_loads": len(restore_checks),
         "model_loads": len(restore_checks),
         "model_queries": 0,
@@ -250,7 +253,11 @@ def validate_only() -> dict:
         "cpu_limit_seconds": CPU_LIMIT_SECONDS,
         "errors": errors,
         "can_promote": False,
-        "summary_zh": "12个冻结完整bundle独立恢复及哈希核对通过；0模型查询/更新，可进入v24配对诊断一次性查询。" if complete else "checkpoint readiness未通过；停止，不查询、不训练、不重试。",
+        "summary_zh": (
+            "12个冻结完整bundle独立恢复及哈希核对通过；0模型查询/更新，可进入v24配对诊断一次性查询。"
+            if complete
+            else "checkpoint readiness未通过；停止，不查询、不训练、不重试。"
+        ),
     }
     write_new(READINESS, report)
     binding = {
@@ -324,11 +331,15 @@ def _paired_summary(rows: list[dict], face: dict) -> dict:
             pattern = (
                 "known_exact_unknown_abstain"
                 if known.get("free_exact") is True and unknown_is_abstain
-                else "known_abstains_unknown_abstain"
-                if known.get("output_hex") == b"unknown".hex() and unknown_is_abstain
-                else "known_exact_unknown_false_answer"
-                if known.get("free_exact") is True
-                else "other_pair_outcome"
+                else (
+                    "known_abstains_unknown_abstain"
+                    if known.get("output_hex") == b"unknown".hex() and unknown_is_abstain
+                    else (
+                        "known_exact_unknown_false_answer"
+                        if known.get("free_exact") is True
+                        else "other_pair_outcome"
+                    )
+                )
             )
             counts[pattern] += 1
         if len(pairs) != 40:
@@ -469,7 +480,9 @@ def execute_approved() -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PLAN-N1-147 matched known/unknown abstention diagnostic")
+    parser = argparse.ArgumentParser(
+        description="PLAN-N1-147 matched known/unknown abstention diagnostic"
+    )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--validate-only", action="store_true")
     group.add_argument("--execute-approved", action="store_true")
@@ -477,7 +490,22 @@ def main() -> int:
     result = validate_only() if args.validate_only else execute_approved()
     print(
         json.dumps(
-            {key: result.get(key) for key in ("status", "complete", "cpu_seconds", "cumulative_cpu_seconds", "independent_full_bundle_restores", "diagnostic_queries", "model_queries", "parameter_updates", "can_promote", "errors", "summary_zh")},
+            {
+                key: result.get(key)
+                for key in (
+                    "status",
+                    "complete",
+                    "cpu_seconds",
+                    "cumulative_cpu_seconds",
+                    "independent_full_bundle_restores",
+                    "diagnostic_queries",
+                    "model_queries",
+                    "parameter_updates",
+                    "can_promote",
+                    "errors",
+                    "summary_zh",
+                )
+            },
             ensure_ascii=True,
             sort_keys=True,
         )

@@ -37,11 +37,19 @@ ENDPOINTS = tuple((seed, branch) for seed in n150_builder.SEEDS for branch in n1
 EXPECTED_TOTAL_QUERIES = TOTAL_QUERIES_PER_ENDPOINT * len(ENDPOINTS)
 
 READINESS = ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_readiness_20261020.json"
-READINESS_ATTEMPT = ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_readiness_attempt_20261020.json"
-SOURCE_BINDING = ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_source_binding_20261020.json"
+READINESS_ATTEMPT = (
+    ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_readiness_attempt_20261020.json"
+)
+SOURCE_BINDING = (
+    ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_source_binding_20261020.json"
+)
 PREFLIGHT = ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_preflight_20261020.json"
-PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_preflight_attempt_20261020.json"
-PREFLIGHT_BINDING = ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_preflight_binding_20261020.json"
+PREFLIGHT_ATTEMPT = (
+    ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_preflight_attempt_20261020.json"
+)
+PREFLIGHT_BINDING = (
+    ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_preflight_binding_20261020.json"
+)
 ATTEMPT = ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_attempt_20261020.json"
 RESULT = ROOT / "reports/taiji_n1_plan151a_train_score_ledger_recovery_result_20261020.json"
 TEST = ROOT / "tests/taiji_native/test_n1_plan151_train_score_ledger_recovery_contract.py"
@@ -88,7 +96,10 @@ def write_new(path: Path, value: dict) -> None:
 
 
 def verify_hashes(source_hashes: dict[str, str]) -> bool:
-    return all(Path(path).is_file() and sha256(Path(path)) == digest for path, digest in source_hashes.items())
+    return all(
+        Path(path).is_file() and sha256(Path(path)) == digest
+        for path, digest in source_hashes.items()
+    )
 
 
 def _merge_hashes(target: dict[str, str], incoming: dict[str, str]) -> None:
@@ -104,11 +115,23 @@ def _endpoint_records(result: dict) -> dict[tuple[int, str], dict]:
     records = {(int(row["seed"]), str(row["branch"])): row for row in result.get("models", [])}
     require(set(records) == set(ENDPOINTS), "N1-150 must contain exactly the six frozen endpoints")
     for endpoint, row in records.items():
-        require(row.get("training_sufficient") is True, f"N1-150 endpoint did not pass its original gate: {endpoint}")
-        require(row.get("original_train_gate_queries") == ORIGINAL_GATE_QUERIES_PER_ENDPOINT, f"N1-150 original gate denominator differs: {endpoint}")
-        require(row.get("length_score_queries") == LENGTH_QUERIES_PER_ENDPOINT, f"N1-150 length denominator differs: {endpoint}")
+        require(
+            row.get("training_sufficient") is True,
+            f"N1-150 endpoint did not pass its original gate: {endpoint}",
+        )
+        require(
+            row.get("original_train_gate_queries") == ORIGINAL_GATE_QUERIES_PER_ENDPOINT,
+            f"N1-150 original gate denominator differs: {endpoint}",
+        )
+        require(
+            row.get("length_score_queries") == LENGTH_QUERIES_PER_ENDPOINT,
+            f"N1-150 length denominator differs: {endpoint}",
+        )
         checkpoint = Path(row["final_checkpoint_path"]).resolve()
-        require(checkpoint.is_file() and sha256(checkpoint) == row["final_checkpoint_sha256"], f"N1-150 final checkpoint changed: {endpoint}")
+        require(
+            checkpoint.is_file() and sha256(checkpoint) == row["final_checkpoint_sha256"],
+            f"N1-150 final checkpoint changed: {endpoint}",
+        )
     return records
 
 
@@ -132,7 +155,9 @@ def _load_n150_source_context() -> tuple[dict, dict, dict, dict, dict]:
     return readiness, preflight, result, bound, schedule
 
 
-def unpack_n150_preflight(parts: tuple, result_report: dict) -> tuple[dict, dict, dict, dict, dict, dict]:
+def unpack_n150_preflight(
+    parts: tuple, result_report: dict
+) -> tuple[dict, dict, dict, dict, dict, dict]:
     """Keep the third N1-150 return value as its binding; load result separately."""
     if len(parts) != 5:
         raise Refuse("N1-150 frozen preflight return arity changed")
@@ -179,10 +204,7 @@ def validate_gate_parity(recovered: dict, frozen: dict) -> None:
 
 
 def validate_row_coverage(rows: list[dict]) -> dict:
-    counts = Counter(
-        (int(row["seed"]), str(row["branch"]), str(row["event"]))
-        for row in rows
-    )
+    counts = Counter((int(row["seed"]), str(row["branch"]), str(row["event"])) for row in rows)
     expected = {}
     for seed, branch in ENDPOINTS:
         expected[(seed, branch, "original_train_gate_row")] = ORIGINAL_GATE_QUERIES_PER_ENDPOINT
@@ -204,18 +226,35 @@ def _readiness_source_context() -> tuple[dict, dict, dict, dict, dict, dict[str,
     sources = collect_source_hashes(n150_result)
     inputs = bound["inputs"]
     require(len(inputs.get("items", [])) == 192, "N1-151 requires the original 192 train tasks")
-    require(all(item.get("split") == "train" for item in inputs["items"]), "N1-151 source must remain train-only")
+    require(
+        all(item.get("split") == "train" for item in inputs["items"]),
+        "N1-151 source must remain train-only",
+    )
     selected = n150._length_score_items(inputs)
-    require({length: len(items) for length, items in selected.items()} == {8: 96, 16: 96, 32: 96}, "N1-150A length sample selection differs")
+    require(
+        {length: len(items) for length, items in selected.items()} == {8: 96, 16: 96, 32: 96},
+        "N1-150A length sample selection differs",
+    )
     return readiness, preflight, n150_result, bound, schedule, sources
 
 
 def source_readiness() -> dict:
-    outputs = (READINESS, READINESS_ATTEMPT, SOURCE_BINDING, PREFLIGHT, PREFLIGHT_ATTEMPT, PREFLIGHT_BINDING, ATTEMPT, RESULT)
+    outputs = (
+        READINESS,
+        READINESS_ATTEMPT,
+        SOURCE_BINDING,
+        PREFLIGHT,
+        PREFLIGHT_ATTEMPT,
+        PREFLIGHT_BINDING,
+        ATTEMPT,
+        RESULT,
+    )
     if any(path.exists() for path in outputs):
         raise FileExistsError("PLAN-N1-151 outputs are write-once")
     started = time.process_time()
-    _n150_readiness, _n150_preflight, n150_result, bound, schedule, sources = _readiness_source_context()
+    _n150_readiness, _n150_preflight, n150_result, bound, schedule, sources = (
+        _readiness_source_context()
+    )
     require(verify_hashes(sources), "N1-151 source changed during no-query readiness")
     cpu = time.process_time() - started
     complete = cpu <= CPU_LIMIT_SECONDS and len(sources) >= 12
@@ -253,27 +292,33 @@ def source_readiness() -> dict:
         "can_promote": False,
         "summary_zh": "N1-150来源、六枚final checkpoint、train-only题目与7,488条重复评分分母核验通过；0模型/checkpoint加载、0查询、0更新。",
     }
-    write_new(READINESS_ATTEMPT, {
-        "schema": "n1-plan151a-readiness-attempt-v1",
-        "status": "started",
-        "plan_sha256": PLAN_SHA256,
-        "repair_addendum_sha256": REPAIR_PLAN_SHA256,
-        "source_hash_count": len(sources),
-        "cpu_seconds": round(cpu, 6),
-        "model_loads": 0,
-        "model_queries": 0,
-        "parameter_updates": 0,
-    })
+    write_new(
+        READINESS_ATTEMPT,
+        {
+            "schema": "n1-plan151a-readiness-attempt-v1",
+            "status": "started",
+            "plan_sha256": PLAN_SHA256,
+            "repair_addendum_sha256": REPAIR_PLAN_SHA256,
+            "source_hash_count": len(sources),
+            "cpu_seconds": round(cpu, 6),
+            "model_loads": 0,
+            "model_queries": 0,
+            "parameter_updates": 0,
+        },
+    )
     write_new(READINESS, report)
-    write_new(SOURCE_BINDING, {
-        "schema": "n1-plan151a-readiness-source-binding-v1",
-        "status": "complete" if complete else "stopped",
-        "plan_sha256": PLAN_SHA256,
-        "repair_addendum_sha256": REPAIR_PLAN_SHA256,
-        "readiness_sha256": sha256(READINESS),
-        "source_hashes": sources,
-        "can_promote": False,
-    })
+    write_new(
+        SOURCE_BINDING,
+        {
+            "schema": "n1-plan151a-readiness-source-binding-v1",
+            "status": "complete" if complete else "stopped",
+            "plan_sha256": PLAN_SHA256,
+            "repair_addendum_sha256": REPAIR_PLAN_SHA256,
+            "readiness_sha256": sha256(READINESS),
+            "source_hashes": sources,
+            "can_promote": False,
+        },
+    )
     return report
 
 
@@ -317,15 +362,18 @@ def checkpoint_preflight() -> dict:
         raise TimeoutError("N1-151 CPU ceiling exhausted during readiness revalidation")
     budget = n132.CpuBudget(remaining)
     budget.guard(reserve=30)
-    write_new(PREFLIGHT_ATTEMPT, {
-        "schema": "n1-plan151a-checkpoint-preflight-attempt-v1",
-        "status": "started",
-        "plan_sha256": PLAN_SHA256,
-        "repair_addendum_sha256": REPAIR_PLAN_SHA256,
-        "final_checkpoint_count": len(ENDPOINTS),
-        "model_queries": 0,
-        "parameter_updates": 0,
-    })
+    write_new(
+        PREFLIGHT_ATTEMPT,
+        {
+            "schema": "n1-plan151a-checkpoint-preflight-attempt-v1",
+            "status": "started",
+            "plan_sha256": PLAN_SHA256,
+            "repair_addendum_sha256": REPAIR_PLAN_SHA256,
+            "final_checkpoint_count": len(ENDPOINTS),
+            "model_queries": 0,
+            "parameter_updates": 0,
+        },
+    )
     expected = {(int(row["seed"]), str(row["branch"])): row for row in n150_result["models"]}
     restores = []
     errors = []
@@ -338,7 +386,8 @@ def checkpoint_preflight() -> dict:
             if (
                 restored.get("sha256") != model_row.get("final_checkpoint_sha256")
                 or restored.get("fingerprint") != model_row.get("final_bundle_fingerprint")
-                or restored.get("total_updates") != n150_builder.n132.TOTAL_UPDATES + n150_builder.UPDATES_PER_MODEL
+                or restored.get("total_updates")
+                != n150_builder.n132.TOTAL_UPDATES + n150_builder.UPDATES_PER_MODEL
                 or restored.get("history_count") != model_row.get("final_history_count")
             ):
                 raise Refuse(f"N1-151 independent final restore differs: {seed}/{branch}")
@@ -377,21 +426,30 @@ def checkpoint_preflight() -> dict:
         "errors": errors,
         "can_promote": False,
     }
-    report["summary_zh"] = "六个N1-150 final full bundle已再次独立恢复6/6；0模型查询、0参数更新，可进入逐题计分。" if complete else "final bundle恢复前置停止；不计分、不重试。"
+    report["summary_zh"] = (
+        "六个N1-150 final full bundle已再次独立恢复6/6；0模型查询、0参数更新，可进入逐题计分。"
+        if complete
+        else "final bundle恢复前置停止；不计分、不重试。"
+    )
     write_new(PREFLIGHT, report)
-    write_new(PREFLIGHT_BINDING, {
-        "schema": "n1-plan151a-final-checkpoint-preflight-binding-v1",
-        "status": "complete" if complete else "stopped",
-        "plan_sha256": PLAN_SHA256,
-        "repair_addendum_sha256": REPAIR_PLAN_SHA256,
-        "preflight_sha256": sha256(PREFLIGHT),
-        "source_hashes": all_sources,
-        "can_promote": False,
-    })
+    write_new(
+        PREFLIGHT_BINDING,
+        {
+            "schema": "n1-plan151a-final-checkpoint-preflight-binding-v1",
+            "status": "complete" if complete else "stopped",
+            "plan_sha256": PLAN_SHA256,
+            "repair_addendum_sha256": REPAIR_PLAN_SHA256,
+            "preflight_sha256": sha256(PREFLIGHT),
+            "source_hashes": all_sources,
+            "can_promote": False,
+        },
+    )
     return report
 
 
-def _length_rows(model, optimizer, seed: int, branch: str, inputs: dict, views: dict, budget: n132.CpuBudget) -> list[dict]:
+def _length_rows(
+    model, optimizer, seed: int, branch: str, inputs: dict, views: dict, budget: n132.CpuBudget
+) -> list[dict]:
     before = n150._fingerprint(model, optimizer)
     rows = []
     selected = n150._length_score_items(inputs)
@@ -413,7 +471,9 @@ def _length_rows(model, optimizer, seed: int, branch: str, inputs: dict, views: 
     return rows
 
 
-def _score_endpoint(model_row: dict, bound: dict, schedule: dict, budget: n132.CpuBudget) -> tuple[dict, list[dict]]:
+def _score_endpoint(
+    model_row: dict, bound: dict, schedule: dict, budget: n132.CpuBudget
+) -> tuple[dict, list[dict]]:
     seed, branch = int(model_row["seed"]), str(model_row["branch"])
     checkpoint = Path(model_row["final_checkpoint_path"]).resolve()
     if sha256(checkpoint) != model_row["final_checkpoint_sha256"]:
@@ -426,17 +486,36 @@ def _score_endpoint(model_row: dict, bound: dict, schedule: dict, budget: n132.C
     gate_rows, gate_summary, sufficient, gate_queries = n132._evaluate_train_only(
         bound["g"], model, optimizer, seed, inputs, budget
     )
-    require(gate_queries == ORIGINAL_GATE_QUERIES_PER_ENDPOINT and len(gate_rows) == ORIGINAL_GATE_QUERIES_PER_ENDPOINT, f"N1-151 original gate denominator differs: {seed}/{branch}")
+    require(
+        gate_queries == ORIGINAL_GATE_QUERIES_PER_ENDPOINT
+        and len(gate_rows) == ORIGINAL_GATE_QUERIES_PER_ENDPOINT,
+        f"N1-151 original gate denominator differs: {seed}/{branch}",
+    )
     validate_gate_parity(gate_summary, model_row["original_train_gate"])
-    require(sufficient is model_row["training_sufficient"] is True, f"N1-151 original gate sufficiency differs: {seed}/{branch}")
-    rows = [{"event": "original_train_gate_row", "seed": seed, "branch": branch, **row} for row in gate_rows]
+    require(
+        sufficient is model_row["training_sufficient"] is True,
+        f"N1-151 original gate sufficiency differs: {seed}/{branch}",
+    )
+    rows = [
+        {"event": "original_train_gate_row", "seed": seed, "branch": branch, **row}
+        for row in gate_rows
+    ]
     length_rows = _length_rows(model, optimizer, seed, branch, inputs, schedule["views"], budget)
     rows.extend(length_rows)
     length_summary = n150._length_score_summary(length_rows)
-    require(length_summary == model_row["train_only_length_summary"], f"N1-151 length aggregates differ from N1-150: {seed}/{branch}")
-    require(n150._fingerprint(model, optimizer) == before, f"N1-151 scoring changed the complete bundle: {seed}/{branch}")
+    require(
+        length_summary == model_row["train_only_length_summary"],
+        f"N1-151 length aggregates differ from N1-150: {seed}/{branch}",
+    )
+    require(
+        n150._fingerprint(model, optimizer) == before,
+        f"N1-151 scoring changed the complete bundle: {seed}/{branch}",
+    )
     total_steps = {int(optimizer.state[param]["step"]) for param in model.parameters()}
-    require(total_steps == {n132.TOTAL_UPDATES + n150_builder.UPDATES_PER_MODEL}, f"N1-151 final optimizer step changed: {seed}/{branch}")
+    require(
+        total_steps == {n132.TOTAL_UPDATES + n150_builder.UPDATES_PER_MODEL},
+        f"N1-151 final optimizer step changed: {seed}/{branch}",
+    )
     record = {
         "seed": seed,
         "branch": branch,
@@ -459,7 +538,9 @@ def _score_endpoint(model_row: dict, bound: dict, schedule: dict, budget: n132.C
 
 
 def _verify_preflight() -> tuple[dict, dict, dict, dict, dict, dict, dict[str, str]]:
-    if not all(path.is_file() for path in (READINESS, SOURCE_BINDING, PREFLIGHT, PREFLIGHT_BINDING)):
+    if not all(
+        path.is_file() for path in (READINESS, SOURCE_BINDING, PREFLIGHT, PREFLIGHT_BINDING)
+    ):
         raise FileNotFoundError("N1-151 readiness and six-final-restore preflight are required")
     readiness = read_json(READINESS)
     source_binding = read_json(SOURCE_BINDING)
@@ -490,12 +571,22 @@ def _verify_preflight() -> tuple[dict, dict, dict, dict, dict, dict, dict[str, s
         raise Refuse("N1-151 bound source/checkpoint hashes changed before scoring")
     n150_readiness, n150_preflight, n150_result, bound, schedule = _load_n150_source_context()
     sources = collect_source_hashes(n150_result)
-    return readiness, preflight, n150_readiness, n150_preflight, n150_result, {"bound": bound, "schedule": schedule}, sources
+    return (
+        readiness,
+        preflight,
+        n150_readiness,
+        n150_preflight,
+        n150_result,
+        {"bound": bound, "schedule": schedule},
+        sources,
+    )
 
 
 def execute_approved() -> dict:
     started = time.process_time()
-    readiness, preflight, _n150_readiness, _n150_preflight, n150_result, runtime, sources = _verify_preflight()
+    readiness, preflight, _n150_readiness, _n150_preflight, n150_result, runtime, sources = (
+        _verify_preflight()
+    )
     validation_cpu = time.process_time() - started
     remaining = CPU_LIMIT_SECONDS - float(preflight["cumulative_cpu_seconds"]) - validation_cpu
     if remaining <= 0:
@@ -583,7 +674,8 @@ def execute_approved() -> dict:
         "length_rows_per_endpoint": LENGTH_QUERIES_PER_ENDPOINT,
         "total_rows_per_endpoint": TOTAL_QUERIES_PER_ENDPOINT,
         "n150_original_train_only_queries": n150_result["train_score_queries"],
-        "combined_n150_plus_n151_train_only_queries": n150_result["train_score_queries"] + query_count,
+        "combined_n150_plus_n151_train_only_queries": n150_result["train_score_queries"]
+        + query_count,
         "parameter_updates": 0,
         "optimizer_steps": 0,
         "dev_queries": 0,
@@ -602,7 +694,9 @@ def execute_approved() -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PLAN-N1-151A source-binding repair and score ledger recovery")
+    parser = argparse.ArgumentParser(
+        description="PLAN-N1-151A source-binding repair and score ledger recovery"
+    )
     modes = parser.add_mutually_exclusive_group(required=True)
     modes.add_argument("--validate-only", action="store_true")
     modes.add_argument("--checkpoint-preflight", action="store_true")

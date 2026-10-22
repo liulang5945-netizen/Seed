@@ -36,7 +36,9 @@ class JsonStream:
     """Scan JSON values without decoding skipped row payloads."""
 
     def __init__(self, path: Path):
-        self._stream = Path(path).open("r", encoding="utf-8")
+        # noqa 下一条：SIM115 —— 句柄由实例持有、生命周期即对象生命周期，由 close() 显式关闭，
+        # 包 with 会在构造时立刻关闭（错误修法）。
+        self._stream = Path(path).open("r", encoding="utf-8")  # noqa: SIM115
         self._lookahead: str | None = None
         self._lookahead_cookie = None
 

@@ -80,7 +80,9 @@ def configure() -> None:
             value["prior_failed_cpu_seconds"] = PRIOR_FAILED_CPU_SECONDS
             value["linked_cpu_limit_seconds"] = LINKED_CPU_LIMIT_SECONDS
             if "cpu_seconds" in value:
-                value["linked_cpu_seconds"] = round(PRIOR_FAILED_CPU_SECONDS + float(value["cpu_seconds"]), 6)
+                value["linked_cpu_seconds"] = round(
+                    PRIOR_FAILED_CPU_SECONDS + float(value["cpu_seconds"]), 6
+                )
         original_write_new(path, value)
 
     g.write_new = _write_with_linked_budget
@@ -95,10 +97,24 @@ def main() -> int:
     except Exception as exc:
         print(f"PLAN-N1-162G1 refused: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 1
-    print(json.dumps({key: result[key] for key in (
-        "status", "cpu_seconds", "parameter_updates_in_memory", "summary_by_threads",
-        "best_median_thread_count", "stable_recommendation_thread_count", "summary_zh",
-    )}, ensure_ascii=False, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                key: result[key]
+                for key in (
+                    "status",
+                    "cpu_seconds",
+                    "parameter_updates_in_memory",
+                    "summary_by_threads",
+                    "best_median_thread_count",
+                    "stable_recommendation_thread_count",
+                    "summary_zh",
+                )
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+    )
     return 0
 
 

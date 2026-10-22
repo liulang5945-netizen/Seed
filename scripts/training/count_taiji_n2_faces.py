@@ -61,11 +61,7 @@ def _strip_volatile(node: Any, top: bool = False) -> Any:
 
     if isinstance(node, dict):
         drop = VOLATILE_KEYS | PROVENANCE_KEYS if top else VOLATILE_KEYS
-        return {
-            key: _strip_volatile(value)
-            for key, value in node.items()
-            if key not in drop
-        }
+        return {key: _strip_volatile(value) for key, value in node.items() if key not in drop}
     if isinstance(node, list):
         return [_strip_volatile(item) for item in node]
     return node
@@ -150,9 +146,7 @@ def _main_column_entries(payload: Any) -> dict[str, dict[str, Any]]:
     def walk(node: Any) -> None:
         if isinstance(node, dict):
             if "never_lf_eaters_counted" in node:
-                source = str(
-                    node.get("report") or node.get("path") or node.get("name") or ""
-                )
+                source = str(node.get("report") or node.get("path") or node.get("name") or "")
                 found[source] = {
                     "never_lf_eaters_counted": node.get("never_lf_eaters_counted"),
                     "generation_rows_seen": node.get("generation_rows_seen"),
@@ -230,12 +224,8 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         )
 
     #: G-N2-1 的实证：回退面与巩固前**读数**逐位同（剥掉易变字段与出处字段之后）。
-    comparable_before = json.dumps(
-        _strip_volatile(cap0_before, top=True), sort_keys=True
-    )
-    comparable_rollback = json.dumps(
-        _strip_volatile(cap0_rollback, top=True), sort_keys=True
-    )
+    comparable_before = json.dumps(_strip_volatile(cap0_before, top=True), sort_keys=True)
+    comparable_rollback = json.dumps(_strip_volatile(cap0_rollback, top=True), sort_keys=True)
     g_n2_1_identical = comparable_before == comparable_rollback
 
     #: 动态范围：巩固前后如果整张面读数逐位同，说明这把尺量不动权重变化——不是"保持住了"。
@@ -253,9 +243,7 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
     for key in shared:
         b, a = arms_before[key], arms_after[key]
         hits_delta = int(a["strict_hits"] or 0) - int(b["strict_hits"] or 0)
-        formed_delta = int(a["well_formed_texts"] or 0) - int(
-            b["well_formed_texts"] or 0
-        )
+        formed_delta = int(a["well_formed_texts"] or 0) - int(b["well_formed_texts"] or 0)
         hits_dropped += int(hits_delta < 0)
         formed_dropped += int(formed_delta < 0)
         replay_rows[key] = {
@@ -284,9 +272,7 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         "rollback_tensors_changed": tensor.get("rollback", {}).get("tensors_changed"),
         "candidate_tensors_changed": tensor.get("candidate", {}).get("tensors_changed"),
         "align_pass": align.get("align_pass"),
-        "aligned_tensors_differing": (align.get("tensor_check") or {}).get(
-            "tensors_differing"
-        ),
+        "aligned_tensors_differing": (align.get("tensor_check") or {}).get("tensors_differing"),
         "treated_faces_read_on": "seed_n2_candidate_aligned_20261008.pt",
     }
     stop_entries = _main_column_entries(stop_main) if stop_main else {}
@@ -298,15 +284,13 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         "before": before_mc,
         "after": after_mc,
         "delta": (
-            int(after_mc["never_lf_eaters_counted"])
-            - int(before_mc["never_lf_eaters_counted"])
+            int(after_mc["never_lf_eaters_counted"]) - int(before_mc["never_lf_eaters_counted"])
             if stop_measured
             else None
         ),
         "denominator": before_mc.get("generation_rows_seen") if stop_measured else None,
         "items_sha_match": bool(
-            stop_measured
-            and before_mc.get("items_sha256") == after_mc.get("items_sha256")
+            stop_measured and before_mc.get("items_sha256") == after_mc.get("items_sha256")
         ),
         "direction_defined": False,
         "reason": (
@@ -397,24 +381,12 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="N2 通电面判读器")
-    parser.add_argument(
-        "--cap0-before", default="reports/taiji_n2_cap0_before_20261008.json"
-    )
-    parser.add_argument(
-        "--cap0-after", default="reports/taiji_n2_cap0_after_20261008.json"
-    )
-    parser.add_argument(
-        "--cap0-rollback", default="reports/taiji_n2_cap0_rollback_20261008.json"
-    )
-    parser.add_argument(
-        "--replay-before", default="reports/taiji_n2_replay24_before_20261008.json"
-    )
-    parser.add_argument(
-        "--replay-after", default="reports/taiji_n2_replay24_after_20261008.json"
-    )
-    parser.add_argument(
-        "--postcheck", default="reports/taiji_n2_postcheck_20261008.json"
-    )
+    parser.add_argument("--cap0-before", default="reports/taiji_n2_cap0_before_20261008.json")
+    parser.add_argument("--cap0-after", default="reports/taiji_n2_cap0_after_20261008.json")
+    parser.add_argument("--cap0-rollback", default="reports/taiji_n2_cap0_rollback_20261008.json")
+    parser.add_argument("--replay-before", default="reports/taiji_n2_replay24_before_20261008.json")
+    parser.add_argument("--replay-after", default="reports/taiji_n2_replay24_after_20261008.json")
+    parser.add_argument("--postcheck", default="reports/taiji_n2_postcheck_20261008.json")
     parser.add_argument("--align", default="reports/taiji_n2_align_20261008.json")
     parser.add_argument("--material", default="reports/taiji_n2_material_20261008.json")
     parser.add_argument(
@@ -453,9 +425,7 @@ def main(argv: list[str] | None = None) -> int:
             ensure_ascii=True,
         )
     )
-    print(
-        "blocking=" + json.dumps(payload.get("blocking_terms", []), ensure_ascii=True)
-    )
+    print("blocking=" + json.dumps(payload.get("blocking_terms", []), ensure_ascii=True))
     print(f"out -> {out}")
     return rc
 

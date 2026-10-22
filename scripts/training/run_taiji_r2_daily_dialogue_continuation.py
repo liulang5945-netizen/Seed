@@ -169,9 +169,9 @@ def _arm_corpus(base: LanguageEpisodeCorpus, arm: str) -> LanguageEpisodeCorpus:
     )
 
 
-def _load_inputs() -> tuple[
-    LanguageEpisodeCorpus, dict[str, Any], dict[str, Any], dict[str, str], set[str]
-]:
+def _load_inputs() -> (
+    tuple[LanguageEpisodeCorpus, dict[str, Any], dict[str, Any], dict[str, str], set[str]]
+):
     for path, expected, label in (
         (BASE_PLAN, BASE_PLAN_SHA256, "base plan"),
         (PLAN, PLAN_SHA256, "continuation plan"),
@@ -580,7 +580,9 @@ def execute() -> dict[str, Any]:
             start_episode_count = active_trainer.episode_count
             local_episode_index = 0
 
-            def on_progress(record: dict[str, Any]) -> None:
+            # B023: 默认参数把当前迭代的 arm 钉进闭包（train 在同一次迭代内同步调用，
+            # 行为不变；防的是未来把回调挪出循环体后的晚绑定串臂）。
+            def on_progress(record: dict[str, Any], arm: str = arm) -> None:
                 nonlocal local_episode_index
                 local_episode_index += 1
                 episode_counts[arm] += 1
@@ -827,9 +829,9 @@ def execute() -> dict[str, Any]:
             "status": "partial" if sum(observation_counts.values()) else "failed_before_training",
             "complete": False,
             "plan_sha256": PLAN_SHA256,
-            "source_hashes": dict(sorted(source_hashes.items()))
-            if "source_hashes" in locals()
-            else {},
+            "source_hashes": (
+                dict(sorted(source_hashes.items())) if "source_hashes" in locals() else {}
+            ),
             "completed_training_episodes": dict(episode_counts),
             "completed_response_observations": dict(observation_counts),
             "completed_generation_outputs": generation_count,

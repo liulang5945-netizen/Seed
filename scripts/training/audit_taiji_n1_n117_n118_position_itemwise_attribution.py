@@ -60,7 +60,8 @@ def read_position_shards(label: str, report: dict) -> dict[int, dict]:
         path = Path(seal["path"])
         if seal.get("compressed_sha256") != expected_sha or sha256(path) != expected_sha:
             raise ValueError(f"frozen {label} seed{seed} shard changed: {path}")
-        envelope = json.loads(gzip.open(path, "rt", encoding="utf-8").read())
+        with gzip.open(path, "rt", encoding="utf-8") as shard_stream:
+            envelope = json.loads(shard_stream.read())
         record = envelope["record"]
         if (
             envelope.get("schema") != "n1-lossless-training-evidence-shard-v1"

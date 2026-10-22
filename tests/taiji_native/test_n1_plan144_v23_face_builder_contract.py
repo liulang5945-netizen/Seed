@@ -25,7 +25,9 @@ def test_v23_face_is_deterministic_balanced_and_covers_frozen_positions() -> Non
     assert checks["accepted"] is True
     assert checks["items"] == 160
     assert all(count == 20 for count in checks["items_by_subset_and_kind"].values())
-    assert checks["entity_count"] == len({name for item in first["episodes"] for name in item["entities"]})
+    assert checks["entity_count"] == len(
+        {name for item in first["episodes"] for name in item["entities"]}
+    )
     assert first["shape_counts"]["new_entity_count"] == checks["entity_count"]
     assert first["shape_counts"]["new_word_count"] > 0
 

@@ -48,7 +48,10 @@ def test_frozen_repeated_scoring_denominators() -> None:
     assert recovery.TOTAL_QUERIES_PER_ENDPOINT == 1_248
     assert recovery.EXPECTED_TOTAL_QUERIES == 7_488
     assert recovery.CPU_LIMIT_SECONDS == 3_600
-    assert recovery.REPAIR_PLAN_SHA256 == "4892cc62f197689e0437a104bd2e592696ed67863a7746d4a7cb36a3ca0bc965"
+    assert (
+        recovery.REPAIR_PLAN_SHA256
+        == "4892cc62f197689e0437a104bd2e592696ed67863a7746d4a7cb36a3ca0bc965"
+    )
 
 
 def test_n150_preflight_binding_is_not_mistaken_for_its_result_report() -> None:

@@ -30,8 +30,12 @@ PLAN_SHA256 = schedule_builder.PLAN_SHA256
 MANIFEST = schedule_builder.MANIFEST
 READINESS = schedule_builder.READINESS
 PRIOR_RESULT = schedule_builder.PRIOR_RESULT
-ZERO_ATTEMPT = ROOT / "reports/taiji_n1_plan165_transition_template_mid_dose_zero_attempt_20261020.json"
-ZERO_PREFLIGHT = ROOT / "reports/taiji_n1_plan165_transition_template_mid_dose_zero_preflight_20261020.json"
+ZERO_ATTEMPT = (
+    ROOT / "reports/taiji_n1_plan165_transition_template_mid_dose_zero_attempt_20261020.json"
+)
+ZERO_PREFLIGHT = (
+    ROOT / "reports/taiji_n1_plan165_transition_template_mid_dose_zero_preflight_20261020.json"
+)
 ATTEMPT = ROOT / "reports/taiji_n1_plan165_transition_template_mid_dose_attempt_20261020.json"
 PROGRESS = ROOT / "reports/taiji_n1_plan165_transition_template_mid_dose_progress_20261020.jsonl"
 RESULT = ROOT / "reports/taiji_n1_plan165_transition_template_mid_dose_result_20261020.json"
@@ -45,7 +49,9 @@ UPDATES_PER_MODEL = SLOTS_PER_PASS * PASSES
 TOTAL_UPDATES = len(SEEDS) * len(ARMS) * UPDATES_PER_MODEL
 GATE_QUERIES_PER_ENDPOINT = 960
 LENGTH_QUERIES_PER_ENDPOINT = 288
-TRAIN_SCORE_QUERIES = len(SEEDS) * len(ARMS) * (GATE_QUERIES_PER_ENDPOINT + LENGTH_QUERIES_PER_ENDPOINT)
+TRAIN_SCORE_QUERIES = (
+    len(SEEDS) * len(ARMS) * (GATE_QUERIES_PER_ENDPOINT + LENGTH_QUERIES_PER_ENDPOINT)
+)
 STAGE_CPU_LIMIT_SECONDS = 10_500.0
 LINKED_CPU_LIMIT_SECONDS = 50_000.0
 PRIOR_LINKED_CPU_SECONDS = 38_253.796875
@@ -72,13 +78,18 @@ class CpuBudget:
     def guard(self, reserve: float = 0.0) -> None:
         used = self.used()
         if used + reserve > self.limit:
-            raise TimeoutError(f"N1-165 CPU budget exceeded: {used:.3f}+{reserve:.3f}/{self.limit:.3f}")
+            raise TimeoutError(
+                f"N1-165 CPU budget exceeded: {used:.3f}+{reserve:.3f}/{self.limit:.3f}"
+            )
 
 
 def write_new(path: Path, value: dict) -> None:
     if path.exists():
         raise FileExistsError(f"N1-165 write-once output exists: {path}")
-    path.write_text(json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n",
+        encoding="utf-8",
+    )
 
 
 def write_jsonl(stream, value: dict) -> None:
@@ -129,8 +140,12 @@ def _independent_restore(path: Path, *, arm: str, seed: int, budget: CpuBudget) 
     )
     restored = json.loads(proc.stdout)
     budget.child_seconds += float(restored["cpu_seconds"])
-    expected_steps = EXPECTED_PARENT_STEPS if path.name.endswith("_zero.pt") else EXPECTED_FINAL_STEPS
-    expected_history = EXPECTED_PARENT_HISTORY if path.name.endswith("_zero.pt") else EXPECTED_FINAL_HISTORY
+    expected_steps = (
+        EXPECTED_PARENT_STEPS if path.name.endswith("_zero.pt") else EXPECTED_FINAL_STEPS
+    )
+    expected_history = (
+        EXPECTED_PARENT_HISTORY if path.name.endswith("_zero.pt") else EXPECTED_FINAL_HISTORY
+    )
     if (
         restored.get("complete") is not True
         or restored.get("equal") is not True
@@ -157,11 +172,13 @@ def _load_readiness() -> tuple[dict, dict, dict, dict, dict[str, str]]:
         readiness.get("status") != "ready"
         or readiness.get("complete") is not True
         or readiness.get("plan_sha256") != PLAN_SHA256
-        or readiness.get("readiness_rebinding_addendum_sha256") != schedule_builder.REBINDING_PLAN_SHA256
+        or readiness.get("readiness_rebinding_addendum_sha256")
+        != schedule_builder.REBINDING_PLAN_SHA256
         or readiness.get("manifest_sha256") != n162.sha256(MANIFEST)
         or readiness.get("source_hashes_unchanged") is not True
         or manifest.get("plan_sha256") != PLAN_SHA256
-        or manifest.get("readiness_rebinding_addendum_sha256") != schedule_builder.REBINDING_PLAN_SHA256
+        or manifest.get("readiness_rebinding_addendum_sha256")
+        != schedule_builder.REBINDING_PLAN_SHA256
         or manifest.get("rows_sha256") != n162.builder.canonical_sha(manifest.get("rows", []))
         or len(manifest.get("rows", [])) != SLOTS_PER_PASS
         or manifest.get("total_updates") != TOTAL_UPDATES
@@ -185,7 +202,11 @@ def _load_readiness() -> tuple[dict, dict, dict, dict, dict[str, str]]:
         raise Refuse("N1-163 dose-anchor result is stale or incomplete")
     parent_map = {}
     for seed in SEEDS:
-        matches = [row for row in prior["models"] if row.get("seed") == seed and row.get("arm") == schedule_builder.PARENT_ARM]
+        matches = [
+            row
+            for row in prior["models"]
+            if row.get("seed") == seed and row.get("arm") == schedule_builder.PARENT_ARM
+        ]
         if len(matches) != 1:
             raise Refuse(f"N1-165 parent endpoint ambiguous: seed{seed}")
         parent = matches[0]
@@ -202,10 +223,33 @@ def _load_readiness() -> tuple[dict, dict, dict, dict, dict[str, str]]:
                 or n162.sha256(Path(anchor["path"])) != anchor.get("sha256")
             ):
                 raise Refuse(f"N1-165 dose anchor source binding differs: seed{seed}/{anchor_arm}")
-    return readiness, manifest, runtime, {"prior": prior, "parents": parent_map, "zero": zero, "runtime_readiness": runtime_readiness, "n163_anchor": n163_anchor, "n163_dose_anchors": readiness["n163_dose_anchors"]}, sources
+    return (
+        readiness,
+        manifest,
+        runtime,
+        {
+            "prior": prior,
+            "parents": parent_map,
+            "zero": zero,
+            "runtime_readiness": runtime_readiness,
+            "n163_anchor": n163_anchor,
+            "n163_dose_anchors": readiness["n163_dose_anchors"],
+        },
+        sources,
+    )
 
 
-def _save_checkpoint(model, optimizer, path: Path, *, seed: int, arm: str, parent_path: Path, parent_hash: str, additional_updates: int) -> dict:
+def _save_checkpoint(
+    model,
+    optimizer,
+    path: Path,
+    *,
+    seed: int,
+    arm: str,
+    parent_path: Path,
+    parent_hash: str,
+    additional_updates: int,
+) -> dict:
     if path.exists():
         raise FileExistsError(f"N1-165 checkpoint path is write-once: {path}")
     payload = n155._checkpoint_payload(
@@ -234,18 +278,21 @@ def checkpoint_preflight(manifest: dict, metadata: dict, budget: CpuBudget) -> d
     if CHECKPOINT_ROOT.exists():
         raise FileExistsError(f"N1-165 checkpoint root already exists: {CHECKPOINT_ROOT}")
     CHECKPOINT_ROOT.mkdir(parents=True, exist_ok=False)
-    write_new(ZERO_ATTEMPT, {
-        "schema": "taiji-n1-plan165-zero-attempt-v1",
-        "status": "started",
-        "plan_sha256": PLAN_SHA256,
-        "parent_result_sha256": schedule_builder.PRIOR_RESULT_SHA256,
-        "planned_zero_bundles": len(SEEDS) * len(ARMS),
-        "model_queries": 0,
-        "parameter_updates": 0,
-        "optimizer_steps": 0,
-        "checkpoint_root": str(CHECKPOINT_ROOT.resolve()),
-        "can_promote": False,
-    })
+    write_new(
+        ZERO_ATTEMPT,
+        {
+            "schema": "taiji-n1-plan165-zero-attempt-v1",
+            "status": "started",
+            "plan_sha256": PLAN_SHA256,
+            "parent_result_sha256": schedule_builder.PRIOR_RESULT_SHA256,
+            "planned_zero_bundles": len(SEEDS) * len(ARMS),
+            "model_queries": 0,
+            "parameter_updates": 0,
+            "optimizer_steps": 0,
+            "checkpoint_root": str(CHECKPOINT_ROOT.resolve()),
+            "can_promote": False,
+        },
+    )
     pairs = []
     pair_fingerprints = {}
     try:
@@ -278,27 +325,34 @@ def checkpoint_preflight(manifest: dict, metadata: dict, budget: CpuBudget) -> d
                     additional_updates=0,
                 )
                 receipt = _independent_restore(path, arm=arm, seed=seed, budget=budget)
-                if receipt["fingerprint"] != fingerprint or zero_payload["bundle_fingerprint"] != fingerprint:
+                if (
+                    receipt["fingerprint"] != fingerprint
+                    or zero_payload["bundle_fingerprint"] != fingerprint
+                ):
                     raise Refuse(f"N1-165 pair zero bundles differ: seed{seed}/{arm}")
-                pairs.append({
-                    "seed": seed,
-                    "arm": arm,
-                    "parent_checkpoint_path": str(parent_path),
-                    "parent_checkpoint_sha256": parent_hash,
-                    "parent_fingerprint": fingerprint,
-                    "zero_checkpoint_path": str(path.resolve()),
-                    "zero_checkpoint_sha256": n162.sha256(path),
-                    "zero_fingerprint": zero_payload["bundle_fingerprint"],
-                    "zero_history_count": len(model._observations),
-                    "zero_optimizer_step": EXPECTED_PARENT_STEPS,
-                    "independent_restore": receipt,
-                })
+                pairs.append(
+                    {
+                        "seed": seed,
+                        "arm": arm,
+                        "parent_checkpoint_path": str(parent_path),
+                        "parent_checkpoint_sha256": parent_hash,
+                        "parent_fingerprint": fingerprint,
+                        "zero_checkpoint_path": str(path.resolve()),
+                        "zero_checkpoint_sha256": n162.sha256(path),
+                        "zero_fingerprint": zero_payload["bundle_fingerprint"],
+                        "zero_history_count": len(model._observations),
+                        "zero_optimizer_step": EXPECTED_PARENT_STEPS,
+                        "independent_restore": receipt,
+                    }
+                )
             if n162.sha256(parent_path) != parent_hash:
                 raise Refuse(f"N1-165 parent changed while saving zero pair: seed{seed}")
             del model, optimizer, payload
 
         expected_zero_count = len(SEEDS) * len(ARMS)
-        if len(pairs) != expected_zero_count or any(pair["zero_fingerprint"] != pair_fingerprints[pair["seed"]] for pair in pairs):
+        if len(pairs) != expected_zero_count or any(
+            pair["zero_fingerprint"] != pair_fingerprints[pair["seed"]] for pair in pairs
+        ):
             raise Refuse("N1-165 zero bundles did not preserve their complete parent state")
         report = {
             "schema": "taiji-n1-plan165-zero-preflight-v1",
@@ -308,7 +362,9 @@ def checkpoint_preflight(manifest: dict, metadata: dict, budget: CpuBudget) -> d
             "readiness_sha256": n162.sha256(READINESS),
             "manifest_sha256": n162.sha256(MANIFEST),
             "zero_checkpoint_count": len(pairs),
-            "independent_restore_count": sum(int(pair["independent_restore"]["complete"]) for pair in pairs),
+            "independent_restore_count": sum(
+                int(pair["independent_restore"]["complete"]) for pair in pairs
+            ),
             "zero_fingerprints_match_parent": True,
             "parent_endpoint_count": len(pair_fingerprints),
             "zero_checkpoints": pairs,
@@ -326,7 +382,9 @@ def checkpoint_preflight(manifest: dict, metadata: dict, budget: CpuBudget) -> d
             "complete": False,
             "plan_sha256": PLAN_SHA256,
             "zero_checkpoint_count": len(pairs),
-            "independent_restore_count": sum(int(pair["independent_restore"]["complete"]) for pair in pairs),
+            "independent_restore_count": sum(
+                int(pair["independent_restore"]["complete"]) for pair in pairs
+            ),
             "zero_checkpoints": pairs,
             "errors": [f"{type(exc).__name__}: {exc}"],
             "cpu_seconds": round(budget.used(), 6),
@@ -340,7 +398,9 @@ def checkpoint_preflight(manifest: dict, metadata: dict, budget: CpuBudget) -> d
     return report
 
 
-def _prepare_item(slot: dict, row: dict, length: int, template_id: str, views: dict) -> tuple[dict, dict | None]:
+def _prepare_item(
+    slot: dict, row: dict, length: int, template_id: str, views: dict
+) -> tuple[dict, dict | None]:
     item = n162.n150._apply_context(slot["item"], slot["item_key"], length, views)
     second = None
     if slot.get("second") is not None:
@@ -350,7 +410,9 @@ def _prepare_item(slot: dict, row: dict, length: int, template_id: str, views: d
         item["question"] = n162.builder.TRAINING_TEMPLATES[template_id].format(entity=target)
         if second is not None:
             second_target = n132._query_subject(second["question"])
-            second["question"] = n162.builder.TRAINING_TEMPLATES[template_id].format(entity=second_target)
+            second["question"] = n162.builder.TRAINING_TEMPLATES[template_id].format(
+                entity=second_target
+            )
     if item.get("kind") == "unknown" and second is None:
         raise Refuse("N1-165 unknown paired query is missing its second question")
     return item, second
@@ -371,27 +433,30 @@ def execute() -> dict:
         raise TimeoutError("N1-165 linked CPU budget is exhausted before checkpoint preflight")
     budget = CpuBudget(min(remaining_stage, remaining_linked))
 
-    write_new(ATTEMPT, {
-        "schema": "taiji-n1-plan165-attempt-v1",
-        "status": "started",
-        "plan_sha256": PLAN_SHA256,
-        "readiness_sha256": n162.sha256(READINESS),
-        "manifest_sha256": n162.sha256(MANIFEST),
-        "zero_preflight_required": True,
-        "planned_updates": TOTAL_UPDATES,
-        "planned_train_score_queries": TRAIN_SCORE_QUERIES,
-        "fresh_face_queries": 0,
-        "dev_queries": 0,
-        "holdout_queries": 0,
-        "confirmation_queries": 0,
-        "cpu_limit_seconds": round(min(remaining_stage, remaining_linked), 6),
-        "linked_cpu_limit_seconds": LINKED_CPU_LIMIT_SECONDS,
-        "prior_linked_cpu_seconds": PRIOR_LINKED_CPU_SECONDS,
-        "readiness_cpu_seconds": readiness_cpu,
-        "live_source_validation_cpu_seconds": round(validation_cpu, 6),
-        "checkpoint_root": str(CHECKPOINT_ROOT.resolve()),
-        "can_promote": False,
-    })
+    write_new(
+        ATTEMPT,
+        {
+            "schema": "taiji-n1-plan165-attempt-v1",
+            "status": "started",
+            "plan_sha256": PLAN_SHA256,
+            "readiness_sha256": n162.sha256(READINESS),
+            "manifest_sha256": n162.sha256(MANIFEST),
+            "zero_preflight_required": True,
+            "planned_updates": TOTAL_UPDATES,
+            "planned_train_score_queries": TRAIN_SCORE_QUERIES,
+            "fresh_face_queries": 0,
+            "dev_queries": 0,
+            "holdout_queries": 0,
+            "confirmation_queries": 0,
+            "cpu_limit_seconds": round(min(remaining_stage, remaining_linked), 6),
+            "linked_cpu_limit_seconds": LINKED_CPU_LIMIT_SECONDS,
+            "prior_linked_cpu_seconds": PRIOR_LINKED_CPU_SECONDS,
+            "readiness_cpu_seconds": readiness_cpu,
+            "live_source_validation_cpu_seconds": round(validation_cpu, 6),
+            "checkpoint_root": str(CHECKPOINT_ROOT.resolve()),
+            "can_promote": False,
+        },
+    )
 
     zero_preflight = checkpoint_preflight(manifest, metadata, budget)
     if (
@@ -413,7 +478,9 @@ def execute() -> dict:
     partial_checkpoint = None
     try:
         base_schedule = n162.builder.build_schedule(runtime["n155_schedule"])
-        if n162.builder.canonical_sha(base_schedule["rows"]) != manifest.get("base_schedule_sha256"):
+        if n162.builder.canonical_sha(base_schedule["rows"]) != manifest.get(
+            "base_schedule_sha256"
+        ):
             raise Refuse("N1-165 reconstructed base schedule differs from frozen manifest")
         derived_rows = manifest["rows"]
         for seed in SEEDS:
@@ -437,7 +504,13 @@ def execute() -> dict:
                     or _optimizer_step_values(optimizer) != {EXPECTED_PARENT_STEPS}
                 ):
                     raise Refuse(f"N1-165 restored zero bundle mismatch: seed{seed}/{arm}")
-                active = {"seed": seed, "arm": arm, "completed_updates": 0, "parent_path": parent_path, "parent_hash": parent_hash}
+                active = {
+                    "seed": seed,
+                    "arm": arm,
+                    "completed_updates": 0,
+                    "parent_path": parent_path,
+                    "parent_hash": parent_hash,
+                }
                 metrics = Counter()
                 length_counts = Counter()
                 template_counts = Counter()
@@ -449,7 +522,9 @@ def execute() -> dict:
                     slot = base_schedule["slots"][slot_index]
                     length = int(source_row["context_length"])
                     template_id = source_row["n165_candidate_template_id"]
-                    item, second = _prepare_item(slot, source_row, length, template_id, base_schedule["views"])
+                    item, second = _prepare_item(
+                        slot, source_row, length, template_id, base_schedule["views"]
+                    )
                     result = n162._training_step(
                         model,
                         optimizer,
@@ -464,33 +539,45 @@ def execute() -> dict:
                     template_counts[(str(source_row["kind"]), length, template_id)] += 1
                     for key in ("total", "base_total", "qa", "observation", "binding"):
                         metrics[key] += float(result[key])
-                    write_jsonl(progress, {
-                        "event": "training_update",
-                        "seed": seed,
-                        "arm": arm,
-                        "step": step,
-                        "pass": pass_index,
-                        "slot_index": slot_index,
-                        "parent_id": source_row["parent_id"],
-                        "route": source_row["route"],
-                        "kind": source_row["kind"],
-                        "context_length": length,
-                        "question_template_id": template_id,
-                        "item_id": item["id"],
-                        "question": item["question"],
-                        "second_id": None if second is None else second["id"],
-                        "second_question": None if second is None else second["question"],
-                        **result,
-                    })
+                    write_jsonl(
+                        progress,
+                        {
+                            "event": "training_update",
+                            "seed": seed,
+                            "arm": arm,
+                            "step": step,
+                            "pass": pass_index,
+                            "slot_index": slot_index,
+                            "parent_id": source_row["parent_id"],
+                            "route": source_row["route"],
+                            "kind": source_row["kind"],
+                            "context_length": length,
+                            "question_template_id": template_id,
+                            "item_id": item["id"],
+                            "question": item["question"],
+                            "second_id": None if second is None else second["id"],
+                            "second_question": None if second is None else second["question"],
+                            **result,
+                        },
+                    )
                     if (step + 1) % 64 == 0:
                         progress.flush()
                     if (step + 1) % 1_024 == 0:
-                        print(f"plan165 seed={seed} arm={arm} step={step+1}/{UPDATES_PER_MODEL} cpu={budget.used():.1f}", flush=True)
+                        print(
+                            f"plan165 seed={seed} arm={arm} step={step+1}/{UPDATES_PER_MODEL} cpu={budget.used():.1f}",
+                            flush=True,
+                        )
 
-                if active["completed_updates"] != UPDATES_PER_MODEL or length_counts != EXPECTED_CONTEXT_COUNTS:
+                if (
+                    active["completed_updates"] != UPDATES_PER_MODEL
+                    or length_counts != EXPECTED_CONTEXT_COUNTS
+                ):
                     raise Refuse(f"N1-165 update/context counts differ: {seed}/{arm}")
                 final_step_values = _optimizer_step_values(optimizer)
-                if final_step_values != {EXPECTED_FINAL_STEPS} or len(model._observations) != EXPECTED_FINAL_HISTORY:
+                if (
+                    final_step_values != {EXPECTED_FINAL_STEPS}
+                    or len(model._observations) != EXPECTED_FINAL_HISTORY
+                ):
                     raise Refuse(f"N1-165 optimizer/history continuation differs: {seed}/{arm}")
 
                 final_path = CHECKPOINT_ROOT / f"s{seed}_{arm}_final.pt"
@@ -511,12 +598,23 @@ def execute() -> dict:
 
                 before_score = n162._fingerprint(model, optimizer)
                 gate_rows, gate_summary, sufficient, gate_queries = n132._evaluate_train_only(
-                    runtime["n155_bound"]["g"], model, optimizer, seed, runtime["n155_bound"]["inputs"], budget
+                    runtime["n155_bound"]["g"],
+                    model,
+                    optimizer,
+                    seed,
+                    runtime["n155_bound"]["inputs"],
+                    budget,
                 )
-                if gate_queries != GATE_QUERIES_PER_ENDPOINT or len(gate_rows) != GATE_QUERIES_PER_ENDPOINT:
+                if (
+                    gate_queries != GATE_QUERIES_PER_ENDPOINT
+                    or len(gate_rows) != GATE_QUERIES_PER_ENDPOINT
+                ):
                     raise Refuse(f"N1-165 original train gate denominator differs: {seed}/{arm}")
                 for score_row in gate_rows:
-                    write_jsonl(progress, {**score_row, "event": "original_train_gate_row", "seed": seed, "arm": arm})
+                    write_jsonl(
+                        progress,
+                        {**score_row, "event": "original_train_gate_row", "seed": seed, "arm": arm},
+                    )
                 length_rows = n155._train_length_rows(
                     model,
                     optimizer,
@@ -529,52 +627,73 @@ def execute() -> dict:
                 if len(length_rows) != LENGTH_QUERIES_PER_ENDPOINT:
                     raise Refuse(f"N1-165 train length score denominator differs: {seed}/{arm}")
                 for score_row in length_rows:
-                    write_jsonl(progress, {**score_row, "event": "length_score_row", "seed": seed, "arm": arm})
+                    write_jsonl(
+                        progress,
+                        {**score_row, "event": "length_score_row", "seed": seed, "arm": arm},
+                    )
                 score_count += gate_queries + len(length_rows)
                 if n162._fingerprint(model, optimizer) != before_score:
                     raise Refuse(f"N1-165 train-only scoring mutated final bundle: {seed}/{arm}")
 
-                final_records.append({
-                    "seed": seed,
-                    "arm": arm,
-                    "parent_experimental_arm": schedule_builder.PARENT_ARM,
-                    "parent_checkpoint_path": str(parent_path),
-                    "parent_checkpoint_sha256": parent_hash,
-                    "parent_bundle_fingerprint": parent["final_bundle_fingerprint"],
-                    "parent_total_updates": EXPECTED_PARENT_STEPS,
-                    "parent_history_count": EXPECTED_PARENT_HISTORY,
-                    "additional_updates_this_plan": UPDATES_PER_MODEL,
-                    "cumulative_additional_updates_from_n150": int(parent["cumulative_additional_updates_from_n150"]) + UPDATES_PER_MODEL,
-                    "total_updates": EXPECTED_FINAL_STEPS,
-                    "initial_history_count": EXPECTED_PARENT_HISTORY,
-                    "final_history_count": len(model._observations),
-                    "optimizer_step_values": sorted(final_step_values),
-                    "context_length_update_counts": dict(sorted(length_counts.items())),
-                    "question_template_counts": {f"{kind}/{length}/{template}": count for (kind, length, template), count in sorted(template_counts.items())},
-                    "loss_means": {key: float(metrics[key]) / UPDATES_PER_MODEL for key in ("total", "base_total", "qa", "observation", "binding")},
-                    "original_train_gate": gate_summary,
-                    "training_sufficient": sufficient,
-                    "original_train_gate_queries": gate_queries,
-                    "length_score_queries": len(length_rows),
-                    "final_checkpoint_path": str(final_path.resolve()),
-                    "final_checkpoint_sha256": final_sha,
-                    "final_bundle_fingerprint": final_payload["bundle_fingerprint"],
-                    "final_independent_restore": final_restore,
-                    "zero_checkpoint_sha256": zero_sha,
-                    "zero_fingerprint": fingerprint,
-                })
+                final_records.append(
+                    {
+                        "seed": seed,
+                        "arm": arm,
+                        "parent_experimental_arm": schedule_builder.PARENT_ARM,
+                        "parent_checkpoint_path": str(parent_path),
+                        "parent_checkpoint_sha256": parent_hash,
+                        "parent_bundle_fingerprint": parent["final_bundle_fingerprint"],
+                        "parent_total_updates": EXPECTED_PARENT_STEPS,
+                        "parent_history_count": EXPECTED_PARENT_HISTORY,
+                        "additional_updates_this_plan": UPDATES_PER_MODEL,
+                        "cumulative_additional_updates_from_n150": int(
+                            parent["cumulative_additional_updates_from_n150"]
+                        )
+                        + UPDATES_PER_MODEL,
+                        "total_updates": EXPECTED_FINAL_STEPS,
+                        "initial_history_count": EXPECTED_PARENT_HISTORY,
+                        "final_history_count": len(model._observations),
+                        "optimizer_step_values": sorted(final_step_values),
+                        "context_length_update_counts": dict(sorted(length_counts.items())),
+                        "question_template_counts": {
+                            f"{kind}/{length}/{template}": count
+                            for (kind, length, template), count in sorted(template_counts.items())
+                        },
+                        "loss_means": {
+                            key: float(metrics[key]) / UPDATES_PER_MODEL
+                            for key in ("total", "base_total", "qa", "observation", "binding")
+                        },
+                        "original_train_gate": gate_summary,
+                        "training_sufficient": sufficient,
+                        "original_train_gate_queries": gate_queries,
+                        "length_score_queries": len(length_rows),
+                        "final_checkpoint_path": str(final_path.resolve()),
+                        "final_checkpoint_sha256": final_sha,
+                        "final_bundle_fingerprint": final_payload["bundle_fingerprint"],
+                        "final_independent_restore": final_restore,
+                        "zero_checkpoint_sha256": zero_sha,
+                        "zero_fingerprint": fingerprint,
+                    }
+                )
                 del payload
                 model = None
                 optimizer = None
                 active = None
 
         progress.flush()
-        if update_count != TOTAL_UPDATES or score_count != TRAIN_SCORE_QUERIES or len(final_records) != len(SEEDS) * len(ARMS):
+        if (
+            update_count != TOTAL_UPDATES
+            or score_count != TRAIN_SCORE_QUERIES
+            or len(final_records) != len(SEEDS) * len(ARMS)
+        ):
             raise Refuse("N1-165 total update/score/endpoint counts differ")
         if not n162.n150_builder.verify_hashes(source_hashes):
             raise Refuse("N1-165 source hashes changed during training")
         for parent in metadata["parents"].values():
-            if n162.sha256(Path(parent["final_checkpoint_path"])) != parent["final_checkpoint_sha256"]:
+            if (
+                n162.sha256(Path(parent["final_checkpoint_path"]))
+                != parent["final_checkpoint_sha256"]
+            ):
                 raise Refuse("N1-165 mutated a frozen N1-162B parent checkpoint")
 
         candidate_records = final_records
@@ -598,9 +717,13 @@ def execute() -> dict:
             "train_score_queries": score_count,
             "gate_queries_per_endpoint": GATE_QUERIES_PER_ENDPOINT,
             "length_queries_per_endpoint": LENGTH_QUERIES_PER_ENDPOINT,
-            "candidate_sufficient_all_seeds": len(candidate_records) == 3 and all(row["training_sufficient"] for row in candidate_records),
-            "mid_dose_sufficient_all_seeds": len(candidate_records) == len(SEEDS) and all(row["training_sufficient"] for row in candidate_records),
-            "training_sufficient_all_endpoints": all(row["training_sufficient"] for row in final_records),
+            "candidate_sufficient_all_seeds": len(candidate_records) == 3
+            and all(row["training_sufficient"] for row in candidate_records),
+            "mid_dose_sufficient_all_seeds": len(candidate_records) == len(SEEDS)
+            and all(row["training_sufficient"] for row in candidate_records),
+            "training_sufficient_all_endpoints": all(
+                row["training_sufficient"] for row in final_records
+            ),
             "fresh_face_queries": 0,
             "dev_queries": 0,
             "holdout_queries": 0,
@@ -610,12 +733,16 @@ def execute() -> dict:
             "zero_checkpoint_count": len(SEEDS) * len(ARMS),
             "final_checkpoint_count": len(final_records),
             "zero_independent_restores": zero_preflight["independent_restore_count"],
-            "final_independent_restores": sum(int(row["final_independent_restore"]["complete"]) for row in final_records),
+            "final_independent_restores": sum(
+                int(row["final_independent_restore"]["complete"]) for row in final_records
+            ),
             "stage_cpu_seconds": round(budget.used() + readiness_cpu + validation_cpu, 6),
             "execution_cpu_seconds": round(budget.used(), 6),
             "cpu_limit_seconds": STAGE_CPU_LIMIT_SECONDS,
             "prior_linked_cpu_seconds": PRIOR_LINKED_CPU_SECONDS,
-            "cumulative_linked_cpu_seconds": round(PRIOR_LINKED_CPU_SECONDS + readiness_cpu + validation_cpu + budget.used(), 6),
+            "cumulative_linked_cpu_seconds": round(
+                PRIOR_LINKED_CPU_SECONDS + readiness_cpu + validation_cpu + budget.used(), 6
+            ),
             "linked_cpu_limit_seconds": LINKED_CPU_LIMIT_SECONDS,
             "source_hashes": dict(sorted(source_hashes.items())),
             "source_hashes_unchanged": True,
@@ -663,7 +790,11 @@ def execute() -> dict:
             "cpu_seconds": round(budget.used(), 6),
             "cpu_limit_seconds": budget.limit,
             "errors": errors,
-            "checkpoint_writes": sum(1 for p in CHECKPOINT_ROOT.glob("*.pt") if p.is_file()) if CHECKPOINT_ROOT.is_dir() else 0,
+            "checkpoint_writes": (
+                sum(1 for p in CHECKPOINT_ROOT.glob("*.pt") if p.is_file())
+                if CHECKPOINT_ROOT.is_dir()
+                else 0
+            ),
             "can_promote": False,
         }
         if not RESULT.exists():
@@ -684,7 +815,9 @@ def main() -> int:
     torch.set_num_threads(1)
     if args.restore_worker is not None:
         try:
-            print(json.dumps(_worker_restore(args.restore_worker), ensure_ascii=False, sort_keys=True))
+            print(
+                json.dumps(_worker_restore(args.restore_worker), ensure_ascii=False, sort_keys=True)
+            )
             return 0
         except Exception as exc:
             print(f"N1-165 restore refused: {type(exc).__name__}: {exc}", file=sys.stderr)
@@ -694,10 +827,24 @@ def main() -> int:
     except Exception as exc:
         print(f"N1-165 refused: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 1
-    print(json.dumps({key: report[key] for key in (
-        "status", "total_updates", "train_score_queries", "stage_cpu_seconds",
-        "candidate_sufficient_all_seeds", "mid_dose_sufficient_all_seeds", "can_promote",
-    )}, ensure_ascii=False, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                key: report[key]
+                for key in (
+                    "status",
+                    "total_updates",
+                    "train_score_queries",
+                    "stage_cpu_seconds",
+                    "candidate_sufficient_all_seeds",
+                    "mid_dose_sufficient_all_seeds",
+                    "can_promote",
+                )
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+    )
     return 0
 
 

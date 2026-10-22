@@ -16,10 +16,14 @@ sys.path.insert(0, str(ROOT))
 from scripts.training import build_taiji_n1_v24_abstention_after_n146 as n147_builder
 from scripts.training import eval_taiji_n1_v24_abstention_after_n146 as n147_eval
 
-PLAN = ROOT / "plans/reference/PLAN-N1-148_matched_abstention_diagnostic_scorer_revision_20261019.md"
+PLAN = (
+    ROOT / "plans/reference/PLAN-N1-148_matched_abstention_diagnostic_scorer_revision_20261019.md"
+)
 PLAN_SHA256 = "35214c44aec6eb33f1ea57bcada0eabd597d69fa29528228f0a158e21e1ba966"
 SOURCE_PRECHECK = ROOT / "reports/taiji_n1_v25_abstention_source_union_precheck_20261019.json"
-SOURCE_EXCLUSIONS = ROOT / "plans/manifests/n1_v25_abstention_after_n147_source_exclusions_20261019.json"
+SOURCE_EXCLUSIONS = (
+    ROOT / "plans/manifests/n1_v25_abstention_after_n147_source_exclusions_20261019.json"
+)
 FACE = ROOT / "plans/manifests/n1_v25_abstention_seed125_20261019.json"
 FACE_ATTEMPT = ROOT / "plans/manifests/n1_v25_abstention_seed125_20261019_attempt.json"
 FACE_CHECKS = ROOT / "reports/taiji_n1_v25_abstention_face_checks_20261019.json"
@@ -127,7 +131,8 @@ def _collect_source_union() -> tuple[set[str], set[str], dict[str, str], dict]:
         and result.get("dev_queries") == 0
         and result.get("v3_holdout_queries") == 0
         and result.get("can_promote") is False
-        and result.get("errors") == [
+        and result.get("errors")
+        == [
             "N1-132/seed11/parent diagnostic: ValueError: confirmation holdout split and frozen arm required"
         ]
         and len(result.get("endpoint_receipts", [])) == 1
@@ -146,7 +151,9 @@ def _collect_source_union() -> tuple[set[str], set[str], dict[str, str], dict]:
         and n147_eval.frozen_eval._verify_hashes(result.get("source_hashes", {})),
         "N1-147 attempt/progress/source/checkpoint hash chain changed",
     )
-    progress_events = [json.loads(line) for line in N147_PROGRESS.read_text(encoding="utf-8").splitlines() if line]
+    progress_events = [
+        json.loads(line) for line in N147_PROGRESS.read_text(encoding="utf-8").splitlines() if line
+    ]
     require(
         all(event.get("event") != "query_row" for event in progress_events)
         and len(progress_events) == 1
@@ -229,8 +236,13 @@ def build_face(excluded_entities: set[str], excluded_words: set[str], seed: int 
 
 
 def validate_face(face: dict, excluded_entities: set[str], excluded_words: set[str]) -> dict:
-    require(face.get("schema") == "n1-v25-matched-abstention-diagnostic-face-v1", "v25 schema mismatch")
-    require(face.get("seed") == SEED and face.get("plan_sha256") == PLAN_SHA256, "v25 seed/plan mismatch")
+    require(
+        face.get("schema") == "n1-v25-matched-abstention-diagnostic-face-v1", "v25 schema mismatch"
+    )
+    require(
+        face.get("seed") == SEED and face.get("plan_sha256") == PLAN_SHA256,
+        "v25 seed/plan mismatch",
+    )
     require(len(face.get("episodes", [])) == ITEMS, "v25 item count mismatch")
     template = copy.deepcopy(face)
     template["schema"] = "n1-v24-matched-abstention-diagnostic-face-v1"
@@ -242,7 +254,10 @@ def validate_face(face: dict, excluded_entities: set[str], excluded_words: set[s
     checks = n147_builder.validate_face(template, excluded_entities, excluded_words)
     require(checks.get("accepted") is True, "v25 face differs from matched-pair template contract")
     require(
-        all(item["id"].startswith("v25-pair-") and item["pair_id"].startswith("v25-pair-") for item in face["episodes"]),
+        all(
+            item["id"].startswith("v25-pair-") and item["pair_id"].startswith("v25-pair-")
+            for item in face["episodes"]
+        ),
         "v25 identifiers retain an old seed family prefix",
     )
     return {
@@ -265,7 +280,10 @@ def prepare_face() -> dict:
     entities, words, source_hashes, source_union = _collect_source_union()
     source_hashes[str(PLAN.resolve())] = sha256(PLAN)
     source_hashes[str(Path(__file__).resolve())] = sha256(Path(__file__))
-    require(n147_builder.n144_builder._verify_hashes(source_hashes), "N1-147/v24/N1-148 source changed before face generation")
+    require(
+        n147_builder.n144_builder._verify_hashes(source_hashes),
+        "N1-147/v24/N1-148 source changed before face generation",
+    )
     face = build_face(entities, words)
     validate_face(face, entities, words)
     write_new(
@@ -358,13 +376,32 @@ def prepare_face() -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PLAN-N1-148 fresh v25 matched abstention face builder")
+    parser = argparse.ArgumentParser(
+        description="PLAN-N1-148 fresh v25 matched abstention face builder"
+    )
     parser.add_argument("--prepare-face", action="store_true")
     args = parser.parse_args()
     if not args.prepare_face:
         parser.error("one-shot invocation requires --prepare-face")
     result = prepare_face()
-    print(json.dumps({key: result.get(key) for key in ("status", "complete", "cpu_seconds", "model_queries", "parameter_updates", "can_promote", "summary_zh")}, ensure_ascii=True, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                key: result.get(key)
+                for key in (
+                    "status",
+                    "complete",
+                    "cpu_seconds",
+                    "model_queries",
+                    "parameter_updates",
+                    "can_promote",
+                    "summary_zh",
+                )
+            },
+            ensure_ascii=True,
+            sort_keys=True,
+        )
+    )
     return 0 if result.get("complete") is True else 1
 
 

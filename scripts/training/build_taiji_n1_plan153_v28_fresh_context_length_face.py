@@ -64,7 +64,9 @@ def sha256(path: Path) -> str:
 
 
 def canonical_sha(value: object) -> str:
-    payload = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    payload = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode(
+        "utf-8"
+    )
     return hashlib.sha256(payload).hexdigest()
 
 
@@ -138,7 +140,9 @@ def collect_n150_exclusions() -> tuple[set[str], set[str], dict, dict, dict]:
         "N1-150/151A/152 evidence is incomplete or crosses its frozen boundary",
     )
     excluded_entities = set(n149_manifest["excluded_entities"])
-    excluded_words = set(n149_manifest["excluded_word_values"]) | {UNKNOWN} | set(DIRECTIONS) | set(TURNS)
+    excluded_words = (
+        set(n149_manifest["excluded_word_values"]) | {UNKNOWN} | set(DIRECTIONS) | set(TURNS)
+    )
     source_entities = set(excluded_entities)
     source_words = set(excluded_words)
     for item in schedule["source_items"].values():
@@ -182,7 +186,8 @@ def collect_n150_exclusions() -> tuple[set[str], set[str], dict, dict, dict]:
         n150.PROGRESS,
         Path(__file__).resolve(),
         ROOT / "scripts/training/run_taiji_n1_plan153_v28_fresh_context_length_confirmation.py",
-        ROOT / "tests/taiji_native/test_n1_plan153_v28_fresh_context_length_confirmation_contract.py",
+        ROOT
+        / "tests/taiji_native/test_n1_plan153_v28_fresh_context_length_confirmation_contract.py",
     )
     for path in paths:
         path = Path(path).resolve()
@@ -202,10 +207,18 @@ def collect_n150_exclusions() -> tuple[set[str], set[str], dict, dict, dict]:
         "entity_exclusion_sha256": digest_strings(all_context_entities),
         "word_exclusion_sha256": digest_strings(all_context_words),
     }
-    return exclusions[0], exclusions[1], summary, source_hashes, {"bound": bound, "schedule": schedule}
+    return (
+        exclusions[0],
+        exclusions[1],
+        summary,
+        source_hashes,
+        {"bound": bound, "schedule": schedule},
+    )
 
 
-def build_face(excluded_entities: set[str], excluded_words: set[str], seed: int = SEED) -> tuple[dict, dict]:
+def build_face(
+    excluded_entities: set[str], excluded_words: set[str], seed: int = SEED
+) -> tuple[dict, dict]:
     helper = n150_builder.n149_builder.n148_builder.n147_builder
     used_entities = set(excluded_entities)
     used_words = set(excluded_words) | {UNKNOWN} | set(DIRECTIONS) | set(TURNS)
@@ -249,7 +262,9 @@ def build_face(excluded_entities: set[str], excluded_words: set[str], seed: int 
                 neighbor_count = 32
                 target_indices = []
 
-            neighbors = [helper._confusable(target, used_entities, rng) for _ in range(neighbor_count)]
+            neighbors = [
+                helper._confusable(target, used_entities, rng) for _ in range(neighbor_count)
+            ]
             values = []
             for filler_index in range(neighbor_count):
                 length = MATERIAL_LENGTHS[(filler_index + index) % 2]
@@ -257,21 +272,29 @@ def build_face(excluded_entities: set[str], excluded_words: set[str], seed: int 
 
             if kind == "lookup":
                 base_rows = [f"{target} uses {answer}.", f"{neighbors[0]} uses {values[0]}."]
-                filler_rows = [f"{name} uses {value}." for name, value in zip(neighbors[1:], values[1:], strict=True)]
+                filler_rows = [
+                    f"{name} uses {value}."
+                    for name, value in zip(neighbors[1:], values[1:], strict=True)
+                ]
             elif kind in ("revision", "transition"):
                 base_rows = rows
-                filler_rows = [f"{name} uses {value}." for name, value in zip(neighbors, values, strict=True)]
+                filler_rows = [
+                    f"{name} uses {value}." for name, value in zip(neighbors, values, strict=True)
+                ]
             else:
-                base_rows = [f"{neighbors[0]} uses {values[0]}.", f"{neighbors[1]} uses {values[1]}."]
-                filler_rows = [f"{name} uses {value}." for name, value in zip(neighbors[2:], values[2:], strict=True)]
+                base_rows = [
+                    f"{neighbors[0]} uses {values[0]}.",
+                    f"{neighbors[1]} uses {values[1]}.",
+                ]
+                filler_rows = [
+                    f"{name} uses {value}."
+                    for name, value in zip(neighbors[2:], values[2:], strict=True)
+                ]
 
             if len(base_rows) != 2 or len(filler_rows) != 30:
                 raise Refuse(f"fresh context base/filler length differs: {item_id}")
             full_rows = [*base_rows, *filler_rows]
-            views = {
-                str(length): full_rows[:length]
-                for length in LENGTHS
-            }
+            views = {str(length): full_rows[:length] for length in LENGTHS}
             entities = [target, *neighbors]
             item = {
                 "id": item_id,
@@ -306,16 +329,30 @@ def build_face(excluded_entities: set[str], excluded_words: set[str], seed: int 
         "can_promote": False,
     }
     checks = validate_face(manifest, excluded_entities, excluded_words)
-    return manifest, {"checks": checks, "answer_length_counts": {f"{kind}/{length}": count for (kind, length), count in sorted(answer_lengths.items())}}
+    return manifest, {
+        "checks": checks,
+        "answer_length_counts": {
+            f"{kind}/{length}": count for (kind, length), count in sorted(answer_lengths.items())
+        },
+    }
 
 
 def validate_face(manifest: dict, excluded_entities: set[str], excluded_words: set[str]) -> dict:
     items = manifest.get("items", [])
-    require(manifest.get("schema") == "n1-plan153-v28-fresh-context-length-face-v1", "N1-153 face schema mismatch")
+    require(
+        manifest.get("schema") == "n1-plan153-v28-fresh-context-length-face-v1",
+        "N1-153 face schema mismatch",
+    )
     require(len(items) == ITEMS_PER_KIND * len(KINDS) == 160, "N1-153 requires 160 base items")
-    require(manifest.get("expected_queries") == EXPECTED_QUERIES == 2_880, "N1-153 query denominator differs")
+    require(
+        manifest.get("expected_queries") == EXPECTED_QUERIES == 2_880,
+        "N1-153 query denominator differs",
+    )
     kinds = Counter(item.get("kind") for item in items)
-    require(kinds == Counter({kind: ITEMS_PER_KIND for kind in KINDS}), "N1-153 base kind balance differs")
+    require(
+        kinds == Counter({kind: ITEMS_PER_KIND for kind in KINDS}),
+        "N1-153 base kind balance differs",
+    )
     target_names = set()
     face_entities = set()
     face_entity_occurrences = []
@@ -328,21 +365,33 @@ def validate_face(manifest: dict, excluded_entities: set[str], excluded_words: s
         target = n132._query_subject(item["question"])
         target_names.add(item["id"])
         rows8, rows16, rows32 = (item["observations_by_length"][str(length)] for length in LENGTHS)
-        require(len(rows8) == 8 and len(rows16) == 16 and len(rows32) == 32, f"context length mismatch: {item['id']}")
+        require(
+            len(rows8) == 8 and len(rows16) == 16 and len(rows32) == 32,
+            f"context length mismatch: {item['id']}",
+        )
         require(rows8 == rows16[:8] == rows32[:8], f"length contexts are not nested: {item['id']}")
         query = {**item, "observations": rows32}
         target_indices = n132._target_observation_indices(query)
         expected_indices = item["target_observation_indices"]
-        require(target_indices == (expected_indices if expected_indices else None), f"target-row positions differ: {item['id']}")
+        require(
+            target_indices == (expected_indices if expected_indices else None),
+            f"target-row positions differ: {item['id']}",
+        )
         if target_indices is not None:
-            require(rows32[: len(target_indices)] == [rows32[index] for index in target_indices], f"target facts are not first: {item['id']}")
+            require(
+                rows32[: len(target_indices)] == [rows32[index] for index in target_indices],
+                f"target facts are not first: {item['id']}",
+            )
         for name in item["entities"]:
             face_entity_occurrences.append(name)
         for row in rows32:
             name = row.removesuffix(".").split()[0]
             face_entities.add(name)
             if name != target:
-                require(_hamming(target, name) == DISTANCE, f"fresh distractor is not d=1: {item['id']}/{name}")
+                require(
+                    _hamming(target, name) == DISTANCE,
+                    f"fresh distractor is not d=1: {item['id']}/{name}",
+                )
                 hamming_pairs += 1
             parts = row.removesuffix(".").split()
             if len(parts) == 3 and parts[1] == "uses":
@@ -352,13 +401,27 @@ def validate_face(manifest: dict, excluded_entities: set[str], excluded_words: s
                 face_words.add(parts[3])
                 face_word_occurrences.append(parts[3])
         if item["kind"] in ("lookup", "revision"):
-            require(item["answer"] not in excluded_words, f"answer overlaps an excluded word: {item['id']}")
+            require(
+                item["answer"] not in excluded_words,
+                f"answer overlaps an excluded word: {item['id']}",
+            )
     generated_targets = {n132._query_subject(item["question"]) for item in items}
-    require(len(generated_targets) == len(items) and not (generated_targets & excluded_entities), "fresh target entities overlap source exclusions")
-    require(not (face_entities & excluded_entities), "fresh face entities overlap source exclusions")
+    require(
+        len(generated_targets) == len(items) and not (generated_targets & excluded_entities),
+        "fresh target entities overlap source exclusions",
+    )
+    require(
+        not (face_entities & excluded_entities), "fresh face entities overlap source exclusions"
+    )
     require(not (face_words & excluded_words), "fresh face words overlap source exclusions")
-    require(len(face_entity_occurrences) == len(set(face_entity_occurrences)), "face entity values are not globally unique")
-    require(len(face_word_occurrences) == len(set(face_word_occurrences)), "face material values are not globally unique")
+    require(
+        len(face_entity_occurrences) == len(set(face_entity_occurrences)),
+        "face entity values are not globally unique",
+    )
+    require(
+        len(face_word_occurrences) == len(set(face_word_occurrences)),
+        "face material values are not globally unique",
+    )
     return {
         "accepted": True,
         "base_item_count": len(items),
@@ -390,12 +453,18 @@ def prepare_face() -> dict:
     if sha256(PLAN) != PLAN_SHA256:
         raise Refuse("N1-153 plan SHA changed")
     started = time.process_time()
-    excluded_entities, excluded_words, exclusion_summary, source_hashes, runtime = collect_n150_exclusions()
+    excluded_entities, excluded_words, exclusion_summary, source_hashes, runtime = (
+        collect_n150_exclusions()
+    )
     face, face_summary = build_face(excluded_entities, excluded_words)
-    require(n150_builder.verify_hashes(source_hashes), "N1-153 sources changed during face generation")
+    require(
+        n150_builder.verify_hashes(source_hashes), "N1-153 sources changed during face generation"
+    )
     cpu = time.process_time() - started
     require(cpu <= 3_600.0, "N1-153 face/source preparation exceeds CPU ceiling")
-    face_bytes = json.dumps(face, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    face_bytes = json.dumps(face, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode(
+        "utf-8"
+    )
     checks = {
         "schema": "n1-plan153-v28-fresh-context-face-checks-v1",
         "status": "complete",
@@ -438,15 +507,32 @@ def prepare_face() -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PLAN-N1-153 fresh context-length face preparation")
+    parser = argparse.ArgumentParser(
+        description="PLAN-N1-153 fresh context-length face preparation"
+    )
     parser.add_argument("--prepare-face", action="store_true")
     args = parser.parse_args()
     if not args.prepare_face:
         parser.error("one-shot invocation requires --prepare-face")
     result = prepare_face()
-    keys = ("status", "accepted", "base_item_count", "total_queries", "source_exclusion_summary", "source_hash_count", "cpu_seconds", "model_loads", "checkpoint_loads", "model_queries", "parameter_updates", "can_promote")
+    keys = (
+        "status",
+        "accepted",
+        "base_item_count",
+        "total_queries",
+        "source_exclusion_summary",
+        "source_hash_count",
+        "cpu_seconds",
+        "model_loads",
+        "checkpoint_loads",
+        "model_queries",
+        "parameter_updates",
+        "can_promote",
+    )
     output = {key: result.get(key) for key in keys if key in result}
-    output["summary_zh"] = "N1-153 fresh face/source preparation complete; no model load/query/update."
+    output["summary_zh"] = (
+        "N1-153 fresh face/source preparation complete; no model load/query/update."
+    )
     print(json.dumps(output, ensure_ascii=True, sort_keys=True))
     return 0 if result.get("status") == "complete" else 1
 

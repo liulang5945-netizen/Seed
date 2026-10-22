@@ -36,30 +36,70 @@ from taiji.native_local_relation_evidence_candidate import (  # noqa: E402
     LocalRelationEvidenceCandidate,
 )
 
-PLAN = ROOT / "plans/reference/PLAN-N1-141_interleaved_context_schedule_matched_continuation_draft_20261019.md"
+PLAN = (
+    ROOT
+    / "plans/reference/PLAN-N1-141_interleaved_context_schedule_matched_continuation_draft_20261019.md"
+)
 PLAN_SHA256 = "00b3033bf0682206192fb92018d9b202d8abb8dec5e74a9e1d57797bc45955a3"
 APPROVED_DRAFT_SHA256 = "a5f6a4166b40dc92a72def8f70af146061fbaeea875282cd23df72f476430a3"
 
 N132_RESULT = n132.RESULT
-N140_PLAN = ROOT / "plans/reference/PLAN-N1-140_baseline_retention_balanced_matched_continuation_draft_20261019.md"
+N140_PLAN = (
+    ROOT
+    / "plans/reference/PLAN-N1-140_baseline_retention_balanced_matched_continuation_draft_20261019.md"
+)
 N140_CLOSEOUT = ROOT / "plans/reference/PLAN-N1-140_execution_closeout_20261019.md"
-N140_RESULT = ROOT / "reports/taiji_n1_plan140_baseline_retention_balanced_matched_continuation_result_20261019.json"
-N140_ITEMWISE = ROOT / "reports/taiji_n1_plan140_itemwise_retention_context_attribution_20261019.json"
+N140_RESULT = (
+    ROOT
+    / "reports/taiji_n1_plan140_baseline_retention_balanced_matched_continuation_result_20261019.json"
+)
+N140_ITEMWISE = (
+    ROOT / "reports/taiji_n1_plan140_itemwise_retention_context_attribution_20261019.json"
+)
 N138_RESULT = v20.RUN_REPORT
 N138_MANIFEST = v20.SOURCE_EXCLUSIONS
 N138_FACE = v20.FACE
 N138_FACE_CHECKS = v20.FACE_CHECKS
 
-READINESS = ROOT / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_readiness_20261019.json"
-READINESS_ATTEMPT = ROOT / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_readiness_attempt_20261019.json"
-SOURCE_BINDING = ROOT / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_source_binding_20261019.json"
-PREFLIGHT = ROOT / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_checkpoint_preflight_20261019.json"
-PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_checkpoint_preflight_attempt_20261019.json"
-PREFLIGHT_BINDING = ROOT / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_checkpoint_preflight_binding_20261019.json"
-ATTEMPT = ROOT / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_attempt_20261019.json"
-PROGRESS = ROOT / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_progress_20261019.jsonl"
-RESULT = ROOT / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_result_20261019.json"
-CHECKPOINT_ROOT = ROOT / "data/checkpoints/n1_plan141_interleaved_context_schedule_matched_continuation_20261019"
+READINESS = (
+    ROOT
+    / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_readiness_20261019.json"
+)
+READINESS_ATTEMPT = (
+    ROOT
+    / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_readiness_attempt_20261019.json"
+)
+SOURCE_BINDING = (
+    ROOT
+    / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_source_binding_20261019.json"
+)
+PREFLIGHT = (
+    ROOT
+    / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_checkpoint_preflight_20261019.json"
+)
+PREFLIGHT_ATTEMPT = (
+    ROOT
+    / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_checkpoint_preflight_attempt_20261019.json"
+)
+PREFLIGHT_BINDING = (
+    ROOT
+    / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_checkpoint_preflight_binding_20261019.json"
+)
+ATTEMPT = (
+    ROOT
+    / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_attempt_20261019.json"
+)
+PROGRESS = (
+    ROOT
+    / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_progress_20261019.jsonl"
+)
+RESULT = (
+    ROOT
+    / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_result_20261019.json"
+)
+CHECKPOINT_ROOT = (
+    ROOT / "data/checkpoints/n1_plan141_interleaved_context_schedule_matched_continuation_20261019"
+)
 
 SEEDS = (11, 12, 13)
 BRANCHES = ("candidate", "control")
@@ -238,11 +278,8 @@ def _collect_original_schedule(
     if (
         len(parent_counts) != 48
         or set(parent_counts.values()) != {48}
-        or set(grouped) != {
-            (parent, route)
-            for parent in parent_counts
-            for route in ("raw", "hard")
-        }
+        or set(grouped)
+        != {(parent, route) for parent in parent_counts for route in ("raw", "hard")}
         or any(len(rows) != 24 for rows in grouped.values())
     ):
         raise ValueError("每个transition父项须有raw/hard各24个更新slot")
@@ -316,12 +353,8 @@ def build_context_assignment(records: list[dict]) -> tuple[dict[int, dict], dict
                 parent_counts[condition] += 1
                 route_condition_counts[(route, condition)] += 1
                 global_counts[condition] += 1
-        if (
-            parent_counts[BASELINE_CONDITION] != 24
-            or any(
-                parent_counts[condition] != 4
-                for condition, _length, _distance in TRANSITION_CONDITIONS
-            )
+        if parent_counts[BASELINE_CONDITION] != 24 or any(
+            parent_counts[condition] != 4 for condition, _length, _distance in TRANSITION_CONDITIONS
         ):
             raise ValueError(f"per-parent context exposure counts differ: {parent}")
         per_parent[parent] = dict(sorted(parent_counts.items()))
@@ -340,10 +373,7 @@ def build_context_assignment(records: list[dict]) -> tuple[dict[int, dict], dict
         for route, expected in (("raw", 96), ("hard", 96))
     ):
         raise ValueError("raw/hard context exposure balance changed")
-    if any(
-        route_condition_counts[(route, BASELINE_CONDITION)] != 576
-        for route in ("raw", "hard")
-    ):
+    if any(route_condition_counts[(route, BASELINE_CONDITION)] != 576 for route in ("raw", "hard")):
         raise ValueError("raw/hard two-row baseline must split 576/576")
 
     summary = {
@@ -410,15 +440,13 @@ def build_context_variants(
             "big",
         )
         directions = [
-            DIRECTIONS[(direction_seed + offset) % len(DIRECTIONS)]
-            for offset in range(count)
+            DIRECTIONS[(direction_seed + offset) % len(DIRECTIONS)] for offset in range(count)
         ]
         names = [_new_neighbor(subject, distance, used, rng) for _ in range(count)]
         if any(_hamming(subject, name) != distance for name in names):
             raise AssertionError("generated neighbor has incorrect Hamming distance")
         observations = [
-            f"{name} faces {direction}."
-            for name, direction in zip(names, directions, strict=True)
+            f"{name} faces {direction}." for name, direction in zip(names, directions, strict=True)
         ]
         all_new_names.extend(names)
         return {"entities": names, "observations": observations}
@@ -451,9 +479,7 @@ def build_context_variants(
         )
         subject = n132._query_subject(record["item"]["question"])
         key = (record["parent_id"], subject)
-        hard_requirements[key][distance] = max(
-            hard_requirements[key][distance], length - 2
-        )
+        hard_requirements[key][distance] = max(hard_requirements[key][distance], length - 2)
         hard_augmented_slots += 1
     if hard_augmented_slots != 576:
         raise ValueError("each parent must retain 12 nonbaseline hard-route slots")
@@ -463,9 +489,7 @@ def build_context_variants(
         subject = key[1]
         by_distance = {}
         for distance, count in sorted(hard_requirements[key].items()):
-            by_distance[distance] = make_distance_rows(
-                subject, (key[0], "hard"), distance, count
-            )
+            by_distance[distance] = make_distance_rows(subject, (key[0], "hard"), distance, count)
             hard_distance_variant_count += 1
         variants[(key[0], "hard", subject)] = {
             "subject": subject,
@@ -553,7 +577,9 @@ def validate_context_schedule(
                 for name, row in zip(filler_names, filler_rows, strict=True)
             )
         ):
-            raise ValueError(f"scheduled context violates target/length/distance contract at {step}")
+            raise ValueError(
+                f"scheduled context violates target/length/distance contract at {step}"
+            )
         lengths[str(length)] += 1
 
     expected = Counter()
@@ -571,7 +597,8 @@ def validate_context_schedule(
         "validated_transition_slots": len(records),
         "validated_augmented_slots": sum(lengths.values()),
         "validated_baseline_slots": sum(
-            value for (_route, condition), value in observed.items()
+            value
+            for (_route, condition), value in observed.items()
             if condition == BASELINE_CONDITION
         ),
         "augmented_context_length_counts": dict(sorted(lengths.items())),
@@ -583,7 +610,9 @@ def validate_context_schedule(
     }
 
 
-def _apply_context(item: dict, variant: dict, condition: str, *, item_id: str | None = None) -> dict:
+def _apply_context(
+    item: dict, variant: dict, condition: str, *, item_id: str | None = None
+) -> dict:
     selected = {name: (length, distance) for name, length, distance in TRANSITION_CONDITIONS}
     if condition not in selected:
         raise ValueError(f"unknown augmented context condition: {condition}")
@@ -615,9 +644,7 @@ def _apply_context(item: dict, variant: dict, condition: str, *, item_id: str | 
 def _validate_n132_parent_report() -> tuple[dict, dict[int, dict]]:
     report = read_json(N132_RESULT)
     models = {
-        int(row["seed"]): row
-        for row in report.get("models", [])
-        if row.get("arm") == "position"
+        int(row["seed"]): row for row in report.get("models", []) if row.get("arm") == "position"
     }
     if (
         report.get("complete") is not True
@@ -700,12 +727,8 @@ def _validate_n140_rationale() -> dict:
         "itemwise_report_sha256": sha256(N140_ITEMWISE),
         "original_gate_pass_endpoints": itemwise["original_gate_pass_endpoints"],
         "original_gate_endpoint_count": itemwise["original_gate_endpoint_count"],
-        "candidate_context_free_exact_total": itemwise[
-            "candidate_context_free_exact_total"
-        ],
-        "control_context_free_exact_total": itemwise[
-            "control_context_free_exact_total"
-        ],
+        "candidate_context_free_exact_total": itemwise["candidate_context_free_exact_total"],
+        "control_context_free_exact_total": itemwise["control_context_free_exact_total"],
         "seed13_candidate_transition_n139_exact": itemwise[
             "seed13_candidate_transition_n139_exact"
         ],
@@ -786,9 +809,7 @@ def _build_static_context() -> dict:
         base_scheduled,
     ) = _collect_original_schedule(g, inputs)
     assignment, assignment_summary = build_context_assignment(records)
-    train_entity_names = {
-        entity for item in inputs["items"] for entity in item.get("entities", [])
-    }
+    train_entity_names = {entity for item in inputs["items"] for entity in item.get("entities", [])}
     if not train_entity_names <= excluded_names:
         raise ValueError("N1-138消费清单没有覆盖全部冻结v3 train实体名")
     variants, variant_summary = build_context_variants(
@@ -825,14 +846,12 @@ def _build_static_context() -> dict:
         N138_FACE_CHECKS,
         v20.PLAN,
         Path(v20.__file__).resolve(),
-        Path(v20.__file__).resolve().with_name(
-            "eval_taiji_n1_v20_neighbor_distance_dose_curve.py"
-        ),
+        Path(v20.__file__).resolve().with_name("eval_taiji_n1_v20_neighbor_distance_dose_curve.py"),
     ):
         _add_source(source_hashes, path)
 
     n132_parent_hashes = {}
-    for seed, row in parent_models.items():
+    for _seed, row in parent_models.items():
         parent_path = Path(row["final_checkpoint_path"]).resolve()
         digest = row["final_checkpoint_sha256"]
         _add_source(source_hashes, parent_path, digest)
@@ -847,9 +866,7 @@ def _build_static_context() -> dict:
         for step, row in sorted({record["step"]: record for record in records}.items())
     ]
     schedule_sha = hashlib.sha256(
-        json.dumps(
-            schedule_digest_rows, separators=(",", ":"), ensure_ascii=True
-        ).encode("ascii")
+        json.dumps(schedule_digest_rows, separators=(",", ":"), ensure_ascii=True).encode("ascii")
     ).hexdigest()
     return {
         "g": g,
@@ -945,8 +962,7 @@ def source_readiness() -> dict:
         and bound["context_validation"]["validated_transition_slots"] == 2_304
         and bound["context_validation"]["validated_augmented_slots"] == 1_152
         and bound["context_validation"]["validated_baseline_slots"] == 1_152
-        and bound["context_validation"]["augmented_context_length_counts"]
-        == {"8": 576, "16": 576}
+        and bound["context_validation"]["augmented_context_length_counts"] == {"8": 576, "16": 576}
         and bound["variant_summary"]["unique_new_entity_count"]
         == (
             bound["variant_summary"]["raw_filler_entity_count"]
@@ -1066,11 +1082,7 @@ def _restore_payload(
     if additional < 0 or additional > ADDITIONAL_UPDATES:
         raise ValueError("N1-141 checkpoint续训更新数越界")
     expected_phase = (
-        "zero"
-        if additional == 0
-        else "final"
-        if additional == ADDITIONAL_UPDATES
-        else "partial"
+        "zero" if additional == 0 else "final" if additional == ADDITIONAL_UPDATES else "partial"
     )
     if (
         payload.get("phase") != expected_phase
@@ -1138,9 +1150,7 @@ def _save_checkpoint(
         "phase": (
             "zero"
             if additional_updates == 0
-            else "final"
-            if additional_updates == ADDITIONAL_UPDATES
-            else "partial"
+            else "final" if additional_updates == ADDITIONAL_UPDATES else "partial"
         ),
         "parent_checkpoint_path": str(Path(parent_path).resolve()),
         "parent_checkpoint_sha256": parent_hash,
@@ -1187,9 +1197,8 @@ def _independent_restore(path: Path, budget: CpuBudget) -> dict:
     result = json.loads(response.stdout)
     budget.children += float(result["cpu_seconds"])
     budget.guard()
-    if (
-        result.get("complete") is not True
-        or result.get("signature") != result.get("bundle_fingerprint")
+    if result.get("complete") is not True or result.get("signature") != result.get(
+        "bundle_fingerprint"
     ):
         raise ValueError(f"N1-141独立完整bundle恢复不匹配：{path.name}")
     return {"path": str(path.resolve()), "sha256": sha256(path), **result, "equal": True}
@@ -1199,7 +1208,15 @@ def checkpoint_preflight() -> dict:
     started = time.process_time()
     readiness, binding = _verify_readiness()
     if _outputs_exist(
-        (PREFLIGHT, PREFLIGHT_ATTEMPT, PREFLIGHT_BINDING, ATTEMPT, PROGRESS, RESULT, CHECKPOINT_ROOT)
+        (
+            PREFLIGHT,
+            PREFLIGHT_ATTEMPT,
+            PREFLIGHT_BINDING,
+            ATTEMPT,
+            PROGRESS,
+            RESULT,
+            CHECKPOINT_ROOT,
+        )
     ):
         raise FileExistsError("PLAN-N1-141 checkpoint preflight已开始或已有产物；禁止重试")
     write_new(
@@ -1233,7 +1250,9 @@ def checkpoint_preflight() -> dict:
         CHECKPOINT_ROOT.mkdir(parents=True, exist_ok=False)
         _require_plan_identity()
         if not _verify_source_hashes(readiness["source_hashes"]):
-            raise ValueError("static readiness source changed before zero-copy checkpoint preflight")
+            raise ValueError(
+                "static readiness source changed before zero-copy checkpoint preflight"
+            )
         parent_rows = {
             int(row["seed"]): row
             for row in read_json(N132_RESULT)["models"]
@@ -1573,8 +1592,7 @@ def _context_score_summary(rows: list[dict]) -> dict:
                 direction: {
                     "items": sum(row["answer_direction"] == direction for row in selected),
                     "free_exact": sum(
-                        row["answer_direction"] == direction
-                        and row.get("free_exact") is True
+                        row["answer_direction"] == direction and row.get("free_exact") is True
                         for row in selected
                     ),
                 }
@@ -1609,11 +1627,7 @@ def run_training() -> dict:
     if not _verify_source_hashes(source_hashes):
         raise ValueError("固定续训开始前有来源/checkpoint哈希变化")
     setup_cpu = time.process_time() - stage_started
-    prior_cpu = (
-        float(readiness["cpu_seconds"])
-        + float(preflight["cpu_seconds"])
-        + setup_cpu
-    )
+    prior_cpu = float(readiness["cpu_seconds"]) + float(preflight["cpu_seconds"]) + setup_cpu
     remaining = CPU_LIMIT_SECONDS - prior_cpu
     if remaining <= 0:
         raise TimeoutError("PLAN-N1-141累计CPU额度在续训开始前已耗尽")
@@ -1663,7 +1677,9 @@ def run_training() -> dict:
                     parent_fingerprint = zero_payload["parent_bundle_fingerprint"]
                     before = e11.scorer.paired.fingerprint(model.bundle(optimizer))
                     if before != parent_fingerprint:
-                        raise ValueError("zero bundle loaded for continuation is not the parent endpoint")
+                        raise ValueError(
+                            "zero bundle loaded for continuation is not the parent endpoint"
+                        )
 
                     active = {
                         "seed": seed,
@@ -1694,9 +1710,7 @@ def run_training() -> dict:
                             if item.get("kind") == "transition":
                                 spec = bound["assignment"][step]
                                 context = (
-                                    spec["condition"]
-                                    if branch == "candidate"
-                                    else "control_2row"
+                                    spec["condition"] if branch == "candidate" else "control_2row"
                                 )
                             metrics = n132._training_step(
                                 model,
@@ -1740,8 +1754,7 @@ def run_training() -> dict:
 
                     ledger_summary = _context_ledger_summary(context_ledger, branch)
                     total_steps = {
-                        int(optimizer.state[parameter]["step"])
-                        for parameter in model.parameters()
+                        int(optimizer.state[parameter]["step"]) for parameter in model.parameters()
                     }
                     if (
                         total_steps != {TOTAL_UPDATES}
@@ -1814,9 +1827,7 @@ def run_training() -> dict:
             for branch in BRANCHES:
                 budget.guard(reserve=30)
                 record = next(
-                    row
-                    for row in records
-                    if row["seed"] == seed and row["branch"] == branch
+                    row for row in records if row["seed"] == seed and row["branch"] == branch
                 )
                 final_path = Path(record["final_checkpoint_path"])
                 final_payload = torch.load(final_path, map_location="cpu", weights_only=True)
@@ -1872,10 +1883,7 @@ def run_training() -> dict:
             and not active["final_saved"]
         ):
             try:
-                partial_path = (
-                    CHECKPOINT_ROOT
-                    / f"s{active['seed']}_{active['branch']}_partial.pt"
-                )
+                partial_path = CHECKPOINT_ROOT / f"s{active['seed']}_{active['branch']}_partial.pt"
                 partial_payload = _save_checkpoint(
                     model,
                     optimizer,
@@ -1896,32 +1904,23 @@ def run_training() -> dict:
                     "automatic_resume_allowed": False,
                 }
             except BaseException as save_error:
-                errors.append(
-                    f"partial checkpoint save {type(save_error).__name__}: {save_error}"
-                )
+                errors.append(f"partial checkpoint save {type(save_error).__name__}: {save_error}")
 
     unchanged = _verify_source_hashes(source_hashes)
     if not unchanged:
         errors.append("N1-141运行期间至少一个冻结来源/父checkpoint/zero bundle哈希改变")
     checkpoint_hashes = {
-        str(path.resolve()): sha256(path)
-        for path in CHECKPOINT_ROOT.glob("*.pt")
-        if path.is_file()
+        str(path.resolve()): sha256(path) for path in CHECKPOINT_ROOT.glob("*.pt") if path.is_file()
     }
     stage_cpu = setup_cpu + time.process_time() - execution_started + budget.children
-    cumulative_cpu = (
-        float(readiness["cpu_seconds"])
-        + float(preflight["cpu_seconds"])
-        + stage_cpu
-    )
+    cumulative_cpu = float(readiness["cpu_seconds"]) + float(preflight["cpu_seconds"]) + stage_cpu
     endpoint_records = [row for row in records if "train_sufficiency" in row]
     sufficient_all = len(endpoint_records) == 6 and all(
         row["training_sufficient"] for row in endpoint_records
     )
     scored_queries = sum(int(row.get("train_score_queries", 0)) for row in endpoint_records)
     scored_rows = sum(
-        len(row.get("frozen_gate_rows", []))
-        + len(row.get("augmented_context_rows", []))
+        len(row.get("frozen_gate_rows", [])) + len(row.get("augmented_context_rows", []))
         for row in endpoint_records
     )
     complete = (
@@ -1933,10 +1932,7 @@ def run_training() -> dict:
         and scored_queries == EXPECTED_TOTAL_TRAIN_QUERIES
         and scored_rows == EXPECTED_TOTAL_TRAIN_QUERIES
         and len(checkpoint_hashes) == 12
-        and all(
-            row.get("final_independent_restore", {}).get("equal") is True
-            for row in records
-        )
+        and all(row.get("final_independent_restore", {}).get("equal") is True for row in records)
         and unchanged
         and cumulative_cpu <= CPU_LIMIT_SECONDS
     )

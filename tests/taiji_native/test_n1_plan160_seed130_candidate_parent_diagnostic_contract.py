@@ -8,7 +8,10 @@ from scripts.training import run_taiji_n1_plan160_seed130_candidate_parent_diagn
 
 def test_plan_sha_and_seed130_denominators_are_frozen() -> None:
     assert hashlib.sha256(builder.PLAN.read_bytes()).hexdigest() == builder.PLAN_SHA256
-    assert hashlib.sha256(builder.CORRECTION_ADDENDUM.read_bytes()).hexdigest() == builder.CORRECTION_SHA256
+    assert (
+        hashlib.sha256(builder.CORRECTION_ADDENDUM.read_bytes()).hexdigest()
+        == builder.CORRECTION_SHA256
+    )
     assert builder.PRIOR_LINKED_CPU_SECONDS == 10_421.21875
     assert builder.PRIOR_QUERIES == 480
     assert builder.TOTAL_QUERIES - builder.PRIOR_QUERIES == 2_400
@@ -54,9 +57,9 @@ def test_fresh_summary_checks_all_seed_branch_length_kind_strata() -> None:
                             "context_length": length,
                             "kind": kind,
                             "free_exact": index % 2 == 0,
-                            "output_hex": "756e6b6e6f776e"
-                            if kind == "unknown" and index % 2 == 0
-                            else "",
+                            "output_hex": (
+                                "756e6b6e6f776e" if kind == "unknown" and index % 2 == 0 else ""
+                            ),
                         }
                     )
     summary = runner.fresh_summary(rows)
@@ -78,7 +81,9 @@ def test_fresh_summary_accepts_single_endpoint_continuation_rows() -> None:
                         "context_length": length,
                         "kind": kind,
                         "free_exact": index % 2 == 0,
-                        "output_hex": "756e6b6e6f776e" if kind == "unknown" and index % 2 == 0 else "",
+                        "output_hex": (
+                            "756e6b6e6f776e" if kind == "unknown" and index % 2 == 0 else ""
+                        ),
                     }
                 )
     summary = runner.fresh_summary(rows)

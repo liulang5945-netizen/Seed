@@ -293,9 +293,11 @@ def build(source: Path) -> tuple[LanguageEpisodeCorpus, dict[str, Any]]:
         target_lengths.append(len(episode.target_bytes))
     manifest = {
         "schema": "taiji-r2-oasst2-daily-dialogue-corpus-v1",
-        "status": "ready"
-        if all(episode_counts[split] > 0 for split in ("train", "dev", "final"))
-        else "failed",
+        "status": (
+            "ready"
+            if all(episode_counts[split] > 0 for split in ("train", "dev", "final"))
+            else "failed"
+        ),
         "source_repository": SOURCE_REPOSITORY,
         "source_revision": SOURCE_REVISION,
         "source_license": "Apache-2.0 (Hugging Face dataset metadata)",

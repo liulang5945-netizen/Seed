@@ -85,15 +85,11 @@ def measure(path: Path, *, expected_cells: int = 5) -> dict[str, object]:
         "expected_cells": int(expected_cells),
         "rows": len(rows),
         "cells_per_row": {str(k): v for k, v in sorted(split_counts.items())},
-        "cells_per_row_escape_aware": {
-            str(k): v for k, v in sorted(aware_counts.items())
-        },
+        "cells_per_row_escape_aware": {str(k): v for k, v in sorted(aware_counts.items())},
         "rows_with_escaped_pipes_in_cells": escaped_cells,
         "rows_matching_declaration": split_counts.get(declared, 0),
         "rows_with_more_cells": sum(v for k, v in split_counts.items() if k > declared),
-        "rows_with_fewer_cells": sum(
-            v for k, v in split_counts.items() if k < declared
-        ),
+        "rows_with_fewer_cells": sum(v for k, v in split_counts.items() if k < declared),
         "rows_closed_with_pipe": closed,
         "rows_not_closed": len(rows) - closed,
         "max_debt_id": ids[-1],
@@ -156,15 +152,9 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 2
     try:
-        report = measure(
-            PROJECT_ROOT / args.table, expected_cells=int(args.expect_cells)
-        )
+        report = measure(PROJECT_ROOT / args.table, expected_cells=int(args.expect_cells))
     except ValueError as exc:
-        print(
-            json.dumps(
-                {"format": REPORT_FORMAT, "status": "refuse_scan", "detail": str(exc)}
-            )
-        )
+        print(json.dumps({"format": REPORT_FORMAT, "status": "refuse_scan", "detail": str(exc)}))
         return 2
     out = Path(args.out_report)
     if not out.is_absolute():
@@ -197,9 +187,7 @@ def main(argv: list[str] | None = None) -> int:
             "header_declares_the_expected_shape",
         }
     failing = sorted(
-        name
-        for name, ok in report["verdicts"].items()
-        if ok is not True and name in enforced
+        name for name, ok in report["verdicts"].items() if ok is not True and name in enforced
     )
     print(
         json.dumps(
@@ -209,13 +197,9 @@ def main(argv: list[str] | None = None) -> int:
                 "cells_per_row": report["cells_per_row"],
                 "cells_per_row_escape_aware": report["cells_per_row_escape_aware"],
                 "rows_not_expected_cells": report["rows_not_expected_cells"],
-                "rows_with_escaped_pipes_in_cells": report[
-                    "rows_with_escaped_pipes_in_cells"
-                ],
+                "rows_with_escaped_pipes_in_cells": report["rows_with_escaped_pipes_in_cells"],
                 "max_debt_id": report["max_debt_id"],
-                "declared_is_the_majority_shape": report[
-                    "declared_is_the_majority_shape"
-                ],
+                "declared_is_the_majority_shape": report["declared_is_the_majority_shape"],
                 "failing_verdicts": failing,
             },
             ensure_ascii=True,

@@ -27,20 +27,26 @@ PLAN = ROOT / "plans/reference/PLAN-N1-88_position_final_cycle_lr_decay_review_2
 BASE_REPORT = ROOT / "reports/taiji_n1_transition_factorial_run86c.json"
 AUDIT_REPORT = ROOT / "reports/taiji_n1_transition_factorial_run86c_offline_trajectory_audit.json"
 PREFLIGHT = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88c_preflight.json"
-PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88c_preflight_attempt.json"
-PREFLIGHT_ATTEMPT_2 = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88c_preflight_attempt_02.json"
-PREFLIGHT_FAILURE = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88c_preflight_failure.json"
+PREFLIGHT_ATTEMPT = (
+    ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88c_preflight_attempt.json"
+)
+PREFLIGHT_ATTEMPT_2 = (
+    ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88c_preflight_attempt_02.json"
+)
+PREFLIGHT_FAILURE = (
+    ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88c_preflight_failure.json"
+)
 ATTEMPT = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88c_attempt.json"
 REPORT = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88c.json"
 COMPLETION = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88c_completion.json"
 LAUNCH_MANIFEST = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88c_launcher.json"
-LAUNCH_RETURNED = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88c_launcher_returned.json"
+LAUNCH_RETURNED = (
+    ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88c_launcher_returned.json"
+)
 WORKER_MANIFEST = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88c_worker.json"
 STDOUT = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88c.stdout.log"
 STDERR = ROOT / "reports/taiji_n1_transition_factorial_lr_decay_run88c.stderr.log"
-CHECKPOINT_ROOT = (
-    ROOT / "data/checkpoints/run88c/n1_transition_factorial_lr_decay_20261016"
-)
+CHECKPOINT_ROOT = ROOT / "data/checkpoints/run88c/n1_transition_factorial_lr_decay_20261016"
 
 TASK_RUN = "Seed-N1-LRDecay-Run88C-20261016"
 BASE_REPORT_SHA256 = "0a8fc62e9aa00577d67001c70008773e6e5cee54cebad4115956e0360446d785"
@@ -297,12 +303,11 @@ def make_module() -> tuple[dict, dict, dict]:
             **{step: BASE_LR for step in range(DECAY_START)},
             **{step: FINAL_LR for step in range(DECAY_START, UPDATES)},
         }
-        if ACTIVE_RATE_LOG != expected_rates:
+        if expected_rates != ACTIVE_RATE_LOG:
             problems.append(f"actual learning-rate steps differ for seed {seed}")
         if (
             record["losses"][:DECAY_START] != baseline["losses"][:DECAY_START]
-            or record["measurements"][:DECAY_START]
-            != baseline["measurements"][:DECAY_START]
+            or record["measurements"][:DECAY_START] != baseline["measurements"][:DECAY_START]
         ):
             problems.append(f"paired trajectory differs before step {DECAY_START}")
         current_rows = [row for row in record["rows"] if row["completed_updates"] < DECAY_START]
@@ -321,6 +326,7 @@ def make_module() -> tuple[dict, dict, dict]:
         return summary
 
     globals_dict["seal_record"] = seal_with_paired_control
+
     def independent(path, expected, budget):
         budget.guard(reserve=10)
         python = Path(sys.executable)
@@ -434,7 +440,9 @@ def checkpoint_preflight() -> dict:
             or any(CHECKPOINT_ROOT.iterdir())
             or PREFLIGHT_ATTEMPT_2.exists()
         ):
-            raise FileExistsError("run88c preflight retry requires the recorded empty-root first failure")
+            raise FileExistsError(
+                "run88c preflight retry requires the recorded empty-root first failure"
+            )
         attempt_path = PREFLIGHT_ATTEMPT_2
         attempt_number = 2
     else:
@@ -452,7 +460,11 @@ def checkpoint_preflight() -> dict:
         BASE_REPORT,
         AUDIT_REPORT,
         *PRIOR_FAILED_PREFLIGHTS,
-        *(Path(entry["shard"]["path"]) for entry in baseline_report["models"] if entry["arm"] == ARM),
+        *(
+            Path(entry["shard"]["path"])
+            for entry in baseline_report["models"]
+            if entry["arm"] == ARM
+        ),
     ]
     if attempt_number == 2:
         extra.extend((PREFLIGHT_ATTEMPT, PREFLIGHT_FAILURE))
@@ -544,7 +556,10 @@ def checkpoint_preflight() -> dict:
         "can_promote": False,
         "completed_utc": utc_now(),
     }
-    if not report["learning_rate_contract"]["optimizer_group_rates_verified"] or cpu_seconds + PRIOR_CPU_RESERVE_SECONDS >= CPU_LIMIT_SECONDS:
+    if (
+        not report["learning_rate_contract"]["optimizer_group_rates_verified"]
+        or cpu_seconds + PRIOR_CPU_RESERVE_SECONDS >= CPU_LIMIT_SECONDS
+    ):
         raise ValueError("run88c checkpoint preflight or schedule contract did not pass")
     write_new(PREFLIGHT, report)
     binding = {
@@ -558,13 +573,24 @@ def checkpoint_preflight() -> dict:
     binding_path = PREFLIGHT.with_name(PREFLIGHT.stem + "_binding.json")
     write_new(binding_path, binding)
     # The report is immutable once written; the binding contains the report's raw SHA.
-    print(json.dumps({"complete": True, "report": str(PREFLIGHT), "cpu_seconds": report["cpu_seconds"], "checkpoints": 3}))
+    print(
+        json.dumps(
+            {
+                "complete": True,
+                "report": str(PREFLIGHT),
+                "cpu_seconds": report["cpu_seconds"],
+                "checkpoints": 3,
+            }
+        )
+    )
     return report
 
 
 def task_receipts(identity: dict) -> tuple[dict, Path]:
     deadline = time.monotonic() + 60
-    while (not LAUNCH_MANIFEST.exists() or not LAUNCH_RETURNED.exists()) and time.monotonic() < deadline:
+    while (
+        not LAUNCH_MANIFEST.exists() or not LAUNCH_RETURNED.exists()
+    ) and time.monotonic() < deadline:
         time.sleep(0.05)
     if not LAUNCH_MANIFEST.exists() or not LAUNCH_RETURNED.exists():
         raise FileNotFoundError("run88c task manifest or launcher return is missing")
@@ -640,7 +666,11 @@ def training_audit() -> dict:
         LAUNCH_MANIFEST,
         LAUNCH_RETURNED,
         worker_path,
-        *(Path(entry["shard"]["path"]) for entry in baseline_report["models"] if entry["arm"] == ARM),
+        *(
+            Path(entry["shard"]["path"])
+            for entry in baseline_report["models"]
+            if entry["arm"] == ARM
+        ),
         *(CHECKPOINT_ROOT / name for name in known_checkpoints),
     ]
     guards = source_guards(g, readiness_guards, extra)
@@ -723,7 +753,9 @@ def training_audit() -> dict:
         prior_cpu_reserve_seconds=PRIOR_CPU_RESERVE_SECONDS,
         cpu_seconds=round(PRIOR_CPU_RESERVE_SECONDS + preflight_cpu + setup_cpu + budget.used(), 6),
         cpu_accounting_complete=budget.accounting_complete,
-        sources_unchanged=all(guard_sha256(Path(path)) == digest for path, digest in guards.items()),
+        sources_unchanged=all(
+            guard_sha256(Path(path)) == digest for path, digest in guards.items()
+        ),
         code_unchanged=g["identity"]() == identity,
         completed_updates=sum(model.get("completed_updates", 0) for model in result["models"]),
         qa_sequences=sum(model.get("qa_sequences", 0) for model in result["models"]),
@@ -753,7 +785,9 @@ def training_audit() -> dict:
         and result["sources_unchanged"]
         and result["code_unchanged"]
         and result["cpu_accounting_complete"]
-        and not any(result[key] for key in ("dev_queries", "holdout_queries", "confirmation_queries"))
+        and not any(
+            result[key] for key in ("dev_queries", "holdout_queries", "confirmation_queries")
+        )
     )
     result["can_promote"] = False
     write_new(REPORT, result)
@@ -770,7 +804,9 @@ def configure_stdio() -> None:
     sys.stderr = STDERR.open("x", encoding="utf-8", buffering=1)
 
 
-def complete(exit_code: int, started: str, cpu_start: float, report_sha: str | None, error: str | None = None) -> int:
+def complete(
+    exit_code: int, started: str, cpu_start: float, report_sha: str | None, error: str | None = None
+) -> int:
     receipt_value = {
         "schema": "n1-transition-factorial-lr-decay-run88c-completion-v1",
         "task_name": TASK_RUN,
@@ -800,7 +836,15 @@ def main() -> int:
         return 0
     if args.checkpoint_preflight:
         value = checkpoint_preflight()
-        print(json.dumps({"complete": value["complete"], "report": str(PREFLIGHT), "cpu_seconds": value["cpu_seconds"]}))
+        print(
+            json.dumps(
+                {
+                    "complete": value["complete"],
+                    "report": str(PREFLIGHT),
+                    "cpu_seconds": value["cpu_seconds"],
+                }
+            )
+        )
         return 0
 
     configure_stdio()
@@ -813,7 +857,9 @@ def main() -> int:
         failure = f"{type(error).__name__}: {error}"
         traceback.print_exc(file=sys.stderr)
         if not COMPLETION.exists():
-            return complete(1, started, cpu_start, sha256(REPORT) if REPORT.exists() else None, failure)
+            return complete(
+                1, started, cpu_start, sha256(REPORT) if REPORT.exists() else None, failure
+            )
         raise
 
 

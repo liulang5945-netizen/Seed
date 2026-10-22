@@ -134,11 +134,17 @@ def test_context_bank_is_nested_target_first_and_exclusion_safe() -> None:
         subject = builder.n132._query_subject(item["question"])
         filler_rows = views[32][len(base) :]
         previous = filler_banks.setdefault(subject, filler_rows)
-        assert previous[: min(len(previous), len(filler_rows))] == filler_rows[: min(len(previous), len(filler_rows))]
+        assert (
+            previous[: min(len(previous), len(filler_rows))]
+            == filler_rows[: min(len(previous), len(filler_rows))]
+        )
         for row in filler_rows:
             name, _, word = row.removesuffix(".").split()
             assert len(name) == builder.ENTITY_LENGTH
-            assert builder.n149_builder.n148_builder.n147_builder._hamming(subject, name) == builder.DISTANCE
+            assert (
+                builder.n149_builder.n148_builder.n147_builder._hamming(subject, name)
+                == builder.DISTANCE
+            )
             assert name not in source_names | excluded_entities
             assert word not in source_words | excluded_words
             assert generated_entity_owner.setdefault(name, subject) == subject

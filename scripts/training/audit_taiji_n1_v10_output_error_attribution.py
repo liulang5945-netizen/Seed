@@ -203,7 +203,7 @@ def _strata(rows: list[dict], dimensions: tuple[str, ...]) -> list[dict]:
         grouped[tuple(row[dimension] for dimension in dimensions)].append(row)
     output = []
     for key, group in sorted(grouped.items(), key=lambda pair: tuple(str(v) for v in pair[0])):
-        output.append({**dict(zip(dimensions, key)), **_summary(group)})
+        output.append({**dict(zip(dimensions, key, strict=False)), **_summary(group)})
     return output
 
 

@@ -9,11 +9,26 @@ from scripts.training import run_taiji_n1_plan162b_question_surface_matched_cont
 
 
 def test_repair_addendum_and_original_failure_receipt_are_bound() -> None:
-    assert hashlib.sha256(runner.REPAIR_ADDENDUM.read_bytes()).hexdigest() == runner.REPAIR_ADDENDUM_SHA256
-    assert hashlib.sha256(runner.ORIGINAL_RESULT.read_bytes()).hexdigest() == runner.ORIGINAL_RESULT_SHA256
-    assert hashlib.sha256(runner.ORIGINAL_ATTEMPT.read_bytes()).hexdigest() == runner.ORIGINAL_ATTEMPT_SHA256
-    assert hashlib.sha256(runner.ORIGINAL_PROGRESS.read_bytes()).hexdigest() == runner.ORIGINAL_PROGRESS_SHA256
-    assert hashlib.sha256(runner.ORIGINAL_PARTIAL_CHECKPOINT.read_bytes()).hexdigest() == runner.ORIGINAL_PARTIAL_SHA256
+    assert (
+        hashlib.sha256(runner.REPAIR_ADDENDUM.read_bytes()).hexdigest()
+        == runner.REPAIR_ADDENDUM_SHA256
+    )
+    assert (
+        hashlib.sha256(runner.ORIGINAL_RESULT.read_bytes()).hexdigest()
+        == runner.ORIGINAL_RESULT_SHA256
+    )
+    assert (
+        hashlib.sha256(runner.ORIGINAL_ATTEMPT.read_bytes()).hexdigest()
+        == runner.ORIGINAL_ATTEMPT_SHA256
+    )
+    assert (
+        hashlib.sha256(runner.ORIGINAL_PROGRESS.read_bytes()).hexdigest()
+        == runner.ORIGINAL_PROGRESS_SHA256
+    )
+    assert (
+        hashlib.sha256(runner.ORIGINAL_PARTIAL_CHECKPOINT.read_bytes()).hexdigest()
+        == runner.ORIGINAL_PARTIAL_SHA256
+    )
 
 
 def test_original_question_fallback_uses_captured_parser_after_patch() -> None:
@@ -50,5 +65,12 @@ def test_budget_accounts_for_the_zero_update_first_attempt() -> None:
 
 
 def test_new_execution_artifacts_remain_inside_repository() -> None:
-    for path in (runner.REPAIR_ADDENDUM, runner.REPAIR_TEST, runner.CHECKPOINT_ROOT, runner.ATTEMPT, runner.PROGRESS, runner.RESULT):
+    for path in (
+        runner.REPAIR_ADDENDUM,
+        runner.REPAIR_TEST,
+        runner.CHECKPOINT_ROOT,
+        runner.ATTEMPT,
+        runner.PROGRESS,
+        runner.RESULT,
+    ):
         assert Path(path).resolve().is_relative_to(builder.ROOT)

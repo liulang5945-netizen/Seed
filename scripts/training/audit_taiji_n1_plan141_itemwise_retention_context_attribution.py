@@ -9,11 +9,23 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-PLAN = ROOT / "plans/reference/PLAN-N1-141_interleaved_context_schedule_matched_continuation_draft_20261019.md"
+PLAN = (
+    ROOT
+    / "plans/reference/PLAN-N1-141_interleaved_context_schedule_matched_continuation_draft_20261019.md"
+)
 N132_RESULT = ROOT / "reports/taiji_n1_plan132_binding_supervision_calibration_result_20261019.json"
-N140_RESULT = ROOT / "reports/taiji_n1_plan140_baseline_retention_balanced_matched_continuation_result_20261019.json"
-N141_RESULT = ROOT / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_result_20261019.json"
-RUNNER = ROOT / "scripts/training/run_taiji_n1_plan141_interleaved_context_schedule_matched_continuation.py"
+N140_RESULT = (
+    ROOT
+    / "reports/taiji_n1_plan140_baseline_retention_balanced_matched_continuation_result_20261019.json"
+)
+N141_RESULT = (
+    ROOT
+    / "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_result_20261019.json"
+)
+RUNNER = (
+    ROOT
+    / "scripts/training/run_taiji_n1_plan141_interleaved_context_schedule_matched_continuation.py"
+)
 REPORT = ROOT / "reports/taiji_n1_plan141_itemwise_retention_context_attribution_20261019.json"
 CONDITIONS = ("8/d1", "8/d2", "8/d4", "16/d1", "16/d2", "16/d4")
 KINDS = ("lookup", "revision", "transition", "unknown")
@@ -106,18 +118,10 @@ def analyze() -> dict:
     ):
         raise ValueError("complete train-only N1-132/140/141 reports are required")
 
-    parents = {
-        int(row["seed"]): row
-        for row in n132["models"]
-        if row.get("arm") == "position"
-    }
+    parents = {int(row["seed"]): row for row in n132["models"] if row.get("arm") == "position"}
     old = {(int(row["seed"]), row["branch"]): row for row in n140["models"]}
     new = {(int(row["seed"]), row["branch"]): row for row in n141["models"]}
-    expected = {
-        (seed, branch)
-        for seed in (11, 12, 13)
-        for branch in ("candidate", "control")
-    }
+    expected = {(seed, branch) for seed in (11, 12, 13) for branch in ("candidate", "control")}
     if set(parents) != {11, 12, 13} or set(old) != expected or set(new) != expected:
         raise ValueError("N1-132/140/141 must contain all six seed-matched endpoints")
 
@@ -147,9 +151,7 @@ def analyze() -> dict:
                 if row.get("condition") == condition
             ]
             n141_context_rows = [
-                row
-                for row in model["augmented_context_rows"]
-                if row.get("condition") == condition
+                row for row in model["augmented_context_rows"] if row.get("condition") == condition
             ]
             n140_context = _score_map(n140_context_rows, key="parent_id")
             n141_context = _score_map(n141_context_rows, key="parent_id")

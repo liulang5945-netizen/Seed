@@ -108,8 +108,10 @@ def _validate_inputs() -> tuple[Any, Any, dict[str, Any], dict[str, Any], dict[s
     )
     if (
         baseline.get("checkpoint_digest") != baseline_digest
-        or baseline.get("checkpoint_digest") != "1a77364a42633686dc9e1e9ee6a13a7e09b4f07770e3841d873bacd9eadaeaeb"
-        or baseline.get("corpus_digest") != base._read_json(base.ASSISTANT_MANIFEST).get("corpus_digest")
+        or baseline.get("checkpoint_digest")
+        != "1a77364a42633686dc9e1e9ee6a13a7e09b4f07770e3841d873bacd9eadaeaeb"
+        or baseline.get("corpus_digest")
+        != base._read_json(base.ASSISTANT_MANIFEST).get("corpus_digest")
         or base.sha256(base.BASELINE_CHECKPOINT) != base.BASELINE_CHECKPOINT_SHA256
     ):
         raise Refuse("warm-start parent checkpoint provenance differs")
@@ -197,13 +199,13 @@ def prepare(arm: str) -> dict[str, Any]:
             raise Refuse("full-turn one-episode credit probe failed or mutated its parent")
 
         sft_model = Taiji.from_checkpoint(zero_payload["model"], device="cpu")
-        sft_canary, encoder = base._assistant_sft_trainer(sft_model, assistant_corpus, base._fresh_code_revision())
+        sft_canary, encoder = base._assistant_sft_trainer(
+            sft_model, assistant_corpus, base._fresh_code_revision()
+        )
         sft_zero_path = paths["checkpoint_dir"] / "assistant_sft_canary_zero.pt"
         sft_zero_payload = sft_canary.checkpoint()
         base._atomic_save(sft_zero_payload, sft_zero_path)
-        sft_restore = base._independent_restore(
-            sft_zero_path, "assistant_sft", preflight_budget
-        )
+        sft_restore = base._independent_restore(sft_zero_path, "assistant_sft", preflight_budget)
         if sft_restore.get("checkpoint_digest") != sft_zero_payload.get("checkpoint_digest"):
             raise Refuse("assistant calibration canary checkpoint did not independently restore")
         sft_probe = LanguageAlignmentTrainer.from_checkpoint(sft_zero_payload, assistant_corpus)
@@ -228,13 +230,19 @@ def prepare(arm: str) -> dict[str, Any]:
             "assistant_train_corpus_digest": assistant_corpus.digest,
             "pretraining_episodes": len(pretrain_corpus.episodes),
             "pretraining_families": len({item.family_id for item in pretrain_corpus.episodes}),
-            "pretraining_target_bytes_per_epoch": sum(len(item.target_bytes) for item in pretrain_corpus.episodes),
+            "pretraining_target_bytes_per_epoch": sum(
+                len(item.target_bytes) for item in pretrain_corpus.episodes
+            ),
             "assistant_train_episodes": len(assistant_corpus.episodes),
             "model_parameters": parameters,
             "model_config": model.checkpoint()["config"],
             "warm_start_parent_checkpoint_sha256": base.BASELINE_CHECKPOINT_SHA256,
             "fresh_seed": FRESH_SEED if arm == "fresh_same_capacity" else None,
-            "zero_checkpoint": {"path": str(zero_path.resolve()), "sha256": _sha256(zero_path), **zero_restore},
+            "zero_checkpoint": {
+                "path": str(zero_path.resolve()),
+                "sha256": _sha256(zero_path),
+                **zero_restore,
+            },
             "assistant_canary_zero_checkpoint": {
                 "path": str(sft_zero_path.resolve()),
                 "sha256": _sha256(sft_zero_path),
@@ -245,19 +253,41 @@ def prepare(arm: str) -> dict[str, Any]:
                 "assistant_target_bytes": len(assistant_corpus.episodes[0].target_bytes),
                 "parent_checkpoints_unchanged": True,
             },
-            "cpu_seconds_preflight": round(time.process_time() - start_cpu + preflight_budget.child_seconds, 6),
+            "cpu_seconds_preflight": round(
+                time.process_time() - start_cpu + preflight_budget.child_seconds, 6
+            ),
             "cpu_limit_seconds": CPU_LIMIT_PER_ARM,
             "formal_updates": 0,
             "generation_queries": 0,
             "can_promote": False,
         }
         base.write_new_json(paths["readiness"], readiness)
-        _record(progress, {"event": "checkpoint_and_credit_preflight_pass", "readiness_sha256": _sha256(paths["readiness"])})
-        attempt.update({"status": "ready", "readiness_sha256": _sha256(paths["readiness"]), "cpu_seconds_preflight": readiness["cpu_seconds_preflight"]})
+        _record(
+            progress,
+            {
+                "event": "checkpoint_and_credit_preflight_pass",
+                "readiness_sha256": _sha256(paths["readiness"]),
+            },
+        )
+        attempt.update(
+            {
+                "status": "ready",
+                "readiness_sha256": _sha256(paths["readiness"]),
+                "cpu_seconds_preflight": readiness["cpu_seconds_preflight"],
+            }
+        )
         _write_atomic(paths["attempt"], attempt)
         return readiness
     except BaseException as exc:
-        attempt.update({"status": "preflight_failed", "error": f"{type(exc).__name__}: {exc}", "cpu_seconds": round(time.process_time() - start_cpu + preflight_budget.child_seconds, 6)})
+        attempt.update(
+            {
+                "status": "preflight_failed",
+                "error": f"{type(exc).__name__}: {exc}",
+                "cpu_seconds": round(
+                    time.process_time() - start_cpu + preflight_budget.child_seconds, 6
+                ),
+            }
+        )
         _write_atomic(paths["attempt"], attempt)
         raise
     finally:
@@ -284,12 +314,20 @@ def execute(arm: str) -> dict[str, Any]:
     pretrainer = LanguageAlignmentTrainer.from_checkpoint(
         torch.load(zero_path, map_location="cpu", weights_only=True), pretrain_corpus
     )
-    if pretrainer.checkpoint()["checkpoint_digest"] != readiness["zero_checkpoint"]["checkpoint_digest"]:
+    if (
+        pretrainer.checkpoint()["checkpoint_digest"]
+        != readiness["zero_checkpoint"]["checkpoint_digest"]
+    ):
         raise Refuse("matched-arm full-turn zero bundle does not restore exactly")
     if _resource_snapshot()["available_memory_gib"] < MIN_FREE_MEMORY_GIB:
         raise Refuse("insufficient memory to start matched-arm training")
 
-    attempt.update({"status": "training", "training_started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())})
+    attempt.update(
+        {
+            "status": "training",
+            "training_started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        }
+    )
     _write_atomic(paths["attempt"], attempt)
     progress = paths["progress"].open("a", encoding="utf-8", newline="\n")
     active_trainer: LanguageAlignmentTrainer | None = pretrainer
@@ -299,20 +337,29 @@ def execute(arm: str) -> dict[str, Any]:
     sft_count = 0
     sft_updates = 0
     try:
+
         def on_pretrain(record: dict[str, Any]) -> None:
             nonlocal pretrain_count, pretrain_updates
             pretrain_count += 1
             pretrain_updates += int(record["observations"])
             if pretrain_count % 128 == 0:
-                _record(progress, {
-                    "event": "full_turn_pretraining_progress",
-                    "episode": pretrain_count,
-                    "episodes_planned": base.PRETRAIN_EPISODE_COUNT * base.PRETRAIN_EPOCHS,
-                    "target_byte_updates": pretrain_updates,
-                    "cpu_seconds": round(preflight_cpu + budget.used(), 3),
-                    "available_memory_gib": round(psutil.virtual_memory().available / 1024**3, 3),
-                })
-                print(f"r2-warmstart-{arm} episode={pretrain_count}/{base.PRETRAIN_EPISODE_COUNT * base.PRETRAIN_EPOCHS} updates={pretrain_updates} cpu={preflight_cpu + budget.used():.1f}", flush=True)
+                _record(
+                    progress,
+                    {
+                        "event": "full_turn_pretraining_progress",
+                        "episode": pretrain_count,
+                        "episodes_planned": base.PRETRAIN_EPISODE_COUNT * base.PRETRAIN_EPOCHS,
+                        "target_byte_updates": pretrain_updates,
+                        "cpu_seconds": round(preflight_cpu + budget.used(), 3),
+                        "available_memory_gib": round(
+                            psutil.virtual_memory().available / 1024**3, 3
+                        ),
+                    },
+                )
+                print(
+                    f"r2-warmstart-{arm} episode={pretrain_count}/{base.PRETRAIN_EPISODE_COUNT * base.PRETRAIN_EPOCHS} updates={pretrain_updates} cpu={preflight_cpu + budget.used():.1f}",
+                    flush=True,
+                )
             if psutil.virtual_memory().available < 4 * 1024**3:
                 raise Refuse("available memory fell below 4 GiB during matched training")
             budget.guard()
@@ -324,7 +371,9 @@ def execute(arm: str) -> dict[str, Any]:
             or pretrain_updates != base.PRETRAIN_TARGET_BYTES_PER_EPOCH * base.PRETRAIN_EPOCHS
             or pretrainer.global_step != pretrain_updates
         ):
-            raise Refuse("full-turn matched-arm training did not meet the fixed episode/update budget")
+            raise Refuse(
+                "full-turn matched-arm training did not meet the fixed episode/update budget"
+            )
 
         pretrain_final = paths["checkpoint_dir"] / "full_turn_final.pt"
         pretrain_payload = pretrainer.checkpoint()
@@ -332,10 +381,20 @@ def execute(arm: str) -> dict[str, Any]:
         pretrain_restore = base._independent_restore(pretrain_final, "pretraining", budget)
         if pretrain_restore.get("checkpoint_digest") != pretrain_payload.get("checkpoint_digest"):
             raise Refuse("full-turn matched-arm final checkpoint restore failed")
-        _record(progress, {"event": "full_turn_final_restored", "checkpoint_sha256": _sha256(pretrain_final), "checkpoint_digest": pretrain_payload["checkpoint_digest"], "restore": pretrain_restore})
+        _record(
+            progress,
+            {
+                "event": "full_turn_final_restored",
+                "checkpoint_sha256": _sha256(pretrain_final),
+                "checkpoint_digest": pretrain_payload["checkpoint_digest"],
+                "restore": pretrain_restore,
+            },
+        )
 
         sft_model = Taiji.from_checkpoint(pretrain_payload["model"], device="cpu")
-        sft_trainer, encoder = base._assistant_sft_trainer(sft_model, assistant_corpus, base._fresh_code_revision())
+        sft_trainer, encoder = base._assistant_sft_trainer(
+            sft_model, assistant_corpus, base._fresh_code_revision()
+        )
         active_trainer = sft_trainer
         active_stage = "assistant_sft"
         sft_zero = paths["checkpoint_dir"] / "assistant_sft_zero.pt"
@@ -349,7 +408,8 @@ def execute(arm: str) -> dict[str, Any]:
         if (
             probe_result.get("status") != "completed"
             or sft_probe.global_step != len(assistant_corpus.episodes[0].target_bytes)
-            or sft_trainer.checkpoint()["checkpoint_digest"] != sft_zero_payload["checkpoint_digest"]
+            or sft_trainer.checkpoint()["checkpoint_digest"]
+            != sft_zero_payload["checkpoint_digest"]
         ):
             raise Refuse("assistant calibration one-episode credit probe failed")
 
@@ -358,14 +418,20 @@ def execute(arm: str) -> dict[str, Any]:
             sft_count += 1
             sft_updates += int(record["observations"])
             if sft_count % 64 == 0:
-                _record(progress, {
-                    "event": "assistant_sft_progress",
-                    "episode": sft_count,
-                    "episodes_planned": base.ASSISTANT_TRAIN_EPISODE_COUNT,
-                    "target_byte_updates": sft_updates,
-                    "cpu_seconds": round(preflight_cpu + budget.used(), 3),
-                })
-                print(f"r2-warmstart-{arm} sft_episode={sft_count}/{base.ASSISTANT_TRAIN_EPISODE_COUNT} updates={sft_updates} cpu={preflight_cpu + budget.used():.1f}", flush=True)
+                _record(
+                    progress,
+                    {
+                        "event": "assistant_sft_progress",
+                        "episode": sft_count,
+                        "episodes_planned": base.ASSISTANT_TRAIN_EPISODE_COUNT,
+                        "target_byte_updates": sft_updates,
+                        "cpu_seconds": round(preflight_cpu + budget.used(), 3),
+                    },
+                )
+                print(
+                    f"r2-warmstart-{arm} sft_episode={sft_count}/{base.ASSISTANT_TRAIN_EPISODE_COUNT} updates={sft_updates} cpu={preflight_cpu + budget.used():.1f}",
+                    flush=True,
+                )
             budget.guard()
 
         sft_result = sft_trainer.train(epochs=base.ASSISTANT_CALIBRATION_EPOCHS, progress=on_sft)
@@ -397,16 +463,28 @@ def execute(arm: str) -> dict[str, Any]:
                 "episodes": pretrain_count,
                 "target_byte_updates": pretrain_updates,
                 "global_step": pretrainer.global_step,
-                "checkpoint": {"path": str(pretrain_final.resolve()), "sha256": _sha256(pretrain_final), "restore": pretrain_restore},
+                "checkpoint": {
+                    "path": str(pretrain_final.resolve()),
+                    "sha256": _sha256(pretrain_final),
+                    "restore": pretrain_restore,
+                },
             },
             "assistant_calibration": {
                 "episodes": sft_count,
                 "target_byte_updates": sft_updates,
                 "global_step": sft_trainer.global_step,
                 "target_encoder_format": encoder.FORMAT,
-                "checkpoint": {"path": str(sft_final.resolve()), "sha256": _sha256(sft_final), "restore": sft_final_restore},
+                "checkpoint": {
+                    "path": str(sft_final.resolve()),
+                    "sha256": _sha256(sft_final),
+                    "restore": sft_final_restore,
+                },
             },
-            "checkpoint_restores": {"full_turn_final": pretrain_restore, "assistant_zero": sft_zero_restore, "assistant_final": sft_final_restore},
+            "checkpoint_restores": {
+                "full_turn_final": pretrain_restore,
+                "assistant_zero": sft_zero_restore,
+                "assistant_final": sft_final_restore,
+            },
             "cpu_seconds_total": round(preflight_cpu + budget.used(), 6),
             "cpu_limit_seconds": CPU_LIMIT_PER_ARM,
             "generation_queries": 0,
@@ -415,9 +493,22 @@ def execute(arm: str) -> dict[str, Any]:
             "can_promote": False,
         }
         base.write_new_json(paths["result"], result)
-        attempt.update({"status": "complete", "result_sha256": _sha256(paths["result"]), "cpu_seconds_total": result["cpu_seconds_total"]})
+        attempt.update(
+            {
+                "status": "complete",
+                "result_sha256": _sha256(paths["result"]),
+                "cpu_seconds_total": result["cpu_seconds_total"],
+            }
+        )
         _write_atomic(paths["attempt"], attempt)
-        _record(progress, {"event": "arm_complete", "result_sha256": _sha256(paths["result"]), "cpu_seconds_total": result["cpu_seconds_total"]})
+        _record(
+            progress,
+            {
+                "event": "arm_complete",
+                "result_sha256": _sha256(paths["result"]),
+                "cpu_seconds_total": result["cpu_seconds_total"],
+            },
+        )
         return result
     except BaseException as exc:
         partial = None
@@ -427,7 +518,11 @@ def execute(arm: str) -> dict[str, Any]:
                 if not partial_path.exists():
                     partial_payload = active_trainer.checkpoint()
                     base._atomic_save(partial_payload, partial_path)
-                    partial = {"path": str(partial_path.resolve()), "sha256": _sha256(partial_path), "checkpoint_digest": partial_payload.get("checkpoint_digest")}
+                    partial = {
+                        "path": str(partial_path.resolve()),
+                        "sha256": _sha256(partial_path),
+                        "checkpoint_digest": partial_payload.get("checkpoint_digest"),
+                    }
             except Exception as save_exc:
                 partial = {"save_error": f"{type(save_exc).__name__}: {save_exc}"}
         failure = {
@@ -447,7 +542,13 @@ def execute(arm: str) -> dict[str, Any]:
         }
         if not paths["result"].exists():
             base.write_new_json(paths["result"], failure)
-        attempt.update({"status": failure["status"], "error": failure["error"], "result_sha256": _sha256(paths["result"])})
+        attempt.update(
+            {
+                "status": failure["status"],
+                "error": failure["error"],
+                "result_sha256": _sha256(paths["result"]),
+            }
+        )
         _write_atomic(paths["attempt"], attempt)
         raise
     finally:
@@ -471,7 +572,9 @@ def main() -> int:
                     "status": result.get("status", "ready"),
                     "arm": args.arm,
                     "model_parameters": result.get("model_parameters"),
-                    "cpu_seconds": result.get("cpu_seconds_total", result.get("cpu_seconds_preflight")),
+                    "cpu_seconds": result.get(
+                        "cpu_seconds_total", result.get("cpu_seconds_preflight")
+                    ),
                     "readiness": result.get("readiness_sha256"),
                     "result": result.get("result_sha256"),
                 },
@@ -481,7 +584,10 @@ def main() -> int:
         )
         return 0
     except Exception as exc:
-        print(f"R2 matched warm-start {args.arm} stopped: {type(exc).__name__}: {exc}", file=sys.stderr)
+        print(
+            f"R2 matched warm-start {args.arm} stopped: {type(exc).__name__}: {exc}",
+            file=sys.stderr,
+        )
         return 1
 
 

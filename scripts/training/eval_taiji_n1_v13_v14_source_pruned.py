@@ -25,7 +25,9 @@ PLAN = ROOT / "plans/reference/PLAN-N1-126_source_pruned_saved_error_diagnostic_
 PLAN_SHA256 = "795aaa57900a05e63edf6097578523121cf63ab82971cdeada2874aebc2b0f96"
 INITIAL_READINESS_PLAN_SHA256 = "24740d08e0d61fa0ccf77530f309d47be42b84af07349bd4d4217e9009b3b614"
 READINESS = ROOT / "reports/taiji_n1_v13_v14_source_pruned_readiness_20261019.json"
-READINESS_REVALIDATION = ROOT / "reports/taiji_n1_v13_v14_source_pruned_readiness_revalidation_20261019.json"
+READINESS_REVALIDATION = (
+    ROOT / "reports/taiji_n1_v13_v14_source_pruned_readiness_revalidation_20261019.json"
+)
 ATTEMPT = ROOT / "reports/taiji_n1_v13_v14_source_pruned_attempt_20261019.json"
 RESULT = ROOT / "reports/taiji_n1_v13_v14_source_pruned_result_20261019.json"
 CPU_LIMIT_SECONDS = 600
@@ -239,10 +241,7 @@ def source_readiness() -> dict:
         if not file.is_file() or sha256(file) != expected:
             raise ValueError(f"source changed during PLAN-N1-126 readiness: {path}")
     cpu = time.process_time() - started
-    if cpu > CPU_LIMIT_SECONDS:
-        status = "stopped_cpu_limit"
-    else:
-        status = "ready_for_approved_execution"
+    status = "stopped_cpu_limit" if cpu > CPU_LIMIT_SECONDS else "ready_for_approved_execution"
     report = {
         "schema": "n1-plan126-source-pruned-readiness-v1",
         "status": status,

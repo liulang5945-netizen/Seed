@@ -43,7 +43,9 @@ SCORES_PER_ENDPOINT = GATE_QUERIES + LENGTH_QUERIES
 DISCARDED_SEED12_UPDATES = 7_564
 PARTIAL_SEED12_UPDATE_OPERATIONS = 1
 FIRST_ATTEMPT_PROGRESS_UPDATE_ROWS = 25_996
-FIRST_ATTEMPT_UPDATE_OPERATIONS = FIRST_ATTEMPT_PROGRESS_UPDATE_ROWS + PARTIAL_SEED12_UPDATE_OPERATIONS
+FIRST_ATTEMPT_UPDATE_OPERATIONS = (
+    FIRST_ATTEMPT_PROGRESS_UPDATE_ROWS + PARTIAL_SEED12_UPDATE_OPERATIONS
+)
 FIRST_ATTEMPT_CPU_UPPER_SECONDS = 4_000.0
 CPU_LIMIT_SECONDS = 7_000.0
 LINKED_CPU_LIMIT_SECONDS = 50_000.0
@@ -65,7 +67,9 @@ def write_new(path: Path, value: dict[str, Any]) -> None:
 
 
 def _digest(value: Any) -> str:
-    payload = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    payload = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode(
+        "utf-8"
+    )
     return hashlib.sha256(payload).hexdigest()
 
 
@@ -80,7 +84,9 @@ def _read_jsonl(path: Path) -> list[dict[str, Any]]:
     return rows
 
 
-def _collect_old_progress() -> tuple[list[dict[str, Any]], dict[str, list[dict[str, Any]]], dict[str, str]]:
+def _collect_old_progress() -> (
+    tuple[list[dict[str, Any]], dict[str, list[dict[str, Any]]], dict[str, str]]
+):
     digest = n162.sha256(OLD_PROGRESS)
     if digest != "11c59e4348baec67f7c77ff79f8a3574789cb68bc945f8ed266e482652071abf":
         raise Refuse("interrupted N1-165 progress SHA differs from the frozen recovery plan")
@@ -96,11 +102,14 @@ def _collect_old_progress() -> tuple[list[dict[str, Any]], dict[str, list[dict[s
     partial_tail = raw_lines[-1]
     if (
         len(partial_tail) != 2_410
-        or hashlib.sha256(partial_tail).hexdigest() != "0d94ef091aeb5ddd3b037c3a5be14576283868c13d90eb5b220c846ab527a110"
+        or hashlib.sha256(partial_tail).hexdigest()
+        != "0d94ef091aeb5ddd3b037c3a5be14576283868c13d90eb5b220c846ab527a110"
         or not partial_tail.endswith(b'"route"')
         or b'"event":"training_update"' not in partial_tail
     ):
-        raise Refuse("interrupted progress terminal fragment differs from the frozen partial update")
+        raise Refuse(
+            "interrupted progress terminal fragment differs from the frozen partial update"
+        )
     rows = []
     for line_number, line in enumerate(raw_lines[:-1], 1):
         try:
@@ -132,16 +141,22 @@ def _collect_old_progress() -> tuple[list[dict[str, Any]], dict[str, list[dict[s
     if any(row.get("seed") != 11 or row.get("arm") != ARM for row in gates + lengths):
         raise Refuse("only seed11 score rows are expected in the interrupted attempt")
     score_rows = {"gates": gates, "lengths": lengths}
-    return rows, score_rows, {
-        "progress_sha256": digest,
-        "event_counts": dict(counts),
-        "valid_jsonl_rows": len(rows),
-        "partial_terminal_record_bytes": len(partial_tail),
-        "partial_terminal_record_sha256": hashlib.sha256(partial_tail).hexdigest(),
-    }
+    return (
+        rows,
+        score_rows,
+        {
+            "progress_sha256": digest,
+            "event_counts": dict(counts),
+            "valid_jsonl_rows": len(rows),
+            "partial_terminal_record_bytes": len(partial_tail),
+            "partial_terminal_record_sha256": hashlib.sha256(partial_tail).hexdigest(),
+        },
+    )
 
 
-def _validate_interrupted_state(manifest: dict, runtime: dict, metadata: dict[str, Any]) -> dict[str, Any]:
+def _validate_interrupted_state(
+    manifest: dict, runtime: dict, metadata: dict[str, Any]
+) -> dict[str, Any]:
     if NEW_ATTEMPT.exists() or NEW_PROGRESS.exists() or NEW_RESULT.exists() or OLD_RESULT.exists():
         raise FileExistsError("N1-165A and official result paths are write-once")
     if n162.sha256(PLAN) != PLAN_SHA256:
@@ -154,7 +169,10 @@ def _validate_interrupted_state(manifest: dict, runtime: dict, metadata: dict[st
         or old_attempt.get("planned_train_score_queries") != 3_744
     ):
         raise Refuse("original N1-165 attempt is not the expected interrupted attempt")
-    if n162.sha256(OLD_ATTEMPT) != "06742a1e8cd72d224cf67e3c6023064c9253592ebf1149f89dc8d69bd969b5d1":
+    if (
+        n162.sha256(OLD_ATTEMPT)
+        != "06742a1e8cd72d224cf67e3c6023064c9253592ebf1149f89dc8d69bd969b5d1"
+    ):
         raise Refuse("original N1-165 attempt SHA differs from the frozen recovery plan")
     old_preflight = n162.read_json(OLD_ZERO_PREFLIGHT)
     if (
@@ -163,7 +181,8 @@ def _validate_interrupted_state(manifest: dict, runtime: dict, metadata: dict[st
         or old_preflight.get("zero_checkpoint_count") != 3
         or old_preflight.get("independent_restore_count") != 3
         or old_preflight.get("parameter_updates") != 0
-        or n162.sha256(OLD_ZERO_PREFLIGHT) != "e628c03cd5e4ccf4f54e598635d593e7e715324438866a501768a936ea4ad003"
+        or n162.sha256(OLD_ZERO_PREFLIGHT)
+        != "e628c03cd5e4ccf4f54e598635d593e7e715324438866a501768a936ea4ad003"
     ):
         raise Refuse("original N1-165 zero checkpoint preflight is not complete")
 
@@ -185,15 +204,16 @@ def _validate_interrupted_state(manifest: dict, runtime: dict, metadata: dict[st
         raise Refuse("a seed12/13 recovery final or partial checkpoint already exists")
     if any(not path.is_file() for path in required.values()):
         raise Refuse("required N1-165 zero/final checkpoint is missing")
-    expected_zeros = {
-        int(row["seed"]): row
-        for row in old_preflight["zero_checkpoints"]
-    }
+    expected_zeros = {int(row["seed"]): row for row in old_preflight["zero_checkpoints"]}
     zero_hashes = {}
     for seed in (11, 12, 13):
         path = required[f"s{seed}_zero"]
         row = expected_zeros.get(seed)
-        if row is None or row.get("arm") != ARM or n162.sha256(path) != row.get("zero_checkpoint_sha256"):
+        if (
+            row is None
+            or row.get("arm") != ARM
+            or n162.sha256(path) != row.get("zero_checkpoint_sha256")
+        ):
             raise Refuse(f"N1-165 zero checkpoint differs from preflight: seed{seed}")
         zero_hashes[str(seed)] = row["zero_checkpoint_sha256"]
     seed11_sha = n162.sha256(required["s11_final"])
@@ -221,11 +241,22 @@ def _validate_interrupted_state(manifest: dict, runtime: dict, metadata: dict[st
     }
 
 
-def _score_endpoint(seed: int, model, optimizer, runtime: dict[str, Any], base_schedule: dict[str, Any], budget: n165.CpuBudget):
+def _score_endpoint(
+    seed: int,
+    model,
+    optimizer,
+    runtime: dict[str, Any],
+    base_schedule: dict[str, Any],
+    budget: n165.CpuBudget,
+):
     before = n162._fingerprint(model, optimizer)
     gate_rows, gate_summary, sufficient, gate_queries = n132._evaluate_train_only(
-        runtime["n155_bound"]["g"], model, optimizer, seed,
-        runtime["n155_bound"]["inputs"], budget,
+        runtime["n155_bound"]["g"],
+        model,
+        optimizer,
+        seed,
+        runtime["n155_bound"]["inputs"],
+        budget,
     )
     if gate_queries != GATE_QUERIES or len(gate_rows) != GATE_QUERIES:
         raise Refuse(f"N1-165A original train gate denominator differs for seed{seed}")
@@ -246,7 +277,11 @@ def _score_endpoint(seed: int, model, optimizer, runtime: dict[str, Any], base_s
 
 
 def _seed_training_rows(rows: list[dict[str, Any]], seed: int) -> list[dict[str, Any]]:
-    selected = [row for row in rows if row.get("event") == "training_update" and int(row.get("seed", -1)) == seed]
+    selected = [
+        row
+        for row in rows
+        if row.get("event") == "training_update" and int(row.get("seed", -1)) == seed
+    ]
     if len(selected) != UPDATES_PER_ENDPOINT:
         raise Refuse(f"N1-165A preserved seed{seed} training row count differs")
     return selected
@@ -254,10 +289,12 @@ def _seed_training_rows(rows: list[dict[str, Any]], seed: int) -> list[dict[str,
 
 def _summarize_losses(rows: list[dict[str, Any]], seed: int) -> Counter:
     selected = _seed_training_rows(rows, seed)
-    return Counter({
-        key: sum(float(row[key]) for row in selected)
-        for key in ("total", "base_total", "qa", "observation", "binding")
-    })
+    return Counter(
+        {
+            key: sum(float(row[key]) for row in selected)
+            for key in ("total", "base_total", "qa", "observation", "binding")
+        }
+    )
 
 
 def _context_counts(rows: list[dict[str, Any]], seed: int) -> Counter:
@@ -271,10 +308,25 @@ def _template_counts(rows: list[dict[str, Any]], seed: int) -> Counter:
     )
 
 
-def _record(seed: int, parent: dict, zero_sha: str, zero_fingerprint: str, final_path: Path,
-            final_sha: str, final_payload: dict, final_restore: dict, model, optimizer,
-            metrics: Counter, length_counts: Counter, template_counts: Counter,
-            gate_summary: dict, sufficient: bool, gate_queries: int, length_queries: int) -> dict[str, Any]:
+def _record(
+    seed: int,
+    parent: dict,
+    zero_sha: str,
+    zero_fingerprint: str,
+    final_path: Path,
+    final_sha: str,
+    final_payload: dict,
+    final_restore: dict,
+    model,
+    optimizer,
+    metrics: Counter,
+    length_counts: Counter,
+    template_counts: Counter,
+    gate_summary: dict,
+    sufficient: bool,
+    gate_queries: int,
+    length_queries: int,
+) -> dict[str, Any]:
     final_steps = n165._optimizer_step_values(optimizer)
     return {
         "seed": seed,
@@ -286,14 +338,23 @@ def _record(seed: int, parent: dict, zero_sha: str, zero_fingerprint: str, final
         "parent_total_updates": n165.EXPECTED_PARENT_STEPS,
         "parent_history_count": n165.EXPECTED_PARENT_HISTORY,
         "additional_updates_this_plan": UPDATES_PER_ENDPOINT,
-        "cumulative_additional_updates_from_n150": int(parent["cumulative_additional_updates_from_n150"]) + UPDATES_PER_ENDPOINT,
+        "cumulative_additional_updates_from_n150": int(
+            parent["cumulative_additional_updates_from_n150"]
+        )
+        + UPDATES_PER_ENDPOINT,
         "total_updates": n165.EXPECTED_FINAL_STEPS,
         "initial_history_count": n165.EXPECTED_PARENT_HISTORY,
         "final_history_count": len(model._observations),
         "optimizer_step_values": sorted(final_steps),
         "context_length_update_counts": dict(sorted(length_counts.items())),
-        "question_template_counts": {f"{kind}/{length}/{template}": count for (kind, length, template), count in sorted(template_counts.items())},
-        "loss_means": {key: float(metrics[key]) / UPDATES_PER_ENDPOINT for key in ("total", "base_total", "qa", "observation", "binding")},
+        "question_template_counts": {
+            f"{kind}/{length}/{template}": count
+            for (kind, length, template), count in sorted(template_counts.items())
+        },
+        "loss_means": {
+            key: float(metrics[key]) / UPDATES_PER_ENDPOINT
+            for key in ("total", "base_total", "qa", "observation", "binding")
+        },
         "original_train_gate": gate_summary,
         "training_sufficient": sufficient,
         "original_train_gate_queries": gate_queries,
@@ -321,14 +382,16 @@ def execute() -> dict[str, Any]:
 
     interrupted = _validate_interrupted_state(manifest, runtime, metadata)
     source_hashes = dict(source_hashes)
-    source_hashes.update({
-        str(PLAN.resolve()): PLAN_SHA256,
-        str(OLD_ATTEMPT.resolve()): n162.sha256(OLD_ATTEMPT),
-        str(OLD_PROGRESS.resolve()): interrupted["old_progress_receipt"]["progress_sha256"],
-        str(OLD_ZERO_PREFLIGHT.resolve()): n162.sha256(OLD_ZERO_PREFLIGHT),
-        str(Path(__file__).resolve()): n162.sha256(Path(__file__).resolve()),
-        str(interrupted["seed11_final_path"].resolve()): interrupted["seed11_final_sha256"],
-    })
+    source_hashes.update(
+        {
+            str(PLAN.resolve()): PLAN_SHA256,
+            str(OLD_ATTEMPT.resolve()): n162.sha256(OLD_ATTEMPT),
+            str(OLD_PROGRESS.resolve()): interrupted["old_progress_receipt"]["progress_sha256"],
+            str(OLD_ZERO_PREFLIGHT.resolve()): n162.sha256(OLD_ZERO_PREFLIGHT),
+            str(Path(__file__).resolve()): n162.sha256(Path(__file__).resolve()),
+            str(interrupted["seed11_final_path"].resolve()): interrupted["seed11_final_sha256"],
+        }
+    )
     if not n162.n150_builder.verify_hashes(source_hashes):
         raise Refuse("N1-165A recovery input hashes changed")
 
@@ -380,30 +443,53 @@ def execute() -> dict[str, Any]:
             raise Refuse("N1-165A seed11 scoring changed its final model/optimizer bundle")
         old_gate = interrupted["old_score_rows"]["gates"]
         old_length = interrupted["old_score_rows"]["lengths"]
-        current_gate = [{**row, "event": "original_train_gate_row", "seed": seed11, "arm": ARM} for row in seed11_gate]
-        current_length = [{**row, "event": "length_score_row", "seed": seed11, "arm": ARM} for row in seed11_length]
+        current_gate = [
+            {**row, "event": "original_train_gate_row", "seed": seed11, "arm": ARM}
+            for row in seed11_gate
+        ]
+        current_length = [
+            {**row, "event": "length_score_row", "seed": seed11, "arm": ARM}
+            for row in seed11_length
+        ]
         if current_gate != old_gate or current_length != old_length:
             raise Refuse("N1-165A seed11 repeated train scores differ from the preserved rows")
         with NEW_PROGRESS.open("x", encoding="utf-8", newline="\n") as progress:
-            n165.write_jsonl(progress, {
-                "event": "seed11_score_reconciliation",
-                "seed": seed11,
-                "arm": ARM,
-                "gate_rows": len(current_gate),
-                "length_rows": len(current_length),
-                "rows_match_preserved_progress": True,
-                "preserved_gate_rows_sha256": _digest(old_gate),
-                "preserved_length_rows_sha256": _digest(old_length),
-                "duplicate_train_queries": SCORES_PER_ENDPOINT,
-            })
+            n165.write_jsonl(
+                progress,
+                {
+                    "event": "seed11_score_reconciliation",
+                    "seed": seed11,
+                    "arm": ARM,
+                    "gate_rows": len(current_gate),
+                    "length_rows": len(current_length),
+                    "rows_match_preserved_progress": True,
+                    "preserved_gate_rows_sha256": _digest(old_gate),
+                    "preserved_length_rows_sha256": _digest(old_length),
+                    "duplicate_train_queries": SCORES_PER_ENDPOINT,
+                },
+            )
             progress.flush()
-            zero11 = next(row for row in interrupted["old_preflight"]["zero_checkpoints"] if row["seed"] == 11)
+            zero11 = next(
+                row for row in interrupted["old_preflight"]["zero_checkpoints"] if row["seed"] == 11
+            )
             seed11_record = _record(
-                seed11, metadata["parents"][seed11], zero11["zero_checkpoint_sha256"],
-                zero11["zero_fingerprint"], seed11_path, interrupted["seed11_final_sha256"],
-                seed11_payload, seed11_restore, model, optimizer, _summarize_losses(interrupted["old_progress_rows"], seed11),
-                _context_counts(interrupted["old_progress_rows"], seed11), _template_counts(interrupted["old_progress_rows"], seed11),
-                seed11_gate_summary, seed11_sufficient, len(seed11_gate), len(seed11_length),
+                seed11,
+                metadata["parents"][seed11],
+                zero11["zero_checkpoint_sha256"],
+                zero11["zero_fingerprint"],
+                seed11_path,
+                interrupted["seed11_final_sha256"],
+                seed11_payload,
+                seed11_restore,
+                model,
+                optimizer,
+                _summarize_losses(interrupted["old_progress_rows"], seed11),
+                _context_counts(interrupted["old_progress_rows"], seed11),
+                _template_counts(interrupted["old_progress_rows"], seed11),
+                seed11_gate_summary,
+                seed11_sufficient,
+                len(seed11_gate),
+                len(seed11_length),
             )
             score_count += SCORES_PER_ENDPOINT
             del model, optimizer, seed11_payload
@@ -416,7 +502,9 @@ def execute() -> dict[str, Any]:
                 parent_path = Path(parent["final_checkpoint_path"]).resolve()
                 parent_hash = parent["final_checkpoint_sha256"]
                 zero_path = n165.CHECKPOINT_ROOT / f"s{seed}_{ARM}_zero.pt"
-                zero_receipt = n165._independent_restore(zero_path, arm=ARM, seed=seed, budget=budget)
+                zero_receipt = n165._independent_restore(
+                    zero_path, arm=ARM, seed=seed, budget=budget
+                )
                 zero_hash = n162.sha256(zero_path)
                 if zero_hash != interrupted["zero_checkpoint_hashes"][str(seed)]:
                     raise Refuse(f"N1-165A zero bundle changed before replay: seed{seed}")
@@ -430,15 +518,26 @@ def execute() -> dict[str, Any]:
                     or n165._optimizer_step_values(optimizer) != {n165.EXPECTED_PARENT_STEPS}
                 ):
                     raise Refuse(f"N1-165A zero bundle state differs for seed{seed}")
-                active = {"seed": seed, "arm": ARM, "completed_updates": 0, "parent_path": parent_path, "parent_hash": parent_hash}
+                active = {
+                    "seed": seed,
+                    "arm": ARM,
+                    "completed_updates": 0,
+                    "parent_path": parent_path,
+                    "parent_hash": parent_hash,
+                }
                 metrics = Counter()
                 length_counts = Counter()
                 template_counts = Counter()
-                old_prefix = {
-                    int(row["step"]): row
-                    for row in interrupted["old_progress_rows"]
-                    if row.get("event") == "training_update" and int(row.get("seed", -1)) == seed
-                } if seed == 12 else {}
+                old_prefix = (
+                    {
+                        int(row["step"]): row
+                        for row in interrupted["old_progress_rows"]
+                        if row.get("event") == "training_update"
+                        and int(row.get("seed", -1)) == seed
+                    }
+                    if seed == 12
+                    else {}
+                )
                 for step in range(UPDATES_PER_ENDPOINT):
                     budget.guard(reserve=20)
                     pass_index, slot_index = divmod(step, n165.SLOTS_PER_PASS)
@@ -446,7 +545,9 @@ def execute() -> dict[str, Any]:
                     slot = base_schedule["slots"][slot_index]
                     length = int(source_row["context_length"])
                     template_id = source_row["n165_candidate_template_id"]
-                    item, second = n165._prepare_item(slot, source_row, length, template_id, base_schedule["views"])
+                    item, second = n165._prepare_item(
+                        slot, source_row, length, template_id, base_schedule["views"]
+                    )
                     metrics_row = n162._training_step(
                         model,
                         optimizer,
@@ -475,8 +576,14 @@ def execute() -> dict[str, Any]:
                         "second_question": None if second is None else second["question"],
                         **metrics_row,
                     }
-                    if seed == 12 and step < DISCARDED_SEED12_UPDATES and progress_row != old_prefix[step]:
-                        raise Refuse(f"N1-165A deterministic replay prefix differs at seed12 step {step}")
+                    if (
+                        seed == 12
+                        and step < DISCARDED_SEED12_UPDATES
+                        and progress_row != old_prefix[step]
+                    ):
+                        raise Refuse(
+                            f"N1-165A deterministic replay prefix differs at seed12 step {step}"
+                        )
                     n165.write_jsonl(progress, progress_row)
                     if (step + 1) % 64 == 0:
                         progress.flush()
@@ -485,58 +592,112 @@ def execute() -> dict[str, Any]:
                     for key in ("total", "base_total", "qa", "observation", "binding"):
                         metrics[key] += float(metrics_row[key])
                     if (step + 1) % 1_024 == 0:
-                        print(f"plan165a seed={seed} arm={ARM} step={step+1}/{UPDATES_PER_ENDPOINT} cpu={budget.used():.1f}", flush=True)
+                        print(
+                            f"plan165a seed={seed} arm={ARM} step={step+1}/{UPDATES_PER_ENDPOINT} cpu={budget.used():.1f}",
+                            flush=True,
+                        )
 
-                if active["completed_updates"] != UPDATES_PER_ENDPOINT or length_counts != EXPECTED_CONTEXT_COUNTS:
+                if (
+                    active["completed_updates"] != UPDATES_PER_ENDPOINT
+                    or length_counts != EXPECTED_CONTEXT_COUNTS
+                ):
                     raise Refuse(f"N1-165A endpoint update/context counts differ for seed{seed}")
-                if n165._optimizer_step_values(optimizer) != {n165.EXPECTED_FINAL_STEPS} or len(model._observations) != n165.EXPECTED_FINAL_HISTORY:
+                if (
+                    n165._optimizer_step_values(optimizer) != {n165.EXPECTED_FINAL_STEPS}
+                    or len(model._observations) != n165.EXPECTED_FINAL_HISTORY
+                ):
                     raise Refuse(f"N1-165A optimizer/history differs for seed{seed}")
                 final_path = n165.CHECKPOINT_ROOT / f"s{seed}_{ARM}_final.pt"
                 final_payload = n165._save_checkpoint(
-                    model, optimizer, final_path, seed=seed, arm=ARM,
-                    parent_path=parent_path, parent_hash=parent_hash,
+                    model,
+                    optimizer,
+                    final_path,
+                    seed=seed,
+                    arm=ARM,
+                    parent_path=parent_path,
+                    parent_hash=parent_hash,
                     additional_updates=UPDATES_PER_ENDPOINT,
                 )
                 final_sha = n162.sha256(final_path)
                 active = None
-                final_restore = n165._independent_restore(final_path, arm=ARM, seed=seed, budget=budget)
+                final_restore = n165._independent_restore(
+                    final_path, arm=ARM, seed=seed, budget=budget
+                )
                 if final_restore["fingerprint"] != final_payload["bundle_fingerprint"]:
                     raise Refuse(f"N1-165A final full bundle restore mismatch for seed{seed}")
                 gate_rows, gate_summary, sufficient, queries = n132._evaluate_train_only(
-                    runtime["n155_bound"]["g"], model, optimizer, seed,
-                    runtime["n155_bound"]["inputs"], budget,
+                    runtime["n155_bound"]["g"],
+                    model,
+                    optimizer,
+                    seed,
+                    runtime["n155_bound"]["inputs"],
+                    budget,
                 )
                 if queries != GATE_QUERIES or len(gate_rows) != GATE_QUERIES:
                     raise Refuse(f"N1-165A original train gate denominator differs for seed{seed}")
                 for row in gate_rows:
-                    n165.write_jsonl(progress, {**row, "event": "original_train_gate_row", "seed": seed, "arm": ARM})
+                    n165.write_jsonl(
+                        progress,
+                        {**row, "event": "original_train_gate_row", "seed": seed, "arm": ARM},
+                    )
                 length_rows = n155._train_length_rows(
-                    model, optimizer, seed, "unknown8_rebalanced",
-                    runtime["n155_bound"]["inputs"], base_schedule["views"], budget,
+                    model,
+                    optimizer,
+                    seed,
+                    "unknown8_rebalanced",
+                    runtime["n155_bound"]["inputs"],
+                    base_schedule["views"],
+                    budget,
                 )
                 if len(length_rows) != LENGTH_QUERIES:
                     raise Refuse(f"N1-165A length score denominator differs for seed{seed}")
                 for row in length_rows:
-                    n165.write_jsonl(progress, {**row, "event": "length_score_row", "seed": seed, "arm": ARM})
+                    n165.write_jsonl(
+                        progress, {**row, "event": "length_score_row", "seed": seed, "arm": ARM}
+                    )
                 if n162._fingerprint(model, optimizer) != final_payload["bundle_fingerprint"]:
                     raise Refuse(f"N1-165A train scoring altered final model state for seed{seed}")
                 score_count += GATE_QUERIES + LENGTH_QUERIES
-                zero_receipt = next(row for row in interrupted["old_preflight"]["zero_checkpoints"] if row["seed"] == seed)
+                zero_receipt = next(
+                    row
+                    for row in interrupted["old_preflight"]["zero_checkpoints"]
+                    if row["seed"] == seed
+                )
                 record = _record(
-                    seed, parent, zero_hash, zero_receipt["zero_fingerprint"], final_path,
-                    final_sha, final_payload, final_restore, model, optimizer, metrics,
-                    length_counts, template_counts, gate_summary, sufficient,
-                    queries, len(length_rows),
+                    seed,
+                    parent,
+                    zero_hash,
+                    zero_receipt["zero_fingerprint"],
+                    final_path,
+                    final_sha,
+                    final_payload,
+                    final_restore,
+                    model,
+                    optimizer,
+                    metrics,
+                    length_counts,
+                    template_counts,
+                    gate_summary,
+                    sufficient,
+                    queries,
+                    len(length_rows),
                 )
                 final_records.append(record)
                 del payload
                 model = optimizer = payload = None
 
             progress.flush()
-        if update_count != 2 * UPDATES_PER_ENDPOINT or score_count != 3 * SCORES_PER_ENDPOINT or len(final_records) != 3:
+        if (
+            update_count != 2 * UPDATES_PER_ENDPOINT
+            or score_count != 3 * SCORES_PER_ENDPOINT
+            or len(final_records) != 3
+        ):
             raise Refuse("N1-165A recovered update/score/endpoint totals differ")
         for parent in metadata["parents"].values():
-            if n162.sha256(Path(parent["final_checkpoint_path"])) != parent["final_checkpoint_sha256"]:
+            if (
+                n162.sha256(Path(parent["final_checkpoint_path"]))
+                != parent["final_checkpoint_sha256"]
+            ):
                 raise Refuse("N1-165A mutated a frozen N1-162B parent checkpoint")
         source_hashes[str(NEW_PROGRESS.resolve())] = n162.sha256(NEW_PROGRESS)
         for record in final_records:
@@ -575,24 +736,37 @@ def execute() -> dict[str, Any]:
             "initial_attempt_update_operations_upper": FIRST_ATTEMPT_UPDATE_OPERATIONS,
             "initial_attempt_train_score_calls": SCORES_PER_ENDPOINT,
             "total_train_score_calls_across_attempts": SCORES_PER_ENDPOINT + score_count,
-            "discarded_seed12_partial_updates": DISCARDED_SEED12_UPDATES + PARTIAL_SEED12_UPDATE_OPERATIONS,
+            "discarded_seed12_partial_updates": DISCARDED_SEED12_UPDATES
+            + PARTIAL_SEED12_UPDATE_OPERATIONS,
             "partial_terminal_update_operations": PARTIAL_SEED12_UPDATE_OPERATIONS,
-            "partial_terminal_record_bytes": interrupted["old_progress_receipt"]["partial_terminal_record_bytes"],
-            "partial_terminal_record_sha256": interrupted["old_progress_receipt"]["partial_terminal_record_sha256"],
+            "partial_terminal_record_bytes": interrupted["old_progress_receipt"][
+                "partial_terminal_record_bytes"
+            ],
+            "partial_terminal_record_sha256": interrupted["old_progress_receipt"][
+                "partial_terminal_record_sha256"
+            ],
             "completion_updates": update_count,
             "physical_parameter_update_operations": FIRST_ATTEMPT_UPDATE_OPERATIONS + update_count,
             "initial_attempt_status": "interrupted_before_result",
             "initial_seed11_score_rows_reproduced_exactly": True,
             "seed12_replay_prefix_rows_matched": DISCARDED_SEED12_UPDATES,
             "seed12_replay_prefix_total": DISCARDED_SEED12_UPDATES,
-            "candidate_sufficient_all_seeds": all(row["training_sufficient"] for row in final_records),
-            "mid_dose_sufficient_all_seeds": all(row["training_sufficient"] for row in final_records),
-            "training_sufficient_all_endpoints": all(row["training_sufficient"] for row in final_records),
+            "candidate_sufficient_all_seeds": all(
+                row["training_sufficient"] for row in final_records
+            ),
+            "mid_dose_sufficient_all_seeds": all(
+                row["training_sufficient"] for row in final_records
+            ),
+            "training_sufficient_all_endpoints": all(
+                row["training_sufficient"] for row in final_records
+            ),
             "zero_checkpoint_count": 3,
             "zero_independent_restores": 3,
             "recovery_zero_rechecks": 2,
             "final_checkpoint_count": 3,
-            "final_independent_restores": sum(int(row["final_independent_restore"]["complete"]) for row in final_records),
+            "final_independent_restores": sum(
+                int(row["final_independent_restore"]["complete"]) for row in final_records
+            ),
             "checkpoint_writes_completion": 2,
             "checkpoint_writes_total_across_attempts": 6,
             "checkpoint_writes": 6,
@@ -621,7 +795,9 @@ def execute() -> dict[str, Any]:
             "n165_result_sha256": _digest(result),
             "initial_attempt_sha256": n162.sha256(OLD_ATTEMPT),
             "initial_progress_sha256": interrupted["old_progress_receipt"]["progress_sha256"],
-            "initial_partial_terminal_record_sha256": interrupted["old_progress_receipt"]["partial_terminal_record_sha256"],
+            "initial_partial_terminal_record_sha256": interrupted["old_progress_receipt"][
+                "partial_terminal_record_sha256"
+            ],
             "seed11_score_rows_reconciled": SCORES_PER_ENDPOINT,
             "seed12_discarded_prefix_replayed_and_matched": DISCARDED_SEED12_UPDATES,
             "seed12_unpersisted_partial_update_operations_discarded": PARTIAL_SEED12_UPDATE_OPERATIONS,
@@ -639,11 +815,21 @@ def execute() -> dict[str, Any]:
             try:
                 partial_path = n165.CHECKPOINT_ROOT / f"s{active['seed']}_{ARM}_165a_partial.pt"
                 partial_payload = n165._save_checkpoint(
-                    model, optimizer, partial_path, seed=int(active["seed"]), arm=ARM,
-                    parent_path=Path(active["parent_path"]), parent_hash=str(active["parent_hash"]),
+                    model,
+                    optimizer,
+                    partial_path,
+                    seed=int(active["seed"]),
+                    arm=ARM,
+                    parent_path=Path(active["parent_path"]),
+                    parent_hash=str(active["parent_hash"]),
                     additional_updates=int(active["completed_updates"]),
                 )
-                partial_checkpoint = {"path": str(partial_path.resolve()), "sha256": n162.sha256(partial_path), "additional_updates": active["completed_updates"], "fingerprint": partial_payload["bundle_fingerprint"]}
+                partial_checkpoint = {
+                    "path": str(partial_path.resolve()),
+                    "sha256": n162.sha256(partial_path),
+                    "additional_updates": active["completed_updates"],
+                    "fingerprint": partial_payload["bundle_fingerprint"],
+                }
             except Exception as save_exc:
                 partial_checkpoint = {"save_error": f"{type(save_exc).__name__}: {save_exc}"}
         else:
@@ -654,7 +840,9 @@ def execute() -> dict[str, Any]:
             "complete": False,
             "completion_plan_sha256": PLAN_SHA256,
             "initial_attempt_sha256": n162.sha256(OLD_ATTEMPT) if OLD_ATTEMPT.is_file() else None,
-            "initial_progress_sha256": n162.sha256(OLD_PROGRESS) if OLD_PROGRESS.is_file() else None,
+            "initial_progress_sha256": (
+                n162.sha256(OLD_PROGRESS) if OLD_PROGRESS.is_file() else None
+            ),
             "recovery_updates": update_count,
             "recovery_score_queries": score_count,
             "completed_models": final_records,
@@ -669,7 +857,7 @@ def execute() -> dict[str, Any]:
             write_new(NEW_RESULT, failure)
         raise
     finally:
-        if 'progress' in locals():
+        if "progress" in locals():
             try:
                 progress.flush()
                 progress.close()
@@ -684,7 +872,23 @@ def main() -> int:
     except Exception as exc:
         print(f"N1-165A refused: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 1
-    print(json.dumps({key: report[key] for key in ("status", "total_updates", "train_score_queries", "completion_cpu_seconds", "candidate_sufficient_all_seeds", "can_promote")}, ensure_ascii=False, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                key: report[key]
+                for key in (
+                    "status",
+                    "total_updates",
+                    "train_score_queries",
+                    "completion_cpu_seconds",
+                    "candidate_sufficient_all_seeds",
+                    "can_promote",
+                )
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+    )
     return 0
 
 

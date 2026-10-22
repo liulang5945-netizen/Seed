@@ -290,7 +290,7 @@ def _measure(model, item: dict, arm: str, session: str) -> dict:
 
     argmax_positions = alignment.argmax(-1)
     fact_rows = []
-    for observation_index, relation, text, source_id, row_mask in row_masks:
+    for observation_index, _text, source_id, row_mask in row_masks:
         row_mass = alignment[:, row_mask].sum(-1)
         row_share = float(row_mask.float().mean().item())
         row_argmax = row_mask[argmax_positions].float()

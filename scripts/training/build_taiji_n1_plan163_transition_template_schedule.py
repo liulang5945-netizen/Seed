@@ -14,7 +14,10 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.training import run_taiji_n1_plan162b_question_surface_matched_continuation as n162
 
-PLAN = ROOT / "plans/reference/PLAN-N1-163_transition_template_rebalanced_matched_continuation_20261020.md"
+PLAN = (
+    ROOT
+    / "plans/reference/PLAN-N1-163_transition_template_rebalanced_matched_continuation_20261020.md"
+)
 PLAN_SHA256 = "c13eb8b2bb318f95de72e3813a669aa12a6d7321751a48a455d2a69769d65459"
 REBINDING_PLAN = ROOT / "plans/reference/PLAN-N1-163A_readiness_source_rebinding_20261020.md"
 REBINDING_PLAN_SHA256 = "40a68ccc9ff1fc057d4b88afea7c48a9129d12ce013f1b7caba09ccdd74deefc"
@@ -28,16 +31,26 @@ F1_CLOSEOUT = ROOT / "plans/reference/PLAN-N1-162F1_execution_closeout_20261020.
 G2_CLOSEOUT = ROOT / "plans/reference/PLAN-N1-162G2_execution_closeout_20261020.md"
 N162B_RUNNER = Path(n162.__file__).resolve()
 BUILDER = ROOT / "scripts/training/build_taiji_n1_plan163_transition_template_schedule.py"
-RUNNER = ROOT / "scripts/training/run_taiji_n1_plan163_transition_template_rebalanced_continuation.py"
+RUNNER = (
+    ROOT / "scripts/training/run_taiji_n1_plan163_transition_template_rebalanced_continuation.py"
+)
 TEST = ROOT / "tests/taiji_native/test_n1_plan163_transition_template_rebalanced_contract.py"
 BASE_SCHEDULE = ROOT / "plans/manifests/n1_plan162_v34_question_surface_schedule_20261020.json"
-SUPERSEDED_MANIFEST = ROOT / "plans/manifests/n1_plan163_transition_template_rebalanced_schedule_20261020.json"
+SUPERSEDED_MANIFEST = (
+    ROOT / "plans/manifests/n1_plan163_transition_template_rebalanced_schedule_20261020.json"
+)
 SUPERSEDED_MANIFEST_SHA256 = "231d98e8a40457a30933d930940b868f4ce6615f316520065562bcd843b6371f"
-SUPERSEDED_READINESS = ROOT / "reports/taiji_n1_plan163_transition_template_rebalanced_readiness_20261020.json"
+SUPERSEDED_READINESS = (
+    ROOT / "reports/taiji_n1_plan163_transition_template_rebalanced_readiness_20261020.json"
+)
 SUPERSEDED_READINESS_SHA256 = "e43db7afd228a16f5eaf00f9046627816fb536324f36a3b462ec8eb128932813"
 SUPERSEDED_BUILDER_SHA256 = "39e7944651fe71c8b9056677f85455e628ad35fd650218e21f36c287379b350d"
-MANIFEST = ROOT / "plans/manifests/n1_plan163a_transition_template_rebalanced_schedule_20261020.json"
-READINESS = ROOT / "reports/taiji_n1_plan163a_transition_template_rebalanced_readiness_20261020.json"
+MANIFEST = (
+    ROOT / "plans/manifests/n1_plan163a_transition_template_rebalanced_schedule_20261020.json"
+)
+READINESS = (
+    ROOT / "reports/taiji_n1_plan163a_transition_template_rebalanced_readiness_20261020.json"
+)
 PARENT_SEEDS = (11, 12, 13)
 PARENT_ARM = "surface_augmented"
 CONTROL_ARM = "surface_replay_control"
@@ -66,7 +79,10 @@ def read_json(path: Path) -> dict:
 def write_new(path: Path, value: dict) -> None:
     if path.exists():
         raise FileExistsError(f"N1-163 write-once output exists: {path}")
-    path.write_text(json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n",
+        encoding="utf-8",
+    )
 
 
 def derive_arm_rows(base_rows: list[dict]) -> list[dict]:
@@ -76,17 +92,22 @@ def derive_arm_rows(base_rows: list[dict]) -> list[dict]:
         candidate = template
         if base["kind"] == "transition" and template == BAD_TEMPLATE:
             candidate = PREFERRED_TEMPLATE
-        rows.append({
-            **base,
-            "n163_control_template_id": template,
-            "n163_candidate_template_id": candidate,
-        })
+        rows.append(
+            {
+                **base,
+                "n163_control_template_id": template,
+                "n163_candidate_template_id": candidate,
+            }
+        )
     return rows
 
 
 def template_counts(rows: list[dict], key: str) -> dict[str, int]:
     counter = Counter((str(row["kind"]), int(row["context_length"]), str(row[key])) for row in rows)
-    return {f"{kind}/{length}/{template}": count for (kind, length, template), count in sorted(counter.items())}
+    return {
+        f"{kind}/{length}/{template}": count
+        for (kind, length, template), count in sorted(counter.items())
+    }
 
 
 def validate_derived_rows(base_rows: list[dict], rows: list[dict]) -> dict:
@@ -94,9 +115,21 @@ def validate_derived_rows(base_rows: list[dict], rows: list[dict]) -> dict:
         raise Refuse("N1-163 schedule denominator differs from N1-162B")
     replacements = 0
     for base, row in zip(base_rows, rows, strict=True):
-        for key in ("step", "parent_id", "route", "kind", "context_length", "item_id", "item_key", "second_id", "second_key"):
+        for key in (
+            "step",
+            "parent_id",
+            "route",
+            "kind",
+            "context_length",
+            "item_id",
+            "item_key",
+            "second_id",
+            "second_key",
+        ):
             if row.get(key) != base.get(key):
-                raise Refuse(f"N1-163 changed a frozen schedule field at step {base.get('step')}: {key}")
+                raise Refuse(
+                    f"N1-163 changed a frozen schedule field at step {base.get('step')}: {key}"
+                )
         if row["n163_control_template_id"] != base["augmented_template_id"]:
             raise Refuse("N1-163 control question assignment differs from N1-162B")
         expected_candidate = base["augmented_template_id"]
@@ -104,13 +137,19 @@ def validate_derived_rows(base_rows: list[dict], rows: list[dict]) -> dict:
             expected_candidate = PREFERRED_TEMPLATE
             replacements += 1
         if row["n163_candidate_template_id"] != expected_candidate:
-            raise Refuse(f"N1-163 candidate changed an unregistered template at step {base.get('step')}")
+            raise Refuse(
+                f"N1-163 candidate changed an unregistered template at step {base.get('step')}"
+            )
     if replacements != 576:
         raise Refuse(f"N1-163 must replace exactly 576 transition slots, got {replacements}")
 
     parent_counts = Counter(str(row["parent_id"]) for row in rows)
     route_counts = Counter((str(row["parent_id"]), str(row["route"])) for row in rows)
-    if len(parent_counts) != 192 or set(parent_counts.values()) != {48} or set(route_counts.values()) != {24}:
+    if (
+        len(parent_counts) != 192
+        or set(parent_counts.values()) != {48}
+        or set(route_counts.values()) != {24}
+    ):
         raise Refuse("N1-163 per-parent/raw-hard schedule balance differs")
     control = template_counts(rows, "n163_control_template_id")
     candidate = template_counts(rows, "n163_candidate_template_id")
@@ -129,7 +168,9 @@ def validate_derived_rows(base_rows: list[dict], rows: list[dict]) -> dict:
                 raise Refuse(f"N1-163 control transition ratio differs: {key}={control.get(key)}")
         for key, expected in expected_candidate.items():
             if candidate.get(key) != expected:
-                raise Refuse(f"N1-163 candidate transition ratio differs: {key}={candidate.get(key)}")
+                raise Refuse(
+                    f"N1-163 candidate transition ratio differs: {key}={candidate.get(key)}"
+                )
         if candidate.get(f"transition/{length}/direction_after_turning", 0) != 0:
             raise Refuse("N1-163 candidate retains the replaced transition template")
 
@@ -152,7 +193,10 @@ def build() -> dict:
         raise Refuse("PLAN-N1-163 SHA mismatch")
     if sha256(REBINDING_PLAN) != REBINDING_PLAN_SHA256:
         raise Refuse("PLAN-N1-163A source rebinding addendum SHA mismatch")
-    if sha256(SUPERSEDED_MANIFEST) != SUPERSEDED_MANIFEST_SHA256 or sha256(SUPERSEDED_READINESS) != SUPERSEDED_READINESS_SHA256:
+    if (
+        sha256(SUPERSEDED_MANIFEST) != SUPERSEDED_MANIFEST_SHA256
+        or sha256(SUPERSEDED_READINESS) != SUPERSEDED_READINESS_SHA256
+    ):
         raise Refuse("superseded N1-163 schedule/readiness SHA mismatch")
     if sha256(PRIOR_RESULT) != PRIOR_RESULT_SHA256:
         raise Refuse("N1-162B result SHA mismatch")
@@ -162,11 +206,19 @@ def build() -> dict:
         raise FileExistsError("N1-163 manifest/readiness outputs are write-once")
 
     prior = read_json(PRIOR_RESULT)
-    if prior.get("complete") is not True or prior.get("training_updates") != 55_296 or prior.get("source_hashes_unchanged") is not True:
+    if (
+        prior.get("complete") is not True
+        or prior.get("training_updates") != 55_296
+        or prior.get("source_hashes_unchanged") is not True
+    ):
         raise Refuse("N1-162B parent result is incomplete or drifted")
     f1 = read_json(F1_RESULT)
     g2 = read_json(G2_RESULT)
-    if f1.get("complete") is not True or g2.get("complete") is not True or g2.get("stable_recommendation_thread_count") != 1:
+    if (
+        f1.get("complete") is not True
+        or g2.get("complete") is not True
+        or g2.get("stable_recommendation_thread_count") != 1
+    ):
         raise Refuse("N1-162F1/G2 evidence is incomplete or contradicts single-thread plan")
     superseded_manifest = read_json(SUPERSEDED_MANIFEST)
     superseded_readiness = read_json(SUPERSEDED_READINESS)
@@ -187,7 +239,8 @@ def build() -> dict:
     rows = derive_arm_rows(base_schedule["rows"])
     checks = validate_derived_rows(base_schedule["rows"], rows)
     if (
-        n162.builder.canonical_sha(base_schedule["rows"]) != superseded_manifest.get("base_schedule_sha256")
+        n162.builder.canonical_sha(base_schedule["rows"])
+        != superseded_manifest.get("base_schedule_sha256")
         or n162.builder.canonical_sha(rows) != superseded_manifest.get("rows_sha256")
         or rows != superseded_manifest.get("rows")
     ):
@@ -196,7 +249,11 @@ def build() -> dict:
     parent_endpoints = {}
     source_hashes = dict(sources)
     for seed in PARENT_SEEDS:
-        matches = [row for row in prior["models"] if row.get("seed") == seed and row.get("arm") == PARENT_ARM]
+        matches = [
+            row
+            for row in prior["models"]
+            if row.get("seed") == seed and row.get("arm") == PARENT_ARM
+        ]
         if len(matches) != 1:
             raise Refuse(f"N1-163 parent endpoint ambiguous: seed{seed}/{PARENT_ARM}")
         parent = matches[0]
@@ -273,7 +330,9 @@ def build() -> dict:
         raise Refuse("N1-163 source/SHA changed after manifest write")
     cpu = time.process_time() - started
     if cpu > BUILD_CPU_LIMIT_SECONDS:
-        raise TimeoutError(f"N1-163 schedule build CPU exceeded: {cpu:.3f}/{BUILD_CPU_LIMIT_SECONDS:.3f}")
+        raise TimeoutError(
+            f"N1-163 schedule build CPU exceeded: {cpu:.3f}/{BUILD_CPU_LIMIT_SECONDS:.3f}"
+        )
     report = {
         "schema": "taiji-n1-plan163-transition-template-readiness-v1",
         "status": "ready",
@@ -313,7 +372,16 @@ def main() -> int:
     except Exception as exc:
         print(f"N1-163 schedule refused: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 1
-    print(json.dumps({key: report[key] for key in ("status", "source_hash_count", "cpu_seconds", "checks", "can_promote")}, ensure_ascii=False, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                key: report[key]
+                for key in ("status", "source_hash_count", "cpu_seconds", "checks", "can_promote")
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+    )
     return 0
 
 

@@ -66,15 +66,14 @@ def validate_inputs(start: float) -> tuple[dict, list[dict], list[dict]]:
         or report.get("sources_unchanged") is not True
         or report.get("cpu_accounting_complete") is not True
         or len(report.get("models", [])) != 9
-        or any(report.get(key) != 0 for key in ("dev_queries", "holdout_queries", "confirmation_queries"))
+        or any(
+            report.get(key) != 0
+            for key in ("dev_queries", "holdout_queries", "confirmation_queries")
+        )
     ):
         raise ValueError("run86c report does not meet frozen offline-audit preconditions")
 
-    expected = {
-        (seed, arm)
-        for seed in (11, 12, 13)
-        for arm in ("position", "terminal", "cut")
-    }
+    expected = {(seed, arm) for seed in (11, 12, 13) for arm in ("position", "terminal", "cut")}
     models = report["models"]
     if {(model["seed"], model["arm"]) for model in models} != expected:
         raise ValueError("run86c model matrix differs from the frozen nine-model set")
@@ -302,7 +301,9 @@ def execute() -> dict:
         "plan": "PLAN-N1-87",
         "complete": True,
         "input_report_sha256": EXPECTED_REPORT_SHA256,
-        "completion_report_sha256": json.loads(COMPLETION.read_text(encoding="utf-8"))["report_sha256"],
+        "completion_report_sha256": json.loads(COMPLETION.read_text(encoding="utf-8"))[
+            "report_sha256"
+        ],
         "model_count": len(models),
         "sealed_model_count": len(records),
         "analysis_windows": len(windows),
@@ -354,9 +355,9 @@ if __name__ == "__main__":
                 "models": completed["model_count"],
                 "analysis_windows": completed["analysis_windows"],
                 "cpu_seconds": completed["execution"]["cpu_seconds"],
-                "seed12_position_cycle4": completed[
-                    "seed12_position_cycle4_item_loss_link"
-                ]["original"],
+                "seed12_position_cycle4": completed["seed12_position_cycle4_item_loss_link"][
+                    "original"
+                ],
             },
             ensure_ascii=False,
             sort_keys=True,

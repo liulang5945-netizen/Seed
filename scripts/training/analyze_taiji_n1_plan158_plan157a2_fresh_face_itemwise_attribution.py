@@ -25,7 +25,10 @@ SOURCE_PROGRESS_SHA256 = "95992dc16b58ba32d5ea1de37837601b5eb1fef8d555e9bb24079d
 FACE = n157_builder.FACE
 FACE_SHA256 = "cf34e7de874b316581c4c6520786e2bf6406d328d4989b869901eb667e9c9a2f"
 REPORT = ROOT / "reports/taiji_n1_plan158_plan157a2_fresh_face_itemwise_attribution_20261020.json"
-TEST = ROOT / "tests/taiji_native/test_n1_plan158_plan157a2_fresh_face_itemwise_attribution_contract.py"
+TEST = (
+    ROOT
+    / "tests/taiji_native/test_n1_plan158_plan157a2_fresh_face_itemwise_attribution_contract.py"
+)
 
 BRANCHES = ("unknown8_rebalanced", "length_mixed_parent")
 SEEDS = (11, 12, 13)
@@ -138,7 +141,12 @@ def length_transition_summary(rows: list[dict]) -> list[dict]:
             "from_length": before,
             "to_length": after,
         }
-        record.update({key: int(value) for key, value in sorted(counts[(seed, branch, kind, before, after)].items())})
+        record.update(
+            {
+                key: int(value)
+                for key, value in sorted(counts[(seed, branch, kind, before, after)].items())
+            }
+        )
         output.append(record)
     return output
 
@@ -171,7 +179,10 @@ def analyze() -> dict:
         raise Refuse("N1-157A2 bound source/checkpoint hashes changed")
 
     rows = result["fresh_diagnostic_rows"]
-    counts = Counter((int(row["seed"]), str(row["branch"]), str(row["kind"]), int(row["context_length"])) for row in rows)
+    counts = Counter(
+        (int(row["seed"]), str(row["branch"]), str(row["kind"]), int(row["context_length"]))
+        for row in rows
+    )
     expected = {
         (seed, branch, kind, length): 40
         for seed in SEEDS
@@ -183,7 +194,9 @@ def analyze() -> dict:
         raise Refuse("N1-158 seed/branch/kind/length denominator differs")
     paired = paired_summary(rows)
     transitions = length_transition_summary(rows)
-    if len(paired) != len(SEEDS) * len(KINDS) * len(LENGTHS) or len(transitions) != len(SEEDS) * len(BRANCHES) * len(KINDS) * len(LENGTH_TRANSITIONS):
+    if len(paired) != len(SEEDS) * len(KINDS) * len(LENGTHS) or len(transitions) != len(
+        SEEDS
+    ) * len(BRANCHES) * len(KINDS) * len(LENGTH_TRANSITIONS):
         raise Refuse("N1-158 paired summary strata differ")
     if sha256(SOURCE_RESULT) != SOURCE_RESULT_SHA256 or sha256(FACE) != FACE_SHA256:
         raise Refuse("N1-158 source result or face changed during analysis")
@@ -233,24 +246,34 @@ def analyze() -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PLAN-N1-158 fresh-face itemwise paired attribution")
+    parser = argparse.ArgumentParser(
+        description="PLAN-N1-158 fresh-face itemwise paired attribution"
+    )
     parser.parse_args()
     report = analyze()
-    print(json.dumps({
-        "status": report["status"],
-        "complete": report["complete"],
-        "paired_row_count": report["paired_row_count"],
-        "pair_strata": len(report["pairs_by_seed_length_kind"]),
-        "length_transition_strata": len(report["nested_length_transitions_by_seed_branch_kind"]),
-        "cpu_seconds": report["cpu_seconds"],
-        "source_hashes_unchanged": report["source_hashes_unchanged"],
-        "model_loads": report["model_loads"],
-        "checkpoint_loads": report["checkpoint_loads"],
-        "model_queries": report["model_queries"],
-        "parameter_updates": report["parameter_updates"],
-        "can_promote": report["can_promote"],
-        "summary_zh": report["summary_zh"],
-    }, ensure_ascii=True, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                "status": report["status"],
+                "complete": report["complete"],
+                "paired_row_count": report["paired_row_count"],
+                "pair_strata": len(report["pairs_by_seed_length_kind"]),
+                "length_transition_strata": len(
+                    report["nested_length_transitions_by_seed_branch_kind"]
+                ),
+                "cpu_seconds": report["cpu_seconds"],
+                "source_hashes_unchanged": report["source_hashes_unchanged"],
+                "model_loads": report["model_loads"],
+                "checkpoint_loads": report["checkpoint_loads"],
+                "model_queries": report["model_queries"],
+                "parameter_updates": report["parameter_updates"],
+                "can_promote": report["can_promote"],
+                "summary_zh": report["summary_zh"],
+            },
+            ensure_ascii=True,
+            sort_keys=True,
+        )
+    )
     return 0
 
 

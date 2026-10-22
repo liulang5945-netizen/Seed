@@ -132,7 +132,9 @@ def verify_readiness() -> tuple[dict, dict[str, str]]:
     if not n160.n150_builder.verify_hashes(readiness.get("source_hashes", {})):
         raise Refuse("PLAN-N1-161 readiness source hashes changed")
     endpoints, sources, _ = builder.source_context()
-    if len(endpoints) != 6 or not set(sources.items()).issubset(set(readiness["source_hashes"].items())):
+    if len(endpoints) != 6 or not set(sources.items()).issubset(
+        set(readiness["source_hashes"].items())
+    ):
         raise Refuse("PLAN-N1-161 frozen endpoint/source set changed")
     return readiness, dict(readiness["source_hashes"])
 
@@ -309,11 +311,15 @@ def fresh_summary(rows: list[dict]) -> list[dict]:
         for length in LENGTHS:
             for kind in KINDS:
                 template_ids = (
-                    "material_active",
-                    "material_passive",
-                ) if kind in builder.MATERIAL_KINDS else (
-                    "direction_after_turning",
-                    "direction_after_turn",
+                    (
+                        "material_active",
+                        "material_passive",
+                    )
+                    if kind in builder.MATERIAL_KINDS
+                    else (
+                        "direction_after_turning",
+                        "direction_after_turn",
+                    )
                 )
                 for template_id in template_ids:
                     items = groups[(seed, branch, length, kind, template_id)]
@@ -332,7 +338,9 @@ def fresh_summary(rows: list[dict]) -> list[dict]:
                             "items": len(items),
                             "free_exact": sum(row.get("free_exact") is True for row in items),
                             "teacher_exact": sum(row.get("teacher_exact") is True for row in items),
-                            "literal_unknown": sum(row.get("output_hex") == UNKNOWN_HEX for row in items),
+                            "literal_unknown": sum(
+                                row.get("output_hex") == UNKNOWN_HEX for row in items
+                            ),
                         }
                     )
     return summary
@@ -382,11 +390,17 @@ def execute_approved() -> dict:
             budget.guard(reserve=30)
             checkpoint = Path(endpoint["checkpoint_path"]).resolve()
             if sha256(checkpoint) != endpoint["checkpoint_sha256"]:
-                raise Refuse(f"PLAN-N1-161 checkpoint SHA changed: {endpoint['seed']}/{endpoint['branch']}")
-            model, optimizer, payload, fingerprint = _restore_endpoint(endpoint["branch"], checkpoint)
+                raise Refuse(
+                    f"PLAN-N1-161 checkpoint SHA changed: {endpoint['seed']}/{endpoint['branch']}"
+                )
+            model, optimizer, payload, fingerprint = _restore_endpoint(
+                endpoint["branch"], checkpoint
+            )
             model_load_count += 1
             if fingerprint != endpoint["bundle_fingerprint"]:
-                raise Refuse(f"PLAN-N1-161 bundle fingerprint mismatch: {endpoint['seed']}/{endpoint['branch']}")
+                raise Refuse(
+                    f"PLAN-N1-161 bundle fingerprint mismatch: {endpoint['seed']}/{endpoint['branch']}"
+                )
             before = _fingerprint(model, optimizer)
             endpoint_rows = []
             for base in face["items"]:
@@ -420,9 +434,9 @@ def execute_approved() -> dict:
                     row = {
                         "seed": endpoint["seed"],
                         "branch": endpoint["branch"],
-                        "model_role": "candidate"
-                        if endpoint["branch"] == "unknown8_rebalanced"
-                        else "parent",
+                        "model_role": (
+                            "candidate" if endpoint["branch"] == "unknown8_rebalanced" else "parent"
+                        ),
                         "question_template_id": base["question_template_id"],
                         "question": base["question"],
                         "event": "question_surface_diagnostic_row",
@@ -434,9 +448,13 @@ def execute_approved() -> dict:
                     if query_count % 64 == 0:
                         progress.flush()
             if len(endpoint_rows) != QUERIES_PER_ENDPOINT:
-                raise Refuse(f"PLAN-N1-161 query count differs: {endpoint['seed']}/{endpoint['branch']}")
+                raise Refuse(
+                    f"PLAN-N1-161 query count differs: {endpoint['seed']}/{endpoint['branch']}"
+                )
             if _fingerprint(model, optimizer) != before:
-                raise Refuse(f"PLAN-N1-161 scoring changed bundle: {endpoint['seed']}/{endpoint['branch']}")
+                raise Refuse(
+                    f"PLAN-N1-161 scoring changed bundle: {endpoint['seed']}/{endpoint['branch']}"
+                )
             del model, optimizer, payload
         progress.flush()
         progress.close()

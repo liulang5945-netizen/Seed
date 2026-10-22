@@ -27,7 +27,10 @@ from scripts.training import (  # noqa: E402
     build_taiji_n1_v18_target_position_context_order as n136_builder,
 )
 
-PLAN = ROOT / "plans/reference/PLAN-N1-137_neighbor_distance_context_interference_diagnostic_draft_20261019.md"
+PLAN = (
+    ROOT
+    / "plans/reference/PLAN-N1-137_neighbor_distance_context_interference_diagnostic_draft_20261019.md"
+)
 PLAN_SHA256 = "d6e75d3251cc5690211b16e649f00e4ee78206308a4805995465a48c0d7d15f0"
 APPROVED_DRAFT_SHA256 = "c76fd2ca5c0c19f9c38afe14c1facfe8871bcd7ddb44766a64710cd06bad44df"
 
@@ -41,15 +44,31 @@ N136_FACE_CHECKS = n136_builder.FACE_CHECKS
 N136_RUN_REPORT = n136_builder.RUN_REPORT
 N136_RUN_ATTEMPT = n136_builder.RUN_ATTEMPT
 
-SOURCE_EXCLUSIONS = ROOT / "plans/manifests/n1_hard_neighbor_v19_neighbor_distance_seed119_source_exclusions_20261019.json"
+SOURCE_EXCLUSIONS = (
+    ROOT
+    / "plans/manifests/n1_hard_neighbor_v19_neighbor_distance_seed119_source_exclusions_20261019.json"
+)
 READINESS = ROOT / "reports/taiji_n1_plan137_neighbor_distance_readiness_20261019.json"
-READINESS_ATTEMPT = ROOT / "reports/taiji_n1_plan137_neighbor_distance_readiness_attempt_20261019.json"
-FACE = ROOT / "plans/manifests/n1_hard_neighbor_v19_neighbor_distance_context_interference_seed119_20261019.json"
+READINESS_ATTEMPT = (
+    ROOT / "reports/taiji_n1_plan137_neighbor_distance_readiness_attempt_20261019.json"
+)
+FACE = (
+    ROOT
+    / "plans/manifests/n1_hard_neighbor_v19_neighbor_distance_context_interference_seed119_20261019.json"
+)
 FACE_ATTEMPT = FACE.with_name(FACE.stem + "_attempt.json")
 FACE_CHECKS = ROOT / "reports/taiji_n1_plan137_neighbor_distance_face_checks_20261019.json"
-RUN_REPORT = ROOT / "reports/taiji_n1_plan137_neighbor_distance_context_interference_diagnostic_20261019.json"
-RUN_ATTEMPT = ROOT / "reports/taiji_n1_plan137_neighbor_distance_context_interference_diagnostic_attempt_20261019.json"
-TEST = ROOT / "tests/taiji_native/test_n1_plan137_neighbor_distance_context_interference_contract.py"
+RUN_REPORT = (
+    ROOT
+    / "reports/taiji_n1_plan137_neighbor_distance_context_interference_diagnostic_20261019.json"
+)
+RUN_ATTEMPT = (
+    ROOT
+    / "reports/taiji_n1_plan137_neighbor_distance_context_interference_diagnostic_attempt_20261019.json"
+)
+TEST = (
+    ROOT / "tests/taiji_native/test_n1_plan137_neighbor_distance_context_interference_contract.py"
+)
 
 SEED = 119
 TEMPLATE_COUNT = 8
@@ -245,7 +264,9 @@ def _confusable_at_distance(
     raise ValueError(f"无法生成d={distance}邻近实体")
 
 
-def _make_episode(*, ordinal: int, template: dict, context_length: int, distance: int | None) -> dict:
+def _make_episode(
+    *, ordinal: int, template: dict, context_length: int, distance: int | None
+) -> dict:
     if distance is None:
         if context_length != 2:
             raise ValueError("共同基线只允许使用2行上下文")
@@ -295,9 +316,11 @@ def build_v19_face(excluded_names: set[str], excluded_words: set[str]) -> dict:
             distractor_sets = {}
             for distance in DISTANCES:
                 names = [
-                    v9._confusable(subject, used_names, rng)
-                    if distance == 1
-                    else _confusable_at_distance(subject, distance, used_names, rng)
+                    (
+                        v9._confusable(subject, used_names, rng)
+                        if distance == 1
+                        else _confusable_at_distance(subject, distance, used_names, rng)
+                    )
                     for _ in range(max(LENGTHS) - 2)
                 ]
                 observations = [
@@ -382,7 +405,9 @@ def audit_v19_face(face: dict, *, excluded_names: set[str], excluded_words: set[
             (16, "d2"): 8,
         }
     )
-    observed_conditions = Counter((item.get("context_length"), item.get("condition")) for item in episodes)
+    observed_conditions = Counter(
+        (item.get("context_length"), item.get("condition")) for item in episodes
+    )
     template_checks = len(templates) == TEMPLATE_COUNT and len(by_template) == TEMPLATE_COUNT
     content_checks = True
     distance_checks = True
@@ -418,21 +443,18 @@ def audit_v19_face(face: dict, *, excluded_names: set[str], excluded_words: set[
             and eight_d2["observations"][:2] == template["target_rows"]
             and sixteen_d1["observations"][:2] == template["target_rows"]
             and sixteen_d2["observations"][:2] == template["target_rows"]
-            and eight_d1["observations"][2:]
-            == template["distractor_sets"]["1"]["observations"][:6]
+            and eight_d1["observations"][2:] == template["distractor_sets"]["1"]["observations"][:6]
             and sixteen_d1["observations"][2:]
             == template["distractor_sets"]["1"]["observations"][:14]
-            and eight_d2["observations"][2:]
-            == template["distractor_sets"]["2"]["observations"][:6]
+            and eight_d2["observations"][2:] == template["distractor_sets"]["2"]["observations"][:6]
             and sixteen_d2["observations"][2:]
             == template["distractor_sets"]["2"]["observations"][:14]
-            and eight_d1["observations"][2:]
-            == sixteen_d1["observations"][2:8]
-            and eight_d2["observations"][2:]
-            == sixteen_d2["observations"][2:8]
+            and eight_d1["observations"][2:] == sixteen_d1["observations"][2:8]
+            and eight_d2["observations"][2:] == sixteen_d2["observations"][2:8]
         )
         distance_checks &= all(
-            sum(left != right for left, right in zip(template["subject"], name, strict=True)) == distance
+            sum(left != right for left, right in zip(template["subject"], name, strict=True))
+            == distance
             for distance in DISTANCES
             for name in template["distractor_sets"][str(distance)]["entities"]
         )
@@ -478,7 +500,9 @@ def audit_v19_face(face: dict, *, excluded_names: set[str], excluded_words: set[
         and face.get("subsets") == {"diagnostic": ids}
         and all(item.get("split") == "holdout" for item in episodes),
         "balanced_template_conditions": observed_conditions == expected_conditions
-        and all(len(item.get("observations", [])) == item.get("context_length") for item in episodes),
+        and all(
+            len(item.get("observations", [])) == item.get("context_length") for item in episodes
+        ),
         "eight_direction_turn_templates": template_checks
         and Counter(item.get("answer_direction") for item in templates)
         == Counter({direction: 2 for direction in DIRECTIONS})
@@ -591,9 +615,9 @@ def source_readiness() -> dict:
         "complete": not errors,
         "plan_sha256": PLAN_SHA256,
         "approved_draft_sha256": APPROVED_DRAFT_SHA256,
-        "source_exclusion_manifest_sha256": sha256(SOURCE_EXCLUSIONS)
-        if SOURCE_EXCLUSIONS.exists()
-        else None,
+        "source_exclusion_manifest_sha256": (
+            sha256(SOURCE_EXCLUSIONS) if SOURCE_EXCLUSIONS.exists() else None
+        ),
         "source_hashes": source_hashes,
         "endpoint_count": len(endpoint_restores),
         "endpoint_restores": endpoint_restores,
@@ -608,9 +632,11 @@ def source_readiness() -> dict:
         "cpu_seconds": cpu,
         "cpu_limit_seconds": CPU_LIMIT_SECONDS,
         "can_promote": False,
-        "summary_zh": "12个冻结endpoint完整bundle恢复一致；v3训练至v18已消费来源排除完成；本阶段0模型查询、0参数更新、未生成题面。"
-        if not errors
-        else "N1-137 readiness停止；保留失败回执，不生成题面、不查询、不更新。",
+        "summary_zh": (
+            "12个冻结endpoint完整bundle恢复一致；v3训练至v18已消费来源排除完成；本阶段0模型查询、0参数更新、未生成题面。"
+            if not errors
+            else "N1-137 readiness停止；保留失败回执，不生成题面、不查询、不更新。"
+        ),
         "errors": errors,
     }
     report["readiness_attempt_sha256"] = sha256(READINESS_ATTEMPT)

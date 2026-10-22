@@ -59,7 +59,9 @@ def test_measure_diagnostic_scores_without_relabiling_the_split(monkeypatch) -> 
             return torch.zeros((len(target) + 1, 257)), None
 
         def generate_trace(self, _tape, _session, _question, _limit):
-            return SimpleNamespace(output=b"abcdef", raw=b"abcdef", stop_reason="boundary", generated_steps=7)
+            return SimpleNamespace(
+                output=b"abcdef", raw=b"abcdef", stop_reason="boundary", generated_steps=7
+            )
 
     paired = evaluator.frozen_eval.n132.e11.scorer.paired
     monkeypatch.setattr(paired, "project", lambda item: SimpleNamespace(question=item["question"]))

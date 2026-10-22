@@ -142,7 +142,9 @@ def run() -> dict:
         "readiness_revalidation_sha256"
     ) == started_hashes[readiness_key] and source_binding_v2.get(
         "source_hashes"
-    ) == readiness_v2.get("source_hashes")
+    ) == readiness_v2.get(
+        "source_hashes"
+    )
     active_preflight_bound = (
         preflight.get("complete") is True
         and preflight.get("status") == "complete"

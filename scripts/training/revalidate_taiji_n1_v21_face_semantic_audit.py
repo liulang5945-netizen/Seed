@@ -62,13 +62,29 @@ def revalidate() -> dict:
     exclusions = read_json(SOURCE_EXCLUSIONS)
     semantic = audit.audit_face(face, exclusions)
     _require_replay_matches(prior, semantic, sha256(FACE), sha256(SOURCE_EXCLUSIONS))
-    source_paths = (PLAN, FACE, SOURCE_EXCLUSIONS, FACE_CHECKS, PREPARED, PRIOR_AUDIT, Path(audit.__file__), Path(__file__))
+    source_paths = (
+        PLAN,
+        FACE,
+        SOURCE_EXCLUSIONS,
+        FACE_CHECKS,
+        PREPARED,
+        PRIOR_AUDIT,
+        Path(audit.__file__),
+        Path(__file__),
+    )
     source_hashes = {str(Path(path).resolve()): sha256(Path(path)) for path in source_paths}
-    unchanged = all(Path(path).is_file() and sha256(Path(path)) == digest for path, digest in source_hashes.items())
+    unchanged = all(
+        Path(path).is_file() and sha256(Path(path)) == digest
+        for path, digest in source_hashes.items()
+    )
     if not unchanged:
         raise ValueError("v21 semantic audit revalidation source changed")
     old_audit_script = next(
-        (digest for path, digest in prior.get("source_hashes", {}).items() if Path(path).resolve() == Path(audit.__file__).resolve()),
+        (
+            digest
+            for path, digest in prior.get("source_hashes", {}).items()
+            if Path(path).resolve() == Path(audit.__file__).resolve()
+        ),
         None,
     )
     report = {

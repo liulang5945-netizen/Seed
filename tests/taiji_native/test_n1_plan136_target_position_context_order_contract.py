@@ -23,7 +23,9 @@ def test_v18_face_balances_baseline_and_position_conditions() -> None:
     assert face["seed"] == 118
     assert len(face["episodes"]) == 40
     assert len(face["matched_templates"]) == 8
-    assert Counter((item["context_length"], item["placement"]) for item in face["episodes"]) == Counter(
+    assert Counter(
+        (item["context_length"], item["placement"]) for item in face["episodes"]
+    ) == Counter(
         {
             (2, "baseline"): 8,
             (8, "early"): 8,
@@ -110,18 +112,17 @@ def test_v18_summary_keeps_condition_denominators_and_position_pairs() -> None:
                             "stop_reason": "boundary" if exact else "limit",
                         }
                     )
-                endpoint_rows.append(
-                    {"source": source, "seed": seed, "arm": arm, "rows": rows}
-                )
+                endpoint_rows.append({"source": source, "seed": seed, "arm": arm, "rows": rows})
 
     by_endpoint, comparisons = evaluator._summarize_conditions(face, endpoint_rows)
 
     assert len(by_endpoint) == 12
     assert len(comparisons) == 12
     for summary in by_endpoint.values():
-        assert [summary["by_condition"][key]["items"] for key in (
-            "2/baseline", "8/early", "8/late", "16/early", "16/late"
-        )] == [8, 8, 8, 8, 8]
+        assert [
+            summary["by_condition"][key]["items"]
+            for key in ("2/baseline", "8/early", "8/late", "16/early", "16/late")
+        ] == [8, 8, 8, 8, 8]
         assert len(summary["by_matched_template"]) == 8
     for summary in comparisons.values():
         assert summary["8_early_vs_late"]["matched_templates"] == 8

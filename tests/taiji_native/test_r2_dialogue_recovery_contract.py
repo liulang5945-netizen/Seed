@@ -66,9 +66,11 @@ def test_orphan_ignored_and_corruption_refused(tmp_path):
 def test_lock_and_binding_refusal(tmp_path):
     candidate = trainer()
     with RecoveryStore(tmp_path, {"arm": "a"}, candidate.corpus) as store:
-        with pytest.raises(RuntimeError, match="live_identity=True"):
-            with RecoveryStore(tmp_path, {"arm": "a"}, candidate.corpus):
-                pass
+        with (
+            pytest.raises(RuntimeError, match="live_identity=True"),
+            RecoveryStore(tmp_path, {"arm": "a"}, candidate.corpus),
+        ):
+            pass
         store.commit(candidate, Cursor(), 2, {})
         with pytest.raises(ValueError, match="bindings"):
             RecoveryStore(tmp_path, {"arm": "b"}, candidate.corpus).load_latest()
@@ -119,12 +121,16 @@ def test_reclaim_dead_owner_and_guard(tmp_path, monkeypatch):
     monkeypatch.setattr(psutil, "Process", process)
     with reclaim_writer_lock(tmp_path) as token:
         assert list((tmp_path / "stale-locks").iterdir())[0].read_bytes() == raw
-        with pytest.raises(RuntimeError, match="guard blocks"):
-            with RecoveryStore(tmp_path, {"arm": "a"}, candidate.corpus):
-                pass
-        with pytest.raises(RuntimeError, match="already in progress"):
-            with reclaim_writer_lock(tmp_path):
-                pass
+        with (
+            pytest.raises(RuntimeError, match="guard blocks"),
+            RecoveryStore(tmp_path, {"arm": "a"}, candidate.corpus),
+        ):
+            pass
+        with (
+            pytest.raises(RuntimeError, match="already in progress"),
+            reclaim_writer_lock(tmp_path),
+        ):
+            pass
         with RecoveryStore(tmp_path, {"arm": "a"}, candidate.corpus, reclaim_token=token):
             assert (tmp_path / "writer.lock").is_file()
     assert not (tmp_path / "reclaim.guard").exists()
@@ -149,8 +155,10 @@ def test_reclaim_alive_reused_invalid(tmp_path):
     ]:
         raw = json.dumps(identity).encode()
         lock.write_bytes(raw)
-        with pytest.raises((RuntimeError, ValueError), match=message):
-            with reclaim_writer_lock(tmp_path):
-                pass
+        with (
+            pytest.raises((RuntimeError, ValueError), match=message),
+            reclaim_writer_lock(tmp_path),
+        ):
+            pass
         assert lock.read_bytes() == raw
         assert not (tmp_path / "reclaim.guard").exists()

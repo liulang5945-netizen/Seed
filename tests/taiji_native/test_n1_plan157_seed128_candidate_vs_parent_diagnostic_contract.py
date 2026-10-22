@@ -10,7 +10,10 @@ from scripts.training import run_taiji_n1_plan157_seed128_candidate_vs_parent_di
 
 def test_plan_digest_and_query_denominator_are_frozen() -> None:
     assert hashlib.sha256(builder.PLAN.read_bytes()).hexdigest() == builder.PLAN_SHA256
-    assert hashlib.sha256(builder.CORRECTION_ADDENDUM.read_bytes()).hexdigest() == builder.CORRECTION_SHA256
+    assert (
+        hashlib.sha256(builder.CORRECTION_ADDENDUM.read_bytes()).hexdigest()
+        == builder.CORRECTION_SHA256
+    )
     assert len(builder.ENDPOINTS) == 6
     assert builder.QUERIES_PER_ENDPOINT == 480
     assert builder.TOTAL_QUERIES == 2_880
@@ -87,4 +90,3 @@ def test_fresh_summary_accepts_one_complete_endpoint_continuation_cell() -> None
     assert len(summary) == 12
     assert all(row["seed"] == 11 and row["branch"] == "unknown8_rebalanced" for row in summary)
     assert all(row["items"] == 40 for row in summary)
-

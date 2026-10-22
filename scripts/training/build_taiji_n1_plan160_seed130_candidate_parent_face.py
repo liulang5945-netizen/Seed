@@ -22,7 +22,9 @@ from scripts.training import build_taiji_n1_v27_length_robust_training_after_n14
 
 PLAN = ROOT / "plans/reference/PLAN-N1-160_seed130_candidate_parent_fresh_replication_20261020.md"
 PLAN_SHA256 = "55ca0f18a741857ac903502213222feba92cbfc2a6b16215c221224fd8551d7a"
-CORRECTION_ADDENDUM = ROOT / "plans/reference/PLAN-N1-160A_remaining_endpoint_continuation_20261020.md"
+CORRECTION_ADDENDUM = (
+    ROOT / "plans/reference/PLAN-N1-160A_remaining_endpoint_continuation_20261020.md"
+)
 CORRECTION_SHA256 = "bf4e3d4953da077b45cf04ae073a8c415cdab40786b0c06ca545aa1eab96c3a4"
 N159A_RESULT = ROOT / "reports/taiji_n1_plan159a_candidate_parent_result_20261020.json"
 N159A_RESULT_SHA256 = "809bc1c79cc130129e07fcbed9080e6af9f1dea0322381c1b6b1e9e5204a65dd"
@@ -32,11 +34,19 @@ N158_REPORT = n158.REPORT
 N158_REPORT_SHA256 = "6f0681bf2c819df9444ff7e89faaca6f536a3aac55181e68059f8b892d99591a"
 PRIOR_SOURCE_AUDIT = ROOT / "reports/taiji_n1_plan160_candidate_parent_source_audit_20261020.json"
 PRIOR_READINESS = ROOT / "reports/taiji_n1_plan160_candidate_parent_readiness_20261020.json"
-PRIOR_READINESS_ATTEMPT = ROOT / "reports/taiji_n1_plan160_candidate_parent_readiness_attempt_20261020.json"
-PRIOR_SOURCE_BINDING = ROOT / "reports/taiji_n1_plan160_candidate_parent_source_binding_20261020.json"
+PRIOR_READINESS_ATTEMPT = (
+    ROOT / "reports/taiji_n1_plan160_candidate_parent_readiness_attempt_20261020.json"
+)
+PRIOR_SOURCE_BINDING = (
+    ROOT / "reports/taiji_n1_plan160_candidate_parent_source_binding_20261020.json"
+)
 PRIOR_PREFLIGHT = ROOT / "reports/taiji_n1_plan160_candidate_parent_preflight_20261020.json"
-PRIOR_PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_plan160_candidate_parent_preflight_attempt_20261020.json"
-PRIOR_PREFLIGHT_BINDING = ROOT / "reports/taiji_n1_plan160_candidate_parent_preflight_binding_20261020.json"
+PRIOR_PREFLIGHT_ATTEMPT = (
+    ROOT / "reports/taiji_n1_plan160_candidate_parent_preflight_attempt_20261020.json"
+)
+PRIOR_PREFLIGHT_BINDING = (
+    ROOT / "reports/taiji_n1_plan160_candidate_parent_preflight_binding_20261020.json"
+)
 PRIOR_ATTEMPT = ROOT / "reports/taiji_n1_plan160_candidate_parent_attempt_20261020.json"
 PRIOR_PROGRESS = ROOT / "reports/taiji_n1_plan160_candidate_parent_progress_20261020.jsonl"
 PRIOR_RESULT = ROOT / "reports/taiji_n1_plan160_candidate_parent_result_20261020.json"
@@ -168,13 +178,15 @@ def source_context() -> tuple[list[dict], dict[str, str], dict]:
         and prior_progress_rows == prior_rows
         and {int(row.get("seed", -1)) for row in prior_rows} == {11}
         and {str(row.get("branch")) for row in prior_rows} == {"unknown8_rebalanced"}
-        and prior_strata == Counter({(length, kind): ITEMS_PER_KIND for length in LENGTHS for kind in KINDS})
+        and prior_strata
+        == Counter({(length, kind): ITEMS_PER_KIND for length in LENGTHS for kind in KINDS})
         and prior_result.get("errors")
         == ["Refuse: PLAN-N1-160 summary stratum differs: 11/length_mixed_parent/8/lookup"]
         and prior_result.get("source_hashes_unchanged") is True
         and prior_result.get("progress_integrity", {}).get("complete") is True
         and prior_result.get("progress_integrity", {}).get("line_count") == PRIOR_QUERIES
-        and prior_result.get("progress_integrity", {}).get("progress_sha256") == PRIOR_PROGRESS_SHA256
+        and prior_result.get("progress_integrity", {}).get("progress_sha256")
+        == PRIOR_PROGRESS_SHA256
         and prior_result.get("cumulative_linked_cpu_seconds") == PRIOR_LINKED_CPU_SECONDS
         and prior_attempt.get("status") == "started"
         and prior_attempt.get("face_sha256") == PRIOR_FACE_SHA256

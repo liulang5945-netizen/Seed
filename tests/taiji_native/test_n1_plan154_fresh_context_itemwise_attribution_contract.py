@@ -32,9 +32,11 @@ def _rows() -> list[dict]:
                                 "kind": kind,
                                 "context_length": length,
                                 "free_exact": exact,
-                                "output_hex": analysis.UNKNOWN_HEX
-                                if kind == "unknown" and exact
-                                else "6f74686572",
+                                "output_hex": (
+                                    analysis.UNKNOWN_HEX
+                                    if kind == "unknown" and exact
+                                    else "6f74686572"
+                                ),
                             }
                         )
     return rows

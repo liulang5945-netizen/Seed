@@ -8,8 +8,14 @@ from scripts.training import run_taiji_n1_plan159_seed129_candidate_parent_diagn
 
 def test_plan_and_seed129_replication_denominators_are_frozen() -> None:
     assert hashlib.sha256(builder.PLAN.read_bytes()).hexdigest() == builder.PLAN_SHA256
-    assert hashlib.sha256(builder.PRIOR_CORRECTION_ADDENDUM.read_bytes()).hexdigest() == builder.PRIOR_CORRECTION_SHA256
-    assert hashlib.sha256(builder.CORRECTION_ADDENDUM.read_bytes()).hexdigest() == builder.CORRECTION_SHA256
+    assert (
+        hashlib.sha256(builder.PRIOR_CORRECTION_ADDENDUM.read_bytes()).hexdigest()
+        == builder.PRIOR_CORRECTION_SHA256
+    )
+    assert (
+        hashlib.sha256(builder.CORRECTION_ADDENDUM.read_bytes()).hexdigest()
+        == builder.CORRECTION_SHA256
+    )
     assert builder.QUERIES_PER_ENDPOINT == 480
     assert builder.TOTAL_QUERIES == 2_880
     assert builder.PRIOR_LINKED_CPU_SECONDS == 9_956.421875
@@ -49,9 +55,9 @@ def test_fresh_summary_requires_all_endpoint_length_kind_strata() -> None:
                             "context_length": length,
                             "kind": kind,
                             "free_exact": index % 2 == 0,
-                            "output_hex": "756e6b6e6f776e"
-                            if kind == "unknown" and index % 2 == 0
-                            else "",
+                            "output_hex": (
+                                "756e6b6e6f776e" if kind == "unknown" and index % 2 == 0 else ""
+                            ),
                         }
                     )
     summary = runner._fresh_summary(rows)
@@ -73,7 +79,9 @@ def test_fresh_summary_accepts_single_endpoint_continuation_data() -> None:
                         "context_length": length,
                         "kind": kind,
                         "free_exact": index % 2 == 0,
-                        "output_hex": "756e6b6e6f776e" if kind == "unknown" and index % 2 == 0 else "",
+                        "output_hex": (
+                            "756e6b6e6f776e" if kind == "unknown" and index % 2 == 0 else ""
+                        ),
                     }
                 )
     summary = runner._fresh_summary(rows)

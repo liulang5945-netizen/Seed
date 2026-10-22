@@ -52,7 +52,9 @@ def test_transition_unknown_and_decode_error_classes_are_explicit() -> None:
     initial = analyzer.classify_row({"output_hex": b"east".hex(), "free_exact": False}, transition)
     other = analyzer.classify_row({"output_hex": b"west".hex(), "free_exact": False}, transition)
     unknown = _base_item("unknown")
-    abstention = analyzer.classify_row({"output_hex": b"unknown".hex(), "free_exact": True}, unknown)
+    abstention = analyzer.classify_row(
+        {"output_hex": b"unknown".hex(), "free_exact": True}, unknown
+    )
     bad_hex = analyzer.classify_row({"output_hex": "0xz1", "free_exact": False}, unknown)
     bad_utf8 = analyzer.classify_row({"output_hex": "ff", "free_exact": False}, unknown)
 
@@ -70,12 +72,12 @@ def test_full_fixture_keeps_all_frozen_scores_and_endpoint_rows() -> None:
         for local in range(20):
             item = _base_item(kind)
             item.update({"id": f"v23-confirm-{kind}-{local:03d}"})
-            if kind == "lookup":
-                item["answer"] = "newval"
-            elif kind == "revision":
+            if kind in ("lookup", "revision"):
                 item["answer"] = "newval"
             elif kind == "transition":
-                item.update({"answer": "south", "answer_direction": "south", "turn_template": "right"})
+                item.update(
+                    {"answer": "south", "answer_direction": "south", "turn_template": "right"}
+                )
             else:
                 item["answer"] = "unknown"
             episodes.append(item)

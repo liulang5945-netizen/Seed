@@ -211,7 +211,7 @@ def _load_pretrain_corpus() -> LanguageEpisodeCorpus:
 def _load_assistant_train_corpus() -> LanguageEpisodeCorpus:
     episodes = []
     with ASSISTANT_EPISODES.open("r", encoding="utf-8") as stream:
-        for line_number, line in enumerate(stream, 1):
+        for _, line in enumerate(stream, 1):
             metadata = _json_selected_fields(line, {"split"})
             if metadata.get("split") != "train":
                 continue
@@ -1107,14 +1107,14 @@ def execute() -> dict[str, Any]:
                     partial = {"save_error": f"{type(save_error).__name__}: {save_error}"}
         failure = {
             "schema": "taiji-r2-daily-dialogue-full-turn-pretraining-result-v1",
-            "status": "partial"
-            if pretrain_byte_updates or sft_byte_updates
-            else "failed_before_updates",
+            "status": (
+                "partial" if pretrain_byte_updates or sft_byte_updates else "failed_before_updates"
+            ),
             "complete": False,
             "plan_sha256": PLAN_SHA256,
-            "source_hashes": dict(sorted(source_hashes.items()))
-            if "source_hashes" in locals()
-            else {},
+            "source_hashes": (
+                dict(sorted(source_hashes.items())) if "source_hashes" in locals() else {}
+            ),
             "active_stage": active_stage,
             "pretraining_episodes": pretrain_episode_count,
             "pretraining_byte_updates": pretrain_byte_updates,

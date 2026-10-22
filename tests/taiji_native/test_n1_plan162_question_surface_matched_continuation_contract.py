@@ -38,18 +38,20 @@ def _synthetic_base_schedule() -> dict:
                     "second_key": None,
                 }
                 slots.append(slot)
-                rows.append({
-                    "step": step,
-                    "parent_id": parent,
-                    "route": route,
-                    "route_ordinal": ordinal,
-                    "kind": kind,
-                    "candidate_length": length,
-                    "item_id": item["id"],
-                    "item_key": slot["item_key"],
-                    "second_id": None,
-                    "second_key": None,
-                })
+                rows.append(
+                    {
+                        "step": step,
+                        "parent_id": parent,
+                        "route": route,
+                        "route_ordinal": ordinal,
+                        "kind": kind,
+                        "candidate_length": length,
+                        "item_id": item["id"],
+                        "item_key": slot["item_key"],
+                        "second_id": None,
+                        "second_key": None,
+                    }
+                )
                 step += 1
     return {
         "slots": slots,
@@ -61,7 +63,10 @@ def _synthetic_base_schedule() -> dict:
 
 def test_plan_and_budget_addendum_hashes_are_frozen() -> None:
     assert hashlib.sha256(builder.PLAN.read_bytes()).hexdigest() == builder.PLAN_SHA256
-    assert hashlib.sha256(builder.BUDGET_ADDENDUM.read_bytes()).hexdigest() == builder.BUDGET_ADDENDUM_SHA256
+    assert (
+        hashlib.sha256(builder.BUDGET_ADDENDUM.read_bytes()).hexdigest()
+        == builder.BUDGET_ADDENDUM_SHA256
+    )
 
 
 def test_matched_schedule_preserves_parent_routes_and_per_parent_ratios() -> None:
@@ -76,7 +81,7 @@ def test_matched_schedule_preserves_parent_routes_and_per_parent_ratios() -> Non
     for row in manifest["schedule_rows"]:
         groups[(row["parent_id"], row["kind"], row["context_length"])].append(row)
         assert row["control_template_id"] == "original"
-    for (parent, kind, length), rows in groups.items():
+    for (_, kind, length), rows in groups.items():
         values = Counter(row["augmented_template_id"] for row in rows)
         first, second = builder._template_pair(kind)
         total = builder._expected_length_counts(kind)[length]
@@ -98,7 +103,9 @@ def test_surface_question_parser_covers_training_templates_and_original_form() -
 
 
 def test_seed132_holdout_templates_are_distinct_from_training_templates() -> None:
-    assert set(builder.HOLDOUT_TEMPLATES.values()).isdisjoint(set(builder.TRAINING_TEMPLATES.values()))
+    assert set(builder.HOLDOUT_TEMPLATES.values()).isdisjoint(
+        set(builder.TRAINING_TEMPLATES.values())
+    )
     for kind in builder.KINDS:
         template_ids = [builder._face_template_id(kind, index) for index in range(40)]
         assert set(Counter(template_ids).values()) == {20}

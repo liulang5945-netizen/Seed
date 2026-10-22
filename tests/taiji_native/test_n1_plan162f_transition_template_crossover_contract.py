@@ -44,5 +44,11 @@ def test_baseline_key_normalizes_factorial_original_to_its_view() -> None:
 
 
 def test_readonly_result_paths_are_repository_local() -> None:
-    for path in (runner.PLAN, runner.N155A_RESULT, runner.N162B_RESULT, runner.PROGRESS, runner.RESULT):
+    for path in (
+        runner.PLAN,
+        runner.N155A_RESULT,
+        runner.N162B_RESULT,
+        runner.PROGRESS,
+        runner.RESULT,
+    ):
         assert Path(path).resolve().is_relative_to(runner.ROOT)

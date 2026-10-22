@@ -358,9 +358,9 @@ def run_diagnostic(*, owner_approved: bool) -> dict:
         "source_hashes": source_hashes,
         "source_hashes_unchanged": unchanged,
         "readiness_sha256": sha256(READINESS) if READINESS.is_file() else None,
-        "source_exclusion_manifest_sha256": sha256(SOURCE_EXCLUSIONS)
-        if SOURCE_EXCLUSIONS.is_file()
-        else None,
+        "source_exclusion_manifest_sha256": (
+            sha256(SOURCE_EXCLUSIONS) if SOURCE_EXCLUSIONS.is_file() else None
+        ),
         "face_sha256": sha256(FACE) if FACE.is_file() else None,
         "face_checks_sha256": sha256(FACE_CHECKS) if FACE_CHECKS.is_file() else None,
         "run_attempt_sha256": sha256(RUN_ATTEMPT),
@@ -385,9 +385,11 @@ def run_diagnostic(*, owner_approved: bool) -> dict:
         "cpu_limit_seconds": CPU_LIMIT_SECONDS,
         "can_promote": False,
         "errors": errors,
-        "summary_zh": "N1-136完成同事实、固定8/16行数下的目标位置前置/后置匹配诊断，并保存480条逐题生成字节；仅作描述性对照，不设能力门、不作模型晋升。"
-        if complete
-        else "N1-136诊断未完整完成；保留已执行查询与失败回执，不重试。",
+        "summary_zh": (
+            "N1-136完成同事实、固定8/16行数下的目标位置前置/后置匹配诊断，并保存480条逐题生成字节；仅作描述性对照，不设能力门、不作模型晋升。"
+            if complete
+            else "N1-136诊断未完整完成；保留已执行查询与失败回执，不重试。"
+        ),
     }
     write_new(RUN_REPORT, report)
     return report

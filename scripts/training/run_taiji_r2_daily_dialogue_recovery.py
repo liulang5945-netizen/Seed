@@ -47,8 +47,12 @@ PREFIX = ROOT / "reports/taiji_r2_daily_dialogue_recovery_v2_20261021"
 SAVE_INTERVAL = 32
 WORST_EPISODE_PROBES = {
     arm: (
-        ROOT / "reports" / f"taiji_r2_daily_dialogue_recovery_20261021_{arm}_worst_episode_probe.json",
-        ROOT / "reports" / f"taiji_r2_daily_dialogue_recovery_20261021_{arm}_worst_assistant_episode_probe.json",
+        ROOT
+        / "reports"
+        / f"taiji_r2_daily_dialogue_recovery_20261021_{arm}_worst_episode_probe.json",
+        ROOT
+        / "reports"
+        / f"taiji_r2_daily_dialogue_recovery_20261021_{arm}_worst_assistant_episode_probe.json",
     )
     for arm in ARMS
 }
@@ -61,7 +65,11 @@ def utc_now() -> str:
 def host_cpu_seconds() -> float:
     """Cumulative machine CPU seconds; on the same boot it bounds dead-run CPU."""
     return sum(
-        sum(value for field, value in zip(core._fields, core) if field not in {"idle", "iowait"})
+        sum(
+            value
+            for field, value in zip(core._fields, core, strict=False)
+            if field not in {"idle", "iowait"}
+        )
         for core in psutil.cpu_times(percpu=True)
     )
 
@@ -121,7 +129,9 @@ def source_bindings(arm: str) -> dict[str, Any]:
     for probe_path in WORST_EPISODE_PROBES[arm]:
         probe = base._read_json(probe_path)
         if probe.get("zero_sha256_before") != expected_zero_sha:
-            raise base.Refuse(f"worst-episode probe belongs to a different zero parent: {probe_path.name}")
+            raise base.Refuse(
+                f"worst-episode probe belongs to a different zero parent: {probe_path.name}"
+            )
     return {
         "run": "r2_daily_dialogue_recovery_v2_20261021",
         "arm": arm,
@@ -132,13 +142,23 @@ def source_bindings(arm: str) -> dict[str, Any]:
 
 def validate_probe_face(arm: str, pretrain, assistant) -> None:
     expected_faces = (
-        (WORST_EPISODE_PROBES[arm][0], max(pretrain.episodes, key=lambda row: len(row.target_bytes))),
-        (WORST_EPISODE_PROBES[arm][1], max(assistant.episodes, key=lambda row: len(row.target_bytes))),
+        (
+            WORST_EPISODE_PROBES[arm][0],
+            max(pretrain.episodes, key=lambda row: len(row.target_bytes)),
+        ),
+        (
+            WORST_EPISODE_PROBES[arm][1],
+            max(assistant.episodes, key=lambda row: len(row.target_bytes)),
+        ),
     )
     for path, episode in expected_faces:
         probe = base._read_json(path)
-        if probe.get("episode_id") != episode.episode_id or int(probe.get("target_bytes", 0)) != len(episode.target_bytes):
-            raise base.Refuse(f"worst-episode probe does not match longest frozen train message: {path.name}")
+        if probe.get("episode_id") != episode.episode_id or int(
+            probe.get("target_bytes", 0)
+        ) != len(episode.target_bytes):
+            raise base.Refuse(
+                f"worst-episode probe does not match longest frozen train message: {path.name}"
+            )
 
 
 def episode_cpu_reserve(arm: str) -> tuple[float, dict[str, str]]:
@@ -270,9 +290,11 @@ def open_store(directory: Path, bindings: dict[str, Any], corpus, *, resume: boo
     if (directory / "writer.lock").exists():
         if not resume:
             raise base.Refuse("writer lock exists; explicit resume is required")
-        with reclaim_writer_lock(directory) as token:
-            with RecoveryStore(directory, bindings, corpus, reclaim_token=token) as store:
-                yield store
+        with (
+            reclaim_writer_lock(directory) as token,
+            RecoveryStore(directory, bindings, corpus, reclaim_token=token) as store,
+        ):
+            yield store
     else:
         with RecoveryStore(directory, bindings, corpus) as store:
             yield store
@@ -555,8 +577,12 @@ def execute(arm: str, *, resume: bool = False) -> dict[str, Any]:
         resources = resource_snapshot()
         base.write_jsonl(
             progress,
-            {"event": "training_resource_preflight_passed", "arm": arm,
-             "cpu_seconds": budget.used(), "resources": resources},
+            {
+                "event": "training_resource_preflight_passed",
+                "arm": arm,
+                "cpu_seconds": budget.used(),
+                "resources": resources,
+            },
         )
         for stage, corpus, epochs, expected_episodes, expected_updates in (
             ("pretraining", pretrain, 8, 30_096, 14_517_912),

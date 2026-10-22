@@ -6,7 +6,10 @@ from scripts.training import run_taiji_n1_plan162g_training_thread_scaling_bench
 def test_thread_scaling_uses_balanced_repeated_runs_and_fixed_update_count() -> None:
     assert benchmark.THREAD_COUNTS == (1, 2, 4)
     assert benchmark.TRIAL_ORDER == ((1, 1), (2, 1), (4, 1), (4, 2), (2, 2), (1, 2))
-    assert all(sum(1 for threads, _ in benchmark.TRIAL_ORDER if threads == count) == 2 for count in benchmark.THREAD_COUNTS)
+    assert all(
+        sum(1 for threads, _ in benchmark.TRIAL_ORDER if threads == count) == 2
+        for count in benchmark.THREAD_COUNTS
+    )
     assert benchmark.WARMUP_UPDATES == 32
     assert benchmark.MEASURED_UPDATES == 256
     assert len(benchmark.TRIAL_ORDER) * benchmark.SCHEDULE_ROWS == 1_728

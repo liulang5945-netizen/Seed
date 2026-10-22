@@ -74,7 +74,8 @@ def _verify_inputs() -> tuple[dict, dict, dict, dict, dict]:
         or attempt.get("planned_queries") != builder.ITEMS * len(ENDPOINTS)
         or attempt.get("model_queries") != 0
         or attempt.get("parameter_updates") != 0
-        or face.get("schema") != "n1-transition-neighbor-distance-context-interference-diagnostic-v1"
+        or face.get("schema")
+        != "n1-transition-neighbor-distance-context-interference-diagnostic-v1"
         or face.get("seed") != builder.SEED
         or face.get("items") != builder.ITEMS
         or face.get("context_lengths") != list(builder.LENGTHS)
@@ -361,9 +362,9 @@ def run_diagnostic(*, owner_approved: bool) -> dict:
         "source_hashes": source_hashes,
         "source_hashes_unchanged": unchanged,
         "readiness_sha256": sha256(READINESS) if READINESS.is_file() else None,
-        "source_exclusion_manifest_sha256": sha256(SOURCE_EXCLUSIONS)
-        if SOURCE_EXCLUSIONS.is_file()
-        else None,
+        "source_exclusion_manifest_sha256": (
+            sha256(SOURCE_EXCLUSIONS) if SOURCE_EXCLUSIONS.is_file() else None
+        ),
         "face_sha256": sha256(FACE) if FACE.is_file() else None,
         "face_checks_sha256": sha256(FACE_CHECKS) if FACE_CHECKS.is_file() else None,
         "run_attempt_sha256": sha256(RUN_ATTEMPT),
@@ -388,9 +389,11 @@ def run_diagnostic(*, owner_approved: bool) -> dict:
         "cpu_limit_seconds": CPU_LIMIT_SECONDS,
         "can_promote": False,
         "errors": errors,
-        "summary_zh": "N1-137完成固定观测数下d=1/d=2近邻干扰的一次性匹配诊断，保存480条逐题生成字节；仅作描述性对照，不设能力门、不作模型晋升。"
-        if complete
-        else "N1-137诊断未完整完成；保留已执行查询与失败回执，不重试。",
+        "summary_zh": (
+            "N1-137完成固定观测数下d=1/d=2近邻干扰的一次性匹配诊断，保存480条逐题生成字节；仅作描述性对照，不设能力门、不作模型晋升。"
+            if complete
+            else "N1-137诊断未完整完成；保留已执行查询与失败回执，不重试。"
+        ),
     }
     write_new(RUN_REPORT, report)
     return report

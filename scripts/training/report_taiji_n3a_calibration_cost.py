@@ -56,11 +56,7 @@ CANDIDATE_BUDGET_TICKS = (250_000, 1_000_000, 4_000_000)
 def _read_last_row(path: Path) -> dict[str, Any] | None:
     if not path.is_file():
         return None
-    rows = [
-        json.loads(line)
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line
-    ]
+    rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
     return rows[-1] if rows else None
 
 
@@ -72,9 +68,7 @@ def _arm(arm: str, progress: Path, checkpoint: Path) -> dict[str, Any]:
     ticks = int(row["ticks"])
     reached = bool(row.get("reached_budget"))
     if not reached or elapsed <= 0:
-        raise RuntimeError(
-            f"标定臂 {arm} 自述未达预算或耗时非正：reached_budget={reached}"
-        )
+        raise RuntimeError(f"标定臂 {arm} 自述未达预算或耗时非正：reached_budget={reached}")
     return {
         "arm": arm,
         "command": CALIBRATION_COMMANDS[arm],
@@ -91,12 +85,8 @@ def _arm(arm: str, progress: Path, checkpoint: Path) -> dict[str, Any]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(
-        description="N3 甲标定读数器（零训练、只读标定产物）"
-    )
-    parser.add_argument(
-        "--out-report", default="reports/taiji_n3a_calibration_cost_20261008.json"
-    )
+    parser = argparse.ArgumentParser(description="N3 甲标定读数器（零训练、只读标定产物）")
+    parser.add_argument("--out-report", default="reports/taiji_n3a_calibration_cost_20261008.json")
     parser.add_argument(
         "--overwrite",
         action="store_true",
@@ -139,8 +129,7 @@ def main(argv: list[str] | None = None) -> int:
             per_arm[f"{ticks}_ticks"] = {
                 "single_arm_wallclock_hours": round(hours, 2),
                 "two_arms_wallclock_hours": round(2 * hours, 2),
-                "checkpoints_bytes_if_one_save_each": 2
-                * int(scale10["checkpoint_bytes"] or 0),
+                "checkpoints_bytes_if_one_save_each": 2 * int(scale10["checkpoint_bytes"] or 0),
             }
         payload["extrapolation_from_measured_scale10"] = per_arm
     payload["not_measured_here"] = [

@@ -199,13 +199,13 @@ def checkpoint_preflight() -> dict:
     write_new(
         PREFLIGHT_ATTEMPT,
         {
-        "schema": "n1-plan159a-checkpoint-preflight-attempt-v1",
+            "schema": "n1-plan159a-checkpoint-preflight-attempt-v1",
             "status": "started",
             "plan_sha256": PLAN_SHA256,
-        "correction_addendum_sha256": builder.CORRECTION_SHA256,
-        "prior_result_sha256": builder.PRIOR_RESULT_SHA256,
-        "prior_consumed_queries": builder.PRIOR_QUERIES,
-        "remaining_queries": TOTAL_QUERIES - builder.PRIOR_QUERIES,
+            "correction_addendum_sha256": builder.CORRECTION_SHA256,
+            "prior_result_sha256": builder.PRIOR_RESULT_SHA256,
+            "prior_consumed_queries": builder.PRIOR_QUERIES,
+            "remaining_queries": TOTAL_QUERIES - builder.PRIOR_QUERIES,
             "readiness_sha256": sha256(READINESS),
             "endpoint_count": 6,
             "model_queries": 0,
@@ -397,7 +397,9 @@ def execute_approved() -> dict:
     prior_result = read_json(builder.PRIOR_RESULT)
     prior_rows = list(prior_result.get("fresh_diagnostic_rows", []))
     prior_endpoint_keys = {(int(row["seed"]), str(row["branch"])) for row in prior_rows}
-    if len(prior_rows) != builder.PRIOR_QUERIES or prior_endpoint_keys != {(11, "unknown8_rebalanced")}:
+    if len(prior_rows) != builder.PRIOR_QUERIES or prior_endpoint_keys != {
+        (11, "unknown8_rebalanced")
+    }:
         raise Refuse("PLAN-N1-159A prior face rows are not exactly the sealed first endpoint")
     prior_summaries = _fresh_summary(prior_rows)
     write_new(
@@ -468,9 +470,9 @@ def execute_approved() -> dict:
                     row = {
                         "seed": int(endpoint["seed"]),
                         "branch": str(endpoint["branch"]),
-                        "model_role": "candidate"
-                        if endpoint["branch"] == "unknown8_rebalanced"
-                        else "parent",
+                        "model_role": (
+                            "candidate" if endpoint["branch"] == "unknown8_rebalanced" else "parent"
+                        ),
                         "event": "fresh_diagnostic_row",
                         **scored,
                     }

@@ -156,7 +156,9 @@ def calculate() -> dict:
         )
         category = output_class(row, base)
         exact_recomputed = category == "exact"
-        require(exact_recomputed is row.get("free_exact"), f"free_exact recomputation differs: {key}")
+        require(
+            exact_recomputed is row.get("free_exact"), f"free_exact recomputation differs: {key}"
+        )
         teacher_free_mismatches += row.get("teacher_exact") is not row.get("free_exact")
         summary_key = (
             str(row["branch"]),
@@ -166,7 +168,13 @@ def calculate() -> dict:
             int(row["context_length"]),
         )
         summaries[summary_key][category] += 1
-        pair_key = (int(row["seed"]), parent_id, int(row["context_length"]), str(row["kind"]), str(row["question_template_id"]))
+        pair_key = (
+            int(row["seed"]),
+            parent_id,
+            int(row["context_length"]),
+            str(row["kind"]),
+            str(row["question_template_id"]),
+        )
         paired.setdefault(pair_key, {})[str(row["branch"])] = exact_recomputed
         attributed.append(
             {
@@ -288,7 +296,26 @@ def main() -> int:
         json.dump(report, stream, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
         stream.write("\n")
         stream.flush()
-    print(json.dumps({k: report.get(k) for k in ("status", "complete", "row_count", "pair_count", "teacher_free_exact_mismatches", "cpu_seconds", "model_queries", "can_promote", "summary_zh")}, ensure_ascii=True, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                k: report.get(k)
+                for k in (
+                    "status",
+                    "complete",
+                    "row_count",
+                    "pair_count",
+                    "teacher_free_exact_mismatches",
+                    "cpu_seconds",
+                    "model_queries",
+                    "can_promote",
+                    "summary_zh",
+                )
+            },
+            ensure_ascii=True,
+            sort_keys=True,
+        )
+    )
     return 0 if report.get("complete") is True else 1
 
 

@@ -30,20 +30,33 @@ from scripts.training import (  # noqa: E402
     build_taiji_n1_v16_transition_direction_position_diagnostic as n134_builder,
 )
 
-PLAN = ROOT / "plans/reference/PLAN-N1-135_matched_context_length_transition_diagnostic_draft_20261019.md"
+PLAN = (
+    ROOT
+    / "plans/reference/PLAN-N1-135_matched_context_length_transition_diagnostic_draft_20261019.md"
+)
 PLAN_SHA256 = "ce13538e0cb743c53b625c6ca6aa1448bb3922d1e2ea3013c934f4fb1e3fb85b"
 APPROVED_DRAFT_SHA256 = "5ae6a3ad6a59c9d49cca68f6b7a707d76d8813d77a3e11b50e3c1fef6a8e9bab"
 TRAINING_COVERAGE_AUDIT = n132_coverage.OUTPUT
 TRAINING_COVERAGE_AUDIT_SHA256 = "2aff999b6c745b74030fcb98b3da4bf84d9db56a2958bc916ff7b475d49b0028"
 
-SOURCE_EXCLUSIONS = ROOT / "plans/manifests/n1_hard_neighbor_v17_transition_context_length_seed117_source_exclusions_20261019.json"
+SOURCE_EXCLUSIONS = (
+    ROOT
+    / "plans/manifests/n1_hard_neighbor_v17_transition_context_length_seed117_source_exclusions_20261019.json"
+)
 READINESS = ROOT / "reports/taiji_n1_plan135_transition_context_length_readiness_20261019.json"
-READINESS_ATTEMPT = ROOT / "reports/taiji_n1_plan135_transition_context_length_readiness_attempt_20261019.json"
-FACE = ROOT / "plans/manifests/n1_hard_neighbor_v17_matched_context_length_transition_seed117_20261019.json"
+READINESS_ATTEMPT = (
+    ROOT / "reports/taiji_n1_plan135_transition_context_length_readiness_attempt_20261019.json"
+)
+FACE = (
+    ROOT
+    / "plans/manifests/n1_hard_neighbor_v17_matched_context_length_transition_seed117_20261019.json"
+)
 FACE_ATTEMPT = FACE.with_name(FACE.stem + "_attempt.json")
 FACE_CHECKS = ROOT / "reports/taiji_n1_plan135_transition_context_length_face_checks_20261019.json"
 RUN_REPORT = ROOT / "reports/taiji_n1_plan135_matched_context_length_diagnostic_20261019.json"
-RUN_ATTEMPT = ROOT / "reports/taiji_n1_plan135_matched_context_length_diagnostic_attempt_20261019.json"
+RUN_ATTEMPT = (
+    ROOT / "reports/taiji_n1_plan135_matched_context_length_diagnostic_attempt_20261019.json"
+)
 TEST = ROOT / "tests/taiji_native/test_n1_plan135_matched_context_length_contract.py"
 
 N134_PLAN = n134_builder.PLAN
@@ -245,8 +258,7 @@ def build_v17_face(excluded_names: set[str], excluded_words: set[str]) -> dict:
             start_direction = DIRECTIONS[(direction_index - turn) % len(DIRECTIONS)]
             subject = v9._novel(ENTITY_LENGTH, used_names, rng)
             distractors = [
-                v9._confusable(subject, used_names, rng)
-                for _ in range(max(LENGTHS) - 2)
+                v9._confusable(subject, used_names, rng) for _ in range(max(LENGTHS) - 2)
             ]
             target_rows = [
                 f"{subject} faces {start_direction}.",
@@ -377,7 +389,9 @@ def audit_v17_face(face: dict, *, excluded_names: set[str], excluded_words: set[
         and all(item.get("split") == "holdout" for item in episodes),
         "balanced_context_lengths": Counter(item.get("context_length") for item in episodes)
         == Counter({length: 8 for length in LENGTHS})
-        and all(len(item.get("observations", [])) == item.get("context_length") for item in episodes),
+        and all(
+            len(item.get("observations", [])) == item.get("context_length") for item in episodes
+        ),
         "eight_direction_turn_templates": template_checks
         and Counter(item.get("answer_direction") for item in templates)
         == Counter({direction: 2 for direction in DIRECTIONS})
@@ -400,7 +414,13 @@ def audit_v17_face(face: dict, *, excluded_names: set[str], excluded_words: set[
         "target_rows_compute_answer_direction": all(
             item["observations"][0] == f"{item['entities'][0]} faces {item['start_direction']}."
             and item["observations"][1] == f"{item['entities'][0]} turns {item['turn_word']}."
-            and DIRECTIONS[(DIRECTIONS.index(item["start_direction"]) + (1 if item["turn_word"] == "right" else -1)) % 4]
+            and DIRECTIONS[
+                (
+                    DIRECTIONS.index(item["start_direction"])
+                    + (1 if item["turn_word"] == "right" else -1)
+                )
+                % 4
+            ]
             == item["answer"]
             for item in episodes
         ),
@@ -495,9 +515,9 @@ def source_readiness() -> dict:
         "complete": not errors,
         "plan_sha256": PLAN_SHA256,
         "approved_draft_sha256": APPROVED_DRAFT_SHA256,
-        "source_exclusion_manifest_sha256": sha256(SOURCE_EXCLUSIONS)
-        if SOURCE_EXCLUSIONS.exists()
-        else None,
+        "source_exclusion_manifest_sha256": (
+            sha256(SOURCE_EXCLUSIONS) if SOURCE_EXCLUSIONS.exists() else None
+        ),
         "source_hashes": source_hashes,
         "endpoint_count": len(endpoint_restores),
         "endpoint_restores": endpoint_restores,
@@ -512,9 +532,11 @@ def source_readiness() -> dict:
         "cpu_seconds": cpu,
         "cpu_limit_seconds": CPU_LIMIT_SECONDS,
         "can_promote": False,
-        "summary_zh": "12个冻结endpoint完整bundle恢复一致；v3训练至v16已消费来源排除完成；本阶段0模型查询、0参数更新、未生成题面。"
-        if not errors
-        else "N1-135 readiness停止；保留失败回执，不生成题面、不查询、不更新。",
+        "summary_zh": (
+            "12个冻结endpoint完整bundle恢复一致；v3训练至v16已消费来源排除完成；本阶段0模型查询、0参数更新、未生成题面。"
+            if not errors
+            else "N1-135 readiness停止；保留失败回执，不生成题面、不查询、不更新。"
+        ),
         "errors": errors,
     }
     report["readiness_attempt_sha256"] = sha256(READINESS_ATTEMPT)

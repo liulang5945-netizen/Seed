@@ -29,15 +29,13 @@ RUN86_STDOUT = ROOT / "reports/taiji_n1_transition_factorial_run86c.stdout.log"
 RUN86_STDERR = ROOT / "reports/taiji_n1_transition_factorial_run86c.stderr.log"
 COMPLETION = ROOT / "reports/taiji_n1_transition_factorial_run86c_completion.json"
 
-PREFLIGHT_STEM = ROOT / "reports/taiji_n1_transition_factorial_run86_runtime_preflight_scheduled_run86c"
+PREFLIGHT_STEM = (
+    ROOT / "reports/taiji_n1_transition_factorial_run86_runtime_preflight_scheduled_run86c"
+)
 PREFLIGHT_REPORT = PREFLIGHT_STEM.with_suffix(".json")
 PREFLIGHT_HEARTBEATS = PREFLIGHT_STEM.with_suffix(".jsonl")
-PREFLIGHT_LAUNCH_MANIFEST = PREFLIGHT_STEM.with_name(
-    PREFLIGHT_STEM.name + "_launcher.json"
-)
-PREFLIGHT_LAUNCH_RETURNED = PREFLIGHT_STEM.with_name(
-    PREFLIGHT_STEM.name + "_returned.json"
-)
+PREFLIGHT_LAUNCH_MANIFEST = PREFLIGHT_STEM.with_name(PREFLIGHT_STEM.name + "_launcher.json")
+PREFLIGHT_LAUNCH_RETURNED = PREFLIGHT_STEM.with_name(PREFLIGHT_STEM.name + "_returned.json")
 PREFLIGHT_WORKER = PREFLIGHT_STEM.with_name(PREFLIGHT_STEM.name + "_worker.json")
 PREFLIGHT_STDOUT = PREFLIGHT_STEM.with_name(PREFLIGHT_STEM.name + ".stdout.log")
 PREFLIGHT_STDERR = PREFLIGHT_STEM.with_name(PREFLIGHT_STEM.name + ".stderr.log")
@@ -101,9 +99,7 @@ def configure_stdio(probe: bool, handoff: bool = False) -> None:
     paths = (
         (PREFLIGHT_STDOUT, PREFLIGHT_STDERR)
         if probe
-        else (HANDOFF_STDOUT, HANDOFF_STDERR)
-        if handoff
-        else (RUN86_STDOUT, RUN86_STDERR)
+        else (HANDOFF_STDOUT, HANDOFF_STDERR) if handoff else (RUN86_STDOUT, RUN86_STDERR)
     )
     for path in paths:
         if path.exists():
@@ -139,9 +135,8 @@ def task_receipts(probe: bool, handoff: bool = False) -> tuple[dict, dict, Path]
         expected_mode = "run"
     deadline = time.monotonic() + 60
     while (
-        (not manifest_path.exists() or not returned_path.exists())
-        and time.monotonic() < deadline
-    ):
+        not manifest_path.exists() or not returned_path.exists()
+    ) and time.monotonic() < deadline:
         time.sleep(0.05)
     if not manifest_path.exists() or not returned_path.exists():
         raise FileNotFoundError("run86c task registration/return receipts are missing")
@@ -239,9 +234,7 @@ def synthetic_heartbeat() -> int:
     ended = utc_now()
     returning = datetime.fromisoformat(returned_utc)
     post_return = [
-        sample
-        for sample in samples
-        if datetime.fromisoformat(sample["utc"]) > returning
+        sample for sample in samples if datetime.fromisoformat(sample["utc"]) > returning
     ]
     cpu_seconds = time.process_time() - cpu_start
     result = dict(
@@ -340,7 +333,9 @@ def execute_run86c() -> dict:
         or runner_globals["ATTEMPT"] != ATTEMPT
         or Path(runner_globals["get_external_path"]("data/checkpoints")) != CHECKPOINTS
     ):
-        raise RuntimeError("run86c runner output/checkpoint routing did not resolve to its isolated family")
+        raise RuntimeError(
+            "run86c runner output/checkpoint routing did not resolve to its isolated family"
+        )
     result = runner_globals["audit"]()
     return dict(result=result, worker_path=worker_path, returned=returned)
 

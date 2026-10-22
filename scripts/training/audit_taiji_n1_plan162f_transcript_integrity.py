@@ -120,15 +120,24 @@ def _read_progress() -> tuple[list[dict], dict[str, int], int]:
             counts[str(row.get("event"))] += 1
             rows.append(row)
     require(not malformed, f"F progress has malformed rows: {malformed[:3]}")
-    require(dict(counts) == {"transition_template_query": engine.TOTAL_QUERIES}, f"F progress event count differs: {dict(counts)}")
+    require(
+        dict(counts) == {"transition_template_query": engine.TOTAL_QUERIES},
+        f"F progress event count differs: {dict(counts)}",
+    )
     return rows, dict(sorted(counts.items())), total
 
 
 def _compare_old_source_hashes(result: dict) -> dict:
     hashes = result.get("source_hashes", {})
     runner_path = str(F_ENGINE.resolve())
-    require(hashes.get(runner_path) == F_RUNNER_SHA_AT_COMPLETION, "F result expected runner SHA differs from recorded drift")
-    require(sha256(F_ENGINE) == F_CURRENT_RUNNER_SHA, "current F runner SHA changed after revalidation plan")
+    require(
+        hashes.get(runner_path) == F_RUNNER_SHA_AT_COMPLETION,
+        "F result expected runner SHA differs from recorded drift",
+    )
+    require(
+        sha256(F_ENGINE) == F_CURRENT_RUNNER_SHA,
+        "current F runner SHA changed after revalidation plan",
+    )
     unchanged = {}
     bad = []
     missing = []
@@ -159,7 +168,10 @@ def _compare_old_source_hashes(result: dict) -> dict:
 
 def _validate_transcript(result: dict, progress: list[dict], expected: dict) -> dict:
     result_rows = result.get("output_rows", [])
-    require(len(result_rows) == len(expected) == len(progress), "F output/progress row denominator differs")
+    require(
+        len(result_rows) == len(expected) == len(progress),
+        "F output/progress row denominator differs",
+    )
     result_by_key = {}
     for row in result_rows:
         key = _query_key(row)
@@ -174,7 +186,10 @@ def _validate_transcript(result: dict, progress: list[dict], expected: dict) -> 
         if key in progress_by_key:
             raise Refuse(f"duplicate progress query key: {key}")
         progress_by_key[key] = {name: value for name, value in row.items() if name != "event"}
-    require(set(result_by_key) == set(expected) == set(progress_by_key), "F result/progress key coverage differs from reconstructed plan")
+    require(
+        set(result_by_key) == set(expected) == set(progress_by_key),
+        "F result/progress key coverage differs from reconstructed plan",
+    )
     field_mismatches = Counter()
     output_type_mismatches = []
     for key, want in expected.items():
@@ -183,7 +198,11 @@ def _validate_transcript(result: dict, progress: list[dict], expected: dict) -> 
             if row.get(field) != value:
                 field_mismatches[field] += 1
         if progress_by_key[key] != row:
-            differing = [field for field in set(progress_by_key[key]) | set(row) if progress_by_key[key].get(field) != row.get(field)]
+            differing = [
+                field
+                for field in set(progress_by_key[key]) | set(row)
+                if progress_by_key[key].get(field) != row.get(field)
+            ]
             for field in differing:
                 field_mismatches[f"progress_result/{field}"] += 1
         output_type = n162d._classify_output(
@@ -193,12 +212,30 @@ def _validate_transcript(result: dict, progress: list[dict], expected: dict) -> 
             str(want["initial_direction"]),
             str(want["turn"]),
         )
-        if output_type != row.get("output_type") or (output_type == "correct_exact") != (row.get("free_exact") is True):
-            output_type_mismatches.append({"key": key, "stored_type": row.get("output_type"), "recomputed_type": output_type, "stored_free_exact": row.get("free_exact")})
-    require(not field_mismatches and not output_type_mismatches, f"F transcript result/answer/output recomputation differs: {dict(field_mismatches)} / {len(output_type_mismatches)}")
+        if output_type != row.get("output_type") or (output_type == "correct_exact") != (
+            row.get("free_exact") is True
+        ):
+            output_type_mismatches.append(
+                {
+                    "key": key,
+                    "stored_type": row.get("output_type"),
+                    "recomputed_type": output_type,
+                    "stored_free_exact": row.get("free_exact"),
+                }
+            )
+    require(
+        not field_mismatches and not output_type_mismatches,
+        f"F transcript result/answer/output recomputation differs: {dict(field_mismatches)} / {len(output_type_mismatches)}",
+    )
     recomputed_summary, recomputed_pairs = engine._summarize(result_rows)
-    require(recomputed_summary == result.get("summary_by_endpoint_view_condition_template"), "F per-endpoint summary differs from output rows")
-    require(recomputed_pairs == result.get("paired_template_type_transitions"), "F paired-template summary differs from output rows")
+    require(
+        recomputed_summary == result.get("summary_by_endpoint_view_condition_template"),
+        "F per-endpoint summary differs from output rows",
+    )
+    require(
+        recomputed_pairs == result.get("paired_template_type_transitions"),
+        "F paired-template summary differs from output rows",
+    )
     return {
         "expected_query_keys": len(expected),
         "result_rows": len(result_rows),
@@ -223,10 +260,21 @@ def audit() -> dict:
     require(sha256(F_PROGRESS) == F_PROGRESS_SHA256, "F progress SHA changed")
     require(sha256(F_RESULT) == F_RESULT_SHA256, "F result SHA changed")
     result = read_json(F_RESULT)
-    require(result.get("complete") is True and result.get("status") == "complete", "F prior attempt is not complete")
-    require(result.get("queries") == engine.TOTAL_QUERIES and result.get("parameter_updates") == 0 and result.get("can_promote") is False, "F prior run crossed its frozen boundary")
+    require(
+        result.get("complete") is True and result.get("status") == "complete",
+        "F prior attempt is not complete",
+    )
+    require(
+        result.get("queries") == engine.TOTAL_QUERIES
+        and result.get("parameter_updates") == 0
+        and result.get("can_promote") is False,
+        "F prior run crossed its frozen boundary",
+    )
     prior_runner = _compare_old_source_hashes(result)
-    require(prior_runner["all_other_sources_unchanged"] is True, "F transcript has source drift beyond the known runner change")
+    require(
+        prior_runner["all_other_sources_unchanged"] is True,
+        "F transcript has source drift beyond the known runner change",
+    )
     source_hashes, endpoints, source_context = engine._source_and_endpoints()
     require(len(endpoints) == 9, "F1 revalidation requires nine frozen endpoints")
     bound = engine.n132._build_context(load_inputs=True)
@@ -235,10 +283,17 @@ def audit() -> dict:
     require(len(expected) == engine.TOTAL_QUERIES, "F plan-derived expected query count differs")
     progress, event_counts, line_count = _read_progress()
     transcript = _validate_transcript(result, progress, expected)
-    require(sha256(F_PROGRESS) == F_PROGRESS_SHA256 and sha256(F_RESULT) == F_RESULT_SHA256, "F transcript changed during revalidation")
+    require(
+        sha256(F_PROGRESS) == F_PROGRESS_SHA256 and sha256(F_RESULT) == F_RESULT_SHA256,
+        "F transcript changed during revalidation",
+    )
     require(n150_builder.verify_hashes(source_hashes), "F1 parent/checkpoint/source hashes changed")
     cpu = time.process_time() - started
-    complete = cpu <= CPU_LIMIT_SECONDS and transcript["expected_query_keys"] == engine.TOTAL_QUERIES and prior_runner["all_other_sources_unchanged"]
+    complete = (
+        cpu <= CPU_LIMIT_SECONDS
+        and transcript["expected_query_keys"] == engine.TOTAL_QUERIES
+        and prior_runner["all_other_sources_unchanged"]
+    )
     audit_sources = {
         **source_hashes,
         str(F_PLAN.resolve()): F_PLAN_SHA256,
@@ -268,7 +323,9 @@ def audit() -> dict:
         "queries_revalidated": transcript["result_rows"],
         "progress_line_count": line_count,
         "progress_event_counts": event_counts,
-        "training_input_view_count": sum(len(bound["inputs"]["views"][name]) for name in ("original", "rename")),
+        "training_input_view_count": sum(
+            len(bound["inputs"]["views"][name]) for name in ("original", "rename")
+        ),
         "factorial_cases_rederived": len(cases),
         "execution_cpu_seconds": round(cpu, 6),
         "cpu_limit_seconds": CPU_LIMIT_SECONDS,
@@ -293,7 +350,25 @@ def main() -> int:
     args = parser.parse_args()
     del args
     result = audit()
-    print(json.dumps({key: result.get(key) for key in ("status", "complete", "execution_cpu_seconds", "queries_revalidated", "new_model_queries", "parameter_updates", "can_promote", "summary_zh")}, ensure_ascii=True, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                key: result.get(key)
+                for key in (
+                    "status",
+                    "complete",
+                    "execution_cpu_seconds",
+                    "queries_revalidated",
+                    "new_model_queries",
+                    "parameter_updates",
+                    "can_promote",
+                    "summary_zh",
+                )
+            },
+            ensure_ascii=True,
+            sort_keys=True,
+        )
+    )
     return 0 if result.get("complete") is True else 1
 
 

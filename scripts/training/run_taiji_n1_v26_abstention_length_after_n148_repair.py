@@ -15,7 +15,10 @@ from scripts.training import eval_taiji_n1_v26_abstention_length_after_n148 as f
 
 REPAIR_PLAN = ROOT / "plans/reference/PLAN-N1-149A_readiness_module_binding_correction_20261020.md"
 REPAIR_PLAN_SHA256 = "9b57cdd68b36df8b6d5035ca1ee2803a387dd522ac054472c0ddc5695f295876"
-N149_PLAN = ROOT / "plans/reference/PLAN-N1-149_matched_abstention_context_length_curve_diagnostic_draft_20261019.md"
+N149_PLAN = (
+    ROOT
+    / "plans/reference/PLAN-N1-149_matched_abstention_context_length_curve_diagnostic_draft_20261019.md"
+)
 N149_PLAN_SHA256 = "d6dfb5a9e6e6f5d563a7d137ef838a197c7bbff98cbca52d85fe4a11de2e6497"
 N149_BUILDER_SHA256 = "0122f9baa7e6fe3464efc62de9c7696928b1038793afc4c37680a15e88b5db9a"
 N149_EVALUATOR_SHA256 = "119ee5c8ad6eca014fc09d64e09658e008399ac6d093e860108aa0bf4b0820da"

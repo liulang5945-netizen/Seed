@@ -32,11 +32,17 @@ TRAIN_MANIFESTS = (
 )
 SOURCE_AUDIT = ROOT / "reports/taiji_n1_plan161_question_surface_source_audit_20261020.json"
 READINESS = ROOT / "reports/taiji_n1_plan161_question_surface_readiness_20261020.json"
-READINESS_ATTEMPT = ROOT / "reports/taiji_n1_plan161_question_surface_readiness_attempt_20261020.json"
+READINESS_ATTEMPT = (
+    ROOT / "reports/taiji_n1_plan161_question_surface_readiness_attempt_20261020.json"
+)
 SOURCE_BINDING = ROOT / "reports/taiji_n1_plan161_question_surface_source_binding_20261020.json"
 PREFLIGHT = ROOT / "reports/taiji_n1_plan161_question_surface_preflight_20261020.json"
-PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_plan161_question_surface_preflight_attempt_20261020.json"
-PREFLIGHT_BINDING = ROOT / "reports/taiji_n1_plan161_question_surface_preflight_binding_20261020.json"
+PREFLIGHT_ATTEMPT = (
+    ROOT / "reports/taiji_n1_plan161_question_surface_preflight_attempt_20261020.json"
+)
+PREFLIGHT_BINDING = (
+    ROOT / "reports/taiji_n1_plan161_question_surface_preflight_binding_20261020.json"
+)
 FACE = ROOT / "plans/manifests/n1_plan161_v33_question_surface_seed131_20261020.json"
 FACE_AUDIT = ROOT / "reports/taiji_n1_plan161_question_surface_face_audit_20261020.json"
 FACE_CHECKS = ROOT / "reports/taiji_n1_plan161_question_surface_face_checks_20261020.json"
@@ -137,7 +143,9 @@ def _template_regexes() -> dict[str, re.Pattern]:
     marker = "__ENTITY__"
     return {
         template_id: re.compile(
-            "^" + re.escape(template.format(entity=marker)).replace(re.escape(marker), r"[a-z]{10}") + "$"
+            "^"
+            + re.escape(template.format(entity=marker)).replace(re.escape(marker), r"[a-z]{10}")
+            + "$"
         )
         for template_id, template in QUESTION_TEMPLATES.items()
     }
@@ -153,14 +161,19 @@ def audit_training_question_surface(source_hashes: dict[str, str]) -> dict:
         expected = n150.get("source_hashes", {}).get(resolved)
         require(expected is not None, f"training manifest is not bound by N1-150: {path}")
         require(sha256(path) == expected, f"training manifest SHA changed: {path}")
-        require(source_hashes.get(resolved) == expected, f"training manifest missing from source union: {path}")
+        require(
+            source_hashes.get(resolved) == expected,
+            f"training manifest missing from source union: {path}",
+        )
         manifest_hashes[resolved] = expected
         questions.extend(_questions(read_json(path)))
     collisions = {
         template_id: sum(regex.fullmatch(question) is not None for question in questions)
         for template_id, regex in regexes.items()
     }
-    require(not any(collisions.values()), f"question template overlaps training questions: {collisions}")
+    require(
+        not any(collisions.values()), f"question template overlaps training questions: {collisions}"
+    )
     return {
         "complete": True,
         "training_manifest_hashes": manifest_hashes,
@@ -281,7 +294,10 @@ def source_readiness() -> dict:
             "items_per_kind": ITEMS_PER_KIND,
             "kinds": list(KINDS),
             "lengths": list(LENGTHS),
-            "template_ids": {kind: [question_template_id(kind, 0), question_template_id(kind, 1)] for kind in KINDS},
+            "template_ids": {
+                kind: [question_template_id(kind, 0), question_template_id(kind, 1)]
+                for kind in KINDS
+            },
             "total_queries": TOTAL_QUERIES,
         },
         "prior_linked_cpu_seconds": PRIOR_LINKED_CPU_SECONDS,
@@ -386,18 +402,29 @@ def _make_face() -> tuple[dict, dict]:
         "total_queries": TOTAL_QUERIES,
         "can_promote": False,
     }
-    contract = validate_face(manifest, exclusions["excluded_entities"], exclusions["excluded_words"])
+    contract = validate_face(
+        manifest, exclusions["excluded_entities"], exclusions["excluded_words"]
+    )
     return manifest, {"base_generator": generator, "face_contract": contract}
 
 
 def validate_face(manifest: dict, excluded_entities: set[str], excluded_words: set[str]) -> dict:
     items = manifest.get("items", [])
-    require(manifest.get("plan161_schema") == "n1-plan161-v33-question-surface-face-v1", "N1-161 face schema differs")
-    require(manifest.get("plan_sha256") == PLAN_SHA256 and manifest.get("seed") == SEED, "N1-161 face plan/seed differs")
+    require(
+        manifest.get("plan161_schema") == "n1-plan161-v33-question-surface-face-v1",
+        "N1-161 face schema differs",
+    )
+    require(
+        manifest.get("plan_sha256") == PLAN_SHA256 and manifest.get("seed") == SEED,
+        "N1-161 face plan/seed differs",
+    )
     require(len(items) == ITEMS_PER_KIND * len(KINDS) == 160, "N1-161 requires 160 items")
     require(manifest.get("total_queries") == TOTAL_QUERIES, "N1-161 query denominator differs")
     kind_counts = Counter(item.get("kind") for item in items)
-    require(kind_counts == Counter({kind: ITEMS_PER_KIND for kind in KINDS}), "N1-161 kind balance differs")
+    require(
+        kind_counts == Counter({kind: ITEMS_PER_KIND for kind in KINDS}),
+        "N1-161 kind balance differs",
+    )
     template_counts = Counter()
     all_entities = []
     all_words = []
@@ -410,40 +437,81 @@ def validate_face(manifest: dict, excluded_entities: set[str], excluded_words: s
         target = item["entities"][0]
         index = int(item_id.rsplit("-", 1)[1])
         template_id = question_template_id(str(item["kind"]), index)
-        require(item.get("question_template_id") == template_id, f"template assignment differs: {item_id}")
-        require(item.get("question") == render_question(template_id, target), f"question template differs: {item_id}")
-        require(item["question"].count(target) == 1, f"target entity is not uniquely named: {item_id}")
-        require(not any(name != target and name in item["question"] for name in item["entities"]), f"distractor leaks into question: {item_id}")
+        require(
+            item.get("question_template_id") == template_id,
+            f"template assignment differs: {item_id}",
+        )
+        require(
+            item.get("question") == render_question(template_id, target),
+            f"question template differs: {item_id}",
+        )
+        require(
+            item["question"].count(target) == 1, f"target entity is not uniquely named: {item_id}"
+        )
+        require(
+            not any(name != target and name in item["question"] for name in item["entities"]),
+            f"distractor leaks into question: {item_id}",
+        )
         template_counts[(str(item["kind"]), template_id)] += 1
-        require(item.get("target_observation_indices") == ({"lookup": [0], "revision": [0, 1], "transition": [0, 1], "unknown": []}[item["kind"]]), f"target position contract differs: {item_id}")
+        require(
+            item.get("target_observation_indices")
+            == (
+                {"lookup": [0], "revision": [0, 1], "transition": [0, 1], "unknown": []}[
+                    item["kind"]
+                ]
+            ),
+            f"target position contract differs: {item_id}",
+        )
         rows8, rows16, rows32 = (item["observations_by_length"][str(length)] for length in LENGTHS)
-        require(len(rows8) == 8 and len(rows16) == 16 and len(rows32) == 32, f"context lengths differ: {item_id}")
+        require(
+            len(rows8) == 8 and len(rows16) == 16 and len(rows32) == 32,
+            f"context lengths differ: {item_id}",
+        )
         require(rows8 == rows16[:8] == rows32[:8], f"contexts are not nested: {item_id}")
         target_rows = item["target_observation_indices"]
         if item["kind"] == "lookup":
-            require(rows32[0] == f"{target} uses {item['answer']}.", f"lookup answer evidence differs: {item_id}")
+            require(
+                rows32[0] == f"{target} uses {item['answer']}.",
+                f"lookup answer evidence differs: {item_id}",
+            )
         elif item["kind"] == "revision":
-            require(rows32[0].startswith(f"{target} uses ") and rows32[1] == f"{target} now uses {item['answer']}.", f"revision evidence differs: {item_id}")
+            require(
+                rows32[0].startswith(f"{target} uses ")
+                and rows32[1] == f"{target} now uses {item['answer']}.",
+                f"revision evidence differs: {item_id}",
+            )
         elif item["kind"] == "transition":
-            require(rows32[0].startswith(f"{target} faces ") and rows32[1].startswith(f"{target} turns "), f"transition evidence differs: {item_id}")
+            require(
+                rows32[0].startswith(f"{target} faces ")
+                and rows32[1].startswith(f"{target} turns "),
+                f"transition evidence differs: {item_id}",
+            )
         else:
-            require(not any(row.startswith(target + " ") for row in rows32), f"unknown target unexpectedly appears in evidence: {item_id}")
-        require(len(target_rows) == (0 if item["kind"] == "unknown" else (1 if item["kind"] == "lookup" else 2)), f"target evidence count differs: {item_id}")
+            require(
+                not any(row.startswith(target + " ") for row in rows32),
+                f"unknown target unexpectedly appears in evidence: {item_id}",
+            )
+        require(
+            len(target_rows)
+            == (0 if item["kind"] == "unknown" else (1 if item["kind"] == "lookup" else 2)),
+            f"target evidence count differs: {item_id}",
+        )
         for entity in item["entities"]:
             all_entities.append(entity)
         for row in rows32:
             entity = row.removesuffix(".").split()[0]
             if entity != target:
-                require(n153._hamming(target, entity) == 1, f"distractor distance differs: {item_id}/{entity}")
+                require(
+                    n153._hamming(target, entity) == 1,
+                    f"distractor distance differs: {item_id}/{entity}",
+                )
             parts = row.removesuffix(".").split()
             if len(parts) == 3 and parts[1] == "uses":
                 all_words.append(parts[2])
             elif len(parts) == 4 and parts[1:3] == ["now", "uses"]:
                 all_words.append(parts[3])
     expected_templates = {
-        (kind, question_template_id(kind, index)): 20
-        for kind in KINDS
-        for index in (0, 1)
+        (kind, question_template_id(kind, index)): 20 for kind in KINDS for index in (0, 1)
     }
     require(template_counts == Counter(expected_templates), "N1-161 template balance differs")
     serialized_template_counts = {
@@ -464,7 +532,9 @@ def validate_face(manifest: dict, excluded_entities: set[str], excluded_words: s
         "accepted": True,
         "base_item_count": len(items),
         "items_by_kind": dict(sorted(kind_counts.items())),
-        "question_template_counts": {f"{k}/{t}": n for (k, t), n in sorted(template_counts.items())},
+        "question_template_counts": {
+            f"{k}/{t}": n for (k, t), n in sorted(template_counts.items())
+        },
         "queries_per_endpoint": QUERIES_PER_ENDPOINT,
         "total_queries": TOTAL_QUERIES,
         "face_entity_count": len(face_entities),
@@ -506,7 +576,10 @@ def prepare_face() -> dict:
         and pf_binding.get("preflight_sha256") == sha256(PREFLIGHT),
         "N1-161 preflight binding is stale",
     )
-    require(pf_binding.get("source_hashes") == preflight.get("source_hashes"), "N1-161 preflight source map differs")
+    require(
+        pf_binding.get("source_hashes") == preflight.get("source_hashes"),
+        "N1-161 preflight source map differs",
+    )
     started = time.process_time()
     endpoints, sources, exclusions = source_context()
     ready_sources = dict(sources)
@@ -534,7 +607,11 @@ def prepare_face() -> dict:
     write_new(FACE_AUDIT, audit)
     checks = {
         "schema": "n1-plan161-question-surface-face-checks-v1",
-        "status": "complete" if audit["source_hashes_unchanged"] and details["face_contract"]["accepted"] else "stopped",
+        "status": (
+            "complete"
+            if audit["source_hashes_unchanged"] and details["face_contract"]["accepted"]
+            else "stopped"
+        ),
         "plan_sha256": PLAN_SHA256,
         "face_sha256": sha256(FACE),
         "face_audit_sha256": sha256(FACE_AUDIT),
@@ -548,7 +625,9 @@ def prepare_face() -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PLAN-N1-161 source readiness and seed131 question-surface face")
+    parser = argparse.ArgumentParser(
+        description="PLAN-N1-161 source readiness and seed131 question-surface face"
+    )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--validate-only", action="store_true")
     group.add_argument("--prepare-face", action="store_true")

@@ -86,7 +86,9 @@ def test_episode_reserves_cover_twice_the_measured_longest_probe() -> None:
 def test_start_resource_guard_requires_two_cpu_samples_and_memory(monkeypatch) -> None:
     samples = iter((30.0, 80.0))
     monkeypatch.setattr(recovery.psutil, "cpu_percent", lambda *, interval: next(samples))
-    monkeypatch.setattr(recovery.psutil, "virtual_memory", lambda: type("Mem", (), {"available": 16 * 1024**3})())
+    monkeypatch.setattr(
+        recovery.psutil, "virtual_memory", lambda: type("Mem", (), {"available": 16 * 1024**3})()
+    )
     result = recovery.resource_snapshot()
     assert result["cpu_percent_samples"] == [30.0, 80.0]
     assert result["available_memory_gib"] == 16
@@ -95,7 +97,9 @@ def test_start_resource_guard_requires_two_cpu_samples_and_memory(monkeypatch) -
 def test_start_resource_guard_rejects_overloaded_cpu(monkeypatch) -> None:
     samples = iter((20.0, 86.0))
     monkeypatch.setattr(recovery.psutil, "cpu_percent", lambda *, interval: next(samples))
-    monkeypatch.setattr(recovery.psutil, "virtual_memory", lambda: type("Mem", (), {"available": 16 * 1024**3})())
+    monkeypatch.setattr(
+        recovery.psutil, "virtual_memory", lambda: type("Mem", (), {"available": 16 * 1024**3})()
+    )
     with pytest.raises(recovery.base.Refuse, match="CPU start samples"):
         recovery.resource_snapshot()
 

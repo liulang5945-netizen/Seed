@@ -78,11 +78,11 @@ def main() -> int:
     if args.expect_legacy_absent and args.report:
         parser.error("--expect-legacy-absent cannot be combined with --report")
     if not args.expect_legacy_absent and (
-        args.report is None
-        or args.expect_episodes is None
-        or args.expect_context_dim is None
+        args.report is None or args.expect_episodes is None or args.expect_context_dim is None
     ):
-        parser.error("open-carrier audit requires --report, --expect-episodes, and --expect-context-dim")
+        parser.error(
+            "open-carrier audit requires --report, --expect-episodes, and --expect-context-dim"
+        )
 
     saved = _load_weights_only(checkpoint_path)
     native_carrier = _carrier_from_checkpoint(saved, "native")
@@ -144,7 +144,9 @@ def main() -> int:
         raise RuntimeError("restored carrier episode count does not match")
     actual_manifest = carrier.episode_manifest()
     if actual_manifest != expected_manifest:
-        raise RuntimeError("restored episode ids, source metadata, lengths, or vector contents differ")
+        raise RuntimeError(
+            "restored episode ids, source metadata, lengths, or vector contents differ"
+        )
     for expected in expected_manifest:
         episode_id = str(expected["episode_id"])
         vectors = substrate.read_persistent_stepwise_episode(episode_id)
@@ -159,8 +161,11 @@ def main() -> int:
         raise RuntimeError("missing episode lookup did not return an empty trace")
 
     first_nonempty = next(
-        (substrate.read_persistent_stepwise_episode(item["episode_id"]) for item in expected_manifest
-         if int(item["steps"]) > 0),
+        (
+            substrate.read_persistent_stepwise_episode(item["episode_id"])
+            for item in expected_manifest
+            if int(item["steps"]) > 0
+        ),
         None,
     )
     feedback = (

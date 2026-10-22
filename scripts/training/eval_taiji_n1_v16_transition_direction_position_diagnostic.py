@@ -286,9 +286,11 @@ def run_diagnostic(*, owner_approved: bool) -> dict:
         "cpu_limit_seconds": CPU_LIMIT_SECONDS,
         "can_promote": False,
         "errors": errors,
-        "summary_zh": "N1-134对已批准的seed116方向×位置诊断面完成一次性计分；读数仅作描述，不设晋升门，不隔离上下文长度效应。"
-        if complete
-        else "N1-134诊断未完整完成；保留已执行查询与失败回执，不重试。",
+        "summary_zh": (
+            "N1-134对已批准的seed116方向×位置诊断面完成一次性计分；读数仅作描述，不设晋升门，不隔离上下文长度效应。"
+            if complete
+            else "N1-134诊断未完整完成；保留已执行查询与失败回执，不重试。"
+        ),
     }
     write_new(RUN_REPORT, report)
     return report

@@ -32,13 +32,21 @@ SOURCE_AUDIT = builder.SOURCE_AUDIT
 FACE = builder.FACE
 FACE_CHECKS = builder.FACE_CHECKS
 READINESS = ROOT / "reports/taiji_n1_plan153_v28_fresh_context_readiness_20261020.json"
-READINESS_ATTEMPT = ROOT / "reports/taiji_n1_plan153_v28_fresh_context_readiness_attempt_20261020.json"
+READINESS_ATTEMPT = (
+    ROOT / "reports/taiji_n1_plan153_v28_fresh_context_readiness_attempt_20261020.json"
+)
 SOURCE_BINDING = ROOT / "reports/taiji_n1_plan153_v28_fresh_context_source_binding_20261020.json"
 PREFLIGHT = ROOT / "reports/taiji_n1_plan153_v28_fresh_context_checkpoint_preflight_20261020.json"
-PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_plan153_v28_fresh_context_checkpoint_preflight_attempt_20261020.json"
-PREFLIGHT_BINDING = ROOT / "reports/taiji_n1_plan153_v28_fresh_context_checkpoint_preflight_binding_20261020.json"
+PREFLIGHT_ATTEMPT = (
+    ROOT / "reports/taiji_n1_plan153_v28_fresh_context_checkpoint_preflight_attempt_20261020.json"
+)
+PREFLIGHT_BINDING = (
+    ROOT / "reports/taiji_n1_plan153_v28_fresh_context_checkpoint_preflight_binding_20261020.json"
+)
 ATTEMPT = ROOT / "reports/taiji_n1_plan153_v28_fresh_context_attempt_20261020.json"
-RESULT = ROOT / "reports/taiji_n1_plan153_v28_fresh_context_length_confirmation_result_20261020.json"
+RESULT = (
+    ROOT / "reports/taiji_n1_plan153_v28_fresh_context_length_confirmation_result_20261020.json"
+)
 N150_RESULT = n150.RESULT
 N150_RESULT_SHA256 = builder.N150_RESULT_SHA256
 N151A_RESULT = builder.N151A_RESULT
@@ -85,7 +93,9 @@ def _merge_hashes(target: dict[str, str], incoming: dict[str, str]) -> None:
         target[path] = digest
 
 
-def collect_source_hashes(n150_result: dict, n151a_result: dict, n152_result: dict, inherited: dict[str, str]) -> dict[str, str]:
+def collect_source_hashes(
+    n150_result: dict, n151a_result: dict, n152_result: dict, inherited: dict[str, str]
+) -> dict[str, str]:
     hashes: dict[str, str] = {}
     _merge_hashes(hashes, inherited)
     _merge_hashes(hashes, n150_result.get("source_hashes", {}))
@@ -224,7 +234,10 @@ def _measure_diagnostic(model, item: dict, session: str) -> dict:
 
 def validate_face_queries(face: dict) -> dict:
     items = face.get("items", [])
-    require(len(items) == 160 and face.get("base_item_count") == 160, "N1-153 requires 160 face base items")
+    require(
+        len(items) == 160 and face.get("base_item_count") == 160,
+        "N1-153 requires 160 face base items",
+    )
     rows = []
     per_kind = Counter()
     for base in items:
@@ -236,37 +249,56 @@ def validate_face_queries(face: dict) -> dict:
             if selected != expected:
                 raise Refuse(f"N1-153 runtime target rows differ: {base['id']}/{length}")
             rows.append(item)
-    require(per_kind == Counter({kind: 40 for kind in KINDS}), "N1-153 runtime face kind balance differs")
+    require(
+        per_kind == Counter({kind: 40 for kind in KINDS}),
+        "N1-153 runtime face kind balance differs",
+    )
     require(len(rows) == 480, "N1-153 per-endpoint face query count must be 480")
-    return {"items": len(items), "queries_per_endpoint": len(rows), "items_by_kind": dict(sorted(per_kind.items()))}
+    return {
+        "items": len(items),
+        "queries_per_endpoint": len(rows),
+        "items_by_kind": dict(sorted(per_kind.items())),
+    }
 
 
 def _summary_rows(rows: list[dict]) -> list[dict]:
     groups: dict[tuple[int, str, int, str], list[dict]] = defaultdict(list)
     for row in rows:
-        groups[(int(row["seed"]), str(row["branch"]), int(row["context_length"]), str(row["kind"]))].append(row)
+        groups[
+            (int(row["seed"]), str(row["branch"]), int(row["context_length"]), str(row["kind"]))
+        ].append(row)
     summary = []
     for seed, branch in ENDPOINTS:
         for length in LENGTHS:
             for kind in KINDS:
                 selected = groups[(seed, branch, length, kind)]
                 if len(selected) != 40:
-                    raise Refuse(f"N1-153 result stratum count differs: {seed}/{branch}/{length}/{kind}")
-                summary.append({
-                    "seed": seed,
-                    "branch": branch,
-                    "context_length": length,
-                    "kind": kind,
-                    "items": len(selected),
-                    "free_exact": sum(row.get("free_exact") is True for row in selected),
-                    "literal_unknown": sum(row.get("output_hex") == UNKNOWN_HEX for row in selected),
-                })
+                    raise Refuse(
+                        f"N1-153 result stratum count differs: {seed}/{branch}/{length}/{kind}"
+                    )
+                summary.append(
+                    {
+                        "seed": seed,
+                        "branch": branch,
+                        "context_length": length,
+                        "kind": kind,
+                        "items": len(selected),
+                        "free_exact": sum(row.get("free_exact") is True for row in selected),
+                        "literal_unknown": sum(
+                            row.get("output_hex") == UNKNOWN_HEX for row in selected
+                        ),
+                    }
+                )
     return summary
 
 
 def _validate_prepared_outputs() -> tuple[dict, dict, dict[str, str]]:
-    n150_readiness, n150_preflight, n150_result, bound, schedule, face, checks, sources = _source_context()
-    excluded_entities, excluded_words, exclusion_summary, rebuilt_sources, _runtime = builder.collect_n150_exclusions()
+    n150_readiness, n150_preflight, n150_result, bound, schedule, face, checks, sources = (
+        _source_context()
+    )
+    excluded_entities, excluded_words, exclusion_summary, rebuilt_sources, _runtime = (
+        builder.collect_n150_exclusions()
+    )
     audit = read_json(SOURCE_AUDIT)
     for key, value in exclusion_summary.items():
         if audit.get(key) != value:
@@ -277,11 +309,30 @@ def _validate_prepared_outputs() -> tuple[dict, dict, dict[str, str]]:
     if runtime_face != face or sha256(FACE) != checks.get("face_manifest_sha256"):
         raise Refuse("N1-153 deterministically rebuilt face differs from the frozen manifest")
     face_summary = validate_face_queries(face)
-    return {"bound": bound, "schedule": schedule, "face": face, "face_summary": face_summary, "n150_result": n150_result}, checks, sources
+    return (
+        {
+            "bound": bound,
+            "schedule": schedule,
+            "face": face,
+            "face_summary": face_summary,
+            "n150_result": n150_result,
+        },
+        checks,
+        sources,
+    )
 
 
 def source_readiness() -> dict:
-    outputs = (READINESS, READINESS_ATTEMPT, SOURCE_BINDING, PREFLIGHT, PREFLIGHT_ATTEMPT, PREFLIGHT_BINDING, ATTEMPT, RESULT)
+    outputs = (
+        READINESS,
+        READINESS_ATTEMPT,
+        SOURCE_BINDING,
+        PREFLIGHT,
+        PREFLIGHT_ATTEMPT,
+        PREFLIGHT_BINDING,
+        ATTEMPT,
+        RESULT,
+    )
     if any(path.exists() for path in outputs):
         raise FileExistsError("N1-153 runner outputs are write-once")
     started = time.process_time()
@@ -315,17 +366,30 @@ def source_readiness() -> dict:
         "can_promote": False,
         "summary_zh": "N1-153 face、source exclusion、嵌套长度和六endpoint查询分母通过；0模型/checkpoint加载、0查询、0更新。",
     }
-    write_new(READINESS_ATTEMPT, {"schema": "n1-plan153-readiness-attempt-v1", "status": "started", "plan_sha256": PLAN_SHA256, "cpu_seconds": round(cpu, 6), "model_queries": 0, "parameter_updates": 0})
+    write_new(
+        READINESS_ATTEMPT,
+        {
+            "schema": "n1-plan153-readiness-attempt-v1",
+            "status": "started",
+            "plan_sha256": PLAN_SHA256,
+            "cpu_seconds": round(cpu, 6),
+            "model_queries": 0,
+            "parameter_updates": 0,
+        },
+    )
     write_new(READINESS, report)
-    write_new(SOURCE_BINDING, {
-        "schema": "n1-plan153-readiness-source-binding-v1",
-        "status": "complete" if report["complete"] else "stopped",
-        "plan_sha256": PLAN_SHA256,
-        "readiness_sha256": sha256(READINESS),
-        "source_hashes": sources,
-        "face_sha256": sha256(FACE),
-        "can_promote": False,
-    })
+    write_new(
+        SOURCE_BINDING,
+        {
+            "schema": "n1-plan153-readiness-source-binding-v1",
+            "status": "complete" if report["complete"] else "stopped",
+            "plan_sha256": PLAN_SHA256,
+            "readiness_sha256": sha256(READINESS),
+            "source_hashes": sources,
+            "face_sha256": sha256(FACE),
+            "can_promote": False,
+        },
+    )
     return report
 
 
@@ -360,7 +424,17 @@ def checkpoint_preflight() -> dict:
         raise TimeoutError("N1-153 CPU ceiling exhausted during readiness revalidation")
     budget = n132.CpuBudget(remaining)
     budget.guard(reserve=30)
-    write_new(PREFLIGHT_ATTEMPT, {"schema": "n1-plan153-checkpoint-preflight-attempt-v1", "status": "started", "plan_sha256": PLAN_SHA256, "endpoint_count": len(ENDPOINTS), "model_queries": 0, "parameter_updates": 0})
+    write_new(
+        PREFLIGHT_ATTEMPT,
+        {
+            "schema": "n1-plan153-checkpoint-preflight-attempt-v1",
+            "status": "started",
+            "plan_sha256": PLAN_SHA256,
+            "endpoint_count": len(ENDPOINTS),
+            "model_queries": 0,
+            "parameter_updates": 0,
+        },
+    )
     n150_result = read_json(N150_RESULT)
     expected = {(int(row["seed"]), str(row["branch"])): row for row in n150_result["models"]}
     restores = []
@@ -371,7 +445,9 @@ def checkpoint_preflight() -> dict:
             model_row = expected[(seed, branch)]
             path = Path(model_row["final_checkpoint_path"]).resolve()
             restore = n150._independent_restore(path, budget)
-            if restore.get("fingerprint") != model_row.get("final_bundle_fingerprint") or restore.get("sha256") != model_row.get("final_checkpoint_sha256"):
+            if restore.get("fingerprint") != model_row.get(
+                "final_bundle_fingerprint"
+            ) or restore.get("sha256") != model_row.get("final_checkpoint_sha256"):
                 raise Refuse(f"N1-153 final checkpoint restore mismatch: {seed}/{branch}")
             restores.append(restore)
         if not n150_builder.verify_hashes(sources):
@@ -407,15 +483,31 @@ def checkpoint_preflight() -> dict:
         "cpu_limit_seconds": CPU_LIMIT_SECONDS,
         "errors": errors,
         "can_promote": False,
-        "summary_zh": "六个N1-150 final full bundle再次独立恢复6/6；0模型查询、0更新。" if complete else "checkpoint恢复前置停止，不查询、不重试。",
+        "summary_zh": (
+            "六个N1-150 final full bundle再次独立恢复6/6；0模型查询、0更新。"
+            if complete
+            else "checkpoint恢复前置停止，不查询、不重试。"
+        ),
     }
     write_new(PREFLIGHT, report)
-    write_new(PREFLIGHT_BINDING, {"schema": "n1-plan153-checkpoint-preflight-binding-v1", "status": "complete" if complete else "stopped", "plan_sha256": PLAN_SHA256, "preflight_sha256": sha256(PREFLIGHT), "source_hashes": all_sources, "can_promote": False})
+    write_new(
+        PREFLIGHT_BINDING,
+        {
+            "schema": "n1-plan153-checkpoint-preflight-binding-v1",
+            "status": "complete" if complete else "stopped",
+            "plan_sha256": PLAN_SHA256,
+            "preflight_sha256": sha256(PREFLIGHT),
+            "source_hashes": all_sources,
+            "can_promote": False,
+        },
+    )
     return report
 
 
 def _verify_preflight() -> tuple[dict, dict, dict, dict[str, str]]:
-    if not all(path.is_file() for path in (READINESS, SOURCE_BINDING, PREFLIGHT, PREFLIGHT_BINDING)):
+    if not all(
+        path.is_file() for path in (READINESS, SOURCE_BINDING, PREFLIGHT, PREFLIGHT_BINDING)
+    ):
         raise FileNotFoundError("N1-153 readiness and final restore preflight are required")
     readiness = read_json(READINESS)
     binding = read_json(SOURCE_BINDING)
@@ -458,22 +550,25 @@ def execute_approved() -> dict:
         input_hashes[str(path.resolve())] = sha256(path)
     if not n150_builder.verify_hashes(input_hashes):
         raise Refuse("N1-153 source/checkpoint chain differs before query")
-    write_new(ATTEMPT, {
-        "schema": "n1-plan153-fresh-context-length-attempt-v1",
-        "status": "started",
-        "plan_sha256": PLAN_SHA256,
-        "readiness_sha256": sha256(READINESS),
-        "preflight_sha256": sha256(PREFLIGHT),
-        "face_sha256": sha256(FACE),
-        "planned_endpoints": len(ENDPOINTS),
-        "queries_per_endpoint": 480,
-        "planned_queries": EXPECTED_QUERIES,
-        "parameter_updates": 0,
-        "dev_queries": 0,
-        "holdout_queries": 0,
-        "confirmation_queries": 0,
-        "can_promote": False,
-    })
+    write_new(
+        ATTEMPT,
+        {
+            "schema": "n1-plan153-fresh-context-length-attempt-v1",
+            "status": "started",
+            "plan_sha256": PLAN_SHA256,
+            "readiness_sha256": sha256(READINESS),
+            "preflight_sha256": sha256(PREFLIGHT),
+            "face_sha256": sha256(FACE),
+            "planned_endpoints": len(ENDPOINTS),
+            "queries_per_endpoint": 480,
+            "planned_queries": EXPECTED_QUERIES,
+            "parameter_updates": 0,
+            "dev_queries": 0,
+            "holdout_queries": 0,
+            "confirmation_queries": 0,
+            "can_promote": False,
+        },
+    )
     n150_result = read_json(N150_RESULT)
     models = {(int(row["seed"]), str(row["branch"])): row for row in n150_result["models"]}
     rows = []
@@ -503,7 +598,9 @@ def execute_approved() -> dict:
                             row = _measure_diagnostic(model, item, session)
                         finally:
                             model._observations.pop(session, None)
-                        endpoint_rows.append({"seed": seed, "branch": branch, "event": "diagnostic_row", **row})
+                        endpoint_rows.append(
+                            {"seed": seed, "branch": branch, "event": "diagnostic_row", **row}
+                        )
                 if len(endpoint_rows) != 480:
                     raise Refuse(f"N1-153 endpoint query count differs: {seed}/{branch}")
                 if n150._fingerprint(model, optimizer) != before:
@@ -564,7 +661,9 @@ def execute_approved() -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PLAN-N1-153 fresh-context paired length diagnostic")
+    parser = argparse.ArgumentParser(
+        description="PLAN-N1-153 fresh-context paired length diagnostic"
+    )
     modes = parser.add_mutually_exclusive_group(required=True)
     modes.add_argument("--validate-only", action="store_true")
     modes.add_argument("--checkpoint-preflight", action="store_true")
@@ -577,7 +676,24 @@ def main() -> int:
         result = checkpoint_preflight()
     else:
         result = execute_approved()
-    keys = ("status", "complete", "cpu_seconds", "cumulative_cpu_seconds", "base_item_count", "endpoint_count", "query_count", "independent_restore_count", "model_queries", "parameter_updates", "dev_queries", "holdout_queries", "confirmation_queries", "can_promote", "errors", "summary_zh")
+    keys = (
+        "status",
+        "complete",
+        "cpu_seconds",
+        "cumulative_cpu_seconds",
+        "base_item_count",
+        "endpoint_count",
+        "query_count",
+        "independent_restore_count",
+        "model_queries",
+        "parameter_updates",
+        "dev_queries",
+        "holdout_queries",
+        "confirmation_queries",
+        "can_promote",
+        "errors",
+        "summary_zh",
+    )
     print(json.dumps({key: result.get(key) for key in keys}, ensure_ascii=True, sort_keys=True))
     return 0 if result.get("complete") is True else 1
 

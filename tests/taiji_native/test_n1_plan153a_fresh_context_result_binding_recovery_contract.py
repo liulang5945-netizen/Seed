@@ -23,9 +23,11 @@ def _endpoint_rows(seed: int, branch: str) -> list[dict]:
                         "kind": kind,
                         "context_length": length,
                         "free_exact": exact,
-                        "output_hex": recovery.builder.UNKNOWN.encode("utf-8").hex()
-                        if kind == "unknown" and exact
-                        else "6f74686572",
+                        "output_hex": (
+                            recovery.builder.UNKNOWN.encode("utf-8").hex()
+                            if kind == "unknown" and exact
+                            else "6f74686572"
+                        ),
                     }
                 )
     return rows

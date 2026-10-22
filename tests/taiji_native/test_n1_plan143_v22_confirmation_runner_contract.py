@@ -5,15 +5,11 @@ import pytest
 from scripts.training import build_taiji_n1_v21_confirmation_after_n141 as face_builder
 from scripts.training import eval_taiji_n1_v22_confirmation_after_n142 as evaluator
 
-ENDPOINTS = [
-    ("N1-132", "parent", seed) for seed in (11, 12, 13)
-] + [
-    ("N1-140", "candidate", seed) for seed in (11, 12, 13)
-] + [
-    ("N1-141", branch, seed)
-    for seed in (11, 12, 13)
-    for branch in ("candidate", "control")
-]
+ENDPOINTS = (
+    [("N1-132", "parent", seed) for seed in (11, 12, 13)]
+    + [("N1-140", "candidate", seed) for seed in (11, 12, 13)]
+    + [("N1-141", branch, seed) for seed in (11, 12, 13) for branch in ("candidate", "control")]
+)
 
 
 def _range_rows(qualified: int) -> list[dict]:
@@ -118,7 +114,10 @@ def test_endpoint_registry_binds_all_three_sources_and_seed_pairs() -> None:
     assert len({spec["endpoint_id"] for spec in specs}) == 12
     assert {spec["source"] for spec in specs} == {"N1-132", "N1-140", "N1-141"}
     assert all(spec["seed"] in (11, 12, 13) and spec["arm"] == "position" for spec in specs)
-    assert all(spec["path"].is_file() and face_builder.sha256(spec["path"]) == spec["sha256"] for spec in specs)
+    assert all(
+        spec["path"].is_file() and face_builder.sha256(spec["path"]) == spec["sha256"]
+        for spec in specs
+    )
 
 
 def test_progress_summary_uses_completed_rows_and_preserves_partial_errors() -> None:

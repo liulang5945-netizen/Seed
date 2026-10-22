@@ -137,7 +137,12 @@ def build() -> tuple[LanguageEpisodeCorpus, dict[str, Any]]:
         "corpus_digest"
     ) != "bec58e46045aaccddb7811fb9b8f755291dd70845ad888bfe438f8678e589af6" or manifest.get(
         "split_episode_counts"
-    ) != {"train": 525, "dev": 62, "final": 123, "retention": 0}:
+    ) != {
+        "train": 525,
+        "dev": 62,
+        "final": 123,
+        "retention": 0,
+    }:
         raise Refuse("current OASST2 split manifest differs from the frozen inventory")
     family_split: dict[str, str] = {}
     with TRAIN_EPISODES.open("r", encoding="utf-8") as stream:
@@ -158,7 +163,7 @@ def build() -> tuple[LanguageEpisodeCorpus, dict[str, Any]]:
     rejection_counts = Counter()
     source_chinese_messages = 0
     with gzip.open(RAW, "rt", encoding="utf-8") as stream:
-        for line_number, line in enumerate(stream, 1):
+        for _, line in enumerate(stream, 1):
             metadata = _json_selected_fields(line, {"lang", "message_tree_id"})
             if metadata.get("lang") != "zh":
                 continue

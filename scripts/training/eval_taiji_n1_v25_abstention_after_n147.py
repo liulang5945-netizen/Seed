@@ -101,7 +101,9 @@ def validate_diagnostic_items(items: list[dict]) -> dict:
     pairs: dict[str, dict[str, dict]] = defaultdict(dict)
     for item in items:
         condition = item.get("pair_condition")
-        if condition not in CONDITIONS or item.get("kind") != ("lookup" if condition == "known" else "unknown"):
+        if condition not in CONDITIONS or item.get("kind") != (
+            "lookup" if condition == "known" else "unknown"
+        ):
             raise ValueError(f"invalid matched diagnostic condition: {item.get('id')}")
         pairs[str(item.get("pair_id"))][condition] = item
     if len(pairs) != 40 or any(set(group) != set(CONDITIONS) for group in pairs.values()):
@@ -117,7 +119,8 @@ def validate_diagnostic_items(items: list[dict]) -> dict:
             or known.get("question") != unknown.get("question")
             or known.get("target_fact_indices") != [start]
             or unknown.get("target_fact_indices") != []
-            or known.get("observations", [None] * 32)[start] != f"{target} uses {known.get('answer')}."
+            or known.get("observations", [None] * 32)[start]
+            != f"{target} uses {known.get('answer')}."
             or any(
                 known["observations"][index] != unknown["observations"][index]
                 for index in range(32)
@@ -125,7 +128,11 @@ def validate_diagnostic_items(items: list[dict]) -> dict:
             )
         ):
             raise ValueError(f"matched pair contract mismatch: {pair_id}")
-    return {"items": len(items), "pairs": len(pairs), "conditions": dict(Counter(item["pair_condition"] for item in items))}
+    return {
+        "items": len(items),
+        "pairs": len(pairs),
+        "conditions": dict(Counter(item["pair_condition"] for item in items)),
+    }
 
 
 @torch.no_grad()
@@ -224,8 +231,10 @@ def _read_prepared_face() -> tuple[dict, dict, dict]:
         or manifest.get("word_value_count") != 15_288
         or len(set(manifest.get("excluded_entities", []))) != 38_122
         or len(set(manifest.get("excluded_word_values", []))) != 15_288
-        or face_builder.digest_strings(set(manifest.get("excluded_entities", []))) != manifest.get("entity_exclusion_sha256")
-        or face_builder.digest_strings(set(manifest.get("excluded_word_values", []))) != manifest.get("word_exclusion_sha256")
+        or face_builder.digest_strings(set(manifest.get("excluded_entities", [])))
+        != manifest.get("entity_exclusion_sha256")
+        or face_builder.digest_strings(set(manifest.get("excluded_word_values", [])))
+        != manifest.get("word_exclusion_sha256")
         or face.get("schema") != "n1-v25-matched-abstention-diagnostic-face-v1"
         or face.get("seed") != 125
         or face.get("plan_sha256") != PLAN_SHA256
@@ -398,11 +407,17 @@ def validate_only() -> dict:
             "plan_sha256": PLAN_SHA256,
             "readiness_sha256": sha256(READINESS),
             "source_hashes": hashes,
-            "checkpoint_hashes": {str(Path(spec["path"]).resolve()): spec["sha256"] for spec in specs},
+            "checkpoint_hashes": {
+                str(Path(spec["path"]).resolve()): spec["sha256"] for spec in specs
+            },
             "can_promote": False,
         },
     )
-    report["summary_zh"] = "12端点诊断bundle readiness完成；0查询/更新，可进入一次性v25诊断。" if complete else "bundle readiness停止；0查询，不重试。"
+    report["summary_zh"] = (
+        "12端点诊断bundle readiness完成；0查询/更新，可进入一次性v25诊断。"
+        if complete
+        else "bundle readiness停止；0查询，不重试。"
+    )
     return report
 
 
@@ -477,7 +492,9 @@ def execute_approved() -> dict:
         frozen_eval.n120_eval.n120.configure()
         readiness, face, specs = _verify_readiness()
         prior_cpu = float(readiness["cumulative_cpu_seconds"])
-        budget = frozen_eval.CpuDeadline(CPU_LIMIT_SECONDS - prior_cpu - (time.process_time() - started))
+        budget = frozen_eval.CpuDeadline(
+            CPU_LIMIT_SECONDS - prior_cpu - (time.process_time() - started)
+        )
         items = list(face["episodes"])
         validation = validate_diagnostic_items(items)
         if validation != {"items": 80, "pairs": 40, "conditions": {"known": 40, "unknown": 40}}:
@@ -525,8 +542,13 @@ def execute_approved() -> dict:
             finally:
                 if model is not None and optimizer is not None and before is not None:
                     try:
-                        if frozen_eval.n132.e11.scorer.paired.fingerprint(model.bundle(optimizer)) != before:
-                            receipt["error"] = "ValueError: frozen diagnostic changed bundle fingerprint"
+                        if (
+                            frozen_eval.n132.e11.scorer.paired.fingerprint(model.bundle(optimizer))
+                            != before
+                        ):
+                            receipt["error"] = (
+                                "ValueError: frozen diagnostic changed bundle fingerprint"
+                            )
                     except BaseException as exc:
                         receipt["error"] = f"{type(exc).__name__}: {exc}"
                 if model is not None:
@@ -536,10 +558,14 @@ def execute_approved() -> dict:
             receipt["queries"] = accounting["model_queries"]
             receipt["completed_rows"] = len(output)
             receipt["bundle_fingerprint"] = before
-            receipt["checkpoint_unchanged"] = Path(spec["path"]).is_file() and sha256(spec["path"]) == spec["sha256"]
+            receipt["checkpoint_unchanged"] = (
+                Path(spec["path"]).is_file() and sha256(spec["path"]) == spec["sha256"]
+            )
             receipt["cpu_seconds"] = round(time.process_time() - endpoint_started, 6)
             if not receipt["checkpoint_unchanged"]:
-                receipt["error"] = receipt["error"] or "ValueError: checkpoint bytes changed during diagnostic"
+                receipt["error"] = (
+                    receipt["error"] or "ValueError: checkpoint bytes changed during diagnostic"
+                )
             result_rows.extend(output)
             receipts.append(receipt)
             queries += int(receipt["queries"])
@@ -556,7 +582,14 @@ def execute_approved() -> dict:
         errors.append("N1-148 diagnostic source/checkpoint hash changed")
     execution_cpu = time.process_time() - started
     cumulative = prior_cpu + execution_cpu
-    complete = not errors and queries == 960 and len(result_rows) == 960 and len(receipts) == 12 and unchanged and cumulative <= CPU_LIMIT_SECONDS
+    complete = (
+        not errors
+        and queries == 960
+        and len(result_rows) == 960
+        and len(receipts) == 12
+        and unchanged
+        and cumulative <= CPU_LIMIT_SECONDS
+    )
     paired = _paired_summary(result_rows, face) if result_rows else {}
     report = {
         "schema": "n1-plan148-v25-matched-abstention-diagnostic-v1",
@@ -596,13 +629,34 @@ def execute_approved() -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PLAN-N1-148 diagnostic-split matched abstention scorer")
+    parser = argparse.ArgumentParser(
+        description="PLAN-N1-148 diagnostic-split matched abstention scorer"
+    )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--validate-only", action="store_true")
     group.add_argument("--execute-approved", action="store_true")
     args = parser.parse_args()
     result = validate_only() if args.validate_only else execute_approved()
-    print(json.dumps({key: result.get(key) for key in ("status", "complete", "cpu_seconds", "cumulative_cpu_seconds", "independent_full_bundle_restores", "diagnostic_queries", "parameter_updates", "can_promote", "errors")}, ensure_ascii=True, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                key: result.get(key)
+                for key in (
+                    "status",
+                    "complete",
+                    "cpu_seconds",
+                    "cumulative_cpu_seconds",
+                    "independent_full_bundle_restores",
+                    "diagnostic_queries",
+                    "parameter_updates",
+                    "can_promote",
+                    "errors",
+                )
+            },
+            ensure_ascii=True,
+            sort_keys=True,
+        )
+    )
     return 0 if result.get("complete") is True else 1
 
 

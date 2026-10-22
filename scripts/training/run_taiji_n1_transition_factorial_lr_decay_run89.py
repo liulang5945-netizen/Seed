@@ -328,7 +328,7 @@ def make_module() -> tuple[dict, dict, dict]:
             **{step: BASE_LR for step in range(DECAY_START)},
             **{step: FINAL_LR for step in range(DECAY_START, UPDATES)},
         }
-        if ACTIVE_RATE_LOG != expected_rates:
+        if expected_rates != ACTIVE_RATE_LOG:
             problems.append(f"actual learning-rate steps differ for seed {record['seed']}")
         if (
             record["losses"][:PREFIX_UPDATES] != baseline["losses"][:PREFIX_UPDATES]

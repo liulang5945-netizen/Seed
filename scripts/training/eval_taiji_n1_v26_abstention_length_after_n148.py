@@ -100,13 +100,21 @@ def validate_diagnostic_items(items: list[dict]) -> dict:
         raise ValueError("diagnostic split required; do not relabel as holdout")
     if any(item.get("arm", "position") != "position" for item in items):
         raise ValueError("frozen position arm required")
-    if any(item.get("context_length") not in LENGTHS or len(item.get("observations", [])) != item.get("context_length") for item in items):
+    if any(
+        item.get("context_length") not in LENGTHS
+        or len(item.get("observations", [])) != item.get("context_length")
+        for item in items
+    ):
         raise ValueError("diagnostic context length must be exactly 8, 16, or 32 rows")
-    length_groups: dict[int, dict[str, dict[str, dict]]] = {length: defaultdict(dict) for length in LENGTHS}
+    length_groups: dict[int, dict[str, dict[str, dict]]] = {
+        length: defaultdict(dict) for length in LENGTHS
+    }
     logical_groups: dict[str, dict[int, dict[str, dict]]] = defaultdict(lambda: defaultdict(dict))
     for item in items:
         condition = item.get("pair_condition")
-        if condition not in CONDITIONS or item.get("kind") != ("lookup" if condition == "known" else "unknown"):
+        if condition not in CONDITIONS or item.get("kind") != (
+            "lookup" if condition == "known" else "unknown"
+        ):
             raise ValueError(f"invalid matched diagnostic condition: {item.get('id')}")
         length_groups[int(item["context_length"])][str(item["pair_id"])][condition] = item
         logical_groups[str(item["logical_pair_id"])][int(item["context_length"])][condition] = item
@@ -114,7 +122,9 @@ def validate_diagnostic_items(items: list[dict]) -> dict:
         raise ValueError("exactly 40 logical matched pairs are required")
     for length in LENGTHS:
         pairs = length_groups[length]
-        if len(pairs) != LOGICAL_PAIRS or any(set(group) != set(CONDITIONS) for group in pairs.values()):
+        if len(pairs) != LOGICAL_PAIRS or any(
+            set(group) != set(CONDITIONS) for group in pairs.values()
+        ):
             raise ValueError(f"40 complete known/unknown pairs are required at length {length}")
         known_lengths = Counter(len(group["known"]["answer"]) for group in pairs.values())
         if any(known_lengths[value] != 20 for value in (6, 7)):
@@ -133,7 +143,10 @@ def validate_diagnostic_items(items: list[dict]) -> dict:
                 or known.get("target_fact_indices") != [0]
                 or unknown.get("target_fact_indices") != []
                 or known["observations"][0] != f"{target} uses {known.get('answer')}."
-                or any(known["observations"][index] != unknown["observations"][index] for index in range(1, length))
+                or any(
+                    known["observations"][index] != unknown["observations"][index]
+                    for index in range(1, length)
+                )
             ):
                 raise ValueError(f"matched pair contract mismatch: {pair_id}")
     for logical_id, by_length in logical_groups.items():
@@ -156,14 +169,24 @@ def validate_diagnostic_items(items: list[dict]) -> dict:
             prior_question = known["question"]
             if prior_prefix:
                 for condition in CONDITIONS:
-                    if by_length[length][condition]["observations"][:len(prior_prefix[condition])] != prior_prefix[condition]:
-                        raise ValueError(f"contexts are not nested: {logical_id}/{condition}/{length}")
-            prior_prefix = {condition: list(by_length[length][condition]["observations"]) for condition in CONDITIONS}
+                    if (
+                        by_length[length][condition]["observations"][: len(prior_prefix[condition])]
+                        != prior_prefix[condition]
+                    ):
+                        raise ValueError(
+                            f"contexts are not nested: {logical_id}/{condition}/{length}"
+                        )
+            prior_prefix = {
+                condition: list(by_length[length][condition]["observations"])
+                for condition in CONDITIONS
+            }
     return {
         "items": len(items),
         "logical_pairs": len(logical_groups),
         "pair_groups": sum(len(length_groups[length]) for length in LENGTHS),
-        "items_by_length": {length: sum(item["context_length"] == length for item in items) for length in LENGTHS},
+        "items_by_length": {
+            length: sum(item["context_length"] == length for item in items) for length in LENGTHS
+        },
         "conditions": dict(Counter(item["pair_condition"] for item in items)),
     }
 
@@ -266,8 +289,10 @@ def _read_prepared_face() -> tuple[dict, dict, dict]:
         or manifest.get("word_value_count") != 16_608
         or len(set(manifest.get("excluded_entities", []))) != 39_442
         or len(set(manifest.get("excluded_word_values", []))) != 16_608
-        or face_builder.digest_strings(set(manifest.get("excluded_entities", []))) != manifest.get("entity_exclusion_sha256")
-        or face_builder.digest_strings(set(manifest.get("excluded_word_values", []))) != manifest.get("word_exclusion_sha256")
+        or face_builder.digest_strings(set(manifest.get("excluded_entities", [])))
+        != manifest.get("entity_exclusion_sha256")
+        or face_builder.digest_strings(set(manifest.get("excluded_word_values", [])))
+        != manifest.get("word_exclusion_sha256")
         or face.get("schema") != "n1-v26-matched-abstention-length-diagnostic-face-v1"
         or face.get("seed") != 126
         or face.get("plan_sha256") != PLAN_SHA256
@@ -430,7 +455,11 @@ def validate_only() -> dict:
         "cpu_limit_seconds": CPU_LIMIT_SECONDS,
         "errors": errors,
         "can_promote": False,
-        "summary_zh": "12端点诊断bundle readiness完成；0查询/更新，可进入一次性v26诊断。" if complete else "bundle readiness停止；0查询，不重试。",
+        "summary_zh": (
+            "12端点诊断bundle readiness完成；0查询/更新，可进入一次性v26诊断。"
+            if complete
+            else "bundle readiness停止；0查询，不重试。"
+        ),
     }
     write_new(READINESS, report)
     write_new(
@@ -441,7 +470,9 @@ def validate_only() -> dict:
             "plan_sha256": PLAN_SHA256,
             "readiness_sha256": sha256(READINESS),
             "source_hashes": hashes,
-            "checkpoint_hashes": {str(Path(spec["path"]).resolve()): spec["sha256"] for spec in specs},
+            "checkpoint_hashes": {
+                str(Path(spec["path"]).resolve()): spec["sha256"] for spec in specs
+            },
             "can_promote": False,
         },
     )
@@ -497,11 +528,15 @@ def _paired_summary(rows: list[dict], face: dict) -> dict:
                 item = face_by_id[item_id]
                 if int(item["context_length"]) == length:
                     by_pair[item["pair_id"]][item["pair_condition"]] = row
-            if len(by_pair) != LOGICAL_PAIRS or any(set(pair) != set(CONDITIONS) for pair in by_pair.values()):
-                raise ValueError(f"endpoint lacks 40 complete pairs at length {length}: {endpoint_id}")
+            if len(by_pair) != LOGICAL_PAIRS or any(
+                set(pair) != set(CONDITIONS) for pair in by_pair.values()
+            ):
+                raise ValueError(
+                    f"endpoint lacks 40 complete pairs at length {length}: {endpoint_id}"
+                )
             counts = Counter()
             known_exact = known_abstain = unknown_abstain = unknown_false = 0
-            for pair_id, conditions in by_pair.items():
+            for _pair_id, conditions in by_pair.items():
                 known = conditions["known"]
                 unknown = conditions["unknown"]
                 known_correct = known.get("free_exact") is True
@@ -514,11 +549,15 @@ def _paired_summary(rows: list[dict], face: dict) -> dict:
                 pattern = (
                     "known_exact_unknown_abstain"
                     if known_correct and unknown_literal_abstain
-                    else "known_abstains_unknown_abstain"
-                    if known_literal_abstain and unknown_literal_abstain
-                    else "known_exact_unknown_false_answer"
-                    if known_correct
-                    else "other_pair_outcome"
+                    else (
+                        "known_abstains_unknown_abstain"
+                        if known_literal_abstain and unknown_literal_abstain
+                        else (
+                            "known_exact_unknown_false_answer"
+                            if known_correct
+                            else "other_pair_outcome"
+                        )
+                    )
                 )
                 counts[pattern] += 1
             per_length[str(length)] = {
@@ -533,7 +572,9 @@ def _paired_summary(rows: list[dict], face: dict) -> dict:
         logical_pairs: dict[str, dict[int, dict]] = defaultdict(lambda: defaultdict(dict))
         for item_id, row in by_id.items():
             item = face_by_id[item_id]
-            logical_pairs[item["logical_pair_id"]][int(item["context_length"])][item["pair_condition"]] = row
+            logical_pairs[item["logical_pair_id"]][int(item["context_length"])][
+                item["pair_condition"]
+            ] = row
         if len(logical_pairs) != LOGICAL_PAIRS:
             raise ValueError(f"endpoint logical pair count differs: {endpoint_id}")
         curves = []
@@ -548,8 +589,12 @@ def _paired_summary(rows: list[dict], face: dict) -> dict:
                     "by_length": {
                         str(length): {
                             "known_exact": by_length[length]["known"].get("free_exact") is True,
-                            "known_abstain_literal": by_length[length]["known"].get("output_hex") == b"unknown".hex(),
-                            "unknown_abstain_literal": by_length[length]["unknown"].get("output_hex") == b"unknown".hex(),
+                            "known_abstain_literal": by_length[length]["known"].get("output_hex")
+                            == b"unknown".hex(),
+                            "unknown_abstain_literal": by_length[length]["unknown"].get(
+                                "output_hex"
+                            )
+                            == b"unknown".hex(),
                         }
                         for length in CONTEXT_LENGTHS
                     },
@@ -594,7 +639,9 @@ def execute_approved() -> dict:
         frozen_eval.n120_eval.n120.configure()
         readiness, face, specs = _verify_readiness()
         prior_cpu = float(readiness["cumulative_cpu_seconds"])
-        budget = frozen_eval.CpuDeadline(CPU_LIMIT_SECONDS - prior_cpu - (time.process_time() - started))
+        budget = frozen_eval.CpuDeadline(
+            CPU_LIMIT_SECONDS - prior_cpu - (time.process_time() - started)
+        )
         items = list(face["episodes"])
         validation = validate_diagnostic_items(items)
         if validation != {
@@ -648,8 +695,13 @@ def execute_approved() -> dict:
             finally:
                 if model is not None and optimizer is not None and before is not None:
                     try:
-                        if frozen_eval.n132.e11.scorer.paired.fingerprint(model.bundle(optimizer)) != before:
-                            receipt["error"] = "ValueError: frozen diagnostic changed bundle fingerprint"
+                        if (
+                            frozen_eval.n132.e11.scorer.paired.fingerprint(model.bundle(optimizer))
+                            != before
+                        ):
+                            receipt["error"] = (
+                                "ValueError: frozen diagnostic changed bundle fingerprint"
+                            )
                     except BaseException as exc:
                         receipt["error"] = f"{type(exc).__name__}: {exc}"
                 if model is not None:
@@ -659,10 +711,14 @@ def execute_approved() -> dict:
             receipt["queries"] = accounting["model_queries"]
             receipt["completed_rows"] = len(output)
             receipt["bundle_fingerprint"] = before
-            receipt["checkpoint_unchanged"] = Path(spec["path"]).is_file() and sha256(spec["path"]) == spec["sha256"]
+            receipt["checkpoint_unchanged"] = (
+                Path(spec["path"]).is_file() and sha256(spec["path"]) == spec["sha256"]
+            )
             receipt["cpu_seconds"] = round(time.process_time() - endpoint_started, 6)
             if not receipt["checkpoint_unchanged"]:
-                receipt["error"] = receipt["error"] or "ValueError: checkpoint bytes changed during diagnostic"
+                receipt["error"] = (
+                    receipt["error"] or "ValueError: checkpoint bytes changed during diagnostic"
+                )
             result_rows.extend(output)
             receipts.append(receipt)
             queries += int(receipt["queries"])
@@ -679,7 +735,14 @@ def execute_approved() -> dict:
         errors.append("N1-149 diagnostic source/checkpoint hash changed")
     execution_cpu = time.process_time() - started
     cumulative = prior_cpu + execution_cpu
-    complete = not errors and queries == 2880 and len(result_rows) == 2880 and len(receipts) == 12 and unchanged and cumulative <= CPU_LIMIT_SECONDS
+    complete = (
+        not errors
+        and queries == 2880
+        and len(result_rows) == 2880
+        and len(receipts) == 12
+        and unchanged
+        and cumulative <= CPU_LIMIT_SECONDS
+    )
     paired = _paired_summary(result_rows, face) if result_rows else {}
     report = {
         "schema": "n1-plan149-v26-matched-abstention-length-diagnostic-v1",
@@ -719,13 +782,34 @@ def execute_approved() -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PLAN-N1-149 diagnostic-split matched abstention scorer")
+    parser = argparse.ArgumentParser(
+        description="PLAN-N1-149 diagnostic-split matched abstention scorer"
+    )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--validate-only", action="store_true")
     group.add_argument("--execute-approved", action="store_true")
     args = parser.parse_args()
     result = validate_only() if args.validate_only else execute_approved()
-    print(json.dumps({key: result.get(key) for key in ("status", "complete", "cpu_seconds", "cumulative_cpu_seconds", "independent_full_bundle_restores", "diagnostic_queries", "parameter_updates", "can_promote", "errors")}, ensure_ascii=True, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                key: result.get(key)
+                for key in (
+                    "status",
+                    "complete",
+                    "cpu_seconds",
+                    "cumulative_cpu_seconds",
+                    "independent_full_bundle_restores",
+                    "diagnostic_queries",
+                    "parameter_updates",
+                    "can_promote",
+                    "errors",
+                )
+            },
+            ensure_ascii=True,
+            sort_keys=True,
+        )
+    )
     return 0 if result.get("complete") is True else 1
 
 

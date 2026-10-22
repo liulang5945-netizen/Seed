@@ -12,10 +12,19 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 RESULT = ROOT / "reports/taiji_n1_plan163_transition_template_rebalanced_result_20261020.json"
 PROGRESS = ROOT / "reports/taiji_n1_plan163_transition_template_rebalanced_progress_20261020.jsonl"
-READINESS = ROOT / "reports/taiji_n1_plan163a_transition_template_rebalanced_readiness_20261020.json"
-MANIFEST = ROOT / "plans/manifests/n1_plan163a_transition_template_rebalanced_schedule_20261020.json"
-PLAN = ROOT / "plans/reference/PLAN-N1-163_transition_template_rebalanced_matched_continuation_20261020.md"
-RUNNER = ROOT / "scripts/training/run_taiji_n1_plan163_transition_template_rebalanced_continuation.py"
+READINESS = (
+    ROOT / "reports/taiji_n1_plan163a_transition_template_rebalanced_readiness_20261020.json"
+)
+MANIFEST = (
+    ROOT / "plans/manifests/n1_plan163a_transition_template_rebalanced_schedule_20261020.json"
+)
+PLAN = (
+    ROOT
+    / "plans/reference/PLAN-N1-163_transition_template_rebalanced_matched_continuation_20261020.md"
+)
+RUNNER = (
+    ROOT / "scripts/training/run_taiji_n1_plan163_transition_template_rebalanced_continuation.py"
+)
 AUDITOR = Path(__file__).resolve()
 INITIAL_REPORT = ROOT / "reports/taiji_n1_plan163_itemwise_attribution_20261020.json"
 REPORT = ROOT / "reports/taiji_n1_plan163_itemwise_attribution_v2_20261020.json"
@@ -63,13 +72,7 @@ def _summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
 
     free_by_kind = {
         view: dict(
-            sorted(
-                Counter(
-                    row["kind"]
-                    for row in by_view[view]
-                    if row["free_exact"]
-                ).items()
-            )
+            sorted(Counter(row["kind"] for row in by_view[view] if row["free_exact"]).items())
         )
         for view in ("original", "rename")
     }
@@ -220,13 +223,19 @@ def main() -> int:
         raise ValueError("training progress row count differs from the result")
     for key in expected_model_order:
         steps = training_steps[key]
-        if len(steps) != TRAINING_STEPS_PER_ENDPOINT or min(steps) != 0 or max(steps) != TRAINING_STEPS_PER_ENDPOINT - 1:
+        if (
+            len(steps) != TRAINING_STEPS_PER_ENDPOINT
+            or min(steps) != 0
+            or max(steps) != TRAINING_STEPS_PER_ENDPOINT - 1
+        ):
             raise ValueError(f"training update sequence is incomplete for {key}")
     if len(gate_rows) != result["gate_queries_per_endpoint"] * len(models):
         raise ValueError("train-gate progress row count differs from the result")
     if len(length_rows) != result["length_queries_per_endpoint"] * len(models):
         raise ValueError("length progress row count differs from the result")
-    if progress_events["original_train_gate_row"] != len(gate_rows) or progress_events["length_score_row"] != len(length_rows):
+    if progress_events["original_train_gate_row"] != len(gate_rows) or progress_events[
+        "length_score_row"
+    ] != len(length_rows):
         raise ValueError("progress event counts differ from loaded row counts")
 
     gate_blocks: dict[tuple[int, str], list[dict[str, Any]]] = {}
@@ -249,7 +258,9 @@ def main() -> int:
         }
         for field, value in fields.items():
             if recomputed[field] != value:
-                raise ValueError(f"recomputed {field} differs from result for {key}: {recomputed[field]} != {value}")
+                raise ValueError(
+                    f"recomputed {field} differs from result for {key}: {recomputed[field]} != {value}"
+                )
         if recomputed["rows_by_view"] != {
             "original": 192,
             "pair": 96,
@@ -281,8 +292,14 @@ def main() -> int:
         pairwise_gate.append(
             {
                 "seed": seed,
-                "control_training_sufficient": next(r["training_sufficient"] for r in models if (r["seed"], r["arm"]) == control_key),
-                "candidate_training_sufficient": next(r["training_sufficient"] for r in models if (r["seed"], r["arm"]) == candidate_key),
+                "control_training_sufficient": next(
+                    r["training_sufficient"] for r in models if (r["seed"], r["arm"]) == control_key
+                ),
+                "candidate_training_sufficient": next(
+                    r["training_sufficient"]
+                    for r in models
+                    if (r["seed"], r["arm"]) == candidate_key
+                ),
                 **_moves(
                     _indexed(gate_blocks[control_key], length=False),
                     _indexed(gate_blocks[candidate_key], length=False),
@@ -347,7 +364,20 @@ def main() -> int:
     with REPORT.open("x", encoding="utf-8", newline="\n") as handle:
         json.dump(report, handle, ensure_ascii=False, indent=2, sort_keys=True)
         handle.write("\n")
-    print(json.dumps({"status": report["status"], "cpu_seconds": report["cpu_seconds"], "endpoints": len(models), "gate_rows": len(gate_rows), "length_rows": len(length_rows), "all_summaries_match": True}, ensure_ascii=False, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                "status": report["status"],
+                "cpu_seconds": report["cpu_seconds"],
+                "endpoints": len(models),
+                "gate_rows": len(gate_rows),
+                "length_rows": len(length_rows),
+                "all_summaries_match": True,
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+    )
     return 0
 
 

@@ -18,7 +18,9 @@ PLAN = ROOT / "plans/reference/PLAN-N1-162G2_mixed_context_thread_scaling_benchm
 PLAN_SHA256 = "ea8f325709c195a69935c517ee8e01b360e13370eb405e31c240e5c26752d68e"
 G1_RESULT = ROOT / "reports/taiji_n1_plan162g1_training_thread_scaling_20261020.json"
 G1_RESULT_SHA256 = "2659d8aaf9a3c034b1bff18dfe65b5582c5001664ff4483d3fe137395f07933c"
-G1_PLAN = ROOT / "plans/reference/PLAN-N1-162G1_training_thread_scaling_preflight_repair_20261020.md"
+G1_PLAN = (
+    ROOT / "plans/reference/PLAN-N1-162G1_training_thread_scaling_preflight_repair_20261020.md"
+)
 G1_PLAN_SHA256 = "015e364a7a7e2dd2c48bac83abd40eec950c51f953bb144524b6e7ac8e42994d"
 G1_RUNNER = ROOT / "scripts/training/run_taiji_n1_plan162g1_training_thread_scaling_benchmark.py"
 G1_RUNNER_SHA256 = "f9638d79228679de3b16390dd8698d4aece18f9e44682c58bc7af6a683c75cdb"
@@ -37,20 +39,40 @@ G_PROGRESS_SHA256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b785
 G_RESULT = ROOT / "reports/taiji_n1_plan162g_training_thread_scaling_20261020.json"
 G_RESULT_SHA256 = "c84874ec479f43046a3c5962b4918e414dcd3c34eedd345fa150cbc4e8bffa63"
 G2_ATTEMPT = ROOT / "reports/taiji_n1_plan162g2_mixed_context_thread_scaling_attempt_20261020.json"
-G2_PROGRESS = ROOT / "reports/taiji_n1_plan162g2_mixed_context_thread_scaling_progress_20261020.jsonl"
+G2_PROGRESS = (
+    ROOT / "reports/taiji_n1_plan162g2_mixed_context_thread_scaling_progress_20261020.jsonl"
+)
 G2_RESULT = ROOT / "reports/taiji_n1_plan162g2_mixed_context_thread_scaling_20261020.json"
 
 KINDS = ("lookup", "revision", "transition", "unknown")
 LENGTHS = (8, 16, 32)
 WARMUP_TARGETS = {
-    ("lookup", 8): 3, ("revision", 8): 3, ("transition", 8): 3, ("unknown", 8): 3,
-    ("lookup", 16): 3, ("revision", 16): 3, ("transition", 16): 2, ("unknown", 16): 2,
-    ("lookup", 32): 3, ("revision", 32): 3, ("transition", 32): 2, ("unknown", 32): 2,
+    ("lookup", 8): 3,
+    ("revision", 8): 3,
+    ("transition", 8): 3,
+    ("unknown", 8): 3,
+    ("lookup", 16): 3,
+    ("revision", 16): 3,
+    ("transition", 16): 2,
+    ("unknown", 16): 2,
+    ("lookup", 32): 3,
+    ("revision", 32): 3,
+    ("transition", 32): 2,
+    ("unknown", 32): 2,
 }
 MEASURED_TARGETS = {
-    ("lookup", 8): 21, ("revision", 8): 21, ("transition", 8): 21, ("unknown", 8): 33,
-    ("lookup", 16): 21, ("revision", 16): 21, ("transition", 16): 21, ("unknown", 16): 17,
-    ("lookup", 32): 21, ("revision", 32): 21, ("transition", 32): 21, ("unknown", 32): 17,
+    ("lookup", 8): 21,
+    ("revision", 8): 21,
+    ("transition", 8): 21,
+    ("unknown", 8): 33,
+    ("lookup", 16): 21,
+    ("revision", 16): 21,
+    ("transition", 16): 21,
+    ("unknown", 16): 17,
+    ("lookup", 32): 21,
+    ("revision", 32): 21,
+    ("transition", 32): 21,
+    ("unknown", 32): 17,
 }
 SAMPLE_DESIGN: dict = {}
 CPU_LIMIT_SECONDS = 1_200.0
@@ -124,7 +146,11 @@ def _spread(indices: list[int], count: int) -> list[int]:
 
 def select_schedule_indices(rows: list[dict]) -> tuple[list[int], list[int]]:
     groups = {
-        key: [index for index, row in enumerate(rows) if (str(row["kind"]), int(row["context_length"])) == key]
+        key: [
+            index
+            for index, row in enumerate(rows)
+            if (str(row["kind"]), int(row["context_length"])) == key
+        ]
         for key in WARMUP_TARGETS
     }
     warmup: list[int] = []
@@ -134,7 +160,7 @@ def select_schedule_indices(rows: list[dict]) -> tuple[list[int], list[int]]:
         total = WARMUP_TARGETS[key] + MEASURED_TARGETS[key]
         selected = _spread(group, total)
         warmup.extend(_spread(selected, WARMUP_TARGETS[key]))
-        warmup_set = set(warmup[-WARMUP_TARGETS[key]:])
+        warmup_set = set(warmup[-WARMUP_TARGETS[key] :])
         measured.extend(index for index in selected if index not in warmup_set)
     warmup.sort()
     measured.sort()
@@ -144,7 +170,9 @@ def select_schedule_indices(rows: list[dict]) -> tuple[list[int], list[int]]:
 
 
 def _counts(rows: list[dict], indices: list[int]) -> dict[str, dict[str, int]]:
-    counts = Counter((str(rows[index]["kind"]), int(rows[index]["context_length"])) for index in indices)
+    counts = Counter(
+        (str(rows[index]["kind"]), int(rows[index]["context_length"])) for index in indices
+    )
     return {
         length: {kind: counts[(kind, int(length))] for kind in KINDS}
         for length in map(str, LENGTHS)
@@ -184,8 +212,12 @@ def _write_new_with_sample(path: Path, value: dict) -> None:
     if path == G2_ATTEMPT:
         value = dict(value)
         value["sample_contract"] = {
-            "warmup_targets_by_length_kind": {f"{kind}:{length}": count for (kind, length), count in WARMUP_TARGETS.items()},
-            "measured_targets_by_length_kind": {f"{kind}:{length}": count for (kind, length), count in MEASURED_TARGETS.items()},
+            "warmup_targets_by_length_kind": {
+                f"{kind}:{length}": count for (kind, length), count in WARMUP_TARGETS.items()
+            },
+            "measured_targets_by_length_kind": {
+                f"{kind}:{length}": count for (kind, length), count in MEASURED_TARGETS.items()
+            },
             "parent_g1_result_sha256": G1_RESULT_SHA256,
         }
     elif path == G2_RESULT:
@@ -209,10 +241,25 @@ def main() -> int:
     except Exception as exc:
         print(f"PLAN-N1-162G2 refused: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 1
-    print(json.dumps({key: report[key] for key in (
-        "status", "cpu_seconds", "parameter_updates_in_memory", "summary_by_threads",
-        "best_median_thread_count", "stable_recommendation_thread_count", "sample_design", "summary_zh",
-    )}, ensure_ascii=False, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                key: report[key]
+                for key in (
+                    "status",
+                    "cpu_seconds",
+                    "parameter_updates_in_memory",
+                    "summary_by_threads",
+                    "best_median_thread_count",
+                    "stable_recommendation_thread_count",
+                    "sample_design",
+                    "summary_zh",
+                )
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+    )
     return 0
 
 

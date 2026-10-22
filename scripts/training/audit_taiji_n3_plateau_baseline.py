@@ -50,9 +50,7 @@ def _read_rows(path: Path) -> list[dict[str, Any]]:
                     raise ValueError(f"{path.name}: 进度行缺字段 {field} ⇒ 不判")
             rows.append(record)
     if len(rows) < QUINTILES * 2:
-        raise ValueError(
-            f"{path.name}: 进度行 {len(rows)} 条不足以分 {QUINTILES} 段 ⇒ 不判"
-        )
+        raise ValueError(f"{path.name}: 进度行 {len(rows)} 条不足以分 {QUINTILES} 段 ⇒ 不判")
     rows.sort(key=lambda record: int(record["ticks"]))
     return rows
 
@@ -109,9 +107,7 @@ def summarize(name: str, path: Path) -> dict[str, Any]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument(
-        "--out-report", default=None, help="可选：把 JSON 读数写到该路径"
-    )
+    parser.add_argument("--out-report", default=None, help="可选：把 JSON 读数写到该路径")
     parser.add_argument(
         "--overwrite",
         action="store_true",
@@ -126,9 +122,7 @@ def main(argv: list[str] | None = None) -> int:
         try:
             results.append(summarize(name, path))
         except (OSError, ValueError, json.JSONDecodeError) as error:
-            results.append(
-                {"run": name, "status": "refused", "error": str(error)[:300]}
-            )
+            results.append({"run": name, "status": "refused", "error": str(error)[:300]})
             rc = 2
     payload: dict[str, Any] = {
         "format": "taiji-n3-plateau-baseline-v1",

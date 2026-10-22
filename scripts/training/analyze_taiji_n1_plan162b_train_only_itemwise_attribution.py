@@ -81,23 +81,35 @@ def _pair_key(row: dict, fields: tuple[str, ...]) -> tuple:
     return tuple(row.get(field) for field in fields)
 
 
-def bind_endpoint_chunks(rows: list[dict], *, rows_per_endpoint: int, event: str) -> tuple[list[dict], int]:
+def bind_endpoint_chunks(
+    rows: list[dict], *, rows_per_endpoint: int, event: str
+) -> tuple[list[dict], int]:
     require(len(rows) == rows_per_endpoint * len(ENDPOINTS), f"{event} denominator differs")
     bound = []
     overwritten_arm_rows = 0
     for endpoint_index, (seed, arm) in enumerate(ENDPOINTS):
         start = endpoint_index * rows_per_endpoint
         chunk = rows[start : start + rows_per_endpoint]
-        require(len(chunk) == rows_per_endpoint, f"{event} endpoint chunk is truncated: {seed}/{arm}")
-        require(all(int(row.get("seed", -1)) == seed for row in chunk), f"{event} endpoint order/seed mismatch: {seed}/{arm}")
+        require(
+            len(chunk) == rows_per_endpoint, f"{event} endpoint chunk is truncated: {seed}/{arm}"
+        )
+        require(
+            all(int(row.get("seed", -1)) == seed for row in chunk),
+            f"{event} endpoint order/seed mismatch: {seed}/{arm}",
+        )
         for row in chunk:
             item = dict(row)
             logged_arm = item.get("arm")
             if event == "original_train_gate_row":
-                require(logged_arm == "position", f"unexpected inherited N1-132 arm field: {logged_arm}")
+                require(
+                    logged_arm == "position", f"unexpected inherited N1-132 arm field: {logged_arm}"
+                )
                 overwritten_arm_rows += 1
             elif logged_arm is not None:
-                require(logged_arm == arm, f"{event} external arm label differs: {seed}/{arm}/{logged_arm}")
+                require(
+                    logged_arm == arm,
+                    f"{event} external arm label differs: {seed}/{arm}/{logged_arm}",
+                )
             item["experiment_arm"] = arm
             bound.append(item)
     return bound, overwritten_arm_rows
@@ -107,8 +119,18 @@ def _summarize_gate_endpoint(rows: list[dict]) -> dict:
     by_set = defaultdict(list)
     for row in rows:
         by_set[str(row.get("evaluation_set"))].append(row)
-    required = {"original": 192, "rename": 192, "factorial_original": 192, "factorial_rename": 192, "pair": 96, "rename_pair": 96}
-    require({key: len(by_set.get(key, [])) for key in required} == required, "gate evaluation-set denominators differ")
+    required = {
+        "original": 192,
+        "rename": 192,
+        "factorial_original": 192,
+        "factorial_rename": 192,
+        "pair": 96,
+        "rename_pair": 96,
+    }
+    require(
+        {key: len(by_set.get(key, [])) for key in required} == required,
+        "gate evaluation-set denominators differ",
+    )
     original = by_set["original"]
     rename = by_set["rename"]
     pair = by_set["pair"]
@@ -126,12 +148,20 @@ def _summarize_gate_endpoint(rows: list[dict]) -> dict:
         by_parent = defaultdict(list)
         for row in selected:
             by_parent[str(row["id"])].append(row)
-        require(len(by_parent) == 48 and all(len(items) == 4 for items in by_parent.values()), f"factorial parent/condition coverage differs: {view}")
-        joint = sum(all(row.get("free_exact") is True for row in items) for items in by_parent.values())
+        require(
+            len(by_parent) == 48 and all(len(items) == 4 for items in by_parent.values()),
+            f"factorial parent/condition coverage differs: {view}",
+        )
+        joint = sum(
+            all(row.get("free_exact") is True for row in items) for items in by_parent.values()
+        )
         return {
             "items": len(selected),
             "parents": len(by_parent),
-            "by_condition": {name: int(condition_counts[name]) for name in ("original", "direction_opposite", "turn_flip", "both")},
+            "by_condition": {
+                name: int(condition_counts[name])
+                for name in ("original", "direction_opposite", "turn_flip", "both")
+            },
             "joint_four_exact": int(joint),
         }
 
@@ -155,7 +185,9 @@ def _sufficient(summary: dict) -> bool:
         and summary["rename_free_exact"] >= 173
         and all(summary["rename_free_by_kind"].get(kind, 0) >= 40 for kind in KINDS)
         and summary["rename_pair_exact"] >= 87
-        and all(summary["factorial"][view]["joint_four_exact"] >= 44 for view in ("original", "rename"))
+        and all(
+            summary["factorial"][view]["joint_four_exact"] >= 44 for view in ("original", "rename")
+        )
     )
 
 
@@ -167,13 +199,21 @@ def _paired_gate_rows(rows: list[dict]) -> tuple[list[dict], list[dict]]:
         arm = str(row["experiment_arm"])
         require(arm not in pair, f"duplicate gate row pair: {key}/{arm}")
         pair[arm] = row
-    require(all(set(pair) == set(ARMS) for pair in keyed.values()), "control/augmented gate key coverage differs")
+    require(
+        all(set(pair) == set(ARMS) for pair in keyed.values()),
+        "control/augmented gate key coverage differs",
+    )
     groups = defaultdict(Counter)
     errors = []
-    for key, pair in keyed.items():
+    for _key, pair in keyed.items():
         control = pair["surface_control"]
         augmented = pair["surface_augmented"]
-        group = (int(control["seed"]), str(control["evaluation_set"]), str(control["kind"]), control.get("condition"))
+        group = (
+            int(control["seed"]),
+            str(control["evaluation_set"]),
+            str(control["kind"]),
+            control.get("condition"),
+        )
         counts = groups[group]
         control_exact = control.get("free_exact") is True
         augmented_exact = augmented.get("free_exact") is True
@@ -186,21 +226,25 @@ def _paired_gate_rows(rows: list[dict]) -> tuple[list[dict], list[dict]]:
         counts["both_wrong"] += not control_exact and not augmented_exact
         counts["raw_output_changed"] += control.get("raw_hex") != augmented.get("raw_hex")
         if control_exact != augmented_exact:
-            errors.append({
-                "seed": int(control["seed"]),
-                "evaluation_set": control["evaluation_set"],
-                "kind": control["kind"],
-                "condition": control.get("condition"),
-                "parent_id": control["id"],
-                "control_free_exact": control_exact,
-                "augmented_free_exact": augmented_exact,
-                "control_raw_hex": control.get("raw_hex"),
-                "augmented_raw_hex": augmented.get("raw_hex"),
-                "control_stop_reason": control.get("stop_reason"),
-                "augmented_stop_reason": augmented.get("stop_reason"),
-            })
+            errors.append(
+                {
+                    "seed": int(control["seed"]),
+                    "evaluation_set": control["evaluation_set"],
+                    "kind": control["kind"],
+                    "condition": control.get("condition"),
+                    "parent_id": control["id"],
+                    "control_free_exact": control_exact,
+                    "augmented_free_exact": augmented_exact,
+                    "control_raw_hex": control.get("raw_hex"),
+                    "augmented_raw_hex": augmented.get("raw_hex"),
+                    "control_stop_reason": control.get("stop_reason"),
+                    "augmented_stop_reason": augmented.get("stop_reason"),
+                }
+            )
     summary = []
-    for key in sorted(groups, key=lambda value: tuple("" if item is None else str(item) for item in value)):
+    for key in sorted(
+        groups, key=lambda value: tuple("" if item is None else str(item) for item in value)
+    ):
         seed, view, kind, condition = key
         row = {"seed": seed, "evaluation_set": view, "kind": kind, "condition": condition}
         row.update({name: int(value) for name, value in sorted(groups[key].items())})
@@ -216,9 +260,12 @@ def _paired_length_rows(rows: list[dict]) -> list[dict]:
         arm = str(row["experiment_arm"])
         require(arm not in pair, f"duplicate length row pair: {key}/{arm}")
         pair[arm] = row
-    require(all(set(pair) == set(ARMS) for pair in keyed.values()), "control/augmented length key coverage differs")
+    require(
+        all(set(pair) == set(ARMS) for pair in keyed.values()),
+        "control/augmented length key coverage differs",
+    )
     groups = defaultdict(Counter)
-    for key, pair in keyed.items():
+    for _key, pair in keyed.items():
         control, augmented = pair["surface_control"], pair["surface_augmented"]
         group = (int(control["seed"]), str(control["kind"]), int(control["context_length"]))
         counts = groups[group]
@@ -242,18 +289,27 @@ def _paired_length_rows(rows: list[dict]) -> list[dict]:
 def _template_exposure(schedule: dict) -> tuple[dict[str, dict], dict[str, dict]]:
     counts = defaultdict(Counter)
     for row in schedule.get("schedule_rows", []):
-        counts[str(row["parent_id"])][f"{row['context_length']}/{row['augmented_template_id']}"] += 1
-    by_parent = {parent: dict(sorted(counter.items())) for parent, counter in sorted(counts.items())}
+        counts[str(row["parent_id"])][
+            f"{row['context_length']}/{row['augmented_template_id']}"
+        ] += 1
+    by_parent = {
+        parent: dict(sorted(counter.items())) for parent, counter in sorted(counts.items())
+    }
     by_kind_length = Counter()
     parent_kind = {}
     for row in schedule["schedule_rows"]:
         parent_kind[str(row["parent_id"])] = str(row["kind"])
-        by_kind_length[(str(row["kind"]), int(row["context_length"]), str(row["augmented_template_id"]))] += 1
+        by_kind_length[
+            (str(row["kind"]), int(row["context_length"]), str(row["augmented_template_id"]))
+        ] += 1
     aggregate = {
         f"{kind}/{length}/{template}": int(value)
         for (kind, length, template), value in sorted(by_kind_length.items())
     }
-    require(len(by_parent) == 192 and all(sum(values.values()) == 48 for values in by_parent.values()), "template exposure parent schedule differs")
+    require(
+        len(by_parent) == 192 and all(sum(values.values()) == 48 for values in by_parent.values()),
+        "template exposure parent schedule differs",
+    )
     return by_parent, aggregate
 
 
@@ -278,7 +334,10 @@ def _read_progress() -> tuple[dict[str, int], list[dict], list[dict], int]:
             elif event == "length_score_row":
                 length_rows.append(row)
     require(not malformed, f"N1-162B progress malformed rows: {malformed[:3]}")
-    require(dict(counts) == EXPECTED_EVENTS and total == sum(EXPECTED_EVENTS.values()), f"N1-162B progress event counts differ: {dict(counts)}")
+    require(
+        dict(counts) == EXPECTED_EVENTS and total == sum(EXPECTED_EVENTS.values()),
+        f"N1-162B progress event counts differ: {dict(counts)}",
+    )
     return dict(sorted(counts.items())), gate_rows, length_rows, total
 
 
@@ -320,8 +379,13 @@ def analyze() -> dict:
 
     source_hashes = dict(result["source_hashes"])
     schedule_path = str(SCHEDULE.resolve())
-    require(schedule_path in source_hashes and sha256(SCHEDULE) == source_hashes[schedule_path], "N1-162B frozen schedule SHA changed")
-    require(n150_builder.verify_hashes(source_hashes), "N1-162B bound input/checkpoint hashes changed")
+    require(
+        schedule_path in source_hashes and sha256(SCHEDULE) == source_hashes[schedule_path],
+        "N1-162B frozen schedule SHA changed",
+    )
+    require(
+        n150_builder.verify_hashes(source_hashes), "N1-162B bound input/checkpoint hashes changed"
+    )
     counts, raw_gate_rows, raw_length_rows, line_count = _read_progress()
     bound_gate_rows, overwritten_arm_rows = bind_endpoint_chunks(
         raw_gate_rows, rows_per_endpoint=GATE_ROWS_PER_ENDPOINT, event="original_train_gate_row"
@@ -330,30 +394,57 @@ def analyze() -> dict:
         raw_length_rows, rows_per_endpoint=LENGTH_ROWS_PER_ENDPOINT, event="length_score_row"
     )
     schedule = read_json(SCHEDULE)
-    require(builder.validate_schedule(schedule)["accepted"] is True, "N1-162 schedule contract changed")
+    require(
+        builder.validate_schedule(schedule)["accepted"] is True, "N1-162 schedule contract changed"
+    )
     exposure_by_parent, exposure_by_kind_length = _template_exposure(schedule)
 
     gate_endpoint_summaries = []
     gate_recalculation_matches = True
     for seed, arm in ENDPOINTS:
-        endpoint_rows = [row for row in bound_gate_rows if (int(row["seed"]), str(row["experiment_arm"])) == (seed, arm)]
-        require(len(endpoint_rows) == GATE_ROWS_PER_ENDPOINT, f"N1-162 gate chunk count differs: {seed}/{arm}")
+        endpoint_rows = [
+            row
+            for row in bound_gate_rows
+            if (int(row["seed"]), str(row["experiment_arm"])) == (seed, arm)
+        ]
+        require(
+            len(endpoint_rows) == GATE_ROWS_PER_ENDPOINT,
+            f"N1-162 gate chunk count differs: {seed}/{arm}",
+        )
         recomputed = _summarize_gate_endpoint(endpoint_rows)
-        model = next(row for row in result["models"] if int(row["seed"]) == seed and str(row["arm"]) == arm)
+        model = next(
+            row for row in result["models"] if int(row["seed"]) == seed and str(row["arm"]) == arm
+        )
         stored = model["original_train_gate"]
-        fields = ("free_exact", "items", "free_by_kind", "rename_free_exact", "rename_free_by_kind", "pair_exact", "rename_pair_exact", "factorial")
+        fields = (
+            "free_exact",
+            "items",
+            "free_by_kind",
+            "rename_free_exact",
+            "rename_free_by_kind",
+            "pair_exact",
+            "rename_pair_exact",
+            "factorial",
+        )
         matches = all(recomputed[field] == stored.get(field) for field in fields)
         sufficient = _sufficient(recomputed)
-        gate_recalculation_matches = gate_recalculation_matches and matches and sufficient == model["training_sufficient"]
-        gate_endpoint_summaries.append({
-            "seed": seed,
-            "arm": arm,
-            "training_sufficient_stored": model["training_sufficient"],
-            "training_sufficient_recomputed": sufficient,
-            "gate_summary_matches_stored": matches,
-            **recomputed,
-        })
-    require(gate_recalculation_matches, "N1-132 gate recomputation differs from frozen endpoint summaries")
+        gate_recalculation_matches = (
+            gate_recalculation_matches and matches and sufficient == model["training_sufficient"]
+        )
+        gate_endpoint_summaries.append(
+            {
+                "seed": seed,
+                "arm": arm,
+                "training_sufficient_stored": model["training_sufficient"],
+                "training_sufficient_recomputed": sufficient,
+                "gate_summary_matches_stored": matches,
+                **recomputed,
+            }
+        )
+    require(
+        gate_recalculation_matches,
+        "N1-132 gate recomputation differs from frozen endpoint summaries",
+    )
 
     paired_gate_summary, gate_disagreements = _paired_gate_rows(bound_gate_rows)
     paired_length_summary = _paired_length_rows(bound_length_rows)
@@ -366,21 +457,30 @@ def analyze() -> dict:
     for row in paired_gate_summary:
         key = (row["seed"], row["evaluation_set"], row["kind"], row["condition"])
         grouped[key] = row
-    for (seed, view, kind, condition), row in sorted(grouped.items(), key=lambda item: tuple(str(v) for v in item[0])):
-        class_gate_deltas.append({
-            "seed": seed,
-            "evaluation_set": view,
-            "kind": kind,
-            "condition": condition,
-            "items": row["items"],
-            "control_exact": row["control_exact"],
-            "augmented_exact": row["augmented_exact"],
-            "delta": row["augmented_exact"] - row["control_exact"],
-            "control_only_correct": row["control_only_correct"],
-            "augmented_only_correct": row["augmented_only_correct"],
-            "raw_output_changed": row["raw_output_changed"],
-        })
-    require(sha256(N162B_RESULT) == N162B_RESULT_SHA256 and sha256(PROGRESS) == PROGRESS_SHA256 and n150_builder.verify_hashes(source_hashes), "N1-162B evidence changed during attribution")
+    for (seed, view, kind, condition), row in sorted(
+        grouped.items(), key=lambda item: tuple(str(v) for v in item[0])
+    ):
+        class_gate_deltas.append(
+            {
+                "seed": seed,
+                "evaluation_set": view,
+                "kind": kind,
+                "condition": condition,
+                "items": row["items"],
+                "control_exact": row["control_exact"],
+                "augmented_exact": row["augmented_exact"],
+                "delta": row["augmented_exact"] - row["control_exact"],
+                "control_only_correct": row["control_only_correct"],
+                "augmented_only_correct": row["augmented_only_correct"],
+                "raw_output_changed": row["raw_output_changed"],
+            }
+        )
+    require(
+        sha256(N162B_RESULT) == N162B_RESULT_SHA256
+        and sha256(PROGRESS) == PROGRESS_SHA256
+        and n150_builder.verify_hashes(source_hashes),
+        "N1-162B evidence changed during attribution",
+    )
     cpu = time.process_time() - started
     complete = cpu <= CPU_LIMIT_SECONDS
     report_sources = {
@@ -451,7 +551,27 @@ def main() -> int:
     args = parser.parse_args()
     del args
     report = analyze()
-    print(json.dumps({key: report.get(key) for key in ("status", "complete", "cpu_seconds", "progress_line_count", "gate_recalculation_matches_all_six", "model_loads", "model_queries", "parameter_updates", "can_promote", "summary_zh")}, ensure_ascii=True, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                key: report.get(key)
+                for key in (
+                    "status",
+                    "complete",
+                    "cpu_seconds",
+                    "progress_line_count",
+                    "gate_recalculation_matches_all_six",
+                    "model_loads",
+                    "model_queries",
+                    "parameter_updates",
+                    "can_promote",
+                    "summary_zh",
+                )
+            },
+            ensure_ascii=True,
+            sort_keys=True,
+        )
+    )
     return 0 if report.get("complete") is True else 1
 
 

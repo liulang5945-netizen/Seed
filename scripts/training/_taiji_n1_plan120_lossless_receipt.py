@@ -171,9 +171,10 @@ def validate_adam_proposal_measurement(measurement):
             or group["clipped"] != (group["scale"] < 1)
         ):
             raise ValueError("finite bounded actual Adam proposal evidence required")
-        if not shared or name not in RWL_GROUPS:
-            if group["actual_l2"] > group["cap"] * 1.0001 + 1e-6:
-                raise ValueError("finite bounded actual Adam proposal evidence required")
+        if (not shared or name not in RWL_GROUPS) and group["actual_l2"] > (
+            group["cap"] * 1.0001 + 1e-6
+        ):
+            raise ValueError("finite bounded actual Adam proposal evidence required")
 
     if not shared:
         return

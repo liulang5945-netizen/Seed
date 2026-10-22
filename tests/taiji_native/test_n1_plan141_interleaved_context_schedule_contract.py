@@ -89,10 +89,7 @@ def test_candidate_assignment_interleaves_two_row_baseline_and_balances_paths() 
         assert summary["by_route_and_condition"][f"hard/{condition}"] == 96
     assert all(
         counts["baseline"] == 24
-        and all(
-            counts[name] == 4
-            for name, _length, _distance in runner.TRANSITION_CONDITIONS
-        )
+        and all(counts[name] == 4 for name, _length, _distance in runner.TRANSITION_CONDITIONS)
         for counts in summary["per_parent"].values()
     )
 
@@ -123,9 +120,7 @@ def test_context_generation_tracks_each_scheduled_hard_target() -> None:
             for name in changed["entities"][-(length - 2) :]
         )
 
-    hard_record = next(
-        row for row in hard if assignment[row["step"]]["condition"] == "8/d1"
-    )
+    hard_record = next(row for row in hard if assignment[row["step"]]["condition"] == "8/d1")
     subject = runner.n132._query_subject(hard_record["item"]["question"])
     hard_variant = variants[(hard_record["parent_id"], "hard", subject)]
     changed = runner._apply_context(hard_record["item"], hard_variant, "8/d1")

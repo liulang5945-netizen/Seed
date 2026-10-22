@@ -206,9 +206,11 @@ def _source_context() -> tuple[dict, dict, dict, dict, dict, dict, dict[str, str
         n153.PREFLIGHT_ATTEMPT,
         n153.PREFLIGHT_BINDING,
         n153.ATTEMPT,
-        builder.N150_CLOSEOUT
-        if hasattr(builder, "N150_CLOSEOUT")
-        else ROOT / "plans/reference/PLAN-N1-150_execution_closeout_20261020.md",
+        (
+            builder.N150_CLOSEOUT
+            if hasattr(builder, "N150_CLOSEOUT")
+            else ROOT / "plans/reference/PLAN-N1-150_execution_closeout_20261020.md"
+        ),
         ROOT / "plans/reference/PLAN-N1-152_execution_closeout_20261020.md",
         Path(n153.__file__).resolve(),
         Path(__file__).resolve(),
@@ -454,9 +456,11 @@ def checkpoint_preflight() -> dict:
         "cpu_limit_seconds": CPU_LIMIT_SECONDS,
         "errors": errors,
         "can_promote": False,
-        "summary_zh": "N1-153A复用face的六个final checkpoint独立恢复6/6；0模型查询、0更新。"
-        if complete
-        else "N1-153A final恢复前置停止，不查询、不重试。",
+        "summary_zh": (
+            "N1-153A复用face的六个final checkpoint独立恢复6/6；0模型查询、0更新。"
+            if complete
+            else "N1-153A final恢复前置停止，不查询、不重试。"
+        ),
     }
     write_new(PREFLIGHT, report)
     write_new(

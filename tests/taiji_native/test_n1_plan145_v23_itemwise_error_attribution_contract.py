@@ -23,7 +23,9 @@ def _synthetic_inputs() -> tuple[list[dict], dict]:
                     "subset": "confirm",
                     "split": "holdout",
                     "kind": kind,
-                    "target_start_index": positions[kind][local % len(positions[kind])] if positions[kind] else None,
+                    "target_start_index": (
+                        positions[kind][local % len(positions[kind])] if positions[kind] else None
+                    ),
                     "answer_length": 6 + local % 2 if kind in ("lookup", "revision") else None,
                 }
             )

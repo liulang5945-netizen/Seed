@@ -15,7 +15,9 @@ sys.path.insert(0, str(ROOT))
 
 PLAN = ROOT / "plans/reference/PLAN-N1-146_v23_output_source_item_attribution_draft_20261019.md"
 PLAN_SHA256 = "9b97dc49206077076d513ba172d15bd267716a6c12a6a4d47d5e601ee21b1baa"
-N144_PLAN = ROOT / "plans/reference/PLAN-N1-144_v23_long_context_confirmation_after_n143_draft_20261019.md"
+N144_PLAN = (
+    ROOT / "plans/reference/PLAN-N1-144_v23_long_context_confirmation_after_n143_draft_20261019.md"
+)
 N144_PLAN_SHA256 = "b5527b5f8a56aa12604a7dbc40dad1fa74c3f4ea8e953a6b2539f1fa3c5fcf42"
 N145_PLAN = ROOT / "plans/reference/PLAN-N1-145_v23_itemwise_error_attribution_draft_20261019.md"
 N145_PLAN_SHA256 = "647c70092b6efae729f29849bf77e36032f899b63c05399f8c497e679fa651d9"
@@ -74,7 +76,12 @@ def parse_material_facts(item: dict) -> list[dict]:
             )
         elif len(parts) == 4 and parts[1:3] == ["now", "uses"]:
             facts.append(
-                {"entity": parts[0], "value": parts[3], "role": "now_uses", "observation_index": index}
+                {
+                    "entity": parts[0],
+                    "value": parts[3],
+                    "role": "now_uses",
+                    "observation_index": index,
+                }
             )
     return facts
 
@@ -172,7 +179,9 @@ def classify_row(row: dict, item: dict) -> dict:
         return classification
 
     if kind == "unknown":
-        classification["output_class"] = "unknown_literal" if output_text == "unknown" else "other_abstention_output"
+        classification["output_class"] = (
+            "unknown_literal" if output_text == "unknown" else "other_abstention_output"
+        )
         classification["free_exact_text_consistent"] = (output_text == "unknown") == exact
         return classification
 
@@ -204,29 +213,52 @@ def validate_and_classify(rows: list[dict], face: dict) -> list[dict]:
     grouped: dict[str, list[dict]] = defaultdict(list)
     for row in rows:
         endpoint_id = str(row.get("endpoint_id"))
-        require(endpoint_id in endpoint_meta and row.get("subset") == "confirm", f"unexpected query row: {endpoint_id}")
-        require(type(row.get("free_exact")) is bool, f"missing frozen score: {endpoint_id}/{row.get('id')}")
+        require(
+            endpoint_id in endpoint_meta and row.get("subset") == "confirm",
+            f"unexpected query row: {endpoint_id}",
+        )
+        require(
+            type(row.get("free_exact")) is bool,
+            f"missing frozen score: {endpoint_id}/{row.get('id')}",
+        )
         require(row.get("id") in face_by_id, f"query row has no face item: {row.get('id')}")
         item = face_by_id[row["id"]]
         require(row.get("kind") == item.get("kind"), f"row/face kind mismatch: {row.get('id')}")
         source, branch, seed = endpoint_meta[endpoint_id]
-        require((row.get("source"), row.get("branch"), row.get("seed")) == (source, branch, seed), f"endpoint metadata mismatch: {endpoint_id}")
+        require(
+            (row.get("source"), row.get("branch"), row.get("seed")) == (source, branch, seed),
+            f"endpoint metadata mismatch: {endpoint_id}",
+        )
         grouped[endpoint_id].append(row)
-    require(len(rows) == 960 and set(grouped) == set(endpoint_meta), "input must contain 960 rows for all 12 endpoints")
+    require(
+        len(rows) == 960 and set(grouped) == set(endpoint_meta),
+        "input must contain 960 rows for all 12 endpoints",
+    )
 
     shared_ids: set[str] | None = None
     classified = []
     for endpoint_id, selected in sorted(grouped.items()):
         ids = [str(row["id"]) for row in selected]
-        require(len(selected) == 80 and len(set(ids)) == 80, f"endpoint rows incomplete or duplicated: {endpoint_id}")
-        require(all(Counter(row["kind"] for row in selected)[kind] == 20 for kind in KINDS), f"class balance differs: {endpoint_id}")
+        require(
+            len(selected) == 80 and len(set(ids)) == 80,
+            f"endpoint rows incomplete or duplicated: {endpoint_id}",
+        )
+        require(
+            all(Counter(row["kind"] for row in selected)[kind] == 20 for kind in KINDS),
+            f"class balance differs: {endpoint_id}",
+        )
         current_ids = set(ids)
-        require(shared_ids is None or current_ids == shared_ids, "all endpoints must use the same confirmation items")
+        require(
+            shared_ids is None or current_ids == shared_ids,
+            "all endpoints must use the same confirmation items",
+        )
         shared_ids = current_ids
         for row in selected:
             item = face_by_id[row["id"]]
             output_hex = row.get("output_hex")
-            require(isinstance(output_hex, str), f"output_hex is missing: {endpoint_id}/{row['id']}")
+            require(
+                isinstance(output_hex, str), f"output_hex is missing: {endpoint_id}/{row['id']}"
+            )
             outcome = classify_row(row, item)
             classified.append(
                 {
@@ -300,11 +332,20 @@ def validate_frozen_inputs() -> tuple[dict, dict, dict, dict[str, str]]:
         and n145.get("can_promote") is False,
         "N1-145 offline attribution is incomplete or bound to another result",
     )
-    require(n144.get("face_sha256") == FACE_SHA256 and n145.get("face_sha256") == FACE_SHA256, "face hash binding differs")
-    require(n145.get("n144_result_sha256") == N144_RESULT_SHA256, "N1-145 attribution binds another N1-144 result")
+    require(
+        n144.get("face_sha256") == FACE_SHA256 and n145.get("face_sha256") == FACE_SHA256,
+        "face hash binding differs",
+    )
+    require(
+        n145.get("n144_result_sha256") == N144_RESULT_SHA256,
+        "N1-145 attribution binds another N1-144 result",
+    )
     attempt_sha = sha256(ATTEMPT)
     progress_sha = sha256(PROGRESS)
-    require(n144.get("attempt_sha256") == attempt_sha and n144.get("progress_sha256") == progress_sha, "N1-144 attempt/progress hash mismatch")
+    require(
+        n144.get("attempt_sha256") == attempt_sha and n144.get("progress_sha256") == progress_sha,
+        "N1-144 attempt/progress hash mismatch",
+    )
     input_hashes = {
         str(path.resolve()): sha256(path)
         for path in (
@@ -330,9 +371,14 @@ def analyze() -> dict:
     classified = validate_and_classify(rows, face)
     summary = summarize(classified)
     require(len(classified) == 960, "classified output row count differs")
-    require(all(sha256(Path(path)) == digest for path, digest in input_hashes.items()), "analysis input changed during run")
+    require(
+        all(sha256(Path(path)) == digest for path, digest in input_hashes.items()),
+        "analysis input changed during run",
+    )
     cpu_seconds = time.process_time() - started
-    require(cpu_seconds <= CPU_LIMIT_SECONDS, f"PLAN-N1-146 CPU ceiling exceeded: {cpu_seconds:.6f}s")
+    require(
+        cpu_seconds <= CPU_LIMIT_SECONDS, f"PLAN-N1-146 CPU ceiling exceeded: {cpu_seconds:.6f}s"
+    )
     return {
         "schema": "n1-plan146-v23-output-source-attribution-v1",
         "status": "complete",
@@ -368,7 +414,9 @@ def analyze() -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PLAN-N1-146 read-only v23 output source attribution")
+    parser = argparse.ArgumentParser(
+        description="PLAN-N1-146 read-only v23 output source attribution"
+    )
     parser.add_argument("--analyze", action="store_true")
     args = parser.parse_args()
     if not args.analyze:
@@ -377,7 +425,19 @@ def main() -> int:
     write_new(OUTPUT, result)
     print(
         json.dumps(
-            {key: result.get(key) for key in ("status", "complete", "classified_rows", "cpu_seconds", "model_queries", "parameter_updates", "can_promote", "summary_zh")},
+            {
+                key: result.get(key)
+                for key in (
+                    "status",
+                    "complete",
+                    "classified_rows",
+                    "cpu_seconds",
+                    "model_queries",
+                    "parameter_updates",
+                    "can_promote",
+                    "summary_zh",
+                )
+            },
             ensure_ascii=True,
             sort_keys=True,
         )

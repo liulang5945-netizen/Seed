@@ -23,12 +23,16 @@ MANIFEST163 = n163_builder.MANIFEST
 READINESS163 = n163_builder.READINESS
 RESULT163 = ROOT / "reports/taiji_n1_plan163_transition_template_rebalanced_result_20261020.json"
 N163_RESULT = RESULT163
-PROGRESS163 = ROOT / "reports/taiji_n1_plan163_transition_template_rebalanced_progress_20261020.jsonl"
+PROGRESS163 = (
+    ROOT / "reports/taiji_n1_plan163_transition_template_rebalanced_progress_20261020.jsonl"
+)
 PLAN164 = ROOT / "plans/reference/PLAN-N1-164_plan163_itemwise_pair_attribution_20261020.md"
 REPORT164 = ROOT / "reports/taiji_n1_plan163_itemwise_attribution_v2_20261020.json"
 AUDITOR164 = ROOT / "scripts/training/audit_taiji_n1_plan163_itemwise_attribution.py"
 BUILDER163 = Path(n163_builder.__file__).resolve()
-RUNNER163 = ROOT / "scripts/training/run_taiji_n1_plan163_transition_template_rebalanced_continuation.py"
+RUNNER163 = (
+    ROOT / "scripts/training/run_taiji_n1_plan163_transition_template_rebalanced_continuation.py"
+)
 BUILDER = Path(__file__).resolve()
 RUNNER = ROOT / "scripts/training/run_taiji_n1_plan165_transition_template_mid_dose.py"
 MANIFEST = ROOT / "plans/manifests/n1_plan165_transition_template_mid_dose_schedule_20261020.json"
@@ -93,7 +97,9 @@ def _parent_order(value: str) -> int:
 def derive_mid_dose_rows(base_rows: list[dict]) -> tuple[list[dict], dict]:
     if len(base_rows) != SLOTS_PER_PASS:
         raise Refuse(f"N1-165 base schedule length differs: {len(base_rows)}")
-    rows = [{**row, "n165_candidate_template_id": row["augmented_template_id"]} for row in base_rows]
+    rows = [
+        {**row, "n165_candidate_template_id": row["augmented_template_id"]} for row in base_rows
+    ]
 
     replaced_groups: dict[tuple[str, str, int], list[int]] = defaultdict(list)
     for index, row in enumerate(base_rows):
@@ -104,7 +110,9 @@ def derive_mid_dose_rows(base_rows: list[dict]) -> tuple[list[dict], dict]:
     groups_by_route_length: dict[tuple[str, int], list[tuple[str, str, int]]] = defaultdict(list)
     for group, indexes in replaced_groups.items():
         if len(indexes) != 2:
-            raise Refuse(f"N1-165 expected two retained-template slots in {group}; got {len(indexes)}")
+            raise Refuse(
+                f"N1-165 expected two retained-template slots in {group}; got {len(indexes)}"
+            )
         groups_by_route_length[(group[1], group[2])].append(group)
 
     replaced_slots = 0
@@ -113,7 +121,9 @@ def derive_mid_dose_rows(base_rows: list[dict]) -> tuple[list[dict], dict]:
     for (route, length), groups in sorted(groups_by_route_length.items()):
         ordered = sorted(groups, key=lambda group: _parent_order(group[0]))
         if len(ordered) != 48:
-            raise Refuse(f"N1-165 expected 48 balanced groups for {route}/{length}; got {len(ordered)}")
+            raise Refuse(
+                f"N1-165 expected 48 balanced groups for {route}/{length}; got {len(ordered)}"
+            )
         for group_rank, group in enumerate(ordered):
             indexes = sorted(replaced_groups[group], key=lambda i: int(base_rows[i]["step"]))
             keep_index = group_rank % 2
@@ -141,11 +151,21 @@ def derive_mid_dose_rows(base_rows: list[dict]) -> tuple[list[dict], dict]:
     context_counts = Counter()
     for base, row in zip(base_rows, rows, strict=True):
         for key in (
-            "step", "parent_id", "route", "kind", "context_length", "item_id", "item_key",
-            "second_id", "second_key", "augmented_template_id",
+            "step",
+            "parent_id",
+            "route",
+            "kind",
+            "context_length",
+            "item_id",
+            "item_key",
+            "second_id",
+            "second_key",
+            "augmented_template_id",
         ):
             if row.get(key) != base.get(key):
-                raise Refuse(f"N1-165 changed a frozen base schedule field: {base.get('step')}/{key}")
+                raise Refuse(
+                    f"N1-165 changed a frozen base schedule field: {base.get('step')}/{key}"
+                )
         if row["kind"] == "transition":
             templates_by_length[int(row["context_length"])][row["n165_candidate_template_id"]] += 1
         context_counts[int(row["context_length"])] += 1
@@ -223,17 +243,30 @@ def build() -> dict:
 
     parents = {}
     for seed in SEEDS:
-        old_parent = [row for row in previous_result["models"] if row["seed"] == seed and row["arm"] == n163_builder.CANDIDATE_ARM]
-        control = [row for row in previous_result["models"] if row["seed"] == seed and row["arm"] == n163_builder.CONTROL_ARM]
+        old_parent = [
+            row
+            for row in previous_result["models"]
+            if row["seed"] == seed and row["arm"] == n163_builder.CANDIDATE_ARM
+        ]
+        control = [
+            row
+            for row in previous_result["models"]
+            if row["seed"] == seed and row["arm"] == n163_builder.CONTROL_ARM
+        ]
         if len(old_parent) != 1 or len(control) != 1:
             raise Refuse(f"N1-165 requires one N1-163 control and full-dose anchor for seed{seed}")
         if old_parent[0]["parent_checkpoint_sha256"] != control[0]["parent_checkpoint_sha256"]:
             raise Refuse(f"N1-163 dose anchors do not share the same parent for seed{seed}")
         parent_matches = [
-            row for row in read_json(n163_builder.PRIOR_RESULT)["models"]
+            row
+            for row in read_json(n163_builder.PRIOR_RESULT)["models"]
             if row.get("seed") == seed and row.get("arm") == PARENT_ARM
         ]
-        if len(parent_matches) != 1 or parent_matches[0]["final_checkpoint_sha256"] != old_parent[0]["parent_checkpoint_sha256"]:
+        if (
+            len(parent_matches) != 1
+            or parent_matches[0]["final_checkpoint_sha256"]
+            != old_parent[0]["parent_checkpoint_sha256"]
+        ):
             raise Refuse(f"N1-163 parent checkpoint lineage differs for seed{seed}")
         parent = parent_matches[0]
         parent_path = Path(parent["final_checkpoint_path"]).resolve()
@@ -258,7 +291,11 @@ def build() -> dict:
     for seed in SEEDS:
         anchor_endpoints[str(seed)] = {}
         for arm in (n163_builder.CONTROL_ARM, n163_builder.CANDIDATE_ARM):
-            matches = [row for row in previous_result["models"] if row.get("seed") == seed and row.get("arm") == arm]
+            matches = [
+                row
+                for row in previous_result["models"]
+                if row.get("seed") == seed and row.get("arm") == arm
+            ]
             if len(matches) != 1:
                 raise Refuse(f"N1-163 dose anchor missing or ambiguous: seed{seed}/{arm}")
             anchor = matches[0]
@@ -286,7 +323,7 @@ def build() -> dict:
     rows_sha = n162.builder.canonical_sha(rows)
     source_hashes = dict(previous_readiness["source_hashes"])
     source_hashes.update({str(path): digest for path, digest in fixed_hashes.items()})
-    for path, parent in parents.items():
+    for _path, parent in parents.items():
         source_hashes[parent["path"]] = parent["sha256"]
     for seed_anchors in anchor_endpoints.values():
         for anchor in seed_anchors.values():
@@ -332,7 +369,9 @@ def build() -> dict:
 
     cpu = time.process_time() - started
     if cpu > CPU_LIMIT_SECONDS:
-        raise TimeoutError(f"N1-165 schedule builder CPU exceeded: {cpu:.3f}/{CPU_LIMIT_SECONDS:.3f}")
+        raise TimeoutError(
+            f"N1-165 schedule builder CPU exceeded: {cpu:.3f}/{CPU_LIMIT_SECONDS:.3f}"
+        )
     readiness = {
         "schema": "taiji-n1-plan165-transition-template-mid-dose-readiness-v1",
         "status": "ready",
@@ -370,7 +409,19 @@ def main() -> int:
     except Exception as exc:
         print(f"N1-165 schedule refused: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 1
-    print(json.dumps({"status": report["status"], "source_hash_count": report["source_hash_count"], "cpu_seconds": report["cpu_seconds"], "checks": report["checks"], "can_promote": report["can_promote"]}, ensure_ascii=False, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                "status": report["status"],
+                "source_hash_count": report["source_hash_count"],
+                "cpu_seconds": report["cpu_seconds"],
+                "checks": report["checks"],
+                "can_promote": report["can_promote"],
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+    )
     return 0
 
 

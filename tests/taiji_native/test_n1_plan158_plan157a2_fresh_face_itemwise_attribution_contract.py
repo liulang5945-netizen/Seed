@@ -104,13 +104,18 @@ def test_nested_transition_summary_is_per_seed_and_arm() -> None:
             )
     summary = analyzer.length_transition_summary(rows)
     candidate = next(
-        row for row in summary
-        if row["branch"] == "unknown8_rebalanced" and row["from_length"] == 8 and row["to_length"] == 16
+        row
+        for row in summary
+        if row["branch"] == "unknown8_rebalanced"
+        and row["from_length"] == 8
+        and row["to_length"] == 16
     )
     parent = next(
-        row for row in summary
-        if row["branch"] == "length_mixed_parent" and row["from_length"] == 8 and row["to_length"] == 16
+        row
+        for row in summary
+        if row["branch"] == "length_mixed_parent"
+        and row["from_length"] == 8
+        and row["to_length"] == 16
     )
     assert candidate["wrong_to_right"] == 1
     assert parent["right_to_wrong"] == 1
-

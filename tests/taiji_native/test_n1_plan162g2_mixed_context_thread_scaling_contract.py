@@ -20,7 +20,9 @@ def test_length_stratified_schedule_selection_is_balanced_and_disjoint() -> None
     assert len(warmup) == 32
     assert len(measured) == 256
     assert not (set(warmup) & set(measured))
-    assert Counter(rows[index]["context_length"] for index in measured) == Counter({8: 96, 16: 80, 32: 80})
+    assert Counter(rows[index]["context_length"] for index in measured) == Counter(
+        {8: 96, 16: 80, 32: 80}
+    )
     assert benchmark._counts(rows, measured) == {
         "8": {"lookup": 21, "revision": 21, "transition": 21, "unknown": 33},
         "16": {"lookup": 21, "revision": 21, "transition": 21, "unknown": 17},

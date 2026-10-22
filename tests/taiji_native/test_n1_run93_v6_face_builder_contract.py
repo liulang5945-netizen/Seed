@@ -114,7 +114,7 @@ SIGNED_SHAPE = {
 
 def test_the_signed_shape_is_exactly_the_ruled_one() -> None:
     assert v6.SIGNED_DISTRIBUTION == SIGNED_SHAPE, v6.SIGNED_DISTRIBUTION
-    assert v6.SIGNED_DISTRIBUTION == {**v6.draft_distribution(), "name_neighbor_distance": 1}
+    assert {**v6.draft_distribution(), "name_neighbor_distance": 1} == v6.SIGNED_DISTRIBUTION
     episodes, pair, _sources = v6.build(dict(v6.SIGNED_DISTRIBUTION))
     reading = v6.audit(episodes, v6.SIGNED_DISTRIBUTION, pair)
     assert reading["accepted"] is True, reading["checks"]

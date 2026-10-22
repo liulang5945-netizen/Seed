@@ -97,7 +97,10 @@ def _merge_hashes(target: dict[str, str], incoming: dict[str, str]) -> None:
 
 
 def _verify_hashes(source_hashes: dict[str, str]) -> bool:
-    return all(Path(path).is_file() and sha256(Path(path)) == expected for path, expected in source_hashes.items())
+    return all(
+        Path(path).is_file() and sha256(Path(path)) == expected
+        for path, expected in source_hashes.items()
+    )
 
 
 def _filler_names(bound: dict) -> set[str]:
@@ -142,11 +145,16 @@ def _collect_source_union() -> tuple[set[str], set[str], dict[str, str], dict]:
     for label, result in (("n139", n139_result), ("n140", n140_result), ("n141", n141_result)):
         require(result.get("complete") is True, f"{label}训练结果未完整结案")
         require(result.get("source_hashes_unchanged") is True, f"{label}来源守卫失败")
-        require(result.get("dev_queries") == 0 and result.get("holdout_queries") == 0, f"{label}越过train-only边界")
+        require(
+            result.get("dev_queries") == 0 and result.get("holdout_queries") == 0,
+            f"{label}越过train-only边界",
+        )
         _merge_hashes(source_hashes, result.get("source_hashes") or {})
         _merge_hashes(source_hashes, result.get("new_checkpoint_hashes") or {})
 
-    itemwise141 = read_json(ROOT / "reports/taiji_n1_plan141_itemwise_retention_context_attribution_20261019.json")
+    itemwise141 = read_json(
+        ROOT / "reports/taiji_n1_plan141_itemwise_retention_context_attribution_20261019.json"
+    )
     require(itemwise141.get("complete") is True, "N1-141逐题归因报告不完整")
     require(itemwise141.get("source_hashes_unchanged") is True, "N1-141逐题归因来源改变")
     _merge_hashes(source_hashes, itemwise141.get("source_hashes", {}))
@@ -234,15 +242,21 @@ def build_face(excluded_entities: set[str], excluded_words: set[str], seed: int 
                 subject = _novel(ENTITY_LENGTH, used_entities, rng)
                 answer_length = 6 if local % 2 == 0 else 7
                 answer_lengths[(subset, kind, answer_length)] += 1
-                start = LOOKUP_POSITIONS[local % len(LOOKUP_POSITIONS)] if kind == "lookup" else (
-                    PAIR_POSITIONS[local % len(PAIR_POSITIONS)]
-                    if kind in ("revision", "transition")
-                    else None
+                start = (
+                    LOOKUP_POSITIONS[local % len(LOOKUP_POSITIONS)]
+                    if kind == "lookup"
+                    else (
+                        PAIR_POSITIONS[local % len(PAIR_POSITIONS)]
+                        if kind in ("revision", "transition")
+                        else None
+                    )
                 )
                 if start is not None:
                     starts[(subset, kind, start)] += 1
 
-                target_rows = 1 if kind == "lookup" else 2 if kind in ("revision", "transition") else 0
+                target_rows = (
+                    1 if kind == "lookup" else 2 if kind in ("revision", "transition") else 0
+                )
                 distractors = [
                     _confusable(subject, used_entities, rng)
                     for _ in range(OBSERVATIONS - target_rows)
@@ -266,12 +280,12 @@ def build_face(excluded_entities: set[str], excluded_words: set[str], seed: int 
                     question = f"material of {subject}?"
                 elif kind == "transition":
                     answer_direction = DIRECTIONS[local % len(DIRECTIONS)]
-                    turn_parity = (
-                        local // len(DIRECTIONS) + local % len(DIRECTIONS)
-                    ) % 2
+                    turn_parity = (local // len(DIRECTIONS) + local % len(DIRECTIONS)) % 2
                     turn_template = "right" if turn_parity == 0 else "left"
                     delta = 1 if turn_template == "right" else -1
-                    initial = DIRECTIONS[(DIRECTIONS.index(answer_direction) - delta) % len(DIRECTIONS)]
+                    initial = DIRECTIONS[
+                        (DIRECTIONS.index(answer_direction) - delta) % len(DIRECTIONS)
+                    ]
                     answer = answer_direction
                     observations[start] = f"{subject} faces {initial}."
                     observations[start + 1] = f"{subject} turns {turn_template}."
@@ -283,8 +297,12 @@ def build_face(excluded_entities: set[str], excluded_words: set[str], seed: int 
                     answer = ABSTENTION
                     question = f"material of {subject}?"
 
-                filler_indices = [position for position, row in enumerate(observations) if row is None]
-                require(len(filler_indices) == len(distractors), f"{kind} filler slot count differs")
+                filler_indices = [
+                    position for position, row in enumerate(observations) if row is None
+                ]
+                require(
+                    len(filler_indices) == len(distractors), f"{kind} filler slot count differs"
+                )
                 filler_rows = []
                 for number, name in enumerate(distractors):
                     if kind == "transition":
@@ -298,11 +316,19 @@ def build_face(excluded_entities: set[str], excluded_words: set[str], seed: int 
                 for position, row in zip(filler_indices, filler_rows, strict=True):
                     observations[position] = row
 
-                require(all(row is not None for row in observations), f"{kind} context has empty rows")
+                require(
+                    all(row is not None for row in observations), f"{kind} context has empty rows"
+                )
                 entities = [subject, *distractors]
                 require(len(entities) == len(set(entities)), f"{kind} episode repeats an entity")
-                require(all(len(name) == ENTITY_LENGTH for name in entities), f"{kind} entity length differs")
-                require(all(_hamming(subject, name) == DISTANCE for name in distractors), f"{kind} d=1 differs")
+                require(
+                    all(len(name) == ENTITY_LENGTH for name in entities),
+                    f"{kind} entity length differs",
+                )
+                require(
+                    all(_hamming(subject, name) == DISTANCE for name in distractors),
+                    f"{kind} d=1 differs",
+                )
                 episodes.append(
                     {
                         "id": f"v21-{subset}-{kind}-{local:03d}",
@@ -385,7 +411,13 @@ def validate_face(face: dict, excluded_entities: set[str], excluded_words: set[s
     require(
         all(
             len(item.get("entities", []))
-            == 1 + OBSERVATIONS - (1 if item["kind"] == "lookup" else 2 if item["kind"] in ("revision", "transition") else 0)
+            == 1
+            + OBSERVATIONS
+            - (
+                1
+                if item["kind"] == "lookup"
+                else 2 if item["kind"] in ("revision", "transition") else 0
+            )
             for item in episodes
         ),
         "v21 entity shape differs",
@@ -395,30 +427,57 @@ def validate_face(face: dict, excluded_entities: set[str], excluded_words: set[s
         "duplicate entity within an episode",
     )
     all_names = {name for item in episodes for name in item["entities"]}
-    require(not (all_names & excluded_entities), "v21 entity overlaps consumed/source exclusion union")
-    require(len(all_names) == sum(len(item["entities"]) for item in episodes), "v21 entity repeats across episodes")
+    require(
+        not (all_names & excluded_entities), "v21 entity overlaps consumed/source exclusion union"
+    )
+    require(
+        len(all_names) == sum(len(item["entities"]) for item in episodes),
+        "v21 entity repeats across episodes",
+    )
     material_values = {
         row.removesuffix(".").split()[-1]
         for item in episodes
         for row in item["observations"]
         if " uses " in row
-    } | {
-        item["answer"]
-        for item in episodes
-        if item["kind"] in ("lookup", "revision")
-    }
-    require(not (material_values & excluded_words), "v21 material/answer overlaps consumed word exclusions")
-    require(all(len(value) in (6, 7) for value in material_values), "v21 materials must be 6/7 chars")
+    } | {item["answer"] for item in episodes if item["kind"] in ("lookup", "revision")}
     require(
-        all(_hamming(item["entities"][0], name) == DISTANCE for item in episodes for name in item["entities"][1:]),
+        not (material_values & excluded_words),
+        "v21 material/answer overlaps consumed word exclusions",
+    )
+    require(
+        all(len(value) in (6, 7) for value in material_values), "v21 materials must be 6/7 chars"
+    )
+    require(
+        all(
+            _hamming(item["entities"][0], name) == DISTANCE
+            for item in episodes
+            for name in item["entities"][1:]
+        ),
         "v21 Hamming-distance contract failed",
     )
     counts = Counter((item["subset"], item["kind"]) for item in episodes)
-    require(all(counts[(subset, kind)] == ITEMS_PER_SUBSET_KIND for subset in SUBSETS for kind in KINDS), "v21 subset balance differs")
-    directions = Counter((item["subset"], item["answer_direction"]) for item in episodes if item["kind"] == "transition")
-    turns = Counter((item["subset"], item["turn_template"]) for item in episodes if item["kind"] == "transition")
-    require(all(directions[(subset, direction)] == 5 for subset in SUBSETS for direction in DIRECTIONS), "v21 direction balance differs")
-    require(all(turns[(subset, turn)] == 10 for subset in SUBSETS for turn in ("left", "right")), "v21 turn balance differs")
+    require(
+        all(
+            counts[(subset, kind)] == ITEMS_PER_SUBSET_KIND for subset in SUBSETS for kind in KINDS
+        ),
+        "v21 subset balance differs",
+    )
+    directions = Counter(
+        (item["subset"], item["answer_direction"])
+        for item in episodes
+        if item["kind"] == "transition"
+    )
+    turns = Counter(
+        (item["subset"], item["turn_template"]) for item in episodes if item["kind"] == "transition"
+    )
+    require(
+        all(directions[(subset, direction)] == 5 for subset in SUBSETS for direction in DIRECTIONS),
+        "v21 direction balance differs",
+    )
+    require(
+        all(turns[(subset, turn)] == 10 for subset in SUBSETS for turn in ("left", "right")),
+        "v21 turn balance differs",
+    )
     return {
         "accepted": True,
         "items": len(episodes),
@@ -536,7 +595,18 @@ def main() -> int:
     result = prepare_face()
     print(
         json.dumps(
-            {key: result.get(key) for key in ("status", "complete", "cpu_seconds", "model_queries", "parameter_updates", "can_promote", "summary_zh")},
+            {
+                key: result.get(key)
+                for key in (
+                    "status",
+                    "complete",
+                    "cpu_seconds",
+                    "model_queries",
+                    "parameter_updates",
+                    "can_promote",
+                    "summary_zh",
+                )
+            },
             ensure_ascii=True,
             sort_keys=True,
         )

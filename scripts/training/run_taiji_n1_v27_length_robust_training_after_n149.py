@@ -79,7 +79,16 @@ def _fingerprint(model, optimizer) -> str:
     return n132.e11.scorer.paired.fingerprint(model.bundle(optimizer))
 
 
-def _n150_payload(model, optimizer, *, seed: int, branch: str, parent_path: Path, parent_hash: str, additional_updates: int) -> dict:
+def _n150_payload(
+    model,
+    optimizer,
+    *,
+    seed: int,
+    branch: str,
+    parent_path: Path,
+    parent_hash: str,
+    additional_updates: int,
+) -> dict:
     candidate = copy.deepcopy(model.bundle(optimizer))
     return {
         "schema": "n1-plan150-v27-length-robust-checkpoint-v1",
@@ -131,7 +140,9 @@ def _restore_n150_payload(payload: dict):
     if (
         fingerprint != payload.get("bundle_fingerprint")
         or len(optimizer.state) != 41
-        or any(int(optimizer.state[param]["step"]) != expected_steps for param in model.parameters())
+        or any(
+            int(optimizer.state[param]["step"]) != expected_steps for param in model.parameters()
+        )
         or len(model._observations) != int(payload["history_count"])
     ):
         raise ValueError("N1-150 complete model/Adam/RNG/history restore mismatch")
@@ -166,7 +177,9 @@ def _restore_worker(path: Path) -> dict:
 
 def _independent_restore(path: Path, budget: n132.CpuBudget) -> dict:
     budget.guard(reserve=5)
-    environment = dict(os.environ, OMP_NUM_THREADS="1", MKL_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1")
+    environment = dict(
+        os.environ, OMP_NUM_THREADS="1", MKL_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1"
+    )
     process = subprocess.run(
         [sys.executable, str(Path(__file__).resolve()), "--restore-worker", str(path)],
         cwd=ROOT,
@@ -231,9 +244,16 @@ def _verify_readiness() -> tuple[dict, dict, dict, dict]:
         source_exclusion_sha256=sha256(SOURCE_EXCLUSIONS),
         resource_addendum_sha256=RESOURCE_ADDENDUM_SHA256,
     )
-    if recomputed != schedule_manifest or recomputed["schedule_sha256"] != readiness.get("schedule_identity_sha256"):
+    if recomputed != schedule_manifest or recomputed["schedule_sha256"] != readiness.get(
+        "schedule_identity_sha256"
+    ):
         raise ValueError("N1-150 schedule/context bank differs from frozen readiness")
-    return readiness, binding, precheck, {"bound": bound, "schedule": schedule, "schedule_manifest": schedule_manifest}
+    return (
+        readiness,
+        binding,
+        precheck,
+        {"bound": bound, "schedule": schedule, "schedule_manifest": schedule_manifest},
+    )
 
 
 def checkpoint_preflight() -> dict:
@@ -296,8 +316,18 @@ def checkpoint_preflight() -> dict:
                     additional_updates=0,
                 )
                 if payload["bundle_fingerprint"] != before:
-                    raise ValueError(f"zero-copy payload changed parent bundle: seed{seed}/{branch}")
-                saved.append({"seed": seed, "branch": branch, "path": str(zero_path.resolve()), "sha256": sha256(zero_path), "bundle_fingerprint": before})
+                    raise ValueError(
+                        f"zero-copy payload changed parent bundle: seed{seed}/{branch}"
+                    )
+                saved.append(
+                    {
+                        "seed": seed,
+                        "branch": branch,
+                        "path": str(zero_path.resolve()),
+                        "sha256": sha256(zero_path),
+                        "bundle_fingerprint": before,
+                    }
+                )
             if _fingerprint(model, optimizer) != before:
                 raise ValueError(f"zero-copy save changed source model: seed{seed}")
             del model, optimizer
@@ -317,7 +347,9 @@ def checkpoint_preflight() -> dict:
         errors.append(f"{type(exc).__name__}: {exc}")
     cpu = time.process_time() - started + budget.children
     cumulative = float(readiness["cumulative_cpu_seconds"]) + cpu
-    complete = not errors and len(saved) == 6 and len(restores) == 6 and cumulative <= CPU_LIMIT_SECONDS
+    complete = (
+        not errors and len(saved) == 6 and len(restores) == 6 and cumulative <= CPU_LIMIT_SECONDS
+    )
     report = {
         "schema": "n1-plan150-v27-zero-checkpoint-preflight-v1",
         "status": "complete" if complete else "stopped",
@@ -344,7 +376,11 @@ def checkpoint_preflight() -> dict:
         "errors": errors,
         "can_promote": False,
     }
-    report["summary_zh"] = "六个zero bundle已保存并独立恢复6/6，三seed候选/控制fingerprint一致；0更新/查询。" if complete else "zero checkpoint preflight停止；不训练、不重试。"
+    report["summary_zh"] = (
+        "六个zero bundle已保存并独立恢复6/6，三seed候选/控制fingerprint一致；0更新/查询。"
+        if complete
+        else "zero checkpoint preflight停止；不训练、不重试。"
+    )
     write_new(PREFLIGHT, report)
     write_new(
         PREFLIGHT_BINDING,
@@ -375,7 +411,9 @@ def _entities_for_question(item: dict, observations: list[str]) -> list[str]:
     return names
 
 
-def _apply_context(item: dict, context_key: str, length: int, views: dict[str, dict[int, list[str]]]) -> dict:
+def _apply_context(
+    item: dict, context_key: str, length: int, views: dict[str, dict[int, list[str]]]
+) -> dict:
     if context_key not in views or length not in views[context_key]:
         raise ValueError(f"train item lacks frozen length view: {item.get('id')}/{length}")
     return _with_observations(item, list(views[context_key][length]), length)
@@ -425,7 +463,10 @@ def _measure_train_length_view(model, item: dict, session: str) -> dict:
 
 def _length_score_items(inputs: dict) -> dict[int, list[dict]]:
     by_kind = {
-        kind: sorted((item for item in inputs["items"] if item.get("kind") == kind), key=lambda row: row["id"])
+        kind: sorted(
+            (item for item in inputs["items"] if item.get("kind") == kind),
+            key=lambda row: row["id"],
+        )
         for kind in builder.TRAIN_KINDS
     }
     if any(len(rows) != 48 for rows in by_kind.values()):
@@ -436,7 +477,16 @@ def _length_score_items(inputs: dict) -> dict[int, list[dict]]:
     return {length: selected for length in builder.LENGTHS}
 
 
-def _score_length_descriptors(model, optimizer, seed: int, branch: str, inputs: dict, views: dict, budget: n132.CpuBudget, progress: Path):
+def _score_length_descriptors(
+    model,
+    optimizer,
+    seed: int,
+    branch: str,
+    inputs: dict,
+    views: dict,
+    budget: n132.CpuBudget,
+    progress: Path,
+):
     before = _fingerprint(model, optimizer)
     rows = []
     queries = 0
@@ -474,7 +524,11 @@ def _length_score_summary(rows: list[dict]) -> dict:
                 raise ValueError(f"length score requires 24 train items per class: {length}/{kind}")
             exact = sum(row.get("free_exact") is True for row in selected)
             abstain = sum(row.get("output_hex") == b"unknown".hex() for row in selected)
-            summary[str(length)][kind] = {"items": len(selected), "exact": exact, "literal_unknown": abstain}
+            summary[str(length)][kind] = {
+                "items": len(selected),
+                "exact": exact,
+                "literal_unknown": abstain,
+            }
     return summary
 
 
@@ -490,7 +544,15 @@ def run_training() -> dict:
         raise FileExistsError("N1-150 training result is one-shot; no resume/retry")
     budget = n132.CpuBudget(remaining_cpu)
     source_hashes = dict(preflight["source_hashes"])
-    for path in (READINESS, SOURCE_BINDING, PRECHECK, SOURCE_EXCLUSIONS, SCHEDULE, PREFLIGHT, PREFLIGHT_BINDING):
+    for path in (
+        READINESS,
+        SOURCE_BINDING,
+        PRECHECK,
+        SOURCE_EXCLUSIONS,
+        SCHEDULE,
+        PREFLIGHT,
+        PREFLIGHT_BINDING,
+    ):
         source_hashes[str(Path(path).resolve())] = sha256(path)
     zero_records = preflight.get("zero_checkpoints", [])
     for row in zero_records:
@@ -532,14 +594,18 @@ def run_training() -> dict:
             raise ValueError("N1-150 schedule changed after preflight")
         parent_rows, parent_hashes = builder.parent_checkpoints()
         zero_by_key = {(int(row["seed"]), row["branch"]): row for row in zero_records}
-        if set(zero_by_key) != {(seed, branch) for seed in builder.SEEDS for branch in builder.BRANCHES}:
+        if set(zero_by_key) != {
+            (seed, branch) for seed in builder.SEEDS for branch in builder.BRANCHES
+        }:
             raise ValueError("N1-150 zero checkpoint set does not cover all six endpoints")
 
         for seed in builder.SEEDS:
             for branch in builder.BRANCHES:
                 budget.guard(reserve=60)
                 zero = zero_by_key[(seed, branch)]
-                model, optimizer, zero_payload, before = _restore_n150_checkpoint(Path(zero["path"]))
+                model, optimizer, zero_payload, before = _restore_n150_checkpoint(
+                    Path(zero["path"])
+                )
                 active = {
                     "seed": seed,
                     "branch": branch,
@@ -549,17 +615,30 @@ def run_training() -> dict:
                 }
                 initial_history = len(model._observations)
                 expected_parent_steps = n132.TOTAL_UPDATES
-                if any(int(optimizer.state[param]["step"]) != expected_parent_steps for param in model.parameters()):
-                    raise ValueError(f"zero bundle Adam state is not at N1-132 endpoint: seed{seed}/{branch}")
+                if any(
+                    int(optimizer.state[param]["step"]) != expected_parent_steps
+                    for param in model.parameters()
+                ):
+                    raise ValueError(
+                        f"zero bundle Adam state is not at N1-132 endpoint: seed{seed}/{branch}"
+                    )
                 step_losses = []
                 context_length_counts = Counter()
                 for slot in schedule["slots"]:
                     budget.guard(reserve=20)
-                    context_length = slot["candidate_length"] if branch == "length_mixed" else builder.SHORT_CONTROL_LENGTH
-                    item = _apply_context(slot["item"], slot["item_key"], context_length, schedule["views"])
+                    context_length = (
+                        slot["candidate_length"]
+                        if branch == "length_mixed"
+                        else builder.SHORT_CONTROL_LENGTH
+                    )
+                    item = _apply_context(
+                        slot["item"], slot["item_key"], context_length, schedule["views"]
+                    )
                     second = None
                     if slot["second"] is not None:
-                        second = _with_observations(slot["second"], item["observations"], context_length)
+                        second = _with_observations(
+                            slot["second"], item["observations"], context_length
+                        )
                     metrics = n132._training_step(
                         model,
                         optimizer,
@@ -608,13 +687,16 @@ def run_training() -> dict:
                     active["completed_updates"] != UPDATES_PER_MODEL
                     or total_steps != {n132.TOTAL_UPDATES + UPDATES_PER_MODEL}
                     or len(model._observations) != initial_history + UPDATES_PER_MODEL
-                    or context_length_counts != (
+                    or context_length_counts
+                    != (
                         Counter({8: UPDATES_PER_MODEL})
                         if branch == "eight_row_control"
                         else Counter({length: UPDATES_PER_MODEL // 3 for length in builder.LENGTHS})
                     )
                 ):
-                    raise ValueError(f"N1-150 fixed updates/history/length distribution differ: seed{seed}/{branch}")
+                    raise ValueError(
+                        f"N1-150 fixed updates/history/length distribution differ: seed{seed}/{branch}"
+                    )
 
                 parent_path = Path(zero_payload["parent_checkpoint_path"]).resolve()
                 final_path = CHECKPOINT_ROOT / f"s{seed}_{branch}_final.pt"
@@ -633,10 +715,20 @@ def run_training() -> dict:
                 gate_rows, gate_summary, sufficient, gate_queries = n132._evaluate_train_only(
                     g, model, optimizer, seed, inputs, budget
                 )
-                if gate_queries != ORIGINAL_GATE_QUERIES_PER_ENDPOINT or len(gate_rows) != ORIGINAL_GATE_QUERIES_PER_ENDPOINT:
-                    raise ValueError(f"original N1-132 gate query denominator changed: seed{seed}/{branch}")
+                if (
+                    gate_queries != ORIGINAL_GATE_QUERIES_PER_ENDPOINT
+                    or len(gate_rows) != ORIGINAL_GATE_QUERIES_PER_ENDPOINT
+                ):
+                    raise ValueError(
+                        f"original N1-132 gate query denominator changed: seed{seed}/{branch}"
+                    )
                 for row in gate_rows:
-                    durable = {"event": "original_train_gate_row", "seed": seed, "branch": branch, **row}
+                    durable = {
+                        "event": "original_train_gate_row",
+                        "seed": seed,
+                        "branch": branch,
+                        **row,
+                    }
                     append_jsonl(PROGRESS, durable)
                 train_score_queries += gate_queries
                 length_rows, length_queries = _score_length_descriptors(
@@ -649,11 +741,18 @@ def run_training() -> dict:
                     budget,
                     PROGRESS,
                 )
-                if length_queries != LENGTH_SCORE_QUERIES_PER_ENDPOINT or len(length_rows) != LENGTH_SCORE_QUERIES_PER_ENDPOINT:
-                    raise ValueError(f"N1-150 length score denominator changed: seed{seed}/{branch}")
+                if (
+                    length_queries != LENGTH_SCORE_QUERIES_PER_ENDPOINT
+                    or len(length_rows) != LENGTH_SCORE_QUERIES_PER_ENDPOINT
+                ):
+                    raise ValueError(
+                        f"N1-150 length score denominator changed: seed{seed}/{branch}"
+                    )
                 train_score_queries += length_queries
                 if _fingerprint(model, optimizer) != gate_fingerprint:
-                    raise ValueError(f"train-only scoring changed frozen final bundle: seed{seed}/{branch}")
+                    raise ValueError(
+                        f"train-only scoring changed frozen final bundle: seed{seed}/{branch}"
+                    )
                 loss_means = {
                     name: sum(float(row[name]) for row in step_losses) / len(step_losses)
                     for name in ("total", "base_total", "qa", "observation", "binding")
@@ -726,9 +825,7 @@ def run_training() -> dict:
     if not source_unchanged:
         errors.append("N1-150 training source/zero checkpoint hash changed")
     new_checkpoints = {
-        str(path.resolve()): sha256(path)
-        for path in CHECKPOINT_ROOT.glob("*.pt")
-        if path.is_file()
+        str(path.resolve()): sha256(path) for path in CHECKPOINT_ROOT.glob("*.pt") if path.is_file()
     }
     stage_cpu = time.process_time() - start + budget.children
     cumulative = float(preflight["cumulative_cpu_seconds"]) + stage_cpu
@@ -821,8 +918,15 @@ def main() -> int:
 
 
 def _verify_preflight() -> tuple[dict, dict, dict, dict, dict]:
-    if not READINESS.is_file() or not SOURCE_BINDING.is_file() or not PREFLIGHT.is_file() or not PREFLIGHT_BINDING.is_file():
-        raise FileNotFoundError("N1-150 readiness and six-copy zero checkpoint preflight are required")
+    if (
+        not READINESS.is_file()
+        or not SOURCE_BINDING.is_file()
+        or not PREFLIGHT.is_file()
+        or not PREFLIGHT_BINDING.is_file()
+    ):
+        raise FileNotFoundError(
+            "N1-150 readiness and six-copy zero checkpoint preflight are required"
+        )
     readiness = read_json(READINESS)
     readiness_binding = read_json(SOURCE_BINDING)
     preflight = read_json(PREFLIGHT)
@@ -868,7 +972,9 @@ def _verify_preflight() -> tuple[dict, dict, dict, dict, dict]:
         source_exclusion_sha256=sha256(SOURCE_EXCLUSIONS),
         resource_addendum_sha256=RESOURCE_ADDENDUM_SHA256,
     )
-    if expected != scheduled_manifest or expected["schedule_sha256"] != readiness.get("schedule_identity_sha256"):
+    if expected != scheduled_manifest or expected["schedule_sha256"] != readiness.get(
+        "schedule_identity_sha256"
+    ):
         raise ValueError("N1-150 deterministic length schedule changed after readiness")
     return readiness, preflight, preflight_binding, bound, schedule
 

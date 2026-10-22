@@ -26,16 +26,18 @@ def test_output_classification_prioritizes_old_revision_value() -> None:
     base = {
         "kind": "revision",
         "answer": "newval",
-        "observations_by_length": {
-            "8": ["target uses oldval.", "target now uses newval."]
-        },
+        "observations_by_length": {"8": ["target uses oldval.", "target now uses newval."]},
     }
     row = {"raw_hex": b"oldval".hex(), "stop_reason": "boundary", "context_length": 8}
     assert analyzer.output_class(row, base) == "stale_revision_value"
 
 
 def test_output_classification_separates_abstention_and_direction_tokens() -> None:
-    base = {"kind": "lookup", "answer": "matval", "observations_by_length": {"8": ["target uses matval."]}}
+    base = {
+        "kind": "lookup",
+        "answer": "matval",
+        "observations_by_length": {"8": ["target uses matval."]},
+    }
     unknown_row = {"raw_hex": b"unknown".hex(), "stop_reason": "boundary", "context_length": 8}
     direction_row = {"raw_hex": b"north".hex(), "stop_reason": "boundary", "context_length": 8}
     assert analyzer.output_class(unknown_row, base) == "literal_unknown"

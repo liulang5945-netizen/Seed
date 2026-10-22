@@ -31,7 +31,9 @@ PRIOR_RESULT_SHA256 = "19dfaeb2086abaa503ee5150dba3bbfc9756d0892e8b6b54222fbfc4e
 SCHEDULE_MANIFEST = ROOT / "plans/manifests/n1_plan162_v34_question_surface_schedule_20261020.json"
 SCHEDULE_MANIFEST_SHA256 = "225b5d6e55df9cec3b62a977e2a34173a9dc39b9c54d32d5258c2451e9e99fd1"
 SCHEDULE_ROWS_SHA256 = "bf6cc77a9f569b3d9dca151d455bfbe6ccf875715d17f2a123d94dfc2c88c84c"
-CHECKPOINT = ROOT / "data/checkpoints/n1_plan162b_question_surface_20261020/s11_surface_control_final.pt"
+CHECKPOINT = (
+    ROOT / "data/checkpoints/n1_plan162b_question_surface_20261020/s11_surface_control_final.pt"
+)
 CHECKPOINT_SHA256 = "6976af645eff7213aa4d210d0919451c37e430bf3821b3c1e0c1360f17acd913"
 CHECKPOINT_FINGERPRINT = "0df7ba460cf9022fdba4e20902df754b255f6e187c2fcc2dfc7b754c825e9890"
 ATTEMPT = ROOT / "reports/taiji_n1_plan162g_training_thread_scaling_attempt_20261020.json"
@@ -65,7 +67,10 @@ def read_json(path: Path) -> dict:
 def write_new(path: Path, value: dict) -> None:
     if path.exists():
         raise FileExistsError(f"write-once PLAN-N1-162G output exists: {path}")
-    path.write_text(json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n",
+        encoding="utf-8",
+    )
 
 
 def _check_budget(started_cpu: float) -> None:
@@ -93,7 +98,11 @@ def _verify_sources() -> tuple[dict, dict, dict, dict[str, str]]:
         or prior.get("can_promote") is not False
     ):
         raise Refuse("N1-162B training source result is incomplete or changed")
-    matches = [row for row in prior.get("models", []) if row.get("seed") == 11 and row.get("arm") == "surface_control"]
+    matches = [
+        row
+        for row in prior.get("models", [])
+        if row.get("seed") == 11 and row.get("arm") == "surface_control"
+    ]
     if len(matches) != 1:
         raise Refuse("N1-162B seed11 surface_control endpoint is ambiguous")
     endpoint = matches[0]
@@ -141,10 +150,14 @@ def _verify_sources() -> tuple[dict, dict, dict, dict[str, str]]:
 def _prepare_step(slot: dict, row: dict, schedule: dict) -> tuple[dict, dict | None]:
     if row.get("control_template_id") != "original":
         raise Refuse("benchmark control schedule is not the frozen original question surface")
-    item = n150._apply_context(slot["item"], slot["item_key"], int(row["context_length"]), schedule["views"])
+    item = n150._apply_context(
+        slot["item"], slot["item_key"], int(row["context_length"]), schedule["views"]
+    )
     second = None
     if slot.get("second") is not None:
-        second = n150._with_observations(slot["second"], item["observations"], int(row["context_length"]))
+        second = n150._with_observations(
+            slot["second"], item["observations"], int(row["context_length"])
+        )
     return item, second
 
 
@@ -166,22 +179,39 @@ def _summarize_trials(trials: list[dict]) -> tuple[dict, int, int]:
         by_threads[str(threads)] = {
             "rates_updates_per_second": rates,
             "median_updates_per_second": round(statistics.median(rates), 6),
-            "median_cpu_seconds_per_update": round(statistics.median(
-                float(row["cpu_seconds_per_update"]) for row in rows
-            ), 6),
+            "median_cpu_seconds_per_update": round(
+                statistics.median(float(row["cpu_seconds_per_update"]) for row in rows), 6
+            ),
         }
     baseline = float(by_threads["1"]["median_updates_per_second"])
     for threads in (2, 4):
         rates = by_threads[str(threads)]["rates_updates_per_second"]
-        by_threads[str(threads)]["speedup_vs_single_thread"] = round(float(by_threads[str(threads)]["median_updates_per_second"]) / baseline, 4)
-        by_threads[str(threads)]["stable_gain_10_percent"] = all(rate >= baseline * 1.10 for rate in rates)
-    winner = max(THREAD_COUNTS, key=lambda value: float(by_threads[str(value)]["median_updates_per_second"]))
-    stable_candidates = [threads for threads in (2, 4) if by_threads[str(threads)]["stable_gain_10_percent"]]
-    stable_winner = max(stable_candidates, key=lambda value: float(by_threads[str(value)]["median_updates_per_second"])) if stable_candidates else 1
+        by_threads[str(threads)]["speedup_vs_single_thread"] = round(
+            float(by_threads[str(threads)]["median_updates_per_second"]) / baseline, 4
+        )
+        by_threads[str(threads)]["stable_gain_10_percent"] = all(
+            rate >= baseline * 1.10 for rate in rates
+        )
+    winner = max(
+        THREAD_COUNTS, key=lambda value: float(by_threads[str(value)]["median_updates_per_second"])
+    )
+    stable_candidates = [
+        threads for threads in (2, 4) if by_threads[str(threads)]["stable_gain_10_percent"]
+    ]
+    stable_winner = (
+        max(
+            stable_candidates,
+            key=lambda value: float(by_threads[str(value)]["median_updates_per_second"]),
+        )
+        if stable_candidates
+        else 1
+    )
     return by_threads, winner, stable_winner
 
 
-def _run_trial(threads: int, repeat: int, runtime: dict, schedule: dict, endpoint: dict, started_cpu: float) -> dict:
+def _run_trial(
+    threads: int, repeat: int, runtime: dict, schedule: dict, endpoint: dict, started_cpu: float
+) -> dict:
     torch.set_num_threads(threads)
     if torch.get_num_threads() != threads:
         raise Refuse(f"PyTorch did not apply requested thread count {threads}")
@@ -253,17 +283,22 @@ def execute() -> dict:
     if any(path.exists() for path in (ATTEMPT, PROGRESS, RESULT)):
         raise FileExistsError("PLAN-N1-162G outputs are write-once")
     started_cpu = time.process_time()
-    write_new(ATTEMPT, {
-        "schema": "taiji-n1-plan162g-thread-scaling-attempt-v1",
-        "status": "started",
-        "plan_sha256": PLAN_SHA256,
-        "started_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
-        "trial_order": [{"threads": threads, "repeat": repeat} for threads, repeat in TRIAL_ORDER],
-        "updates_per_trial": SCHEDULE_ROWS,
-        "parameter_updates_in_memory": len(TRIAL_ORDER) * SCHEDULE_ROWS,
-        "checkpoint_writes": 0,
-        "can_promote": False,
-    })
+    write_new(
+        ATTEMPT,
+        {
+            "schema": "taiji-n1-plan162g-thread-scaling-attempt-v1",
+            "status": "started",
+            "plan_sha256": PLAN_SHA256,
+            "started_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+            "trial_order": [
+                {"threads": threads, "repeat": repeat} for threads, repeat in TRIAL_ORDER
+            ],
+            "updates_per_trial": SCHEDULE_ROWS,
+            "parameter_updates_in_memory": len(TRIAL_ORDER) * SCHEDULE_ROWS,
+            "checkpoint_writes": 0,
+            "can_promote": False,
+        },
+    )
     progress_path = PROGRESS.open("x", encoding="utf-8")
     trials: list[dict] = []
     source_hashes: dict[str, str] = {}
@@ -274,7 +309,10 @@ def execute() -> dict:
             row = _run_trial(threads, repeat, runtime, schedule, endpoint, started_cpu)
             row["trial"] = trial_index
             trials.append(row)
-            progress_path.write(json.dumps({"event": "trial_complete", **row}, ensure_ascii=False, sort_keys=True) + "\n")
+            progress_path.write(
+                json.dumps({"event": "trial_complete", **row}, ensure_ascii=False, sort_keys=True)
+                + "\n"
+            )
             progress_path.flush()
 
         by_threads, winner, stable_winner = _summarize_trials(trials)
@@ -305,7 +343,9 @@ def execute() -> dict:
             "thread_counts": list(THREAD_COUNTS),
             "cpu_model": platform.processor() or None,
             "logical_cpu_count": os.cpu_count(),
-            "trial_order": [{"threads": threads, "repeat": repeat} for threads, repeat in TRIAL_ORDER],
+            "trial_order": [
+                {"threads": threads, "repeat": repeat} for threads, repeat in TRIAL_ORDER
+            ],
             "warmup_updates_per_trial": WARMUP_UPDATES,
             "measured_updates_per_trial": MEASURED_UPDATES,
             "parameter_updates_in_memory": total_updates,
@@ -362,10 +402,24 @@ def main() -> int:
     except Exception as exc:
         print(f"PLAN-N1-162G refused: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 1
-    print(json.dumps({key: result[key] for key in (
-        "status", "cpu_seconds", "parameter_updates_in_memory", "summary_by_threads",
-        "best_median_thread_count", "stable_recommendation_thread_count", "summary_zh",
-    )}, ensure_ascii=False, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                key: result[key]
+                for key in (
+                    "status",
+                    "cpu_seconds",
+                    "parameter_updates_in_memory",
+                    "summary_by_threads",
+                    "best_median_thread_count",
+                    "stable_recommendation_thread_count",
+                    "summary_zh",
+                )
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+    )
     return 0
 
 

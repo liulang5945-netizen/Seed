@@ -19,9 +19,14 @@ from scripts.training import build_taiji_n1_v26_abstention_length_after_n148 as 
 from scripts.training import eval_taiji_n1_v26_abstention_length_after_n148 as n149_eval
 from scripts.training import run_taiji_n1_plan132_binding_supervision_calibration as n132
 
-PLAN = ROOT / "plans/reference/PLAN-N1-150_matched_long_context_training_continuation_draft_20261020.md"
+PLAN = (
+    ROOT
+    / "plans/reference/PLAN-N1-150_matched_long_context_training_continuation_draft_20261020.md"
+)
 PLAN_SHA256 = "21416667c74656a50f21261d2764794910a6366e25fbdeac86eb87981cc768ed"
-SCORING_ADDENDUM = ROOT / "plans/reference/PLAN-N1-150A_train_only_scoring_denominator_freeze_20261020.md"
+SCORING_ADDENDUM = (
+    ROOT / "plans/reference/PLAN-N1-150A_train_only_scoring_denominator_freeze_20261020.md"
+)
 SCORING_ADDENDUM_SHA256 = "13bdec809f39820b94fdc8773db091a1d08091404037c703ed628d8748bf8d09"
 RESOURCE_ADDENDUM = ROOT / "plans/reference/PLAN-N1-150B_training_cpu_ceiling_revision_20261020.md"
 RESOURCE_ADDENDUM_SHA256 = "e690f71df597b5e16d3b53a48229fc686c3e12a0b081cfff1d65330ebe12ff7e"
@@ -33,8 +38,12 @@ READINESS_ATTEMPT = ROOT / "reports/taiji_n1_plan150_v27_length_readiness_attemp
 SOURCE_BINDING = ROOT / "reports/taiji_n1_plan150_v27_length_source_binding_20261020.json"
 CHECKPOINT_ROOT = ROOT / "data/checkpoints/n1_plan150_v27_length_robust_training_seed126_20261020"
 PREFLIGHT = ROOT / "reports/taiji_n1_plan150_v27_length_checkpoint_preflight_20261020.json"
-PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_plan150_v27_length_checkpoint_preflight_attempt_20261020.json"
-PREFLIGHT_BINDING = ROOT / "reports/taiji_n1_plan150_v27_length_checkpoint_preflight_binding_20261020.json"
+PREFLIGHT_ATTEMPT = (
+    ROOT / "reports/taiji_n1_plan150_v27_length_checkpoint_preflight_attempt_20261020.json"
+)
+PREFLIGHT_BINDING = (
+    ROOT / "reports/taiji_n1_plan150_v27_length_checkpoint_preflight_binding_20261020.json"
+)
 ATTEMPT = ROOT / "reports/taiji_n1_plan150_v27_length_attempt_20261020.json"
 PROGRESS = ROOT / "reports/taiji_n1_plan150_v27_length_progress_20261020.jsonl"
 RESULT = ROOT / "reports/taiji_n1_plan150_v27_length_result_20261020.json"
@@ -83,7 +92,9 @@ def digest_strings(values: set[str]) -> str:
 
 
 def canonical_sha(value: object) -> str:
-    payload = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    payload = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode(
+        "utf-8"
+    )
     return hashlib.sha256(payload).hexdigest()
 
 
@@ -150,7 +161,10 @@ def _base_context_rows(item: dict) -> list[str]:
 
 
 def _generate_context_bank(
-    source_items: dict[str, dict], excluded_entities: set[str], excluded_words: set[str], seed: int = 150126
+    source_items: dict[str, dict],
+    excluded_entities: set[str],
+    excluded_words: set[str],
+    seed: int = 150126,
 ) -> tuple[dict[str, dict[int, list[str]]], dict]:
     used_entities = set(excluded_entities)
     used_words = set(excluded_words) | {ABSTENTION} | set(DIRECTIONS)
@@ -168,10 +182,14 @@ def _generate_context_bank(
             raise Refuse(f"context source is not a supported train item: {item.get('id')}")
         subject = n132._query_subject(item["question"])
         if len(subject) != ENTITY_LENGTH or not subject.isascii() or not subject.isalpha():
-            raise Refuse(f"train subject is not a {ENTITY_LENGTH}-letter lowercase entity: {item.get('id')}")
+            raise Refuse(
+                f"train subject is not a {ENTITY_LENGTH}-letter lowercase entity: {item.get('id')}"
+            )
         base_rows = _base_context_rows(item)
         if not base_rows or len(base_rows) >= max(LENGTHS):
-            raise Refuse(f"unexpected original context length for {item.get('id')}: {len(base_rows)}")
+            raise Refuse(
+                f"unexpected original context length for {item.get('id')}: {len(base_rows)}"
+            )
         descriptors[key] = (item, subject, base_rows)
         required_fillers[subject] = max(required_fillers[subject], max(LENGTHS) - len(base_rows))
 
@@ -182,32 +200,38 @@ def _generate_context_bank(
         filler_rows = []
         for filler_index in range(required_fillers[subject]):
             entity_count_before = len(used_entities)
-            neighbor = n149_builder.n148_builder.n147_builder._confusable(subject, used_entities, rng)
+            neighbor = n149_builder.n148_builder.n147_builder._confusable(
+                subject, used_entities, rng
+            )
             if (
                 len(neighbor) != ENTITY_LENGTH
-                or sum(first != second for first, second in zip(subject, neighbor, strict=True)) != DISTANCE
+                or sum(first != second for first, second in zip(subject, neighbor, strict=True))
+                != DISTANCE
                 or len(used_entities) != entity_count_before + 1
             ):
-                raise Refuse(f"generated distractor is not a unique d={DISTANCE} neighbor: {subject}")
+                raise Refuse(
+                    f"generated distractor is not a unique d={DISTANCE} neighbor: {subject}"
+                )
             material_length = 6 if filler_index % 2 == 0 else 7
             word_count_before = len(used_words)
-            material = n149_builder.n148_builder.n147_builder._novel(material_length, used_words, rng)
+            material = n149_builder.n148_builder.n147_builder._novel(
+                material_length, used_words, rng
+            )
             if len(material) != material_length or len(used_words) != word_count_before + 1:
-                raise Refuse(f"generated training material is not unique or has wrong length: {subject}")
+                raise Refuse(
+                    f"generated training material is not unique or has wrong length: {subject}"
+                )
             filler_rows.append(f"{neighbor} uses {material}.")
         filler_banks[subject] = filler_rows
 
     views = {}
     source_digests = {}
-    for key, (item, subject, base_rows) in descriptors.items():
+    for key, (_item, subject, base_rows) in descriptors.items():
         filler_rows = filler_banks[subject]
         views[key] = {
-            length: [*base_rows, *filler_rows[:length - len(base_rows)]]
-            for length in LENGTHS
+            length: [*base_rows, *filler_rows[: length - len(base_rows)]] for length in LENGTHS
         }
-        source_digests[key] = {
-            str(length): canonical_sha(views[key][length]) for length in LENGTHS
-        }
+        source_digests[key] = {str(length): canonical_sha(views[key][length]) for length in LENGTHS}
     generated_entities = used_entities - initial_entities
     generated_words = used_words - initial_words
     if generated_entities & excluded_entities or generated_words & excluded_words:
@@ -225,8 +249,12 @@ def _generate_context_bank(
     return views, summary
 
 
-def build_schedule(g: dict, inputs: dict, excluded_entities: set[str], excluded_words: set[str]) -> dict:
-    if len(inputs.get("items", [])) != 192 or any(item.get("split") != "train" for item in inputs["items"]):
+def build_schedule(
+    g: dict, inputs: dict, excluded_entities: set[str], excluded_words: set[str]
+) -> dict:
+    if len(inputs.get("items", [])) != 192 or any(
+        item.get("split") != "train" for item in inputs["items"]
+    ):
         raise Refuse("N1-150 requires exactly 192 train parents")
     if "length_ledger" not in g:
         raise Refuse("base schedule must expose its length ledger")
@@ -242,10 +270,14 @@ def build_schedule(g: dict, inputs: dict, excluded_entities: set[str], excluded_
         item, second = g["scheduled"](step, inputs["items"], inputs["curriculum"])
         if item.get("split") != "train" or item.get("kind") not in TRAIN_KINDS:
             raise Refuse(f"base scheduler emitted non-train task at step {step}")
-        if second is not None and (second.get("split") != "train" or second.get("observations") != item.get("observations")):
+        if second is not None and (
+            second.get("split") != "train" or second.get("observations") != item.get("observations")
+        ):
             raise Refuse(f"paired second query changed source tape at step {step}")
         specs = n132._query_specs(item, second)
-        binding_queries += sum(n132._target_observation_indices(spec["query"]) is not None for spec in specs)
+        binding_queries += sum(
+            n132._target_observation_indices(spec["query"]) is not None for spec in specs
+        )
         parent, route = _parent_and_route(item)
         route_key = (parent, route)
         occurrence = slot_counts[route_key]
@@ -279,7 +311,11 @@ def build_schedule(g: dict, inputs: dict, excluded_entities: set[str], excluded_
         len(parent_counts) != 192
         or set(parent_counts.values()) != {UPDATES_PER_PARENT}
         or set(slot_counts.values()) != {24}
-        or any(route_length_counts[(parent, route, length)] != 8 for parent, route in slot_counts for length in LENGTHS)
+        or any(
+            route_length_counts[(parent, route, length)] != 8
+            for parent, route in slot_counts
+            for length in LENGTHS
+        )
         or kind_counts != Counter({kind: 2_304 for kind in TRAIN_KINDS})
         or binding_queries != 11_520
     ):
@@ -299,7 +335,11 @@ def build_schedule(g: dict, inputs: dict, excluded_entities: set[str], excluded_
             "second_key": row["second_key"],
             "second_id": row["second_id"],
             "second_kind": None if row["second"] is None else row["second"].get("kind"),
-            "second_question_sha256": None if row["second"] is None else hashlib.sha256(row["second"]["question"].encode("utf-8")).hexdigest(),
+            "second_question_sha256": (
+                None
+                if row["second"] is None
+                else hashlib.sha256(row["second"]["question"].encode("utf-8")).hexdigest()
+            ),
             "candidate_length": row["candidate_length"],
             "control_length": row["control_length"],
         }
@@ -357,7 +397,10 @@ def validate_schedule_manifest(manifest: dict) -> dict:
 
 
 def verify_hashes(source_hashes: dict[str, str]) -> bool:
-    return all(Path(path).is_file() and sha256(Path(path)) == digest for path, digest in source_hashes.items())
+    return all(
+        Path(path).is_file() and sha256(Path(path)) == digest
+        for path, digest in source_hashes.items()
+    )
 
 
 def parent_checkpoints() -> tuple[dict[int, dict], dict[str, str]]:
@@ -446,8 +489,14 @@ def collect_source_hashes(train_context: dict, parent_hashes: dict[str, str]) ->
 def prepare_readiness() -> tuple[dict, dict, dict, dict]:
     """Read train-only source and build deterministic context/slot contracts; no model load."""
     require(sha256(PLAN) == PLAN_SHA256, "PLAN-N1-150 plan hash changed")
-    require(sha256(SCORING_ADDENDUM) == SCORING_ADDENDUM_SHA256, "PLAN-N1-150A scoring addendum hash changed")
-    require(sha256(RESOURCE_ADDENDUM) == RESOURCE_ADDENDUM_SHA256, "PLAN-N1-150B resource addendum hash changed")
+    require(
+        sha256(SCORING_ADDENDUM) == SCORING_ADDENDUM_SHA256,
+        "PLAN-N1-150A scoring addendum hash changed",
+    )
+    require(
+        sha256(RESOURCE_ADDENDUM) == RESOURCE_ADDENDUM_SHA256,
+        "PLAN-N1-150B resource addendum hash changed",
+    )
     require(sha256(N149_RESULT) == N149_RESULT_SHA256, "N1-149 result hash changed")
     n149_manifest = read_json(N149_MANIFEST)
     n149_result = read_json(N149_RESULT)
@@ -493,7 +542,9 @@ def source_readiness() -> dict:
         RESULT,
     )
     if any(path.exists() for path in outputs) or CHECKPOINT_ROOT.exists():
-        raise FileExistsError("PLAN-N1-150 readiness, schedule, checkpoint, and train outputs are write-once")
+        raise FileExistsError(
+            "PLAN-N1-150 readiness, schedule, checkpoint, and train outputs are write-once"
+        )
     started = time.process_time()
     bound, parents, schedule, source_hashes = prepare_readiness()
     n149_manifest = read_json(N149_MANIFEST)
@@ -574,7 +625,9 @@ def source_readiness() -> dict:
             "control_updates_by_length": schedule_manifest["control_updates_by_length"],
             "parent_count": schedule_manifest["parent_count"],
             "updates_by_task_kind": schedule_manifest["updates_by_task_kind"],
-            "answerable_binding_queries_per_model": schedule_manifest["answerable_binding_queries_per_model"],
+            "answerable_binding_queries_per_model": schedule_manifest[
+                "answerable_binding_queries_per_model"
+            ],
             "total_updates": EXPECTED_TOTAL_UPDATES,
             "train_score_queries_planned": 7_488,
         },
@@ -589,9 +642,24 @@ def source_readiness() -> dict:
         "holdout_queries": 0,
         "confirmation_queries": 0,
         "can_promote": False,
-        "summary_zh": "192条train父项的长度schedule合同通过；candidate 8/16/32等量、control固定8行，0模型/checkpoint加载、0训练、0查询，可进入zero checkpoint preflight。" if complete else "schedule/source readiness停止；不训练、不查询、不重试。",
+        "summary_zh": (
+            "192条train父项的长度schedule合同通过；candidate 8/16/32等量、control固定8行，0模型/checkpoint加载、0训练、0查询，可进入zero checkpoint preflight。"
+            if complete
+            else "schedule/source readiness停止；不训练、不查询、不重试。"
+        ),
     }
-    write_new(READINESS_ATTEMPT, {"schema": "n1-plan150-v27-readiness-attempt-v1", "status": "started", "plan_sha256": PLAN_SHA256, "cpu_seconds": round(cpu, 6), "model_loads": 0, "model_queries": 0, "parameter_updates": 0})
+    write_new(
+        READINESS_ATTEMPT,
+        {
+            "schema": "n1-plan150-v27-readiness-attempt-v1",
+            "status": "started",
+            "plan_sha256": PLAN_SHA256,
+            "cpu_seconds": round(cpu, 6),
+            "model_loads": 0,
+            "model_queries": 0,
+            "parameter_updates": 0,
+        },
+    )
     write_new(READINESS, report)
     write_new(
         SOURCE_BINDING,
@@ -619,7 +687,26 @@ def main() -> int:
     if not args.validate_only:
         parser.error("one-shot invocation requires --validate-only")
     result = source_readiness()
-    print(json.dumps({key: result.get(key) for key in ("status", "complete", "cpu_seconds", "parent_count", "schedule_summary", "model_loads", "model_queries", "parameter_updates", "can_promote")}, ensure_ascii=True, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                key: result.get(key)
+                for key in (
+                    "status",
+                    "complete",
+                    "cpu_seconds",
+                    "parent_count",
+                    "schedule_summary",
+                    "model_loads",
+                    "model_queries",
+                    "parameter_updates",
+                    "can_promote",
+                )
+            },
+            ensure_ascii=True,
+            sort_keys=True,
+        )
+    )
     return 0 if result.get("complete") is True else 1
 
 

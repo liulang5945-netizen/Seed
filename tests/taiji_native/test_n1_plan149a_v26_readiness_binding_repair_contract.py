@@ -21,7 +21,9 @@ def test_repair_binds_nested_verifier_and_adds_readiness_source_hashes() -> None
         assert hashes[str(repair.REPAIR_PLAN.resolve())] == repair.sha256(repair.REPAIR_PLAN)
         assert hashes[str(Path(repair.__file__).resolve())] == repair.sha256(Path(repair.__file__))
         assert hashes[str(repair.TEST.resolve())] == repair.sha256(repair.TEST)
-        assert hashes[str(repair.FAILURE_RECEIPT.resolve())] == repair.sha256(repair.FAILURE_RECEIPT)
+        assert hashes[str(repair.FAILURE_RECEIPT.resolve())] == repair.sha256(
+            repair.FAILURE_RECEIPT
+        )
         assert repair.sha256(repair.face_builder.__file__) == before_builder
         assert repair.sha256(repair.frozen_eval.__file__) == before_evaluator
     finally:

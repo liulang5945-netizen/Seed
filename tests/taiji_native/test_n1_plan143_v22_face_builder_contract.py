@@ -22,7 +22,9 @@ def test_v21_face_is_deterministic_balanced_and_source_disjoint() -> None:
     checks = builder.validate_face(first, excluded_names, excluded_words)
     assert checks["accepted"] is True
     assert checks["items"] == 160
-    assert checks["entity_count"] == len({n for episode in first["episodes"] for n in episode["entities"]})
+    assert checks["entity_count"] == len(
+        {n for episode in first["episodes"] for n in episode["entities"]}
+    )
     assert all(count == 20 for count in checks["items_by_subset_and_kind"].values())
     assert first["shape_counts"]["new_entity_count"] == checks["entity_count"]
     assert first["shape_counts"]["new_word_count"] > 0
@@ -58,7 +60,9 @@ def test_face_checker_rejects_excluded_names_and_non_neighbor_entities() -> None
     episode = wrong_distance["episodes"][0]
     replacement = list(episode["entities"][1])
     target = episode["entities"][0]
-    match = next(index for index, (a, b) in enumerate(zip(target, replacement, strict=True)) if a == b)
+    match = next(
+        index for index, (a, b) in enumerate(zip(target, replacement, strict=True)) if a == b
+    )
     replacement[match] = "z" if target[match] != "z" else "y"
     episode["entities"][1] = "".join(replacement)
     with pytest.raises(builder.Refuse, match="Hamming-distance"):

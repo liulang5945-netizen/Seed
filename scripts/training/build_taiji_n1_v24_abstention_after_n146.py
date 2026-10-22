@@ -17,10 +17,15 @@ sys.path.insert(0, str(ROOT))
 from scripts.training import build_taiji_n1_v23_confirmation_after_n143 as n144_builder
 from scripts.training import eval_taiji_n1_v23_confirmation_after_n143 as n144_eval
 
-PLAN = ROOT / "plans/reference/PLAN-N1-147_matched_known_unknown_abstention_diagnostic_draft_20261019.md"
+PLAN = (
+    ROOT
+    / "plans/reference/PLAN-N1-147_matched_known_unknown_abstention_diagnostic_draft_20261019.md"
+)
 PLAN_SHA256 = "4d6c9799741d3290f5f1e6cda4325268ce086027e4d14a72f82a7f3662e09be8"
 SOURCE_PRECHECK = ROOT / "reports/taiji_n1_v24_abstention_source_union_precheck_20261019.json"
-SOURCE_EXCLUSIONS = ROOT / "plans/manifests/n1_v24_abstention_after_n146_source_exclusions_20261019.json"
+SOURCE_EXCLUSIONS = (
+    ROOT / "plans/manifests/n1_v24_abstention_after_n146_source_exclusions_20261019.json"
+)
 FACE = ROOT / "plans/manifests/n1_v24_abstention_seed124_20261019.json"
 FACE_ATTEMPT = ROOT / "plans/manifests/n1_v24_abstention_seed124_20261019_attempt.json"
 FACE_CHECKS = ROOT / "reports/taiji_n1_v24_abstention_face_checks_20261019.json"
@@ -93,9 +98,7 @@ def _material_values(face: dict) -> set[str]:
         if " uses " in row
     }
     materials.update(
-        item["answer"]
-        for item in face.get("episodes", [])
-        if item.get("kind") == "lookup"
+        item["answer"] for item in face.get("episodes", []) if item.get("kind") == "lookup"
     )
     return materials
 
@@ -243,7 +246,8 @@ def build_face(excluded_entities: set[str], excluded_words: set[str], seed: int 
             for index in range(OBSERVATIONS)
         ]
         common_rows = [
-            f"{name} uses {value}." for name, value in zip(neighbors[:31], neighbor_values[:31], strict=True)
+            f"{name} uses {value}."
+            for name, value in zip(neighbors[:31], neighbor_values[:31], strict=True)
         ]
         replacement = f"{neighbors[31]} uses {neighbor_values[31]}."
         known_rows: list[str] = []
@@ -311,9 +315,14 @@ def build_face(excluded_entities: set[str], excluded_words: set[str], seed: int 
         "answer_lengths": [6, 7],
         "episodes": episodes,
         "shape_counts": {
-            "items_by_condition": {condition: sum(item["pair_condition"] == condition for item in episodes) for condition in CONDITIONS},
+            "items_by_condition": {
+                condition: sum(item["pair_condition"] == condition for item in episodes)
+                for condition in CONDITIONS
+            },
             "pairs_by_target_start": dict(sorted(position_counts.items())),
-            "known_answer_length_counts": {str(length): count for length, count in sorted(answer_length_counts.items())},
+            "known_answer_length_counts": {
+                str(length): count for length, count in sorted(answer_length_counts.items())
+            },
             "new_entity_count": len(used_entities - excluded_entities),
             "new_word_count": len(used_words - excluded_words - {ABSTENTION}),
         },
@@ -328,11 +337,22 @@ def _hamming(first: str, second: str) -> int:
 
 def validate_face(face: dict, excluded_entities: set[str], excluded_words: set[str]) -> dict:
     episodes = face.get("episodes", [])
-    require(face.get("schema") == "n1-v24-matched-abstention-diagnostic-face-v1", "v24 schema mismatch")
+    require(
+        face.get("schema") == "n1-v24-matched-abstention-diagnostic-face-v1", "v24 schema mismatch"
+    )
     require(face.get("seed") == SEED and len(episodes) == ITEMS, "v24 seed/item count mismatch")
     require(len({item.get("id") for item in episodes}) == ITEMS, "v24 item IDs are not unique")
-    require(all(item.get("split") == "diagnostic" and item.get("subset") == "diagnostic" for item in episodes), "v24 items must remain diagnostic split")
-    require(all(len(item.get("observations", [])) == OBSERVATIONS for item in episodes), "v24 context length differs")
+    require(
+        all(
+            item.get("split") == "diagnostic" and item.get("subset") == "diagnostic"
+            for item in episodes
+        ),
+        "v24 items must remain diagnostic split",
+    )
+    require(
+        all(len(item.get("observations", [])) == OBSERVATIONS for item in episodes),
+        "v24 context length differs",
+    )
     by_pair: dict[str, dict[str, dict]] = {}
     for item in episodes:
         by_pair.setdefault(item["pair_id"], {})[item["pair_condition"]] = item
@@ -362,19 +382,40 @@ def validate_face(face: dict, excluded_entities: set[str], excluded_words: set[s
             and unknown["answer"] == ABSTENTION,
             f"paired question/target metadata mismatch: {pair_id}",
         )
-        require(answer_length in (6, 7) and unknown["answer_length"] is None, f"answer length mismatch: {pair_id}")
         require(
-            all(known["observations"][i] == unknown["observations"][i] for i in range(OBSERVATIONS) if i != start),
+            answer_length in (6, 7) and unknown["answer_length"] is None,
+            f"answer length mismatch: {pair_id}",
+        )
+        require(
+            all(
+                known["observations"][i] == unknown["observations"][i]
+                for i in range(OBSERVATIONS)
+                if i != start
+            ),
             f"paired contexts differ outside target slot: {pair_id}",
         )
         replacement = unknown["observations"][start]
-        require(replacement.startswith(f"{unknown['entities'][-1]} uses "), f"unknown replacement fact mismatch: {pair_id}")
-        require(not any(row.startswith(f"{target} ") for row in unknown["observations"]), f"unknown condition contains target fact: {pair_id}")
+        require(
+            replacement.startswith(f"{unknown['entities'][-1]} uses "),
+            f"unknown replacement fact mismatch: {pair_id}",
+        )
+        require(
+            not any(row.startswith(f"{target} ") for row in unknown["observations"]),
+            f"unknown condition contains target fact: {pair_id}",
+        )
         for item in (known, unknown):
             names = item["entities"]
-            require(len(names) == len(set(names)), f"duplicate entity within paired item: {item['id']}")
-            require(all(len(name) == ENTITY_LENGTH for name in names), f"entity length differs: {item['id']}")
-            require(all(_hamming(target, name) == DISTANCE for name in names[1:]), f"d=1 name contract differs: {item['id']}")
+            require(
+                len(names) == len(set(names)), f"duplicate entity within paired item: {item['id']}"
+            )
+            require(
+                all(len(name) == ENTITY_LENGTH for name in names),
+                f"entity length differs: {item['id']}",
+            )
+            require(
+                all(_hamming(target, name) == DISTANCE for name in names[1:]),
+                f"d=1 name contract differs: {item['id']}",
+            )
         pair_entities = set(known["entities"]) | set(unknown["entities"])
         pair_materials = {
             row.removesuffix(".").split()[-1]
@@ -382,14 +423,30 @@ def validate_face(face: dict, excluded_entities: set[str], excluded_words: set[s
             for row in item["observations"]
             if " uses " in row
         } | {known["answer"]}
-        require(not (pair_entities & excluded_entities), f"entity overlaps consumed source: {pair_id}")
-        require(not (pair_materials & excluded_words), f"material overlaps consumed source: {pair_id}")
-        require(not (pair_entities & global_pair_entities), f"entity repeats across pair groups: {pair_id}")
-        require(not (pair_materials & global_pair_materials), f"material repeats across pair groups: {pair_id}")
+        require(
+            not (pair_entities & excluded_entities), f"entity overlaps consumed source: {pair_id}"
+        )
+        require(
+            not (pair_materials & excluded_words), f"material overlaps consumed source: {pair_id}"
+        )
+        require(
+            not (pair_entities & global_pair_entities),
+            f"entity repeats across pair groups: {pair_id}",
+        )
+        require(
+            not (pair_materials & global_pair_materials),
+            f"material repeats across pair groups: {pair_id}",
+        )
         global_pair_entities.update(pair_entities)
         global_pair_materials.update(pair_materials)
-    require(all(pair_positions[position] == 8 for position in POSITIONS), "target-position pair balance differs")
-    require(all(pair_answer_lengths[length] == 20 for length in (6, 7)), "known answer-length pair balance differs")
+    require(
+        all(pair_positions[position] == 8 for position in POSITIONS),
+        "target-position pair balance differs",
+    )
+    require(
+        all(pair_answer_lengths[length] == 20 for length in (6, 7)),
+        "known answer-length pair balance differs",
+    )
     require(len(global_pair_entities) == 1_320, "v24 source face entity count differs")
     require(len(global_pair_materials) == 1_320, "v24 source face material count differs")
     return {
@@ -412,7 +469,10 @@ def prepare_face() -> dict:
     entities, words, source_hashes, source_union = _collect_source_union()
     source_hashes[str(PLAN.resolve())] = sha256(PLAN)
     source_hashes[str(Path(__file__).resolve())] = sha256(Path(__file__))
-    require(n144_builder._verify_hashes(source_hashes), "N1-144/v23/N1-146 source changed before face generation")
+    require(
+        n144_builder._verify_hashes(source_hashes),
+        "N1-144/v23/N1-146 source changed before face generation",
+    )
     face = build_face(entities, words)
     validate_face(face, entities, words)
     precheck = {
@@ -504,13 +564,32 @@ def prepare_face() -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PLAN-N1-147 matched known/unknown diagnostic face builder")
+    parser = argparse.ArgumentParser(
+        description="PLAN-N1-147 matched known/unknown diagnostic face builder"
+    )
     parser.add_argument("--prepare-face", action="store_true")
     args = parser.parse_args()
     if not args.prepare_face:
         parser.error("one-shot invocation requires --prepare-face")
     result = prepare_face()
-    print(json.dumps({key: result.get(key) for key in ("status", "complete", "cpu_seconds", "model_queries", "parameter_updates", "can_promote", "summary_zh")}, ensure_ascii=True, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                key: result.get(key)
+                for key in (
+                    "status",
+                    "complete",
+                    "cpu_seconds",
+                    "model_queries",
+                    "parameter_updates",
+                    "can_promote",
+                    "summary_zh",
+                )
+            },
+            ensure_ascii=True,
+            sort_keys=True,
+        )
+    )
     return 0 if result.get("complete") is True else 1
 
 

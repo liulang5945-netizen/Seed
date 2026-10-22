@@ -26,7 +26,10 @@ from taiji import LanguageAlignmentTrainer, LanguageEpisodeCorpus
 from taiji.internalization import content_digest
 
 PLAN = ROOT / "plans/reference/PLAN-R2-THREAD-SCALING-DIAGNOSTIC_20261021.md"
-CHECKPOINT = ROOT / "data/checkpoints/r2_daily_dialogue_warmstart_matched_20261021/warm_start/full_turn_zero.pt"
+CHECKPOINT = (
+    ROOT
+    / "data/checkpoints/r2_daily_dialogue_warmstart_matched_20261021/warm_start/full_turn_zero.pt"
+)
 EPISODES = ROOT / "data/conversation/OASST2/taiji_r2_dialogue_full_turn_pretraining_episodes.jsonl"
 MANIFEST = ROOT / "data/conversation/OASST2/taiji_r2_dialogue_full_turn_pretraining_manifest.json"
 REPORT_ROOT = ROOT / "reports"
@@ -125,12 +128,19 @@ def execute() -> dict[str, Any]:
     if corpus.sample_counts != {"train": 3762, "dev": 0, "final": 0, "retention": 0}:
         raise Refuse(f"thread-scaling corpus split differs: {corpus.sample_counts}")
     payload = torch.load(CHECKPOINT, map_location="cpu", weights_only=True)
-    expected_digest = content_digest({key: value for key, value in payload.items() if key != "checkpoint_digest"})
-    if payload.get("checkpoint_digest") != expected_digest or payload.get("corpus_digest") != corpus.digest:
+    expected_digest = content_digest(
+        {key: value for key, value in payload.items() if key != "checkpoint_digest"}
+    )
+    if (
+        payload.get("checkpoint_digest") != expected_digest
+        or payload.get("corpus_digest") != corpus.digest
+    ):
         raise Refuse("warm-start zero checkpoint digest/corpus binding differs")
     if len(corpus.episodes) < TRIAL_EPISODES:
         raise Refuse("train-only corpus is too small for fixed thread probe")
-    expected_updates = sum(len(episode.target_bytes) for episode in corpus.episodes[:TRIAL_EPISODES])
+    expected_updates = sum(
+        len(episode.target_bytes) for episode in corpus.episodes[:TRIAL_EPISODES]
+    )
     hashes = sources_before
     attempt = {
         "schema": "taiji-r2-thread-scaling-attempt-v1",
@@ -163,7 +173,9 @@ def execute() -> dict[str, Any]:
             torch.set_num_threads(thread_count)
             actual_threads = torch.get_num_threads()
             if actual_threads != thread_count:
-                raise Refuse(f"requested {thread_count} intra-op threads, runtime reports {actual_threads}")
+                raise Refuse(
+                    f"requested {thread_count} intra-op threads, runtime reports {actual_threads}"
+                )
             restore_started_cpu = time.process_time()
             trainer = LanguageAlignmentTrainer.from_checkpoint(payload, corpus)
             restore_cpu = time.process_time() - restore_started_cpu
@@ -211,10 +223,18 @@ def execute() -> dict[str, Any]:
             rows = [row for row in trials if row["actual_intraop_threads"] == count]
             by_threads[str(count)] = {
                 "repeat_count": len(rows),
-                "median_updates_per_cpu_second": round(statistics.median(row["updates_per_cpu_second"] for row in rows), 3),
-                "median_updates_per_wall_second": round(statistics.median(row["updates_per_wall_second"] for row in rows), 3),
-                "median_cpu_seconds": round(statistics.median(row["training_cpu_seconds"] for row in rows), 6),
-                "median_wall_seconds": round(statistics.median(row["training_wall_seconds"] for row in rows), 6),
+                "median_updates_per_cpu_second": round(
+                    statistics.median(row["updates_per_cpu_second"] for row in rows), 3
+                ),
+                "median_updates_per_wall_second": round(
+                    statistics.median(row["updates_per_wall_second"] for row in rows), 3
+                ),
+                "median_cpu_seconds": round(
+                    statistics.median(row["training_cpu_seconds"] for row in rows), 6
+                ),
+                "median_wall_seconds": round(
+                    statistics.median(row["training_wall_seconds"] for row in rows), 6
+                ),
             }
         result = {
             "schema": "taiji-r2-thread-scaling-result-v1",
@@ -241,11 +261,23 @@ def execute() -> dict[str, Any]:
             "can_promote": False,
         }
         write_new(RESULT, result)
-        attempt.update({"status": "complete", "result_sha256": sha256(RESULT), "total_cpu_seconds": result["total_cpu_seconds"]})
+        attempt.update(
+            {
+                "status": "complete",
+                "result_sha256": sha256(RESULT),
+                "total_cpu_seconds": result["total_cpu_seconds"],
+            }
+        )
         write_replace(ATTEMPT, attempt)
         return result
     except BaseException as exc:
-        attempt.update({"status": "failed", "error": f"{type(exc).__name__}: {exc}", "total_cpu_seconds": round(time.process_time() - started_cpu, 6)})
+        attempt.update(
+            {
+                "status": "failed",
+                "error": f"{type(exc).__name__}: {exc}",
+                "total_cpu_seconds": round(time.process_time() - started_cpu, 6),
+            }
+        )
         write_replace(ATTEMPT, attempt)
         raise
     finally:
@@ -259,7 +291,18 @@ def main() -> int:
     except Exception as exc:
         print(f"R2 thread-scaling diagnostic stopped: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 1
-    print(json.dumps({"status": result["status"], "trial_count": len(result["trials"]), "summary_by_threads": result["summary_by_threads"], "total_cpu_seconds": result["total_cpu_seconds"]}, ensure_ascii=False, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                "status": result["status"],
+                "trial_count": len(result["trials"]),
+                "summary_by_threads": result["summary_by_threads"],
+                "total_cpu_seconds": result["total_cpu_seconds"],
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+    )
     return 0
 
 

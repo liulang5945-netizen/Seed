@@ -94,20 +94,12 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
     arm = loaded["--arm-report"]
     assert arm is not None
     cap0 = {key: loaded[key] for key in ("--cap0-before", "--cap0-after", "--cap0-arm")}
-    replay = {
-        key: loaded[key]
-        for key in ("--replay-before", "--replay-after", "--replay-arm")
-    }
-    assert all(v is not None for v in cap0.values()) and all(
-        v is not None for v in replay.values()
-    )
+    replay = {key: loaded[key] for key in ("--replay-before", "--replay-after", "--replay-arm")}
+    assert all(v is not None for v in cap0.values()) and all(v is not None for v in replay.values())
 
     #: 守卫一／二：这一臂必须"只收束"（参数族零差）且产物可载。任一不成立 ⇒ 整件不判。
     arm_guards = {
-        "g_n6_1_parameter_family_unchanged": arm.get(
-            "g_n6_1_parameter_family_unchanged"
-        )
-        is True,
+        "g_n6_1_parameter_family_unchanged": arm.get("g_n6_1_parameter_family_unchanged") is True,
         "g_n6_2_arm_loadable_and_params_identical": arm.get(
             "g_n6_2_arm_loadable_and_params_identical"
         )
@@ -188,8 +180,7 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             for key in tallies
         },
         "replay_strict_hits": {
-            key: {a: v["strict_hits"] for a, v in replay_arms[key].items()}
-            for key in replay_arms
+            key: {a: v["strict_hits"] for a, v in replay_arms[key].items()} for key in replay_arms
         },
         "replay_well_formed": {
             key: {a: v["well_formed_texts"] for a, v in replay_arms[key].items()}
@@ -290,27 +281,13 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="N2-03 归因判读（收束 vs 权重更新）")
-    parser.add_argument(
-        "--arm-report", default="reports/taiji_n2b_resetarm_20261008.json"
-    )
-    parser.add_argument(
-        "--cap0-before", default="reports/taiji_n2_cap0_before_20261008.json"
-    )
-    parser.add_argument(
-        "--cap0-after", default="reports/taiji_n2b_cap0_after_20261008.json"
-    )
-    parser.add_argument(
-        "--cap0-arm", default="reports/taiji_n2b_resetarm_cap0_20261008.json"
-    )
-    parser.add_argument(
-        "--replay-before", default="reports/taiji_n2_replay24_before_20261008.json"
-    )
-    parser.add_argument(
-        "--replay-after", default="reports/taiji_n2b_replay24_after_20261008.json"
-    )
-    parser.add_argument(
-        "--replay-arm", default="reports/taiji_n2b_resetarm_replay24_20261008.json"
-    )
+    parser.add_argument("--arm-report", default="reports/taiji_n2b_resetarm_20261008.json")
+    parser.add_argument("--cap0-before", default="reports/taiji_n2_cap0_before_20261008.json")
+    parser.add_argument("--cap0-after", default="reports/taiji_n2b_cap0_after_20261008.json")
+    parser.add_argument("--cap0-arm", default="reports/taiji_n2b_resetarm_cap0_20261008.json")
+    parser.add_argument("--replay-before", default="reports/taiji_n2_replay24_before_20261008.json")
+    parser.add_argument("--replay-after", default="reports/taiji_n2b_replay24_after_20261008.json")
+    parser.add_argument("--replay-arm", default="reports/taiji_n2b_resetarm_replay24_20261008.json")
     parser.add_argument(
         "--main-column", default="reports/taiji_n2b_resetarm_stop24_main_20261008.json"
     )
@@ -319,9 +296,7 @@ def main(argv: list[str] | None = None) -> int:
         default="reports/taiji_n2b_stop24_main_20261008.json",
         help="run-2 的主列计数件（题集 sha 与臂档必须同一份，G-N6-3）",
     )
-    parser.add_argument(
-        "--out", default="reports/taiji_n2_03_attribution_20261008.json"
-    )
+    parser.add_argument("--out", default="reports/taiji_n2_03_attribution_20261008.json")
     parser.add_argument(
         "--overwrite",
         action="store_true",
@@ -347,15 +322,12 @@ def main(argv: list[str] | None = None) -> int:
     report_io.write_json_report(out_path, payload, newline="\n", overwrite=True)
     print(f"verdict={payload['verdict']}")
     crit = payload.get("criteria") or {}
-    print(
-        f"n_reproduced={crit.get('n_reproduced')} considered={crit.get('columns_considered')}"
-    )
+    print(f"n_reproduced={crit.get('n_reproduced')} considered={crit.get('columns_considered')}")
     print(f"excluded={json.dumps(crit.get('columns_excluded', []))}")
     print(f"guards={json.dumps(payload.get('guards', {}))}")
     if "per_column" in payload:
         print(
-            "attrib_R="
-            + json.dumps({k: v["attrib_R"] for k, v in payload["per_column"].items()})
+            "attrib_R=" + json.dumps({k: v["attrib_R"] for k, v in payload["per_column"].items()})
         )
     print(f"missing={json.dumps(payload.get('missing', []))}")
     print(f"report -> {out_path}")

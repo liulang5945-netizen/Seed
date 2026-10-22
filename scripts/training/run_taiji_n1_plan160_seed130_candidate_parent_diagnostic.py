@@ -381,7 +381,9 @@ def execute_approved() -> dict:
     prior_result = read_json(builder.PRIOR_RESULT)
     prior_rows = list(prior_result.get("fresh_diagnostic_rows", []))
     prior_endpoint_keys = {(int(row["seed"]), str(row["branch"])) for row in prior_rows}
-    if len(prior_rows) != builder.PRIOR_QUERIES or prior_endpoint_keys != {(11, "unknown8_rebalanced")}:
+    if len(prior_rows) != builder.PRIOR_QUERIES or prior_endpoint_keys != {
+        (11, "unknown8_rebalanced")
+    }:
         raise Refuse("PLAN-N1-160A prior face rows are not exactly the sealed seed11 candidate")
     prior_summaries = fresh_summary(prior_rows)
     write_new(
@@ -450,9 +452,9 @@ def execute_approved() -> dict:
                     row = {
                         "seed": endpoint["seed"],
                         "branch": endpoint["branch"],
-                        "model_role": "candidate"
-                        if endpoint["branch"] == "unknown8_rebalanced"
-                        else "parent",
+                        "model_role": (
+                            "candidate" if endpoint["branch"] == "unknown8_rebalanced" else "parent"
+                        ),
                         "event": "fresh_diagnostic_row",
                         **score,
                     }
@@ -500,8 +502,7 @@ def execute_approved() -> dict:
             or query_count > TOTAL_QUERIES - builder.PRIOR_QUERIES
         ):
             raise Refuse(
-                "PLAN-N1-160A continuation progress mismatch: "
-                f"{count}/{len(rows)}/{query_count}"
+                "PLAN-N1-160A continuation progress mismatch: " f"{count}/{len(rows)}/{query_count}"
             )
         integrity = {
             "complete": True,

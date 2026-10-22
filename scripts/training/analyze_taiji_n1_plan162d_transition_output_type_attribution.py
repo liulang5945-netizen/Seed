@@ -75,7 +75,9 @@ def write_new(path: Path, value: dict) -> None:
 
 
 def _turned(initial: str, turn: str) -> str:
-    require(initial in DIRECTIONS and turn in TURNS, f"invalid direction/turn pair: {initial}/{turn}")
+    require(
+        initial in DIRECTIONS and turn in TURNS, f"invalid direction/turn pair: {initial}/{turn}"
+    )
     offset = 1 if turn == "right" else -1
     return DIRECTIONS[(DIRECTIONS.index(initial) + offset) % len(DIRECTIONS)]
 
@@ -90,10 +92,14 @@ def _input_transition(item: dict) -> tuple[str, str, str]:
     first = observations[0].removesuffix(".").split()
     second = observations[1].removesuffix(".").split()
     require(len(first) == 3 and first[1] == "faces", f"invalid face observation: {observations[0]}")
-    require(len(second) == 3 and second[1] == "turns", f"invalid turn observation: {observations[1]}")
+    require(
+        len(second) == 3 and second[1] == "turns", f"invalid turn observation: {observations[1]}"
+    )
     initial, turn = first[2], second[2]
     answer = _turned(initial, turn)
-    require(item.get("answer") == answer, f"v3 transition target formula mismatch: {item.get('id')}")
+    require(
+        item.get("answer") == answer, f"v3 transition target formula mismatch: {item.get('id')}"
+    )
     return initial, turn, answer
 
 
@@ -140,7 +146,10 @@ def _progress_transition_rows() -> tuple[list[dict], dict[str, int], int]:
             if event == "original_train_gate_row" and row.get("kind") == "transition":
                 transitions.append(row)
     require(not malformed, f"malformed progress rows: {malformed[:3]}")
-    require(dict(counts) == n162c.EXPECTED_EVENTS and total == sum(n162c.EXPECTED_EVENTS.values()), f"N1-162B progress counts differ: {dict(counts)}")
+    require(
+        dict(counts) == n162c.EXPECTED_EVENTS and total == sum(n162c.EXPECTED_EVENTS.values()),
+        f"N1-162B progress counts differ: {dict(counts)}",
+    )
     require(len(transitions) == EXPECTED_TRANSITION_ROWS, "N1-162B transition row count differs")
     return transitions, dict(sorted(counts.items())), total
 
@@ -159,10 +168,19 @@ def _endpoint_bind(rows: list[dict]) -> list[dict]:
     for seed, arm in ENDPOINTS:
         chunk = rows[cursor : cursor + TRANSITION_ROWS_PER_ENDPOINT]
         cursor += TRANSITION_ROWS_PER_ENDPOINT
-        require(len(chunk) == TRANSITION_ROWS_PER_ENDPOINT, f"transition endpoint chunk is truncated: {seed}/{arm}")
-        require(all(int(row.get("seed", -1)) == seed and row.get("arm") == "position" for row in chunk), f"transition endpoint source order differs: {seed}/{arm}")
+        require(
+            len(chunk) == TRANSITION_ROWS_PER_ENDPOINT,
+            f"transition endpoint chunk is truncated: {seed}/{arm}",
+        )
+        require(
+            all(int(row.get("seed", -1)) == seed and row.get("arm") == "position" for row in chunk),
+            f"transition endpoint source order differs: {seed}/{arm}",
+        )
         view_counts = Counter(str(row.get("evaluation_set")) for row in chunk)
-        require(dict(view_counts) == expected_views, f"transition view denominators differ: {seed}/{arm}/{dict(view_counts)}")
+        require(
+            dict(view_counts) == expected_views,
+            f"transition view denominators differ: {seed}/{arm}/{dict(view_counts)}",
+        )
         for row in chunk:
             value = dict(row)
             value["experiment_arm"] = arm
@@ -170,7 +188,9 @@ def _endpoint_bind(rows: list[dict]) -> list[dict]:
     return bound
 
 
-def _expected_lookup(inputs: dict, factorial) -> dict[tuple[int, str, str, str], tuple[str, str, str]]:
+def _expected_lookup(
+    inputs: dict, factorial
+) -> dict[tuple[int, str, str, str], tuple[str, str, str]]:
     expected = {}
     for view in ("original", "rename"):
         items = [item for item in inputs["views"][view] if item.get("kind") == "transition"]
@@ -184,7 +204,10 @@ def _expected_lookup(inputs: dict, factorial) -> dict[tuple[int, str, str, str],
                 turn_variant = str(variant["turn"])
                 variant_answer = str(variant["item"]["answer"])
                 formula_answer = _turned(initial_variant, turn_variant)
-                require(variant_answer == formula_answer, f"factorial source formula differs: {item['id']}/{condition}")
+                require(
+                    variant_answer == formula_answer,
+                    f"factorial source formula differs: {item['id']}/{condition}",
+                )
                 key = (f"factorial_{view}", str(item["id"]), condition, f"{item['id']}:{condition}")
                 expected[key] = (initial_variant, turn_variant, variant_answer)
     return expected
@@ -194,18 +217,32 @@ def _paired_type_summary(rows: list[dict]) -> tuple[list[dict], list[dict]]:
     keyed = {}
     group_counts = defaultdict(Counter)
     for row in rows:
-        key = (int(row["seed"]), str(row["evaluation_set"]), str(row["id"]), row.get("condition"), row.get("case_id"))
+        key = (
+            int(row["seed"]),
+            str(row["evaluation_set"]),
+            str(row["id"]),
+            row.get("condition"),
+            row.get("case_id"),
+        )
         cell = keyed.setdefault(key, {})
         arm = str(row["experiment_arm"])
         require(arm not in cell, f"duplicate transition output row: {key}/{arm}")
         cell[arm] = row
-    require(all(set(cell) == set(ARMS) for cell in keyed.values()), "transition output pair coverage differs")
+    require(
+        all(set(cell) == set(ARMS) for cell in keyed.values()),
+        "transition output pair coverage differs",
+    )
     transitions = Counter()
     for key, cell in keyed.items():
         control = cell["surface_control"]["output_type"]
         augmented = cell["surface_augmented"]["output_type"]
         transitions[(key[1], control, augmented)] += 1
-        group = (key[0], key[1], str(cell["surface_control"]["kind"]), cell["surface_control"].get("condition"))
+        group = (
+            key[0],
+            key[1],
+            str(cell["surface_control"]["kind"]),
+            cell["surface_control"].get("condition"),
+        )
         counts = group_counts[group]
         counts["items"] += 1
         counts["control_exact"] += control == "correct_exact"
@@ -213,9 +250,19 @@ def _paired_type_summary(rows: list[dict]) -> tuple[list[dict], list[dict]]:
         counts["output_type_changed"] += control != augmented
     paired = []
     for (view, control_type, augmented_type), count in sorted(transitions.items()):
-        paired.append({"evaluation_set": view, "control_output_type": control_type, "augmented_output_type": augmented_type, "items": count})
+        paired.append(
+            {
+                "evaluation_set": view,
+                "control_output_type": control_type,
+                "augmented_output_type": augmented_type,
+                "items": count,
+            }
+        )
     grouped = []
-    for key, counts in sorted(group_counts.items(), key=lambda pair: tuple("" if value is None else str(value) for value in pair[0])):
+    for key, counts in sorted(
+        group_counts.items(),
+        key=lambda pair: tuple("" if value is None else str(value) for value in pair[0]),
+    ):
         seed, view, kind, condition = key
         row = {"seed": seed, "evaluation_set": view, "kind": kind, "condition": condition}
         row.update({name: int(value) for name, value in sorted(counts.items())})
@@ -251,7 +298,10 @@ def analyze() -> dict:
     bound = _endpoint_bind(transitions)
     inputs_bound = n132._build_context(load_inputs=True)
     inputs = inputs_bound["inputs"]
-    require(inputs is not None and len(inputs.get("items", [])) == 192, "N1-132 frozen training inputs are required")
+    require(
+        inputs is not None and len(inputs.get("items", [])) == 192,
+        "N1-132 frozen training inputs are required",
+    )
     factorial = inputs_bound["g"]["calibration"].engineering.factorial
     expected = _expected_lookup(inputs, factorial)
     expected_transition_rows = 0
@@ -270,41 +320,78 @@ def analyze() -> dict:
             raise Refuse(f"transition expected-answer binding missing: {key}")
         initial, turn, answer = expected[key]
         if view.startswith("factorial_"):
-            require(row.get("initial_direction") == initial and row.get("turn") == turn, f"factorial condition metadata differs: {key}")
-        output_type = _classify_output(str(row["raw_hex"]), str(row["stop_reason"]), answer, initial, turn)
+            require(
+                row.get("initial_direction") == initial and row.get("turn") == turn,
+                f"factorial condition metadata differs: {key}",
+            )
+        output_type = _classify_output(
+            str(row["raw_hex"]), str(row["stop_reason"]), answer, initial, turn
+        )
         recomputed = output_type == "correct_exact"
-        require(recomputed is bool(row.get("free_exact")), f"transition free_exact recomputation differs: {key}")
+        require(
+            recomputed is bool(row.get("free_exact")),
+            f"transition free_exact recomputation differs: {key}",
+        )
         exact_reproduced += 1
         expected_transition_rows += 1
-        category_counts[(int(row["seed"]), str(row["experiment_arm"]), view, str(row.get("condition") or ""), output_type)] += 1
-        output_rows.append({
-            "seed": int(row["seed"]),
-            "arm": str(row["experiment_arm"]),
-            "experiment_arm": str(row["experiment_arm"]),
-            "evaluation_set": view,
-            "kind": "transition",
-            "id": item_id,
-            "parent_id": item_id,
-            "condition": row.get("condition"),
-            "case_id": row.get("case_id"),
-            "initial_direction": initial,
-            "turn": turn,
-            "expected_answer": answer,
-            "raw_hex": row["raw_hex"],
-            "output_type": output_type,
-            "free_exact_stored": row["free_exact"],
-            "stop_reason": row["stop_reason"],
-        })
-    require(expected_transition_rows == EXPECTED_TRANSITION_ROWS == 2_880 and exact_reproduced == 2_880, "transition row/answer-reconstruction denominator differs")
+        category_counts[
+            (
+                int(row["seed"]),
+                str(row["experiment_arm"]),
+                view,
+                str(row.get("condition") or ""),
+                output_type,
+            )
+        ] += 1
+        output_rows.append(
+            {
+                "seed": int(row["seed"]),
+                "arm": str(row["experiment_arm"]),
+                "experiment_arm": str(row["experiment_arm"]),
+                "evaluation_set": view,
+                "kind": "transition",
+                "id": item_id,
+                "parent_id": item_id,
+                "condition": row.get("condition"),
+                "case_id": row.get("case_id"),
+                "initial_direction": initial,
+                "turn": turn,
+                "expected_answer": answer,
+                "raw_hex": row["raw_hex"],
+                "output_type": output_type,
+                "free_exact_stored": row["free_exact"],
+                "stop_reason": row["stop_reason"],
+            }
+        )
+    require(
+        expected_transition_rows == EXPECTED_TRANSITION_ROWS == 2_880 and exact_reproduced == 2_880,
+        "transition row/answer-reconstruction denominator differs",
+    )
     template_exposure = analysis.get("augmented_template_exposure_by_parent", {})
     for row in output_rows:
         row["augmented_template_exposure_by_length"] = template_exposure.get(row["parent_id"], {})
     paired_output_types, paired_gate_groups = _paired_type_summary(output_rows)
     counts_report = []
-    for key, count in sorted(category_counts.items(), key=lambda item: tuple(str(v) for v in item[0])):
+    for key, count in sorted(
+        category_counts.items(), key=lambda item: tuple(str(v) for v in item[0])
+    ):
         seed, arm, view, condition, output_type = key
-        counts_report.append({"seed": seed, "arm": arm, "evaluation_set": view, "condition": condition or None, "output_type": output_type, "items": int(count)})
-    require(sha256(N162B_RESULT) == N162B_RESULT_SHA256 and sha256(PROGRESS) == PROGRESS_SHA256 and n150_builder.verify_hashes(source_hashes), "N1-162B source evidence changed during attribution")
+        counts_report.append(
+            {
+                "seed": seed,
+                "arm": arm,
+                "evaluation_set": view,
+                "condition": condition or None,
+                "output_type": output_type,
+                "items": int(count),
+            }
+        )
+    require(
+        sha256(N162B_RESULT) == N162B_RESULT_SHA256
+        and sha256(PROGRESS) == PROGRESS_SHA256
+        and n150_builder.verify_hashes(source_hashes),
+        "N1-162B source evidence changed during attribution",
+    )
     cpu = time.process_time() - started
     complete = cpu <= CPU_LIMIT_SECONDS
     report_sources = {
@@ -361,7 +448,27 @@ def main() -> int:
     args = parser.parse_args()
     del args
     report = analyze()
-    print(json.dumps({key: report.get(key) for key in ("status", "complete", "cpu_seconds", "transition_rows", "answer_reconstruction_rows", "model_loads", "model_queries", "parameter_updates", "can_promote", "summary_zh")}, ensure_ascii=True, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                key: report.get(key)
+                for key in (
+                    "status",
+                    "complete",
+                    "cpu_seconds",
+                    "transition_rows",
+                    "answer_reconstruction_rows",
+                    "model_loads",
+                    "model_queries",
+                    "parameter_updates",
+                    "can_promote",
+                    "summary_zh",
+                )
+            },
+            ensure_ascii=True,
+            sort_keys=True,
+        )
+    )
     return 0 if report.get("complete") is True else 1
 
 

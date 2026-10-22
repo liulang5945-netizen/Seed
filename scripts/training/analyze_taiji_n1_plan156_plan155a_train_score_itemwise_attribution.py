@@ -22,7 +22,10 @@ N155A_RESULT_SHA256 = "e577d4dda753d016a46e11ab2e0202b2845206af107c54f87aff7f9fd
 PROGRESS = ROOT / "reports/taiji_n1_plan155a_unknown8_rebalance_progress_20261020.jsonl"
 PROGRESS_SHA256 = "83e951930272d30ab3b70a0164dba0ef628d8876a8138708be08a97d3a7acf73"
 REPORT = ROOT / "reports/taiji_n1_plan156_plan155a_train_score_itemwise_attribution_20261020.json"
-TEST = ROOT / "tests/taiji_native/test_n1_plan156_plan155a_train_score_itemwise_attribution_contract.py"
+TEST = (
+    ROOT
+    / "tests/taiji_native/test_n1_plan156_plan155a_train_score_itemwise_attribution_contract.py"
+)
 
 BRANCHES = ("unknown8_rebalanced", "uniform_length_replay")
 GATE_EVENT = "original_train_gate_row"
@@ -98,7 +101,9 @@ def paired_summary(
         counts["both_wrong"] += not candidate and not control
 
     output = []
-    for group in sorted(groups, key=lambda key: tuple("" if value is None else str(value) for value in key)):
+    for group in sorted(
+        groups, key=lambda key: tuple("" if value is None else str(value) for value in key)
+    ):
         row = dict(zip(group_fields, group, strict=True))
         row.update({key: int(value) for key, value in sorted(groups[group].items())})
         output.append(row)
@@ -187,8 +192,13 @@ def analyze() -> dict:
             elif event == LENGTH_EVENT:
                 length_rows.append(row)
     if malformed or dict(events) != EXPECTED_COUNTS or total_rows != sum(EXPECTED_COUNTS.values()):
-        raise Refuse(f"N1-155A progress denominator/schema differs: {dict(events)} malformed={len(malformed)}")
-    if len(gate_rows) != EXPECTED_COUNTS[GATE_EVENT] or len(length_rows) != EXPECTED_COUNTS[LENGTH_EVENT]:
+        raise Refuse(
+            f"N1-155A progress denominator/schema differs: {dict(events)} malformed={len(malformed)}"
+        )
+    if (
+        len(gate_rows) != EXPECTED_COUNTS[GATE_EVENT]
+        or len(length_rows) != EXPECTED_COUNTS[LENGTH_EVENT]
+    ):
         raise Refuse("N1-156 scored-row extraction differs from the frozen denominator")
 
     gate_paired = paired_summary(
@@ -256,7 +266,9 @@ def analyze() -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PLAN-N1-156 N1-155A train-only itemwise attribution")
+    parser = argparse.ArgumentParser(
+        description="PLAN-N1-156 N1-155A train-only itemwise attribution"
+    )
     parser.parse_args()
     report = analyze()
     print(

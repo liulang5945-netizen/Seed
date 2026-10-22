@@ -121,14 +121,8 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         )
 
     assert powerup is not None and guard is not None
-    assert (
-        cap0_before is not None and cap0_after is not None and cap0_rollback is not None
-    )
-    assert (
-        replay_before is not None
-        and replay_after is not None
-        and main_column is not None
-    )
+    assert cap0_before is not None and cap0_after is not None and cap0_rollback is not None
+    assert replay_before is not None and replay_after is not None and main_column is not None
 
     before_tally = _cap0_tally(cap0_before)
     after_tally = _cap0_tally(cap0_after)
@@ -187,12 +181,8 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         )
 
     #: §3 G-N2-1 的面级实证：回退面与巩固前**读数**逐位同（剥易变＋剥出处，出处差另列出来核对）。
-    comparable_before = json.dumps(
-        _strip_volatile(cap0_before, top=True), sort_keys=True
-    )
-    comparable_rollback = json.dumps(
-        _strip_volatile(cap0_rollback, top=True), sort_keys=True
-    )
+    comparable_before = json.dumps(_strip_volatile(cap0_before, top=True), sort_keys=True)
+    comparable_rollback = json.dumps(_strip_volatile(cap0_rollback, top=True), sort_keys=True)
     comparable_after = json.dumps(_strip_volatile(cap0_after, top=True), sort_keys=True)
     g_n2_1_face_identical = comparable_before == comparable_rollback
     #: 动态范围：这把尺量不动权重变化时，"保持住了"不成立（第一次实测 `ruler_usable=true`）。
@@ -227,16 +217,8 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         #: 配对键必须是**同一个列名**，不是文件名——文件名两档天然不同，
         #: 拿它当列名会让 `_compare_columns` 把两侧都记成"对面缺这一列"（本机自测踩到）。
         main_cols = _compare_columns(
-            {
-                "never_lf_eaters_counted": entries[before_names[0]][
-                    "never_lf_eaters_counted"
-                ]
-            },
-            {
-                "never_lf_eaters_counted": entries[after_names[0]][
-                    "never_lf_eaters_counted"
-                ]
-            },
+            {"never_lf_eaters_counted": entries[before_names[0]]["never_lf_eaters_counted"]},
+            {"never_lf_eaters_counted": entries[after_names[0]]["never_lf_eaters_counted"]},
             direction="smaller",
             label="stop24_main_column_never_lf_eaters_counted",
         )
@@ -258,9 +240,7 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
     groups = [cap0_cols, replay_hits, replay_formed, main_cols]
     j_n2a_prime = all(g["all_held"] for g in groups)
     dropped_map = {g["column_group"]: g["dropped"] for g in groups if g["dropped"]}
-    unverified_map = {
-        g["column_group"]: g["unverified"] for g in groups if g.get("unverified")
-    }
+    unverified_map = {g["column_group"]: g["unverified"] for g in groups if g.get("unverified")}
 
     #: ---- J-持久化／J-N2b'：结论住在通电件里，本件只搬运＋核对不自相矛盾 ----
     j_persistence = bool(powerup.get("j_persistence"))
@@ -289,8 +269,7 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         (guard.get("organs") or {}).get("ran") is False
         and guard_checks.get("organs_ran_false") is True
         and guard_checks.get("weight_digest_unchanged") is True
-        and str(guard.get("digest_before") or "")
-        == str(guard.get("digest_after") or "")
+        and str(guard.get("digest_before") or "") == str(guard.get("digest_after") or "")
         and bool(SHA64.match(str(guard.get("digest_before") or "")))
     )
     g_n2_1_digest = bool(powerup.get("restore_matches_mother")) and bool(
@@ -401,31 +380,15 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(
-        description="N2 第二次通电面判读（PLAN-N2-02 §2/§3）"
-    )
+    parser = argparse.ArgumentParser(description="N2 第二次通电面判读（PLAN-N2-02 §2/§3）")
     parser.add_argument("--powerup", default="reports/taiji_n2b_powerup_20261008.json")
-    parser.add_argument(
-        "--guard-default", default="reports/taiji_n2b_guard_default_20261008.json"
-    )
-    parser.add_argument(
-        "--cap0-before", default="reports/taiji_n2_cap0_before_20261008.json"
-    )
-    parser.add_argument(
-        "--cap0-after", default="reports/taiji_n2b_cap0_after_20261008.json"
-    )
-    parser.add_argument(
-        "--cap0-rollback", default="reports/taiji_n2b_cap0_rollback_20261008.json"
-    )
-    parser.add_argument(
-        "--replay-before", default="reports/taiji_n2_replay24_before_20261008.json"
-    )
-    parser.add_argument(
-        "--replay-after", default="reports/taiji_n2b_replay24_after_20261008.json"
-    )
-    parser.add_argument(
-        "--main-column", default="reports/taiji_n2b_stop24_main_20261008.json"
-    )
+    parser.add_argument("--guard-default", default="reports/taiji_n2b_guard_default_20261008.json")
+    parser.add_argument("--cap0-before", default="reports/taiji_n2_cap0_before_20261008.json")
+    parser.add_argument("--cap0-after", default="reports/taiji_n2b_cap0_after_20261008.json")
+    parser.add_argument("--cap0-rollback", default="reports/taiji_n2b_cap0_rollback_20261008.json")
+    parser.add_argument("--replay-before", default="reports/taiji_n2_replay24_before_20261008.json")
+    parser.add_argument("--replay-after", default="reports/taiji_n2b_replay24_after_20261008.json")
+    parser.add_argument("--main-column", default="reports/taiji_n2b_stop24_main_20261008.json")
     parser.add_argument("--out", default="reports/taiji_n2b_face_verdict_20261008.json")
     parser.add_argument(
         "--overwrite",

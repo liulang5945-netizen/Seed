@@ -23,7 +23,9 @@ def test_v20_face_balances_all_three_distances_at_fixed_context_sizes() -> None:
     assert face["seed"] == 120
     assert len(face["episodes"]) == 56
     assert len(face["matched_templates"]) == 8
-    assert Counter((item["context_length"], item["condition"]) for item in face["episodes"]) == Counter(
+    assert Counter(
+        (item["context_length"], item["condition"]) for item in face["episodes"]
+    ) == Counter(
         {
             (2, "baseline"): 8,
             (8, "d1"): 8,
@@ -107,18 +109,17 @@ def test_v20_summary_preserves_condition_denominators_and_dose_pairs() -> None:
                             "stop_reason": "boundary" if exact else "limit",
                         }
                     )
-                endpoint_rows.append(
-                    {"source": source, "seed": seed, "arm": arm, "rows": rows}
-                )
+                endpoint_rows.append({"source": source, "seed": seed, "arm": arm, "rows": rows})
 
     by_endpoint, comparisons = evaluator._summarize_conditions(face, endpoint_rows)
 
     assert len(by_endpoint) == 12
     assert len(comparisons) == 12
     for summary in by_endpoint.values():
-        assert [summary["by_condition"][key]["items"] for key in (
-            "2/baseline", "8/d1", "8/d2", "8/d4", "16/d1", "16/d2", "16/d4"
-        )] == [8, 8, 8, 8, 8, 8, 8]
+        assert [
+            summary["by_condition"][key]["items"]
+            for key in ("2/baseline", "8/d1", "8/d2", "8/d4", "16/d1", "16/d2", "16/d4")
+        ] == [8, 8, 8, 8, 8, 8, 8]
         assert len(summary["by_matched_template"]) == 8
     for summary in comparisons.values():
         assert summary["8_d1_vs_d2"]["first_only_correct"] == 3
@@ -128,7 +129,9 @@ def test_v20_summary_preserves_condition_denominators_and_dose_pairs() -> None:
 
 def test_v20_trace_retains_distance_and_exact_generation_bytes() -> None:
     item = next(
-        item for item in _face()["episodes"] if item["context_length"] == 16 and item["condition"] == "d4"
+        item
+        for item in _face()["episodes"]
+        if item["context_length"] == 16 and item["condition"] == "d4"
     )
     traced = evaluator._attach_item_trace(
         {

@@ -169,9 +169,7 @@ def build_report() -> dict:
         expected_count = (
             0
             if item["kind"] == "unknown"
-            else 2
-            if item["kind"] in ("revision", "transition")
-            else 1
+            else 2 if item["kind"] in ("revision", "transition") else 1
         )
         if len(positions) != expected_count:
             raise ValueError(f"target observation positions are malformed for {item_id}")

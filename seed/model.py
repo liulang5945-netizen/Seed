@@ -229,12 +229,8 @@ class Seed:
             "config": self.config.to_dict(),
             # Canonical v1 cognitive envelope.  ``substrate`` remains a
             # readable compatibility payload for seed-native-v1 consumers.
-            "taiji": self.substrate.native_checkpoint(
-                _kernel_checkpoint=kernel_checkpoint
-            ),
-            "substrate": self.substrate.checkpoint(
-                _kernel_checkpoint=kernel_checkpoint
-            ),
+            "taiji": self.substrate.native_checkpoint(_kernel_checkpoint=kernel_checkpoint),
+            "substrate": self.substrate.checkpoint(_kernel_checkpoint=kernel_checkpoint),
         }
 
     def restore(self, checkpoint: Mapping[str, Any]) -> None:

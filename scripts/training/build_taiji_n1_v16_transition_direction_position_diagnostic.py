@@ -525,9 +525,9 @@ def source_readiness() -> dict:
         "status": "ready_for_approved_execution" if not errors else "stopped",
         "complete": not errors,
         "plan_sha256": PLAN_SHA256,
-        "source_exclusion_manifest_sha256": sha256(SOURCE_EXCLUSIONS)
-        if SOURCE_EXCLUSIONS.exists()
-        else None,
+        "source_exclusion_manifest_sha256": (
+            sha256(SOURCE_EXCLUSIONS) if SOURCE_EXCLUSIONS.exists() else None
+        ),
         "source_hashes": source_hashes,
         "endpoint_count": len(endpoint_restores),
         "endpoint_restores": endpoint_restores,
@@ -542,9 +542,11 @@ def source_readiness() -> dict:
         "cpu_seconds": cpu,
         "cpu_limit_seconds": CPU_LIMIT_SECONDS,
         "can_promote": False,
-        "summary_zh": "12个完整checkpoint bundle恢复和v15扩展来源并集已核验；本阶段未生成新面、未查询、未更新。"
-        if not errors
-        else "N1-134 readiness停止；保留失败收据，不生成新面、不查询、不更新。",
+        "summary_zh": (
+            "12个完整checkpoint bundle恢复和v15扩展来源并集已核验；本阶段未生成新面、未查询、未更新。"
+            if not errors
+            else "N1-134 readiness停止；保留失败收据，不生成新面、不查询、不更新。"
+        ),
         "errors": errors,
     }
     report["readiness_attempt_sha256"] = sha256(READINESS_ATTEMPT)

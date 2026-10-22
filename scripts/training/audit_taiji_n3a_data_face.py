@@ -120,9 +120,7 @@ def build_face(corpus: list[Path], progress: Path) -> tuple[dict[str, Any], int]
     rows: list[dict[str, Any]] = []
     if progress.is_file():
         rows = [
-            json.loads(line)
-            for line in progress.read_text(encoding="utf-8").splitlines()
-            if line
+            json.loads(line) for line in progress.read_text(encoding="utf-8").splitlines() if line
         ]
     if not rows:
         face["missing"].append("progress_rows")
@@ -188,16 +186,10 @@ def build_face(corpus: list[Path], progress: Path) -> tuple[dict[str, Any], int]
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(
-        description="N3 甲 §8.7 五项取数面（只读、不动训练器）"
-    )
-    parser.add_argument(
-        "--corpus", action="append", required=True, help="语料 jsonl（可重复）"
-    )
+    parser = argparse.ArgumentParser(description="N3 甲 §8.7 五项取数面（只读、不动训练器）")
+    parser.add_argument("--corpus", action="append", required=True, help="语料 jsonl（可重复）")
     parser.add_argument("--progress", required=True, help="该次训练的 progress.jsonl")
-    parser.add_argument(
-        "--out-report", default=None, help="落盘路径；不给只打到 stdout"
-    )
+    parser.add_argument("--out-report", default=None, help="落盘路径；不给只打到 stdout")
     parser.add_argument(
         "--overwrite",
         action="store_true",
@@ -205,14 +197,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    corpus = [
-        Path(raw) if Path(raw).is_absolute() else PROJECT_ROOT / raw
-        for raw in args.corpus
-    ]
+    corpus = [Path(raw) if Path(raw).is_absolute() else PROJECT_ROOT / raw for raw in args.corpus]
     progress = (
-        Path(args.progress)
-        if Path(args.progress).is_absolute()
-        else PROJECT_ROOT / args.progress
+        Path(args.progress) if Path(args.progress).is_absolute() else PROJECT_ROOT / args.progress
     )
     face, rc = build_face(corpus, progress)
 

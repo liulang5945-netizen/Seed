@@ -13,9 +13,14 @@ from scripts.training import build_taiji_n1_v23_confirmation_after_n143 as n144_
 from scripts.training import build_taiji_n1_v24_abstention_after_n146 as face_builder
 from scripts.training import eval_taiji_n1_v24_abstention_after_n146 as frozen_eval
 
-REPAIR_PLAN = ROOT / "plans/reference/PLAN-N1-147A_readiness_verifier_binding_correction_20261019.md"
+REPAIR_PLAN = (
+    ROOT / "plans/reference/PLAN-N1-147A_readiness_verifier_binding_correction_20261019.md"
+)
 REPAIR_PLAN_SHA256 = "7f92146eb583cea46951b439e49294738ff5800656b2b63d4185848abd383d39"
-N147_PLAN = ROOT / "plans/reference/PLAN-N1-147_matched_known_unknown_abstention_diagnostic_draft_20261019.md"
+N147_PLAN = (
+    ROOT
+    / "plans/reference/PLAN-N1-147_matched_known_unknown_abstention_diagnostic_draft_20261019.md"
+)
 N147_PLAN_SHA256 = "4d6c9799741d3290f5f1e6cda4325268ce086027e4d14a72f82a7f3662e09be8"
 N147_BUILDER_SHA256 = "d3f1d03b483e731faed9ec323c959cc16f691c08b7ccc50338da2dd5248942a8"
 N147_EVALUATOR_SHA256 = "611ab328f4b896cfde86891a815acbf6a1ad7fe77897b9231dd59ddb2db3fe80"

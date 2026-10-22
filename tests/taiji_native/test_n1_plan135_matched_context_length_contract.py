@@ -73,9 +73,7 @@ def test_v17_summary_preserves_length_denominators_and_matched_pairs() -> None:
                             "stop_reason": "boundary" if exact else "limit",
                         }
                     )
-                endpoint_rows.append(
-                    {"source": source, "seed": seed, "arm": arm, "rows": rows}
-                )
+                endpoint_rows.append({"source": source, "seed": seed, "arm": arm, "rows": rows})
 
     by_endpoint, paired = evaluator._summarize_matched_lengths(face, endpoint_rows)
 

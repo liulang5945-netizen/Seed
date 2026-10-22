@@ -67,14 +67,25 @@ def verify_length_rows(rows: list[dict]) -> dict:
         length = int(row["context_length"])
         kind = str(row["kind"])
         item_id = str(row["id"])
-        if seed not in SEEDS or branch not in BRANCHES or length not in LENGTHS or kind not in KINDS:
-            raise Refuse(f"unexpected endpoint or descriptor stratum: {seed}/{branch}/{length}/{kind}")
+        if (
+            seed not in SEEDS
+            or branch not in BRANCHES
+            or length not in LENGTHS
+            or kind not in KINDS
+        ):
+            raise Refuse(
+                f"unexpected endpoint or descriptor stratum: {seed}/{branch}/{length}/{kind}"
+            )
         key = (seed, branch, length, item_id)
         if key in keyed:
             raise Refuse(f"duplicate endpoint/length/item row: {key}")
         keyed[key] = row
         counts[(seed, branch, length, kind)] += 1
-        if kind == "unknown" and row.get("free_exact") is True and row.get("output_hex") != UNKNOWN_HEX:
+        if (
+            kind == "unknown"
+            and row.get("free_exact") is True
+            and row.get("output_hex") != UNKNOWN_HEX
+        ):
             raise Refuse(f"unknown exact row is not a literal unknown output: {key}")
     expected_counts = {
         (seed, branch, length, kind): 24
@@ -120,14 +131,18 @@ def aggregate_by_branch_length_kind(rows: list[dict]) -> list[dict]:
         for length in LENGTHS:
             for kind in KINDS:
                 selected = groups[(branch, length, kind)]
-                result.append({
-                    "branch": branch,
-                    "context_length": length,
-                    "kind": kind,
-                    "items": len(selected),
-                    "free_exact": sum(row.get("free_exact") is True for row in selected),
-                    "literal_unknown": sum(row.get("output_hex") == UNKNOWN_HEX for row in selected),
-                })
+                result.append(
+                    {
+                        "branch": branch,
+                        "context_length": length,
+                        "kind": kind,
+                        "items": len(selected),
+                        "free_exact": sum(row.get("free_exact") is True for row in selected),
+                        "literal_unknown": sum(
+                            row.get("output_hex") == UNKNOWN_HEX for row in selected
+                        ),
+                    }
+                )
     return result
 
 
@@ -139,7 +154,9 @@ def matched_candidate_control(rows: list[dict]) -> list[dict]:
     groups: dict[tuple[int, str], Counter] = defaultdict(Counter)
     for seed in SEEDS:
         for length in LENGTHS:
-            for item_id in sorted({key[2] for key in by_endpoint_item if key[0] == seed and key[1] == length}):
+            for item_id in sorted(
+                {key[2] for key in by_endpoint_item if key[0] == seed and key[1] == length}
+            ):
                 candidate = by_endpoint_item[(seed, length, item_id, "length_mixed")]
                 control = by_endpoint_item[(seed, length, item_id, "eight_row_control")]
                 if candidate["kind"] != control["kind"]:
@@ -156,18 +173,26 @@ def matched_candidate_control(rows: list[dict]) -> list[dict]:
     for length in LENGTHS:
         for kind in KINDS:
             counts = groups[(length, kind)]
-            output.append({
-                "context_length": length,
-                "kind": kind,
-                "pairs": sum(counts.values()),
-                **{label: counts.get(outcome, 0) for outcome, label in labels.items()},
-            })
+            output.append(
+                {
+                    "context_length": length,
+                    "kind": kind,
+                    "pairs": sum(counts.values()),
+                    **{label: counts.get(outcome, 0) for outcome, label in labels.items()},
+                }
+            )
     return output
 
 
 def within_branch_transitions(rows: list[dict]) -> list[dict]:
     keyed = {
-        (int(row["seed"]), str(row["branch"]), str(row["kind"]), str(row["id"]), int(row["context_length"])): row
+        (
+            int(row["seed"]),
+            str(row["branch"]),
+            str(row["kind"]),
+            str(row["id"]),
+            int(row["context_length"]),
+        ): row
         for row in rows
     }
     labels = {
@@ -193,24 +218,30 @@ def within_branch_transitions(rows: list[dict]) -> list[dict]:
                         if s == seed and b == branch and k == kind and length == second
                     }
                     if first_ids != second_ids or len(first_ids) != 24:
-                        raise Refuse(f"within-branch item pairing differs: {seed}/{branch}/{kind}/{first}->{second}")
+                        raise Refuse(
+                            f"within-branch item pairing differs: {seed}/{branch}/{kind}/{first}->{second}"
+                        )
                     for item_id in first_ids:
                         a = keyed[(seed, branch, kind, item_id, first)]
                         b = keyed[(seed, branch, kind, item_id, second)]
                         counts[(bool(a.get("free_exact")), bool(b.get("free_exact")))] += 1
-                output.append({
-                    "branch": branch,
-                    "kind": kind,
-                    "from_length": first,
-                    "to_length": second,
-                    "pairs": sum(counts.values()),
-                    **{label: counts.get(outcome, 0) for outcome, label in labels.items()},
-                })
+                output.append(
+                    {
+                        "branch": branch,
+                        "kind": kind,
+                        "from_length": first,
+                        "to_length": second,
+                        "pairs": sum(counts.values()),
+                        **{label: counts.get(outcome, 0) for outcome, label in labels.items()},
+                    }
+                )
     return output
 
 
 def analyze(result: dict) -> dict:
-    rows = [row for row in result.get("itemwise_rows", []) if row.get("event") == "length_score_row"]
+    rows = [
+        row for row in result.get("itemwise_rows", []) if row.get("event") == "length_score_row"
+    ]
     coverage = verify_length_rows(rows)
     return {
         "source_rows": len(rows),
@@ -226,7 +257,10 @@ def run() -> dict:
     if RESULT.exists():
         raise FileExistsError("N1-152 result is write-once")
     started = time.process_time()
-    if sha256(PLAN) != PLAN_SHA256 or sha256(N151A_PLAN) != "4892cc62f197689e0437a104bd2e592696ed67863a7746d4a7cb36a3ca0bc965":
+    if (
+        sha256(PLAN) != PLAN_SHA256
+        or sha256(N151A_PLAN) != "4892cc62f197689e0437a104bd2e592696ed67863a7746d4a7cb36a3ca0bc965"
+    ):
         raise Refuse("N1-152 plan/source plan SHA changed")
     if sha256(N151_RESULT) != N151_RESULT_SHA256 or sha256(N150_RESULT) != N150_RESULT_SHA256:
         raise Refuse("N1-151A/N1-150 source result SHA changed")
@@ -246,15 +280,29 @@ def run() -> dict:
         raise Refuse("N1-151A/N1-150 result boundary is incomplete")
     source_hashes = {
         str(path.resolve()): sha256(path)
-        for path in (PLAN, N151A_PLAN, N151_RESULT, N150_RESULT, N151_FAILURE, Path(__file__).resolve(), TEST)
+        for path in (
+            PLAN,
+            N151A_PLAN,
+            N151_RESULT,
+            N150_RESULT,
+            N151_FAILURE,
+            Path(__file__).resolve(),
+            TEST,
+        )
     }
-    if not all(Path(path).is_file() and sha256(Path(path)) == digest for path, digest in source_hashes.items()):
+    if not all(
+        Path(path).is_file() and sha256(Path(path)) == digest
+        for path, digest in source_hashes.items()
+    ):
         raise Refuse("N1-152 source hash changed before analysis")
     analysis = analyze(n151)
     cpu = time.process_time() - started
     if cpu > CPU_LIMIT_SECONDS:
         raise TimeoutError("N1-152 CPU ceiling exceeded")
-    if not all(Path(path).is_file() and sha256(Path(path)) == digest for path, digest in source_hashes.items()):
+    if not all(
+        Path(path).is_file() and sha256(Path(path)) == digest
+        for path, digest in source_hashes.items()
+    ):
         raise Refuse("N1-152 source hash changed during analysis")
     report = {
         "schema": "n1-plan152-length-itemwise-attribution-v1",
@@ -289,10 +337,25 @@ def main() -> int:
     if not args.run:
         parser.error("one-shot invocation requires --run")
     report = run()
-    print(json.dumps({
-        key: report.get(key)
-        for key in ("status", "complete", "source_rows", "cpu_seconds", "model_loads", "model_queries", "parameter_updates", "can_promote")
-    }, ensure_ascii=True, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                key: report.get(key)
+                for key in (
+                    "status",
+                    "complete",
+                    "source_rows",
+                    "cpu_seconds",
+                    "model_loads",
+                    "model_queries",
+                    "parameter_updates",
+                    "can_promote",
+                )
+            },
+            ensure_ascii=True,
+            sort_keys=True,
+        )
+    )
     return 0 if report.get("complete") is True else 1
 
 

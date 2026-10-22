@@ -353,15 +353,13 @@ def summarize_combination(rows: list[dict]) -> dict:
                     "parents": len(cell_parents),
                     "by_condition": {
                         condition: sum(
-                            parent_rows[parent][condition]["free_exact"]
-                            for parent in cell_parents
+                            parent_rows[parent][condition]["free_exact"] for parent in cell_parents
                         )
                         for condition in CONDITIONS
                     },
                     "joint_four_exact": sum(
                         all(
-                            parent_rows[parent][condition]["free_exact"]
-                            for condition in CONDITIONS
+                            parent_rows[parent][condition]["free_exact"] for condition in CONDITIONS
                         )
                         for parent in cell_parents
                     ),

@@ -160,9 +160,11 @@ def _target_observation_indices(query: dict) -> list[int] | None:
     subject = _query_subject(query["question"])
     selected = []
     for index, row in enumerate(query["observations"]):
-        if kind == "lookup" and row.startswith(subject + " uses "):
+        # noqa 下两条：SIM114 —— 三个分支同体但谓词各属一个 kind 的接纳判据（门族不同），
+        # 合并成巨型布尔会掩盖 per-kind 契约；沿用 H19e 的带理由 noqa 先例。
+        if kind == "lookup" and row.startswith(subject + " uses "):  # noqa: SIM114
             selected.append(index)
-        elif kind == "revision" and (
+        elif kind == "revision" and (  # noqa: SIM114
             row.startswith(subject + " uses ") or row.startswith(subject + " now uses ")
         ):
             selected.append(index)
@@ -892,9 +894,7 @@ def _save_checkpoint(
         "phase": (
             "zero"
             if additional_updates == 0
-            else "final"
-            if additional_updates == ADDITIONAL_UPDATES
-            else "partial"
+            else "final" if additional_updates == ADDITIONAL_UPDATES else "partial"
         ),
         "history_count": len(model._observations),
         "objective": {

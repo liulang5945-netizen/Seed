@@ -32,7 +32,9 @@ N161_RESULT_SHA256 = "2808a969299143c692643bf4bd5ccabdd67a63021f5ad9ba0cab65bcb5
 SOURCE_AUDIT = ROOT / "reports/taiji_n1_plan162_question_surface_source_audit_20261020.json"
 SCHEDULE = ROOT / "plans/manifests/n1_plan162_v34_question_surface_schedule_20261020.json"
 READINESS = ROOT / "reports/taiji_n1_plan162_question_surface_readiness_20261020.json"
-READINESS_ATTEMPT = ROOT / "reports/taiji_n1_plan162_question_surface_readiness_attempt_20261020.json"
+READINESS_ATTEMPT = (
+    ROOT / "reports/taiji_n1_plan162_question_surface_readiness_attempt_20261020.json"
+)
 SOURCE_BINDING = ROOT / "reports/taiji_n1_plan162_question_surface_source_binding_20261020.json"
 FACE = ROOT / "plans/manifests/n1_plan162_v34_question_surface_seed132_20261020.json"
 FACE_AUDIT = ROOT / "reports/taiji_n1_plan162_question_surface_face_audit_20261020.json"
@@ -42,8 +44,12 @@ ATTEMPT = ROOT / "reports/taiji_n1_plan162_question_surface_attempt_20261020.jso
 PROGRESS = ROOT / "reports/taiji_n1_plan162_question_surface_progress_20261020.jsonl"
 RESULT = ROOT / "reports/taiji_n1_plan162_question_surface_result_20261020.json"
 ZERO_PREFLIGHT = ROOT / "reports/taiji_n1_plan162_question_surface_zero_preflight_20261020.json"
-ZERO_PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_plan162_question_surface_zero_preflight_attempt_20261020.json"
-SCORING_PREFLIGHT = ROOT / "reports/taiji_n1_plan162_question_surface_scoring_preflight_20261020.json"
+ZERO_PREFLIGHT_ATTEMPT = (
+    ROOT / "reports/taiji_n1_plan162_question_surface_zero_preflight_attempt_20261020.json"
+)
+SCORING_PREFLIGHT = (
+    ROOT / "reports/taiji_n1_plan162_question_surface_scoring_preflight_20261020.json"
+)
 TEST = ROOT / "tests/taiji_native/test_n1_plan162_question_surface_matched_continuation_contract.py"
 RUNNER = ROOT / "scripts/training/run_taiji_n1_plan162_question_surface_matched_continuation.py"
 
@@ -146,7 +152,10 @@ def build_schedule(base_schedule: dict) -> dict:
     """Bind per-slot paired surface assignments without changing source order."""
     slots = base_schedule.get("slots", [])
     base_rows = base_schedule.get("rows", [])
-    require(len(slots) == len(base_rows) == UPDATES_PER_MODEL, "N1-162 requires the frozen 9,216 parent slots")
+    require(
+        len(slots) == len(base_rows) == UPDATES_PER_MODEL,
+        "N1-162 requires the frozen 9,216 parent slots",
+    )
     rows = []
     parent_kinds: dict[str, str] = {}
     per_parent = Counter()
@@ -158,10 +167,19 @@ def build_schedule(base_schedule: dict) -> dict:
         parent = str(base["parent_id"])
         kind = str(base["kind"])
         length = int(base["candidate_length"])
-        require(slot["item"].get("split") == "train" and slot["item"].get("kind") == kind, "N1-162 source item changed")
-        require(slot["item"].get("id") == base["item_id"] and slot.get("second_id") == base.get("second_id"), "N1-162 source item identity changed")
+        require(
+            slot["item"].get("split") == "train" and slot["item"].get("kind") == kind,
+            "N1-162 source item changed",
+        )
+        require(
+            slot["item"].get("id") == base["item_id"]
+            and slot.get("second_id") == base.get("second_id"),
+            "N1-162 source item identity changed",
+        )
         if parent in parent_kinds:
-            require(parent_kinds[parent] == kind, f"N1-162 parent has multiple task kinds: {parent}")
+            require(
+                parent_kinds[parent] == kind, f"N1-162 parent has multiple task kinds: {parent}"
+            )
         parent_kinds[parent] = kind
         per_parent[parent] += 1
         groups[(parent, kind, length)].append(base)
@@ -171,11 +189,15 @@ def build_schedule(base_schedule: dict) -> dict:
     for (parent, kind, length), group in groups.items():
         group.sort(key=lambda row: int(row["step"]))
         expected = _expected_length_counts(kind)[length]
-        require(len(group) == expected, f"N1-162 per-parent context length differs: {parent}/{length}")
+        require(
+            len(group) == expected, f"N1-162 per-parent context length differs: {parent}/{length}"
+        )
         first, second = _template_pair(kind)
         half = len(group) // 2
         quarter = len(group) // 4
-        require(half + quarter * 2 == len(group), "N1-162 template slot count must divide into 2:1:1")
+        require(
+            half + quarter * 2 == len(group), "N1-162 template slot count must divide into 2:1:1"
+        )
         labels = ["original"] * half + [first] * quarter + [second] * quarter
         for base, template in zip(group, labels, strict=True):
             assignments[int(base["step"])] = template
@@ -201,19 +223,44 @@ def build_schedule(base_schedule: dict) -> dict:
                 "augmented_template_id": treatment_template,
             }
         )
-    require(len(parent_kinds) == 192 and set(per_parent.values()) == {48}, "N1-162 parent update balance differs")
+    require(
+        len(parent_kinds) == 192 and set(per_parent.values()) == {48},
+        "N1-162 parent update balance differs",
+    )
     route_counts = Counter((row["parent_id"], row["route"]) for row in rows)
     require(set(route_counts.values()) == {24}, "N1-162 raw/hard source slot balance differs")
     kind_counts = Counter(row["kind"] for row in rows)
-    require(kind_counts == Counter({kind: 2_304 for kind in KINDS}), "N1-162 task-kind update balance differs")
+    require(
+        kind_counts == Counter({kind: 2_304 for kind in KINDS}),
+        "N1-162 task-kind update balance differs",
+    )
     per_parent_augmented = {
-        "lookup": {"8": {"original": 8, "material_active": 4, "material_passive": 4}, "16": {"original": 8, "material_active": 4, "material_passive": 4}, "32": {"original": 8, "material_active": 4, "material_passive": 4}},
-        "revision": {"8": {"original": 8, "material_active": 4, "material_passive": 4}, "16": {"original": 8, "material_active": 4, "material_passive": 4}, "32": {"original": 8, "material_active": 4, "material_passive": 4}},
-        "transition": {"8": {"original": 8, "direction_after_turning": 4, "direction_after_turn": 4}, "16": {"original": 8, "direction_after_turning": 4, "direction_after_turn": 4}, "32": {"original": 8, "direction_after_turning": 4, "direction_after_turn": 4}},
-        "unknown": {"8": {"original": 12, "material_active": 6, "material_passive": 6}, "16": {"original": 6, "material_active": 3, "material_passive": 3}, "32": {"original": 6, "material_active": 3, "material_passive": 3}},
+        "lookup": {
+            "8": {"original": 8, "material_active": 4, "material_passive": 4},
+            "16": {"original": 8, "material_active": 4, "material_passive": 4},
+            "32": {"original": 8, "material_active": 4, "material_passive": 4},
+        },
+        "revision": {
+            "8": {"original": 8, "material_active": 4, "material_passive": 4},
+            "16": {"original": 8, "material_active": 4, "material_passive": 4},
+            "32": {"original": 8, "material_active": 4, "material_passive": 4},
+        },
+        "transition": {
+            "8": {"original": 8, "direction_after_turning": 4, "direction_after_turn": 4},
+            "16": {"original": 8, "direction_after_turning": 4, "direction_after_turn": 4},
+            "32": {"original": 8, "direction_after_turning": 4, "direction_after_turn": 4},
+        },
+        "unknown": {
+            "8": {"original": 12, "material_active": 6, "material_passive": 6},
+            "16": {"original": 6, "material_active": 3, "material_passive": 3},
+            "32": {"original": 6, "material_active": 3, "material_passive": 3},
+        },
     }
     expected_augmented = {
-        kind: {str(length): {template: count * 48 for template, count in values.items()} for length, values in by_length.items()}
+        kind: {
+            str(length): {template: count * 48 for template, count in values.items()}
+            for length, values in by_length.items()
+        }
         for kind, by_length in per_parent_augmented.items()
     }
     actual_augmented = {
@@ -223,7 +270,10 @@ def build_schedule(base_schedule: dict) -> dict:
         }
         for kind in KINDS
     }
-    require(actual_augmented == expected_augmented, "N1-162 per-kind/length question-surface ratios differ")
+    require(
+        actual_augmented == expected_augmented,
+        "N1-162 per-kind/length question-surface ratios differ",
+    )
     manifest = {
         "schema": "n1-plan162-v34-question-surface-schedule-v1",
         "plan_sha256": PLAN_SHA256,
@@ -249,21 +299,43 @@ def build_schedule(base_schedule: dict) -> dict:
 
 def validate_schedule(manifest: dict) -> dict:
     rows = manifest.get("schedule_rows", [])
-    require(manifest.get("schedule_sha256") == canonical_sha(rows), "N1-162 schedule digest mismatch")
+    require(
+        manifest.get("schedule_sha256") == canonical_sha(rows), "N1-162 schedule digest mismatch"
+    )
     require(len(rows) == UPDATES_PER_MODEL, "N1-162 schedule row count differs")
-    require([int(row["step"]) for row in rows] == list(range(UPDATES_PER_MODEL)), "N1-162 schedule order differs")
+    require(
+        [int(row["step"]) for row in rows] == list(range(UPDATES_PER_MODEL)),
+        "N1-162 schedule order differs",
+    )
     parent_counts = Counter(row["parent_id"] for row in rows)
     route_counts = Counter((row["parent_id"], row["route"]) for row in rows)
-    require(len(parent_counts) == 192 and set(parent_counts.values()) == {48}, "N1-162 parent balance differs")
+    require(
+        len(parent_counts) == 192 and set(parent_counts.values()) == {48},
+        "N1-162 parent balance differs",
+    )
     require(set(route_counts.values()) == {24}, "N1-162 route balance differs")
-    require(manifest.get("total_updates") == TOTAL_UPDATES and manifest.get("train_score_queries") == TRAIN_SCORE_QUERIES, "N1-162 frozen denominator differs")
-    return {"accepted": True, "rows": len(rows), "parents": len(parent_counts), "routes": len(route_counts)}
+    require(
+        manifest.get("total_updates") == TOTAL_UPDATES
+        and manifest.get("train_score_queries") == TRAIN_SCORE_QUERIES,
+        "N1-162 frozen denominator differs",
+    )
+    return {
+        "accepted": True,
+        "rows": len(rows),
+        "parents": len(parent_counts),
+        "routes": len(route_counts),
+    }
 
 
 def _source_context() -> tuple[dict, dict, dict[str, str], dict]:
     require(sha256(PLAN) == PLAN_SHA256, "PLAN-N1-162 plan SHA changed")
-    require(sha256(BUDGET_ADDENDUM) == BUDGET_ADDENDUM_SHA256, "PLAN-N1-162A budget addendum SHA changed")
-    n155_readiness, n155_preflight, n155_context, n155_bound, n155_schedule, n155_sources = n155_runner._verify_preflight()
+    require(
+        sha256(BUDGET_ADDENDUM) == BUDGET_ADDENDUM_SHA256,
+        "PLAN-N1-162A budget addendum SHA changed",
+    )
+    n155_readiness, n155_preflight, n155_context, n155_bound, n155_schedule, n155_sources = (
+        n155_runner._verify_preflight()
+    )
     n155a = read_json(N155A_RESULT)
     require(
         sha256(N155A_RESULT) == N155A_RESULT_SHA256
@@ -280,8 +352,14 @@ def _source_context() -> tuple[dict, dict, dict[str, str], dict]:
         for row in n155a.get("models", [])
         if row.get("branch") == "unknown8_rebalanced" and row.get("training_sufficient") is True
     }
-    require(set(candidate_rows) == set(SEEDS), "N1-162 requires all three sufficient N1-155A candidate bundles")
-    require(n150_builder.verify_hashes(n155a.get("source_hashes", {})), "N1-155A source/checkpoint hashes changed")
+    require(
+        set(candidate_rows) == set(SEEDS),
+        "N1-162 requires all three sufficient N1-155A candidate bundles",
+    )
+    require(
+        n150_builder.verify_hashes(n155a.get("source_hashes", {})),
+        "N1-155A source/checkpoint hashes changed",
+    )
     n161_result = read_json(N161_RESULT)
     require(
         sha256(N161_RESULT) == N161_RESULT_SHA256
@@ -298,12 +376,23 @@ def _source_context() -> tuple[dict, dict, dict[str, str], dict]:
     _merge_hashes(sources, n155a.get("source_hashes", {}))
     _merge_hashes(sources, n161_sources)
     _merge_hashes(sources, n161_result.get("source_hashes", {}))
-    for path in (PLAN, BUDGET_ADDENDUM, N155A_RESULT, N161_RESULT, Path(__file__).resolve(), RUNNER, TEST):
+    for path in (
+        PLAN,
+        BUDGET_ADDENDUM,
+        N155A_RESULT,
+        N161_RESULT,
+        Path(__file__).resolve(),
+        RUNNER,
+        TEST,
+    ):
         require(Path(path).is_file(), f"N1-162 source file missing: {path}")
         _merge_hashes(sources, {str(Path(path).resolve()): sha256(Path(path))})
     for seed, row in candidate_rows.items():
         checkpoint = Path(row["final_checkpoint_path"]).resolve()
-        require(checkpoint.is_file() and sha256(checkpoint) == row["final_checkpoint_sha256"], f"N1-155A seed{seed} candidate checkpoint changed")
+        require(
+            checkpoint.is_file() and sha256(checkpoint) == row["final_checkpoint_sha256"],
+            f"N1-155A seed{seed} candidate checkpoint changed",
+        )
         _merge_hashes(sources, {str(checkpoint): row["final_checkpoint_sha256"]})
     require(n150_builder.verify_hashes(sources), "N1-162 bound source/checkpoint SHA mismatch")
     runtime = {
@@ -321,7 +410,22 @@ def _source_context() -> tuple[dict, dict, dict[str, str], dict]:
 
 
 def source_readiness() -> dict:
-    outputs = (SOURCE_AUDIT, SCHEDULE, READINESS, READINESS_ATTEMPT, SOURCE_BINDING, ZERO_PREFLIGHT, ZERO_PREFLIGHT_ATTEMPT, SCORING_PREFLIGHT, ATTEMPT, PROGRESS, RESULT, FACE, FACE_AUDIT, FACE_CHECKS)
+    outputs = (
+        SOURCE_AUDIT,
+        SCHEDULE,
+        READINESS,
+        READINESS_ATTEMPT,
+        SOURCE_BINDING,
+        ZERO_PREFLIGHT,
+        ZERO_PREFLIGHT_ATTEMPT,
+        SCORING_PREFLIGHT,
+        ATTEMPT,
+        PROGRESS,
+        RESULT,
+        FACE,
+        FACE_AUDIT,
+        FACE_CHECKS,
+    )
     if any(path.exists() for path in outputs) or CHECKPOINT_ROOT.exists():
         raise FileExistsError("PLAN-N1-162 one-shot outputs/checkpoint root already exist")
     started = time.process_time()
@@ -345,25 +449,33 @@ def source_readiness() -> dict:
     source_hashes[str(READINESS_ATTEMPT.resolve())] = sha256(READINESS_ATTEMPT)
     if not n150_builder.verify_hashes(sources):
         raise Refuse("N1-162 source hashes changed during readiness")
-    write_new(SOURCE_AUDIT, {
-        "schema": "n1-plan162-question-surface-source-audit-v1",
-        "status": "complete",
-        "plan_sha256": PLAN_SHA256,
-        "budget_addendum_sha256": BUDGET_ADDENDUM_SHA256,
-        "n155a_candidate_endpoints": [
-            {"seed": seed, "checkpoint_path": row["final_checkpoint_path"], "checkpoint_sha256": row["final_checkpoint_sha256"], "training_sufficient": row["training_sufficient"]}
-            for seed, row in sorted(candidates.items())
-        ],
-        "n161_face_sha256": sha256(n161.FACE),
-        "source_hash_count": len(sources),
-        "source_hashes": sources,
-        "source_hashes_unchanged": True,
-        "excluded_entity_count": len(exclusions["excluded_entities"]),
-        "excluded_word_value_count": len(exclusions["excluded_words"]),
-        "excluded_entity_sha256": digest_strings(exclusions["excluded_entities"]),
-        "excluded_word_value_sha256": digest_strings(exclusions["excluded_words"]),
-        "can_promote": False,
-    })
+    write_new(
+        SOURCE_AUDIT,
+        {
+            "schema": "n1-plan162-question-surface-source-audit-v1",
+            "status": "complete",
+            "plan_sha256": PLAN_SHA256,
+            "budget_addendum_sha256": BUDGET_ADDENDUM_SHA256,
+            "n155a_candidate_endpoints": [
+                {
+                    "seed": seed,
+                    "checkpoint_path": row["final_checkpoint_path"],
+                    "checkpoint_sha256": row["final_checkpoint_sha256"],
+                    "training_sufficient": row["training_sufficient"],
+                }
+                for seed, row in sorted(candidates.items())
+            ],
+            "n161_face_sha256": sha256(n161.FACE),
+            "source_hash_count": len(sources),
+            "source_hashes": sources,
+            "source_hashes_unchanged": True,
+            "excluded_entity_count": len(exclusions["excluded_entities"]),
+            "excluded_word_value_count": len(exclusions["excluded_words"]),
+            "excluded_entity_sha256": digest_strings(exclusions["excluded_entities"]),
+            "excluded_word_value_sha256": digest_strings(exclusions["excluded_words"]),
+            "can_promote": False,
+        },
+    )
     manifest = dict(schedule["manifest"], source_audit_sha256=sha256(SOURCE_AUDIT))
     write_new(SCHEDULE, manifest)
     source_hashes[str(SOURCE_AUDIT.resolve())] = sha256(SOURCE_AUDIT)
@@ -397,17 +509,20 @@ def source_readiness() -> dict:
         "can_promote": False,
     }
     write_new(READINESS, readiness)
-    write_new(SOURCE_BINDING, {
-        "schema": "n1-plan162-question-surface-source-binding-v1",
-        "status": "complete" if readiness["complete"] else "stopped",
-        "plan_sha256": PLAN_SHA256,
-        "budget_addendum_sha256": BUDGET_ADDENDUM_SHA256,
-        "readiness_sha256": sha256(READINESS),
-        "source_audit_sha256": sha256(SOURCE_AUDIT),
-        "schedule_sha256": sha256(SCHEDULE),
-        "source_hashes": sources,
-        "can_promote": False,
-    })
+    write_new(
+        SOURCE_BINDING,
+        {
+            "schema": "n1-plan162-question-surface-source-binding-v1",
+            "status": "complete" if readiness["complete"] else "stopped",
+            "plan_sha256": PLAN_SHA256,
+            "budget_addendum_sha256": BUDGET_ADDENDUM_SHA256,
+            "readiness_sha256": sha256(READINESS),
+            "source_audit_sha256": sha256(SOURCE_AUDIT),
+            "schedule_sha256": sha256(SCHEDULE),
+            "source_hashes": sources,
+            "can_promote": False,
+        },
+    )
     return readiness
 
 
@@ -437,7 +552,9 @@ def _verify_readiness() -> tuple[dict, dict, dict, dict[str, str]]:
     runtime, sources, _exclusions, _candidates = _source_context()
     schedule = build_schedule(runtime["n155_schedule"])
     expected = dict(schedule["manifest"], source_audit_sha256=sha256(SOURCE_AUDIT))
-    if expected != manifest or expected["schedule_sha256"] != readiness.get("schedule_identity_sha256"):
+    if expected != manifest or expected["schedule_sha256"] != readiness.get(
+        "schedule_identity_sha256"
+    ):
         raise Refuse("PLAN-N1-162 fixed schedule changed")
     if sources != readiness.get("source_hashes") or not n150_builder.verify_hashes(sources):
         raise Refuse("PLAN-N1-162 source union/hash changed")
@@ -463,10 +580,19 @@ def _add_seed131_values(item: dict, entities: set[str], words: set[str]) -> None
 
 def _validate_face(manifest: dict, excluded_entities: set[str], excluded_words: set[str]) -> dict:
     items = manifest.get("items", [])
-    require(manifest.get("schema") == "n1-plan162-v34-question-surface-face-v1", "N1-162 face schema differs")
-    require(manifest.get("seed") == FACE_SEED and len(items) == ITEMS_PER_KIND * len(KINDS), "N1-162 face seed/size differs")
+    require(
+        manifest.get("schema") == "n1-plan162-v34-question-surface-face-v1",
+        "N1-162 face schema differs",
+    )
+    require(
+        manifest.get("seed") == FACE_SEED and len(items) == ITEMS_PER_KIND * len(KINDS),
+        "N1-162 face seed/size differs",
+    )
     kind_counts = Counter(item.get("kind") for item in items)
-    require(kind_counts == Counter({kind: ITEMS_PER_KIND for kind in KINDS}), "N1-162 face kind balance differs")
+    require(
+        kind_counts == Counter({kind: ITEMS_PER_KIND for kind in KINDS}),
+        "N1-162 face kind balance differs",
+    )
     template_counts = Counter()
     all_entities = []
     all_words = []
@@ -477,20 +603,39 @@ def _validate_face(manifest: dict, excluded_entities: set[str], excluded_words: 
         target = str(item["entities"][0])
         index = int(item_id.rsplit("-", 1)[1])
         template_id = _face_template_id(kind, index)
-        require(item_id not in item_ids and item.get("split") == "diagnostic", f"invalid/duplicate N1-162 face item: {item_id}")
+        require(
+            item_id not in item_ids and item.get("split") == "diagnostic",
+            f"invalid/duplicate N1-162 face item: {item_id}",
+        )
         item_ids.add(item_id)
-        require(item.get("question_template_id") == template_id, f"N1-162 question template assignment differs: {item_id}")
-        require(item.get("question") == HOLDOUT_TEMPLATES[template_id].format(entity=target), f"N1-162 question bytes differ: {item_id}")
+        require(
+            item.get("question_template_id") == template_id,
+            f"N1-162 question template assignment differs: {item_id}",
+        )
+        require(
+            item.get("question") == HOLDOUT_TEMPLATES[template_id].format(entity=target),
+            f"N1-162 question bytes differ: {item_id}",
+        )
         template_counts[(kind, template_id)] += 1
         views = item.get("observations_by_length", {})
         rows8, rows16, rows32 = (views.get(str(length), []) for length in LENGTHS)
-        require(len(rows8) == 8 and len(rows16) == 16 and len(rows32) == 32, f"N1-162 context length differs: {item_id}")
+        require(
+            len(rows8) == 8 and len(rows16) == 16 and len(rows32) == 32,
+            f"N1-162 context length differs: {item_id}",
+        )
         require(rows8 == rows16[:8] == rows32[:8], f"N1-162 contexts are not nested: {item_id}")
         target_indices = item.get("target_observation_indices", [])
-        expected_indices = {"lookup": [0], "revision": [0, 1], "transition": [0, 1], "unknown": []}[kind]
-        require(target_indices == expected_indices, f"N1-162 target evidence indices differ: {item_id}")
+        expected_indices = {"lookup": [0], "revision": [0, 1], "transition": [0, 1], "unknown": []}[
+            kind
+        ]
+        require(
+            target_indices == expected_indices, f"N1-162 target evidence indices differ: {item_id}"
+        )
         if target_indices:
-            require(rows32[: len(target_indices)] == [rows32[index] for index in target_indices], f"N1-162 target facts are not fixed at the prefix: {item_id}")
+            require(
+                rows32[: len(target_indices)] == [rows32[index] for index in target_indices],
+                f"N1-162 target facts are not fixed at the prefix: {item_id}",
+            )
         all_entities.extend(str(value) for value in item.get("entities", []))
         for row in rows32:
             parts = row.removesuffix(".").split()
@@ -502,20 +647,32 @@ def _validate_face(manifest: dict, excluded_entities: set[str], excluded_words: 
             elif not (len(parts) == 3 and parts[1] in ("faces", "turns")):
                 raise Refuse(f"N1-162 observation row is unsupported: {row}")
     require(len(all_entities) == len(set(all_entities)), "N1-162 face entity values are not unique")
-    require(len(all_words) == len(set(all_words)), "N1-162 face material/answer values are not unique")
+    require(
+        len(all_words) == len(set(all_words)), "N1-162 face material/answer values are not unique"
+    )
     require(not (set(all_entities) & excluded_entities), "N1-162 face overlaps excluded entities")
-    require(not (set(all_words) & excluded_words), "N1-162 face overlaps excluded answer/observation values")
+    require(
+        not (set(all_words) & excluded_words),
+        "N1-162 face overlaps excluded answer/observation values",
+    )
     expected_templates = {
         (kind, template): 20
         for kind in KINDS
-        for template in (("material_associated", "material_belongs") if kind in MATERIAL_KINDS else ("direction_after_turning", "direction_final"))
+        for template in (
+            ("material_associated", "material_belongs")
+            if kind in MATERIAL_KINDS
+            else ("direction_after_turning", "direction_final")
+        )
     }
     require(template_counts == expected_templates, "N1-162 face template balance differs")
     return {
         "accepted": True,
         "items": len(items),
         "items_by_kind": dict(sorted(kind_counts.items())),
-        "template_counts": {f"{kind}/{template}": count for (kind, template), count in sorted(template_counts.items())},
+        "template_counts": {
+            f"{kind}/{template}": count
+            for (kind, template), count in sorted(template_counts.items())
+        },
         "queries_per_endpoint": len(items) * len(LENGTHS),
         "total_queries": len(items) * len(LENGTHS) * SCORING_ENDPOINTS,
         "nested_contexts": True,
@@ -525,19 +682,36 @@ def _validate_face(manifest: dict, excluded_entities: set[str], excluded_words: 
     }
 
 
-def prepare_fresh_face(*, final_checkpoint_hashes: dict[str, str], training_progress_sha256: str) -> dict:
+def prepare_fresh_face(
+    *, final_checkpoint_hashes: dict[str, str], training_progress_sha256: str
+) -> dict:
     if any(path.exists() for path in (FACE, FACE_AUDIT, FACE_CHECKS)):
         raise FileExistsError("N1-162 seed132 face outputs are write-once")
-    require(RESULT.is_file() and PROGRESS.is_file() and sha256(PROGRESS) == training_progress_sha256, "N1-162 completed progress is required before face generation")
+    require(
+        RESULT.is_file() and PROGRESS.is_file() and sha256(PROGRESS) == training_progress_sha256,
+        "N1-162 completed progress is required before face generation",
+    )
     result = read_json(RESULT)
-    require(result.get("training_complete") is True and result.get("training_sufficient_all_endpoints") is True, "N1-162 all six training gates must pass before face generation")
-    require(len(final_checkpoint_hashes) == 6, "N1-162 face requires all six final checkpoint hashes")
+    require(
+        result.get("training_complete") is True
+        and result.get("training_sufficient_all_endpoints") is True,
+        "N1-162 all six training gates must pass before face generation",
+    )
+    require(
+        len(final_checkpoint_hashes) == 6, "N1-162 face requires all six final checkpoint hashes"
+    )
     for raw_path, digest in final_checkpoint_hashes.items():
-        require(Path(raw_path).is_file() and sha256(Path(raw_path)) == digest, f"N1-162 final checkpoint changed: {raw_path}")
+        require(
+            Path(raw_path).is_file() and sha256(Path(raw_path)) == digest,
+            f"N1-162 final checkpoint changed: {raw_path}",
+        )
     started = time.process_time()
     _runtime, sources, exclusions, _candidates = _source_context()
     readiness = read_json(READINESS)
-    require(sources == readiness.get("source_hashes"), "N1-162 source union changed before face generation")
+    require(
+        sources == readiness.get("source_hashes"),
+        "N1-162 source union changed before face generation",
+    )
     excluded_entities = set(exclusions["excluded_entities"])
     excluded_words = set(exclusions["excluded_words"])
     prior_face = read_json(n161.FACE)
@@ -570,7 +744,9 @@ def prepare_fresh_face(*, final_checkpoint_hashes: dict[str, str], training_prog
         "budget_addendum_sha256": BUDGET_ADDENDUM_SHA256,
         "seed": FACE_SEED,
         "question_templates": HOLDOUT_TEMPLATES,
-        "question_template_counts": {f"{kind}/{template}": count for (kind, template), count in sorted(per_template.items())},
+        "question_template_counts": {
+            f"{kind}/{template}": count for (kind, template), count in sorted(per_template.items())
+        },
         "source_exclusion_summary": exclusion_summary,
         "prior_seed131_face_sha256": sha256(n161.FACE),
         "endpoint_count": SCORING_ENDPOINTS,
@@ -579,20 +755,37 @@ def prepare_fresh_face(*, final_checkpoint_hashes: dict[str, str], training_prog
     }
     checks = _validate_face(manifest, excluded_entities, excluded_words)
     question_patterns = {
-        key: re.compile("^" + re.escape(template.format(entity="__ENTITY__")).replace("__ENTITY__", r"[a-z]{10}") + "$")
+        key: re.compile(
+            "^"
+            + re.escape(template.format(entity="__ENTITY__")).replace("__ENTITY__", r"[a-z]{10}")
+            + "$"
+        )
         for key, template in HOLDOUT_TEMPLATES.items()
     }
-    training_questions = [question for path in n161.TRAIN_MANIFESTS for question in n161._questions(read_json(path))]
-    collisions = {key: sum(pattern.fullmatch(question) is not None for question in training_questions) for key, pattern in question_patterns.items()}
-    require(not any(collisions.values()), f"N1-162 holdout templates overlap v3 training questions: {collisions}")
+    training_questions = [
+        question for path in n161.TRAIN_MANIFESTS for question in n161._questions(read_json(path))
+    ]
+    collisions = {
+        key: sum(pattern.fullmatch(question) is not None for question in training_questions)
+        for key, pattern in question_patterns.items()
+    }
+    require(
+        not any(collisions.values()),
+        f"N1-162 holdout templates overlap v3 training questions: {collisions}",
+    )
     treatment_templates = set(TRAINING_TEMPLATES.values())
-    require(not (treatment_templates & set(HOLDOUT_TEMPLATES.values())), "N1-162 training and holdout template forms overlap")
+    require(
+        not (treatment_templates & set(HOLDOUT_TEMPLATES.values())),
+        "N1-162 training and holdout template forms overlap",
+    )
     write_new(FACE, manifest)
     source_hashes = dict(sources)
     source_hashes[str(FACE.resolve())] = sha256(FACE)
     source_hashes[str(RESULT.resolve())] = sha256(RESULT)
     source_hashes[str(PROGRESS.resolve())] = training_progress_sha256
-    source_hashes.update({str(Path(path).resolve()): digest for path, digest in final_checkpoint_hashes.items()})
+    source_hashes.update(
+        {str(Path(path).resolve()): digest for path, digest in final_checkpoint_hashes.items()}
+    )
     audit = {
         "schema": "n1-plan162-v34-question-surface-face-audit-v1",
         "status": "complete",
@@ -629,7 +822,9 @@ def prepare_fresh_face(*, final_checkpoint_hashes: dict[str, str], training_prog
 def main() -> int:
     import argparse
 
-    parser = argparse.ArgumentParser(description="PLAN-N1-162 question-surface schedule and seed132 face")
+    parser = argparse.ArgumentParser(
+        description="PLAN-N1-162 question-surface schedule and seed132 face"
+    )
     modes = parser.add_mutually_exclusive_group(required=True)
     modes.add_argument("--validate-only", action="store_true")
     modes.add_argument("--prepare-fresh-face", action="store_true")
@@ -637,8 +832,19 @@ def main() -> int:
     if args.validate_only:
         result = source_readiness()
     else:
-        raise SystemExit("--prepare-fresh-face is called by the approved training runner after all gates pass")
-    keys = ("status", "complete", "cpu_seconds", "source_hash_count", "training_updates_planned", "train_score_queries_planned", "fresh_face_queries_planned", "can_promote")
+        raise SystemExit(
+            "--prepare-fresh-face is called by the approved training runner after all gates pass"
+        )
+    keys = (
+        "status",
+        "complete",
+        "cpu_seconds",
+        "source_hash_count",
+        "training_updates_planned",
+        "train_score_queries_planned",
+        "fresh_face_queries_planned",
+        "can_promote",
+    )
     print(json.dumps({key: result.get(key) for key in keys}, ensure_ascii=True, sort_keys=True))
     return 0 if result.get("complete") is True else 1
 

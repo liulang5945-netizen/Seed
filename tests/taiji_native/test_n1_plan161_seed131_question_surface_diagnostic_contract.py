@@ -36,8 +36,14 @@ def test_question_templates_are_absent_from_bound_training_questions() -> None:
 
 
 def test_new_question_templates_and_outputs_have_separate_identity() -> None:
-    assert builder.render_question("material_active", "abcde12345") == "what material does abcde12345 use?"
-    assert builder.render_question("material_passive", "abcde12345") == "which material is used by abcde12345?"
+    assert (
+        builder.render_question("material_active", "abcde12345")
+        == "what material does abcde12345 use?"
+    )
+    assert (
+        builder.render_question("material_passive", "abcde12345")
+        == "which material is used by abcde12345?"
+    )
     assert builder.render_question("direction_after_turning", "abcde12345") == (
         "which direction does abcde12345 face after turning?"
     )
@@ -69,9 +75,9 @@ def test_summary_accepts_one_endpoint_and_checks_each_template() -> None:
                             "question_template_id": template_id,
                             "free_exact": index % 2 == 0,
                             "teacher_exact": index % 2 == 0,
-                            "output_hex": "756e6b6e6f776e"
-                            if kind == "unknown" and index % 2 == 0
-                            else "",
+                            "output_hex": (
+                                "756e6b6e6f776e" if kind == "unknown" and index % 2 == 0 else ""
+                            ),
                         }
                     )
     summary = runner.fresh_summary(rows)

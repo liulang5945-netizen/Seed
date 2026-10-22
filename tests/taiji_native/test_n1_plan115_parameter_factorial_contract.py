@@ -24,7 +24,7 @@ def test_full_binary_group_space_and_anchor_reuse_match_query_budget() -> None:
     module = _module()
 
     assert len(module.MASKS) == 32
-    assert module.HYBRID_MASKS == tuple(range(1, 31))
+    assert tuple(range(1, 31)) == module.HYBRID_MASKS
     assert module.REUSED_MASKS == (0, 31)
     assert module.QUERIES_PER_STATE == 384
     assert module.NEW_QUERIES == 11_520

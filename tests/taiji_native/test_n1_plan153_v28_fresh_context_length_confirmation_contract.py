@@ -10,7 +10,17 @@ from scripts.training import build_taiji_n1_plan153_v28_fresh_context_length_fac
 
 def _face():
     excluded_entities = {"zzzzzzzzzz", "yyyyyyyyyy"}
-    excluded_words = {"zzzzzz", "yyyyyyy", "north", "east", "south", "west", "left", "right", "unknown"}
+    excluded_words = {
+        "zzzzzz",
+        "yyyyyyy",
+        "north",
+        "east",
+        "south",
+        "west",
+        "left",
+        "right",
+        "unknown",
+    }
     manifest, summary = builder.build_face(excluded_entities, excluded_words)
     return manifest, summary, excluded_entities, excluded_words
 
@@ -58,8 +68,13 @@ def test_face_targets_are_first_and_all_neighbors_are_d1() -> None:
 def test_face_validator_rejects_a_non_nested_view() -> None:
     manifest, _summary, excluded_entities, excluded_words = _face()
     changed = {**manifest, "items": [dict(item) for item in manifest["items"]]}
-    changed["items"][0] = {**changed["items"][0], "observations_by_length": dict(changed["items"][0]["observations_by_length"])}
-    changed["items"][0]["observations_by_length"]["16"] = list(changed["items"][0]["observations_by_length"]["16"])
+    changed["items"][0] = {
+        **changed["items"][0],
+        "observations_by_length": dict(changed["items"][0]["observations_by_length"]),
+    }
+    changed["items"][0]["observations_by_length"]["16"] = list(
+        changed["items"][0]["observations_by_length"]["16"]
+    )
     changed["items"][0]["observations_by_length"]["16"][0] = "aaaaaaaaaa uses wrongval."
 
     with pytest.raises(builder.Refuse, match="not nested"):

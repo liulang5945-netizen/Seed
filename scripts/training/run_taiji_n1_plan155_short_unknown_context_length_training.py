@@ -98,7 +98,17 @@ def _fingerprint(model, optimizer) -> str:
     return n132.e11.scorer.paired.fingerprint(model.bundle(optimizer))
 
 
-def _checkpoint_payload(model, optimizer, *, seed: int, branch: str, parent_path: Path, parent_hash: str, parent_total: int, additional_updates: int) -> dict:
+def _checkpoint_payload(
+    model,
+    optimizer,
+    *,
+    seed: int,
+    branch: str,
+    parent_path: Path,
+    parent_hash: str,
+    parent_total: int,
+    additional_updates: int,
+) -> dict:
     bundle = copy.deepcopy(model.bundle(optimizer))
     return {
         "schema": "n1-plan155a-v28-unknown8-rebalance-checkpoint-v1",
@@ -184,7 +194,9 @@ def _restore_worker(path: Path) -> dict:
 
 def _independent_restore(path: Path, budget: n132.CpuBudget) -> dict:
     budget.guard(reserve=5)
-    environment = dict(os.environ, OMP_NUM_THREADS="1", MKL_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1")
+    environment = dict(
+        os.environ, OMP_NUM_THREADS="1", MKL_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1"
+    )
     process = subprocess.run(
         [sys.executable, str(Path(__file__).resolve()), "--restore-worker", str(path)],
         cwd=ROOT,
@@ -206,7 +218,9 @@ def _write_metrics(progress, event: str, seed: int, branch: str, step: int, row:
     _write_jsonl(progress, {"event": event, "seed": seed, "branch": branch, "step": step, **row})
 
 
-def _train_length_rows(model, optimizer, seed: int, branch: str, inputs: dict, views: dict, budget: n132.CpuBudget) -> list[dict]:
+def _train_length_rows(
+    model, optimizer, seed: int, branch: str, inputs: dict, views: dict, budget: n132.CpuBudget
+) -> list[dict]:
     before = _fingerprint(model, optimizer)
     selected = n150._length_score_items(inputs)
     rows = []
@@ -263,7 +277,9 @@ def _measure_fresh_diagnostic(model, item: dict, session: str) -> dict:
 def _fresh_summary(rows: list[dict]) -> list[dict]:
     groups = defaultdict(list)
     for row in rows:
-        groups[(int(row["seed"]), str(row["branch"]), int(row["context_length"]), str(row["kind"]))].append(row)
+        groups[
+            (int(row["seed"]), str(row["branch"]), int(row["context_length"]), str(row["kind"]))
+        ].append(row)
     summary = []
     for seed, branch in builder.ENDPOINTS:
         for length in LENGTHS:
@@ -271,15 +287,19 @@ def _fresh_summary(rows: list[dict]) -> list[dict]:
                 items = groups[(seed, branch, length, kind)]
                 if len(items) != FRESH_ITEMS_PER_KIND:
                     raise Refuse(f"fresh score stratum differs: {seed}/{branch}/{length}/{kind}")
-                summary.append({
-                    "seed": seed,
-                    "branch": branch,
-                    "context_length": length,
-                    "kind": kind,
-                    "items": len(items),
-                    "free_exact": sum(item.get("free_exact") is True for item in items),
-                    "literal_unknown": sum(item.get("output_hex") == UNKNOWN_HEX for item in items),
-                })
+                summary.append(
+                    {
+                        "seed": seed,
+                        "branch": branch,
+                        "context_length": length,
+                        "kind": kind,
+                        "items": len(items),
+                        "free_exact": sum(item.get("free_exact") is True for item in items),
+                        "literal_unknown": sum(
+                            item.get("output_hex") == UNKNOWN_HEX for item in items
+                        ),
+                    }
+                )
     return summary
 
 
@@ -296,9 +316,8 @@ def _verify_readiness() -> tuple[dict, dict, dict, dict, dict[str, str]]:
         or readiness.get("plan_sha256") != PLAN_SHA256
         or readiness.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
         or readiness.get("prior_failed_attempt_cpu_seconds") != builder.PRIOR_FAILED_CPU_SECONDS
-        or readiness.get("cumulative_cpu_seconds") != round(
-            builder.PRIOR_FAILED_CPU_SECONDS + float(readiness.get("cpu_seconds", -1)), 6
-        )
+        or readiness.get("cumulative_cpu_seconds")
+        != round(builder.PRIOR_FAILED_CPU_SECONDS + float(readiness.get("cpu_seconds", -1)), 6)
         or binding.get("status") != "complete"
         or binding.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
         or binding.get("readiness_sha256") != sha256(READINESS)
@@ -315,11 +334,19 @@ def _verify_readiness() -> tuple[dict, dict, dict, dict, dict[str, str]]:
     context, bound, base_schedule, sources = builder._source_context()
     schedule = builder.build_schedule(base_schedule)
     expected = dict(schedule["manifest"], source_audit_sha256=sha256(SOURCE_AUDIT))
-    if expected != manifest or expected["schedule_sha256"] != readiness.get("schedule_identity_sha256"):
+    if expected != manifest or expected["schedule_sha256"] != readiness.get(
+        "schedule_identity_sha256"
+    ):
         raise Refuse("N1-155 fixed task/length schedule changed")
     if not set(sources.items()).issubset(set(readiness["source_hashes"].items())):
         raise Refuse("N1-155 base source set differs from readiness")
-    return readiness, audit, context, {"bound": bound, "schedule": schedule}, dict(readiness["source_hashes"])
+    return (
+        readiness,
+        audit,
+        context,
+        {"bound": bound, "schedule": schedule},
+        dict(readiness["source_hashes"]),
+    )
 
 
 def _parent_rows(n150_result: dict) -> dict[int, dict]:
@@ -348,18 +375,21 @@ def checkpoint_preflight() -> dict:
     if CHECKPOINT_ROOT.exists():
         raise FileExistsError(f"N1-155 checkpoint root already exists: {CHECKPOINT_ROOT}")
     CHECKPOINT_ROOT.mkdir(parents=True, exist_ok=False)
-    write_new(PREFLIGHT_ATTEMPT, {
-        "schema": "n1-plan155a-zero-preflight-attempt-v1",
-        "status": "started",
-        "plan_sha256": PLAN_SHA256,
-        "correction_addendum_sha256": builder.CORRECTION_SHA256,
-        "prior_failed_attempt_cpu_seconds": prior_cpu,
-        "readiness_sha256": sha256(READINESS),
-        "zero_checkpoint_count_planned": 6,
-        "parameter_updates": 0,
-        "model_queries": 0,
-        "can_promote": False,
-    })
+    write_new(
+        PREFLIGHT_ATTEMPT,
+        {
+            "schema": "n1-plan155a-zero-preflight-attempt-v1",
+            "status": "started",
+            "plan_sha256": PLAN_SHA256,
+            "correction_addendum_sha256": builder.CORRECTION_SHA256,
+            "prior_failed_attempt_cpu_seconds": prior_cpu,
+            "readiness_sha256": sha256(READINESS),
+            "zero_checkpoint_count_planned": 6,
+            "parameter_updates": 0,
+            "model_queries": 0,
+            "can_promote": False,
+        },
+    )
     n150_result = read_json(N150_RESULT)
     parents = _parent_rows(n150_result)
     zero_rows = []
@@ -422,7 +452,12 @@ def checkpoint_preflight() -> dict:
         errors.append(f"{type(exc).__name__}: {exc}")
     cpu = time.process_time() - started + budget.children
     cumulative = prior_cpu + float(readiness["cpu_seconds"]) + cpu
-    complete = not errors and len(zero_rows) == 6 and len(restores) == 6 and cumulative <= CPU_LIMIT_SECONDS
+    complete = (
+        not errors
+        and len(zero_rows) == 6
+        and len(restores) == 6
+        and cumulative <= CPU_LIMIT_SECONDS
+    )
     report = {
         "schema": "n1-plan155a-zero-checkpoint-preflight-v1",
         "status": "complete" if complete else "stopped",
@@ -449,23 +484,40 @@ def checkpoint_preflight() -> dict:
         "errors": errors,
         "can_promote": False,
     }
-    report["summary_zh"] = "六个zero full bundle保存并独立恢复6/6，candidate/control按seed fingerprint一致；0训练/查询。" if complete else "N1-155 zero bundle前置停止；不训练、不查询、不重试。"
+    report["summary_zh"] = (
+        "六个zero full bundle保存并独立恢复6/6，candidate/control按seed fingerprint一致；0训练/查询。"
+        if complete
+        else "N1-155 zero bundle前置停止；不训练、不查询、不重试。"
+    )
     write_new(PREFLIGHT, report)
-    write_new(PREFLIGHT_BINDING, {
-        "schema": "n1-plan155a-zero-preflight-binding-v1",
-        "status": "complete" if complete else "stopped",
-        "plan_sha256": PLAN_SHA256,
-        "correction_addendum_sha256": builder.CORRECTION_SHA256,
-        "preflight_sha256": sha256(PREFLIGHT),
-        "source_hashes": source_hashes,
-        "zero_checkpoint_hashes": {row["path"]: row["sha256"] for row in zero_rows},
-        "can_promote": False,
-    })
+    write_new(
+        PREFLIGHT_BINDING,
+        {
+            "schema": "n1-plan155a-zero-preflight-binding-v1",
+            "status": "complete" if complete else "stopped",
+            "plan_sha256": PLAN_SHA256,
+            "correction_addendum_sha256": builder.CORRECTION_SHA256,
+            "preflight_sha256": sha256(PREFLIGHT),
+            "source_hashes": source_hashes,
+            "zero_checkpoint_hashes": {row["path"]: row["sha256"] for row in zero_rows},
+            "can_promote": False,
+        },
+    )
     return report
 
 
 def _verify_preflight() -> tuple[dict, dict, dict, dict, dict, dict[str, str]]:
-    if not all(path.is_file() for path in (READINESS, SOURCE_AUDIT, SCHEDULE, SOURCE_BINDING, PREFLIGHT, PREFLIGHT_BINDING)):
+    if not all(
+        path.is_file()
+        for path in (
+            READINESS,
+            SOURCE_AUDIT,
+            SCHEDULE,
+            SOURCE_BINDING,
+            PREFLIGHT,
+            PREFLIGHT_BINDING,
+        )
+    ):
         raise FileNotFoundError("N1-155 readiness and six-zero-restore preflight are required")
     readiness = read_json(READINESS)
     source_binding = read_json(SOURCE_BINDING)
@@ -477,9 +529,8 @@ def _verify_preflight() -> tuple[dict, dict, dict, dict, dict, dict[str, str]]:
         or readiness.get("plan_sha256") != PLAN_SHA256
         or readiness.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
         or readiness.get("prior_failed_attempt_cpu_seconds") != builder.PRIOR_FAILED_CPU_SECONDS
-        or readiness.get("cumulative_cpu_seconds") != round(
-            builder.PRIOR_FAILED_CPU_SECONDS + float(readiness.get("cpu_seconds", -1)), 6
-        )
+        or readiness.get("cumulative_cpu_seconds")
+        != round(builder.PRIOR_FAILED_CPU_SECONDS + float(readiness.get("cpu_seconds", -1)), 6)
         or source_binding.get("status") != "complete"
         or source_binding.get("plan_sha256") != PLAN_SHA256
         or source_binding.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
@@ -516,26 +567,34 @@ def _verify_preflight() -> tuple[dict, dict, dict, dict, dict, dict[str, str]]:
     context, bound, base_schedule, sources = builder._source_context()
     schedule = builder.build_schedule(base_schedule)
     expected = dict(schedule["manifest"], source_audit_sha256=sha256(SOURCE_AUDIT))
-    if expected != schedule_manifest or expected["schedule_sha256"] != readiness.get("schedule_identity_sha256"):
+    if expected != schedule_manifest or expected["schedule_sha256"] != readiness.get(
+        "schedule_identity_sha256"
+    ):
         raise Refuse("N1-155 fixed unknown/length schedule changed")
     return readiness, preflight, context, bound, schedule, dict(preflight["source_hashes"])
 
 
-def _validate_progress_log(path: Path, *, expected_updates: int, expected_train_scores: int) -> dict:
+def _validate_progress_log(
+    path: Path, *, expected_updates: int, expected_train_scores: int
+) -> dict:
     counts = Counter()
     total = 0
     malformed = []
-    for number, line in enumerate(Path(path).open(encoding="utf-8"), 1):
-        total += 1
-        try:
-            row = json.loads(line)
-        except Exception as exc:
-            malformed.append({"line": number, "error": type(exc).__name__})
-            continue
-        counts[str(row.get("event"))] += 1
+    with Path(path).open(encoding="utf-8") as stream:
+        for number, line in enumerate(stream, 1):
+            total += 1
+            try:
+                row = json.loads(line)
+            except Exception as exc:
+                malformed.append({"line": number, "error": type(exc).__name__})
+                continue
+            counts[str(row.get("event"))] += 1
     if malformed:
         raise Refuse(f"N1-155 progress log has malformed rows: {malformed[:5]}")
-    if counts["training_update"] != expected_updates or counts["original_train_gate_row"] + counts["length_score_row"] != expected_train_scores:
+    if (
+        counts["training_update"] != expected_updates
+        or counts["original_train_gate_row"] + counts["length_score_row"] != expected_train_scores
+    ):
         raise Refuse(f"N1-155 progress event counts differ: {dict(counts)}")
     return {
         "line_count": total,
@@ -563,10 +622,14 @@ def _score_fresh_face(
         try:
             checkpoint = Path(record["final_checkpoint_path"]).resolve()
             if sha256(checkpoint) != record["final_checkpoint_sha256"]:
-                raise Refuse(f"N1-155 final checkpoint SHA changed before fresh scoring: {seed}/{branch}")
+                raise Refuse(
+                    f"N1-155 final checkpoint SHA changed before fresh scoring: {seed}/{branch}"
+                )
             model, optimizer, payload, fingerprint = _restore_checkpoint(checkpoint)
             if fingerprint != record["final_bundle_fingerprint"]:
-                raise Refuse(f"N1-155 final full bundle differs before fresh scoring: {seed}/{branch}")
+                raise Refuse(
+                    f"N1-155 final full bundle differs before fresh scoring: {seed}/{branch}"
+                )
             before = _fingerprint(model, optimizer)
             for base in face["items"]:
                 for length in LENGTHS:
@@ -580,14 +643,18 @@ def _score_fresh_face(
                         row = _measure_fresh_diagnostic(model, item, session)
                     finally:
                         model._observations.pop(session, None)
-                    endpoint_rows.append({"seed": seed, "branch": branch, "event": "fresh_diagnostic_row", **row})
+                    endpoint_rows.append(
+                        {"seed": seed, "branch": branch, "event": "fresh_diagnostic_row", **row}
+                    )
             if len(endpoint_rows) != FRESH_QUERIES_PER_ENDPOINT:
                 raise Refuse(f"N1-155 fresh query count differs: {seed}/{branch}")
             # Retain the full endpoint before any later summary validation can fail.
             rows.extend(endpoint_rows)
             summaries.extend(_fresh_summary(endpoint_rows))
             if _fingerprint(model, optimizer) != before:
-                raise Refuse(f"N1-155 fresh diagnostic scoring changed final bundle: {seed}/{branch}")
+                raise Refuse(
+                    f"N1-155 fresh diagnostic scoring changed final bundle: {seed}/{branch}"
+                )
         except BaseException as exc:
             if endpoint_rows and not any(
                 item.get("seed") == seed and item.get("branch") == branch for item in rows
@@ -662,10 +729,7 @@ def execute_approved() -> dict:
     try:
         context, schedule, slots = bound, schedule, schedule["slots"]
         schedule_rows = read_json(SCHEDULE)["schedule_rows"]
-        zero_map = {
-            (int(row["seed"]), str(row["branch"])): row
-            for row in zero_rows
-        }
+        zero_map = {(int(row["seed"]), str(row["branch"])): row for row in zero_rows}
         if set(zero_map) != {(seed, branch) for seed, branch in ENDPOINTS}:
             raise Refuse("N1-155 zero bundle set does not cover six endpoints")
         for seed in SEEDS:
@@ -676,7 +740,8 @@ def execute_approved() -> dict:
                 parent_total = int(payload["parent_total_updates"])
                 initial_history = len(model._observations)
                 if fingerprint != zero["bundle_fingerprint"] or any(
-                    int(optimizer.state[param]["step"]) != parent_total for param in model.parameters()
+                    int(optimizer.state[param]["step"]) != parent_total
+                    for param in model.parameters()
                 ):
                     raise Refuse(f"N1-155 zero bundle parent state mismatch: {seed}/{branch}")
                 parent_path = Path(payload["parent_checkpoint_path"]).resolve()
@@ -695,12 +760,20 @@ def execute_approved() -> dict:
                 for row in schedule_rows:
                     if int(row["step"]) >= UPDATES_PER_MODEL:
                         raise Refuse("N1-155 schedule contains an out-of-range step")
-                    length = int(row["candidate_length"] if branch == "unknown8_rebalanced" else row["control_length"])
+                    length = int(
+                        row["candidate_length"]
+                        if branch == "unknown8_rebalanced"
+                        else row["control_length"]
+                    )
                     slot = slots[int(row["step"])]
-                    item = n150._apply_context(slot["item"], slot["item_key"], length, schedule["views"])
+                    item = n150._apply_context(
+                        slot["item"], slot["item_key"], length, schedule["views"]
+                    )
                     second = None
                     if slot.get("second") is not None:
-                        second = n150._with_observations(slot["second"], item["observations"], length)
+                        second = n150._with_observations(
+                            slot["second"], item["observations"], length
+                        )
                     budget.guard(reserve=15)
                     result = n132._training_step(
                         model,
@@ -716,19 +789,22 @@ def execute_approved() -> dict:
                     kind_length_counts[(row["kind"], length)] += 1
                     for name in ("total", "base_total", "qa", "observation", "binding"):
                         metrics_sums[name] += float(result[name])
-                    _write_jsonl(progress, {
-                        "event": "training_update",
-                        "seed": seed,
-                        "branch": branch,
-                        "step": row["step"],
-                        "parent_id": row["parent_id"],
-                        "route": row["route"],
-                        "kind": row["kind"],
-                        "context_length": length,
-                        "item_id": item["id"],
-                        "second_id": None if second is None else second["id"],
-                        **result,
-                    })
+                    _write_jsonl(
+                        progress,
+                        {
+                            "event": "training_update",
+                            "seed": seed,
+                            "branch": branch,
+                            "step": row["step"],
+                            "parent_id": row["parent_id"],
+                            "route": row["route"],
+                            "kind": row["kind"],
+                            "context_length": length,
+                            "item_id": item["id"],
+                            "second_id": None if second is None else second["id"],
+                            **result,
+                        },
+                    )
                     if (int(row["step"]) + 1) % 64 == 0:
                         progress.flush()
                     if (int(row["step"]) + 1) % 512 == 0:
@@ -744,10 +820,16 @@ def execute_approved() -> dict:
                     if branch == "unknown8_rebalanced"
                     else Counter({8: 3_072, 16: 3_072, 32: 3_072})
                 )
-                if active["completed_updates"] != UPDATES_PER_MODEL or length_counts != expected_lengths:
+                if (
+                    active["completed_updates"] != UPDATES_PER_MODEL
+                    or length_counts != expected_lengths
+                ):
                     raise Refuse(f"N1-155 update/length counts differ: {seed}/{branch}")
                 total_steps = {int(optimizer.state[param]["step"]) for param in model.parameters()}
-                if total_steps != {parent_total + UPDATES_PER_MODEL} or len(model._observations) != initial_history + UPDATES_PER_MODEL:
+                if (
+                    total_steps != {parent_total + UPDATES_PER_MODEL}
+                    or len(model._observations) != initial_history + UPDATES_PER_MODEL
+                ):
                     raise Refuse(f"N1-155 final optimizer/history count differs: {seed}/{branch}")
                 final_path = CHECKPOINT_ROOT / f"s{seed}_{branch}_final.pt"
                 final_payload = _save_checkpoint(
@@ -766,17 +848,34 @@ def execute_approved() -> dict:
                 gate_rows, gate_summary, sufficient, gate_queries = n132._evaluate_train_only(
                     context["g"], model, optimizer, seed, context["inputs"], budget
                 )
-                require(gate_queries == TRAIN_GATE_QUERIES_PER_ENDPOINT and len(gate_rows) == TRAIN_GATE_QUERIES_PER_ENDPOINT, f"N1-155 original gate denominator differs: {seed}/{branch}")
+                require(
+                    gate_queries == TRAIN_GATE_QUERIES_PER_ENDPOINT
+                    and len(gate_rows) == TRAIN_GATE_QUERIES_PER_ENDPOINT,
+                    f"N1-155 original gate denominator differs: {seed}/{branch}",
+                )
                 for score_row in gate_rows:
-                    _write_jsonl(progress, {"event": "original_train_gate_row", "seed": seed, "branch": branch, **score_row})
-                length_rows = _train_length_rows(model, optimizer, seed, branch, context["inputs"], schedule["views"], budget)
+                    _write_jsonl(
+                        progress,
+                        {
+                            "event": "original_train_gate_row",
+                            "seed": seed,
+                            "branch": branch,
+                            **score_row,
+                        },
+                    )
+                length_rows = _train_length_rows(
+                    model, optimizer, seed, branch, context["inputs"], schedule["views"], budget
+                )
                 for score_row in length_rows:
                     _write_jsonl(progress, score_row)
                 train_score_queries += gate_queries + len(length_rows)
                 if _fingerprint(model, optimizer) != frozen_fingerprint:
                     raise Refuse(f"N1-155 train-only scoring changed final bundle: {seed}/{branch}")
                 train_summary = n150._length_score_summary(length_rows)
-                loss_means = {key: float(metrics_sums[key]) / UPDATES_PER_MODEL for key in ("total", "base_total", "qa", "observation", "binding")}
+                loss_means = {
+                    key: float(metrics_sums[key]) / UPDATES_PER_MODEL
+                    for key in ("total", "base_total", "qa", "observation", "binding")
+                }
                 final_record = {
                     "seed": seed,
                     "branch": branch,
@@ -792,7 +891,8 @@ def execute_approved() -> dict:
                     "optimizer_step_values": sorted(total_steps),
                     "context_length_update_counts": dict(sorted(length_counts.items())),
                     "task_kind_length_update_counts": {
-                        f"{kind}/{length}": count for (kind, length), count in sorted(kind_length_counts.items())
+                        f"{kind}/{length}": count
+                        for (kind, length), count in sorted(kind_length_counts.items())
                     },
                     "loss_means": loss_means,
                     "original_train_gate": gate_summary,
@@ -812,21 +912,35 @@ def execute_approved() -> dict:
         progress.flush()
         progress.close()
         progress = None
-        training_sufficient_all = len(endpoint_records) == 6 and all(row["training_sufficient"] for row in endpoint_records)
+        training_sufficient_all = len(endpoint_records) == 6 and all(
+            row["training_sufficient"] for row in endpoint_records
+        )
         face_status = "skipped_original_train_gate_failed"
         face_rows = []
         face_summary = []
         fresh_queries = 0
         if len(endpoint_records) == 6 and training_sufficient_all:
-            final_hashes = {row["final_checkpoint_path"]: row["final_checkpoint_sha256"] for row in endpoint_records}
+            final_hashes = {
+                row["final_checkpoint_path"]: row["final_checkpoint_sha256"]
+                for row in endpoint_records
+            }
             progress_sha = sha256(PROGRESS)
-            face_checks = builder.prepare_fresh_face(final_checkpoint_hashes=final_hashes, training_progress_sha256=progress_sha)
+            face_checks = builder.prepare_fresh_face(
+                final_checkpoint_hashes=final_hashes, training_progress_sha256=progress_sha
+            )
             face_manifest = read_json(FACE)
-            if face_checks.get("source_hashes_unchanged") is False or face_checks.get("total_queries") != FRESH_QUERIES:
+            if (
+                face_checks.get("source_hashes_unchanged") is False
+                or face_checks.get("total_queries") != FRESH_QUERIES
+            ):
                 raise Refuse("N1-155 fresh face source/query contract differs")
-            face_rows, face_summary, fresh_queries, face_errors = _score_fresh_face(endpoint_records, face_manifest, budget)
+            face_rows, face_summary, fresh_queries, face_errors = _score_fresh_face(
+                endpoint_records, face_manifest, budget
+            )
             errors.extend(face_errors)
-            face_status = "complete" if not face_errors and fresh_queries == FRESH_QUERIES else "stopped"
+            face_status = (
+                "complete" if not face_errors and fresh_queries == FRESH_QUERIES else "stopped"
+            )
 
     except BaseException as exc:
         errors.append(f"{type(exc).__name__}: {exc}")
@@ -880,8 +994,15 @@ def execute_approved() -> dict:
                     malformed.append({"line": number, "error": type(exc).__name__})
                     continue
                 counts[str(event)] += 1
-        if malformed or counts["training_update"] != update_count or counts["original_train_gate_row"] + counts["length_score_row"] != train_score_queries or total_lines != expected_train_rows:
-            raise Refuse(f"N1-155 single-handle progress row count differs: {dict(counts)} malformed={len(malformed)}")
+        if (
+            malformed
+            or counts["training_update"] != update_count
+            or counts["original_train_gate_row"] + counts["length_score_row"] != train_score_queries
+            or total_lines != expected_train_rows
+        ):
+            raise Refuse(
+                f"N1-155 single-handle progress row count differs: {dict(counts)} malformed={len(malformed)}"
+            )
         progress_integrity = {
             "complete": True,
             "line_count": total_lines,
@@ -894,15 +1015,21 @@ def execute_approved() -> dict:
         progress_integrity["error"] = f"{type(exc).__name__}: {exc}"
 
     input_hashes = dict(preflight["source_hashes"])
-    for path in (READINESS, SOURCE_AUDIT, SCHEDULE, SOURCE_BINDING, PREFLIGHT, PREFLIGHT_BINDING, ATTEMPT):
+    for path in (
+        READINESS,
+        SOURCE_AUDIT,
+        SCHEDULE,
+        SOURCE_BINDING,
+        PREFLIGHT,
+        PREFLIGHT_BINDING,
+        ATTEMPT,
+    ):
         if path.is_file():
             input_hashes[str(path.resolve())] = sha256(path)
     if PROGRESS.is_file():
         input_hashes[str(PROGRESS.resolve())] = sha256(PROGRESS)
     new_checkpoints = {
-        str(path.resolve()): sha256(path)
-        for path in CHECKPOINT_ROOT.glob("*.pt")
-        if path.is_file()
+        str(path.resolve()): sha256(path) for path in CHECKPOINT_ROOT.glob("*.pt") if path.is_file()
     }
     input_hashes.update(new_checkpoints)
     if not FACE.is_file() and FACE_AUDIT.exists():
@@ -923,13 +1050,20 @@ def execute_approved() -> dict:
         and len([path for path in CHECKPOINT_ROOT.glob("*_final.pt") if path.is_file()]) == 6
     )
     face_expected = len(endpoint_records) == 6 and training_sufficient_all
-    face_complete = face_status == "complete" and fresh_queries == FRESH_QUERIES and len(face_rows) == FRESH_QUERIES
+    face_complete = (
+        face_status == "complete"
+        and fresh_queries == FRESH_QUERIES
+        and len(face_rows) == FRESH_QUERIES
+    )
     protocol_complete = (
         training_complete
         and progress_integrity.get("complete") is True
         and source_unchanged
         and cumulative <= CPU_LIMIT_SECONDS
-        and ((face_expected and face_complete) or (not face_expected and face_status == "skipped_original_train_gate_failed"))
+        and (
+            (face_expected and face_complete)
+            or (not face_expected and face_status == "skipped_original_train_gate_failed")
+        )
         and not errors
     )
     report = {
@@ -978,7 +1112,9 @@ def execute_approved() -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PLAN-N1-155 unknown short-context rebalanced training and fresh diagnostic")
+    parser = argparse.ArgumentParser(
+        description="PLAN-N1-155 unknown short-context rebalanced training and fresh diagnostic"
+    )
     modes = parser.add_mutually_exclusive_group(required=True)
     modes.add_argument("--checkpoint-preflight", action="store_true")
     modes.add_argument("--execute-approved", action="store_true")
@@ -989,10 +1125,7 @@ def main() -> int:
         result = _restore_worker(args.restore_worker)
         print(json.dumps(result, ensure_ascii=True, sort_keys=True))
         return 0 if result.get("complete") is True and result.get("equal") is True else 1
-    if args.checkpoint_preflight:
-        result = checkpoint_preflight()
-    else:
-        result = execute_approved()
+    result = checkpoint_preflight() if args.checkpoint_preflight else execute_approved()
     keys = (
         "status",
         "complete",

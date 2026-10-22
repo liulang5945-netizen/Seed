@@ -32,13 +32,17 @@ PRIOR_LINKED_CPU_SECONDS = builder.PRIOR_LINKED_CPU_SECONDS
 PRIOR_FAILED_STAGE_CPU_SECONDS = 270.4375
 REPAIR_ADDENDUM = ROOT / "plans/reference/PLAN-N1-162B_首步解析器修正与隔离续执行_20261020.md"
 REPAIR_ADDENDUM_SHA256 = "70f84638da596795e2c3c06e86839f56cba07232b975332b19907076d8f76847"
-REPAIR_TEST = ROOT / "tests/taiji_native/test_n1_plan162b_question_surface_matched_continuation_contract.py"
+REPAIR_TEST = (
+    ROOT / "tests/taiji_native/test_n1_plan162b_question_surface_matched_continuation_contract.py"
+)
 ORIGINAL_ATTEMPT = builder.ATTEMPT
 ORIGINAL_PROGRESS = builder.PROGRESS
 ORIGINAL_RESULT = builder.RESULT
 ORIGINAL_ZERO_PREFLIGHT = builder.ZERO_PREFLIGHT
 ORIGINAL_ZERO_PREFLIGHT_ATTEMPT = builder.ZERO_PREFLIGHT_ATTEMPT
-ORIGINAL_PARTIAL_CHECKPOINT = ROOT / "data/checkpoints/n1_plan162_question_surface_20261020/s11_surface_control_partial.pt"
+ORIGINAL_PARTIAL_CHECKPOINT = (
+    ROOT / "data/checkpoints/n1_plan162_question_surface_20261020/s11_surface_control_partial.pt"
+)
 ORIGINAL_RESULT_SHA256 = "b7a2519a2706a7c892bfca782a4823dc5d2e0a1e901bd6eb600ca7523132042a"
 ORIGINAL_ATTEMPT_SHA256 = "86b1ced3c420ef053ab54108d44abe623107375119c51684beb93f6815a9511b"
 ORIGINAL_PROGRESS_SHA256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
@@ -64,12 +68,18 @@ READINESS_ATTEMPT = builder.READINESS_ATTEMPT
 SOURCE_BINDING = builder.SOURCE_BINDING
 CHECKPOINT_ROOT = ROOT / "data/checkpoints/n1_plan162b_question_surface_20261020"
 ZERO_PREFLIGHT = ROOT / "reports/taiji_n1_plan162b_question_surface_zero_preflight_20261020.json"
-ZERO_PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_plan162b_question_surface_zero_preflight_attempt_20261020.json"
-SCORING_PREFLIGHT = ROOT / "reports/taiji_n1_plan162b_question_surface_scoring_preflight_20261020.json"
+ZERO_PREFLIGHT_ATTEMPT = (
+    ROOT / "reports/taiji_n1_plan162b_question_surface_zero_preflight_attempt_20261020.json"
+)
+SCORING_PREFLIGHT = (
+    ROOT / "reports/taiji_n1_plan162b_question_surface_scoring_preflight_20261020.json"
+)
 ATTEMPT = ROOT / "reports/taiji_n1_plan162b_question_surface_attempt_20261020.json"
 PROGRESS = ROOT / "reports/taiji_n1_plan162b_question_surface_progress_20261020.jsonl"
 RESULT = ROOT / "reports/taiji_n1_plan162b_question_surface_result_20261020.json"
-TRAINING_GATE_RECEIPT = ROOT / "reports/taiji_n1_plan162b_question_surface_training_gate_receipt_20261020.json"
+TRAINING_GATE_RECEIPT = (
+    ROOT / "reports/taiji_n1_plan162b_question_surface_training_gate_receipt_20261020.json"
+)
 _ORIGINAL_QUERY_SUBJECT = n132._query_subject
 
 # The frozen N1-162 builder is reused unchanged; redirect its face gate inputs to
@@ -146,9 +156,18 @@ def _restore_worker(path: Path, restore_format: str) -> dict:
 
 def _independent_restore(path: Path, restore_format: str, budget: n132.CpuBudget) -> dict:
     budget.guard(reserve=5)
-    environment = dict(os.environ, OMP_NUM_THREADS="1", MKL_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1")
+    environment = dict(
+        os.environ, OMP_NUM_THREADS="1", MKL_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1"
+    )
     process = subprocess.run(
-        [sys.executable, str(Path(__file__).resolve()), "--restore-worker", str(path), "--restore-format", restore_format],
+        [
+            sys.executable,
+            str(Path(__file__).resolve()),
+            "--restore-worker",
+            str(path),
+            "--restore-format",
+            restore_format,
+        ],
         cwd=ROOT,
         env=environment,
         capture_output=True,
@@ -224,20 +243,30 @@ def _verify_readiness() -> tuple[dict, dict, dict, dict[str, str]]:
         or preflight.get("attempt_sha256") != sha256(ZERO_PREFLIGHT_ATTEMPT)
     ):
         raise Refuse("PLAN-N1-162B zero checkpoint preflight is stale or incomplete")
-    if not n150_builder.verify_hashes(sources) or not n150_builder.verify_hashes(preflight.get("source_hashes", {})):
+    if not n150_builder.verify_hashes(sources) or not n150_builder.verify_hashes(
+        preflight.get("source_hashes", {})
+    ):
         raise Refuse("PLAN-N1-162 source or zero-bundle SHA changed")
     return readiness, preflight, runtime, dict(preflight["source_hashes"])
 
 
 def checkpoint_preflight() -> dict:
-    if any(path.exists() for path in (ZERO_PREFLIGHT, ZERO_PREFLIGHT_ATTEMPT, ATTEMPT, PROGRESS, RESULT)):
+    if any(
+        path.exists()
+        for path in (ZERO_PREFLIGHT, ZERO_PREFLIGHT_ATTEMPT, ATTEMPT, PROGRESS, RESULT)
+    ):
         raise FileExistsError("PLAN-N1-162 preflight/training outputs are write-once")
     started = time.process_time()
     readiness, _manifest, runtime, sources = builder._verify_readiness()
     sources = _repair_sources(sources)
     validation_cpu = time.process_time() - started
     remaining_stage = CPU_LIMIT_SECONDS - PRIOR_FAILED_STAGE_CPU_SECONDS - validation_cpu
-    remaining_linked = LINKED_CPU_LIMIT_SECONDS - PRIOR_LINKED_CPU_SECONDS - PRIOR_FAILED_STAGE_CPU_SECONDS - validation_cpu
+    remaining_linked = (
+        LINKED_CPU_LIMIT_SECONDS
+        - PRIOR_LINKED_CPU_SECONDS
+        - PRIOR_FAILED_STAGE_CPU_SECONDS
+        - validation_cpu
+    )
     remaining = min(remaining_stage, remaining_linked)
     if remaining <= 0:
         raise TimeoutError("PLAN-N1-162B CPU budget exhausted before zero checkpoint preflight")
@@ -246,20 +275,23 @@ def checkpoint_preflight() -> dict:
     if CHECKPOINT_ROOT.exists():
         raise FileExistsError(f"PLAN-N1-162 write-once checkpoint root exists: {CHECKPOINT_ROOT}")
     CHECKPOINT_ROOT.mkdir(parents=True, exist_ok=False)
-    write_new(ZERO_PREFLIGHT_ATTEMPT, {
-        "schema": "n1-plan162b-zero-checkpoint-preflight-attempt-v1",
-        "status": "started",
-        "plan_sha256": PLAN_SHA256,
-        "budget_addendum_sha256": builder.BUDGET_ADDENDUM_SHA256,
-        "repair_addendum_sha256": REPAIR_ADDENDUM_SHA256,
-        "prior_failed_result_sha256": ORIGINAL_RESULT_SHA256,
-        "prior_failed_attempt_sha256": ORIGINAL_ATTEMPT_SHA256,
-        "readiness_sha256": sha256(READINESS),
-        "planned_zero_bundles": 6,
-        "model_queries": 0,
-        "parameter_updates": 0,
-        "can_promote": False,
-    })
+    write_new(
+        ZERO_PREFLIGHT_ATTEMPT,
+        {
+            "schema": "n1-plan162b-zero-checkpoint-preflight-attempt-v1",
+            "status": "started",
+            "plan_sha256": PLAN_SHA256,
+            "budget_addendum_sha256": builder.BUDGET_ADDENDUM_SHA256,
+            "repair_addendum_sha256": REPAIR_ADDENDUM_SHA256,
+            "prior_failed_result_sha256": ORIGINAL_RESULT_SHA256,
+            "prior_failed_attempt_sha256": ORIGINAL_ATTEMPT_SHA256,
+            "readiness_sha256": sha256(READINESS),
+            "planned_zero_bundles": 6,
+            "model_queries": 0,
+            "parameter_updates": 0,
+            "can_promote": False,
+        },
+    )
     candidates = runtime["n155a_candidates"]
     zero_rows = []
     restores = []
@@ -274,9 +306,15 @@ def checkpoint_preflight() -> dict:
             if not source_path.is_file() or sha256(source_path) != source_hash:
                 raise Refuse(f"N1-155A seed{seed} candidate parent changed")
             model, optimizer, payload, fingerprint = n155._restore_checkpoint(source_path)
-            if fingerprint != source.get("final_bundle_fingerprint") or payload.get("branch") != "unknown8_rebalanced":
+            if (
+                fingerprint != source.get("final_bundle_fingerprint")
+                or payload.get("branch") != "unknown8_rebalanced"
+            ):
                 raise Refuse(f"N1-155A seed{seed} candidate bundle differs from frozen result")
-            if any(int(optimizer.state[param]["step"]) != int(payload["total_updates"]) for param in model.parameters()):
+            if any(
+                int(optimizer.state[param]["step"]) != int(payload["total_updates"])
+                for param in model.parameters()
+            ):
                 raise Refuse(f"N1-155A seed{seed} optimizer state does not match total updates")
             pair_fingerprints[seed] = fingerprint
             del model, optimizer, payload
@@ -286,29 +324,39 @@ def checkpoint_preflight() -> dict:
                     raise FileExistsError(f"PLAN-N1-162 write-once zero bundle exists: {zero_path}")
                 shutil.copyfile(source_path, zero_path)
                 if sha256(zero_path) != source_hash:
-                    raise Refuse(f"N1-162B zero bundle is not byte-identical to parent: {seed}/{arm}")
-                zero_rows.append({
-                    "seed": seed,
-                    "arm": arm,
-                    "path": str(zero_path.resolve()),
-                    "sha256": source_hash,
-                    "bundle_fingerprint": fingerprint,
-                    "parent_checkpoint_path": str(source_path),
-                    "parent_checkpoint_sha256": source_hash,
-                    "parent_total_updates": source["total_updates"],
-                    "initial_history_count": source["final_history_count"],
-                })
+                    raise Refuse(
+                        f"N1-162B zero bundle is not byte-identical to parent: {seed}/{arm}"
+                    )
+                zero_rows.append(
+                    {
+                        "seed": seed,
+                        "arm": arm,
+                        "path": str(zero_path.resolve()),
+                        "sha256": source_hash,
+                        "bundle_fingerprint": fingerprint,
+                        "parent_checkpoint_path": str(source_path),
+                        "parent_checkpoint_sha256": source_hash,
+                        "parent_total_updates": source["total_updates"],
+                        "initial_history_count": source["final_history_count"],
+                    }
+                )
         for seed in SEEDS:
             if len({row["bundle_fingerprint"] for row in zero_rows if row["seed"] == seed}) != 1:
-                    raise Refuse(f"N1-162B zero arms differ at seed{seed}")
+                raise Refuse(f"N1-162B zero arms differ at seed{seed}")
         for row in zero_rows:
             budget.guard(reserve=5)
             restored = _independent_restore(Path(row["path"]), "n155", budget)
-            if restored["fingerprint"] != row["bundle_fingerprint"] or restored["seed"] != row["seed"] or restored["branch"] != "unknown8_rebalanced":
-                raise Refuse(f"N1-162 zero bundle restore identity differs: {row['seed']}/{row['arm']}")
+            if (
+                restored["fingerprint"] != row["bundle_fingerprint"]
+                or restored["seed"] != row["seed"]
+                or restored["branch"] != "unknown8_rebalanced"
+            ):
+                raise Refuse(
+                    f"N1-162 zero bundle restore identity differs: {row['seed']}/{row['arm']}"
+                )
             restores.append({"seed": row["seed"], "arm": row["arm"], **restored})
         if len(zero_rows) != 6 or len(restores) != 6:
-                raise Refuse("N1-162B requires six zero full bundles and six independent restores")
+            raise Refuse("N1-162B requires six zero full bundles and six independent restores")
         if not n150_builder.verify_hashes(sources):
             raise Refuse("N1-162B source changed during zero preflight")
     except BaseException as exc:
@@ -318,7 +366,12 @@ def checkpoint_preflight() -> dict:
     cpu = time.process_time() - started + budget.children
     stage_cpu = PRIOR_FAILED_STAGE_CPU_SECONDS + cpu
     linked_cpu = PRIOR_LINKED_CPU_SECONDS + stage_cpu
-    complete = not errors and len(zero_rows) == len(restores) == 6 and stage_cpu <= CPU_LIMIT_SECONDS and linked_cpu <= LINKED_CPU_LIMIT_SECONDS
+    complete = (
+        not errors
+        and len(zero_rows) == len(restores) == 6
+        and stage_cpu <= CPU_LIMIT_SECONDS
+        and linked_cpu <= LINKED_CPU_LIMIT_SECONDS
+    )
     preflight = {
         "schema": "n1-plan162b-zero-checkpoint-preflight-v1",
         "status": "complete" if complete else "stopped",
@@ -351,7 +404,11 @@ def checkpoint_preflight() -> dict:
         "errors": errors,
         "can_promote": False,
     }
-    preflight["summary_zh"] = "N1-162B六个zero full bundle逐seed按字节与指纹匹配N1-155A候选，并独立恢复6/6；零查询、零更新。" if complete else "N1-162B zero bundle前置停止；不训练、不查询、不重试。"
+    preflight["summary_zh"] = (
+        "N1-162B六个zero full bundle逐seed按字节与指纹匹配N1-155A候选，并独立恢复6/6；零查询、零更新。"
+        if complete
+        else "N1-162B zero bundle前置停止；不训练、不查询、不重试。"
+    )
     write_new(ZERO_PREFLIGHT, preflight)
     return preflight
 
@@ -378,7 +435,9 @@ def _apply_question_template(item: dict, template_id: str) -> dict:
     return item
 
 
-def _training_step(model, optimizer, item: dict, second: dict | None, session: str, g: dict) -> dict:
+def _training_step(
+    model, optimizer, item: dict, second: dict | None, session: str, g: dict
+) -> dict:
     original_subject = n132._query_subject
     n132._query_subject = _question_subject
     try:
@@ -390,26 +449,42 @@ def _training_step(model, optimizer, item: dict, second: dict | None, session: s
 def _score_summary(rows: list[dict]) -> list[dict]:
     groups = defaultdict(list)
     for row in rows:
-        groups[(str(row["endpoint_family"]), int(row["seed"]), str(row["branch"]), str(row["kind"]), str(row["question_template_id"]), int(row["context_length"]))].append(row)
+        groups[
+            (
+                str(row["endpoint_family"]),
+                int(row["seed"]),
+                str(row["branch"]),
+                str(row["kind"]),
+                str(row["question_template_id"]),
+                int(row["context_length"]),
+            )
+        ].append(row)
     summary = []
     for family, seed, branch in _scoring_endpoint_keys():
         for kind in KINDS:
             for template_id in _face_templates_for_kind(kind):
                 for length in LENGTHS:
                     items = groups[(family, seed, branch, kind, template_id, length)]
-                    require(len(items) == 20, f"N1-162 score stratum differs: {family}/{seed}/{branch}/{kind}/{template_id}/{length}")
-                    summary.append({
-                        "endpoint_family": family,
-                        "seed": seed,
-                        "branch": branch,
-                        "kind": kind,
-                        "question_template_id": template_id,
-                        "context_length": length,
-                        "items": len(items),
-                        "free_exact": sum(row.get("free_exact") is True for row in items),
-                        "teacher_exact": sum(row.get("teacher_exact") is True for row in items),
-                        "literal_unknown": sum(row.get("raw_hex") == b"unknown".hex() for row in items),
-                    })
+                    require(
+                        len(items) == 20,
+                        f"N1-162 score stratum differs: {family}/{seed}/{branch}/{kind}/{template_id}/{length}",
+                    )
+                    summary.append(
+                        {
+                            "endpoint_family": family,
+                            "seed": seed,
+                            "branch": branch,
+                            "kind": kind,
+                            "question_template_id": template_id,
+                            "context_length": length,
+                            "items": len(items),
+                            "free_exact": sum(row.get("free_exact") is True for row in items),
+                            "teacher_exact": sum(row.get("teacher_exact") is True for row in items),
+                            "literal_unknown": sum(
+                                row.get("raw_hex") == b"unknown".hex() for row in items
+                            ),
+                        }
+                    )
     return summary
 
 
@@ -421,9 +496,9 @@ def _face_templates_for_kind(kind: str) -> tuple[str, str]:
 
 def _scoring_endpoint_keys() -> list[tuple[str, int, str]]:
     return [
-        *(('n1_150_parent', seed, 'length_mixed') for seed in SEEDS),
-        *(('n1_155a_candidate', seed, 'unknown8_rebalanced') for seed in SEEDS),
-        *(('n1_162', seed, arm) for seed, arm in ENDPOINTS),
+        *(("n1_150_parent", seed, "length_mixed") for seed in SEEDS),
+        *(("n1_155a_candidate", seed, "unknown8_rebalanced") for seed in SEEDS),
+        *(("n1_162", seed, arm) for seed, arm in ENDPOINTS),
     ]
 
 
@@ -436,19 +511,51 @@ def _build_scoring_endpoints(runtime: dict, final_records: list[dict]) -> list[d
     }
     candidate_rows = runtime["n155a_candidates"]
     final_rows = {(int(row["seed"]), str(row["arm"])): row for row in final_records}
-    require(set(parent_rows) == set(SEEDS), "N1-162 requires three sufficient N1-150 reference parents")
+    require(
+        set(parent_rows) == set(SEEDS), "N1-162 requires three sufficient N1-150 reference parents"
+    )
     require(set(candidate_rows) == set(SEEDS), "N1-162 requires three N1-155A candidate references")
     require(set(final_rows) == set(ENDPOINTS), "N1-162 requires six final arm endpoints")
     endpoints = []
     for seed in SEEDS:
         parent = parent_rows[seed]
-        endpoints.append({"endpoint_family": "n1_150_parent", "seed": seed, "branch": "length_mixed", "path": parent["final_checkpoint_path"], "sha256": parent["final_checkpoint_sha256"], "fingerprint": parent["final_bundle_fingerprint"], "restore_format": "n150"})
+        endpoints.append(
+            {
+                "endpoint_family": "n1_150_parent",
+                "seed": seed,
+                "branch": "length_mixed",
+                "path": parent["final_checkpoint_path"],
+                "sha256": parent["final_checkpoint_sha256"],
+                "fingerprint": parent["final_bundle_fingerprint"],
+                "restore_format": "n150",
+            }
+        )
     for seed in SEEDS:
         candidate = candidate_rows[seed]
-        endpoints.append({"endpoint_family": "n1_155a_candidate", "seed": seed, "branch": "unknown8_rebalanced", "path": candidate["final_checkpoint_path"], "sha256": candidate["final_checkpoint_sha256"], "fingerprint": candidate["final_bundle_fingerprint"], "restore_format": "n155"})
+        endpoints.append(
+            {
+                "endpoint_family": "n1_155a_candidate",
+                "seed": seed,
+                "branch": "unknown8_rebalanced",
+                "path": candidate["final_checkpoint_path"],
+                "sha256": candidate["final_checkpoint_sha256"],
+                "fingerprint": candidate["final_bundle_fingerprint"],
+                "restore_format": "n155",
+            }
+        )
     for seed, arm in ENDPOINTS:
         final = final_rows[(seed, arm)]
-        endpoints.append({"endpoint_family": "n1_162", "seed": seed, "branch": arm, "path": final["final_checkpoint_path"], "sha256": final["final_checkpoint_sha256"], "fingerprint": final["final_bundle_fingerprint"], "restore_format": "n155"})
+        endpoints.append(
+            {
+                "endpoint_family": "n1_162",
+                "seed": seed,
+                "branch": arm,
+                "path": final["final_checkpoint_path"],
+                "sha256": final["final_checkpoint_sha256"],
+                "fingerprint": final["final_bundle_fingerprint"],
+                "restore_format": "n155",
+            }
+        )
     return endpoints
 
 
@@ -466,8 +573,13 @@ def _independent_scoring_preflight(endpoints: list[dict], budget: n132.CpuBudget
             if not path.is_file() or sha256(path) != endpoint["sha256"]:
                 raise Refuse(f"N1-162 scoring checkpoint SHA changed: {path}")
             restored = _independent_restore(path, endpoint["restore_format"], budget)
-            if restored["fingerprint"] != endpoint["fingerprint"] or restored["seed"] != endpoint["seed"]:
-                raise Refuse(f"N1-162 scoring checkpoint restore differs: {endpoint['endpoint_family']}/{endpoint['seed']}/{endpoint['branch']}")
+            if (
+                restored["fingerprint"] != endpoint["fingerprint"]
+                or restored["seed"] != endpoint["seed"]
+            ):
+                raise Refuse(
+                    f"N1-162 scoring checkpoint restore differs: {endpoint['endpoint_family']}/{endpoint['seed']}/{endpoint['branch']}"
+                )
             restores.append({**endpoint, "restore": restored})
     except BaseException as exc:
         errors.append(f"{type(exc).__name__}: {exc}")
@@ -489,7 +601,9 @@ def _independent_scoring_preflight(endpoints: list[dict], budget: n132.CpuBudget
     return report
 
 
-def _score_face(endpoints: list[dict], face: dict, budget: n132.CpuBudget, progress) -> tuple[list[dict], int, list[str]]:
+def _score_face(
+    endpoints: list[dict], face: dict, budget: n132.CpuBudget, progress
+) -> tuple[list[dict], int, list[str]]:
     rows = []
     queries = 0
     errors = []
@@ -502,12 +616,18 @@ def _score_face(endpoints: list[dict], face: dict, budget: n132.CpuBudget, progr
                 raise Refuse(f"N1-162 checkpoint changed before scoring: {path}")
             model, optimizer, payload, fingerprint = _restore(path, endpoint["restore_format"])
             if fingerprint != endpoint["fingerprint"]:
-                raise Refuse(f"N1-162 bundle fingerprint changed before scoring: {endpoint['endpoint_family']}/{endpoint['seed']}/{endpoint['branch']}")
+                raise Refuse(
+                    f"N1-162 bundle fingerprint changed before scoring: {endpoint['endpoint_family']}/{endpoint['seed']}/{endpoint['branch']}"
+                )
             before = _fingerprint(model, optimizer)
             for base in face["items"]:
                 for length in LENGTHS:
                     budget.guard(reserve=3)
-                    item = {**base, "observations": list(base["observations_by_length"][str(length)]), "context_length": length}
+                    item = {
+                        **base,
+                        "observations": list(base["observations_by_length"][str(length)]),
+                        "context_length": length,
+                    }
                     session = f"n1-plan162-{endpoint['endpoint_family']}-{endpoint['seed']}-{endpoint['branch']}-{item['parent_id']}-l{length}"
                     if session in model._observations:
                         raise Refuse(f"N1-162 scoring session collision: {session}")
@@ -528,14 +648,25 @@ def _score_face(endpoints: list[dict], face: dict, budget: n132.CpuBudget, progr
                     if queries % 64 == 0:
                         progress.flush()
             if len(endpoint_rows) != FACE_QUERIES_PER_ENDPOINT:
-                raise Refuse(f"N1-162 endpoint query denominator differs: {endpoint['endpoint_family']}/{endpoint['seed']}/{endpoint['branch']}")
+                raise Refuse(
+                    f"N1-162 endpoint query denominator differs: {endpoint['endpoint_family']}/{endpoint['seed']}/{endpoint['branch']}"
+                )
             rows.extend(endpoint_rows)
             if _fingerprint(model, optimizer) != before:
-                raise Refuse(f"N1-162 diagnostic scoring changed bundle: {endpoint['endpoint_family']}/{endpoint['seed']}/{endpoint['branch']}")
+                raise Refuse(
+                    f"N1-162 diagnostic scoring changed bundle: {endpoint['endpoint_family']}/{endpoint['seed']}/{endpoint['branch']}"
+                )
         except BaseException as exc:
-            if endpoint_rows and not any(row.get("endpoint_family") == endpoint["endpoint_family"] and row.get("seed") == endpoint["seed"] and row.get("branch") == endpoint["branch"] for row in rows):
+            if endpoint_rows and not any(
+                row.get("endpoint_family") == endpoint["endpoint_family"]
+                and row.get("seed") == endpoint["seed"]
+                and row.get("branch") == endpoint["branch"]
+                for row in rows
+            ):
                 rows.extend(endpoint_rows)
-            errors.append(f"{endpoint['endpoint_family']}/{endpoint['seed']}/{endpoint['branch']}: {type(exc).__name__}: {exc}")
+            errors.append(
+                f"{endpoint['endpoint_family']}/{endpoint['seed']}/{endpoint['branch']}: {type(exc).__name__}: {exc}"
+            )
             break
         finally:
             if model is not None:
@@ -559,9 +690,22 @@ def _validate_progress(path: Path, updates: int, scores: int, fresh: int) -> dic
             counts[str(json.loads(line).get("event"))] += 1
         except Exception as exc:
             malformed.append({"line": number, "error": type(exc).__name__})
-    if malformed or counts["training_update"] != updates or counts["original_train_gate_row"] + counts["length_score_row"] != scores or counts["fresh_face_score_row"] != fresh:
-        raise Refuse(f"N1-162 progress ledger counts differ: {dict(counts)} malformed={len(malformed)}")
-    return {"complete": True, "line_count": total, "event_counts": dict(sorted(counts.items())), "malformed_rows": 0, "sha256": sha256(path)}
+    if (
+        malformed
+        or counts["training_update"] != updates
+        or counts["original_train_gate_row"] + counts["length_score_row"] != scores
+        or counts["fresh_face_score_row"] != fresh
+    ):
+        raise Refuse(
+            f"N1-162 progress ledger counts differ: {dict(counts)} malformed={len(malformed)}"
+        )
+    return {
+        "complete": True,
+        "line_count": total,
+        "event_counts": dict(sorted(counts.items())),
+        "malformed_rows": 0,
+        "sha256": sha256(path),
+    }
 
 
 def execute_approved() -> dict:
@@ -569,14 +713,25 @@ def execute_approved() -> dict:
     readiness, preflight, runtime, base_sources = _verify_readiness()
     validation_cpu = time.process_time() - started
     stage_so_far = PRIOR_FAILED_STAGE_CPU_SECONDS + float(preflight["cpu_seconds"]) + validation_cpu
-    remaining = min(CPU_LIMIT_SECONDS - stage_so_far, LINKED_CPU_LIMIT_SECONDS - PRIOR_LINKED_CPU_SECONDS - stage_so_far)
+    remaining = min(
+        CPU_LIMIT_SECONDS - stage_so_far,
+        LINKED_CPU_LIMIT_SECONDS - PRIOR_LINKED_CPU_SECONDS - stage_so_far,
+    )
     if remaining <= 0:
         raise TimeoutError("PLAN-N1-162B stage/linked CPU budget exhausted before execution")
     if any(path.exists() for path in (ATTEMPT, PROGRESS, RESULT, SCORING_PREFLIGHT)):
         raise FileExistsError("PLAN-N1-162B training/scoring attempt is write-once")
     budget = n132.CpuBudget(remaining)
     source_hashes = dict(base_sources)
-    for path in (SOURCE_AUDIT, SCHEDULE, READINESS, READINESS_ATTEMPT, SOURCE_BINDING, ZERO_PREFLIGHT, ZERO_PREFLIGHT_ATTEMPT):
+    for path in (
+        SOURCE_AUDIT,
+        SCHEDULE,
+        READINESS,
+        READINESS_ATTEMPT,
+        SOURCE_BINDING,
+        ZERO_PREFLIGHT,
+        ZERO_PREFLIGHT_ATTEMPT,
+    ):
         source_hashes[str(Path(path).resolve())] = sha256(path)
     zero_rows = preflight.get("zero_checkpoints", [])
     zero_map = {(int(row["seed"]), str(row["arm"])): row for row in zero_rows}
@@ -630,14 +785,24 @@ def execute_approved() -> dict:
             initial_total = int(payload["total_updates"])
             initial_additional = int(payload["additional_updates"])
             initial_history = len(model._observations)
-            if fingerprint != zero["bundle_fingerprint"] or initial_history != int(zero["initial_history_count"]):
+            if fingerprint != zero["bundle_fingerprint"] or initial_history != int(
+                zero["initial_history_count"]
+            ):
                 raise Refuse(f"N1-162 zero restore differs from preflight: {seed}/{arm}")
             parent_path = Path(payload["parent_checkpoint_path"]).resolve()
             parent_hash = str(payload["parent_checkpoint_sha256"])
             parent_total = int(payload["parent_total_updates"])
             if initial_total != parent_total + initial_additional:
                 raise Refuse(f"N1-162 inherited optimizer lineage differs: {seed}/{arm}")
-            active = {"seed": seed, "arm": arm, "completed_updates": 0, "payload": payload, "parent_path": parent_path, "parent_hash": parent_hash, "parent_total": parent_total}
+            active = {
+                "seed": seed,
+                "arm": arm,
+                "completed_updates": 0,
+                "payload": payload,
+                "parent_path": parent_path,
+                "parent_hash": parent_hash,
+                "parent_total": parent_total,
+            }
             metrics = Counter()
             length_counts = Counter()
             template_counts = Counter()
@@ -646,11 +811,21 @@ def execute_approved() -> dict:
                 if step >= UPDATES_PER_MODEL:
                     raise Refuse("N1-162 schedule contains out-of-range step")
                 slot = schedule["slots"][step]
-                if slot["item"].get("id") != row["item_id"] or slot.get("item_key") != row["item_key"] or slot.get("second_id") != row.get("second_id"):
+                if (
+                    slot["item"].get("id") != row["item_id"]
+                    or slot.get("item_key") != row["item_key"]
+                    or slot.get("second_id") != row.get("second_id")
+                ):
                     raise Refuse(f"N1-162 schedule/source slot identity mismatch at {step}")
                 length = int(row["context_length"])
-                template_id = row["control_template_id"] if arm == "surface_control" else row["augmented_template_id"]
-                item = n150._apply_context(slot["item"], slot["item_key"], length, schedule["views"])
+                template_id = (
+                    row["control_template_id"]
+                    if arm == "surface_control"
+                    else row["augmented_template_id"]
+                )
+                item = n150._apply_context(
+                    slot["item"], slot["item_key"], length, schedule["views"]
+                )
                 second = None
                 if slot.get("second") is not None:
                     second = n150._with_observations(slot["second"], item["observations"], length)
@@ -659,7 +834,9 @@ def execute_approved() -> dict:
                     item["question"] = builder.TRAINING_TEMPLATES[template_id].format(entity=target)
                     if second is not None:
                         second_target = n132._query_subject(second["question"])
-                        second["question"] = builder.TRAINING_TEMPLATES[template_id].format(entity=second_target)
+                        second["question"] = builder.TRAINING_TEMPLATES[template_id].format(
+                            entity=second_target
+                        )
                 if item.get("kind") == "unknown" and second is None:
                     raise Refuse(f"N1-162 unknown paired question is missing: {seed}/{arm}/{step}")
                 budget.guard(reserve=12)
@@ -677,31 +854,43 @@ def execute_approved() -> dict:
                 template_counts[(row["kind"], length, template_id)] += 1
                 for key in ("total", "base_total", "qa", "observation", "binding"):
                     metrics[key] += float(result[key])
-                write_jsonl(progress, {
-                    "event": "training_update",
-                    "seed": seed,
-                    "arm": arm,
-                    "step": step,
-                    "parent_id": row["parent_id"],
-                    "route": row["route"],
-                    "kind": row["kind"],
-                    "context_length": length,
-                    "question_template_id": template_id,
-                    "item_id": item["id"],
-                    "question": item["question"],
-                    "second_id": None if second is None else second["id"],
-                    "second_question": None if second is None else second["question"],
-                    **result,
-                })
+                write_jsonl(
+                    progress,
+                    {
+                        "event": "training_update",
+                        "seed": seed,
+                        "arm": arm,
+                        "step": step,
+                        "parent_id": row["parent_id"],
+                        "route": row["route"],
+                        "kind": row["kind"],
+                        "context_length": length,
+                        "question_template_id": template_id,
+                        "item_id": item["id"],
+                        "question": item["question"],
+                        "second_id": None if second is None else second["id"],
+                        "second_question": None if second is None else second["question"],
+                        **result,
+                    },
+                )
                 if (step + 1) % 64 == 0:
                     progress.flush()
                 if (step + 1) % 512 == 0:
-                    print(f"plan162b seed={seed} arm={arm} step={step+1}/{UPDATES_PER_MODEL} cpu={budget.used():.1f}", flush=True)
+                    print(
+                        f"plan162b seed={seed} arm={arm} step={step+1}/{UPDATES_PER_MODEL} cpu={budget.used():.1f}",
+                        flush=True,
+                    )
             expected_lengths = Counter({8: 3_456, 16: 2_880, 32: 2_880})
-            if active["completed_updates"] != UPDATES_PER_MODEL or length_counts != expected_lengths:
+            if (
+                active["completed_updates"] != UPDATES_PER_MODEL
+                or length_counts != expected_lengths
+            ):
                 raise Refuse(f"N1-162 update/context counts differ: {seed}/{arm}")
             total_steps = {int(optimizer.state[param]["step"]) for param in model.parameters()}
-            if total_steps != {initial_total + UPDATES_PER_MODEL} or len(model._observations) != initial_history + UPDATES_PER_MODEL:
+            if (
+                total_steps != {initial_total + UPDATES_PER_MODEL}
+                or len(model._observations) != initial_history + UPDATES_PER_MODEL
+            ):
                 raise Refuse(f"N1-162 final optimizer/history count differs: {seed}/{arm}")
             final_path = CHECKPOINT_ROOT / f"s{seed}_{arm}_final.pt"
             final_payload = n155._checkpoint_payload(
@@ -725,81 +914,133 @@ def execute_approved() -> dict:
                 raise Refuse(f"N1-162 final full bundle failed restore: {seed}/{arm}")
             before_score = _fingerprint(model, optimizer)
             gate_rows, gate_summary, sufficient, gate_queries = n132._evaluate_train_only(
-                runtime["n155_bound"]["g"], model, optimizer, seed, runtime["n155_bound"]["inputs"], budget
+                runtime["n155_bound"]["g"],
+                model,
+                optimizer,
+                seed,
+                runtime["n155_bound"]["inputs"],
+                budget,
             )
-            require(gate_queries == TRAIN_GATE_QUERIES_PER_ENDPOINT and len(gate_rows) == TRAIN_GATE_QUERIES_PER_ENDPOINT, f"N1-162 original gate denominator differs: {seed}/{arm}")
+            require(
+                gate_queries == TRAIN_GATE_QUERIES_PER_ENDPOINT
+                and len(gate_rows) == TRAIN_GATE_QUERIES_PER_ENDPOINT,
+                f"N1-162 original gate denominator differs: {seed}/{arm}",
+            )
             for score_row in gate_rows:
-                write_jsonl(progress, {"event": "original_train_gate_row", "seed": seed, "arm": arm, **score_row})
-            length_rows = n155._train_length_rows(model, optimizer, seed, "unknown8_rebalanced", runtime["n155_bound"]["inputs"], schedule["views"], budget)
+                write_jsonl(
+                    progress,
+                    {"event": "original_train_gate_row", "seed": seed, "arm": arm, **score_row},
+                )
+            length_rows = n155._train_length_rows(
+                model,
+                optimizer,
+                seed,
+                "unknown8_rebalanced",
+                runtime["n155_bound"]["inputs"],
+                schedule["views"],
+                budget,
+            )
             if len(length_rows) != LENGTH_QUERIES_PER_ENDPOINT:
                 raise Refuse(f"N1-162 train length score denominator differs: {seed}/{arm}")
             for score_row in length_rows:
-                write_jsonl(progress, {"event": "length_score_row", "seed": seed, "arm": arm, **score_row})
+                write_jsonl(
+                    progress, {"event": "length_score_row", "seed": seed, "arm": arm, **score_row}
+                )
             train_score_queries += gate_queries + len(length_rows)
             if _fingerprint(model, optimizer) != before_score:
                 raise Refuse(f"N1-162 train-only scoring mutated final bundle: {seed}/{arm}")
-            final_records.append({
-                "seed": seed,
-                "arm": arm,
-                "branch": "unknown8_rebalanced",
-                "parent_checkpoint_path": str(parent_path),
-                "parent_checkpoint_sha256": parent_hash,
-                "source_n155a_checkpoint_path": zero["parent_checkpoint_path"],
-                "source_n155a_checkpoint_sha256": zero["parent_checkpoint_sha256"],
-                "source_n155a_total_updates": initial_total,
-                "additional_updates_this_plan": UPDATES_PER_MODEL,
-                "cumulative_additional_updates_from_n150": initial_additional + UPDATES_PER_MODEL,
-                "total_updates": parent_total + initial_additional + UPDATES_PER_MODEL,
-                "initial_history_count": initial_history,
-                "final_history_count": len(model._observations),
-                "optimizer_step_values": sorted(total_steps),
-                "context_length_update_counts": dict(sorted(length_counts.items())),
-                "question_template_counts": {f"{kind}/{length}/{template}": count for (kind, length, template), count in sorted(template_counts.items())},
-                "loss_means": {key: float(metrics[key]) / UPDATES_PER_MODEL for key in ("total", "base_total", "qa", "observation", "binding")},
-                "original_train_gate": gate_summary,
-                "training_sufficient": sufficient,
-                "original_train_gate_queries": gate_queries,
-                "length_score_queries": len(length_rows),
-                "final_checkpoint_path": str(final_path.resolve()),
-                "final_checkpoint_sha256": final_sha,
-                "final_bundle_fingerprint": final_payload["bundle_fingerprint"],
-                "final_independent_restore": final_restore,
-            })
+            final_records.append(
+                {
+                    "seed": seed,
+                    "arm": arm,
+                    "branch": "unknown8_rebalanced",
+                    "parent_checkpoint_path": str(parent_path),
+                    "parent_checkpoint_sha256": parent_hash,
+                    "source_n155a_checkpoint_path": zero["parent_checkpoint_path"],
+                    "source_n155a_checkpoint_sha256": zero["parent_checkpoint_sha256"],
+                    "source_n155a_total_updates": initial_total,
+                    "additional_updates_this_plan": UPDATES_PER_MODEL,
+                    "cumulative_additional_updates_from_n150": initial_additional
+                    + UPDATES_PER_MODEL,
+                    "total_updates": parent_total + initial_additional + UPDATES_PER_MODEL,
+                    "initial_history_count": initial_history,
+                    "final_history_count": len(model._observations),
+                    "optimizer_step_values": sorted(total_steps),
+                    "context_length_update_counts": dict(sorted(length_counts.items())),
+                    "question_template_counts": {
+                        f"{kind}/{length}/{template}": count
+                        for (kind, length, template), count in sorted(template_counts.items())
+                    },
+                    "loss_means": {
+                        key: float(metrics[key]) / UPDATES_PER_MODEL
+                        for key in ("total", "base_total", "qa", "observation", "binding")
+                    },
+                    "original_train_gate": gate_summary,
+                    "training_sufficient": sufficient,
+                    "original_train_gate_queries": gate_queries,
+                    "length_score_queries": len(length_rows),
+                    "final_checkpoint_path": str(final_path.resolve()),
+                    "final_checkpoint_sha256": final_sha,
+                    "final_bundle_fingerprint": final_payload["bundle_fingerprint"],
+                    "final_independent_restore": final_restore,
+                }
+            )
             del model, optimizer, payload
             model = optimizer = payload = None
             active = None
         progress.flush()
-        training_sufficient = len(final_records) == 6 and all(record["training_sufficient"] for record in final_records)
+        training_sufficient = len(final_records) == 6 and all(
+            record["training_sufficient"] for record in final_records
+        )
         if training_sufficient:
             if TRAINING_GATE_RECEIPT.exists():
                 raise FileExistsError("N1-162B training gate receipt is write-once")
-            write_new(TRAINING_GATE_RECEIPT, {
-                "schema": "n1-plan162b-training-gate-receipt-v1",
-                "status": "complete",
-                "plan_sha256": PLAN_SHA256,
-                "budget_addendum_sha256": builder.BUDGET_ADDENDUM_SHA256,
-                "repair_addendum_sha256": REPAIR_ADDENDUM_SHA256,
-                "training_complete": len(final_records) == 6 and update_count == TOTAL_UPDATES and train_score_queries == TRAIN_SCORE_QUERIES,
-                "training_sufficient_all_endpoints": True,
-                "training_updates": update_count,
-                "train_score_queries": train_score_queries,
-                "progress_sha256": sha256(PROGRESS),
-                "models": final_records,
-                "can_promote": False,
-            })
+            write_new(
+                TRAINING_GATE_RECEIPT,
+                {
+                    "schema": "n1-plan162b-training-gate-receipt-v1",
+                    "status": "complete",
+                    "plan_sha256": PLAN_SHA256,
+                    "budget_addendum_sha256": builder.BUDGET_ADDENDUM_SHA256,
+                    "repair_addendum_sha256": REPAIR_ADDENDUM_SHA256,
+                    "training_complete": len(final_records) == 6
+                    and update_count == TOTAL_UPDATES
+                    and train_score_queries == TRAIN_SCORE_QUERIES,
+                    "training_sufficient_all_endpoints": True,
+                    "training_updates": update_count,
+                    "train_score_queries": train_score_queries,
+                    "progress_sha256": sha256(PROGRESS),
+                    "models": final_records,
+                    "can_promote": False,
+                },
+            )
             endpoints = _build_scoring_endpoints(runtime, final_records)
             scoring_preflight = _independent_scoring_preflight(endpoints, budget)
             if scoring_preflight.get("complete") is not True:
-                raise Refuse("N1-162B twelve-endpoint restore preflight failed; face/query not reached")
-            final_hashes = {row["final_checkpoint_path"]: row["final_checkpoint_sha256"] for row in final_records}
+                raise Refuse(
+                    "N1-162B twelve-endpoint restore preflight failed; face/query not reached"
+                )
+            final_hashes = {
+                row["final_checkpoint_path"]: row["final_checkpoint_sha256"]
+                for row in final_records
+            }
             progress.flush()
-            face_checks = builder.prepare_fresh_face(final_checkpoint_hashes=final_hashes, training_progress_sha256=sha256(PROGRESS))
+            face_checks = builder.prepare_fresh_face(
+                final_checkpoint_hashes=final_hashes, training_progress_sha256=sha256(PROGRESS)
+            )
             face = read_json(FACE)
-            if face_checks.get("source_hashes_unchanged") is not True or face_checks.get("face_contract", {}).get("total_queries") != FACE_QUERIES:
+            if (
+                face_checks.get("source_hashes_unchanged") is not True
+                or face_checks.get("face_contract", {}).get("total_queries") != FACE_QUERIES
+            ):
                 raise Refuse("N1-162B seed132 face source/query contract differs")
             fresh_rows, fresh_queries, face_errors = _score_face(endpoints, face, budget, progress)
             errors.extend(face_errors)
-            if not face_errors and fresh_queries == FACE_QUERIES and len(fresh_rows) == FACE_QUERIES:
+            if (
+                not face_errors
+                and fresh_queries == FACE_QUERIES
+                and len(fresh_rows) == FACE_QUERIES
+            ):
                 summaries = _score_summary(fresh_rows)
                 face_status = "complete"
             else:
@@ -827,7 +1068,8 @@ def execute_approved() -> dict:
                 parent_path=active["parent_path"],
                 parent_hash=active["parent_hash"],
                 parent_total=int(payload["parent_total_updates"]),
-                additional_updates=int(payload["additional_updates"]) + int(active["completed_updates"]),
+                additional_updates=int(payload["additional_updates"])
+                + int(active["completed_updates"]),
             )
             if not partial_path.exists():
                 with partial_path.open("xb") as stream:
@@ -849,17 +1091,36 @@ def execute_approved() -> dict:
 
     progress_integrity = {"complete": False, "error": None}
     try:
-        progress_integrity = _validate_progress(PROGRESS, update_count, train_score_queries, fresh_queries)
+        progress_integrity = _validate_progress(
+            PROGRESS, update_count, train_score_queries, fresh_queries
+        )
     except BaseException as exc:
         errors.append(f"progress integrity: {type(exc).__name__}: {exc}")
         progress_integrity["error"] = f"{type(exc).__name__}: {exc}"
     source_hashes = dict(base_sources)
-    for path in (SOURCE_AUDIT, SCHEDULE, READINESS, READINESS_ATTEMPT, SOURCE_BINDING, ZERO_PREFLIGHT, ZERO_PREFLIGHT_ATTEMPT, ATTEMPT, PROGRESS, SCORING_PREFLIGHT, TRAINING_GATE_RECEIPT, FACE, FACE_AUDIT, FACE_CHECKS):
+    for path in (
+        SOURCE_AUDIT,
+        SCHEDULE,
+        READINESS,
+        READINESS_ATTEMPT,
+        SOURCE_BINDING,
+        ZERO_PREFLIGHT,
+        ZERO_PREFLIGHT_ATTEMPT,
+        ATTEMPT,
+        PROGRESS,
+        SCORING_PREFLIGHT,
+        TRAINING_GATE_RECEIPT,
+        FACE,
+        FACE_AUDIT,
+        FACE_CHECKS,
+    ):
         if path.is_file():
             source_hashes[str(path.resolve())] = sha256(path)
     for row in preflight.get("zero_checkpoints", []):
         source_hashes[row["path"]] = row["sha256"]
-    new_checkpoints = {str(path.resolve()): sha256(path) for path in CHECKPOINT_ROOT.glob("*.pt") if path.is_file()}
+    new_checkpoints = {
+        str(path.resolve()): sha256(path) for path in CHECKPOINT_ROOT.glob("*.pt") if path.is_file()
+    }
     source_hashes.update(new_checkpoints)
     source_unchanged = n150_builder.verify_hashes(source_hashes)
     if not source_unchanged:
@@ -867,18 +1128,32 @@ def execute_approved() -> dict:
     execution_cpu = time.process_time() - started + budget.children
     stage_cpu = PRIOR_FAILED_STAGE_CPU_SECONDS + float(preflight["cpu_seconds"]) + execution_cpu
     linked_cpu = PRIOR_LINKED_CPU_SECONDS + stage_cpu
-    training_complete = update_count == TOTAL_UPDATES and train_score_queries == TRAIN_SCORE_QUERIES and len(final_records) == 6 and len([p for p in CHECKPOINT_ROOT.glob("*_final.pt") if p.is_file()]) == 6
+    training_complete = (
+        update_count == TOTAL_UPDATES
+        and train_score_queries == TRAIN_SCORE_QUERIES
+        and len(final_records) == 6
+        and len([p for p in CHECKPOINT_ROOT.glob("*_final.pt") if p.is_file()]) == 6
+    )
     if not training_complete and not errors:
         errors.append("PLAN-N1-162B training endpoint/update denominator incomplete")
-    face_expected = len(final_records) == 6 and all(row["training_sufficient"] for row in final_records)
-    face_complete = face_status == "complete" and fresh_queries == FACE_QUERIES and len(fresh_rows) == FACE_QUERIES
+    face_expected = len(final_records) == 6 and all(
+        row["training_sufficient"] for row in final_records
+    )
+    face_complete = (
+        face_status == "complete"
+        and fresh_queries == FACE_QUERIES
+        and len(fresh_rows) == FACE_QUERIES
+    )
     protocol_complete = (
         training_complete
         and progress_integrity.get("complete") is True
         and source_unchanged
         and stage_cpu <= CPU_LIMIT_SECONDS
         and linked_cpu <= LINKED_CPU_LIMIT_SECONDS
-        and ((face_expected and face_complete) or (not face_expected and face_status == "skipped_original_train_gate_failed"))
+        and (
+            (face_expected and face_complete)
+            or (not face_expected and face_status == "skipped_original_train_gate_failed")
+        )
         and not errors
     )
     report = {
@@ -892,7 +1167,9 @@ def execute_approved() -> dict:
         "prior_failed_attempt_stage_cpu_seconds": PRIOR_FAILED_STAGE_CPU_SECONDS,
         "readiness_sha256": sha256(READINESS),
         "zero_preflight_sha256": sha256(ZERO_PREFLIGHT),
-        "training_gate_receipt_sha256": sha256(TRAINING_GATE_RECEIPT) if TRAINING_GATE_RECEIPT.is_file() else None,
+        "training_gate_receipt_sha256": (
+            sha256(TRAINING_GATE_RECEIPT) if TRAINING_GATE_RECEIPT.is_file() else None
+        ),
         "attempt_sha256": sha256(ATTEMPT),
         "source_hashes": source_hashes,
         "source_hashes_unchanged": source_unchanged,
@@ -903,7 +1180,8 @@ def execute_approved() -> dict:
         "optimizer_steps": update_count,
         "train_score_queries": train_score_queries,
         "training_complete": training_complete,
-        "training_sufficient_all_endpoints": len(final_records) == 6 and all(row["training_sufficient"] for row in final_records),
+        "training_sufficient_all_endpoints": len(final_records) == 6
+        and all(row["training_sufficient"] for row in final_records),
         "scoring_preflight": scoring_preflight,
         "fresh_face_status": face_status,
         "fresh_face_sha256": sha256(FACE) if FACE.is_file() else None,
@@ -943,8 +1221,33 @@ def main() -> int:
         print(json.dumps(result, ensure_ascii=True, sort_keys=True))
         return 0 if result.get("complete") is True and result.get("equal") is True else 1
     result = checkpoint_preflight() if args.checkpoint_preflight else execute_approved()
-    keys = ("status", "complete", "cpu_seconds", "cumulative_stage_cpu_seconds", "cumulative_linked_cpu_seconds", "zero_checkpoint_count", "independent_restore_count", "training_updates", "train_score_queries", "training_sufficient_all_endpoints", "fresh_face_status", "fresh_queries", "dev_queries", "holdout_queries", "confirmation_queries", "can_promote", "errors", "summary_zh")
-    print(json.dumps({key: result.get(key) for key in keys if key in result}, ensure_ascii=True, sort_keys=True))
+    keys = (
+        "status",
+        "complete",
+        "cpu_seconds",
+        "cumulative_stage_cpu_seconds",
+        "cumulative_linked_cpu_seconds",
+        "zero_checkpoint_count",
+        "independent_restore_count",
+        "training_updates",
+        "train_score_queries",
+        "training_sufficient_all_endpoints",
+        "fresh_face_status",
+        "fresh_queries",
+        "dev_queries",
+        "holdout_queries",
+        "confirmation_queries",
+        "can_promote",
+        "errors",
+        "summary_zh",
+    )
+    print(
+        json.dumps(
+            {key: result.get(key) for key in keys if key in result},
+            ensure_ascii=True,
+            sort_keys=True,
+        )
+    )
     return 0 if result.get("complete") is True else 1
 
 

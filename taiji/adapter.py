@@ -11807,9 +11807,7 @@ class TSKV8Adapter(Taiji):
         _kernel_checkpoint: Mapping[str, Any] | None = None,
     ) -> dict[str, Any]:
         payload = dict(
-            self._kernel_checkpoint_payload()
-            if _kernel_checkpoint is None
-            else _kernel_checkpoint
+            self._kernel_checkpoint_payload() if _kernel_checkpoint is None else _kernel_checkpoint
         )
         payload["adapter"] = self.ADAPTER_NAME
         payload["perception"] = self.perception.checkpoint()

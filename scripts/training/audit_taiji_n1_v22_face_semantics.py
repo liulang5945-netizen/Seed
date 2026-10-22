@@ -80,9 +80,7 @@ def audit_face(face: dict, exclusions: dict) -> dict:
         subject = item["entities"][0]
         rows = item["observations"]
         target_rows = [
-            (index, row)
-            for index, row in enumerate(rows)
-            if row.startswith(subject + " ")
+            (index, row) for index, row in enumerate(rows) if row.startswith(subject + " ")
         ]
         target_indices = [index for index, _row in target_rows]
         if target_indices != item.get("target_fact_indices"):
@@ -98,7 +96,11 @@ def audit_face(face: dict, exclusions: dict) -> dict:
             target_answer_values.add(value)
             target_starts[(subset, kind, target_rows[0][0])] += 1
         elif kind == "revision":
-            if len(target_rows) != 2 or " uses " not in target_rows[0][1] or " now uses " not in target_rows[1][1]:
+            if (
+                len(target_rows) != 2
+                or " uses " not in target_rows[0][1]
+                or " now uses " not in target_rows[1][1]
+            ):
                 raise ValueError(f"revision target facts missing or misordered: {item_id}")
             stale = target_rows[0][1].split(" uses ", 1)[1].removesuffix(".")
             current = target_rows[1][1].split(" now uses ", 1)[1].removesuffix(".")
@@ -110,14 +112,19 @@ def audit_face(face: dict, exclusions: dict) -> dict:
             stale_values.add(stale)
             target_starts[(subset, kind, target_rows[0][0])] += 1
         elif kind == "transition":
-            if _transition_answer(face, item, [row for _index, row in target_rows]) != item["answer"]:
+            if (
+                _transition_answer(face, item, [row for _index, row in target_rows])
+                != item["answer"]
+            ):
                 raise ValueError(f"transition target semantics mismatch: {item_id}")
             direction_counts[(subset, item["answer_direction"])] += 1
             turn_counts[(subset, item["turn_template"])] += 1
             target_starts[(subset, kind, target_rows[0][0])] += 1
         elif kind == "unknown":
             if target_rows or item.get("answer") != builder.ABSTENTION:
-                raise ValueError(f"unknown item contains a target fact or wrong abstention: {item_id}")
+                raise ValueError(
+                    f"unknown item contains a target fact or wrong abstention: {item_id}"
+                )
             unknown_answer_counts[(subset, item["answer"])] += 1
         else:
             raise ValueError(f"unexpected item kind: {kind}")
@@ -140,19 +147,34 @@ def audit_face(face: dict, exclusions: dict) -> dict:
 
     if len(item_ids) != 160:
         raise ValueError("v22 item identifiers must be unique")
-    if any(count != 20 for count in unknown_answer_counts.values()) or set(unknown_answer_counts) != {
-        (subset, "unknown") for subset in builder.SUBSETS
-    }:
+    if any(count != 20 for count in unknown_answer_counts.values()) or set(
+        unknown_answer_counts
+    ) != {(subset, "unknown") for subset in builder.SUBSETS}:
         raise ValueError("each subset must retain twenty literal unknown answers")
-    if len(target_answer_values) != 80 or len(stale_values) != 40 or len(filler_material_values) != 1_800:
+    if (
+        len(target_answer_values) != 80
+        or len(stale_values) != 40
+        or len(filler_material_values) != 1_800
+    ):
         raise ValueError("v22 material target/filler inventory does not match the frozen design")
     if len(target_answer_values | stale_values | filler_material_values) != 1_920:
         raise ValueError("v22 material strings must be globally unique")
-    if any(len(value) not in (6, 7) for value in target_answer_values | stale_values | filler_material_values):
+    if any(
+        len(value) not in (6, 7)
+        for value in target_answer_values | stale_values | filler_material_values
+    ):
         raise ValueError("v22 material vocabulary has an invalid length")
-    if any(direction_counts[(subset, direction)] != 5 for subset in builder.SUBSETS for direction in builder.DIRECTIONS):
+    if any(
+        direction_counts[(subset, direction)] != 5
+        for subset in builder.SUBSETS
+        for direction in builder.DIRECTIONS
+    ):
         raise ValueError("v22 transition answer directions are not balanced")
-    if any(turn_counts[(subset, turn)] != 10 for subset in builder.SUBSETS for turn in ("left", "right")):
+    if any(
+        turn_counts[(subset, turn)] != 10
+        for subset in builder.SUBSETS
+        for turn in ("left", "right")
+    ):
         raise ValueError("v22 transition turn templates are not balanced")
     return {
         "items": len(item_ids),
@@ -191,13 +213,18 @@ def audit() -> dict:
         raise FileExistsError("v22 face semantic audit is write-once")
     started = time.process_time()
     if sha256(PLAN) != builder.PLAN_SHA256 or not FACE.is_file() or not SOURCE_EXCLUSIONS.is_file():
-        raise FileNotFoundError("frozen N1-143 plan, face and source exclusion manifest are required")
+        raise FileNotFoundError(
+            "frozen N1-143 plan, face and source exclusion manifest are required"
+        )
     face = read_json(FACE)
     exclusions = read_json(SOURCE_EXCLUSIONS)
     semantic = audit_face(face, exclusions)
     source_paths = (PLAN, FACE, SOURCE_EXCLUSIONS, FACE_CHECKS, PREPARED, Path(__file__))
     source_hashes = {str(path.resolve()): sha256(path) for path in source_paths}
-    unchanged = all(Path(path).is_file() and sha256(Path(path)) == digest for path, digest in source_hashes.items())
+    unchanged = all(
+        Path(path).is_file() and sha256(Path(path)) == digest
+        for path, digest in source_hashes.items()
+    )
     if not unchanged:
         raise ValueError("v22 face semantic audit source changed")
     report = {

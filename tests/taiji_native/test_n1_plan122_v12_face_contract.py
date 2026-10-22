@@ -48,7 +48,9 @@ def test_v12_face_audit_rejects_a_non_neighbor_distractor() -> None:
     subject = face["episodes"][0]["entities"][0]
     distractor = list(face["episodes"][0]["entities"][1])
     changed = next(
-        index for index, (left, right) in enumerate(zip(subject, distractor)) if left != right
+        index
+        for index, (left, right) in enumerate(zip(subject, distractor, strict=False))
+        if left != right
     )
     extra = next(index for index in range(len(subject)) if index != changed)
     distractor[extra] = next(letter for letter in builder.v9.LETTERS if letter != subject[extra])

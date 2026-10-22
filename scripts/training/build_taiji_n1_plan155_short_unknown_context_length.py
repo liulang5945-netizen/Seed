@@ -41,7 +41,9 @@ PRIOR_READINESS = ROOT / "reports/taiji_n1_plan155_unknown8_rebalance_readiness_
 PRIOR_READINESS_ATTEMPT = (
     ROOT / "reports/taiji_n1_plan155_unknown8_rebalance_readiness_attempt_20261020.json"
 )
-PRIOR_SOURCE_BINDING = ROOT / "reports/taiji_n1_plan155_unknown8_rebalance_source_binding_20261020.json"
+PRIOR_SOURCE_BINDING = (
+    ROOT / "reports/taiji_n1_plan155_unknown8_rebalance_source_binding_20261020.json"
+)
 PRIOR_CHECKPOINT_ROOT = ROOT / "data/checkpoints/n1_plan155_v28_unknown8_rebalance_20261020"
 PRIOR_PREFLIGHT = ROOT / "reports/taiji_n1_plan155_unknown8_rebalance_preflight_20261020.json"
 PRIOR_PREFLIGHT_ATTEMPT = (
@@ -77,12 +79,18 @@ N153_FAILURE_ATTEMPT = n153_runner.ATTEMPT
 SOURCE_AUDIT = ROOT / "reports/taiji_n1_plan155a_unknown8_rebalance_source_audit_20261020.json"
 SCHEDULE = ROOT / "plans/manifests/n1_plan155a_unknown8_rebalance_schedule_20261020.json"
 READINESS = ROOT / "reports/taiji_n1_plan155a_unknown8_rebalance_readiness_20261020.json"
-READINESS_ATTEMPT = ROOT / "reports/taiji_n1_plan155a_unknown8_rebalance_readiness_attempt_20261020.json"
+READINESS_ATTEMPT = (
+    ROOT / "reports/taiji_n1_plan155a_unknown8_rebalance_readiness_attempt_20261020.json"
+)
 SOURCE_BINDING = ROOT / "reports/taiji_n1_plan155a_unknown8_rebalance_source_binding_20261020.json"
 CHECKPOINT_ROOT = ROOT / "data/checkpoints/n1_plan155a_v28_unknown8_rebalance_20261020"
 PREFLIGHT = ROOT / "reports/taiji_n1_plan155a_unknown8_rebalance_preflight_20261020.json"
-PREFLIGHT_ATTEMPT = ROOT / "reports/taiji_n1_plan155a_unknown8_rebalance_preflight_attempt_20261020.json"
-PREFLIGHT_BINDING = ROOT / "reports/taiji_n1_plan155a_unknown8_rebalance_preflight_binding_20261020.json"
+PREFLIGHT_ATTEMPT = (
+    ROOT / "reports/taiji_n1_plan155a_unknown8_rebalance_preflight_attempt_20261020.json"
+)
+PREFLIGHT_BINDING = (
+    ROOT / "reports/taiji_n1_plan155a_unknown8_rebalance_preflight_binding_20261020.json"
+)
 ATTEMPT = ROOT / "reports/taiji_n1_plan155a_unknown8_rebalance_attempt_20261020.json"
 PROGRESS = ROOT / "reports/taiji_n1_plan155a_unknown8_rebalance_progress_20261020.jsonl"
 RESULT = ROOT / "reports/taiji_n1_plan155a_unknown8_rebalance_result_20261020.json"
@@ -285,7 +293,8 @@ def _source_context() -> tuple[dict, dict, dict, dict, dict[str, str]]:
         and prior_failed_result.get("prior_readiness_preflight_cpu_seconds") == 108.15625
         and isinstance(previous_partial, dict)
         and previous_partial.get("additional_updates") == 0
-        and Path(previous_partial.get("path", "")).resolve().parent == PRIOR_CHECKPOINT_ROOT.resolve()
+        and Path(previous_partial.get("path", "")).resolve().parent
+        == PRIOR_CHECKPOINT_ROOT.resolve()
         and previous_partial.get("sha256") == PRIOR_PARTIAL_CHECKPOINT_SHA256
         and sha256(Path(previous_partial["path"])) == PRIOR_PARTIAL_CHECKPOINT_SHA256,
         "N1-155A requires the sealed zero-update KeyError receipt and intact prior preflight",
@@ -832,10 +841,7 @@ def main() -> int:
     modes.add_argument("--validate-only", action="store_true")
     modes.add_argument("--prepare-fresh-face", action="store_true")
     args = parser.parse_args()
-    if args.validate_only:
-        result = source_readiness()
-    else:
-        result = prepare_fresh_face()
+    result = source_readiness() if args.validate_only else prepare_fresh_face()
     keys = (
         "status",
         "complete",

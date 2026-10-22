@@ -9,11 +9,23 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-PLAN = ROOT / "plans/reference/PLAN-N1-140_baseline_retention_balanced_matched_continuation_draft_20261019.md"
+PLAN = (
+    ROOT
+    / "plans/reference/PLAN-N1-140_baseline_retention_balanced_matched_continuation_draft_20261019.md"
+)
 N132_RESULT = ROOT / "reports/taiji_n1_plan132_binding_supervision_calibration_result_20261019.json"
-N139_RESULT = ROOT / "reports/taiji_n1_plan139_context_robust_matched_continuation_calibration_result_20261019.json"
-N140_RESULT = ROOT / "reports/taiji_n1_plan140_baseline_retention_balanced_matched_continuation_result_20261019.json"
-RUNNER = ROOT / "scripts/training/run_taiji_n1_plan140_baseline_retention_balanced_matched_continuation.py"
+N139_RESULT = (
+    ROOT
+    / "reports/taiji_n1_plan139_context_robust_matched_continuation_calibration_result_20261019.json"
+)
+N140_RESULT = (
+    ROOT
+    / "reports/taiji_n1_plan140_baseline_retention_balanced_matched_continuation_result_20261019.json"
+)
+RUNNER = (
+    ROOT
+    / "scripts/training/run_taiji_n1_plan140_baseline_retention_balanced_matched_continuation.py"
+)
 REPORT = ROOT / "reports/taiji_n1_plan140_itemwise_retention_context_attribution_20261019.json"
 CONDITIONS = ("8/d1", "8/d2", "8/d4", "16/d1", "16/d2", "16/d4")
 KINDS = ("lookup", "revision", "transition", "unknown")
@@ -106,18 +118,12 @@ def analyze() -> dict:
         raise ValueError("complete train-only N1-132/139/140 reports are required")
 
     parent_by_seed = {
-        int(row["seed"]): row
-        for row in n132["models"]
-        if row.get("arm") == "position"
+        int(row["seed"]): row for row in n132["models"] if row.get("arm") == "position"
     }
     if set(parent_by_seed) != {11, 12, 13}:
         raise ValueError("N1-132 must provide all three position parent endpoints")
-    n139_by_endpoint = {
-        (int(row["seed"]), row["branch"]): row for row in n139["models"]
-    }
-    n140_by_endpoint = {
-        (int(row["seed"]), row["branch"]): row for row in n140["models"]
-    }
+    n139_by_endpoint = {(int(row["seed"]), row["branch"]): row for row in n139["models"]}
+    n140_by_endpoint = {(int(row["seed"]), row["branch"]): row for row in n140["models"]}
     expected_endpoints = {
         (seed, branch) for seed in (11, 12, 13) for branch in ("candidate", "control")
     }
@@ -145,9 +151,7 @@ def analyze() -> dict:
         context_pairs = {}
         for condition in CONDITIONS:
             context_rows = [
-                row
-                for row in model["augmented_context_rows"]
-                if row.get("condition") == condition
+                row for row in model["augmented_context_rows"] if row.get("condition") == condition
             ]
             context_map = _score_map(context_rows, key="parent_id")
             if len(context_map) != 48:
@@ -175,10 +179,7 @@ def analyze() -> dict:
     for condition in CONDITIONS:
         candidate_maps = candidate_context[condition]
         control_maps = control_context[condition]
-        by_seed = {
-            seed: _paired(control_maps[seed], candidate_maps[seed])
-            for seed in (11, 12, 13)
-        }
+        by_seed = {seed: _paired(control_maps[seed], candidate_maps[seed]) for seed in (11, 12, 13)}
         combined_candidate = {
             f"seed{seed}/{item}": value
             for seed in (11, 12, 13)
@@ -196,17 +197,23 @@ def analyze() -> dict:
         candidate_totals[condition] = sum(
             sum(values.values()) for values in candidate_maps.values()
         )
-        control_totals[condition] = sum(
-            sum(values.values()) for values in control_maps.values()
-        )
+        control_totals[condition] = sum(sum(values.values()) for values in control_maps.values())
 
     prior_seed13 = n139_by_endpoint[(13, "candidate")]
     final_seed13 = n140_by_endpoint[(13, "candidate")]
     prior_transition = _score_map(
-        [row for row in _original_rows(prior_seed13["frozen_gate_rows"]) if row["kind"] == "transition"]
+        [
+            row
+            for row in _original_rows(prior_seed13["frozen_gate_rows"])
+            if row["kind"] == "transition"
+        ]
     )
     final_transition = _score_map(
-        [row for row in _original_rows(final_seed13["frozen_gate_rows"]) if row["kind"] == "transition"]
+        [
+            row
+            for row in _original_rows(final_seed13["frozen_gate_rows"])
+            if row["kind"] == "transition"
+        ]
     )
     n139_errors = {item for item, correct in prior_transition.items() if not correct}
     n140_errors = {item for item, correct in final_transition.items() if not correct}

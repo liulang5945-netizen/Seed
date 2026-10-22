@@ -91,7 +91,9 @@ def test_endpoint_registry_reuses_only_the_twelve_frozen_comparison_bundles() ->
 
     assert len(specs) == 12
     assert {spec["source"] for spec in specs} == {"N1-132", "N1-140", "N1-141"}
-    assert all(spec["path"].is_file() and builder.sha256(spec["path"]) == spec["sha256"] for spec in specs)
+    assert all(
+        spec["path"].is_file() and builder.sha256(spec["path"]) == spec["sha256"] for spec in specs
+    )
 
 
 def test_paired_summary_separates_known_correctness_from_unknown_abstention() -> None:

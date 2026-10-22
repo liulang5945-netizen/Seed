@@ -116,7 +116,10 @@ def _merge_hashes(target: dict[str, str], incoming: dict[str, str]) -> None:
 
 
 def _verify_hashes(source_hashes: dict[str, str]) -> bool:
-    return all(Path(path).is_file() and sha256(Path(path)) == digest for path, digest in source_hashes.items())
+    return all(
+        Path(path).is_file() and sha256(Path(path)) == digest
+        for path, digest in source_hashes.items()
+    )
 
 
 def _frozen_reports() -> tuple[dict, dict, dict]:
@@ -290,7 +293,10 @@ def _restore_endpoint(spec: dict):
             raise ValueError(f"N1-140 comparison checkpoint协议不符：{path}")
     elif spec["source"] == "N1-141":
         model, optimizer = n141._restore_payload(payload)
-        if payload.get("branch") != spec["branch"] or payload.get("plan_sha256") != n141.PLAN_SHA256:
+        if (
+            payload.get("branch") != spec["branch"]
+            or payload.get("plan_sha256") != n141.PLAN_SHA256
+        ):
             raise ValueError(f"N1-141 checkpoint协议不符：{path}")
     else:
         raise ValueError(f"unknown endpoint source: {spec['source']}")
@@ -336,7 +342,10 @@ def _source_hashes(prepared: dict, specs: list[dict]) -> dict[str, str]:
 
 
 def validate_only() -> dict:
-    if any(path.exists() for path in (READINESS, READINESS_ATTEMPT, SOURCE_BINDING, ATTEMPT, PROGRESS, RESULT)):
+    if any(
+        path.exists()
+        for path in (READINESS, READINESS_ATTEMPT, SOURCE_BINDING, ATTEMPT, PROGRESS, RESULT)
+    ):
         raise FileExistsError("PLAN-N1-144 checkpoint readiness/query phase is write-once")
     started = time.process_time()
     n120_eval.n120.configure()
@@ -419,9 +428,8 @@ def validate_only() -> dict:
         "endpoints": restore_checks,
         "endpoint_count": len(restore_checks),
         "independent_full_bundle_restores": len(restore_checks),
-        "all_full_bundles_equal": len(restore_checks) == 12 and all(
-            row["equal"] for row in restore_checks
-        ),
+        "all_full_bundles_equal": len(restore_checks) == 12
+        and all(row["equal"] for row in restore_checks),
         "checkpoint_loads": len(restore_checks),
         "model_loads": len(restore_checks),
         "model_queries": 0,
@@ -617,12 +625,19 @@ def confirmation_summary(rows: list[dict]) -> dict:
         if len(ids) != 80:
             raise ValueError(f"duplicate confirmation IDs in {endpoint_id}")
         if shared_ids is not None and ids != shared_ids:
-            raise ValueError("all confirmation endpoints must use the same 80 unique confirmation IDs")
+            raise ValueError(
+                "all confirmation endpoints must use the same 80 unique confirmation IDs"
+            )
         shared_ids = ids
-        by_kind = {kind: sum(row.get("kind") == kind and row.get("free_exact") is True for row in selected) for kind in KINDS}
+        by_kind = {
+            kind: sum(row.get("kind") == kind and row.get("free_exact") is True for row in selected)
+            for kind in KINDS
+        }
         kind_counts = Counter(row.get("kind") for row in selected)
         if any(kind_counts[kind] != 20 for kind in KINDS):
-            raise ValueError(f"each endpoint requires 20 confirmation items per class: {endpoint_id}")
+            raise ValueError(
+                f"each endpoint requires 20 confirmation items per class: {endpoint_id}"
+            )
         exact = sum(row.get("free_exact") is True for row in selected)
         source = selected[0]["source"]
         branch = selected[0]["branch"]
@@ -640,11 +655,11 @@ def confirmation_summary(rows: list[dict]) -> dict:
     n140_block = family_totals[("N1-140", "candidate")]
     control = family_totals[("N1-141", "control")]
     parent = family_totals[("N1-132", "parent")]
-    candidate_endpoints = [
-        per_endpoint[f"N1-141/seed{seed}/candidate"] for seed in (11, 12, 13)
-    ]
+    candidate_endpoints = [per_endpoint[f"N1-141/seed{seed}/candidate"] for seed in (11, 12, 13)]
     gates = {
-        "candidate_each_seed_at_least_40_of_80": all(row["exact"] >= 40 for row in candidate_endpoints),
+        "candidate_each_seed_at_least_40_of_80": all(
+            row["exact"] >= 40 for row in candidate_endpoints
+        ),
         "candidate_each_seed_each_kind_at_least_8_of_20": all(
             all(row["free_exact_by_kind"][kind] >= 8 for kind in KINDS)
             for row in candidate_endpoints
@@ -656,8 +671,7 @@ def confirmation_summary(rows: list[dict]) -> dict:
     return {
         "per_endpoint": per_endpoint,
         "aggregate_exact_by_family": {
-            f"{source}/{branch}": total
-            for (source, branch), total in sorted(family_totals.items())
+            f"{source}/{branch}": total for (source, branch), total in sorted(family_totals.items())
         },
         "candidate_exact": candidate,
         "n141_control_exact": control,
@@ -742,7 +756,9 @@ def execute_approved() -> dict:
         if (
             len(sacrifice_items) != 80
             or len(confirm_items) != 80
-            or any(sum(item.get("kind") == kind for item in sacrifice_items) != 20 for kind in KINDS)
+            or any(
+                sum(item.get("kind") == kind for item in sacrifice_items) != 20 for kind in KINDS
+            )
             or any(sum(item.get("kind") == kind for item in confirm_items) != 20 for kind in KINDS)
         ):
             raise ValueError("v23 sacrifice/confirm subset changed after face checks")
@@ -758,7 +774,12 @@ def execute_approved() -> dict:
             if receipt.get("error"):
                 errors.append(f"{spec['endpoint_id']} sacrifice: {receipt['error']}")
                 break
-        if not errors and sacrifice_queries == 960 and len(range_rows) == 960 and len(range_receipts) == 12:
+        if (
+            not errors
+            and sacrifice_queries == 960
+            and len(range_rows) == 960
+            and len(range_receipts) == 12
+        ):
             range_gate = _range_summary(range_rows)
         if range_gate is not None and range_gate["range_check_passed"]:
             for spec in specs:
@@ -772,7 +793,12 @@ def execute_approved() -> dict:
                 if receipt.get("error"):
                     errors.append(f"{spec['endpoint_id']} confirm: {receipt['error']}")
                     break
-            if not errors and confirmation_queries == 960 and len(confirm_rows) == 960 and len(confirm_receipts) == 12:
+            if (
+                not errors
+                and confirmation_queries == 960
+                and len(confirm_rows) == 960
+                and len(confirm_receipts) == 12
+            ):
                 confirmation = confirmation_summary(confirm_rows)
     except BaseException as exc:
         errors.append(f"{type(exc).__name__}: {exc}")
@@ -782,14 +808,22 @@ def execute_approved() -> dict:
         errors.append("至少一个来源或checkpoint在range/confirm查询期间改变")
     execution_cpu = time.process_time() - execution_started
     cumulative_cpu = prior_cpu + execution_cpu
-    range_complete = sacrifice_queries == 960 and len(range_rows) == 960 and len(range_receipts) == 12 and range_gate is not None
+    range_complete = (
+        sacrifice_queries == 960
+        and len(range_rows) == 960
+        and len(range_receipts) == 12
+        and range_gate is not None
+    )
     confirmation_complete = (
         confirmation_queries == 960 and len(confirm_receipts) == 12 and confirmation is not None
     )
     complete = (
         not errors
         and range_complete
-        and (range_gate is not None and (not range_gate["range_check_passed"] or confirmation_complete))
+        and (
+            range_gate is not None
+            and (not range_gate["range_check_passed"] or confirmation_complete)
+        )
         and unchanged
         and cumulative_cpu <= CPU_LIMIT_SECONDS
     )

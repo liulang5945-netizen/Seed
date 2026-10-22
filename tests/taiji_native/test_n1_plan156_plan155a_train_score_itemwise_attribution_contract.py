@@ -123,13 +123,16 @@ def test_length_transition_summary_counts_wrong_right_directions() -> None:
     candidate_short = next(
         row
         for row in summary
-        if row["branch"] == "unknown8_rebalanced" and row["from_length"] == 8 and row["to_length"] == 16
+        if row["branch"] == "unknown8_rebalanced"
+        and row["from_length"] == 8
+        and row["to_length"] == 16
     )
     control_short = next(
         row
         for row in summary
-        if row["branch"] == "uniform_length_replay" and row["from_length"] == 8 and row["to_length"] == 16
+        if row["branch"] == "uniform_length_replay"
+        and row["from_length"] == 8
+        and row["to_length"] == 16
     )
     assert candidate_short["wrong_to_right"] == 1
     assert control_short["right_to_wrong"] == 1
-

@@ -89,10 +89,7 @@ def test_candidate_context_assignment_preserves_parent_and_route_balance() -> No
         assert summary["by_route_and_condition"][f"hard/{condition}"] == 168
     assert all(
         counts["baseline"] == 6
-        and all(
-            counts[name] == 7
-            for name, _length, _distance in runner.TRANSITION_CONDITIONS
-        )
+        and all(counts[name] == 7 for name, _length, _distance in runner.TRANSITION_CONDITIONS)
         for counts in summary["per_parent"].values()
     )
 
@@ -126,20 +123,13 @@ def test_contexts_match_each_actual_target_and_keep_exact_distance() -> None:
             for name in changed["entities"][-(length - 2) :]
         )
 
-    hard_record = next(
-        row
-        for row in hard
-        if assignment[row["step"]]["condition"] == "8/d1"
-    )
+    hard_record = next(row for row in hard if assignment[row["step"]]["condition"] == "8/d1")
     subject = runner.n132._query_subject(hard_record["item"]["question"])
     hard_variant = variants[(hard_record["parent_id"], "hard", subject)]
     changed = runner._apply_context(hard_record["item"], hard_variant, "8/d1")
     assert changed["observations"][:2] == hard_record["item"]["observations"]
     assert len(changed["observations"]) == 8
-    assert all(
-        runner._hamming(subject, name) == 1
-        for name in changed["entities"][-6:]
-    )
+    assert all(runner._hamming(subject, name) == 1 for name in changed["entities"][-6:])
 
 
 def test_context_builder_rejects_nonapproved_condition() -> None:

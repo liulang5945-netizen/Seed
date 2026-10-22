@@ -91,7 +91,14 @@ def test_nested_length_summary_reports_known_abstention_and_unknown_specificity(
             output, exact = "unknown", False
         else:
             output, exact = "unknown", True
-        rows.append({"endpoint_id": endpoint_id, "id": item["id"], "output_hex": output.encode().hex(), "free_exact": exact})
+        rows.append(
+            {
+                "endpoint_id": endpoint_id,
+                "id": item["id"],
+                "output_hex": output.encode().hex(),
+                "free_exact": exact,
+            }
+        )
 
     summary = evaluator._paired_summary(rows, face)
     by_length = summary[endpoint_id]["by_context_length"]

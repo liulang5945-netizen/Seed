@@ -55,6 +55,7 @@ def test_tracked_machine_reports_have_one_home():
     misplaced = [name for name in tracked if name.endswith(".json")]
     assert not misplaced, f"Machine reports belong in reports/: {misplaced}"
 
+
 #: 命名族：匹配即视为已知（无需进台账），但删除仍须走 clean_worktree 的豁免逻辑。
 #: `_pytest_*` / `.pytest-*` 与 `direct-*` 分别对应 .gitignore 既有规则与 S2「特殊」节。
 #: `.dsh-sbx*`（Taiji Harness 起服沙箱 HOME）与 `.electron-cache`（harness 侧的 Electron
