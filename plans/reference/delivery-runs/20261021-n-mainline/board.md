@@ -399,3 +399,8 @@ v1.1 amendment成功write-once发布；三臂`--run`都进入真实runtime，CPU
 已确认近期extension快照boot_identity有1792002779.5610702与1792002779.56107两种值，仅差约0.0000002秒。严格float相等把它们当成跨boot，触发wall×24未知尾账，使实际闲置等待抬高预算。parent boot值为1792002780.622641，与当前相差1.06157秒，不能把原parent未知尾账一并当作该微小抖动退款。
 
 唯一下一步：修正extension boot身份的浮点稳定性，并对v1.2新窗口内已证实的误分类尾账形成独立、追加的审计校正方案。原历史event/contract保留；不得删除或清零原parent未知费用。已批准cap保持1.5M/4.3M，修复后先核验同boot host-CPU上界，再恢复训练。当前不能声称权重已有更新。
+
+
+## extension尾账校正核算完成
+
+已新增boot-accounting helper与4项定向回归。原prepared基线3,949,572.172730完整保留，读取当前全部host CPU得到新的可证明上界4,034,133.407105；现账4,175,331.822847。proposal已write-once保存在reports的boot_accounting_audit_v1，尚未应用credit。原parent boot差1.06秒，不纳入微秒级修正。下一步按04-continuation-boot-accounting-v1-3.md追加来源/会计修订与可复算校正event，然后在已批准预算内续训。
