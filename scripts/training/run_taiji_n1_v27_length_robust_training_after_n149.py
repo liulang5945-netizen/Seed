@@ -20,6 +20,7 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.training import build_taiji_n1_v27_length_robust_training_after_n149 as builder
 from scripts.training import run_taiji_n1_plan132_binding_supervision_calibration as n132
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = builder.PLAN
 PLAN_SHA256 = builder.PLAN_SHA256
@@ -226,12 +227,16 @@ def _verify_readiness() -> tuple[dict, dict, dict, dict]:
         or binding.get("readiness_sha256") != sha256(READINESS)
         or binding.get("source_hashes") != readiness.get("source_hashes")
         or binding.get("schedule_sha256") != sha256(SCHEDULE)
-        or binding.get("source_exclusion_sha256") != sha256(SOURCE_EXCLUSIONS)
+        or not seal_ast.receipt_binding_matches(
+            binding.get("source_exclusion_sha256"), SOURCE_EXCLUSIONS
+        )
         or binding.get("resource_addendum_sha256") != RESOURCE_ADDENDUM_SHA256
         or precheck.get("status") != "complete"
         or precheck.get("resource_addendum_sha256") != RESOURCE_ADDENDUM_SHA256
         or readiness.get("precheck_sha256") != sha256(PRECHECK)
-        or readiness.get("source_exclusion_sha256") != sha256(SOURCE_EXCLUSIONS)
+        or not seal_ast.receipt_binding_matches(
+            readiness.get("source_exclusion_sha256"), SOURCE_EXCLUSIONS
+        )
         or readiness.get("schedule_sha256") != sha256(SCHEDULE)
         or schedule_manifest.get("resource_addendum_sha256") != RESOURCE_ADDENDUM_SHA256
     ):
@@ -941,7 +946,9 @@ def _verify_preflight() -> tuple[dict, dict, dict, dict, dict]:
         or readiness_binding.get("readiness_sha256") != sha256(READINESS)
         or readiness_binding.get("source_hashes") != readiness.get("source_hashes")
         or readiness_binding.get("schedule_sha256") != sha256(SCHEDULE)
-        or readiness_binding.get("source_exclusion_sha256") != sha256(SOURCE_EXCLUSIONS)
+        or not seal_ast.receipt_binding_matches(
+            readiness_binding.get("source_exclusion_sha256"), SOURCE_EXCLUSIONS
+        )
         or preflight.get("status") != "complete"
         or preflight.get("complete") is not True
         or preflight.get("plan_sha256") != PLAN_SHA256

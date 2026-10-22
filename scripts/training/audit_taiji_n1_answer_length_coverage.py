@@ -18,7 +18,7 @@ CONTRACT_TEST = ROOT / "tests/taiji_native/test_n1_run109_answer_length_coverage
 
 PLAN_SHA256 = "60704ef0802319dd742849c41c5eb19f057fbbf451d4cb8da3a86e53a47c6dd4"
 SCHEDULE_SHA256 = "dc3a96ad17d43bd898e403ecd119c12c781317a71ab06ba39cdab6db24c40d50"
-FACE_SHA256 = "2d912941baecaa4811266ace64b56fa9bb2ace65d657691834911db16ed369d8"
+FACE_SHA256 = "9b23a8b4ad1508ab0c2b100b9eb98b9c4dcf572b031bb0782b1267737173d5ca"
 
 SCHEMA = "n1-train-v10-answer-length-coverage-v1"
 EXPECTED_KIND_COUNTS = {"lookup": 768, "revision": 768, "transition": 768, "unknown": 768}

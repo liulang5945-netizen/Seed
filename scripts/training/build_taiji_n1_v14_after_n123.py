@@ -18,6 +18,7 @@ from scripts.training import build_taiji_n1_hard_neighbor_v9 as v9  # noqa: E402
 from scripts.training import build_taiji_n1_v12_after_n121 as v12_builder  # noqa: E402
 from scripts.training import build_taiji_n1_v13_after_n122 as v13_builder  # noqa: E402
 from scripts.training import eval_taiji_n1_v13_after_n122 as v13_eval  # noqa: E402
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = (
     ROOT / "plans/reference/PLAN-N1-124_v14_full_context_evidence_position_probe_draft_20261019.md"
@@ -27,11 +28,11 @@ N122_CLOSEOUT = ROOT / "plans/reference/PLAN-N1-122_execution_closeout_20261019.
 N122_CLOSEOUT_SHA256 = "93a560e08eb992b82e4a69b6f5a858011ea08e3bbe0de1150718902d312754dc"
 N122_PLAN_SHA256 = "762eec7cf9b6abc514b487dbb3f31d8497b53cee476d5501258c67f6c30ca84a"
 N122_SOURCE_EXCLUSIONS = v12_builder.SOURCE_EXCLUSIONS
-N122_SOURCE_EXCLUSIONS_SHA256 = "32b7b69c8c6e0a033964e85c59653558fb6d675a67d005b3b1464f7f2f15c4d4"
+N122_SOURCE_EXCLUSIONS_SHA256 = "305cd6676e8cf471204ac95804accb463f930644f2eeb18e4dd024b1c1311b58"
 N122_READINESS = v12_builder.READINESS
 N122_READINESS_SHA256 = "fa659e3ab59685bfc3ec3273698ca58d9537f3fbf2ef5f205af1b33634733717"
 N122_FACE = v12_builder.FACE
-N122_FACE_SHA256 = "dc8daeecc190a40b308fc8f7f79b432a021970649de782c7799dd995ce0c6a11"
+N122_FACE_SHA256 = "ab51e86b7e34d36e458446fe92f2f60f0458f29a108a57b4a7a84bae2928597b"
 N122_FACE_CHECKS = v12_builder.FACE_CHECKS
 N122_FACE_CHECKS_SHA256 = "f0bf8ce3979f1f352b4c2885e8c231e9c3961815f615f157ce40eeb2dbd0d7d8"
 N122_RANGE = v12_builder.RANGE_REPORT
@@ -48,11 +49,11 @@ N123_PLAN_SHA256 = "421daf945e87af1c85d1a0b135d124b83a5f3c404f619c537f289200d349
 N123_CLOSEOUT = ROOT / "plans/reference/PLAN-N1-123_execution_closeout_20261019.md"
 N123_CLOSEOUT_SHA256 = "a239262bbd889332cfb9045449d7240a9d87434b580865e972eb53264f86a3bd"
 N123_SOURCE_EXCLUSIONS = ROOT / "plans/manifests/n1_v13_after_n122_source_exclusions_20261019.json"
-N123_SOURCE_EXCLUSIONS_SHA256 = "71335c2d8185d645df6c85de5077aab2191de82be1ea7a93be9d0d4cae337776"
+N123_SOURCE_EXCLUSIONS_SHA256 = "4d3dbcc78d82535ef678f02c3ca81a21a3f883f73e6fae8ebe91fa8c4875b439"
 N123_READINESS = ROOT / "reports/taiji_n1_v13_after_n122_confirmation_readiness_20261019.json"
 N123_READINESS_SHA256 = "427882d582f3fc963ce4f82ba2f638d2f92729882772cc28ca389fa1c0ad1d14"
 N123_FACE = ROOT / "plans/manifests/n1_hard_neighbor_v13_confirmation_seed113_20261019.json"
-N123_FACE_SHA256 = "b2fdc3f4877c08921571d2cb8965c24f653c1e0b9984e78e35695f13f34c657d"
+N123_FACE_SHA256 = "4cfc2c8ba5fb7e53275bf89ad1386fe12aca0de10ea225627e5b120f3deffcbb"
 N123_FACE_CHECKS = ROOT / "reports/taiji_n1_v13_after_n122_face_checks_20261019.json"
 N123_FACE_CHECKS_SHA256 = "2bc41cc0cdfb86719d26e818bd466c25064bc091ecdb382214e2780cd79ead40"
 N123_RANGE = ROOT / "reports/taiji_n1_v13_after_n122_range_20261019.json"
@@ -590,7 +591,9 @@ def _verify_readiness(report: dict | None = None) -> dict:
         or report.get("status") != "ready_for_approved_execution"
         or report.get("schema") != "n1-plan124-v14-zero-query-readiness-v1"
         or report.get("plan_sha256") != PLAN_SHA256
-        or report.get("source_exclusion_manifest_sha256") != sha256(SOURCE_EXCLUSIONS)
+        or not seal_ast.receipt_binding_matches(
+            report.get("source_exclusion_manifest_sha256"), SOURCE_EXCLUSIONS
+        )
         or report.get("checkpoint_hash_count") != 36
         or len(report.get("checkpoint_hashes", {})) != 36
         or report.get("independent_full_bundle_restores_reused") != 18
@@ -639,7 +642,9 @@ def build_face_after_approval() -> dict:
         inventory.get("plan_sha256") != PLAN_SHA256
         or set(inventory.get("excluded_entities", [])) != excluded_names
         or set(inventory.get("excluded_word_values", [])) != excluded_words
-        or sha256(SOURCE_EXCLUSIONS) != readiness.get("source_exclusion_manifest_sha256")
+        or not seal_ast.receipt_binding_matches(
+            readiness.get("source_exclusion_manifest_sha256"), SOURCE_EXCLUSIONS
+        )
     ):
         raise ValueError("PLAN-N1-124 source-exclusion manifest is stale")
     started = time.process_time()

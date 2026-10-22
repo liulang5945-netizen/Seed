@@ -19,6 +19,7 @@ from scripts.training import build_taiji_n1_plan153_v28_fresh_context_length_fac
 from scripts.training import run_taiji_n1_plan132_binding_supervision_calibration as n132
 from scripts.training import run_taiji_n1_plan153_v28_fresh_context_length_confirmation as n153
 from scripts.training import run_taiji_n1_v27_length_robust_training_after_n149 as n150
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = ROOT / "plans/reference/PLAN-N1-153A_fresh_context_result_binding_recovery_20261020.md"
 PLAN_SHA256 = "ab2c0040da74e63aea78226e7e542473fcd8c85412220e1d88d7cd3ca79cf185"
@@ -136,7 +137,9 @@ def _source_context() -> tuple[dict, dict, dict, dict, dict, dict, dict[str, str
     require(
         n153_readiness.get("complete") is True
         and n153_readiness.get("source_hashes_unchanged") is True
-        and n153_readiness_binding.get("readiness_sha256") == sha256(n153.READINESS)
+        and seal_ast.receipt_binding_matches(
+            n153_readiness_binding.get("readiness_sha256"), n153.READINESS
+        )
         and n153_readiness_binding.get("source_hashes") == n153_readiness.get("source_hashes")
         and n153_preflight.get("complete") is True
         and n153_preflight.get("independent_restore_count") == 6
@@ -144,7 +147,9 @@ def _source_context() -> tuple[dict, dict, dict, dict, dict, dict, dict[str, str
         and n153_preflight.get("model_queries") == 0
         and n153_preflight.get("parameter_updates") == 0
         and n153_preflight_binding.get("status") == "complete"
-        and n153_preflight_binding.get("preflight_sha256") == sha256(n153.PREFLIGHT),
+        and seal_ast.receipt_binding_matches(
+            n153_preflight_binding.get("preflight_sha256"), n153.PREFLIGHT
+        ),
         "N1-153 readiness and 6/6 final restore preflight are not valid for continuation",
     )
     require(
@@ -179,7 +184,7 @@ def _source_context() -> tuple[dict, dict, dict, dict, dict, dict, dict[str, str
     require(
         face.get("plan_sha256") == builder.PLAN_SHA256
         and checks.get("accepted") is True
-        and checks.get("face_manifest_sha256") == sha256(builder.FACE)
+        and seal_ast.receipt_binding_matches(checks.get("face_manifest_sha256"), builder.FACE)
         and audit.get("face_sha256") == checks.get("face_sha256"),
         "N1-153 one-shot face/source audit changed",
     )
@@ -375,7 +380,7 @@ def _verify_readiness() -> tuple[dict, dict, dict[str, str]]:
         or report.get("repair_plan_sha256") != PLAN_SHA256
         or binding.get("status") != "complete"
         or binding.get("repair_plan_sha256") != PLAN_SHA256
-        or binding.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(binding.get("readiness_sha256"), READINESS)
         or binding.get("source_hashes") != report.get("source_hashes")
     ):
         raise Refuse("N1-153A readiness/source binding is stale")
@@ -490,7 +495,7 @@ def _verify_preflight() -> tuple[dict, dict, dict[str, str]]:
         readiness.get("complete") is not True
         or readiness.get("repair_plan_sha256") != PLAN_SHA256
         or binding.get("status") != "complete"
-        or binding.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(binding.get("readiness_sha256"), READINESS)
         or preflight.get("complete") is not True
         or preflight.get("independent_restore_count") != 6
         or preflight.get("repair_plan_sha256") != PLAN_SHA256
@@ -499,7 +504,9 @@ def _verify_preflight() -> tuple[dict, dict, dict[str, str]]:
         or preflight.get("parameter_updates") != 0
         or preflight_binding.get("status") != "complete"
         or preflight_binding.get("repair_plan_sha256") != PLAN_SHA256
-        or preflight_binding.get("preflight_sha256") != sha256(PREFLIGHT)
+        or not seal_ast.receipt_binding_matches(
+            preflight_binding.get("preflight_sha256"), PREFLIGHT
+        )
     ):
         raise Refuse("N1-153A readiness/preflight is stale or incomplete")
     sources = preflight.get("source_hashes", {})

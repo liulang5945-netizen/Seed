@@ -24,6 +24,7 @@ from scripts.training import run_taiji_n1_plan132_binding_supervision_calibratio
 from scripts.training import run_taiji_n1_plan155_short_unknown_context_length_training as n155
 from scripts.training import run_taiji_n1_plan162b_question_surface_matched_continuation as n162
 from scripts.training import run_taiji_n1_plan165_transition_template_mid_dose as n165
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = ROOT / "plans/reference/PLAN-N1-165A_partial_attempt_completion_20261020.md"
 PLAN_SHA256 = "04f38f7711ac907869334e8ad0c785733cc615271a07cf3df32810bbb7f6ee27"
@@ -212,7 +213,7 @@ def _validate_interrupted_state(
         if (
             row is None
             or row.get("arm") != ARM
-            or n162.sha256(path) != row.get("zero_checkpoint_sha256")
+            or not seal_ast.receipt_binding_matches(row.get("zero_checkpoint_sha256"), path)
         ):
             raise Refuse(f"N1-165 zero checkpoint differs from preflight: seed{seed}")
         zero_hashes[str(seed)] = row["zero_checkpoint_sha256"]

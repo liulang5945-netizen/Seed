@@ -16,6 +16,7 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.training import build_taiji_n1_plan153_v28_fresh_context_length_face as n153
 from scripts.training import build_taiji_n1_plan160_seed130_candidate_parent_face as n160
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = ROOT / "plans/reference/PLAN-N1-161_unseen_question_surface_diagnostic_20261020.md"
 PLAN_SHA256 = "07ac97d0b96dc8dc0e17f3e7df7aa85b7df8211b2e31ff75f35872119ca567d3"
@@ -564,7 +565,7 @@ def prepare_face() -> dict:
     require(
         preflight.get("complete") is True
         and preflight.get("plan_sha256") == PLAN_SHA256
-        and preflight.get("readiness_sha256") == sha256(READINESS)
+        and seal_ast.receipt_binding_matches(preflight.get("readiness_sha256"), READINESS)
         and preflight.get("source_hashes_unchanged") is True
         and preflight.get("independent_restore_count") == 6,
         "N1-161 six-bundle preflight is incomplete",
@@ -572,8 +573,8 @@ def prepare_face() -> dict:
     require(
         pf_binding.get("status") == "complete"
         and pf_binding.get("plan_sha256") == PLAN_SHA256
-        and pf_binding.get("readiness_sha256") == sha256(READINESS)
-        and pf_binding.get("preflight_sha256") == sha256(PREFLIGHT),
+        and seal_ast.receipt_binding_matches(pf_binding.get("readiness_sha256"), READINESS)
+        and seal_ast.receipt_binding_matches(pf_binding.get("preflight_sha256"), PREFLIGHT),
         "N1-161 preflight binding is stale",
     )
     require(

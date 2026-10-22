@@ -73,8 +73,10 @@ def _face_and_checks() -> tuple[dict, dict]:
         or checks.get("model_queries") != 0
         or checks.get("parameter_updates") != 0
         or checks.get("plan_sha256") != face_builder.PLAN_SHA256
-        or checks.get("source_readiness_sha256") != sha256(READINESS)
-        or checks.get("source_exclusion_manifest_sha256") != sha256(SOURCE_EXCLUSIONS)
+        or not seal_ast.receipt_binding_matches(checks.get("source_readiness_sha256"), READINESS)
+        or not seal_ast.receipt_binding_matches(
+            checks.get("source_exclusion_manifest_sha256"), SOURCE_EXCLUSIONS
+        )
         or checks.get("checks", {}).get("answer_length_split") is not True
     ):
         raise ValueError("N1-122 face or checks differ from the frozen contract")
@@ -304,7 +306,7 @@ def _require_passing_range(range_report: dict) -> None:
         or range_report.get("confirmation_queries") != 0
         or range_report.get("queried_subset") != "sacrifice"
         or not seal_ast.receipt_binding_matches(range_report.get("face_sha256"), FACE)
-        or range_report.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(range_report.get("readiness_sha256"), READINESS)
         or range_report.get("source_hashes_unchanged") is not True
     ):
         raise ValueError("the one-shot 180-query range gate must pass before confirm")

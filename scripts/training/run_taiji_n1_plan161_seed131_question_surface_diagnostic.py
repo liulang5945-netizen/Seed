@@ -124,9 +124,9 @@ def verify_readiness() -> tuple[dict, dict[str, str]]:
         or audit.get("source_hashes_unchanged") is not True
         or binding.get("status") != "complete"
         or binding.get("plan_sha256") != PLAN_SHA256
-        or binding.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(binding.get("readiness_sha256"), READINESS)
         or binding.get("source_hashes") != readiness.get("source_hashes")
-        or readiness.get("source_audit_sha256") != sha256(SOURCE_AUDIT)
+        or not seal_ast.receipt_binding_matches(readiness.get("source_audit_sha256"), SOURCE_AUDIT)
         or readiness.get("source_hashes_unchanged") is not True
     ):
         raise Refuse("PLAN-N1-161 readiness/source binding is stale")
@@ -252,17 +252,17 @@ def verify_ready_face() -> tuple[dict, dict, list[dict], dict[str, str]]:
         or source_audit.get("status") != "complete"
         or source_audit.get("plan_sha256") != PLAN_SHA256
         or source_binding.get("status") != "complete"
-        or source_binding.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(source_binding.get("readiness_sha256"), READINESS)
         or source_binding.get("source_hashes") != readiness.get("source_hashes")
         or preflight.get("complete") is not True
         or preflight.get("plan_sha256") != PLAN_SHA256
-        or preflight.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(preflight.get("readiness_sha256"), READINESS)
         or preflight.get("source_hashes_unchanged") is not True
         or preflight.get("independent_restore_count") != 6
         or pf_binding.get("status") != "complete"
         or pf_binding.get("plan_sha256") != PLAN_SHA256
-        or pf_binding.get("readiness_sha256") != sha256(READINESS)
-        or pf_binding.get("preflight_sha256") != sha256(PREFLIGHT)
+        or not seal_ast.receipt_binding_matches(pf_binding.get("readiness_sha256"), READINESS)
+        or not seal_ast.receipt_binding_matches(pf_binding.get("preflight_sha256"), PREFLIGHT)
         or pf_binding.get("source_hashes") != preflight.get("source_hashes")
         or face.get("plan161_schema") != "n1-plan161-v33-question-surface-face-v1"
         or face.get("seed") != builder.SEED
@@ -273,7 +273,7 @@ def verify_ready_face() -> tuple[dict, dict, list[dict], dict[str, str]]:
         or face_checks.get("status") != "complete"
         or face_checks.get("source_hashes_unchanged") is not True
         or not seal_ast.receipt_binding_matches(face_checks.get("face_sha256"), FACE)
-        or face_checks.get("face_audit_sha256") != sha256(FACE_AUDIT)
+        or not seal_ast.receipt_binding_matches(face_checks.get("face_audit_sha256"), FACE_AUDIT)
     ):
         raise Refuse("PLAN-N1-161 readiness/preflight/face binding is stale")
     source_hashes = dict(preflight["source_hashes"])

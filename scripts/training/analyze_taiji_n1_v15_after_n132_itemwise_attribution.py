@@ -97,9 +97,11 @@ def build_report() -> dict:
         or confirmation.get("source_hashes_unchanged") is not True
         or confirmation.get("can_promote") is not False
         or not seal_ast.receipt_binding_matches(confirmation.get("face_sha256"), FACE)
-        or confirmation.get("face_checks_sha256") != sha256(FACE_CHECKS)
-        or confirmation.get("range_report_sha256") != sha256(RANGE_REPORT)
-        or confirmation.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(confirmation.get("face_checks_sha256"), FACE_CHECKS)
+        or not seal_ast.receipt_binding_matches(
+            confirmation.get("range_report_sha256"), RANGE_REPORT
+        )
+        or not seal_ast.receipt_binding_matches(confirmation.get("readiness_sha256"), READINESS)
         or exclusions.get("entity_count") != 7308
         or exclusions.get("word_value_count") != 5808
     ):

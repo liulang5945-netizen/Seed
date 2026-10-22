@@ -16,6 +16,7 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.training import build_taiji_n1_v25_abstention_after_n147 as n148_builder
 from scripts.training import eval_taiji_n1_v25_abstention_after_n147 as n148_eval
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = (
     ROOT
@@ -126,7 +127,7 @@ def _collect_source_union() -> tuple[set[str], set[str], dict[str, str], dict]:
         and prior_face.get("seed") == 125
         and len(prior_face.get("episodes", [])) == 80
         and prior_checks.get("accepted") is True
-        and prior_checks.get("face_sha256") == sha256(N148_FACE)
+        and seal_ast.receipt_binding_matches(prior_checks.get("face_sha256"), N148_FACE)
         and prior_prepared.get("complete") is True
         and n148_readiness.get("status") == "ready_for_diagnostic"
         and n148_readiness.get("complete") is True
@@ -137,12 +138,12 @@ def _collect_source_union() -> tuple[set[str], set[str], dict[str, str], dict]:
         and n148_result.get("diagnostic_queries") == 960
         and len(n148_result.get("diagnostic_rows", [])) == 960
         and n148_result.get("source_hashes_unchanged") is True
-        and sha256(N148_ATTEMPT) == n148_result.get("attempt_sha256")
-        and sha256(N148_PROGRESS) == n148_result.get("progress_sha256")
+        and seal_ast.receipt_binding_matches(n148_result.get("attempt_sha256"), N148_ATTEMPT)
+        and seal_ast.receipt_binding_matches(n148_result.get("progress_sha256"), N148_PROGRESS)
         and n148_result.get("parameter_updates") == 0
         and n148_result.get("can_promote") is False
         and n148_binding.get("status") == "complete"
-        and n148_binding.get("readiness_sha256") == sha256(N148_READINESS),
+        and seal_ast.receipt_binding_matches(n148_binding.get("readiness_sha256"), N148_READINESS),
         "N1-148 face/readiness/result is incomplete or outside its frozen boundary",
     )
     if not n148_builder.n147_builder.n144_builder._verify_hashes(

@@ -29,6 +29,7 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.training import _taiji_n1_transition_factorial_training_receipt as receipt
 from scripts.training import run_taiji_n1_transition_factorial_lr_decay_run88 as lr88
+from scripts.training import seal_ast  # noqa: E402
 
 FROZEN_RUNNER = ROOT / "scripts/training/run_taiji_n1_transition_factorial_paired.py"
 FROZEN_RUNNER_SHA256 = lr88.FROZEN_RUNNER_SHA256
@@ -628,7 +629,7 @@ def task_receipts(identity: dict) -> tuple[dict, Path]:
         or launch.get("controller_sha256") != identity["controller_sha256"]
         or launch.get("launcher_sha256") != identity["launcher_sha256"]
         or launch.get("frozen_runner_sha256") != identity["frozen_runner_sha256"]
-        or launch.get("preflight_report_sha256") != sha256(PREFLIGHT)
+        or not seal_ast.receipt_binding_matches(launch.get("preflight_report_sha256"), PREFLIGHT)
         or launch.get("preflight_binding_sha256")
         != sha256(PREFLIGHT.with_name(PREFLIGHT.stem + "_binding.json"))
     ):

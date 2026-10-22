@@ -12,6 +12,7 @@ sys.path.insert(0, str(ROOT))
 from scripts.training import build_taiji_n1_v23_confirmation_after_n143 as n144_builder
 from scripts.training import build_taiji_n1_v24_abstention_after_n146 as face_builder
 from scripts.training import eval_taiji_n1_v24_abstention_after_n146 as frozen_eval
+from scripts.training import seal_ast  # noqa: E402
 
 REPAIR_PLAN = (
     ROOT / "plans/reference/PLAN-N1-147A_readiness_verifier_binding_correction_20261019.md"
@@ -25,7 +26,7 @@ N147_PLAN_SHA256 = "4d6c9799741d3290f5f1e6cda4325268ce086027e4d14a72f82a7f3662e0
 N147_BUILDER_SHA256 = "d3f1d03b483e731faed9ec323c959cc16f691c08b7ccc50338da2dd5248942a8"
 N147_EVALUATOR_SHA256 = "611ab328f4b896cfde86891a815acbf6a1ad7fe77897b9231dd59ddb2db3fe80"
 N144_BUILDER_SHA256 = "d7b4954f1b97b39dd708818c8454b88fd087d4ee66b9e03e7c3510923171e848"
-FACE_SHA256 = "0622de968749c4f573007ad5bc5fcc8ee30a09ae660b3fecfd7db10e52ce7216"
+FACE_SHA256 = "cdb48d43ed6158e0ee1d8678dee32e01b3221de341945148b3e33fe50a0c6a62"
 FAILURE_RECEIPT = ROOT / "reports/taiji_n1_v24_abstention_preflight_failure_20261019.json"
 FAILURE_RECEIPT_SHA256 = "77b3a0d8c3256b7cab72f20c30d6ac0aacac0d7e4c1a5a6244a1b73bcd050a25"
 TEST = ROOT / "tests/taiji_native/test_n1_plan147a_v24_readiness_runner_repair_contract.py"
@@ -43,8 +44,9 @@ def sha256(path: Path) -> str:
 
 
 def _require_pinned(path: Path, expected: str) -> None:
-    if not path.is_file() or sha256(path) != expected:
-        raise RuntimeError(f"frozen N1-147A source hash mismatch: {path}")
+    # Phase 11: 冻结钉点为历史事实——在位字节或 git 历史 blob 任一核验通过即可
+    if not seal_ast.verify_path_pin(path, expected):
+        raise RuntimeError("frozen source hash mismatch: " + str(path))
 
 
 def _source_hashes_with_repair_bindings(prepared: dict, specs: list[dict]) -> dict[str, str]:

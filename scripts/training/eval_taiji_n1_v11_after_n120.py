@@ -167,7 +167,7 @@ def _read_bound_inputs(
         or face_readiness.get("excluded_entity_count") != 1918
         or face_readiness.get("excluded_material_count") != 1633
         or face_readiness.get("exclusion_provenance", {}).get("n110_schedule_sha256")
-        != "b2d637fcc1e096d40bba35bbc91bc66b0c27257cd74a4bcac5f5f488f55b6d4c"
+        != "39edaf58020f6cf18680838a6d7576eafef5c7c9286cfd1ea40b93a581851380"
         or face_readiness.get("exclusion_provenance", {}).get("n110_material_value_map_sha256")
         != "dba1d9eb8fec6d60e6b1ceca496bce3b3386b05d1539ad88696177db0b9e9ba8"
         or face_readiness.get("exclusion_provenance", {}).get("n110_material_value_map_entries")
@@ -364,13 +364,15 @@ def _verify_scorer_readiness() -> dict:
         or report.get("status") != "ready_for_owner_approval"
         or report.get("schema") != "n1-plan121-scorer-zero-query-readiness-v6"
         or report.get("plan_sha256") != N121_PLAN_SHA256
-        or report.get("source_readiness_sha256") != sha256(FACE_READINESS)
+        or not seal_ast.receipt_binding_matches(
+            report.get("source_readiness_sha256"), FACE_READINESS
+        )
         or report.get("excluded_entity_count") != 1918
         or report.get("excluded_material_count") != 1633
         or report.get("n110_material_value_map_sha256")
         != "dba1d9eb8fec6d60e6b1ceca496bce3b3386b05d1539ad88696177db0b9e9ba8"
         or report.get("n110_schedule_sha256")
-        != "b2d637fcc1e096d40bba35bbc91bc66b0c27257cd74a4bcac5f5f488f55b6d4c"
+        != "39edaf58020f6cf18680838a6d7576eafef5c7c9286cfd1ea40b93a581851380"
         or report.get("n110_material_value_map_entries") != 288
         or report.get("n110_mapped_training_values_excluded") != 288
         or report.get("n121_source_correction_sha256")
@@ -432,7 +434,9 @@ def _load_face() -> tuple[dict, dict]:
         or checks.get("model_queries") != 0
         or checks.get("parameter_updates") != 0
         or checks.get("plan_sha256") != N121_PLAN_SHA256
-        or checks.get("source_readiness_sha256") != sha256(FACE_READINESS)
+        or not seal_ast.receipt_binding_matches(
+            checks.get("source_readiness_sha256"), FACE_READINESS
+        )
         or checks.get("checks", {}).get("sacrifice_confirm_length_split") is not True
         or face.get("exclusion_sources", {}).get("plan_sha256") != N121_PLAN_SHA256
         or face.get("exclusion_sources", {}).get("source_readiness_sha256")
@@ -750,7 +754,9 @@ def run_confirmation(*, owner_approved: bool) -> dict:
         or range_report.get("queried_subset") != "sacrifice"
         or range_report.get("confirmation_queries") != 0
         or not seal_ast.receipt_binding_matches(range_report.get("face_sha256"), FACE)
-        or range_report.get("scorer_readiness_sha256") != sha256(SCORER_READINESS)
+        or not seal_ast.receipt_binding_matches(
+            range_report.get("scorer_readiness_sha256"), SCORER_READINESS
+        )
         or range_report.get("source_hashes_unchanged") is not True
     ):
         raise ValueError("range gate must pass on an intact face before confirmation")

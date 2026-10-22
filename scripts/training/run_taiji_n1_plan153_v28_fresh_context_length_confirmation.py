@@ -19,6 +19,7 @@ from scripts.training import build_taiji_n1_plan153_v28_fresh_context_length_fac
 from scripts.training import build_taiji_n1_v27_length_robust_training_after_n149 as n150_builder
 from scripts.training import run_taiji_n1_plan132_binding_supervision_calibration as n132
 from scripts.training import run_taiji_n1_v27_length_robust_training_after_n149 as n150
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = builder.PLAN
 PLAN_SHA256 = builder.PLAN_SHA256
@@ -163,7 +164,7 @@ def _source_context() -> tuple[dict, dict, dict, dict, dict, dict, dict, dict[st
         and checks.get("status") == "complete"
         and checks.get("accepted") is True
         and checks.get("plan_sha256") == PLAN_SHA256
-        and checks.get("face_manifest_sha256") == sha256(FACE)
+        and seal_ast.receipt_binding_matches(checks.get("face_manifest_sha256"), FACE)
         and audit.get("face_sha256") == checks.get("face_sha256")
         and face.get("plan_sha256") == PLAN_SHA256,
         "N1-153 prepared face/source audit is stale or invalid",
@@ -306,7 +307,9 @@ def _validate_prepared_outputs() -> tuple[dict, dict, dict[str, str]]:
     if audit.get("source_hashes") != rebuilt_sources:
         raise Refuse("N1-153 source audit hash map differs from rebuilt source union")
     runtime_face = builder.build_face(excluded_entities, excluded_words)[0]
-    if runtime_face != face or sha256(FACE) != checks.get("face_manifest_sha256"):
+    if runtime_face != face or not seal_ast.receipt_binding_matches(
+        checks.get("face_manifest_sha256"), FACE
+    ):
         raise Refuse("N1-153 deterministically rebuilt face differs from the frozen manifest")
     face_summary = validate_face_queries(face)
     return (
@@ -403,7 +406,7 @@ def _verify_readiness() -> tuple[dict, dict, dict, dict[str, str]]:
         or report.get("status") != "ready_for_checkpoint_preflight"
         or report.get("plan_sha256") != PLAN_SHA256
         or binding.get("status") != "complete"
-        or binding.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(binding.get("readiness_sha256"), READINESS)
         or binding.get("source_hashes") != report.get("source_hashes")
     ):
         raise Refuse("N1-153 readiness/source binding is stale")
@@ -517,7 +520,7 @@ def _verify_preflight() -> tuple[dict, dict, dict, dict[str, str]]:
         readiness.get("complete") is not True
         or readiness.get("plan_sha256") != PLAN_SHA256
         or binding.get("status") != "complete"
-        or binding.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(binding.get("readiness_sha256"), READINESS)
         or preflight.get("complete") is not True
         or preflight.get("independent_restore_count") != 6
         or preflight.get("plan_sha256") != PLAN_SHA256
@@ -525,7 +528,9 @@ def _verify_preflight() -> tuple[dict, dict, dict, dict[str, str]]:
         or preflight.get("model_queries") != 0
         or preflight.get("parameter_updates") != 0
         or preflight_binding.get("status") != "complete"
-        or preflight_binding.get("preflight_sha256") != sha256(PREFLIGHT)
+        or not seal_ast.receipt_binding_matches(
+            preflight_binding.get("preflight_sha256"), PREFLIGHT
+        )
         or preflight_binding.get("source_hashes") != preflight.get("source_hashes")
     ):
         raise Refuse("N1-153 readiness/final restore preflight is stale")

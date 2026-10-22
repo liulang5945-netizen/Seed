@@ -143,7 +143,7 @@ def validate_face_and_sources() -> tuple[dict, dict, dict, dict[str, str], dict 
         or checks.get("parameter_updates") != 0
         or checks.get("optimizer_steps") != 0
         or checks.get("plan_sha256") != PLAN_SHA256
-        or checks.get("face_file_sha256") != sha256(FACE)
+        or not seal_ast.receipt_binding_matches(checks.get("face_file_sha256"), FACE)
         or not seal_ast.receipt_binding_matches(checks.get("face_sha256"), FACE)
         or face.get("schema") != face_builder.SCHEMA
         or face.get("split") != "diagnostic"
@@ -587,7 +587,7 @@ def run_execute() -> dict:
     repair_sha256 = sha256(REPAIR_RECEIPT) if repair is not None else None
     if (
         not seal_ast.receipt_binding_matches(readiness.get("face_sha256"), FACE)
-        or readiness.get("checks_sha256") != sha256(CHECKS)
+        or not seal_ast.receipt_binding_matches(readiness.get("checks_sha256"), CHECKS)
         or readiness.get("preflight_repair_receipt_sha256") != repair_sha256
         or readiness.get("checkpoint_guards") != checkpoint_guards
         or readiness.get("source_guards") != _evaluation_source_guards(source_guards)

@@ -15,6 +15,7 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.training import build_taiji_n1_v24_abstention_after_n146 as n147_builder
 from scripts.training import eval_taiji_n1_v24_abstention_after_n146 as n147_eval
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = (
     ROOT / "plans/reference/PLAN-N1-148_matched_abstention_diagnostic_scorer_revision_20261019.md"
@@ -110,7 +111,7 @@ def _collect_source_union() -> tuple[set[str], set[str], dict[str, str], dict]:
         and prior_face.get("seed") == 124
         and len(prior_face.get("episodes", [])) == 80
         and prior_checks.get("accepted") is True
-        and prior_checks.get("face_sha256") == sha256(N147_FACE)
+        and seal_ast.receipt_binding_matches(prior_checks.get("face_sha256"), N147_FACE)
         and prior_prepared.get("complete") is True
         and readiness.get("status") == "ready_for_diagnostic"
         and readiness.get("complete") is True
@@ -118,7 +119,7 @@ def _collect_source_union() -> tuple[set[str], set[str], dict[str, str], dict]:
         and readiness.get("source_hashes_unchanged") is True
         and readiness.get("model_queries") == 0
         and binding.get("status") == "complete"
-        and binding.get("readiness_sha256") == sha256(N147_READINESS)
+        and seal_ast.receipt_binding_matches(binding.get("readiness_sha256"), N147_READINESS)
         and attempt.get("status") == "started"
         and result.get("status") == "stopped"
         and result.get("complete") is False
@@ -143,9 +144,9 @@ def _collect_source_union() -> tuple[set[str], set[str], dict[str, str], dict]:
         "N1-147 failed attempt is incomplete or inconsistent with its frozen source boundary",
     )
     require(
-        sha256(N147_ATTEMPT) == result.get("attempt_sha256")
-        and sha256(N147_PROGRESS) == result.get("progress_sha256")
-        and sha256(N147_FACE) == result.get("face_sha256")
+        seal_ast.receipt_binding_matches(result.get("attempt_sha256"), N147_ATTEMPT)
+        and seal_ast.receipt_binding_matches(result.get("progress_sha256"), N147_PROGRESS)
+        and seal_ast.receipt_binding_matches(result.get("face_sha256"), N147_FACE)
         and n147_builder.n144_builder._verify_hashes(old_manifest.get("source_hashes", {}))
         and n147_builder.n144_builder._verify_hashes(prior_prepared.get("source_hashes", {}))
         and n147_eval.frozen_eval._verify_hashes(result.get("source_hashes", {})),

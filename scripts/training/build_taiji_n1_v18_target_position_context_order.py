@@ -632,7 +632,9 @@ def _verify_readiness() -> dict:
         or report.get("status") != "ready_for_approved_execution"
         or report.get("plan_sha256") != PLAN_SHA256
         or report.get("approved_draft_sha256") != APPROVED_DRAFT_SHA256
-        or report.get("source_exclusion_manifest_sha256") != sha256(SOURCE_EXCLUSIONS)
+        or not seal_ast.receipt_binding_matches(
+            report.get("source_exclusion_manifest_sha256"), SOURCE_EXCLUSIONS
+        )
         or report.get("endpoint_count") != 12
         or report.get("entity_exclusion_count") != EXPECTED_EXCLUDED_ENTITIES
         or report.get("word_value_exclusion_count") != EXPECTED_EXCLUDED_WORDS

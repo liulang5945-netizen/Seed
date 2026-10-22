@@ -80,8 +80,10 @@ def _face_and_checks() -> tuple[dict, dict]:
         or checks.get("model_queries") != 0
         or checks.get("parameter_updates") != 0
         or checks.get("plan_sha256") != face_builder.PLAN_SHA256
-        or checks.get("readiness_sha256") != sha256(READINESS)
-        or checks.get("source_exclusion_manifest_sha256") != sha256(SOURCE_EXCLUSIONS)
+        or not seal_ast.receipt_binding_matches(checks.get("readiness_sha256"), READINESS)
+        or not seal_ast.receipt_binding_matches(
+            checks.get("source_exclusion_manifest_sha256"), SOURCE_EXCLUSIONS
+        )
     ):
         raise ValueError("v15题面、face checks或冻结合同不一致")
     source_hashes = face.get("exclusion_sources", {}).get("source_hashes", {})
@@ -370,7 +372,7 @@ def _require_passing_range(report: dict) -> None:
         or report.get("confirmation_queries") != 0
         or report.get("queried_subset") != "sacrifice"
         or not seal_ast.receipt_binding_matches(report.get("face_sha256"), FACE)
-        or report.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(report.get("readiness_sha256"), READINESS)
         or report.get("source_hashes_unchanged") is not True
     ):
         raise ValueError("须先完整通过同一v15 face的180查询range门")

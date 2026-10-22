@@ -150,8 +150,10 @@ def _collect_source_union() -> tuple[set[str], set[str], dict[str, str], dict]:
     ):
         raise Refuse("N1-142关闭回执、v21 face或source manifest不符合N1-143前置")
     if (
-        sha256(n142_eval.ATTEMPT) != n142_result.get("attempt_sha256")
-        or sha256(n142_eval.PROGRESS) != n142_result.get("progress_sha256")
+        not seal_ast.receipt_binding_matches(n142_result.get("attempt_sha256"), n142_eval.ATTEMPT)
+        or not seal_ast.receipt_binding_matches(
+            n142_result.get("progress_sha256"), n142_eval.PROGRESS
+        )
         or not prior_face_builder._verify_hashes(old_manifest.get("source_hashes", {}))
         or not prior_face_builder._verify_hashes(prior_prepared.get("source_hashes", {}))
     ):

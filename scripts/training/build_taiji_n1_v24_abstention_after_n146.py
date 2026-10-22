@@ -16,6 +16,7 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.training import build_taiji_n1_v23_confirmation_after_n143 as n144_builder
 from scripts.training import eval_taiji_n1_v23_confirmation_after_n143 as n144_eval
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = (
     ROOT
@@ -120,7 +121,7 @@ def _collect_source_union() -> tuple[set[str], set[str], dict[str, str], dict]:
         and prior_face.get("seed") == 123
         and len(prior_face.get("episodes", [])) == 160
         and prior_checks.get("accepted") is True
-        and prior_checks.get("face_sha256") == sha256(N144_FACE)
+        and seal_ast.receipt_binding_matches(prior_checks.get("face_sha256"), N144_FACE)
         and prior_prepared.get("complete") is True
         and n144_result.get("complete") is True
         and n144_result.get("status") == "confirmation_failed"
@@ -128,8 +129,8 @@ def _collect_source_union() -> tuple[set[str], set[str], dict[str, str], dict]:
         and n144_result.get("source_hashes_unchanged") is True
         and n144_result.get("can_promote") is False
         and n146_report.get("complete") is True
-        and n146_report.get("n144_result_sha256") == sha256(N144_RESULT)
-        and n146_report.get("face_sha256") == sha256(N144_FACE)
+        and seal_ast.receipt_binding_matches(n146_report.get("n144_result_sha256"), N144_RESULT)
+        and seal_ast.receipt_binding_matches(n146_report.get("face_sha256"), N144_FACE)
         and n146_report.get("can_promote") is False
         and sha256(N146_REPORT) == N146_REPORT_SHA256,
         "N1-144/v23/N1-146 source receipts differ from the frozen boundary",

@@ -156,7 +156,9 @@ def _verify_readiness() -> tuple[dict, dict[str, str]]:
         or readiness.get("prior_result_sha256") != builder.PRIOR_RESULT_SHA256
         or readiness.get("prior_consumed_queries") != builder.PRIOR_QUERIES
         or readiness.get("remaining_queries") != TOTAL_QUERIES - builder.PRIOR_QUERIES
-        or readiness.get("prior_n157a_readiness_sha256") != sha256(builder.PRIOR_N157A_READINESS)
+        or not seal_ast.receipt_binding_matches(
+            readiness.get("prior_n157a_readiness_sha256"), builder.PRIOR_N157A_READINESS
+        )
         or readiness.get("binding_failure_receipt_sha256") != builder.PRIOR_BINDING_FAILURE_SHA256
         or readiness.get("remaining_queries") != TOTAL_QUERIES - builder.PRIOR_QUERIES
         or audit.get("status") != "complete"
@@ -165,7 +167,9 @@ def _verify_readiness() -> tuple[dict, dict[str, str]]:
         or audit.get("prior_result_sha256") != builder.PRIOR_RESULT_SHA256
         or audit.get("prior_consumed_queries") != builder.PRIOR_QUERIES
         or audit.get("remaining_queries") != TOTAL_QUERIES - builder.PRIOR_QUERIES
-        or audit.get("prior_n157a_readiness_sha256") != sha256(builder.PRIOR_N157A_READINESS)
+        or not seal_ast.receipt_binding_matches(
+            audit.get("prior_n157a_readiness_sha256"), builder.PRIOR_N157A_READINESS
+        )
         or audit.get("binding_failure_receipt_sha256") != builder.PRIOR_BINDING_FAILURE_SHA256
         or audit.get("binding_failure_cpu_reserve_seconds")
         != builder.BINDING_FAILURE_CPU_RESERVE_SECONDS
@@ -174,9 +178,11 @@ def _verify_readiness() -> tuple[dict, dict[str, str]]:
         or binding.get("prior_result_sha256") != builder.PRIOR_RESULT_SHA256
         or binding.get("prior_consumed_queries") != builder.PRIOR_QUERIES
         or binding.get("remaining_queries") != TOTAL_QUERIES - builder.PRIOR_QUERIES
-        or binding.get("prior_n157a_readiness_sha256") != sha256(builder.PRIOR_N157A_READINESS)
+        or not seal_ast.receipt_binding_matches(
+            binding.get("prior_n157a_readiness_sha256"), builder.PRIOR_N157A_READINESS
+        )
         or binding.get("binding_failure_receipt_sha256") != builder.PRIOR_BINDING_FAILURE_SHA256
-        or binding.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(binding.get("readiness_sha256"), READINESS)
         or binding.get("source_hashes") != readiness.get("source_hashes")
     ):
         raise Refuse("PLAN-N1-157 readiness/source binding is stale")
@@ -318,14 +324,18 @@ def _verify_preflight_and_face() -> tuple[dict, dict, list[dict], dict[str, str]
         or readiness.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
         or readiness.get("prior_result_sha256") != builder.PRIOR_RESULT_SHA256
         or readiness.get("prior_consumed_queries") != builder.PRIOR_QUERIES
-        or readiness.get("prior_n157a_readiness_sha256") != sha256(builder.PRIOR_N157A_READINESS)
+        or not seal_ast.receipt_binding_matches(
+            readiness.get("prior_n157a_readiness_sha256"), builder.PRIOR_N157A_READINESS
+        )
         or readiness.get("binding_failure_receipt_sha256") != builder.PRIOR_BINDING_FAILURE_SHA256
         or preflight.get("complete") is not True
         or preflight.get("plan_sha256") != PLAN_SHA256
         or preflight.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
         or preflight.get("prior_result_sha256") != builder.PRIOR_RESULT_SHA256
         or preflight.get("prior_consumed_queries") != builder.PRIOR_QUERIES
-        or preflight.get("prior_n157a_readiness_sha256") != sha256(builder.PRIOR_N157A_READINESS)
+        or not seal_ast.receipt_binding_matches(
+            preflight.get("prior_n157a_readiness_sha256"), builder.PRIOR_N157A_READINESS
+        )
         or preflight.get("binding_failure_receipt_sha256") != builder.PRIOR_BINDING_FAILURE_SHA256
         or preflight_binding.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
         or preflight_binding.get("prior_result_sha256") != builder.PRIOR_RESULT_SHA256
@@ -337,7 +347,9 @@ def _verify_preflight_and_face() -> tuple[dict, dict, list[dict], dict[str, str]
         or preflight.get("independent_restore_count") != 6
         or preflight.get("source_hashes_unchanged") is not True
         or preflight_binding.get("status") != "complete"
-        or preflight_binding.get("preflight_sha256") != sha256(PREFLIGHT)
+        or not seal_ast.receipt_binding_matches(
+            preflight_binding.get("preflight_sha256"), PREFLIGHT
+        )
         or preflight_binding.get("source_hashes") != preflight.get("source_hashes")
         or face.get("plan157_schema") != "n1-plan157-v30-candidate-vs-parent-face-v1"
         or face.get("plan_sha256") != PLAN_SHA256
@@ -347,7 +359,7 @@ def _verify_preflight_and_face() -> tuple[dict, dict, list[dict], dict[str, str]
         or face_audit.get("source_hashes_unchanged") is not True
         or face_checks.get("status") != "complete"
         or not seal_ast.receipt_binding_matches(face_checks.get("face_sha256"), FACE)
-        or face_checks.get("face_audit_sha256") != sha256(FACE_AUDIT)
+        or not seal_ast.receipt_binding_matches(face_checks.get("face_audit_sha256"), FACE_AUDIT)
         or face_checks.get("total_queries") != TOTAL_QUERIES
     ):
         raise Refuse("PLAN-N1-157 preflight/face binding is stale or incomplete")

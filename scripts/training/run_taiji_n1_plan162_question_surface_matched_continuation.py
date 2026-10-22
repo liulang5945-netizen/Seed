@@ -24,6 +24,7 @@ from scripts.training import build_taiji_n1_v27_length_robust_training_after_n14
 from scripts.training import run_taiji_n1_plan132_binding_supervision_calibration as n132
 from scripts.training import run_taiji_n1_plan155_short_unknown_context_length_training as n155
 from scripts.training import run_taiji_n1_v27_length_robust_training_after_n149 as n150
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN_SHA256 = builder.PLAN_SHA256
 CPU_LIMIT_SECONDS = builder.CPU_LIMIT_SECONDS
@@ -172,10 +173,12 @@ def _verify_readiness() -> tuple[dict, dict, dict, dict[str, str]]:
         or preflight.get("model_queries") != 0
         or preflight.get("parameter_updates") != 0
         or preflight.get("optimizer_steps") != 0
-        or preflight.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(preflight.get("readiness_sha256"), READINESS)
         or attempt.get("status") != "started"
         or attempt.get("plan_sha256") != PLAN_SHA256
-        or preflight.get("attempt_sha256") != sha256(ZERO_PREFLIGHT_ATTEMPT)
+        or not seal_ast.receipt_binding_matches(
+            preflight.get("attempt_sha256"), ZERO_PREFLIGHT_ATTEMPT
+        )
     ):
         raise Refuse("PLAN-N1-162 zero checkpoint preflight is stale or incomplete")
     if not n150_builder.verify_hashes(sources) or not n150_builder.verify_hashes(

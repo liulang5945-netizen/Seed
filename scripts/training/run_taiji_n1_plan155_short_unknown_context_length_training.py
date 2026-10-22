@@ -23,6 +23,7 @@ from scripts.training import build_taiji_n1_v27_length_robust_training_after_n14
 from scripts.training import run_taiji_n1_plan132_binding_supervision_calibration as n132
 from scripts.training import run_taiji_n1_plan153_v28_fresh_context_length_confirmation as n153
 from scripts.training import run_taiji_n1_v27_length_robust_training_after_n149 as n150
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = builder.PLAN
 PLAN_SHA256 = builder.PLAN_SHA256
@@ -320,9 +321,9 @@ def _verify_readiness() -> tuple[dict, dict, dict, dict, dict[str, str]]:
         != round(builder.PRIOR_FAILED_CPU_SECONDS + float(readiness.get("cpu_seconds", -1)), 6)
         or binding.get("status") != "complete"
         or binding.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
-        or binding.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(binding.get("readiness_sha256"), READINESS)
         or binding.get("source_hashes") != readiness.get("source_hashes")
-        or readiness.get("schedule_sha256") != sha256(SCHEDULE)
+        or not seal_ast.receipt_binding_matches(readiness.get("schedule_sha256"), SCHEDULE)
         or audit.get("status") != "complete"
         or audit.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
         or audit.get("prior_failed_attempt_result_sha256") != builder.PRIOR_FAILED_RESULT_SHA256
@@ -534,7 +535,7 @@ def _verify_preflight() -> tuple[dict, dict, dict, dict, dict, dict[str, str]]:
         or source_binding.get("status") != "complete"
         or source_binding.get("plan_sha256") != PLAN_SHA256
         or source_binding.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
-        or source_binding.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(source_binding.get("readiness_sha256"), READINESS)
         or source_binding.get("source_hashes") != readiness.get("source_hashes")
         or preflight.get("complete") is not True
         or preflight.get("plan_sha256") != PLAN_SHA256
@@ -556,7 +557,9 @@ def _verify_preflight() -> tuple[dict, dict, dict, dict, dict, dict[str, str]]:
         or preflight_binding.get("status") != "complete"
         or preflight_binding.get("plan_sha256") != PLAN_SHA256
         or preflight_binding.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
-        or preflight_binding.get("preflight_sha256") != sha256(PREFLIGHT)
+        or not seal_ast.receipt_binding_matches(
+            preflight_binding.get("preflight_sha256"), PREFLIGHT
+        )
         or preflight_binding.get("source_hashes") != preflight.get("source_hashes")
     ):
         raise Refuse("N1-155 readiness/zero restore preflight is stale or incomplete")

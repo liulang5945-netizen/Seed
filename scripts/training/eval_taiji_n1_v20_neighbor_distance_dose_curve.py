@@ -71,14 +71,18 @@ def _verify_inputs() -> tuple[dict, dict, dict, dict, dict]:
         checks.get("accepted") is not True
         or not seal_ast.receipt_binding_matches(checks.get("face_sha256"), FACE)
         or checks.get("plan_sha256") != builder.PLAN_SHA256
-        or checks.get("readiness_sha256") != sha256(READINESS)
-        or checks.get("source_exclusion_manifest_sha256") != sha256(SOURCE_EXCLUSIONS)
+        or not seal_ast.receipt_binding_matches(checks.get("readiness_sha256"), READINESS)
+        or not seal_ast.receipt_binding_matches(
+            checks.get("source_exclusion_manifest_sha256"), SOURCE_EXCLUSIONS
+        )
         or checks.get("model_queries") != 0
         or checks.get("parameter_updates") != 0
         or attempt.get("status") != "started"
         or attempt.get("plan_sha256") != builder.PLAN_SHA256
-        or attempt.get("readiness_sha256") != sha256(READINESS)
-        or attempt.get("source_exclusion_manifest_sha256") != sha256(SOURCE_EXCLUSIONS)
+        or not seal_ast.receipt_binding_matches(attempt.get("readiness_sha256"), READINESS)
+        or not seal_ast.receipt_binding_matches(
+            attempt.get("source_exclusion_manifest_sha256"), SOURCE_EXCLUSIONS
+        )
         or attempt.get("planned_items") != builder.ITEMS
         or attempt.get("planned_queries") != builder.ITEMS * len(ENDPOINTS)
         or attempt.get("model_queries") != 0

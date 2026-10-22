@@ -86,7 +86,9 @@ def load_face() -> tuple[dict, dict]:
     if (
         checks.get("accepted") is not True
         or not seal_ast.receipt_binding_matches(checks.get("face_sha256"), FACE)
-        or checks.get("training_report_sha256") != sha256(training.REPORT)
+        or not seal_ast.receipt_binding_matches(
+            checks.get("training_report_sha256"), training.REPORT
+        )
         or len(face.get("episodes", [])) != 40
         or len(face.get("subsets", {}).get("sacrifice", [])) != 20
         or len(face.get("subsets", {}).get("confirm", [])) != 20

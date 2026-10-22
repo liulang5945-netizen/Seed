@@ -89,7 +89,9 @@ def load_face() -> tuple[dict, dict]:
     if (
         checks.get("accepted") is not True
         or not seal_ast.receipt_binding_matches(checks.get("face_sha256"), FACE)
-        or checks.get("training_report_sha256") != sha256(training.REPORT)
+        or not seal_ast.receipt_binding_matches(
+            checks.get("training_report_sha256"), training.REPORT
+        )
         or face.get("schema") != "n1-hard-neighbor-v9-confirmation-v1"
         or face.get("seed") != 109
         or face.get("observations_per_item") != 12
@@ -413,7 +415,7 @@ def run_confirmation() -> dict:
     repair = read_json(CONFIRM_PREFLIGHT_REPAIR)
     if (
         repair.get("status") != "pre_attempt_failure_repaired"
-        or repair.get("range_report_sha256") != sha256(RANGE_REPORT)
+        or not seal_ast.receipt_binding_matches(repair.get("range_report_sha256"), RANGE_REPORT)
         or repair.get("range_evaluator_sha256") != range_evaluator_sha256
         or repair.get("repaired_confirmation_evaluator_sha256") != confirmation_evaluator_sha256
         or repair.get("confirm_attempt_written") is not False

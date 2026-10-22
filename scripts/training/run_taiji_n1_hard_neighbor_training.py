@@ -613,7 +613,7 @@ def _validate_preflight(g: dict, identity_value: dict) -> tuple[float, dict[str,
         or report.get("status") != "complete"
         or report.get("code_identity") != identity_value
         or report.get("protocol") != g["PROTOCOL"]
-        or binding.get("preflight_report_sha256") != sha256(PREFLIGHT)
+        or not seal_ast.receipt_binding_matches(binding.get("preflight_report_sha256"), PREFLIGHT)
         or binding.get("code_identity") != identity_value
         or binding.get("schedule_sha256") != SCHEDULE_SHA256
         or len(report.get("zero_checkpoints", [])) != 9

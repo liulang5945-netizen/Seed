@@ -23,6 +23,7 @@ from scripts.training import (
     run_taiji_n1_plan155_short_unknown_context_length_training as n155_runner,
 )
 from scripts.training import run_taiji_n1_v27_length_robust_training_after_n149 as n150
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = ROOT / "plans/reference/PLAN-N1-157_seed128_candidate_vs_parent_fresh_diagnostic_20261020.md"
 PLAN_SHA256 = "ad097dc74c03d9df49a1101d4af3b7159c1ab4741e586b73557cf8e4f6f50e44"
@@ -293,14 +294,20 @@ def source_context() -> tuple[list[dict], dict[str, str], dict]:
         and prior_n157a_source_audit.get("source_hashes_unchanged") is True
         and prior_n157a_source_audit.get("prior_result_sha256") == PRIOR_RESULT_SHA256
         and prior_n157a_binding.get("status") == "complete"
-        and prior_n157a_binding.get("readiness_sha256") == sha256(PRIOR_N157A_READINESS)
+        and seal_ast.receipt_binding_matches(
+            prior_n157a_binding.get("readiness_sha256"), PRIOR_N157A_READINESS
+        )
         and prior_n157a_binding.get("source_hashes") == prior_n157a_readiness.get("source_hashes")
         and "prior_result_sha256" not in prior_n157a_binding
         and "prior_consumed_queries" not in prior_n157a_binding
         and binding_failure.get("status") == "stopped"
         and binding_failure.get("correction_addendum_sha256") == PRIOR_CORRECTION_SHA256
-        and binding_failure.get("readiness_sha256") == sha256(PRIOR_N157A_READINESS)
-        and binding_failure.get("source_binding_sha256") == sha256(PRIOR_N157A_SOURCE_BINDING)
+        and seal_ast.receipt_binding_matches(
+            binding_failure.get("readiness_sha256"), PRIOR_N157A_READINESS
+        )
+        and seal_ast.receipt_binding_matches(
+            binding_failure.get("source_binding_sha256"), PRIOR_N157A_SOURCE_BINDING
+        )
         and binding_failure.get("checkpoint_restores") == 0
         and binding_failure.get("model_queries") == 0
         and binding_failure.get("model_updates") == 0

@@ -11,6 +11,7 @@ from pathlib import Path
 
 from scripts.training import build_taiji_n1_hard_neighbor_training_schedule as train_data
 from scripts.training import run_taiji_n1_hard_neighbor_training as training
+from scripts.training import seal_ast  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 PLAN = ROOT / "plans/reference/PLAN-N1-102_v12_observation_range_probe_20261017.md"
@@ -696,7 +697,9 @@ def _training_precondition() -> dict:
     identity = report.get("code_identity", {})
     if (
         identity.get("schema") != "n1-hard-neighbor-training-code-identity-v1"
-        or identity.get("controller_sha256") != sha256(Path(training.__file__).resolve())
+        or not seal_ast.receipt_binding_matches(
+            identity.get("controller_sha256"), Path(training.__file__).resolve()
+        )
         or identity.get("schedule_sha256") != training.SCHEDULE_SHA256
     ):
         raise ValueError("training report is not bound to the frozen PLAN-N1-100 controller")

@@ -164,7 +164,7 @@ def verify_readiness() -> tuple[dict, dict[str, str]]:
         or binding.get("prior_result_sha256") != builder.PRIOR_RESULT_SHA256
         or binding.get("prior_consumed_queries") != builder.PRIOR_QUERIES
         or binding.get("remaining_queries") != TOTAL_QUERIES - builder.PRIOR_QUERIES
-        or binding.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(binding.get("readiness_sha256"), READINESS)
         or binding.get("source_hashes") != readiness.get("source_hashes")
     ):
         raise Refuse("PLAN-N1-160A readiness/source binding is stale")
@@ -310,7 +310,7 @@ def verify_ready_face() -> tuple[dict, dict, list[dict], dict[str, str]]:
         or pf_binding.get("correction_addendum_sha256") != builder.CORRECTION_SHA256
         or pf_binding.get("prior_result_sha256") != builder.PRIOR_RESULT_SHA256
         or pf_binding.get("prior_consumed_queries") != builder.PRIOR_QUERIES
-        or pf_binding.get("preflight_sha256") != sha256(PREFLIGHT)
+        or not seal_ast.receipt_binding_matches(pf_binding.get("preflight_sha256"), PREFLIGHT)
         or face.get("plan160_schema") != "n1-plan160-v32-candidate-parent-face-v1"
         or face.get("seed") != 130
         or face.get("total_queries") != TOTAL_QUERIES
@@ -318,7 +318,7 @@ def verify_ready_face() -> tuple[dict, dict, list[dict], dict[str, str]]:
         or not seal_ast.receipt_binding_matches(face_audit.get("face_sha256"), FACE)
         or face_checks.get("status") != "complete"
         or not seal_ast.receipt_binding_matches(face_checks.get("face_sha256"), FACE)
-        or face_checks.get("face_audit_sha256") != sha256(FACE_AUDIT)
+        or not seal_ast.receipt_binding_matches(face_checks.get("face_audit_sha256"), FACE_AUDIT)
     ):
         raise Refuse("PLAN-N1-160A preflight/face binding is stale")
     source_hashes = dict(preflight["source_hashes"])

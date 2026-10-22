@@ -17,6 +17,7 @@ sys.path.insert(0, str(ROOT))
 from scripts.training import build_taiji_n1_hard_neighbor_v9 as v9  # noqa: E402
 from scripts.training import build_taiji_n1_v12_after_n121 as v12_builder  # noqa: E402
 from scripts.training import eval_taiji_n1_v12_after_n121 as v12_eval  # noqa: E402
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = ROOT / "plans/reference/PLAN-N1-123_v13_long_context_range_probe_draft_20261019.md"
 PLAN_SHA256 = "421daf945e87af1c85d1a0b135d124b83a5f3c404f619c537f289200d34962eb"
@@ -24,11 +25,11 @@ N122_CLOSEOUT = ROOT / "plans/reference/PLAN-N1-122_execution_closeout_20261019.
 N122_CLOSEOUT_SHA256 = "93a560e08eb992b82e4a69b6f5a858011ea08e3bbe0de1150718902d312754dc"
 N122_PLAN_SHA256 = "762eec7cf9b6abc514b487dbb3f31d8497b53cee476d5501258c67f6c30ca84a"
 N122_SOURCE_EXCLUSIONS = v12_builder.SOURCE_EXCLUSIONS
-N122_SOURCE_EXCLUSIONS_SHA256 = "32b7b69c8c6e0a033964e85c59653558fb6d675a67d005b3b1464f7f2f15c4d4"
+N122_SOURCE_EXCLUSIONS_SHA256 = "305cd6676e8cf471204ac95804accb463f930644f2eeb18e4dd024b1c1311b58"
 N122_READINESS = v12_builder.READINESS
 N122_READINESS_SHA256 = "fa659e3ab59685bfc3ec3273698ca58d9537f3fbf2ef5f205af1b33634733717"
 N122_FACE = v12_builder.FACE
-N122_FACE_SHA256 = "dc8daeecc190a40b308fc8f7f79b432a021970649de782c7799dd995ce0c6a11"
+N122_FACE_SHA256 = "ab51e86b7e34d36e458446fe92f2f60f0458f29a108a57b4a7a84bae2928597b"
 N122_FACE_CHECKS = v12_builder.FACE_CHECKS
 N122_FACE_CHECKS_SHA256 = "f0bf8ce3979f1f352b4c2885e8c231e9c3961815f615f157ce40eeb2dbd0d7d8"
 N122_RANGE = v12_builder.RANGE_REPORT
@@ -134,7 +135,9 @@ def source_inventory() -> tuple[list[dict], set[str], set[str], dict]:
         or exclusions.get("status") != "ready_for_approval"
         or exclusions.get("entity_count") != 5898
         or exclusions.get("word_value_count") != 4728
-        or readiness.get("source_exclusion_manifest_sha256") != sha256(N122_SOURCE_EXCLUSIONS)
+        or not seal_ast.receipt_binding_matches(
+            readiness.get("source_exclusion_manifest_sha256"), N122_SOURCE_EXCLUSIONS
+        )
         or range_report.get("complete") is not True
         or range_report.get("status") != "range_not_met"
         or range_report.get("range_gate", {}).get("range_check_passed") is not False
@@ -493,7 +496,9 @@ def _verify_readiness(report: dict | None = None) -> dict:
         or report.get("status") != "ready_for_approved_execution"
         or report.get("schema") != "n1-plan123-v13-zero-query-readiness-v1"
         or report.get("plan_sha256") != PLAN_SHA256
-        or report.get("source_exclusion_manifest_sha256") != sha256(SOURCE_EXCLUSIONS)
+        or not seal_ast.receipt_binding_matches(
+            report.get("source_exclusion_manifest_sha256"), SOURCE_EXCLUSIONS
+        )
         or report.get("checkpoint_hash_count") != 36
         or len(report.get("checkpoint_hashes", {})) != 36
         or report.get("independent_full_bundle_restores_reused") != 18
@@ -542,7 +547,9 @@ def build_face_after_approval() -> dict:
         inventory.get("plan_sha256") != PLAN_SHA256
         or set(inventory.get("excluded_entities", [])) != excluded_names
         or set(inventory.get("excluded_word_values", [])) != excluded_words
-        or sha256(SOURCE_EXCLUSIONS) != readiness.get("source_exclusion_manifest_sha256")
+        or not seal_ast.receipt_binding_matches(
+            readiness.get("source_exclusion_manifest_sha256"), SOURCE_EXCLUSIONS
+        )
     ):
         raise ValueError("PLAN-N1-123 source-exclusion manifest is stale")
     started = time.process_time()

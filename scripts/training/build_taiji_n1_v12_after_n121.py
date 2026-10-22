@@ -21,6 +21,7 @@ from scripts.training import (
     run_taiji_n1_expanded_normalized_rwl_length_balanced as n120,
 )  # noqa: E402
 from scripts.training import run_taiji_n1_hard_neighbor_training as baseline_training  # noqa: E402
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = ROOT / "plans/reference/PLAN-N1-122_v12_hard_neighbor_range_recovery_draft_20261019.md"
 PLAN_SHA256 = "762eec7cf9b6abc514b487dbb3f31d8497b53cee476d5501258c67f6c30ca84a"
@@ -28,7 +29,7 @@ N121_CLOSEOUT = ROOT / "plans/reference/PLAN-N1-121_execution_closeout_20261019.
 N121_CLOSEOUT_SHA256 = "a50abc1b359be0e21010864864b11c0daf6296a03d5217d0419aa8be339aac90"
 N121_CORRECTION_SHA256 = "896dad354e6c81b7a1157746fe4e4bc5dcc8fcd266a7707dc09f476d7bb7aba7"
 N121_FACE = ROOT / "plans/manifests/n1_hard_neighbor_v11_confirmation_seed111_20261019.json"
-N121_FACE_SHA256 = "1d9236c5a258493ace574af74ae6b032632cf53011b009ad47660f862ea87f5e"
+N121_FACE_SHA256 = "74b4381936a9b950faa7a2a049197591a56c21510402cfb3a84a523697ea46ba"
 N121_RANGE = ROOT / "reports/taiji_n1_v11_after_n120_range_20261019.json"
 N121_RANGE_SHA256 = "f1ce49385c1ee6001385a93a5bf65a7de08546c094afac697f3e6fee46fc8cf2"
 N121_SOURCE_AUDIT = ROOT / "reports/taiji_n1_v11_after_n120_source_overlap_audit_20261019.json"
@@ -578,7 +579,9 @@ def build_face_after_approval() -> dict:
         inventory.get("plan_sha256") != PLAN_SHA256
         or set(inventory.get("excluded_entities", [])) != excluded_names
         or set(inventory.get("excluded_word_values", [])) != excluded_words
-        or sha256(SOURCE_EXCLUSIONS) != readiness.get("source_exclusion_manifest_sha256")
+        or not seal_ast.receipt_binding_matches(
+            readiness.get("source_exclusion_manifest_sha256"), SOURCE_EXCLUSIONS
+        )
     ):
         raise ValueError("PLAN-N1-122 source-exclusion manifest is stale")
     started = time.process_time()
@@ -642,7 +645,9 @@ def _verify_readiness(report: dict | None = None) -> dict:
         or report.get("status") != "ready_for_approval"
         or report.get("schema") != "n1-plan122-v12-zero-query-readiness-v1"
         or report.get("plan_sha256") != PLAN_SHA256
-        or report.get("source_exclusion_manifest_sha256") != sha256(SOURCE_EXCLUSIONS)
+        or not seal_ast.receipt_binding_matches(
+            report.get("source_exclusion_manifest_sha256"), SOURCE_EXCLUSIONS
+        )
         or report.get("checkpoint_hash_count") != 36
         or len(report.get("checkpoint_hashes", {})) != 36
         or report.get("independent_full_bundle_restores_reused") != 18

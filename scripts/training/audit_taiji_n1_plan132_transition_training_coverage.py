@@ -11,6 +11,7 @@ from pathlib import Path
 
 from scripts.training import analyze_taiji_n1_v15_after_n132_itemwise_attribution as n133_itemwise
 from scripts.training import run_taiji_n1_plan132_binding_supervision_calibration as n132
+from scripts.training import seal_ast  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 N133_PLAN = (
@@ -124,7 +125,9 @@ def build_report() -> dict:
         or confirm.get("complete") is not True
         or confirm.get("can_promote") is not False
         or confirm.get("confirmation_queries") != 240
-        or itemwise_report.get("confirmation_report_sha256") != sha256(N133_CONFIRM)
+        or not seal_ast.receipt_binding_matches(
+            itemwise_report.get("confirmation_report_sha256"), N133_CONFIRM
+        )
     ):
         raise ValueError("N1-133已消费结果或v15面绑定失效")
     confirm_ids = set(face["subsets"]["confirm"])

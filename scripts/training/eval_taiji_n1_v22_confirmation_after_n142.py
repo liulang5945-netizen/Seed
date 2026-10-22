@@ -180,19 +180,25 @@ def _read_prepared_face() -> tuple[dict, dict, dict, dict, dict]:
         or read_json(FACE_ATTEMPT).get("plan_sha256") != PLAN_SHA256
         or read_json(FACE_ATTEMPT).get("model_queries") != 0
         or read_json(FACE_ATTEMPT).get("parameter_updates") != 0
-        or sha256(FACE) != checks.get("face_sha256")
+        or not seal_ast.receipt_binding_matches(checks.get("face_sha256"), FACE)
         or checks.get("accepted") is not True
         or checks.get("plan_sha256") != PLAN_SHA256
-        or checks.get("source_exclusion_sha256") != sha256(SOURCE_EXCLUSIONS)
+        or not seal_ast.receipt_binding_matches(
+            checks.get("source_exclusion_sha256"), SOURCE_EXCLUSIONS
+        )
         or checks.get("model_queries") != 0
         or checks.get("parameter_updates") != 0
         or prepared.get("complete") is not True
         or prepared.get("status") != "ready_for_checkpoint_readiness"
         or prepared.get("plan_sha256") != PLAN_SHA256
         or not seal_ast.receipt_binding_matches(prepared.get("face_sha256"), FACE)
-        or prepared.get("face_checks_sha256") != sha256(FACE_CHECKS)
-        or prepared.get("source_exclusion_sha256") != sha256(SOURCE_EXCLUSIONS)
-        or prepared.get("source_precheck_sha256") != sha256(SOURCE_PRECHECK)
+        or not seal_ast.receipt_binding_matches(prepared.get("face_checks_sha256"), FACE_CHECKS)
+        or not seal_ast.receipt_binding_matches(
+            prepared.get("source_exclusion_sha256"), SOURCE_EXCLUSIONS
+        )
+        or not seal_ast.receipt_binding_matches(
+            prepared.get("source_precheck_sha256"), SOURCE_PRECHECK
+        )
         or prepared.get("source_hashes_unchanged") is not True
         or prepared.get("model_queries") != 0
         or prepared.get("parameter_updates") != 0
@@ -200,7 +206,9 @@ def _read_prepared_face() -> tuple[dict, dict, dict, dict, dict]:
         raise ValueError("v22面、来源排除或face readiness与冻结合同不一致")
     if not face_builder._verify_hashes(prepared.get("source_hashes", {})):
         raise ValueError("v22 face准备期来源哈希变化")
-    if sha256(SOURCE_EXCLUSIONS) != checks.get("source_exclusion_sha256"):
+    if not seal_ast.receipt_binding_matches(
+        checks.get("source_exclusion_sha256"), SOURCE_EXCLUSIONS
+    ):
         raise ValueError("v22来源排除清单哈希变化")
     # Re-run the pure face checker from the saved manifest and face bytes.
     verified = face_builder.validate_face(
@@ -484,7 +492,7 @@ def _verify_readiness() -> tuple[dict, dict, dict, dict, list[dict]]:
         or readiness.get("new_confirmation_queries") != 0
         or binding.get("status") != "complete"
         or binding.get("plan_sha256") != PLAN_SHA256
-        or binding.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(binding.get("readiness_sha256"), READINESS)
         or binding.get("source_hashes") != readiness.get("source_hashes")
     ):
         raise ValueError("v22 readiness/source binding不完整或已变化")

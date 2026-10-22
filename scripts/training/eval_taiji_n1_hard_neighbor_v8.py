@@ -86,7 +86,9 @@ def load_face() -> tuple[dict, dict]:
     if (
         checks.get("accepted") is not True
         or not seal_ast.receipt_binding_matches(checks.get("face_sha256"), FACE)
-        or checks.get("training_report_sha256") != sha256(training.REPORT)
+        or not seal_ast.receipt_binding_matches(
+            checks.get("training_report_sha256"), training.REPORT
+        )
         or face.get("schema") != "n1-hard-neighbor-v8-confirmation-v1"
         or face.get("seed") != 108
         or face.get("observations_per_item") != 8

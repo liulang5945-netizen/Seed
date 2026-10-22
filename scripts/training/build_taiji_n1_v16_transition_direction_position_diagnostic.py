@@ -164,7 +164,9 @@ def _prior_sources() -> tuple[set[str], set[str], dict[str, str], dict, list[dic
         or prior_analysis.get("status") != "complete"
         or prior_analysis.get("model_queries") != 0
         or prior_analysis.get("parameter_updates") != 0
-        or prior_analysis.get("confirmation_report_sha256") != sha256(N133_CONFIRM)
+        or not seal_ast.receipt_binding_matches(
+            prior_analysis.get("confirmation_report_sha256"), N133_CONFIRM
+        )
         or sha256(TRAINING_COVERAGE_AUDIT) != TRAINING_COVERAGE_AUDIT_SHA256
         or training_audit.get("status") != "complete"
         or training_audit.get("train_split_only") is not True
@@ -564,7 +566,9 @@ def _verify_readiness() -> dict:
         report.get("complete") is not True
         or report.get("status") != "ready_for_approved_execution"
         or report.get("plan_sha256") != PLAN_SHA256
-        or report.get("source_exclusion_manifest_sha256") != sha256(SOURCE_EXCLUSIONS)
+        or not seal_ast.receipt_binding_matches(
+            report.get("source_exclusion_manifest_sha256"), SOURCE_EXCLUSIONS
+        )
         or report.get("endpoint_count") != 12
         or report.get("model_queries") != 0
         or report.get("parameter_updates") != 0

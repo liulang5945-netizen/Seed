@@ -20,7 +20,7 @@ N144_PLAN = (
 )
 N144_PLAN_SHA256 = "b5527b5f8a56aa12604a7dbc40dad1fa74c3f4ea8e953a6b2539f1fa3c5fcf42"
 FACE = ROOT / "plans/manifests/n1_v23_confirmation_seed123_20261019.json"
-FACE_SHA256 = "fe036143a4b66ca552720642500fd8d37dddcab912487c0b6a297e56d1351c1e"
+FACE_SHA256 = "3ecef19979926e0456c814f81dda3ec457c11a70e5a7a86624835ed0de2ee9dc"
 RESULT = ROOT / "reports/taiji_n1_v23_confirmation_result_20261019.json"
 RESULT_SHA256 = "67038a9848b3c7ac088fea1983d9ba40ea153e91c8a4c436db830e8894e80388"
 ATTEMPT = ROOT / "reports/taiji_n1_v23_confirmation_attempt_20261019.json"

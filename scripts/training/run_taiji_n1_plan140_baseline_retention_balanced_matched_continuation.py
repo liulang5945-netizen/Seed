@@ -1015,7 +1015,7 @@ def _verify_readiness() -> tuple[dict, dict]:
         or readiness.get("planned_train_only_queries") != EXPECTED_TOTAL_TRAIN_QUERIES
         or binding.get("status") != "complete"
         or binding.get("plan_sha256") != PLAN_SHA256
-        or binding.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(binding.get("readiness_sha256"), READINESS)
         or binding.get("source_hashes") != readiness.get("source_hashes")
         or binding.get("parent_checkpoint_hashes") != readiness.get("parent_checkpoint_hashes")
     ):
@@ -1369,8 +1369,10 @@ def _verify_preflight() -> tuple[dict, dict, dict, dict]:
         or attempt.get("plan_sha256") != PLAN_SHA256
         or binding.get("status") != "complete"
         or binding.get("plan_sha256") != PLAN_SHA256
-        or binding.get("preflight_sha256") != sha256(PREFLIGHT)
-        or binding.get("preflight_attempt_sha256") != sha256(PREFLIGHT_ATTEMPT)
+        or not seal_ast.receipt_binding_matches(binding.get("preflight_sha256"), PREFLIGHT)
+        or not seal_ast.receipt_binding_matches(
+            binding.get("preflight_attempt_sha256"), PREFLIGHT_ATTEMPT
+        )
         or binding.get("zero_checkpoint_hashes") != preflight.get("zero_checkpoint_hashes")
         or binding.get("parent_checkpoint_hashes") != readiness.get("parent_checkpoint_hashes")
     ):

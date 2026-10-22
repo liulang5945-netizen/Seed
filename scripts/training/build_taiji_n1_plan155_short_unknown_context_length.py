@@ -22,6 +22,7 @@ from scripts.training import (
     run_taiji_n1_plan153_v28_fresh_context_length_confirmation as n153_runner,
 )
 from scripts.training import run_taiji_n1_v27_length_robust_training_after_n149 as n150
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = (
     ROOT
@@ -203,7 +204,7 @@ def _source_context() -> tuple[dict, dict, dict, dict, dict[str, str]]:
         and n150_result.get("train_score_queries") == 7_488
         and n150_result.get("training_sufficient_all_endpoints") is True
         and n150_result.get("can_promote") is False
-        and sha256(n150.PROGRESS) == n150_result.get("progress_sha256")
+        and seal_ast.receipt_binding_matches(n150_result.get("progress_sha256"), n150.PROGRESS)
         and n151a.get("complete") is True
         and n151a.get("source_hashes_unchanged") is True
         and n152_result.get("complete") is True
@@ -257,8 +258,12 @@ def _source_context() -> tuple[dict, dict, dict, dict, dict[str, str]]:
         and prior_failed_result.get("errors") == ["KeyError: 'views'"]
         and prior_failed_result.get("source_hashes_unchanged") is True
         and prior_failed_result.get("plan_sha256") == PLAN_SHA256
-        and prior_failed_result.get("attempt_sha256") == sha256(PRIOR_FAILED_ATTEMPT)
-        and prior_failed_result.get("preflight_sha256") == sha256(PRIOR_PREFLIGHT)
+        and seal_ast.receipt_binding_matches(
+            prior_failed_result.get("attempt_sha256"), PRIOR_FAILED_ATTEMPT
+        )
+        and seal_ast.receipt_binding_matches(
+            prior_failed_result.get("preflight_sha256"), PRIOR_PREFLIGHT
+        )
         and prior_failed_result.get("cpu_seconds") == PRIOR_FAILED_STAGE_CPU_SECONDS
         and prior_failed_result.get("cumulative_cpu_seconds") == PRIOR_FAILED_CPU_SECONDS
         and prior_failed_attempt.get("status") == "started"
@@ -274,9 +279,13 @@ def _source_context() -> tuple[dict, dict, dict, dict, dict[str, str]]:
         and prior_source_audit.get("status") == "complete"
         and prior_source_audit.get("source_hashes_unchanged") is True
         and prior_schedule.get("schedule_sha256") == prior_readiness.get("schedule_identity_sha256")
-        and prior_schedule.get("source_audit_sha256") == sha256(PRIOR_SOURCE_AUDIT)
+        and seal_ast.receipt_binding_matches(
+            prior_schedule.get("source_audit_sha256"), PRIOR_SOURCE_AUDIT
+        )
         and prior_source_binding.get("status") == "complete"
-        and prior_source_binding.get("readiness_sha256") == sha256(PRIOR_READINESS)
+        and seal_ast.receipt_binding_matches(
+            prior_source_binding.get("readiness_sha256"), PRIOR_READINESS
+        )
         and prior_preflight.get("complete") is True
         and prior_preflight.get("plan_sha256") == PLAN_SHA256
         and prior_preflight.get("zero_checkpoint_count") == 6
@@ -284,10 +293,14 @@ def _source_context() -> tuple[dict, dict, dict, dict, dict[str, str]]:
         and prior_preflight.get("source_hashes_unchanged") is True
         and prior_preflight.get("model_queries") == 0
         and prior_preflight.get("parameter_updates") == 0
-        and prior_preflight.get("readiness_sha256") == sha256(PRIOR_READINESS)
+        and seal_ast.receipt_binding_matches(
+            prior_preflight.get("readiness_sha256"), PRIOR_READINESS
+        )
         and prior_preflight_binding.get("status") == "complete"
         and prior_preflight_binding.get("plan_sha256") == PLAN_SHA256
-        and prior_preflight_binding.get("preflight_sha256") == sha256(PRIOR_PREFLIGHT)
+        and seal_ast.receipt_binding_matches(
+            prior_preflight_binding.get("preflight_sha256"), PRIOR_PREFLIGHT
+        )
         and prior_preflight_binding.get("source_hashes") == prior_preflight.get("source_hashes")
         and len(previous_zero_rows) == 6
         and prior_failed_result.get("prior_readiness_preflight_cpu_seconds") == 108.15625

@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from scripts.training import run_taiji_n1_plan162b_question_surface_matched_continuation as n162
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = (
     ROOT
@@ -261,7 +262,7 @@ def build() -> dict:
         path = Path(parent["final_checkpoint_path"]).resolve()
         if (
             not path.is_file()
-            or sha256(path) != parent.get("final_checkpoint_sha256")
+            or not seal_ast.receipt_binding_matches(parent.get("final_checkpoint_sha256"), path)
             or restore.get("complete") is not True
             or restore.get("equal") is not True
             or parent.get("final_history_count") != 79_872

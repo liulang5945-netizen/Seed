@@ -19,6 +19,7 @@ from scripts.training import (
 from scripts.training import build_taiji_n1_plan153_v28_fresh_context_length_face as n153_builder
 from scripts.training import build_taiji_n1_plan159_seed129_candidate_parent_face as n159_builder
 from scripts.training import build_taiji_n1_v27_length_robust_training_after_n149 as n150_builder
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = ROOT / "plans/reference/PLAN-N1-160_seed130_candidate_parent_fresh_replication_20261020.md"
 PLAN_SHA256 = "55ca0f18a741857ac903502213222feba92cbfc2a6b16215c221224fd8551d7a"
@@ -153,7 +154,7 @@ def source_context() -> tuple[list[dict], dict[str, str], dict]:
         and n158_result.get("complete") is True
         and n158_result.get("source_result_sha256") == n159_builder.N157A2_RESULT_SHA256
         and n158_result.get("source_progress_sha256") == n159_builder.N157A2_PROGRESS_SHA256
-        and n158_result.get("face_sha256") == sha256(FACE128)
+        and seal_ast.receipt_binding_matches(n158_result.get("face_sha256"), FACE128)
         and n158_result.get("can_promote") is False,
         "N1-159A/N1-158 replication source evidence is incomplete",
     )
@@ -421,7 +422,7 @@ def verify_sealed_face() -> dict:
         and audit.get("face_sha256") == PRIOR_FACE_SHA256
         and checks.get("status") == "complete"
         and checks.get("face_sha256") == PRIOR_FACE_SHA256
-        and checks.get("face_audit_sha256") == sha256(FACE_AUDIT),
+        and seal_ast.receipt_binding_matches(checks.get("face_audit_sha256"), FACE_AUDIT),
         "PLAN-N1-160A sealed seed130 face audit is stale",
     )
     return checks

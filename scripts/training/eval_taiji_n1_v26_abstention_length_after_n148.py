@@ -301,19 +301,25 @@ def _read_prepared_face() -> tuple[dict, dict, dict]:
         or attempt.get("plan_sha256") != PLAN_SHA256
         or attempt.get("model_queries") != 0
         or attempt.get("parameter_updates") != 0
-        or sha256(FACE) != checks.get("face_sha256")
+        or not seal_ast.receipt_binding_matches(checks.get("face_sha256"), FACE)
         or checks.get("accepted") is not True
         or checks.get("plan_sha256") != PLAN_SHA256
-        or checks.get("source_exclusion_sha256") != sha256(SOURCE_EXCLUSIONS)
+        or not seal_ast.receipt_binding_matches(
+            checks.get("source_exclusion_sha256"), SOURCE_EXCLUSIONS
+        )
         or checks.get("source_hashes_unchanged") is not True
         or checks.get("model_queries") != 0
         or checks.get("parameter_updates") != 0
         or prepared.get("complete") is not True
         or prepared.get("plan_sha256") != PLAN_SHA256
         or not seal_ast.receipt_binding_matches(prepared.get("face_sha256"), FACE)
-        or prepared.get("face_checks_sha256") != sha256(FACE_CHECKS)
-        or prepared.get("source_exclusion_sha256") != sha256(SOURCE_EXCLUSIONS)
-        or prepared.get("source_precheck_sha256") != sha256(SOURCE_PRECHECK)
+        or not seal_ast.receipt_binding_matches(prepared.get("face_checks_sha256"), FACE_CHECKS)
+        or not seal_ast.receipt_binding_matches(
+            prepared.get("source_exclusion_sha256"), SOURCE_EXCLUSIONS
+        )
+        or not seal_ast.receipt_binding_matches(
+            prepared.get("source_precheck_sha256"), SOURCE_PRECHECK
+        )
         or prepared.get("source_hashes_unchanged") is not True
         or prepared.get("model_queries") != 0
         or prepared.get("parameter_updates") != 0
@@ -500,7 +506,7 @@ def _verify_readiness() -> tuple[dict, dict, list[dict]]:
         or readiness.get("parameter_updates") != 0
         or binding.get("status") != "complete"
         or binding.get("plan_sha256") != PLAN_SHA256
-        or binding.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(binding.get("readiness_sha256"), READINESS)
         or binding.get("source_hashes") != readiness.get("source_hashes")
     ):
         raise ValueError("N1-149 readiness/source binding mismatch")

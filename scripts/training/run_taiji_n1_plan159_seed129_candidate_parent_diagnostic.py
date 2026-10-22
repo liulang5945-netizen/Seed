@@ -172,7 +172,7 @@ def _verify_readiness() -> tuple[dict, dict[str, str]]:
         or binding.get("prior_result_sha256") != builder.PRIOR_RESULT_SHA256
         or binding.get("prior_consumed_queries") != builder.PRIOR_QUERIES
         or binding.get("remaining_queries") != TOTAL_QUERIES - builder.PRIOR_QUERIES
-        or binding.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(binding.get("readiness_sha256"), READINESS)
         or binding.get("source_hashes") != readiness.get("source_hashes")
     ):
         raise Refuse("PLAN-N1-159 readiness/source binding is stale")
@@ -320,7 +320,9 @@ def _verify_preflight_and_face() -> tuple[dict, dict, list[dict], dict[str, str]
         or preflight_binding.get("prior_result_sha256") != builder.PRIOR_RESULT_SHA256
         or preflight_binding.get("prior_consumed_queries") != builder.PRIOR_QUERIES
         or preflight_binding.get("remaining_queries") != TOTAL_QUERIES - builder.PRIOR_QUERIES
-        or preflight_binding.get("preflight_sha256") != sha256(PREFLIGHT)
+        or not seal_ast.receipt_binding_matches(
+            preflight_binding.get("preflight_sha256"), PREFLIGHT
+        )
         or face.get("plan159_schema") != "n1-plan159-v31-candidate-parent-face-v1"
         or face.get("plan_sha256") != PLAN_SHA256
         or face.get("seed") != 129
@@ -330,7 +332,7 @@ def _verify_preflight_and_face() -> tuple[dict, dict, list[dict], dict[str, str]
         or face_audit.get("source_hashes_unchanged") is not True
         or face_checks.get("status") != "complete"
         or not seal_ast.receipt_binding_matches(face_checks.get("face_sha256"), FACE)
-        or face_checks.get("face_audit_sha256") != sha256(FACE_AUDIT)
+        or not seal_ast.receipt_binding_matches(face_checks.get("face_audit_sha256"), FACE_AUDIT)
         or face_checks.get("total_queries") != TOTAL_QUERIES
     ):
         raise Refuse("PLAN-N1-159 preflight/seed129 face binding is stale")

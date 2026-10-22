@@ -28,6 +28,7 @@ from scripts.training import eval_taiji_n1_v11_after_n120 as e11  # noqa: E402
 from scripts.training import (
     run_taiji_n1_expanded_normalized_rwl_length_balanced as n120,
 )  # noqa: E402
+from scripts.training import seal_ast  # noqa: E402
 from taiji.native_local_relation_evidence_candidate import (  # noqa: E402
     LocalRelationEvidenceCandidate,
 )
@@ -618,7 +619,9 @@ def source_revalidation() -> dict:
             or failed_preflight.get("parameter_updates") != 0
             or failed_preflight.get("zero_checkpoints") != []
             or failed_preflight.get("source_hashes_unchanged") is not True
-            or failed_binding.get("preflight_sha256") != sha256(PREFLIGHT)
+            or not seal_ast.receipt_binding_matches(
+                failed_binding.get("preflight_sha256"), PREFLIGHT
+            )
             or failed_binding.get("status") != "stopped"
         ):
             raise ValueError("failed preflight must be bound and stopped before checkpoint loads")
@@ -962,7 +965,9 @@ def checkpoint_preflight() -> dict:
             or prior_preflight.get("checkpoint_loads") != 0
             or prior_preflight.get("parameter_updates") != 0
             or prior_preflight.get("zero_checkpoints") != []
-            or prior_binding.get("preflight_sha256") != sha256(PREFLIGHT)
+            or not seal_ast.receipt_binding_matches(
+                prior_binding.get("preflight_sha256"), PREFLIGHT
+            )
         ):
             raise FileExistsError("previous checkpoint preflight is not eligible for repair")
         preflight_path = PREFLIGHT_REVALIDATION
@@ -1167,7 +1172,7 @@ def _verify_preflight() -> tuple[dict, dict, dict]:
         or preflight.get("source_hashes_unchanged") is not True
         or preflight.get("parameter_updates") != 0
         or preflight.get("independent_restores") != 3
-        or binding.get("preflight_sha256") != sha256(preflight_path)
+        or not seal_ast.receipt_binding_matches(binding.get("preflight_sha256"), preflight_path)
         or binding.get("status") != "complete"
     ):
         raise ValueError("N1-132 zero-copy preflight is stale or incomplete")

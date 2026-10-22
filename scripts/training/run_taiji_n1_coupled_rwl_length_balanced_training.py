@@ -20,6 +20,7 @@ from scripts.training import (
 from scripts.training import (
     run_taiji_n1_length_balanced_training as length_balanced,
 )
+from scripts.training import seal_ast  # noqa: E402
 from seed_platform.paths import get_external_path  # noqa: E402
 
 PLAN = ROOT / "plans/reference/PLAN-N1-116_coupled_rwl_trust_region_training_draft_20261018.md"
@@ -201,7 +202,9 @@ def verify_runner_source_binding() -> dict:
         binding.get("schema") != "n1-coupled-rwl-runner-source-binding-v1"
         or binding.get("status") != "complete"
         or binding.get("plan_sha256") != PLAN_SHA256
-        or binding.get("runner_readiness_sha256") != sha256(RUNNER_READINESS)
+        or not seal_ast.receipt_binding_matches(
+            binding.get("runner_readiness_sha256"), RUNNER_READINESS
+        )
         or any(
             binding.get(key) != 0
             for key in (

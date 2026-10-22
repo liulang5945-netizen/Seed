@@ -20,6 +20,7 @@ from scripts.training import build_taiji_n1_plan153_v28_fresh_context_length_fac
 from scripts.training import build_taiji_n1_plan157_seed128_candidate_vs_parent_face as n157_builder
 from scripts.training import build_taiji_n1_v27_length_robust_training_after_n149 as n150_builder
 from scripts.training import run_taiji_n1_v27_length_robust_training_after_n149 as n150
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = ROOT / "plans/reference/PLAN-N1-159_seed129_candidate_parent_fresh_replication_20261020.md"
 PLAN_SHA256 = "a152a2ce63ae063a7863a11573ae964c01b1a1a3222552a15977bf9023834b5b"
@@ -184,12 +185,12 @@ def source_context() -> tuple[list[dict], dict[str, str], dict]:
         and n157a2_result.get("fresh_queries") == TOTAL_QUERIES
         and n157a2_result.get("new_fresh_queries") == 2_400
         and n157a2_result.get("prior_consumed_queries") == 480
-        and n157a2_result.get("face_sha256") == sha256(FACE128)
+        and seal_ast.receipt_binding_matches(n157a2_result.get("face_sha256"), FACE128)
         and n157a2_result.get("source_hashes_unchanged") is True
         and n157a2_result.get("can_promote") is False
         and n158_report.get("complete") is True
         and n158_report.get("source_result_sha256") == N157A2_RESULT_SHA256
-        and n158_report.get("face_sha256") == sha256(FACE128)
+        and seal_ast.receipt_binding_matches(n158_report.get("face_sha256"), FACE128)
         and n158_report.get("can_promote") is False,
         "PLAN-N1-159 parent/candidate source execution evidence is incomplete",
     )
@@ -438,7 +439,9 @@ def prepare_face() -> dict:
         preflight.get("complete") is not True
         or preflight.get("independent_restore_count") != 6
         or preflight_binding.get("status") != "complete"
-        or preflight_binding.get("preflight_sha256") != sha256(PREFLIGHT)
+        or not seal_ast.receipt_binding_matches(
+            preflight_binding.get("preflight_sha256"), PREFLIGHT
+        )
         or preflight_binding.get("source_hashes") != preflight.get("source_hashes")
         or not n150_builder.verify_hashes(preflight.get("source_hashes", {}))
     ):

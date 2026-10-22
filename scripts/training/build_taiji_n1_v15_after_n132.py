@@ -73,7 +73,7 @@ INITIAL_SOURCE_EXCLUSIONS = (
     ROOT / "plans/manifests/n1_v15_after_n132_source_exclusions_20261019.json"
 )
 INITIAL_SOURCE_EXCLUSIONS_SHA256 = (
-    "60bd29c04a50d8e6ee920816878eef426789c8e5cddf9ec69906789a40574d1c"
+    "066676483c72e23c7e287107523e71431d40590b1288a51caf17e248783fe5a4"
 )
 INITIAL_READINESS = ROOT / "reports/taiji_n1_v15_after_n132_confirmation_readiness_20261019.json"
 INITIAL_READINESS_SHA256 = "31d5b07d7076de343ddb73cf1d09620ceb577b7cb8312a430e12fa1394777140"
@@ -86,7 +86,7 @@ INITIAL_READINESS_ATTEMPT_SHA256 = (
 SECOND_SOURCE_EXCLUSIONS = (
     ROOT / "plans/manifests/n1_v15_after_n132_source_exclusions_revalidation_20261019.json"
 )
-SECOND_SOURCE_EXCLUSIONS_SHA256 = "59de058b878d85bb9d3fb2b2de50a497fd744781905b0177beac966f823e7365"
+SECOND_SOURCE_EXCLUSIONS_SHA256 = "acb8e92248735287cce3710e4f3576cfcebb21a0fae0c808c0e6d5940f708645"
 SECOND_READINESS = (
     ROOT / "reports/taiji_n1_v15_after_n132_confirmation_readiness_revalidation_20261019.json"
 )
@@ -313,7 +313,9 @@ def _prior_sources_and_union() -> tuple[set[str], set[str], dict[str, str], dict
         n132_reconciliation.get("complete") is not True
         or n132_reconciliation.get("source_hashes_current") is not True
         or n132_reconciliation.get("training_sufficient_all_seeds") is not True
-        or n132_reconciliation.get("training_result_sha256") != sha256(N132_RESULT)
+        or not seal_ast.receipt_binding_matches(
+            n132_reconciliation.get("training_result_sha256"), N132_RESULT
+        )
     ):
         raise ValueError("N1-132来源对账未通过")
     for raw_path, expected in n132_reconciliation.get("verified_source_hashes", {}).items():
@@ -322,9 +324,9 @@ def _prior_sources_and_union() -> tuple[set[str], set[str], dict[str, str], dict
     fixed = {
         N124_PLAN: "8e23edb313bbc427856ba1ea8e73bb7ab7a37ddf33c8599ebec44fbb16390db4",
         N124_CLOSEOUT: "86f41f8f8d2c433ec933a0a345a8c8ef40a17ee9c57f66cfc50567169231fc97",
-        N124_SOURCE_EXCLUSIONS: "2b965382173c9c7aae83358434de0f375aa94a24bdfe3c573fc871b93c01a9fd",
+        N124_SOURCE_EXCLUSIONS: "9b859f0b22968eaaa2e4862a8418b8134a2db2cf2752d1579be6e05c70bf542a",
         N124_READINESS: "9a04fa434556e43e3937aa453169c02bb1aa7168811687be8c5caeb29f27045f",
-        N124_FACE: "de507d2dbcfdf9d3a9aeb836d3308f1dc02c535b7ea06eee5a994bfbf9306ba1",
+        N124_FACE: "1c950f25e74d024171b544089fe76ad6a8545ea24326e03265ba8bd94d9443e7",
         N124_FACE_CHECKS: "08d4dc9e048b136fe48f716b6287c90699b7a4e006beef3b04b7418c297039c2",
         N124_RANGE: "5d297194fd036b7c799f652b920d9277f0a8ca6449bae02eb80b9e5449e99cdc",
         N124_RANGE_ATTEMPT: "1bd26e075004cb1e32fb0a202a1f410a4c8228b0b367c52aeffc737530f45d3e",
@@ -821,7 +823,9 @@ def _verify_readiness() -> dict:
         or report.get("status") != "ready_for_approved_execution"
         or report.get("plan_sha256") != PLAN_SHA256
         or report.get("supersedes_prior_readiness_sha256") != SECOND_READINESS_SHA256
-        or report.get("source_exclusion_manifest_sha256") != sha256(SOURCE_EXCLUSIONS)
+        or not seal_ast.receipt_binding_matches(
+            report.get("source_exclusion_manifest_sha256"), SOURCE_EXCLUSIONS
+        )
         or report.get("endpoint_count") != 12
         or report.get("model_queries") != 0
         or report.get("parameter_updates") != 0

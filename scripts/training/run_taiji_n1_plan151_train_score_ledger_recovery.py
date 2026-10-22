@@ -18,6 +18,7 @@ sys.path.insert(0, str(ROOT))
 from scripts.training import build_taiji_n1_v27_length_robust_training_after_n149 as n150_builder
 from scripts.training import run_taiji_n1_plan132_binding_supervision_calibration as n132
 from scripts.training import run_taiji_n1_v27_length_robust_training_after_n149 as n150
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = ROOT / "plans/reference/PLAN-N1-151_train_score_ledger_recovery_draft_20261020.md"
 PLAN_SHA256 = "fdab96decd468f94820c6ab33abbd5c18e78ca78c599e7521a27db74cef1f9a7"
@@ -150,7 +151,10 @@ def _load_n150_source_context() -> tuple[dict, dict, dict, dict, dict]:
         and result.get("can_promote") is False,
         "N1-150 completed train-only source result is incomplete or outside its frozen boundary",
     )
-    require(sha256(n150.PROGRESS) == result.get("progress_sha256"), "N1-150 progress SHA changed")
+    require(
+        seal_ast.receipt_binding_matches(result.get("progress_sha256"), n150.PROGRESS),
+        "N1-150 progress SHA changed",
+    )
     _endpoint_records(result)
     return readiness, preflight, result, bound, schedule
 
@@ -336,7 +340,7 @@ def _verify_readiness() -> tuple[dict, dict, dict, dict, dict, dict[str, str]]:
         or binding.get("status") != "complete"
         or binding.get("plan_sha256") != PLAN_SHA256
         or binding.get("repair_addendum_sha256") != REPAIR_PLAN_SHA256
-        or binding.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(binding.get("readiness_sha256"), READINESS)
         or binding.get("source_hashes") != report.get("source_hashes")
     ):
         raise Refuse("N1-151 readiness binding is stale or incomplete")
@@ -552,7 +556,7 @@ def _verify_preflight() -> tuple[dict, dict, dict, dict, dict, dict, dict[str, s
         or readiness.get("repair_addendum_sha256") != REPAIR_PLAN_SHA256
         or source_binding.get("status") != "complete"
         or source_binding.get("repair_addendum_sha256") != REPAIR_PLAN_SHA256
-        or source_binding.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(source_binding.get("readiness_sha256"), READINESS)
         or source_binding.get("source_hashes") != readiness.get("source_hashes")
         or preflight.get("complete") is not True
         or preflight.get("independent_restore_count") != 6
@@ -563,7 +567,9 @@ def _verify_preflight() -> tuple[dict, dict, dict, dict, dict, dict, dict[str, s
         or preflight.get("parameter_updates") != 0
         or preflight_binding.get("status") != "complete"
         or preflight_binding.get("repair_addendum_sha256") != REPAIR_PLAN_SHA256
-        or preflight_binding.get("preflight_sha256") != sha256(PREFLIGHT)
+        or not seal_ast.receipt_binding_matches(
+            preflight_binding.get("preflight_sha256"), PREFLIGHT
+        )
         or preflight_binding.get("source_hashes") != preflight.get("source_hashes")
     ):
         raise Refuse("N1-151 readiness/final restore preflight is incomplete or stale")

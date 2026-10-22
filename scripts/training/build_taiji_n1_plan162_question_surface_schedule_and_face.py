@@ -19,6 +19,7 @@ from scripts.training import build_taiji_n1_v27_length_robust_training_after_n14
 from scripts.training import (
     run_taiji_n1_plan155_short_unknown_context_length_training as n155_runner,
 )
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = ROOT / "plans/reference/PLAN-N1-162_question_surface_matched_continuation_20261020.md"
 PLAN_SHA256 = "50b7381ceb4cd8424a4314737e1e3f9d7288721e889f702fb4d0784778b3a901"
@@ -538,15 +539,15 @@ def _verify_readiness() -> tuple[dict, dict, dict, dict[str, str]]:
         or readiness.get("status") != "ready_for_zero_checkpoint_preflight"
         or readiness.get("plan_sha256") != PLAN_SHA256
         or readiness.get("budget_addendum_sha256") != BUDGET_ADDENDUM_SHA256
-        or readiness.get("schedule_sha256") != sha256(SCHEDULE)
-        or readiness.get("source_audit_sha256") != sha256(SOURCE_AUDIT)
+        or not seal_ast.receipt_binding_matches(readiness.get("schedule_sha256"), SCHEDULE)
+        or not seal_ast.receipt_binding_matches(readiness.get("source_audit_sha256"), SOURCE_AUDIT)
         or binding.get("status") != "complete"
-        or binding.get("readiness_sha256") != sha256(READINESS)
+        or not seal_ast.receipt_binding_matches(binding.get("readiness_sha256"), READINESS)
         or binding.get("source_hashes") != readiness.get("source_hashes")
         or audit.get("status") != "complete"
         or audit.get("source_hashes") != readiness.get("source_hashes")
         or attempt.get("plan_sha256") != PLAN_SHA256
-        or manifest.get("source_audit_sha256") != sha256(SOURCE_AUDIT)
+        or not seal_ast.receipt_binding_matches(manifest.get("source_audit_sha256"), SOURCE_AUDIT)
     ):
         raise Refuse("PLAN-N1-162 readiness binding is stale")
     runtime, sources, _exclusions, _candidates = _source_context()
