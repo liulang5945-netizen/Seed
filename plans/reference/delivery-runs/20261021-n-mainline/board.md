@@ -202,3 +202,10 @@
 - 复审状态：第二轮P7原结论和预算2/2保留为历史；用户已明确要求持续推进至收官，故对这份新补丁安排额外独立复审。当前P7仍未通过，W5b仍锁定。
 - 训练证据：最后durable进度04:52:46-04:53:28；full_turn_1m 9,472/30,096，warm_start与fresh_same_capacity各14,528/30,096；三attempt仍标`training`但无新progress/final。沙箱进程清单不足以确认外部会话，未重启、未覆盖、未读取dev/reference。
 - 主线边界：N主线仍以自然中文多轮对话为当前能力目标；本补丁只修评估门禁，不构成能力提升或晋级证据，`can_promote=false`及N1-166冻结保持不变。
+
+### Phase 7 第三轮独立复审：提交 4ce91e141（2026-10-22）
+- 结论：不放行；P0=0、P1=1、P2=0。P2-04已关闭：worker暂停创建、Job分配与核验完成后才resume，启动CPU受Job/bootstrap账本覆盖。P1-07主要IPC写入阻塞已受线程deadline监督、2 KiB上限与持久face引用保护；仍有writer线程超时未退出时，失败收敛会丢失`ipc_write_thread_stopped`，可能遗漏当前query的unknown尾账。
+- 产物：`artifacts/07-evaluation-review-4ce91e141.md`。
+- 验证：根任务40项synthetic测试通过；本次独立定向复跑8项通过（32项deselected，6.07秒）；未读取dev/reference、加载模型、运行selector或`--execute`。
+- 回流判定：P1-07未关闭；需保留writer退出状态、把未闭合query明确记为unknown，并补Job已终止但writer仍存活的synthetic故障测试。历史回流预算2/2及第二轮打回原样保留；本轮新提交复审不等于预先放行。
+- 阶段指针：仍为Phase 8；真实156次评测/W5b继续冻结。
