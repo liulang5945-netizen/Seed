@@ -440,3 +440,8 @@ manifest绑定的checkpoint验证适配器ad4f8c7ef已对receipt祖先链、bund
 ## 完训前元数据入口准备
 
 新增prepare_taiji_r2_continuation_endpoints.py，5项检查通过。默认实际运行仅返回三臂仍缺final的training状态，dev_queries=0；--prepare必须等三臂完整result/readiness、唯一全链completion事件、关闭writer和父来源/最终checkpoint绑定全部通过，才发布独立manifest，can_query_dev/can_promote仍false。当前仍仅监测45943/45618/39673现有训练句柄，不访问保留面。22:48最近耐久进度为9,952/15,136/15,328，预算剩余约250,632 CPU秒。
+
+
+## 持续训练核验（22:54）
+
+三条现有句柄45943/45618/39673长轮询均存活。耐久进度10,016/15,264/15,488，full-turn已越过一万；预算余量249,659.687 CPU秒，CPU22.0%/23.8%、RAM25.502GiB。保持同一训练方向、原分母和批准ceiling，唯一下一步仍为等待与监测当前进程至完整终点。无模型能力晋级结论。
