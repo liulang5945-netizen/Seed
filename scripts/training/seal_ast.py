@@ -92,6 +92,14 @@ def _strip_annotations(tree: ast.AST) -> None:
                         rewritten.append(ast.Assign(targets=[stmt.target], value=stmt.value))
                     continue
                 rewritten.append(stmt)
+            if (
+                not rewritten
+                and field == "body"
+                and isinstance(
+                    parent, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)
+                )
+            ):
+                rewritten.append(ast.Pass())  # 裸注解剥离后体为空，补 pass 保持可解析
             setattr(parent, field, rewritten)
 
 
