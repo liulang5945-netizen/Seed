@@ -2,7 +2,13 @@
 
 ## 当前执行：N1-165A结案；R2自然中文多轮对话v2三臂重做
 
-## 当前唯一下一步：独立复审成功terminal记账修复；P7通过且三臂终点恢复齐备后，才进入W5b
+## 当前唯一下一步：独立复审task-start intent尾账修复；P7通过且三臂终点恢复齐备后，才进入W5b
+
+### 最新进度补充（2026-10-22 12:41 Asia/Shanghai）
+
+第六轮复审对提交`8e4c736e2`判P0=0/P1=0/P2=1：成功terminal同步及false→true writer unknown已通过；P2-06是`restore_started/query_started`先耐久写ledger、后写progress，而`active_task`在两次append之后才建立。根任务用restore/query两条progress失败注入复现停止事件的task id丢失；修复将active task身份放在首次ledger intent写入前建立，ledger intent耐久成功后立刻记`active_task_intent_written`，query_attempts也在durable query intent之后计数。progress故障时事件保留task/operation、intent状态及`unknown_tail=true`。两个红测首次都因`task_id=None`失败，修复后2/2通过；完整合同47/47通过，Ruff、Black、py_compile、CLI帮助和diff检查通过。新补丁未提交/未复审。
+
+三臂最后durable progress仍停于04:52:46-04:53:28，attempt=`training`且无final；没有新产物。客户端状态和沙箱进程视图不足以确认外部训练会话，不重启或覆盖。N主线继续先提升自然中文多轮对话能力，W5b/真实评测冻结，`can_promote=false`与N1-166冻结不变。
 
 ### 最新进度补充（2026-10-22 12:34 Asia/Shanghai）
 

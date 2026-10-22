@@ -1881,3 +1881,58 @@ def test_durable_restore_terminal_is_not_duplicated_when_progress_append_fails(
     assert stopped["task_terminal_missing"] is False
     assert stopped["unknown_tail"] is False
     assert stopped["operation"] == "restore"
+
+
+@pytest.mark.parametrize(
+    "operation,intent_event,expected_query_attempts",
+    [("restore", "restore_started", 0), ("generate", "query_started", 1)],
+)
+def test_durable_intent_progress_failure_preserves_open_task_unknown(
+    tmp_path, monkeypatch, operation, intent_event, expected_query_attempts
+):
+    _, _, preflight = _valid_records(tmp_path)
+    paths = _output_paths(tmp_path / f"reports-{operation}-intent-progress-failure")
+    paths["readiness"].parent.mkdir(parents=True)
+    _write_readiness(paths, preflight)
+    receipts = _restore_receipts(preflight["endpoints"])
+    worker = _FakeSupervisedWorker(receipts, preflight["endpoints"])
+    selector_calls = []
+    original_append = evaluation._append_jsonl
+
+    def fail_after_intent_ledger(path, payload, *, flush_file=None):
+        if (
+            Path(path).resolve() == paths["progress"].resolve()
+            and payload.get("event") == intent_event
+        ):
+            raise OSError("synthetic progress append failure after durable task intent")
+        return original_append(path, payload, flush_file=flush_file)
+
+    monkeypatch.setattr(evaluation, "_append_jsonl", fail_after_intent_ledger)
+    with pytest.raises(evaluation.Refuse, match="one-shot evaluation attempt is consumed"):
+        evaluation.execute(
+            **_execute_kwargs(
+                paths,
+                preflight,
+                lambda **_kwargs: worker,
+                _DurabilityApi(),
+                prompt_selector=lambda: selector_calls.append(True) or _prompts(),
+            )
+        )
+
+    events = [json.loads(line) for line in paths["ledger"].read_text(encoding="utf-8").splitlines()]
+    intent = next(event for event in events if event["event"] == intent_event)
+    stopped = next(event for event in events if event["event"] == "evaluation_stopped")
+    assert stopped["task_id"] == intent["task_id"]
+    assert stopped["operation"] == operation
+    assert stopped["task_terminal_missing"] is True
+    assert stopped["task_intent_unverified"] is False
+    assert stopped["unknown_tail"] is True
+    assert stopped["query_attempts"] == expected_query_attempts
+    assert not any(
+        event.get("task_id") == intent["task_id"]
+        and event["event"]
+        in {"restore_completed", "restore_timeout", "restore_failed", "query_output_persisted"}
+        for event in events
+    )
+    assert selector_calls == ([] if operation == "restore" else [True])
+    assert not any(request["operation"] == "generate" for request in worker.requests)

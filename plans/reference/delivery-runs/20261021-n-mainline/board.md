@@ -241,6 +241,14 @@
 - 回流判定：P2-05需在正常成功terminal ledger append后更新状态，并补terminal已durable但后续progress失败的故障注入；此前2/2历史预算与复审结论保持原样。
 - 阶段指针：保持Phase 8；P7/W5a当前不放行，真实评测继续冻结。
 
+### Phase 6 追加返工：task-start intent身份与尾账（2026-10-22）
+- 第六轮复审`1b8eceb5c`针对`8e4c736e2`判P0=0/P1=0/P2=1：restore/query started intent ledger已durable但progress追加失败时，旧顺序还未建立active task身份。
+- 红测复现restore与generation两条路径的停止事件task_id为空。修复在intent事件前记录active task；ledger durable返回后置intent确认并按query递增query_attempts。progress失败时task id/operation保留、`task_terminal_missing=true`、`unknown_tail=true`。
+- 验证：restore/query progress故障注入2/2通过；模块合同47/47，Ruff、Black、py_compile、CLI帮助和diff检查通过。
+- 状态：当前修复未提交/未独立复核；第六轮P2-06不放行结论对提交`8e4c736e2`仍有效。
+- 训练进度无更新：last durable 9,472/14,528/14,528，attempt=`training`无final；外部会话不可由沙箱确认，不重启、不覆盖。
+- N主线方向仍是自然中文多轮对话能力；门禁改进不代表模型能力，`can_promote=false`、N1-166冻结与W5b冻结保留。
+
 ### Phase 6 追加返工：正常terminal状态同步（2026-10-22）
 - 第五轮复审`2bd90c39d`针对`aed03128a`判P0=0/P1=0/P2=1：成功`restore_completed`/`query_output_persisted`已durable写入后，状态位没有同步更新；后续progress故障可误报task terminal missing。
 - 红测在restore ledger terminal成功、progress append失败的场景下观察到重复terminal（`restore_completed`+`restore_failed`）。修复在成功terminal ledger append后立即置位；后续故障保留已有terminal并进入外层失败收敛。

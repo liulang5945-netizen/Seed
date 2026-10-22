@@ -138,3 +138,11 @@ git diff --check
 - 修复：两个正常terminal事件完成durable ledger append后立即置terminal状态；后续progress/清理故障保留已存在的唯一terminal，由外层写evaluation-stopped记录，不再伪造第二条query/restore失败terminal。
 - 验证：专项单测1/1通过；评估器合同45/45通过（9.42秒）；Ruff、Black、py_compile、CLI `--help`与diff检查通过。未访问真实dev/reference或运行模型、restore、selector、`--execute`。
 - 门禁：第五轮复审对旧提交报告P0=0/P1=0/P2=1；当前补丁尚未提交/复审，W5a/P7仍未放行。
+
+### Phase 6 追加：task-start intent身份与尾账（2026-10-22）
+
+- 根因：第六轮审查对提交`8e4c736e2`发现restore/query start有同型的写入窗口：ledger intent append先成功，progress append随后失败，`active_task`尚未赋值；外层failure event会漏当前task identity，query_attempts也可能仍是0。
+- 红测：restore `restore_started`和generation `query_started`的progress append故障注入均在旧实现失败，首个断言为`evaluation_stopped.task_id`为空，ledger中对应intent已耐久存在。
+- 修复：构造intent事件后、首次ledger append前即记录active task与未完成状态；ledger append确认后即标记intent durable。query_attempts在同一确认点递增。故progress append失败会保留task_id/operation，`task_intent_unverified=false`、`task_terminal_missing=true`、`unknown_tail=true`；若ledger intent自身未确认，则记录intent unverified并仍设unknown。
+- 验证：restore与generation两个intent-progress故障注入2/2通过；完整合同47/47（10.08秒）；Ruff、Black、py_compile、模块CLI帮助及diff检查通过。没有运行真实数据/模型/selector/`--execute`。
+- 门禁：第六轮审查对旧提交的P2-06结论保持有效；当前补丁尚未提交/复审，Phase 7仍不放行。

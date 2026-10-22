@@ -75,3 +75,11 @@ Phase 7第二轮复审指出的P1-07/P2-04已落实到实现与合成测试：IP
 修复在`restore_completed`与`query_output_persisted`各自的durable ledger append成功后立即置`active_task_terminal_written=true`。若同一执行区间的后续操作抛错，catch路径不再创建第二条失败terminal，而由外层记录`evaluation_stopped`，保留当前task身份且不把已落盘terminal误判为missing。失败注入单测1/1通过，完整模块合同45/45（9.42秒），Ruff、Black、py_compile、CLI `--help`及diff检查通过。
 
 该补丁尚未提交或复审。第五轮结论P0=0/P1=0/P2=1对提交`aed03128a`有效；P2按Phase 7门槛必须独立关闭后才可放行。真实W5b、restore、dev/reference、selector和`--execute`继续冻结。
+
+## Phase 6 task-start intent尾账修正（2026-10-22）
+
+第六轮复审对提交`8e4c736e2`发现task-start窗口：`restore_started/query_started` ledger append已成功，但progress append失败时，`active_task`尚未赋值；outer stopping event因此可能丢task_id/operation、漏掉query_attempt计数并将unknown尾账误记为已知。
+
+修复将当前task身份和terminal/intention状态初始化移动到ledger intent append之前。ledger intent耐久append返回成功后立即置`active_task_intent_written=true`；query intent同一时点递增`query_attempts`。progress append失败时外层分别区分`task_intent_unverified`与`task_terminal_missing`，保留task id/operation并设`unknown_tail=true`。restore/query两种progress故障注入2/2通过；模块合同47/47（10.08秒），Ruff、Black、py_compile、CLI `--help`与diff检查通过。
+
+此补丁尚未提交/独立复审。第六轮P0=0/P1=0/P2=1对提交`8e4c736e2`有效，P2-06须按Phase 7全P2闭合门槛独立确认；W5b、真实restore、dev/reference、selector与`--execute`仍冻结。
