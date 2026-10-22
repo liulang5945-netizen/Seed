@@ -529,6 +529,7 @@ def _source_revision_path(revision: str) -> Path:
     names = {
         "v1.1": _SOURCE_REVISION_V1_1_NAME,
         "v1.2": _SOURCE_REVISION_V1_2_NAME,
+        "v1.3": f"{EXTENSION_PREFIX}_source_revision_v1_3.json",
     }
     try:
         name = names[revision]
@@ -671,7 +672,8 @@ def effective_budget_limits() -> tuple[float, float]:
     The v1.2 source revision is the sole budget-amendment artifact. Its absence
     keeps the original v1 ceiling; a present but invalid revision fails closed.
     """
-    revision_path = _source_revision_path("v1.2")
+    v13_path = _source_revision_path("v1.3")
+    revision_path = v13_path if v13_path.exists() else _source_revision_path("v1.2")
     revision_key = str(revision_path.resolve())
     if not revision_path.exists():
         if revision_key in _ACTIVE_BUDGET_REVISION_SHA256:
@@ -695,10 +697,47 @@ def effective_budget_limits() -> tuple[float, float]:
     _base_contract()
     contract_sha256 = _sha256_file(CONTRACT_PATH)
     prior_sha256 = _validate_prior_v1_1(contract_sha256)
+    expected_schema = _SOURCE_REVISION_V1_2_SCHEMA
+    review_path = _SOURCE_REVISION_V1_2_REVIEW
+    if revision_path == v13_path:
+        prior_path = _source_revision_path("v1.2")
+        prior = _read_json(prior_path)
+        if (
+            prior.get("schema") != _SOURCE_REVISION_V1_2_SCHEMA
+            or prior.get("contract_sha256") != contract_sha256
+            or prior.get("previous_source_revision_sha256") != prior_sha256
+            or prior.get("approved_budget") != {"per_arm": 1_500_000.0, "aggregate": 4_300_000.0}
+            or prior.get("review_report_sha256") != _sha256_file(_SOURCE_REVISION_V1_2_REVIEW)
+        ):
+            raise ExtensionLedgerRefuse("v1.3 predecessor differs")
+        _validate_source_binding(prior.get("current_continuation_sources"), verify_file_bytes=False)
+        prior_sha256 = _sha256_file(prior_path)
+        expected_schema = "taiji-r2-continuation-source-revision-v1.3"
+        review_path = (
+            ROOT
+            / "plans/reference/delivery-runs/20261021-n-mainline/artifacts/04-continuation-boot-accounting-v1-3.md"
+        )
+        audit = (
+            ROOT
+            / "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_boot_accounting_audit_v1.json"
+        )
+        expected_boot_sources = {
+            str((ROOT / rel).resolve()): _sha256_file(ROOT / rel)
+            for rel in (
+                "scripts/training/taiji_r2_dialogue_boot_accounting.py",
+                "tests/taiji_native/test_r2_dialogue_boot_accounting_contract.py",
+            )
+        }
+        if (
+            revision.get("boot_audit_path") != str(audit.resolve())
+            or revision.get("boot_audit_sha256") != _sha256_file(audit)
+            or revision.get("boot_accounting_sources") != expected_boot_sources
+        ):
+            raise ExtensionLedgerRefuse("v1.3 boot audit or source binding differs")
     expected_budget = {"per_arm": 1_500_000.0, "aggregate": 4_300_000.0}
     budget = revision.get("approved_budget")
     if (
-        revision.get("schema") != _SOURCE_REVISION_V1_2_SCHEMA
+        revision.get("schema") != expected_schema
         or revision.get("contract_sha256") != contract_sha256
         or revision.get("previous_source_revision_sha256") != prior_sha256
         or not isinstance(budget, Mapping)
@@ -714,9 +753,9 @@ def effective_budget_limits() -> tuple[float, float]:
     if (
         not isinstance(review_sha, str)
         or not _HEX_256_RE.fullmatch(review_sha)
-        or not _SOURCE_REVISION_V1_2_REVIEW.is_file()
-        or _SOURCE_REVISION_V1_2_REVIEW.is_symlink()
-        or _sha256_file(_SOURCE_REVISION_V1_2_REVIEW) != review_sha
+        or not review_path.is_file()
+        or review_path.is_symlink()
+        or _sha256_file(review_path) != review_sha
     ):
         raise ExtensionLedgerRefuse("v1.2 source revision review report binding differs")
     _ACTIVE_BUDGET_REVISION_SHA256[revision_key] = revision_sha256
@@ -880,6 +919,106 @@ def _read_summary_fast(
     return contract, charges, reservations, str(event_sha)
 
 
+def _validate_boot_correction(event, previous_charge, prior_files):
+    from scripts.training.taiji_r2_dialogue_boot_accounting import reconciled_host_cpu_upper
+
+    revision = _read_json(_source_revision_path("v1.3"))
+    audit_path = Path(revision["boot_audit_path"])
+    if _sha256_file(audit_path) != revision["boot_audit_sha256"]:
+        raise ExtensionLedgerRefuse("boot audit digest differs")
+    audit = _read_json(audit_path)
+    row = audit["rows"][event["arm"]]
+    sequence = row["basis_sequence"]
+    if sequence >= len(prior_files):
+        raise ExtensionLedgerRefuse("boot audit basis is not earlier in chain")
+    basis = _read_json(prior_files[sequence][1])
+    if (
+        basis.get("event") != "continuation_prepared"
+        or basis.get("arm") != event["arm"]
+        or basis.get("event_sha256") != row["basis_event_sha256"]
+        or basis.get("charged_cpu_seconds") != row["basis_charge"]
+        or basis.get("details", {}).get("accounting_snapshot") != row["basis_snapshot"]
+        or previous_charge != row["current_ledger_charge"]
+    ):
+        raise ExtensionLedgerRefuse("boot correction basis or previous charge differs")
+    for _, path in prior_files:
+        prior = _read_json(path)
+        if prior.get("event") in {
+            "episode_completed",
+            "durable_training_commit",
+            "parent_checkpoint_restored",
+        }:
+            raise ExtensionLedgerRefuse("boot correction refuses training history")
+        if (
+            prior.get("event") == "boot_accounting_upper_reconciled"
+            and prior.get("arm") == event["arm"]
+        ):
+            raise ExtensionLedgerRefuse("duplicate boot correction")
+    expected = reconciled_host_cpu_upper(
+        row["basis_charge"],
+        row["basis_snapshot"],
+        current_boot_identity=audit["current_boot_identity"],
+        current_host_cpu_seconds=audit["current_host_cpu_seconds"],
+    )
+    if (
+        event.get("charged_cpu_seconds") != expected
+        or event.get("details", {}).get("audit_sha256") != revision["boot_audit_sha256"]
+    ):
+        raise ExtensionLedgerRefuse("boot correction upper differs from proof")
+
+
+def reconcile_boot_accounting():
+    api = _durability_api()
+    qualification = _qualify_reports_directory(api)
+    with _aggregate_lock(LOCK_PATH):
+        contract, charges, reservations, previous_sha = _read_ledger_full(api=api)
+        if reservations:
+            raise ExtensionLedgerRefuse("boot correction requires settled writers")
+        revision = _read_json(_source_revision_path("v1.3"))
+        audit = _read_json(Path(revision["boot_audit_path"]))
+        for arm in ARMS:
+            files = _event_files(AGGREGATE_LEDGER_PREFIX)
+            if any(
+                _read_json(path).get("event") == "boot_accounting_upper_reconciled"
+                and _read_json(path).get("arm") == arm
+                for _, path in files
+            ):
+                continue
+            row = audit["rows"][arm]
+            entry = {
+                "schema": EVENT_SCHEMA,
+                "sequence": len(files),
+                "event": "boot_accounting_upper_reconciled",
+                "extension_id": EXTENSION_PREFIX,
+                "arm": arm,
+                "charged_cpu_seconds": row["resolved_host_cpu_upper"],
+                "parent_attempt_sha256": contract["parent_records"][arm]["parent_attempt_sha256"],
+                "parent_receipt_sha256": contract["parent_records"][arm]["parent_receipt_sha256"],
+                "details": {
+                    "audit_sha256": revision["boot_audit_sha256"],
+                    "previous_charge": charges[arm],
+                    "accounting_snapshot": {
+                        "charged_cpu_seconds": row["resolved_host_cpu_upper"],
+                        "boot_identity": audit["current_boot_identity"],
+                        "host_cpu_seconds": audit["current_host_cpu_seconds"],
+                        "logical_cpu_upper": row["basis_snapshot"]["logical_cpu_upper"],
+                        "snapshot_utc": audit["utc"],
+                    },
+                },
+                "created_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "previous_event_sha256": previous_sha,
+            }
+            _validate_boot_correction(entry, charges[arm], files)
+            entry["event_sha256"] = _digest(entry)
+            _durable_write(
+                _event_path(AGGREGATE_LEDGER_PREFIX, len(files)), entry, qualification, api
+            )
+            charges[arm] = entry["charged_cpu_seconds"]
+            previous_sha = entry["event_sha256"]
+            _write_summary(contract, charges, {}, len(files), previous_sha, qualification, api)
+    return charges
+
+
 def _read_ledger_full(
     *, api: Any | None = None
 ) -> tuple[dict[str, Any], dict[str, float], dict[str, dict[str, Any]], str]:
@@ -937,7 +1076,12 @@ def _read_ledger_full(
             ) or event.get("parent_receipt_sha256") != parent.get("parent_receipt_sha256"):
                 raise ExtensionLedgerRefuse("aggregate ledger charge lost parent lineage")
             value = float(value)
-            if event.get("event") == "work_unit_reserved":
+            if event.get("event") == "boot_accounting_upper_reconciled":
+                if reservations:
+                    raise ExtensionLedgerRefuse("boot correction requires no reservations")
+                _validate_boot_correction(event, charges[arm], files[:sequence])
+                charges[arm] = value
+            elif event.get("event") == "work_unit_reserved":
                 if arm in reservations:
                     raise ExtensionLedgerRefuse(f"arm already has an active reservation: {arm}")
                 if value < charges[arm] or value > PER_ARM_CPU_LIMIT:

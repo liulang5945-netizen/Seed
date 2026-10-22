@@ -659,7 +659,7 @@ def tail_charge_from_snapshot(
         raise Refuse("accounting snapshot is incomplete")
     saved_boot = float(snapshot["boot_identity"])
     host_delta = current_host_cpu_seconds - float(snapshot["host_cpu_seconds"])
-    if current_boot_identity == saved_boot and host_delta >= 0:
+    if abs(current_boot_identity - saved_boot) <= 0.001 and host_delta >= 0:
         lost_upper = host_delta
     else:
         elapsed = max(
@@ -858,9 +858,14 @@ def _source_revision_path(revision: str | None = None) -> Path:
     names = {
         "v1.1": "taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_source_revision_v1_1.json",
         "v1.2": "taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_source_revision_v1_2.json",
+        "v1.3": "taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_source_revision_v1_3.json",
     }
     if revision is None:
-        revision = "v1.2" if (REPORTS_DIR / names["v1.2"]).exists() else "v1.1"
+        revision = (
+            "v1.3"
+            if (REPORTS_DIR / names["v1.3"]).exists()
+            else ("v1.2" if (REPORTS_DIR / names["v1.2"]).exists() else "v1.1")
+        )
     if revision not in names:
         raise Refuse(f"unknown source revision: {revision}")
     return REPORTS_DIR / names[revision]
@@ -953,6 +958,20 @@ def _effective_attempt(
                 "per_arm": V1_2_PER_ARM_CPU_LIMIT,
                 "aggregate": V1_2_AGGREGATE_CPU_LIMIT,
             }
+        )
+    elif schema == "taiji-r2-continuation-source-revision-v1.3":
+        previous_path = _source_revision_path("v1.2")
+        report = (
+            ROOT
+            / "plans/reference/delivery-runs/20261021-n-mainline/artifacts/04-continuation-boot-accounting-v1-3.md"
+        )
+        valid_revision = (
+            previous_path.is_file()
+            and revision.get("previous_source_revision_sha256") == sha256_file(previous_path)
+            and revision.get("current_continuation_sources") == expected
+            and revision.get("review_report_sha256") == sha256_file(report)
+            and revision.get("approved_budget")
+            == {"per_arm": V1_2_PER_ARM_CPU_LIMIT, "aggregate": V1_2_AGGREGATE_CPU_LIMIT}
         )
     else:
         valid_revision = False
@@ -2018,7 +2037,9 @@ class ExtensionBudget:
         }
 
     def resume_from(self, envelope: dict[str, Any], previous_charge: float) -> None:
-        self.charged = max(self.used(), float(previous_charge), frozen.tail_charge(envelope))
+        self.charged = max(
+            self.used(), float(previous_charge), _extension_checkpoint_tail(envelope)
+        )
         self.started = time.process_time()
         self.child_seconds = 0.0
 
@@ -2168,6 +2189,19 @@ def _last_accounting_snapshot(arm: str) -> dict[str, Any]:
     raise Refuse(f"aggregate ledger lacks an accounting snapshot for {arm}")
 
 
+def _extension_checkpoint_tail(envelope: dict[str, Any]) -> float:
+    ledger = envelope["ledger"]
+    return tail_charge_from_snapshot(
+        {
+            "charged_cpu_seconds": ledger["charged_cpu_seconds"],
+            "snapshot_utc": ledger["snapshot_utc"],
+            "boot_identity": ledger["host_boot_time"],
+            "host_cpu_seconds": ledger["host_cpu_seconds"],
+            "logical_cpu_upper": ledger["logical_cpu_upper"],
+        }
+    )
+
+
 def _start_charge(context: dict[str, Any]) -> float:
     arm = context["arm"]
     charges = latest_charges()
@@ -2188,7 +2222,7 @@ def _start_charge(context: dict[str, Any]) -> float:
         # all elapsed time after that extension event.
         tail = snapshot_tail
     else:
-        tail = max(float(frozen.tail_charge(envelope)), snapshot_tail)
+        tail = max(float(_extension_checkpoint_tail(envelope)), snapshot_tail)
     return max(float(charges[arm]), tail)
 
 
