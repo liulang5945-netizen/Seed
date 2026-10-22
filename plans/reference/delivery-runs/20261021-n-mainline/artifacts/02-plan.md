@@ -1,16 +1,16 @@
 # 当前增量工程计划
 
 ## 结论
-训练期间仅补齐07独立评测器；不更改运行中训练代码及冻结计划。
+Phase 7评测器代码门已通过，但真实W5b仍锁定。用户已批准R2三臂版本化续训上限（累计每臂1,000,000、聚合3,000,000 process-CPU秒）；先实现并独立审查extension runner/账本，再从三臂原durable checkpoint续训。不得覆盖旧attempt、progress、result、checkpoint或冻结source hash。
 
 ## 产物与依赖
-架构合同 → 独立评测器和契约测试 → 独立审查 → 定向验证 → 计划同步与提交。训练三终点完整且恢复通过后才允许真实生成。
+续训扩展合同 → versioned runner/CPU ledger及合成故障测试 → 独立代码审查 → 逐臂source/parent-checkpoint/readiness/资源门 → 三臂续训 → 三臂终点fresh-process恢复 → W5b评测门。真实生成仍须等所有训练终点和恢复门通过。
 
 ## 遗留风险
 训练耗时可能跨会话；本交付完成不等于训练或N主线收官。
 
 ## 给下游
-保持78次新增生成和39个共同prompt分母，沿用06已保存两端点，失败留证且禁止静默重试。资源预算必须在执行前明确。
+原R2-07旧计划保留为历史；v2真实评测按156次固定新生成要求执行。当前续训按[02-continuation-extension-plan.md](02-continuation-extension-plan.md)推进；每臂额度包含全部旧actual/unknown-tail，不得重置。启动前重算尾账与资源，超过批准额度则停止并重新决策。
 
 ## R2 recovery v2 W5 修订计划（2026-10-21）
 
@@ -109,3 +109,9 @@ Phase 7评测器代码门由独立复审提交`928d4b8e6`通过（P0/P1/P2=0）�
 13:19 Asia/Shanghai按checkpoint ledger计算，boot identity改变后冻结的`tail_charge`采用elapsed wall×24 logical CPUs，上界full_turn_1m 764,220.402秒、warm_start 763,673.331秒、fresh_same_capacity 762,788.250秒；分别超过旧240,000/120,000/120,000秒上限。合计保守尾账2,290,682秒，不等同于实际新增训练消耗。按近期吞吐粗略外推剩余训练约150,000秒，但实际会受训练速率影响。
 
 为保留三个verified partial checkpoint并延续同一对话路线，建议另立版本化continuation attempt，旧attempt/receipt/hash保持只读；新runner先由架构/代码审查，再让每臂CPU上限提高到1,000,000秒（总上限3,000,000秒），完整携带上述unknown tail，额外训练不得超新上限。warm/fresh也必须加载`b6bb45b5`的精确绑定源码；W5b仍在三臂终点与独立恢复通过前禁止。此上限相对旧480,000秒约为6.25倍，虽为保守上界而非预计实耗，属于新的资源决策。当前先等待用户明确选择；未批准前不做预算override、不再启动训练。
+
+## Phase 8 版本化续训预算决策与计划修订（2026-10-22）
+
+用户已明确批准每臂累计1,000,000、三臂累计3,000,000 process-CPU秒。上节预算草案中“等待批准”已完成；早期临时source overlay并直接续原attempt的做法被新版本extension合同取代。额度是包含原attempt已记账CPU与冻结规则未知尾账的总累计上限，不是每臂新增1M或中断后重置。13:30:50快照的当前tail及每臂剩余额度见[续训扩展计划](02-continuation-extension-plan.md)，启动前需按冻结公式重新计算。
+
+唯一下步为实现独立版本化extension runner、checkpoint分支谱系与单调CPU账本，并通过合成中断/恢复/并发聚合上限测试；由独立code-reviewer复核通过且三臂source兼容性与fresh-process parent checkpoint门通过后，才允许恢复训练。真实训练继续使用各自原checkpoint；旧attempt/progress/result/checkpoint/source hashes保持不可变。训练完成且三臂新终点readiness与恢复检查全过前，W5b、真实dev/reference、selector与`--execute`保持冻结，`can_promote=false`，N1-166继续冻结。

@@ -1,7 +1,7 @@
 # N 主线交付黑板
 
 - 运行目录: E:\Seed\plans\reference\delivery-runs\20261021-n-mainline
-- 当前阶段: Phase 8 测试/执行监控（三臂v2固定训练进行中；终点恢复前的留出评测仍阻断）
+- 当前阶段: Phase 8 测试/执行监控（续训扩展实现与执行前门禁待完成；真实训练未启动，W5b仍阻断）
 - 任务一句话: 延续当前R2-06/07冻结训练，补齐终点评测与证据闭环，依据结果推进N主线。
 
 ## 阶段记录
@@ -20,6 +20,7 @@
 - 2026-10-21：Phase 3需求岗新增R2 recovery v2评测需求补充，因旧06未保存39面generation且v2 result schema不同；只替代v2评测调用与验收口径，不改训练合同、N1-166冻结门或旧R2-07历史。下游实现与测试按R2V2-01..07执行。
 - 2026-10-22：为关闭P7的P1-06，architecture-reviewer裁决仅支持Windows本地固定NTFS，以exclusive-temp写入/刷新后`MoveFileExW(MOVEFILE_WRITE_THROUGH)`无覆盖发布attempt和initial ledger；网络、ReFS、可移动及未验证文件系统拒绝。架构补充已提交`75cba6ec5`；Phase6可按该边界返工，Phase8主训练指针不变。
 - 2026-10-22：Phase 3需求岗按最新Phase 4长驻worker/deadline合同新增R2V2-08..10运行时预算验收，不改R2V2-01..07、156分母、训练合同或能力边界；若预算/有限deadline/进程树取消能力无法证明，selector与generation均须为0。
+- 2026-10-22：用户批准R2 continuation extension v1累计预算每臂1,000,000、三臂聚合3,000,000 process-CPU秒；额度包含旧实耗与未知尾账，仅授权一个版本化续训窗口，不重置、不覆写旧证据。预算决策草案已完成；须先实现并独立审查extension runner、checkpoint谱系、source compatibility与CPU账本，所有门通过后再从各自父checkpoint续训。
 
 ## 回流记录
 
@@ -30,7 +31,7 @@
 - 当前先决：P1-06已由architecture-reviewer补充合同并提交`75cba6ec5`；Phase 6 AI实现可开始六项P1/三项P2返工，Phase 8三臂训练指针维持不变。
 
 ## 风险与待办
-- 训练中不读取dev/reference，不写训练checkpoint，不把格式统计当成语言能力。
+- 执行门通过前不写续训checkpoint；通过后只写版本化extension checkpoint根，不改旧checkpoint。训练中不读取dev/reference，不把格式统计或工程门通过当成语言能力。
 - 当前任务不能承诺“完美”或能力晋升；收官需真实实验、可读性审阅和有效门槛证据。
 
 ### Phase 4 架构审查（architecture-reviewer）完成
@@ -291,3 +292,19 @@
 - boot identity改变后tail_charge上界为full_turn_1m 764,220.402、warm_start 763,673.331、fresh_same_capacity 762,788.250 CPU秒；旧限分别240k/120k/120k，均超限。数值是安全上界，非实际新增训练CPU。
 - 决策点：任何继续训练均需新版本continuation合同、budget与独立审查。推荐提案上限每臂1M、总3M，原partial/unknown tail/hash保持只读。未经用户明确选择，不改预算、不再启动；保留旧attempt/source及最新checkpoint。
 - 方向仍是对话能力优先，但本节点先等预算决策；W5b、真实dev/reference、selector/`--execute`继续冻结。
+
+### Phase 4 补充：R2 continuation extension v1 架构审查（2026-10-22）
+- 决策：用户已批准每臂累计1,000,000、三臂聚合3,000,000 process-CPU秒；架构报告`artifacts/04-continuation-extension-architecture.md`通过进入实现，不代表训练放行。
+- 合同：每臂从自己的last durable checkpoint续训；旧attempt/progress/result/checkpoint及parent source hash只读。新attempt/progress/result用sidecar；新checkpoint写到`continuation_v1`版本化根，以parent receipt SHA建立谱系。
+- CPU：1M/臂含旧实耗与未知尾账，非额外额度；13:30审查快照tail为780,628.774/780,081.702/779,196.622秒，aggregate 2,339,907.098秒。该快照仅审查基线，执行前重算；boot mismatch期间每小时每臂最多再增长86,400秒。
+- 来源：当前仍有7个不同源码文件的parent hash mismatch；已查看Git差异但不改写旧hash。extension须交source compatibility receipt，逐项记录parent/current SHA和审查报告；无法证明则fail closed。
+- 给下游：实现versioned runner、fork checkpoint lineage、单调CPU与aggregate ledger、源码兼容证据和故障测试；独立code review通过及所有来源/恢复/资源/预算门满足后方可训练。W5b/真实dev/reference/selector/`--execute`继续冻结，`can_promote=false`、N1-166冻结。
+- 主阶段指针：保持Phase 8；本补充不覆盖历史合同或变更原attempt状态。
+
+### Phase 3 补充：R2 continuation extension v1 需求（2026-10-22）
+- 结论：新增R2EXT-01..08与AC-R2EXT-01..08，覆盖累计预算、父checkpoint续接、旧证据只读、单调尾账、source兼容性、耐久账本、并发/资源与能力边界；与`artifacts/04-continuation-extension-architecture.md`一致。
+- 产物：`artifacts/03-requirements.md`（追加R2 continuation extension v1小节）。
+- 关键要点：每臂累计≤1,000,000、聚合≤3,000,000 process-CPU秒；各臂只从自身last durable checkpoint续训；sidecar和版本化checkpoint分支由parent attempt/receipt SHA锚定；未知尾账不得清零；来源差异不改写父hash。
+- 风险：13:30预算快照随wall×24继续增长；任何启动须重算，且source、durability、fresh-process restore及资源门未通过前不恢复训练。
+- 给下游：依架构合同实现extension runner/账本并由独立code reviewer复核；W5b/真实dev/reference/selector/`--execute`保持冻结，`can_promote=false`、N1-166冻结。
+- 主阶段指针：保持Phase 8；本补充仅为需求门记录，不代表实现、训练或评测通过。

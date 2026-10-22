@@ -1,16 +1,20 @@
 # 当前执行（N 主线，2026-10-06 起）
 
-## 当前执行：N1-165A结案；R2自然中文多轮对话v2三臂重做
+## 当前执行：N1-165A结案；R2自然中文多轮对话v2三臂续训与终点评测
 
-## 当前唯一下一步：决定是否批准一版新的R2 continuation CPU上限；旧attempt已按冻结门fail closed
+## 当前唯一下一步：实现并独立审查版本化 R2 continuation extension runner 与单调 CPU 账本；代码/源码/父checkpoint门通过前不启动训练
 
-### 最新进度补充（2026-10-22 13:20 Asia/Shanghai）
+### 最新进度补充（2026-10-22 13:30 Asia/Shanghai）
 
-Phase 7评测器代码门已通过（`928d4b8e6`，P0/P1/P2=0）。原三臂恢复再次核验后发现冻结CPU预算也无法续行：系统boot identity已改变，恢复账本按冻结规则采用wall time×logical CPU作为未知尾账上界；full_turn_1m/warm_start/fresh_same_capacity当前上界分别约764,220/763,673/762,788 process-CPU秒，对应旧上限240,000/120,000/120,000，三臂均超限。full-turn准确恢复了绑定源码、通过fresh-process latest bundle与资源预检，但随后写入`recovery_stopped`并以`recovery CPU allocation exhausted; no implicit retry`停止；warm/fresh的精确绑定还另需`run_taiji_r2_daily_dialogue_warmstart_matched.py`版本`b6bb45b5`，未进入checkpoint写入。
+用户已批准新版本续训上限：每臂累计最多1,000,000 process-CPU秒，三臂合计最多3,000,000。该额度包含原训练已记账成本、未知尾账及续训消耗，不是额外给每臂重新发放1M，也不允许每次中断重置。三臂各自从其原latest durable checkpoint续训，旧attempt/progress/result/checkpoint保留原样。
 
-上述数值是boot-change后的保守尾账上界，不是实际新增训练CPU；末次durable训练量仍为9,472/14,528/14,528，三个final均缺。将原480,000合计上限扩大到每臂1,000,000、总计3,000,000 process-CPU秒，可覆盖当前上界并为固定训练剩余量保留空间；这是约6.25倍的上限变更，必须先做版本化续训合同/恢复实现复核，再执行。旧attempt、checkpoint与失败尾账均保留；不伪造hash、不清零未知尾账、不放行W5b。当前唯一待决事项：是否批准这项新版本预算上限。
+13:30:50 Asia/Shanghai只读账本快照：durable episodes仍为9,472/14,528/14,528，三个result仍缺；按冻结`tail_charge`重算的保守上界为780,628.774/780,081.702/779,196.622秒，合计2,339,907.098秒，3M额度当时仅剩660,092.902秒。此尾账不是实际新增CPU，且每再等待一小时最多每臂增加86,400秒；执行前必须重算，不能把该快照视为固定账值。
 
-### 最新进度补充（2026-10-22 12:59 Asia/Shanghai）
+旧checkpoint所绑定的源码hash仍不可改写。当前差异经只读比较，训练/数据构建代码主要是格式整理与未使用变量改名；每项差异仍需被extension合同逐一记录并独立核验。新runner必须绑定自己的源码版本，不能靠直接续用旧attempt或静默改hash绕过门禁。旧的“逐臂临时overlay后直接对原attempt `--resume`”方案已被版本化extension设计取代。
+
+合同、账本快照与验收顺序见[续训扩展计划](../../reference/delivery-runs/20261021-n-mainline/artifacts/02-continuation-extension-plan.md)、[续训扩展架构审查](../../reference/delivery-runs/20261021-n-mainline/artifacts/04-continuation-extension-architecture.md)和[R2EXT需求](../../reference/delivery-runs/20261021-n-mainline/artifacts/03-requirements.md)。
+
+### 历史进度补充（2026-10-22 12:59 Asia/Shanghai）
 
 在只读确认三臂lock owner PID均不存在、资源门通过、Phase 7代码门通过后，根任务对原attempt各调用了一次显式`--resume`。三次都在`source_bindings()`阶段fail closed，拒绝首个不匹配的corpus builder SHA；没有创建新attempt、没有进入`open_store`、没有回收/改写stale lock或checkpoint，三臂progress/final状态未变。
 

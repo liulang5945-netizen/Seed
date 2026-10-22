@@ -65,3 +65,34 @@ AC-R-04 无训练更新；原checkpoint文件hash保持不变；执行预算明�
 - 本修订仅澄清v2评测实现和合成验收。parent只读基线、三条v2 `assistant_sft` final、source/checkpoint核验、旧输出不可冒充复用、156分母、reference/exact scoring为0、training/optimizer updates为0、`can_promote=false`及固定12-family人工审阅全部保持原要求。
 - 若单worker内存/资源门或进程树取消能力不成立，不允许退回父进程同步生成、逐query重载模型或任何未审查拓扑；应在selector前拒绝并保留证据。任何替代拓扑须先由架构岗审查，且重新证明同样的预算、deadline、耐久账本和156分母。
 - 真实selector和生成仍等待Phase8三臂final结果及全部恢复门通过；此运行时澄清不授权读取真实prompt、运行模型或训练。
+
+## R2 continuation extension v1 需求修订（2026-10-22）
+
+本补充响应用户批准的三臂累计续训上限，并为各臂从其原 durable checkpoint 延续固定 R2 recovery v2 训练新增可验收要求。它不改变自然中文多轮对话的N主线方向，也不把训练完成视为能力提升。旧R2/R2V2需求与失败证据均保留；实现合同以 `artifacts/04-continuation-extension-architecture.md` 为准。
+
+### 用户故事与验收标准
+
+|编号|需求 / 用户故事|优先级 / 依赖|对应验收标准|
+|---|---|---|---|
+|R2EXT-01|作为实验负责人，我希望获得明确的版本化续训预算，以便能在不清除先前成本的情况下继续既有三臂实验。|P0；用户批准预算|AC-R2EXT-01：给定任一臂的已记账CPU与冻结规则尾账，当扩展runner启动或恢复时，则本臂累计上限为1,000,000 process-CPU秒、三臂合计上限为3,000,000秒；启动前重算当前尾账，任一上界触限或剩余额度不足以覆盖下一episode与失败收敛reserve时，必须在新训练更新前拒绝并持久化原因。额度不是旧账之外的新额度，任何中断都不能重置。|
+|R2EXT-02|作为研究负责人，我希望每臂从自己的最后一个验证checkpoint及其游标续训，以便保留此前的有效权重和更新。|P0；父bundle与receipt校验通过|AC-R2EXT-02：给定父attempt、parent latest receipt/bundle、bindings与cursor，当恢复时，则fresh process核验receipt SHA、bundle SHA、checkpoint digest、arm/stage/corpus/source binding和cursor后，训练必须从该checkpoint下一条继续；不得从zero重建、合并不同arm权重或按日志推高cursor。|
+|R2EXT-03|作为审计者，我希望新续训证据与旧证据分离且可回溯，以便能判断每次训练属于哪个预算窗口。|P0；R2EXT-02|AC-R2EXT-03：给定已存在的旧attempt/progress/result/checkpoint，当创建和执行extension时，则旧文件内容与SHA保持不变；新attempt/progress/result使用独立schema与sidecar路径；新checkpoint写入版本化目录，并通过parent attempt SHA与parent receipt SHA形成可验证谱系。旧result缺失时，不得把新result伪写回旧attempt。|
+|R2EXT-04|作为预算负责人，我希望CPU实际值与未知尾账单调累计，以便宿主更新或强杀后仍可阻止超额训练。|P0；R2EXT-01|AC-R2EXT-04：给定父checkpoint ledger和任何后续extension ledger，当boot identity不变且主机CPU计数可用时按冻结规则计入其增量；当boot identity改变或计数倒退时，按`elapsed_wall × max(saved logical CPU, current logical CPU)`形成未知尾账。每次恢复的累计charge不得低于所有已知事件值、前次累计值和当前尾账上界的最大值；restore、准备、训练、子进程、保存、失败收敛及回滚重算均计入。|
+|R2EXT-05|作为实验负责人，我希望来源差异被明确核验并绑定，以便checkpoint续接不会掩盖源码身份变化。|P0；R2EXT-02|AC-R2EXT-05：给定父attempt source hash与当前源码，当extension预检时，则逐文件记录parent SHA、实际运行SHA、对应Git blob/commit和兼容性审查报告SHA；extension runner/tests另记录自身SHA。不得修改父hash、将当前SHA冒充父SHA、忽略差异或静默overlay；任何无法证明与parent checkpoint兼容的文件都应拒绝该臂。|
+|R2EXT-06|作为研究负责人，我希望初始预算意图和每个checkpoint事务在恢复前已可靠落盘，以便中断时不丢失成本或采用未验证权重。|P0；R2EXT-01..05|AC-R2EXT-06：给定extension已通过静态准入，当首次restore/训练更新启动前，则write-once manifest、parent lineage、accounting start与aggregate reservation必须在已验证本地文件系统上耐久发布；任何durability失败时restore/训练调用数为0。每个checkpoint需经fresh-process验证与receipt后方可成为latest；写入中断、receipt缺失、latest损坏或writer身份不明时fail closed且保留既有数据。|
+|R2EXT-07|作为实验负责人，我希望单臂写入与三臂共享预算/资源受到同一守卫，以便在并发时仍能维持上限和速率。|P0；R2EXT-01、R2EXT-06|AC-R2EXT-07：给定三臂并行准入，当持久化aggregate ledger分配额度时，则必须用原子串行化检查每臂累计不超过1M且三臂之和不超过3M；同一臂最多一个writer。CPU双采样需均≤85%、可用内存≥8 GiB，并监测实际吞吐；若资源或速率不足以在剩余额度内完成下一有界工作单元，则停止派发并记账，不能静默降速后超预算。|
+|R2EXT-08|作为N主线负责人，我希望训练结果通过全部来源、readiness和独立恢复门后再进行对话评测，以便能力结论保持证据约束。|P0；R2EXT-02..07|AC-R2EXT-08：给定extension三臂均达到冻结训练分母（每臂30,096 pretraining episodes / 14,517,912 byte updates，525 assistant-SFT episodes / 113,209 byte updates），且新result、readiness、source bindings及fresh-process恢复全部通过，则可交W5b评测门审查；任一缺失或unknown时真实prompt selector调用数必须为0。全过程`dev_queries=0`、`reference_queries=0`、`generation_queries=0`、`can_promote=false`，N1-166继续冻结；不得据工程或保存恢复结果宣称模型能力晋级。|
+
+### 变更边界与待确认事项
+
+- 变更原因：boot identity改变后冻结尾账超过原480,000秒预算；用户已批准以累计每臂1,000,000、聚合3,000,000 process-CPU秒建立一次版本化续训窗口。新额不清零旧账、不修改父checkpoint或来源身份。
+- 非目标：不从zero重训、不覆盖旧attempt/progress/result/checkpoint，不读取dev/reference，不运行selector或`--execute`，不改训练目标、分母、数据顺序、超参与N1-166晋级门。
+- 假设：当前父latest bundle/receipt与原训练数据仍完整；所有source compatibility与fresh-process parent恢复均须在执行前重新验证。审查快照随墙钟增长而过期。
+- 遗留风险：1M/臂仅适用于当前续训窗口；若尾账在执行前或中断后吃尽余量，必须停止并另行讨论，不得隐式增加预算。
+
+## 回流判定
+
+- 结论：通过；R2EXT-01至R2EXT-08可逐项验收，且与已审查extension架构合同一致。
+- 回流目标：无。
+- 返工原因：无；来源/账本/恢复差异按下游实现门处理。
+- 给下游：按 `artifacts/04-continuation-extension-architecture.md` 实现并测试；独立代码审查与三臂执行前门全部通过后才可训练。
