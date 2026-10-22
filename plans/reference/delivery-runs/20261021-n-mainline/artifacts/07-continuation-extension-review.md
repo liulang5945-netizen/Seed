@@ -52,3 +52,13 @@
 代码根因：extension先由validate_source_compatibility接受精确审核过的parent/current SHA与Git blob来源，但execute_arm随后直接调用base._validate_sources()。base validator仍逐项按旧常量raw SHA硬拒绝；当前builder SHA与其parent SHA不同，扩展兼容报告没有传入该validator。触发点位于runner第2600行、open root writer store之前；旧validator的拒绝点为full-turn pretraining runner第284-286行。现有execute合同测试在runner测试第394、537、646、756及相邻用例直接monkeypatch base._validate_sources，因此72项通过没有覆盖此真实组件边界。
 
 最小安全设计建议：保留base旧常量与默认strict validator，不调用base._validate_sources，也不monkeypatch hash。新增版本化extension validator，完整覆盖base validator的冻结文件SHA表；每项只接受精确父字节，或已审查兼容报告中parent SHA/current SHA/Git commit+blob完全匹配的条目。未跟踪data仍要求parent attempt/receipt/bundle SHA精确绑定。来源门通过后复用base._load_pretrain_corpus、base._load_assistant_train_corpus和base._read_json，并保留readiness/manifest字段、split/family/role计数及pretraining target-byte总量检查，向原probe/trainer路径返回相同数据形状；不得加载dev/reference/selector。新增helper、runner调用路径、v1账本charged-tail carry-forward与拒绝未批准源/坏manifest的红测都纳入新版本SHA及独立审查；04 v1不改。
+
+## v1.1 精确父版本 Git revision pin 复审（2026-10-22）
+
+最终复核哈希：runner 49D0B4D2E43C486813F28972A84940756FA70353C00EC03142D04425124B655C；runner合同测试 3AC8C9DB074911AD4ADFEA1705042717CB699C95A028CCE80AC433F6F9046EE4；v1.1来源修订补充 5440B14FF76DE69DE1B7DE12B56420B544D675F029E45CC79DA4CB70EF222604。原v1架构保持 SHA-256 7BBBA63EAA0D7509BA14FCCED09645DCADB168CF7626F85BD8FFD3AD4595D999。
+
+精确父字节来源现在可固定Git revision，其他调用仍默认使用HEAD；v1父上下文固定到prepare时的提交 ad18ce7c7add64ea444f7f78c678e5d19a459cb9。校验仍验证该提交、历史blob OID/SHA及当前文件clean-filter OID。已审查的非精确builder差异仍使用各自冻结的兼容revision和精确current SHA。此修正稳定来源证明元数据，不放宽字节或谱系门。
+
+验证：来源/来源证明定向测试4/4通过（3.28秒），当前runner的py_compile与目标diff-check通过。此前pin变更前的27项修订测试通过；本次pin小改后未重跑全量组合。P0=0、P1=0、P2=0。
+
+门槛结论：允许尝试一次真实prepare-source-revision；仅当同锁完整账本回放和三臂候选校验通过时才发布write-once amendment。当前amendment尚未发布、CPU账本未变。本审查不放行run或训练；每臂仍须实时通过预算/资源/吞吐检查、获取root writer lock，并完成计费的fresh-process父checkpoint恢复。

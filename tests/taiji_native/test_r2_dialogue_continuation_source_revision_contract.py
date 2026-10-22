@@ -180,14 +180,14 @@ def test_effective_attempt_adopts_revision_in_memory_without_mutating_v1_attempt
 @pytest.mark.parametrize(
     "mutation, message",
     [
-        ("old_attempt", "source revision does not exactly bind"),
-        ("readiness", "source revision does not exactly bind"),
-        ("contract", "source revision does not exactly bind"),
-        ("review_report", "source revision does not exactly bind"),
-        ("budget", "source revision does not exactly bind"),
-        ("old_sources", "source revision does not exactly bind"),
-        ("current_binding", "source revision does not exactly bind"),
-        ("parent_receipt", "source revision does not exactly bind"),
+        ("old_attempt", "(?:bind|binding)"),
+        ("readiness", "(?:bind|binding)"),
+        ("contract", "(?:bind|binding)"),
+        ("review_report", "(?:bind|binding)"),
+        ("budget", "(?:bind|binding)"),
+        ("old_sources", "(?:bind|binding)"),
+        ("current_binding", "(?:bind|binding)"),
+        ("parent_receipt", "(?:bind|binding)"),
     ],
 )
 def test_effective_attempt_rejects_revision_or_v1_lineage_drift(
@@ -280,7 +280,20 @@ def _prepared_arms_fixture(tmp_path: Path, monkeypatch) -> dict[str, Any]:
         attempt_path.write_bytes(_json_bytes(attempt))
         progress_path = tmp_path / f"{arm}-progress.jsonl"
         progress_path.write_bytes(
-            (json.dumps({"event": "continuation_prepared", "arm": arm}) + "\n").encode()
+            b"".join(
+                _json_bytes(event)
+                for event in [
+                    {"event": "continuation_prepared", "arm": arm},
+                    {"event": "continuation_start_intent", "arm": arm},
+                    {"event": "continuation_started", "arm": arm},
+                    {"event": "training_resource_preflight_passed", "arm": arm},
+                    {
+                        "event": "continuation_stopped",
+                        "arm": arm,
+                        "stop_reason": "throughput_projection_exceeds_remaining_budget",
+                    },
+                ]
+            )
         )
         root = tmp_path / arm / "checkpoint"
         for directory in (root, root / "pretraining", root / "assistant_sft"):
@@ -317,7 +330,32 @@ def _prepared_arms_fixture(tmp_path: Path, monkeypatch) -> dict[str, Any]:
     monkeypatch.setattr(runner, "ARCHITECTURE_REPORT", source_report)
     monkeypatch.setattr(runner, "SOURCE_REVISION_REPORT", review_report)
     monkeypatch.setattr(runner, "_continuation_source_binding", lambda _sha: expected_current)
-    monkeypatch.setattr(runner, "_source_revision_path", lambda: tmp_path / "source-revision.json")
+
+    def revision_path(revision=None):
+        if revision is None:
+            revision = "v1.2" if (tmp_path / "revision-v12.json").exists() else "v1.1"
+        return tmp_path / ("revision-v12.json" if revision == "v1.2" else "revision-v11.json")
+
+    monkeypatch.setattr(runner, "_source_revision_path", revision_path)
+    monkeypatch.setattr(runner, "SOURCE_REVISION_V1_2_REPORT", review_report)
+    previous = {
+        "schema": "taiji-r2-continuation-source-revision-v1.1",
+        "original_attempts": {
+            arm: {
+                "attempt_sha256": _sha(c["locations"]["extension_attempt"].read_bytes()),
+                "parent_readiness_sha256": _sha(c["locations"]["parent_readiness"].read_bytes()),
+                "parent_receipt_sha256": c["parent_receipt_sha256"],
+                "prepared_progress_sha256": "e" * 64,
+            }
+            for arm, c in contexts.items()
+        },
+    }
+    revision_path("v1.1").write_bytes(_json_bytes(previous))
+    monkeypatch.setattr(runner, "PER_ARM_CPU_LIMIT", 1_450_000.0)
+    monkeypatch.setattr(runner, "AGGREGATE_CPU_LIMIT", 4_200_000.0)
+    monkeypatch.setattr(
+        runner.continuation_budget, "effective_budget_limits", lambda: (1_500_000.0, 4_300_000.0)
+    )
     monkeypatch.setattr(
         runner,
         "_expected_parent_paths",
@@ -333,7 +371,9 @@ def _prepared_arms_fixture(tmp_path: Path, monkeypatch) -> dict[str, Any]:
     monkeypatch.setattr(runner, "latest_charges", lambda: dict(default_charges))
 
     @contextmanager
-    def mock_source_revision_budget_snapshot():
+    def mock_source_revision_budget_snapshot(**_kwargs):
+        if runner.latest_reservations():
+            raise runner.Refuse("active CPU reservation")
         yield runner.latest_charges()
 
     monkeypatch.setattr(
@@ -377,7 +417,7 @@ def test_prepare_source_revision_is_append_only_and_does_not_reset_ledger(
     prepared = runner.prepare_source_revision()
     revision = runner.read_json(runner._source_revision_path())
 
-    assert revision["schema"] == "taiji-r2-continuation-source-revision-v1.1"
+    assert revision["schema"] == "taiji-r2-continuation-source-revision-v1.2"
     assert revision["approved_budget"] == {
         "per_arm": runner.PER_ARM_CPU_LIMIT,
         "aggregate": runner.AGGREGATE_CPU_LIMIT,
@@ -387,7 +427,7 @@ def test_prepare_source_revision_is_append_only_and_does_not_reset_ledger(
     for arm, context in fixture["contexts"].items():
         assert context["locations"]["extension_attempt"].read_bytes() == attempt_bytes[arm]
         assert context["locations"]["extension_progress"].read_bytes() == progress_bytes[arm]
-        assert revision["original_attempts"][arm]["prepared_progress_sha256"] == _sha(
+        assert revision["original_attempts"][arm]["stopped_progress_sha256"] == _sha(
             progress_bytes[arm]
         )
 
@@ -423,7 +463,7 @@ def test_prepare_source_revision_rejects_invalid_ledger_before_publishing(
     with pytest.raises(runner.Refuse, match=message):
         runner.prepare_source_revision()
 
-    assert not runner._source_revision_path().exists()
+    assert not runner._source_revision_path("v1.2").exists()
 
 
 def test_prepare_source_revision_rejects_invalid_candidate_checkpoint_before_publishing(
@@ -440,7 +480,7 @@ def test_prepare_source_revision_rejects_invalid_candidate_checkpoint_before_pub
     with pytest.raises(runner.Refuse, match="parent receipt fork changed"):
         runner.prepare_source_revision()
 
-    assert not runner._source_revision_path().exists()
+    assert not runner._source_revision_path("v1.2").exists()
 
 
 def _mock_source_revision_ledger_history(

@@ -58,8 +58,10 @@ from pathlib import Path
 from typing import Any, BinaryIO
 
 ARMS = ("full_turn_1m", "warm_start", "fresh_same_capacity")
-PER_ARM_CPU_LIMIT = 1_450_000.0
-AGGREGATE_CPU_LIMIT = 4_200_000.0
+BASE_PER_ARM_CPU_LIMIT = 1_450_000.0
+BASE_AGGREGATE_CPU_LIMIT = 4_200_000.0
+PER_ARM_CPU_LIMIT = BASE_PER_ARM_CPU_LIMIT
+AGGREGATE_CPU_LIMIT = BASE_AGGREGATE_CPU_LIMIT
 MOVEFILE_WRITE_THROUGH = 0x00000008
 MOVEFILE_REPLACE_EXISTING = 0x00000001
 DRIVE_FIXED = 3
@@ -80,6 +82,23 @@ LOCK_PATH = REPORTS_DIR / f"{EXTENSION_PREFIX}_aggregate_cpu_ledger.lock"
 _THREAD_LOCK = threading.RLock()
 _EVENT_RE = re.compile(r"^(?P<prefix>.+)\.(?P<sequence>\d{8})\.json$")
 _HEX_256_RE = re.compile(r"^[0-9a-f]{64}$")
+_SOURCE_REVISION_V1_1_SCHEMA = "taiji-r2-continuation-source-revision-v1.1"
+_SOURCE_REVISION_V1_2_SCHEMA = "taiji-r2-continuation-source-revision-v1.2"
+_SOURCE_REVISION_V1_1_NAME = f"{EXTENSION_PREFIX}_source_revision_v1_1.json"
+_SOURCE_REVISION_V1_2_NAME = f"{EXTENSION_PREFIX}_source_revision_v1_2.json"
+_SOURCE_REVISION_V1_1_REVIEW = (
+    ROOT
+    / "plans/reference/delivery-runs/20261021-n-mainline/artifacts/04-continuation-source-revision-v1-1.md"
+)
+_SOURCE_REVISION_V1_2_REVIEW = (
+    ROOT
+    / "plans/reference/delivery-runs/20261021-n-mainline/artifacts/04-continuation-source-revision-v1-2.md"
+)
+_SOURCE_REVISION_ARCHITECTURE_REPORT = (
+    ROOT
+    / "plans/reference/delivery-runs/20261021-n-mainline/artifacts/04-continuation-extension-architecture.md"
+)
+_ACTIVE_BUDGET_REVISION_SHA256: dict[str, str] = {}
 
 
 class ExtensionLedgerRefuse(RuntimeError):
@@ -462,7 +481,7 @@ def _validate_parent_records(
         if not isinstance(charged, (int, float)) or isinstance(charged, bool):
             raise ExtensionLedgerRefuse(f"parent charge must be numeric: {arm}")
         charged = float(charged)
-        if not math.isfinite(charged) or charged < 0 or charged > PER_ARM_CPU_LIMIT:
+        if not math.isfinite(charged) or charged < 0 or charged > BASE_PER_ARM_CPU_LIMIT:
             raise ExtensionLedgerRefuse(f"parent charge is outside the approved ceiling: {arm}")
         if raw.get("tail_status") not in {"closed", "conservative_upper_bound"}:
             raise ExtensionLedgerRefuse(f"parent tail is unresolved or partial: {arm}")
@@ -492,7 +511,7 @@ def _validate_parent_records(
         normalized[arm] = dict(raw)
         normalized[arm]["charged_cpu_seconds"] = charged
     total = sum(item["charged_cpu_seconds"] for item in normalized.values())
-    if total > AGGREGATE_CPU_LIMIT:
+    if total > BASE_AGGREGATE_CPU_LIMIT:
         raise ExtensionLedgerRefuse("parent charges exceed the aggregate CPU ceiling")
     return normalized
 
@@ -506,12 +525,31 @@ def _finite_nonnegative(value: Any) -> bool:
     )
 
 
-def _read_contract() -> dict[str, Any]:
+def _source_revision_path(revision: str) -> Path:
+    names = {
+        "v1.1": _SOURCE_REVISION_V1_1_NAME,
+        "v1.2": _SOURCE_REVISION_V1_2_NAME,
+    }
+    try:
+        name = names[revision]
+    except KeyError as exc:
+        raise ValueError(f"unknown source revision: {revision}") from exc
+    return REPORTS_DIR / name
+
+
+def _sha256_file(path: Path) -> str:
+    try:
+        return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    except OSError as exc:
+        raise ExtensionLedgerRefuse(f"cannot read revision-bound file: {path}") from exc
+
+
+def _base_contract() -> dict[str, Any]:
     contract = _read_json(CONTRACT_PATH)
     if (
         contract.get("schema") != CONTRACT_SCHEMA
-        or contract.get("per_arm_cpu_seconds") != PER_ARM_CPU_LIMIT
-        or contract.get("aggregate_cpu_seconds") != AGGREGATE_CPU_LIMIT
+        or contract.get("per_arm_cpu_seconds") != BASE_PER_ARM_CPU_LIMIT
+        or contract.get("aggregate_cpu_seconds") != BASE_AGGREGATE_CPU_LIMIT
         or contract.get("arms") != list(ARMS)
     ):
         raise ExtensionLedgerRefuse("extension budget contract schema or caps differ")
@@ -520,6 +558,174 @@ def _read_contract() -> dict[str, Any]:
         contract, omit="contract_sha256"
     ):
         raise ExtensionLedgerRefuse("extension budget contract digest mismatch")
+    return contract
+
+
+def _expected_source_revision_files() -> dict[str, Path]:
+    return {
+        "runner": ROOT / "scripts/training/run_taiji_r2_daily_dialogue_continuation_extension.py",
+        "budget_helper": Path(__file__).resolve(),
+        "runner_contract_test": (
+            ROOT / "tests/taiji_native/test_r2_dialogue_continuation_extension_runner_contract.py"
+        ),
+        "budget_contract_test": (
+            ROOT / "tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py"
+        ),
+        "source_validator": ROOT
+        / "scripts/training/taiji_r2_dialogue_continuation_source_validation.py",
+        "source_validator_contract_test": (
+            ROOT / "tests/taiji_native/test_r2_dialogue_continuation_source_validation_contract.py"
+        ),
+        "source_revision_contract_test": (
+            ROOT / "tests/taiji_native/test_r2_dialogue_continuation_source_revision_contract.py"
+        ),
+    }
+
+
+def _validate_source_binding(binding: Any, *, verify_file_bytes: bool) -> None:
+    expected_files = _expected_source_revision_files()
+    expected_keys = {"runner_path", "runner_sha256", "files", "report_path", "report_sha256"}
+    if not isinstance(binding, Mapping) or set(binding) != expected_keys:
+        raise ExtensionLedgerRefuse("source revision continuation binding is malformed")
+    files = binding.get("files")
+    if not isinstance(files, Mapping) or set(files) != set(expected_files):
+        raise ExtensionLedgerRefuse("source revision tracked file set differs")
+    normalized: dict[str, tuple[Path, str]] = {}
+    for name, expected_path in expected_files.items():
+        row = files.get(name)
+        if not isinstance(row, Mapping) or set(row) != {"path", "sha256"}:
+            raise ExtensionLedgerRefuse(f"source revision file binding is malformed: {name}")
+        path_value = row.get("path")
+        digest = row.get("sha256")
+        if (
+            not isinstance(path_value, str)
+            or not isinstance(digest, str)
+            or not _HEX_256_RE.fullmatch(digest)
+        ):
+            raise ExtensionLedgerRefuse(f"source revision file binding is invalid: {name}")
+        expected_resolved = expected_path.resolve()
+        try:
+            actual_resolved = Path(path_value).resolve(strict=True)
+        except OSError as exc:
+            raise ExtensionLedgerRefuse(f"source revision file is missing: {name}") from exc
+        if actual_resolved != expected_resolved or not expected_resolved.is_file():
+            raise ExtensionLedgerRefuse(f"source revision file path differs: {name}")
+        if expected_resolved.is_symlink():
+            raise ExtensionLedgerRefuse(f"source revision file must not be a symlink: {name}")
+        if verify_file_bytes and _sha256_file(expected_resolved) != digest:
+            raise ExtensionLedgerRefuse(f"source revision file hash differs: {name}")
+        normalized[name] = (expected_resolved, digest)
+
+    runner_path, runner_digest = normalized["runner"]
+    if (
+        binding.get("runner_path") != str(runner_path)
+        or binding.get("runner_sha256") != runner_digest
+    ):
+        raise ExtensionLedgerRefuse("source revision runner binding differs from tracked file row")
+    report_path_value = binding.get("report_path")
+    report_digest = binding.get("report_sha256")
+    expected_report = _SOURCE_REVISION_ARCHITECTURE_REPORT.resolve()
+    if (
+        report_path_value != str(expected_report)
+        or not isinstance(report_digest, str)
+        or not _HEX_256_RE.fullmatch(report_digest)
+        or not expected_report.is_file()
+        or expected_report.is_symlink()
+    ):
+        raise ExtensionLedgerRefuse("source revision architecture report binding is invalid")
+    if verify_file_bytes and _sha256_file(expected_report) != report_digest:
+        raise ExtensionLedgerRefuse("source revision architecture report hash differs")
+
+
+def _validate_prior_v1_1(contract_sha256: str) -> str:
+    path = _source_revision_path("v1.1")
+    if path.is_symlink() or not path.is_file():
+        raise ExtensionLedgerRefuse("v1.2 budget amendment requires the v1.1 source revision")
+    previous = _read_json(path)
+    if (
+        previous.get("schema") != _SOURCE_REVISION_V1_1_SCHEMA
+        or previous.get("contract_sha256") != contract_sha256
+        or previous.get("approved_budget")
+        != {
+            "per_arm": BASE_PER_ARM_CPU_LIMIT,
+            "aggregate": BASE_AGGREGATE_CPU_LIMIT,
+        }
+    ):
+        raise ExtensionLedgerRefuse("v1.1 source revision does not bind the immutable base budget")
+    _validate_source_binding(previous.get("current_continuation_sources"), verify_file_bytes=False)
+    review_sha = previous.get("review_report_sha256")
+    if (
+        not isinstance(review_sha, str)
+        or not _HEX_256_RE.fullmatch(review_sha)
+        or not _SOURCE_REVISION_V1_1_REVIEW.is_file()
+        or _SOURCE_REVISION_V1_1_REVIEW.is_symlink()
+        or _sha256_file(_SOURCE_REVISION_V1_1_REVIEW) != review_sha
+    ):
+        raise ExtensionLedgerRefuse("v1.1 source revision review report binding differs")
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def effective_budget_limits() -> tuple[float, float]:
+    """Return the immutable v1 caps or the validated v1.2 approved caps.
+
+    The v1.2 source revision is the sole budget-amendment artifact. Its absence
+    keeps the original v1 ceiling; a present but invalid revision fails closed.
+    """
+    revision_path = _source_revision_path("v1.2")
+    revision_key = str(revision_path.resolve())
+    if not revision_path.exists():
+        if revision_key in _ACTIVE_BUDGET_REVISION_SHA256:
+            raise ExtensionLedgerRefuse("active v1.2 budget amendment disappeared")
+        return BASE_PER_ARM_CPU_LIMIT, BASE_AGGREGATE_CPU_LIMIT
+    if revision_path.is_symlink() or not revision_path.is_file():
+        raise ExtensionLedgerRefuse("v1.2 budget amendment must be a regular write-once file")
+
+    raw_bytes = revision_path.read_bytes()
+    revision_sha256 = hashlib.sha256(raw_bytes).hexdigest()
+    previous_sha256 = _ACTIVE_BUDGET_REVISION_SHA256.get(revision_key)
+    if previous_sha256 is not None and previous_sha256 != revision_sha256:
+        raise ExtensionLedgerRefuse("v1.2 budget amendment changed after activation")
+    try:
+        revision = json.loads(raw_bytes.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ExtensionLedgerRefuse("v1.2 budget amendment is not valid JSON") from exc
+    if not isinstance(revision, dict):
+        raise ExtensionLedgerRefuse("v1.2 budget amendment must be a JSON object")
+
+    _base_contract()
+    contract_sha256 = _sha256_file(CONTRACT_PATH)
+    prior_sha256 = _validate_prior_v1_1(contract_sha256)
+    expected_budget = {"per_arm": 1_500_000.0, "aggregate": 4_300_000.0}
+    budget = revision.get("approved_budget")
+    if (
+        revision.get("schema") != _SOURCE_REVISION_V1_2_SCHEMA
+        or revision.get("contract_sha256") != contract_sha256
+        or revision.get("previous_source_revision_sha256") != prior_sha256
+        or not isinstance(budget, Mapping)
+        or set(budget) != {"per_arm", "aggregate"}
+        or any(not _finite_nonnegative(value) for value in budget.values())
+        or dict(budget) != expected_budget
+        or budget["per_arm"] <= BASE_PER_ARM_CPU_LIMIT
+        or budget["aggregate"] <= BASE_AGGREGATE_CPU_LIMIT
+    ):
+        raise ExtensionLedgerRefuse("v1.2 budget amendment schema, lineage, or caps differ")
+    _validate_source_binding(revision.get("current_continuation_sources"), verify_file_bytes=True)
+    review_sha = revision.get("review_report_sha256")
+    if (
+        not isinstance(review_sha, str)
+        or not _HEX_256_RE.fullmatch(review_sha)
+        or not _SOURCE_REVISION_V1_2_REVIEW.is_file()
+        or _SOURCE_REVISION_V1_2_REVIEW.is_symlink()
+        or _sha256_file(_SOURCE_REVISION_V1_2_REVIEW) != review_sha
+    ):
+        raise ExtensionLedgerRefuse("v1.2 source revision review report binding differs")
+    _ACTIVE_BUDGET_REVISION_SHA256[revision_key] = revision_sha256
+    return float(budget["per_arm"]), float(budget["aggregate"])
+
+
+def _read_contract() -> dict[str, Any]:
+    contract = _base_contract()
+    effective_budget_limits()
     return contract
 
 
@@ -870,6 +1076,8 @@ def initialize_ledger(
     Repeated initialization is refused; callers must use ``latest_charges`` to
     resume the same extension window.
     """
+    if _source_revision_path("v1.2").exists():
+        raise ExtensionLedgerRefuse("cannot initialize the immutable v1 contract after v1.2")
     parents = _validate_initialization_inputs(parent_records, source_report_sha256, approved_utc)
     charges = {arm: float(parents[arm]["charged_cpu_seconds"]) for arm in ARMS}
     api = _durability_api()
@@ -883,8 +1091,8 @@ def initialize_ledger(
             "schema": CONTRACT_SCHEMA,
             "extension_id": EXTENSION_PREFIX,
             "arms": list(ARMS),
-            "per_arm_cpu_seconds": PER_ARM_CPU_LIMIT,
-            "aggregate_cpu_seconds": AGGREGATE_CPU_LIMIT,
+            "per_arm_cpu_seconds": BASE_PER_ARM_CPU_LIMIT,
+            "aggregate_cpu_seconds": BASE_AGGREGATE_CPU_LIMIT,
             "approved_utc": approved_utc,
             "source_compatibility_report_sha256": source_report_sha256,
             "parent_records": parents,
@@ -1156,15 +1364,23 @@ def guard(arm: str, next_charge: float, reserve_cpu_seconds: float = 0.0) -> str
     return reservation_id
 
 
+# A fresh process adopts a previously published v1.2 amendment before it can
+# read, reserve, reconcile, or settle any extension budget.
+PER_ARM_CPU_LIMIT, AGGREGATE_CPU_LIMIT = effective_budget_limits()
+
+
 __all__ = [
     "AGGREGATE_CPU_LIMIT",
     "ARMS",
+    "BASE_AGGREGATE_CPU_LIMIT",
+    "BASE_PER_ARM_CPU_LIMIT",
     "CONTRACT_PATH",
     "EXTENSION_CHECKPOINT_ROOT",
     "ExtensionLedgerRefuse",
     "PER_ARM_CPU_LIMIT",
     "append_charge",
     "durable_publish",
+    "effective_budget_limits",
     "guard",
     "initialize_ledger",
     "latest_charges",

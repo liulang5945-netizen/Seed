@@ -72,8 +72,10 @@ FRESH_PROCESS_RESTORE_TIMEOUT_SECONDS = 120.0
 FINAL_PUBLICATION_RESERVE_SECONDS = 30.0
 APPROVED_UTC = "2026-10-22"
 APPROVAL_SOURCE = (
-    "approved continuation extension budget: 1.45M CPU seconds per arm, 4.2M aggregate"
+    "user approved cumulative continuation ceilings: 1.5M CPU seconds per arm, 4.3M aggregate"
 )
+V1_2_PER_ARM_CPU_LIMIT = 1_500_000.0
+V1_2_AGGREGATE_CPU_LIMIT = 4_300_000.0
 ARCHITECTURE_REPORT = (
     ROOT
     / "plans/reference/delivery-runs/20261021-n-mainline/artifacts/04-continuation-extension-architecture.md"
@@ -252,10 +254,11 @@ def _configure_prepared_storage() -> dict[str, Any]:
     contract_path = paths(ARMS[0])["contract_path"]
     contract = read_json(contract_path)
     if (
-        contract.get("per_arm_cpu_seconds") != PER_ARM_CPU_LIMIT
-        or contract.get("aggregate_cpu_seconds") != AGGREGATE_CPU_LIMIT
+        contract.get("per_arm_cpu_seconds") != continuation_budget.BASE_PER_ARM_CPU_LIMIT
+        or contract.get("aggregate_cpu_seconds") != continuation_budget.BASE_AGGREGATE_CPU_LIMIT
+        or continuation_budget.effective_budget_limits() != (PER_ARM_CPU_LIMIT, AGGREGATE_CPU_LIMIT)
     ):
-        raise Refuse("runner and durable ledger budget constants differ")
+        raise Refuse("runner and versioned cumulative budget amendment differ")
     durability = contract.get("durability")
     if not isinstance(durability, dict) or not isinstance(durability.get("volume_root"), str):
         raise Refuse("continuation contract lacks its approved storage volume")
@@ -845,13 +848,22 @@ SOURCE_REVISION_REPORT = (
     ROOT
     / "plans/reference/delivery-runs/20261021-n-mainline/artifacts/04-continuation-source-revision-v1-1.md"
 )
+SOURCE_REVISION_V1_2_REPORT = (
+    ROOT
+    / "plans/reference/delivery-runs/20261021-n-mainline/artifacts/04-continuation-source-revision-v1-2.md"
+)
 
 
-def _source_revision_path() -> Path:
-    return (
-        REPORTS_DIR
-        / "taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_source_revision_v1_1.json"
-    )
+def _source_revision_path(revision: str | None = None) -> Path:
+    names = {
+        "v1.1": "taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_source_revision_v1_1.json",
+        "v1.2": "taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_source_revision_v1_2.json",
+    }
+    if revision is None:
+        revision = "v1.2" if (REPORTS_DIR / names["v1.2"]).exists() else "v1.1"
+    if revision not in names:
+        raise Refuse(f"unknown source revision: {revision}")
+    return REPORTS_DIR / names[revision]
 
 
 def _continuation_source_files() -> dict[str, Path]:
@@ -909,22 +921,44 @@ def _effective_attempt(
     old = revision.get("original_attempts", {}).get(arm, {})
     old_sources = attempt.get("continuation_sources", {})
     if (
-        revision.get("schema") != "taiji-r2-continuation-source-revision-v1.1"
-        or revision.get("current_continuation_sources") != expected
-        or revision.get("contract_sha256") != sha256_file(location["contract_path"])
-        or revision.get("review_report_sha256") != sha256_file(SOURCE_REVISION_REPORT)
-        or revision.get("approved_budget")
-        != {"per_arm": PER_ARM_CPU_LIMIT, "aggregate": AGGREGATE_CPU_LIMIT}
+        revision.get("contract_sha256") != sha256_file(location["contract_path"])
         or old.get("attempt_sha256") != sha256_file(location["extension_attempt"])
         or old.get("parent_readiness_sha256") != sha256_file(location["parent_readiness"])
         or old.get("parent_receipt_sha256") != PARENT_RECEIPT_SHA256[arm]
         or old_sources.get("runner_sha256") != V1_RUNNER_SHA256
         or {name: row.get("sha256") for name, row in old_sources.get("files", {}).items()}
         != V1_SOURCE_HASHES
-        or old_sources.get("report_sha256") != source_report_sha256
+        or old_sources.get("report_sha256") != sha256_file(ARCHITECTURE_REPORT)
         or attempt.get("source_compatibility", {}).get("runner_sha256") != V1_RUNNER_SHA256
     ):
-        raise Refuse("source revision does not exactly bind original and current sources")
+        raise Refuse("source revision does not exactly bind original v1 lineage")
+
+    schema = revision.get("schema")
+    if schema == "taiji-r2-continuation-source-revision-v1.1":
+        valid_revision = (
+            revision.get("current_continuation_sources") == expected
+            and revision.get("review_report_sha256") == sha256_file(SOURCE_REVISION_REPORT)
+            and revision.get("approved_budget")
+            == {"per_arm": 1_450_000.0, "aggregate": 4_200_000.0}
+        )
+    elif schema == "taiji-r2-continuation-source-revision-v1.2":
+        previous_path = _source_revision_path("v1.1")
+        valid_revision = (
+            previous_path.is_file()
+            and revision.get("previous_source_revision_sha256") == sha256_file(previous_path)
+            and revision.get("current_continuation_sources") == expected
+            and revision.get("review_report_sha256") == sha256_file(SOURCE_REVISION_V1_2_REPORT)
+            and revision.get("approved_budget")
+            == {
+                "per_arm": V1_2_PER_ARM_CPU_LIMIT,
+                "aggregate": V1_2_AGGREGATE_CPU_LIMIT,
+            }
+        )
+    else:
+        valid_revision = False
+    if not valid_revision:
+        raise Refuse("versioned source and cumulative budget revision binding differs")
+
     effective = dict(attempt)
     effective["continuation_sources"] = expected
     effective["source_compatibility"] = {
@@ -940,7 +974,7 @@ def _effective_attempt(
 
 
 @contextmanager
-def _source_revision_budget_snapshot():
+def _source_revision_budget_snapshot(*, allow_stopped_runtime: bool = False):
     # Hold the shared budget serialization point until amendment publication.
     with continuation_budget._aggregate_lock(continuation_budget.LOCK_PATH):
         _, charges, reservations, _ = continuation_budget._read_ledger_full()
@@ -953,6 +987,15 @@ def _source_revision_budget_snapshot():
             "continuation_prepared",
             "continuation_prepare_reconciled",
         }
+        if allow_stopped_runtime:
+            allowed_events.update(
+                {
+                    "continuation_started",
+                    "training_resource_preflight_passed",
+                    "continuation_stopped",
+                    "work_unit_settled",
+                }
+            )
         for _sequence, event_path in continuation_budget._event_files(
             continuation_budget.AGGREGATE_LEDGER_PREFIX
         ):
@@ -961,13 +1004,46 @@ def _source_revision_budget_snapshot():
         yield dict(charges)
 
 
+def _validate_stopped_untrained_progress(events: list[dict[str, Any]]) -> None:
+    allowed = {
+        "continuation_prepare_intent",
+        "continuation_prepare_tail_reconciled",
+        "continuation_prepared",
+        "continuation_prepare_reconciled",
+        "continuation_start_intent",
+        "continuation_started",
+        "training_resource_preflight_passed",
+        "continuation_stopped",
+    }
+    if any(event.get("event") not in allowed for event in events):
+        raise Refuse("budget revision refuses restore or training history")
+    counts = {name: sum(event.get("event") == name for event in events) for name in allowed}
+    if not counts["continuation_prepared"] or any(
+        counts[name] != 1
+        for name in (
+            "continuation_start_intent",
+            "continuation_started",
+            "training_resource_preflight_passed",
+            "continuation_stopped",
+        )
+    ):
+        raise Refuse("budget revision requires one clean stopped start attempt per arm")
+    stopped = next(event for event in events if event.get("event") == "continuation_stopped")
+    if stopped.get("stop_reason") != "throughput_projection_exceeds_remaining_budget":
+        raise Refuse("budget revision only adopts the reviewed forecast stop")
+
+
 def prepare_source_revision() -> dict[str, Any]:
-    # A source revision adopts prepared evidence; it must never reinitialize CPU.
+    # v1.2 continues the same ledger and adopts only the reviewed pre-training stops.
     _configure_prepared_storage()
     source_report_sha = sha256_file(ARCHITECTURE_REPORT)
-    if latest_reservations():
-        raise Refuse("source revision requires no active CPU reservation")
-    original_attempts = {}
+    previous_path = _source_revision_path("v1.1")
+    target_path = _source_revision_path("v1.2")
+    if not previous_path.is_file() or previous_path.is_symlink():
+        raise Refuse("v1.2 requires the durable v1.1 source amendment")
+    previous_revision = read_json(previous_path)
+    previous_sha256 = sha256_file(previous_path)
+    original_attempts: dict[str, Any] = {}
     for arm in ARMS:
         context = _parent_context(arm)
         location = context["locations"]
@@ -976,7 +1052,8 @@ def prepare_source_revision() -> dict[str, Any]:
         compatible = dict(context["source_compatibility"])
         compatible["runner_sha256"] = V1_RUNNER_SHA256
         if (
-            attempt.get("schema") != "taiji-r2-dialogue-continuation-extension-attempt-v1"
+            previous_revision.get("schema") != "taiji-r2-continuation-source-revision-v1.1"
+            or attempt.get("schema") != "taiji-r2-dialogue-continuation-extension-attempt-v1"
             or attempt.get("arm") != arm
             or attempt.get("source_compatibility_report_sha256") != source_report_sha
             or attempt.get("parent_checkpoint", {}).get("receipt_sha256")
@@ -988,51 +1065,55 @@ def prepare_source_revision() -> dict[str, Any]:
             or attempt.get("source_compatibility") != compatible
             or attempt.get("parent", {}).get("attempt_sha256") != context["parent_attempt_sha256"]
         ):
-            raise Refuse("source revision requires exact reviewed v1 prepared sources")
+            raise Refuse("v1.2 requires exact original v1 prepared sources")
         events = read_jsonl(location["extension_progress"])
-        allowed = {
-            "continuation_prepare_intent",
-            "continuation_prepare_tail_reconciled",
-            "continuation_prepared",
-            "continuation_prepare_reconciled",
-        }
-        if not any(e.get("event") == "continuation_prepared" for e in events) or any(
-            e.get("event") not in allowed for e in events
-        ):
-            raise Refuse("source revision is only allowed before any execution event")
+        _validate_stopped_untrained_progress(events)
         for directory in (
             location["extension_checkpoint_root"],
             location["extension_checkpoint_root"] / "pretraining",
             location["extension_checkpoint_root"] / "assistant_sft",
         ):
             if (directory / "writer.lock").exists() or (directory / "reclaim.guard").exists():
-                raise Refuse("source revision requires quiescent checkpoint writers")
+                raise Refuse("budget revision requires quiescent checkpoint writers")
         if (
             location["extension_result"].exists()
             or _readiness_path(location["extension_result"]).exists()
         ):
-            raise Refuse("source revision cannot adopt terminal artifacts")
+            raise Refuse("budget revision cannot adopt terminal artifacts")
         _expected, missing = _parent_copy_state(context)
         if missing:
-            raise Refuse("source revision parent fork is incomplete")
+            raise Refuse("budget revision parent fork is incomplete")
+        original = previous_revision.get("original_attempts", {}).get(arm)
+        if (
+            not isinstance(original, dict)
+            or original.get("attempt_sha256") != sha256_file(location["extension_attempt"])
+            or original.get("parent_readiness_sha256") != sha256_file(location["parent_readiness"])
+            or original.get("parent_receipt_sha256") != context["parent_receipt_sha256"]
+        ):
+            raise Refuse("v1.2 original v1 attempt lineage changed")
         original_attempts[arm] = {
-            "attempt_sha256": sha256_file(location["extension_attempt"]),
-            "parent_readiness_sha256": sha256_file(location["parent_readiness"]),
-            "parent_receipt_sha256": context["parent_receipt_sha256"],
-            "prepared_progress_sha256": sha256_file(location["extension_progress"]),
+            **original,
+            "stopped_progress_sha256": sha256_file(location["extension_progress"]),
         }
     payload = {
-        "schema": "taiji-r2-continuation-source-revision-v1.1",
+        "schema": "taiji-r2-continuation-source-revision-v1.2",
         "contract_sha256": sha256_file(_expected_parent_paths(ARMS[0])["contract_path"]),
+        "previous_source_revision_sha256": previous_sha256,
         "original_attempts": original_attempts,
         "current_continuation_sources": _continuation_source_binding(source_report_sha),
-        "review_report_sha256": sha256_file(SOURCE_REVISION_REPORT),
-        "approved_budget": {"per_arm": PER_ARM_CPU_LIMIT, "aggregate": AGGREGATE_CPU_LIMIT},
-        "reason": "reviewed builder compatibility was rejected by frozen raw-SHA validator before execution",
+        "review_report_sha256": sha256_file(SOURCE_REVISION_V1_2_REPORT),
+        "approved_budget": {
+            "per_arm": V1_2_PER_ARM_CPU_LIMIT,
+            "aggregate": V1_2_AGGREGATE_CPU_LIMIT,
+        },
+        "approval_source": "user approved the cumulative ceilings 1,500,000 per arm and 4,300,000 aggregate; prior charges and tails remain included",
+        "reason": "the approved v1.1 run passed resources and stopped before restore/training because its projection exceeded 4.2M",
     }
-    with _source_revision_budget_snapshot() as charges:
+    with _source_revision_budget_snapshot(allow_stopped_runtime=True) as charges:
         _validate_prepared(source_revision_candidate=payload, ledger_snapshot=charges)
-        _write_json_once(_source_revision_path(), payload)
+        _write_json_once(target_path, payload)
+    global PER_ARM_CPU_LIMIT, AGGREGATE_CPU_LIMIT
+    PER_ARM_CPU_LIMIT, AGGREGATE_CPU_LIMIT = continuation_budget.effective_budget_limits()
     return _validate_prepared()
 
 

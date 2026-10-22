@@ -69,6 +69,8 @@ def _configure(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     )
     monkeypatch.setattr(extension, "LOCK_PATH", tmp_path / "aggregate-ledger.lock")
     monkeypatch.setattr(extension, "_DURABILITY_API", FakeDurabilityApi(str(tmp_path.anchor)))
+    monkeypatch.setattr(extension, "PER_ARM_CPU_LIMIT", extension.BASE_PER_ARM_CPU_LIMIT)
+    monkeypatch.setattr(extension, "AGGREGATE_CPU_LIMIT", extension.BASE_AGGREGATE_CPU_LIMIT)
 
 
 def _parent_records(charges: dict[str, float] | None = None) -> dict[str, dict[str, object]]:
@@ -139,6 +141,7 @@ def _reserve_in_child(
     extension.AGGREGATE_LEDGER_PREFIX = report_path / "aggregate-ledger"
     extension.AGGREGATE_LEDGER_SUMMARY = report_path / "aggregate-ledger.latest.json"
     extension.LOCK_PATH = report_path / "aggregate-ledger.lock"
+    extension.PER_ARM_CPU_LIMIT = extension.BASE_PER_ARM_CPU_LIMIT
     extension.AGGREGATE_CPU_LIMIT = aggregate_limit
     extension._DURABILITY_API = FakeDurabilityApi(str(report_path.anchor))
     try:
@@ -158,6 +161,7 @@ def _read_resume_state_in_child(
     extension.AGGREGATE_LEDGER_PREFIX = report_path / "aggregate-ledger"
     extension.AGGREGATE_LEDGER_SUMMARY = report_path / "aggregate-ledger.latest.json"
     extension.LOCK_PATH = report_path / "aggregate-ledger.lock"
+    extension.PER_ARM_CPU_LIMIT = extension.BASE_PER_ARM_CPU_LIMIT
     extension.AGGREGATE_CPU_LIMIT = aggregate_limit
     extension._DURABILITY_API = FakeDurabilityApi(str(report_path.anchor))
     result_queue.put((extension.latest_charges()[arm], extension.latest_reservations()[arm]))
@@ -445,9 +449,9 @@ def test_guard_respects_per_arm_reserve_and_actual_settlement_cap(
 def test_two_processes_cannot_overreserve_shared_aggregate_budget(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    _configure(tmp_path, monkeypatch)
     monkeypatch.setattr(extension, "AGGREGATE_CPU_LIMIT", 2_500_000.0)
     charges = {arm: 700_000.0 for arm in extension.ARMS}
-    _configure(tmp_path, monkeypatch)
     extension.initialize_ledger(_parent_records(charges), "a" * 64, "2026-10-22")
 
     context = multiprocessing.get_context("spawn")
@@ -617,3 +621,111 @@ def test_durable_publish_detects_readback_hash_mismatch(
         )
     assert target.read_bytes() == b"tampered"
     assert not list(directory.glob(".*.tmp"))
+
+
+def _source_binding_snapshot() -> dict[str, Any]:
+    files = {
+        name: {"path": str(path.resolve()), "sha256": extension._sha256_file(path)}
+        for name, path in extension._expected_source_revision_files().items()
+    }
+    runner = files["runner"]
+    architecture_report = extension._SOURCE_REVISION_ARCHITECTURE_REPORT.resolve()
+    return {
+        "runner_path": runner["path"],
+        "runner_sha256": runner["sha256"],
+        "files": files,
+        "report_path": str(architecture_report),
+        "report_sha256": extension._sha256_file(architecture_report),
+    }
+
+
+def _publish_test_v1_2_revision(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    charges: dict[str, float] | None = None,
+) -> Path:
+    _configure(tmp_path, monkeypatch)
+    extension.initialize_ledger(_parent_records(charges), "a" * 64, "2026-10-22")
+    contract_sha = extension._sha256_file(extension.CONTRACT_PATH)
+    original_v1_1 = extension.ROOT / "reports" / extension._SOURCE_REVISION_V1_1_NAME
+    prior = json.loads(original_v1_1.read_text(encoding="utf-8"))
+    prior["contract_sha256"] = contract_sha
+    prior_path = extension._source_revision_path("v1.1")
+    prior_path.write_bytes(extension._canonical_json(prior))
+    revision = {
+        "schema": extension._SOURCE_REVISION_V1_2_SCHEMA,
+        "contract_sha256": contract_sha,
+        "previous_source_revision_sha256": extension._sha256_file(prior_path),
+        "approved_budget": {"per_arm": 1_500_000.0, "aggregate": 4_300_000.0},
+        "current_continuation_sources": _source_binding_snapshot(),
+        "review_report_sha256": extension._sha256_file(extension._SOURCE_REVISION_V1_2_REVIEW),
+    }
+    revision_path = extension._source_revision_path("v1.2")
+    revision_path.write_bytes(extension._canonical_json(revision))
+    return revision_path
+
+
+def test_effective_budget_is_base_until_v1_2_and_keeps_v1_contract_immutable(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _initialize(tmp_path, monkeypatch)
+    contract_bytes = extension.CONTRACT_PATH.read_bytes()
+
+    assert extension.effective_budget_limits() == (
+        extension.BASE_PER_ARM_CPU_LIMIT,
+        extension.BASE_AGGREGATE_CPU_LIMIT,
+    )
+    contract = extension._read_contract()
+    assert contract["per_arm_cpu_seconds"] == 1_450_000.0
+    assert contract["aggregate_cpu_seconds"] == 4_200_000.0
+    assert extension.CONTRACT_PATH.read_bytes() == contract_bytes
+
+
+def test_valid_v1_2_revision_applies_approved_limits_to_ledger_guard(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    charges = {
+        "full_turn_1m": 1_250_000.0,
+        "warm_start": 1_400_000.0,
+        "fresh_same_capacity": 1_400_000.0,
+    }
+    revision_path = _publish_test_v1_2_revision(tmp_path, monkeypatch, charges=charges)
+    contract_bytes = extension.CONTRACT_PATH.read_bytes()
+
+    limits = extension.effective_budget_limits()
+    assert limits == (1_500_000.0, 4_300_000.0)
+    monkeypatch.setattr(extension, "PER_ARM_CPU_LIMIT", limits[0])
+    monkeypatch.setattr(extension, "AGGREGATE_CPU_LIMIT", limits[1])
+    reservation = extension.guard("full_turn_1m", 1_250_000.0, 200_000.0)
+
+    assert len(reservation) == 32
+    assert sum(extension.latest_charges().values()) == 4_250_000.0
+    assert extension._read_contract()["aggregate_cpu_seconds"] == 4_200_000.0
+    assert extension.CONTRACT_PATH.read_bytes() == contract_bytes
+    assert revision_path.is_file()
+
+
+@pytest.mark.parametrize(
+    "tamper",
+    ["contract", "previous", "budget", "tracked_source", "review_report"],
+)
+def test_v1_2_revision_rejects_lineage_budget_and_source_drift(
+    tamper: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    revision_path = _publish_test_v1_2_revision(tmp_path, monkeypatch)
+    revision = json.loads(revision_path.read_text(encoding="utf-8"))
+    if tamper == "contract":
+        revision["contract_sha256"] = "0" * 64
+    elif tamper == "previous":
+        revision["previous_source_revision_sha256"] = "0" * 64
+    elif tamper == "budget":
+        revision["approved_budget"]["aggregate"] = 4_200_000.0
+    elif tamper == "tracked_source":
+        revision["current_continuation_sources"]["files"]["budget_helper"]["sha256"] = "0" * 64
+    elif tamper == "review_report":
+        revision["review_report_sha256"] = "0" * 64
+    revision_path.write_bytes(extension._canonical_json(revision))
+
+    with pytest.raises(extension.ExtensionLedgerRefuse):
+        extension.effective_budget_limits()
