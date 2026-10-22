@@ -232,3 +232,11 @@
 - 状态：新修复尚未提交、待独立Phase 7复审；第四轮不放行结论仍是对旧提交的有效历史证据。真实评测及W5b继续冻结。
 - 训练快照未变：三臂last durable分别为9,472、14,528、14,528 episodes，attempt仍标training且无final；沙箱不能证明外部会话存活，不重启、不覆盖。
 - 方向与能力边界：继续以自然中文多轮对话为N主线当前目标；门禁修补不代表模型能力提升，`can_promote=false`及N1-166冻结不变。
+
+### Phase 7 第五轮独立复审：提交 aed03128a（2026-10-22）
+- 结论：不放行；P0=0、P1=0、P2=1。false→true writer二次清理后的`task_terminal_missing/unknown_tail`已正确保持unknown；P2-04与旧P1/P2未见回归。
+- 新发现：成功restore的`restore_completed`或generation的`query_output_persisted`写入ledger后，正常成功路径未同步置`active_task_terminal_written=true`。若restore terminal已durable而随后progress append失败，outer仍可能误报task terminal缺失，违反P2全闭门槛。
+- 产物：`artifacts/07-evaluation-review-aed03128a.md`。
+- 验证：根任务已验证44项合同、Ruff/Black/py_compile/CLI和提交门禁；本轮未重跑。未读dev/reference、restore模型、运行selector或`--execute`。
+- 回流判定：P2-05需在正常成功terminal ledger append后更新状态，并补terminal已durable但后续progress失败的故障注入；此前2/2历史预算与复审结论保持原样。
+- 阶段指针：保持Phase 8；P7/W5a当前不放行，真实评测继续冻结。
