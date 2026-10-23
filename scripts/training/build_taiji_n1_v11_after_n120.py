@@ -34,7 +34,7 @@ N110_VALUE_MAP_ENTRIES = 288
 N121_PLAN = (
     ROOT / "plans/reference/PLAN-N1-121_v11_confirmation_after_n120_training_draft_20261019.md"
 )
-N121_PLAN_SHA256 = "614598049c09ac3f7403dd3f10c8911e362407cd0a6fad11c9f92ff9cb5bbe9d"
+N121_PLAN_SHA256 = "5c2ac778e8e205e1574a2bd93d77dfc1c597490aced4db7a0b0f6d2efbbfefb8"
 N121_SOURCE_CORRECTION = (
     ROOT / "plans/reference/PLAN-N1-121_source_exclusion_correction_20261019.md"
 )

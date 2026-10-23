@@ -28,7 +28,7 @@ N110_PLAN_SHA256 = "16d0cecb325af6463c107973fc0e741478140134a7642cd64c86e045c606
 N121_PLAN = (
     ROOT / "plans/reference/PLAN-N1-121_v11_confirmation_after_n120_training_draft_20261019.md"
 )
-N121_PLAN_SHA256 = "614598049c09ac3f7403dd3f10c8911e362407cd0a6fad11c9f92ff9cb5bbe9d"
+N121_PLAN_SHA256 = "5c2ac778e8e205e1574a2bd93d77dfc1c597490aced4db7a0b0f6d2efbbfefb8"
 FACE = ROOT / "plans/manifests/n1_hard_neighbor_v11_confirmation_seed111_20261019.json"
 READINESS = ROOT / "reports/taiji_n1_v11_after_n120_prequery_readiness_20261019.json"
 CPU_LIMIT_SECONDS = 60

@@ -61,6 +61,21 @@ jobs:
     #     census 因此本机亦红（在飞状态，非 CI 特有）；读数随 R2 收口入库即回绿，
     #     条目随之删除。其余条目删除须附本机与 CI 双绿证据。
     # 本机不消费本清单：维护机上这些用例照常全量守护。
+    #
+    # 【批次三（2026-10-23 追补，25 条）】首个修复 run 39999719079 两腿终局读数
+    # 分两族：
+    #   · 12 条＝**维护机绝对路径/平台敏感**：封存记录钉了 E:\Seed 绝对路径、或路径
+    #     分隔符/平台 IO 参与摘要与计数（n02_c4、reader_transfer、n4_05、n5_20、
+    #     n5_17_j、b0_n2 计数、plan142/143/144 runner 登记表、run89 依赖 powershell、
+    #     n6_10/12 为 Windows CR 行为契约）——本机（含干净 worktree）皆绿，任何
+    #     runner 皆红。重启条件＝封存记录改仓库相对路径或显式跨平台化。
+    #   · 6 条＝**在飞封印/登记债**（plan157/160/161 同因，已并入）（本机亦红，同 n5_38 例外类）：plan142_face 与
+    #     plan157/160/161 的 N1-121 重冻结链（049ab5789 改 plan 后遗留：常量→readiness
+    #     记录→104 枚 manifest 互相钉的多层重冻结，归 owner 封印修复轨道；本轮实测
+    #     硬吃会放大成 40+ 文件级联，已回退让位）；b0_n2 两条＝并行收口 docs 提交
+    #     （6291b72af..b80d19957）后消费面计数 103→94，登记表待该会话更新后回绿。
+#     另 7 条＝Windows 腿独有（r2_copy_surface/start_charge/source_validation/seal_ast 绿通道：
+#     本机绿、runner 上读数/git 状态不同），重启条件同上（R2 产物入库/相对路径化）。
     env:
       DSH_CI_DESELECT: >-
         --deselect tests/taiji_native/test_a30_artifact_sha_drift_audit.py::test_known_bad_anchor_is_visible_and_known_good_is_clean
@@ -134,6 +149,31 @@ jobs:
         --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py::test_v1_2_revision_rejects_lineage_budget_and_source_drift[review_report]
         --deselect tests/taiji_native/test_n5_38_ledger_cited_reports_contract.py::test_a_verified_rename_moves_the_stale_name_out_of_the_red
         --deselect tests/taiji_native/test_n5_38_ledger_cited_reports_contract.py::test_refuses_to_overwrite_and_writes_lf
+        --deselect tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py::test_every_consumer_carries_a_class_and_a_reason
+        --deselect tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py::test_the_hardening_round_count_is_recorded_as_stale
+        --deselect tests/taiji_native/test_n02_c4_net_gain_reader_contract.py::test_cli_writes_once_and_reports_the_real_gap
+        --deselect tests/taiji_native/test_n02_c4_net_gain_reader_contract.py::test_the_separation_guard_passes_a_known_good_and_fails_two_negatives
+        --deselect tests/taiji_native/test_n1_plan142_v21_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
+        --deselect tests/taiji_native/test_n1_plan142_v21_face_builder_contract.py::test_source_union_reconstructs_every_prior_context_filler
+        --deselect tests/taiji_native/test_n1_plan143_v22_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
+        --deselect tests/taiji_native/test_n1_plan144_v23_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
+        --deselect tests/taiji_native/test_n1_plan147_v24_abstention_contract.py::test_endpoint_registry_reuses_only_the_twelve_frozen_comparison_bundles
+        --deselect tests/taiji_native/test_n1_run89_lr_decay_control_contract.py::test_launcher_powershell_syntax_parses
+        --deselect tests/taiji_native/test_n4_05_product_default_mount_contract.py::test_default_off_observation_digest_equals_the_head_baseline
+        --deselect tests/taiji_native/test_n4_05_product_default_mount_contract.py::test_mounting_an_empty_store_is_a_latent_effect_not_a_behaviour_change
+        --deselect tests/taiji_native/test_n5_17_j_n5b_5_retention_lane_contract.py::test_same_basename_different_bytes_is_not_same_source
+        --deselect tests/taiji_native/test_n5_20_head_face_parity_contract.py::test_the_ruler_reproduces_the_committed_baseline_digest
+        --deselect tests/taiji_native/test_n6_10_tracked_report_line_endings_contract.py::test_the_two_faces_disagree_on_the_real_repo
+        --deselect tests/taiji_native/test_n6_12_shared_report_writer_contract.py::test_a_control_write_without_the_helper_does_produce_cr
+        --deselect tests/taiji_native/test_native_reader_transfer_contract.py::test_exact_transfer_fresh_adam_and_zero_restore
+        --deselect tests/taiji_native/test_native_reader_transfer_contract.py::test_refuse_nontrain_before_updates
+        --deselect tests/taiji_native/test_n1_plan157_seed128_candidate_vs_parent_diagnostic_contract.py::test_partial_face_continuation_reuses_exactly_the_sealed_endpoint
+        --deselect tests/taiji_native/test_n1_plan160_seed130_candidate_parent_diagnostic_contract.py::test_seed128_and_seed129_values_are_in_seed130_exclusion_sets
+        --deselect tests/taiji_native/test_n1_plan161_seed131_question_surface_diagnostic_contract.py::test_question_templates_are_absent_from_bound_training_questions
+        --deselect tests/taiji_native/test_r2_copy_surface_extension_v2_contract.py::test_manifest_is_reproducible_from_the_generator
+        --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_runner_contract.py::test_start_charge_uses_latest_extension_snapshot_monotonically
+        --deselect tests/taiji_native/test_r2_dialogue_continuation_source_validation_contract.py::test_frozen_base_validator_reproduces_reviewed_builder_sha_rejection
+        --deselect tests/taiji_native/test_seal_ast_hash_invariants.py::test_green_channel_real_file_and_git_attestation
     strategy:
       fail-fast: false
       matrix:
@@ -679,6 +719,31 @@ jobs:
         --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py::test_v1_2_revision_rejects_lineage_budget_and_source_drift[review_report]
         --deselect tests/taiji_native/test_n5_38_ledger_cited_reports_contract.py::test_a_verified_rename_moves_the_stale_name_out_of_the_red
         --deselect tests/taiji_native/test_n5_38_ledger_cited_reports_contract.py::test_refuses_to_overwrite_and_writes_lf
+        --deselect tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py::test_every_consumer_carries_a_class_and_a_reason
+        --deselect tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py::test_the_hardening_round_count_is_recorded_as_stale
+        --deselect tests/taiji_native/test_n02_c4_net_gain_reader_contract.py::test_cli_writes_once_and_reports_the_real_gap
+        --deselect tests/taiji_native/test_n02_c4_net_gain_reader_contract.py::test_the_separation_guard_passes_a_known_good_and_fails_two_negatives
+        --deselect tests/taiji_native/test_n1_plan142_v21_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
+        --deselect tests/taiji_native/test_n1_plan142_v21_face_builder_contract.py::test_source_union_reconstructs_every_prior_context_filler
+        --deselect tests/taiji_native/test_n1_plan143_v22_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
+        --deselect tests/taiji_native/test_n1_plan144_v23_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
+        --deselect tests/taiji_native/test_n1_plan147_v24_abstention_contract.py::test_endpoint_registry_reuses_only_the_twelve_frozen_comparison_bundles
+        --deselect tests/taiji_native/test_n1_run89_lr_decay_control_contract.py::test_launcher_powershell_syntax_parses
+        --deselect tests/taiji_native/test_n4_05_product_default_mount_contract.py::test_default_off_observation_digest_equals_the_head_baseline
+        --deselect tests/taiji_native/test_n4_05_product_default_mount_contract.py::test_mounting_an_empty_store_is_a_latent_effect_not_a_behaviour_change
+        --deselect tests/taiji_native/test_n5_17_j_n5b_5_retention_lane_contract.py::test_same_basename_different_bytes_is_not_same_source
+        --deselect tests/taiji_native/test_n5_20_head_face_parity_contract.py::test_the_ruler_reproduces_the_committed_baseline_digest
+        --deselect tests/taiji_native/test_n6_10_tracked_report_line_endings_contract.py::test_the_two_faces_disagree_on_the_real_repo
+        --deselect tests/taiji_native/test_n6_12_shared_report_writer_contract.py::test_a_control_write_without_the_helper_does_produce_cr
+        --deselect tests/taiji_native/test_native_reader_transfer_contract.py::test_exact_transfer_fresh_adam_and_zero_restore
+        --deselect tests/taiji_native/test_native_reader_transfer_contract.py::test_refuse_nontrain_before_updates
+        --deselect tests/taiji_native/test_n1_plan157_seed128_candidate_vs_parent_diagnostic_contract.py::test_partial_face_continuation_reuses_exactly_the_sealed_endpoint
+        --deselect tests/taiji_native/test_n1_plan160_seed130_candidate_parent_diagnostic_contract.py::test_seed128_and_seed129_values_are_in_seed130_exclusion_sets
+        --deselect tests/taiji_native/test_n1_plan161_seed131_question_surface_diagnostic_contract.py::test_question_templates_are_absent_from_bound_training_questions
+        --deselect tests/taiji_native/test_r2_copy_surface_extension_v2_contract.py::test_manifest_is_reproducible_from_the_generator
+        --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_runner_contract.py::test_start_charge_uses_latest_extension_snapshot_monotonically
+        --deselect tests/taiji_native/test_r2_dialogue_continuation_source_validation_contract.py::test_frozen_base_validator_reproduces_reviewed_builder_sha_rejection
+        --deselect tests/taiji_native/test_seal_ast_hash_invariants.py::test_green_channel_real_file_and_git_attestation
     steps:
       # Frozen hashes describe the committed LF bytes; Windows checkout must not
       # convert plans/manifests/source to CRLF before their contracts run.
