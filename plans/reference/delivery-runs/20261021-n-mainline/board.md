@@ -1,7 +1,7 @@
 # N主线交付黑板
 
 - 运行目录：`E:/Seed/plans/reference/delivery-runs/20261021-n-mainline`。
-- 主阶段：Phase 8训练/评价交接；v1.5已激活，warm以v4续训，CC-1评测适配实现/合成已完成，真实评价待三臂终点。
+- 主阶段：Phase 8训练/评价交接；CC-1评测适配实现/合成已完成，真实评价待全部训练终态，具体运行仅按03。
 - 持续Goal已由用户正式设置，详细WBS见[10](../../../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。
 - 唯一活动队首与实时事实只由[03](../../../active/roadmap/03_CURRENT_EXECUTION.md)维护；本页不再复制额度/进度快照。
 
@@ -11,9 +11,10 @@
 |---|---|---|
 | 原R2来源、checkpoint、账本与旧局部检查 | 继承限定证据 | 冻结原件与旧失败保留，不能代替新全链能力 |
 | 单入口精简 | 已实现并用于实际续训 | [15记录](artifacts/15-training-system-simplification.md)；当前运行按03 |
-| 当前训练与完整实验出口 | warm运行/原四端点未齐，D1已完成 | CC-1.4/1.5沿有效v1.5与原终点；实际运行看03 |
+| 当前训练与完整实验出口 | 原四端点未齐，D1已完成，实时终态见03 | CC-1.4/1.5沿有效v1.5与原终点；实际运行看03 |
 | extension评测适配 | 已提交；相关110支合成与独立审查完成，真实端点未测 | [04适配架构](artifacts/04-continuation-evaluation-adapter.md)、[工程交接](artifacts/02-plan.md)，CC-1.1–1.3 |
-| W5b/人工判读 | 前置未齐，未放行 | 原四端点、one-shot、双预算及冻结面不变 |
+| W5b/人工判读 | 真实前置未齐；固定判读/结案交接已准备 | [02交接](artifacts/02-plan.md#cc-16-判读与结案交接)；固定分母和原收官合同不变 |
+| CI修复 | 用户另行安排的任务负责 | 本任务不重复修复、提交或覆盖CI相关改动 |
 | 详细计划与旧计划衔接 | 本轮重编完成，独立复审/一致性检查通过 | [10](../../../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)、[17矩阵](artifacts/17-plan-transition-and-reconciliation.md) |
 | L2/L3/L4/扩面 | 尚未证明 | 按07及10条件准入，不补写已实现/已晋级 |
 
@@ -24,6 +25,8 @@
 本轮由implementation-planner编写10，architecture-reviewer核对旧计划/绑定与过渡；主理人整合、检查和提交。审查结果以实际产物和17核验记录为准，不把计划完成写为模型目标完成。
 
 2026-10-23后继收官决策：用户要求明确当前做训练还是验证，并为当前主线设置结束条件。主理人核验实际warm进程与进度、D1及评测实现，closeout_contract_review独立核对固定分母、人工判读缺口和停止出口；结果写入[03的R1–R6与终态表](../../../active/roadmap/03_CURRENT_EXECUTION.md#本轮cc-1的固定收官合同)。CC-1只到三臂训练、一次固定W5b、固定人工判读及结案；正/负/不可判均可完整结案，资源不足或工程失败分别封存。信息/信用正式实验移入独立后继包，不追加为本轮前置；D1已完成，不自动继续提额。同步修正本页及02/10中仍停留在v1.4停止/适配未提交的过时时态。
+
+2026-10-24用户说明CI已交其他任务，询问可并行事项。主理人选择仅准备本轮固定判读与结案交接，api-tester只读核对原review/records结构，architecture-reviewer核对warm现有result/readiness/receipt和唯一completion；内容直接补入02，不新建计划层或预占评测输出。warm已达原终点的既有证据内部一致，另外两臂仍有进度，W5b未执行；本次不改训练源码/阈值、不新增查询或重做恢复。同步收束03/10/本页及技术摘要中仍写warm运行/三臂串行的旧时态，沿已有并行授权，不扩大范围。 本次交接经独立复核通过，10项计划/条款检查通过，5份改动文档48个本地链接有效，差异检查通过；不代表全库CI或模型能力通过。
 
 ## 历史与回流
 

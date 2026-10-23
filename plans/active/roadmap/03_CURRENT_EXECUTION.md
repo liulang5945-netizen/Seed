@@ -1,6 +1,6 @@
 # N主线当前执行
 
-更新：2026-10-23，Asia/Shanghai。本页维护唯一活动队首与本轮收官合同；[10](10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)维护详细WBS，[09](09_NEXT_MAINLINE_PLAN.md)维护机制继承，[07](07_MINI_MODEL_DELIVERY.md)维护能力/用户验收。
+更新：2026-10-24，Asia/Shanghai。本页维护唯一活动队首与本轮收官合同；[10](10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)维护详细WBS，[09](09_NEXT_MAINLINE_PLAN.md)维护机制继承，[07](07_MINI_MODEL_DELIVERY.md)维护能力/用户验收。
 
 ## 目标、当前动作与本轮边界
 
@@ -12,8 +12,9 @@ CC-1结案与持续Goal完成分别记录。CC-2归因、CC-3语言/L2、CC-4同
 
 ## 当前运行与证据快照
 
-- 2026-10-23已核验warm_start实际PID 11272、创建时间与writer锁一致，命令为`run_taiji_r2_fast_ledger_resume_v4.py`，进程存活。21:25:12最新耐久为**29,056预训练episodes / 14,036,704 updates**（ledger sequence 69835）；此为时间点快照，后续以progress、receipt及同一进程身份为准。尚无三臂完整final；本轮paired_eval的attempt/result均未出现。
-- full_turn_1m最新耐久16,992 / 8,176,295，fresh_same_capacity为25,088 / 12,091,199；先完成warm，再按full→fresh串行接续。旧未耐久进度不作为恢复游标。
+- warm_start 已于2026-10-23 **23:33:32**发布唯一completion（sequence 74028），result.complete=true、readiness=ready。预训练**30,096 / 14,517,912**、SFT **525 / 113,209**达到原终点；两个final及既有独立恢复记录complete/equal一致。2026-10-24本次仅核对小JSON/receipt与文件存在，未重新加载或恢复模型。
+- 2026-10-24 **01:09**只读进度：full_turn_1m为18,115 / 8,772,534，最近耐久18,112 / 8,771,718；fresh_same_capacity为25,737 / 12,453,598，最近耐久25,728 / 12,452,408。两臂进度日志持续推进，沿已有最多两臂并行安排；无两臂完整final，旧未耐久进度不作恢复游标。W5b attempt/result/review/failure均未出现，仍未准入。
+- warm 的result/readiness记账为发布前成本下界1,580,449.388716 CPU秒，completion/当前账本为1,580,449.419966，相差0.03125秒；两种口径分别保留。当前无warm reservation、writer锁不存在；本次未做OS全进程核验，不能仅凭无锁宣称writer已退出。
 - **有效累计额度为D1已批准并激活的v1.5：1,590,000 process-CPU秒/臂、4,560,000总计**；旧实耗、reserve及未知尾账全部计入。write-once amendment `21e0497e`，锚sequence 66699；[18预算裁决](../../reference/delivery-runs/20261021-n-mainline/artifacts/18-d1-budget-decision.md)记录来源。17:48的v1.4停止与旧额度只作历史，不能覆盖19:41后的v1.5续训事实。
 - endpoint provider、独立extension evaluator/versioned worker、launch/ledger/budget血缘已提交；相关110支合成合同通过，独立审查三项修正已提交。**实现与合成通过；真实终点/评测贯通尚未验证。** 旧冻结评测源码不改。
 
@@ -47,9 +48,13 @@ CC-1结案与持续Goal完成分别记录。CC-2归因、CC-3语言/L2、CC-4同
 - 无法确认进程终止时，停止派发新任务并记录终止/成本未知，不能宣称进程树已回收；普通观察超时先复核同一实际进程。该异常须处置留证，不能以重启掩盖。
 - 记录本包相关检查与对应提交CI。全库既有维护债、M7发布、全部长期CR以及新的信息/信用实验不追加为CC-1收官条件；`can_promote=false`、N1-166及其未消费确认面维持原冻结。
 
+## 等待期间已安排的独立工作
+
+CI由用户另行安排的任务负责，本任务不再修改其文件或叠加修复。当前只准备本轮CC-1.6的固定人工判读与R6结案交接，见[02现有交接表](../../reference/delivery-runs/20261021-n-mainline/artifacts/02-plan.md#cc-16-判读与结案交接)。四维口径、48行记录字段、固定分母、成本口径和R1–R6证据栏已明确；不新建平行计划，不预建评测保留路径、不读取题面或提前生成输出。当前准备完成，正式判读仍等待原W5b真实持久化输出。
+
 ## 当前唯一下一步：完成 full_turn_1m 与 fresh_same_capacity 的并行训练并核验两份 final
 
-warm_start 已完成：result/readiness 齐备、`pretraining_final` 与 `assistant_sft_final` 均落盘并有独立恢复，累计 1,580,449 CPU 秒。当前 full_turn_1m 与 fresh_same_capacity 两臂并行：full 约 17,6xx/30,096 预训练 episodes，fresh 已从 25,088/30,096 恢复。三臂 final 齐备后才进入 R3–R5。若触及停止线，走 R6 对应的 partial/failure 结案，当前轮次到此结束。信息/信用正式实验及新配方留给后继包，不延长本轮。
+warm_start 已完成：result/readiness 齐备、`pretraining_final` 与 `assistant_sft_final` 均落盘并有独立恢复，累计 1,580,449 CPU 秒。当前 full_turn_1m 与 fresh_same_capacity 两臂并行：具体耐久游标与进度见上方时间点快照。三臂 final 齐备后才进入 R3–R5。若触及停止线，走 R6 对应的 partial/failure 结案，当前轮次到此结束。信息/信用正式实验及新配方留给后继包，不延长本轮。
 
 现行实际训练入口为`scripts/training/run_taiji_r2_fast_ledger_resume_v4.py --arm <arm>`，必须继承本轮来源、恢复与v1.5预算门；`run_taiji_r2_resume.py`属于既有历史入口，不能据旧状态重复启动。新训练前先核验完整checkpoint保存与独立恢复；不修改运行中绑定的源码、语料或谱系。
 
