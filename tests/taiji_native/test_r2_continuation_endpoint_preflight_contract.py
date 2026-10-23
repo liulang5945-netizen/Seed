@@ -1,6 +1,7 @@
 import copy
 import hashlib
 import json
+import pathlib
 from contextlib import nullcontext
 from types import SimpleNamespace
 
@@ -223,6 +224,54 @@ def test_manifest_launch_evidence_is_consumed_by_the_evaluation_adapter(tmp_path
     assert launch["ledger_charges"] == {arm: 1_400_005.0 for arm in backend.ARMS}
     assert launch["verified_ledger_tip_sha256"] == "a" * 64
     assert str(source.resolve()) in launch["source_hashes"]
+
+
+def test_producer_manifest_enters_the_frozen_four_endpoint_envelope(tmp_path, monkeypatch):
+    backend, _ = complete_backend(tmp_path)
+    source = tmp_path / "launch_source.json"
+    source.write_text("{}\n", encoding="utf-8")
+    provenance = {
+        "launches": {
+            arm: [
+                {
+                    "path": f"launch-{arm}.json",
+                    "sha256": "1" * 64,
+                    "start_receipt_sha256": "2" * 64,
+                    "start_bundle_sha256": "3" * 64,
+                }
+            ]
+            for arm in backend.ARMS
+        },
+        "verified_sources": {str(source): hashlib.sha256(source.read_bytes()).hexdigest()},
+    }
+    monkeypatch.setattr(m, "validate_launch_provenance", lambda *args, **kwargs: provenance)
+    monkeypatch.setattr(adapter, "refuse_if_recovery_evaluation_consumed", lambda **_kwargs: None)
+    manifest = m.metadata_preflight(backend)
+    baseline = tmp_path / "parent.pt"
+    baseline.write_bytes(b"parent")
+    preflight = adapter.extension_preflight(
+        manifest,
+        arm_paths=backend.paths,
+        hash_file=lambda path: hashlib.sha256(pathlib.Path(path).read_bytes()).hexdigest(),
+        baseline_fn=lambda: {
+            "endpoint_id": "parent_baseline",
+            "path": baseline.resolve(),
+            "sha256": hashlib.sha256(baseline.read_bytes()).hexdigest(),
+            "checkpoint_digest": "f" * 64,
+        },
+        eval_hashes=lambda: {},
+    )
+    assert [row["endpoint_id"] for row in preflight["endpoints"]] == list(adapter.ENDPOINT_ORDER)
+    readiness = adapter.extension_readiness(preflight)
+    assert readiness["expected_generation_outputs"] == 156
+    assert readiness["input_families"] == 39
+    payload = adapter.endpoint_manifest_payload(preflight)
+    assert [row["endpoint_kind"] for row in payload["endpoints"]] == [
+        "parent_baseline",
+        "continuation_extension",
+        "continuation_extension",
+        "continuation_extension",
+    ]
 
 
 @pytest.mark.parametrize("drift", ["incomplete", "duplicate_completion", "writer", "parent"])
