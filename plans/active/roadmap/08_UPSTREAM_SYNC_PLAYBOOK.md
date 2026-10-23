@@ -1791,3 +1791,10 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 - 重试结果：warm 与 full 同时恢复成功，warm 进入 SFT（约 8/525），full 进入预训练（约 17,009/30,096）；最多两臂，未启动 fresh。
 - **保留债**：受来源修订绑定的 `test_guard_respects_per_arm_reserve_and_actual_settlement_cap` 在 v1.5 激活后失败，因为它在 `_configure` 前用 `PER_ARM_CPU_LIMIT`（现为1.59M）构造 charge，而 `initialize_ledger` 用 base 1.5M 校验。该文件是 source revision 核心绑定源，不能直接改；需下一轮 source revision 把它改为 `BASE_PER_ARM_CPU_LIMIT`。生产 v4 路径不受影响，但这是已知 CI 债，不在本轮收官前修。
 - 下一格：盯住 warm final，随后启动 fresh 与 full 并行；full 继续。所有启动仍走 v4 与 v1.5 门。
+
+### ㊵-1136 【2026-10-24 · warm final 完成；full+fresh 两臂并行；源行尾门修正】
+
+- warm_start 已完成：SFT 525 episodes，`final_stage_restored`、唯一 `continuation_completed`、result/readiness 齐备，`pretraining_final` 与 `assistant_sft_final` 均有独立恢复；累计 1,580,449.39 CPU 秒。result 为 complete，readiness 为 ready。
+- fresh 启动两次被源一致性门挡住：`taiji/language_alignment.py` 工作区被写成 CRLF（raw sha a2a3），而父尝试记录的是同一 raw 字节、Git clean-filter blob 为 LF（a160）。转成 LF 会触发 `unreviewed source drift`；恢复父尝试的 raw CRLF 字节后 `_parent_context` 通过。fresh 已从 25,088/30,096 恢复。
+- 当前两臂：full 约 17,6xx/30,096 预训练、fresh 约 25,088/30,096 预训练；warm 已 final。三臂账本合计约 4.404M，余量约 15.6 万；reservation 仅 full/fresh。
+- 下一格：等 full/fresh final；三臂齐备后进 R3–R5。工程债仍为源修订绑定的旧预算测试（下一轮 source revision 修）。

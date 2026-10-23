@@ -42,14 +42,14 @@ CC-1结案与持续Goal完成分别记录。CC-2归因、CC-3语言/L2、CC-4同
 | `REVIEW_PENDING` 仅待判读 | 机器输出齐全但R5/R6未齐；只完成既定判读与结案，不再训练或增加查询。此状态不是完整收官。 |
 
 - **训练止于v1.5现有累计上限。** D1已解决，本轮不自动再次提额、加epoch、换数据/模型、降终点或改分母。任一必需臂触顶、资源拒绝或保存/恢复失败，停止后续启动，按partial/failure出口封存；正常在跑但尚无final属于等待，不能误判失败。
-- 当前 owner 已批准**两臂并行**：warm_start（SFT）与 full_turn_1m（预训练）同时运行；warm final 后启动 fresh_same_capacity 与 full 并行，任意时刻最多两臂。第一次并行尝试因账本快照长锁与跨臂主机尾账失败，已修复（`2b985255b`）并重试成功；旧的串行守护队列不再使用。接续须核验前臂真实终态、恢复、来源与当前预算门，不能仅看final文件。
+- 当前 owner 已批准**两臂并行**：warm 已完成 final，full_turn_1m（预训练）与 fresh_same_capacity（预训练）现同时运行，任意时刻最多两臂。第一次并行尝试因账本快照长锁与跨臂主机尾账失败，已修复（`2b985255b`）并重试成功；旧的串行守护队列不再使用。接续须核验前臂真实终态、恢复、来源与当前预算门，不能仅看final文件。
 - **W5b独立CPU与wall上限各14,400秒**，不借训练额度；涵盖监督/恢复/生成/IPC/终止与发布预留。receipt记录发布前实测并保留finalization reserve，不能宣称已实测receipt自身、最终result及进程退出全成本。execute形成attempt即消费一次资格，失败也不重试、不换入口/名字、不补题、不续跑。
 - 无法确认进程终止时，停止派发新任务并记录终止/成本未知，不能宣称进程树已回收；普通观察超时先复核同一实际进程。该异常须处置留证，不能以重启掩盖。
 - 记录本包相关检查与对应提交CI。全库既有维护债、M7发布、全部长期CR以及新的信息/信用实验不追加为CC-1收官条件；`can_promote=false`、N1-166及其未消费确认面维持原冻结。
 
-## 当前唯一下一步：完成 warm_start 的 v1.5 续训，随后启动 fresh 与 full 并行
+## 当前唯一下一步：完成 full_turn_1m 与 fresh_same_capacity 的并行训练并核验两份 final
 
-当前两臂并行运行：warm_start（SFT）与 full_turn_1m（预训练）。warm final 后启动 fresh_same_capacity 与 full 并行，最多两臂；三臂完整才进入R3–R5。若触及上述停止线，则走R6对应的partial/failure结案，当前轮次到此结束。信息/信用正式实验及新配方留给后继包，不延长本轮。
+warm_start 已完成：result/readiness 齐备、`pretraining_final` 与 `assistant_sft_final` 均落盘并有独立恢复，累计 1,580,449 CPU 秒。当前 full_turn_1m 与 fresh_same_capacity 两臂并行：full 约 17,6xx/30,096 预训练 episodes，fresh 已从 25,088/30,096 恢复。三臂 final 齐备后才进入 R3–R5。若触及停止线，走 R6 对应的 partial/failure 结案，当前轮次到此结束。信息/信用正式实验及新配方留给后继包，不延长本轮。
 
 现行实际训练入口为`scripts/training/run_taiji_r2_fast_ledger_resume_v4.py --arm <arm>`，必须继承本轮来源、恢复与v1.5预算门；`run_taiji_r2_resume.py`属于既有历史入口，不能据旧状态重复启动。新训练前先核验完整checkpoint保存与独立恢复；不修改运行中绑定的源码、语料或谱系。
 

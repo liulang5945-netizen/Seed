@@ -23,7 +23,7 @@ D1 已批准并激活 **v1.5：1,590,000 CPU秒/臂、4,560,000总计**，旧实
 
 冻结W5b继续采用parent_baseline＋三臂，**39×4＝156次generation**、固定同面前12个family人工判读、CPU与wall各14,400秒；跨入口共享一次性消费边界。全部端点、来源、恢复与资源门通过前不读selector/prompt；不读reference、不训练、不补跑失败调用，`can_promote=false`。N1-166及其未消费确认面维持原冻结；dev/reference/selector权限不因持续Goal扩大。
 
-- 2026-10-23 进展：CC-1.1 v1.4 预算激活（`68ed3495c`）与完整血缘接线（`1fc8bac40`）；CC-1.2 适配层（`612c2dfe4`）与 versioned worker（`b1817cbcf`）；CC-1.3 合成矩阵（`9ec663c25`／`112caed7b`）＋独立审查三项修正（`d39f6c8af`），相关契约 **110 支通过**，extension 评测合同冻结。D1 已批准：v1.5（1,590,000／4,560,000，`21e0497e`）write-once 激活；`72b5d13d2` 新增 v4 多臂入口。owner 随后批准**两臂并行**；第一次尝试因账本快照长锁和跨臂主机尾账失败，`2b985255b` 修复后重试成功：warm（SFT）与 full（预训练）现已同时运行，warm final 后启动 fresh。
+- 2026-10-23/24 进展：CC-1.1 v1.4 预算激活（`68ed3495c`）与完整血缘接线（`1fc8bac40`）；CC-1.2 适配层（`612c2dfe4`）与 versioned worker（`b1817cbcf`）；CC-1.3 合成矩阵（`9ec663c25`／`112caed7b`）＋独立审查三项修正（`d39f6c8af`），相关契约 **110 支通过**。D1 已批准 v1.5（1,590,000／4,560,000，`21e0497e`）；owner 批准**两臂并行**，第一次因账本快照长锁与跨臂尾账失败，`2b985255b` 修复后重试成功。**warm_start 已完成 final**（result/readiness 齐、两阶段 final 与独立恢复，累计 1,580,449 CPU 秒）；full_turn_1m 与 fresh_same_capacity 现并行预训练。
 
 ## 3. WBS：从当前R2走到同一模型的持续能力
 
@@ -113,7 +113,7 @@ D1–D6是证据/范围/预算决策点，不是额外审批仪式：到点先�
 
 新实施PLAN/SPEC及结案落`plans/reference/`既有命名族，机器证据落`reports/`，数据/checkpoint沿既有受控根及路径合同；不新增近义顶层目录。错误方向退出活动命令和队首，冻结文件、失败、原始输出与谱系保留；重复过程文本按目录规范S9完成蒸馏、迁链和Git精确恢复登记后可实际删除，不再逐轮复制整篇快照。已核实可再生的临时/空残留可清理，不按“失败”删除唯一研究证据或checkpoint。
 
-**当前队首与实际进度以[03](03_CURRENT_EXECUTION.md)为准：完成在跑warm_start的v1.5 SFT与full_turn_1m预训练，warm终态后启动fresh与full并行，最多两臂。** 三臂齐备后做原W5b；停止线触发则按03封存，不把partial称为final。
+**当前队首与实际进度以[03](03_CURRENT_EXECUTION.md)为准：完成 full_turn_1m 与 fresh_same_capacity 的并行训练并核验两份 final。** warm 已完成；三臂齐备后做原W5b；停止线触发则按03封存，不把partial称为final。
 
 ## 6. 当前轮次的有限收官与后继边界
 
