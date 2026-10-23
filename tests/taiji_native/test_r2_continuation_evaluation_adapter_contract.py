@@ -16,6 +16,10 @@ from pathlib import Path
 
 import pytest
 
+from scripts.training import evaluate_taiji_r2_daily_dialogue_continuation_extension_v1 as entry
+from scripts.training import (
+    evaluate_taiji_r2_daily_dialogue_continuation_extension_worker_v1 as worker,
+)
 from scripts.training import evaluate_taiji_r2_daily_dialogue_recovery_v2 as recovery
 from scripts.training import taiji_r2_continuation_evaluation_adapter as adapter
 
@@ -176,3 +180,118 @@ def test_entry_refuses_execute_and_worker_with_stdout_json() -> None:
         payload = json.loads(proc.stdout.decode("utf-8"))
         assert payload["status"] == "refused"
         assert payload["can_promote"] is False
+
+
+def test_recovery_consumption_guard_blocks_a_second_face(tmp_path: Path) -> None:
+    old_attempt = tmp_path / "old_attempt.json"
+    old_attempt.write_text("{}\n", encoding="utf-8")
+    with pytest.raises(adapter.AdapterRefuse, match="already consumed"):
+        adapter.refuse_if_recovery_evaluation_consumed(paths_fn=lambda: {"attempt": old_attempt})
+
+
+def _request(operation: str) -> dict[str, str]:
+    return {
+        "operation": operation,
+        "endpoint_id": "parent_baseline",
+        "task_id": "task-1",
+        "token": "token",
+        "attempt_id": "attempt-1",
+    }
+
+
+def _authorize(**_: object) -> dict[str, object]:
+    return {"attempt": {"attempt_id": "attempt-1"}, "intent": {}}
+
+
+def test_worker_refuses_restore_when_readiness_differs(tmp_path: Path) -> None:
+    readiness_path = tmp_path / "readiness.json"
+    readiness_path.write_text('{"status":"other"}\n', encoding="utf-8")
+    preflight = {
+        "endpoints": [],
+        "report_hashes": {},
+        "source_hashes": {},
+        "baseline": {"sha256": _sha("a")},
+    }
+    with pytest.raises(worker.Refuse, match="metadata differs"):
+        worker._handle_task(
+            _request("restore"),
+            attempt_path=tmp_path / "attempt.json",
+            ledger_path=tmp_path / "ledger.jsonl",
+            durability_api=object(),
+            trainers={},
+            endpoint_specs={},
+            corpus_holder={"assistant": object()},
+            job_membership_check=lambda: True,
+            authorize_fn=_authorize,
+            preflight_fn=lambda: preflight,
+            evaluation_paths_fn=lambda: {"readiness": readiness_path},
+        )
+
+
+def test_worker_refuses_restore_when_endpoint_is_not_in_the_fixed_map(
+    tmp_path: Path,
+) -> None:
+    preflight = {
+        "endpoints": [],
+        "report_hashes": {},
+        "source_hashes": {},
+        "baseline": {"sha256": _sha("a")},
+    }
+    readiness = recovery._readiness_payload(preflight)
+    readiness_path = tmp_path / "readiness.json"
+    readiness_path.write_text(json.dumps(readiness), encoding="utf-8")
+    attempt = {
+        "attempt_id": "attempt-1",
+        "readiness": readiness,
+        "source_hashes": {},
+        "input_report_hashes": {},
+    }
+    with pytest.raises(worker.Refuse, match="fixed four-endpoint map"):
+        worker._handle_task(
+            _request("restore"),
+            attempt_path=tmp_path / "attempt.json",
+            ledger_path=tmp_path / "ledger.jsonl",
+            durability_api=object(),
+            trainers={},
+            endpoint_specs={},
+            corpus_holder={"assistant": object()},
+            job_membership_check=lambda: True,
+            authorize_fn=lambda **_: {"attempt": attempt, "intent": {"checkpoint_sha256": "x"}},
+            preflight_fn=lambda: preflight,
+            evaluation_paths_fn=lambda: {"readiness": readiness_path},
+        )
+
+
+def test_worker_refuses_generate_before_four_restores(tmp_path: Path) -> None:
+    with pytest.raises(worker.Refuse, match="before all four restores"):
+        worker._handle_task(
+            _request("generate"),
+            attempt_path=tmp_path / "attempt.json",
+            ledger_path=tmp_path / "ledger.jsonl",
+            durability_api=object(),
+            trainers={},
+            endpoint_specs={},
+            corpus_holder={},
+            job_membership_check=lambda: True,
+            authorize_fn=_authorize,
+        )
+
+
+def test_entry_worker_factory_uses_the_versioned_command(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_worker(**kwargs: object) -> str:
+        captured.update(kwargs)
+        return "worker"
+
+    monkeypatch.setattr(recovery, "SupervisedWorker", fake_worker)
+    result = entry._worker_factory(
+        attempt_path=Path("attempt.json"),
+        ledger_path=Path("ledger.jsonl"),
+        budget=None,
+    )
+    assert result == "worker"
+    command = captured["command"]
+    assert isinstance(command, list)
+    assert adapter.WORKER_MODULE in command
+    assert "scripts.training.evaluate_taiji_r2_daily_dialogue_recovery_v2" not in command

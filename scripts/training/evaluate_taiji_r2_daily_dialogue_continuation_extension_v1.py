@@ -1,9 +1,10 @@
 """Versioned continuation-extension paired-evaluation entry (CC-1.2).
 
 ``--validate-only`` freezes the extension endpoint manifest and the frozen
-evaluator's readiness envelope.  ``--execute`` / ``--worker`` stay refused until
-the versioned extension worker is wired; this entry never monkeypatches the
-frozen recovery-v2 evaluator.
+evaluator's readiness envelope.  ``--execute`` runs the same one-shot,
+four-endpoint evaluation through a versioned worker, and ``--worker`` is that
+worker's private IPC loop.  The frozen recovery-v2 evaluator is imported as a
+library; its module globals are never patched.
 """
 
 from __future__ import annotations
@@ -18,11 +19,20 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.training import (
+    evaluate_taiji_r2_daily_dialogue_continuation_extension_worker_v1 as worker,  # noqa: E402
+)
+from scripts.training import evaluate_taiji_r2_daily_dialogue_recovery_v2 as recovery  # noqa: E402
 from scripts.training import taiji_r2_continuation_evaluation_adapter as adapter  # noqa: E402
 
 
 def _emit(payload: dict[str, Any]) -> None:
     print(json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
+
+
+def _worker_factory(**kwargs: Any) -> Any:
+    command = adapter.extension_worker_command(kwargs["attempt_path"], kwargs["ledger_path"])
+    return recovery.SupervisedWorker(**kwargs, command=command)
 
 
 def main() -> int:
@@ -36,17 +46,39 @@ def main() -> int:
     parser.add_argument("--job-name", help=argparse.SUPPRESS)
     args = parser.parse_args()
 
-    if args.worker or args.execute:
+    if args.worker:
+        if args.attempt_path is None or args.ledger_path is None or not args.job_name:
+            _emit(
+                {
+                    "status": "refused",
+                    "error": "private --worker mode requires attempt, ledger and job name",
+                    "can_promote": False,
+                }
+            )
+            return 2
+        return worker.worker_loop(
+            args.attempt_path.resolve(), args.ledger_path.resolve(), args.job_name
+        )
+
+    if args.attempt_path is not None or args.ledger_path is not None or args.job_name:
         _emit(
             {
                 "status": "refused",
-                "error": "extension worker provider is not wired; run --validate-only",
+                "error": "attempt/ledger paths are only valid in private worker mode",
                 "can_promote": False,
             }
         )
         return 2
 
     try:
+        if args.execute:
+            result = recovery.execute(
+                paths=adapter.extension_evaluation_paths(),
+                preflight_fn=adapter.extension_preflight,
+                worker_factory=_worker_factory,
+            )
+            _emit({"status": result.get("status"), "can_promote": False})
+            return 0
         preflight = adapter.extension_preflight()
         paths = adapter.extension_evaluation_paths()
         readiness = adapter.write_extension_readiness(paths["readiness"], preflight)

@@ -28,7 +28,7 @@ ARMS = extension.ARMS
 ENDPOINT_ORDER = ("parent_baseline", *ARMS)
 ENDPOINT_SCHEMA = "taiji-r2-continuation-evaluation-endpoints-v1"
 MANIFEST_SCHEMA = "taiji-r2-continuation-endpoint-manifest-v1"
-WORKER_MODULE = "scripts.training.evaluate_taiji_r2_daily_dialogue_continuation_extension_v1"
+WORKER_MODULE = "scripts.training.evaluate_taiji_r2_daily_dialogue_continuation_extension_worker_v1"
 FINAL_STAGE = "assistant_sft_final"
 PRETRAIN_STAGE = "pretraining_final"
 EVAL_STAGE = "assistant_sft"
@@ -181,6 +181,24 @@ def extension_worker_command(attempt_path: Path, ledger_path: Path) -> list[str]
     ]
 
 
+def refuse_if_recovery_evaluation_consumed(
+    *,
+    paths_fn: Callable[[], Mapping[str, Path]] = recovery._evaluation_paths,
+) -> None:
+    """The frozen recovery-v2 evaluation and this extension share one 39-family face.
+
+    The old entry is frozen and cannot check the extension prefix, so the
+    extension checks the old outputs before it touches the selector.  Running
+    the old entry after the extension is a protocol violation recorded in 03.
+    """
+    for key, path in paths_fn().items():
+        if Path(path).exists():
+            raise AdapterRefuse(
+                f"recovery-v2 evaluation is already consumed ({key}); "
+                "the shared 39-family face cannot be queried twice"
+            )
+
+
 def extension_preflight(
     manifest: Mapping[str, Any] | None = None,
     *,
@@ -190,6 +208,7 @@ def extension_preflight(
     eval_hashes: Callable[[], dict[str, str]] | None = None,
 ) -> dict[str, Any]:
     """Build the frozen evaluator's envelope from extension endpoints and evidence."""
+    refuse_if_recovery_evaluation_consumed()
     if manifest is None:
         manifest = endpoints.metadata_preflight()
     endpoint_rows, baseline, arm_records = extension_endpoint_map(manifest, baseline_fn=baseline_fn)
