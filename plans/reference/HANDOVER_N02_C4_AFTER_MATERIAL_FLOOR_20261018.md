@@ -2,8 +2,8 @@
 
 ## 0. 三个锚点（**落笔时现取**，下一次开工的第一个动作是重取这三行再复用本页）
 
-- `git log --oneline -1` → `61bed8d25 feat(taiji): take the V014 mother-side answer probe the reader can now show`（**05:50Z 刷新**：本页首次落笔后本腿又做完 §1 第 8、9、10 三格；本窗口累计 18 笔提交，从 `713cedd50` 起）
-- `git rev-list --count origin/main..HEAD` → **123**（05:50Z 现取；每提交一次就变，引用前必须重取。owner 本窗口裁"暂不推"，推送一事不许自行执行）
+- `git log --oneline -1` → `499505d6d chore(repo): stop the per-record CPU ledger shards from flooding reports/`（本腿自 10-18 起共 378 笔提交在此之后入库，含并发会话的量；本页 §1 的 10 格里第 8／9／10 格与 §7 的运维事件都是 10-23 刷新时补的）
+- `git rev-list --count origin/main..HEAD` → **1**（10-23 13:45 现取）。**这条与本页早先写的"未推 113／123"已经不同**：`origin/main` 的 tip 现为 `32b1edc39`（10-23 12:19），且 `git merge-base --is-ancestor 8c8439248 origin/main` 为真 ⇒ 本腿 10-18 那批提交**已被别人（或 owner）推上去了**，不是我推的（owner 的"暂不推"仍是我这边的约束，我没执行 `git push`）。下一轮引用这个数之前必须重取。
 - 别人在飞的件（**不要提交、不要 checkout、不要抢它的写靶**）：`scripts/training/run_taiji_n1_length_balanced_training.py`、`tests/taiji_native/test_n1_plan110_length_balanced_runner_contract.py`、`scripts/training/run_taiji_n1_native_evidence_paired.py`（现取为 ` M`）；另有 6 枚 `reports/taiji_n5_07_*.json` 是 autocrlf/stat 幻影（`git diff --numstat` 空、盘与 HEAD 的 `b'\r'` 都是 0）。
 - 本腿自己的写靶状态：`reports/taiji_n2b_powerup_20261008_c4g1.json`／`…_c4g2.json`／`…_c4gb1.json` 三枚都已入库；**同 tag 复跑会被驱动的 `_refuse_completed_target` 拒**（DEBT-G169），要再跑必须换 tag。
 
@@ -64,6 +64,8 @@
 
 ## 7. 停靠动作（本页写完即停）
 
-- 工作区没有本腿的未提交件：本窗口所有代码／件／台账／计划都在上述 11 笔提交里；`git status` 里剩下的脏项全是 §0 列出的别人在飞件与幻影件。
-- 门：`black --check`／`ruff check`／`audit_taiji_debt_table_column_shape`（173 行）／`audit_taiji_ledger_marker_uniqueness`（748 行、duplicates 空）／`audit_taiji_tracked_report_line_endings`（holds）／`census_taiji_debt_row_effective_status`／`check_plans_markdown_links`／`audit_taiji_prereg_exit_wording`（criterion_lines 36 ≥ 地板 5、unpinned 0）均 rc=0；唯一 rc=1 是 §5 那枚外来红。
-- 未推：113 笔，owner 裁"暂不推"，我不执行 `git push`。
+- 工作区没有本腿的未提交件：本腿所有代码／件／台账／计划都已入库（最后一笔 `499505d6d`）；`git status` 里剩下的脏项全是并发会话在飞件与幻影件。
+- **10-23 的一次运维事件（已入库，细节见 08 ㊵-1128／DEBT-G175）**：Qoder 桌面端"环境信息"报"Git 状态暂时无法读取"，根因是并发仪器把 CPU 账本**按每条记录一个文件**扇进被跟踪的 `reports/`（现取 61,115 枚分片／55.32 MB ⇒ `git status` 返回 61,226 行，而 git 本身 rc=0、0.4 秒、无 `index.lock`）。owner 裁"升成 .gitignore 规则＋登记债"后：加两条精确规则（汇总件仍可入库）、**一个文件都没删**，`git status` 现取 **118 行／未跟踪 31**；顺手把 `08` 里 8 行裸 LF 归一回 CRLF（剥掉 `\r` 逐字节等值才写盘），并记下"plans/*.md 行尾无门"这条缺口（`audit_taiji_tracked_report_line_endings` 默认面只有 `reports/`）。**根因未修**：落点常量在那台仪器手里，删除分片属破坏性动作由 owner 排期。
+- 门（10-23 13:45 现取）：`audit_taiji_debt_table_column_shape` rows=175 rc=0／`audit_taiji_ledger_marker_uniqueness` rows_counted=752、duplicates 空 rc=0／`audit_taiji_tracked_report_line_endings` verdict=holds rc=0／`census_taiji_debt_row_effective_status` rc=0／`check_plans_markdown_links` rc=0／`audit_taiji_prereg_exit_wording` criterion_lines=36（地板 5）、unpinned 0 rc=0；`audit_taiji_ledger_cited_reports_are_tracked` 仍 rc=1，唯一 offender 是并发腿那枚 write-once 回执（不在盘上）。合同测本轮新增：地板仪 18、确定性件 6、形态普查 9、逐条判读器 11、复述仪出版 6（各文件现取全绿）。
+- 未推：现取 **1**（就是上面那笔运维提交）。owner 的"暂不推"我照办，没执行 `git push`；`origin/main` 在 10-23 12:19 被别人推进过，见 §0。
+- 还有一件 git 自述的维护提示（**我没动**，等 owner 排期）：提交时 git 警告 "There are too many unreachable loose objects; run 'git prune' to remove them."。
