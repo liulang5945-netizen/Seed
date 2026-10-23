@@ -15,22 +15,24 @@
 - full_turn_1m与fresh_same_capacity暂缓，原checkpoint和parent链保留；目前无完整三臂final、无新语言能力通过结论。
 - 当前v1.4版本化累计上限1,550,000 CPU秒/臂、4,400,000总计，包含旧实耗、reserve和未知尾账。此数值是上轮按推进单臂要求落盘的修订，不追写为用户逐字批准该数额；本轮不改额度。
 - 原终点每臂30,096预训练episodes / 14,517,912 updates，再525 SFT episodes / 113,209 updates。剩余费用与完整终点尚有缺口风险；运行中估计作告警，实际硬预算守卫继续，触顶不重启循环。
-- endpoint准备器的v1.4激活是局部未提交改动，已有5项preflight本地检查证据；不等于新旧manifest、provider与worker已贯通。相关实现未纳入本次文档提交。
+- endpoint准备器的v1.4激活（68ed3495c）与extension适配/worker/launch血缘（612c2dfe4／b1817cbcf／1fc8bac40）均已提交；真实预检仍因三臂未齐被拒绝，不等于新旧manifest、provider与worker已在真实终点贯通。
 
 ## 当前工作包与接续
 
 | 工作 | 状态 | 出口 |
 |---|---|---|
-| CC-1.1 来源/launch/endpoint provider | v1.4 预算激活已提交（68ed3495c）；完整血缘/provider 待做 | 新简化入口及历史V3、v1.4与旧修订可验证，四端点snapshot；合成拒绝漂移/重复completion/活writer |
+| CC-1.1 来源/launch/endpoint provider | v1.4 预算激活（68ed3495c）；完整血缘/provider 接线（1fc8bac40）；真实预检待三臂齐备 | 新简化入口及历史V3、v1.4与旧修订可验证，四端点snapshot；合成拒绝漂移/重复completion/活writer |
 | CC-1.2 独立extension evaluator/worker | 适配层＋versioned worker 已提交（612c2dfe4／b1817cbcf）；真实预检待三臂齐备 | 父进程和受监督worker使用同provider、snapshot与授权路径；无伪zero或旧schema回退 |
-| CC-1.3 合成与独立审查 | 继承48＋扩展13＝61支合成契约通过（9ec663c25／112caed7b）；独立审查待做 | one-shot跨入口、39×4、固定12、双预算与失败树终止；对应提交CI与独立审查 |
+| CC-1.3 合成与独立审查 | 独立审查完成，修正三项（d39f6c8af）＋launch/ledger/budget接线（1fc8bac40）；81支合成契约通过；extension 评测合同冻结 | one-shot跨入口、39×4、固定12、双预算与失败树终止；对应提交CI与独立审查 |
 | CC-1.4 当前训练 | warm已按预算保护停止；另两臂暂缓 | 耐久partial与停止事件保留，无完整final；D1准备到原完整实验出口的费用/范围裁决 |
 | CC-1.5 预算/三臂完整性 | 待实际费用闭合 | D1一次性提交到原完整出口的缺口与推荐；不补额则封存partial，W5b继续阻断 |
 | CC-1.6 原W5b | 前置未齐 | parent+三臂、39×4=156、固定前12-family人工、CPU/wall各14,400秒，一次调用并保存原始失败 |
 
-## 当前唯一下一步：完成 CC-1.3 的独立审查并冻结 extension 评测合同（61 支合成矩阵已过）
+## 当前唯一下一步：准备 CC-1.5 的 D1 预算裁决材料（三臂到完整终点的缺口、总成本与唯一推荐）
 
-合成矩阵已跑通：旧 recovery-v2 评测 48 支（含“旧 restart 仍严格”与“extension 不伪造 zero”）＋ extension 适配/worker 13 支（156／39 分母、跨入口消费、readiness 不符、端点不在固定四端图、四端 restore 前 generate、worker factory 命令）＝ **61 支通过**。消费守卫只挡已跑信号（attempt/ledger/progress/face/generations/result/cost_receipt/review/failure），不挡 `--validate-only` 的 readiness。下一步＝对 adapter/worker/entry 三文件做独立逐行审查，重点：provider 一致性、旧分支不变、one-shot、CPU/wall 双预算、失败树终止；审查通过后冻结 extension 评测合同。真实执行仍被三臂未齐挡住（warm partial、另两臂暂缓）。保留warm耐久partial与停止账，不消费保留题面；按D1讨论完整预算与原配对问题，不降分母、不把partial称final。
+CC-1.3 已收口：独立审查发现并修正三项——评测源码未进 `source_hashes`、worker 未固定 torch 线程、restore 收据未核对阶段/digest；审查中又发现 CC-1.1 的 launch 血缘未接，已把 `launch_provenance`、账本 tip/charges 与批准额度绑定进 extension 快照，并让端点清单与 worker 恢复收据携带端点类型/血缘快照。旧 recovery-v2 评测 48 支＋extension 19 支＋生产→适配衔接 1 支＋既有预检/launch 套件＝ **81 支通过**；extension 评测合同冻结。残余：旧冻结入口无法检查 extension 前缀（不改冻结源），运行纪律为 extension 已跑则不再跑旧入口，extension 侧守卫已挡旧入口消费；真实预检仍被三臂未齐挡住（warm partial、另两臂暂缓）。
+
+下一步只做 D1 材料，不启动训练、不消费保留题面：按现有 aggregate ledger、每臂 receipt 与暂缓臂的历史成本，核算三臂到达 30,096 预训练 episodes／14,517,912 updates，再完成 525 SFT episodes／113,209 updates 的实际缺口与总成本（含未知尾账），列出“补额完成原实验／封存 partial 转 CC-2 归因”两种选择能回答与放弃的问题，给出唯一推荐，提交 owner 裁决。裁决前保留 warm 耐久 partial 与停止账，不降分母、不把 partial 称 final。
 
 N1-166及原确认面、dev/reference/selector、能力晋级继续按原门冻结。普通实现与受影响验证自动推进；只有实质改变预算/题面/冻结协议/路线时到10的对应D节点裁决，其余独立工作持续。
 

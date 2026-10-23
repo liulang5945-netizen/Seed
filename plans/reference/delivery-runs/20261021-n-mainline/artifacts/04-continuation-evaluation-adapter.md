@@ -37,3 +37,10 @@ CPU≤14400且wall≤14400，包含metadata/source校验、启动/四端恢复�
 - 结论：通过（仅架构/实现准入，不放行真实评测）
 - 回流目标：无
 - 返工原因：无；worker硬编码及launch证据补齐是本阶段定义的下游交付。
+
+## 2026-10-23 实施状态（CC-1.2/1.3 收口）
+
+- 独立入口、versioned worker、适配层已落地并通过合成合同（`612c2dfe4`／`b1817cbcf`／`9ec663c25`／`112caed7b`／`d39f6c8af`／`1fc8bac40`）；冻结 recovery-v2 评测器未改。
+- launch provenance、aggregate ledger tip/charges、批准额度已绑入 extension 快照；端点清单与 worker 恢复收据携带 `endpoint_kind` 与 `lineage_snapshot_sha256`；评测源码闭包（冻结源＋extension seam）进入 `source_hashes`。
+- 训练与评测预算以 v1.4 **1,550,000 CPU秒/臂、4,400,000总计**为准；本文第26行 v1.3 数值为历史。
+- 真实评测仍待三臂完整终点；下一步为 CC-1.5 D1 材料（缺口、总成本与唯一推荐）。

@@ -1743,3 +1743,15 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 - 消费守卫收窄：`CONSUMPTION_KEYS` 只含 attempt/ledger/progress/face/generations/result/cost_receipt/review/failure；`--validate-only` 写的 readiness 是准备不是消费，不再误挡。测试两支（attempt 必挡／readiness 不挡）。
 - 半径：测试 2 份＋adapter 1 份；未碰产品码/训练/账本/在飞 partial；真实评价未启动；`git push` 未执行。
 - 下一格：CC-1.3 独立审查（对 adapter/worker/entry 三文件逐行审查，重点＝provider 一致性、旧分支不变、one-shot、CPU/wall 双预算、失败树终止），审查通过后冻结 extension 评测合同；真实预检仍等三臂齐备／D1。
+
+### ㊵-1132 【2026-10-23 · CC-1.3 独立审查收口：三项修正＋CC-1.1 launch/ledger/budget 血缘接线；81 支全过；extension 合同冻结；下一步 D1 材料】
+
+- 审查范围：adapter/worker/entry 三文件逐行；冻结 recovery-v2 未改，旧 48 支仍绿。确认 provider 一致性（父/worker 同一 `extension_preflight`）、one-shot（冻结 execute 的 attempt/claim）、CPU/wall 各 14,400 秒（`EVALUATION_CPU/WALL_LIMIT_SECONDS`）、失败树终止（`failed_task`＋`terminate_tree`）、固定前 12 例（`_review_markdown(sample_count=12)`）。
+- 查出的三项缺口，已修（`d39f6c8af`）：
+  1. **评测源码未进快照**：`extension_preflight` 默认 `eval_hashes=None`，父/worker 之间 adapter/worker/entry 被改不会被 readiness/attempt 发现。新增 `extension_source_hashes()`，绑定冻结源码闭包＋7 个 extension seam（adapter/entry/worker/extension 模块/endpoint 准备器/endpoint 校验器/本契约测试）。
+  2. **worker 未固定 torch 线程**：冻结入口在 `--worker` 前 `torch.set_num_threads(1)`，扩展 worker 缺此步；已补。
+  3. **restore 收据校验偏浅**：adapter 只查 `complete/equal`；增查 `restore.stage` 与该阶段一致、`restore.checkpoint_digest` 与阶段 digest 一致。
+- 审查中又发现 CC-1.1“完整血缘”未接（`1fc8bac40`）：`prepare.metadata_preflight` 已产出 `launch_provenance`／`verified_ledger_tip_sha256`／`ledger_charges`／`approved_budget`，adapter 之前忽略。现新增 `launch_evidence()`：三臂 launch 列表非空、逐文件字节比对 `verified_sources`、tip 为 sha256、charges 覆盖三臂且不超每臂/总计批准额度；launch 源进入 `source_hashes`。端点清单增 `endpoint_kind`／`lineage_snapshot_sha256`／账本 tip／charges／批准额度；worker 恢复收据带 `endpoint_kind` 与血缘快照。
+- 测试：旧 recovery-v2 48＋extension 19＋生产→适配衔接 1＋既有 endpoint preflight/launch 套件＝**81 支通过**（13.08 秒）；black/ruff 通过。
+- 残余与纪律：旧冻结入口无法检查 extension 前缀（不改冻结源）；extension 已跑则不再跑旧入口，extension 侧 guard 已挡旧入口消费。真实预检仍被三臂未齐拒绝（`training endpoints are incomplete`，rc=2，stdout JSON），未写 readiness、未启动评价。
+- 下一格：CC-1.5 D1 材料——按 aggregate ledger/receipt 核算三臂到完整终点的缺口、总成本、未知尾账，列两种选择并给唯一推荐；D1 前不训练、不消费保留题面。
