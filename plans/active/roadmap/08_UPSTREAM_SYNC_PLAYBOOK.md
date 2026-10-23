@@ -1771,7 +1771,8 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 - `run_taiji_r2_fast_ledger_resume_v4.py`：多臂（warm 7 GiB／其余 8 GiB）、v1.5 额度、schema `taiji-r2-fast-ledger-resume-v4`、16 源绑定；`build_manifest_v4` 拒绝错臂/错补额/错额度/缺源/不可行投影。
 - launch 血缘补齐：`validate_taiji_r2_continuation_launches.py` 现扫描 target v1、fast v1/v2/v3/v4 与简化 `taiji_r2_resume_*`；按 schema 记录历史批准额度；v3 历史源以声明哈希留痕（`historical_sources`，不要求当前字节相等），v4/当前源仍按字节校验；forecast 作用域按 `projection_scope` 判定。真实 reports 树实测：full 3／warm 6／fresh 2 个 launch manifest，29 个当前源、12 个历史源。
 - adapter 已接收 `historical_sources` 并写入端点清单；当前源继续进 `source_hashes` 参与父/worker 一致性比对。
-- 测试：相关契约 **109 支通过**（adapter 20、recovery 48、endpoint preflight 6、launch provenance 11、v1.5 5、v4 13、计划门等）；black/ruff 通过。提交 `72b5d13d2`。
+- 测试：相关契约 **110 支通过**（adapter 20、recovery 48、endpoint preflight 7、launch provenance 11、v1.5 5、v4 13、计划门等）；black/ruff 通过。提交 `72b5d13d2`。
+- 生产→适配端到端合成（`9089da25f`）：`prepare.metadata_preflight` 产出的三臂 manifest 直接进入冻结四端点信封，156／39、四端 `endpoint_kind`、launch/ledger/budget 绑定全部通过，证明真实 final 齐备后预检不会卡在 producer/adapter 形状不一致。
 - 训练前检查：`run_taiji_r2_resume.py --check-only --arm warm_start` 通过；内存 23.47 GiB。warm 已于 19:41 用 v4 续训，manifest `024767a4` 绑定 16 源、approved 1,590,000／4,560,000、amendment `21e0497e`。恢复时账本先记约 **1.87 万 CPU 秒主机尾账**（停止到恢复间的主机 CPU 差，按 unknown tail 计入），由 v1.5 的 warm 缓冲吸收；后续 full/fresh 必须无缝接续，避免空置再产生尾账。20:00 进度 27,679 episodes／13,345,570 updates、累计 1,568,838 CPU 秒。
 - 下一格：盯住 warm 到 final 并通过 endpoint/独立恢复门；成功后按 full_turn_1m→fresh_same_capacity 逐臂。触顶/内存不足/恢复失败即停止留证。
 - 后续臂启动前发现并修正（`ccbf8648e`）：v1.5 激活器原先临时套 v1.4 上限读账本，warm 已计超过 1.55M 会误拒；现按 v1.5 上限读取，且 warm 已生成的 v4 manifest 以旧 v1.5 源哈希走历史声明通道。真实 provenance 现识别 warm 7 个 launch、36 当前源／13 历史源；43 支相关测试通过。

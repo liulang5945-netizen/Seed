@@ -36,7 +36,7 @@ warm_start 已于 19:41 用 v4 入口续训，latest durable 27,584 episodes／1
 
 D1 材料见[18-d1-budget-decision.md](../../reference/delivery-runs/20261021-n-mainline/artifacts/18-d1-budget-decision.md)：三臂已计 4,369,799.25 CPU 秒，补完预计 118,303，总计原缺口 88,102；补后仍留总计约 71,898、warm 约 28,840 缓冲。
 
-CC-1.3 已收口：独立审查三项修正（评测源码进 `source_hashes`、worker 固定 torch 线程、restore 阶段/digest 核对）＋launch/ledger/budget 血缘；旧 recovery-v2 评测 48 支＋extension 19 支＋生产→适配衔接等＝ **109 支相关契约通过**；extension 评测合同冻结。残余：旧冻结入口无法检查 extension 前缀（不改冻结源），运行纪律为 extension 已跑则不再跑旧入口。
+CC-1.3 已收口：独立审查三项修正（评测源码进 `source_hashes`、worker 固定 torch 线程、restore 阶段/digest 核对）＋launch/ledger/budget 血缘；旧 recovery-v2 评测 48 支＋extension 19 支＋生产→适配衔接等＝ **110 支相关契约通过**；extension 评测合同冻结。残余：旧冻结入口无法检查 extension 前缀（不改冻结源），运行纪律为 extension 已跑则不再跑旧入口。
 
 N1-166及原确认面、dev/reference/selector、能力晋级继续按原门冻结。普通实现与受影响验证自动推进；只有实质改变预算/题面/冻结协议/路线时到10的对应D节点裁决，其余独立工作持续。
 

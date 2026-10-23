@@ -23,7 +23,7 @@ warm完整终点仍为30,096预训练episodes / 14,517,912 updates，再完成52
 
 冻结W5b继续采用parent_baseline＋三臂，**39×4＝156次generation**、固定同面前12个family人工判读、CPU与wall各14,400秒；跨入口共享一次性消费边界。全部端点、来源、恢复与资源门通过前不读selector/prompt；不读reference、不训练、不补跑失败调用，`can_promote=false`。N1-166及其未消费确认面维持原冻结；dev/reference/selector权限不因持续Goal扩大。
 
-- 2026-10-23 进展：CC-1.1 v1.4 预算激活（`68ed3495c`）与完整血缘接线（`1fc8bac40`）；CC-1.2 适配层（`612c2dfe4`）与 versioned worker（`b1817cbcf`）；CC-1.3 合成矩阵（`9ec663c25`／`112caed7b`）＋独立审查三项修正（`d39f6c8af`），相关契约 **109 支通过**，extension 评测合同冻结。D1 已批准：v1.5（1,590,000／4,560,000，`21e0497e`）write-once 激活；`72b5d13d2` 新增 v4 多臂入口并补齐 v3 历史/v4 当前 launch 血缘。warm_start 已用 v4 续训，full／fresh 待其 final 后逐臂。
+- 2026-10-23 进展：CC-1.1 v1.4 预算激活（`68ed3495c`）与完整血缘接线（`1fc8bac40`）；CC-1.2 适配层（`612c2dfe4`）与 versioned worker（`b1817cbcf`）；CC-1.3 合成矩阵（`9ec663c25`／`112caed7b`）＋独立审查三项修正（`d39f6c8af`），相关契约 **110 支通过**，extension 评测合同冻结。D1 已批准：v1.5（1,590,000／4,560,000，`21e0497e`）write-once 激活；`72b5d13d2` 新增 v4 多臂入口并补齐 v3 历史/v4 当前 launch 血缘。warm_start 已用 v4 续训，full／fresh 待其 final 后逐臂。
 
 ## 3. WBS：从当前R2走到同一模型的持续能力
 
