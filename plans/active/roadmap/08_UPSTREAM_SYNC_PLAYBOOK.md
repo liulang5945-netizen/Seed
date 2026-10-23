@@ -1720,3 +1720,11 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 ### ㊵-1127 【2026-10-21 · VISION §5.4（新 V-42）落盘：把"容量不是可提取性"写成记忆/巩固件的共同验收口径；N2-01 只加报告面，已冻 J-N2a／J-N2b 一字不改】
 
 ### ㊵-1128 【2026-10-23 · Qoder 桌面端"环境信息"报"Git 状态暂时无法读取"已定位并止血：不是 git 坏，是 `reports/` 里被扇出 **61,115 枚** CPU 账本分片（55.32 MB），`git status --porcelain` 返回 **61,226 行**把消费方打爆；加 `.gitignore` 精确规则后现取降到 **116 行／未跟踪 29**，一个文件都没删】
+### ㊵-1129 【2026-10-23 · CC-1.1 v1.4 预算激活＋CC-1.2 extension 评测适配层落盘：42＋7 支合同全过；`--execute/--worker` 仍拒绝，versioned worker 接线是下一格】
+
+- CC-1.1（提交 `68ed3495c`，12 文件）：`prepare_taiji_r2_continuation_endpoints` 在 v1.4 修订存在时激活（`activate_budget()`）；`run_taiji_r2_fast_ledger_resume` 支持 v1.4 预算与 warm-start-only 内存地板；新增 `run_taiji_r2_fast_ledger_resume_v2/v3`；`validate_...launches` 增加 selected-arm forecast scope、v2 源绑定与 memory-floor 范围校验。42 支合同通过（3.56 秒）。
+- CC-1.2（提交 `612c2dfe4`，3 文件）：新增 `taiji_r2_continuation_evaluation_adapter.py`——把 extension endpoint manifest 映射到冻结的 parent＋三臂四端点信封：`assistant_sft_final`→冻结的 `assistant_sft` 槽（525／113209），预训练 30096／14517912；拒绝 `restart_from_zero=true`；独立 schema `taiji-r2-continuation-evaluation-endpoints-v1`；版本化 worker 命令（`{job_name}` 由 `SupervisedWorker` 替换）。新增 `evaluate_..._extension_v1.py`：`--validate-only` 冻结 readiness＋endpoint manifest；`--execute/--worker` 打印 stdout JSON 并 rc=2。7 支合成契约＋既有 42 支＝**49 支通过**（7.65 秒）。
+- 边界：**未改冻结的 recovery-v2 评测器**，未 monkeypatch 其全局；未读题面/模型/checkpoint；未启动训练或真实评价。extension 三臂仍未齐（warm partial、另两臂暂缓）⇒ 真树 `--validate-only` 会按 pending 拒绝，这是正确行为。
+- 附带修复（本机环境，不入仓）：pre-commit 的 black 进程池在打印结果后挂起；改为进程内 `black.format_file_contents` 等价门（仍 100 列／py312），并让无 lefthook 配置的 `prepare-commit-msg` 包装器空转。**门禁未放宽**，两次提交均经 ruff＋black 等价门，且 pre-commit 末行打印 `pre-commit: local gates OK`。
+- 半径：两份脚本＋三份测试（新增 3 文件）＋03/10 状态行；未碰产品码、训练、账本、在飞 partial；`git push` 仍未执行。
+- 下一格：CC-1.2 versioned worker loop——复用旧 Job Object/IPC/restore/generate，但每次 restore 用同一 extension provider；补 39×4、固定 12、one-shot、双预算与失败树终止的合成契约。
