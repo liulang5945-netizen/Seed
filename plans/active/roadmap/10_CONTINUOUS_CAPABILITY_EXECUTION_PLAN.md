@@ -15,15 +15,15 @@
 
 ## 2. 当前基线及不可移动的边界
 
-当前warm_start已到单臂预算保护出口并保留partial；full_turn_1m、fresh_same_capacity暂缓。当前独立推进CC-1.1–1.3适配，CC-1.5准备完整预算/范围裁决。有效累计上限为**1,550,000 CPU秒/臂、4,400,000总计**，旧实耗、reserve和未知尾账保留。实时余量只从03所指账本/receipt复核，不把本页快照当新额度。
+D1 已批准并激活 **v1.5：1,590,000 CPU秒/臂、4,560,000总计**，旧实耗、reserve和未知尾账保留。warm_start 已用 v4 入口续训；full_turn_1m、fresh_same_capacity 待 warm 完成后逐臂。实时余量只从03所指账本/receipt复核，不把本页快照当新额度。
 
 warm完整终点仍为30,096预训练episodes / 14,517,912 updates，再完成525 SFT episodes / 113,209 updates；真实final、独立恢复与终态发布均计入完整出口。触顶未完成就保留partial，不能降低终点、清账或改称final。
 
-单入口精简已经完成，不重复列作待办。endpoint准备器已有真实后端激活v1.4额度；独立extension入口、versioned worker与launch/ledger/budget血缘已接线并通过合成合同，**真实评测仍待三臂完整终点**。技术边界见[适配架构](../../reference/delivery-runs/20261021-n-mainline/artifacts/04-continuation-evaluation-adapter.md)。
+单入口精简已经完成，不重复列作待办。endpoint准备器已激活 v1.5 额度；独立extension入口、versioned worker与launch/ledger/budget血缘已接线并通过合成合同，**真实评测仍待三臂完整终点**。技术边界见[适配架构](../../reference/delivery-runs/20261021-n-mainline/artifacts/04-continuation-evaluation-adapter.md)。
 
 冻结W5b继续采用parent_baseline＋三臂，**39×4＝156次generation**、固定同面前12个family人工判读、CPU与wall各14,400秒；跨入口共享一次性消费边界。全部端点、来源、恢复与资源门通过前不读selector/prompt；不读reference、不训练、不补跑失败调用，`can_promote=false`。N1-166及其未消费确认面维持原冻结；dev/reference/selector权限不因持续Goal扩大。
 
-- 2026-10-23 进展：CC-1.1 v1.4 预算激活（`68ed3495c`）与完整血缘接线（`1fc8bac40`）；CC-1.2 适配层（`612c2dfe4`）与 versioned worker（`b1817cbcf`）；CC-1.3 合成矩阵（`9ec663c25`／`112caed7b`）＋独立审查三项修正（`d39f6c8af`）＝**81 支通过**，extension 评测合同冻结。CC-1.5 的 [D1 材料](../../reference/delivery-runs/20261021-n-mainline/artifacts/18-d1-budget-decision.md)已备：三臂耐久游标合计已计 4,369,799 CPU 秒，补完预计 118,303，总计缺口 88,102；推荐 v1.5 补额 1,590,000／4,560,000，等 owner 裁决。真实预检仍被三臂未齐挡住。
+- 2026-10-23 进展：CC-1.1 v1.4 预算激活（`68ed3495c`）与完整血缘接线（`1fc8bac40`）；CC-1.2 适配层（`612c2dfe4`）与 versioned worker（`b1817cbcf`）；CC-1.3 合成矩阵（`9ec663c25`／`112caed7b`）＋独立审查三项修正（`d39f6c8af`），相关契约 **109 支通过**，extension 评测合同冻结。D1 已批准：v1.5（1,590,000／4,560,000，`21e0497e`）write-once 激活；`72b5d13d2` 新增 v4 多臂入口并补齐 v3 历史/v4 当前 launch 血缘。warm_start 已用 v4 续训，full／fresh 待其 final 后逐臂。
 
 ## 3. WBS：从当前R2走到同一模型的持续能力
 
@@ -113,4 +113,4 @@ D1–D6是证据/范围/预算决策点，不是额外审批仪式：到点先�
 
 新实施PLAN/SPEC及结案落`plans/reference/`既有命名族，机器证据落`reports/`，数据/checkpoint沿既有受控根及路径合同；不新增近义顶层目录。错误方向退出活动命令和队首，冻结文件、失败、原始输出与谱系保留；重复过程文本按目录规范S9完成蒸馏、迁链和Git精确恢复登记后可实际删除，不再逐轮复制整篇快照。已核实可再生的临时/空残留可清理，不按“失败”删除唯一研究证据或checkpoint。
 
-**唯一当前下一步：D1 裁决。** 批准 [D1 材料](../../reference/delivery-runs/20261021-n-mainline/artifacts/18-d1-budget-decision.md)推荐的 v1.5 补额（每臂1,590,000、总计4,560,000），即按原范围逐臂续训至三臂final；或明确选择封存partial转CC-2。裁决前不启动训练、不消费保留题面、不将partial转为final，也不提前开启后续能力训练。fresh恢复前必须确认可用内存≥8 GiB。
+**唯一当前下一步：完成 warm_start 的 v1.5 续训并验收 final。** 当前 v4 入口已运行，latest durable 27,584 episodes／13,304,596 updates；到 30,096／14,517,912 后再完成 525 SFT episodes／113,209 updates。成功后按 full_turn_1m→fresh_same_capacity 逐臂续训，三臂 final 齐备才跑真实 extension 预检与 W5b。任一臂触顶、内存不足或恢复失败即停止留证，不自动续额；不降分母、不将 partial 转为 final。

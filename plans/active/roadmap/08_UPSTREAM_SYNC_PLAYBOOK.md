@@ -1764,3 +1764,13 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 - 两个选择：A 补额完成原实验（可得 W5b 四端配对、固定 12-family 人工判读）；B 封存 partial 转 CC-2（只能得到“训练未完成”混淆的归因，不能产出配对证据）。已花 4.37M 只差约 2.7% 即可转化为完整端点，**唯一推荐 A**。
 - 推荐 v1.5：每臂 1,590,000（+40,000）、总计 4,560,000（+160,000）；补后扣预计剩余仍留总计约 71,898、warm 单臂约 28,840 缓冲。执行前置：fresh 恢复前内存 ≥8 GiB；逐臂串行；恢复前验零步完整 checkpoint 与独立恢复；再次触顶即停；评价 CPU/wall 各 14,400 另计。
 - 材料：`plans/reference/delivery-runs/20261021-n-mainline/artifacts/18-d1-budget-decision.md`。未创建 v1.5 补额文件、未启动训练、未消费题面；下一格＝owner 对 D1 的裁决。
+
+### ㊵-1134 【2026-10-23 · D1 批准：v1.5 write-once 激活（1,590,000／4,560,000，21e0497e）；v4 多臂入口＋launch 血缘；warm 续训中】
+
+- owner 选择“批准 v1.5 补额（推荐）”。`taiji_r2_continuation_budget_amendment_v1_5.py` 已把新额度 write-once 绑定当前账本 tip：sequence 66,699、charges 4,369,799.25、amendment `21e0497e81c64ed43022c57222d531c094b472d06e5d9383faf25c765e42e422`。激活器先在进程内临时采用 v1.4 上限读取账本，再切到 v1.5，避免 warm 已计 1,549,763.98 超过基础 1.5M 导致读取拒绝。
+- `run_taiji_r2_fast_ledger_resume_v4.py`：多臂（warm 7 GiB／其余 8 GiB）、v1.5 额度、schema `taiji-r2-fast-ledger-resume-v4`、16 源绑定；`build_manifest_v4` 拒绝错臂/错补额/错额度/缺源/不可行投影。
+- launch 血缘补齐：`validate_taiji_r2_continuation_launches.py` 现扫描 target v1、fast v1/v2/v3/v4 与简化 `taiji_r2_resume_*`；按 schema 记录历史批准额度；v3 历史源以声明哈希留痕（`historical_sources`，不要求当前字节相等），v4/当前源仍按字节校验；forecast 作用域按 `projection_scope` 判定。真实 reports 树实测：full 3／warm 6／fresh 2 个 launch manifest，29 个当前源、12 个历史源。
+- adapter 已接收 `historical_sources` 并写入端点清单；当前源继续进 `source_hashes` 参与父/worker 一致性比对。
+- 测试：相关契约 **109 支通过**（adapter 20、recovery 48、endpoint preflight 6、launch provenance 11、v1.5 5、v4 13、计划门等）；black/ruff 通过。提交 `72b5d13d2`。
+- 训练前检查：`run_taiji_r2_resume.py --check-only --arm warm_start` 通过；内存 23.47 GiB。warm 已于 19:41 用 v4 续训，manifest `024767a4` 绑定 16 源、approved 1,590,000／4,560,000、amendment `21e0497e`，预计剩余 11,340 CPU 秒。当前无 final、未消费题面。
+- 下一格：盯住 warm 到 final 并通过 endpoint/独立恢复门；成功后按 full_turn_1m→fresh_same_capacity 逐臂。触顶/内存不足/恢复失败即停止留证。
