@@ -181,18 +181,34 @@ def extension_worker_command(attempt_path: Path, ledger_path: Path) -> list[str]
     ]
 
 
+CONSUMPTION_KEYS = (
+    "attempt",
+    "ledger",
+    "progress",
+    "face",
+    "generations",
+    "result",
+    "cost_receipt",
+    "review",
+    "failure",
+)
+
+
 def refuse_if_recovery_evaluation_consumed(
     *,
     paths_fn: Callable[[], Mapping[str, Path]] = recovery._evaluation_paths,
 ) -> None:
     """The frozen recovery-v2 evaluation and this extension share one 39-family face.
 
-    The old entry is frozen and cannot check the extension prefix, so the
-    extension checks the old outputs before it touches the selector.  Running
-    the old entry after the extension is a protocol violation recorded in 03.
+    Only consumption signals block the extension.  A readiness written by
+    ``--validate-only`` is preparation, not consumption, so it must not block.
+    The old entry is frozen and cannot check the extension prefix; running the
+    old entry after the extension is a protocol violation recorded in 03.
     """
-    for key, path in paths_fn().items():
-        if Path(path).exists():
+    paths = paths_fn()
+    for key in CONSUMPTION_KEYS:
+        path = paths.get(key)
+        if path is not None and Path(path).exists():
             raise AdapterRefuse(
                 f"recovery-v2 evaluation is already consumed ({key}); "
                 "the shared 39-family face cannot be queried twice"

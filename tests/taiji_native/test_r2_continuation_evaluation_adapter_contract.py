@@ -191,6 +191,13 @@ def test_recovery_consumption_guard_blocks_a_second_face(tmp_path: Path) -> None
         adapter.refuse_if_recovery_evaluation_consumed(paths_fn=lambda: {"attempt": old_attempt})
 
 
+def test_readiness_alone_does_not_block_the_extension(tmp_path: Path) -> None:
+    """`--validate-only` preparation is not consumption; only run signals block."""
+    readiness = tmp_path / "old_readiness.json"
+    readiness.write_text("{}\n", encoding="utf-8")
+    adapter.refuse_if_recovery_evaluation_consumed(paths_fn=lambda: {"readiness": readiness})
+
+
 def _request(operation: str) -> dict[str, str]:
     return {
         "operation": operation,
