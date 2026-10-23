@@ -4506,3 +4506,11 @@ owner 裁"甲＝转乙路"后，PLAN-N1-93 是那条路的可签规格；本轮�
 - 门：`test_n6_04_vision_clause_traceability_contract`＋`test_n6_05_clause_existence_gate_contract` **15 passed**（V-42 同时有 id 与 §5.4 锚双引用，存在性门不红）。
 - 附带修复（先于本轮存在、HEAD 已提交）：03 的标题已被改成 `## 当前执行：…`，`test_project_identity` 因"零条唯一执行项"红；本轮**追加**一行 `## 当前唯一下一步：R2-06/07 三臂 v2 --prepare-only ＋ fresh-process 恢复核验`（不改原行），该册 **4 passed**。
 - 半径：只动三份计划/设计文档＋03 一行；不碰产品码、训练、checkpoint、在飞的 R2 文件；未执行 `git push`。
+### ㊵-1128 【2026-10-23 · Qoder 桌面端"环境信息"报"Git 状态暂时无法读取"已定位并止血：不是 git 坏，是 `reports/` 里被扇出 **61,115 枚** CPU 账本分片（55.32 MB），`git status --porcelain` 返回 **61,226 行**把消费方打爆；加 `.gitignore` 精确规则后现取降到 **116 行／未跟踪 29**，一个文件都没删】
+
+- 取证顺序（都是同一轮现取，写进债行 DEBT-G175）：①`.git/index.lock` 不存在；②`git status --porcelain` 自己 **rc=0、0.4 秒** ⇒ git 侧没坏，坏的是载荷量级；③按首段目录分组计数：**61,138/61,142 条未跟踪项在 `reports/`**；④按名字形状去重只剩 24 种，其中一种占 **61,115** 枚（`…_aggregate_cpu_ledger.00000000.json` 递增分片）；⑤mtime 区间 10-21 11:17 → 10-23 11:57 ⇒ 已停 1.7 小时，不是正在长；⑥当时唯一在跑的 python 是另一会话的 seal 审计（PID 21552），与本项无关。
+- 生产侧点名：`scripts/training/taiji_r2_dialogue_continuation_extension.py` 的 `:78-80` 把账本前缀常量钉在 `REPORTS_DIR`，`:445` 每条记录生成一个 `{prefix}.NNNNNNNN.json`。这与本仓既有那条"默认写靶不许指在库/跟踪目录"（DEBT-G50）同族，新形态是**按记录扇文件**——它不覆写谁，但会把跟踪目录旁边的未跟踪项炸到工具不可用。
+- 处置（owner 裁"升成 .gitignore 规则＋登记债"）：`.gitignore` 追加两条精确规则（只匹配那批分片与它的 `.lock`，汇总件 `…_aggregate_cpu_ledger.latest.json` 保持可入库），风格与文件里既有那条同类先例一致（`…_source_revision_v1_*.json` 早已因"绑定绝对工作区路径"被忽略）。**先做的是本地 `.git/info/exclude` 止血**（零共享、可整块删），确认有效后按裁定升成 `.gitignore` 并把本地那份**还原回备份**，避免同一件事两处生效；原 exclude 备份在 `C:/Users/23747/AppData/Local/Temp/n1_v6_sign/exclude_backup_20261023.txt`。
+- 顺手量到并修掉一件**别的**事：`08` 现有 **8 行是裸 LF 行尾**（本文件约定 CRLF 统一；来源是 ㊵-1127 那一格以 LF 追加，把我 ㊵-1126 的末行边界也带成了 LF）。本轮追加前先把裸 LF 归一回 CRLF，并**证它没改内容**（把两版都剥掉 `\r` 逐字节相等才写盘）。这条属门缺口：`audit_taiji_tracked_report_line_endings` 的面默认只有 `reports/`（`--face` 默认值），plans 下的 md 行尾漂了没有任何门会红——本轮 `marker`／`debt_shape`／`line_endings` 全 rc=0 却带着 8 行裸 LF，就是证据。
+- 没做的（都因"不抢别人的写靶、不删别人的产物"）：没改那台仪器的落点常量、没搬也没删 61k 枚分片、没动并发会话任何在飞件。这两件列在 DEBT-G175 的修法①③里，等仪器所有者会话或 owner 排期；删除属破坏性动作，由 owner 自己排。
+- 半径：本轮只读诊断＋两行 `.gitignore`＋两行文档（05 债行、本行）；零模型查询、零权重改动、零 git 历史动作；`git push` 未执行（owner 前一轮裁"暂不推"，未获新授权）。

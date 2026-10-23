@@ -331,3 +331,8 @@ focused-before.xml
 
 # Local continuation source records bind absolute workspace paths.
 reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_source_revision_v1_*.json
+# Per-record CPU-ledger shards: one file per ledger event, 61115 files / 55.32 MB on 2026-10-23,
+# which made `git status` return 61226 lines and the IDE git panel fail to read it (DEBT-G175).
+# The aggregate summary `..._aggregate_cpu_ledger.latest.json` stays publishable.
+reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_aggregate_cpu_ledger.[0-9]*.json
+reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_aggregate_cpu_ledger.lock
