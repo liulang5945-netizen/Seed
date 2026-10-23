@@ -336,3 +336,6 @@ reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_source_revisio
 # The aggregate summary `..._aggregate_cpu_ledger.latest.json` stays publishable.
 reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_aggregate_cpu_ledger.[0-9]*.json
 reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_aggregate_cpu_ledger.lock
+
+# Generated output JSON stays local; versioned historical evidence lives in reports/legacy/output/.
+/output/**/*.json
