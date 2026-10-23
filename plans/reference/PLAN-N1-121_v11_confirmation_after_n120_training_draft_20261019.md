@@ -39,4 +39,4 @@ The maximum is 540 model queries if both phases run; no parameter updates or opt
 - Face manifest: `plans/manifests/n1_hard_neighbor_v11_confirmation_seed111_20261019.json`.
 - Build/readiness report: `reports/taiji_n1_v11_after_n120_confirmation_readiness_20261019.json`.
 - Sacrifice range report: `reports/taiji_n1_v11_after_n120_range_20261019.json`.
-- One-shot confirmation report, only if range passes: `reports/taiji_n1_v11_after_n120_confirmation_20261019.json`.
+- One-shot confirmation report, only if range passes（`--out-report`；2026-10-23 标注：未产出）: `reports/taiji_n1_v11_after_n120_confirmation_20261019.json`.

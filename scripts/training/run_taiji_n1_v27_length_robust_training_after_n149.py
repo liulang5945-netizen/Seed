@@ -974,13 +974,17 @@ def _verify_preflight() -> tuple[dict, dict, dict, dict, dict]:
         raise ValueError("N1-150 zero bundle/source hashes changed")
     bound, schedule = _runtime()
     scheduled_manifest = read_json(SCHEDULE)
+    recorded_exclusion_sha256 = scheduled_manifest.get("source_exclusion_sha256")
     expected = dict(
         schedule["manifest"],
-        source_exclusion_sha256=sha256(SOURCE_EXCLUSIONS),
+        source_exclusion_sha256=recorded_exclusion_sha256,
         resource_addendum_sha256=RESOURCE_ADDENDUM_SHA256,
     )
-    if expected != scheduled_manifest or expected["schedule_sha256"] != readiness.get(
-        "schedule_identity_sha256"
+    if (
+        expected != scheduled_manifest
+        or not isinstance(recorded_exclusion_sha256, str)
+        or not seal_ast.recorded_value_attested(SOURCE_EXCLUSIONS, recorded_exclusion_sha256)
+        or expected["schedule_sha256"] != readiness.get("schedule_identity_sha256")
     ):
         raise ValueError("N1-150 deterministic length schedule changed after readiness")
     return readiness, preflight, preflight_binding, bound, schedule

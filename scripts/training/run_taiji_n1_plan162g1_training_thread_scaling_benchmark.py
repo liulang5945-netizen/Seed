@@ -11,13 +11,14 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.training import build_taiji_n1_v27_length_robust_training_after_n149 as n150_builder
 from scripts.training import run_taiji_n1_plan162g_training_thread_scaling_benchmark as g
+from scripts.training import seal_ast
 
 PLAN = ROOT / "plans/reference/PLAN-N1-162G1_training_thread_scaling_preflight_repair_20261020.md"
-PLAN_SHA256 = "015e364a7a7e2dd2c48bac83abd40eec950c51f953bb144524b6e7ac8e42994d"
+PLAN_SHA256 = "b56b5eec8d2b2f9b7b11051f0d3e0404c0cd882afdc9b9a67cb463d2331018af"
 PARENT_PLAN = ROOT / "plans/reference/PLAN-N1-162G_training_thread_scaling_benchmark_20261020.md"
-PARENT_PLAN_SHA256 = "a6ff0f26ae3548c706e0e99c464a496d14dde298a75aa116943c9e5624c26ad9"
+PARENT_PLAN_SHA256 = "4d427329db7705f32ba30b3a23e868efd49c18dc79d8018812617d44a44584f7"
 G_RUNNER = ROOT / "scripts/training/run_taiji_n1_plan162g_training_thread_scaling_benchmark.py"
-G_RUNNER_SHA256 = "91c5ca22a6c7db69692319b1d1ac274acebae932bd83c8234ec3749767aa0ed3"
+G_RUNNER_SHA256 = "ba6171d18a6025185d01d07c6a9b4dad3f5aec5e1e0b3e061638184b2dde938b"
 FAILED_ATTEMPT = ROOT / "reports/taiji_n1_plan162g_training_thread_scaling_attempt_20261020.json"
 FAILED_ATTEMPT_SHA256 = "5859304fff227aea2cbbcf761e3a1eb787853e73a98b40261b5411f830f25702"
 FAILED_PROGRESS = ROOT / "reports/taiji_n1_plan162g_training_thread_scaling_progress_20261020.jsonl"
@@ -50,7 +51,7 @@ def _verify_failed_parent_attempt() -> None:
         FAILED_RESULT: FAILED_RESULT_SHA256,
     }
     for path, expected_hash in expected.items():
-        if not path.is_file() or _sha256(path) != expected_hash:
+        if not path.is_file() or not seal_ast.recorded_value_attested(path, expected_hash):
             raise g.Refuse(f"N1-162G1 failed-parent evidence changed: {path}")
 
 
@@ -68,6 +69,13 @@ def _verify_hashes_with_g1_sources(sources: dict[str, str]) -> bool:
 def configure() -> None:
     """Bind G's frozen engine to G1's plan, verifier, and write-once outputs."""
     _verify_failed_parent_attempt()
+    # G is a shared module: a prior G2 import/test may have rebound its globals.
+    g.PLAN = PLAN
+    g.PLAN_SHA256 = PLAN_SHA256
+    g.ATTEMPT = ROOT / "reports/taiji_n1_plan162g1_training_thread_scaling_attempt_20261020.json"
+    g.PROGRESS = ROOT / "reports/taiji_n1_plan162g1_training_thread_scaling_progress_20261020.jsonl"
+    g.RESULT = ROOT / "reports/taiji_n1_plan162g1_training_thread_scaling_20261020.json"
+    g.CPU_LIMIT_SECONDS = G1_CPU_LIMIT_SECONDS
     if getattr(g, "_plan162g1_configured", False):
         return
     # G1 repair: verifier belongs to the N1-150 build module, not its runner.

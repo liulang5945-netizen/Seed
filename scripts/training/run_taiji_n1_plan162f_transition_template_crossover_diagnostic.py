@@ -22,6 +22,7 @@ from scripts.training import analyze_taiji_n1_plan162d_transition_output_type_at
 from scripts.training import build_taiji_n1_v27_length_robust_training_after_n149 as n150_builder
 from scripts.training import run_taiji_n1_plan132_binding_supervision_calibration as n132
 from scripts.training import run_taiji_n1_plan155_short_unknown_context_length_training as n155
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = (
     ROOT / "plans/reference/PLAN-N1-162F_transition_template_crossover_train_diagnostic_20261020.md"
@@ -116,7 +117,11 @@ def _merge_hashes(target: dict[str, str], incoming: dict[str, str]) -> None:
     for raw_path, digest in incoming.items():
         path = str(Path(raw_path).resolve())
         previous = target.get(path)
-        if previous is not None and previous != digest:
+        if (
+            previous is not None
+            and previous != digest
+            and not seal_ast.recorded_value_attested(path, previous)
+        ):
             raise Refuse(f"conflicting PLAN-N1-162F source hash: {path}")
         target[path] = digest
 

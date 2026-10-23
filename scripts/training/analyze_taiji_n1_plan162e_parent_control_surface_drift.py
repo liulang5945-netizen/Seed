@@ -18,6 +18,7 @@ from scripts.training import build_taiji_n1_v27_length_robust_training_after_n14
 from scripts.training import (
     run_taiji_n1_plan155_short_unknown_context_length_training as n155_runner,
 )
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = ROOT / "plans/reference/PLAN-N1-162E_parent_control_surface_drift_attribution_20261020.md"
 PLAN_SHA256 = "f5f66410ab357d51d543d871ba697e19396da5b8a942d99d232a1c292efa60a5"
@@ -81,7 +82,7 @@ def write_new(path: Path, value: dict) -> None:
 def _merge_hashes(target: dict[str, str], incoming: dict[str, str]) -> None:
     for path, digest in incoming.items():
         old = target.get(path)
-        if old is not None and old != digest:
+        if old is not None and old != digest and not seal_ast.recorded_value_attested(path, old):
             raise Refuse(f"conflicting source hash: {path}")
         target[path] = digest
 

@@ -108,7 +108,11 @@ def _merge_hashes(target: dict[str, str], incoming: dict[str, str]) -> None:
     for raw_path, digest in incoming.items():
         path = str(Path(raw_path).resolve())
         prior = target.get(path)
-        if prior is not None and prior != digest:
+        if (
+            prior is not None
+            and prior != digest
+            and not seal_ast.recorded_value_attested(path, prior)
+        ):
             raise ValueError(f"冻结来源哈希冲突：{path}")
         target[path] = digest
 

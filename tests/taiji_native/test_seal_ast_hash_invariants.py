@@ -9,6 +9,8 @@ ADR: outputs/project-audit-20261021-2315/artifacts/11-seal-migration-design.md
 
 from __future__ import annotations
 
+import hashlib
+
 import black
 
 from scripts.training import seal_ast
@@ -105,3 +107,25 @@ def test_green_channel_real_file_and_git_attestation():
     ok, failures = seal_ast.verify_hash_dict({path: digest})
     assert ok is True and failures == []
     assert seal_ast.verify_path_pin(path, digest) is True
+
+
+def test_out_of_root_missing_pin_is_a_clean_failure_not_a_crash(tmp_path):
+    """仓外且缺失的钉点必须返回失败清单，而不是把 relative_to 的 ValueError 抛给调用方。"""
+    outside = tmp_path / "missing.json"
+    assert outside.is_relative_to(seal_ast.ROOT) is False
+    ok, failures = seal_ast.verify_hash_dict({str(outside): "0" * 64})
+    assert ok is False
+    assert failures == [str(outside)]
+
+
+def test_recorded_value_attested_accepts_current_and_history_but_rejects_fabricated():
+    rel = "scripts/training/seal_ast.py"
+    path = seal_ast.ROOT / rel
+    commits = seal_ast.file_commits(rel)
+    assert commits
+    historical = seal_ast.git_blob_bytes(commits[-1], rel)
+    assert historical is not None
+    historical_sha = hashlib.sha256(historical).hexdigest()
+    assert seal_ast.recorded_value_attested(path, seal_ast.sha256_file(path)) is True
+    assert seal_ast.recorded_value_attested(path, historical_sha) is True
+    assert seal_ast.recorded_value_attested(path, "0" * 64) is False

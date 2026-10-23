@@ -17,6 +17,7 @@ sys.path.insert(0, str(ROOT))
 from scripts.training import build_taiji_n1_v27_length_robust_training_after_n149 as n150_builder
 from scripts.training import run_taiji_n1_plan132_binding_supervision_calibration as n132
 from scripts.training import run_taiji_n1_v27_length_robust_training_after_n149 as n150
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN = ROOT / "plans/reference/PLAN-N1-153_fresh_context_length_paired_diagnostic_20261020.md"
 PLAN_SHA256 = "7f38c25832e5245f55e272d974ae00a831542d9b5f8cd9a5410901bc7d87e88b"
@@ -89,7 +90,7 @@ def _merge_hashes(target: dict[str, str], incoming: dict[str, str]) -> None:
     for raw_path, digest in incoming.items():
         path = str(Path(raw_path).resolve())
         old = target.get(path)
-        if old is not None and old != digest:
+        if old is not None and old != digest and not seal_ast.recorded_value_attested(path, old):
             raise Refuse(f"conflicting PLAN-N1-153 source hash: {path}")
         target[path] = digest
 

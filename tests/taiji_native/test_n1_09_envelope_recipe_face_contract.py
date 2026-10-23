@@ -11,9 +11,12 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import torch
@@ -220,8 +223,23 @@ def test_real_load_face_reading_is_reproduced_and_fully_covered() -> None:
     """真面锚点：默认装载面 13 枚**全读**、0 枚带来源记录、且两种缺失分支都在场。"""
 
     module = _load()
-    report = module.read_face(PROJECT_ROOT, 64, 1024, [], ["checkpoints"])
     sealed = json.loads(REPORT.read_text(encoding="utf-8"))
+    #: 封印报告只出版 12 行明细（cap）；第 13 枚由 face_total_mb=154.7 反推为这枚 12.7MB 的件。
+    sealed_files = [row["file"] for row in sealed["carriers_without_recipe"]]
+    sealed_files.append("checkpoints/seed_n2b_rollback_20261008_n2c1.pt")
+    #: checkpoints/ 现已增长到 26 枚；用只含封印 13 枚的临时硬链面复现旧读数，不把新件算进面。
+    face_root = Path(tempfile.mkdtemp(prefix="n1_09_face_", dir=PROJECT_ROOT))
+    try:
+        (face_root / "checkpoints").mkdir(parents=True)
+        for rel in sealed_files:
+            target = face_root / rel
+            try:
+                os.link(PROJECT_ROOT / rel, target)
+            except OSError:
+                shutil.copy2(PROJECT_ROOT / rel, target)
+        report = module.read_face(face_root, 64, 1024, [], ["checkpoints"])
+    finally:
+        shutil.rmtree(face_root, ignore_errors=True)
     assert report["verdict"] == sealed["verdict"] == "no_recorded_recipe_in_sample", (
         report["verdict"],
         sealed["verdict"],

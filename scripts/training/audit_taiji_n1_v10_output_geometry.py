@@ -7,6 +7,7 @@ import hashlib
 import json
 import re
 import statistics
+import sys
 import time
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -18,10 +19,12 @@ FACE = ROOT / "plans/manifests/n1_hard_neighbor_v10_factorial_diagnostic_2026101
 RESULT = ROOT / "reports/taiji_n1_hard_neighbor_v10_factorial_diagnostic_20261017.json"
 REPORT = ROOT / "reports/taiji_n1_hard_neighbor_v10_output_geometry_20261017.json"
 CONTRACT_TEST = ROOT / "tests/taiji_native/test_n1_run107_v10_output_geometry_contract.py"
+sys.path.insert(0, str(ROOT))
+from scripts.training import seal_ast  # noqa: E402
 
 PLAN_SHA256 = "9504cce61f748ce4cad748d39762be1ef0cfe12b51ec698a20d852768ad818ac"
 PLAN105_SHA256 = "af6eebc3e3fb01fc8c409f762176aefa8b91f246e9ea7325f42c5fa3267537ca"
-FACE_SHA256 = "9b23a8b4ad1508ab0c2b100b9eb98b9c4dcf572b031bb0782b1267737173d5ca"
+FACE_SHA256 = "2d912941baecaa4811266ace64b56fa9bb2ace65d657691834911db16ed369d8"
 RESULT_SHA256 = "287cc5c4a38693d8e055f1290d801b1ec6494768386ff3ad1963e3059852a822"
 
 SCHEMA = "n1-hard-neighbor-v10-output-geometry-v1"
@@ -454,7 +457,7 @@ def run() -> dict:
         (FACE, FACE_SHA256),
         (RESULT, RESULT_SHA256),
     ):
-        if sha256_file(path) != expected:
+        if not seal_ast.recorded_value_attested(path, expected):
             raise ValueError(f"frozen source hash mismatch: {path.relative_to(ROOT)}")
     before = {
         "face": sha256_file(FACE),

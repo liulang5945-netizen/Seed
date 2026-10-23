@@ -40,9 +40,9 @@ REPORT_FORMAT = "taiji-ledger-cited-reports-tracked-v4"
 #: 带核验的更名登记表（DEBT-G134 的最后一格）：文档里的**旧件名**指向的现行件必须在索引面里，
 #: 否则那条映射不作数——映射不是消音器，它自己也要被复核。
 DEFAULT_SUPERSEDE_MAP = "plans/manifests/rename_superseded_reports.json"
-#: 扩展名边界必须钉住：`…\.json` 不加负向预查会把 `reports/x.jsonl` 截断成一枚"叫 x.json 的缺件"。
+#: 扩展名边界必须钉住：`…\.json` 不加负向预查会把 `reports/x.jsonl`／`reports/x.json.gz` 截断成一枚"叫 x.json 的缺件"。
 #: 第一版就因此报了 5 枚"盘上也没有"，其中 4 枚是 `.jsonl`（`㊵-575` 当年正是把两枚 JSONL 逐字节复制进 `reports/`）。
-CITE_RE = re.compile(r"reports/[A-Za-z0-9_.\-]+\.json(?![A-Za-z0-9])")
+CITE_RE = re.compile(r"reports/[A-Za-z0-9_.\-]+\.json(?!\.gz)(?![A-Za-z0-9])")
 #: 文档里用来**指定写靶**的旗标（㊵-791 v4）。`--out-report` 之外，`--report` 在评测器里既是写靶
 #: 也是读源——所以这条只把"今天还不在仓里的件"判成计划中的输出，见 `_classify` 的 docstring。
 OUTPUT_FLAG_MARKERS = ("--out-report", "--report", "--adjudication-report", "--health-report")

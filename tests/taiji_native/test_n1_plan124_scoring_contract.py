@@ -42,9 +42,9 @@ def test_confirmation_requires_all_180_sacrifice_rows_before_release() -> None:
 
 def test_confirmation_requires_exact_range_identity(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
-        evaluator,
-        "sha256",
-        lambda path: "face" if path == evaluator.FACE else "readiness",
+        evaluator.seal_ast,
+        "receipt_binding_matches",
+        lambda recorded, path: recorded == ("face" if path == evaluator.FACE else "readiness"),
     )
     valid = {
         "complete": True,

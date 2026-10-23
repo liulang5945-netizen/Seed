@@ -28,6 +28,12 @@ def _load():
 CENSUS = _load()
 
 
+def test_json_gz_is_not_truncated_to_a_bare_json_citation() -> None:
+    assert CENSUS.CITE_RE.findall("reports/x.json.gz") == []
+    assert CENSUS.CITE_RE.findall("reports/x.jsonl") == []
+    assert CENSUS.CITE_RE.findall("reports/x.json") == ["reports/x.json"]
+
+
 def test_the_three_kinds_of_absence_are_split_into_three_buckets() -> None:
     cited = {
         "reports/gone.json": ["doc.md"],

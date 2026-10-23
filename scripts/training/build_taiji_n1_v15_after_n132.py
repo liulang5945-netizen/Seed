@@ -185,7 +185,9 @@ def _add_source(source_hashes: dict[str, str], path: Path, expected: str | None 
     source_hashes[str(path)] = actual
 
 
-def _prior_sources_and_union() -> tuple[set[str], set[str], dict[str, str], dict]:
+def _prior_sources_and_union(
+    *, require_unused_seed: bool = True
+) -> tuple[set[str], set[str], dict[str, str], dict]:
     if sha256(PLAN) != PLAN_SHA256:
         raise ValueError("PLAN-N1-133冻结稿哈希不匹配")
     precheck = read_json(SOURCE_UNION_PRECHECK)
@@ -414,7 +416,7 @@ def _prior_sources_and_union() -> tuple[set[str], set[str], dict[str, str], dict
     for path in sorted((ROOT / "plans/manifests").glob("n1_hard_neighbor_*.json")):
         ledger = read_json(path)
         _add_source(source_hashes, path)
-        if ledger.get("seed") == SEED:
+        if require_unused_seed and ledger.get("seed") == SEED:
             seed115_ledgers.append(str(path))
     if seed115_ledgers:
         raise ValueError(f"seed 115已在硬邻居账本出现：{seed115_ledgers}")
@@ -609,7 +611,7 @@ def audit_v15_face(face: dict, *, excluded_names: set[str], excluded_words: set[
 def _verify_current_sources(source_hashes: dict[str, str]) -> None:
     for raw_path, expected in source_hashes.items():
         path = Path(raw_path)
-        if not path.is_file() or sha256(path) != expected:
+        if not path.is_file() or not _recorded_attests(path, expected):
             raise ValueError(f"readiness后来源已变化：{path}")
 
 

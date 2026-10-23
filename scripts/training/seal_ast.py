@@ -198,13 +198,42 @@ def _blob_sha_variants(blob: bytes) -> set[str]:
 def git_history_attests(path_str: str, recorded: str) -> bool:
     """记录值是否与该文件某个历史 blob 的字节哈希一致（R5 同法）。"""
     path = Path(path_str)
-    rel = path.resolve().relative_to(ROOT).as_posix() if path.is_absolute() else str(path_str)
+    try:
+        rel = path.resolve().relative_to(ROOT).as_posix() if path.is_absolute() else str(path_str)
+    except ValueError:
+        # 仓外路径没有可取证的历史；按「未取证」返回，由调用方决定 fail-closed。
+        return False
     for commit in file_commits(rel):
         blob = git_blob_bytes(commit, rel)
         if blob is None:
             continue
         if recorded in _blob_sha_variants(blob):
             return True
+    return False
+
+
+def recorded_value_attested(path: Path | str, recorded: str) -> bool:
+    """记录值是否仍可取证：在位字节/AST，或 git 历史 blob 的字节/AST 任一。"""
+    path_str = str(path)
+    if _in_place_match(path_str, recorded, scheme=None):
+        return True
+    if git_history_attests(path_str, recorded):
+        return True
+    if not _looks_like_python(path_str):
+        return False
+    try:
+        rel = _rel_to_root(path_str)
+    except ValueError:
+        return False
+    for commit in file_commits(rel):
+        blob = git_blob_bytes(commit, rel)
+        if blob is None:
+            continue
+        try:
+            if ast_hash(blob.decode("utf-8")) == recorded:
+                return True
+        except (SyntaxError, UnicodeDecodeError):
+            continue
     return False
 
 

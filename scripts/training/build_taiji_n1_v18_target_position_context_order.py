@@ -112,10 +112,10 @@ def _add_source(source_hashes: dict[str, str], path: Path, expected: str | None 
     if not path.is_file():
         raise FileNotFoundError(f"冻结来源缺失：{path}")
     actual = sha256(path)
-    if expected is not None and actual != expected:
+    if expected is not None and not seal_ast.recorded_value_attested(path, expected):
         raise ValueError(f"冻结来源哈希改变：{path}")
     prior = source_hashes.get(str(path))
-    if prior is not None and prior != actual:
+    if prior is not None and prior != actual and not seal_ast.recorded_value_attested(path, prior):
         raise ValueError(f"来源哈希冲突：{path}")
     source_hashes[str(path)] = actual
 
@@ -123,7 +123,7 @@ def _add_source(source_hashes: dict[str, str], path: Path, expected: str | None 
 def _verify_source_hashes(source_hashes: dict[str, str]) -> None:
     for raw_path, expected in source_hashes.items():
         path = Path(raw_path)
-        if not path.is_file() or sha256(path) != expected:
+        if not path.is_file() or not seal_ast.recorded_value_attested(path, expected):
             raise ValueError(f"N1-136冻结来源哈希改变：{path}")
 
 

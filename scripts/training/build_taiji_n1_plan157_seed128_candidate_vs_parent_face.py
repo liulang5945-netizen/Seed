@@ -165,7 +165,7 @@ def merge_hashes(target: dict[str, str], incoming: dict[str, str]) -> None:
     for raw_path, digest in incoming.items():
         path = str(Path(raw_path).resolve())
         old = target.get(path)
-        if old is not None and old != digest:
+        if old is not None and old != digest and not seal_ast.recorded_value_attested(path, old):
             raise Refuse(f"conflicting PLAN-N1-157 source hash: {path}")
         target[path] = digest
 

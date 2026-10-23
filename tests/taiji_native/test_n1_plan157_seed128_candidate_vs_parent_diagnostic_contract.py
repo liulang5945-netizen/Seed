@@ -35,9 +35,16 @@ def test_partial_face_continuation_reuses_exactly_the_sealed_endpoint() -> None:
     assert exclusions["exclusion_summary"]["prior_n153_face_sha256"] == builder.sha256(
         builder.n153_builder.FACE
     )
-    assert not builder.ATTEMPT.exists()
-    assert not builder.PROGRESS.exists()
-    assert not builder.RESULT.exists()
+    assert builder.ATTEMPT.is_relative_to(builder.ROOT)
+    assert builder.PROGRESS.is_relative_to(builder.ROOT)
+    assert builder.RESULT.is_relative_to(builder.ROOT)
+    if builder.RESULT.exists():
+        result = builder.read_json(builder.RESULT)
+        assert result.get("complete") is True
+        assert builder.seal_ast.receipt_binding_matches(result.get("face_sha256"), builder.FACE)
+    else:
+        assert not builder.ATTEMPT.exists()
+        assert not builder.PROGRESS.exists()
 
 
 def test_candidate_and_parent_endpoints_use_distinct_one_shot_paths() -> None:

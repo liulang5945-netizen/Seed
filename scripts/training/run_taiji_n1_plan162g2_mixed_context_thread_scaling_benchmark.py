@@ -15,13 +15,13 @@ from scripts.training import build_taiji_n1_v27_length_robust_training_after_n14
 from scripts.training import run_taiji_n1_plan162g_training_thread_scaling_benchmark as g
 
 PLAN = ROOT / "plans/reference/PLAN-N1-162G2_mixed_context_thread_scaling_benchmark_20261020.md"
-PLAN_SHA256 = "ea8f325709c195a69935c517ee8e01b360e13370eb405e31c240e5c26752d68e"
+PLAN_SHA256 = "be391eb5cdc676963ef83e79cc3a4baa6da8e6a92f2264c217c36dca1c82c2e1"
 G1_RESULT = ROOT / "reports/taiji_n1_plan162g1_training_thread_scaling_20261020.json"
 G1_RESULT_SHA256 = "2659d8aaf9a3c034b1bff18dfe65b5582c5001664ff4483d3fe137395f07933c"
 G1_PLAN = (
     ROOT / "plans/reference/PLAN-N1-162G1_training_thread_scaling_preflight_repair_20261020.md"
 )
-G1_PLAN_SHA256 = "015e364a7a7e2dd2c48bac83abd40eec950c51f953bb144524b6e7ac8e42994d"
+G1_PLAN_SHA256 = "b56b5eec8d2b2f9b7b11051f0d3e0404c0cd882afdc9b9a67cb463d2331018af"
 G1_RUNNER = ROOT / "scripts/training/run_taiji_n1_plan162g1_training_thread_scaling_benchmark.py"
 G1_RUNNER_SHA256 = "f9638d79228679de3b16390dd8698d4aece18f9e44682c58bc7af6a683c75cdb"
 G1_ATTEMPT = ROOT / "reports/taiji_n1_plan162g1_training_thread_scaling_attempt_20261020.json"
@@ -31,7 +31,7 @@ G1_PROGRESS_SHA256 = "80889e23de38ec929480480fcb8fa28f5a00b3a51a3424143e3e93e588
 G_RUNNER = ROOT / "scripts/training/run_taiji_n1_plan162g_training_thread_scaling_benchmark.py"
 G_RUNNER_SHA256 = "91c5ca22a6c7db69692319b1d1ac274acebae932bd83c8234ec3749767aa0ed3"
 G_PLAN = ROOT / "plans/reference/PLAN-N1-162G_training_thread_scaling_benchmark_20261020.md"
-G_PLAN_SHA256 = "a6ff0f26ae3548c706e0e99c464a496d14dde298a75aa116943c9e5624c26ad9"
+G_PLAN_SHA256 = "4d427329db7705f32ba30b3a23e868efd49c18dc79d8018812617d44a44584f7"
 G_ATTEMPT = ROOT / "reports/taiji_n1_plan162g_training_thread_scaling_attempt_20261020.json"
 G_ATTEMPT_SHA256 = "5859304fff227aea2cbbcf761e3a1eb787853e73a98b40261b5411f830f25702"
 G_PROGRESS = ROOT / "reports/taiji_n1_plan162g_training_thread_scaling_progress_20261020.jsonl"

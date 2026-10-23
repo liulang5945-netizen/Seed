@@ -10,6 +10,13 @@
       "reason": "N2-C1 那次复跑换了文件名（带 `_n2c1` 代次后缀）；预注册载体格里写的是预测名。",
       "source": "plans/reference/PLAN-N2-01_consolidation_powerup_prereg_20261007.md §追加（2026-10-13 ㊵-782）",
       "recorded_on": "2026-10-13"
+    },
+    {
+      "superseded": "reports/taiji_n1_plan150_v27_length_robust_training_result_20261020.json",
+      "successor": "reports/taiji_n1_plan150_v27_length_result_20261020.json",
+      "reason": "N1-150 结果件定名去掉了 `robust_training` 中段；计划草稿保留旧名。",
+      "source": "plans/reference/PLAN-N1-150_matched_long_context_training_continuation_draft_20261020.md（2026-10-23 登记）",
+      "recorded_on": "2026-10-23"
     }
   ]
 }

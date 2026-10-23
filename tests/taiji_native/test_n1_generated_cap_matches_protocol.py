@@ -27,7 +27,10 @@ PAIRED_FILES = 3
 #: `5aea3fbef` 新建的 `eval_taiji_n1_input_factorial_diagnostic.py`（`:344` 处 `generate_trace(..., 64)`），
 #: 落在 DEBT-G150"字面量仍是真源头、协议键仍无消费处"那半未覆盖段里 ⇒ 计数照实抬，件名写在这里，
 #: 谁把它改成读协议键就把它从这一档里减掉（减了这条测会红，那是正确的红，见 test 里的负对照）。
-CAP_ONLY_FILES = 10
+#: 2026-10-23 抬到 16：新增 6 枚仍只含 `generate_trace(..., 8|32|64)` 字面量、无协议键的审计/评测件：
+#: audit_taiji_n1_{contextual_question,local_question_binding,question_alignment,residual_question,
+#: train_content_read}.py 与 eval_taiji_n1_v13_v14_full_context_source_mask.py；字面量取值仍 ⊆ {8,32,64}，0 mismatch。
+CAP_ONLY_FILES = 16
 PROTOCOL_ONLY_FILES = 1
 LITERAL_CAP_VALUES = {8, 32, 64}
 

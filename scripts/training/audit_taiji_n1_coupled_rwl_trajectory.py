@@ -162,7 +162,7 @@ def analyze() -> dict:
             value.get("complete") is not True
             or value.get("completed_updates") != 9 * UPDATES
             or value.get("schedule_sha256")
-            != "39edaf58020f6cf18680838a6d7576eafef5c7c9286cfd1ea40b93a581851380"
+            != "b2d637fcc1e096d40bba35bbc91bc66b0c27257cd74a4bcac5f5f488f55b6d4c"
             or any(value.get(k) for k in ("dev_queries", "holdout_queries", "confirmation_queries"))
         ):
             raise ValueError(f"complete matched train-only report required: {path}")

@@ -24,6 +24,6 @@
 - Runner：`scripts/training/run_taiji_n1_plan151_train_score_ledger_recovery.py`
 - 合同测试：`tests/taiji_native/test_n1_plan151_train_score_ledger_recovery_contract.py`
 - Readiness：`reports/taiji_n1_plan151_train_score_ledger_recovery_readiness_20261020.json`
-- 恢复前置：`reports/taiji_n1_plan151_train_score_ledger_recovery_preflight_20261020.json`
-- Attempt：`reports/taiji_n1_plan151_train_score_ledger_recovery_attempt_20261020.json`
-- 完整逐题结果：`reports/taiji_n1_plan151_train_score_ledger_recovery_result_20261020.json`
+- 恢复前置（`--out-report`；2026-10-23 标注：计划输出，未产出）：`reports/taiji_n1_plan151_train_score_ledger_recovery_preflight_20261020.json`
+- Attempt（`--out-report`；2026-10-23 标注：计划输出，未产出）：`reports/taiji_n1_plan151_train_score_ledger_recovery_attempt_20261020.json`
+- 完整逐题结果（`--out-report`；2026-10-23 标注：计划输出，未产出）：`reports/taiji_n1_plan151_train_score_ledger_recovery_result_20261020.json`

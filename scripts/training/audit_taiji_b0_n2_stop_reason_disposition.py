@@ -212,6 +212,385 @@ EXPECTED_CONSUMERS: tuple[dict[str, str], ...] = (
     },
 )
 
+ADDITIONAL_CONSUMERS: tuple[dict[str, str], ...] = tuple(
+    {"path": path, "class": kind, "why": why}
+    for path, kind, why in (
+        (
+            "scripts/training/_taiji_n1_plan118_lossless_receipt.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: and row["stop_reason"] == "boundary"',
+        ),
+        (
+            "scripts/training/_taiji_n1_plan120_lossless_receipt.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: and row["stop_reason"] == "boundary"',
+        ),
+        (
+            "scripts/training/_taiji_n1_transition_factorial_training_receipt.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: and row["stop_reason"] == "boundary"',
+        ),
+        (
+            "scripts/training/analyze_taiji_n1_plan161_question_surface_itemwise_attribution.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: if raw == target and row.get("stop_reason") == "boundary":',
+        ),
+        (
+            "scripts/training/analyze_taiji_n1_plan162b_train_only_itemwise_attribution.py",
+            "record_only",
+            '2026-10-23 live scan: "control_stop_reason": control.get("stop_reason"),',
+        ),
+        (
+            "scripts/training/analyze_taiji_n1_plan162d_transition_output_type_attribution.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: return "correct_exact" if stop_reason == "boundary" else "target_bytes_bad_stop"',
+        ),
+        (
+            "scripts/training/analyze_taiji_n1_position_weight_history_crossover_session_scope.py",
+            "record_only",
+            '2026-10-23 live scan: "stop_reason",',
+        ),
+        (
+            "scripts/training/analyze_taiji_n1_transition_operator_error_attribution.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: return "correct" if row.get("stop_reason") == "boundary" else "expected_text_non_boundary"',
+        ),
+        (
+            "scripts/training/attribute_taiji_n1_confirmation_errors_run89.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: row["stop_reason"] == "boundary"',
+        ),
+        (
+            "scripts/training/audit_taiji_n1_entity_binding.py",
+            "judgement (raw+stop identity)",
+            '2026-10-23 live scan: for k in ("raw_hex", "stop_reason", "teacher_tokens_correct")',
+        ),
+        (
+            "scripts/training/audit_taiji_n1_fidelity_content_read.py",
+            "judgement (branch/comparison)",
+            '2026-10-23 live scan: if (prediction["raw_hex"], prediction["stop_reason"]) != (',
+        ),
+        (
+            "scripts/training/audit_taiji_n1_iterative_content_read.py",
+            "judgement (branch/comparison)",
+            '2026-10-23 live scan: if (prediction["raw_hex"], prediction["stop_reason"]) != (',
+        ),
+        (
+            "scripts/training/audit_taiji_n1_native_evidence_train_fit.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: "free_exact": trace.raw == target and trace.stop_reason == "boundary",',
+        ),
+        (
+            "scripts/training/audit_taiji_n1_plan162f_transcript_integrity.py",
+            "record_only",
+            '2026-10-23 live scan: str(row["stop_reason"]),',
+        ),
+        (
+            "scripts/training/audit_taiji_n1_question_fusion.py",
+            "judgement (raw+stop identity)",
+            '2026-10-23 live scan: all(row[k] == old[k] for k in ("raw_hex", "stop_reason", "teacher_tokens_correct"))',
+        ),
+        (
+            "scripts/training/audit_taiji_n1_relation_seed_drift.py",
+            "judgement (branch/comparison)",
+            '2026-10-23 live scan: stop_reasons=dict(Counter(r["stop_reason"] for r in subset)),',
+        ),
+        (
+            "scripts/training/audit_taiji_n1_train_content_read.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: "exact": trace.raw == item["answer"].encode() and trace.stop_reason == "boundary",',
+        ),
+        (
+            "scripts/training/audit_taiji_n1_transfer_binding.py",
+            "judgement (raw+stop identity)",
+            '2026-10-23 live scan: for k in ("raw_hex", "stop_reason", "teacher_tokens_correct")',
+        ),
+        (
+            "scripts/training/build_taiji_n1_v15_after_n132.py",
+            "record_only",
+            '2026-10-23 live scan: "prior_stop_reasons_zh": [',
+        ),
+        (
+            "scripts/training/diagnose_taiji_n1_fresh_training_logs.py",
+            "record_only",
+            "2026-10-23 live scan: confusion[f\"{item['answer']}->{label}/{row['stop_reason']}\"] += 1",
+        ),
+        (
+            "scripts/training/diagnose_taiji_n1_fresh_transition_factorial.py",
+            "record_only",
+            '2026-10-23 live scan: "stop_reason",',
+        ),
+        (
+            "scripts/training/diagnose_taiji_n1_position_weight_history_crossover.py",
+            "record_only",
+            '2026-10-23 live scan: "stop_reason",',
+        ),
+        (
+            "scripts/training/eval_taiji_n1_fresh_frozen_confirmation.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: free_exact=trace.raw == target and trace.stop_reason == "boundary",',
+        ),
+        (
+            "scripts/training/eval_taiji_n1_frozen_v4_confirmation.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: free_exact=trace.raw == target and trace.stop_reason == "boundary",',
+        ),
+        (
+            "scripts/training/eval_taiji_n1_input_factorial_diagnostic.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: "free_exact": trace.raw == target and trace.stop_reason == "boundary",',
+        ),
+        (
+            "scripts/training/eval_taiji_n1_transition_factorial_confirmation.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: free_exact=trace.raw == target and trace.stop_reason == "boundary",',
+        ),
+        (
+            "scripts/training/eval_taiji_n1_v13_v14_full_context_question_binding_mask.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: free_exact=trace.raw == target and trace.stop_reason == "boundary",',
+        ),
+        (
+            "scripts/training/eval_taiji_n1_v13_v14_full_context_source_mask.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: audit["boundary_native"] = trace.stop_reason == "boundary"',
+        ),
+        (
+            "scripts/training/eval_taiji_n1_v17_matched_context_length.py",
+            "record_only",
+            '2026-10-23 live scan: "stop_reason": row["stop_reason"],',
+        ),
+        (
+            "scripts/training/eval_taiji_n1_v18_target_position_context_order.py",
+            "record_only",
+            '2026-10-23 live scan: "stop_reason": row["stop_reason"],',
+        ),
+        (
+            "scripts/training/eval_taiji_n1_v19_neighbor_distance_context_interference.py",
+            "record_only",
+            '2026-10-23 live scan: "stop_reason": row["stop_reason"],',
+        ),
+        (
+            "scripts/training/eval_taiji_n1_v20_neighbor_distance_dose_curve.py",
+            "record_only",
+            '2026-10-23 live scan: "stop_reason": row["stop_reason"],',
+        ),
+        (
+            "scripts/training/eval_taiji_n1_v25_abstention_after_n147.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: "free_exact": trace.raw == target and trace.stop_reason == "boundary",',
+        ),
+        (
+            "scripts/training/eval_taiji_n1_v26_abstention_length_after_n148.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: "free_exact": trace.raw == target and trace.stop_reason == "boundary",',
+        ),
+        (
+            "scripts/training/run_taiji_n1_address_consistency.py",
+            "judgement (raw+stop identity)",
+            '2026-10-23 live scan: all(r[k] == old[r["id"]][k] for k in ("raw_hex", "stop_reason", "teacher_tokens_correct"))',
+        ),
+        (
+            "scripts/training/run_taiji_n1_bound_consistency.py",
+            "judgement (raw+stop identity)",
+            '2026-10-23 live scan: all(r[k] == old[r["id"]][k] for k in ("raw_hex", "stop_reason", "teacher_tokens_correct"))',
+        ),
+        (
+            "scripts/training/run_taiji_n1_contextual_question.py",
+            "judgement (raw+stop identity)",
+            '2026-10-23 live scan: all(r[k] == old[r["id"]][k] for k in ("raw_hex", "stop_reason", "teacher_tokens_correct"))',
+        ),
+        (
+            "scripts/training/run_taiji_n1_local_question.py",
+            "judgement (raw+stop identity)",
+            '2026-10-23 live scan: all(r[k] == old[r["id"]][k] for k in ("raw_hex", "stop_reason", "teacher_tokens_correct"))',
+        ),
+        (
+            "scripts/training/run_taiji_n1_local_relation.py",
+            "judgement (raw+stop identity)",
+            '2026-10-23 live scan: all(r[k] == old[r["id"]][k] for k in ("raw_hex", "stop_reason", "teacher_tokens_correct"))',
+        ),
+        (
+            "scripts/training/run_taiji_n1_native_evidence_paired.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: "exact": trace.raw == item["answer"].encode() and trace.stop_reason == "boundary",',
+        ),
+        (
+            "scripts/training/run_taiji_n1_plan153_v28_fresh_context_length_confirmation.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: "free_exact": trace.raw == target and trace.stop_reason == "boundary",',
+        ),
+        (
+            "scripts/training/run_taiji_n1_plan155_short_unknown_context_length_training.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: "free_exact": trace.raw == target and trace.stop_reason == "boundary",',
+        ),
+        (
+            "scripts/training/run_taiji_n1_plan162f_transition_template_crossover_diagnostic.py",
+            "record_only",
+            '2026-10-23 live scan: "stop_reason": row["stop_reason"],',
+        ),
+        (
+            "scripts/training/run_taiji_n1_reader_transfer.py",
+            "judgement (raw+stop identity)",
+            '2026-10-23 live scan: all(r[k] == old[r["id"]][k] for k in ("raw_hex", "stop_reason", "teacher_tokens_correct"))',
+        ),
+        (
+            "scripts/training/run_taiji_n1_relative_continuation.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: "free_exact": trace.raw == target and trace.stop_reason == "boundary",',
+        ),
+        (
+            "scripts/training/run_taiji_n1_relative_margin.py",
+            "judgement (raw+stop identity)",
+            '2026-10-23 live scan: all(r[k] == old[r["id"]][k] for k in ("raw_hex", "stop_reason", "teacher_tokens_correct"))',
+        ),
+        (
+            "scripts/training/run_taiji_n1_relative_paired.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: "free_exact": trace.raw == target and trace.stop_reason == "boundary",',
+        ),
+        (
+            "scripts/training/run_taiji_n1_renaming.py",
+            "judgement (raw+stop identity)",
+            '2026-10-23 live scan: all(r[k] == old[r["id"]][k] for k in ("raw_hex", "stop_reason", "teacher_tokens_correct"))',
+        ),
+        (
+            "scripts/training/run_taiji_n1_v27_length_robust_training_after_n149.py",
+            "judgement (boundary)",
+            '2026-10-23 live scan: "free_exact": trace.raw == target and trace.stop_reason == "boundary",',
+        ),
+        (
+            "taiji/position_evidence_reference.py",
+            "record_only",
+            "2026-10-23 live scan: stop_reason: str",
+        ),
+        (
+            "tests/taiji_native/test_n1_plan135_matched_context_length_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: "stop_reason": "boundary" if exact else "limit",',
+        ),
+        (
+            "tests/taiji_native/test_n1_plan136_target_position_context_order_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: "stop_reason": "boundary" if exact else "limit",',
+        ),
+        (
+            "tests/taiji_native/test_n1_plan137_neighbor_distance_context_interference_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: "stop_reason": "boundary" if exact else "limit",',
+        ),
+        (
+            "tests/taiji_native/test_n1_plan138_neighbor_distance_dose_curve_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: "stop_reason": "boundary" if exact else "limit",',
+        ),
+        (
+            "tests/taiji_native/test_n1_plan148_v25_abstention_scorer_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: output=b"abcdef", raw=b"abcdef", stop_reason="boundary", generated_steps=7',
+        ),
+        (
+            "tests/taiji_native/test_n1_plan161_question_surface_itemwise_attribution_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: row = {"raw_hex": b"oldval".hex(), "stop_reason": "boundary", "context_length": 8}',
+        ),
+        (
+            "tests/taiji_native/test_n1_plan162b_train_only_itemwise_attribution_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: "stop_reason": "boundary",',
+        ),
+        (
+            "tests/taiji_native/test_n1_plan162f1_transcript_integrity_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: "stop_reason": "boundary",',
+        ),
+        (
+            "tests/taiji_native/test_n1_plan162f_transition_template_crossover_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: "stop_reason": "boundary",',
+        ),
+        (
+            "tests/taiji_native/test_n1_run91_error_attribution_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: assert shape_of(stop_reason="cap", generated_steps=64, free_exact=False) == (',
+        ),
+        (
+            "tests/taiji_native/test_native_fresh_frozen_confirmation_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: and measured[0]["stop_reason"] == "boundary"',
+        ),
+        (
+            "tests/taiji_native/test_native_fresh_training_log_diagnostic_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: stop_reason="boundary" if free else "cap",',
+        ),
+        (
+            "tests/taiji_native/test_native_fresh_transition_factorial_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: stop_reason="boundary",',
+        ),
+        (
+            "tests/taiji_native/test_native_frozen_v4_confirmation_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: and measured[0]["stop_reason"] == "boundary"',
+        ),
+        (
+            "tests/taiji_native/test_native_iterative_evidence_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: assert trace.raw == b"" and trace.stop_reason == "boundary"',
+        ),
+        (
+            "tests/taiji_native/test_native_question_fusion_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: row = dict(raw_hex="61", stop_reason="boundary", teacher_tokens_correct=2, teacher_ce=0.5)',
+        ),
+        (
+            "tests/taiji_native/test_native_relation_seed_drift_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: stop_reason="boundary",',
+        ),
+        (
+            "tests/taiji_native/test_native_transition_factorial_calibration_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: stop_reason="boundary",',
+        ),
+        (
+            "tests/taiji_native/test_native_transition_factorial_confirmation_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: and measured[0]["stop_reason"] == "boundary"',
+        ),
+        (
+            "tests/taiji_native/test_native_transition_factorial_paired_training_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: stop_reason="boundary",',
+        ),
+        (
+            "tests/taiji_native/test_native_transition_factorial_training_receipt_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: stop_reason="boundary",',
+        ),
+        (
+            "tests/taiji_native/test_position_evidence_reference_contract.py",
+            "judgement (test assertion)",
+            '2026-10-23 live scan: assert trace.stop_reason == "boundary" and trace.generated_steps == 1',
+        ),
+    )
+)
+EXPECTED_CONSUMERS = EXPECTED_CONSUMERS + ADDITIONAL_CONSUMERS
+
+PENDING_FRONTIER_CONSUMERS: dict[str, str] = {
+    "scripts/training/evaluate_taiji_r2_daily_dialogue_recovery_v2.py": "2026-10-23 R2/new-front consumer; leave to that line: f\"**{labels[endpoint_id]}**（{output['stop_reason']}，{output['generated_bytes_length']}字节）\",",
+    "scripts/training/run_taiji_r2_daily_dialogue_continuation.py": '2026-10-23 R2/new-front consumer; leave to that line: "stop_reason": stop,',
+    "scripts/training/run_taiji_r2_daily_dialogue_continuation_extension.py": '2026-10-23 R2/new-front consumer; leave to that line: if stopped.get("stop_reason") != "throughput_projection_exceeds_remaining_budget":',
+    "scripts/training/run_taiji_r2_daily_dialogue_full_turn_pretraining.py": "2026-10-23 R2/new-front consumer; leave to that line: text, utf8_valid, no_replacement, boundary, stop_reason = trainer._generated_text(raw)",
+    "scripts/training/run_taiji_r2_daily_dialogue_material_comparison.py": "2026-10-23 R2/new-front consumer; leave to that line: text, valid_utf8, no_replacement, boundary, stop_reason = trainer._generated_text(raw)",
+    "tests/taiji_native/test_r2_daily_dialogue_recovery_v2_evaluation_contract.py": '2026-10-23 R2/new-front consumer; leave to that line: "stop_reason": "end_marker",',
+    "tests/taiji_native/test_r2_dialogue_continuation_extension_runner_contract.py": '2026-10-23 R2/new-front consumer; leave to that line: assert events[0]["stop_reason"] == "cumulative_cpu_ceiling_exhausted"',
+    "tests/taiji_native/test_r2_dialogue_continuation_source_revision_contract.py": '2026-10-23 R2/new-front consumer; leave to that line: "stop_reason": "throughput_projection_exceeds_remaining_budget",',
+    "scripts/training/run_taiji_r2_resume.py": '2026-10-23 R2/new-front consumer; leave to that line: self.pending_stop_details = {"stop_reason": "work_unit_refused", ...}',
+}
+
 #: Every place a stop reason participates in a *decision*.  Each marker must still
 #: appear in its file; the ``safe_because`` field is the review conclusion.
 JUDGEMENT_SITES: tuple[dict[str, str], ...] = (
@@ -383,11 +762,14 @@ def live_consumers() -> set[str]:
 
 
 def disposition() -> dict[str, Any]:
-    expected = {row["path"] for row in EXPECTED_CONSUMERS}
+    registered = {row["path"] for row in EXPECTED_CONSUMERS}
+    pending = set(PENDING_FRONTIER_CONSUMERS)
+    expected = registered | pending
     live = live_consumers()
 
     added = sorted(live - expected)
     removed = sorted(expected - live)
+    pending_absent = sorted(pending - live)
 
     site_checks: list[dict[str, Any]] = []
     for site in JUDGEMENT_SITES:
@@ -423,6 +805,11 @@ def disposition() -> dict[str, Any]:
         "consumer_count": len(live),
         "consumer_count_in_hardening_report": 11,
         "consumer_count_now": len(live),
+        "registered_consumer_count": len(registered),
+        "pending_frontier_consumers": [
+            {"path": path, "why": PENDING_FRONTIER_CONSUMERS[path]} for path in sorted(pending)
+        ],
+        "pending_frontier_absent": pending_absent,
         "count_was_stale": bool(len(live) != 11),
         "added_since_hardening_report": [
             row["path"] for row in EXPECTED_CONSUMERS if row.get("added_after_hardening_report")
@@ -440,7 +827,9 @@ def disposition() -> dict[str, Any]:
         "judgement_sites": site_checks,
         "missing_judgement_sites": missing_sites,
         "judgement_sites_intact": not missing_sites,
-        "review_checks_passed": not missing_sites and not added and not removed,
+        "review_checks_passed": (
+            not missing_sites and not added and not removed and not pending_absent
+        ),
         "consumers": list(EXPECTED_CONSUMERS),
         "classification_counts": {
             "record_only_files": sum(row["class"] == "record_only" for row in EXPECTED_CONSUMERS),
@@ -464,7 +853,7 @@ def disposition() -> dict[str, Any]:
             "not a success label and by itself proves neither safety nor member incapability. "
             "The N2 semantics are frozen in the WP-2 preregistration; runtime changes "
             "still require WP-3's five exits"
-            if not missing_sites and not added and not removed
+            if not missing_sites and not added and not removed and not pending_absent
             else "the review surface changed; re-disposition before landing"
         ),
     }

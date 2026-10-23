@@ -38,7 +38,7 @@ def test_v16_face_audit_rejects_wrong_answer_direction() -> None:
 
 
 def test_v16_source_union_is_bound_to_consumed_v15_and_frozen_endpoints() -> None:
-    names, words, source_hashes, counts, endpoints = v16._prior_sources()
+    names, words, source_hashes, counts, endpoints = v16._prior_sources(require_unused_seed=False)
 
     assert len(names) == 7938
     assert len(words) == 6288
@@ -46,8 +46,14 @@ def test_v16_source_union_is_bound_to_consumed_v15_and_frozen_endpoints() -> Non
     assert len(endpoints) == 12
     assert sum(item["source"] == "N1-132" for item in endpoints) == 3
     assert sum(item["source"] == "N1-120" for item in endpoints) == 9
-    assert not v16.FACE.exists()
-    assert not v16.RUN_REPORT.exists()
+    assert v16.FACE.is_relative_to(v16.ROOT)
+    assert v16.RUN_REPORT.is_relative_to(v16.ROOT)
+    if v16.RUN_REPORT.exists():
+        run_report = v16.read_json(v16.RUN_REPORT)
+        assert run_report.get("complete") is True
+        assert v16.seal_ast.receipt_binding_matches(run_report.get("face_sha256"), v16.FACE)
+    else:
+        assert not v16.FACE.exists()
 
 
 def test_v16_direction_position_summary_keeps_full_cell_denominator() -> None:

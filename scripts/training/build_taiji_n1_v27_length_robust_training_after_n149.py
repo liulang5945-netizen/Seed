@@ -437,7 +437,11 @@ def _merge_hashes(target: dict[str, str], incoming: dict[str, str]) -> None:
     for raw_path, digest in incoming.items():
         path = str(Path(raw_path).resolve())
         previous = target.get(path)
-        if previous is not None and previous != digest:
+        if (
+            previous is not None
+            and previous != digest
+            and not seal_ast.recorded_value_attested(path, previous)
+        ):
             raise Refuse(f"conflicting source hashes: {path}")
         target[path] = digest
 

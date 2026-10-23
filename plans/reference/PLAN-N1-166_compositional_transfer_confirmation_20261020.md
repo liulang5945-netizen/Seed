@@ -57,5 +57,5 @@ N1-166A与N1-166B各生成一张独立face，使用不同随机种子和互不�
 - `scripts/training/score_taiji_n1_plan166_transfer_family_b.py`
 - `plans/manifests/n1_plan166_transfer_family_a_seed166101_20261020.json`
 - `plans/manifests/n1_plan166_transfer_family_b_seed166202_20261020.json`
-- `reports/taiji_n1_plan166_compositional_transfer_readiness_20261020.json`
-- `reports/taiji_n1_plan166_compositional_transfer_result_20261020.json`
+- 计划输出（`--out-report`；2026-10-23 标注：未产出）：`reports/taiji_n1_plan166_compositional_transfer_readiness_20261020.json`
+- 计划输出（`--out-report`；2026-10-23 标注：未产出）：`reports/taiji_n1_plan166_compositional_transfer_result_20261020.json`

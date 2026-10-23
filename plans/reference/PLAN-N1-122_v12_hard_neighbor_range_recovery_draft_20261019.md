@@ -48,5 +48,5 @@ Maximum query count is 540. The independent cumulative CPU ceiling is 600 second
 - Face checks: `reports/taiji_n1_v12_after_n121_face_checks_20261019.json`.
 - Range: `reports/taiji_n1_v12_after_n121_range_20261019.json`.
 - Range attempt: `reports/taiji_n1_v12_after_n121_range_20261019_attempt.json`.
-- Confirmation, only if range passes: `reports/taiji_n1_v12_after_n121_confirmation_20261019.json`.
-- Confirmation attempt, only if range passes: `reports/taiji_n1_v12_after_n121_confirmation_20261019_attempt.json`.
+- Confirmation, only if range passes（`--out-report`；2026-10-23 标注：未产出）: `reports/taiji_n1_v12_after_n121_confirmation_20261019.json`.
+- Confirmation attempt, only if range passes（`--out-report`；2026-10-23 标注：未产出）: `reports/taiji_n1_v12_after_n121_confirmation_20261019_attempt.json`.

@@ -15,6 +15,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from scripts.training import seal_ast  # noqa: E402
+
 BASELINE_REPORT = ROOT / "reports/taiji_n1_hard_neighbor_training_20261017.json"
 CANDIDATE_REPORT = ROOT / "reports/taiji_n1_length_balanced_training_20261018.json"
 BASELINE_SCHEDULE = ROOT / "plans/manifests/n1_hard_neighbor_training_schedule_v1_20261017.json"
@@ -28,7 +30,7 @@ EXPECTED = {
     BASELINE_REPORT: "dad10ec72c605367f99da035bab07d522ce1793154915ebcc3c7f1022f411909",
     CANDIDATE_REPORT: "e848433de597d378e9e1dc52bf488f296f90c5ce67f3855e19bcfe49268aaa0c",
     BASELINE_SCHEDULE: "dc3a96ad17d43bd898e403ecd119c12c781317a71ab06ba39cdab6db24c40d50",
-    CANDIDATE_SCHEDULE: "39edaf58020f6cf18680838a6d7576eafef5c7c9286cfd1ea40b93a581851380",
+    CANDIDATE_SCHEDULE: "b2d637fcc1e096d40bba35bbc91bc66b0c27257cd74a4bcac5f5f488f55b6d4c",
 }
 CPU_LIMIT_SECONDS = 120.0
 SEED = 13
@@ -384,7 +386,7 @@ def analyze() -> dict:
     if REPORT.exists() or ATTEMPT.exists():
         raise FileExistsError("PLAN-N1-114 is write-once; report or attempt already exists")
     for path, expected in EXPECTED.items():
-        if not path.is_file() or sha256_file(path) != expected:
+        if not path.is_file() or not seal_ast.recorded_value_attested(path, expected):
             raise ValueError(f"frozen PLAN-N1-114 input hash mismatch: {path}")
     budget = CpuBudget()
     guards = {

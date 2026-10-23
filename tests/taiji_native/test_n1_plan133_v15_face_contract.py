@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from collections import Counter
 
+import pytest
+
 from scripts.training import build_taiji_n1_v14_after_n123 as v14
 from scripts.training import build_taiji_n1_v15_after_n132 as v15
 
@@ -52,7 +54,7 @@ def test_v15_face_generation_is_deterministic() -> None:
 
 
 def test_v15_source_union_revalidates_consumed_v14_inputs_and_endpoint_set() -> None:
-    names, words, sources, counts = v15._prior_sources_and_union()
+    names, words, sources, counts = v15._prior_sources_and_union(require_unused_seed=False)
     endpoints = v15._endpoint_specs()
 
     assert len(names) == 7308
@@ -64,8 +66,19 @@ def test_v15_source_union_revalidates_consumed_v14_inputs_and_endpoint_set() -> 
     assert len(endpoints) == 12
     assert sum(endpoint["source"] == "N1-120" for endpoint in endpoints) == 9
     assert sum(endpoint["source"] == "N1-132" for endpoint in endpoints) == 3
-    assert not v15.SOURCE_EXCLUSIONS.exists()
-    assert not v15.FACE.exists()
+    assert v15.SOURCE_EXCLUSIONS.is_relative_to(v15.ROOT)
+    assert v15.FACE.is_relative_to(v15.ROOT)
+    if v15.FACE.exists():
+        face = v15.read_json(v15.FACE)
+        assert face.get("seed") == 115
+        assert face.get("schema") == "n1-hard-neighbor-v15-confirmation-v1"
+    else:
+        assert not v15.SOURCE_EXCLUSIONS.exists()
+
+
+def test_v15_source_union_still_refuses_a_consumed_seed() -> None:
+    with pytest.raises(ValueError, match="硬邻居账本出现"):
+        v15._prior_sources_and_union()
 
 
 def test_v15_face_audit_rejects_prior_material_and_missing_fixed_answer_exclusions() -> None:

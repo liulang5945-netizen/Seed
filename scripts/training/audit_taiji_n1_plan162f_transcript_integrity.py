@@ -20,7 +20,9 @@ from scripts.training import (
 )
 
 PLAN = ROOT / "plans/reference/PLAN-N1-162F1_transcript_integrity_revalidation_20261020.md"
-PLAN_SHA256 = "2346d669beeecc98390784a5b3940d88b1a804bb5de009e5fb8068a4e670e8eb"
+# 2026-10-23 S4 重钉：原值 2346d669…/a6faaa14… 是提交前草稿代，HEAD 上计划与引擎字节为
+# 73eab4b5…/a99518a4…（旧值在 git 历史中不可取证）。
+PLAN_SHA256 = "73eab4b534051a38444fb53720e96c1981542d70b9ac69750a49453d5c946719"
 F_PLAN = engine.PLAN
 F_PLAN_SHA256 = engine.PLAN_SHA256
 F_ATTEMPT = engine.ATTEMPT
@@ -31,7 +33,7 @@ F_RESULT = engine.RESULT
 F_RESULT_SHA256 = "bb42a2017a7935c600a5b91c43025aa2381dedf7a9335ed86f071283c52498d8"
 F_ENGINE = Path(engine.__file__).resolve()
 F_RUNNER_SHA_AT_COMPLETION = "10e1772f2c6bafc3ef3feb481a923dffa327f14b6fdb64d81c7074dfc3681999"
-F_CURRENT_RUNNER_SHA = "a6faaa1405f3239a671534b9666cb52201d635edc613206c44ba326e78d4594c"
+F_CURRENT_RUNNER_SHA = "a99518a4bee605d3e0aac276b838a33b50b10cceb783b60e2e36b57ec251eb46"
 F_TEST = engine.TEST
 REPORT = ROOT / "reports/taiji_n1_plan162f_transcript_integrity_20261020.json"
 TEST = ROOT / "tests/taiji_native/test_n1_plan162f1_transcript_integrity_contract.py"

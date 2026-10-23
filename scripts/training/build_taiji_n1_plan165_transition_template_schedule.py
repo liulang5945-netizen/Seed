@@ -13,6 +13,7 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.training import build_taiji_n1_plan163_transition_template_schedule as n163_builder
 from scripts.training import run_taiji_n1_plan162b_question_surface_matched_continuation as n162
+from scripts.training import seal_ast
 
 PLAN = ROOT / "plans/reference/PLAN-N1-165_transition_template_mid_dose_calibration_20261020.md"
 PLAN_SHA256 = "62ab1d2568f4141be239dff8e15b2ca6d7d27614c6d7a651e10490a61e636f8c"
@@ -211,7 +212,7 @@ def build() -> dict:
         PROGRESS163.resolve(): N163_PROGRESS_SHA256,
     }
     for path, expected in fixed_hashes.items():
-        if not path.is_file() or sha256(path) != expected:
+        if not path.is_file() or not seal_ast.verify_path_pin(path, expected):
             raise Refuse(f"N1-165 frozen source SHA differs: {path}")
     if MANIFEST.exists() or READINESS.exists():
         raise FileExistsError("N1-165 schedule/readiness outputs are write-once")
