@@ -1779,3 +1779,15 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 - 串行守护已排队：warm final 出现后 30 秒自动启动 full_turn_1m，full final 后 30 秒启动 fresh_same_capacity；8 小时未见 warm final 则退出。目的＝避免空置产生新的主机尾账，同时保持单臂串行与各自预算/内存门。
 - 队列前 dry-run（不写 manifest、不训练）：full_turn_1m／fresh_same_capacity 的 v4 manifest 均可构建，投影 80,820.9／25,832.7 CPU 秒，`selected_arm_feasible` 与 `global_feasible` 均为 true；说明串行守护启动时不会被投影门挡住。
 - 预算安全复核（warm 27,848 episodes）：当前余额 warm 20,233／full 153,131／fresh 206,834／总计 170,198；三臂到完整终点预计还需 warm 12,784＋full 80,821＋fresh 25,833＝119,438，全部完成后总计仍留 **50,760** CPU 秒缓冲，warm 单臂留 7,449。无需再补额。
+
+### ㊵-1135 【2026-10-23 · 两臂并行实测：第一次因账本快照长锁＋跨臂主机尾账双停；修复后 warm+full 并行成功；保留一项源修订债】
+
+- owner 批准两臂并行。第一次尝试：warm 在 SFT settle 时等账本锁 20 秒超时；full 启动时把自上次快照以来的主机 CPU 差（约 25.2 万秒，含 warm 训练）算到自己头上，判 `cumulative CPU ceiling exhausted before execution`。两条事件均未造成额外账本扣费：summary 仍为 warm 1,578,060／full 1,436,869／fresh 1,383,166。
+- 修复（`2b985255b`）：
+  1. `verified_snapshot` 只在锁内抓取 summary/目标序列，把锚点与整链重放移到锁外；事件文件只追加不可变，新事件不影响已捕获前缀。这样启动不再长时间占全局锁。
+  2. v4 新增 `safe_start_charge`：无活动 reservation 时直接用账本已结算 CPU；只有残留 reservation（真正未知尾）才回退原 host-upper。避免把其他臂/空置主机 CPU 记到恢复臂。
+  3. 契约：`test_two_processes_cannot_overreserve_shared_aggregate_budget` 复跑通过；新增 `test_replays_final_stage_restored_as_a_settlement`、`test_safe_start_charge_uses_ledger_after_a_settled_stop`；相关 55 支通过。
+- launch 血缘：warm 旧 v4 manifest、full 失败启动 manifest 通过“历史声明源”映射继续可核验；当前源则按新字节校验。真实 reports 树识别 full 4／warm 7／fresh 2 个 launch。
+- 重试结果：warm 与 full 同时恢复成功，warm 进入 SFT（约 8/525），full 进入预训练（约 17,009/30,096）；最多两臂，未启动 fresh。
+- **保留债**：受来源修订绑定的 `test_guard_respects_per_arm_reserve_and_actual_settlement_cap` 在 v1.5 激活后失败，因为它在 `_configure` 前用 `PER_ARM_CPU_LIMIT`（现为1.59M）构造 charge，而 `initialize_ledger` 用 base 1.5M 校验。该文件是 source revision 核心绑定源，不能直接改；需下一轮 source revision 把它改为 `BASE_PER_ARM_CPU_LIMIT`。生产 v4 路径不受影响，但这是已知 CI 债，不在本轮收官前修。
+- 下一格：盯住 warm final，随后启动 fresh 与 full 并行；full 继续。所有启动仍走 v4 与 v1.5 门。

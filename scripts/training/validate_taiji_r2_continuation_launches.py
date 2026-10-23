@@ -95,7 +95,7 @@ FAST_LAUNCH_V4_SOURCE_SHA256 = {
     "scripts/training/run_taiji_r2_checkpoint_resume_adapter.py": "fce64448dc8d9d49104509c1a1cd5a4f4beeb80f5ee7ea74c440a2c118ae34b5",
     "scripts/training/taiji_r2_target_update_projection.py": "c7a2d0821b59a35fc5beca94edab557e2c201b04a028311a0008091209d1aeba",
     "tests/taiji_native/test_r2_fast_ledger_resume_contract.py": "839e4f8bb85a7ce816cae33fafe185761f298717cd58a08807b767620a12bcc5",
-    "tests/taiji_native/test_r2_resume_ledger_anchor_contract.py": "e9985a64ffc7a58c1d6b4a30d11b419d7a5bbcb0c7e2fe16e696bfa886a7ae4f",
+    "tests/taiji_native/test_r2_resume_ledger_anchor_contract.py": "107cb6f16202cfca2b4934c6d17d1a694efd815156d3cb556e8954029b9c93bc",
     "tests/taiji_native/test_r2_fast_ledger_resume_v2_contract.py": "3cd27ced8d3daacf52ddecfe4aa589da96240fea7666b9daaf186939f6358dbc",
     "scripts/training/taiji_r2_continuation_budget_amendment_v1_4.py": "0e4e5c186097ec1d66a8f5ab2f674a37803980ce1f70def3baea8e5177643780",
     "tests/taiji_native/test_r2_continuation_budget_amendment_v1_4_contract.py": "d1a3dfb9a227706e10718403fe76db0595d7e3f15ae47b563b24aca0ce07aaf4",
