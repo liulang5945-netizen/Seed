@@ -1,5 +1,7 @@
 # Seed / Taiji 晋级、阶段退出与发布门禁
 
+> 2026-10-23事实复核：根目录现有`ci.yml`和`m7-ci.yml`；后者实际接入Harness build、doc-sync与hygiene。本文2026-10-04“根workflow未接Harness”的条目保留为当时历史，已有后继接线，不能据它判断当前仍为空集；m7-ci不承担完整M7发布验收。本次评审基线4c1ba7f730无已核验的对应远端结果，最近已查询旧提交32b1edc390主CI失败、m7-ci成功，不能跨提交转移结论。来源与运行链接见[项目评审](../../reference/delivery-runs/20261021-n-mainline/artifacts/16-project-review-and-continuous-objective.md)。
+
 > 2026-09-18更新：D1仪器Q1–Q5通过不等于模型能力通过；D2 v4/v5 train-only探针未过学习门，未形成L2/M5新证据，路线复审以03为准。历史六seed读数与缺失产物仍按[设计依据复核](../../reference/M5_DISTILLATION_TOMBSTONE.md)解释。VISION §18补接口/学习责任和设计变量，不追改冻结阈值、final边界或停止条件；本轮计划维护不授权训练。当前HEAD全量CI未核验，文档检查不等于CI通过。
 
 > 更新：2026-09-17。配合 [总阶段地图](01_SCOPE_AND_PHASES.md)；执行顺序只由 [03](03_CURRENT_EXECUTION.md) 决定。规则层级和实施状态见[架构 §0.2/§8.5](../TAIJI_NATIVE_ARCHITECTURE_V1.md)。本文不修改历史冻结实验阈值。

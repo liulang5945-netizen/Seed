@@ -5,7 +5,8 @@
 - 活动入口：`python scripts/training/run_taiji_r2_resume.py`，只续接 warm_start。
 - 当前累计额度：1.55M CPU秒/臂、4.4M 总额，旧账不重置。
 - 2026-10-23 精简决策：删除活动启动链的多版本 manifest 嵌套、重复历史扫描、反复三臂预测否决和 CPU 采样否决，统一 warm 7GiB；保留 checkpoint 与硬预算。真实预检与20项测试通过。
-- 15:00新入口实跑成功：resumed事件61,135；新耐久checkpoint25,024，durable事件61,209；最近episode25,030 / 12,052,192 updates（事件61,221），运行会话62394活跃。
+- 15:24运行快照：warm episode25,402 / 12,273,366 updates（事件62,009），最近耐久25,376 / 12,263,243（事件61,957）；有效单臂余量约8.1k CPU秒，费用与完整终点的缺口风险见03。
+- 2026-10-23项目复核与目标建议：[同一模型真实能力、保持与成本驱动的持续目标](artifacts/16-project-review-and-continuous-objective.md)。本次为建议/计划更新；未创建Goal或改写冻结门。唯一后继工作是趁训练补齐extension评测适配链。
 - [精简产物与剩余事项](artifacts/15-training-system-simplification.md)。下方旧阶段表是历史记录，其运行快照以03为准。
 
 ## 阶段与交付状态
