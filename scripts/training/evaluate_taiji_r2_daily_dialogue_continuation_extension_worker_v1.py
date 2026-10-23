@@ -101,6 +101,14 @@ def _handle_task(
         endpoint = endpoint_specs.get(endpoint_id)
         if endpoint is None:
             raise Refuse("restore endpoint is not in the fixed four-endpoint map")
+        expected_kind = (
+            "parent_baseline" if endpoint_id == "parent_baseline" else "continuation_extension"
+        )
+        if endpoint.get("endpoint_kind") != expected_kind:
+            raise Refuse(f"{endpoint_id} endpoint kind differs from the extension map")
+        lineage_snapshot = str(endpoint.get("lineage_snapshot_sha256", ""))
+        if len(lineage_snapshot) != 64:
+            raise Refuse(f"{endpoint_id} endpoint lineage snapshot is missing")
         if authorization["intent"].get("checkpoint_sha256") != endpoint["sha256"]:
             raise Refuse("restore endpoint SHA differs from the durable parent intent")
         trainer, model_digest = recovery._load_endpoint_trainer(
@@ -125,10 +133,12 @@ def _handle_task(
             "complete": True,
             "equal": True,
             "endpoint_id": endpoint_id,
+            "endpoint_kind": endpoint["endpoint_kind"],
             "stage": "parent_baseline" if endpoint_id == "parent_baseline" else "assistant_sft",
             "path": str(Path(endpoint["path"]).resolve()),
             "sha256": endpoint["sha256"],
             "checkpoint_digest": endpoint["checkpoint_digest"],
+            "lineage_snapshot_sha256": lineage_snapshot,
             "model_digest": model_digest,
             "corpus_digest": corpus_holder["assistant"].digest,
             "episode_count": expected_episodes,

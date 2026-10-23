@@ -7,6 +7,7 @@ from types import SimpleNamespace
 import pytest
 
 from scripts.training import prepare_taiji_r2_continuation_endpoints as m
+from scripts.training import taiji_r2_continuation_evaluation_adapter as adapter
 from scripts.training.validate_taiji_r2_continuation_endpoint import STAGES, EndpointRefuse
 
 
@@ -194,6 +195,34 @@ def test_all_three_metadata_endpoints_require_no_model_or_prompt_access(tmp_path
     assert manifest["launch_provenance"] == launch_provenance
     assert manifest["can_query_dev"] is False
     assert manifest["can_promote"] is False
+
+
+def test_manifest_launch_evidence_is_consumed_by_the_evaluation_adapter(tmp_path, monkeypatch):
+    backend, _ = complete_backend(tmp_path)
+    source = tmp_path / "launch_source.json"
+    source.write_text("{}\n", encoding="utf-8")
+    provenance = {
+        "launches": {
+            arm: [
+                {
+                    "path": f"launch-{arm}.json",
+                    "sha256": "1" * 64,
+                    "start_receipt_sha256": "2" * 64,
+                    "start_bundle_sha256": "3" * 64,
+                }
+            ]
+            for arm in backend.ARMS
+        },
+        "verified_sources": {str(source): hashlib.sha256(source.read_bytes()).hexdigest()},
+    }
+    monkeypatch.setattr(m, "validate_launch_provenance", lambda *args, **kwargs: provenance)
+    manifest = m.metadata_preflight(backend)
+    launch = adapter.launch_evidence(manifest)
+    assert launch["source_revision_sha256"] == manifest["source_revision_sha256"]
+    assert launch["approved_budget"] == {"per_arm": 1_500_000.0, "aggregate": 4_300_000.0}
+    assert launch["ledger_charges"] == {arm: 1_400_005.0 for arm in backend.ARMS}
+    assert launch["verified_ledger_tip_sha256"] == "a" * 64
+    assert str(source.resolve()) in launch["source_hashes"]
 
 
 @pytest.mark.parametrize("drift", ["incomplete", "duplicate_completion", "writer", "parent"])

@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import sys
 from collections.abc import Callable, Mapping
 from pathlib import Path
@@ -75,6 +76,78 @@ def extension_source_hashes(
             raise AdapterRefuse(f"extension evaluation source is missing: {path}")
         hashes[str(path.resolve())] = hash_file(path)
     return dict(sorted(hashes.items()))
+
+
+def _number(value: Any, label: str) -> float:
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(float(value))
+        or value < 0
+    ):
+        raise AdapterRefuse(f"{label} must be a finite non-negative number")
+    return float(value)
+
+
+def launch_evidence(
+    manifest: Mapping[str, Any], *, hash_file: Callable[[Path], str] = recovery.sha256_file
+) -> dict[str, Any]:
+    """Bind actual launch lineage, ledger tip/charges and approved budget.
+
+    ``prepare_taiji_r2_continuation_endpoints.metadata_preflight`` produces these
+    fields from the verified launch manifests, source revision, boot audit and
+    aggregate ledger.  They must enter the evaluation snapshot: otherwise the
+    endpoint map would be frozen while the launches and their accounting could
+    drift unnoticed.
+    """
+    manifest = _mapping(manifest, "extension endpoint manifest")
+    provenance = _mapping(manifest.get("launch_provenance"), "launch provenance")
+    launches = _mapping(provenance.get("launches"), "launch provenance arms")
+    if set(launches) != set(ARMS):
+        raise AdapterRefuse("launch provenance must cover exactly the three arms")
+    for arm in ARMS:
+        rows = launches[arm]
+        if not isinstance(rows, (list, tuple)) or not rows:
+            raise AdapterRefuse(f"{arm} launch provenance is empty")
+        for row in rows:
+            row = _mapping(row, f"{arm} launch provenance row")
+            _sha(row.get("sha256"), f"{arm} launch manifest sha256")
+            _sha(row.get("start_receipt_sha256"), f"{arm} launch start receipt sha256")
+            _sha(row.get("start_bundle_sha256"), f"{arm} launch start bundle sha256")
+    verified = _mapping(provenance.get("verified_sources"), "verified launch sources")
+    if not verified:
+        raise AdapterRefuse("launch provenance has no verified source bytes")
+    source_hashes: dict[str, str] = {}
+    for raw_path, digest in verified.items():
+        expected = _sha(digest, f"launch source {raw_path}")
+        path = Path(str(raw_path))
+        absolute = path.resolve() if path.is_absolute() else (ROOT / path).resolve()
+        if not absolute.is_file():
+            raise AdapterRefuse(f"launch source is missing: {raw_path}")
+        actual = hash_file(absolute)
+        if actual != expected:
+            raise AdapterRefuse(f"launch source bytes differ: {raw_path}")
+        source_hashes[str(absolute)] = actual
+    tip = _sha(manifest.get("verified_ledger_tip_sha256"), "verified ledger tip")
+    raw_charges = _mapping(manifest.get("ledger_charges"), "ledger charges")
+    if set(raw_charges) != set(ARMS):
+        raise AdapterRefuse("ledger charges must cover exactly the three arms")
+    charges = {arm: _number(raw_charges[arm], f"{arm} charged CPU") for arm in ARMS}
+    raw_budget = _mapping(manifest.get("approved_budget"), "approved budget")
+    per_arm = _number(raw_budget.get("per_arm"), "approved per-arm budget")
+    aggregate = _number(raw_budget.get("aggregate"), "approved aggregate budget")
+    if any(charge > per_arm for charge in charges.values()) or sum(charges.values()) > aggregate:
+        raise AdapterRefuse("ledger charges exceed the approved launch budget")
+    return {
+        "source_revision_sha256": _sha(
+            manifest.get("source_revision_sha256"), "source revision sha256"
+        ),
+        "launch_provenance_sha256": snapshot_sha256(provenance),
+        "verified_ledger_tip_sha256": tip,
+        "ledger_charges": charges,
+        "approved_budget": {"per_arm": per_arm, "aggregate": aggregate},
+        "source_hashes": dict(sorted(source_hashes.items())),
+    }
 
 
 def _mapping(value: Any, label: str) -> Mapping[str, Any]:
@@ -261,8 +334,22 @@ def extension_preflight(
     if manifest is None:
         manifest = endpoints.metadata_preflight()
     endpoint_rows, baseline, arm_records = extension_endpoint_map(manifest, baseline_fn=baseline_fn)
+    launch = launch_evidence(manifest, hash_file=hash_file)
+    lineage_snapshot = launch["launch_provenance_sha256"]
+    endpoint_rows = tuple(
+        dict(
+            row,
+            endpoint_kind=(
+                "parent_baseline"
+                if row["endpoint_id"] == "parent_baseline"
+                else "continuation_extension"
+            ),
+            lineage_snapshot_sha256=lineage_snapshot,
+        )
+        for row in endpoint_rows
+    )
     report_hashes: dict[str, dict[str, str]] = {}
-    source_hashes: dict[str, str] = {}
+    source_hashes: dict[str, str] = dict(launch["source_hashes"])
     for arm in ARMS:
         paths = arm_paths(arm)
         result = Path(paths["extension_result"])
@@ -288,6 +375,7 @@ def extension_preflight(
         "source_hashes": dict(sorted(source_hashes.items())),
         "endpoint_schema": ENDPOINT_SCHEMA,
         "endpoint_manifest_sha256": snapshot_sha256(manifest),
+        "launch": launch,
     }
 
 
@@ -309,6 +397,7 @@ def write_extension_readiness(path: Path, preflight: Mapping[str, Any]) -> dict[
 
 def endpoint_manifest_payload(preflight: Mapping[str, Any]) -> dict[str, Any]:
     """Independent extension schema; never consumed by the frozen evaluator."""
+    launch = preflight["launch"]
     return {
         "schema": ENDPOINT_SCHEMA,
         "manifest_sha256": preflight["endpoint_manifest_sha256"],
@@ -316,13 +405,20 @@ def endpoint_manifest_payload(preflight: Mapping[str, Any]) -> dict[str, Any]:
         "endpoints": [
             {
                 "endpoint_id": row["endpoint_id"],
+                "endpoint_kind": row["endpoint_kind"],
                 "path": str(row["path"]),
                 "sha256": row["sha256"],
                 "checkpoint_digest": row["checkpoint_digest"],
                 "source": row["source"],
+                "lineage_snapshot_sha256": row["lineage_snapshot_sha256"],
             }
             for row in preflight["endpoints"]
         ],
+        "source_revision_sha256": launch["source_revision_sha256"],
+        "launch_provenance_sha256": launch["launch_provenance_sha256"],
+        "verified_ledger_tip_sha256": launch["verified_ledger_tip_sha256"],
+        "ledger_charges": launch["ledger_charges"],
+        "approved_budget": launch["approved_budget"],
         "source_hashes": preflight["source_hashes"],
         "can_promote": False,
     }

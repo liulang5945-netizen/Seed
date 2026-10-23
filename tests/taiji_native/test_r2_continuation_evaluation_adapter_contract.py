@@ -48,6 +48,8 @@ def _stage(path: Path, name: str, episodes: int, updates: int) -> dict:
 
 
 def _manifest(tmp_path: Path) -> dict:
+    launch_source = tmp_path / "launch_manifest.json"
+    launch_source.write_text("{}\n", encoding="utf-8")
     records = {}
     for arm in adapter.ARMS:
         records[arm] = {
@@ -69,10 +71,28 @@ def _manifest(tmp_path: Path) -> dict:
                 ),
             },
         }
+    launches = {
+        arm: [
+            {
+                "path": f"launch-{arm}.json",
+                "sha256": _sha("1"),
+                "start_receipt_sha256": _sha("2"),
+                "start_bundle_sha256": _sha("3"),
+            }
+        ]
+        for arm in adapter.ARMS
+    }
     return {
         "schema": adapter.MANIFEST_SCHEMA,
         "endpoints": records,
         "source_revision_sha256": _sha("c"),
+        "launch_provenance": {
+            "launches": launches,
+            "verified_sources": {str(launch_source): _hash_file(launch_source)},
+        },
+        "verified_ledger_tip_sha256": _sha("7"),
+        "ledger_charges": {arm: 1_400_000.0 for arm in adapter.ARMS},
+        "approved_budget": {"per_arm": 1_550_000.0, "aggregate": 4_400_000.0},
     }
 
 
@@ -86,7 +106,7 @@ def _baseline(tmp_path: Path) -> dict:
 
 
 def _hash_file(path: Path) -> str:
-    return hashlib.sha256(Path(path).name.encode("utf-8")).hexdigest()
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
 def _arm_paths(tmp_path: Path):
@@ -102,6 +122,15 @@ def _arm_paths(tmp_path: Path):
         }
 
     return build
+
+
+def _preflight(tmp_path: Path, manifest: dict) -> dict:
+    return adapter.extension_preflight(
+        manifest,
+        arm_paths=_arm_paths(tmp_path),
+        hash_file=_hash_file,
+        baseline_fn=lambda: _baseline(tmp_path),
+    )
 
 
 def test_extension_map_uses_assistant_sft_final_in_frozen_order(tmp_path: Path) -> None:
@@ -206,6 +235,46 @@ def test_extension_map_rejects_a_restore_receipt_from_another_stage(tmp_path: Pa
     ] = _sha("d")
     with pytest.raises(adapter.AdapterRefuse, match="restore digest"):
         adapter.extension_endpoint_map(manifest, baseline_fn=lambda: _baseline(tmp_path))
+
+
+def test_preflight_binds_launch_provenance_ledger_and_budget(tmp_path: Path) -> None:
+    manifest = _manifest(tmp_path)
+    preflight = _preflight(tmp_path, manifest)
+    launch = preflight["launch"]
+    assert launch["source_revision_sha256"] == _sha("c")
+    assert launch["approved_budget"] == {"per_arm": 1_550_000.0, "aggregate": 4_400_000.0}
+    assert set(launch["ledger_charges"]) == set(adapter.ARMS)
+    source = next(iter(manifest["launch_provenance"]["verified_sources"]))
+    assert str(Path(source).resolve()) in preflight["source_hashes"]
+
+    payload = adapter.endpoint_manifest_payload(preflight)
+    assert payload["launch_provenance_sha256"] == launch["launch_provenance_sha256"]
+    assert payload["verified_ledger_tip_sha256"] == _sha("7")
+    assert payload["approved_budget"] == launch["approved_budget"]
+    assert [row["endpoint_kind"] for row in payload["endpoints"]] == [
+        "parent_baseline",
+        *("continuation_extension" for _ in adapter.ARMS),
+    ]
+
+
+def test_preflight_rejects_launch_source_drift(tmp_path: Path) -> None:
+    manifest = _manifest(tmp_path)
+    source = Path(next(iter(manifest["launch_provenance"]["verified_sources"])))
+    source.write_text("changed\n", encoding="utf-8")
+    with pytest.raises(adapter.AdapterRefuse, match="launch source bytes differ"):
+        _preflight(tmp_path, manifest)
+
+
+def test_preflight_rejects_missing_launch_arm_or_budget_overrun(tmp_path: Path) -> None:
+    manifest = _manifest(tmp_path)
+    del manifest["launch_provenance"]["launches"][adapter.ARMS[0]]
+    with pytest.raises(adapter.AdapterRefuse, match="exactly the three arms"):
+        _preflight(tmp_path, manifest)
+
+    manifest = _manifest(tmp_path)
+    manifest["ledger_charges"][adapter.ARMS[0]] = 1_600_000.0
+    with pytest.raises(adapter.AdapterRefuse, match="exceed the approved launch budget"):
+        _preflight(tmp_path, manifest)
 
 
 def test_entry_refuses_execute_and_worker_with_stdout_json() -> None:
