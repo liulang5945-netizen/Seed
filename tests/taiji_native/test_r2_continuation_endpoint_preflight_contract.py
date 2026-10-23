@@ -185,10 +185,13 @@ def complete_backend(tmp_path):
     return backend, event_paths
 
 
-def test_all_three_metadata_endpoints_require_no_model_or_prompt_access(tmp_path):
+def test_all_three_metadata_endpoints_require_no_model_or_prompt_access(tmp_path, monkeypatch):
     backend, _ = complete_backend(tmp_path)
+    launch_provenance = {"launches": {arm: [] for arm in backend.ARMS}, "verified_sources": {}}
+    monkeypatch.setattr(m, "validate_launch_provenance", lambda *args, **kwargs: launch_provenance)
     manifest = m.metadata_preflight(backend)
     assert set(manifest["endpoints"]) == set(backend.ARMS)
+    assert manifest["launch_provenance"] == launch_provenance
     assert manifest["can_query_dev"] is False
     assert manifest["can_promote"] is False
 

@@ -1,6 +1,6 @@
 # N 主线当前执行
 
-更新：2026-10-22 23:27 Asia/Shanghai 实测快照；本页是唯一活动队首。运行状态优先于本文快照，以已确认的进程句柄、progress、receipt 和账本为准。
+更新：2026-10-23 09:43 Asia/Shanghai 实测快照；本页是唯一活动队首。运行状态优先于本文快照，以已确认的进程句柄、progress、receipt 和账本为准。
 
 ## 目标与方向
 
@@ -10,16 +10,18 @@
 
 ## 当前事实
 
-| 臂 | 作用 | 最新耐久 episodes | 耐久 target-byte updates | 已确认存活句柄 |
+| 臂 | 作用 | 最新耐久 episodes | 耐久 target-byte updates | 最新执行事实 |
 |---|---|---:|---:|---:|
-| full_turn_1m | fresh 1M-capacity 全轮预训练 | 10,432 | 5,066,333 | 45943 |
-| warm_start | 旧 R2 权重热启动 | 16,000 | 7,699,000 | 45618 |
-| fresh_same_capacity | 与 warm 相同结构/容量的随机初始化对照 | 16,192 | 7,805,988 | 39673 |
+| full_turn_1m | fresh 1M-capacity 全轮预训练 | 17,019 | 8,192,724 | 旧句柄已失效；最新恢复尝试因账本锁争用退出，未写新训练事件 |
+| warm_start | 旧 R2 权重热启动 | 24,607 | 11,857,500 | 恢复启动中；尚无新 `continuation_resumed` 事件 |
+| fresh_same_capacity | 与 warm 相同结构/容量的随机初始化对照 | 24,827 | 11,939,829 | 恢复启动中；旧 reservation 保留待恢复事务结算 |
 
-- 三臂均在真实训练，已有新增 checkpoint 与独立恢复 digest；均无完整 final result。句柄已轮询确认存活，不能仅凭旧 status/锁判断。
+- 上表是各臂最后耐久进度（2026-10-23 09:29）；目前均无完整 final result。原会话句柄已失效。
 - 每臂终点：**30,096 pretraining episodes / 14,517,912 target-byte updates**，然后 **525 assistant-SFT episodes / 113,209 updates**。
-- 用户已批准同一累计窗口：**1,500,000 CPU 秒/臂，4,300,000 CPU 秒总额**。23:27账本约4,055,990秒，余量244,010秒，剩余预测176,472秒；全部臂投影可行。费用与余量须实时重算。
-- CPU双采样53.3%/52.2%，可用内存23.585GiB；后续资源仍由运行守卫检查。这些是执行健康证据，尚非对话能力结论。
+- 用户已批准同一累计窗口：**1,500,000 CPU 秒/臂，4,300,000 CPU 秒总额**。09:29账本 charges + 保守 reservation 为4,142,220秒；剩余上限157,780秒。最新只读target-update预测137,058秒，三臂单臂/总额门均通过，费用与余量须实时重算。
+- 恢复时CPU双采样≤85%、可用内存≥8GiB仍由运行守卫复核；上次资源快照不视为当前状态。这些是执行健康证据，尚非对话能力结论。
+
+原三臂并发恢复触发共享累计账本20秒锁超时：full-turn安全退出于续训事件写入前；warm/fresh命令需逐个收敛。当前只串行启动恢复过程，待新耐久事件确认后再保持训练并发。过程记录见[启动来源核验与中断处置](../../reference/delivery-runs/20261021-n-mainline/artifacts/13-continuation-launch-provenance.md)。
 
 ## 已收束的决策与故障
 
@@ -37,14 +39,14 @@
 
 | 顺序 | 工作与当前状态 | 完成证据 / 下一阶段条件 |
 |---|---|---|
-| 1（当前） | 监测三条现有训练句柄，完成原定三臂训练 | 全部冻结episode/update分母；final文件、receipt与fresh-process restore一致；来源、账本与恢复链闭合 |
-| 2 | 收束extension终点元数据；校验器和入口已实现，尚无真实终点通过 | result/readiness/唯一completion事件互相绑定；parent与来源不漂移；无writer或pending reservation；纳入实际启动适配器manifest来源复核 |
+| 1（当前） | 从三臂最后耐久receipt恢复至原定训练终点；恢复命令串行启动，训练在来源/资源门通过后继续 | 全部冻结episode/update分母；final文件、receipt与fresh-process restore一致；来源、账本和reservation闭合 |
+| 2 | 收束extension终点元数据；endpoint校验器与实际启动manifest来源核验已实现，真实终点仍待齐 | result/readiness/唯一completion事件互相绑定；parent与来源不漂移；无writer或pending reservation；当前已实际校验三臂共6份历史/恢复launch manifest |
 | 3 | 完成extension配对评测入口与最终源码链复核 | 旧评测器不能直接接extension schema；需接好新终点和worker合同，并复核v1.3会计校正、恢复/预测适配器；当前只有各项合同与运行证据，不能补写为全链独立审查通过 |
 | 4 | 前置全过后，按冻结W5b合同做一次配对生成与人工判读 | 固定parent+三臂，39 family×4端点=156次generation；原CPU/wall双预算14,400秒、固定12-family人工样例、参考回答隔离；不追加题面或看结果降线 |
 | 5 | 依据完整结果给出唯一后继方向 | 区分格式/停止、贴题连贯、历史消费、初始化/容量效应和保持；说明失败根因与高上限方案。需要改变预算、题面或研究路线时再讨论 |
 | 6 | 有能力证据后进入同bundle整模型验收 | 按[07整模型交付](07_MINI_MODEL_DELIVERY.md)和[02晋级规则](02_GATES_AND_CI.md)逐项证明；本次R2实验收官不等于项目完美收官 |
 
-**当前唯一下一步：继续监测45943 / 45618 / 39673至原定训练终点。** 等待期间可准备不接触保留面的元数据/评测适配；不另开训练方向。
+**当前唯一下一步：逐个收敛三臂恢复启动，先确认 continuation-resumed 耐久事件，再继续原定训练。** 不启动额外训练方向。
 
 ## 中断与决策规则
 

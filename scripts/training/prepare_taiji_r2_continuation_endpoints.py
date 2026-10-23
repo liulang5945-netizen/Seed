@@ -17,6 +17,7 @@ from scripts.training.validate_taiji_r2_continuation_endpoint import (
     EndpointRefuse,
     validate_extension_endpoint,
 )
+from scripts.training.validate_taiji_r2_continuation_launches import validate_launch_provenance
 
 
 def read_json(path):
@@ -52,6 +53,9 @@ def metadata_preflight(backend=budget):
     revision_path = backend.REPORTS_DIR / f"{backend.EXTENSION_PREFIX}_source_revision_v1_3.json"
     revision = read_json(revision_path)
     revision_sha = sha(revision_path)
+    launch_provenance = validate_launch_provenance(
+        backend, revision, revision_sha, revision_path=revision_path, root=ROOT
+    )
     with backend._aggregate_lock(backend.LOCK_PATH):
         _, charges, reservations, tip = backend._read_ledger_full()
         if reservations:
@@ -113,6 +117,7 @@ def metadata_preflight(backend=budget):
         "schema": "taiji-r2-continuation-endpoint-manifest-v1",
         "endpoints": endpoints,
         "source_revision_sha256": revision_sha,
+        "launch_provenance": launch_provenance,
         "verified_ledger_tip_sha256": tip,
         "ledger_charges": charges,
         "approved_budget": {
