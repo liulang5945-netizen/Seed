@@ -117,6 +117,17 @@ def launch_evidence(
     verified = _mapping(provenance.get("verified_sources"), "verified launch sources")
     if not verified:
         raise AdapterRefuse("launch provenance has no verified source bytes")
+    historical = provenance.get("historical_sources", {})
+    if not isinstance(historical, Mapping):
+        raise AdapterRefuse("historical launch sources must be an object")
+    historical_sources: dict[str, str] = {}
+    for raw_path, digest in historical.items():
+        expected = _sha(digest, f"historical launch source {raw_path}")
+        path = Path(str(raw_path))
+        absolute = path.resolve() if path.is_absolute() else (ROOT / path).resolve()
+        if not absolute.is_file():
+            raise AdapterRefuse(f"historical launch source is missing: {raw_path}")
+        historical_sources[str(absolute)] = expected
     source_hashes: dict[str, str] = {}
     for raw_path, digest in verified.items():
         expected = _sha(digest, f"launch source {raw_path}")
@@ -147,6 +158,7 @@ def launch_evidence(
         "ledger_charges": charges,
         "approved_budget": {"per_arm": per_arm, "aggregate": aggregate},
         "source_hashes": dict(sorted(source_hashes.items())),
+        "historical_sources": dict(sorted(historical_sources.items())),
     }
 
 
@@ -420,6 +432,7 @@ def endpoint_manifest_payload(preflight: Mapping[str, Any]) -> dict[str, Any]:
         "ledger_charges": launch["ledger_charges"],
         "approved_budget": launch["approved_budget"],
         "source_hashes": preflight["source_hashes"],
+        "historical_sources": launch["historical_sources"],
         "can_promote": False,
     }
 

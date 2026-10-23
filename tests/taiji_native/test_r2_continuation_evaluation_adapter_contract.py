@@ -50,6 +50,8 @@ def _stage(path: Path, name: str, episodes: int, updates: int) -> dict:
 def _manifest(tmp_path: Path) -> dict:
     launch_source = tmp_path / "launch_manifest.json"
     launch_source.write_text("{}\n", encoding="utf-8")
+    historical_source = tmp_path / "historical_launch.json"
+    historical_source.write_text("{}\n", encoding="utf-8")
     records = {}
     for arm in adapter.ARMS:
         records[arm] = {
@@ -89,6 +91,7 @@ def _manifest(tmp_path: Path) -> dict:
         "launch_provenance": {
             "launches": launches,
             "verified_sources": {str(launch_source): _hash_file(launch_source)},
+            "historical_sources": {str(historical_source): _hash_file(historical_source)},
         },
         "verified_ledger_tip_sha256": _sha("7"),
         "ledger_charges": {arm: 1_400_000.0 for arm in adapter.ARMS},
@@ -263,6 +266,16 @@ def test_preflight_rejects_launch_source_drift(tmp_path: Path) -> None:
     source.write_text("changed\n", encoding="utf-8")
     with pytest.raises(adapter.AdapterRefuse, match="launch source bytes differ"):
         _preflight(tmp_path, manifest)
+
+
+def test_preflight_records_historical_sources_without_byte_binding(tmp_path: Path) -> None:
+    manifest = _manifest(tmp_path)
+    historical = Path(next(iter(manifest["launch_provenance"]["historical_sources"])))
+    preflight = _preflight(tmp_path, manifest)
+    resolved = str(historical.resolve())
+    assert resolved in preflight["launch"]["historical_sources"]
+    assert resolved not in preflight["source_hashes"]
+    assert resolved in adapter.endpoint_manifest_payload(preflight)["historical_sources"]
 
 
 def test_preflight_rejects_missing_launch_arm_or_budget_overrun(tmp_path: Path) -> None:

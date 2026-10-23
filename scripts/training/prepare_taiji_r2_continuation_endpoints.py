@@ -55,6 +55,10 @@ def metadata_preflight(backend=budget):
 
         if REVISION_PATH.exists():
             activate_budget()
+        from scripts.training import taiji_r2_continuation_budget_amendment_v1_5 as amendment_v1_5
+
+        if amendment_v1_5.REVISION_PATH.exists():
+            amendment_v1_5.activate_budget_amendment()
     revision_path = backend.REPORTS_DIR / f"{backend.EXTENSION_PREFIX}_source_revision_v1_3.json"
     revision = read_json(revision_path)
     revision_sha = sha(revision_path)

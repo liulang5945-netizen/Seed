@@ -249,3 +249,45 @@ def test_selected_arm_forecast_still_rejects_its_own_hard_cap_overrun():
         provenance._validate_forecast(
             selected_forecast(warm_projection=120_000.0), "warm_start", ARMS, selected_arm=True
         )
+
+
+def test_declared_source_history_is_recorded_without_current_byte_equality(tmp_path):
+    relative = "scripts/training/example.py"
+    path = tmp_path / relative
+    path.parent.mkdir(parents=True)
+    path.write_text("new bytes", encoding="utf-8")
+    old_digest = hashlib.sha256(b"old bytes").hexdigest()
+
+    verified, historical = provenance._source_map_with_history(
+        {str(path.resolve()): old_digest},
+        [(("scripts/training/example.py",), {relative: old_digest})],
+        tmp_path,
+    )
+    assert verified == {}
+    assert historical == {relative: old_digest}
+
+    with pytest.raises(EndpointRefuse):
+        provenance._source_map_with_history(
+            {str(path.resolve()): "0" * 64},
+            [(("scripts/training/example.py",), {relative: old_digest})],
+            tmp_path,
+        )
+
+
+def test_v4_memory_floor_is_per_arm():
+    provenance._validate_resource_policy(
+        "taiji-r2-fast-ledger-resume-v4",
+        "warm_start",
+        {"memory_floor_gib": 7.0, "scope": "warm_start_only"},
+    )
+    provenance._validate_resource_policy(
+        "taiji-r2-fast-ledger-resume-v4",
+        "full_turn_1m",
+        {"memory_floor_gib": 8.0, "scope": "default"},
+    )
+    with pytest.raises(EndpointRefuse):
+        provenance._validate_resource_policy(
+            "taiji-r2-fast-ledger-resume-v4",
+            "fresh_same_capacity",
+            {"memory_floor_gib": 7.0, "scope": "warm_start_only"},
+        )

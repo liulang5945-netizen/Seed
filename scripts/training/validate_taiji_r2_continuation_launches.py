@@ -30,8 +30,6 @@ FAST_LAUNCH_SOURCES = (
     "scripts/training/taiji_r2_target_update_projection.py",
     "tests/taiji_native/test_r2_fast_ledger_resume_contract.py",
     "tests/taiji_native/test_r2_resume_ledger_anchor_contract.py",
-    "scripts/training/run_taiji_r2_fast_ledger_resume_v2.py",
-    "tests/taiji_native/test_r2_fast_ledger_resume_v2_contract.py",
 )
 FAST_LAUNCH_SOURCE_SHA256 = {
     "scripts/training/run_taiji_r2_fast_ledger_resume.py": "d8ece312b17e6b84cdd8c45a332534ef2b2755b0e159b208151c65479e9a9cbf",
@@ -40,6 +38,11 @@ FAST_LAUNCH_SOURCE_SHA256 = {
     "scripts/training/taiji_r2_target_update_projection.py": "c7a2d0821b59a35fc5beca94edab557e2c201b04a028311a0008091209d1aeba",
     "tests/taiji_native/test_r2_fast_ledger_resume_contract.py": "839e4f8bb85a7ce816cae33fafe185761f298717cd58a08807b767620a12bcc5",
     "tests/taiji_native/test_r2_resume_ledger_anchor_contract.py": "e9985a64ffc7a58c1d6b4a30d11b419d7a5bbcb0c7e2fe16e696bfa886a7ae4f",
+}
+FAST_LAUNCH_SOURCE_SHA256_HISTORICAL = {
+    **FAST_LAUNCH_SOURCE_SHA256,
+    "scripts/training/run_taiji_r2_fast_ledger_resume.py": "581f0b3a235db643251b18d4949442ad7e6f9cd8e1b8b066106e8e3a1f53cb87",
+    "tests/taiji_native/test_r2_fast_ledger_resume_contract.py": "4a2b6add5c7fb25b40a1064e8fa62f0ab7f465b51717a8d281d89c65463ff100",
 }
 FAST_LAUNCH_V2_SOURCES = (
     "scripts/training/run_taiji_r2_fast_ledger_resume_v2.py",
@@ -50,6 +53,78 @@ FAST_LAUNCH_V2_SOURCE_SHA256 = {
     **FAST_LAUNCH_SOURCE_SHA256,
     "scripts/training/run_taiji_r2_fast_ledger_resume_v2.py": "1530e68150fe8264d1db509b52fbb82159c8d325f2fa24d44ca2b88a7869f9e6",
     "tests/taiji_native/test_r2_fast_ledger_resume_v2_contract.py": "3cd27ced8d3daacf52ddecfe4aa589da96240fea7666b9daaf186939f6358dbc",
+}
+FAST_LAUNCH_V3_SOURCES = (
+    "scripts/training/run_taiji_r2_fast_ledger_resume_v3.py",
+    *FAST_LAUNCH_V2_SOURCES,
+    "scripts/training/taiji_r2_continuation_budget_amendment_v1_4.py",
+    "tests/taiji_native/test_r2_continuation_budget_amendment_v1_4_contract.py",
+    "tests/taiji_native/test_r2_fast_ledger_resume_v3_contract.py",
+)
+FAST_LAUNCH_V3_SOURCE_SHA256 = {
+    **FAST_LAUNCH_V2_SOURCE_SHA256,
+    "scripts/training/run_taiji_r2_fast_ledger_resume_v3.py": "299ee8f7071124216fe4d5cdd9b24bdf50a68955c772f552169eaa0f89d946ea",
+    "scripts/training/taiji_r2_continuation_budget_amendment_v1_4.py": "ccd2d92e1ff025109404b9d0c7443d9a6b132e6dcef0678707eb6b5f26ffb40d",
+    "tests/taiji_native/test_r2_continuation_budget_amendment_v1_4_contract.py": "0e16d0b0583e02fb32b04fd9d0f1a97bf77624191ba98ef87c941281ef8ebc93",
+    "tests/taiji_native/test_r2_fast_ledger_resume_v3_contract.py": "6a1ea3fef94af7f9f89e10faa26927b05edfaac3b51f0a87e5aa613310dbb814",
+}
+FAST_LAUNCH_V4_SOURCES = (
+    "scripts/training/run_taiji_r2_fast_ledger_resume_v4.py",
+    "scripts/training/run_taiji_r2_fast_ledger_resume_v3.py",
+    "scripts/training/run_taiji_r2_fast_ledger_resume_v2.py",
+    "scripts/training/run_taiji_r2_fast_ledger_resume.py",
+    "scripts/training/taiji_r2_resume_ledger_anchor.py",
+    "scripts/training/run_taiji_r2_checkpoint_resume_adapter.py",
+    "scripts/training/taiji_r2_target_update_projection.py",
+    "tests/taiji_native/test_r2_fast_ledger_resume_contract.py",
+    "tests/taiji_native/test_r2_resume_ledger_anchor_contract.py",
+    "tests/taiji_native/test_r2_fast_ledger_resume_v2_contract.py",
+    "scripts/training/taiji_r2_continuation_budget_amendment_v1_4.py",
+    "tests/taiji_native/test_r2_continuation_budget_amendment_v1_4_contract.py",
+    "tests/taiji_native/test_r2_fast_ledger_resume_v3_contract.py",
+    "scripts/training/taiji_r2_continuation_budget_amendment_v1_5.py",
+    "tests/taiji_native/test_r2_continuation_budget_amendment_v1_5_contract.py",
+    "tests/taiji_native/test_r2_fast_ledger_resume_v4_contract.py",
+)
+FAST_LAUNCH_V4_SOURCE_SHA256 = {
+    "scripts/training/run_taiji_r2_fast_ledger_resume_v4.py": "bba3e9c0aa44b0f1de67365ae78d955f9566eb06074f6b76f3b6a0f78f4a3c03",
+    "scripts/training/run_taiji_r2_fast_ledger_resume_v3.py": "e73efd6af0de7a799a9f4e3f612a71faece42f1f8f3bb4879f4a138090de5523",
+    "scripts/training/run_taiji_r2_fast_ledger_resume_v2.py": "1530e68150fe8264d1db509b52fbb82159c8d325f2fa24d44ca2b88a7869f9e6",
+    "scripts/training/run_taiji_r2_fast_ledger_resume.py": "d8ece312b17e6b84cdd8c45a332534ef2b2755b0e159b208151c65479e9a9cbf",
+    "scripts/training/taiji_r2_resume_ledger_anchor.py": "c729243584d89bd8aded0bacfdd7d0e99d760ad72dbe6020aff5bd03b5dfd37b",
+    "scripts/training/run_taiji_r2_checkpoint_resume_adapter.py": "fce64448dc8d9d49104509c1a1cd5a4f4beeb80f5ee7ea74c440a2c118ae34b5",
+    "scripts/training/taiji_r2_target_update_projection.py": "c7a2d0821b59a35fc5beca94edab557e2c201b04a028311a0008091209d1aeba",
+    "tests/taiji_native/test_r2_fast_ledger_resume_contract.py": "839e4f8bb85a7ce816cae33fafe185761f298717cd58a08807b767620a12bcc5",
+    "tests/taiji_native/test_r2_resume_ledger_anchor_contract.py": "e9985a64ffc7a58c1d6b4a30d11b419d7a5bbcb0c7e2fe16e696bfa886a7ae4f",
+    "tests/taiji_native/test_r2_fast_ledger_resume_v2_contract.py": "3cd27ced8d3daacf52ddecfe4aa589da96240fea7666b9daaf186939f6358dbc",
+    "scripts/training/taiji_r2_continuation_budget_amendment_v1_4.py": "0e4e5c186097ec1d66a8f5ab2f674a37803980ce1f70def3baea8e5177643780",
+    "tests/taiji_native/test_r2_continuation_budget_amendment_v1_4_contract.py": "d1a3dfb9a227706e10718403fe76db0595d7e3f15ae47b563b24aca0ce07aaf4",
+    "tests/taiji_native/test_r2_fast_ledger_resume_v3_contract.py": "d09875c357a4083e04816c2f238cf477546c09314463050f8830f537c11f6382",
+    "scripts/training/taiji_r2_continuation_budget_amendment_v1_5.py": "6882f4bb5a3e16828470c82bfff11f3a18ce40a96769d0da10e94cf36d540156",
+    "tests/taiji_native/test_r2_continuation_budget_amendment_v1_5_contract.py": "1d16e976a9c68975bca9b33ab0f7429a1afea82d263f89d734d9a71806b6a132",
+    "tests/taiji_native/test_r2_fast_ledger_resume_v4_contract.py": "6c1df2dbaa22b7009e3f845f0e5b8228bc845460ea8c825e7546dbe91d3e360f",
+}
+RESUME_V1_SOURCES = (
+    "scripts/training/run_taiji_r2_checkpoint_resume_adapter.py",
+    "scripts/training/run_taiji_r2_daily_dialogue_continuation_extension.py",
+    "scripts/training/run_taiji_r2_resume.py",
+    "scripts/training/taiji_r2_dialogue_continuation_extension.py",
+    "scripts/training/taiji_r2_resume_ledger_anchor.py",
+)
+RESUME_V1_SOURCE_SHA256 = {
+    "scripts/training/run_taiji_r2_checkpoint_resume_adapter.py": "fce64448dc8d9d49104509c1a1cd5a4f4beeb80f5ee7ea74c440a2c118ae34b5",
+    "scripts/training/run_taiji_r2_daily_dialogue_continuation_extension.py": "b1813dc73badafd6601f71074bfa4192492097d0595b62bcbac4d8327f362340",
+    "scripts/training/run_taiji_r2_resume.py": "0e32ff7d7ce021fd56ca936a61b6d21c2819963ba9cba1df43d9baad94508770",
+    "scripts/training/taiji_r2_dialogue_continuation_extension.py": "5d99fb67dc427ae782f61e16f71f27ea494e9891277329aff0746a5abff9e524",
+    "scripts/training/taiji_r2_resume_ledger_anchor.py": "c729243584d89bd8aded0bacfdd7d0e99d760ad72dbe6020aff5bd03b5dfd37b",
+}
+APPROVED_BUDGET_BY_SCHEMA = {
+    "taiji-r2-target-update-resume-v1": {"per_arm": 1_500_000.0, "aggregate": 4_300_000.0},
+    "taiji-r2-fast-ledger-resume-v1": {"per_arm": 1_500_000.0, "aggregate": 4_300_000.0},
+    "taiji-r2-fast-ledger-resume-v2": {"per_arm": 1_500_000.0, "aggregate": 4_300_000.0},
+    "taiji-r2-fast-ledger-resume-v3": {"per_arm": 1_550_000.0, "aggregate": 4_400_000.0},
+    "taiji-r2-fast-ledger-resume-v4": {"per_arm": 1_590_000.0, "aggregate": 4_560_000.0},
+    "taiji-r2-resume-v1": {"per_arm": 1_550_000.0, "aggregate": 4_400_000.0},
 }
 CORE_SOURCES = {
     "budget_contract_test": "tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py",
@@ -113,15 +188,60 @@ def _bound(path, expected, root):
     return path.resolve().relative_to(root.resolve()).as_posix()
 
 
-def _source_map(rows, expected_paths, root, *, expected_sha256=None):
+def _source_map(rows, expected_paths, root, *, expected_sha256=None, verify_bytes=True):
     if not isinstance(rows, dict) or len(rows) != len(expected_paths):
         raise EndpointRefuse("launch source set is incomplete")
-    result = {_bound(path, digest, root): digest for path, digest in rows.items()}
+    result = {}
+    for path, digest in rows.items():
+        if (
+            not isinstance(digest, str)
+            or len(digest) != 64
+            or any(character not in "0123456789abcdef" for character in digest)
+        ):
+            raise EndpointRefuse("launch source digest is malformed")
+        if verify_bytes:
+            relative = _bound(path, digest, root)
+        else:
+            checked = _checked_path(path, root)
+            relative = checked.resolve().relative_to(root.resolve()).as_posix()
+        if relative in result:
+            raise EndpointRefuse("launch source path is duplicated")
+        result[relative] = digest
     if set(result) != set(expected_paths):
         raise EndpointRefuse("launch source set differs")
     if expected_sha256 is not None and result != expected_sha256:
         raise EndpointRefuse("launch sources differ from the approved adapter revision")
     return result
+
+
+def _source_map_with_history(rows, candidates, root):
+    if not isinstance(rows, dict):
+        raise EndpointRefuse("launch source set is incomplete")
+    declared = None
+    for expected_paths, expected_hashes in candidates:
+        try:
+            candidate = _source_map(
+                rows,
+                expected_paths,
+                root,
+                expected_sha256=expected_hashes,
+                verify_bytes=False,
+            )
+        except EndpointRefuse:
+            continue
+        declared = candidate
+        break
+    if declared is None:
+        raise EndpointRefuse("launch sources differ from every approved revision")
+    verified = {}
+    historical = {}
+    for relative, digest in declared.items():
+        actual = _sha(_checked_path(root / relative, root))
+        if actual == digest:
+            verified[relative] = digest
+        else:
+            historical[relative] = digest
+    return verified, historical
 
 
 def _validate_forecast(forecast, arm, arms, *, selected_arm=False):
@@ -193,12 +313,77 @@ def _validate_forecast(forecast, arm, arms, *, selected_arm=False):
 def _validate_resource_policy(schema, arm, policy):
     if schema == "taiji-r2-fast-ledger-resume-v1":
         return
-    if (
-        schema != "taiji-r2-fast-ledger-resume-v2"
-        or arm != "warm_start"
-        or policy != {"memory_floor_gib": 7.0, "scope": "warm_start_only"}
+    if schema in {"taiji-r2-fast-ledger-resume-v2", "taiji-r2-fast-ledger-resume-v3"}:
+        if arm != "warm_start" or policy != {"memory_floor_gib": 7.0, "scope": "warm_start_only"}:
+            raise EndpointRefuse("v2/v3 memory-floor override is outside the warm-start scope")
+        return
+    if schema == "taiji-r2-fast-ledger-resume-v4":
+        expected = (
+            {"memory_floor_gib": 7.0, "scope": "warm_start_only"}
+            if arm == "warm_start"
+            else {"memory_floor_gib": 8.0, "scope": "default"}
+        )
+        if policy != expected:
+            raise EndpointRefuse("v4 memory floor differs from its per-arm scope")
+        return
+    if schema == "taiji-r2-resume-v1":
+        if arm != "warm_start" or policy != {"memory_floor_gib": 7.0, "scope": "warm_start_only"}:
+            raise EndpointRefuse("simplified resume memory floor is warm-start only")
+        return
+    raise EndpointRefuse("unknown launch resource policy")
+
+
+def _read_amendment(module):
+    path = module.REVISION_PATH
+    if path.is_symlink() or not path.is_file():
+        raise EndpointRefuse("budget amendment file is missing or linked")
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise EndpointRefuse("budget amendment file is malformed") from exc
+
+
+def _amendment_sha(schema):
+    if schema in {"taiji-r2-fast-ledger-resume-v3", "taiji-r2-resume-v1"}:
+        from scripts.training import taiji_r2_continuation_budget_amendment_v1_4 as module
+
+        record = _read_amendment(module)
+        module.validate_amendment(record, source_revision_sha256=module.SOURCE_REVISION_SHA256)
+        return record["amendment_sha256"]
+    if schema == "taiji-r2-fast-ledger-resume-v4":
+        from scripts.training import taiji_r2_continuation_budget_amendment_v1_4 as previous
+        from scripts.training import taiji_r2_continuation_budget_amendment_v1_5 as module
+
+        previous_record = _read_amendment(previous)
+        previous.validate_amendment(
+            previous_record, source_revision_sha256=previous.SOURCE_REVISION_SHA256
+        )
+        record = _read_amendment(module)
+        module.validate_amendment(
+            record,
+            source_revision_sha256=module.SOURCE_REVISION_SHA256,
+            previous_amendment_sha256=previous_record["amendment_sha256"],
+        )
+        return record["amendment_sha256"]
+    return None
+
+
+def _validate_ledger_anchor(anchor, *, require_baseline):
+    if not isinstance(anchor, dict) or (
+        (require_baseline and anchor.get("baseline_sequence") != BASELINE["sequence"])
+        or (require_baseline and anchor.get("baseline_event_sha256") != BASELINE["event_sha256"])
+        or not isinstance(anchor.get("sequence"), int)
+        or isinstance(anchor.get("sequence"), bool)
+        or not isinstance(anchor.get("event_sha256"), str)
+        or not isinstance(anchor.get("charges"), dict)
+        or not isinstance(anchor.get("reservations"), dict)
     ):
-        raise EndpointRefuse("v2 memory-floor override is outside the warm-start scope")
+        raise EndpointRefuse("resume manifest lacks its pinned ledger anchor")
+    replayed = verified_snapshot(sequence=anchor["sequence"])
+    if any(
+        anchor.get(key) != replayed.get(key) for key in ("event_sha256", "charges", "reservations")
+    ):
+        raise EndpointRefuse("resume manifest ledger tip differs from replay")
 
 
 def validate_launch_provenance(backend, revision, revision_sha256, *, revision_path, root):
@@ -215,6 +400,7 @@ def validate_launch_provenance(backend, revision, revision_sha256, *, revision_p
     if revision_sha256 != SOURCE_REVISION_SHA256:
         raise EndpointRefuse("source revision is not the approved v1.3 record")
     sources = {}
+    historical_sources = {}
     immutable_artifacts = (
         (
             backend.REPORTS_DIR / f"{backend.EXTENSION_PREFIX}_contract.json",
@@ -255,6 +441,9 @@ def validate_launch_provenance(backend, revision, revision_sha256, *, revision_p
             list(backend.REPORTS_DIR.glob(f"taiji_r2_target_update_resume_{arm}_*.json"))
             + list(backend.REPORTS_DIR.glob(f"taiji_r2_fast_ledger_resume_{arm}_*.json"))
             + list(backend.REPORTS_DIR.glob(f"taiji_r2_fast_ledger_resume_v2_{arm}_*.json"))
+            + list(backend.REPORTS_DIR.glob(f"taiji_r2_fast_ledger_resume_v3_{arm}_*.json"))
+            + list(backend.REPORTS_DIR.glob(f"taiji_r2_fast_ledger_resume_v4_{arm}_*.json"))
+            + list(backend.REPORTS_DIR.glob(f"taiji_r2_resume_{arm}_*.json"))
         )
         if not manifests:
             raise EndpointRefuse(f"actual target-update launch manifest is missing: {arm}")
@@ -262,20 +451,21 @@ def validate_launch_provenance(backend, revision, revision_sha256, *, revision_p
         for path in manifests:
             manifest = _read(path, root)
             schema = manifest.get("schema")
+            expected_budget = APPROVED_BUDGET_BY_SCHEMA.get(schema)
             if (
-                schema
-                not in {
-                    "taiji-r2-target-update-resume-v1",
-                    "taiji-r2-fast-ledger-resume-v1",
-                    "taiji-r2-fast-ledger-resume-v2",
-                }
+                expected_budget is None
                 or manifest.get("arm") != arm
                 or manifest.get("source_revision_sha256") != revision_sha256
                 or manifest.get("extension_attempt_sha256") != _sha(attempt_path)
-                or manifest.get("approved_budget")
-                != {"per_arm": backend.PER_ARM_CPU_LIMIT, "aggregate": backend.AGGREGATE_CPU_LIMIT}
+                or manifest.get("approved_budget") != expected_budget
             ):
                 raise EndpointRefuse("launch identity, revision or approved budget differs")
+            if schema in {
+                "taiji-r2-fast-ledger-resume-v3",
+                "taiji-r2-fast-ledger-resume-v4",
+                "taiji-r2-resume-v1",
+            } and manifest.get("budget_amendment_sha256") != _amendment_sha(schema):
+                raise EndpointRefuse("launch budget amendment differs")
             if schema == "taiji-r2-target-update-resume-v1":
                 sources.update(
                     _source_map(
@@ -285,50 +475,73 @@ def validate_launch_provenance(backend, revision, revision_sha256, *, revision_p
                         expected_sha256=LAUNCH_SOURCE_SHA256,
                     )
                 )
-            elif schema in {
-                "taiji-r2-fast-ledger-resume-v1",
-                "taiji-r2-fast-ledger-resume-v2",
-            }:
-                if schema == "taiji-r2-fast-ledger-resume-v1":
-                    expected_paths = FAST_LAUNCH_SOURCES
-                    expected_hashes = FAST_LAUNCH_SOURCE_SHA256
-                else:
-                    expected_paths = FAST_LAUNCH_V2_SOURCES
-                    expected_hashes = FAST_LAUNCH_V2_SOURCE_SHA256
+            elif schema == "taiji-r2-fast-ledger-resume-v1":
+                verified, declared_history = _source_map_with_history(
+                    manifest.get("sources"),
+                    [
+                        (FAST_LAUNCH_SOURCES, FAST_LAUNCH_SOURCE_SHA256),
+                        (FAST_LAUNCH_SOURCES, FAST_LAUNCH_SOURCE_SHA256_HISTORICAL),
+                    ],
+                    root,
+                )
+                sources.update(verified)
+                historical_sources.update(declared_history)
+                _validate_resource_policy(schema, arm, manifest.get("resource_policy"))
+                _validate_ledger_anchor(manifest.get("ledger_anchor"), require_baseline=True)
+            elif schema == "taiji-r2-fast-ledger-resume-v2":
                 sources.update(
                     _source_map(
                         manifest.get("sources"),
-                        expected_paths,
+                        FAST_LAUNCH_V2_SOURCES,
                         root,
-                        expected_sha256=expected_hashes,
+                        expected_sha256=FAST_LAUNCH_V2_SOURCE_SHA256,
                     )
                 )
                 _validate_resource_policy(schema, arm, manifest.get("resource_policy"))
-                anchor = manifest.get("ledger_anchor")
-                if not isinstance(anchor, dict) or (
-                    anchor.get("baseline_sequence") != BASELINE["sequence"]
-                    or anchor.get("baseline_event_sha256") != BASELINE["event_sha256"]
-                    or not isinstance(anchor.get("sequence"), int)
-                    or isinstance(anchor.get("sequence"), bool)
-                ):
-                    raise EndpointRefuse("fast-resume manifest lacks its pinned ledger anchor")
-                replayed = verified_snapshot(sequence=anchor["sequence"])
-                if any(
-                    anchor.get(key) != replayed.get(key)
-                    for key in ("event_sha256", "charges", "reservations")
-                ):
-                    raise EndpointRefuse("fast-resume manifest ledger tip differs from replay")
-            forecast = manifest.get("forecast")
-            _validate_forecast(
-                forecast,
-                arm,
-                backend.ARMS,
-                selected_arm=schema
-                in {
-                    "taiji-r2-fast-ledger-resume-v1",
-                    "taiji-r2-fast-ledger-resume-v2",
-                },
-            )
+                _validate_ledger_anchor(manifest.get("ledger_anchor"), require_baseline=True)
+            elif schema == "taiji-r2-fast-ledger-resume-v3":
+                historical_sources.update(
+                    _source_map(
+                        manifest.get("sources"),
+                        FAST_LAUNCH_V3_SOURCES,
+                        root,
+                        expected_sha256=FAST_LAUNCH_V3_SOURCE_SHA256,
+                        verify_bytes=False,
+                    )
+                )
+                _validate_resource_policy(schema, arm, manifest.get("resource_policy"))
+                _validate_ledger_anchor(manifest.get("ledger_anchor"), require_baseline=True)
+            elif schema == "taiji-r2-fast-ledger-resume-v4":
+                sources.update(
+                    _source_map(
+                        manifest.get("sources"),
+                        FAST_LAUNCH_V4_SOURCES,
+                        root,
+                        expected_sha256=FAST_LAUNCH_V4_SOURCE_SHA256,
+                    )
+                )
+                _validate_resource_policy(schema, arm, manifest.get("resource_policy"))
+                _validate_ledger_anchor(manifest.get("ledger_anchor"), require_baseline=True)
+            else:
+                sources.update(
+                    _source_map(
+                        manifest.get("sources"),
+                        RESUME_V1_SOURCES,
+                        root,
+                        expected_sha256=RESUME_V1_SOURCE_SHA256,
+                    )
+                )
+                _validate_resource_policy(schema, arm, manifest.get("resource_policy"))
+                _validate_ledger_anchor(manifest.get("ledger_anchor"), require_baseline=False)
+            if schema != "taiji-r2-resume-v1":
+                forecast = manifest.get("forecast")
+                _validate_forecast(
+                    forecast,
+                    arm,
+                    backend.ARMS,
+                    selected_arm=isinstance(forecast, dict)
+                    and forecast.get("projection_scope") == "selected_arm",
+                )
             start = manifest.get("latest_commit")
             if not isinstance(start, dict) or not any(
                 event.get("event") == "durable_training_commit" and event.get("receipt") == start
@@ -362,4 +575,8 @@ def validate_launch_provenance(backend, revision, revision_sha256, *, revision_p
         path = _checked_path(root / relative, root)
         digest = _sha(path)
         sources[_bound(path, digest, root)] = digest
-    return {"launches": launches, "verified_sources": sources}
+    return {
+        "launches": launches,
+        "verified_sources": sources,
+        "historical_sources": historical_sources,
+    }
