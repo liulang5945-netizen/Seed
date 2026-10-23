@@ -1778,3 +1778,4 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 - 后续臂启动前发现并修正（`ccbf8648e`）：v1.5 激活器原先临时套 v1.4 上限读账本，warm 已计超过 1.55M 会误拒；现按 v1.5 上限读取，且 warm 已生成的 v4 manifest 以旧 v1.5 源哈希走历史声明通道。真实 provenance 现识别 warm 7 个 launch、36 当前源／13 历史源；43 支相关测试通过。
 - 串行守护已排队：warm final 出现后 30 秒自动启动 full_turn_1m，full final 后 30 秒启动 fresh_same_capacity；8 小时未见 warm final 则退出。目的＝避免空置产生新的主机尾账，同时保持单臂串行与各自预算/内存门。
 - 队列前 dry-run（不写 manifest、不训练）：full_turn_1m／fresh_same_capacity 的 v4 manifest 均可构建，投影 80,820.9／25,832.7 CPU 秒，`selected_arm_feasible` 与 `global_feasible` 均为 true；说明串行守护启动时不会被投影门挡住。
+- 预算安全复核（warm 27,848 episodes）：当前余额 warm 20,233／full 153,131／fresh 206,834／总计 170,198；三臂到完整终点预计还需 warm 12,784＋full 80,821＋fresh 25,833＝119,438，全部完成后总计仍留 **50,760** CPU 秒缓冲，warm 单臂留 7,449。无需再补额。
