@@ -25,14 +25,16 @@
 | CC-1.2 独立extension evaluator/worker | 适配层＋versioned worker 已提交（612c2dfe4／b1817cbcf）；真实预检待三臂齐备 | 父进程和受监督worker使用同provider、snapshot与授权路径；无伪zero或旧schema回退 |
 | CC-1.3 合成与独立审查 | 独立审查完成，修正三项（d39f6c8af）＋launch/ledger/budget接线（1fc8bac40）；81支合成契约通过；extension 评测合同冻结 | one-shot跨入口、39×4、固定12、双预算与失败树终止；对应提交CI与独立审查 |
 | CC-1.4 当前训练 | warm已按预算保护停止；另两臂暂缓 | 耐久partial与停止事件保留，无完整final；D1准备到原完整实验出口的费用/范围裁决 |
-| CC-1.5 预算/三臂完整性 | 待实际费用闭合 | D1一次性提交到原完整出口的缺口与推荐；不补额则封存partial，W5b继续阻断 |
+| CC-1.5 预算/三臂完整性 | D1 材料已备（18-d1-budget-decision.md）；推荐 v1.5 补额 1,590,000／4,560,000；等 owner 裁决 | D1一次性提交到原完整出口的缺口与推荐；不补额则封存partial，W5b继续阻断 |
 | CC-1.6 原W5b | 前置未齐 | parent+三臂、39×4=156、固定前12-family人工、CPU/wall各14,400秒，一次调用并保存原始失败 |
 
-## 当前唯一下一步：准备 CC-1.5 的 D1 预算裁决材料（三臂到完整终点的缺口、总成本与唯一推荐）
+## 当前唯一下一步：D1 裁决——批准 v1.5 补额并授权三臂逐臂续训
 
-CC-1.3 已收口：独立审查发现并修正三项——评测源码未进 `source_hashes`、worker 未固定 torch 线程、restore 收据未核对阶段/digest；审查中又发现 CC-1.1 的 launch 血缘未接，已把 `launch_provenance`、账本 tip/charges 与批准额度绑定进 extension 快照，并让端点清单与 worker 恢复收据携带端点类型/血缘快照。旧 recovery-v2 评测 48 支＋extension 19 支＋生产→适配衔接 1 支＋既有预检/launch 套件＝ **81 支通过**；extension 评测合同冻结。残余：旧冻结入口无法检查 extension 前缀（不改冻结源），运行纪律为 extension 已跑则不再跑旧入口，extension 侧守卫已挡旧入口消费；真实预检仍被三臂未齐挡住（warm partial、另两臂暂缓）。
+D1 材料见[18-d1-budget-decision.md](../../reference/delivery-runs/20261021-n-mainline/artifacts/18-d1-budget-decision.md)。按耐久游标：full 16,992 episodes／8,176,295 updates、warm 27,584／13,304,596、fresh 25,088／12,091,199；三臂合计已计 4,369,799 CPU 秒，v1.4 总计余量仅 30,201。按最近边际速率与 1.15 安全系数，补完剩余预训练＋SFT 预计需 118,303 CPU 秒：full 81,023、warm 11,396、fresh 25,884。单臂只有 warm 缺 11,160；总计缺口 88,102。
 
-下一步只做 D1 材料，不启动训练、不消费保留题面：按现有 aggregate ledger、每臂 receipt 与暂缓臂的历史成本，核算三臂到达 30,096 预训练 episodes／14,517,912 updates，再完成 525 SFT episodes／113,209 updates 的实际缺口与总成本（含未知尾账），列出“补额完成原实验／封存 partial 转 CC-2 归因”两种选择能回答与放弃的问题，给出唯一推荐，提交 owner 裁决。裁决前保留 warm 耐久 partial 与停止账，不降分母、不把 partial 称 final。
+**唯一推荐**：批准 v1.5 把每臂上限提到 1,590,000、总计提到 4,560,000（+40,000／+160,000），留总计约 7.2 万、warm 单臂约 2.9 万缓冲；按原终点完成三臂 final 后再进 W5b。备选是封存 partial 转 CC-2，但只能得到“训练未完成”混淆的归因，不能产出四端配对证据。裁决前不启动训练、不改冻结协议、不把 partial 称 final；fresh 恢复前必须确认可用内存 ≥8 GiB。
+
+CC-1.3 已收口：独立审查发现并修正三项——评测源码未进 `source_hashes`、worker 未固定 torch 线程、restore 收据未核对阶段/digest；审查中又发现 CC-1.1 的 launch 血缘未接，已把 `launch_provenance`、账本 tip/charges 与批准额度绑定进 extension 快照，并让端点清单与 worker 恢复收据携带端点类型/血缘快照。旧 recovery-v2 评测 48 支＋extension 19 支＋生产→适配衔接 1 支＋既有预检/launch 套件＝ **81 支通过**；extension 评测合同冻结。残余：旧冻结入口无法检查 extension 前缀（不改冻结源），运行纪律为 extension 已跑则不再跑旧入口，extension 侧守卫已挡旧入口消费；真实预检仍被三臂未齐挡住。
 
 N1-166及原确认面、dev/reference/selector、能力晋级继续按原门冻结。普通实现与受影响验证自动推进；只有实质改变预算/题面/冻结协议/路线时到10的对应D节点裁决，其余独立工作持续。
 

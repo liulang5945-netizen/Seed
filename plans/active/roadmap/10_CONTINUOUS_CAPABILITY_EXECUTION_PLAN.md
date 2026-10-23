@@ -23,7 +23,7 @@ warm完整终点仍为30,096预训练episodes / 14,517,912 updates，再完成52
 
 冻结W5b继续采用parent_baseline＋三臂，**39×4＝156次generation**、固定同面前12个family人工判读、CPU与wall各14,400秒；跨入口共享一次性消费边界。全部端点、来源、恢复与资源门通过前不读selector/prompt；不读reference、不训练、不补跑失败调用，`can_promote=false`。N1-166及其未消费确认面维持原冻结；dev/reference/selector权限不因持续Goal扩大。
 
-- 2026-10-23 进展：CC-1.1 v1.4 预算激活（`68ed3495c`）与完整血缘接线（`1fc8bac40`）；CC-1.2 适配层（`612c2dfe4`）与 versioned worker（`b1817cbcf`）；CC-1.3 合成矩阵（`9ec663c25`／`112caed7b`）＋独立审查三项修正（`d39f6c8af`）＝**81 支通过**，extension 评测合同冻结。审查同时把 launch provenance、账本 tip/charges、批准额度绑入快照。下一格＝CC-1.5 D1 材料：三臂到完整终点的缺口、总成本与唯一推荐；真实预检仍被三臂未齐挡住。
+- 2026-10-23 进展：CC-1.1 v1.4 预算激活（`68ed3495c`）与完整血缘接线（`1fc8bac40`）；CC-1.2 适配层（`612c2dfe4`）与 versioned worker（`b1817cbcf`）；CC-1.3 合成矩阵（`9ec663c25`／`112caed7b`）＋独立审查三项修正（`d39f6c8af`）＝**81 支通过**，extension 评测合同冻结。CC-1.5 的 [D1 材料](../../reference/delivery-runs/20261021-n-mainline/artifacts/18-d1-budget-decision.md)已备：三臂耐久游标合计已计 4,369,799 CPU 秒，补完预计 118,303，总计缺口 88,102；推荐 v1.5 补额 1,590,000／4,560,000，等 owner 裁决。真实预检仍被三臂未齐挡住。
 
 ## 3. WBS：从当前R2走到同一模型的持续能力
 
@@ -113,4 +113,4 @@ D1–D6是证据/范围/预算决策点，不是额外审批仪式：到点先�
 
 新实施PLAN/SPEC及结案落`plans/reference/`既有命名族，机器证据落`reports/`，数据/checkpoint沿既有受控根及路径合同；不新增近义顶层目录。错误方向退出活动命令和队首，冻结文件、失败、原始输出与谱系保留；重复过程文本按目录规范S9完成蒸馏、迁链和Git精确恢复登记后可实际删除，不再逐轮复制整篇快照。已核实可再生的临时/空残留可清理，不按“失败”删除唯一研究证据或checkpoint。
 
-**唯一当前下一步：准备CC-1.5的D1预算裁决材料**——按现有aggregate ledger、每臂receipt与暂缓臂历史成本，核算三臂到原完整终点（30,096预训练episodes／14,517,912 updates，再525 SFT episodes／113,209 updates）的实际缺口、总成本与未知尾账，列出“补额完成原实验／封存partial转CC-2归因”两种选择能回答与放弃的问题并给出唯一推荐，提交owner裁决。D1前不启动训练、不消费保留题面、不将partial转为final，也不提前开启后续能力训练。
+**唯一当前下一步：D1 裁决。** 批准 [D1 材料](../../reference/delivery-runs/20261021-n-mainline/artifacts/18-d1-budget-decision.md)推荐的 v1.5 补额（每臂1,590,000、总计4,560,000），即按原范围逐臂续训至三臂final；或明确选择封存partial转CC-2。裁决前不启动训练、不消费保留题面、不将partial转为final，也不提前开启后续能力训练。fresh恢复前必须确认可用内存≥8 GiB。
