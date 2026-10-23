@@ -5,7 +5,10 @@
      viewport edge, so anchors near the right edge would wrap early;
      max-content sizes by the label alone, capped at half the viewport. */
   width: max-content;
-  max-width: 50vw;
+  box-sizing: border-box;
+  max-width: min(50vw, calc(100vw - 24px));
+  max-height: calc(100vh - 24px);
+  overflow: auto;
   padding: 3px 7px;
   border-radius: 8px;
   background: var(--dsw-alias-tooltip-bg);
@@ -21,7 +24,8 @@
 
 .bubble[data-portal] { z-index: 1100; }
 
-.bubble[data-side='right'] {
+.bubble[data-side='right'],
+.bubble[data-side='left'] {
   transform: translateY(-50%);
 }
 

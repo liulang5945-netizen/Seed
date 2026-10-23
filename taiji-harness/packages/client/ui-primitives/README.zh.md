@@ -100,6 +100,8 @@ kind: "package-library"
 <a id="understand-the-implementation"></a>
 ## 理解实现
 
+`Tooltip` 依次尝试首选侧、相反侧和垂直方向，让能放下的提示避开触发按钮；没有任何一侧能放下时，提示保持在视口边距内，调用方设置的宽度上限也受该边距约束。
+
 Menu.listClassName 独立控制菜单卡片样式，不影响入口容器，也适用于 portal 模式。
 
 <details>

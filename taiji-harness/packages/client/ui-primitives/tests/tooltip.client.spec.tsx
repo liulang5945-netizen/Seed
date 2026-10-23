@@ -64,10 +64,9 @@ describe('Tooltip', () => {
     const bubble = screen.getByRole('tooltip')
     expect(bubble.textContent).toBe('Open sidebar')
     expect(bubble.getAttribute('data-side')).toBe('right')
-    // jsdom rects are all-zero: right placement lands at the +10 gutter, then
-    // the zero-width measured rect clamps to the 12px edge margin (10 + 12).
-    expect(bubble.style.left).toBe('22px')
-    expect(bubble.style.top).toBe('0px')
+    // An anchor with no measured room falls back inside both viewport margins.
+    expect(bubble.style.left).toBe('12px')
+    expect(bubble.style.top).toBe('12px')
     fireEvent.mouseLeave(anchor)
     expect(screen.queryByRole('tooltip')).toBeNull()
   })
@@ -84,7 +83,7 @@ describe('Tooltip', () => {
     expect(bubble.getAttribute('data-side')).toBe('bottom')
     // Zero-width jsdom rect at x=0 clamps to the 12px edge margin.
     expect(bubble.style.left).toBe('12px')
-    expect(bubble.style.top).toBe('8px')
+    expect(bubble.style.top).toBe('12px')
     fireEvent.blur(anchor)
     expect(screen.queryByRole('tooltip')).toBeNull()
   })
@@ -120,8 +119,8 @@ describe('Tooltip', () => {
     )
     fireEvent.mouseEnter(screen.getByText('anchor'))
 
-    // The stylesheet's half-viewport cap stays the default; this one overrides it.
-    expect(screen.getByRole('tooltip').style.maxWidth).toBe('360px')
+    // A caller cap remains bounded by the viewport's safe margins.
+    expect(screen.getByRole('tooltip').style.maxWidth).toBe('min(360px, calc(100vw - 24px))')
   })
 
   it('clamps a bubble overflowing the right viewport edge back inside', () => {
@@ -155,7 +154,7 @@ describe('Tooltip', () => {
         </Tooltip>,
       )
       fireEvent.mouseEnter(screen.getByText('anchor'))
-      expect(screen.getByRole('tooltip').style.left).toBe('862px')
+      expect(screen.getByRole('tooltip').style.left).toBe('912px')
 
       view.rerender(
         <Tooltip label="Short" side="bottom">
@@ -166,7 +165,7 @@ describe('Tooltip', () => {
 
       Object.defineProperty(window, 'innerWidth', { configurable: true, value: 900 })
       fireEvent(window, new Event('resize'))
-      expect(screen.getByRole('tooltip').style.left).toBe('888px')
+      expect(screen.getByRole('tooltip').style.left).toBe('838px')
     } finally {
       Object.defineProperty(window, 'innerWidth', { configurable: true, value: originalWidth })
       spy.mockRestore()
@@ -257,9 +256,8 @@ describe('Tooltip', () => {
     }
   })
 
-  it('keeps the requested side when neither side fits', () => {
-    // A bubble taller than the viewport has no home; oscillating between the
-    // two would be worse than honouring the request.
+  it('uses a perpendicular side when neither vertical side fits', () => {
+    // Both vertical sides are too small; the available right side keeps the trigger clear.
     const spy = placed(300, 400, 900)
     try {
       render(
@@ -268,7 +266,7 @@ describe('Tooltip', () => {
         </Tooltip>,
       )
       fireEvent.mouseEnter(screen.getByText('anchor'))
-      expect(screen.getByRole('tooltip').getAttribute('data-side')).toBe('bottom')
+      expect(screen.getByRole('tooltip').getAttribute('data-side')).toBe('right')
     } finally {
       spy.mockRestore()
     }

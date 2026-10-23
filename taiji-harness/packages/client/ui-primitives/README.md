@@ -100,6 +100,8 @@ The atoms cannot read the application locale, so every piece of user-facing copy
 <a id="understand-the-implementation"></a>
 ## Understand the implementation
 
+`Tooltip` tries its preferred side, the opposite side, then perpendicular sides to keep a fitting bubble clear of its trigger. If no side fits, it stays within the viewport margins; a caller width cap is also bounded by those margins.
+
 Menu.listClassName styles the menu card independently of the anchor wrapper, including in portal mode.
 
 <details>

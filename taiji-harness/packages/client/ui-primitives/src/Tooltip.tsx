@@ -3,6 +3,7 @@
 import { cloneElement, createContext, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { FocusEventHandler, MouseEventHandler, MutableRefObject, ReactElement, Ref } from 'react'
 import { createPortal } from 'react-dom'
+import { placeTooltip } from './tooltip-placement.ts'
 import css from './Tooltip.module.css'
 
 /** Bubble placement relative to the anchor. */
@@ -42,7 +43,7 @@ if (typeof window !== 'undefined') {
 /**
  * Attach a hover/focus tooltip to an anchor element.
  * @param props.label - bubble text, or a resolver evaluated only while the bubble is visible.
- * @param props.side - placement relative to the anchor (default 'right').
+ * @param props.side - preferred side (default 'right'); fitting tries its opposite and perpendicular sides.
  * @param props.align - horizontal anchor-edge alignment for 'bottom'/'top' bubbles: 'end' pins
  * the bubble's right edge to the anchor's (for anchors beside other hover surfaces the centered
  * bubble would overlap); default 'center'. Ignored for side 'right'.
@@ -69,51 +70,11 @@ export function Tooltip({ label, side = 'right', align = 'center', delayMs = 0, 
   }, [childRef])
   // The anchor's edges rather than final coordinates: a vertical flip has to
   // re-derive the bubble's own top from the opposite edge.
-  const [pos, setPos] = useState<{ x: number; top: number; bottom: number } | null>(null)
-  // Where the bubble actually sits, which is the requested side until the
-  // viewport refuses it.
-  const [placement, setPlacement] = useState<TooltipSide>(side)
+  const [pos, setPos] = useState<{ x: number; left: number; right: number; top: number; bottom: number } | null>(null)
   const bubble = useRef<HTMLSpanElement | null>(null)
   const resolvedLabel = pos === null
     ? null
     : typeof label === 'function' ? label() : label
-  const y = pos === null
-    ? 0
-    : placement === 'right'
-      ? pos.top + (pos.bottom - pos.top) / 2
-      : placement === 'top' ? pos.top - 8 : pos.bottom + 8
-  const EDGE_MARGIN = 12
-  // Viewport fit: fixed positioning knows nothing about edges, so a centered
-  // bubble near the right edge would clip and a long label under an anchor low
-  // on the page would run off the bottom. Horizontally the bubble slides back
-  // inside; vertically it flips to the opposite side, which is the only move
-  // that does not cover the anchor being read. Each measurement resets the base
-  // position first, so a shorter label or a larger viewport releases a previous
-  // adjustment without another render.
-  useLayoutEffect(() => {
-    if (pos === null) return
-    const fit = () => {
-      const el = bubble.current
-      /* v8 ignore next -- pos is set only while the bubble is mounted. */
-      if (el === null) return
-      el.style.left = `${pos.x}px`
-      const r = el.getBoundingClientRect()
-      let dx = 0
-      if (r.right > window.innerWidth - EDGE_MARGIN) dx = window.innerWidth - EDGE_MARGIN - r.right
-      if (r.left + dx < EDGE_MARGIN) dx = EDGE_MARGIN - r.left
-      el.style.left = `${pos.x + dx}px`
-      if (side === 'right') return
-      // Flip only into a side that genuinely fits, so an anchor with room on
-      // neither side keeps the requested placement instead of oscillating.
-      const fitsBelow = pos.bottom + 8 + r.height <= window.innerHeight - EDGE_MARGIN
-      const fitsAbove = pos.top - 8 - r.height >= EDGE_MARGIN
-      if (placement === 'bottom' && !fitsBelow && fitsAbove) setPlacement('top')
-      if (placement === 'top' && !fitsAbove && fitsBelow) setPlacement('bottom')
-    }
-    fit()
-    window.addEventListener('resize', fit)
-    return () => { window.removeEventListener('resize', fit) }
-  }, [placement, pos, resolvedLabel, side])
   const showTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   // Hover and focus are independent triggers: the bubble hides only after
   // BOTH clear (hovering away from a focused anchor must not drop it).
@@ -128,6 +89,31 @@ export function Tooltip({ label, side = 'right', align = 'center', delayMs = 0, 
   const [suppressed, setSuppressed] = useState(false)
   const announce = useCallback((active: boolean) => { suppressAncestors?.(active) }, [suppressAncestors])
   const visible = pos !== null && !disabled
+  useLayoutEffect(() => {
+    if (pos === null) return
+    const fit = () => {
+      const el = bubble.current
+      /* v8 ignore next -- pos is set only while the bubble is mounted. */
+      if (el === null) return
+      const rect = el.getBoundingClientRect()
+      const anchorRect = anchor.current?.getBoundingClientRect() ?? pos
+      const placed = placeTooltip({
+        anchor: anchorRect, width: rect.width, height: rect.height,
+        viewportWidth: window.innerWidth, viewportHeight: window.innerHeight,
+        side, align, gap: 8,
+      })
+      const horizontal = placed.side === 'right' || placed.side === 'left'
+      const offsetX = horizontal ? 0 : align === 'end' ? placed.width : placed.width / 2
+      const offsetY = horizontal ? placed.height / 2 : placed.side === 'top' ? placed.height : 0
+      el.style.left = `${placed.left + offsetX}px`
+      el.style.top = `${placed.top + offsetY}px`
+      el.dataset.side = placed.side
+      el.style.visibility = 'visible'
+    }
+    fit()
+    window.addEventListener('resize', fit)
+    return () => { window.removeEventListener('resize', fit) }
+  }, [align, pos, resolvedLabel, side, suppressed, visible])
   useEffect(() => {
     announce(visible)
     return () => { announce(false) }
@@ -155,11 +141,10 @@ export function Tooltip({ label, side = 'right', align = 'center', delayMs = 0, 
     /* v8 ignore next -- the ref is attached by event time: events fire on the cloned anchor. */
     if (el === null) return
     const r = el.getBoundingClientRect()
-    // Every show starts from the requested side; the fit pass flips it only
-    // where this anchor's position demands it.
-    setPlacement(side)
     setPos({
       x: side === 'right' ? r.right + 10 : align === 'end' ? r.right : r.left + r.width / 2,
+      left: r.left,
+      right: r.right,
       top: r.top,
       bottom: r.bottom,
     })
@@ -189,10 +174,10 @@ export function Tooltip({ label, side = 'right', align = 'center', delayMs = 0, 
     <span
       ref={bubble}
       className={css.bubble}
-      data-side={placement}
+      data-side={side}
       data-portal={portal || undefined}
       data-align={align}
-      style={{ left: pos.x, top: y, ...maxWidth === undefined ? {} : { maxWidth } }}
+      style={{ left: pos.x, top: pos.top, visibility: 'hidden', ...maxWidth === undefined ? {} : { maxWidth: `min(${maxWidth}px, calc(100vw - 24px))` } }}
       role="tooltip"
     >
       {resolvedLabel}

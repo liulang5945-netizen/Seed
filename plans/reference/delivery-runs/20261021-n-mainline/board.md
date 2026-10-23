@@ -14,6 +14,7 @@
 | 当前训练与完整实验出口 | 原四端点未齐，D1已完成，实时终态见03 | CC-1.4/1.5沿有效v1.5与原终点；实际运行看03 |
 | extension评测适配 | 已提交；相关110支合成与独立审查完成，真实端点未测 | [04适配架构](artifacts/04-continuation-evaluation-adapter.md)、[工程交接](artifacts/02-plan.md)，CC-1.1–1.3 |
 | W5b/人工判读 | 真实前置未齐；固定判读/结案交接已准备 | [02交接](artifacts/02-plan.md#cc-16-判读与结案交接)；固定分母和原收官合同不变 |
+| 客户端对话/生命页 | 本地实现与验收完成 | [现行体验修订](../../UI_LIFE_UX_SPEC_20261003.md)、[DSH选择性借鉴](../../../active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md#2026-10-24-选择性借鉴)；不替代研究队首或安装包发布 |
 | CI修复 | 用户另行安排的任务负责 | 本任务不重复修复、提交或覆盖CI相关改动 |
 | 详细计划与旧计划衔接 | 本轮重编完成，独立复审/一致性检查通过 | [10](../../../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)、[17矩阵](artifacts/17-plan-transition-and-reconciliation.md) |
 | L2/L3/L4/扩面 | 尚未证明 | 按07及10条件准入，不补写已实现/已晋级 |

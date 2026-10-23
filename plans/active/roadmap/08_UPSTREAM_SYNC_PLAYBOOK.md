@@ -4,6 +4,20 @@
 
 本页不再追加逐步对话/命令/审批长流水。新实现的结论、来源和失败写入对应PLAN/SPEC/结案/报告；只在本手册更新实际同步触点，历史标题用于定位。保留752条登记（594中括号、158标题形，最大1128），不把工作树标题审计冒充历史全文审计。更早行内引用按原Git文本查找，不补造登记。
 
+## 2026-10-24 选择性借鉴
+
+本轮核验官方发布标签`dsh-v0.2.1-rc.3`，commit `1f81c047fc48fa190a683e469daa699857e9afe8`，来源为[官方发布说明](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.1-rc.3)。本地仍为`0.1.7-alpha.1`基底；下面是选择性适配，不表示整包升级。当前生命页、Taiji路由及源/状态所有权继续保留。
+
+| 更新 | 本轮决定与依据 |
+|---|---|
+| 提示浮层避让 | 已适配该标签的`ui-primitives/src/tooltip-placement.ts`几何算法与15项几何读数用例，接入本地Tooltip；窗口边缘按相反/垂直方向找空间，无可用方向才做有界回退。保留本地公开props、点击/焦点/嵌套交互，不引入新版快捷键或额外导出。38项几何与既有交互测试通过。 |
+| 切换后找回未发送草稿 | 本地`startSession→openWorkspace→connectWorkspace→reuseOrCreateBlank`已具备空会话复用；现有工作区回归覆盖该路径，不重复移植新版曾修复的回归。 |
+| 导航“更多”及插件入口定制 | 暂不移植：涉及新包、区域所有权、slot装配和多个导航消费者；应在独立有界包中验证，本轮不将其混入生命状态修复。 |
+| 标签条滚动位置保留 | 已审阅官方`0b8eabaf665b4a0aa3590d8eaf045963f27dfbb1`；本地尚无其offset持久结构，不能只套卸载回调，本轮暂缓。 |
+| DeepSeek模型列表更新/外部服务 | 不属于本轮Taiji客户端状态修复，不改provider、凭据或模型请求路径。 |
+
+重放新增触点：H1b/H1c/H1f保留训练/名册缺失语义、显式刷新与逐来源准入；H3的`ui-conversation`保留等待反馈/输入焦点，`ui-chat`保留附件收缩，`ui-primitives`保留浮层几何；M3刷新API目录。真实Web验收新增`apps/web/tests/life-status.e2e.ts`及两份owner-local快照，并登记Host/Client编译面。测试装配器`client-runtime/.../bundle-roster.ts`必须能从bundle本身manifest解析自身行，不要求安装到自己的node_modules。具体体验出口见[生命页现行修订](../../reference/UI_LIFE_UX_SPEC_20261003.md)。
+
 ## 1 · 前提与范围
 
 - **fork 无共同祖先**：G1 以 tarball 落地（非 clone），本仓从未有上游 git 历史与 remote ⇒ `git merge/cherry-pick upstream` **先天不可用**。同步机制定型为：**上游快照 + 本清单重放**（审计四已裁定，此处不重开）。
