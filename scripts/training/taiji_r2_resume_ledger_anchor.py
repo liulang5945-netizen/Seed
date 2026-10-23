@@ -131,6 +131,7 @@ def replay_ledger_tail(
             "episode_completed",
             "durable_training_commit",
             "work_unit_settled",
+            "final_stage_restored",
         }:
             if (
                 current is None
@@ -188,44 +189,49 @@ def verified_snapshot(*, sequence: int | None = None) -> dict[str, Any]:
             or target > current_sequence
         ):
             raise LedgerAnchorRefuse("requested ledger sequence is outside the audited tail")
-        anchor_event = _read_event(
-            budget._event_path(budget.AGGREGATE_LEDGER_PREFIX, BASELINE["sequence"])
-        )
-        if (
-            anchor_event.get("event_sha256") != BASELINE["event_sha256"]
-            or anchor_event.get("event_sha256") != _digest_event(anchor_event)
-            or anchor_event.get("event") != "work_unit_reserved"
-            or anchor_event.get("arm") != "fresh_same_capacity"
-            or anchor_event.get("charged_cpu_seconds") != BASELINE["charges"]["fresh_same_capacity"]
-            or anchor_event.get("reservation_id")
-            != BASELINE["reservations"]["fresh_same_capacity"]["reservation_id"]
-            or anchor_event.get("reserved_cpu_seconds")
-            != BASELINE["reservations"]["fresh_same_capacity"]["reserved_cpu_seconds"]
-        ):
-            raise LedgerAnchorRefuse("pinned full-audit ledger anchor differs")
-        tail = [
-            _read_event(budget._event_path(budget.AGGREGATE_LEDGER_PREFIX, index))
-            for index in range(BASELINE["sequence"] + 1, target + 1)
-        ]
-        snapshot = replay_ledger_tail(
-            BASELINE,
-            tail,
-            contract,
-            per_arm_limit=budget.PER_ARM_CPU_LIMIT,
-            aggregate_limit=budget.AGGREGATE_CPU_LIMIT,
-        )
-        if target == current_sequence and (
-            snapshot["event_sha256"] != live_tip
-            or snapshot["charges"] != live_charges
-            or snapshot["reservations"] != live_reservations
-        ):
-            raise LedgerAnchorRefuse("replayed ledger tail differs from verified summary tip")
-        snapshot["effective_charges"] = {
-            arm: snapshot["charges"][arm]
-            + float(snapshot["reservations"].get(arm, {}).get("reserved_cpu_seconds", 0.0))
-            for arm in ARMS
-        }
-        return snapshot
+        compare_live_tip = target == current_sequence
+    # Event files are immutable and append-only; replaying a captured prefix
+    # outside the lock keeps the lock hold short enough for another arm's
+    # settlement.  New events after the captured target do not affect this
+    # snapshot, and the live-tip comparison uses the values captured above.
+    anchor_event = _read_event(
+        budget._event_path(budget.AGGREGATE_LEDGER_PREFIX, BASELINE["sequence"])
+    )
+    if (
+        anchor_event.get("event_sha256") != BASELINE["event_sha256"]
+        or anchor_event.get("event_sha256") != _digest_event(anchor_event)
+        or anchor_event.get("event") != "work_unit_reserved"
+        or anchor_event.get("arm") != "fresh_same_capacity"
+        or anchor_event.get("charged_cpu_seconds") != BASELINE["charges"]["fresh_same_capacity"]
+        or anchor_event.get("reservation_id")
+        != BASELINE["reservations"]["fresh_same_capacity"]["reservation_id"]
+        or anchor_event.get("reserved_cpu_seconds")
+        != BASELINE["reservations"]["fresh_same_capacity"]["reserved_cpu_seconds"]
+    ):
+        raise LedgerAnchorRefuse("pinned full-audit ledger anchor differs")
+    tail = [
+        _read_event(budget._event_path(budget.AGGREGATE_LEDGER_PREFIX, index))
+        for index in range(BASELINE["sequence"] + 1, target + 1)
+    ]
+    snapshot = replay_ledger_tail(
+        BASELINE,
+        tail,
+        contract,
+        per_arm_limit=budget.PER_ARM_CPU_LIMIT,
+        aggregate_limit=budget.AGGREGATE_CPU_LIMIT,
+    )
+    if compare_live_tip and (
+        snapshot["event_sha256"] != live_tip
+        or snapshot["charges"] != live_charges
+        or snapshot["reservations"] != live_reservations
+    ):
+        raise LedgerAnchorRefuse("replayed ledger tail differs from verified summary tip")
+    snapshot["effective_charges"] = {
+        arm: snapshot["charges"][arm]
+        + float(snapshot["reservations"].get(arm, {}).get("reserved_cpu_seconds", 0.0))
+        for arm in ARMS
+    }
+    return snapshot
 
 
 def current_fast_charges() -> dict[str, float]:

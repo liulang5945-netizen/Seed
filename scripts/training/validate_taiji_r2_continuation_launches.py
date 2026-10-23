@@ -87,11 +87,11 @@ FAST_LAUNCH_V4_SOURCES = (
     "tests/taiji_native/test_r2_fast_ledger_resume_v4_contract.py",
 )
 FAST_LAUNCH_V4_SOURCE_SHA256 = {
-    "scripts/training/run_taiji_r2_fast_ledger_resume_v4.py": "bba3e9c0aa44b0f1de67365ae78d955f9566eb06074f6b76f3b6a0f78f4a3c03",
+    "scripts/training/run_taiji_r2_fast_ledger_resume_v4.py": "19cd416e635798a9525a55f3c3bc75381dce8a1c1d38fdd6dbc86f1a779e6d8a",
     "scripts/training/run_taiji_r2_fast_ledger_resume_v3.py": "e73efd6af0de7a799a9f4e3f612a71faece42f1f8f3bb4879f4a138090de5523",
     "scripts/training/run_taiji_r2_fast_ledger_resume_v2.py": "1530e68150fe8264d1db509b52fbb82159c8d325f2fa24d44ca2b88a7869f9e6",
     "scripts/training/run_taiji_r2_fast_ledger_resume.py": "d8ece312b17e6b84cdd8c45a332534ef2b2755b0e159b208151c65479e9a9cbf",
-    "scripts/training/taiji_r2_resume_ledger_anchor.py": "c729243584d89bd8aded0bacfdd7d0e99d760ad72dbe6020aff5bd03b5dfd37b",
+    "scripts/training/taiji_r2_resume_ledger_anchor.py": "8ce88545113bdfb8c9a7e50a131db011f6f49fda586e3ce8dcb24053623d9328",
     "scripts/training/run_taiji_r2_checkpoint_resume_adapter.py": "fce64448dc8d9d49104509c1a1cd5a4f4beeb80f5ee7ea74c440a2c118ae34b5",
     "scripts/training/taiji_r2_target_update_projection.py": "c7a2d0821b59a35fc5beca94edab557e2c201b04a028311a0008091209d1aeba",
     "tests/taiji_native/test_r2_fast_ledger_resume_contract.py": "839e4f8bb85a7ce816cae33fafe185761f298717cd58a08807b767620a12bcc5",
@@ -102,11 +102,21 @@ FAST_LAUNCH_V4_SOURCE_SHA256 = {
     "tests/taiji_native/test_r2_fast_ledger_resume_v3_contract.py": "d09875c357a4083e04816c2f238cf477546c09314463050f8830f537c11f6382",
     "scripts/training/taiji_r2_continuation_budget_amendment_v1_5.py": "22d89e8baad9894e4a006c981985446ba4cf8c2b38b9acd0bce77d99bb9a5fdf",
     "tests/taiji_native/test_r2_continuation_budget_amendment_v1_5_contract.py": "1d16e976a9c68975bca9b33ab0f7429a1afea82d263f89d734d9a71806b6a132",
-    "tests/taiji_native/test_r2_fast_ledger_resume_v4_contract.py": "6c1df2dbaa22b7009e3f845f0e5b8228bc845460ea8c825e7546dbe91d3e360f",
+    "tests/taiji_native/test_r2_fast_ledger_resume_v4_contract.py": "b205b3ffea0a1cceeb24daf9245952de4522df4276ccc07918b334511565819a",
 }
 FAST_LAUNCH_V4_SOURCE_SHA256_WARM = {
     **FAST_LAUNCH_V4_SOURCE_SHA256,
+    "scripts/training/run_taiji_r2_fast_ledger_resume_v4.py": "bba3e9c0aa44b0f1de67365ae78d955f9566eb06074f6b76f3b6a0f78f4a3c03",
+    "scripts/training/taiji_r2_resume_ledger_anchor.py": "c729243584d89bd8aded0bacfdd7d0e99d760ad72dbe6020aff5bd03b5dfd37b",
     "scripts/training/taiji_r2_continuation_budget_amendment_v1_5.py": "6882f4bb5a3e16828470c82bfff11f3a18ce40a96769d0da10e94cf36d540156",
+    "tests/taiji_native/test_r2_fast_ledger_resume_v4_contract.py": "6c1df2dbaa22b7009e3f845f0e5b8228bc845460ea8c825e7546dbe91d3e360f",
+    "tests/taiji_native/test_r2_resume_ledger_anchor_contract.py": "e9985a64ffc7a58c1d6b4a30d11b419d7a5bbcb0c7e2fe16e696bfa886a7ae4f",
+}
+FAST_LAUNCH_V4_SOURCE_SHA256_FAILED_START = {
+    **FAST_LAUNCH_V4_SOURCE_SHA256_WARM,
+    "scripts/training/taiji_r2_resume_ledger_anchor.py": "f2358608900fb3e180ebdaa04ab79f3b1179f07529eb717c10aee4e3c4654065",
+    "tests/taiji_native/test_r2_resume_ledger_anchor_contract.py": "107cb6f16202cfca2b4934c6d17d1a694efd815156d3cb556e8954029b9c93bc",
+    "scripts/training/taiji_r2_continuation_budget_amendment_v1_5.py": "22d89e8baad9894e4a006c981985446ba4cf8c2b38b9acd0bce77d99bb9a5fdf",
 }
 RESUME_V1_SOURCES = (
     "scripts/training/run_taiji_r2_checkpoint_resume_adapter.py",
@@ -493,14 +503,13 @@ def validate_launch_provenance(backend, revision, revision_sha256, *, revision_p
                 _validate_resource_policy(schema, arm, manifest.get("resource_policy"))
                 _validate_ledger_anchor(manifest.get("ledger_anchor"), require_baseline=True)
             elif schema == "taiji-r2-fast-ledger-resume-v2":
-                sources.update(
-                    _source_map(
-                        manifest.get("sources"),
-                        FAST_LAUNCH_V2_SOURCES,
-                        root,
-                        expected_sha256=FAST_LAUNCH_V2_SOURCE_SHA256,
-                    )
+                verified, declared_history = _source_map_with_history(
+                    manifest.get("sources"),
+                    [(FAST_LAUNCH_V2_SOURCES, FAST_LAUNCH_V2_SOURCE_SHA256)],
+                    root,
                 )
+                sources.update(verified)
+                historical_sources.update(declared_history)
                 _validate_resource_policy(schema, arm, manifest.get("resource_policy"))
                 _validate_ledger_anchor(manifest.get("ledger_anchor"), require_baseline=True)
             elif schema == "taiji-r2-fast-ledger-resume-v3":
@@ -521,6 +530,7 @@ def validate_launch_provenance(backend, revision, revision_sha256, *, revision_p
                     [
                         (FAST_LAUNCH_V4_SOURCES, FAST_LAUNCH_V4_SOURCE_SHA256),
                         (FAST_LAUNCH_V4_SOURCES, FAST_LAUNCH_V4_SOURCE_SHA256_WARM),
+                        (FAST_LAUNCH_V4_SOURCES, FAST_LAUNCH_V4_SOURCE_SHA256_FAILED_START),
                     ],
                     root,
                 )
@@ -529,14 +539,13 @@ def validate_launch_provenance(backend, revision, revision_sha256, *, revision_p
                 _validate_resource_policy(schema, arm, manifest.get("resource_policy"))
                 _validate_ledger_anchor(manifest.get("ledger_anchor"), require_baseline=True)
             else:
-                sources.update(
-                    _source_map(
-                        manifest.get("sources"),
-                        RESUME_V1_SOURCES,
-                        root,
-                        expected_sha256=RESUME_V1_SOURCE_SHA256,
-                    )
+                verified, declared_history = _source_map_with_history(
+                    manifest.get("sources"),
+                    [(RESUME_V1_SOURCES, RESUME_V1_SOURCE_SHA256)],
+                    root,
                 )
+                sources.update(verified)
+                historical_sources.update(declared_history)
                 _validate_resource_policy(schema, arm, manifest.get("resource_policy"))
                 _validate_ledger_anchor(manifest.get("ledger_anchor"), require_baseline=False)
             if schema != "taiji-r2-resume-v1":

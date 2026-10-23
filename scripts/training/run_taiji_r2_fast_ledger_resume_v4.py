@@ -47,6 +47,24 @@ SOURCES = (
     "tests/taiji_native/test_r2_fast_ledger_resume_v4_contract.py",
 )
 APPROVED_BUDGET = {"per_arm": PER_ARM_CPU_LIMIT, "aggregate": AGGREGATE_CPU_LIMIT}
+_ORIGINAL_START_CHARGE = r._start_charge
+
+
+def safe_start_charge(context):
+    """Use the ledger charge after a settled stop, not host CPU from other arms.
+
+    A clean stop has no active reservation, so its ledger charge already covers
+    the arm's own CPU.  Charging the host-wide delta again would attribute the
+    other arms' training (or idle host CPU) to this arm and can exhaust its cap
+    before the first step.
+    """
+    arm = context["arm"]
+    charges = r.latest_charges()
+    if arm not in charges:
+        raise r.Refuse(f"aggregate ledger lacks arm: {arm}")
+    if r.latest_reservations().get(arm) is None:
+        return float(charges[arm])
+    return float(_ORIGINAL_START_CHARGE(context))
 
 
 def memory_policy(arm):
@@ -142,6 +160,7 @@ def main():
     r.latest_charges = current_fast_charges
     r.latest_reservations = current_fast_reservations
     r._throughput_projection = _selected_projection
+    r._start_charge = safe_start_charge
     r.resource_snapshot = lambda: sample_resources(r.psutil, arm=args.arm)
     print(r.execute_arm(args.arm, resume=True)["status"])
 

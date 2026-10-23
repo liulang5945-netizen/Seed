@@ -116,6 +116,47 @@ def test_replays_reservations_and_settlements_from_pinned_tip():
     assert result["reservations"] == {}
 
 
+def test_replays_final_stage_restored_as_a_settlement():
+    anchor, events, contract = fixture()
+    fifth = events[-1]
+    reserved = copy.deepcopy(fifth)
+    reserved.update(
+        {
+            "sequence": 106,
+            "event": "work_unit_reserved",
+            "charged_cpu_seconds": 330.0,
+            "reservation_id": "e" * 32,
+            "reserved_cpu_seconds": 10.0,
+            "details": {},
+            "previous_event_sha256": fifth["event_sha256"],
+        }
+    )
+    reserved["event_sha256"] = budget._digest(reserved, omit="event_sha256")
+    restored = copy.deepcopy(reserved)
+    restored.update(
+        {
+            "sequence": 107,
+            "event": "final_stage_restored",
+            "charged_cpu_seconds": 340.0,
+            "details": {"reservation_id": "e" * 32, "stage": "pretraining"},
+            "previous_event_sha256": reserved["event_sha256"],
+        }
+    )
+    restored["event_sha256"] = budget._digest(restored, omit="event_sha256")
+
+    result = replay_ledger_tail(
+        anchor,
+        [*events, reserved, restored],
+        contract,
+        per_arm_limit=1_500_000.0,
+        aggregate_limit=4_300_000.0,
+    )
+
+    assert result["sequence"] == 107
+    assert result["charges"]["fresh_same_capacity"] == 340.0
+    assert result["reservations"] == {}
+
+
 @pytest.mark.parametrize(
     "mutation",
     [

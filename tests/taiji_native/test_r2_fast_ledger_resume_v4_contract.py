@@ -1,6 +1,7 @@
 import pytest
 
 from scripts.training import run_taiji_r2_daily_dialogue_continuation_extension as runner
+from scripts.training import run_taiji_r2_fast_ledger_resume_v4 as v4
 from scripts.training.run_taiji_r2_fast_ledger_resume import SOURCE_REVISION_SHA256
 from scripts.training.run_taiji_r2_fast_ledger_resume_v4 import (
     APPROVED_BUDGET,
@@ -71,6 +72,21 @@ def test_v4_manifest_binds_v1_5_and_per_arm_memory_floor(arm):
         else {"memory_floor_gib": 8.0, "scope": "default"}
     )
     assert manifest["resource_policy"] == expected_floor
+
+
+def test_safe_start_charge_uses_ledger_after_a_settled_stop(monkeypatch):
+    charges = {"full_turn_1m": 10.0, "warm_start": 123.0, "fresh_same_capacity": 20.0}
+    monkeypatch.setattr(v4.r, "latest_charges", lambda: charges)
+    monkeypatch.setattr(v4.r, "latest_reservations", lambda: {})
+    assert v4.safe_start_charge({"arm": "warm_start"}) == 123.0
+
+    monkeypatch.setattr(v4, "_ORIGINAL_START_CHARGE", lambda context: 999.0)
+    monkeypatch.setattr(
+        v4.r,
+        "latest_reservations",
+        lambda: {"warm_start": {"reservation_id": "e" * 32, "reserved_cpu_seconds": 10.0}},
+    )
+    assert v4.safe_start_charge({"arm": "warm_start"}) == 999.0
 
 
 @pytest.mark.parametrize("change", ["arm", "amendment", "budget", "sources", "forecast"])
