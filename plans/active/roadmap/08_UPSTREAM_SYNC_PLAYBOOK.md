@@ -1737,3 +1737,9 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 - 环境修复：`black_check_gate.py` 入仓（进程内等价门，100 列／py312）；pre-commit 调它而非外部 black（外部 black 在本机打印后挂起）。门禁未放宽，提交 `b1817cbcf` 末行打印 `pre-commit: local gates OK`。
 - 半径：4 份脚本/工具＋1 份测试（新增 2 文件）＋03/10 状态行；未碰产品码、训练、账本、在飞 partial；未启动真实评价；`git push` 仍未执行。
 - 下一格：CC-1.3 合成矩阵与独立审查（39×4、固定 12、跨入口 one-shot、双预算、失败树终止、旧 restart 仍严格、extension 不伪造 zero）。
+### ㊵-1131 【2026-10-23 · CC-1.3 合成矩阵跑通：继承 48 支＋扩展 13 支＝61 支全过；消费守卫只挡“已跑信号”不挡 readiness；下一步＝独立审查】
+
+- 旧 recovery-v2 评测契约 **48 支**（含新增 `test_recovery_restart_from_zero_must_remain_true` ⇒ 旧分支仍要求 true；extension 分支另测拒绝伪 zero）＋ extension 适配/worker **13 支**（156／39 分母、跨入口消费、readiness 不符、端点不在固定四端图、四端 restore 前 generate、worker factory 命令）＝ **61 支通过**（11.65 秒）。
+- 消费守卫收窄：`CONSUMPTION_KEYS` 只含 attempt/ledger/progress/face/generations/result/cost_receipt/review/failure；`--validate-only` 写的 readiness 是准备不是消费，不再误挡。测试两支（attempt 必挡／readiness 不挡）。
+- 半径：测试 2 份＋adapter 1 份；未碰产品码/训练/账本/在飞 partial；真实评价未启动；`git push` 未执行。
+- 下一格：CC-1.3 独立审查（对 adapter/worker/entry 三文件逐行审查，重点＝provider 一致性、旧分支不变、one-shot、CPU/wall 双预算、失败树终止），审查通过后冻结 extension 评测合同；真实预检仍等三臂齐备／D1。

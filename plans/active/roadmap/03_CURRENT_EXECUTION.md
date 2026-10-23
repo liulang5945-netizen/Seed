@@ -23,14 +23,14 @@
 |---|---|---|
 | CC-1.1 来源/launch/endpoint provider | v1.4 预算激活已提交（68ed3495c）；完整血缘/provider 待做 | 新简化入口及历史V3、v1.4与旧修订可验证，四端点snapshot；合成拒绝漂移/重复completion/活writer |
 | CC-1.2 独立extension evaluator/worker | 适配层＋versioned worker 已提交（612c2dfe4／b1817cbcf）；真实预检待三臂齐备 | 父进程和受监督worker使用同provider、snapshot与授权路径；无伪zero或旧schema回退 |
-| CC-1.3 合成与独立审查 | 旧局部门可继承，全链待做 | one-shot跨入口、39×4、固定12、双预算与失败树终止；对应提交CI与独立审查 |
+| CC-1.3 合成与独立审查 | 继承48＋扩展13＝61支合成契约通过（9ec663c25／112caed7b）；独立审查待做 | one-shot跨入口、39×4、固定12、双预算与失败树终止；对应提交CI与独立审查 |
 | CC-1.4 当前训练 | warm已按预算保护停止；另两臂暂缓 | 耐久partial与停止事件保留，无完整final；D1准备到原完整实验出口的费用/范围裁决 |
 | CC-1.5 预算/三臂完整性 | 待实际费用闭合 | D1一次性提交到原完整出口的缺口与推荐；不补额则封存partial，W5b继续阻断 |
 | CC-1.6 原W5b | 前置未齐 | parent+三臂、39×4=156、固定前12-family人工、CPU/wall各14,400秒，一次调用并保存原始失败 |
 
-## 当前唯一下一步：完成 CC-1.3 的 extension 合成与独立审查（worker 已接线）
+## 当前唯一下一步：完成 CC-1.3 的独立审查并冻结 extension 评测合同（61 支合成矩阵已过）
 
-versioned worker 已接线：`--execute` 走 `recovery.execute`＋同一 extension provider，`--worker` 走新循环；`--validate-only` 仍冻结 readiness＋端点清单。54 支合同通过。真实执行仍被三臂未齐挡住（warm partial、另两臂暂缓）。下一步＝补 CC-1.3 合成矩阵：39×4、固定 12、跨入口 one-shot（旧 recovery 评测已消费则拒绝）、双预算、失败树终止、旧 restart 仍严格、extension 不伪造 zero；随后做独立代码审查。保留warm耐久partial与停止账，不消费保留题面；按D1讨论完整预算与原配对问题，不降分母、不把partial称final。
+合成矩阵已跑通：旧 recovery-v2 评测 48 支（含“旧 restart 仍严格”与“extension 不伪造 zero”）＋ extension 适配/worker 13 支（156／39 分母、跨入口消费、readiness 不符、端点不在固定四端图、四端 restore 前 generate、worker factory 命令）＝ **61 支通过**。消费守卫只挡已跑信号（attempt/ledger/progress/face/generations/result/cost_receipt/review/failure），不挡 `--validate-only` 的 readiness。下一步＝对 adapter/worker/entry 三文件做独立逐行审查，重点：provider 一致性、旧分支不变、one-shot、CPU/wall 双预算、失败树终止；审查通过后冻结 extension 评测合同。真实执行仍被三臂未齐挡住（warm partial、另两臂暂缓）。保留warm耐久partial与停止账，不消费保留题面；按D1讨论完整预算与原配对问题，不降分母、不把partial称final。
 
 N1-166及原确认面、dev/reference/selector、能力晋级继续按原门冻结。普通实现与受影响验证自动推进；只有实质改变预算/题面/冻结协议/路线时到10的对应D节点裁决，其余独立工作持续。
 
