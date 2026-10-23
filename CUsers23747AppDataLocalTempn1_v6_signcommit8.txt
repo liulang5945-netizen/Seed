@@ -1,3 +1,0 @@
-│  No config files with names ["lefthook" ".lefthook" ".config\\lefthook"] have been found in "E:/Seed"
-[main 64f6a639c] docs(n02): record the owner's C4 package choice and write the launch sheet without firing it
- 2 files changed, 25 insertions(+), 3 deletions(-)

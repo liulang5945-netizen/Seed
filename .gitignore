@@ -297,6 +297,10 @@ focused-before.xml
 # underscore form is added: `.tmp-p4-9-run.txt` is tracked, and the dash form is the
 # directory family's business.  Verified no tracked path matches this pattern.
 .tmp_*
+
+# Misquoted Windows temp paths can become flattened files at the repository root.
+# U+F03A is the colon replacement used by the two accidental signcommit logs.
+/[A-Za-z][:]*AppDataLocalTemp*
 # H19 (2026-09-30): 上面那条只写了 `.tmp-<主题>/`（**连字符**），而实际产出的临时文件用的是
 # `.tmp_<name>.<ext>`（**下划线**，如 `.tmp_ruff.json`、`.tmp_test_native.log`）—— 两者不是同一个 glob，
 # 于是这族文件全部漏网进了 git status。这正是 R1 说的"按实例名写"：规则作者以为自己覆盖了 `.tmp*`。

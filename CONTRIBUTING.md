@@ -84,4 +84,12 @@ The previous NeuroPlex Transformer runtime remains under `neuroplex/` for reprod
 
 ## License
 
-Contributions are licensed under Apache License 2.0.
+Contributions to Seed are licensed under [Apache License 2.0](LICENSE). The root
+license retains the original `Copyright 2026 NeuroPlex Contributors` notice from
+the project's initial open-source commit (`896f850af`); the current Seed/Taiji
+name does not replace that historical attribution.
+
+The vendored [Taiji Harness workspace](taiji-harness/LICENSE) carries its own MIT
+license and upstream copyright notice. Preserve its license and
+[third-party notices](taiji-harness/THIRD_PARTY_NOTICES.md) when contributing or
+redistributing that workspace.

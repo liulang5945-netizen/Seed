@@ -1,0 +1,66 @@
+{
+  "date": "2026-10-23",
+  "base_commit": "0977f9b91076c386ad58136a0be44d024c94b046",
+  "scope": "Local security directories excluding data, taiji_data, checkpoints, harness, dependency, tool-state and test-temp trees; all reachable local Git refs and credential-path blobs; no credential values exported",
+  "excluded_directory_names": [
+    ".codex",
+    ".git",
+    ".local",
+    ".seed_test_tmp",
+    ".venv",
+    "__pycache__",
+    "checkpoints",
+    "data",
+    "node_modules",
+    "taiji-harness",
+    "taiji_data"
+  ],
+  "scan_errors": [
+    "E:\\Seed\\.dsh-sbx\\AppData\\Local\\Microsoft\\Windows\\INetCache\\Content.IE5"
+  ],
+  "historical_credential_blob_count": 0,
+  "live_credentials": [
+    {
+      "path": "security/.fernet_key",
+      "ignored": true,
+      "matches_any_historical_credential": false,
+      "matches_documented_leaked_fingerprint": false
+    },
+    {
+      "path": "security/.jwt_secret",
+      "ignored": true,
+      "matches_any_historical_credential": false,
+      "matches_documented_leaked_fingerprint": false
+    },
+    {
+      "path": "security/.storage_salt",
+      "ignored": true,
+      "matches_any_historical_credential": false,
+      "matches_documented_leaked_fingerprint": false
+    }
+  ],
+  "all_scanned_live_values_differ_from_history": true,
+  "dispatched_older_packages_verified": false,
+  "secret_guard_tests": "6 passed in 3.53s",
+  "credential_rotation_performed": false,
+  "history_rewritten": false,
+  "documented_leaked_fingerprints_compared": [
+    "abe3c9f10563a1ab",
+    "e6401f86c1313d6d",
+    "f1d2ed7bdd5ea4f9"
+  ],
+  "all_scanned_live_values_differ_from_documented_leaks": true,
+  "history_comparison_limit": "No credential-path blobs found in currently reachable local refs; documented leak fingerprints also compared. This is not proof that remote caches, older clones or delivered packages are clean.",
+  "dist_directory_present": false,
+  "old_packaged_test_directory_present": true,
+  "validation": {
+    "secret_and_folder_tests_passed": 13,
+    "secret_and_folder_tests_failed": 1,
+    "existing_failure": "test_tracked_machine_reports_have_one_home",
+    "preexisting_json_outside_reports_at_base_commit": 109,
+    "ruff": "passed",
+    "diff_check": "passed"
+  },
+  "repository_description_updated": true,
+  "repository_description": "Open-source runtime and research platform for Taiji (态极), a native cognitive model exploring persistent state, memory, predictive learning, planning and action-feedback loops. Includes Python APIs, experiment runners, tests and reproducible research reports."
+}

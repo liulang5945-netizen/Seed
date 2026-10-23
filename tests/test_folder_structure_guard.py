@@ -56,6 +56,22 @@ def test_tracked_machine_reports_have_one_home():
     assert not misplaced, f"Machine reports belong in reports/: {misplaced}"
 
 
+def test_flattened_windows_temp_paths_do_not_enter_the_repository():
+    """Reject misquoted absolute temp paths without hiding ordinary text files."""
+    tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=REPO).decode().split("\0")
+    pattern = re.compile(r"^[A-Za-z][:\uf03a].*AppDataLocalTemp")
+    assert not [name for name in tracked if pattern.match(name)]
+    for name in (
+        "C\uf03aUsersExampleAppDataLocalTempnew_probe.txt",
+        "D\uf03aUsersOtherAppDataLocalTempnew.log",
+    ):
+        result = subprocess.run(["git", "check-ignore", "--no-index", "-q", "--", name], cwd=REPO)
+        assert result.returncode == 0, name
+    for name in ("requirements.txt", "requirements-legacy.txt"):
+        result = subprocess.run(["git", "check-ignore", "--no-index", "-q", "--", name], cwd=REPO)
+        assert result.returncode == 1, name
+
+
 #: 命名族：匹配即视为已知（无需进台账），但删除仍须走 clean_worktree 的豁免逻辑。
 #: `_pytest_*` / `.pytest-*` 与 `direct-*` 分别对应 .gitignore 既有规则与 S2「特殊」节。
 #: `.dsh-sbx*`（Taiji Harness 起服沙箱 HOME）与 `.electron-cache`（harness 侧的 Electron

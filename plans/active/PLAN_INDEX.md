@@ -1,5 +1,7 @@
 # Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
+> **2026-10-23 仓库申请前整改**：GitHub About 已改为态极原生认知模型的开源运行时与研究平台；安全守卫6/6通过，三份在位凭据均不匹配已记录泄漏指纹，旧分发包仍需单独核实。保留原Apache许可证及NeuroPlex历史署名，贡献指南补充Harness的独立MIT来源；清理两份误落根目录的提交日志，新增命名族忽略和防回归检查。联合检查13通过、1项既有报告目录守卫失败，未删改研究证据；详见[整改结案](../reference/REPO_PREAPPLICATION_REMEDIATION_20261023.md)。本次不改变研究队首或训练进程；整改后唯一建议是先核对既有报告引用，再修复报告目录守卫失败。
+
 > **2026-10-21 当前N队首**：v2三臂自然中文多轮训练从zero并发重做，旧06/07中断weights不可恢复。full_turn_1m 3,936 episodes/1,889,706 updates/CPU14,112.281秒；warm/fresh各6,048/2,880,820 updates/CPU13,728.828/13,729.016秒。fresh与warm并齐、latest恢复通过，0dev/reference、can_promote=false。唯一下一步继续到固定分母/终点restore；CI修复本地提交、推送后重跑待办。详见[03](roadmap/03_CURRENT_EXECUTION.md)、[v2 handoff](../reference/PLAN-R2-DAILY-DIALOGUE-RECOVERY_V2_READINESS_20261021.md)和[黑板](../reference/delivery-runs/20261021-n-mainline/board.md)。
 
 > **2026-10-21 R2并发配对更新**：R2-DIALOGUE-06的1M fresh全轮预训练最近14,789/30,096 episode（49.1%）；R2-DIALOGUE-07 warm-start/fresh-same-capacity两臂均为9,856/30,096 episode（32.7%）、各4,718,755 target-byte updates。07两臂各使用旧R2原生300k结构、相同全轮语料与固定更新量，两个zero full bundle、两个助手校准canary均通过新进程恢复与单episode信用探针，预检CPU分别50.90625/32.84375秒。当前checkpoint目录只有zero与canary，没有训练终点；Codex官方文档未保证桌面客户端重启会保留本地执行会话，因此先按可能中断处理，优先等训练完成后再重启。R2-08线程诊断7/8 trial后按attempt停止，CPU超限48.4375秒；父checkpoint不变、0 dev/reference/checkpoint写入，见[线程诊断裁定](../reference/EXP-R2-THREAD-SCALING-ADJUDICATION_20261021.md)。配对runner契约测试3/3、Ruff、py_compile通过。N1-166仍因N1-165前置门仅2/3未准入，保持原判据与未消费状态。
