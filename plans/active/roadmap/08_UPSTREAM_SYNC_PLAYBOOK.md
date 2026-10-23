@@ -1772,5 +1772,5 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 - launch 血缘补齐：`validate_taiji_r2_continuation_launches.py` 现扫描 target v1、fast v1/v2/v3/v4 与简化 `taiji_r2_resume_*`；按 schema 记录历史批准额度；v3 历史源以声明哈希留痕（`historical_sources`，不要求当前字节相等），v4/当前源仍按字节校验；forecast 作用域按 `projection_scope` 判定。真实 reports 树实测：full 3／warm 6／fresh 2 个 launch manifest，29 个当前源、12 个历史源。
 - adapter 已接收 `historical_sources` 并写入端点清单；当前源继续进 `source_hashes` 参与父/worker 一致性比对。
 - 测试：相关契约 **109 支通过**（adapter 20、recovery 48、endpoint preflight 6、launch provenance 11、v1.5 5、v4 13、计划门等）；black/ruff 通过。提交 `72b5d13d2`。
-- 训练前检查：`run_taiji_r2_resume.py --check-only --arm warm_start` 通过；内存 23.47 GiB。warm 已于 19:41 用 v4 续训，manifest `024767a4` 绑定 16 源、approved 1,590,000／4,560,000、amendment `21e0497e`，预计剩余 11,340 CPU 秒。当前无 final、未消费题面。
+- 训练前检查：`run_taiji_r2_resume.py --check-only --arm warm_start` 通过；内存 23.47 GiB。warm 已于 19:41 用 v4 续训，manifest `024767a4` 绑定 16 源、approved 1,590,000／4,560,000、amendment `21e0497e`。恢复时账本先记约 **1.87 万 CPU 秒主机尾账**（停止到恢复间的主机 CPU 差，按 unknown tail 计入），由 v1.5 的 warm 缓冲吸收；后续 full/fresh 必须无缝接续，避免空置再产生尾账。20:00 进度 27,679 episodes／13,345,570 updates、累计 1,568,838 CPU 秒。
 - 下一格：盯住 warm 到 final 并通过 endpoint/独立恢复门；成功后按 full_turn_1m→fresh_same_capacity 逐臂。触顶/内存不足/恢复失败即停止留证。
