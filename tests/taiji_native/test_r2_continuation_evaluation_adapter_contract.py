@@ -174,6 +174,40 @@ def test_preflight_keeps_the_frozen_readiness_envelope(tmp_path: Path) -> None:
     assert [row["endpoint_id"] for row in manifest["endpoints"]] == list(adapter.ENDPOINT_ORDER)
 
 
+def test_preflight_binds_frozen_and_extension_sources_by_default(tmp_path: Path) -> None:
+    preflight = adapter.extension_preflight(
+        _manifest(tmp_path),
+        arm_paths=_arm_paths(tmp_path),
+        hash_file=_hash_file,
+        baseline_fn=lambda: _baseline(tmp_path),
+    )
+    bound = set(preflight["source_hashes"])
+    expected = {
+        str(Path(adapter.__file__).resolve()),
+        str(Path(worker.__file__).resolve()),
+        str(Path(entry.__file__).resolve()),
+        str(Path(recovery.__file__).resolve()),
+        str(Path(__file__).resolve()),
+    }
+    assert expected <= bound
+
+
+def test_extension_map_rejects_a_restore_receipt_from_another_stage(tmp_path: Path) -> None:
+    manifest = _manifest(tmp_path)
+    manifest["endpoints"][adapter.ARMS[1]]["final_checkpoints"][adapter.FINAL_STAGE]["restore"][
+        "stage"
+    ] = "pretraining"
+    with pytest.raises(adapter.AdapterRefuse, match="restore stage"):
+        adapter.extension_endpoint_map(manifest, baseline_fn=lambda: _baseline(tmp_path))
+
+    manifest = _manifest(tmp_path)
+    manifest["endpoints"][adapter.ARMS[2]]["final_checkpoints"][adapter.PRETRAIN_STAGE]["restore"][
+        "checkpoint_digest"
+    ] = _sha("d")
+    with pytest.raises(adapter.AdapterRefuse, match="restore digest"):
+        adapter.extension_endpoint_map(manifest, baseline_fn=lambda: _baseline(tmp_path))
+
+
 def test_entry_refuses_execute_and_worker_with_stdout_json() -> None:
     for flag in ("--execute", "--worker"):
         proc = subprocess.run([sys.executable, str(ENTRY), flag], capture_output=True, check=False)

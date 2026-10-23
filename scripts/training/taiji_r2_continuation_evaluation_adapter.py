@@ -34,6 +34,16 @@ PRETRAIN_STAGE = "pretraining_final"
 EVAL_STAGE = "assistant_sft"
 EXPECTED_FINAL = {"episodes": 525, "target_byte_updates": 113209}
 EXPECTED_PRETRAIN = {"episodes": 30096, "target_byte_updates": 14517912}
+ROOT = Path(__file__).resolve().parents[2]
+EXTENSION_SOURCE_PATHS = (
+    Path(__file__).resolve(),
+    ROOT / "scripts/training/evaluate_taiji_r2_daily_dialogue_continuation_extension_v1.py",
+    ROOT / "scripts/training/evaluate_taiji_r2_daily_dialogue_continuation_extension_worker_v1.py",
+    ROOT / "scripts/training/taiji_r2_dialogue_continuation_extension.py",
+    ROOT / "scripts/training/prepare_taiji_r2_continuation_endpoints.py",
+    ROOT / "scripts/training/validate_taiji_r2_continuation_endpoint.py",
+    ROOT / "tests/taiji_native/test_r2_continuation_evaluation_adapter_contract.py",
+)
 
 
 class AdapterRefuse(ValueError):
@@ -46,6 +56,25 @@ def canonical_json(value: Mapping[str, Any]) -> bytes:
 
 def snapshot_sha256(manifest: Mapping[str, Any]) -> str:
     return hashlib.sha256(canonical_json(manifest)).hexdigest()
+
+
+def extension_source_hashes(
+    *, hash_file: Callable[[Path], str] = recovery.sha256_file
+) -> dict[str, str]:
+    """Bind the frozen evaluator sources plus every extension-source seam.
+
+    The frozen evaluator hashes its own source closure.  The extension runs the
+    same protocol through three extra modules, so those files must travel in the
+    readiness/attempt ``source_hashes`` too; otherwise a mid-run edit could not
+    be detected by the parent or the supervised worker.
+    """
+    paths = dict.fromkeys((*recovery._evaluation_source_paths(), *EXTENSION_SOURCE_PATHS))
+    hashes: dict[str, str] = {}
+    for path in paths:
+        if not path.is_file():
+            raise AdapterRefuse(f"extension evaluation source is missing: {path}")
+        hashes[str(path.resolve())] = hash_file(path)
+    return dict(sorted(hashes.items()))
 
 
 def _mapping(value: Any, label: str) -> Mapping[str, Any]:
@@ -93,6 +122,10 @@ def _stage(
     restore = _mapping(stage.get("restore"), f"{label} {name} restore")
     if restore.get("complete") is not True or restore.get("equal") is not True:
         raise AdapterRefuse(f"{label} {name} independent restore is incomplete")
+    if restore.get("stage") != name.removesuffix("_final"):
+        raise AdapterRefuse(f"{label} {name} restore stage differs from its checkpoint stage")
+    if restore.get("checkpoint_digest") != stage.get("checkpoint_digest"):
+        raise AdapterRefuse(f"{label} {name} restore digest differs from the checkpoint digest")
     return stage
 
 
@@ -245,8 +278,8 @@ def extension_preflight(
     for row in endpoint_rows:
         source_hashes[str(Path(row["path"]).resolve())] = row["sha256"]
     source_hashes[str(Path(baseline["path"]).resolve())] = baseline["sha256"]
-    if eval_hashes is not None:
-        source_hashes.update(eval_hashes())
+    frozen_or_injected = eval_hashes or (lambda: extension_source_hashes(hash_file=hash_file))
+    source_hashes.update(frozen_or_injected())
     return {
         "validated_arms": arm_records,
         "report_hashes": report_hashes,

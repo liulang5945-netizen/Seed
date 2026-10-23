@@ -16,6 +16,8 @@ from collections.abc import Callable, Mapping
 from pathlib import Path
 from typing import Any
 
+import torch
+
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
@@ -195,6 +197,7 @@ def worker_loop(attempt_path: Path, ledger_path: Path, job_name: str) -> int:
     """Private persistent worker; one IPC task at a time, no selector."""
     if os.name != "nt":
         raise Refuse("DURABILITY_UNSUPPORTED: restore/generation worker requires Windows NTFS")
+    torch.set_num_threads(1)
     durability_api = recovery.WindowsDurabilityApi()
     if not attempt_path.exists() or not ledger_path.exists():
         raise Refuse("worker requires an existing parent attempt and ledger")
