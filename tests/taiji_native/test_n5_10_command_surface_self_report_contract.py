@@ -62,9 +62,15 @@ def test_no_clock_is_published_in_the_command_surface() -> None:
 def test_a_real_run_round_trips_its_own_argv(tmp_path: Path) -> None:
     out_dir = tmp_path / "cs"
     out_dir.mkdir(parents=True)
+    corpus = out_dir / "corpus.txt"
+    corpus.write_text(
+        "A small synthetic corpus for the command surface contract.\n" * 8, encoding="utf-8"
+    )
     argv = [
         sys.executable,
         str(TRAINER),
+        "--corpus",
+        str(corpus),
         "--readout",
         "predictive",
         "--no-readout-position",
