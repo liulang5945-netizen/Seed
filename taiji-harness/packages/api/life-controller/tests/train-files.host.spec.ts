@@ -54,7 +54,7 @@ describe('LifeController training roster', () => {
 
     const { snapshot } = await controller.snapshot(new AbortController().signal)
 
-    expect(snapshot.training.datasets).toEqual([
+    expect(snapshot.training?.datasets).toEqual([
       { path: 'consolidated/night-1.jsonl', sizeBytes: 4096 },
       { path: 'simple_zh/dialogue_extended_clean.jsonl', sizeBytes: 108_327_171 },
     ])
@@ -68,7 +68,7 @@ describe('LifeController training roster', () => {
 
     const { snapshot } = await controller.snapshot(new AbortController().signal)
 
-    expect(snapshot.training.datasets).toBeUndefined()
+    expect(snapshot.training?.datasets).toBeUndefined()
     expect(snapshot.availability.runtime).toBe('ok')
     expect(snapshot.fresh).toBe(true)
     expect(snapshot.unavailable).toContain('train-files: HTTP 404')
@@ -80,7 +80,7 @@ describe('LifeController training roster', () => {
 
     const { snapshot } = await controller.snapshot(new AbortController().signal)
 
-    expect(snapshot.training.datasets).toBeUndefined()
+    expect(snapshot.training?.datasets).toBeUndefined()
     expect(snapshot.unavailable).toEqual([])
   })
 
@@ -90,7 +90,7 @@ describe('LifeController training roster', () => {
 
     const { snapshot } = await controller.snapshot(new AbortController().signal)
 
-    expect(snapshot.training.datasets).toBeUndefined()
+    expect(snapshot.training?.datasets).toBeUndefined()
     expect(snapshot.availability.runtime).toBe('down')
     expect(snapshot.unavailable.join(' ')).toContain('life/runtime-unreachable')
   })

@@ -129,6 +129,18 @@ describe('absent and legacy reading shapes', () => {
 })
 
 describe('renderLifeState', () => {
+  it('omits unreported training instead of claiming it is off', () => {
+    const { training: _training, ...snapshot } = nativeSnapshot()
+    const reading = renderLifeState(snapshot, BASE, 400)
+    if (reading.kind !== 'inject') throw new Error('expected an injectable reading')
+
+    expect(reading.text).not.toContain('training[')
+    expect(reading.text).toContain('source=native')
+    expect(significantChange(snapshot, nativeSnapshot())).toBe(true)
+    expect(significantChange(nativeSnapshot(), snapshot)).toBe(true)
+    expect(significantChange(snapshot, snapshot)).toBe(false)
+  })
+
   it('renders a native reading with needs, drives, training, and knowledge', () => {
     const reading = renderLifeState(nativeSnapshot(), BASE + 5_000, 400)
     expect(reading).toEqual({

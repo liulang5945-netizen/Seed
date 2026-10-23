@@ -1344,7 +1344,7 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
     methods: [
       {
         signature: '@Remote async snapshot(signal: AbortSignal): Promise<LifeSnapshotValue>',
-        description: 'Read the current runtime snapshot.',
+        description: 'Read a new runtime snapshot.',
         parameters: [{ name: 'signal', description: 'caller lifetime.' }],
         returns: 'the snapshot, marked `down` when the runtime did not answer.',
       },
@@ -5538,7 +5538,7 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   },
   {
     name: 'LifeSnapshot',
-    declaration: 'export interface LifeSnapshot {\n    readonly source: LifeSource;\n    readonly observedAt: string;\n    readonly fresh: boolean;\n    readonly pollIntervalMs: number;\n    readonly health?: LifeHealthView;\n    readonly memory?: LifeMemoryView;\n    readonly life?: LifeLifeView;\n    readonly training: LifeTrainingView;\n    readonly knowledge?: LifeKnowledgeView;\n    readonly consolidation?: LifeConsolidationView;\n    readonly artifacts?: LifeArtifactsView;\n    readonly workbench?: LifeWorkbenchView;\n    readonly auth?: LifeAuthView;\n    readonly availability: LifeAvailability;\n    readonly unavailable: readonly string[];\n}',
+    declaration: 'export interface LifeSnapshot {\n    readonly source: LifeSource;\n    readonly observedAt: string;\n    readonly fresh: boolean;\n    readonly pollIntervalMs: number;\n    readonly health?: LifeHealthView;\n    readonly memory?: LifeMemoryView;\n    readonly life?: LifeLifeView;\n    readonly training?: LifeTrainingView;\n    readonly knowledge?: LifeKnowledgeView;\n    readonly consolidation?: LifeConsolidationView;\n    readonly artifacts?: LifeArtifactsView;\n    readonly workbench?: LifeWorkbenchView;\n    readonly auth?: LifeAuthView;\n    readonly availability: LifeAvailability;\n    readonly unavailable: readonly string[];\n}',
   },
   {
     name: 'LifeSnapshotValue',
@@ -5558,7 +5558,7 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   },
   {
     name: 'LifeTrainingView',
-    declaration: 'export interface LifeTrainingView {\n    readonly isTraining: boolean;\n    readonly pauseRequested: boolean;\n    readonly stopRequested: boolean;\n    readonly publishing: boolean;\n    readonly progress?: LifeProgressView;\n    readonly checkpoints: readonly LifeCheckpointView[];\n    readonly datasets?: readonly LifeDatasetView[];\n    readonly warnings?: readonly string[];\n}',
+    declaration: 'export interface LifeTrainingView {\n    readonly isTraining: boolean;\n    readonly pauseRequested: boolean;\n    readonly stopRequested: boolean;\n    readonly publishing: boolean;\n    readonly progress?: LifeProgressView;\n    readonly checkpoints?: readonly LifeCheckpointView[];\n    readonly datasets?: readonly LifeDatasetView[];\n    readonly warnings?: readonly string[];\n}',
   },
   {
     name: 'LifeTrainStartRequest',

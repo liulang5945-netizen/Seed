@@ -108,13 +108,13 @@ export class LifeController extends TypertRemoteService {
   }
 
   /**
-   * Read the current runtime snapshot.
+   * Read a new runtime snapshot.
    * @param signal - caller lifetime.
    * @returns the snapshot, marked `down` when the runtime did not answer.
    */
   @Remote
   async snapshot(signal: AbortSignal): Promise<LifeSnapshotValue> {
-    return { snapshot: await this.feed.read(signal) }
+    return { snapshot: await this.feed.refresh(signal) }
   }
 
   /**

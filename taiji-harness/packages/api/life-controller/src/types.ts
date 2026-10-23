@@ -190,8 +190,8 @@ export interface LifeTrainingView {
   readonly publishing: boolean
   /** Latest progress sample, present only while a stream reported one. */
   readonly progress?: LifeProgressView
-  /** Checkpoint roster, newest first as the runtime returns it. */
-  readonly checkpoints: readonly LifeCheckpointView[]
+  /** Checkpoint roster, newest first; absent when its read did not answer. */
+  readonly checkpoints?: readonly LifeCheckpointView[]
   /** Trainable dataset roster, absent when the roster read did not answer. */
   readonly datasets?: readonly LifeDatasetView[]
   /**
@@ -320,8 +320,8 @@ export interface LifeSnapshot {
   readonly memory?: LifeMemoryView
   /** Life numbers, absent when neither organ answered. */
   readonly life?: LifeLifeView
-  /** Training projection; empty defaults stand in until the first read. */
-  readonly training: LifeTrainingView
+  /** Training projection, absent when status failed or omitted training. */
+  readonly training?: LifeTrainingView
   /** Knowledge projection, absent when the gated surface did not answer. */
   readonly knowledge?: LifeKnowledgeView
   /** Memory and consolidation projection, absent when the runtime does not serve it. */

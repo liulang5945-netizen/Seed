@@ -10,7 +10,7 @@ Source: [`packages/api/life-controller/src/types.ts`](../../packages/api/life-co
 
 控制器按四个层级读取 runtime 的 HTTP 面，而某个数值来自哪一层本身就是数据的一部分。
 
-- 常开读取：`GET /api/runtime/status` 携带 health、memory、life、training、`tools`（工作台能力快照）与 `auth`（运行时鉴权态）分节，`GET /api/train/checkpoints` 携带 checkpoint 名单，`GET /api/train/files` 携带可训练数据集名单（data 目录下的 POSIX 相对路径及其大小），`GET /api/artifacts` 携带发布态——哪个检查点在应答、settings 为下次启动点名了哪个——`GET /api/consolidation/status` 携带记忆日志计数与睡眠 pass 的产物——pass 计数、最近语料、数据环规格与最近报告。只要 runtime 进程存活，各层都会应答；早于巩固面的 runtime 在该路径应答 `404`，控制器据此记录为一行 `unavailable` 而非快照失败。
+- 常开读取：`GET /api/runtime/status` 携带 health、memory、life、training、`tools`（工作台能力快照）与 `auth`（运行时鉴权态）分节，`GET /api/train/checkpoints` 携带 checkpoint 名单，`GET /api/train/files` 携带可训练数据集名单（data 目录下的 POSIX 相对路径及其大小），`GET /api/artifacts` 携带发布态——哪个检查点在应答、settings 为下次启动点名了哪个——`GET /api/consolidation/status` 携带记忆日志计数与睡眠 pass 的产物——pass 计数、最近语料、数据环规格与最近报告。名册、发布态及巩固读取要求 status 已应答，检查点读取还要求已报告训练分节；早于巩固面的 runtime 在该路径应答 `404`，控制器据此记录为一行 `unavailable` 而非快照失败。
 - 受门控读取：`GET /api/life/status`（legacy 调度器）与 `GET /api/rag/status`（知识索引）仅在 runtime 通过 `SEED_ENABLE_LEGACY` 启用其 Legacy surface 时才挂载；`GET /api/rag/files`（已挂载文档及其索引状态）仅在该面应答时才读取，因此被禁用知识库只留下一个 `disabled` 事实。未挂载的受门控路径应答 `404`，控制器据此记录为 `disabled`——即"该来源从未存在"，而不是"runtime 坏了"。
 - 训练进度流：`POST /api/train/native` 与 `POST /api/train/resume_checkpoint`（从已保存的 checkpoint 续训，可带数据集与 tick 上限）应答同一条 server-sent event 流：每个 `progress` 事件携带一个 `LifeProgressView`，`warning` 事件（例如续训时的语料漂移提醒）由控制器折叠进快照的 `training.warnings`，由 `completed` 或 `error` 事件结束本次运行。
 - 巩固控制：`POST /api/consolidate` 运行一次 native 睡眠 pass（分析、投影、规格化，仅在被要求时才让基底入睡），并以 JSON 应答其报告。
@@ -21,11 +21,13 @@ Source: [`packages/api/life-controller/src/types.ts`](../../packages/api/life-co
 
 ## 快照
 
-`LifeSnapshot` 是一次完整读数，并指明应答的器官：`source`（哪个器官提供了生命数值）、`observedAt`（本次读数的 ISO-8601 时刻）、`fresh`（仅当本轮 status 读取有应答时为真）、`pollIntervalMs`（取数时生效的轮询间隔）、可选的 `health`、`memory`、`life`、`knowledge`、`consolidation`、`artifacts`、`workbench`、`auth` 投影、始终存在的 `training` 投影、`availability`，以及 `unavailable`。运行中的 runtime 未包含的 status 分节使对应投影保持缺失，而非填零。
+`LifeSnapshot` 是一次完整读数，并指明应答的器官：`source`（哪个器官提供了生命数值）、`observedAt`（本次读数的 ISO-8601 时刻）、`fresh`（仅当本轮 status 读取有应答时为真）、`pollIntervalMs`（取数时生效的轮询间隔）、可选的 `health`、`memory`、`life`、`training`、`knowledge`、`consolidation`、`artifacts`、`workbench`、`auth` 投影、`availability`，以及 `unavailable`。status 读取失败或未包含训练分节时，`training` 保持缺失；只有明确报告的 `isTraining: false` 才表示此 runtime 空闲。其他缺失的 status 分节同样使对应投影保持缺失，而非填零。
 
 `unavailable` 为每个未应答的来源保留一行便于运维阅读的说明，使面板能够指出 runtime 的哪一部分缺失，而不是显示空白。没有人测量过的量保持缺失而非默认零，因为一个永久为零的读数读起来像已测得的事实，反而掩盖了来源从未应答。
 
-`LifeAvailability` 独立分类每个来源：`runtime` 为 `ok` 或 `down`，`legacy` 与 `knowledge` 为 `ok`、`disabled` 或 `down`，`trainingStream` 为 `idle`、`streaming` 或 `closed`。`LifeTrainingView` 携带 runtime 的训练锁标志、它尚未观测到的暂停与停止请求、发布锁、最新的 `LifeProgressView`、按最新在前的 checkpoint 名单（截断到 `maxCheckpoints` 上限）、`datasets`——面板提供给一次运行的可训练名册（`path` 与 runtime 报出的 `size_bytes`），该读取未应答时保持缺失——以及 `warnings`：本 Host 上一次运行中 runtime 自己的消息，新运行被接受时清空、运行结束后仍保留。`LifeKnowledgeView` 携带索引规模与 `files`——已挂载文档及其大小和 `indexed` 或 `pending` 状态，文件清单读取未应答时保持缺失。
+`LifeAvailability` 独立分类每个来源：`runtime` 为 `ok` 或 `down`，`legacy` 与 `knowledge` 为 `ok`、`disabled` 或 `down`，`trainingStream` 为 `idle`、`streaming` 或 `closed`。`LifeTrainingView` 携带 runtime 的训练锁标志、它尚未观测到的暂停与停止请求、发布锁、最新的 `LifeProgressView`、`checkpoints`——按最新在前的 checkpoint 名单，截断到 `maxCheckpoints` 上限，读取未应答时保持缺失——、`datasets`——面板提供给一次运行的可训练名册（`path` 与 runtime 报出的 `size_bytes`），该读取未应答时保持缺失——以及 `warnings`：本 Host 上一次运行中 runtime 自己的消息，新运行被接受时清空、运行结束后仍保留。`LifeKnowledgeView` 携带索引规模与 `files`——已挂载文档及其大小和 `indexed` 或 `pending` 状态，文件清单读取未应答时保持缺失。
+
+`checkpoints` 字段缺失表示名册读取未应答，空数组表示已应答且没有检查点。生命器官缺失不影响独立应答的训练、知识或宿主读数。这些读数只描述所配置的 runtime，不包含它之外的研究训练进程或检查点目录。
 
 ## Remote 方法
 
@@ -84,7 +86,7 @@ Host service backing the generated `ctx.remote.life` namespace.
 
 ```ts cordis-catalog
 /**
- * Read the current runtime snapshot.
+ * Read a new runtime snapshot.
  * @param signal - caller lifetime.
  * @returns the snapshot, marked `down` when the runtime did not answer.
  */

@@ -8,7 +8,7 @@ English | [中文](README.zh.md)
 
 ## Summary
 
-Use this package to render a browser chat from recorded Session conversations, including historical images, localized actions, and restored scroll position. Work-details modes control reasoning previews and fold eligible completed-turn process rows without hiding final answers. Local transcript and steering submissions appear immediately, remain in their original surface, and disappear atomically when authoritative Session records arrive, while queued submissions stay outside Chat. The package does not assemble or modify model requests.
+Use this package to render a browser chat from recorded Session conversations, including historical images, localized actions, and restored scroll position. File attachment cards are at most 240px wide and shrink to fit narrow transcript columns. Work-details modes control reasoning previews and fold eligible completed-turn process rows without hiding final answers. Local transcript and steering submissions appear immediately, remain in their original surface, and disappear atomically when authoritative Session records arrive, while queued submissions stay outside Chat. The package does not assemble or modify model requests.
 
 File-mention providers receive the viewed Session ID with the closing-turn owner, so links into inherited history can address the fork itself.
 

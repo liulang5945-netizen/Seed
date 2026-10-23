@@ -102,17 +102,28 @@ export class LifeFeed {
     this.progress = progress
     this.stream = stream
     this.warnings = warnings
-    void this.refresh(this.lifetime.signal)
+    void this.refresh(this.lifetime.signal).catch((error: unknown) => {
+      // Disposal cancels the detached read; other failures remain observable.
+      if (!this.stopped) this.ctx.logger.warn(`life-controller: snapshot read failed: ${String(error)}`)
+    })
   }
 
-  /** Read once and publish when the reading changed. */
-  private async refresh(signal: AbortSignal): Promise<LifeSnapshot> {
+  /**
+   * Read the runtime once and publish while both caller and feed remain active.
+   * @param signal - caller lifetime.
+   * @returns the newly observed snapshot.
+   */
+  async refresh(signal: AbortSignal): Promise<LifeSnapshot> {
+    signal.throwIfAborted()
+    this.lifetime.signal.throwIfAborted()
     const snapshot = await this.client.readSnapshot(signal, {
       ...(this.progress === undefined ? {} : { progress: this.progress }),
       ...(this.warnings.length === 0 ? {} : { warnings: this.warnings }),
       stream: this.stream,
       ...(this.lastOkAt === undefined ? {} : { lastOkAt: this.lastOkAt }),
     })
+    signal.throwIfAborted()
+    this.lifetime.signal.throwIfAborted()
     const stamped: LifeSnapshot = { ...snapshot, pollIntervalMs: this.interval() }
     if (snapshot.availability.runtime === 'ok') this.lastOkAt = snapshot.observedAt
     this.snapshot = stamped
@@ -137,7 +148,7 @@ export class LifeFeed {
 
   /** Interval in force: the active cadence while training holds the runtime. */
   private interval(): number {
-    const training = this.snapshot?.training.isTraining === true || this.stream === 'streaming'
+    const training = this.snapshot?.training?.isTraining === true || this.stream === 'streaming'
     return training ? this.options.activePollIntervalMs : this.options.pollIntervalMs
   }
 

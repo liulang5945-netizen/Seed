@@ -181,6 +181,38 @@
   white-space: nowrap;
 }
 
+.connectionStatus {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.connectionStatus > p {
+  flex: 1 1 280px;
+}
+
+.summaryStatus {
+  margin-left: auto;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.technicalSummary {
+  color: var(--dsw-alias-label-secondary);
+  font-size: 13px;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.technicalSummary:focus-visible,
+.connectionStatus button:focus-visible {
+  outline: 2px solid var(--dsw-alias-state-business-primary);
+  outline-offset: 3px;
+}
+
 /* A run report lists its weaknesses and notes as plain sentences. They were
    12px with no space between rows, so a long list read as one dense block
    right above the "run one pass" button. */
@@ -739,6 +771,10 @@
   border-left: 6px solid var(--dsw-alias-label-secondary, #61666b);
   content: "";
   transition: transform var(--ds-transition-duration-fast, 0.1s) var(--ds-ease-in-out, ease-in-out);
+}
+
+.sectionSummary:has(.summaryStatus)::after {
+  margin-left: 0;
 }
 
 /* <summary> never exposes aria-expanded in Chromium; [open] on the parent is

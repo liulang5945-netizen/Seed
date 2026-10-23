@@ -48,7 +48,8 @@ export function renderLifeState(snapshot: LifeSnapshot, now: number, maxChars: n
     if (life.legacy.totalHeartbeats > 0) segments.push(`heartbeats=${format(life.legacy.totalHeartbeats)}`)
     if (life.legacy.totalEvents > 0) segments.push(`events=${format(life.legacy.totalEvents)}`)
   }
-  segments.push(trainingSegment(snapshot))
+  const training = trainingSegment(snapshot)
+  if (training !== undefined) segments.push(training)
   const knowledge = snapshot.knowledge
   if (knowledge !== undefined) {
     segments.push(`knowledge[${format(knowledge.docCount)} docs ${format(knowledge.chunkCount)} chunks]`)
@@ -71,8 +72,8 @@ export function significantChange(previous: LifeSnapshot | undefined, next: Life
   if (previous === undefined) return true
   const a = previous.training
   const b = next.training
-  if (a.isTraining !== b.isTraining || a.pauseRequested !== b.pauseRequested
-    || a.stopRequested !== b.stopRequested) return true
+  if (a?.isTraining !== b?.isTraining || a?.pauseRequested !== b?.pauseRequested
+    || a?.stopRequested !== b?.stopRequested) return true
   if ((previous.life?.legacy?.dominantNeed ?? '') !== (next.life?.legacy?.dominantNeed ?? '')) return true
   const needsA = previous.life?.native?.needs ?? previous.life?.legacy?.needs ?? {}
   const needsB = next.life?.native?.needs ?? next.life?.legacy?.needs ?? {}
@@ -94,8 +95,9 @@ function mapSegment(name: string, values: Readonly<Record<string, number>>): str
   return `${name}[${entries.map(([key, value]) => `${key}=${format(value)}`).join(' ')}]`
 }
 
-function trainingSegment(snapshot: LifeSnapshot): string {
+function trainingSegment(snapshot: LifeSnapshot): string | undefined {
   const training = snapshot.training
+  if (training === undefined) return undefined
   const parts = [training.isTraining ? 'running' : 'off']
   if (training.pauseRequested) parts.push('pausing')
   if (training.stopRequested) parts.push('stopping')

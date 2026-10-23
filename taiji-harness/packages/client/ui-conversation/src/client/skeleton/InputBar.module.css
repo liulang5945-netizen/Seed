@@ -107,6 +107,14 @@
   color: var(--dsw-alias-state-business-primary);
 }
 
+.card:focus-within {
+  --dsw-elevation-stroke-color: var(--dsw-alias-state-business-primary);
+}
+
+.cardWorkspaceTrigger:focus-within::after {
+  color: var(--dsw-alias-state-business-primary);
+}
+
 .accessory {
   display: flex;
   align-items: center;
@@ -147,8 +155,24 @@
   position: relative;
 }
 
+/* Command feedback stays outside the busy card so its live region can announce. */
+.pendingStatus {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: var(--dsh-composer-card-max-width);
+  margin-bottom: 6px;
+  padding: 0 8px;
+  color: var(--dsw-alias-label-secondary);
+  font-size: var(--dsh-content-font-size-secondary, 13px);
+  line-height: calc(18px + var(--dsh-content-font-delta-secondary, 0px));
+}
+
 /* Machine pending dot (adjudicating / submitting). */
 .pending {
+  flex: none;
   width: 8px;
   height: 8px;
   border-radius: 50%;
@@ -206,14 +230,12 @@
   visibility: hidden;
 }
 
-/* figma 34:10434: #ADB2B8 light / #81858C dark — the caption pair exactly.
-   Insets mirror .input's pads (the other right 4px sits on .scroll). One
-   ellipsized line: a wrapped second line would clip against the docked
-   36px floor. */
+/* Insets mirror .input's pads (the other right 4px sits on .scroll). One
+   ellipsized line keeps the prompt inside the docked 36px floor. */
 .placeholder {
   position: absolute;
   inset: 4px 8px auto 14px;
-  color: var(--dsw-alias-label-caption);
+  color: var(--dsw-alias-label-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -416,3 +438,9 @@
 .activity { display: flex; align-items: center; flex: none; }
 .activity:empty { display: none; }
 .activityExpanded { flex: 1; min-width: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pending {
+    animation: none;
+  }
+}

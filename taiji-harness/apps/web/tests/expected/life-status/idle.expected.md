@@ -1,0 +1,16 @@
+- group "训练":
+  - heading "训练" [level=3]
+  - group "运行状态":
+    - heading "运行状态" [level=4]
+    - paragraph: 这里只显示当前连接运行时管理的训练，不包含独立运行的训练任务。
+    - term: 进度流
+    - definition: 未连接
+    - paragraph: 空闲
+    - paragraph: 尚无进度样本。
+  - group "运行控制":
+    - heading "运行控制" [level=4]
+    - button "启动训练"
+    - button "暂停" [disabled]
+    - button "继续" [disabled]
+    - button "停止" [disabled]
+    - button "强制解锁" [disabled]

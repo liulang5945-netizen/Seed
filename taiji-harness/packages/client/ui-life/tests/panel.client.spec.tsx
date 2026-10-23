@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { LifeControlError, type ILife } from '@taiji/dsh-api-life-controller/client'
 import type {
@@ -200,9 +200,11 @@ function knowledgePicker(): HTMLInputElement {
 
 /** One snapshot whose roster carries an extra (just uploaded) file. */
 function withDataset(snapshot: LifeSnapshot, path: string, sizeBytes: number): LifeSnapshot {
+  const training = snapshot.training
+  if (training === undefined) throw new Error('dataset fixture requires known training')
   return {
     ...snapshot,
-    training: { ...snapshot.training, datasets: [...(snapshot.training.datasets ?? []), { path, sizeBytes }] },
+    training: { ...training, datasets: [...(training.datasets ?? []), { path, sizeBytes }] },
   }
 }
 
@@ -213,6 +215,107 @@ const UNAVAILABLE: RemoteFailure = new RemoteError(
 )
 
 describe('LifePanel', () => {
+  it('keeps disconnected training unknown, folds unavailable regions, and retries the reading', async () => {
+    const disconnected = stubLife({
+      source: 'absent',
+      observedAt: '2026-10-23T17:00:00.000Z',
+      fresh: false,
+      pollIntervalMs: 5000,
+      availability: { runtime: 'down', legacy: 'down', knowledge: 'down', trainingStream: 'idle' },
+      unavailable: ['runtime unavailable', 'runtime unavailable', 'runtime unavailable'],
+    })
+    mountPanel(disconnected.life)
+
+    expect(screen.queryByText(en.trainingIdle)).toBeNull()
+    expect(screen.queryByText(en.checkpointsEmpty)).toBeNull()
+    expect(screen.getByText(en.trainingUnavailable)).not.toBeNull()
+    expect(screen.getByText(en.checkpointsUnavailable)).not.toBeNull()
+    expect(screen.getAllByText('runtime unavailable')).toHaveLength(1)
+    expect(document.querySelector('#life-training')?.hasAttribute('open')).toBe(false)
+    expect(document.querySelector('#life-readings')?.hasAttribute('open')).toBe(false)
+    expect(document.querySelector('#life-checkpoints')?.hasAttribute('open')).toBe(false)
+    for (const name of [en.trainStart, en.uploadPick, en.lifeStart, en.actionFeed, en.lifeStop]) {
+      expect(screen.getByRole('button', { name, hidden: true }).getAttribute('disabled')).not.toBeNull()
+    }
+    fireEvent.click(screen.getByRole('button', { name: en.retry }))
+    await waitFor(() => { expect(disconnected.mocks.refresh).toHaveBeenCalledTimes(1) })
+    expect(disconnected.mocks.trainStart).not.toHaveBeenCalled()
+    expect(disconnected.mocks.lifeStart).not.toHaveBeenCalled()
+  })
+
+  it('keeps a failed checkpoint roster unknown while known idle training remains usable', () => {
+    const known = nativeSnapshot()
+    const { checkpoints, ...training } = known.training!
+    expect(checkpoints).toEqual([])
+    const { life, mocks } = stubLife({ ...known, training })
+    mountPanel(life)
+
+    expect(screen.getByText(en.checkpointsUnavailable)).not.toBeNull()
+    expect(screen.queryByText(en.checkpointsEmpty)).toBeNull()
+    expect(screen.getByRole('button', { name: en.trainStart }).getAttribute('disabled')).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: en.lifeStart, hidden: true }))
+    expect(mocks.lifeStart).not.toHaveBeenCalled()
+  })
+
+  it('keeps independently answering organs usable when the runtime status read fails', async () => {
+    const { training, ...base } = legacySnapshot()
+    expect(training).toBeDefined()
+    const { life, mocks } = stubLife({
+      ...base,
+      fresh: false,
+      availability: { runtime: 'down', legacy: 'ok', knowledge: 'ok', trainingStream: 'idle' },
+    })
+    mountPanel(life)
+
+    expect(screen.getByRole('button', { name: en.trainStart, hidden: true }).getAttribute('disabled')).not.toBeNull()
+    expect(screen.getByRole('button', { name: en.lifeStart }).getAttribute('disabled')).toBeNull()
+    expect(screen.getByRole('button', { name: en.knowledgeUpload }).getAttribute('disabled')).toBeNull()
+    expect(screen.getByRole('button', { name: en.runConsolidate }).getAttribute('disabled')).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: en.actionFeed }))
+    await waitFor(() => { expect(mocks.lifeAction).toHaveBeenCalledWith({ action: 'feed' }) })
+  })
+
+  it('requires known idle training and publish metadata for checkpoint mutations', () => {
+    const checkpoint = { filename: 'saved.pt', step: 5, bytes: 128, modifiedUtc: '', savedAtUtc: '', numEpochs: 1 }
+    const base = nativeSnapshot()
+    const { artifacts, ...withoutArtifacts } = base
+    expect(artifacts).toBeDefined()
+    const noPublish = stubLife({ ...withoutArtifacts, training: { ...base.training!, checkpoints: [checkpoint] } })
+    mountPanel(noPublish.life)
+    expect(screen.getByRole('button', { name: `${en.activateRow} saved.pt` }).getAttribute('disabled')).not.toBeNull()
+    expect(screen.getByRole('checkbox', { name: `${en.colSelect} saved.pt` }).getAttribute('disabled')).not.toBeNull()
+    expect(screen.getByRole('button', { name: `${en.resumeFrom} saved.pt` }).getAttribute('disabled')).toBeNull()
+    cleanup()
+
+    mountPanel(stubLife({ ...base, training: { ...base.training!, isTraining: true, checkpoints: [checkpoint] } }).life)
+    for (const name of [`${en.resumeFrom} saved.pt`, `${en.activateRow} saved.pt`]) {
+      expect(screen.getByRole('button', { name }).getAttribute('disabled')).not.toBeNull()
+    }
+    cleanup()
+
+    mountPanel(stubLife({ ...base, training: { ...base.training!, publishing: true, checkpoints: [checkpoint] } }).life)
+    for (const name of [en.trainStart, `${en.resumeFrom} saved.pt`, `${en.activateRow} saved.pt`]) {
+      expect(screen.getByRole('button', { name }).getAttribute('disabled')).not.toBeNull()
+    }
+    expect(screen.getByRole('checkbox', { name: `${en.colSelect} saved.pt` }).getAttribute('disabled')).not.toBeNull()
+  })
+
+  it('recovers unknown readings from a later snapshot and prevents overlapping consolidation', () => {
+    const known = nativeSnapshot()
+    const { training, ...base } = known
+    expect(training).toBeDefined()
+    const { life, emit } = stubLife(base)
+    mountPanel(life)
+    expect(screen.getByRole('button', { name: en.trainStart, hidden: true }).getAttribute('disabled')).not.toBeNull()
+    act(() => { emit(known) })
+    expect(screen.getByRole('button', { name: en.trainStart }).getAttribute('disabled')).toBeNull()
+    expect(screen.queryByText(en.trainingUnavailable)).toBeNull()
+    cleanup()
+
+    mountPanel(stubLife({ ...known, consolidation: { ...known.consolidation!, running: true } }).life)
+    expect(screen.getByRole('button', { name: en.runConsolidate }).getAttribute('disabled')).not.toBeNull()
+  })
+
   it('renders a native reading across all six sections', () => {
     const { life } = stubLife(nativeSnapshot())
     mountPanel(life)
@@ -1059,8 +1162,8 @@ describe('LifePanel edge readings', () => {
       },
     }), 'new-set.jsonl', 17))
     await screen.findByRole('checkbox', { name: /^new-set\.jsonl/ })
-    expect((screen.getByRole('checkbox', { name: /other\/new-set\.jsonl/ }) as HTMLInputElement).checked).toBe(true)
-    expect((screen.getByRole('checkbox', { name: /^new-set\.jsonl/ }) as HTMLInputElement).checked).toBe(false)
+    expect(screen.getByRole<HTMLInputElement>('checkbox', { name: /other\/new-set\.jsonl/ }).checked).toBe(true)
+    expect(screen.getByRole<HTMLInputElement>('checkbox', { name: /^new-set\.jsonl/ }).checked).toBe(false)
   })
 
   it('names the streaming and closed training-stream states with their dots and warning tags', () => {
@@ -1123,7 +1226,7 @@ describe('LifePanel edge readings', () => {
     fireEvent.click(screen.getByRole('button', { name: t('confirmDeleteDatasets', { count: '2' }) }))
     const refusal = await screen.findByRole('alert')
     expect(refusal.textContent).toBe(t('errConflict', { reason: 'busy' }))
-    expect((screen.getByRole('checkbox', { name: /consolidated\/night-1\.jsonl/ }) as HTMLInputElement).checked).toBe(true)
+    expect(screen.getByRole<HTMLInputElement>('checkbox', { name: /consolidated\/night-1\.jsonl/ }).checked).toBe(true)
     expect(screen.queryByText(t('deleteDone', { count: '0' }))).toBeNull()
 
     // A later attempt that removes the first file but loses the roster read
@@ -1167,7 +1270,7 @@ describe('LifePanel edge readings', () => {
     fireEvent.click(screen.getByRole('button', { name: en.deletePickedCheckpoints }))
     fireEvent.click(screen.getByRole('button', { name: t('confirmDeleteCheckpoints', { count: '2' }) }))
     await screen.findByRole('alert')
-    expect((screen.getByRole('checkbox', { name: `${en.colSelect} old_run.pt` }) as HTMLInputElement).checked).toBe(true)
+    expect(screen.getByRole<HTMLInputElement>('checkbox', { name: `${en.colSelect} old_run.pt` }).checked).toBe(true)
     expect(screen.queryByText(t('deleteDone', { count: '0' }))).toBeNull()
 
     mocks.deleteCheckpoint.mockReset()
@@ -1325,7 +1428,7 @@ describe('LifePanel edge readings', () => {
     fireEvent.click(screen.getByRole('button', { name: en.deletePickedKnowledge }))
     fireEvent.click(screen.getByRole('button', { name: t('confirmDeleteKnowledge', { count: '2' }) }))
     await screen.findByRole('alert')
-    expect((screen.getByRole('checkbox', { name: 'handbook.md' }) as HTMLInputElement).checked).toBe(true)
+    expect(screen.getByRole<HTMLInputElement>('checkbox', { name: 'handbook.md' }).checked).toBe(true)
     expect(screen.queryByText(t('deleteDone', { count: '0' }))).toBeNull()
 
     mocks.deleteKnowledge.mockReset()

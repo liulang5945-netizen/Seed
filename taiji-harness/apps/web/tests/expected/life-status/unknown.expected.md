@@ -1,0 +1,14 @@
+- group "训练":
+  - heading "训练" [level=3]
+  - text: 尚未获取
+  - group "运行状态":
+    - heading "运行状态" [level=4]
+    - paragraph: 这里只显示当前连接运行时管理的训练，不包含独立运行的训练任务。
+    - paragraph: 训练状态尚未获取，无法判断是否空闲。
+  - group "运行控制":
+    - heading "运行控制" [level=4]
+    - button "启动训练" [disabled]
+    - button "暂停" [disabled]
+    - button "继续" [disabled]
+    - button "停止" [disabled]
+    - button "强制解锁" [disabled]

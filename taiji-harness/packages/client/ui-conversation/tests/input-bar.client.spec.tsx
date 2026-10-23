@@ -1322,7 +1322,7 @@ describe('running and lock semantics', () => {
 })
 
 describe('machine pending lock', () => {
-  it('submitting renders read-only textarea, pending dot, and a disabled primary', () => {
+  it('submitting announces command execution beside a busy read-only composer', () => {
     const { view, shell } = bench()
     // Drive the machine into submitting through a claim + enter.
     act(() => {
@@ -1338,9 +1338,34 @@ describe('machine pending lock', () => {
       shell.submit()
     })
     expect(shell.snapshot.phase).toBe('submitting')
+    expect(view.getByRole('status').textContent).toBe(zh['input.status.submitting'])
+    const card = view.container.querySelector('[data-composer-card]')!
+    expect(card.getAttribute('aria-busy')).toBe('true')
+    expect(card.contains(view.getByRole('status'))).toBe(false)
     const textarea = view.container.querySelector<HTMLDivElement>('[data-composer-input]')!
     expect(editableOf(textarea)).toBe(false)
     expect(view.container.querySelector<HTMLButtonElement>('button[aria-label="发送消息"]')!.disabled).toBe(true)
+  })
+
+  it('announces adjudication in the selected locale and clears feedback when it settles', () => {
+    const { view, shell, props } = bench({ t: makeTranslate(en) })
+    const input = createSnapshotStore({ ...shell.snapshot, phase: 'adjudicating' as const })
+    view.rerender(<InputBar {...props} useInput={bindSnapshotSelector(input)} />)
+    expect(view.getByRole('status').textContent).toBe(en['input.status.adjudicating'])
+    const card = view.container.querySelector('[data-composer-card]')!
+    expect(card.getAttribute('aria-busy')).toBe('true')
+    expect(editableOf(view.container.querySelector('[data-composer-input]')!)).toBe(false)
+
+    view.rerender(<InputBar {...props} />)
+    expect(view.queryByRole('status')).toBeNull()
+    expect(card.getAttribute('aria-busy')).toBe('false')
+  })
+
+  it('keeps ordinary running messages editable without command feedback', () => {
+    const { view, textarea } = bench({ running: true, draft: 'next message' })
+    expect(view.queryByRole('status')).toBeNull()
+    expect(view.container.querySelector('[data-composer-card]')!.getAttribute('aria-busy')).toBe('false')
+    expect(editableOf(textarea)).toBe(true)
   })
 })
 

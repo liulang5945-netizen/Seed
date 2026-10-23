@@ -366,6 +366,12 @@ export const InputBar = memo(function InputBar({
           {notice.text}
         </div>
       )}
+      {machineBusy && (
+        <div className={css.pendingStatus} role="status">
+          <span className={css.pending} aria-hidden />
+          {t(input.phase === 'adjudicating' ? 'input.status.adjudicating' : 'input.status.submitting')}
+        </div>
+      )}
       {/* Trigger clicks land on the card, not the editor: the toolbar row's
           disabled controls swallow clicks otherwise (the CSS state disarms
           their pointer events), so the WHOLE capsule is the pick target.
@@ -375,6 +381,7 @@ export const InputBar = memo(function InputBar({
         ref={cardRef}
         className={clsx(css.card, workspaceTrigger && css.cardWorkspaceTrigger)}
         data-composer-card
+        aria-busy={machineBusy}
         onClick={workspaceTrigger ? onRequestWorkspace : undefined}
         onPointerDown={workspaceTrigger ? (e) => { e.stopPropagation() } : undefined}
       >

@@ -8,6 +8,8 @@ kind: "package-reference"
 
 ## 概述
 
+显式快照请求会重新读取运行时；订阅流仍从当前缓存快照开始。
+
 `@taiji/dsh-api-life-controller` 拥有 Host 的 `ctx.lifeController` 服务和生成的 Client `ctx.remote.life` namespace。它的 Remote 方法读取 Taiji 本地 runtime——健康、内存、由实际应答器官提供的生命数值、训练状态及其 checkpoint 名单、受门控的知识索引，以及记忆日志与睡眠巩固的产物——并承载生命面板下发的控制动词：训练的启动、暂停、恢复、停止和重置，一次巩固 pass，以及受门控的 legacy 生命启动、停止和活动。runtime 始终是唯一事实来源：每份读数都携带其来源、时间戳、新鲜度和逐来源可用性，而服务绝不合成 runtime 未报告的取值。
 
 ## 目录
@@ -25,6 +27,10 @@ kind: "package-reference"
 Host 控制器拥有唯一一个面向 Taiji 本地 runtime 的轮询循环，并由它服务所有消费方。每轮只读一次 runtime，盖上当时生效的间隔，并仅在渲染结果变化时发布，因此[生命子系统参考](../../../docs/subsystems/life.zh.md)保持为读数的唯一描述，而本 README 拥有包契约：配置、线上动词及其失败。`follow()` 先发出一帧携带当前快照的 `baseline`，此后每次变化发出一帧替换快照的 `snapshot`；重连会以新的 baseline 开始新一代，因此消费方从不依赖在断线期间收到每一帧。
 
 runtime 是唯一事实来源，而读数会说明每个数值的出处。`GET /api/runtime/status` 始终可用：其 `life` 分节自选来源器官——`seed` 为 native homeostasis 器官，`ok` 为 legacy 调度器——其 `tools` 分节携带工作台能力快照（数量、修订、来源与归属），其 `auth` 分节携带运行时鉴权态；此外`GET /api/train/checkpoints` 携带已保存运行的名单，`GET /api/train/files` 携带可训练数据集名单（data 目录下的 POSIX 相对路径及其大小），`GET /api/artifacts` 携带发布态（哪个检查点在应答、settings 为下次启动点名了哪个），而 `GET /api/consolidation/status` 携带记忆日志计数与睡眠 pass 的产物（pass 计数、最近语料、数据环规格与最近报告）。一个所选文件以 multipart 字节经 `POST /api/train/upload_dataset` 或 `POST /api/rag/upload` 进入 runtime，而 `DELETE /api/train/file/{path}`、`DELETE /api/train/checkpoint/{filename}` 与 `DELETE /api/rag/file/{name}` 按名删除一个数据集、检查点或文档；检查点路由以 `409` 拒绝活跃与已配置的那一枚。旧模型发布 API（`/api/model/publish`、`/api/model/published`、`/api/model/export_gguf`）是已退出的 410 墓碑——`POST /api/runtime/activate` 激活平台所有的检查点才是发布面。legacy 生命 surface（`/api/life`）与知识索引（`/api/rag`）仅在 runtime 通过 `SEED_ENABLE_LEGACY` 启用它们时才挂载，且已挂载文档（`GET /api/rag/files`）仅在该面应答时才读取；未挂载的路径应答 `404`，控制器据此记录为 `disabled` 而非失败，而 `/api/taiji/life` 下的 legacy 控制动词在同样情形下以 `life/unavailable` 拒绝。运行中的 runtime 不提供的巩固读取会成为一行 `unavailable` 而非快照失败，因为较旧的 runtime 是部署的事实，不是坏掉的读数。因此每份快照都携带 `source`、`observedAt`、`fresh`、`availability`，以及每个未应答来源的一行 `unavailable`；没有人测量过的量保持缺失而非默认零。控制器不会重新换算 native homeostasis 的数值，也不会用 native 读数顶替 legacy 读数。
+
+status 读取必须返回 2xx，控制器才投影其中字段并将 `fresh` 设为真。连接失败或非 2xx 响应会将 `availability.runtime` 标为 `down`；独立探测的 legacy 与知识来源仍保留各自的可用性和读数。同文的 `unavailable` 消息在每份快照中只出现一次。
+
+status 读取失败或载荷未提供该分节时，`training` 保持缺失。已报告的训练分节中，名单读取失败或未提供名单时，`checkpoints` 保持缺失；只有成功返回的空数组才表示 runtime 报告没有检查点。消费方必须区分未获得读数与实测空闲状态、空列表。
 
 ### 配置
 

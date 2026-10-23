@@ -35,7 +35,7 @@ class FeedProbe extends LifeController {
   }
 }
 
-async function harness(): Promise<Harness> {
+async function harness(pollIntervalMs = 250): Promise<Harness> {
   const runtime = await mockLifeRuntime()
   const ctx = new Context()
   roots.push(ctx)
@@ -46,7 +46,7 @@ async function harness(): Promise<Harness> {
   } as never)
   const controller = new FeedProbe(ctx, {
     baseURL: runtime.url,
-    pollIntervalMs: 250,
+    pollIntervalMs,
     activePollIntervalMs: 250,
     requestTimeoutMs: 2_000,
     maxCheckpoints: 5,
@@ -86,7 +86,7 @@ describe('LifeController snapshot', () => {
       native: { tick: 41, mode: 'wake', needs: { curiosity: 42.5 }, drives: { exploration: 40 } },
     })
     expect(snapshot.life?.legacy).toBeUndefined()
-    expect(snapshot.training.checkpoints).toEqual([
+    expect(snapshot.training?.checkpoints).toEqual([
       {
         filename: 'seed_native.pt',
         step: 1000,
@@ -159,9 +159,49 @@ describe('LifeController snapshot', () => {
     expect(snapshot.health).toBeUndefined()
     expect(snapshot.life).toBeUndefined()
     expect(snapshot.source).toBe('absent')
-    expect(snapshot.training).toMatchObject({ isTraining: false, checkpoints: [] })
-    expect(snapshot.training.progress).toBeUndefined()
-    expect(snapshot.unavailable.join(' ')).toContain('life/runtime-unreachable')
+    expect(snapshot.training).toBeUndefined()
+    expect(snapshot.unavailable).toHaveLength(1)
+    expect(snapshot.unavailable[0]).toContain('life/runtime-unreachable')
+  })
+
+  it.each([401, 500])('keeps HTTP %i status refusals down even when their body resembles a reading', async (status) => {
+    const { controller, runtime } = await harness()
+    runtime.controlReplies.set('/api/runtime/status', { status, body: runtime.runtimeStatus })
+
+    const { snapshot } = await controller.snapshot(new AbortController().signal)
+
+    expect(snapshot.availability.runtime).toBe('down')
+    expect(snapshot.fresh).toBe(false)
+    expect(snapshot.source).toBe('absent')
+    expect(snapshot.health).toBeUndefined()
+    expect(snapshot.memory).toBeUndefined()
+    expect(snapshot.life).toBeUndefined()
+    expect(snapshot.workbench).toBeUndefined()
+    expect(snapshot.auth).toBeUndefined()
+    expect(snapshot.training).toBeUndefined()
+    expect(snapshot.unavailable).toContain(`runtime: HTTP ${String(status)}`)
+    expect(runtime.requests.some(entry => entry.path === '/api/train/checkpoints')).toBe(false)
+  })
+
+  it('retains independently healthy gated sources when the status transport fails', async () => {
+    const { controller, runtime } = await harness()
+    runtime.transport.set('/api/runtime/status', {})
+    runtime.legacyReply = { status: 200, body: { is_running: true } }
+    runtime.knowledgeReply = {
+      status: 200,
+      body: { doc_count: 2, chunk_count: 9, has_embeddings: true, embed_dim: 384 },
+    }
+    runtime.knowledgeFilesReply = { status: 200, body: { files: [] } }
+
+    const { snapshot } = await controller.snapshot(new AbortController().signal)
+
+    expect(snapshot.availability).toMatchObject({ runtime: 'down', legacy: 'ok', knowledge: 'ok' })
+    expect(snapshot.fresh).toBe(false)
+    expect(snapshot.training).toBeUndefined()
+    expect(snapshot.knowledge).toEqual({ docCount: 2, chunkCount: 9, hasEmbeddings: true, embedDim: 384, files: [] })
+    expect([...new Set(runtime.requests.map(entry => entry.path))]).toEqual([
+      '/api/runtime/status', '/api/life/status', '/api/rag/status', '/api/rag/files',
+    ])
   })
 })
 
@@ -251,6 +291,20 @@ describe('LifeController follow', () => {
 })
 
 describe('LifeController feed seam', () => {
+  it('rechecks the runtime immediately on an explicit snapshot after recovery', async () => {
+    const { controller, runtime } = await harness(60_000)
+    runtime.controlReplies.set('/api/runtime/status', { status: 500 })
+    await controller.snapshot(new AbortController().signal)
+    await vi.waitFor(() => { expect(controller.probeFeed.latest?.availability.runtime).toBe('down') })
+    const before = runtime.requests.filter(entry => entry.path === '/api/runtime/status').length
+    runtime.controlReplies.delete('/api/runtime/status')
+
+    const { snapshot } = await controller.snapshot(new AbortController().signal)
+
+    expect(snapshot.availability.runtime).toBe('ok')
+    expect(runtime.requests.filter(entry => entry.path === '/api/runtime/status').length).toBeGreaterThan(before)
+  })
+
   it('refuses a second start and exposes the last observed snapshot', async () => {
     const { controller } = await harness()
     const feed = controller.probeFeed
@@ -276,6 +330,8 @@ describe('LifeController absent sections', () => {
     expect(snapshot.availability.runtime).toBe('ok')
     expect(snapshot.health).toBeUndefined()
     expect(snapshot.memory).toBeUndefined()
+    expect(snapshot.training).toBeUndefined()
+    expect(runtime.requests.some(entry => entry.path === '/api/train/checkpoints')).toBe(false)
   })
 })
 
@@ -339,8 +395,8 @@ describe('LifeController progress and frame parsing', () => {
     await expect(controller.trainStart({ parameterBudget: 1_000 })).resolves.toEqual({ message: 'training accepted' })
     const carried = await vi.waitFor(async () => {
       const { snapshot } = await controller.snapshot(new AbortController().signal)
-      if (snapshot.training.progress === undefined) throw new Error('no progress sample carried yet')
-      return snapshot.training.progress
+      if (snapshot.training?.progress === undefined) throw new Error('no progress sample carried yet')
+      return snapshot.training?.progress
     })
     expect(carried.step).toBe(250)
     expect(carried.eta).toBeUndefined()
@@ -364,7 +420,7 @@ describe('LifeController progress and frame parsing', () => {
       expect(snapshot.availability.trainingStream).toBe('closed')
       return snapshot
     })
-    expect(settled.training.progress).toBeUndefined()
+    expect(settled.training?.progress).toBeUndefined()
     await runtime.closeTraining()
   })
 })
@@ -446,7 +502,7 @@ describe('LifeController gated roster cut and odd SSE block', () => {
 
     // A block with no data line yields no frame, so nothing is reported as in flight.
     expect(snapshot.availability.trainingStream).not.toBe('streaming')
-    expect(snapshot.training.progress).toBeUndefined()
+    expect(snapshot.training?.progress).toBeUndefined()
   })
 })
 
@@ -546,7 +602,10 @@ describe('LifeController degraded reads', () => {
 
     // The HTTP failure is reported as an unavailable surface, and no roster is invented.
     expect(snapshot.unavailable.join(' ')).toContain('checkpoints: HTTP 500')
-    expect(snapshot.training.checkpoints).toEqual([])
+    expect(snapshot.training).toMatchObject({ isTraining: false })
+    expect(snapshot.training?.checkpoints).toBeUndefined()
+    expect(snapshot.availability.runtime).toBe('ok')
+    expect(snapshot.fresh).toBe(true)
   })
 
   it('drops a roster whose reply is well-received but carries no rows', async () => {
@@ -560,8 +619,31 @@ describe('LifeController degraded reads', () => {
 
     // A 200 whose payload lacks the expected rows degrades silently: the panel loses
     // the roster without an HTTP complaint it could not explain.
-    expect(snapshot.training.checkpoints).toEqual([])
+    expect(snapshot.training?.checkpoints).toBeUndefined()
     expect(snapshot.unavailable.join(' ')).not.toContain('HTTP 200')
+  })
+
+  it('keeps a transport-failed checkpoint roster absent while status and empty dataset reads answer', async () => {
+    const { controller, runtime } = await harness()
+    runtime.transport.set('/api/train/checkpoints', {})
+    runtime.controlReplies.set('/api/train/files', { status: 200, body: { entries: [] } })
+
+    const { snapshot } = await controller.snapshot(new AbortController().signal)
+
+    expect(snapshot.availability.runtime).toBe('ok')
+    expect(snapshot.training?.isTraining).toBe(false)
+    expect(snapshot.training?.checkpoints).toBeUndefined()
+    expect(snapshot.training?.datasets).toEqual([])
+    expect(snapshot.unavailable.join(' ')).toContain('life/runtime-unreachable')
+  })
+
+  it('carries a successfully reported empty checkpoint roster as empty', async () => {
+    const { controller } = await harness()
+
+    const { snapshot } = await controller.snapshot(new AbortController().signal)
+
+    expect(snapshot.training?.checkpoints).toEqual([])
+    expect(snapshot.unavailable).toEqual([])
   })
 })
 
@@ -599,11 +681,11 @@ describe('LifeController training control', () => {
 
     const streaming = await vi.waitFor(async () => {
       const { snapshot } = await controller.snapshot(new AbortController().signal)
-      expect(snapshot.training.progress?.fraction).toBe(0.5)
+      expect(snapshot.training?.progress?.fraction).toBe(0.5)
       return snapshot
     })
     expect(streaming.availability.trainingStream).toBe('streaming')
-    expect(streaming.training.progress).toMatchObject({ step: 500, loss: 1.5, totalSteps: 1000 })
+    expect(streaming.training?.progress).toMatchObject({ step: 500, loss: 1.5, totalSteps: 1000 })
     await runtime.closeTraining()
   })
 
@@ -618,7 +700,7 @@ describe('LifeController training control', () => {
     await vi.waitFor(async () => {
       const { snapshot } = await controller.snapshot(new AbortController().signal)
       expect(snapshot.availability.trainingStream).not.toBe('streaming')
-      expect(snapshot.training.progress).toBeUndefined()
+      expect(snapshot.training?.progress).toBeUndefined()
     })
 
     // Leaving the slot is what makes the settlement observable: a new run is accepted.
@@ -638,8 +720,8 @@ describe('LifeController training control', () => {
       expect(snapshot.availability.trainingStream).toBe('idle')
       return snapshot
     })
-    expect(settled.training.progress).toBeUndefined()
-    expect(settled.training.checkpoints.map(row => row.filename)).toEqual(['resumed.pt'])
+    expect(settled.training?.progress).toBeUndefined()
+    expect(settled.training?.checkpoints?.map(row => row.filename)).toEqual(['resumed.pt'])
   })
 
   it('refuses a second run while the first stream is open', async () => {
@@ -663,7 +745,7 @@ describe('LifeController training control', () => {
     expect(failure?.message).toContain('训练已在运行')
     const { snapshot } = await controller.snapshot(new AbortController().signal)
     expect(snapshot.availability.trainingStream).toBe('idle')
-    expect(snapshot.training.progress).toBeUndefined()
+    expect(snapshot.training?.progress).toBeUndefined()
   })
 
   it('maps a runtime failure with the runtime’s own detail', async () => {
@@ -712,7 +794,7 @@ describe('LifeController training control', () => {
       expect(snapshot.availability.trainingStream).toBe('closed')
       return snapshot
     })
-    expect(failed.training.progress).toBeUndefined()
-    expect(failed.training.isTraining).toBe(false)
+    expect(failed.training?.progress).toBeUndefined()
+    expect(failed.training?.isTraining).toBe(false)
   })
 })

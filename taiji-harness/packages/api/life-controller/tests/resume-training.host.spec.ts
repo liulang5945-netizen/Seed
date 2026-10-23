@@ -62,7 +62,7 @@ describe('LifeController resumed training', () => {
       expect(snapshot.availability.trainingStream).toBe('idle')
       return snapshot
     })
-    expect(settled.training.progress).toBeUndefined()
+    expect(settled.training?.progress).toBeUndefined()
   })
 
   it('omits absent optional fields so the runtime keeps its own defaults', async () => {
@@ -86,7 +86,7 @@ describe('LifeController resumed training', () => {
 
     const warned = await vi.waitFor(async () => {
       const { snapshot } = await controller.snapshot(new AbortController().signal)
-      expect(snapshot.training.warnings).toEqual([drift])
+      expect(snapshot.training?.warnings).toEqual([drift])
       return snapshot
     })
     // The tick cap reaches the runtime as its own field name, not a panel invention.
@@ -105,7 +105,7 @@ describe('LifeController resumed training', () => {
     await controller.trainResumeCheckpoint({ checkpoint: 'seed_beta.pt' })
     await vi.waitFor(async () => {
       const { snapshot } = await controller.snapshot(new AbortController().signal)
-      expect(snapshot.training.warnings).toEqual(['第一次的漂移警告'])
+      expect(snapshot.training?.warnings).toEqual(['第一次的漂移警告'])
     })
 
     runtime.training = { kind: 'frames', frames: [progressFrame(), completedFrame()] }
@@ -115,10 +115,10 @@ describe('LifeController resumed training', () => {
     // observation that a new accepted run resets the warning state.
     const fresh = await vi.waitFor(async () => {
       const { snapshot } = await controller.snapshot(new AbortController().signal)
-      expect(snapshot.training.warnings).toBeUndefined()
+      expect(snapshot.training?.warnings).toBeUndefined()
       return snapshot
     })
-    expect(fresh.training.progress).toBeUndefined()
+    expect(fresh.training?.progress).toBeUndefined()
   })
 
   it('maps a refused resume with the runtime\'s own detail', async () => {

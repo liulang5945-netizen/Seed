@@ -128,7 +128,13 @@ export class LifeRuntimeClient {
     let runtime: LifeRuntimeState = 'ok'
     const unavailable: string[] = []
     try {
-      status = await this.read(STATUS_PATH, signal)
+      const reply = await this.read(STATUS_PATH, signal)
+      if (reply.status >= 200 && reply.status < 300) {
+        status = reply
+      } else {
+        runtime = 'down'
+        unavailable.push(`runtime: HTTP ${String(reply.status)}`)
+      }
     } catch (error) {
       runtime = 'down'
       unavailable.push(describeFailure(error))
@@ -188,11 +194,13 @@ export class LifeRuntimeClient {
       ...(workbench === undefined ? {} : { workbench }),
       ...(auth === undefined ? {} : { auth }),
       ...(life === undefined ? {} : { life }),
-      training: {
-        ...(training ?? emptyTraining()),
-        ...(checkpoints === undefined ? {} : { checkpoints }),
-        ...(datasetsReading === undefined ? {} : { datasets: datasetsReading }),
-      },
+      ...(training === undefined ? {} : {
+        training: {
+          ...training,
+          ...(checkpoints === undefined ? {} : { checkpoints }),
+          ...(datasetsReading === undefined ? {} : { datasets: datasetsReading }),
+        },
+      }),
       ...(knowledgeReading === undefined ? {} : { knowledge: knowledgeReading }),
       ...(consolidationReading === undefined ? {} : { consolidation: consolidationReading }),
       ...(artifacts === undefined ? {} : { artifacts }),
@@ -202,7 +210,7 @@ export class LifeRuntimeClient {
         knowledge: knowledge.state,
         trainingStream: carry.stream,
       },
-      unavailable,
+      unavailable: [...new Set(unavailable)],
       ...(carry.lastOkAt === undefined ? {} : { lastOkAt: carry.lastOkAt }),
     }
   }
@@ -686,7 +694,7 @@ function lifeView(body: unknown): LifeLifeView | undefined {
   return { isRunning: legacy.isRunning, legacy }
 }
 
-/** Training projection; `undefined` means the status read itself failed. */
+/** Training projection, absent when status failed or omitted its training block. */
 function trainingView(body: unknown, carry: LifeTrainingCarry): LifeTrainingView | undefined {
   const training = object(body, 'training')
   if (training === undefined) return undefined
@@ -699,7 +707,6 @@ function trainingView(body: unknown, carry: LifeTrainingCarry): LifeTrainingView
     publishing: flag(training, 'publishing'),
     ...(progress === undefined ? {} : { progress }),
     ...(warnings === undefined || warnings.length === 0 ? {} : { warnings }),
-    checkpoints: [],
   }
 }
 
@@ -771,17 +778,6 @@ function passReportView(report: Record<string, unknown>, spec: Record<string, un
     weaknesses: stringList(report['weaknesses']),
     notes: stringList(report['notes']),
     workbenchCapabilities: number(value(value(report, 'projection'), 'by_source'), 'workbench_capabilities'),
-  }
-}
-
-/** Training defaults used before the first status answer. */
-function emptyTraining(): LifeTrainingView {
-  return {
-    isTraining: false,
-    pauseRequested: false,
-    stopRequested: false,
-    publishing: false,
-    checkpoints: [],
   }
 }
 
