@@ -1,6 +1,6 @@
 # N 主线当前执行
 
-更新：2026-10-23 09:43 Asia/Shanghai 实测快照；本页是唯一活动队首。运行状态优先于本文快照，以已确认的进程句柄、progress、receipt 和账本为准。
+更新：2026-10-23 11:07 Asia/Shanghai 实测快照；本页是唯一活动队首。运行状态优先于本文快照，以已确认的进程句柄、progress、receipt 和账本为准。
 
 ## 目标与方向
 
@@ -12,16 +12,16 @@
 
 | 臂 | 作用 | 最新耐久 episodes | 耐久 target-byte updates | 最新执行事实 |
 |---|---|---:|---:|---:|
-| full_turn_1m | fresh 1M-capacity 全轮预训练 | 17,019 | 8,192,724 | 旧句柄已失效；最新恢复尝试因账本锁争用退出，未写新训练事件 |
-| warm_start | 旧 R2 权重热启动 | 24,607 | 11,857,500 | 恢复启动中；尚无新 `continuation_resumed` 事件 |
-| fresh_same_capacity | 与 warm 相同结构/容量的随机初始化对照 | 24,827 | 11,939,829 | 恢复启动中；旧 reservation 保留待恢复事务结算 |
+| full_turn_1m | fresh 1M-capacity 全轮预训练 | 17,019 | 8,192,724 | 仍停在中断点；待内存稳定达门后用fast-ledger入口恢复 |
+| warm_start | 旧 R2 权重热启动 | 24,915 | 11,986,178 | 已持久停止；可用内存低于8GiB |
+| fresh_same_capacity | 与 warm 相同结构/容量的随机初始化对照 | 25,104 | 12,096,251 | 已持久停止；可用内存低于8GiB |
 
-- 上表是各臂最后耐久进度（2026-10-23 09:29）；目前均无完整 final result。原会话句柄已失效。
+- 上表是各臂最后耐久进度（full约09:29，warm/fresh约10:12）；目前均无完整 final result，原会话句柄已失效。
 - 每臂终点：**30,096 pretraining episodes / 14,517,912 target-byte updates**，然后 **525 assistant-SFT episodes / 113,209 updates**。
-- 用户已批准同一累计窗口：**1,500,000 CPU 秒/臂，4,300,000 CPU 秒总额**。09:29账本 charges + 保守 reservation 为4,142,220秒；剩余上限157,780秒。最新只读target-update预测137,058秒，三臂单臂/总额门均通过，费用与余量须实时重算。
-- 恢复时CPU双采样≤85%、可用内存≥8GiB仍由运行守卫复核；上次资源快照不视为当前状态。这些是执行健康证据，尚非对话能力结论。
+- 用户已批准同一累计窗口：**1,500,000 CPU 秒/臂，4,300,000 CPU 秒总额**。10:13账本charges为4,150,675.782秒、无活动reservation，余量149,324.218秒。target-update投影136,656.835秒，三臂单臂与总额均通过。
+- warm/fresh曾因可用内存低于8GiB安全停止；11:07三次采样7.663/7.859/7.839GiB，当前内存门未通过。恢复还须CPU双采样≤85%、可用内存≥8GiB并留有启动余量。
 
-原三臂并发恢复触发共享累计账本20秒锁超时：full-turn安全退出于续训事件写入前；warm/fresh命令需逐个收敛。当前只串行启动恢复过程，待新耐久事件确认后再保持训练并发。过程记录见[启动来源核验与中断处置](../../reference/delivery-runs/20261021-n-mainline/artifacts/13-continuation-launch-provenance.md)。
+原三臂并发恢复触发共享累计账本20秒锁超时；warm/fresh后续恢复并推进，继而因内存守卫停止。已实现版本化fast-ledger入口：从已完整审计的序号59,476锚点重放后续事件，终点评测前仍完整回放账本。该入口尚未实跑。见[启动来源核验](../../reference/delivery-runs/20261021-n-mainline/artifacts/13-continuation-launch-provenance.md)和[内存守卫与快速恢复更新](../../reference/delivery-runs/20261021-n-mainline/artifacts/14-memory-gated-fast-resume.md)。
 
 ## 已收束的决策与故障
 
@@ -39,19 +39,19 @@
 
 | 顺序 | 工作与当前状态 | 完成证据 / 下一阶段条件 |
 |---|---|---|
-| 1（当前） | 从三臂最后耐久receipt恢复至原定训练终点；恢复命令串行启动，训练在来源/资源门通过后继续 | 全部冻结episode/update分母；final文件、receipt与fresh-process restore一致；来源、账本和reservation闭合 |
-| 2 | 收束extension终点元数据；endpoint校验器与实际启动manifest来源核验已实现，真实终点仍待齐 | result/readiness/唯一completion事件互相绑定；parent与来源不漂移；无writer或pending reservation；当前已实际校验三臂共6份历史/恢复launch manifest |
+| 1（当前） | 等内存资源稳定通过守卫后，用fast-ledger入口恢复full-turn，再按单臂确认资源稳定后恢复其余臂 | 全部冻结episode/update分母；final文件、receipt与fresh-process restore一致；来源、账本和reservation闭合 |
+| 2 | 收束extension终点元数据；endpoint校验器与实际启动manifest来源核验已实现，真实终点仍待齐 | result/readiness/唯一completion事件互相绑定；parent与来源不漂移；无writer或pending reservation；已核验6份实际launch manifest及26项来源/审计文件 |
 | 3 | 完成extension配对评测入口与最终源码链复核 | 旧评测器不能直接接extension schema；需接好新终点和worker合同，并复核v1.3会计校正、恢复/预测适配器；当前只有各项合同与运行证据，不能补写为全链独立审查通过 |
 | 4 | 前置全过后，按冻结W5b合同做一次配对生成与人工判读 | 固定parent+三臂，39 family×4端点=156次generation；原CPU/wall双预算14,400秒、固定12-family人工样例、参考回答隔离；不追加题面或看结果降线 |
 | 5 | 依据完整结果给出唯一后继方向 | 区分格式/停止、贴题连贯、历史消费、初始化/容量效应和保持；说明失败根因与高上限方案。需要改变预算、题面或研究路线时再讨论 |
 | 6 | 有能力证据后进入同bundle整模型验收 | 按[07整模型交付](07_MINI_MODEL_DELIVERY.md)和[02晋级规则](02_GATES_AND_CI.md)逐项证明；本次R2实验收官不等于项目完美收官 |
 
-**当前唯一下一步：逐个收敛三臂恢复启动，先确认 continuation-resumed 耐久事件，再继续原定训练。** 不启动额外训练方向。
+**当前唯一下一步：待可用内存稳定超过8GiB并通过双采样后，用fast-ledger入口单臂恢复 full_turn_1m；确认耐久事件和资源稳定后再恢复其余两臂。** 不启动额外训练方向。
 
 ## 中断与决策规则
 
 - 正常运行：保留当前进程与来源哈希，按checkpoint/资源/预测检查，不因例行状态读取重复启动。
-- 确认退出：核对真实句柄、最后耐久receipt与祖先链；在实时预算、资源和来源门通过后，使用[当前target-update恢复入口](../../../scripts/training/run_taiji_r2_target_update_resume.py)接续同一arm。保留失败证据。
+- 确认退出：核对真实句柄、最后耐久receipt与祖先链；在实时预算、资源和来源门通过后，使用[当前fast-ledger恢复入口](../../../scripts/training/run_taiji_r2_fast_ledger_resume.py)接续同一arm。保留失败证据。
 - 预算不足、来源/题面权限变化或结果需要改变研究路线：先给出实测缺口和可审阅方案，再进行必要决策；已批准额度不重复询问。
 - W5b、dev/reference、selector和晋级当前仍冻结。测试、恢复、loss和训练步数都不能代替语言能力。
 
@@ -64,6 +64,7 @@ N1-165A已结案但训练充分性门仅2/3；N1-166确认面未消费。R2-DIAL
 | 入口 | 用途 |
 |---|---|
 | [续训活动摘要](../../reference/delivery-runs/20261021-n-mainline/artifacts/02-continuation-extension-plan.md) | 运行方式、预算、来源与checkpoint规则 |
+| [fast-ledger恢复入口](../../../scripts/training/run_taiji_r2_fast_ledger_resume.py) | 固定审计锚点+尾账重放；须通过CPU、内存和target-update预算守卫 |
 | [交付黑板](../../reference/delivery-runs/20261021-n-mainline/board.md) | 阶段状态、待办与历史证据索引 |
 | [终点元数据入口](../../../scripts/training/prepare_taiji_r2_continuation_endpoints.py) | 当前只返回training；真实就绪前不生成完成证据 |
 | [完整历史快照](../../archive/history/N_MAINLINE_EXECUTION_BEFORE_CONSOLIDATION_20261022.md) | 保留旧判断、失败、审批和原执行日志，历史“下一步”已失效 |

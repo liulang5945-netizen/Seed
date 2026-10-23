@@ -2,23 +2,23 @@
 
 - 主阶段：**Phase 8 训练执行与监测**。
 - 当前队首：[03当前执行](../../../active/roadmap/03_CURRENT_EXECUTION.md)。
-- 当前唯一动作：串行恢复三臂至30,096预训练+525SFT终点，再核验终点。
+- 当前唯一动作：待内存稳定通过守卫后单臂恢复，资源稳定后续完三臂至终点。
 - 预算：同一累计窗口1.5M CPU秒/臂、4.3M总额；历史费用按账本与v1.3审计校正解释。
-- 09:29耐久进度：full17,019 / warm24,607 / fresh24,827 episodes；原句柄失效。09:43余量157,780秒、目标更新预测137,058秒，预算门通过。
-- 恢复情况：并发resume命令触发共享ledger锁超时；full在写入新训练事件前安全退出，warm/fresh启动尚待明确结果。保守reservation仍计费；恢复启动改为逐臂串行。
+- 10:13耐久进度：full17,019 / warm24,915 / fresh25,104 episodes；原句柄均失效。charges 4,150,675.782秒、余量149,324.218秒；target-update预测136,656.835秒，无活动reservation。
+- 恢复情况：并发resume曾触发共享ledger锁超时；warm/fresh恢复后因内存低于8GiB停止。11:07三次内存采样7.663/7.859/7.839GiB，fast-ledger入口已实现和测试，尚未实跑。
 
 ## 阶段与交付状态
 
 | 工作 | 状态 | 证据 / 未完成项 |
 |---|---|---|
 | 来源、保存/恢复、累计账与中断恢复 | 已实现并用于实际训练 | [活动合同](artifacts/02-continuation-extension-plan.md)及其技术证据；保留全部旧失败 |
-| 当前三臂训练 | 中断后恢复中 | 最后durable progress及receipt保留；无完整final，不判能力通过；并发启动锁超时已登记 |
-| extension终点校验 | 实现及synthetic检查已过，真实终点待齐 | endpoint校验器8项、preflight入口5项；实际launch provenance另有7项新测试，三臂共6份manifest与22项来源现场核验通过 |
+| 当前三臂训练 | 资源门待恢复 | 最后durable progress及receipt保留；无完整final，不判能力通过；账本锁超时与内存停机均已登记 |
+| extension终点校验 | 实现及synthetic检查已过，真实终点待齐 | endpoint校验器8项、preflight入口5项；launch provenance及fast-ledger新增覆盖；三臂6份既有manifest与26项来源现场核验通过 |
 | 完整评测接口与最终来源链复核 | 待完成 | 旧driver不直接支持extension schema；v1.3/恢复/预测适配器须在真实评价前复核 |
 | W5b / 人工判读 | 冻结，等待前置 | parent+三臂、39×4=156 generation；固定人工样例，不增加题面 |
 | 能力晋级 / 整模型验收 / 发布 | 未通过 | 按02/07，不以训练或工程检查替代 |
 | 本轮文档收束 | 已整理并核验 | [收束记录](artifacts/12-plan-consolidation-20261022.md) |
-| 实际续训launch来源验证 | 已实现并现场通过 | [验证合同与中断处置](artifacts/13-continuation-launch-provenance.md)；final终点仍待训练完成 |
+| 实际续训launch来源验证与fast-ledger恢复 | 已实现、35项定向测试通过 | [内存守卫与快速恢复更新](artifacts/14-memory-gated-fast-resume.md)；fast-ledger入口待资源门通过后实跑 |
 
 ## 当前已采用的修订
 

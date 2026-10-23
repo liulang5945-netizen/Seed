@@ -6,8 +6,8 @@
 
 | 顺序 | 交付 | 状态 / 出口 |
 |---|---|---|
-| 1 | 从最后耐久checkpoint恢复并完成训练 | 进行中；客户端中断后原句柄失效，恢复命令并发遇20秒ledger锁超时；改为逐臂串行启动，最终须达每臂30,096预训练+525SFT及fresh restore |
-| 2 | extension终点manifest | metadata validator、preflight与launch来源校验均已实现；三臂历史/恢复launch manifest共6份实际核验通过，真实结果和唯一completion事件尚缺 |
+| 1 | 从最后耐久checkpoint恢复并完成训练 | 等内存稳定≥8GiB后使用fast-ledger入口单臂启动；warm/fresh已因内存守卫停止，full尚未恢复；最终须达每臂30,096预训练+525SFT及fresh restore |
+| 2 | extension终点manifest | metadata validator、preflight与launch来源校验均已实现；三臂6份既有launch manifest与26项来源现场核验通过，真实结果和唯一completion事件尚缺 |
 | 3 | extension配对评测接线与最终代码/来源复核 | 待完成；旧recovery-v1 schema/CPU上限不能冒充extension；全链最终复核不能由历史局部审查代替 |
 | 4 | W5b一次配对生成与人工判读 | 前置齐备后按原39×4=156、14,400 CPU/wall秒和固定人工样例执行；当前仍冻结 |
 | 5 | 实验结案与唯一后继方向 | 完整成本、来源、checkpoint、输出及负结果；按数据/目标/容量/结构根因选择高上限方案 |
