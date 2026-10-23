@@ -9,15 +9,15 @@
 依据：[核心需求](../TAIJI_CORE_REQUIREMENTS.md)、[整模型交付07](07_MINI_MODEL_DELIVERY.md)、[N主线09](09_NEXT_MAINLINE_PLAN.md)、[项目复核16](../../reference/delivery-runs/20261021-n-mainline/artifacts/16-project-review-and-continuous-objective.md)、[交付黑板](../../reference/delivery-runs/20261021-n-mainline/board.md)。用户已将该目标设为正式持续Goal；16中提出目标时的“建议”是历史时态。
 
 - 本文补齐09之后的持续执行层，保留N编号、原合同、负结果与CR，不以新WBS替换旧判据。L2/L3/L4/L5沿用07；WBS编号只用于排工，不新增能力等级。
-- **当前执行**仅CC-1；CC-2在真实终点或有证据的停止后接续；CC-3至CC-6按前置证据准入；CC-7是后续设计。没有承诺完成日期，也没有凭本计划冻结新的分数线。
+- **当前执行**仅CC-1；CC-2仅在CC-1依03完整结案或partial/failure封存后接续；CC-3至CC-6按前置证据准入；CC-7是后续设计。没有承诺完成日期，也没有凭本计划冻结新的分数线。
 - Taiji拥有内容、记忆策略、预测、选择与学习责任；Seed执行权限、存储与外部动作。外部模型表达、检索命中、记忆存储成功、训练步数或UI均不能代替原生认知能力。
-- 在已授权、合同不变且预算可覆盖完整出口时自动推进；预算版本、题面权限、冻结合同或方案发生实质变化时，先准备可审阅的证据与推荐，再到相应决策节点停止。普通实现、验证和本地提交不逐项等待批准。完整预算规划针对新包；已在跑任务按实际硬上限继续，运行中预测只作信息，不恢复三臂全史扫描或预测否决。
+- 在已授权、合同不变且预算可覆盖完整出口时自动推进；预算版本、题面权限、冻结合同或方案发生实质变化时，先准备可审阅的证据与推荐，再到相应决策节点停止。普通实现、验证和本地提交不逐项等待批准。完整预算规划针对新包；已在跑任务沿其绑定版本的实际预算/恢复守卫继续，本轮不改变运行策略，也不重新引入全史扫描。
 
 ## 2. 当前基线及不可移动的边界
 
 D1 已批准并激活 **v1.5：1,590,000 CPU秒/臂、4,560,000总计**，旧实耗、reserve和未知尾账保留。warm_start 已用 v4 入口续训；full_turn_1m、fresh_same_capacity 待 warm 完成后逐臂。实时余量只从03所指账本/receipt复核，不把本页快照当新额度。
 
-warm完整终点仍为30,096预训练episodes / 14,517,912 updates，再完成525 SFT episodes / 113,209 updates；真实final、独立恢复与终态发布均计入完整出口。触顶未完成就保留partial，不能降低终点、清账或改称final。
+三臂各自完整终点仍为30,096预训练episodes / 14,517,912 updates，再完成525 SFT episodes / 113,209 updates；真实final、独立恢复与终态发布均计入完整出口。触顶未完成就保留partial，不能降低终点、清账或改称final。
 
 单入口精简已经完成，不重复列作待办。endpoint准备器已激活 v1.5 额度；独立extension入口、versioned worker与launch/ledger/budget血缘已接线并通过合成合同，**真实评测仍待三臂完整终点**。技术边界见[适配架构](../../reference/delivery-runs/20261021-n-mainline/artifacts/04-continuation-evaluation-adapter.md)。
 
@@ -36,11 +36,11 @@ warm完整终点仍为30,096预训练episodes / 14,517,912 updates，再完成52
 | CC-1.1 / AI、架构 | 活动launch/receipt/预算修订链；`scripts/training/prepare_taiji_r2_continuation_endpoints.py`、`validate_taiji_r2_continuation_endpoint.py`、`validate_taiji_r2_continuation_launches.py` | provider规范与四端点snapshot：分别绑定parent来源、实际launch来源、当前评价来源；新简化manifest、v1.4及既有修订可审计；合成缺件/漂移/重复completion拒绝 | 继承局部额度接线，补完整血缘；发现旧schema/额度假设即修适配层，不改冻结源或伪装restart_from_zero。当前不运行真实模型/selector |
 | CC-1.2 / AI、集成 | CC-1.1与适配架构；旧`evaluate_taiji_r2_daily_dialogue_recovery_v2.py`的监督worker、IPC、Job Object、耐久账本 | 新版本独立extension入口与worker/provider贯通；parent与worker同一snapshot、授权路径和schema；旧入口原语义保留；文件命名/输出前缀写入实施合同 | 可与CC-1.4并行；禁止运行时覆写旧全局或伪造旧result；路径、token、receipt或进程树不明就拒绝，无模型调用 |
 | CC-1.3 / 测评、审查 | CC-1.1/1.2；`tests/taiji_native/test_r2_continuation_endpoint_preflight_contract.py`及拟新增适配合同测试 | 合成证明39×4、固定12、跨入口one-shot、四端恢复后才selector、CPU/wall双限、失败树终止与来源漂移拒绝；独立审查结论和对应提交CI | 合成通过只准入真实预检；失败退回对应provider/worker，不消费题面；按改动面验证，不重跑研究训练 |
-| CC-1.4 / AI、工程 | warm运行/停止回执与耐久partial；`scripts/training/run_taiji_r2_resume.py`、原progress/receipt、aggregate ledger | 到达完整终点并发布final/readiness/唯一completion，或触顶/故障的partial停止回执；记录实际与未知成本、耐久/未耐久差额、恢复结果 | 按现有硬预算运行；不改在跑源码/数据/配方，不重复启动同臂。保存失败、来源不符、预算触顶立即停止；恢复必须先验完整checkpoint |
-| CC-1.5 / 主理、AI | CC-1.4实际费用、另两臂耐久游标与原配对合同；同一累计账本 | 三臂到完整出口的实测缺口表；运行中即可准备，不必等触顶；给出是否足额完成原实验的预算裁决材料 | **D1预算节点**：现额度能覆盖完整出口则按原范围接续；不足先提交版本化补额与总成本推荐；不补额则封存partial，W5b阻断，不改单臂验收。禁止自动循环提额 |
+| CC-1.4 / AI、工程 | warm运行/停止回执与耐久partial；`scripts/training/run_taiji_r2_fast_ledger_resume_v4.py --arm <arm>`、原progress/receipt、aggregate ledger | 到达完整终点并发布final/readiness/唯一completion，或触顶/故障的partial停止回执；记录实际与未知成本、耐久/未耐久差额、恢复结果 | 按现有硬预算运行；不改在跑源码/数据/配方，不重复启动同臂。保存失败、来源不符、预算触顶立即停止；恢复必须先验完整checkpoint |
+| CC-1.5 / 主理、AI | CC-1.4实际费用、另两臂耐久游标与原配对合同；同一累计账本 | D1完成记录及v1.5累计账；核验三臂能否在现额度到原出口，保留实际缺口与未知尾账 | **D1已完成，本轮不自动再提额**：按v1.5接续；必需臂触顶/资源拒绝则停止后续串行启动并封存partial，W5b阻断，不改单臂验收。结束条件见03的R1–R6与终态表 |
 | CC-1.6 / 测评、主理 | CC-1.3及三臂完整终点、终态来源全链审计、四端独立恢复、一次性消费与双预算门 | 原冻结W5b的156条耐久原始输出、逐次intent/费用/恢复/来源与固定12-family人工表；完整或失败结案，记录实际已消费范围 | 任一前置缺失回CC-1.1/1.4/1.5且selector为0；开始后失败停止留证，不重试/补题/换入口。W5b是描述性配对证据，不直接判L2 |
 
-### CC-2 结案后接续：归因并选定一个高上限干预
+### CC-2 独立后继包：归因并选定一个高上限干预
 
 | 编号 / 责任 | 输入与实际触点 | 交付物与出口证据 | 依赖、失败回流及预算 |
 |---|---|---|---|
@@ -113,4 +113,14 @@ D1–D6是证据/范围/预算决策点，不是额外审批仪式：到点先�
 
 新实施PLAN/SPEC及结案落`plans/reference/`既有命名族，机器证据落`reports/`，数据/checkpoint沿既有受控根及路径合同；不新增近义顶层目录。错误方向退出活动命令和队首，冻结文件、失败、原始输出与谱系保留；重复过程文本按目录规范S9完成蒸馏、迁链和Git精确恢复登记后可实际删除，不再逐轮复制整篇快照。已核实可再生的临时/空残留可清理，不按“失败”删除唯一研究证据或checkpoint。
 
-**唯一当前下一步：完成 warm_start 的 v1.5 续训并验收 final。** 当前 v4 入口已运行，latest durable 27,584 episodes／13,304,596 updates；到 30,096／14,517,912 后再完成 525 SFT episodes／113,209 updates。成功后按 full_turn_1m→fresh_same_capacity 逐臂续训，三臂 final 齐备才跑真实 extension 预检与 W5b。任一臂触顶、内存不足或恢复失败即停止留证，不自动续额；不降分母、不将 partial 转为 final。
+**当前队首与实际进度以[03](03_CURRENT_EXECUTION.md)为准：完成在跑warm_start的v1.5续训并核验终态。** 成功后串行full→fresh，再做原W5b；停止线触发则按03封存，不把partial称为final。
+
+## 6. 当前轮次的有限收官与后继边界
+
+**CC-1是一个固定实验轮次：既定三臂续训＋一次W5b＋固定人工判读＋结案。** 其唯一收官合同由[03的R1–R6与终态表](03_CURRENT_EXECUTION.md#本轮cc-1的固定收官合同)维护，本文及交接材料只引用，避免产生不同分母/额度/状态版本。
+
+完整结案要求三臂原终点及可恢复终态、同snapshot四端点、39×4＝156次完整输出、前12 family×4＝48个回答的已填写判读和实际成本/失败汇总；结果无收益或退化也结束这一轮。触顶或资源不足按证据不足封存；工程/一次性执行错误按失败封存；机器输出完整而人工表未填只能记REVIEW_PENDING。三种结案均不要求继续训到结果变好，亦不宣告持续Goal完成。
+
+D1已解决；本轮沿v1.5上限执行，不自动追加预算、剂量、数据、诊断或评测。信息消费与学习信用的正式因果/更新验证，以及后续架构改动，属于CC-2/3独立有界包，不能加入本轮收官前置。CC-2先整理已消费证据，再选择必要诊断；其实施合同须在新执行前写明问题、对照、完整预算、分母、停止线和正/负/不可判出口。普通授权内实现可继续，实质路线/冻结范围变化才到D2/D3讨论。
+
+后继每个包都分别结束并提交：明确本包能回答的问题、实际结论与唯一后继建议，再按已有授权进入下一包；不得用“仍未达L2/L3/L4”把一次实验无限续期。长期等级仍按07原门裁决，必要的新评价阈值在消费其独立面之前按原流程冻结，不追改当前W5b。

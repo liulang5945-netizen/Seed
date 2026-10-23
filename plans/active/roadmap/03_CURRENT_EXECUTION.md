@@ -1,49 +1,58 @@
 # N主线当前执行
 
-更新：2026-10-23，Asia/Shanghai。本页是唯一活动队首；[10](10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)负责详细WBS，[09](09_NEXT_MAINLINE_PLAN.md)负责机制继承，[07](07_MINI_MODEL_DELIVERY.md)负责能力/用户验收。
+更新：2026-10-23，Asia/Shanghai。本页维护唯一活动队首与本轮收官合同；[10](10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)维护详细WBS，[09](09_NEXT_MAINLINE_PLAN.md)维护机制继承，[07](07_MINI_MODEL_DELIVERY.md)维护能力/用户验收。
 
-## 目标与阶段
+## 目标、当前动作与本轮边界
 
-用户已将持续Goal正式设为：沿N主线，把态极发展成由自身认知机制驱动、能通过自然中文可靠完成连续任务、跨会话积累和修正经验、从反馈中学会新能力并保持旧能力的原生认知模型；每轮以同一可恢复版本的未见表现、保持和实际成本验收。
+持续Goal：沿N主线，把态极发展成由自身认知机制驱动、能通过自然中文可靠完成连续任务、跨会话积累和修正经验、从反馈中学会新能力并保持旧能力的原生认知模型；每轮以同一可恢复版本的未见表现、保持和实际成本验收。
 
-当前CC-1执行中。整体衔接为CC-1训练/评价出口→CC-2归因→CC-3语言/L2→CC-4同bundle联合能力/L3→CC-5连续经验→CC-6学习与保持/L4→按证据选择CC-7扩面。L3所需有限状态可从CC-5.1提前抽取，隔离加载可在CC-3期间开发。
+**当前动作是继续已批准的R2续训；本轮研究目的则是完成既定配方的配对验证。** 顺序固定为三臂训练终点→四端点恢复/准入→一次W5b→固定人工判读→结案。当前CC-1只包含这些工作。信息进入决策路径、任务错误能否教会负责模块的正式干预实验属于后继CC-2/3；09§1.5的接口级零更新观察已完成，但不证明整模型因果使用或学习收益，也不增加本轮收官前置。
 
-## 当前运行与事实
+CC-1结案与持续Goal完成分别记录。CC-2归因、CC-3语言/L2、CC-4同bundle联合能力/L3、CC-5连续经验、CC-6学习与保持/L4、CC-7扩面仍依10按证据准入；本轮不以完成全部长期阶段为收官条件。
 
-- 2026-10-23 17:48:48 Asia/Shanghai：warm因剩余单臂额度不足下一工作单元及预留而停止（事件66,699）；执行会话62394已返回exit=1。最近耐久27,584 episodes / 13,304,596 updates（事件66,653），最后未耐久进度27,606 / 13,311,741；warm累计1,549,763.982 CPU秒，无活动reservation，保留partial。
-- 清理前已核验62394存活，最终复核确认其预算出口停止；历史活跃快照不再代表当前状态。checkpoint、账本与运行源码不在本轮清理范围。
-- full_turn_1m与fresh_same_capacity暂缓，原checkpoint和parent链保留；目前无完整三臂final、无新语言能力通过结论。
-- 当前v1.4版本化累计上限1,550,000 CPU秒/臂、4,400,000总计，包含旧实耗、reserve和未知尾账。此数值是上轮按推进单臂要求落盘的修订，不追写为用户逐字批准该数额；本轮不改额度。
-- 原终点每臂30,096预训练episodes / 14,517,912 updates，再525 SFT episodes / 113,209 updates。剩余费用与完整终点尚有缺口风险；运行中估计作告警，实际硬预算守卫继续，触顶不重启循环。
-- endpoint准备器的v1.4激活（68ed3495c）与extension适配/worker/launch血缘（612c2dfe4／b1817cbcf／1fc8bac40）均已提交；真实预检仍因三臂未齐被拒绝，不等于新旧manifest、provider与worker已在真实终点贯通。
+## 当前运行与证据快照
 
-## 当前工作包与接续
+- 2026-10-23已核验warm_start实际PID 11272、创建时间与writer锁一致，命令为`run_taiji_r2_fast_ledger_resume_v4.py`，进程存活。21:25:12最新耐久为**29,056预训练episodes / 14,036,704 updates**（ledger sequence 69835）；此为时间点快照，后续以progress、receipt及同一进程身份为准。尚无三臂完整final；本轮paired_eval的attempt/result均未出现。
+- full_turn_1m最新耐久16,992 / 8,176,295，fresh_same_capacity为25,088 / 12,091,199；先完成warm，再按full→fresh串行接续。旧未耐久进度不作为恢复游标。
+- **有效累计额度为D1已批准并激活的v1.5：1,590,000 process-CPU秒/臂、4,560,000总计**；旧实耗、reserve及未知尾账全部计入。write-once amendment `21e0497e`，锚sequence 66699；[18预算裁决](../../reference/delivery-runs/20261021-n-mainline/artifacts/18-d1-budget-decision.md)记录来源。17:48的v1.4停止与旧额度只作历史，不能覆盖19:41后的v1.5续训事实。
+- endpoint provider、独立extension evaluator/versioned worker、launch/ledger/budget血缘已提交；相关110支合成合同通过，独立审查三项修正已提交。**实现与合成通过；真实终点/评测贯通尚未验证。** 旧冻结评测源码不改。
 
-| 工作 | 状态 | 出口 |
-|---|---|---|
-| CC-1.1 来源/launch/endpoint provider | v1.4 预算激活（68ed3495c）；完整血缘/provider 接线（1fc8bac40）；真实预检待三臂齐备 | 新简化入口及历史V3、v1.4与旧修订可验证，四端点snapshot；合成拒绝漂移/重复completion/活writer |
-| CC-1.2 独立extension evaluator/worker | 适配层＋versioned worker 已提交（612c2dfe4／b1817cbcf）；真实预检待三臂齐备 | 父进程和受监督worker使用同provider、snapshot与授权路径；无伪zero或旧schema回退 |
-| CC-1.3 合成与独立审查 | 独立审查完成，修正三项（d39f6c8af）＋launch/ledger/budget接线（1fc8bac40）；81支合成契约通过；extension 评测合同冻结 | one-shot跨入口、39×4、固定12、双预算与失败树终止；对应提交CI与独立审查 |
-| CC-1.4 当前训练 | v1.5 已激活；warm_start 于 19:41 用 v4 入口续训中（manifest 024767a4）；full／fresh 待 warm 完成后逐臂 | 耐久partial与停止事件保留，无完整final；D1准备到原完整实验出口的费用/范围裁决 |
-| CC-1.5 预算/三臂完整性 | D1 已批准；v1.5 write-once 已落盘（21e0497e：1,590,000／4,560,000，锚 sequence 66699）；v4 多臂入口与历史/当前 launch 血缘已接线 | D1一次性提交到原完整出口的缺口与推荐；不补额则封存partial，W5b继续阻断 |
-| CC-1.6 原W5b | 前置未齐 | parent+三臂、39×4=156、固定前12-family人工、CPU/wall各14,400秒，一次调用并保存原始失败 |
+## 本轮CC-1的固定收官合同
 
-## 当前唯一下一步：完成 warm_start 的 v1.5 续训并验收 final（当前运行中）
+完整收官必须满足R1–R6；负结果同样可以完整收官。以下是固定流程与证据条件，未新增语言能力通过率门槛。
 
-D1 已由 owner 批准，v1.5 补额已 write-once 落盘并激活：每臂 **1,590,000**、总计 **4,560,000**，绑定账本 sequence 66699，amendment `21e0497e`。为完成三臂，新增 `run_taiji_r2_fast_ledger_resume_v4.py`（多臂、v1.5、warm 7 GiB／其余 8 GiB）与 launch 血缘支持（v3 历史声明源、v4 当前源、简化 resume 入口、按 schema 的历史额度）；旧冻结评测器未改。
+| 条件 | 可核验的结束标准 |
+|---|---|
+| R1 三臂到原终点 | 每臂预训练**30,096 episodes / 14,517,912 target-byte updates**，再SFT **525 episodes / 113,209 updates**；具备**3份result、3份readiness、6个阶段final checkpoint及独立恢复证据**。partial不能替代final。 |
+| R2 身份、终态与费用闭合 | parent、实际launch、source/corpus/bundle/schema、预算修订链与ledger可核验；每臂唯一completion，终态无活writer/未结reservation。已测实耗、保守未知尾账、未实测发布/退出成本分别声明，不把发布前receipt当作退出全成本实测。 |
+| R3 四端点准入 | parent_baseline＋三臂使用同一endpoint snapshot；受监督worker完成四端点恢复并持久化receipt后才读selector。文件存在本身不代表恢复通过；缺任一端点不消费题面。 |
+| R4 一次固定W5b | **39个唯一family×4端点＝156次generation**；attempts＝outputs＝persisted＝156，每端点39，reuse＝0；沿原冻结题面、顺序、decoder与消费协议执行一次。保留原始输出及逐次费用/来源/失败。 |
+| R5 固定人工判读 | 同面前**12 family×4＝48个端点回答**逐项判读中文可读性、贴题、历史连贯与重复；每端点每项分母12，填写判断、依据、不可判项及判读责任人。自动生成的review展示或机器result.complete不能替代填好的判读表。读数为描述性配对证据，不直接判L2。 |
+| R6 结案落盘并提交 | 汇总R1–R5的实际完成/缺项、证据路径、收益/无收益/退化/混合或不可判、保持覆盖、实际成本与失败；在`plans/reference/`既有`PLAN-R2-…execution_closeout…`命名族形成唯一结案，日期取实际结案日；同步本页、10及黑板并提交。只保留一个后继建议，新实验另成有界包。 |
 
-warm_start 已于 19:41 用 v4 入口续训，latest durable 27,584 episodes／13,304,596 updates；20:20 进度 27,732 episodes／13,371,433 updates，累计 1,569,057 CPU 秒。恢复时账本先记了约 **1.87 万 CPU 秒的“主机尾账”**（上次停止到本次恢复之间主机 CPU 差，按未知尾账计入），v1.5 的 warm 缓冲吸收了它；因此 **full/fresh 必须在 warm 结束后立即接续**，避免空置再次产生尾账。已排队一个串行守护命令：warm final 出现后 30 秒启动 full_turn_1m，full final 后 30 秒启动 fresh_same_capacity；8 小时未观察到 warm final 则退出，不盲目启动。下一步只做一件事：**盯住 warm 到 final 并过 endpoint/独立恢复门**；成功后队列自动接续 full → fresh（各自预计 81,023／25,884 CPU 秒），三臂 final 齐备后才跑真实 extension 预检与 W5b。任一臂再次触顶、内存不足或恢复失败即停止留证，不自动续额。
+证据沿现有`reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_*`路径族；评价子族为`…_paired_eval_*`，包含endpoint manifest/readiness、attempt/ledger/progress、face与prompt SHA、generations、result/cost receipt、review或failure。不得通过改名重开一次性消费。
 
-D1 材料见[18-d1-budget-decision.md](../../reference/delivery-runs/20261021-n-mainline/artifacts/18-d1-budget-decision.md)：三臂已计 4,369,799.25 CPU 秒，补完预计 118,303，总计原缺口 88,102；补后仍留总计约 71,898、warm 约 28,840 缓冲。
+## 明确的终态与停止线
 
-CC-1.3 已收口：独立审查三项修正（评测源码进 `source_hashes`、worker 固定 torch 线程、restore 阶段/digest 核对）＋launch/ledger/budget 血缘；旧 recovery-v2 评测 48 支＋extension 19 支＋生产→适配衔接等＝ **110 支相关契约通过**；extension 评测合同冻结。残余：旧冻结入口无法检查 extension 前缀（不改冻结源），运行纪律为 extension 已跑则不再跑旧入口。
+| 本轮状态 | 判定及允许动作 |
+|---|---|
+| `CLOSED_COMPLETE` 完整结案 | R1–R6全部满足。能力读数可改善、无收益、退化、混合或不可判；**无需出现正收益才能结束本轮**。本轮配方不自动追加训练或补题。 |
+| `CLOSED_PARTIAL` 证据不足封存 | 硬预算/资源出口导致三臂或必需分母不完整，保存耐久partial、停止回执、已消费范围、费用/未知尾账和缺项后结案。不能判新语言能力胜败；W5b若尚未准入则不启动。 |
+| `CLOSED_FAILURE` 工程失败封存 | 保存、来源、恢复、耐久发布、worker/IPC或one-shot执行失败，保存原始故障/partial、已消费范围与费用后结案；工程故障不能写为模型能力负结果。 |
+| `REVIEW_PENDING` 仅待判读 | 机器输出齐全但R5/R6未齐；只完成既定判读与结案，不再训练或增加查询。此状态不是完整收官。 |
 
-N1-166及原确认面、dev/reference/selector、能力晋级继续按原门冻结。普通实现与受影响验证自动推进；只有实质改变预算/题面/冻结协议/路线时到10的对应D节点裁决，其余独立工作持续。
+- **训练止于v1.5现有累计上限。** D1已解决，本轮不自动再次提额、加epoch、换数据/模型、降终点或改分母。任一必需臂触顶、资源拒绝或保存/恢复失败，停止后续串行启动，按partial/failure出口封存；正常在跑但尚无final属于等待，不能误判失败。
+- 已登记的串行等待安排为warm final后接full、full后接fresh，warm等待上限8小时；本页未独立验证守护进程存活，不能凭排队记录宣称已启动后两臂。接续须核验前臂真实终态、恢复、来源与当前预算门，不能仅看final文件；超时只复核原句柄，不自动续开等待/训练循环。
+- **W5b独立CPU与wall上限各14,400秒**，不借训练额度；涵盖监督/恢复/生成/IPC/终止与发布预留。receipt记录发布前实测并保留finalization reserve，不能宣称已实测receipt自身、最终result及进程退出全成本。execute形成attempt即消费一次资格，失败也不重试、不换入口/名字、不补题、不续跑。
+- 无法确认进程终止时，停止派发新任务并记录终止/成本未知，不能宣称进程树已回收；普通观察超时先复核同一实际进程。该异常须处置留证，不能以重启掩盖。
+- 记录本包相关检查与对应提交CI。全库既有维护债、M7发布、全部长期CR以及新的信息/信用实验不追加为CC-1收官条件；`can_promote=false`、N1-166及其未消费确认面维持原冻结。
 
-## 使用与中断规则
+## 当前唯一下一步：完成 warm_start 的 v1.5 续训并核验终态
 
-唯一现行入口为`python scripts/training/run_taiji_r2_resume.py`，`--check-only`是独立预检，不代表启动；本轮不重复启动同臂；当前因预算出口停止，不能按旧运行快照重启。句柄超时不等于退出，先复核同句柄；确认终止后才按有效预算、来源和checkpoint恢复。新训练前检查完整保存/独立恢复；不修改运行中已绑定源码、语料或谱系。
+继续当前v4进程，不重复启动同臂。到原预训练终点后完成既定SFT、final及独立恢复；通过后按full_turn_1m→fresh_same_capacity逐臂执行，三臂完整才进入R3–R5。若触及上述停止线，则走R6对应的partial/failure结案，当前轮次到此结束。信息/信用正式实验及新配方留给后继包，不延长本轮。
+
+现行实际训练入口为`scripts/training/run_taiji_r2_fast_ledger_resume_v4.py --arm <arm>`，必须继承本轮来源、恢复与v1.5预算门；`run_taiji_r2_resume.py`属于既有历史入口，不能据旧状态重复启动。新训练前先核验完整checkpoint保存与独立恢复；不修改运行中绑定的源码、语料或谱系。
 
 ## 历史与计划去向
 
-[17过渡矩阵](../../reference/delivery-runs/20261021-n-mainline/artifacts/17-plan-transition-and-reconciliation.md)登记旧计划的继承、合并、退役与后续准入；[历史全文恢复](../../reference/PROJECT_HISTORY_CONSOLIDATION_20261023.md)、[更早N历史](../../archive/history/N_MAINLINE_EXECUTION_BEFORE_CONSOLIDATION_20261022.md)保留旧判断/失败。历史0/12不套到未测新候选，训练步数不代替语言能力；整项目未完成，M阶段限定收束不补发L2/L3/L4。
+[17过渡矩阵](../../reference/delivery-runs/20261021-n-mainline/artifacts/17-plan-transition-and-reconciliation.md)登记旧计划的继承、合并、退役与后继准入；[历史全文恢复](../../reference/PROJECT_HISTORY_CONSOLIDATION_20261023.md)、[更早N历史](../../archive/history/N_MAINLINE_EXECUTION_BEFORE_CONSOLIDATION_20261022.md)保留旧判断/失败。历史0/12不套到未测新候选，训练步数不代替语言能力；整项目尚未完成，M阶段限定收束不补发L2/L3/L4。
