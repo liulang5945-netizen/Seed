@@ -32,7 +32,7 @@
 
 D1 已由 owner 批准，v1.5 补额已 write-once 落盘并激活：每臂 **1,590,000**、总计 **4,560,000**，绑定账本 sequence 66699，amendment `21e0497e`。为完成三臂，新增 `run_taiji_r2_fast_ledger_resume_v4.py`（多臂、v1.5、warm 7 GiB／其余 8 GiB）与 launch 血缘支持（v3 历史声明源、v4 当前源、简化 resume 入口、按 schema 的历史额度）；旧冻结评测器未改。
 
-warm_start 已于 19:41 用 v4 入口续训，latest durable 27,584 episodes／13,304,596 updates；20:00 进度 27,679 episodes／13,345,570 updates，累计 1,568,838 CPU 秒。恢复时账本先记了约 **1.87 万 CPU 秒的“主机尾账”**（上次停止到本次恢复之间主机 CPU 差，按未知尾账计入），v1.5 的 warm 缓冲吸收了它；因此 **full/fresh 必须在 warm 结束后立即接续**，避免空置再次产生尾账。下一步只做一件事：**盯住 warm 到 final 并过 endpoint/独立恢复门**；成功后按 full_turn_1m → fresh_same_capacity 逐臂续训（各自预计 81,023／25,884 CPU 秒），三臂 final 齐备后才跑真实 extension 预检与 W5b。任一臂再次触顶、内存不足或恢复失败即停止留证，不自动续额。
+warm_start 已于 19:41 用 v4 入口续训，latest durable 27,584 episodes／13,304,596 updates；20:20 进度 27,732 episodes／13,371,433 updates，累计 1,569,057 CPU 秒。恢复时账本先记了约 **1.87 万 CPU 秒的“主机尾账”**（上次停止到本次恢复之间主机 CPU 差，按未知尾账计入），v1.5 的 warm 缓冲吸收了它；因此 **full/fresh 必须在 warm 结束后立即接续**，避免空置再次产生尾账。已排队一个串行守护命令：warm final 出现后 30 秒启动 full_turn_1m，full final 后 30 秒启动 fresh_same_capacity；8 小时未观察到 warm final 则退出，不盲目启动。下一步只做一件事：**盯住 warm 到 final 并过 endpoint/独立恢复门**；成功后队列自动接续 full → fresh（各自预计 81,023／25,884 CPU 秒），三臂 final 齐备后才跑真实 extension 预检与 W5b。任一臂再次触顶、内存不足或恢复失败即停止留证，不自动续额。
 
 D1 材料见[18-d1-budget-decision.md](../../reference/delivery-runs/20261021-n-mainline/artifacts/18-d1-budget-decision.md)：三臂已计 4,369,799.25 CPU 秒，补完预计 118,303，总计原缺口 88,102；补后仍留总计约 71,898、warm 约 28,840 缓冲。
 

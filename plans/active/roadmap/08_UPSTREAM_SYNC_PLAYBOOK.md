@@ -1775,3 +1775,4 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 - 训练前检查：`run_taiji_r2_resume.py --check-only --arm warm_start` 通过；内存 23.47 GiB。warm 已于 19:41 用 v4 续训，manifest `024767a4` 绑定 16 源、approved 1,590,000／4,560,000、amendment `21e0497e`。恢复时账本先记约 **1.87 万 CPU 秒主机尾账**（停止到恢复间的主机 CPU 差，按 unknown tail 计入），由 v1.5 的 warm 缓冲吸收；后续 full/fresh 必须无缝接续，避免空置再产生尾账。20:00 进度 27,679 episodes／13,345,570 updates、累计 1,568,838 CPU 秒。
 - 下一格：盯住 warm 到 final 并通过 endpoint/独立恢复门；成功后按 full_turn_1m→fresh_same_capacity 逐臂。触顶/内存不足/恢复失败即停止留证。
 - 后续臂启动前发现并修正（`ccbf8648e`）：v1.5 激活器原先临时套 v1.4 上限读账本，warm 已计超过 1.55M 会误拒；现按 v1.5 上限读取，且 warm 已生成的 v4 manifest 以旧 v1.5 源哈希走历史声明通道。真实 provenance 现识别 warm 7 个 launch、36 当前源／13 历史源；43 支相关测试通过。
+- 串行守护已排队：warm final 出现后 30 秒自动启动 full_turn_1m，full final 后 30 秒启动 fresh_same_capacity；8 小时未见 warm final 则退出。目的＝避免空置产生新的主机尾账，同时保持单臂串行与各自预算/内存门。
