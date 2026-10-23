@@ -8,6 +8,8 @@
 
 ## 当前事实
 
+- **2026-10-23 15:00 Asia/Shanghai 实测：精简入口已实际恢复训练。** resumed 账本事件61,135；新耐久 checkpoint `commit-00025024-da08a9ffc8fb450ca993a20e8002ac5e.pt`（durable事件61,209）；随后episode事件61,221推进到25,030 / 12,052,192 updates。运行会话62394仍活跃。以下上一轮24,992耐久点和61,133账本是启动前快照，不再代表最新进度。
+
 - warm_start 上次进程确实新增了训练事件，最后记录为 24,998 episodes / 12,038,798 updates；最新耐久 checkpoint 为 24,992 episodes / 12,035,537 updates。更早的 25,010 是旧进程未耐久进度，恢复时回退到耐久点，旧 CPU 仍计费。
 - full_turn_1m 与 fresh_same_capacity 保留原 checkpoint；无完整三臂 final。
 - 当前版本化累计上限为 1,550,000 CPU 秒/臂、4,400,000 总计；v1.4 sidecar 已存在，旧实耗和未知尾账不重置。它是上轮根据用户要求推进单臂所作的修订，不追写为用户逐字批准该数额。

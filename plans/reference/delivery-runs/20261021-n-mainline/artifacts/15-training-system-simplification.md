@@ -29,3 +29,7 @@
 ## 后继与限制
 
 下一步使用单入口续训 warm_start，观察耐久 checkpoint。新简化 manifest 的 endpoint 审计接线在最终评测前完成；已有 V3 历史 manifest 也需被终态校验器识别，不得跳过。原三臂配对评测与整模型能力门不因流程精简而改写。
+
+## 精简入口实际运行验证
+
+2026-10-23 15:00 Asia/Shanghai：会话62394已实际续训，输出continuation_resumed事件61,135与durable_training_commit事件61,209。新checkpoint为`commit-00025024-da08a9ffc8fb450ca993a20e8002ac5e.pt`；随后进度25,030 episodes / 12,052,192 updates，事件61,221。上述为时点快照，后续以progress与receipt为准；训练进程保留继续运行。
