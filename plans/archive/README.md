@@ -1,50 +1,28 @@
-# 计划归档索引
+# 历史设计与证据恢复索引
 
-最新归档：[2026-09-10 结果复审前执行流水](history/20260910_result_review/EXECUTION_HISTORY.md) 与 [历史计划入口](history/20260910_result_review/PLAN_INDEX_HISTORY.md)。当前顺序见 [唯一执行计划](../active/roadmap/03_CURRENT_EXECUTION.md)。
+当前开发只读[03队首](../active/roadmap/03_CURRENT_EXECUTION.md)、[10详细计划](../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)与[09设计继承](../active/roadmap/09_NEXT_MAINLINE_PLAN.md)。本目录保留独有设计/证据与必要兼容路径，不再要求每次文档整理复制整份过程流水。
 
-这里保存已完成、被新路线替代或仅用于历史追溯的计划。归档文档保留当时的实验上下文和决策证据，但不提供当前执行顺序。
+## 留在工作树的历史
 
-## 归档分类
-
-| 目录 | 内容边界 |
+| 分类 | 用途 |
 |---|---|
-| `architecture_design/` | 被 Native v1 替代的早期完整架构草案 |
-| `audits/` | 历史审计、缺口盘点和方向评估；大审计已拆成 origins/findings/directions |
-| `authored/` | 已冻结的早期设计原则、启动标准和 Legacy 机制说明 |
-| `history/` | 阶段收束、对话/实验/项目事件和路线执行日志 |
-| `history/roadmap_shards/` | W7-R5B/R5C 已完成的编号 slice 分片合同与评审记录 |
-| `implementation/` | 已完成的修复、旧实现和兼容层实施记录 |
-| `reference/` | 只用于历史或训练背景的参考资料 |
+| `architecture_design/` | 早期架构及仍被根需求引用的原始依据 |
+| `audits/` | 历史妥协/缺口盘点，结论按后继证据解释 |
+| `authored/` | 原设计原则与启动标准 |
+| `implementation/` | 旧实现/兼容层说明 |
+| `reference/` | 独有历史参考资料 |
+| `history/` | 必要阶段原件、既有索引与兼容文件；日期不代表仍执行 |
+| `history/roadmap_shards/` | 旧W7等分片引用，当前不按旧切片开工 |
 
-## 最近一次路线拆分
+## 本次删除与恢复
 
-2026-09-06 研究重审将累计的 M0/M1/M2 执行日志及旧“下一步”完整保存到 [research_review_20260906](history/research_review_20260906/README.md)，同时把未验证的 M2af 草案保存为不可执行文本。核心需求仍常驻 active；活动执行计划已改为详细阶段、对照、验收与失败出口。本次审视纠正了 active 评分错 owner、B5 holdout 重复和 Gate 语义，历史报告原样保留，不能绕过[研究审视](../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)直接继承旧能力结论。
+2026-10-23已将6份整篇重复过渡快照移出工作树；原始计划和当时归档版本均已在Git提交中保存。08删除重复操作流水、保留同步手册/登记标题/必要逐字处方；reference索引删除滚动状态正文，改为主题导航。准确文件映射、SHA、行尾及恢复命令见[历史整理记录](../reference/PROJECT_HISTORY_CONSOLIDATION_20261023.md)。本目录不再把2026-09-10写为“最新归档”。
 
-2026-09-01 最新一次收束将原活动 `SEED_DEVELOPMENT_ROADMAP` 与 `roadmap/01～04` 全文移入 [roadmap_convergence_20260901](history/roadmap_convergence_20260901/README.md)。活动路径保留短兼容入口，所有当前优先级、日程、Gate 和下一步统一由 `plans/active/roadmap/03_CURRENT_EXECUTION.md` 承载。
+既有结果层见[研究复核](../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)、[M5蒸馏墓碑](../reference/M5_DISTILLATION_TOMBSTONE.md)、[项目收束](../reference/M0_M7_PROJECT_CONSOLIDATION_20261006.md)。它们的冻结判读、批准范围和失败保留；已使用的语料、权重、来源记录及会话数据不按“旧”批量删除。
 
-| 文档 | 归档原因 |
-|---|---|
-| [SEED_ROADMAP_RELEASE_LOG_2026_08.md](history/SEED_ROADMAP_RELEASE_LOG_2026_08.md) | 原总路线 P8 产品与发布记录已完成，移出当前执行文件 |
-| [SEED_ROADMAP_EXECUTION_FOUNDATION_2026_08.md](history/SEED_ROADMAP_EXECUTION_FOUNDATION_2026_08.md) | 路线校准前的历史 Gate 与执行记录 |
-| [SEED_ROADMAP_WORKBENCH_PLAN_2026_08.md](history/SEED_ROADMAP_WORKBENCH_PLAN_2026_08.md) | 全盘审计形成的 W0–W7 规划原文，当前摘要已提炼到 active |
-| [SEED_ROADMAP_WORKBENCH_PROGRESS_2026_08.md](history/SEED_ROADMAP_WORKBENCH_PROGRESS_2026_08.md) | Workbench Closure 已完成 slice 和历史下一步连续记录 |
-| [PLANS_INDEX_STATUS_SNAPSHOT_20260829.md](history/PLANS_INDEX_STATUS_SNAPSHOT_20260829.md) | 旧入口同时承载导航、状态和日志，现已拆分 |
-| [ARCHITECTURE_COMPROMISE_ORIGINS.md](audits/ARCHITECTURE_COMPROMISE_ORIGINS.md) | 原架构妥协审计的早期机制与历史状态 |
-| [ARCHITECTURE_COMPROMISE_FINDINGS.md](audits/ARCHITECTURE_COMPROMISE_FINDINGS.md) | 原架构妥协审计的系统性缺口与组件 findings |
-| [ARCHITECTURE_COMPROMISE_DIRECTIONS.md](audits/ARCHITECTURE_COMPROMISE_DIRECTIONS.md) | 原架构妥协审计的改进方向与候选路线 |
-| [SEED_GATE_CI_HISTORY_2026_08.md](history/SEED_GATE_CI_HISTORY_2026_08.md) | 2026-08-29 以前累计的 Gate、CI 事故、修复和逐轮证据；活动文件只保留仍生效规则 |
-| [SEED_W7_EXECUTION_PLAN_SNAPSHOT_20260829.md](history/SEED_W7_EXECUTION_PLAN_SNAPSHOT_20260829.md) | R1–R5 原详细蓝图与已完成过程；后续阶段已重写为 C0–C8 活动计划 |
-| [SEED_NATIVE_PHASE_HISTORY_20260829.md](history/SEED_NATIVE_PHASE_HISTORY_20260829.md) | P0–P7 原滚动实现记录；活动版只保留长期范围、阶段状态和退出门槛 |
-| [roadmap_shards/](history/roadmap_shards/) | 2026-09-01 归档 `05`～`61` 共 57 个已完成 slice 分片（原在 `plans/active/roadmap/`）。每个分片的执行结论都已在 [04_EXECUTION_PLAN.md](../active/roadmap/04_EXECUTION_PLAN.md) 的对应 `### R5C-Sxx（已完成）` 小节保留，因此归档不丢失可执行信息；分片内部相对链接已在同一次改动内按新深度改写 |
-| [62_POST_S51_PROJECT_CONVERGENCE_20260831.md](history/62_POST_S51_PROJECT_CONVERGENCE_20260831.md) | 2026-09-01 归档。交付顺序阶段 P0–P8 的原始收敛计划；其统一执行原则、P2 自然语言执行链和 P3–P8 未退出 Gate 已并入 [01_SCOPE_AND_PHASES.md](../active/roadmap/01_SCOPE_AND_PHASES.md) 第 6–7 节，本文件只保留当时的事实盘点与已完成子阶段记录 |
-| [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](history/63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md) | 2026-09-01 归档。E1–E9 原生进化与客户端体化的原始总路线；路线决策、目标架构、语料/经验合同、Skill/MCP/插件合同、归因规则、E7–E9 未闭合阶段和 owner 已并入 [04_EXECUTION_PLAN.md](../active/roadmap/04_EXECUTION_PLAN.md) 第 9–18 节，指标与决策节点已并入 [02_GATES_AND_CI.md](../active/roadmap/02_GATES_AND_CI.md) 第 5–6 节，本文件只保留 E0–E6 的当时完成记录 |
+## 留存规则
 
-其他归档文档的用途见各自文件头部说明。原路线、旧 NeuroPlex/Transformer 设计和测试调试记录都不应被重新解释为当前 Taiji 事实。
-
-## 使用规则
-
-- 项目使命和长期核心讨论必须保留在 `plans/active/TAIJI_CORE_REQUIREMENTS.md` 与 `plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md`。
-- 当前执行顺序、优先级、日程、Gate 和唯一下一步只看 `plans/active/roadmap/03_CURRENT_EXECUTION.md`。
-- 当前身份、所有权和产品边界只看 `plans/active/ARCHITECTURE_DIRECTION_2026_08.md` 与 `plans/active/SEED_ARCHITECTURE.md`。
-- 归档文档中的“下一步”均是历史记录，不得直接恢复执行。
-- `plans/active/roadmap/` 保留 `01`～`04` 四个稳定路径，其中只有 `03_CURRENT_EXECUTION.md` 承载计划；`01`、`02`、`04` 是历史引用兼容入口。新增阶段内容只能更新 `03`，不得新增并行路线或编号分片。
+- 活动索引维护当前职责，不保留并列历史队首；详细包由10、当前动作由03维护。
+- 唯一设计依据、冻结合同/来源SHA、原始评价结果、未完成工作及受用方读取的内容保留原位。
+- 重复过程文本在结论蒸馏、引用迁移、Git精确恢复验证后可删除；恢复原文时不把旧额度/权限/判据当新授权。
+- 可再生缓存与测试残留按实际白名单清理，保留含源码快照的临时根；不通过重写Git或prune来“清历史”。

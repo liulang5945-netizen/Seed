@@ -68,3 +68,27 @@ def test_pytest_basetemp_families_are_included_but_cache_is_not(tmp_path, monkey
     planned = {rel for rel, _count, _mb, verdict in module.plan_dirs() if verdict == "删除"}
 
     assert planned == {".pytest-tmp-n1-run100-contracts", ".pytest-final-all"}
+
+
+def test_default_cleanup_keeps_state_overlays_and_dependencies(tmp_path, monkeypatch) -> None:
+    module = _module()
+    module.ROOT = str(tmp_path)
+    payloads = []
+    for name in (".seed_test_tmp", "_libs", "logs", "rag_data", "user_data", "agent_workspace"):
+        payload = tmp_path / name / "retained-state.txt"
+        payload.parent.mkdir()
+        payload.write_text("unique state or source overlay", encoding="utf-8")
+        payloads.append(payload)
+    build = tmp_path / "build"
+    build.mkdir()
+    (build / "generated.txt").write_text("reproducible", encoding="utf-8")
+    monkeypatch.setattr(module, "git_ignored", lambda _rel: True)
+
+    planned = [rel for rel, _n, _mb, verdict in module.plan_dirs() if verdict == "删除"]
+    assert planned == ["build"]
+    for rel in planned:
+        assert module.remove_dir(rel)
+    assert not build.exists()
+    assert all(
+        path.read_text(encoding="utf-8") == "unique state or source overlay" for path in payloads
+    )

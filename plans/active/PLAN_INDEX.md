@@ -20,8 +20,8 @@
 - M0–M3历史底座、M4限定继承、M5批准退出与M6限定收官按[项目收束](../reference/M0_M7_PROJECT_CONSOLIDATION_20261006.md)继承；其排除项仍在原批准书中。N目标不是把M0–M8从头重开，也不是补发R2或L3通过。
 - N1-165A/166、旧R2负结果、N2/N3/N5和C4/C5按原冻结范围保留；新包选择见10，历史“下一步”不再调度。
 - M7实际CI、发布与M8真实设备/规模化按原重启条件处理。受当前变更影响的CI持续检查，不清空所有维护债才开展一次有界能力验证。
-- [仓库整改结案](../reference/REPO_PREAPPLICATION_REMEDIATION_20261023.md)、[技术债台账](roadmap/05_TECH_DEBT_REGISTER.md)与[过程记录](roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md)继续保留各自证据，不创建并列主线。
+- [仓库整改结案](../reference/REPO_PREAPPLICATION_REMEDIATION_20261023.md)、[技术债台账](roadmap/05_TECH_DEBT_REGISTER.md)与[重放手册/历史登记](roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md)继续保留各自证据，不创建并列主线。
 
 ## 3. 历史归档
 
-本页原1039行的逐轮记录已完整迁入[过渡前索引](../archive/history/CONTINUOUS_TRANSITION_PLAN_INDEX_BEFORE_20261023.md)，相对链接按归档位置重定位，原始内容可由提交历史复核。历史失败、审批、引用与排除项继续有效；带日期的历史队首只解释当时执行。
+本页原1039行逐轮记录已从工作树移除，Git保留完整原文与当时归档版本；[历史整理与恢复](../reference/PROJECT_HISTORY_CONSOLIDATION_20261023.md)登记精确路径/提交。历史失败、审批、引用与排除项继续有效，旧队首只解释当时时点。

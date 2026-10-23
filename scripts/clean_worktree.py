@@ -40,7 +40,6 @@ HUMAN_ONLY_PREFIXES = ("direct-",)
 DELETABLE_DIRS = [
     "build",
     "dist",
-    ".seed_test_tmp",
     "_pytest_m2aa_full",
     "_pytest_m2aa_runtime",
     "_pytest_m2aa_runtime_2",
@@ -50,11 +49,6 @@ DELETABLE_DIRS = [
     ".npm-cache",
     "__pycache__",
     "neuroplex.egg-info",
-    "_libs",
-    "logs",
-    "rag_data",
-    "user_data",
-    "agent_workspace",
     "update_frontend",
 ]
 # 前缀族：.tmp-<主题>/（S3 命名约定）和历史 pytest basetemp 残留；
@@ -71,7 +65,20 @@ NESTED_DELETABLE = (
 )
 
 # 只报告、永不删除：体积大或语义特殊，删不删由所有者决定
-OWNER_DECISION = ["data", ".codex", "taiji_data", ".local", "checkpoints", "security"]
+OWNER_DECISION = [
+    "data",
+    ".codex",
+    "taiji_data",
+    ".local",
+    "checkpoints",
+    "security",
+    ".seed_test_tmp",  # May also contain source overlays needed by live training.
+    "_libs",
+    "logs",
+    "rag_data",
+    "user_data",
+    "agent_workspace",
+]
 PRESERVE_EMPTY_ROOTS = frozenset(OWNER_DECISION) | {"output", "outputs", "artifacts"}
 
 
@@ -199,8 +206,7 @@ def main() -> None:
         full = os.path.join(ROOT, rel)
         if not os.path.isdir(full):
             continue
-        n, mb = tree_count(full)
-        print(f"  {rel:26s} {n:6d} files {mb:9.1f} MB")
+        print(f"  {rel:26s} 保留（不递归统计）")
 
     print(f"\n合计将删文件（不含空目录）: {total_files}")
     if not args.apply:

@@ -10,7 +10,7 @@
 > 事件全记录：`plans/reference/REPO_SECRET_REMEDIATION_20260919.md`。
 >
 > **配套文档**：目录与文件存放规则见
-> [FOLDER_STRUCTURE_RULES.md](FOLDER_STRUCTURE_RULES.md)（S1–S8，管「什么东西放在哪」；
+> [FOLDER_STRUCTURE_RULES.md](FOLDER_STRUCTURE_RULES.md)（S1–S9，管「什么东西放在哪」；
 > 配套清理工具 `scripts/clean_worktree.py`，默认 dry-run）。
 
 ---

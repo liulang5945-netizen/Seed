@@ -27,4 +27,6 @@
 
 ## 历史
 
+2026-10-23已执行[全项目历史整理](reference/PROJECT_HISTORY_CONSOLIDATION_20261023.md)：删除旧测试/缓存与6份整篇重复快照，08保留重放手册及登记标题，reference改为主题索引；完整旧文按Git精确恢复，不再重复存放。
+
 16保留[目标提出时的评审](reference/delivery-runs/20261021-n-mainline/artifacts/16-project-review-and-continuous-objective.md)，17登记本轮正式衔接。更早逐轮状态见[20261022索引快照](archive/history/PLANS_INDEX_BEFORE_N_CONSOLIDATION_20261022.md)与[旧执行快照](archive/history/N_MAINLINE_EXECUTION_BEFORE_CONSOLIDATION_20261022.md)，本轮六份过渡前全文由17导航；旧“下一步”不再调度。

@@ -2,7 +2,7 @@
 
 更新：2026-10-23。当前执行只由[03](03_CURRENT_EXECUTION.md)调度，详细工作包见[10持续能力计划](10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。本文保留N1–N6设计语义与42条VISION映射，退出逐轮运行日志职责。
 
-过渡前全文见[历史设计与排程](../../archive/history/CONTINUOUS_TRANSITION_N_DESIGN_BEFORE_20261023.md)。旧N编号、原实验判据、正负结果及未消费面保留。旧“全部适应加速就绪后才进入同bundle/联合闭环”的总排程由本次持续目标取代；L2前可做隔离集成，满足07的L3即可用户验收，不等全部N/VISION完成。
+过渡前全文从Git读取，见[历史全文恢复](../../reference/PROJECT_HISTORY_CONSOLIDATION_20261023.md)。旧N编号、原实验判据、正负结果及未消费面保留。旧“全部适应加速就绪后才进入同bundle/联合闭环”的总排程由本次持续目标取代；L2前可做隔离集成，满足07的L3即可用户验收，不等全部N/VISION完成。
 
 ## 0. 北极星与第0点
 

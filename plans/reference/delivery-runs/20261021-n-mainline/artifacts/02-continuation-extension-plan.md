@@ -6,7 +6,7 @@
 |---|---|
 | 研究目的 | 原生中文多轮学习充分性与初始化/容量对照；尚无新语言能力结论 |
 | 身份 | 各臂从自己的已验证耐久parent/最新receipt续接；权重、优化器、RNG、游标与来源保留，不合并权重 |
-| 当前范围 | warm_start单臂运行；full_turn_1m、fresh_same_capacity暂缓；它们仍是原配对合同的端点 |
+| 当前范围 | warm_start因单臂预算保护出口停止并保留partial；full_turn_1m、fresh_same_capacity暂缓；它们仍是原配对合同的端点 |
 | 训练终点 | 每臂30,096 pretraining episodes / 14,517,912 updates，再525 SFT episodes / 113,209 updates；partial不冒充final |
 | 版本化累计上限 | v1.4 sidecar为1,550,000 CPU秒/臂、4,400,000总计；旧实耗、reservation与未知尾账计入，来源审批历史不改写 |
 | 活动入口 | `scripts/training/run_taiji_r2_resume.py`，现限warm；新增其他臂入口须在同合同与预算裁决后实施，不把只读预检当续训 |
@@ -23,4 +23,4 @@
 
 恢复、来源和生成链未闭合时，按CC-1对应包修复；真实输出归因按CC-2。终点/三臂费用不足不推导新能力胜败，更不自行把原四端点评测缩成单臂。
 
-旧活动摘要与先前快照完整见[过渡前全文](../../../../archive/history/CONTINUOUS_TRANSITION_R2_SUMMARY_BEFORE_20261023.md)。
+旧活动摘要与先前快照从Git读取，见[历史全文恢复](../../../PROJECT_HISTORY_CONSOLIDATION_20261023.md)。
