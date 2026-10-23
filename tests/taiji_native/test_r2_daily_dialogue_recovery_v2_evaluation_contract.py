@@ -251,6 +251,14 @@ def test_fixed_four_endpoint_mapping_and_156_query_denominator(tmp_path):
         evaluation.expected_generation_count(38)
 
 
+def test_recovery_restart_from_zero_must_remain_true(tmp_path):
+    """The extension branch may reject restart_from_zero; the frozen branch must keep requiring it."""
+    readiness, result, root = _arm_fixture(tmp_path, "warm_start")
+    result["restart_from_zero"] = False
+    with pytest.raises(evaluation.Refuse, match="incomplete or contains an unsafe"):
+        evaluation.validate_arm_result("warm_start", readiness, result, arm_root=root)
+
+
 def test_arm_result_rejects_source_drift_and_endpoint_escape(tmp_path):
     readiness, result, root = _arm_fixture(tmp_path, "warm_start")
     source_path = Path(next(iter(result["bindings"]["source_hashes"])))

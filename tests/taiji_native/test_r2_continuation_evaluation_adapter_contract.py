@@ -166,6 +166,8 @@ def test_preflight_keeps_the_frozen_readiness_envelope(tmp_path: Path) -> None:
 
     readiness = adapter.extension_readiness(preflight)
     assert readiness == recovery._readiness_payload(preflight)
+    assert readiness["expected_generation_outputs"] == 156
+    assert readiness["input_families"] == 39
     manifest = adapter.endpoint_manifest_payload(preflight)
     assert manifest["schema"] == adapter.ENDPOINT_SCHEMA
     assert manifest["can_promote"] is False
