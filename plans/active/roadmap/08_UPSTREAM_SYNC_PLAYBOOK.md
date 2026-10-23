@@ -1728,3 +1728,12 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 - 附带修复（本机环境，不入仓）：pre-commit 的 black 进程池在打印结果后挂起；改为进程内 `black.format_file_contents` 等价门（仍 100 列／py312），并让无 lefthook 配置的 `prepare-commit-msg` 包装器空转。**门禁未放宽**，两次提交均经 ruff＋black 等价门，且 pre-commit 末行打印 `pre-commit: local gates OK`。
 - 半径：两份脚本＋三份测试（新增 3 文件）＋03/10 状态行；未碰产品码、训练、账本、在飞 partial；`git push` 仍未执行。
 - 下一格：CC-1.2 versioned worker loop——复用旧 Job Object/IPC/restore/generate，但每次 restore 用同一 extension provider；补 39×4、固定 12、one-shot、双预算与失败树终止的合成契约。
+### ㊵-1130 【2026-10-23 · CC-1.2 versioned extension worker 接线完成：父与 worker 同一 extension provider，旧冻结评测器一字未改；54 支合同全过；真实预检仍被三臂未齐挡住】
+
+- 新增 `evaluate_..._extension_worker_v1.py`：复用旧 Job Object/IPC/restore/generate 协议，但 restore 分支的 readiness 与端点映射来自**同一 extension provider**（不是旧 `metadata_preflight`）；空 trainers 下的 generate 在四端 restore 前响亮拒绝；shutdown 仍要求四端齐备。
+- 入口接线：`--execute` 调 `recovery.execute(paths=extension_paths, preflight_fn=extension_preflight, worker_factory=…)`；`--worker` 调新循环；`--validate-only` 不变。worker 命令指向 `scripts.training.evaluate_..._extension_worker_v1`，不含旧模块名。
+- 跨入口 one-shot：adapter 新增 `refuse_if_recovery_evaluation_consumed()`——旧 recovery-v2 评测的任一输出存在即拒绝 extension；旧入口冻结不改，扩展后不得再跑旧入口（协议写入 03）。真实树现读旧配对评测 **0 件** ⇒ 不触发。
+- 测试：12 支适配/worker 合同（新增：readiness 不符、端点不在固定四端图、四端 restore 前 generate、跨入口消费守卫、worker factory 命令）＋42 支 CC-1.1 ＝ **54 支通过**（7.09 秒）。
+- 环境修复：`black_check_gate.py` 入仓（进程内等价门，100 列／py312）；pre-commit 调它而非外部 black（外部 black 在本机打印后挂起）。门禁未放宽，提交 `b1817cbcf` 末行打印 `pre-commit: local gates OK`。
+- 半径：4 份脚本/工具＋1 份测试（新增 2 文件）＋03/10 状态行；未碰产品码、训练、账本、在飞 partial；未启动真实评价；`git push` 仍未执行。
+- 下一格：CC-1.3 合成矩阵与独立审查（39×4、固定 12、跨入口 one-shot、双预算、失败树终止、旧 restart 仍严格、extension 不伪造 zero）。

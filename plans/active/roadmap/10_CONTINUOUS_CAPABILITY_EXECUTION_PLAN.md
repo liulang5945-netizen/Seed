@@ -23,7 +23,7 @@ warm完整终点仍为30,096预训练episodes / 14,517,912 updates，再完成52
 
 冻结W5b继续采用parent_baseline＋三臂，**39×4＝156次generation**、固定同面前12个family人工判读、CPU与wall各14,400秒；跨入口共享一次性消费边界。全部端点、来源、恢复与资源门通过前不读selector/prompt；不读reference、不训练、不补跑失败调用，`can_promote=false`。N1-166及其未消费确认面维持原冻结；dev/reference/selector权限不因持续Goal扩大。
 
-- 2026-10-23 进展：CC-1.1 v1.4 预算激活已提交（`68ed3495c`）；CC-1.2 extension 评测适配层与 7 支合成契约已提交（`612c2dfe4`），42＋7 支合同通过。`--execute/--worker` 仍拒绝；下一格＝versioned worker loop（同一 extension provider，复用旧 Job Object/IPC/restore/generate）。extension 三臂仍未齐，真实评价未准入。
+- 2026-10-23 进展：CC-1.1 v1.4 预算激活已提交（`68ed3495c`）；CC-1.2 extension 适配层（`612c2dfe4`）与 versioned worker 接线（`b1817cbcf`）已提交，54 支合同通过。`--execute`/`--worker` 已接线，但真实执行仍被三臂未齐挡住。下一格＝CC-1.3 合成矩阵与独立审查：39×4、固定 12、跨入口 one-shot、双预算、失败树终止、旧 restart 仍严格、extension 不伪造 zero。
 
 ## 3. WBS：从当前R2走到同一模型的持续能力
 

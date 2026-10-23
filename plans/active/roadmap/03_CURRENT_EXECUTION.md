@@ -22,15 +22,15 @@
 | 工作 | 状态 | 出口 |
 |---|---|---|
 | CC-1.1 来源/launch/endpoint provider | v1.4 预算激活已提交（68ed3495c）；完整血缘/provider 待做 | 新简化入口及历史V3、v1.4与旧修订可验证，四端点snapshot；合成拒绝漂移/重复completion/活writer |
-| CC-1.2 独立extension evaluator/worker | 适配层 provider＋合成契约已提交（612c2dfe4）；worker 接线待做 | 父进程和受监督worker使用同provider、snapshot与授权路径；无伪zero或旧schema回退 |
+| CC-1.2 独立extension evaluator/worker | 适配层＋versioned worker 已提交（612c2dfe4／b1817cbcf）；真实预检待三臂齐备 | 父进程和受监督worker使用同provider、snapshot与授权路径；无伪zero或旧schema回退 |
 | CC-1.3 合成与独立审查 | 旧局部门可继承，全链待做 | one-shot跨入口、39×4、固定12、双预算与失败树终止；对应提交CI与独立审查 |
 | CC-1.4 当前训练 | warm已按预算保护停止；另两臂暂缓 | 耐久partial与停止事件保留，无完整final；D1准备到原完整实验出口的费用/范围裁决 |
 | CC-1.5 预算/三臂完整性 | 待实际费用闭合 | D1一次性提交到原完整出口的缺口与推荐；不补额则封存partial，W5b继续阻断 |
 | CC-1.6 原W5b | 前置未齐 | parent+三臂、39×4=156、固定前12-family人工、CPU/wall各14,400秒，一次调用并保存原始失败 |
 
-## 当前唯一下一步：完成 CC-1.2 的 versioned extension worker 接线（adapter provider 已锁定）
+## 当前唯一下一步：完成 CC-1.3 的 extension 合成与独立审查（worker 已接线）
 
-适配层已把 extension endpoint manifest 映射到冻结的 parent+三臂四端点信封，42＋7 支合同全过；`--execute/--worker` 仍响亮拒绝。下一步＝新增 versioned worker loop：复用旧 Job Object/IPC/restore/generate，但每次 restore 用同一 extension provider；补 39×4、固定 12、one-shot、双预算与失败树终止的合成契约。保留warm耐久partial与停止账，不消费保留题面；warm已触预算出口，适配工作继续；按D1讨论完整预算与原配对问题，不降分母、不把partial称final。
+versioned worker 已接线：`--execute` 走 `recovery.execute`＋同一 extension provider，`--worker` 走新循环；`--validate-only` 仍冻结 readiness＋端点清单。54 支合同通过。真实执行仍被三臂未齐挡住（warm partial、另两臂暂缓）。下一步＝补 CC-1.3 合成矩阵：39×4、固定 12、跨入口 one-shot（旧 recovery 评测已消费则拒绝）、双预算、失败树终止、旧 restart 仍严格、extension 不伪造 zero；随后做独立代码审查。保留warm耐久partial与停止账，不消费保留题面；按D1讨论完整预算与原配对问题，不降分母、不把partial称final。
 
 N1-166及原确认面、dev/reference/selector、能力晋级继续按原门冻结。普通实现与受影响验证自动推进；只有实质改变预算/题面/冻结协议/路线时到10的对应D节点裁决，其余独立工作持续。
 
