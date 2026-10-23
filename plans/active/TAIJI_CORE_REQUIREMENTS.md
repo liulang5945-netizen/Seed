@@ -4,6 +4,8 @@
 
 更新时间：2026-09-18
 
+2026-10-23执行衔接：用户已设置“原生连续任务、跨会话经验、反馈学习与旧能力保持”的正式持续Goal，作为下述CR的阶段化实施目标。详细工作包见[10持续能力计划](roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)，当前队首见[03](roadmap/03_CURRENT_EXECUTION.md)，能力等级按[07](roadmap/07_MINI_MODEL_DELIVERY.md)。CR与认知所有权继续有效；每轮选择一个主要缺口，不把全部长期需求同时前置到当前R2。
+
 ## 1. 本文为什么必须常驻 active
 
 计划文档分三类：

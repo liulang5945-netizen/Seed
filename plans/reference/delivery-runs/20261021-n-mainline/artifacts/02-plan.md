@@ -1,28 +1,17 @@
-# 当前增量工程计划
+# N持续目标工程交接计划
 
-## 2026-10-23 活动流程修订
+更新：2026-10-23。目标已由用户设置为正式持续Goal；[10详细计划](../../../../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)维护CC工作包，[03](../../../../active/roadmap/03_CURRENT_EXECUTION.md)维护唯一队首。本页只承担当前CC-1的实施交接。
 
-以[03当前执行](../../../../active/roadmap/03_CURRENT_EXECUTION.md)为唯一活动状态。日常只使用 `python scripts/training/run_taiji_r2_resume.py`；先用 `--check-only` 验证。累计额度 1.55M CPU秒/臂、4.4M 总额，旧账不清零。warm 最新耐久点 24,992 episodes，最后训练事件 24,998。启动对账、资源和预算采用顺序已精简，见[精简记录](15-training-system-simplification.md)。以下为修订前历史快照，其中旧额度、旧入口和“运行中”不再代表当前状态。
+| 顺序 | 工程交付 | 当前状态 | 实施出口 |
+|---|---|---|---|
+| CC-1.1 | 新旧launch、v1.4、endpoint/provider统一来源 | 部分实现；准备器额度接线有本地5项既有测试证据，尚未提交；新旧manifest识别与完整来源验证待补 | 四端点schema/血缘/预算一致，合成缺件/篡改/重复completion/活writer拒绝，不消费题面 |
+| CC-1.2 | 独立extension evaluator与受监督worker | 架构已明确，未实现贯通 | 同snapshot/路径/token授权和恢复，无旧入口全局覆写/伪zero回退 |
+| CC-1.3 | 合成、独立审查与对应提交CI | 旧局部检查可继承，适配全链未过 | 39×4、固定12、共享one-shot、双预算、故障树终止全部成立；审查未通过不真实调用 |
+| CC-1.4/1.5 | 当前训练完整或partial出口、三臂费用裁决 | warm单臂运行，另两臂暂缓，实时状态看03 | 完整分母与恢复，或如实partial停止；费用包含旧账与未知尾账，额度不足到D1一次性提交完整缺口 |
+| CC-1.6 | 原冻结W5b与人工判读 | 前置未齐，尚不执行 | 原156次输出、固定人工表、来源/调用/费用和失败完整保存 |
 
+CC-1.1–1.3可与现有warm运行并行。单臂完整结果不替代原四端点配对；缺端点则W5b继续阻断。真实评价后按CC-2归因，再进入CC-3语言/L2，CC-4同bundle/L3，CC-5/6连续经验与L4，最终有证据再选择CC-7。
 
-当前主阶段为三臂实际训练；唯一活动队首以[03](../../../../active/roadmap/03_CURRENT_EXECUTION.md)为准。已批准1.5M CPU秒/臂、4.3M总额，旧费用与版本化校正均在同一账本内解释。
+设计边界见[适配架构](04-continuation-evaluation-adapter.md)、[活动技术摘要](02-continuation-extension-plan.md)。角色、文件触点、产物与失败回流均展开在10；名称未确定的独立入口由实施合同登记，本文不发布不存在的命令。
 
-## 推进与完成标准
-
-| 顺序 | 交付 | 状态 / 出口 |
-|---|---|---|
-| 1 | 完成获选单臂训练，再决定是否续跑其他臂 | warm_start已从latest durable receipt恢复并运行；selected-arm预测保留硬预算/资源守卫。终点须达30,096预训练+525SFT及fresh restore |
-| 2 | extension终点manifest | metadata validator、preflight与launch来源校验均已实现；三臂6份既有launch manifest与26项来源现场核验通过，真实结果和唯一completion事件尚缺 |
-| 3 | extension配对评测接线与最终代码/来源复核 | 待完成；旧recovery-v1 schema/CPU上限不能冒充extension；全链最终复核不能由历史局部审查代替 |
-| 4 | W5b一次配对生成与人工判读 | 前置齐备后按原39×4=156、14,400 CPU/wall秒和固定人工样例执行；当前仍冻结 |
-| 5 | 实验结案与唯一后继方向 | 完整成本、来源、checkpoint、输出及负结果；按数据/目标/容量/结构根因选择高上限方案 |
-
-## 风险与处置
-
-- 运行跨会话：用真实句柄判活；确认退出后从验证过的latest接续，不把status/旧锁当存活证明。
-- 预算/来源/题面变化：保存证据并按实测缺口决策；已批准内容不重复审批。
-- 现有synthetic和工程通过只证明局部门，真实终点与语言能力尚待证据。
-
-当前技术合同见[续训活动摘要](02-continuation-extension-plan.md)，评测原合同见[04-v2架构](04-v2-evaluation-architecture.md)与[03需求](03-requirements.md)。早期06/07复用旧输出方案和后继v2方案都保留原文，但当前以v2四端点及后继extension适配为准。
-
-原逐次追加计划见[增量计划历史](../../../../archive/history/N_MAINLINE_INCREMENTAL_PLAN_BEFORE_CONSOLIDATION_20261022.md)。
+旧逐轮计划已迁入[过渡前全文](../../../../archive/history/CONTINUOUS_TRANSITION_INCREMENTAL_PLAN_BEFORE_20261023.md)，旧门、费用与失败证据继续保留；旧“下一步”不再调度。
