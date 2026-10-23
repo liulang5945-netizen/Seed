@@ -100,9 +100,13 @@ FAST_LAUNCH_V4_SOURCE_SHA256 = {
     "scripts/training/taiji_r2_continuation_budget_amendment_v1_4.py": "0e4e5c186097ec1d66a8f5ab2f674a37803980ce1f70def3baea8e5177643780",
     "tests/taiji_native/test_r2_continuation_budget_amendment_v1_4_contract.py": "d1a3dfb9a227706e10718403fe76db0595d7e3f15ae47b563b24aca0ce07aaf4",
     "tests/taiji_native/test_r2_fast_ledger_resume_v3_contract.py": "d09875c357a4083e04816c2f238cf477546c09314463050f8830f537c11f6382",
-    "scripts/training/taiji_r2_continuation_budget_amendment_v1_5.py": "6882f4bb5a3e16828470c82bfff11f3a18ce40a96769d0da10e94cf36d540156",
+    "scripts/training/taiji_r2_continuation_budget_amendment_v1_5.py": "22d89e8baad9894e4a006c981985446ba4cf8c2b38b9acd0bce77d99bb9a5fdf",
     "tests/taiji_native/test_r2_continuation_budget_amendment_v1_5_contract.py": "1d16e976a9c68975bca9b33ab0f7429a1afea82d263f89d734d9a71806b6a132",
     "tests/taiji_native/test_r2_fast_ledger_resume_v4_contract.py": "6c1df2dbaa22b7009e3f845f0e5b8228bc845460ea8c825e7546dbe91d3e360f",
+}
+FAST_LAUNCH_V4_SOURCE_SHA256_WARM = {
+    **FAST_LAUNCH_V4_SOURCE_SHA256,
+    "scripts/training/taiji_r2_continuation_budget_amendment_v1_5.py": "6882f4bb5a3e16828470c82bfff11f3a18ce40a96769d0da10e94cf36d540156",
 }
 RESUME_V1_SOURCES = (
     "scripts/training/run_taiji_r2_checkpoint_resume_adapter.py",
@@ -512,14 +516,16 @@ def validate_launch_provenance(backend, revision, revision_sha256, *, revision_p
                 _validate_resource_policy(schema, arm, manifest.get("resource_policy"))
                 _validate_ledger_anchor(manifest.get("ledger_anchor"), require_baseline=True)
             elif schema == "taiji-r2-fast-ledger-resume-v4":
-                sources.update(
-                    _source_map(
-                        manifest.get("sources"),
-                        FAST_LAUNCH_V4_SOURCES,
-                        root,
-                        expected_sha256=FAST_LAUNCH_V4_SOURCE_SHA256,
-                    )
+                verified, declared_history = _source_map_with_history(
+                    manifest.get("sources"),
+                    [
+                        (FAST_LAUNCH_V4_SOURCES, FAST_LAUNCH_V4_SOURCE_SHA256),
+                        (FAST_LAUNCH_V4_SOURCES, FAST_LAUNCH_V4_SOURCE_SHA256_WARM),
+                    ],
+                    root,
                 )
+                sources.update(verified)
+                historical_sources.update(declared_history)
                 _validate_resource_policy(schema, arm, manifest.get("resource_policy"))
                 _validate_ledger_anchor(manifest.get("ledger_anchor"), require_baseline=True)
             else:

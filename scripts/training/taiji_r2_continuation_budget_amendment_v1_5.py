@@ -130,12 +130,9 @@ def activate_budget_amendment() -> dict[str, Any]:
         budget.AGGREGATE_CPU_LIMIT,
         budget.effective_budget_limits,
     )
-    budget.PER_ARM_CPU_LIMIT = PREVIOUS_BUDGET["per_arm"]
-    budget.AGGREGATE_CPU_LIMIT = PREVIOUS_BUDGET["aggregate"]
-    budget.effective_budget_limits = lambda: (
-        PREVIOUS_BUDGET["per_arm"],
-        PREVIOUS_BUDGET["aggregate"],
-    )
+    budget.PER_ARM_CPU_LIMIT = PER_ARM_CPU_LIMIT
+    budget.AGGREGATE_CPU_LIMIT = AGGREGATE_CPU_LIMIT
+    budget.effective_budget_limits = lambda: (PER_ARM_CPU_LIMIT, AGGREGATE_CPU_LIMIT)
     try:
         with budget._aggregate_lock(budget.LOCK_PATH):
             contract, charges, reservations, tip = budget._read_summary_fast()
