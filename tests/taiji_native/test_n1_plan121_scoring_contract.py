@@ -113,7 +113,7 @@ def test_scorer_readiness_rejects_a_source_exclusion_regression(tmp_path, monkey
         "n110_material_value_map_sha256": (
             "dba1d9eb8fec6d60e6b1ceca496bce3b3386b05d1539ad88696177db0b9e9ba8"
         ),
-        "n110_schedule_sha256": "b2d637fcc1e096d40bba35bbc91bc66b0c27257cd74a4bcac5f5f488f55b6d4c",
+        "n110_schedule_sha256": "39edaf58020f6cf18680838a6d7576eafef5c7c9286cfd1ea40b93a581851380",
         "n110_material_value_map_entries": 288,
         "n110_mapped_training_values_excluded": 288,
         "n121_source_correction_sha256": "896dad354e6c81b7a1157746fe4e4bc5dcc8fcd266a7707dc09f476d7bb7aba7",

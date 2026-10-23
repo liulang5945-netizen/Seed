@@ -207,3 +207,45 @@ def test_refuses_launch_provenance_drift(tmp_path, drift, monkeypatch):
         validate_launch_provenance(
             backend, revision, revision_sha, revision_path=revision_path, root=tmp_path
         )
+
+
+def selected_forecast(warm_projection=30_003.1, warm_feasible=True):
+    return {
+        "arm": "warm_start",
+        "feasible": True,
+        "global_feasible": False,
+        "selected_arm_feasible": True,
+        "projection_scope": "selected_arm",
+        "deferred_arms": ["full_turn_1m", "fresh_same_capacity"],
+        "projection_unit": "target_byte_updates",
+        "safety_factor": 1.15,
+        "projected_cpu_by_arm": {
+            "full_turn_1m": 80_820.9,
+            "warm_start": warm_projection,
+            "fresh_same_capacity": 25_832.7,
+        },
+        "projected_cpu_aggregate": 80_820.9 + warm_projection + 25_832.7,
+        "aggregate_headroom_cpu_seconds": 103_046.9,
+        "arm_headroom_by_arm_cpu_seconds": {
+            "full_turn_1m": 72_463.4,
+            "warm_start": 113_749.7,
+            "fresh_same_capacity": 116_833.7,
+        },
+        "arm_headroom_cpu_seconds": 113_749.7,
+        "per_arm_feasible": {
+            "full_turn_1m": False,
+            "warm_start": warm_feasible,
+            "fresh_same_capacity": True,
+        },
+    }
+
+
+def test_selected_arm_can_run_when_its_budget_fits_but_deferred_arm_does_not():
+    provenance._validate_forecast(selected_forecast(), "warm_start", ARMS, selected_arm=True)
+
+
+def test_selected_arm_forecast_still_rejects_its_own_hard_cap_overrun():
+    with pytest.raises(EndpointRefuse):
+        provenance._validate_forecast(
+            selected_forecast(warm_projection=120_000.0), "warm_start", ARMS, selected_arm=True
+        )

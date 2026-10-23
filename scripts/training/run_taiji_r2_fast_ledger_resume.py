@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import math
 import re
 import sys
 import uuid
@@ -38,6 +39,37 @@ def sha(path: Path) -> str:
     return r.sha256_file(path)
 
 
+def selected_arm_projection_feasible(arm, forecast):
+    if not isinstance(forecast, dict) or forecast.get("arm") != arm:
+        return False
+    by_arm = forecast.get("projected_cpu_by_arm")
+    headroom = forecast.get("arm_headroom_by_arm_cpu_seconds")
+    feasible = forecast.get("per_arm_feasible")
+    aggregate_headroom = forecast.get("aggregate_headroom_cpu_seconds")
+
+    def valid_number(value):
+        return (
+            isinstance(value, (int, float))
+            and not isinstance(value, bool)
+            and math.isfinite(value)
+            and value >= 0
+        )
+
+    return (
+        isinstance(by_arm, dict)
+        and isinstance(headroom, dict)
+        and isinstance(feasible, dict)
+        and arm in by_arm
+        and arm in headroom
+        and feasible.get(arm) is True
+        and valid_number(by_arm[arm])
+        and valid_number(headroom[arm])
+        and valid_number(aggregate_headroom)
+        and by_arm[arm] <= headroom[arm]
+        and by_arm[arm] <= aggregate_headroom
+    )
+
+
 def build_manifest(
     arm,
     *,
@@ -60,9 +92,11 @@ def build_manifest(
     ):
         raise r.Refuse("fast ledger resume source identity is malformed")
     if (
-        not isinstance(forecast, dict)
-        or forecast.get("arm") != arm
+        not selected_arm_projection_feasible(arm, forecast)
         or forecast.get("feasible") is not True
+        or forecast.get("selected_arm_feasible") is not True
+        or forecast.get("projection_scope") != "selected_arm"
+        or not isinstance(forecast.get("global_feasible"), bool)
     ):
         raise r.Refuse(f"target-update forecast exceeds approved headroom: {forecast}")
     if (
@@ -88,6 +122,7 @@ def build_manifest(
         "extension_attempt_sha256": extension_attempt_sha256,
         "latest_commit": latest_commit,
         "forecast": forecast,
+        "projection_scope": "selected_arm",
         "approved_budget": approved_budget,
         "ledger_anchor": {
             key: snapshot[key]
@@ -127,6 +162,11 @@ def main():
     )
     progress = r.read_jsonl(r.paths(args.arm)["extension_progress"])
     commit = next(e for e in reversed(progress) if e.get("event") == "durable_training_commit")
+    forecast["global_feasible"] = forecast["feasible"]
+    forecast["selected_arm_feasible"] = selected_arm_projection_feasible(args.arm, forecast)
+    forecast["projection_scope"] = "selected_arm"
+    forecast["deferred_arms"] = [arm for arm in r.ARMS if arm != args.arm]
+    forecast["feasible"] = forecast["selected_arm_feasible"]
     manifest = build_manifest(
         args.arm,
         source_revision_sha256=SOURCE_REVISION_SHA256,
@@ -150,7 +190,26 @@ def main():
     r._validate_prepared = lambda **_kwargs: prepared
     r.latest_charges = current_fast_charges
     r.latest_reservations = current_fast_reservations
-    r._throughput_projection = throughput_projection
+
+    def project_selected_arm(current_arm, contexts, *, current_stage, current_episodes):
+        projection = throughput_projection(
+            current_arm,
+            contexts,
+            current_stage=current_stage,
+            current_episodes=current_episodes,
+        )
+        projection["global_feasible"] = projection["feasible"]
+        projection["selected_arm_feasible"] = selected_arm_projection_feasible(
+            current_arm, projection
+        )
+        projection["projection_scope"] = "selected_arm"
+        projection["deferred_arms"] = [
+            candidate for candidate in r.ARMS if candidate != current_arm
+        ]
+        projection["feasible"] = projection["selected_arm_feasible"]
+        return projection
+
+    r._throughput_projection = project_selected_arm
     print(r.execute_arm(args.arm, resume=True)["status"])
 
 

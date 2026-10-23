@@ -30,14 +30,26 @@ FAST_LAUNCH_SOURCES = (
     "scripts/training/taiji_r2_target_update_projection.py",
     "tests/taiji_native/test_r2_fast_ledger_resume_contract.py",
     "tests/taiji_native/test_r2_resume_ledger_anchor_contract.py",
+    "scripts/training/run_taiji_r2_fast_ledger_resume_v2.py",
+    "tests/taiji_native/test_r2_fast_ledger_resume_v2_contract.py",
 )
 FAST_LAUNCH_SOURCE_SHA256 = {
-    "scripts/training/run_taiji_r2_fast_ledger_resume.py": "581f0b3a235db643251b18d4949442ad7e6f9cd8e1b8b066106e8e3a1f53cb87",
+    "scripts/training/run_taiji_r2_fast_ledger_resume.py": "d8ece312b17e6b84cdd8c45a332534ef2b2755b0e159b208151c65479e9a9cbf",
     "scripts/training/taiji_r2_resume_ledger_anchor.py": "c729243584d89bd8aded0bacfdd7d0e99d760ad72dbe6020aff5bd03b5dfd37b",
     "scripts/training/run_taiji_r2_checkpoint_resume_adapter.py": "fce64448dc8d9d49104509c1a1cd5a4f4beeb80f5ee7ea74c440a2c118ae34b5",
     "scripts/training/taiji_r2_target_update_projection.py": "c7a2d0821b59a35fc5beca94edab557e2c201b04a028311a0008091209d1aeba",
-    "tests/taiji_native/test_r2_fast_ledger_resume_contract.py": "4a2b6add5c7fb25b40a1064e8fa62f0ab7f465b51717a8d281d89c65463ff100",
+    "tests/taiji_native/test_r2_fast_ledger_resume_contract.py": "839e4f8bb85a7ce816cae33fafe185761f298717cd58a08807b767620a12bcc5",
     "tests/taiji_native/test_r2_resume_ledger_anchor_contract.py": "e9985a64ffc7a58c1d6b4a30d11b419d7a5bbcb0c7e2fe16e696bfa886a7ae4f",
+}
+FAST_LAUNCH_V2_SOURCES = (
+    "scripts/training/run_taiji_r2_fast_ledger_resume_v2.py",
+    *FAST_LAUNCH_SOURCES,
+    "tests/taiji_native/test_r2_fast_ledger_resume_v2_contract.py",
+)
+FAST_LAUNCH_V2_SOURCE_SHA256 = {
+    **FAST_LAUNCH_SOURCE_SHA256,
+    "scripts/training/run_taiji_r2_fast_ledger_resume_v2.py": "1530e68150fe8264d1db509b52fbb82159c8d325f2fa24d44ca2b88a7869f9e6",
+    "tests/taiji_native/test_r2_fast_ledger_resume_v2_contract.py": "3cd27ced8d3daacf52ddecfe4aa589da96240fea7666b9daaf186939f6358dbc",
 }
 CORE_SOURCES = {
     "budget_contract_test": "tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py",
@@ -112,7 +124,7 @@ def _source_map(rows, expected_paths, root, *, expected_sha256=None):
     return result
 
 
-def _validate_forecast(forecast, arm, arms):
+def _validate_forecast(forecast, arm, arms, *, selected_arm=False):
     if not isinstance(forecast, dict):
         raise EndpointRefuse("launch forecast is missing")
     safety = forecast.get("safety_factor")
@@ -131,11 +143,9 @@ def _validate_forecast(forecast, arm, arms):
 
     if (
         forecast.get("arm") != arm
-        or forecast.get("feasible") is not True
         or forecast.get("projection_unit") != "target_byte_updates"
         or not valid_number(safety)
         or safety < 1.15
-        or forecast.get("per_arm_feasible") != {name: True for name in arms}
         or not isinstance(per_arm, dict)
         or set(per_arm) != set(arms)
         or not all(valid_number(value) for value in per_arm.values())
@@ -145,11 +155,50 @@ def _validate_forecast(forecast, arm, arms):
         or not valid_number(aggregate)
         or not math.isclose(aggregate, sum(per_arm.values()), rel_tol=1e-9, abs_tol=0.01)
         or not valid_number(aggregate_headroom)
-        or aggregate > aggregate_headroom
-        or any(per_arm[name] > headroom[name] for name in arms)
         or forecast.get("arm_headroom_cpu_seconds") != headroom[arm]
     ):
-        raise EndpointRefuse("launch forecast is missing, inconsistent or infeasible")
+        raise EndpointRefuse("launch forecast is missing or malformed")
+    flags = forecast.get("per_arm_feasible")
+    if (
+        not isinstance(flags, dict)
+        or set(flags) != set(arms)
+        or any(not isinstance(flags[name], bool) for name in arms)
+    ):
+        raise EndpointRefuse("launch forecast feasibility map is malformed")
+    global_feasible = (
+        all(flags.values())
+        and aggregate <= aggregate_headroom
+        and all(per_arm[name] <= headroom[name] for name in arms)
+    )
+    if selected_arm:
+        if (
+            forecast.get("projection_scope") != "selected_arm"
+            or forecast.get("feasible") is not True
+            or forecast.get("selected_arm_feasible") is not True
+            or forecast.get("global_feasible") is not global_feasible
+            or flags[arm] is not True
+            or per_arm[arm] > headroom[arm]
+            or per_arm[arm] > aggregate_headroom
+            or forecast.get("deferred_arms") != [name for name in arms if name != arm]
+        ):
+            raise EndpointRefuse("selected-arm forecast exceeds a hard budget ceiling")
+    elif (
+        forecast.get("feasible") is not True
+        or global_feasible is not True
+        or flags != {name: True for name in arms}
+    ):
+        raise EndpointRefuse("launch forecast is infeasible for the full endpoint set")
+
+
+def _validate_resource_policy(schema, arm, policy):
+    if schema == "taiji-r2-fast-ledger-resume-v1":
+        return
+    if (
+        schema != "taiji-r2-fast-ledger-resume-v2"
+        or arm != "warm_start"
+        or policy != {"memory_floor_gib": 7.0, "scope": "warm_start_only"}
+    ):
+        raise EndpointRefuse("v2 memory-floor override is outside the warm-start scope")
 
 
 def validate_launch_provenance(backend, revision, revision_sha256, *, revision_path, root):
@@ -205,6 +254,7 @@ def validate_launch_provenance(backend, revision, revision_sha256, *, revision_p
         manifests = sorted(
             list(backend.REPORTS_DIR.glob(f"taiji_r2_target_update_resume_{arm}_*.json"))
             + list(backend.REPORTS_DIR.glob(f"taiji_r2_fast_ledger_resume_{arm}_*.json"))
+            + list(backend.REPORTS_DIR.glob(f"taiji_r2_fast_ledger_resume_v2_{arm}_*.json"))
         )
         if not manifests:
             raise EndpointRefuse(f"actual target-update launch manifest is missing: {arm}")
@@ -213,7 +263,12 @@ def validate_launch_provenance(backend, revision, revision_sha256, *, revision_p
             manifest = _read(path, root)
             schema = manifest.get("schema")
             if (
-                schema not in {"taiji-r2-target-update-resume-v1", "taiji-r2-fast-ledger-resume-v1"}
+                schema
+                not in {
+                    "taiji-r2-target-update-resume-v1",
+                    "taiji-r2-fast-ledger-resume-v1",
+                    "taiji-r2-fast-ledger-resume-v2",
+                }
                 or manifest.get("arm") != arm
                 or manifest.get("source_revision_sha256") != revision_sha256
                 or manifest.get("extension_attempt_sha256") != _sha(attempt_path)
@@ -230,15 +285,25 @@ def validate_launch_provenance(backend, revision, revision_sha256, *, revision_p
                         expected_sha256=LAUNCH_SOURCE_SHA256,
                     )
                 )
-            else:
+            elif schema in {
+                "taiji-r2-fast-ledger-resume-v1",
+                "taiji-r2-fast-ledger-resume-v2",
+            }:
+                if schema == "taiji-r2-fast-ledger-resume-v1":
+                    expected_paths = FAST_LAUNCH_SOURCES
+                    expected_hashes = FAST_LAUNCH_SOURCE_SHA256
+                else:
+                    expected_paths = FAST_LAUNCH_V2_SOURCES
+                    expected_hashes = FAST_LAUNCH_V2_SOURCE_SHA256
                 sources.update(
                     _source_map(
                         manifest.get("sources"),
-                        FAST_LAUNCH_SOURCES,
+                        expected_paths,
                         root,
-                        expected_sha256=FAST_LAUNCH_SOURCE_SHA256,
+                        expected_sha256=expected_hashes,
                     )
                 )
+                _validate_resource_policy(schema, arm, manifest.get("resource_policy"))
                 anchor = manifest.get("ledger_anchor")
                 if not isinstance(anchor, dict) or (
                     anchor.get("baseline_sequence") != BASELINE["sequence"]
@@ -254,7 +319,16 @@ def validate_launch_provenance(backend, revision, revision_sha256, *, revision_p
                 ):
                     raise EndpointRefuse("fast-resume manifest ledger tip differs from replay")
             forecast = manifest.get("forecast")
-            _validate_forecast(forecast, arm, backend.ARMS)
+            _validate_forecast(
+                forecast,
+                arm,
+                backend.ARMS,
+                selected_arm=schema
+                in {
+                    "taiji-r2-fast-ledger-resume-v1",
+                    "taiji-r2-fast-ledger-resume-v2",
+                },
+            )
             start = manifest.get("latest_commit")
             if not isinstance(start, dict) or not any(
                 event.get("event") == "durable_training_commit" and event.get("receipt") == start

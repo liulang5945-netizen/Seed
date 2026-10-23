@@ -50,6 +50,11 @@ def metadata_preflight(backend=budget):
     pending = pending_arms(backend)
     if pending:
         raise EndpointRefuse(f"training endpoints are incomplete: {pending}")
+    if backend is budget:
+        from scripts.training.run_taiji_r2_resume import REVISION_PATH, activate_budget
+
+        if REVISION_PATH.exists():
+            activate_budget()
     revision_path = backend.REPORTS_DIR / f"{backend.EXTENSION_PREFIX}_source_revision_v1_3.json"
     revision = read_json(revision_path)
     revision_sha = sha(revision_path)
