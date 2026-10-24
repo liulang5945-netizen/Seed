@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import time
 import uuid
 from pathlib import Path
 
@@ -13,6 +14,7 @@ if str(ROOT) not in sys.path:
 
 from scripts.training import run_taiji_r2_daily_dialogue_continuation_extension as r
 from scripts.training import run_taiji_r2_fast_ledger_resume as r2
+from scripts.training import taiji_r2_dialogue_continuation_extension as budget
 from scripts.training.run_taiji_r2_checkpoint_resume_adapter import validate_prepared
 from scripts.training.run_taiji_r2_fast_ledger_resume import (
     SOURCE_REVISION_SHA256,
@@ -48,6 +50,35 @@ SOURCES = (
 )
 APPROVED_BUDGET = {"per_arm": PER_ARM_CPU_LIMIT, "aggregate": AGGREGATE_CPU_LIMIT}
 _ORIGINAL_START_CHARGE = r._start_charge
+_ORIGINAL_MOVE_FILE_WRITE_THROUGH = budget._durability_api().move_file_write_through
+_ORIGINAL_LATEST_CHARGES = r.latest_charges
+_ORIGINAL_LATEST_RESERVATIONS = r.latest_reservations
+
+
+def retrying_move_file_write_through(*args, **kwargs):
+    """Retry the shared-summary replace when another arm briefly holds the file."""
+    for attempt in range(6):
+        try:
+            return _ORIGINAL_MOVE_FILE_WRITE_THROUGH(*args, **kwargs)
+        except PermissionError:
+            if attempt == 5:
+                raise
+            time.sleep(0.1 * (attempt + 1))
+
+
+def latest_charges_resilient():
+    """Use the fast summary, falling back to a full replay when it is stale."""
+    try:
+        return current_fast_charges()
+    except (FileNotFoundError, budget.ExtensionLedgerRefuse):
+        return _ORIGINAL_LATEST_CHARGES()
+
+
+def latest_reservations_resilient():
+    try:
+        return current_fast_reservations()
+    except (FileNotFoundError, budget.ExtensionLedgerRefuse):
+        return _ORIGINAL_LATEST_RESERVATIONS()
 
 
 def safe_start_charge(context):
@@ -157,8 +188,9 @@ def main():
     r._write_json_once(manifest_path, manifest)
 
     r._validate_prepared = lambda **_kwargs: prepared
-    r.latest_charges = current_fast_charges
-    r.latest_reservations = current_fast_reservations
+    r.latest_charges = latest_charges_resilient
+    r.latest_reservations = latest_reservations_resilient
+    budget._durability_api().move_file_write_through = retrying_move_file_write_through
     r._throughput_projection = _selected_projection
     r._start_charge = safe_start_charge
     r.resource_snapshot = lambda: sample_resources(r.psutil, arm=args.arm)

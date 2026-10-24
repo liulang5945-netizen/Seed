@@ -87,7 +87,7 @@ FAST_LAUNCH_V4_SOURCES = (
     "tests/taiji_native/test_r2_fast_ledger_resume_v4_contract.py",
 )
 FAST_LAUNCH_V4_SOURCE_SHA256 = {
-    "scripts/training/run_taiji_r2_fast_ledger_resume_v4.py": "19cd416e635798a9525a55f3c3bc75381dce8a1c1d38fdd6dbc86f1a779e6d8a",
+    "scripts/training/run_taiji_r2_fast_ledger_resume_v4.py": "b74f9538be528e872bac198741a348388bafeffbef3d52ea775ab53896ccd79a",
     "scripts/training/run_taiji_r2_fast_ledger_resume_v3.py": "e73efd6af0de7a799a9f4e3f612a71faece42f1f8f3bb4879f4a138090de5523",
     "scripts/training/run_taiji_r2_fast_ledger_resume_v2.py": "1530e68150fe8264d1db509b52fbb82159c8d325f2fa24d44ca2b88a7869f9e6",
     "scripts/training/run_taiji_r2_fast_ledger_resume.py": "d8ece312b17e6b84cdd8c45a332534ef2b2755b0e159b208151c65479e9a9cbf",
@@ -102,7 +102,7 @@ FAST_LAUNCH_V4_SOURCE_SHA256 = {
     "tests/taiji_native/test_r2_fast_ledger_resume_v3_contract.py": "d09875c357a4083e04816c2f238cf477546c09314463050f8830f537c11f6382",
     "scripts/training/taiji_r2_continuation_budget_amendment_v1_5.py": "22d89e8baad9894e4a006c981985446ba4cf8c2b38b9acd0bce77d99bb9a5fdf",
     "tests/taiji_native/test_r2_continuation_budget_amendment_v1_5_contract.py": "1d16e976a9c68975bca9b33ab0f7429a1afea82d263f89d734d9a71806b6a132",
-    "tests/taiji_native/test_r2_fast_ledger_resume_v4_contract.py": "b205b3ffea0a1cceeb24daf9245952de4522df4276ccc07918b334511565819a",
+    "tests/taiji_native/test_r2_fast_ledger_resume_v4_contract.py": "ad574a0729ecad393034695aeebc5193d8d8ad151782db807f08957b778d2961",
 }
 FAST_LAUNCH_V4_SOURCE_SHA256_WARM = {
     **FAST_LAUNCH_V4_SOURCE_SHA256,
@@ -117,6 +117,11 @@ FAST_LAUNCH_V4_SOURCE_SHA256_FAILED_START = {
     "scripts/training/taiji_r2_resume_ledger_anchor.py": "f2358608900fb3e180ebdaa04ab79f3b1179f07529eb717c10aee4e3c4654065",
     "tests/taiji_native/test_r2_resume_ledger_anchor_contract.py": "107cb6f16202cfca2b4934c6d17d1a694efd815156d3cb556e8954029b9c93bc",
     "scripts/training/taiji_r2_continuation_budget_amendment_v1_5.py": "22d89e8baad9894e4a006c981985446ba4cf8c2b38b9acd0bce77d99bb9a5fdf",
+}
+FAST_LAUNCH_V4_SOURCE_SHA256_PRE_RETRY = {
+    **FAST_LAUNCH_V4_SOURCE_SHA256,
+    "scripts/training/run_taiji_r2_fast_ledger_resume_v4.py": "19cd416e635798a9525a55f3c3bc75381dce8a1c1d38fdd6dbc86f1a779e6d8a",
+    "tests/taiji_native/test_r2_fast_ledger_resume_v4_contract.py": "b205b3ffea0a1cceeb24daf9245952de4522df4276ccc07918b334511565819a",
 }
 RESUME_V1_SOURCES = (
     "scripts/training/run_taiji_r2_checkpoint_resume_adapter.py",
@@ -531,6 +536,7 @@ def validate_launch_provenance(backend, revision, revision_sha256, *, revision_p
                         (FAST_LAUNCH_V4_SOURCES, FAST_LAUNCH_V4_SOURCE_SHA256),
                         (FAST_LAUNCH_V4_SOURCES, FAST_LAUNCH_V4_SOURCE_SHA256_WARM),
                         (FAST_LAUNCH_V4_SOURCES, FAST_LAUNCH_V4_SOURCE_SHA256_FAILED_START),
+                        (FAST_LAUNCH_V4_SOURCES, FAST_LAUNCH_V4_SOURCE_SHA256_PRE_RETRY),
                     ],
                     root,
                 )

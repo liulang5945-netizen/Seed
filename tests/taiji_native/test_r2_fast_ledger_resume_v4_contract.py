@@ -74,6 +74,30 @@ def test_v4_manifest_binds_v1_5_and_per_arm_memory_floor(arm):
     assert manifest["resource_policy"] == expected_floor
 
 
+def test_move_retries_a_transient_permission_error(monkeypatch):
+    calls = []
+
+    def flaky(*_args, **_kwargs):
+        calls.append(1)
+        if len(calls) < 3:
+            raise PermissionError("busy")
+        return "moved"
+
+    monkeypatch.setattr(v4, "_ORIGINAL_MOVE_FILE_WRITE_THROUGH", flaky)
+    monkeypatch.setattr(v4.time, "sleep", lambda _seconds: None)
+    assert v4.retrying_move_file_write_through() == "moved"
+    assert len(calls) == 3
+
+
+def test_latest_charges_falls_back_to_full_replay_when_summary_is_stale(monkeypatch):
+    def stale():
+        raise v4.budget.ExtensionLedgerRefuse("aggregate ledger summary is stale")
+
+    monkeypatch.setattr(v4, "current_fast_charges", stale)
+    monkeypatch.setattr(v4, "_ORIGINAL_LATEST_CHARGES", lambda: {"warm_start": 1.0})
+    assert v4.latest_charges_resilient() == {"warm_start": 1.0}
+
+
 def test_safe_start_charge_uses_ledger_after_a_settled_stop(monkeypatch):
     charges = {"full_turn_1m": 10.0, "warm_start": 123.0, "fresh_same_capacity": 20.0}
     monkeypatch.setattr(v4.r, "latest_charges", lambda: charges)
