@@ -62,7 +62,7 @@ jobs:
     #     条目随之删除。其余条目删除须附本机与 CI 双绿证据。
     # 本机不消费本清单：维护机上这些用例照常全量守护。
     #
-    # 【批次三（2026-10-23 追补，28 条）】首个修复 run 39999719079 两腿终局读数
+    # 【批次三（2026-10-23 追补 28 条，2026-10-24 摘 1）】首个修复 run 39999719079 两腿终局读数
     # 分两族：
     #   · 12 条＝**维护机绝对路径/平台敏感**：封存记录钉了 E:\Seed 绝对路径、或路径
     #     分隔符/平台 IO 参与摘要与计数（n02_c4、reader_transfer、n4_05、n5_20、
@@ -154,7 +154,6 @@ jobs:
         --deselect tests/taiji_native/test_n02_c4_net_gain_reader_contract.py::test_cli_writes_once_and_reports_the_real_gap
         --deselect tests/taiji_native/test_n02_c4_net_gain_reader_contract.py::test_the_separation_guard_passes_a_known_good_and_fails_two_negatives
         --deselect tests/taiji_native/test_n1_plan142_v21_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
-        --deselect tests/taiji_native/test_n1_plan142_v21_face_builder_contract.py::test_source_union_reconstructs_every_prior_context_filler
         --deselect tests/taiji_native/test_n1_plan143_v22_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan144_v23_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan147_v24_abstention_contract.py::test_endpoint_registry_reuses_only_the_twelve_frozen_comparison_bundles
@@ -727,7 +726,6 @@ jobs:
         --deselect tests/taiji_native/test_n02_c4_net_gain_reader_contract.py::test_cli_writes_once_and_reports_the_real_gap
         --deselect tests/taiji_native/test_n02_c4_net_gain_reader_contract.py::test_the_separation_guard_passes_a_known_good_and_fails_two_negatives
         --deselect tests/taiji_native/test_n1_plan142_v21_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
-        --deselect tests/taiji_native/test_n1_plan142_v21_face_builder_contract.py::test_source_union_reconstructs_every_prior_context_filler
         --deselect tests/taiji_native/test_n1_plan143_v22_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan144_v23_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan147_v24_abstention_contract.py::test_endpoint_registry_reuses_only_the_twelve_frozen_comparison_bundles
