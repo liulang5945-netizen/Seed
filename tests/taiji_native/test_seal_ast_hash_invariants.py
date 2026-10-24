@@ -129,3 +129,38 @@ def test_recorded_value_attested_accepts_current_and_history_but_rejects_fabrica
     assert seal_ast.recorded_value_attested(path, seal_ast.sha256_file(path)) is True
     assert seal_ast.recorded_value_attested(path, historical_sha) is True
     assert seal_ast.recorded_value_attested(path, "0" * 64) is False
+
+
+RUNNER_LAYOUT = "D:/a/Seed/Seed/scripts/training/seal_ast.py"
+
+
+def test_cross_machine_absolute_prefix_maps_onto_the_repo_file():
+    """绿向（跨机映射）: 维护机布局的绝对路径在非维护机上归位到仓库内同一文件。
+
+    D:/a/Seed/Seed 是 GitHub runner 的检出布局——在任何开发机上都不存在，
+    因此在位通道必然落空，归位是唯一通路。维护机上 E:/Seed 在位命中，
+    两条路殊途同归（同文件同字节）。
+    """
+    digest = seal_ast.sha256_file(seal_ast.ROOT / "scripts/training/seal_ast.py")
+    ok, failures = seal_ast.verify_hash_dict({RUNNER_LAYOUT: digest})
+    assert ok is True and failures == []
+    assert seal_ast._repo_relative(RUNNER_LAYOUT) == "scripts/training/seal_ast.py"
+    assert seal_ast._repo_relative("scripts\\training\\seal_ast.py") == (
+        "scripts/training/seal_ast.py"
+    )
+    assert seal_ast._repo_relative("no\\such\\file.json") is None
+
+
+def test_cross_machine_prefix_with_fabricated_hash_stays_red():
+    """红向（映射后仍判哈希）: 路径归位只决定核验哪个文件，伪造哈希照样全红。"""
+    ok, failures = seal_ast.verify_hash_dict({RUNNER_LAYOUT: "0" * 64})
+    assert ok is False
+    assert failures == [RUNNER_LAYOUT]
+
+
+def test_unmappable_out_of_repo_layout_stays_fail_closed(tmp_path):
+    """红向（映射失败）: 后缀不落在任何仓库内文件的绝对路径保持 fail-closed。"""
+    outside = tmp_path / "nested" / "missing.json"
+    ok, failures = seal_ast.verify_hash_dict({str(outside): "0" * 64})
+    assert ok is False
+    assert failures == [str(outside)]

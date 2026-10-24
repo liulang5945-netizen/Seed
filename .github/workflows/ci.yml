@@ -63,9 +63,15 @@ jobs:
     #     条目随之删除。其余条目删除须附本机与 CI 双绿证据。
     # 本机不消费本清单：维护机上这些用例照常全量守护。
     #
-    # 【批次三（2026-10-23 追补 28 条；plan142_face 摘后 2026-10-24 两腿实测仍红、复册）】首个修复 run 39999719079 两腿终局读数
+    # 【批次三（2026-10-23 追补 28 条；plan142_face 复册后又于 2026-10-25 随 seal_ast 路径解析器摘除）】首个修复 run 39999719079 两腿终局读数
     # 分两族：
-    #   · 12 条＝**维护机绝对路径/平台敏感**：封存记录钉了 E:\Seed 绝对路径、或路径
+    #   · 线 1 推进（2026-10-25）：seal_ast 增加跨机记录路径解析器（resolve_recorded_path，
+#     绝对路径键按「以已知仓库路径结尾的最长后缀」归位，映射必须命中 git 索引或在位
+#     文件否则 fail-closed）＋n02_c4 adjudicator 接线——摘除 plan142_face 与 n02_c4
+#     两条×2；决定性本机证据＝N1-138 结果 266 枚 E:\Seed 键重写为 runner 布局后
+#     verify_hash_dict 0 失败（通道红绿见 test_seal_ast_hash_invariants 新增 3 支）。
+#     其余绝对路径条目待 CI 实证后逐批摘除。
+#   · 其余 12 条＝**维护机绝对路径/平台敏感（部分已修待摘）**：封存记录钉了 E:\Seed 绝对路径、或路径
     #     分隔符/平台 IO 参与摘要与计数（n02_c4、reader_transfer、n4_05、n5_20、
     #     n5_17_j、b0_n2 计数、plan142/143/144 runner 登记表、run89 依赖 powershell、
     #     n6_10/12 为 Windows CR 行为契约）——本机（含干净 worktree）皆绿，任何
@@ -159,8 +165,6 @@ jobs:
         --deselect tests/taiji_native/test_n5_38_ledger_cited_reports_contract.py::test_refuses_to_overwrite_and_writes_lf
         --deselect tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py::test_every_consumer_carries_a_class_and_a_reason
         --deselect tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py::test_the_hardening_round_count_is_recorded_as_stale
-        --deselect tests/taiji_native/test_n02_c4_net_gain_reader_contract.py::test_cli_writes_once_and_reports_the_real_gap
-        --deselect tests/taiji_native/test_n02_c4_net_gain_reader_contract.py::test_the_separation_guard_passes_a_known_good_and_fails_two_negatives
         --deselect tests/taiji_native/test_n1_plan142_v21_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan143_v22_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan144_v23_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
@@ -177,7 +181,6 @@ jobs:
         --deselect tests/taiji_native/test_n1_plan157_seed128_candidate_vs_parent_diagnostic_contract.py::test_partial_face_continuation_reuses_exactly_the_sealed_endpoint
         --deselect tests/taiji_native/test_n1_plan160_seed130_candidate_parent_diagnostic_contract.py::test_seed128_and_seed129_values_are_in_seed130_exclusion_sets
         --deselect tests/taiji_native/test_n1_plan161_seed131_question_surface_diagnostic_contract.py::test_question_templates_are_absent_from_bound_training_questions
-        --deselect tests/taiji_native/test_n1_plan142_v21_face_builder_contract.py::test_source_union_reconstructs_every_prior_context_filler
         --deselect tests/taiji_native/test_native_local_relation_contract.py::test_relation_credit_cut_terminal_sources_and_reuse
         --deselect tests/taiji_native/test_native_relation_confirmation_contract.py::test_each_seed_terminal_and_cut_observation_branch
         --deselect tests/taiji_native/test_cross_domain_structural_gain.py::test_cross_domain_structural_gain_gate
@@ -739,8 +742,6 @@ jobs:
         --deselect tests/taiji_native/test_n5_38_ledger_cited_reports_contract.py::test_refuses_to_overwrite_and_writes_lf
         --deselect tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py::test_every_consumer_carries_a_class_and_a_reason
         --deselect tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py::test_the_hardening_round_count_is_recorded_as_stale
-        --deselect tests/taiji_native/test_n02_c4_net_gain_reader_contract.py::test_cli_writes_once_and_reports_the_real_gap
-        --deselect tests/taiji_native/test_n02_c4_net_gain_reader_contract.py::test_the_separation_guard_passes_a_known_good_and_fails_two_negatives
         --deselect tests/taiji_native/test_n1_plan142_v21_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan143_v22_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan144_v23_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
@@ -757,7 +758,6 @@ jobs:
         --deselect tests/taiji_native/test_n1_plan157_seed128_candidate_vs_parent_diagnostic_contract.py::test_partial_face_continuation_reuses_exactly_the_sealed_endpoint
         --deselect tests/taiji_native/test_n1_plan160_seed130_candidate_parent_diagnostic_contract.py::test_seed128_and_seed129_values_are_in_seed130_exclusion_sets
         --deselect tests/taiji_native/test_n1_plan161_seed131_question_surface_diagnostic_contract.py::test_question_templates_are_absent_from_bound_training_questions
-        --deselect tests/taiji_native/test_n1_plan142_v21_face_builder_contract.py::test_source_union_reconstructs_every_prior_context_filler
         --deselect tests/taiji_native/test_native_local_relation_contract.py::test_relation_credit_cut_terminal_sources_and_reuse
         --deselect tests/taiji_native/test_native_relation_confirmation_contract.py::test_each_seed_terminal_and_cut_observation_branch
         --deselect tests/taiji_native/test_cross_domain_structural_gain.py::test_cross_domain_structural_gain_gate

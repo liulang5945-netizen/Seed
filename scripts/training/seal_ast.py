@@ -33,6 +33,74 @@ PYTHON_PIN = (3, 12)
 # 历史取证时最多回溯的提交数（单文件）；防御性上界，防病态长历史拖死校验。
 GIT_HISTORY_WALK_LIMIT = 500
 
+
+# ---------------------------------------------------------------- 记录路径解析
+# 封存证据里的路径键来自「某台检出本仓的机器」：维护机（E:\Seed\...）或 CI
+# runner（D:\a\Seed\Seed\...）。绝对路径在本机不存在时，按「以已知仓库路径
+# 结尾」的最长后缀归位到本仓文件；候选必须命中 git 索引或在位文件，否则拒绝
+# 映射。049ab5789 的「仓外钉 fail-closed」由此收紧为「映射不到仓库文件的钉
+# fail-closed」：伪造哈希与真仓外路径仍全红，而历史记录可跨机核验。
+
+_REPO_TRACKED: set[str] | None = None
+
+
+def _tracked_repo_paths() -> set[str]:
+    """HEAD 索引里的仓库相对路径全集（懒加载缓存；git 不可用时为空集）。"""
+    global _REPO_TRACKED
+    if _REPO_TRACKED is None:
+        result = subprocess.run(
+            ["git", "-C", str(ROOT), "ls-tree", "-r", "--name-only", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        _REPO_TRACKED = set(result.stdout.splitlines()) if result.returncode == 0 else set()
+    return _REPO_TRACKED
+
+
+def _path_suffix_candidates(path_str: str) -> list[str]:
+    """记录路径的仓库相对后缀候选（最长＝最具体者优先）；分隔符与盘符归一。"""
+    text = str(path_str).replace("\\", "/").strip()
+    parts = [part for part in text.split("/") if part not in ("", ".")]
+    if parts and len(parts[0]) == 2 and parts[0][1] == ":":
+        parts = parts[1:]  # Windows 盘符（E:）不是仓库结构的一部分
+    return ["/".join(parts[index:]) for index in range(len(parts))]
+
+
+def _repo_relative(path_str: str) -> str | None:
+    """记录路径 → 仓库相对 posix 路径；映射不到仓库内文件时返回 None。"""
+    text = str(path_str).replace("\\", "/").strip()
+    if not text:
+        return None
+    windows_drive = len(text) > 2 and text[1] == ":" and text[2] == "/"
+    posix_absolute = text.startswith("/")
+    if not (windows_drive or posix_absolute or Path(path_str).is_absolute()):
+        parts = [part for part in text.split("/") if part not in ("", ".")]
+        candidate = "/".join(parts)
+        if not candidate or candidate.startswith("../"):
+            return None
+        if candidate in _tracked_repo_paths() or (ROOT / candidate).is_file():
+            return candidate
+        return None
+    for candidate in _path_suffix_candidates(text):
+        if candidate in _tracked_repo_paths() or (ROOT / candidate).is_file():
+            return candidate
+    return None
+
+
+def resolve_recorded_path(path_str: str) -> Path | None:
+    """记录路径 → 本机在位文件；原路径存在则原样返回，否则试仓库内映射。"""
+    path = Path(path_str)
+    if path.is_file():
+        return path
+    relative = _repo_relative(path_str)
+    if relative is not None:
+        local = ROOT / relative
+        if local.is_file():
+            return local
+    return None
+
+
 # Golden 夹具：含 docstring / 注解 / f-string / 控制流的固定片段。
 GOLDEN_SNIPPET = '''\
 """Golden seal snippet v1."""
@@ -144,8 +212,8 @@ def _looks_like_python(path: str | Path) -> bool:
 
 def _in_place_match(path_str: str, recorded: str, *, scheme: str | None) -> bool:
     """scheme=None 双通道（字节或 AST 任一）；byte-v0 纯字节；ast-canonical-v1 py 用 AST 其余字节。"""
-    path = Path(path_str)
-    if not path.is_file():
+    path = resolve_recorded_path(path_str)
+    if path is None:
         return False
     if scheme == SCHEME_BYTE:
         return sha256_file(path) == recorded
@@ -197,11 +265,9 @@ def _blob_sha_variants(blob: bytes) -> set[str]:
 
 def git_history_attests(path_str: str, recorded: str) -> bool:
     """记录值是否与该文件某个历史 blob 的字节哈希一致（R5 同法）。"""
-    path = Path(path_str)
-    try:
-        rel = path.resolve().relative_to(ROOT).as_posix() if path.is_absolute() else str(path_str)
-    except ValueError:
-        # 仓外路径没有可取证的历史；按「未取证」返回，由调用方决定 fail-closed。
+    rel = _repo_relative(path_str)
+    if rel is None:
+        # 映射不到仓库内文件的路径没有可取证的历史；fail-closed 由调用方决定语义。
         return False
     for commit in file_commits(rel):
         blob = git_blob_bytes(commit, rel)
@@ -221,9 +287,8 @@ def recorded_value_attested(path: Path | str, recorded: str) -> bool:
         return True
     if not _looks_like_python(path_str):
         return False
-    try:
-        rel = _rel_to_root(path_str)
-    except ValueError:
+    rel = _repo_relative(path_str)
+    if rel is None:
         return False
     for commit in file_commits(rel):
         blob = git_blob_bytes(commit, rel)
@@ -239,8 +304,8 @@ def recorded_value_attested(path: Path | str, recorded: str) -> bool:
 
 def verify_path_pin(path: Path | str, recorded: str, *, allow_git_history: bool = True) -> bool:
     """单文件钉点: 在位字节，失败时可选 git 历史取证（controller 绑定等历史钉）。"""
-    path = Path(path)
-    if path.is_file() and sha256_file(path) == recorded:
+    resolved = resolve_recorded_path(str(path))
+    if resolved is not None and sha256_file(resolved) == recorded:
         return True
     return allow_git_history and git_history_attests(str(path), recorded)
 
@@ -292,7 +357,10 @@ def verify_source_hashes(
     if git_history_commit is not None:
         failures = []
         for path_str, recorded in entries.items():
-            rel = _rel_to_root(path_str)
+            rel = _repo_relative(path_str)
+            if rel is None:
+                failures.append(path_str)
+                continue
             blob = git_blob_bytes(git_history_commit, rel)
             if blob is None:
                 failures.append(path_str)
@@ -311,10 +379,11 @@ def verify_source_hashes(
 
 
 def _rel_to_root(path_str: str) -> str:
-    path = Path(path_str)
-    if path.is_absolute():
-        return path.resolve().relative_to(ROOT).as_posix()
-    return str(path_str).replace("\\", "/")
+    """兼容 shim：旧调用方语义（解析失败抛 ValueError）。"""
+    relative = _repo_relative(path_str)
+    if relative is None:
+        raise ValueError(f"path does not map into the repository: {path_str}")
+    return relative
 
 
 # ---------------------------------------------------------------- 自检

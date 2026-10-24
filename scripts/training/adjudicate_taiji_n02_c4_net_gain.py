@@ -14,9 +14,14 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.training import seal_ast  # noqa: E402
 
 RETENTION_FORMAT = "taiji-n2-04-retention-pair-v1"
 GAIN_QUALITY_KEY = "j_n2b_prime_delta_quality"
@@ -70,10 +75,12 @@ def load_pair(path: Path) -> dict:
     for key, value in pair.items():
         if not key.endswith("_path") or not isinstance(value, str):
             continue
-        face = Path(value)
         digest_key = key[: -len("_path")] + "_sha256"
         recorded = pair.get(digest_key)
-        require(face.is_file(), f"{digest_key}: recorded face is gone: {face}")
+        # 配对件登记的是产生时刻的检出布局（E:\Seed\...）；换机后按仓库内
+        # 身份归位——四面都已入库，映射失败仍 fail-closed。
+        face = seal_ast.resolve_recorded_path(value)
+        require(face is not None, f"{digest_key}: recorded face is gone: {value}")
         actual = sha(face)
         require(
             recorded == actual,
