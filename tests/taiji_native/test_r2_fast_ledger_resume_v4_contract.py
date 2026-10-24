@@ -1,4 +1,16 @@
+import sys
+
 import pytest
+
+# v4 runner 在**导入期**就绑定 Windows 本地 NTFS 持久化 API
+# （`_durability_api()` 在非 Windows 上抛 DURABILITY_UNSUPPORTED），
+# Ubuntu CI 腿因此收集即炸。持久化写通道是 Windows-only 的既定契约，
+# 这里整模块跳过而不是改 runner——后者是在飞训练的源绑定面。
+if sys.platform != "win32":
+    pytest.skip(
+        "v4 fast-ledger runner binds the Windows NTFS durability API at import time",
+        allow_module_level=True,
+    )
 
 from scripts.training import run_taiji_r2_daily_dialogue_continuation_extension as runner
 from scripts.training import run_taiji_r2_fast_ledger_resume_v4 as v4
