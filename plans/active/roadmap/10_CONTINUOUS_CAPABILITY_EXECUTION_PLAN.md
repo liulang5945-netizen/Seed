@@ -15,7 +15,7 @@
 
 ## 2. 当前基线及不可移动的边界
 
-D1 已批准并激活 **v1.5：1,590,000 CPU秒/臂、4,560,000总计**，旧实耗、reserve和未知尾账保留。warm_start 已完成；full_turn_1m、fresh_same_capacity 沿03已登记的owner批准安排并行训练，任意时刻最多两臂。实时余量只从03所指账本/receipt复核，不把本页快照当新额度。
+D1 已批准并激活 **v1.5：1,590,000 CPU秒/臂、4,560,000总计**，旧实耗、reserve和未知尾账保留。warm_start、fresh_same_capacity 已完成；full_turn_1m 于2026-10-24 14:45从耐久cursor 21,072单独续训。因Windows共享账本写竞态，执行改为**逐臂串行**（不再并行），实时余量只从03所指账本/receipt复核，不把本页快照当新额度。
 
 三臂各自完整终点仍为30,096预训练episodes / 14,517,912 updates，再完成525 SFT episodes / 113,209 updates；真实final、独立恢复与终态发布均计入完整出口。触顶未完成就保留partial，不能降低终点、清账或改称final。
 
