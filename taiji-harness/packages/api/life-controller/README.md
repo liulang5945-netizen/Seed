@@ -8,9 +8,7 @@ English | [中文](README.zh.md)
 
 ## Summary
 
-Explicit snapshot requests re-read the runtime. Stream followers still start from the current cached snapshot.
-
-`@taiji/dsh-api-life-controller` owns the `ctx.lifeController` service and the Client `ctx.remote.life` namespace. Its Remote methods read the Taiji local runtime — health, memory, each answering organ's life numbers, training state with its checkpoints, the knowledge index, and the memory journal with consolidation products — and carry the control verbs a life panel issues: training start, pause, resume, stop, and reset, one consolidation pass, and the gated legacy life start, stop, and action. The runtime stays the single source of truth: every reading carries its source, timestamp, freshness, and per-source availability, and the service never derives a value the runtime did not report.
+`@taiji/dsh-api-life-controller` owns the `ctx.lifeController` service and the Client `ctx.remote.life` namespace. Remote methods read the Taiji runtime (health, memory, per-organ life numbers, training state with checkpoints, the knowledge index, and the memory journal with consolidation products) and carry its control verbs: training start, pause, resume, stop, and reset, one consolidation pass, plus the gated legacy life start, stop, and action. Explicit snapshot requests re-read the runtime; stream followers start from the cached snapshot. The runtime stays authoritative: every reading carries its source, timestamp, freshness, and per-source availability; the service never derives unreported values.
 
 ## Table of Contents
 

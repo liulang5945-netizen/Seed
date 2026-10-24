@@ -107,6 +107,16 @@
   "这是一个标签/徽标/表格单元"；后者（标签/仪表/徽标/表格）就该更小更密。
 - **别把 `<ul>` 改 flex 来加行距**：flex 父容器会把 `li` blockify，**项目符号整体消失**。
   用 `.x li + li { margin-top: 4px }` 代替。
+- **改被封印钉住的 .py 前，先分辨「钉的口径」再估级联**（2026-10-22 实测）：
+  manifest 的 `source_hashes` 是**当前值**口径（改文件必须重冻结）；Python 常量
+  （如 `RUNNER_TEST_SHA256`）经 `seal_ast.verify_path_pin` 是**历史 blob** 口径（在位字节或 git 历史任一），
+  旧值留在历史里 ⇒ **不动常量就零级联**。判错会把 1 个文件的改动放大成 40+ 文件的级联重冻结。
+- **扫封印钉点必须遍历 4 个池，不能只扫顶层**：`source_hashes` / `source_guards` /
+  `exclusion_sources.*` / `construction.*`。实测只扫顶层得 22 个 manifest，补 `exclusion_sources`
+  池后是 28 个——漏掉的 6 个会在验收时才炸。重冻结用**二进制替换**（保 CRLF），
+  替换前校验「该字面量确实归属目标文件」再动手。
+- **复检全量 manifest 时的假警报**：非 .py 条目（钉别的 manifest / schedule json）是**创建 blob** 口径，
+  用「当前字节严格相等」去比会报 648 条假失配；真正的信号是 **.py 通道失配数 = 0**。
 
 ## 5 当前状态与归档索引
 
