@@ -164,3 +164,13 @@ def test_unmappable_out_of_repo_layout_stays_fail_closed(tmp_path):
     ok, failures = seal_ast.verify_hash_dict({str(outside): "0" * 64})
     assert ok is False
     assert failures == [str(outside)]
+
+
+def test_rendering_tolerant_match_accepts_newline_variants_only():
+    """绿红双向: 换行渲染差异视为未变更；真实内容变化任何渲染下都不同。"""
+    raw = b'{"a": 1}\n{"b": 2}\n'
+    crlf_recorded = hashlib.sha256(raw.replace(b"\n", b"\r\n")).hexdigest()
+    assert seal_ast.rendering_tolerant_match(crlf_recorded, raw) is True
+    assert seal_ast.rendering_tolerant_match(hashlib.sha256(raw).hexdigest(), raw) is True
+    tampered = raw.replace(b"1", b"2")
+    assert seal_ast.rendering_tolerant_match(crlf_recorded, tampered) is False

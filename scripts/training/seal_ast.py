@@ -263,6 +263,16 @@ def _blob_sha_variants(blob: bytes) -> set[str]:
     }
 
 
+def rendering_tolerant_match(recorded: str, raw: bytes) -> bool:
+    """记录值是否匹配 raw 的任一换行渲染（raw / LF→CRLF / CRLF→LF）。
+
+    供 application 侧字节比对复用历史通道同一妥协：.gitattributes 之前
+    在维护机 CRLF 工作树里取的记录值，与重归一后检出（LF）的字节视为
+    未变更；真实内容变化在任何渲染下都不同。
+    """
+    return recorded in _blob_sha_variants(raw)
+
+
 def git_history_attests(path_str: str, recorded: str) -> bool:
     """记录值是否与该文件某个历史 blob 的字节哈希一致（R5 同法）。"""
     rel = _repo_relative(path_str)

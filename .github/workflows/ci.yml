@@ -70,7 +70,11 @@ jobs:
 #     文件否则 fail-closed）＋n02_c4 adjudicator 接线——摘除 plan142_face 与 n02_c4
 #     两条×2；决定性本机证据＝N1-138 结果 266 枚 E:\Seed 键重写为 runner 布局后
 #     verify_hash_dict 0 失败（通道红绿见 test_seal_ast_hash_invariants 新增 3 支）。
-#     其余绝对路径条目待 CI 实证后逐批摘除。
+#     其余绝对路径条目待 CI 实证后逐批摘除。run 40114788927 Windows 腿读数：
+#     n02_c4 映射已打通、剩余阻塞是 CRLF 时代记录字节 vs LF 检出——已加
+#     rendering_tolerant_match（与历史通道同一妥协）保持摘除；plan142_face
+#     的 N1-138 source_hashes 混有未入库 checkpoint 条目（无历史可取证），
+#     复册归线 2（产物入库），路径映射对此无能为力。
 #   · 其余 12 条＝**维护机绝对路径/平台敏感（部分已修待摘）**：封存记录钉了 E:\Seed 绝对路径、或路径
     #     分隔符/平台 IO 参与摘要与计数（n02_c4、reader_transfer、n4_05、n5_20、
     #     n5_17_j、b0_n2 计数、plan142/143/144 runner 登记表、run89 依赖 powershell、
@@ -104,6 +108,7 @@ jobs:
         --deselect tests/taiji_native/test_c2_calibration_runner_contract.py::test_resume_preserves_once_only_surface_and_unchanged_weights
         --deselect tests/taiji_native/test_c2_calibration_runner_contract.py::test_selected_surface_is_the_preregistered_balanced_content
         --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_v2_smoke_face_judges_and_table_agrees
+        --deselect tests/taiji_native/test_n1_plan142_v21_face_builder_contract.py::test_source_union_reconstructs_every_prior_context_filler
         --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_v1_face_refuses_no_fallback
         --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_missing_policy_self_report_refuses
         --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_short_face_refuses_after_warmup
@@ -679,6 +684,7 @@ jobs:
         --deselect tests/taiji_native/test_c2_calibration_runner_contract.py::test_resume_preserves_once_only_surface_and_unchanged_weights
         --deselect tests/taiji_native/test_c2_calibration_runner_contract.py::test_selected_surface_is_the_preregistered_balanced_content
         --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_v2_smoke_face_judges_and_table_agrees
+        --deselect tests/taiji_native/test_n1_plan142_v21_face_builder_contract.py::test_source_union_reconstructs_every_prior_context_filler
         --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_v1_face_refuses_no_fallback
         --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_missing_policy_self_report_refuses
         --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_short_face_refuses_after_warmup

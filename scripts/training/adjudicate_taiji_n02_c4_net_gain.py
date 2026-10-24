@@ -82,8 +82,10 @@ def load_pair(path: Path) -> dict:
         face = seal_ast.resolve_recorded_path(value)
         require(face is not None, f"{digest_key}: recorded face is gone: {value}")
         actual = sha(face)
+        # 记录值出自 .gitattributes 之前的 CRLF 工作树；重归一检出（LF）按
+        # 渲染变体容忍（与历史通道同一妥协），真实内容变化任何渲染下都不同。
         require(
-            recorded == actual,
+            seal_ast.rendering_tolerant_match(recorded, face.read_bytes()),
             f"{digest_key}: bytes changed under the pair ({recorded} recorded, {actual} actual)",
         )
         rebind[digest_key] = actual
