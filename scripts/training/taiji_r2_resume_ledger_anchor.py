@@ -132,6 +132,7 @@ def replay_ledger_tail(
             "durable_training_commit",
             "work_unit_settled",
             "final_stage_restored",
+            "crash_recovery_upper_settlement",
         }:
             if (
                 current is None

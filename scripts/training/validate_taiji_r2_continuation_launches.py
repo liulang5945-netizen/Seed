@@ -91,11 +91,11 @@ FAST_LAUNCH_V4_SOURCE_SHA256 = {
     "scripts/training/run_taiji_r2_fast_ledger_resume_v3.py": "e73efd6af0de7a799a9f4e3f612a71faece42f1f8f3bb4879f4a138090de5523",
     "scripts/training/run_taiji_r2_fast_ledger_resume_v2.py": "1530e68150fe8264d1db509b52fbb82159c8d325f2fa24d44ca2b88a7869f9e6",
     "scripts/training/run_taiji_r2_fast_ledger_resume.py": "d8ece312b17e6b84cdd8c45a332534ef2b2755b0e159b208151c65479e9a9cbf",
-    "scripts/training/taiji_r2_resume_ledger_anchor.py": "8ce88545113bdfb8c9a7e50a131db011f6f49fda586e3ce8dcb24053623d9328",
+    "scripts/training/taiji_r2_resume_ledger_anchor.py": "71b14683273f6ea4a7e952f374da99273e9a99828fa01cb9b959778b8205846f",
     "scripts/training/run_taiji_r2_checkpoint_resume_adapter.py": "fce64448dc8d9d49104509c1a1cd5a4f4beeb80f5ee7ea74c440a2c118ae34b5",
     "scripts/training/taiji_r2_target_update_projection.py": "c7a2d0821b59a35fc5beca94edab557e2c201b04a028311a0008091209d1aeba",
     "tests/taiji_native/test_r2_fast_ledger_resume_contract.py": "839e4f8bb85a7ce816cae33fafe185761f298717cd58a08807b767620a12bcc5",
-    "tests/taiji_native/test_r2_resume_ledger_anchor_contract.py": "107cb6f16202cfca2b4934c6d17d1a694efd815156d3cb556e8954029b9c93bc",
+    "tests/taiji_native/test_r2_resume_ledger_anchor_contract.py": "2af2c3b554eab3306717ae290c5558e0f36c47ccd5dad6f7c6e5a96a2ae85fe5",
     "tests/taiji_native/test_r2_fast_ledger_resume_v2_contract.py": "3cd27ced8d3daacf52ddecfe4aa589da96240fea7666b9daaf186939f6358dbc",
     "scripts/training/taiji_r2_continuation_budget_amendment_v1_4.py": "0e4e5c186097ec1d66a8f5ab2f674a37803980ce1f70def3baea8e5177643780",
     "tests/taiji_native/test_r2_continuation_budget_amendment_v1_4_contract.py": "d1a3dfb9a227706e10718403fe76db0595d7e3f15ae47b563b24aca0ce07aaf4",
@@ -121,6 +121,8 @@ FAST_LAUNCH_V4_SOURCE_SHA256_FAILED_START = {
 FAST_LAUNCH_V4_SOURCE_SHA256_PRE_RETRY = {
     **FAST_LAUNCH_V4_SOURCE_SHA256,
     "scripts/training/run_taiji_r2_fast_ledger_resume_v4.py": "19cd416e635798a9525a55f3c3bc75381dce8a1c1d38fdd6dbc86f1a779e6d8a",
+    "scripts/training/taiji_r2_resume_ledger_anchor.py": "8ce88545113bdfb8c9a7e50a131db011f6f49fda586e3ce8dcb24053623d9328",
+    "tests/taiji_native/test_r2_resume_ledger_anchor_contract.py": "107cb6f16202cfca2b4934c6d17d1a694efd815156d3cb556e8954029b9c93bc",
     "tests/taiji_native/test_r2_fast_ledger_resume_v4_contract.py": "b205b3ffea0a1cceeb24daf9245952de4522df4276ccc07918b334511565819a",
 }
 RESUME_V1_SOURCES = (

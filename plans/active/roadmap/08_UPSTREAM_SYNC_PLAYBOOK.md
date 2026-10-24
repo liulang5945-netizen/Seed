@@ -1812,3 +1812,11 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 - fresh 启动两次被源一致性门挡住：`taiji/language_alignment.py` 工作区被写成 CRLF（raw sha a2a3），而父尝试记录的是同一 raw 字节、Git clean-filter blob 为 LF（a160）。转成 LF 会触发 `unreviewed source drift`；恢复父尝试的 raw CRLF 字节后 `_parent_context` 通过。fresh 已从 25,088/30,096 恢复。
 - 当前两臂：full 约 17,6xx/30,096 预训练、fresh 约 25,088/30,096 预训练；warm 已 final。三臂账本合计约 4.404M，余量约 15.6 万；reservation 仅 full/fresh。
 - 下一格：等 full/fresh final；三臂齐备后进 R3–R5。工程债仍为源修订绑定的旧预算测试（下一轮 source revision 修）。
+
+### ㊵-1137 【2026-10-24 · 第二次并行被 Windows 共享 summary 竞态打停；修复后改串行 fresh→full】
+
+- 06:44 前后 full 与 fresh 同时替换 aggregate summary，一方 `MoveFileExW` 得到 `WinError 5 拒绝访问`；事件已耐久但 summary 落后，随后 `_persist_stop_event` 用 fast summary 读取触发 `stale`，两臂退出。耐久 cursor：full 21,072、fresh 28,061；没有预算超扣。
+- 修复（`8e48a2d05` 及后续 anchor 白名单）：v4 给共享 summary 替换加 6 次指数退避重试；`latest_charges`/`latest_reservations` 在 fast summary 失败时回退全量重放；`verified_snapshot` 只锁内抓前缀、重放在锁外；anchor 增加 `crash_recovery_upper_settlement`。
+- 账本修复：全量重放重建 summary；full 的孤儿 reservation 按上界 1,332 CPU 秒结算（`crash_recovery_upper_settlement`），无活跃 reservation。三臂已计 **4,441,503**，总计余量 **118,497**。
+- 决策：并行争用让 full 从约5.2秒/episode 降到 7.06，且共享 summary 写是失败源；改为**串行先 fresh（剩约2千 episode）再 full（剩约9千）**，总时更短、避开竞态。fresh 已从 28,038 恢复并训练。
+- 契约：v4 11 支、anchor 10 支通过；新增 retry/stale/ crash settlement 用例。真实 provenance 接受 warm/full/fresh 旧 v4 manifest 的历史源映射。
