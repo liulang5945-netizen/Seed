@@ -8,9 +8,7 @@ kind: "package-reference"
 
 ## 概述
 
-显式快照请求会重新读取运行时；订阅流仍从当前缓存快照开始。
-
-`@taiji/dsh-api-life-controller` 拥有 Host 的 `ctx.lifeController` 服务和生成的 Client `ctx.remote.life` namespace。它的 Remote 方法读取 Taiji 本地 runtime——健康、内存、由实际应答器官提供的生命数值、训练状态及其 checkpoint 名单、受门控的知识索引，以及记忆日志与睡眠巩固的产物——并承载生命面板下发的控制动词：训练的启动、暂停、恢复、停止和重置，一次巩固 pass，以及受门控的 legacy 生命启动、停止和活动。runtime 始终是唯一事实来源：每份读数都携带其来源、时间戳、新鲜度和逐来源可用性，而服务绝不合成 runtime 未报告的取值。
+`@taiji/dsh-api-life-controller` 拥有 Host 的 `ctx.lifeController` 服务和生成的 Client `ctx.remote.life` namespace。它的 Remote 方法读取 Taiji runtime（健康、内存、逐器官的生命数值、带 checkpoint 名单的训练状态、受门控的知识索引，以及记忆日志与睡眠巩固的产物），并承载其控制动词：训练的启动、暂停、恢复、停止和重置，一次巩固 pass，以及受门控的 legacy 生命启动、停止和活动。显式快照请求会重新读取运行时；订阅流从当前缓存快照开始。runtime 始终是权威来源：每份读数都携带其来源、时间戳、新鲜度和逐来源可用性，而服务绝不合成 runtime 未报告的取值。
 
 ## 目录
 
