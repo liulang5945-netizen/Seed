@@ -80,7 +80,9 @@ jobs:
     #     plan157/160/161 的 N1-121 重冻结链（049ab5789 改 plan 后遗留：常量→readiness
     #     记录→104 枚 manifest 互相钉的多层重冻结，归 owner 封印修复轨道；本轮实测
     #     硬吃会放大成 40+ 文件级联，已回退让位）；b0_n2 两条＝并行收口 docs 提交
-    #     （6291b72af..b80d19957）后消费面计数 103→94，登记表待该会话更新后回绿。
+    #     （6291b72af..b80d19957）后消费面改双列表记账（registry 94＋pending 9）——
+#     2026-10-25 semantics 契约迁移完成（pending 感知等式＋stale 语义对齐
+#     disposition_contract），两条摘除回绿。
 #     另 10 条＝Windows/Ubuntu 腿独有（r2_copy_surface/start_charge/source_validation/seal_ast 绿通道：
 #     本机绿、runner 上读数/git 状态不同），重启条件同上（R2 产物入库/相对路径化）。
 #   · 另 7 条＝**族 A 第五例**（relation 两测＋structural-gain 门族 5 条：cross_domain/
@@ -163,8 +165,6 @@ jobs:
         --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py::test_v1_2_revision_rejects_lineage_budget_and_source_drift[review_report]
         --deselect tests/taiji_native/test_n5_38_ledger_cited_reports_contract.py::test_a_verified_rename_moves_the_stale_name_out_of_the_red
         --deselect tests/taiji_native/test_n5_38_ledger_cited_reports_contract.py::test_refuses_to_overwrite_and_writes_lf
-        --deselect tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py::test_every_consumer_carries_a_class_and_a_reason
-        --deselect tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py::test_the_hardening_round_count_is_recorded_as_stale
         --deselect tests/taiji_native/test_n1_plan142_v21_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan143_v22_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan144_v23_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
@@ -740,8 +740,6 @@ jobs:
         --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py::test_v1_2_revision_rejects_lineage_budget_and_source_drift[review_report]
         --deselect tests/taiji_native/test_n5_38_ledger_cited_reports_contract.py::test_a_verified_rename_moves_the_stale_name_out_of_the_red
         --deselect tests/taiji_native/test_n5_38_ledger_cited_reports_contract.py::test_refuses_to_overwrite_and_writes_lf
-        --deselect tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py::test_every_consumer_carries_a_class_and_a_reason
-        --deselect tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py::test_the_hardening_round_count_is_recorded_as_stale
         --deselect tests/taiji_native/test_n1_plan142_v21_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan143_v22_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan144_v23_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs

@@ -304,11 +304,23 @@ def test_this_file_is_itself_dispositioned_as_a_consumer(n2: dict) -> None:
 
 
 def test_every_consumer_carries_a_class_and_a_reason(n2: dict) -> None:
-    assert len(n2["consumers"]) == n2["consumer_count"] == n2["consumer_count_now"]
+    # 049ab5789 起消费面双列表记账：已处置登记（consumers）＋待处置前沿
+    # （pending_frontier_consumers，R2 在飞件逐项复核后转正）。两列表互斥，
+    # 并集等于 live 扫描全消费面（disposition_contract 以 live==expected 钉住）。
+    assert len(n2["consumers"]) + len(n2["pending_frontier_consumers"]) == (n2["consumer_count"])
+    assert n2["consumer_count"] == n2["consumer_count_now"]
     for consumer in n2["consumers"]:
         assert consumer["class"], consumer["path"]
         assert consumer["why"], consumer["path"]
-    assert len({consumer["path"] for consumer in n2["consumers"]}) == n2["consumer_count"]
+    for pending in n2["pending_frontier_consumers"]:
+        assert pending["why"], pending["path"]
+    assert (
+        len(
+            {consumer["path"] for consumer in n2["consumers"]}
+            | {pending["path"] for pending in n2["pending_frontier_consumers"]}
+        )
+        == n2["consumer_count"]
+    )
 
 
 def test_the_inventory_separates_live_gates_from_test_assertions(n2: dict) -> None:
@@ -336,8 +348,11 @@ def test_the_hardening_round_count_is_recorded_as_stale(n2: dict) -> None:
     assert n2["consumer_count_in_hardening_report"] == 11
     assert n2["count_was_stale"] is True
     added = set(n2["added_since_hardening_report"])
-    assert len(added) == n2["consumer_count_now"] - 11
-    assert SELF_PATH in added
+    # 2026-10-23 重构后 added_since 是「M4 时代后新增」的登记标记子集
+    # （disposition_contract 钉 11），不再是全量差集；非硬化消费面的完备性
+    # 由 test_every_consumer 的双列表并集 == live 全量钉住。
+    assert len(added) == 11
+    assert added.isdisjoint({pending["path"] for pending in n2["pending_frontier_consumers"]})
 
 
 # --------------------------------------------------------------------------- #
