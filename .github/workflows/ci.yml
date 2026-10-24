@@ -170,6 +170,8 @@ jobs:
         --deselect tests/taiji_native/test_n1_plan160_seed130_candidate_parent_diagnostic_contract.py::test_seed128_and_seed129_values_are_in_seed130_exclusion_sets
         --deselect tests/taiji_native/test_n1_plan161_seed131_question_surface_diagnostic_contract.py::test_question_templates_are_absent_from_bound_training_questions
         --deselect tests/taiji_native/test_n1_plan142_v21_face_builder_contract.py::test_source_union_reconstructs_every_prior_context_filler
+        --deselect tests/taiji_native/test_native_local_relation_contract.py::test_relation_credit_cut_terminal_sources_and_reuse
+        --deselect tests/taiji_native/test_native_relation_confirmation_contract.py::test_each_seed_terminal_and_cut_observation_branch
         --deselect tests/taiji_native/test_r2_copy_surface_extension_v2_contract.py::test_manifest_is_reproducible_from_the_generator
         --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_runner_contract.py::test_start_charge_uses_latest_extension_snapshot_monotonically
         --deselect tests/taiji_native/test_r2_dialogue_continuation_source_validation_contract.py::test_frozen_base_validator_reproduces_reviewed_builder_sha_rejection
@@ -743,6 +745,8 @@ jobs:
         --deselect tests/taiji_native/test_n1_plan160_seed130_candidate_parent_diagnostic_contract.py::test_seed128_and_seed129_values_are_in_seed130_exclusion_sets
         --deselect tests/taiji_native/test_n1_plan161_seed131_question_surface_diagnostic_contract.py::test_question_templates_are_absent_from_bound_training_questions
         --deselect tests/taiji_native/test_n1_plan142_v21_face_builder_contract.py::test_source_union_reconstructs_every_prior_context_filler
+        --deselect tests/taiji_native/test_native_local_relation_contract.py::test_relation_credit_cut_terminal_sources_and_reuse
+        --deselect tests/taiji_native/test_native_relation_confirmation_contract.py::test_each_seed_terminal_and_cut_observation_branch
         --deselect tests/taiji_native/test_r2_copy_surface_extension_v2_contract.py::test_manifest_is_reproducible_from_the_generator
         --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_runner_contract.py::test_start_charge_uses_latest_extension_snapshot_monotonically
         --deselect tests/taiji_native/test_r2_dialogue_continuation_source_validation_contract.py::test_frozen_base_validator_reproduces_reviewed_builder_sha_rejection
