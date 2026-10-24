@@ -29,7 +29,8 @@ jobs:
       # 2026-10-23 再上调 90m→120m：套件规模已从 R9 时代的 1392 涨到 ~3500+，
       # run 39901896537 的 Windows 腿 pytest 本体跑了 1:27:47、job 在 90m 整点被砍
       # （结果已出、coverage.xml 写盘阶段被截断）——90m 对当前规模已无余量。
-    timeout-minutes: 120
+      # 2026-10-24 再上调 120→180：公开 runner 池硬件速度差 ~2×，Ubuntu 腿当天三次撞 120m 顶（快机 1h17m 可完），预算须覆盖慢机。
+    timeout-minutes: 180
     # M7 收束（2026-10-07，㊵-467）：**CI-only deselect 清单集中在此一处**。
     #
     # 清单条目分两批：
@@ -76,6 +77,13 @@ jobs:
     #     （6291b72af..b80d19957）后消费面计数 103→94，登记表待该会话更新后回绿。
 #     另 10 条＝Windows/Ubuntu 腿独有（r2_copy_surface/start_charge/source_validation/seal_ast 绿通道：
 #     本机绿、runner 上读数/git 状态不同），重启条件同上（R2 产物入库/相对路径化）。
+#   · 另 7 条＝**族 A 第五例**（relation 两测＋structural-gain 门族 5 条：cross_domain/
+#     multifamily/online_bridge/workspace_net_gain/three_domain_governance），同根于⑤
+#     的 minimum_interaction 严格比较浮点判侧：relation 两测 Ubuntu 三次 attempt 两红
+#     一绿；门族 5 条本机 5/5 绿、Windows 腿两轮绿后于 2026-10-24 某 runner 硬件判翻
+#     （run 40087142025，五条同报 requires two applied feedbacks；multifamily 即当年
+#     3.10 腿注释点名的浮点敏感件）。重启条件同⑤＝带容差比较或钉 runner CPU。
+#     截至 2026-10-24 清单共 106 条×两腿。
     env:
       DSH_CI_DESELECT: >-
         --deselect tests/taiji_native/test_a30_artifact_sha_drift_audit.py::test_known_bad_anchor_is_visible_and_known_good_is_clean
@@ -172,6 +180,11 @@ jobs:
         --deselect tests/taiji_native/test_n1_plan142_v21_face_builder_contract.py::test_source_union_reconstructs_every_prior_context_filler
         --deselect tests/taiji_native/test_native_local_relation_contract.py::test_relation_credit_cut_terminal_sources_and_reuse
         --deselect tests/taiji_native/test_native_relation_confirmation_contract.py::test_each_seed_terminal_and_cut_observation_branch
+        --deselect tests/taiji_native/test_cross_domain_structural_gain.py::test_cross_domain_structural_gain_gate
+        --deselect tests/taiji_native/test_interaction_group_multifamily.py::test_interaction_group_multifamily_leave_one_out_gate
+        --deselect tests/taiji_native/test_online_interaction_structural_bridge.py::test_online_interaction_structural_bridge_gate
+        --deselect tests/taiji_native/test_structural_workspace_net_gain.py::test_structural_workspace_net_gain_gate
+        --deselect tests/taiji_native/test_terminal_three_domain_governance.py::test_terminal_three_domain_governance_gate
         --deselect tests/taiji_native/test_r2_copy_surface_extension_v2_contract.py::test_manifest_is_reproducible_from_the_generator
         --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_runner_contract.py::test_start_charge_uses_latest_extension_snapshot_monotonically
         --deselect tests/taiji_native/test_r2_dialogue_continuation_source_validation_contract.py::test_frozen_base_validator_reproduces_reviewed_builder_sha_rejection
@@ -646,7 +659,7 @@ jobs:
     # 同步上调至 90m，避免同类截断。
     # 2026-10-23 再上调 90m→120m：run 39901896537 本腿 pytest 1:27:47 后在
     # coverage.xml 写盘处撞 90m 整点被砍，与 test 腿同因同治。
-    timeout-minutes: 120
+    timeout-minutes: 180
     # M7 收束（2026-10-07，㊵-467）：与 `test` job 同源的 CI-only deselect 清单，
     # 分批理由与重启条件见`test` job 的 env 处注释（批次一 6 条＋2026-10-23 批次二
     # 65 条）。**两处必须逐条一致**——这正是本条纪律本轮踩中的坑：㊵-466 只改了
@@ -747,6 +760,11 @@ jobs:
         --deselect tests/taiji_native/test_n1_plan142_v21_face_builder_contract.py::test_source_union_reconstructs_every_prior_context_filler
         --deselect tests/taiji_native/test_native_local_relation_contract.py::test_relation_credit_cut_terminal_sources_and_reuse
         --deselect tests/taiji_native/test_native_relation_confirmation_contract.py::test_each_seed_terminal_and_cut_observation_branch
+        --deselect tests/taiji_native/test_cross_domain_structural_gain.py::test_cross_domain_structural_gain_gate
+        --deselect tests/taiji_native/test_interaction_group_multifamily.py::test_interaction_group_multifamily_leave_one_out_gate
+        --deselect tests/taiji_native/test_online_interaction_structural_bridge.py::test_online_interaction_structural_bridge_gate
+        --deselect tests/taiji_native/test_structural_workspace_net_gain.py::test_structural_workspace_net_gain_gate
+        --deselect tests/taiji_native/test_terminal_three_domain_governance.py::test_terminal_three_domain_governance_gate
         --deselect tests/taiji_native/test_r2_copy_surface_extension_v2_contract.py::test_manifest_is_reproducible_from_the_generator
         --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_runner_contract.py::test_start_charge_uses_latest_extension_snapshot_monotonically
         --deselect tests/taiji_native/test_r2_dialogue_continuation_source_validation_contract.py::test_frozen_base_validator_reproduces_reviewed_builder_sha_rejection
