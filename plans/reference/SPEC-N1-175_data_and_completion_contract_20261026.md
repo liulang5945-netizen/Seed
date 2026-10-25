@@ -72,3 +72,6 @@ train-only真实batch更新测得3700目标字节/8.421875 process-CPU秒=439.33
 
 
 N175首个正式epoch已全部完成，seed169/170/171均完成288更新、各曝光822311 target bytes，平均teacher-forced loss分别2.6297/2.5999/2.6203 nats。epoch01检查点已在独立新进程恢复并验证step/exposure/cursor及digest往返，详见[epoch01恢复回执](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch01_20261026.json)。三个seed均已从epoch01 checkpoint进入后续训练，精确cursor见progress账本；单epoch训练损失只证明训练运转，不作能力结论。
+
+
+N175 epoch02已完成：三个seed各288更新、822311 target bytes，mean loss分别2.1047/2.0941/2.0965 nats，CPU分别1406.30/1421.52/1413.27秒。三个epoch02检查点均已独立进程恢复、cursor与optimizer计数校验、重序列化digest一致；见[epoch02恢复回执](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch02_20261026.json)。loss下降只说明teacher-forced拟合在推进，当前无自由生成或留出能力证据。

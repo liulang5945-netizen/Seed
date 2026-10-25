@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import time
 from pathlib import Path
@@ -14,7 +15,10 @@ from taiji.conditional_language_v3 import ConditionalLanguageTrainerV3
 
 SEEDS = (169, 170, 171)
 MIGRATION = ROOT / "reports/taiji_n1_plan175_v3_parent_migration_20261026.json"
-OUTPUT = ROOT / "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch01_20261026.json"
+
+
+def report_path(epoch: int) -> Path:
+    return ROOT / f"reports/taiji_n1_plan175_v3_checkpoint_restore_epoch{epoch:02d}_20261026.json"
 
 
 def verify_seed(seed: int, epoch: int) -> dict:
@@ -57,14 +61,19 @@ def verify_seed(seed: int, epoch: int) -> dict:
 
 
 def main() -> None:
-    if OUTPUT.exists():
-        raise FileExistsError(OUTPUT)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--epoch", type=int, default=1, choices=range(1, 41))
+    args = parser.parse_args()
+    output = report_path(args.epoch)
+    if output.exists():
+        raise FileExistsError(output)
     torch.set_num_threads(1)
     started = time.process_time()
-    results = [verify_seed(seed, 1) for seed in SEEDS]
+    results = [verify_seed(seed, args.epoch) for seed in SEEDS]
     payload = {
         "schema": "taiji-n1-plan175-v3-durable-checkpoint-restore-v1",
-        "status": "all_seed_epoch1_fresh_process_restore_and_roundtrip_passed",
+        "status": f"all_seed_epoch{args.epoch}_restore_and_roundtrip_passed",
+        "epoch": args.epoch,
         "verifier_sha256": digest(Path(__file__)),
         "runner_sha256": digest(ROOT / "scripts/training/run_taiji_n1_plan175_v3_scale.py"),
         "candidate_sha256": digest(ROOT / "taiji/conditional_language_v3.py"),
@@ -74,7 +83,7 @@ def main() -> None:
         "process_cpu_seconds": time.process_time() - started,
         "seeds": results,
     }
-    with OUTPUT.open("x", encoding="utf-8", newline="\n") as stream:
+    with output.open("x", encoding="utf-8", newline="\n") as stream:
         json.dump(payload, stream, ensure_ascii=False, indent=2)
         stream.write("\n")
     print(
