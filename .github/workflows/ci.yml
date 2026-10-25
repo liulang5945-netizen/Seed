@@ -263,7 +263,12 @@ jobs:
         #   是某一版检查器的产物，检查器静默升级（新增检查项）会让阈值凭空失效，
         #   表现为无人改代码而门禁数字自己变（实测 47→63、259→281 即由此产生）。
         #   凡「拿输出数字当阈值」的工具都必须钉版本，否则棘轮基线没有意义。
-        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography numpy "psutil>=5.9.0,<7.0.0" ruff==0.16.4 black==26.5.1 mypy==2.3.1 pip-audit==2.10.1
+        # R11（ADR-S3 §4.3，R-S3 附带项）：junit 的 classname 语义是 pytest 的版本行为，
+        #   split_ci_junit_faces.py 的派生正确性依赖它 ⇒ pytest/pytest-cov 同样必须钉版本。
+        #   钉 CI 实测在跑的版本（run 40203419431 读数）：pytest==9.1.1 / pytest-cov==7.1.0。
+        #   判据语义不变，只是把浮动版本变成固定版本；升级 pytest 前必须在本机先跑
+        #   split_ci_junit_faces 的自校验（ADR §4.3 失败矩阵）。
+        run: pip install sentencepiece pytest==9.1.1 pytest-cov==7.1.0 httpx fastapi python-multipart pydantic anyio cryptography numpy "psutil>=5.9.0,<7.0.0" ruff==0.16.4 black==26.5.1 mypy==2.3.1 pip-audit==2.10.1
 
       - name: Install package (editable)
         run: pip install -e . --no-deps
@@ -464,31 +469,35 @@ jobs:
         # 逻辑见 scripts/training/verify_ci_deselect_list.py（单文件、可本机直接跑）。
         run: python scripts/training/verify_ci_deselect_list.py
 
-      - name: Run native architecture contracts
-        # DSH_CI_DESELECT 见job 级 env 处的完整理由（族 B/C 5 条 CI 上无此物可测）。
-        # 该清单是**全链路共享**的：跑整个 tests/ 的步也必须带上，否则同一批用例在那里会再红一次。
-        run: >-
-          python -m pytest tests/taiji_native -q --tb=short
-          --junitxml=native-report.xml -o junit_logging=all
-          ${{ env.DSH_CI_DESELECT }}
-
-      - name: Run Seed model-boundary contracts
-        run: >-
-          python -m pytest tests/seed -q --tb=short
-          --junitxml=seed-report.xml -o junit_logging=all
-          ${{ env.DSH_CI_DESELECT }}
-
       - name: Run complete regression suite
+        id: pytest-full
         # Legacy real-checkpoint tests skip when local artifacts are absent.
         # coverage.json 供 B-4 核心推理路径门按文件过滤分母用（同一趟插桩，两张面两个读数）。
         # ${{ env.DSH_CI_DESELECT }} **必须带**：本步跑整个 tests/，不带则族 B/C 那 5 条会在这里再红一次
         #（㊵-467 实测：run 37505960489 在本步红了 4 条，而上一步是 0 failed）。
+        # R-S3（ADR-S3 §3.5 C-5）：本腿唯一保留的 pytest 步——step25（native）/step26（seed）
+        # 两趟重复执行已删，两面改由下方 `Derive native/seed junit faces` 从本步的 report.xml
+        # 派生（S3 去重，单腿省 ~25m）。`-o junit_logging=all` 由 step25/26 的口径统一到本步，
+        # 保证派生面的 <system-out> 语义与去重前一致（R5 对照实验同口径）。
+        # ⚠️ R-S1a 之前本步**不加 continue-on-error**（主理人裁定，2026-10-26）：
+        # 保持「失败即红」语义；S6a 落地时与汇总判红 step 同 commit 一起加，
+        # 防 R4（continue-on-error 先行、汇总缺席 ⇒ 真红变绿）。
         run: >-
           python -m pytest tests/ -q --cov
-          --junitxml=report.xml
+          --junitxml=report.xml -o junit_logging=all
           --cov-report=xml:coverage.xml
           --cov-report=json:coverage.json
           ${{ env.DSH_CI_DESELECT }}
+
+      - name: Derive native/seed junit faces
+        id: junit-faces
+        # R-S3（ADR-S3 §3.4 C-4）：native/seed 两面不再是独立 pytest 执行，由本腿唯一一趟
+        # 全量执行的 report.xml 派生。脚本 stdlib only + fail-closed；两级自校验（① collection
+        # failure 形态 ⇒ exit 5 并打印模块清单；② 三面之和守恒 + 两面非空 ⇒ exit 4），
+        # 退出码 2/3/4/5 见 ADR §3.8。派生文件头有 derived-from 注释（不是独立执行面）。
+        # 上传的 artifact 名 native-report.xml / seed-report.xml / report.xml 不变。
+        # ⚠️ 本步同样在 R-S1a 之前不加 continue-on-error（理由同上）。
+        run: python scripts/training/split_ci_junit_faces.py --source report.xml --native native-report.xml --seed seed-report.xml --repo-root .
 
       # B-4（审计 2026-08-23 §7-16"核心推理路径覆盖率 ≥60%"）：本步按声明面（brain + resonance 的
       # ensemble/continuous/field + layers）过滤后单独判；面内文件缺席报告直接判红
@@ -787,7 +796,11 @@ jobs:
         # H19x (2026-10-21): the Windows full-suite leg uses `pip install -e . --no-deps`,
         # but collected N1 training runners import psutil directly. Without an explicit
         # install, 141 test modules failed collection with ModuleNotFoundError: psutil.
-        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography numpy "psutil>=5.9.0,<7.0.0" black==26.5.1
+        # R11 (ADR-S3 §4.3): pin pytest/pytest-cov to the versions CI actually ran
+        # (run 40203419431) — junit classname semantics are pytest version behaviour and
+        # the deselect guard's node-id parsing depends on them. Judgement semantics
+        # unchanged; floating → fixed only. See the Ubuntu leg's Install step for context.
+        run: pip install sentencepiece pytest==9.1.1 pytest-cov==7.1.0 httpx fastapi python-multipart pydantic anyio cryptography numpy "psutil>=5.9.0,<7.0.0" black==26.5.1
 
       - name: Install package (editable)
         run: pip install -e . --no-deps
