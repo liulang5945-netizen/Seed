@@ -914,14 +914,36 @@ jobs:
           set -o pipefail
           probe="$RUNNER_TEMP/crlf-probe"
           rm -rf "$probe"
-          git config --global core.autocrlf true
-          git clone --quiet . "$probe"
-          git config --global core.autocrlf false
+          # R-P2（审读返工，ADR-S6 附录 B）：不再三段改写 runner 全局 git 配置——
+          # `git clone -c` 把 core.autocrlf=true 写进**新克隆仓库**的 config，
+          # 渲染转换发生在 clone 过程内，runner 全局态零污染。
+          git -c core.autocrlf=true clone --quiet . "$probe"
           cd "$probe"
           python -m pytest tests/ --co -q -p no:cacheprovider --continue-on-collection-errors 2>&1 | tee crlf_collect.log
+          # R-P1（审读返工，fail-closed）：`set -o pipefail` 只改管道返回值，本脚本无
+          # `set -e`，若不显式取 PIPESTATUS[0]，pytest 以「无 ERROR collecting 行」的
+          # 方式非零退出（usage error=4 / internal=3 / no-tests=5 / 崩溃）时 count=0
+          # 会被静默判绿——探针自身故障静默失效正是 S6 要根治的家族，不许在探针
+          # 体内复发。rc≠0 且 count=0 ⇒ 探针故障判红，并落日志尾段供归因。
+          rc=${PIPESTATUS[0]}
           failed_modules=$(grep -oE "ERROR collecting [^ ]+" crlf_collect.log | sort -u || true)
           count=$(printf '%s' "$failed_modules" | grep -c "ERROR collecting" || true)
-          echo "CRLF probe: $count module(s) failed to collect"
+          echo "CRLF probe: pytest rc=$rc, $count module(s) failed to collect"
+          if [ "$rc" -ne 0 ] && [ "$count" -eq 0 ]; then
+            {
+              echo "### CRLF collection probe — probe failure (NOT a clean pass)"
+              echo ""
+              echo "pytest exited rc=$rc with zero collection errors: probe/runner failure"
+              echo "(usage error=4, internal error=3, no-tests=5, or crash). Fail-closed red."
+              echo ""
+              echo "last 40 lines of crlf_collect.log:"
+              echo '```'
+              tail -n 40 crlf_collect.log
+              echo '```'
+            } | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "::error::CRLF 探针自身故障：pytest rc=$rc 且 0 条 collection error——fail-closed 判红"
+            exit 1
+          fi
           if [ "$count" -gt 0 ]; then
             {
               echo "### CRLF collection probe — $count module(s) failed under autocrlf=true checkout"
