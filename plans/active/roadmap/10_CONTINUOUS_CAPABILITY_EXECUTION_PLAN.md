@@ -1,7 +1,7 @@
 # 态极持续能力执行与主线接力计划
 
 
-> **2026-10-26 N175执行状态**：V3工程、数据合同与盲评方案已冻结，三个N1-174 TF父模型已迁移。正式三seed均完成epoch 1–2，durable checkpoints均经新进程恢复/digest往返验证（[epoch01](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch01_20261026.json)、[epoch02](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch02_20261026.json)）。epoch02训练loss约2.094–2.105 nats，仍仅teacher-forced训练侧信号；目前继续进入epoch03，留出正文未读。固定数据1148题/517family、40epoch×3seed、每seed CPU保护30万/总计90万。训练完成后读取64个family并按R/S门盲评；进度细项以seed progress账本为准。
+> **2026-10-26 N175执行状态**：V3工程、数据合同与盲评方案已冻结。三个N174 TF父模型完成迁移；seed169/170/171正式训练均完成epoch 1–3，每轮checkpoint均落盘，epoch01/02/03均通过新进程恢复、游标/optimizer计数和digest往返验证（[epoch01](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch01_20261026.json)、[epoch02](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch02_20261026.json)、[epoch03](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch03_20261026.json)）。epoch03 loss约1.982–1.989 nats，仅teacher-forced训练读数；三seed已进入epoch04，留出正文未读。固定语料1148题/517family、40epoch×3seed、每seed CPU保护30万/总计90万；训练完成后读取64个family并按R/S门盲评。
 
 
 > **2026-10-25 N1-175元数据审计更新（覆盖本页旧规模预估，旧实验合同及结果保留）**：冻结源5073条中文标签回复只对应1959个用户parent；排除旧非train的121个root-family后，剩4165条回复、1612个用户parent、595个family，其中rank=0仅1393条。尚未做正文质量/语义去重、未选新留出、未训练。原“≥2000、优先5000对”和3–8万CPU均为审计前预估，不能直接视为已具备的数据规模或执行合同。当前执行队首为**修订N1-175数据合同**：明确优选答案/多参考政策，以独立提问覆盖和可靠目标为先，按实际合格规模冻结root-family隔离与前瞻语义判读；不靠同问低排名回复凑量，也不把名义数量变成无限等待的硬门。原前缀指标保留作机制读数，不独自定义自然语言成功。此轮不改N174判据，不把单seed训练复现推广成稳定能力，也不把本剂量ss较差推广成机制普遍无效。见[元数据审计与后续约束](../../reference/PLAN-N1-175_metadata_feasibility_audit_20261025.md)。
