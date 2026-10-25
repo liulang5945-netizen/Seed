@@ -1,6 +1,6 @@
 # CC-1 之后的评价工程恢复合同 v1
 
-日期：2026-10-25，Asia/Shanghai。状态：**恢复入口已实现、真实无模型握手与合成通过；正式恢复协议待一次裁决，未启动新消费**。本合同承接[03](../../../../active/roadmap/03_CURRENT_EXECUTION.md)的唯一队首，只为取得已训端点的真实配对表现；不训练、不换模型、不补发能力通过。原CC-1的CLOSED_FAILURE及已消费资格不改。
+日期：2026-10-25，Asia/Shanghai。状态：**恢复入口已实现、真实无模型握手与合成通过；正式恢复协议已获用户一次批准，待预检后执行**。本合同承接[03](../../../../active/roadmap/03_CURRENT_EXECUTION.md)的唯一队首，只为取得已训端点的真实配对表现；不训练、不换模型、不补发能力通过。原CC-1的CLOSED_FAILURE及已消费资格不改。
 
 ## 1. 本次已完成的工程证据
 
@@ -58,7 +58,7 @@
 1. 用明确的恢复协议ID绑定本合同、旧attempt/failure/ledger SHA与新的source快照；授权字段区分“旧失败保留”“一次新的恢复资格”，不能仅把旧输出prefix改名。
 2. 新parent/worker显式共用恢复provider与path，已修正旧worker回查旧path的缺口；未修改冻结evaluator或全局monkeypatch。
 3. 用新budget_factory约束正式阶段10500 CPU/13000 wall，保留冻结的单任务上界和完整reserve，历史/准备分配单列计入原14400总账；合成检查包括旧attempt已消费但恢复授权缺失、source漂移、超预算、重复恢复、parent/worker snapshot不同、无四端receipt读题等合成拒绝检查。
-4. `python -m scripts.training.evaluate_taiji_r2_engineering_recovery_v1 --validate-only`及`--execute`均先检查一份机器合同的明确恢复授权；当前授权字段为false，实际CLI必须在metadata/model/selector之前拒绝。一次协议裁决通过后，先validate-only冻结完整快照，再execute一次；执行仍先四端点恢复和receipt，再读selector/生成，最后固定判读。
+4. `python -m scripts.training.evaluate_taiji_r2_engineering_recovery_v1 --validate-only`及`--execute`均先检查一份机器合同的明确恢复授权；用户已明确批准本合同，授权字段随本次批准启用；先validate-only冻结完整快照，再execute一次；执行仍先四端点恢复和receipt，再读selector/生成，最后固定判读。
 
 机器合同为`reports/taiji_r2_evaluation_recovery_v1_contract_20261025.json`，固定旧失败SHA、四端点SHA、新source closure、分母、历史/准备预留及正式阶段额度；`authorizes_new_attempt/same_dev_face_reuse_approved/historical_tail_reserve_accepted`是一项协议裁决的三个记录，不是三轮审批。源码/端点/账本有漂移就拒绝，不静默重算snapshot。
 
@@ -70,4 +70,4 @@
 
 ## 给下游
 
-唯一下一步：一次裁决本合同的恢复资格、原开发面复用及同账方案；工程入口和合成已完成，不再以逐文件批准作为前置。需要此裁决是因为旧03合同明确attempt即消费、失败不重试，新的正式查询会改变该一次性协议；当前“下一步”的可逆准备不被当作静默重开旧资格。批准后只开启本版本一次，按§6有限结案。当前探针通过不是正式评价授权或能力通过。
+用户已回复“批准合同v1，启动一次恢复评价（推荐）”，一次接受恢复资格、原开发面复用及同账方案。唯一下一步：预检通过后按本版本执行一次，固定156输出/48回答；工程入口和合成已完成，不再重复确认。需要此裁决是因为旧03合同明确attempt即消费、失败不重试，新的正式查询会改变该一次性协议；当前“下一步”的可逆准备不被当作静默重开旧资格。本次批准只开启本版本一次，按§6有限结案；不代表能力通过。

@@ -1,10 +1,10 @@
 {
   "schema": "taiji-r2-evaluation-engineering-recovery-contract-v1",
   "recovery_id": "taiji-r2-evaluation-engineering-recovery-v1-20261025",
-  "status": "decision_pending",
-  "authorizes_new_attempt": false,
-  "same_dev_face_reuse_approved": false,
-  "historical_tail_reserve_accepted": false,
+  "status": "approved_once",
+  "authorizes_new_attempt": true,
+  "same_dev_face_reuse_approved": true,
+  "historical_tail_reserve_accepted": true,
   "old_attempt_consumed": true,
   "preserve_old_failure": true,
   "old_attempt_id": "abffec0c23f5274b382a06ce45f47197688d061440e0080e",
@@ -50,11 +50,14 @@
     "tests/taiji_native/test_r2_continuation_evaluation_adapter_contract.py": "b0649abfc278c66168ea345322d266c875e173fb641a974625bd60dfaa68a2f0",
     "tests/taiji_native/test_r2_daily_dialogue_recovery_v2_evaluation_contract.py": "f644ec8f8e28c0a861bf2601bdf4f9b9c94ecbdf85eda6bfccdd792626898a19",
     "scripts/training/check_taiji_r2_evaluation_recovery.py": "941a52511d8a79f74662fc63e00599f188a365f0dcf4ed56e60a6828128b0bb6",
-    "scripts/training/taiji_r2_evaluation_recovery_v1.py": "62ffb7f89c15673e00029d35fb5a74542c447eb4a5879bca8bc1b8a16cba2631",
+    "scripts/training/taiji_r2_evaluation_recovery_v1.py": "1c71499ea8a47b078d88b65b346a6c2765c81678feb5a33e5035e991b266ad2c",
     "scripts/training/evaluate_taiji_r2_engineering_recovery_v1.py": "36679df849e58cc0ebe33e733199b890b08556de59f394c4ead12d90d4b49076",
     "tests/taiji_native/test_r2_evaluation_recovery_preparation.py": "d6ec3d500bd453862be8b94fd9fc2576e2cf27babe9ff7475f3f28ef9d284513",
     "tests/taiji_native/test_r2_engineering_recovery_entry_contract.py": "f8f4d93b0a7197e929fb2b315ce80050310c9678a5c4d16e8c6029be3137d454",
-    "plans/reference/delivery-runs/20261021-n-mainline/artifacts/04-evaluation-engineering-recovery-v1.md": "e86168092d3c656fcb0253138a4ba5c246107c0f864ca7991dcdf75a4776a308"
+    "plans/reference/delivery-runs/20261021-n-mainline/artifacts/04-evaluation-engineering-recovery-v1.md": "51219397447290a81ca769cbb9219808186fcdb89cf9022a118ee499e57572c4"
   },
-  "can_promote": false
+  "can_promote": false,
+  "approved_at_utc": "2026-10-25T04:09:24Z",
+  "approval_source": "human user reply",
+  "approval_quote": "批准合同v1，启动一次恢复评价（推荐）"
 }

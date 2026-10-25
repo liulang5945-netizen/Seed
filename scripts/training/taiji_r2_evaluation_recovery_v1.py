@@ -35,7 +35,7 @@ def paths() -> dict[str, Path]:
             ("generations", "generations", "json"),
             ("result", "result", "json"),
             ("cost_receipt", "cost_receipt", "json"),
-            ("review", "review", "json"),
+            ("review", "review", "md"),
             ("failure", "failure", "json"),
             ("endpoint_manifest", "endpoints", "json"),
         )
