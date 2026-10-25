@@ -790,7 +790,7 @@ def effective_budget_limits() -> tuple[float, float]:
         or not _HEX_256_RE.fullmatch(review_sha)
         or not review_path.is_file()
         or review_path.is_symlink()
-        or _sha256_file(review_path) != review_sha
+        or not seal_ast.rendering_tolerant_match(review_sha, review_path.read_bytes())
     ):
         raise ExtensionLedgerRefuse("v1.2 source revision review report binding differs")
     _ACTIVE_BUDGET_REVISION_SHA256[revision_key] = revision_sha256
