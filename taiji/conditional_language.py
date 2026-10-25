@@ -11,7 +11,7 @@ import math
 from collections.abc import Sequence
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import torch
 from torch import nn
@@ -202,7 +202,8 @@ class ConditionalLanguageTrainer:
             raise ValueError("update requires a declared nonempty batch")
         self.optimizer.zero_grad(set_to_none=True)
         byte_count = sum(len(target) for _, target in examples)
-        loss = (
+        loss = cast(
+            torch.Tensor,
             sum(
                 F.cross_entropy(
                     self.model.teacher_forced(prompt, target),
@@ -211,10 +212,10 @@ class ConditionalLanguageTrainer:
                 )
                 for prompt, target in examples
             )
-            / byte_count
+            / byte_count,
         )
         loss.backward()
-        gradients = {}
+        gradients: dict[str, float] = {}
         for name, parameter in self.model.named_parameters():
             group = (
                 ".".join(name.split(".")[:2]) if name.startswith("core.") else name.split(".")[0]
