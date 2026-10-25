@@ -3,10 +3,20 @@
 import hashlib
 import json
 import os
+import sys
 from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+
+# 被测 runner 在导入期绑定 Windows 本地 NTFS 持久化 API（DURABILITY_UNSUPPORTED
+# 在非 Windows 上抛出，run 40166946185 Ubuntu 腿收集即炸）——与 v4 快速续跑契约
+# 同一处置：非 Windows 整模块跳过，不改 runner（训练在飞源绑定面）。
+if sys.platform != "win32":
+    pytest.skip(
+        "worker runner binds the Windows NTFS durability API at import time",
+        allow_module_level=True,
+    )
 
 from scripts.training import (
     evaluate_taiji_r2_daily_dialogue_continuation_extension_worker_v1 as worker,

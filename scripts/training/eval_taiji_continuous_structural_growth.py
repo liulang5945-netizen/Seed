@@ -150,7 +150,15 @@ def _extend_online_feedbacks(
             }
         )
         if admission.status != "applied":
-            raise AssertionError(f"second-cycle online feedback was not admitted: {family}")
+            # 诊断 instrumentation（2026-10-25）：方案乙 isclose 容差后 Ubuntu 仍稳定
+            # 拒第二个 feedback（online-de-next），断言原样只报族名不报拒绝原因——
+            # 带上 reason 与三阈值读数，下轮 CI 直接定位真实翻转门与量级。
+            raise AssertionError(
+                f"second-cycle online feedback was not admitted: {family} "
+                f"(reason={admission.reason}, realized_interaction="
+                f"{feedback.realized_interaction!r}, uncertainty={feedback.uncertainty!r}, "
+                f"resource_cost={feedback.resource_cost!r})"
+            )
     return controller, tuple(all_feedbacks), tuple(all_rounds)
 
 

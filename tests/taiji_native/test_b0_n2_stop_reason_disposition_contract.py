@@ -40,7 +40,8 @@ def test_current_review_surface_is_complete(audit, report):
     # 逐条理由写在 EXPECTED_CONSUMERS / SCAN_EXCLUSIONS 里。**没有放宽任何东西**：
     # 本断言仍是"冻结名单必须与活扫描逐路径相等"，且 test_live_drift_is_a_failing_audit 仍会红。
     # 2026-10-23 补登记 72 个旧 N1/产品消费者（13 record_only + 59 judgement），
-    # 8 个 R2/新前线消费者单列在 PENDING_FRONTIER_CONSUMERS，由该线逐项复核。
+    # R2/新前线消费者单列在 PENDING_FRONTIER_CONSUMERS 由该线逐项复核
+    # （2026-10-23 起 9 个，2026-10-25 增 worker namespace 集成测试后 10 个）。
     expected |= set(audit.PENDING_FRONTIER_CONSUMERS)
     assert len(audit.EXPECTED_CONSUMERS) == 94
     assert audit.live_consumers() == expected
@@ -68,7 +69,7 @@ def test_historical_inventory_is_not_rewritten(report):
         (REPO / "reports/taiji_b0_m4_hardening_20260913.json").read_text(encoding="utf-8")
     )
     assert historic["stop_reason_consumers"]["file_count"] == 11
-    assert report["consumer_count_now"] == 103
+    assert report["consumer_count_now"] == 104
     assert len(report["added_since_hardening_report"]) == 11
 
 

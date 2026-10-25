@@ -1,1 +1,665 @@
-{"added_since_hardening_report":["scripts/training/probe_taiji_b0_structure_space.py","tests/taiji_native/test_b0_m4_hardening_contract.py","tests/taiji_native/test_b0_structure_space_contract.py","tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py","tests/taiji_native/test_b0_rule_revision_seal_contract.py","tests/taiji_native/test_b0_m1_counterfactual_contract.py","scripts/training/eval_taiji_b0_b2v4_collaboration_gate.py","scripts/training/audit_taiji_r2_h3_7_attribution.py","scripts/training/run_taiji_collab_handoff_entry_evidence.py","scripts/training/run_taiji_unified_entry_evidence.py","taiji/collab_handoff.py"],"classification_counts":{"judgement_or_mixed_files":71,"record_only_files":23},"conclusion":"the reviewed sites record reasons, compare replicas, count interception prefixes/substrings, or assert historical reports. all_members_blocked is not a success label and by itself proves neither safety nor member incapability. The N2 semantics are frozen in the WP-2 preregistration; runtime changes still require WP-3's five exits","consumer_count":103,"consumer_count_in_hardening_report":11,"consumer_count_now":103,"consumers":[{"class":"record_only","path":"scripts/training/audit_taiji_b0_m4_artifact.py","why":"writes stop_reason into the audit payload and aggregates it; no comparison"},{"class":"record_only + prefix_judgement","path":"scripts/training/audit_taiji_b0_m4_hardening.py","why":"aggregates per variant; its was_contract_intercepted() keys on the contract_intercepted prefix, which the new reason does not carry"},{"class":"record_only","path":"scripts/training/audit_taiji_b0_measurement_reachability.py","why":"reads the frozen route-A report field block3_audit.stop_reason_classes; it does not scan a live tree"},{"class":"judgement (replica equality + interception prefix)","path":"scripts/training/eval_taiji_p5_2a_predictive_execution_gate.py","why":"see J1 and J2 below"},{"class":"judgement (replica equality)","path":"scripts/training/eval_taiji_p5_2b_group_causal_corpora_gate.py","why":"see J3 below; it is also the only file M4 actually edits"},{"class":"record_only","path":"scripts/training/eval_taiji_p5_2c_double_prime_unseen_combination_transfer_gate.py","why":"aggregates by reason.split(':')[0] into the report; no comparison"},{"class":"record_only","path":"scripts/training/eval_taiji_p5_2c_prime_unseen_combination_transfer_gate.py","why":"same class aggregation as the other P5.2c gates"},{"class":"record_only","path":"scripts/training/eval_taiji_p5_2c_triple_prime_representation_repair_gate.py","why":"same class aggregation as the other P5.2c gates"},{"class":"record_only","path":"scripts/training/eval_taiji_p5_2c_unseen_combination_transfer_gate.py","why":"same class aggregation as the other P5.2c gates"},{"class":"record_only","path":"scripts/training/probe_taiji_b0_m1_counterfactual.py","why":"the counterfactual itself: produces and aggregates stop reasons"},{"added_after_hardening_report":"yes","class":"record_only","path":"scripts/training/probe_taiji_b0_structure_space.py","why":"N1 probe: aggregates frozen/audited reason counters per cell"},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_b0_m4_artifact_audit_contract.py","why":"see J4 below"},{"added_after_hardening_report":"yes","class":"judgement (test assertion)","path":"tests/taiji_native/test_b0_m4_hardening_contract.py","why":"see J4 below"},{"added_after_hardening_report":"yes","class":"judgement (test assertion)","path":"tests/taiji_native/test_b0_structure_space_contract.py","why":"see J4 below"},{"added_after_hardening_report":"yes","class":"judgement (test assertion)","path":"tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py","why":"see J8 below: asserts the frozen N2 semantics against archived reports"},{"added_after_hardening_report":"yes","class":"judgement (test assertion)","path":"tests/taiji_native/test_b0_rule_revision_seal_contract.py","why":"see J9 below: pins the rule_revision=0 evidence seal and the shipped rule"},{"added_after_hardening_report":"yes","class":"judgement (test assertion)","path":"tests/taiji_native/test_b0_m1_counterfactual_contract.py","why":"see J10 below: compares stop_reasons between the sealed and the landed reports"},{"added_after_hardening_report":"yes","class":"record_only","path":"scripts/training/eval_taiji_b0_b2v4_collaboration_gate.py","why":"aggregates per-face episode stop-reason counts via _stop_reason_counts; it records frequencies and makes no safety or capability judgement"},{"added_after_hardening_report":"yes","class":"judgement (assertion on aggregate stop reasons)","path":"scripts/training/audit_taiji_r2_h3_7_attribution.py","why":"asserts the frozen aggregate reason appears in the R2 decision; see the H3.7 attribution ledger"},{"added_after_hardening_report":"yes","class":"judgement (membership on both reason names)","path":"scripts/training/run_taiji_collab_handoff_entry_evidence.py","why":"its evidence booleans key on membership of BOTH the frozen and the new name (all_members_blocked_demonstrated / all_members_exhausted_demonstrated) plus an equality against goal_reached; see J11 below"},{"added_after_hardening_report":"yes","class":"judgement (writes the rule's reason literals itself)","path":"scripts/training/run_taiji_unified_entry_evidence.py","why":"a hand-rolled replica of the loop: it emits goal_reached / all_members_exhausted / contract_intercepted:<code> / approval_rejected / step_cap as literals. See J12 below."},{"added_after_hardening_report":"yes","class":"record_only","path":"taiji/collab_handoff.py","why":"the rule-side producer for the handoff episode: it copies `decision.stop` verbatim into the episode payload and events; its only comparison on the value is `is None` (the step_cap fallback), which no new reason can satisfy by accident"},{"class":"judgement (boundary)","path":"scripts/training/_taiji_n1_plan118_lossless_receipt.py","why":"2026-10-23 live scan: and row[\"stop_reason\"] == \"boundary\""},{"class":"judgement (boundary)","path":"scripts/training/_taiji_n1_plan120_lossless_receipt.py","why":"2026-10-23 live scan: and row[\"stop_reason\"] == \"boundary\""},{"class":"judgement (boundary)","path":"scripts/training/_taiji_n1_transition_factorial_training_receipt.py","why":"2026-10-23 live scan: and row[\"stop_reason\"] == \"boundary\""},{"class":"judgement (boundary)","path":"scripts/training/analyze_taiji_n1_plan161_question_surface_itemwise_attribution.py","why":"2026-10-23 live scan: if raw == target and row.get(\"stop_reason\") == \"boundary\":"},{"class":"record_only","path":"scripts/training/analyze_taiji_n1_plan162b_train_only_itemwise_attribution.py","why":"2026-10-23 live scan: \"control_stop_reason\": control.get(\"stop_reason\"),"},{"class":"judgement (boundary)","path":"scripts/training/analyze_taiji_n1_plan162d_transition_output_type_attribution.py","why":"2026-10-23 live scan: return \"correct_exact\" if stop_reason == \"boundary\" else \"target_bytes_bad_stop\""},{"class":"record_only","path":"scripts/training/analyze_taiji_n1_position_weight_history_crossover_session_scope.py","why":"2026-10-23 live scan: \"stop_reason\","},{"class":"judgement (boundary)","path":"scripts/training/analyze_taiji_n1_transition_operator_error_attribution.py","why":"2026-10-23 live scan: return \"correct\" if row.get(\"stop_reason\") == \"boundary\" else \"expected_text_non_boundary\""},{"class":"judgement (boundary)","path":"scripts/training/attribute_taiji_n1_confirmation_errors_run89.py","why":"2026-10-23 live scan: row[\"stop_reason\"] == \"boundary\""},{"class":"judgement (raw+stop identity)","path":"scripts/training/audit_taiji_n1_entity_binding.py","why":"2026-10-23 live scan: for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\")"},{"class":"judgement (branch/comparison)","path":"scripts/training/audit_taiji_n1_fidelity_content_read.py","why":"2026-10-23 live scan: if (prediction[\"raw_hex\"], prediction[\"stop_reason\"]) != ("},{"class":"judgement (branch/comparison)","path":"scripts/training/audit_taiji_n1_iterative_content_read.py","why":"2026-10-23 live scan: if (prediction[\"raw_hex\"], prediction[\"stop_reason\"]) != ("},{"class":"judgement (boundary)","path":"scripts/training/audit_taiji_n1_native_evidence_train_fit.py","why":"2026-10-23 live scan: \"free_exact\": trace.raw == target and trace.stop_reason == \"boundary\","},{"class":"record_only","path":"scripts/training/audit_taiji_n1_plan162f_transcript_integrity.py","why":"2026-10-23 live scan: str(row[\"stop_reason\"]),"},{"class":"judgement (raw+stop identity)","path":"scripts/training/audit_taiji_n1_question_fusion.py","why":"2026-10-23 live scan: all(row[k] == old[k] for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\"))"},{"class":"judgement (branch/comparison)","path":"scripts/training/audit_taiji_n1_relation_seed_drift.py","why":"2026-10-23 live scan: stop_reasons=dict(Counter(r[\"stop_reason\"] for r in subset)),"},{"class":"judgement (boundary)","path":"scripts/training/audit_taiji_n1_train_content_read.py","why":"2026-10-23 live scan: \"exact\": trace.raw == item[\"answer\"].encode() and trace.stop_reason == \"boundary\","},{"class":"judgement (raw+stop identity)","path":"scripts/training/audit_taiji_n1_transfer_binding.py","why":"2026-10-23 live scan: for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\")"},{"class":"record_only","path":"scripts/training/build_taiji_n1_v15_after_n132.py","why":"2026-10-23 live scan: \"prior_stop_reasons_zh\": ["},{"class":"record_only","path":"scripts/training/diagnose_taiji_n1_fresh_training_logs.py","why":"2026-10-23 live scan: confusion[f\"{item['answer']}->{label}/{row['stop_reason']}\"] += 1"},{"class":"record_only","path":"scripts/training/diagnose_taiji_n1_fresh_transition_factorial.py","why":"2026-10-23 live scan: \"stop_reason\","},{"class":"record_only","path":"scripts/training/diagnose_taiji_n1_position_weight_history_crossover.py","why":"2026-10-23 live scan: \"stop_reason\","},{"class":"judgement (boundary)","path":"scripts/training/eval_taiji_n1_fresh_frozen_confirmation.py","why":"2026-10-23 live scan: free_exact=trace.raw == target and trace.stop_reason == \"boundary\","},{"class":"judgement (boundary)","path":"scripts/training/eval_taiji_n1_frozen_v4_confirmation.py","why":"2026-10-23 live scan: free_exact=trace.raw == target and trace.stop_reason == \"boundary\","},{"class":"judgement (boundary)","path":"scripts/training/eval_taiji_n1_input_factorial_diagnostic.py","why":"2026-10-23 live scan: \"free_exact\": trace.raw == target and trace.stop_reason == \"boundary\","},{"class":"judgement (boundary)","path":"scripts/training/eval_taiji_n1_transition_factorial_confirmation.py","why":"2026-10-23 live scan: free_exact=trace.raw == target and trace.stop_reason == \"boundary\","},{"class":"judgement (boundary)","path":"scripts/training/eval_taiji_n1_v13_v14_full_context_question_binding_mask.py","why":"2026-10-23 live scan: free_exact=trace.raw == target and trace.stop_reason == \"boundary\","},{"class":"judgement (boundary)","path":"scripts/training/eval_taiji_n1_v13_v14_full_context_source_mask.py","why":"2026-10-23 live scan: audit[\"boundary_native\"] = trace.stop_reason == \"boundary\""},{"class":"record_only","path":"scripts/training/eval_taiji_n1_v17_matched_context_length.py","why":"2026-10-23 live scan: \"stop_reason\": row[\"stop_reason\"],"},{"class":"record_only","path":"scripts/training/eval_taiji_n1_v18_target_position_context_order.py","why":"2026-10-23 live scan: \"stop_reason\": row[\"stop_reason\"],"},{"class":"record_only","path":"scripts/training/eval_taiji_n1_v19_neighbor_distance_context_interference.py","why":"2026-10-23 live scan: \"stop_reason\": row[\"stop_reason\"],"},{"class":"record_only","path":"scripts/training/eval_taiji_n1_v20_neighbor_distance_dose_curve.py","why":"2026-10-23 live scan: \"stop_reason\": row[\"stop_reason\"],"},{"class":"judgement (boundary)","path":"scripts/training/eval_taiji_n1_v25_abstention_after_n147.py","why":"2026-10-23 live scan: \"free_exact\": trace.raw == target and trace.stop_reason == \"boundary\","},{"class":"judgement (boundary)","path":"scripts/training/eval_taiji_n1_v26_abstention_length_after_n148.py","why":"2026-10-23 live scan: \"free_exact\": trace.raw == target and trace.stop_reason == \"boundary\","},{"class":"judgement (raw+stop identity)","path":"scripts/training/run_taiji_n1_address_consistency.py","why":"2026-10-23 live scan: all(r[k] == old[r[\"id\"]][k] for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\"))"},{"class":"judgement (raw+stop identity)","path":"scripts/training/run_taiji_n1_bound_consistency.py","why":"2026-10-23 live scan: all(r[k] == old[r[\"id\"]][k] for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\"))"},{"class":"judgement (raw+stop identity)","path":"scripts/training/run_taiji_n1_contextual_question.py","why":"2026-10-23 live scan: all(r[k] == old[r[\"id\"]][k] for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\"))"},{"class":"judgement (raw+stop identity)","path":"scripts/training/run_taiji_n1_local_question.py","why":"2026-10-23 live scan: all(r[k] == old[r[\"id\"]][k] for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\"))"},{"class":"judgement (raw+stop identity)","path":"scripts/training/run_taiji_n1_local_relation.py","why":"2026-10-23 live scan: all(r[k] == old[r[\"id\"]][k] for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\"))"},{"class":"judgement (boundary)","path":"scripts/training/run_taiji_n1_native_evidence_paired.py","why":"2026-10-23 live scan: \"exact\": trace.raw == item[\"answer\"].encode() and trace.stop_reason == \"boundary\","},{"class":"judgement (boundary)","path":"scripts/training/run_taiji_n1_plan153_v28_fresh_context_length_confirmation.py","why":"2026-10-23 live scan: \"free_exact\": trace.raw == target and trace.stop_reason == \"boundary\","},{"class":"judgement (boundary)","path":"scripts/training/run_taiji_n1_plan155_short_unknown_context_length_training.py","why":"2026-10-23 live scan: \"free_exact\": trace.raw == target and trace.stop_reason == \"boundary\","},{"class":"record_only","path":"scripts/training/run_taiji_n1_plan162f_transition_template_crossover_diagnostic.py","why":"2026-10-23 live scan: \"stop_reason\": row[\"stop_reason\"],"},{"class":"judgement (raw+stop identity)","path":"scripts/training/run_taiji_n1_reader_transfer.py","why":"2026-10-23 live scan: all(r[k] == old[r[\"id\"]][k] for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\"))"},{"class":"judgement (boundary)","path":"scripts/training/run_taiji_n1_relative_continuation.py","why":"2026-10-23 live scan: \"free_exact\": trace.raw == target and trace.stop_reason == \"boundary\","},{"class":"judgement (raw+stop identity)","path":"scripts/training/run_taiji_n1_relative_margin.py","why":"2026-10-23 live scan: all(r[k] == old[r[\"id\"]][k] for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\"))"},{"class":"judgement (boundary)","path":"scripts/training/run_taiji_n1_relative_paired.py","why":"2026-10-23 live scan: \"free_exact\": trace.raw == target and trace.stop_reason == \"boundary\","},{"class":"judgement (raw+stop identity)","path":"scripts/training/run_taiji_n1_renaming.py","why":"2026-10-23 live scan: all(r[k] == old[r[\"id\"]][k] for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\"))"},{"class":"judgement (boundary)","path":"scripts/training/run_taiji_n1_v27_length_robust_training_after_n149.py","why":"2026-10-23 live scan: \"free_exact\": trace.raw == target and trace.stop_reason == \"boundary\","},{"class":"record_only","path":"taiji/position_evidence_reference.py","why":"2026-10-23 live scan: stop_reason: str"},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_n1_plan135_matched_context_length_contract.py","why":"2026-10-23 live scan: \"stop_reason\": \"boundary\" if exact else \"limit\","},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_n1_plan136_target_position_context_order_contract.py","why":"2026-10-23 live scan: \"stop_reason\": \"boundary\" if exact else \"limit\","},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_n1_plan137_neighbor_distance_context_interference_contract.py","why":"2026-10-23 live scan: \"stop_reason\": \"boundary\" if exact else \"limit\","},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_n1_plan138_neighbor_distance_dose_curve_contract.py","why":"2026-10-23 live scan: \"stop_reason\": \"boundary\" if exact else \"limit\","},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_n1_plan148_v25_abstention_scorer_contract.py","why":"2026-10-23 live scan: output=b\"abcdef\", raw=b\"abcdef\", stop_reason=\"boundary\", generated_steps=7"},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_n1_plan161_question_surface_itemwise_attribution_contract.py","why":"2026-10-23 live scan: row = {\"raw_hex\": b\"oldval\".hex(), \"stop_reason\": \"boundary\", \"context_length\": 8}"},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_n1_plan162b_train_only_itemwise_attribution_contract.py","why":"2026-10-23 live scan: \"stop_reason\": \"boundary\","},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_n1_plan162f1_transcript_integrity_contract.py","why":"2026-10-23 live scan: \"stop_reason\": \"boundary\","},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_n1_plan162f_transition_template_crossover_contract.py","why":"2026-10-23 live scan: \"stop_reason\": \"boundary\","},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_n1_run91_error_attribution_contract.py","why":"2026-10-23 live scan: assert shape_of(stop_reason=\"cap\", generated_steps=64, free_exact=False) == ("},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_native_fresh_frozen_confirmation_contract.py","why":"2026-10-23 live scan: and measured[0][\"stop_reason\"] == \"boundary\""},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_native_fresh_training_log_diagnostic_contract.py","why":"2026-10-23 live scan: stop_reason=\"boundary\" if free else \"cap\","},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_native_fresh_transition_factorial_contract.py","why":"2026-10-23 live scan: stop_reason=\"boundary\","},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_native_frozen_v4_confirmation_contract.py","why":"2026-10-23 live scan: and measured[0][\"stop_reason\"] == \"boundary\""},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_native_iterative_evidence_contract.py","why":"2026-10-23 live scan: assert trace.raw == b\"\" and trace.stop_reason == \"boundary\""},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_native_question_fusion_contract.py","why":"2026-10-23 live scan: row = dict(raw_hex=\"61\", stop_reason=\"boundary\", teacher_tokens_correct=2, teacher_ce=0.5)"},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_native_relation_seed_drift_contract.py","why":"2026-10-23 live scan: stop_reason=\"boundary\","},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_native_transition_factorial_calibration_contract.py","why":"2026-10-23 live scan: stop_reason=\"boundary\","},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_native_transition_factorial_confirmation_contract.py","why":"2026-10-23 live scan: and measured[0][\"stop_reason\"] == \"boundary\""},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_native_transition_factorial_paired_training_contract.py","why":"2026-10-23 live scan: stop_reason=\"boundary\","},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_native_transition_factorial_training_receipt_contract.py","why":"2026-10-23 live scan: stop_reason=\"boundary\","},{"class":"judgement (test assertion)","path":"tests/taiji_native/test_position_evidence_reference_contract.py","why":"2026-10-23 live scan: assert trace.stop_reason == \"boundary\" and trace.generated_steps == 1"}],"count_was_stale":true,"does_not_decide_n2":"the N2 semantics are frozen in plans/reference/M5_B0_N2_STOP_REASON_PREREGISTRATION_FROZEN_20260915.md; this scan only verifies that the consumer inventory and the judgement-site markers behind it are still complete and undisplaced","drift":{"added":[],"clean":true,"meaning":"a non-empty 'added' list means a new file consumes stop_reason and must be dispositioned before M4 lands; this check exists because the hardening report's own list went stale within one round","removed":[]},"format":"taiji-b0-n2-stop-reason-disposition-v1","frozen_counterpart":"all_members_exhausted","interception_prefix":"contract_intercepted","judgement_sites":[{"id":"J1","kind":"replica_equality","marker_present":true,"path":"scripts/training/eval_taiji_p5_2a_predictive_execution_gate.py","safe_because":"the marker sits in deterministic_surface(), which compares the matrix run with a replica run under the same rule. A new reason must remain in the comparison; equality still requires an actual replica test"},{"id":"J2","kind":"prefix_predicate","marker_present":true,"path":"scripts/training/eval_taiji_p5_2a_predictive_execution_gate.py","safe_because":"it counts safety stops from the step-level 'stop' field by the contract_intercepted prefix; all_members_blocked does not carry that prefix, so it is never miscounted as a safety stop"},{"id":"J3","kind":"replica_equality","marker_present":true,"path":"scripts/training/eval_taiji_p5_2b_group_causal_corpora_gate.py","safe_because":"a matrix-vs-replica comparison under the same rule. The reason remains part of the equality; changing the rule does not prove determinism"},{"id":"J4","kind":"test_assertion","marker_present":true,"path":"tests/taiji_native/test_b0_m4_artifact_audit_contract.py","safe_because":"pins the FROZEN-rule baseline inside an already-generated report; it is historical evidence, not a live gate.  WP-3 must re-review it because the counterfactual is expected to degenerate to identity once M4 lands"},{"id":"J5","kind":"substring_predicate","marker_present":true,"path":"scripts/training/audit_taiji_b0_m4_hardening.py","safe_because":"tests substring membership, not startswith. The new reason does not contain contract_intercepted; this does not certify policy compliance"},{"id":"J6","kind":"test_assertion","marker_present":true,"path":"tests/taiji_native/test_b0_m4_hardening_contract.py","safe_because":"pins distinct reason counts in the historical two-rule report"},{"id":"J7","kind":"test_assertion","marker_present":true,"path":"tests/taiji_native/test_b0_structure_space_contract.py","safe_because":"pins the frozen versus counterfactual report, not a live admission gate"},{"id":"J8","kind":"test_assertion","marker_present":true,"path":"tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py","safe_because":"the WP-2 two-direction guard itself: it pins the frozen semantics (terminal, not goal_reached, not an interception, absent from the frozen rule) against archived reports. It is an admission guard for WP-3, not a runtime gate"},{"id":"J9","kind":"test_assertion","marker_present":true,"path":"tests/taiji_native/test_b0_rule_revision_seal_contract.py","safe_because":"the WP-3 exit-5 seal guard: it pins the rule_revision=0 report digests, the version labels on the interpreting documents, and which single composition rule ships. It reads reason names only to assert their immutability; it is an evidence-integrity guard, not a runtime gate"},{"id":"J10","kind":"test_assertion","marker_present":true,"path":"tests/taiji_native/test_b0_m1_counterfactual_contract.py","safe_because":"the WP-3 exit-2 guard: it compares the frozen-surface and candidate-surface stop_reasons of the sealed revision-0 report with the landed report, field by field, so 'landing changed no outcome' is checked rather than recited. It reads reason names only to assert immutability across rule revisions; it is an evidence-integrity guard, not a runtime gate"},{"id":"J11","kind":"membership_predicate","marker_present":true,"path":"scripts/training/run_taiji_collab_handoff_entry_evidence.py","safe_because":"the HANDOFF-M4 entry-evidence runner: it treats the new reason as something that must be *demonstrated* (membership in the observed stop-reason set), alongside a separate exhausted check and a goal_reached equality.  It therefore never reads all_members_blocked as success or as an interception; but its gate does require the new name to appear, so this file's evidence is only valid post-M4 and must be re-read if the reason is ever renamed"},{"id":"J12","kind":"rule_replica_literal","marker_present":true,"path":"scripts/training/run_taiji_unified_entry_evidence.py","safe_because":"this runner hand-writes the rule's terminal labels instead of reading them from the policy. The literal above sits in the `if not bindable:` branch, which is exactly the FROZEN rule's exhausted condition, while all_members_blocked arises from bindable members whose execution failed -- a different branch handled by policy.select below.  success is computed independently via _goal_reached and trace_valid only checks event *kinds* (taiji/unified_entry.py), so no new reason can be silently counted as a success.  The residual exposure is the replica itself: if the two conditions were ever merged here, this label would need re-review, and M4's own evidence path does not go through this file"}],"judgement_sites_intact":true,"missing_judgement_sites":[],"new_reason":"all_members_blocked","new_reason_carries_interception_prefix":false,"pending_frontier_absent":[],"pending_frontier_consumers":[{"path":"scripts/training/evaluate_taiji_r2_daily_dialogue_recovery_v2.py","why":"2026-10-23 R2/new-front consumer; leave to that line: f\"**{labels[endpoint_id]}**（{output['stop_reason']}，{output['generated_bytes_length']}字节）\","},{"path":"scripts/training/run_taiji_r2_daily_dialogue_continuation.py","why":"2026-10-23 R2/new-front consumer; leave to that line: \"stop_reason\": stop,"},{"path":"scripts/training/run_taiji_r2_daily_dialogue_continuation_extension.py","why":"2026-10-23 R2/new-front consumer; leave to that line: if stopped.get(\"stop_reason\") != \"throughput_projection_exceeds_remaining_budget\":"},{"path":"scripts/training/run_taiji_r2_daily_dialogue_full_turn_pretraining.py","why":"2026-10-23 R2/new-front consumer; leave to that line: text, utf8_valid, no_replacement, boundary, stop_reason = trainer._generated_text(raw)"},{"path":"scripts/training/run_taiji_r2_daily_dialogue_material_comparison.py","why":"2026-10-23 R2/new-front consumer; leave to that line: text, valid_utf8, no_replacement, boundary, stop_reason = trainer._generated_text(raw)"},{"path":"scripts/training/run_taiji_r2_resume.py","why":"2026-10-23 R2/new-front consumer; leave to that line: self.pending_stop_details = {\"stop_reason\": \"work_unit_refused\", ...}"},{"path":"tests/taiji_native/test_r2_daily_dialogue_recovery_v2_evaluation_contract.py","why":"2026-10-23 R2/new-front consumer; leave to that line: \"stop_reason\": \"end_marker\","},{"path":"tests/taiji_native/test_r2_dialogue_continuation_extension_runner_contract.py","why":"2026-10-23 R2/new-front consumer; leave to that line: assert events[0][\"stop_reason\"] == \"cumulative_cpu_ceiling_exhausted\""},{"path":"tests/taiji_native/test_r2_dialogue_continuation_source_revision_contract.py","why":"2026-10-23 R2/new-front consumer; leave to that line: \"stop_reason\": \"throughput_projection_exceeds_remaining_budget\","}],"registered_consumer_count":94,"review_checks_passed":true,"scope_limit":"text scan and source markers only; not an exhaustive data-flow proof. Marker presence cannot establish an unchanged predicate or deterministic replicas","self_audit_paths_excluded":["scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py","tests/taiji_native/test_b0_n2_stop_reason_disposition_contract.py"],"status":"inventory_guard_for_frozen_preregistration","terminal_semantics":{"all_members_blocked":"terminal task non-completion, not an intermediate successful handoff","implies_global_member_inability":false,"implies_goal_reached":false,"safety_status":"requires execution and policy evidence; cannot be inferred from reason alone"},"version":2}
+{
+  "format": "taiji-b0-n2-stop-reason-disposition-v1",
+  "version": 2,
+  "status": "inventory_guard_for_frozen_preregistration",
+  "does_not_decide_n2": "the N2 semantics are frozen in plans/reference/M5_B0_N2_STOP_REASON_PREREGISTRATION_FROZEN_20260915.md; this scan only verifies that the consumer inventory and the judgement-site markers behind it are still complete and undisplaced",
+  "new_reason": "all_members_blocked",
+  "frozen_counterpart": "all_members_exhausted",
+  "interception_prefix": "contract_intercepted",
+  "new_reason_carries_interception_prefix": false,
+  "self_audit_paths_excluded": [
+    "scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py",
+    "tests/taiji_native/test_b0_n2_stop_reason_disposition_contract.py"
+  ],
+  "consumer_count": 104,
+  "consumer_count_in_hardening_report": 11,
+  "consumer_count_now": 104,
+  "registered_consumer_count": 94,
+  "pending_frontier_consumers": [
+    {
+      "path": "scripts/training/evaluate_taiji_r2_daily_dialogue_recovery_v2.py",
+      "why": "2026-10-23 R2/new-front consumer; leave to that line: f\"**{labels[endpoint_id]}**（{output['stop_reason']}，{output['generated_bytes_length']}字节）\","
+    },
+    {
+      "path": "scripts/training/run_taiji_r2_daily_dialogue_continuation.py",
+      "why": "2026-10-23 R2/new-front consumer; leave to that line: \"stop_reason\": stop,"
+    },
+    {
+      "path": "scripts/training/run_taiji_r2_daily_dialogue_continuation_extension.py",
+      "why": "2026-10-23 R2/new-front consumer; leave to that line: if stopped.get(\"stop_reason\") != \"throughput_projection_exceeds_remaining_budget\":"
+    },
+    {
+      "path": "scripts/training/run_taiji_r2_daily_dialogue_full_turn_pretraining.py",
+      "why": "2026-10-23 R2/new-front consumer; leave to that line: text, utf8_valid, no_replacement, boundary, stop_reason = trainer._generated_text(raw)"
+    },
+    {
+      "path": "scripts/training/run_taiji_r2_daily_dialogue_material_comparison.py",
+      "why": "2026-10-23 R2/new-front consumer; leave to that line: text, valid_utf8, no_replacement, boundary, stop_reason = trainer._generated_text(raw)"
+    },
+    {
+      "path": "scripts/training/run_taiji_r2_resume.py",
+      "why": "2026-10-23 R2/new-front consumer; leave to that line: self.pending_stop_details = {\"stop_reason\": \"work_unit_refused\", ...}"
+    },
+    {
+      "path": "tests/taiji_native/test_r2_daily_dialogue_recovery_v2_evaluation_contract.py",
+      "why": "2026-10-23 R2/new-front consumer; leave to that line: \"stop_reason\": \"end_marker\","
+    },
+    {
+      "path": "tests/taiji_native/test_r2_dialogue_continuation_extension_runner_contract.py",
+      "why": "2026-10-23 R2/new-front consumer; leave to that line: assert events[0][\"stop_reason\"] == \"cumulative_cpu_ceiling_exhausted\""
+    },
+    {
+      "path": "tests/taiji_native/test_r2_dialogue_continuation_source_revision_contract.py",
+      "why": "2026-10-23 R2/new-front consumer; leave to that line: \"stop_reason\": \"throughput_projection_exceeds_remaining_budget\","
+    },
+    {
+      "path": "tests/taiji_native/test_r2_worker_namespace_integration.py",
+      "why": "2026-10-25 R2/new-front consumer; leave to that line: \"stop_reason\": \"end_marker\","
+    }
+  ],
+  "pending_frontier_absent": [],
+  "count_was_stale": true,
+  "added_since_hardening_report": [
+    "scripts/training/probe_taiji_b0_structure_space.py",
+    "tests/taiji_native/test_b0_m4_hardening_contract.py",
+    "tests/taiji_native/test_b0_structure_space_contract.py",
+    "tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py",
+    "tests/taiji_native/test_b0_rule_revision_seal_contract.py",
+    "tests/taiji_native/test_b0_m1_counterfactual_contract.py",
+    "scripts/training/eval_taiji_b0_b2v4_collaboration_gate.py",
+    "scripts/training/audit_taiji_r2_h3_7_attribution.py",
+    "scripts/training/run_taiji_collab_handoff_entry_evidence.py",
+    "scripts/training/run_taiji_unified_entry_evidence.py",
+    "taiji/collab_handoff.py"
+  ],
+  "drift": {
+    "added": [],
+    "removed": [],
+    "clean": true,
+    "meaning": "a non-empty 'added' list means a new file consumes stop_reason and must be dispositioned before M4 lands; this check exists because the hardening report's own list went stale within one round"
+  },
+  "judgement_sites": [
+    {
+      "id": "J1",
+      "path": "scripts/training/eval_taiji_p5_2a_predictive_execution_gate.py",
+      "kind": "replica_equality",
+      "marker_present": true,
+      "safe_because": "the marker sits in deterministic_surface(), which compares the matrix run with a replica run under the same rule. A new reason must remain in the comparison; equality still requires an actual replica test"
+    },
+    {
+      "id": "J2",
+      "path": "scripts/training/eval_taiji_p5_2a_predictive_execution_gate.py",
+      "kind": "prefix_predicate",
+      "marker_present": true,
+      "safe_because": "it counts safety stops from the step-level 'stop' field by the contract_intercepted prefix; all_members_blocked does not carry that prefix, so it is never miscounted as a safety stop"
+    },
+    {
+      "id": "J3",
+      "path": "scripts/training/eval_taiji_p5_2b_group_causal_corpora_gate.py",
+      "kind": "replica_equality",
+      "marker_present": true,
+      "safe_because": "a matrix-vs-replica comparison under the same rule. The reason remains part of the equality; changing the rule does not prove determinism"
+    },
+    {
+      "id": "J4",
+      "path": "tests/taiji_native/test_b0_m4_artifact_audit_contract.py",
+      "kind": "test_assertion",
+      "marker_present": true,
+      "safe_because": "pins the FROZEN-rule baseline inside an already-generated report; it is historical evidence, not a live gate.  WP-3 must re-review it because the counterfactual is expected to degenerate to identity once M4 lands"
+    },
+    {
+      "id": "J5",
+      "path": "scripts/training/audit_taiji_b0_m4_hardening.py",
+      "kind": "substring_predicate",
+      "marker_present": true,
+      "safe_because": "tests substring membership, not startswith. The new reason does not contain contract_intercepted; this does not certify policy compliance"
+    },
+    {
+      "id": "J6",
+      "path": "tests/taiji_native/test_b0_m4_hardening_contract.py",
+      "kind": "test_assertion",
+      "marker_present": true,
+      "safe_because": "pins distinct reason counts in the historical two-rule report"
+    },
+    {
+      "id": "J7",
+      "path": "tests/taiji_native/test_b0_structure_space_contract.py",
+      "kind": "test_assertion",
+      "marker_present": true,
+      "safe_because": "pins the frozen versus counterfactual report, not a live admission gate"
+    },
+    {
+      "id": "J8",
+      "path": "tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py",
+      "kind": "test_assertion",
+      "marker_present": true,
+      "safe_because": "the WP-2 two-direction guard itself: it pins the frozen semantics (terminal, not goal_reached, not an interception, absent from the frozen rule) against archived reports. It is an admission guard for WP-3, not a runtime gate"
+    },
+    {
+      "id": "J9",
+      "path": "tests/taiji_native/test_b0_rule_revision_seal_contract.py",
+      "kind": "test_assertion",
+      "marker_present": true,
+      "safe_because": "the WP-3 exit-5 seal guard: it pins the rule_revision=0 report digests, the version labels on the interpreting documents, and which single composition rule ships. It reads reason names only to assert their immutability; it is an evidence-integrity guard, not a runtime gate"
+    },
+    {
+      "id": "J10",
+      "path": "tests/taiji_native/test_b0_m1_counterfactual_contract.py",
+      "kind": "test_assertion",
+      "marker_present": true,
+      "safe_because": "the WP-3 exit-2 guard: it compares the frozen-surface and candidate-surface stop_reasons of the sealed revision-0 report with the landed report, field by field, so 'landing changed no outcome' is checked rather than recited. It reads reason names only to assert immutability across rule revisions; it is an evidence-integrity guard, not a runtime gate"
+    },
+    {
+      "id": "J11",
+      "path": "scripts/training/run_taiji_collab_handoff_entry_evidence.py",
+      "kind": "membership_predicate",
+      "marker_present": true,
+      "safe_because": "the HANDOFF-M4 entry-evidence runner: it treats the new reason as something that must be *demonstrated* (membership in the observed stop-reason set), alongside a separate exhausted check and a goal_reached equality.  It therefore never reads all_members_blocked as success or as an interception; but its gate does require the new name to appear, so this file's evidence is only valid post-M4 and must be re-read if the reason is ever renamed"
+    },
+    {
+      "id": "J12",
+      "path": "scripts/training/run_taiji_unified_entry_evidence.py",
+      "kind": "rule_replica_literal",
+      "marker_present": true,
+      "safe_because": "this runner hand-writes the rule's terminal labels instead of reading them from the policy. The literal above sits in the `if not bindable:` branch, which is exactly the FROZEN rule's exhausted condition, while all_members_blocked arises from bindable members whose execution failed -- a different branch handled by policy.select below.  success is computed independently via _goal_reached and trace_valid only checks event *kinds* (taiji/unified_entry.py), so no new reason can be silently counted as a success.  The residual exposure is the replica itself: if the two conditions were ever merged here, this label would need re-review, and M4's own evidence path does not go through this file"
+    }
+  ],
+  "missing_judgement_sites": [],
+  "judgement_sites_intact": true,
+  "review_checks_passed": true,
+  "consumers": [
+    {
+      "path": "scripts/training/audit_taiji_b0_m4_artifact.py",
+      "class": "record_only",
+      "why": "writes stop_reason into the audit payload and aggregates it; no comparison"
+    },
+    {
+      "path": "scripts/training/audit_taiji_b0_m4_hardening.py",
+      "class": "record_only + prefix_judgement",
+      "why": "aggregates per variant; its was_contract_intercepted() keys on the contract_intercepted prefix, which the new reason does not carry"
+    },
+    {
+      "path": "scripts/training/audit_taiji_b0_measurement_reachability.py",
+      "class": "record_only",
+      "why": "reads the frozen route-A report field block3_audit.stop_reason_classes; it does not scan a live tree"
+    },
+    {
+      "path": "scripts/training/eval_taiji_p5_2a_predictive_execution_gate.py",
+      "class": "judgement (replica equality + interception prefix)",
+      "why": "see J1 and J2 below"
+    },
+    {
+      "path": "scripts/training/eval_taiji_p5_2b_group_causal_corpora_gate.py",
+      "class": "judgement (replica equality)",
+      "why": "see J3 below; it is also the only file M4 actually edits"
+    },
+    {
+      "path": "scripts/training/eval_taiji_p5_2c_double_prime_unseen_combination_transfer_gate.py",
+      "class": "record_only",
+      "why": "aggregates by reason.split(':')[0] into the report; no comparison"
+    },
+    {
+      "path": "scripts/training/eval_taiji_p5_2c_prime_unseen_combination_transfer_gate.py",
+      "class": "record_only",
+      "why": "same class aggregation as the other P5.2c gates"
+    },
+    {
+      "path": "scripts/training/eval_taiji_p5_2c_triple_prime_representation_repair_gate.py",
+      "class": "record_only",
+      "why": "same class aggregation as the other P5.2c gates"
+    },
+    {
+      "path": "scripts/training/eval_taiji_p5_2c_unseen_combination_transfer_gate.py",
+      "class": "record_only",
+      "why": "same class aggregation as the other P5.2c gates"
+    },
+    {
+      "path": "scripts/training/probe_taiji_b0_m1_counterfactual.py",
+      "class": "record_only",
+      "why": "the counterfactual itself: produces and aggregates stop reasons"
+    },
+    {
+      "path": "scripts/training/probe_taiji_b0_structure_space.py",
+      "class": "record_only",
+      "why": "N1 probe: aggregates frozen/audited reason counters per cell",
+      "added_after_hardening_report": "yes"
+    },
+    {
+      "path": "tests/taiji_native/test_b0_m4_artifact_audit_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "see J4 below"
+    },
+    {
+      "path": "tests/taiji_native/test_b0_m4_hardening_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "see J4 below",
+      "added_after_hardening_report": "yes"
+    },
+    {
+      "path": "tests/taiji_native/test_b0_structure_space_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "see J4 below",
+      "added_after_hardening_report": "yes"
+    },
+    {
+      "path": "tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "see J8 below: asserts the frozen N2 semantics against archived reports",
+      "added_after_hardening_report": "yes"
+    },
+    {
+      "path": "tests/taiji_native/test_b0_rule_revision_seal_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "see J9 below: pins the rule_revision=0 evidence seal and the shipped rule",
+      "added_after_hardening_report": "yes"
+    },
+    {
+      "path": "tests/taiji_native/test_b0_m1_counterfactual_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "see J10 below: compares stop_reasons between the sealed and the landed reports",
+      "added_after_hardening_report": "yes"
+    },
+    {
+      "path": "scripts/training/eval_taiji_b0_b2v4_collaboration_gate.py",
+      "class": "record_only",
+      "why": "aggregates per-face episode stop-reason counts via _stop_reason_counts; it records frequencies and makes no safety or capability judgement",
+      "added_after_hardening_report": "yes"
+    },
+    {
+      "path": "scripts/training/audit_taiji_r2_h3_7_attribution.py",
+      "class": "judgement (assertion on aggregate stop reasons)",
+      "why": "asserts the frozen aggregate reason appears in the R2 decision; see the H3.7 attribution ledger",
+      "added_after_hardening_report": "yes"
+    },
+    {
+      "path": "scripts/training/run_taiji_collab_handoff_entry_evidence.py",
+      "class": "judgement (membership on both reason names)",
+      "why": "its evidence booleans key on membership of BOTH the frozen and the new name (all_members_blocked_demonstrated / all_members_exhausted_demonstrated) plus an equality against goal_reached; see J11 below",
+      "added_after_hardening_report": "yes"
+    },
+    {
+      "path": "scripts/training/run_taiji_unified_entry_evidence.py",
+      "class": "judgement (writes the rule's reason literals itself)",
+      "why": "a hand-rolled replica of the loop: it emits goal_reached / all_members_exhausted / contract_intercepted:<code> / approval_rejected / step_cap as literals. See J12 below.",
+      "added_after_hardening_report": "yes"
+    },
+    {
+      "path": "taiji/collab_handoff.py",
+      "class": "record_only",
+      "why": "the rule-side producer for the handoff episode: it copies `decision.stop` verbatim into the episode payload and events; its only comparison on the value is `is None` (the step_cap fallback), which no new reason can satisfy by accident",
+      "added_after_hardening_report": "yes"
+    },
+    {
+      "path": "scripts/training/_taiji_n1_plan118_lossless_receipt.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: and row[\"stop_reason\"] == \"boundary\""
+    },
+    {
+      "path": "scripts/training/_taiji_n1_plan120_lossless_receipt.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: and row[\"stop_reason\"] == \"boundary\""
+    },
+    {
+      "path": "scripts/training/_taiji_n1_transition_factorial_training_receipt.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: and row[\"stop_reason\"] == \"boundary\""
+    },
+    {
+      "path": "scripts/training/analyze_taiji_n1_plan161_question_surface_itemwise_attribution.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: if raw == target and row.get(\"stop_reason\") == \"boundary\":"
+    },
+    {
+      "path": "scripts/training/analyze_taiji_n1_plan162b_train_only_itemwise_attribution.py",
+      "class": "record_only",
+      "why": "2026-10-23 live scan: \"control_stop_reason\": control.get(\"stop_reason\"),"
+    },
+    {
+      "path": "scripts/training/analyze_taiji_n1_plan162d_transition_output_type_attribution.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: return \"correct_exact\" if stop_reason == \"boundary\" else \"target_bytes_bad_stop\""
+    },
+    {
+      "path": "scripts/training/analyze_taiji_n1_position_weight_history_crossover_session_scope.py",
+      "class": "record_only",
+      "why": "2026-10-23 live scan: \"stop_reason\","
+    },
+    {
+      "path": "scripts/training/analyze_taiji_n1_transition_operator_error_attribution.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: return \"correct\" if row.get(\"stop_reason\") == \"boundary\" else \"expected_text_non_boundary\""
+    },
+    {
+      "path": "scripts/training/attribute_taiji_n1_confirmation_errors_run89.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: row[\"stop_reason\"] == \"boundary\""
+    },
+    {
+      "path": "scripts/training/audit_taiji_n1_entity_binding.py",
+      "class": "judgement (raw+stop identity)",
+      "why": "2026-10-23 live scan: for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\")"
+    },
+    {
+      "path": "scripts/training/audit_taiji_n1_fidelity_content_read.py",
+      "class": "judgement (branch/comparison)",
+      "why": "2026-10-23 live scan: if (prediction[\"raw_hex\"], prediction[\"stop_reason\"]) != ("
+    },
+    {
+      "path": "scripts/training/audit_taiji_n1_iterative_content_read.py",
+      "class": "judgement (branch/comparison)",
+      "why": "2026-10-23 live scan: if (prediction[\"raw_hex\"], prediction[\"stop_reason\"]) != ("
+    },
+    {
+      "path": "scripts/training/audit_taiji_n1_native_evidence_train_fit.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: \"free_exact\": trace.raw == target and trace.stop_reason == \"boundary\","
+    },
+    {
+      "path": "scripts/training/audit_taiji_n1_plan162f_transcript_integrity.py",
+      "class": "record_only",
+      "why": "2026-10-23 live scan: str(row[\"stop_reason\"]),"
+    },
+    {
+      "path": "scripts/training/audit_taiji_n1_question_fusion.py",
+      "class": "judgement (raw+stop identity)",
+      "why": "2026-10-23 live scan: all(row[k] == old[k] for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\"))"
+    },
+    {
+      "path": "scripts/training/audit_taiji_n1_relation_seed_drift.py",
+      "class": "judgement (branch/comparison)",
+      "why": "2026-10-23 live scan: stop_reasons=dict(Counter(r[\"stop_reason\"] for r in subset)),"
+    },
+    {
+      "path": "scripts/training/audit_taiji_n1_train_content_read.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: \"exact\": trace.raw == item[\"answer\"].encode() and trace.stop_reason == \"boundary\","
+    },
+    {
+      "path": "scripts/training/audit_taiji_n1_transfer_binding.py",
+      "class": "judgement (raw+stop identity)",
+      "why": "2026-10-23 live scan: for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\")"
+    },
+    {
+      "path": "scripts/training/build_taiji_n1_v15_after_n132.py",
+      "class": "record_only",
+      "why": "2026-10-23 live scan: \"prior_stop_reasons_zh\": ["
+    },
+    {
+      "path": "scripts/training/diagnose_taiji_n1_fresh_training_logs.py",
+      "class": "record_only",
+      "why": "2026-10-23 live scan: confusion[f\"{item['answer']}->{label}/{row['stop_reason']}\"] += 1"
+    },
+    {
+      "path": "scripts/training/diagnose_taiji_n1_fresh_transition_factorial.py",
+      "class": "record_only",
+      "why": "2026-10-23 live scan: \"stop_reason\","
+    },
+    {
+      "path": "scripts/training/diagnose_taiji_n1_position_weight_history_crossover.py",
+      "class": "record_only",
+      "why": "2026-10-23 live scan: \"stop_reason\","
+    },
+    {
+      "path": "scripts/training/eval_taiji_n1_fresh_frozen_confirmation.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: free_exact=trace.raw == target and trace.stop_reason == \"boundary\","
+    },
+    {
+      "path": "scripts/training/eval_taiji_n1_frozen_v4_confirmation.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: free_exact=trace.raw == target and trace.stop_reason == \"boundary\","
+    },
+    {
+      "path": "scripts/training/eval_taiji_n1_input_factorial_diagnostic.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: \"free_exact\": trace.raw == target and trace.stop_reason == \"boundary\","
+    },
+    {
+      "path": "scripts/training/eval_taiji_n1_transition_factorial_confirmation.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: free_exact=trace.raw == target and trace.stop_reason == \"boundary\","
+    },
+    {
+      "path": "scripts/training/eval_taiji_n1_v13_v14_full_context_question_binding_mask.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: free_exact=trace.raw == target and trace.stop_reason == \"boundary\","
+    },
+    {
+      "path": "scripts/training/eval_taiji_n1_v13_v14_full_context_source_mask.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: audit[\"boundary_native\"] = trace.stop_reason == \"boundary\""
+    },
+    {
+      "path": "scripts/training/eval_taiji_n1_v17_matched_context_length.py",
+      "class": "record_only",
+      "why": "2026-10-23 live scan: \"stop_reason\": row[\"stop_reason\"],"
+    },
+    {
+      "path": "scripts/training/eval_taiji_n1_v18_target_position_context_order.py",
+      "class": "record_only",
+      "why": "2026-10-23 live scan: \"stop_reason\": row[\"stop_reason\"],"
+    },
+    {
+      "path": "scripts/training/eval_taiji_n1_v19_neighbor_distance_context_interference.py",
+      "class": "record_only",
+      "why": "2026-10-23 live scan: \"stop_reason\": row[\"stop_reason\"],"
+    },
+    {
+      "path": "scripts/training/eval_taiji_n1_v20_neighbor_distance_dose_curve.py",
+      "class": "record_only",
+      "why": "2026-10-23 live scan: \"stop_reason\": row[\"stop_reason\"],"
+    },
+    {
+      "path": "scripts/training/eval_taiji_n1_v25_abstention_after_n147.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: \"free_exact\": trace.raw == target and trace.stop_reason == \"boundary\","
+    },
+    {
+      "path": "scripts/training/eval_taiji_n1_v26_abstention_length_after_n148.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: \"free_exact\": trace.raw == target and trace.stop_reason == \"boundary\","
+    },
+    {
+      "path": "scripts/training/run_taiji_n1_address_consistency.py",
+      "class": "judgement (raw+stop identity)",
+      "why": "2026-10-23 live scan: all(r[k] == old[r[\"id\"]][k] for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\"))"
+    },
+    {
+      "path": "scripts/training/run_taiji_n1_bound_consistency.py",
+      "class": "judgement (raw+stop identity)",
+      "why": "2026-10-23 live scan: all(r[k] == old[r[\"id\"]][k] for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\"))"
+    },
+    {
+      "path": "scripts/training/run_taiji_n1_contextual_question.py",
+      "class": "judgement (raw+stop identity)",
+      "why": "2026-10-23 live scan: all(r[k] == old[r[\"id\"]][k] for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\"))"
+    },
+    {
+      "path": "scripts/training/run_taiji_n1_local_question.py",
+      "class": "judgement (raw+stop identity)",
+      "why": "2026-10-23 live scan: all(r[k] == old[r[\"id\"]][k] for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\"))"
+    },
+    {
+      "path": "scripts/training/run_taiji_n1_local_relation.py",
+      "class": "judgement (raw+stop identity)",
+      "why": "2026-10-23 live scan: all(r[k] == old[r[\"id\"]][k] for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\"))"
+    },
+    {
+      "path": "scripts/training/run_taiji_n1_native_evidence_paired.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: \"exact\": trace.raw == item[\"answer\"].encode() and trace.stop_reason == \"boundary\","
+    },
+    {
+      "path": "scripts/training/run_taiji_n1_plan153_v28_fresh_context_length_confirmation.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: \"free_exact\": trace.raw == target and trace.stop_reason == \"boundary\","
+    },
+    {
+      "path": "scripts/training/run_taiji_n1_plan155_short_unknown_context_length_training.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: \"free_exact\": trace.raw == target and trace.stop_reason == \"boundary\","
+    },
+    {
+      "path": "scripts/training/run_taiji_n1_plan162f_transition_template_crossover_diagnostic.py",
+      "class": "record_only",
+      "why": "2026-10-23 live scan: \"stop_reason\": row[\"stop_reason\"],"
+    },
+    {
+      "path": "scripts/training/run_taiji_n1_reader_transfer.py",
+      "class": "judgement (raw+stop identity)",
+      "why": "2026-10-23 live scan: all(r[k] == old[r[\"id\"]][k] for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\"))"
+    },
+    {
+      "path": "scripts/training/run_taiji_n1_relative_continuation.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: \"free_exact\": trace.raw == target and trace.stop_reason == \"boundary\","
+    },
+    {
+      "path": "scripts/training/run_taiji_n1_relative_margin.py",
+      "class": "judgement (raw+stop identity)",
+      "why": "2026-10-23 live scan: all(r[k] == old[r[\"id\"]][k] for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\"))"
+    },
+    {
+      "path": "scripts/training/run_taiji_n1_relative_paired.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: \"free_exact\": trace.raw == target and trace.stop_reason == \"boundary\","
+    },
+    {
+      "path": "scripts/training/run_taiji_n1_renaming.py",
+      "class": "judgement (raw+stop identity)",
+      "why": "2026-10-23 live scan: all(r[k] == old[r[\"id\"]][k] for k in (\"raw_hex\", \"stop_reason\", \"teacher_tokens_correct\"))"
+    },
+    {
+      "path": "scripts/training/run_taiji_n1_v27_length_robust_training_after_n149.py",
+      "class": "judgement (boundary)",
+      "why": "2026-10-23 live scan: \"free_exact\": trace.raw == target and trace.stop_reason == \"boundary\","
+    },
+    {
+      "path": "taiji/position_evidence_reference.py",
+      "class": "record_only",
+      "why": "2026-10-23 live scan: stop_reason: str"
+    },
+    {
+      "path": "tests/taiji_native/test_n1_plan135_matched_context_length_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: \"stop_reason\": \"boundary\" if exact else \"limit\","
+    },
+    {
+      "path": "tests/taiji_native/test_n1_plan136_target_position_context_order_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: \"stop_reason\": \"boundary\" if exact else \"limit\","
+    },
+    {
+      "path": "tests/taiji_native/test_n1_plan137_neighbor_distance_context_interference_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: \"stop_reason\": \"boundary\" if exact else \"limit\","
+    },
+    {
+      "path": "tests/taiji_native/test_n1_plan138_neighbor_distance_dose_curve_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: \"stop_reason\": \"boundary\" if exact else \"limit\","
+    },
+    {
+      "path": "tests/taiji_native/test_n1_plan148_v25_abstention_scorer_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: output=b\"abcdef\", raw=b\"abcdef\", stop_reason=\"boundary\", generated_steps=7"
+    },
+    {
+      "path": "tests/taiji_native/test_n1_plan161_question_surface_itemwise_attribution_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: row = {\"raw_hex\": b\"oldval\".hex(), \"stop_reason\": \"boundary\", \"context_length\": 8}"
+    },
+    {
+      "path": "tests/taiji_native/test_n1_plan162b_train_only_itemwise_attribution_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: \"stop_reason\": \"boundary\","
+    },
+    {
+      "path": "tests/taiji_native/test_n1_plan162f1_transcript_integrity_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: \"stop_reason\": \"boundary\","
+    },
+    {
+      "path": "tests/taiji_native/test_n1_plan162f_transition_template_crossover_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: \"stop_reason\": \"boundary\","
+    },
+    {
+      "path": "tests/taiji_native/test_n1_run91_error_attribution_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: assert shape_of(stop_reason=\"cap\", generated_steps=64, free_exact=False) == ("
+    },
+    {
+      "path": "tests/taiji_native/test_native_fresh_frozen_confirmation_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: and measured[0][\"stop_reason\"] == \"boundary\""
+    },
+    {
+      "path": "tests/taiji_native/test_native_fresh_training_log_diagnostic_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: stop_reason=\"boundary\" if free else \"cap\","
+    },
+    {
+      "path": "tests/taiji_native/test_native_fresh_transition_factorial_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: stop_reason=\"boundary\","
+    },
+    {
+      "path": "tests/taiji_native/test_native_frozen_v4_confirmation_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: and measured[0][\"stop_reason\"] == \"boundary\""
+    },
+    {
+      "path": "tests/taiji_native/test_native_iterative_evidence_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: assert trace.raw == b\"\" and trace.stop_reason == \"boundary\""
+    },
+    {
+      "path": "tests/taiji_native/test_native_question_fusion_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: row = dict(raw_hex=\"61\", stop_reason=\"boundary\", teacher_tokens_correct=2, teacher_ce=0.5)"
+    },
+    {
+      "path": "tests/taiji_native/test_native_relation_seed_drift_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: stop_reason=\"boundary\","
+    },
+    {
+      "path": "tests/taiji_native/test_native_transition_factorial_calibration_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: stop_reason=\"boundary\","
+    },
+    {
+      "path": "tests/taiji_native/test_native_transition_factorial_confirmation_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: and measured[0][\"stop_reason\"] == \"boundary\""
+    },
+    {
+      "path": "tests/taiji_native/test_native_transition_factorial_paired_training_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: stop_reason=\"boundary\","
+    },
+    {
+      "path": "tests/taiji_native/test_native_transition_factorial_training_receipt_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: stop_reason=\"boundary\","
+    },
+    {
+      "path": "tests/taiji_native/test_position_evidence_reference_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "2026-10-23 live scan: assert trace.stop_reason == \"boundary\" and trace.generated_steps == 1"
+    }
+  ],
+  "classification_counts": {
+    "record_only_files": 23,
+    "judgement_or_mixed_files": 71
+  },
+  "scope_limit": "text scan and source markers only; not an exhaustive data-flow proof. Marker presence cannot establish an unchanged predicate or deterministic replicas",
+  "terminal_semantics": {
+    "all_members_blocked": "terminal task non-completion, not an intermediate successful handoff",
+    "implies_goal_reached": false,
+    "implies_global_member_inability": false,
+    "safety_status": "requires execution and policy evidence; cannot be inferred from reason alone"
+  },
+  "conclusion": "the reviewed sites record reasons, compare replicas, count interception prefixes/substrings, or assert historical reports. all_members_blocked is not a success label and by itself proves neither safety nor member incapability. The N2 semantics are frozen in the WP-2 preregistration; runtime changes still require WP-3's five exits"
+}

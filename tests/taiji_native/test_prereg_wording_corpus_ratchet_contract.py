@@ -32,6 +32,11 @@ SCRIPT = REPO / "scripts" / "training" / "audit_taiji_prereg_exit_wording.py"
 #: 旧 42 份时代的 4 项 invisible 全部仍在册（无假绿）。G74② 的逐份措辞修复仍归人判，
 #: 修掉一份就应把该名从这里删掉（棘轮只许单向收紧）。
 FROZEN_INVISIBLE = {
+    # 2026-10-25 增补：并行会话新落 3 份 R2 收口预注册（CC1/V1 closeout、V2 人工复核），
+    # 与在册 224 份同批待 G74② 逐份判。
+    "PLAN-R2-DAILY-DIALOGUE-CONTINUATION-CC1_execution_closeout_20261025.md",
+    "PLAN-R2-EVALUATION-RECOVERY-V1_execution_closeout_20261025.md",
+    "PLAN-R2-EVALUATION-RECOVERY-V2_human_review_20261025.md",
     "PLAN-N02-V014-turn-trace-diagnostic-draft-20261018.md",
     "PLAN-N1-07_C2_calibration_budget_adjudication_20261015.md",
     "PLAN-N1-07_C2_calibration_result_adjudication_20261015.md",
