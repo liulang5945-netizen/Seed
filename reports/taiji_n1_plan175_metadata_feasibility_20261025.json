@@ -1,0 +1,36 @@
+{
+  "schema": "taiji-n1-plan175-metadata-feasibility-v1",
+  "status": "metadata_complete",
+  "raw_source_sha256": "a9f240c4c77aa1378364f70d37e753c07ba284e247b019d700e1947a0e5da751",
+  "old_episode_source_sha256": "4759163516064e5d2cc2e2fb5d505c0a915736218abdecb3d61771c16569b06d",
+  "audit_source_sha256": "814b4a0a1d2e9af348f075d2afcf2e98abca37f6902718394033a9b7bc4f8caa",
+  "counts": {
+    "message_records": 135174,
+    "metadata_zh_reply_candidates": 5073,
+    "distinct_prompt_parent_nodes": 1959,
+    "root_families": 716,
+    "rank_counts": {
+      "0": 1694,
+      "1": 1693,
+      "2": 960,
+      "None": 716,
+      "3": 10
+    },
+    "old_all_root_families": 461,
+    "old_nontrain_root_families": 121,
+    "old_train_distinct_prompt_parent_nodes": 525,
+    "old_episode_ids_unmapped": 0,
+    "pool_reply_candidates": 4165,
+    "pool_root_families": 595,
+    "pool_distinct_prompt_parent_nodes": 1612,
+    "pool_rank_zero_candidates": 1393,
+    "pool_families_not_in_old_episode_pool": 255
+  },
+  "scope": "metadata-tagged zh replies with valid zh prompt parent; not body language/quality or semantic dedup",
+  "text_bodies_parsed": 0,
+  "quality_filtering_done": false,
+  "new_holdout_selected": false,
+  "model_loads": 0,
+  "training_updates": 0,
+  "cpu_seconds": 8.859375
+}
