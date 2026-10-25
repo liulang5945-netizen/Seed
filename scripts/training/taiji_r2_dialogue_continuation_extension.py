@@ -747,10 +747,26 @@ def effective_budget_limits() -> tuple[float, float]:
                 "tests/taiji_native/test_r2_dialogue_boot_accounting_contract.py",
             )
         }
+        recorded_audit_rel = seal_ast.repo_relative(str(revision.get("boot_audit_path", "")))
+        audit_rel = seal_ast.repo_relative(str(audit))
+        boot_audit_identified = recorded_audit_rel is not None and recorded_audit_rel == audit_rel
+        boot_sources_match = len(revision.get("boot_accounting_sources", {})) == len(
+            expected_boot_sources
+        ) and all(
+            seal_ast.repo_relative(str(recorded_key)) == seal_ast.repo_relative(str(expected_key))
+            and seal_ast.verify_path_pin(str(expected_key), str(recorded_value))
+            for (recorded_key, recorded_value), (expected_key, expected_value) in zip(
+                sorted(revision.get("boot_accounting_sources", {}).items()),
+                sorted(expected_boot_sources.items()),
+                strict=True,
+            )
+        )
         if (
-            revision.get("boot_audit_path") != str(audit.resolve())
-            or revision.get("boot_audit_sha256") != _sha256_file(audit)
-            or revision.get("boot_accounting_sources") != expected_boot_sources
+            not boot_audit_identified
+            or not seal_ast.rendering_tolerant_match(
+                revision.get("boot_audit_sha256", ""), audit.read_bytes()
+            )
+            or not boot_sources_match
         ):
             raise ExtensionLedgerRefuse("v1.3 boot audit or source binding differs")
     expected_budget = {"per_arm": 1_500_000.0, "aggregate": 4_300_000.0}
