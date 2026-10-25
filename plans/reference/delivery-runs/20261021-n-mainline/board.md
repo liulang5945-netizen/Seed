@@ -1,7 +1,7 @@
 # N主线交付黑板
 
 - 运行目录：`E:/Seed/plans/reference/delivery-runs/20261021-n-mainline`。
-- 主阶段：恢复v1已失败结案，后继v2题面消费规则待裁决；三臂成果保留，真实配对输出尚未取得，具体队首仅按03。
+- 主阶段：恢复v2机器侧已完成（四端真实恢复＋156/156生成＋唯一marker），能力读数为四端（含基线）不可读，R5待责任判读人确认；具体队首仅按03。
 - 持续Goal已由用户正式设置，详细WBS见[10](../../../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。
 - 唯一活动队首与实时事实只由[03](../../../active/roadmap/03_CURRENT_EXECUTION.md)维护；本页不再复制额度/进度快照。
 
@@ -11,9 +11,9 @@
 |---|---|---|
 | 原R2来源、checkpoint、账本与旧局部检查 | 继承限定证据 | 冻结原件与旧失败保留，不能代替新全链能力 |
 | 单入口精简 | 已实现并用于实际续训 | [15记录](artifacts/15-training-system-simplification.md)；当前运行按03 |
-| 当前训练与完整实验出口 | 三臂complete；metadata预检通过，0/4评价新进程恢复、0/156生成，原attempt工程失败封存，详见03 | CC-1.4/1.5沿有效v1.5与原终点；实际运行看03 |
+| 当前训练与完整实验出口 | 三臂complete；恢复v2完成四端真实恢复与156/156生成，能力读数四端不可读、无配方排序，详见03 | CC-1.4/1.5沿有效v1.5与原终点；实际运行看03 |
 | extension评测适配 | 已提交；相关110支合成与独立审查完成，真实端点未测 | [04适配架构](artifacts/04-continuation-evaluation-adapter.md)、[工程交接](artifacts/02-plan.md)，CC-1.1–1.3 |
-| W5b/人工判读 | 原attempt握手失败、无输出可判；原入口与恢复入口真实无模型握手均过；用户已批准并执行恢复v1，首restore授权失败，0输出，按约停止；修复验证完成 | [02交接](artifacts/02-plan.md)；固定分母和原收官合同不变 |
+| W5b/人工判读 | 恢复v2已执行：admission_002真实四端恢复通过，formal_001 156/156输出、marker在selector前发布；四端不可读，48行判读待确认 | [恢复v2结案](../../PLAN-R2-EVALUATION-RECOVERY-V2_execution_closeout_20261025.md)、[判读表](../../PLAN-R2-EVALUATION-RECOVERY-V2_human_review_20261025.md)；固定分母不变 |
 | 客户端对话/生命页 | 连接/未知语义修复已交付；原生发展运行台重设计待实施 | [现行体验修订](../../UI_LIFE_UX_SPEC_20261003.md)、[DSH选择性借鉴](../../../active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md)；不替代研究队首或安装包发布 |
 | CI修复 | 用户另行安排的任务负责 | 本任务不重复修复、提交或覆盖CI相关改动 |
 | 详细计划与旧计划衔接 | N交汇与下一VISION重新归位，最终复核通过；随本次变更提交 | [10](../../../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)、[17矩阵](artifacts/17-plan-transition-and-reconciliation.md) |

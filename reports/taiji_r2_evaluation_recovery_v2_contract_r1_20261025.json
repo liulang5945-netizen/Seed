@@ -1,0 +1,62 @@
+{
+  "schema": "taiji-r2-evaluation-recovery-contract-v2",
+  "recovery_id": "taiji-r2-evaluation-recovery-v2-20261025",
+  "revision": 1,
+  "status": "adopted",
+  "adopts_consumption_boundary_v2": true,
+  "authorizes_engineering_admission": true,
+  "authorizes_one_formal_face_consumption": true,
+  "preserves_v1_failure": true,
+  "preserves_cc1_failure": true,
+  "same_dev_face_reuse_approved": true,
+  "historical_tail_reserve_accepted": true,
+  "cpu_limit_seconds": 500.0,
+  "wall_limit_seconds": 500.0,
+  "formal_cpu_limit_seconds": 10300.0,
+  "formal_wall_limit_seconds": 12500.0,
+  "historical_cpu_reserve_seconds": 3400.0,
+  "historical_wall_reserve_seconds": 180.0,
+  "v1_measured_cpu_seconds": 84.484375,
+  "v1_measured_wall_seconds": 94.236,
+  "generation_outputs": 156,
+  "review_answers": 48,
+  "endpoint_checkpoint_sha256": {
+    "parent_baseline": "41655eb8b5fcd7e446acb924e94e458ce9b1e966a96a95517198a5ac38df2086",
+    "full_turn_1m": "5654b9eac004e98525e55661e6606be8de1f40027bebfa547ae02ee378efa4ca",
+    "warm_start": "c8a1068f3e0886b46694cabd2b0c03e07c89d8dbd182e654e4599073a528cd50",
+    "fresh_same_capacity": "86b9167507f53daec2a57956a01bb054dfe2f4c041ba5852414b04e3f78989e5"
+  },
+  "old_cc1": {
+    "attempt_id": "abffec0c23f5274b382a06ce45f47197688d061440e0080e",
+    "raw_sha256": {
+      "attempt": "ab482dac42b2601802071b0d6db53ae42991d2b570a46b7d24d16811c0de04be",
+      "failure": "2043b6aacf36efc60f5110036ebf9f80d08c256b80ece77da051f11c91eb57e9",
+      "result": "eb801d2c489a3eb2ae9fd92d8c7272c53710d6b5e77e6e5f13162091a40309bb"
+    },
+    "ledger_sha256": "89dd0decbe1b03840bca1017b1f9abe9257fea87ada562ee765d4677bc79c9e2"
+  },
+  "old_v1": {
+    "attempt_id": "8a4dfd7ee2cb0ecbba4573892a62e139b690af182064803b",
+    "raw_sha256": {
+      "attempt": "68fb90651beab43766d91322e882b6f8b77b2758ef8a49b4038fc5a5f45cf431",
+      "failure": "60ae1c5892550f8f37cf8169ddbec31af8915b70e5967ae6113ea29072f38a53",
+      "result": "370c44ea69dab471f1f9a12d51b74d4cfcf0092acd7a83fd69bd1672c1b6f1a9"
+    },
+    "ledger_sha256": "1716faffeed4bfa5039d5ad7a274059e3d007b4bf28b9a6f54d77eee465bcc6a"
+  },
+  "approved_source_sha256": {
+    "scripts/training/taiji_r2_evaluation_recovery_v2.py": "6205542c3f279a404f323bfe00e32a34878a404109c73cf3e99f1462a51397b6",
+    "scripts/training/evaluate_taiji_r2_evaluation_recovery_v2.py": "e457ef8779f595e1e771c57b3278190ba830c4b8e11d2a949e7ec4ddca44dfea",
+    "scripts/training/evaluate_taiji_r2_daily_dialogue_continuation_extension_worker_v1.py": "6422d2d659ef62f6b845236e05ae5a1b58c9ffbc58e83cc8b667c1e7e8a2c8fb",
+    "scripts/training/taiji_r2_continuation_evaluation_adapter.py": "5e505584a7469509cde6f7b55e7e7c69ae8d8486faa8bfd96d100ab593d56fca",
+    "scripts/training/evaluate_taiji_r2_daily_dialogue_continuation_extension_v1.py": "d542f8ba76b6796e63ae30826534302f6b9309a3421673c535723b3745e144b2",
+    "scripts/training/check_taiji_r2_evaluation_recovery.py": "941a52511d8a79f74662fc63e00599f188a365f0dcf4ed56e60a6828128b0bb6",
+    "tests/taiji_native/test_r2_evaluation_recovery_v2_contract.py": "32725ad7a21f7dc641a9ac040cbb67efd95943bfb3b2e930a88c1246af7231e8",
+    "plans/reference/delivery-runs/20261021-n-mainline/artifacts/04-evaluation-consumption-boundary-v2.md": "68b13f4ff8dc7d5472afb445fe4967bb240a4e4f37e07f801d57eacf8e910479",
+    "plans/reference/delivery-runs/20261021-n-mainline/artifacts/05-evaluation-recovery-v2-plan.md": "04e9acb039f62fe52be4adc1bb29032f5323491fc85c260fdc1dbdbcdc47fb5f"
+  },
+  "can_promote": false,
+  "approved_at_utc": "2026-10-25T05:30:35.696179+00:00",
+  "approval_source": "human user reply (AskUserQuestion)",
+  "approval_quote": "采纳 v2（推荐）"
+}

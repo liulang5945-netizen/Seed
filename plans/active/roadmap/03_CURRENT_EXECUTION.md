@@ -6,7 +6,7 @@
 
 持续Goal：沿N主线，把态极发展成由自身认知机制驱动、能通过自然中文可靠完成连续任务、跨会话积累和修正经验、从反馈中学会新能力并保持旧能力的原生认知模型；每轮以同一可恢复版本的未见表现、保持和实际成本验收。
 
-**三臂训练终点与评价metadata预检完成；评测新进程恢复0/4，W5b attempt在worker启动握手前失败，生成0/156，本轮按CLOSED_FAILURE封存。** 原完整路径仍为训练终点→四端点恢复→配对输出→固定判读→结案；当前失败没有回答配方效果。后继优先复用已训端点完成有界评价恢复，不重复训练，也不从0输出推断模型根因。
+**三臂训练终点与评价metadata预检完成；CC-1与恢复v1两次正式attempt均在selector前因工程接线失败，各0/4恢复、0/156输出，分别按CLOSED_FAILURE封存；用户已采纳消费边界v2，当前唯一队首为恢复v2：工程准入→一次正式消费→48判读→结案。** 原完整路径仍为训练终点→四端点恢复→配对输出→固定判读→结案；两次失败都没有回答配方效果。后继复用已训端点完成有界评价恢复，不重复训练，也不从0输出推断模型根因。
 
 CC-1结案与持续Goal完成分别记录。CC-2归因、CC-3语言/L2、CC-4同bundle联合能力/L3、CC-5连续经验、CC-6学习与保持/L4、CC-7扩面仍依10按证据准入；本轮不以完成全部长期阶段为收官条件。
 
@@ -70,7 +70,23 @@ CI由用户另行安排的任务负责，本任务不再修改其文件或叠加
 
 2026-10-25后继方案修订：完整架构/驱动力/VX0–VX7工程包统一归[VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)，N只通过09的J1信息消费/J2信用/J3连续状态与条件选择取必要切片。生命页新发展运行台按[VX6设计](../../reference/UI_LIFE_UX_SPEC_20261003.md)分段实施，当前已交付的是连接/未知语义修复，不代表新五视图或自主策略已实现；VX6.0只读研究观察器可独立先行。此设计修订不改本页CC-1终点、预算、冻结面或研究队首。
 
-## 当前唯一下一步：裁决v2题面消费协议
+## 当前唯一下一步：确认48行判读（v2机器侧已完成）
+
+2026-10-25执行结果：`admission_001`在准入保护区计算处工程失败（70.703 CPU，0恢复）；`admission_002`在真实Job/IPC/token/NTFS下完成四端只读恢复（345.578 CPU）；`formal_001`完成**156/156**生成、逐端39、reuse=0、0参数/优化器更新、`can_promote=false`，**唯一marker在selector前发布**，发布前实测651.703 CPU/966.015 wall。窗口剩余9,847.531 CPU/12,740.687 wall，无未知尾账事件。
+
+能力读数：四端点（含parent基线）在冻结decoder下均输出控制标记串与无词法结构汉字拼接，**无可读中文、无贴题、机械重复**；有历史行不连贯。因为基线本身不可读，本轮不能给出配方排序；这是能力负结果而非工程失败。48行判读表已逐行起草，见[判读表](../../reference/PLAN-R2-EVALUATION-RECOVERY-V2_human_review_20261025.md)，待责任判读人确认或更正。完整事实、费用与出口见[恢复v2结案](../../reference/PLAN-R2-EVALUATION-RECOVERY-V2_execution_closeout_20261025.md)与[执行审计](../../../reports/taiji_r2_evaluation_recovery_v2_execution_audit_20261025.json)。
+
+用户于2026-10-25**采纳[消费边界v2](../../reference/delivery-runs/20261021-n-mainline/artifacts/04-evaluation-consumption-boundary-v2.md)**，授权按原额度与固定范围自动完成工程准入、一次真实题面消费、48条判读与结案。实施计划与判据预注册见[05计划](../../reference/delivery-runs/20261021-n-mainline/artifacts/05-evaluation-recovery-v2-plan.md)。
+
+| 项 | v2现行口径 |
+|---|---|
+| 不变项 | 四端checkpoint SHA、39×4=156生成、48回答判读、0参数/优化器更新、`can_promote=false`、原39-family开发面 |
+| 工程准入 | 独立`admission_NNN`命名空间：真实Job/IPC/token/NTFS＋四端只读恢复；不进入selector、不读dev正文 |
+| 正式消费 | 独立`formal_NNN`命名空间：冻结四端恢复→selector前耐久发布唯一marker→156生成；**marker后任何失败不重试** |
+| 窗口账本 | 历史尾账预留3,400 CPU/180 wall＋v1已测84.484375/94.236＋准入500/500＋正式10,330/12,500＝14,314.484/13,274.236，低于14,400；每次操作前核对余额 |
+| 失败出口 | marker前工程失败不消耗正式资格、只追加费用；marker不可读/半写按已消费停止；源码/端点漂移、余额不足、异命名空间一律拒绝 |
+
+旧CC-1与恢复v1仍为已消费的`CLOSED_FAILURE`，原始attempt/failure/result/ledger、合同与source SHA不改；v2不追认历史资格、不换题面、不降分母。
 
 CC-1 已按 **CLOSED_FAILURE** 结案，唯一结案文件为 [PLAN-R2-DAILY-DIALOGUE-CONTINUATION-CC1_execution_closeout_20261025.md](../../reference/PLAN-R2-DAILY-DIALOGUE-CONTINUATION-CC1_execution_closeout_20261025.md)：训练R1与训练侧R2/metadata预检完成；R3新进程恢复未完成，R4一次性attempt工程失败且资格已消费、R5无可判输出，R6记录缺项与尚未闭合的评价尾账。工程故障不写作模型能力负结果；三臂的完整可恢复终态保留。
 

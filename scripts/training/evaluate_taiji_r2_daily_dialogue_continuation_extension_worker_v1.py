@@ -48,6 +48,7 @@ def _handle_task(
     authorize_fn: Callable[..., Mapping[str, Any]] | None = None,
     preflight_fn: Callable[[], Mapping[str, Any]] | None = None,
     evaluation_paths_fn: Callable[[], Mapping[str, Path]] | None = None,
+    generation_gate: Callable[[], None] | None = None,
 ) -> dict[str, Any]:
     operation = request.get("operation")
     endpoint_id = request.get("endpoint_id")
@@ -158,6 +159,8 @@ def _handle_task(
 
     if operation != "generate":
         raise Refuse("worker operation is not supported")
+    if generation_gate is not None:
+        generation_gate()
     if tuple(trainers) != ENDPOINT_ORDER:
         raise Refuse("worker generation cannot begin before all four restores")
     if endpoint_id not in trainers or endpoint_id not in endpoint_specs:
@@ -215,6 +218,7 @@ def worker_loop(
     *,
     preflight_fn: Callable[[], Mapping[str, Any]] | None = None,
     evaluation_paths_fn: Callable[[], Mapping[str, Path]] | None = None,
+    generation_gate: Callable[[], None] | None = None,
 ) -> int:
     """Private persistent worker; one IPC task at a time, no selector."""
     if os.name != "nt":
@@ -297,6 +301,7 @@ def worker_loop(
                 job_name=job_name,
                 preflight_fn=preflight_fn,
                 evaluation_paths_fn=evaluation_paths_fn,
+                generation_gate=generation_gate,
             )
             response["task_id"] = request.get("task_id")
             response["endpoint_id"] = request.get("endpoint_id")
