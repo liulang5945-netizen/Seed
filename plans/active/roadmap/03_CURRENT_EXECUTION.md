@@ -1,7 +1,7 @@
 # N主线当前执行
 
 
-> **2026-10-26 N175执行状态**：V3边界/版本互拒/新进程恢复和逐样本梯度等价已通过5项V3+9项V2定向测试；三份N1-174 TF终点检查点已迁移为V3并逐个新进程恢复。训练侧冻结为1148题/517family、822311 target bytes/epoch、prompt最长4078；length-stratified train-only更新实测439.33 target byte/process-CPU秒，完整训练40epoch×3seed约22.5万CPU秒，2倍估算约45万。训练runner已实现，单seed保护30万、三seed合计90万CPU秒，每epoch耐久检查点；batch调度和语料隔离测试通过。短标定仅2步，不代表能力结果。当前唯一下一步：**启动seed169/170/171三条V3 TF正式训练**。计划/报告SHA与结案门见[合同](../../reference/SPEC-N1-175_data_and_completion_contract_20261026.md)。
+> **2026-10-26 N175执行状态**：V3边界/版本互拒/新进程恢复和逐样本梯度等价已通过5项V3+9项V2定向测试；三份N1-174 TF终点已迁移并新进程恢复。冻结语料1148题/517family、822311 target bytes/epoch；短train-only更新实测439.33 target byte/process-CPU秒，完整40epoch×3seed估计约22.5万CPU秒，2倍约45万。正式seed169/170/171当前均在epoch1 batch64/288；epoch检查点将在整轮完成时落盘，留出正文读取0。盲化判读生成器已预备：训练全完后一次读取64个预选family，每seed逐题配对matched与错配prompt，输出ID盲化且保留64分母。当前继续监督三条正式训练，完成后直接生成固定评阅包。[合同与门槛](../../reference/SPEC-N1-175_data_and_completion_contract_20261026.md)。
 
 
 > **2026-10-25 N1-175元数据审计更新（覆盖本页旧规模预估，旧实验合同及结果保留）**：冻结源5073条中文标签回复只对应1959个用户parent；排除旧非train的121个root-family后，剩4165条回复、1612个用户parent、595个family，其中rank=0仅1393条。尚未做正文质量/语义去重、未选新留出、未训练。原“≥2000、优先5000对”和3–8万CPU均为审计前预估，不能直接视为已具备的数据规模或执行合同。当日执行队首为**修订N1-175数据合同**：明确优选答案/多参考政策，以独立提问覆盖和可靠目标为先，按实际合格规模冻结root-family隔离与前瞻语义判读；不靠同问低排名回复凑量，也不把名义数量变成无限等待的硬门。原前缀指标保留作机制读数，不独自定义自然语言成功。此轮不改N174判据，不把单seed训练复现推广成稳定能力，也不把本剂量ss较差推广成机制普遍无效。见[元数据审计与后续约束](../../reference/PLAN-N1-175_metadata_feasibility_audit_20261025.md)。
@@ -76,7 +76,7 @@ CI由用户另行安排的任务负责，本任务不再修改其文件或叠加
 
 2026-10-25后继方案修订：完整架构/驱动力/VX0–VX7工程包统一归[VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)，N只通过09的J1信息消费/J2信用/J3连续状态与条件选择取必要切片。生命页新发展运行台按[VX6设计](../../reference/UI_LIFE_UX_SPEC_20261003.md)分段实施，当前已交付的是连接/未知语义修复，不代表新五视图或自主策略已实现；VX6.0只读研究观察器可独立先行。此设计修订不改本页CC-1终点、预算、冻结面或研究队首。
 
-## 当前唯一下一步：启动N1-175固定三seed完整回答训练
+## 当前唯一下一步：完成N1-175三seed完整回答训练与固定留出评价
 
 恢复v2已按 **CLOSED_COMPLETE** 收口：用户2026-10-25确认48行判读——四端（含parent基线）在冻结decoder下**不可读、不贴题、机械重复**，有历史行不连贯；因此本轮**不能给出配方排序**，属能力负结果而非工程失败。机器事实：`admission_001`工程失败70.703 CPU；`admission_002`四端真实恢复345.578 CPU；`formal_001`完成156/156、逐端39、reuse=0、0更新，**唯一marker在selector前发布**，发布前651.703 CPU/966.015 wall；窗口剩余9,847.531 CPU/12,740.687 wall，无未知尾账。本轮不追加训练、不补题、不再读dev面。
 
@@ -96,7 +96,7 @@ CC-2/N1-167已完成48/48只读矩阵，134.46875 CPU/137.125 wall，四端原�
 
 **N1-174 家族（500题规模对照）已按CLOSED_BOUNDED结案，出口INCONCLUSIVE_ROLLOUT**：N1-174与N1-174B先后因我把防失控阈值设在实测成本之下而在epoch 23–24、37–38截断（PARTIAL保留）；N1-174C利用epoch 30耐久checkpoint续训到40，六run复现差全为**0.0**，final均新进程恢复。最终读数：tf臂训练TF **.992–.996**、训练自由匹配中位数 **.937/.305/.294**（仅1/3 seed≥0.50，R未达）；ss臂训练TF .897–.907、自由 .058–.179，同剂量更差。留出题自由匹配 **0/48**（均值.001–.008），own TF .39–.41与错配 .38–.40几乎相同；16条留出输出互不相同但都是通用助手套话，没有任何按题绑定证据。描述性结论：**训练题已能自写（单seed .937），留出题零绑定，scheduled sampling无效**。费用：174 PARTIAL 19,223.453 CPU、174B PARTIAL 30,073.359、174C 7,751.125，家族合计 **57,047.937 CPU**。见[N1-174 家族结案](../../reference/PLAN-N1-174C_execution_closeout_20261025.md)。
 
-N1-174提出的数据扩展方向已完成N175数据合同和train-only正文审计；冻结1148题/517family，64个新family的留出正文未读。V3独立状态/模型/训练器通过V3边界、版本互拒、独立恢复、续训一致性、梯度等价及V2回归检查；N174 TF seed169/170/171父模型和AdamW状态均已迁移。完整训练目标822311字节/epoch，短batch实测439.33 target byte/process-CPU秒，合同估计3seed×40epochs约22.5万CPU秒、预算保护90万。train-only标定累计2次optimizer update，不作为能力结果。唯一下一步是按冻结manifest启动3条TF正式训练，逐epoch耐久保存；完成后才读取固定64-family留出并按R/S门结案。原2000–5000名义对和3–8万预估均撤出执行要求。
+N1-174提出的数据扩展方向已完成N175数据合同和train-only正文审计；冻结1148题/517family，64个新family的留出正文未读。V3独立状态/模型/训练器通过V3边界、版本互拒、独立恢复、续训一致性、梯度等价及V2回归检查；N174 TF seed169/170/171父模型和AdamW状态均已迁移。完整训练目标822311字节/epoch，短batch实测439.33 target byte/process-CPU秒，合同估计3seed×40epochs约22.5万CPU秒、预算保护90万。train-only标定累计2次optimizer update，不作为能力结果。三条TF正式训练已启动并按epoch耐久保存；下一动作是监督其到固定终点，随后一次读取固定64-family留出，生成盲化matched/错配评阅包并按R/S门有限结案。原2000–5000名义对和3–8万预估均撤出执行要求。
 
 旧恢复v2的结案与证据见[恢复v2结案](../../reference/PLAN-R2-EVALUATION-RECOVERY-V2_execution_closeout_20261025.md)、[48行判读](../../reference/PLAN-R2-EVALUATION-RECOVERY-V2_human_review_20261025.md)、[执行审计](../../../reports/taiji_r2_evaluation_recovery_v2_execution_audit_20261025.json)。
 

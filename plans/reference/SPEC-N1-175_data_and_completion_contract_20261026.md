@@ -1,6 +1,6 @@
 # N1-175 数据与有限结案合同 v1
 
-日期：2026-10-26，持续更新。训练runner已冻结并准备启动三seed正式执行；train-only校准完成，不表示能力提升。承接N1-174家族结案及[N175元数据审计](PLAN-N1-175_metadata_feasibility_audit_20261025.md)。数据隔离与候选选择已执行；训练长度与成本尚未冻结，不将本合同写成已训练或能力通过。
+日期：2026-10-26，持续更新。三seed正式训练已启动；train-only校准完成，不表示能力提升。承接N1-174家族结案及[N175元数据审计](PLAN-N1-175_metadata_feasibility_audit_20261025.md)。数据隔离与候选选择已执行；训练长度与成本尚未冻结，不将本合同写成已训练或能力通过。
 
 ## 方向与本轮范围
 
@@ -66,3 +66,6 @@ train-only真实batch更新测得3700目标字节/8.421875 process-CPU秒=439.33
 
 
 正式训练入口为[`run_taiji_n1_plan175_v3_scale.py`](../../scripts/training/run_taiji_n1_plan175_v3_scale.py)，按seed单独进程运行，续训从最近一个epoch checkpoint恢复，progress账本记录当前batch。首轮结束后按本合同的固定R/S门生成64个留出family回答；训练期间不解析其正文。
+
+
+盲化评价生成器[`evaluate_taiji_n1_plan175_v3_holdout.py`](../../scripts/training/evaluate_taiji_n1_plan175_v3_holdout.py)已准备但未运行。运行前强制检查三seed均到40 epochs且最终checkpoint SHA吻合，之后才读取64个固定family；每题用各seed分别生成matched与确定性跨family错配prompt输出，盲评文件与揭盲key在同一原子目录发布，失效family保留在64分母且不补抽。人工评阅按0/1/2标准记录，只有盲评后才揭示seed/条件。
