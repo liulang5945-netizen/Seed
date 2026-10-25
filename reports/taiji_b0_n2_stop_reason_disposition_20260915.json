@@ -11,14 +11,22 @@
     "scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py",
     "tests/taiji_native/test_b0_n2_stop_reason_disposition_contract.py"
   ],
-  "consumer_count": 104,
+  "consumer_count": 106,
   "consumer_count_in_hardening_report": 11,
-  "consumer_count_now": 104,
+  "consumer_count_now": 106,
   "registered_consumer_count": 94,
   "pending_frontier_consumers": [
     {
+      "path": "scripts/training/diagnose_taiji_n1_plan167_train_decoder.py",
+      "why": "2026-10-25 N1/closeout consumer; leave to that line: stop_reason written into the diagnosis payload"
+    },
+    {
       "path": "scripts/training/evaluate_taiji_r2_daily_dialogue_recovery_v2.py",
       "why": "2026-10-23 R2/new-front consumer; leave to that line: f\"**{labels[endpoint_id]}**（{output['stop_reason']}，{output['generated_bytes_length']}字节）\","
+    },
+    {
+      "path": "scripts/training/run_taiji_n1_plan168_isolated_train_fit.py",
+      "why": "2026-10-25 N1/closeout consumer; leave to that line: stop_reason carried through the isolated train-fit record"
     },
     {
       "path": "scripts/training/run_taiji_r2_daily_dialogue_continuation.py",

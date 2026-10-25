@@ -590,6 +590,8 @@ PENDING_FRONTIER_CONSUMERS: dict[str, str] = {
     "tests/taiji_native/test_r2_dialogue_continuation_source_revision_contract.py": '2026-10-23 R2/new-front consumer; leave to that line: "stop_reason": "throughput_projection_exceeds_remaining_budget",',
     "scripts/training/run_taiji_r2_resume.py": '2026-10-23 R2/new-front consumer; leave to that line: self.pending_stop_details = {"stop_reason": "work_unit_refused", ...}',
     "tests/taiji_native/test_r2_worker_namespace_integration.py": '2026-10-25 R2/new-front consumer; leave to that line: "stop_reason": "end_marker",',
+    "scripts/training/diagnose_taiji_n1_plan167_train_decoder.py": "2026-10-25 N1/closeout consumer; leave to that line: stop_reason written into the diagnosis payload",
+    "scripts/training/run_taiji_n1_plan168_isolated_train_fit.py": "2026-10-25 N1/closeout consumer; leave to that line: stop_reason carried through the isolated train-fit record",
 }
 
 #: Every place a stop reason participates in a *decision*.  Each marker must still

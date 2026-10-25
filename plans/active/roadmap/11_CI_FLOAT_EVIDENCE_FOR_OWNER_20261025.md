@@ -61,6 +61,18 @@ multifamily 报 `selector did not choose a group for held-out complement`。
 2. 翻转发生在 `< 0` 边界还是 `< threshold` 边界（决定容差写法）；
 3. multifamily 的容器迭代顺序敏感性是否独立于浮点（3.10 判例提示可能双因）。
 
+**2026-10-25 插桩读数到位（run 40185913504，Ubuntu）**：
+`reason=feedback_resource_cost_exceeds_admission_budget, realized_interaction=0.6000000000000001,
+uncertainty=1.165359456941537, resource_cost=3.0`——与静态分析吻合（interaction 门 0.6 vs 0.1
+余量巨大、uncertainty 1.165 < 1.25 均安全），拒绝来自 **resource_cost 门：第二个 episode
+(d,e) 的资源消耗 3.0 精确超过 admission 预算 2.0**。而 40171918472 的 Ubuntu 绿过同一测——
+机制＝上游模型数值的平台差异改变 `select` 结果 → 不同候选 → episode 资源消耗不同（有时
+≤2.0 有时 =3.0），量级型发散而非渲染噪声，isclose 容差不适用。**归 owner 二次裁定**：
+（i）该 eval 的 `maximum_resource_cost` 2.0 提到覆盖 (d,e) 家族固有消耗（参数级修正，
+不改结构增益判据）；或（ii）`_extend_online_feedbacks` 的两轮 select 确定化（钉住与
+第一轮一致的候选路径）。裁定前该测保持 deselect。
+另：本轮 b0_n2 又接两次登记（N1-167/168 收口脚本，registry 94/pending 12/live 106）——
+并行会话结案波仍在落盘，按 CI_CONTRACT_RULES §2.1 逐波收口。
 **2026-10-25 静态分析更新（continuous_structural_growth 专属）**：方案乙
 （isclose 1e-12）实施后该测在 run 40166946185 Ubuntu 仍翻一次、在
 499c3892f 又绿——但静态分析**基本排除阈值门**：该 eval 的
