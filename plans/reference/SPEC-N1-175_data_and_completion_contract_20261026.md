@@ -84,3 +84,6 @@ N175 epoch04已完成：三个seed各288更新、822311 target bytes，mean loss
 
 
 N175 epoch05已完成：三个seed各288更新、822311 target bytes，mean loss分别1.8708/1.8659/1.8645 nats，CPU分别1450.98/1447.73/1447.31秒。epoch05检查点均通过独立进程恢复、计数和digest往返校验；见[epoch05恢复回执](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch05_20261026.json)。三个seed继续epoch06；损失下降尚不能替代自由生成与盲测。
+
+
+N175 epoch06已完成：三个seed各288更新、822311 target bytes，mean loss分别1.8322/1.8220/1.8257 nats，CPU分别1548.34/1551.45/1547.08秒。epoch06检查点均通过独立进程恢复和digest往返验证，见[epoch06恢复回执](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch06_20261026.json)。seed169已进入epoch07；其余seed按epoch06 durable cursor继续。loss仅为teacher-forced训练拟合读数。
