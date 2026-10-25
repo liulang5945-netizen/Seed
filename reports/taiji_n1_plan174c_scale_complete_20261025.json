@@ -1,0 +1,103 @@
+{
+  "schema": "taiji-n1-plan174c-scale-aggregate-v1",
+  "status": "INCONCLUSIVE_ROLLOUT",
+  "all_runs_complete": true,
+  "rollout_medians": {
+    "tf": [
+      0.9371279761904762,
+      0.3046875,
+      0.2941810344827586
+    ],
+    "ss": [
+      0.17864387134164011,
+      0.05823266806722689,
+      0.09375
+    ]
+  },
+  "rollout_gate_by_arm": {
+    "tf": false,
+    "ss": false
+  },
+  "binding_hits": {
+    "tf": 0,
+    "ss": 0
+  },
+  "binding_qualified": {
+    "tf": 0,
+    "ss": 0
+  },
+  "binding_gate_arms": [],
+  "hit_lead": 0,
+  "criteria": {
+    "rollout_gate": 0.5,
+    "own_gate": 0.2,
+    "margin": 0.15,
+    "binding_hits": 24,
+    "hit_lead": 8
+  },
+  "runs": {
+    "tf_seed169": {
+      "status": "complete",
+      "cpu_seconds": 1105.453125,
+      "wall_seconds": 1114.1560000000754,
+      "train_free_match_median": 0.9371279761904762,
+      "heldout_free_match_mean": 0.00830078125,
+      "binding_hits": 0,
+      "reproduction_difference": null,
+      "error": null
+    },
+    "tf_seed170": {
+      "status": "complete",
+      "cpu_seconds": 1317.4375,
+      "wall_seconds": 1329.453000000096,
+      "train_free_match_median": 0.3046875,
+      "heldout_free_match_mean": 0.0009765625,
+      "binding_hits": 0,
+      "reproduction_difference": null,
+      "error": null
+    },
+    "tf_seed171": {
+      "status": "complete",
+      "cpu_seconds": 1311.53125,
+      "wall_seconds": 1324.079000000027,
+      "train_free_match_median": 0.2941810344827586,
+      "heldout_free_match_mean": 0.0029296875,
+      "binding_hits": 0,
+      "reproduction_difference": null,
+      "error": null
+    },
+    "ss_seed169": {
+      "status": "complete",
+      "cpu_seconds": 1337.796875,
+      "wall_seconds": 1349.2189999999246,
+      "train_free_match_median": 0.17864387134164011,
+      "heldout_free_match_mean": 0.001953125,
+      "binding_hits": 0,
+      "reproduction_difference": null,
+      "error": null
+    },
+    "ss_seed170": {
+      "status": "complete",
+      "cpu_seconds": 1339.328125,
+      "wall_seconds": 1350.3120000000345,
+      "train_free_match_median": 0.05823266806722689,
+      "heldout_free_match_mean": 0.00146484375,
+      "binding_hits": 0,
+      "reproduction_difference": null,
+      "error": null
+    },
+    "ss_seed171": {
+      "status": "complete",
+      "cpu_seconds": 1339.578125,
+      "wall_seconds": 1351.25,
+      "train_free_match_median": 0.09375,
+      "heldout_free_match_mean": 0.00390625,
+      "binding_hits": 0,
+      "reproduction_difference": null,
+      "error": null
+    }
+  },
+  "total_cpu_seconds": 7751.125,
+  "dev_queries": 0,
+  "can_promote": false
+}

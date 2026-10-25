@@ -1,7 +1,7 @@
 # N主线交付黑板
 
 - 运行目录：`E:/Seed/plans/reference/delivery-runs/20261021-n-mainline`。
-- 主阶段：恢复v2已按CLOSED_COMPLETE结案；CC-2/N1-167、168、169、170、171均已结案；N1-170在已见4题把TF升至0.99、自由匹配升至0–78.1%（记忆复现），N1-171的16题4折留出探针因64次整批更新训练侧未拟合（训练TF中位数.535–.578）按INCONCLUSIVE_UNDERFIT收口；N1-172在折0/1把训练TF抬到.941–.953后，训练题自由匹配仍仅0–4.7%、留出绑定命中0/8，按FAIL_NO_GENERALIZATION收口；N1-173 scheduled sampling（p≤.47、120步）训练TF仍.965–.981，但训练自由匹配中位数仅.0156/0，按INCONCLUSIVE_ROLLOUT收口，自由滚动瓶颈未破；CC-2余额仅103.266 CPU，当前唯一下一步是N1-174申请新预算的正式规模对照（全量525题、滚动感知两臂、3 seed，先2,000 CPU标定再决定是否放到20,000），具体按03。
+- 主阶段：恢复v2已按CLOSED_COMPLETE结案；CC-2/N1-167、168、169、170、171均已结案；N1-170在已见4题把TF升至0.99、自由匹配升至0–78.1%（记忆复现），N1-171的16题4折留出探针因64次整批更新训练侧未拟合（训练TF中位数.535–.578）按INCONCLUSIVE_UNDERFIT收口；N1-172在折0/1把训练TF抬到.941–.953后，训练题自由匹配仍仅0–4.7%、留出绑定命中0/8，按FAIL_NO_GENERALIZATION收口；N1-173 scheduled sampling（p≤.47、120步）训练TF仍.965–.981，但训练自由匹配中位数仅.0156/0，按INCONCLUSIVE_ROLLOUT收口。用户随后批准新预算且不硬性封顶机时；N1-174家族（500题、两臂、3 seed、40 epochs）已完成：tf臂训练TF .992–.996、训练自由匹配中位数 .937/.305/.294（仅1/3 seed达滚动门），留出0/48、own与错配TF无差异；ss臂更差。两次阈值截断由epoch30耐久checkpoint续训补齐（复现差0.0），家族合计57,047.937 CPU，出口INCONCLUSIVE_ROLLOUT。当前唯一下一步是N1-175数据规模跃迁（审计中文对≥2,000、留出64 family、仅tf臂3 seed、逐字+人工贴题，预估3–8万CPU），具体按03。
 - 持续Goal已由用户正式设置，详细WBS见[10](../../../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。
 - 唯一活动队首与实时事实只由[03](../../../active/roadmap/03_CURRENT_EXECUTION.md)维护；本页不再复制额度/进度快照。
 
@@ -86,3 +86,5 @@ N1-171实际完成并按CLOSED_BOUNDED结案：16题确定性选择做4折轮换
 N1-172实际完成并按CLOSED_BOUNDED结案：同一选择与折0/1，176步上限、训练TF中位数≥.90早停；两折均在96步停止（.9531/.9414，损失0.44/0.48 nats），排除「更新预算不足」。但同批训练题自由匹配仅0–4.7%，留出8题命中0/8，留出自身target TF与错配target无差异；预注册出口FAIL_NO_GENERALIZATION，机制判读为「TF拟合达成、自由滚动一致性未达成、绑定未证明」。3份checkpoint新进程恢复、8份来源SHA不变、0 dev；费用379.406 CPU/387.313 wall，CC-2累计1,246.843/1,274.876（余553.157 CPU）。唯一后继[N1-173 scheduled sampling自由滚动训练探针](../../PLAN-N1-172_execution_closeout_20261025.md)（折0/1、≤128步、≤520 CPU）。
 
 N1-173实际完成并按CLOSED_BOUNDED结案，出口INCONCLUSIVE_ROLLOUT：新增`taiji/conditional_language_rollout.py`与独立checkpoint格式，6/6契约测试；两折各120次整批更新，采样概率末步.469。训练TF仍.9805/.9648、损失5.55→.41/.47，但训练题自由匹配中位数仅.0156/0，留出0–0.8%、8题命中0/8，own与错配TF同档。该剂量下scheduled sampling未抬起自由滚动，不证明机制无效或绑定不存在。3份checkpoint新进程恢复、9份来源SHA不变、0 dev；费用449.891 CPU/457.547 wall，CC-2累计1,696.734/1,732.423（余103.266 CPU）。唯一后继[N1-174申请新预算的正式规模对照](../../PLAN-N1-173_execution_closeout_20261025.md)：全量525题、滚动感知两臂、3 seed，先2,000 CPU标定再决定是否放到20,000；未获批前不再启动训练。
+
+N1-174家族实际完成并按CLOSED_BOUNDED结案，出口INCONCLUSIVE_ROLLOUT：500题、两臂、3 seed、40 epochs。tf臂训练TF .992–.996、训练自由匹配中位数 .937/.305/.294（仅1/3 seed达滚动门）；ss臂训练TF .897–.907、自由 .058–.179。留出自由匹配0/48、own TF .39–.41与错配 .38–.40无差异，16条留出输出互不相同但都是通用助手套话。174/174B两次因防失控阈值低于实测成本在epoch 23–24、37–38截断（PARTIAL保留），174C用epoch30耐久checkpoint续训到40，六run复现差全为0.0，final均新进程恢复。费用174 19,223.453＋174B 30,073.359＋174C 7,751.125＝57,047.937 CPU。唯一后继[N1-175数据规模跃迁](../../PLAN-N1-174C_execution_closeout_20261025.md)：审计OASST2中文对（≥2,000、可达5,000优先）、留出64 family、仅tf臂3 seed 40–60 epochs、逐字＋人工贴题判读，预估3–8万CPU；若5,000对仍0绑定则转结构改造。

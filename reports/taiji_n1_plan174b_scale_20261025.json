@@ -1,0 +1,90 @@
+{
+  "schema": "taiji-n1-plan174-scale-aggregate-v1",
+  "status": "PARTIAL",
+  "all_runs_complete": false,
+  "rollout_medians": {
+    "tf": [],
+    "ss": []
+  },
+  "rollout_gate_by_arm": {
+    "tf": false,
+    "ss": false
+  },
+  "binding_hits": {
+    "tf": 0,
+    "ss": 0
+  },
+  "binding_qualified": {
+    "tf": 0,
+    "ss": 0
+  },
+  "binding_gate_arms": [],
+  "hit_lead": 0,
+  "criteria": {
+    "rollout_gate": 0.5,
+    "own_gate": 0.2,
+    "margin": 0.15,
+    "binding_hits": 24,
+    "hit_lead": 8
+  },
+  "runs": {
+    "tf_seed169": {
+      "status": "partial",
+      "cpu_seconds": 5012.359375,
+      "wall_seconds": 5060.0320000000065,
+      "train_free_match_median": null,
+      "heldout_free_match_mean": null,
+      "binding_hits": 0,
+      "error": "N1-174B run reached its runaway-protection threshold"
+    },
+    "tf_seed170": {
+      "status": "partial",
+      "cpu_seconds": 5011.734375,
+      "wall_seconds": 5058.9529999999795,
+      "train_free_match_median": null,
+      "heldout_free_match_mean": null,
+      "binding_hits": 0,
+      "error": "N1-174B run reached its runaway-protection threshold"
+    },
+    "tf_seed171": {
+      "status": "partial",
+      "cpu_seconds": 5011.359375,
+      "wall_seconds": 5059.390999999945,
+      "train_free_match_median": null,
+      "heldout_free_match_mean": null,
+      "binding_hits": 0,
+      "error": "N1-174B run reached its runaway-protection threshold"
+    },
+    "ss_seed169": {
+      "status": "partial",
+      "cpu_seconds": 5012.265625,
+      "wall_seconds": 5059.280999999959,
+      "train_free_match_median": null,
+      "heldout_free_match_mean": null,
+      "binding_hits": 0,
+      "error": "N1-174B run reached its runaway-protection threshold"
+    },
+    "ss_seed170": {
+      "status": "partial",
+      "cpu_seconds": 5012.625,
+      "wall_seconds": 5060.155999999959,
+      "train_free_match_median": null,
+      "heldout_free_match_mean": null,
+      "binding_hits": 0,
+      "error": "N1-174B run reached its runaway-protection threshold"
+    },
+    "ss_seed171": {
+      "status": "partial",
+      "cpu_seconds": 5013.015625,
+      "wall_seconds": 5059.734000000055,
+      "train_free_match_median": null,
+      "heldout_free_match_mean": null,
+      "binding_hits": 0,
+      "error": "N1-174B run reached its runaway-protection threshold"
+    }
+  },
+  "dev_queries": 0,
+  "can_promote": false,
+  "total_cpu_seconds": 30073.359375,
+  "total_wall_seconds_max": 5060.155999999959
+}
