@@ -71,4 +71,4 @@ train-only真实batch更新测得3700目标字节/8.421875 process-CPU秒=439.33
 盲化评价生成器[`evaluate_taiji_n1_plan175_v3_holdout.py`](../../scripts/training/evaluate_taiji_n1_plan175_v3_holdout.py)已准备但未运行。运行前强制检查三seed均到40 epochs、报告所用corpus manifest SHA、最终checkpoint文件SHA与内部checkpoint digest吻合，并复验原始OASST及既有split SHA和64个family覆盖；全部通过后才读取64个固定family。每题用各seed分别生成matched与确定性跨family错配prompt输出，盲评文件与揭盲key在同一原子目录发布，失效family保留在64分母且不补抽。人工评阅按0/1/2标准记录，只有盲评后才揭示seed/条件。
 
 
-N175首个正式epoch已全部完成，seed169/170/171均完成288更新、各曝光822311 target bytes，平均teacher-forced loss分别2.6297/2.5999/2.6203 nats。epoch01检查点已在独立新进程恢复并验证step/exposure/cursor及digest往返，详见[epoch01恢复回执](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch01_20261026.json)。seed169现进入epoch02，其余seed按各自epoch checkpoint继续；单epoch训练损失只证明训练运转，不作能力结论。
+N175首个正式epoch已全部完成，seed169/170/171均完成288更新、各曝光822311 target bytes，平均teacher-forced loss分别2.6297/2.5999/2.6203 nats。epoch01检查点已在独立新进程恢复并验证step/exposure/cursor及digest往返，详见[epoch01恢复回执](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch01_20261026.json)。三个seed均已从epoch01 checkpoint进入后续训练，精确cursor见progress账本；单epoch训练损失只证明训练运转，不作能力结论。

@@ -1,7 +1,7 @@
 # N主线当前执行
 
 
-> **2026-10-26 N175执行状态**：V3边界/版本互拒/新进程恢复和逐样本梯度等价已通过5项V3+9项V2定向测试；三份N1-174 TF终点已迁移并新进程恢复。冻结语料1148题/517family、822311 target bytes/epoch；短train-only更新实测439.33 target byte/process-CPU秒，完整40epoch×3seed估计约22.5万CPU秒，2倍约45万。正式三seed均已完成epoch1并写入耐久checkpoint，独立进程恢复和digest往返全部通过，详见[首轮恢复回执](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch01_20261026.json)；seed169进入epoch2，另外两条持续续训。留出正文仍未读取。盲化评阅生成器已准备，训练完后固定读取64个预选family。当前继续监督训练至固定终点。[合同与门槛](../../reference/SPEC-N1-175_data_and_completion_contract_20261026.md)。
+> **2026-10-26 N175执行状态**：V3边界/版本互拒/新进程恢复和逐样本梯度等价已通过5项V3+9项V2定向测试；三份N1-174 TF终点已迁移并新进程恢复。冻结语料1148题/517family、822311 target bytes/epoch；短train-only更新实测439.33 target byte/process-CPU秒，完整40epoch×3seed估计约22.5万CPU秒，2倍约45万。正式三seed均已完成epoch1并写入耐久checkpoint，独立进程恢复和digest往返全部通过，详见[首轮恢复回执](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch01_20261026.json)；三条已进入后续epoch持续续训，精确batch/费用见各自progress账本。留出正文仍未读取。盲化评阅生成器已准备，训练完后固定读取64个预选family。当前继续监督训练至固定终点。[合同与门槛](../../reference/SPEC-N1-175_data_and_completion_contract_20261026.md)。
 
 
 > **2026-10-25 N1-175元数据审计更新（覆盖本页旧规模预估，旧实验合同及结果保留）**：冻结源5073条中文标签回复只对应1959个用户parent；排除旧非train的121个root-family后，剩4165条回复、1612个用户parent、595个family，其中rank=0仅1393条。尚未做正文质量/语义去重、未选新留出、未训练。原“≥2000、优先5000对”和3–8万CPU均为审计前预估，不能直接视为已具备的数据规模或执行合同。当日执行队首为**修订N1-175数据合同**：明确优选答案/多参考政策，以独立提问覆盖和可靠目标为先，按实际合格规模冻结root-family隔离与前瞻语义判读；不靠同问低排名回复凑量，也不把名义数量变成无限等待的硬门。原前缀指标保留作机制读数，不独自定义自然语言成功。此轮不改N174判据，不把单seed训练复现推广成稳定能力，也不把本剂量ss较差推广成机制普遍无效。见[元数据审计与后续约束](../../reference/PLAN-N1-175_metadata_feasibility_audit_20261025.md)。
