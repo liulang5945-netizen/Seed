@@ -1,7 +1,7 @@
 # N主线交付黑板
 
 - 运行目录：`E:/Seed/plans/reference/delivery-runs/20261021-n-mainline`。
-- 主阶段：恢复v2已按CLOSED_COMPLETE结案（四端真实恢复＋156/156生成＋唯一marker＋用户确认48行判读），能力读数为四端（含基线）不可读、无配方排序；CC-2/N1-167与N1-168完整实证已结案，用户已采纳N1-169，当前推进共享条件语言候选的完整工程/恢复/一次标定，具体按03。
+- 主阶段：恢复v2已按CLOSED_COMPLETE结案；CC-2/N1-167、N1-168与N1-169均已结案，N1-169标定门槛未达并记录暴露缺口；当前等待N1-170暴露缩放探针的裁决（≤1,200 CPU在CC-2现有额度内），具体按03。
 - 持续Goal已由用户正式设置，详细WBS见[10](../../../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。
 - 唯一活动队首与实时事实只由[03](../../../active/roadmap/03_CURRENT_EXECUTION.md)维护；本页不再复制额度/进度快照。
 
@@ -76,3 +76,5 @@ N1-168实际完成：zero先保存并新进程核对完整digest/原生RNG/计�
 本轮大步推进验收：N167/N168源与冻结PLAN/SPEC全部SHA复核一致，zero/final文件SHA与两次新进程恢复回执一致，累计32/9320计数正确且parent未变；25项检查通过，7份收束文档113条链接有效，Black/Ruff/差异检查通过。两套实际原始报告、派生统计、费用和独立结案随提交，checkpoint留受控data目录。当前N169是新的模型路线讨论，不继续固定8轮或旧dev。
 
 2026-10-25用户采纳共享条件主链推荐路线。新原生TaskStateV1/Core/ConditionalLanguageCandidate已按VX1/VX3切片实现，native适配器只提供显式隔离工厂；默认模型未改。状态/来源/参数revision及统一next_logits实际消费、编码与读取梯度、detach对照、生成中断恢复和下一AdamW更新同一性均有测试；既有CognitiveState只锚定引用，不声称world/goal/自主器官已接通。待全部合成/恢复检查后以原4train/seed169跑固定64batch，最多1200/1800，正式比较在实测后一次冻结。
+
+N1-169实际完成：工程E通过（8/8测试、zero/one/final三份新进程恢复、938177参数、默认模型与parent未变、0 dev）；64 batch/31,680 target-byte标定TF top-1 .658/.703/.695/.672、NLL 8.01→1.68–1.98 bits、完整汉字5/31、12/39、10/38、9/40，但自由128 byte前缀匹配0–3.9%，预注册「4题TF≥0.80且自由≥0.80」门槛未达，按SPEC记录暴露/滚动缺口，不称语言通过。同任务只读对照（parent .19–.31、N168 child .27–.37 TF）不构成算法胜负。费用67.765625 CPU/70.359 wall，CC-2累计321.125/329.625。唯一后继[N1-170暴露缩放探针](../../PLAN-N1-169_execution_closeout_20261025.md)（64→256 batch、单seed单臂、≤1,200 CPU，现有额度内）；20,000 CPU/24,000 wall正式对照属新预算，未批准不启动。

@@ -1,0 +1,27 @@
+{
+  "schema": "taiji-n1-plan169-comparison-cost-basis-v1",
+  "capacity_ceiling": 1000000,
+  "fresh_local_parameter_count": 971427,
+  "candidate_parameter_count": 938177,
+  "exact_parameter_matched": false,
+  "fresh_local_initialization_cpu_seconds": 1.078125,
+  "fresh_local_corpus_digest": "4362c85eb7e97c8bb78ac77041182699292d7f0019d3cf846063206a5b00e006",
+  "fresh_local_seed": 169,
+  "initialization_order": "enable native factorized plan before fitting its target encoder; same frozen recipe precondition",
+  "model_updates_in_this_probe": 0,
+  "native_batch_cpu_upper_estimate": 18.57666015625,
+  "candidate_batch_cpu_upper_estimate": 3.0154671717171717,
+  "proposed_batches_per_seed": 256,
+  "seeds": [
+    169,
+    170,
+    171
+  ],
+  "target_byte_exposures_per_arm_seed": 298240,
+  "projected_local_cpu_all_seeds": 14266.875,
+  "projected_candidate_cpu_all_seeds": 2315.878787878788,
+  "reserved_shared_cpu": 2000,
+  "proposed_complete_cpu_cap": 20000,
+  "proposed_complete_wall_cap": 24000,
+  "limitations": "estimates are not measured future costs; hard runtime/partial exits required; no dev/confirmation query and no model promotion"
+}

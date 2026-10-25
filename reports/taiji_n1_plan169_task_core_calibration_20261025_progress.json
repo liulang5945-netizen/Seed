@@ -1,0 +1,1425 @@
+{
+  "schema": "taiji-n1-plan169-task-core-calibration-v1",
+  "status": "running",
+  "steps": [
+    {
+      "step": 1,
+      "loss_nats": 5.550388336181641,
+      "loss_bits": 8.007517727617198,
+      "gradient_norm_before_clip": 0.36309945583343506,
+      "gradient_group_norms": {
+        "core.embedding": 0.005192835555865178,
+        "core.encoder": 0.08453987801288644,
+        "core.keys": 0.0002492782828579677,
+        "core.values": 0.10684837359588312,
+        "query": 0.00023417949255976326,
+        "decoder": 0.15541813776272773,
+        "output": 0.2984893723789247
+      },
+      "target_byte_exposures": 495,
+      "update_cpu_seconds": 0.421875
+    },
+    {
+      "step": 2,
+      "loss_nats": 5.4469075202941895,
+      "loss_bits": 7.858226467709228,
+      "gradient_norm_before_clip": 0.390468031167984,
+      "gradient_group_norms": {
+        "core.embedding": 0.007276674771748257,
+        "core.encoder": 0.11036636376704713,
+        "core.keys": 0.0012234855862265446,
+        "core.values": 0.12657675155120068,
+        "query": 0.0011000452124878526,
+        "decoder": 0.16358984260529022,
+        "output": 0.3121630461359041
+      },
+      "target_byte_exposures": 990,
+      "update_cpu_seconds": 0.34375
+    },
+    {
+      "step": 3,
+      "loss_nats": 5.32496452331543,
+      "loss_bits": 7.682299910696834,
+      "gradient_norm_before_clip": 0.4940810203552246,
+      "gradient_group_norms": {
+        "core.embedding": 0.012651281155919817,
+        "core.encoder": 0.1805616668545452,
+        "core.keys": 0.003503485080445042,
+        "core.values": 0.18274363051937373,
+        "query": 0.0033502028325286125,
+        "decoder": 0.198588881445131,
+        "output": 0.3721525096460303
+      },
+      "target_byte_exposures": 1485,
+      "update_cpu_seconds": 0.421875
+    },
+    {
+      "step": 4,
+      "loss_nats": 5.152231216430664,
+      "loss_bits": 7.433098425457831,
+      "gradient_norm_before_clip": 0.6838526725769043,
+      "gradient_group_norms": {
+        "core.embedding": 0.0217491966313202,
+        "core.encoder": 0.2950952995787396,
+        "core.keys": 0.010238623299264615,
+        "core.values": 0.2709618074189609,
+        "query": 0.010480225206723854,
+        "decoder": 0.2674637945283594,
+        "output": 0.4846944351702378
+      },
+      "target_byte_exposures": 1980,
+      "update_cpu_seconds": 0.40625
+    },
+    {
+      "step": 5,
+      "loss_nats": 4.88960599899292,
+      "loss_bits": 7.054210326648011,
+      "gradient_norm_before_clip": 0.9616469144821167,
+      "gradient_group_norms": {
+        "core.embedding": 0.035226966016560224,
+        "core.encoder": 0.45769181666675557,
+        "core.keys": 0.030394492840960203,
+        "core.values": 0.37906010935187556,
+        "query": 0.03241534192406324,
+        "decoder": 0.37062893166233746,
+        "output": 0.6565179107663993
+      },
+      "target_byte_exposures": 2475,
+      "update_cpu_seconds": 0.46875
+    },
+    {
+      "step": 6,
+      "loss_nats": 4.516865253448486,
+      "loss_bits": 6.516459101513802,
+      "gradient_norm_before_clip": 1.165470838546753,
+      "gradient_group_norms": {
+        "core.embedding": 0.046154048543528906,
+        "core.encoder": 0.5761385406937711,
+        "core.keys": 0.07349242061567074,
+        "core.values": 0.420940054143762,
+        "query": 0.07804422980977725,
+        "decoder": 0.4139643300557892,
+        "output": 0.814989472532222
+      },
+      "target_byte_exposures": 2970,
+      "update_cpu_seconds": 0.46875
+    },
+    {
+      "step": 7,
+      "loss_nats": 4.146683216094971,
+      "loss_bits": 5.982399311997712,
+      "gradient_norm_before_clip": 0.8144615888595581,
+      "gradient_group_norms": {
+        "core.embedding": 0.031014727465677443,
+        "core.encoder": 0.36450666653242264,
+        "core.keys": 0.0781514897736708,
+        "core.values": 0.23033042167050072,
+        "query": 0.07956765378754857,
+        "decoder": 0.19767253023370457,
+        "output": 0.6518862743813683
+      },
+      "target_byte_exposures": 3465,
+      "update_cpu_seconds": 0.5625
+    },
+    {
+      "step": 8,
+      "loss_nats": 4.0196757316589355,
+      "loss_bits": 5.799166244046062,
+      "gradient_norm_before_clip": 1.0678136348724365,
+      "gradient_group_norms": {
+        "core.embedding": 0.012743376338081445,
+        "core.encoder": 0.14927849061320253,
+        "core.keys": 0.044101473389646234,
+        "core.values": 0.13980914460599894,
+        "query": 0.041387255759084834,
+        "decoder": 0.17226684787668553,
+        "output": 1.031940426410817
+      },
+      "target_byte_exposures": 3960,
+      "update_cpu_seconds": 0.625
+    },
+    {
+      "step": 9,
+      "loss_nats": 4.0282673835754395,
+      "loss_bits": 5.8115613776590465,
+      "gradient_norm_before_clip": 1.62965726852417,
+      "gradient_group_norms": {
+        "core.embedding": 0.03384442066856031,
+        "core.encoder": 0.3894657657503105,
+        "core.keys": 0.11422064576095615,
+        "core.values": 0.2548928496332039,
+        "query": 0.10276563626949362,
+        "decoder": 0.2115587650187109,
+        "output": 1.5393696541408777
+      },
+      "target_byte_exposures": 4455,
+      "update_cpu_seconds": 0.578125
+    },
+    {
+      "step": 10,
+      "loss_nats": 4.001265048980713,
+      "loss_bits": 5.77260524344681,
+      "gradient_norm_before_clip": 1.2875046730041504,
+      "gradient_group_norms": {
+        "core.embedding": 0.030601226607586015,
+        "core.encoder": 0.351779607783862,
+        "core.keys": 0.10112126034310205,
+        "core.values": 0.2189883897976768,
+        "query": 0.088295983446709,
+        "decoder": 0.17897050212389345,
+        "output": 1.1979158638393435
+      },
+      "target_byte_exposures": 4950,
+      "update_cpu_seconds": 0.484375
+    },
+    {
+      "step": 11,
+      "loss_nats": 3.9544339179992676,
+      "loss_bits": 5.705042203020657,
+      "gradient_norm_before_clip": 0.7416037321090698,
+      "gradient_group_norms": {
+        "core.embedding": 0.019731116624882604,
+        "core.encoder": 0.22331890361232037,
+        "core.keys": 0.06499099988937937,
+        "core.values": 0.13933906369228752,
+        "query": 0.055952371468400874,
+        "decoder": 0.16137687220558772,
+        "output": 0.6685182088522479
+      },
+      "target_byte_exposures": 5445,
+      "update_cpu_seconds": 0.46875
+    },
+    {
+      "step": 12,
+      "loss_nats": 3.9203426837921143,
+      "loss_bits": 5.655858948492213,
+      "gradient_norm_before_clip": 0.796989381313324,
+      "gradient_group_norms": {
+        "core.embedding": 0.012459830821492766,
+        "core.encoder": 0.1375633731659942,
+        "core.keys": 0.040826091345900345,
+        "core.values": 0.11204722152282375,
+        "query": 0.034960818260070026,
+        "decoder": 0.17812466396338453,
+        "output": 0.7542898969707783
+      },
+      "target_byte_exposures": 5940,
+      "update_cpu_seconds": 0.5
+    },
+    {
+      "step": 13,
+      "loss_nats": 3.8900418281555176,
+      "loss_bits": 5.612144054330603,
+      "gradient_norm_before_clip": 0.937002956867218,
+      "gradient_group_norms": {
+        "core.embedding": 0.008916210008447233,
+        "core.encoder": 0.09272674244972813,
+        "core.keys": 0.027759098816202858,
+        "core.values": 0.10667589418445332,
+        "query": 0.02362549049893904,
+        "decoder": 0.1930378903749471,
+        "output": 0.9051714508441983
+      },
+      "target_byte_exposures": 6435,
+      "update_cpu_seconds": 0.5
+    },
+    {
+      "step": 14,
+      "loss_nats": 3.8530213832855225,
+      "loss_bits": 5.5587348421051574,
+      "gradient_norm_before_clip": 0.9382036924362183,
+      "gradient_group_norms": {
+        "core.embedding": 0.007220039432070678,
+        "core.encoder": 0.06387597188686542,
+        "core.keys": 0.01916485379366407,
+        "core.values": 0.09727988614912486,
+        "query": 0.016037077845645408,
+        "decoder": 0.190860100829058,
+        "output": 0.9108183413663082
+      },
+      "target_byte_exposures": 6930,
+      "update_cpu_seconds": 0.5625
+    },
+    {
+      "step": 15,
+      "loss_nats": 3.8101727962493896,
+      "loss_bits": 5.496917398079029,
+      "gradient_norm_before_clip": 0.8026372194290161,
+      "gradient_group_norms": {
+        "core.embedding": 0.006749066016333084,
+        "core.encoder": 0.0423842177162907,
+        "core.keys": 0.012941830344725576,
+        "core.values": 0.07942898249619311,
+        "query": 0.01036587731882563,
+        "decoder": 0.17699355174342346,
+        "output": 0.7774866491849709
+      },
+      "target_byte_exposures": 7425,
+      "update_cpu_seconds": 0.546875
+    },
+    {
+      "step": 16,
+      "loss_nats": 3.7697501182556152,
+      "loss_bits": 5.4385998009979595,
+      "gradient_norm_before_clip": 0.5983082056045532,
+      "gradient_group_norms": {
+        "core.embedding": 0.0071527875227457745,
+        "core.encoder": 0.029635394779961563,
+        "core.keys": 0.009864483700411913,
+        "core.values": 0.05790546538052317,
+        "query": 0.0074336439989488344,
+        "decoder": 0.1650143545913662,
+        "output": 0.5712419229605255
+      },
+      "target_byte_exposures": 7920,
+      "update_cpu_seconds": 0.5
+    },
+    {
+      "step": 17,
+      "loss_nats": 3.7371771335601807,
+      "loss_bits": 5.391606917510904,
+      "gradient_norm_before_clip": 0.4403071403503418,
+      "gradient_group_norms": {
+        "core.embedding": 0.007819907487651611,
+        "core.encoder": 0.026185777304751474,
+        "core.keys": 0.010037837484289951,
+        "core.values": 0.042843801586506476,
+        "query": 0.007430068344282506,
+        "decoder": 0.16317183465103155,
+        "output": 0.40560127809227525
+      },
+      "target_byte_exposures": 8415,
+      "update_cpu_seconds": 0.578125
+    },
+    {
+      "step": 18,
+      "loss_nats": 3.71151065826416,
+      "loss_bits": 5.354578020884237,
+      "gradient_norm_before_clip": 0.4158238470554352,
+      "gradient_group_norms": {
+        "core.embedding": 0.008516282383781987,
+        "core.encoder": 0.030236135929878165,
+        "core.keys": 0.012096249841941518,
+        "core.values": 0.04124301428922122,
+        "query": 0.00902407150416432,
+        "decoder": 0.16980093185858325,
+        "output": 0.3757186306020517
+      },
+      "target_byte_exposures": 8910,
+      "update_cpu_seconds": 0.59375
+    },
+    {
+      "step": 19,
+      "loss_nats": 3.6879663467407227,
+      "loss_bits": 5.320610759408228,
+      "gradient_norm_before_clip": 0.4554665982723236,
+      "gradient_group_norms": {
+        "core.embedding": 0.009190031669629048,
+        "core.encoder": 0.035017787275062606,
+        "core.keys": 0.014104946179945352,
+        "core.values": 0.04476287892796822,
+        "query": 0.010498651838215986,
+        "decoder": 0.1772457876807058,
+        "output": 0.4152263687125406
+      },
+      "target_byte_exposures": 9405,
+      "update_cpu_seconds": 0.59375
+    },
+    {
+      "step": 20,
+      "loss_nats": 3.661945104598999,
+      "loss_bits": 5.283070042412592,
+      "gradient_norm_before_clip": 0.46506839990615845,
+      "gradient_group_norms": {
+        "core.embedding": 0.009787936725129003,
+        "core.encoder": 0.035522452027526207,
+        "core.keys": 0.014649491967554345,
+        "core.values": 0.04432281322076466,
+        "query": 0.010807979357243647,
+        "decoder": 0.17848365901518085,
+        "output": 0.4251836273895685
+      },
+      "target_byte_exposures": 9900,
+      "update_cpu_seconds": 0.578125
+    },
+    {
+      "step": 21,
+      "loss_nats": 3.631671667098999,
+      "loss_bits": 5.239394704260681,
+      "gradient_norm_before_clip": 0.435223251581192,
+      "gradient_group_norms": {
+        "core.embedding": 0.010352194402409238,
+        "core.encoder": 0.032707959578833344,
+        "core.keys": 0.013813344324253672,
+        "core.values": 0.039800564444150845,
+        "query": 0.010313944300089662,
+        "decoder": 0.17372394967288293,
+        "output": 0.39520102585276456
+      },
+      "target_byte_exposures": 10395,
+      "update_cpu_seconds": 0.5625
+    },
+    {
+      "step": 22,
+      "loss_nats": 3.597877025604248,
+      "loss_bits": 5.190639342567583,
+      "gradient_norm_before_clip": 0.3982175886631012,
+      "gradient_group_norms": {
+        "core.embedding": 0.010968054037399705,
+        "core.encoder": 0.03078620122423406,
+        "core.keys": 0.012884392866453188,
+        "core.values": 0.03533412294653611,
+        "query": 0.010280767565751142,
+        "decoder": 0.1683354245963793,
+        "output": 0.3572875165113258
+      },
+      "target_byte_exposures": 10890,
+      "update_cpu_seconds": 0.484375
+    },
+    {
+      "step": 23,
+      "loss_nats": 3.5618953704833984,
+      "loss_bits": 5.138728787161756,
+      "gradient_norm_before_clip": 0.3814294934272766,
+      "gradient_group_norms": {
+        "core.embedding": 0.011662447303344226,
+        "core.encoder": 0.032407683605113584,
+        "core.keys": 0.013143555344032446,
+        "core.values": 0.03392552892153107,
+        "query": 0.011511784119397898,
+        "decoder": 0.165947356747974,
+        "output": 0.33957210673823385
+      },
+      "target_byte_exposures": 11385,
+      "update_cpu_seconds": 0.515625
+    },
+    {
+      "step": 24,
+      "loss_nats": 3.524409532546997,
+      "loss_bits": 5.0846481546673425,
+      "gradient_norm_before_clip": 0.385165810585022,
+      "gradient_group_norms": {
+        "core.embedding": 0.012410153582668408,
+        "core.encoder": 0.0366229949894744,
+        "core.keys": 0.014801428484589426,
+        "core.values": 0.03485430232361562,
+        "query": 0.013792975676839282,
+        "decoder": 0.16584751648522042,
+        "output": 0.34311735307395735
+      },
+      "target_byte_exposures": 11880,
+      "update_cpu_seconds": 0.515625
+    },
+    {
+      "step": 25,
+      "loss_nats": 3.48539400100708,
+      "loss_bits": 5.028360640797057,
+      "gradient_norm_before_clip": 0.3944607973098755,
+      "gradient_group_norms": {
+        "core.embedding": 0.013179505782875843,
+        "core.encoder": 0.041638791227303566,
+        "core.keys": 0.01730263252198209,
+        "core.values": 0.03605139567224065,
+        "query": 0.01670566020633296,
+        "decoder": 0.16581513891953825,
+        "output": 0.3525914865009821
+      },
+      "target_byte_exposures": 12375,
+      "update_cpu_seconds": 0.4375
+    },
+    {
+      "step": 26,
+      "loss_nats": 3.4445455074310303,
+      "loss_bits": 4.969428721687105,
+      "gradient_norm_before_clip": 0.3985590934753418,
+      "gradient_group_norms": {
+        "core.embedding": 0.013952471013724694,
+        "core.encoder": 0.04660685292499586,
+        "core.keys": 0.02010789130979702,
+        "core.values": 0.03655444020038402,
+        "query": 0.02002668811603949,
+        "decoder": 0.16496515830266203,
+        "output": 0.35655187139168715
+      },
+      "target_byte_exposures": 12870,
+      "update_cpu_seconds": 0.46875
+    },
+    {
+      "step": 27,
+      "loss_nats": 3.4015543460845947,
+      "loss_bits": 4.907405586410546,
+      "gradient_norm_before_clip": 0.39528176188468933,
+      "gradient_group_norms": {
+        "core.embedding": 0.014718836261462072,
+        "core.encoder": 0.051245871119657505,
+        "core.keys": 0.022702356657365693,
+        "core.values": 0.036508251820846375,
+        "query": 0.023372966485756836,
+        "decoder": 0.16391052482866353,
+        "output": 0.35234228368964715
+      },
+      "target_byte_exposures": 13365,
+      "update_cpu_seconds": 0.5
+    },
+    {
+      "step": 28,
+      "loss_nats": 3.3561971187591553,
+      "loss_bits": 4.841968939479661,
+      "gradient_norm_before_clip": 0.38765960931777954,
+      "gradient_group_norms": {
+        "core.embedding": 0.015449890320754221,
+        "core.encoder": 0.05492937503884516,
+        "core.keys": 0.02422876131885689,
+        "core.values": 0.03645600609459854,
+        "query": 0.025700436287810092,
+        "decoder": 0.163707612469951,
+        "output": 0.3429996356819247
+      },
+      "target_byte_exposures": 13860,
+      "update_cpu_seconds": 0.484375
+    },
+    {
+      "step": 29,
+      "loss_nats": 3.30847430229187,
+      "loss_bits": 4.773119468825055,
+      "gradient_norm_before_clip": 0.3797024190425873,
+      "gradient_group_norms": {
+        "core.embedding": 0.016078137595632383,
+        "core.encoder": 0.056214552162253455,
+        "core.keys": 0.023516972232322825,
+        "core.values": 0.03664322512176913,
+        "query": 0.025333960372239304,
+        "decoder": 0.16459320558846363,
+        "output": 0.3333592588807168
+      },
+      "target_byte_exposures": 14355,
+      "update_cpu_seconds": 0.515625
+    },
+    {
+      "step": 30,
+      "loss_nats": 3.258786201477051,
+      "loss_bits": 4.701434692188323,
+      "gradient_norm_before_clip": 0.37382012605667114,
+      "gradient_group_norms": {
+        "core.embedding": 0.016555247320029887,
+        "core.encoder": 0.054306961330536724,
+        "core.keys": 0.020196161644273937,
+        "core.values": 0.03681868024914402,
+        "query": 0.021264898139334257,
+        "decoder": 0.1656305722844504,
+        "output": 0.32691025180998096
+      },
+      "target_byte_exposures": 14850,
+      "update_cpu_seconds": 0.53125
+    },
+    {
+      "step": 31,
+      "loss_nats": 3.2078981399536133,
+      "loss_bits": 4.628018738188008,
+      "gradient_norm_before_clip": 0.3711127042770386,
+      "gradient_group_norms": {
+        "core.embedding": 0.016974634731788646,
+        "core.encoder": 0.052062904289642956,
+        "core.keys": 0.01628736717849479,
+        "core.values": 0.03681892247606927,
+        "query": 0.015157822851395279,
+        "decoder": 0.1658440238213279,
+        "output": 0.3246111385489816
+      },
+      "target_byte_exposures": 15345,
+      "update_cpu_seconds": 0.453125
+    },
+    {
+      "step": 32,
+      "loss_nats": 3.156393051147461,
+      "loss_bits": 4.553712601986827,
+      "gradient_norm_before_clip": 0.3721069097518921,
+      "gradient_group_norms": {
+        "core.embedding": 0.01751910673220408,
+        "core.encoder": 0.054384902175602004,
+        "core.keys": 0.014950198640019152,
+        "core.values": 0.03715297890408021,
+        "query": 0.010844151646976519,
+        "decoder": 0.16539160711146672,
+        "output": 0.32576746251471583
+      },
+      "target_byte_exposures": 15840,
+      "update_cpu_seconds": 0.484375
+    },
+    {
+      "step": 33,
+      "loss_nats": 3.1041324138641357,
+      "loss_bits": 4.478316439744476,
+      "gradient_norm_before_clip": 0.37629377841949463,
+      "gradient_group_norms": {
+        "core.embedding": 0.018221767093108007,
+        "core.encoder": 0.06099733920064786,
+        "core.keys": 0.01592262224180236,
+        "core.values": 0.03853357904015334,
+        "query": 0.009794409535253597,
+        "decoder": 0.1654974356208267,
+        "output": 0.3291230896074241
+      },
+      "target_byte_exposures": 16335,
+      "update_cpu_seconds": 0.515625
+    },
+    {
+      "step": 34,
+      "loss_nats": 3.050395965576172,
+      "loss_bits": 4.400791132284445,
+      "gradient_norm_before_clip": 0.3817029893398285,
+      "gradient_group_norms": {
+        "core.embedding": 0.018889377857012304,
+        "core.encoder": 0.06645453371141875,
+        "core.keys": 0.016420849905813106,
+        "core.values": 0.04076435519680294,
+        "query": 0.010005190666944717,
+        "decoder": 0.16703691181766464,
+        "output": 0.33315586194401864
+      },
+      "target_byte_exposures": 16830,
+      "update_cpu_seconds": 0.484375
+    },
+    {
+      "step": 35,
+      "loss_nats": 2.9945168495178223,
+      "loss_bits": 4.320174608657805,
+      "gradient_norm_before_clip": 0.3854447901248932,
+      "gradient_group_norms": {
+        "core.embedding": 0.01925330277540261,
+        "core.encoder": 0.06540517034352089,
+        "core.keys": 0.014687012505177092,
+        "core.values": 0.0425426496768076,
+        "query": 0.010294146938345003,
+        "decoder": 0.16921277035721968,
+        "output": 0.33638680039798846
+      },
+      "target_byte_exposures": 17325,
+      "update_cpu_seconds": 0.515625
+    },
+    {
+      "step": 36,
+      "loss_nats": 2.9364993572235107,
+      "loss_bits": 4.236473060239987,
+      "gradient_norm_before_clip": 0.38632217049598694,
+      "gradient_group_norms": {
+        "core.embedding": 0.01929950542104044,
+        "core.encoder": 0.057803821588187324,
+        "core.keys": 0.011522316297240461,
+        "core.values": 0.04271347462790031,
+        "query": 0.010806467795139397,
+        "decoder": 0.17043820210110056,
+        "output": 0.33824470031307585
+      },
+      "target_byte_exposures": 17820,
+      "update_cpu_seconds": 0.515625
+    },
+    {
+      "step": 37,
+      "loss_nats": 2.876953601837158,
+      "loss_bits": 4.150566694238109,
+      "gradient_norm_before_clip": 0.3863944113254547,
+      "gradient_group_norms": {
+        "core.embedding": 0.01938713819508137,
+        "core.encoder": 0.0518602348473295,
+        "core.keys": 0.010674039652317417,
+        "core.values": 0.04156948030157251,
+        "query": 0.012106346298068902,
+        "decoder": 0.17038485572794682,
+        "output": 0.3394370436605913
+      },
+      "target_byte_exposures": 18315,
+      "update_cpu_seconds": 0.515625
+    },
+    {
+      "step": 38,
+      "loss_nats": 2.8163435459136963,
+      "loss_bits": 4.0631248671293285,
+      "gradient_norm_before_clip": 0.38760820031166077,
+      "gradient_group_norms": {
+        "core.embedding": 0.01972045302206485,
+        "core.encoder": 0.0522802385172357,
+        "core.keys": 0.012166412245926642,
+        "core.values": 0.04037102082262756,
+        "query": 0.014065573744524934,
+        "decoder": 0.17003377256418156,
+        "output": 0.34092922073035037
+      },
+      "target_byte_exposures": 18810,
+      "update_cpu_seconds": 0.515625
+    },
+    {
+      "step": 39,
+      "loss_nats": 2.7546963691711426,
+      "loss_bits": 3.974186790958041,
+      "gradient_norm_before_clip": 0.3892037868499756,
+      "gradient_group_norms": {
+        "core.embedding": 0.02003192953823918,
+        "core.encoder": 0.0504203875830711,
+        "core.keys": 0.011622767843749297,
+        "core.values": 0.03996917038641868,
+        "query": 0.01643839439566299,
+        "decoder": 0.17023123820715524,
+        "output": 0.34286519342593874
+      },
+      "target_byte_exposures": 19305,
+      "update_cpu_seconds": 0.640625
+    },
+    {
+      "step": 40,
+      "loss_nats": 2.692051887512207,
+      "loss_bits": 3.883809907929635,
+      "gradient_norm_before_clip": 0.391453355550766,
+      "gradient_group_norms": {
+        "core.embedding": 0.020310828192852022,
+        "core.encoder": 0.05003095337983741,
+        "core.keys": 0.013156669108268664,
+        "core.values": 0.04049292351905876,
+        "query": 0.019987976771566853,
+        "decoder": 0.17121354239404027,
+        "output": 0.3446678293398518
+      },
+      "target_byte_exposures": 19800,
+      "update_cpu_seconds": 0.5
+    },
+    {
+      "step": 41,
+      "loss_nats": 2.6281111240386963,
+      "loss_bits": 3.791562885555747,
+      "gradient_norm_before_clip": 0.39344194531440735,
+      "gradient_group_norms": {
+        "core.embedding": 0.020460443057771286,
+        "core.encoder": 0.051457612661705204,
+        "core.keys": 0.015446548175332786,
+        "core.values": 0.04050490087543518,
+        "query": 0.023980763458187473,
+        "decoder": 0.17283315903872673,
+        "output": 0.3455523992033636
+      },
+      "target_byte_exposures": 20295,
+      "update_cpu_seconds": 0.53125
+    },
+    {
+      "step": 42,
+      "loss_nats": 2.5624566078186035,
+      "loss_bits": 3.696843440593055,
+      "gradient_norm_before_clip": 0.3947073221206665,
+      "gradient_group_norms": {
+        "core.embedding": 0.02027405406794361,
+        "core.encoder": 0.04605617800092912,
+        "core.keys": 0.014438373659159065,
+        "core.values": 0.0396327474898462,
+        "query": 0.027637625151578447,
+        "decoder": 0.17546442987327046,
+        "output": 0.3463132509597915
+      },
+      "target_byte_exposures": 20790,
+      "update_cpu_seconds": 0.53125
+    },
+    {
+      "step": 43,
+      "loss_nats": 2.494981527328491,
+      "loss_bits": 3.5994974765863863,
+      "gradient_norm_before_clip": 0.3967796266078949,
+      "gradient_group_norms": {
+        "core.embedding": 0.020339097264168493,
+        "core.encoder": 0.04870286138348329,
+        "core.keys": 0.0178315460198079,
+        "core.values": 0.03931723438578484,
+        "query": 0.03336924703182236,
+        "decoder": 0.17754305997467426,
+        "output": 0.3466291031191468
+      },
+      "target_byte_exposures": 21285,
+      "update_cpu_seconds": 0.4375
+    },
+    {
+      "step": 44,
+      "loss_nats": 2.425445556640625,
+      "loss_bits": 3.4991782765116013,
+      "gradient_norm_before_clip": 0.3947119414806366,
+      "gradient_group_norms": {
+        "core.embedding": 0.020175799324105098,
+        "core.encoder": 0.04186484850268206,
+        "core.keys": 0.01851013915413734,
+        "core.values": 0.038242057742172916,
+        "query": 0.040968426499023526,
+        "decoder": 0.17646804205323108,
+        "output": 0.3449861898821787
+      },
+      "target_byte_exposures": 21780,
+      "update_cpu_seconds": 0.515625
+    },
+    {
+      "step": 45,
+      "loss_nats": 2.354762554168701,
+      "loss_bits": 3.3972042593702145,
+      "gradient_norm_before_clip": 0.3948272168636322,
+      "gradient_group_norms": {
+        "core.embedding": 0.02024752910325858,
+        "core.encoder": 0.0477283844295628,
+        "core.keys": 0.021177113125216963,
+        "core.values": 0.03767903611503804,
+        "query": 0.04811539607411796,
+        "decoder": 0.17599408968899474,
+        "output": 0.34357772869850656
+      },
+      "target_byte_exposures": 22275,
+      "update_cpu_seconds": 0.515625
+    },
+    {
+      "step": 46,
+      "loss_nats": 2.2837445735931396,
+      "loss_bits": 3.294746970979903,
+      "gradient_norm_before_clip": 0.3957960903644562,
+      "gradient_group_norms": {
+        "core.embedding": 0.019855564128319066,
+        "core.encoder": 0.052425271410023074,
+        "core.keys": 0.030389815873797073,
+        "core.values": 0.03702210726235354,
+        "query": 0.05526574730420083,
+        "decoder": 0.17606437702493766,
+        "output": 0.34229675284505345
+      },
+      "target_byte_exposures": 22770,
+      "update_cpu_seconds": 0.546875
+    },
+    {
+      "step": 47,
+      "loss_nats": 2.2130167484283447,
+      "loss_bits": 3.192708288361792,
+      "gradient_norm_before_clip": 0.38998502492904663,
+      "gradient_group_norms": {
+        "core.embedding": 0.018604817870510583,
+        "core.encoder": 0.042876747269407205,
+        "core.keys": 0.027750993169053467,
+        "core.values": 0.0364919303935977,
+        "query": 0.054911134222452564,
+        "decoder": 0.1699478937860398,
+        "output": 0.3404507716148718
+      },
+      "target_byte_exposures": 23265,
+      "update_cpu_seconds": 0.484375
+    },
+    {
+      "step": 48,
+      "loss_nats": 2.144989490509033,
+      "loss_bits": 3.0945657007163265,
+      "gradient_norm_before_clip": 0.38364481925964355,
+      "gradient_group_norms": {
+        "core.embedding": 0.01766598865560747,
+        "core.encoder": 0.04998703313111452,
+        "core.keys": 0.021895685085763065,
+        "core.values": 0.03906279336550939,
+        "query": 0.04552614832320488,
+        "decoder": 0.1611368173009901,
+        "output": 0.3381299811456807
+      },
+      "target_byte_exposures": 23760,
+      "update_cpu_seconds": 0.484375
+    },
+    {
+      "step": 49,
+      "loss_nats": 2.0814921855926514,
+      "loss_bits": 3.002958453803648,
+      "gradient_norm_before_clip": 0.37837207317352295,
+      "gradient_group_norms": {
+        "core.embedding": 0.01688127804077772,
+        "core.encoder": 0.051823287064342936,
+        "core.keys": 0.020748467012312016,
+        "core.values": 0.04071504039411774,
+        "query": 0.03686660820747503,
+        "decoder": 0.15917923457376168,
+        "output": 0.3337837281067318
+      },
+      "target_byte_exposures": 24255,
+      "update_cpu_seconds": 0.46875
+    },
+    {
+      "step": 50,
+      "loss_nats": 2.021759033203125,
+      "loss_bits": 2.9167817310746136,
+      "gradient_norm_before_clip": 0.3763684928417206,
+      "gradient_group_norms": {
+        "core.embedding": 0.016385195411809394,
+        "core.encoder": 0.046142162191506964,
+        "core.keys": 0.01979577447417627,
+        "core.values": 0.041173686963666745,
+        "query": 0.038999740655005985,
+        "decoder": 0.16586371855301885,
+        "output": 0.32884450922878655
+      },
+      "target_byte_exposures": 24750,
+      "update_cpu_seconds": 0.46875
+    },
+    {
+      "step": 51,
+      "loss_nats": 1.9633370637893677,
+      "loss_bits": 2.8324966455224194,
+      "gradient_norm_before_clip": 0.3726089298725128,
+      "gradient_group_norms": {
+        "core.embedding": 0.01624291734875596,
+        "core.encoder": 0.0450560220437871,
+        "core.keys": 0.022079491499945467,
+        "core.values": 0.039848956476165466,
+        "query": 0.04466818597509104,
+        "decoder": 0.17086785566509638,
+        "output": 0.32137024278341514
+      },
+      "target_byte_exposures": 25245,
+      "update_cpu_seconds": 0.46875
+    },
+    {
+      "step": 52,
+      "loss_nats": 1.9047914743423462,
+      "loss_bits": 2.74803321396128,
+      "gradient_norm_before_clip": 0.3660869002342224,
+      "gradient_group_norms": {
+        "core.embedding": 0.016113862836341128,
+        "core.encoder": 0.045808264467286905,
+        "core.keys": 0.02617033573150524,
+        "core.values": 0.037628226664970905,
+        "query": 0.046180611609406605,
+        "decoder": 0.17132743521178187,
+        "output": 0.3131720833407267
+      },
+      "target_byte_exposures": 25740,
+      "update_cpu_seconds": 0.484375
+    },
+    {
+      "step": 53,
+      "loss_nats": 1.846013069152832,
+      "loss_bits": 2.663233900283006,
+      "gradient_norm_before_clip": 0.3593043386936188,
+      "gradient_group_norms": {
+        "core.embedding": 0.015651494154257737,
+        "core.encoder": 0.04418974864655742,
+        "core.keys": 0.03132052026935716,
+        "core.values": 0.040014912200821234,
+        "query": 0.046228387218868815,
+        "decoder": 0.17043525115994465,
+        "output": 0.30518203120984266
+      },
+      "target_byte_exposures": 26235,
+      "update_cpu_seconds": 0.53125
+    },
+    {
+      "step": 54,
+      "loss_nats": 1.7872591018676758,
+      "loss_bits": 2.5784698430481585,
+      "gradient_norm_before_clip": 0.3477146327495575,
+      "gradient_group_norms": {
+        "core.embedding": 0.016372933079177223,
+        "core.encoder": 0.061504797876875884,
+        "core.keys": 0.03168967817076744,
+        "core.values": 0.042327444587224906,
+        "query": 0.03547129610629596,
+        "decoder": 0.16129524448807342,
+        "output": 0.2945943077910507
+      },
+      "target_byte_exposures": 26730,
+      "update_cpu_seconds": 0.421875
+    },
+    {
+      "step": 55,
+      "loss_nats": 1.7297210693359375,
+      "loss_bits": 2.495460008852112,
+      "gradient_norm_before_clip": 0.34463971853256226,
+      "gradient_group_norms": {
+        "core.embedding": 0.015504845834946128,
+        "core.encoder": 0.04323649900698021,
+        "core.keys": 0.016400560566168444,
+        "core.values": 0.04377908049677439,
+        "query": 0.032142316140583216,
+        "decoder": 0.15993897262691853,
+        "output": 0.29642717062912854
+      },
+      "target_byte_exposures": 27225,
+      "update_cpu_seconds": 0.453125
+    },
+    {
+      "step": 56,
+      "loss_nats": 1.6733821630477905,
+      "loss_bits": 2.414180148141094,
+      "gradient_norm_before_clip": 0.3473314344882965,
+      "gradient_group_norms": {
+        "core.embedding": 0.016371008760069642,
+        "core.encoder": 0.061022613667166284,
+        "core.keys": 0.026552210113762634,
+        "core.values": 0.04387312567185304,
+        "query": 0.044133466092429484,
+        "decoder": 0.15863263206367756,
+        "output": 0.2947995102058543
+      },
+      "target_byte_exposures": 27720,
+      "update_cpu_seconds": 0.46875
+    },
+    {
+      "step": 57,
+      "loss_nats": 1.6169284582138062,
+      "loss_bits": 2.3327346681372956,
+      "gradient_norm_before_clip": 0.3510935604572296,
+      "gradient_group_norms": {
+        "core.embedding": 0.016459350286046587,
+        "core.encoder": 0.0681421427936398,
+        "core.keys": 0.05108879566962376,
+        "core.values": 0.043297565806578786,
+        "query": 0.06503419436351428,
+        "decoder": 0.16815214051068442,
+        "output": 0.285244456858044
+      },
+      "target_byte_exposures": 28215,
+      "update_cpu_seconds": 0.53125
+    },
+    {
+      "step": 58,
+      "loss_nats": 1.5645595788955688,
+      "loss_bits": 2.257182345647962,
+      "gradient_norm_before_clip": 0.4535196125507355,
+      "gradient_group_norms": {
+        "core.embedding": 0.022373610197623958,
+        "core.encoder": 0.16809600181114806,
+        "core.keys": 0.12146427012711561,
+        "core.values": 0.07371101434572992,
+        "query": 0.14481576960341683,
+        "decoder": 0.2244171813328658,
+        "output": 0.29223808239846094
+      },
+      "target_byte_exposures": 28710,
+      "update_cpu_seconds": 0.59375
+    },
+    {
+      "step": 59,
+      "loss_nats": 1.5235953330993652,
+      "loss_bits": 2.1980834313840227,
+      "gradient_norm_before_clip": 0.8957584500312805,
+      "gradient_group_norms": {
+        "core.embedding": 0.04584199397306518,
+        "core.encoder": 0.4228063888515221,
+        "core.keys": 0.32977998123423724,
+        "core.values": 0.1629320170677955,
+        "query": 0.3825608525394762,
+        "decoder": 0.48624927051904404,
+        "output": 0.3215991528384039
+      },
+      "target_byte_exposures": 29205,
+      "update_cpu_seconds": 0.5
+    },
+    {
+      "step": 60,
+      "loss_nats": 1.487531304359436,
+      "loss_bits": 2.1460540359664497,
+      "gradient_norm_before_clip": 0.8106212019920349,
+      "gradient_group_norms": {
+        "core.embedding": 0.03816935073600134,
+        "core.encoder": 0.3367085699190449,
+        "core.keys": 0.23753839922729095,
+        "core.values": 0.1544911928000179,
+        "query": 0.33799730133595374,
+        "decoder": 0.45922164902985996,
+        "output": 0.369947658109388
+      },
+      "target_byte_exposures": 29700,
+      "update_cpu_seconds": 0.46875
+    },
+    {
+      "step": 61,
+      "loss_nats": 1.4216151237487793,
+      "loss_bits": 2.050957089085114,
+      "gradient_norm_before_clip": 0.5438825488090515,
+      "gradient_group_norms": {
+        "core.embedding": 0.02389264000998679,
+        "core.encoder": 0.1914470071789107,
+        "core.keys": 0.14455301533304868,
+        "core.values": 0.09726744635367511,
+        "query": 0.2055993124591084,
+        "decoder": 0.30151966229947447,
+        "output": 0.30829379054278294
+      },
+      "target_byte_exposures": 30195,
+      "update_cpu_seconds": 0.46875
+    },
+    {
+      "step": 62,
+      "loss_nats": 1.3866617679595947,
+      "loss_bits": 2.00053005602563,
+      "gradient_norm_before_clip": 0.9499127864837646,
+      "gradient_group_norms": {
+        "core.embedding": 0.045674444536605276,
+        "core.encoder": 0.4013519887529308,
+        "core.keys": 0.26618855662873997,
+        "core.values": 0.18554912772818866,
+        "query": 0.41250101853826515,
+        "decoder": 0.5809558197264704,
+        "output": 0.3552685149250499
+      },
+      "target_byte_exposures": 30690,
+      "update_cpu_seconds": 0.453125
+    },
+    {
+      "step": 63,
+      "loss_nats": 1.3214713335037231,
+      "loss_bits": 1.9064801395227469,
+      "gradient_norm_before_clip": 0.41779181361198425,
+      "gradient_group_norms": {
+        "core.embedding": 0.023061903048445433,
+        "core.encoder": 0.16821923047381626,
+        "core.keys": 0.09017637089434707,
+        "core.values": 0.0696725340871123,
+        "query": 0.10146928843239394,
+        "decoder": 0.22620637881338135,
+        "output": 0.2669643287737345
+      },
+      "target_byte_exposures": 31185,
+      "update_cpu_seconds": 0.484375
+    },
+    {
+      "step": 64,
+      "loss_nats": 1.2853877544403076,
+      "loss_bits": 1.8544225389504325,
+      "gradient_norm_before_clip": 0.6479088068008423,
+      "gradient_group_norms": {
+        "core.embedding": 0.03323635549130008,
+        "core.encoder": 0.2692707962298237,
+        "core.keys": 0.1651409444149876,
+        "core.values": 0.12920041481100222,
+        "query": 0.26946450656188875,
+        "decoder": 0.3723714791072554,
+        "output": 0.3015623968104062
+      },
+      "target_byte_exposures": 31680,
+      "update_cpu_seconds": 0.53125
+    }
+  ],
+  "milestones": [
+    {
+      "step": 0,
+      "episode_id": "oasst2:50fdf402-7314-463e-b645-b0b8feb93651",
+      "target_bytes": 111,
+      "tf_top1": 0.0,
+      "nll_bits": 8.014637121432315,
+      "cjk_correct": 0,
+      "cjk_total": 31,
+      "generated_hex": "1aecaaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaa",
+      "generated_text": "\u001a쪪ڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪ",
+      "utf8_pending": 0,
+      "free_target_prefix_match": 0.0
+    },
+    {
+      "step": 0,
+      "episode_id": "oasst2:e888c23e-640e-4bd1-9112-98aebf8c2675",
+      "target_bytes": 128,
+      "tf_top1": 0.0,
+      "nll_bits": 8.01480566443016,
+      "cjk_correct": 0,
+      "cjk_total": 39,
+      "generated_hex": "2626e78989dcae0f0a023c3c422d2dcc94722e0272023c3c422d2dcc94722e0272023c3c422d2dcc94722e0272023c3c422d2dcc94722e0272023c3c422d2dcc94722e0272023c3c422d2dcc94722e0272023c3c422d2dcc94722e0272023c3c422d2dcc94722e0272023c3c422d2dcc94722e0272023c3c422d2dcc94722e02",
+      "generated_text": "&&牉ܮ\u000f\n\u0002<<B--̔r.\u0002r\u0002<<B--̔r.\u0002r\u0002<<B--̔r.\u0002r\u0002<<B--̔r.\u0002r\u0002<<B--̔r.\u0002r\u0002<<B--̔r.\u0002r\u0002<<B--̔r.\u0002r\u0002<<B--̔r.\u0002r\u0002<<B--̔r.\u0002r\u0002<<B--̔r.\u0002",
+      "utf8_pending": 0,
+      "free_target_prefix_match": 0.0
+    },
+    {
+      "step": 0,
+      "episode_id": "oasst2:5da96e59-6bfe-4996-87de-f7721c00cf82",
+      "target_bytes": 128,
+      "tf_top1": 0.0,
+      "nll_bits": 7.98926761663824,
+      "cjk_correct": 0,
+      "cjk_total": 38,
+      "generated_hex": "2626e78989dcaee4b9b1daaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaa",
+      "generated_text": "&&牉ܮ乱ڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪ",
+      "utf8_pending": 0,
+      "free_target_prefix_match": 0.0
+    },
+    {
+      "step": 0,
+      "episode_id": "oasst2:e794a47e-e9c9-4cbf-9c3b-d7e7b6ecb50f",
+      "target_bytes": 128,
+      "tf_top1": 0.0,
+      "nll_bits": 8.012306412547822,
+      "cjk_correct": 0,
+      "cjk_total": 40,
+      "generated_hex": "2626e78989dcaee4b9acdaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaa",
+      "generated_text": "&&牉ܮ乬ڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪ",
+      "utf8_pending": 0,
+      "free_target_prefix_match": 0.0
+    },
+    {
+      "step": 1,
+      "episode_id": "oasst2:50fdf402-7314-463e-b645-b0b8feb93651",
+      "target_bytes": 111,
+      "tf_top1": 0.04504504504504504,
+      "nll_bits": 7.870323039440315,
+      "cjk_correct": 0,
+      "cjk_total": 31,
+      "generated_hex": "e68b8b26e78989dca9e59a9ae59a9ae59a9adaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaa",
+      "generated_text": "拋&牉ܩ嚚嚚嚚ڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪ",
+      "utf8_pending": 0,
+      "free_target_prefix_match": 0.0
+    },
+    {
+      "step": 1,
+      "episode_id": "oasst2:e888c23e-640e-4bd1-9112-98aebf8c2675",
+      "target_bytes": 128,
+      "tf_top1": 0.0703125,
+      "nll_bits": 7.857403702707501,
+      "cjk_correct": 0,
+      "cjk_total": 39,
+      "generated_hex": "e68b8b26e78989dca9e59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a",
+      "generated_text": "拋&牉ܩ嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚�",
+      "utf8_pending": 1,
+      "free_target_prefix_match": 0.0
+    },
+    {
+      "step": 1,
+      "episode_id": "oasst2:5da96e59-6bfe-4996-87de-f7721c00cf82",
+      "target_bytes": 128,
+      "tf_top1": 0.0703125,
+      "nll_bits": 7.838767662660007,
+      "cjk_correct": 0,
+      "cjk_total": 38,
+      "generated_hex": "e68b8b26e78989dca9d08e37efb4ace59a9a0cdaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaadaaada",
+      "generated_text": "拋&牉ܩЎ7ﴬ嚚\fڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪڪ�",
+      "utf8_pending": 1,
+      "free_target_prefix_match": 0.0
+    },
+    {
+      "step": 1,
+      "episode_id": "oasst2:e794a47e-e9c9-4cbf-9c3b-d7e7b6ecb50f",
+      "target_bytes": 128,
+      "tf_top1": 0.0625,
+      "nll_bits": 7.868018471918753,
+      "cjk_correct": 0,
+      "cjk_total": 40,
+      "generated_hex": "e68b8b26e78989dca9d08e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e2d0a0e",
+      "generated_text": "拋&牉ܩЎ-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e-\n\u000e",
+      "utf8_pending": 0,
+      "free_target_prefix_match": 0.0078125
+    },
+    {
+      "step": 8,
+      "episode_id": "oasst2:50fdf402-7314-463e-b645-b0b8feb93651",
+      "target_bytes": 111,
+      "tf_top1": 0.09009009009009009,
+      "nll_bits": 6.240468222715202,
+      "cjk_correct": 0,
+      "cjk_total": 31,
+      "generated_hex": "e5899ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a",
+      "generated_text": "剚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚�",
+      "utf8_pending": 1,
+      "free_target_prefix_match": 0.0
+    },
+    {
+      "step": 8,
+      "episode_id": "oasst2:e888c23e-640e-4bd1-9112-98aebf8c2675",
+      "target_bytes": 128,
+      "tf_top1": 0.09375,
+      "nll_bits": 5.743163189480304,
+      "cjk_correct": 0,
+      "cjk_total": 39,
+      "generated_hex": "e5899ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a",
+      "generated_text": "剚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚�",
+      "utf8_pending": 1,
+      "free_target_prefix_match": 0.0
+    },
+    {
+      "step": 8,
+      "episode_id": "oasst2:5da96e59-6bfe-4996-87de-f7721c00cf82",
+      "target_bytes": 128,
+      "tf_top1": 0.0859375,
+      "nll_bits": 5.475328759881522,
+      "cjk_correct": 0,
+      "cjk_total": 38,
+      "generated_hex": "e59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a",
+      "generated_text": "嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚�",
+      "utf8_pending": 1,
+      "free_target_prefix_match": 0.0
+    },
+    {
+      "step": 8,
+      "episode_id": "oasst2:e794a47e-e9c9-4cbf-9c3b-d7e7b6ecb50f",
+      "target_bytes": 128,
+      "tf_top1": 0.0625,
+      "nll_bits": 5.844250464073842,
+      "cjk_correct": 0,
+      "cjk_total": 40,
+      "generated_hex": "e5899ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a9ae59a",
+      "generated_text": "剚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚嚚�",
+      "utf8_pending": 1,
+      "free_target_prefix_match": 0.0
+    },
+    {
+      "step": 32,
+      "episode_id": "oasst2:50fdf402-7314-463e-b645-b0b8feb93651",
+      "target_bytes": 111,
+      "tf_top1": 0.2072072072072072,
+      "nll_bits": 4.734057737265188,
+      "cjk_correct": 0,
+      "cjk_total": 31,
+      "generated_hex": "e698afe58589e79a84e58589e79a84e58589e79a84e58589e79a84e58589e79a84e58589e79a84e58589e79a84e58589e79a84e58589e79a84e58589e79a84e58589e79a84e58589e79a84e58589e79a84e58589e79a84e58589e79a84e58589e79a84e58589e79a84e58589e79a84e58589e79a84e58589e79a84e58589e79a",
+      "generated_text": "是光的光的光的光的光的光的光的光的光的光的光的光的光的光的光的光的光的光的光的光的光�",
+      "utf8_pending": 1,
+      "free_target_prefix_match": 0.0
+    },
+    {
+      "step": 32,
+      "episode_id": "oasst2:e888c23e-640e-4bd1-9112-98aebf8c2675",
+      "target_bytes": 128,
+      "tf_top1": 0.265625,
+      "nll_bits": 4.348902590657929,
+      "cjk_correct": 2,
+      "cjk_total": 39,
+      "generated_hex": "e69cbce58589e79cbce58589e79cbce58589e79cbce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce5859ce585",
+      "generated_text": "朼光眼光眼光眼兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜兜�",
+      "utf8_pending": 1,
+      "free_target_prefix_match": 0.0
+    },
+    {
+      "step": 32,
+      "episode_id": "oasst2:5da96e59-6bfe-4996-87de-f7721c00cf82",
+      "target_bytes": 128,
+      "tf_top1": 0.2578125,
+      "nll_bits": 4.271811711373976,
+      "cjk_correct": 0,
+      "cjk_total": 38,
+      "generated_hex": "e69cbce58589e79a84e69cbce58589e79a84e69cbce58589e79a84e69cbce58589e79a84e69cbce58589e79a84e69cbce58589e79a84e69cbce58589e79a84e69cbce58589e79a84e69cbce58589e79a84e69cbce58589e79a84e69cbce58589e79a84e69cbce58589e79a84e69cbce58589e79a84e69cbce58589e79a84e69c",
+      "generated_text": "朼光的朼光的朼光的朼光的朼光的朼光的朼光的朼光的朼光的朼光的朼光的朼光的朼光的朼光的�",
+      "utf8_pending": 1,
+      "free_target_prefix_match": 0.0
+    },
+    {
+      "step": 32,
+      "episode_id": "oasst2:e794a47e-e9c9-4cbf-9c3b-d7e7b6ecb50f",
+      "target_bytes": 128,
+      "tf_top1": 0.2265625,
+      "nll_bits": 4.592458573399709,
+      "cjk_correct": 1,
+      "cjk_total": 40,
+      "generated_hex": "e698afe688afe688afe688afe6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce6888ce688",
+      "generated_text": "是戯戯戯戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌戌�",
+      "utf8_pending": 1,
+      "free_target_prefix_match": 0.0078125
+    },
+    {
+      "step": 64,
+      "episode_id": "oasst2:50fdf402-7314-463e-b645-b0b8feb93651",
+      "target_bytes": 111,
+      "tf_top1": 0.6576576576576577,
+      "nll_bits": 1.7053197720278084,
+      "cjk_correct": 5,
+      "cjk_total": 31,
+      "generated_hex": "e8bf98e698afe5908de380820a3c7c656e647c3e",
+      "generated_text": "还是名。\n<|end|>",
+      "utf8_pending": 0,
+      "free_target_prefix_match": 0.0
+    },
+    {
+      "step": 64,
+      "episode_id": "oasst2:e888c23e-640e-4bd1-9112-98aebf8c2675",
+      "target_bytes": 128,
+      "tf_top1": 0.703125,
+      "nll_bits": 1.7097369744325688,
+      "cjk_correct": 12,
+      "cjk_total": 39,
+      "generated_hex": "e995bfe69c8be69c8be58fafe883bde79cbce58589e79cbce58589e79cbce58589e79cbce58589e79cbce58589e79cbce58589e79cbce58589e79cbce58589e79cbce58589e79cbce58589e79cbce58589e79cbce58589e79cbce58589e79cbce58589e79cbce58589e79cbce58589e79cbce58589e79cbce58589e79cbce585",
+      "generated_text": "长朋朋可能眼光眼光眼光眼光眼光眼光眼光眼光眼光眼光眼光眼光眼光眼光眼光眼光眼光眼光眼�",
+      "utf8_pending": 1,
+      "free_target_prefix_match": 0.0390625
+    },
+    {
+      "step": 64,
+      "episode_id": "oasst2:5da96e59-6bfe-4996-87de-f7721c00cf82",
+      "target_bytes": 128,
+      "tf_top1": 0.6953125,
+      "nll_bits": 1.6751696654877004,
+      "cjk_correct": 10,
+      "cjk_total": 38,
+      "generated_hex": "e4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8bae4b8",
+      "generated_text": "为为为为为为为为为为为为为为为为为为为为为为为为为为为为为为为为为为为为为为为为为为�",
+      "utf8_pending": 1,
+      "free_target_prefix_match": 0.0
+    },
+    {
+      "step": 64,
+      "episode_id": "oasst2:e794a47e-e9c9-4cbf-9c3b-d7e7b6ecb50f",
+      "target_bytes": 128,
+      "tf_top1": 0.671875,
+      "nll_bits": 1.9806658878683245,
+      "cjk_correct": 9,
+      "cjk_total": 40,
+      "generated_hex": "e8bf9de681afe58f96e4b88defbc8ce68896e4b88defbc8ce68896e68891e68896e68891e68896e68891e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e68896e688",
+      "generated_text": "违息取不，或不，或我或我或我或或或或或或或或或或或或或或或或或或或或或或或或或或或或�",
+      "utf8_pending": 1,
+      "free_target_prefix_match": 0.0
+    }
+  ],
+  "restores": {
+    "zero": {
+      "checkpoint_digest": "46d9da9514f730d596b4cc59cb1c43e8a375dd0405a1cb071e6429a0f5e94f00",
+      "next_logits_digest": "1c1175fe1b5fa2bef6d6d897419c2aeff9ebd3f036496d19801c986af47af0fe",
+      "continuation_hex": "1aecaaaadaaadaaadaaadaaadaaadaaa",
+      "steps": 0,
+      "target_byte_exposures": 0,
+      "parameter_count": 938177,
+      "path": "E:\\Seed\\data\\checkpoints\\n1_plan169_task_core_20261025\\zero.pt",
+      "sha256": "67c024798eecd259888c9c83dd7e6d5acb658d2d0dba218a19b98825efd90c17",
+      "process_cpu_seconds": 3.53125,
+      "wall_seconds": 4.047000000020489
+    },
+    "one_update": {
+      "checkpoint_digest": "fd52c352a88b2988468147788797cebb77cb611d7925485f28f7b1bb7a26fa6d",
+      "next_logits_digest": "e011cfd9b60e9b635f79f909957d0cf50a222c2aa4b829399ca787ff61bff5fe",
+      "continuation_hex": "e68b8b26e78989dca9e59a9ae59a9ae5",
+      "steps": 1,
+      "target_byte_exposures": 495,
+      "parameter_count": 938177,
+      "path": "E:\\Seed\\data\\checkpoints\\n1_plan169_task_core_20261025\\one_update.pt",
+      "sha256": "0c82b83003f4f22e7bd0cfb7fe2bb5835dd99a641bff71aba2c999b0b64448e1",
+      "process_cpu_seconds": 3.6875,
+      "wall_seconds": 4.23499999998603
+    }
+  },
+  "controls": {},
+  "dev_queries": 0,
+  "can_promote": false,
+  "world_goal_consumers_implemented": false,
+  "source_sha256": {
+    "scripts\\training\\calibrate_taiji_n1_plan169_task_core.py": "db4116d26c5722e2d815dd716afc3c0e6e65102db7e30ea2e36f239c04b8aebc",
+    "reports\\taiji_n1_plan167_train_decoder_result_20261025.json": "25925d3b569be671433b9899144aa8742706b079390d49e7875890019e78cb03",
+    "reports\\taiji_n1_plan168_isolated_train_fit_20261025.json": "a33e0581112f2ed0ce875f01a6d87f448a89f80bbe189300dace105a3f67e495",
+    "data\\checkpoints\\n1_plan168_train_fit_20261025\\final.pt": "8daa35d7b5d415fa616ff1d76498c298c835e0834ddf145d24907e3bb1cacdcd",
+    "taiji\\task_state.py": "16ea149abd6bdde89b913daca07a6d3c7672b18f1119b06ce1c7abff5033bc65",
+    "taiji\\task_core.py": "ca9b13cf7d608ece32957925ff08120c52627cd3f5dba2cb9d33e0f9f74013c6",
+    "taiji\\conditional_language.py": "e3bcffef6f3ac7950706b792ef1bd43731a4ef10d797c3932932a814e6d1ed17",
+    "taiji\\adapter.py": "3abec22d7b05e13b9306343e3aa4b9dea8cb4d24665aaa83fe5ca70e6ddfe276",
+    "plans\\reference\\PLAN-N1-169_shared_language_chain_design_20261025.md": "2eae07ebdc24647d9b8bbb22d7573f6b8d939587f5d112a3fb91db9080f53038",
+    "plans\\reference\\SPEC-N1-169_shared_language_candidate_20261025.md": "06239d7c6de20f2da70e968ff8076b279b8fb77b43f75aae4b644b06ea23a454"
+  },
+  "selection": [
+    {
+      "episode_id": "oasst2:50fdf402-7314-463e-b645-b0b8feb93651",
+      "prompt_sha256": "200b971662a06eb5d0e8dd81d86a15d5aa72b50f350a94fa242b666202354e69",
+      "target_fragment_sha256": "e634594c05113cf82fbfaa2f92629ab8c9ae7b2863b8394674951b5d46104af0",
+      "target_bytes": 111
+    },
+    {
+      "episode_id": "oasst2:e888c23e-640e-4bd1-9112-98aebf8c2675",
+      "prompt_sha256": "8f9f4a2d6d8d8c7f5db09ba9523fc45b79281d702b97ac9fd5b4c94a40413051",
+      "target_fragment_sha256": "cd465350a118b4e7a4a4fd7400f987e4bbab43894eed8811abf8644ba1b03422",
+      "target_bytes": 128
+    },
+    {
+      "episode_id": "oasst2:5da96e59-6bfe-4996-87de-f7721c00cf82",
+      "prompt_sha256": "41e3ef1ba133682dcc3e2836e3b01f515e507d1f2100bab15bced859d4c28dac",
+      "target_fragment_sha256": "351351e4792ae9cf90c402bca6dc1c91d0c99b85df4e699e6a3631a596852bef",
+      "target_bytes": 128
+    },
+    {
+      "episode_id": "oasst2:e794a47e-e9c9-4cbf-9c3b-d7e7b6ecb50f",
+      "prompt_sha256": "6063c3e937001d389a37b8dbb23010ee0f8286db2882e7e1e47f2dcc44282ab5",
+      "target_fragment_sha256": "81aacd0b64a231f64698704f726a149b294d8a8465b1a1daf47c6b352128dea4",
+      "target_bytes": 128
+    }
+  ],
+  "parameter_count": 938177
+}

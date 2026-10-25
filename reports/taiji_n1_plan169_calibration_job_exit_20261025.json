@@ -1,0 +1,12 @@
+{
+  "schema": "taiji-n1-plan169-calibration-job-exit-v1",
+  "returncode": 0,
+  "job_cpu_seconds_all_processes": 68.25,
+  "wall_seconds": 71.10900000005495,
+  "tree_stopped": true,
+  "watchdog_forced": false,
+  "stdout": [
+    "{\"status\": \"complete\", \"steps\": 64, \"cpu_seconds\": 67.765625, \"error\": null}"
+  ],
+  "scope": "one 64-update train-only calibration, all zero/one/final fresh-restore processes and read-only local controls"
+}
