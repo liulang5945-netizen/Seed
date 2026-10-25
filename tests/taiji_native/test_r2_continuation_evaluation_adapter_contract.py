@@ -183,6 +183,25 @@ def test_worker_command_is_versioned_not_the_frozen_evaluator() -> None:
     assert "scripts.training.evaluate_taiji_r2_daily_dialogue_recovery_v2" not in command
 
 
+def test_worker_command_module_has_a_runnable_entry_point() -> None:
+    """Regression: the worker library module has no ``__main__`` block.
+
+    The one-shot W5b of 2026-10-25 died before the bootstrap-ready handshake
+    because ``-m`` pointed at the library module, which exits silently.  The
+    documented private entry is the versioned entry script with ``--worker``.
+    """
+    command = adapter.extension_worker_command(Path("attempt.json"), Path("ledger.jsonl"))
+    module = command[command.index("-m") + 1]
+    completed = subprocess.run(
+        [sys.executable, "-m", module, "--help"],
+        capture_output=True,
+        text=True,
+        cwd=REPO,
+    )
+    assert completed.returncode == 0, completed.stderr
+    assert "usage" in completed.stdout.lower()
+
+
 def test_preflight_keeps_the_frozen_readiness_envelope(tmp_path: Path) -> None:
     preflight = adapter.extension_preflight(
         _manifest(tmp_path),

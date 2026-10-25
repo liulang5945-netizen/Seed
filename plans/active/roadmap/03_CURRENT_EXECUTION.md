@@ -6,7 +6,7 @@
 
 持续Goal：沿N主线，把态极发展成由自身认知机制驱动、能通过自然中文可靠完成连续任务、跨会话积累和修正经验、从反馈中学会新能力并保持旧能力的原生认知模型；每轮以同一可恢复版本的未见表现、保持和实际成本验收。
 
-**三臂已发布训练终态metadata；当前动作是核验终态与四端点准入，通过后完成既定配方的配对验证。** 顺序固定为三臂训练终点→四端点恢复/准入→一次W5b→固定人工判读→结案。当前CC-1只包含这些工作。信息进入决策路径、任务错误能否教会负责模块的正式干预实验属于后继CC-2/3；09§1.5的接口级零更新观察已完成，但不证明整模型因果使用或学习收益，也不增加本轮收官前置。
+**三臂已完成训练终点，四端点准入已通过；唯一一次W5b在worker启动握手上工程失败，本轮按CLOSED_FAILURE封存。** 顺序固定为三臂训练终点→四端点恢复/准入→一次W5b→固定人工判读→结案；本轮止于R4失败，未进入R5。后续语言能力读数必须作为新的有界包重新登记，不复用本次已消费的one-shot资格。
 
 CC-1结案与持续Goal完成分别记录。CC-2归因、CC-3语言/L2、CC-4同bundle联合能力/L3、CC-5连续经验、CC-6学习与保持/L4、CC-7扩面仍依10按证据准入；本轮不以完成全部长期阶段为收官条件。
 
@@ -20,11 +20,19 @@ CC-1结案与持续Goal完成分别记录。CC-2归因、CC-3语言/L2、CC-4同
 | fresh_same_capacity | 2026-10-24 13:51 | result.complete=true，readiness=ready |
 | full_turn_1m | 2026-10-25 07:42:51 | result.complete=true，readiness=ready；completion记账1,521,529.860816 CPU秒 |
 
-三臂训练终态已发布，本轮`paired_eval`的attempt/result/failure均未出现。此次仅核对小JSON和progress记录，未重新加载checkpoint、执行四端点恢复、读取selector/prompt或运行评测；metadata complete不能替代R1/R2/R3全链审计，也不宣告本轮结案或语言能力通过。终态writer、reservation及实际费用仍由准入门核验。
+三臂训练终态已发布。2026-10-25 11:16 真实extension端点预检通过并持久化 `…_paired_eval_endpoints.json`（一个公开的 `endpoints_validated` metadata manifest + adapter持有的 `…_paired_eval_endpoints.json`）：parent_baseline＋三臂同snapshot、`can_query_dev=false`、`can_promote=false`。11:17 `--validate-only` 返回 ready，`expected_generation_outputs=156`，端点顺序 parent_baseline→full→warm→fresh。此前**未**读取selector/prompt、未生成任何输出；本次准入只做metadata与文件校验，四端点恢复由受监督worker在`--execute`内执行并持久化receipt。
+
+预检打通时做了三处必要修正（合成合同18+19支通过）：①预检先激活v1.5、仅在其缺位时回退v1.4，避免用1.55M旧上限校验warm的1.58M实耗；②launch provenance新增已审查的`FAST_LAUNCH_V4_SOURCE_SHA256_CI_GUARD`集合，对应v4合同测试新增的非Windows整模块跳过（训练运行字节未变）；③adapter的baseline默认值改为零参`_baseline_receipt()`，补上冻结校验器要求的固定baseline路径。冻结评测源码未改。
+
+11:17 执行一次W5b `--execute`（39×4＝156）。attempt `abffec0c…e0080e` 于11:18:01形成，11:18:03因 **`worker exited before authenticated bootstrap-ready handshake`** 停止；`query_attempts=0`、`persisted_generation_outputs=0`、`unknown_tail=false`，CPU 60.78秒／wall 63.95秒（均在其独立14,400秒额度内）。按合同资格已消费，不重试、不换名、不补题。
+
+根因：adapter 的 `WORKER_MODULE` 指向 worker **库模块**（无 `__main__`），`python -m` 静默退出；已改为版本化入口 `evaluate_…_extension_v1`（其 `--worker` 分支才是文档化IPC循环），并新增回归测试（命令里的 `-m` 模块必须能响应 `--help`）。adapter 合同20支通过，冻结评测器源码未改。该修复只防复现，不构成重跑授权。
+
+三臂实际费用合计 **4,512,256.891 / 4,560,000**，训练余量 **47,743.109** CPU秒。R5无输出可判，未执行。
 
 有效训练累计额度仍为D1批准的v1.5：**1,590,000 process-CPU秒/臂、4,560,000总计**，旧实耗、reserve与未知尾账全部保留；amendment `21e0497e`，锚sequence 66699，来源见[18预算裁决](../../reference/delivery-runs/20261021-n-mainline/artifacts/18-d1-budget-decision.md)。warm的result/readiness为发布前下界1,580,449.388716，completion/账本为1,580,449.419966；不把发布前receipt误称完整退出全成本。
 
-续训历史中两次并行曾因长锁/跨臂尾账及Windows共享summary替换竞态停止，保留原失败、保守结算和修复（`2b985255b`、`8e48a2d05`）；最终逐臂串行到终点。旧逐时进度/ETA从Git及原progress/receipt读取，不再作为活动重启指令。endpoint/provider、独立extension evaluator/worker和来源接线的既有110支合成证据继续继承，真实四端点与W5b贯通仍待实测。
+续训历史中两次并行曾因长锁/跨臂尾账及Windows共享summary替换竞态停止，保留原失败、保守结算和修复（`2b985255b`、`8e48a2d05`）；最终逐臂串行到终点。旧逐时进度/ETA从Git及原progress/receipt读取，不再作为活动重启指令。endpoint/provider、独立extension evaluator/worker和来源接线的既有合成证据继续继承；真实四端点准入通过，W5b以一次`--execute`实测并在worker启动握手上失败，原始attempt/failure/result保留。
 
 ## 本轮CC-1的固定收官合同
 
@@ -62,11 +70,13 @@ CI由用户另行安排的任务负责，本任务不再修改其文件或叠加
 
 2026-10-25后继方案修订：完整架构/驱动力/VX0–VX7工程包统一归[VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)，N只通过09的J1信息消费/J2信用/J3连续状态与条件选择取必要切片。生命页新发展运行台按[VX6设计](../../reference/UI_LIFE_UX_SPEC_20261003.md)分段实施，当前已交付的是连接/未知语义修复，不代表新五视图或自主策略已实现；VX6.0只读研究观察器可独立先行。此设计修订不改本页CC-1终点、预算、冻结面或研究队首。
 
-## 当前唯一下一步：核验三臂终态与四端点准入，通过后执行原W5b
+## 结案与本轮之后
 
-核对R1/R2的完整计数、来源/launch/预算修订链、唯一completion、终态writer/reservation及费用；通过后在原评价预算内完成parent_baseline＋三臂的受监督独立恢复，全部receipt持久化后才读selector，按R3–R5一次执行39×4生成和固定12-family人工判读，再按R6结案。前置缺失不消费题面；已消费后失败按原one-shot出口留证，不重试/补题。
+CC-1 已按 **CLOSED_FAILURE** 结案，唯一结案文件为 [PLAN-R2-DAILY-DIALOGUE-CONTINUATION-CC1_execution_closeout_20261025.md](../../reference/PLAN-R2-DAILY-DIALOGUE-CONTINUATION-CC1_execution_closeout_20261025.md)：R1–R3 完成、R4 一次性W5b工程失败且资格已消费、R5无可判输出、R6落盘。工程故障不写作模型能力负结果；三臂的完整可恢复终态保留。
 
-本次规划修订没有执行上述模型准入或评价。当前三臂无需新的训练启动；现有v4入口只保留来源/历史恢复用途，不能因旧等待快照重复训练。J/VX架构和驱动实施另按其合同，不延长本轮。
+**唯一下一步：进入 CC-2/VX0**——先整理已消费证据与错误表，再选择唯一必要诊断（信息是否进入决策路径），并按有界包重新登记问题、对照、固定分母、完整预算与停止线。不在本轮追加训练、复用已消费资格或补题。
+
+当前三臂无需新的训练启动；现有v4入口只保留来源/历史恢复用途。J/VX架构和驱动实施另按其合同，不延长本轮。
 
 ## 历史与计划去向
 

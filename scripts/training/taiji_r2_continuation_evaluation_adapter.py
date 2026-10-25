@@ -23,13 +23,14 @@ from typing import Any
 
 from scripts.training import evaluate_taiji_r2_daily_dialogue_recovery_v2 as recovery
 from scripts.training import prepare_taiji_r2_continuation_endpoints as endpoints
+from scripts.training import run_taiji_r2_daily_dialogue_full_turn_pretraining as base
 from scripts.training import taiji_r2_dialogue_continuation_extension as extension
 
 ARMS = extension.ARMS
 ENDPOINT_ORDER = ("parent_baseline", *ARMS)
 ENDPOINT_SCHEMA = "taiji-r2-continuation-evaluation-endpoints-v1"
 MANIFEST_SCHEMA = "taiji-r2-continuation-endpoint-manifest-v1"
-WORKER_MODULE = "scripts.training.evaluate_taiji_r2_daily_dialogue_continuation_extension_worker_v1"
+WORKER_MODULE = "scripts.training.evaluate_taiji_r2_daily_dialogue_continuation_extension_v1"
 FINAL_STAGE = "assistant_sft_final"
 PRETRAIN_STAGE = "pretraining_final"
 EVAL_STAGE = "assistant_sft"
@@ -49,6 +50,14 @@ EXTENSION_SOURCE_PATHS = (
 
 class AdapterRefuse(ValueError):
     """An extension endpoint manifest cannot enter the frozen evaluation envelope."""
+
+
+def _baseline_receipt() -> dict[str, Any]:
+    """Zero-arg adapter for the frozen validator's fixed baseline path signature."""
+    return recovery.validate_baseline_checkpoint(
+        base.BASELINE_CHECKPOINT,
+        expected_sha256=base.BASELINE_CHECKPOINT_SHA256,
+    )
 
 
 def canonical_json(value: Mapping[str, Any]) -> bytes:
@@ -217,7 +226,7 @@ def _stage(
 def extension_endpoint_map(
     manifest: Mapping[str, Any],
     *,
-    baseline_fn: Callable[[], dict[str, Any]] = recovery.validate_baseline_checkpoint,
+    baseline_fn: Callable[[], dict[str, Any]] = _baseline_receipt,
 ) -> tuple[tuple[dict[str, Any], ...], dict[str, Any], dict[str, dict[str, Any]]]:
     """Map the extension manifest onto the frozen ``parent + three arms`` order.
 
@@ -338,7 +347,7 @@ def extension_preflight(
     *,
     arm_paths: Callable[[str], Mapping[str, Path]] = extension.paths,
     hash_file: Callable[[Path], str] = recovery.sha256_file,
-    baseline_fn: Callable[[], dict[str, Any]] = recovery.validate_baseline_checkpoint,
+    baseline_fn: Callable[[], dict[str, Any]] = _baseline_receipt,
     eval_hashes: Callable[[], dict[str, str]] | None = None,
 ) -> dict[str, Any]:
     """Build the frozen evaluator's envelope from extension endpoints and evidence."""

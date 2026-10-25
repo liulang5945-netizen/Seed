@@ -1820,3 +1820,19 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 - 账本修复：全量重放重建 summary；full 的孤儿 reservation 按上界 1,332 CPU 秒结算（`crash_recovery_upper_settlement`），无活跃 reservation。三臂已计 **4,441,503**，总计余量 **118,497**。
 - 决策：并行争用让 full 从约5.2秒/episode 降到 7.06，且共享 summary 写是失败源；改为**串行先 fresh（剩约2千 episode）再 full（剩约9千）**，总时更短、避开竞态。fresh 已从 28,038 恢复并训练。
 - 契约：v4 11 支、anchor 10 支通过；新增 retry/stale/ crash settlement 用例。真实 provenance 接受 warm/full/fresh 旧 v4 manifest 的历史源映射。
+
+### ㊵-1138 【2026-10-25 · 三臂齐备、四端点预检打通；三处接线修正】
+
+- full_turn_1m 于2026-10-25 07:42:51发布唯一completion，预训练30,096／14,517,912＋SFT 525／113,209，result/readiness齐备，两个final独立恢复 equal。三臂实际费用合计4,512,256.891 CPU秒，训练余量47,743.109。
+- 端点预检 `prepare_taiji_r2_continuation_endpoints.py` 通过并持久化metadata manifest。打通时修三处：
+  1. 预检原先先激活v1.4（1.55M/4.4M）再激活v1.5；v1.4 会先用旧上限校验 warm 的 1.58M 实耗并拒绝。改为 v1.5 优先、仅缺位时回退 v1.4。
+  2. launch provenance 增加 `FAST_LAUNCH_V4_SOURCE_SHA256_CI_GUARD` 已审查集合：v4 合同测试新增非 Windows 整模块跳过（Ubuntu 腿收集即炸），训练运行字节未变，两种修订都接受。
+  3. adapter 的 baseline 默认值 `recovery.validate_baseline_checkpoint` 需要 `path` 参数，而调用是零参；改为 `_baseline_receipt()`，用冻结评测器的固定 baseline 路径与期望 SHA。
+- 结果：`--validate-only` 返回 ready，端点顺序 parent_baseline→full→warm→fresh，`expected_generation_outputs=156`；`can_query_dev=false`、`can_promote=false`。合成合同 provenance+preflight 18支、adapter 19支通过。
+
+### ㊵-1139 【2026-10-25 · 一次性W5b在worker启动握手失败：根因、修复、CC-1按CLOSED_FAILURE结案】
+
+- 11:17 `--execute` 形成 attempt `abffec0c…e0080e`，11:18:03 停止：`worker exited before authenticated bootstrap-ready handshake`；`query_attempts=0`、`persisted_generation_outputs=0`、`unknown_tail=false`、`worker_tree_exit_unverified=false`，CPU 60.78秒／wall 63.95秒。
+- 根因：`taiji_r2_continuation_evaluation_adapter.WORKER_MODULE` 指向 worker **库模块** `evaluate_…_worker_v1.py`，该文件只有函数、没有 `__main__`；`python -m` 静默退出（实测无输出、退出0），父进程收不到 ready。文档化的私有入口是 `evaluate_…_extension_v1.py --worker`。
+- 修复：`WORKER_MODULE` 改为版本化入口；新增回归 `test_worker_command_module_has_a_runnable_entry_point`（对命令里的 `-m` 模块执行 `--help`，要求退出0且输出 usage）。adapter 合同20支通过；冻结评测器未改。修复只防复现，不构成重跑授权。
+- 结案：按one-shot合同资格已消费，不重试/换名/补题；CC-1 按 **CLOSED_FAILURE** 封存，结案文件 `plans/reference/PLAN-R2-DAILY-DIALOGUE-CONTINUATION-CC1_execution_closeout_20261025.md`。R5无输出，未判读；工程失败不写作模型能力负结果。唯一后继＝CC-2/VX0。

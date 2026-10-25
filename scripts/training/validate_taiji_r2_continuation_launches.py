@@ -125,6 +125,13 @@ FAST_LAUNCH_V4_SOURCE_SHA256_PRE_RETRY = {
     "tests/taiji_native/test_r2_resume_ledger_anchor_contract.py": "107cb6f16202cfca2b4934c6d17d1a694efd815156d3cb556e8954029b9c93bc",
     "tests/taiji_native/test_r2_fast_ledger_resume_v4_contract.py": "b205b3ffea0a1cceeb24daf9245952de4522df4276ccc07918b334511565819a",
 }
+# 2026-10-24 用户侧 CI 修复给 v4 合同测试加了非 Windows 平台整模块跳过
+# （Ubuntu 腿收集即炸的唯一原因）。该测试不在训练运行时导入链上，运行字节
+# 全部相同，只有这一个测试文件的字节变化；两种修订都保留为已批准集合。
+FAST_LAUNCH_V4_SOURCE_SHA256_CI_GUARD = {
+    **FAST_LAUNCH_V4_SOURCE_SHA256,
+    "tests/taiji_native/test_r2_fast_ledger_resume_v4_contract.py": "a8a6e773dab938ea6c506281eff875e28838ebd46ed0744c19e168e8c2e02323",
+}
 RESUME_V1_SOURCES = (
     "scripts/training/run_taiji_r2_checkpoint_resume_adapter.py",
     "scripts/training/run_taiji_r2_daily_dialogue_continuation_extension.py",
@@ -539,6 +546,7 @@ def validate_launch_provenance(backend, revision, revision_sha256, *, revision_p
                         (FAST_LAUNCH_V4_SOURCES, FAST_LAUNCH_V4_SOURCE_SHA256_WARM),
                         (FAST_LAUNCH_V4_SOURCES, FAST_LAUNCH_V4_SOURCE_SHA256_FAILED_START),
                         (FAST_LAUNCH_V4_SOURCES, FAST_LAUNCH_V4_SOURCE_SHA256_PRE_RETRY),
+                        (FAST_LAUNCH_V4_SOURCES, FAST_LAUNCH_V4_SOURCE_SHA256_CI_GUARD),
                     ],
                     root,
                 )

@@ -51,14 +51,17 @@ def metadata_preflight(backend=budget):
     if pending:
         raise EndpointRefuse(f"training endpoints are incomplete: {pending}")
     if backend is budget:
-        from scripts.training.run_taiji_r2_resume import REVISION_PATH, activate_budget
-
-        if REVISION_PATH.exists():
-            activate_budget()
         from scripts.training import taiji_r2_continuation_budget_amendment_v1_5 as amendment_v1_5
+        from scripts.training.run_taiji_r2_resume import REVISION_PATH
 
+        # v1.5 supersedes v1.4; activating v1.4 first would validate the live
+        # summary against the old 1.55M ceiling and refuse warm_start's charge.
         if amendment_v1_5.REVISION_PATH.exists():
             amendment_v1_5.activate_budget_amendment()
+        elif REVISION_PATH.exists():
+            from scripts.training.run_taiji_r2_resume import activate_budget
+
+            activate_budget()
     revision_path = backend.REPORTS_DIR / f"{backend.EXTENSION_PREFIX}_source_revision_v1_3.json"
     revision = read_json(revision_path)
     revision_sha = sha(revision_path)
