@@ -6,6 +6,7 @@ import pytest
 import torch
 
 from scripts.training import diagnose_taiji_n1_plan167_train_decoder as diagnosis
+from scripts.training import summarize_taiji_n1_plan167_train_decoder as summary
 from taiji import (
     LanguageAlignmentConfig,
     LanguageAlignmentTrainer,
@@ -104,3 +105,12 @@ def test_tf_metrics_and_js_keep_distinct_probability_surfaces() -> None:
     result = diagnosis.summarize_tf(rows)
     assert result["top1_raw"] == 0
     assert result["top1_masked"] == 1
+
+
+def test_character_metric_requires_all_bytes_and_excludes_incomplete_character() -> None:
+    raw = "中文".encode()
+    rows = [{"target": byte, "raw_top1": byte} for byte in raw]
+    assert summary.cjk_accuracy(rows) == (2, 2)
+    rows[4]["raw_top1"] = 0
+    assert summary.cjk_accuracy(rows) == (1, 2)
+    assert summary.cjk_accuracy(rows[:5]) == (1, 1)

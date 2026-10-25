@@ -1,0 +1,11 @@
+{
+  "schema": "taiji-n1-plan167-process-exit-v1",
+  "returncode": 0,
+  "process_cpu_seconds_through_exit": 134.46875,
+  "wall_seconds_through_exit": 137.125,
+  "watchdog_forced": false,
+  "stdout": "{\"status\": \"complete\", \"cells\": 48, \"cpu_seconds\": 134.03125, \"error\": null}",
+  "stderr": "",
+  "training_updates": 0,
+  "dev_queries": 0
+}

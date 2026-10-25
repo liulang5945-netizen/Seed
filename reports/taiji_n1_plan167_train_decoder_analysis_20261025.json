@@ -1,0 +1,351 @@
+{
+  "schema": "taiji-n1-plan167-attribution-summary-v1",
+  "status": "complete",
+  "aggregation": "macro mean over four fixed training episodes; CJK character counts pooled",
+  "cjk_metric_scope": "posthoc descriptive complete-character TF metric; not a new preregistered gate",
+  "endpoints": {
+    "parent_baseline": {
+      "read_only_verified": true,
+      "modes": {
+        "configured": {
+          "status": "complete",
+          "episodes": 4,
+          "top1_raw": 0.24799408783783783,
+          "top1_masked": 0.26557221283783783,
+          "nll_raw_bits": 4.302010133295282,
+          "nll_masked_bits": 3.9754882087286765,
+          "free_target_prefix_match": 0.001953125,
+          "cjk_tf_characters_correct": 5,
+          "cjk_tf_characters": 148,
+          "cjk_tf_character_accuracy": 0.033783783783783786,
+          "readonly_training_path_accuracy": 0.25289160127869803
+        },
+        "protected": {
+          "status": "complete",
+          "episodes": 4,
+          "top1_raw": 0.008111627252252252,
+          "top1_masked": 0.020428631756756757,
+          "nll_raw_bits": 8.023046641438896,
+          "nll_masked_bits": 6.541327284118645,
+          "free_target_prefix_match": 0.0,
+          "cjk_tf_characters_correct": 0,
+          "cjk_tf_characters": 148,
+          "cjk_tf_character_accuracy": 0.0,
+          "readonly_training_path_accuracy": 0.25289160127869803
+        },
+        "oracle_plan": {
+          "status": "complete",
+          "episodes": 4,
+          "top1_raw": 0.26361908783783783,
+          "top1_masked": 0.27533783783783783,
+          "nll_raw_bits": 4.365609899768804,
+          "nll_masked_bits": 4.017363357764198,
+          "free_target_prefix_match": 0.001953125,
+          "cjk_tf_characters_correct": 4,
+          "cjk_tf_characters": 148,
+          "cjk_tf_character_accuracy": 0.02702702702702703,
+          "readonly_training_path_accuracy": 0.25289160127869803
+        },
+        "prompt_swap": {
+          "mean_js_bits_min": 0.007805890700763902,
+          "mean_js_bits_max": 0.017199997059123954,
+          "top1_agreement_min": 0.8203125,
+          "top1_agreement_max": 0.859375,
+          "mean_nll_delta": 0.029865856864870866
+        }
+      }
+    },
+    "full_turn_1m": {
+      "read_only_verified": true,
+      "modes": {
+        "configured": {
+          "status": "complete",
+          "episodes": 4,
+          "top1_raw": 0.24845157657657657,
+          "top1_masked": 0.2663288288288288,
+          "nll_raw_bits": 4.395534455689549,
+          "nll_masked_bits": 4.013776420807329,
+          "free_target_prefix_match": 0.0,
+          "cjk_tf_characters_correct": 2,
+          "cjk_tf_characters": 148,
+          "cjk_tf_character_accuracy": 0.013513513513513514,
+          "readonly_training_path_accuracy": 0.25325808419306406
+        },
+        "protected": {
+          "status": "complete",
+          "episodes": 4,
+          "top1_raw": 0.2529560810810811,
+          "top1_masked": 0.2808980855855856,
+          "nll_raw_bits": 4.323538912285038,
+          "nll_masked_bits": 3.9645930738616806,
+          "free_target_prefix_match": 0.0,
+          "cjk_tf_characters_correct": 1,
+          "cjk_tf_characters": 148,
+          "cjk_tf_character_accuracy": 0.006756756756756757,
+          "readonly_training_path_accuracy": 0.25325808419306406
+        },
+        "oracle_plan": {
+          "status": "complete",
+          "episodes": 4,
+          "top1_raw": 0.23493806306306306,
+          "top1_masked": 0.26288006756756754,
+          "nll_raw_bits": 4.3621735633056975,
+          "nll_masked_bits": 3.978589092379204,
+          "free_target_prefix_match": 0.0,
+          "cjk_tf_characters_correct": 2,
+          "cjk_tf_characters": 148,
+          "cjk_tf_character_accuracy": 0.013513513513513514,
+          "readonly_training_path_accuracy": 0.25325808419306406
+        },
+        "prompt_swap": {
+          "mean_js_bits_min": 0.007575391898210573,
+          "mean_js_bits_max": 0.024534219223279544,
+          "top1_agreement_min": 0.7734375,
+          "top1_agreement_max": 0.859375,
+          "mean_nll_delta": 0.03109607043454843
+        }
+      }
+    },
+    "warm_start": {
+      "read_only_verified": true,
+      "modes": {
+        "configured": {
+          "status": "complete",
+          "episodes": 4,
+          "top1_raw": 0.21855644707207206,
+          "top1_masked": 0.24679757882882883,
+          "nll_raw_bits": 4.562311048043506,
+          "nll_masked_bits": 4.104396694759725,
+          "free_target_prefix_match": 0.001953125,
+          "cjk_tf_characters_correct": 1,
+          "cjk_tf_characters": 148,
+          "cjk_tf_character_accuracy": 0.006756756756756757,
+          "readonly_training_path_accuracy": 0.2248148476097065
+        },
+        "protected": {
+          "status": "complete",
+          "episodes": 4,
+          "top1_raw": 0.2014358108108108,
+          "top1_masked": 0.22381756756756757,
+          "nll_raw_bits": 4.76624371254779,
+          "nll_masked_bits": 4.323539809522774,
+          "free_target_prefix_match": 0.0,
+          "cjk_tf_characters_correct": 0,
+          "cjk_tf_characters": 148,
+          "cjk_tf_character_accuracy": 0.0,
+          "readonly_training_path_accuracy": 0.2248148476097065
+        },
+        "oracle_plan": {
+          "status": "complete",
+          "episodes": 4,
+          "top1_raw": 0.22216356981981983,
+          "top1_masked": 0.2565632038288288,
+          "nll_raw_bits": 4.5191110056484405,
+          "nll_masked_bits": 4.056826520575386,
+          "free_target_prefix_match": 0.001953125,
+          "cjk_tf_characters_correct": 0,
+          "cjk_tf_characters": 148,
+          "cjk_tf_character_accuracy": 0.0,
+          "readonly_training_path_accuracy": 0.2248148476097065
+        },
+        "prompt_swap": {
+          "mean_js_bits_min": 0.011160010410456143,
+          "mean_js_bits_max": 0.055838556260871676,
+          "top1_agreement_min": 0.6796875,
+          "top1_agreement_max": 0.837837815284729,
+          "mean_nll_delta": -0.02726230561296994
+        }
+      }
+    },
+    "fresh_same_capacity": {
+      "read_only_verified": true,
+      "modes": {
+        "configured": {
+          "status": "complete",
+          "episodes": 4,
+          "top1_raw": 0.21931306306306306,
+          "top1_masked": 0.22937781531531531,
+          "nll_raw_bits": 4.5769231746611805,
+          "nll_masked_bits": 4.177835470427739,
+          "free_target_prefix_match": 0.0,
+          "cjk_tf_characters_correct": 3,
+          "cjk_tf_characters": 148,
+          "cjk_tf_character_accuracy": 0.02027027027027027,
+          "readonly_training_path_accuracy": 0.2229588963963964
+        },
+        "protected": {
+          "status": "complete",
+          "episodes": 4,
+          "top1_raw": 0.21465019707207206,
+          "top1_masked": 0.22441582207207206,
+          "nll_raw_bits": 4.632478533415878,
+          "nll_masked_bits": 4.2809366379300755,
+          "free_target_prefix_match": 0.0,
+          "cjk_tf_characters_correct": 3,
+          "cjk_tf_characters": 148,
+          "cjk_tf_character_accuracy": 0.02027027027027027,
+          "readonly_training_path_accuracy": 0.2229588963963964
+        },
+        "oracle_plan": {
+          "status": "complete",
+          "episodes": 4,
+          "top1_raw": 0.23057432432432434,
+          "top1_masked": 0.23477970157657657,
+          "nll_raw_bits": 4.509234175092378,
+          "nll_masked_bits": 4.1111758420363405,
+          "free_target_prefix_match": 0.0,
+          "cjk_tf_characters_correct": 3,
+          "cjk_tf_characters": 148,
+          "cjk_tf_character_accuracy": 0.02027027027027027,
+          "readonly_training_path_accuracy": 0.2229588963963964
+        },
+        "prompt_swap": {
+          "mean_js_bits_min": 0.012031974092857632,
+          "mean_js_bits_max": 0.05003377653250756,
+          "top1_agreement_min": 0.71875,
+          "top1_agreement_max": 0.8671875,
+          "mean_nll_delta": -0.025107949353540215
+        }
+      }
+    }
+  },
+  "preregistered_classifications": [
+    {
+      "endpoint_id": "parent_baseline",
+      "episode_id": "oasst2:50fdf402-7314-463e-b645-b0b8feb93651",
+      "high_tf_low_rollout": false,
+      "oracle_rescue": false,
+      "protected_rescue": false,
+      "prompt_insensitive": false
+    },
+    {
+      "endpoint_id": "parent_baseline",
+      "episode_id": "oasst2:e888c23e-640e-4bd1-9112-98aebf8c2675",
+      "high_tf_low_rollout": false,
+      "oracle_rescue": false,
+      "protected_rescue": false,
+      "prompt_insensitive": false
+    },
+    {
+      "endpoint_id": "parent_baseline",
+      "episode_id": "oasst2:5da96e59-6bfe-4996-87de-f7721c00cf82",
+      "high_tf_low_rollout": false,
+      "oracle_rescue": false,
+      "protected_rescue": false,
+      "prompt_insensitive": false
+    },
+    {
+      "endpoint_id": "parent_baseline",
+      "episode_id": "oasst2:e794a47e-e9c9-4cbf-9c3b-d7e7b6ecb50f",
+      "high_tf_low_rollout": false,
+      "oracle_rescue": false,
+      "protected_rescue": false,
+      "prompt_insensitive": false
+    },
+    {
+      "endpoint_id": "full_turn_1m",
+      "episode_id": "oasst2:50fdf402-7314-463e-b645-b0b8feb93651",
+      "high_tf_low_rollout": false,
+      "oracle_rescue": false,
+      "protected_rescue": false,
+      "prompt_insensitive": false
+    },
+    {
+      "endpoint_id": "full_turn_1m",
+      "episode_id": "oasst2:e888c23e-640e-4bd1-9112-98aebf8c2675",
+      "high_tf_low_rollout": false,
+      "oracle_rescue": false,
+      "protected_rescue": false,
+      "prompt_insensitive": false
+    },
+    {
+      "endpoint_id": "full_turn_1m",
+      "episode_id": "oasst2:5da96e59-6bfe-4996-87de-f7721c00cf82",
+      "high_tf_low_rollout": false,
+      "oracle_rescue": false,
+      "protected_rescue": false,
+      "prompt_insensitive": false
+    },
+    {
+      "endpoint_id": "full_turn_1m",
+      "episode_id": "oasst2:e794a47e-e9c9-4cbf-9c3b-d7e7b6ecb50f",
+      "high_tf_low_rollout": false,
+      "oracle_rescue": false,
+      "protected_rescue": false,
+      "prompt_insensitive": false
+    },
+    {
+      "endpoint_id": "warm_start",
+      "episode_id": "oasst2:50fdf402-7314-463e-b645-b0b8feb93651",
+      "high_tf_low_rollout": false,
+      "oracle_rescue": false,
+      "protected_rescue": false,
+      "prompt_insensitive": false
+    },
+    {
+      "endpoint_id": "warm_start",
+      "episode_id": "oasst2:e888c23e-640e-4bd1-9112-98aebf8c2675",
+      "high_tf_low_rollout": false,
+      "oracle_rescue": false,
+      "protected_rescue": false,
+      "prompt_insensitive": false
+    },
+    {
+      "endpoint_id": "warm_start",
+      "episode_id": "oasst2:5da96e59-6bfe-4996-87de-f7721c00cf82",
+      "high_tf_low_rollout": false,
+      "oracle_rescue": false,
+      "protected_rescue": false,
+      "prompt_insensitive": false
+    },
+    {
+      "endpoint_id": "warm_start",
+      "episode_id": "oasst2:e794a47e-e9c9-4cbf-9c3b-d7e7b6ecb50f",
+      "high_tf_low_rollout": false,
+      "oracle_rescue": false,
+      "protected_rescue": false,
+      "prompt_insensitive": false
+    },
+    {
+      "endpoint_id": "fresh_same_capacity",
+      "episode_id": "oasst2:50fdf402-7314-463e-b645-b0b8feb93651",
+      "high_tf_low_rollout": false,
+      "oracle_rescue": false,
+      "protected_rescue": false,
+      "prompt_insensitive": false
+    },
+    {
+      "endpoint_id": "fresh_same_capacity",
+      "episode_id": "oasst2:e888c23e-640e-4bd1-9112-98aebf8c2675",
+      "high_tf_low_rollout": false,
+      "oracle_rescue": false,
+      "protected_rescue": false,
+      "prompt_insensitive": false
+    },
+    {
+      "endpoint_id": "fresh_same_capacity",
+      "episode_id": "oasst2:5da96e59-6bfe-4996-87de-f7721c00cf82",
+      "high_tf_low_rollout": false,
+      "oracle_rescue": false,
+      "protected_rescue": false,
+      "prompt_insensitive": false
+    },
+    {
+      "endpoint_id": "fresh_same_capacity",
+      "episode_id": "oasst2:e794a47e-e9c9-4cbf-9c3b-d7e7b6ecb50f",
+      "high_tf_low_rollout": false,
+      "oracle_rescue": false,
+      "protected_rescue": false,
+      "prompt_insensitive": false
+    }
+  ],
+  "counts": {
+    "high_tf_low_rollout": 0,
+    "oracle_rescue": 0,
+    "protected_rescue": 0,
+    "prompt_insensitive": 0
+  },
+  "scope": "four known train episodes; not held-out capability or recipe ranking",
+  "input_sha256": "25925d3b569be671433b9899144aa8742706b079390d49e7875890019e78cb03",
+  "analyzer_sha256": "5313f1f8cd20bb8ac53a7d769c335074b52c5cbff851b57c191fe1bd08411988"
+}
