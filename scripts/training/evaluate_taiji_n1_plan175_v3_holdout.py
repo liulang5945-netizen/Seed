@@ -6,8 +6,10 @@ import gzip
 import hashlib
 import json
 import os
+import secrets
 import tempfile
 import time
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -16,7 +18,7 @@ import torch
 from scripts.training.audit_taiji_n1_plan175_source_metadata import ROOT, digest
 from scripts.training.calibrate_taiji_n1_plan175_v3_train_only import build_episode
 from scripts.training.migrate_taiji_n1_plan175_v2_to_v3 import SEEDS
-from scripts.training.run_taiji_n1_plan175_v3_scale import report_path
+from scripts.training.run_taiji_n1_plan175_v3_scale import checkpoint_path, report_path
 from scripts.training.run_taiji_r2_daily_dialogue_full_turn_pretraining import _json_selected_fields
 from taiji.conditional_language_v3 import ConditionalLanguageTrainerV3
 
@@ -29,6 +31,7 @@ RAW_SOURCE_SHA256 = "a9f240c4c77aa1378364f70d37e753c07ba284e247b019d700e1947a0e5
 OLD_EPISODE_SHA256 = "4759163516064e5d2cc2e2fb5d505c0a915736218abdecb3d61771c16569b06d"
 REPORTS = ROOT / "reports"
 OUTPUT_DIR = REPORTS / "taiji_n1_plan175_v3_review_20261026"
+ATTEMPT_MARKER = REPORTS / "taiji_n1_plan175_v3_review_20261026.attempt.json"
 HOLDOUT_SALT = "n175-root-holdout-v1-20261026"
 MAX_INPUT_BYTES = 4096
 MAX_OUTPUT_BYTES = 2048
@@ -46,29 +49,118 @@ def select_one_per_family(candidates: list[dict]) -> list[dict]:
     return sorted(chosen, key=lambda item: item["family"])
 
 
+def normalized_source_sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+
+
 def require_completed_runs() -> list[dict[str, Any]]:
     corpus = json.loads(CORPUS.read_text(encoding="utf-8"))
+    migration = json.loads(MIGRATION.read_text(encoding="utf-8"))
+    if migration.get("status") != "three_seed_parent_migrated_no_training":
+        raise ValueError("N1-175 parent migration receipt differs")
+    parents = {item["seed"]: item for item in migration.get("parents", [])}
+    if set(parents) != set(SEEDS):
+        raise ValueError("N1-175 parent migration receipt lacks the fixed seeds")
+    candidate_source = ROOT / "taiji/conditional_language_v3.py"
+    candidate_sha = digest(candidate_source)
+    runner_source = ROOT / "scripts/training/run_taiji_n1_plan175_v3_scale.py"
+    runner_sha = digest(runner_source)
+    migration_source = ROOT / "scripts/training/migrate_taiji_n1_plan175_v2_to_v3.py"
+    if (
+        migration.get("v3_candidate_sha256") != normalized_source_sha256(candidate_source)
+        or migration.get("migration_script_sha256") != normalized_source_sha256(migration_source)
+        or migration.get("training_updates") != 0
+        or migration.get("new_holdout_text_read") != 0
+        or migration.get("can_promote") is not False
+    ):
+        raise ValueError("N1-175 migration source or separation lineage differs")
     runs = []
     for seed in SEEDS:
         path = report_path(seed)
         if not path.is_file():
             raise ValueError("N1-175 holdout remains sealed until all three runs complete")
         report = json.loads(path.read_text(encoding="utf-8"))
-        if report.get("status") != "complete" or report.get("epochs_complete") != 40:
+        if (
+            report.get("status") != "complete"
+            or report.get("run") != f"tf_seed{seed}"
+            or report.get("seed") != seed
+            or report.get("epochs_complete") != 40
+            or report.get("epochs_planned") != 40
+            or report.get("fresh_process_restore") != "passed"
+        ):
             raise ValueError(f"seed {seed} has not reached its fixed 40-epoch endpoint")
-        if report.get("dataset_manifest_sha256") != corpus.get("candidate_manifest_sha256"):
+        if report.get("dataset_manifest_sha256") != corpus.get(
+            "candidate_manifest_sha256"
+        ) or report.get("dataset_partition_sha256") != corpus.get("partition_sha256"):
             raise ValueError(f"seed {seed} final report used a different frozen train corpus")
-        checkpoint = ROOT / report["final_checkpoint"]
-        if digest(checkpoint) != report["final_checkpoint_sha256"]:
+        if (
+            report.get("candidate_source_sha256") != candidate_sha
+            or report.get("runner_source_sha256") != runner_sha
+        ):
+            raise ValueError(f"seed {seed} training source lineage differs")
+        if (
+            report.get("heldout_text_parsed") != 0
+            or report.get("development_reads") != 0
+            or report.get("can_promote") is not False
+        ):
+            raise ValueError(f"seed {seed} report violates train/holdout separation")
+        parent = parents[seed]
+        if (
+            report.get("parent_v2_checkpoint_sha256") != parent.get("parent_checkpoint_sha256")
+            or report.get("parent_v3_checkpoint") != parent.get("v3_checkpoint")
+            or report.get("parent_v3_checkpoint_sha256") != parent.get("v3_checkpoint_sha256")
+        ):
+            raise ValueError(
+                f"seed {seed} parent checkpoint lineage differs from migration receipt"
+            )
+        expected_checkpoint = checkpoint_path(seed, 40).resolve()
+        checkpoint = (ROOT / str(report.get("final_checkpoint", ""))).resolve()
+        if checkpoint != expected_checkpoint or not checkpoint.is_file():
+            raise ValueError(f"seed {seed} final checkpoint path differs from the fixed run")
+        checkpoint_sha = digest(checkpoint)
+        if checkpoint_sha != report.get("final_checkpoint_sha256"):
             raise ValueError(f"seed {seed} final checkpoint SHA differs")
-        runs.append({"seed": seed, "report": report, "report_sha256": digest(path)})
+        payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
+        if payload.get("checkpoint_digest") != report.get("final_checkpoint_digest"):
+            raise ValueError(f"seed {seed} final checkpoint digest differs")
+        trainer, state, cursor = ConditionalLanguageTrainerV3.from_checkpoint(payload)
+        epochs = report.get("epoch_results", [])
+        expected_epochs = list(range(1, 41))
+        if [row.get("epoch") for row in epochs] != expected_epochs or any(
+            row.get("updates") != 288
+            or row.get("target_bytes") != corpus.get("complete_target_bytes_per_epoch")
+            for row in epochs
+        ):
+            raise ValueError(f"seed {seed} final report has an incomplete epoch ledger")
+        expected_steps = parent.get("parent_steps", 0) + sum(row["updates"] for row in epochs)
+        if (
+            cursor.get("seed") != seed
+            or cursor.get("epoch") != 40
+            or cursor.get("dataset_manifest_sha256") != corpus.get("candidate_manifest_sha256")
+            or trainer.steps != expected_steps
+            or state.to_payload().get("format") != "taiji-task-state-v3"
+        ):
+            raise ValueError(f"seed {seed} final checkpoint cursor or counters differ")
+        runs.append(
+            {
+                "seed": seed,
+                "report": report,
+                "report_sha256": digest(path),
+                "trainer": trainer,
+            }
+        )
     return runs
 
 
-def load_fixed_holdout() -> tuple[list[dict], list[dict], int, list[dict]]:
+def load_fixed_holdout(
+    *,
+    expected_partition_sha256: str,
+    before_body_read: Callable[[list[dict]], None],
+) -> tuple[list[dict], list[dict], int, list[dict]]:
     partition = json.loads(PARTITION.read_text(encoding="utf-8"))
     if (
-        digest(RAW_SOURCE) != RAW_SOURCE_SHA256
+        digest(PARTITION) != expected_partition_sha256
+        or digest(RAW_SOURCE) != RAW_SOURCE_SHA256
         or digest(RAW_SOURCE) != partition.get("raw_source_sha256")
         or digest(OLD_EPISODES) != OLD_EPISODE_SHA256
         or digest(OLD_EPISODES) != partition.get("old_episode_source_sha256")
@@ -106,6 +198,7 @@ def load_fixed_holdout() -> tuple[list[dict], list[dict], int, list[dict]]:
             raise ValueError("selected holdout family differs from source ancestry")
         chains[candidate["target_id"]] = chain
         needed.update(chain)
+    before_body_read(selected)
     with gzip.open(RAW_SOURCE, "rt", encoding="utf-8") as stream:
         for line in stream:
             identity = _json_selected_fields(line, {"message_id"}).get("message_id")
@@ -138,17 +231,9 @@ def load_fixed_holdout() -> tuple[list[dict], list[dict], int, list[dict]]:
     return episodes, excluded, len(needed), selected
 
 
-def generate_for_seed(seed: int, report: dict, episodes: list[tuple[dict, Any]]) -> list[dict]:
-    checkpoint = ROOT / report["final_checkpoint"]
-    payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
-    if payload.get("checkpoint_digest") != report.get("final_checkpoint_digest"):
-        raise ValueError(f"seed {seed} final checkpoint digest differs from its run report")
-    trainer, _, cursor = ConditionalLanguageTrainerV3.from_checkpoint(payload)
-    if cursor.get("epoch") != 40 or trainer.steps != 5000 + 40 * 288:
-        # Exact update count is additionally checked against the saved per-epoch ledger below.
-        expected_steps = 5000 + sum(item["updates"] for item in report["epoch_results"])
-        if cursor.get("epoch") != 40 or trainer.steps != expected_steps:
-            raise ValueError(f"seed {seed} trainer cursor differs from its final report")
+def generate_for_seed(
+    seed: int, trainer: ConditionalLanguageTrainerV3, episodes: list[tuple[dict, Any]]
+) -> list[dict]:
     wrong_indices = {index: (index + 1) % len(episodes) for index in range(len(episodes))}
     outputs = []
     for index, (candidate, episode) in enumerate(episodes):
@@ -173,9 +258,7 @@ def generate_for_seed(seed: int, report: dict, episodes: list[tuple[dict, Any]])
                 },
             )
             generated = trainer.model.generate(state, max_new_bytes=MAX_OUTPUT_BYTES)
-            opaque = hashlib.sha256(
-                f"n175-review:{seed}:{candidate['family']}:{condition}".encode()
-            ).hexdigest()[:16]
+            opaque = secrets.token_hex(16)
             outputs.append(
                 {
                     "response_id": opaque,
@@ -200,29 +283,68 @@ def generate_for_seed(seed: int, report: dict, episodes: list[tuple[dict, Any]])
 def main() -> None:
     if OUTPUT_DIR.exists():
         raise FileExistsError("N1-175 holdout evaluation is write-once")
+    if ATTEMPT_MARKER.exists():
+        raise FileExistsError("N1-175 holdout text-read attempt already registered; no retry")
     if list(REPORTS.glob(".tmp-n175-review-*")):
         raise FileExistsError("an interrupted review bundle exists and requires recovery")
-    runs = require_completed_runs()
-    migration = json.loads(MIGRATION.read_text(encoding="utf-8"))
-    corpus = json.loads(CORPUS.read_text(encoding="utf-8"))
-    if migration["status"] != "three_seed_parent_migrated_no_training":
-        raise ValueError("parent migration receipt differs")
     torch.set_num_threads(1)
     started_cpu, started_wall = time.process_time(), time.monotonic()
-    episodes, excluded, text_nodes_parsed, selected = load_fixed_holdout()
+    runs = require_completed_runs()
+    corpus = json.loads(CORPUS.read_text(encoding="utf-8"))
+    attempt_id = secrets.token_hex(24)
+    attempt_record: dict[str, Any] = {}
+
+    def register_text_read(selected: list[dict]) -> None:
+        payload = {
+            "schema": "taiji-n1-plan175-v3-holdout-attempt-v1",
+            "status": "holdout_text_read_started_no_retry",
+            "attempt_id": attempt_id,
+            "registered_unix_seconds": time.time(),
+            "selected_holdout_families": len(selected),
+            "run_reports": [
+                {
+                    "seed": item["seed"],
+                    "report_sha256": item["report_sha256"],
+                    "final_checkpoint_sha256": item["report"]["final_checkpoint_sha256"],
+                }
+                for item in runs
+            ],
+            "corpus_manifest_sha256": corpus["candidate_manifest_sha256"],
+            "partition_sha256": corpus["partition_sha256"],
+            "migration_receipt_sha256": digest(MIGRATION),
+            "candidate_source_sha256": digest(ROOT / "taiji/conditional_language_v3.py"),
+            "runner_source_sha256": digest(
+                ROOT / "scripts/training/run_taiji_n1_plan175_v3_scale.py"
+            ),
+            "migration_source_sha256": digest(
+                ROOT / "scripts/training/migrate_taiji_n1_plan175_v2_to_v3.py"
+            ),
+            "evaluator_source_sha256": digest(Path(__file__)),
+        }
+        with ATTEMPT_MARKER.open("x", encoding="utf-8", newline="\n") as stream:
+            json.dump(payload, stream, ensure_ascii=False, indent=2)
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        attempt_record.update(payload)
+
+    episodes, excluded, text_nodes_parsed, selected = load_fixed_holdout(
+        expected_partition_sha256=corpus["partition_sha256"],
+        before_body_read=register_text_read,
+    )
     if len(episodes) < 2:
         raise ValueError(
             "fewer than two preselected evaluable families remain for fixed prompt mismatch"
         )
     all_outputs = []
     for item in runs:
-        all_outputs.extend(generate_for_seed(item["seed"], item["report"], episodes))
+        all_outputs.extend(generate_for_seed(item["seed"], item["trainer"], episodes))
     case_rows, key_rows = [], []
     by_family = {candidate["family"]: episode for candidate, episode in episodes}
     for family, episode in by_family.items():
         responses = [row for row in all_outputs if row["family"] == family]
-        responses.sort(key=lambda row: hashlib.sha256(row["response_id"].encode()).hexdigest())
-        case_id = hashlib.sha256(f"review-case:{family}".encode()).hexdigest()[:16]
+        secrets.SystemRandom().shuffle(responses)
+        case_id = secrets.token_hex(16)
         case_rows.append(
             {
                 "case_id": case_id,
@@ -256,12 +378,9 @@ def main() -> None:
                 }
             )
     for row in excluded:
-        candidate = row["candidate"]
         case_rows.append(
             {
-                "case_id": hashlib.sha256(
-                    f"review-case:{candidate['family']}".encode()
-                ).hexdigest()[:16],
+                "case_id": secrets.token_hex(16),
                 "status": "not_evaluable_no_replacement",
                 "question": "",
                 "reference_answer": "",
@@ -271,6 +390,7 @@ def main() -> None:
                 "rationale": {},
             }
         )
+    secrets.SystemRandom().shuffle(case_rows)
     review = {
         "schema": "taiji-n1-plan175-blind-semantic-review-v1",
         "status": "ready_for_blind_human_adjudication",
@@ -281,7 +401,7 @@ def main() -> None:
                 "2": "直接回答问题且核心内容正确",
             },
             "unverifiable_factual_claim": "在rationale注明，并将rating留空待裁决",
-            "scoring": "不要求复现reference的逐字前缀；按问题相关性与正确性评分。响应ID匿名且顺序已打乱。",
+            "scoring": "不要求复现reference的逐字前缀；按问题相关性与正确性评分。案例和响应使用随机匿名ID并随机排列，映射只在独立揭盲key中。",
         },
         "case_count": len(case_rows),
         "eligible_case_count": len(episodes),
@@ -295,8 +415,18 @@ def main() -> None:
     receipt = {
         "schema": "taiji-n1-plan175-v3-holdout-generation-v1",
         "status": "generation_complete_waiting_for_human_review",
+        "attempt_id": attempt_id,
+        "attempt_marker_sha256": digest(ATTEMPT_MARKER),
+        "attempt_registered_unix_seconds": attempt_record["registered_unix_seconds"],
         "run_reports": [{"seed": item["seed"], "sha256": item["report_sha256"]} for item in runs],
         "corpus_manifest_sha256": corpus["candidate_manifest_sha256"],
+        "migration_receipt_sha256": digest(MIGRATION),
+        "candidate_source_sha256": digest(ROOT / "taiji/conditional_language_v3.py"),
+        "runner_source_sha256": digest(ROOT / "scripts/training/run_taiji_n1_plan175_v3_scale.py"),
+        "migration_source_sha256": digest(
+            ROOT / "scripts/training/migrate_taiji_n1_plan175_v2_to_v3.py"
+        ),
+        "evaluator_source_sha256": digest(Path(__file__)),
         "selected_holdout_families": len(
             json.loads(PARTITION.read_text(encoding="utf-8"))["holdout_families"]
         ),
