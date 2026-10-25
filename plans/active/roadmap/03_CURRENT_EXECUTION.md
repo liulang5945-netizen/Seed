@@ -1,28 +1,30 @@
 # N主线当前执行
 
-更新：2026-10-24，Asia/Shanghai。本页维护唯一活动队首与本轮收官合同；[10](10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)维护详细WBS，[09](09_NEXT_MAINLINE_PLAN.md)维护机制继承，[07](07_MINI_MODEL_DELIVERY.md)维护能力/用户验收。
+更新：2026-10-25，Asia/Shanghai。本页维护唯一活动队首与本轮收官合同；[10](10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)维护详细WBS，[09](09_NEXT_MAINLINE_PLAN.md)维护机制继承，[07](07_MINI_MODEL_DELIVERY.md)维护能力/用户验收。
 
 ## 目标、当前动作与本轮边界
 
 持续Goal：沿N主线，把态极发展成由自身认知机制驱动、能通过自然中文可靠完成连续任务、跨会话积累和修正经验、从反馈中学会新能力并保持旧能力的原生认知模型；每轮以同一可恢复版本的未见表现、保持和实际成本验收。
 
-**当前动作是继续已批准的R2续训；本轮研究目的则是完成既定配方的配对验证。** 顺序固定为三臂训练终点→四端点恢复/准入→一次W5b→固定人工判读→结案。当前CC-1只包含这些工作。信息进入决策路径、任务错误能否教会负责模块的正式干预实验属于后继CC-2/3；09§1.5的接口级零更新观察已完成，但不证明整模型因果使用或学习收益，也不增加本轮收官前置。
+**三臂已发布训练终态metadata；当前动作是核验终态与四端点准入，通过后完成既定配方的配对验证。** 顺序固定为三臂训练终点→四端点恢复/准入→一次W5b→固定人工判读→结案。当前CC-1只包含这些工作。信息进入决策路径、任务错误能否教会负责模块的正式干预实验属于后继CC-2/3；09§1.5的接口级零更新观察已完成，但不证明整模型因果使用或学习收益，也不增加本轮收官前置。
 
 CC-1结案与持续Goal完成分别记录。CC-2归因、CC-3语言/L2、CC-4同bundle联合能力/L3、CC-5连续经验、CC-6学习与保持/L4、CC-7扩面仍依10按证据准入；本轮不以完成全部长期阶段为收官条件。
 
 ## 当前运行与证据快照
 
-- warm_start 已于2026-10-23 **23:33:32**发布唯一completion（sequence 74028），result.complete=true、readiness=ready。预训练**30,096 / 14,517,912**、SFT **525 / 113,209**达到原终点；两个final及既有独立恢复记录complete/equal一致。2026-10-24本次仅核对小JSON/receipt与文件存在，未重新加载或恢复模型。
-- 2026-10-24 **10:15**只读进度：并行写账本竞态导致两臂在06:44前后崩溃；耐久 cursor 为 full **21,072**、fresh **28,061**。summary 已全量重放修复，full 孤儿 reservation 按上界 1,332 秒结算；fresh 已单独恢复并从 **28,038** 继续，full 暂不发车。三臂已计约 **4.442M**，总计余量约 **11.8 万**；W5b仍未准入。
-- 2026-10-24 **10:22**只读进度：**串行fresh单独在跑**（进程10:12启动），**28,095 / 30,096**，剩余预训练约 **2,001 episodes／99.2万 updates**，最近40个episode **6.20秒/episode**，预计预训练约3.5小时后到终点、再加525 SFT；full 无进程，耐久 cursor 仍为 **21,072 / 10,128,330 updates**。账本 charge：fresh 1,398,203／full 1,463,250／warm 1,580,449，合计 **4,441,902**，总计余量 **118,098**；按现有update边际投影 fresh 约1.2万、full 约5.7万 CPU秒，均在单臂与总计余量内。
-- 2026-10-24 **13:51**fresh_same_capacity 发布唯一completion（sequence 93,763）：预训练 **30,096 / 14,517,912**、SFT **525 / 113,209** 达终点；result.complete=true、readiness=ready；两个 final（`pretraining_final.pt`／`assistant_sft_final.pt`）的独立恢复均 equal=true；账本 fresh charge **1,410,277.6**，无活动 reservation。三臂已计 **4,453,977**，总计余量 **106,023**。
-- 2026-10-24 **14:45**按串行顺序单独启动 full_turn_1m（`run_taiji_r2_fast_ledger_resume_v4.py --arm full_turn_1m`），从耐久 cursor **21,072 / 10,128,330 updates** 恢复；单臂余量 **126,750**，投影约 **5.7万** CPU秒，总计余量足够。启动校验约12分钟后于 **14:57** 产出恢复后的首个 episode；实测 **6.50秒/episode**（21,075→21,099），剩余 8,997 episodes 预计预训练约 **16 小时**（明天约07:00），再加 525 SFT（约30分钟）到 final。最新账本 charge full **1,463,729**，三臂合计 **4,454,456**，总计余量 **105,544**。
-- 2026-10-24 **17:03**只读进度：full **22,268 / 30,096**（**10,761,674 / 14,517,912** updates），最近59个episode **5.02秒/episode**；剩 7,828 episodes，按 5.0–6.1 秒/ep 预计 **11–13 小时**到预训练终点（明天约04:00–06:30），再加 525 SFT。账本 full charge **1,470,838**，三臂合计 **4,461,566**，总计余量 **98,434**；full 单臂余量 **119,162**，投影约5万，仍足够。无活动 reservation，进程单臂运行。
-- 2026-10-24 **23:34**只读进度：full **26,019 / 30,096**（**12,573,054 / 14,517,912** updates），最近59个episode **5.38秒/episode**；剩 4,077 episodes，预计预训练 **约05:45** 到终点，再加 SFT（按warm实测SFT阶段约68分钟）→ final 约 **明天07:00**。账本 full charge **1,493,341**，三臂合计 **4,484,127**，总计余量 **75,873**；full 单臂余量 **96,659**，剩余投影约2.6万，足够。无报错，单臂运行中。
-- 2026-10-25 **02:12**只读进度：full **27,572 / 30,096**（**13,303,369 / 14,517,912** updates），最近59个episode **6.96秒/episode**；剩 2,524 episodes，按 5.4–7.0 秒/ep 预计预训练 **06:00–07:05** 到终点，再加 SFT（约68分钟）→ final 约 **07:10–08:15**。账本 full charge **1,502,494**，三臂合计 **4,493,221**，总计余量 **66,779**；full 单臂余量 **87,506**，剩余投影约1.8万，足够。无报错，单臂运行中。
-- warm 的result/readiness记账为发布前成本下界1,580,449.388716 CPU秒，completion/当前账本为1,580,449.419966，相差0.03125秒；两种口径分别保留。当前无warm reservation、writer锁不存在；本次未做OS全进程核验，不能仅凭无锁宣称writer已退出。
-- **有效累计额度为D1已批准并激活的v1.5：1,590,000 process-CPU秒/臂、4,560,000总计**；旧实耗、reserve及未知尾账全部计入。write-once amendment `21e0497e`，锚sequence 66699；[18预算裁决](../../reference/delivery-runs/20261021-n-mainline/artifacts/18-d1-budget-decision.md)记录来源。17:48的v1.4停止与旧额度只作历史，不能覆盖19:41后的v1.5续训事实。
-- endpoint provider、独立extension evaluator/versioned worker、launch/ledger/budget血缘已提交；相关110支合成合同通过，独立审查三项修正已提交。**实现与合成通过；真实终点/评测贯通尚未验证。** 旧冻结评测源码不改。
+2026-10-25只读核对三臂result/readiness及progress终态：
+
+| 端点 | 已观察的completion（Asia/Shanghai） | 小metadata状态 |
+|---|---|---|
+| warm_start | 2026-10-23 23:33:32，sequence 74028 | result.complete=true，readiness=ready |
+| fresh_same_capacity | 2026-10-24 13:51 | result.complete=true，readiness=ready |
+| full_turn_1m | 2026-10-25 07:42:51 | result.complete=true，readiness=ready；completion记账1,521,529.860816 CPU秒 |
+
+三臂训练终态已发布，本轮`paired_eval`的attempt/result/failure均未出现。此次仅核对小JSON和progress记录，未重新加载checkpoint、执行四端点恢复、读取selector/prompt或运行评测；metadata complete不能替代R1/R2/R3全链审计，也不宣告本轮结案或语言能力通过。终态writer、reservation及实际费用仍由准入门核验。
+
+有效训练累计额度仍为D1批准的v1.5：**1,590,000 process-CPU秒/臂、4,560,000总计**，旧实耗、reserve与未知尾账全部保留；amendment `21e0497e`，锚sequence 66699，来源见[18预算裁决](../../reference/delivery-runs/20261021-n-mainline/artifacts/18-d1-budget-decision.md)。warm的result/readiness为发布前下界1,580,449.388716，completion/账本为1,580,449.419966；不把发布前receipt误称完整退出全成本。
+
+续训历史中两次并行曾因长锁/跨臂尾账及Windows共享summary替换竞态停止，保留原失败、保守结算和修复（`2b985255b`、`8e48a2d05`）；最终逐臂串行到终点。旧逐时进度/ETA从Git及原progress/receipt读取，不再作为活动重启指令。endpoint/provider、独立extension evaluator/worker和来源接线的既有110支合成证据继续继承，真实四端点与W5b贯通仍待实测。
 
 ## 本轮CC-1的固定收官合同
 
@@ -49,20 +51,22 @@ CC-1结案与持续Goal完成分别记录。CC-2归因、CC-3语言/L2、CC-4同
 | `REVIEW_PENDING` 仅待判读 | 机器输出齐全但R5/R6未齐；只完成既定判读与结案，不再训练或增加查询。此状态不是完整收官。 |
 
 - **训练止于v1.5现有累计上限。** D1已解决，本轮不自动再次提额、加epoch、换数据/模型、降终点或改分母。任一必需臂触顶、资源拒绝或保存/恢复失败，停止后续启动，按partial/failure出口封存；正常在跑但尚无final属于等待，不能误判失败。
-- 当前并行安排因 Windows 共享账本写竞态停止：full 与 fresh 在 06:44 前后同时替换 aggregate summary 时一方拿到 `WinError 5`，summary 变 stale，两臂随后崩溃；耐久进度未丢（full 21,072、fresh 28,061）。已用全量重放修复 summary、按上界结算 full 的孤儿 reservation，并在 v4 加入 summary 替换重试与 stale 自动全量回退。并行争用还让 full 变慢；现改为**串行：先单独跑完 fresh，再单独跑 full**。第一次并行尝试的长锁/跨臂尾账修复（`2b985255b`）仍有效。接续须核验前臂真实终态、恢复、来源与当前预算门，不能仅看final文件。
+- 三臂已发布完整训练metadata，不再按旧并行/串行快照重复启动。历史共享账本故障和保守费用保留；评价前仍需核验真实终态、来源、恢复与当前费用门，不能仅看final文件。
 - **W5b独立CPU与wall上限各14,400秒**，不借训练额度；涵盖监督/恢复/生成/IPC/终止与发布预留。receipt记录发布前实测并保留finalization reserve，不能宣称已实测receipt自身、最终result及进程退出全成本。execute形成attempt即消费一次资格，失败也不重试、不换入口/名字、不补题、不续跑。
 - 无法确认进程终止时，停止派发新任务并记录终止/成本未知，不能宣称进程树已回收；普通观察超时先复核同一实际进程。该异常须处置留证，不能以重启掩盖。
 - 记录本包相关检查与对应提交CI。全库既有维护债、M7发布、全部长期CR以及新的信息/信用实验不追加为CC-1收官条件；`can_promote=false`、N1-166及其未消费确认面维持原冻结。
 
-## 等待期间已安排的独立工作
+## 独立交付与结案准备
 
-CI由用户另行安排的任务负责，本任务不再修改其文件或叠加修复。当前只准备本轮CC-1.6的固定人工判读与R6结案交接，见[02现有交接表](../../reference/delivery-runs/20261021-n-mainline/artifacts/02-plan.md#cc-16-判读与结案交接)。四维口径、48行记录字段、固定分母、成本口径和R1–R6证据栏已明确；不新建平行计划，不预建评测保留路径、不读取题面或提前生成输出。当前准备完成，正式判读仍等待原W5b真实持久化输出。 用户后继授权的客户端对话/生命页修复及DSH选择性借鉴已完成本地构建、回归和隔离页面验收，范围及暂缓项见[08](08_UPSTREAM_SYNC_PLAYBOOK.md#2026-10-24-选择性借鉴)与[现行体验修订](../../reference/UI_LIFE_UX_SPEC_20261003.md)；未整体升级Harness或发布安装包，不追加为本轮研究收官条件。
+CI由用户另行安排的任务负责，本任务不再修改其文件或叠加修复。当前只准备本轮CC-1.6的固定人工判读与R6结案交接，见[02现有交接表](../../reference/delivery-runs/20261021-n-mainline/artifacts/02-plan.md)。四维口径、48行记录字段、固定分母、成本口径和R1–R6证据栏已明确；不新建平行计划，不预建评测保留路径、不读取题面或提前生成输出。当前准备完成，正式判读仍等待原W5b真实持久化输出。 用户后继授权的客户端对话/生命页修复及DSH选择性借鉴已完成本地构建、回归和隔离页面验收，范围及暂缓项见[08](08_UPSTREAM_SYNC_PLAYBOOK.md)与[现行体验修订](../../reference/UI_LIFE_UX_SPEC_20261003.md)；未整体升级Harness或发布安装包，不追加为本轮研究收官条件。
 
-## 当前唯一下一步：先单独跑完 fresh_same_capacity，再单独跑 full_turn_1m
+2026-10-25后继方案修订：完整架构/驱动力/VX0–VX7工程包统一归[VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)，N只通过09的J1信息消费/J2信用/J3连续状态与条件选择取必要切片。生命页新发展运行台按[VX6设计](../../reference/UI_LIFE_UX_SPEC_20261003.md)分段实施，当前已交付的是连接/未知语义修复，不代表新五视图或自主策略已实现；VX6.0只读研究观察器可独立先行。此设计修订不改本页CC-1终点、预算、冻结面或研究队首。
 
-warm_start 已完成。并行因共享账本写竞态停止；现改为串行：fresh 已单独恢复并从 28,038/30,096 继续，预计先到 final；fresh 完成后单独启动 full（耐久 cursor 21,072/30,096）。三臂 final 齐备后才进入 R3–R5。若触及停止线，走 R6 对应的 partial/failure 结案，当前轮次到此结束。信息/信用正式实验及新配方留给后继包，不延长本轮。
+## 当前唯一下一步：核验三臂终态与四端点准入，通过后执行原W5b
 
-现行实际训练入口为`scripts/training/run_taiji_r2_fast_ledger_resume_v4.py --arm <arm>`，必须继承本轮来源、恢复与v1.5预算门；`run_taiji_r2_resume.py`属于既有历史入口，不能据旧状态重复启动。新训练前先核验完整checkpoint保存与独立恢复；不修改运行中绑定的源码、语料或谱系。
+核对R1/R2的完整计数、来源/launch/预算修订链、唯一completion、终态writer/reservation及费用；通过后在原评价预算内完成parent_baseline＋三臂的受监督独立恢复，全部receipt持久化后才读selector，按R3–R5一次执行39×4生成和固定12-family人工判读，再按R6结案。前置缺失不消费题面；已消费后失败按原one-shot出口留证，不重试/补题。
+
+本次规划修订没有执行上述模型准入或评价。当前三臂无需新的训练启动；现有v4入口只保留来源/历史恢复用途，不能因旧等待快照重复训练。J/VX架构和驱动实施另按其合同，不延长本轮。
 
 ## 历史与计划去向
 

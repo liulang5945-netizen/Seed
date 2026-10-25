@@ -11,7 +11,9 @@
 | extension评价适配 | [独立provider/worker架构](delivery-runs/20261021-n-mainline/artifacts/04-continuation-evaluation-adapter.md) |
 | 单入口续训与来源 | [15精简](delivery-runs/20261021-n-mainline/artifacts/15-training-system-simplification.md)、[原extension架构](delivery-runs/20261021-n-mainline/artifacts/04-continuation-extension-architecture.md) |
 | 原全轮/R2配对合同 | [全轮预训练](PLAN-R2-DAILY-DIALOGUE-FULL-TURN-PRETRAINING_20261021.md)、[恢复合同](PLAN-R2-DAILY-DIALOGUE-RECOVERY_20261021.md)、[warm/fresh合同](PLAN-R2-DAILY-DIALOGUE-WARMSTART-MATCHED_20261021.md) |
-| 设计储备与原生目标 | [VISION](VISION_FUTURE_TECHNOLOGY.md)、[09机制映射](../active/roadmap/09_NEXT_MAINLINE_PLAN.md)、[根需求](../active/TAIJI_CORE_REQUIREMENTS.md) |
+| 下一主线统一架构、驱动力与VX0–VX7工程包 | [VISION现行方案](VISION_FUTURE_TECHNOLOGY.md)；旧全文由其固定Git身份恢复 |
+| 当前N的必要交汇与原生目标 | [09机制/交汇映射](../active/roadmap/09_NEXT_MAINLINE_PLAN.md)、[根需求](../active/TAIJI_CORE_REQUIREMENTS.md) |
+| 生命页发展运行台与VX6.0–6.4 | [实施设计](UI_LIFE_UX_SPEC_20261003.md)、[视觉规则](UI_LIFE_VISUAL_DIRECTION_20261003.md) |
 
 ## 已结案证据与批准范围
 

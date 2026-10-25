@@ -4,7 +4,7 @@
 
 ## 当前路线与文档职责
 
-当前CC-1从既有R2训练/评测出口接续，随后CC-2归因→CC-3语言/L2→CC-4同bundle联合能力/L3→CC-5连续经验→CC-6学习保持/L4→按证据选择CC-7扩面。详细包和条件见10；当前运行事实与额度不在导航页复制，只看03。
+当前N按03收束CC-1既定R2训练/评测，CC-2据实际结果选择必要交汇；N的语言/联合任务可与下一VISION共用J1信息消费、J2学习信用、J3连续状态/条件选择切片。完整架构、驱动力和VX0–VX7工程包归VISION，生命周期与能力交付归10/07；不等待整套自主性才验收N语言，也不把VX加入CC-1收官。当前运行事实与额度只看03。
 
 | 要查什么 | 主要入口 |
 |---|---|
@@ -12,7 +12,9 @@
 | 详细分阶段工作包、依赖、产物、证据、失败回流和决策 | [10持续能力执行计划](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md) |
 | 旧计划继承/合并/退役/历史/条件保留 | [17过渡与收束](reference/delivery-runs/20261021-n-mainline/artifacts/17-plan-transition-and-reconciliation.md) |
 | N1–N6及42条设计责任 | [09主线设计](active/roadmap/09_NEXT_MAINLINE_PLAN.md) |
-| 根需求、认知所有权、目标架构 | [核心需求](active/TAIJI_CORE_REQUIREMENTS.md)、[原生架构](active/TAIJI_NATIVE_ARCHITECTURE_V1.md)、[VISION](reference/VISION_FUTURE_TECHNOLOGY.md) |
+| 根需求、认知所有权、现有架构 | [核心需求](active/TAIJI_CORE_REQUIREMENTS.md)、[原生架构](active/TAIJI_NATIVE_ARCHITECTURE_V1.md) |
+| 下一主线统一架构、驱动力及VX开发包 | [VISION现行方案](reference/VISION_FUTURE_TECHNOLOGY.md) |
+| 生命页重设计、字段来源及VX6子包 | [生命页实施设计](reference/UI_LIFE_UX_SPEC_20261003.md)、[视觉方向](reference/UI_LIFE_VISUAL_DIRECTION_20261003.md) |
 | M0–M8资产与范围排除 | [01阶段地图](active/roadmap/01_SCOPE_AND_PHASES.md)、[既有项目收束](reference/M0_M7_PROJECT_CONSOLIDATION_20261006.md) |
 | 能力、用户验收与采用/发布 | [07整模型交付](active/roadmap/07_MINI_MODEL_DELIVERY.md)、[02门禁/CI](active/roadmap/02_GATES_AND_CI.md) |
 | CC-1实施交接与R2技术约束 | [工程交接](reference/delivery-runs/20261021-n-mainline/artifacts/02-plan.md)、[活动技术摘要](reference/delivery-runs/20261021-n-mainline/artifacts/02-continuation-extension-plan.md) |
