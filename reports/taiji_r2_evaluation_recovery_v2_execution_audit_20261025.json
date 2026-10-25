@@ -1,7 +1,7 @@
 {
   "schema": "taiji-r2-evaluation-recovery-v2-execution-audit",
   "date": "2026-10-25",
-  "status": "machine_complete_review_pending",
+  "status": "closed_complete_user_confirmed",
   "attempt_id": "1b679707823e5cf69dfc6721537fdd75a055066465ae85ed",
   "complete": true,
   "counts": {
@@ -272,10 +272,12 @@
     }
   },
   "review": {
-    "status": "pending_responsible_reviewer_confirmation",
+    "status": "confirmed_by_user",
     "path": "E:\\Seed\\plans\\reference\\PLAN-R2-EVALUATION-RECOVERY-V2_human_review_20261025.md",
-    "sha256": "0d6f0f8f4829eb8d3b5f6b5387ca3f1b73b528ee73cb5c95018ce2adf5b389c2",
-    "rows": 48
+    "sha256": "b8733308234365767a238573a4b8bbde92603000c60ddc4332310cd348849a47",
+    "rows": 48,
+    "confirmed_at_utc": "2026-10-25T06:56:54.360843+00:00",
+    "approval_quote": "确认全部 48 行（推荐）"
   },
   "can_promote": false
 }

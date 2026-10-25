@@ -1,6 +1,6 @@
 # R2 评价工程恢复 v2 实施计划与判据预注册
 
-日期：2026-10-25，Asia/Shanghai。状态：**已执行；机器侧完成，R5 待责任判读人确认**。用户于本日选择「采纳 v2（推荐）」，授权在[消费边界 v2](04-evaluation-consumption-boundary-v2.md)的原额度与固定范围内，自动完成工程准入、一次真实题面消费、固定判读与有限结案。执行结果见[结案](../../PLAN-R2-EVALUATION-RECOVERY-V2_execution_closeout_20261025.md)。
+日期：2026-10-25，Asia/Shanghai。状态：**已执行并按 CLOSED_COMPLETE 结案**（用户确认 48 行判读；四端不可读、无配方排序）。用户于本日选择「采纳 v2（推荐）」，授权在[消费边界 v2](04-evaluation-consumption-boundary-v2.md)的原额度与固定范围内，自动完成工程准入、一次真实题面消费、固定判读与有限结案。执行结果见[结案](../../PLAN-R2-EVALUATION-RECOVERY-V2_execution_closeout_20261025.md)。
 
 本文件同时承担 N 主线开工前的三件套：架构条款对账（§0）、实施计划（§1–§5、§7）、判据预注册（§6）。判据先于任何真实题面访问写定，事后不得改判据或分母。
 

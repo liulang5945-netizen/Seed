@@ -6,7 +6,7 @@
 
 持续Goal：沿N主线，把态极发展成由自身认知机制驱动、能通过自然中文可靠完成连续任务、跨会话积累和修正经验、从反馈中学会新能力并保持旧能力的原生认知模型；每轮以同一可恢复版本的未见表现、保持和实际成本验收。
 
-**三臂训练终点与评价metadata预检完成；CC-1与恢复v1两次正式attempt均在selector前因工程接线失败，各0/4恢复、0/156输出，分别按CLOSED_FAILURE封存；用户已采纳消费边界v2，当前唯一队首为恢复v2：工程准入→一次正式消费→48判读→结案。** 原完整路径仍为训练终点→四端点恢复→配对输出→固定判读→结案；两次失败都没有回答配方效果。后继复用已训端点完成有界评价恢复，不重复训练，也不从0输出推断模型根因。
+**三臂训练终点与评价metadata预检完成；CC-1与恢复v1两次正式attempt均在selector前因工程接线失败；恢复v2已按CLOSED_COMPLETE收口，四端（含基线）不可读、无配方排序。当前唯一候选队首为CC-2归因（训练侧decoder诊断，需先补三件套）。** 原完整路径仍为训练终点→四端点恢复→配对输出→固定判读→结案；本轮已取得真实配对读数。后继不重复训练，也不从不可读输出直接推断架构根因。
 
 CC-1结案与持续Goal完成分别记录。CC-2归因、CC-3语言/L2、CC-4同bundle联合能力/L3、CC-5连续经验、CC-6学习与保持/L4、CC-7扩面仍依10按证据准入；本轮不以完成全部长期阶段为收官条件。
 
@@ -70,11 +70,11 @@ CI由用户另行安排的任务负责，本任务不再修改其文件或叠加
 
 2026-10-25后继方案修订：完整架构/驱动力/VX0–VX7工程包统一归[VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)，N只通过09的J1信息消费/J2信用/J3连续状态与条件选择取必要切片。生命页新发展运行台按[VX6设计](../../reference/UI_LIFE_UX_SPEC_20261003.md)分段实施，当前已交付的是连接/未知语义修复，不代表新五视图或自主策略已实现；VX6.0只读研究观察器可独立先行。此设计修订不改本页CC-1终点、预算、冻结面或研究队首。
 
-## 当前唯一下一步：确认48行判读（v2机器侧已完成）
+## 当前唯一下一步：开启CC-2归因（训练侧decoder诊断）
 
-2026-10-25执行结果：`admission_001`在准入保护区计算处工程失败（70.703 CPU，0恢复）；`admission_002`在真实Job/IPC/token/NTFS下完成四端只读恢复（345.578 CPU）；`formal_001`完成**156/156**生成、逐端39、reuse=0、0参数/优化器更新、`can_promote=false`，**唯一marker在selector前发布**，发布前实测651.703 CPU/966.015 wall。窗口剩余9,847.531 CPU/12,740.687 wall，无未知尾账事件。
+恢复v2已按 **CLOSED_COMPLETE** 收口：用户2026-10-25确认48行判读——四端（含parent基线）在冻结decoder下**不可读、不贴题、机械重复**，有历史行不连贯；因此本轮**不能给出配方排序**，属能力负结果而非工程失败。机器事实：`admission_001`工程失败70.703 CPU；`admission_002`四端真实恢复345.578 CPU；`formal_001`完成156/156、逐端39、reuse=0、0更新，**唯一marker在selector前发布**，发布前651.703 CPU/966.015 wall；窗口剩余9,847.531 CPU/12,740.687 wall，无未知尾账。本轮不追加训练、不补题、不再读dev面。
 
-能力读数：四端点（含parent基线）在冻结decoder下均输出控制标记串与无词法结构汉字拼接，**无可读中文、无贴题、机械重复**；有历史行不连贯。因为基线本身不可读，本轮不能给出配方排序；这是能力负结果而非工程失败。48行判读表已逐行起草，见[判读表](../../reference/PLAN-R2-EVALUATION-RECOVERY-V2_human_review_20261025.md)，待责任判读人确认或更正。完整事实、费用与出口见[恢复v2结案](../../reference/PLAN-R2-EVALUATION-RECOVERY-V2_execution_closeout_20261025.md)与[执行审计](../../../reports/taiji_r2_evaluation_recovery_v2_execution_audit_20261025.json)。
+唯一后继：**CC-2归因**——先用训练侧（非dev）输入检验同一checkpoint在训练目标decoder下能否产生可读中文，以区分「发射/解码结构失配」与「prompt→response依赖从未进入监督」。开工前按N纪律补齐三件套（VISION条款对账、PLAN-Nxx、SPEC判据预注册）；不得复用已消费的dev面，也不改本轮判据。结案与证据见[恢复v2结案](../../reference/PLAN-R2-EVALUATION-RECOVERY-V2_execution_closeout_20261025.md)、[48行判读](../../reference/PLAN-R2-EVALUATION-RECOVERY-V2_human_review_20261025.md)、[执行审计](../../../reports/taiji_r2_evaluation_recovery_v2_execution_audit_20261025.json)。
 
 用户于2026-10-25**采纳[消费边界v2](../../reference/delivery-runs/20261021-n-mainline/artifacts/04-evaluation-consumption-boundary-v2.md)**，授权按原额度与固定范围自动完成工程准入、一次真实题面消费、48条判读与结案。实施计划与判据预注册见[05计划](../../reference/delivery-runs/20261021-n-mainline/artifacts/05-evaluation-recovery-v2-plan.md)。
 

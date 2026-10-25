@@ -1,6 +1,6 @@
 # R2 评价工程恢复 v2 执行结案
 
-日期：2026-10-25，Asia/Shanghai。状态：**REVIEW_PENDING**（机器事实与 R1–R4、R6 已完成；48 行判读表已逐行起草，待责任判读人确认或更正）。用户当日采纳[消费边界 v2](delivery-runs/20261021-n-mainline/artifacts/04-evaluation-consumption-boundary-v2.md)，实施计划与判据预注册见[05计划](delivery-runs/20261021-n-mainline/artifacts/05-evaluation-recovery-v2-plan.md)。原 CC-1 与恢复 v1 的 `CLOSED_FAILURE`、原始证据、已消费资格均不变。
+日期：2026-10-25，Asia/Shanghai。状态：**CLOSED_COMPLETE**（R1–R6 全部满足；用户当日确认 48 行判读：四端不可读、不贴题、机械重复，有历史行不连贯）。用户当日采纳[消费边界 v2](delivery-runs/20261021-n-mainline/artifacts/04-evaluation-consumption-boundary-v2.md)，实施计划与判据预注册见[05计划](delivery-runs/20261021-n-mainline/artifacts/05-evaluation-recovery-v2-plan.md)。原 CC-1 与恢复 v1 的 `CLOSED_FAILURE`、原始证据、已消费资格均不变。
 
 ## 1. 实际执行
 
@@ -27,7 +27,7 @@
 | R2 身份、终态与费用闭合 | 端点 SHA/源码/预算修订链与窗口账本一致；无活 writer、无未结 reservation |
 | R3 四端点准入 | `admission_002` 真实四端恢复通过；正式 attempt 内四 receipt 齐全 |
 | R4 一次固定 W5b | 156 attempts＝outputs＝persisted，逐端 39，reuse=0，沿原冻结题面与 decoder 一次 |
-| R5 固定人工判读 | 48 行、四维、依据与不可判项已逐行填写；**待责任判读人确认**，故当前为 REVIEW_PENDING |
+| R5 固定人工判读 | 48 行、四维、依据与不可判项已逐行填写，责任判读人于 2026-10-25 确认全部初判；四端不可读/不贴题/机械重复，有历史行不连贯 |
 | R6 结案落盘并提交 | 本文件、执行审计、03/05/黑板/10 同步与提交 |
 
 ## 4. 保持覆盖
@@ -56,6 +56,6 @@
 
 ## 7. 出口与唯一后继
 
-若责任判读人确认 48 行初判（或逐项更正），R5 完成，本包按 **CLOSED_COMPLETE** 收口：能力读数为「四端不可读、无配方排序」，不追加训练、不补题、不再读 dev 面。若拒绝确认，则保持 `REVIEW_PENDING`，只允许完成判读与结案，不得新增查询。
+责任判读人已确认 48 行判读，R5 完成，本包按 **CLOSED_COMPLETE** 收口：能力读数为「四端不可读、无配方排序」，不追加训练、不补题、不再读 dev 面。
 
-唯一后继建议：进入 **CC-2 归因**——用训练侧（非 dev）输入检验同一 checkpoint 在训练目标 decoder 下能否产生可读中文，以区分「发射/解码结构失配」与「prompt→response 依赖从未进入监督」。该诊断不得复用已消费的 dev 面，也不改本轮判据。
+唯一后继建议：进入 **CC-2 归因**——先用训练侧（非 dev）输入检验同一 checkpoint 在训练目标 decoder 下能否产生可读中文，以区分「发射/解码结构失配」与「prompt→response 依赖从未进入监督」。该诊断不得复用已消费的 dev 面，也不改本轮判据；开工前按 N 纪律补三件套（VISION 对账、PLAN-Nxx、SPEC 判据预注册）。
