@@ -70,11 +70,11 @@ CI由用户另行安排的任务负责，本任务不再修改其文件或叠加
 
 2026-10-25后继方案修订：完整架构/驱动力/VX0–VX7工程包统一归[VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)，N只通过09的J1信息消费/J2信用/J3连续状态与条件选择取必要切片。生命页新发展运行台按[VX6设计](../../reference/UI_LIFE_UX_SPEC_20261003.md)分段实施，当前已交付的是连接/未知语义修复，不代表新五视图或自主策略已实现；VX6.0只读研究观察器可独立先行。此设计修订不改本页CC-1终点、预算、冻结面或研究队首。
 
-## 当前唯一下一步：开启CC-2归因（训练侧decoder诊断）
+## 当前唯一下一步：执行N1-167完整训练侧归因包
 
 恢复v2已按 **CLOSED_COMPLETE** 收口：用户2026-10-25确认48行判读——四端（含parent基线）在冻结decoder下**不可读、不贴题、机械重复**，有历史行不连贯；因此本轮**不能给出配方排序**，属能力负结果而非工程失败。机器事实：`admission_001`工程失败70.703 CPU；`admission_002`四端真实恢复345.578 CPU；`formal_001`完成156/156、逐端39、reuse=0、0更新，**唯一marker在selector前发布**，发布前651.703 CPU/966.015 wall；窗口剩余9,847.531 CPU/12,740.687 wall，无未知尾账。本轮不追加训练、不补题、不再读dev面。
 
-唯一后继：**CC-2归因**——先用训练侧（非dev）输入检验同一checkpoint在训练目标decoder下能否产生可读中文，以区分「发射/解码结构失配」与「prompt→response依赖从未进入监督」。开工前按N纪律补齐三件套（VISION条款对账、PLAN-Nxx、SPEC判据预注册）；不得复用已消费的dev面，也不改本轮判据。结案与证据见[恢复v2结案](../../reference/PLAN-R2-EVALUATION-RECOVERY-V2_execution_closeout_20261025.md)、[48行判读](../../reference/PLAN-R2-EVALUATION-RECOVERY-V2_human_review_20261025.md)、[执行审计](../../../reports/taiji_r2_evaluation_recovery_v2_execution_audit_20261025.json)。
+当前执行：**CC-2/N1-167训练侧归因包**——[PLAN-N1-167](../../reference/PLAN-N1-167_train_decoder_attribution_20261025.md)含VISION条款对账，配套[SPEC预注册](../../reference/SPEC-N1-167_train_decoder_attribution_20261025.md)已写定。按固定4 train样本×4端点×configured/protected/oracle-plan三路径，执行TF/128字节自由生成与错配prompt诊断，原checkpoint只读、0参数更新，CPU≤1800/wall≤2400；完成实测、判读、结案与计划提交后再给一个后继。用户已要求更大跨度自动推进，不逐项确认普通修复；不重读已消费dev、不追加训练、不改旧结论。结案与证据见[恢复v2结案](../../reference/PLAN-R2-EVALUATION-RECOVERY-V2_execution_closeout_20261025.md)、[48行判读](../../reference/PLAN-R2-EVALUATION-RECOVERY-V2_human_review_20261025.md)、[执行审计](../../../reports/taiji_r2_evaluation_recovery_v2_execution_audit_20261025.json)。
 
 用户于2026-10-25**采纳[消费边界v2](../../reference/delivery-runs/20261021-n-mainline/artifacts/04-evaluation-consumption-boundary-v2.md)**，授权按原额度与固定范围自动完成工程准入、一次真实题面消费、48条判读与结案。实施计划与判据预注册见[05计划](../../reference/delivery-runs/20261021-n-mainline/artifacts/05-evaluation-recovery-v2-plan.md)。
 
