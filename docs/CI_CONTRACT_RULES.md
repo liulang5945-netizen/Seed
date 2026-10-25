@@ -66,6 +66,15 @@
    与被字节钉住的结案文档不动。（事故：首轮粗替换引发 104 枚钉上钉级联。）
 3. 封存记录引用产物时确认产物已入库；未入库产物（checkpoints、在飞
    jsonl）的哈希钉在任何 runner 上都无法核验。
+4. **遗留证据的绝对路径字段**（本规则设立前写入的 runner_path、
+   boot_audit_path、boot_accounting_sources 等）：校验方接
+   `seal_ast.resolve_recorded_path` 跨机归位＋`seal_ast.verify_path_pin`
+   历史取证＋`seal_ast.rendering_tolerant_match` 渲染容忍（先例：R2
+   source_revision 链，2026-10-25 owner 裁定）；**不要**重写已入库证据
+   文件本身（哈希链会级联）。新证据一律仓库相对路径（§1.2）。
+5. **训练治理面文件**（run_taiji_r2_*、taiji_r2_dialogue_continuation_
+   extension.py 等）默认冻结；R2 结案后的owner 授权例外修改须在代码
+   注释里写明裁定出处与语义转变（部署面活校验→来源出处核验）。
 
 ## 4. deselect 清单纪律
 

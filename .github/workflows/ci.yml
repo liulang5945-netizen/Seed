@@ -96,17 +96,17 @@ jobs:
     #     runner 皆红。重启条件＝封存记录改仓库相对路径或显式跨平台化。
 #   · b0_n2 两条已随 semantics 契约迁移摘除；n5_38 两条已随批 A/B 证据入库摘除
 #     （2026-10-25 owner 裁 A/B，LF worktree 实证回绿）。
-#   · 其余线 2 条目仍在册：plan157/160/161 依赖 134MB 的 plan155a 进度 jsonl
-#     （超 GitHub 100MB 单文件硬限无法入库）＋批 C checkpoint 消费者（owner 裁
-#     checkpoints 不直存→skipif 化待执行）；extension_contract 6 条＋fast_ledger
-#     2 条的 source_revision 证据内嵌绝对路径（非维护树必拒，治理面文件不可改——
-#     归 owner：证据相对路径化或接 seal_ast 映射，见 roadmap/12）。
+#   · extension_contract 6 条已随治理面校验跨机化摘除（owner 裁定接 seal_ast
+#     映射＋历史取证＋渲染容忍，LF worktree 60/60 实证）。其余线 2 条目仍在册：
+#     plan157/160/161 依赖 134MB 的 plan155a 进度 jsonl（超 GitHub 100MB 单文件
+#     硬限无法入库）＋批 C checkpoint/语料消费者（owner 裁 checkpoints 不直存→
+#     skipif 化待执行）＋fast_ledger 2 条（checkpoint）。
 #     另 10 条＝Windows/Ubuntu 腿独有（r2_copy_surface/start_charge/source_validation/seal_ast 绿通道：
 #     本机绿、runner 上读数/git 状态不同），重启条件同上（R2 产物入库/相对路径化）。
 #   · 族 A 第五例 7 条（relation 两测＋structural-gain 门族 5 条）已于 2026-10-25
 #     随方案乙（admission 判定改 isclose 相对容差）摘除，翻转记录、代码位点与
 #     裁定留痕见 plans/active/roadmap/11_CI_FLOAT_EVIDENCE_FOR_OWNER_20261025.md。
-#     截至 2026-10-25（批 A/B 摘 n5_38 后）清单共 93 条×两腿。
+#     截至 2026-10-25（批 A/B＋治理面跨机化，摘 n5_38＋extension_contract）清单共 87 条×两腿。
     env:
       DSH_CI_DESELECT: >-
         --deselect tests/taiji_native/test_a30_artifact_sha_drift_audit.py::test_known_bad_anchor_is_visible_and_known_good_is_clean
@@ -173,12 +173,6 @@ jobs:
         --deselect tests/taiji_native/test_r2_fast_ledger_resume_v2_contract.py::test_v2_records_scoped_memory_floor_and_deferred_arms
         --deselect tests/taiji_native/test_r2_fast_ledger_resume_contract.py::test_manifest_binds_fast_ledger_anchor_sources_and_resume_checkpoint
         --deselect tests/taiji_native/test_r2_daily_dialogue_warmstart_matched_contract.py::test_warm_and_fresh_models_share_shape_but_not_initial_weights
-        --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py::test_valid_v1_2_revision_applies_approved_limits_to_ledger_guard
-        --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py::test_v1_2_revision_rejects_lineage_budget_and_source_drift[contract]
-        --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py::test_v1_2_revision_rejects_lineage_budget_and_source_drift[previous]
-        --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py::test_v1_2_revision_rejects_lineage_budget_and_source_drift[budget]
-        --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py::test_v1_2_revision_rejects_lineage_budget_and_source_drift[tracked_source]
-        --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py::test_v1_2_revision_rejects_lineage_budget_and_source_drift[review_report]
         --deselect tests/taiji_native/test_n1_plan142_v21_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan143_v22_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan144_v23_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
@@ -740,12 +734,6 @@ jobs:
         --deselect tests/taiji_native/test_r2_fast_ledger_resume_v2_contract.py::test_v2_records_scoped_memory_floor_and_deferred_arms
         --deselect tests/taiji_native/test_r2_fast_ledger_resume_contract.py::test_manifest_binds_fast_ledger_anchor_sources_and_resume_checkpoint
         --deselect tests/taiji_native/test_r2_daily_dialogue_warmstart_matched_contract.py::test_warm_and_fresh_models_share_shape_but_not_initial_weights
-        --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py::test_valid_v1_2_revision_applies_approved_limits_to_ledger_guard
-        --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py::test_v1_2_revision_rejects_lineage_budget_and_source_drift[contract]
-        --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py::test_v1_2_revision_rejects_lineage_budget_and_source_drift[previous]
-        --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py::test_v1_2_revision_rejects_lineage_budget_and_source_drift[budget]
-        --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py::test_v1_2_revision_rejects_lineage_budget_and_source_drift[tracked_source]
-        --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_contract.py::test_v1_2_revision_rejects_lineage_budget_and_source_drift[review_report]
         --deselect tests/taiji_native/test_n1_plan142_v21_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan143_v22_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan144_v23_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
