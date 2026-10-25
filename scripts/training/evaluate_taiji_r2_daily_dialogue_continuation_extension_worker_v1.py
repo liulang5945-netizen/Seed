@@ -65,6 +65,10 @@ def _handle_task(
     if not in_job:
         raise Refuse("worker task is refused outside the parent-supervised Job Object")
     authorize = authorize_fn or recovery._authorize_worker_task
+    if authorize_fn is None:
+        fixed_paths = (evaluation_paths_fn or adapter.extension_evaluation_paths)()
+        expected_attempt_path = expected_attempt_path or fixed_paths["attempt"]
+        expected_ledger_path = expected_ledger_path or fixed_paths["ledger"]
     authorization = authorize(
         operation=operation,
         endpoint_id=endpoint_id,
@@ -163,6 +167,7 @@ def _handle_task(
         attempt_id=authorization["attempt"]["attempt_id"],
         expected_prompt_sha256=str(authorization["intent"].get("prompt_sha256", "")),
         ledger_path=ledger_path,
+        expected_face_path=(evaluation_paths_fn or adapter.extension_evaluation_paths)()["face"],
     )
     if request.get("index") != authorization["intent"].get("index"):
         raise Refuse("worker prompt SHA differs from the durable query intent")

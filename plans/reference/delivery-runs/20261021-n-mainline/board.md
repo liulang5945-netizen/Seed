@@ -1,7 +1,7 @@
 # N主线交付黑板
 
 - 运行目录：`E:/Seed/plans/reference/delivery-runs/20261021-n-mainline`。
-- 主阶段：Phase 8已批准的一次恢复评价，预检后执行；Phase 8原attempt工程失败保留；三臂已训完，原CC-1 attempt启动握手失败封存，恢复与配对输出未完成，具体运行仅按03。
+- 主阶段：恢复v1工程失败结案；后继协议边界待讨论；Phase 8原attempt工程失败保留；三臂已训完，原CC-1 attempt启动握手失败封存，恢复与配对输出未完成，具体运行仅按03。
 - 持续Goal已由用户正式设置，详细WBS见[10](../../../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。
 - 唯一活动队首与实时事实只由[03](../../../active/roadmap/03_CURRENT_EXECUTION.md)维护；本页不再复制额度/进度快照。
 
@@ -13,7 +13,7 @@
 | 单入口精简 | 已实现并用于实际续训 | [15记录](artifacts/15-training-system-simplification.md)；当前运行按03 |
 | 当前训练与完整实验出口 | 三臂complete；metadata预检通过，0/4评价新进程恢复、0/156生成，原attempt工程失败封存，详见03 | CC-1.4/1.5沿有效v1.5与原终点；实际运行看03 |
 | extension评测适配 | 已提交；相关110支合成与独立审查完成，真实端点未测 | [04适配架构](artifacts/04-continuation-evaluation-adapter.md)、[工程交接](artifacts/02-plan.md)，CC-1.1–1.3 |
-| W5b/人工判读 | 原attempt握手失败、无输出可判；原入口与恢复入口真实无模型握手均过；用户已批准合同v1，按03预检后执行一次 | [02交接](artifacts/02-plan.md)；固定分母和原收官合同不变 |
+| W5b/人工判读 | 原attempt握手失败、无输出可判；原入口与恢复入口真实无模型握手均过；用户已批准并执行恢复v1，首restore授权失败，0输出，按约停止；修复验证完成 | [02交接](artifacts/02-plan.md)；固定分母和原收官合同不变 |
 | 客户端对话/生命页 | 连接/未知语义修复已交付；原生发展运行台重设计待实施 | [现行体验修订](../../UI_LIFE_UX_SPEC_20261003.md)、[DSH选择性借鉴](../../../active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md)；不替代研究队首或安装包发布 |
 | CI修复 | 用户另行安排的任务负责 | 本任务不重复修复、提交或覆盖CI相关改动 |
 | 详细计划与旧计划衔接 | N交汇与下一VISION重新归位，最终复核通过；随本次变更提交 | [10](../../../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)、[17矩阵](artifacts/17-plan-transition-and-reconciliation.md) |
@@ -58,3 +58,7 @@
 用户后继要求“历史太庞杂，整理收束，该删就删”。已删除旧可再生运行产物与6份整篇快照，08删除重复流水并保留重放/登记/必要处方，索引按主题收束。结论、失败与恢复入口见[整理记录](../../PROJECT_HISTORY_CONSOLIDATION_20261023.md)，不再将同一全文复制入另一层归档。当前训练与CC-1真实出口仍按03。
 
 2026-10-25用户明确批准恢复合同v1，原开发面复用、新一次资格和同账预留一次通过；不再重复询问。三臂不重训，原失败/费用不覆盖；先只读预检，再按已批准156输出/48回答执行。恢复Markdown review使用.md扩展名的文件命名修正已在启动前绑定新source快照，不改题面、模型、decoder或分母。
+
+恢复v1实际结果：12:14形成attempt，bootstrap通过，parent restore在固定路径授权前被拒绝，0模型恢复/0生成，按失败不重试封存。主理人确认上一版缺真实授权/face路径集成覆盖，责任属于工程实现；补齐可信provider三处path及全合成4/156真token/face回归，真实Job/IPC/NTFS claim探针在模型前停止、树退出通过。原机器合同/source快照不刷新；raw和退出费用保留，恢复v1独立结案落盘。唯一后继讨论工程准入与题面消费分离，不再为同一已消费资格换名重跑。
+
+本次恢复执行与修复验收：98项相关合成/冻结评价/身份条款检查通过，真实Job/token/NTFS claim模型前探针通过；Black/Ruff及差异检查通过。批准合同JSON与本次attempt绑定SHA仍一致，未刷新为修复后source，真实face/generations仍不存在。4份改动/结案文档本地链接已核对有效。正式失败的5份JSON原件及预检/退出/probe回执随本次提交；ledger/progress按jsonl忽略政策留本机，另入库JSON执行审计固定其SHA/事件摘要；当前不发出新一次查询授权。

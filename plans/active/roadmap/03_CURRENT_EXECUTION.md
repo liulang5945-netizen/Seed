@@ -70,11 +70,11 @@ CI由用户另行安排的任务负责，本任务不再修改其文件或叠加
 
 2026-10-25后继方案修订：完整架构/驱动力/VX0–VX7工程包统一归[VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)，N只通过09的J1信息消费/J2信用/J3连续状态与条件选择取必要切片。生命页新发展运行台按[VX6设计](../../reference/UI_LIFE_UX_SPEC_20261003.md)分段实施，当前已交付的是连接/未知语义修复，不代表新五视图或自主策略已实现；VX6.0只读研究观察器可独立先行。此设计修订不改本页CC-1终点、预算、冻结面或研究队首。
 
-## 当前唯一下一步：执行已批准的一次恢复评价
+## 当前唯一下一步：裁决工程准入与题面消费的协议边界
 
 CC-1 已按 **CLOSED_FAILURE** 结案，唯一结案文件为 [PLAN-R2-DAILY-DIALOGUE-CONTINUATION-CC1_execution_closeout_20261025.md](../../reference/PLAN-R2-DAILY-DIALOGUE-CONTINUATION-CC1_execution_closeout_20261025.md)：训练R1与训练侧R2/metadata预检完成；R3新进程恢复未完成，R4一次性attempt工程失败且资格已消费、R5无可判输出，R6记录缺项与尚未闭合的评价尾账。工程故障不写作模型能力负结果；三臂的完整可恢复终态保留。
 
-**用户已明确批准恢复合同v1及一次正式恢复评价，当前按合同预检后执行。** [恢复合同v1](../../reference/delivery-runs/20261021-n-mainline/artifacts/04-evaluation-engineering-recovery-v1.md)明确：保留原attempt失败与费用，复用四个已训端点及原39-family开发面，仅给新协议一次恢复资格，固定156生成和48回答判读；不重训、不补题、不改评分。历史/准备预留与正式恢复拟合计CPU14140秒、wall13480秒，均在原14400评价总账内，不提训练预算。旧一次资格不重开；本次明确批准只开启新恢复协议的一次资格，不重训，失败不重试。
+**用户批准的恢复v1已实际执行，首个恢复任务在授权路径检查失败，按CLOSED_FAILURE结案；不重试。** metadata预检与真实bootstrap通过，但冻结授权器仍默认旧attempt/ledger，未加载模型，0/4恢复、0/156输出、未读本次题面。源/权限接线遗漏由本任务承担，不能写成模型负结果。完整事实与费用见[恢复v1结案](../../reference/PLAN-R2-EVALUATION-RECOVERY-V1_execution_closeout_20261025.md)。
 
 2026-10-25本次推进：只读审计/真实bootstrap工具及版本化恢复provider/entry已实现；原extension worker新增可选显式provider/path注入，旧默认不变，新parent/worker同snapshot。修复原入口两次、新恢复入口一次的真实握手/Job树退出均过，0模型任务/恢复/题查询/更新，原失败四件SHA不变。最终[新入口探针回执](../../../reports/taiji_r2_evaluation_recovery_v1_bootstrap_20261025.json)及机器恢复合同已落盘；三个probe共10.4375 CPU秒、12.313 wall秒。此前机器合同关闭并实际拒绝正式入口；本次用户明确批准后启用同一合同授权字段，先metadata预检，再执行一次。
 
@@ -83,3 +83,5 @@ CC-1 已按 **CLOSED_FAILURE** 结案，唯一结案文件为 [PLAN-R2-DAILY-DIA
 ## 历史与计划去向
 
 [17过渡矩阵](../../reference/delivery-runs/20261021-n-mainline/artifacts/17-plan-transition-and-reconciliation.md)登记旧计划的继承、合并、退役与后继准入；[历史全文恢复](../../reference/PROJECT_HISTORY_CONSOLIDATION_20261023.md)、[更早N历史](../../archive/history/N_MAINLINE_EXECUTION_BEFORE_CONSOLIDATION_20261022.md)保留旧判断/失败。历史0/12不套到未测新候选，训练步数不代替语言能力；整项目尚未完成，M阶段限定收束不补发L2/L3/L4。
+
+2026-10-25恢复v1后继：可信provider的attempt/ledger/face三处路径已补齐；全合成4恢复/156生成使用真实token/face校验通过，真实Job/IPC/NTFS token-claim探针到达模型加载前的指定停止点并确认树退出。当前修复不刷新已消费合同SHA或重开资格。唯一后继是一次讨论工程准入与题面消费是否应分离，避免未触达题面的工程错误反复消耗科学试验资格；本轮保持失败封存。

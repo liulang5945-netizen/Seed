@@ -1,0 +1,11 @@
+{
+  "schema": "taiji-r2-recovery-v1-process-exit-receipt",
+  "returncode": 2,
+  "parent_process_cpu_seconds_through_exit": 33.328125,
+  "monitor_cpu_seconds": 0.0,
+  "wall_seconds_through_exit": 38.03200000000652,
+  "outer_watchdog_forced": false,
+  "stdout": "{\"status\": \"refused\", \"error\": \"one-shot evaluation attempt is consumed: parent_baseline restore failed; this one-shot evaluation attempt is consumed\", \"can_promote\": false}",
+  "stderr": "",
+  "child_cpu_scope": "see frozen evaluator cost receipt; this receipt measures parent only"
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "taiji-r2-real-worker-authorization-probe-v1",
+  "status": "passed",
+  "authenticated_ready": true,
+  "real_parent_token_consumed": true,
+  "ntfs_claim_published": true,
+  "claim_sha256": "a6fe908db569d4e6c122946bfaddbabded5bee9a4e8c7b44c924e8f720a6dc4c",
+  "stopped_before_model_load": true,
+  "worker_tree_stopped": true,
+  "model_restores": 0,
+  "prompt_queries": 0,
+  "cpu_seconds_parent": 0.03125,
+  "cpu_seconds_child": 1.828125,
+  "wall_seconds": 2.140999999945052,
+  "frozen_authorizer_sha256": "c8aa16adf7fe0030c4480d627406685217e7de6cde790b38d5bfcb1b4cc78b90",
+  "extension_worker_sha256": "ee26973038ccd9fb0951e3d1b24e3c65cdacb728dcdd6b173b364c9c6d7b5c1a",
+  "scope": "synthetic attempt in a real Job; intentional sentinel failure after token claim, before preflight/model"
+}

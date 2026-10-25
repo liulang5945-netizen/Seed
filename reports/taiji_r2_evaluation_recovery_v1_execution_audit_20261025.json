@@ -1,0 +1,90 @@
+{
+  "schema": "taiji-r2-recovery-v1-failure-execution-audit",
+  "formal_attempts": 1,
+  "formal_retries": 0,
+  "actual_model_restores": 0,
+  "query_attempts": 0,
+  "generation_outputs": 0,
+  "logs": {
+    "ledger": {
+      "path": "reports\\taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_recovery_v1_ledger.jsonl",
+      "sha256": "1716faffeed4bfa5039d5ad7a274059e3d007b4bf28b9a6f54d77eee465bcc6a",
+      "event_count": 5,
+      "events": [
+        {
+          "attempt_id": "8a4dfd7ee2cb0ecbba4573892a62e139b690af182064803b",
+          "event": "attempt_started",
+          "timestamp_utc": "2026-10-25T04:14:35.181306+00:00",
+          "unknown_tail": false
+        },
+        {
+          "attempt_id": "8a4dfd7ee2cb0ecbba4573892a62e139b690af182064803b",
+          "event": "worker_startup_started",
+          "timestamp_utc": "2026-10-25T04:14:35.194179+00:00",
+          "unknown_tail": true
+        },
+        {
+          "attempt_id": "8a4dfd7ee2cb0ecbba4573892a62e139b690af182064803b",
+          "event": "worker_supervision_ready",
+          "timestamp_utc": "2026-10-25T04:14:37.388570+00:00",
+          "unknown_tail": false
+        },
+        {
+          "attempt_id": "8a4dfd7ee2cb0ecbba4573892a62e139b690af182064803b",
+          "endpoint_id": "parent_baseline",
+          "event": "restore_started",
+          "operation": "restore",
+          "task_id": "restore-0-5fe0dfa0ba32f685",
+          "timestamp_utc": "2026-10-25T04:14:37.395017+00:00",
+          "unknown_tail": true
+        },
+        {
+          "attempt_id": "8a4dfd7ee2cb0ecbba4573892a62e139b690af182064803b",
+          "cpu_seconds_total": 32.84375,
+          "endpoint_id": "parent_baseline",
+          "error": "worker task restore-0-5fe0dfa0ba32f685 failed: Refuse: worker attempt/ledger path is outside the fixed evaluation contract",
+          "event": "restore_failed",
+          "operation": "restore",
+          "task_id": "restore-0-5fe0dfa0ba32f685",
+          "timestamp_utc": "2026-10-25T04:14:37.419629+00:00",
+          "unknown_tail": true,
+          "worker_tree_stopped": true
+        }
+      ]
+    },
+    "progress": {
+      "path": "reports\\taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_recovery_v1_progress.jsonl",
+      "sha256": "fe7bb446429b33b7130ba8088332ab014033de95a6ffaa0b9e409067c61f64ea",
+      "event_count": 3,
+      "events": [
+        {
+          "attempt_id": "8a4dfd7ee2cb0ecbba4573892a62e139b690af182064803b",
+          "event": "execution_started",
+          "timestamp_utc": "2026-10-25T04:14:35.190624+00:00"
+        },
+        {
+          "attempt_id": "8a4dfd7ee2cb0ecbba4573892a62e139b690af182064803b",
+          "endpoint_id": "parent_baseline",
+          "event": "restore_started",
+          "operation": "restore",
+          "task_id": "restore-0-5fe0dfa0ba32f685",
+          "timestamp_utc": "2026-10-25T04:14:37.395017+00:00",
+          "unknown_tail": true
+        },
+        {
+          "attempt_id": "8a4dfd7ee2cb0ecbba4573892a62e139b690af182064803b",
+          "cpu_seconds_total": 32.84375,
+          "endpoint_id": "parent_baseline",
+          "error": "worker task restore-0-5fe0dfa0ba32f685 failed: Refuse: worker attempt/ledger path is outside the fixed evaluation contract",
+          "event": "restore_failed",
+          "operation": "restore",
+          "task_id": "restore-0-5fe0dfa0ba32f685",
+          "timestamp_utc": "2026-10-25T04:14:37.419629+00:00",
+          "unknown_tail": true,
+          "worker_tree_stopped": true
+        }
+      ]
+    }
+  },
+  "scope": "JSONL runtime originals remain local under repository ignore policy; this versioned JSON records hashes and diagnostic events."
+}

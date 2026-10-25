@@ -1,0 +1,12 @@
+{
+  "schema": "taiji-r2-recovery-v1-validation-receipt",
+  "mode": "validate-only",
+  "returncode": 0,
+  "validation_process_cpu_seconds": 40.703125,
+  "monitor_cpu_seconds": 0.015625,
+  "wall_seconds": 43.89099999994505,
+  "stdout": "{\"status\": \"ready\", \"expected_generation_outputs\": 156, \"can_promote\": false}",
+  "stderr": "",
+  "model_restores": 0,
+  "prompt_queries": 0
+}
