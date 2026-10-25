@@ -466,6 +466,8 @@ jobs:
           path: reports/ci_verify/
 
       - name: Verify CI-only deselect list is not silently empty
+        id: deselect-guard
+        continue-on-error: true
         # M7 收束（2026-10-07，㊵-469）：**pytest 对指向不存在路径的 --deselect 静默通过**。
         # ㊵-467 写清单时把 `tests/test_taiji_runtime_attachment.py` 误写成
         # `tests/seed/test_taiji_runtime_attachment.py`（真实路径在 tests/ 根，不在 tests/seed/）
@@ -475,10 +477,13 @@ jobs:
         # **判据：清单必须自证每条都真的指向一个已收集的用例**，
         # 否则「已处置」会静默退化为「未处置」——而且没有任何报错提示你。
         # 逻辑见 scripts/training/verify_ci_deselect_list.py（单文件、可本机直接跑）。
+        # R-S6a：continue-on-error 并入 S6-i 集合，红由末置 `Summarize CI gate
+        # outcomes` 按 steps.deselect-guard.outcome 判（一红不再让整腿失明）。
         run: python scripts/training/verify_ci_deselect_list.py
 
       - name: Run complete regression suite
         id: pytest-full
+        continue-on-error: true
         # Legacy real-checkpoint tests skip when local artifacts are absent.
         # coverage.json 供 B-4 核心推理路径门按文件过滤分母用（同一趟插桩，两张面两个读数）。
         # ${{ env.DSH_CI_DESELECT }} **必须带**：本步跑整个 tests/，不带则族 B/C 那 5 条会在这里再红一次
@@ -487,9 +492,9 @@ jobs:
         # 两趟重复执行已删，两面改由下方 `Derive native/seed junit faces` 从本步的 report.xml
         # 派生（S3 去重，单腿省 ~25m）。`-o junit_logging=all` 由 step25/26 的口径统一到本步，
         # 保证派生面的 <system-out> 语义与去重前一致（R5 对照实验同口径）。
-        # ⚠️ R-S1a 之前本步**不加 continue-on-error**（主理人裁定，2026-10-26）：
-        # 保持「失败即红」语义；S6a 落地时与汇总判红 step 同 commit 一起加，
-        # 防 R4（continue-on-error 先行、汇总缺席 ⇒ 真红变绿）。
+        # R-S6a（决策 3①：continue-on-error 与汇总判红同 commit）：真红不再让
+        # pytest 后的 junit-faces/coverage-gate/上传被跳过，失败时反而有产物可供取证；
+        # 红由末置 `Summarize CI gate outcomes` 按 steps.pytest-full.outcome 判。
         run: >-
           python -m pytest tests/ -q --cov
           --junitxml=report.xml -o junit_logging=all
@@ -499,12 +504,13 @@ jobs:
 
       - name: Derive native/seed junit faces
         id: junit-faces
+        continue-on-error: true
         # R-S3（ADR-S3 §3.4 C-4）：native/seed 两面不再是独立 pytest 执行，由本腿唯一一趟
         # 全量执行的 report.xml 派生。脚本 stdlib only + fail-closed；两级自校验（① collection
         # failure 形态 ⇒ exit 5 并打印模块清单；② 三面之和守恒 + 两面非空 ⇒ exit 4），
         # 退出码 2/3/4/5 见 ADR §3.8。派生文件头有 derived-from 注释（不是独立执行面）。
         # 上传的 artifact 名 native-report.xml / seed-report.xml / report.xml 不变。
-        # ⚠️ 本步同样在 R-S1a 之前不加 continue-on-error（理由同上）。
+        # R-S6a：红由末置汇总 step 按 steps.junit-faces.outcome 判。
         run: python scripts/training/split_ci_junit_faces.py --source report.xml --native native-report.xml --seed seed-report.xml --repo-root .
 
       # B-4（审计 2026-08-23 §7-16"核心推理路径覆盖率 ≥60%"）：本步按声明面（brain + resonance 的
@@ -522,6 +528,9 @@ jobs:
       # 只在套件步成功时判——某条 lane 因并发抢 checkpoints/ 文件锁没跑完时该面会掉到 46%，
       # 那时该报的是"套件红了"，不该再叠一条语义错位的"覆盖率不足"。
       - name: Core reasoning path coverage gate (B-4)
+        id: coverage-gate
+        continue-on-error: true
+        # R-S6a：红由末置汇总 step 按 steps.coverage-gate.outcome 判。
         run: python scripts/training/verify_core_reasoning_coverage.py --from-report coverage.json --threshold 60.0 --out reports/core_reasoning_coverage_ci.json
 
       - name: Upload core coverage report
@@ -559,6 +568,54 @@ jobs:
             seed-report.xml
             report.xml
             coverage.xml
+
+      - name: Summarize CI gate outcomes
+        id: gate-summary
+        if: always()
+        # R-S6a（ADR-S6 §3.6；决策 3①「continue-on-error 与汇总判红同 commit」的收口半）：
+        # 本腿四个门禁 step（deselect-guard / pytest-full / junit-faces / coverage-gate）
+        # 均已挂 continue-on-error，job 结论由本步收口。四条机制约定（写进 commit message）：
+        # ① 只认 steps.<id>.outcome，绝不认 conclusion——continue-on-error 会把
+        #    conclusion 改写成 success，用 conclusion 判红 = 真红变绿（R4 头号风险）；
+        # ② skipped 判红（DoD D1「门禁 step 实际执行」的永久复押：谁再引入短路，CI 立刻红）；
+        # ③ 未知/空值判红（step id 拼错/被删 ⇒ outcome 解析为空串 ⇒ 红——「漏掉汇总」
+        #    与「改名静默失效」在机械上不成立）；
+        # ④ 本步自身禁止 continue-on-error，且是这组 step 里唯一不带它的。
+        # 表格同时打到 stdout（日志可见）与 $GITHUB_STEP_SUMMARY（UI 可见）。
+        # collection-crlf 探针在 Windows 腿（决策 14），其 outcome 由该腿的同名汇总判。
+        env:
+          OUT_GUARD: ${{ steps.deselect-guard.outcome }}
+          OUT_PYTEST: ${{ steps.pytest-full.outcome }}
+          OUT_FACES: ${{ steps.junit-faces.outcome }}
+          OUT_COVER: ${{ steps.coverage-gate.outcome }}
+        run: |
+          set -u
+          red=0
+          check() {  # $1=label  $2=outcome
+            case "$2" in
+              success) printf '| %-16s | %-10s | ok   |\n' "$1" "$2" ;;
+              failure) printf '| %-16s | %-10s | RED  |\n' "$1" "$2"; red=1 ;;
+              cancelled) printf '| %-16s | %-10s | RED  |\n' "$1" "$2"; red=1 ;;
+              skipped) printf '| %-16s | %-10s | RED  |\n' "$1" "$2"; red=1 ;;
+              *) printf '| %-16s | %-10s | RED(unknown) |\n' "$1" "${2:-<empty>}"; red=1 ;;
+            esac
+          }
+          table=$(mktemp)
+          {
+            echo "### CI gate outcomes (ADR-S6)"
+            echo "| step | outcome | verdict |"
+            echo "|---|---|---|"
+            check "deselect-guard" "$OUT_GUARD"
+            check "pytest-full"    "$OUT_PYTEST"
+            check "junit-faces"    "$OUT_FACES"
+            check "coverage-gate"  "$OUT_COVER"
+          } > "$table"
+          cat "$table"
+          cat "$table" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$red" -ne 0 ]; then
+            echo "::error::至少一个门禁 step 未完成成功（outcome≠success）；本 job 判红"
+            exit 1
+          fi
 
   # R4: 同 F02，不设 needs——镜像构建自带完整依赖安装，与 test 无产物耦合。
   # §14.8 记载的两个缺陷（Dockerfile 缺 data/ 目录、seed_platform 未随包安装导致
@@ -817,8 +874,12 @@ jobs:
       # 覆盖率度量面必须与测试范围对齐：本 job 跑全量 tests/（排除 slow），
       # 与 Ubuntu test job 保持一致范围，便于跨平台对比。
       - name: Run full regression tests on Windows
+        id: pytest-windows
+        continue-on-error: true
         # ${{ env.DSH_CI_DESELECT }} **必须带**：本步跑整个 tests/，
         # 不带则族 B/C 那 5 条会在这里再红一次（㊵-467 实测：run 37505960489 红 5 条）。
+        # R-S6a：红由本腿末置 `Summarize CI gate outcomes (Windows)` 按
+        # steps.pytest-windows.outcome 判。
         run: >-
           python -m pytest tests/ -q -m "not slow" --cov
           --junitxml=report-win.xml
@@ -833,3 +894,77 @@ jobs:
           path: |
             report-win.xml
             coverage-win.xml
+
+      - name: Collect all tests under CRLF checkout
+        id: collection-crlf
+        continue-on-error: true
+        # R-S6a + 决策 8/11/14（裁定轨迹）：CRLF **渲染轴**的收集探针，放 Windows 腿
+        # （决策 14：渲染轴与平台轴不得混进同一步；L2「Linux 侧未实测」已被现有证据
+        # 证伪——run 40207103896 Ubuntu 守卫 172/172、0 落空）。
+        # 主检出被 autocrlf=false 冻结（见本 job 顶部的 Preserve committed bytes），
+        # 本步从本地对象库克隆一份 **autocrlf=true** 的渲染态检出，只做
+        # `pytest tests/ --co -q`（不跑用例，~1–2m），专测「渲染差异是否再次引发
+        # 导入期 collection error」（D-01 族探针；红绿双向证明在本机做——
+        # cimirror-head-crlf 即现成红态夹具，不在 main 上故意制造红）。
+        # 决策 11：失败模块清单必须显式落 step summary（不是只给一个 exit code）。
+        # continue-on-error 并入 S6-i 集合（决策 11 追认），由本腿汇总 step 按
+        # steps.collection-crlf.outcome 判红。
+        shell: bash
+        run: |
+          set -o pipefail
+          probe="$RUNNER_TEMP/crlf-probe"
+          rm -rf "$probe"
+          git config --global core.autocrlf true
+          git clone --quiet . "$probe"
+          git config --global core.autocrlf false
+          cd "$probe"
+          python -m pytest tests/ --co -q -p no:cacheprovider --continue-on-collection-errors 2>&1 | tee crlf_collect.log
+          failed_modules=$(grep -oE "ERROR collecting [^ ]+" crlf_collect.log | sort -u || true)
+          count=$(printf '%s' "$failed_modules" | grep -c "ERROR collecting" || true)
+          echo "CRLF probe: $count module(s) failed to collect"
+          if [ "$count" -gt 0 ]; then
+            {
+              echo "### CRLF collection probe — $count module(s) failed under autocrlf=true checkout"
+              echo ""
+              echo "$failed_modules"
+            } | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "::error::CRLF 渲染检出下有 $count 个模块 collection error（D-01 族）"
+            exit 1
+          fi
+
+      - name: Summarize CI gate outcomes (Windows)
+        id: gate-summary-windows
+        if: always()
+        # R-S6a：Windows 腿汇总，契约与 Ubuntu 腿 gate-summary 同一（ADR §3.6
+        # 「两腿结构同构，后续读到的失败传播语义是同一种」）。判 steps.pytest-windows
+        # 与 steps.collection-crlf 两个 outcome；四条机制约定同 Ubuntu 腿注释①–④。
+        env:
+          OUT_PYTEST: ${{ steps.pytest-windows.outcome }}
+          OUT_COLLECT: ${{ steps.collection-crlf.outcome }}
+        shell: bash
+        run: |
+          set -u
+          red=0
+          check() {  # $1=label  $2=outcome
+            case "$2" in
+              success) printf '| %-16s | %-10s | ok   |\n' "$1" "$2" ;;
+              failure) printf '| %-16s | %-10s | RED  |\n' "$1" "$2"; red=1 ;;
+              cancelled) printf '| %-16s | %-10s | RED  |\n' "$1" "$2"; red=1 ;;
+              skipped) printf '| %-16s | %-10s | RED  |\n' "$1" "$2"; red=1 ;;
+              *) printf '| %-16s | %-10s | RED(unknown) |\n' "$1" "${2:-<empty>}"; red=1 ;;
+            esac
+          }
+          table=$(mktemp)
+          {
+            echo "### CI gate outcomes (ADR-S6, Windows leg)"
+            echo "| step | outcome | verdict |"
+            echo "|---|---|---|"
+            check "pytest-windows" "$OUT_PYTEST"
+            check "collection-crlf" "$OUT_COLLECT"
+          } > "$table"
+          cat "$table"
+          cat "$table" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$red" -ne 0 ]; then
+            echo "::error::至少一个门禁 step 未完成成功（outcome≠success）；本 job 判红"
+            exit 1
+          fi
