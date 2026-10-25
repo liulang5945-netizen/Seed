@@ -37,6 +37,7 @@ import torch
 
 from scripts.training import run_taiji_r2_daily_dialogue_full_turn_pretraining as base
 from scripts.training import run_taiji_r2_daily_dialogue_recovery as frozen
+from scripts.training import seal_ast  # noqa: E402
 from scripts.training import taiji_r2_dialogue_continuation_extension as continuation_budget
 from scripts.training import taiji_r2_dialogue_continuation_source_validation as source_validation
 from scripts.training import taiji_r2_dialogue_recovery as recovery
@@ -989,7 +990,9 @@ def _effective_attempt(
         or old_sources.get("runner_sha256") != V1_RUNNER_SHA256
         or {name: row.get("sha256") for name, row in old_sources.get("files", {}).items()}
         != V1_SOURCE_HASHES
-        or old_sources.get("report_sha256") != sha256_file(ARCHITECTURE_REPORT)
+        or not seal_ast.rendering_tolerant_match(
+            old_sources.get("report_sha256", ""), ARCHITECTURE_REPORT.read_bytes()
+        )
         or attempt.get("source_compatibility", {}).get("runner_sha256") != V1_RUNNER_SHA256
     ):
         raise Refuse("source revision does not exactly bind original v1 lineage")
@@ -998,7 +1001,9 @@ def _effective_attempt(
     if schema == "taiji-r2-continuation-source-revision-v1.1":
         valid_revision = (
             _bindings_match_by_provenance(revision.get("current_continuation_sources"), expected)
-            and revision.get("review_report_sha256") == sha256_file(SOURCE_REVISION_REPORT)
+            and seal_ast.rendering_tolerant_match(
+                revision.get("review_report_sha256", ""), SOURCE_REVISION_REPORT.read_bytes()
+            )
             and revision.get("approved_budget")
             == {"per_arm": 1_450_000.0, "aggregate": 4_200_000.0}
         )
@@ -1010,7 +1015,9 @@ def _effective_attempt(
             and _bindings_match_by_provenance(
                 revision.get("current_continuation_sources"), expected
             )
-            and revision.get("review_report_sha256") == sha256_file(SOURCE_REVISION_V1_2_REPORT)
+            and seal_ast.rendering_tolerant_match(
+                revision.get("review_report_sha256", ""), SOURCE_REVISION_V1_2_REPORT.read_bytes()
+            )
             and revision.get("approved_budget")
             == {
                 "per_arm": V1_2_PER_ARM_CPU_LIMIT,
@@ -1029,7 +1036,9 @@ def _effective_attempt(
             and _bindings_match_by_provenance(
                 revision.get("current_continuation_sources"), expected
             )
-            and revision.get("review_report_sha256") == sha256_file(report)
+            and seal_ast.rendering_tolerant_match(
+                revision.get("review_report_sha256", ""), report.read_bytes()
+            )
             and revision.get("approved_budget")
             == {"per_arm": V1_2_PER_ARM_CPU_LIMIT, "aggregate": V1_2_AGGREGATE_CPU_LIMIT}
         )

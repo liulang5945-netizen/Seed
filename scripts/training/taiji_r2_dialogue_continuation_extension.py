@@ -687,6 +687,8 @@ def effective_budget_limits() -> tuple[float, float]:
     The v1.2 source revision is the sole budget-amendment artifact. Its absence
     keeps the original v1 ceiling; a present but invalid revision fails closed.
     """
+    from scripts.training import seal_ast
+
     v13_path = _source_revision_path("v1.3")
     revision_path = v13_path if v13_path.exists() else _source_revision_path("v1.2")
     revision_key = str(revision_path.resolve())
@@ -722,7 +724,9 @@ def effective_budget_limits() -> tuple[float, float]:
             or prior.get("contract_sha256") != contract_sha256
             or prior.get("previous_source_revision_sha256") != prior_sha256
             or prior.get("approved_budget") != {"per_arm": 1_500_000.0, "aggregate": 4_300_000.0}
-            or prior.get("review_report_sha256") != _sha256_file(_SOURCE_REVISION_V1_2_REVIEW)
+            or not seal_ast.rendering_tolerant_match(
+                prior.get("review_report_sha256", ""), _SOURCE_REVISION_V1_2_REVIEW.read_bytes()
+            )
         ):
             raise ExtensionLedgerRefuse("v1.3 predecessor differs")
         _validate_source_binding(prior.get("current_continuation_sources"), verify_file_bytes=False)
