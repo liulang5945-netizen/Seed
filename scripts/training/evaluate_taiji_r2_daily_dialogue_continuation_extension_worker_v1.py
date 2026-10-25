@@ -203,7 +203,14 @@ def _handle_task(
     }
 
 
-def worker_loop(attempt_path: Path, ledger_path: Path, job_name: str) -> int:
+def worker_loop(
+    attempt_path: Path,
+    ledger_path: Path,
+    job_name: str,
+    *,
+    preflight_fn: Callable[[], Mapping[str, Any]] | None = None,
+    evaluation_paths_fn: Callable[[], Mapping[str, Path]] | None = None,
+) -> int:
     """Private persistent worker; one IPC task at a time, no selector."""
     if os.name != "nt":
         raise Refuse("DURABILITY_UNSUPPORTED: restore/generation worker requires Windows NTFS")
@@ -283,6 +290,8 @@ def worker_loop(attempt_path: Path, ledger_path: Path, job_name: str) -> int:
                 endpoint_specs=endpoint_specs,
                 corpus_holder=corpus_holder,
                 job_name=job_name,
+                preflight_fn=preflight_fn,
+                evaluation_paths_fn=evaluation_paths_fn,
             )
             response["task_id"] = request.get("task_id")
             response["endpoint_id"] = request.get("endpoint_id")

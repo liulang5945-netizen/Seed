@@ -70,11 +70,13 @@ CI由用户另行安排的任务负责，本任务不再修改其文件或叠加
 
 2026-10-25后继方案修订：完整架构/驱动力/VX0–VX7工程包统一归[VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)，N只通过09的J1信息消费/J2信用/J3连续状态与条件选择取必要切片。生命页新发展运行台按[VX6设计](../../reference/UI_LIFE_UX_SPEC_20261003.md)分段实施，当前已交付的是连接/未知语义修复，不代表新五视图或自主策略已实现；VX6.0只读研究观察器可独立先行。此设计修订不改本页CC-1终点、预算、冻结面或研究队首。
 
-## 当前唯一下一步：同已训端点评价恢复
+## 当前唯一下一步：评价恢复协议的一次性裁决
 
 CC-1 已按 **CLOSED_FAILURE** 结案，唯一结案文件为 [PLAN-R2-DAILY-DIALOGUE-CONTINUATION-CC1_execution_closeout_20261025.md](../../reference/PLAN-R2-DAILY-DIALOGUE-CONTINUATION-CC1_execution_closeout_20261025.md)：训练R1与训练侧R2/metadata预检完成；R3新进程恢复未完成，R4一次性attempt工程失败且资格已消费、R5无可判输出，R6记录缺项与尚未闭合的评价尾账。工程故障不写作模型能力负结果；三臂的完整可恢复终态保留。
 
-**唯一下一步：形成同已训端点的有界评价恢复合同。** 已有worker入口修复，先完成隔离合成与不加载模型/不读题面的真实握手验收、启动尾账及题面暴露核验，再一次登记修复后source snapshot、parent＋三臂、固定156生成/48回答判读、完整费用和失败出口。原attempt失败与费用不覆盖；旧one-shot不重开。确证原面未暴露且有权复用才在新合同中沿用，不明则采用独立隔离面，不改候选/评分来求通过。恢复取得行为输出后再做CC-2/VX0机制归因；没有输出时先做工程归因，不把J1当作这轮模型已证故障。详见10的评价恢复交接。
+**恢复入口、真实无模型握手及合成检查已完成，当前唯一待决是恢复协议的一次裁决。** [恢复合同v1](../../reference/delivery-runs/20261021-n-mainline/artifacts/04-evaluation-engineering-recovery-v1.md)明确：保留原attempt失败与费用，复用四个已训端点及原39-family开发面，仅给新协议一次恢复资格，固定156生成和48回答判读；不重训、不补题、不改评分。历史/准备预留与正式恢复拟合计CPU14140秒、wall13480秒，均在原14400评价总账内，不提训练预算。旧一次资格不重开，新正式查询是冻结协议的实质变化，须明确接受本次恢复方案后才开启。
+
+2026-10-25本次推进：只读审计/真实bootstrap工具及版本化恢复provider/entry已实现；原extension worker新增可选显式provider/path注入，旧默认不变，新parent/worker同snapshot。修复原入口两次、新恢复入口一次的真实握手/Job树退出均过，0模型任务/恢复/题查询/更新，原失败四件SHA不变。最终[新入口探针回执](../../../reports/taiji_r2_evaluation_recovery_v1_bootstrap_20261025.json)及机器恢复合同已落盘；三个probe共10.4375 CPU秒、12.313 wall秒。机器合同授权字段为false，现行`--validate-only/--execute`会在metadata/model/selector前拒绝，不把本次“下一步”的可逆工程当成新题面消费授权。
 
 当前三臂无需新的训练启动；现有v4入口只保留来源/历史恢复用途。J/VX架构和驱动实施另按其合同，不延长本轮。
 

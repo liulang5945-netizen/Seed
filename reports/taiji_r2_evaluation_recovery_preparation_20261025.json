@@ -1,0 +1,56 @@
+{
+  "schema": "taiji-r2-evaluation-recovery-preparation-v1",
+  "status": "prepared",
+  "can_promote": false,
+  "formal_evaluation_authorized": false,
+  "failed_attempt": {
+    "attempt_id": "abffec0c23f5274b382a06ce45f47197688d061440e0080e",
+    "raw_sha256": {
+      "attempt": "ab482dac42b2601802071b0d6db53ae42991d2b570a46b7d24d16811c0de04be",
+      "failure": "2043b6aacf36efc60f5110036ebf9f80d08c256b80ece77da051f11c91eb57e9",
+      "result": "eb801d2c489a3eb2ae9fd92d8c7272c53710d6b5e77e6e5f13162091a40309bb"
+    },
+    "ledger_sha256": "89dd0decbe1b03840bca1017b1f9abe9257fea87ada562ee765d4677bc79c9e2",
+    "events": [
+      "attempt_started",
+      "worker_startup_started",
+      "evaluation_stopped",
+      "worker_startup_tail_audited"
+    ],
+    "query_attempts": 0,
+    "persisted_generation_outputs": 0,
+    "fresh_process_restores": {},
+    "stopped_before_selection_in_this_attempt": true,
+    "exposure_scope": "this instrumented attempt only; not a machine-wide access audit",
+    "source_mismatches_after_fix": [
+      "scripts\\training\\prepare_taiji_r2_continuation_endpoints.py",
+      "scripts\\training\\taiji_r2_continuation_evaluation_adapter.py",
+      "tests\\taiji_native\\test_r2_continuation_evaluation_adapter_contract.py"
+    ],
+    "published_cpu_seconds": 60.78125,
+    "published_wall_seconds": 63.95299999997951,
+    "latest_startup_tail_unknown": true,
+    "latest_startup_tail_upper": null,
+    "boot_identity_difference_seconds": 2.384185791015625e-07,
+    "no_retry_authorized": true
+  },
+  "source_sha256": "cb0487b9b2f818e803054be0a7765d7b50fd566ebcaa363d64f33ba7a14b68e0",
+  "bootstrap": {
+    "status": "passed",
+    "worker_module": "scripts.training.evaluate_taiji_r2_daily_dialogue_continuation_extension_v1",
+    "authenticated_ready": true,
+    "worker_tree_stopped": true,
+    "exit_code": 1,
+    "ready_child_cpu_seconds": 1.703125,
+    "child_cpu_seconds": 1.703125,
+    "parent_cpu_seconds_after_import": 0.046875,
+    "wall_seconds_after_import": 2.094000000040978,
+    "model_tasks_sent": 0,
+    "checkpoint_restores": 0,
+    "prompt_queries": 0,
+    "training_updates": 0,
+    "termination": "intentional Job termination after ready, not four-restore shutdown"
+  },
+  "preparation_parent_cpu_seconds": 1.65625,
+  "preparation_wall_seconds": 4.047000000020489
+}
