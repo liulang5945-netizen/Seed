@@ -1,0 +1,77 @@
+{
+  "schema": "taiji-n1-plan175-v3-train-only-calibration-v1",
+  "status": "one_train_only_update_complete",
+  "v3_candidate_sha256": "90eff7b871b51c9a121e6dfbbe962932cf9e2136952fba6aa75022d696c5186c",
+  "migration_report_sha256": "0a39fd9ece257c4a648741cbece99e0ad235a41968c513b813c97b25af07c447",
+  "parent_checkpoint_sha256": "8d2d001d92f7cfd65a48197a92ee94495deecce4e00a1c03cc427790e3755301",
+  "parent_checkpoint_digest": "1b3423ea9cb25e0ae8e475fe33234580c92e3a89784c1decfe7fc449f9c44720",
+  "data": {
+    "counts": {
+      "eligible_complete_answer": 1148,
+      "complete_target_over_2048_bytes": 70,
+      "serialized_prompt_over_4096_bytes": 12,
+      "normalized_duplicate_context": 28,
+      "eligible_family_count": 517
+    },
+    "train_text_nodes_parsed": 2965,
+    "heldout_text_nodes_parsed": 0,
+    "partition_sha256": "fb9208c66e7e2edd6431cf155e041ea9de67caa008dae51bfa46aa4d9b880207",
+    "raw_source_sha256": "a9f240c4c77aa1378364f70d37e753c07ba284e247b019d700e1947a0e5da751",
+    "old_episode_source_sha256": "4759163516064e5d2cc2e2fb5d505c0a915736218abdecb3d61771c16569b06d"
+  },
+  "complete_train_corpus_candidates": 1148,
+  "complete_train_corpus_families": 517,
+  "calibration_batch": [
+    {
+      "target_id": "baa70129-58c0-4d23-bf31-09b594bbc56c",
+      "family": "8981275a-5316-43e8-b948-d53ea2bc8e00",
+      "prompt_bytes": 1505,
+      "target_bytes": 126
+    },
+    {
+      "target_id": "db051222-a2c5-4d4a-ba1d-412033d8eb59",
+      "family": "9ea56b2d-7582-4b61-a26f-d50452fd9593",
+      "prompt_bytes": 248,
+      "target_bytes": 511
+    },
+    {
+      "target_id": "6273de4a-1ab3-4b03-8d45-ced5508171cd",
+      "family": "4cc8153b-045d-4832-b335-9fd2f55e5569",
+      "prompt_bytes": 1157,
+      "target_bytes": 1024
+    },
+    {
+      "target_id": "f5fafd4f-5a46-43c0-820c-3a911a745f35",
+      "family": "2ef6c031-41f5-40ae-a5e8-6eb82806b30c",
+      "prompt_bytes": 240,
+      "target_bytes": 2043
+    }
+  ],
+  "update_metrics": {
+    "step": 5001,
+    "loss_nats": 3.2755913510918617,
+    "loss_bits": 4.725679398199008,
+    "gradient_norm_before_clip": 1.8693560361862183,
+    "gradient_group_norms": {
+      "core.embedding": 0.159350479100225,
+      "core.encoder": 0.9801732445319457,
+      "core.keys": 0.5467172940243841,
+      "core.values": 0.5307504131583485,
+      "query": 0.5794830394587873,
+      "decoder": 1.1525482050910112,
+      "output": 0.5063076562173435,
+      "input_position": 0.0777040135932847,
+      "output_position": 0.03486184523266955
+    },
+    "target_byte_exposures": 2162864
+  },
+  "elapsed_process_cpu_seconds": 14.921875,
+  "elapsed_wall_seconds": 15.327999999979511,
+  "target_bytes_per_process_cpu_second": 144945.85968586386,
+  "calibration_checkpoint": "data\\checkpoints\\n1_plan175_v3_calibration_20261026\\tf_seed169\\step0001.pt",
+  "calibration_checkpoint_sha256": "5fedf2e78b1a2b06e17afacccce154eb9e0a7d1c5d7cfa7d63b4b0b736b84326",
+  "calibration_checkpoint_digest": "0ab9a2c8ce38961d76d0a70bd31c53c1d0177e2f6eeb2d9a0cd76c6520dd51cd",
+  "heldout_text_parsed": 0,
+  "development_reads": 0,
+  "can_promote": false
+}

@@ -1,0 +1,70 @@
+{
+  "schema": "taiji-n1-plan175-v3-update-cost-v1",
+  "status": "second_disjoint_train_only_update_and_restore_complete",
+  "v3_candidate_sha256": "90eff7b871b51c9a121e6dfbbe962932cf9e2136952fba6aa75022d696c5186c",
+  "profile_script_sha256": "3e85379b03f860bc41a3479bf256016e40878e735a8a4edcc96cbbab9f3c3043",
+  "first_calibration_report_sha256": "ebcab26fe61b72528ecc48a1c3bb75df9539ae2c0089f38a80fff1418405dfc2",
+  "first_checkpoint_sha256": "5fedf2e78b1a2b06e17afacccce154eb9e0a7d1c5d7cfa7d63b4b0b736b84326",
+  "current_checkpoint_sha256": "6716b06be2c82f38576a5c2dc14e2304c9eb8568c052e25cd71a0d5e7de94088",
+  "current_checkpoint_digest": "cb77fc1338e57633b50f122aa4527ef58eaa9c363c7d82973163c8e10f2adb6a",
+  "partition_sha256": "fb9208c66e7e2edd6431cf155e041ea9de67caa008dae51bfa46aa4d9b880207",
+  "eligible_train_examples": 1148,
+  "eligible_train_families": 517,
+  "disjoint_batch": [
+    {
+      "target_id": "e42e440d-5f87-431f-9a14-9a06e64139c4",
+      "family": "bc91c682-ef6c-4d17-84bd-51fd832599e8",
+      "prompt_bytes": 683,
+      "target_bytes": 126
+    },
+    {
+      "target_id": "b4ca4915-15eb-4089-959b-01f1e0f11e71",
+      "family": "753eac4d-1551-4dc8-8811-caeb328b34cb",
+      "prompt_bytes": 171,
+      "target_bytes": 509
+    },
+    {
+      "target_id": "cc107882-900b-4975-89ae-688869bd15ae",
+      "family": "ef564021-2cfc-435c-8a7b-1528e75c9e91",
+      "prompt_bytes": 1161,
+      "target_bytes": 1025
+    },
+    {
+      "target_id": "9a2ffd07-1a4e-4698-bba9-3fb3c7457afa",
+      "family": "8c9d2ac5-3d13-44ce-bbbd-a75f18dae3b5",
+      "prompt_bytes": 1998,
+      "target_bytes": 2040
+    }
+  ],
+  "batch_target_bytes": 3700,
+  "update_metrics": {
+    "step": 5002,
+    "loss_nats": 3.8575987368822098,
+    "loss_bits": 5.565338567439493,
+    "gradient_norm_before_clip": 1.7946839332580566,
+    "gradient_group_norms": {
+      "core.embedding": 0.14460126366683088,
+      "core.encoder": 0.8723610594091388,
+      "core.keys": 0.4973061232695611,
+      "core.values": 0.5442662636247169,
+      "query": 0.5212302083027192,
+      "decoder": 1.1779731070438801,
+      "output": 0.47958346460026813,
+      "input_position": 0.0709748627296943,
+      "output_position": 0.0330491439934321
+    },
+    "target_byte_exposures": 2166564
+  },
+  "update_process_cpu_seconds": 8.421875,
+  "update_wall_seconds": 8.48499999998603,
+  "target_bytes_per_process_cpu_second": 439.33209647495363,
+  "cumulative_target_exposures_before": 2162864,
+  "cumulative_target_exposures_after": 2166564,
+  "fresh_process_restore": "passed",
+  "fresh_process_restore_cpu_seconds": 2.1875,
+  "heldout_text_parsed": 0,
+  "development_reads": 0,
+  "training_updates_this_profile": 1,
+  "can_promote": false,
+  "correction": "The first report divided cumulative lifetime exposures by setup-plus-update CPU; this report uses this batch's exposure delta divided by optimizer-update CPU only."
+}

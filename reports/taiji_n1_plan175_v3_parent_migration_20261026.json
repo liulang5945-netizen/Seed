@@ -1,0 +1,67 @@
+{
+  "schema": "taiji-n1-plan175-v2-to-v3-parent-migration-v1",
+  "status": "three_seed_parent_migrated_no_training",
+  "migration_script_sha256": "741b92682dff3ef70956b0613214f440af37b8af4a873a41eaffaf3259c4094b",
+  "v3_candidate_sha256": "90eff7b871b51c9a121e6dfbbe962932cf9e2136952fba6aa75022d696c5186c",
+  "parents": [
+    {
+      "seed": 169,
+      "parent_checkpoint": "data\\checkpoints\\n1_plan174c_scale_complete_20261025\\tf_seed169\\final.pt",
+      "parent_checkpoint_sha256": "f83564bf5f9d17360c7a030e2712b8e4ad77183819d297a9a7bf77a237b1cc92",
+      "parent_checkpoint_digest": "5cfa330b7c122fc1871edb4135b10faa05485e875fed34c1162745e402ba2783",
+      "parent_steps": 5000,
+      "parent_cursor": {
+        "epoch": 40,
+        "batch": 125
+      },
+      "v3_checkpoint": "data\\checkpoints\\n1_plan175_v3_parent_20261026\\tf_seed169\\zero.pt",
+      "v3_checkpoint_sha256": "8d2d001d92f7cfd65a48197a92ee94495deecce4e00a1c03cc427790e3755301",
+      "v3_checkpoint_digest": "1b3423ea9cb25e0ae8e475fe33234580c92e3a89784c1decfe7fc449f9c44720",
+      "v3_parameter_count": 1331393,
+      "optimizer_state_parameter_count": 19,
+      "position_rows_copied": 512,
+      "fresh_process_restore": "passed"
+    },
+    {
+      "seed": 170,
+      "parent_checkpoint": "data\\checkpoints\\n1_plan174c_scale_complete_20261025\\tf_seed170\\final.pt",
+      "parent_checkpoint_sha256": "5a78d4e6cf01cc0ca500f1c76560b3cac2d90dbccb9bcebdcf4e466f813e22fc",
+      "parent_checkpoint_digest": "e0845c5e1c6d31ae0bf4937936ddebf57888080f54c2e746efbc642613d0f444",
+      "parent_steps": 5000,
+      "parent_cursor": {
+        "epoch": 40,
+        "batch": 125
+      },
+      "v3_checkpoint": "data\\checkpoints\\n1_plan175_v3_parent_20261026\\tf_seed170\\zero.pt",
+      "v3_checkpoint_sha256": "497e5f9e6677405197b43bfc153e07d819dadc7fe9a3ab495bd0fb57714e508e",
+      "v3_checkpoint_digest": "0d4ffb6cfee82e09d9bf7cda913d6fc15bfd1b0710f261027e9b59fd15b82593",
+      "v3_parameter_count": 1331393,
+      "optimizer_state_parameter_count": 19,
+      "position_rows_copied": 512,
+      "fresh_process_restore": "passed"
+    },
+    {
+      "seed": 171,
+      "parent_checkpoint": "data\\checkpoints\\n1_plan174c_scale_complete_20261025\\tf_seed171\\final.pt",
+      "parent_checkpoint_sha256": "e5ec3050f336ed2bef937262b9124c9f6be4f297352a2e176a63087ed8796fd7",
+      "parent_checkpoint_digest": "f2652b5fef1e77052f29cb05a4be6d42f65ac76f1856bfd361680e4256bbe027",
+      "parent_steps": 5000,
+      "parent_cursor": {
+        "epoch": 40,
+        "batch": 125
+      },
+      "v3_checkpoint": "data\\checkpoints\\n1_plan175_v3_parent_20261026\\tf_seed171\\zero.pt",
+      "v3_checkpoint_sha256": "be63fcd79b4bc86d4f13cb7f1c1b7f637881af1ab3231515a9f3dcd85be34e47",
+      "v3_checkpoint_digest": "94c31699b9347b8da77bfe88a8e37bfa406e2d8bc2b417f6cc2fabd921c7037b",
+      "v3_parameter_count": 1331393,
+      "optimizer_state_parameter_count": 19,
+      "position_rows_copied": 512,
+      "fresh_process_restore": "passed"
+    }
+  ],
+  "training_updates": 0,
+  "new_holdout_text_read": 0,
+  "cpu_seconds": 23.390625,
+  "wall_seconds": 19.89000000001397,
+  "can_promote": false
+}

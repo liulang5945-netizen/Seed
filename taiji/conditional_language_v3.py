@@ -22,7 +22,7 @@ from .conditional_language_v2 import (
     _EvidenceCache,
 )
 from .internalization import content_digest
-from .task_core_v2 import TaskCoreV2
+from .task_core_v2 import TaskCoreConfigV2, TaskCoreV2
 from .task_state_v2 import TaskStateV2
 
 
@@ -38,6 +38,7 @@ class TaskCoreConfigV3:
     max_output_position: int = 2048
     max_generation_bytes: int = 2048
     seed: int = 169
+    position_extension_seed: int = 170
 
     def __post_init__(self) -> None:
         if any(
@@ -52,6 +53,7 @@ class TaskCoreConfigV3:
                 self.max_input_evidence_bytes,
                 self.max_output_position,
                 self.max_generation_bytes,
+                self.position_extension_seed,
             )
         ):
             raise ValueError("V3 dimensions and byte bounds must be positive")
@@ -196,7 +198,7 @@ class ConditionalLanguageCandidateV3(ConditionalLanguageCandidateV2):
         self.config = config
         del self.position
         with torch.random.fork_rng(devices=[]):
-            torch.default_generator.manual_seed(config.seed)
+            torch.default_generator.manual_seed(config.position_extension_seed)
             self.core = TaskCoreV3(config)
             self.input_position = nn.Embedding(
                 config.max_input_evidence_bytes, config.key_width, dtype=torch.float32
@@ -307,6 +309,135 @@ class ConditionalLanguageTrainerV3(ConditionalLanguageTrainerV2):
             "target_byte_exposures": self.target_byte_exposures,
         }
 
+    @classmethod
+    def from_v2_checkpoint(
+        cls,
+        payload: dict[str, Any],
+        *,
+        config: TaskCoreConfigV3,
+        parent_checkpoint_sha256: str,
+    ) -> ConditionalLanguageTrainerV3:
+        """Migrate a V2 parent without resetting shared weights or Adam state."""
+        if (
+            payload.get("format") != ConditionalLanguageTrainerV2.FORMAT
+            or payload.get("version") != 2
+        ):
+            raise ValueError("migration requires a V2 trainer checkpoint")
+        if content_digest(
+            {k: v for k, v in payload.items() if k != "checkpoint_digest"}
+        ) != payload.get("checkpoint_digest"):
+            raise ValueError("V2 parent checkpoint digest differs")
+        if len(parent_checkpoint_sha256) != 64:
+            raise ValueError("migration requires the parent's file SHA-256")
+        old_config = payload["config"]
+        for name in ("width", "embedding_width", "key_width", "slots", "chunk_bytes", "seed"):
+            if old_config[name] != getattr(config, name):
+                raise ValueError(f"V2 parent {name} differs from the V3 migration config")
+        if old_config["max_evidence_bytes"] > config.max_input_evidence_bytes:
+            raise ValueError("V3 input evidence cannot be shorter than the V2 parent window")
+        if old_config["max_generation_bytes"] > config.max_output_position:
+            raise ValueError("V3 output positions cannot be shorter than the V2 parent window")
+
+        old_model = ConditionalLanguageCandidateV2(
+            TaskCoreConfigV2(**old_config),
+            bundle_id=payload["bundle_id"],
+        )
+        old_model.load_state_dict(payload["parameters"], strict=True)
+        model = ConditionalLanguageCandidateV3(config, bundle_id=payload["bundle_id"])
+        old_parameters = dict(old_model.named_parameters())
+        new_parameters = dict(model.named_parameters())
+        mapped = set()
+        with torch.no_grad():
+            for name, target in new_parameters.items():
+                source_name = (
+                    "position.weight"
+                    if name in {"input_position.weight", "output_position.weight"}
+                    else name
+                )
+                if source_name not in old_parameters:
+                    raise ValueError(f"V2 parent lacks parameter {source_name}")
+                source = old_parameters[source_name]
+                if name in {"input_position.weight", "output_position.weight"}:
+                    if (
+                        source.ndim != 2
+                        or source.shape[1] != target.shape[1]
+                        or source.shape[0] > target.shape[0]
+                    ):
+                        raise ValueError("V2 position table cannot be embedded into V3 table")
+                    target[: source.shape[0]].copy_(source)
+                elif target.shape != source.shape:
+                    raise ValueError(f"shared parameter shape differs for {name}")
+                else:
+                    target.copy_(source)
+                mapped.add(source_name)
+        if mapped != set(old_parameters):
+            raise ValueError("V2 parent contains unmapped parameters")
+        model.parameter_revision = payload["parameter_revision"]
+
+        trainer = cls(model, learning_rate=payload["learning_rate"])
+        old_optimizer = payload["optimizer"]
+        new_optimizer = trainer.optimizer.state_dict()
+        if len(old_optimizer["param_groups"]) != 1 or len(new_optimizer["param_groups"]) != 1:
+            raise ValueError("V3 migration currently requires one AdamW parameter group")
+        old_ids = old_optimizer["param_groups"][0]["params"]
+        new_ids = new_optimizer["param_groups"][0]["params"]
+        old_names = list(old_parameters)
+        new_names = list(new_parameters)
+        if len(old_ids) != len(old_names) or len(new_ids) != len(new_names):
+            raise ValueError("optimizer parameter ordering cannot be reconciled")
+        old_id_by_name = dict(zip(old_names, old_ids, strict=True))
+        migrated_state = {}
+        for new_name, new_id in zip(new_names, new_ids, strict=True):
+            old_name = (
+                "position.weight"
+                if new_name in {"input_position.weight", "output_position.weight"}
+                else new_name
+            )
+            old_id = old_id_by_name[old_name]
+            previous = old_optimizer["state"].get(old_id)
+            if previous is None:
+                continue
+            state = {}
+            for key, value in previous.items():
+                if (
+                    isinstance(value, torch.Tensor)
+                    and value.ndim > 0
+                    and value.shape == old_parameters[old_name].shape
+                ):
+                    expanded = torch.zeros_like(
+                        new_parameters[new_name], memory_format=torch.preserve_format
+                    )
+                    if new_name in {"input_position.weight", "output_position.weight"}:
+                        expanded[: value.shape[0]].copy_(value)
+                    else:
+                        expanded.copy_(value)
+                    state[key] = expanded
+                else:
+                    state[key] = (
+                        value.detach().clone()
+                        if isinstance(value, torch.Tensor)
+                        else copy.deepcopy(value)
+                    )
+            migrated_state[new_id] = state
+        group = copy.deepcopy(old_optimizer["param_groups"][0])
+        group["params"] = new_ids
+        trainer.optimizer.load_state_dict({"state": migrated_state, "param_groups": [group]})
+        trainer.steps = payload["steps"]
+        trainer.target_byte_exposures = payload["target_byte_exposures"]
+        model.generator.set_state(payload["rng_state"])
+        trainer.lineage = {
+            "migration": "conditional-language-v2-to-v3-v1",
+            "parent_bundle_id": payload["bundle_id"],
+            "parent_checkpoint_sha256": parent_checkpoint_sha256,
+            "parent_checkpoint_digest": payload["checkpoint_digest"],
+            "copied_parameters": sorted(old_parameters),
+            "position_source": "v2.position.weight copied to the leading rows of both V3 tables; extension rows retain V3 deterministic initialization",
+            "position_rows_copied": int(old_parameters["position.weight"].shape[0]),
+            "position_extension_seed": config.position_extension_seed,
+            "optimizer_state": "AdamW moments copied by parameter name; copied position moments placed in first 512 rows and extension rows zeroed",
+        }
+        return trainer
+
     def checkpoint(self, state: TaskStateV3, *, cursor: dict[str, Any]) -> dict[str, Any]:
         self.model.validate(state)
         payload = {
@@ -323,6 +454,7 @@ class ConditionalLanguageTrainerV3(ConditionalLanguageTrainerV2):
             "learning_rate": self.learning_rate,
             "steps": self.steps,
             "target_byte_exposures": self.target_byte_exposures,
+            "lineage": copy.deepcopy(getattr(self, "lineage", {})),
             "rng_state": self.model.generator.get_state().clone(),
             "task_state": state.to_payload(),
             "cursor": copy.deepcopy(cursor),
@@ -347,6 +479,7 @@ class ConditionalLanguageTrainerV3(ConditionalLanguageTrainerV2):
         trainer.optimizer.load_state_dict(payload["optimizer"])
         trainer.steps = payload["steps"]
         trainer.target_byte_exposures = payload["target_byte_exposures"]
+        trainer.lineage = copy.deepcopy(payload.get("lineage", {}))
         model.generator.set_state(payload["rng_state"])
         state = TaskStateV3.from_payload(payload["task_state"])
         model.validate(state)
