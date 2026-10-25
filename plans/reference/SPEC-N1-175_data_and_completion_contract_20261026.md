@@ -68,4 +68,4 @@ train-only真实batch更新测得3700目标字节/8.421875 process-CPU秒=439.33
 正式训练入口为[`run_taiji_n1_plan175_v3_scale.py`](../../scripts/training/run_taiji_n1_plan175_v3_scale.py)，按seed单独进程运行，续训从最近一个epoch checkpoint恢复，progress账本记录当前batch。首轮结束后按本合同的固定R/S门生成64个留出family回答；训练期间不解析其正文。
 
 
-盲化评价生成器[`evaluate_taiji_n1_plan175_v3_holdout.py`](../../scripts/training/evaluate_taiji_n1_plan175_v3_holdout.py)已准备但未运行。运行前强制检查三seed均到40 epochs且最终checkpoint SHA吻合，之后才读取64个固定family；每题用各seed分别生成matched与确定性跨family错配prompt输出，盲评文件与揭盲key在同一原子目录发布，失效family保留在64分母且不补抽。人工评阅按0/1/2标准记录，只有盲评后才揭示seed/条件。
+盲化评价生成器[`evaluate_taiji_n1_plan175_v3_holdout.py`](../../scripts/training/evaluate_taiji_n1_plan175_v3_holdout.py)已准备但未运行。运行前强制检查三seed均到40 epochs、报告所用corpus manifest SHA、最终checkpoint文件SHA与内部checkpoint digest吻合，并复验原始OASST及既有split SHA和64个family覆盖；全部通过后才读取64个固定family。每题用各seed分别生成matched与确定性跨family错配prompt输出，盲评文件与揭盲key在同一原子目录发布，失效family保留在64分母且不补抽。人工评阅按0/1/2标准记录，只有盲评后才揭示seed/条件。

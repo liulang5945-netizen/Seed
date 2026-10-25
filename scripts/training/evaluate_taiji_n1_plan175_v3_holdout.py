@@ -24,6 +24,9 @@ PARTITION = ROOT / "reports/taiji_n1_plan175_metadata_partition_20261026.json"
 MIGRATION = ROOT / "reports/taiji_n1_plan175_v3_parent_migration_20261026.json"
 CORPUS = ROOT / "reports/taiji_n1_plan175_v3_train_corpus_v2_20261026.json"
 RAW_SOURCE = ROOT / "data/conversation/OASST2/2023-11-05_oasst2_ready.messages.jsonl.gz"
+OLD_EPISODES = ROOT / "data/conversation/OASST2/taiji_r2_daily_dialogue_episodes.jsonl"
+RAW_SOURCE_SHA256 = "a9f240c4c77aa1378364f70d37e753c07ba284e247b019d700e1947a0e5da751"
+OLD_EPISODE_SHA256 = "4759163516064e5d2cc2e2fb5d505c0a915736218abdecb3d61771c16569b06d"
 REPORTS = ROOT / "reports"
 OUTPUT_DIR = REPORTS / "taiji_n1_plan175_v3_review_20261026"
 HOLDOUT_SALT = "n175-root-holdout-v1-20261026"
@@ -44,6 +47,7 @@ def select_one_per_family(candidates: list[dict]) -> list[dict]:
 
 
 def require_completed_runs() -> list[dict[str, Any]]:
+    corpus = json.loads(CORPUS.read_text(encoding="utf-8"))
     runs = []
     for seed in SEEDS:
         path = report_path(seed)
@@ -52,6 +56,8 @@ def require_completed_runs() -> list[dict[str, Any]]:
         report = json.loads(path.read_text(encoding="utf-8"))
         if report.get("status") != "complete" or report.get("epochs_complete") != 40:
             raise ValueError(f"seed {seed} has not reached its fixed 40-epoch endpoint")
+        if report.get("dataset_manifest_sha256") != corpus.get("candidate_manifest_sha256"):
+            raise ValueError(f"seed {seed} final report used a different frozen train corpus")
         checkpoint = ROOT / report["final_checkpoint"]
         if digest(checkpoint) != report["final_checkpoint_sha256"]:
             raise ValueError(f"seed {seed} final checkpoint SHA differs")
@@ -61,8 +67,19 @@ def require_completed_runs() -> list[dict[str, Any]]:
 
 def load_fixed_holdout() -> tuple[list[dict], list[dict], int, list[dict]]:
     partition = json.loads(PARTITION.read_text(encoding="utf-8"))
+    if (
+        digest(RAW_SOURCE) != RAW_SOURCE_SHA256
+        or digest(RAW_SOURCE) != partition.get("raw_source_sha256")
+        or digest(OLD_EPISODES) != OLD_EPISODE_SHA256
+        or digest(OLD_EPISODES) != partition.get("old_episode_source_sha256")
+    ):
+        raise ValueError("frozen OASST2 or prior split source SHA differs")
     selected = select_one_per_family(partition["holdout_candidates"])
-    if len(partition["holdout_families"]) != 64 or len(selected) != 64:
+    if (
+        len(partition["holdout_families"]) != 64
+        or len(selected) != 64
+        or {row["family"] for row in selected} != set(partition["holdout_families"])
+    ):
         raise ValueError("frozen holdout no longer has exactly one preselected prompt per family")
     rows = {}
     fields = {"message_id", "parent_id", "role", "lang", "deleted"}
@@ -75,6 +92,8 @@ def load_fixed_holdout() -> tuple[list[dict], list[dict], int, list[dict]]:
             rows[identity] = row
     chains, needed = {}, set()
     for candidate in selected:
+        if rows.get(candidate["target_id"], {}).get("parent_id") != candidate["prompt_id"]:
+            raise ValueError("frozen candidate prompt/target relation differs from source metadata")
         identity, chain, seen = candidate["target_id"], [], set()
         while identity is not None:
             if identity not in rows or identity in seen:
@@ -122,6 +141,8 @@ def load_fixed_holdout() -> tuple[list[dict], list[dict], int, list[dict]]:
 def generate_for_seed(seed: int, report: dict, episodes: list[tuple[dict, Any]]) -> list[dict]:
     checkpoint = ROOT / report["final_checkpoint"]
     payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
+    if payload.get("checkpoint_digest") != report.get("final_checkpoint_digest"):
+        raise ValueError(f"seed {seed} final checkpoint digest differs from its run report")
     trainer, _, cursor = ConditionalLanguageTrainerV3.from_checkpoint(payload)
     if cursor.get("epoch") != 40 or trainer.steps != 5000 + 40 * 288:
         # Exact update count is additionally checked against the saved per-epoch ledger below.
