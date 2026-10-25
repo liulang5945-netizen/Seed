@@ -49,8 +49,10 @@ def _configure_synthetic_publisher(monkeypatch, root: Path) -> None:
 
 
 def test_runner_and_ledger_share_approved_budget_constants() -> None:
-    assert ledger.PER_ARM_CPU_LIMIT == runner.PER_ARM_CPU_LIMIT == 1_450_000.0
-    assert ledger.AGGREGATE_CPU_LIMIT == runner.AGGREGATE_CPU_LIMIT == 4_200_000.0
+    # 批 B 入库 source_revision 链后，import 期有效预算=批准的 v1.2/v1.3 值
+    # （owner 批准的 D1 预算链）；本测钉的是 runner 与 ledger 的共享一致性。
+    assert ledger.PER_ARM_CPU_LIMIT == runner.PER_ARM_CPU_LIMIT == 1_500_000.0
+    assert ledger.AGGREGATE_CPU_LIMIT == runner.AGGREGATE_CPU_LIMIT == 4_300_000.0
 
 
 def test_tail_charge_uses_wall_times_cpu_upper_bound_after_boot_change() -> None:
@@ -1626,8 +1628,9 @@ def test_prepare_only_creates_one_complete_synthetic_extension_without_restore_o
         assert source_report_sha256 == _sha(architecture.read_bytes())
         assert approved_utc == runner.APPROVED_UTC
         contract = {
-            "per_arm_cpu_seconds": runner.PER_ARM_CPU_LIMIT,
-            "aggregate_cpu_seconds": runner.AGGREGATE_CPU_LIMIT,
+            # durable contract 记录不可变 v1 预算（BASE）；有效预算由修订链承载。
+            "per_arm_cpu_seconds": ledger.BASE_PER_ARM_CPU_LIMIT,
+            "aggregate_cpu_seconds": ledger.BASE_AGGREGATE_CPU_LIMIT,
             "durability": {"volume_root": volume_root},
             "parent_records": parent_records,
             "source_compatibility_report_sha256": source_report_sha256,

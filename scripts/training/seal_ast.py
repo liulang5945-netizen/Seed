@@ -88,16 +88,27 @@ def _repo_relative(path_str: str) -> str | None:
     return None
 
 
+def repo_relative(path_str: str) -> str | None:
+    """记录路径 → 仓库相对 posix 路径的公开入口；映射不到返回 None（fail-closed）。"""
+    return _repo_relative(path_str)
+
+
 def resolve_recorded_path(path_str: str) -> Path | None:
-    """记录路径 → 本机在位文件；原路径存在则原样返回，否则试仓库内映射。"""
-    path = Path(path_str)
-    if path.is_file():
-        return path
+    """记录路径 → 本机在位文件。
+
+    绝对路径的权威是它的**仓库相对身份**而非机器前缀：先按仓库内映射归位
+    （维护机/ worktree / runner 的同一检出身份归一到当前 ROOT），映射不到
+    再回退字面路径（仓外合成夹具等）。2026-10-25 由「字面优先」改为
+    「映射优先」——字面优先会让维护机的 worktree 运行解析回主树文件。
+    """
     relative = _repo_relative(path_str)
     if relative is not None:
         local = ROOT / relative
         if local.is_file():
             return local
+    path = Path(path_str)
+    if path.is_file():
+        return path
     return None
 
 

@@ -419,8 +419,11 @@ def test_unresolved_or_partial_parent_tail_refuses_initialization(
 def test_guard_respects_per_arm_reserve_and_actual_settlement_cap(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    # 天花板侧取 BASE（_configure 已把 PER_ARM 钉到 BASE）：批 B 入库
+    # source_revision 后 import 期 PER_ARM=1.5M，父记录 charges 校验以 BASE 为界。
+    ceiling = extension.BASE_PER_ARM_CPU_LIMIT
     charges = {
-        "full_turn_1m": extension.PER_ARM_CPU_LIMIT - 25_000.0,
+        "full_turn_1m": ceiling - 25_000.0,
         "warm_start": 500_000.0,
         "fresh_same_capacity": 500_000.0,
     }
@@ -429,19 +432,19 @@ def test_guard_respects_per_arm_reserve_and_actual_settlement_cap(
     with pytest.raises(extension.ExtensionLedgerRefuse, match="insufficient per-arm"):
         extension.guard(
             "full_turn_1m",
-            extension.PER_ARM_CPU_LIMIT - 25_000.0,
+            ceiling - 25_000.0,
             reserve_cpu_seconds=50_000.0,
         )
     token = extension.guard(
         "full_turn_1m",
-        extension.PER_ARM_CPU_LIMIT - 25_000.0,
+        ceiling - 25_000.0,
         reserve_cpu_seconds=24_999.0,
     )
     with pytest.raises(extension.ExtensionLedgerRefuse, match="per-arm cap"):
         extension.append_charge(
             "full_turn_1m",
             "bad_settlement",
-            extension.PER_ARM_CPU_LIMIT + 1.0,
+            ceiling + 1.0,
             {"reservation_id": token},
         )
 

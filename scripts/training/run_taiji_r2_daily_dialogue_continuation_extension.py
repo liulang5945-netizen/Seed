@@ -906,6 +906,62 @@ def _continuation_source_binding(source_report_sha256: str) -> dict[str, Any]:
     }
 
 
+def _bindings_match_by_provenance(recorded: Any, expected: dict[str, Any]) -> bool:
+    """R2 结案后绑定比较改为出处核验（owner 2026-10-25 裁定接 seal_ast 映射）。
+
+    结案后 revision 绑定的语义从「部署面活校验」转为「来源出处核验」：
+    路径按仓库相对身份比对（记录值来自维护机布局，在任何检出树上归一），
+    哈希按在位字节或 git 历史 blob 取证（S4 同法，渲染变体已含）。治理面
+    文件结案后的演进由 git 历史取证背书。路径等价规则：字面相等，或两侧
+    解析到同一本机文件（合成夹具的仓外 tmp 路径走字面相等）。
+    """
+    from scripts.training import seal_ast
+
+    if not isinstance(recorded, dict):
+        return False
+    recorded_files = recorded.get("files")
+    expected_files = expected.get("files")
+    if not isinstance(recorded_files, dict) or not isinstance(expected_files, dict):
+        return False
+    if set(recorded_files) != set(expected_files):
+        return False
+
+    def _same_file(recorded_value: Any, expected_value: str) -> bool:
+        if not isinstance(recorded_value, str):
+            return False
+        if recorded_value == expected_value:
+            return True
+        return seal_ast.resolve_recorded_path(recorded_value) == Path(expected_value).resolve()
+
+    def _bytes_attested(expected_value: str, expected_digest: str, recorded_digest: Any) -> bool:
+        """期望文件可解析时核字节（在位或 git 历史，S4 同法）；不可解析（合成
+        夹具的裸相对名＋伪造哈希）回退字面哈希相等——哈希变异仍拒。"""
+        if not isinstance(recorded_digest, str):
+            return False
+        expected_file = seal_ast.resolve_recorded_path(expected_value)
+        if expected_file is None:
+            return recorded_digest == expected_digest
+        return seal_ast.verify_path_pin(str(expected_file), recorded_digest)
+
+    for name, expected_row in expected_files.items():
+        recorded_row = recorded_files[name]
+        if not isinstance(recorded_row, dict):
+            return False
+        if not _same_file(recorded_row.get("path"), str(expected_row["path"])):
+            return False
+        if not _bytes_attested(
+            str(expected_row["path"]), str(expected_row["sha256"]), recorded_row.get("sha256", "")
+        ):
+            return False
+    if not _same_file(recorded.get("runner_path"), str(expected.get("runner_path"))):
+        return False
+    return _bytes_attested(
+        str(expected.get("runner_path", "")),
+        str(expected.get("runner_sha256", "")),
+        recorded.get("runner_sha256", ""),
+    )
+
+
 def _effective_attempt(
     attempt: dict[str, Any],
     source_report_sha256: str,
@@ -941,7 +997,7 @@ def _effective_attempt(
     schema = revision.get("schema")
     if schema == "taiji-r2-continuation-source-revision-v1.1":
         valid_revision = (
-            revision.get("current_continuation_sources") == expected
+            _bindings_match_by_provenance(revision.get("current_continuation_sources"), expected)
             and revision.get("review_report_sha256") == sha256_file(SOURCE_REVISION_REPORT)
             and revision.get("approved_budget")
             == {"per_arm": 1_450_000.0, "aggregate": 4_200_000.0}
@@ -951,7 +1007,9 @@ def _effective_attempt(
         valid_revision = (
             previous_path.is_file()
             and revision.get("previous_source_revision_sha256") == sha256_file(previous_path)
-            and revision.get("current_continuation_sources") == expected
+            and _bindings_match_by_provenance(
+                revision.get("current_continuation_sources"), expected
+            )
             and revision.get("review_report_sha256") == sha256_file(SOURCE_REVISION_V1_2_REPORT)
             and revision.get("approved_budget")
             == {
@@ -968,7 +1026,9 @@ def _effective_attempt(
         valid_revision = (
             previous_path.is_file()
             and revision.get("previous_source_revision_sha256") == sha256_file(previous_path)
-            and revision.get("current_continuation_sources") == expected
+            and _bindings_match_by_provenance(
+                revision.get("current_continuation_sources"), expected
+            )
             and revision.get("review_report_sha256") == sha256_file(report)
             and revision.get("approved_budget")
             == {"per_arm": V1_2_PER_ARM_CPU_LIMIT, "aggregate": V1_2_AGGREGATE_CPU_LIMIT}

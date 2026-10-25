@@ -605,36 +605,51 @@ def _validate_source_binding(binding: Any, *, verify_file_bytes: bool) -> None:
         ):
             raise ExtensionLedgerRefuse(f"source revision file binding is invalid: {name}")
         expected_resolved = expected_path.resolve()
-        try:
-            actual_resolved = Path(path_value).resolve(strict=True)
-        except OSError as exc:
-            raise ExtensionLedgerRefuse(f"source revision file is missing: {name}") from exc
-        if actual_resolved != expected_resolved or not expected_resolved.is_file():
+        # 2026-10-25 owner 裁定（R2 CLOSED_FAILURE 结案后本绑定语义从部署面活校验
+        # 转为来源出处核验）：记录路径按 seal_ast 跨机归位（E:\Seed\... 维护机布局
+        # 在任何检出树上归一到当前 ROOT），归位失败回退字面严格解析；字节核验改
+        # 历史感知（在位字节或 git 历史 blob——S4 同法，渲染变体已含）。这是训练
+        # 治理面文件的 owner 授权例外修改；改动前字节已在 git 历史可取证。
+        from scripts.training import seal_ast
+
+        resolved = seal_ast.resolve_recorded_path(path_value)
+        if resolved is None:
+            try:
+                resolved = Path(path_value).resolve(strict=True)
+            except OSError as exc:
+                raise ExtensionLedgerRefuse(f"source revision file is missing: {name}") from exc
+        if resolved != expected_resolved or not expected_resolved.is_file():
             raise ExtensionLedgerRefuse(f"source revision file path differs: {name}")
         if expected_resolved.is_symlink():
             raise ExtensionLedgerRefuse(f"source revision file must not be a symlink: {name}")
-        if verify_file_bytes and _sha256_file(expected_resolved) != digest:
+        if verify_file_bytes and not seal_ast.verify_path_pin(str(expected_resolved), digest):
             raise ExtensionLedgerRefuse(f"source revision file hash differs: {name}")
         normalized[name] = (expected_resolved, digest)
 
     runner_path, runner_digest = normalized["runner"]
-    if (
-        binding.get("runner_path") != str(runner_path)
-        or binding.get("runner_sha256") != runner_digest
-    ):
+    recorded_runner = binding.get("runner_path")
+    runner_identified = recorded_runner == str(runner_path) or (
+        isinstance(recorded_runner, str)
+        and seal_ast.resolve_recorded_path(recorded_runner) == runner_path
+    )
+    if not runner_identified or binding.get("runner_sha256") != runner_digest:
         raise ExtensionLedgerRefuse("source revision runner binding differs from tracked file row")
     report_path_value = binding.get("report_path")
     report_digest = binding.get("report_sha256")
     expected_report = _SOURCE_REVISION_ARCHITECTURE_REPORT.resolve()
+    report_identified = report_path_value == str(expected_report) or (
+        isinstance(report_path_value, str)
+        and seal_ast.resolve_recorded_path(report_path_value) == expected_report
+    )
     if (
-        report_path_value != str(expected_report)
+        not report_identified
         or not isinstance(report_digest, str)
         or not _HEX_256_RE.fullmatch(report_digest)
         or not expected_report.is_file()
         or expected_report.is_symlink()
     ):
         raise ExtensionLedgerRefuse("source revision architecture report binding is invalid")
-    if verify_file_bytes and _sha256_file(expected_report) != report_digest:
+    if verify_file_bytes and not seal_ast.verify_path_pin(str(expected_report), report_digest):
         raise ExtensionLedgerRefuse("source revision architecture report hash differs")
 
 

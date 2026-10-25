@@ -147,9 +147,11 @@ def _revision_payload(case: dict[str, Any]) -> dict[str, Any]:
         },
         "current_continuation_sources": case["expected_current"],
         "review_report_sha256": _sha(case["review_report"].read_bytes()),
+        # v1.1 schema 绑定不可变原始预算（1.45M/4.2M）——批 B 入库后模块常数
+        # 已是批准的 v1.2/v1.3 有效值，不能从这里取。
         "approved_budget": {
-            "per_arm": runner.PER_ARM_CPU_LIMIT,
-            "aggregate": runner.AGGREGATE_CPU_LIMIT,
+            "per_arm": 1_450_000.0,
+            "aggregate": 4_200_000.0,
         },
     }
 
