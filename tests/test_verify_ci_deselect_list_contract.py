@@ -20,6 +20,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from scripts.training import verify_ci_deselect_list as guard
 from scripts.training.verify_ci_deselect_list import (
     _error_file_of,
     collect_listed_files,
@@ -192,3 +193,22 @@ def test_true_prefix_entry_is_miss_while_old_substring_logic_would_pass(tmp_path
     assert verdict.misses == ["tests/x/test_a.py::test_a(该文件里没有同名用例)"]
     assert verdict.hits == []
     assert verdict.red is True
+
+
+def test_empty_deselect_list_is_exit2(tmp_path: Path, monkeypatch, capsys):
+    """A6（AR 附录 A 顺带项）：fail-closed——清单被删/为空 ⇒ exit 2，
+    不允许退化为「没清单＝全通过」（守卫头注释第 5 条的判据原文）。
+    两个 return-2 通道各自触发一次：
+    ① WORKFLOW 指向不存在的路径（数据源不可读）；
+    ② WORKFLOW 存在但零条目（清单被清空/键名被改）。"""
+    # ① 数据源不可读 ⇒ return 2
+    monkeypatch.setattr(guard, "WORKFLOW", tmp_path / "no_such_ci.yml")
+    assert guard.main() == 2
+
+    # ② 清单被清空 ⇒ return 2（文件合法存在，但没有任何行首 --deselect 条目）
+    empty = tmp_path / "ci.yml"
+    empty.write_text("name: no-deselect-here\n", encoding="utf-8")
+    monkeypatch.setattr(guard, "WORKFLOW", empty)
+    assert guard.main() == 2
+    out = capsys.readouterr().out
+    assert "::error::" in out and "没读到任何" in out and guard.KEY in out
