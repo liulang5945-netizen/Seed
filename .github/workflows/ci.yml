@@ -75,16 +75,21 @@ jobs:
 #     rendering_tolerant_match（与历史通道同一妥协）保持摘除；plan142_face
 #     的 N1-138 source_hashes 混有未入库 checkpoint 条目（无历史可取证），
 #     复册归线 2（产物入库），路径映射对此无能为力。
+#     2026-10-25 LF worktree 判据补测：plan157/160/161 三条在 runner 同构检出
+#     下仍红，根因是消费 reports/ 的在飞 progress/attempt jsonl（未入库）——
+#     归线 2 缺产物族（批次三原「同因绝对路径钉」归类有误，本地红是 N1-121
+#     哈希链、CI 红从来都是缺产物）。线 1 可修面至此收口：n02_c4 已摘、
+#     其余条目的红因各自独立（分隔符摘要/powershell/CR 行为契约/未入库产物）。
 #   · 其余 12 条＝**维护机绝对路径/平台敏感（部分已修待摘）**：封存记录钉了 E:\Seed 绝对路径、或路径
     #     分隔符/平台 IO 参与摘要与计数（n02_c4、reader_transfer、n4_05、n5_20、
     #     n5_17_j、b0_n2 计数、plan142/143/144 runner 登记表、run89 依赖 powershell、
     #     n6_10/12 为 Windows CR 行为契约）——本机（含干净 worktree）皆绿，任何
     #     runner 皆红。重启条件＝封存记录改仓库相对路径或显式跨平台化。
-    #   · 6 条＝**在飞封印/登记债**（plan157/160/161 同因，已并入）（本机亦红，同 n5_38 例外类）：plan142_face 与
-    #     plan157/160/161 的 N1-121 重冻结链（049ab5789 改 plan 后遗留：常量→readiness
-    #     记录→104 枚 manifest 互相钉的多层重冻结，归 owner 封印修复轨道；本轮实测
-    #     硬吃会放大成 40+ 文件级联，已回退让位）；b0_n2 两条＝并行收口 docs 提交
-    #     （6291b72af..b80d19957）后消费面改双列表记账（registry 94＋pending 9）——
+#   · 6 条＝**在飞封印/登记债**（本机亦红，同 n5_38 例外类）：plan157/160/161 消费
+#     reports/ 的在飞 progress/attempt jsonl（未入库；2026-10-25 LF worktree 判据
+#     实测仍红，归线 2）；plan142_face 的 N1-121 重冻结链与未入库 checkpoint 条目
+#     （见上，复册归线 2）；b0_n2 两条＝并行收口 docs 提交
+#     （6291b72af..b80d19957）后消费面改双列表记账（registry 94＋pending 9）——
 #     2026-10-25 semantics 契约迁移完成（pending 感知等式＋stale 语义对齐
 #     disposition_contract），两条摘除回绿。
 #     另 10 条＝Windows/Ubuntu 腿独有（r2_copy_surface/start_charge/source_validation/seal_ast 绿通道：
