@@ -1,7 +1,7 @@
 # N主线当前执行
 
 
-> **2026-10-26 N175执行状态**：seed169/170/171正式训练均完成epoch 1–9，durable checkpoint逐轮写入；epoch01–09均经新进程恢复、optimizer计数与digest往返验证（回执归档reports）。epoch09 loss约1.730–1.738 nats，仅teacher-forced训练信号；seed169/171已进入epoch10，seed170刚完成epoch09。留出正文未读。冻结语料1148题/517family、40epoch×3seed、每seedCPU保护30万/总计90万；正式训练完成后按R/S门盲评。
+> **2026-10-26 N175执行状态**：seed169/170/171正式训练均完成epoch 1–10，durable checkpoint逐轮保存；epoch01–10每轮均经独立新进程恢复、optimizer计数和digest往返验证（回执归档reports）。epoch10 teacher-forced loss约1.700–1.708 nats，仅训练侧拟合信号；seed169进入epoch11，其余两条epoch10已恢复续跑，留出正文未读。固定语料1148题/517family、40epoch×3seed、每seedCPU保护30万/总计90万；完成后按R/S门盲评。
 
 
 > **2026-10-25 N1-175元数据审计更新（覆盖本页旧规模预估，旧实验合同及结果保留）**：冻结源5073条中文标签回复只对应1959个用户parent；排除旧非train的121个root-family后，剩4165条回复、1612个用户parent、595个family，其中rank=0仅1393条。尚未做正文质量/语义去重、未选新留出、未训练。原“≥2000、优先5000对”和3–8万CPU均为审计前预估，不能直接视为已具备的数据规模或执行合同。当日执行队首为**修订N1-175数据合同**：明确优选答案/多参考政策，以独立提问覆盖和可靠目标为先，按实际合格规模冻结root-family隔离与前瞻语义判读；不靠同问低排名回复凑量，也不把名义数量变成无限等待的硬门。原前缀指标保留作机制读数，不独自定义自然语言成功。此轮不改N174判据，不把单seed训练复现推广成稳定能力，也不把本剂量ss较差推广成机制普遍无效。见[元数据审计与后续约束](../../reference/PLAN-N1-175_metadata_feasibility_audit_20261025.md)。
