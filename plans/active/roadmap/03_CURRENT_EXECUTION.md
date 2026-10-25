@@ -70,7 +70,7 @@ CI由用户另行安排的任务负责，本任务不再修改其文件或叠加
 
 2026-10-25后继方案修订：完整架构/驱动力/VX0–VX7工程包统一归[VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)，N只通过09的J1信息消费/J2信用/J3连续状态与条件选择取必要切片。生命页新发展运行台按[VX6设计](../../reference/UI_LIFE_UX_SPEC_20261003.md)分段实施，当前已交付的是连接/未知语义修复，不代表新五视图或自主策略已实现；VX6.0只读研究观察器可独立先行。此设计修订不改本页CC-1终点、预算、冻结面或研究队首。
 
-## 当前唯一下一步：讨论N1-169可学条件语言主链候选
+## 当前唯一下一步：N1-169候选工程与一次train-only标定
 
 恢复v2已按 **CLOSED_COMPLETE** 收口：用户2026-10-25确认48行判读——四端（含parent基线）在冻结decoder下**不可读、不贴题、机械重复**，有历史行不连贯；因此本轮**不能给出配方排序**，属能力负结果而非工程失败。机器事实：`admission_001`工程失败70.703 CPU；`admission_002`四端真实恢复345.578 CPU；`formal_001`完成156/156、逐端39、reuse=0、0更新，**唯一marker在selector前发布**，发布前651.703 CPU/966.015 wall；窗口剩余9,847.531 CPU/12,740.687 wall，无未知尾账。本轮不追加训练、不补题、不再读dev面。
 
@@ -78,7 +78,7 @@ CC-2/N1-167已完成48/48只读矩阵，134.46875 CPU/137.125 wall，四端原�
 
 本轮自动接力N1-168已完成固定8轮、32额外episode/9320目标字节，zero/final独立恢复通过，原parent不变。TF字节24.85%→32.10%、NLL4.396→3.775，但完整汉字TF仅2→4/148，自由前缀匹配≤0.39%，0/4小集门通过。实际fabric、predictive context与response-plan参数改变，不能判无学习；任务收益转化仍未解决。两包模型进程共253.359375 CPU/259.266 wall，低于本轮1800/2400。见[N1-168结案](../../reference/PLAN-N1-168_execution_closeout_20261025.md)。
 
-当前到达真正的主计算/学习链路线讨论节点：[N1-169](../../reference/PLAN-N1-169_shared_language_chain_design_20261025.md)唯一推荐共享任务状态/条件序列信用的新语言主链候选，保留原局部链作同资源对照。当前8轮结果不足以证明更大剂量必败，也不支持只换decoder；不自动加16/64轮，不更换默认模型，不接触已消费dev。
+用户已明确选择“推进共享条件语言主链（推荐）”。当前执行[N1-169](../../reference/PLAN-N1-169_shared_language_chain_design_20261025.md)工程E与一次train-only标定，[SPEC](../../reference/SPEC-N1-169_shared_language_candidate_20261025.md)先冻结：原生TaskState/Core/条件byte生成、opt-in native工厂、完整AdamW/RNG/生成cursor恢复，938177参数（旧对照971427，均≤100万但非精确匹配）。固定seed169/4已见train/64batch/31680目标byte，最多1200 CPU/1800 wall，旧模型/默认入口不变、0 dev。完成工程/实际恢复/标定后一次冻结正式同资源比较；当前不提前宣告候选优越或开始独立query。
 
 旧恢复v2的结案与证据见[恢复v2结案](../../reference/PLAN-R2-EVALUATION-RECOVERY-V2_execution_closeout_20261025.md)、[48行判读](../../reference/PLAN-R2-EVALUATION-RECOVERY-V2_human_review_20261025.md)、[执行审计](../../../reports/taiji_r2_evaluation_recovery_v2_execution_audit_20261025.json)。
 

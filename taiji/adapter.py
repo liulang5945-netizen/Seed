@@ -460,6 +460,25 @@ class TSKV8Adapter(Taiji):
 
         return CognitiveState.from_payload(self._cognitive_state.to_payload(), device=self.device)
 
+    def create_conditional_language_candidate(
+        self, *, scope_id: str, session_id: str, config: Any = None
+    ):
+        """Create an isolated opt-in candidate; never change this adapter's model.
+
+        The native reference is an anchor, not a claim that world/goal organs
+        already consume the new task state. Their consumers require later VX work.
+        """
+        from .conditional_language import ConditionalLanguageCandidate
+        from .task_core import TaskCoreConfig
+
+        candidate = ConditionalLanguageCandidate(config or TaskCoreConfig())
+        state = candidate.new_state(
+            scope_id=scope_id,
+            session_id=session_id,
+            native_state_ref=f"cognitive:{self._cognitive_state.episode_id}:{self._cognitive_state.tick}",
+        )
+        return candidate, state
+
     @property
     def last_task_interpretation(self) -> TaskInterpretation | None:
         """Return the latest semantic candidate admitted by Taiji."""

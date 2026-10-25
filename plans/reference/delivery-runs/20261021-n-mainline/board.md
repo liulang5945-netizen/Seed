@@ -1,7 +1,7 @@
 # N主线交付黑板
 
 - 运行目录：`E:/Seed/plans/reference/delivery-runs/20261021-n-mainline`。
-- 主阶段：恢复v2已按CLOSED_COMPLETE结案（四端真实恢复＋156/156生成＋唯一marker＋用户确认48行判读），能力读数为四端（含基线）不可读、无配方排序；CC-2/N1-167与N1-168完整实证已结案，当前进入N1-169主计算/学习链路线讨论，具体按03。
+- 主阶段：恢复v2已按CLOSED_COMPLETE结案（四端真实恢复＋156/156生成＋唯一marker＋用户确认48行判读），能力读数为四端（含基线）不可读、无配方排序；CC-2/N1-167与N1-168完整实证已结案，用户已采纳N1-169，当前推进共享条件语言候选的完整工程/恢复/一次标定，具体按03。
 - 持续Goal已由用户正式设置，详细WBS见[10](../../../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。
 - 唯一活动队首与实时事实只由[03](../../../active/roadmap/03_CURRENT_EXECUTION.md)维护；本页不再复制额度/进度快照。
 
@@ -74,3 +74,5 @@ N1-167实际完成：48/48矩阵、16真实decoder装配对齐、16错配prompt�
 N1-168实际完成：zero先保存并新进程核对完整digest/原生RNG/计数/首步概率后才更新，32 episode/9320目标byte全部完成，final同样独立恢复；parent原档未变、默认模型未替换。0/1/2/4/8曲线TF24.85%→32.10%、NLL4.396→3.775，完整汉字2→4/148，自由匹配≤0.39%；fabric/ctx/plan参数有实际变化，protected读出按该路径保持。Job全进程118.890625 CPU/122.141 wall，树退出，连同N167共253.359375/259.266。两个包均有限结案，当前N169已形成工程触点与选择代价，唯一推荐新可学条件主链候选＋旧链同资源对照；主路线变化处才停讨论，不继续同配方加轮数。
 
 本轮大步推进验收：N167/N168源与冻结PLAN/SPEC全部SHA复核一致，zero/final文件SHA与两次新进程恢复回执一致，累计32/9320计数正确且parent未变；25项检查通过，7份收束文档113条链接有效，Black/Ruff/差异检查通过。两套实际原始报告、派生统计、费用和独立结案随提交，checkpoint留受控data目录。当前N169是新的模型路线讨论，不继续固定8轮或旧dev。
+
+2026-10-25用户采纳共享条件主链推荐路线。新原生TaskStateV1/Core/ConditionalLanguageCandidate已按VX1/VX3切片实现，native适配器只提供显式隔离工厂；默认模型未改。状态/来源/参数revision及统一next_logits实际消费、编码与读取梯度、detach对照、生成中断恢复和下一AdamW更新同一性均有测试；既有CognitiveState只锚定引用，不声称world/goal/自主器官已接通。待全部合成/恢复检查后以原4train/seed169跑固定64batch，最多1200/1800，正式比较在实测后一次冻结。
