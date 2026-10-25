@@ -1,0 +1,65 @@
+{
+  "schema": "taiji-n1-plan175-v3-durable-checkpoint-restore-v1",
+  "status": "all_seed_epoch13_restore_and_roundtrip_passed",
+  "epoch": 13,
+  "verifier_sha256": "0578feba45c4b560329385e05442a0c0ba5a6789386c51d27ba7a25d75a33ab1",
+  "runner_sha256": "811260bf04ed08b890a3318114140398ecb4fab643c20c5ad6c8614daa187e0a",
+  "candidate_sha256": "09487eebafbcfa2d801eae7986286c3a51322c94cb60fa72818b8392b387593a",
+  "migration_report_sha256": "0a39fd9ece257c4a648741cbece99e0ad235a41968c513b813c97b25af07c447",
+  "training_updates": 0,
+  "heldout_text_read": 0,
+  "process_cpu_seconds": 4.546875,
+  "seeds": [
+    {
+      "seed": 169,
+      "epoch": 13,
+      "checkpoint": "data\\checkpoints\\n1_plan175_v3_scale_20261026\\tf_seed169\\epoch_13.pt",
+      "checkpoint_sha256": "1bb568e8a4f44446af60680d7850e1664a5f093e422f16095d2a338ab4fa80f7",
+      "checkpoint_digest": "97137769260eca2d4b7d09ca6bd3aeb369084c260cfb3d5edc86b5b137070501",
+      "steps": 8744,
+      "target_byte_exposures": 12849203,
+      "cursor": {
+        "seed": 169,
+        "epoch": 13,
+        "batch": 0,
+        "epoch_order_sha256": "e0561801829211d948b59ccbc4bcb124d2be8e6bc4a733f50ffa80aabc9c614e",
+        "dataset_manifest_sha256": "e42ab300c1267da52b29156e0fa9f329d92c00cebbebb9762bf9cce99ca0aff2"
+      },
+      "roundtrip": "passed"
+    },
+    {
+      "seed": 170,
+      "epoch": 13,
+      "checkpoint": "data\\checkpoints\\n1_plan175_v3_scale_20261026\\tf_seed170\\epoch_13.pt",
+      "checkpoint_sha256": "11fa93d706e98f1255b05988732746a084f9a477b9e50d889fcbc51cb239fd27",
+      "checkpoint_digest": "f6f3fb8603644feda89189632ed1254a404a12a3a6938654c6a2fa435c3c2ab3",
+      "steps": 8744,
+      "target_byte_exposures": 12849203,
+      "cursor": {
+        "seed": 170,
+        "epoch": 13,
+        "batch": 0,
+        "epoch_order_sha256": "90214554137895bc1f251dac67d336f54c6858cb0d0b6f5385a4fdfdb39310ab",
+        "dataset_manifest_sha256": "e42ab300c1267da52b29156e0fa9f329d92c00cebbebb9762bf9cce99ca0aff2"
+      },
+      "roundtrip": "passed"
+    },
+    {
+      "seed": 171,
+      "epoch": 13,
+      "checkpoint": "data\\checkpoints\\n1_plan175_v3_scale_20261026\\tf_seed171\\epoch_13.pt",
+      "checkpoint_sha256": "604386ad2f8d3b6c2799380cf7caea31aec7fcc935aae328abe0a0ff666176d2",
+      "checkpoint_digest": "898dafb03634949401ee3197dfa418e05f7a1cec6b2638a778b7c6e9ef596191",
+      "steps": 8744,
+      "target_byte_exposures": 12849203,
+      "cursor": {
+        "seed": 171,
+        "epoch": 13,
+        "batch": 0,
+        "epoch_order_sha256": "861137b1d98bc6aa672b901129680d64c267222d93cefa4427c216a679bd4ecc",
+        "dataset_manifest_sha256": "e42ab300c1267da52b29156e0fa9f329d92c00cebbebb9762bf9cce99ca0aff2"
+      },
+      "roundtrip": "passed"
+    }
+  ]
+}
