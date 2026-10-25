@@ -37,9 +37,15 @@ jobs:
     # 【批次一（㊵-467/469，6 条→2026-10-25 摘 1 剩 5 条）】依赖 CI 机器上不存在的东西：未入库的实验产物／语料、
     # `reports/` 下的读数、runner 的工作目录形态与编码路径。**它们在本机逐条皆绿（已实测），
     # 在 runner 上永久红。**其中 `test_continuous_structural_growth_gate` 一条（族 A
-    # 第四例）已于 2026-10-25 随 owner 裁定的方案乙摘除：admission 阈值判定改
-    # math.isclose 相对容差（taiji/interaction_group_online.py 的
-    # ADMISSION_FLOAT_TOLERANCE），族 A 全部 8 条同日摘除，红绿语义钉在
+    # 第四例）曾于 2026-10-25 随 owner 裁定的方案乙摘除（admission 阈值判定改
+    # math.isclose 相对容差，taiji/interaction_group_online.py 的
+    # ADMISSION_FLOAT_TOLERANCE），但其翻转是**量级型**：run 40185913504 插桩读数
+    # ＝resource_cost=3.0 精确超预算 2.0（interaction 0.6／uncertainty 1.165 均在
+    # 安全区），同腿又绿过一次＝上游模型差异改变 select 候选致 episode 消耗摆动
+    # ——isclose 不适用，同日复册待 owner 二次裁定（提该 eval 的
+    # maximum_resource_cost 或 select 确定化），读数与方案留痕见
+    # plans/active/roadmap/11_CI_FLOAT_EVIDENCE_FOR_OWNER_20261025.md。方案乙
+    # 本体对族 A 其余 7 条生效且已实证，红绿语义钉在
     # test_interaction_group_online 的
     # test_online_admission_thresholds_absorb_cross_platform_float_noise。
     # 其余条目的重启条件：① data/simple_zh 语料入库；② output/a31_chunked_self 产物入库；
@@ -100,10 +106,11 @@ jobs:
 #   · 族 A 第五例 7 条（relation 两测＋structural-gain 门族 5 条）已于 2026-10-25
 #     随方案乙（admission 判定改 isclose 相对容差）摘除，翻转记录、代码位点与
 #     裁定留痕见 plans/active/roadmap/11_CI_FLOAT_EVIDENCE_FOR_OWNER_20261025.md。
-#     截至 2026-10-25 清单共 94 条×两腿。
+#     截至 2026-10-25（⑤复册后）清单共 95 条×两腿。
     env:
       DSH_CI_DESELECT: >-
         --deselect tests/taiji_native/test_a30_artifact_sha_drift_audit.py::test_known_bad_anchor_is_visible_and_known_good_is_clean
+        --deselect tests/taiji_native/test_continuous_structural_growth.py::test_continuous_structural_growth_gate
         --deselect tests/taiji_native/test_a30_probe_help_runs.py::test_probe_help_exits_zero_and_lists_every_flag
         --deselect tests/taiji_native/test_a30_self_answers_report_face.py::test_fresh_target_is_accepted
         --deselect tests/taiji_native/test_g35_checkpoint_overwrite_guard.py::test_escape_flag_reaches_the_write_path
@@ -672,6 +679,7 @@ jobs:
     env:
       DSH_CI_DESELECT: >-
         --deselect tests/taiji_native/test_a30_artifact_sha_drift_audit.py::test_known_bad_anchor_is_visible_and_known_good_is_clean
+        --deselect tests/taiji_native/test_continuous_structural_growth.py::test_continuous_structural_growth_gate
         --deselect tests/taiji_native/test_a30_probe_help_runs.py::test_probe_help_exits_zero_and_lists_every_flag
         --deselect tests/taiji_native/test_a30_self_answers_report_face.py::test_fresh_target_is_accepted
         --deselect tests/taiji_native/test_g35_checkpoint_overwrite_guard.py::test_escape_flag_reaches_the_write_path
