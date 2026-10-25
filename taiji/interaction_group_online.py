@@ -18,6 +18,13 @@ from dataclasses import dataclass, replace
 from typing import Any
 
 from .contracts import Outcome
+
+# 2026-10-25 owner 裁定（方案乙，plans/active/roadmap/11_CI_FLOAT_EVIDENCE_FOR_OWNER_20261025.md）：
+# admission 阈值判定用 math.isclose 相对容差吸收跨平台浮点渲染差——公开 runner
+# 池的 CPU/BLAS 在阈值附近会算出 1e-16~1e-18 级噪声，翻转严格不等号（族 A 第五例
+# 实测：relation 两测 Ubuntu 三次两红一绿、structural-gain 门族 Windows 两轮绿后
+# 翻红）。容差内的值视为恰在阈值上（准入）；超过容差的真实违规任何平台都仍拒绝。
+ADMISSION_FLOAT_TOLERANCE = 1e-12
 from .interaction_group_transfer import (
     InteractionGroupTransferCandidate,
     InteractionGroupTransferLearner,
@@ -547,11 +554,26 @@ class InteractionGroupOnlineLearner:
             return "outcome_not_terminal"
         if feedback.outcome.success is not True:
             return "outcome_unsuccessful"
-        if feedback.realized_interaction < self.minimum_interaction:
+        if feedback.realized_interaction < self.minimum_interaction and not math.isclose(
+            feedback.realized_interaction,
+            self.minimum_interaction,
+            rel_tol=ADMISSION_FLOAT_TOLERANCE,
+            abs_tol=ADMISSION_FLOAT_TOLERANCE,
+        ):
             return "interaction_below_admission_threshold"
-        if feedback.uncertainty > self.maximum_feedback_uncertainty:
+        if feedback.uncertainty > self.maximum_feedback_uncertainty and not math.isclose(
+            feedback.uncertainty,
+            self.maximum_feedback_uncertainty,
+            rel_tol=ADMISSION_FLOAT_TOLERANCE,
+            abs_tol=ADMISSION_FLOAT_TOLERANCE,
+        ):
             return "feedback_uncertainty_exceeds_admission_threshold"
-        if feedback.resource_cost > self.maximum_resource_cost:
+        if feedback.resource_cost > self.maximum_resource_cost and not math.isclose(
+            feedback.resource_cost,
+            self.maximum_resource_cost,
+            rel_tol=ADMISSION_FLOAT_TOLERANCE,
+            abs_tol=ADMISSION_FLOAT_TOLERANCE,
+        ):
             return "feedback_resource_cost_exceeds_admission_budget"
         if not feedback.event_ids:
             return "native_event_evidence_missing"

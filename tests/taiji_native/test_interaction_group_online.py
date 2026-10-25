@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pytest
 
 from taiji import (
@@ -208,3 +210,109 @@ def test_online_feedback_rejects_holdout_partition_and_tampered_checkpoint() -> 
     tampered["minimum_interaction"] = 0.25
     with pytest.raises(ValueError, match="checkpoint digest"):
         InteractionGroupOnlineLearner.from_checkpoint(tampered)
+
+
+def test_online_admission_thresholds_absorb_cross_platform_float_noise() -> None:
+    """方案乙（owner 2026-10-25 裁定）：admission 阈值判定用 isclose 相对容差。
+
+    族 A 第五例在 runner 上的翻转形态是阈值附近 1e-15 级浮点噪声翻转严格
+    不等号（relation 两测 Ubuntu 三次两红一绿、structural-gain 门族 Windows
+    两轮绿后翻红）。这里两条方向都**确定性构造**——绿向＝恰在阈值下方
+    1e-15 的值按容差视为在阈值上准入；红向＝真实违规（1e-3）任何平台都
+    拒绝——不依赖本机与 runner 的浮点差异本身。
+    """
+    outcome = Outcome(
+        "online-intent",
+        reward=1.0,
+        success=True,
+        terminal=True,
+        provenance="native-workbench",
+        tick=1,
+    )
+    controller = InteractionGroupOnlineLearner(_learner(), maximum_resource_cost=2.0)
+    parent_digest = str(controller.checkpoint()["checkpoint_digest"])
+    feedback = _feedback(controller, parent_digest=parent_digest, outcome=outcome, suffix="tol")
+    interaction = feedback.realized_interaction
+    noise = 1e-15
+
+    near = InteractionGroupOnlineLearner(
+        _learner(), minimum_interaction=interaction + noise, maximum_resource_cost=2.0
+    )
+    near_feedback = _feedback(
+        near,
+        parent_digest=str(near.checkpoint()["checkpoint_digest"]),
+        outcome=outcome,
+        suffix="tol-near",
+    )
+    assert near.apply_feedback(near_feedback).status == "applied"
+
+    far = InteractionGroupOnlineLearner(
+        _learner(), minimum_interaction=interaction + 1e-3, maximum_resource_cost=2.0
+    )
+    far_feedback = _feedback(
+        far,
+        parent_digest=str(far.checkpoint()["checkpoint_digest"]),
+        outcome=outcome,
+        suffix="tol-far",
+    )
+    admission = far.apply_feedback(far_feedback)
+    assert admission.status == "rejected"
+    assert admission.reason == "interaction_below_admission_threshold"
+
+    uncertain = InteractionGroupOnlineLearner(
+        _learner(),
+        maximum_feedback_uncertainty=0.5 - noise,
+        maximum_resource_cost=2.0,
+    )
+    uncertain_feedback = replace(
+        _feedback(
+            uncertain,
+            parent_digest=str(uncertain.checkpoint()["checkpoint_digest"]),
+            outcome=outcome,
+            suffix="tol-unc",
+        ),
+        uncertainty=0.5,
+    )
+    assert uncertain.apply_feedback(uncertain_feedback).status == "applied"
+
+    over = InteractionGroupOnlineLearner(
+        _learner(),
+        maximum_feedback_uncertainty=0.5 - 1e-3,
+        maximum_resource_cost=2.0,
+    )
+    over_feedback = replace(
+        _feedback(
+            over,
+            parent_digest=str(over.checkpoint()["checkpoint_digest"]),
+            outcome=outcome,
+            suffix="tol-over",
+        ),
+        uncertainty=0.5,
+    )
+    admission = over.apply_feedback(over_feedback)
+    assert admission.status == "rejected"
+    assert admission.reason == "feedback_uncertainty_exceeds_admission_threshold"
+
+    budget = InteractionGroupOnlineLearner(
+        _learner(), maximum_resource_cost=feedback.resource_cost - noise
+    )
+    budget_feedback = _feedback(
+        budget,
+        parent_digest=str(budget.checkpoint()["checkpoint_digest"]),
+        outcome=outcome,
+        suffix="tol-budget",
+    )
+    assert budget.apply_feedback(budget_feedback).status == "applied"
+
+    over_budget = InteractionGroupOnlineLearner(
+        _learner(), maximum_resource_cost=feedback.resource_cost - 1e-3
+    )
+    over_budget_feedback = _feedback(
+        over_budget,
+        parent_digest=str(over_budget.checkpoint()["checkpoint_digest"]),
+        outcome=outcome,
+        suffix="tol-over-budget",
+    )
+    admission = over_budget.apply_feedback(over_budget_feedback)
+    assert admission.status == "rejected"
+    assert admission.reason == "feedback_resource_cost_exceeds_admission_budget"

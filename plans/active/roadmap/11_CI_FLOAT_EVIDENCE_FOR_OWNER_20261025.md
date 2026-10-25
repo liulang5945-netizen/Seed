@@ -1,6 +1,11 @@
 # CI 浮点判侧证据包（族 A 第五例）——供 owner 裁定
 
-状态：**仅证据，未实施任何代码改动**。裁定前不动 `taiji/interaction_group_online.py`。
+状态：**owner 已于 2026-10-25 裁定方案乙并实施**（admission 阈值判定改
+`math.isclose` 相对容差，`taiji/interaction_group_online.py` 的
+`ADMISSION_FLOAT_TOLERANCE = 1e-12`；族 A 全部 8 条 deselect 同日摘除，
+红绿语义钉在 `test_interaction_group_online` 的
+`test_online_admission_thresholds_absorb_cross_platform_float_noise`）。
+本文件保留为裁定留痕与实施依据。
 背景：2026-10-24/25 CI 修绿期间，8 条测试因跨 runner 浮点判侧翻转入 deselect
 （ci.yml 批次三「族 A 第五例」），按批次一⑤先例「不修核心库＝不动研究语义」搁置。
 

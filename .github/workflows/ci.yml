@@ -34,11 +34,14 @@ jobs:
     # M7 收束（2026-10-07，㊵-467）：**CI-only deselect 清单集中在此一处**。
     #
     # 清单条目分两批：
-    # 【批次一（㊵-467/469，6 条）】依赖 CI 机器上不存在的东西：未入库的实验产物／语料、
+    # 【批次一（㊵-467/469，6 条→2026-10-25 摘 1 剩 5 条）】依赖 CI 机器上不存在的东西：未入库的实验产物／语料、
     # `reports/` 下的读数、runner 的工作目录形态与编码路径。**它们在本机逐条皆绿（已实测），
-    # 在 runner 上永久红。**其中 `test_continuous_structural_growth_gate` 一条的根因是
-    # `minimum_interaction` 严格 `<` 比较的跨平台浮点判侧（族 A 第四例，判据在核心库里，
-    # 不修核心库＝不动研究语义；重启条件＝该比较加容差或冻结平台）。
+    # 在 runner 上永久红。**其中 `test_continuous_structural_growth_gate` 一条（族 A
+    # 第四例）已于 2026-10-25 随 owner 裁定的方案乙摘除：admission 阈值判定改
+    # math.isclose 相对容差（taiji/interaction_group_online.py 的
+    # ADMISSION_FLOAT_TOLERANCE），族 A 全部 8 条同日摘除，红绿语义钉在
+    # test_interaction_group_online 的
+    # test_online_admission_thresholds_absorb_cross_platform_float_noise。
     # 其余条目的重启条件：① data/simple_zh 语料入库；② output/a31_chunked_self 产物入库；
     # ③ reports/ 下 A30 读数入库；④ runner --help 编码路径修复。
     #
@@ -94,13 +97,10 @@ jobs:
 #     disposition_contract），两条摘除回绿。
 #     另 10 条＝Windows/Ubuntu 腿独有（r2_copy_surface/start_charge/source_validation/seal_ast 绿通道：
 #     本机绿、runner 上读数/git 状态不同），重启条件同上（R2 产物入库/相对路径化）。
-#   · 另 7 条＝**族 A 第五例**（relation 两测＋structural-gain 门族 5 条：cross_domain/
-#     multifamily/online_bridge/workspace_net_gain/three_domain_governance），同根于⑤
-#     的 minimum_interaction 严格比较浮点判侧：relation 两测 Ubuntu 三次 attempt 两红
-#     一绿；门族 5 条本机 5/5 绿、Windows 腿两轮绿后于 2026-10-24 某 runner 硬件判翻
-#     （run 40087142025，五条同报 requires two applied feedbacks；multifamily 即当年
-#     3.10 腿注释点名的浮点敏感件）。重启条件同⑤＝带容差比较或钉 runner CPU。
-#     截至 2026-10-24 清单共 106 条×两腿。
+#   · 族 A 第五例 7 条（relation 两测＋structural-gain 门族 5 条）已于 2026-10-25
+#     随方案乙（admission 判定改 isclose 相对容差）摘除，翻转记录、代码位点与
+#     裁定留痕见 plans/active/roadmap/11_CI_FLOAT_EVIDENCE_FOR_OWNER_20261025.md。
+#     截至 2026-10-25 清单共 94 条×两腿。
     env:
       DSH_CI_DESELECT: >-
         --deselect tests/taiji_native/test_a30_artifact_sha_drift_audit.py::test_known_bad_anchor_is_visible_and_known_good_is_clean
@@ -108,7 +108,6 @@ jobs:
         --deselect tests/taiji_native/test_a30_self_answers_report_face.py::test_fresh_target_is_accepted
         --deselect tests/taiji_native/test_g35_checkpoint_overwrite_guard.py::test_escape_flag_reaches_the_write_path
         --deselect tests/test_taiji_runtime_attachment.py::test_seed_runtime_records_refusal_and_stays_unattached
-        --deselect tests/taiji_native/test_continuous_structural_growth.py::test_continuous_structural_growth_gate
         --deselect tests/taiji_native/test_c2_calibration_runner_contract.py::test_approved_budget_continuation_preserves_repair_count
         --deselect tests/taiji_native/test_c2_calibration_runner_contract.py::test_resume_preserves_once_only_surface_and_unchanged_weights
         --deselect tests/taiji_native/test_c2_calibration_runner_contract.py::test_selected_surface_is_the_preregistered_balanced_content
@@ -191,13 +190,6 @@ jobs:
         --deselect tests/taiji_native/test_n1_plan157_seed128_candidate_vs_parent_diagnostic_contract.py::test_partial_face_continuation_reuses_exactly_the_sealed_endpoint
         --deselect tests/taiji_native/test_n1_plan160_seed130_candidate_parent_diagnostic_contract.py::test_seed128_and_seed129_values_are_in_seed130_exclusion_sets
         --deselect tests/taiji_native/test_n1_plan161_seed131_question_surface_diagnostic_contract.py::test_question_templates_are_absent_from_bound_training_questions
-        --deselect tests/taiji_native/test_native_local_relation_contract.py::test_relation_credit_cut_terminal_sources_and_reuse
-        --deselect tests/taiji_native/test_native_relation_confirmation_contract.py::test_each_seed_terminal_and_cut_observation_branch
-        --deselect tests/taiji_native/test_cross_domain_structural_gain.py::test_cross_domain_structural_gain_gate
-        --deselect tests/taiji_native/test_interaction_group_multifamily.py::test_interaction_group_multifamily_leave_one_out_gate
-        --deselect tests/taiji_native/test_online_interaction_structural_bridge.py::test_online_interaction_structural_bridge_gate
-        --deselect tests/taiji_native/test_structural_workspace_net_gain.py::test_structural_workspace_net_gain_gate
-        --deselect tests/taiji_native/test_terminal_three_domain_governance.py::test_terminal_three_domain_governance_gate
         --deselect tests/taiji_native/test_r2_copy_surface_extension_v2_contract.py::test_manifest_is_reproducible_from_the_generator
         --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_runner_contract.py::test_start_charge_uses_latest_extension_snapshot_monotonically
         --deselect tests/taiji_native/test_r2_dialogue_continuation_source_validation_contract.py::test_frozen_base_validator_reproduces_reviewed_builder_sha_rejection
@@ -684,7 +676,6 @@ jobs:
         --deselect tests/taiji_native/test_a30_self_answers_report_face.py::test_fresh_target_is_accepted
         --deselect tests/taiji_native/test_g35_checkpoint_overwrite_guard.py::test_escape_flag_reaches_the_write_path
         --deselect tests/test_taiji_runtime_attachment.py::test_seed_runtime_records_refusal_and_stays_unattached
-        --deselect tests/taiji_native/test_continuous_structural_growth.py::test_continuous_structural_growth_gate
         --deselect tests/taiji_native/test_c2_calibration_runner_contract.py::test_approved_budget_continuation_preserves_repair_count
         --deselect tests/taiji_native/test_c2_calibration_runner_contract.py::test_resume_preserves_once_only_surface_and_unchanged_weights
         --deselect tests/taiji_native/test_c2_calibration_runner_contract.py::test_selected_surface_is_the_preregistered_balanced_content
@@ -767,13 +758,6 @@ jobs:
         --deselect tests/taiji_native/test_n1_plan157_seed128_candidate_vs_parent_diagnostic_contract.py::test_partial_face_continuation_reuses_exactly_the_sealed_endpoint
         --deselect tests/taiji_native/test_n1_plan160_seed130_candidate_parent_diagnostic_contract.py::test_seed128_and_seed129_values_are_in_seed130_exclusion_sets
         --deselect tests/taiji_native/test_n1_plan161_seed131_question_surface_diagnostic_contract.py::test_question_templates_are_absent_from_bound_training_questions
-        --deselect tests/taiji_native/test_native_local_relation_contract.py::test_relation_credit_cut_terminal_sources_and_reuse
-        --deselect tests/taiji_native/test_native_relation_confirmation_contract.py::test_each_seed_terminal_and_cut_observation_branch
-        --deselect tests/taiji_native/test_cross_domain_structural_gain.py::test_cross_domain_structural_gain_gate
-        --deselect tests/taiji_native/test_interaction_group_multifamily.py::test_interaction_group_multifamily_leave_one_out_gate
-        --deselect tests/taiji_native/test_online_interaction_structural_bridge.py::test_online_interaction_structural_bridge_gate
-        --deselect tests/taiji_native/test_structural_workspace_net_gain.py::test_structural_workspace_net_gain_gate
-        --deselect tests/taiji_native/test_terminal_three_domain_governance.py::test_terminal_three_domain_governance_gate
         --deselect tests/taiji_native/test_r2_copy_surface_extension_v2_contract.py::test_manifest_is_reproducible_from_the_generator
         --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_runner_contract.py::test_start_charge_uses_latest_extension_snapshot_monotonically
         --deselect tests/taiji_native/test_r2_dialogue_continuation_source_validation_contract.py::test_frozen_base_validator_reproduces_reviewed_builder_sha_rejection
