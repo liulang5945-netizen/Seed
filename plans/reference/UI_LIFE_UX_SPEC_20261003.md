@@ -179,4 +179,4 @@ VX6.0首个fixture列表在开工时一次冻结为：正常推进、已知停�
 
 旧main panel id和现有runtime控制API先保留；新DTO版本须明确向后兼容或拒绝策略，不能静默把旧字段改叫学得驱力。Legacy默认不新增装配，只移动入口与作用域说明。旧主动模式按钮可以保留在兼容工具，但不得在原生总览仍以无来源“喂食/睡眠/玩耍”出现。模型根价值/参数、研究预算和训练checkpoint没有前端直接编辑入口。
 
-视觉规则见[修订后的视觉方向](UI_LIFE_VISUAL_DIRECTION_20261003.md)；当前已实现API的唯一说明仍为[Life subsystem](../../taiji-harness/docs/subsystems/life.md)。本页提出的development/researchRuns DTO和命令尚待对应开发包实施，设计完成不等于接口存在或模型已自主。
+视觉采用[Seed认知观测台风格](UI_LIFE_VISUAL_DIRECTION_20261003.md)：白/墨蓝灰与Seed绿、单一当前重点、真实事件脉络和舒展留白；字阶、主题token、五视图构图及审美验收以该规格为准。当前已实现API的唯一说明仍为[Life subsystem](../../taiji-harness/docs/subsystems/life.md)。本页提出的development/researchRuns DTO和命令尚待对应开发包实施，设计完成不等于接口存在或模型已自主。
