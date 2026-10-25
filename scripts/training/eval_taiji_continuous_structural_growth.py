@@ -302,6 +302,14 @@ def evaluate() -> dict[str, object]:
     runs: list[dict[str, object]] = []
     for seed in LEARNER_SEEDS:
         controller, feedbacks, first_rounds = _run_online_feedbacks(corpus=corpus, seed=seed)
+        # Owner 2026-10-25 裁定 (i)：本 eval 的扩展相 admission 资源预算 2.0→4.0。
+        # 依据＝run 40185913504 插桩读数：第二循环 (d,e) episode 的 resource_cost=3.0
+        # 精确超 2.0（interaction 0.6／uncertainty 1.165 均在安全区），同腿又绿过
+        # 一次＝上游模型数值的平台差异改变 select 候选致 episode 消耗摆动——量级型
+        # 发散，isclose 容差不适用。4.0 覆盖该家族固有消耗并留余量；结构增益判据
+        # 本身不变（证据与方案见 plans/active/roadmap/
+        # 11_CI_FLOAT_EVIDENCE_FOR_OWNER_20261025.md）。
+        controller.maximum_resource_cost = 4.0
         controller, feedbacks, all_rounds = _extend_online_feedbacks(
             controller,
             feedbacks,

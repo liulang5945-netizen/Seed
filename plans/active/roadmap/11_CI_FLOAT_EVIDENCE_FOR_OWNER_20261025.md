@@ -71,6 +71,10 @@ uncertainty=1.165359456941537, resource_cost=3.0`——与静态分析吻合（i
 （i）该 eval 的 `maximum_resource_cost` 2.0 提到覆盖 (d,e) 家族固有消耗（参数级修正，
 不改结构增益判据）；或（ii）`_extend_online_feedbacks` 的两轮 select 确定化（钉住与
 第一轮一致的候选路径）。裁定前该测保持 deselect。
+
+**2026-10-25 二次裁定落地**：owner 裁 (i)——该 eval 扩展相 admission 资源预算
+2.0→4.0（eval_taiji_continuous_structural_growth.py 的 evaluate()，判据本身
+不变，本机绿 47.65s），deselect 条目摘除。
 另：本轮 b0_n2 又接两次登记（N1-167/168 收口脚本，registry 94/pending 12/live 106）——
 并行会话结案波仍在落盘，按 CI_CONTRACT_RULES §2.1 逐波收口。
 **2026-10-25 静态分析更新（continuous_structural_growth 专属）**：方案乙
