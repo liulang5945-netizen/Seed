@@ -1,0 +1,114 @@
+# R-S4c（ADR-S4 §5.1/§6.3，2026-10-26）：≤6m 快通道——lint/black/frozen-marker/mypy-core。
+#
+# 定位：**信息通道，不是门禁替代**。CI（ci.yml）仍是唯一发布门禁；本 workflow 的
+# 价值是让每一刀落地后 ~6m 内就知道 lint/format/mypy 是否挂了，而不必等 1.5h+ 的全量腿。
+# 与 ci.yml 同名检查使用**完全相同的钉版本与运行块**（R7 纪律：凡拿输出当判据的工具
+# 必须钉版本）⇒ 两通道在同一 commit 上的读数天然一致（ADR §6.3 ⑤ 验证项 3）。
+#
+# 与 ci-fast-lint 并发组独立：`lint-` 前缀，不与 ci.yml 的 `${{ github.ref }}` 组冲突
+# ——两条 workflow 不会互相取消，快通道的连推取消也不影响主腿结论。
+#
+# 快通道**不跑**：torch 全量测试、8 个 verify 脚本、deselect 守卫、任何 pytest
+# （这些要么贵、要么必须钉在 ci.yml 原处，见 ADR §5.1）。
+name: CI fast lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHONUTF8: "1"
+
+jobs:
+  lint-fast:
+    runs-on: ubuntu-latest
+    # 目标 ≤6m（ADR §5.1）；10m 兜 pip 冷缓存（torch CPU wheel ~200MB 下载）。
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      # 为什么装 torch（ADR §5.1 原文带问号"torch? 不需要 torch"，此处以实测收口）：
+      # mypy core 棘轮（baseline 0）跑 `mypy seed taiji`，缺 torch 时每个
+      # `import torch` 都报 "Cannot find implementation or library stub"
+      # ⇒ 错误数 >0 ⇒ 棘轮假红，且读数与 ci.yml 不可比。要读数一致就必须与
+      # ci.yml 同一安装面（R7：同一 commit 上两个通道的检查结果必须一致）。
+      - name: Install torch (CPU)
+        run: pip install torch==2.13.0+cpu --index-url https://download.pytorch.org/whl/cpu
+
+      # 与 ci.yml 的 Install test dependencies 同一钉版本面（去掉 pytest/pytest-cov/
+      # pip-audit 三个本通道不消费的项；ruff/black/mypy 与 ci.yml 逐字一致）。
+      - name: Install lint toolchain (pinned, aligned with ci.yml)
+        run: pip install sentencepiece httpx fastapi python-multipart pydantic anyio cryptography numpy "psutil>=5.9.0,<7.0.0" ruff==0.16.4 black==26.5.1 mypy==2.3.1
+
+      - name: Install package (editable)
+        run: pip install -e . --no-deps
+
+      # ── 以下四个运行块与 ci.yml 同名 step 逐字一致（读数可比性）──
+      - name: Lint with ruff
+        run: ruff check .
+
+      - name: Lint with ruff bugbear/simplify rules (ratchet, baseline 0)
+        env:
+          RUFF_BSIM_BASELINE: "0"
+        run: |
+          set -o pipefail
+          ruff check . --select B,SIM --ignore B008 | tee ruff-bsim.log || true
+          if grep -q "^All checks passed" ruff-bsim.log; then
+            errors=0
+          else
+            errors=$(grep -oE "^Found [0-9]+ error" ruff-bsim.log | grep -oE "[0-9]+" | head -n1)
+          fi
+          if [ -z "$errors" ]; then
+            echo "::error::无法从 ruff 输出解析违规数——门禁不能在解析失败时静默放行"
+            tail -n 20 ruff-bsim.log
+            exit 1
+          fi
+          echo "ruff B/SIM violations: $errors (baseline $RUFF_BSIM_BASELINE)"
+          if [ "$errors" -gt "$RUFF_BSIM_BASELINE" ]; then
+            echo "::error::B/SIM 违规 $errors 超过基线 $RUFF_BSIM_BASELINE，存在新增退化"
+            exit 1
+          fi
+          if [ "$errors" -lt "$RUFF_BSIM_BASELINE" ]; then
+            echo "::notice::B/SIM 违规已降至 $errors，请把 RUFF_BSIM_BASELINE 下调至该值以单向收紧棘轮"
+          fi
+
+      - name: Format check with black
+        run: black --check .
+
+      - name: Audit frozen markers against the formatter
+        run: python scripts/training/audit_frozen_marker_formatter_conflict.py --no-write
+
+      - name: Type check core modules with mypy (ratchet, baseline 0)
+        env:
+          MYPY_CORE_BASELINE: "0"
+        run: |
+          set -o pipefail
+          mypy --follow-imports=silent seed taiji | tee mypy-core.log || true
+          if grep -q "^Success: no issues found" mypy-core.log; then
+            errors=0
+          else
+            errors=$(grep -oE "^Found [0-9]+ error" mypy-core.log | grep -oE "[0-9]+" | head -n1)
+          fi
+          if [ -z "$errors" ]; then
+            echo "::error::无法从 mypy 输出解析错误数——门禁不能在解析失败时静默放行"
+            tail -n 20 mypy-core.log
+            exit 1
+          fi
+          echo "mypy core errors: $errors (baseline $MYPY_CORE_BASELINE)"
+          if [ "$errors" -gt "$MYPY_CORE_BASELINE" ]; then
+            echo "::error::核心类型错误 $errors 超过基线 $MYPY_CORE_BASELINE，存在新增类型退化"
+            exit 1
+          fi
+          if [ "$errors" -lt "$MYPY_CORE_BASELINE" ]; then
+            echo "::notice::核心类型错误已降至 $errors，请把 MYPY_CORE_BASELINE 下调至该值以单向收紧棘轮"
+          fi
