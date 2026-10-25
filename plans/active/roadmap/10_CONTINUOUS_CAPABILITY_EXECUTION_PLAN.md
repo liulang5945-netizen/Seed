@@ -1,12 +1,12 @@
 # 态极持续能力执行与主线接力计划
 
 
-> **2026-10-26 N175执行状态**：seed169/170/171正式训练均完成epoch 1–11，durable checkpoint逐轮保存；epoch01–11每轮均经新进程恢复、optimizer计数与digest往返验证（回执归档reports）。epoch11 teacher-forced loss约1.674–1.683 nats，仅训练拟合信号；seed171进入epoch12，另两条从epoch11检查点继续，留出正文未读。训练固定语料1148题/517family、40epoch×3seed，单seedCPU保护30万/合计90万。
+> **2026-10-26 N175执行状态**：seed169/170/171 V3完整回答TF正式训练均完成epoch 1–12/40，durable checkpoint逐轮保存；epoch01–12每轮均经新进程恢复、optimizer计数与digest往返验证（回执归档reports）。epoch12 teacher-forced loss分别1.6569/1.6479/1.6568 nats，仅属训练拟合信号；三条续训已进入epoch13，精确游标见progress账本。训练固定语料1148题/517family，单seedCPU保护30万/合计90万；64-family留出正文仍未读。
 
 
 > **2026-10-25 N1-175元数据审计更新（覆盖本页旧规模预估，旧实验合同及结果保留）**：冻结源5073条中文标签回复只对应1959个用户parent；排除旧非train的121个root-family后，剩4165条回复、1612个用户parent、595个family，其中rank=0仅1393条。尚未做正文质量/语义去重、未选新留出、未训练。原“≥2000、优先5000对”和3–8万CPU均为审计前预估，不能直接视为已具备的数据规模或执行合同。当前执行队首为**修订N1-175数据合同**：明确优选答案/多参考政策，以独立提问覆盖和可靠目标为先，按实际合格规模冻结root-family隔离与前瞻语义判读；不靠同问低排名回复凑量，也不把名义数量变成无限等待的硬门。原前缀指标保留作机制读数，不独自定义自然语言成功。此轮不改N174判据，不把单seed训练复现推广成稳定能力，也不把本剂量ss较差推广成机制普遍无效。见[元数据审计与后续约束](../../reference/PLAN-N1-175_metadata_feasibility_audit_20261025.md)。
 
-更新：2026-10-25，Asia/Shanghai。当前研究动作、有效预算与队首只由[03](03_CURRENT_EXECUTION.md)维护。本页负责当前N的有限出口、N与下一主线的实施交接；[09](09_NEXT_MAINLINE_PLAN.md)保存N机制/交汇身份，[VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)是下一主线架构、驱动力及VX工程包的唯一方案正文，生命页具体设计由[体验规格](../../reference/UI_LIFE_UX_SPEC_20261003.md)维护。
+更新：2026-10-26，Asia/Shanghai。当前研究动作、有效预算与队首只由[03](03_CURRENT_EXECUTION.md)维护。本页负责当前N的有限出口、N与下一主线的实施交接；[09](09_NEXT_MAINLINE_PLAN.md)保存N机制/交汇身份，[VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)是下一主线架构、驱动力及VX工程包的唯一方案正文，生命页具体设计由[体验规格](../../reference/UI_LIFE_UX_SPEC_20261003.md)维护。
 
 ## 1. 本次修订及职责
 
@@ -162,4 +162,4 @@ D1–D6保留为实质证据/范围决策点，不是每个文件的重复审批
 
 2026-10-25 N1-173已实际完成并按CLOSED_BOUNDED结案，出口INCONCLUSIVE_ROLLOUT：新增rollout trainer与独立checkpoint格式，6/6契约测试；折0/1各120次整批更新，scheduled sampling概率末步.469。训练TF仍.9805/.9648、损失5.55→.41/.47，但训练题自由匹配中位数仅.0156/0（N1-172为.0078/0），留出0–0.8%、8题命中0/8，own TF .156–.160与错配.154–.158无差异。该剂量下scheduled sampling没有抬起自由滚动；不证明机制无效或绑定不存在。3份checkpoint新进程恢复、9份来源SHA不变、0 dev、can_promote=false；费用449.891 CPU/457.547 wall，CC-2累计1,696.734/1,732.423（余103.266 CPU/667.577 wall）。唯一后继[N1-174申请新预算的正式规模对照](../../reference/PLAN-N1-173_execution_closeout_20261025.md)：全量525题、自由滚动感知两臂、3 seed，先2,000 CPU标定再决定是否放到20,000；未获批前不再启动训练。
 
-2026-10-25用户批准新预算并明确不硬性封顶机时。N1-174家族（174/174B/174C）已完成500题、两臂、3 seed、40 epochs：174与174B因防失控阈值低于实测成本先后在epoch 23–24、37–38截断，174C用epoch30耐久checkpoint续训到40，六run复现差全为0.0。最终tf臂训练TF .992–.996、训练自由匹配中位数 .937/.305/.294（1/3 seed达滚动门），ss臂 .897–.907/.058–.179；留出自由匹配0/48、own与错配TF无差异，16条留出输出互不相同但都是通用助手套话。预注册出口INCONCLUSIVE_ROLLOUT，描述性事实为「训练题已能自写、留出题零绑定、scheduled sampling无效」。费用174 19,223.453＋174B 30,073.359＋174C 7,751.125＝57,047.937 CPU。唯一后继[N1-175数据规模跃迁](../../reference/PLAN-N1-174C_execution_closeout_20261025.md)：审计OASST2档案中文对（≥2,000、可达5,000优先）、留出64 family、仅tf臂3 seed 40–60 epochs、逐字＋人工贴题判读，预估3–8万CPU；若5,000对仍0绑定则转结构改造。
+2026-10-25用户批准新预算并明确不硬性封顶机时。N1-174家族（174/174B/174C）已完成500题、两臂、3 seed、40 epochs：174与174B因防失控阈值低于实测成本先后在epoch 23–24、37–38截断，174C用epoch30耐久checkpoint续训到40，六run复现差全为0.0。最终tf臂训练TF .992–.996、训练自由匹配中位数 .937/.305/.294（1/3 seed达滚动门），ss臂 .897–.907/.058–.179；留出自由匹配0/48、own与错配TF无差异，16条留出输出互不相同但都是通用助手套话。预注册出口INCONCLUSIVE_ROLLOUT，描述性事实为「训练题已能自写、留出题零绑定、scheduled sampling无效」。费用174 19,223.453＋174B 30,073.359＋174C 7,751.125＝57,047.937 CPU。该结案当时提议的[N1-175数据规模跃迁](../../reference/PLAN-N1-174C_execution_closeout_20261025.md)仅为早期方案；2026-10-26数据和主链审计已撤销其样本规模与CPU预估，并落地N175 V3完整回答训练合同，当前执行见本页首部、03和[N175合同](../../reference/SPEC-N1-175_data_and_completion_contract_20261026.md)。

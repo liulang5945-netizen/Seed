@@ -1,6 +1,6 @@
 # N1-175 数据与有限结案合同 v1
 
-日期：2026-10-26，持续更新。三seed正式训练已启动；train-only校准完成，不表示能力提升。承接N1-174家族结案及[N175元数据审计](PLAN-N1-175_metadata_feasibility_audit_20261025.md)。数据隔离与候选选择已执行；训练长度与成本尚未冻结，不将本合同写成已训练或能力通过。
+日期：2026-10-26，持续更新。seed169/170/171正式训练均完成epoch 1–12/40，epoch01–12检查点均通过独立进程恢复与digest往返；当前续训已进入epoch13。承接N1-174家族结案及[N175元数据审计](PLAN-N1-175_metadata_feasibility_audit_20261025.md)。冻结训练包为1148题/517family、3 seeds×40 epochs；64-family留出正文读取为0。训练损失只作teacher-forced拟合信号，不代表能力提升。
 
 ## 方向与本轮范围
 
@@ -23,9 +23,9 @@
 
 完整target≤512字节的早期可行性场景有537条/354family；这只是长度探针，不是最终数据合同。V3实际完整上下文编码并按带结束标记的target≤2048、序列化prompt≤4096筛选，得到1148题、517个family；其target总量822311字节/epoch、prompt总量788550字节/epoch，target最长2043、prompt最长4078字节。分布为target≤128/512/1024/2048：204/532/768/1148题。详细清单与冻结SHA见[train corpus回执](../../reports/taiji_n1_plan175_v3_train_corpus_v2_20261026.json)。正文仅解析训练family；留出正文仍为0。
 
-唯一后继是完整回答的变长训练准备：先统计真实token/byte工作量与截断覆盖，设计按字节数分桶的batch，保留完整回答边界；长尾若需限制，按训练侧分布和实测成本一次冻结并公开覆盖率。原128字节前缀可继续作为历史可比机制指标，不再代替完整目标的训练和评价。不得仅为使门槛通过而去掉长题或反复扩大长度。
+完整回答的变长训练准备已完成并进入正式V3训练：按target字节分桶、保留完整回答边界，训练合同固定到40 epochs/seed。原128字节前缀只保留为历史可比机制指标，不代替完整目标训练和评价；不因中间损失或训练内读数追加epoch、改样本或扩大长度。
 
-训练侧完整target总计1,078,103字节；≤128/512/1024/2048/4096字节分别248/572/814/1189/1245条，最长15822字节。上述覆盖为质量去重前分布，不能当最终样本数。2048覆盖1189/1258≈94.5%，是候选工程标定点，不是已批准的最终规模或成本。
+较早的训练侧候选target统计为1,078,103字节；≤128/512/1024/2048/4096字节分别248/572/814/1189/1245条、最长15822字节。该统计是质量去重前的历史工程探针，不是本次最终样本量；执行清单以1148题的冻结corpus回执为准。
 
 ## 发现的主链边界与下一工程包
 
@@ -41,14 +41,14 @@ V2→V3迁移函数按参数名映射了全部共享权重与AdamW状态；V2位
 
 train-only真实batch更新测得3700目标字节/8.421875 process-CPU秒=439.33目标字节/CPU秒，第二个与首批题目及family均不重合；该数字是小样本量级标定，不保证长程线性。首份标定回执把累计历史曝光当作本批分子，吞吐率错误；其持久结果保留，勿用于成本估算，正确分子/计时见[独立更新成本回执](../../reports/taiji_n1_plan175_v3_update_cost_20261026.json)。据实际corpus计算40 epochs为32892440目标字节/seed，初估74800 CPU秒/seed、3 seed约225000；2倍余量约450000 process-CPU秒。输入context和长序列成本可能使实耗偏离，训练期间以进度账本为准。
 
-这属于条件语言候选的局部主链升级，当前证据不要求推翻整个认知架构。N175从“纯数据规模对照”修订为“完整回答训练准备”，已完成结构/恢复验收与train-only成本标定；接续按冻结40 epochs、3 TF seeds、batch4及真实父模型迁移开展正式N175。每seed CPU保护上限300000、全队列上限900000 process-CPU秒，包含预计费用和大余量，均低于既有每臂授权；若触顶则按合同保留partial并停止，不自动提额。训练完成后再读取64个新留出family，不在训练中查询。
+这属于条件语言候选的局部主链升级，当前证据不要求推翻整个认知架构。N175从“纯数据规模对照”修订为“V3完整回答训练”，结构/恢复验收与train-only成本标定已完成，正式三seed TF训练当前到12/40 epochs；按冻结40 epochs、batch4及真实父模型迁移继续。每seed CPU保护上限300000、全队列上限900000 process-CPU秒，包含预计费用和大余量，均低于既有每臂授权；若触顶则按合同保留partial并停止，不自动提额。训练完成后再读取64个新留出family，不在训练中查询。
 
 ## 工程与运行顺序
 
 1. 候选划分和train结构审计：本轮已完成，代码测试覆盖确定性、旧家族排除、同题多目标拒绝、断链与长度完整性。
 2. V3状态/模型/逐样本梯度与checkpoint：已完成并经V3/V2定向回归及新进程恢复验证；三个N174 TF seed真实父checkpoint迁移完成。
 3. Train-only完整答复标定：已完成；corpus1148题/517family，3700 byte update为439.33 target byte/process-CPU秒。第一份统计回执率值错误，按独立第二批实测为准。
-4. 现冻结训练包：corpus 1148条、517 families、manifest SHA见回执；V3输入4096/输出2048；父模型seed169/170/171、V2→V3按名迁移；tf单臂、batch4、按完整target字节分桶，40 epochs/seed、每epoch耐久checkpoint。CPU guard 300000/seed、合计900000 process-CPU秒。旧3–8万CPU撤销。训练当前排队启动；短标定仅2个单步batch，不将其计作正式40-epoch训练结果。
+4. 现冻结训练包：corpus 1148条、517 families、manifest SHA见回执；V3输入4096/输出2048；父模型seed169/170/171、V2→V3按名迁移；tf单臂、batch4、按完整target字节分桶，40 epochs/seed、每epoch耐久checkpoint。CPU guard 300000/seed、合计900000 process-CPU秒。旧3–8万CPU撤销。当前正式训练已完成12/40 epochs/seed，短标定仅2个单步batch，不计入正式训练结果。
 5. 新留出仅用于冻结后的评价，不参与梯度、超参、答案筛选或训练长度选择。正式输出后不因负结果追加epoch、重抽seed、换题或重跑。
 
 ## 收官条件与结论边界
@@ -62,10 +62,10 @@ train-only真实batch更新测得3700目标字节/8.421875 process-CPU秒=439.33
 - 终点全部达成但R未达：有限不可判结案；R达成但S未达：该固定数据/剂量下未见可靠贴题收益，进入条件消费/学习信用诊断，而非继续无限扩数据；有效题不足以判断：数据/评价不可判结案，不补抽重新求过门。
 - 即使通过，仅支持本数据分布与本候选的有限收益，不等于完整N主线收官、默认入口替换、成长或自主性能力通过。推广仍按N整体验收。
 
-语义门为本次预注册的新候选标准；正式读留出与训练前还需完成上列数据质量、变长工程与成本冻结。当前训练更新0、留出正文读取0，不制造已获能力的表述。
+语义门为本次预注册的新候选标准；数据质量、变长工程与成本已冻结并通过前置检查。正式读留出仍必须等三seed全部到40 epochs、最终checkpoint lineage验证通过。当前留出正文读取0，不制造已获能力的表述。
 
 
-正式训练入口为[`run_taiji_n1_plan175_v3_scale.py`](../../scripts/training/run_taiji_n1_plan175_v3_scale.py)，按seed单独进程运行，续训从最近一个epoch checkpoint恢复，progress账本记录当前batch。首轮结束后按本合同的固定R/S门生成64个留出family回答；训练期间不解析其正文。
+正式训练入口为[`run_taiji_n1_plan175_v3_scale.py`](../../scripts/training/run_taiji_n1_plan175_v3_scale.py)，按seed单独进程运行，续训从最近一个epoch checkpoint恢复，progress账本记录当前batch。三seed均完成40 epochs、最终checkpoint与数据/源码来源核验通过后，再按本合同固定R/S门生成64个留出family回答；训练期间不解析其正文。
 
 
 盲化评价生成器[`evaluate_taiji_n1_plan175_v3_holdout.py`](../../scripts/training/evaluate_taiji_n1_plan175_v3_holdout.py)已准备但未运行。运行前强制检查三seed均到40 epochs、报告所用corpus manifest SHA、最终checkpoint文件SHA与内部checkpoint digest吻合，并复验原始OASST及既有split SHA和64个family覆盖；全部通过后才读取64个固定family。每题用各seed分别生成matched与确定性跨family错配prompt输出，盲评文件与揭盲key在同一原子目录发布，失效family保留在64分母且不补抽。人工评阅按0/1/2标准记录，只有盲评后才揭示seed/条件。
@@ -102,3 +102,6 @@ N175 epoch10已完成：三个seed各288更新、822311 target bytes，mean loss
 
 
 N175 epoch11已完成：三个seed各288更新、822311 target bytes，mean loss分别1.6829/1.6744/1.6813 nats，CPU分别1410.47/1406.36/1417.20秒。epoch11三个检查点独立恢复及digest往返通过，见[epoch11恢复回执](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch11_20261026.json)。seed171已进入epoch12，其余两seed正在续跑；teacher-forced损失不代表泛化。
+
+
+N175 epoch12已完成：seed169/170/171各288更新、822311 target bytes，mean loss分别1.6569/1.6479/1.6568 nats，CPU分别1408.86/1409.00/1416.33秒。三个epoch12检查点均通过独立进程恢复、step/exposure/cursor核对及digest往返；见[epoch12恢复回执](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch12_20261026.json)。三seed续训进入epoch13，64-family留出正文仍未读；teacher-forced损失不代表泛化。

@@ -1,13 +1,13 @@
 # N主线交付黑板
 
 
-> **2026-10-26 N175执行状态**：seed169/170/171正式训练均完成epoch 1–11，durable checkpoint逐轮保存；epoch01–11每轮均经新进程恢复、optimizer计数与digest往返验证（回执归档reports）。epoch11 teacher-forced loss约1.674–1.683 nats，仅训练拟合信号；seed171进入epoch12，另两条从epoch11检查点继续，留出正文未读。训练固定语料1148题/517family、40epoch×3seed，单seedCPU保护30万/合计90万。
+> **2026-10-26 N175执行状态**：seed169/170/171 V3完整回答TF正式训练均完成epoch 1–12/40，durable checkpoint逐轮保存；epoch01–12每轮均经新进程恢复、optimizer计数与digest往返验证（回执归档reports）。epoch12 teacher-forced loss分别1.6569/1.6479/1.6568 nats，仅属训练拟合信号；三条续训已进入epoch13，精确游标见progress账本。训练固定语料1148题/517family，单seedCPU保护30万/合计90万；64-family留出正文仍未读。
 
 
 > **2026-10-25 N1-175元数据审计更新（覆盖本页旧规模预估，旧实验合同及结果保留）**：冻结源5073条中文标签回复只对应1959个用户parent；排除旧非train的121个root-family后，剩4165条回复、1612个用户parent、595个family，其中rank=0仅1393条。尚未做正文质量/语义去重、未选新留出、未训练。原“≥2000、优先5000对”和3–8万CPU均为审计前预估，不能直接视为已具备的数据规模或执行合同。当前执行队首为**修订N1-175数据合同**：明确优选答案/多参考政策，以独立提问覆盖和可靠目标为先，按实际合格规模冻结root-family隔离与前瞻语义判读；不靠同问低排名回复凑量，也不把名义数量变成无限等待的硬门。原前缀指标保留作机制读数，不独自定义自然语言成功。此轮不改N174判据，不把单seed训练复现推广成稳定能力，也不把本剂量ss较差推广成机制普遍无效。见[元数据审计与后续约束](../../PLAN-N1-175_metadata_feasibility_audit_20261025.md)。
 
 - 运行目录：`E:/Seed/plans/reference/delivery-runs/20261021-n-mainline`。
-- 主阶段：恢复v2已按CLOSED_COMPLETE结案；CC-2/N1-167、168、169、170、171均已结案；N1-170在已见4题把TF升至0.99、自由匹配升至0–78.1%（记忆复现），N1-171的16题4折留出探针因64次整批更新训练侧未拟合（训练TF中位数.535–.578）按INCONCLUSIVE_UNDERFIT收口；N1-172在折0/1把训练TF抬到.941–.953后，训练题自由匹配仍仅0–4.7%、留出绑定命中0/8，按FAIL_NO_GENERALIZATION收口；N1-173 scheduled sampling（p≤.47、120步）训练TF仍.965–.981，但训练自由匹配中位数仅.0156/0，按INCONCLUSIVE_ROLLOUT收口。用户随后批准新预算且不硬性封顶机时；N1-174家族（500题、两臂、3 seed、40 epochs）已完成：tf臂训练TF .992–.996、训练自由匹配中位数 .937/.305/.294（仅1/3 seed达滚动门），留出0/48、own与错配TF无差异；ss臂更差。两次阈值截断由epoch30耐久checkpoint续训补齐（复现差0.0），家族合计57,047.937 CPU，出口INCONCLUSIVE_ROLLOUT。该行记录N1-174结案时的规模跃迁初始预估；2026-10-26经数据与主链审计后已由03和N175合同替代，当前队首为V3运行时边界与恢复验收。
+- 主阶段：恢复v2已按CLOSED_COMPLETE结案；CC-2/N1-167至N1-174历史结论与固定出口见下方记录；N1-174结案时的规模跃迁初始预估已被2026-10-26数据与主链审计撤销。当前队首为N1-175 V3完整回答训练：三seed均完成epoch 1–12/40，epoch12检查点已独立恢复与digest往返验证；沿现有进程训练至40轮后运行一次固定64-family盲化留出评价。留出正文未读，能力结论未形成；队首和合同见03及N175合同。
 - 持续Goal已由用户正式设置，详细WBS见[10](../../../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。
 - 唯一活动队首与实时事实只由[03](../../../active/roadmap/03_CURRENT_EXECUTION.md)维护；本页不再复制额度/进度快照。
 
@@ -17,7 +17,7 @@
 |---|---|---|
 | 原R2来源、checkpoint、账本与旧局部检查 | 继承限定证据 | 冻结原件与旧失败保留，不能代替新全链能力 |
 | 单入口精简 | 已实现并用于实际续训 | [15记录](artifacts/15-training-system-simplification.md)；当前运行按03 |
-| 当前训练与完整实验出口 | 三臂complete；恢复v2完成四端真实恢复与156/156生成，能力读数四端不可读、无配方排序，详见03 | CC-1.4/1.5沿有效v1.5与原终点；实际运行看03 |
+| CC-1历史训练与完整实验出口 | 三臂complete；恢复v2完成四端真实恢复与156/156生成，能力读数四端不可读、无配方排序，详见03 | CC-1.4/1.5沿有效v1.5与原终点；当前N175实际运行看03 |
 | extension评测适配 | 已提交；相关110支合成与独立审查完成，真实端点未测 | [04适配架构](artifacts/04-continuation-evaluation-adapter.md)、[工程交接](artifacts/02-plan.md)，CC-1.1–1.3 |
 | W5b/人工判读 | 恢复v2已结案CLOSED_COMPLETE：admission_002真实四端恢复通过，formal_001 156/156输出、marker在selector前发布；四端不可读，48行判读已由用户确认 | [恢复v2结案](../../PLAN-R2-EVALUATION-RECOVERY-V2_execution_closeout_20261025.md)、[判读表](../../PLAN-R2-EVALUATION-RECOVERY-V2_human_review_20261025.md)；固定分母不变 |
 | 客户端对话/生命页 | 连接/未知语义修复已交付；原生发展运行台重设计待实施 | [现行体验修订](../../UI_LIFE_UX_SPEC_20261003.md)、[DSH选择性借鉴](../../../active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md)；不替代研究队首或安装包发布 |
