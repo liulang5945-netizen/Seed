@@ -8,9 +8,17 @@ on:
 # R8: 并发治理（见 roadmap §14.14）。
 # 同一分支/PR 连续推送时按 ref 分组并取消旧 run，避免旧 job 白烧 runner 额度；
 # 5 个 job 实测峰值并发 7（< 公开仓库 20 上限，非资源争用问题，纯粹是旧 run 浪费）。
+# R-S4（ADR-S4 §6.3，2026-10-26）：cancel-in-progress 按事件分化——
+#   PR 连续 push 是同一次 review 的迭代，保留取消（反馈快、省额度）；
+#   push 到 main 的每个 commit 都是已发布状态，必须留下完整结论——
+#   本仓近 40 次 run 只有 5 次 success 的机制性原因就是 main 上 run 互删、
+#   中间 commit 的结论永久缺失。代价（ADR §6.3 量化）：main 上 run 改串行排队，
+#   零星 push ≈ 一次 run（1h24m–1h52m），繁忙日队尾 ≈ 4–6h，夜间自然排空。
+#   回退触发条件（写进台账）：main 上 queued run ≥3 持续超过 6h ⇒ git revert 本刀
+#   （ci-fast-lint.yml 快通道不受影响）。
 concurrency:
   group: ${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   # Verification reports and subprocess contracts use UTF-8 on every platform.
