@@ -70,13 +70,17 @@ CI由用户另行安排的任务负责，本任务不再修改其文件或叠加
 
 2026-10-25后继方案修订：完整架构/驱动力/VX0–VX7工程包统一归[VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)，N只通过09的J1信息消费/J2信用/J3连续状态与条件选择取必要切片。生命页新发展运行台按[VX6设计](../../reference/UI_LIFE_UX_SPEC_20261003.md)分段实施，当前已交付的是连接/未知语义修复，不代表新五视图或自主策略已实现；VX6.0只读研究观察器可独立先行。此设计修订不改本页CC-1终点、预算、冻结面或研究队首。
 
-## 当前唯一下一步：执行N1-168隔离小集学习充分性
+## 当前唯一下一步：讨论N1-169可学条件语言主链候选
 
 恢复v2已按 **CLOSED_COMPLETE** 收口：用户2026-10-25确认48行判读——四端（含parent基线）在冻结decoder下**不可读、不贴题、机械重复**，有历史行不连贯；因此本轮**不能给出配方排序**，属能力负结果而非工程失败。机器事实：`admission_001`工程失败70.703 CPU；`admission_002`四端真实恢复345.578 CPU；`formal_001`完成156/156、逐端39、reuse=0、0更新，**唯一marker在selector前发布**，发布前651.703 CPU/966.015 wall；窗口剩余9,847.531 CPU/12,740.687 wall，无未知尾账。本轮不追加训练、不补题、不再读dev面。
 
 CC-2/N1-167已完成48/48只读矩阵，134.46875 CPU/137.125 wall，四端原件不变；configured TF字节约22%–25%、完整汉字TF约0.7%–3.4%，0/16 oracle救援、0/16其他读出救援，prompt替换实际改变分布。见[N1-167结案](../../reference/PLAN-N1-167_execution_closeout_20261025.md)，不判输入零消费，也不据此直接推翻架构。
 
-当前自动接力[PLAN-N1-168](../../reference/PLAN-N1-168_isolated_train_fit_20261025.md)及[SPEC](../../reference/SPEC-N1-168_isolated_train_fit_20261025.md)：只在full_turn_1m新副本按原规则训练固定4题×8轮，32额外episode/9320目标字节，先保存zero并新进程验证，再看0/1/2/4/8曲线和final/partial独立恢复。原档/默认模型不变、0 dev，N168≤1600 CPU/2200 wall，与N167及汇总合计仍守本轮1800/2400上限。普通实现到运行/归因/计划提交连续完成，不停在核对或论文式概念比较。旧恢复v2的结案与证据见[恢复v2结案](../../reference/PLAN-R2-EVALUATION-RECOVERY-V2_execution_closeout_20261025.md)、[48行判读](../../reference/PLAN-R2-EVALUATION-RECOVERY-V2_human_review_20261025.md)、[执行审计](../../../reports/taiji_r2_evaluation_recovery_v2_execution_audit_20261025.json)。
+本轮自动接力N1-168已完成固定8轮、32额外episode/9320目标字节，zero/final独立恢复通过，原parent不变。TF字节24.85%→32.10%、NLL4.396→3.775，但完整汉字TF仅2→4/148，自由前缀匹配≤0.39%，0/4小集门通过。实际fabric、predictive context与response-plan参数改变，不能判无学习；任务收益转化仍未解决。两包模型进程共253.359375 CPU/259.266 wall，低于本轮1800/2400。见[N1-168结案](../../reference/PLAN-N1-168_execution_closeout_20261025.md)。
+
+当前到达真正的主计算/学习链路线讨论节点：[N1-169](../../reference/PLAN-N1-169_shared_language_chain_design_20261025.md)唯一推荐共享任务状态/条件序列信用的新语言主链候选，保留原局部链作同资源对照。当前8轮结果不足以证明更大剂量必败，也不支持只换decoder；不自动加16/64轮，不更换默认模型，不接触已消费dev。
+
+旧恢复v2的结案与证据见[恢复v2结案](../../reference/PLAN-R2-EVALUATION-RECOVERY-V2_execution_closeout_20261025.md)、[48行判读](../../reference/PLAN-R2-EVALUATION-RECOVERY-V2_human_review_20261025.md)、[执行审计](../../../reports/taiji_r2_evaluation_recovery_v2_execution_audit_20261025.json)。
 
 用户于2026-10-25**采纳[消费边界v2](../../reference/delivery-runs/20261021-n-mainline/artifacts/04-evaluation-consumption-boundary-v2.md)**，授权按原额度与固定范围自动完成工程准入、一次真实题面消费、48条判读与结案。实施计划与判据预注册见[05计划](../../reference/delivery-runs/20261021-n-mainline/artifacts/05-evaluation-recovery-v2-plan.md)。
 

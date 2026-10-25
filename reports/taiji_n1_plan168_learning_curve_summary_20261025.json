@@ -1,0 +1,185 @@
+{
+  "schema": "taiji-n1-plan168-learning-curve-summary-v1",
+  "input_sha256": "a33e0581112f2ed0ce875f01a6d87f448a89f80bbe189300dace105a3f67e495",
+  "aggregation": "macro mean over fixed four train episodes; complete CJK TF characters pooled",
+  "milestones": [
+    {
+      "epoch": 0,
+      "tf_top1": 0.24845157657657657,
+      "nll_bits": 4.395534455689549,
+      "cjk_correct": 2,
+      "cjk_characters": 148,
+      "free_target_prefix_match": 0.0,
+      "per_episode": [
+        {
+          "episode_id": "oasst2:50fdf402-7314-463e-b645-b0b8feb93651",
+          "tf_top1": 0.3063063063063063,
+          "target_prefix_match": 0.0
+        },
+        {
+          "episode_id": "oasst2:e888c23e-640e-4bd1-9112-98aebf8c2675",
+          "tf_top1": 0.1875,
+          "target_prefix_match": 0.0
+        },
+        {
+          "episode_id": "oasst2:5da96e59-6bfe-4996-87de-f7721c00cf82",
+          "tf_top1": 0.265625,
+          "target_prefix_match": 0.0
+        },
+        {
+          "episode_id": "oasst2:e794a47e-e9c9-4cbf-9c3b-d7e7b6ecb50f",
+          "tf_top1": 0.234375,
+          "target_prefix_match": 0.0
+        }
+      ]
+    },
+    {
+      "epoch": 1,
+      "tf_top1": 0.2887105855855856,
+      "nll_bits": 4.1638202110834115,
+      "cjk_correct": 3,
+      "cjk_characters": 148,
+      "free_target_prefix_match": 0.001953125,
+      "per_episode": [
+        {
+          "episode_id": "oasst2:50fdf402-7314-463e-b645-b0b8feb93651",
+          "tf_top1": 0.34234234234234234,
+          "target_prefix_match": 0.0
+        },
+        {
+          "episode_id": "oasst2:e888c23e-640e-4bd1-9112-98aebf8c2675",
+          "tf_top1": 0.2265625,
+          "target_prefix_match": 0.0
+        },
+        {
+          "episode_id": "oasst2:5da96e59-6bfe-4996-87de-f7721c00cf82",
+          "tf_top1": 0.2734375,
+          "target_prefix_match": 0.0
+        },
+        {
+          "episode_id": "oasst2:e794a47e-e9c9-4cbf-9c3b-d7e7b6ecb50f",
+          "tf_top1": 0.3125,
+          "target_prefix_match": 0.0078125
+        }
+      ]
+    },
+    {
+      "epoch": 2,
+      "tf_top1": 0.2962239583333333,
+      "nll_bits": 4.080459413662593,
+      "cjk_correct": 2,
+      "cjk_characters": 148,
+      "free_target_prefix_match": 0.001953125,
+      "per_episode": [
+        {
+          "episode_id": "oasst2:50fdf402-7314-463e-b645-b0b8feb93651",
+          "tf_top1": 0.3333333333333333,
+          "target_prefix_match": 0.0
+        },
+        {
+          "episode_id": "oasst2:e888c23e-640e-4bd1-9112-98aebf8c2675",
+          "tf_top1": 0.2265625,
+          "target_prefix_match": 0.0
+        },
+        {
+          "episode_id": "oasst2:5da96e59-6bfe-4996-87de-f7721c00cf82",
+          "tf_top1": 0.296875,
+          "target_prefix_match": 0.0
+        },
+        {
+          "episode_id": "oasst2:e794a47e-e9c9-4cbf-9c3b-d7e7b6ecb50f",
+          "tf_top1": 0.328125,
+          "target_prefix_match": 0.0078125
+        }
+      ]
+    },
+    {
+      "epoch": 4,
+      "tf_top1": 0.3059895833333333,
+      "nll_bits": 3.9524673211165267,
+      "cjk_correct": 3,
+      "cjk_characters": 148,
+      "free_target_prefix_match": 0.001953125,
+      "per_episode": [
+        {
+          "episode_id": "oasst2:50fdf402-7314-463e-b645-b0b8feb93651",
+          "tf_top1": 0.3333333333333333,
+          "target_prefix_match": 0.0
+        },
+        {
+          "episode_id": "oasst2:e888c23e-640e-4bd1-9112-98aebf8c2675",
+          "tf_top1": 0.265625,
+          "target_prefix_match": 0.0
+        },
+        {
+          "episode_id": "oasst2:5da96e59-6bfe-4996-87de-f7721c00cf82",
+          "tf_top1": 0.2890625,
+          "target_prefix_match": 0.0
+        },
+        {
+          "episode_id": "oasst2:e794a47e-e9c9-4cbf-9c3b-d7e7b6ecb50f",
+          "tf_top1": 0.3359375,
+          "target_prefix_match": 0.0078125
+        }
+      ]
+    },
+    {
+      "epoch": 8,
+      "tf_top1": 0.3210163288288288,
+      "nll_bits": 3.77533704758135,
+      "cjk_correct": 4,
+      "cjk_characters": 148,
+      "free_target_prefix_match": 0.00390625,
+      "per_episode": [
+        {
+          "episode_id": "oasst2:50fdf402-7314-463e-b645-b0b8feb93651",
+          "tf_top1": 0.3153153153153153,
+          "target_prefix_match": 0.0
+        },
+        {
+          "episode_id": "oasst2:e888c23e-640e-4bd1-9112-98aebf8c2675",
+          "tf_top1": 0.328125,
+          "target_prefix_match": 0.0
+        },
+        {
+          "episode_id": "oasst2:5da96e59-6bfe-4996-87de-f7721c00cf82",
+          "tf_top1": 0.2734375,
+          "target_prefix_match": 0.0078125
+        },
+        {
+          "episode_id": "oasst2:e794a47e-e9c9-4cbf-9c3b-d7e7b6ecb50f",
+          "tf_top1": 0.3671875,
+          "target_prefix_match": 0.0078125
+        }
+      ]
+    }
+  ],
+  "parameter_changes": {
+    "fabric": {
+      "tensors": 12,
+      "changed_tensors": 9,
+      "l2_change": 0.3844667551395586
+    },
+    "predictive_context": {
+      "tensors": 1,
+      "changed_tensors": 1,
+      "l2_change": 1.914581222600252
+    },
+    "predictive_readout": {
+      "tensors": 2,
+      "changed_tensors": 0,
+      "l2_change": 0.0
+    },
+    "response_plan_readout": {
+      "tensors": 5,
+      "changed_tensors": 5,
+      "l2_change": 7.807346512304449
+    }
+  },
+  "parent_unchanged": true,
+  "can_promote": false,
+  "fit_criterion_pass_episodes": 0,
+  "high_tf_low_rollout_episodes": 0,
+  "combined_measured_model_process_cpu": 253.359375,
+  "combined_measured_model_process_wall": 259.26599999994505
+}

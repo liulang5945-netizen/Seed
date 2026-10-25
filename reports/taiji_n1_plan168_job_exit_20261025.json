@@ -1,0 +1,12 @@
+{
+  "schema": "taiji-n1-plan168-job-exit-v1",
+  "returncode": 0,
+  "job_cpu_seconds_all_processes": 118.890625,
+  "wall_seconds": 122.14099999994505,
+  "tree_stopped": true,
+  "watchdog_forced": false,
+  "stdout": [
+    "{\"status\": \"complete\", \"additional_updates\": 9320, \"actual_target_byte_updates\": 122529, \"cpu_seconds\": 118.578125, \"error\": null, \"restore_error\": null}"
+  ],
+  "scope": "training process and all fresh-process checkpoint verification children"
+}
