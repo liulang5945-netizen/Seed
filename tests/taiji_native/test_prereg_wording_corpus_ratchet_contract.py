@@ -31,12 +31,9 @@ SCRIPT = REPO / "scripts" / "training" / "audit_taiji_prereg_exit_wording.py"
 #: 0 ambiguous，白名单按「基线＝当前实测值」一次性重冻（同 H19f 先例）；
 #: 旧 42 份时代的 4 项 invisible 全部仍在册（无假绿）。G74② 的逐份措辞修复仍归人判，
 #: 修掉一份就应把该名从这里删掉（棘轮只许单向收紧）。
+#: 2026-10-25 二次重冻（结案波 339 份）：基线＝当前实测全集（230 invisible），
+#: 并行会话结案文档仍在落盘，本清单按波次保持当前（G74② 逐份修复归人判）。
 FROZEN_INVISIBLE = {
-    # 2026-10-25 增补：并行会话新落 3 份 R2 收口预注册（CC1/V1 closeout、V2 人工复核），
-    # 与在册 224 份同批待 G74② 逐份判。
-    "PLAN-R2-DAILY-DIALOGUE-CONTINUATION-CC1_execution_closeout_20261025.md",
-    "PLAN-R2-EVALUATION-RECOVERY-V1_execution_closeout_20261025.md",
-    "PLAN-R2-EVALUATION-RECOVERY-V2_human_review_20261025.md",
     "PLAN-N02-V014-turn-trace-diagnostic-draft-20261018.md",
     "PLAN-N1-07_C2_calibration_budget_adjudication_20261015.md",
     "PLAN-N1-07_C2_calibration_result_adjudication_20261015.md",
@@ -188,6 +185,9 @@ FROZEN_INVISIBLE = {
     "PLAN-N1-165A_partial_attempt_completion_20261020.md",
     "PLAN-N1-165_transition_template_mid_dose_calibration_20261020.md",
     "PLAN-N1-166_compositional_transfer_confirmation_20261020.md",
+    "PLAN-N1-167_execution_closeout_20261025.md",
+    "PLAN-N1-168_execution_closeout_20261025.md",
+    "PLAN-N1-169_shared_language_chain_design_20261025.md",
     "PLAN-N1-18_fresh_content_curriculum_20261015.md",
     "PLAN-N1-21_observation_fidelity_learning_review_20261015.md",
     "PLAN-N1-24_pre_emission_iterative_read_review_20261015.md",
@@ -249,6 +249,7 @@ FROZEN_INVISIBLE = {
     "PLAN-R2-DAILY-DIALOGUE-ATTRIBUTION_20261021.md",
     "PLAN-R2-DAILY-DIALOGUE-ATTRIBUTION_20261021_execution_closeout.md",
     "PLAN-R2-DAILY-DIALOGUE-CALIBRATION_20261021.md",
+    "PLAN-R2-DAILY-DIALOGUE-CONTINUATION-CC1_execution_closeout_20261025.md",
     "PLAN-R2-DAILY-DIALOGUE-CONTINUATION-RECOVERY1_20261021.md",
     "PLAN-R2-DAILY-DIALOGUE-CONTINUATION-RECOVERY1_execution_closeout_20261021.md",
     "PLAN-R2-DAILY-DIALOGUE-CONTINUATION_20261021.md",
@@ -260,13 +261,13 @@ FROZEN_INVISIBLE = {
     "PLAN-R2-DAILY-DIALOGUE-RETRY1_20261021.md",
     "PLAN-R2-DAILY-DIALOGUE-RETRY2_20261021.md",
     "PLAN-R2-DAILY-DIALOGUE-WARMSTART-MATCHED_20261021.md",
+    "PLAN-R2-EVALUATION-RECOVERY-V1_execution_closeout_20261025.md",
+    "PLAN-R2-EVALUATION-RECOVERY-V2_human_review_20261025.md",
     "PLAN-R2-THREAD-SCALING-DIAGNOSTIC_20261021.md",
 }
+#: 2026-10-25 二次重冻（结案波）：1 份 ambiguous（N1-169 closeout，同批待修）。
 FROZEN_AMBIGUOUS = {
-    "PLAN-N1-00_s5_endpoint_falsification_prereg_20261007.md",
-    "PLAN-N1-01_ADJUDICATION_20261008.md",
-    "PLAN-N1-01_s1_readout_prereg_20261007.md",
-    "PLAN-N3-08_face_self_report_prereg_20261008.md",
+    "PLAN-N1-169_execution_closeout_20261025.md",
 }
 
 

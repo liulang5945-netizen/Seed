@@ -70,6 +70,18 @@ instance name):
 Full rules, incident timeline and exact commands: [`docs/REPO_HYGIENE_RULES.md`](docs/REPO_HYGIENE_RULES.md).
 Machine-enforced by `tests/test_repo_secret_guard.py` — run it before committing.
 
+## CI contract
+
+CI green means "every measurable surface is green"; the deselect list is
+registered debt with restart conditions, not an exemption. Before pushing,
+new tests and new docs carry registration duties (platform guards,
+repo-relative paths, stop_reason consumer registration, prereg wording gate)
+that are minute-cheap but hour-expensive when missed — 2026-10-23～25 spent
+12 CI runs (~30 wall-clock hours) re-learning them.
+
+Full rules with the incidents that motivate each one:
+[`docs/CI_CONTRACT_RULES.md`](docs/CI_CONTRACT_RULES.md).
+
 ## Pull requests
 
 1. Create a branch, normally `feat/<name>` or `fix/<name>`.

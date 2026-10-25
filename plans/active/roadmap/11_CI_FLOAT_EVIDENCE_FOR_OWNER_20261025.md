@@ -61,6 +61,21 @@ multifamily 报 `selector did not choose a group for held-out complement`。
 2. 翻转发生在 `< 0` 边界还是 `< threshold` 边界（决定容差写法）；
 3. multifamily 的容器迭代顺序敏感性是否独立于浮点（3.10 判例提示可能双因）。
 
+**2026-10-25 静态分析更新（continuous_structural_growth 专属）**：方案乙
+（isclose 1e-12）实施后该测在 run 40166946185 Ubuntu 仍翻一次、在
+499c3892f 又绿——但静态分析**基本排除阈值门**：该 eval 的
+`realized_interaction = derived_score − _single_score(first) − _single_score(second)`，
+其中 derived_score 有 1e-12 护栏精确等于 1.0、`_single_score` 是纯常量函数
+（0.2），realized ≈ 0.6 对 minimum 0.1 余量巨大，三道阈值门都在远离边界的
+安全区。真因指向**candidate 生命周期语义**：第二个 second-cycle feedback
+`(d,e)` 与第一个已准入的 `(a,e)` 共享成员 e，e 被观察后 `(d,e)` 候选的命运
+取决于 learner 状态，而上游 torch 数值的平台差异会改变 select 的候选组成。
+此层属研究语义（candidate 生命周期），归 owner 裁定；诊断插桩
+（`eval_taiji_continuous_structural_growth.py:152`，断言携带
+admission.reason 与三阈值读数）已在其树上，下次翻红直接读出确切 reason。
+另注意：其「Linux 稳定红」旧认知已被推翻——isclose 前后各红绿交替一次，
+实为间歇性（runner 池硬件轮换放大的上游数值差异）。
+
 ## 四、补丁草案（裁定同意后才实施）
 
 - 方案甲（最小）：两处严格 `<` 改带绝对容差比较（如 `< -1e-12`），
