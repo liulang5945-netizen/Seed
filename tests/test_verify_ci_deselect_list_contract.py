@@ -172,3 +172,23 @@ def test_end_to_end_substring_injection_with_real_pytest_collection(tmp_path: Pa
     assert verdict.hits == ["test_sample.py::test_alpha_beta"]
     assert verdict.misses == ["test_sample.py::test_alpha(该文件里没有同名用例)"]
     assert verdict.red is True
+
+
+def test_true_prefix_entry_is_miss_while_old_substring_logic_would_pass(tmp_path: Path):
+    """批次 0 ②（AR 规格）：条目是某真实 node-id 的**真前缀**
+    （条目 `...::test_a`，实际收集 `...::test_ab`）。
+    红绿双向——旧版子串判定 `method in collected.stdout` 在本场景为真（误判 OK），
+    新守卫必须 MISS 判红；断言消息含判据原文，便于与其它失败通道区分。"""
+    repo = _skeleton_repo(tmp_path, ["tests/x/test_a.py"])
+    stdout = "tests/x/test_a.py::test_ab\n=== 1 collected in 0.01s ===\n"
+    nodes, error_files = parse_collection_output(stdout)
+    assert nodes == {"tests/x/test_a.py::test_ab"}
+
+    # 红腿：旧版子串逻辑的判定式在本场景成立（旧版会判绿——这正是缺陷本体）
+    assert "test_a" in stdout
+
+    # 绿腿：新守卫精确成员判定 ⇒ 真前缀条目 MISS 判红
+    verdict = judge(["tests/x/test_a.py::test_a"], nodes, error_files, repo=repo)
+    assert verdict.misses == ["tests/x/test_a.py::test_a(该文件里没有同名用例)"]
+    assert verdict.hits == []
+    assert verdict.red is True
