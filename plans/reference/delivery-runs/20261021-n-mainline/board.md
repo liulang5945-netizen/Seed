@@ -1,7 +1,7 @@
 # N主线交付黑板
 
 - 运行目录：`E:/Seed/plans/reference/delivery-runs/20261021-n-mainline`。
-- 主阶段：恢复v1工程失败结案；后继协议边界待讨论；Phase 8原attempt工程失败保留；三臂已训完，原CC-1 attempt启动握手失败封存，恢复与配对输出未完成，具体运行仅按03。
+- 主阶段：恢复v1已失败结案，后继v2题面消费规则待裁决；三臂成果保留，真实配对输出尚未取得，具体队首仅按03。
 - 持续Goal已由用户正式设置，详细WBS见[10](../../../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。
 - 唯一活动队首与实时事实只由[03](../../../active/roadmap/03_CURRENT_EXECUTION.md)维护；本页不再复制额度/进度快照。
 
@@ -62,3 +62,7 @@
 恢复v1实际结果：12:14形成attempt，bootstrap通过，parent restore在固定路径授权前被拒绝，0模型恢复/0生成，按失败不重试封存。主理人确认上一版缺真实授权/face路径集成覆盖，责任属于工程实现；补齐可信provider三处path及全合成4/156真token/face回归，真实Job/IPC/NTFS claim探针在模型前停止、树退出通过。原机器合同/source快照不刷新；raw和退出费用保留，恢复v1独立结案落盘。唯一后继讨论工程准入与题面消费分离，不再为同一已消费资格换名重跑。
 
 本次恢复执行与修复验收：98项相关合成/冻结评价/身份条款检查通过，真实Job/token/NTFS claim模型前探针通过；Black/Ruff及差异检查通过。批准合同JSON与本次attempt绑定SHA仍一致，未刷新为修复后source，真实face/generations仍不存在。4份改动/结案文档本地链接已核对有效。正式失败的5份JSON原件及预检/退出/probe回执随本次提交；ledger/progress按jsonl忽略政策留本机，另入库JSON执行审计固定其SHA/事件摘要；当前不发出新一次查询授权。
+
+2026-10-25用户“下一步”承接协议讨论：新增消费边界v2讨论稿，比较attempt/首条成功输出/首次题面读取三种界点，唯一推荐首次题面读取前耐久marker；工程故障在同一硬预算与后续完整reserve内处理，marker后不重试，未知暴露/标记不明停止。明确混合split语料的哈希/split-only/train恢复白名单、缓存无旁路、跨工程尝试总账及旧失败不追改。当前仅写计划，不运行v2、不回写已批准v1机器合同，不把“下一步”当新增正式资格批准。
+
+消费边界v2讨论稿核验：4份改动文档54条本地链接有效，身份/条款16项通过，旧批准v1合同与原attempt绑定SHA仍一致；本次无代码、模型、题面或费用执行变动。
