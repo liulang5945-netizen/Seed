@@ -35,3 +35,23 @@
 每批入库＝一次独立提交；入库后跑 `verify_ci_deselect_list.py` 自证、
 按 deselect 逐条摘除并盯 CI 双腿绿；批 B/C 涉及的哈希钉如报失配，
 按 N1-121 方法论（活跃钉口径）重冻结，不扩大面。
+
+
+## 执行读数（2026-10-25，A/B 已入库）
+
+- **批 A 已入库**：209 件 R2 证据（407KB 全 LF），owner 裁定后一次提交。
+- **批 B 已入库（两次提交）**：plan157/157a2/159a/160/160a/161 六件进度
+  jsonl（5.1MB）＋source_revision v1.1/v1.2/v1.3（被 .gitignore:333 逐名
+  规则屏蔽，force-add）＋plan159 progress。
+- **排除项**：plan155a jsonl **134MB**（超 GitHub 100MB 单文件硬限）——
+  plan157/160/161 的传递闭包含它，故三条暂不可清退（skipif 化或制品库
+  待议）；plan155 jsonl 0 字节（torn write）。
+- **LF worktree 实测**：n5_38 两条回绿已摘（93 条×两腿）；extension_
+  contract 6 条＋fast_ledger 2 条暴露**新阻塞**——source_revision 证据
+  内嵌 E:\Seed 绝对路径（runner_path 等字段），校验在非维护树必拒，
+  而校验方是训练治理面文件（铁律不可改）→ 归 owner：证据相对路径化
+  重冻结，或治理面校验接 seal_ast.resolve_recorded_path 映射。
+- **批 C skipif 化清单（checkpoint/语料消费者，约 15 条）**：warmstart、
+  evaluation_adapter×3（另需 data/conversation OASST2 jsonl）、
+  fast_ledger manifest+v2、reader_transfer×2、n5_15×2、n5_16、
+  plan110 runner×3、登记表三、plan142_face——转换待下一批次执行。
