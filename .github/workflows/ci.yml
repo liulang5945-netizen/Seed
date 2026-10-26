@@ -531,7 +531,9 @@ jobs:
         id: coverage-gate
         continue-on-error: true
         # R-S6a：红由末置汇总 step 按 steps.coverage-gate.outcome 判。
-        run: python scripts/training/verify_core_reasoning_coverage.py --from-report coverage.json --threshold 60.0 --out reports/core_reasoning_coverage_ci.json
+        run: |
+          false  # M5-inject: forced failure (E-fail), revert after readout
+          python scripts/training/verify_core_reasoning_coverage.py --from-report coverage.json --threshold 60.0 --out reports/core_reasoning_coverage_ci.json
 
       - name: Upload core coverage report
         if: always()
