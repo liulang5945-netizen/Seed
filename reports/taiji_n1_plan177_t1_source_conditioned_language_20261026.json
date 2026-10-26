@@ -1,0 +1,57 @@
+{
+  "schema": "taiji-n177-t1-source-conditioned-language-v1",
+  "status": "implemented_and_causally_verified_as_source_consumer; not capability evidence",
+  "source_sha256": {
+    "taiji/joint_task_state.py": "5acbe47aa29a3a113fdc9729d402577fd0f8520d1379c4850019a3c11f15ff17",
+    "taiji/conditional_language_v4.py": "96f83b5f14fff91f213837eb520dfb2ebfa973436f7f3d04370700e4ce9d218c",
+    "tests/taiji_native/test_n1_plan177_joint_task_state.py": "53972232eac0e96123dd6a177ed0853ee8589025b2fd7b7871cf65ab32d509f0"
+  },
+  "source_set_sha256": "1843e7fce4e738a2ece5b5b3bb98e1720b8db1381860356d1708a02723a68576",
+  "consumer_path": [
+    "canonical CognitiveState.workspace.selection selects a bound WorldObject",
+    "latest source-linked WorldEvent resolves through exact input_id or InputTrace percept/assembly identity",
+    "JointContentReadViewV1 exposes selected neural source IDs",
+    "ConditionalLanguageCandidateV4 filters byte and workspace evidence keys/values to those source frames",
+    "V4 next_logits_from_joint and generate_from_joint consume that cache and return an updated joint frame"
+  ],
+  "source_granularity": "whole selected input frame; byte-level spans are not inferred from world events",
+  "real_adapter_ingest": "TSKV8Adapter.ingest_input(learn=False) InputTrace was appended to JointTaskState and consumed by the V4 logits path",
+  "structured_fact_fixture": "the adapter integration test injects a structured WorldObject/WorkspaceSelection fixture; it is not evidence of natural-Chinese parsing or fact learning",
+  "causal_matrix": {
+    "scope_count": 2,
+    "goal_count": 2,
+    "interventions": [
+      "relevant source flip",
+      "irrelevant fact hold",
+      "joint path cut",
+      "selection restore rescue"
+    ],
+    "cases_passed": 16
+  },
+  "tests": {
+    "joint_task_state_module_passed": 50,
+    "combined_joint_adapter_input_and_v4_modules_passed": 62,
+    "mypy": "passed for taiji/joint_task_state.py and taiji/conditional_language_v4.py",
+    "ruff": "passed with repository defaults",
+    "black": "passed"
+  },
+  "percept_identity_compatibility": "per-byte InputTrace records may reuse a PerceptEvent identity within an assembly; the source map preserves one entry per byte and allows repeated event IDs",
+  "formal_training_updates": 0,
+  "model_parameters_updated": false,
+  "semantic_gain": "not measured; logits sensitivity proves consumption only",
+  "natural_chinese_fact_understanding": "not measured",
+  "episodic_memory_retrieval": "not integrated",
+  "world_prediction_or_action_selection": "not integrated",
+  "old_capability_retention": "not measured",
+  "sealed_body_reads": 0,
+  "n175_key_opened": false,
+  "default_adapter_replaced": false,
+  "can_promote": false,
+  "next_development_step": "N177.2-T2: retrieve a required episode from the actual EpisodicMemoryStore through the same joint source map and feed it to the language consumer",
+  "architecture_review": {
+    "finding": "reference-only JointContentReadViewV1 would not close the decision path; selected source evidence must feed the actual V4 key/value cache",
+    "implemented_response": "V4 source-filtered cache consumes JointContentReadViewV1 selected neural source IDs; default adapter generation remains unchanged",
+    "review_scope": "read-only architecture review before T1 implementation"
+  },
+  "architecture_interface_issue_found": "Real adapter InputTrace may repeat PerceptEvent IDs for multiple bytes in one learned assembly; N177.1 now preserves per-byte references without falsely requiring unique event IDs."
+}

@@ -21,9 +21,9 @@
 
 N175交接见[原判读与费用](../../reference/PLAN-N1-175_evaluation_handoff_20261026.md)；N176来源、固定范围和预算只看[已冻结F0/F1合同](../../reference/SPEC-N1-176_F0_F1_pilot_20261026.md)。本次不变更它们的题面、分母、阈值、预算、源码绑定或消费资格。
 
-## 当前唯一下一步：接通N177.2必要消费者与反馈责任
+## 当前唯一下一步：N177.2-T2接入真实经历记忆读取
 
-[N177实施合同](../../reference/PLAN-N1-177_joint_cognition_slice_20261026.md)内177.1共同状态桥已完成，见[状态接口回执](../../../reports/taiji_n1_plan177_state_interface_20261026.json)；30项状态、来源、生命周期与checkpoint测试、mypy、Ruff、Black通过。组件以CognitiveState为根，将V4神经TaskState和InputTrace逐byte来源、owner/scope/session/revision绑定，支持reset/carry及同NativeCheckpoint候选/Adam恢复；生产Adapter还未挂载，semantic gain未测。
+N177.1接口范围已完成，见[状态接口回执](../../../reports/taiji_n1_plan177_state_interface_20261026.json)。N177.2-T1现已把实际`TSKV8Adapter.ingest_input`产生的`InputTrace`加入同一JointTaskState，并让V4的`next_logits`/生成缓存按当前workspace选择的、有精确来源的事实筛选可读输入帧；[T1回执](../../../reports/taiji_n1_plan177_t1_source_conditioned_language_20261026.json)记录16个相关翻转/无关保持/切断/救援因果用例、50项联合模块测试及62项组合回归。证明的是条件信息进入logits，不是自然中文事实理解；world事实在Adapter集成用例中由结构化fixture注入。N177.2的T2记忆读取与T3行动条件预测仍未接通。
 
 该步与N176原一次有限结案可并行。主开发队列只有N177这一条；N176是已训练资产的收束支线，N175剩余人工评分是明确保留的review待办。两者不是“先等全部人工判读或toy正收益，才能修共同架构”的无限门。
 
@@ -32,8 +32,8 @@ N175交接见[原判读与费用](../../reference/PLAN-N1-175_evaluation_handoff
 | 顺序 | 实际工作 | 完成/停止条件 | 允许的后继 |
 | --- | --- | --- | --- |
 | 0 本次对账与重编 | 核对当前源码/报告，把历史队首撤出活动正文；统一03/09/10/07及N177接口合同 | 现状、归档、依赖与有限出口一致并提交 | 本步到此结束，不产生新训练或封存消费 |
-| 1 共同状态及生命周期 | 177.1：opt-in共同状态/来源映射、scope与生命周期接口 | 2scope×2goal×5事件的20组矩阵及30项专项测试、静态检查通过；生产Adapter/语义收益不作完成声明 | 进入任务必需消费者；不等独立语言L2 |
-| 2 必要记忆/预测/选择与表达 | 177.2：T1事实→T2情景→T3目标/一步行动；语言读取同一被选内容与ActionIntent | 相关/无关、切断/救援16组检查；同候选实际调用与归属可核验 | 接入真实反馈责任；不要求F0激活全部模块 |
+| 1 共同状态及生命周期 | 177.1：opt-in共同状态/来源映射、scope与生命周期接口 | 20组矩阵、30项N177.1专项测试及静态检查通过；生产消费者由177.2接入，语义收益不作完成声明 | 进入任务必需消费者；不等独立语言L2 |
+| 2 必要记忆/预测/选择与表达 | 177.2：T1事实→T2情景→T3目标/一步行动；语言读取同一被选内容与ActionIntent | T1来源条件语言消费及2scope×2goal×4干预16例通过；T2记忆和T3世界预测仍待接通，不能把T1界面证据算为完整共同链 | 当前先接入T2真实经历记忆；再继续T3所需路径 |
 | 3 学习信用和完整恢复 | 177.3：真实Outcome路由、state/参数收益分账，8组恢复和六类学习对照 | 每个任务错误有明确允许更新处；零步恢复、下一选择/更新连续性通过 | 冻结新包课程、对照、资源和停止线 |
 | 4 同候选基础课程与保持 | 177.4/5：F0–F2及support/query，在该共同候选上学语言、事实、更正、情景和行动 | 固定终点判收益/无收益/退化/不可判；新收益和旧保持分别裁决 | 有证据后扩F3；失败只回流一个主要机制，不能无限加轮 |
 | 5 自然连续任务与跨会话 | F3逐步增加表达、任务组合、真实经历与持续纠错 | 同一可恢复版本未见任务、反馈后query及旧能力保持按07裁决 | 分别形成L2/L3/L4证据，不拼接不同模型成绩 |
@@ -62,6 +62,6 @@ N175交接见[原判读与费用](../../reference/PLAN-N1-175_evaluation_handoff
 
 03发布唯一当前动作；10维护依赖/WBS/有限出口；09维护机制及42条来源；07维护能力门；N177合同落实施工；VISION维护更广设计和有条件候选。UI、驱动力与全自主性按各自承载，不成为本轮共同链的额外无限门。CI已有他人负责的修复继续独立协作，只检查本次影响面。
 
-N177.1有限完成：opt-in JointTaskStateV1不复制世界/记忆内容，只存根state与V4 trainer的可核验引用、来源映射和生命周期；workspace读视图对未验证事实标为unverified/ref-only。N177.2接入实际memory/world-prediction/selection消费者、同状态语言意图和任务信用。当前不恢复旧V3/V4训练格式，不触碰未消费面。
+N177.1有限完成。N177.2-T1现有来源约束语言读取桥；N177.2-T2实际EpisodicMemoryStore读取、T3行动条件预测/选择及任务信用尚未完成。实现仍为opt-in联合研究候选，默认Adapter路径未替换；当前不训练、不触碰未消费面。
 
 N177.1状态机纳入response_complete、awaiting_outcome、cancelled及resolved complete四种语义。结束标记只关闭本轮答复；若ActionIntent有待结Outcome，重复用户输入/turn reset/cancel均拒绝，unknown结果等到同intent receipt结算，非终态失败允许继续规划。该状态名与回归由[JointTaskStateV1](../../../taiji/joint_task_state.py)实现，30项退出规范用例通过。

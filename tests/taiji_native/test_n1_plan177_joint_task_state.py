@@ -8,11 +8,13 @@ from dataclasses import replace
 import pytest
 import torch
 
+from taiji.adapter import TSKV8Adapter
 from taiji.conditional_language_v3 import TaskCoreConfigV3
 from taiji.conditional_language_v4 import (
     ConditionalLanguageCandidateV4,
     ConditionalLanguageTrainerV4,
 )
+from taiji.config import TaijiConfig
 from taiji.contracts import (
     ActionIntent,
     Assembly,
@@ -38,7 +40,7 @@ from taiji.contracts import (
     WorldObject,
     WorldState,
 )
-from taiji.input_boundary import InputTrace
+from taiji.input_boundary import InputFrame, InputTrace
 from taiji.internalization import content_digest
 from taiji.joint_task_state import JointTaskStateV1
 
@@ -191,6 +193,90 @@ def setup_joint(
         session_id=session,
     )
     return model, root, trace, joint
+
+
+def setup_two_source_joint(*, scope="scope-1", goal_id="goal-1", session="source-pair"):
+    model, blue_root, blue_trace, initial = setup_joint(
+        text="杯子是蓝色的。", scope=scope, session=session, goal_id=goal_id
+    )
+    budget = {"remaining_steps": 1, "max_observation_bytes": 256}
+    one_source = initial.append_input(model, blue_trace, blue_root, resource_snapshot=budget)
+    red_trace = make_trace("杯子是红色的。", input_id="input-source-red", timestamp=5)[1]
+    red_root = make_root(
+        red_trace,
+        "杯子是红色的。",
+        task_id=one_source.task_id,
+        color="红色",
+        goal_id=goal_id,
+        object_id="object-red",
+    )
+    candidate_blue = "candidate-blue"
+    candidate_red = "candidate-red"
+    broadcast = torch.tensor([0.5, 0.5], dtype=torch.float32)
+    workspace = WorkspaceState(
+        tick=red_root.tick,
+        focus=(candidate_blue,),
+        bindings=((candidate_blue, "object-1"), (candidate_red, "object-red")),
+        broadcast=broadcast,
+        capacity=1,
+        candidates=(
+            WorkspaceCandidate(
+                candidate_blue,
+                torch.tensor([1.0, 0.0], dtype=torch.float32),
+                source=blue_trace.input_id,
+            ),
+            WorkspaceCandidate(
+                candidate_red,
+                torch.tensor([0.0, 1.0], dtype=torch.float32),
+                source=red_trace.input_id,
+            ),
+        ),
+        selection=WorkspaceSelection(
+            tick=red_root.tick,
+            mode="learned",
+            candidate_ids=(candidate_blue, candidate_red),
+            selected_ids=(candidate_blue,),
+            scores=(1.0, 0.0),
+            broadcast=broadcast,
+            capacity=1,
+        ),
+        percept_event_id=red_trace.percepts[-1].event_id,
+        percept_assembly_id=red_trace.percepts[-1].assembly_id,
+    )
+    red_root = replace(
+        red_root,
+        workspace=workspace,
+        world=replace(
+            red_root.world,
+            entities=("object-1", "object-red"),
+            objects=blue_root.world.objects + red_root.world.objects,
+            events=blue_root.world.events + red_root.world.events,
+        ),
+        events=blue_root.events + red_root.events,
+        assemblies=blue_root.assemblies + red_root.assemblies,
+    )
+    two_sources = one_source.append_input(model, red_trace, red_root, resource_snapshot=budget)
+    return model, red_root, two_sources
+
+
+def select_workspace_candidate(root: CognitiveState, selected_id: str) -> CognitiveState:
+    workspace = root.workspace
+    assert workspace.selection is not None
+    score_by_id = dict(
+        zip(workspace.selection.candidate_ids, workspace.selection.scores, strict=True)
+    )
+    ordered_scores = tuple(
+        score_by_id[candidate_id] for candidate_id in workspace.selection.candidate_ids
+    )
+    selection = replace(
+        workspace.selection,
+        selected_ids=(selected_id,),
+        scores=ordered_scores,
+    )
+    return replace(
+        root,
+        workspace=replace(workspace, focus=(selected_id,), selection=selection),
+    )
 
 
 def test_same_cognitive_owner_workspace_and_provenance_reach_the_joint_view():
@@ -370,6 +456,8 @@ def test_response_end_marker_closes_a_turn_and_a_follow_up_continues_the_same_ta
     )
     response = frame.with_language_state(neural).complete_response()
     assert response.lifecycle == "response_complete"
+    with pytest.raises(ValueError, match="lifecycle"):
+        model.next_logits_from_joint(response)
     next_trace = make_trace("还有问题。", input_id="second-turn")[1]
     next_root = make_root(next_trace, "还有问题。", task_id=response.task_id)
     resumed = response.append_input(
@@ -526,3 +614,178 @@ def test_twenty_scope_goal_lifecycle_contract_cases(scope, goal, event):
         candidate_bundle_id=model.bundle_id,
     )
     assert content_digest(result.to_payload()) == content_digest(frame.to_payload())
+
+
+def test_joint_content_read_view_maps_selected_fact_to_exact_neural_source():
+    _, _, joint = setup_two_source_joint()
+
+    view = joint.content_view()
+
+    assert view.selected_candidates[0].source_status == "source_linked"
+    assert view.selected_neural_source_ids == (joint.input_bindings[0].neural_source_id,)
+
+
+@pytest.mark.parametrize("scope", ["scope-a", "scope-b"])
+@pytest.mark.parametrize("goal_id", ["goal-x", "goal-y"])
+@pytest.mark.parametrize("intervention", ["related_flip", "unrelated_hold", "cut", "rescue"])
+def test_v4_joint_logits_pass_sixteen_scope_goal_intervention_cases(scope, goal_id, intervention):
+    session = f"{scope}-{goal_id}"
+    model, root, joint = setup_two_source_joint(scope=scope, goal_id=goal_id, session=session)
+    selected_sources = joint.content_view().selected_neural_source_ids
+    logits_selected, _ = model.next_logits_from_joint(joint)
+
+    if intervention == "related_flip":
+        flipped_root = select_workspace_candidate(root, "candidate-red")
+        flipped = joint.advance_cognitive_state(flipped_root)
+        assert flipped.content_view().selected_neural_source_ids != selected_sources
+        logits_flipped, _ = model.next_logits_from_joint(flipped)
+        assert not torch.allclose(logits_selected, logits_flipped)
+    elif intervention == "unrelated_hold":
+        unrelated_object = WorldObject("object-unrelated", attributes=(("shape", "round"),))
+        unrelated_root = replace(
+            root,
+            world=replace(
+                root.world,
+                entities=tuple(item.object_id for item in root.world.objects)
+                + ("object-unrelated",),
+                objects=root.world.objects + (unrelated_object,),
+            ),
+        )
+        unrelated = joint.advance_cognitive_state(unrelated_root)
+        assert unrelated.content_view().selected_neural_source_ids == selected_sources
+        logits_unrelated, _ = model.next_logits_from_joint(unrelated)
+        assert torch.equal(logits_selected, logits_unrelated)
+    elif intervention == "cut":
+        logits_cut, _ = model.next_logits(joint.language_state)
+        assert not torch.allclose(logits_selected, logits_cut)
+    else:
+        flipped_root = select_workspace_candidate(root, "candidate-red")
+        flipped = joint.advance_cognitive_state(flipped_root)
+        restored_selection = flipped.advance_cognitive_state(root)
+        logits_rescued, _ = model.next_logits_from_joint(restored_selection)
+        assert torch.equal(logits_selected, logits_rescued)
+
+
+def test_joint_language_generation_uses_selected_source_cache_without_parameter_updates():
+    model, _, joint = setup_two_source_joint()
+    before = {name: value.detach().clone() for name, value in model.state_dict().items()}
+
+    generated, updated_joint_state = model.generate_from_joint(joint, max_new_bytes=8)
+
+    assert isinstance(generated, bytes) and 0 < len(generated) <= 8
+    assert updated_joint_state.language_state.generated.endswith(generated)
+    assert all(torch.equal(before[name], value) for name, value in model.state_dict().items())
+    assert joint.language_state.generated == b""
+
+
+def test_joint_language_consumer_rejects_generic_origin_without_exact_source_lineage():
+    model, root, joint = setup_two_source_joint()
+    selected_event = replace(root.world.events[0], provenance="client")
+    unlinked_root = replace(
+        root,
+        world=replace(root.world, events=(selected_event,)),
+        events=(),
+        assemblies=(),
+    )
+    unlinked = joint.advance_cognitive_state(unlinked_root)
+
+    assert unlinked.content_view().selected_candidates[0].source_status == (
+        "world_fact_source_unlinked"
+    )
+    with pytest.raises(ValueError, match="exact source-linked"):
+        model.next_logits_from_joint(unlinked)
+
+
+def test_actual_adapter_trace_can_feed_the_joint_v4_consumer_interface():
+    adapter = TSKV8Adapter(
+        TaijiConfig(region_sizes=(24, 16), synapse_fan_in=6, motor_fan_in=8, seed=41)
+    )
+    model = ConditionalLanguageCandidateV4(
+        TaskCoreConfigV3(
+            width=8,
+            embedding_width=4,
+            key_width=4,
+            slots=4,
+            chunk_bytes=4,
+            max_observation_bytes=256,
+            max_input_evidence_bytes=256,
+            max_output_position=16,
+            max_generation_bytes=16,
+            seed=17,
+        )
+    )
+    initial_root = adapter.cognitive_snapshot()
+    initial_joint = JointTaskStateV1.begin(
+        model,
+        initial_root,
+        joint_bundle_id="joint-v1:adapter-test",
+        owner_id="user-1",
+        scope_id="scope-1",
+        session_id="adapter-session",
+    )
+    frame = InputFrame(
+        input_id="adapter-input-1",
+        modality="text",
+        payload="杯子是蓝色的。".encode(),
+        source="test.client",
+        timestamp=3,
+    )
+    trace = adapter.ingest_input(frame, learn=False)
+    root = adapter.cognitive_snapshot()
+    candidate_id, object_id = "adapter-fact", "adapter-cup"
+    world_event = WorldEvent(
+        event_id="adapter-world-fact",
+        kind="observed_attribute",
+        tick=root.world.tick,
+        subject_id=object_id,
+        object_id=object_id,
+        attributes=(("color", "蓝色"),),
+        provenance=trace.input_id,
+    )
+    broadcast = torch.zeros(2, dtype=torch.float32)
+    workspace = WorkspaceState(
+        tick=root.workspace.tick,
+        focus=(candidate_id,),
+        bindings=((candidate_id, object_id),),
+        broadcast=broadcast,
+        capacity=1,
+        candidates=(
+            WorkspaceCandidate(
+                candidate_id,
+                torch.tensor([1.0, 0.0], dtype=torch.float32),
+                source=trace.input_id,
+            ),
+        ),
+        selection=WorkspaceSelection(
+            tick=root.workspace.tick,
+            mode="learned",
+            candidate_ids=(candidate_id,),
+            selected_ids=(candidate_id,),
+            scores=(1.0,),
+            broadcast=broadcast,
+            capacity=1,
+        ),
+    )
+    root = replace(
+        root,
+        workspace=workspace,
+        world=replace(
+            root.world,
+            entities=(object_id,),
+            objects=(WorldObject(object_id, attributes=(("color", "蓝色"),)),),
+            events=(world_event,),
+        ),
+    )
+    joint = initial_joint.append_input(
+        model,
+        trace,
+        root,
+        resource_snapshot={"remaining_steps": 1, "max_observation_bytes": 256},
+    )
+
+    logits, _ = model.next_logits_from_joint(joint)
+
+    assert logits.shape == (257,)
+    assert joint.content_view().selected_neural_source_ids == (
+        joint.input_bindings[0].neural_source_id,
+    )

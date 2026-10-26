@@ -53,7 +53,7 @@
 
 ### 3.2 共同任务状态、来源、时间与重置
 
-N177.1已实现opt-in `JointTaskStateV1`，以一个`CognitiveState`为认知根，映射V4神经`TaskState`、逐byte`InputTrace`来源、owner/scope/session/revision及显式reset/carry；30项定向用例和静态检查通过。当前只证明接口和合成NativeCheckpoint封装/恢复可用，真实Adapter/记忆/世界/选择消费者尚未接入，不等同3.2整体生产链出口。具体报告见[状态接口回执](../../../reports/taiji_n1_plan177_state_interface_20261026.json)。下一步接通T1所需实际消费者；不新增`joint_task_core.py`包装层，除非真实调用图证明需要。
+N177.1接口以一个`CognitiveState`为认知根，映射V4神经`TaskState`、逐byte`InputTrace`来源、owner/scope/session/revision及显式reset/carry；30项N177.1定向用例和静态检查通过。N177.2-T1现把实际Adapter `InputTrace`及结构化事实来源接入V4源帧过滤consumer，16项因果检查和50项联合模块测试通过，详见[状态接口回执](../../../reports/taiji_n1_plan177_state_interface_20261026.json)与[T1回执](../../../reports/taiji_n1_plan177_t1_source_conditioned_language_20261026.json)。这证明opt-in候选的来源选择进入logits，不证明自然中文理解或生产默认路径已替换；episodic memory/WorldDynamics仍未接入，3.2整体生产链出口未达。下一步走T2，不新增`joint_task_core.py`包装层，除非真实调用图证明需要。
 
 | 项目 | 实施要求 |
 |---|---|
@@ -65,6 +65,8 @@ N177.1已实现opt-in `JointTaskStateV1`，以一个`CognitiveState`为认知根
 | 被阻止的训练 | 所需信息尚无法表示、跨reset丢失或checkpoint不能完整保存/恢复时，不为依赖这些信息的任务开训 |
 
 ### 3.3 必要记忆选择、行动条件世界预测与短规划
+
+当前进展：N177.2-T1已将精确来源绑定的共同事实读取接入V4语言候选，实际Adapter输入、T1相关翻转/无关保持/切断/救援16例和报告见[T1回执](../../../reports/taiji_n1_plan177_t1_source_conditioned_language_20261026.json)。这一结果仅验证当前workspace选择对logits的因果可达，事实由结构化fixture给出，不表示模型能从自然中文自行抽取，也未接EpisodicMemoryStore或WorldDynamicsLearner。下一步只做T2真实经历读取，再按依赖接T3世界预测/行动选择；本节整体出口未达。
 
 | 项目 | 实施要求 |
 |---|---|

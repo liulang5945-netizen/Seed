@@ -81,8 +81,12 @@ class JointInputBindingV1:
             raise ValueError("input binding must contain at least one source byte")
         if len(self.percept_event_ids) != self.byte_count:
             raise ValueError("each input byte needs a recorded percept event reference")
+        # The adapter may reuse one percept event for several bytes in a learned
+        # assembly. Keep one reference per byte, but do not invent uniqueness.
         object.__setattr__(
-            self, "percept_event_ids", _unique_ids(self.percept_event_ids, "percept event id")
+            self,
+            "percept_event_ids",
+            tuple(_required_text(x, "percept event id") for x in self.percept_event_ids),
         )
         # Variable-duration bytes legitimately reuse an assembly identity.
         assemblies = tuple(_required_text(x, "assembly id") for x in self.assembly_ids)
@@ -759,6 +763,7 @@ class JointContentReadViewV1:
     bundle_id: str
     state_revision: int
     source_ids: tuple[str, ...]
+    selected_neural_source_ids: tuple[str, ...]
     selected_candidates: tuple[JointCandidateReferenceV1, ...]
     unresolved_focus_ids: tuple[str, ...]
     world_objects: tuple[Any, ...]
@@ -775,11 +780,9 @@ class JointContentReadViewV1:
         root = state.cognitive_state
         known_sources = {state.task_id}
         for item in state.input_bindings:
-            known_sources.update({item.input_id, item.neural_source_id, item.source})
+            known_sources.update({item.input_id, item.neural_source_id})
             known_sources.update(item.percept_event_ids)
             known_sources.update(item.assembly_ids)
-        known_sources.add(root.observation.source if root.observation is not None else "")
-        known_sources.discard("")
         candidate_map = {item.candidate_id: item for item in root.workspace.candidates}
         requested_ids = (
             tuple(root.workspace.selection.selected_ids)
@@ -798,6 +801,33 @@ class JointContentReadViewV1:
         references = []
         selected_objects: dict[str, Any] = {}
         selected_events: dict[str, Any] = {}
+        selected_neural_source_ids: set[str] = set()
+
+        def linked_neural_sources(event_id: str, provenance: str) -> set[str]:
+            """Map an evidence event to exact consumed input identities, never generic origin labels."""
+            owner_event = root_events.get(event_id)
+            owner_assembly_ids = set(() if owner_event is None else owner_event.assembly_ids)
+            owner_percept_ids: set[str] = set()
+            for assembly_id in owner_assembly_ids:
+                assembly = assemblies.get(assembly_id)
+                if assembly is not None:
+                    owner_percept_ids.update(assembly.source_event_ids)
+            exact: set[str] = set()
+            for binding in state.input_bindings:
+                if (
+                    provenance in {binding.input_id, binding.neural_source_id}
+                    or event_id in binding.percept_event_ids
+                ):
+                    exact.add(binding.neural_source_id)
+            if exact:
+                return exact
+            return {
+                binding.neural_source_id
+                for binding in state.input_bindings
+                if owner_assembly_ids.intersection(binding.assembly_ids)
+                or owner_percept_ids.intersection(binding.percept_event_ids)
+            }
+
         for candidate_id in selected_ids:
             target = bindings.get(candidate_id)
             target_kind = "unresolved"
@@ -806,6 +836,7 @@ class JointContentReadViewV1:
                 target_kind = "world_object"
                 selected_objects[target] = objects[target]
                 linked_fields: list[bool] = []
+                candidate_sources: set[str] = set()
                 for attribute, value in objects[target].attributes:
                     matching = [
                         event
@@ -821,44 +852,36 @@ class JointContentReadViewV1:
                     latest = [event for event in matching if event.tick == latest_tick]
                     field_linked = False
                     for event in latest:
-                        owner_event = root_events.get(event.event_id)
-                        direct_source = event.provenance in known_sources
-                        traced_owner = owner_event is not None and any(
-                            assembly_id in assemblies
-                            and bool(set(assemblies[assembly_id].source_event_ids) & known_sources)
-                            for assembly_id in owner_event.assembly_ids
-                        )
-                        if direct_source or traced_owner:
+                        event_sources = linked_neural_sources(event.event_id, event.provenance)
+                        if event_sources:
                             selected_events[event.event_id] = event
+                            candidate_sources.update(event_sources)
                             field_linked = True
                     linked_fields.append(field_linked)
                 if linked_fields and all(linked_fields):
                     source_status = "source_linked"
+                    selected_neural_source_ids.update(candidate_sources)
                 elif any(linked_fields):
                     source_status = "partially_source_linked"
                 else:
                     source_status = "world_fact_source_unlinked"
             elif target in world_events:
                 target_kind = "world_event"
-                selected_events[target] = world_events[target]
-                source_status = (
-                    "source_linked"
-                    if world_events[target].provenance in known_sources or target in root_events
-                    else "world_event_source_unlinked"
-                )
+                event_sources = linked_neural_sources(target, world_events[target].provenance)
+                if event_sources:
+                    selected_events[target] = world_events[target]
+                    selected_neural_source_ids.update(event_sources)
+                    source_status = "source_linked"
+                else:
+                    source_status = "world_event_source_unlinked"
             elif target in root_events:
                 target_kind = "cognitive_event"
-                source_status = (
-                    "source_linked"
-                    if any(
-                        assembly_id in assemblies
-                        and set(assemblies[assembly_id].source_event_ids).intersection(
-                            known_sources
-                        )
-                        for assembly_id in root_events[target].assembly_ids
-                    )
-                    else "cognitive_event_source_unlinked"
-                )
+                event_sources = linked_neural_sources(target, root_events[target].provenance)
+                if event_sources:
+                    selected_neural_source_ids.update(event_sources)
+                    source_status = "source_linked"
+                else:
+                    source_status = "cognitive_event_source_unlinked"
             elif target in set(root.memory.episodic_ids):
                 target_kind, source_status = "episodic_memory_ref", "ref_only_owner_lookup_required"
             elif target in set(root.memory.working_ids):
@@ -871,6 +894,17 @@ class JointContentReadViewV1:
                 target_kind, source_status = "concept_ref", "ref_only_owner_lookup_required"
             elif target in known_sources:
                 target_kind, source_status = "input_source", "source_linked"
+                selected_neural_source_ids.update(
+                    binding.neural_source_id
+                    for binding in state.input_bindings
+                    if target
+                    in {
+                        binding.input_id,
+                        binding.neural_source_id,
+                        *binding.percept_event_ids,
+                        *binding.assembly_ids,
+                    }
+                )
             elif target is None:
                 source_status = "no_content_binding"
             else:
@@ -882,6 +916,7 @@ class JointContentReadViewV1:
             bundle_id=state.joint_bundle_id,
             state_revision=state.joint_revision,
             source_ids=tuple(item.input_id for item in state.input_bindings),
+            selected_neural_source_ids=tuple(sorted(selected_neural_source_ids)),
             selected_candidates=tuple(references),
             unresolved_focus_ids=unresolved_focus,
             world_objects=tuple(selected_objects.values()),
