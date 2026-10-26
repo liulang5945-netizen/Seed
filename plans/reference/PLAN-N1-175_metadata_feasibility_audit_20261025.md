@@ -6,6 +6,14 @@
 
 冻结OASST2 gzip档案SHA已与原常量核对一致。仅提取message_id/parent_id/role/lang/deleted/rank，构建消息父子与root-family索引；不解析text正文、不选新holdout、不载模型、不写checkpoint。原episode文件也只提取episode_id/split，全部ID可映射到原档案。
 
+## 判据、出口与验收
+
+判据：OASST2 gzip档案SHA与原常量核对一致；扫描止于元数据层（message_id/parent_id/role/lang/deleted/rank），不解析正文、不选新holdout、不载模型、不写checkpoint；计数口径以下表为准。
+
+出口：元数据审计完成即出口——结论为"尚非质量合格数据集，不启动训练"；后续动作移交N1-175数据合同修订（见"唯一建议"），不把未达名义数量变成无限等待训练的硬门。
+
+验收：机器审计回执（见"可复现交付"）的数字与本页"实际计数"表逐项一致；lang=zh是来源标签而非正文语言质量证明，新留出与质量规则另行预注册后再评价。
+
 ## 实际计数
 
 | 项 | 计数 |
