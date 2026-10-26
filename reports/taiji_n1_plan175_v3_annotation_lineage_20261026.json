@@ -1,0 +1,34 @@
+{
+  "schema": "taiji-n1-plan175-source-annotation-audit-v1",
+  "status": "runtime_ast_equal_source_gate_still_blocked",
+  "commit": "6853d9589f41ab8ed560d9b0915cf97620f69b8b",
+  "old_normalized_sha256": "90eff7b871b51c9a121e6dfbbe962932cf9e2136952fba6aa75022d696c5186c",
+  "new_normalized_sha256": "978212208ebf55e69094c7f24708d41cbb9eb13ca1e05be081f079508d3ad6d9",
+  "runtime_ast_sha256": "ed24ef701bc61d9572a284984fb557df258a738756d2f91363c0e5a3112e829e",
+  "normalization": "AST strips comments and valueless postponed AnnAssign; all executable assignments, calls, statements, signatures and constants retained",
+  "behavior_change_negative_control": "rejected",
+  "source_gate_modified": false,
+  "heldout_text_read": 0,
+  "training_updates": 0,
+  "process_cpu_seconds": 0.046875,
+  "checkpoint_verifier_format_only_transition": {
+    "executed_source_sha256": "a9673170ea8952ebc982cbe52900302bacb8c1616c74cdeb31d89e6bf91ef76c",
+    "committed_source_sha256": "ec387d6a5a82110d6f0e0de96c81fc8b8e335e5343368ac1edf621e5c8cc7a19",
+    "ast_equal": true,
+    "note": "Epoch37-40 restore receipts retain the source SHA actually executed before formatter-only changes."
+  },
+  "targeted_validation": {
+    "passed": 14,
+    "seconds": 14.22,
+    "initial_setup_errors": 14,
+    "initial_failure": "default temporary directory permission; rerun with repository test temp directory passed",
+    "ruff": "passed",
+    "checkpoint_epochs_restored": [
+      37,
+      38,
+      39,
+      40
+    ],
+    "checkpoint_count": 12
+  }
+}

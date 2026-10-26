@@ -23,9 +23,17 @@ def report_path(epoch: int) -> Path:
 
 def verify_seed(seed: int, epoch: int) -> dict:
     progress = json.loads(progress_path(seed).read_text(encoding="utf-8"))
-    if progress.get("last_durable_epoch", 0) < epoch:
+    # The runner atomically replaces the live cursor with its terminal result.
+    terminal = progress.get("status") == "complete"
+    durable = (
+        progress.get("epochs_complete", 0) if terminal else progress.get("last_durable_epoch", 0)
+    )
+    epoch_history = (
+        progress.get("epoch_results", []) if terminal else progress.get("epoch_history", [])
+    )
+    if durable < epoch:
         raise ValueError(f"seed {seed} has not durably saved epoch {epoch}")
-    history = [row for row in progress.get("epoch_history", []) if row.get("epoch") <= epoch]
+    history = [row for row in epoch_history if row.get("epoch") <= epoch]
     if len(history) != epoch or history[-1]["epoch"] != epoch:
         raise ValueError(f"seed {seed} progress lacks complete metrics through epoch {epoch}")
     path = checkpoint_path(seed, epoch)
