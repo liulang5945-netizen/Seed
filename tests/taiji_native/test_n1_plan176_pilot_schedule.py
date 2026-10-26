@@ -2,6 +2,7 @@
 
 from collections import Counter
 
+from scripts.training.audit_taiji_n1_plan176_learning_paths import normalized_answer
 from scripts.training.build_taiji_n1_plan176_foundation_corpus import (
     COLORS,
     OBJECTS,
@@ -40,3 +41,9 @@ def test_sealed_counterfactual_remains_an_unseen_pair_and_irrelevant_target_is_f
     assert pair_split(oi, COLORS.index(related["response"].rstrip("。"))) == "sealed"
     assert irrelevant["response"] == row["response"]
     assert irrelevant["user_input"] != row["user_input"]
+
+
+def test_answer_normalization_handles_the_real_target_terminal_newline():
+    assert normalized_answer("蓝色。\n<|end|>\n".encode()) == "蓝色"
+    assert normalized_answer("蓝色。\n<|end|>".encode()) == "蓝色"
+    assert normalized_answer(b"\xe8") is None

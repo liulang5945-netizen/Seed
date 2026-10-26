@@ -12,6 +12,7 @@
 | 单入口续训与来源 | [15精简](delivery-runs/20261021-n-mainline/artifacts/15-training-system-simplification.md)、[原extension架构](delivery-runs/20261021-n-mainline/artifacts/04-continuation-extension-architecture.md) |
 | 原全轮/R2配对合同 | [全轮预训练](PLAN-R2-DAILY-DIALOGUE-FULL-TURN-PRETRAINING_20261021.md)、[恢复合同](PLAN-R2-DAILY-DIALOGUE-RECOVERY_20261021.md)、[warm/fresh合同](PLAN-R2-DAILY-DIALOGUE-WARMSTART-MATCHED_20261021.md) |
 | 下一主线统一架构、驱动力与VX0–VX7工程包 | [VISION现行方案](VISION_FUTURE_TECHNOLOGY.md)；旧全文由其固定Git身份恢复 |
+| 七类架构缺陷与改造建议核实 | [主张与来源审计](PLAN-N1-176_architecture_claims_audit_20261026.md) |
 | 后继基础语义与分级课程 | [N176实施计划](PLAN-N1-176_foundation_curriculum_20261026.md)、[固定F0/F1合同](SPEC-N1-176_F0_F1_pilot_20261026.md)、[材料审计](../../reports/taiji_n1_plan175_curriculum_data_audit_20261026.json) |
 | N175当前评价与匿名判读 | [评价交接](PLAN-N1-175_evaluation_handoff_20261026.md)、[匿名判读表](PLAN-N1-175_blind_review_20261026.md) |
 | 前序语言负结果的原因与审计 | [N175原因复盘](PLAN-N1-175_prior_results_cause_review_20261026.md)、[初始化/历史读数审计](../../reports/taiji_n1_plan175_prior_results_cause_audit_20261026.json) |

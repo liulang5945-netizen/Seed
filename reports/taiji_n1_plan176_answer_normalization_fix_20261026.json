@@ -1,0 +1,88 @@
+{
+  "schema": "taiji-n176-answer-normalization-correction-v1",
+  "reason": "LanguageEpisode target ends newline after end marker; strip surrounding whitespace before removing marker, per existing frozen scoring definition",
+  "regression_reproduced_before_fix": true,
+  "regression_tests_passed": 3,
+  "original_audit_sha256": "9a855d791818fd61ed056b7958fa108ad9594cc9429c8c3ccb005e1e867ec0f5",
+  "original_audit_preserved": true,
+  "corrected_base_free_correct": 0,
+  "corrected_scores_from_existing_text": [
+    {
+      "episode_id": "n176:world:5:7:2:q2",
+      "corrected_condition_correct": {
+        "matched": false,
+        "related_fact_flip": false,
+        "irrelevant_fact_flip": false,
+        "swapped_prompt": false
+      }
+    },
+    {
+      "episode_id": "n176:world:6:6:3:q2",
+      "corrected_condition_correct": {
+        "matched": false,
+        "related_fact_flip": false,
+        "irrelevant_fact_flip": false,
+        "swapped_prompt": false
+      }
+    },
+    {
+      "episode_id": "n176:world:0:3:2:q3",
+      "corrected_condition_correct": {
+        "matched": false,
+        "related_fact_flip": false,
+        "irrelevant_fact_flip": false,
+        "swapped_prompt": false
+      }
+    },
+    {
+      "episode_id": "n176:world:6:0:3:q3",
+      "corrected_condition_correct": {
+        "matched": false,
+        "related_fact_flip": false,
+        "irrelevant_fact_flip": false,
+        "swapped_prompt": false
+      }
+    },
+    {
+      "episode_id": "n176:world:2:5:2:q4",
+      "corrected_condition_correct": {
+        "matched": false,
+        "related_fact_flip": false,
+        "irrelevant_fact_flip": false,
+        "swapped_prompt": false
+      }
+    },
+    {
+      "episode_id": "n176:world:3:3:3:q4",
+      "corrected_condition_correct": {
+        "matched": false,
+        "related_fact_flip": false,
+        "irrelevant_fact_flip": false,
+        "swapped_prompt": false
+      }
+    },
+    {
+      "episode_id": "n176:world:4:4:0:q5",
+      "corrected_condition_correct": {
+        "matched": false,
+        "related_fact_flip": false,
+        "irrelevant_fact_flip": false,
+        "swapped_prompt": false
+      }
+    },
+    {
+      "episode_id": "n176:world:3:7:1:q5",
+      "corrected_condition_correct": {
+        "matched": false,
+        "related_fact_flip": false,
+        "irrelevant_fact_flip": false,
+        "swapped_prompt": false
+      }
+    }
+  ],
+  "new_model_queries": 0,
+  "new_sealed_body_extractions": 0,
+  "n175_key_opened": false,
+  "normalizer_source_sha256": "91c0e237361e76c0a8f832253525cd375fa0671d37f2526bb480fdc57e0b81e9",
+  "scope": "Only exact finite-answer rescoring; raw UTF8 validity cannot be reconstructed from lossy stored text and is not newly claimed"
+}

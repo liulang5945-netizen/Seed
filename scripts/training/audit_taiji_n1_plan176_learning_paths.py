@@ -103,6 +103,9 @@ def trace(model, state, target: bytes):
 
 
 def normalized_answer(raw: bytes) -> str | None:
+    # LanguageEpisode.target_text ends in "\n<|end|>\n", while generation
+    # stops at the marker. Normalize surrounding whitespace before the marker.
+    raw = raw.strip()
     if raw.endswith(b"<|end|>"):
         raw = raw[: -len(b"<|end|>")]
     try:

@@ -1,0 +1,101 @@
+{
+  "schema": "taiji-n176-foundation-pilot-v1",
+  "status": "complete",
+  "arm": "flat_v3",
+  "pid": 32140,
+  "version": 3,
+  "parent_checkpoint": "data\\checkpoints\\n1_plan175_v3_scale_20261026\\tf_seed169\\epoch_40.pt",
+  "parent_checkpoint_sha256": "4a30bde4fd632a500a8a7c83e56d8987ad9edf516e05275208260e5feff5a3ec",
+  "sources_sha256": {
+    "spec": "417efe0ed16b3d72ef0ebed3f56875718b0fcb1dadc50faaef1189bbe0c9e730",
+    "selection": "45e5b57c152bcbb82234bc97e91ad10c11d4b95faab02671fb9f474e029e84db",
+    "runner": "211d343bb0e8952cbd6c52aca53a7d3ef98532c1dae539befae3efdd4397fa26",
+    "candidate": "2fc5305f60e2eaeb8a82a77dbfd679cacee8c001f6f42c5346ce7d3bccabc619",
+    "restore_helper": "9d00174c63c297075331da4e71338c795d3a51818ed23cf87a8b2c1ceae011bc"
+  },
+  "train_corpus_sha256": "75164193dbcef08c4c5db9e5f17b084554aabde0cdae7da21a3d40a34b0a7555",
+  "order_sha256": "229d7bd47926e3c149410105d4bf78c545b77368d6ab99cc1b7a14e6ce33abde",
+  "planned_updates": 2560,
+  "planned_target_byte_exposures": 190080,
+  "completed_updates": 2560,
+  "initial_steps": 16520,
+  "initial_target_byte_exposures": 35051600,
+  "zero_fresh_restore": {
+    "status": "passed",
+    "steps": 16520,
+    "cpu_seconds": 4.5625
+  },
+  "sealed_text_read": 0,
+  "n175_key_opened": false,
+  "can_promote": false,
+  "cpu_guard_seconds": 1500,
+  "durable_checkpoints": [
+    {
+      "next_batch": 256,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\flat_v3\\batch_00256.pt",
+      "sha256": "c2cdad350667de81cfb903e6ce8ac03df074aeb0063d4de7836fae729c981b36"
+    },
+    {
+      "next_batch": 512,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\flat_v3\\batch_00512.pt",
+      "sha256": "b498a180cd72afc9d1863720ac33321854a6bb6c5c4f1cee4f9a6e7b5eb90fb2"
+    },
+    {
+      "next_batch": 640,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\flat_v3\\batch_00640.pt",
+      "sha256": "1ef83003e7da11be03ca83034b30f4b885d26ae16cfded8000a1d2e301b0c79d"
+    },
+    {
+      "next_batch": 768,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\flat_v3\\batch_00768.pt",
+      "sha256": "fba8f8c86ffdc0d02ca28f2f560de270da9fabc518393b34f9ef963351c909fe"
+    },
+    {
+      "next_batch": 1024,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\flat_v3\\batch_01024.pt",
+      "sha256": "f35af9fdad3ca434733dd1305b265889c5c55217d5cca1e600f07754fc319649"
+    },
+    {
+      "next_batch": 1280,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\flat_v3\\batch_01280.pt",
+      "sha256": "c77d6bf45e46de34155d876239bab02328a347c3cbff29a96e951455f4ad407e"
+    },
+    {
+      "next_batch": 1536,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\flat_v3\\batch_01536.pt",
+      "sha256": "74b36017a4994bfa6ed5ed23475bba7a93df0c4f37916fd9c3b45444db9dface"
+    },
+    {
+      "next_batch": 1792,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\flat_v3\\batch_01792.pt",
+      "sha256": "992681699e6f5b44c819228edd41f564e0d7fab5a23e3b04f21c73236636e419"
+    },
+    {
+      "next_batch": 2048,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\flat_v3\\batch_02048.pt",
+      "sha256": "30394c88964e91cb082c9ef86b6f9ad629949754970de3e0925b7934c354ddb2"
+    },
+    {
+      "next_batch": 2304,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\flat_v3\\batch_02304.pt",
+      "sha256": "14e1ff2cddfd8ac917f4cffbf2bd80a0badbe608d57e378964e15722752fdb2c"
+    },
+    {
+      "next_batch": 2560,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\flat_v3\\batch_02560.pt",
+      "sha256": "7b8f7b9cac66c13ad03415cde82620ef3759f133cb906fb536092eb870f81161"
+    }
+  ],
+  "target_byte_exposures": 190080,
+  "mean_loss_nats": 0.042720250130657604,
+  "process_cpu_seconds": 803.015625,
+  "child_process_cpu_seconds": 8.484375,
+  "wall_seconds": 990.3279999999795,
+  "final_checkpoint": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\flat_v3\\batch_02560.pt",
+  "final_checkpoint_sha256": "7b8f7b9cac66c13ad03415cde82620ef3759f133cb906fb536092eb870f81161",
+  "final_fresh_restore": {
+    "status": "passed",
+    "steps": 19080,
+    "cpu_seconds": 3.921875
+  }
+}

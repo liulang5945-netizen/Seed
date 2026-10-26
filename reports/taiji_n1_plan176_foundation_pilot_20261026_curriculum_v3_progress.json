@@ -1,0 +1,101 @@
+{
+  "schema": "taiji-n176-foundation-pilot-v1",
+  "status": "complete",
+  "arm": "curriculum_v3",
+  "pid": 38260,
+  "version": 3,
+  "parent_checkpoint": "data\\checkpoints\\n1_plan175_v3_scale_20261026\\tf_seed169\\epoch_40.pt",
+  "parent_checkpoint_sha256": "4a30bde4fd632a500a8a7c83e56d8987ad9edf516e05275208260e5feff5a3ec",
+  "sources_sha256": {
+    "spec": "417efe0ed16b3d72ef0ebed3f56875718b0fcb1dadc50faaef1189bbe0c9e730",
+    "selection": "45e5b57c152bcbb82234bc97e91ad10c11d4b95faab02671fb9f474e029e84db",
+    "runner": "211d343bb0e8952cbd6c52aca53a7d3ef98532c1dae539befae3efdd4397fa26",
+    "candidate": "2fc5305f60e2eaeb8a82a77dbfd679cacee8c001f6f42c5346ce7d3bccabc619",
+    "restore_helper": "9d00174c63c297075331da4e71338c795d3a51818ed23cf87a8b2c1ceae011bc"
+  },
+  "train_corpus_sha256": "75164193dbcef08c4c5db9e5f17b084554aabde0cdae7da21a3d40a34b0a7555",
+  "order_sha256": "622dccd134a86ac77e3740a4acca0ddc4b74ac976825f95c5d9c2d319b5a8e1c",
+  "planned_updates": 2560,
+  "planned_target_byte_exposures": 190080,
+  "completed_updates": 2560,
+  "initial_steps": 16520,
+  "initial_target_byte_exposures": 35051600,
+  "zero_fresh_restore": {
+    "status": "passed",
+    "steps": 16520,
+    "cpu_seconds": 4.21875
+  },
+  "sealed_text_read": 0,
+  "n175_key_opened": false,
+  "can_promote": false,
+  "cpu_guard_seconds": 1500,
+  "durable_checkpoints": [
+    {
+      "next_batch": 256,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\curriculum_v3\\batch_00256.pt",
+      "sha256": "9aab8d5c3c7b569a6bb9418f58bf713446bdaa8f1e429ae4212d759f7b7b860e"
+    },
+    {
+      "next_batch": 512,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\curriculum_v3\\batch_00512.pt",
+      "sha256": "8555c5f0bbf39d398d9cc74c47f1dc493a496dca69c10325707bdaf261329fc0"
+    },
+    {
+      "next_batch": 640,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\curriculum_v3\\batch_00640.pt",
+      "sha256": "a14e1dcdb3e35de207828b3d9f55ec68edc63bef8f891a582c59e2b6ca46420f"
+    },
+    {
+      "next_batch": 768,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\curriculum_v3\\batch_00768.pt",
+      "sha256": "433e70820c95ed7baa51af19fc9641faaad7a4ddd703724fa61a4fa901cc47ae"
+    },
+    {
+      "next_batch": 1024,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\curriculum_v3\\batch_01024.pt",
+      "sha256": "fc98d68275b8e29d551190dabf3b0a1ad66ad7dc68709c1c40df74e56453992f"
+    },
+    {
+      "next_batch": 1280,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\curriculum_v3\\batch_01280.pt",
+      "sha256": "36f30e3d747040364232ac89872f35f998caa4ebc5849189354bd5170be8fc52"
+    },
+    {
+      "next_batch": 1536,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\curriculum_v3\\batch_01536.pt",
+      "sha256": "8cf4a0a6a255bf9a4cb0d3ffd7bf9578a7cfde5cf34d0cc8c3a57489a1c2b9d8"
+    },
+    {
+      "next_batch": 1792,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\curriculum_v3\\batch_01792.pt",
+      "sha256": "f4762f993a341e1120d04948a4f7932ec82a33949a27b66c9405e50c4a3a4255"
+    },
+    {
+      "next_batch": 2048,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\curriculum_v3\\batch_02048.pt",
+      "sha256": "ba62dd4d05c6dd0fe9adba7e9bd81a20620f5e63d048f715599637e4bf671d2f"
+    },
+    {
+      "next_batch": 2304,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\curriculum_v3\\batch_02304.pt",
+      "sha256": "7f674f3a79d700314fa1632627bbe315dad2e5c5286cb142b1f12bff3bfae1bc"
+    },
+    {
+      "next_batch": 2560,
+      "path": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\curriculum_v3\\batch_02560.pt",
+      "sha256": "4361802f2849c75c35cd12b29bd8f682730b635f643c654d6530c9b43009de37"
+    }
+  ],
+  "target_byte_exposures": 190080,
+  "mean_loss_nats": 0.03614943086698357,
+  "process_cpu_seconds": 800.8125,
+  "child_process_cpu_seconds": 8.28125,
+  "wall_seconds": 988.6720000000205,
+  "final_checkpoint": "data\\checkpoints\\n1_plan176_foundation_pilot_20261026\\curriculum_v3\\batch_02560.pt",
+  "final_checkpoint_sha256": "4361802f2849c75c35cd12b29bd8f682730b635f643c654d6530c9b43009de37",
+  "final_fresh_restore": {
+    "status": "passed",
+    "steps": 19080,
+    "cpu_seconds": 4.0625
+  }
+}
