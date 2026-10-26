@@ -37,7 +37,7 @@
       "lines": 114
     }
   },
-  "active_current_lines": 61,
+  "active_current_lines": 63,
   "next_development_step": "N177.1 shared content state, ownership, provenance/time and lifecycle interfaces",
   "N176_closure_in_parallel_without_retraining": true,
   "requires_N176_positive_result_before_joint_engineering": false,
@@ -50,5 +50,6 @@
   "final_identity_tests_passed": 4,
   "independent_sequence_review": "passed_no_blocking_dependency_issue",
   "preserve_N176_runtime_before_shared_semantic_changes": true,
-  "mechanism_research_can_move_forward_on_evidenced_blocker": true
+  "mechanism_research_can_move_forward_on_evidenced_blocker": true,
+  "task_wise_vertical_progression_without_all_organs_gate": true
 }
