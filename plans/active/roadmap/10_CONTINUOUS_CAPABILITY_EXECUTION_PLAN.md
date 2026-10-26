@@ -53,7 +53,7 @@
 
 ### 3.2 共同任务状态、来源、时间与重置
 
-N177.1接口以一个`CognitiveState`为认知根，映射V4神经`TaskState`、逐byte`InputTrace`来源、owner/scope/session/revision及显式reset/carry；30项N177.1定向用例和静态检查通过。N177.2-T1现把实际Adapter `InputTrace`及结构化事实来源接入V4源帧过滤consumer，16项因果检查和50项联合模块测试通过，详见[状态接口回执](../../../reports/taiji_n1_plan177_state_interface_20261026.json)与[T1回执](../../../reports/taiji_n1_plan177_t1_source_conditioned_language_20261026.json)。这证明opt-in候选的来源选择进入logits，不证明自然中文理解或生产默认路径已替换；episodic memory/WorldDynamics仍未接入，3.2整体生产链出口未达。下一步走T2，不新增`joint_task_core.py`包装层，除非真实调用图证明需要。
+N177.1以一个`CognitiveState`为根，映射V4神经`TaskState`、逐byte`InputTrace`来源、owner/scope/session/revision及reset/carry；30项N177.1定向用例和静态检查通过。N177.2-T1把Adapter `InputTrace`及结构化事实来源接入V4源帧consumer；T2从实际`EpisodicMemoryStore`选择当前`CognitiveState.memory.episodic_ids`授权的经历，经事件/assembly和percept时间跨度唯一映射到历史输入，再与当前query共同进入V4；同查询记忆切除对照、52项联合测试及64项组合回归通过。证据证明opt-in同task来源消费，不代表自然理解、生产默认路径、记录级用户/范围隔离或跨session记忆。V1 payload可迁移；若缺时间span且身份复用则拒绝T2读取。见[N177.1回执](../../../reports/taiji_n1_plan177_state_interface_20261026.json)、[T1回执](../../../reports/taiji_n1_plan177_t1_source_conditioned_language_20261026.json)和[T2回执](../../../reports/taiji_n1_plan177_t2_episodic_consumer_20261026.json)。
 
 | 项目 | 实施要求 |
 |---|---|
@@ -66,7 +66,7 @@ N177.1接口以一个`CognitiveState`为认知根，映射V4神经`TaskState`、
 
 ### 3.3 必要记忆选择、行动条件世界预测与短规划
 
-当前进展：N177.2-T1已将精确来源绑定的共同事实读取接入V4语言候选，实际Adapter输入、T1相关翻转/无关保持/切断/救援16例和报告见[T1回执](../../../reports/taiji_n1_plan177_t1_source_conditioned_language_20261026.json)。这一结果仅验证当前workspace选择对logits的因果可达，事实由结构化fixture给出，不表示模型能从自然中文自行抽取，也未接EpisodicMemoryStore或WorldDynamicsLearner。下一步只做T2真实经历读取，再按依赖接T3世界预测/行动选择；本节整体出口未达。
+当前进展：N177.2-T1/T2已完成来源约束语言消费。T2使用真实`EpisodicMemoryStore`排名，先限于Taiji在当前`CognitiveState.memory.episodic_ids`列出的记录，再以percept tick span区分跨输入帧重复的event/assembly identity，并将当前query与所选历史输入帧一起送入V4。固定同一query时，加入/切除所选记忆会改变logits；间隔无关输入不进入memory-conditioned缓存。结构化记忆记录和输入由测试构造，不宣称事实理解、成功写入、跨session回忆或生产隐私边界。N177.2-T3行动条件预测/候选选择仍待接入。
 
 | 项目 | 实施要求 |
 |---|---|

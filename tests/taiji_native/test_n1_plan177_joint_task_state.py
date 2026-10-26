@@ -20,6 +20,7 @@ from taiji.contracts import (
     Assembly,
     CognitiveState,
     DevelopmentState,
+    EpisodicMemoryRecord,
     Event,
     Goal,
     GoalState,
@@ -40,9 +41,10 @@ from taiji.contracts import (
     WorldObject,
     WorldState,
 )
+from taiji.episodic_memory import EpisodicMemoryStore
 from taiji.input_boundary import InputFrame, InputTrace
 from taiji.internalization import content_digest
-from taiji.joint_task_state import JointTaskStateV1
+from taiji.joint_task_state import JointEpisodeReadV1, JointTaskStateV1
 
 
 def make_trace(text: str, *, input_id: str, source: str = "client", timestamp: int = 4):
@@ -484,6 +486,22 @@ def test_versioned_joint_payload_roundtrips_and_rejects_owner_neural_or_cognitiv
         candidate_bundle_id=model.bundle_id,
     )
     assert restored.to_payload()["cognitive_state_sha256"] == joined.cognitive_state_sha256
+    legacy_payload = copy.deepcopy(payload)
+    legacy_payload["format"] = "taiji-joint-task-state-v1"
+    legacy_payload["version"] = 1
+    for binding in legacy_payload["input_bindings"]:
+        binding.pop("percept_tick_start", None)
+        binding.pop("percept_tick_end", None)
+    migrated = JointTaskStateV1.from_payload(
+        legacy_payload,
+        joint_bundle_id="joint-v1:test",
+        owner_id="user-1",
+        scope_id="scope-1",
+        session_id="session-1",
+        candidate_bundle_id=model.bundle_id,
+    )
+    assert migrated.to_payload()["format"] == "taiji-joint-task-state-v2"
+    assert migrated.input_bindings[0].percept_tick_start is None
     with pytest.raises(ValueError, match="owner"):
         JointTaskStateV1.from_payload(
             payload,
@@ -527,8 +545,28 @@ def test_one_native_checkpoint_contains_one_cognitive_owner_and_its_candidate_op
         candidate.steps == 0
         and restored.language_state.observations == joined.language_state.observations
     )
+    legacy_envelope = copy.deepcopy(envelope)
+    legacy_component = legacy_envelope["components"].pop("joint_task_state_v2")
+    legacy_component["format"] = "taiji-joint-cognitive-component-v1"
+    legacy_component["frame"]["format"] = "taiji-joint-task-state-v1"
+    legacy_component["frame"]["version"] = 1
+    for binding in legacy_component["frame"]["input_bindings"]:
+        binding.pop("percept_tick_start", None)
+        binding.pop("percept_tick_end", None)
+    legacy_component.pop("component_digest")
+    legacy_component["component_digest"] = content_digest(legacy_component)
+    legacy_envelope["components"]["joint_task_state_v1"] = legacy_component
+    migrated, _ = JointTaskStateV1.restore_native_checkpoint(
+        legacy_envelope,
+        joint_bundle_id=joined.joint_bundle_id,
+        owner_id=joined.owner_id,
+        scope_id=joined.scope_id,
+        session_id=joined.session_id,
+    )
+    assert migrated.to_payload()["format"] == "taiji-joint-task-state-v2"
+    assert migrated.input_bindings[0].percept_tick_start is None
     damaged = copy.deepcopy(envelope)
-    damaged["components"]["joint_task_state_v1"]["frame"]["owner_id"] = "user-other"
+    damaged["components"]["joint_task_state_v2"]["frame"]["owner_id"] = "user-other"
     with pytest.raises(ValueError, match="component digest"):
         JointTaskStateV1.restore_native_checkpoint(
             damaged,
@@ -789,3 +827,166 @@ def test_actual_adapter_trace_can_feed_the_joint_v4_consumer_interface():
     assert joint.content_view().selected_neural_source_ids == (
         joint.input_bindings[0].neural_source_id,
     )
+
+
+def test_actual_episodic_store_hit_is_source_bound_and_consumed_by_v4():
+    adapter = TSKV8Adapter(
+        TaijiConfig(region_sizes=(24, 16), synapse_fan_in=6, motor_fan_in=8, seed=51)
+    )
+    store = EpisodicMemoryStore(capacity=8)
+    adapter.attach_episodic_memory(store)
+    model = ConditionalLanguageCandidateV4(
+        TaskCoreConfigV3(
+            width=8,
+            embedding_width=4,
+            key_width=4,
+            slots=4,
+            chunk_bytes=4,
+            max_observation_bytes=256,
+            max_input_evidence_bytes=256,
+            max_output_position=16,
+            max_generation_bytes=16,
+            seed=23,
+        )
+    )
+    initial_root = adapter.cognitive_snapshot()
+    joint = JointTaskStateV1.begin(
+        model,
+        initial_root,
+        joint_bundle_id="joint-v1:episode-read-test",
+        owner_id="user-1",
+        scope_id="scope-1",
+        session_id="episode-read-session",
+    )
+    budget = {"remaining_steps": 1, "max_observation_bytes": 256}
+
+    memory_frame = InputFrame(
+        "episode-input-1", "text", "之前杯子是蓝色。".encode(), "test.client", timestamp=1
+    )
+    memory_trace = adapter.ingest_input(memory_frame, learn=False)
+    memory_root = adapter.cognitive_snapshot()
+    joint = joint.append_input(model, memory_trace, memory_root, resource_snapshot=budget)
+    memory_record = EpisodicMemoryRecord(
+        memory_id="episode-memory-1",
+        episode_id=joint.task_id,
+        tick=memory_root.tick,
+        cue=memory_trace.percepts[-1].features.detach().clone(),
+        provenance="external",
+        event_ids=(memory_trace.percepts[-1].event_id,),
+        assembly_ids=(memory_trace.percepts[-1].assembly_id,),
+    )
+    store.write(memory_record)
+
+    unrelated_frame = InputFrame(
+        "episode-input-2", "text", "今天天气晴朗。".encode(), "test.client", timestamp=2
+    )
+    unrelated_trace = adapter.ingest_input(unrelated_frame, learn=False)
+    unrelated_root = adapter.cognitive_snapshot()
+    joint = joint.append_input(model, unrelated_trace, unrelated_root, resource_snapshot=budget)
+
+    query_frame = InputFrame(
+        "episode-query-1", "text", "杯子之前是什么颜色？".encode(), "test.client", timestamp=3
+    )
+    query_trace = adapter.ingest_input(query_frame, learn=False)
+    query_root = adapter.cognitive_snapshot()
+    assert memory_record.memory_id in query_root.memory.episodic_ids
+    joint = joint.append_input(model, query_trace, query_root, resource_snapshot=budget)
+    read = JointEpisodeReadV1.retrieve(joint, store)
+
+    memory_source = joint.input_bindings[0].neural_source_id
+    unrelated_source = joint.input_bindings[1].neural_source_id
+    query_source = joint.input_bindings[2].neural_source_id
+    assert read.memory_id == memory_record.memory_id
+    assert read.memory_neural_source_ids == (memory_source,)
+    assert read.query_neural_source_id == query_source
+    assert read.selected_neural_source_ids == (query_source, memory_source)
+    assert unrelated_source not in read.selected_neural_source_ids
+    forged_read = replace(
+        read,
+        selected_neural_source_ids=(query_source, memory_source, unrelated_source),
+    )
+    with pytest.raises(ValueError, match="receipt differs"):
+        model.next_logits_from_episode(joint, forged_read, store)
+
+    legacy_payload = copy.deepcopy(joint.to_payload())
+    legacy_payload["format"] = "taiji-joint-task-state-v1"
+    legacy_payload["version"] = 1
+    for binding in legacy_payload["input_bindings"]:
+        binding.pop("percept_tick_start", None)
+        binding.pop("percept_tick_end", None)
+    legacy_joint = JointTaskStateV1.from_payload(
+        legacy_payload,
+        joint_bundle_id=joint.joint_bundle_id,
+        owner_id=joint.owner_id,
+        scope_id=joint.scope_id,
+        session_id=joint.session_id,
+        candidate_bundle_id=model.bundle_id,
+    )
+    with pytest.raises(ValueError, match="source frame"):
+        JointEpisodeReadV1.retrieve(legacy_joint, store)
+
+    before = {name: value.detach().clone() for name, value in model.state_dict().items()}
+    memory_logits, _ = model.next_logits_from_episode(joint, read, store)
+    query_only_logits, _ = model.next_logits_from_episode_query_only(joint, read, store)
+    unconditioned_logits, _ = model.next_logits(joint.language_state)
+    assert not torch.allclose(memory_logits, query_only_logits)
+    assert not torch.allclose(memory_logits, unconditioned_logits)
+    generated, resumed_joint = model.generate_from_episode(joint, read, store, max_new_bytes=8)
+    assert isinstance(generated, bytes) and generated
+    assert resumed_joint.language_state.generated.endswith(generated)
+    assert all(torch.equal(before[name], value) for name, value in model.state_dict().items())
+
+
+def test_joint_episode_read_rejects_unapproved_or_unlinked_store_records():
+    adapter = TSKV8Adapter(
+        TaijiConfig(region_sizes=(24, 16), synapse_fan_in=6, motor_fan_in=8, seed=61)
+    )
+    store = EpisodicMemoryStore(capacity=4)
+    adapter.attach_episodic_memory(store)
+    model = ConditionalLanguageCandidateV4(
+        TaskCoreConfigV3(
+            width=8,
+            embedding_width=4,
+            key_width=4,
+            slots=4,
+            chunk_bytes=4,
+            max_observation_bytes=256,
+            max_input_evidence_bytes=256,
+            max_output_position=16,
+            max_generation_bytes=16,
+            seed=29,
+        )
+    )
+    initial_root = adapter.cognitive_snapshot()
+    joint = JointTaskStateV1.begin(
+        model,
+        initial_root,
+        joint_bundle_id="joint-v1:episode-unlinked-test",
+        owner_id="user-1",
+        scope_id="scope-1",
+        session_id="episode-unlinked-session",
+    )
+    frame = InputFrame(
+        "episode-unlinked-input", "text", "再问一次。".encode(), "test.client", timestamp=1
+    )
+    trace = adapter.ingest_input(frame, learn=False)
+    root = adapter.cognitive_snapshot()
+    orphan = EpisodicMemoryRecord(
+        memory_id="orphan-memory",
+        episode_id=root.episode_id,
+        tick=root.tick,
+        cue=trace.percepts[-1].features.detach().clone(),
+        provenance="external",
+        assembly_ids=("assembly-not-in-joint-ledger",),
+    )
+    store.write(orphan)
+    root = replace(root, memory=replace(root.memory, episodic_ids=(orphan.memory_id,)))
+    joint = joint.append_input(
+        model,
+        trace,
+        root,
+        resource_snapshot={"remaining_steps": 1, "max_observation_bytes": 256},
+    )
+
+    with pytest.raises(ValueError, match="no source frame"):
+        JointEpisodeReadV1.retrieve(joint, store)

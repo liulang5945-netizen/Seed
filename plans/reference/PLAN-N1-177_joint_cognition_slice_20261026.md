@@ -1,6 +1,6 @@
 # N177 最小共同认知纵切片：实施依赖与接口合同
 
-日期：2026-10-26。状态：N177.1 opt-in共同状态接口和N177.2-T1来源约束语言消费已通过本地工程/因果退出检查；T2真实经历记忆、T3行动条件预测/选择与更新信用未接通；训练和新封存读取尚未发生。
+日期：2026-10-26。状态：N177.1和N177.2-T1/T2 opt-in共同状态与真实来源消费已通过工程/因果退出检查；T3行动条件世界预测/候选选择和N177.3反馈责任未接通；未训练、未读新封存面。
 
 ## 1. 本次改变的依赖
 
@@ -69,8 +69,8 @@ N176三臂已经完成，仍按原一次评价有限收束，用于解释课程�
 | 顺序 | 文件/触点 | 交付与有限出口 | 失败回流 |
 | --- | --- | --- | --- |
 | 177.0 本合同与责任盘点 | 本文件；`contracts.py`、`task_state*.py`、`conditional_language_v4.py`、`adapter.py` | 当前版本、继承/新建/退出、任务所需路径及信用表可交实现；此规划阶段结束 | 明确不可表达的差异并选择一种表示，不以“研究一下”挂起 |
-| **177.1 共同状态和读写接口（有限完成）** | `taiji/joint_task_state.py` opt-in bridge；以既有`CognitiveState`为唯一根，映射V4 `TaskState`及`InputTrace`；未创建`joint_task_core.py`包装层 | 20组scope/goal/lifecycle矩阵＋10项来源、状态机、checkpoint专项回归，共30项；pytest、mypy、Ruff、Black通过。workspace视图不复制未验证内容。T1已在opt-in调用链消费Adapter InputTrace；默认Adapter生成路径未替换，语义收益未测 | 保持边界；T1的opt-in来源消费已接通并有限验证，继续N177.2-T2真实经历读取；不将这一证据称为默认Adapter接入或中文理解 |
-| 177.2 必要记忆/预测/选择与语言装配（进行中） | T1：`joint_task_state.py`来源映射＋`conditional_language_v4.py`的源帧过滤consumer；真实`TSKV8Adapter.ingest_input`产生的`InputTrace`作为输入。T2/T3再接`episodic_memory.py`、`world_learning.py`、`executive.py`与必要选择接口，不预建空壳 | T1完成2scope×2goal×4干预16例：相关来源翻转须改logits、无关事实保持、旁路切断、恢复救援；50项联合状态模块及62项组合回归通过。结构化事实fixture只证明consumer因果可达，不是自然中文理解；T2经历读取、T3预测/选择及信用仍待验 | 丢来源回InputTrace/owner映射，未读取回V4实际key/value，事实未被理解回中文解析/表示，不让宿主补答案 |
+| **177.1 共同状态和读写接口（有限完成）** | `taiji/joint_task_state.py` opt-in bridge；以既有`CognitiveState`为唯一根，映射V4 `TaskState`及`InputTrace`；未创建`joint_task_core.py`包装层 | 20组scope/goal/lifecycle矩阵＋10项来源、状态机、checkpoint专项回归，共30项；pytest、mypy、Ruff、Black通过。workspace视图不复制未验证内容。T1已在opt-in调用链消费Adapter InputTrace；默认Adapter生成路径未替换，语义收益未测 | 保持边界；T1/T2的opt-in来源消费已接通并有限验证，继续N177.2-T3行动条件预测/选择；不将这一证据称为默认Adapter接入或中文理解 |
+| 177.2 必要记忆/预测/选择与语言装配（进行中） | T1：`joint_task_state.py`来源映射＋V4源帧过滤consumer；T2：`EpisodicMemoryStore`经当前CognitiveState授权ID检索，事件/assembly及percept tick映射到原输入，再与query共同进入V4；T3：待接`world_learning.py`及`executive.py`实际预测/选择接口 | T1的2scope×2goal×4干预16例通过；T2实际Adapter memory IDs→Store hit→JointEpisodeReadV1→V4条件key/value消费，同query的memory与query-only logits不同。52项联合模块/64项组合回归通过。V1状态迁移可读；缺时间span或来源歧义时fail-closed；T2仅同JointTaskState历史，不证明自然理解、跨session回忆或record级owner/scope隔离 | 不以ref-only代替读取；复用身份含混回来源时间映射，owner/scope不可信回存储授权合同，跨session无raw来源回证据保存/恢复，未读T3预测回世界学习/选择责任 |
 | 177.3 反馈责任与完整恢复 | 计划`joint_learning.py`；现有`continual_checkpoint.py`、world/memory/update接口 | 观察后、提议动作后、等待真实结果、反馈更新后四阶段×两scope的8组恢复；正确反馈、无更新、置换反馈、仅读出、冻结负责模块、仅state变化六类对照可运行 | 没有反馈接收者则先修J2；不能只增加训练剂量 |
 | 177.4 固定课程/成本/比较合同 | 新包独立数据清单与一次train-only标定；复用F0–F2规则但增加经历/目标/动作/反馈任务 | 训练/校准/封存的family与组合提前隔离，全部oracle排除在推理输入外；同父/同资源比较及预算/停止线一次冻结 | 新数据/目标质量问题回数据，资源不符回本步骤重新测定并说明，不消耗sealed后重选 |
 | 177.5 同候选有限训练与验收 | 统一入口与report；语言切片/共同链必要消融对照 | F0形成、F1绑定、F2更正/历史/动作、support→隔离query新收益与旧保持分项裁决；每包均到固定终点结束 | 本包负结果/partial照实结案，选一个主要机制与固定反证，不反复加轮求过门 |
@@ -91,4 +91,4 @@ F3再增加自然表达、多步连续任务和真实跨会话经验；CC-5/6的
 
 本次计划重排以03/09/10/07、本合同、N176承接说明及历史索引一致并提交为完成，不新增模型训练或封存消费。冻结实验结果/预算不改、历史失败可精确恢复，是重排的硬边界。
 
-N177.1和N177.2-T1已完成各自有限出口，整体共同链尚未结束。唯一下一步是**177.2-T2：从真实EpisodicMemoryStore按joint task/scope检索经历，将所选记录的来源绑定回JointTaskState并送入同一V4条件读取路径**；先验证命中/置换/切断/救援，不把ref-only注册称记忆消费。当前不训练、不读取sealed、不替换默认Adapter行为。
+N177.1和N177.2-T1/T2已达到各自有限工程出口，整体共同链尚未结束。唯一下一步是**177.2-T3：将当前任务`WorldState`和允许候选动作送入实际`WorldDynamicsLearner.predict`，由`ExecutiveController`按当前Goal选择一个ActionIntent，并让同一V4表达路径读取该意图和证据**；先固定相关动作/无关动作/预测切断/救援因果门，不执行外部动作、不训练、不读取sealed。

@@ -20,7 +20,8 @@ from .internalization import content_digest
 from .utf8_state import utf8_allowed
 
 if TYPE_CHECKING:
-    from .joint_task_state import JointTaskStateV1
+    from .episodic_memory import EpisodicMemoryStore
+    from .joint_task_state import JointEpisodeReadV1, JointTaskStateV1
 
 
 @dataclass(frozen=True)
@@ -84,9 +85,16 @@ class ConditionalLanguageCandidateV4(ConditionalLanguageCandidateV3):
             self.core.values(state.workspace),
         )
 
-    def _joint_evidence_cache(self, joint_state: JointTaskStateV1) -> _WorkspaceEvidenceCache:
+    def _joint_evidence_cache(
+        self,
+        joint_state: JointTaskStateV1,
+        *,
+        episode_read: JointEpisodeReadV1 | None = None,
+        memory_store: EpisodicMemoryStore | None = None,
+        include_memory_sources: bool = True,
+    ) -> _WorkspaceEvidenceCache:
         """Build a source-filtered cache from selected facts in the canonical state."""
-        from .joint_task_state import JointTaskStateV1
+        from .joint_task_state import JointEpisodeReadV1, JointTaskStateV1
 
         if not isinstance(joint_state, JointTaskStateV1):
             raise TypeError("joint language consumption requires JointTaskStateV1")
@@ -98,20 +106,34 @@ class ConditionalLanguageCandidateV4(ConditionalLanguageCandidateV3):
         if state.bundle_id != self.bundle_id:
             raise ValueError("joint task belongs to another language candidate")
 
-        view = joint_state.content_view()
-        if not view.selected_candidates:
-            raise ValueError("joint language consumption requires a selected content candidate")
-        unresolved = tuple(
-            f"{item.candidate_id}:{item.source_status}"
-            for item in view.selected_candidates
-            if item.source_status != "source_linked"
-        )
-        if unresolved:
-            raise ValueError(
-                "selected joint content lacks exact source-linked evidence: "
-                + ", ".join(unresolved)
+        if episode_read is None:
+            if memory_store is not None:
+                raise ValueError("memory store requires an explicit joint episode read")
+            view = joint_state.content_view()
+            if not view.selected_candidates:
+                raise ValueError("joint language consumption requires a selected content candidate")
+            unresolved = tuple(
+                f"{item.candidate_id}:{item.source_status}"
+                for item in view.selected_candidates
+                if item.source_status != "source_linked"
             )
-        selected_sources = view.selected_neural_source_ids
+            if unresolved:
+                raise ValueError(
+                    "selected joint content lacks exact source-linked evidence: "
+                    + ", ".join(unresolved)
+                )
+            selected_sources = view.selected_neural_source_ids
+        else:
+            if not isinstance(episode_read, JointEpisodeReadV1):
+                raise TypeError("memory-conditioned language requires JointEpisodeReadV1")
+            if memory_store is None:
+                raise ValueError("memory-conditioned language requires its source store")
+            episode_read.validate_for(joint_state, memory_store)
+            selected_sources = (
+                episode_read.selected_neural_source_ids
+                if include_memory_sources
+                else (episode_read.query_neural_source_id,)
+            )
         if not selected_sources:
             raise ValueError("selected joint content has no exact neural input source")
 
@@ -172,17 +194,45 @@ class ConditionalLanguageCandidateV4(ConditionalLanguageCandidateV3):
         cache = self._joint_evidence_cache(joint_state)
         return self.next_logits(joint_state.language_state, cache=cache)
 
-    @torch.no_grad()
-    def generate_from_joint(
-        self, joint_state: JointTaskStateV1, *, max_new_bytes: int = 128
+    def next_logits_from_episode(
+        self,
+        joint_state: JointTaskStateV1,
+        episode_read: JointEpisodeReadV1,
+        memory_store: EpisodicMemoryStore,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """Run V4 with both the current query frame and one retrieved episode."""
+        cache = self._joint_evidence_cache(
+            joint_state, episode_read=episode_read, memory_store=memory_store
+        )
+        return self.next_logits(joint_state.language_state, cache=cache)
+
+    def next_logits_from_episode_query_only(
+        self,
+        joint_state: JointTaskStateV1,
+        episode_read: JointEpisodeReadV1,
+        memory_store: EpisodicMemoryStore,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """Lesion baseline: keep the current query and remove retrieved memory sources."""
+        cache = self._joint_evidence_cache(
+            joint_state,
+            episode_read=episode_read,
+            memory_store=memory_store,
+            include_memory_sources=False,
+        )
+        return self.next_logits(joint_state.language_state, cache=cache)
+
+    def _generate_from_joint_cache(
+        self,
+        joint_state: JointTaskStateV1,
+        cache: _WorkspaceEvidenceCache,
+        *,
+        max_new_bytes: int,
     ) -> tuple[bytes, JointTaskStateV1]:
-        """Greedy V4 generation whose evidence keys are restricted to selected joint sources."""
         if max_new_bytes <= 0:
             raise ValueError("generation byte allowance must be positive")
         state = joint_state.language_state
         if len(state.generated) + max_new_bytes > self.config.max_generation_bytes:
             raise ValueError("generation exceeds the declared V3 response bound")
-        cache = self._joint_evidence_cache(joint_state)
         start = len(state.generated)
         for _ in range(max_new_bytes):
             if state.generated.endswith(b"<|end|>"):
@@ -196,6 +246,29 @@ class ConditionalLanguageCandidateV4(ConditionalLanguageCandidateV3):
         if state.generated.endswith(b"<|end|>"):
             updated_joint_state = updated_joint_state.complete_response()
         return state.generated[start:], updated_joint_state
+
+    @torch.no_grad()
+    def generate_from_joint(
+        self, joint_state: JointTaskStateV1, *, max_new_bytes: int = 128
+    ) -> tuple[bytes, JointTaskStateV1]:
+        """Greedy V4 generation whose evidence keys are restricted to selected joint sources."""
+        cache = self._joint_evidence_cache(joint_state)
+        return self._generate_from_joint_cache(joint_state, cache, max_new_bytes=max_new_bytes)
+
+    @torch.no_grad()
+    def generate_from_episode(
+        self,
+        joint_state: JointTaskStateV1,
+        episode_read: JointEpisodeReadV1,
+        memory_store: EpisodicMemoryStore,
+        *,
+        max_new_bytes: int = 128,
+    ) -> tuple[bytes, JointTaskStateV1]:
+        """Greedy V4 generation conditioned on a source-bound episodic read."""
+        cache = self._joint_evidence_cache(
+            joint_state, episode_read=episode_read, memory_store=memory_store
+        )
+        return self._generate_from_joint_cache(joint_state, cache, max_new_bytes=max_new_bytes)
 
     # State V3 is a deliberately parallel version; validate rejects V2 at runtime.
     def next_logits(  # type: ignore[override]

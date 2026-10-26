@@ -1,0 +1,61 @@
+{
+  "schema": "taiji-n177-t2-episodic-consumer-v1",
+  "status": "actual_same_joint_state_episodic_read_consumed_by_v4; not capability evidence",
+  "source_sha256": {
+    "taiji/joint_task_state.py": "c726af6b8340e54ccff90babd5546f07140fb73ad8aa4f07ec1cdaacb6d4f6b8",
+    "taiji/conditional_language_v4.py": "4a6dc532a0b556832cc202e4a20cb8a855de3f8b64759251a97d3d08fd1e972c",
+    "taiji/adapter.py": "3abec22d7b05e13b9306343e3aa4b9dea8cb4d24665aaa83fe5ca70e6ddfe276",
+    "taiji/episodic_memory.py": "d0eb042278de0a485199a62606e858d538dd6c99830db426bf781313f1573293",
+    "tests/taiji_native/test_n1_plan177_joint_task_state.py": "2704bb91f5dd40b9793d728c716f588ba9609273f5aa8952409a30cfb625441a"
+  },
+  "source_set_sha256": "aff29fda4558e1d14d296b356524d61584d4afd56744ebea1abe53fc362c39cc",
+  "consumer_path": [
+    "TSKV8Adapter.ingest_input observes the query and the attached EpisodicMemoryStore retrieves candidates",
+    "CognitiveState.memory.episodic_ids is the explicit allowlist for retrieved record IDs",
+    "JointEpisodeReadV1 verifies the selected hit, receipt digest, owner/scope/session revision, query cue and input identity",
+    "record event/assembly IDs map through Event lineage and per-input percept tick spans to one historical frame",
+    "current query plus the selected memory frame enter the same V4 byte/workspace evidence cache",
+    "next_logits_from_episode and generate_from_episode use that cache; query-only lesion preserves the same query and removes only the retrieved memory frame"
+  ],
+  "wire_format": {
+    "current": "taiji-joint-task-state-v2 / joint_task_state_v2",
+    "migration": "legacy V1 payloads and native components restore to V2; old bindings with no percept tick span remain readable but ambiguous memory source reads fail closed"
+  },
+  "source_identity_fix": "JointInputBinding stores the start/end percept observation ticks for each actual input frame. Reused event/assembly identities are resolved only when the record tick or linked CognitiveState.Event interval identifies one frame.",
+  "causal_evidence": {
+    "actual_adapter_query": "actual TSKV8Adapter.ingest_input(learn=False) produced the current query trace and populated episodic_ids from the attached store",
+    "record_setup": "one experienced external memory record tied to a prior adapter input assembly; test fixture writes the record, so successful memory writing/credit is not claimed",
+    "memory_and_query_sources_entered_v4": true,
+    "same_query_memory_vs_query_only_logits_differ": true,
+    "query_vs_unconditioned_full_history_logits_differ": true,
+    "intervening_unrelated_input_excluded_from_conditioned_cache": true,
+    "forged_source_receipt_rejected": true,
+    "ambiguous_reused_source_ids_rejected": true
+  },
+  "authorization_boundary": {
+    "record_id_must_be_in_current_cognitive_memory_refs": true,
+    "receipt_bound_to_owner_scope_session_revision_and_cognitive_state_digest": true,
+    "record_schema_has_no_independent_owner_scope_session_fields": true,
+    "production_privacy_isolation": "not proven; store attachment and CognitiveState construction are caller-trusted"
+  },
+  "coverage_boundary": {
+    "cross_session_recall": "not integrated; new_session clears input bindings and records do not persist raw source bytes",
+    "world_prediction_or_action_selection": "not integrated",
+    "default_adapter_generation": "unchanged",
+    "language_or_memory_learning": "not measured"
+  },
+  "tests": {
+    "joint_task_state_module_passed": 52,
+    "combined_joint_adapter_input_and_v4_modules_passed": 64,
+    "mypy": "passed for taiji/joint_task_state.py and taiji/conditional_language_v4.py",
+    "ruff": "passed with repository defaults",
+    "black": "passed"
+  },
+  "formal_training_updates": 0,
+  "model_parameters_updated": false,
+  "sealed_body_reads": 0,
+  "n175_key_opened": false,
+  "can_promote": false,
+  "architecture_review": "source identity ambiguity and memory-specific causal isolation findings addressed; caller-trusted owner/scope and cross-session-source caveats remain",
+  "next_development_step": "N177.2-T3: connect one-step WorldDynamicsLearner action-conditioned predictions and ExecutiveController selection to the same joint frame and V4 language consumer"
+}

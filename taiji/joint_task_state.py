@@ -10,17 +10,21 @@ unlinked workspace candidate is trustworthy.
 from __future__ import annotations
 
 import hashlib
+import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 from typing import Any
 
 from .conditional_language_v3 import TaskStateV3
 from .contracts import CognitiveState, NativeCheckpoint
+from .episodic_memory import EpisodicMemoryStore
 from .input_boundary import InputTrace
 from .internalization import content_digest
 
-JOINT_TASK_STATE_FORMAT = "taiji-joint-task-state-v1"
-JOINT_NATIVE_COMPONENT = "joint_task_state_v1"
+JOINT_TASK_STATE_FORMAT_V1 = "taiji-joint-task-state-v1"
+JOINT_TASK_STATE_FORMAT = "taiji-joint-task-state-v2"
+JOINT_NATIVE_COMPONENT_V1 = "joint_task_state_v1"
+JOINT_NATIVE_COMPONENT = "joint_task_state_v2"
 
 
 def _required_text(value: Any, name: str) -> str:
@@ -64,6 +68,8 @@ class JointInputBindingV1:
     payload_sha256: str
     percept_event_ids: tuple[str, ...]
     assembly_ids: tuple[str, ...]
+    percept_tick_start: int | None = None
+    percept_tick_end: int | None = None
 
     def __post_init__(self) -> None:
         for field_name in (
@@ -91,6 +97,16 @@ class JointInputBindingV1:
         # Variable-duration bytes legitimately reuse an assembly identity.
         assemblies = tuple(_required_text(x, "assembly id") for x in self.assembly_ids)
         object.__setattr__(self, "assembly_ids", tuple(dict.fromkeys(assemblies)))
+        if (self.percept_tick_start is None) != (self.percept_tick_end is None):
+            raise ValueError("percept tick span requires both endpoints")
+        tick_start = self.percept_tick_start
+        tick_end = self.percept_tick_end
+        if (
+            tick_start is not None
+            and tick_end is not None
+            and (tick_start < 0 or tick_end < tick_start)
+        ):
+            raise ValueError("percept tick span must be nonnegative and ordered")
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -105,6 +121,8 @@ class JointInputBindingV1:
             "payload_sha256": self.payload_sha256,
             "percept_event_ids": list(self.percept_event_ids),
             "assembly_ids": list(self.assembly_ids),
+            "percept_tick_start": self.percept_tick_start,
+            "percept_tick_end": self.percept_tick_end,
         }
 
     @classmethod
@@ -122,7 +140,10 @@ class JointInputBindingV1:
             "percept_event_ids",
             "assembly_ids",
         }
-        if not isinstance(payload, Mapping) or set(payload) != required:
+        if not isinstance(payload, Mapping) or frozenset(payload) not in {
+            frozenset(required),
+            frozenset(required | {"percept_tick_start", "percept_tick_end"}),
+        }:
             raise ValueError("joint input binding has an unsupported schema")
         return cls(
             input_id=str(payload["input_id"]),
@@ -136,11 +157,21 @@ class JointInputBindingV1:
             payload_sha256=str(payload["payload_sha256"]),
             percept_event_ids=tuple(str(x) for x in payload["percept_event_ids"]),
             assembly_ids=tuple(str(x) for x in payload["assembly_ids"]),
+            percept_tick_start=(
+                None
+                if payload.get("percept_tick_start") is None
+                else int(payload["percept_tick_start"])
+            ),
+            percept_tick_end=(
+                None
+                if payload.get("percept_tick_end") is None
+                else int(payload["percept_tick_end"])
+            ),
         )
 
 
 @dataclass(frozen=True)
-class JointTaskStateV1:
+class JointTaskStateV2:
     """Canonical Taiji state plus a source-bound neural task state."""
 
     joint_bundle_id: str
@@ -245,6 +276,7 @@ class JointTaskStateV1:
         modality = trace.observations[0].modality
         values = []
         previous_time = -1
+        previous_percept_tick = -1
         for observation, percept in zip(trace.observations, trace.percepts, strict=True):
             if observation.modality != "text-byte" or type(observation.value) is not int:
                 raise ValueError("V4 joint byte input only accepts Taiji text-byte observations")
@@ -258,10 +290,13 @@ class JointTaskStateV1:
                 raise ValueError("one joint input frame cannot mix source/provenance/modality")
             if observation.timestamp < previous_time:
                 raise ValueError("input observation timestamps must be ordered")
+            if percept.observation_tick < previous_percept_tick:
+                raise ValueError("input percept ticks must be ordered")
             if percept.modality != "text-byte":
                 raise ValueError("percept modality differs from the text-byte source")
             values.append(observation.value)
             previous_time = observation.timestamp
+            previous_percept_tick = percept.observation_tick
         return bytes(values)
 
     def append_input(
@@ -336,6 +371,8 @@ class JointTaskStateV1:
             payload_sha256=hashlib.sha256(raw).hexdigest(),
             percept_event_ids=percept_ids,
             assembly_ids=assembly_ids,
+            percept_tick_start=min(percept.observation_tick for percept in trace.percepts),
+            percept_tick_end=max(percept.observation_tick for percept in trace.percepts),
         )
         return replace(
             self,
@@ -419,11 +456,11 @@ class JointTaskStateV1:
             raise ValueError("joint language checkpoint belongs to another candidate bundle")
         if content_digest(neural.to_payload()) != content_digest(self.language_state.to_payload()):
             raise ValueError("joint task state differs from language checkpoint state")
-        if JOINT_NATIVE_COMPONENT in envelope.components:
+        if {JOINT_NATIVE_COMPONENT, JOINT_NATIVE_COMPONENT_V1}.intersection(envelope.components):
             raise ValueError("native checkpoint already contains a joint task component")
         frame = {
             "format": JOINT_TASK_STATE_FORMAT,
-            "version": 1,
+            "version": 2,
             "joint_bundle_id": self.joint_bundle_id,
             "owner_id": self.owner_id,
             "scope_id": self.scope_id,
@@ -435,7 +472,7 @@ class JointTaskStateV1:
             "lifecycle": self.lifecycle,
         }
         component = {
-            "format": "taiji-joint-cognitive-component-v1",
+            "format": "taiji-joint-cognitive-component-v2",
             "frame": frame,
             "language_candidate_checkpoint": dict(language_candidate_checkpoint),
         }
@@ -460,9 +497,18 @@ class JointTaskStateV1:
         """Restore both cognitive owner and candidate from the same native checkpoint."""
         envelope = NativeCheckpoint.from_payload(native_payload)
         component = envelope.components.get(JOINT_NATIVE_COMPONENT)
+        legacy_component = False
+        if component is None:
+            component = envelope.components.get(JOINT_NATIVE_COMPONENT_V1)
+            legacy_component = component is not None
+        expected_component_format = (
+            "taiji-joint-cognitive-component-v1"
+            if legacy_component
+            else "taiji-joint-cognitive-component-v2"
+        )
         if (
             not isinstance(component, Mapping)
-            or component.get("format") != "taiji-joint-cognitive-component-v1"
+            or component.get("format") != expected_component_format
         ):
             raise ValueError("native checkpoint lacks the joint cognition component")
         expected_component = content_digest(
@@ -480,20 +526,28 @@ class JointTaskStateV1:
             raise ValueError("joint cognition component frame is missing")
         if frame.get("cognitive_state_sha256") != cognitive_state_digest(envelope.cognitive_state):
             raise ValueError("joint frame cognitive owner differs from native checkpoint")
-        joint = cls(
-            joint_bundle_id=str(frame["joint_bundle_id"]),
-            owner_id=str(frame["owner_id"]),
-            scope_id=str(frame["scope_id"]),
-            session_id=str(frame["session_id"]),
-            task_id=str(frame["task_id"]),
-            joint_revision=int(frame["joint_revision"]),
-            cognitive_state=envelope.cognitive_state,
-            cognitive_state_sha256=str(frame["cognitive_state_sha256"]),
-            language_state=neural,
-            input_bindings=tuple(
-                JointInputBindingV1.from_payload(item) for item in frame["input_bindings"]
-            ),
-            lifecycle=str(frame["lifecycle"]),
+        joint_payload = {
+            "format": str(frame.get("format", JOINT_TASK_STATE_FORMAT_V1)),
+            "version": int(frame.get("version", 1)),
+            "joint_bundle_id": str(frame["joint_bundle_id"]),
+            "owner_id": str(frame["owner_id"]),
+            "scope_id": str(frame["scope_id"]),
+            "session_id": str(frame["session_id"]),
+            "task_id": str(frame["task_id"]),
+            "joint_revision": int(frame["joint_revision"]),
+            "cognitive_state_sha256": str(frame["cognitive_state_sha256"]),
+            "cognitive_state": envelope.cognitive_state.to_payload(),
+            "language_state": neural.to_payload(),
+            "input_bindings": list(frame["input_bindings"]),
+            "lifecycle": str(frame["lifecycle"]),
+        }
+        joint = cls.from_payload(
+            joint_payload,
+            joint_bundle_id=joint_bundle_id,
+            owner_id=owner_id,
+            scope_id=scope_id,
+            session_id=session_id,
+            candidate_bundle_id=trainer.model.bundle_id,
         )
         for name, expected in (
             ("joint_bundle_id", joint_bundle_id),
@@ -675,7 +729,7 @@ class JointTaskStateV1:
         self._validate_live_owner()
         return {
             "format": self.FORMAT,
-            "version": 1,
+            "version": 2,
             "joint_bundle_id": self.joint_bundle_id,
             "owner_id": self.owner_id,
             "scope_id": self.scope_id,
@@ -717,7 +771,11 @@ class JointTaskStateV1:
         }
         if not isinstance(payload, Mapping) or set(payload) != fields:
             raise ValueError("joint task state schema differs")
-        if (payload["format"], payload["version"]) != (cls.FORMAT, 1):
+        payload_version = (payload["format"], payload["version"])
+        if payload_version not in {
+            (JOINT_TASK_STATE_FORMAT_V1, 1),
+            (cls.FORMAT, 2),
+        }:
             raise ValueError("unsupported joint task state version")
         for name, expected in (
             ("joint_bundle_id", joint_bundle_id),
@@ -746,6 +804,237 @@ class JointTaskStateV1:
             ),
             lifecycle=str(payload["lifecycle"]),
         )
+
+
+@dataclass(frozen=True)
+class JointEpisodeReadV1:
+    """One store-selected episode bound to the current query and source frames."""
+
+    FORMAT = "taiji-joint-episode-read-v1"
+
+    joint_bundle_id: str
+    owner_id: str
+    scope_id: str
+    session_id: str
+    joint_revision: int
+    cognitive_state_sha256: str
+    query_input_id: str
+    query_neural_source_id: str
+    memory_id: str
+    record_sha256: str
+    cue_sha256: str
+    retrieval_score: float
+    retrieval_limit: int
+    memory_neural_source_ids: tuple[str, ...]
+    selected_neural_source_ids: tuple[str, ...]
+
+    def __post_init__(self) -> None:
+        for field_name in (
+            "joint_bundle_id",
+            "owner_id",
+            "scope_id",
+            "session_id",
+            "cognitive_state_sha256",
+            "query_input_id",
+            "query_neural_source_id",
+            "memory_id",
+            "record_sha256",
+            "cue_sha256",
+        ):
+            _required_text(getattr(self, field_name), field_name)
+        if (
+            self.joint_revision < 0
+            or not math.isfinite(float(self.retrieval_score))
+            or self.retrieval_limit <= 0
+        ):
+            raise ValueError("joint episode read revision or score is invalid")
+        memory_sources = _unique_ids(self.memory_neural_source_ids, "episode memory source id")
+        selected_sources = _unique_ids(
+            self.selected_neural_source_ids, "selected episode source id"
+        )
+        if not memory_sources or self.query_neural_source_id in memory_sources:
+            raise ValueError("episode read must link a distinct historical input source")
+        if self.query_neural_source_id not in selected_sources or not set(memory_sources).issubset(
+            selected_sources
+        ):
+            raise ValueError("episode read does not include both query and memory sources")
+        object.__setattr__(self, "memory_neural_source_ids", memory_sources)
+        object.__setattr__(self, "selected_neural_source_ids", selected_sources)
+
+    @classmethod
+    def retrieve(
+        cls,
+        state: JointTaskStateV1,
+        store: EpisodicMemoryStore,
+        *,
+        limit: int = 3,
+    ) -> JointEpisodeReadV1:
+        """Retrieve only a record already named by Taiji's current memory state."""
+        if not isinstance(store, EpisodicMemoryStore):
+            raise TypeError("episode retrieval requires Taiji's EpisodicMemoryStore")
+        state._validate_live_owner()
+        if state.lifecycle != "active":
+            raise ValueError("joint task lifecycle does not permit episode retrieval")
+        root = state.cognitive_state
+        if not state.input_bindings or root.percept is None:
+            raise ValueError("episode retrieval requires a current input-bound percept")
+        if not root.memory.episodic_ids:
+            raise ValueError("canonical CognitiveState has no authorized episode references")
+        query_binding = state.input_bindings[-1]
+        if (
+            root.observation is None
+            or root.observation.source != query_binding.source
+            or root.observation.provenance != query_binding.provenance
+            or root.percept.event_id not in query_binding.percept_event_ids
+        ):
+            raise ValueError("current percept does not belong to the latest joint input frame")
+        query_cue = root.percept.features
+        hits = store.retrieve(query_cue, limit=limit)
+        allowed_memory_ids = set(root.memory.episodic_ids)
+        hit = next(
+            (
+                item
+                for item in hits
+                if item.record.memory_id in allowed_memory_ids
+                and item.record.provenance not in {"generated", "imagined"}
+            ),
+            None,
+        )
+        if hit is None:
+            raise ValueError("episodic retrieval found no authorized real-experience hit")
+
+        record = hit.record
+        event_ids = set(record.event_ids)
+        assembly_ids = set(record.assembly_ids)
+        percept_ids = set(record.event_ids)
+        cognitive_events = {item.event_id: item for item in root.events}
+        assemblies = {item.assembly_id: item for item in root.assemblies}
+        event_windows: list[tuple[int, int]] = []
+        for event_id in record.event_ids:
+            event = cognitive_events.get(event_id)
+            if event is None:
+                continue
+            event_windows.append((event.start_tick, event.end_tick))
+            assembly_ids.update(event.assembly_ids)
+            for assembly_id in event.assembly_ids:
+                assembly = assemblies.get(assembly_id)
+                if assembly is not None:
+                    percept_ids.update(assembly.source_event_ids)
+
+        candidates = [
+            binding
+            for binding in state.input_bindings
+            if assembly_ids.intersection(binding.assembly_ids)
+            or event_ids.intersection(binding.percept_event_ids)
+            or percept_ids.intersection(binding.percept_event_ids)
+        ]
+        tick_candidates = [
+            binding
+            for binding in candidates
+            if binding.percept_tick_start is not None
+            and binding.percept_tick_end is not None
+            and (
+                any(
+                    max(binding.percept_tick_start, event_start)
+                    <= min(binding.percept_tick_end, event_end)
+                    for event_start, event_end in event_windows
+                )
+                if event_windows
+                else binding.percept_tick_start <= record.tick <= binding.percept_tick_end
+            )
+        ]
+        if len(tick_candidates) > 1:
+            raise ValueError(
+                "episode source identity is ambiguous across reused event/assembly IDs"
+            )
+        if not tick_candidates:
+            raise ValueError("episode record has no source frame with a matching percept time span")
+        memory_sources = {tick_candidates[0].neural_source_id}
+        memory_sources.discard(query_binding.neural_source_id)
+        if not memory_sources:
+            raise ValueError("retrieved episode has no source frame in the joint task ledger")
+        selected_sources = tuple(
+            dict.fromkeys((query_binding.neural_source_id, *sorted(memory_sources)))
+        )
+        return cls(
+            joint_bundle_id=state.joint_bundle_id,
+            owner_id=state.owner_id,
+            scope_id=state.scope_id,
+            session_id=state.session_id,
+            joint_revision=state.joint_revision,
+            cognitive_state_sha256=state.cognitive_state_sha256,
+            query_input_id=query_binding.input_id,
+            query_neural_source_id=query_binding.neural_source_id,
+            memory_id=record.memory_id,
+            record_sha256=content_digest(record.to_payload()),
+            cue_sha256=content_digest(query_cue),
+            retrieval_score=float(hit.score),
+            retrieval_limit=int(limit),
+            memory_neural_source_ids=tuple(sorted(memory_sources)),
+            selected_neural_source_ids=selected_sources,
+        )
+
+    def validate_for(self, state: JointTaskStateV1, store: EpisodicMemoryStore) -> None:
+        state._validate_live_owner()
+        if (
+            self.joint_bundle_id,
+            self.owner_id,
+            self.scope_id,
+            self.session_id,
+            self.joint_revision,
+            self.cognitive_state_sha256,
+        ) != (
+            state.joint_bundle_id,
+            state.owner_id,
+            state.scope_id,
+            state.session_id,
+            state.joint_revision,
+            state.cognitive_state_sha256,
+        ):
+            raise ValueError("episode read belongs to a stale or different joint revision")
+        if not state.input_bindings or (
+            state.input_bindings[-1].input_id,
+            state.input_bindings[-1].neural_source_id,
+        ) != (self.query_input_id, self.query_neural_source_id):
+            raise ValueError("episode read query source differs from the current joint input")
+        if (
+            state.cognitive_state.percept is None
+            or content_digest(state.cognitive_state.percept.features) != self.cue_sha256
+        ):
+            raise ValueError("episode retrieval cue differs from the current cognitive percept")
+        if self.memory_id not in state.cognitive_state.memory.episodic_ids:
+            raise ValueError("episode read is no longer authorized by canonical memory state")
+        records = {record.memory_id: record for record in store.records}
+        record = records.get(self.memory_id)
+        if record is None or content_digest(record.to_payload()) != self.record_sha256:
+            raise ValueError("episode read record is missing or changed in the memory store")
+        known_sources = {item.neural_source_id for item in state.input_bindings}
+        if not set(self.selected_neural_source_ids).issubset(known_sources):
+            raise ValueError("episode read references an input source outside the joint ledger")
+        expected = type(self).retrieve(state, store, limit=self.retrieval_limit)
+        if expected != self:
+            raise ValueError("episode read receipt differs from the authorized store selection")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": self.FORMAT,
+            "version": 1,
+            "joint_bundle_id": self.joint_bundle_id,
+            "owner_id": self.owner_id,
+            "scope_id": self.scope_id,
+            "session_id": self.session_id,
+            "joint_revision": self.joint_revision,
+            "cognitive_state_sha256": self.cognitive_state_sha256,
+            "query_input_id": self.query_input_id,
+            "query_neural_source_id": self.query_neural_source_id,
+            "memory_id": self.memory_id,
+            "record_sha256": self.record_sha256,
+            "cue_sha256": self.cue_sha256,
+            "retrieval_score": self.retrieval_score,
+            "retrieval_limit": self.retrieval_limit,
+            "memory_neural_source_ids": list(self.memory_neural_source_ids),
+            "selected_neural_source_ids": list(self.selected_neural_source_ids),
+        }
 
 
 @dataclass(frozen=True)
@@ -927,3 +1216,8 @@ class JointContentReadViewV1:
             action_intent_id=None if root.action_intent is None else root.action_intent.intent_id,
             outcome_intent_id=None if root.outcome is None else root.outcome.intent_id,
         )
+
+
+# Compatibility name for the original public frame API. The current serialized
+# form is v2; from_payload keeps a one-way migration path for v1 frames.
+JointTaskStateV1 = JointTaskStateV2
