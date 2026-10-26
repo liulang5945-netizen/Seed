@@ -35,6 +35,17 @@ ATTEMPT_MARKER = REPORTS / "taiji_n1_plan175_v3_review_20261026.attempt.json"
 HOLDOUT_SALT = "n175-root-holdout-v1-20261026"
 MAX_INPUT_BYTES = 4096
 MAX_OUTPUT_BYTES = 2048
+# User authorized this exact annotation-only CI transition on 2026-10-26.
+# Audit: reports/taiji_n1_plan175_v3_annotation_lineage_20261026.json.
+# All other source changes retain the original strict rejection behavior.
+AUTHORIZED_ANNOTATION_TRANSITION = (
+    "90eff7b871b51c9a121e6dfbbe962932cf9e2136952fba6aa75022d696c5186c",
+    "978212208ebf55e69094c7f24708d41cbb9eb13ca1e05be081f079508d3ad6d9",
+)
+
+
+def migration_candidate_source_matches(expected: str, actual: str) -> bool:
+    return expected == actual or (expected, actual) == AUTHORIZED_ANNOTATION_TRANSITION
 
 
 def select_one_per_family(candidates: list[dict]) -> list[dict]:
@@ -67,7 +78,9 @@ def require_completed_runs() -> list[dict[str, Any]]:
     runner_sha = digest(runner_source)
     migration_source = ROOT / "scripts/training/migrate_taiji_n1_plan175_v2_to_v3.py"
     if (
-        migration.get("v3_candidate_sha256") != normalized_source_sha256(candidate_source)
+        not migration_candidate_source_matches(
+            migration.get("v3_candidate_sha256"), normalized_source_sha256(candidate_source)
+        )
         or migration.get("migration_script_sha256") != normalized_source_sha256(migration_source)
         or migration.get("training_updates") != 0
         or migration.get("new_holdout_text_read") != 0

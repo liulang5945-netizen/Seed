@@ -1,6 +1,19 @@
 """The final face is selected once, by family, before any body is read."""
 
-from scripts.training.evaluate_taiji_n1_plan175_v3_holdout import select_one_per_family
+from scripts.training.evaluate_taiji_n1_plan175_v3_holdout import (
+    AUTHORIZED_ANNOTATION_TRANSITION,
+    migration_candidate_source_matches,
+    select_one_per_family,
+)
+
+
+def test_source_transition_accepts_only_the_explicitly_authorized_pair():
+    old, new = AUTHORIZED_ANNOTATION_TRANSITION
+    assert migration_candidate_source_matches(old, old)
+    assert migration_candidate_source_matches(old, new)
+    assert not migration_candidate_source_matches(new, old)
+    assert not migration_candidate_source_matches(old, "0" * 64)
+    assert not migration_candidate_source_matches("0" * 64, new)
 
 
 def test_holdout_selection_is_deterministic_and_keeps_one_prompt_per_family():
