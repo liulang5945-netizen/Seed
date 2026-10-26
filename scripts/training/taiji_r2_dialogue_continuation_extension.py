@@ -654,6 +654,8 @@ def _validate_source_binding(binding: Any, *, verify_file_bytes: bool) -> None:
 
 
 def _validate_prior_v1_1(contract_sha256: str) -> str:
+    from scripts.training import seal_ast
+
     path = _source_revision_path("v1.1")
     if path.is_symlink() or not path.is_file():
         raise ExtensionLedgerRefuse("v1.2 budget amendment requires the v1.1 source revision")
@@ -675,7 +677,15 @@ def _validate_prior_v1_1(contract_sha256: str) -> str:
         or not _HEX_256_RE.fullmatch(review_sha)
         or not _SOURCE_REVISION_V1_1_REVIEW.is_file()
         or _SOURCE_REVISION_V1_1_REVIEW.is_symlink()
-        or _sha256_file(_SOURCE_REVISION_V1_1_REVIEW) != review_sha
+        # 2026-10-26 D-01 拆雷（owner 授权 R-S1a）：本位点是同族最后一个严格字节
+        # 比较，autocrlf=true 检出下 review report 字节变 CRLF，模块级
+        # effective_budget_limits() 在 import 期抛 ExtensionLedgerRefuse，
+        # 19 个 test_r2_* 模块 collection error（run 40258536618 CRLF 探针实证，
+        # 本机 clone 复现同栈）。改渲染容忍匹配，与 v1.2/v1.3 位点（2026-10-25
+        # owner 裁定）同族一致；真实内容变化在任何渲染下都不同。
+        or not seal_ast.rendering_tolerant_match(
+            review_sha, _SOURCE_REVISION_V1_1_REVIEW.read_bytes()
+        )
     ):
         raise ExtensionLedgerRefuse("v1.1 source revision review report binding differs")
     return hashlib.sha256(path.read_bytes()).hexdigest()
