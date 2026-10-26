@@ -1,0 +1,65 @@
+{
+  "schema": "taiji-n1-plan175-v3-durable-checkpoint-restore-v1",
+  "status": "all_seed_epoch27_restore_and_roundtrip_passed",
+  "epoch": 27,
+  "verifier_sha256": "0578feba45c4b560329385e05442a0c0ba5a6789386c51d27ba7a25d75a33ab1",
+  "runner_sha256": "811260bf04ed08b890a3318114140398ecb4fab643c20c5ad6c8614daa187e0a",
+  "candidate_sha256": "2fc5305f60e2eaeb8a82a77dbfd679cacee8c001f6f42c5346ce7d3bccabc619",
+  "migration_report_sha256": "0a39fd9ece257c4a648741cbece99e0ad235a41968c513b813c97b25af07c447",
+  "training_updates": 0,
+  "heldout_text_read": 0,
+  "process_cpu_seconds": 4.46875,
+  "seeds": [
+    {
+      "seed": 169,
+      "epoch": 27,
+      "checkpoint": "data\\checkpoints\\n1_plan175_v3_scale_20261026\\tf_seed169\\epoch_27.pt",
+      "checkpoint_sha256": "09226765cf3f0c6f6163c43f608b2b3f412582cd6504ff7099a801169e9bf653",
+      "checkpoint_digest": "34efee052340b07f856524e5a2127a426e6e04f7ddb88f0f18f64a382cc24252",
+      "steps": 12776,
+      "target_byte_exposures": 24361557,
+      "cursor": {
+        "seed": 169,
+        "epoch": 27,
+        "batch": 0,
+        "epoch_order_sha256": "ee52352a26454d4964126fe6cedff524ade5daf5c8e239ba9cb79c38894f7a1e",
+        "dataset_manifest_sha256": "e42ab300c1267da52b29156e0fa9f329d92c00cebbebb9762bf9cce99ca0aff2"
+      },
+      "roundtrip": "passed"
+    },
+    {
+      "seed": 170,
+      "epoch": 27,
+      "checkpoint": "data\\checkpoints\\n1_plan175_v3_scale_20261026\\tf_seed170\\epoch_27.pt",
+      "checkpoint_sha256": "b69847fca8fe425216c52db50dd33b99b11f53cafcd97b2fbe413ed42603cc04",
+      "checkpoint_digest": "a225b7f6a34961b3a03356d0e167532fd03190ac34a2a708506e227059e03232",
+      "steps": 12776,
+      "target_byte_exposures": 24361557,
+      "cursor": {
+        "seed": 170,
+        "epoch": 27,
+        "batch": 0,
+        "epoch_order_sha256": "9049756b784e87e656971309c471bb51d44f97c729c763a14780748cedcb500c",
+        "dataset_manifest_sha256": "e42ab300c1267da52b29156e0fa9f329d92c00cebbebb9762bf9cce99ca0aff2"
+      },
+      "roundtrip": "passed"
+    },
+    {
+      "seed": 171,
+      "epoch": 27,
+      "checkpoint": "data\\checkpoints\\n1_plan175_v3_scale_20261026\\tf_seed171\\epoch_27.pt",
+      "checkpoint_sha256": "9fa2c0d635a60779c44b1ae67a050c444271edc4e5e27b17814337f8ed795b81",
+      "checkpoint_digest": "31a8860cbe5a022c005f5600b96757b427b824f74665d0163961c16147809935",
+      "steps": 12776,
+      "target_byte_exposures": 24361557,
+      "cursor": {
+        "seed": 171,
+        "epoch": 27,
+        "batch": 0,
+        "epoch_order_sha256": "9e33418807651da0f3bae89161e063bbe776f098213015f0a4e49d44c0d3d3c6",
+        "dataset_manifest_sha256": "e42ab300c1267da52b29156e0fa9f329d92c00cebbebb9762bf9cce99ca0aff2"
+      },
+      "roundtrip": "passed"
+    }
+  ]
+}

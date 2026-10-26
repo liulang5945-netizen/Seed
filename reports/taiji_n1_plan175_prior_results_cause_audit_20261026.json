@@ -1,0 +1,270 @@
+{
+  "schema": "taiji-n1-plan175-prior-language-result-cause-audit-v1",
+  "status": "read_only_historical_evidence_review",
+  "created_utc": "2026-10-26T06:46:57.560516+00:00",
+  "git_head": "188b1dd89301348a5dae8f1ec24dd4a2b6ae08d4",
+  "audit_training_updates": 0,
+  "audit_new_holdout_text_reads": 0,
+  "parameter_digest_method": "sha256(sorted parameter name UTF-8 followed by contiguous tensor numpy bytes)",
+  "n174b_zero_checkpoints": [
+    {
+      "run_label": "tf_seed169",
+      "checkpoint": "data/checkpoints/n1_plan174b_scale_20261025/tf_seed169/zero.pt",
+      "checkpoint_sha256": "3c2ddf2b34f345ddd35514d3ce88d49032c97e7817ace8c38e3001e3c47c7007",
+      "config_seed": 169,
+      "steps": 0,
+      "parameters_sha256": "2c0058fd077bb20f02b17f5a0a50995b1b28d51e6295d95ab6a6bfc0803b60cf"
+    },
+    {
+      "run_label": "tf_seed170",
+      "checkpoint": "data/checkpoints/n1_plan174b_scale_20261025/tf_seed170/zero.pt",
+      "checkpoint_sha256": "d2c3335237ca4c3ef1c455fbf4159cdb6afa28542a8900956ef1a9799901b1da",
+      "config_seed": 169,
+      "steps": 0,
+      "parameters_sha256": "2c0058fd077bb20f02b17f5a0a50995b1b28d51e6295d95ab6a6bfc0803b60cf"
+    },
+    {
+      "run_label": "tf_seed171",
+      "checkpoint": "data/checkpoints/n1_plan174b_scale_20261025/tf_seed171/zero.pt",
+      "checkpoint_sha256": "a3654080155e341e575eec4a295c54129185056a95e6b490e2c6303065acf6e2",
+      "config_seed": 169,
+      "steps": 0,
+      "parameters_sha256": "2c0058fd077bb20f02b17f5a0a50995b1b28d51e6295d95ab6a6bfc0803b60cf"
+    },
+    {
+      "run_label": "ss_seed169",
+      "checkpoint": "data/checkpoints/n1_plan174b_scale_20261025/ss_seed169/zero.pt",
+      "checkpoint_sha256": "d3cb598bb9f83cd19bbb8a75895e3c7f041253fdadc7f248a6cfbdad361866b8",
+      "config_seed": 169,
+      "steps": 0,
+      "parameters_sha256": "2c0058fd077bb20f02b17f5a0a50995b1b28d51e6295d95ab6a6bfc0803b60cf"
+    },
+    {
+      "run_label": "ss_seed170",
+      "checkpoint": "data/checkpoints/n1_plan174b_scale_20261025/ss_seed170/zero.pt",
+      "checkpoint_sha256": "d1f99c21022aa3e0db275d05e3f2cd9c13b4b49daf039061f0de0025c013ae38",
+      "config_seed": 169,
+      "steps": 0,
+      "parameters_sha256": "2c0058fd077bb20f02b17f5a0a50995b1b28d51e6295d95ab6a6bfc0803b60cf"
+    },
+    {
+      "run_label": "ss_seed171",
+      "checkpoint": "data/checkpoints/n1_plan174b_scale_20261025/ss_seed171/zero.pt",
+      "checkpoint_sha256": "abf289560db5c382e40c0c773dcd672e1faa41816054ad6694b51478d447ba74",
+      "config_seed": 169,
+      "steps": 0,
+      "parameters_sha256": "2c0058fd077bb20f02b17f5a0a50995b1b28d51e6295d95ab6a6bfc0803b60cf"
+    }
+  ],
+  "n174b_all_six_initial_parameters_identical": true,
+  "n174b_distinct_config_seeds": [
+    169
+  ],
+  "n174_three_run_scope": "data-order trajectories from a shared initialization, not independent full random initializations",
+  "n175_migrated_parents": [
+    {
+      "run_label": "tf_seed169",
+      "config_seed": 169,
+      "stored_position_extension_seed": null,
+      "lineage_position_extension_seed": null,
+      "checkpoint_sha256": "8d2d001d92f7cfd65a48197a92ee94495deecce4e00a1c03cc427790e3755301",
+      "parameters_sha256": "8e7dfc9f5aff9f0f89d2fd2438ebe86ab8aaa534fd961360cc5eea2f0d7e2a10"
+    },
+    {
+      "run_label": "tf_seed170",
+      "config_seed": 169,
+      "stored_position_extension_seed": 171,
+      "lineage_position_extension_seed": 171,
+      "checkpoint_sha256": "497e5f9e6677405197b43bfc153e07d819dadc7fe9a3ab495bd0fb57714e508e",
+      "parameters_sha256": "e9e31b9f5ede68daaa8b9af3e3bbb4c191ba4106bd58e8f7750bfde0172048db"
+    },
+    {
+      "run_label": "tf_seed171",
+      "config_seed": 169,
+      "stored_position_extension_seed": 172,
+      "lineage_position_extension_seed": 172,
+      "checkpoint_sha256": "be63fcd79b4bc86d4f13cb7f1c1b7f637881af1ab3231515a9f3dcd85be34e47",
+      "parameters_sha256": "4ba282437b264d6845974de28b883c54c61812e88541c8a15f9bab62bed960c6"
+    }
+  ],
+  "n175_parent_metadata_limit": "seed169 zero checkpoint does not store position_extension_seed; do not infer its historical initialization from a later constructor default. Frozen parameter bytes and checkpoint SHA remain authoritative.",
+  "n174_final_runs": [
+    {
+      "run_label": "tf_seed169",
+      "source_report": "reports/taiji_n1_plan174c_scale_complete_20261025_tf_seed169.json",
+      "source_report_sha256": "d11b162e68804beada1f6f04e38d870865f3d081ea7455a0879574f6633bb3df",
+      "status": "complete",
+      "final_epoch": 40,
+      "source_unchanged_after_run": true,
+      "summary": {
+        "train_tf_top1_median": 0.99609375,
+        "train_free_match_median": 0.9371279761904762,
+        "heldout_tf_top1_median": 0.40625,
+        "heldout_free_match_mean": 0.00830078125,
+        "heldout_distinct_outputs": 16,
+        "heldout_mismatched_tf_top1_mean": 0.3955078125
+      },
+      "heldout_own_tf_top1_mean": 0.40625,
+      "heldout_wrong_target_tf_top1_mean": 0.3955078125,
+      "mean_difference": 0.0107421875
+    },
+    {
+      "run_label": "tf_seed170",
+      "source_report": "reports/taiji_n1_plan174c_scale_complete_20261025_tf_seed170.json",
+      "source_report_sha256": "bf1f0399066ed80c46f006ece490c597cb7f7efa73d65c05d0b1abbacd32fe57",
+      "status": "complete",
+      "final_epoch": 40,
+      "source_unchanged_after_run": true,
+      "summary": {
+        "train_tf_top1_median": 0.9921875,
+        "train_free_match_median": 0.3046875,
+        "heldout_tf_top1_median": 0.390625,
+        "heldout_free_match_mean": 0.0009765625,
+        "heldout_distinct_outputs": 16,
+        "heldout_mismatched_tf_top1_mean": 0.384765625
+      },
+      "heldout_own_tf_top1_mean": 0.396484375,
+      "heldout_wrong_target_tf_top1_mean": 0.384765625,
+      "mean_difference": 0.01171875
+    },
+    {
+      "run_label": "tf_seed171",
+      "source_report": "reports/taiji_n1_plan174c_scale_complete_20261025_tf_seed171.json",
+      "source_report_sha256": "32eed2df3aa19fd5ad07801ef4ae2ef9735f87e136cf0a0219b651097957c284",
+      "status": "complete",
+      "final_epoch": 40,
+      "source_unchanged_after_run": true,
+      "summary": {
+        "train_tf_top1_median": 0.9921875,
+        "train_free_match_median": 0.2941810344827586,
+        "heldout_tf_top1_median": 0.39453125,
+        "heldout_free_match_mean": 0.0029296875,
+        "heldout_distinct_outputs": 16,
+        "heldout_mismatched_tf_top1_mean": 0.3876953125
+      },
+      "heldout_own_tf_top1_mean": 0.39404296875,
+      "heldout_wrong_target_tf_top1_mean": 0.3876953125,
+      "mean_difference": 0.00634765625
+    },
+    {
+      "run_label": "ss_seed169",
+      "source_report": "reports/taiji_n1_plan174c_scale_complete_20261025_ss_seed169.json",
+      "source_report_sha256": "3e713c6f0d0b761ad9a45d9c4a24908cf839f425d113f7983234b464b4ba296c",
+      "status": "complete",
+      "final_epoch": 40,
+      "source_unchanged_after_run": true,
+      "summary": {
+        "train_tf_top1_median": 0.906906512605042,
+        "train_free_match_median": 0.17864387134164011,
+        "heldout_tf_top1_median": 0.25390625,
+        "heldout_free_match_mean": 0.001953125,
+        "heldout_distinct_outputs": 16,
+        "heldout_mismatched_tf_top1_mean": 0.26318359375
+      },
+      "heldout_own_tf_top1_mean": 0.26708984375,
+      "heldout_wrong_target_tf_top1_mean": 0.26318359375,
+      "mean_difference": 0.00390625
+    },
+    {
+      "run_label": "ss_seed170",
+      "source_report": "reports/taiji_n1_plan174c_scale_complete_20261025_ss_seed170.json",
+      "source_report_sha256": "5045102ec3b43e3f7521fcd9d01d19401eab724202f61821bd89fa6585ac43b9",
+      "status": "complete",
+      "final_epoch": 40,
+      "source_unchanged_after_run": true,
+      "summary": {
+        "train_tf_top1_median": 0.900946585530764,
+        "train_free_match_median": 0.05823266806722689,
+        "heldout_tf_top1_median": 0.24609375,
+        "heldout_free_match_mean": 0.00146484375,
+        "heldout_distinct_outputs": 16,
+        "heldout_mismatched_tf_top1_mean": 0.25146484375
+      },
+      "heldout_own_tf_top1_mean": 0.2744140625,
+      "heldout_wrong_target_tf_top1_mean": 0.25146484375,
+      "mean_difference": 0.02294921875
+    },
+    {
+      "run_label": "ss_seed171",
+      "source_report": "reports/taiji_n1_plan174c_scale_complete_20261025_ss_seed171.json",
+      "source_report_sha256": "7848271bb953c375fb5a35c1ea872f10941c57aa63ba9f42a4f13600283c2921",
+      "status": "complete",
+      "final_epoch": 40,
+      "source_unchanged_after_run": true,
+      "summary": {
+        "train_tf_top1_median": 0.8974946120689655,
+        "train_free_match_median": 0.09375,
+        "heldout_tf_top1_median": 0.265625,
+        "heldout_free_match_mean": 0.00390625,
+        "heldout_distinct_outputs": 16,
+        "heldout_mismatched_tf_top1_mean": 0.24365234375
+      },
+      "heldout_own_tf_top1_mean": 0.27587890625,
+      "heldout_wrong_target_tf_top1_mean": 0.24365234375,
+      "mean_difference": 0.0322265625
+    }
+  ],
+  "n174_gate_results": {
+    "status": "INCONCLUSIVE_ROLLOUT",
+    "all_runs_complete": true,
+    "binding_hits": {
+      "tf": 0,
+      "ss": 0
+    },
+    "rollout_medians": {
+      "tf": [
+        0.9371279761904762,
+        0.3046875,
+        0.2941810344827586
+      ],
+      "ss": [
+        0.17864387134164011,
+        0.05823266806722689,
+        0.09375
+      ]
+    },
+    "rollout_gate_by_arm": {
+      "tf": false,
+      "ss": false
+    },
+    "can_promote": false
+  },
+  "n174_training_contract": {
+    "episodes": 500,
+    "families": 324,
+    "parameters": 970945,
+    "epochs": 40,
+    "target_prefix_bytes": 128,
+    "initialization": "fresh ConditionalLanguageCandidateV2; no R2 parent weight load"
+  },
+  "n174_control_definition": "same heldout prompt with another heldout target for mismatched TF; not a fixed-target prompt-swap intervention",
+  "n174_control_limit": "target difficulty is confounded; small differences are descriptive and no significance test was performed",
+  "n175_frozen_corpus": {
+    "episode_count": 1148,
+    "family_count": 517,
+    "complete_target_bytes_per_epoch": 822311,
+    "max_complete_target_bytes": 2043,
+    "max_serialized_prompt_bytes": 4078,
+    "target_byte_threshold_counts": {
+      "128": 204,
+      "512": 532,
+      "1024": 768,
+      "2048": 1148
+    },
+    "heldout_text_nodes_parsed": 0
+  },
+  "source_sha256": {
+    "taiji/conditional_language_v2.py": "314d1b6159e932807d647edb6573f0d13e2455799c50a559c23fd27a52e24221",
+    "taiji/conditional_language_v3.py": "2fc5305f60e2eaeb8a82a77dbfd679cacee8c001f6f42c5346ce7d3bccabc619",
+    "taiji/task_core_v2.py": "cac7a01da23b57b4c797b3fb6d9c7c70a823f9a99b5ad1fe9d0056de3be2a7b5",
+    "scripts/training/calibrate_taiji_n1_plan174_scale.py": "ee33146d99990e958b54c8773d9289d4342371dbf7fd77d263b419d5c127f49f",
+    "scripts/training/calibrate_taiji_n1_plan174b_scale.py": "625f6b7c69d2bcf9d41b81d5d1e02c59adb7b749e8e502c3aa7c08e6bf0f4ab0",
+    "scripts/training/migrate_taiji_n1_plan175_v2_to_v3.py": "741b92682dff3ef70956b0613214f440af37b8af4a873a41eaffaf3259c4094b"
+  },
+  "limits": [
+    "No causal ablation isolates capacity, data coverage, semantics and architecture.",
+    "Historical prefix-match failure alone does not establish zero semantic accuracy.",
+    "N174 SS results apply only to its fixed data, schedule and update budget.",
+    "Current N175 heldout remains unread by this audit; intermediate training loss is not generalization evidence."
+  ]
+}
