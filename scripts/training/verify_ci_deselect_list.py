@@ -254,7 +254,9 @@ def main() -> int:
     for miss in verdict.misses:
         print(f"::error::清单条目落空，deselect 会静默失效：{miss}")
     for nofile in verdict.nofile:
-        print(f"::error::清单条目指向不存在的文件（㊵-467 原病）：{nofile}")
+        # 输出路径禁非 GBK 字形（N5-17 census：㊵=U+3295 落 stdout 档即进 crash_face，
+        # Windows GBK 控制台 print 必崩）；编号以 GBK 兼容形式保留在消息里。
+        print(f"::error::清单条目指向不存在的文件（40-467 原病）：{nofile}")
     for warn in verdict.uncollectable:
         # 黄：收集失败由 pytest step 自己判红，守卫只提醒，不重复计红。
         print(f"::warning::{warn}")
