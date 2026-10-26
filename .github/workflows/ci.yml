@@ -101,16 +101,21 @@ jobs:
 #   · b0_n2 两条已随 semantics 契约迁移摘除；n5_38 两条已随批 A/B 证据入库摘除
 #     （2026-10-25 owner 裁 A/B，LF worktree 实证回绿）。
 #   · extension_contract 6 条已随治理面校验跨机化摘除（owner 裁定接 seal_ast
-#     映射＋历史取证＋渲染容忍，LF worktree 60/60 实证）。其余线 2 条目仍在册：
-#     plan157/160/161 依赖 134MB 的 plan155a 进度 jsonl（超 GitHub 100MB 单文件
-#     硬限无法入库）＋批 C checkpoint/语料消费者（owner 裁 checkpoints 不直存→
-#     skipif 化待执行）＋fast_ledger 2 条（checkpoint）。
+#     映射＋历史取证＋渲染容忍，LF worktree 60/60 实证）。
+#   · 2026-10-25 深夜摘除 8 条（批 A/B 后 worktree 实证）：plan134（jsonl 已入库）、
+#     n3_09 拒绝分支 3 条（不消费缺失文件）、fast_ledger manifest+v2（证据已入库，
+#     批 4 扫描红为顺序干扰、独立跑 12/12 绿）、start_charge（并行会话已修）、
+#     green_channel（测试自身 E:/Seed 字面改经 resolve_recorded_path 归位）。
+#   · 其余线 2 条目仍在册：plan157/160/161 依赖 134MB 的 plan155a 进度 jsonl
+#     （超 GitHub 100MB 单文件硬限无法入库）＋批 C checkpoint/语料消费者（owner 裁
+#     checkpoints 不直存→skipif 化待执行）。注意：checkpoint 消费者在维护机
+#     worktree 的通过是 E:/Seed 字面陷阱（主树文件存在），不构成解锁证据。
 #     另 10 条＝Windows/Ubuntu 腿独有（r2_copy_surface/start_charge/source_validation/seal_ast 绿通道：
 #     本机绿、runner 上读数/git 状态不同），重启条件同上（R2 产物入库/相对路径化）。
 #   · 族 A 第五例 7 条（relation 两测＋structural-gain 门族 5 条）已于 2026-10-25
 #     随方案乙（admission 判定改 isclose 相对容差）摘除，翻转记录、代码位点与
 #     裁定留痕见 plans/active/roadmap/11_CI_FLOAT_EVIDENCE_FOR_OWNER_20261025.md。
-#     截至 2026-10-25（批 A/B＋治理面跨机化＋裁定 (i)，清单共 86 条×两腿）。
+#     截至 2026-10-25 深夜（再摘 8 条）清单共 78 条×两腿。
     env:
       DSH_CI_DESELECT: >-
         --deselect tests/taiji_native/test_a30_artifact_sha_drift_audit.py::test_known_bad_anchor_is_visible_and_known_good_is_clean
@@ -126,9 +131,6 @@ jobs:
         --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_v1_face_refuses_no_fallback
         --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_missing_policy_self_report_refuses
         --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_short_face_refuses_after_warmup
-        --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_reasons_disagreement_refuses
-        --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_freezable_branch_is_reachable
-        --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_not_freezable_branch_is_reachable
         --deselect tests/taiji_native/test_n1_07_answer_source_provenance_contract.py::test_real_face_reproduces_today_reading
         --deselect tests/taiji_native/test_n1_09_envelope_recipe_face_contract.py::test_cli_refuses_to_overwrite_and_writes_lf
         --deselect tests/taiji_native/test_n1_09_envelope_recipe_face_contract.py::test_real_load_face_reading_is_reproduced_and_fully_covered
@@ -137,7 +139,6 @@ jobs:
         --deselect tests/taiji_native/test_n1_plan110_length_balanced_runner_contract.py::test_z_candidate_controller_namespace_does_not_mutate_v9_baseline_module
         --deselect tests/taiji_native/test_n1_plan133_v15_face_contract.py::test_v15_source_union_revalidates_consumed_v14_inputs_and_endpoint_set
         --deselect tests/taiji_native/test_n1_plan133_v15_face_contract.py::test_v15_source_union_still_refuses_a_consumed_seed
-        --deselect tests/taiji_native/test_n1_plan134_transition_diagnostic_contract.py::test_v16_source_union_is_bound_to_consumed_v15_and_frozen_endpoints
         --deselect tests/taiji_native/test_n1_plan143_v22_face_builder_contract.py::test_source_union_adds_the_consumed_v21_face_and_partial_run
         --deselect tests/taiji_native/test_n1_plan144_v23_face_builder_contract.py::test_source_union_adds_the_consumed_v22_face_and_complete_v22_range
         --deselect tests/taiji_native/test_n1_plan147_v24_abstention_contract.py::test_source_union_adds_the_consumed_v23_face_without_overlap
@@ -173,8 +174,6 @@ jobs:
         --deselect tests/taiji_native/test_r2_continuation_evaluation_adapter_contract.py::test_preflight_binds_frozen_and_extension_sources_by_default
         --deselect tests/taiji_native/test_r2_continuation_evaluation_adapter_contract.py::test_preflight_binds_launch_provenance_ledger_and_budget
         --deselect tests/taiji_native/test_r2_continuation_evaluation_adapter_contract.py::test_preflight_records_historical_sources_without_byte_binding
-        --deselect tests/taiji_native/test_r2_fast_ledger_resume_v2_contract.py::test_v2_records_scoped_memory_floor_and_deferred_arms
-        --deselect tests/taiji_native/test_r2_fast_ledger_resume_contract.py::test_manifest_binds_fast_ledger_anchor_sources_and_resume_checkpoint
         --deselect tests/taiji_native/test_r2_daily_dialogue_warmstart_matched_contract.py::test_warm_and_fresh_models_share_shape_but_not_initial_weights
         --deselect tests/taiji_native/test_n1_plan142_v21_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan143_v22_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
@@ -193,9 +192,7 @@ jobs:
         --deselect tests/taiji_native/test_n1_plan160_seed130_candidate_parent_diagnostic_contract.py::test_seed128_and_seed129_values_are_in_seed130_exclusion_sets
         --deselect tests/taiji_native/test_n1_plan161_seed131_question_surface_diagnostic_contract.py::test_question_templates_are_absent_from_bound_training_questions
         --deselect tests/taiji_native/test_r2_copy_surface_extension_v2_contract.py::test_manifest_is_reproducible_from_the_generator
-        --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_runner_contract.py::test_start_charge_uses_latest_extension_snapshot_monotonically
         --deselect tests/taiji_native/test_r2_dialogue_continuation_source_validation_contract.py::test_frozen_base_validator_reproduces_reviewed_builder_sha_rejection
-        --deselect tests/taiji_native/test_seal_ast_hash_invariants.py::test_green_channel_real_file_and_git_attestation
         --deselect tests/taiji_native/test_r2_daily_dialogue_recovery_v2_evaluation_contract.py::test_interrupted_restore_tail_is_audited_without_resume_or_prompt
         --deselect tests/taiji_native/test_r2_daily_dialogue_recovery_v2_evaluation_contract.py::test_missing_result_and_resource_failure_refuse_before_attempt_or_prompt
         --deselect tests/taiji_native/test_r2_daily_dialogue_recovery_v2_evaluation_contract.py::test_private_worker_module_entrypoint_refuses_missing_parent_markers_before_data_access
@@ -754,9 +751,6 @@ jobs:
         --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_v1_face_refuses_no_fallback
         --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_missing_policy_self_report_refuses
         --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_short_face_refuses_after_warmup
-        --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_reasons_disagreement_refuses
-        --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_freezable_branch_is_reachable
-        --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_not_freezable_branch_is_reachable
         --deselect tests/taiji_native/test_n1_07_answer_source_provenance_contract.py::test_real_face_reproduces_today_reading
         --deselect tests/taiji_native/test_n1_09_envelope_recipe_face_contract.py::test_cli_refuses_to_overwrite_and_writes_lf
         --deselect tests/taiji_native/test_n1_09_envelope_recipe_face_contract.py::test_real_load_face_reading_is_reproduced_and_fully_covered
@@ -765,7 +759,6 @@ jobs:
         --deselect tests/taiji_native/test_n1_plan110_length_balanced_runner_contract.py::test_z_candidate_controller_namespace_does_not_mutate_v9_baseline_module
         --deselect tests/taiji_native/test_n1_plan133_v15_face_contract.py::test_v15_source_union_revalidates_consumed_v14_inputs_and_endpoint_set
         --deselect tests/taiji_native/test_n1_plan133_v15_face_contract.py::test_v15_source_union_still_refuses_a_consumed_seed
-        --deselect tests/taiji_native/test_n1_plan134_transition_diagnostic_contract.py::test_v16_source_union_is_bound_to_consumed_v15_and_frozen_endpoints
         --deselect tests/taiji_native/test_n1_plan143_v22_face_builder_contract.py::test_source_union_adds_the_consumed_v21_face_and_partial_run
         --deselect tests/taiji_native/test_n1_plan144_v23_face_builder_contract.py::test_source_union_adds_the_consumed_v22_face_and_complete_v22_range
         --deselect tests/taiji_native/test_n1_plan147_v24_abstention_contract.py::test_source_union_adds_the_consumed_v23_face_without_overlap
@@ -801,8 +794,6 @@ jobs:
         --deselect tests/taiji_native/test_r2_continuation_evaluation_adapter_contract.py::test_preflight_binds_frozen_and_extension_sources_by_default
         --deselect tests/taiji_native/test_r2_continuation_evaluation_adapter_contract.py::test_preflight_binds_launch_provenance_ledger_and_budget
         --deselect tests/taiji_native/test_r2_continuation_evaluation_adapter_contract.py::test_preflight_records_historical_sources_without_byte_binding
-        --deselect tests/taiji_native/test_r2_fast_ledger_resume_v2_contract.py::test_v2_records_scoped_memory_floor_and_deferred_arms
-        --deselect tests/taiji_native/test_r2_fast_ledger_resume_contract.py::test_manifest_binds_fast_ledger_anchor_sources_and_resume_checkpoint
         --deselect tests/taiji_native/test_r2_daily_dialogue_warmstart_matched_contract.py::test_warm_and_fresh_models_share_shape_but_not_initial_weights
         --deselect tests/taiji_native/test_n1_plan142_v21_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan143_v22_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
@@ -821,9 +812,7 @@ jobs:
         --deselect tests/taiji_native/test_n1_plan160_seed130_candidate_parent_diagnostic_contract.py::test_seed128_and_seed129_values_are_in_seed130_exclusion_sets
         --deselect tests/taiji_native/test_n1_plan161_seed131_question_surface_diagnostic_contract.py::test_question_templates_are_absent_from_bound_training_questions
         --deselect tests/taiji_native/test_r2_copy_surface_extension_v2_contract.py::test_manifest_is_reproducible_from_the_generator
-        --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_runner_contract.py::test_start_charge_uses_latest_extension_snapshot_monotonically
         --deselect tests/taiji_native/test_r2_dialogue_continuation_source_validation_contract.py::test_frozen_base_validator_reproduces_reviewed_builder_sha_rejection
-        --deselect tests/taiji_native/test_seal_ast_hash_invariants.py::test_green_channel_real_file_and_git_attestation
         --deselect tests/taiji_native/test_r2_daily_dialogue_recovery_v2_evaluation_contract.py::test_interrupted_restore_tail_is_audited_without_resume_or_prompt
         --deselect tests/taiji_native/test_r2_daily_dialogue_recovery_v2_evaluation_contract.py::test_missing_result_and_resource_failure_refuse_before_attempt_or_prompt
         --deselect tests/taiji_native/test_r2_daily_dialogue_recovery_v2_evaluation_contract.py::test_private_worker_module_entrypoint_refuses_missing_parent_markers_before_data_access

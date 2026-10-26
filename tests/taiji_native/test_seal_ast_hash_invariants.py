@@ -101,9 +101,15 @@ def test_r4_fabricated_hash_is_rejected_by_all_channels():
 
 
 def test_green_channel_real_file_and_git_attestation():
-    """绿向（真实文件）: 在位字节通过；同一记录值经 git 历史取证也通过。"""
+    """绿向（真实文件）: 在位字节通过；同一记录值经 git 历史取证也通过。
+
+    记录路径用维护机布局字面值——经 resolve_recorded_path 归位到当前检出树
+    后再取字节，任何检出树（含 CI runner）上本测都可核验。
+    """
     path = "E:/Seed/scripts/training/seal_ast.py"
-    digest = seal_ast.sha256_file(path)
+    resolved = seal_ast.resolve_recorded_path(path)
+    assert resolved is not None
+    digest = seal_ast.sha256_file(resolved)
     ok, failures = seal_ast.verify_hash_dict({path: digest})
     assert ok is True and failures == []
     assert seal_ast.verify_path_pin(path, digest) is True
