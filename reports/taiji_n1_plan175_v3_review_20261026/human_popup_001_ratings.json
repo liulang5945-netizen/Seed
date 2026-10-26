@@ -1,0 +1,54 @@
+{
+  "schema": "taiji-n175-human-popup-ratings-v1",
+  "request_call_id": "call_5e6f7850a0ab4fafbf4533e1b32f5fe1",
+  "case_id": "563efe9ec699e7e07ff0a601b9d402be",
+  "reviewer": "用户（当前会话弹窗）",
+  "human_answers_received": true,
+  "display_transform": "Only the terminal <|end|> marker was hidden; all answer text was displayed.",
+  "ratings": [
+    {
+      "question_item_index": 0,
+      "response_id": "6a9e36efdde747fae0e217cd7dac908a",
+      "score": 0,
+      "answer": "0分：不通顺、无关或没有回答问题",
+      "rationale": "用户弹窗判定：不通顺、无关或没有回答问题。"
+    },
+    {
+      "question_item_index": 1,
+      "response_id": "9ea190ac8f8fc292403faf8e038e9f02",
+      "score": 0,
+      "answer": "0分：不通顺、无关或没有回答问题",
+      "rationale": "用户弹窗判定：不通顺、无关或没有回答问题。"
+    },
+    {
+      "question_item_index": 2,
+      "response_id": "c976ca94fc790c435d65d9514fe1e212",
+      "score": 0,
+      "answer": "0分：不通顺、无关或没有回答问题",
+      "rationale": "用户弹窗判定：不通顺、无关或没有回答问题。"
+    },
+    {
+      "question_item_index": 3,
+      "response_id": "a39658d11cae5b9b83431550c2442f97",
+      "score": 0,
+      "answer": "0分：不通顺、无关或没有回答问题",
+      "rationale": "用户弹窗判定：不通顺、无关或没有回答问题。"
+    },
+    {
+      "question_item_index": 4,
+      "response_id": "4f27146b94652e769e185bf4cc453651",
+      "score": 0,
+      "answer": "0分：不通顺、无关或没有回答问题",
+      "rationale": "用户弹窗判定：不通顺、无关或没有回答问题。"
+    },
+    {
+      "question_item_index": 5,
+      "response_id": "4d0982559a88b21d6e1f0ca5827952c8",
+      "score": 0,
+      "answer": "0分：不通顺、无关或没有回答问题",
+      "rationale": "用户弹窗判定：不通顺、无关或没有回答问题。"
+    }
+  ],
+  "blind_key_opened": false,
+  "blind_review_sha256": "948ea4e7df2393e509b4d6fc3d91637e7345fd491f64322f8ad7cf9992961922"
+}

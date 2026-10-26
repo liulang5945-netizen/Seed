@@ -1,0 +1,61 @@
+{
+  "schema": "taiji-n176-foundation-corpus-prototype-v1",
+  "status": "prototype_structural_checks_passed_no_training",
+  "summary": {
+    "episodes": 1536,
+    "families": 256,
+    "primary_object_color_pairs": 64,
+    "unique_model_prompts": 1536,
+    "split_counts": {
+      "train": {
+        "episodes": 960,
+        "families": 160,
+        "by_level": {
+          "F0": 320,
+          "F1": 320,
+          "F2": 320
+        },
+        "target_bytes_per_pass": 18480
+      },
+      "calibration": {
+        "episodes": 192,
+        "families": 32,
+        "by_level": {
+          "F0": 64,
+          "F1": 64,
+          "F2": 64
+        },
+        "target_bytes_per_pass": 3696
+      },
+      "sealed": {
+        "episodes": 384,
+        "families": 64,
+        "by_level": {
+          "F0": 128,
+          "F1": 128,
+          "F2": 128
+        },
+        "target_bytes_per_pass": 7392
+      }
+    },
+    "oracle_metadata_in_model_prompt": false,
+    "primary_pair_isolation": "passed_including_distractor_facts"
+  },
+  "split_sha256": {
+    "train": "75164193dbcef08c4c5db9e5f17b084554aabde0cdae7da21a3d40a34b0a7555",
+    "calibration": "3ecd0ec1f3f3c19db9f175e95f27559162cb7bd65d2e5ffe62f272a63d9da1c9",
+    "sealed": "c8d3dee217613ee0a232c4faf2b02f6b80850acb6f6d59e9db535cee1ee45fae"
+  },
+  "generator_sha256": "d3df3c9e8c0ae1d2a4afdce7f9361601f074f94ae75f39f30fa0921e7d6b6ad5",
+  "output_directory": "data\\conversation\\taiji_n1_plan176_foundation_20261026",
+  "training_updates": 0,
+  "model_queries": 0,
+  "human_quality_review": "pending",
+  "limitations": [
+    "Finite synthetic vocabulary and templates; not open-domain language evidence",
+    "F0 copying measures form, not understanding",
+    "Only F1 primary-color queries claim isolated unseen object/color pairings",
+    "F2 relation pairs can repeat across splits; only scene-family isolation is claimed",
+    "Formal training budget and thresholds are not frozen by this prototype"
+  ]
+}

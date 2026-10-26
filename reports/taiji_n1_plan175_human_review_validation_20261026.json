@@ -1,0 +1,13 @@
+{
+  "status": "awaiting_human_ratings",
+  "filled": 6,
+  "pending": 306,
+  "reviewer_set": true,
+  "blind_key_opened": false,
+  "process_cpu_seconds": 0.015625,
+  "adjudicator_sha256": "f07b23bd8309b76a44dcbfc55befcb0c9d0158e0e456513c7b731d42cea63856",
+  "tests": {
+    "human_adjudication_passed": 11,
+    "foundation_corpus_passed": 6
+  }
+}

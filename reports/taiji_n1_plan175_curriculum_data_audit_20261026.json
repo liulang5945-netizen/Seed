@@ -1,0 +1,130 @@
+{
+  "schema": "taiji-n175-curriculum-data-audit-v1",
+  "status": "descriptive_data_audit_not_training_or_capability_evaluation",
+  "training_pairs": 1148,
+  "family_count": 517,
+  "target_bucket_counts": {
+    "128": 204,
+    "512": 328,
+    "1024": 236,
+    "2048": 380
+  },
+  "median_target_bytes": 589.0,
+  "median_prompt_bytes": 357.5,
+  "with_history": 671,
+  "curriculum_in_current_runner": "target-length bucketing for batches then randomized batch order; no semantic-level prerequisite gates",
+  "semantic_difficulty_labels": "not supplied; byte length is not a semantic difficulty label",
+  "samples": [
+    {
+      "bucket_max_target_bytes": 128,
+      "episode_id": "084a6c20-319c-4656-b535-9e4072b0b4e5",
+      "question": "谢谢，那我爷爷的兄弟的孙子呢？",
+      "history_turns": 1,
+      "prompt_bytes": 263,
+      "target_bytes": 18,
+      "target_preview": "堂兄弟"
+    },
+    {
+      "bucket_max_target_bytes": 128,
+      "episode_id": "3185353a-d278-4ce6-8337-b6942031e2a2",
+      "question": "我儿子的儿子是我的谁？",
+      "history_turns": 0,
+      "prompt_bytes": 162,
+      "target_bytes": 30,
+      "target_preview": "他是你的孙子。"
+    },
+    {
+      "bucket_max_target_bytes": 128,
+      "episode_id": "59301990-2d1c-4844-9184-95f2766ba5b6",
+      "question": "可以帮我查询一下天气吗？",
+      "history_turns": 0,
+      "prompt_bytes": 165,
+      "target_bytes": 94,
+      "target_preview": "可以， 我可以帮你查询你的天气，请告诉我你的所在位置好吗？"
+    },
+    {
+      "bucket_max_target_bytes": 512,
+      "episode_id": "e62bacc9-73d6-4942-994d-01cb030c0a4f",
+      "question": "这是什么？",
+      "history_turns": 0,
+      "prompt_bytes": 144,
+      "target_bytes": 174,
+      "target_preview": "很抱歉，我无法回答这个问题，因为您没有提供任何上下文或附加信息。请提供更多信息，以便我可以更好地回答您的问题。"
+    },
+    {
+      "bucket_max_target_bytes": 512,
+      "episode_id": "7291ddba-1e8c-438b-93f1-827a0ba3b05f",
+      "question": "你好呀，写一首诗给我吧。关于快乐的傍晚。",
+      "history_turns": 0,
+      "prompt_bytes": 189,
+      "target_bytes": 466,
+      "target_preview": "当傍晚的余晖染红天际，\n我凝望着这美妙的光景。\n那些曾经的忧伤和烦恼，\n在这一刻都变得微不足道。\n\n微风轻拂，树叶沙沙作响，\n鸟儿在歌唱，欢快的声音嘹亮。\n我感觉到快乐就在身旁，\n在这个美好的傍晚，我找到了自己。\n\n让我们一起迎接夜幕的降临，\n沉浸在这快乐的氛围中。\n让我们忘记所有的烦恼和忧愁，\n让我们享受这美好的傍晚。"
+    },
+    {
+      "bucket_max_target_bytes": 512,
+      "episode_id": "a7194bdb-9082-4e80-86a5-e361113e715b",
+      "question": "你应该推断出新一年的试卷，而不是推脱掉这个问题",
+      "history_turns": 2,
+      "prompt_bytes": 497,
+      "target_bytes": 377,
+      "target_preview": "非常抱歉，我无法推断出新年的试卷，因为我是一个基于预先训练模型的AI语言模型，并不具备推断或预测考试试卷的能力。我的主要任务是提供准确和有用的信息来帮助您解决问题。此外，我也不支持任何作弊行为，建议您通过认真学习来准备考试。祝您学习顺利，考试成功！"
+    },
+    {
+      "bucket_max_target_bytes": 1024,
+      "episode_id": "fba421eb-6739-413f-8ffd-18bf1162a3ba",
+      "question": "將6699變成2進位制在把出現的1的數量相加，答案是多少",
+      "history_turns": 0,
+      "prompt_bytes": 201,
+      "target_bytes": 739,
+      "target_preview": "思考步驟：\n1. 用除以2和取餘數的方式將6699轉換成2進位制。\n2. 數出2進位制中1的個數。\n3. 把1的個數相加，得到答案。\n\n解答：\n1. 先用除以2和取餘數的方式將6699轉換成2進位制：\n```\n6699 ÷ 2 = 3349 ... 1\n3349 ÷ 2 = 1674 ... 1\n1674 ÷ 2 = 837 ... 0\n837 ÷ 2 = 418 ... 1\n418 ÷ 2 = 209 ... 0\n209 ÷ 2 = 104 ... 1\n104 ÷ 2 = "
+    },
+    {
+      "bucket_max_target_bytes": 1024,
+      "episode_id": "9395e764-9fb1-4dc0-8960-11d64ee28799",
+      "question": "什么是预训练语言模型？",
+      "history_turns": 0,
+      "prompt_bytes": 162,
+      "target_bytes": 920,
+      "target_preview": "预训练语言模型是一种机器学习模型，它通过对大规模文本数据进行无监督学习，学习出一个通用的语言表示，能够应用于各种自然语言处理任务。这种模型可以用来自动生成文本、完成句子、对话和机器翻译等任务。\n\n预训练语言模型通常使用神经网络来建模，并使用一种称为“自监督学习”的技术来训练模型。自监督学习是指使用未标记的数据来训练模型，因此不需要人工标记数据，这使得训练模型更加高效。\n\n最流行的预训练语言模型之一是BERT（Bidirectional Encoder Representati"
+    },
+    {
+      "bucket_max_target_bytes": 1024,
+      "episode_id": "0c9e0cdc-a42c-45bb-9e13-bbd677801880",
+      "question": "你能完成什么事情？",
+      "history_turns": 1,
+      "prompt_bytes": 316,
+      "target_bytes": 752,
+      "target_preview": "作为一个人工智能助理，我可以完成许多任务。以下是我能够帮助您完成的一些事情：\n1.回答您的问题：无论是关于任何主题的问题，我都可以尽力为您提供答案。\n2.提供建议：如果您需要关于购物、旅行、饮食、健康、学习等方面的建议，我可以为您提供一些有用的信息。\n3.翻译：如果您需要翻译一些文字或语音信息，我可以帮您完成，支持多种语言之间的翻译。\n4.编程：如果您需要一些简单的编程任务，我可以为您提供代码，或者指导您如何解决问题。\n\n请注意，这只是一些我能够完成的常见任务，如果您需要其他"
+    },
+    {
+      "bucket_max_target_bytes": 2048,
+      "episode_id": "200d4493-ca9e-415b-b01c-56812eb057cc",
+      "question": "在守望先锋中，如何反制对方强势的铁拳选手？",
+      "history_turns": 0,
+      "prompt_bytes": 192,
+      "target_bytes": 1674,
+      "target_preview": "铁拳是守望先锋中非常强大的英雄，他的能力包括强大的控制和伤害输出，以及能够在短时间内造成大量伤害的爆发技能。以下是一些可以帮助你反制铁拳选手的建议：\n\n保持距离：铁拳的主要输出手段是他的爆发技能，因此保持距离是非常重要的。尽量避免与铁拳近身作战，保持一定的距离可以让你更容易逃脱或者进行反击。\n\n掌握好铁拳的技能：铁拳的爆发技能是他最强大的输出手段，因此要尽可能地掌握好他的技能，包括他的爆发技能和位移技能。在铁拳使用爆发技能时，你可以利用你的闪避技能或者位移技能来躲避他的攻击，"
+    },
+    {
+      "bucket_max_target_bytes": 2048,
+      "episode_id": "6ad70c53-1119-4cd8-a0c1-34fdb15b4107",
+      "question": "如何用nginx proxy manager 反向代理非本機的服務",
+      "history_turns": 0,
+      "prompt_bytes": 188,
+      "target_bytes": 1166,
+      "target_preview": "要使用Nginx Proxy Manager反向代理非本机的服务，需要完成以下步骤：\n\n在Nginx Proxy Manager中创建代理主机：登录Nginx Proxy Manager的Web管理界面，点击“Proxy Hosts”选项卡，然后点击“Add Proxy Host”按钮。在弹出的对话框中，输入要代理的主机名称和主机IP地址等信息。\n\n配置代理规则：在代理主机创建完成后，需要配置代理规则。在“Proxy Hosts”页面中，找到你刚刚创建的代理主机，点击“Edi"
+    },
+    {
+      "bucket_max_target_bytes": 2048,
+      "episode_id": "9ae9a320-241a-4b28-a869-2ae61c733d4d",
+      "question": "如果我在婚姻中没有过错，怎么样才能维护我的合法权益",
+      "history_turns": 1,
+      "prompt_bytes": 1162,
+      "target_bytes": 1753,
+      "target_preview": "依照不同国家的相关法律法规，需要采取的维权方式可能有所不同。以中国为例：\n\n在中国，离婚由《婚姻法》管辖，该法规定了财产分割、子女监护和配偶抚养的准则。根据法律规定，夫妻双方在婚姻中拥有平等的权利和责任，如果他们想结束婚姻，都有权要求离婚。\n\n如果你在婚姻中没有过错，并希望寻求离婚，你可以通过向当地法院提出离婚申请来实现。你需要提供证据来支持你的主张，即你的配偶有过错，如通奸、虐待或其他不当行为的证据。\n\n另外，你也可以通过与你的配偶相互协商来寻求离婚，这可以通过调解或其他替"
+    }
+  ],
+  "training_updates": 0,
+  "new_holdout_body_reads": 0,
+  "blind_key_opened": false
+}
