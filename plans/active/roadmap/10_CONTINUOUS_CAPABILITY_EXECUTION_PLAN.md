@@ -53,6 +53,8 @@
 
 ### 3.2 共同任务状态、来源、时间与重置
 
+N177.1已实现opt-in `JointTaskStateV1`，以一个`CognitiveState`为认知根，映射V4神经`TaskState`、逐byte`InputTrace`来源、owner/scope/session/revision及显式reset/carry；30项定向用例和静态检查通过。当前只证明接口和合成NativeCheckpoint封装/恢复可用，真实Adapter/记忆/世界/选择消费者尚未接入，不等同3.2整体生产链出口。具体报告见[状态接口回执](../../../reports/taiji_n1_plan177_state_interface_20261026.json)。下一步接通T1所需实际消费者；不新增`joint_task_core.py`包装层，除非真实调用图证明需要。
+
 | 项目 | 实施要求 |
 |---|---|
 | 输入 | 选定受限任务、实际调用图、N175/N176可继承权重及独立候选版本；需要保留的对象/事件/关系差异 |

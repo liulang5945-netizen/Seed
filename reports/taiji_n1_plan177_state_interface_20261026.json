@@ -1,0 +1,31 @@
+{
+  "schema": "taiji-n177-joint-task-state-delivery-v1",
+  "status": "interface_scope_implemented_and_verified_static; production_integration_pending",
+  "candidate_file": "taiji/joint_task_state.py",
+  "candidate_source_sha256": "3b1c5fe1992b38ac154818535e0f033c41d41490f9b4e40beb9e40559549ac87",
+  "test_file": "tests/taiji_native/test_n1_plan177_joint_task_state.py",
+  "pytest_tests_passed": 30,
+  "black": "passed",
+  "ruff_select_FIB": "passed",
+  "mypy_taiji_joint_task_state": "passed",
+  "n177_1_contract_exits": [
+    "Canonical CognitiveState is held once as owner; nested payload integrity detects mutations",
+    "V3/V4 neural TaskState is versioned and scope/session/bundle bound",
+    "InputTrace UTF8 byte observations and percept/assembly identities map to neural source spans",
+    "Task reset retains root state and evidence; new session creates an empty neural task and requires explicit exact carry IDs",
+    "World/workspace/memory/action read view preserves canonical object identity and reports unresolved source links",
+    "One NativeCheckpoint envelope can contain the same root plus the V4 model, optimizer and joint source map with digest checks"
+  ],
+  "formal_training_updates": 0,
+  "real_native_adapter_integration": "not claimed; production Adapter and memory/world/selection consumers remain unwired",
+  "language_semantic_gain": "not measured",
+  "old_capability_retention": "not measured",
+  "sealed_body_reads": 0,
+  "n175_key_opened": false,
+  "can_promote": false,
+  "next_development_step": "N177.2-T1: wire the real Adapter path through joint state, required fact/memory read, and language conditioning; verify relevant flip, irrelevant hold, cut, and rescue",
+  "lifecycle_contract_matrix_cases": 20,
+  "total_targeted_test_cases": 30,
+  "checkpoint_verification": "synthetic NativeCheckpoint envelope save/restore of the same CognitiveState root, V4 candidate, Adam optimizer, and source map passed; no training checkpoint or model update was created",
+  "ruff": "passed (repository default checks)"
+}

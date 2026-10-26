@@ -1,6 +1,6 @@
 # N177 最小共同认知纵切片：实施依赖与接口合同
 
-日期：2026-10-26。状态：开发顺序及首个联合实现包已确定；尚未实现新候选、启动新训练或读取新封存面。本合同把[架构问题核实](PLAN-N1-176_architecture_claims_audit_20261026.md)接入当前进度；开发调度只看[03](../active/roadmap/03_CURRENT_EXECUTION.md)，完整WBS只看[10](../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。
+日期：2026-10-26。状态：N177.1 opt-in共同状态接口已实现并通过本地工程退出检查；生产Adapter/记忆/世界/选择联合链、新候选、训练和新封存读取尚未发生。本合同把[架构问题核实](PLAN-N1-176_architecture_claims_audit_20261026.md)接入当前进度；开发调度只看[03](../active/roadmap/03_CURRENT_EXECUTION.md)，完整WBS只看[10](../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。
 
 ## 1. 本次改变的依赖
 
@@ -69,7 +69,7 @@ N176三臂已经完成，仍按原一次评价有限收束，用于解释课程�
 | 顺序 | 文件/触点 | 交付与有限出口 | 失败回流 |
 | --- | --- | --- | --- |
 | 177.0 本合同与责任盘点 | 本文件；`contracts.py`、`task_state*.py`、`conditional_language_v4.py`、`adapter.py` | 当前版本、继承/新建/退出、任务所需路径及信用表可交实现；此规划阶段结束 | 明确不可表达的差异并选择一种表示，不以“研究一下”挂起 |
-| **177.1 共同状态和读写接口** | 计划`taiji/joint_task_state.py`、`joint_task_core.py`；扩展/映射既有CognitiveState身份 | 统一内容绑定、来源/有效时间、scope、reset与序列化；20组生命周期用例（2scope×2goal×turn reset/session重启/取消/新事实/进程恢复五事件）完成 | 无法保留必需区别则改表示/主链，先阻断对应任务训练 |
+| **177.1 共同状态和读写接口（有限完成）** | `taiji/joint_task_state.py` opt-in bridge；以既有`CognitiveState`为唯一根，映射V4 `TaskState`及`InputTrace`；未创建`joint_task_core.py`包装层 | 20组scope/goal/lifecycle矩阵＋10项来源、状态机、checkpoint专项回归，共30项；pytest、mypy、Ruff、Black通过。workspace视图不复制未验证内容。生产Adapter尚未接入，语义收益未测 | 保持边界；N177.2按T1实际调用图接通需要的consumer，先做来源可追踪的读入与相关/无关反事实检查 |
 | 177.2 必要记忆/预测/选择与语言装配 | 复用或版本化`episodic_memory.py`、`world_learning.py`、`executive.py`、`content_selection.py`；计划`joint_cognition.py`及显式语言条件桥 | T1→T2→T3逐个接通；16组相关/无关/切断/救援用例完成；未用模块不得算收益 | 丢信息到producer/表示，未读取到consumer，选择错误到预测/目标/路由；不让宿主补答案 |
 | 177.3 反馈责任与完整恢复 | 计划`joint_learning.py`；现有`continual_checkpoint.py`、world/memory/update接口 | 观察后、提议动作后、等待真实结果、反馈更新后四阶段×两scope的8组恢复；正确反馈、无更新、置换反馈、仅读出、冻结负责模块、仅state变化六类对照可运行 | 没有反馈接收者则先修J2；不能只增加训练剂量 |
 | 177.4 固定课程/成本/比较合同 | 新包独立数据清单与一次train-only标定；复用F0–F2规则但增加经历/目标/动作/反馈任务 | 训练/校准/封存的family与组合提前隔离，全部oracle排除在推理输入外；同父/同资源比较及预算/停止线一次冻结 | 新数据/目标质量问题回数据，资源不符回本步骤重新测定并说明，不消耗sealed后重选 |
@@ -91,4 +91,4 @@ F3再增加自然表达、多步连续任务和真实跨会话经验；CC-5/6的
 
 本次计划重排以03/09/10/07、本合同、N176承接说明及历史索引一致并提交为完成，不新增模型训练或封存消费。冻结实验结果/预算不改、历史失败可精确恢复，是重排的硬边界。
 
-完成本次重排后的唯一开发动作是**177.1：实现共同内容状态及读写/生命周期接口**。随后的177.2/3接线、反馈和恢复按依赖自动推进；遇到状态不可表达或权责无法兼容的实质架构选择时，提交具体反例、候选代价与唯一建议再讨论，不停在抽象概念。
+N177.1接口范围已完成，整体3.2生产接入尚未完成。唯一下一步是**177.2-T1：沿真实Adapter入口接入共同状态→实际事实/记忆读取→语言条件消费，并做相关翻转、无关保持、切断/救援的因果检查**。只构造本任务真正需要的桥接，不为“模块齐全”创建空壳；每个读值须保留来源ID。随后依检查结果推进反馈信用；不启动模型训练或sealed评价。
