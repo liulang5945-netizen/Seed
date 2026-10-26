@@ -1,6 +1,6 @@
 # N1-175 数据与有限结案合同 v1
 
-日期：2026-10-26，持续更新。seed169/170/171正式训练均完成epoch 1–35/40，epoch01–35检查点均通过独立进程恢复与digest往返；当前续训继续运行。承接N1-174家族结案及[N175元数据审计](PLAN-N1-175_metadata_feasibility_audit_20261025.md)。冻结训练包为1148题/517family、3 seeds×40 epochs；64-family留出正文读取为0。训练损失只作teacher-forced拟合信号，不代表能力提升。
+日期：2026-10-26，持续更新。seed169/170/171正式训练均完成epoch 1–36/40，epoch01–36检查点均通过独立进程恢复与digest往返；当前续训继续运行。承接N1-174家族结案及[N175元数据审计](PLAN-N1-175_metadata_feasibility_audit_20261025.md)。冻结训练包为1148题/517family、3 seeds×40 epochs；64-family留出正文读取为0。训练损失只作teacher-forced拟合信号，不代表能力提升。
 
 ## 方向与本轮范围
 
@@ -43,14 +43,14 @@ V2→V3迁移函数按参数名映射了全部共享权重与AdamW状态；V2位
 
 train-only真实batch更新测得3700目标字节/8.421875 process-CPU秒=439.33目标字节/CPU秒，第二个与首批题目及family均不重合；该数字是小样本量级标定，不保证长程线性。首份标定回执把累计历史曝光当作本批分子，吞吐率错误；其持久结果保留，勿用于成本估算，正确分子/计时见[独立更新成本回执](../../reports/taiji_n1_plan175_v3_update_cost_20261026.json)。据实际corpus计算40 epochs为32892440目标字节/seed，初估74800 CPU秒/seed、3 seed约225000；2倍余量约450000 process-CPU秒。输入context和长序列成本可能使实耗偏离，训练期间以进度账本为准。
 
-这属于条件语言候选的局部主链升级，当前证据不要求推翻整个认知架构。N175从“纯数据规模对照”修订为“V3完整回答训练”，结构/恢复验收与train-only成本标定已完成，正式三seed TF训练当前到35/40 epochs；按冻结40 epochs、batch4及真实父模型迁移继续。每seed CPU保护上限300000、全队列上限900000 process-CPU秒，包含预计费用和大余量，均低于既有每臂授权；若触顶则按合同保留partial并停止，不自动提额。训练完成后再读取64个新留出family，不在训练中查询。
+这属于条件语言候选的局部主链升级，当前证据不要求推翻整个认知架构。N175从“纯数据规模对照”修订为“V3完整回答训练”，结构/恢复验收与train-only成本标定已完成，正式三seed TF训练当前到36/40 epochs；按冻结40 epochs、batch4及真实父模型迁移继续。每seed CPU保护上限300000、全队列上限900000 process-CPU秒，包含预计费用和大余量，均低于既有每臂授权；若触顶则按合同保留partial并停止，不自动提额。训练完成后再读取64个新留出family，不在训练中查询。
 
 ## 工程与运行顺序
 
 1. 候选划分和train结构审计：本轮已完成，代码测试覆盖确定性、旧家族排除、同题多目标拒绝、断链与长度完整性。
 2. V3状态/模型/逐样本梯度与checkpoint：已完成并经V3/V2定向回归及新进程恢复验证；三个N174 TF seed真实父checkpoint迁移完成。
 3. Train-only完整答复标定：已完成；corpus1148题/517family，3700 byte update为439.33 target byte/process-CPU秒。第一份统计回执率值错误，按独立第二批实测为准。
-4. 现冻结训练包：corpus 1148条、517 families、manifest SHA见回执；V3输入4096/输出2048；父模型seed169/170/171、V2→V3按名迁移；tf单臂、batch4、按完整target字节分桶，40 epochs/seed、每epoch耐久checkpoint。CPU guard 300000/seed、合计900000 process-CPU秒。旧3–8万CPU撤销。当前正式训练已完成35/40 epochs/seed，短标定仅2个单步batch，不计入正式训练结果。
+4. 现冻结训练包：corpus 1148条、517 families、manifest SHA见回执；V3输入4096/输出2048；父模型seed169/170/171、V2→V3按名迁移；tf单臂、batch4、按完整target字节分桶，40 epochs/seed、每epoch耐久checkpoint。CPU guard 300000/seed、合计900000 process-CPU秒。旧3–8万CPU撤销。当前正式训练已完成36/40 epochs/seed，短标定仅2个单步batch，不计入正式训练结果。
 5. 新留出仅用于冻结后的评价，不参与梯度、超参、答案筛选或训练长度选择。正式输出后不因负结果追加epoch、重抽seed、换题或重跑。
 
 ## 收官条件与结论边界
@@ -65,6 +65,8 @@ train-only真实batch更新测得3700目标字节/8.421875 process-CPU秒=439.33
 - 即使通过，仅支持本数据分布与本候选的有限收益，不等于完整N主线收官、默认入口替换、成长或自主性能力通过。推广仍按N整体验收。
 
 语义门为本次预注册的新候选标准；数据质量、变长工程与成本已冻结并通过前置检查。正式读留出仍必须等三seed全部到40 epochs、最终checkpoint lineage验证通过。当前留出正文读取0，不制造已获能力的表述。
+
+2026-10-26架构归因补记：结案须按[10执行规则](../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)交付架构判决。合成状态干预已确认V3语言next_logits不独立消费workspace，hidden与byte memory阳性对照有效，见[架构路径审计](../../reports/taiji_n1_plan175_architecture_path_audit_20261026.json)。当前普通问答仍有hidden与byte memory信息路径，因此该缺口不能独自改判R/S或证明历史QA主因；也不能把本语言切片通过写成工作空间/世界预测/规划联合架构通过。此项为只读架构证据与归因要求，固定行为门、40轮终点和一次留出边界保持。
 
 
 正式训练入口为[`run_taiji_n1_plan175_v3_scale.py`](../../scripts/training/run_taiji_n1_plan175_v3_scale.py)，按seed单独进程运行，续训从最近一个epoch checkpoint恢复，progress账本记录当前batch。三seed均完成40 epochs、最终checkpoint与数据/源码来源核验通过后，再按本合同固定R/S门生成64个留出family回答；训练期间不解析其正文。
@@ -147,7 +149,7 @@ N175 epoch24已完成：seed169/170/171各288更新、822311 target bytes，mean
 
 N175 epoch25已完成：seed169/170/171各288更新、822311 target bytes，mean loss分别1.407944/1.400155/1.435233 nats，CPU分别1531.83/1522.25/1535.34秒。三个epoch25检查点均通过独立进程恢复、step/exposure/cursor核对及digest往返；见[epoch25恢复回执](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch25_20261026.json)。三seed继续运行后续固定训练，64-family留出正文仍未读；teacher-forced损失不代表泛化。
 
-## 2026-10-26 后台续训26–35轮恢复追记
+## 2026-10-26 后台续训26–36轮恢复追记
 
 三条正式训练在后台持续推进；以下补齐各轮原checkpoint独立恢复、计数与digest往返证据。每seed每轮288更新、822311目标byte，所有核验新增训练更新0、留出正文读取0。loss仍仅作teacher-forced拟合读数，不增加或改写R/S门。
 
@@ -163,3 +165,4 @@ N175 epoch25已完成：seed169/170/171各288更新、822311 target bytes，mean
 | 33 | 1.3074/1.3074/1.3464 | 1184.16/1190.94/1186.28 | [恢复回执](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch33_20261026.json) |
 | 34 | 1.3008/1.2993/1.3331 | 1249.17/1267.31/1287.64 | [恢复回执](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch34_20261026.json) |
 | 35 | 1.2884/1.2861/1.3224 | 1260.84/1263.98/1275.11 | [恢复回执](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch35_20261026.json) |
+| 36 | 1.2744/1.2757/1.3139 | 1554.30/1562.53/1538.12 | [恢复回执](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch36_20261026.json) |

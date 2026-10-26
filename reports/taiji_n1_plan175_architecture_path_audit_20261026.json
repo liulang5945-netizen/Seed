@@ -1,0 +1,50 @@
+{
+  "schema": "taiji-n1-plan175-architecture-path-audit-v1",
+  "status": "workspace_nonconsumption_confirmed_with_positive_controls",
+  "created_utc": "2026-10-26T07:19:41.454849+00:00",
+  "git_head": "df61903575e57c29cad51f238539a141d43e3e0d",
+  "checkpoint": "data\\checkpoints\\n1_plan175_v3_scale_20261026\\tf_seed169\\epoch_35.pt",
+  "checkpoint_sha256": "8a536e82ec289b75b9380bbcf1c794f5f0bac280707675641cf177bb754af7e3",
+  "checkpoint_digest": "f5e116649faf9ccab4ecacec0fb9f56ea18efaeee057a502e8ab89f8085ca0c5",
+  "synthetic_prompt_ascii": "[facts] A=1; B=2. [query] A=?",
+  "synthetic_target_first_byte": 49,
+  "workspace_shape": [
+    1,
+    256
+  ],
+  "byte_memory_shape": [
+    29,
+    256
+  ],
+  "hidden_shape": [
+    256
+  ],
+  "next_byte_max_abs_logit_difference": {
+    "workspace_only": 0.0,
+    "byte_memory_only": 2.349543333053589,
+    "hidden_only": 1.3974432945251465
+  },
+  "loss_gradient": {
+    "workspace": {
+      "unused": true,
+      "l2_norm": null
+    },
+    "byte_memory": {
+      "unused": false,
+      "l2_norm": 8.100020408630371
+    },
+    "hidden": {
+      "unused": false,
+      "l2_norm": 4.352596282958984
+    }
+  },
+  "audit_optimizer_updates": 0,
+  "new_holdout_text_reads": 0,
+  "source_sha256": {
+    "taiji/conditional_language_v2.py": "314d1b6159e932807d647edb6573f0d13e2455799c50a559c23fd27a52e24221",
+    "taiji/conditional_language_v3.py": "2fc5305f60e2eaeb8a82a77dbfd679cacee8c001f6f42c5346ce7d3bccabc619",
+    "taiji/task_core_v2.py": "cac7a01da23b57b4c797b3fb6d9c7c70a823f9a99b5ad1fe9d0056de3be2a7b5"
+  },
+  "claim": "The V3 language next-byte path does not consume workspace as a distinct state input. byte_memory and hidden are consumed.",
+  "claim_limit": "This establishes an integration gap for tasks that require independent workspace content. It does not by itself prove workspace nonconsumption caused the historical QA failure, because information can also be encoded through hidden and byte_memory."
+}
