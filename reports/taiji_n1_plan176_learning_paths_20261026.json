@@ -1,0 +1,581 @@
+{
+  "schema": "taiji-n176-information-credit-path-audit-v1",
+  "status": "complete_train_only_no_updates",
+  "parent_seed": 169,
+  "parent_checkpoint_sha256": "4a30bde4fd632a500a8a7c83e56d8987ad9edf516e05275208260e5feff5a3ec",
+  "train_corpus_sha256": "75164193dbcef08c4c5db9e5f17b084554aabde0cdae7da21a3d40a34b0a7555",
+  "audit_source_sha256": "c1fd8a7038ac481a8bfe9ee77db9d23ce3f8b1af28d6666e653044d4e93fb52e",
+  "selected_episodes": [
+    "n176:world:5:7:2:q2",
+    "n176:world:6:6:3:q2",
+    "n176:world:0:3:2:q3",
+    "n176:world:6:0:3:q3",
+    "n176:world:2:5:2:q4",
+    "n176:world:3:3:3:q4",
+    "n176:world:4:4:0:q5",
+    "n176:world:3:7:1:q5"
+  ],
+  "results": [
+    {
+      "episode_id": "n176:world:5:7:2:q2",
+      "query_kind": "primary_color",
+      "conditions": {
+        "matched": {
+          "fixed_original_target_nll": 2.1026620864868164,
+          "fixed_original_target_tf_top1": 0.6111111044883728,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "如果一加为您提供帮助。\n<|end|>",
+          "generated_bytes": 41,
+          "terminated": true
+        },
+        "related_fact_flip": {
+          "fixed_original_target_nll": 2.390255928039551,
+          "fixed_original_target_tf_top1": 0.6111111044883728,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "在爱泼斯，我的给出的主要是学习为一些工作文字向我提问。\n<|end|>",
+          "generated_bytes": 89,
+          "terminated": true
+        },
+        "irrelevant_fact_flip": {
+          "fixed_original_target_nll": 2.255200147628784,
+          "fixed_original_target_tf_top1": 0.6111111044883728,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "如果你有什么与热的詆中接受的詞海，我会尽力将为我们的試看，YKivel �",
+          "generated_bytes": 96,
+          "terminated": false
+        },
+        "swapped_prompt": {
+          "fixed_original_target_nll": 2.767986297607422,
+          "fixed_original_target_tf_top1": 0.5555555820465088,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "当然可以，请随时告诉我，但是我不想了一个关于一天，相对于不仅使用",
+          "generated_bytes": 96,
+          "terminated": false
+        }
+      },
+      "paths": {
+        "task_loss_gradient_norms": {
+          "state.workspace": null,
+          "state.byte_memory": 1.9405877590179443,
+          "state.hidden": 0.6421545743942261,
+          "core.embedding.weight": 1.5706026554107666,
+          "core.encoder.weight_ih_l0": 10.36734390258789,
+          "core.encoder.weight_hh_l0": 6.296082496643066,
+          "core.encoder.bias_ih_l0": 1.548717975616455,
+          "core.encoder.bias_hh_l0": 0.807134211063385,
+          "core.keys.weight": 4.985719680786133,
+          "core.keys.bias": 1.634283535167924e-07,
+          "core.values.weight": 4.073108673095703,
+          "core.values.bias": 1.003025770187378,
+          "query.weight": 3.930727958679199,
+          "query.bias": 0.33459746837615967,
+          "decoder.weight_ih": 5.788239002227783,
+          "decoder.weight_hh": 4.974889755249023,
+          "decoder.bias_ih": 0.553031325340271,
+          "decoder.bias_hh": 0.39949125051498413,
+          "output.weight": 2.3843231201171875,
+          "output.bias": 0.1599600911140442,
+          "input_position.weight": 0.6354056596755981,
+          "output_position.weight": 0.3380162715911865
+        },
+        "state_perturbation_max_logit_delta": {
+          "workspace": 0.0,
+          "byte_memory": 2.1823959350585938,
+          "hidden": 1.3705120086669922
+        }
+      }
+    },
+    {
+      "episode_id": "n176:world:6:6:3:q2",
+      "query_kind": "primary_color",
+      "conditions": {
+        "matched": {
+          "fixed_original_target_nll": 2.100055694580078,
+          "fixed_original_target_tf_top1": 0.5555555820465088,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "当然可以，请随时告诉我，但是我不想了一个关于一天，相对于不仅使用",
+          "generated_bytes": 96,
+          "terminated": false
+        },
+        "related_fact_flip": {
+          "fixed_original_target_nll": 2.125295877456665,
+          "fixed_original_target_tf_top1": 0.5555555820465088,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "当然可以，请随时告诉我，我将尽我所能尽地为您提供帮助。\n<|end|>",
+          "generated_bytes": 89,
+          "terminated": true
+        },
+        "irrelevant_fact_flip": {
+          "fixed_original_target_nll": 2.2321882247924805,
+          "fixed_original_target_tf_top1": 0.5555555820465088,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "在数率，我可以为您提供一个人工智能助理。你有其他问题或者你的计算",
+          "generated_bytes": 96,
+          "terminated": false
+        },
+        "swapped_prompt": {
+          "fixed_original_target_nll": 1.5743236541748047,
+          "fixed_original_target_tf_top1": 0.6111111044883728,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "如果一加为您提供帮助。\n<|end|>",
+          "generated_bytes": 41,
+          "terminated": true
+        }
+      },
+      "paths": {
+        "task_loss_gradient_norms": {
+          "state.workspace": null,
+          "state.byte_memory": 1.1588408946990967,
+          "state.hidden": 0.4908514618873596,
+          "core.embedding.weight": 0.9452120661735535,
+          "core.encoder.weight_ih_l0": 5.66077184677124,
+          "core.encoder.weight_hh_l0": 3.2360568046569824,
+          "core.encoder.bias_ih_l0": 1.0082355737686157,
+          "core.encoder.bias_hh_l0": 0.44754981994628906,
+          "core.keys.weight": 1.9155552387237549,
+          "core.keys.bias": 1.1243005104688564e-07,
+          "core.values.weight": 2.915480136871338,
+          "core.values.bias": 0.717291533946991,
+          "query.weight": 1.629313349723816,
+          "query.bias": 0.11741258203983307,
+          "decoder.weight_ih": 4.243653297424316,
+          "decoder.weight_hh": 3.757071018218994,
+          "decoder.bias_ih": 0.4096009135246277,
+          "decoder.bias_hh": 0.28587427735328674,
+          "output.weight": 2.6670308113098145,
+          "output.bias": 0.17971795797348022,
+          "input_position.weight": 0.27638930082321167,
+          "output_position.weight": 0.12850892543792725
+        },
+        "state_perturbation_max_logit_delta": {
+          "workspace": 0.0,
+          "byte_memory": 2.5166091918945312,
+          "hidden": 1.3605823516845703
+        }
+      }
+    },
+    {
+      "episode_id": "n176:world:0:3:2:q3",
+      "query_kind": "distractor_color",
+      "conditions": {
+        "matched": {
+          "fixed_original_target_nll": 1.121622920036316,
+          "fixed_original_target_tf_top1": 0.6111111044883728,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "当然可以，这个词星間质变。我可以为您提高积紧建筑的程序。\n<|end|>",
+          "generated_bytes": 92,
+          "terminated": true
+        },
+        "related_fact_flip": {
+          "fixed_original_target_nll": 1.1554311513900757,
+          "fixed_original_target_tf_top1": 0.6111111044883728,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "不客气，但是如果您有任何的吗？\n<|end|>",
+          "generated_bytes": 53,
+          "terminated": true
+        },
+        "irrelevant_fact_flip": {
+          "fixed_original_target_nll": 1.2048077583312988,
+          "fixed_original_target_tf_top1": 0.5555555820465088,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "当然可以，这个词随时向我提问。\n<|end|>",
+          "generated_bytes": 53,
+          "terminated": true
+        },
+        "swapped_prompt": {
+          "fixed_original_target_nll": 1.5866494178771973,
+          "fixed_original_target_tf_top1": 0.6666666865348816,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "不客气，并不是光的公司，也有些自然语言处理逻辑是一个开源的书籍和",
+          "generated_bytes": 96,
+          "terminated": false
+        }
+      },
+      "paths": {
+        "task_loss_gradient_norms": {
+          "state.workspace": null,
+          "state.byte_memory": 1.6337978839874268,
+          "state.hidden": 0.5530273914337158,
+          "core.embedding.weight": 1.0014348030090332,
+          "core.encoder.weight_ih_l0": 6.3470234870910645,
+          "core.encoder.weight_hh_l0": 3.53594970703125,
+          "core.encoder.bias_ih_l0": 1.0160123109817505,
+          "core.encoder.bias_hh_l0": 0.4999920725822449,
+          "core.keys.weight": 3.2922651767730713,
+          "core.keys.bias": 1.579819013386441e-07,
+          "core.values.weight": 2.6504924297332764,
+          "core.values.bias": 0.5961841344833374,
+          "query.weight": 2.26943039894104,
+          "query.bias": 0.2181060016155243,
+          "decoder.weight_ih": 3.977004051208496,
+          "decoder.weight_hh": 3.6993026733398438,
+          "decoder.bias_ih": 0.36468571424484253,
+          "decoder.bias_hh": 0.2915012538433075,
+          "output.weight": 2.1549079418182373,
+          "output.bias": 0.1412721872329712,
+          "input_position.weight": 0.5515706539154053,
+          "output_position.weight": 0.22832393646240234
+        },
+        "state_perturbation_max_logit_delta": {
+          "workspace": 0.0,
+          "byte_memory": 2.430544137954712,
+          "hidden": 1.454822063446045
+        }
+      }
+    },
+    {
+      "episode_id": "n176:world:6:0:3:q3",
+      "query_kind": "distractor_color",
+      "conditions": {
+        "matched": {
+          "fixed_original_target_nll": 1.5866494178771973,
+          "fixed_original_target_tf_top1": 0.6666666865348816,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "不客气，并不是光的公司，也有些自然语言处理逻辑是一个开源的书籍和",
+          "generated_bytes": 96,
+          "terminated": false
+        },
+        "related_fact_flip": {
+          "fixed_original_target_nll": 1.6019618511199951,
+          "fixed_original_target_tf_top1": 0.6666666865348816,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "不客气，如吗？\n<|end|>",
+          "generated_bytes": 29,
+          "terminated": true
+        },
+        "irrelevant_fact_flip": {
+          "fixed_original_target_nll": 1.6133439540863037,
+          "fixed_original_target_tf_top1": 0.6666666865348816,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "不客气，并不会尽力帮助的存在，可以用于不同的公司放。\n\n这个问题的�",
+          "generated_bytes": 96,
+          "terminated": false
+        },
+        "swapped_prompt": {
+          "fixed_original_target_nll": 1.121622920036316,
+          "fixed_original_target_tf_top1": 0.6111111044883728,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "当然可以，这个词星間质变。我可以为您提高积紧建筑的程序。\n<|end|>",
+          "generated_bytes": 92,
+          "terminated": true
+        }
+      },
+      "paths": {
+        "task_loss_gradient_norms": {
+          "state.workspace": null,
+          "state.byte_memory": 1.3735042810440063,
+          "state.hidden": 0.5156176686286926,
+          "core.embedding.weight": 0.9516310691833496,
+          "core.encoder.weight_ih_l0": 5.52769660949707,
+          "core.encoder.weight_hh_l0": 2.982135772705078,
+          "core.encoder.bias_ih_l0": 0.9241833090782166,
+          "core.encoder.bias_hh_l0": 0.43195831775665283,
+          "core.keys.weight": 2.376176118850708,
+          "core.keys.bias": 1.6876163044798886e-07,
+          "core.values.weight": 3.017887592315674,
+          "core.values.bias": 0.6503982543945312,
+          "query.weight": 1.8194752931594849,
+          "query.bias": 0.15769453346729279,
+          "decoder.weight_ih": 4.400670528411865,
+          "decoder.weight_hh": 3.910734176635742,
+          "decoder.bias_ih": 0.39449188113212585,
+          "decoder.bias_hh": 0.29824551939964294,
+          "output.weight": 2.5189712047576904,
+          "output.bias": 0.16285379230976105,
+          "input_position.weight": 0.3725315034389496,
+          "output_position.weight": 0.16453123092651367
+        },
+        "state_perturbation_max_logit_delta": {
+          "workspace": 0.0,
+          "byte_memory": 2.04171085357666,
+          "hidden": 1.3185958862304688
+        }
+      }
+    },
+    {
+      "episode_id": "n176:world:2:5:2:q4",
+      "query_kind": "location_update",
+      "conditions": {
+        "matched": {
+          "fixed_original_target_nll": 2.1124768257141113,
+          "fixed_original_target_tf_top1": 0.6666666865348816,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "方你的规吸引起应该。好的情况的机业民的能力。同时，中国政治关系。",
+          "generated_bytes": 96,
+          "terminated": false
+        },
+        "related_fact_flip": {
+          "fixed_original_target_nll": 2.0929675102233887,
+          "fixed_original_target_tf_top1": 0.6190476417541504,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "抱歉，我是一款的帮助。\n<|end|>",
+          "generated_bytes": 41,
+          "terminated": true
+        },
+        "irrelevant_fact_flip": {
+          "fixed_original_target_nll": 2.1862995624542236,
+          "fixed_original_target_tf_top1": 0.6666666865348816,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "注意以下步骤：propy LAAE这将函数应该是一个分析与到平台中批不同的商�",
+          "generated_bytes": 96,
+          "terminated": false
+        },
+        "swapped_prompt": {
+          "fixed_original_target_nll": 2.6950488090515137,
+          "fixed_original_target_tf_top1": 0.523809552192688,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "北京并不断地球行主可能合理。\n\n4. 用於为“我提问。\n\n2、图像的生活的�",
+          "generated_bytes": 96,
+          "terminated": false
+        }
+      },
+      "paths": {
+        "task_loss_gradient_norms": {
+          "state.workspace": null,
+          "state.byte_memory": 1.2940069437026978,
+          "state.hidden": 0.2981346845626831,
+          "core.embedding.weight": 1.0865534543991089,
+          "core.encoder.weight_ih_l0": 6.592080116271973,
+          "core.encoder.weight_hh_l0": 4.363592624664307,
+          "core.encoder.bias_ih_l0": 1.0355335474014282,
+          "core.encoder.bias_hh_l0": 0.5616312623023987,
+          "core.keys.weight": 2.9244885444641113,
+          "core.keys.bias": 1.7451304756832542e-07,
+          "core.values.weight": 2.7864742279052734,
+          "core.values.bias": 0.6934956312179565,
+          "query.weight": 2.7346880435943604,
+          "query.bias": 0.19735941290855408,
+          "decoder.weight_ih": 4.257419586181641,
+          "decoder.weight_hh": 4.110756874084473,
+          "decoder.bias_ih": 0.4135932922363281,
+          "decoder.bias_hh": 0.31134918332099915,
+          "output.weight": 2.219714879989624,
+          "output.bias": 0.14153139293193817,
+          "input_position.weight": 0.3730798363685608,
+          "output_position.weight": 0.20277521014213562
+        },
+        "state_perturbation_max_logit_delta": {
+          "workspace": 0.0,
+          "byte_memory": 2.2843735218048096,
+          "hidden": 1.2338931560516357
+        }
+      }
+    },
+    {
+      "episode_id": "n176:world:3:3:3:q4",
+      "query_kind": "location_update",
+      "conditions": {
+        "matched": {
+          "fixed_original_target_nll": 1.8924140930175781,
+          "fixed_original_target_tf_top1": 0.5714285969734192,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "北京并不断地球行主可能合理。\n\n4. 用於为“我提问。\n\n2、图像的生活的�",
+          "generated_bytes": 96,
+          "terminated": false
+        },
+        "related_fact_flip": {
+          "fixed_original_target_nll": 1.8452425003051758,
+          "fixed_original_target_tf_top1": 0.5714285969734192,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "北京并不是看看法对话题和积分的。\n\n总之，所以学习烹难以分析。如果�",
+          "generated_bytes": 96,
+          "terminated": false
+        },
+        "irrelevant_fact_flip": {
+          "fixed_original_target_nll": 1.8332699537277222,
+          "fixed_original_target_tf_top1": 0.5714285969734192,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "北京并不断地球行且下文学的具体需要的界部和风险。如果您需要进行一",
+          "generated_bytes": 96,
+          "terminated": false
+        },
+        "swapped_prompt": {
+          "fixed_original_target_nll": 1.281919240951538,
+          "fixed_original_target_tf_top1": 0.6190476417541504,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "方你的规吸引起应该。好的情况的机业民的能力。同时，中国政治关系。",
+          "generated_bytes": 96,
+          "terminated": false
+        }
+      },
+      "paths": {
+        "task_loss_gradient_norms": {
+          "state.workspace": null,
+          "state.byte_memory": 1.2582406997680664,
+          "state.hidden": 0.4460955560207367,
+          "core.embedding.weight": 1.1710691452026367,
+          "core.encoder.weight_ih_l0": 6.7311248779296875,
+          "core.encoder.weight_hh_l0": 4.413349628448486,
+          "core.encoder.bias_ih_l0": 1.1246013641357422,
+          "core.encoder.bias_hh_l0": 0.5536307096481323,
+          "core.keys.weight": 2.3087050914764404,
+          "core.keys.bias": 1.4996086861174263e-07,
+          "core.values.weight": 3.496161460876465,
+          "core.values.bias": 0.7588208913803101,
+          "query.weight": 2.1996076107025146,
+          "query.bias": 0.12655146420001984,
+          "decoder.weight_ih": 5.252307891845703,
+          "decoder.weight_hh": 4.380923748016357,
+          "decoder.bias_ih": 0.4635043740272522,
+          "decoder.bias_hh": 0.33784350752830505,
+          "output.weight": 2.4763944149017334,
+          "output.bias": 0.1307690292596817,
+          "input_position.weight": 0.30572181940078735,
+          "output_position.weight": 0.1756446212530136
+        },
+        "state_perturbation_max_logit_delta": {
+          "workspace": 0.0,
+          "byte_memory": 2.6157591342926025,
+          "hidden": 1.327789306640625
+        }
+      }
+    },
+    {
+      "episode_id": "n176:world:4:4:0:q5",
+      "query_kind": "owner_correction",
+      "conditions": {
+        "matched": {
+          "fixed_original_target_nll": 1.3439078330993652,
+          "fixed_original_target_tf_top1": 0.6666666865348816,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "作为一个无有任何主义的组分析，我没有所并不同的子并不同的哲学是一",
+          "generated_bytes": 96,
+          "terminated": false
+        },
+        "related_fact_flip": {
+          "fixed_original_target_nll": 1.3408277034759521,
+          "fixed_original_target_tf_top1": 0.7142857313156128,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "作为一个是我是因此，我现在是指字。因此，我是一个日底生成写学的原",
+          "generated_bytes": 96,
+          "terminated": false
+        },
+        "irrelevant_fact_flip": {
+          "fixed_original_target_nll": 1.413895606994629,
+          "fixed_original_target_tf_top1": 0.6666666865348816,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "作为一个无有任何主义接受的原则，C + 水是一个大学的因此，我的哪个�",
+          "generated_bytes": 96,
+          "terminated": false
+        },
+        "swapped_prompt": {
+          "fixed_original_target_nll": 1.3751904964447021,
+          "fixed_original_target_tf_top1": 0.761904776096344,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "他语言大的编程语言处理不一个平台，由于并在经济，或直接用哦將哲学",
+          "generated_bytes": 96,
+          "terminated": false
+        }
+      },
+      "paths": {
+        "task_loss_gradient_norms": {
+          "state.workspace": null,
+          "state.byte_memory": 0.9016082286834717,
+          "state.hidden": 0.302249014377594,
+          "core.embedding.weight": 0.8141389489173889,
+          "core.encoder.weight_ih_l0": 4.813444137573242,
+          "core.encoder.weight_hh_l0": 2.841238021850586,
+          "core.encoder.bias_ih_l0": 0.8744756579399109,
+          "core.encoder.bias_hh_l0": 0.4130164086818695,
+          "core.keys.weight": 1.101274847984314,
+          "core.keys.bias": 1.5412516063406656e-07,
+          "core.values.weight": 2.818420648574829,
+          "core.values.bias": 0.6236653327941895,
+          "query.weight": 0.980934739112854,
+          "query.bias": 0.0640469565987587,
+          "decoder.weight_ih": 3.856473207473755,
+          "decoder.weight_hh": 3.2848641872406006,
+          "decoder.bias_ih": 0.34252893924713135,
+          "decoder.bias_hh": 0.2520824074745178,
+          "output.weight": 2.166994094848633,
+          "output.bias": 0.13292944431304932,
+          "input_position.weight": 0.15668705105781555,
+          "output_position.weight": 0.08066228777170181
+        },
+        "state_perturbation_max_logit_delta": {
+          "workspace": 0.0,
+          "byte_memory": 2.2854366302490234,
+          "hidden": 1.2281454801559448
+        }
+      }
+    },
+    {
+      "episode_id": "n176:world:3:7:1:q5",
+      "query_kind": "owner_correction",
+      "conditions": {
+        "matched": {
+          "fixed_original_target_nll": 2.177617073059082,
+          "fixed_original_target_tf_top1": 0.6190476417541504,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "他语言大的编程语言处理不一个平台，由于并在经济，或直接用哦將哲学",
+          "generated_bytes": 96,
+          "terminated": false
+        },
+        "related_fact_flip": {
+          "fixed_original_target_nll": 2.1551036834716797,
+          "fixed_original_target_tf_top1": 0.6190476417541504,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "他语言大的编程语言处理是一个 AI 多姻更新法，我可以帮助到您的目的�",
+          "generated_bytes": 96,
+          "terminated": false
+        },
+        "irrelevant_fact_flip": {
+          "fixed_original_target_nll": 2.205324172973633,
+          "fixed_original_target_tf_top1": 0.6190476417541504,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "他聪你的回答您的编程的结果，我的相应的结品将将其存。\n<|end|>",
+          "generated_bytes": 86,
+          "terminated": true
+        },
+        "swapped_prompt": {
+          "fixed_original_target_nll": 2.2766261100769043,
+          "fixed_original_target_tf_top1": 0.6190476417541504,
+          "free_correct_for_actual_fact": false,
+          "generated_text": "作为一个无有任何主义的组分析，我没有所并不同的子并不同的哲学是一",
+          "generated_bytes": 96,
+          "terminated": false
+        }
+      },
+      "paths": {
+        "task_loss_gradient_norms": {
+          "state.workspace": null,
+          "state.byte_memory": 1.6446975469589233,
+          "state.hidden": 0.40604567527770996,
+          "core.embedding.weight": 1.1921663284301758,
+          "core.encoder.weight_ih_l0": 7.452839374542236,
+          "core.encoder.weight_hh_l0": 4.4989213943481445,
+          "core.encoder.bias_ih_l0": 1.0579516887664795,
+          "core.encoder.bias_hh_l0": 0.590732991695404,
+          "core.keys.weight": 3.0473451614379883,
+          "core.keys.bias": 1.4920399848961097e-07,
+          "core.values.weight": 3.27970552444458,
+          "core.values.bias": 0.7339175343513489,
+          "query.weight": 2.584850788116455,
+          "query.bias": 0.19802133738994598,
+          "decoder.weight_ih": 5.199166774749756,
+          "decoder.weight_hh": 4.919605255126953,
+          "decoder.bias_ih": 0.4696909487247467,
+          "decoder.bias_hh": 0.34265679121017456,
+          "output.weight": 2.333744764328003,
+          "output.bias": 0.14421673119068146,
+          "input_position.weight": 0.46266433596611023,
+          "output_position.weight": 0.2105451375246048
+        },
+        "state_perturbation_max_logit_delta": {
+          "workspace": 0.0,
+          "byte_memory": 2.2425785064697266,
+          "hidden": 1.2622891664505005
+        }
+      }
+    }
+  ],
+  "base_free_correct": 0,
+  "workspace_independent_path_absent": true,
+  "checkpoint_unchanged": true,
+  "training_updates": 0,
+  "new_sealed_text_read": 0,
+  "n175_blind_key_opened": false,
+  "process_cpu_seconds": 4.359375,
+  "wall_seconds": 4.702999999979511,
+  "limitations": "One N175 parent before foundation training; gradients/logit deltas do not prove semantic use or learning benefit. Swapped-prompt correctness is not a semantic gate; its fixed-target NLL controls target difficulty only."
+}

@@ -1,0 +1,23 @@
+{
+  "schema": "taiji-n176-engineering-readiness-v1",
+  "status": "ready_for_fixed_F0_F1_pilot",
+  "tests": {
+    "V4_plus_V3_regression": 13,
+    "V4_corpus_schedule": 16,
+    "mypy_core_sources": 150
+  },
+  "initial_test_failures": [
+    {
+      "reason": "out-of-range evidence reference was already rejected by TaskState, test expectation moved to include that boundary"
+    },
+    {
+      "reason": "restored Adam tensors aliased in-memory snapshot; V4 loader now deep-copies state; exact continuation and source snapshot preservation passed"
+    }
+  ],
+  "engineering_cpu_reserve_seconds": 200,
+  "calibration_optimizer_updates": 4,
+  "formal_training_updates": 0,
+  "new_sealed_body_fields_extracted": 0,
+  "n175_key_opened": false,
+  "can_promote": false
+}

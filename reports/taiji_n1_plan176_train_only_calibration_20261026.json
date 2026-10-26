@@ -1,0 +1,206 @@
+{
+  "schema": "taiji-n176-foundation-train-only-calibration-v1",
+  "status": "two_updates_each_v3_v4_complete_restored",
+  "train_corpus_sha256": "75164193dbcef08c4c5db9e5f17b084554aabde0cdae7da21a3d40a34b0a7555",
+  "calibration_source_sha256": "9d00174c63c297075331da4e71338c795d3a51818ed23cf87a8b2c1ceae011bc",
+  "candidate_sources_sha256": {
+    "3": "2fc5305f60e2eaeb8a82a77dbfd679cacee8c001f6f42c5346ce7d3bccabc619",
+    "4": "bdb63766fdc71d4651bb3390f510fd133774679bdbcf4f097a1cc46af34891c9"
+  },
+  "runs": [
+    {
+      "version": 3,
+      "parent_checkpoint": "data\\checkpoints\\n1_plan175_v3_scale_20261026\\tf_seed169\\epoch_40.pt",
+      "parent_checkpoint_sha256": "4a30bde4fd632a500a8a7c83e56d8987ad9edf516e05275208260e5feff5a3ec",
+      "zero_checkpoint": "data\\checkpoints\\n1_plan176_train_only_calibration_20261026\\v3\\zero.pt",
+      "zero_checkpoint_sha256": "123cd4a730aef1a7134931d0b66b6c12427e99c5fb14e5a7f4baf71814c2043d",
+      "final_checkpoint": "data\\checkpoints\\n1_plan176_train_only_calibration_20261026\\v3\\step2.pt",
+      "final_checkpoint_sha256": "a59422b0d0b7735163ab31ffe05ad9cf57413c17b40ee3e08a5bf129716e9554",
+      "zero_fresh_restore": {
+        "status": "passed",
+        "steps": 16520,
+        "cpu_seconds": 2.09375
+      },
+      "final_fresh_restore": {
+        "status": "passed",
+        "steps": 16522,
+        "cpu_seconds": 2.15625
+      },
+      "updates": [
+        {
+          "batch": 0,
+          "episode_ids": [
+            "n176:world:2:2:2:q0",
+            "n176:world:0:2:0:q0",
+            "n176:world:2:3:3:q0",
+            "n176:world:5:1:1:q0"
+          ],
+          "current_batch_target_bytes": 72,
+          "process_cpu_seconds": 0.15625,
+          "update_receipt": {
+            "step": 16521,
+            "loss_nats": 1.9513697922229767,
+            "loss_bits": 2.8152315221806155,
+            "gradient_norm_before_clip": 8.185269355773926,
+            "gradient_group_norms": {
+              "core.embedding": 0.7213673412529196,
+              "core.encoder": 5.820025786436117,
+              "core.keys": 2.0311699484676664,
+              "core.values": 2.5242320690553357,
+              "query": 1.4648173892510314,
+              "decoder": 4.008286815688221,
+              "output": 1.9494879188913556,
+              "input_position": 0.2821548133118096,
+              "output_position": 0.1269297138049024
+            },
+            "target_byte_exposures": 35051672
+          }
+        },
+        {
+          "batch": 1,
+          "episode_ids": [
+            "n176:world:4:5:0:q3",
+            "n176:world:7:7:1:q3",
+            "n176:world:1:5:3:q2",
+            "n176:world:3:4:0:q3"
+          ],
+          "current_batch_target_bytes": 72,
+          "process_cpu_seconds": 0.171875,
+          "update_receipt": {
+            "step": 16522,
+            "loss_nats": 1.4793795943260193,
+            "loss_bits": 2.1342936043264746,
+            "gradient_norm_before_clip": 6.754488468170166,
+            "gradient_group_norms": {
+              "core.embedding": 0.6527964682868014,
+              "core.encoder": 4.50928134804441,
+              "core.keys": 1.4033891187137573,
+              "core.values": 2.0655795067814195,
+              "query": 1.274589431140787,
+              "decoder": 3.668917472313371,
+              "output": 1.8631614460606747,
+              "input_position": 0.24124583868282154,
+              "output_position": 0.11050925760547983
+            },
+            "target_byte_exposures": 35051744
+          }
+        }
+      ],
+      "extra_optimizer_updates": 2,
+      "extra_target_byte_exposures": 144,
+      "learning_rate_inherited": 0.001,
+      "train_batch_loss_before": [
+        1.9513698154025607,
+        1.6114254262712266
+      ],
+      "train_batch_loss_after": [
+        1.0340837372673883,
+        0.9287150833341811
+      ]
+    },
+    {
+      "version": 4,
+      "parent_checkpoint": "data\\checkpoints\\n1_plan176_v4_parent_20261026\\tf_seed169\\zero.pt",
+      "parent_checkpoint_sha256": "a2b48409bbb943936f31836aabdcd13318409392e2eab74da9aabebc76598711",
+      "zero_checkpoint": "data\\checkpoints\\n1_plan176_train_only_calibration_20261026\\v4\\zero.pt",
+      "zero_checkpoint_sha256": "09341be675afbff64ba81c763d8df3cf11a4fa5043dda9c1fc46b541c781d848",
+      "final_checkpoint": "data\\checkpoints\\n1_plan176_train_only_calibration_20261026\\v4\\step2.pt",
+      "final_checkpoint_sha256": "8088dcbe1764c56cf728d8d40d457f1da282e848d17eb4dce36335b7fc0d7b8f",
+      "zero_fresh_restore": {
+        "status": "passed",
+        "steps": 16520,
+        "cpu_seconds": 2.28125
+      },
+      "final_fresh_restore": {
+        "status": "passed",
+        "steps": 16522,
+        "cpu_seconds": 2.359375
+      },
+      "updates": [
+        {
+          "batch": 0,
+          "episode_ids": [
+            "n176:world:2:2:2:q0",
+            "n176:world:0:2:0:q0",
+            "n176:world:2:3:3:q0",
+            "n176:world:5:1:1:q0"
+          ],
+          "current_batch_target_bytes": 72,
+          "process_cpu_seconds": 0.15625,
+          "update_receipt": {
+            "step": 16521,
+            "loss_nats": 1.951358288526535,
+            "loss_bits": 2.815214925854807,
+            "gradient_norm_before_clip": 8.2048921585083,
+            "gradient_group_norms": {
+              "workspace_gate": 8.702492625807377e-06,
+              "core.embedding": 0.7210777570246639,
+              "core.encoder": 5.820303134782669,
+              "core.keys": 2.0319928498179958,
+              "core.values": 2.5243375548938154,
+              "query": 1.4653769053725854,
+              "decoder": 4.005906042462328,
+              "output": 1.9498223414668396,
+              "input_position": 0.2822815072717152,
+              "output_position": 0.1269498971382016,
+              "workspace_projection": 0.5753214103675927
+            },
+            "target_byte_exposures": 35051672
+          }
+        },
+        {
+          "batch": 1,
+          "episode_ids": [
+            "n176:world:4:5:0:q3",
+            "n176:world:7:7:1:q3",
+            "n176:world:1:5:3:q2",
+            "n176:world:3:4:0:q3"
+          ],
+          "current_batch_target_bytes": 72,
+          "process_cpu_seconds": 0.15625,
+          "update_receipt": {
+            "step": 16522,
+            "loss_nats": 1.4454152584075928,
+            "loss_bits": 2.0852934253298736,
+            "gradient_norm_before_clip": 6.6773505210876465,
+            "gradient_group_norms": {
+              "workspace_gate": 0.029609736201944205,
+              "core.embedding": 0.642618334593354,
+              "core.encoder": 4.449836727392499,
+              "core.keys": 1.374297699604116,
+              "core.values": 2.0297638665120417,
+              "query": 1.2406336978786419,
+              "decoder": 3.602986607577836,
+              "output": 1.8412609407767706,
+              "input_position": 0.236043774751664,
+              "output_position": 0.1079363553793275,
+              "workspace_projection": 0.6207023683018811
+            },
+            "target_byte_exposures": 35051744
+          }
+        }
+      ],
+      "extra_optimizer_updates": 2,
+      "extra_target_byte_exposures": 144,
+      "learning_rate_inherited": 0.001,
+      "train_batch_loss_before": [
+        1.9513583183288574,
+        1.6107713646358914
+      ],
+      "train_batch_loss_after": [
+        0.9580285284254286,
+        0.861870699458652
+      ]
+    }
+  ],
+  "training_updates": 4,
+  "formal_training_updates": 0,
+  "sealed_episodes_read": 0,
+  "n175_key_opened": false,
+  "formal_runs_start_from": "Uncalibrated original parent checkpoints, not these two-update artifacts",
+  "process_cpu_seconds": 5.1875,
+  "child_process_cpu_seconds": 8.890625,
+  "wall_seconds": 26.094000000040978,
+  "cpu_guard_seconds": 300,
+  "can_promote": false
+}
