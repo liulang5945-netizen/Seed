@@ -1,6 +1,6 @@
 # Taiji VISION：下一主线统一架构、内生驱动与开发落地方案
 
-版本：2026-10-25定稿（承接2026-10-24讨论重编）。定位：**下一主线的现行设计与工程包正文**，承接当前N的必要实现切片；不是当前研究运行队列，也不表示新核心、学习或自主性已通过。当前运行与停止条件只看[03](../active/roadmap/03_CURRENT_EXECUTION.md)，N交汇与42条来源身份看[09](../active/roadmap/09_NEXT_MAINLINE_PLAN.md)，能力交付看[10](../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)与[07](../active/roadmap/07_MINI_MODEL_DELIVERY.md)。
+版本：2026-10-26执行衔接修订（继承2026-10-25设计与2026-10-24讨论）。定位：**下一主线的现行设计与工程包正文**，承接当前N的必要实现切片；不是当前研究运行队列，也不表示新核心、学习或自主性已通过。当前运行与停止条件只看[03](../active/roadmap/03_CURRENT_EXECUTION.md)，N交汇与42条来源身份看[09](../active/roadmap/09_NEXT_MAINLINE_PLAN.md)，能力交付看[10](../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)与[07](../active/roadmap/07_MINI_MODEL_DELIVERY.md)。
 
 本版替代旧稿里互相覆盖的“当前/唯一优先/先通电”指令，把架构、学习、驱动和生命页放在同一条可交付链上。代码触点分“已有”与“拟新增”；以下拟名、初始配置与验收批次是可实施设计，不冒称已存在API或已批准训练消费。用户本次要求的是具体开发方案；本次重编不改训练源码或当前合同。
 
@@ -10,7 +10,8 @@
 
 | 所处位置 | 实际工作及承接 | 明确出口 |
 |---|---|---|
-| 当前N/CC-1 | 已有R2训练、四端点W5b、固定人工判读、完整或partial/failure结案 | 原合同收束，不加本VISION前置 |
+| 历史CC-1/R2 | 原训练/评价、失败与负结果结案保留；未完成项按各原件记录 | 不重新发布旧启动指令，不加本VISION前置 |
+| 当前N177共同纵切片 | 共同状态/来源/时间→任务必需记忆/预测/选择→同状态语言/行动及反馈；课程在同一候选上发展 | 按N177接口/恢复/学习/保持有限出口；已训N176收束可并行，不要求其正收益 |
 | N交汇J1 | 信息进入真实消费者：取VX1/VX3中当前语言/联合任务必需的状态、证据、条件生成切片 | 同输入跨状态定向行为与救援，限定该入口/任务 |
 | N交汇J2 | 任务误差教会负责模块：取VX3/VX4所需的目标、参数接收者和反馈路由 | 信号→更新→独立行为收益及保持分别有证据 |
 | N交汇J3 | 当前联合任务需要连续目标、跨轮状态或条件选择时，取VX1/VX2最小完整切片 | 不被reset清除；相同候选下需求确实改变相对价值 |
@@ -65,9 +66,9 @@ flowchart LR
 
 ### 3.1 TaskCore的首版实现选择
 
-拟新增`taiji/task_state.py`、`taiji/task_core.py`；已有`CognitiveState`继续承载现有器官状态，TaskState通过稳定ID/组件引用连接它，不再复制一套互相覆盖的生命状态。TaskCoreV1先采用可训练的事件/片段编码、门控递推工作空间和内容查询；原始byte/来源引用保留无损，关系内容不能先压成mean/std再交消费者。
+既有`taiji/task_state.py`、`task_core.py`及V2/V3/V4已实现独立语言候选的神经状态与读取；它们尚未证明共同对象/事件语义。当前[N177](PLAN-N1-177_joint_cognition_slice_20261026.md)以CognitiveState及WorldObject/WorldEvent/ActionIntent/Outcome身份为根，演进可学习共同内容、来源和时间组件，拟以`joint_task_state.py`、`joint_task_core.py`及明确桥接实施。旧器官真值和新神经表示须有实际映射/迁移，不能维护两套互相覆盖的世界。原始byte/来源引用保留，关系区别不能先压成mean/std再交消费者。
 
-首切片配置候选为语义宽度256、工作槽16、每决策最多8候选、每episode最多16步；这些是VX0的一次train-only可学性/费用标定起点，不是长期容量上限。只有该次标定可在读取query前修订并冻结配置；不因结果不好自动加槽、加epoch或换种子。
+旧首切片配置曾以语义宽度256、工作槽16、每决策最多8候选、每episode最多16步为标定起点；它们不是N177的隐式配置或长期容量上限。N177先证明必要区别可表示/消费，再按真实标定一次冻结具体实现。只有该次标定可在读取query前修订并冻结配置；不因结果不好自动加槽、加epoch或换种子。
 
 新增候选`step_task(observation, task_state, resource_snapshot, learn=False)`返回下一TaskState、决策和原始输出引用；名字为拟接口。训练、研究评价与产品候选入口复用它。旧`generate_input(reset=True)`不被静默改义；新入口显式区分`turn/session/development`重置域，只有用户取消/新作用域/显式发展重置可清除持久目标。编码、字节效应器和可用器官复用，新增的是实际条件路径，不是把结构化状态拼成外围自然语言提示。
 
@@ -102,7 +103,7 @@ VX3在`language_alignment.py`及候选适配层新增TaskCore条件读入点：d
 
 | 类型 | 必填核心字段/状态 | 所有者与保存 |
 |---|---|---|
-| `TaskStateV1` | schema、bundle/scope/session ID、revision、goal_refs、belief/evidence bindings、工作空间引用、能力缺口、pending_decision | Taiji持有；turn reset不清持久事实，按session/user隔离 |
+| 共同任务状态组件（N177版本化） | schema、bundle/scope/session ID、revision、goal_refs、belief/evidence bindings、工作空间引用、能力缺口、pending_decision | Taiji持有；turn reset不清持久事实，按session/user隔离 |
 | `GoalCommitment` | goal_id、parent_id、origin、authorized_scope、success_predicate_ref、status、evidence_ids、取消原因 | Taiji维护目标；外部授权/取消忠实继承；proposed/active/suspended/fulfilled/cancelled分开 |
 | `ResourceSnapshot` | observed_at、实际used/reserved/limit、可用内存、wall期限、动作额度、未知尾账及新鲜度 | Seed计量/授权，Taiji只读估值；模型不能自行加预算 |
 | `LearningGap` | 缺口类型、失败/矛盾来源、校准不确定性、估计可学性、上次gain receipt、eligible feedback scope | Taiji估计；测量/估计/未知明确标记，不能全靠原始预测误差 |
@@ -111,11 +112,13 @@ VX3在`language_alignment.py`及候选适配层新增TaskCore条件读入点：d
 | `LearningReceipt` | parent/child、可写参数组、support/query身份、更新与保持、恢复/成本、处置 | 学习器生成、独立检查；只在声明范围接纳 |
 | `DevelopmentSnapshot/Event` | source/bundle/scope、revision/cursor、各域availability、上述事实的安全投影、测量时间/来源 | Runtime只读投影；Host/UI消费，不直接控制内部数值 |
 
-完整候选checkpoint至少保存θ、TaskCore/器官状态、目标与记忆引用、fast参数、优化器、RNG、课程/环境游标、待结算信用和资源/动作回执。拟新增`task_state_v1`组件，外层格式号由VX0兼容矩阵落实；旧格式读取不静默丢组件，新格式不伪装成旧bundle。零步保存/新进程恢复、下一步决策和下一次合法更新连续性先过，再训练。
+完整候选checkpoint至少保存θ、TaskCore/器官状态、目标与记忆引用、fast参数、优化器、RNG、课程/环境游标、待结算信用和资源/动作回执。N177拟注册`joint_task_state`共同内容组件，不复用旧神经TaskStateV1的身份；外层格式号由兼容矩阵落实；旧格式读取不静默丢组件，新格式不伪装成旧bundle。零步保存/新进程恢复、下一步决策和下一次合法更新连续性先过，再训练。
 
 动作提交分清proposed/authorized/executing/executed/result_unknown/feedback_settled。内部状态发布可原子化，外部执行不能假设与checkpoint跨系统原子；取消/重启后先核对真实回执，不能重复执行或补造成功。详尽来源、时态、冲突撤销、有限容量和隐私作用域适用于全部记忆。
 
 ## 5. 可直接交接的开发包
+
+2026-10-26排期约束：当前N177承载VX0/1/3/4及任务所需VX2的最小共同纵切片；联合开发不等待独立语言L2通过，F0也不要求全套器官先完成。已训N176原评价有限结案可与接口/静态工程并行。完整自主目标、驱动、成长与算力研究按具体缺口后继受理，WBS只在10维护，不再从VX编号派生第二套先后队列。
 
 统一编号VX0–VX7；不是V0–V3成熟度，也不改V-01…42来源身份。每包由实现者提交源/合同测试/真实装配与能力证据，主理人复核；本节定义依赖和出口，03只选择当期唯一研究包。VX6子包是同一包的产品交付，不另起研究队首。 每个研究包区分工程就绪E与行为验收B；E只说明可以测，不能当能力通过。VX0先交工程/实验同一合同，后续VX1–VX3完成必要E后，在该合同内执行一次VX0-R标定/冻结点，再进入B；因此不要求先有新模型才允许设计，也不重复实现同一切片。VX0-R是同合同内的自动准入核对，不新增逐文件或逐次更新的人审；只有实质预算/冻结范围变化才进入已有决策节点。
 
@@ -132,7 +135,7 @@ VX3在`language_alignment.py`及候选适配层新增TaskCore条件读入点：d
 
 **共同任务状态与跨轮连续性。依赖VX0；N的J1/J3可先取。**
 
-- 拟新增`taiji/task_state.py`、`task_core.py`；在`contracts.py/adapter.py`加候选step与reset域，native checkpoint注册候选组件；现有R2入口默认值不改。
+- 复用既有TaskState/core与CognitiveState的可兼容部分，当前必要共享内容按N177新增joint组件及实际桥接；在`contracts.py/adapter.py`落实step/reset域和checkpoint注册，不把已存在的神经状态再次写作未创建。
 - 输入/输出：合法观察、父状态、承诺、资源→下一TaskState/语义工作空间与来源引用。先实现状态事务/作用域，再接可训练TaskCore，不先建UI百分比。
 - 固定测试：两session×两goal×五种生命周期（turn reset/session重启/取消/新事实/恢复）=20组；字段/摘要、隔离、下一步决策与下一次更新连续性逐组检查，不能以摘要相同代替行为一致。
 - 交付与出口：完整state/checkpoint和候选入口，20组身份/作用域均满足，未知不伪造且旧默认入口不变；失败归本包，不用追加训练修状态丢失。

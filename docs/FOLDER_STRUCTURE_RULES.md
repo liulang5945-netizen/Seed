@@ -143,7 +143,7 @@ git 不跟踪空目录，所以**空目录不可能有版本价值**。运行时
   `.seed_test_tmp/`，不得在根目录自建 pytest 临时目录
 - `scripts/`：可复用脚本；一次性数据修复脚本按既有约定 `scripts/download_*` 忽略或归档
 - `docs/`：治理与规范文档（`REPO_HYGIENE_RULES.md`、本文件）
-- `plans/`：计划与结项账本，**只追加**（见各计划文件的冻结纪律）
+- `plans/`：活动计划随项目现状重编，维护当前职责、依赖、证据与唯一队首；冻结合同、原始结案与失败证据按各自冻结纪律保留，重复历史按 S9 蒸馏并登记精确恢复身份，不把逐轮对话持续追加到活动正文。
 - `reports/`：验收证据与报告；`_gate_*.log` 白名单随仓库走
 - `design/`：设计稿与候选方案（如 `logo-candidates/`），选定后原候选保留作决策记录
 - `taiji-harness/`：dsh fork，自成 pnpm workspace（`apps/`、`packages/`、`vendor/` 等）；

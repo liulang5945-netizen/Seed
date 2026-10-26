@@ -4,7 +4,7 @@
 
 ## 当前路线与文档职责
 
-既定R2训练/评测已完整负结果收官，CC-2本轮已完成N1-167/N1-168真实诊断，N1-169至N1-174家族已结案，N1-175完成数据合同与训练侧审计，当前按03推进V3完整回答正式训练与固定R/S评价；N的语言/联合任务可与下一VISION共用J1信息消费、J2学习信用、J3连续状态/条件选择切片。完整架构、驱动力和VX0–VX7工程包归VISION，生命周期与能力交付归10/07；不等待整套自主性才验收N语言，也不把VX加入CC-1收官。当前运行事实与额度只看03。
+现行顺序已调整为：共同内容状态/来源/生命周期→任务所需记忆、预测与选择→同状态表达及反馈信用→同一候选上的基础课程/保持→自然连续任务与跨会话学习。已训N176按原合同有限收束，与N177接口/静态工程并行，不以独立语言L2或toy正收益作为共同架构开工门。当前唯一动作看03，具体首包见[N177实施合同](reference/PLAN-N1-177_joint_cognition_slice_20261026.md)。更广自主性与机制研究归VISION，能力验收归07；不发布第二条模型/预算队列。
 
 | 要查什么 | 主要入口 |
 |---|---|
@@ -19,10 +19,10 @@
 | 生命页重设计、字段来源及VX6子包 | [生命页实施设计](reference/UI_LIFE_UX_SPEC_20261003.md)、[视觉方向](reference/UI_LIFE_VISUAL_DIRECTION_20261003.md) |
 | M0–M8资产与范围排除 | [01阶段地图](active/roadmap/01_SCOPE_AND_PHASES.md)、[既有项目收束](reference/M0_M7_PROJECT_CONSOLIDATION_20261006.md) |
 | 能力、用户验收与采用/发布 | [07整模型交付](active/roadmap/07_MINI_MODEL_DELIVERY.md)、[02门禁/CI](active/roadmap/02_GATES_AND_CI.md) |
-| CC-1实施交接与R2技术约束 | [工程交接](reference/delivery-runs/20261021-n-mainline/artifacts/02-plan.md)、[活动技术摘要](reference/delivery-runs/20261021-n-mainline/artifacts/02-continuation-extension-plan.md) |
+| 历史CC-1实施交接与R2冻结技术约束 | [工程交接](reference/delivery-runs/20261021-n-mainline/artifacts/02-plan.md)、[历史技术摘要](reference/delivery-runs/20261021-n-mainline/artifacts/02-continuation-extension-plan.md) |
 | 活动文件索引、交付记录 | [PLAN_INDEX](active/PLAN_INDEX.md)、[黑板](reference/delivery-runs/20261021-n-mainline/board.md) |
 
-当前数据与有限结案约束见[N1-175合同](reference/SPEC-N1-175_data_and_completion_contract_20261026.md)。
+当前开发依赖见[N177合同](reference/PLAN-N1-177_joint_cognition_slice_20261026.md)；已训资产收束仍按[N176冻结合同](reference/SPEC-N1-176_F0_F1_pilot_20261026.md)，N175原合同与未完成S留原位，不混用资格。
 
 ## 继承与纪律
 
