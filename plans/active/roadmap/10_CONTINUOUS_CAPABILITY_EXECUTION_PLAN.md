@@ -66,7 +66,7 @@ N177.1以一个`CognitiveState`为根，映射V4神经`TaskState`、逐byte`Inpu
 
 ### 3.3 必要记忆选择、行动条件世界预测与短规划
 
-当前进展：N177.2-T1/T2已完成来源约束语言消费。T2使用真实`EpisodicMemoryStore`排名，先限于Taiji在当前`CognitiveState.memory.episodic_ids`列出的记录，再以percept tick span区分跨输入帧重复的event/assembly identity，并将当前query与所选历史输入帧一起送入V4。固定同一query时，加入/切除所选记忆会改变logits；间隔无关输入不进入memory-conditioned缓存。结构化记忆记录和输入由测试构造，不宣称事实理解、成功写入、跨session回忆或生产隐私边界。N177.2-T3行动条件预测/候选选择仍待接入。
+当前进展：N177.2-T1/T2/T3已完成opt-in消费者接线与因果接口检查。T2的真实`EpisodicMemoryStore`命中和来源时段映射只作用于当前JointTaskState账本；T3用与活动Goal同ID、带显式state_slots/relation_targets的WorldTarget比较候选预测，Executive唯一选择写回ActionIntent/WorldPredictionRecord，V4再消费同状态投影。[T3回执](../../../reports/taiji_n1_plan177_t3_world_action_conditioning_20261026.json)记录目标翻转、预测翻转、动作次序置换、logits因果敏感性及只读门。Goal target和模型权重由结构化测试提供，不证明中文目标理解、学习或外部执行；owner/scope隔离、跨session来源恢复仍未建立。
 
 | 项目 | 实施要求 |
 |---|---|
@@ -78,6 +78,8 @@ N177.1以一个`CognitiveState`为根，映射V4神经`TaskState`、逐byte`Inpu
 | 被阻止的训练 | 任务需要的记忆/世界/候选差异尚未进入真实消费者时，不以加课程或训练量替代接线；不为补齐记忆分类、全部自主目标或全部驱力另开无界训练 |
 
 ### 3.4 同一状态的语言/行动与合法反馈信用
+
+当前进展：T3已把显式Goal约束、选定ActionIntent和对应预测绑定到同一个CognitiveState；ActionIntent和预测字段经内部条件证据源进入V4 logits/生成。外部动作仍未执行，Outcome→world/executive/language责任路由、模型快照随决策持久化及决策中断后的联合恢复尚未实现；按N177.3进入信用与恢复实现。
 
 | 项目 | 实施要求 |
 |---|---|

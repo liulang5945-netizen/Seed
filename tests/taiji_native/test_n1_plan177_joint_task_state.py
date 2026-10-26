@@ -37,14 +37,22 @@ from taiji.contracts import (
     WorkspaceCandidate,
     WorkspaceSelection,
     WorkspaceState,
+    WorldAffordance,
     WorldEvent,
     WorldObject,
     WorldState,
 )
 from taiji.episodic_memory import EpisodicMemoryStore
+from taiji.executive import ExecutiveController
 from taiji.input_boundary import InputFrame, InputTrace
 from taiji.internalization import content_digest
+from taiji.joint_action import (
+    JointActionReadV1,
+    JointGoalWorldTargetV1,
+    JointWorldDecisionV1,
+)
 from taiji.joint_task_state import JointEpisodeReadV1, JointTaskStateV1
+from taiji.world_learning import WorldDynamicsLearner, WorldSchema
 
 
 def make_trace(text: str, *, input_id: str, source: str = "client", timestamp: int = 4):
@@ -170,6 +178,7 @@ def setup_joint(
     scope="scope-1",
     session="session-1",
     goal_id="goal-1",
+    max_observation_bytes=256,
 ):
     _, trace = make_trace(text, input_id=f"input-{session}-{text}")
     root = make_root(trace, text, goal_id=goal_id)
@@ -180,8 +189,8 @@ def setup_joint(
             key_width=4,
             slots=4,
             chunk_bytes=4,
-            max_observation_bytes=256,
-            max_input_evidence_bytes=256,
+            max_observation_bytes=max_observation_bytes,
+            max_input_evidence_bytes=max_observation_bytes,
             max_output_position=128,
             max_generation_bytes=128,
         )
@@ -990,3 +999,214 @@ def test_joint_episode_read_rejects_unapproved_or_unlinked_store_records():
 
     with pytest.raises(ValueError, match="no source frame"):
         JointEpisodeReadV1.retrieve(joint, store)
+
+
+def _world_predictor_for_action(preferred_kind: str) -> WorldDynamicsLearner:
+    schema = WorldSchema(
+        object_ids=("object-1",),
+        state_slots=(("object-1", "on_table"),),
+        relation_slots=(),
+        action_kinds=("leave", "place"),
+        actor_ids=("agent",),
+        target_ids=("object-1",),
+        parameter_names=(),
+    )
+    model = WorldDynamicsLearner(schema, hidden_dim=4, seed=73)
+    preferred_index = schema.input_feature_keys.index(("action-kind", preferred_kind))
+    rejected_kind = "leave" if preferred_kind == "place" else "place"
+    rejected_index = schema.input_feature_keys.index(("action-kind", rejected_kind))
+    with torch.no_grad():
+        model.network[0].weight.zero_()
+        model.network[0].bias.zero_()
+        model.network[0].weight[0, preferred_index] = 1.0
+        model.network[0].weight[0, rejected_index] = -1.0
+        model.network[2].weight.zero_()
+        model.network[2].bias.zero_()
+        model.network[2].weight[0, 0] = 1.0
+        model.network[2].weight[schema.state_dim, 0] = 1.0
+        model.network[2].weight[schema.state_dim + 1, 0] = 1.0
+    return model
+
+
+def _executive_preferring_goal_alignment() -> ExecutiveController:
+    controller = ExecutiveController(candidate_feature_dim=6)
+    with torch.no_grad():
+        controller._model.weight.zero_()
+        controller._model.bias.zero_()
+        controller._model.weight[0, 0] = 1.0
+    return controller
+
+
+def _setup_joint_world_decision():
+    model, root, trace, initial = setup_joint(
+        text="杯子在桌上。", session="joint-world", max_observation_bytes=2048
+    )
+    action_affordances = (
+        WorldAffordance(
+            "aff-place",
+            "place",
+            actor_id="agent",
+            target_id="object-1",
+            confidence=0.9,
+        ),
+        WorldAffordance(
+            "aff-leave",
+            "leave",
+            actor_id="agent",
+            target_id="object-1",
+            confidence=0.9,
+        ),
+    )
+    world_event = replace(
+        root.world.events[0],
+        attributes=(("on_table", 0.0),),
+    )
+    structured_root = replace(
+        root,
+        goals=GoalState(tick=root.tick, goals=(Goal("goal-place", "place cup", priority=1.0),)),
+        world=replace(
+            root.world,
+            entities=("object-1",),
+            objects=(WorldObject("object-1", attributes=(("on_table", 0.0),)),),
+            events=(world_event,),
+            affordances=action_affordances,
+        ),
+    )
+    joint = initial.append_input(
+        model,
+        trace,
+        structured_root,
+        resource_snapshot={
+            "remaining_steps": 1,
+            "max_observation_bytes": model.config.max_observation_bytes,
+        },
+    )
+    return model, structured_root, joint
+
+
+def test_world_prediction_executive_selection_and_v4_action_condition_share_joint_state():
+    language_model, root, initial_joint = _setup_joint_world_decision()
+    executive = _executive_preferring_goal_alignment()
+    place_predictor = _world_predictor_for_action("place")
+    leave_predictor = _world_predictor_for_action("leave")
+    source_input_ids = (initial_joint.input_bindings[-1].input_id,)
+    place_goal_state = replace(
+        root.world,
+        objects=(WorldObject("object-1", attributes=(("on_table", 1.0),)),),
+    )
+    leave_goal_state = replace(
+        root.world,
+        objects=(WorldObject("object-1", attributes=(("on_table", -1.0),)),),
+    )
+    place_target = JointGoalWorldTargetV1(
+        "goal-place",
+        place_goal_state,
+        source_input_ids,
+        "structured-interface-test",
+        state_slots=(("object-1", "on_table"),),
+    )
+    leave_root = replace(
+        root,
+        goals=GoalState(tick=root.tick, goals=(Goal("goal-leave", "leave cup", priority=1.0),)),
+    )
+    leave_joint = initial_joint.advance_cognitive_state(leave_root)
+    leave_target = JointGoalWorldTargetV1(
+        "goal-leave",
+        leave_goal_state,
+        source_input_ids,
+        "structured-interface-test",
+        state_slots=(("object-1", "on_table"),),
+    )
+    incomplete_target = JointGoalWorldTargetV1(
+        "goal-place",
+        replace(
+            place_goal_state,
+            objects=(WorldObject("object-1", attributes=()),),
+        ),
+        source_input_ids,
+        "structured-interface-test",
+        state_slots=(("object-1", "on_table"),),
+    )
+    with pytest.raises(ValueError, match="omits an explicitly required"):
+        JointWorldDecisionV1.select(
+            initial_joint,
+            place_predictor,
+            executive,
+            goal_target=incomplete_target,
+        )
+    with pytest.raises(ValueError, match="cannot distinguish"):
+        JointWorldDecisionV1.select(
+            initial_joint,
+            place_predictor,
+            ExecutiveController(candidate_feature_dim=6),
+            goal_target=place_target,
+        )
+    language_parameters = {
+        name: value.detach().clone() for name, value in language_model.state_dict().items()
+    }
+    executive_before = executive.checkpoint()
+    place_before = place_predictor.snapshot()
+    leave_before = leave_predictor.snapshot()
+
+    place_decision = JointWorldDecisionV1.select(
+        initial_joint, place_predictor, executive, goal_target=place_target
+    )
+    leave_decision = JointWorldDecisionV1.select(
+        leave_joint, place_predictor, executive, goal_target=leave_target
+    )
+    world_flip_decision = JointWorldDecisionV1.select(
+        initial_joint, leave_predictor, executive, goal_target=place_target
+    )
+    reversed_root = replace(
+        root,
+        world=replace(root.world, affordances=tuple(reversed(root.world.affordances))),
+    )
+    reversed_joint = initial_joint.advance_cognitive_state(reversed_root)
+    reversed_decision = JointWorldDecisionV1.select(
+        reversed_joint, place_predictor, executive, goal_target=place_target
+    )
+
+    assert place_decision.decision.action_intent.kind == "place"
+    assert leave_decision.decision.action_intent.kind == "leave"
+    assert world_flip_decision.decision.action_intent.kind == "leave"
+    assert reversed_decision.decision.selected.source_affordance_id == (
+        place_decision.decision.selected.source_affordance_id
+    )
+    assert place_decision.joint_state.cognitive_state.action_intent == (
+        place_decision.decision.action_intent
+    )
+    assert place_decision.joint_state.cognitive_state.world_prediction.action.action_id == (
+        place_decision.decision.action_intent.parameters["source_world_action_id"]
+    )
+    assert place_decision.joint_state.cognitive_state.plan.selected_plan_id == (
+        place_decision.decision.action_intent.parameters["candidate_id"]
+    )
+    assert (
+        place_decision.joint_state.cognitive_state.action_intent.parameters["world_model_sha256"]
+        == place_decision.world_model_sha256
+    )
+    assert (
+        place_decision.joint_state.cognitive_state.action_intent.parameters["executive_sha256"]
+        == place_decision.executive_sha256
+    )
+    place_read = JointActionReadV1.from_joint_state(place_decision.joint_state)
+    leave_read = JointActionReadV1.from_joint_state(leave_decision.joint_state)
+    world_flip_read = JointActionReadV1.from_joint_state(world_flip_decision.joint_state)
+    place_logits, _ = language_model.next_logits_from_action(place_decision.joint_state, place_read)
+    leave_logits, _ = language_model.next_logits_from_action(leave_decision.joint_state, leave_read)
+    world_flip_logits, _ = language_model.next_logits_from_action(
+        world_flip_decision.joint_state, world_flip_read
+    )
+    assert not torch.allclose(place_logits, leave_logits)
+    assert not torch.allclose(place_logits, world_flip_logits)
+    generated, updated_joint = language_model.generate_from_action(
+        place_decision.joint_state, place_read, max_new_bytes=8
+    )
+    assert generated and updated_joint.language_state.generated.endswith(generated)
+    assert content_digest(executive.checkpoint()) == content_digest(executive_before)
+    assert content_digest(place_predictor.snapshot()) == content_digest(place_before)
+    assert content_digest(leave_predictor.snapshot()) == content_digest(leave_before)
+    assert all(
+        torch.equal(language_parameters[name], value)
+        for name, value in language_model.state_dict().items()
+    )

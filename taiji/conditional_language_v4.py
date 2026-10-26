@@ -21,6 +21,7 @@ from .utf8_state import utf8_allowed
 
 if TYPE_CHECKING:
     from .episodic_memory import EpisodicMemoryStore
+    from .joint_action import JointActionReadV1
     from .joint_task_state import JointEpisodeReadV1, JointTaskStateV1
 
 
@@ -92,6 +93,7 @@ class ConditionalLanguageCandidateV4(ConditionalLanguageCandidateV3):
         episode_read: JointEpisodeReadV1 | None = None,
         memory_store: EpisodicMemoryStore | None = None,
         include_memory_sources: bool = True,
+        selected_source_ids: tuple[str, ...] | None = None,
     ) -> _WorkspaceEvidenceCache:
         """Build a source-filtered cache from selected facts in the canonical state."""
         from .joint_task_state import JointEpisodeReadV1, JointTaskStateV1
@@ -106,7 +108,11 @@ class ConditionalLanguageCandidateV4(ConditionalLanguageCandidateV3):
         if state.bundle_id != self.bundle_id:
             raise ValueError("joint task belongs to another language candidate")
 
-        if episode_read is None:
+        if selected_source_ids is not None:
+            if episode_read is not None or memory_store is not None:
+                raise ValueError("explicit source set cannot be mixed with other read receipts")
+            selected_sources = selected_source_ids
+        elif episode_read is None:
             if memory_store is not None:
                 raise ValueError("memory store requires an explicit joint episode read")
             view = joint_state.content_view()
@@ -187,6 +193,62 @@ class ConditionalLanguageCandidateV4(ConditionalLanguageCandidateV3):
             joint_state.cognitive_state_sha256,
         )
 
+    def _action_evidence_cache(
+        self,
+        joint_state: JointTaskStateV1,
+        action_read: JointActionReadV1,
+        *,
+        episode_read: JointEpisodeReadV1 | None = None,
+        memory_store: EpisodicMemoryStore | None = None,
+    ) -> _WorkspaceEvidenceCache:
+        from .joint_action import JointActionReadV1
+
+        if not isinstance(action_read, JointActionReadV1):
+            raise TypeError("action-conditioned language requires JointActionReadV1")
+        action_read.validate_for(joint_state, episode_read=episode_read, memory_store=memory_store)
+        base = self._joint_evidence_cache(
+            joint_state, selected_source_ids=action_read.source_neural_ids
+        )
+        if len(action_read.projection_bytes) > self.config.max_observation_bytes:
+            raise ValueError("joint action projection exceeds the V4 observation bound")
+        action_source_id = "joint-action:" + action_read.projection_sha256[:32]
+        action_state = self.new_state(
+            scope_id=joint_state.scope_id,
+            session_id=joint_state.session_id,
+            native_state_ref=action_source_id,
+        )
+        action_state = cast(
+            TaskStateV3,
+            self.step_task(
+                action_read.projection_bytes,
+                action_state,
+                scope_id=joint_state.scope_id,
+                session_id=joint_state.session_id,
+                source_id=action_source_id,
+                resource_snapshot={
+                    "remaining_steps": 1,
+                    "max_observation_bytes": self.config.max_observation_bytes,
+                },
+            ),
+        )
+        action_cache = self.evidence_cache(action_state)
+        return _WorkspaceEvidenceCache(
+            base.bundle_id,
+            base.scope_id,
+            base.session_id,
+            base.parameter_revision,
+            base.byte_memory,
+            base.hidden,
+            torch.cat((base.keys, action_cache.keys), dim=0),
+            torch.cat((base.values, action_cache.values), dim=0),
+            base.workspace,
+            torch.cat((base.workspace_keys, action_cache.workspace_keys), dim=0),
+            torch.cat((base.workspace_values, action_cache.workspace_values), dim=0),
+            (*base.selected_source_ids, action_source_id),
+            joint_state.joint_revision,
+            joint_state.cognitive_state_sha256,
+        )
+
     def next_logits_from_joint(
         self, joint_state: JointTaskStateV1
     ) -> tuple[torch.Tensor, torch.Tensor]:
@@ -218,6 +280,23 @@ class ConditionalLanguageCandidateV4(ConditionalLanguageCandidateV3):
             episode_read=episode_read,
             memory_store=memory_store,
             include_memory_sources=False,
+        )
+        return self.next_logits(joint_state.language_state, cache=cache)
+
+    def next_logits_from_action(
+        self,
+        joint_state: JointTaskStateV1,
+        action_read: JointActionReadV1,
+        *,
+        episode_read: JointEpisodeReadV1 | None = None,
+        memory_store: EpisodicMemoryStore | None = None,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """Run V4 with the selected Taiji ActionIntent and its prediction in the read path."""
+        cache = self._action_evidence_cache(
+            joint_state,
+            action_read,
+            episode_read=episode_read,
+            memory_store=memory_store,
         )
         return self.next_logits(joint_state.language_state, cache=cache)
 
@@ -267,6 +346,25 @@ class ConditionalLanguageCandidateV4(ConditionalLanguageCandidateV3):
         """Greedy V4 generation conditioned on a source-bound episodic read."""
         cache = self._joint_evidence_cache(
             joint_state, episode_read=episode_read, memory_store=memory_store
+        )
+        return self._generate_from_joint_cache(joint_state, cache, max_new_bytes=max_new_bytes)
+
+    @torch.no_grad()
+    def generate_from_action(
+        self,
+        joint_state: JointTaskStateV1,
+        action_read: JointActionReadV1,
+        *,
+        episode_read: JointEpisodeReadV1 | None = None,
+        memory_store: EpisodicMemoryStore | None = None,
+        max_new_bytes: int = 128,
+    ) -> tuple[bytes, JointTaskStateV1]:
+        """Greedy V4 generation conditioned on the same state's selected action evidence."""
+        cache = self._action_evidence_cache(
+            joint_state,
+            action_read,
+            episode_read=episode_read,
+            memory_store=memory_store,
         )
         return self._generate_from_joint_cache(joint_state, cache, max_new_bytes=max_new_bytes)
 

@@ -1,0 +1,66 @@
+{
+  "schema": "taiji-n177-t3-world-action-condition-v1",
+  "status": "structured_one_step_prediction_selection_and_v4_consumer_verified; not learned planning capability",
+  "source_sha256": {
+    "taiji/joint_action.py": "a7f227919f60139a676e7ba6366058a8051a6cea42c7ea48d740593fbc227a55",
+    "taiji/joint_task_state.py": "c726af6b8340e54ccff90babd5546f07140fb73ad8aa4f07ec1cdaacb6d4f6b8",
+    "taiji/conditional_language_v4.py": "3efef1005fdbe02a3120189bebec112f6c3ceb8803f1eebe390f677d8bac9f94",
+    "taiji/world_learning.py": "df344279086b0cc3e3f5e83540d83f929ed9696f056c067eb38d4d9bc99d9eb3",
+    "taiji/executive.py": "9b5de851ea65b0287200646ec7d382c4002582cf42593064c5615e3aebd1a9dc",
+    "taiji/contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+    "tests/taiji_native/test_n1_plan177_joint_task_state.py": "0d937b8601fd5ea69154586868e368ea43023a0271ec31a2f181a1c7befcafdf"
+  },
+  "source_set_sha256": "51177d5554ec07b26b1204e23c4a6a8a3dc26d4e365b7b85cd3352fd6420502f",
+  "decision_path": [
+    "current CognitiveState Goal and WorldAffordances are validated on the joint frame",
+    "JointGoalWorldTargetV1 binds explicit state_slots/relation_targets to the active Goal ID and source input IDs",
+    "WorldDynamicsLearner.predict scores each afforded WorldAction with register_parameters=False",
+    "predicted state distance over explicitly specified target constraints forms goal_alignment; ExecutiveController scores candidate/context features",
+    "a tied best score fails closed instead of choosing by affordance order",
+    "selected PlanState, ActionIntent and WorldPredictionRecord are committed into the same CognitiveState revision",
+    "goal target payload/digest and predictor/controller digests persist in ActionIntent; JointActionReadV1 projects that state and V4 encodes it as a temporary byte source for logits/generation"
+  ],
+  "goal_contract": {
+    "target_mask": "explicit numeric state slots and boolean relation targets; missing required values reject and unspecified features are excluded from distance",
+    "identity": "target Goal ID must equal the active canonical Goal; cited input IDs must exist in the joint input ledger",
+    "durable_projection": "the ActionIntent carries the target constraint payload and digest into CognitiveState and V4 action projection",
+    "source_semantics": "input-ID membership is verified, but source text is not proven to entail target constraints",
+    "test_target_provenance": "structured-interface-test; not natural-language interpretation evidence"
+  },
+  "causal_controls": {
+    "target_flip_with_fixed_predictor_and_controller_changes_selected_action": true,
+    "predictor_output_flip_with_fixed_target_and_controller_changes_selected_action": true,
+    "affordance_enumeration_reversal_preserves_selected_affordance": true,
+    "missing_required_target_field_rejected": true,
+    "untrained_executive_tie_rejected": true,
+    "selected_action_projection_changes_v4_logits": true,
+    "selected_action_projection_used_during_v4_generation": true
+  },
+  "fixtures_and_limits": {
+    "world_predictor_weights": "manually configured deterministic test fixture; no optimizer/training run",
+    "executive_weights": "manually configured deterministic test fixture; no optimizer/training run",
+    "selected_goal": "structured target fixture; no natural-Chinese goal parser tested",
+    "action_execution": "not performed; no environment or external action called",
+    "outcome_credit": "not implemented; N177.3",
+    "checkpoint_provenance": "target and model/controller digests persist in ActionIntent; complete WDL/Executive parameter snapshots are not yet part of one joint candidate checkpoint; N177.3 recovery remains",
+    "default_adapter": "unchanged; opt-in joint path only",
+    "cross_session_memory": "not integrated; T2 currently requires source frames to remain in the same JointTaskState"
+  },
+  "tests": {
+    "joint_task_state_module_passed": 53,
+    "combined_joint_adapter_input_and_v4_modules_passed": 65,
+    "mypy": "passed for joint_action.py, joint_task_state.py and conditional_language_v4.py",
+    "ruff": "passed with repository defaults",
+    "black": "passed"
+  },
+  "formal_training_updates": 0,
+  "model_parameters_updated": false,
+  "environment_actions_executed": 0,
+  "semantic_gain": "not measured",
+  "old_capability_retention": "not measured",
+  "sealed_body_reads": 0,
+  "n175_key_opened": false,
+  "can_promote": false,
+  "architecture_review": "same-state forward prediction→executive selection→ActionIntent→V4 condition is verified; semantic target interpretation, learned policy and full model checkpoint recovery remain open",
+  "next_development_step": "N177.3: route experienced non-generated Outcome to the declared world/executive/language owners and verify zero-step plus interrupted-decision restore/continue in one native checkpoint"
+}
