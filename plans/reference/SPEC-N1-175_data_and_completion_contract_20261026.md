@@ -166,3 +166,7 @@ N175 epoch25已完成：seed169/170/171各288更新、822311 target bytes，mean
 | 34 | 1.3008/1.2993/1.3331 | 1249.17/1267.31/1287.64 | [恢复回执](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch34_20261026.json) |
 | 35 | 1.2884/1.2861/1.3224 | 1260.84/1263.98/1275.11 | [恢复回执](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch35_20261026.json) |
 | 36 | 1.2744/1.2757/1.3139 | 1554.30/1562.53/1538.12 | [恢复回执](../../reports/taiji_n1_plan175_v3_checkpoint_restore_epoch36_20261026.json) |
+
+N175最终状态（2026-10-26）：seed169/170/171均完成40/40 epoch、16,520 optimizer steps；末轮teacher-forced loss为1.240987/1.237241/1.280408 nats，正式训练累计167,862.797 process-CPU秒。三份最终checkpoint的新进程恢复均通过；各训练run报告及进度账本记录了终点哈希与零开发/留出读取：[seed169](../../reports/taiji_n1_plan175_v3_scale_20261026_tf_seed169.json)、[seed170](../../reports/taiji_n1_plan175_v3_scale_20261026_tf_seed170.json)、[seed171](../../reports/taiji_n1_plan175_v3_scale_20261026_tf_seed171.json)。
+
+架构归因：本轮只证明V3完整回答TF训练稳定完成且teacher-forced NLL下降；没有读未见family，故不能据此判断语言泛化。已确认的workspace→`next_logits`消费缺口是结构性架构缺陷，但当前字节生成仍可经hidden/byte-memory路径取数；现有证据不足以把全部训练收益受限归因为此缺口，也没有证明该缺口导致本轮训练曲线。后续盲评必须独立判读自然中文、题目绑定、连续任务及旧能力保持，再决定该缺口对实际表现的因果贡献；不得把训练损失写成架构已验证或能力达标。
