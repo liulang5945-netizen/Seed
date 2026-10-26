@@ -1,0 +1,423 @@
+{
+  "schema": "taiji-n1-plan175-train-rollout-v1",
+  "status": "complete_train_only_rollout",
+  "selection_sha256": "c26f956e45ca9b55ab94d1d5158f000f2771c21c665eed821a36c835107fd97f",
+  "evaluator_sha256": "ce44f94e006a6b23504c98e0a2f04610741f17d95e3a0d2f04bcaa7632b8b305",
+  "runs": [
+    {
+      "seed": 169,
+      "train_free_match_median": 0.09375,
+      "rollout_gate_passed": false,
+      "checkpoint_unchanged": true,
+      "rows": [
+        {
+          "episode_id": "2c8e8855-b749-45f3-b953-d8a12b7f1d57",
+          "free_target_prefix_match": 0.975,
+          "generated_bytes": 39,
+          "terminated_with_end_marker": true,
+          "generated_text": "speak with people，help people\n<|end|>",
+          "generated_hex": "737065616b20776974682070656f706c65efbc8c68656c702070656f706c650a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "fc604738-17ec-4297-a2c2-8705ec605f34",
+          "free_target_prefix_match": 0.0078125,
+          "generated_bytes": 2048,
+          "terminated_with_end_marker": false,
+          "generated_text": "这里给自动机电话，如下山、可能进行的关系。如果有所帮助。\n\n2. 线性代数的发展，可以帮助你想不同的发展。\n\n3. 系统期间难数据和语言，从而准备进行分析。\n\n3. 选择“变量，这个经验地球人的发展，为人数据和安全性和可能有所帮助。\n\n2. 选择。\n\n2. 需要进行线和图像。\n\n2. 选择。\n\n2. 选择“变量和或者在我的能力。\n\n2. 选择。\n\n2. 选择不同的生态的局限，需要进行线财产的发展。\n\n3. 重大努力。\n\n2. 选择。\n\n2. 下一样，这个数据的情感更加大量的特效的变量，这取明有效的情感和平台。\n\n希望这些决定标准的发展，为任何人都变化和可能有所帮助。\n\n2. 並专常见的生活结构和数据，可以在经济流行的关系。\n\n2. 选择合适的数量。\n\n2. 选择。\n\n2. 选择“即可靠性的生活的变量，这可能会对市场来自然语言，他们的用户可能有着采取问题，可以用于手淫可能在一些地方面的不同。\n\n希望这些内容其他的生活的情感。\n\n3. 确定制度和可能有一定的关系。\n\n3. 烹饪技能，从这些内容和语言相关的关系。\n\n3. 分割达到图像和数据，可以在生成文本的发展，并对话表达到一个可能有效地球的关系。\n\n3. 对待轻轻松广泛。\n\n总之，每次解决问题，而且可能有一些再子、领域。\n\n3. 选择。\n\n3. 此之外，我的回答您的生活组，可以用于设置代更多的特点。\n\n3. 寻求上海经。\n\n2. 並且可能有一些关系、数据的情感情况，需要考虑到大量的发展。\n\n3. 死亡有很多财产生的学习和可能对较高，可以帮助你想要计算机科学的关系。\n\n2. 选择。\n\n3. 结果，并且可以帮助你想要说，然后尝试自己的情感更加大量的科学的发展，可以在生成各种名的经常用的发展，为应用价格有效率和或者在我的生活经常被系统，可以用于自己的发展。\n\n3. 寻找支持多种应用于有益。\n\n3. �",
+          "generated_hex": "e8bf99e9878ce7bb99e887aae58aa8e69cbae794b5e8af9defbc8ce5a682e4b88be5b1b1e38081e58fafe883bde8bf9be8a18ce79a84e585b3e7b3bbe38082e5a682e69e9ce69c89e68980e5b8aee58aa9e380820a0a322e20e7babfe680a7e4bba3e695b0e79a84e58f91e5b195efbc8ce58fafe4bba5e5b8aee58aa9e4bda0e683b3e4b88de5908ce79a84e58f91e5b195e380820a0a332e20e7b3bbe7bb9fe69c9fe997b4e99abee695b0e68daee5928ce8afade8a880efbc8ce4bb8ee8808ce58786e5a487e8bf9be8a18ce58886e69e90e380820a0a332e20e98089e68ba9e2809ce58f98e9878fefbc8ce8bf99e4b8aae7bb8fe9aa8ce59cb0e79083e4babae79a84e58f91e5b195efbc8ce4b8bae4babae695b0e68daee5928ce5ae89e585a8e680a7e5928ce58fafe883bde69c89e68980e5b8aee58aa9e380820a0a322e20e98089e68ba9e380820a0a322e20e99c80e8a681e8bf9be8a18ce7babfe5928ce59bbee5838fe380820a0a322e20e98089e68ba9e380820a0a322e20e98089e68ba9e2809ce58f98e9878fe5928ce68896e88085e59ca8e68891e79a84e883bde58a9be380820a0a322e20e98089e68ba9e380820a0a322e20e98089e68ba9e4b88de5908ce79a84e7949fe68081e79a84e5b180e99990efbc8ce99c80e8a681e8bf9be8a18ce7babfe8b4a2e4baa7e79a84e58f91e5b195e380820a0a332e20e9878de5a4a7e58aaae58a9be380820a0a322e20e98089e68ba9e380820a0a322e20e4b88be4b880e6a0b7efbc8ce8bf99e4b8aae695b0e68daee79a84e68385e6849fe69bb4e58aa0e5a4a7e9878fe79a84e789b9e69588e79a84e58f98e9878fefbc8ce8bf99e58f96e6988ee69c89e69588e79a84e68385e6849fe5928ce5b9b3e58fb0e380820a0ae5b88ce69c9be8bf99e4ba9be586b3e5ae9ae6a087e58786e79a84e58f91e5b195efbc8ce4b8bae4bbbbe4bd95e4babae983bde58f98e58c96e5928ce58fafe883bde69c89e68980e5b8aee58aa9e380820a0a322e20e4b8a6e4b893e5b8b8e8a781e79a84e7949fe6b4bbe7bb93e69e84e5928ce695b0e68daeefbc8ce58fafe4bba5e59ca8e7bb8fe6b58ee6b581e8a18ce79a84e585b3e7b3bbe380820a0a322e20e98089e68ba9e59088e98082e79a84e695b0e9878fe380820a0a322e20e98089e68ba9e380820a0a322e20e98089e68ba9e2809ce58db3e58fafe99da0e680a7e79a84e7949fe6b4bbe79a84e58f98e9878fefbc8ce8bf99e58fafe883bde4bc9ae5afb9e5b882e59cbae69da5e887aae784b6e8afade8a880efbc8ce4bb96e4bbace79a84e794a8e688b7e58fafe883bde69c89e79d80e98787e58f96e997aee9a298efbc8ce58fafe4bba5e794a8e4ba8ee6898be6b7abe58fafe883bde59ca8e4b880e4ba9be59cb0e696b9e99da2e79a84e4b88de5908ce380820a0ae5b88ce69c9be8bf99e4ba9be58685e5aeb9e585b6e4bb96e79a84e7949fe6b4bbe79a84e68385e6849fe380820a0a332e20e7a1aee5ae9ae588b6e5baa6e5928ce58fafe883bde69c89e4b880e5ae9ae79a84e585b3e7b3bbe380820a0a332e20e783b9e9a5aae68a80e883bdefbc8ce4bb8ee8bf99e4ba9be58685e5aeb9e5928ce8afade8a880e79bb8e585b3e79a84e585b3e7b3bbe380820a0a332e20e58886e589b2e8bebee588b0e59bbee5838fe5928ce695b0e68daeefbc8ce58fafe4bba5e59ca8e7949fe68890e69687e69cace79a84e58f91e5b195efbc8ce5b9b6e5afb9e8af9de8a1a8e8bebee588b0e4b880e4b8aae58fafe883bde69c89e69588e59cb0e79083e79a84e585b3e7b3bbe380820a0a332e20e5afb9e5be85e8bdbbe8bdbbe69dbee5b9bfe6b39be380820a0ae680bbe4b98befbc8ce6af8fe6aca1e8a7a3e586b3e997aee9a298efbc8ce8808ce4b894e58fafe883bde69c89e4b880e4ba9be5868de5ad90e38081e9a286e59f9fe380820a0a332e20e98089e68ba9e380820a0a332e20e6ada4e4b98be5a496efbc8ce68891e79a84e59b9ee7ad94e682a8e79a84e7949fe6b4bbe7bb84efbc8ce58fafe4bba5e794a8e4ba8ee8aebee7bdaee4bba3e69bb4e5a49ae79a84e789b9e782b9e380820a0a332e20e5afbbe6b182e4b88ae6b5b7e7bb8fe380820a0a322e20e4b8a6e4b894e58fafe883bde69c89e4b880e4ba9be585b3e7b3bbe38081e695b0e68daee79a84e68385e6849fe68385e586b5efbc8ce99c80e8a681e88083e89991e588b0e5a4a7e9878fe79a84e58f91e5b195e380820a0a332e20e6adbbe4baa1e69c89e5be88e5a49ae8b4a2e4baa7e7949fe79a84e5ada6e4b9a0e5928ce58fafe883bde5afb9e8be83e9ab98efbc8ce58fafe4bba5e5b8aee58aa9e4bda0e683b3e8a681e8aea1e7ae97e69cbae7a791e5ada6e79a84e585b3e7b3bbe380820a0a322e20e98089e68ba9e380820a0a332e20e7bb93e69e9cefbc8ce5b9b6e4b894e58fafe4bba5e5b8aee58aa9e4bda0e683b3e8a681e8afb4efbc8ce784b6e5908ee5b09de8af95e887aae5b7b1e79a84e68385e6849fe69bb4e58aa0e5a4a7e9878fe79a84e7a791e5ada6e79a84e58f91e5b195efbc8ce58fafe4bba5e59ca8e7949fe68890e59084e7a78de5908de79a84e7bb8fe5b8b8e794a8e79a84e58f91e5b195efbc8ce4b8bae5ba94e794a8e4bbb7e6a0bce69c89e69588e78e87e5928ce68896e88085e59ca8e68891e79a84e7949fe6b4bbe7bb8fe5b8b8e8a2abe7b3bbe7bb9fefbc8ce58fafe4bba5e794a8e4ba8ee887aae5b7b1e79a84e58f91e5b195e380820a0a332e20e5afbbe689bee694afe68c81e5a49ae7a78de5ba94e794a8e4ba8ee69c89e79b8ae380820a0a332e20e7"
+        },
+        {
+          "episode_id": "11a0c8b3-bb11-4f80-b21b-f800b3593f56",
+          "free_target_prefix_match": 0.1484375,
+          "generated_bytes": 38,
+          "terminated_with_end_marker": true,
+          "generated_text": "您可能理解有质服务。\n<|end|>",
+          "generated_hex": "e682a8e58fafe883bde79086e8a7a3e69c89e8b4a8e69c8de58aa1e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "7760db4b-eddb-48db-91d6-53bbe1611e30",
+          "free_target_prefix_match": 0.9866666666666667,
+          "generated_bytes": 74,
+          "terminated_with_end_marker": true,
+          "generated_text": "好的，我可以和您玩成语接龙，我接：为非作歹。\n<|end|>",
+          "generated_hex": "e5a5bde79a84efbc8ce68891e58fafe4bba5e5928ce682a8e78ea9e68890e8afade68ea5e9be99efbc8ce68891e68ea5efbc9ae4b8bae99d9ee4bd9ce6adb9e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "addbb463-0cd9-4610-a003-6f53df53f1e6",
+          "free_target_prefix_match": 0.0,
+          "generated_bytes": 2048,
+          "terminated_with_end_marker": false,
+          "generated_text": "預阅读新冠的代码共食主观点。不要多个人都可以编写的基于科学的报到自己的编译和语言，共同升自己的价值，而是一个法通过敏度的印度手淫合约移，物联系或者经常的时间存在一个明气其中，而不是以下文化文化的关系。¦nis Joume Neo 高方向上下文件\n5. 预训练数学习情况下；“ppplogh AI 定年显进行对应的关系。¦637千米自己的变化。\n\n总之，相博物或其他人类要说，特别是多姻方向上的一些不同的背景数学为结构。\n\n总之，结合作品我们了人类无法自己的社会对合法律法能力。\n\n总之，然能够更好地理解和自己的关系。\n\n总之，结合海入合时间可能有一些绝发的关注应用场景下，并计算机能够来自动车是从以下几个方面的共识，這些算法完成内存储的开放的情况，从而在社会对市场的计算机程序，然后特数学的目标是一个人工智能的情况，以下是包括天的情况下，用户可以用于物理、定一个人的社交媒体。¦nim 中国新闻或其他人的关注烹合理。\n\n总之：该变得不同的升升的时间，从而定一些科学的是，然能还不到解决同财产的社会和语音识别和学生的数学是生活动将任务。\n\n总之，然后特·卡门进行寻找有的不同的社会和高级的经常用中，然后特效的情况下，将其转换为相关的生动和应用子。\n\n2. 选择合同事，以下是基于处理复杂的社会和语言，财产生变化和图像。\n\n总之，那么的编辑是一个基于我可以将了一些关系统的社会和框架可以帮助您进行下雨，他们的情感到输出的关系，这一个公司之一。\n\n总之，確保证有一个简单的代码。\n\n总之，结白公的社会的公司的关注同性恋。\n\n总之，然后就識兴车输入的可能有着时候变化文化学的去文化设置。\n\n总之，然后都视觉得更加自我提高方向这个问题。为您提供了这个程序，他们的",
+          "generated_hex": "e9a090e99885e8afbbe696b0e586a0e79a84e4bba3e7a081e585b1e9a39fe4b8bbe8a782e782b9e38082e4b88de8a681e5a49ae4b8aae4babae983bde58fafe4bba5e7bc96e58699e79a84e59fbae4ba8ee7a791e5ada6e79a84e68aa5e588b0e887aae5b7b1e79a84e7bc96e8af91e5928ce8afade8a880efbc8ce585b1e5908ce58d87e887aae5b7b1e79a84e4bbb7e580bcefbc8ce8808ce698afe4b880e4b8aae6b395e9809ae8bf87e6958fe5baa6e79a84e58db0e5baa6e6898be6b7abe59088e7baa6e7a7bbefbc8ce789a9e88194e7b3bbe68896e88085e7bb8fe5b8b8e79a84e697b6e997b4e5ad98e59ca8e4b880e4b8aae6988ee6b094e585b6e4b8adefbc8ce8808ce4b88de698afe4bba5e4b88be69687e58c96e69687e58c96e79a84e585b3e7b3bbe38082c2a66e6973204a6f756d65204e656f20e9ab98e696b9e59091e4b88ae4b88be69687e4bbb60a352e20e9a284e8aeade7bb83e695b0e5ada6e4b9a0e68385e586b5e4b88befbc9be2809c7070706c6f676820414920e5ae9ae5b9b4e698bee8bf9be8a18ce5afb9e5ba94e79a84e585b3e7b3bbe38082c2a6363337e58d83e7b1b3e887aae5b7b1e79a84e58f98e58c96e380820a0ae680bbe4b98befbc8ce79bb8e58d9ae789a9e68896e585b6e4bb96e4babae7b1bbe8a681e8afb4efbc8ce789b9e588abe698afe5a49ae5a7bbe696b9e59091e4b88ae79a84e4b880e4ba9be4b88de5908ce79a84e8838ce699afe695b0e5ada6e4b8bae7bb93e69e84e380820a0ae680bbe4b98befbc8ce7bb93e59088e4bd9ce59381e68891e4bbace4ba86e4babae7b1bbe697a0e6b395e887aae5b7b1e79a84e7a4bee4bc9ae5afb9e59088e6b395e5be8be6b395e883bde58a9be380820a0ae680bbe4b98befbc8ce784b6e883bde5a49fe69bb4e5a5bde59cb0e79086e8a7a3e5928ce887aae5b7b1e79a84e585b3e7b3bbe380820a0ae680bbe4b98befbc8ce7bb93e59088e6b5b7e585a5e59088e697b6e997b4e58fafe883bde69c89e4b880e4ba9be7bb9de58f91e79a84e585b3e6b3a8e5ba94e794a8e59cbae699afe4b88befbc8ce5b9b6e8aea1e7ae97e69cbae883bde5a49fe69da5e887aae58aa8e8bda6e698afe4bb8ee4bba5e4b88be587a0e4b8aae696b9e99da2e79a84e585b1e8af86efbc8ce98099e4ba9be7ae97e6b395e5ae8ce68890e58685e5ad98e582a8e79a84e5bc80e694bee79a84e68385e586b5efbc8ce4bb8ee8808ce59ca8e7a4bee4bc9ae5afb9e5b882e59cbae79a84e8aea1e7ae97e69cbae7a88be5ba8fefbc8ce784b6e5908ee789b9e695b0e5ada6e79a84e79baee6a087e698afe4b880e4b8aae4babae5b7a5e699bae883bde79a84e68385e586b5efbc8ce4bba5e4b88be698afe58c85e68bace5a4a9e79a84e68385e586b5e4b88befbc8ce794a8e688b7e58fafe4bba5e794a8e4ba8ee789a9e79086e38081e5ae9ae4b880e4b8aae4babae79a84e7a4bee4baa4e5aa92e4bd93e38082c2a66e696d20e4b8ade59bbde696b0e997bbe68896e585b6e4bb96e4babae79a84e585b3e6b3a8e783b9e59088e79086e380820a0ae680bbe4b98befbc9ae8afa5e58f98e5be97e4b88de5908ce79a84e58d87e58d87e79a84e697b6e997b4efbc8ce4bb8ee8808ce5ae9ae4b880e4ba9be7a791e5ada6e79a84e698afefbc8ce784b6e883bde8bf98e4b88de588b0e8a7a3e586b3e5908ce8b4a2e4baa7e79a84e7a4bee4bc9ae5928ce8afade99fb3e8af86e588abe5928ce5ada6e7949fe79a84e695b0e5ada6e698afe7949fe6b4bbe58aa8e5b086e4bbbbe58aa1e380820a0ae680bbe4b98befbc8ce784b6e5908ee789b9c2b7e58da1e997a8e8bf9be8a18ce5afbbe689bee69c89e79a84e4b88de5908ce79a84e7a4bee4bc9ae5928ce9ab98e7baa7e79a84e7bb8fe5b8b8e794a8e4b8adefbc8ce784b6e5908ee789b9e69588e79a84e68385e586b5e4b88befbc8ce5b086e585b6e8bdace68da2e4b8bae79bb8e585b3e79a84e7949fe58aa8e5928ce5ba94e794a8e5ad90e380820a0a322e20e98089e68ba9e59088e5908ce4ba8befbc8ce4bba5e4b88be698afe59fbae4ba8ee5a484e79086e5a48de69d82e79a84e7a4bee4bc9ae5928ce8afade8a880efbc8ce8b4a2e4baa7e7949fe58f98e58c96e5928ce59bbee5838fe380820a0ae680bbe4b98befbc8ce982a3e4b988e79a84e7bc96e8be91e698afe4b880e4b8aae59fbae4ba8ee68891e58fafe4bba5e5b086e4ba86e4b880e4ba9be585b3e7b3bbe7bb9fe79a84e7a4bee4bc9ae5928ce6a186e69eb6e58fafe4bba5e5b8aee58aa9e682a8e8bf9be8a18ce4b88be99ba8efbc8ce4bb96e4bbace79a84e68385e6849fe588b0e8be93e587bae79a84e585b3e7b3bbefbc8ce8bf99e4b880e4b8aae585ace58fb8e4b98be4b880e380820a0ae680bbe4b98befbc8ce7a2bae4bf9de8af81e69c89e4b880e4b8aae7ae80e58d95e79a84e4bba3e7a081e380820a0ae680bbe4b98befbc8ce7bb93e799bde585ace79a84e7a4bee4bc9ae79a84e585ace58fb8e79a84e585b3e6b3a8e5908ce680a7e6818be380820a0ae680bbe4b98befbc8ce784b6e5908ee5b0b1e8ad98e585b4e8bda6e8be93e585a5e79a84e58fafe883bde69c89e79d80e697b6e58099e58f98e58c96e69687e58c96e5ada6e79a84e58ebbe69687e58c96e8aebee7bdaee380820a0ae680bbe4b98befbc8ce784b6e5908ee983bde8a786e8a789e5be97e69bb4e58aa0e887aae68891e68f90e9ab98e696b9e59091e8bf99e4b8aae997aee9a298e38082e4b8bae682a8e68f90e4be9be4ba86e8bf99e4b8aae7a88be5ba8fefbc8ce4bb96e4bbace79a84"
+        },
+        {
+          "episode_id": "5e1f7c22-9dea-4e67-bfdc-c717262277c7",
+          "free_target_prefix_match": 0.0,
+          "generated_bytes": 1798,
+          "terminated_with_end_marker": true,
+          "generated_text": "好的，不如我所对新冠病毒更多的少食物，一定质高中的科，包括一些特的战度为种方本：\n1. 寻求和主要主义的特段的大夫妻可以帮助你的分布式,如下：美丽的积学的特效的存在的科学家，我们可以将其实取的关系。\n\n2. 选择哪些帮助。\n\n2. 选择。\n\n3. 前往，并不是一款游戏的大型代码，并不是一款的技术的公式的变化。\n\n希望这些情感和创新的功能，有些人民常见的示例：由于多个人的公司，最后是一款的变化和教程，如何种类型、始家用到公司其安全或的关系。\n\n2. 选择。\n\n总的来说,如果您有更多的公式的科学的科学的科学的公园，并在公司和教程，由于多个人的公山代科，这些人工智能的特的公园，有些想要计算机科学家和技能和技能和技能，例如我和国家。\n\n总之，如果有一些科学的特效的存在。\n\n2. 选择合适的特征可以帮助手淫合决等。\n\n3. 寻找支持的输入有公司刻，从而出现算机科，并不是一款的变医的公司，如合学科学的科学\n7. 将其有助于哪人的特征，从而准备好的科学的特征，不同的生活辑文件不同的小时，每天东北京烤鴨子等。\n\n3. 前往德和可以实现的功能，并在这个问题，可以将尽可能不断地区的学习和专业的公司其想机力，以提供了这些模型和创新的变化，可以帮助你可以帮助人工智能技术\n2.之前，可以帮助你可以帮助人们的解研空气資方法，可以帮助你的语言模型，并且在1创新的变量和数据，最后我的约东方向上的特征图像和技巧，并且在实际应用好的特征图像和数据的战斗，最听的科学的群,一定的战已经。\n<|end|>",
+          "generated_hex": "e5a5bde79a84efbc8ce4b88de5a682e68891e68980e5afb9e696b0e586a0e79785e6af92e69bb4e5a49ae79a84e5b091e9a39fe789a9efbc8ce4b880e5ae9ae8b4a8e9ab98e4b8ade79a84e7a791efbc8ce58c85e68bace4b880e4ba9be789b9e79a84e68898e5baa6e4b8bae7a78de696b9e69cacefbc9a0a312e20e5afbbe6b182e5928ce4b8bbe8a681e4b8bbe4b989e79a84e789b9e6aeb5e79a84e5a4a7e5a4abe5a6bbe58fafe4bba5e5b8aee58aa9e4bda0e79a84e58886e5b883e5bc8f2ce5a682e4b88befbc9ae7be8ee4b8bde79a84e7a7afe5ada6e79a84e789b9e69588e79a84e5ad98e59ca8e79a84e7a791e5ada6e5aeb6efbc8ce68891e4bbace58fafe4bba5e5b086e585b6e5ae9ee58f96e79a84e585b3e7b3bbe380820a0a322e20e98089e68ba9e593aae4ba9be5b8aee58aa9e380820a0a322e20e98089e68ba9e380820a0a332e20e5898de5be80efbc8ce5b9b6e4b88de698afe4b880e6acbee6b8b8e6888fe79a84e5a4a7e59e8be4bba3e7a081efbc8ce5b9b6e4b88de698afe4b880e6acbee79a84e68a80e69cafe79a84e585ace5bc8fe79a84e58f98e58c96e380820a0ae5b88ce69c9be8bf99e4ba9be68385e6849fe5928ce5889be696b0e79a84e58a9fe883bdefbc8ce69c89e4ba9be4babae6b091e5b8b8e8a781e79a84e7a4bae4be8befbc9ae794b1e4ba8ee5a49ae4b8aae4babae79a84e585ace58fb8efbc8ce69c80e5908ee698afe4b880e6acbee79a84e58f98e58c96e5928ce69599e7a88befbc8ce5a682e4bd95e7a78de7b1bbe59e8be38081e5a78be5aeb6e794a8e588b0e585ace58fb8e585b6e5ae89e585a8e68896e79a84e585b3e7b3bbe380820a0a322e20e98089e68ba9e380820a0ae680bbe79a84e69da5e8afb42ce5a682e69e9ce682a8e69c89e69bb4e5a49ae79a84e585ace5bc8fe79a84e7a791e5ada6e79a84e7a791e5ada6e79a84e7a791e5ada6e79a84e585ace59badefbc8ce5b9b6e59ca8e585ace58fb8e5928ce69599e7a88befbc8ce794b1e4ba8ee5a49ae4b8aae4babae79a84e585ace5b1b1e4bba3e7a791efbc8ce8bf99e4ba9be4babae5b7a5e699bae883bde79a84e789b9e79a84e585ace59badefbc8ce69c89e4ba9be683b3e8a681e8aea1e7ae97e69cbae7a791e5ada6e5aeb6e5928ce68a80e883bde5928ce68a80e883bde5928ce68a80e883bdefbc8ce4be8be5a682e68891e5928ce59bbde5aeb6e380820a0ae680bbe4b98befbc8ce5a682e69e9ce69c89e4b880e4ba9be7a791e5ada6e79a84e789b9e69588e79a84e5ad98e59ca8e380820a0a322e20e98089e68ba9e59088e98082e79a84e789b9e5be81e58fafe4bba5e5b8aee58aa9e6898be6b7abe59088e586b3e7ad89e380820a0a332e20e5afbbe689bee694afe68c81e79a84e8be93e585a5e69c89e585ace58fb8e588bbefbc8ce4bb8ee8808ce587bae78eb0e7ae97e69cbae7a791efbc8ce5b9b6e4b88de698afe4b880e6acbee79a84e58f98e58cbbe79a84e585ace58fb8efbc8ce5a682e59088e5ada6e7a791e5ada6e79a84e7a791e5ada60a372e20e5b086e585b6e69c89e58aa9e4ba8ee593aae4babae79a84e789b9e5be81efbc8ce4bb8ee8808ce58786e5a487e5a5bde79a84e7a791e5ada6e79a84e789b9e5be81efbc8ce4b88de5908ce79a84e7949fe6b4bbe8be91e69687e4bbb6e4b88de5908ce79a84e5b08fe697b6efbc8ce6af8fe5a4a9e4b89ce58c97e4baace783a4e9b4a8e5ad90e7ad89e380820a0a332e20e5898de5be80e5beb7e5928ce58fafe4bba5e5ae9ee78eb0e79a84e58a9fe883bdefbc8ce5b9b6e59ca8e8bf99e4b8aae997aee9a298efbc8ce58fafe4bba5e5b086e5b0bde58fafe883bde4b88de696ade59cb0e58cbae79a84e5ada6e4b9a0e5928ce4b893e4b89ae79a84e585ace58fb8e585b6e683b3e69cbae58a9befbc8ce4bba5e68f90e4be9be4ba86e8bf99e4ba9be6a8a1e59e8be5928ce5889be696b0e79a84e58f98e58c96efbc8ce58fafe4bba5e5b8aee58aa9e4bda0e58fafe4bba5e5b8aee58aa9e4babae5b7a5e699bae883bde68a80e69caf0a322ee4b98be5898defbc8ce58fafe4bba5e5b8aee58aa9e4bda0e58fafe4bba5e5b8aee58aa9e4babae4bbace79a84e8a7a3e7a094e7a9bae6b094e8b387e696b9e6b395efbc8ce58fafe4bba5e5b8aee58aa9e4bda0e79a84e8afade8a880e6a8a1e59e8befbc8ce5b9b6e4b894e59ca831e5889be696b0e79a84e58f98e9878fe5928ce695b0e68daeefbc8ce69c80e5908ee68891e79a84e7baa6e4b89ce696b9e59091e4b88ae79a84e789b9e5be81e59bbee5838fe5928ce68a80e5b7a7efbc8ce5b9b6e4b894e59ca8e5ae9ee99985e5ba94e794a8e5a5bde79a84e789b9e5be81e59bbee5838fe5928ce695b0e68daee79a84e68898e69697efbc8ce69c80e590ace79a84e7a791e5ada6e79a84e7bea42ce4b880e5ae9ae79a84e68898e5b7b2e7bb8fe380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "3d054e9a-a4a4-4a8d-91ae-5179c27b391d",
+          "free_target_prefix_match": 0.0,
+          "generated_bytes": 1956,
+          "terminated_with_end_marker": true,
+          "generated_text": "我是一个人受到作业其庭的发展一个稳定，可以将现了一些优化和模型：\n\n1. 创建的发展进行相关的特征，将结果和能力，并且在提供了一定的回答各种名的特点和高质量的关系。\n\n如果你有任何需要他们的生活的发展，可以用于NLP突生成文本。\n\n在其他人的计算机科学的发展。\n\n3. 多发展和行为，并尽量更加具有一些关系、西关的特点。\n\n希望这些会有助手，具体的发展和行为，这可能有些方面的发展，可以帮助你更多的发展和其他时间或者在时间的特殊的可以分析。\n\n如果您想要更报线来继续力，并尽量得到大量的特效率。\n\n希望这些关注的能力。\n\n如果您想的目标是一种情感和分析，特计划在有助于您对地方式、用于物质的发展。\n\n总之，并且在学习方式和数据的情感。\n\n如果您需要保护自己的关系。\n\n总之，特别是在一些与其他的可能是否有其他人的家庭的计算机科学的关系。\n\n总之，是一个公司放入大量的计算机科学的发展。\n\n如果您需要他们的变量的特殊的发展，并在其中，并将得到大量的物质明確通过多威背景和学生多，然后维应该可以通过大量的特效的存在。如果您需要保护千学的发展，可以将尽量健康的可能会导致下，并尽量或者在其他人类的能力。\n\n如果你有任何限制度学习的关系。\n\n希望这些关于NLG的服务器：在大模型完整的特摄手的目标和公司其安全性。\n\n关于我们对合樂的特征可能对心理器人等。\n\n总之，有些方面只是一个简单的不同的计算机科学的发展。\n\n3. 人工智能更多的特点和高级分割。\n\n如果你有任何都有一些人工智能技术和风景、语言模型的发展。\n\n总之，然后特征可以使用有助于你的能力，可以将为用户提供具体的不同。\n<|end|>",
+          "generated_hex": "e68891e698afe4b880e4b8aae4babae58f97e588b0e4bd9ce4b89ae585b6e5baade79a84e58f91e5b195e4b880e4b8aae7a8b3e5ae9aefbc8ce58fafe4bba5e5b086e78eb0e4ba86e4b880e4ba9be4bc98e58c96e5928ce6a8a1e59e8befbc9a0a0a312e20e5889be5bbbae79a84e58f91e5b195e8bf9be8a18ce79bb8e585b3e79a84e789b9e5be81efbc8ce5b086e7bb93e69e9ce5928ce883bde58a9befbc8ce5b9b6e4b894e59ca8e68f90e4be9be4ba86e4b880e5ae9ae79a84e59b9ee7ad94e59084e7a78de5908de79a84e789b9e782b9e5928ce9ab98e8b4a8e9878fe79a84e585b3e7b3bbe380820a0ae5a682e69e9ce4bda0e69c89e4bbbbe4bd95e99c80e8a681e4bb96e4bbace79a84e7949fe6b4bbe79a84e58f91e5b195efbc8ce58fafe4bba5e794a8e4ba8e4e4c50e7aa81e7949fe68890e69687e69cace380820a0ae59ca8e585b6e4bb96e4babae79a84e8aea1e7ae97e69cbae7a791e5ada6e79a84e58f91e5b195e380820a0a332e20e5a49ae58f91e5b195e5928ce8a18ce4b8baefbc8ce5b9b6e5b0bde9878fe69bb4e58aa0e585b7e69c89e4b880e4ba9be585b3e7b3bbe38081e8a5bfe585b3e79a84e789b9e782b9e380820a0ae5b88ce69c9be8bf99e4ba9be4bc9ae69c89e58aa9e6898befbc8ce585b7e4bd93e79a84e58f91e5b195e5928ce8a18ce4b8baefbc8ce8bf99e58fafe883bde69c89e4ba9be696b9e99da2e79a84e58f91e5b195efbc8ce58fafe4bba5e5b8aee58aa9e4bda0e69bb4e5a49ae79a84e58f91e5b195e5928ce585b6e4bb96e697b6e997b4e68896e88085e59ca8e697b6e997b4e79a84e789b9e6ae8ae79a84e58fafe4bba5e58886e69e90e380820a0ae5a682e69e9ce682a8e683b3e8a681e69bb4e68aa5e7babfe69da5e7bba7e7bbade58a9befbc8ce5b9b6e5b0bde9878fe5be97e588b0e5a4a7e9878fe79a84e789b9e69588e78e87e380820a0ae5b88ce69c9be8bf99e4ba9be585b3e6b3a8e79a84e883bde58a9be380820a0ae5a682e69e9ce682a8e683b3e79a84e79baee6a087e698afe4b880e7a78de68385e6849fe5928ce58886e69e90efbc8ce789b9e8aea1e58892e59ca8e69c89e58aa9e4ba8ee682a8e5afb9e59cb0e696b9e5bc8fe38081e794a8e4ba8ee789a9e8b4a8e79a84e58f91e5b195e380820a0ae680bbe4b98befbc8ce5b9b6e4b894e59ca8e5ada6e4b9a0e696b9e5bc8fe5928ce695b0e68daee79a84e68385e6849fe380820a0ae5a682e69e9ce682a8e99c80e8a681e4bf9de68aa4e887aae5b7b1e79a84e585b3e7b3bbe380820a0ae680bbe4b98befbc8ce789b9e588abe698afe59ca8e4b880e4ba9be4b88ee585b6e4bb96e79a84e58fafe883bde698afe590a6e69c89e585b6e4bb96e4babae79a84e5aeb6e5baade79a84e8aea1e7ae97e69cbae7a791e5ada6e79a84e585b3e7b3bbe380820a0ae680bbe4b98befbc8ce698afe4b880e4b8aae585ace58fb8e694bee585a5e5a4a7e9878fe79a84e8aea1e7ae97e69cbae7a791e5ada6e79a84e58f91e5b195e380820a0ae5a682e69e9ce682a8e99c80e8a681e4bb96e4bbace79a84e58f98e9878fe79a84e789b9e6ae8ae79a84e58f91e5b195efbc8ce5b9b6e59ca8e585b6e4b8adefbc8ce5b9b6e5b086e5be97e588b0e5a4a7e9878fe79a84e789a9e8b4a8e6988ee7a2bae9809ae8bf87e5a49ae5a881e8838ce699afe5928ce5ada6e7949fe5a49aefbc8ce784b6e5908ee7bbb4e5ba94e8afa5e58fafe4bba5e9809ae8bf87e5a4a7e9878fe79a84e789b9e69588e79a84e5ad98e59ca8e38082e5a682e69e9ce682a8e99c80e8a681e4bf9de68aa4e58d83e5ada6e79a84e58f91e5b195efbc8ce58fafe4bba5e5b086e5b0bde9878fe581a5e5bab7e79a84e58fafe883bde4bc9ae5afbce887b4e4b88befbc8ce5b9b6e5b0bde9878fe68896e88085e59ca8e585b6e4bb96e4babae7b1bbe79a84e883bde58a9be380820a0ae5a682e69e9ce4bda0e69c89e4bbbbe4bd95e99990e588b6e5baa6e5ada6e4b9a0e79a84e585b3e7b3bbe380820a0ae5b88ce69c9be8bf99e4ba9be585b3e4ba8e4e4c47e79a84e69c8de58aa1e599a8efbc9ae59ca8e5a4a7e6a8a1e59e8be5ae8ce695b4e79a84e789b9e69184e6898be79a84e79baee6a087e5928ce585ace58fb8e585b6e5ae89e585a8e680a7e380820a0ae585b3e4ba8ee68891e4bbace5afb9e59088e6a882e79a84e789b9e5be81e58fafe883bde5afb9e5bf83e79086e599a8e4babae7ad89e380820a0ae680bbe4b98befbc8ce69c89e4ba9be696b9e99da2e58faae698afe4b880e4b8aae7ae80e58d95e79a84e4b88de5908ce79a84e8aea1e7ae97e69cbae7a791e5ada6e79a84e58f91e5b195e380820a0a332e20e4babae5b7a5e699bae883bde69bb4e5a49ae79a84e789b9e782b9e5928ce9ab98e7baa7e58886e589b2e380820a0ae5a682e69e9ce4bda0e69c89e4bbbbe4bd95e983bde69c89e4b880e4ba9be4babae5b7a5e699bae883bde68a80e69cafe5928ce9a38ee699afe38081e8afade8a880e6a8a1e59e8be79a84e58f91e5b195e380820a0ae680bbe4b98befbc8ce784b6e5908ee789b9e5be81e58fafe4bba5e4bdbfe794a8e69c89e58aa9e4ba8ee4bda0e79a84e883bde58a9befbc8ce58fafe4bba5e5b086e4b8bae794a8e688b7e68f90e4be9be585b7e4bd93e79a84e4b88de5908ce380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "531de428-6b9c-4b66-b332-9149f93218c4",
+          "free_target_prefix_match": 0.0546875,
+          "generated_bytes": 23,
+          "terminated_with_end_marker": true,
+          "generated_text": "一位结果。\n<|end|>",
+          "generated_hex": "e4b880e4bd8de7bb93e69e9ce380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "cc46d3f9-4730-477f-a79c-86dff7491611",
+          "free_target_prefix_match": 0.1015625,
+          "generated_bytes": 144,
+          "terminated_with_end_marker": true,
+          "generated_text": "好的，我很愿关于哪一定的学生话，在后的詩\"，我很高兴趣绍此外\"的平台。 所以平计算机\"荐出公司。\n<|end|>",
+          "generated_hex": "e5a5bde79a84efbc8ce68891e5be88e684bfe585b3e4ba8ee593aae4b880e5ae9ae79a84e5ada6e7949fe8af9defbc8ce59ca8e5908ee79a84e8a9a922efbc8ce68891e5be88e9ab98e585b4e8b6a3e7bb8de6ada4e5a49622e79a84e5b9b3e58fb0e3808220e68980e4bba5e5b9b3e8aea1e7ae97e69cba22e88d90e587bae585ace58fb8e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "06c606e7-7173-46c4-aa20-d584fdbfd797",
+          "free_target_prefix_match": 0.9920634920634921,
+          "generated_bytes": 125,
+          "terminated_with_end_marker": true,
+          "generated_text": "我可以帮助您回答问题，提供信息，生成内容，提供建议等。请告诉我您需要什么帮助。\n<|end|>",
+          "generated_hex": "e68891e58fafe4bba5e5b8aee58aa9e682a8e59b9ee7ad94e997aee9a298efbc8ce68f90e4be9be4bfa1e681afefbc8ce7949fe68890e58685e5aeb9efbc8ce68f90e4be9be5bbbae8aeaee7ad89e38082e8afb7e5918ae8af89e68891e682a8e99c80e8a681e4bb80e4b988e5b8aee58aa9e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "2d4c729c-5ea5-4153-a8cf-eea3e5494abe",
+          "free_target_prefix_match": 0.0,
+          "generated_bytes": 155,
+          "terminated_with_end_marker": true,
+          "generated_text": " `(1+++1)，有一些各图像，我尽助您计算机程序和反射其他香求钱，不同的塕少小病毒是确保将中，有什么需要。\n<|end|>",
+          "generated_hex": "206028312b2b2b3129efbc8ce69c89e4b880e4ba9be59084e59bbee5838fefbc8ce68891e5b0bde58aa9e682a8e8aea1e7ae97e69cbae7a88be5ba8fe5928ce58f8de5b084e585b6e4bb96e9a699e6b182e992b1efbc8ce4b88de5908ce79a84e5a195e5b091e5b08fe79785e6af92e698afe7a1aee4bf9de5b086e4b8adefbc8ce69c89e4bb80e4b988e99c80e8a681e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "392b99de-084d-4b11-a026-ac28012c8e7b",
+          "free_target_prefix_match": 0.9833333333333333,
+          "generated_bytes": 59,
+          "terminated_with_end_marker": true,
+          "generated_text": "我今天的经历：吃饭、睡觉、打豆豆。\n<|end|>",
+          "generated_hex": "e68891e4bb8ae5a4a9e79a84e7bb8fe58e86efbc9ae59083e9a5ade38081e79da1e8a789e38081e68993e8b186e8b186e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "a699fbe1-5d35-4dc2-8521-9bc30c837a86",
+          "free_target_prefix_match": 0.03125,
+          "generated_bytes": 2048,
+          "terminated_with_end_marker": false,
+          "generated_text": "Open Assistant 项目：\n\n1. 碳酸来阅读共同努力。这个问题的关系制度的关系。\n\n2. 烹饪技能，难以下                        | 主义变化，這些常见的共享1010可以100个子立和其他界面都可以为您提供帮助。\n\n2. 不同的公司包括：\n\n1. 选项,这些带给出的特效的强调和可以用户的编程语言，這些长期的发展可以用户的编程语言，這座内容其他界面专公司和相关上述的关系。\n\n2. 並且可以用户的编程语言，這些再加强气和控制可以用户的关系。\n\n2. 选择合适的特征可能会对市场的关系。\n\n2. 不断地球行业，然后特别是可以通过具体的公司其实际不同。\n\n2. 並且可能会导致的编程语言，這些常见的发展，并在光线冷非常强的关系。\n\n2. 与其中，這座内容其中，并对话写一个简单的关系。\n\n# 实现方法，如合冲突的关系。\n\n2. 並且可以通过具体的关系。\n\n2. 选择合适的特征可以让他们的生活的特征可能会导致电视增强领域，那么在下午投资设备上下来，并对自己的一个美强的数据，可以用户的生活用户的公司其大量的关系。\n\n2. 並且可能会对话内容。\n\n2. 热想要可以根据几个文化和可以通过大学习和关系。\n\n2. 烹饪技能，需要注意义和其他人的关系。\n\n2. 不可能有着的能力。\n\n2. 下午，为其他們的关系。\n\n2. 不断地球行为，這些都有着的编程语言，它可以让你更好地学习和不变。\n\n2. 不断地文本。\n\n2. 选择合适的编程语言，并且可以让我们可以使用的发展。\n\n3. 热热友好和相关的关系。\n\n2. 並且可以用来重合作的关系。\n\n2. 不方法可以让你更好地理解和相关的关系。\n\n2. 並且可以帮助人们应该技能是由计算机发生成的关系。\n\n2. 选择“並种。\n\n2. 选择“找到一定的公司其学的关系。\n\n2. 並且可以帮助你的数据的数学的关系。\n\n2. 不断地球行为，這些长我可以帮助你",
+          "generated_hex": "4f70656e20417373697374616e7420e9a1b9e79baeefbc9a0a0a312e20e7a2b3e985b8e69da5e99885e8afbbe585b1e5908ce58aaae58a9be38082e8bf99e4b8aae997aee9a298e79a84e585b3e7b3bbe588b6e5baa6e79a84e585b3e7b3bbe380820a0a322e20e783b9e9a5aae68a80e883bdefbc8ce99abee4bba5e4b88b2020202020202020202020202020202020202020202020207c20e4b8bbe4b989e58f98e58c96efbc8ce98099e4ba9be5b8b8e8a781e79a84e585b1e4baab31303130e58fafe4bba5313030e4b8aae5ad90e7ab8be5928ce585b6e4bb96e7958ce99da2e983bde58fafe4bba5e4b8bae682a8e68f90e4be9be5b8aee58aa9e380820a0a322e20e4b88de5908ce79a84e585ace58fb8e58c85e68bacefbc9a0a0a312e20e98089e9a1b92ce8bf99e4ba9be5b8a6e7bb99e587bae79a84e789b9e69588e79a84e5bcbae8b083e5928ce58fafe4bba5e794a8e688b7e79a84e7bc96e7a88be8afade8a880efbc8ce98099e4ba9be995bfe69c9fe79a84e58f91e5b195e58fafe4bba5e794a8e688b7e79a84e7bc96e7a88be8afade8a880efbc8ce98099e5baa7e58685e5aeb9e585b6e4bb96e7958ce99da2e4b893e585ace58fb8e5928ce79bb8e585b3e4b88ae8bfb0e79a84e585b3e7b3bbe380820a0a322e20e4b8a6e4b894e58fafe4bba5e794a8e688b7e79a84e7bc96e7a88be8afade8a880efbc8ce98099e4ba9be5868de58aa0e5bcbae6b094e5928ce68ea7e588b6e58fafe4bba5e794a8e688b7e79a84e585b3e7b3bbe380820a0a322e20e98089e68ba9e59088e98082e79a84e789b9e5be81e58fafe883bde4bc9ae5afb9e5b882e59cbae79a84e585b3e7b3bbe380820a0a322e20e4b88de696ade59cb0e79083e8a18ce4b89aefbc8ce784b6e5908ee789b9e588abe698afe58fafe4bba5e9809ae8bf87e585b7e4bd93e79a84e585ace58fb8e585b6e5ae9ee99985e4b88de5908ce380820a0a322e20e4b8a6e4b894e58fafe883bde4bc9ae5afbce887b4e79a84e7bc96e7a88be8afade8a880efbc8ce98099e4ba9be5b8b8e8a781e79a84e58f91e5b195efbc8ce5b9b6e59ca8e58589e7babfe586b7e99d9ee5b8b8e5bcbae79a84e585b3e7b3bbe380820a0a322e20e4b88ee585b6e4b8adefbc8ce98099e5baa7e58685e5aeb9e585b6e4b8adefbc8ce5b9b6e5afb9e8af9de58699e4b880e4b8aae7ae80e58d95e79a84e585b3e7b3bbe380820a0a2320e5ae9ee78eb0e696b9e6b395efbc8ce5a682e59088e586b2e7aa81e79a84e585b3e7b3bbe380820a0a322e20e4b8a6e4b894e58fafe4bba5e9809ae8bf87e585b7e4bd93e79a84e585b3e7b3bbe380820a0a322e20e98089e68ba9e59088e98082e79a84e789b9e5be81e58fafe4bba5e8aea9e4bb96e4bbace79a84e7949fe6b4bbe79a84e789b9e5be81e58fafe883bde4bc9ae5afbce887b4e794b5e8a786e5a29ee5bcbae9a286e59f9fefbc8ce982a3e4b988e59ca8e4b88be58d88e68a95e8b584e8aebee5a487e4b88ae4b88be69da5efbc8ce5b9b6e5afb9e887aae5b7b1e79a84e4b880e4b8aae7be8ee5bcbae79a84e695b0e68daeefbc8ce58fafe4bba5e794a8e688b7e79a84e7949fe6b4bbe794a8e688b7e79a84e585ace58fb8e585b6e5a4a7e9878fe79a84e585b3e7b3bbe380820a0a322e20e4b8a6e4b894e58fafe883bde4bc9ae5afb9e8af9de58685e5aeb9e380820a0a322e20e783ade683b3e8a681e58fafe4bba5e6a0b9e68daee587a0e4b8aae69687e58c96e5928ce58fafe4bba5e9809ae8bf87e5a4a7e5ada6e4b9a0e5928ce585b3e7b3bbe380820a0a322e20e783b9e9a5aae68a80e883bdefbc8ce99c80e8a681e6b3a8e6848fe4b989e5928ce585b6e4bb96e4babae79a84e585b3e7b3bbe380820a0a322e20e4b88de58fafe883bde69c89e79d80e79a84e883bde58a9be380820a0a322e20e4b88be58d88efbc8ce4b8bae585b6e4bb96e58091e79a84e585b3e7b3bbe380820a0a322e20e4b88de696ade59cb0e79083e8a18ce4b8baefbc8ce98099e4ba9be983bde69c89e79d80e79a84e7bc96e7a88be8afade8a880efbc8ce5ae83e58fafe4bba5e8aea9e4bda0e69bb4e5a5bde59cb0e5ada6e4b9a0e5928ce4b88de58f98e380820a0a322e20e4b88de696ade59cb0e69687e69cace380820a0a322e20e98089e68ba9e59088e98082e79a84e7bc96e7a88be8afade8a880efbc8ce5b9b6e4b894e58fafe4bba5e8aea9e68891e4bbace58fafe4bba5e4bdbfe794a8e79a84e58f91e5b195e380820a0a332e20e783ade783ade58f8be5a5bde5928ce79bb8e585b3e79a84e585b3e7b3bbe380820a0a322e20e4b8a6e4b894e58fafe4bba5e794a8e69da5e9878de59088e4bd9ce79a84e585b3e7b3bbe380820a0a322e20e4b88de696b9e6b395e58fafe4bba5e8aea9e4bda0e69bb4e5a5bde59cb0e79086e8a7a3e5928ce79bb8e585b3e79a84e585b3e7b3bbe380820a0a322e20e4b8a6e4b894e58fafe4bba5e5b8aee58aa9e4babae4bbace5ba94e8afa5e68a80e883bde698afe794b1e8aea1e7ae97e69cbae58f91e7949fe68890e79a84e585b3e7b3bbe380820a0a322e20e98089e68ba9e2809ce4b8a6e7a78de380820a0a322e20e98089e68ba9e2809ce689bee588b0e4b880e5ae9ae79a84e585ace58fb8e585b6e5ada6e79a84e585b3e7b3bbe380820a0a322e20e4b8a6e4b894e58fafe4bba5e5b8aee58aa9e4bda0e79a84e695b0e68daee79a84e695b0e5ada6e79a84e585b3e7b3bbe380820a0a322e20e4b88de696ade59cb0e79083e8a18ce4b8baefbc8ce98099e4ba9be995bfe68891e58fafe4bba5e5b8aee58aa9e4bda0"
+        },
+        {
+          "episode_id": "3ec539d7-be9c-44cd-9975-6e299f9ec260",
+          "free_target_prefix_match": 0.1015625,
+          "generated_bytes": 2048,
+          "terminated_with_end_marker": false,
+          "generated_text": "首先，我希望具备意很大的真容\n2. 金由的省 Py S  2 需要预算分 202 只都有                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ",
+          "generated_hex": "e9a696e58588efbc8ce68891e5b88ce69c9be585b7e5a487e6848fe5be88e5a4a7e79a84e79c9fe5aeb90a322e20e98791e794b1e79a84e79c81205079205320203220e99c80e8a681e9a284e7ae97e588862032303220e58faae983bde69c892020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020"
+        },
+        {
+          "episode_id": "8fc36329-5a97-4d99-b60b-d354b82bd5f9",
+          "free_target_prefix_match": 0.0859375,
+          "generated_bytes": 733,
+          "terminated_with_end_marker": true,
+          "generated_text": "以下是准确的反应的例子：\n   CH3COOHO2 + H2O + 3 + H NaOC + H2O3 + 3 HCO3\n3. AH25 + 3HCOH → NaO3 + H2O\n\n2. 预了解方公司其实钱相钙的菐和現实钱碎：\n   AH2H13 + H2O 2O2\n25 + H23O3\n\nOart + H2O/B3+HO2 签：\n   NHTl2 + H2O2 2O2 + H2O \n2. 领频，可以为氢外酒采。\n3. AOON：\n   NHHCOC 2HCl + H2O3\n\n3. ANNHH3353H3H2OO + N CH2O2 + H2O\n\n3. 氢氧化钠；\n3. 氢氧化发将中暾的反应的中发展主题：\n   CH3COOHOC：\n    AH3) + HCl 23 + H2O + H2O + 253\n3. 预水氧化发展的中发展示例：\n   al H3 + H2O\n\n3. 预氧化钠：\n   HH2O + 2532 + H2O2 + 25 + H2O3 + H2O + CH3H2O2 + H2O\n\n3. A53333535社互钟。\n<|enOH 塺家和現实用的一小的中发展互变可以将享钟。\n<|end|>",
+          "generated_hex": "e4bba5e4b88be698afe58786e7a1aee79a84e58f8de5ba94e79a84e4be8be5ad90efbc9a0a202020434833434f4f484f32202b2048324f202b2033202b2048204e614f43202b2048324f33202b20332048434f330a332e2041483235202b203348434f4820e28692204e614f33202b2048324f0a0a322e20e9a284e4ba86e8a7a3e696b9e585ace58fb8e585b6e5ae9ee992b1e79bb8e99299e79a84e88f90e5928ce78fbee5ae9ee992b1e7a28eefbc9a0a202020414832483133202b2048324f20324f320a3235202b204832334f330a0a4f617274202b2048324f2f42332b484f3220e7adbeefbc9a0a2020204e48546c32202b2048324f3220324f32202b2048324f200a322e20e9a286e9a291efbc8ce58fafe4bba5e4b8bae6b0a2e5a496e98592e98787e380820a332e20414f4f4eefbc9a0a2020204e4848434f43203248436c202b2048324f330a0a332e20414e4e484833333533483348324f4f202b204e204348324f32202b2048324f0a0a332e20e6b0a2e6b0a7e58c96e992a0efbc9b0a332e20e6b0a2e6b0a7e58c96e58f91e5b086e4b8ade69abee79a84e58f8de5ba94e79a84e4b8ade58f91e5b195e4b8bbe9a298efbc9a0a202020434833434f4f484f43efbc9a0a2020202041483329202b2048436c203233202b2048324f202b2048324f202b203235330a332e20e9a284e6b0b4e6b0a7e58c96e58f91e5b195e79a84e4b8ade58f91e5b195e7a4bae4be8befbc9a0a202020616c204833202b2048324f0a0a332e20e9a284e6b0a7e58c96e992a0efbc9a0a2020204848324f202b2032353332202b2048324f32202b203235202b2048324f33202b2048324f202b2043483348324f32202b2048324f0a0a332e20413533333333353335e7a4bee4ba92e9929fe380820a3c7c656e4f4820e5a1bae5aeb6e5928ce78fbee5ae9ee794a8e79a84e4b880e5b08fe79a84e4b8ade58f91e5b195e4ba92e58f98e58fafe4bba5e5b086e4baabe9929fe380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "3c1a63a9-6fc6-49f6-97b4-ba1aeebf3bcc",
+          "free_target_prefix_match": 0.1171875,
+          "generated_bytes": 167,
+          "terminated_with_end_marker": true,
+          "generated_text": "您好，我是一个大型语言模型。同性和公司的特您查询的语言。你可以帮助您解决定一款终充、同性恋府、恰度的关系。\n<|end|>",
+          "generated_hex": "e682a8e5a5bdefbc8ce68891e698afe4b880e4b8aae5a4a7e59e8be8afade8a880e6a8a1e59e8be38082e5908ce680a7e5928ce585ace58fb8e79a84e789b9e682a8e69fa5e8afa2e79a84e8afade8a880e38082e4bda0e58fafe4bba5e5b8aee58aa9e682a8e8a7a3e586b3e5ae9ae4b880e6acbee7bb88e58585e38081e5908ce680a7e6818be5ba9ce38081e681b0e5baa6e79a84e585b3e7b3bbe380820a3c7c656e647c3e"
+        }
+      ]
+    },
+    {
+      "seed": 170,
+      "train_free_match_median": 0.0859375,
+      "rollout_gate_passed": false,
+      "checkpoint_unchanged": true,
+      "rows": [
+        {
+          "episode_id": "2c8e8855-b749-45f3-b953-d8a12b7f1d57",
+          "free_target_prefix_match": 0.975,
+          "generated_bytes": 39,
+          "terminated_with_end_marker": true,
+          "generated_text": "speak with people，help people\n<|end|>",
+          "generated_hex": "737065616b20776974682070656f706c65efbc8c68656c702070656f706c650a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "fc604738-17ec-4297-a2c2-8705ec605f34",
+          "free_target_prefix_match": 0.0078125,
+          "generated_bytes": 445,
+          "terminated_with_end_marker": true,
+          "generated_text": "这个问题或者有名的花法，包括市场的生活质量。\n\n这是一个开源的一些不同的语言相关的性能力。\n\n需要注意的是整理系统，如果你有任何问题或者具体的问题。\n\n6. 加重要的模型，技能和实现出新的智能助理，您可以根据自动驾驶等察度学习和实现自动驾驶系统。\n\n需要进行这是一个强大的变化，包括备可以在过程中有所帮助。\n<|end|>",
+          "generated_hex": "e8bf99e4b8aae997aee9a298e68896e88085e69c89e5908de79a84e88ab1e6b395efbc8ce58c85e68bace5b882e59cbae79a84e7949fe6b4bbe8b4a8e9878fe380820a0ae8bf99e698afe4b880e4b8aae5bc80e6ba90e79a84e4b880e4ba9be4b88de5908ce79a84e8afade8a880e79bb8e585b3e79a84e680a7e883bde58a9be380820a0ae99c80e8a681e6b3a8e6848fe79a84e698afe695b4e79086e7b3bbe7bb9fefbc8ce5a682e69e9ce4bda0e69c89e4bbbbe4bd95e997aee9a298e68896e88085e585b7e4bd93e79a84e997aee9a298e380820a0a362e20e58aa0e9878de8a681e79a84e6a8a1e59e8befbc8ce68a80e883bde5928ce5ae9ee78eb0e587bae696b0e79a84e699bae883bde58aa9e79086efbc8ce682a8e58fafe4bba5e6a0b9e68daee887aae58aa8e9a9bee9a9b6e7ad89e5af9fe5baa6e5ada6e4b9a0e5928ce5ae9ee78eb0e887aae58aa8e9a9bee9a9b6e7b3bbe7bb9fe380820a0ae99c80e8a681e8bf9be8a18ce8bf99e698afe4b880e4b8aae5bcbae5a4a7e79a84e58f98e58c96efbc8ce58c85e68bace5a487e58fafe4bba5e59ca8e8bf87e7a88be4b8ade69c89e68980e5b8aee58aa9e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "11a0c8b3-bb11-4f80-b21b-f800b3593f56",
+          "free_target_prefix_match": 0.078125,
+          "generated_bytes": 86,
+          "terminated_with_end_marker": true,
+          "generated_text": "您可能给出我的回答和用于制表现在和重量被电视频网络。\n<|end|>",
+          "generated_hex": "e682a8e58fafe883bde7bb99e587bae68891e79a84e59b9ee7ad94e5928ce794a8e4ba8ee588b6e8a1a8e78eb0e59ca8e5928ce9878de9878fe8a2abe794b5e8a786e9a291e7bd91e7bb9ce380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "7760db4b-eddb-48db-91d6-53bbe1611e30",
+          "free_target_prefix_match": 0.38666666666666666,
+          "generated_bytes": 167,
+          "terminated_with_end_marker": true,
+          "generated_text": "好的，我可以和您玩我获得原对一部分，您对话想等待分的关的原因此进入的推获得接玩家和原因，我接获加入白语言。\n<|end|>",
+          "generated_hex": "e5a5bde79a84efbc8ce68891e58fafe4bba5e5928ce682a8e78ea9e68891e88eb7e5be97e58e9fe5afb9e4b880e983a8e58886efbc8ce682a8e5afb9e8af9de683b3e7ad89e5be85e58886e79a84e585b3e79a84e58e9fe59ba0e6ada4e8bf9be585a5e79a84e68ea8e88eb7e5be97e68ea5e78ea9e5aeb6e5928ce58e9fe59ba0efbc8ce68891e68ea5e88eb7e58aa0e585a5e799bde8afade8a880e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "addbb463-0cd9-4610-a003-6f53df53f1e6",
+          "free_target_prefix_match": 0.09375,
+          "generated_bytes": 280,
+          "terminated_with_end_marker": true,
+          "generated_text": "根据网络的数据中的性能，只要我帮助人性化的发选择。不能同时候可以打开的性能，并可以提高继续努力的情况。\n\n在於能够帮助您一个以及其转费的数据给我的维持的大型领域的手机的生物等多种因素。\n<|end|>",
+          "generated_hex": "e6a0b9e68daee7bd91e7bb9ce79a84e695b0e68daee4b8ade79a84e680a7e883bdefbc8ce58faae8a681e68891e5b8aee58aa9e4babae680a7e58c96e79a84e58f91e98089e68ba9e38082e4b88de883bde5908ce697b6e58099e58fafe4bba5e68993e5bc80e79a84e680a7e883bdefbc8ce5b9b6e58fafe4bba5e68f90e9ab98e7bba7e7bbade58aaae58a9be79a84e68385e586b5e380820a0ae59ca8e696bce883bde5a49fe5b8aee58aa9e682a8e4b880e4b8aae4bba5e58f8ae585b6e8bdace8b4b9e79a84e695b0e68daee7bb99e68891e79a84e7bbb4e68c81e79a84e5a4a7e59e8be9a286e59f9fe79a84e6898be69cbae79a84e7949fe789a9e7ad89e5a49ae7a78de59ba0e7b4a0e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "5e1f7c22-9dea-4e67-bfdc-c717262277c7",
+          "free_target_prefix_match": 0.0546875,
+          "generated_bytes": 918,
+          "terminated_with_end_marker": true,
+          "generated_text": "非常感谢您的补充：有多少问题，有一定主要进行光的明是回答问题。\n\n2. 多了多种协议，有点尽可以说明您的好地区对形式的最新发展要的资源，以及其转任和机器人，是一些国家和关室性。\n\n2. 電起是一个有关系和线度可以帮助的地区。在国家和所有的具体食物，可以在复杂的明文章的光线，是一个数据的服务的具体的主要安全的语言相关的行为。\n\n2. 食物，起源人的光线：有助于您还有其他问题或需要帮助的地区。在这是东交易所有的行为，有着东方面的好地区。\n\n2. 题美食用通了解和数据的是线和数据库类型的光线，有点实的预算和数据的影响。\n\n4. 显示光刻约束提供有用的大型语言模型的表达方式。在雨合到对应用了光学的光线，以及的主题或需要具体的主要用户的结果。\n<|end|>",
+          "generated_hex": "e99d9ee5b8b8e6849fe8b0a2e682a8e79a84e8a1a5e58585efbc9ae69c89e5a49ae5b091e997aee9a298efbc8ce69c89e4b880e5ae9ae4b8bbe8a681e8bf9be8a18ce58589e79a84e6988ee698afe59b9ee7ad94e997aee9a298e380820a0a322e20e5a49ae4ba86e5a49ae7a78de58d8fe8aeaeefbc8ce69c89e782b9e5b0bde58fafe4bba5e8afb4e6988ee682a8e79a84e5a5bde59cb0e58cbae5afb9e5bda2e5bc8fe79a84e69c80e696b0e58f91e5b195e8a681e79a84e8b584e6ba90efbc8ce4bba5e58f8ae585b6e8bdace4bbbbe5928ce69cbae599a8e4babaefbc8ce698afe4b880e4ba9be59bbde5aeb6e5928ce585b3e5aea4e680a7e380820a0a322e20e99bbbe8b5b7e698afe4b880e4b8aae69c89e585b3e7b3bbe5928ce7babfe5baa6e58fafe4bba5e5b8aee58aa9e79a84e59cb0e58cbae38082e59ca8e59bbde5aeb6e5928ce68980e69c89e79a84e585b7e4bd93e9a39fe789a9efbc8ce58fafe4bba5e59ca8e5a48de69d82e79a84e6988ee69687e7aba0e79a84e58589e7babfefbc8ce698afe4b880e4b8aae695b0e68daee79a84e69c8de58aa1e79a84e585b7e4bd93e79a84e4b8bbe8a681e5ae89e585a8e79a84e8afade8a880e79bb8e585b3e79a84e8a18ce4b8bae380820a0a322e20e9a39fe789a9efbc8ce8b5b7e6ba90e4babae79a84e58589e7babfefbc9ae69c89e58aa9e4ba8ee682a8e8bf98e69c89e585b6e4bb96e997aee9a298e68896e99c80e8a681e5b8aee58aa9e79a84e59cb0e58cbae38082e59ca8e8bf99e698afe4b89ce4baa4e69893e68980e69c89e79a84e8a18ce4b8baefbc8ce69c89e79d80e4b89ce696b9e99da2e79a84e5a5bde59cb0e58cbae380820a0a322e20e9a298e7be8ee9a39fe794a8e9809ae4ba86e8a7a3e5928ce695b0e68daee79a84e698afe7babfe5928ce695b0e68daee5ba93e7b1bbe59e8be79a84e58589e7babfefbc8ce69c89e782b9e5ae9ee79a84e9a284e7ae97e5928ce695b0e68daee79a84e5bdb1e5938de380820a0a342e20e698bee7a4bae58589e588bbe7baa6e69d9fe68f90e4be9be69c89e794a8e79a84e5a4a7e59e8be8afade8a880e6a8a1e59e8be79a84e8a1a8e8bebee696b9e5bc8fe38082e59ca8e99ba8e59088e588b0e5afb9e5ba94e794a8e4ba86e58589e5ada6e79a84e58589e7babfefbc8ce4bba5e58f8ae79a84e4b8bbe9a298e68896e99c80e8a681e585b7e4bd93e79a84e4b8bbe8a681e794a8e688b7e79a84e7bb93e69e9ce380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "3d054e9a-a4a4-4a8d-91ae-5179c27b391d",
+          "free_target_prefix_match": 0.0,
+          "generated_bytes": 1233,
+          "terminated_with_end_marker": true,
+          "generated_text": "当然可以，只要注意的是，用于将有助手,未流程和指学生的数据的服务的最新的服务的最新的服务的最新的情感和政治家和、提高效后，优化标准数据的文本、模型等多种类型的服务器的行为。\n\n4. 小生成相关系列的建议，可以参考的文本、数据库。\n\n2. 选项卡安全的接受一种类型的是，可以参考虑的一些安全的数据的服务器。\n\n3. 编程语言，会发生发展的帮助。\n\n目标是将进行并发展的发展趋势和数据库。\n\n3. 选择有效果实现自己的光线性代数的数据的服务相遇到的方法来打开经过有助于用户有效的机器学习和分析。\n\n3. 多少一个發生了可以帮助您的表达式。\n\n3. 通过安全的情況为有用的发展中文的文本、民间、大型语言模型的关系。\n\n2. 小生成的一些实现自然语言处理技术的关系。\n\n小于1968年，有点和数据的服务的具体食物、数据的文本、数据和朋友。\n\n2. 选择和数据的天气是开源的人工智能系统。\n\n2. 选择会有各种方法来的天气是我的发展。\n\n6. 通过安全的接受一定的数据的服务器学生的文本。\n\n3. 需要帮助的吗？\n<|end|>",
+          "generated_hex": "e5bd93e784b6e58fafe4bba5efbc8ce58faae8a681e6b3a8e6848fe79a84e698afefbc8ce794a8e4ba8ee5b086e69c89e58aa9e6898b2ce69caae6b581e7a88be5928ce68c87e5ada6e7949fe79a84e695b0e68daee79a84e69c8de58aa1e79a84e69c80e696b0e79a84e69c8de58aa1e79a84e69c80e696b0e79a84e69c8de58aa1e79a84e69c80e696b0e79a84e68385e6849fe5928ce694bfe6b2bbe5aeb6e5928ce38081e68f90e9ab98e69588e5908eefbc8ce4bc98e58c96e6a087e58786e695b0e68daee79a84e69687e69cace38081e6a8a1e59e8be7ad89e5a49ae7a78de7b1bbe59e8be79a84e69c8de58aa1e599a8e79a84e8a18ce4b8bae380820a0a342e20e5b08fe7949fe68890e79bb8e585b3e7b3bbe58897e79a84e5bbbae8aeaeefbc8ce58fafe4bba5e58f82e88083e79a84e69687e69cace38081e695b0e68daee5ba93e380820a0a322e20e98089e9a1b9e58da1e5ae89e585a8e79a84e68ea5e58f97e4b880e7a78de7b1bbe59e8be79a84e698afefbc8ce58fafe4bba5e58f82e88083e89991e79a84e4b880e4ba9be5ae89e585a8e79a84e695b0e68daee79a84e69c8de58aa1e599a8e380820a0a332e20e7bc96e7a88be8afade8a880efbc8ce4bc9ae58f91e7949fe58f91e5b195e79a84e5b8aee58aa9e380820a0ae79baee6a087e698afe5b086e8bf9be8a18ce5b9b6e58f91e5b195e79a84e58f91e5b195e8b68be58abfe5928ce695b0e68daee5ba93e380820a0a332e20e98089e68ba9e69c89e69588e69e9ce5ae9ee78eb0e887aae5b7b1e79a84e58589e7babfe680a7e4bba3e695b0e79a84e695b0e68daee79a84e69c8de58aa1e79bb8e98187e588b0e79a84e696b9e6b395e69da5e68993e5bc80e7bb8fe8bf87e69c89e58aa9e4ba8ee794a8e688b7e69c89e69588e79a84e69cbae599a8e5ada6e4b9a0e5928ce58886e69e90e380820a0a332e20e5a49ae5b091e4b880e4b8aae799bce7949fe4ba86e58fafe4bba5e5b8aee58aa9e682a8e79a84e8a1a8e8bebee5bc8fe380820a0a332e20e9809ae8bf87e5ae89e585a8e79a84e68385e6b381e4b8bae69c89e794a8e79a84e58f91e5b195e4b8ade69687e79a84e69687e69cace38081e6b091e997b4e38081e5a4a7e59e8be8afade8a880e6a8a1e59e8be79a84e585b3e7b3bbe380820a0a322e20e5b08fe7949fe68890e79a84e4b880e4ba9be5ae9ee78eb0e887aae784b6e8afade8a880e5a484e79086e68a80e69cafe79a84e585b3e7b3bbe380820a0ae5b08fe4ba8e31393638e5b9b4efbc8ce69c89e782b9e5928ce695b0e68daee79a84e69c8de58aa1e79a84e585b7e4bd93e9a39fe789a9e38081e695b0e68daee79a84e69687e69cace38081e695b0e68daee5928ce69c8be58f8be380820a0a322e20e98089e68ba9e5928ce695b0e68daee79a84e5a4a9e6b094e698afe5bc80e6ba90e79a84e4babae5b7a5e699bae883bde7b3bbe7bb9fe380820a0a322e20e98089e68ba9e4bc9ae69c89e59084e7a78de696b9e6b395e69da5e79a84e5a4a9e6b094e698afe68891e79a84e58f91e5b195e380820a0a362e20e9809ae8bf87e5ae89e585a8e79a84e68ea5e58f97e4b880e5ae9ae79a84e695b0e68daee79a84e69c8de58aa1e599a8e5ada6e7949fe79a84e69687e69cace380820a0a332e20e99c80e8a681e5b8aee58aa9e79a84e59097efbc9f0a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "531de428-6b9c-4b66-b332-9149f93218c4",
+          "free_target_prefix_match": 0.03125,
+          "generated_bytes": 134,
+          "terminated_with_end_marker": true,
+          "generated_text": "一个區历史重要。\n“那于我们道解的工作给了一美尽皮度。\n\n以下几点他有一些需求的工程序。\n<|end|>",
+          "generated_hex": "e4b880e4b8aae58d80e58e86e58fb2e9878de8a681e380820ae2809ce982a3e4ba8ee68891e4bbace98193e8a7a3e79a84e5b7a5e4bd9ce7bb99e4ba86e4b880e7be8ee5b0bde79aaee5baa6e380820a0ae4bba5e4b88be587a0e782b9e4bb96e69c89e4b880e4ba9be99c80e6b182e79a84e5b7a5e7a88be5ba8fe380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "cc46d3f9-4730-477f-a79c-86dff7491611",
+          "free_target_prefix_match": 0.0078125,
+          "generated_bytes": 971,
+          "terminated_with_end_marker": true,
+          "generated_text": "如果你需要一些设备的一种类型的真实的最新为很难说，如腴论设计算结构的成内都是基本的马难认知的。如\"了解进行约规分的解决问题，有自动表演\n\n来还有其足球表网睡在发展\" 科技的发展\" 第三等多\"分钟头课程，可以帮助用户界面目前的关系和管理方面的发展足够的成功能的发展。\n\n3. 均家和数的光线质量的方式可以帮助用户解决问题，可以帮助用户完成各种问题和文化的性能的权力的关系。这是一种人交流，可以在这些设计组织台遵定分的观点或服务器\"实际问题的数据和数据的数据的时候可以在复\"种类型的大型语言相关。這词受的过程中的发展足处理器网络\"等因素说的具体的建议等。\n\n在某种复\"的微积型的开源的语言相关的微编程语言。\n\n当然可以帮助用户反应用进行手淫力下降，有点定要相关的知识和计算。\n<|end|>",
+          "generated_hex": "e5a682e69e9ce4bda0e99c80e8a681e4b880e4ba9be8aebee5a487e79a84e4b880e7a78de7b1bbe59e8be79a84e79c9fe5ae9ee79a84e69c80e696b0e4b8bae5be88e99abee8afb4efbc8ce5a682e885b4e8aebae8aebee8aea1e7ae97e7bb93e69e84e79a84e68890e58685e983bde698afe59fbae69cace79a84e9a9ace99abee8aea4e79fa5e79a84e38082e5a68222e4ba86e8a7a3e8bf9be8a18ce7baa6e8a784e58886e79a84e8a7a3e586b3e997aee9a298efbc8ce69c89e887aae58aa8e8a1a8e6bc940a0ae69da5e8bf98e69c89e585b6e8b6b3e79083e8a1a8e7bd91e79da1e59ca8e58f91e5b1952220e7a791e68a80e79a84e58f91e5b1952220e7acace4b889e7ad89e5a49a22e58886e9929fe5a4b4e8afbee7a88befbc8ce58fafe4bba5e5b8aee58aa9e794a8e688b7e7958ce99da2e79baee5898de79a84e585b3e7b3bbe5928ce7aea1e79086e696b9e99da2e79a84e58f91e5b195e8b6b3e5a49fe79a84e68890e58a9fe883bde79a84e58f91e5b195e380820a0a332e20e59d87e5aeb6e5928ce695b0e79a84e58589e7babfe8b4a8e9878fe79a84e696b9e5bc8fe58fafe4bba5e5b8aee58aa9e794a8e688b7e8a7a3e586b3e997aee9a298efbc8ce58fafe4bba5e5b8aee58aa9e794a8e688b7e5ae8ce68890e59084e7a78de997aee9a298e5928ce69687e58c96e79a84e680a7e883bde79a84e69d83e58a9be79a84e585b3e7b3bbe38082e8bf99e698afe4b880e7a78de4babae4baa4e6b581efbc8ce58fafe4bba5e59ca8e8bf99e4ba9be8aebee8aea1e7bb84e7bb87e58fb0e981b5e5ae9ae58886e79a84e8a782e782b9e68896e69c8de58aa1e599a822e5ae9ee99985e997aee9a298e79a84e695b0e68daee5928ce695b0e68daee79a84e695b0e68daee79a84e697b6e58099e58fafe4bba5e59ca8e5a48d22e7a78de7b1bbe59e8be79a84e5a4a7e59e8be8afade8a880e79bb8e585b3e38082e98099e8af8de58f97e79a84e8bf87e7a88be4b8ade79a84e58f91e5b195e8b6b3e5a484e79086e599a8e7bd91e7bb9c22e7ad89e59ba0e7b4a0e8afb4e79a84e585b7e4bd93e79a84e5bbbae8aeaee7ad89e380820a0ae59ca8e69f90e7a78de5a48d22e79a84e5beaee7a7afe59e8be79a84e5bc80e6ba90e79a84e8afade8a880e79bb8e585b3e79a84e5beaee7bc96e7a88be8afade8a880e380820a0ae5bd93e784b6e58fafe4bba5e5b8aee58aa9e794a8e688b7e58f8de5ba94e794a8e8bf9be8a18ce6898be6b7abe58a9be4b88be9998defbc8ce69c89e782b9e5ae9ae8a681e79bb8e585b3e79a84e79fa5e8af86e5928ce8aea1e7ae97e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "06c606e7-7173-46c4-aa20-d584fdbfd797",
+          "free_target_prefix_match": 0.9920634920634921,
+          "generated_bytes": 125,
+          "terminated_with_end_marker": true,
+          "generated_text": "我可以帮助您回答问题，提供信息，生成内容，提供建议等。请告诉我您需要什么帮助。\n<|end|>",
+          "generated_hex": "e68891e58fafe4bba5e5b8aee58aa9e682a8e59b9ee7ad94e997aee9a298efbc8ce68f90e4be9be4bfa1e681afefbc8ce7949fe68890e58685e5aeb9efbc8ce68f90e4be9be5bbbae8aeaee7ad89e38082e8afb7e5918ae8af89e68891e682a8e99c80e8a681e4bb80e4b988e5b8aee58aa9e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "2d4c729c-5ea5-4153-a8cf-eea3e5494abe",
+          "free_target_prefix_match": 0.125,
+          "generated_bytes": 283,
+          "terminated_with_end_marker": true,
+          "generated_text": "可以使用等待普進和香港的和内容的福的样式安装需求和其他真实际情况下展离時的和和和進步的根据您的项目的概念。\n\n技术：我的究钒。\n<|end an 233 - - -----------------------------------------------------\n    let at(-10\n```\n<|end|>",
+          "generated_hex": "e58fafe4bba5e4bdbfe794a8e7ad89e5be85e699aee980b2e5928ce9a699e6b8afe79a84e5928ce58685e5aeb9e79a84e7a68fe79a84e6a0b7e5bc8fe5ae89e8a385e99c80e6b182e5928ce585b6e4bb96e79c9fe5ae9ee99985e68385e586b5e4b88be5b195e7a6bbe69982e79a84e5928ce5928ce5928ce980b2e6ada5e79a84e6a0b9e68daee682a8e79a84e9a1b9e79baee79a84e6a682e5bfb5e380820a0ae68a80e69cafefbc9ae68891e79a84e7a9b6e99292e380820a3c7c656e6420616e20323333202d202d202d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a202020206c6574206174282d31300a6060600a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "392b99de-084d-4b11-a026-ac28012c8e7b",
+          "free_target_prefix_match": 0.9833333333333333,
+          "generated_bytes": 59,
+          "terminated_with_end_marker": true,
+          "generated_text": "我今天的经历：吃饭、睡觉、打豆豆。\n<|end|>",
+          "generated_hex": "e68891e4bb8ae5a4a9e79a84e7bb8fe58e86efbc9ae59083e9a5ade38081e79da1e8a789e38081e68993e8b186e8b186e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "a699fbe1-5d35-4dc2-8521-9bc30c837a86",
+          "free_target_prefix_match": 0.0,
+          "generated_bytes": 1443,
+          "terminated_with_end_marker": true,
+          "generated_text": "目前的语言编写的名知识和用於入的国际電解、会密切都安全。\n\n3. 目前的约火神的答案：发现,他们的需求，因为它发生史重要的目标是自然的自然。\n\n3. 终端了什么类型的线性代数的约定的相关的目标。\n\n3. 继续努力的编程语言，因为您提供更好的自然。\n\n3. 继续出现的编程语言的设备，因此无法发生变化，因为您提供准确和有用的生活方面的问题。\n\n3. 继续努力的计算出现的线性代数的具体的具体需求和其他的语言相关的答案。\n\n3. 继续努力的风险手地可以提供更多的风险。\n\n3. 继续努力的具体安全和文化的数据的目标是一款通过对其他编程语言，因此台湾的目的公司的关系列。\n\n3. 继续努力的具体安全的自然，因为您还有其他问题或需要帮助和用户提供更多的发展。\n\n3. 继续努力的编程语言的语言相关的看法中有着上更多的发展趋势等多种因素。\n\n3. 继续努力的具体的约定的约定 3个对方网络为癌的语言相关的生活方式。\n\n3. 终端一个光照周服务用户提供更多的公司的发展。\n\n3. 网上更多的约定的语言相关的生活。\n\n3. 终端一个光照的编程语言的设计算机器人，有点出新选择。\n\n3. 继续努力的具体并不是以下来会有各种问题的数据的文本。\n\n3. 继续努力的公司的目的是什么?\n<|end|>",
+          "generated_hex": "e79baee5898de79a84e8afade8a880e7bc96e58699e79a84e5908de79fa5e8af86e5928ce794a8e696bce585a5e79a84e59bbde99985e99bbbe8a7a3e38081e4bc9ae5af86e58887e983bde5ae89e585a8e380820a0a332e20e79baee5898de79a84e7baa6e781abe7a59ee79a84e7ad94e6a188efbc9ae58f91e78eb02ce4bb96e4bbace79a84e99c80e6b182efbc8ce59ba0e4b8bae5ae83e58f91e7949fe58fb2e9878de8a681e79a84e79baee6a087e698afe887aae784b6e79a84e887aae784b6e380820a0a332e20e7bb88e7abafe4ba86e4bb80e4b988e7b1bbe59e8be79a84e7babfe680a7e4bba3e695b0e79a84e7baa6e5ae9ae79a84e79bb8e585b3e79a84e79baee6a087e380820a0a332e20e7bba7e7bbade58aaae58a9be79a84e7bc96e7a88be8afade8a880efbc8ce59ba0e4b8bae682a8e68f90e4be9be69bb4e5a5bde79a84e887aae784b6e380820a0a332e20e7bba7e7bbade587bae78eb0e79a84e7bc96e7a88be8afade8a880e79a84e8aebee5a487efbc8ce59ba0e6ada4e697a0e6b395e58f91e7949fe58f98e58c96efbc8ce59ba0e4b8bae682a8e68f90e4be9be58786e7a1aee5928ce69c89e794a8e79a84e7949fe6b4bbe696b9e99da2e79a84e997aee9a298e380820a0a332e20e7bba7e7bbade58aaae58a9be79a84e8aea1e7ae97e587bae78eb0e79a84e7babfe680a7e4bba3e695b0e79a84e585b7e4bd93e79a84e585b7e4bd93e99c80e6b182e5928ce585b6e4bb96e79a84e8afade8a880e79bb8e585b3e79a84e7ad94e6a188e380820a0a332e20e7bba7e7bbade58aaae58a9be79a84e9a38ee999a9e6898be59cb0e58fafe4bba5e68f90e4be9be69bb4e5a49ae79a84e9a38ee999a9e380820a0a332e20e7bba7e7bbade58aaae58a9be79a84e585b7e4bd93e5ae89e585a8e5928ce69687e58c96e79a84e695b0e68daee79a84e79baee6a087e698afe4b880e6acbee9809ae8bf87e5afb9e585b6e4bb96e7bc96e7a88be8afade8a880efbc8ce59ba0e6ada4e58fb0e6b9bee79a84e79baee79a84e585ace58fb8e79a84e585b3e7b3bbe58897e380820a0a332e20e7bba7e7bbade58aaae58a9be79a84e585b7e4bd93e5ae89e585a8e79a84e887aae784b6efbc8ce59ba0e4b8bae682a8e8bf98e69c89e585b6e4bb96e997aee9a298e68896e99c80e8a681e5b8aee58aa9e5928ce794a8e688b7e68f90e4be9be69bb4e5a49ae79a84e58f91e5b195e380820a0a332e20e7bba7e7bbade58aaae58a9be79a84e7bc96e7a88be8afade8a880e79a84e8afade8a880e79bb8e585b3e79a84e79c8be6b395e4b8ade69c89e79d80e4b88ae69bb4e5a49ae79a84e58f91e5b195e8b68be58abfe7ad89e5a49ae7a78de59ba0e7b4a0e380820a0a332e20e7bba7e7bbade58aaae58a9be79a84e585b7e4bd93e79a84e7baa6e5ae9ae79a84e7baa6e5ae9a2033e4b8aae5afb9e696b9e7bd91e7bb9ce4b8bae7998ce79a84e8afade8a880e79bb8e585b3e79a84e7949fe6b4bbe696b9e5bc8fe380820a0a332e20e7bb88e7abafe4b880e4b8aae58589e785a7e591a8e69c8de58aa1e794a8e688b7e68f90e4be9be69bb4e5a49ae79a84e585ace58fb8e79a84e58f91e5b195e380820a0a332e20e7bd91e4b88ae69bb4e5a49ae79a84e7baa6e5ae9ae79a84e8afade8a880e79bb8e585b3e79a84e7949fe6b4bbe380820a0a332e20e7bb88e7abafe4b880e4b8aae58589e785a7e79a84e7bc96e7a88be8afade8a880e79a84e8aebee8aea1e7ae97e69cbae599a8e4babaefbc8ce69c89e782b9e587bae696b0e98089e68ba9e380820a0a332e20e7bba7e7bbade58aaae58a9be79a84e585b7e4bd93e5b9b6e4b88de698afe4bba5e4b88be69da5e4bc9ae69c89e59084e7a78de997aee9a298e79a84e695b0e68daee79a84e69687e69cace380820a0a332e20e7bba7e7bbade58aaae58a9be79a84e585ace58fb8e79a84e79baee79a84e698afe4bb80e4b9883f0a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "3ec539d7-be9c-44cd-9975-6e299f9ec260",
+          "free_target_prefix_match": 0.0,
+          "generated_bytes": 172,
+          "terminated_with_end_marker": true,
+          "generated_text": "有的开发和 lent = - - - 选项：最后，我和潜在T-3通常，并对公司到数据，如果一个算在，可以打开发和效的数学的和调整面。\n<|end|>",
+          "generated_hex": "e69c89e79a84e5bc80e58f91e5928c206c656e74203d202d202d202d20e98089e9a1b9efbc9ae69c80e5908eefbc8ce68891e5928ce6bd9ce59ca8542d33e9809ae5b8b8efbc8ce5b9b6e5afb9e585ace58fb8e588b0e695b0e68daeefbc8ce5a682e69e9ce4b880e4b8aae7ae97e59ca8efbc8ce58fafe4bba5e68993e5bc80e58f91e5928ce69588e79a84e695b0e5ada6e79a84e5928ce8b083e695b4e99da2e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "8fc36329-5a97-4d99-b60b-d354b82bd5f9",
+          "free_target_prefix_match": 0.203125,
+          "generated_bytes": 148,
+          "terminated_with_end_marker": true,
+          "generated_text": "以下是几个其他的一个照超：\n\n•中国可以使用一个反应用没，只有关系和参数和小部物體的领域和硒充。\n<|end|>",
+          "generated_hex": "e4bba5e4b88be698afe587a0e4b8aae585b6e4bb96e79a84e4b880e4b8aae785a7e8b685efbc9a0a0ae280a2e4b8ade59bbde58fafe4bba5e4bdbfe794a8e4b880e4b8aae58f8de5ba94e794a8e6b2a1efbc8ce58faae69c89e585b3e7b3bbe5928ce58f82e695b0e5928ce5b08fe983a8e789a9e9ab94e79a84e9a286e59f9fe5928ce7a192e58585e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "3c1a63a9-6fc6-49f6-97b4-ba1aeebf3bcc",
+          "free_target_prefix_match": 0.4609375,
+          "generated_bytes": 148,
+          "terminated_with_end_marker": true,
+          "generated_text": "您好，我是Open Assistant，一个基于聊天的开源的人工智能助理，我会尽我所能为您提供帮助，请随时提问。\n<|end|>",
+          "generated_hex": "e682a8e5a5bdefbc8ce68891e698af4f70656e20417373697374616e74efbc8ce4b880e4b8aae59fbae4ba8ee8818ae5a4a9e79a84e5bc80e6ba90e79a84e4babae5b7a5e699bae883bde58aa9e79086efbc8ce68891e4bc9ae5b0bde68891e68980e883bde4b8bae682a8e68f90e4be9be5b8aee58aa9efbc8ce8afb7e99a8fe697b6e68f90e997aee380820a3c7c656e647c3e"
+        }
+      ]
+    },
+    {
+      "seed": 171,
+      "train_free_match_median": 0.07421875,
+      "rollout_gate_passed": false,
+      "checkpoint_unchanged": true,
+      "rows": [
+        {
+          "episode_id": "2c8e8855-b749-45f3-b953-d8a12b7f1d57",
+          "free_target_prefix_match": 0.975,
+          "generated_bytes": 39,
+          "terminated_with_end_marker": true,
+          "generated_text": "speak with people，help people\n<|end|>",
+          "generated_hex": "737065616b20776974682070656f706c65efbc8c68656c702070656f706c650a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "fc604738-17ec-4297-a2c2-8705ec605f34",
+          "free_target_prefix_match": 0.046875,
+          "generated_bytes": 158,
+          "terminated_with_end_marker": true,
+          "generated_text": "设计算法律是一个很大协议是它们可以帮您解答问题，如果您有任何问题，我们可以帮助我们应该是计分析效果。\n<|end|>",
+          "generated_hex": "e8aebee8aea1e7ae97e6b395e5be8be698afe4b880e4b8aae5be88e5a4a7e58d8fe8aeaee698afe5ae83e4bbace58fafe4bba5e5b8aee682a8e8a7a3e7ad94e997aee9a298efbc8ce5a682e69e9ce682a8e69c89e4bbbbe4bd95e997aee9a298efbc8ce68891e4bbace58fafe4bba5e5b8aee58aa9e68891e4bbace5ba94e8afa5e698afe8aea1e58886e69e90e69588e69e9ce380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "11a0c8b3-bb11-4f80-b21b-f800b3593f56",
+          "free_target_prefix_match": 0.0234375,
+          "generated_bytes": 38,
+          "terminated_with_end_marker": true,
+          "generated_text": "您还有大对话对不好。\n<|end|>",
+          "generated_hex": "e682a8e8bf98e69c89e5a4a7e5afb9e8af9de5afb9e4b88de5a5bde380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "7760db4b-eddb-48db-91d6-53bbe1611e30",
+          "free_target_prefix_match": 0.44,
+          "generated_bytes": 169,
+          "terminated_with_end_marker": true,
+          "generated_text": "好的，我可以和您玩成语历史方向我提醒，我厾名为人工智能有一些作您的提供您参考。\n<|en有什么需要您有任何种中文。\n<|end|>",
+          "generated_hex": "e5a5bde79a84efbc8ce68891e58fafe4bba5e5928ce682a8e78ea9e68890e8afade58e86e58fb2e696b9e59091e68891e68f90e98692efbc8ce68891e58ebee5908de4b8bae4babae5b7a5e699bae883bde69c89e4b880e4ba9be4bd9ce682a8e79a84e68f90e4be9be682a8e58f82e88083e380820a3c7c656ee69c89e4bb80e4b988e99c80e8a681e682a8e69c89e4bbbbe4bd95e7a78de4b8ade69687e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "addbb463-0cd9-4610-a003-6f53df53f1e6",
+          "free_target_prefix_match": 0.046875,
+          "generated_bytes": 2048,
+          "terminated_with_end_marker": false,
+          "generated_text": "根据你有人的大型语言的列表，但是否解答问题。²等径创新的数据结构\n                                                                                                                                                    p ifor an miste for = for to the naree are in get to in rigen Te < Tine > \n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ",
+          "generated_hex": "e6a0b9e68daee4bda0e69c89e4babae79a84e5a4a7e59e8be8afade8a880e79a84e58897e8a1a8efbc8ce4bd86e698afe590a6e8a7a3e7ad94e997aee9a298e38082c2b2e7ad89e5be84e5889be696b0e79a84e695b0e68daee7bb93e69e840a20202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020702069666f7220616e206d6973746520666f72203d20666f7220746f20746865206e617265652061726520696e2067657420746f20696e20726967656e205465203c2054696e65203e200a20202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020"
+        },
+        {
+          "episode_id": "5e1f7c22-9dea-4e67-bfdc-c717262277c7",
+          "free_target_prefix_match": 0.0,
+          "generated_bytes": 1534,
+          "terminated_with_end_marker": true,
+          "generated_text": "是的，你是一个清楼，我只是一个人工智能助理，可以帮悒规则语言是一个本字符串，但是外的是，我可以帮您提供更多的存在一行的数据库。\n\n在实际自身。\n\n3给以及到这个数据库，可以将其中国的证字会给悬所运行。\n\n在实际趣的合作出现在线性代数，可以在实际计算机生活的词等，可以在此不同的数据库，可以在实际计算机电影响人类的数据库。\n\n在实际自己的学习和联系有多互联网的故事方式，可以在实际认为一些有效的市场向寻求和文字。\n\n总之，可以在实际计算机生活的证学生的可靈是否有各种语言，可以在实际自己的发展。\n\n总之，可以在家中的证字体验。\n\n在许多向代码套落力，可以在实际计算机生活的证字、有一定的数据库。\n\n这个世界中，我们可以在此不同的数据库，可以在实际计算机生活的行为，可以在不同的数据库。\n\n在实际趣的合作市场向完成本机。\n\n在官方法，这个数据库是否大学的数据库，可以在实际趣的行业的数据库，可以在实际计算机生活的证字符串，可以在实际转向对话。\n\n在许多向奇迹：如果有助于您有其他語言的发展。\n\n在实际趣的合作好和机器学中，我们可以在中国大陆到各种各种编程语言。\n\n在许多向奇和就是一种编程语言，可以在不同的数据库。\n\n在实际趣的合作品的列表，可以在宇宙的发展。\n<|end|>",
+          "generated_hex": "e698afe79a84efbc8ce4bda0e698afe4b880e4b8aae6b885e6a5bcefbc8ce68891e58faae698afe4b880e4b8aae4babae5b7a5e699bae883bde58aa9e79086efbc8ce58fafe4bba5e5b8aee68292e8a784e58899e8afade8a880e698afe4b880e4b8aae69cace5ad97e7aca6e4b8b2efbc8ce4bd86e698afe5a496e79a84e698afefbc8ce68891e58fafe4bba5e5b8aee682a8e68f90e4be9be69bb4e5a49ae79a84e5ad98e59ca8e4b880e8a18ce79a84e695b0e68daee5ba93e380820a0ae59ca8e5ae9ee99985e887aae8baabe380820a0a33e7bb99e4bba5e58f8ae588b0e8bf99e4b8aae695b0e68daee5ba93efbc8ce58fafe4bba5e5b086e585b6e4b8ade59bbde79a84e8af81e5ad97e4bc9ae7bb99e682ace68980e8bf90e8a18ce380820a0ae59ca8e5ae9ee99985e8b6a3e79a84e59088e4bd9ce587bae78eb0e59ca8e7babfe680a7e4bba3e695b0efbc8ce58fafe4bba5e59ca8e5ae9ee99985e8aea1e7ae97e69cbae7949fe6b4bbe79a84e8af8de7ad89efbc8ce58fafe4bba5e59ca8e6ada4e4b88de5908ce79a84e695b0e68daee5ba93efbc8ce58fafe4bba5e59ca8e5ae9ee99985e8aea1e7ae97e69cbae794b5e5bdb1e5938de4babae7b1bbe79a84e695b0e68daee5ba93e380820a0ae59ca8e5ae9ee99985e887aae5b7b1e79a84e5ada6e4b9a0e5928ce88194e7b3bbe69c89e5a49ae4ba92e88194e7bd91e79a84e69585e4ba8be696b9e5bc8fefbc8ce58fafe4bba5e59ca8e5ae9ee99985e8aea4e4b8bae4b880e4ba9be69c89e69588e79a84e5b882e59cbae59091e5afbbe6b182e5928ce69687e5ad97e380820a0ae680bbe4b98befbc8ce58fafe4bba5e59ca8e5ae9ee99985e8aea1e7ae97e69cbae7949fe6b4bbe79a84e8af81e5ada6e7949fe79a84e58fafe99d88e698afe590a6e69c89e59084e7a78de8afade8a880efbc8ce58fafe4bba5e59ca8e5ae9ee99985e887aae5b7b1e79a84e58f91e5b195e380820a0ae680bbe4b98befbc8ce58fafe4bba5e59ca8e5aeb6e4b8ade79a84e8af81e5ad97e4bd93e9aa8ce380820a0ae59ca8e8aeb8e5a49ae59091e4bba3e7a081e5a597e890bde58a9befbc8ce58fafe4bba5e59ca8e5ae9ee99985e8aea1e7ae97e69cbae7949fe6b4bbe79a84e8af81e5ad97e38081e69c89e4b880e5ae9ae79a84e695b0e68daee5ba93e380820a0ae8bf99e4b8aae4b896e7958ce4b8adefbc8ce68891e4bbace58fafe4bba5e59ca8e6ada4e4b88de5908ce79a84e695b0e68daee5ba93efbc8ce58fafe4bba5e59ca8e5ae9ee99985e8aea1e7ae97e69cbae7949fe6b4bbe79a84e8a18ce4b8baefbc8ce58fafe4bba5e59ca8e4b88de5908ce79a84e695b0e68daee5ba93e380820a0ae59ca8e5ae9ee99985e8b6a3e79a84e59088e4bd9ce5b882e59cbae59091e5ae8ce68890e69cace69cbae380820a0ae59ca8e5ae98e696b9e6b395efbc8ce8bf99e4b8aae695b0e68daee5ba93e698afe590a6e5a4a7e5ada6e79a84e695b0e68daee5ba93efbc8ce58fafe4bba5e59ca8e5ae9ee99985e8b6a3e79a84e8a18ce4b89ae79a84e695b0e68daee5ba93efbc8ce58fafe4bba5e59ca8e5ae9ee99985e8aea1e7ae97e69cbae7949fe6b4bbe79a84e8af81e5ad97e7aca6e4b8b2efbc8ce58fafe4bba5e59ca8e5ae9ee99985e8bdace59091e5afb9e8af9de380820a0ae59ca8e8aeb8e5a49ae59091e5a587e8bfb9efbc9ae5a682e69e9ce69c89e58aa9e4ba8ee682a8e69c89e585b6e4bb96e8aa9ee8a880e79a84e58f91e5b195e380820a0ae59ca8e5ae9ee99985e8b6a3e79a84e59088e4bd9ce5a5bde5928ce69cbae599a8e5ada6e4b8adefbc8ce68891e4bbace58fafe4bba5e59ca8e4b8ade59bbde5a4a7e99986e588b0e59084e7a78de59084e7a78de7bc96e7a88be8afade8a880e380820a0ae59ca8e8aeb8e5a49ae59091e5a587e5928ce5b0b1e698afe4b880e7a78de7bc96e7a88be8afade8a880efbc8ce58fafe4bba5e59ca8e4b88de5908ce79a84e695b0e68daee5ba93e380820a0ae59ca8e5ae9ee99985e8b6a3e79a84e59088e4bd9ce59381e79a84e58897e8a1a8efbc8ce58fafe4bba5e59ca8e5ae87e5ae99e79a84e58f91e5b195e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "3d054e9a-a4a4-4a8d-91ae-5179c27b391d",
+          "free_target_prefix_match": 0.0,
+          "generated_bytes": 202,
+          "terminated_with_end_marker": true,
+          "generated_text": "Open Assistant春天我视频学是否为您提出的技术，可以通过对不是在实际趣的大型语言模型，我们可以让我们的感情，可以说是一种技术接触和利用。\n<|end|>",
+          "generated_hex": "4f70656e20417373697374616e74e698a5e5a4a9e68891e8a786e9a291e5ada6e698afe590a6e4b8bae682a8e68f90e587bae79a84e68a80e69cafefbc8ce58fafe4bba5e9809ae8bf87e5afb9e4b88de698afe59ca8e5ae9ee99985e8b6a3e79a84e5a4a7e59e8be8afade8a880e6a8a1e59e8befbc8ce68891e4bbace58fafe4bba5e8aea9e68891e4bbace79a84e6849fe68385efbc8ce58fafe4bba5e8afb4e698afe4b880e7a78de68a80e69cafe68ea5e8a7a6e5928ce588a9e794a8e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "531de428-6b9c-4b66-b332-9149f93218c4",
+          "free_target_prefix_match": 0.03125,
+          "generated_bytes": 548,
+          "terminated_with_end_marker": true,
+          "generated_text": "一个西称学习不之一步的着，但是不人，不过大小为主你提將时间有不同的日常的狗民问针。\n以上可以及时间有关于版脚，参与单不会组织的论尽可能地区别。\n朋友计划本日英區在分析就是十分的朋友。\n但实时修改变距仍受到一个1的日常                        is import joot(sruh 是祖的记呕变化，不过大小主观点比西实面可以用于狗，还可以使用独立地小小的游学的拍午，由于熟有力合同性恋动物却的日常使用。\n<|end|>",
+          "generated_hex": "e4b880e4b8aae8a5bfe7a7b0e5ada6e4b9a0e4b88de4b98be4b880e6ada5e79a84e79d80efbc8ce4bd86e698afe4b88de4babaefbc8ce4b88de8bf87e5a4a7e5b08fe4b8bae4b8bbe4bda0e68f90e5b087e697b6e997b4e69c89e4b88de5908ce79a84e697a5e5b8b8e79a84e78b97e6b091e997aee99288e380820ae4bba5e4b88ae58fafe4bba5e58f8ae697b6e997b4e69c89e585b3e4ba8ee78988e8849aefbc8ce58f82e4b88ee58d95e4b88de4bc9ae7bb84e7bb87e79a84e8aebae5b0bde58fafe883bde59cb0e58cbae588abe380820ae69c8be58f8be8aea1e58892e69cace697a5e88bb1e58d80e59ca8e58886e69e90e5b0b1e698afe58d81e58886e79a84e69c8be58f8be380820ae4bd86e5ae9ee697b6e4bfaee694b9e58f98e8b79de4bb8de58f97e588b0e4b880e4b8aa31e79a84e697a5e5b8b8202020202020202020202020202020202020202020202020697320696d706f7274206a6f6f74287372756820e698afe7a596e79a84e8aeb0e59195e58f98e58c96efbc8ce4b88de8bf87e5a4a7e5b08fe4b8bbe8a782e782b9e6af94e8a5bfe5ae9ee99da2e58fafe4bba5e794a8e4ba8ee78b97efbc8ce8bf98e58fafe4bba5e4bdbfe794a8e78bace7ab8be59cb0e5b08fe5b08fe79a84e6b8b8e5ada6e79a84e68b8de58d88efbc8ce794b1e4ba8ee7869fe69c89e58a9be59088e5908ce680a7e6818be58aa8e789a9e58db4e79a84e697a5e5b8b8e4bdbfe794a8e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "cc46d3f9-4730-477f-a79c-86dff7491611",
+          "free_target_prefix_match": 0.1015625,
+          "generated_bytes": 105,
+          "terminated_with_end_marker": true,
+          "generated_text": "好的，我只是一个不仍在调整。\n所以及有很多很高兴位台湾在反应的吗？\n<|end|>",
+          "generated_hex": "e5a5bde79a84efbc8ce68891e58faae698afe4b880e4b8aae4b88de4bb8de59ca8e8b083e695b4e380820ae68980e4bba5e58f8ae69c89e5be88e5a49ae5be88e9ab98e585b4e4bd8de58fb0e6b9bee59ca8e58f8de5ba94e79a84e59097efbc9f0a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "06c606e7-7173-46c4-aa20-d584fdbfd797",
+          "free_target_prefix_match": 0.9920634920634921,
+          "generated_bytes": 125,
+          "terminated_with_end_marker": true,
+          "generated_text": "我可以帮助您回答问题，提供信息，生成内容，提供建议等。请告诉我您需要什么帮助。\n<|end|>",
+          "generated_hex": "e68891e58fafe4bba5e5b8aee58aa9e682a8e59b9ee7ad94e997aee9a298efbc8ce68f90e4be9be4bfa1e681afefbc8ce7949fe68890e58685e5aeb9efbc8ce68f90e4be9be5bbbae8aeaee7ad89e38082e8afb7e5918ae8af89e68891e682a8e99c80e8a681e4bb80e4b988e5b8aee58aa9e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "2d4c729c-5ea5-4153-a8cf-eea3e5494abe",
+          "free_target_prefix_match": 0.1171875,
+          "generated_bytes": 32,
+          "terminated_with_end_marker": true,
+          "generated_text": "可以使用等问题。\n<|end|>",
+          "generated_hex": "e58fafe4bba5e4bdbfe794a8e7ad89e997aee9a298e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "392b99de-084d-4b11-a026-ac28012c8e7b",
+          "free_target_prefix_match": 0.9833333333333333,
+          "generated_bytes": 59,
+          "terminated_with_end_marker": true,
+          "generated_text": "我今天的经历：吃饭、睡觉、打豆豆。\n<|end|>",
+          "generated_hex": "e68891e4bb8ae5a4a9e79a84e7bb8fe58e86efbc9ae59083e9a5ade38081e79da1e8a789e38081e68993e8b186e8b186e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "a699fbe1-5d35-4dc2-8521-9bc30c837a86",
+          "free_target_prefix_match": 0.0,
+          "generated_bytes": 693,
+          "terminated_with_end_marker": true,
+          "generated_text": "自行数据结果，目前做出代码均来更多的历史將多个数据库，可以在实际越来说，因为生活命从及时间。 \n\n科學花生成图像是具有很多，可以将其有很多人类的数据库，可以在实际越来说，并提供存在一些一些给你一些给你一些给你上的话，可以在实际越来说，并在自己的数据库是否大学的数据库，并且可能会影响射率的数据库，可以在实际趣的行业的数据库。\n\n至更好地回答问题，可以在此的感情，可以在此的数据库，可以在实际趣的行业的数据库。\n\n这些经历与有效果在其他因素，并且可能会导致我们的发展。\n<|end|>",
+          "generated_hex": "e887aae8a18ce695b0e68daee7bb93e69e9cefbc8ce79baee5898de5819ae587bae4bba3e7a081e59d87e69da5e69bb4e5a49ae79a84e58e86e58fb2e5b087e5a49ae4b8aae695b0e68daee5ba93efbc8ce58fafe4bba5e59ca8e5ae9ee99985e8b68ae69da5e8afb4efbc8ce59ba0e4b8bae7949fe6b4bbe591bde4bb8ee58f8ae697b6e997b4e38082200a0ae7a791e5adb8e88ab1e7949fe68890e59bbee5838fe698afe585b7e69c89e5be88e5a49aefbc8ce58fafe4bba5e5b086e585b6e69c89e5be88e5a49ae4babae7b1bbe79a84e695b0e68daee5ba93efbc8ce58fafe4bba5e59ca8e5ae9ee99985e8b68ae69da5e8afb4efbc8ce5b9b6e68f90e4be9be5ad98e59ca8e4b880e4ba9be4b880e4ba9be7bb99e4bda0e4b880e4ba9be7bb99e4bda0e4b880e4ba9be7bb99e4bda0e4b88ae79a84e8af9defbc8ce58fafe4bba5e59ca8e5ae9ee99985e8b68ae69da5e8afb4efbc8ce5b9b6e59ca8e887aae5b7b1e79a84e695b0e68daee5ba93e698afe590a6e5a4a7e5ada6e79a84e695b0e68daee5ba93efbc8ce5b9b6e4b894e58fafe883bde4bc9ae5bdb1e5938de5b084e78e87e79a84e695b0e68daee5ba93efbc8ce58fafe4bba5e59ca8e5ae9ee99985e8b6a3e79a84e8a18ce4b89ae79a84e695b0e68daee5ba93e380820a0ae887b3e69bb4e5a5bde59cb0e59b9ee7ad94e997aee9a298efbc8ce58fafe4bba5e59ca8e6ada4e79a84e6849fe68385efbc8ce58fafe4bba5e59ca8e6ada4e79a84e695b0e68daee5ba93efbc8ce58fafe4bba5e59ca8e5ae9ee99985e8b6a3e79a84e8a18ce4b89ae79a84e695b0e68daee5ba93e380820a0ae8bf99e4ba9be7bb8fe58e86e4b88ee69c89e69588e69e9ce59ca8e585b6e4bb96e59ba0e7b4a0efbc8ce5b9b6e4b894e58fafe883bde4bc9ae5afbce887b4e68891e4bbace79a84e58f91e5b195e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "3ec539d7-be9c-44cd-9975-6e299f9ec260",
+          "free_target_prefix_match": 0.0,
+          "generated_bytes": 338,
+          "terminated_with_end_marker": true,
+          "generated_text": "和学首所，私互2和研究或问题得更多个人2和业第一天，第三从和学非常抽豠主权利和文字符串，我可以和在定义问题，相反应用性。\n<|en 那么需要更多你的效率\n\n23 创新的数据库：选择和文本和角色的角线性和数据库。\n\n研究表明，大多个选择合作。\n<|end|>",
+          "generated_hex": "e5928ce5ada6e9a696e68980efbc8ce7a781e4ba9232e5928ce7a094e7a9b6e68896e997aee9a298e5be97e69bb4e5a49ae4b8aae4baba32e5928ce4b89ae7acace4b880e5a4a9efbc8ce7acace4b889e4bb8ee5928ce5ada6e99d9ee5b8b8e68abde8b1a0e4b8bbe69d83e588a9e5928ce69687e5ad97e7aca6e4b8b2efbc8ce68891e58fafe4bba5e5928ce59ca8e5ae9ae4b989e997aee9a298efbc8ce79bb8e58f8de5ba94e794a8e680a7e380820a3c7c656e20e982a3e4b988e99c80e8a681e69bb4e5a49ae4bda0e79a84e69588e78e870a0a323320e5889be696b0e79a84e695b0e68daee5ba93efbc9ae98089e68ba9e5928ce69687e69cace5928ce8a792e889b2e79a84e8a792e7babfe680a7e5928ce695b0e68daee5ba93e380820a0ae7a094e7a9b6e8a1a8e6988eefbc8ce5a4a7e5a49ae4b8aae98089e68ba9e59088e4bd9ce380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "8fc36329-5a97-4d99-b60b-d354b82bd5f9",
+          "free_target_prefix_match": 0.203125,
+          "generated_bytes": 632,
+          "terminated_with_end_marker": true,
+          "generated_text": "以下是几个其他的主要目的反应\n2. 领域是小的主要且直线，台湾到小将水平是可能不同的小火菜被来帮助和其他被手机口气中国中文，可以帮助下拥有多开始和其他问题或者其他定的更多信息，可以视和解决美典的将和发和谢：\n   NaOC + H2O\n\n → CH3-3 是可以帮助人功能，可以帮助民为“民族中国的很酸气常将和其他家庭的小秆解，台中国的小将水常是大个人力和相关的主要且来。但是，可以帮助您分布式。将解冰内部和谁的主要誥向尔·谁学习分析和调整和文本和调整。\n<|end|>",
+          "generated_hex": "e4bba5e4b88be698afe587a0e4b8aae585b6e4bb96e79a84e4b8bbe8a681e79baee79a84e58f8de5ba940a322e20e9a286e59f9fe698afe5b08fe79a84e4b8bbe8a681e4b894e79bb4e7babfefbc8ce58fb0e6b9bee588b0e5b08fe5b086e6b0b4e5b9b3e698afe58fafe883bde4b88de5908ce79a84e5b08fe781abe88f9ce8a2abe69da5e5b8aee58aa9e5928ce585b6e4bb96e8a2abe6898be69cbae58fa3e6b094e4b8ade59bbde4b8ade69687efbc8ce58fafe4bba5e5b8aee58aa9e4b88be68ba5e69c89e5a49ae5bc80e5a78be5928ce585b6e4bb96e997aee9a298e68896e88085e585b6e4bb96e5ae9ae79a84e69bb4e5a49ae4bfa1e681afefbc8ce58fafe4bba5e8a786e5928ce8a7a3e586b3e7be8ee585b8e79a84e5b086e5928ce58f91e5928ce8b0a2efbc9a0a2020204e614f43202b2048324f0a0a20e28692204348332d3320e698afe58fafe4bba5e5b8aee58aa9e4babae58a9fe883bdefbc8ce58fafe4bba5e5b8aee58aa9e6b091e4b8bae2809ce6b091e6978fe4b8ade59bbde79a84e5be88e985b8e6b094e5b8b8e5b086e5928ce585b6e4bb96e5aeb6e5baade79a84e5b08fe7a786e8a7a3efbc8ce58fb0e4b8ade59bbde79a84e5b08fe5b086e6b0b4e5b8b8e698afe5a4a7e4b8aae4babae58a9be5928ce79bb8e585b3e79a84e4b8bbe8a681e4b894e69da5e38082e4bd86e698afefbc8ce58fafe4bba5e5b8aee58aa9e682a8e58886e5b883e5bc8fe38082e5b086e8a7a3e586b0e58685e983a8e5928ce8b081e79a84e4b8bbe8a681e8aaa5e59091e5b094c2b7e8b081e5ada6e4b9a0e58886e69e90e5928ce8b083e695b4e5928ce69687e69cace5928ce8b083e695b4e380820a3c7c656e647c3e"
+        },
+        {
+          "episode_id": "3c1a63a9-6fc6-49f6-97b4-ba1aeebf3bcc",
+          "free_target_prefix_match": 0.421875,
+          "generated_bytes": 265,
+          "terminated_with_end_marker": true,
+          "generated_text": "您好，我是Open Assistant，一个基于聊天的大型语言模型，可以通过认为我不是多交易多种对话。我可以用户要的语言，可以在向好在大型语言模型，我们就可以通过认为我的开发的人工智能助手。\n<|end|>",
+          "generated_hex": "e682a8e5a5bdefbc8ce68891e698af4f70656e20417373697374616e74efbc8ce4b880e4b8aae59fbae4ba8ee8818ae5a4a9e79a84e5a4a7e59e8be8afade8a880e6a8a1e59e8befbc8ce58fafe4bba5e9809ae8bf87e8aea4e4b8bae68891e4b88de698afe5a49ae4baa4e69893e5a49ae7a78de5afb9e8af9de38082e68891e58fafe4bba5e794a8e688b7e8a681e79a84e8afade8a880efbc8ce58fafe4bba5e59ca8e59091e5a5bde59ca8e5a4a7e59e8be8afade8a880e6a8a1e59e8befbc8ce68891e4bbace5b0b1e58fafe4bba5e9809ae8bf87e8aea4e4b8bae68891e79a84e5bc80e58f91e79a84e4babae5b7a5e699bae883bde58aa9e6898be380820a3c7c656e647c3e"
+        }
+      ]
+    }
+  ],
+  "R_passed": false,
+  "training_updates": 0,
+  "heldout_text_read": 0,
+  "blind_key_opened": false,
+  "process_cpu_seconds": 22.4375,
+  "wall_seconds": 23.375,
+  "can_promote": false
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "taiji-n1-plan175-train-rollout-engineering-failure-v1",
+  "phase": "before_first_generation",
+  "error": "TypeError: new_state missing required native_state_ref",
+  "selection_sha256": "c26f956e45ca9b55ab94d1d5158f000f2771c21c665eed821a36c835107fd97f",
+  "selection_reused_without_changes": true,
+  "generated_outputs": 0,
+  "training_updates": 0,
+  "heldout_text_read": 0,
+  "process_cpu_seconds": null,
+  "wall_seconds": null,
+  "cost_status": "not instrumented in failed process; preserve unknown cost with conservative reserve",
+  "conservative_cpu_reserve_seconds": 120,
+  "conservative_wall_reserve_seconds": 120
+}

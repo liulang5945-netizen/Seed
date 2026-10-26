@@ -1,0 +1,30 @@
+{
+  "schema": "taiji-n1-plan175-train-rollout-selection-v1",
+  "rule": "N174 SHA order and 16 evenly spaced positions, applied to N175 train pool",
+  "pool_size": 1148,
+  "episode_ids": [
+    "2c8e8855-b749-45f3-b953-d8a12b7f1d57",
+    "fc604738-17ec-4297-a2c2-8705ec605f34",
+    "11a0c8b3-bb11-4f80-b21b-f800b3593f56",
+    "7760db4b-eddb-48db-91d6-53bbe1611e30",
+    "addbb463-0cd9-4610-a003-6f53df53f1e6",
+    "5e1f7c22-9dea-4e67-bfdc-c717262277c7",
+    "3d054e9a-a4a4-4a8d-91ae-5179c27b391d",
+    "531de428-6b9c-4b66-b332-9149f93218c4",
+    "cc46d3f9-4730-477f-a79c-86dff7491611",
+    "06c606e7-7173-46c4-aa20-d584fdbfd797",
+    "2d4c729c-5ea5-4153-a8cf-eea3e5494abe",
+    "392b99de-084d-4b11-a026-ac28012c8e7b",
+    "a699fbe1-5d35-4dc2-8521-9bc30c837a86",
+    "3ec539d7-be9c-44cd-9975-6e299f9ec260",
+    "8fc36329-5a97-4d99-b60b-d354b82bd5f9",
+    "3c1a63a9-6fc6-49f6-97b4-ba1aeebf3bcc"
+  ],
+  "registered_before_generation": true,
+  "prefix_bytes": 128,
+  "full_generation_byte_limit": 2048,
+  "same_sample_as_n174": false,
+  "heldout_text_read": 0,
+  "blind_key_opened": false,
+  "evaluator_sha256": "00131fc93f25cbc37d460e69c94581af11ecf5cd4adb2c00ccd25dc3a3036f6e"
+}

@@ -1,0 +1,36 @@
+{
+  "schema": "taiji-n1-plan175-v3-holdout-generation-v1",
+  "status": "generation_complete_waiting_for_human_review",
+  "attempt_id": "0a36ea27f675295b7093bdd9acd4cbd6e32e987742188d24",
+  "attempt_marker_sha256": "7487026dce312435188cc6f515f41a9edb29af0c050980625d6d87fadb7450d6",
+  "attempt_registered_unix_seconds": 1793006407.8059254,
+  "run_reports": [
+    {
+      "seed": 169,
+      "sha256": "b8ec283908a493f34379c538feec5e1c93b7931255e7d3c806e987295ce8e766"
+    },
+    {
+      "seed": 170,
+      "sha256": "830fd16dd134cbd7509440d9d93df68d4ad0e79d008f4c7fdbb0e7d61c8a49f8"
+    },
+    {
+      "seed": 171,
+      "sha256": "82092aac580b770e1ac8e50835602f35188d9042172df97a6305348d6f6e7bd4"
+    }
+  ],
+  "corpus_manifest_sha256": "e42ab300c1267da52b29156e0fa9f329d92c00cebbebb9762bf9cce99ca0aff2",
+  "migration_receipt_sha256": "0a39fd9ece257c4a648741cbece99e0ad235a41968c513b813c97b25af07c447",
+  "candidate_source_sha256": "2fc5305f60e2eaeb8a82a77dbfd679cacee8c001f6f42c5346ce7d3bccabc619",
+  "runner_source_sha256": "811260bf04ed08b890a3318114140398ecb4fab643c20c5ad6c8614daa187e0a",
+  "migration_source_sha256": "741b92682dff3ef70956b0613214f440af37b8af4a873a41eaffaf3259c4094b",
+  "evaluator_source_sha256": "01ded94af5928de1cc70211ab7f6b79a8b65d505d6fd39dd506456ddf35c83e9",
+  "selected_holdout_families": 64,
+  "eligible_review_cases": 52,
+  "excluded_no_replacement": 12,
+  "expected_outputs": 312,
+  "actual_outputs": 312,
+  "heldout_text_nodes_parsed": 140,
+  "process_cpu_seconds": 87.15625,
+  "wall_seconds": 88.31200000003446,
+  "can_promote": false
+}
