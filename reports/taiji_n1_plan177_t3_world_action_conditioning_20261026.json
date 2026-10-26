@@ -15,15 +15,15 @@
     "current CognitiveState Goal and WorldAffordances are validated on the joint frame",
     "JointGoalWorldTargetV1 binds explicit state_slots/relation_targets to the active Goal ID and source input IDs",
     "WorldDynamicsLearner.predict scores each afforded WorldAction with register_parameters=False",
-    "predicted state distance over explicitly specified target constraints forms goal_alignment; ExecutiveController scores candidate/context features",
-    "a tied best score fails closed instead of choosing by affordance order",
+    "predicted state distance over only specified target constraints forms goal_alignment; ExecutiveController scores prediction-derived candidates in the current goal context",
+    "a tied best score fails closed instead of choosing by affordance enumeration order",
     "selected PlanState, ActionIntent and WorldPredictionRecord are committed into the same CognitiveState revision",
-    "goal target payload/digest and predictor/controller digests persist in ActionIntent; JointActionReadV1 projects that state and V4 encodes it as a temporary byte source for logits/generation"
+    "goal target constraints/digest and world/executive digests persist in ActionIntent; JointActionReadV1 projects that state and V4 encodes it as a temporary byte source for logits and generation"
   ],
   "goal_contract": {
     "target_mask": "explicit numeric state slots and boolean relation targets; missing required values reject and unspecified features are excluded from distance",
     "identity": "target Goal ID must equal the active canonical Goal; cited input IDs must exist in the joint input ledger",
-    "durable_projection": "the ActionIntent carries the target constraint payload and digest into CognitiveState and V4 action projection",
+    "durable_projection": "ActionIntent carries the structured target constraints, source input IDs, provenance and digests into CognitiveState and V4 action projection",
     "source_semantics": "input-ID membership is verified, but source text is not proven to entail target constraints",
     "test_target_provenance": "structured-interface-test; not natural-language interpretation evidence"
   },
@@ -39,10 +39,11 @@
   "fixtures_and_limits": {
     "world_predictor_weights": "manually configured deterministic test fixture; no optimizer/training run",
     "executive_weights": "manually configured deterministic test fixture; no optimizer/training run",
-    "selected_goal": "structured target fixture; no natural-Chinese goal parser tested",
+    "goal_target": "structured fixture tied to a Goal ID and source input; no natural-Chinese goal parser tested",
+    "goal_feature": "alignment uses only declared target slots; the transition predictor itself is not goal-conditioned",
     "action_execution": "not performed; no environment or external action called",
     "outcome_credit": "not implemented; N177.3",
-    "checkpoint_provenance": "target and model/controller digests persist in ActionIntent; complete WDL/Executive parameter snapshots are not yet part of one joint candidate checkpoint; N177.3 recovery remains",
+    "checkpoint_provenance": "predictor/executive digests are stored in ActionIntent, but complete WDL/Executive parameter snapshots are not yet attached to the joint candidate checkpoint; N177.3 recovery remains",
     "default_adapter": "unchanged; opt-in joint path only",
     "cross_session_memory": "not integrated; T2 currently requires source frames to remain in the same JointTaskState"
   },
@@ -61,6 +62,6 @@
   "sealed_body_reads": 0,
   "n175_key_opened": false,
   "can_promote": false,
-  "architecture_review": "same-state forward prediction→executive selection→ActionIntent→V4 condition is verified; semantic target interpretation, learned policy and full model checkpoint recovery remain open",
-  "next_development_step": "N177.3: route experienced non-generated Outcome to the declared world/executive/language owners and verify zero-step plus interrupted-decision restore/continue in one native checkpoint"
+  "architecture_review": "same-state forward prediction→executive selection→ActionIntent→V4 condition is verified; remaining limits are caller-provided goal semantics, learned policy, external outcomes and full predictor/executive checkpoint recovery",
+  "next_development_step": "N177.3: route experienced non-generated Outcome to declared world/executive/language owners and verify zero-step plus interrupted-decision restore/continue in one native checkpoint"
 }
