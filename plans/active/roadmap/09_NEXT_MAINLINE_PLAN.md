@@ -114,7 +114,7 @@ N1消费/信用、N2更新保持、N3数据/容量、N4记忆治理、N5世界/�
 
 当前唯一研究队首只在03。已授权的文档、接口实现、合成检查以及生命页只读观察器可在不改绑定源、不争用训练资源时推进；真实模型运行、共享writer和新研究方向按03与所选包串接。读取既有训练metadata不等于启动模型或将研究runner纳入生命运行时控制。
 
-截至2026-10-28 02:42，N177.6按冻结合同继续运行：Correct、Parser-permuted、no_update与readout_only/seed0四臂各完成2560（no_update自durable 1280恢复，尾段1281–1439重放/丢弃），第五臂responsible_owner_frozen/seed0已启动（零检查点就位、metrics update138）。metrics约468,350 CPU秒/43,721 wall秒、制品约1.62 GB；并发重叠另暂留2,000 CPU秒/180 wall秒，预算上界470,350/43,901秒。恢复前确认单实例；原15臂合同和checkpoint保留，不读holdout、不注入教师信号。当前唯一队首是按冻结合同监督本次训练；离线监督器S0降为候选方向，启动前须另经用户授权，任何后续训练包先补run-root互斥。
+截至2026-10-28 03:12，N177.6按冻结合同继续运行：Correct、Parser-permuted、no_update与readout_only/seed0四臂各完成2560（no_update自durable 1280恢复，尾段1281–1439重放/丢弃），第五臂responsible_owner_frozen/seed0已耐久update768、metrics update807。metrics约489,191 CPU秒/45,531 wall秒、制品约1.70 GB；并发重叠另暂留2,000 CPU秒/180 wall秒，预算上界491,191/45,711秒。恢复前确认单实例；原15臂合同和checkpoint保留，不读holdout、不注入教师信号。当前唯一队首是按冻结合同监督本次训练；离线监督器S0降为候选方向，启动前须另经用户授权，任何后续训练包先补run-root互斥。
 
 当前接力为“N176按原合同有限结案 ∥ N177.6按用户指示自durable点恢复续跑→各臂固定终点后query/holdout只读评价与架构归因→离线监督器保留为候选规划（启动须另经授权、S0规格与run-root互斥）→若准入再为监督数据和学习信号另立manifest、matched baseline/弱标签控制及新预算”。`∥`只允许不争用受控资源、不改绑定源的独立工作。教师不得进入Taiji运行时；原N177.6不改合同，外部模型的答案、判断或logits不得被追溯性地算作本轮监督。任何新训练先落实单实例互斥与全资源预算。
 
