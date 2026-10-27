@@ -402,7 +402,12 @@ class JointWorldDecisionV1:
             action_intent=decision.action_intent,
             world_prediction=selected_prediction,
         )
-        updated_joint = joint_state.advance_cognitive_state(updated_owner)
+        updated_joint = joint_state.advance_cognitive_state(updated_owner).with_decision_trace(
+            decision.action_intent.intent_id,
+            world_model_snapshot=world_snapshot,
+            executive_checkpoint=executive_checkpoint,
+            executive_decision=decision.to_payload(),
+        )
         return cls(
             source_joint_revision=joint_state.joint_revision,
             joint_state=updated_joint,

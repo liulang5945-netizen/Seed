@@ -1,6 +1,6 @@
 # 态极持续能力执行与主线接力计划
 
-更新：2026-10-26，Asia/Shanghai。**当前唯一研究队首、运行权限和有效预算只由[03](03_CURRENT_EXECUTION.md)维护。** 本页维护能力依赖、开发触点与有限出口；[09](09_NEXT_MAINLINE_PLAN.md)保留N机制及J1/J2/J3身份，[N177共同认知纵切片](../../reference/PLAN-N1-177_joint_cognition_slice_20261026.md)承载下一实施包，[VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)保留完整架构、自主性及候选研究设计，[07](07_MINI_MODEL_DELIVERY.md)裁决能力和用户验收。本页不发布第二条运行指令，不以计划修订改动任何已冻结SPEC。
+更新：2026-10-27，Asia/Shanghai。**当前唯一研究队首、运行权限和有效预算只由[03](03_CURRENT_EXECUTION.md)维护。** 本页维护能力依赖、开发触点与有限出口；[09](09_NEXT_MAINLINE_PLAN.md)保留N机制及J1/J2/J3身份，[N177共同认知纵切片](../../reference/PLAN-N1-177_joint_cognition_slice_20261026.md)承载下一实施包，[VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)保留完整架构、自主性及候选研究设计，[07](07_MINI_MODEL_DELIVERY.md)裁决能力和用户验收。本页不发布第二条运行指令，不以计划修订改动任何已冻结SPEC。
 
 ## 1. 持续Goal、现状与本次排期修订
 
@@ -79,15 +79,17 @@ N177.1以一个`CognitiveState`为根，映射V4神经`TaskState`、逐byte`Inpu
 
 ### 3.4 同一状态的语言/行动与合法反馈信用
 
-当前进展：T3已把显式Goal约束、选定ActionIntent和对应预测绑定到同一个CognitiveState；ActionIntent和预测字段经内部条件证据源进入V4 logits/生成。外部动作仍未执行，Outcome→world/executive/language责任路由、模型快照随决策持久化及决策中断后的联合恢复尚未实现；按N177.3进入信用与恢复实现。
+当前进展：T3的结构化Goal约束、选定ActionIntent及预测进入同一CognitiveState；V4读取同一决策投影。N177.3A已完成有限恢复/信用接口：[joint v3检查点](../../../reports/taiji_n1_plan177_3a_receipt_credit_recovery_20261027.json)将动作receipt、WDL快照、Executive检查点、保存的决策对象和选择时WorldPrediction摘要绑定到同一组件；v1/v2向前迁移、版本混装/重复组件拒绝、unknown结果fresh-process恢复、同动作/同预测/状态前后态冲突拒绝均通过定向回归。只读`JointCreditRouteV1`单列`CognitiveState`状态owner及world/executive/语言参数接收者；语言接收要求显式text target，环境reward本身不能授权语言更新。
+
+有限结论：80项联合/InputBoundary/V4回归，Ruff、Black、mypy通过；68项模块专项通过。快照可重建并校验摘要，但没有重放全部候选重算同一选择。Outcome来源/执行ID尚无executor签名，仍是调用者声明；模型没有接收任何参数更新，也未执行外部动作，未证明学习或能力提升。N177.3整体未收官：反馈更新后的中断恢复和六类学习对照仍待接通，唯一队首见03。
 
 | 项目 | 实施要求 |
 |---|---|
 | 输入 | 已带身份的共同任务态、选中证据/预测/决定、真实outcome及反馈来源；任务错误与允许更新责任表 |
-| 实际触点 | `taiji/adapter.py`真实生成/执行边界、`taiji/conditional_language_v4.py`或N177明确替换的消费者、`taiji/language_alignment.py`、`taiji/local_learning.py`及所选世界/记忆更新器 |
-| 输出 | 中文说明和行动实际消费同一任务状态；生产者→消费者→行为与outcome→负责模块的闭合映射；待执行/已执行/结果未知/反馈已结算分开，合法反馈按权限释放 |
-| 有限exit | 相关/无关干预、切断/救援及更新责任核验完成；消费者更换留版本/参数/计算差异；新候选zero保存及独立恢复通过后才进入有界行为包。原生语言、行动效力和参数学习分别计分 |
-| 失败回流 | 语言仍只读独立神经chunk回共同消费者；更新只到readout回信用/目标；真实结果未知回执行/恢复协议，禁止把预测当已发生反馈 |
+| 实际触点 | `taiji/joint_task_state.py`的动作/Outcome/native v3恢复协议、`taiji/joint_action.py`决策快照、`taiji/joint_learning.py`只读责任路由、`taiji/conditional_language_v4.py`及实际世界更新器 |
+| 输出 | CognitiveState唯一状态owner；每个ActionIntent、选择时预测、决策模型快照、Outcome和执行receipt身份一致；world/executive参数与显式语言目标分别路由，环境reward不隐式授权语言学习 |
+| 有限exit | 177.3A静态出口已过：版本迁移和混装拒绝、各回执状态×双scope恢复、unknown fresh-process、Outcome/Transition一致及决策快照重建/摘要核验。177.3B再接反馈更新后的恢复及六类对照；保存的决策对象尚未完整重放选择 |
+| 失败回流 | 预测与Outcome冲突回世界/credit绑定；执行来源未认证回executor收据；更新owner缺失回credit路由；预测当Outcome、caller provenance当独立认证、只读路由当学习证据均拒绝 |
 | 被阻止的训练 | 梯度非零不能代替任务收益；无合法反馈或必要模块没有更新责任时，不开依赖其学习的新训练；不把任意非零梯度强加给合法冻结/local/离散分支 |
 
 ### 3.5 同一候选内F0–F2、学习责任与旧能力保持

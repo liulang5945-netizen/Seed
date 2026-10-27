@@ -1,0 +1,58 @@
+{
+  "schema": "taiji-n177-3a-receipt-credit-recovery-v1",
+  "date": "2026-10-27",
+  "status": "bounded checkpoint and read-only credit-routing contracts verified; learning closure not complete",
+  "source_sha256": {
+    "taiji/joint_task_state.py": "c9603bf94d239c1529278135fd0928dca3447513b7b174f608068d728197ac97",
+    "taiji/joint_action.py": "f1a3ac8857cb87e2a39998fe08cac50cf63278c921ada5c4940582850496a3a5",
+    "taiji/joint_learning.py": "c6d54cb99e535c85c37afd348fecb3681efb8e7f2428dfcacfb5055b04ba37f8",
+    "taiji/conditional_language_v4.py": "3efef1005fdbe02a3120189bebec112f6c3ceb8803f1eebe390f677d8bac9f94",
+    "taiji/world_learning.py": "df344279086b0cc3e3f5e83540d83f929ed9696f056c067eb38d4d9bc99d9eb3",
+    "taiji/executive.py": "9b5de851ea65b0287200646ec7d382c4002582cf42593064c5615e3aebd1a9dc",
+    "taiji/contracts.py": "0c2728ed010b8f240ecb3263ec130a8b39bea8c78d675c9ba2014a707c4b2bec",
+    "tests/taiji_native/test_n1_plan177_joint_task_state.py": "38552c15dc6a0f55b904e2d80ceef4617d1a960b45749ae9848bdf325f5cbf8d",
+    "tests/taiji_native/test_input_boundary.py": "faf4034609225097b582601e368e701fe1ec627489914bb83130c75eb780a3d7",
+    "tests/taiji_native/test_conditional_language_candidate_v4.py": "511fa0eaaeb1faa8906537b8a8974c3460a22871232699f91d820a0b316d9b38"
+  },
+  "delivered": {
+    "joint_task_state_format": "v3 exact schema; v1/v2 migrate forward without fabricating action receipts; native component key, component format, frame format/version are cross-checked; duplicate joint components are rejected",
+    "action_lifecycle": [
+      "proposed",
+      "dispatch_started",
+      "awaiting_outcome",
+      "outcome_unknown",
+      "settled",
+      "superseded",
+      "cancelled"
+    ],
+    "outcome_identity": "same ActionIntent and persisted execution receipt; duplicate settled/unknown results are idempotent and conflicting duplicates fail closed",
+    "world_transition_identity": "action ID, kind, actor, target, parameters, before/after world, selected prediction identity and prediction digest are bound; Outcome fields must agree with WorldTransition",
+    "decision_checkpoint": "same native component stores WDL snapshot, Executive checkpoint, saved decision, selected WorldPredictionRecord digest and action receipts; restore_models reconstructs both model owners and validates their digests",
+    "credit_route": "read-only route names CognitiveState as state owner; world_model/executive eligibility requires the matching saved decision; language_candidate eligibility requires explicit same-task text feedback; apply_updates is hard-disabled"
+  },
+  "evidence": {
+    "joint_task_state_tests_passed": 68,
+    "combined_joint_input_boundary_and_v4_tests_passed": 80,
+    "receipt_statuses_checkpointed_across_two_scopes": 12,
+    "unknown_outcome_fresh_process_restore": true,
+    "decision_models_reconstructed_and_digest_checked": true,
+    "decision_candidate_replay_verified": false,
+    "ruff": "passed",
+    "ruff_b_sim_ratchet": "passed",
+    "black": "passed",
+    "mypy": "passed for joint_task_state.py, joint_action.py and joint_learning.py"
+  },
+  "limits": {
+    "outcome_authenticity": "not established; provenance and execution IDs are caller assertions, with no executor-signed receipt",
+    "language_feedback": "explicit caller-provided target text is bound to task/scope/input identity but is not independently judged for correctness",
+    "training_updates": 0,
+    "external_actions": 0,
+    "sealed_reads": 0,
+    "learning_controls": "correct/permuted/no-update/readout-only/frozen-owner/state-only comparison runs not implemented or evaluated",
+    "feedback_update_recovery": "not yet covered; checkpointed receipt and snapshot restore are established only through outcome settlement",
+    "semantic_gain": "not measured",
+    "capability_promotion": false
+  },
+  "architecture_verdict": "N177.3A closes a real checkpoint/identity/credit-routing interface gap. It does not demonstrate that any responsible module learned from feedback or that an environment result was independently verified.",
+  "next_development_step": "N177.3B: define and verify the opt-in state/parameter credit-update contract and six bounded controls before any new training authorization."
+}

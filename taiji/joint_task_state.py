@@ -9,6 +9,7 @@ unlinked workspace candidate is trustworthy.
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import math
 from collections.abc import Mapping, Sequence
@@ -22,9 +23,11 @@ from .input_boundary import InputTrace
 from .internalization import content_digest
 
 JOINT_TASK_STATE_FORMAT_V1 = "taiji-joint-task-state-v1"
-JOINT_TASK_STATE_FORMAT = "taiji-joint-task-state-v2"
+JOINT_TASK_STATE_FORMAT_V2 = "taiji-joint-task-state-v2"
+JOINT_TASK_STATE_FORMAT = "taiji-joint-task-state-v3"
 JOINT_NATIVE_COMPONENT_V1 = "joint_task_state_v1"
-JOINT_NATIVE_COMPONENT = "joint_task_state_v2"
+JOINT_NATIVE_COMPONENT_V2 = "joint_task_state_v2"
+JOINT_NATIVE_COMPONENT = "joint_task_state_v3"
 
 
 def _required_text(value: Any, name: str) -> str:
@@ -51,6 +54,20 @@ def _neural_observation_index(state: TaskStateV3) -> dict[str, bytes]:
     if len(set(sources)) != len(sources):
         raise ValueError("neural task state repeats an observation source")
     return dict(state.observations)
+
+
+def _world_action_matches_intent(action: Any, intent: Any, world_action_id: str) -> bool:
+    expected_parameters = intent.parameters.get("parameters", {})
+    if not isinstance(expected_parameters, Mapping):
+        return False
+    return (
+        action.action_id == world_action_id
+        and action.kind == intent.kind
+        and action.tick == intent.tick
+        and action.actor_id == str(intent.parameters.get("actor_id", ""))
+        and action.target_id == str(intent.parameters.get("target_id", ""))
+        and content_digest(dict(action.parameters)) == content_digest(dict(expected_parameters))
+    )
 
 
 @dataclass(frozen=True)
@@ -171,7 +188,278 @@ class JointInputBindingV1:
 
 
 @dataclass(frozen=True)
-class JointTaskStateV2:
+class JointActionExecutionReceiptV1:
+    """Checkpointed two-phase execution receipt; it never invokes an environment."""
+
+    intent_id: str
+    world_action_id: str
+    idempotency_key: str
+    status: str
+    proposed_at_revision: int
+    execution_id: str | None = None
+    outcome_sha256: str | None = None
+
+    STATUSES = frozenset(
+        {
+            "proposed",
+            "dispatch_started",
+            "awaiting_outcome",
+            "outcome_unknown",
+            "settled",
+            "superseded",
+            "cancelled",
+        }
+    )
+
+    def __post_init__(self) -> None:
+        for field_name in ("intent_id", "world_action_id", "idempotency_key"):
+            _required_text(getattr(self, field_name), field_name)
+        if self.status not in self.STATUSES:
+            raise ValueError("unsupported joint action execution status")
+        if self.proposed_at_revision < 0:
+            raise ValueError("action proposal revision cannot be negative")
+        if self.execution_id is not None:
+            _required_text(self.execution_id, "execution_id")
+        if self.outcome_sha256 is not None:
+            _required_text(self.outcome_sha256, "outcome_sha256")
+        if self.status == "proposed" and (
+            self.execution_id is not None or self.outcome_sha256 is not None
+        ):
+            raise ValueError("proposed action cannot carry an execution or outcome receipt")
+        if self.status == "dispatch_started" and self.execution_id != self.idempotency_key:
+            raise ValueError("dispatch-started receipt must expose its idempotency key")
+        if (
+            self.status in {"awaiting_outcome", "outcome_unknown", "settled"}
+            and self.execution_id is None
+        ):
+            raise ValueError("executed action status requires an execution receipt")
+        if self.status in {"outcome_unknown", "settled"} and self.outcome_sha256 is None:
+            raise ValueError("recorded action outcome requires an outcome digest")
+        if self.status in {"superseded", "cancelled"} and (
+            self.execution_id is not None or self.outcome_sha256 is not None
+        ):
+            raise ValueError("undispatched terminal proposal cannot carry an execution receipt")
+
+    @classmethod
+    def proposed(
+        cls,
+        *,
+        joint_bundle_id: str,
+        owner_id: str,
+        scope_id: str,
+        session_id: str,
+        task_id: str,
+        joint_revision: int,
+        intent_id: str,
+        world_action_id: str,
+    ) -> JointActionExecutionReceiptV1:
+        identity = "\0".join((joint_bundle_id, owner_id, scope_id, session_id, task_id, intent_id))
+        key = "taiji-action:" + hashlib.sha256(identity.encode("utf-8")).hexdigest()
+        return cls(
+            intent_id=intent_id,
+            world_action_id=world_action_id,
+            idempotency_key=key,
+            status="proposed",
+            proposed_at_revision=joint_revision,
+        )
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": "taiji-joint-action-execution-receipt-v1",
+            "version": 1,
+            "intent_id": self.intent_id,
+            "world_action_id": self.world_action_id,
+            "idempotency_key": self.idempotency_key,
+            "status": self.status,
+            "proposed_at_revision": self.proposed_at_revision,
+            "execution_id": self.execution_id,
+            "outcome_sha256": self.outcome_sha256,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> JointActionExecutionReceiptV1:
+        required = {
+            "format",
+            "version",
+            "intent_id",
+            "world_action_id",
+            "idempotency_key",
+            "status",
+            "proposed_at_revision",
+            "execution_id",
+            "outcome_sha256",
+        }
+        if not isinstance(payload, Mapping) or set(payload) != required:
+            raise ValueError("joint action execution receipt schema differs")
+        if (payload["format"], payload["version"]) != (
+            "taiji-joint-action-execution-receipt-v1",
+            1,
+        ):
+            raise ValueError("unsupported joint action execution receipt version")
+        return cls(
+            intent_id=str(payload["intent_id"]),
+            world_action_id=str(payload["world_action_id"]),
+            idempotency_key=str(payload["idempotency_key"]),
+            status=str(payload["status"]),
+            proposed_at_revision=int(payload["proposed_at_revision"]),
+            execution_id=(
+                None if payload["execution_id"] is None else str(payload["execution_id"])
+            ),
+            outcome_sha256=(
+                None if payload["outcome_sha256"] is None else str(payload["outcome_sha256"])
+            ),
+        )
+
+
+@dataclass(frozen=True)
+class JointDecisionTraceV1:
+    """The exact read-only decision models and executive choice bound to one intent."""
+
+    intent_id: str
+    world_model_snapshot: Mapping[str, Any]
+    world_prediction: Mapping[str, Any]
+    executive_checkpoint: Mapping[str, Any]
+    executive_decision: Mapping[str, Any]
+    world_model_sha256: str
+    world_prediction_sha256: str
+    executive_sha256: str
+    decision_sha256: str
+
+    FORMAT = "taiji-joint-decision-trace-v1"
+
+    def __post_init__(self) -> None:
+        _required_text(self.intent_id, "intent_id")
+        for field_name in (
+            "world_model_snapshot",
+            "world_prediction",
+            "executive_checkpoint",
+            "executive_decision",
+        ):
+            value = getattr(self, field_name)
+            if not isinstance(value, Mapping):
+                raise TypeError(f"{field_name} must be a checkpoint mapping")
+            object.__setattr__(self, field_name, copy.deepcopy(dict(value)))
+        expected = (
+            ("world_model_sha256", self.world_model_snapshot),
+            ("world_prediction_sha256", self.world_prediction),
+            ("executive_sha256", self.executive_checkpoint),
+            ("decision_sha256", self.executive_decision),
+        )
+        for name, payload in expected:
+            digest = getattr(self, name)
+            if digest != content_digest(payload):
+                raise ValueError(f"joint decision trace {name} differs from its payload")
+        selected = self.executive_decision.get("selected")
+        selected_intent = selected.get("action_intent") if isinstance(selected, Mapping) else None
+        if (
+            not isinstance(selected_intent, Mapping)
+            or selected_intent.get("intent_id") != self.intent_id
+        ):
+            raise ValueError("joint decision trace executive choice differs from its ActionIntent")
+
+    @classmethod
+    def create(
+        cls,
+        *,
+        intent_id: str,
+        world_model_snapshot: Mapping[str, Any],
+        world_prediction: Mapping[str, Any],
+        executive_checkpoint: Mapping[str, Any],
+        executive_decision: Mapping[str, Any],
+    ) -> JointDecisionTraceV1:
+        return cls(
+            intent_id=intent_id,
+            world_model_snapshot=world_model_snapshot,
+            world_prediction=world_prediction,
+            world_prediction_sha256=content_digest(world_prediction),
+            executive_checkpoint=executive_checkpoint,
+            executive_decision=executive_decision,
+            world_model_sha256=content_digest(world_model_snapshot),
+            executive_sha256=content_digest(executive_checkpoint),
+            decision_sha256=content_digest(executive_decision),
+        )
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": self.FORMAT,
+            "version": 1,
+            "intent_id": self.intent_id,
+            "world_model_snapshot": copy.deepcopy(dict(self.world_model_snapshot)),
+            "world_prediction": copy.deepcopy(dict(self.world_prediction)),
+            "executive_checkpoint": copy.deepcopy(dict(self.executive_checkpoint)),
+            "executive_decision": copy.deepcopy(dict(self.executive_decision)),
+            "world_model_sha256": self.world_model_sha256,
+            "world_prediction_sha256": self.world_prediction_sha256,
+            "executive_sha256": self.executive_sha256,
+            "decision_sha256": self.decision_sha256,
+        }
+
+    def restore_models(self) -> tuple[Any, Any, Any]:
+        """Rebuild both models and deserialize the saved choice; this does not replay candidates."""
+        import torch
+
+        from .executive import ExecutiveController, ExecutiveDecision
+        from .world_learning import WorldDynamicsLearner, WorldSchema
+
+        schema_payload = self.world_model_snapshot.get("schema")
+        if not isinstance(schema_payload, Mapping):
+            raise ValueError("joint decision trace lacks the world model schema")
+        rng_state = torch.random.get_rng_state()
+        try:
+            world_model = WorldDynamicsLearner(
+                WorldSchema.from_payload(dict(schema_payload)),
+                hidden_dim=int(self.world_model_snapshot["hidden_dim"]),
+                seed=0,
+            )
+        finally:
+            torch.random.set_rng_state(rng_state)
+        world_model.restore(self.world_model_snapshot)
+        executive = ExecutiveController.from_checkpoint(self.executive_checkpoint)
+        decision = ExecutiveDecision.from_payload(self.executive_decision)
+        if content_digest(world_model.snapshot()) != self.world_model_sha256:
+            raise ValueError("restored world model differs from its decision trace")
+        if content_digest(executive.checkpoint()) != self.executive_sha256:
+            raise ValueError("restored executive differs from its decision trace")
+        if content_digest(decision.to_payload()) != self.decision_sha256:
+            raise ValueError("restored executive decision differs from its decision trace")
+        if decision.action_intent.intent_id != self.intent_id:
+            raise ValueError("restored executive decision names another ActionIntent")
+        return world_model, executive, decision
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> JointDecisionTraceV1:
+        required = {
+            "format",
+            "version",
+            "intent_id",
+            "world_model_snapshot",
+            "world_prediction",
+            "executive_checkpoint",
+            "executive_decision",
+            "world_model_sha256",
+            "world_prediction_sha256",
+            "executive_sha256",
+            "decision_sha256",
+        }
+        if not isinstance(payload, Mapping) or set(payload) != required:
+            raise ValueError("joint decision trace schema differs")
+        if (payload["format"], payload["version"]) != (cls.FORMAT, 1):
+            raise ValueError("unsupported joint decision trace version")
+        return cls(
+            intent_id=str(payload["intent_id"]),
+            world_model_snapshot=payload["world_model_snapshot"],
+            world_prediction=payload["world_prediction"],
+            executive_checkpoint=payload["executive_checkpoint"],
+            executive_decision=payload["executive_decision"],
+            world_model_sha256=str(payload["world_model_sha256"]),
+            world_prediction_sha256=str(payload["world_prediction_sha256"]),
+            executive_sha256=str(payload["executive_sha256"]),
+            decision_sha256=str(payload["decision_sha256"]),
+        )
+
+
+@dataclass(frozen=True)
+class JointTaskStateV3:
     """Canonical Taiji state plus a source-bound neural task state."""
 
     joint_bundle_id: str
@@ -185,7 +473,12 @@ class JointTaskStateV2:
     language_state: TaskStateV3
     input_bindings: tuple[JointInputBindingV1, ...] = ()
     lifecycle: str = "active"
+    action_receipts: tuple[JointActionExecutionReceiptV1, ...] = ()
+    decision_trace: JointDecisionTraceV1 | None = None
     FORMAT = JOINT_TASK_STATE_FORMAT
+    PENDING_ACTION_STATUSES = frozenset(
+        {"proposed", "dispatch_started", "awaiting_outcome", "outcome_unknown"}
+    )
 
     def __post_init__(self) -> None:
         for field_name in ("joint_bundle_id", "owner_id", "scope_id", "session_id", "task_id"):
@@ -230,6 +523,70 @@ class JointTaskStateV2:
                 or hashlib.sha256(raw).hexdigest() != binding.payload_sha256
             ):
                 raise ValueError("joint input binding does not match its exact neural byte source")
+        receipts = tuple(self.action_receipts)
+        if any(not isinstance(item, JointActionExecutionReceiptV1) for item in receipts):
+            raise TypeError("joint action history must contain execution receipts")
+        if len({item.intent_id for item in receipts}) != len(receipts):
+            raise ValueError("joint action receipt history repeats an ActionIntent ID")
+        latest_receipt = None if not receipts else receipts[-1]
+        if (
+            latest_receipt is not None
+            and latest_receipt.status in {"awaiting_outcome", "outcome_unknown"}
+            and self.lifecycle != "awaiting_outcome"
+        ):
+            raise ValueError("joint lifecycle must reflect an accepted pending action")
+        if self.lifecycle == "awaiting_outcome" and (
+            latest_receipt is None
+            or latest_receipt.status not in {"awaiting_outcome", "outcome_unknown"}
+        ):
+            raise ValueError("awaiting_outcome lifecycle requires its matching action receipt")
+        if receipts and receipts[-1].status in {
+            "proposed",
+            "dispatch_started",
+            "awaiting_outcome",
+            "outcome_unknown",
+        }:
+            current_intent = self.cognitive_state.action_intent
+            if current_intent is None or current_intent.intent_id != receipts[-1].intent_id:
+                raise ValueError(
+                    "pending execution receipt differs from the canonical ActionIntent"
+                )
+        object.__setattr__(self, "action_receipts", receipts)
+        if self.decision_trace is not None:
+            if not isinstance(self.decision_trace, JointDecisionTraceV1):
+                raise TypeError("joint decision trace must use its versioned contract")
+            intent = self.cognitive_state.action_intent
+            if intent is None or intent.intent_id != self.decision_trace.intent_id:
+                raise ValueError("joint decision trace differs from the canonical ActionIntent")
+            if (
+                intent.parameters.get("world_model_sha256")
+                != self.decision_trace.world_model_sha256
+                or intent.parameters.get("executive_sha256") != self.decision_trace.executive_sha256
+            ):
+                raise ValueError("joint decision trace model digests differ from ActionIntent")
+            selected = self.decision_trace.executive_decision.get("selected")
+            selected_intent = (
+                selected.get("action_intent") if isinstance(selected, Mapping) else None
+            )
+            if not isinstance(selected_intent, Mapping) or content_digest(
+                selected_intent
+            ) != content_digest(intent.to_payload()):
+                raise ValueError("joint decision trace selected a different ActionIntent payload")
+            receipt = None if not receipts else receipts[-1]
+            prediction = self.cognitive_state.world_prediction
+            if (
+                receipt is None
+                or receipt.intent_id != intent.intent_id
+                or prediction is None
+                or not _world_action_matches_intent(
+                    prediction.action, intent, receipt.world_action_id
+                )
+                or content_digest(prediction.to_payload())
+                != self.decision_trace.world_prediction_sha256
+                or content_digest(self.decision_trace.world_prediction)
+                != self.decision_trace.world_prediction_sha256
+            ):
+                raise ValueError("joint decision trace lacks its matching selected prediction")
         if self.language_state.bundle_id == "":
             raise ValueError("joint neural bundle identity cannot be empty")
 
@@ -310,6 +667,23 @@ class JointTaskStateV2:
         self._validate_live_owner()
         if self.lifecycle in {"awaiting_outcome", "cancelled", "complete"}:
             raise ValueError(f"joint task status {self.lifecycle!r} cannot accept input")
+        receipts = self.action_receipts
+        latest_receipt = None if not receipts else receipts[-1]
+        if latest_receipt is not None and latest_receipt.status in {
+            "dispatch_started",
+            "awaiting_outcome",
+            "outcome_unknown",
+        }:
+            raise ValueError(
+                "an external action may have executed; reconcile its receipt before new input"
+            )
+        if latest_receipt is not None and latest_receipt.status == "proposed":
+            if (
+                cognitive_state.action_intent is not None
+                and cognitive_state.action_intent.intent_id == latest_receipt.intent_id
+            ):
+                raise ValueError("new input still carries the unexecuted proposed ActionIntent")
+            receipts = (*receipts[:-1], replace(latest_receipt, status="superseded"))
         if getattr(candidate, "bundle_id", None) != self.language_state.bundle_id:
             raise ValueError("joint candidate bundle differs")
         if (self.scope_id, self.session_id) != (
@@ -382,6 +756,14 @@ class JointTaskStateV2:
             language_state=neural,
             input_bindings=self.input_bindings + (binding,),
             lifecycle="active" if self.lifecycle == "response_complete" else self.lifecycle,
+            action_receipts=receipts,
+            decision_trace=(
+                self.decision_trace
+                if cognitive_state.action_intent is not None
+                and self.decision_trace is not None
+                and cognitive_state.action_intent.intent_id == self.decision_trace.intent_id
+                else None
+            ),
         )
 
     def advance_cognitive_state(self, cognitive_state: CognitiveState) -> JointTaskStateV1:
@@ -391,17 +773,178 @@ class JointTaskStateV2:
             raise ValueError("task identity change requires an explicit new task")
         if cognitive_state.tick < self.cognitive_state.tick:
             raise ValueError("canonical cognitive-state time cannot move backwards")
+        receipts = self.action_receipts
+        latest = None if not receipts else receipts[-1]
+        pending = {"proposed", "dispatch_started", "awaiting_outcome", "outcome_unknown"}
+        if latest is not None and latest.status in pending:
+            current_intent = cognitive_state.action_intent
+            if current_intent is None or current_intent.intent_id != latest.intent_id:
+                raise ValueError(
+                    "pending action must be cancelled or reconciled by its execution receipt"
+                )
+            if cognitive_state_digest(cognitive_state) != self.cognitive_state_sha256:
+                raise ValueError(
+                    "pending action state must be changed through its execution receipt"
+                )
+        previous_intent = self.cognitive_state.action_intent
+        current_intent = cognitive_state.action_intent
+        if (
+            previous_intent is not None
+            and current_intent is not None
+            and previous_intent.intent_id == current_intent.intent_id
+            and content_digest(previous_intent.to_payload())
+            != content_digest(current_intent.to_payload())
+        ):
+            raise ValueError("an ActionIntent identity cannot be rebound to different parameters")
+        if current_intent is not None and (
+            previous_intent is None or current_intent.intent_id != previous_intent.intent_id
+        ):
+            if latest is not None and latest.status in pending:
+                raise ValueError("a second ActionIntent cannot replace a pending execution")
+            world_action_id = str(
+                current_intent.parameters.get("source_world_action_id", current_intent.intent_id)
+            )
+            receipts = (
+                *receipts,
+                JointActionExecutionReceiptV1.proposed(
+                    joint_bundle_id=self.joint_bundle_id,
+                    owner_id=self.owner_id,
+                    scope_id=self.scope_id,
+                    session_id=self.session_id,
+                    task_id=self.task_id,
+                    joint_revision=self.joint_revision + 1,
+                    intent_id=current_intent.intent_id,
+                    world_action_id=world_action_id,
+                ),
+            )
         return replace(
             self,
             joint_revision=self.joint_revision + 1,
             cognitive_state=cognitive_state,
             cognitive_state_sha256=cognitive_state_digest(cognitive_state),
+            action_receipts=receipts,
+            decision_trace=(
+                self.decision_trace
+                if current_intent is not None
+                and self.decision_trace is not None
+                and current_intent.intent_id == self.decision_trace.intent_id
+                else None
+            ),
+        )
+
+    def with_decision_trace(
+        self,
+        intent_id: str,
+        *,
+        world_model_snapshot: Mapping[str, Any],
+        executive_checkpoint: Mapping[str, Any],
+        executive_decision: Mapping[str, Any],
+    ) -> JointTaskStateV1:
+        self._validate_live_owner()
+        intent = self.cognitive_state.action_intent
+        if intent is None or intent.intent_id != intent_id:
+            raise ValueError("decision trace requires the current canonical ActionIntent")
+        trace = JointDecisionTraceV1.create(
+            intent_id=intent_id,
+            world_model_snapshot=world_model_snapshot,
+            world_prediction=(
+                self.cognitive_state.world_prediction.to_payload()
+                if self.cognitive_state.world_prediction is not None
+                else {}
+            ),
+            executive_checkpoint=executive_checkpoint,
+            executive_decision=executive_decision,
+        )
+        if (
+            intent.parameters.get("world_model_sha256") != trace.world_model_sha256
+            or intent.parameters.get("executive_sha256") != trace.executive_sha256
+        ):
+            raise ValueError("decision model snapshots do not match the ActionIntent hashes")
+        return replace(
+            self,
+            joint_revision=self.joint_revision + 1,
+            decision_trace=trace,
+        )
+
+    @property
+    def action_receipt(self) -> JointActionExecutionReceiptV1 | None:
+        return None if not self.action_receipts else self.action_receipts[-1]
+
+    def begin_action_dispatch(self, intent_id: str) -> tuple[JointTaskStateV1, str]:
+        """Checkpoint this intent's idempotency key before the caller crosses an executor boundary."""
+        self._validate_live_owner()
+        receipt = self.action_receipt
+        if self.lifecycle not in {"active", "response_complete"}:
+            raise ValueError("joint task lifecycle does not permit action dispatch")
+        if receipt is None or receipt.status != "proposed" or receipt.intent_id != intent_id:
+            raise ValueError("only the current proposed ActionIntent can begin dispatch")
+        started = replace(
+            receipt,
+            status="dispatch_started",
+            execution_id=receipt.idempotency_key,
+        )
+        state = replace(
+            self,
+            joint_revision=self.joint_revision + 1,
+            action_receipts=(*self.action_receipts[:-1], started),
+        )
+        return state, started.idempotency_key
+
+    def mark_action_execution_accepted(self, intent_id: str, execution_id: str) -> JointTaskStateV1:
+        """Record a durable executor acknowledgement; this method does not dispatch anything."""
+        self._validate_live_owner()
+        _required_text(execution_id, "execution_id")
+        receipt = self.action_receipt
+        if receipt is None or receipt.intent_id != intent_id:
+            raise ValueError("execution acknowledgement does not match the pending ActionIntent")
+        if receipt.status == "awaiting_outcome" and receipt.execution_id == execution_id:
+            return self
+        if receipt.status != "dispatch_started":
+            raise ValueError("execution acknowledgement requires a checkpointed dispatch start")
+        accepted = replace(receipt, status="awaiting_outcome", execution_id=execution_id)
+        return replace(
+            self,
+            joint_revision=self.joint_revision + 1,
+            lifecycle="awaiting_outcome",
+            action_receipts=(*self.action_receipts[:-1], accepted),
+        )
+
+    def cancel_action_proposal(self, intent_id: str) -> JointTaskStateV1:
+        """Cancel a proposal only before any executor call may have started."""
+        self._validate_live_owner()
+        receipt = self.action_receipt
+        if receipt is None or receipt.status != "proposed" or receipt.intent_id != intent_id:
+            raise ValueError("only an undispatched proposed action can be cancelled")
+        root = self.cognitive_state
+        if root.action_intent is None or root.action_intent.intent_id != intent_id:
+            raise ValueError("proposed action differs from canonical CognitiveState")
+        cancelled = replace(receipt, status="cancelled")
+        owner = replace(
+            root,
+            action_intent=None,
+            outcome=None,
+            world_transition=None,
+            world_prediction=None,
+            plan=replace(root.plan, selected_plan_id=None),
+        )
+        return replace(
+            self,
+            joint_revision=self.joint_revision + 1,
+            cognitive_state=owner,
+            cognitive_state_sha256=cognitive_state_digest(owner),
+            action_receipts=(*self.action_receipts[:-1], cancelled),
+            decision_trace=None,
         )
 
     def reset_turn(self) -> JointTaskStateV1:
         self._validate_live_owner()
         if self.lifecycle not in {"active", "response_complete"}:
             raise ValueError("turn reset cannot discard an unresolved environment outcome")
+        if (
+            self.action_receipt is not None
+            and self.action_receipt.status in self.PENDING_ACTION_STATUSES
+        ):
+            raise ValueError("resolve or cancel the pending ActionIntent before turn reset")
         neural = self.language_state.reset("turn")
         if not isinstance(neural, TaskStateV3):
             raise TypeError("turn reset lost the candidate task-state version")
@@ -456,11 +999,15 @@ class JointTaskStateV2:
             raise ValueError("joint language checkpoint belongs to another candidate bundle")
         if content_digest(neural.to_payload()) != content_digest(self.language_state.to_payload()):
             raise ValueError("joint task state differs from language checkpoint state")
-        if {JOINT_NATIVE_COMPONENT, JOINT_NATIVE_COMPONENT_V1}.intersection(envelope.components):
+        if {
+            JOINT_NATIVE_COMPONENT,
+            JOINT_NATIVE_COMPONENT_V2,
+            JOINT_NATIVE_COMPONENT_V1,
+        }.intersection(envelope.components):
             raise ValueError("native checkpoint already contains a joint task component")
         frame = {
             "format": JOINT_TASK_STATE_FORMAT,
-            "version": 2,
+            "version": 3,
             "joint_bundle_id": self.joint_bundle_id,
             "owner_id": self.owner_id,
             "scope_id": self.scope_id,
@@ -470,9 +1017,13 @@ class JointTaskStateV2:
             "cognitive_state_sha256": self.cognitive_state_sha256,
             "input_bindings": [item.to_payload() for item in self.input_bindings],
             "lifecycle": self.lifecycle,
+            "action_receipts": [item.to_payload() for item in self.action_receipts],
+            "decision_trace": (
+                None if self.decision_trace is None else self.decision_trace.to_payload()
+            ),
         }
         component = {
-            "format": "taiji-joint-cognitive-component-v2",
+            "format": "taiji-joint-cognitive-component-v3",
             "frame": frame,
             "language_candidate_checkpoint": dict(language_candidate_checkpoint),
         }
@@ -496,34 +1047,76 @@ class JointTaskStateV2:
     ) -> tuple[JointTaskStateV1, Any]:
         """Restore both cognitive owner and candidate from the same native checkpoint."""
         envelope = NativeCheckpoint.from_payload(native_payload)
-        component = envelope.components.get(JOINT_NATIVE_COMPONENT)
-        legacy_component = False
-        if component is None:
-            component = envelope.components.get(JOINT_NATIVE_COMPONENT_V1)
-            legacy_component = component is not None
-        expected_component_format = (
-            "taiji-joint-cognitive-component-v1"
-            if legacy_component
-            else "taiji-joint-cognitive-component-v2"
+        component_specs = (
+            (
+                JOINT_NATIVE_COMPONENT,
+                "taiji-joint-cognitive-component-v3",
+                JOINT_TASK_STATE_FORMAT,
+                3,
+            ),
+            (
+                JOINT_NATIVE_COMPONENT_V2,
+                "taiji-joint-cognitive-component-v2",
+                JOINT_TASK_STATE_FORMAT_V2,
+                2,
+            ),
+            (
+                JOINT_NATIVE_COMPONENT_V1,
+                "taiji-joint-cognitive-component-v1",
+                JOINT_TASK_STATE_FORMAT_V1,
+                1,
+            ),
         )
+        present_specs = [item for item in component_specs if item[0] in envelope.components]
+        if len(present_specs) != 1:
+            raise ValueError("native checkpoint must contain exactly one joint cognition component")
+        component_key, expected_component_format, expected_frame_format, expected_frame_version = (
+            present_specs[0]
+        )
+        component = envelope.components[component_key]
         if (
             not isinstance(component, Mapping)
             or component.get("format") != expected_component_format
+            or set(component)
+            != {"format", "frame", "language_candidate_checkpoint", "component_digest"}
         ):
-            raise ValueError("native checkpoint lacks the joint cognition component")
+            raise ValueError("native checkpoint joint cognition component schema differs")
         expected_component = content_digest(
             {key: value for key, value in component.items() if key != "component_digest"}
         )
         if component.get("component_digest") != expected_component:
             raise ValueError("joint cognition component digest differs")
+        frame = component.get("frame")
+        if not isinstance(frame, Mapping):
+            raise ValueError("joint cognition component frame is missing")
+        base_frame_fields = {
+            "format",
+            "version",
+            "joint_bundle_id",
+            "owner_id",
+            "scope_id",
+            "session_id",
+            "task_id",
+            "joint_revision",
+            "cognitive_state_sha256",
+            "input_bindings",
+            "lifecycle",
+        }
+        expected_frame_fields = (
+            base_frame_fields | {"action_receipts", "decision_trace"}
+            if expected_frame_version == 3
+            else base_frame_fields
+        )
+        if (frame.get("format"), frame.get("version")) != (
+            expected_frame_format,
+            expected_frame_version,
+        ) or set(frame) != expected_frame_fields:
+            raise ValueError("joint cognition component and frame versions differ")
         from .conditional_language_v4 import ConditionalLanguageTrainerV4
 
         trainer, neural, _ = ConditionalLanguageTrainerV4.from_checkpoint(
             component["language_candidate_checkpoint"]
         )
-        frame = component.get("frame")
-        if not isinstance(frame, Mapping):
-            raise ValueError("joint cognition component frame is missing")
         if frame.get("cognitive_state_sha256") != cognitive_state_digest(envelope.cognitive_state):
             raise ValueError("joint frame cognitive owner differs from native checkpoint")
         joint_payload = {
@@ -541,6 +1134,9 @@ class JointTaskStateV2:
             "input_bindings": list(frame["input_bindings"]),
             "lifecycle": str(frame["lifecycle"]),
         }
+        if expected_frame_version == 3:
+            joint_payload["action_receipts"] = list(frame["action_receipts"])
+            joint_payload["decision_trace"] = frame["decision_trace"]
         joint = cls.from_payload(
             joint_payload,
             joint_bundle_id=joint_bundle_id,
@@ -563,6 +1159,16 @@ class JointTaskStateV2:
         self._validate_live_owner()
         if self.lifecycle not in {"active", "response_complete"}:
             raise ValueError("cancellation cannot discard an unresolved environment outcome")
+        receipt = self.action_receipt
+        if receipt is not None and receipt.status in {
+            "dispatch_started",
+            "awaiting_outcome",
+            "outcome_unknown",
+        }:
+            raise ValueError("external action may have executed; reconcile it before cancelling")
+        receipts = self.action_receipts
+        if receipt is not None and receipt.status == "proposed":
+            receipts = (*receipts[:-1], replace(receipt, status="cancelled"))
         neural = self.language_state.reset("turn")
         if not isinstance(neural, TaskStateV3):
             raise TypeError("task cancellation lost the candidate task-state version")
@@ -571,6 +1177,7 @@ class JointTaskStateV2:
             joint_revision=self.joint_revision + 1,
             language_state=neural,
             lifecycle="cancelled",
+            action_receipts=receipts,
         )
 
     def complete_response(self) -> JointTaskStateV1:
@@ -582,20 +1189,120 @@ class JointTaskStateV2:
             raise ValueError("response completion requires the candidate end marker")
         return replace(self, joint_revision=self.joint_revision + 1, lifecycle="response_complete")
 
+    def _validate_world_transition(
+        self,
+        cognitive_state: CognitiveState,
+        receipt: JointActionExecutionReceiptV1,
+        intent: Any,
+        *,
+        validate_before_state: bool = True,
+    ) -> Any | None:
+        transition = cognitive_state.world_transition
+        if transition is None:
+            return None
+        if not _world_action_matches_intent(transition.action, intent, receipt.world_action_id):
+            raise ValueError("world transition action differs from the selected ActionIntent")
+        if validate_before_state and content_digest(
+            transition.before.to_payload()
+        ) != content_digest(self.cognitive_state.world.to_payload()):
+            raise ValueError("world transition before-state differs from the dispatched state")
+        if content_digest(transition.after.to_payload()) != content_digest(
+            cognitive_state.world.to_payload()
+        ):
+            raise ValueError("world transition after-state differs from the current CognitiveState")
+        prediction = cognitive_state.world_prediction
+        if (
+            prediction is None
+            or not _world_action_matches_intent(prediction.action, intent, receipt.world_action_id)
+            or prediction.action.tick != transition.action.tick
+        ):
+            raise ValueError("world transition lacks its matching selected prediction")
+        if (
+            self.decision_trace is not None
+            and self.decision_trace.intent_id == intent.intent_id
+            and content_digest(prediction.to_payload())
+            != self.decision_trace.world_prediction_sha256
+        ):
+            raise ValueError("world prediction differs from its selection-time decision trace")
+        return prediction
+
     def record_action_outcome(
-        self, cognitive_state: CognitiveState, intent_id: str
+        self,
+        cognitive_state: CognitiveState,
+        intent_id: str,
+        *,
+        execution_id: str,
     ) -> JointTaskStateV1:
-        """Record a linked environment outcome; failure may leave the parent task active."""
+        """Bind a caller-supplied outcome; this does not authenticate an executor or environment."""
         self._validate_live_owner()
-        if self.lifecycle not in {"active", "awaiting_outcome"}:
+        if self.lifecycle not in {"active", "response_complete", "awaiting_outcome"}:
             raise ValueError("a closed task cannot accept an action outcome")
+        _required_text(execution_id, "execution_id")
+        receipt = self.action_receipt
+        if receipt is None or receipt.intent_id != intent_id:
+            raise ValueError("action outcome has no matching persisted execution receipt")
+        outcome = cognitive_state.outcome
+        if (
+            outcome is None
+            or outcome.intent_id != intent_id
+            or outcome.provenance
+            in {
+                "generated",
+                "imagined",
+            }
+        ):
+            raise ValueError("action outcome requires a linked non-generated environment receipt")
+        intent = self.cognitive_state.action_intent
+        if intent is None or intent.intent_id != intent_id:
+            raise ValueError("action outcome does not match the canonical ActionIntent")
+        world_transition = cognitive_state.world_transition
+        if world_transition is not None:
+            self._validate_world_transition(
+                cognitive_state,
+                receipt,
+                intent,
+                validate_before_state=receipt.status not in {"settled", "outcome_unknown"},
+            )
+            transition_outcome = world_transition.outcome.to_payload()
+            cognitive_outcome = outcome.to_payload()
+            transition_outcome.pop("intent_id")
+            cognitive_outcome.pop("intent_id")
+            if content_digest(transition_outcome) != content_digest(cognitive_outcome):
+                raise ValueError("world transition and CognitiveState outcome disagree")
+        result_digest = content_digest(
+            {
+                "outcome": outcome.to_payload(),
+                "world_transition": (
+                    None if world_transition is None else world_transition.to_payload()
+                ),
+            }
+        )
+        if receipt.status == "settled":
+            if receipt.execution_id == execution_id and receipt.outcome_sha256 == result_digest:
+                return self
+            raise ValueError("conflicting duplicate outcome for a settled action")
+        if receipt.status not in {"dispatch_started", "awaiting_outcome", "outcome_unknown"}:
+            raise ValueError("action outcome requires a started or acknowledged execution")
+        if receipt.execution_id != execution_id:
+            raise ValueError("action outcome execution receipt ID differs")
+        if (
+            receipt.status == "outcome_unknown"
+            and outcome.success is None
+            and receipt.outcome_sha256 != result_digest
+        ):
+            raise ValueError("conflicting duplicate unknown outcome for one execution receipt")
+        if (
+            receipt.status == "outcome_unknown"
+            and outcome.success is None
+            and receipt.outcome_sha256 == result_digest
+        ):
+            return self
         if (
             cognitive_state.episode_id != self.task_id
             or cognitive_state.tick < self.cognitive_state.tick
         ):
             raise ValueError("action outcome crossed task identity or moved time backwards")
-        intent = self.cognitive_state.action_intent
-        current_intent, outcome = cognitive_state.action_intent, cognitive_state.outcome
+        current_intent = cognitive_state.action_intent
         if (
             intent is None
             or (
@@ -606,20 +1313,23 @@ class JointTaskStateV2:
             or outcome is None
             or intent.intent_id != intent_id
             or outcome.intent_id != intent_id
-            or outcome.provenance == "generated"
         ):
             raise ValueError("action outcome requires the same intent and a non-generated receipt")
-        lifecycle = (
-            "awaiting_outcome"
-            if outcome.success is None
-            else "complete" if outcome.terminal else "active"
-        )
+        if outcome.success is None:
+            updated_receipt = replace(
+                receipt, status="outcome_unknown", outcome_sha256=result_digest
+            )
+            lifecycle = "awaiting_outcome"
+        else:
+            updated_receipt = replace(receipt, status="settled", outcome_sha256=result_digest)
+            lifecycle = "complete" if outcome.terminal else "active"
         return replace(
             self,
             joint_revision=self.joint_revision + 1,
             cognitive_state=cognitive_state,
             cognitive_state_sha256=cognitive_state_digest(cognitive_state),
             lifecycle=lifecycle,
+            action_receipts=(*self.action_receipts[:-1], updated_receipt),
         )
 
     def new_session(
@@ -631,6 +1341,11 @@ class JointTaskStateV2:
         authorized_carry_refs: Sequence[str],
     ) -> JointTaskStateV1:
         self._validate_live_owner()
+        if (
+            self.action_receipt is not None
+            and self.action_receipt.status in self.PENDING_ACTION_STATUSES
+        ):
+            raise ValueError("resolve or cancel the pending action before opening a new session")
         _required_text(session_id, "new session_id")
         if session_id == self.session_id:
             raise ValueError("new_session requires a new session identity")
@@ -729,7 +1444,7 @@ class JointTaskStateV2:
         self._validate_live_owner()
         return {
             "format": self.FORMAT,
-            "version": 2,
+            "version": 3,
             "joint_bundle_id": self.joint_bundle_id,
             "owner_id": self.owner_id,
             "scope_id": self.scope_id,
@@ -741,6 +1456,10 @@ class JointTaskStateV2:
             "language_state": self.language_state.to_payload(),
             "input_bindings": [x.to_payload() for x in self.input_bindings],
             "lifecycle": self.lifecycle,
+            "action_receipts": [x.to_payload() for x in self.action_receipts],
+            "decision_trace": (
+                None if self.decision_trace is None else self.decision_trace.to_payload()
+            ),
         }
 
     @classmethod
@@ -754,7 +1473,7 @@ class JointTaskStateV2:
         session_id: str,
         candidate_bundle_id: str,
     ) -> JointTaskStateV1:
-        fields = {
+        legacy_fields = {
             "format",
             "version",
             "joint_bundle_id",
@@ -769,14 +1488,23 @@ class JointTaskStateV2:
             "input_bindings",
             "lifecycle",
         }
-        if not isinstance(payload, Mapping) or set(payload) != fields:
+        current_fields = legacy_fields | {"action_receipts", "decision_trace"}
+        if not isinstance(payload, Mapping) or frozenset(payload) not in {
+            frozenset(legacy_fields),
+            frozenset(current_fields),
+        }:
             raise ValueError("joint task state schema differs")
         payload_version = (payload["format"], payload["version"])
         if payload_version not in {
             (JOINT_TASK_STATE_FORMAT_V1, 1),
-            (cls.FORMAT, 2),
+            (JOINT_TASK_STATE_FORMAT_V2, 2),
+            (cls.FORMAT, 3),
         }:
             raise ValueError("unsupported joint task state version")
+        if payload_version == (cls.FORMAT, 3) and set(payload) != current_fields:
+            raise ValueError("joint task state v3 requires action and decision trace fields")
+        if payload_version != (cls.FORMAT, 3) and set(payload) != legacy_fields:
+            raise ValueError("legacy joint task state cannot carry v3 action receipts")
         for name, expected in (
             ("joint_bundle_id", joint_bundle_id),
             ("owner_id", owner_id),
@@ -803,6 +1531,15 @@ class JointTaskStateV2:
                 JointInputBindingV1.from_payload(x) for x in payload["input_bindings"]
             ),
             lifecycle=str(payload["lifecycle"]),
+            action_receipts=tuple(
+                JointActionExecutionReceiptV1.from_payload(item)
+                for item in payload.get("action_receipts", ())
+            ),
+            decision_trace=(
+                None
+                if payload.get("decision_trace") is None
+                else JointDecisionTraceV1.from_payload(payload["decision_trace"])
+            ),
         )
 
 
@@ -1218,6 +1955,7 @@ class JointContentReadViewV1:
         )
 
 
-# Compatibility name for the original public frame API. The current serialized
-# form is v2; from_payload keeps a one-way migration path for v1 frames.
-JointTaskStateV1 = JointTaskStateV2
+# Compatibility names for existing callers; serialized data migrates forward
+# through the exact v1/v2/v3 formats in from_payload.
+JointTaskStateV2 = JointTaskStateV3
+JointTaskStateV1 = JointTaskStateV3

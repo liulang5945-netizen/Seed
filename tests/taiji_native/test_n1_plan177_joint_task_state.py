@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 import copy
+import json
+import subprocess
+import sys
 from dataclasses import replace
 
 import pytest
@@ -37,10 +40,13 @@ from taiji.contracts import (
     WorkspaceCandidate,
     WorkspaceSelection,
     WorkspaceState,
+    WorldAction,
     WorldAffordance,
     WorldEvent,
     WorldObject,
+    WorldPredictionRecord,
     WorldState,
+    WorldTransition,
 )
 from taiji.episodic_memory import EpisodicMemoryStore
 from taiji.executive import ExecutiveController
@@ -51,7 +57,8 @@ from taiji.joint_action import (
     JointGoalWorldTargetV1,
     JointWorldDecisionV1,
 )
-from taiji.joint_task_state import JointEpisodeReadV1, JointTaskStateV1
+from taiji.joint_learning import JointCreditRouteV1, JointLanguageFeedbackV1
+from taiji.joint_task_state import JointDecisionTraceV1, JointEpisodeReadV1, JointTaskStateV1
 from taiji.world_learning import WorldDynamicsLearner, WorldSchema
 
 
@@ -408,9 +415,25 @@ def test_action_failure_replans_unknown_blocks_replay_and_only_terminal_outcome_
     model, root, trace, joint = setup_joint()
     intent = ActionIntent("intent-1", "move", tick=root.tick)
     pending = replace(root, action_intent=intent, outcome=None)
-    frame = joint.advance_cognitive_state(pending)
+    proposed = joint.advance_cognitive_state(pending)
+    assert proposed.action_receipt is not None
+    assert proposed.action_receipt.status == "proposed"
+    frame, idempotency_key = proposed.begin_action_dispatch("intent-1")
+    assert frame.action_receipt.status == "dispatch_started"
+    assert frame.action_receipt.execution_id == idempotency_key
+    with pytest.raises(ValueError, match="proposed ActionIntent"):
+        frame.begin_action_dispatch("intent-1")
     with pytest.raises(ValueError, match="non-generated"):
-        frame.record_action_outcome(pending, "intent-1")
+        frame.record_action_outcome(
+            replace(pending, outcome=Outcome("intent-1", 0.0, provenance="generated")),
+            "intent-1",
+            execution_id=idempotency_key,
+        )
+    accepted = frame.mark_action_execution_accepted("intent-1", "executor-1")
+    assert accepted.action_receipt.status == "awaiting_outcome"
+    assert accepted.lifecycle == "awaiting_outcome"
+    with pytest.raises(ValueError, match="dispatch start"):
+        accepted.mark_action_execution_accepted("intent-1", "executor-2")
     failure = Outcome(
         "intent-1",
         reward=-1.0,
@@ -419,8 +442,23 @@ def test_action_failure_replans_unknown_blocks_replay_and_only_terminal_outcome_
         tick=root.tick,
         provenance="experienced",
     )
-    retry = frame.record_action_outcome(replace(pending, outcome=failure), "intent-1")
+    retry = accepted.record_action_outcome(
+        replace(pending, outcome=failure), "intent-1", execution_id="executor-1"
+    )
     assert retry.lifecycle == "active" and retry.cognitive_state.outcome.success is False
+    assert retry.action_receipt.status == "settled"
+    assert (
+        retry.record_action_outcome(
+            replace(pending, outcome=failure), "intent-1", execution_id="executor-1"
+        )
+        is retry
+    )
+    with pytest.raises(ValueError, match="conflicting duplicate"):
+        retry.record_action_outcome(
+            replace(pending, outcome=replace(failure, reward=-2.0)),
+            "intent-1",
+            execution_id="executor-1",
+        )
     unknown = Outcome(
         "intent-1",
         reward=0.0,
@@ -429,10 +467,30 @@ def test_action_failure_replans_unknown_blocks_replay_and_only_terminal_outcome_
         tick=root.tick,
         provenance="experienced",
     )
-    awaiting = retry.record_action_outcome(
-        replace(retry.cognitive_state, outcome=unknown), "intent-1"
+    unknown_start = proposed.begin_action_dispatch("intent-1")[0].mark_action_execution_accepted(
+        "intent-1", "executor-unknown"
+    )
+    awaiting = unknown_start.record_action_outcome(
+        replace(unknown_start.cognitive_state, outcome=unknown),
+        "intent-1",
+        execution_id="executor-unknown",
     )
     assert awaiting.lifecycle == "awaiting_outcome"
+    assert awaiting.action_receipt.status == "outcome_unknown"
+    assert (
+        awaiting.record_action_outcome(
+            replace(unknown_start.cognitive_state, outcome=unknown),
+            "intent-1",
+            execution_id="executor-unknown",
+        )
+        is awaiting
+    )
+    with pytest.raises(ValueError, match="conflicting duplicate unknown"):
+        awaiting.record_action_outcome(
+            replace(unknown_start.cognitive_state, outcome=replace(unknown, reward=0.25)),
+            "intent-1",
+            execution_id="executor-unknown",
+        )
     with pytest.raises(ValueError, match="awaiting_outcome"):
         awaiting.append_input(
             model,
@@ -449,12 +507,123 @@ def test_action_failure_replans_unknown_blocks_replay_and_only_terminal_outcome_
         provenance="experienced",
     )
     settled = awaiting.record_action_outcome(
-        replace(awaiting.cognitive_state, outcome=resolved), "intent-1"
+        replace(awaiting.cognitive_state, outcome=resolved),
+        "intent-1",
+        execution_id="executor-unknown",
     )
     assert settled.lifecycle == "complete"
     generated = replace(failure, provenance="generated")
     with pytest.raises(ValueError, match="non-generated"):
-        frame.record_action_outcome(replace(pending, outcome=generated), "intent-1")
+        frame.record_action_outcome(
+            replace(pending, outcome=generated),
+            "intent-1",
+            execution_id=idempotency_key,
+        )
+
+
+def test_action_outcome_can_settle_after_response_completion():
+    _, root, _, joint = setup_joint()
+    intent = ActionIntent("intent-after-response", "move", tick=root.tick)
+    proposed = joint.advance_cognitive_state(replace(root, action_intent=intent, outcome=None))
+    neural = replace(
+        proposed.language_state,
+        generated=b"<|end|>",
+        previous_byte=ord(">"),
+        decoder_hidden=torch.zeros_like(proposed.language_state.hidden),
+    )
+    response = proposed.with_language_state(neural).complete_response()
+    dispatch, _ = response.begin_action_dispatch(intent.intent_id)
+    accepted = dispatch.mark_action_execution_accepted(intent.intent_id, "executor-after-response")
+    result = Outcome(intent.intent_id, -0.5, success=False, terminal=False, tick=root.tick)
+    settled = accepted.record_action_outcome(
+        replace(accepted.cognitive_state, outcome=result),
+        intent.intent_id,
+        execution_id="executor-after-response",
+    )
+    assert settled.lifecycle == "active"
+    assert settled.action_receipt.status == "settled"
+
+
+def test_world_transition_and_cognitive_outcome_must_agree_before_settlement():
+    _, root, _, joint = setup_joint()
+    intent = ActionIntent(
+        "intent-transition",
+        "move",
+        parameters={"source_world_action_id": "world-action-transition"},
+        tick=root.tick,
+    )
+    proposed = joint.advance_cognitive_state(replace(root, action_intent=intent, outcome=None))
+    dispatch, _ = proposed.begin_action_dispatch(intent.intent_id)
+    accepted = dispatch.mark_action_execution_accepted(intent.intent_id, "executor-transition")
+    after = replace(root.world, tick=root.world.tick + 1)
+    action = WorldAction(
+        "world-action-transition", "move", tick=root.world.tick, provenance="experienced"
+    )
+    transition_outcome = Outcome(
+        action.action_id,
+        1.0,
+        success=True,
+        terminal=False,
+        tick=after.tick,
+        provenance="experienced",
+    )
+    transition = WorldTransition(root.world, action, after, transition_outcome)
+    prediction = WorldPredictionRecord(
+        action=replace(action, provenance="planned"),
+        predicted_state=after,
+        predicted_reward=0.8,
+        predicted_success_probability=0.9,
+    )
+    contradictory = Outcome(
+        intent.intent_id,
+        -1.0,
+        success=False,
+        terminal=False,
+        tick=after.tick,
+        provenance="experienced",
+    )
+    invalid_owner = replace(
+        accepted.cognitive_state,
+        tick=after.tick,
+        world=after,
+        world_prediction=prediction,
+        world_transition=transition,
+        outcome=contradictory,
+    )
+    same_id_wrong_action = replace(action, kind="open")
+    wrong_action_transition = replace(transition, action=same_id_wrong_action)
+    with pytest.raises(ValueError, match="selected ActionIntent"):
+        accepted.record_action_outcome(
+            replace(invalid_owner, world_transition=wrong_action_transition),
+            intent.intent_id,
+            execution_id="executor-transition",
+        )
+    with pytest.raises(ValueError, match="matching selected prediction"):
+        accepted.record_action_outcome(
+            replace(invalid_owner, world_prediction=None),
+            intent.intent_id,
+            execution_id="executor-transition",
+        )
+    inconsistent_after = replace(after, tick=after.tick + 1)
+    with pytest.raises(ValueError, match="after-state"):
+        accepted.record_action_outcome(
+            replace(invalid_owner, world=inconsistent_after),
+            intent.intent_id,
+            execution_id="executor-transition",
+        )
+    with pytest.raises(ValueError, match="disagree"):
+        accepted.record_action_outcome(
+            invalid_owner,
+            intent.intent_id,
+            execution_id="executor-transition",
+        )
+    matching = replace(contradictory, reward=1.0, success=True)
+    settled = accepted.record_action_outcome(
+        replace(invalid_owner, outcome=matching),
+        intent.intent_id,
+        execution_id="executor-transition",
+    )
+    assert settled.action_receipt.status == "settled"
 
 
 def test_response_end_marker_closes_a_turn_and_a_follow_up_continues_the_same_task():
@@ -495,9 +664,25 @@ def test_versioned_joint_payload_roundtrips_and_rejects_owner_neural_or_cognitiv
         candidate_bundle_id=model.bundle_id,
     )
     assert restored.to_payload()["cognitive_state_sha256"] == joined.cognitive_state_sha256
+    legacy_v2_payload = copy.deepcopy(payload)
+    legacy_v2_payload["format"] = "taiji-joint-task-state-v2"
+    legacy_v2_payload["version"] = 2
+    legacy_v2_payload.pop("action_receipts")
+    legacy_v2_payload.pop("decision_trace")
+    migrated_v2 = JointTaskStateV1.from_payload(
+        legacy_v2_payload,
+        joint_bundle_id="joint-v1:test",
+        owner_id="user-1",
+        scope_id="scope-1",
+        session_id="session-1",
+        candidate_bundle_id=model.bundle_id,
+    )
+    assert migrated_v2.to_payload()["format"] == "taiji-joint-task-state-v3"
     legacy_payload = copy.deepcopy(payload)
     legacy_payload["format"] = "taiji-joint-task-state-v1"
     legacy_payload["version"] = 1
+    legacy_payload.pop("action_receipts")
+    legacy_payload.pop("decision_trace")
     for binding in legacy_payload["input_bindings"]:
         binding.pop("percept_tick_start", None)
         binding.pop("percept_tick_end", None)
@@ -509,7 +694,7 @@ def test_versioned_joint_payload_roundtrips_and_rejects_owner_neural_or_cognitiv
         session_id="session-1",
         candidate_bundle_id=model.bundle_id,
     )
-    assert migrated.to_payload()["format"] == "taiji-joint-task-state-v2"
+    assert migrated.to_payload()["format"] == "taiji-joint-task-state-v3"
     assert migrated.input_bindings[0].percept_tick_start is None
     with pytest.raises(ValueError, match="owner"):
         JointTaskStateV1.from_payload(
@@ -555,27 +740,37 @@ def test_one_native_checkpoint_contains_one_cognitive_owner_and_its_candidate_op
         and restored.language_state.observations == joined.language_state.observations
     )
     legacy_envelope = copy.deepcopy(envelope)
-    legacy_component = legacy_envelope["components"].pop("joint_task_state_v2")
-    legacy_component["format"] = "taiji-joint-cognitive-component-v1"
-    legacy_component["frame"]["format"] = "taiji-joint-task-state-v1"
-    legacy_component["frame"]["version"] = 1
-    for binding in legacy_component["frame"]["input_bindings"]:
-        binding.pop("percept_tick_start", None)
-        binding.pop("percept_tick_end", None)
-    legacy_component.pop("component_digest")
-    legacy_component["component_digest"] = content_digest(legacy_component)
-    legacy_envelope["components"]["joint_task_state_v1"] = legacy_component
-    migrated, _ = JointTaskStateV1.restore_native_checkpoint(
-        legacy_envelope,
-        joint_bundle_id=joined.joint_bundle_id,
-        owner_id=joined.owner_id,
-        scope_id=joined.scope_id,
-        session_id=joined.session_id,
-    )
-    assert migrated.to_payload()["format"] == "taiji-joint-task-state-v2"
-    assert migrated.input_bindings[0].percept_tick_start is None
+    for version, component_key, component_format in (
+        (2, "joint_task_state_v2", "taiji-joint-cognitive-component-v2"),
+        (1, "joint_task_state_v1", "taiji-joint-cognitive-component-v1"),
+    ):
+        legacy_envelope = copy.deepcopy(envelope)
+        legacy_component = legacy_envelope["components"].pop("joint_task_state_v3")
+        legacy_component["format"] = component_format
+        legacy_component["frame"]["format"] = f"taiji-joint-task-state-v{version}"
+        legacy_component["frame"]["version"] = version
+        legacy_component["frame"].pop("action_receipts")
+        legacy_component["frame"].pop("decision_trace")
+        if version == 1:
+            for binding in legacy_component["frame"]["input_bindings"]:
+                binding.pop("percept_tick_start", None)
+                binding.pop("percept_tick_end", None)
+        legacy_component.pop("component_digest")
+        legacy_component["component_digest"] = content_digest(legacy_component)
+        legacy_envelope["components"][component_key] = legacy_component
+        migrated, _ = JointTaskStateV1.restore_native_checkpoint(
+            legacy_envelope,
+            joint_bundle_id=joined.joint_bundle_id,
+            owner_id=joined.owner_id,
+            scope_id=joined.scope_id,
+            session_id=joined.session_id,
+        )
+        assert migrated.to_payload()["format"] == "taiji-joint-task-state-v3"
+        assert migrated.action_receipts == () and migrated.decision_trace is None
+        if version == 1:
+            assert migrated.input_bindings[0].percept_tick_start is None
     damaged = copy.deepcopy(envelope)
-    damaged["components"]["joint_task_state_v2"]["frame"]["owner_id"] = "user-other"
+    damaged["components"]["joint_task_state_v3"]["frame"]["owner_id"] = "user-other"
     with pytest.raises(ValueError, match="component digest"):
         JointTaskStateV1.restore_native_checkpoint(
             damaged,
@@ -584,6 +779,153 @@ def test_one_native_checkpoint_contains_one_cognitive_owner_and_its_candidate_op
             scope_id=joined.scope_id,
             session_id=joined.session_id,
         )
+    mismatched_frame = copy.deepcopy(envelope)
+    mismatched_component = mismatched_frame["components"]["joint_task_state_v3"]
+    mismatched_component["frame"]["format"] = "taiji-joint-task-state-v2"
+    mismatched_component["frame"]["version"] = 2
+    mismatched_component["frame"].pop("action_receipts")
+    mismatched_component["frame"].pop("decision_trace")
+    mismatched_component.pop("component_digest")
+    mismatched_component["component_digest"] = content_digest(mismatched_component)
+    with pytest.raises(ValueError, match="versions differ"):
+        JointTaskStateV1.restore_native_checkpoint(
+            mismatched_frame,
+            joint_bundle_id=joined.joint_bundle_id,
+            owner_id=joined.owner_id,
+            scope_id=joined.scope_id,
+            session_id=joined.session_id,
+        )
+    duplicate_component = copy.deepcopy(envelope)
+    duplicate_component["components"]["joint_task_state_v2"] = copy.deepcopy(
+        duplicate_component["components"]["joint_task_state_v3"]
+    )
+    with pytest.raises(ValueError, match="exactly one"):
+        JointTaskStateV1.restore_native_checkpoint(
+            duplicate_component,
+            joint_bundle_id=joined.joint_bundle_id,
+            owner_id=joined.owner_id,
+            scope_id=joined.scope_id,
+            session_id=joined.session_id,
+        )
+
+
+@pytest.mark.parametrize(
+    "stage,expected_status",
+    [
+        ("proposed", "proposed"),
+        ("dispatch_started", "dispatch_started"),
+        ("awaiting_outcome", "awaiting_outcome"),
+        ("outcome_unknown", "outcome_unknown"),
+        ("settled", "settled"),
+        ("cancelled", "cancelled"),
+    ],
+)
+@pytest.mark.parametrize("scope", ["scope-a", "scope-b"])
+def test_action_execution_receipt_survives_native_checkpoint(stage, expected_status, scope):
+    model, root, _, joint = setup_joint(scope=scope, session=f"session-{scope}")
+    intent = ActionIntent("intent-checkpoint", "move", tick=root.tick)
+    frame = joint.advance_cognitive_state(replace(root, action_intent=intent, outcome=None))
+    idempotency_key = None
+    execution_id = None
+    if stage not in {"proposed", "cancelled"}:
+        frame, idempotency_key = frame.begin_action_dispatch(intent.intent_id)
+    if stage in {"awaiting_outcome", "outcome_unknown", "settled"}:
+        execution_id = "executor-checkpoint"
+        frame = frame.mark_action_execution_accepted(intent.intent_id, execution_id)
+    if stage == "outcome_unknown":
+        unknown = Outcome(intent.intent_id, 0.0, success=None, provenance="experienced")
+        frame = frame.record_action_outcome(
+            replace(frame.cognitive_state, outcome=unknown),
+            intent.intent_id,
+            execution_id=execution_id,
+        )
+    elif stage == "settled":
+        result = Outcome(intent.intent_id, 1.0, success=True, terminal=False)
+        frame = frame.record_action_outcome(
+            replace(frame.cognitive_state, outcome=result),
+            intent.intent_id,
+            execution_id=execution_id,
+        )
+    elif stage == "cancelled":
+        frame = frame.cancel_action_proposal(intent.intent_id)
+    trainer = ConditionalLanguageTrainerV4(model)
+    language_checkpoint = trainer.checkpoint(frame.language_state, cursor={"step": 0})
+    native = NativeCheckpoint(
+        kernel={"format": "synthetic-task-kernel-v1"},
+        cognitive_state=frame.cognitive_state,
+    )
+    envelope = frame.attach_to_native_checkpoint(native.to_payload(), language_checkpoint)
+    restored, _ = JointTaskStateV1.restore_native_checkpoint(
+        envelope,
+        joint_bundle_id=frame.joint_bundle_id,
+        owner_id=frame.owner_id,
+        scope_id=frame.scope_id,
+        session_id=frame.session_id,
+    )
+    assert restored.action_receipt is not None
+    assert restored.action_receipt.status == expected_status
+    if stage == "proposed":
+        _, restored_key = restored.begin_action_dispatch(intent.intent_id)
+        assert restored_key == restored.action_receipt.idempotency_key
+    elif stage == "dispatch_started":
+        assert restored.action_receipt.execution_id == idempotency_key
+    elif stage in {"awaiting_outcome", "outcome_unknown", "settled"}:
+        assert restored.action_receipt.execution_id == execution_id
+
+
+def test_unknown_action_checkpoint_restores_in_a_fresh_process(tmp_path):
+    model, root, _, joint = setup_joint(scope="scope-fresh", session="session-fresh")
+    intent = ActionIntent("intent-fresh-restore", "move", tick=root.tick)
+    proposed = joint.advance_cognitive_state(replace(root, action_intent=intent, outcome=None))
+    dispatch, idempotency_key = proposed.begin_action_dispatch(intent.intent_id)
+    accepted = dispatch.mark_action_execution_accepted(intent.intent_id, "executor-fresh-restore")
+    unknown = Outcome(intent.intent_id, 0.0, success=None, provenance="experienced")
+    pending = accepted.record_action_outcome(
+        replace(accepted.cognitive_state, outcome=unknown),
+        intent.intent_id,
+        execution_id="executor-fresh-restore",
+    )
+    trainer = ConditionalLanguageTrainerV4(model)
+    language_checkpoint = trainer.checkpoint(pending.language_state, cursor={"step": 0})
+    native = NativeCheckpoint(
+        kernel={"format": "synthetic-task-kernel-v1"},
+        cognitive_state=pending.cognitive_state,
+    )
+    envelope = pending.attach_to_native_checkpoint(native.to_payload(), language_checkpoint)
+    checkpoint_path = tmp_path / "joint-outcome-unknown.pt"
+    torch.save(envelope, checkpoint_path)
+    child = """
+import json, sys, torch
+from taiji.joint_task_state import JointTaskStateV1
+payload = torch.load(sys.argv[1], map_location='cpu', weights_only=False)
+state, trainer = JointTaskStateV1.restore_native_checkpoint(
+    payload,
+    joint_bundle_id='joint-v1:test',
+    owner_id='user-1',
+    scope_id='scope-fresh',
+    session_id='session-fresh',
+)
+print(json.dumps({
+    'status': state.action_receipt.status,
+    'execution_id': state.action_receipt.execution_id,
+    'idempotency_key': state.action_receipt.idempotency_key,
+    'candidate_steps': trainer.steps,
+}))
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", child, str(checkpoint_path)],
+        cwd=str(tmp_path.parents[2]),
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    restored = json.loads(result.stdout.strip())
+    assert restored == {
+        "status": "outcome_unknown",
+        "execution_id": "executor-fresh-restore",
+        "idempotency_key": idempotency_key,
+        "candidate_steps": 0,
+    }
 
 
 @pytest.mark.parametrize("scope", ["scope-a", "scope-b"])
@@ -920,6 +1262,8 @@ def test_actual_episodic_store_hit_is_source_bound_and_consumed_by_v4():
     legacy_payload = copy.deepcopy(joint.to_payload())
     legacy_payload["format"] = "taiji-joint-task-state-v1"
     legacy_payload["version"] = 1
+    legacy_payload.pop("action_receipts")
+    legacy_payload.pop("decision_trace")
     for binding in legacy_payload["input_bindings"]:
         binding.pop("percept_tick_start", None)
         binding.pop("percept_tick_end", None)
@@ -1189,6 +1533,49 @@ def test_world_prediction_executive_selection_and_v4_action_condition_share_join
         place_decision.joint_state.cognitive_state.action_intent.parameters["executive_sha256"]
         == place_decision.executive_sha256
     )
+    decision_trace = place_decision.joint_state.decision_trace
+    assert decision_trace is not None
+    assert decision_trace.intent_id == place_decision.decision.action_intent.intent_id
+    assert decision_trace.world_model_sha256 == place_decision.world_model_sha256
+    assert decision_trace.executive_sha256 == place_decision.executive_sha256
+    altered_decision = copy.deepcopy(dict(decision_trace.executive_decision))
+    altered_decision["selected"]["action_intent"]["expected_outcome"] += ";altered"
+    altered_trace = JointDecisionTraceV1.create(
+        intent_id=decision_trace.intent_id,
+        world_model_snapshot=decision_trace.world_model_snapshot,
+        world_prediction=decision_trace.world_prediction,
+        executive_checkpoint=decision_trace.executive_checkpoint,
+        executive_decision=altered_decision,
+    )
+    with pytest.raises(ValueError, match="different ActionIntent payload"):
+        replace(place_decision.joint_state, decision_trace=altered_trace)
+    decision_trainer = ConditionalLanguageTrainerV4(language_model)
+    decision_checkpoint = decision_trainer.checkpoint(
+        place_decision.joint_state.language_state, cursor={"step": 0}
+    )
+    decision_native = NativeCheckpoint(
+        kernel={"format": "synthetic-task-kernel-v1"},
+        cognitive_state=place_decision.joint_state.cognitive_state,
+    )
+    decision_envelope = place_decision.joint_state.attach_to_native_checkpoint(
+        decision_native.to_payload(), decision_checkpoint
+    )
+    decision_restored, _ = JointTaskStateV1.restore_native_checkpoint(
+        decision_envelope,
+        joint_bundle_id=place_decision.joint_state.joint_bundle_id,
+        owner_id=place_decision.joint_state.owner_id,
+        scope_id=place_decision.joint_state.scope_id,
+        session_id=place_decision.joint_state.session_id,
+    )
+    assert content_digest(decision_restored.decision_trace.to_payload()) == content_digest(
+        decision_trace.to_payload()
+    )
+    restored_world, restored_executive, restored_decision = (
+        decision_restored.decision_trace.restore_models()
+    )
+    assert content_digest(restored_world.snapshot()) == decision_trace.world_model_sha256
+    assert content_digest(restored_executive.checkpoint()) == decision_trace.executive_sha256
+    assert content_digest(restored_decision.to_payload()) == decision_trace.decision_sha256
     place_read = JointActionReadV1.from_joint_state(place_decision.joint_state)
     leave_read = JointActionReadV1.from_joint_state(leave_decision.joint_state)
     world_flip_read = JointActionReadV1.from_joint_state(world_flip_decision.joint_state)
@@ -1210,3 +1597,81 @@ def test_world_prediction_executive_selection_and_v4_action_condition_share_join
         torch.equal(language_parameters[name], value)
         for name, value in language_model.state_dict().items()
     )
+    decision_state = place_decision.joint_state
+    intent = decision_state.cognitive_state.action_intent
+    assert intent is not None
+    dispatch, _ = decision_state.begin_action_dispatch(intent.intent_id)
+    execution_id = "trusted-fixture-executor-1"
+    accepted = dispatch.mark_action_execution_accepted(intent.intent_id, execution_id)
+    selected_action = replace(place_decision.selected_prediction.action, provenance="experienced")
+    after = replace(root.world, tick=root.world.tick + 1)
+    transition_result = Outcome(
+        selected_action.action_id,
+        reward=0.75,
+        success=True,
+        terminal=False,
+        tick=after.tick,
+        provenance="experienced",
+    )
+    transition = WorldTransition(root.world, selected_action, after, transition_result)
+    intent_result = replace(transition_result, intent_id=intent.intent_id)
+    outcome_owner = replace(
+        accepted.cognitive_state,
+        tick=after.tick,
+        world=after,
+        outcome=intent_result,
+        world_transition=transition,
+    )
+    altered_prediction = replace(
+        outcome_owner.world_prediction,
+        predicted_reward=outcome_owner.world_prediction.predicted_reward + 0.01,
+    )
+    with pytest.raises(ValueError, match="selection-time decision trace"):
+        accepted.record_action_outcome(
+            replace(outcome_owner, world_prediction=altered_prediction),
+            intent.intent_id,
+            execution_id=execution_id,
+        )
+    settled = accepted.record_action_outcome(
+        outcome_owner,
+        intent.intent_id,
+        execution_id=execution_id,
+    )
+    feedback = JointLanguageFeedbackV1.bind(
+        settled,
+        input_id=source_input_ids[0],
+        kind="correction",
+        target_text="杯子已放在桌上。",
+    )
+    _, reused_id_trace = make_trace("请继续核对。", input_id=source_input_ids[0])
+    reused_id_root = make_root(reused_id_trace, "请继续核对。", task_id="other-task")
+    other_joint = JointTaskStateV1.begin(
+        language_model,
+        reused_id_root,
+        joint_bundle_id="joint-v1:other-scope",
+        owner_id="user-1",
+        scope_id="scope-other",
+        session_id="session-other",
+    ).append_input(
+        language_model,
+        reused_id_trace,
+        reused_id_root,
+        resource_snapshot={
+            "remaining_steps": 1,
+            "max_observation_bytes": language_model.config.max_observation_bytes,
+        },
+    )
+    with pytest.raises(ValueError, match="different joint task"):
+        feedback.validate_for(other_joint)
+    route = JointCreditRouteV1.from_settled_outcome(settled, language_feedback=feedback)
+    assert set(route.eligible_receivers) == {"world_model", "executive", "language_candidate"}
+    assert route.world_prediction_sha256 is not None
+    assert route.state_owner == "CognitiveState"
+    assert route.apply_updates is False
+    assert route.outcome_trust == "caller_asserted_experienced_not_authenticated"
+    restored_route = JointCreditRouteV1.from_payload(route.to_payload())
+    assert content_digest(restored_route.to_payload()) == content_digest(route.to_payload())
+    reward_only_route = JointCreditRouteV1.from_settled_outcome(settled)
+    assert set(reward_only_route.eligible_receivers) == {"world_model", "executive"}
+    assert content_digest(executive.checkpoint()) == content_digest(executive_before)
+    assert content_digest(place_predictor.snapshot()) == content_digest(place_before)
