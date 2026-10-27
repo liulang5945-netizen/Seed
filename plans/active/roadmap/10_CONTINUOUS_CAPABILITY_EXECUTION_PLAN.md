@@ -81,27 +81,31 @@ N177.1以一个`CognitiveState`为根，映射V4神经`TaskState`、逐byte`Inpu
 
 当前进展：T3的结构化Goal约束、选定ActionIntent及预测进入同一CognitiveState；V4读取同一决策投影。N177.3A已完成有限恢复/信用接口：[joint v3检查点](../../../reports/taiji_n1_plan177_3a_receipt_credit_recovery_20261027.json)将动作receipt、WDL快照、Executive检查点、保存的决策对象和选择时WorldPrediction摘要绑定到同一组件；v1/v2向前迁移、版本混装/重复组件拒绝、unknown结果fresh-process恢复、同动作/同预测/状态前后态冲突拒绝均通过定向回归。只读`JointCreditRouteV1`单列`CognitiveState`状态owner及world/executive/语言参数接收者；语言接收要求显式text target，环境reward本身不能授权语言更新。
 
-有限结论：80项联合/InputBoundary/V4回归，Ruff含B/SIM、Black、mypy通过；68项模块专项通过。快照可重建并校验摘要，但没有重放全部候选重算同一选择。Outcome来源/执行ID尚无executor签名，仍是调用者声明；模型没有接收任何参数更新，也未执行外部动作，未证明学习或能力提升。N177.3A/B静态identity、恢复及六类更新权限规格有限完成；参数更新后的中断恢复和六类实际学习对照仍未运行，唯一队首转至N177.4固定课程/资源合同，详见03。
+有限结论：80项联合/InputBoundary/V4回归，Ruff含B/SIM、Black、mypy通过；68项N177.3专项通过。快照可重建并校验摘要，但没有重放全部候选重算同一选择。Outcome来源/执行ID尚无executor签名，仍是调用者声明；模型没有接收任何参数更新，也未执行外部动作，未证明学习或能力提升。N177.3A/B静态identity、恢复及六类更新权限规格有限完成；参数更新后的中断恢复和六类实际学习对照仍未运行。
+
+N177.4A已接通单对象/属性T1事实与更正：[回执](../../../reports/taiji_n1_plan177_4a_native_fact_producer_20261027.json)保存了raw byte/percept span、source hash、producer checkpoint和parse ledger；模型自产候选经过源校验后写入WorldObject/WorldEvent/CognitiveState Workspace，同时把slot pooled特征写入V4 neural workspace。切断该semantic row会改变V4 logits，跨帧 Adapter checkpoint可带着已知事实继续；但是解码用固定logit test double，实际producer未训练，query/goal尚不写状态。唯一队首转到N177.5 T1课程/资源合同，详见03。
 
 | 项目 | 实施要求 |
 |---|---|
 | 输入 | 已带身份的共同任务态、选中证据/预测/决定、真实outcome及反馈来源；任务错误与允许更新责任表 |
 | 实际触点 | `taiji/joint_task_state.py`的动作/Outcome/native v3恢复协议、`taiji/joint_action.py`决策快照、`taiji/joint_learning.py`只读责任路由、`taiji/conditional_language_v4.py`及实际世界更新器 |
 | 输出 | CognitiveState唯一状态owner；每个ActionIntent、选择时预测、决策模型快照、Outcome和执行receipt身份一致；world/executive参数与显式语言目标分别路由，环境reward不隐式授权语言学习 |
-| 有限exit | 177.3A静态出口已过：版本迁移和混装拒绝、各回执状态×双scope恢复、unknown fresh-process、Outcome/Transition一致及决策快照重建/摘要核验。177.3B六类权限规格和同一NativeCheckpoint更新前后/新进程恢复要求已冻结；没有实际参数更新，更新后恢复/六类行为对照留给N177.5合同内验收。保存的决策对象尚未完整重放选择 |
+| 有限exit | 177.3A静态出口已过：版本迁移和混装拒绝、各回执状态×双scope恢复、unknown fresh-process、Outcome/Transition一致及决策快照重建/摘要核验。177.3B六类权限规格和同一NativeCheckpoint更新前后/新进程恢复要求已冻结；没有实际参数更新，更新后恢复/六类行为对照留给N177.6授权训练验收。保存的决策对象尚未完整重放选择 |
 | 失败回流 | 预测与Outcome冲突回世界/credit绑定；执行来源未认证回executor收据；更新owner缺失回credit路由；预测当Outcome、caller provenance当独立认证、只读路由当学习证据均拒绝 |
 | 被阻止的训练 | 梯度非零不能代替任务收益；无合法反馈或必要模块没有更新责任时，不开依赖其学习的新训练；不把任意非零梯度强加给合法冻结/local/离散分支 |
 
-### 3.5 同一候选内F0–F2、学习责任与旧能力保持
+### 3.5 T1入门课程、学习责任与旧能力保持
+
+前置审计指出Adapter原路径只生成byte Observation/Percept，Goal/semantic provider由调用者提供；T1/T2/T3的结构化fixture不能证明raw-text语义。N177.4A已为T1 assertion/correction增加opt-in model-owned span producer，但query/goal仍是候选，不能训练/宣称T2/T3原生理解。训练边界继续由N177.5的T1合同控制；输入断点证据见[审计](../../../reports/taiji_n1_plan177_4_native_input_producer_gap_20261027.json)。
 
 | 项目 | 实施要求 |
 |---|---|
-| 输入 | 共同链工程/恢复证据、train-only可学性及完整成本标定；新包冻结数据/场景/表达隔离、支持/查询/保持分离与更新权限 |
-| 实际触点 | 既有N176课程构建器可按新合同复用，新增候选/数据/报告沿既定目录；实际消费者和更新器沿3.2–3.4；旧N176 sealed/原N175匿名题面与key不作新训练材料 |
-| 输出 | F0字面/结束、F1事实绑定、F2关系/指代/纠正分别报告；共同记忆/预测/语言的因果贡献；同初始无更新、正确/置换反馈、仅readout、负责模块冻结的必要对照；隔离query收益及旧级/旧能力保持 |
-| 有限exit | 一份固定批次/预算的课程行为与学习归因结案。阶段分数用于决定后继声明/难度，不修改本包更新数；F0可从纵切片最初有限实现开展，不等全部器官完善。N176既有门仅约束原包，不是共同工程永久前置 |
-| 失败回流 | 已见未拟合区分数据/表示/目标/优化/剂量；已见拟合而翻转/未见失败优先查绑定/消费者；新收益伴旧退化回更新/保持，保留父版本；每次只受理一个主要缺口的后继包 |
-| 被阻止的训练 | 不因未达门自动加轮、换题或扩大专业知识；不以多个独立runner分数拼联合模型；没有足够预算完成评价/保持/恢复时先缩成可判别包或进入实质资源决策 |
+| 输入 | N177.4A T1事实/更正producer及恢复证据、train-only可学性估算和成本标定；本包只冻结F0/F1入门数据/表达、支持/查询/保持分离与更新权限 |
+| 实际触点 | opt-in `taiji/joint_input_producer.py`、JointTaskState、V4 semantic workspace和3.4 credit contract；N176课程构建器仅按新合同复用；旧N176 sealed/原N175匿名题面与key不作新训练材料 |
+| 输出 | F0简单日常短句/回合结束；F1事实slot及更正；监督标签只进入train loss，推理只给raw InputTrace/当前状态；六类状态/参数比较及隔离query收益/旧F0保持分项 |
+| 有限exit | 一次冻结T1课程family、train/support/query/holdout、同父同资源、预算和停止线；保持、parse准确率、语言回答与恢复均有独立分母。合同可审通过后再明确申请正式训练预算，阶段结果不能自动扩题/加轮 |
+| 失败回流 | raw输入不能产生typed state回producer/表示；已见未拟合区分数据/目标/优化/剂量；已见拟合而翻转/未见失败查绑定/消费者；新收益伴旧退化回更新/保持，保留父版本；每次只受理一个主要缺口 |
+| 被阻止的训练 | producer还依赖人工结构注入时，不训练并宣称自然语义；不自动加轮、换题或扩大专业知识；不以多个独立runner分数拼联合模型；预算不足以评价/保持/恢复时转预算决策 |
 
 ### 3.6 F3自然连续任务与跨会话经验
 

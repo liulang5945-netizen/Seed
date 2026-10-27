@@ -1,0 +1,39 @@
+{
+  "schema": "taiji-n177-4-native-input-producer-gap-v1",
+  "date": "2026-10-27",
+  "status": "upstream input-to-state producer gap confirmed in the active N177 path",
+  "source_sha256": {
+    "taiji/adapter.py": "3abec22d7b05e13b9306343e3aa4b9dea8cb4d24665aaa83fe5ca70e6ddfe276",
+    "taiji/joint_task_state.py": "c9603bf94d239c1529278135fd0928dca3447513b7b174f608068d728197ac97",
+    "taiji/joint_action.py": "f1a3ac8857cb87e2a39998fe08cac50cf63278c921ada5c4940582850496a3a5",
+    "tests/taiji_native/test_n1_plan177_joint_task_state.py": "38552c15dc6a0f55b904e2d80ceef4617d1a960b45749ae9848bdf325f5cbf8d"
+  },
+  "evidence": {
+    "adapter_ingest_input": "taiji/adapter.py:11094 converts input bytes to Observation and PerceptEvent records and returns InputTrace; it does not derive WorldObject, WorldEvent, or Goal facts from natural Chinese",
+    "task_interpretation": "taiji/adapter.py:8269 accepts goal_description and constraints from its caller",
+    "semantic_provider_path": "taiji/adapter.py:8302 validates caller/provider-supplied SemanticEvidenceProposal; it is not a Taiji-learned raw-text parser",
+    "joint_input_bridge": "JointTaskState.append_input receives both the InputTrace and an already-created CognitiveState",
+    "t1_t2_t3_fixture_boundary": "current N177 tests construct structured owner facts and T3 goal targets; they verify downstream identity/consumption, not natural-Chinese extraction"
+  },
+  "architecture_verdict": "Current N177 proves that structured, source-bound content can reach memory/world/selection/language consumers. It does not prove raw Chinese input creates that structured content inside Taiji. Starting a joint capability training package on injected structured facts would skip the input producer and could overstate semantic ability.",
+  "required_next_slice": {
+    "producer": "opt-in, model-owned conversion from raw Chinese evidence to typed object/attribute/relation/goal candidates",
+    "provenance": "each candidate must retain input ID and byte/percept evidence span, confidence and ambiguity",
+    "consumer": "the same produced state must enter T1 correction, T2 retrieval and T3 prediction/selection without oracle targets at inference",
+    "tests": [
+      "simple factual statement binding",
+      "correction changes only the related current fact",
+      "related fact flip changes the answer or action",
+      "unrelated fact preserves the answer or action",
+      "ambiguous input abstains instead of silently receiving a structured fixture",
+      "checkpoint save/restore preserves producer parameters and source identity"
+    ]
+  },
+  "limits": {
+    "training_updates": 0,
+    "external_actions": 0,
+    "sealed_reads": 0,
+    "provider_evidence": "retained as a separate interface/fallback; it cannot stand in for native producer capability evidence"
+  },
+  "next_development_step": "N177.4: implement the opt-in native input-to-state producer and verify its source, correction, ambiguity and consumer path before freezing a semantic training course."
+}

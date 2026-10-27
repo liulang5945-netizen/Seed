@@ -1,0 +1,49 @@
+{
+  "schema": "taiji-n177-4a-native-fact-producer-v1",
+  "date": "2026-10-27",
+  "status": "opt-in T1 fact/correction producer and V4 semantic evidence path integrated; learned capability not evaluated",
+  "source_sha256": {
+    "taiji/joint_input_producer.py": "0b14e61dd450d3545f15e84f19e950a4ca1569e5e5532d4dd1c421b1cf281a93",
+    "tests/taiji_native/test_n1_plan177_input_producer.py": "5d6e09ef0b30179f2eab7a303bf798f5d393d569573d33d841f1084702c59285",
+    "taiji/joint_task_state.py": "c9603bf94d239c1529278135fd0928dca3447513b7b174f608068d728197ac97",
+    "taiji/conditional_language_v4.py": "3efef1005fdbe02a3120189bebec112f6c3ceb8803f1eebe390f677d8bac9f94",
+    "taiji/adapter.py": "3abec22d7b05e13b9306343e3aa4b9dea8cb4d24665aaa83fe5ca70e6ddfe276"
+  },
+  "implementation": {
+    "input": "exact raw UTF-8 bytes plus per-byte Taiji PerceptEvent features from the committed InputTrace",
+    "learnable_path": "producer-owned byte embedding, projection, bidirectional recurrent context, BIO slot head and utterance-act head; old detached PerceptEvent features are auxiliary inputs, not claimed as updated by semantic loss",
+    "typed_slots": ["entity", "attribute", "value", "negation"],
+    "acts": ["assertion", "correction", "query", "goal", "ambiguous"],
+    "query_goal_commit": "query/goal parses are retained as candidates only; they do not update GoalState, memory retrieval or ActionIntent",
+    "source_binding": "every span is bound to input_id, full-source SHA-256, half-open UTF-8 byte offsets, exact percept event IDs, assembly IDs and a producer revision",
+    "commit": "only a current-model output with a resolved assertion/correction can update WorldObject/WorldEvent; correction replaces one matching object attribute and preserves event history and unrelated entities",
+    "language_consumer": "the selected semantic feature is added to V4 workspace with its exact source span; a source-row cut changes next-byte logits in the deterministic structural fixture",
+    "checkpoint": "producer weights and parse ledger are stored in a separate versioned component of the same NativeCheckpoint as the joint state and V4 candidate",
+    "multi_turn": "canonical CognitiveState can be rebound to a TSK-v8 native checkpoint before the next InputFrame; a second-frame correction retains the first parsed fact"
+  },
+  "evidence": {
+    "producer_module_tests_passed": 5,
+    "combined_N177_input_boundary_v4_and_plan_identity_tests_passed": 91,
+    "source_span_oracle_split_utf8_rejected": true,
+    "ambiguous_or_negative_fact_not_committed": true,
+    "corrected_attribute_and_unrelated_fact_hold": true,
+    "V4_semantic_workspace_cut_changes_logits": true,
+    "producer_checkpoint_restored_in_fresh_process": true,
+    "train_only_loss_has_gradient_to_producer": true,
+    "model_parameters_updated": false,
+    "ruff_black_mypy": "passed"
+  },
+  "limits": {
+    "parse_logits_fixture": "commit-path intervention tests use a fixed-logit test double; this verifies source, state and consumer contracts, not semantic accuracy",
+    "semantic_ability": "not measured; the parser candidate is untrained",
+    "act_commit": "assertion and correction are integrated; query and goal remain hypotheses and do not update GoalState or memory retrieval",
+    "T2_T3_natural_input": "still not demonstrated; existing memory/action paths retain structured test targets",
+    "checkpoint_training_state": "weights and parse ledger are saved; optimizer/RNG/update continuation is not implemented because no training occurred",
+    "default_adapter": "unchanged; parser remains opt-in",
+    "external_actions": 0,
+    "sealed_reads": 0,
+    "capability_promotion": false
+  },
+  "architecture_verdict": "The previously missing input producer now has a source-bound learnable candidate and an actual semantic feature path into the V4 decoder. Structural tests establish wiring and recovery only; no claim of Chinese fact extraction quality or learned capability follows.",
+  "next_development_step": "N177.5: freeze the T1 F0/F1 beginner course, family split, same-parent controls, CPU/wall budget, checkpoint policy and finite stopping line before any training authorization. T2 query retrieval and T3 goal parsing remain deferred until those task slices are activated."
+}

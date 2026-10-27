@@ -42,5 +42,5 @@
     "learning_or_capability_gain": "not measured"
   },
   "architecture_verdict": "This completes the static comparison contract only. It makes the state owner, parameter recipients, frozen groups, target identity and required recovery checks explicit; it does not demonstrate that any receiver learned.",
-  "next_development_step": "N177.4: freeze the F0-F2 course, family splits, same-parent resource comparison, checkpoint cost and finite stopping criteria before requesting a new training budget."
+  "next_development_step": "N177.5: freeze the T1 F0/F1 beginner course, family split, same-parent controls, CPU/wall budget, checkpoint policy and finite stopping line before any training authorization."
 }
