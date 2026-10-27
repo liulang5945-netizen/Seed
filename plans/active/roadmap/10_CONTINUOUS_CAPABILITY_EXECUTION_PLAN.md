@@ -42,7 +42,7 @@
 
 ### 3.1 已训N176收束与N177无模型工程准备
 
-运行快照（2026-10-27 21:42）：Correct与Parser-permuted/seed0均完成2560并耐久保存；no_update/seed0零状态后曾中断，已从checkpoint恢复，metrics到update26。全局durable更新5120；最新metrics累计约306,033 CPU秒/28,839 wall秒、制品约1.15 GB，含故障、回放及保守尾账。
+运行快照（2026-10-27 21:42）：Correct与Parser-permuted/seed0均完成2560并耐久保存；no_update/seed0零状态后曾中断，已从checkpoint恢复，metrics到update46。全局durable更新5120；最新metrics累计约306,437 CPU秒/28,881 wall秒、制品约1.15 GB，含故障、回放及保守尾账。
 
 | 项目 | 实施要求 |
 |---|---|
