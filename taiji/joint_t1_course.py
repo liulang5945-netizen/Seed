@@ -454,12 +454,11 @@ def _family_digest(level: str, values: Sequence[str]) -> str:
     return f"{level.lower()}-family:{digest[:20]}"
 
 
-def _f0_families() -> dict[str, tuple[tuple[str, str], ...]]:
+def _f0_families() -> dict[str, tuple[str, ...]]:
     combinations = tuple(product(_NAMES, _F0_ITEMS))
     family_ids = tuple(_family_digest("F0", pair) for pair in combinations)
     splits = _split_family_ids(family_ids)
-    by_id = {_family_digest("F0", pair): pair for pair in combinations}
-    return {partition: tuple(by_id[item] for item in splits[partition]) for partition in splits}
+    return {partition: splits[partition] for partition in splits}
 
 
 def _f1_primary_combinations() -> tuple[tuple[str, str, str, str], ...]:

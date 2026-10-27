@@ -114,9 +114,9 @@ N1消费/信用、N2更新保持、N3数据/容量、N4记忆治理、N5世界/�
 
 当前唯一研究队首只在03。已授权的文档、接口实现、合成检查以及生命页只读观察器可在不改绑定源、不争用训练资源时推进；真实模型运行、共享writer和新研究方向按03与所选包串接。读取既有训练metadata不等于启动模型或将研究runner纳入生命运行时控制。
 
-截至2026-10-27，N177.2-T1/T2/T3的opt-in消费路径及N177.3A/B静态恢复/信用合同已过各自有限接口门；N177.4A又接通了T1 assertion/correction与当前值query的原生byte/percept→source-bound WorldObject/Workspace→V4语义切片。parser仍未训练，query尚不检索episodic memory，Goal尚未从文本写入GoalState，故不证明自然中文理解；当前唯一队首以03中的N177.5A联合Trainer/manifest/preflight为准。
+截至2026-10-27，N177.2-T1/T2/T3的opt-in消费路径及N177.3A/B静态恢复/信用合同已过各自有限接口门；N177.4A接通T1 assertion/correction与当前值query的byte/percept→source-bound WorldObject/Workspace→V4切片。N177.5A builder、双owner训练器、590MB train-only frozen InputTrace cache、五模式梯度责任剖面及cache-bound NativeCheckpoint fresh-process恢复均通过工程预检；无optimizer update。实际固定窗口见03/5.5SPEC，当前唯一队首是N177.6固定T1训练与独立评分。query仍不检索episodic memory，Goal尚未从文本写入GoalState，故当前状态不证明自然中文理解。
 
-当前接力为“N176按原合同有限结案 ∥ N177不消费sealed的合同/接口/合成检查→同一共同纵切片工程就绪→训练前完整保存恢复与合同内标定→有限F0–F2行为/学习验证→分别作语言/联合能力/保持裁决”。`∥`只允许不争用受控资源、不改绑定源的独立工作，不预先消费评价或启动新训练。N176的正/负/不可判结果用于有限归因，不是修复已确认共同链缺项的开工门。
+当前接力为“N176按原合同有限结案 ∥ N177不消费sealed的合同/接口/工程检查→同一共同纵切片工程就绪→冻结输入缓存/训练责任/恢复预检→N177.6按≤2.4M CPU/≤220k wall/≤8GiB一次固定训练和holdout评价→分别作语言/联合能力/保持裁决”。`∥`只允许不争用受控资源、不改绑定源的独立工作。N176的正/负/不可判结果用于有限归因，不是修复已确认共同链缺项的开工门；新N177 checkpoint与旧父候选隔离。
 
 当前任务不需要的完整目标提议、主动调度、结构成长和多模态归下一VISION；稳定跨会话成长由CC-5/6与L4后继验收，不把其最小状态/学习责任一起后置。接力输入、文件触点和出口见10与N177，不在本页发布第二条运行指令。
 
