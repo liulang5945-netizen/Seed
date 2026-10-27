@@ -23,7 +23,9 @@
 
 N175交接见[原判读与费用](../../reference/PLAN-N1-175_evaluation_handoff_20261026.md)；N176来源、固定范围和预算只看[已冻结F0/F1合同](../../reference/SPEC-N1-176_F0_F1_pilot_20261026.md)。本次不变更它们的题面、分母、阈值、预算、源码绑定或消费资格。
 
-## 当前唯一下一步：N177.6固定T1联合训练与有限结案（运行中）
+## 当前唯一下一步：N177.6固定T1训练续跑与按计划监督（用户指示恢复）
+
+N177.6曾按用户请求暂停（权威run_state曾为`paused_by_user`）：Correct/seed0与Parser-permuted/seed0各完成2560并耐久保存；no_update/seed0最新耐久checkpoint为update1280，metrics到update1439，1281–1439为未落盘尾段。用户于2026-10-27晚指示恢复主线训练：runner已于2026-10-27 23:33以`--resume`自durable 1280续接，尾段按停机政策自动记为重放/丢弃（第6条discarded范围），状态转`running`；单实例已确认（恢复前无其他训练进程）。恢复前累计metrics为342,835.70 process-CPU秒/32,328.17 wall秒，制品1,264,483,917 bytes；此前双会话重叠额外暂留2,000 CPU秒/180 wall秒，保守记账上界344,835.70/32,508.17秒，低于2.4M CPU/220k wall/8GiB原上限。未读取query/holdout/sealed。N177.6原manifest、数据、15臂、阈值与预算不改；教师信号不注入本冻结实验。当前唯一队首是按冻结合同监督本次训练：检查点、资源账与臂进度按计划记录并提交。
 
 N177.1及N177.2-T1/T2/T3已完成各自有限工程出口。[T3回执](../../../reports/taiji_n1_plan177_t3_world_action_conditioning_20261026.json)记录了结构化目标、固定权重WorldDynamics预测/Executive选择、ActionIntent写回和V4动作条件消费；不证明中文目标解析、已学规划或外部行动。
 
@@ -39,7 +41,7 @@ N177.3B已把状态owner/参数owner分账及六类比较定义为可校验合�
 
 T1固定合同见[SPEC-N1-177.5 v2](../../reference/SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md)。640个train episodes、15臂各2560步、train-only InputTrace cache与课程顺序固定；cache与zero NativeCheckpoint已做源绑定和新进程恢复预检。N177.6上限为2,400,000 process-CPU秒、220,000 wall秒及8 GiB制品。Correct/seed0已完成2560步并耐久保存；Parser-permuted/seed0已完成2560步并耐久保存；update801和923曾暴露producer 48维到V4 workspace 256维的两处接口断层，现认知与语言路径共用prefix_zero_extension_v1无损注入，实际48→256接口回归及该模块7项检查通过。producer.predict仍返回detach parse：parser loss更新producer，answer loss更新V4，后者不回传producer；本冻结候选不能证明下游answer-error credit。独立scorer保留学习、参数责任与逐family state-write对照，尚未读取query/holdout；父checkpoint只读、sealed reads=0。
 
-运行快照（2026-10-27 22:31）：Correct与Parser-permuted/seed0均完成2560并耐久保存；no_update/seed0已耐久update1,280，metrics到1,282，F0/F1分界checkpoint保留。双会话重叠后旧会话已停止，新会话从零checkpoint回放，1–78记为未耐久回滚。runner仅校验manifest、未做run-root单实例互斥，是本次并发根因；当前仅一个会话活动。metrics累计约338,030 CPU秒/31,880 wall秒、制品约1.26 GB；重叠期额外暂留2,000 CPU秒/180 wall秒，预算记账上界约340,030/32,060秒。全局durable游标6,400；15臂中两臂完成，holdout未读。后续训练包启动前补单实例互斥门。
+运行快照（2026-10-27 23:33恢复运行）：Correct与Parser-permuted/seed0均完成2560并耐久保存；no_update/seed0自durable update1280恢复续跑，metrics尾段1281–1439已按停机政策记为重放/丢弃。恢复前metrics累计342,835.70 CPU秒/32,328.17 wall秒、制品1,264,483,917 bytes；双会话重叠另暂留2,000 CPU秒/180 wall秒，预算记账上界344,835.70/32,508.17秒。全局durable游标6,400起继续；holdout未读。恢复时单实例已确认；runner无run-root单实例互斥，任何后续新包须先补门。
 
 该步与N176原一次有限结案可并行。主开发队列只有N177这一条；N176是已训练资产的收束支线，N175剩余人工评分是明确保留的review待办。两者不是“先等全部人工判读或toy正收益，才能修共同架构”的无限门。
 
@@ -56,11 +58,11 @@ T1固定合同见[SPEC-N1-177.5 v2](../../reference/SPEC-N1-177_5_T1_F0_F1_pilot
 | 4B T2情景与T3自然Goal producer | 后续扩展同一producer/retriever到跨turn记忆query和自然Goal→target slot/action candidate | 推理不注入provider/gold state；查询source/time正确，Goal span绑定target slots，歧义不生成ActionIntent | 不阻塞T1；未通过前T2/T3保持结构化接口证据边界 |
 | 5A 联合Trainer及source-bound manifest（完成） | `taiji/joint_t1_course.py`、`taiji/joint_t1_trace_cache.py`、`taiji/joint_t1_trainer.py`；zero/cache-bound NativeCheckpoint新进程preflight | family/target/order、train-only cache source SHA及独立重放一致；五模式梯度owner路径通过；完整run窗口预算≤2.4M CPU/220k wall/8GiB | 进入固定T1 run；更新期间仍以真实累计账本硬停止 |
 | 5B 有界训练合同（固定） | SPEC-N1-177.5 v2，15 arms×2560 updates，成对state-write诊断，family macro及seed规则 | 30%余量后投影2.269M CPU/199.519k wall/6.29GB；硬上限2.4M/220k/8GiB；用户站立式可逆操作授权适用，N174旧账不继承 | 进入N177.6固定T1候选训练及验收 |
-| **6 同候选T1有限训练与保持（角色分类修复后运行，当前唯一队首）** | producer+JointTaskState+V4同一bundle、train-only frozen cache、独立arm/native checkpoints | Correct/seed0完整2560；Parser-permuted/seed0已完成2560，已越过update2235故障点。全局durable=5120；资源含两次失败回放和尾账。answer error不回传producer仍是架构信用边界 | 第三臂no_update/seed0已写入可恢复零状态；当前按冻结顺序继续训练第三臂，再继续其余12臂；全部端点后独立holdout评价与架构归因 |
+| **6 同候选T1有限训练与保持（用户指示恢复，运行中）** | producer+JointTaskState+V4同一bundle、train-only frozen cache、独立arm/native checkpoints | Correct与Parser-permuted/seed0完成2560；no_update/seed0自durable 1280续跑，尾段1281–1439重放/丢弃记账；恢复前资源342,835.70/32,328.17，含历史失败/回放，另暂留并发重叠2,000/180；holdout未读。answer error不回传producer仍是架构信用边界 | 保留原manifest与checkpoints，不注入监督器；按冻结合同继续至各臂固定终点。离线监督器S0保留为候选方向，启动前须另经用户授权与run-root互斥 |
 | 7 自然连续任务与跨会话 | 情景回忆、多轮更正、一步行动、真实经历与持续纠错逐级扩展 | 同一可恢复版本未见任务、反馈后query及旧能力保持按07裁决 | 分别形成L2/L3/L4证据，不拼接不同模型成绩 |
 | 8 按瓶颈触发机制与算力研究 | 表示时界/轨迹恢复/学习信用或计算热点确有证据时，选择一个多尺度、更新或并行候选 | 同任务/同资源比较收益、信息损失、保持、吞吐/内存及恢复，固定出口 | 采用或否决该候选，不先预定PC/SSM/块稀疏必胜 |
 
-步骤1–6按T1→T2→T3逐任务纵向执行，不先完成所有任务的全部器官才训练。N177.5A/B有限工程、恢复和固定资源合同已过；N177.6已按同一bundle进入一次有界训练。当前唯一队首是监控checkpoint、资源账和固定课程，随后独立评分并完成架构归因。T2/T3 query/Goal自然输入能力在T1结果可判后扩展。
+步骤1–6按T1→T2→T3逐任务纵向执行，不先完成所有任务的全部器官才训练。N177.5A/B有限工程、恢复和固定资源合同已过；N177.6已按用户指示自durable点恢复运行。当前唯一队首是按冻结合同监督本次训练：检查点、资源账与臂进度按计划记录；不读取N177.6 holdout，不注入教师信号。离线监督器S0保留为候选方向（见N177计划§9），启动前须另经用户授权。T2/T3 query/Goal自然输入能力仍待后续。
 
 快慢状态、reset和反馈责任在步骤1–3先定义；完整多时间尺度算法及硬件换底座不是第一次联合链的预设前置。步骤8是条件支路，可在步骤1–7出现必要表示/时界/信用/计算瓶颈时前移，不必等F3完成。语言与联合认知共同开发、按07分别验收，能力等级不是开发许可。
 

@@ -42,7 +42,19 @@
 
 ### 3.1 已训N176收束与N177无模型工程准备
 
-运行快照（2026-10-27 22:31）：no_update/seed0已durable update1,280、metrics update1,282；F0/F1分界checkpoint保留，前两臂各durable 2560。单实例互斥缺失导致双续训会话，旧会话已停止；从零checkpoint重放的1–78步按未耐久回滚保留。metrics累计约338,030 CPU秒/31,880 wall秒、制品约1.26 GB；重叠期另暂留2,000 CPU秒/180 wall秒，预算记账上界340,030/32,060秒。全局durable游标6,400。当前冻结训练继续；互斥门安排在后续训练包启动前。
+运行快照（2026-10-27 23:33恢复）：N177.6已按用户指示自durable点恢复运行。Correct与Parser-permuted/seed0各durable 2560；no_update/seed0自durable 1280续接，metrics尾段1281–1439按停机政策重放/丢弃。恢复前metrics累计约342,835.70 CPU秒/32,328.17 wall秒，制品1,264,483,917 bytes；双会话重叠另暂留2,000 CPU秒/180 wall秒，预算记账上界344,835.70/32,508.17秒。恢复时确认单实例；原固定合同与holdout边界不变，教师不得注入。新监督训练包前置增加run-root互斥。
+
+#### 低消耗训练监督器（候选规划，非活动队首）
+
+2026-10-27晚用户指示恢复主线训练，本节降为候选规划，不再是活动队首；启动任何监督器工作前须另经用户授权并先完成S0规格与run-root互斥。
+
+推荐角色是**本地、训练期、按需调用的弱监督器/诊断器**，不是替Taiji写完整答案的常驻教师。先复用并量测一个现成的小型模型，不从零训练监督模型；只处理student失败、高不确定或人机评审分歧的train样本，并缓存结果。监督器输出简短结构化诊断（证据span、可观察错误类别、置信/弃权、建议复习层级）；正确答案仍由任务确定性校验器或抽样人工标注确认。teacher自由文本和logits默认不作为gold target。
+
+方案权衡：全量teacher答案/蒸馏覆盖密，但会增加调用开销、幻觉及模仿表层文本风险；人工全审可信但扩展成本高；选择性弱监督加确定性校验/少量人工校准在成本和证据强度间最合适。任何模型负责模块的归因必须由Taiji内部可观察trace/消融验证，外部监督器不能仅凭回答文字断言错误属于producer、query selector或language readout。
+
+有限路线：S0冻结一个本地候选、硬件/量化/上下文设置、简短JSON schema、train-only校准样本、人审一致性阈值、弃权规则和每个可采纳标签的CPU/GPU/wall/内存成本上限；不训练学生、不触碰sealed。S1只在验证/人工审过的train失败样本上生成监督并测有效覆盖率、错误标签精度和单位成本；低于预先阈值则拒用。S2若S1通过，创建独立candidate/manifest，从同一已知父checkpoint出发，对比无教师matched continuation、通过验证的监督信号以及小规模置换信号控制；将监督器成本计入总成本。S3由不含教师的student独立执行未见组合、基础中文与保持评价；教师永不进入运行时。每步可按成功、负结果、不可判或预算停止有限结案。
+
+架构交叉门：N177.6当前`JointInputProducerV1.predict`为detach parse，parser loss能更新producer，但answer loss不能回传producer。低成本监督可以给可核验的span/role辅助目标，却不能自动修复answer-error credit断点。新包必须先提交`producer→state→consumer→output→loss/update receiver`路径和断开/置换对照；若目标是让最终回答错误改变producer，先给出实际信用路径，否则监督器只算训练标签来源，不算架构修复。
 
 | 项目 | 实施要求 |
 |---|---|

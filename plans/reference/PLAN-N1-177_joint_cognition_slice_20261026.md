@@ -1,6 +1,6 @@
 # N177 最小共同认知纵切片：实施依赖与接口合同
 
-日期：2026-10-27。状态：N177.1及N177.2-T1/T2/T3 opt-in共同状态、记忆/世界/选择/语言消费链已通过有限工程/因果接口检查；N177.3A恢复/只读路由与N177.3B六类更新权限规格已通过有限静态出口。实际参数更新、更新后恢复、行为学习对照和模型能力仍未验收；没有参数更新、外部动作或新封存读取。
+日期：2026-10-27。状态：N177.1及N177.2-T1/T2/T3 opt-in共同状态、记忆/世界/选择/语言消费链已通过有限工程/因果接口检查；N177.3A恢复/只读路由与N177.3B六类更新权限规格已通过有限静态出口；N177.6按用户指示于2026-10-27 23:33自durable 1280恢复运行，尾段按停机政策重放/丢弃记账。实际参数更新、更新后恢复、行为学习对照和模型能力仍未验收；没有参数更新、外部动作或新封存读取。
 
 ## 1. 本次改变的依赖
 
@@ -77,7 +77,7 @@ N176三臂已经完成，仍按原一次评价有限收束，用于解释课程�
 | **177.4B T2情景检索与T3自然Goal输入（后继扩展）** | 同producer/retriever扩展到跨turn EpisodicMemoryStore query和自然Goal→target slots/action candidate；只用opt-in bundle | inference无provider/gold injection；查询source/时序正确，Goal由raw span映射target slots；歧义不创建ActionIntent | T1结果可判后按范围启用；此前T2/T3结构化fixture只算接口证据 |
 | **177.5A 联合Trainer/manifest/零状态preflight（有限完成）** | `taiji/joint_t1_course.py`、`taiji/joint_t1_trace_cache.py`、`taiji/joint_t1_trainer.py`和`preflight_taiji_n1_plan177_5a_checkpoint.py`；[预检报告](../../../reports/taiji_n1_plan177_5a_preflight_20261027_v2.json) | 640 train episodes/2560顺序固定；train-only 590,512,321-byte trace cache逐源SHA绑定，F0/F1共13轮fresh Adapter重放逐字段一致；backward-only五模式梯度归属符合合同且0 optimizer updates；cache-bound zero NativeCheckpoint 19,550,523 bytes fresh-process参数/optimizer/cursor恢复一致 | 结构化接口可进入训练；不代表学到能力 |
 | **177.5B 固定T1课程/资源合同（固定）** | [SPEC-N1-177.5 v2](SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md) | 5 modes×3 seeds、2560 steps/arm、write-enabled/disabled配对诊断及family/seed评分已冻结；投影含30%余量2,269,268 CPU s/199,519 wall s/6.29GB | 新硬上限2.4M CPU s/220k wall s/8GiB；由用户AGENTS.md的可逆工作授权运行，旧N174账不继承；触限即保存并停止 |
-| **177.6 T1同候选有限训练与验收（恢复后运行）** | 同一producer+JointTaskState+V4 bundle及冻结train trace cache；独立NativeCheckpoint与scorer | Correct与Parser-permuted/seed0均已完成2560并耐久保存，第三臂no_update/seed0已耐久至update512、metrics至519；双会话重叠后停止旧会话，新会话从零checkpoint重放，range 1–78计为未耐久回滚；累计metrics约338,030 CPU秒/31,880 wall秒，重叠暂留2,000 CPU秒/180 wall秒；holdout未读；run-root互斥门列为后续训练包前置 | 按固定15臂继续至各自终点或硬限；全部端点后独立评价与归因 |
+| **177.6 T1同候选有限训练与验收（用户指示恢复，运行中）** | 同一producer+JointTaskState+V4 bundle及冻结train trace cache；独立NativeCheckpoint与scorer | Correct与Parser-permuted/seed0均完成2560；no_update/seed0于2026-10-27 23:33自durable 1280恢复，metrics尾段1281–1439按停机政策记为重放/丢弃（第6条discarded范围），状态running。恢复前累计342,835.70 CPU秒/32,328.17 wall秒，另暂留2,000 CPU秒/180 wall秒。双会话问题根因是runner缺run-root互斥 | 保留原合同、manifest、checkpoint及全部费用；恢复只从durable点续接且重放/丢弃尾段，不注入teacher。任何新训练须独立身份/预算并先具备run-root互斥 |
 
 实施按T1→T2→T3逐任务纵向贯通：对当前子任务落实共同状态、原生输入producer、必要消费者、信用/恢复、固定课程与有限训练。177.4A已接入T1事实/更正和当前值query；177.5A trainer/cache/preflight及177.5B课程/资源合同均有限完成；当前进入177.6一次固定T1训练与只读评价。T2情景检索与T3自然Goal producer在T1结果可判后扩展；不能把T3结构化target替代原生目标解析。
 
@@ -95,4 +95,42 @@ F3再增加自然表达、多步连续任务和真实跨会话经验；CC-5/6的
 
 本次计划重排以03/09/10/07、本合同、N176承接说明及历史索引一致并提交为完成，不新增模型训练或封存消费。冻结实验结果/预算不改、历史失败可精确恢复，是重排的硬边界。
 
-该臂从durable2048恢复，越过两次update2235故障并完成至2560；Correct与Parser-permuted均完成，no_update零状态后发现双会话，旧会话已停止；新会话回放至durable update1,280、metrics update1,282，range 1–78记为未耐久回滚。累计metrics约338,030 CPU秒/31,880 wall秒，双会话重叠另留2,000 CPU秒/180 wall秒；runner无单实例互斥为根因，后续训练包启动前修复。Answer-loss因detach parse不更新producer，信用边界结案时须报告；holdout未读，硬限不变。
+该臂从durable2048恢复，越过两次update2235故障并完成至2560；Correct与Parser-permuted均完成。no_update/seed0曾在update1280被用户暂停，metrics尾段1281–1439未落盘；用户于2026-10-27晚指示恢复主线训练，no_update/seed0自durable 1280续接并将尾段按停机政策记为重放/丢弃，训练按冻结臂序继续。恢复前资源累计342,835.70 CPU秒/32,328.17 wall秒，双会话重叠另留2,000/180秒；runner无单实例互斥为根因，恢复前已确认单会话。原15臂合同、模型和checkpoints保持，不读holdout、不追加教师信号。Answer-loss因detach parse不更新producer，仍是架构信用边界。
+
+## 9. 低消耗离线训练监督器（候选规划，未准入训练）
+
+本节是用户暂停N177.6后新增的候选方向，不追溯改变N177.6原合同、训练臂、数据、checkpoint或预算；完成本节规格也不等于授权启动模型训练。上位身份规则沿用[原生架构§6.1](../active/TAIJI_NATIVE_ARCHITECTURE_V1.md)：外部teacher只能作为明确披露的`native-assisted`训练信号，不能成为运行时认知依赖。
+
+### 9.1 角色选择
+
+| 方案 | 优势 | 主要问题 | 决策 |
+|---|---|---|---|
+| 对所有问题生成完整标准答案/蒸馏logits | 目标密、易直接接入文本loss | 成本随全部token增长；错误答案会变成伪金标；可能让Taiji复制答案样式而不学内容绑定 | 不作为默认 |
+| 仅靠人工审阅全部数据 | 标签可信、责任清楚 | 人工成本随训练样本线性增长，难覆盖迭代失败 | 留给校准、疑难和准入抽样 |
+| 本地小模型做选择性、离线、结构化弱监督；确定性校验/人工抽样确认 | 只调用高价值失败样本；可缓存；信号类别和费用可审计 | 需先校准置信度与标签质量，可能因弃权多而不值得使用 | **推荐** |
+| 外部模型在Taiji运行时给答案、记忆或行动建议 | 短期能力看似提升 | 把认知控制权移出Taiji，违背原生架构目标 | 禁止 |
+
+先复用一个现成、可本地运行的小型模型并实测，不从零训练监督模型。当前主机观测基线为24逻辑CPU、PyTorch CUDA不可用、47.2 GiB总RAM/约10.9 GiB可用RAM（2026-10-27 22:40采样）；因此首个候选按CPU-only评估，暂设监督进程常驻内存≤6 GiB以保留主机余量。实际型号由吞吐、峰值内存、中文监督精度和许可核验共同选择；模型尺寸本身不作为低消耗证据。若本地质量门失败，先结案本地路线，不自动改走高成本远端调用。
+
+### 9.2 监督数据流与可验证信号
+
+`student在train样本上的输出/trace → 失败、不确定或分歧筛选 → 小模型给结构化弱标签/错误假设 → 确定性任务校验器或人工抽样准入 → 带来源、scope和模型版本的监督记录 → 仅路由到已声明的loss接收模块`。
+
+监督输出限于：证据span ID、可观察错误类别（如漏用事实/用错实体/未采纳更正/未回答/中文不清晰）、置信度或弃权、建议复习层级、验证来源。监督器可提出模块责任候选，但必须由Taiji trace、loss路径或消融验证后才可路由。未经校验的teacher答案、隐式推理文本、teacher hidden states/logits不得作为默认目标。输出缓存按输入/trace、teacher版本、rubric版本和prompt哈希去重；teacher只接触获准train split，holdout及sealed完全隔离。
+
+### 9.3 有限门与费用
+
+| 门 | 交付 | 通过后允许 |
+|---|---|---|
+| S0 规格与本机资源基线 | 冻结一个候选、量化/上下文、schema、错误类别、train-only人审校准集、校准量表、弃权规则、CPU/GPU/wall/峰值内存上限和标签单位成本口径 | 只运行监督器质量/成本基准，不训练Taiji |
+| S1 标签准入小试 | 在训练split失败/不确定样本上计算人审一致性、可采纳覆盖率、错误类别精度、缓存命中率与总成本；阈值在揭示小试结果前登记 | 低于任一准入门则拒用并结案；通过才撰写新训练合同 |
+| S2 新候选受控学习 | 独立manifest；从共同父checkpoint开始；匹配无teacher continuation、受校验监督信号及小份额置换信号控制；相同任务/步数/预算；监督器推理费用计入总资源 | 只比较监督信号是否带来每单位总资源的可迁移净收益和负责模块改变 |
+| S3 教师撤除验收 | teacher停止后student独立自由生成；未见组合、旧能力保持、来源绑定、恢复、架构/信用归因和资源成本按新SPEC结案 | 成功/负结果/不可判/预算停止择一有限结束；不因teacher评语好看而推广 |
+
+若source hash、parent revision、课程顺序与N177.6的Correct/seed0精确匹配，后者可作为no-teacher参考；若任一不匹配，则新合同必须补跑匹配基线，不能拼接分数。原N177.6当前停在update1280的no_update臂，metrics尾段到1439；恢复只接受既有manifest及耐久checkpoint，不增加teacher标签或扩大上限。
+
+### 9.4 架构归因的硬门
+
+N177.6中answer loss不回传producer是已知断点。监督器提供span/role辅助标签可以训练其解析头，但不能据此宣称最终任务错误已教会producer。若新目标要求“用户回答错→producer被纠正”，新包必须实现并验证闭环信用路径，并提供正确/置换/无更新和负责接收者冻结对照；否则应把监督目标限定为可验证的局部解析能力，清晰标为辅助学习，不冒称解决架构问题。
+
+监督器方向保留为候选规划：用户已于2026-10-27晚指示恢复主线训练（见§8），S0不再是活动队首，学生训练不再因此保持暂停；若未来启动监督器，仍须先完成本节S0规格与准入门，并另经用户授权。
