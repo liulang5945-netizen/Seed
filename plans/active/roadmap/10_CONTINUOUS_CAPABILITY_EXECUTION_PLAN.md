@@ -42,7 +42,7 @@
 
 ### 3.1 已训N176收束与N177无模型工程准备
 
-恢复状态同步（2026-10-27 15:02:52）：Correct/seed0在update922后因语言workspace仍直接拼入48维producer特征而失败；最新durable为768。认知与语言两条路径已统一无损宽度注入，4→8和48→256定向回归以及模块7项检查通过。最后实测58,573.41 CPU/5,990.08 wall秒，失败尾段额外保守预留1,000 CPU/120 wall秒；恢复时记录769–922回放并沿原上限继续。
+恢复状态同步（2026-10-27 15:22:22）：Correct/seed0此前在update922后因语言workspace直接拼入48维特征失败；两条路径已统一无损注入，4→8及48→256回归和模块7项检查通过。runner已从durable update768恢复并登记769–922回放，metrics到780；累计60,325.86 CPU/6,266.64 wall秒包含失败未测尾段的保守预留。下一验证是越过update923并保存下一耐久点。
 
 | 项目 | 实施要求 |
 |---|---|
@@ -85,7 +85,7 @@ N177.1以一个`CognitiveState`为根，映射V4神经`TaskState`、逐byte`Inpu
 
 有限结论：80项联合/InputBoundary/V4回归，Ruff含B/SIM、Black、mypy通过；68项N177.3专项通过。快照可重建并校验摘要，但没有重放全部候选重算同一选择。Outcome来源/执行ID尚无executor签名，仍是调用者声明；模型没有接收任何参数更新，也未执行外部动作，未证明学习或能力提升。N177.3A/B静态identity、恢复及六类更新权限规格有限完成；参数更新后的中断恢复和六类实际学习对照仍未运行。
 
-N177.4A已接通来源绑定的单对象事实/更正和V4消费，N177.5A的课程、train-only cache、五模式梯度归属和zero NativeCheckpoint恢复已完成工程预检。N177.6 update923暴露此前只修复认知workspace、遗漏语言workspace的48→256维度断层；两条路径已改用同一无损注入并通过针对性回归，当前等待从durable update768恢复，metrics至922的重复工作与失败尾段均继续计入。当前候选的answer loss不通过detached parse反馈producer，需在本轮有限结案中单列；独立scorer准备了学习、参数责任及逐family state-write对照，尚未读query/holdout。
+N177.4A已接通来源绑定的单对象事实/更正和V4消费，N177.5A的课程、train-only cache、五模式梯度归属和zero NativeCheckpoint恢复已完成工程预检。N177.6 update923暴露认知与语言workspace间的48→256维度适配遗漏；两条路径现使用同一无损注入并通过针对性回归，已从durable update768恢复并按账本回放769–922。当前候选的answer loss不通过detached parse反馈producer，需在本轮有限结案中单列；独立scorer准备了学习、参数责任及逐family state-write对照，尚未读query/holdout。
 
 | 项目 | 实施要求 |
 |---|---|
