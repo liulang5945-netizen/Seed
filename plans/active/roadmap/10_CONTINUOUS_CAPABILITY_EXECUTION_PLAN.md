@@ -42,7 +42,7 @@
 
 ### 3.1 已训N176收束与N177无模型工程准备
 
-运行快照（2026-10-27 22:10）：no_update/seed0已durable update768、metrics update777；F0/F1分界checkpoint保留，前两臂各durable 2560。单实例互斥缺失导致双续训会话，旧会话已停止；从零checkpoint重放的1–78步按未耐久回滚保留。metrics累计约324,031 CPU秒/30,627 wall秒、制品约1.23 GB；重叠期另暂留2,000 CPU秒/180 wall秒，预算记账上界326,031/30,807秒。全局durable游标5,888。当前冻结训练继续；互斥门安排在后续训练包启动前。
+运行快照（2026-10-27 22:20）：no_update/seed0已durable update1,024、metrics update1,026；F0/F1分界checkpoint保留，前两臂各durable 2560。单实例互斥缺失导致双续训会话，旧会话已停止；从零checkpoint重放的1–78步按未耐久回滚保留。metrics累计约330,726 CPU秒/31,217 wall秒、制品约1.24 GB；重叠期另暂留2,000 CPU秒/180 wall秒，预算记账上界332,726/31,397秒。全局durable游标6,144。当前冻结训练继续；互斥门安排在后续训练包启动前。
 
 | 项目 | 实施要求 |
 |---|---|
