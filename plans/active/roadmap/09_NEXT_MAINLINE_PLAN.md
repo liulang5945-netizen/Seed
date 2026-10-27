@@ -114,7 +114,7 @@ N1消费/信用、N2更新保持、N3数据/容量、N4记忆治理、N5世界/�
 
 当前唯一研究队首只在03。已授权的文档、接口实现、合成检查以及生命页只读观察器可在不改绑定源、不争用训练资源时推进；真实模型运行、共享writer和新研究方向按03与所选包串接。读取既有训练metadata不等于启动模型或将研究runner纳入生命运行时控制。
 
-截至2026-10-27，N177.2-T1/T2/T3 opt-in消费路径与N177.3A/B恢复/信用合同已过有限工程门；N177.4A接通T1 assertion/correction和current-value query的byte/percept→source-bound WorldObject/Workspace→V4切片。N177.5A builder、双owner trainer、590MB train-only frozen InputTrace cache、五模式梯度责任剖面及cache-bound NativeCheckpoint fresh-process恢复通过预检。N177.6 Correct/seed0通过2-step恢复canary；CState carry修复后update768 checkpoint已保存并包含F1前128步。update801在第一次resolved F1事实提交时暴露producer48维与V4 workspace256维不匹配，已补无损宽度接口适配，769–800将在恢复时回放且资源仍计入；更早的257–283首跑与重放也均保留。另已确认answer-loss不通过detached parse回传producer，这是本候选的架构信用边界。独立scorer静态检查通过，覆盖学习门、参数责任配对及逐family state-write因果对照，尚未读query/holdout。当前唯一队首仍是修复后的有界训练，之后独立scorer评价；训练中间loss不证明自然中文理解，sealed未读。
+截至2026-10-27，N177.2-T1/T2/T3 opt-in消费路径与N177.3A/B恢复/信用合同已过有限工程门；N177.4A接通T1 assertion/correction和current-value query的byte/percept→source-bound WorldObject/Workspace→V4切片。N177.5A builder、双owner trainer、590MB train-only frozen InputTrace cache、五模式梯度责任剖面及cache-bound NativeCheckpoint fresh-process恢复通过预检。N177.6 Correct/seed0通过2-step恢复canary；CState carry修复后update768 checkpoint已保存并包含F1前128步。update801暴露producer48维与V4 workspace256维不匹配，现以无损宽度接口适配修复，恢复已越过801到807。769–800和257–283两段回放/首跑资源均保留计费。answer-loss不通过detached parse回传producer是本候选的架构信用边界。独立scorer静态检查通过，覆盖学习门、参数责任配对及逐family state-write因果对照，尚未读query/holdout。当前唯一队首仍是修复后的有界训练，之后独立scorer评价；训练中间loss不证明自然中文理解，sealed未读。
 
 当前接力为“N176按原合同有限结案 ∥ N177不消费sealed的接口/工程检查→同一共同纵切片工程就绪与固定输入cache→N177.6≤2.4M CPU/≤220k wall/≤8GiB一次训练→固定终点query/holdout、旧能力保持与架构归因”。`∥`只允许不争用受控资源、不改绑定源的独立工作。N176的正/负/不可判结果用于有限归因，不是修复已确认共同链缺项的开工门；新N177 checkpoint与旧父候选隔离。
 
