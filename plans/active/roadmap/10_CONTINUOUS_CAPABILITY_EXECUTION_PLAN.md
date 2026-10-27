@@ -42,7 +42,7 @@
 
 ### 3.1 已训N176收束与N177无模型工程准备
 
-运行快照（2026-10-27 17:40:42）：Correct/seed0已越过原update923宽度故障，最新durable update2304、metrics update2383；累计151,585.20 CPU/14,566.96 wall秒包含先前失败及保守预留。这是固定15臂的第一臂，继续按03和原合同执行。
+运行快照（2026-10-27 17:56:16）：Correct/seed0已完成固定2560步并保存终点checkpoint，成为首个completed arm；Parser-permuted/seed0已写zero checkpoint并进入下一臂。累计CPU/wall约161,870.70/15,497.86秒，含旧失败回放与尾账预留；其余固定臂按03和原合同继续执行。
 
 | 项目 | 实施要求 |
 |---|---|
