@@ -42,7 +42,7 @@
 
 ### 3.1 已训N176收束与N177无模型工程准备
 
-运行快照（2026-10-27 21:53）：no_update/seed0已durable update256、metrics update280；双会话重叠后旧会话已停止，新会话从零checkpoint重放，range 1–78记为未耐久回滚。累计metrics约312,817 CPU秒/29,616 wall秒、制品约1.17 GB；重叠另预留2,000 CPU秒/180 wall秒，预算记账上界314,817/29,796秒。全局durable游标5,376。
+运行快照（2026-10-27 22:01）：no_update/seed0已durable update512、metrics update519；前两臂各durable 2560。单实例互斥缺失导致双续训会话，旧会话已停止；从零checkpoint重放的1–78步按未耐久回滚保留。metrics累计约317,699 CPU秒/30,059 wall秒、制品约1.19 GB；重叠期另暂留2,000 CPU秒/180 wall秒，预算记账上界319,699/30,239秒。全局durable游标5,632。当前冻结训练继续；互斥门安排在后续训练包启动前。
 
 | 项目 | 实施要求 |
 |---|---|
@@ -85,7 +85,7 @@ N177.1以一个`CognitiveState`为根，映射V4神经`TaskState`、逐byte`Inpu
 
 有限结论：80项联合/InputBoundary/V4回归，Ruff含B/SIM、Black、mypy通过；68项N177.3专项通过。快照可重建并校验摘要，但没有重放全部候选重算同一选择。Outcome来源/执行ID尚无executor签名，仍是调用者声明；模型没有接收任何参数更新，也未执行外部动作，未证明学习或能力提升。N177.3A/B静态identity、恢复及六类更新权限规格有限完成；参数更新后的中断恢复和六类实际学习对照仍未运行。
 
-Parser-permuted/seed0曾在update2235因resolved query多出value span失败；修复后恢复并完成2560。no_update/seed0随后出现双续训会话，旧会话已停止；单一新会话从零checkpoint恢复至durable update256、metrics update280。range 1–78记为未耐久回滚，重叠期另暂留2,000 CPU秒/180 wall秒，均计入固定预算。
+Parser-permuted/seed0曾在update2235因resolved query多出value span失败；修复后恢复并完成2560。no_update/seed0随后出现双续训会话，旧会话已停止；单一新会话从零checkpoint恢复至durable update256、metrics update280。range 1–78记为未耐久回滚；runner未作run-root单实例互斥为并发根因，后续包启动前补门。重叠期另暂留2,000 CPU秒/180 wall秒，均计入固定预算。
 
 | 项目 | 实施要求 |
 |---|---|

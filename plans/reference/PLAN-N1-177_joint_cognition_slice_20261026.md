@@ -77,7 +77,7 @@ N176三臂已经完成，仍按原一次评价有限收束，用于解释课程�
 | **177.4B T2情景检索与T3自然Goal输入（后继扩展）** | 同producer/retriever扩展到跨turn EpisodicMemoryStore query和自然Goal→target slots/action candidate；只用opt-in bundle | inference无provider/gold injection；查询source/时序正确，Goal由raw span映射target slots；歧义不创建ActionIntent | T1结果可判后按范围启用；此前T2/T3结构化fixture只算接口证据 |
 | **177.5A 联合Trainer/manifest/零状态preflight（有限完成）** | `taiji/joint_t1_course.py`、`taiji/joint_t1_trace_cache.py`、`taiji/joint_t1_trainer.py`和`preflight_taiji_n1_plan177_5a_checkpoint.py`；[预检报告](../../../reports/taiji_n1_plan177_5a_preflight_20261027_v2.json) | 640 train episodes/2560顺序固定；train-only 590,512,321-byte trace cache逐源SHA绑定，F0/F1共13轮fresh Adapter重放逐字段一致；backward-only五模式梯度归属符合合同且0 optimizer updates；cache-bound zero NativeCheckpoint 19,550,523 bytes fresh-process参数/optimizer/cursor恢复一致 | 结构化接口可进入训练；不代表学到能力 |
 | **177.5B 固定T1课程/资源合同（固定）** | [SPEC-N1-177.5 v2](SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md) | 5 modes×3 seeds、2560 steps/arm、write-enabled/disabled配对诊断及family/seed评分已冻结；投影含30%余量2,269,268 CPU s/199,519 wall s/6.29GB | 新硬上限2.4M CPU s/220k wall s/8GiB；由用户AGENTS.md的可逆工作授权运行，旧N174账不继承；触限即保存并停止 |
-| **177.6 T1同候选有限训练与验收（恢复后运行）** | 同一producer+JointTaskState+V4 bundle及冻结train trace cache；独立NativeCheckpoint与scorer | Correct与Parser-permuted/seed0均已完成2560并耐久保存，第三臂no_update/seed0已耐久至update256、metrics至280；双会话重叠后停止旧会话，新会话从零checkpoint重放，range 1–78计为未耐久回滚；累计metrics约312,817 CPU秒/29,616 wall秒，重叠暂留2,000 CPU秒/180 wall秒；holdout未读 | 按固定15臂继续至各自终点或硬限；全部端点后独立评价与归因 |
+| **177.6 T1同候选有限训练与验收（恢复后运行）** | 同一producer+JointTaskState+V4 bundle及冻结train trace cache；独立NativeCheckpoint与scorer | Correct与Parser-permuted/seed0均已完成2560并耐久保存，第三臂no_update/seed0已耐久至update512、metrics至519；双会话重叠后停止旧会话，新会话从零checkpoint重放，range 1–78计为未耐久回滚；累计metrics约317,699 CPU秒/30,059 wall秒，重叠暂留2,000 CPU秒/180 wall秒；holdout未读；run-root互斥门列为后续训练包前置 | 按固定15臂继续至各自终点或硬限；全部端点后独立评价与归因 |
 
 实施按T1→T2→T3逐任务纵向贯通：对当前子任务落实共同状态、原生输入producer、必要消费者、信用/恢复、固定课程与有限训练。177.4A已接入T1事实/更正和当前值query；177.5A trainer/cache/preflight及177.5B课程/资源合同均有限完成；当前进入177.6一次固定T1训练与只读评价。T2情景检索与T3自然Goal producer在T1结果可判后扩展；不能把T3结构化target替代原生目标解析。
 
@@ -95,4 +95,4 @@ F3再增加自然表达、多步连续任务和真实跨会话经验；CC-5/6的
 
 本次计划重排以03/09/10/07、本合同、N176承接说明及历史索引一致并提交为完成，不新增模型训练或封存消费。冻结实验结果/预算不改、历史失败可精确恢复，是重排的硬边界。
 
-该臂从durable2048恢复，越过两次update2235故障并完成至2560；Correct与Parser-permuted均完成，no_update零状态后发现双会话，旧会话已停止；新会话回放至durable update256、metrics update280，range 1–78记为未耐久回滚。累计metrics约312,817 CPU秒/29,616 wall秒，双会话重叠另留2,000 CPU秒/180 wall秒；均在原预算上限内。Answer-loss因detach parse不更新producer，信用边界结案时须报告；holdout未读，硬限不变。
+该臂从durable2048恢复，越过两次update2235故障并完成至2560；Correct与Parser-permuted均完成，no_update零状态后发现双会话，旧会话已停止；新会话回放至durable update512、metrics update519，range 1–78记为未耐久回滚。累计metrics约317,699 CPU秒/30,059 wall秒，双会话重叠另留2,000 CPU秒/180 wall秒；runner无单实例互斥为根因，后续训练包启动前修复。Answer-loss因detach parse不更新producer，信用边界结案时须报告；holdout未读，硬限不变。
