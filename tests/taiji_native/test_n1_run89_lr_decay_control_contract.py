@@ -15,6 +15,7 @@ report, no checkpoint, no query.
 
 from __future__ import annotations
 
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -146,14 +147,24 @@ def test_launcher_is_one_parameterised_file_that_hands_over_the_arm() -> None:
 
 
 def test_launcher_powershell_syntax_parses() -> None:
+    #: PowerShell 语言工件只能由 PowerShell 解析器判——Ubuntu 腿默认没有 `powershell`，
+    #: 那是环境缺席而不是回归。按候选名找解释器，找到就跑，两者都缺席就点名响亮 skip；
+    #: 任何其它失败（rc≠0／解析出 error）仍照旧红。
+    launcher = run89.LAUNCHER
     command = (
         "$errors = $null; "
         "[System.Management.Automation.Language.Parser]::ParseFile("
-        f"'{run89.LAUNCHER.as_posix()}', [ref]$null, [ref]$errors) | Out-Null; "
+        f"'{launcher.as_posix()}', [ref]$null, [ref]$errors) | Out-Null; "
         "$errors.Count"
     )
+    shell = next((name for name in ("powershell", "pwsh") if shutil.which(name)), None)
+    if shell is None:
+        pytest.skip(
+            "宿主没有 PowerShell 解释器（powershell/pwsh 都不在 PATH）⇒ "
+            f"{launcher.as_posix() or 'run89.LAUNCHER（未 configure）'} 的语法面在此不可判定"
+        )
     result = subprocess.run(
-        ["powershell", "-NoProfile", "-Command", command],
+        [shell, "-NoProfile", "-Command", command],
         capture_output=True,
         text=True,
         timeout=120,

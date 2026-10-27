@@ -15,6 +15,7 @@
 
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 import sys
@@ -25,6 +26,10 @@ PROBE = PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py
 
 
 def _help_output() -> str:
+    #: 用法屏的**换行宽度与输出编码**都是宿主属性：argparse 按 `COLUMNS`／终端宽度折行，
+    #: 旗标名可能被拆到两行上去（"旗标没出现在帮助里"就是这样造出来的），而 CI 的终端宽度与
+    #: 维护机不同。所以把宽度与编码钉成常量，两面读到同一张屏。
+    env = dict(os.environ, COLUMNS="200", PYTHONIOENCODING="utf-8")
     run = subprocess.run(
         [sys.executable, str(PROBE), "--help"],
         cwd=PROJECT_ROOT,
@@ -32,6 +37,7 @@ def _help_output() -> str:
         text=True,
         encoding="utf-8",
         errors="replace",
+        env=env,
     )
     assert run.returncode == 0, f"--help 退出码 {run.returncode}：{run.stderr[-300:]}"
     return run.stdout
@@ -39,10 +45,12 @@ def _help_output() -> str:
 
 def test_probe_help_exits_zero_and_lists_every_flag() -> None:
     text = _help_output()
+    #: 按"空白折叠后"匹配：既不让折行把旗标名切开造成假缺失，也不放过真的没打印出来的旗标。
+    flat = " ".join(text.split())
     source = PROBE.read_text(encoding="utf-8")
     declared = sorted(set(re.findall(r'add_argument\(\s*"(--[a-z0-9-]+)"', source)))
     assert declared, "一个旗标都没扫到 ⇒ 扫描方式过期了，本守卫失去覆盖面"
-    missing = [flag for flag in declared if flag not in text]
+    missing = [flag for flag in declared if flag not in flat]
     assert not missing, f"这些旗标没出现在用法屏上：{missing}（共声明 {len(declared)} 个）"
 
 

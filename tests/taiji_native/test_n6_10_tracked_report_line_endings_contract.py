@@ -107,10 +107,9 @@ def test_an_empty_face_fails_loudly(instrument) -> None:
 
 
 def test_the_two_faces_disagree_on_the_real_repo(instrument, tmp_path) -> None:
-    """真面：索引面两枚、工作树面 138 枚 ⇒ 判据必须只认前者。
+    """真面：判据必须只认索引字节面；工作树那一面按本机检出态出版（不相等的证明在下一条按构造做）。
 
-    枚数不钉死（我下一批加一枚读数件就会推翻它），这里只断言"两面不相等"这件事本身——
-    它才是"哪张面"必须写进件里的理由。
+    枚数不钉死（我下一批加一枚读数件就会推翻它），这里只保留与宿主无关的那几句。
     """
 
     out = tmp_path / "lf.json"
@@ -121,7 +120,10 @@ def test_the_two_faces_disagree_on_the_real_repo(instrument, tmp_path) -> None:
     assert report["tracked_total"] == len(
         instrument.tracked_paths(PROJECT_ROOT, instrument.DEFAULT_FACE)
     )
-    assert report["working_tree_cr_files_total"] != len(report["cr_bearing_names"])
+    assert report["working_tree_cr_files_total"] >= len(report["cr_bearing_names"])
+    #: 原句是 `working_tree_cr_files_total != len(cr_bearing_names)`——那是**本机 `core.autocrlf`
+    #: smudge 出来的检出态**（Linux 腿两面本就相等，于是这条在任何 runner 上都红），
+    #: 不是判据要守的事。"两面确实分开"改由下一条按构造证明，不靠宿主检出态。
     #: 不钉死枚数（下一批加一枚读数件就会推翻它）；钉的是"桶里的总数必须等于逐枚求和"与
     #: "索引面上没有一枚是 `\r\n`"——后者才是"两面必须分开"的实证。
     buckets = report["buckets_index_face"]
@@ -138,6 +140,91 @@ def test_the_two_faces_disagree_on_the_real_repo(instrument, tmp_path) -> None:
     )
     assert buckets["lone_cr"] == sum(row["lone_cr"] for row in report["cr_bearing_tracked_files"])
     assert buckets["lone_cr"] > 0
+
+
+def test_the_two_faces_disagree_by_construction(instrument, tmp_path) -> None:
+    """ "两面必须分开"这件事要按构造证明，不能靠维护机恰好把检出翻成 CRLF。
+
+    造一枚件：索引里是纯 LF 的字节，工作树里同一枚带 `\r\n`（不 add）。在 Windows 与 Linux 上
+    这张面的两面都由构造撑开 ⇒ 判据若改读工作树，第一条断言当场为假。
+    """
+
+    repo = tmp_path / "repo"
+    (repo / "reports").mkdir(parents=True)
+    rel = "reports/one.json"
+    (repo / rel).write_bytes(b'{\n  "a": 1\n}\n')
+    for args in (
+        ["init", "--quiet"],
+        ["add", rel],
+        [
+            "-c",
+            "user.email=fixture@example.invalid",
+            "-c",
+            "user.name=fixture",
+            "-c",
+            "commit.gpgsign=false",
+            "commit",
+            "--quiet",
+            "-m",
+            "fixture",
+        ],
+    ):
+        subprocess.run(
+            ["git", "-c", "core.autocrlf=false", *args],
+            cwd=repo,
+            check=True,
+            capture_output=True,
+        )
+    #: 提交之后再改工作树 ⇒ 索引面仍是纯 LF，工作树面已带 CR。
+    (repo / rel).write_bytes(b'{\r\n  "a": 1\r\n}\r\n')
+
+    out = tmp_path / "constructed.json"
+    rc = instrument.main(["--root", str(repo), "--face", "reports/", "--out-report", str(out)])
+    report: dict[str, Any] = json.loads(out.read_text(encoding="utf-8"))
+    assert rc == 0, report["failing_verdicts"]
+    #: 索引面干净 ⇒ 不判红（这正是"只认索引面"的可见后果）。
+    assert report["cr_bearing_names"] == [], report
+    assert report["buckets_index_face"]["crlf_pairs"] == 0, report
+    #: 同一枚在工作树面带 CR ⇒ 两面确实分开，且这里不判它。
+    assert report["working_tree_cr_files_total"] == 1, report["working_tree_cr_sample"]
+
+
+def test_the_index_face_is_the_one_that_fires(instrument, tmp_path) -> None:
+    """上一条的负对照：把 CR **提交进索引**，同一把尺必须当场红——证明判定真在读索引面而不是盘。"""
+
+    repo = tmp_path / "repo"
+    (repo / "reports").mkdir(parents=True)
+    rel = "reports/one.json"
+    (repo / rel).write_bytes(b'{\r\n  "a": 1\r\n}\r\n')
+    for args in (
+        ["init", "--quiet"],
+        ["add", rel],
+        [
+            "-c",
+            "user.email=fixture@example.invalid",
+            "-c",
+            "user.name=fixture",
+            "-c",
+            "commit.gpgsign=false",
+            "commit",
+            "--quiet",
+            "-m",
+            "fixture",
+        ],
+    ):
+        subprocess.run(
+            ["git", "-c", "core.autocrlf=false", *args],
+            cwd=repo,
+            check=True,
+            capture_output=True,
+        )
+
+    out = tmp_path / "fired.json"
+    rc = instrument.main(["--root", str(repo), "--face", "reports/", "--out-report", str(out)])
+    report: dict[str, Any] = json.loads(out.read_text(encoding="utf-8"))
+    assert rc == 1, report["verdicts"]
+    assert report["cr_bearing_names"] == ["reports/one.json"], report
+    assert "no_new_cr_bearing_tracked_file" in report["failing_verdicts"], report
 
 
 def test_the_instrument_refuses_to_overwrite_an_existing_report(instrument, tmp_path) -> None:

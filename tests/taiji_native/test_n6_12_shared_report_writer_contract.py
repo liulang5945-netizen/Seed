@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 from pathlib import Path
 from typing import Any
 
@@ -39,11 +40,24 @@ def test_the_helper_writes_no_carriage_returns(tmp_path: Path) -> None:
 
 
 def test_a_control_write_without_the_helper_does_produce_cr(tmp_path: Path) -> None:
-    #: 反面对照（这条测的是"测本身有效"）：同一份文本用旧写法落盘，在这台机器上必须真带 CR。
-    #: 若这一支也得到 0，那上面那条断言就没有判别力——平台默认不是 LF 时才轮得到本助手做事。
-    target = tmp_path / "old.json"
-    target.write_text(json.dumps({"a": 1}, indent=2) + "\n", encoding="utf-8")
-    assert target.read_bytes().count(bytes([13])) > 0
+    #: 反面对照（这条测的是"测本身有效"）。**宿主默认只是两路里的一路**：Windows 不带 `newline`
+    #: 会翻出 CR，POSIX 默认不翻——把判别力押在宿主默认面上，Linux 腿必红而判据没变。
+    #: 所以这里把两个平台的默认行尾各**显式**走一遍（两支都能在任一宿主上为假），
+    #: 宿主自己的默认值只出版不判。
+    payload = json.dumps({"a": 1}, indent=2) + "\n"
+
+    windows_style = tmp_path / "old_windows_default.json"
+    windows_style.write_text(payload, encoding="utf-8", newline="\r\n")
+    assert windows_style.read_bytes().count(bytes([13])) > 0
+
+    posix_style = tmp_path / "old_posix_default.json"
+    posix_style.write_text(payload, encoding="utf-8", newline="\n")
+    assert posix_style.read_bytes().count(bytes([13])) == 0
+
+    host = tmp_path / "old_host_default.json"
+    host.write_text(payload, encoding="utf-8")
+    host_cr = host.read_bytes().count(bytes([13]))
+    assert (host_cr > 0) == (os.linesep == "\r\n"), (host_cr, repr(os.linesep))
 
 
 def test_newline_is_a_parameter_not_a_constant(tmp_path: Path) -> None:

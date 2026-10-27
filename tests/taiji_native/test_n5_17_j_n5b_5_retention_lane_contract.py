@@ -79,8 +79,8 @@ def _pair(
     name: str,
     cells: dict[str, tuple[int, int]],
     *,
-    cap0_before: str = r"reports\base_beta_cap0.json",
-    replay_before: str = r"reports\base_beta_replay24.json",
+    cap0_before: str = "reports/base_beta_cap0.json",
+    replay_before: str = "reports/base_beta_replay24.json",
     cap0_sha: str = "aa11",
     replay_sha: str = "bb22",
     columns_compared: Any = 7,
@@ -235,7 +235,7 @@ def test_same_basename_different_bytes_is_not_same_source(tmp_path: Path) -> Non
         tmp_path,
         "control_pair.json",
         CONTROL,
-        cap0_before=r"output\arm_b\base_beta_cap0.json",
+        cap0_before="output/arm_b/base_beta_cap0.json",
         cap0_sha="cc33",
     )
     rc, payload = _run(tmp_path, _retention_args(treated, control))
