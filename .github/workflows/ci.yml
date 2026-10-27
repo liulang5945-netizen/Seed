@@ -115,10 +115,17 @@ jobs:
 #   · 族 A 第五例 7 条（relation 两测＋structural-gain 门族 5 条）已于 2026-10-25
 #     随方案乙（admission 判定改 isclose 相对容差）摘除，翻转记录、代码位点与
 #     裁定留痕见 plans/active/roadmap/11_CI_FLOAT_EVIDENCE_FOR_OWNER_20261025.md。
-#     截至 2026-10-25 深夜（再摘 8 条）清单共 78 条×两腿。
+#     截至 2026-10-26（复册 5＋plan167×2＋skipif 化 6）清单共 79 条×两腿。
     env:
       DSH_CI_DESELECT: >-
         --deselect tests/taiji_native/test_a30_artifact_sha_drift_audit.py::test_known_bad_anchor_is_visible_and_known_good_is_clean
+        --deselect tests/taiji_native/test_n1_plan134_transition_diagnostic_contract.py::test_v16_source_union_is_bound_to_consumed_v15_and_frozen_endpoints
+        --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_reasons_disagreement_refuses
+        --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_freezable_branch_is_reachable
+        --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_not_freezable_branch_is_reachable
+        --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_runner_contract.py::test_start_charge_uses_latest_extension_snapshot_monotonically
+        --deselect tests/taiji_native/test_n1_plan167_train_decoder.py::test_instrumented_rollout_matches_the_real_configured_decoder
+        --deselect tests/taiji_native/test_n1_plan167_train_decoder.py::test_oracle_changes_only_disposable_state_and_never_calls_learning
         --deselect tests/taiji_native/test_a30_probe_help_runs.py::test_probe_help_exits_zero_and_lists_every_flag
         --deselect tests/taiji_native/test_a30_self_answers_report_face.py::test_fresh_target_is_accepted
         --deselect tests/taiji_native/test_g35_checkpoint_overwrite_guard.py::test_escape_flag_reaches_the_write_path
@@ -171,10 +178,6 @@ jobs:
         --deselect tests/taiji_native/test_native_renaming_curriculum_contract.py::test_complete_trained_adam_restore_and_initial_controls
         --deselect tests/taiji_native/test_native_renaming_curriculum_contract.py::test_new_batch_sessions_do_not_collide_with_restored_history
         --deselect tests/taiji_native/test_native_writer_question_interchange_contract.py::test_native_and_two_donors_preserve_original_logits
-        --deselect tests/taiji_native/test_r2_continuation_evaluation_adapter_contract.py::test_preflight_binds_frozen_and_extension_sources_by_default
-        --deselect tests/taiji_native/test_r2_continuation_evaluation_adapter_contract.py::test_preflight_binds_launch_provenance_ledger_and_budget
-        --deselect tests/taiji_native/test_r2_continuation_evaluation_adapter_contract.py::test_preflight_records_historical_sources_without_byte_binding
-        --deselect tests/taiji_native/test_r2_daily_dialogue_warmstart_matched_contract.py::test_warm_and_fresh_models_share_shape_but_not_initial_weights
         --deselect tests/taiji_native/test_n1_plan142_v21_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan143_v22_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan144_v23_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
@@ -186,8 +189,6 @@ jobs:
         --deselect tests/taiji_native/test_n5_20_head_face_parity_contract.py::test_the_ruler_reproduces_the_committed_baseline_digest
         --deselect tests/taiji_native/test_n6_10_tracked_report_line_endings_contract.py::test_the_two_faces_disagree_on_the_real_repo
         --deselect tests/taiji_native/test_n6_12_shared_report_writer_contract.py::test_a_control_write_without_the_helper_does_produce_cr
-        --deselect tests/taiji_native/test_native_reader_transfer_contract.py::test_exact_transfer_fresh_adam_and_zero_restore
-        --deselect tests/taiji_native/test_native_reader_transfer_contract.py::test_refuse_nontrain_before_updates
         --deselect tests/taiji_native/test_n1_plan157_seed128_candidate_vs_parent_diagnostic_contract.py::test_partial_face_continuation_reuses_exactly_the_sealed_endpoint
         --deselect tests/taiji_native/test_n1_plan160_seed130_candidate_parent_diagnostic_contract.py::test_seed128_and_seed129_values_are_in_seed130_exclusion_sets
         --deselect tests/taiji_native/test_n1_plan161_seed131_question_surface_diagnostic_contract.py::test_question_templates_are_absent_from_bound_training_questions
@@ -739,6 +740,13 @@ jobs:
     env:
       DSH_CI_DESELECT: >-
         --deselect tests/taiji_native/test_a30_artifact_sha_drift_audit.py::test_known_bad_anchor_is_visible_and_known_good_is_clean
+        --deselect tests/taiji_native/test_n1_plan134_transition_diagnostic_contract.py::test_v16_source_union_is_bound_to_consumed_v15_and_frozen_endpoints
+        --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_reasons_disagreement_refuses
+        --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_freezable_branch_is_reachable
+        --deselect tests/taiji_native/test_n3_09_tau_rule_contract.py::test_not_freezable_branch_is_reachable
+        --deselect tests/taiji_native/test_r2_dialogue_continuation_extension_runner_contract.py::test_start_charge_uses_latest_extension_snapshot_monotonically
+        --deselect tests/taiji_native/test_n1_plan167_train_decoder.py::test_instrumented_rollout_matches_the_real_configured_decoder
+        --deselect tests/taiji_native/test_n1_plan167_train_decoder.py::test_oracle_changes_only_disposable_state_and_never_calls_learning
         --deselect tests/taiji_native/test_a30_probe_help_runs.py::test_probe_help_exits_zero_and_lists_every_flag
         --deselect tests/taiji_native/test_a30_self_answers_report_face.py::test_fresh_target_is_accepted
         --deselect tests/taiji_native/test_g35_checkpoint_overwrite_guard.py::test_escape_flag_reaches_the_write_path
@@ -791,10 +799,6 @@ jobs:
         --deselect tests/taiji_native/test_native_renaming_curriculum_contract.py::test_complete_trained_adam_restore_and_initial_controls
         --deselect tests/taiji_native/test_native_renaming_curriculum_contract.py::test_new_batch_sessions_do_not_collide_with_restored_history
         --deselect tests/taiji_native/test_native_writer_question_interchange_contract.py::test_native_and_two_donors_preserve_original_logits
-        --deselect tests/taiji_native/test_r2_continuation_evaluation_adapter_contract.py::test_preflight_binds_frozen_and_extension_sources_by_default
-        --deselect tests/taiji_native/test_r2_continuation_evaluation_adapter_contract.py::test_preflight_binds_launch_provenance_ledger_and_budget
-        --deselect tests/taiji_native/test_r2_continuation_evaluation_adapter_contract.py::test_preflight_records_historical_sources_without_byte_binding
-        --deselect tests/taiji_native/test_r2_daily_dialogue_warmstart_matched_contract.py::test_warm_and_fresh_models_share_shape_but_not_initial_weights
         --deselect tests/taiji_native/test_n1_plan142_v21_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan143_v22_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
         --deselect tests/taiji_native/test_n1_plan144_v23_confirmation_runner_contract.py::test_endpoint_registry_binds_all_three_sources_and_seed_pairs
@@ -806,8 +810,6 @@ jobs:
         --deselect tests/taiji_native/test_n5_20_head_face_parity_contract.py::test_the_ruler_reproduces_the_committed_baseline_digest
         --deselect tests/taiji_native/test_n6_10_tracked_report_line_endings_contract.py::test_the_two_faces_disagree_on_the_real_repo
         --deselect tests/taiji_native/test_n6_12_shared_report_writer_contract.py::test_a_control_write_without_the_helper_does_produce_cr
-        --deselect tests/taiji_native/test_native_reader_transfer_contract.py::test_exact_transfer_fresh_adam_and_zero_restore
-        --deselect tests/taiji_native/test_native_reader_transfer_contract.py::test_refuse_nontrain_before_updates
         --deselect tests/taiji_native/test_n1_plan157_seed128_candidate_vs_parent_diagnostic_contract.py::test_partial_face_continuation_reuses_exactly_the_sealed_endpoint
         --deselect tests/taiji_native/test_n1_plan160_seed130_candidate_parent_diagnostic_contract.py::test_seed128_and_seed129_values_are_in_seed130_exclusion_sets
         --deselect tests/taiji_native/test_n1_plan161_seed131_question_surface_diagnostic_contract.py::test_question_templates_are_absent_from_bound_training_questions

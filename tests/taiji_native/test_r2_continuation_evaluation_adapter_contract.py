@@ -27,6 +27,19 @@ REPO = Path(__file__).resolve().parents[2]
 ENTRY = REPO / "scripts/training/evaluate_taiji_r2_daily_dialogue_continuation_extension_v1.py"
 
 
+# 2026-10-25 owner 裁定：data/ 下 checkpoints/语料不入 git——产物在位才跑，
+# CI 上跳过（本机仍全量守护）。准入出处：roadmap/12 批 C。
+_ARTIFACT = (
+    Path(__file__).resolve().parents[2]
+    / "data/conversation/OASST2/taiji_r2_daily_dialogue_episodes.jsonl"
+)
+_ARTIFACT_PRESENT = _ARTIFACT.is_file()
+_ARTIFACT_REASON = (
+    "consumes data/ artifacts that are not git-stored "
+    "(owner 2026-10-25: checkpoints/corpus stay out of git)"
+)
+
+
 def _sha(character: str) -> str:
     return character * 64
 
@@ -225,6 +238,7 @@ def test_preflight_keeps_the_frozen_readiness_envelope(tmp_path: Path) -> None:
     assert [row["endpoint_id"] for row in manifest["endpoints"]] == list(adapter.ENDPOINT_ORDER)
 
 
+@pytest.mark.skipif(not _ARTIFACT_PRESENT, reason=_ARTIFACT_REASON)
 def test_preflight_binds_frozen_and_extension_sources_by_default(tmp_path: Path) -> None:
     preflight = adapter.extension_preflight(
         _manifest(tmp_path),
@@ -259,6 +273,7 @@ def test_extension_map_rejects_a_restore_receipt_from_another_stage(tmp_path: Pa
         adapter.extension_endpoint_map(manifest, baseline_fn=lambda: _baseline(tmp_path))
 
 
+@pytest.mark.skipif(not _ARTIFACT_PRESENT, reason=_ARTIFACT_REASON)
 def test_preflight_binds_launch_provenance_ledger_and_budget(tmp_path: Path) -> None:
     manifest = _manifest(tmp_path)
     preflight = _preflight(tmp_path, manifest)
@@ -287,6 +302,7 @@ def test_preflight_rejects_launch_source_drift(tmp_path: Path) -> None:
         _preflight(tmp_path, manifest)
 
 
+@pytest.mark.skipif(not _ARTIFACT_PRESENT, reason=_ARTIFACT_REASON)
 def test_preflight_records_historical_sources_without_byte_binding(tmp_path: Path) -> None:
     manifest = _manifest(tmp_path)
     historical = Path(next(iter(manifest["launch_provenance"]["historical_sources"])))

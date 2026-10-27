@@ -1,9 +1,24 @@
 from __future__ import annotations
 
+from pathlib import Path
+
+import pytest
 import torch
 
 from scripts.training import run_taiji_r2_daily_dialogue_warmstart_matched as matched
 from taiji.internalization import content_digest
+
+# 2026-10-25 owner 裁定：data/ 下 checkpoints/语料不入 git——产物在位才跑，
+# CI 上跳过（本机仍全量守护）。准入出处：roadmap/12 批 C。
+_ARTIFACT = (
+    Path(__file__).resolve().parents[2]
+    / "data/checkpoints/r2_daily_dialogue_oasst2_20261021_continuation/dialogue_context_final.pt"
+)
+_ARTIFACT_PRESENT = _ARTIFACT.is_file()
+_ARTIFACT_REASON = (
+    "consumes data/ artifacts that are not git-stored "
+    "(owner 2026-10-25: checkpoints/corpus stay out of git)"
+)
 
 
 def test_matched_arms_use_disjoint_write_once_paths() -> None:
@@ -20,6 +35,7 @@ def test_matched_arms_use_disjoint_write_once_paths() -> None:
     )
 
 
+@pytest.mark.skipif(not _ARTIFACT_PRESENT, reason=_ARTIFACT_REASON)
 def test_warm_and_fresh_models_share_shape_but_not_initial_weights() -> None:
     payload = torch.load(matched.base.BASELINE_CHECKPOINT, map_location="cpu", weights_only=True)
     warm = matched._new_model("warm_start", payload)

@@ -34,6 +34,9 @@ SCRIPT = REPO / "scripts" / "training" / "audit_taiji_prereg_exit_wording.py"
 #: 2026-10-25 二次重冻（结案波 339 份）：基线＝当前实测全集（230 invisible），
 #: 并行会话结案文档仍在落盘，本清单按波次保持当前（G74② 逐份修复归人判）。
 FROZEN_INVISIBLE = {
+    # 2026-10-26 增补：N1-175 盲审与 N1-176 主张审计两份结案文档（并行会话落盘）。
+    "PLAN-N1-175_blind_review_20261026.md",
+    "PLAN-N1-176_architecture_claims_audit_20261026.md",
     "PLAN-N02-V014-turn-trace-diagnostic-draft-20261018.md",
     "PLAN-N1-07_C2_calibration_budget_adjudication_20261015.md",
     "PLAN-N1-07_C2_calibration_result_adjudication_20261015.md",
