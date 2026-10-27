@@ -35,7 +35,7 @@ N177.3B已把状态owner/参数owner分账及六类比较定义为可校验合�
 
 边界：assertion/correction进入WorldObject/WorldEvent；query可选择已有实体/属性事实和对应source供V4消费，但不检索EpisodicMemory；goal仍是候选，不写GoalState、不生成ActionIntent。训练焦点限于T1事实/更正和基础中文；T2情景检索与T3自然Goal/动作解析仍待后续，结构化fixture不能计作原生解析。
 
-T1固定训练方案已形成[SPEC-N1-177.5](../../reference/SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md)：640 train episodes、六模式×三seed、2560 updates/arm，拟议新窗≤40,000 process-CPU秒/50,000 wall秒/6GiB。它是预算提案，不是训练授权。唯一下一步是实现JointT1TrainerV1和family manifest，做每臂zero checkpoint/optimizer fresh-restore; 2-step optimizer canary计入N177.6获批run，批准前不执行，验证两个loss只更新获准owner且checkpoint同包包含parser/V4/optimizer/RNG/source cursor；不运行正式训练、不执行外部动作、不读取sealed。preflight完成后再一次性请求这份新预算，旧N174额度不继承。
+T1固定训练合同已修订为[SPEC-N1-177.5 v2](../../reference/SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md)：640 train episodes、5个更新模式×3 seed、2560 updates/arm；去掉无用途的support split，钉死train-only parser/answer targets、F0/F1 family与8-turn误写分母、parser-permuted变换、写入开/关成对诊断和family-macro/seed汇总。旧40k CPU/50k wall/6GiB估算因多轮重建与联合checkpoint成本未闭合而撤回。确定性课程builder已落在`taiji/joint_t1_course.py`（语法编译通过，尚未行为验证/生成正式数据）。唯一下一步仍是实现JointT1TrainerV1并核验builder输出、双owner mask及零状态同NativeCheckpoint独立恢复/续接；零更新测量全bundle实际大小和all-in资源，不做optimizer更新、不读sealed。测量后形成一份含30%余量的真实窗口合同，再一次性请求授权；旧N174额度不继承。
 
 该步与N176原一次有限结案可并行。主开发队列只有N177这一条；N176是已训练资产的收束支线，N175剩余人工评分是明确保留的review待办。两者不是“先等全部人工判读或toy正收益，才能修共同架构”的无限门。
 
@@ -50,8 +50,8 @@ T1固定训练方案已形成[SPEC-N1-177.5](../../reference/SPEC-N1-177_5_T1_F0
 | 3B 状态/参数责任合同 | 177.3B：六类更新权限与same-checkpoint前后恢复要求的可校验规格 | 两项合同测试通过，各模式的可写/冻结接收者不冲突；正确与置换反馈复用同一路由owner以隔离标签差异；`apply_updates=false`，没有执行实际更新或后验恢复 | 进入4A T1原生事实生产 |
 | 4A T1事实/当前值query producer（有限工程完成） | 177.4A：raw bytes＋Percept→模型自有slot候选→source-bound fact/correction写入CognitiveState；query选择已有fact及source，并把slot feature送入V4 workspace | 5项producer测试及91项组合回归通过；UTF-8/percept源校验、否定/歧义拒写、修正只改相关字段、跨Adapter续接、切断语义feature改变V4 logits、新进程producer/parse ledger恢复。固定logit test double只证接口，不证模型已学 | 进入T1入门课程合同；当前query不检索情景记忆，Goal不写状态 |
 | 4B T2情景与T3自然Goal producer | 后续扩展同一producer/retriever到跨turn记忆query和自然Goal→target slot/action candidate | 推理不注入provider/gold state；查询source/time正确，Goal span绑定target slots，歧义不生成ActionIntent | 不阻塞T1；未通过前T2/T3保持结构化接口证据边界 |
-| 5A 联合Trainer及source-bound manifest | 177.5A：实现双owner parser/V4 update route、family级数据builder、fixed order和single native trainer checkpoint | 数据分割/target digest/六模式映射固定；zero checkpoint、optimizer/RNG fresh-restore preflight通过；2-step update canary计入N177.6获批run；未执行正式数据更新 | 完成工程preflight后请求新N177训练预算 |
-| 5B 有界训练合同 | SPEC-N1-177.5：40k CPU/50k wall/6GiB proposed ceiling、stop line与有限F0/F1指标 | 用户对具体合同授权后，按固定family和更新数开始；预算触顶保留partial并停止，不自动加轮 | 进入177.6固定T1候选训练及验收 |
+| 5A 联合Trainer及source-bound manifest | 177.5A：`taiji/joint_t1_course.py`确定性family/target/order builder已实现但未行为验证；待实现双owner parser/V4 update route和single native trainer checkpoint | v2课程合同固定；builder行为核验、零状态完整checkpoint、fresh-restore和恢复后forward一致；完成实测全包成本表；本阶段无optimizer更新 | 按实测成本和30%余量固化一次预算合同 |
+| 5B 有界训练合同 | SPEC-N1-177.5 v2：F0/F1固定课程、15 arms×2560 updates、成对state-write诊断、family宏平均、一次终点 | 全包CPU/wall/artifact限额由5A实测结果固化，非旧40k/50k/6GiB假设；用户授权前不执行optimizer更新 | 进入N177.6固定T1候选训练及验收 |
 | 6 同候选T1有限训练与保持 | 177.6：原生producer+JointTaskState+V4同一bundle上的一次有限训练/评测 | 固定终点判收益/无收益/退化/不可判；producer、语言readout、状态更新分账；F0保持及更新后新进程恢复通过 | T1过门后扩T2/T3；失败回一个主要机制并有限收束 |
 | 7 自然连续任务与跨会话 | 情景回忆、多轮更正、一步行动、真实经历与持续纠错逐级扩展 | 同一可恢复版本未见任务、反馈后query及旧能力保持按07裁决 | 分别形成L2/L3/L4证据，不拼接不同模型成绩 |
 | 8 按瓶颈触发机制与算力研究 | 表示时界/轨迹恢复/学习信用或计算热点确有证据时，选择一个多尺度、更新或并行候选 | 同任务/同资源比较收益、信息损失、保持、吞吐/内存及恢复，固定出口 | 采用或否决该候选，不先预定PC/SSM/块稀疏必胜 |

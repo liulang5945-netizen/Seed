@@ -83,7 +83,7 @@ N177.1以一个`CognitiveState`为根，映射V4神经`TaskState`、逐byte`Inpu
 
 有限结论：80项联合/InputBoundary/V4回归，Ruff含B/SIM、Black、mypy通过；68项N177.3专项通过。快照可重建并校验摘要，但没有重放全部候选重算同一选择。Outcome来源/执行ID尚无executor签名，仍是调用者声明；模型没有接收任何参数更新，也未执行外部动作，未证明学习或能力提升。N177.3A/B静态identity、恢复及六类更新权限规格有限完成；参数更新后的中断恢复和六类实际学习对照仍未运行。
 
-N177.4A已接通单对象/属性T1事实与更正：[回执](../../../reports/taiji_n1_plan177_4a_native_fact_producer_20261027.json)保存了raw byte/percept span、source hash、producer checkpoint和parse ledger；模型自产候选经过源校验后写入WorldObject/WorldEvent/CognitiveState Workspace，同时把slot pooled特征写入V4 neural workspace。切断该semantic row会改变V4 logits，跨帧 Adapter checkpoint可带着已知事实继续；但是解码用固定logit test double，实际producer未训练，query/goal尚不写状态。唯一队首转到N177.5 T1课程/资源合同，详见03。
+N177.4A已接通单对象/属性T1事实与更正：[回执](../../../reports/taiji_n1_plan177_4a_native_fact_producer_20261027.json)保存了raw byte/percept span、source hash、producer checkpoint和parse ledger；模型自产候选经过源校验后写入WorldObject/WorldEvent/CognitiveState Workspace，同时把slot pooled特征写入V4 neural workspace。切断该semantic row会改变V4 logits，跨帧 Adapter checkpoint可带着已知事实继续；但是解码用固定logit test double，实际producer未训练，query/goal尚不写状态。`taiji/joint_t1_course.py`已实现确定性课程/target/order builder，尚未行为验证、未生成正式数据。唯一队首转到N177.5A联合trainer与零状态checkpoint preflight；课程和资源合同见SPEC-N1-177.5 v2，资源按全包实测闭合，详见03。
 
 | 项目 | 实施要求 |
 |---|---|
@@ -100,10 +100,10 @@ N177.4A已接通单对象/属性T1事实与更正：[回执](../../../reports/ta
 
 | 项目 | 实施要求 |
 |---|---|
-| 输入 | N177.4A T1事实/更正producer及恢复证据、train-only可学性估算和成本标定；本包只冻结F0/F1入门数据/表达、支持/查询/保持分离与更新权限 |
-| 实际触点 | opt-in `taiji/joint_input_producer.py`、JointTaskState、V4 semantic workspace和3.4 credit contract；N176课程构建器仅按新合同复用；旧N176 sealed/原N175匿名题面与key不作新训练材料 |
-| 输出 | F0简单日常短句/回合结束；F1事实slot及更正；监督标签只进入train loss，推理只给raw InputTrace/当前状态；六类状态/参数比较及隔离query收益/旧F0保持分项 |
-| 有限exit | T1原生事实/当前值query已有有限接口门；冻结课程family、train/support/query/holdout、同父同资源、预算和停止线后一次跑到固定终点。span解析/状态/回答/保持/恢复分别记分；fixed-logit接口测试不冒充自然解析。合同与runner审好后再请求正式预算，不自动扩题/加轮 |
+| 输入 | N177.4A T1事实/更正producer及恢复证据、train-only可学性估算和成本标定；本包冻结F0/F1入门数据/表达、train/query/holdout分离与更新权限 |
+| 实际触点 | opt-in `taiji/joint_input_producer.py`、`taiji/joint_t1_course.py`、JointTaskState、V4 semantic workspace和3.4 credit contract；N176课程构建器仅按新合同复用；旧N176 sealed/原N175匿名题面与key不作新训练材料 |
+| 输出 | F0简单日常短句/回合结束；F1事实slot及更正；监督标签只进入train loss，推理只给raw InputTrace/当前状态；parser/V4责任比较、write-enabled/disabled状态对照及隔离query/holdout收益、旧F0保持分项 |
+| 有限exit | T1原生事实/当前值query已有有限接口门；固定family、train/query/holdout、顺序、对照和停止线，按零状态全包checkpoint与全run p95成本实测＋30%余量形成唯一窗口。span解析/状态/回答/保持/恢复分别记分；fixed-logit接口测试不冒充自然解析。合同与runner审好后再一次请求正式预算，不自动扩题/加轮 |
 | 失败回流 | raw输入不能产生typed state回producer/表示；已见未拟合区分数据/目标/优化/剂量；已见拟合而翻转/未见失败查绑定/消费者；新收益伴旧退化回更新/保持，保留父版本；每次只受理一个主要缺口 |
 | 被阻止的训练 | producer还依赖人工结构注入时，不训练并宣称自然语义；不自动加轮、换题或扩大专业知识；不以多个独立runner分数拼联合模型；预算不足以评价/保持/恢复时转预算决策 |
 
