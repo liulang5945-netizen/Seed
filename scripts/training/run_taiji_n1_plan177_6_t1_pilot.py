@@ -388,6 +388,16 @@ def _run() -> int:
         )
         progress["status"] = "running"
         progress["resumed_at_local"] = time.strftime("%Y-%m-%d %H:%M:%S")
+        if "failure" in progress:
+            progress.setdefault("recovered_failures", []).append(progress.pop("failure"))
+            _append_jsonl(
+                metrics_path,
+                {
+                    "event": "engineering_failure_recovered",
+                    "status": "recovered_from_latest_checkpoint",
+                    "implementation_revision": current_revision,
+                },
+            )
         _atomic_json(state_path, progress)
     else:
         _atomic_json(manifest_path, run_manifest)

@@ -44,11 +44,11 @@
         "optimizer_updates": 0,
         "parameters_optimizers_and_cursor_unchanged": true,
         "parser_loss_nats": 3.9937143325805664,
-        "process_cpu_seconds": 45.0,
+        "process_cpu_seconds": 47.0,
         "producer_gradient_norm": 1.6094470505650476,
         "producer_parameters_with_gradient": 15,
         "seed": 0,
-        "wall_seconds": 3.8666737000457942
+        "wall_seconds": 4.108949200017378
       },
       {
         "answer_loss_nats_per_byte": 4.482208251953125,
@@ -84,11 +84,11 @@
         "optimizer_updates": 0,
         "parameters_optimizers_and_cursor_unchanged": true,
         "parser_loss_nats": 3.99967360496521,
-        "process_cpu_seconds": 44.203125,
+        "process_cpu_seconds": 47.234375,
         "producer_gradient_norm": 1.6084253859925939,
         "producer_parameters_with_gradient": 15,
         "seed": 0,
-        "wall_seconds": 3.812910000095144
+        "wall_seconds": 4.095407000044361
       },
       {
         "answer_loss_nats_per_byte": 4.482208251953125,
@@ -106,11 +106,11 @@
         "optimizer_updates": 0,
         "parameters_optimizers_and_cursor_unchanged": true,
         "parser_loss_nats": 3.9937143325805664,
-        "process_cpu_seconds": 26.515625,
+        "process_cpu_seconds": 28.484375,
         "producer_gradient_norm": 0.0,
         "producer_parameters_with_gradient": 0,
         "seed": 0,
-        "wall_seconds": 2.3072236001025885
+        "wall_seconds": 2.5409026998095214
       },
       {
         "answer_loss_nats_per_byte": 4.482208251953125,
@@ -132,11 +132,11 @@
         "optimizer_updates": 0,
         "parameters_optimizers_and_cursor_unchanged": true,
         "parser_loss_nats": 3.9937143325805664,
-        "process_cpu_seconds": 35.421875,
+        "process_cpu_seconds": 38.84375,
         "producer_gradient_norm": 0.0,
         "producer_parameters_with_gradient": 0,
         "seed": 0,
-        "wall_seconds": 3.065297699999064
+        "wall_seconds": 3.3822176000103354
       },
       {
         "answer_loss_nats_per_byte": 4.482208251953125,
@@ -172,11 +172,11 @@
         "optimizer_updates": 0,
         "parameters_optimizers_and_cursor_unchanged": true,
         "parser_loss_nats": 3.9937143325805664,
-        "process_cpu_seconds": 41.125,
+        "process_cpu_seconds": 44.765625,
         "producer_gradient_norm": 0.0,
         "producer_parameters_with_gradient": 0,
         "seed": 0,
-        "wall_seconds": 3.5545569001697004
+        "wall_seconds": 3.882937999907881
       }
     ],
     "optimizer_updates": 0,
@@ -769,41 +769,41 @@
     },
     "modes": [
       {
-        "cpu_seconds_all_seeds": 322913.08325709053,
+        "cpu_seconds_all_seeds": 337264.7758462946,
         "mode": "correct",
-        "wall_seconds_all_seeds": 27739.313175803007
+        "wall_seconds_all_seeds": 29477.38483373898
       },
       {
-        "cpu_seconds_all_seeds": 317194.8307410796,
+        "cpu_seconds_all_seeds": 338946.61482159194,
         "mode": "parser_permuted",
-        "wall_seconds_all_seeds": 27353.615228132036
+        "wall_seconds_all_seeds": 29380.23380541807
       },
       {
-        "cpu_seconds_all_seeds": 190272.0494053065,
+        "cpu_seconds_all_seeds": 204399.49679780423,
         "mode": "no_update",
-        "wall_seconds_all_seeds": 16551.90041225651
+        "wall_seconds_all_seeds": 18228.30194811239
       },
       {
-        "cpu_seconds_all_seeds": 254181.9304666057,
+        "cpu_seconds_all_seeds": 278736.7795059469,
         "mode": "readout_only",
-        "wall_seconds_all_seeds": 21990.284020173636
+        "wall_seconds_all_seeds": 24263.850666863455
       },
       {
-        "cpu_seconds_all_seeds": 295106.67886550777,
+        "cpu_seconds_all_seeds": 321231.24428179325,
         "mode": "responsible_owner_frozen",
-        "wall_seconds_all_seeds": 25500.203716142667
+        "wall_seconds_all_seeds": 27855.992405150508
       }
     ],
     "optimizer_step_overhead_fraction": 0.1,
     "optimizer_updates_total": 38400,
     "projected_artifact_bytes_with_reserve": 6285787368.900001,
-    "projected_cpu_with_reserve": 2124965.730886894,
-    "projected_wall_with_reserve": 185118.7184946269,
+    "projected_cpu_with_reserve": 2269267.514967406,
+    "projected_wall_with_reserve": 199519.4578573159,
     "reserve_fraction": 0.30000000000000004,
     "status": "within_caps",
     "stop_rule": "stop at the first hard cap, preserve the latest checkpoint, and do not retry or raise the cap automatically",
-    "total_cpu_before_reserve": 1634589.023759149,
-    "total_wall_before_reserve": 142399.01422663606,
+    "total_cpu_before_reserve": 1745590.396128774,
+    "total_wall_before_reserve": 153476.50604408915,
     "updates_per_arm": 2560
   },
   "sealed_reads": 0,

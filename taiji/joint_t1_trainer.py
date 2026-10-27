@@ -206,9 +206,17 @@ def _carry_t1_world_workspace(
         tick=max(previous.tick, incoming.tick),
         workspace=workspace,
         world=world,
-        events=tuple(sorted(root_events.values(), key=lambda item: (item.tick, item.event_id))),
+        events=tuple(
+            sorted(
+                root_events.values(),
+                key=lambda item: (item.start_tick, item.end_tick, item.event_id),
+            )
+        ),
         assemblies=tuple(
-            sorted(assemblies.values(), key=lambda item: (item.tick, item.assembly_id))
+            sorted(
+                assemblies.values(),
+                key=lambda item: (item.start_tick, item.end_tick, item.assembly_id),
+            )
         ),
         concepts=tuple(sorted(concepts.values(), key=lambda item: item.concept_id)),
     )
