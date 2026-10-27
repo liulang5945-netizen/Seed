@@ -94,6 +94,19 @@ def _git_revision() -> str:
     return result.stdout.strip()
 
 
+def _git_changed_paths(base_revision: str, current_revision: str) -> tuple[str, ...]:
+    if base_revision == current_revision:
+        return ()
+    result = subprocess.run(
+        ["git", "diff", "--name-only", f"{base_revision}..{current_revision}"],
+        cwd=REPOSITORY_ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return tuple(line for line in result.stdout.splitlines() if line)
+
+
 def _trainer_signature(trainer: JointT1TrainerV1) -> dict[str, Any]:
     return {
         "mode": trainer.mode,
@@ -372,11 +385,22 @@ def _run() -> int:
                 }
             )
         if history[-1].get("revision") != current_revision:
+            previous_revision = str(history[-1]["revision"])
+            changed_paths = _git_changed_paths(previous_revision, current_revision)
+            model_source_changes = tuple(
+                path for path in changed_paths if path.startswith("taiji/")
+            )
             history.append(
                 {
                     "revision": current_revision,
                     "effective_from_checkpoint_update": latest_checkpoint_update,
-                    "reason": "preserve model-owned T1 world/workspace state across cached Adapter snapshots",
+                    "reason": (
+                        "T1 model source changes are listed for attribution"
+                        if model_source_changes
+                        else "T1 model sources unchanged; repository revision is ledger/evaluation/docs-only"
+                    ),
+                    "changed_paths": list(changed_paths),
+                    "t1_model_source_changes": list(model_source_changes),
                 }
             )
         progress["process_cpu_seconds"] = carried_cpu

@@ -478,6 +478,7 @@ class JointInputProducerV1(nn.Module):
     """Learnable byte/percept span producer; it never receives gold state at inference."""
 
     PARAMETER_OWNER = JointSemanticTrainingTargetV1.RECEIVER
+    WORKSPACE_FEATURE_EMBEDDING = "prefix_zero_extension_v1"
 
     def __init__(
         self,
@@ -741,6 +742,23 @@ class JointInputProducerV1(nn.Module):
             semantic_features=semantic_features,
         )
 
+    @staticmethod
+    def _embed_semantic_features_in_workspace(
+        semantic_features: tuple[float, ...], workspace_width: int
+    ) -> torch.Tensor:
+        """Inject the producer vector losslessly into the wider consumer basis."""
+
+        source = torch.tensor(semantic_features, dtype=torch.float32)
+        if workspace_width <= 0 or source.numel() == 0 or source.numel() > workspace_width:
+            raise ValueError(
+                "semantic producer features cannot be losslessly embedded in workspace"
+            )
+        if source.numel() == workspace_width:
+            return source
+        embedded = torch.zeros(workspace_width, dtype=torch.float32)
+        embedded[: source.numel()] = source
+        return embedded
+
     @torch.no_grad()
     def predict(self, joint_state: JointTaskStateV1, trace: InputTrace) -> JointSemanticParseV1:
         self._validate_trace(joint_state, trace)
@@ -790,8 +808,8 @@ class JointInputProducerV1(nn.Module):
             )
         if parse.act == "query" and spans_by_role["value"]:
             raise ValueError("resolved query parse must not include an asserted value span")
-        if len(parse.semantic_features) != language_candidate.config.width:
-            raise ValueError("semantic producer feature width differs from the V4 workspace width")
+        if len(parse.semantic_features) > language_candidate.config.width:
+            raise ValueError("semantic producer feature width exceeds the V4 workspace width")
         entity_text = spans_by_role["entity"][0].text
         attribute_text = spans_by_role["attribute"][0].text
         value_text = "" if parse.act == "query" else spans_by_role["value"][0].text
@@ -850,7 +868,10 @@ class JointInputProducerV1(nn.Module):
         candidate_id = "native-semantic-candidate:" + parse.parse_sha256
         candidate = WorkspaceCandidate(
             candidate_id,
-            torch.tensor(parse.semantic_features, dtype=torch.float32),
+            self._embed_semantic_features_in_workspace(
+                parse.semantic_features,
+                language_candidate.config.width,
+            ),
             salience=parse.confidence,
             source=parse.input_id,
         )

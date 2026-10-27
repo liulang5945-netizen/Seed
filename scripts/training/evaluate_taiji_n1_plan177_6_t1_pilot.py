@@ -510,6 +510,15 @@ def _macro_family_metric(episodes: list[dict[str, Any]], key: str) -> float | No
     return mean(mean(values) for values in by_family.values())
 
 
+def _family_metric_map(episodes: list[dict[str, Any]], *, key: str, level: str) -> dict[str, float]:
+    by_family: dict[str, list[float]] = defaultdict(list)
+    for episode in episodes:
+        value = episode.get(key)
+        if episode["level"] == level and value is not None:
+            by_family[episode["family_id"]].append(float(value))
+    return {family_id: mean(values) for family_id, values in by_family.items()}
+
+
 def _score_split(
     *,
     trainer: JointT1TrainerV1,
@@ -698,6 +707,11 @@ def _run_evaluation() -> int:
                     "seed": seed,
                     "checkpoint": str(checkpoint_path),
                     "update_cursor": trainer.update_cursor,
+                    "semantic_feature_interface": {
+                        "producer_width": trainer.producer.hidden_dim,
+                        "workspace_width": trainer.model.config.width,
+                        "embedding": JointInputProducerV1.WORKSPACE_FEATURE_EMBEDDING,
+                    },
                     **result,
                 }
             )
@@ -754,16 +768,40 @@ def _run_evaluation() -> int:
         if read_only["partial"]:
             evaluation_budget_stop = True
             break
+        write_enabled = next(
+            item
+            for item in evaluation_results[1]["arms"]
+            if item["mode"] == "correct" and item["seed"] == seed
+        )
+        write_enabled_by_family = _family_metric_map(
+            write_enabled["episodes_detail"],
+            key="f1_state_query_score",
+            level="F1",
+        )
+        write_disabled_by_family = _family_metric_map(
+            read_only["episodes_detail"],
+            key="f1_state_query_score",
+            level="F1",
+        )
+        if write_enabled_by_family.keys() != write_disabled_by_family.keys():
+            raise ValueError("state-write diagnostic holdout family coverage differs")
+        paired_family_deltas = [
+            {
+                "family_id": family_id,
+                "write_enabled": write_enabled_by_family[family_id],
+                "write_disabled": write_disabled_by_family[family_id],
+                "delta": write_enabled_by_family[family_id] - write_disabled_by_family[family_id],
+            }
+            for family_id in sorted(write_enabled_by_family)
+        ]
         state_write_diagnostics.append(
             {
                 "seed": seed,
                 "checkpoint": str(checkpoint_path),
-                "write_enabled_holdout": next(
-                    item
-                    for item in evaluation_results[1]["arms"]
-                    if item["mode"] == "correct" and item["seed"] == seed
-                )["family_macro"],
+                "write_enabled_holdout": write_enabled["family_macro"],
                 "write_disabled_holdout": read_only["family_macro"],
+                "paired_family_deltas": paired_family_deltas,
+                "paired_family_count": len(paired_family_deltas),
             }
         )
         del trainer
@@ -854,6 +892,33 @@ def _run_evaluation() -> int:
                 and min(values) >= -0.05
             ),
         }
+    responsibility_contrasts = {}
+    for control in ("readout_only", "responsible_owner_frozen"):
+        deltas = []
+        for seed in range(3):
+            correct = f1_scores.get(("correct", seed))
+            baseline = f1_scores.get((control, seed))
+            if correct is None or baseline is None:
+                continue
+            correct_score = correct["f1_state_query_score"]
+            baseline_score = baseline["f1_state_query_score"]
+            if correct_score is not None and baseline_score is not None:
+                deltas.append(
+                    {
+                        "seed": seed,
+                        "delta": correct_score - baseline_score,
+                        "correct": correct_score,
+                        "control": baseline_score,
+                    }
+                )
+        values = [item["delta"] for item in deltas]
+        responsibility_contrasts[control] = {
+            "paired_seed_deltas": deltas,
+            "median_delta": median(values) if values else None,
+            "positive_seed_count": sum(value > 0.0 for value in values),
+            "complete_seed_pairs": len(values) == 3,
+            "interpretation": "descriptive parameter-responsibility comparison; no added pass threshold",
+        }
     learning_gate_passed = len(learning_contrasts) == 2 and all(
         item["passed"] for item in learning_contrasts.values()
     )
@@ -940,14 +1005,18 @@ def _run_evaluation() -> int:
     )
     architecture_attribution = {
         "information_path": "frozen Adapter source traces are hash-bound; each update rebuilds V4 TaskState and producer parse/state from the current arm",
-        "credit_path": "preflight proved the declared gradient receivers; formal update outcomes are recorded per arm",
+        "semantic_feature_bridge": "producer features are losslessly prefix-zero-extended into the V4 workspace; per-arm widths and embedding id are recorded",
+        "credit_path": "parser loss reaches the producer and answer loss reaches V4; producer prediction is detached before state commit, so answer-loss gradients do not reach the producer in this frozen candidate",
         "state_lifecycle": "cached Adapter snapshots carry producer-owned world/workspace forward between turns",
+        "parameter_responsibility_controls": responsibility_contrasts,
+        "state_write_causal_control": state_write_diagnostics,
         "learning_gain_observed": learning_gate_passed,
         "f0_retention_observed": f0_retention_passed,
+        "scope_limit": "attribution is limited to this fixed synthetic F0/F1 T1 slice and these candidate parameter routes",
         "conclusion": (
-            "Correct supervision has fixed-slice behavioral gain over both controls; this supports the T1 path only."
+            "Correct supervision has fixed-slice behavioral gain over both controls for the parser-supervised producer/V4 consumer path; downstream answer-error credit to the producer is not established."
             if learning_gate_passed
-            else "Gradient paths are reachable, but fixed-slice behavioral gain is not established; objective, representation and optimization remain competing causes."
+            else "Fixed-slice behavioral gain is not established. This candidate has separate parser and answer-loss routes, with no downstream answer-error gradient to the producer; representation and optimization remain additional factors."
         ),
     }
 
@@ -987,6 +1056,7 @@ def _run_evaluation() -> int:
         "query_and_holdout": evaluation_results,
         "state_write_diagnostics": state_write_diagnostics,
         "learning_contrasts": learning_contrasts,
+        "parameter_responsibility_contrasts_descriptive": responsibility_contrasts,
         "absolute_means": absolute_means,
         "absolute_gates": absolute_gates,
         "f0_retention": f0_retention,
