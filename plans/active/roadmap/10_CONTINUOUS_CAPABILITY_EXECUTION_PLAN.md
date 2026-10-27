@@ -42,7 +42,7 @@
 
 ### 3.1 已训N176收束与N177无模型工程准备
 
-运行快照（2026-10-27 19:03:05）：Correct/seed0已完成2560步；Parser-permuted/seed0已durable update1024。全局durable游标3584，metrics累计约205,242 CPU/19,508 wall秒，含失败回放及尾账预留；其余固定臂按03和原合同继续执行。
+运行快照（2026-10-27 19:25:23）：Correct/seed0已完成2560步；Parser-permuted/seed0已durable update1280、metrics update1284。全局durable游标3840，累计CPU/wall约220,057/20,847秒、制品约1.03 GB，含失败回放及尾账预留；其余固定臂按03和原合同继续执行。
 
 | 项目 | 实施要求 |
 |---|---|
