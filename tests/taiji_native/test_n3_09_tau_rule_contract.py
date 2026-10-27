@@ -8,6 +8,8 @@
 * 逐行合取与产品自述的 `decision_reasons` 不一致 ⇒ rc=2（这条是"我另算一遍"的合法性来源）；
 * 判级两支都走：够得着 ⇒ `freezable`；够不着 ⇒ `not_freezable_at_this_grid` 并出版"必须 ≤ X"。
 
+拒绝支与判级支都实走；只用到「一张合法自述头」的三支（两条判级支＋合取对表支）读
+`FROZEN_V2_HEADER` 而不读真件——真件 `output/n3_08_smoke/pressure.jsonl` 未入库，runner 上取不到。
 真实在库面只读；被改的副本一律落 pytest 的 `tmp_path`。
 """
 
@@ -19,10 +21,40 @@ import sys
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 REPO = Path(__file__).resolve().parents[2]
 SCRIPT = REPO / "scripts/training/freeze_taiji_n3_09_tau_rule.py"
 V1_FACE = REPO / "output/n3_04/beta_gate025/pressure.jsonl"
 V2_FACE = REPO / "output/n3_08_smoke/pressure.jsonl"
+
+#: 2026-10-27 逐值取自建账机器上真件的 face 行（format／policy 九键／ema_initial）。
+#: 下面 `test_frozen_v2_header_still_matches_the_real_face` 在真件在位时复算这份冻结，
+#: 产物入库后该守卫自动开始跑，漂移当场响亮。
+FROZEN_V2_HEADER: dict[str, Any] = {
+    "kind": "face",
+    "seed": 20260821,
+    "format": "taiji-n3-pressure-face-v2",
+    "policy": {
+        "ema_rate": 0.25,
+        "growth_resource_cost": 1,
+        "minimum_activity_saturation": 0.4,
+        "minimum_fast_slow_conflict": 0.4,
+        "minimum_pressure": 0.7,
+        "minimum_residual_error": 0.55,
+        "minimum_resource_state": 0.4,
+        "minimum_utility_gap": 0.35,
+        "required_pressure_steps": 3,
+    },
+    "ema_initial": {
+        "activity_saturation_ema": 0.0,
+        "consecutive_pressure_steps": 0,
+        "fast_slow_conflict_ema": 0.0,
+        "residual_error_ema": 0.0,
+        "resource_state_ema": 1.0,
+        "utility_gap_ema": 0.0,
+    },
+}
 
 
 def _load_module():
@@ -103,12 +135,11 @@ def test_short_face_refuses_after_warmup(tmp_path: Path) -> None:
 
 
 def test_reasons_disagreement_refuses(tmp_path: Path) -> None:
-    #: 把一行 EMA 抬到过阈、但保留该产品"说没过阈"的 reasons ⇒ 我的口径与闸不同源，必须闭嘴。
-    records = _records(V2_FACE)
-    pressures = [record for record in records if record.get("kind") == "pressure"]
-    target = pressures[20]
+    #: 造一行六道全过阈、但该产品"说没过阈"的记录 ⇒ 我的口径与闸不同源，必须闭嘴。
+    records = _synthetic(FROZEN_V2_HEADER, count=1200, hot_rows=0)
+    target = records[21]
     for key, field in READER.GATES:
-        target[key] = float(records[0]["policy"][field]) + 0.05
+        target[key] = float(FROZEN_V2_HEADER["policy"][field]) + 0.05
     assert "pressure_below_threshold" in target["decision_reasons"]
     rc, payload = _run(tmp_path, _write(tmp_path, records))
     assert rc == 2
@@ -138,8 +169,7 @@ def _synthetic(header: dict[str, Any], count: int, *, hot_rows: int) -> list[dic
 def test_freezable_branch_is_reachable(tmp_path: Path) -> None:
     """为真那一支必须也能走：造一张"末尾连续 8 步六道同过"的合面 ⇒ 判 freezable。"""
 
-    records = _records(V2_FACE)
-    header = next(record for record in records if record.get("kind") == "face")
+    header = FROZEN_V2_HEADER
     synthetic = _synthetic(header, count=1200, hot_rows=8)
     rc, payload = _run(tmp_path, _write(tmp_path, synthetic))
     assert rc == 0, payload
@@ -155,8 +185,7 @@ def test_freezable_branch_is_reachable(tmp_path: Path) -> None:
 
 def test_not_freezable_branch_is_reachable(tmp_path: Path) -> None:
     #: 同一把尺的反面：只连续 2 步（< required_pressure_steps=3）⇒ 必须判"不可冻"并给出上界。
-    records = _records(V2_FACE)
-    header = next(record for record in records if record.get("kind") == "face")
+    header = FROZEN_V2_HEADER
     synthetic = _synthetic(header, count=1200, hot_rows=2)
     rc, payload = _run(tmp_path, _write(tmp_path, synthetic))
     assert rc == 0, payload
@@ -166,3 +195,14 @@ def test_not_freezable_branch_is_reachable(tmp_path: Path) -> None:
     assert face["must_be_at_most_to_be_solvable"] == round(
         float(header["policy"]["minimum_pressure"]) + 0.02, 6
     )
+
+
+def test_frozen_v2_header_still_matches_the_real_face() -> None:
+    """冻结头的复押：真件在位时逐值相等——产物一入库这条就自动开始跑，不必有人记得。"""
+
+    if not V2_FACE.is_file():
+        pytest.skip(f"自述头已冻结在文件内；真件 {V2_FACE.name} 未入库，本机之外无件可复算")
+    header = next(record for record in _records(V2_FACE) if record.get("kind") == "face")
+    assert FROZEN_V2_HEADER["format"] == header["format"]
+    assert FROZEN_V2_HEADER["policy"] == header["policy"]
+    assert FROZEN_V2_HEADER["ema_initial"] == header["ema_initial"]

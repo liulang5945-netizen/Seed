@@ -1940,6 +1940,10 @@ def test_start_charge_uses_latest_extension_snapshot_monotonically(
     )
     monkeypatch.setattr(runner.psutil, "boot_time", lambda: 21.0)
     monkeypatch.setattr(runner.frozen, "host_cpu_seconds", lambda: 200.0)
+    #: 尾账上界走 `elapsed × max(记录上限, os.cpu_count())`；不钉这一格，期望值 1040 就是在测
+    #: 维护机的核数（24 核 ⇒ 800+10×24；4 核 runner ⇒ 800+10×8=880，红了不是回归）。
+    #: 本文件另两支同族测本来就显式传 `current_logical_cpu_count=24`，这里按同一口径钉住。
+    monkeypatch.setattr(runner.os, "cpu_count", lambda: 24)
     now = datetime(2026, 10, 22, 0, 0, 10, tzinfo=UTC)
     monkeypatch.setattr(runner, "utc_now", lambda: now.isoformat())
     monkeypatch.setattr(
