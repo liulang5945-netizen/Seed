@@ -1,7 +1,7 @@
 """Source-bound cache of frozen TSK-v8 InputTrace/per-turn owner snapshots.
 
-This cache contains only deterministic adapter outputs for the train split. It
-never stores V4 TaskState, producer parses, semantic candidates, or language
+Each cache contains one split at a time and only deterministic Adapter outputs.
+It never stores V4 TaskState, producer parses, semantic candidates, or language
 answers, all of which must be rebuilt with the current candidate parameters.
 """
 
@@ -260,7 +260,7 @@ class JointT1TraceCacheV1:
             for item in self.entries
         )
         if actual != expected:
-            raise ValueError("T1 trace cache sources/order differ from the train-only manifest")
+            raise ValueError("T1 trace cache sources/order differ from the selected split manifest")
         expected_episode_ids = tuple(item.episode_id for item in train_episodes)
         if tuple(item_id for item_id, _ in self.episode_initial_states) != expected_episode_ids:
             raise ValueError("T1 trace cache episode-start states differ from train manifest order")
@@ -310,10 +310,11 @@ def build_joint_t1_trace_cache(
     base_adapter_checkpoint: Mapping[str, Any],
     train_episodes: Sequence[JointT1EpisodeV1],
 ) -> JointT1TraceCacheV1:
-    """Build the frozen, train-only Adapter trace cache from source InputFrames."""
+    """Build a frozen Adapter trace cache from one and only one source split."""
 
-    if any(episode.partition != "train" for episode in train_episodes):
-        raise ValueError("T1 trace cache may contain only the train partition")
+    partitions = {episode.partition for episode in train_episodes}
+    if len(partitions) != 1 or not partitions.issubset({"train", "query", "holdout"}):
+        raise ValueError("T1 trace cache must contain exactly one declared split")
     adapter_sha = content_digest(dict(base_adapter_checkpoint))
     entries = []
     initial_states = []

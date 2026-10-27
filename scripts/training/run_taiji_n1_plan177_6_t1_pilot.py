@@ -83,6 +83,17 @@ def _sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _git_revision() -> str:
+    result = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=REPOSITORY_ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return result.stdout.strip()
+
+
 def _trainer_signature(trainer: JointT1TrainerV1) -> dict[str, Any]:
     return {
         "mode": trainer.mode,
@@ -335,8 +346,46 @@ def _run() -> int:
                     carried_wall,
                     float(last_metric.get("cumulative_wall_seconds", 0.0)),
                 )
+        latest_checkpoint_update = max(
+            (
+                int(item.get("update_cursor", 0))
+                for item in progress.get("latest_checkpoint_by_arm", {}).values()
+            ),
+            default=0,
+        )
+        progress.setdefault("discarded_update_ranges", [])
+        history = progress.setdefault("implementation_history", [])
+        current_revision = _git_revision()
+        if not history:
+            previous_revision = subprocess.run(
+                ["git", "rev-parse", "HEAD^"],
+                cwd=REPOSITORY_ROOT,
+                capture_output=True,
+                text=True,
+                check=True,
+            ).stdout.strip()
+            history.append(
+                {
+                    "revision": previous_revision,
+                    "effective_through_checkpoint_update": latest_checkpoint_update,
+                    "reason": "original N177.6 runner implementation",
+                }
+            )
+        if history[-1].get("revision") != current_revision:
+            history.append(
+                {
+                    "revision": current_revision,
+                    "effective_from_checkpoint_update": latest_checkpoint_update,
+                    "reason": "preserve model-owned T1 world/workspace state across cached Adapter snapshots",
+                }
+            )
         progress["process_cpu_seconds"] = carried_cpu
         progress["wall_seconds"] = carried_wall
+        progress["implementation_revision"] = current_revision
+        progress["optimizer_updates"] = sum(
+            int(item.get("update_cursor", 0))
+            for item in progress.get("latest_checkpoint_by_arm", {}).values()
+        )
         progress["status"] = "running"
         progress["resumed_at_local"] = time.strftime("%Y-%m-%d %H:%M:%S")
         _atomic_json(state_path, progress)
@@ -352,6 +401,11 @@ def _run() -> int:
             "wall_seconds": preflight_wall,
             "artifact_bytes": _artifact_bytes(args.run_root, args.trace_cache, args.report),
             "optimizer_updates": 0,
+            "implementation_revision": _git_revision(),
+            "implementation_history": [
+                {"revision": _git_revision(), "effective_from_checkpoint_update": 0}
+            ],
+            "discarded_update_ranges": [],
             "started_at_local": time.strftime("%Y-%m-%d %H:%M:%S"),
         }
         _atomic_json(state_path, progress)
@@ -388,15 +442,15 @@ def _run() -> int:
         progress["process_cpu_seconds"] = cpu_used
         progress["wall_seconds"] = wall_used
         progress["artifact_bytes"] = _artifact_bytes(args.run_root, args.trace_cache, args.report)
-        progress["optimizer_updates"] = sum(
-            int(item.get("completed_updates", 0))
-            for item in progress["latest_checkpoint_by_arm"].values()
-        )
         progress["latest_checkpoint_by_arm"][arm_id] = {
             "path": str(checkpoint_path),
             "update_cursor": trainer.update_cursor,
             "completed_updates": trainer.completed_updates,
         }
+        progress["optimizer_updates"] = sum(
+            int(item.get("update_cursor", 0))
+            for item in progress["latest_checkpoint_by_arm"].values()
+        )
         if completed and arm_id not in progress["completed_arms"]:
             progress["completed_arms"].append(arm_id)
         _atomic_json(state_path, progress)
@@ -427,6 +481,36 @@ def _run() -> int:
                 )
                 if (trainer.mode, trainer.seed) != (mode, seed):
                     raise ValueError("resume checkpoint belongs to another N177.6 arm")
+                last_update = None
+                if metrics_path.is_file():
+                    with metrics_path.open("r", encoding="utf-8") as handle:
+                        for line in handle:
+                            if not line.strip():
+                                continue
+                            item = json.loads(line)
+                            if item.get("event") == "update" and item.get("arm_id") == arm_id:
+                                last_update = item
+                if (
+                    last_update is not None
+                    and int(last_update.get("update", 0)) > trainer.update_cursor
+                ):
+                    discarded = {
+                        "arm_id": arm_id,
+                        "from_update": trainer.update_cursor + 1,
+                        "through_update": int(last_update["update"]),
+                        "metrics_only_not_in_latest_checkpoint": True,
+                    }
+                    if discarded not in progress["discarded_update_ranges"]:
+                        progress["discarded_update_ranges"].append(discarded)
+                    _append_jsonl(
+                        metrics_path,
+                        {
+                            "event": "checkpoint_resume_rollback",
+                            **discarded,
+                            "latest_checkpoint": str(zero_path),
+                            "implementation_revision": progress["implementation_revision"],
+                        },
+                    )
             elif mode == "correct" and seed == 0:
                 zero_path = DEFAULT_ZERO_CHECKPOINT
                 zero_payload = torch.load(zero_path, map_location="cpu", weights_only=False)
@@ -505,6 +589,7 @@ def _run() -> int:
                         {
                             "event": "update",
                             "arm_id": arm_id,
+                            "implementation_revision": progress.get("implementation_revision"),
                             "cumulative_process_cpu_seconds": current_usage()[0],
                             "cumulative_wall_seconds": current_usage()[1],
                             **receipt,
@@ -542,6 +627,7 @@ def _run() -> int:
                     {
                         "event": "update",
                         "arm_id": arm_id,
+                        "implementation_revision": progress.get("implementation_revision"),
                         "cumulative_process_cpu_seconds": cpu_used,
                         "cumulative_wall_seconds": wall_used,
                         **receipt,

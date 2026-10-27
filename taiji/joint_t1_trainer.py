@@ -13,6 +13,7 @@ import hashlib
 import random
 import time
 from collections.abc import Mapping, Sequence
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -21,7 +22,7 @@ from torch.nn import functional as F
 
 from .adapter import TSKV8Adapter
 from .conditional_language_v4 import ConditionalLanguageTrainerV4
-from .contracts import NativeCheckpoint
+from .contracts import CognitiveState, NativeCheckpoint, WorkspaceSelection, WorkspaceState
 from .input_boundary import InputTrace
 from .internalization import content_digest
 from .joint_input_producer import (
@@ -95,6 +96,122 @@ def _component_with_digest(payload: dict[str, Any]) -> dict[str, Any]:
     component = dict(payload)
     component["component_digest"] = content_digest(component)
     return component
+
+
+def _carry_t1_world_workspace(
+    previous: CognitiveState,
+    incoming: CognitiveState,
+) -> CognitiveState:
+    """Preserve model-written facts while advancing the frozen Adapter input owner."""
+
+    if previous.episode_id != incoming.episode_id:
+        raise ValueError("T1 owner-state merge crossed episode identity")
+    object_map = {item.object_id: item for item in incoming.world.objects}
+    object_map.update({item.object_id: item for item in previous.world.objects})
+    objects = tuple(object_map[key] for key in sorted(object_map))
+
+    relation_map = {(item[0], item[1]): item for item in incoming.world.relations}
+    relation_map.update({(item[0], item[1]): item for item in previous.world.relations})
+    relations = tuple(relation_map[key] for key in sorted(relation_map))
+
+    event_map = {item.event_id: item for item in incoming.world.events}
+    event_map.update({item.event_id: item for item in previous.world.events})
+    world_events = tuple(sorted(event_map.values(), key=lambda item: (item.tick, item.event_id)))
+    affordance_map = {item.affordance_id: item for item in incoming.world.affordances}
+    affordance_map.update({item.affordance_id: item for item in previous.world.affordances})
+    world = replace(
+        incoming.world,
+        tick=max(previous.world.tick, incoming.world.tick),
+        entities=(
+            tuple(item.object_id for item in objects)
+            if objects
+            else tuple(sorted(set(previous.world.entities) | set(incoming.world.entities)))
+        ),
+        relations=relations,
+        objects=objects,
+        events=world_events,
+        affordances=tuple(affordance_map[key] for key in sorted(affordance_map)),
+    )
+
+    prior_workspace = previous.workspace
+    current_workspace = incoming.workspace
+    candidate_map = {item.candidate_id: item for item in current_workspace.candidates}
+    candidate_map.update({item.candidate_id: item for item in prior_workspace.candidates})
+    candidate_order = tuple(
+        dict.fromkeys(
+            item.candidate_id
+            for item in (*current_workspace.candidates, *prior_workspace.candidates)
+        )
+    )
+    capacity = max(prior_workspace.capacity, current_workspace.capacity)
+    if capacity > 0:
+        candidate_order = candidate_order[-capacity:]
+    candidates = tuple(candidate_map[item] for item in candidate_order)
+    source_selection = current_workspace.selection or prior_workspace.selection
+    if source_selection is not None and not set(source_selection.selected_ids).issubset(
+        set(candidate_order)
+    ):
+        source_selection = prior_workspace.selection
+    workspace_tick = max(prior_workspace.tick, current_workspace.tick)
+    selection = None
+    focus: tuple[str, ...] = ()
+    broadcast = current_workspace.broadcast
+    if source_selection is not None:
+        candidate_ids = tuple(item.candidate_id for item in candidates)
+        candidate_set = set(candidate_ids)
+        selected = tuple(item for item in source_selection.selected_ids if item in candidate_set)
+        previous_scores = dict(
+            zip(source_selection.candidate_ids, source_selection.scores, strict=True)
+        )
+        scores = tuple(float(previous_scores.get(item, 0.0)) for item in candidate_ids)
+        broadcast = source_selection.broadcast
+        selection = WorkspaceSelection(
+            tick=workspace_tick,
+            mode=source_selection.mode if selected else "none",
+            candidate_ids=candidate_ids,
+            selected_ids=selected,
+            scores=scores,
+            broadcast=broadcast,
+            capacity=capacity,
+        )
+        focus = selected
+    bindings = dict(current_workspace.bindings)
+    bindings.update(dict(prior_workspace.bindings))
+    retained_ids = set(candidate_order)
+    workspace = WorkspaceState(
+        tick=workspace_tick,
+        focus=focus,
+        bindings=tuple(
+            sorted((key, value) for key, value in bindings.items() if key in retained_ids)
+        ),
+        broadcast=broadcast,
+        capacity=capacity,
+        candidates=candidates,
+        selection=selection,
+        percept_event_id=current_workspace.percept_event_id or prior_workspace.percept_event_id,
+        percept_assembly_id=current_workspace.percept_assembly_id
+        or prior_workspace.percept_assembly_id,
+        percept_boundary_closed=(
+            current_workspace.percept_boundary_closed or prior_workspace.percept_boundary_closed
+        ),
+    )
+    root_events = {item.event_id: item for item in incoming.events}
+    root_events.update({item.event_id: item for item in previous.events})
+    assemblies = {item.assembly_id: item for item in incoming.assemblies}
+    assemblies.update({item.assembly_id: item for item in previous.assemblies})
+    concepts = {item.concept_id: item for item in incoming.concepts}
+    concepts.update({item.concept_id: item for item in previous.concepts})
+    return replace(
+        incoming,
+        tick=max(previous.tick, incoming.tick),
+        workspace=workspace,
+        world=world,
+        events=tuple(sorted(root_events.values(), key=lambda item: (item.tick, item.event_id))),
+        assemblies=tuple(
+            sorted(assemblies.values(), key=lambda item: (item.tick, item.assembly_id))
+        ),
+        concepts=tuple(sorted(concepts.values(), key=lambda item: item.concept_id)),
+    )
 
 
 class JointT1TrainerV1:
@@ -268,6 +385,20 @@ class JointT1TrainerV1:
             entry = self.input_trace_cache.get(turn.episode_id, turn.turn_index)
             trace = entry.trace
             cognitive_state = entry.cognitive_state
+        if joint.input_bindings:
+            previous_owner = joint.cognitive_state
+            cognitive_state = _carry_t1_world_workspace(previous_owner, cognitive_state)
+            incoming_objects = {item.object_id: item for item in cognitive_state.world.objects}
+            incoming_events = {item.event_id for item in cognitive_state.world.events}
+            if any(
+                item.object_id not in incoming_objects
+                or content_digest(incoming_objects[item.object_id].to_payload())
+                != content_digest(item.to_payload())
+                for item in previous_owner.world.objects
+            ) or not {item.event_id for item in previous_owner.world.events}.issubset(
+                incoming_events
+            ):
+                raise RuntimeError("cached input append discarded model-owned T1 world state")
         joint = joint.append_input(
             self.model,
             trace,
