@@ -226,6 +226,25 @@ def test_ambiguous_or_negated_candidate_never_writes_a_positive_fact():
     assert negation_producer.commit_to_joint_state(joint, trace, negated, language_model) is joint
 
 
+def test_query_with_asserted_value_is_marked_ambiguous_before_state_commit():
+    text = "杯子的颜色是蓝色。"
+    _, language_model, trace, joint = setup_joint(text)
+
+    class QueryWithValueProducer(FixedLogitProducer):
+        def forward(self, trace):
+            slot_logits, _, encoded = super().forward(trace)
+            act_logits = torch.full((len(ACT_NAMES),), -12.0)
+            act_logits[ACT_NAMES.index("query")] = 12.0
+            return slot_logits, act_logits, encoded
+
+    producer = QueryWithValueProducer(trace=trace)
+    parse = producer.predict(joint, trace)
+    assert parse.act == "query"
+    assert {span.role for span in parse.spans} == {"entity", "attribute", "value"}
+    assert parse.status == "ambiguous"
+    assert producer.commit_to_joint_state(joint, trace, parse, language_model) is joint
+
+
 def test_correction_updates_only_the_bound_entity_attribute_and_keeps_history():
     text = "杯子的颜色是蓝色。"
     adapter, language_model, trace, joint = setup_joint(text)

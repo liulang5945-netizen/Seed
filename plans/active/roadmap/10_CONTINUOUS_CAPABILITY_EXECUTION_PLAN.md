@@ -42,7 +42,7 @@
 
 ### 3.1 已训N176收束与N177无模型工程准备
 
-运行快照（2026-10-27 20:33:07）：Correct/seed0已完成2560步；Parser-permuted/seed0已durable update2048、metrics update2059。全局durable游标4608，累计CPU/wall约265,033.59/24,911.12秒、制品约1.07 GB，含失败回放及尾账预留；其余固定臂按03和原合同继续执行。
+运行快照（2026-10-27 20:47:17）：Correct/seed0完成2560；Parser-permuted/seed0在update2235因query多出value span而失败，durable仍2048、metrics到2234。角色分类已修、模块8项测试通过，尚未恢复。失败尾段预留1,000 CPU/120 wall秒已计入；冻结臂顺序和资源上限不变。
 
 | 项目 | 实施要求 |
 |---|---|
@@ -85,7 +85,7 @@ N177.1以一个`CognitiveState`为根，映射V4神经`TaskState`、逐byte`Inpu
 
 有限结论：80项联合/InputBoundary/V4回归，Ruff含B/SIM、Black、mypy通过；68项N177.3专项通过。快照可重建并校验摘要，但没有重放全部候选重算同一选择。Outcome来源/执行ID尚无executor签名，仍是调用者声明；模型没有接收任何参数更新，也未执行外部动作，未证明学习或能力提升。N177.3A/B静态identity、恢复及六类更新权限规格有限完成；参数更新后的中断恢复和六类实际学习对照仍未运行。
 
-N177.4A已接通来源绑定的单对象事实/更正和V4消费，N177.5A的课程、train-only cache、五模式梯度归属和zero NativeCheckpoint恢复已完成工程预检。N177.6 update923暴露认知与语言workspace间的48→256维度适配遗漏；两条路径现使用同一无损注入并通过针对性回归，Correct/seed0已完成2560步；Parser-permuted/seed0已耐久到update2048。当前候选的answer loss不通过detached parse反馈producer，需在本轮有限结案中单列；独立scorer准备了学习、参数责任及逐family state-write对照，尚未读query/holdout。
+Parser-permuted/seed0在update2235因resolved query多出value span而失败；已修正act-role合法性分类，模块8项测试通过。恢复从durable2048继续，769–922与2049–2234的重放/故障资源均入同一账。
 
 | 项目 | 实施要求 |
 |---|---|

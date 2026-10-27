@@ -696,6 +696,8 @@ class JointInputProducerV1(nn.Module):
         role_counts = {role: len(decoded[role]) for role in decoded}
         if any(role_counts[role] != 1 for role in required_roles):
             invalid_span = True
+        if any(decoded[role] and role not in required_roles for role in decoded):
+            invalid_span = True
         if decoded["negation"]:
             invalid_span = True
         status = (
