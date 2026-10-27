@@ -42,7 +42,7 @@
 
 ### 3.1 已训N176收束与N177无模型工程准备
 
-运行快照（2026-10-27 17:17:47）：Correct/seed0已越过原update923宽度故障，最新durable update2048、metrics update2133；累计136,715.31 CPU/13,191.78 wall秒包含先前失败及保守预留。这是固定15臂的第一臂，继续按03和原合同执行。
+运行快照（2026-10-27 17:35:25）：Correct/seed0已越过原update923宽度故障，最新durable update2304、metrics update2325；累计148,129.64 CPU/14,249.18 wall秒包含先前失败及保守预留。这是固定15臂的第一臂，继续按03和原合同执行。
 
 | 项目 | 实施要求 |
 |---|---|
@@ -85,7 +85,7 @@ N177.1以一个`CognitiveState`为根，映射V4神经`TaskState`、逐byte`Inpu
 
 有限结论：80项联合/InputBoundary/V4回归，Ruff含B/SIM、Black、mypy通过；68项N177.3专项通过。快照可重建并校验摘要，但没有重放全部候选重算同一选择。Outcome来源/执行ID尚无executor签名，仍是调用者声明；模型没有接收任何参数更新，也未执行外部动作，未证明学习或能力提升。N177.3A/B静态identity、恢复及六类更新权限规格有限完成；参数更新后的中断恢复和六类实际学习对照仍未运行。
 
-N177.4A已接通来源绑定的单对象事实/更正和V4消费，N177.5A的课程、train-only cache、五模式梯度归属和zero NativeCheckpoint恢复已完成工程预检。N177.6 update923暴露认知与语言workspace间的48→256维度适配遗漏；两条路径现使用同一无损注入并通过针对性回归，Correct/seed0已从768恢复并推进至durable update2048。当前候选的answer loss不通过detached parse反馈producer，需在本轮有限结案中单列；独立scorer准备了学习、参数责任及逐family state-write对照，尚未读query/holdout。
+N177.4A已接通来源绑定的单对象事实/更正和V4消费，N177.5A的课程、train-only cache、五模式梯度归属和zero NativeCheckpoint恢复已完成工程预检。N177.6 update923暴露认知与语言workspace间的48→256维度适配遗漏；两条路径现使用同一无损注入并通过针对性回归，Correct/seed0已从768恢复并推进至durable update2304。当前候选的answer loss不通过detached parse反馈producer，需在本轮有限结案中单列；独立scorer准备了学习、参数责任及逐family state-write对照，尚未读query/holdout。
 
 | 项目 | 实施要求 |
 |---|---|
