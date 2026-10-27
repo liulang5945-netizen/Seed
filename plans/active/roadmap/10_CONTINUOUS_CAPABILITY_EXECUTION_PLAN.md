@@ -42,7 +42,7 @@
 
 ### 3.1 已训N176收束与N177无模型工程准备
 
-运行快照（2026-10-27 21:24:19）：Correct/seed0完成2560；Parser-permuted/seed0 durable update2304、metrics update2372，已越过update2235故障点。全局durable游标4864，累计CPU/wall约294,599/27,711秒、制品约1.09 GB，含两次失败及全部回放尾账。
+运行快照（2026-10-27 21:42）：Correct与Parser-permuted/seed0均完成2560并耐久保存；no_update/seed0零状态后曾中断，已从checkpoint恢复，metrics到update26。全局durable更新5120；最新metrics累计约306,033 CPU秒/28,839 wall秒、制品约1.15 GB，含故障、回放及保守尾账。
 
 | 项目 | 实施要求 |
 |---|---|
@@ -85,7 +85,7 @@ N177.1以一个`CognitiveState`为根，映射V4神经`TaskState`、逐byte`Inpu
 
 有限结论：80项联合/InputBoundary/V4回归，Ruff含B/SIM、Black、mypy通过；68项N177.3专项通过。快照可重建并校验摘要，但没有重放全部候选重算同一选择。Outcome来源/执行ID尚无executor签名，仍是调用者声明；模型没有接收任何参数更新，也未执行外部动作，未证明学习或能力提升。N177.3A/B静态identity、恢复及六类更新权限规格有限完成；参数更新后的中断恢复和六类实际学习对照仍未运行。
 
-Parser-permuted/seed0在update2235曾因resolved query多出value span而失败；Act-role修复通过8项模块测试，恢复已越过update2235至metrics2372。两次故障和回放成本保留在同一账本。
+Parser-permuted/seed0曾在update2235因resolved query多出value span失败；修复后恢复并完成2560。no_update/seed0随后在零状态保存后遇到一次执行会话中断，已从零状态checkpoint恢复至update26；所有故障和回放成本均保留在同一账本。
 
 | 项目 | 实施要求 |
 |---|---|
