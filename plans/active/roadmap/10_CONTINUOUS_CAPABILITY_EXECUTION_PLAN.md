@@ -42,7 +42,7 @@
 
 ### 3.1 已训N176收束与N177无模型工程准备
 
-运行快照（2026-10-27 23:38恢复后）：no_update/seed0自durable 1280续接并已耐久update1,536、metrics update1,669，尾段1281–1439按停机政策重放/丢弃；前两臂各durable 2560。metrics累计约354,600 CPU秒/33,539 wall秒，制品约1.26 GB；双会话重叠另暂留2,000 CPU秒/180 wall秒，预算记账上界356,600/33,719秒。全局durable游标6,656。恢复时确认单实例；原固定合同与holdout边界不变，教师不得注入。新监督训练包前置增加run-root互斥。
+运行快照（2026-10-28 00:42）：Correct、Parser-permuted与no_update/seed0三臂各durable 2560（no_update自durable 1280恢复，尾段1281–1439重放/丢弃），readout_only/seed0已耐久update256。metrics累计约386,590 CPU秒/36,532 wall秒，制品约1.40 GB；双会话重叠另暂留2,000 CPU秒/180 wall秒，预算记账上界388,590/36,712秒。全局durable游标7,936。恢复时确认单实例；原固定合同与holdout边界不变，教师不得注入。新监督训练包前置增加run-root互斥。
 
 #### 低消耗训练监督器（候选规划，非活动队首）
 
