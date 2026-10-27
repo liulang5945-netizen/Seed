@@ -39,7 +39,7 @@ N177.3B已把状态owner/参数owner分账及六类比较定义为可校验合�
 
 T1固定合同见[SPEC-N1-177.5 v2](../../reference/SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md)。640个train episodes、15臂各2560步、train-only InputTrace cache与课程顺序固定；cache与zero NativeCheckpoint已做源绑定和新进程恢复预检。N177.6上限为2,400,000 process-CPU秒、220,000 wall秒及8 GiB制品。Correct/seed0已完成2560步并耐久保存；Parser-permuted/seed0最新durable checkpoint为update1792；update801和923曾暴露producer 48维到V4 workspace 256维的两处接口断层，现认知与语言路径共用prefix_zero_extension_v1无损注入，实际48→256接口回归及该模块7项检查通过。producer.predict仍返回detach parse：parser loss更新producer，answer loss更新V4，后者不回传producer；本冻结候选不能证明下游answer-error credit。独立scorer保留学习、参数责任与逐family state-write对照，尚未读取query/holdout；父checkpoint只读、sealed reads=0。
 
-运行快照（2026-10-27 20:47:17）：Correct/seed0已完成2560步；Parser-permuted/seed0在update2235因query含额外value角色而工程失败，durable仍2048、metrics到2234。Act-role分类修复和模块8项测试已通过；失败尾段已保守预留1,000 CPU/120 wall秒，运行总账275,704 CPU秒/25,881 wall秒。恢复时从2048回放2049–2234，先验证越过故障点再继续。
+运行快照（2026-10-27 20:51:25）：Correct/seed0完成2560步；Parser-permuted/seed0在update2235因query额外value角色被判为resolved而工程失败，durable仍2048、metrics至2234。现Act-role分类修复已通过模块8项测试，失败尾段已预留1,000 CPU/120 wall秒、总账275,704 CPU秒/25,881 wall秒；恢复将从2048回放2049–2234并越过原失败点。
 
 该步与N176原一次有限结案可并行。主开发队列只有N177这一条；N176是已训练资产的收束支线，N175剩余人工评分是明确保留的review待办。两者不是“先等全部人工判读或toy正收益，才能修共同架构”的无限门。
 

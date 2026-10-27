@@ -42,7 +42,7 @@
 
 ### 3.1 已训N176收束与N177无模型工程准备
 
-运行快照（2026-10-27 20:47:17）：Correct/seed0完成2560；Parser-permuted/seed0在update2235因query多余value角色失败，durable2048、metrics2234。Act-role分类已修、模块8项测试通过，尚待恢复；失败尾段预留1,000 CPU/120 wall秒已计入。
+运行快照（2026-10-27 20:51:25）：Correct/seed0完成2560；Parser-permuted/seed0在update2235因query多余value角色失败，durable2048、metrics2234。Act-role分类已修、模块8项测试通过，尚待恢复；失败尾段预留1,000 CPU/120 wall秒已计入。
 
 | 项目 | 实施要求 |
 |---|---|
@@ -85,7 +85,7 @@ N177.1以一个`CognitiveState`为根，映射V4神经`TaskState`、逐byte`Inpu
 
 有限结论：80项联合/InputBoundary/V4回归，Ruff含B/SIM、Black、mypy通过；68项N177.3专项通过。快照可重建并校验摘要，但没有重放全部候选重算同一选择。Outcome来源/执行ID尚无executor签名，仍是调用者声明；模型没有接收任何参数更新，也未执行外部动作，未证明学习或能力提升。N177.3A/B静态identity、恢复及六类更新权限规格有限完成；参数更新后的中断恢复和六类实际学习对照仍未运行。
 
-Parser-permuted/seed0在update2235因resolved query多出value span而失败；Act-role分类已修复并由模块8项测试验证。恢复将从durable2048回放2049–2234，769–922与2049–2234的重放/故障资源同一总账。
+Parser-permuted/seed0在update2235因resolved query多出value span而失败；Act-role分类已修复并由模块8项测试验证。恢复从durable2048回放2049–2234，769–922与2049–2234的重放/故障资源同一总账。
 
 | 项目 | 实施要求 |
 |---|---|
