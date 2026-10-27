@@ -114,7 +114,7 @@ N1消费/信用、N2更新保持、N3数据/容量、N4记忆治理、N5世界/�
 
 当前唯一研究队首只在03。已授权的文档、接口实现、合成检查以及生命页只读观察器可在不改绑定源、不争用训练资源时推进；真实模型运行、共享writer和新研究方向按03与所选包串接。读取既有训练metadata不等于启动模型或将研究runner纳入生命运行时控制。
 
-截至2026-10-27 18:25，N177共同状态与T1训练继续。Correct/seed0已完成2560步；Parser-permuted/seed0已durable update512、metrics update516。全局durable游标3072，累计metrics成本约180,592 CPU秒/17,273 wall秒，含故障回放与保守尾账。下游answer-loss仍不回传producer；单臂完成不代表能力门通过。
+截至2026-10-27 18:33，N177共同状态与T1训练继续。Correct/seed0已完成2560步；Parser-permuted/seed0已耐久到F0/F1边界update640、metrics到648。全局durable游标3200，累计metrics约185,541 CPU秒/17,724 wall秒，含故障回放与保守尾账。第二臂刚进入F1；下游answer-loss仍不回传producer，单臂完成不代表能力门通过。
 
 当前接力为“N176按原合同有限结案 ∥ N177不消费sealed的接口/工程检查→同一共同纵切片工程就绪与固定输入cache→N177.6≤2.4M CPU/≤220k wall/≤8GiB一次训练→固定终点query/holdout、旧能力保持与架构归因”。`∥`只允许不争用受控资源、不改绑定源的独立工作。N176的正/负/不可判结果用于有限归因，不是修复已确认共同链缺项的开工门；新N177 checkpoint与旧父候选隔离。
 
