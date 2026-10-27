@@ -419,3 +419,286 @@ class JointCreditRouteV1:
             ),
             apply_updates=bool(payload["apply_updates"]),
         )
+
+
+@dataclass(frozen=True)
+class JointCreditComparisonSpecV1:
+    """Pre-run update-owner and recovery contract; it never applies a learning update."""
+
+    mode: str
+    route_sha256: str
+    state_owner: str | None
+    state_write_allowed: bool
+    parameter_update_owners: tuple[str, ...]
+    frozen_parameter_owners: tuple[str, ...]
+    unrelated_parameter_updates_allowed: bool
+    feedback_sha256: str | None
+    pre_update_checkpoint_required: bool = True
+    post_update_checkpoint_required: bool = True
+    same_native_checkpoint_required: bool = True
+    fresh_process_restore_required: bool = True
+    apply_updates: bool = False
+
+    FORMAT = "taiji-joint-credit-comparison-spec-v1"
+    MODES = frozenset(
+        {
+            "correct_feedback",
+            "permuted_feedback",
+            "no_update",
+            "readout_only",
+            "responsible_owner_frozen",
+            "state_only_change",
+        }
+    )
+    PARAMETER_OWNERS = frozenset(
+        {
+            "world_model",
+            "executive",
+            "language_candidate",
+            "language_candidate.output",
+            "language_candidate.non_readout",
+            "all_parameters",
+        }
+    )
+
+    def __post_init__(self) -> None:
+        if self.mode not in self.MODES:
+            raise ValueError("unsupported joint credit comparison mode")
+        _required_text(self.route_sha256, "route_sha256")
+        if self.state_owner not in {None, "CognitiveState"}:
+            raise ValueError("joint credit comparison has an unsupported state owner")
+        for field_name in (
+            "state_write_allowed",
+            "unrelated_parameter_updates_allowed",
+            "pre_update_checkpoint_required",
+            "post_update_checkpoint_required",
+            "same_native_checkpoint_required",
+            "fresh_process_restore_required",
+            "apply_updates",
+        ):
+            if type(getattr(self, field_name)) is not bool:
+                raise TypeError(f"{field_name} must be a boolean")
+        update_owners = tuple(self.parameter_update_owners)
+        frozen_owners = tuple(self.frozen_parameter_owners)
+        if (
+            len(set(update_owners)) != len(update_owners)
+            or not set(update_owners) <= self.PARAMETER_OWNERS
+        ):
+            raise ValueError("joint credit comparison has invalid parameter update owners")
+        if (
+            len(set(frozen_owners)) != len(frozen_owners)
+            or not set(frozen_owners) <= self.PARAMETER_OWNERS
+        ):
+            raise ValueError("joint credit comparison has invalid frozen parameter owners")
+        if set(update_owners) & set(frozen_owners):
+            raise ValueError("a parameter owner cannot be updated and frozen in one comparison")
+        object.__setattr__(self, "parameter_update_owners", update_owners)
+        object.__setattr__(self, "frozen_parameter_owners", frozen_owners)
+        if self.feedback_sha256 is not None:
+            _required_text(self.feedback_sha256, "feedback_sha256")
+        if not (
+            self.pre_update_checkpoint_required
+            and self.post_update_checkpoint_required
+            and self.same_native_checkpoint_required
+            and self.fresh_process_restore_required
+        ):
+            raise ValueError(
+                "every joint credit comparison requires pre/post fresh-restore checkpoints"
+            )
+        if self.apply_updates:
+            raise ValueError("N177.3B comparison specs are declarative and cannot apply updates")
+        if self.mode == "permuted_feedback" and self.feedback_sha256 is None:
+            raise ValueError("permuted feedback comparison requires a target digest")
+        if self.mode in {"correct_feedback", "permuted_feedback"} and (
+            self.state_owner != "CognitiveState"
+            or not self.state_write_allowed
+            or not self.parameter_update_owners
+            or self.frozen_parameter_owners
+        ):
+            raise ValueError("feedback comparison must permit its routed owners and state owner")
+        if self.mode == "no_update" and (
+            self.state_owner is not None
+            or self.state_write_allowed
+            or self.parameter_update_owners
+            or self.frozen_parameter_owners != ("all_parameters",)
+        ):
+            raise ValueError("no_update comparison must freeze state and all parameters")
+        if self.mode == "readout_only" and (
+            self.state_write_allowed
+            or self.parameter_update_owners != ("language_candidate.output",)
+            or "language_candidate.non_readout" not in self.frozen_parameter_owners
+            or self.feedback_sha256 is None
+        ):
+            raise ValueError("readout_only comparison must isolate the language output layer")
+        if self.mode == "responsible_owner_frozen" and (
+            self.state_owner != "CognitiveState"
+            or not self.state_write_allowed
+            or self.parameter_update_owners
+            or not self.frozen_parameter_owners
+            or not self.unrelated_parameter_updates_allowed
+        ):
+            raise ValueError("responsible_owner_frozen comparison must freeze routed owners only")
+        if self.mode == "state_only_change" and (
+            self.state_owner != "CognitiveState"
+            or not self.state_write_allowed
+            or self.parameter_update_owners
+            or self.frozen_parameter_owners != ("all_parameters",)
+            or self.unrelated_parameter_updates_allowed
+        ):
+            raise ValueError("state_only_change must permit state writes and freeze all parameters")
+
+    @classmethod
+    def for_route(
+        cls,
+        route: JointCreditRouteV1,
+        mode: str,
+        *,
+        alternate_feedback_sha256: str | None = None,
+    ) -> JointCreditComparisonSpecV1:
+        route_digest = route.to_payload()["route_sha256"]
+        receiver_set = set(route.eligible_receivers)
+        if mode == "correct_feedback":
+            return cls(
+                mode=mode,
+                route_sha256=route_digest,
+                state_owner="CognitiveState",
+                state_write_allowed=True,
+                parameter_update_owners=route.eligible_receivers,
+                frozen_parameter_owners=(),
+                unrelated_parameter_updates_allowed=False,
+                feedback_sha256=route.language_feedback_sha256,
+            )
+        if mode == "permuted_feedback":
+            if "language_candidate" not in receiver_set:
+                raise ValueError("permuted feedback requires a language receiver in the route")
+            _required_text(alternate_feedback_sha256, "alternate_feedback_sha256")
+            if alternate_feedback_sha256 == route.language_feedback_sha256:
+                raise ValueError("permuted feedback must differ from the correct target digest")
+            return cls(
+                mode=mode,
+                route_sha256=route_digest,
+                state_owner="CognitiveState",
+                state_write_allowed=True,
+                parameter_update_owners=route.eligible_receivers,
+                frozen_parameter_owners=(),
+                unrelated_parameter_updates_allowed=False,
+                feedback_sha256=alternate_feedback_sha256,
+            )
+        if mode == "no_update":
+            return cls(
+                mode=mode,
+                route_sha256=route_digest,
+                state_owner=None,
+                state_write_allowed=False,
+                parameter_update_owners=(),
+                frozen_parameter_owners=("all_parameters",),
+                unrelated_parameter_updates_allowed=False,
+                feedback_sha256=route.language_feedback_sha256,
+            )
+        if mode == "readout_only":
+            if "language_candidate" not in receiver_set:
+                raise ValueError("readout-only comparison requires explicit language feedback")
+            frozen = tuple(
+                sorted((receiver_set - {"language_candidate"}) | {"language_candidate.non_readout"})
+            )
+            return cls(
+                mode=mode,
+                route_sha256=route_digest,
+                state_owner=None,
+                state_write_allowed=False,
+                parameter_update_owners=("language_candidate.output",),
+                frozen_parameter_owners=frozen,
+                unrelated_parameter_updates_allowed=False,
+                feedback_sha256=route.language_feedback_sha256,
+            )
+        if mode == "responsible_owner_frozen":
+            return cls(
+                mode=mode,
+                route_sha256=route_digest,
+                state_owner="CognitiveState",
+                state_write_allowed=True,
+                parameter_update_owners=(),
+                frozen_parameter_owners=tuple(sorted(receiver_set)),
+                unrelated_parameter_updates_allowed=True,
+                feedback_sha256=route.language_feedback_sha256,
+            )
+        if mode == "state_only_change":
+            return cls(
+                mode=mode,
+                route_sha256=route_digest,
+                state_owner="CognitiveState",
+                state_write_allowed=True,
+                parameter_update_owners=(),
+                frozen_parameter_owners=("all_parameters",),
+                unrelated_parameter_updates_allowed=False,
+                feedback_sha256=route.language_feedback_sha256,
+            )
+        raise ValueError("unsupported joint credit comparison mode")
+
+    def to_payload(self) -> dict[str, Any]:
+        payload = {
+            "format": self.FORMAT,
+            "version": 1,
+            "mode": self.mode,
+            "route_sha256": self.route_sha256,
+            "state_owner": self.state_owner,
+            "state_write_allowed": self.state_write_allowed,
+            "parameter_update_owners": list(self.parameter_update_owners),
+            "frozen_parameter_owners": list(self.frozen_parameter_owners),
+            "unrelated_parameter_updates_allowed": self.unrelated_parameter_updates_allowed,
+            "feedback_sha256": self.feedback_sha256,
+            "pre_update_checkpoint_required": self.pre_update_checkpoint_required,
+            "post_update_checkpoint_required": self.post_update_checkpoint_required,
+            "same_native_checkpoint_required": self.same_native_checkpoint_required,
+            "fresh_process_restore_required": self.fresh_process_restore_required,
+            "apply_updates": self.apply_updates,
+        }
+        payload["spec_sha256"] = content_digest(payload)
+        return payload
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> JointCreditComparisonSpecV1:
+        required = {
+            "format",
+            "version",
+            "mode",
+            "route_sha256",
+            "state_owner",
+            "state_write_allowed",
+            "parameter_update_owners",
+            "frozen_parameter_owners",
+            "unrelated_parameter_updates_allowed",
+            "feedback_sha256",
+            "pre_update_checkpoint_required",
+            "post_update_checkpoint_required",
+            "same_native_checkpoint_required",
+            "fresh_process_restore_required",
+            "apply_updates",
+            "spec_sha256",
+        }
+        if not isinstance(payload, Mapping) or set(payload) != required:
+            raise ValueError("joint credit comparison spec schema differs")
+        unsigned = {key: value for key, value in payload.items() if key != "spec_sha256"}
+        if payload["spec_sha256"] != content_digest(unsigned):
+            raise ValueError("joint credit comparison spec digest differs")
+        if (payload["format"], payload["version"]) != (cls.FORMAT, 1):
+            raise ValueError("unsupported joint credit comparison spec version")
+        return cls(
+            mode=str(payload["mode"]),
+            route_sha256=str(payload["route_sha256"]),
+            state_owner=None if payload["state_owner"] is None else str(payload["state_owner"]),
+            state_write_allowed=bool(payload["state_write_allowed"]),
+            parameter_update_owners=tuple(str(x) for x in payload["parameter_update_owners"]),
+            frozen_parameter_owners=tuple(str(x) for x in payload["frozen_parameter_owners"]),
+            unrelated_parameter_updates_allowed=bool(
+                payload["unrelated_parameter_updates_allowed"]
+            ),
+            feedback_sha256=(
+                None if payload["feedback_sha256"] is None else str(payload["feedback_sha256"])
+            ),
+            pre_update_checkpoint_required=bool(payload["pre_update_checkpoint_required"]),
+            post_update_checkpoint_required=bool(payload["post_update_checkpoint_required"]),
+            same_native_checkpoint_required=bool(payload["same_native_checkpoint_required"]),
+            fresh_process_restore_required=bool(payload["fresh_process_restore_required"]),
+            apply_updates=bool(payload["apply_updates"]),
+        )

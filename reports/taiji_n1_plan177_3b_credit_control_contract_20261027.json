@@ -1,0 +1,46 @@
+{
+  "schema": "taiji-n177-3b-credit-control-contract-v1",
+  "date": "2026-10-27",
+  "status": "six state/parameter control specifications frozen; no learning updates applied",
+  "source_sha256": {
+    "taiji/joint_learning.py": "d4993bd6020b7b3430afd5855fbe5680e4cbd3b1153981e9936b38d12dd319a9",
+    "taiji/joint_task_state.py": "c9603bf94d239c1529278135fd0928dca3447513b7b174f608068d728197ac97",
+    "tests/taiji_native/test_n1_plan177_joint_learning.py": "d44384de5993389b1ac78984e2efb4e981ae95907d084b40fbd727b91fe89926",
+    "tests/taiji_native/test_n1_plan177_joint_task_state.py": "38552c15dc6a0f55b904e2d80ceef4617d1a960b45749ae9848bdf325f5cbf8d"
+  },
+  "control_modes": {
+    "correct_feedback": "update only the parameter owners declared by the route and permit the canonical CognitiveState write",
+    "permuted_feedback": "use the same routed owners with a target digest different from the correct target",
+    "no_update": "freeze all parameters and disallow a state write in the comparison phase",
+    "readout_only": "allow only language_candidate.output parameters; freeze non-readout, world and executive owners",
+    "responsible_owner_frozen": "freeze route-declared owners while permitting the CognitiveState write and unrelated parameter groups",
+    "state_only_change": "permit only the CognitiveState write and freeze every parameter group"
+  },
+  "checkpoint_contract": {
+    "pre_update_checkpoint_required": true,
+    "post_update_checkpoint_required": true,
+    "same_native_checkpoint_required": true,
+    "fresh_process_restore_required": true,
+    "optimizer_rng_and_owner_state_requirements": "to be concretized in N177.4 against the selected course and actual update implementations",
+    "spec_applies_updates": false
+  },
+  "evidence": {
+    "comparison_contract_tests_passed": 2,
+    "combined_joint_task_learning_input_boundary_v4_and_plan_identity_tests_passed": 86,
+    "ruff": "passed",
+    "ruff_b_sim_ratchet": "passed",
+    "black": "passed",
+    "mypy": "passed for joint_task_state.py, joint_action.py and joint_learning.py"
+  },
+  "limits": {
+    "model_parameter_updates": 0,
+    "actual_control_trials": 0,
+    "post_update_checkpoint_restore": "specified, not exercised",
+    "external_actions": 0,
+    "sealed_reads": 0,
+    "outcome_authenticity": "still an unverified caller assertion",
+    "learning_or_capability_gain": "not measured"
+  },
+  "architecture_verdict": "This completes the static comparison contract only. It makes the state owner, parameter recipients, frozen groups, target identity and required recovery checks explicit; it does not demonstrate that any receiver learned.",
+  "next_development_step": "N177.4: freeze the F0-F2 course, family splits, same-parent resource comparison, checkpoint cost and finite stopping criteria before requesting a new training budget."
+}

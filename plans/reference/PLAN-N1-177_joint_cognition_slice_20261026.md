@@ -1,6 +1,6 @@
 # N177 最小共同认知纵切片：实施依赖与接口合同
 
-日期：2026-10-27。状态：N177.1及N177.2-T1/T2/T3 opt-in共同状态、记忆/世界/选择/语言消费链已通过有限工程/因果接口检查；N177.3A动作身份、checkpoint恢复和只读信用路由已通过，N177.3整体仍未收官；没有参数更新、外部动作或新封存读取。
+日期：2026-10-27。状态：N177.1及N177.2-T1/T2/T3 opt-in共同状态、记忆/世界/选择/语言消费链已通过有限工程/因果接口检查；N177.3A恢复/只读路由与N177.3B六类更新权限规格已通过有限静态出口。实际参数更新、更新后恢复、行为学习对照和模型能力仍未验收；没有参数更新、外部动作或新封存读取。
 
 ## 1. 本次改变的依赖
 
@@ -72,7 +72,7 @@ N176三臂已经完成，仍按原一次评价有限收束，用于解释课程�
 | **177.1 共同状态和读写接口（有限完成）** | `taiji/joint_task_state.py` opt-in bridge；以既有`CognitiveState`为唯一根，映射V4 `TaskState`及`InputTrace`；未创建`joint_task_core.py`包装层 | 20组scope/goal/lifecycle矩阵＋10项来源、状态机、checkpoint专项回归，共30项；pytest、mypy、Ruff、Black通过。workspace视图不复制未验证内容。T1已消费Adapter InputTrace；默认Adapter生成路径未替换，语义收益未测 | T1/T2/T3的opt-in来源和条件消费者已接通；保持默认入口及能力声明边界，进入N177.3信用/恢复 |
 | **177.2 必要记忆/预测/选择与语言装配（有限实现完成）** | T1：`joint_task_state.py`来源映射＋V4源帧过滤；T2：`EpisodicMemoryStore`经当前CognitiveState授权ID检索并按事件/assembly/percept tick唯一映射；T3：`joint_action.py`调用`WorldDynamicsLearner.predict`、`ExecutiveController.select`并写回ActionIntent/WorldPredictionRecord，V4读取同一决策投影 | T1的2scope×2goal×4干预16例通过；T2同query memory与query-only logits不同，歧义来源拒绝，V1→V2检查点迁移；T3显式Goal state_slots/relation_targets、目标翻转/预测翻转会改变选择，affordance重排不改变结果，动作投影改变V4 logits。53项联合模块/65项组合回归通过。T3目标与模型/控制器权重由结构化测试提供，不代表自然中文目标理解、训练或行动能力 | 未选目标state slot不得隐式按零比较；目标来源只证明来自当前输入账本、不证明语义解释；owner/scope身份由当前memory allowlist提供而非record自证；跨session来源缺失回保存/恢复；预测或执行未达回具体producer/consumer，不把输出敏感性称为学习 |
 | **177.3A 身份、checkpoint与只读信用路由（有限工程完成）** | `joint_task_state.py` v3动作receipt/迁移；`joint_action.py`保存完整WDL/Executive快照与选中预测摘要；`joint_learning.py`只读credit route | v1/v2严格迁移、版本混装/重复组件拒绝；proposed/dispatch/awaiting/unknown/settled/cancelled恢复；Outcome/Transition/Intent/Prediction绑定；CognitiveState状态owner与参数接收者分列。68项模块专项与80项组合回归、独立进程unknown恢复通过。Outcome provenance仍是未认证caller assertion；decision可重建/摘要核验但未重放候选选择；`apply_updates=false` | 该出口只证明身份、恢复与资格路由，不证明世界模型、Executive或语言模块已学习；executor结果仍缺签名来源 |
-| **177.3B 学习责任更新及对照契约（待执行）** | `joint_learning.py` opt-in update adapter、N177独立checkpoint组件 | 状态owner与各参数owner分账；固定correct/permuted/no-update/readout-only/frozen-owner/state-only六类对照，覆盖反馈更新前后checkpoint及中断恢复；不写默认生产入口 | 先建立更新/恢复静态合同与合成反例；正式或train-only运行另有独立数据、恢复和资源合同，不继承旧N174预算 |
+| **177.3B 状态/参数责任及六类对照规格（静态合同完成）** | `joint_learning.py::JointCreditComparisonSpecV1`；无生产入口写入 | correct/permuted/no-update/readout-only/responsible-owner-frozen/state-only-change六种模式明确状态owner、可更新参数组、冻结参数组和语言目标摘要；所有模式要求同一NativeCheckpoint保存更新前后状态并新进程恢复，`apply_updates=false` | 该规格只可校验，不代表已执行更新或后验恢复；实际更新与六类行为对照随177.5固定训练合同验收 |
 | 177.4 固定课程/成本/比较合同 | 新包独立数据清单与一次train-only标定；复用F0–F2规则但增加经历/目标/动作/反馈任务 | 训练/校准/封存的family与组合提前隔离，全部oracle排除在推理输入外；同父/同资源比较及预算/停止线一次冻结 | 新数据/目标质量问题回数据，资源不符回本步骤重新测定并说明，不消耗sealed后重选 |
 | 177.5 同候选有限训练与验收 | 统一入口与report；语言切片/共同链必要消融对照 | F0形成、F1绑定、F2更正/历史/动作、support→隔离query新收益与旧保持分项裁决；每包均到固定终点结束 | 本包负结果/partial照实结案，选一个主要机制与固定反证，不反复加轮求过门 |
 
@@ -92,4 +92,4 @@ F3再增加自然表达、多步连续任务和真实跨会话经验；CC-5/6的
 
 本次计划重排以03/09/10/07、本合同、N176承接说明及历史索引一致并提交为完成，不新增模型训练或封存消费。冻结实验结果/预算不改、历史失败可精确恢复，是重排的硬边界。
 
-N177.1及N177.2-T1/T2/T3已达到各自有限工程出口；N177.3A只读身份/恢复出口完成，整体Goal仍未结束。唯一下一步是**177.3B：实现状态owner与参数owner分账的opt-in更新责任适配器，冻结六类学习对照，并把反馈更新前后恢复列入同一checkpoint合同**。此步先做静态/合成接口门，不运行正式模型训练、不执行外部动作、不读取sealed；后续训练需新的固定课程与资源授权。
+N177.1–N177.3B的有限工程与静态对照合同已完成；整体Goal仍未结束。唯一下一步是**177.4：固定F0–F2同候选课程、family隔离、同父同资源对照、训练前/后NativeCheckpoint保存恢复成本、预算和停止线**。不训练、不执行外部动作、不读取sealed；旧N174资源上限不继承给N177，正式训练只能按具体新合同和授权启动。

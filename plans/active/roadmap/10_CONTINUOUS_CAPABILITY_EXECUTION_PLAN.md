@@ -81,14 +81,14 @@ N177.1以一个`CognitiveState`为根，映射V4神经`TaskState`、逐byte`Inpu
 
 当前进展：T3的结构化Goal约束、选定ActionIntent及预测进入同一CognitiveState；V4读取同一决策投影。N177.3A已完成有限恢复/信用接口：[joint v3检查点](../../../reports/taiji_n1_plan177_3a_receipt_credit_recovery_20261027.json)将动作receipt、WDL快照、Executive检查点、保存的决策对象和选择时WorldPrediction摘要绑定到同一组件；v1/v2向前迁移、版本混装/重复组件拒绝、unknown结果fresh-process恢复、同动作/同预测/状态前后态冲突拒绝均通过定向回归。只读`JointCreditRouteV1`单列`CognitiveState`状态owner及world/executive/语言参数接收者；语言接收要求显式text target，环境reward本身不能授权语言更新。
 
-有限结论：80项联合/InputBoundary/V4回归，Ruff、Black、mypy通过；68项模块专项通过。快照可重建并校验摘要，但没有重放全部候选重算同一选择。Outcome来源/执行ID尚无executor签名，仍是调用者声明；模型没有接收任何参数更新，也未执行外部动作，未证明学习或能力提升。N177.3整体未收官：反馈更新后的中断恢复和六类学习对照仍待接通，唯一队首见03。
+有限结论：80项联合/InputBoundary/V4回归，Ruff含B/SIM、Black、mypy通过；68项模块专项通过。快照可重建并校验摘要，但没有重放全部候选重算同一选择。Outcome来源/执行ID尚无executor签名，仍是调用者声明；模型没有接收任何参数更新，也未执行外部动作，未证明学习或能力提升。N177.3A/B静态identity、恢复及六类更新权限规格有限完成；参数更新后的中断恢复和六类实际学习对照仍未运行，唯一队首转至N177.4固定课程/资源合同，详见03。
 
 | 项目 | 实施要求 |
 |---|---|
 | 输入 | 已带身份的共同任务态、选中证据/预测/决定、真实outcome及反馈来源；任务错误与允许更新责任表 |
 | 实际触点 | `taiji/joint_task_state.py`的动作/Outcome/native v3恢复协议、`taiji/joint_action.py`决策快照、`taiji/joint_learning.py`只读责任路由、`taiji/conditional_language_v4.py`及实际世界更新器 |
 | 输出 | CognitiveState唯一状态owner；每个ActionIntent、选择时预测、决策模型快照、Outcome和执行receipt身份一致；world/executive参数与显式语言目标分别路由，环境reward不隐式授权语言学习 |
-| 有限exit | 177.3A静态出口已过：版本迁移和混装拒绝、各回执状态×双scope恢复、unknown fresh-process、Outcome/Transition一致及决策快照重建/摘要核验。177.3B再接反馈更新后的恢复及六类对照；保存的决策对象尚未完整重放选择 |
+| 有限exit | 177.3A静态出口已过：版本迁移和混装拒绝、各回执状态×双scope恢复、unknown fresh-process、Outcome/Transition一致及决策快照重建/摘要核验。177.3B六类权限规格和同一NativeCheckpoint更新前后/新进程恢复要求已冻结；没有实际参数更新，更新后恢复/六类行为对照留给N177.5合同内验收。保存的决策对象尚未完整重放选择 |
 | 失败回流 | 预测与Outcome冲突回世界/credit绑定；执行来源未认证回executor收据；更新owner缺失回credit路由；预测当Outcome、caller provenance当独立认证、只读路由当学习证据均拒绝 |
 | 被阻止的训练 | 梯度非零不能代替任务收益；无合法反馈或必要模块没有更新责任时，不开依赖其学习的新训练；不把任意非零梯度强加给合法冻结/local/离散分支 |
 
