@@ -41,7 +41,7 @@ N177.3B已把状态owner/参数owner分账及六类比较定义为可校验合�
 
 T1固定合同见[SPEC-N1-177.5 v2](../../reference/SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md)。640个train episodes、15臂各2560步、train-only InputTrace cache与课程顺序固定；cache与zero NativeCheckpoint已做源绑定和新进程恢复预检。N177.6上限为2,400,000 process-CPU秒、220,000 wall秒及8 GiB制品。Correct/seed0已完成2560步并耐久保存；Parser-permuted/seed0已完成2560步并耐久保存；update801和923曾暴露producer 48维到V4 workspace 256维的两处接口断层，现认知与语言路径共用prefix_zero_extension_v1无损注入，实际48→256接口回归及该模块7项检查通过。producer.predict仍返回detach parse：parser loss更新producer，answer loss更新V4，后者不回传producer；本冻结候选不能证明下游answer-error credit。独立scorer保留学习、参数责任与逐family state-write对照，尚未读取query/holdout；父checkpoint只读、sealed reads=0。
 
-运行快照（2026-10-28 07:11监督）：**seed0五个模式（correct、parser_permuted、no_update、readout_only、responsible_owner_frozen）全部完成2560并耐久保存**（no_update自durable 1280恢复，尾段1281–1439按停机政策重放/丢弃）；第六臂correct/seed1已耐久update2048、metrics到2187。metrics累计约653,367 CPU秒/59,908 wall秒、制品约2.04 GB；双会话重叠另暂留2,000 CPU秒/180 wall秒，预算记账上界655,367/60,088秒。全局durable游标14,848；15臂中五臂完成，holdout未读。恢复时单实例已确认；runner无run-root单实例互斥，任何后续新包须先补门。
+运行快照（2026-10-28 07:41监督）：seed0五模式与correct/seed1共六臂完成2560并耐久保存（no_update自durable 1280恢复，尾段1281–1439按停机政策重放/丢弃）；第七臂parser_permuted/seed1已启动，零检查点就位、metrics到38。metrics累计约673,154 CPU秒/61,708 wall秒、制品约2.09 GB；双会话重叠另暂留2,000 CPU秒/180 wall秒，预算记账上界675,154/61,888秒。全局durable游标15,360；15臂中六臂完成，holdout未读。恢复时单实例已确认；runner无run-root单实例互斥，任何后续新包须先补门。
 
 该步与N176原一次有限结案可并行。主开发队列只有N177这一条；N176是已训练资产的收束支线，N175剩余人工评分是明确保留的review待办。两者不是“先等全部人工判读或toy正收益，才能修共同架构”的无限门。
 
