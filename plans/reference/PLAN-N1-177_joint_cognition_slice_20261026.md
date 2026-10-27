@@ -77,7 +77,7 @@ N176三臂已经完成，仍按原一次评价有限收束，用于解释课程�
 | **177.4B T2情景检索与T3自然Goal输入（后继扩展）** | 同producer/retriever扩展到跨turn EpisodicMemoryStore query和自然Goal→target slots/action candidate；只用opt-in bundle | inference无provider/gold injection；查询source/时序正确，Goal由raw span映射target slots；歧义不创建ActionIntent | T1结果可判后按范围启用；此前T2/T3结构化fixture只算接口证据 |
 | **177.5A 联合Trainer/manifest/零状态preflight（有限完成）** | `taiji/joint_t1_course.py`、`taiji/joint_t1_trace_cache.py`、`taiji/joint_t1_trainer.py`和`preflight_taiji_n1_plan177_5a_checkpoint.py`；[预检报告](../../../reports/taiji_n1_plan177_5a_preflight_20261027_v2.json) | 640 train episodes/2560顺序固定；train-only 590,512,321-byte trace cache逐源SHA绑定，F0/F1共13轮fresh Adapter重放逐字段一致；backward-only五模式梯度归属符合合同且0 optimizer updates；cache-bound zero NativeCheckpoint 19,550,523 bytes fresh-process参数/optimizer/cursor恢复一致 | 结构化接口可进入训练；不代表学到能力 |
 | **177.5B 固定T1课程/资源合同（固定）** | [SPEC-N1-177.5 v2](SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md) | 5 modes×3 seeds、2560 steps/arm、write-enabled/disabled配对诊断及family/seed评分已冻结；投影含30%余量2,269,268 CPU s/199,519 wall s/6.29GB | 新硬上限2.4M CPU s/220k wall s/8GiB；由用户AGENTS.md的可逆工作授权运行，旧N174账不继承；触限即保存并停止 |
-| **177.6 T1同候选有限训练与验收（接口修复后运行）** | 同一producer+JointTaskState+V4 bundle及冻结train trace cache；独立NativeCheckpoint与只读scorer | update923暴露48→256适配遗漏语言workspace；两条路径统一无损注入，实际维度和模块7项回归通过。durable update768，已登记769–922回放并到metrics780；失败未测尾段1,000 CPU/120 wall秒保守预留入账。answer-loss不向producer反传是本候选架构信用边界 | 继续回放并确认越过923，运行到2560终点或2.4M CPU/220k wall/8GiB硬限，再有限归因结案 |
+| **177.6 T1同候选有限训练与验收（接口修复后运行）** | 同一producer+JointTaskState+V4 bundle及冻结train trace cache；独立NativeCheckpoint与只读scorer | update923暴露48→256适配遗漏语言workspace；两条路径统一无损注入，实际维度和模块7项回归通过。Correct/seed0 durable update2048、metrics update2133（17:17快照），已越过旧故障；失败未测尾段保守预留入账。answer-loss不向producer反传是本候选架构信用边界 | 继续固定15臂至各自2560终点或2.4M CPU/220k wall/8GiB硬限，再有限归因结案 |
 
 实施按T1→T2→T3逐任务纵向贯通：对当前子任务落实共同状态、原生输入producer、必要消费者、信用/恢复、固定课程与有限训练。177.4A已接入T1事实/更正和当前值query；177.5A trainer/cache/preflight及177.5B课程/资源合同均有限完成；当前进入177.6一次固定T1训练与只读评价。T2情景检索与T3自然Goal producer在T1结果可判后扩展；不能把T3结构化target替代原生目标解析。
 
@@ -95,4 +95,4 @@ F3再增加自然表达、多步连续任务和真实跨会话经验；CC-5/6的
 
 本次计划重排以03/09/10/07、本合同、N176承接说明及历史索引一致并提交为完成，不新增模型训练或封存消费。冻结实验结果/预算不改、历史失败可精确恢复，是重排的硬边界。
 
-N177.1–N177.5B有限工程/恢复/资源合同已完成；整体Goal仍未结束。唯一队首是**177.6：从update768耐久checkpoint继续固定T1联合训练并在终点做独立评分与架构归因**。update923发现producer特征宽度适配只覆盖CognitiveState而遗漏语言workspace；两处已统一无损注入，实际48→256及模块回归通过。runner已恢复并登记769–922回放，metrics到780；旧账与失败未测尾段的保守预留均计入，待越过失败点。parser输出detach，answer-loss不向producer反传，该架构信用边界需单列；scorer未读query/holdout，父checkpoint只读，硬限CPU≤2.4M秒、wall≤220k秒、制品≤8GiB。
+N177.1–N177.5B有限工程/恢复/资源合同已完成；整体Goal仍未结束。唯一队首是**177.6：继续固定T1联合训练并在终点做独立评分与架构归因**。Correct/seed0已越过update923故障并达到durable update2048，metrics到2133；旧账与失败未测尾段的保守预留均计入。parser输出detach，answer-loss不向producer反传，该架构信用边界需单列；scorer未读query/holdout，父checkpoint只读，硬限CPU≤2.4M秒、wall≤220k秒、制品≤8GiB。
