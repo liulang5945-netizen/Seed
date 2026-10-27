@@ -165,7 +165,9 @@ class JointCreditRouteV1:
     apply_updates: bool = False
 
     FORMAT = "taiji-joint-credit-route-v1"
-    RECEIVERS = frozenset({"world_model", "executive", "language_candidate"})
+    RECEIVERS = frozenset(
+        {"world_model", "executive", "language_candidate", "input_semantic_producer"}
+    )
 
     def __post_init__(self) -> None:
         for name in (
@@ -457,6 +459,7 @@ class JointCreditComparisonSpecV1:
             "language_candidate",
             "language_candidate.output",
             "language_candidate.non_readout",
+            "input_semantic_producer",
             "all_parameters",
         }
     )

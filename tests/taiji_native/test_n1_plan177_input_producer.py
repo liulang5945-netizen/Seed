@@ -277,6 +277,7 @@ def test_fit_loss_is_source_bound_train_only_and_reaches_producer_parameters():
         tag_ids=tag_ids,
         act_id=ACT_NAMES.index("assertion"),
     )
+    assert producer.PARAMETER_OWNER == target.RECEIVER == "input_semantic_producer"
     assert JointSemanticTrainingTargetV1.from_payload(target.to_payload()) == target
     model_before = content_digest(producer.checkpoint())
     loss, components = producer.supervised_loss(joint, trace, target)

@@ -386,6 +386,7 @@ class JointSemanticTrainingTargetV1:
     target_sha256: str
 
     FORMAT = "taiji-joint-semantic-training-target-v1"
+    RECEIVER = "input_semantic_producer"
 
     def __post_init__(self) -> None:
         for name in ("input_id", "source_sha256", "family_id", "target_sha256"):
@@ -475,6 +476,8 @@ class JointSemanticTrainingTargetV1:
 
 class JointInputProducerV1(nn.Module):
     """Learnable byte/percept span producer; it never receives gold state at inference."""
+
+    PARAMETER_OWNER = JointSemanticTrainingTargetV1.RECEIVER
 
     def __init__(
         self,

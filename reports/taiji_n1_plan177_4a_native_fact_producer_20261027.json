@@ -3,8 +3,9 @@
   "date": "2026-10-27",
   "status": "opt-in T1 fact/correction producer and V4 semantic evidence path integrated; learned capability not evaluated",
   "source_sha256": {
-    "taiji/joint_input_producer.py": "0b14e61dd450d3545f15e84f19e950a4ca1569e5e5532d4dd1c421b1cf281a93",
-    "tests/taiji_native/test_n1_plan177_input_producer.py": "fc041d7efffb7cecfa210a12a29cba8e47451a5ab1f708e3a3cca9ee8d7f3754",
+    "taiji/joint_input_producer.py": "4dda91121d3485e7c132d7f7a48b2d9da008d6f2a8881926392a57c8f6e2a93a",
+    "tests/taiji_native/test_n1_plan177_input_producer.py": "5b0ef0909524d1438a8811289e88125315137110abb24f775526b615737ade4d",
+    "taiji/joint_learning.py": "62c10626038193ab2335c7e145e9f0929c60b66ca8f7ea03677c961deb130bef",
     "taiji/joint_task_state.py": "c9603bf94d239c1529278135fd0928dca3447513b7b174f608068d728197ac97",
     "taiji/conditional_language_v4.py": "3efef1005fdbe02a3120189bebec112f6c3ceb8803f1eebe390f677d8bac9f94",
     "taiji/adapter.py": "3abec22d7b05e13b9306343e3aa4b9dea8cb4d24665aaa83fe5ca70e6ddfe276"
@@ -12,6 +13,7 @@
   "implementation": {
     "input": "exact raw UTF-8 bytes plus per-byte Taiji PerceptEvent features from the committed InputTrace",
     "learnable_path": "producer-owned byte embedding, projection, bidirectional recurrent context, BIO slot head and utterance-act head; old detached PerceptEvent features are auxiliary inputs, not claimed as updated by semantic loss",
+    "parameter_owner": "input_semantic_producer; its fit-only span/act loss reaches producer parameters; joint_learning receiver schema recognizes this owner",
     "typed_slots": ["entity", "attribute", "value", "negation"],
     "acts": ["assertion", "correction", "query", "goal", "ambiguous"],
     "query_goal_commit": "query/goal parses are retained as candidates only; they do not update GoalState, memory retrieval or ActionIntent",
@@ -36,6 +38,7 @@
   "limits": {
     "parse_logits_fixture": "commit-path intervention tests use a fixed-logit test double; this verifies source, state and consumer contracts, not semantic accuracy",
     "semantic_ability": "not measured; the parser candidate is untrained",
+    "language_loss_credit": "V4 consumes detached producer semantic features; language loss is not claimed to update the producer, which currently receives only explicit train-partition span/act labels",
     "act_commit": "assertion and correction are integrated; query and goal remain hypotheses and do not update GoalState or memory retrieval",
     "T2_T3_natural_input": "still not demonstrated; existing memory/action paths retain structured test targets",
     "checkpoint_training_state": "weights and parse ledger are saved; optimizer/RNG/update continuation is not implemented because no training occurred",
