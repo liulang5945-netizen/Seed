@@ -83,7 +83,7 @@ N177.1以一个`CognitiveState`为根，映射V4神经`TaskState`、逐byte`Inpu
 
 有限结论：80项联合/InputBoundary/V4回归，Ruff含B/SIM、Black、mypy通过；68项N177.3专项通过。快照可重建并校验摘要，但没有重放全部候选重算同一选择。Outcome来源/执行ID尚无executor签名，仍是调用者声明；模型没有接收任何参数更新，也未执行外部动作，未证明学习或能力提升。N177.3A/B静态identity、恢复及六类更新权限规格有限完成；参数更新后的中断恢复和六类实际学习对照仍未运行。
 
-N177.4A已接通单对象/属性T1事实与更正：[回执](../../../reports/taiji_n1_plan177_4a_native_fact_producer_20261027.json)保存了raw byte/percept span、source hash、producer checkpoint和parse ledger；模型自产候选经过源校验后写入WorldObject/WorldEvent/CognitiveState Workspace，同时把slot pooled特征写入V4 neural workspace。切断该semantic row会改变V4 logits，跨帧 Adapter checkpoint可带着已知事实继续；但是解码用固定logit test double，实际producer未训练，query/goal尚不写状态。N177.5A course builder和双owner trainer已接通；590MB train-only frozen InputTrace cache通过fresh Adapter逐字段重放；五模式backward-only路由验证通过且未更新参数；cache-bound zero NativeCheckpoint新进程恢复通过。成本/预算及有限训练stop line见03和SPEC-N1-177.5 v2，当前唯一队首是N177.6。
+N177.4A已接通单对象/属性T1事实与更正：[回执](../../../reports/taiji_n1_plan177_4a_native_fact_producer_20261027.json)保存了raw byte/percept span、source hash、producer checkpoint和parse ledger；模型自产候选经过源校验后写入WorldObject/WorldEvent/CognitiveState Workspace，同时把slot pooled特征写入V4 neural workspace。切断该semantic row会改变V4 logits，跨帧 Adapter checkpoint可带着已知事实继续；但是解码用固定logit test double，实际producer未训练，query/goal尚不写状态。N177.5A course builder和双owner trainer已接通；590MB train-only frozen InputTrace cache通过fresh Adapter逐字段重放；五模式backward-only路由验证通过且未更新参数；cache-bound zero NativeCheckpoint新进程恢复通过。N177.6已启动，Correct/seed0通过2-step恢复canary并推进中；成本/预算stop line见03和SPEC-N1-177.5 v2。
 
 | 项目 | 实施要求 |
 |---|---|

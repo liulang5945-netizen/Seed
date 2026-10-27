@@ -21,7 +21,7 @@
 
 N175交接见[原判读与费用](../../reference/PLAN-N1-175_evaluation_handoff_20261026.md)；N176来源、固定范围和预算只看[已冻结F0/F1合同](../../reference/SPEC-N1-176_F0_F1_pilot_20261026.md)。本次不变更它们的题面、分母、阈值、预算、源码绑定或消费资格。
 
-## 当前唯一下一步：N177.6固定T1联合训练与有限结案
+## 当前唯一下一步：N177.6固定T1联合训练与有限结案（运行中）
 
 N177.1及N177.2-T1/T2/T3已完成各自有限工程出口。[T3回执](../../../reports/taiji_n1_plan177_t3_world_action_conditioning_20261026.json)记录了结构化目标、固定权重WorldDynamics预测/Executive选择、ActionIntent写回和V4动作条件消费；不证明中文目标解析、已学规划或外部行动。
 
@@ -35,7 +35,7 @@ N177.3B已把状态owner/参数owner分账及六类比较定义为可校验合�
 
 边界：assertion/correction进入WorldObject/WorldEvent；query可选择已有实体/属性事实和对应source供V4消费，但不检索EpisodicMemory；goal仍是候选，不写GoalState、不生成ActionIntent。训练焦点限于T1事实/更正和基础中文；T2情景检索与T3自然Goal/动作解析仍待后续，结构化fixture不能计作原生解析。
 
-T1固定合同见[SPEC-N1-177.5 v2](../../reference/SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md)。F0/F1 builder固定640 train episodes和2560步顺序；冻结Adapter/InputTrace cache为590,512,321 bytes，F0/F1 13轮独立重放的InputTrace和CognitiveState逐字段一致。双owner trainer五种模式的backward-only梯度路径通过，参数/optimizer/cursor保持不变；零状态19,550,523-byte NativeCheckpoint绑定cache SHA并在新进程恢复一致。[preflight与成本报告](../../../reports/taiji_n1_plan177_5a_preflight_20261027_v2.json)记录0正式updates、0 sealed reads。按实际模式profile、保守cache建设界限、评价与checkpoint数量估算，含30%余量为约2,124,966 process-CPU秒/185,119 wall秒/6.29GB。执行窗口固定为CPU≤2,400,000秒、wall≤220,000秒、artifacts≤8GiB；首2步canary包含在内。用户提供的AGENTS.md已授权可逆项目工作；N176父checkpoint只读，15个训练臂分别保存。触及任一上限或恢复/来源门失败即保存partial并停止，不自动重试、不提额。
+T1固定合同见[SPEC-N1-177.5 v2](../../reference/SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md)。F0/F1 builder固定640 train episodes和2560步顺序；冻结Adapter/InputTrace cache为590,512,321 bytes，F0/F1 13轮独立重放的InputTrace和CognitiveState逐字段一致。双owner trainer五种模式的backward-only梯度路径通过、参数/optimizer/cursor保持不变；零状态19,550,523-byte NativeCheckpoint绑定cache SHA并在新进程恢复一致。[preflight与成本报告](../../../reports/taiji_n1_plan177_5a_preflight_20261027_v2.json)记录完整资源投影和0 sealed reads。N177.6窗口CPU≤2,400,000秒、wall≤220,000秒、artifacts≤8GiB，30%余量已含，首2步canary计入。当前运行目录为`data/checkpoints/n1_plan177_6_t1_pilot_20261027/`；截至本次记录，Correct/seed0已完成39/2560 updates，2-step canary及新进程恢复通过，下一持久检查点在update256；总账约18,923 CPU秒/2,095 wall秒，sealed reads=0。[实时update记录](../../../data/checkpoints/n1_plan177_6_t1_pilot_20261027/metrics.jsonl)。该早期teacher-forced loss不作能力结论。N176父checkpoint只读；任一硬限或恢复/来源门失败即保留partial并停止，不自动重试/提额。
 
 该步与N176原一次有限结案可并行。主开发队列只有N177这一条；N176是已训练资产的收束支线，N175剩余人工评分是明确保留的review待办。两者不是“先等全部人工判读或toy正收益，才能修共同架构”的无限门。
 
@@ -52,11 +52,11 @@ T1固定合同见[SPEC-N1-177.5 v2](../../reference/SPEC-N1-177_5_T1_F0_F1_pilot
 | 4B T2情景与T3自然Goal producer | 后续扩展同一producer/retriever到跨turn记忆query和自然Goal→target slot/action candidate | 推理不注入provider/gold state；查询source/time正确，Goal span绑定target slots，歧义不生成ActionIntent | 不阻塞T1；未通过前T2/T3保持结构化接口证据边界 |
 | 5A 联合Trainer及source-bound manifest（完成） | `taiji/joint_t1_course.py`、`taiji/joint_t1_trace_cache.py`、`taiji/joint_t1_trainer.py`；zero/cache-bound NativeCheckpoint新进程preflight | family/target/order、train-only cache source SHA及独立重放一致；五模式梯度owner路径通过；完整run窗口预算≤2.4M CPU/220k wall/8GiB | 进入固定T1 run；更新期间仍以真实累计账本硬停止 |
 | 5B 有界训练合同（固定） | SPEC-N1-177.5 v2，15 arms×2560 updates，成对state-write诊断，family macro及seed规则 | 30%余量后投影2.125M CPU/185.119k wall/6.29GB；硬上限2.4M/220k/8GiB；用户站立式可逆操作授权适用，N174旧账不继承 | 进入N177.6固定T1候选训练及验收 |
-| **6 同候选T1有限训练与保持（当前唯一下一步）** | 原生producer+JointTaskState+V4同一bundle、train-only frozen trace cache、独立arm/native checkpoints | 正确/置换/无更新/readout-only/owner-frozen共15臂各2560步；固定canary/checkpoint/有限F0/F1 query与holdout、write状态消融、旧F0保持 | 到固定终点判收益/无收益/退化/不可判/预算partial；不自动加轮/提额。之后才扩T2/T3 |
+| **6 同候选T1有限训练与保持（运行中，当前唯一队首）** | 原生producer+JointTaskState+V4同一bundle、train-only frozen trace cache、独立arm/native checkpoints | Correct/seed0已过2-step canary fresh restore，当前39/2560；后续固定15臂各2560步，按模式/seed账本、预算和checkpoint间隔推进 | 达固定终点或硬限，独立只读scorer评价并结案收益/无收益/退化/不可判/partial；不自动加轮/提额。之后才扩T2/T3 |
 | 7 自然连续任务与跨会话 | 情景回忆、多轮更正、一步行动、真实经历与持续纠错逐级扩展 | 同一可恢复版本未见任务、反馈后query及旧能力保持按07裁决 | 分别形成L2/L3/L4证据，不拼接不同模型成绩 |
 | 8 按瓶颈触发机制与算力研究 | 表示时界/轨迹恢复/学习信用或计算热点确有证据时，选择一个多尺度、更新或并行候选 | 同任务/同资源比较收益、信息损失、保持、吞吐/内存及恢复，固定出口 | 采用或否决该候选，不先预定PC/SSM/块稀疏必胜 |
 
-步骤1–6按T1→T2→T3逐任务纵向执行，不先完成所有任务的全部器官才训练。N177.5A与5B有限工程、恢复和固定资源合同已过；当前唯一队首是N177.6一次有界训练及独立评测。T2/T3 query/Goal自然输入能力在T1结果可判后扩展。
+步骤1–6按T1→T2→T3逐任务纵向执行，不先完成所有任务的全部器官才训练。N177.5A/B有限工程、恢复和固定资源合同已过；N177.6已按同一bundle进入一次有界训练。当前唯一队首是监控checkpoint、资源账和固定课程，随后独立评分并完成架构归因。T2/T3 query/Goal自然输入能力在T1结果可判后扩展。
 
 快慢状态、reset和反馈责任在步骤1–3先定义；完整多时间尺度算法及硬件换底座不是第一次联合链的预设前置。步骤8是条件支路，可在步骤1–7出现必要表示/时界/信用/计算瓶颈时前移，不必等F3完成。语言与联合认知共同开发、按07分别验收，能力等级不是开发许可。
 

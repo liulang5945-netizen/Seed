@@ -60,6 +60,9 @@ DEFAULT_ZERO_CHECKPOINT = (
 )
 DEFAULT_RUN_ROOT = REPOSITORY_ROOT / "data" / "checkpoints" / "n1_plan177_6_t1_pilot_20261027"
 DEFAULT_REPORT = REPOSITORY_ROOT / "reports" / "taiji_n1_plan177_6_t1_pilot_20261027.json"
+DEFAULT_PREFLIGHT_REPORT = (
+    REPOSITORY_ROOT / "reports" / "taiji_n1_plan177_5a_preflight_20261027_v2.json"
+)
 PREFLIGHT_SCRIPT = (
     REPOSITORY_ROOT / "scripts" / "training" / "preflight_taiji_n1_plan177_5a_checkpoint.py"
 )
@@ -272,7 +275,7 @@ def _run() -> int:
     args.run_root.mkdir(parents=True, exist_ok=True)
     session_cpu_start = time.process_time()
     session_wall_start = time.perf_counter()
-    preflight_cpu, preflight_wall = _preflight_overhead(args.report)
+    preflight_cpu, preflight_wall = _preflight_overhead(DEFAULT_PREFLIGHT_REPORT)
     external_cpu_seconds = 0.0
 
     parent_sha256 = _sha256_file(args.parent)
