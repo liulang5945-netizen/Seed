@@ -42,7 +42,7 @@
 
 ### 3.1 已训N176收束与N177无模型工程准备
 
-恢复状态同步（2026-10-27 14:55:53）：上段“等待F1提交预检后恢复”是修复提交前的状态，已被实际恢复覆盖。训练从update768恢复、按账本回放769–800，并越过原update801宽度异常至858；当前durable仍为768，metrics累计约54,677.94 CPU秒/5,572.82 wall秒，未读query/holdout。继续运行并等待下一耐久点1024。
+恢复状态同步（2026-10-27 15:02:52）：Correct/seed0在update922后因语言workspace仍直接拼入48维producer特征而失败；最新durable为768。认知与语言两条路径已统一无损宽度注入，4→8和48→256定向回归以及模块7项检查通过。最后实测58,573.41 CPU/5,990.08 wall秒，失败尾段额外保守预留1,000 CPU/120 wall秒；恢复时记录769–922回放并沿原上限继续。
 
 | 项目 | 实施要求 |
 |---|---|
@@ -85,7 +85,7 @@ N177.1以一个`CognitiveState`为根，映射V4神经`TaskState`、逐byte`Inpu
 
 有限结论：80项联合/InputBoundary/V4回归，Ruff含B/SIM、Black、mypy通过；68项N177.3专项通过。快照可重建并校验摘要，但没有重放全部候选重算同一选择。Outcome来源/执行ID尚无executor签名，仍是调用者声明；模型没有接收任何参数更新，也未执行外部动作，未证明学习或能力提升。N177.3A/B静态identity、恢复及六类更新权限规格有限完成；参数更新后的中断恢复和六类实际学习对照仍未运行。
 
-N177.4A已接通单对象/属性T1事实与更正：[回执](../../../reports/taiji_n1_plan177_4a_native_fact_producer_20261027.json)保存了raw byte/percept span、source hash、producer checkpoint和parse ledger；模型自产候选经过源校验后写入WorldObject/WorldEvent/CognitiveState Workspace，同时把slot pooled特征写入V4 neural workspace。切断该semantic row会改变V4 logits，跨帧 Adapter checkpoint可带着已知事实继续；但是解码用固定logit test double，实际producer未训练，query/goal尚不写状态。N177.5A course builder和双owner trainer已接通；590MB train-only frozen InputTrace cache通过fresh Adapter逐字段重放；五模式backward-only路由验证通过且未更新参数；cache-bound zero NativeCheckpoint新进程恢复通过。N177.6 Correct/seed0的durable checkpoint现到update768，包含F1前128步；update801首次resolved F1事实提交因producer48维与V4 workspace256维不匹配而中止，已补无损prefix-zero-extension、当前等待F1提交预检后从768恢复，769–800和早前257–283执行资源均继续计入。该候选已确认answer loss不通过detached parse反馈给producer，需在有限结案中作为架构信用边界单列。独立只读scorer静态检查已过，按合同准备学习对照、Readout-only/Responsible-owner-frozen描述性责任配对和逐family state-write因果对照；尚未读query/holdout。成本/预算stop line见03和SPEC-N1-177.5 v2。
+N177.4A已接通来源绑定的单对象事实/更正和V4消费，N177.5A的课程、train-only cache、五模式梯度归属和zero NativeCheckpoint恢复已完成工程预检。N177.6 update923暴露此前只修复认知workspace、遗漏语言workspace的48→256维度断层；两条路径已改用同一无损注入并通过针对性回归，当前等待从durable update768恢复，metrics至922的重复工作与失败尾段均继续计入。当前候选的answer loss不通过detached parse反馈producer，需在本轮有限结案中单列；独立scorer准备了学习、参数责任及逐family state-write对照，尚未读query/holdout。
 
 | 项目 | 实施要求 |
 |---|---|

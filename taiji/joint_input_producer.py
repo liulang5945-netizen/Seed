@@ -866,12 +866,13 @@ class JointInputProducerV1(nn.Module):
                 events=(*root.world.events, event),
             )
         candidate_id = "native-semantic-candidate:" + parse.parse_sha256
+        workspace_feature = self._embed_semantic_features_in_workspace(
+            parse.semantic_features,
+            language_candidate.config.width,
+        )
         candidate = WorkspaceCandidate(
             candidate_id,
-            self._embed_semantic_features_in_workspace(
-                parse.semantic_features,
-                language_candidate.config.width,
-            ),
+            workspace_feature,
             salience=parse.confidence,
             source=parse.input_id,
         )
@@ -928,8 +929,7 @@ class JointInputProducerV1(nn.Module):
         slot_spans = [item for item in parse.spans if item.role in {"entity", "attribute", "value"}]
         span_start = min(item.start_byte for item in slot_spans)
         span_end = max(item.end_byte for item in slot_spans)
-        semantic_feature = torch.tensor(
-            parse.semantic_features,
+        semantic_feature = workspace_feature.to(
             dtype=joint_state.language_state.workspace.dtype,
             device=joint_state.language_state.workspace.device,
         ).reshape(1, -1)

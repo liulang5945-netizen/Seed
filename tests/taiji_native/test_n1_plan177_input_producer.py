@@ -31,13 +31,13 @@ from taiji.joint_input_producer import (
 from taiji.joint_task_state import JointTaskStateV1
 
 
-def setup_joint(text: str, *, input_id: str = "producer-input"):
+def setup_joint(text: str, *, input_id: str = "producer-input", width: int = 8):
     adapter = TSKV8Adapter(
         TaijiConfig(region_sizes=(24, 16), synapse_fan_in=6, motor_fan_in=8, seed=71)
     )
     language_model = ConditionalLanguageCandidateV4(
         TaskCoreConfigV3(
-            width=8,
+            width=width,
             embedding_width=4,
             key_width=4,
             slots=4,
@@ -106,9 +106,18 @@ class FixedLogitProducer(JointInputProducerV1):
     """Test double for the span decoder; its fixed outputs are not capability evidence."""
 
     def __init__(
-        self, *, trace, act="assertion", value="蓝色", negation=False, low_confidence=False
+        self,
+        *,
+        trace,
+        act="assertion",
+        value="蓝色",
+        negation=False,
+        low_confidence=False,
+        hidden_dim=8,
     ):
-        super().__init__(percept_feature_dim=trace.percepts[0].features.numel(), hidden_dim=8)
+        super().__init__(
+            percept_feature_dim=trace.percepts[0].features.numel(), hidden_dim=hidden_dim
+        )
         self.test_act = act
         self.test_value = value
         self.test_negation = negation
@@ -169,6 +178,37 @@ def test_native_span_parse_updates_world_and_v4_reads_the_exact_source():
     )
     raw_only = updated.with_language_state(raw_only_neural)
     raw_logits, _ = language_model.next_logits_from_joint(raw_only)
+    assert not torch.allclose(logits, raw_logits)
+
+
+@pytest.mark.parametrize(("producer_width", "workspace_width"), [(4, 8), (48, 256)])
+def test_smaller_producer_features_reach_both_workspace_paths_without_truncation(
+    producer_width, workspace_width
+):
+    text = "杯子的颜色是蓝色。"
+    _, language_model, trace, joint = setup_joint(text, width=workspace_width)
+    producer = FixedLogitProducer(trace=trace, hidden_dim=producer_width)
+    parse = producer.predict(joint, trace)
+    assert parse.status == "resolved"
+
+    updated = producer.commit_to_joint_state(joint, trace, parse, language_model)
+    expected = torch.cat(
+        (
+            torch.arange(1, producer_width + 1, dtype=torch.float32),
+            torch.zeros(workspace_width - producer_width),
+        )
+    )
+    assert torch.equal(updated.cognitive_state.workspace.candidates[-1].features, expected)
+    assert torch.equal(updated.language_state.workspace[-1], expected)
+    logits, _ = language_model.next_logits_from_joint(updated)
+    without_semantic_row = updated.with_language_state(
+        replace(
+            updated.language_state,
+            workspace=updated.language_state.workspace[:-1],
+            evidence_refs=updated.language_state.evidence_refs[:-1],
+        )
+    )
+    raw_logits, _ = language_model.next_logits_from_joint(without_semantic_row)
     assert not torch.allclose(logits, raw_logits)
 
 
