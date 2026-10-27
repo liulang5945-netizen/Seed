@@ -86,7 +86,10 @@ def byte_span(text: str, fragment: str) -> tuple[int, int]:
 def logits_for_fact(text: str, *, act: str = "assertion", value: str = "蓝色"):
     raw = text.encode("utf-8")
     tag_ids = [0] * len(raw)
-    for role, fragment in (("ENTITY", "杯子"), ("ATTRIBUTE", "颜色"), ("VALUE", value)):
+    slots = [("ENTITY", "杯子"), ("ATTRIBUTE", "颜色")]
+    if act != "query":
+        slots.append(("VALUE", value))
+    for role, fragment in slots:
         start, end = byte_span(text, fragment)
         tag_ids[start] = TAG_NAMES.index(f"B_{role}")
         for index in range(start + 1, end):
@@ -258,6 +261,51 @@ def test_correction_updates_only_the_bound_entity_attribute_and_keeps_history():
     cut_joint = corrected.with_language_state(cut_language_state)
     cut_logits, _ = language_model.next_logits_from_joint(cut_joint)
     assert not torch.allclose(corrected_logits, cut_logits)
+    query_adapter_checkpoint = producer.bind_cognitive_owner_to_native_adapter_checkpoint(
+        resumed_adapter.native_checkpoint(), corrected
+    )
+    query_adapter = TSKV8Adapter.from_native_checkpoint(query_adapter_checkpoint)
+    query_text = "杯子的颜色是什么？"
+    query_trace = query_adapter.ingest_input(
+        InputFrame(
+            input_id="producer-query-input",
+            modality="text",
+            payload=query_text.encode("utf-8"),
+            source="test.client",
+            timestamp=query_adapter.tick + 1,
+        ),
+        learn=False,
+    )
+    query_root = query_adapter.cognitive_snapshot()
+    query_joint = corrected.append_input(
+        language_model,
+        query_trace,
+        query_root,
+        resource_snapshot={"remaining_steps": 1, "max_observation_bytes": 256},
+    )
+    query_producer = FixedLogitProducer(trace=query_trace, act="query")
+    query_parse = make_parse(query_producer, query_joint, query_trace)
+    assert query_parse.status == "resolved" and query_parse.act == "query"
+    queried = query_producer.commit_to_joint_state(
+        query_joint, query_trace, query_parse, language_model
+    )
+    queried_objects = {item.object_id: item for item in queried.cognitive_state.world.objects}
+    assert queried_objects[cup_id].attribute("颜色") == "红色"
+    query_view = queried.content_view()
+    assert query_view.selected_candidates[0].source_status == "source_linked"
+    assert set(query_view.selected_neural_source_ids) == {
+        binding.neural_source_id for binding in queried.input_bindings
+    }
+    query_logits, _ = language_model.next_logits_from_joint(queried)
+    assert query_logits.shape[-1] == 257
+    query_cut_state = replace(
+        queried.language_state,
+        workspace=queried.language_state.workspace[:-1],
+        evidence_refs=queried.language_state.evidence_refs[:-1],
+    )
+    query_cut = queried.with_language_state(query_cut_state)
+    query_cut_logits, _ = language_model.next_logits_from_joint(query_cut)
+    assert not torch.allclose(query_logits, query_cut_logits)
 
 
 def test_fit_loss_is_source_bound_train_only_and_reaches_producer_parameters():

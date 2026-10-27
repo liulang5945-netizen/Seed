@@ -1884,6 +1884,18 @@ class JointContentReadViewV1:
                             candidate_sources.update(event_sources)
                             field_linked = True
                     linked_fields.append(field_linked)
+                candidate_source = candidate_map[candidate_id].source
+                candidate_sources.update(
+                    binding.neural_source_id
+                    for binding in state.input_bindings
+                    if candidate_source
+                    in {
+                        binding.input_id,
+                        binding.neural_source_id,
+                        *binding.percept_event_ids,
+                        *binding.assembly_ids,
+                    }
+                )
                 if linked_fields and all(linked_fields):
                     source_status = "source_linked"
                     selected_neural_source_ids.update(candidate_sources)

@@ -765,64 +765,88 @@ class JointInputProducerV1(nn.Module):
             parse.producer_parameter_revision != self.parameter_revision
         ):
             raise ValueError("semantic parse belongs to another producer parameter revision")
-        if parse.status != "resolved" or parse.act not in {"assertion", "correction"}:
+        if parse.status != "resolved" or parse.act not in {
+            "assertion",
+            "correction",
+            "query",
+        }:
             return joint_state
         spans_by_role = {
             role: [item for item in parse.spans if item.role == role]
             for role in ("entity", "attribute", "value")
         }
-        if any(len(spans_by_role[role]) != 1 for role in spans_by_role):
-            raise ValueError(
-                "resolved factual parse must have one entity, attribute and value span"
+        required_roles = (
+            ("entity", "attribute")
+            if parse.act == "query"
+            else (
+                "entity",
+                "attribute",
+                "value",
             )
+        )
+        if any(len(spans_by_role[role]) != 1 for role in required_roles):
+            raise ValueError(
+                "resolved semantic parse lacks its required entity/attribute/value spans"
+            )
+        if parse.act == "query" and spans_by_role["value"]:
+            raise ValueError("resolved query parse must not include an asserted value span")
         if len(parse.semantic_features) != language_candidate.config.width:
             raise ValueError("semantic producer feature width differs from the V4 workspace width")
         entity_text = spans_by_role["entity"][0].text
         attribute_text = spans_by_role["attribute"][0].text
-        value_text = spans_by_role["value"][0].text
-        if not entity_text or not attribute_text or not value_text:
+        value_text = "" if parse.act == "query" else spans_by_role["value"][0].text
+        if not entity_text or not attribute_text or (parse.act != "query" and not value_text):
             raise ValueError("resolved semantic facts cannot contain empty slots")
         object_id = self.entity_object_id(joint_state, entity_text)
         root = joint_state.cognitive_state
         old_object = next(
             (item for item in root.world.objects if item.object_id == object_id), None
         )
-        attributes = {} if old_object is None else dict(old_object.attributes)
-        attributes[attribute_text] = value_text
-        new_object = WorldObject(
-            object_id,
-            attributes=tuple(sorted(attributes.items())),
-            tags=() if old_object is None else old_object.tags,
-        )
-        world_objects = tuple(
-            item for item in root.world.objects if item.object_id != object_id
-        ) + (new_object,)
-        relations = tuple(
-            item
-            for item in root.world.relations
-            if not (item[0] == object_id and item[1] == attribute_text)
-        ) + (
-            (object_id, attribute_text, value_text),
-        )
-        event_id = "native-semantic-event:" + parse.parse_sha256
-        if any(item.event_id == event_id for item in root.world.events):
-            raise ValueError("native semantic parse event was already committed")
-        event = WorldEvent(
-            event_id=event_id,
-            kind="native_fact_correction" if parse.act == "correction" else "native_fact_assertion",
-            tick=root.world.tick,
-            subject_id=object_id,
-            object_id=object_id,
-            attributes=((attribute_text, value_text),),
-            provenance=parse.input_id,
-        )
-        world = replace(
-            root.world,
-            entities=tuple(item.object_id for item in world_objects),
-            relations=relations,
-            objects=world_objects,
-            events=(*root.world.events, event),
-        )
+        if parse.act == "query":
+            if old_object is None or attribute_text not in dict(old_object.attributes):
+                return joint_state
+            world = root.world
+        else:
+            attributes = {} if old_object is None else dict(old_object.attributes)
+            attributes[attribute_text] = value_text
+            new_object = WorldObject(
+                object_id,
+                attributes=tuple(sorted(attributes.items())),
+                tags=() if old_object is None else old_object.tags,
+            )
+            world_objects = tuple(
+                item for item in root.world.objects if item.object_id != object_id
+            ) + (new_object,)
+            relations = tuple(
+                item
+                for item in root.world.relations
+                if not (item[0] == object_id and item[1] == attribute_text)
+            ) + (
+                (object_id, attribute_text, value_text),
+            )
+            event_id = "native-semantic-event:" + parse.parse_sha256
+            if any(item.event_id == event_id for item in root.world.events):
+                raise ValueError("native semantic parse event was already committed")
+            event = WorldEvent(
+                event_id=event_id,
+                kind=(
+                    "native_fact_correction"
+                    if parse.act == "correction"
+                    else "native_fact_assertion"
+                ),
+                tick=root.world.tick,
+                subject_id=object_id,
+                object_id=object_id,
+                attributes=((attribute_text, value_text),),
+                provenance=parse.input_id,
+            )
+            world = replace(
+                root.world,
+                entities=tuple(item.object_id for item in world_objects),
+                relations=relations,
+                objects=world_objects,
+                events=(*root.world.events, event),
+            )
         candidate_id = "native-semantic-candidate:" + parse.parse_sha256
         candidate = WorkspaceCandidate(
             candidate_id,

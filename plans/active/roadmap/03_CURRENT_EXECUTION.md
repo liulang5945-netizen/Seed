@@ -21,7 +21,7 @@
 
 N175交接见[原判读与费用](../../reference/PLAN-N1-175_evaluation_handoff_20261026.md)；N176来源、固定范围和预算只看[已冻结F0/F1合同](../../reference/SPEC-N1-176_F0_F1_pilot_20261026.md)。本次不变更它们的题面、分母、阈值、预算、源码绑定或消费资格。
 
-## 当前唯一下一步：N177.5 T1入门课程与资源合同
+## 当前唯一下一步：N177.5A联合训练器、manifest与恢复preflight
 
 N177.1及N177.2-T1/T2/T3已完成各自有限工程出口。[T3回执](../../../reports/taiji_n1_plan177_t3_world_action_conditioning_20261026.json)记录了结构化目标、固定权重WorldDynamics预测/Executive选择、ActionIntent写回和V4动作条件消费；不证明中文目标解析、已学规划或外部行动。
 
@@ -31,9 +31,11 @@ N177.3A已完成有限工程出口，详见[回执](../../../reports/taiji_n1_pl
 
 N177.3B已把状态owner/参数owner分账及六类比较定义为可校验合同，详见[回执](../../../reports/taiji_n1_plan177_3b_credit_control_contract_20261027.json)。合同区分正确与置换目标、无状态/参数更新、仅`language_candidate.output`更新、冻结责任接收者但允许非路由模块更新、以及只写CognitiveState且冻结所有参数；每个比较要求同一NativeCheckpoint更新前后保存并fresh-process恢复。合同本身`apply_updates=false`，不声称这些学习结果已运行。N177.3有限收官只覆盖静态责任/恢复约束；正式更新后的行为/恢复证据归训练评价包。
 
-上游缺口与源码证据见[输入生产者审计](../../../reports/taiji_n1_plan177_4_native_input_producer_gap_20261027.json)。N177.4A已完成T1有限垂直片：[回执](../../../reports/taiji_n1_plan177_4a_native_fact_producer_20261027.json)记录了raw bytes＋Percept的可学习span/act候选、source-bound事实/更正、CognitiveState写入、V4语义workspace消费、跨Adapter检查点续接和新进程producer恢复。误差标签路径有梯度到producer自身参数；没有执行更新，事实span测试使用固定logit double，能力仍未测。
+上游缺口与源码证据见[输入生产者审计](../../../reports/taiji_n1_plan177_4_native_input_producer_gap_20261027.json)。N177.4A已完成T1有限垂直片：[回执](../../../reports/taiji_n1_plan177_4a_native_fact_producer_20261027.json)记录了raw bytes＋Percept的可学习span/act候选、source-bound事实/更正和当前值query选择，写入CognitiveState/Workspace并把语义feature接到V4；跨Adapter检查点续接和新进程producer恢复通过。误差标签路径有梯度到producer自身参数；没有执行更新，结构span测试使用固定logit test double，能力仍未测。
 
-边界：只提交assertion/correction进入WorldObject/WorldEvent；query/goal仅形成候选，不写GoalState、不自动检索/规划/行动。当前训练焦点应限制在T1事实/更正和基础中文；T2记忆query与T3自然Goal/动作解析留待后续纵切片，结构化fixture不能计作原生解析。唯一下一步为N177.5：以简单日常中文设计F0/F1入门数据和固定的同父对照、预算、保存/恢复与停止线；先产出可审合同，不开始正式训练、不执行外部动作、不读取sealed，老N174预算不继承。
+边界：assertion/correction进入WorldObject/WorldEvent；query可选择已有实体/属性事实和对应source供V4消费，但不检索EpisodicMemory；goal仍是候选，不写GoalState、不生成ActionIntent。训练焦点限于T1事实/更正和基础中文；T2情景检索与T3自然Goal/动作解析仍待后续，结构化fixture不能计作原生解析。
+
+T1固定训练方案已形成[SPEC-N1-177.5](../../reference/SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md)：640 train episodes、六模式×三seed、2560 updates/arm，拟议新窗≤40,000 process-CPU秒/50,000 wall秒/6GiB。它是预算提案，不是训练授权。唯一下一步是实现JointT1TrainerV1和family manifest，做每臂zero checkpoint/optimizer fresh-restore; 2-step optimizer canary计入N177.6获批run，批准前不执行，验证两个loss只更新获准owner且checkpoint同包包含parser/V4/optimizer/RNG/source cursor；不运行正式训练、不执行外部动作、不读取sealed。preflight完成后再一次性请求这份新预算，旧N174额度不继承。
 
 该步与N176原一次有限结案可并行。主开发队列只有N177这一条；N176是已训练资产的收束支线，N175剩余人工评分是明确保留的review待办。两者不是“先等全部人工判读或toy正收益，才能修共同架构”的无限门。
 
@@ -46,14 +48,15 @@ N177.3B已把状态owner/参数owner分账及六类比较定义为可校验合�
 | 2 必要记忆/预测/选择与表达 | 177.2：T1事实→T2情景→T3目标/一步行动；语言读取同一被选内容与ActionIntent | T1/T2/T3 opt-in来源消费、显式Goal target、行动条件预测/选择及V4动作条件logits通过；53项联合模块测试及65项组合回归通过。结构化target与固定模型参数仅为接口因果证据，不代表自然中文理解/学习，跨session与生产隔离仍未通过 | 进入N177.3信用/恢复，保留未执行外部动作、未训练的边界 |
 | 3A 身份/恢复工程 | 177.3A：Outcome调用者回执、同一native v3组件、动作及决策/预测摘要、只读信用责任路由 | 68项模块回归、12个回执状态×scope恢复和fresh-process unknown恢复通过；仅证明接口/恢复，不证明真实环境认证或学习 | 进入3B对照合同，不运行训练 |
 | 3B 状态/参数责任合同 | 177.3B：六类更新权限与same-checkpoint前后恢复要求的可校验规格 | 两项合同测试通过，各模式的可写/冻结接收者不冲突；正确与置换反馈复用同一路由owner以隔离标签差异；`apply_updates=false`，没有执行实际更新或后验恢复 | 进入4A T1原生事实生产 |
-| 4A T1原生事实生产（有限工程完成） | 177.4A：raw bytes＋Percept→模型自有slot候选→source-bound assertion/correction写入CognitiveState/Workspace | 5项producer测试及91项组合回归通过；输入span/UTF-8/percept ID校验、否定/歧义拒写、修正只改相关字段、跨Adapter同主状态续接、V4语义workspace切断负例及producer/parse ledger新进程恢复。固定logit test double只证接口，不证模型已学 | 进入T1入门课程合同；query/goal不自动写GoalState |
-| 4B T2/T3原生query与Goal producer | 按同一producer在T1课程可判后扩展到查询/记忆和自然Goal/动作目标映射 | 推理不注入provider/gold state；query选择正确经历、Goal文字到target slot有source span；歧义不生成ActionIntent | 不阻塞当前T1课程；未通过前T2/T3仍只算结构化接口证据 |
-| 5 固定T1课程与资源 | 177.5：F0/F1日常短句、事实与更正；family拆分、同父对照、成本和停止线固定 | train/support/query/holdout分母、CPU/wall/磁盘、checkpoint/RNG/恢复和收官线可审；未授权不运行 | 到训练决策点时申请新N177预算，不继承N174额度 |
+| 4A T1事实/当前值query producer（有限工程完成） | 177.4A：raw bytes＋Percept→模型自有slot候选→source-bound fact/correction写入CognitiveState；query选择已有fact及source，并把slot feature送入V4 workspace | 5项producer测试及91项组合回归通过；UTF-8/percept源校验、否定/歧义拒写、修正只改相关字段、跨Adapter续接、切断语义feature改变V4 logits、新进程producer/parse ledger恢复。固定logit test double只证接口，不证模型已学 | 进入T1入门课程合同；当前query不检索情景记忆，Goal不写状态 |
+| 4B T2情景与T3自然Goal producer | 后续扩展同一producer/retriever到跨turn记忆query和自然Goal→target slot/action candidate | 推理不注入provider/gold state；查询source/time正确，Goal span绑定target slots，歧义不生成ActionIntent | 不阻塞T1；未通过前T2/T3保持结构化接口证据边界 |
+| 5A 联合Trainer及source-bound manifest | 177.5A：实现双owner parser/V4 update route、family级数据builder、fixed order和single native trainer checkpoint | 数据分割/target digest/六模式映射固定；zero checkpoint、optimizer/RNG fresh-restore preflight通过；2-step update canary计入N177.6获批run；未执行正式数据更新 | 完成工程preflight后请求新N177训练预算 |
+| 5B 有界训练合同 | SPEC-N1-177.5：40k CPU/50k wall/6GiB proposed ceiling、stop line与有限F0/F1指标 | 用户对具体合同授权后，按固定family和更新数开始；预算触顶保留partial并停止，不自动加轮 | 进入177.6固定T1候选训练及验收 |
 | 6 同候选T1有限训练与保持 | 177.6：原生producer+JointTaskState+V4同一bundle上的一次有限训练/评测 | 固定终点判收益/无收益/退化/不可判；producer、语言readout、状态更新分账；F0保持及更新后新进程恢复通过 | T1过门后扩T2/T3；失败回一个主要机制并有限收束 |
 | 7 自然连续任务与跨会话 | 情景回忆、多轮更正、一步行动、真实经历与持续纠错逐级扩展 | 同一可恢复版本未见任务、反馈后query及旧能力保持按07裁决 | 分别形成L2/L3/L4证据，不拼接不同模型成绩 |
 | 8 按瓶颈触发机制与算力研究 | 表示时界/轨迹恢复/学习信用或计算热点确有证据时，选择一个多尺度、更新或并行候选 | 同任务/同资源比较收益、信息损失、保持、吞吐/内存及恢复，固定出口 | 采用或否决该候选，不先预定PC/SSM/块稀疏必胜 |
 
-步骤1–6按T1→T2→T3逐任务纵向执行，不先完成所有任务的全部器官才训练。T1事实producer有限工程出口已过；N177.5冻结入门课程/预算；N177.6才运行一次T1候选比较并测F0保持。T2/T3 query/Goal自然输入能力可在T1结果可判后扩展。
+步骤1–6按T1→T2→T3逐任务纵向执行，不先完成所有任务的全部器官才训练。T1事实producer有限工程出口已过；当前实现N177.5A双owner训练/恢复工程和family manifest；只有preflight成功后，才由用户一次性授权拟议40k/50k预算并进入N177.6。T2/T3 query/Goal自然输入能力可在T1结果可判后扩展。
 
 快慢状态、reset和反馈责任在步骤1–3先定义；完整多时间尺度算法及硬件换底座不是第一次联合链的预设前置。步骤8是条件支路，可在步骤1–7出现必要表示/时界/信用/计算瓶颈时前移，不必等F3完成。语言与联合认知共同开发、按07分别验收，能力等级不是开发许可。
 

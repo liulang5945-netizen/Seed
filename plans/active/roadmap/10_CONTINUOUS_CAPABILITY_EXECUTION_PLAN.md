@@ -96,14 +96,14 @@ N177.4A已接通单对象/属性T1事实与更正：[回执](../../../reports/ta
 
 ### 3.5 T1入门课程、学习责任与旧能力保持
 
-前置审计指出Adapter原路径只生成byte Observation/Percept，Goal/semantic provider由调用者提供；T1/T2/T3的结构化fixture不能证明raw-text语义。N177.4A已为T1 assertion/correction增加opt-in model-owned span producer，但query/goal仍是候选，不能训练/宣称T2/T3原生理解。训练边界继续由N177.5的T1合同控制；输入断点证据见[审计](../../../reports/taiji_n1_plan177_4_native_input_producer_gap_20261027.json)。
+前置审计指出Adapter原路径只生成byte Observation/Percept，Goal/semantic provider由调用者提供；T1/T2/T3的结构化fixture不能证明raw-text语义。N177.4A已为T1 assertion/correction增加opt-in model-owned span producer，并让query解析选择当前已知entity/attribute事实和query source送入V4；它还不检索episodic memory，Goal只保留候选，不能宣称T2/T3原生理解。训练边界继续由N177.5的T1合同控制；输入断点证据见[审计](../../../reports/taiji_n1_plan177_4_native_input_producer_gap_20261027.json)。
 
 | 项目 | 实施要求 |
 |---|---|
 | 输入 | N177.4A T1事实/更正producer及恢复证据、train-only可学性估算和成本标定；本包只冻结F0/F1入门数据/表达、支持/查询/保持分离与更新权限 |
 | 实际触点 | opt-in `taiji/joint_input_producer.py`、JointTaskState、V4 semantic workspace和3.4 credit contract；N176课程构建器仅按新合同复用；旧N176 sealed/原N175匿名题面与key不作新训练材料 |
 | 输出 | F0简单日常短句/回合结束；F1事实slot及更正；监督标签只进入train loss，推理只给raw InputTrace/当前状态；六类状态/参数比较及隔离query收益/旧F0保持分项 |
-| 有限exit | 一次冻结T1课程family、train/support/query/holdout、同父同资源、预算和停止线；保持、parse准确率、语言回答与恢复均有独立分母。合同可审通过后再明确申请正式训练预算，阶段结果不能自动扩题/加轮 |
+| 有限exit | T1原生事实/当前值query已有有限接口门；冻结课程family、train/support/query/holdout、同父同资源、预算和停止线后一次跑到固定终点。span解析/状态/回答/保持/恢复分别记分；fixed-logit接口测试不冒充自然解析。合同与runner审好后再请求正式预算，不自动扩题/加轮 |
 | 失败回流 | raw输入不能产生typed state回producer/表示；已见未拟合区分数据/目标/优化/剂量；已见拟合而翻转/未见失败查绑定/消费者；新收益伴旧退化回更新/保持，保留父版本；每次只受理一个主要缺口 |
 | 被阻止的训练 | producer还依赖人工结构注入时，不训练并宣称自然语义；不自动加轮、换题或扩大专业知识；不以多个独立runner分数拼联合模型；预算不足以评价/保持/恢复时转预算决策 |
 

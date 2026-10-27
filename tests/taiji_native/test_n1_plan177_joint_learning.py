@@ -21,7 +21,12 @@ def make_route() -> JointCreditRouteV1:
         outcome_sha256=content_digest("settled-outcome"),
         outcome_trust="caller_asserted_experienced_not_authenticated",
         state_owner="CognitiveState",
-        eligible_receivers=("world_model", "executive", "language_candidate"),
+        eligible_receivers=(
+            "world_model",
+            "executive",
+            "language_candidate",
+            "input_semantic_producer",
+        ),
         world_model_sha256=content_digest("world-model"),
         world_prediction_sha256=content_digest("selected-prediction"),
         executive_sha256=content_digest("executive"),
@@ -53,7 +58,12 @@ def test_six_credit_controls_are_distinct_and_require_restorable_checkpoints():
     assert no_update.frozen_parameter_owners == ("all_parameters",)
     assert readout.parameter_update_owners == ("language_candidate.output",)
     assert "language_candidate.non_readout" in readout.frozen_parameter_owners
-    assert set(owner_frozen.frozen_parameter_owners) == set(route.eligible_receivers)
+    assert owner_frozen.frozen_parameter_owners == ("input_semantic_producer",)
+    assert set(owner_frozen.parameter_update_owners) == {
+        "world_model",
+        "executive",
+        "language_candidate",
+    }
     assert owner_frozen.unrelated_parameter_updates_allowed
     assert state_only.state_owner == "CognitiveState" and state_only.state_write_allowed
     assert state_only.frozen_parameter_owners == ("all_parameters",)

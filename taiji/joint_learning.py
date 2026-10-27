@@ -536,11 +536,13 @@ class JointCreditComparisonSpecV1:
         if self.mode == "responsible_owner_frozen" and (
             self.state_owner != "CognitiveState"
             or not self.state_write_allowed
-            or self.parameter_update_owners
-            or not self.frozen_parameter_owners
-            or not self.unrelated_parameter_updates_allowed
+            or "input_semantic_producer" in self.parameter_update_owners
+            or "input_semantic_producer" not in self.frozen_parameter_owners
+            or self.unrelated_parameter_updates_allowed != bool(self.parameter_update_owners)
         ):
-            raise ValueError("responsible_owner_frozen comparison must freeze routed owners only")
+            raise ValueError(
+                "responsible_owner_frozen must freeze the typed-state producer and isolate other owners"
+            )
         if self.mode == "state_only_change" and (
             self.state_owner != "CognitiveState"
             or not self.state_write_allowed
@@ -615,14 +617,18 @@ class JointCreditComparisonSpecV1:
                 feedback_sha256=route.language_feedback_sha256,
             )
         if mode == "responsible_owner_frozen":
+            if "input_semantic_producer" not in receiver_set:
+                raise ValueError("responsible-owner freeze requires the T1 semantic producer route")
+            frozen_owners = ("input_semantic_producer",)
+            update_owners = tuple(sorted(receiver_set - set(frozen_owners)))
             return cls(
                 mode=mode,
                 route_sha256=route_digest,
                 state_owner="CognitiveState",
                 state_write_allowed=True,
-                parameter_update_owners=(),
-                frozen_parameter_owners=tuple(sorted(receiver_set)),
-                unrelated_parameter_updates_allowed=True,
+                parameter_update_owners=update_owners,
+                frozen_parameter_owners=frozen_owners,
+                unrelated_parameter_updates_allowed=bool(update_owners),
                 feedback_sha256=route.language_feedback_sha256,
             )
         if mode == "state_only_change":
