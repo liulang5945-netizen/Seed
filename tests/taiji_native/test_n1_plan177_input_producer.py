@@ -17,7 +17,7 @@ from taiji.conditional_language_v4 import (
     ConditionalLanguageTrainerV4,
 )
 from taiji.config import TaijiConfig
-from taiji.contracts import NativeCheckpoint, WorldObject
+from taiji.contracts import NativeCheckpoint, WorldEvent, WorldObject
 from taiji.input_boundary import InputFrame
 from taiji.internalization import content_digest
 from taiji.joint_input_producer import (
@@ -196,6 +196,17 @@ def test_correction_updates_only_the_bound_entity_attribute_and_keeps_history():
             joint.cognitive_state.world,
             entities=(cup_id, unrelated.object_id),
             objects=(old_cup, unrelated),
+            events=(
+                WorldEvent(
+                    event_id="seeded-fact-event",
+                    kind="observed_fact",
+                    tick=joint.cognitive_state.world.tick,
+                    subject_id=cup_id,
+                    object_id=cup_id,
+                    attributes=old_cup.attributes,
+                    provenance=trace.input_id,
+                ),
+            ),
         ),
     )
     seeded = joint.advance_cognitive_state(previous)
@@ -238,6 +249,15 @@ def test_correction_updates_only_the_bound_entity_attribute_and_keeps_history():
     assert corrected_objects[cup_id].attribute("颜色") == "红色"
     assert corrected_objects[cup_id].attribute("位置") == "桌上"
     assert corrected_objects[unrelated.object_id].attribute("颜色") == "绿色"
+    corrected_logits, _ = language_model.next_logits_from_joint(corrected)
+    cut_language_state = replace(
+        corrected.language_state,
+        workspace=corrected.language_state.workspace[:-1],
+        evidence_refs=corrected.language_state.evidence_refs[:-1],
+    )
+    cut_joint = corrected.with_language_state(cut_language_state)
+    cut_logits, _ = language_model.next_logits_from_joint(cut_joint)
+    assert not torch.allclose(corrected_logits, cut_logits)
 
 
 def test_fit_loss_is_source_bound_train_only_and_reaches_producer_parameters():

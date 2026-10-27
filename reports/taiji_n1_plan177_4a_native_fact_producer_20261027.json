@@ -4,7 +4,7 @@
   "status": "opt-in T1 fact/correction producer and V4 semantic evidence path integrated; learned capability not evaluated",
   "source_sha256": {
     "taiji/joint_input_producer.py": "0b14e61dd450d3545f15e84f19e950a4ca1569e5e5532d4dd1c421b1cf281a93",
-    "tests/taiji_native/test_n1_plan177_input_producer.py": "5d6e09ef0b30179f2eab7a303bf798f5d393d569573d33d841f1084702c59285",
+    "tests/taiji_native/test_n1_plan177_input_producer.py": "fc041d7efffb7cecfa210a12a29cba8e47451a5ab1f708e3a3cca9ee8d7f3754",
     "taiji/joint_task_state.py": "c9603bf94d239c1529278135fd0928dca3447513b7b174f608068d728197ac97",
     "taiji/conditional_language_v4.py": "3efef1005fdbe02a3120189bebec112f6c3ceb8803f1eebe390f677d8bac9f94",
     "taiji/adapter.py": "3abec22d7b05e13b9306343e3aa4b9dea8cb4d24665aaa83fe5ca70e6ddfe276"
