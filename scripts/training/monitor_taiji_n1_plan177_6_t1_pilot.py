@@ -85,10 +85,13 @@ def build(run_root: Path = RUN_ROOT) -> dict[str, Any]:
     state, rows, manifest, lock = load(run_root)
     caps = manifest["hard_caps"]
     costs = arm_costs(rows)
-    cursors = {
+    #: 耐久游标（run_state）与实时进度（metrics）是两条面：自洽核对只用耐久面，
+    #: 投影用实时面。混用会造出假的不一致（本仪器第一版就这么错过一次）。
+    durable_cursors = {
         arm: int(info.get("update_cursor", 0))
         for arm, info in state.get("latest_checkpoint_by_arm", {}).items()
     }
+    cursors = dict(durable_cursors)
     last_update = max(
         (row for row in rows if row.get("event") == "update"),
         key=lambda row: row["cumulative_wall_seconds"],
@@ -156,6 +159,33 @@ def build(run_root: Path = RUN_ROOT) -> dict[str, Any]:
             missing_final.append(arm)
 
     lock_pid = lock.get("pid")
+    completed = set(state.get("completed_arms", []))
+    cursor_consistent = all(
+        durable_cursors.get(arm, 0) == PER_ARM_UPDATES for arm in completed
+    ) and int(state.get("optimizer_updates", 0)) == sum(
+        min(cursor, PER_ARM_UPDATES) for cursor in durable_cursors.values()
+    )
+    verdicts = {
+        #: 完成臂必须都已到 2560，且全局游标 == 各臂游标之和（少记/多记都会在这里显形）。
+        "completed_arms_at_exact_multiples": cursor_consistent,
+        "process_cpu_inside_cap": (
+            last_update["cumulative_process_cpu_seconds"] < caps["process_cpu_seconds"]
+        ),
+        "wall_inside_cap": last_update["cumulative_wall_seconds"] < caps["wall_seconds"],
+        "artifacts_inside_cap": state["artifact_bytes"] < caps["artifact_bytes"],
+        "projection_inside_caps": (
+            last_update["cumulative_process_cpu_seconds"] + remaining_cpu
+            < caps["process_cpu_seconds"]
+            and last_update["cumulative_wall_seconds"] + remaining_wall < caps["wall_seconds"]
+            and not unknown_modes
+        ),
+        "completed_arms_have_final_files": not missing_final,
+        "single_lock_owner_alive": bool(lock_pid) and _pid_alive(lock_pid) is True,
+        "no_anomalies_since_latest_revision": (
+            events_since_latest["checkpoint_resume_rollback"] == 0
+            and events_since_latest["engineering_failure_recovered"] == 0
+        ),
+    }
     return {
         "format": "taiji-n177-6-t1-supervision-v1",
         "observed_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
@@ -205,6 +235,8 @@ def build(run_root: Path = RUN_ROOT) -> dict[str, Any]:
             ],
             "latest_implementation_revision": latest_revision,
         },
+        "verdicts": verdicts,
+        "all_verdicts_ok": all(verdicts.values()),
         "checkpoints": {
             "per_arm": checkpoints,
             "completed_arms_with_missing_final": missing_final,
@@ -271,7 +303,9 @@ def main(argv: list[str] | None = None) -> int:
         f"anomalies={report['anomalies']['rollback_events'] + report['anomalies']['recovered_failure_events']} "
         f"(since_resume={report['anomalies']['rollback_events_since_latest_revision'] + report['anomalies']['recovered_failure_events_since_latest_revision']}) "
         f"lock_alive={report['lock']['pid_alive']} "
-        f"ckpt_missing={len(report['checkpoints']['completed_arms_with_missing_final'])}"
+        f"ckpt_missing={len(report['checkpoints']['completed_arms_with_missing_final'])} "
+        f"all_ok={report['all_verdicts_ok']} "
+        f"failed_verdicts={sorted(k for k, ok in report['verdicts'].items() if not ok)}"
     )
     return 0
 

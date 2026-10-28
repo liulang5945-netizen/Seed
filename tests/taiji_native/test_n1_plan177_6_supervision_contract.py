@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -164,6 +165,49 @@ def test_a_completed_arm_without_its_final_file_is_named(monitor, tmp_path: Path
     assert report["checkpoints"]["completed_arms_with_missing_final"] == ["no_update__seed_0"]
     assert report["checkpoints"]["per_arm"]["correct__seed_0"]["bytes"] == 128
     assert report["checkpoints"]["per_arm"]["correct__seed_0"]["latest_exists"] is True
+
+
+def test_verdicts_pass_on_a_consistent_state(monitor, tmp_path: Path) -> None:
+    #: 五种模式都要有成本样本，否则投影那格会因为"有剩余臂但无速率"判 False（那是对的）。
+    rows: list[dict[str, Any]] = []
+    cursors: dict[str, int] = {}
+    completed: list[str] = []
+    for index, mode in enumerate(monitor.MODES):
+        arm = f"{mode}__seed_0"
+        rows.append(_update(arm, 1, 0.0, 0.0))
+        rows.append(_update(arm, 101, 400.0 + index, 40.0 + index))
+        cursors[arm] = 2560
+        completed.append(arm)
+    root = _root(tmp_path, cursors=cursors, completed=completed, rows=rows, lock_pid=os.getpid())
+    for arm in completed:
+        (root / arm).mkdir()
+        (root / arm / "final.pt").write_bytes(b"x")
+    report = monitor.build(root)
+    assert report["all_verdicts_ok"] is True, report["verdicts"]
+    assert report["verdicts"]["single_lock_owner_alive"] is True
+
+
+def test_a_cursor_mismatch_fails_the_consistency_verdict(monitor, tmp_path: Path) -> None:
+    rows = [
+        _update("correct__seed_0", 1, 0.0, 0.0),
+        _update("correct__seed_0", 101, 440.0, 38.0),
+    ]
+    root = _root(
+        tmp_path,
+        cursors={"correct__seed_0": 2560},
+        completed=["correct__seed_0"],
+        rows=rows,
+        lock_pid=os.getpid(),
+    )
+    (root / "correct__seed_0").mkdir()
+    (root / "correct__seed_0" / "final.pt").write_bytes(b"x")
+    state = json.loads((root / "run_state.json").read_text(encoding="utf-8"))
+    #: 全局游标比各臂之和大 1 ⇒ 账不自洽，必须是显式的 False 而不是被四舍五入掉。
+    state["optimizer_updates"] += 1
+    (root / "run_state.json").write_text(json.dumps(state), encoding="utf-8", newline="\n")
+    report = monitor.build(root)
+    assert report["verdicts"]["completed_arms_at_exact_multiples"] is False
+    assert report["all_verdicts_ok"] is False
 
 
 def test_anomalies_and_stale_lock_are_published(monitor, tmp_path: Path) -> None:
