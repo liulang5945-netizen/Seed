@@ -4,7 +4,7 @@
 
 ## 当前路线与文档职责
 
-现行顺序已调整为：共同内容状态/来源/生命周期→任务所需记忆、预测与选择→同状态表达及反馈信用→同一候选上的基础课程/保持→自然连续任务与跨会话学习。已训N176按原合同有限收束，与N177接口/静态工程并行，不以独立语言L2或toy正收益作为共同架构开工门。当前唯一动作看03，具体首包见[N177实施合同](reference/PLAN-N1-177_joint_cognition_slice_20261026.md)。更广自主性与机制研究归VISION，能力验收归07；不发布第二条模型/预算队列。
+2026-10-28重排：**零训练的必经信息/逐loss信用基准→已投入固定包有限结案与瓶颈裁决→唯一任务信用候选及公平控制→opt-in实现/零步恢复→成本、观测与跨包停止线冻结→一次有界训练评价→T2/T3自然输入、连续任务和跨会话扩展。** 当前唯一动作见[03](active/roadmap/03_CURRENT_EXECUTION.md)，工作包及有限出口见[10](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。N176/N177.6沿原合同收束，不追改题面/监督/阈值；N177已有工程作为资产继承，不按历史编号重跑。teacher、扩量、共享受体和拓扑替换只在实际瓶颈成立时进入条件支路。更广自主性归VISION，能力采用归07。
 
 | 要查什么 | 主要入口 |
 |---|---|
@@ -22,11 +22,11 @@
 | 历史CC-1实施交接与R2冻结技术约束 | [工程交接](reference/delivery-runs/20261021-n-mainline/artifacts/02-plan.md)、[历史技术摘要](reference/delivery-runs/20261021-n-mainline/artifacts/02-continuation-extension-plan.md) |
 | 活动文件索引、交付记录 | [PLAN_INDEX](active/PLAN_INDEX.md)、[黑板](reference/delivery-runs/20261021-n-mainline/board.md) |
 
-当前开发依赖见[N177合同](reference/PLAN-N1-177_joint_cognition_slice_20261026.md)；已训资产收束仍按[N176冻结合同](reference/SPEC-N1-176_F0_F1_pilot_20261026.md)，N175原合同与未完成S留原位，不混用资格。
+已有实施资产与后继衔接见[N177合同](reference/PLAN-N1-177_joint_cognition_slice_20261026.md)；已训资产收束仍按[N176冻结合同](reference/SPEC-N1-176_F0_F1_pilot_20261026.md)，N175原合同与未完成S留原位，不混用资格。
 
 ## 继承与纪律
 
-- M5批准退出、M6限定收官和成长/发布/设备等排除继续按原批准范围继承，不宣称原生对话或L3/L4已通过。N1-166、原封存面及W5b前置保持。
+- M5批准退出、M6限定收官和成长/发布/设备等排除继续按原批准范围继承，不宣称原生对话或L3/L4已通过。N1-166与原封存面边界保持；W5b恢复v2按原结案继承，不重新当未来战役。
 - 训练先验证checkpoint保存/独立恢复；未变合同内已授权工作自动推进，实质预算/题面/冻结协议变动到10对应D节点裁决。
 - 成功、负结果、partial和不可判分别记账；同一bundle的真实能力是验收对象，不用多个研究runner成绩拼出一个模型。
 - 旧方向退出活动指令与队首，冻结合同、失败、原始输出与谱系保留。目录与产物按[目录规范](../docs/FOLDER_STRUCTURE_RULES.md)管理。

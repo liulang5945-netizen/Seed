@@ -1,6 +1,6 @@
 # 09 N主线机制设计与下一主线交汇
 
-更新：2026-10-26。研究执行只由[03](03_CURRENT_EXECUTION.md)调度，[10](10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)负责执行接力；[VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)是完整架构、驱动力和VX工程包的设计正文。本页保留N机制身份、已核验差距与当前任务必须解决的交汇；当前共同认知纵切片的依赖和有限交付由[N1-177](../../reference/PLAN-N1-177_joint_cognition_slice_20261026.md)落实，不另起一套完整架构方案。
+更新：2026-10-28。研究执行只由[03](03_CURRENT_EXECUTION.md)调度，[10](10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)负责执行接力；[VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)是完整架构、驱动力和VX工程包的设计正文。本页保留N机制身份、已核验差距与当前任务必须解决的交汇；当前共同认知纵切片的依赖和有限交付由[N1-177](../../reference/PLAN-N1-177_joint_cognition_slice_20261026.md)落实，不另起一套完整架构方案。
 
 旧N编号、原实验判据、正负结果及未消费面保留。旧详稿按[历史恢复](../../reference/PROJECT_HISTORY_CONSOLIDATION_20261023.md)从Git读取；§1.3首四列保留原条款身份，其“章节”是旧VISION来源定位，第五列给出现行承接，不以旧章节号代替新方案执行顺序。
 
@@ -114,9 +114,9 @@ N1消费/信用、N2更新保持、N3数据/容量、N4记忆治理、N5世界/�
 
 当前唯一研究队首只在03。已授权的文档、接口实现、合成检查以及生命页只读观察器可在不改绑定源、不争用训练资源时推进；真实模型运行、共享writer和新研究方向按03与所选包串接。读取既有训练metadata不等于启动模型或将研究runner纳入生命运行时控制。
 
-2026-10-28复核：当前状态见[03的12:48:01账本快照](03_CURRENT_EXECUTION.md)，metadata已记录11:03:48续接与八臂完成，10:32七臂暂停作为历史保留。本轮未核验到可见runner进程，不凭metadata自动补起、恢复或停止。现有runner的run-root互斥已由`0f16776f5`实现，历史并发费用不清零；新监督器仍需独立授权、身份/预算及writer互斥验证。原15臂合同、checkpoint与holdout边界不改。所有者三类未解命题及跨包停止线缺口见[10 §2.1](10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md#21-所有者需要裁决的三类未解命题2026-10-28复核)，不另发布训练队列。
+2026-10-28推进重排：当前新开发队首先做零训练的必经信息与逐loss信用基准；旧N177.6/N176保持原合同有限结案，metadata与资源只看[03](03_CURRENT_EXECUTION.md)，不由计划自动补起或停止进程。固定支持、共享投影及producer代理任务约束按[10研究依据](10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md#21-所有者需要裁决的三类未解命题2026-10-28复核)限定范围；不把TSK路径外推为全部GRU候选的能力上限。
 
-当前接力为“N176按原合同有限结案 ∥ N177.6按用户指示自durable点恢复续跑→各臂固定终点后query/holdout只读评价与架构归因→离线监督器保留为候选规划（启动须另经授权、S0规格与run-root互斥）→若准入再为监督数据和学习信号另立manifest、matched baseline/弱标签控制及新预算”。`∥`只允许不争用受控资源、不改绑定源的独立工作。教师不得进入Taiji运行时；原N177.6不改合同，外部模型的答案、判断或logits不得被追溯性地算作本轮监督。任何新训练先落实单实例互斥与全资源预算。
+后继接力按[10 §3.0](10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md#30-重排后的推进顺序)：信息/信用基准→原包有限结案及瓶颈裁决→唯一任务信用候选和stop-gradient控制→opt-in实现与零步恢复→成本/仪器/跨包停止线冻结→一次有界训练评价→T2/T3与连续经验扩展。teacher、扩量、共享受体和拓扑替换只在其实际瓶颈成立时进入条件支路；教师不进入运行时，原N177.6不追改监督。
 
 当前任务不需要的完整目标提议、主动调度、结构成长和多模态归下一VISION；稳定跨会话成长由CC-5/6与L4后继验收，不把其最小状态/学习责任一起后置。接力输入、文件触点和出口见10与N177，不在本页发布第二条运行指令。
 
