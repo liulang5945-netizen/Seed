@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import atexit
 import copy
 import hashlib
 import json
@@ -105,6 +106,88 @@ def _git_changed_paths(base_revision: str, current_revision: str) -> tuple[str, 
         check=True,
     )
     return tuple(line for line in result.stdout.splitlines() if line)
+
+
+#: run-root 互斥锁的文件名与"这条命令是不是本 runner"的判据串。双跑会把同一份冻结预算烧两遍，
+#: 而 runner 原先没有任何 run-root 单实例互斥（03 队首登记的那条缺口）。
+RUN_LOCK_NAME = "run_root.lock"
+RUNNER_STEM = Path(__file__).name
+
+
+def _run_lock_owner(lock: Path) -> dict[str, Any]:
+    """锁里的归属记录；读不出内容时按"有人占着"处理（fail-closed，坏锁不能变成放行）。"""
+
+    try:
+        payload = json.loads(lock.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {"pid": None, "unreadable": True}
+    return payload if isinstance(payload, dict) else {"pid": None, "unreadable": True}
+
+
+def _owner_alive(pid: Any) -> bool:
+    """按 pid 真实验活：进程不在＝陈旧；在但不是本 runner＝pid 复用，也算陈旧。
+
+    读不到别人的命令行（权限等）一律当作活着并拒起——把"判不了"当成"通过"正是这类门的存在理由。
+    """
+
+    if not isinstance(pid, int) or pid <= 0:
+        return True
+    try:
+        import psutil
+    except ImportError:  # 没有 psutil 就没有验活手段，宁可拒起也不放行第二个实例
+        return True
+    try:
+        if not psutil.pid_exists(pid):
+            return False
+        cmdline = " ".join(psutil.Process(pid).cmdline())
+    except (psutil.Error, OSError):
+        return True
+    return RUNNER_STEM in cmdline
+
+
+def acquire_run_lock(run_root: Path) -> tuple[Path, str | None]:
+    """以 ``O_EXCL`` 原子占住 run root，返回（锁路径，被接管的陈旧锁名）。
+
+    已有锁：归属进程仍活着 ⇒ 响亮拒绝；已死或已不是本 runner ⇒ 改名保留取证后接管。
+    """
+
+    lock = run_root / RUN_LOCK_NAME
+    payload = {
+        "pid": os.getpid(),
+        "runner": RUNNER_STEM,
+        "taken_local": time.strftime("%Y-%m-%d %H:%M:%S"),
+    }
+    try:
+        with open(lock, "x", encoding="utf-8", newline="\n") as stream:
+            json.dump(payload, stream, ensure_ascii=True, sort_keys=True)
+            stream.write("\n")
+        return lock, None
+    except FileExistsError:
+        pass
+    existing = _run_lock_owner(lock)
+    if _owner_alive(existing.get("pid")):
+        raise RuntimeError(
+            f"N177.6 run root 已被另一实例占用（pid={existing.get('pid')}）：{lock}；"
+            "双跑会把同一份冻结预算烧两遍，先确认那个进程"
+        )
+    stale_name = f"{RUN_LOCK_NAME}.stale-{int(time.time())}"
+    lock.replace(run_root / stale_name)
+    with open(lock, "x", encoding="utf-8", newline="\n") as stream:
+        json.dump(
+            {**payload, "adopted_stale_lock": stale_name},
+            stream,
+            ensure_ascii=True,
+            sort_keys=True,
+        )
+        stream.write("\n")
+    return lock, stale_name
+
+
+def release_run_lock(lock: Path) -> None:
+    """只摘自己那把锁：归属 pid 不是本进程就原样留着（别人的锁不是我的清理对象）。"""
+
+    if _run_lock_owner(lock).get("pid") == os.getpid():
+        lock.unlink(missing_ok=True)
 
 
 def _trainer_signature(trainer: JointT1TrainerV1) -> dict[str, Any]:
@@ -297,6 +380,18 @@ def _run() -> int:
         raise FileNotFoundError("N177.6 requires the fixed V4 parent and verified train cache")
 
     args.run_root.mkdir(parents=True, exist_ok=True)
+    run_lock, adopted_stale_lock = acquire_run_lock(args.run_root)
+    atexit.register(release_run_lock, run_lock)
+    if adopted_stale_lock is not None:
+        _append_jsonl(
+            metrics_path,
+            {
+                "event": "run_root_lock_adopted",
+                "stale_lock": adopted_stale_lock,
+                "taken_over_by_pid": os.getpid(),
+                "note": "上一实例的 pid 已不存在或已不是本 runner；陈旧锁改名保留取证后接管",
+            },
+        )
     session_cpu_start = time.process_time()
     session_wall_start = time.perf_counter()
     preflight_cpu, preflight_wall = _preflight_overhead(DEFAULT_PREFLIGHT_REPORT)
