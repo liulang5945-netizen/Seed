@@ -85,6 +85,23 @@
 
 本轮验证：producer现有接口/梯度/恢复测试、活动计划身份/链接及仓库卫生共18项本机检查通过，`git diff --check`通过；CI收集配置已核对，但不声称当前远端run已通过。
 
+### 2.4 TSK稀疏支持与情景共享读出的结构约束（2026-10-28）
+
+本轮先读`fabric.py`、`sparse.py`、`organs.py`、`memory.py`的实际实现，再核对config、model调用、现有合同/测试与历史对照。以下是无需行为实验才能认定的结构事实；其范围不能外推成“整个当前Taiji的表征只由初始化随机性决定”。[原生架构§2.4](../TAIJI_NATIVE_ARCHITECTURE_V1.md#24-稀疏和局部是资源策略不是表达能力上限)已经明确固定fan-in是kernel参考格式，不能作为永久架构身份。
+
+| 已确认约束 | 为什么值得关注 | 实际边界与既有反例 |
+|---|---|---|
+| 单个`SparseSynapses.local_update`只修改现有`pre_index`对应权重；固定输入中不在支持集内的坐标不能直接贡献该行输出/学习项。普通wake路径不启用`restructure` | 若当前固定输入的任务信号落在该行未连接坐标，重复同一局部权重更新不能招募缺失直连；需要输入表示改变、已有其他路径或结构变化 | [fabric慢巩固decoder](../../../taiji/fabric.py)使用完整输入支持；[结构更新](../../../taiji/sparse.py)确实修改`pre_index`，consolidate仅在学习、首写及field-trusted等条件开启。turnover是单次速率上限，不是终身可换边总量。递归/层间/慢路径和权重变化还能改变后续trace，所以缺直连不等于全网信息永远不可达；初始种子影响支持，不独自决定全部可学习表征 |
+| 默认`memory_action_decoder="shared"`的场读出先经固定`SparseReceptorBank`，默认192维activity压到48维context；共享头不能恢复该投影已丢掉的区别 | 固定受体映射不是由各读出任务学习选择的；动作、结果、奖励、时间/情节、来源及皮层读出的共同输入可能具有共同盲区。增加同输入的读出头或训练读出权重不能恢复已折叠的差异 | [memory](../../../taiji/memory.py)已有local/cue_selective直接action支及dual直接replay支，不能称所有模式/输出都只经共享context；其余列明的共享头仍受此约束。confidence另依赖association活动，完整状态与后续递归也可携带其他区别，不能由相同context直接推出整份MemoryRecall或未来行为相同 |
+
+**不可辨识性是结构事实。** [受体线性部分](../../../taiji/organs.py)记为R：默认48×192、每输入恰连一个非空输出通道，行支持互不相交，故rank为48、核空间维数144；进入归一化分支后还丢掉正尺度。对两个使受体context相同的activity，共享原始读出头不可能区分它们。本轮用合成非负向量构造了不同输入、完全相同context的例子（0 optimizer step、无真实checkpoint），只验证这一代数事实；未将该对向量冒称为实际可达engram，也未证明某任务所需区别必然落入该核空间。
+
+**不是首次发现，也不因有替代路径就称默认已修。** `structural_update`注释本身是既有初始化彩票诊断及修法；慢巩固完整支持已有[架构合同测试](../../../tests/taiji_native/test_architecture_contract.py)，巩固重连已有[终止性测试](../../../tests/taiji_native/test_endogenous_replay.py)。共享瓶颈及直接action读出的动机也已写入memory实现；[M1-40同预算对照](../../../reports/taiji_m1_40_binding_substrate_20260902.json)中的local/cue_selective均未过B5，原失败保留，只关闭当时动作读出替代的充分解释，不否认共享压缩存在，也不否决所有新读出设计。
+
+当前N177的输入trace沿冻结cache或`learn=False`取得，但producer/V4另有可学习embedding/GRU及raw-byte输入，不能把上述TSK单bank或EpisodicField共享头当成它的唯一信息通路。唯一后继仍是§2.3当前候选的信息/信用基准：先标明所选任务的必需差异及真实必经路径，再决定是否需要新的底层候选；不凭历史注释全面重构，不自动重跑旧M1对照或修改现有训练。
+
+本轮验证：文档身份/活动链接、仓库卫生及cue-selective/dual已有配置恢复用例共12项本机检查通过，`git diff --check`通过；合成投影检查没有optimizer更新，不是能力实验或当前提交远端CI结果。
+
 ## 3. 整合依赖与逐阶段有限出口
 
 主链为：**N176原包一次结案＋N177接口/静态工程并行准备 → 共同状态/来源/时间/重置 → 所需记忆选择与行动条件世界预测/短规划 → 同一状态的语言/行动和合法反馈信用 → 同一候选内F0–F2、学习责任与保持 → F3自然连续任务/跨会话 → 按实际瓶颈研究时间尺度、学习机制或算力 → 07同bundle验收。**
