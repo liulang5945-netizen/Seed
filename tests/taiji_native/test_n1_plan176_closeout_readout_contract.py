@@ -125,6 +125,24 @@ def test_the_primary_gate_can_turn_green(instrument, tmp_path: Path) -> None:
     assert report["flag_cross_check"]["mismatches"] == {"valid_utf8": 0, "terminated": 0}
 
 
+def test_architecture_attribution_reports_every_spec_bullet(instrument, tmp_path: Path) -> None:
+    """SPEC 要求"架构归因必须同时报告"五件：这里钉住五件都在件里，且两条读数由数算出。"""
+
+    report = _run(instrument, tmp_path, _rows("arm_a", primary_correct=False))
+    attribution = report["architecture_attribution"]
+    for key in (
+        "workspace_consumption",
+        "real_content_use",
+        "curriculum_order_effect",
+        "competing_explanations",
+        "retention",
+        "conclusion",
+    ):
+        assert key in attribution, key
+    assert attribution["real_content_use"]["related_flip_equals_primary_in_every_arm"] is True
+    assert attribution["conclusion"] == "structural gap repaired, behavioural gain not demonstrated"
+
+
 def test_denominator_drift_fails_closed(instrument, tmp_path: Path) -> None:
     rows = _rows("arm_a", primary_correct=True)
     rows.pop()  # 少一条保持行 ⇒ 分母与 SPEC 不符

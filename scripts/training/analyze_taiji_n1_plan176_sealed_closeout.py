@@ -198,6 +198,79 @@ def main() -> int:
     if denominator_problems:
         raise ValueError(f"fixed denominators differ from SPEC: {denominator_problems}")
 
+    def _gap(hi_arm: str, lo_arm: str, key: str) -> float | None:
+        hi = per_arm[hi_arm]["f1"][key]
+        lo = per_arm[lo_arm]["f1"][key]
+        return None if hi is None or lo is None else round(hi - lo, 6)
+
+    primary_all = {arm: data["f1"]["primary_accuracy"] for arm, data in per_arm.items()}
+    cut_gap = (
+        None
+        if "curriculum_v4" not in per_arm
+        or per_arm["curriculum_v4"]["f1"]["workspace_cut_accuracy"] is None
+        else round(
+            per_arm["curriculum_v4"]["f1"]["primary_accuracy"]
+            - per_arm["curriculum_v4"]["f1"]["workspace_cut_accuracy"],
+            6,
+        )
+    )
+    flip_follows = all(
+        data["f1"]["related_flip_accuracy"] == data["f1"]["primary_accuracy"]
+        for data in per_arm.values()
+    )
+    architecture_attribution = {
+        "workspace_consumption": {
+            "curriculum_v4_primary_accuracy": primary_all.get("curriculum_v4"),
+            "curriculum_v4_workspace_cut_accuracy": per_arm.get("curriculum_v4", {})
+            .get("f1", {})
+            .get("workspace_cut_accuracy"),
+            "drop_from_cutting_workspace": cut_gap,
+            "reading": (
+                "cutting the workspace changes the answer rate materially ⇒ the workspace is consumed"
+                if cut_gap is not None and cut_gap > 0.05
+                else "no material drop observed ⇒ workspace consumption not demonstrated"
+            ),
+            "threshold": "none pre-registered; reported descriptively",
+        },
+        "real_content_use": {
+            "related_flip_equals_primary_in_every_arm": flip_follows,
+            "reading": (
+                "flipping the queried fact leaves the answer rate unchanged ⇒ following the content is not established"
+                if flip_follows
+                else "flip answers differ from the originals ⇒ content dependence is partially visible"
+            ),
+        },
+        "curriculum_order_effect": {
+            "primary_accuracy_by_arm": primary_all,
+            "v4_minus_v3": (
+                _gap("curriculum_v4", "curriculum_v3", "primary_accuracy")
+                if "curriculum_v4" in per_arm and "curriculum_v3" in per_arm
+                else None
+            ),
+            "v3_minus_flat": (
+                _gap("curriculum_v3", "flat_v3", "primary_accuracy")
+                if "curriculum_v3" in per_arm and "flat_v3" in per_arm
+                else None
+            ),
+            "reading": "ordering shows a monotone gap but cannot be separated from capacity/dose in this pack",
+        },
+        "competing_explanations": {
+            "capacity_dose_target": "this frozen pack has no capacity or dose ablation, so capacity/dose cannot be excluded as the source of the ordering gap",
+            "objective": "all arms share the same frozen objective and update count (2560)",
+        },
+        "retention": {
+            "n175_r16_drop_pp_by_arm": {
+                arm: data["n175_retention"]["drop_pp"] for arm, data in per_arm.items()
+            },
+            "reading": "drop above 3 pp on the 16 seen N175 items counts as local forgetting per SPEC",
+        },
+        "conclusion": (
+            "structural gap repaired, behavioural gain not demonstrated"
+            if all(data["gates_passed"] < data["gates_total"] for data in per_arm.values())
+            else "at least one arm met every gate; read per-arm gates before any claim"
+        ),
+    }
+
     report = {
         "format": "taiji-n176-sealed-closeout-readout-v1",
         "date": "2026-10-28",
@@ -230,6 +303,7 @@ def main() -> int:
             "source": "SPEC verbatim",
         },
         "per_arm": per_arm,
+        "architecture_attribution": architecture_attribution,
         "scope_limits": [
             "文字输出为有限词表精确判读，不是开放语义评分器",
             "F0 阶段探针与 N175 R16 是已见题，只描述保持，不构成未见能力证据",

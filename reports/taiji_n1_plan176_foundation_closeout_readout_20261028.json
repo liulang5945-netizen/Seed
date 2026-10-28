@@ -1,4 +1,40 @@
 {
+  "architecture_attribution": {
+    "competing_explanations": {
+      "capacity_dose_target": "this frozen pack has no capacity or dose ablation, so capacity/dose cannot be excluded as the source of the ordering gap",
+      "objective": "all arms share the same frozen objective and update count (2560)"
+    },
+    "conclusion": "structural gap repaired, behavioural gain not demonstrated",
+    "curriculum_order_effect": {
+      "primary_accuracy_by_arm": {
+        "curriculum_v3": 0.453125,
+        "curriculum_v4": 0.609375,
+        "flat_v3": 0.203125
+      },
+      "reading": "ordering shows a monotone gap but cannot be separated from capacity/dose in this pack",
+      "v3_minus_flat": 0.25,
+      "v4_minus_v3": 0.15625
+    },
+    "real_content_use": {
+      "reading": "flipping the queried fact leaves the answer rate unchanged ⇒ following the content is not established",
+      "related_flip_equals_primary_in_every_arm": true
+    },
+    "retention": {
+      "n175_r16_drop_pp_by_arm": {
+        "curriculum_v3": 9.3262,
+        "curriculum_v4": 9.3262,
+        "flat_v3": 9.3262
+      },
+      "reading": "drop above 3 pp on the 16 seen N175 items counts as local forgetting per SPEC"
+    },
+    "workspace_consumption": {
+      "curriculum_v4_primary_accuracy": 0.609375,
+      "curriculum_v4_workspace_cut_accuracy": 0.125,
+      "drop_from_cutting_workspace": 0.484375,
+      "reading": "cutting the workspace changes the answer rate materially ⇒ the workspace is consumed",
+      "threshold": "none pre-registered; reported descriptively"
+    }
+  },
   "date": "2026-10-28",
   "denominator_check": {},
   "flag_cross_check": {
