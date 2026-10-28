@@ -12,6 +12,7 @@ from pathlib import Path
 
 import torch
 
+from scripts.training import seal_ast  # noqa: E402
 from scripts.training.audit_taiji_n1_plan176_learning_paths import (
     CORPUS,
     PARENT,
@@ -108,6 +109,19 @@ def checkpoint_body_digest(payload: dict) -> str:
     )
 
 
+def source_attestation(recorded: str, path: Path) -> str:
+    """记录值落在哪一面：`in_place`（今天的字节）／`history`（该路径的历史 blob）／`missing`。
+
+    与 N1 链 S4/S5 同一口径（`seal_ast.recorded_value_attested`）：端点训练时的候选源码可能在其后
+    被同一文件继续演进，身份核验要认"训练时那份可被 git 历史取证"，而不是要求今天的字节不变。
+    取证方式逐项披露进 attempt 的 provenance，重跑的人能看出哪一项是历史面。
+    """
+
+    if not seal_ast.recorded_value_attested(str(path), recorded):
+        return "missing"
+    return "in_place" if digest(path) == recorded else "history"
+
+
 def preflight(budget: EvaluationBudget) -> dict:
     """Load every required train-side dependency; never open a sealed file."""
     budget.check()
@@ -163,6 +177,7 @@ def preflight(budget: EvaluationBudget) -> dict:
         raise ValueError("curriculum arms must share the exact fixed order")
     budget.check()
     trainers, earlier, checkpoint_sources = {}, {}, {}
+    source_attestations: dict[str, dict[str, str]] = {}
     parents = {}
     for version, path, receipt_path, sha_field in (
         (3, PARENT, PARENT_REPORT, "final_checkpoint_sha256"),
@@ -201,6 +216,10 @@ def preflight(budget: EvaluationBudget) -> dict:
             "restore_helper": ROOT / "scripts/training/calibrate_taiji_n1_plan176_foundation.py",
         }
         parent_path, parent_sha, parent_payload = parents[version]
+        attestation = {
+            name: source_attestation(report["sources_sha256"][name], path)
+            for name, path in source_paths.items()
+        }
         if (
             report["status"] != "complete"
             or report["arm"] != arm
@@ -222,14 +241,12 @@ def preflight(budget: EvaluationBudget) -> dict:
             or report["zero_fresh_restore"]["steps"] != report["initial_steps"]
             or report["final_fresh_restore"]["status"] != "passed"
             or report["final_fresh_restore"]["steps"] != report["initial_steps"] + 2560
-            or any(
-                report["sources_sha256"][name] != digest(path)
-                for name, path in source_paths.items()
-            )
+            or any(value == "missing" for value in attestation.values())
         ):
             raise ValueError(
                 f"{arm}: pilot endpoint, lineage, order, exposure or source gate failed"
             )
+        source_attestations[arm] = attestation
         durable = {item["next_batch"]: item for item in report["durable_checkpoints"]}
         if len(durable) != len(report["durable_checkpoints"]):
             raise ValueError("duplicate durable checkpoint cursor")
@@ -288,6 +305,7 @@ def preflight(budget: EvaluationBudget) -> dict:
         "provenance": {
             "train_corpus_sha256": train_sha,
             "checkpoint_sha256": checkpoint_sources,
+            "source_attestation": source_attestations,
             "run_report_sha256": {arm: digest(report_path(arm)) for arm in ARMS},
             "N175_train_sources": old_sources,
             "N175_selection_sha256": digest(N175_SELECTION),
