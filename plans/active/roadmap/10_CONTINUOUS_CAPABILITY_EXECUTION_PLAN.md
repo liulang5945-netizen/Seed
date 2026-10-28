@@ -66,6 +66,24 @@
 
 续核验证：项目身份/活动计划链接与仓库卫生10项本机检查通过，`git diff --check`通过；未执行模型能力评价，不据此声称当前提交远端CI通过。
 
+### 2.3 新增问题的排除审计与细粒度梯度观测（2026-10-28）
+
+本轮用户将“当前明显问题”限定为代码直接实证、未被现有合同覆盖、且非已知在飞事项；没有最少条数要求。对三个候选逐项核验后的结论是：**没有确认三项新的架构缺陷；仅保留一项更窄的可观测性维护缺口。** 不把未测的收益、已修接口或既有合同责任重新登记为新架构问题。
+
+| 候选问题 | 直接证据及既有覆盖 | 是否作为新增架构问题 |
+|---|---|---|
+| 辅助parser梯度未验证、解析好但特征可能无用 | [现有测试](../../../tests/taiji_native/test_n1_plan177_input_producer.py)调用`torch.autograd.grad(loss, tuple(producer.parameters()))`，默认不允许unused参数，已要求包括slot/act head在内的全部参数在合计辅助loss图中可达，并检查至少一项非零。它不逐head证明梯度非零，也不证明回答贡献；后者已有[N177.5 §3/§5](../../reference/SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md)的正确/置换标签、无更新、owner-frozen、状态写入消融及任务/保持门 | 排除。梯度可达并非完全没有守卫；辅助解析能否带来任务收益已由在飞固定包承担，不能将“可能无用”写成已发生的目标失配 |
+| 零填充导致多来源共占workspace维段、边界无协议 | [producer](../../../taiji/joint_input_producer.py)声明`prefix_zero_extension_v1`，为本次feature构造一整条向量；认知侧新增有ID/source/binding的candidate，语言侧沿行维追加`1×width`，同步追加evidence_ref，再按既有slots容量裁尾。其他来源不是写入本行的零填充尾段。[参数化回归](../../../tests/taiji_native/test_n1_plan177_input_producer.py)已覆盖4→8及真实48→256，逐值断言两个workspace路径一致、尾段为零，并验证切掉该行会改变logits | 排除。共享维段覆盖的前提不符实际；维度协议已有实现与测试。语义对齐/行为收益仍由原N177合同裁决 |
+| 常规CI完全没有梯度所有权守卫 | 根CI运行`pytest tests/`，现有producer辅助梯度测试在其覆盖范围；[五模式preflight](../../../scripts/training/preflight_taiji_n1_plan177_5a_checkpoint.py)也已调用`profile_backward_only`并留原回执。但`tests/`未找到该profile的直接调用，不能宣称五模式profile已被常规CI持续执行 | 不按原表述登记。存在辅助梯度守卫和既有离线所有权检查，剩余是下述细粒度自动回归缺口 |
+
+**唯一保留的观测缺口——缺少“loss来源×参数组”的持续归因断言。** [当前profile](../../../taiji/joint_t1_trainer.py)对`parser_loss + language_loss`合计backward，只报告producer总norm/参数数与V4顶层组norm；producer测试也对slot/act合计辅助loss取梯度。因而现有读数不能独立回答slot loss、act loss、answer loss分别对slot head、act head、共享encoder和语言组贡献什么，也不能仅凭合计norm检测未来误接的answer→producer路径。以上是工具粒度与自动回归覆盖的实证，不是已经发生梯度错路或能力失效的实证。
+
+本轮另以合成fixture做0 optimizer step反例：当前slot/act head均有非零辅助梯度；将slot loss乘零但保留其计算图、act loss保持正常后，slot head梯度为零，现有“全部参数可达＋任一参数非零”断言仍通过。该反例确认逐head零梯度可能漏报，未加载本机checkpoint或消费query/holdout/sealed，也不证明当前槽分类已失效。
+
+本轮唯一建议是把该维护缺口作为§2.2后继信用干预前的基准：用不依赖本机训练cache/checkpoint的合成fixture，分别反传各loss，按任务与允许接收者断言可达/非零/finite及禁止路径，覆盖实际Trainer调用与五模式权限；保留参数、optimizer、游标不变和无sealed读取。连续feature与离散选择的责任仍分开。新增测试须能因对应路径的定向破坏而失败；不能只调用当前总norm profile就声称补齐逐loss归因。此次只完成列举资格审计及计划同步，未修改训练源码、冻结合同或现有运行，不另起能力路线/训练队列。
+
+本轮验证：producer现有接口/梯度/恢复测试、活动计划身份/链接及仓库卫生共18项本机检查通过，`git diff --check`通过；CI收集配置已核对，但不声称当前远端run已通过。
+
 ## 3. 整合依赖与逐阶段有限出口
 
 主链为：**N176原包一次结案＋N177接口/静态工程并行准备 → 共同状态/来源/时间/重置 → 所需记忆选择与行动条件世界预测/短规划 → 同一状态的语言/行动和合法反馈信用 → 同一候选内F0–F2、学习责任与保持 → F3自然连续任务/跨会话 → 按实际瓶颈研究时间尺度、学习机制或算力 → 07同bundle验收。**
