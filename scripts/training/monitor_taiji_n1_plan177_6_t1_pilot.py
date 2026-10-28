@@ -118,14 +118,22 @@ def build(run_root: Path = RUN_ROOT) -> dict[str, Any]:
             remaining_wall += left * wall_rate
 
     events = defaultdict(int)
+    events_since_latest = defaultdict(int)
     latest_revision = None
+    for row in rows:
+        revision = row.get("implementation_revision")
+        if revision:
+            latest_revision = revision
     for row in rows:
         event = row.get("event")
         if event in {"checkpoint_resume_rollback", "engineering_failure_recovered"}:
             events[event] += 1
-        revision = row.get("implementation_revision")
-        if revision:
-            latest_revision = revision
+            #: 只有"本轮实现身份下"的异常才说明这一次续训有问题；历史异常单独报，不混算。
+            if (
+                latest_revision is not None
+                and row.get("implementation_revision") == latest_revision
+            ):
+                events_since_latest[event] += 1
 
     lock_pid = lock.get("pid")
     return {
@@ -169,6 +177,12 @@ def build(run_root: Path = RUN_ROOT) -> dict[str, Any]:
         "anomalies": {
             "rollback_events": events["checkpoint_resume_rollback"],
             "recovered_failure_events": events["engineering_failure_recovered"],
+            "rollback_events_since_latest_revision": events_since_latest[
+                "checkpoint_resume_rollback"
+            ],
+            "recovered_failure_events_since_latest_revision": events_since_latest[
+                "engineering_failure_recovered"
+            ],
             "latest_implementation_revision": latest_revision,
         },
         "lock": {
@@ -229,6 +243,7 @@ def main(argv: list[str] | None = None) -> int:
         f"proj_wall={100 * projection['final_wall_ratio']:.1f}% "
         f"remaining_h={projection['remaining_wall_seconds'] / 3600:.1f} "
         f"anomalies={report['anomalies']['rollback_events'] + report['anomalies']['recovered_failure_events']} "
+        f"(since_resume={report['anomalies']['rollback_events_since_latest_revision'] + report['anomalies']['recovered_failure_events_since_latest_revision']}) "
         f"lock_alive={report['lock']['pid_alive']}"
     )
     return 0

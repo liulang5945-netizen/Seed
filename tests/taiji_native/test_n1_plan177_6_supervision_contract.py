@@ -142,12 +142,17 @@ def test_projection_names_modes_without_a_cost_sample(monitor, tmp_path: Path) -
 def test_anomalies_and_stale_lock_are_published(monitor, tmp_path: Path) -> None:
     rows = [
         _update("correct__seed_0", 1, 0.0, 0.0),
-        {"event": "checkpoint_resume_rollback", "implementation_revision": "r2"},
+        #: 历史异常（旧 revision）与续训后异常分开计数，不许混成一锅。
+        {"event": "checkpoint_resume_rollback", "implementation_revision": "r1"},
+        {"event": "engineering_failure_recovered", "implementation_revision": "r1"},
         {"event": "engineering_failure_recovered", "implementation_revision": "r2"},
     ]
     root = _root(tmp_path, cursors={}, completed=[], rows=rows, lock_pid=999_999_999)
     report = monitor.build(root)
-    assert report["anomalies"]["rollback_events"] == 1
-    assert report["anomalies"]["recovered_failure_events"] == 1
-    assert report["anomalies"]["latest_implementation_revision"] == "r2"
+    anomalies = report["anomalies"]
+    assert anomalies["rollback_events"] == 1
+    assert anomalies["recovered_failure_events"] == 2
+    assert anomalies["rollback_events_since_latest_revision"] == 0
+    assert anomalies["recovered_failure_events_since_latest_revision"] == 1
+    assert anomalies["latest_implementation_revision"] == "r2"
     assert report["lock"]["pid_alive"] is False
