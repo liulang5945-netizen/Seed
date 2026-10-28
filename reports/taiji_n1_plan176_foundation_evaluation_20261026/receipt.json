@@ -1,0 +1,16 @@
+{
+  "schema": "taiji-n176-foundation-evaluation-v1",
+  "status": "fixed_generation_complete",
+  "sealed_outputs": 1216,
+  "train_retention_outputs": 144,
+  "attempt_sha256": "9c8f6d649e844865c60445595087c1601011b7e0c0c08d645b9fab08f1e7c377",
+  "F2_sealed_bodies_parsed": 0,
+  "training_updates": 0,
+  "n175_key_opened": false,
+  "process_cpu_seconds": 42.15625,
+  "prior_evaluation_cpu_seconds": 5.421875,
+  "cumulative_evaluation_cpu_seconds": 47.578125,
+  "wall_seconds": 46.45299999997951,
+  "failure": null,
+  "can_promote": false
+}

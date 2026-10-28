@@ -1,0 +1,54 @@
+{
+  "format": "taiji-n176-sealed-closeout-v1",
+  "date": "2026-10-28",
+  "spec": "plans/reference/SPEC-N1-176_F0_F1_pilot_20261026.md",
+  "attempt": "reports/taiji_n1_plan176_foundation_evaluation_20261026.attempt.json",
+  "receipt": "reports/taiji_n1_plan176_foundation_evaluation_20261026/receipt.json",
+  "costs": "reports/taiji_n1_plan176_foundation_evaluation_20261026.costs.jsonl",
+  "status": "fixed_generation_complete",
+  "fixed_denominators": {
+    "sealed_outputs": 1216,
+    "train_retention_outputs": 144,
+    "total_outputs": 1360,
+    "spec_basis": "every arm 256 matched outputs + 2x64 fact flips per F1 primary-colour item; V4 additionally 64 workspace-cut outputs; plus 96 F0-stage retention and 48 original N175 retention"
+  },
+  "by_arm": {
+    "flat_v3": 432,
+    "curriculum_v3": 432,
+    "curriculum_v4": 496
+  },
+  "gates_observed": {
+    "F2_sealed_bodies_parsed": 0,
+    "training_updates": 0,
+    "n175_key_opened": false,
+    "can_promote": false,
+    "sealed_reads_before_this_attempt": 0
+  },
+  "resources": {
+    "process_cpu_seconds": 42.15625,
+    "prior_evaluation_cpu_seconds": 5.421875,
+    "cumulative_evaluation_cpu_seconds": 47.578125,
+    "cpu_limit_seconds": 1000,
+    "wall_seconds": 46.453
+  },
+  "source_identity": {
+    "method": "seal_ast.recorded_value_attested (in-place bytes or git-history blob) with per-source disclosure recorded in the attempt preflight provenance",
+    "history_attested": {
+      "curriculum_v4.candidate": {
+        "recorded_sha256_prefix": "bdb63766fdc7",
+        "trained_with_commit": "420edb793",
+        "current_sha256_prefix": "3efef1005fdb",
+        "equivalence_evidence": "reports/taiji_n1_plan176_candidate_equivalence_20261028.json"
+      }
+    }
+  },
+  "outputs_file": {
+    "path": "reports/taiji_n1_plan176_foundation_evaluation_20261026/outputs.jsonl",
+    "bytes": 330370,
+    "sha256_prefix": "68677d867d0a16daf54e5b74c7f11735",
+    "line_endings": "LF (0 CR bytes)",
+    "committed": false,
+    "why_not_committed": "1216 of these 1360 lines are sealed-set generations; .gitignore:157 already excludes *.jsonl. Keeping them out of git avoids a future corpus assembly silently ingesting sealed answers. The file stays on disk hash-pinned here; if the owner wants it archived in-repo, force-add with the same hash check."
+  },
+  "open_handoff": "plans/active/roadmap/03_CURRENT_EXECUTION.md 的 N176 行仍写「三臂已训/恢复，原评价待有限收束」；该文件当时在并行会话手里（工作树 M），本件不改它，提交 03 的一方需把这一行换成已消费口径。"
+}
