@@ -91,6 +91,26 @@ def test_a_reused_pid_running_something_else_is_not_an_owner(tmp_path: Path) -> 
         child.wait(timeout=30)
 
 
+def test_the_evaluator_counts_as_an_owner_too(tmp_path: Path) -> None:
+    """同一 run root 也由评价器持有：它的命令行不含 `run_`，但仍必须被认作主人，否则会被接管。"""
+
+    child = subprocess.Popen(
+        [
+            sys.executable,
+            "-c",
+            "import time; time.sleep(120)  # evaluate_taiji_n1_plan177_6_t1_pilot.py",
+        ]
+    )
+    try:
+        _write_lock(tmp_path, {"pid": child.pid, "runner": runner.RUNNER_STEM})
+        assert runner._owner_alive(child.pid) is True
+        with pytest.raises(RuntimeError, match="已被另一实例占用"):
+            runner.acquire_run_lock(tmp_path)
+    finally:
+        child.kill()
+        child.wait(timeout=30)
+
+
 def test_an_unreadable_lock_fails_closed(tmp_path: Path) -> None:
     #: 锁内容坏掉不许退化成"没人占着"——判不了就拒起。
     _write_lock(tmp_path, "{这不是 json")

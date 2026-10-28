@@ -112,6 +112,9 @@ def _git_changed_paths(base_revision: str, current_revision: str) -> tuple[str, 
 #: 而 runner 原先没有任何 run-root 单实例互斥（03 队首登记的那条缺口）。
 RUN_LOCK_NAME = "run_root.lock"
 RUNNER_STEM = Path(__file__).name
+#: 归属判据不能用本文件名：同一个 run root 也由评价器持有（`evaluate_taiji_n1_plan177_6_t1_pilot.py`
+#: 复用这把锁），而它的命令行里不含 `run_`。两端共有的稳定标记是这个 run root 的标识。
+LOCK_OWNER_MARKER = "plan177_6_t1_pilot"
 
 
 def _run_lock_owner(lock: Path) -> dict[str, Any]:
@@ -142,7 +145,7 @@ def _owner_alive(pid: Any) -> bool:
         cmdline = " ".join(psutil.Process(pid).cmdline())
     except (psutil.Error, OSError):
         return True
-    return RUNNER_STEM in cmdline
+    return LOCK_OWNER_MARKER in cmdline
 
 
 def acquire_run_lock(run_root: Path) -> tuple[Path, str | None]:
@@ -155,6 +158,7 @@ def acquire_run_lock(run_root: Path) -> tuple[Path, str | None]:
     payload = {
         "pid": os.getpid(),
         "runner": RUNNER_STEM,
+        "marker": LOCK_OWNER_MARKER,
         "taken_local": time.strftime("%Y-%m-%d %H:%M:%S"),
     }
     try:

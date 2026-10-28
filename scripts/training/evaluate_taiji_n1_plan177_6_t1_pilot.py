@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import atexit
 import json
 import re
 import sys
@@ -20,6 +21,12 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 if str(REPOSITORY_ROOT) not in sys.path:
     sys.path.insert(0, str(REPOSITORY_ROOT))
 
+#: 评价器与训练器对同一个 run root 的**所有权**用同一把锁：两把同名锁各自实现一遍就会有一个漏掉，
+#: 而这里要防的是"评价与训练同时写 run_state / 两个评价同时读 holdout"。
+from scripts.training.run_taiji_n1_plan177_6_t1_pilot import (  # noqa: E402
+    acquire_run_lock,
+    release_run_lock,
+)
 from taiji.adapter import TSKV8Adapter
 from taiji.config import TaijiConfig
 from taiji.internalization import content_digest
@@ -97,9 +104,11 @@ class _EvaluationBudgetStop(RuntimeError):
 
 def _atomic_json(path: Path, payload: dict[str, Any]) -> None:
     temporary = path.with_name(path.name + ".tmp")
+    #: 报告是要入库的读数件：显式 `newline="\n"`，否则本机会落成 CRLF 工作树态（DEBT-G115 同一族）。
     temporary.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
     temporary.replace(path)
 
@@ -581,25 +590,76 @@ def _score_split(
     }
 
 
+#: 可开评的 run_state 状态。`evaluation_in_progress` 留在集合里是给**崩溃恢复**用的：
+#: 中途死掉的评价会被重跑，而重跑会再读一遍 holdout ⇒ 那次重读必须记账（`evaluation_attempts`）。
+EVALUATABLE_STATUSES = (
+    "training_complete_evaluation_pending",
+    "budget_stop",
+    "evaluation_in_progress",
+)
+
+
+def evaluation_gate(
+    run_state: dict[str, Any], report_path: Path, *, overwrite_report: bool = False
+) -> str | None:
+    """开评前的两道门：状态不许在收尾之后；报告不许被静默覆盖。返回拒绝理由或 None。"""
+
+    status = run_state.get("status")
+    if status not in EVALUATABLE_STATUSES:
+        return (
+            "N177.6 scorer runs only after training stops at a fixed boundary "
+            f"(status={status!r})"
+        )
+    if report_path.exists() and not overwrite_report:
+        return (
+            f"holdout 只读一次：{report_path.name} 已存在。要重跑须显式 --overwrite-report"
+            "（旧报告另存 superseded 件留证），并在台账登记这次重读"
+        )
+    return None
+
+
+def record_evaluation_attempt(run_state: dict[str, Any]) -> int:
+    """开评即计数：崩溃也能留下"holdout 被读过第几次"，正常路径下应恒为 1。"""
+
+    attempts = int(run_state.get("evaluation_attempts", 0)) + 1
+    run_state["evaluation_attempts"] = attempts
+    run_state["evaluation_last_start_utc"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    return attempts
+
+
 def _run_evaluation() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-root", type=Path, default=DEFAULT_RUN_ROOT)
     parser.add_argument("--parent", type=Path, default=DEFAULT_PARENT)
     parser.add_argument("--train-cache", type=Path, default=DEFAULT_TRAIN_CACHE)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
+    parser.add_argument(
+        "--overwrite-report",
+        action="store_true",
+        help="重跑评价并覆盖已有报告（旧报告另存 superseded 件留证；正常路径不该用）",
+    )
     args = parser.parse_args()
     state_path = args.run_root / "run_state.json"
     if not state_path.is_file():
         raise FileNotFoundError("N177.6 scorer requires the run_state checkpoint ledger")
     run_state = json.loads(state_path.read_text(encoding="utf-8"))
-    if run_state.get("status") not in {
-        "training_complete_evaluation_pending",
-        "budget_stop",
-        "evaluation_in_progress",
-    }:
-        raise ValueError("N177.6 scorer runs only after training stops at a fixed boundary")
+    refusal = evaluation_gate(run_state, args.report, overwrite_report=args.overwrite_report)
+    if refusal is not None:
+        raise ValueError(refusal)
     if not args.parent.is_file() or not args.train_cache.is_file():
         raise FileNotFoundError("N177.6 scorer requires the fixed parent and train cache")
+
+    attempts = record_evaluation_attempt(run_state)
+    #: 占同一把 run-root 锁：训练仍在跑或另一个评价在跑时在这里就拒掉，不进入读 holdout 的阶段。
+    run_lock, adopted_stale_lock = acquire_run_lock(args.run_root)
+    atexit.register(release_run_lock, run_lock)
+    if args.report.exists():  # 只有 --overwrite-report 走得到这里：旧报告先另存留证
+        superseded = args.report.with_name(
+            f"{args.report.stem}.superseded-{int(time.time())}{args.report.suffix}"
+        )
+        args.report.replace(superseded)
+        run_state["evaluation_report_superseded"] = superseded.as_posix()
+    _atomic_json(state_path, run_state)
 
     start_cpu = time.process_time()
     start_wall = time.perf_counter()
@@ -1052,6 +1112,9 @@ def _run_evaluation() -> int:
             },
         },
         "evaluation_stop_reason": evaluation_context.get("budget_stop_reason"),
+        "evaluation_attempts": attempts,
+        "evaluation_report_superseded": run_state.get("evaluation_report_superseded"),
+        "evaluation_adopted_stale_lock": adopted_stale_lock,
         "fully_scored_holdout_arms": len(fully_scored_holdout_arms),
         "query_and_holdout": evaluation_results,
         "state_write_diagnostics": state_write_diagnostics,
