@@ -64,24 +64,26 @@ N176三臂已经完成，仍按原一次评价有限收束，用于解释课程�
 
 同一checkpoint须包含全部实际消费者及更新者，不拼接各自最佳runner结果。零步保存→新进程恢复→下一步选择/输出一致→同批续训一致性先通过；之后才允许研究训练。V4已修复的Adam输入快照别名问题作为回归保留。
 
-## 6. 实际文件与实施顺序
+## 6. 实施资产、状态与验收入口
 
-本节按真实代码触点维护：已实现文件和有限出口明确标为完成；`joint_learning.py`等尚未实现仍是后续合同，不伪称存在。接口与现有模块不兼容时再版本化，不为保留旧类名牺牲内容能力。
+本表作为资产索引，当前执行顺序取第8节及03/10；每行只登记状态、核心交付和证据入口。逐轮测试数字及设计长文可从`2d8b9f417`的本文件恢复，原报告/SPEC保持原位。
 
-| 顺序 | 文件/触点 | 交付与有限出口 | 失败回流 |
-| --- | --- | --- | --- |
-| 177.0 本合同与责任盘点 | 本文件；`contracts.py`、`task_state*.py`、`conditional_language_v4.py`、`adapter.py` | 当前版本、继承/新建/退出、任务所需路径及信用表可交实现；此规划阶段结束 | 明确不可表达的差异并选择一种表示，不以“研究一下”挂起 |
-| **177.1 共同状态和读写接口（有限完成）** | `taiji/joint_task_state.py` opt-in bridge；以既有`CognitiveState`为唯一根，映射V4 `TaskState`及`InputTrace`；未创建`joint_task_core.py`包装层 | 20组scope/goal/lifecycle矩阵＋10项来源、状态机、checkpoint专项回归，共30项；pytest、mypy、Ruff、Black通过。workspace视图不复制未验证内容。T1已消费Adapter InputTrace；默认Adapter生成路径未替换，语义收益未测 | T1/T2/T3的opt-in来源和条件消费者已接通；保持默认入口及能力声明边界，进入N177.3信用/恢复 |
-| **177.2 必要记忆/预测/选择与语言装配（有限实现完成）** | T1：`joint_task_state.py`来源映射＋V4源帧过滤；T2：`EpisodicMemoryStore`经当前CognitiveState授权ID检索并按事件/assembly/percept tick唯一映射；T3：`joint_action.py`调用`WorldDynamicsLearner.predict`、`ExecutiveController.select`并写回ActionIntent/WorldPredictionRecord，V4读取同一决策投影 | T1的2scope×2goal×4干预16例通过；T2同query memory与query-only logits不同，歧义来源拒绝，V1→V2检查点迁移；T3显式Goal state_slots/relation_targets、目标翻转/预测翻转会改变选择，affordance重排不改变结果，动作投影改变V4 logits。53项联合模块/65项组合回归通过。T3目标与模型/控制器权重由结构化测试提供，不代表自然中文目标理解、训练或行动能力 | 未选目标state slot不得隐式按零比较；目标来源只证明来自当前输入账本、不证明语义解释；owner/scope身份由当前memory allowlist提供而非record自证；跨session来源缺失回保存/恢复；预测或执行未达回具体producer/consumer，不把输出敏感性称为学习 |
-| **177.3A 身份、checkpoint与只读信用路由（有限工程完成）** | `joint_task_state.py` v3动作receipt/迁移；`joint_action.py`保存完整WDL/Executive快照与选中预测摘要；`joint_learning.py`只读credit route | v1/v2严格迁移、版本混装/重复组件拒绝；proposed/dispatch/awaiting/unknown/settled/cancelled恢复；Outcome/Transition/Intent/Prediction绑定；CognitiveState状态owner与参数接收者分列。68项模块专项与80项组合回归、独立进程unknown恢复通过。Outcome provenance仍是未认证caller assertion；decision可重建/摘要核验但未重放候选选择；`apply_updates=false` | 该出口只证明身份、恢复与资格路由，不证明世界模型、Executive或语言模块已学习；executor结果仍缺签名来源 |
-| **177.3B 状态/参数责任及六类对照规格（静态合同完成）** | `joint_learning.py::JointCreditComparisonSpecV1`；无生产入口写入 | correct/permuted/no-update/readout-only/responsible-owner-frozen/state-only-change六种模式明确状态owner、可更新参数组、冻结参数组和语言目标摘要；所有模式要求同一NativeCheckpoint保存更新前后状态并新进程恢复，`apply_updates=false` | 该规格只可校验，不代表已执行更新或后验恢复；实际更新与六类行为对照随177.6授权训练验收 |
-| **177.4A T1原生事实/当前值query生产（有限工程完成）** | opt-in `taiji/joint_input_producer.py`、producer checkpoint与source parse ledger，同joint native envelope；不改N176绑定adapter/runner源 | raw bytes＋逐bytePercept→model-owned span/act候选；entity/attribute/value有UTF-8 source span/percept IDs/hash/confidence；assertion/correction提交WorldObject/WorldEvent，query选择当前已知事实及query source；span pooled semantic feature进入V4 workspace | 91项组合回归含多turn Adapter续接、V4 semantic feature cut改变logits、新进程producer/parse ledger恢复。解析输出使用固定logit test double，监督loss只证明gradient到producer；未训练。query不检索episodic memory，Goal仅candidate |
-| **177.4B T2情景检索与T3自然Goal输入（后继扩展）** | 同producer/retriever扩展到跨turn EpisodicMemoryStore query和自然Goal→target slots/action candidate；只用opt-in bundle | inference无provider/gold injection；查询source/时序正确，Goal由raw span映射target slots；歧义不创建ActionIntent | T1结果可判后按范围启用；此前T2/T3结构化fixture只算接口证据 |
-| **177.5A 联合Trainer/manifest/零状态preflight（有限完成）** | `taiji/joint_t1_course.py`、`taiji/joint_t1_trace_cache.py`、`taiji/joint_t1_trainer.py`和`preflight_taiji_n1_plan177_5a_checkpoint.py`；[预检报告](../../reports/taiji_n1_plan177_5a_preflight_20261027_v2.json) | 640 train episodes/2560顺序固定；train-only 590,512,321-byte trace cache逐源SHA绑定，F0/F1共13轮fresh Adapter重放逐字段一致；backward-only五模式梯度归属符合合同且0 optimizer updates；cache-bound zero NativeCheckpoint 19,550,523 bytes fresh-process参数/optimizer/cursor恢复一致 | 结构化接口可进入训练；不代表学到能力 |
-| **177.5B 固定T1课程/资源合同（固定）** | [SPEC-N1-177.5 v2](SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md) | 5 modes×3 seeds、2560 steps/arm、write-enabled/disabled配对诊断及family/seed评分已冻结；投影含30%余量2,269,268 CPU s/199,519 wall s/6.29GB | 新硬上限2.4M CPU s/220k wall s/8GiB；由用户AGENTS.md的可逆工作授权运行，旧N174账不继承；触限即保存并停止 |
-| **177.6 T1同候选有限训练与验收（旧固定包收束）** | 同一producer+JointTaskState+V4 bundle及冻结cache；独立NativeCheckpoint/scorer | 进度、预算、运行metadata只看03；原暂停、并发费用及尾段重放保留，正式学习对照尚未验收 | 保留原合同、manifest、checkpoint和费用；不插入新任务信用或teacher，不以本轮重排补起/停止已有进程；共享改动前隔离运行图 |
+| 阶段 | 状态 | 核心交付 | 验收入口 |
+|---|---|---|---|
+| 177.0 | 已完成 | 合同、责任及触点盘点 | 本文件§1–5 |
+| 177.1 | 已完成（有限工程） | 同一CognitiveState、来源与生命周期 | [state回执](../../reports/taiji_n1_plan177_state_interface_20261026.json) |
+| 177.2 | 已完成（有限工程） | T1来源、T2情景、T3条件预测/选择及V4消费 | [T1](../../reports/taiji_n1_plan177_t1_source_conditioned_language_20261026.json)、[T2](../../reports/taiji_n1_plan177_t2_episodic_consumer_20261026.json)、[T3](../../reports/taiji_n1_plan177_t3_world_action_conditioning_20261026.json) |
+| 177.3A | 已完成（有限工程） | v3 receipt/checkpoint及只读信用责任 | [恢复回执](../../reports/taiji_n1_plan177_3a_receipt_credit_recovery_20261027.json) |
+| 177.3B | 已完成（静态合同） | 状态/参数责任及比较权限 | [责任回执](../../reports/taiji_n1_plan177_3b_credit_control_contract_20261027.json) |
+| 177.4A | 已完成（有限工程） | raw bytes/Percept→parse→世界状态/workspace | [producer回执](../../reports/taiji_n1_plan177_4a_native_fact_producer_20261027.json) |
+| 177.4B | 待前置 | T2自然query与T3自然Goal输入 | §7后继能力；原结构化fixture不代证 |
+| 177.5A | 已完成（预检） | source-bound trainer/cache/zero恢复 | [预检报告](../../reports/taiji_n1_plan177_5a_preflight_20261027_v2.json) |
+| 177.5B | 已完成（合同冻结） | 本轮数据/臂/验收/预算规则 | [原SPEC v2](SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md) |
+| 177.6 | 进行中 | 当前多臂训练→评价→联合诊断 | [03进度](../active/roadmap/03_CURRENT_EXECUTION.md)、[10工作包](../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md) |
 
-实施按T1→T2→T3逐任务纵向贯通：对当前子任务落实共同状态、原生输入producer、必要消费者、信用/恢复、固定课程与有限训练。177.4A已接入T1事实/更正和当前值query；177.5A trainer/cache/preflight及177.5B课程/资源合同均有限完成；177.6作为旧固定包有限收束，当前新开发先交付第8节的信息/信用基准。T2情景检索与T3自然Goal producer在T1结果可判后扩展；不能把T3结构化target替代原生目标解析。
+资产边界：结构化Goal/固定权重与logit test double只证明接口；只读credit规格不证明实际学习；Outcome仍是未认证caller assertion；记录级owner/scope、跨session来源和自然Goal解释尚未全部验收。默认Adapter未替换，不能从资产完成状态推断自然理解/规划或L3/L4通过。
+
+实施按T1→T2→T3逐任务纵向贯通：对当前子任务落实共同状态、原生输入producer、必要消费者、信用/恢复、固定课程与有限训练。177.4A已接入T1事实/更正和当前值query；177.5A trainer/cache/preflight及177.5B课程/资源合同均有限完成；177.6为当前主实验，信息/信用基准作为第8节B阶段并行准备。T2情景检索与T3自然Goal producer在T1结果可判后扩展；不能把T3结构化target替代原生目标解析。
 
 177.1–177.3可在N176未消费面保持不变的同时实施；不修改N176绑定的V3/V4、runner、SPEC、选择集或checkpoint，也不改变其共享传递依赖的运行语义。需要这类共享修改时，先有限收束N176或保留可独立复现的原运行图；这不是要求N176出现正收益。新候选有独立版本和数据/预算/结果；N176的现有固定评价仍是独立证据收束，不重训。
 
@@ -93,15 +95,19 @@ F3再增加自然表达、多步连续任务和真实跨会话经验；CC-5/6的
 
 更大多时间尺度/latent组块、收缩/恢复目标、PC/向量信用或SSM/块稀疏由实际长程区分、rollout或计算热点触发。快慢状态与reset责任本包先定义，完整算法研究不作为第一次联合链的预设前置；若必要表示/时间信用或算力瓶颈在前阶段已确认，可将对应研究切片提前，不必等F3；任何方案都须同时测任务收益、保持、成本及可恢复性。
 
-## 8. 当前推进重排与交付衔接
+## 8. 当前主实验与后继的统一衔接
 
-2026-10-28用户要求将讨论成果修订进计划并重排顺序。当前唯一新开发队首是[03](../active/roadmap/03_CURRENT_EXECUTION.md)的零训练信息/逐loss信用基准，实际产物及退出见[10 §2.3](../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md#23-队首交付零训练的信息与逐损失信用基准)。177.1–177.5已交付工程作为资产继承，不按历史编号重做。
+当前N177.6多臂训练是主实验，进度只见[03](../active/roadmap/03_CURRENT_EXECUTION.md)；完整阶段与工作包卡片见[10](../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md#30-本轮多臂训练到后继候选的统一阶段表)。177.1–177.5作为已交付底座继承，不重排为未开始任务。
 
-原177.6固定包仍按原15臂、题面、阈值、预算、恢复及独立评价规则有限结案；进度只见03。后继新候选先完成逐loss×参数组和必经信息基准，再基于旧包结果裁决主要瓶颈；优先设计任务信用接口和同前向、stop-gradient控制。独立版本实现、连续feature与离散决策责任、零步checkpoint恢复通过后，冻结资源/仪器及跨包累计停止线，才进入一次有界训练。
+| 阶段 | 本合同的责任 | 转交 |
+|---|---|---|
+| A 训练进行中 | 保持原15臂、固定来源/权限、checkpoint和资源停止线 | 原端点交C |
+| B 可并行准备 | 合成信息/逐loss基准及评价入参核对；不改A运行语义 | 交C/D，不阻塞A |
+| C 原合同评价 | A退出及原准入满足后恢复/独立评分，保留失败与未知 | 原结果/费用交D |
+| D 联合诊断 | 原多臂行为与B信用事实合并，提出一个主要瓶颈 | 决定E/F新候选 |
+| E/F 后继候选 | 独立任务信用图/对照、隔离实现、零步恢复、预算/跨包停止线、有界验证 | 分阶段能力接力 |
 
-本次不追改SPEC-N1-177.5、不把answer-loss信用或teacher插入原包，不运行新训练或提前消费holdout。共享源码修改前须收束或隔离N176/N177.6运行图。旧暂停、重放/丢弃、并发费用和历史方案可由`78eb8690e`的本文件及03/10原文恢复，不能清账删除；原报告与checkpoint沿原归属保留。
-
-第9节的离线监督器保留候选规格，位于现任务信用/任务净收益验证之后；只有合法训练标签质量、覆盖或成本成为实际瓶颈时才按原准入重开，不发布第二队首。
+不得将answer-loss信用或teacher插入当前冻结实验。共享源码修改前先隔离当前运行图或等主实验退出；历史暂停、重放/丢弃和并发费用不清零。第9节保留候选设计，仅在D之后标签覆盖/质量/成本成为实际瓶颈时按原准入重开。
 
 ## 9. 低消耗离线训练监督器（候选规划，未准入训练）
 

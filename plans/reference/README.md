@@ -2,12 +2,23 @@
 
 本页按主题导航，不再复制逐轮训练数字、审批和“下一步”。当前队首见[03](../active/roadmap/03_CURRENT_EXECUTION.md)，详细工作包见[10](../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。原滚动索引全文可从`d12a8679a:plans/reference/README.md`恢复。
 
+## 当前主实验的合同分工
+
+| 文档 | 文档状态 | 维护职责 |
+|---|---|---|
+| [N177实施计划](PLAN-N1-177_joint_cognition_slice_20261026.md) | 活动交接 | 已有资产、A–F实施边界及后继接口 |
+| [177.5 T1 SPEC](SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md) | 原合同冻结 | 五模式×三seed、数据/更新权限、阈值和预算 |
+| [03执行看板](../active/roadmap/03_CURRENT_EXECUTION.md) | 随耐久进度维护 | 当前运行、臂矩阵及累计资源 |
+| [10工作包](../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md) | 随阶段交接维护 | 训练＋并行准备、评价、诊断、后继候选的依赖与验收 |
+
+PLAN的排期表可以随真实推进修订，SPEC与已结案证据保持原规则；同一件事不在多份表里复制状态和预算。当前模式/臂进度只登记03。
+
 ## 当前实施与交接
 
 | 主题 | 入口 |
 |---|---|
 | 持续Goal与旧计划过渡 | [17过渡矩阵](delivery-runs/20261021-n-mainline/artifacts/17-plan-transition-and-reconciliation.md)、[当前交付黑板](delivery-runs/20261021-n-mainline/board.md) |
-| 当前R2工程交接 | [02工程计划](delivery-runs/20261021-n-mainline/artifacts/02-plan.md)、[R2技术摘要](delivery-runs/20261021-n-mainline/artifacts/02-continuation-extension-plan.md) |
+| 历史R2工程交接 | [02工程计划](delivery-runs/20261021-n-mainline/artifacts/02-plan.md)、[R2技术摘要](delivery-runs/20261021-n-mainline/artifacts/02-continuation-extension-plan.md) |
 | extension评价适配 | [独立provider/worker架构](delivery-runs/20261021-n-mainline/artifacts/04-continuation-evaluation-adapter.md) |
 | 单入口续训与来源 | [15精简](delivery-runs/20261021-n-mainline/artifacts/15-training-system-simplification.md)、[原extension架构](delivery-runs/20261021-n-mainline/artifacts/04-continuation-extension-architecture.md) |
 | 原全轮/R2配对合同 | [全轮预训练](PLAN-R2-DAILY-DIALOGUE-FULL-TURN-PRETRAINING_20261021.md)、[恢复合同](PLAN-R2-DAILY-DIALOGUE-RECOVERY_20261021.md)、[warm/fresh合同](PLAN-R2-DAILY-DIALOGUE-WARMSTART-MATCHED_20261021.md) |
