@@ -58,6 +58,7 @@ def _root(
     completed: list[str],
     rows: list[dict[str, Any]],
     lock_pid: int,
+    latest_paths: dict[str, str] | None = None,
 ) -> Path:
     root = tmp_path / "run"
     root.mkdir()
@@ -71,7 +72,11 @@ def _root(
                 "optimizer_updates": sum(cursors.values()),
                 "completed_arms": completed,
                 "latest_checkpoint_by_arm": {
-                    arm: {"update_cursor": cursor, "completed_updates": cursor}
+                    arm: {
+                        "update_cursor": cursor,
+                        "completed_updates": cursor,
+                        "path": (latest_paths or {}).get(arm, str(root / arm / "final.pt")),
+                    }
                     for arm, cursor in cursors.items()
                 },
                 "artifact_bytes": CAPS["artifact_bytes"] // 10,
@@ -137,6 +142,28 @@ def test_projection_names_modes_without_a_cost_sample(monitor, tmp_path: Path) -
         "readout_only",
         "responsible_owner_frozen",
     }
+
+
+def test_a_completed_arm_without_its_final_file_is_named(monitor, tmp_path: Path) -> None:
+    rows = [
+        _update("correct__seed_0", 1, 0.0, 0.0),
+        _update("correct__seed_0", 101, 440.0, 38.0),
+    ]
+    root = _root(
+        tmp_path,
+        cursors={"correct__seed_0": 2560, "no_update__seed_0": 2560},
+        completed=["correct__seed_0", "no_update__seed_0"],
+        rows=rows,
+        lock_pid=999_999_999,
+    )
+    (root / "correct__seed_0").mkdir()
+    final = root / "correct__seed_0" / "final.pt"
+    final.write_bytes(b"x" * 128)
+    report = monitor.build(root)
+    #: 在位的完成臂不进缺件名单，且字节被数到；不在位的必须点名。
+    assert report["checkpoints"]["completed_arms_with_missing_final"] == ["no_update__seed_0"]
+    assert report["checkpoints"]["per_arm"]["correct__seed_0"]["bytes"] == 128
+    assert report["checkpoints"]["per_arm"]["correct__seed_0"]["latest_exists"] is True
 
 
 def test_anomalies_and_stale_lock_are_published(monitor, tmp_path: Path) -> None:

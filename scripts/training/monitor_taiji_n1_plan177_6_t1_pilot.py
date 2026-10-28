@@ -135,6 +135,26 @@ def build(run_root: Path = RUN_ROOT) -> dict[str, Any]:
             ):
                 events_since_latest[event] += 1
 
+    checkpoints = {}
+    missing_final = []
+    total_points = 0
+    for arm, info in sorted(state.get("latest_checkpoint_by_arm", {}).items()):
+        arm_dir = run_root / arm
+        files = sorted(arm_dir.glob("*.pt")) if arm_dir.is_dir() else []
+        size = sum(path.stat().st_size for path in files)
+        latest_path = Path(str(info.get("path", "")))
+        exists = latest_path.is_file()
+        checkpoints[arm] = {
+            "files": len(files),
+            "bytes": size,
+            "latest_cursor": int(info.get("update_cursor", 0)),
+            "latest_exists": exists,
+            "completed": arm in set(state.get("completed_arms", [])),
+        }
+        total_points += size
+        if arm in set(state.get("completed_arms", [])) and not exists:
+            missing_final.append(arm)
+
     lock_pid = lock.get("pid")
     return {
         "format": "taiji-n177-6-t1-supervision-v1",
@@ -184,6 +204,12 @@ def build(run_root: Path = RUN_ROOT) -> dict[str, Any]:
                 "engineering_failure_recovered"
             ],
             "latest_implementation_revision": latest_revision,
+        },
+        "checkpoints": {
+            "per_arm": checkpoints,
+            "completed_arms_with_missing_final": missing_final,
+            "point_bytes_total": total_points,
+            "artifact_bytes_reported": state.get("artifact_bytes"),
         },
         "lock": {
             "pid": lock_pid,
@@ -244,7 +270,8 @@ def main(argv: list[str] | None = None) -> int:
         f"remaining_h={projection['remaining_wall_seconds'] / 3600:.1f} "
         f"anomalies={report['anomalies']['rollback_events'] + report['anomalies']['recovered_failure_events']} "
         f"(since_resume={report['anomalies']['rollback_events_since_latest_revision'] + report['anomalies']['recovered_failure_events_since_latest_revision']}) "
-        f"lock_alive={report['lock']['pid_alive']}"
+        f"lock_alive={report['lock']['pid_alive']} "
+        f"ckpt_missing={len(report['checkpoints']['completed_arms_with_missing_final'])}"
     )
     return 0
 
