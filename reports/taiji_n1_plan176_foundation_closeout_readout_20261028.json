@@ -1,0 +1,175 @@
+{
+  "date": "2026-10-28",
+  "denominator_check": {},
+  "flag_cross_check": {
+    "correct_flag_source": "correct 取自生成时记录：再取一次 target 就等于第二次读 sealed，归一化实现见 evaluate_taiji_n1_plan176_foundation_pilot.normalized_answer",
+    "method": "valid_utf8 与 terminated 由 generated_hex 独立复算后逐条对表",
+    "mismatches": {
+      "terminated": 0,
+      "valid_utf8": 0
+    },
+    "rows_with_flags": 1360
+  },
+  "format": "taiji-n176-sealed-closeout-readout-v1",
+  "inputs": {
+    "outputs": "reports/taiji_n1_plan176_foundation_evaluation_20261026/outputs.jsonl",
+    "outputs_rows": 1360,
+    "receipt": "reports/taiji_n1_plan176_foundation_evaluation_20261026/receipt.json",
+    "receipt_attempt_sha256": "9c8f6d649e844865c60445595087c1601011b7e0c0c08d645b9fab08f1e7c377",
+    "receipt_status": "fixed_generation_complete"
+  },
+  "per_arm": {
+    "curriculum_v3": {
+      "denominators": {
+        "f0_matched": 128,
+        "f0_stage_640": 16,
+        "f0_stage_final": 16,
+        "f1_primary": 64,
+        "irrelevant_flip": 64,
+        "n175_retention": 16,
+        "related_flip": 64,
+        "workspace_cut": 0
+      },
+      "f0": {
+        "literal_accuracy": 1.0,
+        "terminated_rate": 1.0,
+        "valid_utf8_rate": 1.0
+      },
+      "f1": {
+        "irrelevant_flip_accuracy": 0.375,
+        "joint_original_and_related": 0.25,
+        "primary_accuracy": 0.453125,
+        "related_flip_accuracy": 0.453125,
+        "workspace_cut_accuracy": null
+      },
+      "gates": {
+        "f0_terminated_ge_0.95": true,
+        "f0_valid_utf8_ge_0.99": true,
+        "f1_irrelevant_ge_0.95": false,
+        "f1_primary_ge_0.90": false,
+        "f1_related_flip_ge_0.90": false,
+        "r16_retention_drop_le_3pp": false,
+        "stage_f0_drop_le_3pp": true
+      },
+      "gates_passed": 3,
+      "gates_total": 7,
+      "n175_retention": {
+        "arm_prefix_mean": 0.000488,
+        "drop_pp": 9.3262,
+        "parent_prefix_median": 0.09375
+      },
+      "stage_f0": {
+        "at640": 1.0,
+        "drop_pp": 0.0,
+        "final": 1.0
+      }
+    },
+    "curriculum_v4": {
+      "denominators": {
+        "f0_matched": 128,
+        "f0_stage_640": 16,
+        "f0_stage_final": 16,
+        "f1_primary": 64,
+        "irrelevant_flip": 64,
+        "n175_retention": 16,
+        "related_flip": 64,
+        "workspace_cut": 64
+      },
+      "f0": {
+        "literal_accuracy": 1.0,
+        "terminated_rate": 1.0,
+        "valid_utf8_rate": 1.0
+      },
+      "f1": {
+        "irrelevant_flip_accuracy": 0.59375,
+        "joint_original_and_related": 0.46875,
+        "primary_accuracy": 0.609375,
+        "related_flip_accuracy": 0.609375,
+        "workspace_cut_accuracy": 0.125
+      },
+      "gates": {
+        "f0_terminated_ge_0.95": true,
+        "f0_valid_utf8_ge_0.99": true,
+        "f1_irrelevant_ge_0.95": false,
+        "f1_primary_ge_0.90": false,
+        "f1_related_flip_ge_0.90": false,
+        "r16_retention_drop_le_3pp": false,
+        "stage_f0_drop_le_3pp": true
+      },
+      "gates_passed": 3,
+      "gates_total": 7,
+      "n175_retention": {
+        "arm_prefix_mean": 0.000488,
+        "drop_pp": 9.3262,
+        "parent_prefix_median": 0.09375
+      },
+      "stage_f0": {
+        "at640": 1.0,
+        "drop_pp": 0.0,
+        "final": 1.0
+      }
+    },
+    "flat_v3": {
+      "denominators": {
+        "f0_matched": 128,
+        "f0_stage_640": 16,
+        "f0_stage_final": 16,
+        "f1_primary": 64,
+        "irrelevant_flip": 64,
+        "n175_retention": 16,
+        "related_flip": 64,
+        "workspace_cut": 0
+      },
+      "f0": {
+        "literal_accuracy": 1.0,
+        "terminated_rate": 1.0,
+        "valid_utf8_rate": 1.0
+      },
+      "f1": {
+        "irrelevant_flip_accuracy": 0.25,
+        "joint_original_and_related": 0.0,
+        "primary_accuracy": 0.203125,
+        "related_flip_accuracy": 0.203125,
+        "workspace_cut_accuracy": null
+      },
+      "gates": {
+        "f0_terminated_ge_0.95": true,
+        "f0_valid_utf8_ge_0.99": true,
+        "f1_irrelevant_ge_0.95": false,
+        "f1_primary_ge_0.90": false,
+        "f1_related_flip_ge_0.90": false,
+        "r16_retention_drop_le_3pp": false,
+        "stage_f0_drop_le_3pp": true
+      },
+      "gates_passed": 3,
+      "gates_total": 7,
+      "n175_retention": {
+        "arm_prefix_mean": 0.000488,
+        "drop_pp": 9.3262,
+        "parent_prefix_median": 0.09375
+      },
+      "stage_f0": {
+        "at640": 1.0,
+        "drop_pp": 0.0,
+        "final": 1.0
+      }
+    }
+  },
+  "scope_limits": [
+    "文字输出为有限词表精确判读，不是开放语义评分器",
+    "F0 阶段探针与 N175 R16 是已见题，只描述保持，不构成未见能力证据",
+    "can_promote 恒为 false：本包不替代整模型验收，也不给默认入口/稳定性/成长/自主性晋升"
+  ],
+  "sealed_reads": 1,
+  "spec": "plans/reference/SPEC-N1-176_F0_F1_pilot_20261026.md",
+  "thresholds": {
+    "f0_min_terminated": 0.95,
+    "f0_min_valid_utf8": 0.99,
+    "f1_min_irrelevant": 0.95,
+    "f1_min_primary": 0.9,
+    "f1_min_related": 0.9,
+    "r16_max_drop_pp": 3.0,
+    "source": "SPEC verbatim",
+    "stage_max_drop_pp": 3.0
+  }
+}
