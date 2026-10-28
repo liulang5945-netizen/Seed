@@ -141,6 +141,10 @@ def test_architecture_attribution_reports_every_spec_bullet(instrument, tmp_path
         assert key in attribution, key
     assert attribution["real_content_use"]["related_flip_equals_primary_in_every_arm"] is True
     assert attribution["conclusion"] == "structural gap repaired, behavioural gain not demonstrated"
+    #: SPEC 要"唯一后继"；本件只出提案，路线决定权不在仪器手里。
+    proposal = report["proposed_next_direction"]
+    assert proposal["status"].startswith("proposal only")
+    assert "before any F2 preparation" in proposal["direction"]
 
 
 def test_denominator_drift_fails_closed(instrument, tmp_path: Path) -> None:

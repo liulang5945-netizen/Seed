@@ -304,6 +304,18 @@ def main() -> int:
         },
         "per_arm": per_arm,
         "architecture_attribution": architecture_attribution,
+        "proposed_next_direction": {
+            "status": "proposal only; the route decision belongs to the owner",
+            "direction": "fix the T1 content-following / credit path before any F2 preparation",
+            "why_not_f2": "SPEC ties F2 readiness to mechanism gain; F1 primary/related/irrelevant gates are all unmet here",
+            "evidence": {
+                "flip_insensitivity": "related-fact-flip accuracy equals primary accuracy in every arm ⇒ the flip does not move the answer",
+                "workspace_is_consumed": "cutting the workspace drops v4 primary accuracy by the reported margin ⇒ the consumer path is live but not sufficient",
+                "ordering_effect_confounded": "v4>v3>flat is visible but capacity/dose is not ablated in this pack",
+                "retention": "9.33 pp drop on the 16 seen N175 items counts as local forgetting",
+            },
+            "do_not_claim": "no default-entry replacement, no stable-language or growth or autonomy promotion from this pack",
+        },
         "scope_limits": [
             "文字输出为有限词表精确判读，不是开放语义评分器",
             "F0 阶段探针与 N175 R16 是已见题，只描述保持，不构成未见能力证据",
