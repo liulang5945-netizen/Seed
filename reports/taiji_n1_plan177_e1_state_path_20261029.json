@@ -1,0 +1,224 @@
+{
+  "schema": "taiji-n177-e1-state-path-probe-v1",
+  "status": "completed",
+  "checkpoint": "data\\checkpoints\\n1_plan177_6_t1_pilot_20261027\\correct__seed_0\\update_002560.pt",
+  "trace_cache": "data\\checkpoints\\n1_plan177_5a_preflight_20261027\\train_trace_cache_v1.pt",
+  "family": {
+    "family_id": "e1-family:97780f552c7f6a399c6f",
+    "entity": "笔",
+    "value": "红色",
+    "old_value": "蓝色"
+  },
+  "episode_id": "n177-e1:97780f552c7f:train:0",
+  "turns": [
+    {
+      "turn_index": 0,
+      "text": "笔的颜色是蓝色。",
+      "parse": {
+        "act": "assertion",
+        "status": "ambiguous",
+        "confidence": 0.8762843608856201,
+        "ambiguity": 0.12371563911437988,
+        "spans": [
+          {
+            "role": "value",
+            "text": "蓝色",
+            "start_byte": 15,
+            "end_byte": 21,
+            "confidence": 0.9628154635429382
+          },
+          {
+            "role": "attribute",
+            "text": "颜色",
+            "start_byte": 6,
+            "end_byte": 12,
+            "confidence": 0.9987640976905823
+          }
+        ]
+      },
+      "committed": true,
+      "world_objects": 0,
+      "world_events": 0
+    },
+    {
+      "turn_index": 1,
+      "text": "今天先聊到这里。",
+      "parse": {
+        "act": "ambiguous",
+        "status": "ambiguous",
+        "confidence": 0.0,
+        "ambiguity": 1.0,
+        "spans": []
+      },
+      "committed": true,
+      "world_objects": 0,
+      "world_events": 0
+    },
+    {
+      "turn_index": 2,
+      "text": "笔的颜色是什么？",
+      "parse": {
+        "act": "query",
+        "status": "ambiguous",
+        "confidence": 0.9959349632263184,
+        "ambiguity": 0.004065036773681641,
+        "spans": [
+          {
+            "role": "attribute",
+            "text": "颜色",
+            "start_byte": 6,
+            "end_byte": 12,
+            "confidence": 0.9959349632263184
+          }
+        ]
+      },
+      "committed": true,
+      "world_objects": 0,
+      "world_events": 0
+    },
+    {
+      "turn_index": 3,
+      "text": "更正：笔的颜色改为红色。",
+      "parse": {
+        "act": "correction",
+        "status": "ambiguous",
+        "confidence": 0.9765558242797852,
+        "ambiguity": 0.023444175720214844,
+        "spans": [
+          {
+            "role": "value",
+            "text": "红色",
+            "start_byte": 27,
+            "end_byte": 33,
+            "confidence": 0.9765558242797852
+          },
+          {
+            "role": "attribute",
+            "text": "颜色",
+            "start_byte": 15,
+            "end_byte": 21,
+            "confidence": 0.9986763596534729
+          }
+        ]
+      },
+      "committed": true,
+      "world_objects": 0,
+      "world_events": 0
+    },
+    {
+      "turn_index": 4,
+      "text": "笔的颜色是什么？",
+      "parse": {
+        "act": "query",
+        "status": "ambiguous",
+        "confidence": 0.9946429133415222,
+        "ambiguity": 0.005357086658477783,
+        "spans": [
+          {
+            "role": "attribute",
+            "text": "颜色",
+            "start_byte": 6,
+            "end_byte": 12,
+            "confidence": 0.9946429133415222
+          }
+        ]
+      },
+      "committed": true,
+      "world_objects": 0,
+      "world_events": 0
+    },
+    {
+      "turn_index": 5,
+      "text": "另一个事实：眼镜的颜色是紫色。",
+      "parse": {
+        "act": "assertion",
+        "status": "resolved",
+        "confidence": 0.946831464767456,
+        "ambiguity": 0.053168535232543945,
+        "spans": [
+          {
+            "role": "entity",
+            "text": "镜",
+            "start_byte": 21,
+            "end_byte": 24,
+            "confidence": 0.9924564361572266
+          },
+          {
+            "role": "value",
+            "text": "紫色",
+            "start_byte": 36,
+            "end_byte": 42,
+            "confidence": 0.946831464767456
+          },
+          {
+            "role": "attribute",
+            "text": "颜色",
+            "start_byte": 27,
+            "end_byte": 33,
+            "confidence": 0.9960343241691589
+          }
+        ]
+      },
+      "committed": true,
+      "world_objects": 1,
+      "world_events": 1
+    },
+    {
+      "turn_index": 6,
+      "text": "笔之前是什么颜色？",
+      "parse": {
+        "act": "query",
+        "status": "ambiguous",
+        "confidence": 0.7227664589881897,
+        "ambiguity": 0.2772335410118103,
+        "spans": [
+          {
+            "role": "attribute",
+            "text": "颜色",
+            "start_byte": 18,
+            "end_byte": 24,
+            "confidence": 0.9969995617866516
+          }
+        ]
+      },
+      "committed": true,
+      "world_objects": 1,
+      "world_events": 1
+    },
+    {
+      "turn_index": 7,
+      "text": "笔的颜色不确定。",
+      "parse": {
+        "act": "ambiguous",
+        "status": "ambiguous",
+        "confidence": 0.942965567111969,
+        "ambiguity": 0.057034432888031006,
+        "spans": [
+          {
+            "role": "negation",
+            "text": "不",
+            "start_byte": 12,
+            "end_byte": 15,
+            "confidence": 0.942965567111969
+          },
+          {
+            "role": "attribute",
+            "text": "颜色",
+            "start_byte": 6,
+            "end_byte": 12,
+            "confidence": 0.9958711266517639
+          }
+        ]
+      },
+      "committed": true,
+      "world_objects": 1,
+      "world_events": 1
+    }
+  ],
+  "model_calls": 8,
+  "optimizer_updates": 0,
+  "sealed_text_read": 0,
+  "can_promote": false,
+  "cpu_seconds": 14.0,
+  "wall_seconds": 2.0160000000614673
+}

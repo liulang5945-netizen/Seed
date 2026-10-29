@@ -8,7 +8,7 @@
 
 ## 当前唯一下一步：E0补齐证据，E2实现E1冻结的状态消费合同
 
-A的15臂训练与C数值评价已完成，D已发布。现采用[E设计决策](../../reference/PLAN-N1-177_E_state_consumption_and_credit_decision_20261029.md)：先建立能判别状态实际消费的新端点/内容接口，再用同前向stop-gradient控制比较任务信用。E1合同已冻结，见[状态依赖查询与内容消费合同](../../reference/SPEC-N1-177_E1_state_consumption_contract_20261029.md)；E2a课程/manifest已生成，sealed未物化；E0补证与E2b实现可并行，尚未启动新训练。
+A的15臂训练与C数值评价已完成，D已发布。现采用[E设计决策](../../reference/PLAN-N1-177_E_state_consumption_and_credit_decision_20261029.md)：先建立能判别状态实际消费的新端点/内容接口，再用同前向stop-gradient控制比较任务信用。E1合同已冻结，见[状态依赖查询与内容消费合同](../../reference/SPEC-N1-177_E1_state_consumption_contract_20261029.md)；E2a课程/manifest已生成，sealed未物化；E2b-1特征存储/选择器已实现。producer探针显示：已知实体“钥匙”可解析实体/属性/值并写入世界状态，新实体“笔”抽不到实体、世界对象为0；E2b-2先用已知实体fixture，完整8实体留F训练。E0补证与E2b-2可并行，尚未启动新训练。
 
 | 阶段 | 复核状态 | 交付/边界 | 转交 |
 |---|---|---|---|
@@ -39,7 +39,8 @@ A的15臂训练与C数值评价已完成，D已发布。现采用[E设计决策]
 | E0 | B真实路径/有效接收者与隔离证据；15臂终点独立恢复回执 | train/合成固定输入只读复现，不重训/重评 |
 | E1 | [合同已冻结](../../reference/SPEC-N1-177_E1_state_consumption_contract_20261029.md)：同query独立事实/更正/干扰，持久内容特征与查询选择 | 答案因果与state正确性分账；E2按此实现，不再改题面口径 |
 | E2a | [课程/manifest已生成](../../../reports/taiji_n1_plan177_e1_course_20261029.json)：32/16/16 family、train 128/fixture 8、sealed未物化 | 结构审计通过；下一步E2b消费接口 |
-| E2b/E3 | 独立版本任务信用on/off、opt-in实现及零步恢复 | 同父前向等价、正确接收者、禁写组和完整恢复通过 |
+| E2b-1 | 特征存储/查询选择器已实现；[已知实体探针](../../../reports/taiji_n1_plan177_e1_state_path_known_entity_20261029.json)通过，[新实体探针](../../../reports/taiji_n1_plan177_e1_state_path_20261029.json)暴露producer实体抽取缺口 | 8项契约测试通过；下一步E2b-2解码器读出 |
+| E2b-2/E3 | 解码器消费、任务信用on/off、零步恢复 | 相关/无关/切断/救援可定向裁决；同父前向等价、正确接收者、禁写组和完整恢复通过 |
 
 原D关于“SPEC要求新初始化确认”、模块贡献比例及250k CPU报价不作为执行依据，勘误及三种方案的取舍见E决策。仅接梯度不能代替状态消费证据；新候选的具体输入、恢复和资源按E/F落地。
 

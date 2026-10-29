@@ -78,6 +78,8 @@ query内容选择及语言解码须由Taiji自有的可学习消费者完成；�
 
 E0可与E2实现并行，但旧资产恢复及新候选的必要恢复门未闭合前，不能带缺项进入F正式训练。若完成补证需超出已有资源/读取权限，先登记具体输入、一次成本及有限出口，不自动重开旧实验。
 
+2026-10-29 E2b-1 起点探针：N177.6 correct/seed0 终点producer在已知实体“钥匙”上正确抽出entity/attribute/value并写入world object/event；在新实体“笔”上只抽到attribute/value、entity缺失，world objects=0。该事实只限定零步fixture与F训练起点，不改E1课程或判据：E2b-2先用已知实体/已知颜色fixture，完整8实体词表留F训练；新实体实体抽取缺口单列为producer责任，不冒充状态消费失败。证据见[已知实体](../../reports/taiji_n1_plan177_e1_state_path_known_entity_20261029.json)与[新实体](../../reports/taiji_n1_plan177_e1_state_path_20261029.json)。
+
 ## 6. 验收与有限出口
 
 | 判据 | E阶段要求 | F阶段才裁决的内容 |

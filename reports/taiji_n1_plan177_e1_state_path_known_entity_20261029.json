@@ -1,0 +1,259 @@
+{
+  "schema": "taiji-n177-e1-state-path-probe-v1",
+  "status": "completed",
+  "checkpoint": "data\\checkpoints\\n1_plan177_6_t1_pilot_20261027\\correct__seed_0\\update_002560.pt",
+  "trace_cache": "data\\checkpoints\\n1_plan177_5a_preflight_20261027\\train_trace_cache_v1.pt",
+  "family": {
+    "family_id": "e1-family:cb72452639f903fe6780",
+    "entity": "钥匙",
+    "value": "蓝色",
+    "old_value": "黄色"
+  },
+  "episode_id": "n177-e1:cb72452639f9:train:0",
+  "turns": [
+    {
+      "turn_index": 0,
+      "text": "钥匙的颜色是黄色。",
+      "parse": {
+        "act": "assertion",
+        "status": "resolved",
+        "confidence": 0.992749035358429,
+        "ambiguity": 0.007250964641571045,
+        "spans": [
+          {
+            "role": "attribute",
+            "text": "颜色",
+            "start_byte": 9,
+            "end_byte": 15,
+            "confidence": 0.9976632595062256
+          },
+          {
+            "role": "entity",
+            "text": "钥匙",
+            "start_byte": 0,
+            "end_byte": 6,
+            "confidence": 0.9976306557655334
+          },
+          {
+            "role": "value",
+            "text": "黄色",
+            "start_byte": 18,
+            "end_byte": 24,
+            "confidence": 0.9963095784187317
+          }
+        ]
+      },
+      "committed": true,
+      "world_objects": 1,
+      "world_events": 1
+    },
+    {
+      "turn_index": 1,
+      "text": "今天先聊到这里。",
+      "parse": {
+        "act": "ambiguous",
+        "status": "ambiguous",
+        "confidence": 0.0,
+        "ambiguity": 1.0,
+        "spans": []
+      },
+      "committed": true,
+      "world_objects": 1,
+      "world_events": 1
+    },
+    {
+      "turn_index": 2,
+      "text": "钥匙的颜色是什么？",
+      "parse": {
+        "act": "query",
+        "status": "resolved",
+        "confidence": 0.9963698983192444,
+        "ambiguity": 0.0036301016807556152,
+        "spans": [
+          {
+            "role": "attribute",
+            "text": "颜色",
+            "start_byte": 9,
+            "end_byte": 15,
+            "confidence": 0.9963698983192444
+          },
+          {
+            "role": "entity",
+            "text": "钥匙",
+            "start_byte": 0,
+            "end_byte": 6,
+            "confidence": 0.9982917904853821
+          }
+        ]
+      },
+      "committed": true,
+      "world_objects": 1,
+      "world_events": 1
+    },
+    {
+      "turn_index": 3,
+      "text": "更正：钥匙的颜色改为蓝色。",
+      "parse": {
+        "act": "correction",
+        "status": "resolved",
+        "confidence": 0.956719160079956,
+        "ambiguity": 0.043280839920043945,
+        "spans": [
+          {
+            "role": "attribute",
+            "text": "颜色",
+            "start_byte": 18,
+            "end_byte": 24,
+            "confidence": 0.9974157214164734
+          },
+          {
+            "role": "entity",
+            "text": "钥匙",
+            "start_byte": 9,
+            "end_byte": 15,
+            "confidence": 0.9973721504211426
+          },
+          {
+            "role": "value",
+            "text": "蓝色",
+            "start_byte": 30,
+            "end_byte": 36,
+            "confidence": 0.956719160079956
+          }
+        ]
+      },
+      "committed": true,
+      "world_objects": 1,
+      "world_events": 2
+    },
+    {
+      "turn_index": 4,
+      "text": "钥匙的颜色是什么？",
+      "parse": {
+        "act": "query",
+        "status": "resolved",
+        "confidence": 0.9967660903930664,
+        "ambiguity": 0.0032339096069335938,
+        "spans": [
+          {
+            "role": "attribute",
+            "text": "颜色",
+            "start_byte": 9,
+            "end_byte": 15,
+            "confidence": 0.9967660903930664
+          },
+          {
+            "role": "entity",
+            "text": "钥匙",
+            "start_byte": 0,
+            "end_byte": 6,
+            "confidence": 0.9983794093132019
+          }
+        ]
+      },
+      "committed": true,
+      "world_objects": 1,
+      "world_events": 2
+    },
+    {
+      "turn_index": 5,
+      "text": "另一个事实：杯子的颜色是黑色。",
+      "parse": {
+        "act": "assertion",
+        "status": "resolved",
+        "confidence": 0.9870069026947021,
+        "ambiguity": 0.012993097305297852,
+        "spans": [
+          {
+            "role": "attribute",
+            "text": "颜色",
+            "start_byte": 27,
+            "end_byte": 33,
+            "confidence": 0.9954149723052979
+          },
+          {
+            "role": "entity",
+            "text": "杯子",
+            "start_byte": 18,
+            "end_byte": 24,
+            "confidence": 0.9930604100227356
+          },
+          {
+            "role": "value",
+            "text": "黑色",
+            "start_byte": 36,
+            "end_byte": 42,
+            "confidence": 0.9870069026947021
+          }
+        ]
+      },
+      "committed": true,
+      "world_objects": 2,
+      "world_events": 3
+    },
+    {
+      "turn_index": 6,
+      "text": "钥匙之前是什么颜色？",
+      "parse": {
+        "act": "query",
+        "status": "ambiguous",
+        "confidence": 0.753379762172699,
+        "ambiguity": 0.24662023782730103,
+        "spans": [
+          {
+            "role": "attribute",
+            "text": "颜色",
+            "start_byte": 21,
+            "end_byte": 27,
+            "confidence": 0.9975908398628235
+          }
+        ]
+      },
+      "committed": true,
+      "world_objects": 2,
+      "world_events": 3
+    },
+    {
+      "turn_index": 7,
+      "text": "钥匙的颜色不确定。",
+      "parse": {
+        "act": "ambiguous",
+        "status": "ambiguous",
+        "confidence": 0.9078381657600403,
+        "ambiguity": 0.09216183423995972,
+        "spans": [
+          {
+            "role": "attribute",
+            "text": "颜色",
+            "start_byte": 9,
+            "end_byte": 15,
+            "confidence": 0.9973447918891907
+          },
+          {
+            "role": "entity",
+            "text": "钥匙",
+            "start_byte": 0,
+            "end_byte": 6,
+            "confidence": 0.9888895153999329
+          },
+          {
+            "role": "negation",
+            "text": "不",
+            "start_byte": 15,
+            "end_byte": 18,
+            "confidence": 0.9078381657600403
+          }
+        ]
+      },
+      "committed": true,
+      "world_objects": 2,
+      "world_events": 3
+    }
+  ],
+  "model_calls": 8,
+  "optimizer_updates": 0,
+  "sealed_text_read": 0,
+  "can_promote": false,
+  "cpu_seconds": 18.3125,
+  "wall_seconds": 2.530999999959022
+}
