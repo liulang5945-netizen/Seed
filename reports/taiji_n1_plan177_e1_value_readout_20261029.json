@@ -1,0 +1,152 @@
+{
+  "schema": "taiji-n177-e1-value-readout-v1",
+  "status": "feature_not_separable",
+  "checkpoint": "data\\checkpoints\\n1_plan177_6_t1_pilot_20261027\\correct__seed_0\\update_002560.pt",
+  "trace_cache": "data\\checkpoints\\n1_plan177_5a_preflight_20261027\\train_trace_cache_v1.pt",
+  "entity": "钥匙",
+  "prototype_rows": [
+    {
+      "value": "红色",
+      "selected_value": "红色",
+      "correct": true,
+      "logits": [
+        0.9977737665176392,
+        0.00031806156039237976,
+        0.00031806156039237976,
+        0.00031806156039237976,
+        0.00031806156039237976,
+        0.00031806156039237976,
+        0.00031806156039237976,
+        0.00031806156039237976
+      ]
+    },
+    {
+      "value": "蓝色",
+      "selected_value": "蓝色",
+      "correct": true,
+      "logits": [
+        0.000317990779876709,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073
+      ]
+    },
+    {
+      "value": "绿色",
+      "selected_value": "蓝色",
+      "correct": false,
+      "logits": [
+        0.000317990779876709,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073
+      ]
+    },
+    {
+      "value": "黄色",
+      "selected_value": "蓝色",
+      "correct": false,
+      "logits": [
+        0.000317990779876709,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073
+      ]
+    },
+    {
+      "value": "黑色",
+      "selected_value": "蓝色",
+      "correct": false,
+      "logits": [
+        0.000317990779876709,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073
+      ]
+    },
+    {
+      "value": "白色",
+      "selected_value": "蓝色",
+      "correct": false,
+      "logits": [
+        0.000317990779876709,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073
+      ]
+    },
+    {
+      "value": "紫色",
+      "selected_value": "蓝色",
+      "correct": false,
+      "logits": [
+        0.000317990779876709,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073
+      ]
+    },
+    {
+      "value": "橙色",
+      "selected_value": "蓝色",
+      "correct": false,
+      "logits": [
+        0.000317990779876709,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073,
+        0.14281179010868073
+      ]
+    }
+  ],
+  "prototype_accuracy": 0.25,
+  "feature_rank": 2,
+  "feature_count": 8,
+  "feature_dim": 48,
+  "hidden_dim": 256,
+  "min_cosine": 0.9702401161193848,
+  "max_cosine": 1.0,
+  "prototype_sha256": "4bc881170827e433f2a3be0927f5e71faad55e90bbc541946a4d65f16c4fb378",
+  "controls": "not_run_because_feature_not_separable",
+  "architecture_verdict": "producer continuous feature collapses eight colour identities; the readout cannot separate the value, so the decoder was not exercised",
+  "task_scope": "closed-world known-entity colour value readout",
+  "suspected_mechanism": "mean-pooled slot feature is dominated by entity/attribute and loses the value token",
+  "information_path": "fact bytes -> producer mean slot feature -> value readout",
+  "credit_path": "no optimizer update; closed-form readout not fitted for a claim",
+  "competing_causes": "mean pooling, producer feature capacity, or a missing per-slot/value feature path",
+  "next_action": "replace the mean-pooled feature with a value-preserving per-slot or value-token feature, then rerun E2b-2 before any decoder or F training",
+  "optimizer_updates": 0,
+  "checkpoint_loads": 1,
+  "sealed_text_read": 0,
+  "model_calls": 16,
+  "can_promote": false,
+  "cpu_seconds": 1279.078125,
+  "wall_seconds": 246.51600000006147
+}

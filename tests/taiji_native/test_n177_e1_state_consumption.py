@@ -5,13 +5,16 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 import pytest
+import torch
 
 from taiji.joint_state_consumption import (
     PersistentContentFeatureV1,
     PersistentContentStoreV1,
     QueryConditionedSelectorV1,
+    ValueTokenFeatureEncoderV1,
     feature_from_parse,
 )
+from taiji.joint_state_consumption_course import E1_COLORS
 
 _SOURCE = "a" * 64
 
@@ -144,6 +147,22 @@ def test_feature_from_parse_requires_all_three_roles() -> None:
         )
         is None
     )
+
+
+def test_value_token_feature_encoder_separates_colours() -> None:
+    encoder = ValueTokenFeatureEncoderV1()
+    rows = [encoder.encode(colour) for colour in E1_COLORS]
+    assert len({tuple(row.tolist()) for row in rows}) == len(E1_COLORS)
+    loss = torch.stack(rows).sum()
+    loss.backward()
+    assert encoder.embedding.weight.grad is not None
+    assert float(encoder.embedding.weight.grad.abs().sum()) > 0
+
+
+def test_value_token_feature_encoder_rejects_unknown_value() -> None:
+    encoder = ValueTokenFeatureEncoderV1()
+    with pytest.raises(ValueError):
+        encoder.encode("灰色")
 
 
 def test_store_round_trip() -> None:

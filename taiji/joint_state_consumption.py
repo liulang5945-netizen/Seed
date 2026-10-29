@@ -322,6 +322,35 @@ class ContentSelectionV1:
         }
 
 
+class ValueTokenFeatureEncoderV1(nn.Module):
+    """Trainable value-token feature; one-hot init is an interface fixture.
+
+    The producer supplies the discrete value span. This encoder turns that
+    identity into a continuous vector so the decoder path can be tested before
+    the producer's raw-byte feature is made value-preserving in F.
+    """
+
+    def __init__(self, *, dim: int = 64) -> None:
+        super().__init__()
+        if dim < len(E1_COLORS):
+            raise ValueError("value-token feature width must cover every colour")
+        self.values = E1_COLORS
+        self.value_to_index = {value: index for index, value in enumerate(self.values)}
+        self.embedding = nn.Embedding(len(self.values), dim)
+        with torch.no_grad():
+            self.embedding.weight.zero_()
+            for index in range(len(self.values)):
+                self.embedding.weight[index, index] = 1.0
+
+    def encode(self, value: str) -> torch.Tensor:
+        if value not in self.value_to_index:
+            raise ValueError("value-token feature value is outside the frozen colour set")
+        return self.embedding(torch.tensor(self.value_to_index[value]))
+
+    def forward(self, value: str) -> torch.Tensor:
+        return self.encode(value)
+
+
 class QueryConditionedSelectorV1(nn.Module):
     """Trainable entity/attribute scorer; one-hot init gives exact-match zero-step."""
 
@@ -414,6 +443,7 @@ def feature_from_parse(
     revision: int,
     valid_from: int | None = None,
     confidence: float | None = None,
+    continuous: Sequence[float] | None = None,
 ) -> PersistentContentFeatureV1 | None:
     """Build a feature only when the producer produced exactly one role span each."""
 
@@ -425,7 +455,10 @@ def feature_from_parse(
             by_role[role].append(str(getattr(span, "text", "")))
     if any(len(by_role[role]) != 1 for role in by_role):
         return None
-    continuous = tuple(float(item) for item in getattr(parse, "semantic_features", ()))
+    if continuous is None:
+        continuous = tuple(float(item) for item in getattr(parse, "semantic_features", ()))
+    else:
+        continuous = tuple(float(item) for item in continuous)
     if not continuous:
         return None
     return PersistentContentFeatureV1.create(

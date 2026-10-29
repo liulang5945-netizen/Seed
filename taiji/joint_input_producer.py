@@ -767,6 +767,27 @@ class JointInputProducerV1(nn.Module):
         slot_logits, act_logits, encoded = self(trace)
         return self._parse_logits(joint_state, trace, slot_logits, act_logits, encoded)
 
+    @torch.no_grad()
+    def predict_with_role_features(
+        self,
+        joint_state: JointTaskStateV1,
+        trace: InputTrace,
+    ) -> tuple[JointSemanticParseV1, dict[str, tuple[float, ...]]]:
+        """Preserve per-role encoder features instead of one mean over all slots."""
+
+        self._validate_trace(joint_state, trace)
+        slot_logits, act_logits, encoded = self(trace)
+        parse = self._parse_logits(joint_state, trace, slot_logits, act_logits, encoded)
+        roles: dict[str, tuple[float, ...]] = {}
+        for role in ("entity", "attribute", "value"):
+            spans = tuple(item for item in parse.spans if item.role == role)
+            if len(spans) != 1:
+                continue
+            span = spans[0]
+            vector = encoded[span.start_byte : span.end_byte].mean(dim=0)
+            roles[role] = tuple(float(item) for item in vector.detach().cpu().tolist())
+        return parse, roles
+
     def commit_to_joint_state(
         self,
         joint_state: JointTaskStateV1,
