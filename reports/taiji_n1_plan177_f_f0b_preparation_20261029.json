@@ -1,0 +1,141 @@
+{
+  "batch_caliber_conflict": {
+    "f0a_batch": 8,
+    "f1_contract_batch": 4,
+    "recommendation": "run F0b at batch 4 and record that F0a's 200-step batch-8 run is not interchangeable",
+    "why_it_matters": "episode-exposure and per-update cost both scale with batch; F0b must run at the F1 batch (4) or its price cannot be transplanted"
+  },
+  "budget": {
+    "envelope": {
+      "process_cpu_seconds": 2000,
+      "wall_seconds": 1500
+    },
+    "f0a_reference_not_to_be_reused": {
+      "cpu_per_update": 0.5913,
+      "cpu_seconds": 118.25,
+      "model_calls": 0,
+      "optimizer_updates": 200,
+      "why_not_reusable": "F0a ran on cached features with model_calls=0, so it never paid the full producer/V4/decoder cost; the 0.59 cpu s/update is a component floor, not the candidate cost"
+    },
+    "per_run_cpu_allowance": 166.67,
+    "per_run_wall_allowance": 125.0,
+    "sizing_rule": {
+      "hard_stop": "on envelope exhaustion write the summary and stop; no top-up, no extra epoch",
+      "risk": "at N177.6 measured 24.7-45.8 cpu s/update for the joint chain, 166.7 cpu s/run allows only ~3-6 updates after load+restore overhead",
+      "rule": "run 1 measures per-update cost over a fixed 2-update window; the remaining 11 runs are sized so their projected cost stays under the per-run allowance"
+    }
+  },
+  "date": "2026-10-29",
+  "exclusivity": {
+    "lock": "reuse the run_root.lock pattern (O_EXCL + live-owner check + stale lock kept for forensics)",
+    "own_run_root": "data/checkpoints/n1_plan177_f_f0b_20261029",
+    "resource_gates": "CPU double-sample <=85% and available memory >=8 GiB before each run, re-measured not inherited",
+    "serial": "one run at a time; no training, no evaluation and no other calibration concurrently"
+  },
+  "execution_owner": "user (03 user-run checklist: F0b执行)",
+  "exposure_caliber": {
+    "conflict": "SPEC §4 writes '1,280 updates（5 个 128-episode epoch，batch 4）'; 128 episodes at batch 4 is 32 updates/epoch, so 5 epochs is 160 updates, while 1,280 updates is 40 epochs",
+    "option_a": {
+      "episode_exposures": 5120,
+      "epochs": 40,
+      "updates": 1280
+    },
+    "option_b": {
+      "episode_exposures": 640,
+      "epochs": 5,
+      "updates": 160
+    },
+    "owner_decision_required": true,
+    "ratio": "A is 8x B in both updates and episode-exposures",
+    "recommendation": "A (1,280): it is the literal number the frozen text commits to, and 160 updates sits near F0a's 200-step scale which already saturated copy_only; B should only be chosen if the owner re-prices F1 downward"
+  },
+  "format": "taiji-n177-f-f0b-preparation-v1",
+  "must_not": [
+    "read holdout or query",
+    "tune any threshold from partial results",
+    "add epochs, seeds or topics on failure",
+    "treat F0a's 118.25 cpu s as the full-candidate estimate",
+    "let the 12 runs overlap"
+  ],
+  "open_owner_decisions": [
+    "exposure caliber A or B",
+    "confirm the 12-run list (4 arms x 3 seeds) as the F0b surface",
+    "accept the measured-first sizing rule, or grant a larger envelope so each run can do more updates"
+  ],
+  "per_run_protocol": [
+    "zero checkpoint saved before any update, then fresh-process restore of that zero",
+    "warmup window not counted; measured window starts after warmup",
+    "durable checkpoint at every 256 updates, at the course boundary, and at the endpoint",
+    "endpoint fresh-process restore, then replay one fixed input and require identical parse/feature/answer",
+    "record process_cpu_seconds and wall_seconds separately; never pool them"
+  ],
+  "run_count": 12,
+  "runs": [
+    {
+      "arm": "main_credit_on",
+      "run_root": "data/checkpoints/n1_plan177_f_f0b_20261029/main_credit_on__seed_0",
+      "seed": 0
+    },
+    {
+      "arm": "main_credit_stop",
+      "run_root": "data/checkpoints/n1_plan177_f_f0b_20261029/main_credit_stop__seed_0",
+      "seed": 0
+    },
+    {
+      "arm": "copy_only",
+      "run_root": "data/checkpoints/n1_plan177_f_f0b_20261029/copy_only__seed_0",
+      "seed": 0
+    },
+    {
+      "arm": "no_state",
+      "run_root": "data/checkpoints/n1_plan177_f_f0b_20261029/no_state__seed_0",
+      "seed": 0
+    },
+    {
+      "arm": "main_credit_on",
+      "run_root": "data/checkpoints/n1_plan177_f_f0b_20261029/main_credit_on__seed_1",
+      "seed": 1
+    },
+    {
+      "arm": "main_credit_stop",
+      "run_root": "data/checkpoints/n1_plan177_f_f0b_20261029/main_credit_stop__seed_1",
+      "seed": 1
+    },
+    {
+      "arm": "copy_only",
+      "run_root": "data/checkpoints/n1_plan177_f_f0b_20261029/copy_only__seed_1",
+      "seed": 1
+    },
+    {
+      "arm": "no_state",
+      "run_root": "data/checkpoints/n1_plan177_f_f0b_20261029/no_state__seed_1",
+      "seed": 1
+    },
+    {
+      "arm": "main_credit_on",
+      "run_root": "data/checkpoints/n1_plan177_f_f0b_20261029/main_credit_on__seed_2",
+      "seed": 2
+    },
+    {
+      "arm": "main_credit_stop",
+      "run_root": "data/checkpoints/n1_plan177_f_f0b_20261029/main_credit_stop__seed_2",
+      "seed": 2
+    },
+    {
+      "arm": "copy_only",
+      "run_root": "data/checkpoints/n1_plan177_f_f0b_20261029/copy_only__seed_2",
+      "seed": 2
+    },
+    {
+      "arm": "no_state",
+      "run_root": "data/checkpoints/n1_plan177_f_f0b_20261029/no_state__seed_2",
+      "seed": 2
+    }
+  ],
+  "sources": [
+    "plans/reference/SPEC-N1-177_F_value_encoder_20261029.md (§4 四臂与信用控制; §4 曝光句)",
+    "plans/reference/PROJECT_CONSOLIDATION_20261029.md (§4 合同项 1-3)",
+    "plans/active/roadmap/03_CURRENT_EXECUTION.md (F0b 行与限额)"
+  ],
+  "status": "prepared_not_executed"
+}
