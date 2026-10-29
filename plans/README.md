@@ -4,10 +4,12 @@
 
 ## 当前路线与文档职责
 
-2026-10-29阶段收束：原N177.6数值结果继承，E1/E2有限消费实现、F0a值编码器标定及E3推理恢复子门已交付；E0、训练态E3余项与F0b仍未闭合，F1未启动。当前先安排E0补证，资源独占的F0b在后；曝光/判据/预算按[收束记录](reference/PROJECT_CONSOLIDATION_20261029.md)澄清。[03](active/roadmap/03_CURRENT_EXECUTION.md)只维护事实和当前待办，[10](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)维护依赖/验收。本阶段助手修订方案，代码修复、清理、恢复、标定和训练由用户执行。
+2026-10-29后继规划补齐：当前F局部验证之后，按结果分流，再设计T2情景查询、任务所需T3自然目标/有限行动、同bundle自然连续任务及跨会话持续适应，最后按证据进入自主发展/扩域。宏观层次由01维护，N1–N6机制编号由09维护，F后合同/验收卡由10维护；它们不等同验收等级或已完成状态。当前F0b/范围/执行安排仍以03实际登记为准，本轮仅修方案，不改运行或冻结件。
 
 | 要查什么 | 主要入口 |
 |---|---|
+| N宏观发展层次与编号分工 | [01阶段地图](active/roadmap/01_SCOPE_AND_PHASES.md#0-n主线的现行发展阶段) |
+| F结案分流及F后任务/能力接力 | [10后继工作包](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md#38-f结案后的分流与扩面准入) |
 | 当前队首、运行/预算事实及停止/恢复 | [03当前执行](active/roadmap/03_CURRENT_EXECUTION.md) |
 | 详细分阶段工作包、依赖、产物、证据、失败回流和决策 | [10持续能力执行计划](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md) |
 | 前序语言负结果的原因、初始化与评价边界 | [原因复盘](reference/PLAN-N1-175_prior_results_cause_review_20261026.md) |
