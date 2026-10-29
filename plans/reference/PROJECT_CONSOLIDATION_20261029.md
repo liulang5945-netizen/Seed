@@ -127,3 +127,18 @@ owner 同日签了 F1：候选只训 encoder/bias（V4 冻结）、预算上限 
 - 单实例：run root 的 `run_root.lock` 存在即拒起；若进程被 SIGKILL 留下锁，先确认没有活进程再手工删除（不要盲删）。
 - 训练结束后才做：`reports/taiji_n1_plan177_f_f1_20261029.json` 汇总 + 一次 holdout 评分（评分器另件，未写）；期间不读 query/holdout、不调阈值、不加轮次。
 
+### 11.2 F1 评分器：设计要点与未完成原因（下一会话从这里接）
+
+我起了一版 [评分器] 草稿并**当场删掉**了：它把 `state_exact` 写成"解析出的值出现在答案里"、把无关交换实现成"换成另一个实体的值"，这两条与 F 合同 §5 的定义不是同一件事，跑出来的数会看起来成立但量错了对象。先用文字把口径钉住，再写仪器：
+
+- `answer_exact`：冻结 V4 用 F1 合同 §2.5 的 `logit_bias` 逐步生成，规范化后与 `turn.answer_target.target_bytes` 比；按 episode 内轮次评分，再 family macro。
+- `value_exact`：生成文本里的颜色 token 与"当轮应有值"比；与整句分开记。
+- `state_exact`：**不是**看答案里有没有这个词，而是看这次干预下"被选中的 feature 的 value"是否等于课程真值——它测的是 store/selector 把哪条事实交给了解码器。该值必须由 `PersistentContentStoreV1.current(entity, attribute)` 给出，不能从 parse 里顺手续一个。
+- `relevant_swap_delta`：把**被查询实体**的当前值换成另一个合法值后，答案是否**变成交换值**（不是"是否变化"）。
+- `irrelevant_swap_keep`：只改**另一个实体**的当前值，被查询实体的答案保持不变。
+- `cut_drop` / `rescue_gain`：切断选中 feature / 恢复后答案的下降与回来。
+- `copy_only_match` / `no_state_gap` / `credit_gap`：三个对照臂的差值，按同一批 episode 配对。
+- `old_retention`：N176 F0 的 16 题探针这次没接进来，报告里要写 `not_run`，不许写成 0 或"通过"。
+
+另：holdout 的物化入口是 `build_episode(family, variant)`（`build_sealed_split` 对 query/holdout 是硬拒绝），评分器必须自带"写一次"的 attempt 闸；`E1 request` 的 query 面不读。
+
