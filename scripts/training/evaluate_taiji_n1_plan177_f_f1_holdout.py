@@ -396,6 +396,12 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="N177 F1 holdout 一次性评分")
     parser.add_argument("--report", type=Path, default=REPORT)
     parser.add_argument(
+        "--old-retention",
+        type=Path,
+        default=ROOT / "reports/taiji_n1_plan177_f1_old_retention_20261029.json",
+        help="旧保持探针的报告；缺省路径不存在时记为 not_run（判 INCONCLUSIVE）",
+    )
+    parser.add_argument(
         "--smoke-train",
         action="store_true",
         help="只在 train 的一条 episode 上跑通链路（不碰 holdout、不写 holdout 报告）",
@@ -449,8 +455,14 @@ def main(argv: list[str] | None = None) -> int:
     scores["no_state_median"] = statistics.median(
         macro_by_arm[f"no_state__seed_{seed}"]["answer_exact"] for seed in seeds
     )
+    retention_pp = None
+    retention_source = "not_run"
+    if args.old_retention.is_file():
+        retention_report = json.loads(args.old_retention.read_text(encoding="utf-8"))
+        retention_pp = float(retention_report["worst_drop_pp"])
+        retention_source = _rel(args.old_retention)
     gates = gate_report(scores)
-    decision = verdict(scores, None)
+    decision = verdict(scores, retention_pp)
     report = {
         "format": "taiji-n177-f-f1-holdout-v1",
         "date": "2026-10-29",
@@ -461,7 +473,10 @@ def main(argv: list[str] | None = None) -> int:
         "gates": gates,
         "passed_all": all(item["passed"] for item in gates.values()),
         "decision": decision,
-        "old_retention": "not_run (N176 F0 16-probe file is not part of this instrument)",
+        "old_retention": {
+            "source": retention_source,
+            "worst_drop_pp": retention_pp,
+        },
         "cost": {
             "process_cpu_seconds": time.process_time() - cpu_start,
             "wall_seconds": time.perf_counter() - wall_start,

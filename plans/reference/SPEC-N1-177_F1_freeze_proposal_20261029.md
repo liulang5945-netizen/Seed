@@ -70,7 +70,7 @@ F 合同 §5 的主读数 `answer_exact` 要求完整中文回答，而本轮候
 1. 先算三条差值与十道数值门；`copy_only_median`、`no_state_median` 用三 seed 中位。
 2. 触发集合（可同时命中，报告全列）：`FAIL_COPY_ONLY`（copy_only ≥ main）、`FAIL_NO_STATE_EFFECT`（main−no_state 未达门 **或** relevant_swap 未达门）、`FAIL_NO_LEARNING`（credit_gap 未达门）、`FAIL_NO_GENERALIZATION`（main 未达主门）。
 3. 判决按固定优先级取第一个命中：COPY_ONLY → NO_STATE_EFFECT → NO_LEARNING → NO_GENERALIZATION。
-4. `PASS_LEARNED_VALUE` 需要**十门全过且无任何触发项且旧保持下降 ≤3pp**；旧保持本轮未实现（`not_run`，原因见 DEBT-G185：N176 那 16 题只在 N176 世界课程里，收束件读的是已生成的固定输出、不能对任意候选重跑）⇒ 最多判 `INCONCLUSIVE` 并在 `pass_blocked_by` 里点名 `old_retention_not_run`，不许把缺项当通过。
+4. `PASS_LEARNED_VALUE` 需要**十门全过且无任何触发项且旧保持下降 ≤3pp**；旧保持由 `probe_taiji_n1_plan177_f1_old_retention.py` 提供（DEBT-G185 已结清）：父 V4 与候选（偏置=bias(0)）在 N176 F0 的 16 条 retention episode 上各生成一次，`worst_drop_pp` 写进探针件；评分器用 `--old-retention` 读它。**探针件不存在时仍记 `not_run` 并判 `INCONCLUSIVE`**，不许把缺项当通过。
 5. 工程/预算类出口（ENGINEERING_FAILURE / BUDGET_STOP）不由本评分器判，归运行器与训练记录。
 
 ## 5. 停止线

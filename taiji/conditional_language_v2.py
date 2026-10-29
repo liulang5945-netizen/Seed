@@ -187,7 +187,13 @@ class ConditionalLanguageCandidateV2(nn.Module):
         return torch.stack(logits)
 
     @torch.no_grad()
-    def generate(self, state: TaskStateV2, *, max_new_bytes: int = 128) -> TaskStateV2:
+    def generate(
+        self,
+        state: TaskStateV2,
+        *,
+        max_new_bytes: int = 128,
+        logit_bias: torch.Tensor | None = None,
+    ) -> TaskStateV2:
         if max_new_bytes <= 0:
             raise ValueError("generation byte allowance must be positive")
         if len(state.generated) + max_new_bytes > self.config.max_generation_bytes:
@@ -197,6 +203,8 @@ class ConditionalLanguageCandidateV2(nn.Module):
             if state.generated.endswith(b"<|end|>"):
                 break
             logits, hidden = self.next_logits(state, cache=cache)
+            if logit_bias is not None:
+                logits = logits + logit_bias
             allowed = utf8_allowed(state.utf8_remaining, state.utf8_lead)
             index = torch.tensor(allowed, device=logits.device)
             symbol = int(index[logits[index].argmax()])
