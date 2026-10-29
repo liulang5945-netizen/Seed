@@ -334,6 +334,64 @@ def arm_scores(trainer: Any, arm_name: str, seed: int, episodes: list[Any]) -> d
     }
 
 
+VERDICT_PRECEDENCE = (
+    "FAIL_COPY_ONLY",
+    "FAIL_NO_STATE_EFFECT",
+    "FAIL_NO_LEARNING",
+    "FAIL_NO_GENERALIZATION",
+)
+
+
+def verdict(scores: dict[str, float], retention_pp: float | None) -> dict[str, Any]:
+    """F 合同 §5.1 的出口判定；规则先于任何 holdout 读数写死。
+
+    先判"没超出复制下界"，再判"特征没用"，再判"信用没到"，最后才判"只学会了 train"。
+    `old_retention` 没测就不能算 PASS——合同把它写进 PASS 的合取项，缺项判 INCONCLUSIVE。
+    """
+
+    main = scores.get("answer_exact")
+    copy_only = scores.get("copy_only_median")
+    fired: set[str] = set()
+    if main is not None and copy_only is not None and copy_only >= main:
+        fired.add("FAIL_COPY_ONLY")
+    if (
+        scores.get("main_minus_no_state", 0.0) < GATES["main_minus_no_state"]
+        or scores.get("relevant_swap_delta", 0.0) < GATES["relevant_swap_delta"]
+    ):
+        fired.add("FAIL_NO_STATE_EFFECT")
+    if scores.get("credit_gap", 0.0) < GATES["credit_gap"]:
+        fired.add("FAIL_NO_LEARNING")
+    if main is not None and main < GATES["answer_exact"]:
+        fired.add("FAIL_NO_GENERALIZATION")
+    all_gates = all(
+        scores.get(key) is not None and scores[key] >= threshold for key, threshold in GATES.items()
+    )
+    retention_ok = retention_pp is not None and retention_pp <= 3.0
+    reasons = [code for code in VERDICT_PRECEDENCE if code in fired]
+    if all_gates and retention_ok and not fired:
+        label = "PASS_LEARNED_VALUE"
+    elif reasons:
+        label = reasons[0]
+    else:
+        label = "INCONCLUSIVE"
+    return {
+        "verdict": label,
+        "reasons": reasons,
+        "all_numeric_gates_passed": all_gates,
+        "old_retention_pp": retention_pp,
+        "old_retention_measured": retention_pp is not None,
+        "pass_blocked_by": (
+            []
+            if label == "PASS_LEARNED_VALUE"
+            else (
+                ["old_retention_not_run"]
+                if all_gates and not fired and retention_pp is None
+                else reasons or ["effect_below_gate"]
+            )
+        ),
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="N177 F1 holdout 一次性评分")
     parser.add_argument("--report", type=Path, default=REPORT)
@@ -385,7 +443,14 @@ def main(argv: list[str] | None = None) -> int:
             runs[f"{arm_name}__seed_{seed}"] = result
             macro_by_arm[f"{arm_name}__seed_{seed}"] = result["macro"]
     scores = contrasts(macro_by_arm, seeds)
+    scores["copy_only_median"] = statistics.median(
+        macro_by_arm[f"copy_only__seed_{seed}"]["answer_exact"] for seed in seeds
+    )
+    scores["no_state_median"] = statistics.median(
+        macro_by_arm[f"no_state__seed_{seed}"]["answer_exact"] for seed in seeds
+    )
     gates = gate_report(scores)
+    decision = verdict(scores, None)
     report = {
         "format": "taiji-n177-f-f1-holdout-v1",
         "date": "2026-10-29",
@@ -395,6 +460,7 @@ def main(argv: list[str] | None = None) -> int:
         "scores": scores,
         "gates": gates,
         "passed_all": all(item["passed"] for item in gates.values()),
+        "decision": decision,
         "old_retention": "not_run (N176 F0 16-probe file is not part of this instrument)",
         "cost": {
             "process_cpu_seconds": time.process_time() - cpu_start,
@@ -411,8 +477,9 @@ def main(argv: list[str] | None = None) -> int:
     temporary.replace(args.report)
     for key, item in gates.items():
         print(f"{key}: {item['value']} >= {item['threshold']} -> {item['passed']}")
-    print(f"PASSED_ALL={report['passed_all']} out={args.report.name}")
-    return 0 if report["passed_all"] else 1
+    print(f"PASSED_ALL={report['passed_all']} VERDICT={decision['verdict']}")
+    print(f"out={args.report.name}")
+    return 0 if decision["verdict"] == "PASS_LEARNED_VALUE" else 1
 
 
 if __name__ == "__main__":

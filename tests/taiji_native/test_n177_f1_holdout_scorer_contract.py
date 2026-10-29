@@ -10,12 +10,14 @@ from scripts.training.evaluate_taiji_n1_plan177_f_f1_holdout import (
     ARMS,
     GATES,
     METRICS,
+    VERDICT_PRECEDENCE,
     assert_runs_complete,
     contrasts,
     exchanged,
     family_macro,
     gate_report,
     normalize,
+    verdict,
 )
 
 
@@ -87,3 +89,53 @@ def test_holdout_refuses_before_every_run_is_complete(tmp_path) -> None:
             json.dumps({"status": "completed"}), encoding="utf-8", newline=chr(10)
         )
     assert_runs_complete(tmp_path, seeds=(0,))
+
+
+def _passing_scores() -> dict:
+    scores = {key: 1.0 for key in GATES}
+    scores["copy_only_median"] = 0.0
+    scores["no_state_median"] = 0.0
+    return scores
+
+
+def test_verdict_passes_only_with_retention() -> None:
+    assert verdict(_passing_scores(), 1.0)["verdict"] == "PASS_LEARNED_VALUE"
+    blocked = verdict(_passing_scores(), None)
+    assert blocked["verdict"] == "INCONCLUSIVE"
+    assert blocked["pass_blocked_by"] == ["old_retention_not_run"]
+
+
+def test_copy_only_that_matches_main_blocks_the_pass() -> None:
+    scores = _passing_scores()
+    scores["copy_only_median"] = 1.0
+    assert verdict(scores, 1.0)["verdict"] == "FAIL_COPY_ONLY"
+
+
+def test_state_effect_failure_covers_gap_and_swap() -> None:
+    gaps = _passing_scores()
+    gaps["main_minus_no_state"] = 0.0
+    assert verdict(gaps, 1.0)["verdict"] == "FAIL_NO_STATE_EFFECT"
+    swaps = _passing_scores()
+    swaps["relevant_swap_delta"] = 0.0
+    assert verdict(swaps, 1.0)["verdict"] == "FAIL_NO_STATE_EFFECT"
+
+
+def test_credit_gap_failure_is_learning_failure() -> None:
+    scores = _passing_scores()
+    scores["credit_gap"] = 0.0
+    assert verdict(scores, 1.0)["verdict"] == "FAIL_NO_LEARNING"
+
+
+def test_below_main_gate_is_a_generalization_failure_not_a_pass() -> None:
+    scores = _passing_scores()
+    scores["answer_exact"] = 0.60
+    assert verdict(scores, 1.0)["verdict"] == "FAIL_NO_GENERALIZATION"
+
+
+def test_precedence_reports_the_first_code_and_all_reasons() -> None:
+    scores = _passing_scores()
+    scores["copy_only_median"] = 1.0
+    scores["credit_gap"] = 0.0
+    decision = verdict(scores, 1.0)
+    assert decision["verdict"] == VERDICT_PRECEDENCE[0]
+    assert decision["reasons"][:2] == ["FAIL_COPY_ONLY", "FAIL_NO_LEARNING"]

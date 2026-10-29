@@ -63,6 +63,16 @@ F 合同 §5 的主读数 `answer_exact` 要求完整中文回答，而本轮候
 
 任一方向门被满足与否，按 F 合同 §5.1 的出口判决（PASS/FAIL_*/INCONCLUSIVE/ENGINEERING_FAILURE/BUDGET_STOP）原样记录。
 
+## 4.5 判定规则（2026-10-29，先于任何 holdout 读数写死）
+
+判定由评分器里的 `verdict()` 机械给出（[实现](../../../scripts/training/evaluate_taiji_n1_plan177_f_f1_holdout.py)，12 支单测钉住每个分支与优先级）：
+
+1. 先算三条差值与十道数值门；`copy_only_median`、`no_state_median` 用三 seed 中位。
+2. 触发集合（可同时命中，报告全列）：`FAIL_COPY_ONLY`（copy_only ≥ main）、`FAIL_NO_STATE_EFFECT`（main−no_state 未达门 **或** relevant_swap 未达门）、`FAIL_NO_LEARNING`（credit_gap 未达门）、`FAIL_NO_GENERALIZATION`（main 未达主门）。
+3. 判决按固定优先级取第一个命中：COPY_ONLY → NO_STATE_EFFECT → NO_LEARNING → NO_GENERALIZATION。
+4. `PASS_LEARNED_VALUE` 需要**十门全过且无任何触发项且旧保持下降 ≤3pp**；旧保持本轮未实现（`not_run`）⇒ 最多判 `INCONCLUSIVE` 并在 `pass_blocked_by` 里点名 `old_retention_not_run`，不许把缺项当通过。
+5. 工程/预算类出口（ENGINEERING_FAILURE / BUDGET_STOP）不由本评分器判，归运行器与训练记录。
+
 ## 5. 停止线
 
 - 读 holdout 前：12 run 全完成且恢复全真；任一 run 恢复失败 ⇒ ENGINEERING_FAILURE，不读 holdout。
