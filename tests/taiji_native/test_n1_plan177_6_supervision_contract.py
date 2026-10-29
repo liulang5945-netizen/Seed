@@ -187,6 +187,48 @@ def test_verdicts_pass_on_a_consistent_state(monitor, tmp_path: Path) -> None:
     assert report["verdicts"]["single_lock_owner_alive"] is True
 
 
+def test_a_clean_exit_without_a_lock_passes_the_lock_verdict(monitor, tmp_path: Path) -> None:
+    rows = [
+        _update("correct__seed_0", 1, 0.0, 0.0),
+        _update("correct__seed_0", 101, 440.0, 38.0),
+    ]
+    root = _root(
+        tmp_path,
+        cursors={"correct__seed_0": 2560},
+        completed=["correct__seed_0"],
+        rows=rows,
+        lock_pid=0,
+    )
+    (root / "run_root.lock").unlink()
+    state = json.loads((root / "run_state.json").read_text(encoding="utf-8"))
+    state["status"] = "training_complete_evaluation_pending"
+    (root / "run_state.json").write_bytes(json.dumps(state).encode("utf-8"))
+    report = monitor.build(root)
+    #: 终点后锁已被释放 ⇒ 没有锁是干净形状；若还挂着 running 却没锁，则必须是红。
+    assert report["verdicts"]["single_lock_owner_alive"] is True
+
+
+def test_an_active_state_without_a_lock_fails_the_lock_verdict(monitor, tmp_path: Path) -> None:
+    rows = [
+        _update("correct__seed_0", 1, 0.0, 0.0),
+        _update("correct__seed_0", 101, 440.0, 38.0),
+    ]
+    root = _root(
+        tmp_path,
+        cursors={"correct__seed_0": 2560},
+        completed=["correct__seed_0"],
+        rows=rows,
+        lock_pid=0,
+    )
+    (root / "run_root.lock").unlink()
+    state = json.loads((root / "run_state.json").read_text(encoding="utf-8"))
+    state["status"] = "running"
+    (root / "run_state.json").write_bytes(json.dumps(state).encode("utf-8"))
+    report = monitor.build(root)
+    #: 还在跑却没有锁 ⇒ 有人可能正裸跑，必须响。
+    assert report["verdicts"]["single_lock_owner_alive"] is False
+
+
 def test_a_cursor_mismatch_fails_the_consistency_verdict(monitor, tmp_path: Path) -> None:
     rows = [
         _update("correct__seed_0", 1, 0.0, 0.0),

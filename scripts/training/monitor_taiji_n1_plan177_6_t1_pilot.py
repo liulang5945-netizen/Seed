@@ -25,6 +25,8 @@ ROOT = Path(__file__).resolve().parents[2]
 RUN_ROOT = ROOT / "data/checkpoints/n1_plan177_6_t1_pilot_20261027"
 MODES = ("correct", "parser_permuted", "no_update", "readout_only", "responsible_owner_frozen")
 SEEDS = (0, 1, 2)
+#: 这两种状态下 run root 必须有一位活的主人；其余（已到终点）应已释放。
+ACTIVE_STATUSES = ("running", "evaluation_in_progress")
 PER_ARM_UPDATES = 2560
 #: 低于这个样本量的臂不算成本（新起的臂只有几步，速率不可用）。
 MIN_SAMPLE = 60
@@ -180,7 +182,12 @@ def build(run_root: Path = RUN_ROOT) -> dict[str, Any]:
             and not unknown_modes
         ),
         "completed_arms_have_final_files": not missing_final,
-        "single_lock_owner_alive": bool(lock_pid) and _pid_alive(lock_pid) is True,
+        #: 运行中必须有活的主人；已到终点（非 running）时锁应已被 atexit 释放，
+        #: "没有锁"是干净退出的正确形状，不是缺主人。
+        #: 有锁 ⇒ 主人必须活着；没锁 ⇒ 只能出现在非活动状态（否则就是"该有人占着却没有"）。
+        "single_lock_owner_alive": (
+            _pid_alive(lock_pid) is True if lock_pid else state.get("status") not in ACTIVE_STATUSES
+        ),
         "no_anomalies_since_latest_revision": (
             events_since_latest["checkpoint_resume_rollback"] == 0
             and events_since_latest["engineering_failure_recovered"] == 0
