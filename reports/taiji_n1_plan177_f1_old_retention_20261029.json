@@ -1,0 +1,1324 @@
+{
+  "all_within_3pp": false,
+  "cost": {
+    "process_cpu_seconds": 84.421875
+  },
+  "date": "2026-10-29",
+  "format": "taiji-n177-f1-old-retention-v1",
+  "main_within_3pp": false,
+  "main_worst_drop_pp": 6.25,
+  "max_drop_pp": 3.0,
+  "ruler_resolution_pp": 6.25,
+  "runs": [
+    {
+      "arm": "main_credit_on",
+      "candidate_hits": 4,
+      "drop_pp": 0.0,
+      "endpoint": "data/checkpoints/n1_plan177_f_f1_20261029/main_credit_on__seed_0/endpoint_update_1280.pt",
+      "items": 16,
+      "parent_hits": 4,
+      "per_row": [
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:2:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:7:0:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:2:6:2:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:7:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:6:2:1:q0",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:2:1:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:0:3:2:q1",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:2:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:4:2:q0",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:5:5:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:7:2:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:0:1:1:q0",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:1:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:6:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:4:5:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        }
+      ],
+      "rows_where_bias_changed_nothing": 16,
+      "seed": 0,
+      "within_3pp": true
+    },
+    {
+      "arm": "main_credit_stop",
+      "candidate_hits": 4,
+      "drop_pp": 0.0,
+      "endpoint": "data/checkpoints/n1_plan177_f_f1_20261029/main_credit_stop__seed_0/endpoint_update_1280.pt",
+      "items": 16,
+      "parent_hits": 4,
+      "per_row": [
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:2:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:7:0:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:2:6:2:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:7:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:6:2:1:q0",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:2:1:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:2:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:2:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:4:2:q0",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:5:5:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:7:2:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:0:1:1:q0",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:1:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:6:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:4:5:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        }
+      ],
+      "rows_where_bias_changed_nothing": 14,
+      "seed": 0,
+      "within_3pp": true
+    },
+    {
+      "arm": "copy_only",
+      "candidate_hits": 2,
+      "drop_pp": 12.5,
+      "endpoint": "data/checkpoints/n1_plan177_f_f1_20261029/copy_only__seed_0/endpoint_update_1280.pt",
+      "items": 16,
+      "parent_hits": 4,
+      "per_row": [
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:2:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:0:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:2:6:2:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:7:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:6:2:1:q0",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:2:1:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:2:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:2:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:1:4:2:q0",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:5:5:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:2:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:0:1:1:q0",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:1:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:6:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:4:5:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        }
+      ],
+      "rows_where_bias_changed_nothing": 3,
+      "seed": 0,
+      "within_3pp": false
+    },
+    {
+      "arm": "no_state",
+      "candidate_hits": 0,
+      "drop_pp": 25.0,
+      "endpoint": "data/checkpoints/n1_plan177_f_f1_20261029/no_state__seed_0/endpoint_update_1280.pt",
+      "items": 16,
+      "parent_hits": 4,
+      "per_row": [
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:2:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:0:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:2:6:2:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:7:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:6:2:1:q0",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:2:1:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:2:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:2:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:4:2:q0",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:5:5:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:2:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:1:1:q0",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:1:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:6:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:4:5:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        }
+      ],
+      "rows_where_bias_changed_nothing": 0,
+      "seed": 0,
+      "within_3pp": false
+    },
+    {
+      "arm": "main_credit_on",
+      "candidate_hits": 3,
+      "drop_pp": 6.25,
+      "endpoint": "data/checkpoints/n1_plan177_f_f1_20261029/main_credit_on__seed_1/endpoint_update_1280.pt",
+      "items": 16,
+      "parent_hits": 4,
+      "per_row": [
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:2:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:7:0:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:2:6:2:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:7:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:6:2:1:q0",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:2:1:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:2:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:2:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:4:2:q0",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:5:5:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:7:2:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:0:1:1:q0",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:1:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:6:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:4:5:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        }
+      ],
+      "rows_where_bias_changed_nothing": 15,
+      "seed": 1,
+      "within_3pp": false
+    },
+    {
+      "arm": "main_credit_stop",
+      "candidate_hits": 4,
+      "drop_pp": 0.0,
+      "endpoint": "data/checkpoints/n1_plan177_f_f1_20261029/main_credit_stop__seed_1/endpoint_update_1280.pt",
+      "items": 16,
+      "parent_hits": 4,
+      "per_row": [
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:2:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:7:0:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:2:6:2:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:7:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:6:2:1:q0",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:2:1:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:2:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:2:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:4:2:q0",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:5:5:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:7:2:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:0:1:1:q0",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:1:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:6:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:4:5:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        }
+      ],
+      "rows_where_bias_changed_nothing": 11,
+      "seed": 1,
+      "within_3pp": true
+    },
+    {
+      "arm": "copy_only",
+      "candidate_hits": 2,
+      "drop_pp": 12.5,
+      "endpoint": "data/checkpoints/n1_plan177_f_f1_20261029/copy_only__seed_1/endpoint_update_1280.pt",
+      "items": 16,
+      "parent_hits": 4,
+      "per_row": [
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:2:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:0:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:2:6:2:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:7:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:6:2:1:q0",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:2:1:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:2:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:2:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:1:4:2:q0",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:5:5:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:2:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:0:1:1:q0",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:1:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:6:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:4:5:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        }
+      ],
+      "rows_where_bias_changed_nothing": 3,
+      "seed": 1,
+      "within_3pp": false
+    },
+    {
+      "arm": "no_state",
+      "candidate_hits": 0,
+      "drop_pp": 25.0,
+      "endpoint": "data/checkpoints/n1_plan177_f_f1_20261029/no_state__seed_1/endpoint_update_1280.pt",
+      "items": 16,
+      "parent_hits": 4,
+      "per_row": [
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:2:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:0:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:2:6:2:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:7:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:6:2:1:q0",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:2:1:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:2:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:2:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:4:2:q0",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:5:5:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:2:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:1:1:q0",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:1:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:6:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:4:5:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        }
+      ],
+      "rows_where_bias_changed_nothing": 0,
+      "seed": 1,
+      "within_3pp": false
+    },
+    {
+      "arm": "main_credit_on",
+      "candidate_hits": 3,
+      "drop_pp": 6.25,
+      "endpoint": "data/checkpoints/n1_plan177_f_f1_20261029/main_credit_on__seed_2/endpoint_update_1280.pt",
+      "items": 16,
+      "parent_hits": 4,
+      "per_row": [
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:2:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:7:0:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:2:6:2:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:7:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:6:2:1:q0",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:2:1:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:2:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:2:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:4:2:q0",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:5:5:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:7:2:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:0:1:1:q0",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:1:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:6:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:4:5:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        }
+      ],
+      "rows_where_bias_changed_nothing": 15,
+      "seed": 2,
+      "within_3pp": false
+    },
+    {
+      "arm": "main_credit_stop",
+      "candidate_hits": 5,
+      "drop_pp": -6.25,
+      "endpoint": "data/checkpoints/n1_plan177_f_f1_20261029/main_credit_stop__seed_2/endpoint_update_1280.pt",
+      "items": 16,
+      "parent_hits": 4,
+      "per_row": [
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:2:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:7:0:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:2:6:2:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:7:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:6:2:1:q0",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:2:1:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:2:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:2:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:1:4:2:q0",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:5:5:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:7:2:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:0:1:1:q0",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:1:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:6:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:4:5:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        }
+      ],
+      "rows_where_bias_changed_nothing": 12,
+      "seed": 2,
+      "within_3pp": true
+    },
+    {
+      "arm": "copy_only",
+      "candidate_hits": 2,
+      "drop_pp": 12.5,
+      "endpoint": "data/checkpoints/n1_plan177_f_f1_20261029/copy_only__seed_2/endpoint_update_1280.pt",
+      "items": 16,
+      "parent_hits": 4,
+      "per_row": [
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:2:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:0:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:2:6:2:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:7:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:6:2:1:q0",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:2:1:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:2:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:2:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:1:4:2:q0",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:5:5:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:2:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": true,
+          "episode_id": "n176:world:0:1:1:q0",
+          "parent_correct": true,
+          "unchanged_bytes": true
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:1:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:6:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:4:5:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        }
+      ],
+      "rows_where_bias_changed_nothing": 3,
+      "seed": 2,
+      "within_3pp": false
+    },
+    {
+      "arm": "no_state",
+      "candidate_hits": 0,
+      "drop_pp": 25.0,
+      "endpoint": "data/checkpoints/n1_plan177_f_f1_20261029/no_state__seed_2/endpoint_update_1280.pt",
+      "items": 16,
+      "parent_hits": 4,
+      "per_row": [
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:2:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:0:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:2:6:2:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:7:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:6:2:1:q0",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:2:1:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:2:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:2:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:4:2:q0",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:5:5:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:7:2:3:q1",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:1:1:q0",
+          "parent_correct": true,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:1:1:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:3:6:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:0:3:0:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        },
+        {
+          "candidate_correct": false,
+          "episode_id": "n176:world:4:5:3:q1",
+          "parent_correct": false,
+          "unchanged_bytes": false
+        }
+      ],
+      "rows_where_bias_changed_nothing": 0,
+      "seed": 2,
+      "within_3pp": false
+    }
+  ],
+  "scope": "N176 F0 16 retention episodes; parent V4 vs F1 candidate with bias(0)",
+  "worst_drop_pp": 25.0
+}

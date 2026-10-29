@@ -48,7 +48,14 @@ def _passing_scores() -> dict:
     }
 
 
-def _fixture(tmp_path, *, drop_pp: float = 1.0, verdict_label: str = "PASS_LEARNED_VALUE"):
+def _fixture(
+    tmp_path,
+    *,
+    drop_pp: float = 1.0,
+    verdict_label: str = "PASS_LEARNED_VALUE",
+    copy_only_median: float = 0.5,
+):
+    tmp_path.mkdir(parents=True, exist_ok=True)
     run_root = tmp_path / "runs"
     for seed in (0, 1, 2):
         for arm in ARMS:
@@ -66,12 +73,15 @@ def _fixture(tmp_path, *, drop_pp: float = 1.0, verdict_label: str = "PASS_LEARN
             }
             (directory / "run_state.json").write_text(json.dumps(state), encoding="utf-8")
     retention = tmp_path / "retention.json"
-    retention.write_text(json.dumps({"worst_drop_pp": drop_pp}), encoding="utf-8")
+    retention.write_text(
+        json.dumps({"worst_drop_pp": drop_pp, "main_worst_drop_pp": drop_pp}),
+        encoding="utf-8",
+    )
     holdout = tmp_path / "holdout.json"
+    scores = _passing_scores()
+    scores["copy_only_median"] = copy_only_median
     holdout.write_text(
-        json.dumps(
-            {"scores": _passing_scores(), "decision": {"verdict": verdict_label}, "gates": {}}
-        ),
+        json.dumps({"scores": scores, "decision": {"verdict": verdict_label}, "gates": {}}),
         encoding="utf-8",
     )
     (tmp_path / "holdout.attempt.json").write_text("{}", encoding="utf-8")
@@ -133,10 +143,21 @@ def test_an_endpoint_sha_mismatch_refuses(instrument, tmp_path) -> None:
         _run(instrument, report, run_root, retention, holdout)
 
 
-def test_too_large_a_retention_drop_refuses(instrument, tmp_path) -> None:
+def test_a_large_retention_drop_only_blocks_a_pass(instrument, tmp_path) -> None:
+    # 同一批分数 + 4pp 掉分：判定只能是 INCONCLUSIVE，所以件里记 PASS 必须被拒。
     run_root, retention, holdout, report = _fixture(tmp_path, drop_pp=4.0)
-    with pytest.raises(ValueError, match="3pp"):
+    with pytest.raises(ValueError, match="recorded verdict"):
         _run(instrument, report, run_root, retention, holdout)
+    run_root, retention, holdout, report = _fixture(
+        tmp_path / "fail",
+        drop_pp=4.0,
+        verdict_label="FAIL_COPY_ONLY",
+        copy_only_median=1.0,
+    )
+    assert _run(instrument, report, run_root, retention, holdout) == 0
+    payload = json.loads(report.read_text(encoding="utf-8"))
+    assert payload["verdict"] == "FAIL_COPY_ONLY"
+    assert payload["old_retention_main_worst_drop_pp"] == 4.0
 
 
 def test_a_hand_edited_verdict_is_caught(instrument, tmp_path) -> None:

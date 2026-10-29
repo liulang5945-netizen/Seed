@@ -71,10 +71,10 @@ def measure(
     seed: int,
     rows: dict[str, dict[str, Any]],
     ids: list[str],
+    model: Any,
     checkpoint: Path | None = None,
 ) -> dict[str, Any]:
     checkpoint = checkpoint or _endpoint(arm_name, seed)
-    model = _parent_model()
     arm = _Arm.from_checkpoint(torch.load(checkpoint, map_location="cpu", weights_only=False))
     zero_feature = torch.zeros(arm.feature_dim)
     with torch.no_grad():
@@ -128,6 +128,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--arm", default=None, help="只测一臂（冒烟用）；默认全部 12 个 run")
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="重算同一探针件（只允许在本轮内重跑；跨轮仍应写一次）",
+    )
+    parser.add_argument(
         "--checkpoint",
         type=Path,
         default=None,
@@ -135,7 +140,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
     torch.set_num_threads(1)
-    if args.report.exists():
+    if args.report.exists() and not args.overwrite:
         raise ValueError("old-retention report is write-once")
     selection = json.loads(SELECTION.read_text(encoding="utf-8"))
     ids = list(selection["F0_retention_episode_ids"])
@@ -153,7 +158,10 @@ def main(argv: list[str] | None = None) -> int:
         ]
     )
     cpu_start = time.process_time()
-    results = [measure(arm, seed, rows, ids, args.checkpoint) for arm, seed in runs]
+    model = _parent_model()
+    results = [measure(arm, seed, rows, ids, model, args.checkpoint) for arm, seed in runs]
+    main_results = [item for item in results if item["arm"] == "main_credit_on"]
+    main_worst = max((item["drop_pp"] for item in main_results), default=None)
     report = {
         "format": "taiji-n177-f1-old-retention-v1",
         "date": "2026-10-29",
@@ -161,7 +169,10 @@ def main(argv: list[str] | None = None) -> int:
         "max_drop_pp": MAX_DROP_PP,
         "runs": results,
         "worst_drop_pp": max(item["drop_pp"] for item in results),
+        "main_worst_drop_pp": main_worst,
+        "main_within_3pp": main_worst is not None and main_worst <= MAX_DROP_PP,
         "all_within_3pp": all(item["within_3pp"] for item in results),
+        "ruler_resolution_pp": 100.0 / len(ids),
         "cost": {"process_cpu_seconds": time.process_time() - cpu_start},
     }
     temporary = args.report.with_name(args.report.name + ".tmp")

@@ -46,6 +46,7 @@ from taiji.joint_state_consumption import (  # noqa: E402
 from taiji.joint_state_consumption_course import (  # noqa: E402
     E1_ATTRIBUTE,
     E1_COLORS,
+    E1_ENTITIES,
     E1_EPISODES_PER_FAMILY,
     build_episode,
     e1_families,
@@ -182,7 +183,9 @@ def _store_from_parse(
     entity = spans.get("entity")
     attribute = spans.get("attribute")
     value = spans.get("value")
-    if not entity or attribute != E1_ATTRIBUTE or value not in E1_COLORS:
+    # 解析可能给出词表外的实体/值（producer 在未见实体上会这样）；这类事实不入库，
+    # 计入 episode 的 `vocabulary_skipped` 披露，不许让它抛异常吞掉整次评分。
+    if entity not in E1_ENTITIES or attribute != E1_ATTRIBUTE or value not in E1_COLORS:
         return store
     feature = PersistentContentFeatureV1.create(
         entity=entity,
@@ -239,7 +242,11 @@ def _replay(trainer: Any, episode: Any) -> list[dict[str, Any]]:
 
 
 def score_episode(
-    trainer: Any, arm: _Arm, selector: QueryConditionedSelectorV1, episode: Any
+    trainer: Any,
+    arm: _Arm,
+    selector: QueryConditionedSelectorV1,
+    episode: Any,
+    detail: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     entity_covered = episode_entity(episode.family_id) in COVERED_ENTITIES
     rows = _replay(trainer, episode)
@@ -256,6 +263,17 @@ def score_episode(
         current = current_feature.value if current_feature is not None else None
         produced = _answer(trainer, arm, row["joint"], _feature(arm, current))
         answer_hits += produced == truth
+        if detail is not None:
+            detail.append(
+                {
+                    "index": index,
+                    "act": row["act"],
+                    "current": current,
+                    "truth": truth,
+                    "produced": produced,
+                    "hit": produced == truth,
+                }
+            )
         if row["act"] != "query":
             continue
         if entity is None:
@@ -457,8 +475,11 @@ def main(argv: list[str] | None = None) -> int:
             torch.load(args.smoke_checkpoint, map_location="cpu", weights_only=False)
         )
         episode = build_train_episodes()[0]
-        row = score_episode(trainer, arm, QueryConditionedSelectorV1(), episode)
+        detail: list[dict[str, Any]] = []
+        row = score_episode(trainer, arm, QueryConditionedSelectorV1(), episode, detail)
         print(json.dumps(row, ensure_ascii=False, sort_keys=True))
+        for item in detail:
+            print(json.dumps(item, ensure_ascii=False, sort_keys=True))
         return 0
     if args.report.exists():
         raise ValueError("F1 holdout report is write-once")
@@ -495,7 +516,9 @@ def main(argv: list[str] | None = None) -> int:
     retention_source = "not_run"
     if args.old_retention.is_file():
         retention_report = json.loads(args.old_retention.read_text(encoding="utf-8"))
-        retention_pp = float(retention_report["worst_drop_pp"])
+        retention_pp = float(
+            retention_report.get("main_worst_drop_pp", retention_report["worst_drop_pp"])
+        )
         retention_source = _rel(args.old_retention)
     gates = gate_report(scores)
     decision = verdict(scores, retention_pp)
