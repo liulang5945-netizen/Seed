@@ -15,6 +15,7 @@ groups, optimizer/RNG/cursor round-trip).
 from __future__ import annotations
 
 import copy
+import math
 import random
 from collections.abc import Sequence
 from dataclasses import dataclass
@@ -70,11 +71,11 @@ class CreditCaseV1:
 
 
 def _grad_norm(parameters: Sequence[nn.Parameter]) -> float:
-    squares = 0.0
+    squares: float = 0.0
     for parameter in parameters:
         if parameter.grad is not None:
             squares += float(parameter.grad.detach().square().sum())
-    return squares**0.5
+    return math.sqrt(squares)
 
 
 class StateCreditCandidateV1(nn.Module):
