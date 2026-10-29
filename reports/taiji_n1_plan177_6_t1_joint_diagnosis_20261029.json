@@ -1,0 +1,169 @@
+{
+  "competitors": [
+    {
+      "name": "fixed initialization",
+      "separator": "re-run Correct+two controls on a new seed panel with a different init (the SPEC's independent-initialization confirmation)",
+      "status": "not excluded"
+    },
+    {
+      "name": "capacity / dose",
+      "separator": "same-protocol arms at smaller/larger capacity or fewer updates",
+      "status": "not excluded (no ablation in this pack)"
+    },
+    {
+      "name": "data order / curriculum",
+      "separator": "reshuffle the frozen order under an approved variant",
+      "status": "fixed by contract, not varied"
+    },
+    {
+      "name": "format / stop behaviour",
+      "separator": "F0 stop-marker and valid-UTF8 are ~1.0 on all arms, so the gap is not about emitting the marker",
+      "status": "excluded as the gain source"
+    }
+  ],
+  "date": "2026-10-29",
+  "format": "taiji-n177-6-t1-joint-diagnosis-v1",
+  "inputs": [
+    "reports/taiji_n1_plan177_6_t1_evaluation_20261029.json",
+    "reports/taiji_n1_plan177_6_t1_closeout_manifest_20261029.json"
+  ],
+  "per_arm_holdout": [
+    {
+      "answer_exact_mean": 0.995117,
+      "f1_state_query_by_seed": [
+        0.9934895833333334,
+        0.9934895833333334,
+        0.9973958333333334
+      ],
+      "mean": 0.994792,
+      "mode": "correct"
+    },
+    {
+      "answer_exact_mean": 0.986654,
+      "f1_state_query_by_seed": [
+        0.4934895833333333,
+        0.48828125,
+        0.4934895833333333
+      ],
+      "mean": 0.491753,
+      "mode": "parser_permuted"
+    },
+    {
+      "answer_exact_mean": 0.910156,
+      "f1_state_query_by_seed": [
+        0.38671875,
+        0.38671875,
+        0.38671875
+      ],
+      "mean": 0.386719,
+      "mode": "responsible_owner_frozen"
+    },
+    {
+      "answer_exact_mean": 0.027344,
+      "f1_state_query_by_seed": [
+        0.010416666666666666,
+        0.010416666666666666,
+        0.010416666666666666
+      ],
+      "mean": 0.010417,
+      "mode": "readout_only"
+    },
+    {
+      "answer_exact_mean": 0.0,
+      "f1_state_query_by_seed": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean": 0.0,
+      "mode": "no_update"
+    }
+  ],
+  "score_decomposition": {
+    "correct": {
+      "f1_post_correction_answer_exact": 0.994792,
+      "f1_post_correction_state_exact": 1.0,
+      "f1_query_answer_exact": 0.989583,
+      "f1_unrelated_keep_exact": 1.0
+    },
+    "no_update": {
+      "f1_post_correction_answer_exact": 0.0,
+      "f1_post_correction_state_exact": 0.0,
+      "f1_query_answer_exact": 0.0,
+      "f1_unrelated_keep_exact": 0.0
+    },
+    "parser_permuted": {
+      "f1_post_correction_answer_exact": 0.992188,
+      "f1_post_correction_state_exact": 0.0,
+      "f1_query_answer_exact": 0.983507,
+      "f1_unrelated_keep_exact": 0.0
+    },
+    "readout_only": {
+      "f1_post_correction_answer_exact": 0.03125,
+      "f1_post_correction_state_exact": 0.0,
+      "f1_query_answer_exact": 0.020833,
+      "f1_unrelated_keep_exact": 0.0
+    },
+    "responsible_owner_frozen": {
+      "f1_post_correction_answer_exact": 0.976562,
+      "f1_post_correction_state_exact": 0.0,
+      "f1_query_answer_exact": 0.773438,
+      "f1_unrelated_keep_exact": 0.0
+    }
+  },
+  "single_next_step": {
+    "alternative_if_owner_prefers_credit_first": "design + bounded run where answer-loss reaches the producer (the one path this pack explicitly leaves unestablished)",
+    "budget_estimate": {
+      "arms": 3,
+      "basis": "this run: 43.7 cpu s/update for correct, 45.8 for parser_permuted, 24.7 for no_update",
+      "hours": 4,
+      "process_cpu_seconds": 250000,
+      "updates_per_arm": 2560
+    },
+    "step": "independent-initialization confirmation on the same frozen slice",
+    "why": "SPEC ties F2 readiness to mechanism gain being robust; the gain is measured on one 3-seed panel at one initialization"
+  },
+  "stage_status": {
+    "A_training": "complete",
+    "B_credit_preparation": "boundary_only",
+    "B_evaluation_preparation": "complete",
+    "C_contract_evaluation": "complete",
+    "D_joint_diagnosis": "this_file"
+  },
+  "state_write_ablation": [
+    {
+      "delta": 0.62109375,
+      "families": 32,
+      "families_positive": 32,
+      "seed": 0,
+      "write_disabled": 0.3723958333333333,
+      "write_enabled": 0.9934895833333334
+    },
+    {
+      "delta": 0.6080729166666667,
+      "families": 32,
+      "families_positive": 32,
+      "seed": 1,
+      "write_disabled": 0.38541666666666663,
+      "write_enabled": 0.9934895833333334
+    },
+    {
+      "delta": 0.6184895833333334,
+      "families": 32,
+      "families_positive": 32,
+      "seed": 2,
+      "write_disabled": 0.37890625,
+      "write_enabled": 0.9973958333333334
+    }
+  ],
+  "verdict": {
+    "applicable_scope": "fixed synthetic F0/F1 T1 slice, closed-world enumeration; not open-language ability, not whole-model acceptance",
+    "correction_note": "first draft of this field said the query answers collapse; the per-arm decomposition disproved it before publication — parser_permuted keeps query 0.984. The corrected reading is above.",
+    "credit_boundary": "answer loss reaches V4 only; producer prediction is detached before state commit, so answer-error credit to the producer is NOT established by this pack",
+    "mechanism_that_carries_the_gain": "writing the post-correction world state: disabling writes collapses f1_state_query from ~0.995 to ~0.379 on the same checkpoints, and zeroes post_correction_state_exact and unrelated_keep_exact",
+    "non_responsible_updates": "responsible_owner_frozen ≈ 0.387 ⇒ updates outside the frozen responsible receiver produce about a third of the gain",
+    "parser_label_dependence": "parser_permuted keeps ~0.49 of the score ⇒ roughly half the gain depends on correct parser structure labels",
+    "readout_side_updates_alone": "readout_only ≈ no_update (0.010 vs 0.000) ⇒ turning only the readout does not produce the behaviour",
+    "which_half_collapses": "the state-write half, not the answer half. correct: state 1.000 / query 0.990 / correction-answer 0.995 / unrelated-keep 1.000. parser_permuted: state 0.000 / unrelated-keep 0.000 BUT query 0.984 and correction-answer 0.992 ⇒ it still answers correctly while never writing the correct world state. responsible_owner_frozen: state 0.000 / query 0.773 / answer 0.977. So answer text is not the discriminator; post-correction world state (and the unrelated-fact hold) is."
+  }
+}
