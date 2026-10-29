@@ -60,8 +60,8 @@ def _parent_model() -> Any:
     return trainer.model
 
 
-def _endpoint(arm: str, seed: int) -> Path:
-    run_root = F1_ROOT / f"{arm}__seed_{seed}"
+def _endpoint(arm: str, seed: int, root: Path = F1_ROOT) -> Path:
+    run_root = root / f"{arm}__seed_{seed}"
     state = json.loads((run_root / "run_state.json").read_text(encoding="utf-8"))
     return ROOT / state["endpoint"]
 
@@ -72,9 +72,10 @@ def measure(
     rows: dict[str, dict[str, Any]],
     ids: list[str],
     model: Any,
+    run_root: Path,
     checkpoint: Path | None = None,
 ) -> dict[str, Any]:
-    checkpoint = checkpoint or _endpoint(arm_name, seed)
+    checkpoint = checkpoint or _endpoint(arm_name, seed, run_root)
     arm = _Arm.from_checkpoint(torch.load(checkpoint, map_location="cpu", weights_only=False))
     zero_feature = torch.zeros(arm.feature_dim)
     with torch.no_grad():
@@ -111,7 +112,7 @@ def measure(
     return {
         "arm": arm_name,
         "seed": seed,
-        "endpoint": _rel(checkpoint or _endpoint(arm_name, seed)),
+        "endpoint": _rel(checkpoint or _endpoint(arm_name, seed, run_root)),
         "items": len(ids),
         "parent_hits": base_hits,
         "candidate_hits": cand_hits,
@@ -127,6 +128,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--report", type=Path, default=REPORT)
     parser.add_argument("--arm", default=None, help="只测一臂（冒烟用）；默认全部 12 个 run")
     parser.add_argument("--seed", type=int, default=None)
+    parser.add_argument("--run-root", type=Path, default=F1_ROOT)
     parser.add_argument(
         "--overwrite",
         action="store_true",

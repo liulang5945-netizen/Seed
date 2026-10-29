@@ -343,10 +343,12 @@ def score_episode(
     }
 
 
-def holdout_episodes() -> list[Any]:
+def partition_episodes(partition: str) -> list[Any]:
+    if partition not in {"holdout", "query"}:
+        raise ValueError(f"unsupported evaluation partition: {partition}")
     return [
         build_episode(family, variant)
-        for family in e1_families()["holdout"]
+        for family in e1_families()[partition]
         for variant in range(E1_EPISODES_PER_FAMILY)
     ]
 
@@ -368,8 +370,10 @@ def assert_runs_complete(run_root: Path, seeds: tuple[int, ...] = (0, 1, 2)) -> 
         raise ValueError(f"F1 runs are not all completed: {missing}")
 
 
-def arm_scores(trainer: Any, arm_name: str, seed: int, episodes: list[Any]) -> dict[str, Any]:
-    state_path = RUN_ROOT / f"{arm_name}__seed_{seed}" / "run_state.json"
+def arm_scores(
+    trainer: Any, arm_name: str, seed: int, episodes: list[Any], run_root: Path
+) -> dict[str, Any]:
+    state_path = run_root / f"{arm_name}__seed_{seed}" / "run_state.json"
     state = json.loads(state_path.read_text(encoding="utf-8"))
     if state.get("status") != "completed":
         raise ValueError(f"F1 run {arm_name}__seed_{seed} is not completed: {state.get('status')}")
@@ -449,6 +453,13 @@ def verdict(scores: dict[str, float], retention_pp: float | None) -> dict[str, A
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="N177 F1 holdout 一次性评分")
     parser.add_argument("--report", type=Path, default=REPORT)
+    parser.add_argument("--run-root", type=Path, default=RUN_ROOT)
+    parser.add_argument(
+        "--partition",
+        choices=("holdout", "query"),
+        default="holdout",
+        help="评价面；F1b 用 query（从未读过）",
+    )
     parser.add_argument(
         "--old-retention",
         type=Path,
@@ -510,7 +521,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.report.exists():
         raise ValueError("F1 holdout report is write-once")
-    assert_runs_complete(RUN_ROOT)
+    assert_runs_complete(args.run_root)
     attempt = args.report.with_suffix(".attempt.json")
     if attempt.exists():
         raise ValueError("F1 holdout already has one attempt")
@@ -521,7 +532,7 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     trainer = load_trainer()
-    episodes = holdout_episodes()
+    episodes = partition_episodes(args.partition)
     cpu_start = time.process_time()
     wall_start = time.perf_counter()
     seeds = (0, 1, 2)
@@ -529,7 +540,7 @@ def main(argv: list[str] | None = None) -> int:
     macro_by_arm: dict[str, dict[str, float]] = {}
     for seed in seeds:
         for arm_name in ARMS:
-            result = arm_scores(trainer, arm_name, seed, episodes)
+            result = arm_scores(trainer, arm_name, seed, episodes, args.run_root)
             runs[f"{arm_name}__seed_{seed}"] = result
             macro_by_arm[f"{arm_name}__seed_{seed}"] = result["macro"]
     scores = contrasts(macro_by_arm, seeds)
@@ -552,7 +563,7 @@ def main(argv: list[str] | None = None) -> int:
     report = {
         "format": "taiji-n177-f-f1-holdout-v1",
         "date": "2026-10-29",
-        "scope": "12 endpoints; E1 holdout materialized once here; query never read",
+        "scope": f"12 endpoints; E1 {args.partition} materialized once here",
         "holdout_families": len({episode.family_id for episode in episodes}),
         "holdout_episodes": len(episodes),
         "scores": scores,

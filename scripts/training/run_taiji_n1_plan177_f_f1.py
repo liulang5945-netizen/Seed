@@ -28,6 +28,7 @@ if str(ROOT) not in sys.path:
 
 from scripts.training.evaluate_taiji_n1_plan177_f_f1_holdout import (  # noqa: E402
     _replay,
+    _store_from_parse,
 )
 from scripts.training.run_taiji_n1_plan177_f_f0b import (  # noqa: E402
     ARMS,
@@ -36,7 +37,6 @@ from scripts.training.run_taiji_n1_plan177_f_f0b import (  # noqa: E402
     _rel,
     _sha256_file,
     load_trainer,
-    train_items,
 )
 
 RUN_ROOT = ROOT / "data/checkpoints/n1_plan177_f_f1_20261029"
@@ -48,30 +48,39 @@ TOTAL_CPU_CAP = 121500.0
 SEEDS = (0, 1, 2)
 
 
-def build_cases(trainer: Any, items: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
-    """每个家族取它的查询轮 joint 与整句答案目标；冻结链只跑这一次（等价 trace cache）。"""
+def build_cases(trainer: Any) -> list[dict[str, Any]]:
+    """训练面：全部 train episode 里**解析出实体且有当前状态**的查询轮。
 
-    from taiji.joint_state_consumption_course import build_train_episodes
+    F1 只用了每家族 `:0` 的 32 条（其中 16 条可解析），训练侧 answer_exact 只有 2.3%——
+    那是训练覆盖不足，不是机制结论。这里改成逐轮收集，特征取 store 选出的当前值
+    （与评分面同源：模型只能用它自己解析到的状态）。
+    """
 
-    episodes = {
-        item.family_id: item for item in build_train_episodes() if item.episode_id.endswith(":0")
-    }
-    cases: dict[str, dict[str, Any]] = {}
-    for item in items:
-        episode = episodes[item["family_id"]]
+    from taiji.joint_state_consumption import PersistentContentStoreV1
+    from taiji.joint_state_consumption_course import E1_ATTRIBUTE, build_train_episodes
+
+    cases: list[dict[str, Any]] = []
+    for episode in build_train_episodes():
         rows = _replay(trainer, episode)
-        query = next(
-            (row for row in rows if row["act"] == "query" and row["spans"].get("entity")),
-            None,
-        )
-        if query is None:
-            continue
-        target = torch.tensor(list(query["turn"].answer_target.target_bytes), dtype=torch.long)
-        cases[item["family_id"]] = {
-            "joint": query["joint"],
-            "target": target,
-            "value": item["value"],
-        }
+        store = PersistentContentStoreV1(())
+        for index, row in enumerate(rows):
+            store = _store_from_parse(store, row["spans"], turn_index=index, revision=index)
+            if row["act"] != "query":
+                continue
+            entity = row["spans"].get("entity")
+            current = store.current(entity, E1_ATTRIBUTE) if entity else None
+            if current is None:
+                continue
+            cases.append(
+                {
+                    "case_id": f"{episode.episode_id}:{index}",
+                    "joint": row["joint"],
+                    "target": torch.tensor(
+                        list(row["turn"].answer_target.target_bytes), dtype=torch.long
+                    ),
+                    "value": current.value,
+                }
+            )
     return cases
 
 
@@ -108,10 +117,8 @@ def _write_json(path: Path, payload: dict[str, Any]) -> None:
     temporary.replace(path)
 
 
-def _update(
-    arm: _Arm, trainer: Any, cases: dict[str, dict[str, Any]], batch: list[dict[str, Any]]
-) -> float:
-    losses = [answer_loss(arm, trainer, cases[item["family_id"]]) for item in batch]
+def _update(arm: _Arm, trainer: Any, batch: list[dict[str, Any]]) -> float:
+    losses = [answer_loss(arm, trainer, case) for case in batch]
     loss = torch.stack(losses).mean()
     arm.optimizer.zero_grad(set_to_none=True)
     loss.backward()
@@ -155,9 +162,8 @@ def child_digest(checkpoint: Path) -> dict[str, Any]:
 def run_one(
     arm_name: str,
     seed: int,
-    items: list[dict[str, Any]],
     trainer: Any,
-    cases: dict[str, dict[str, Any]],
+    cases: list[dict[str, Any]],
     run_root: Path,
     *,
     updates: int,
@@ -193,9 +199,7 @@ def run_one(
             state["status"] = "run_cpu_cap"
             break
         offset = BATCH * arm.cursor
-        _update(
-            arm, trainer, cases, [items[(offset + index) % len(items)] for index in range(BATCH)]
-        )
+        _update(arm, trainer, [cases[(offset + index) % len(cases)] for index in range(BATCH)])
         if arm.cursor % CHECKPOINT_EVERY == 0:
             torch.save(arm.checkpoint(), latest)
             _write_json(
@@ -262,8 +266,9 @@ def main(argv: list[str] | None = None) -> int:
     os.close(handle)
 
     trainer = load_trainer()
-    items = train_items()
-    cases = build_cases(trainer, items)
+    cases = build_cases(trainer)
+    if not cases:
+        raise RuntimeError("no parseable train query turns; F1b cannot train")
     planned = [(seed, arm) for seed in SEEDS for arm in ARMS]
     if args.only:
         name, seed_text = args.only.rsplit("__seed_", 1)
@@ -281,7 +286,6 @@ def main(argv: list[str] | None = None) -> int:
         state = run_one(
             arm_name,
             seed,
-            items,
             trainer,
             cases,
             run_root,
@@ -307,6 +311,7 @@ def main(argv: list[str] | None = None) -> int:
             "scope": "4 arms x 3 seeds; V4/producer frozen; encoder+bias trained; 1,280 updates",
             "updates": args.updates,
             "threads": args.threads,
+            "train_cases": len(cases),
             "total_cpu_cap": TOTAL_CPU_CAP,
             "run_cpu_cap": RUN_CPU_CAP,
             "stop_reason": stop_reason,
