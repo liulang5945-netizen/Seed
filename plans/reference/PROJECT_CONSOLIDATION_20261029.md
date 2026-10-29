@@ -142,3 +142,14 @@ owner 同日签了 F1：候选只训 encoder/bias（V4 冻结）、预算上限 
 
 另：holdout 的物化入口是 `build_episode(family, variant)`（`build_sealed_split` 对 query/holdout 是硬拒绝），评分器必须自带"写一次"的 attempt 闸；`E1 request` 的 query 面不读。
 
+### 11.3 评分器已落地（2026-10-29），并用 train 冒烟抓掉两处口径错
+
+[评分器](../../../scripts/training/evaluate_taiji_n1_plan177_f_f1_holdout.py) 按 §11.2 的口径写完，另加 `--smoke-train` 只在一条 train episode 上跑通链路（不碰 holdout、不写 holdout 报告）。冒烟当场抓出两处我自己的口径错：
+
+1. **答案是整句，不能拿裸颜色比**：`state_exact`/`value_exact`/四类交换原先直接比"生成文本 == 颜色"，全部假零；改成先 `answer_colour()` 抽颜色再比。（首跑 `state_exact=0.0` 就是这个假零。）
+2. **无关交换的分母**：episode 里只有一个实体时 `irrelevant_swap_keep` 被记成 0.0（"没换成功"），实际是"没东西可换"；现在单列 `irrelevant_turns`，无候选时为 `null`，并把 `query_unparsed`（查询轮 producer 没抽出实体）单独披露。
+
+冒烟读数（train 首条、copy_only 的 zero 端点，未训练）：`answer_exact 0.5、value_exact 1.0、state_exact 1.0、cut_drop 0.0、rescue_gain 1.0、irrelevant_swap_keep null（无第二实体）、query_unparsed 1`。**这不是能力读数**——端点未训练，只用来证明链路和分母都对。
+
+一次性闸：先 `assert_runs_complete()` 核对 12 个 run 都是 `completed`，再写 `.attempt.json`，最后才物化 holdout；任何一步不满足就拒跑，不烧掉那次"只读一次"。
+
