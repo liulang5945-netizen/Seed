@@ -9,6 +9,7 @@
 | [20261029阶段收束](PROJECT_CONSOLIDATION_20261029.md) | 当前收束记录 | E/F0a资产、E3子门、失败、CI/契约待办及用户执行边界 |
 | [E1消费合同](SPEC-N1-177_E1_state_consumption_contract_20261029.md) | 冻结原规则 | 状态依赖任务与内容消费；进度以03为准 |
 | [F值编码器合同](SPEC-N1-177_F_value_encoder_20261029.md) | 方向/四臂及预检规则冻结 | F0a/F0b分账；F1数字/预算及曝光冲突仍须定稿 |
+| [F1冻结提案](SPEC-N1-177_F1_freeze_proposal_20261029.md) | 待owner签署（未启动） | 候选范围、12-run预算(≈121,500 CPU秒)、数值门与停止线；签后写回F合同 |
 | [E状态消费/信用决策](PLAN-N1-177_E_state_consumption_and_credit_decision_20261029.md) | 当前设计决策 | A–D证据复核/勘误、选项取舍及E0–E3出口 |
 | [N177实施计划](PLAN-N1-177_joint_cognition_slice_20261026.md) | 活动交接 | 已有资产、A–F实施边界及后继接口 |
 | [177.5 T1 SPEC](SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md) | 原合同冻结 | 五模式×三seed、数据/更新权限、阈值和预算 |
