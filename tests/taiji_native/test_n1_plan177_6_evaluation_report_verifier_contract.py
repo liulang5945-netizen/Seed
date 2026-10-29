@@ -52,7 +52,8 @@ def _report(verifier, arms: int = 15) -> dict[str, Any]:
         "format": "taiji-n177-6-t1-evaluation-v1",
         "status": "complete",
         "arms_completed": arms,
-        "fully_scored_holdout_arms": [{"mode": "correct", "seed": index} for index in range(arms)],
+        #: 与真实报告同形：这是**计数**，不是逐臂列表（第一版 fixture 用列表，掩盖了这个形状差）。
+        "fully_scored_holdout_arms": arms,
         "sealed_reads": None,
         "absolute_gates": gates,
         "absolute_means": means,
@@ -82,6 +83,7 @@ def test_a_complete_report_passes(verifier) -> None:
     "mutate, needle",
     [
         (lambda report: report.update(arms_completed=14), "arms_completed"),
+        (lambda report: report.update(fully_scored_holdout_arms=14), "fully_scored_holdout_arms"),
         (lambda report: report["absolute_gates"].pop("f1_value_span_exact"), "f1_value_span_exact"),
         (
             lambda report: report["absolute_means"].pop("f0_valid_utf8"),

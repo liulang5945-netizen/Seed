@@ -1,0 +1,115 @@
+{
+  "arms_completed": 15,
+  "completed_arm_ids": [
+    "correct__seed_0",
+    "parser_permuted__seed_0",
+    "no_update__seed_0",
+    "readout_only__seed_0",
+    "responsible_owner_frozen__seed_0",
+    "correct__seed_1",
+    "parser_permuted__seed_1",
+    "no_update__seed_1",
+    "readout_only__seed_1",
+    "responsible_owner_frozen__seed_1",
+    "correct__seed_2",
+    "parser_permuted__seed_2",
+    "no_update__seed_2",
+    "readout_only__seed_2",
+    "responsible_owner_frozen__seed_2"
+  ],
+  "evaluation": "pending separate read-only scorer",
+  "format": "taiji-n177-6-t1-run-report-v1",
+  "resources": {
+    "artifact_bytes": 4209550969,
+    "caps": {
+      "artifact_bytes": 8589934592,
+      "process_cpu_seconds": 2400000,
+      "wall_seconds": 220000
+    },
+    "process_cpu_seconds": 1544241.765625,
+    "wall_seconds": 140071.9671254845
+  },
+  "run_manifest": {
+    "adapter_checkpoint_sha256": "f7cf198e1155b4dadb0614a2afb30c790e6ff2bf70c1cacfb965d1a5daf350cd",
+    "arm_order": [
+      {
+        "mode": "correct",
+        "seed": 0
+      },
+      {
+        "mode": "parser_permuted",
+        "seed": 0
+      },
+      {
+        "mode": "no_update",
+        "seed": 0
+      },
+      {
+        "mode": "readout_only",
+        "seed": 0
+      },
+      {
+        "mode": "responsible_owner_frozen",
+        "seed": 0
+      },
+      {
+        "mode": "correct",
+        "seed": 1
+      },
+      {
+        "mode": "parser_permuted",
+        "seed": 1
+      },
+      {
+        "mode": "no_update",
+        "seed": 1
+      },
+      {
+        "mode": "readout_only",
+        "seed": 1
+      },
+      {
+        "mode": "responsible_owner_frozen",
+        "seed": 1
+      },
+      {
+        "mode": "correct",
+        "seed": 2
+      },
+      {
+        "mode": "parser_permuted",
+        "seed": 2
+      },
+      {
+        "mode": "no_update",
+        "seed": 2
+      },
+      {
+        "mode": "readout_only",
+        "seed": 2
+      },
+      {
+        "mode": "responsible_owner_frozen",
+        "seed": 2
+      }
+    ],
+    "batch_size": 4,
+    "course_sha256": "8443afe253b8f695c14c468fada756f53f275094d87aa945c792f1e2e631ad4b",
+    "f0_only_updates": 640,
+    "format": "taiji-n177-6-t1-run-v1",
+    "hard_caps": {
+      "artifact_bytes": 8589934592,
+      "process_cpu_seconds": 2400000,
+      "wall_seconds": 220000
+    },
+    "input_trace_cache_bytes": 590512321,
+    "input_trace_cache_sha256": "348e574829d51ed593931055d2bfc4becdbcc606458f1223600cf0505daaafbb",
+    "parent_v4_sha256": "6df85a28edbb18b9c8638289ea8bcfaa868eb6b3e384344b12fc7ec2d0e69a71",
+    "stop_rule": "stop on first cap or integrity failure; keep latest checkpoint; no automatic retry/top-up",
+    "train_split_sha256": "a2f6379b38405f83c5b740eaa9f11d41672a3a516fb303d9df899a99f45e77a1",
+    "update_order_sha256": "28abc9c5d1cbaee63189d5ceeac114b5b663cebf3dc5ecec62227710e1d948ff",
+    "updates_per_arm": 2560
+  },
+  "sealed_reads": 0,
+  "status": "training_complete_evaluation_pending"
+}

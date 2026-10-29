@@ -52,9 +52,11 @@ def verify(report: dict[str, Any], state: dict[str, Any]) -> list[str]:
         problems.append(f"format={report.get('format')!r}")
     if report.get("arms_completed") != ARMS:
         problems.append(f"arms_completed={report.get('arms_completed')!r} (need {ARMS})")
-    scored = report.get("fully_scored_holdout_arms") or []
-    if len(scored) != ARMS:
-        problems.append(f"fully_scored_holdout_arms={len(scored)} (need {ARMS})")
+    #: 真实报告里这个字段是**计数**（int）；早期版本曾是列表。两种形状都要能读，别因为形状判"缺口"。
+    scored = report.get("fully_scored_holdout_arms")
+    scored_count = scored if isinstance(scored, int) else len(scored or [])
+    if scored_count != ARMS:
+        problems.append(f"fully_scored_holdout_arms={scored_count} (need {ARMS})")
     if report.get("sealed_reads") not in (None, 0, 1):
         problems.append(f"sealed_reads={report.get('sealed_reads')!r}")
     if state.get("evaluation_attempts") != 1:

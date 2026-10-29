@@ -1,0 +1,192 @@
+{
+  "artifacts_committed": [
+    {
+      "bytes": 58693024,
+      "path": "reports/taiji_n1_plan177_6_t1_evaluation_20261029.json",
+      "sha256": "bab4c0babf5b5b80b21bb0d1e4929dd5df3d3386a22cb02c92c0af9e14edd558"
+    },
+    {
+      "bytes": 3089,
+      "path": "reports/taiji_n1_plan177_6_t1_pilot_20261027.json",
+      "sha256": "4b7e11f4c7898b51eee0b992ff767165118383865c1e7a69575fbfe9a442c376"
+    }
+  ],
+  "artifacts_hash_pinned_not_committed": [
+    {
+      "bytes": 14680,
+      "path": "data/checkpoints/n1_plan177_6_t1_pilot_20261027/run_state.json",
+      "sha256": "18d8c73214d9ce30076493123e38792b5744ded5efc87440842a28fe9b3129ad"
+    },
+    {
+      "bytes": 30037964,
+      "path": "data/checkpoints/n1_plan177_6_t1_pilot_20261027/metrics.jsonl",
+      "sha256": "5367c0b169cd5f9b7cbcf3bbe87c5eeca1d92805f06c64cb4e658554843aebf8"
+    }
+  ],
+  "date": "2026-10-29",
+  "evaluation": {
+    "absolute_gates": {
+      "f0_answer_exact": true,
+      "f0_stop_marker": true,
+      "f0_valid_utf8": true,
+      "f1_attribute_span_exact": true,
+      "f1_entity_span_exact": true,
+      "f1_false_write_rate": true,
+      "f1_post_correction_answer_exact": true,
+      "f1_post_correction_state_exact": true,
+      "f1_unrelated_keep_exact": true,
+      "f1_value_span_exact": true
+    },
+    "absolute_means": {
+      "f0_answer_exact": 0.9979166666666667,
+      "f0_stop_marker": 1.0,
+      "f0_valid_utf8": 1.0,
+      "f1_attribute_span_exact": 1.0,
+      "f1_entity_span_exact": 1.0,
+      "f1_false_write_rate": 0.0,
+      "f1_post_correction_answer_exact": 0.9947916666666666,
+      "f1_post_correction_state_exact": 1.0,
+      "f1_unrelated_keep_exact": 1.0,
+      "f1_value_span_exact": 0.9993489583333334
+    },
+    "arms_completed": 15,
+    "attribution_conclusion": "Correct supervision has fixed-slice behavioral gain over both controls for the parser-supervised producer/V4 consumer path; downstream answer-error credit to the producer is not established.",
+    "f0_retention": [
+      {
+        "delta": 0.9984375,
+        "final_f0_holdout_answer_exact": 0.9984375,
+        "passed_drop_limit": true,
+        "seed": 0,
+        "zero_f0_holdout_answer_exact": 0.0
+      },
+      {
+        "delta": 0.996875,
+        "final_f0_holdout_answer_exact": 0.996875,
+        "passed_drop_limit": true,
+        "seed": 1,
+        "zero_f0_holdout_answer_exact": 0.0
+      },
+      {
+        "delta": 0.9984375,
+        "final_f0_holdout_answer_exact": 0.9984375,
+        "passed_drop_limit": true,
+        "seed": 2,
+        "zero_f0_holdout_answer_exact": 0.0
+      }
+    ],
+    "f0_retention_passed": true,
+    "fully_scored_holdout_arms": 15,
+    "learning_contrasts": {
+      "no_update": {
+        "median_delta": 0.9934895833333334,
+        "minimum_delta": 0.9934895833333334,
+        "passed": true,
+        "positive_seed_count": 3
+      },
+      "parser_permuted": {
+        "median_delta": 0.50390625,
+        "minimum_delta": 0.5,
+        "passed": true,
+        "positive_seed_count": 3
+      }
+    },
+    "resources": {
+      "artifact_bytes": 4679230665,
+      "hard_caps": {
+        "artifact_bytes": 8589934592,
+        "process_cpu_seconds": 2400000,
+        "wall_seconds": 220000
+      },
+      "process_cpu_seconds": 1620987.53125,
+      "wall_seconds": 147210.24861098453
+    },
+    "state_write_diagnostics_n": 3,
+    "status": "complete"
+  },
+  "final_checkpoints": {
+    "correct__seed_0": {
+      "path": "E:\\Seed\\data\\checkpoints\\n1_plan177_6_t1_pilot_20261027\\correct__seed_0\\update_002560.pt",
+      "update_cursor": 2560
+    },
+    "correct__seed_1": {
+      "path": "E:\\Seed\\data\\checkpoints\\n1_plan177_6_t1_pilot_20261027\\correct__seed_1\\update_002560.pt",
+      "update_cursor": 2560
+    },
+    "correct__seed_2": {
+      "path": "E:\\Seed\\data\\checkpoints\\n1_plan177_6_t1_pilot_20261027\\correct__seed_2\\update_002560.pt",
+      "update_cursor": 2560
+    },
+    "no_update__seed_0": {
+      "path": "E:\\Seed\\data\\checkpoints\\n1_plan177_6_t1_pilot_20261027\\no_update__seed_0\\update_002560.pt",
+      "update_cursor": 2560
+    },
+    "no_update__seed_1": {
+      "path": "E:\\Seed\\data\\checkpoints\\n1_plan177_6_t1_pilot_20261027\\no_update__seed_1\\update_002560.pt",
+      "update_cursor": 2560
+    },
+    "no_update__seed_2": {
+      "path": "E:\\Seed\\data\\checkpoints\\n1_plan177_6_t1_pilot_20261027\\no_update__seed_2\\update_002560.pt",
+      "update_cursor": 2560
+    },
+    "parser_permuted__seed_0": {
+      "path": "E:\\Seed\\data\\checkpoints\\n1_plan177_6_t1_pilot_20261027\\parser_permuted__seed_0\\update_002560.pt",
+      "update_cursor": 2560
+    },
+    "parser_permuted__seed_1": {
+      "path": "E:\\Seed\\data\\checkpoints\\n1_plan177_6_t1_pilot_20261027\\parser_permuted__seed_1\\update_002560.pt",
+      "update_cursor": 2560
+    },
+    "parser_permuted__seed_2": {
+      "path": "E:\\Seed\\data\\checkpoints\\n1_plan177_6_t1_pilot_20261027\\parser_permuted__seed_2\\update_002560.pt",
+      "update_cursor": 2560
+    },
+    "readout_only__seed_0": {
+      "path": "E:\\Seed\\data\\checkpoints\\n1_plan177_6_t1_pilot_20261027\\readout_only__seed_0\\update_002560.pt",
+      "update_cursor": 2560
+    },
+    "readout_only__seed_1": {
+      "path": "E:\\Seed\\data\\checkpoints\\n1_plan177_6_t1_pilot_20261027\\readout_only__seed_1\\update_002560.pt",
+      "update_cursor": 2560
+    },
+    "readout_only__seed_2": {
+      "path": "E:\\Seed\\data\\checkpoints\\n1_plan177_6_t1_pilot_20261027\\readout_only__seed_2\\update_002560.pt",
+      "update_cursor": 2560
+    },
+    "responsible_owner_frozen__seed_0": {
+      "path": "E:\\Seed\\data\\checkpoints\\n1_plan177_6_t1_pilot_20261027\\responsible_owner_frozen__seed_0\\update_002560.pt",
+      "update_cursor": 2560
+    },
+    "responsible_owner_frozen__seed_1": {
+      "path": "E:\\Seed\\data\\checkpoints\\n1_plan177_6_t1_pilot_20261027\\responsible_owner_frozen__seed_1\\update_002560.pt",
+      "update_cursor": 2560
+    },
+    "responsible_owner_frozen__seed_2": {
+      "path": "E:\\Seed\\data\\checkpoints\\n1_plan177_6_t1_pilot_20261027\\responsible_owner_frozen__seed_2\\update_002560.pt",
+      "update_cursor": 2560
+    }
+  },
+  "format": "taiji-n177-6-t1-closeout-v1",
+  "metrics_lines": 39077,
+  "open_handoff": [
+    "plans/active/roadmap/03_CURRENT_EXECUTION.md 的 N176 行仍写「原评价待有限收束」（本件不改他人正在编辑的文档）",
+    "03/09/10 的 N177.6 行需把状态从「监督中」换成「15 臂完成＋评价已出」，并把结论指向本清单与评价报告",
+    "N177.6 评价器与训练器默认同一个 --report 路径；按默认跑会覆盖训练器的完成报告，评价应显式给独立路径（本轮用 reports/taiji_n1_plan177_6_t1_evaluation_20261029.json）"
+  ],
+  "sealed_reads_in_this_closeout": 1,
+  "training": {
+    "arms_completed": 15,
+    "resources": {
+      "artifact_bytes": 4209550969,
+      "caps": {
+        "artifact_bytes": 8589934592,
+        "process_cpu_seconds": 2400000,
+        "wall_seconds": 220000
+      },
+      "process_cpu_seconds": 1544241.765625,
+      "wall_seconds": 140071.9671254845
+    },
+    "sealed_reads": 0,
+    "status_before_evaluation": "training_complete_evaluation_pending"
+  },
+  "why_metrics_not_committed": "data/ 目录按 .gitignore:160 整目录忽略（checkpoint 与训练流水按策略不入库）；30 MB 的逐 update 账以 sha256 钉住，原件留在盘上。"
+}

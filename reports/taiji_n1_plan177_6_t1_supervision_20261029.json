@@ -1,0 +1,276 @@
+{
+  "all_verdicts_ok": true,
+  "anomalies": {
+    "latest_implementation_revision": "0f16776f5f32553dede2b8d8df0cf40b42f90ae2",
+    "recovered_failure_events": 4,
+    "recovered_failure_events_since_latest_revision": 0,
+    "rollback_events": 7,
+    "rollback_events_since_latest_revision": 0
+  },
+  "caps": {
+    "artifact_bytes": 8589934592,
+    "process_cpu_seconds": 2400000,
+    "wall_seconds": 220000
+  },
+  "checkpoints": {
+    "artifact_bytes_reported": 4209550969,
+    "completed_arms_with_missing_final": [],
+    "per_arm": {
+      "correct__seed_0": {
+        "bytes": 236671490,
+        "completed": true,
+        "files": 12,
+        "latest_cursor": 2560,
+        "latest_exists": true
+      },
+      "correct__seed_1": {
+        "bytes": 236495639,
+        "completed": true,
+        "files": 12,
+        "latest_cursor": 2560,
+        "latest_exists": true
+      },
+      "correct__seed_2": {
+        "bytes": 236495639,
+        "completed": true,
+        "files": 12,
+        "latest_cursor": 2560,
+        "latest_exists": true
+      },
+      "no_update__seed_0": {
+        "bytes": 234575684,
+        "completed": true,
+        "files": 12,
+        "latest_cursor": 2560,
+        "latest_exists": true
+      },
+      "no_update__seed_1": {
+        "bytes": 234575684,
+        "completed": true,
+        "files": 12,
+        "latest_cursor": 2560,
+        "latest_exists": true
+      },
+      "no_update__seed_2": {
+        "bytes": 234575684,
+        "completed": true,
+        "files": 12,
+        "latest_cursor": 2560,
+        "latest_exists": true
+      },
+      "parser_permuted__seed_0": {
+        "bytes": 236496471,
+        "completed": true,
+        "files": 12,
+        "latest_cursor": 2560,
+        "latest_exists": true
+      },
+      "parser_permuted__seed_1": {
+        "bytes": 236496471,
+        "completed": true,
+        "files": 12,
+        "latest_cursor": 2560,
+        "latest_exists": true
+      },
+      "parser_permuted__seed_2": {
+        "bytes": 236496471,
+        "completed": true,
+        "files": 12,
+        "latest_cursor": 2560,
+        "latest_exists": true
+      },
+      "readout_only__seed_0": {
+        "bytes": 234575748,
+        "completed": true,
+        "files": 12,
+        "latest_cursor": 2560,
+        "latest_exists": true
+      },
+      "readout_only__seed_1": {
+        "bytes": 234575748,
+        "completed": true,
+        "files": 12,
+        "latest_cursor": 2560,
+        "latest_exists": true
+      },
+      "readout_only__seed_2": {
+        "bytes": 234575748,
+        "completed": true,
+        "files": 12,
+        "latest_cursor": 2560,
+        "latest_exists": true
+      },
+      "responsible_owner_frozen__seed_0": {
+        "bytes": 234576516,
+        "completed": true,
+        "files": 12,
+        "latest_cursor": 2560,
+        "latest_exists": true
+      },
+      "responsible_owner_frozen__seed_1": {
+        "bytes": 234576516,
+        "completed": true,
+        "files": 12,
+        "latest_cursor": 2560,
+        "latest_exists": true
+      },
+      "responsible_owner_frozen__seed_2": {
+        "bytes": 234576516,
+        "completed": true,
+        "files": 12,
+        "latest_cursor": 2560,
+        "latest_exists": true
+      }
+    },
+    "point_bytes_total": 3530336025
+  },
+  "completed_arms": 15,
+  "current": {
+    "arm_id": "responsible_owner_frozen__seed_2",
+    "process_cpu_seconds": 1544232.078125,
+    "update": 2560,
+    "wall_seconds": 140070.71010298445
+  },
+  "durable_cursor": 38400,
+  "format": "taiji-n177-6-t1-supervision-v1",
+  "lock": {
+    "marker": "plan177_6_t1_pilot",
+    "pid": 21324,
+    "pid_alive": true,
+    "taken_local": "2026-10-29 10:57:37"
+  },
+  "observed_utc": "2026-10-29T02:59:51Z",
+  "per_arm_cost": {
+    "correct__seed_0": {
+      "cpu_per_update": 56.4236,
+      "updates_measured": 2559,
+      "wall_per_update": 5.3211
+    },
+    "correct__seed_1": {
+      "cpu_per_update": 43.7056,
+      "updates_measured": 2559,
+      "wall_per_update": 3.8057
+    },
+    "correct__seed_2": {
+      "cpu_per_update": 39.0438,
+      "updates_measured": 2559,
+      "wall_per_update": 3.394
+    },
+    "no_update__seed_0": {
+      "cpu_per_update": 29.1626,
+      "updates_measured": 2559,
+      "wall_per_update": 2.7751
+    },
+    "no_update__seed_1": {
+      "cpu_per_update": 26.4222,
+      "updates_measured": 2559,
+      "wall_per_update": 2.3965
+    },
+    "no_update__seed_2": {
+      "cpu_per_update": 24.9368,
+      "updates_measured": 2559,
+      "wall_per_update": 2.1927
+    },
+    "parser_permuted__seed_0": {
+      "cpu_per_update": 56.0097,
+      "updates_measured": 2559,
+      "wall_per_update": 5.1119
+    },
+    "parser_permuted__seed_1": {
+      "cpu_per_update": 45.8325,
+      "updates_measured": 2559,
+      "wall_per_update": 3.9781
+    },
+    "parser_permuted__seed_2": {
+      "cpu_per_update": 46.0404,
+      "updates_measured": 2559,
+      "wall_per_update": 4.017
+    },
+    "readout_only__seed_0": {
+      "cpu_per_update": 32.8522,
+      "updates_measured": 2559,
+      "wall_per_update": 2.858
+    },
+    "readout_only__seed_1": {
+      "cpu_per_update": 41.8136,
+      "updates_measured": 2559,
+      "wall_per_update": 4.0241
+    },
+    "readout_only__seed_2": {
+      "cpu_per_update": 34.7895,
+      "updates_measured": 2559,
+      "wall_per_update": 3.0256
+    },
+    "responsible_owner_frozen__seed_0": {
+      "cpu_per_update": 37.2406,
+      "updates_measured": 2559,
+      "wall_per_update": 3.2432
+    },
+    "responsible_owner_frozen__seed_1": {
+      "cpu_per_update": 41.7633,
+      "updates_measured": 2559,
+      "wall_per_update": 3.8582
+    },
+    "responsible_owner_frozen__seed_2": {
+      "cpu_per_update": 39.7074,
+      "updates_measured": 2559,
+      "wall_per_update": 3.4689
+    }
+  },
+  "per_mode_remaining": {
+    "correct": {
+      "cpu_per_update": 46.39102798944901,
+      "remaining_updates": 0,
+      "wall_per_update": 4.173607661456356
+    },
+    "no_update": {
+      "cpu_per_update": 26.840540331509704,
+      "remaining_updates": 0,
+      "wall_per_update": 2.4547650686987033
+    },
+    "parser_permuted": {
+      "cpu_per_update": 49.29418229777256,
+      "remaining_updates": 0,
+      "wall_per_update": 4.368979286804769
+    },
+    "readout_only": {
+      "cpu_per_update": 36.485103637488606,
+      "remaining_updates": 0,
+      "wall_per_update": 3.3025949762928377
+    },
+    "responsible_owner_frozen": {
+      "cpu_per_update": 39.57043970626547,
+      "remaining_updates": 0,
+      "wall_per_update": 3.5234591648039255
+    }
+  },
+  "projection": {
+    "final_process_cpu_ratio": 0.6434,
+    "final_wall_ratio": 0.6367,
+    "modes_without_cost_sample": [],
+    "remaining_process_cpu_seconds": 0.0,
+    "remaining_updates": 0,
+    "remaining_wall_seconds": 0.0
+  },
+  "scope_limits": [
+    "只读；不判能力，不替代结案",
+    "投影用各模式自己测得的单位成本，剩余臂含在跑臂的未完成部分",
+    "轮次成本受宿主争用影响，投影随争用漂移"
+  ],
+  "status": "training_complete_evaluation_pending",
+  "used": {
+    "artifact_ratio": 0.4900562308030203,
+    "process_cpu_ratio": 0.6434300325520833,
+    "wall_ratio": 0.6366850459226566
+  },
+  "verdicts": {
+    "artifacts_inside_cap": true,
+    "completed_arms_at_exact_multiples": true,
+    "completed_arms_have_final_files": true,
+    "no_anomalies_since_latest_revision": true,
+    "process_cpu_inside_cap": true,
+    "projection_inside_caps": true,
+    "single_lock_owner_alive": true,
+    "wall_inside_cap": true
+  }
+}
