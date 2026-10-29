@@ -118,3 +118,12 @@ owner 同日签了 F1：候选只训 encoder/bias（V4 冻结）、预算上限 
 开工后发现一个实现面缺口：F 合同的主读数 `answer_exact` 要完整回答，而候选只训 encoder/bias——冻结 V4 的贪心生成没有任何"把 feature 用上"的入口。处置：给 `_generate_from_joint_cache` 加了一个**默认 `None`** 的 `logit_bias` 参数（生成时逐步加到下一字节 logits 上），并用两支测钉住"不给 bias 与原贪心逐字节相同、给了 bias 当场改选中字节"。该口径已写进 [F1 合同§2.5](../../reference/SPEC-N1-177_F1_freeze_proposal_20261029.md)，没有改成"只评首字节"那种降级口径。
 
 线程数实测（同一 4 步窗口）：1 线程 3.65 CPU 秒/更新、2 线程 10.1、4 线程 18.6 ⇒ 串行单线程既最省 CPU 也最省总和；预计 wall ≈20 小时，结束时才读一次 holdout。
+
+### 11.1 F1 运行手册（续跑/监督/收口）
+
+- 当前 phase：`run_taiji_n1_plan177_f_f1.py --threads 1` 串行跑 12 个 run；每个 run 的进度看 `data/checkpoints/n1_plan177_f_f1_20261029/<arm>__seed_<n>/run_state.json`（`updates` 只在每 256 步的耐久点刷新，所以"0"不代表没动）。
+- 断点续跑：直接重跑同一命令即可——`run_one` 从 `latest.pt` 恢复并累加 `process_cpu_seconds`；`--only <arm>__seed_<n>` 只跑一个 run（冒烟/补跑用，正式件必须 12 个都 `completed`）。
+- 预算：每 run 10,100 CPU 秒、整包 121,500；触顶写 `run_cpu_cap` / `total_cpu_cap` 并停。
+- 单实例：run root 的 `run_root.lock` 存在即拒起；若进程被 SIGKILL 留下锁，先确认没有活进程再手工删除（不要盲删）。
+- 训练结束后才做：`reports/taiji_n1_plan177_f_f1_20261029.json` 汇总 + 一次 holdout 评分（评分器另件，未写）；期间不读 query/holdout、不调阈值、不加轮次。
+
