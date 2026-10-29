@@ -79,6 +79,47 @@ def _report(verifier, arms: int = 15) -> dict[str, Any]:
             "conclusion": "x",
         },
         "parameters_updated_during_scoring": False,
+        "query_and_holdout": [
+            {"split": "query", "arms": []},
+            {
+                "split": "holdout",
+                "arms": [
+                    {
+                        "mode": "correct",
+                        "seed": index % 3,
+                        "by_level": {
+                            "F0": {
+                                "family_macro": {
+                                    key: 0.5
+                                    for key in (
+                                        "answer_exact_rate",
+                                        "valid_utf8_rate",
+                                        "stop_marker_rate",
+                                    )
+                                }
+                            },
+                            "F1": {
+                                "family_macro": {
+                                    key: 0.5
+                                    for key in (
+                                        "answer_exact_rate",
+                                        "f1_state_query_score",
+                                        "entity_span_exact_rate",
+                                        "attribute_span_exact_rate",
+                                        "value_span_exact_rate",
+                                        "f1_post_correction_state_exact",
+                                        "f1_post_correction_answer_exact",
+                                        "f1_unrelated_keep_exact",
+                                        "f1_false_write_rate",
+                                    )
+                                }
+                            },
+                        },
+                    }
+                    for index in range(arms)
+                ],
+            },
+        ],
     }
 
 
@@ -95,6 +136,16 @@ def test_a_complete_report_passes(verifier) -> None:
     [
         (lambda report: report.update(arms_completed=14), "arms_completed"),
         (lambda report: report.update(fully_scored_holdout_arms=14), "fully_scored_holdout_arms"),
+        (
+            lambda report: report["query_and_holdout"][1]["arms"].pop(),
+            "holdout arms=14",
+        ),
+        (
+            lambda report: report["query_and_holdout"][1]["arms"][0]["by_level"]["F1"][
+                "family_macro"
+            ].pop("f1_state_query_score"),
+            "missing f1_state_query_score",
+        ),
         (lambda report: report["absolute_gates"].pop("f1_value_span_exact"), "f1_value_span_exact"),
         (
             lambda report: report["absolute_means"].pop("f0_valid_utf8"),

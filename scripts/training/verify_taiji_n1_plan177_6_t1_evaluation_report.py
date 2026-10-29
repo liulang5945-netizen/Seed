@@ -67,6 +67,42 @@ def verify(report: dict[str, Any], state: dict[str, Any]) -> list[str]:
     if state.get("evaluation_report_superseded") is not None:
         problems.append("evaluation_report_superseded is set: a previous report was overwritten")
 
+    #: SPEC：均值裁决之外还要"另列逐 seed 读数" ⇒ 逐臂面必须在件里，且带各门要用的列。
+    per_level_keys = {
+        "F0": ("answer_exact_rate", "valid_utf8_rate", "stop_marker_rate"),
+        "F1": (
+            "answer_exact_rate",
+            "f1_state_query_score",
+            "entity_span_exact_rate",
+            "attribute_span_exact_rate",
+            "value_span_exact_rate",
+            "f1_post_correction_state_exact",
+            "f1_post_correction_answer_exact",
+            "f1_unrelated_keep_exact",
+            "f1_false_write_rate",
+        ),
+    }
+    splits = report.get("query_and_holdout")
+    if not isinstance(splits, list) or {entry.get("split") for entry in splits} != {
+        "query",
+        "holdout",
+    }:
+        problems.append("query_and_holdout must carry exactly the query and holdout splits")
+    else:
+        holdout = next(entry for entry in splits if entry.get("split") == "holdout")
+        arms = holdout.get("arms") or []
+        if len(arms) != ARMS:
+            problems.append(f"holdout arms={len(arms)} (per-seed readouts need {ARMS})")
+        for arm in arms:
+            by_level = arm.get("by_level") or {}
+            for level, keys in per_level_keys.items():
+                macro = (by_level.get(level) or {}).get("family_macro") or {}
+                for key in keys:
+                    if key not in macro:
+                        problems.append(
+                            f"holdout {arm.get('mode')}/seed{arm.get('seed')} {level} missing {key}"
+                        )
+                        break
     gates = report.get("absolute_gates") or {}
     means = report.get("absolute_means") or {}
     for name in ABSOLUTE_GATES:
