@@ -767,25 +767,52 @@ class JointInputProducerV1(nn.Module):
         slot_logits, act_logits, encoded = self(trace)
         return self._parse_logits(joint_state, trace, slot_logits, act_logits, encoded)
 
+    def _predict_with_role_vectors(
+        self,
+        joint_state: JointTaskStateV1,
+        trace: InputTrace,
+    ) -> tuple[JointSemanticParseV1, dict[str, torch.Tensor]]:
+        self._validate_trace(joint_state, trace)
+        slot_logits, act_logits, encoded = self(trace)
+        parse = self._parse_logits(joint_state, trace, slot_logits, act_logits, encoded)
+        vectors: dict[str, torch.Tensor] = {}
+        for role in ("entity", "attribute", "value"):
+            spans = tuple(item for item in parse.spans if item.role == role)
+            if len(spans) != 1:
+                continue
+            span = spans[0]
+            vectors[role] = encoded[span.start_byte : span.end_byte]
+        return parse, vectors
+
     @torch.no_grad()
     def predict_with_role_features(
         self,
         joint_state: JointTaskStateV1,
         trace: InputTrace,
     ) -> tuple[JointSemanticParseV1, dict[str, tuple[float, ...]]]:
-        """Preserve per-role encoder features instead of one mean over all slots."""
+        """Preserve per-role mean encoder features instead of one all-slot mean."""
 
-        self._validate_trace(joint_state, trace)
-        slot_logits, act_logits, encoded = self(trace)
-        parse = self._parse_logits(joint_state, trace, slot_logits, act_logits, encoded)
+        parse, vectors = self._predict_with_role_vectors(joint_state, trace)
         roles: dict[str, tuple[float, ...]] = {}
-        for role in ("entity", "attribute", "value"):
-            spans = tuple(item for item in parse.spans if item.role == role)
-            if len(spans) != 1:
-                continue
-            span = spans[0]
-            vector = encoded[span.start_byte : span.end_byte].mean(dim=0)
-            roles[role] = tuple(float(item) for item in vector.detach().cpu().tolist())
+        for role, vector in vectors.items():
+            mean = vector.mean(dim=0)
+            roles[role] = tuple(float(item) for item in mean.detach().cpu().tolist())
+        return parse, roles
+
+    @torch.no_grad()
+    def predict_with_role_byte_features(
+        self,
+        joint_state: JointTaskStateV1,
+        trace: InputTrace,
+    ) -> tuple[JointSemanticParseV1, dict[str, tuple[tuple[float, ...], ...]]]:
+        """Preserve every per-byte encoder row inside each role span."""
+
+        parse, vectors = self._predict_with_role_vectors(joint_state, trace)
+        roles: dict[str, tuple[tuple[float, ...], ...]] = {}
+        for role, vector in vectors.items():
+            roles[role] = tuple(
+                tuple(float(item) for item in row.detach().cpu().tolist()) for row in vector
+            )
         return parse, roles
 
     def commit_to_joint_state(

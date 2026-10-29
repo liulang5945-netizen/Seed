@@ -58,19 +58,24 @@ def _collect(trainer, entity: str, colour: str, feature_source: str, encoder):
     query = episode.turns[4]
     adapter, joint = trainer._new_episode_state(f"e1-proto:{family.token}:fact")
     trace, joint = trainer._append_turn(adapter, joint, fact)
-    parse, role_features = trainer.producer.predict_with_role_features(joint, trace)
-    if feature_source == "producer-mean":
-        continuous = parse.semantic_features
-    elif feature_source == "producer-value":
-        continuous = role_features.get("value")
-    elif feature_source == "value-token":
-        continuous = (
-            None
-            if encoder is None
-            else tuple(float(item) for item in encoder.encode(colour).tolist())
-        )
+    if feature_source == "producer-value-bytes":
+        parse, role_bytes = trainer.producer.predict_with_role_byte_features(joint, trace)
+        value_rows = role_bytes.get("value", ())
+        continuous = tuple(item for row in value_rows for item in row)
     else:
-        raise ValueError("unsupported E2b-2 feature source")
+        parse, role_features = trainer.producer.predict_with_role_features(joint, trace)
+        if feature_source == "producer-mean":
+            continuous = parse.semantic_features
+        elif feature_source == "producer-value":
+            continuous = role_features.get("value")
+        elif feature_source == "value-token":
+            continuous = (
+                None
+                if encoder is None
+                else tuple(float(item) for item in encoder.encode(colour).tolist())
+            )
+        else:
+            raise ValueError("unsupported E2b-2 feature source")
     feature = feature_from_parse(
         parse,
         source_input_id=fact.frame.input_id,
@@ -108,7 +113,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--trace-cache", type=Path, default=TRACE_CACHE)
     parser.add_argument(
         "--feature-source",
-        choices=("producer-mean", "producer-value", "value-token"),
+        choices=(
+            "producer-mean",
+            "producer-value",
+            "producer-value-bytes",
+            "value-token",
+        ),
         default="producer-value",
     )
     parser.add_argument("--readout-root", type=Path, default=READOUT_ROOT)
