@@ -4,7 +4,7 @@
 
 ## 当前路线与文档职责
 
-2026-10-28衔接修正：**当前N177.6多臂训练＋训练期间的评价/信用准备→原合同恢复与评价→联合诊断→后继候选设计/实现→新预算冻结与有界验证→连续任务扩展。** 当前运行与臂进度见[03](active/roadmap/03_CURRENT_EXECUTION.md)，阶段依赖与工作包卡片见[10](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。多臂训练是正在执行的主实验；零训练基准用于解释本轮，不作为开始本轮训练的新前置。N176与N175沿原证据身份保留，不混入本轮分母。
+2026-10-29进入E决策：N177.6的15臂与数值评价完成，D已发布；B实际链/隔离和终点恢复回执的余项转E0补证。采用[状态因果消费优先的E方案](reference/PLAN-N1-177_E_state_consumption_and_credit_decision_20261029.md)：E0补证与E1新端点/消费合同→E2任务信用on/off同图候选→E3零步验收→F独立预算及有界验证。旧切片正向收益保留；新初始化复验与旧题直接接梯度暂不排首位。当前状态见[03](active/roadmap/03_CURRENT_EXECUTION.md)，工作包见[10](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。
 
 | 要查什么 | 主要入口 |
 |---|---|

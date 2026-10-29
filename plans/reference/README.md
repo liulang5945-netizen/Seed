@@ -6,6 +6,7 @@
 
 | 文档 | 文档状态 | 维护职责 |
 |---|---|---|
+| [E状态消费/信用决策](PLAN-N1-177_E_state_consumption_and_credit_decision_20261029.md) | 当前设计决策 | A–D证据复核/勘误、选项取舍及E0–E3出口 |
 | [N177实施计划](PLAN-N1-177_joint_cognition_slice_20261026.md) | 活动交接 | 已有资产、A–F实施边界及后继接口 |
 | [177.5 T1 SPEC](SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md) | 原合同冻结 | 五模式×三seed、数据/更新权限、阈值和预算 |
 | [03执行看板](../active/roadmap/03_CURRENT_EXECUTION.md) | 随耐久进度维护 | 当前运行、臂矩阵及累计资源 |
