@@ -28,8 +28,8 @@ F0a是实际训练侧标定，不是零训练；它没有执行完整producer/V4
 
 | 责任 | 待交付 | 顺序 |
 |---|---|---|
-| E0历史补证 | 原15臂终点fresh-process parse/answer回执，B真实输入/有效mask与隔离证据 | **当前唯一队首：证据收束包先补E0**；按历史源码或披露漂移，不用现排序修复替旧包追签 |
-| E2c/训练态E3余项 | 当前F候选的真实任务信用on/stop、禁写组与optimizer/RNG/cursor独立恢复 | 与E0同属F1准入补证；已有推理恢复资产复用 |
+| E0历史补证 | 已闭合（2026-10-29，只读）：15臂终点 fresh-process 回执＋4个历史revision逐臂复算＋状态隔离/有效mask矩阵，见§8 | 不重训、不重评holdout；已并入F1准入前置清单的完成项 |
+| E2c/训练态E3余项 | 当前F候选的真实任务信用on/stop、禁写组与optimizer/RNG/cursor独立恢复 | **当前唯一队首**；已有推理恢复资产与E0的只读owner profile可复用 |
 | F0b | 完整producer/V4/decoder四臂×三seed的短成本/恢复标定 | 当前可准备manifest/脚本/采样口径；实际计时与模型恢复串行或资源独占 |
 | F1 | 依F0b冻结更新/曝光、数值门、总预算与跨包停止线后，一次有界验证 | 未启动，不由本轮收束放行 |
 
@@ -39,7 +39,7 @@ F合同中已有方向/四臂与F0b限额，正式F1数值门、更新数和总�
 
 1. F合同§4的初拟“1280 updates＝5个128-episode epoch、batch4”不自洽：完整遍历时5 epochs为160 updates，1280为40 epochs。保留冻结原文，本记录登记勘误；定价/正式冻结前选定唯一曝光口径，不能直接照矛盾句开跑。
 2. F0a中copy-only已达1.0；F1要求main超过copy-only的判别力需检验。不能从train满分推出holdout必满，但也不能把复制可满分的端点直接当作机制净收益判据；正式读取holdout前必须澄清。
-3. E0绑定的历史源已与当前producer/runner有漂移。将来的CI类型修正也不替旧源生成恢复证据；源码/制品身份分别登记。
+3. E0绑定的历史源与当前producer/runner确有源码身份差异（4个revision），但**在受测面上没有行为漂移**：固定train episode的parse/feature/answer指纹在4个历史检出与当前树之间60/60逐位相同（§8）。该等式只覆盖一个固定输入下的评分面，不外推到训练轨迹或未见输入。
 4. 冻结件的阶段状态提示已经滞后，尤其E1首行与F的“完整E3”提示；当前验收完成范围以03及本收束记录为准，冻结实验要求不因此减免。
 
 本轮不修改冻结SPEC正文、旧报告或任何阈值；这些项转入后续准入决策，而非补发训练授权。
@@ -70,3 +70,17 @@ E0实施顺序：先按各终点绑定的实现历史确定源码与制品SHA；
 ## 7. 本轮交付边界
 
 按用户最新要求，本轮只提交计划/方案文档。临时源码修正已撤回，未实际清理任何目录，也未执行新训练、模型恢复、F0b或sealed评价。九份计划文档的文件链接/章节锚点及diff静态检查通过；后续修复、回归及清理由用户按上述清单实施。
+
+## 8. E0 补证结果（2026-10-29，只读）
+
+用户2026-10-29更正"标用户执行的其实也需要助手执行"，E0由助手执行。只用训练侧固定输入，**没有重训、没有重评、没有再读holdout/query**。
+
+| 面 | 仪器 | 机检判据 | 结果 |
+|---|---|---|---|
+| 15臂终点 fresh-process 回执 | [verify_..._endpoint_receipts.py](../../../scripts/training/verify_taiji_n1_plan177_6_t1_endpoint_receipts.py) | 每臂主进程指纹＝自己起的真子进程指纹；评分前后参数/优化器/cursor摘要相等 | 15/15 全真；[回执](../../../reports/taiji_n1_plan177_6_t1_endpoint_receipts_20261029.json) |
+| 4个历史revision逐臂复算 | [compare_..._historical_replay.py](../../../scripts/training/compare_taiji_n1_plan177_6_t1_historical_replay.py) | 每臂在**它自己绑定的revision**检出里复算＝当前树指纹；跨面同一仪器字节；检出干净（仅未跟踪仪器） | 60/60 相同（15臂×4面）；[对照件](../../../reports/taiji_n1_plan177_6_t1_historical_replay_20261029.json) |
+| 状态隔离/有效mask矩阵 | [probe_..._state_isolation.py](../../../scripts/training/probe_taiji_n1_plan177_6_t1_state_isolation.py) | 15臂policy自述digest与模式表一致、绑定的train split/cache等于当前实物；5模式 backward-only（**不step**）梯度分布符合各自scope；参数/优化器/cursor前后不变 | 8/8 判据真；[矩阵](../../../reports/taiji_n1_plan177_6_t1_state_isolation_20261029.json) |
+
+支撑读数（同批机检）：`no_update` 无任何语言梯度；`readout_only` 只有 `output` 组（2.72e-01，其answer loss 0.2867/byte）；`responsible_owner_frozen` producer=0 而V4全组有梯度；五个模式的全局RNG状态前后未变（披露项，不计成败）。`correct/parser_permuted` 的 answer loss 0.0002/byte 与 parser loss 0.0002 nats 说明梯度量级差异来自残差，不是掩码泄漏。
+
+边界：复算面是**一个固定train episode**（`f0:…:train:0`）与**固定train batch 0**上的只读前向/反向；等式不外推到训练轨迹、未见输入或能力；评分器报告里的 `parameters_updated_during_scoring` 仍是写死的常量（已登DEBT-G182），本次隔离结论来自回执仪器的实测摘要而非该字段。
