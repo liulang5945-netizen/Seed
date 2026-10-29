@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import statistics
 import sys
 from pathlib import Path
 from typing import Any
@@ -98,10 +99,52 @@ def verify(report: dict[str, Any], state: dict[str, Any]) -> list[str]:
         for key in ("median_delta", "positive_seed_count", "minimum_delta", "passed"):
             if key not in item:
                 problems.append(f"{control}: missing {key}")
+        #: 从逐 seed 差值**独立重算**聚合字段与门，别只信报告里那三个数。
+        values = [float(pair["delta"]) for pair in pairs]
+        if values:
+            if len(values) != 3:
+                continue
+            recomputed_median = statistics.median(values)
+            recomputed_positive = sum(1 for value in values if value > 0.0)
+            recomputed_min = min(values)
+            if (
+                item.get("median_delta") is None
+                or abs(item["median_delta"] - recomputed_median) > 1e-12
+            ):
+                problems.append(f"{control}: median_delta disagrees with paired deltas")
+            if item.get("positive_seed_count") != recomputed_positive:
+                problems.append(f"{control}: positive_seed_count disagrees with paired deltas")
+            if (
+                item.get("minimum_delta") is None
+                or abs(item["minimum_delta"] - recomputed_min) > 1e-12
+            ):
+                problems.append(f"{control}: minimum_delta disagrees with paired deltas")
+            expected_passed = (
+                recomputed_median >= LEARNING_MEDIAN_MIN
+                and recomputed_positive >= LEARNING_MIN_SEEDS_POSITIVE
+                and recomputed_min >= LEARNING_WORST_ALLOWED
+            )
+            if item.get("passed") is not expected_passed:
+                problems.append(
+                    f"{control}: passed flag disagrees with the frozen gate on the paired deltas"
+                )
     if report.get("state_write_diagnostic_required") is False:
         problems.append("state-write diagnostic was declared not required")
     if not report.get("state_write_diagnostics"):
         problems.append("state_write_diagnostics is empty (the causal gate would be unreadable)")
+    diagnostics = report.get("state_write_diagnostics") or []
+    for row in diagnostics:
+        pairs = row.get("paired_family_deltas") or []
+        if row.get("paired_family_count") != len(pairs):
+            problems.append(
+                "state_write_diagnostics: paired_family_count != len(paired_family_deltas)"
+            )
+        for pair in pairs:
+            if abs((pair["write_enabled"] - pair["write_disabled"]) - pair["delta"]) > 1e-12:
+                problems.append(
+                    "state_write_diagnostics: a delta does not equal write_enabled - write_disabled"
+                )
+                break
     retention = report.get("f0_retention") or []
     if len(retention) != 3:
         problems.append(f"f0_retention={len(retention)} (need 3 seeds)")

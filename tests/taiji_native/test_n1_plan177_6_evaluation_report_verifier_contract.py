@@ -43,7 +43,7 @@ def _report(verifier, arms: int = 15) -> dict[str, Any]:
             "paired_seed_deltas": [{"seed": seed, "delta": 0.2} for seed in range(3)],
             "median_delta": 0.2,
             "positive_seed_count": 3,
-            "minimum_delta": 0.1,
+            "minimum_delta": 0.2,  # 与逐 seed 差值一致（三个都是 0.2）
             "passed": True,
         }
         for control in ("no_update", "parser_permuted")
@@ -58,7 +58,18 @@ def _report(verifier, arms: int = 15) -> dict[str, Any]:
         "absolute_gates": gates,
         "absolute_means": means,
         "learning_contrasts": contrasts,
-        "state_write_diagnostics": [{"mode": "correct", "seed": 0}],
+        "state_write_diagnostics": [
+            {
+                "seed": seed,
+                "paired_family_count": 1,
+                "paired_family_deltas": [
+                    {"family_id": "f", "write_enabled": 1.0, "write_disabled": 0.5, "delta": 0.5}
+                ],
+                "write_enabled_holdout": {"f1_state_query_score": 1.0},
+                "write_disabled_holdout": {"f1_state_query_score": 0.5},
+            }
+            for seed in range(3)
+        ],
         "f0_retention": [{"seed": 0}, {"seed": 1}, {"seed": 2}],
         "architecture_attribution": {
             "information_path": "x",
@@ -104,6 +115,24 @@ def test_each_gap_is_named(verifier, mutate, needle: str) -> None:
     mutate(report)
     problems = verifier.verify(report, _state())
     assert any(needle in problem for problem in problems), problems
+
+
+def test_aggregates_must_agree_with_the_paired_deltas(verifier) -> None:
+    report = _report(verifier)
+    report["learning_contrasts"]["no_update"]["median_delta"] = 0.5  # 与逐 seed 差值不符
+    assert any("median_delta disagrees" in p for p in verifier.verify(report, _state()))
+
+    report = _report(verifier)
+    report["learning_contrasts"]["no_update"]["paired_seed_deltas"][0]["delta"] = -0.2
+    #: 逐 seed 差里出现 −0.2 之后，报告里那个 passed=True 就不再成立。
+    assert any("passed flag disagrees" in p for p in verifier.verify(report, _state()))
+
+
+def test_state_write_delta_must_equal_the_two_sides(verifier) -> None:
+    report = _report(verifier)
+    report["state_write_diagnostics"][0]["paired_family_deltas"][0]["delta"] = 0.9
+    problems = verifier.verify(report, _state())
+    assert any("write_enabled - write_disabled" in p for p in problems), problems
 
 
 def test_reading_holdout_twice_is_refused(verifier) -> None:
