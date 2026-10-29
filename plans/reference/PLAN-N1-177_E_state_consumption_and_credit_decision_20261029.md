@@ -84,7 +84,9 @@ E0可与E2实现并行，但旧资产恢复及新候选的必要恢复门未闭�
 
 2026-10-29 E2b-3 组件恢复预检：把value-token encoder、query selector、closed-form readout、active store与替换事实打成bundle；独立进程恢复后baseline/相关/无关/切断/救援的选中值与logits完全一致（max logit diff 0.0），bundle/source SHA可核验，optimizer更新0、sealed读取0。但copy-only与主路径一致，说明当前value-token一热特征仍是**离散值复制的下界**；组件级恢复通过不等于完整E3，也不证明学习型选择。下一步F候选改为**字节级value encoder + answer loss + copy-only消融**：主路径不得读原始值字节，只读encoder输出；若copy-only仍能替代，则特征未被学习。E0与完整E3（producer/V4/decoder）闭合前不启动F。证据见[组件恢复](../../reports/taiji_n1_plan177_e1_value_feature_restore_20261029.json)。
 
-2026-10-29 F合同冻结：F1改为4臂×3 seeds（main_credit_on/main_credit_stop/copy_only/no_state），主路径只读value byte encoder输出，copy-only/no_state为下界，answer loss是唯一切换的任务信用；先F0 train-only标定（≤2,000 CPU）冻结更新数/阈值/预算，再过E0/完整E3，一次有界F1。合同见[字节级值编码器F合同](SPEC-N1-177_F_value_encoder_20261029.md)；本轮未启动F0/F1、未读holdout。
+2026-10-29 F合同冻结：F1改为4臂×3 seeds（main_credit_on/main_credit_stop/copy_only/no_state），主路径只读value byte encoder输出，copy-only/no_state为下界，answer loss是唯一切换的任务信用；先F0 train-only标定（≤2,000 CPU）冻结更新数/阈值/预算，再过E0/完整E3，一次有界F1。合同见[字节级值编码器F合同](SPEC-N1-177_F_value_encoder_20261029.md)；本轮未启动F1、未读holdout。
+
+2026-10-29 F0标定结果：byte-level value encoder（值span UTF-8字节→GRU 64维）+线性值读出，在64条E1 train事实上训练200步；train accuracy **1.0**、no-state **0.078**、copy-only **1.0**；zero与final均新进程恢复通过，CPU 118.25/墙钟50.95，未读query/holdout。该结果只证明训练侧值身份可分，copy-only仍是下界，不能证明holdout、完整中文回答或学习收益；F1未启动，仍受E0与完整E3前置约束。证据见[F0报告](../../reports/taiji_n1_plan177_f_value_encoder_f0_20261029.json)。
 
 ## 6. 验收与有限出口
 

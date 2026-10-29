@@ -1,0 +1,55 @@
+{
+  "schema": "taiji-n177-f-value-encoder-f0-v1",
+  "status": "f0_calibration_completed",
+  "feature_source": "value_span_bytes_gru",
+  "train_samples": 64,
+  "train_colours": 8,
+  "steps": 200,
+  "batch": 8,
+  "learning_rate": 0.001,
+  "loss_first": 2.118281602859497,
+  "loss_last": 0.046561695635318756,
+  "train_accuracy": 1.0,
+  "copy_only_accuracy": 1.0,
+  "no_state_accuracy": 0.078125,
+  "zero_restore": {
+    "status": "passed",
+    "logits": [
+      0.043934643268585205,
+      0.07475508749485016,
+      -0.08933572471141815,
+      0.10803884267807007,
+      -0.10363078117370605,
+      0.2159077525138855,
+      -0.33758544921875,
+      -0.06207498908042908
+    ]
+  },
+  "final_restore": {
+    "status": "passed",
+    "logits": [
+      -0.9291344285011292,
+      5.446680545806885,
+      -1.1933379173278809,
+      -1.0494028329849243,
+      0.3507850170135498,
+      -1.8043137788772583,
+      -3.2145278453826904,
+      0.6814570426940918
+    ]
+  },
+  "zero_final_logit_difference": 5.371925458312035,
+  "checkpoint": {
+    "zero": "data\\checkpoints\\n1_plan177_f_value_encoder_20261029\\zero.pt",
+    "zero_sha256": "dc1a30c23b3ab45930ee65e23ff4a643b5c730b2c05f771036081257a30ba493",
+    "final": "data\\checkpoints\\n1_plan177_f_value_encoder_20261029\\final.pt",
+    "final_sha256": "0923eff81ed696041e08eeea4bd329fb96c99ab6f81fd2d88828e5497395395f"
+  },
+  "optimizer_updates": 200,
+  "sealed_text_read": 0,
+  "query_holdout_read": 0,
+  "model_calls": 0,
+  "can_promote": false,
+  "cpu_seconds": 118.25,
+  "wall_seconds": 50.95299999997951
+}
