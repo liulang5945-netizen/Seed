@@ -6,6 +6,7 @@ import subprocess
 import sys
 from dataclasses import fields as dataclass_fields
 from dataclasses import replace
+from types import MethodType, SimpleNamespace
 
 import pytest
 import torch
@@ -28,6 +29,8 @@ from taiji.joint_input_producer import (
     JointSemanticSpanV1,
     JointSemanticTrainingTargetV1,
 )
+from taiji.joint_t1_course import JointT1AnswerTrainingTargetV1
+from taiji.joint_t1_trainer import JointT1TrainerV1, _mode_policy
 from taiji.joint_task_state import JointTaskStateV1
 
 
@@ -365,6 +368,142 @@ def test_correction_updates_only_the_bound_entity_attribute_and_keeps_history():
     query_cut = queried.with_language_state(query_cut_state)
     query_cut_logits, _ = language_model.next_logits_from_joint(query_cut)
     assert not torch.allclose(query_logits, query_cut_logits)
+
+
+@torch.random.fork_rng(devices=[])
+def test_separate_task_losses_reach_only_their_declared_parameter_groups(monkeypatch):
+    """Exercise the real producer/answer paths without stepping an optimizer."""
+    torch.manual_seed(37)
+    text = "杯子的颜色是蓝色。"
+    _, model, trace, joint = setup_joint(text)
+    producer = JointInputProducerV1(
+        percept_feature_dim=trace.percepts[0].features.numel(), hidden_dim=8
+    )
+    fixed_slot, fixed_act = logits_for_fact(text)
+    original_forward = producer.forward
+
+    def resolved_forward(current_trace):
+        slot, act, encoded = original_forward(current_trace)
+        return fixed_slot + slot * 0.001, fixed_act + act * 0.001, encoded
+
+    monkeypatch.setattr(producer, "forward", resolved_forward)
+    source_sha = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    semantic_target = JointSemanticTrainingTargetV1.create(
+        input_id=trace.input_id,
+        source_sha256=source_sha,
+        family_id="synthetic-family",
+        partition="train",
+        tag_ids=tuple(int(item) for item in fixed_slot.argmax(dim=-1).tolist()),
+        act_id=ACT_NAMES.index("assertion"),
+    )
+    frame = InputFrame(
+        input_id=trace.input_id,
+        modality="text",
+        payload=text.encode("utf-8"),
+        source="test.client",
+        timestamp=3,
+    )
+    answer_target = JointT1AnswerTrainingTargetV1.create(
+        input_id=trace.input_id,
+        source_sha256=source_sha,
+        family_id="synthetic-family",
+        partition="train",
+        target_bytes=b"x<|end|>",
+    )
+    turn = SimpleNamespace(
+        frame=frame,
+        family_id="synthetic-family",
+        level="F1",
+        semantic_target=semantic_target,
+        answer_target=answer_target,
+    )
+    trainer = SimpleNamespace(producer=producer, model=model, mode="correct")
+    before = (content_digest(producer.state_dict()), content_digest(model.state_dict()))
+    parser_loss, components = JointT1TrainerV1._semantic_loss(trainer, joint, trace, turn)
+    parse = producer.predict(joint, trace)
+    assert parse.status == "resolved"
+    committed = producer.commit_to_joint_state(joint, trace, parse, model)
+    answer_loss, _, _ = JointT1TrainerV1._answer_loss(trainer, committed, turn)
+
+    slot_parameters = tuple(producer.slot_head.parameters())
+    act_parameters = tuple(producer.act_head.parameters())
+    shared_parameters = tuple(producer.context.parameters())
+    producer_parameters = tuple(producer.parameters())
+
+    def has_signal(loss, parameters):
+        if not loss.requires_grad:
+            return False
+        gradients = torch.autograd.grad(loss, parameters, retain_graph=True, allow_unused=True)
+        return any(
+            g is not None and torch.isfinite(g).all() and torch.any(g != 0) for g in gradients
+        )
+
+    assert has_signal(components["slot"], slot_parameters)
+    assert has_signal(components["slot"], shared_parameters)
+    assert not has_signal(components["slot"], act_parameters)
+    assert has_signal(components["act"], act_parameters)
+    assert has_signal(components["act"], shared_parameters)
+    assert not has_signal(components["act"], slot_parameters)
+    assert not has_signal(components["slot"] * 0, slot_parameters)
+    assert has_signal(parser_loss, producer_parameters)
+    assert all(
+        gradient is None
+        for gradient in torch.autograd.grad(
+            answer_loss, producer_parameters, retain_graph=True, allow_unused=True
+        )
+    )
+    assert has_signal(answer_loss, tuple(model.output.parameters()))
+    assert has_signal(answer_loss + producer.slot_head.weight.sum(), producer_parameters)
+
+    committed_modes = []
+    original_commit = producer.commit_to_joint_state
+
+    def record_commit(*args, **kwargs):
+        committed_modes.append(True)
+        return original_commit(*args, **kwargs)
+
+    monkeypatch.setattr(producer, "commit_to_joint_state", record_commit)
+    for mode, parser_enabled, language_enabled, writes in (
+        ("correct", True, True, True),
+        ("parser_permuted", True, True, True),
+        ("no_update", False, False, False),
+        ("readout_only", False, True, False),
+        ("responsible_owner_frozen", False, True, True),
+    ):
+        harness = SimpleNamespace(
+            producer=producer, model=model, mode=mode, policy=_mode_policy(mode)
+        )
+        harness._new_episode_state = lambda _episode_id: (None, joint)
+        harness._append_turn = lambda _adapter, _joint, _turn: (trace, joint)
+        harness._semantic_loss = MethodType(JointT1TrainerV1._semantic_loss, harness)
+        harness._answer_loss = MethodType(JointT1TrainerV1._answer_loss, harness)
+        committed_modes.clear()
+        semantic, answer, _, _ = JointT1TrainerV1._run_episode(
+            harness, SimpleNamespace(episode_id="synthetic-episode", turns=(turn,))
+        )
+        assert bool(committed_modes) is writes
+        assert has_signal(semantic, producer_parameters) is parser_enabled
+        assert has_signal(answer, tuple(model.output.parameters())) is language_enabled
+        assert not has_signal(answer, producer_parameters)
+        model.zero_grad(set_to_none=True)
+        if language_enabled:
+            named_parameters = tuple(model.named_parameters())
+            gradients = torch.autograd.grad(
+                answer,
+                tuple(parameter for _, parameter in named_parameters),
+                retain_graph=True,
+                allow_unused=True,
+            )
+            for (_, parameter), gradient in zip(named_parameters, gradients, strict=True):
+                parameter.grad = None if gradient is None else gradient.detach().clone()
+            JointT1TrainerV1._mask_frozen_language_gradients(harness)
+            admitted = {name for name, parameter in named_parameters if parameter.grad is not None}
+            assert any(name.startswith("output.") for name in admitted)
+            if mode == "readout_only":
+                assert all(name.startswith("output.") for name in admitted)
+        model.zero_grad(set_to_none=True)
+
+    assert before == (content_digest(producer.state_dict()), content_digest(model.state_dict()))
 
 
 def test_fit_loss_is_source_bound_train_only_and_reaches_producer_parameters():
