@@ -54,7 +54,8 @@ class FeatureValueReadoutV1(nn.Module):
             raise ValueError("readout was built without a query hidden input")
         if vector.numel() != self.linear.in_features:
             raise ValueError("readout input width differs from its declared dimensions")
-        return self.linear(vector)
+        logits: torch.Tensor = self.linear(vector)
+        return logits
 
     def read(
         self,

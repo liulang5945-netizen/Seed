@@ -345,12 +345,14 @@ def build_joint_t1_trace_cache(
             for name, value in adapter.perception.state_dict().items()
         ):
             raise ValueError("frozen InputTrace construction changed TSK perception parameters")
+    course_sha = str(joint_t1_course_contract()["course_sha256"])
+    split_sha = joint_t1_split_digest(train_episodes)
     payload = {
         "format": JOINT_T1_TRACE_CACHE_FORMAT,
         "version": 1,
         "adapter_checkpoint_sha256": adapter_sha,
-        "course_sha256": str(joint_t1_course_contract()["course_sha256"]),
-        "train_split_sha256": joint_t1_split_digest(train_episodes),
+        "course_sha256": course_sha,
+        "train_split_sha256": split_sha,
         "episode_initial_states": [
             {"episode_id": episode_id, "cognitive_state": state.to_payload()}
             for episode_id, state in initial_states
@@ -359,8 +361,8 @@ def build_joint_t1_trace_cache(
     }
     cache = JointT1TraceCacheV1(
         adapter_checkpoint_sha256=adapter_sha,
-        course_sha256=payload["course_sha256"],
-        train_split_sha256=payload["train_split_sha256"],
+        course_sha256=course_sha,
+        train_split_sha256=split_sha,
         episode_initial_states=tuple(initial_states),
         entries=tuple(entries),
         cache_sha256=content_digest(payload),

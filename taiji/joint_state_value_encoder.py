@@ -32,12 +32,14 @@ class ValueByteEncoderV1(nn.Module):
             rows = value_bytes.reshape(1, -1)
             embedded = self.embedding(rows.long())
             _, hidden = self.gru(embedded)
-            return hidden[-1].reshape(-1)
+            last: torch.Tensor = hidden[-1]
+            return last.reshape(-1)
         if value_bytes.ndim != 2:
             raise ValueError("value bytes must be a 1-D span or a 2-D batch of spans")
         embedded = self.embedding(value_bytes.long())
         _, hidden = self.gru(embedded)
-        return hidden[-1]
+        last_batch: torch.Tensor = hidden[-1]
+        return last_batch
 
     def encode_text(self, value: str) -> torch.Tensor:
         if value not in E1_COLORS:
@@ -60,4 +62,5 @@ class FeatureByteBiasV1(nn.Module):
     def forward(self, feature: torch.Tensor) -> torch.Tensor:
         if feature.numel() != self.feature_dim:
             raise ValueError("feature byte bias input width differs from its declaration")
-        return self.linear(feature.reshape(-1))
+        bias: torch.Tensor = self.linear(feature.reshape(-1))
+        return bias

@@ -345,7 +345,8 @@ class ValueTokenFeatureEncoderV1(nn.Module):
     def encode(self, value: str) -> torch.Tensor:
         if value not in self.value_to_index:
             raise ValueError("value-token feature value is outside the frozen colour set")
-        return self.embedding(torch.tensor(self.value_to_index[value]))
+        token: torch.Tensor = self.embedding(torch.tensor(self.value_to_index[value]))
+        return token
 
     def forward(self, value: str) -> torch.Tensor:
         return self.encode(value)
@@ -379,18 +380,24 @@ class QueryConditionedSelectorV1(nn.Module):
             raise ValueError("E1 selector query entity is outside the frozen vocabulary")
         if attribute not in self.attribute_to_id:
             raise ValueError("E1 selector query attribute is outside the frozen course")
-        return self.entity_embedding(
-            torch.tensor(self.entity_to_id[entity])
-        ) + self.attribute_embedding(torch.tensor(self.attribute_to_id[attribute]))
+        entity_vector: torch.Tensor = self.entity_embedding(torch.tensor(self.entity_to_id[entity]))
+        attribute_vector: torch.Tensor = self.attribute_embedding(
+            torch.tensor(self.attribute_to_id[attribute])
+        )
+        return entity_vector + attribute_vector
 
     def _candidate(self, feature: PersistentContentFeatureV1) -> torch.Tensor:
         if feature.entity not in self.entity_to_id:
             raise ValueError("E1 selector candidate entity is outside the frozen vocabulary")
         if feature.attribute not in self.attribute_to_id:
             raise ValueError("E1 selector candidate attribute is outside the frozen course")
-        return self.entity_embedding(
+        entity_vector: torch.Tensor = self.entity_embedding(
             torch.tensor(self.entity_to_id[feature.entity])
-        ) + self.attribute_embedding(torch.tensor(self.attribute_to_id[feature.attribute]))
+        )
+        attribute_vector: torch.Tensor = self.attribute_embedding(
+            torch.tensor(self.attribute_to_id[feature.attribute])
+        )
+        return entity_vector + attribute_vector
 
     def score_candidates(
         self,
