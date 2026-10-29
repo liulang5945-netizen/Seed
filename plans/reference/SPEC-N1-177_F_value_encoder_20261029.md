@@ -1,6 +1,6 @@
 # N177 F 字节级值编码器候选合同
 
-日期：2026-10-29，Asia/Shanghai。状态：**合同冻结；F0已完成；完整E3 v11/v12严格通过；唯一前置E0；F1未启动。** 前置 [E决策](PLAN-N1-177_E_state_consumption_and_credit_decision_20261029.md)、[E1合同](SPEC-N1-177_E1_state_consumption_contract_20261029.md)、[03当前执行](../active/roadmap/03_CURRENT_EXECUTION.md)。本件不修改 N177.5 v2、N177.6 冻结 SPEC 或已发布评价。
+日期：2026-10-29，Asia/Shanghai。状态：**合同冻结；F0a已完成；F0b（完整候选12-run成本/恢复短标定）待做；完整E3 v11/v12严格通过；E0与F0b为F1前置；F1未启动。** 前置 [E决策](PLAN-N1-177_E_state_consumption_and_credit_decision_20261029.md)、[E1合同](SPEC-N1-177_E1_state_consumption_contract_20261029.md)、[03当前执行](../active/roadmap/03_CURRENT_EXECUTION.md)。本件不修改 N177.5 v2、N177.6 冻结 SPEC 或已发布评价。
 
 ## 1. 要解决的问题与范围
 
@@ -96,7 +96,7 @@ F1 启动前必须闭合：
 
 ## 7. 资源与停止线
 
-- F0 标定上限 **2,000 process-CPU 秒 / 1,500 wall 秒**；只做 train-only 成本与恢复，不读 sealed。
+- F0a 值编码器标定已完成（118.25 CPU）；F0b 完整候选 12-run 短标定另做，上限 **2,000 process-CPU 秒 / 1,500 wall 秒**；只做 train-only 成本与恢复，不读 sealed。
 - F1 预算在 F0 后用实测单位成本 × 1,280 updates × 12 runs × 1.3 余量计算，另加 30% 保存/评价/失败尾账；按用户 2026-10-26 预算政策评估合理性，不预设死上限，也不把“机时还够”当作继续训练的自动理由。
 - 每个 run 设 runaway guard：超过 F0 实测单位成本 × 计划更新 × 1.5 即停止并留 partial；触顶不是科学负结果。
 - 跨包停止线：连续 2 次 F1 级实验未取得机制净收益（不是单次负结果），暂停扩面，回到消费/信用诊断；不在同一配方上重复加轮/换 seed。

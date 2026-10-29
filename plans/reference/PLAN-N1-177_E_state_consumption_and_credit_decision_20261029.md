@@ -86,7 +86,7 @@ E0可与E2实现并行，但旧资产恢复及新候选的必要恢复门未闭�
 
 2026-10-29 F合同冻结：F1改为4臂×3 seeds（main_credit_on/main_credit_stop/copy_only/no_state），主路径只读value byte encoder输出，copy-only/no_state为下界，answer loss是唯一切换的任务信用；先F0 train-only标定（≤2,000 CPU）冻结更新数/阈值/预算，再过E0/完整E3，一次有界F1。合同见[字节级值编码器F合同](SPEC-N1-177_F_value_encoder_20261029.md)；本轮未启动F1、未读holdout。
 
-2026-10-29 F0标定结果：byte-level value encoder（值span UTF-8字节→GRU 64维）+线性值读出，在64条E1 train事实上训练200步；train accuracy **1.0**、no-state **0.078**、copy-only **1.0**；zero与final均新进程恢复通过，CPU 118.25/墙钟50.95，未读query/holdout。该结果只证明训练侧值身份可分，copy-only仍是下界，不能证明holdout、完整中文回答或学习收益；F1未启动，仍受E0与完整E3前置约束。证据见[F0报告](../../reports/taiji_n1_plan177_f_value_encoder_f0_20261029.json)。
+2026-10-29 F0a标定结果：byte-level value encoder（值span UTF-8字节→GRU 64维）+线性值读出，在64条E1 train事实上训练200步；train accuracy **1.0**、no-state **0.078**、copy-only **1.0**；zero与final均新进程恢复通过，CPU 118.25/墙钟50.95，未读query/holdout。该结果只证明训练侧值身份可分，copy-only仍是下界，不能证明holdout、完整中文回答或学习收益；F1未启动，仍受E0、完整E3与F0b完整候选成本标定约束。证据见[F0a报告](../../reports/taiji_n1_plan177_f_value_encoder_f0_20261029.json)。
 
 2026-10-29 完整E3 v6：producer/V4、F0 byte encoder、selector/store、readout、feature→byte bias 同bundle，父/子进程各跑同一更正事实与查询。parse 的 act/status/entity/value、span 角色与字节范围、confidence/ambiguity、semantic features、selected feature、store digest、base 与 conditioned 下一字节 logits 全部一致（最大差0.0），query-only 1 binding/1 observation 且无事实字节；`optimizer_updates=0`、`sealed_text_read=0`。唯一不一致是 span 的 percept/assembly lineage ID（`parse_sha256`/`span_lineage_digest` 不同），因此状态为 **`full_e3_content_passed_lineage_gap`**，严格E3尚未通过。下一步先修 adapter/感知 lineage ID 的跨进程确定性并重跑严格E3；E0并行，F1不启动。证据见[完整E3 v6](../../reports/taiji_n1_plan177_f_full_e3_20261029_v6.json)。
 
