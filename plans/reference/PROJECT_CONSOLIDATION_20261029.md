@@ -122,7 +122,7 @@ owner 同日签了 F1：候选只训 encoder/bias（V4 冻结）、预算上限 
 ### 11.1 F1 运行手册（续跑/监督/收口）
 
 - 当前 phase：`run_taiji_n1_plan177_f_f1.py --threads 1` 串行跑 12 个 run；每个 run 的进度看 `data/checkpoints/n1_plan177_f_f1_20261029/<arm>__seed_<n>/run_state.json`（`updates` 只在每 256 步的耐久点刷新，所以"0"不代表没动）。
-- 断点续跑：直接重跑同一命令即可——`run_one` 从 `latest.pt` 恢复并累加 `process_cpu_seconds`；`--only <arm>__seed_<n>` 只跑一个 run（冒烟/补跑用，正式件必须 12 个都 `completed`）。
+- 断点续跑（2026-10-29 实测过）：把某 run 的 `latest.pt` 与 `run_state.json` 拷到一个临时 run root，`--only <arm>__seed_<n> --updates 514` 跑两格——结果 `resumes=1`、游标从 512 接到 514（不是从零重来）、CPU 账从 2,650.2 累加而不是清零、状态转 `completed`。正式件仍须 12 个 run 都 `completed`；`--only` 只用于冒烟/补跑。
 - 预算：每 run 10,100 CPU 秒、整包 121,500；触顶写 `run_cpu_cap` / `total_cpu_cap` 并停。
 - 单实例：run root 的 `run_root.lock` 存在即拒起；若进程被 SIGKILL 留下锁，先确认没有活进程再手工删除（不要盲删）。
 - 训练结束后才做：`reports/taiji_n1_plan177_f_f1_20261029.json` 汇总 + 一次 holdout 评分（评分器另件，未写）；期间不读 query/holdout、不调阈值、不加轮次。
