@@ -1,11 +1,20 @@
 {
   "batch_caliber_conflict": {
+    "decision": "F0b runs at batch 4 (the F1 batch); F0a's 200-step batch-8 run is not interchangeable",
     "f0a_batch": 8,
     "f1_contract_batch": 4,
     "recommendation": "run F0b at batch 4 and record that F0a's 200-step batch-8 run is not interchangeable",
     "why_it_matters": "episode-exposure and per-update cost both scale with batch; F0b must run at the F1 batch (4) or its price cannot be transplanted"
   },
   "budget": {
+    "decision": {
+      "consequence": "each of the 12 runs may do only ~3-6 updates after load/restore overhead; F0b prices the candidate and proves restore, it does not train for behaviour",
+      "decided": "2026-10-29 by owner",
+      "envelope": {
+        "process_cpu_seconds": 2000,
+        "wall_seconds": 1500
+      }
+    },
     "envelope": {
       "process_cpu_seconds": 2000,
       "wall_seconds": 1500
@@ -32,9 +41,17 @@
     "resource_gates": "CPU double-sample <=85% and available memory >=8 GiB before each run, re-measured not inherited",
     "serial": "one run at a time; no training, no evaluation and no other calibration concurrently"
   },
-  "execution_owner": "user (03 user-run checklist: F0b执行)",
+  "execution_owner": "assistant (owner 2026-10-29: the rows marked 用户执行 are assistant-run)",
   "exposure_caliber": {
     "conflict": "SPEC §4 writes '1,280 updates（5 个 128-episode epoch，batch 4）'; 128 episodes at batch 4 is 32 updates/epoch, so 5 epochs is 160 updates, while 1,280 updates is 40 epochs",
+    "decision": {
+      "chosen": "A",
+      "decided": "2026-10-29 by owner",
+      "episode_exposures": 5120,
+      "epochs": 40,
+      "note": "the '5 epochs' gloss in the frozen text stays as a recorded erratum; the number 1,280 is the single caliber",
+      "updates": 1280
+    },
     "option_a": {
       "episode_exposures": 5120,
       "epochs": 40,
@@ -57,11 +74,7 @@
     "treat F0a's 118.25 cpu s as the full-candidate estimate",
     "let the 12 runs overlap"
   ],
-  "open_owner_decisions": [
-    "exposure caliber A or B",
-    "confirm the 12-run list (4 arms x 3 seeds) as the F0b surface",
-    "accept the measured-first sizing rule, or grant a larger envelope so each run can do more updates"
-  ],
+  "open_owner_decisions": [],
   "per_run_protocol": [
     "zero checkpoint saved before any update, then fresh-process restore of that zero",
     "warmup window not counted; measured window starts after warmup",
