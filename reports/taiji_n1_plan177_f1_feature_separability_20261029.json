@@ -1,0 +1,30 @@
+{
+  "arm": "main_credit_on",
+  "colours": [
+    "红色",
+    "蓝色",
+    "绿色",
+    "黄色",
+    "黑色",
+    "白色",
+    "紫色",
+    "橙色"
+  ],
+  "date": "2026-10-29",
+  "endpoint": "data/checkpoints/n1_plan177_f_f1_20261029/main_credit_on__seed_0/endpoint_update_1280.pt",
+  "format": "taiji-n177-f1-separability-v1",
+  "note": "rank < 8 means the feature cannot even represent 8 distinct values linearly",
+  "readings": {
+    "between_centroid_distance": 3.703145980834961,
+    "distinct_vectors": 8,
+    "max_rank_after_centering": 7,
+    "nearest_own_class_rate": null,
+    "rank": 7,
+    "ratio_between_over_within": null,
+    "ruler_usable": false,
+    "why_not_usable": "每色只有一条样本：中心化后最大秩就是 n-1，类内距离恒 0，留一/质心类指标都无定义",
+    "within_radius": 0.0
+  },
+  "scope": "train-side only: 8 colours through the trained encoder; no sealed read",
+  "seed": 0
+}
