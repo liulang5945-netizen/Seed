@@ -1,6 +1,6 @@
 # N177 E1 状态依赖查询与内容消费合同
 
-日期：2026-10-29，Asia/Shanghai。状态：**合同冻结，未启动实现或训练。** 上级方向见[E决策](PLAN-N1-177_E_state_consumption_and_credit_decision_20261029.md)；当前队首与进度只看[03](../active/roadmap/03_CURRENT_EXECUTION.md)。本件不修改N177.5 v2、N177.6冻结SPEC、已发布评价或N176独立证据。
+日期：2026-10-29，Asia/Shanghai。状态：**合同冻结；E2a课程/manifest已生成，E2b/E3/F未启动。** 上级方向见[E决策](PLAN-N1-177_E_state_consumption_and_credit_decision_20261029.md)；当前队首与进度只看[03](../active/roadmap/03_CURRENT_EXECUTION.md)。本件不修改N177.5 v2、N177.6冻结SPEC、已发布评价或N176独立证据。
 
 ## 1. 要解决的问题与范围
 

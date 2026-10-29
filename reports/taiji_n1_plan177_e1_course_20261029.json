@@ -1,0 +1,262 @@
+{
+  "schema": "taiji-n177-e1-course-build-v1",
+  "status": "built",
+  "module": "scripts.training.build_taiji_n1_plan177_e1_course",
+  "course_format": "taiji-n177-e1-state-consumption-course-v1",
+  "course_sha256": "f1a9806e93d9f9311976df70c6f0712a8aad477c6e2264cca706cb180dea2ce9",
+  "train_split_sha256": "1a2dd724511a1d096914560e9f0c93ba5430f662f5de5e60cd6123644d6e3b5d",
+  "fixture_split_sha256": "b2bf2ca1e1c1c16e649cf5f86f37d371a7f2e3ce6a967b03cf9fe220a37f61c8",
+  "families_per_split": {
+    "train": 32,
+    "query": 16,
+    "holdout": 16
+  },
+  "episodes_per_family": 4,
+  "turns_per_episode": 8,
+  "train": {
+    "path": "data\\course\\n1_plan177_e1_20261029\\train.jsonl",
+    "sha256": "d222c96fe8c9134d99f74294434cab40c5160275992be87b0f998d90af369e8d"
+  },
+  "fixture": {
+    "path": "data\\course\\n1_plan177_e1_20261029\\fixture.jsonl",
+    "sha256": "7c784a6194bab6d908c23a4ea4ed46d4d45650d15d3257d2df405dd027e15bd7"
+  },
+  "manifest": {
+    "path": "data\\course\\n1_plan177_e1_20261029\\manifest.json",
+    "sha256": "e95ce81719abdd94f38410c46ada68404f68bb15d7b9c58729e817247dd14c3d"
+  },
+  "audit": {
+    "ok": true,
+    "checks": [
+      {
+        "name": "family_counts",
+        "passed": true,
+        "detail": {
+          "train": 32,
+          "query": 16,
+          "holdout": 16
+        }
+      },
+      {
+        "name": "family_ids_unique",
+        "passed": true,
+        "detail": {
+          "unique": 64
+        }
+      },
+      {
+        "name": "splits_disjoint",
+        "passed": true,
+        "detail": {
+          "train": 32,
+          "query": 16,
+          "holdout": 16
+        }
+      },
+      {
+        "name": "every_entity_in_every_split",
+        "passed": true,
+        "detail": {
+          "杯子": {
+            "train": 4,
+            "query": 2,
+            "holdout": 2
+          },
+          "盒子": {
+            "train": 4,
+            "query": 2,
+            "holdout": 2
+          },
+          "钥匙": {
+            "train": 4,
+            "query": 2,
+            "holdout": 2
+          },
+          "书": {
+            "train": 4,
+            "query": 2,
+            "holdout": 2
+          },
+          "球": {
+            "train": 4,
+            "query": 2,
+            "holdout": 2
+          },
+          "笔": {
+            "train": 4,
+            "query": 2,
+            "holdout": 2
+          },
+          "手机": {
+            "train": 4,
+            "query": 2,
+            "holdout": 2
+          },
+          "眼镜": {
+            "train": 4,
+            "query": 2,
+            "holdout": 2
+          }
+        }
+      },
+      {
+        "name": "entity_values_disjoint_across_splits",
+        "passed": true,
+        "detail": {
+          "杯子": {
+            "train": [
+              "紫色",
+              "红色",
+              "绿色",
+              "黑色"
+            ],
+            "query": [
+              "橙色",
+              "蓝色"
+            ],
+            "holdout": [
+              "白色",
+              "黄色"
+            ]
+          },
+          "盒子": {
+            "train": [
+              "橙色",
+              "红色",
+              "绿色",
+              "黄色"
+            ],
+            "query": [
+              "白色",
+              "蓝色"
+            ],
+            "holdout": [
+              "紫色",
+              "黑色"
+            ]
+          },
+          "钥匙": {
+            "train": [
+              "橙色",
+              "紫色",
+              "蓝色",
+              "黄色"
+            ],
+            "query": [
+              "白色",
+              "红色"
+            ],
+            "holdout": [
+              "绿色",
+              "黑色"
+            ]
+          },
+          "书": {
+            "train": [
+              "橙色",
+              "绿色",
+              "黄色",
+              "黑色"
+            ],
+            "query": [
+              "红色",
+              "蓝色"
+            ],
+            "holdout": [
+              "白色",
+              "紫色"
+            ]
+          },
+          "球": {
+            "train": [
+              "白色",
+              "紫色",
+              "红色",
+              "黑色"
+            ],
+            "query": [
+              "绿色",
+              "蓝色"
+            ],
+            "holdout": [
+              "橙色",
+              "黄色"
+            ]
+          },
+          "笔": {
+            "train": [
+              "白色",
+              "红色",
+              "绿色",
+              "蓝色"
+            ],
+            "query": [
+              "橙色",
+              "紫色"
+            ],
+            "holdout": [
+              "黄色",
+              "黑色"
+            ]
+          },
+          "手机": {
+            "train": [
+              "橙色",
+              "绿色",
+              "蓝色",
+              "黑色"
+            ],
+            "query": [
+              "紫色",
+              "黄色"
+            ],
+            "holdout": [
+              "白色",
+              "红色"
+            ]
+          },
+          "眼镜": {
+            "train": [
+              "橙色",
+              "白色",
+              "蓝色",
+              "黄色"
+            ],
+            "query": [
+              "红色",
+              "绿色"
+            ],
+            "holdout": [
+              "紫色",
+              "黑色"
+            ]
+          }
+        }
+      },
+      {
+        "name": "complete_entity_value_pairs_disjoint",
+        "passed": true,
+        "detail": {
+          "train": 32,
+          "query": 16,
+          "holdout": 16
+        }
+      },
+      {
+        "name": "old_value_differs_from_current",
+        "passed": true,
+        "detail": {
+          "checked": 64
+        }
+      }
+    ]
+  },
+  "sealed_materialized": false,
+  "sealed_text_read": 0,
+  "model_calls": 0,
+  "checkpoint_loads": 0,
+  "optimizer_updates": 0,
+  "can_promote": false,
+  "cpu_seconds": 5.0625,
+  "wall_seconds": 7.702999999979511
+}

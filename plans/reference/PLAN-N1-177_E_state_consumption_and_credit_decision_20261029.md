@@ -1,6 +1,6 @@
 # N177 E决策：先验证状态因果消费，再验证任务信用收益
 
-日期：2026-10-29，Asia/Shanghai。状态：**本轮选定的E设计方向；实现与F训练尚未执行。** 当前调度由[03](../active/roadmap/03_CURRENT_EXECUTION.md)维护，阶段依赖见[10](../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。本件是后继候选设计，不修改SPEC-N1-177.5 v2或旧结果。
+日期：2026-10-29，Asia/Shanghai。状态：**E1合同已冻结，E2a课程/manifest已生成；E2b/E3与F训练尚未执行。** 当前调度由[03](../active/roadmap/03_CURRENT_EXECUTION.md)维护，阶段依赖见[10](../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。本件是后继候选设计，不修改SPEC-N1-177.5 v2或旧结果。
 
 ## 1. A–D复核及继承范围
 
