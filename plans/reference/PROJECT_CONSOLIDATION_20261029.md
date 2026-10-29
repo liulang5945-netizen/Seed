@@ -84,3 +84,19 @@ E0实施顺序：先按各终点绑定的实现历史确定源码与制品SHA；
 支撑读数（同批机检）：`no_update` 无任何语言梯度；`readout_only` 只有 `output` 组（2.72e-01，其answer loss 0.2867/byte）；`responsible_owner_frozen` producer=0 而V4全组有梯度；五个模式的全局RNG状态前后未变（披露项，不计成败）。`correct/parser_permuted` 的 answer loss 0.0002/byte 与 parser loss 0.0002 nats 说明梯度量级差异来自残差，不是掩码泄漏。
 
 边界：复算面是**一个固定train episode**（`f0:…:train:0`）与**固定train batch 0**上的只读前向/反向；等式不外推到训练轨迹、未见输入或能力；评分器报告里的 `parameters_updated_during_scoring` 仍是写死的常量（已登DEBT-G182），本次隔离结论来自回执仪器的实测摘要而非该字段。
+
+## 9. E2c/E3 状态信用（2026-10-29，零步工程）
+
+新增候选 `taiji/joint_state_credit.py`：字节值编码器 → 按实体/属性身份选择 → 线性颜色读数；两臂只切换"回答CE是否留在连续特征上"。仪器 [E2c控制](../../../scripts/training/run_taiji_n1_plan177_e2c_credit_control.py) 与 [E3零步验收](../../../scripts/training/precheck_taiji_n1_plan177_e3_state_credit.py)。
+
+| 面 | 机检判据 | 结果 |
+|---|---|---|
+| 信用通断（合成3实体＋真实train episode各一） | 两臂初始前向/父参数/选择相同；`credit_on` 编码器与特征张量有正梯度且一步后编码器参数移动；`credit_stop` 编码器梯度与特征梯度为零、编码器不动而读数头照常更新；梯度有限 | 两用例 12/12 全真；[E2c件](../../../reports/taiji_n1_plan177_e2c_credit_control_20261029.json) |
+| 选择器信用 | 回答CE对选择器在两臂均为零（它按身份打分，不读连续特征） | 记为事实：本候选不能声称"选择器已受任务纠正" |
+| 零步保存/新进程恢复 | checkpoint 无 autograd 图；新进程前向 logits/选择/特征逐位相同；optimizer/RNG(torch+python)/cursor/参数一致；二次前向不变 | 17/17 真；[E3件](../../../reports/taiji_n1_plan177_e3_state_credit_20261029.json)，成本约 1.3 CPU 秒量级（限额 8,000/6,000）；checkpoint 落在 `data/`（按策略忽略，件里带 sha256） |
+| 禁写组 | 逐个冻结 encoder/selector/readout：被冻组参数不变且梯度清零，未冻的可写组仍移动（encoder↔readout 双向） | 3/3 组通过 |
+
+两条新发现（不写成能力结论）：
+
+1. **真实链覆盖率**：按"取第一条 producer 能把实体当前值解析成课程真值的家族"这条事先固定的规则，前 3 个家族（球/红色、手机/橙色、笔/红色）都解析不出该实体的颜色事实，第 4 个（杯子/黑色）才成功——即 1/4。这解释了为什么 E2c 的真实用例候选集只有一个实体（选择退化为平凡），也说明 F0b 若直接在 E1 train 上训整候选，解析面会先卡住。试过的家族逐个登记在 E2c件的 `attempts` 里。
+2. **逐位相等依赖线程数**：新进程默认线程数下，同一权重的前向在末位出现 1 ulp 差异；两端都 `torch.set_num_threads(1)` 后才逐位相同。这条不是候选缺陷，但"恢复后前向等价"的判据必须同抄线程口径，否则会造出假红。

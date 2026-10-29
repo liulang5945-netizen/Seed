@@ -1,0 +1,382 @@
+{
+  "all_verdicts_ok": true,
+  "cases": {
+    "real_train_episode": {
+      "arms": {
+        "credit_on": {
+          "cursor_after_step": 1,
+          "feature_digest": "8f717198b0ebe5ba3a24d48f10401d089025f1f5d24eabdcf0095121788ec501",
+          "feature_gradient_norm": 0.5308847427368164,
+          "gradient_norms": {
+            "encoder": 1.7277759979300487,
+            "readout": 2.0685952315968836,
+            "selector": 0.0
+          },
+          "gradients_finite": true,
+          "logits": [
+            -0.07956451177597046,
+            -0.06603708118200302,
+            -0.02601071447134018,
+            0.40542227029800415,
+            0.09244135022163391,
+            -0.0853772759437561,
+            0.09107878059148788,
+            -0.08912539482116699
+          ],
+          "logits_digest": "fc021491f6ec342a0756597c5f31cdde99e8087f1085b3815f965ee763206858",
+          "loss": 2.0308945178985596,
+          "parameter_delta": {
+            "encoder": 1.3783633693917623,
+            "readout": 0.2280348774229096,
+            "selector": 0.0
+          },
+          "parent_digest": {
+            "encoder": "58ca4dc61fb6b8f20f7b3a58900bf5223ea98aa092c04ca811c8b07c3695bb4f",
+            "readout": "fd18f3c4dc01ae70d976eea695b891ed88eedadafff41ffc8f06e28ad91d5c32",
+            "selector": "8704f5e43501171eda5973267f0a7a59a98bc875f122f7fa8f30847349aea9a2"
+          },
+          "selected_value": "黑色",
+          "selection_index": 0
+        },
+        "credit_stop": {
+          "cursor_after_step": 1,
+          "feature_digest": "8f717198b0ebe5ba3a24d48f10401d089025f1f5d24eabdcf0095121788ec501",
+          "feature_gradient_norm": null,
+          "gradient_norms": {
+            "encoder": 0.0,
+            "readout": 2.0685952315968836,
+            "selector": 0.0
+          },
+          "gradients_finite": true,
+          "logits": [
+            -0.07956451177597046,
+            -0.06603708118200302,
+            -0.02601071447134018,
+            0.40542227029800415,
+            0.09244135022163391,
+            -0.0853772759437561,
+            0.09107878059148788,
+            -0.08912539482116699
+          ],
+          "logits_digest": "fc021491f6ec342a0756597c5f31cdde99e8087f1085b3815f965ee763206858",
+          "loss": 2.0308945178985596,
+          "parameter_delta": {
+            "encoder": 0.0,
+            "readout": 0.2280348774229096,
+            "selector": 0.0
+          },
+          "parent_digest": {
+            "encoder": "58ca4dc61fb6b8f20f7b3a58900bf5223ea98aa092c04ca811c8b07c3695bb4f",
+            "readout": "fd18f3c4dc01ae70d976eea695b891ed88eedadafff41ffc8f06e28ad91d5c32",
+            "selector": "8704f5e43501171eda5973267f0a7a59a98bc875f122f7fa8f30847349aea9a2"
+          },
+          "selected_value": "黑色",
+          "selection_index": 0
+        }
+      },
+      "case": {
+        "attribute": "颜色",
+        "case_id": "real:n177-e1:c70ab1b44f0f:train:0",
+        "entity": "杯子",
+        "feature_ids": [
+          "e1-feature:cfef24779c9a7c362c88"
+        ],
+        "label": 4
+      },
+      "provenance": {
+        "attempts": [
+          {
+            "entity": "球",
+            "family_id": "e1-family:817f2730d36ced141e7b",
+            "matches": false,
+            "parsed_value": null,
+            "true_value": "红色"
+          },
+          {
+            "entity": "手机",
+            "family_id": "e1-family:93fc51cb2c6f8ffb7763",
+            "matches": false,
+            "parsed_value": null,
+            "true_value": "橙色"
+          },
+          {
+            "entity": "笔",
+            "family_id": "e1-family:97780f552c7f6a399c6f",
+            "matches": false,
+            "parsed_value": null,
+            "true_value": "红色"
+          },
+          {
+            "entity": "杯子",
+            "family_id": "e1-family:c70ab1b44f0fec06c4c2",
+            "matches": true,
+            "parsed_value": "黑色",
+            "true_value": "黑色"
+          }
+        ],
+        "candidate_values": [
+          "黑色"
+        ],
+        "case_selection_rule": "first train family (value != 黄色) whose current fact parses to truth",
+        "current_facts": {
+          "杯子": {
+            "turn_index": 3,
+            "value": "黑色"
+          }
+        },
+        "episode_id": "n177-e1:c70ab1b44f0f:train:0",
+        "family_id": "e1-family:c70ab1b44f0fec06c4c2",
+        "parses": [
+          {
+            "act": "assertion",
+            "spans": [
+              {
+                "role": "entity",
+                "text": "杯子"
+              },
+              {
+                "role": "attribute",
+                "text": "颜色"
+              },
+              {
+                "role": "value",
+                "text": "绿色"
+              }
+            ],
+            "turn_index": 0
+          },
+          {
+            "act": "ambiguous",
+            "spans": [],
+            "turn_index": 1
+          },
+          {
+            "act": "query",
+            "spans": [
+              {
+                "role": "entity",
+                "text": "杯子"
+              },
+              {
+                "role": "attribute",
+                "text": "颜色"
+              }
+            ],
+            "turn_index": 2
+          },
+          {
+            "act": "correction",
+            "spans": [
+              {
+                "role": "entity",
+                "text": "杯子"
+              },
+              {
+                "role": "attribute",
+                "text": "颜色"
+              },
+              {
+                "role": "value",
+                "text": "黑色"
+              }
+            ],
+            "turn_index": 3
+          },
+          {
+            "act": "query",
+            "spans": [
+              {
+                "role": "entity",
+                "text": "杯子"
+              },
+              {
+                "role": "attribute",
+                "text": "颜色"
+              }
+            ],
+            "turn_index": 4
+          },
+          {
+            "act": "assertion",
+            "spans": [
+              {
+                "role": "attribute",
+                "text": "颜色"
+              },
+              {
+                "role": "value",
+                "text": "紫色"
+              }
+            ],
+            "turn_index": 5
+          },
+          {
+            "act": "query",
+            "spans": [
+              {
+                "role": "attribute",
+                "text": "颜色"
+              }
+            ],
+            "turn_index": 6
+          },
+          {
+            "act": "ambiguous",
+            "spans": [
+              {
+                "role": "entity",
+                "text": "杯子"
+              },
+              {
+                "role": "attribute",
+                "text": "颜色"
+              },
+              {
+                "role": "negation",
+                "text": "不"
+              }
+            ],
+            "turn_index": 7
+          }
+        ],
+        "producer_checkpoint": "data/checkpoints/n1_plan177_6_t1_pilot_20261027/correct__seed_0/update_002560.pt",
+        "producer_matched_family_value": true,
+        "trace_cache": "data/checkpoints/n1_plan177_5a_preflight_20261027/train_trace_cache_v1.pt",
+        "true_value": "黑色"
+      },
+      "verdicts": {
+        "arms_share_initial_forward": true,
+        "arms_share_parent_parameters": true,
+        "credit_on_reaches_encoder": true,
+        "credit_stop_cuts_encoder": true,
+        "encoder_moves_only_under_credit_on": true,
+        "gradients_finite_in_both": true,
+        "one_diagnostic_step_in_both": true,
+        "readout_moves_in_both": true,
+        "readout_trains_in_both": true,
+        "same_selection": true,
+        "selection_matches_label": true,
+        "selector_gets_no_answer_credit_in_both": true
+      }
+    },
+    "synthetic": {
+      "arms": {
+        "credit_on": {
+          "cursor_after_step": 1,
+          "feature_digest": "ac1d44c2dc338a128afe56bc8eb440974ccb40a5140c74fcacb078d5d1607bc3",
+          "feature_gradient_norm": 0.4672199487686157,
+          "gradient_norms": {
+            "encoder": 1.5638911752146245,
+            "readout": 2.0395611412729533,
+            "selector": 0.0
+          },
+          "gradients_finite": true,
+          "logits": [
+            -0.05619637668132782,
+            -0.01545550674200058,
+            -0.04496791213750839,
+            0.41459792852401733,
+            0.0798601508140564,
+            -0.05317442864179611,
+            0.0601419135928154,
+            -0.07635316252708435
+          ],
+          "logits_digest": "5ada8d725311bb1a6210d4f5f2dd51446b2d219ea5870da9403e0f100cdf69a3",
+          "loss": 1.715968370437622,
+          "parameter_delta": {
+            "encoder": 1.3783670457223174,
+            "readout": 0.22803477136330588,
+            "selector": 0.0
+          },
+          "parent_digest": {
+            "encoder": "58ca4dc61fb6b8f20f7b3a58900bf5223ea98aa092c04ca811c8b07c3695bb4f",
+            "readout": "fd18f3c4dc01ae70d976eea695b891ed88eedadafff41ffc8f06e28ad91d5c32",
+            "selector": "8704f5e43501171eda5973267f0a7a59a98bc875f122f7fa8f30847349aea9a2"
+          },
+          "selected_value": "黄色",
+          "selection_index": 0
+        },
+        "credit_stop": {
+          "cursor_after_step": 1,
+          "feature_digest": "ac1d44c2dc338a128afe56bc8eb440974ccb40a5140c74fcacb078d5d1607bc3",
+          "feature_gradient_norm": null,
+          "gradient_norms": {
+            "encoder": 0.0,
+            "readout": 2.0395611412729533,
+            "selector": 0.0
+          },
+          "gradients_finite": true,
+          "logits": [
+            -0.05619637668132782,
+            -0.01545550674200058,
+            -0.04496791213750839,
+            0.41459792852401733,
+            0.0798601508140564,
+            -0.05317442864179611,
+            0.0601419135928154,
+            -0.07635316252708435
+          ],
+          "logits_digest": "5ada8d725311bb1a6210d4f5f2dd51446b2d219ea5870da9403e0f100cdf69a3",
+          "loss": 1.715968370437622,
+          "parameter_delta": {
+            "encoder": 0.0,
+            "readout": 0.22803477136330588,
+            "selector": 0.0
+          },
+          "parent_digest": {
+            "encoder": "58ca4dc61fb6b8f20f7b3a58900bf5223ea98aa092c04ca811c8b07c3695bb4f",
+            "readout": "fd18f3c4dc01ae70d976eea695b891ed88eedadafff41ffc8f06e28ad91d5c32",
+            "selector": "8704f5e43501171eda5973267f0a7a59a98bc875f122f7fa8f30847349aea9a2"
+          },
+          "selected_value": "黄色",
+          "selection_index": 0
+        }
+      },
+      "case": {
+        "attribute": "颜色",
+        "case_id": "synthetic:three-entities",
+        "entity": "钥匙",
+        "feature_ids": [
+          "e1-feature:e51b88e8546cfe8f5249",
+          "e1-feature:0fd00efbe21c463ba76f",
+          "e1-feature:308ae59447294271b090"
+        ],
+        "label": 3
+      },
+      "verdicts": {
+        "arms_share_initial_forward": true,
+        "arms_share_parent_parameters": true,
+        "credit_on_reaches_encoder": true,
+        "credit_stop_cuts_encoder": true,
+        "encoder_moves_only_under_credit_on": true,
+        "gradients_finite_in_both": true,
+        "one_diagnostic_step_in_both": true,
+        "readout_moves_in_both": true,
+        "readout_trains_in_both": true,
+        "same_selection": true,
+        "selection_matches_label": true,
+        "selector_gets_no_answer_credit_in_both": true
+      }
+    }
+  },
+  "cost": {
+    "process_cpu_seconds": 101.46875,
+    "wall_seconds": 105.34733449993655
+  },
+  "credit_modes": [
+    "credit_on",
+    "credit_stop"
+  ],
+  "date": "2026-10-29",
+  "feature_dim": 64,
+  "format": "taiji-n177-e2c-credit-control-v1",
+  "scope": "one synthetic case + one real E1 train episode; per arm one forward/backward/single diagnostic step; no producer/V4 training, no query/holdout/sealed read",
+  "seed": 0,
+  "verdicts": {
+    "auxiliary_slot_act_term": "absent (this bundle has no slot/act head)",
+    "both_cases_present": true,
+    "no_optimizer_training_beyond_diagnostics": true,
+    "real_train_episode_all": true,
+    "synthetic_all": true
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "all_verdicts_ok": true,
+  "checkpoint": "data/checkpoints/n1_plan177_e3_state_credit_20261029/credit_step_003.pt",
+  "checkpoint_sha256": "426649a6fad0bd4c018553ac76c64012e7a0a0f0c8c94c18a0fdef203642f368",
+  "child_forward": {
+    "feature_digest": "c57951b2ae15b730071ce5c9c3b284f90a445a2dee61be48eaf8b238af81ab68",
+    "logits": [
+      -0.8486698269844055,
+      -1.4213778972625732,
+      -1.157989263534546,
+      3.5568008422851562,
+      -0.5763561129570007,
+      -0.60600346326828,
+      -1.157508373260498,
+      -0.8450145721435547
+    ],
+    "logits_digest": "13e1becf86f6be45ba8daef3444cf570486cfd659e47543dce5df066caa09375",
+    "loss": 0.07777170836925507,
+    "selection_index": 0
+  },
+  "child_state": {
+    "cursor": 3,
+    "optimizer": "812719a7074b837cc7478bcd07200ac2017f0c7d0421d109498089cf69014760",
+    "parameters": {
+      "encoder": "54fc9031c1ab4d65f6d6aa962e7438abd727d57313a51ab4a6735324cd098f1e",
+      "readout": "9786e4c56dc3dcdd7d30d47120da236c30c6e4e4af2b13f7837140832dfc2dd1",
+      "selector": "8704f5e43501171eda5973267f0a7a59a98bc875f122f7fa8f30847349aea9a2"
+    },
+    "python_rng": "2ec54b41a5c96679b539c1505701b07b0b46dc74c30da2ad6946bce2b7c2d129",
+    "torch_rng": "17e5c93565564fa7b45cec7dd0d4988c5eeb566b086b6cf5eadeaa2c8115806d"
+  },
+  "cost": {
+    "process_cpu_seconds": 1.0625,
+    "wall_seconds": 5.358962999889627
+  },
+  "date": "2026-10-29",
+  "diagnostic_steps": 3,
+  "format": "taiji-n177-e3-state-credit-v1",
+  "frozen_groups": [
+    {
+      "frozen_gradient_zero": true,
+      "frozen_group": "encoder",
+      "frozen_unchanged": true,
+      "moved_groups": [
+        "readout"
+      ],
+      "unmoved_trainable_groups": [
+        "selector"
+      ]
+    },
+    {
+      "frozen_gradient_zero": true,
+      "frozen_group": "selector",
+      "frozen_unchanged": true,
+      "moved_groups": [
+        "encoder",
+        "readout"
+      ],
+      "unmoved_trainable_groups": []
+    },
+    {
+      "frozen_gradient_zero": true,
+      "frozen_group": "readout",
+      "frozen_unchanged": true,
+      "moved_groups": [
+        "encoder"
+      ],
+      "unmoved_trainable_groups": [
+        "selector"
+      ]
+    }
+  ],
+  "limits": {
+    "process_cpu_seconds": 8000,
+    "wall_seconds": 6000
+  },
+  "scope": "zero-step engineering acceptance for the E2c bundle: save, fresh-process restore, forward/optimizer/RNG/cursor equality, per-group freeze; no formal training, no query/holdout/sealed read",
+  "trained_forward": {
+    "feature_digest": "c57951b2ae15b730071ce5c9c3b284f90a445a2dee61be48eaf8b238af81ab68",
+    "logits": [
+      -0.8486698269844055,
+      -1.4213778972625732,
+      -1.157989263534546,
+      3.5568008422851562,
+      -0.5763561129570007,
+      -0.60600346326828,
+      -1.157508373260498,
+      -0.8450145721435547
+    ],
+    "logits_digest": "13e1becf86f6be45ba8daef3444cf570486cfd659e47543dce5df066caa09375",
+    "loss": 0.07777170836925507,
+    "selection_index": 0
+  },
+  "trained_state": {
+    "cursor": 3,
+    "optimizer": "812719a7074b837cc7478bcd07200ac2017f0c7d0421d109498089cf69014760",
+    "parameters": {
+      "encoder": "54fc9031c1ab4d65f6d6aa962e7438abd727d57313a51ab4a6735324cd098f1e",
+      "readout": "9786e4c56dc3dcdd7d30d47120da236c30c6e4e4af2b13f7837140832dfc2dd1",
+      "selector": "8704f5e43501171eda5973267f0a7a59a98bc875f122f7fa8f30847349aea9a2"
+    },
+    "python_rng": "2ec54b41a5c96679b539c1505701b07b0b46dc74c30da2ad6946bce2b7c2d129",
+    "torch_rng": "17e5c93565564fa7b45cec7dd0d4988c5eeb566b086b6cf5eadeaa2c8115806d"
+  },
+  "verdicts": {
+    "checkpoint_holds_no_autograd_graph": true,
+    "checkpoint_sha256_recorded": true,
+    "checkpoint_written": true,
+    "cursor_advanced_by_diagnostics": true,
+    "diagnostic_steps_changed_parameters": true,
+    "every_frozen_group_gradient_zero": true,
+    "every_frozen_group_unchanged": true,
+    "fresh_process_cursor_matches": true,
+    "fresh_process_forward_matches_parent": true,
+    "fresh_process_optimizer_matches": true,
+    "fresh_process_parameters_match": true,
+    "fresh_process_rng_matches": true,
+    "frozen_encoder_still_lets_readout_move": true,
+    "frozen_readout_still_lets_encoder_move": true,
+    "second_forward_matches_first": true,
+    "within_cpu_budget": true,
+    "within_wall_budget": true
+  },
+  "zero_forward": {
+    "feature_digest": "ac1d44c2dc338a128afe56bc8eb440974ccb40a5140c74fcacb078d5d1607bc3",
+    "logits": [
+      -0.05619637668132782,
+      -0.01545550674200058,
+      -0.04496791213750839,
+      0.41459792852401733,
+      0.0798601508140564,
+      -0.05317442864179611,
+      0.0601419135928154,
+      -0.07635316252708435
+    ],
+    "logits_digest": "5ada8d725311bb1a6210d4f5f2dd51446b2d219ea5870da9403e0f100cdf69a3",
+    "loss": 1.715968370437622,
+    "selection_index": 0
+  }
+}
