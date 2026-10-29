@@ -142,6 +142,8 @@ N176是独立已训资产，按其原SPEC有限评价或保留可复现运行图
 
 ### 3.6 F：资源冻结、一次验证与能力接力
 
+2026-10-29 F候选合同已冻结，见[字节级值编码器F合同](../../reference/SPEC-N1-177_F_value_encoder_20261029.md)：主路径只读value byte encoder输出，copy-only/no_state/credit-stop为对照；先F0 train-only标定，E0与完整E3闭合后一次有界F1。未启动训练。
+
 | 字段 | 设计 |
 |---|---|
 | 投入前 | 成本预检先设限额且无optimizer更新；候选A/F/H覆盖、设备/链路/checkpoint适用阈值明确 |

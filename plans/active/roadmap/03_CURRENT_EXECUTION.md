@@ -8,7 +8,7 @@
 
 ## 当前唯一下一步：E0补齐证据，E2实现E1冻结的状态消费合同
 
-A的15臂训练与C数值评价已完成，D已发布。现采用[E设计决策](../../reference/PLAN-N1-177_E_state_consumption_and_credit_decision_20261029.md)：先建立能判别状态实际消费的新端点/内容接口，再用同前向stop-gradient控制比较任务信用。E1合同已冻结，见[状态依赖查询与内容消费合同](../../reference/SPEC-N1-177_E1_state_consumption_contract_20261029.md)；E2a课程/manifest已生成，sealed未物化；E2b-1特征存储/选择器已实现。producer探针显示：已知实体“钥匙”可解析实体/属性/值并写入世界状态，新实体“笔”抽不到实体、世界对象为0。E2b-2进一步确认：producer的mean特征、value-span mean特征、value-span逐字节特征都只有rank 2，8色不可分（最低余弦分别约0.93/0.93/0.798，原型准确率均25%）；只有value-token可训练嵌入fixture 8/8通过相关/无关/切断/救援，query-only路径只有1个binding/1个observation、无事实字节。E2b-3进一步把value-token encoder/selector/readout/store 打成bundle，独立进程恢复后选中值与logits完全一致（max logit diff 0.0）；但copy-only与主路径一致，说明当前value-token路径仍是**离散值复制下界**，只证明工程恢复，不证明学习型特征。判决：解码器/选择/恢复接口已通，producer连续编码不保留值身份，value-token一热仍是复制地址；下一步不是直接F，而是先设计**字节级value encoder + answer loss + copy-only消融**的F候选，训练前再闭合E0与完整E3。
+A的15臂训练与C数值评价已完成，D已发布。现采用[E设计决策](../../reference/PLAN-N1-177_E_state_consumption_and_credit_decision_20261029.md)：先建立能判别状态实际消费的新端点/内容接口，再用同前向stop-gradient控制比较任务信用。E1合同已冻结，见[状态依赖查询与内容消费合同](../../reference/SPEC-N1-177_E1_state_consumption_contract_20261029.md)；E2a课程/manifest已生成，sealed未物化；E2b-1特征存储/选择器已实现。producer探针显示：已知实体“钥匙”可解析实体/属性/值并写入世界状态，新实体“笔”抽不到实体、世界对象为0。E2b-2进一步确认：producer的mean特征、value-span mean特征、value-span逐字节特征都只有rank 2，8色不可分（最低余弦分别约0.93/0.93/0.798，原型准确率均25%）；只有value-token可训练嵌入fixture 8/8通过相关/无关/切断/救援，query-only路径只有1个binding/1个observation、无事实字节。E2b-3进一步把value-token encoder/selector/readout/store 打成bundle，独立进程恢复后选中值与logits完全一致（max logit diff 0.0）；但copy-only与主路径一致，说明当前value-token路径仍是**离散值复制下界**，只证明工程恢复，不证明学习型特征。判决：解码器/选择/恢复接口已通，producer连续编码不保留值身份，value-token一热仍是复制地址。F候选合同已冻结，见[字节级值编码器F合同](../../reference/SPEC-N1-177_F_value_encoder_20261029.md)：主路径只读value encoder输出，copy-only/no_state/credit-stop为对照；E0与完整E3未闭合前不启动F0/F1。
 
 | 阶段 | 复核状态 | 交付/边界 | 转交 |
 |---|---|---|---|
@@ -42,7 +42,7 @@ A的15臂训练与C数值评价已完成，D已发布。现采用[E设计决策]
 | E2b-1 | 特征存储/查询选择器已实现；[已知实体探针](../../../reports/taiji_n1_plan177_e1_state_path_known_entity_20261029.json)通过，[新实体探针](../../../reports/taiji_n1_plan177_e1_state_path_20261029.json)暴露producer实体抽取缺口 | 8项契约测试通过；下一步E2b-2解码器读出 |
 | E2b-2 | [mean特征](../../../reports/taiji_n1_plan177_e1_value_readout_20261029.json)、[value-span mean](../../../reports/taiji_n1_plan177_e1_value_readout_value_feature_20261029.json)与[value-span逐字节](../../../reports/taiji_n1_plan177_e1_value_readout_value_bytes_20261029.json)均rank 2、原型25%，8色不可分；[value-token fixture](../../../reports/taiji_n1_plan177_e1_value_readout_value_token_20261029.json) 8/8，相关交换/无关保持/切断/救援通过，query-only无事实字节 | 解码器接口已通；producer连续编码不保留值身份，下一步E2b-3 |
 | E2b-3 | [组件bundle恢复预检](../../../reports/taiji_n1_plan177_e1_value_feature_restore_20261029.json)：encoder/selector/readout/store 独立进程恢复通过，max logit diff 0.0；copy-only与主路径一致 | 工程恢复通过；仍是复制下界，不证明学习型特征；下一步F候选 |
-| E3/F | 完整候选零步恢复（producer/V4/decoder）＋字节级value encoder训练与copy-only消融 | E0/E3闭合后另冻F预算与数值门，未启动 |
+| E3/F | [F合同已冻结](../../reference/SPEC-N1-177_F_value_encoder_20261029.md)：byte-level value encoder + answer loss + copy-only/no_state/credit-stop对照；完整E3零步恢复与E0前置 | F0标定→F1；未启动 |
 
 原D关于“SPEC要求新初始化确认”、模块贡献比例及250k CPU报价不作为执行依据，勘误及三种方案的取舍见E决策。仅接梯度不能代替状态消费证据；新候选的具体输入、恢复和资源按E/F落地。
 
