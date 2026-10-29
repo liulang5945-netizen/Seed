@@ -13,17 +13,22 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import subprocess
 import sys
 import time
 from pathlib import Path
 from typing import Any
 
 import torch
+from torch.nn import functional as F
 
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.training.evaluate_taiji_n1_plan177_f_f1_holdout import (  # noqa: E402
+    _replay,
+)
 from scripts.training.run_taiji_n1_plan177_f_f0b import (  # noqa: E402
     ARMS,
     BATCH,
@@ -43,6 +48,50 @@ TOTAL_CPU_CAP = 121500.0
 SEEDS = (0, 1, 2)
 
 
+def build_cases(trainer: Any, items: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    """每个家族取它的查询轮 joint 与整句答案目标；冻结链只跑这一次（等价 trace cache）。"""
+
+    from taiji.joint_state_consumption_course import build_train_episodes
+
+    episodes = {
+        item.family_id: item for item in build_train_episodes() if item.episode_id.endswith(":0")
+    }
+    cases: dict[str, dict[str, Any]] = {}
+    for item in items:
+        episode = episodes[item["family_id"]]
+        rows = _replay(trainer, episode)
+        query = next(
+            (row for row in rows if row["act"] == "query" and row["spans"].get("entity")),
+            None,
+        )
+        if query is None:
+            continue
+        target = torch.tensor(list(query["turn"].answer_target.target_bytes), dtype=torch.long)
+        cases[item["family_id"]] = {
+            "joint": query["joint"],
+            "target": target,
+            "value": item["value"],
+        }
+    return cases
+
+
+def answer_loss(arm: _Arm, trainer: Any, case: dict[str, Any]) -> torch.Tensor:
+    """教师强制整句答案：每步都加同一 bias，损失由答案字节逐步 CE 组成。"""
+
+    joint = case["joint"]
+    target = case["target"]
+    bias = arm.bias(arm.feature({"value": case["value"]}))
+    state = joint.language_state
+    source = joint.input_bindings[-1].neural_source_id
+    cache = trainer.model._joint_evidence_cache(joint, selected_source_ids=(source,))
+    logits = []
+    for symbol in target[:-1]:
+        step_logits, hidden = trainer.model.next_logits(state, cache=cache)
+        logits.append(step_logits + bias)
+        state = trainer.model.observe_response(state, int(symbol), hidden)
+    return F.cross_entropy(torch.stack(logits), target[1:])
+
+
 def _run_state(path: Path) -> dict[str, Any]:
     if path.is_file():
         return json.loads(path.read_text(encoding="utf-8"))
@@ -59,11 +108,56 @@ def _write_json(path: Path, payload: dict[str, Any]) -> None:
     temporary.replace(path)
 
 
+def _update(
+    arm: _Arm, trainer: Any, cases: dict[str, dict[str, Any]], batch: list[dict[str, Any]]
+) -> float:
+    losses = [answer_loss(arm, trainer, cases[item["family_id"]]) for item in batch]
+    loss = torch.stack(losses).mean()
+    arm.optimizer.zero_grad(set_to_none=True)
+    loss.backward()
+    arm.optimizer.step()
+    arm.cursor += 1
+    return float(loss.detach())
+
+
+CHILD_SCRIPT = chr(10).join(
+    [
+        "import json, sys, torch",
+        "from taiji.internalization import content_digest",
+        "from scripts.training.run_taiji_n1_plan177_f_f0b import _Arm",
+        "arm = _Arm.from_checkpoint(torch.load(sys.argv[1], map_location='cpu', weights_only=False))",
+        "print(json.dumps({",
+        "    'parameters': arm.parameters_digest(),",
+        "    'optimizer': content_digest(arm.optimizer.state_dict()),",
+        "    'cursor': arm.cursor,",
+        "}))",
+    ]
+)
+
+
+def child_digest(checkpoint: Path) -> dict[str, Any]:
+    """新进程加载端点，回传参数/优化器/cursor 摘要——恢复门的最薄一支。"""
+
+    script = CHILD_SCRIPT
+    completed = subprocess.run(
+        [sys.executable, "-c", script, str(checkpoint)],
+        capture_output=True,
+        text=True,
+        cwd=str(ROOT),
+        env=dict(os.environ, PYTHONPATH=str(ROOT), PYTHONUTF8="1"),
+        timeout=600,
+    )
+    if completed.returncode != 0:
+        raise RuntimeError(f"F1 endpoint restore failed: {completed.stderr[-600:]}")
+    return json.loads(completed.stdout.strip().splitlines()[-1])
+
+
 def run_one(
     arm_name: str,
     seed: int,
     items: list[dict[str, Any]],
     trainer: Any,
+    cases: dict[str, dict[str, Any]],
     run_root: Path,
     *,
     updates: int,
@@ -99,9 +193,8 @@ def run_one(
             state["status"] = "run_cpu_cap"
             break
         offset = BATCH * arm.cursor
-        arm.step(
-            trainer,
-            [items[(offset + index) % len(items)] for index in range(BATCH)],
+        _update(
+            arm, trainer, cases, [items[(offset + index) % len(items)] for index in range(BATCH)]
         )
         if arm.cursor % CHECKPOINT_EVERY == 0:
             torch.save(arm.checkpoint(), latest)
@@ -121,6 +214,14 @@ def run_one(
     torch.save(arm.checkpoint(), latest)
     endpoint = run_root / f"endpoint_update_{arm.cursor:04d}.pt"
     torch.save(arm.checkpoint(), endpoint)
+    from taiji.internalization import content_digest as _cd
+
+    parent_digest = {
+        "parameters": arm.parameters_digest(),
+        "optimizer": _cd(arm.optimizer.state_dict()),
+        "cursor": arm.cursor,
+    }
+    restored_digest = child_digest(endpoint)
     cpu_used = float(state["process_cpu_seconds"]) + time.process_time() - cpu_before
     wall_used = float(state["wall_seconds"]) + time.perf_counter() - wall_before
     state.update(
@@ -131,6 +232,7 @@ def run_one(
             "wall_seconds": wall_used,
             "endpoint": _rel(endpoint),
             "endpoint_sha256": _sha256_file(endpoint),
+            "endpoint_restore_ok": restored_digest == parent_digest,
             "completed": arm.cursor >= updates,
         }
     )
@@ -161,6 +263,7 @@ def main(argv: list[str] | None = None) -> int:
 
     trainer = load_trainer()
     items = train_items()
+    cases = build_cases(trainer, items)
     planned = [(seed, arm) for seed in SEEDS for arm in ARMS]
     if args.only:
         name, seed_text = args.only.rsplit("__seed_", 1)
@@ -176,7 +279,14 @@ def main(argv: list[str] | None = None) -> int:
             break
         run_root = args.run_root / f"{arm_name}__seed_{seed}"
         state = run_one(
-            arm_name, seed, items, trainer, run_root, updates=args.updates, threads=args.threads
+            arm_name,
+            seed,
+            items,
+            trainer,
+            cases,
+            run_root,
+            updates=args.updates,
+            threads=args.threads,
         )
         total_cpu += float(state["process_cpu_seconds"])
         runs.append(state)
