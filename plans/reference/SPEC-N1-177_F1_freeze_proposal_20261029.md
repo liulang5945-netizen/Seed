@@ -73,6 +73,12 @@ F 合同 §5 的主读数 `answer_exact` 要求完整中文回答，而本轮候
 4. `PASS_LEARNED_VALUE` 需要**十门全过且无任何触发项且旧保持下降 ≤3pp**；旧保持由 `probe_taiji_n1_plan177_f1_old_retention.py` 提供（DEBT-G185 已结清）：父 V4 与候选（偏置=bias(0)）在 N176 F0 的 16 条 retention episode 上各生成一次，`worst_drop_pp` 写进探针件；评分器用 `--old-retention` 读它。**探针件不存在时仍记 `not_run` 并判 `INCONCLUSIVE`**，不许把缺项当通过。
 5. 工程/预算类出口（ENGINEERING_FAILURE / BUDGET_STOP）不由本评分器判，归运行器与训练记录。
 
+## 4.6 覆盖分层读数（2026-10-29 补记，门不变）
+
+训练面只覆盖 4 个实体（DEBT-G184），但 holdout 仍含 producer 解析不出的实体。为避免"均值被未覆盖半边拉低"之后读不出原因，评分器对每个臂额外出版 `by_coverage`：把 holdout episode 按家族实体是否在 4 个已覆盖实体内分成两层，各自 family macro，并给出两层的 episode 数。**十道门的判据仍算在整个 holdout 上（冻结口径不变）**；分层只作诊断，`query_unparsed`（查询轮没抽出实体的次数）同样单列。
+
+若最终主门未过而这层显示差异集中在 `uncovered`，结案应写"未覆盖导致"，不得改写成"机制不成立"；反之亦然。
+
 ## 5. 停止线
 
 - 读 holdout 前：12 run 全完成且恢复全真；任一 run 恢复失败 ⇒ ENGINEERING_FAILURE，不读 holdout。

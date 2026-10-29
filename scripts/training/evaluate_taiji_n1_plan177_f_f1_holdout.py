@@ -54,6 +54,22 @@ from taiji.joint_state_consumption_course import (  # noqa: E402
 RUN_ROOT = ROOT / "data/checkpoints/n1_plan177_f_f1_20261029"
 REPORT = ROOT / "reports/taiji_n1_plan177_f_f1_holdout_20261029.json"
 MAX_NEW_BYTES = 64
+COVERED_ENTITIES = ("钥匙", "杯子", "书", "盒子")
+
+
+def episode_entity(family_id: str) -> str:
+    return _FAMILY_ENTITY[family_id]
+
+
+def _family_entities() -> dict[str, str]:
+    return {
+        family.family_id: family.entity
+        for partition in ("train", "query", "holdout")
+        for family in e1_families()[partition]
+    }
+
+
+_FAMILY_ENTITY = _family_entities()
 GATES = {
     "answer_exact": 0.85,
     "value_exact": 0.90,
@@ -115,6 +131,23 @@ def family_macro(rows: list[dict[str, Any]]) -> dict[str, float]:
                 family_values.append(statistics.mean(values))
         result[key] = statistics.mean(family_values) if family_values else 0.0
     return result
+
+
+def split_by_coverage(rows: list[dict[str, Any]]) -> dict[str, dict[str, float]]:
+    """按"该家族的实体是否在 producer 可解析范围内"分层，门不变、只多做一份读数。
+
+    没有这份分层，一半 holdout 家族因为压根解析不出事实而拉低均值时，读不出
+    到底是"没学会"还是"没覆盖"。
+    """
+
+    covered = [row for row in rows if row.get("entity_covered")]
+    uncovered = [row for row in rows if not row.get("entity_covered")]
+    return {
+        "covered": family_macro(covered) if covered else {},
+        "uncovered": family_macro(uncovered) if uncovered else {},
+        "covered_episodes": len(covered),
+        "uncovered_episodes": len(uncovered),
+    }
 
 
 def contrasts(
@@ -208,6 +241,7 @@ def _replay(trainer: Any, episode: Any) -> list[dict[str, Any]]:
 def score_episode(
     trainer: Any, arm: _Arm, selector: QueryConditionedSelectorV1, episode: Any
 ) -> dict[str, Any]:
+    entity_covered = episode_entity(episode.family_id) in COVERED_ENTITIES
     rows = _replay(trainer, episode)
     store = PersistentContentStoreV1(())
     answer_hits = 0
@@ -276,6 +310,7 @@ def score_episode(
 
     return {
         "family_id": episode.family_id,
+        "entity_covered": entity_covered,
         "turns": len(rows),
         "query_turns": query_turns,
         "irrelevant_turns": irrelevant_turns,
@@ -330,6 +365,7 @@ def arm_scores(trainer: Any, arm_name: str, seed: int, episodes: list[Any]) -> d
         "endpoint": _rel(endpoint),
         "endpoint_sha256": _sha256_file(endpoint),
         "macro": family_macro(per_episode),
+        "by_coverage": split_by_coverage(per_episode),
         "per_episode": per_episode,
     }
 

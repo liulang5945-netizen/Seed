@@ -17,6 +17,7 @@ from scripts.training.evaluate_taiji_n1_plan177_f_f1_holdout import (
     family_macro,
     gate_report,
     normalize,
+    split_by_coverage,
     verdict,
 )
 
@@ -139,3 +140,29 @@ def test_precedence_reports_the_first_code_and_all_reasons() -> None:
     decision = verdict(scores, 1.0)
     assert decision["verdict"] == VERDICT_PRECEDENCE[0]
     assert decision["reasons"][:2] == ["FAIL_COPY_ONLY", "FAIL_NO_LEARNING"]
+
+
+def _coverage_row(family: str, covered: bool, value: float) -> dict:
+    row = {"family_id": family, **{key: value for key in METRICS}}
+    row.update({"turns": 4, "query_turns": 1, "entity_covered": covered})
+    return row
+
+
+def test_coverage_split_keeps_the_two_groups_apart() -> None:
+    rows = [
+        _coverage_row("f1", True, 1.0),
+        _coverage_row("f2", True, 0.8),
+        _coverage_row("f3", False, 0.0),
+        _coverage_row("f4", False, 0.2),
+    ]
+    split = split_by_coverage(rows)
+    assert split["covered_episodes"] == 2
+    assert split["uncovered_episodes"] == 2
+    assert split["covered"]["answer_exact"] == pytest.approx(0.9)
+    assert split["uncovered"]["answer_exact"] == pytest.approx(0.1)
+
+
+def test_coverage_split_reports_empty_side_as_empty() -> None:
+    split = split_by_coverage([_coverage_row("f1", True, 1.0)])
+    assert split["uncovered"] == {}
+    assert split["uncovered_episodes"] == 0
