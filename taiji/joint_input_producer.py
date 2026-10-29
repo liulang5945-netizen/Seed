@@ -684,6 +684,7 @@ class JointInputProducerV1(nn.Module):
                         confidence=confidence,
                     )
                 )
+        spans.sort(key=lambda span: (span.start_byte, span.end_byte, span.role))
         confidence = min([act_confidence, *span_confidences]) if span_confidences else 0.0
         act = ACT_NAMES[act_id]
         required_roles = {

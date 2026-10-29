@@ -90,6 +90,8 @@ E0可与E2实现并行，但旧资产恢复及新候选的必要恢复门未闭�
 
 2026-10-29 完整E3 v6：producer/V4、F0 byte encoder、selector/store、readout、feature→byte bias 同bundle，父/子进程各跑同一更正事实与查询。parse 的 act/status/entity/value、span 角色与字节范围、confidence/ambiguity、semantic features、selected feature、store digest、base 与 conditioned 下一字节 logits 全部一致（最大差0.0），query-only 1 binding/1 observation 且无事实字节；`optimizer_updates=0`、`sealed_text_read=0`。唯一不一致是 span 的 percept/assembly lineage ID（`parse_sha256`/`span_lineage_digest` 不同），因此状态为 **`full_e3_content_passed_lineage_gap`**，严格E3尚未通过。下一步先修 adapter/感知 lineage ID 的跨进程确定性并重跑严格E3；E0并行，F1不启动。证据见[完整E3 v6](../../reports/taiji_n1_plan177_f_full_e3_20261029_v6.json)。
 
+2026-10-29 严格E3修复与通过：逐字段定位发现 percept/assembly ID 本身相同，差异来自 span 在 parse payload 中的顺序；`JointSemanticSpanV1.ROLES` 是 frozenset，`decoded` 字典迭代顺序跨进程不稳定。已把 spans 按 `(start_byte, end_byte, role)` 排序。v11/v12 连续两次严格通过：`parse_digest_equal=true`、`span_lineage_equal=true`、base adapter digest 相等、base/conditioned logits 最大差0.0；选中蓝色、相关交换 delta 1.9756、query-only 无事实字节；`optimizer_updates=0`、`sealed_text_read=0`。F1仅剩E0前置；N177.6历史报告/checkpoint不重算，旧源码保留在git历史，E0需用历史源码或登记来源漂移。证据见[完整E3 v11](../../reports/taiji_n1_plan177_f_full_e3_20261029_v11.json)与[v12](../../reports/taiji_n1_plan177_f_full_e3_20261029_v12.json)。
+
 ## 6. 验收与有限出口
 
 | 判据 | E阶段要求 | F阶段才裁决的内容 |

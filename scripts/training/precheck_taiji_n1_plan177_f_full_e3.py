@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import os
 import subprocess
@@ -20,6 +21,8 @@ import time
 from pathlib import Path
 
 import torch
+
+torch.set_num_threads(1)
 
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
@@ -47,6 +50,12 @@ def _sha256_file(path: Path) -> str:
 
 def _sha256_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def _sha256_state(state) -> str:
+    buffer = io.BytesIO()
+    torch.save(state, buffer)
+    return hashlib.sha256(buffer.getvalue()).hexdigest()
 
 
 def _bundle() -> dict:
@@ -138,6 +147,7 @@ def _episode():
 
 
 def _run(bundle_path: Path) -> dict:
+    torch.manual_seed(1771029)
     from taiji.internalization import content_digest
     from taiji.joint_state_consumption import (
         PersistentContentFeatureV1,
@@ -248,6 +258,17 @@ def _run(bundle_path: Path) -> dict:
         "parse_features": [float(item) for item in parse.semantic_features],
         "parse_confidence": float(parse.confidence),
         "parse_ambiguity": float(parse.ambiguity),
+        "base_adapter_checkpoint_digest": _sha256_state(trainer.base_adapter_checkpoint),
+        "span_lineage": [
+            {
+                "role": span.role,
+                "start_byte": span.start_byte,
+                "end_byte": span.end_byte,
+                "percept_event_ids": list(span.percept_event_ids),
+                "assembly_ids": list(span.assembly_ids),
+            }
+            for span in parse.spans
+        ],
         "parse_meta": {
             "joint_bundle_id": parse.joint_bundle_id,
             "owner_id": parse.owner_id,
@@ -333,8 +354,10 @@ def _compare(parent: dict, child: dict) -> dict:
     meta_differences = sorted(
         key for key in parent["parse_meta"] if parent["parse_meta"][key] != child["parse_meta"][key]
     )
+    lineage_equal = parent["span_lineage"] == child["span_lineage"]
     same_structure &= (
-        parent["conditioned_argmax_byte"] == child["conditioned_argmax_byte"]
+        parent["base_adapter_checkpoint_digest"] == child["base_adapter_checkpoint_digest"]
+        and parent["conditioned_argmax_byte"] == child["conditioned_argmax_byte"]
         and parent["copy_only_argmax_byte"] == child["copy_only_argmax_byte"]
         and parent["no_state_argmax_byte"] == child["no_state_argmax_byte"]
     )
@@ -345,6 +368,9 @@ def _compare(parent: dict, child: dict) -> dict:
         "max_parse_confidence_difference": max_parse_confidence,
         "max_parse_ambiguity_difference": max_parse_ambiguity,
         "parse_meta_differences": meta_differences,
+        "span_lineage_equal": lineage_equal,
+        "base_adapter_checkpoint_equal": parent["base_adapter_checkpoint_digest"]
+        == child["base_adapter_checkpoint_digest"],
         "max_base_logit_difference": max_base,
         "max_conditioned_logit_difference": max_conditioned,
         "passed": bool(
