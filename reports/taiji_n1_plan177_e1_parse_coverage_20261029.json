@@ -1,0 +1,501 @@
+{
+  "checkpoint": "data/checkpoints/n1_plan177_6_t1_pilot_20261027/correct__seed_0/update_002560.pt",
+  "cost": {
+    "process_cpu_seconds": 31.78125,
+    "wall_seconds": 33.01818490005098
+  },
+  "coverage_rate": 0.5,
+  "covered": 16,
+  "covered_families": [
+    "e1-family:1f2a2899711dac29f497",
+    "e1-family:c70ab1b44f0fec06c4c2",
+    "e1-family:b1c7ab7ef800e0fc275a",
+    "e1-family:cb72452639f903fe6780",
+    "e1-family:f3bd289a92925a196b71",
+    "e1-family:e6be0a4ac73acf31ec56",
+    "e1-family:efe31b317304a1b1a81c",
+    "e1-family:93574b784283426808e4",
+    "e1-family:eb42116997b63c485a32",
+    "e1-family:bcd9337e9f79bc47aaaa",
+    "e1-family:3cca1d5ba542ad77ab0d",
+    "e1-family:5ef25f631c7dca52a5d4",
+    "e1-family:27006ff90016d1083108",
+    "e1-family:3689287a42008b17a3c8",
+    "e1-family:e9e43bcb392981a8f4ae",
+    "e1-family:c3173af5ea11efe02e99"
+  ],
+  "date": "2026-10-29",
+  "families": 32,
+  "format": "taiji-n177-e1-parse-coverage-v1",
+  "rows": [
+    {
+      "covered": true,
+      "entity": "钥匙",
+      "episode_id": "n177-e1:1f2a2899711d:train:0",
+      "family_id": "e1-family:1f2a2899711dac29f497",
+      "parsed_turn": 3,
+      "parsed_value": "黄色",
+      "single_role_facts": 2,
+      "true_value": "黄色",
+      "turns": 8
+    },
+    {
+      "covered": false,
+      "entity": "球",
+      "episode_id": "n177-e1:817f2730d36c:train:0",
+      "family_id": "e1-family:817f2730d36ced141e7b",
+      "parsed_turn": null,
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "红色",
+      "turns": 8
+    },
+    {
+      "covered": false,
+      "entity": "手机",
+      "episode_id": "n177-e1:93fc51cb2c6f:train:0",
+      "family_id": "e1-family:93fc51cb2c6f8ffb7763",
+      "parsed_turn": null,
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "橙色",
+      "turns": 8
+    },
+    {
+      "covered": false,
+      "entity": "笔",
+      "episode_id": "n177-e1:97780f552c7f:train:0",
+      "family_id": "e1-family:97780f552c7f6a399c6f",
+      "parsed_turn": null,
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "红色",
+      "turns": 8
+    },
+    {
+      "covered": true,
+      "entity": "杯子",
+      "episode_id": "n177-e1:c70ab1b44f0f:train:0",
+      "family_id": "e1-family:c70ab1b44f0fec06c4c2",
+      "parsed_turn": 3,
+      "parsed_value": "黑色",
+      "single_role_facts": 2,
+      "true_value": "黑色",
+      "turns": 8
+    },
+    {
+      "covered": false,
+      "entity": "手机",
+      "episode_id": "n177-e1:36d04c9c09b1:train:0",
+      "family_id": "e1-family:36d04c9c09b135dbd108",
+      "parsed_turn": null,
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "蓝色",
+      "turns": 8
+    },
+    {
+      "covered": false,
+      "entity": "眼镜",
+      "episode_id": "n177-e1:73182387d9cb:train:0",
+      "family_id": "e1-family:73182387d9cba2584fc0",
+      "parsed_turn": null,
+      "parsed_value": null,
+      "single_role_facts": 3,
+      "true_value": "橙色",
+      "turns": 8
+    },
+    {
+      "covered": false,
+      "entity": "眼镜",
+      "episode_id": "n177-e1:6fa791a504e2:train:0",
+      "family_id": "e1-family:6fa791a504e2c081e212",
+      "parsed_turn": null,
+      "parsed_value": null,
+      "single_role_facts": 3,
+      "true_value": "蓝色",
+      "turns": 8
+    },
+    {
+      "covered": true,
+      "entity": "杯子",
+      "episode_id": "n177-e1:b1c7ab7ef800:train:0",
+      "family_id": "e1-family:b1c7ab7ef800e0fc275a",
+      "parsed_turn": 3,
+      "parsed_value": "绿色",
+      "single_role_facts": 3,
+      "true_value": "绿色",
+      "turns": 8
+    },
+    {
+      "covered": true,
+      "entity": "钥匙",
+      "episode_id": "n177-e1:cb72452639f9:train:0",
+      "family_id": "e1-family:cb72452639f903fe6780",
+      "parsed_turn": 3,
+      "parsed_value": "蓝色",
+      "single_role_facts": 3,
+      "true_value": "蓝色",
+      "turns": 8
+    },
+    {
+      "covered": false,
+      "entity": "笔",
+      "episode_id": "n177-e1:ed1af8e4c8d1:train:0",
+      "family_id": "e1-family:ed1af8e4c8d1bc1f043b",
+      "parsed_turn": null,
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "绿色",
+      "turns": 8
+    },
+    {
+      "covered": false,
+      "entity": "眼镜",
+      "episode_id": "n177-e1:c5591b23c7d4:train:0",
+      "family_id": "e1-family:c5591b23c7d44b15ac4a",
+      "parsed_turn": null,
+      "parsed_value": null,
+      "single_role_facts": 3,
+      "true_value": "黄色",
+      "turns": 8
+    },
+    {
+      "covered": false,
+      "entity": "笔",
+      "episode_id": "n177-e1:9fcbac6a9688:train:0",
+      "family_id": "e1-family:9fcbac6a96889b8ce71e",
+      "parsed_turn": null,
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "蓝色",
+      "turns": 8
+    },
+    {
+      "covered": true,
+      "entity": "杯子",
+      "episode_id": "n177-e1:f3bd289a9292:train:0",
+      "family_id": "e1-family:f3bd289a92925a196b71",
+      "parsed_turn": 3,
+      "parsed_value": "紫色",
+      "single_role_facts": 3,
+      "true_value": "紫色",
+      "turns": 8
+    },
+    {
+      "covered": false,
+      "entity": "球",
+      "episode_id": "n177-e1:03218f7ceb39:train:0",
+      "family_id": "e1-family:03218f7ceb3928ff47ad",
+      "parsed_turn": 0,
+      "parsed_value": "绿色",
+      "single_role_facts": 2,
+      "true_value": "黑色",
+      "turns": 8
+    },
+    {
+      "covered": true,
+      "entity": "书",
+      "episode_id": "n177-e1:e6be0a4ac73a:train:0",
+      "family_id": "e1-family:e6be0a4ac73acf31ec56",
+      "parsed_turn": 3,
+      "parsed_value": "绿色",
+      "single_role_facts": 2,
+      "true_value": "绿色",
+      "turns": 8
+    },
+    {
+      "covered": true,
+      "entity": "盒子",
+      "episode_id": "n177-e1:efe31b317304:train:0",
+      "family_id": "e1-family:efe31b317304a1b1a81c",
+      "parsed_turn": 3,
+      "parsed_value": "绿色",
+      "single_role_facts": 3,
+      "true_value": "绿色",
+      "turns": 8
+    },
+    {
+      "covered": false,
+      "entity": "球",
+      "episode_id": "n177-e1:ffdfc546e410:train:0",
+      "family_id": "e1-family:ffdfc546e410e6d64232",
+      "parsed_turn": 0,
+      "parsed_value": "蓝色",
+      "single_role_facts": 1,
+      "true_value": "白色",
+      "turns": 8
+    },
+    {
+      "covered": false,
+      "entity": "手机",
+      "episode_id": "n177-e1:9d3170f6125f:train:0",
+      "family_id": "e1-family:9d3170f6125f608c945b",
+      "parsed_turn": null,
+      "parsed_value": null,
+      "single_role_facts": 0,
+      "true_value": "黑色",
+      "turns": 8
+    },
+    {
+      "covered": false,
+      "entity": "眼镜",
+      "episode_id": "n177-e1:16d6cc0cb0b0:train:0",
+      "family_id": "e1-family:16d6cc0cb0b0a0c483e2",
+      "parsed_turn": null,
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "白色",
+      "turns": 8
+    },
+    {
+      "covered": false,
+      "entity": "球",
+      "episode_id": "n177-e1:c9bf496f31ac:train:0",
+      "family_id": "e1-family:c9bf496f31ac7051a868",
+      "parsed_turn": null,
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "紫色",
+      "turns": 8
+    },
+    {
+      "covered": true,
+      "entity": "盒子",
+      "episode_id": "n177-e1:93574b784283:train:0",
+      "family_id": "e1-family:93574b784283426808e4",
+      "parsed_turn": 3,
+      "parsed_value": "橙色",
+      "single_role_facts": 3,
+      "true_value": "橙色",
+      "turns": 8
+    },
+    {
+      "covered": true,
+      "entity": "盒子",
+      "episode_id": "n177-e1:eb42116997b6:train:0",
+      "family_id": "e1-family:eb42116997b63c485a32",
+      "parsed_turn": 3,
+      "parsed_value": "黄色",
+      "single_role_facts": 3,
+      "true_value": "黄色",
+      "turns": 8
+    },
+    {
+      "covered": false,
+      "entity": "笔",
+      "episode_id": "n177-e1:b3519be776ba:train:0",
+      "family_id": "e1-family:b3519be776ba84da7309",
+      "parsed_turn": null,
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "白色",
+      "turns": 8
+    },
+    {
+      "covered": true,
+      "entity": "钥匙",
+      "episode_id": "n177-e1:bcd9337e9f79:train:0",
+      "family_id": "e1-family:bcd9337e9f79bc47aaaa",
+      "parsed_turn": 3,
+      "parsed_value": "橙色",
+      "single_role_facts": 2,
+      "true_value": "橙色",
+      "turns": 8
+    },
+    {
+      "covered": true,
+      "entity": "书",
+      "episode_id": "n177-e1:3cca1d5ba542:train:0",
+      "family_id": "e1-family:3cca1d5ba542ad77ab0d",
+      "parsed_turn": 3,
+      "parsed_value": "黑色",
+      "single_role_facts": 2,
+      "true_value": "黑色",
+      "turns": 8
+    },
+    {
+      "covered": true,
+      "entity": "盒子",
+      "episode_id": "n177-e1:5ef25f631c7d:train:0",
+      "family_id": "e1-family:5ef25f631c7dca52a5d4",
+      "parsed_turn": 3,
+      "parsed_value": "红色",
+      "single_role_facts": 2,
+      "true_value": "红色",
+      "turns": 8
+    },
+    {
+      "covered": true,
+      "entity": "钥匙",
+      "episode_id": "n177-e1:27006ff90016:train:0",
+      "family_id": "e1-family:27006ff90016d1083108",
+      "parsed_turn": 3,
+      "parsed_value": "紫色",
+      "single_role_facts": 3,
+      "true_value": "紫色",
+      "turns": 8
+    },
+    {
+      "covered": true,
+      "entity": "书",
+      "episode_id": "n177-e1:3689287a4200:train:0",
+      "family_id": "e1-family:3689287a42008b17a3c8",
+      "parsed_turn": 3,
+      "parsed_value": "黄色",
+      "single_role_facts": 3,
+      "true_value": "黄色",
+      "turns": 8
+    },
+    {
+      "covered": true,
+      "entity": "杯子",
+      "episode_id": "n177-e1:e9e43bcb3929:train:0",
+      "family_id": "e1-family:e9e43bcb392981a8f4ae",
+      "parsed_turn": 3,
+      "parsed_value": "红色",
+      "single_role_facts": 3,
+      "true_value": "红色",
+      "turns": 8
+    },
+    {
+      "covered": false,
+      "entity": "手机",
+      "episode_id": "n177-e1:b4dcea60693c:train:0",
+      "family_id": "e1-family:b4dcea60693cc70e1739",
+      "parsed_turn": null,
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "绿色",
+      "turns": 8
+    },
+    {
+      "covered": true,
+      "entity": "书",
+      "episode_id": "n177-e1:c3173af5ea11:train:0",
+      "family_id": "e1-family:c3173af5ea11efe02e99",
+      "parsed_turn": 3,
+      "parsed_value": "橙色",
+      "single_role_facts": 2,
+      "true_value": "橙色",
+      "turns": 8
+    }
+  ],
+  "scope": "32 train families, one :0 episode each; read-only, no optimizer step",
+  "trace_cache": "data/checkpoints/n1_plan177_5a_preflight_20261027/train_trace_cache_v1.pt",
+  "uncovered_families": [
+    {
+      "entity": "球",
+      "family_id": "e1-family:817f2730d36ced141e7b",
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "红色"
+    },
+    {
+      "entity": "手机",
+      "family_id": "e1-family:93fc51cb2c6f8ffb7763",
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "橙色"
+    },
+    {
+      "entity": "笔",
+      "family_id": "e1-family:97780f552c7f6a399c6f",
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "红色"
+    },
+    {
+      "entity": "手机",
+      "family_id": "e1-family:36d04c9c09b135dbd108",
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "蓝色"
+    },
+    {
+      "entity": "眼镜",
+      "family_id": "e1-family:73182387d9cba2584fc0",
+      "parsed_value": null,
+      "single_role_facts": 3,
+      "true_value": "橙色"
+    },
+    {
+      "entity": "眼镜",
+      "family_id": "e1-family:6fa791a504e2c081e212",
+      "parsed_value": null,
+      "single_role_facts": 3,
+      "true_value": "蓝色"
+    },
+    {
+      "entity": "笔",
+      "family_id": "e1-family:ed1af8e4c8d1bc1f043b",
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "绿色"
+    },
+    {
+      "entity": "眼镜",
+      "family_id": "e1-family:c5591b23c7d44b15ac4a",
+      "parsed_value": null,
+      "single_role_facts": 3,
+      "true_value": "黄色"
+    },
+    {
+      "entity": "笔",
+      "family_id": "e1-family:9fcbac6a96889b8ce71e",
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "蓝色"
+    },
+    {
+      "entity": "球",
+      "family_id": "e1-family:03218f7ceb3928ff47ad",
+      "parsed_value": "绿色",
+      "single_role_facts": 2,
+      "true_value": "黑色"
+    },
+    {
+      "entity": "球",
+      "family_id": "e1-family:ffdfc546e410e6d64232",
+      "parsed_value": "蓝色",
+      "single_role_facts": 1,
+      "true_value": "白色"
+    },
+    {
+      "entity": "手机",
+      "family_id": "e1-family:9d3170f6125f608c945b",
+      "parsed_value": null,
+      "single_role_facts": 0,
+      "true_value": "黑色"
+    },
+    {
+      "entity": "眼镜",
+      "family_id": "e1-family:16d6cc0cb0b0a0c483e2",
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "白色"
+    },
+    {
+      "entity": "球",
+      "family_id": "e1-family:c9bf496f31ac7051a868",
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "紫色"
+    },
+    {
+      "entity": "笔",
+      "family_id": "e1-family:b3519be776ba84da7309",
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "白色"
+    },
+    {
+      "entity": "手机",
+      "family_id": "e1-family:b4dcea60693cc70e1739",
+      "parsed_value": null,
+      "single_role_facts": 1,
+      "true_value": "绿色"
+    }
+  ],
+  "verdict": "f0b_blocked_by_parse_coverage"
+}
