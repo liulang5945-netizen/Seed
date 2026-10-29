@@ -6,68 +6,54 @@
 
 持续Goal（2026-10-27修订）：沿N主线，发展由态极自身可学习、可恢复的认知机制参与决策与表达的原生认知模型，使其能够以自然中文可靠完成连续任务，跨会话积累和纠正经验，从可核验的经验与反馈中学习并保持旧能力；在授权和资源边界内，必要时即使没有新提示，也能根据目标与状态自主选择继续、求证、求助或等待。各阶段预先声明任务范围和收官条件，以身份可追溯的同一候选及其前后版本，对照合理基线，按范围验证未见任务表现、必要机制的实际贡献、反馈对负责模块的作用、旧能力保持、主动选择效果及真实资源成本；成功、负结果、不可判、工程失败或预算停止均按预定出口结案。
 
-## 当前唯一下一步：E0补齐证据，E2实现E1冻结的状态消费合同
+## 当前唯一下一步：由用户执行E0补证，助手维护方案与证据边界
 
-A的15臂训练与C数值评价已完成，D已发布。现采用[E设计决策](../../reference/PLAN-N1-177_E_state_consumption_and_credit_decision_20261029.md)：先建立能判别状态实际消费的新端点/内容接口，再用同前向stop-gradient控制比较任务信用。E1合同已冻结，见[状态依赖查询与内容消费合同](../../reference/SPEC-N1-177_E1_state_consumption_contract_20261029.md)；E2a课程/manifest已生成，sealed未物化；E2b-1特征存储/选择器已实现。producer探针显示：已知实体“钥匙”可解析实体/属性/值并写入世界状态，新实体“笔”抽不到实体、世界对象为0。E2b-2进一步确认：producer的mean特征、value-span mean特征、value-span逐字节特征都只有rank 2，8色不可分（最低余弦分别约0.93/0.93/0.798，原型准确率均25%）；只有value-token可训练嵌入fixture 8/8通过相关/无关/切断/救援，query-only路径只有1个binding/1个observation、无事实字节。E2b-3进一步把value-token encoder/selector/readout/store 打成bundle，独立进程恢复后选中值与logits完全一致（max logit diff 0.0）；但copy-only与主路径一致，说明当前value-token路径仍是**离散值复制下界**，只证明工程恢复，不证明学习型特征。判决：解码器/选择/恢复接口已通，producer连续编码不保留值身份，value-token一热仍是复制地址。F候选合同已冻结，见[字节级值编码器F合同](../../reference/SPEC-N1-177_F_value_encoder_20261029.md)：主路径只读value encoder输出，copy-only/no_state/credit-stop为对照。**F0a train-only标定已完成**：byte-level value encoder在64条E1 train事实上200步学到8色，train accuracy 1.0、no-state 0.078、copy-only 1.0；zero/final新进程恢复均通过，CPU 118.25/墙钟50.95。**F0b（完整producer/V4/decoder候选的12-run成本/恢复短标定）尚未执行**，因此F1预算仍不能冻结。**完整E3已严格通过**：v11/v12 连续两次 `parse_digest_equal=true`、`span_lineage_equal=true`、base adapter digest 相等，base/conditioned 下一字节 logits 最大差 0.0；选中值蓝色、相关交换 delta 1.9756、query-only 1 binding/1 observation 且无事实字节，`optimizer_updates=0`、`sealed_text_read=0`。v6 曾暴露 lineage gap；根因是 `JointSemanticSpanV1.ROLES` 为 frozenset，`decoded` 迭代顺序跨进程不稳定，导致 span 顺序不同；已将 spans 按字节位置排序，ID 与摘要恢复稳定。F1未启动，唯一前置是 E0；N177.6 历史报告/checkpoint 不重算，旧源码保留在 git 历史，E0 需用历史源码或登记来源漂移。
+本次按用户最新要求仅做方案/计划收束，代码修复、模型恢复、标定、训练及清理由用户执行。当前先补E0；训练态E3与CI修复可准备方案，F0b实际计时与恢复工作串行或独占资源。F1未启动，不能由本轮收束放行。
 
-| 阶段 | 复核状态 | 交付/边界 | 转交 |
+## 本轮资产与状态
+
+| 项目 | 当前状态 | 已成立结论 | 待交接 |
 |---|---|---|---|
-| A 多臂训练 | 已完成 | 15臂×2560日程步，原费用/失败保留 | 原端点交C及E0 |
-| B 评价/信用准备 | 评价准备完成；信用boundary-only | 五模式合成损失边界可用；真实链/optimizer/cursor隔离缺项转E0 | 不重训补证 |
-| C 原合同评价 | 数值评价完成；恢复证据待补 | 原绝对/学习/保持门报告通过；终点独立恢复回执未找到 | E0补原工程证据 |
-| D 联合诊断 | 已发布；归因经本轮收窄 | 固定切片有收益，复合分不作模块贡献比例 | E1消费优先方向 |
-| E 后继候选 | E1合同已冻结 | E0补证/E2隔离实现→E3零步验收 | 完成后交F |
-| F 新训练 | 待前置 | 新预算、样本/种子、数值门与跨包停止线另冻 | 未启动新运行 |
+| 原N177.6 A–D | 原数值结果完成 | 固定切片收益保留，原恢复余证仍未齐 | E0历史源补证 |
+| N176 | 固定输出已生成、消费登记完成 | 1360份原输出本地hash保留，F2未解析 | 不重生成、不再称F0/F1未消费 |
+| E1/E2a | 合同冻结、课程生成 | 状态依赖端点/manifest存在，新sealed未物化 | 原数据边界继承 |
+| E2b消费接口 | 有限完成 | 存储、选择、query-only及读出可用 | 保留负结果与复制下界 |
+| F0a | 已完成训练侧标定 | 64条train/200次更新；train1.0、copy1.0、no-state0.078125 | 不代替F0b/泛化证据 |
+| E3推理恢复子门 | v11/v12通过 | parse/span/base及下一字节logits严格一致 | 不代签全部训练态E3 |
+| E0 | 待补证，当前优先 | 原15臂历史源恢复与B真实链/隔离 | 用户执行 |
+| E2c/训练态E3余项 | 待补证 | task-credit on/stop、禁写组、optimizer/RNG/cursor往返尚缺 | F1前置 |
+| F0b | 未执行 | 完整候选12-run短成本/恢复标定 | 数字/口径明确后用户执行 |
+| F1 | 未启动 | 数值门、曝光/更新数与总预算仍未定稿 | 所有前置闭合后独立决策 |
 
-## 原多臂结果与来源
+详细证据、失败与来源见[20261029收束记录](../../reference/PROJECT_CONSOLIDATION_20261029.md)。已确认工程与负结果作为资产继承，不按旧“下一步”重做。
 
-| 项目 | 已发布读数 | 适用解释 |
+## 保留的失败与限制
+
+- 原producer三种连续值特征在对应探针中rank2、8色原型25%；新实体抽取缺口仍在，不外推所有未来表征必败。
+- value-token fixture控制/恢复通过但copy-only同等，是离散复制下界。
+- E3 v6 lineage gap保留；span按字节排序后v11/v12推理恢复通过，未重写旧失败。
+- F0a train1.0不是未见能力；预检的model_calls=0只表示未调用完整producer/V4链，并非没有训练更新。
+
+## 用户执行清单与准入
+
+| 工作包 | 具体任务 | 验收/边界 |
 |---|---|---|
-| 身份 | 15臂完成；run_state=evaluation_complete；attempts=1 | 只读verifier为publishable，不等于全部恢复/科学门已齐 |
-| 原数值门 | 十项绝对线、两条三seed学习门及原F0保持线报告通过 | 固定合成F0/F1 T1，不补发开放语言能力 |
-| Correct查询 | 约98.958%；state exact=100% | 新端点须保留已取得收益 |
-| Parser-permuted查询 | 约98.351%；state exact=0 | 旧答案端点难以识别规范world消费 |
-| Correct关闭commit | 查询约75.781% | commit路径约23.18pp查询效应；不是纯world数值效应 |
-| 结案资源 | CPU 1,620,987.53125秒；wall 147,210.248611秒；制品4,679,230,665 bytes | 在原2.4M/220k/8GiB内，口径/历史费用沿原清单，不充作新预算 |
+| E0 | 原15臂终点fresh-process parse/answer回执；B真实输入、有效mask及隔离补证 | 使用历史源码或披露漂移；不重训、不重评旧holdout |
+| CI | 修复四模块9处mypy类型错误 | 精确记录当前源码身份；本机核心类型/受影响回归及实际CI重新核验 |
+| 训练态E3 | 真正的credit-on/stop、禁写组及optimizer/RNG/cursor往返 | 不能只看现precheck退出码；严格lineage与完整训练门分别验收 |
+| F0b准备 | 12-run清单、独占计时/恢复方案、唯一曝光口径 | 不以F0a单体118.25 CPU估整候选成本 |
+| F0b执行 | 在原2,000 CPU/1,500 wall限额内完整候选短标定 | 实际采样不与E0/恢复争资源 |
+| F1冻结 | 数值门、预算、更新/曝光与跨包停止线 | E0、训练态E3、F0b齐备且判据可判失败后才进入 |
 
-来源：[pilot](../../../reports/taiji_n1_plan177_6_t1_pilot_20261027.json)、[终评](../../../reports/taiji_n1_plan177_6_t1_evaluation_20261029.json)、[结案清单](../../../reports/taiji_n1_plan177_6_t1_closeout_manifest_20261029.json)、[D诊断](../../../reports/taiji_n1_plan177_6_t1_joint_diagnosis_20261029.json)。本轮只读复核已发布报告及原来源，未重跑旧评分或读取新sealed；pilot/evaluation与清单的字节/SHA一致。
+F合同初拟“1280 updates＝5 epochs（128 episodes/batch4）”有算术冲突：5 epochs为160步，1280为40 epochs。本轮只登记勘误，原冻结文本保留；正式定价前须选唯一口径。F0a copy-only已1.0，F1要求main超过copy-only的判别力也须在读取holdout前澄清。
 
-## E当前交付
+## 收束实施边界
 
-| 子步 | 当前动作 | 完成条件 |
-|---|---|---|
-| E0 | B真实路径/有效接收者与隔离证据；15臂终点独立恢复回执 | train/合成固定输入只读复现，不重训/重评 |
-| E1 | [合同已冻结](../../reference/SPEC-N1-177_E1_state_consumption_contract_20261029.md)：同query独立事实/更正/干扰，持久内容特征与查询选择 | 答案因果与state正确性分账；E2按此实现，不再改题面口径 |
-| E2a | [课程/manifest已生成](../../../reports/taiji_n1_plan177_e1_course_20261029.json)：32/16/16 family、train 128/fixture 8、sealed未物化 | 结构审计通过；下一步E2b消费接口 |
-| E2b-1 | 特征存储/查询选择器已实现；[已知实体探针](../../../reports/taiji_n1_plan177_e1_state_path_known_entity_20261029.json)通过，[新实体探针](../../../reports/taiji_n1_plan177_e1_state_path_20261029.json)暴露producer实体抽取缺口 | 8项契约测试通过；下一步E2b-2解码器读出 |
-| E2b-2 | [mean特征](../../../reports/taiji_n1_plan177_e1_value_readout_20261029.json)、[value-span mean](../../../reports/taiji_n1_plan177_e1_value_readout_value_feature_20261029.json)与[value-span逐字节](../../../reports/taiji_n1_plan177_e1_value_readout_value_bytes_20261029.json)均rank 2、原型25%，8色不可分；[value-token fixture](../../../reports/taiji_n1_plan177_e1_value_readout_value_token_20261029.json) 8/8，相关交换/无关保持/切断/救援通过，query-only无事实字节 | 解码器接口已通；producer连续编码不保留值身份，下一步E2b-3 |
-| E2b-3 | [组件bundle恢复预检](../../../reports/taiji_n1_plan177_e1_value_feature_restore_20261029.json)：encoder/selector/readout/store 独立进程恢复通过，max logit diff 0.0；copy-only与主路径一致 | 工程恢复通过；仍是复制下界，不证明学习型特征；下一步F候选 |
-| F0a | [标定报告](../../../reports/taiji_n1_plan177_f_value_encoder_f0_20261029.json)：byte-level value encoder 64 facts/200 steps，train 1.0、no-state 0.078、copy-only 1.0；zero/final独立恢复通过；CPU 118.25 | 只证明训练侧值身份可分；下一步F0b/E0 |
-| F0b | 完整producer/V4/decoder候选的12-run成本/恢复短标定 | 冻结F1预算/更新数/阈值；未执行 |
-| E3-full | [v6 gap](../../../reports/taiji_n1_plan177_f_full_e3_20261029_v6.json)已修复：[v11](../../../reports/taiji_n1_plan177_f_full_e3_20261029_v11.json)/[v12](../../../reports/taiji_n1_plan177_f_full_e3_20261029_v12.json)连续严格通过，parse/span lineage/base adapter digest相等、logits 0.0；span按字节排序 | 仅剩E0；F1未启动 |
-| E3/F1 | F1 4臂×3 seeds（main_on/main_stop/copy_only/no_state） | E0与F0b闭合后冻结数值门/预算，未启动 |
-
-原D关于“SPEC要求新初始化确认”、模块贡献比例及250k CPU报价不作为执行依据，勘误及三种方案的取舍见E决策。仅接梯度不能代替状态消费证据；新候选的具体输入、恢复和资源按E/F落地。
-
-## 其他资产与支线
-
-| 资产 | 状态 | 与当前主线的关系 |
-|---|---|---|
-| N177.1–177.5 | 有限工程已交付 | 状态/来源/结构化T2/T3/producer/cache/恢复作为A–D底座，不重做 |
-| N176 | 三臂已训/恢复，原评价待有限收束 | 独立证据；不混N177分母，共享改动前收束或隔离运行图 |
-| N175 | R为0/3，S仅6/312已判、306未知 | 原人工判读保留，不阻塞A/B、不作新标签 |
-| 旧R2/CC-1 | 原结案和负结果保留 | 不重开、不补发能力通过 |
-
-## 已训N176如何收束
-
-- 沿原SPEC验证来源、顺序、zero/640/终点及保持集依赖和原累计预算，再登记唯一attempt，完成原1360份输出及有限归因；不扩大或重生成题面。
-- 成功、负结果、不可判或消费后的工程失败均按原出口保留。N176不能用来宣布统一认知通过；其失败也不否决N177已知接口欠账的工程修复。
-- N176原合同收束可与零训练信息/信用基准并行；后者避免改N176绑定源。任何后继影响其冻结运行语义/来源身份的共享依赖改动前，先完成N176有限收束或保留其独立可复现运行图。正收益不作准入条件；实际结案/缺项及费用不能清账跳过。
-- 原N175的306项S保持未判，可按用户要求分批弹窗；不以缺项推导语义零分，不将它作为所有模型开发的人工审批队列。
+当前HEAD基线85e7267ef的fast lint失败在mypy，共9处；远端主CI/m7-ci查询时未完成。本次已撤回临时类型修正，工作树只保留计划文档改动。测试目录与原有untracked材料未实际清理，清理候选/核验步骤见收束记录，执行留给用户。
 
 ## 训练、评价和归因的共用边界
 
-新训练依赖所需数据/状态/消费者/更新责任、完整checkpoint零步保存与独立恢复、一次真实成本标定及固定合同。资源/权限或冻结范围确需改变时提交具体影响；常规工程和原授权内工作自动推进，不逐模块请求确认。
+新训练依赖所需数据/状态/消费者/更新责任、完整checkpoint零步保存与独立恢复、成本标定及固定合同。本阶段按用户要求由用户执行实际操作，助手维护方案、状态与验收条件。
 
 每轮结案必须交付10的架构判决、适用任务、信息与信用路径、因果证据、竞争原因和唯一后继。工程接通、loss下降、参数变化、toy通过都不能替代完整原生认知或能力晋升。旧实耗、失败和未知尾账继续保留。
 

@@ -1,6 +1,6 @@
 # N177 E决策：先验证状态因果消费，再验证任务信用收益
 
-日期：2026-10-29，Asia/Shanghai。状态：**E1合同已冻结，E2a课程/manifest已生成；E2b/E3与F训练尚未执行。** 当前调度由[03](../active/roadmap/03_CURRENT_EXECUTION.md)维护，阶段依赖见[10](../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。本件是后继候选设计，不修改SPEC-N1-177.5 v2或旧结果。
+日期：2026-10-29，Asia/Shanghai。状态：E1合同/课程及E2有限消费实现已完成；F0a已标定；E3推理恢复子门通过，训练态余项仍待证据。当前收束与执行清单见[项目收束](PROJECT_CONSOLIDATION_20261029.md)、[03](../active/roadmap/03_CURRENT_EXECUTION.md)。本阶段助手维护方案，实际实施由用户执行；F1未启动。
 
 ## 1. A–D复核及继承范围
 
@@ -78,19 +78,8 @@ query内容选择及语言解码须由Taiji自有的可学习消费者完成；�
 
 E0可与E2实现并行，但旧资产恢复及新候选的必要恢复门未闭合前，不能带缺项进入F正式训练。若完成补证需超出已有资源/读取权限，先登记具体输入、一次成本及有限出口，不自动重开旧实验。
 
-2026-10-29 E2b-1 起点探针：N177.6 correct/seed0 终点producer在已知实体“钥匙”上正确抽出entity/attribute/value并写入world object/event；在新实体“笔”上只抽到attribute/value、entity缺失，world objects=0。该事实只限定零步fixture与F训练起点，不改E1课程或判据：E2b-2先用已知实体/已知颜色fixture，完整8实体词表留F训练；新实体实体抽取缺口单列为producer责任，不冒充状态消费失败。证据见[已知实体](../../reports/taiji_n1_plan177_e1_state_path_known_entity_20261029.json)与[新实体](../../reports/taiji_n1_plan177_e1_state_path_20261029.json)。
 
-2026-10-29 E2b-2 读出结果：producer的mean特征、value-span mean特征与value-span逐字节特征在8色上均只有rank 2，任意两色最低余弦约0.93/0.93/0.798；闭式读出仅25%原型准确，8色不可分。改用可训练value-token嵌入fixture（one-hot初始化）后，原型8/8、相关交换蓝→绿、无关交换保持、切断无候选、救援恢复；query-only路径只有1个binding/1个observation且无事实字节。判决：**解码器读出与选择接口已通；producer连续编码本身不保留值身份，不能直接进F**。下一步E2b-3做value-preserving可学习特征（value-token嵌入或producer值身份辅助目标）并重跑producer特征读数；fixture通过不冒充producer特征通过。证据见[mean特征](../../reports/taiji_n1_plan177_e1_value_readout_20261029.json)、[value-span mean](../../reports/taiji_n1_plan177_e1_value_readout_value_feature_20261029.json)、[value-span逐字节](../../reports/taiji_n1_plan177_e1_value_readout_value_bytes_20261029.json)与[value-token fixture](../../reports/taiji_n1_plan177_e1_value_readout_value_token_20261029.json)。
-
-2026-10-29 E2b-3 组件恢复预检：把value-token encoder、query selector、closed-form readout、active store与替换事实打成bundle；独立进程恢复后baseline/相关/无关/切断/救援的选中值与logits完全一致（max logit diff 0.0），bundle/source SHA可核验，optimizer更新0、sealed读取0。但copy-only与主路径一致，说明当前value-token一热特征仍是**离散值复制的下界**；组件级恢复通过不等于完整E3，也不证明学习型选择。下一步F候选改为**字节级value encoder + answer loss + copy-only消融**：主路径不得读原始值字节，只读encoder输出；若copy-only仍能替代，则特征未被学习。E0与完整E3（producer/V4/decoder）闭合前不启动F。证据见[组件恢复](../../reports/taiji_n1_plan177_e1_value_feature_restore_20261029.json)。
-
-2026-10-29 F合同冻结：F1改为4臂×3 seeds（main_credit_on/main_credit_stop/copy_only/no_state），主路径只读value byte encoder输出，copy-only/no_state为下界，answer loss是唯一切换的任务信用；先F0 train-only标定（≤2,000 CPU）冻结更新数/阈值/预算，再过E0/完整E3，一次有界F1。合同见[字节级值编码器F合同](SPEC-N1-177_F_value_encoder_20261029.md)；本轮未启动F1、未读holdout。
-
-2026-10-29 F0a标定结果：byte-level value encoder（值span UTF-8字节→GRU 64维）+线性值读出，在64条E1 train事实上训练200步；train accuracy **1.0**、no-state **0.078**、copy-only **1.0**；zero与final均新进程恢复通过，CPU 118.25/墙钟50.95，未读query/holdout。该结果只证明训练侧值身份可分，copy-only仍是下界，不能证明holdout、完整中文回答或学习收益；F1未启动，仍受E0、完整E3与F0b完整候选成本标定约束。证据见[F0a报告](../../reports/taiji_n1_plan177_f_value_encoder_f0_20261029.json)。
-
-2026-10-29 完整E3 v6：producer/V4、F0 byte encoder、selector/store、readout、feature→byte bias 同bundle，父/子进程各跑同一更正事实与查询。parse 的 act/status/entity/value、span 角色与字节范围、confidence/ambiguity、semantic features、selected feature、store digest、base 与 conditioned 下一字节 logits 全部一致（最大差0.0），query-only 1 binding/1 observation 且无事实字节；`optimizer_updates=0`、`sealed_text_read=0`。唯一不一致是 span 的 percept/assembly lineage ID（`parse_sha256`/`span_lineage_digest` 不同），因此状态为 **`full_e3_content_passed_lineage_gap`**，严格E3尚未通过。下一步先修 adapter/感知 lineage ID 的跨进程确定性并重跑严格E3；E0并行，F1不启动。证据见[完整E3 v6](../../reports/taiji_n1_plan177_f_full_e3_20261029_v6.json)。
-
-2026-10-29 严格E3修复与通过：逐字段定位发现 percept/assembly ID 本身相同，差异来自 span 在 parse payload 中的顺序；`JointSemanticSpanV1.ROLES` 是 frozenset，`decoded` 字典迭代顺序跨进程不稳定。已把 spans 按 `(start_byte, end_byte, role)` 排序。v11/v12 连续两次严格通过：`parse_digest_equal=true`、`span_lineage_equal=true`、base adapter digest 相等、base/conditioned logits 最大差0.0；选中蓝色、相关交换 delta 1.9756、query-only 无事实字节；`optimizer_updates=0`、`sealed_text_read=0`。F1仅剩E0前置；N177.6历史报告/checkpoint不重算，旧源码保留在git历史，E0需用历史源码或登记来源漂移。证据见[完整E3 v11](../../reports/taiji_n1_plan177_f_full_e3_20261029_v11.json)与[v12](../../reports/taiji_n1_plan177_f_full_e3_20261029_v12.json)。
+当前完成范围与失败演进统一转入[20261029收束记录](PROJECT_CONSOLIDATION_20261029.md)：原连续值特征失配、value-token复制下界、F0a train侧值编码标定、v6 lineage gap与v11/v12推理恢复均分别保留。原逐轮流水由85e7267ef的本文件恢复。F1前置包含E0、训练态E3余项及F0b，不能再称“仅剩E0”；相关曝光/判据冲突按收束记录澄清后定稿。
 
 ## 6. 验收与有限出口
 

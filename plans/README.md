@@ -4,7 +4,7 @@
 
 ## 当前路线与文档职责
 
-2026-10-29进入E决策：N177.6的15臂与数值评价完成，D已发布；B实际链/隔离和终点恢复回执的余项转E0补证。采用[状态因果消费优先的E方案](reference/PLAN-N1-177_E_state_consumption_and_credit_decision_20261029.md)：E0补证与E1新端点/消费合同→E2任务信用on/off同图候选→E3零步验收→F独立预算及有界验证。旧切片正向收益保留；新初始化复验与旧题直接接梯度暂不排首位。当前状态见[03](active/roadmap/03_CURRENT_EXECUTION.md)，工作包见[10](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)。
+2026-10-29阶段收束：原N177.6数值结果继承，E1/E2有限消费实现、F0a值编码器标定及E3推理恢复子门已交付；E0、训练态E3余项与F0b仍未闭合，F1未启动。当前先安排E0补证，资源独占的F0b在后；曝光/判据/预算按[收束记录](reference/PROJECT_CONSOLIDATION_20261029.md)澄清。[03](active/roadmap/03_CURRENT_EXECUTION.md)只维护事实和当前待办，[10](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)维护依赖/验收。本阶段助手修订方案，代码修复、清理、恢复、标定和训练由用户执行。
 
 | 要查什么 | 主要入口 |
 |---|---|
@@ -22,7 +22,7 @@
 | 历史CC-1实施交接与R2冻结技术约束 | [工程交接](reference/delivery-runs/20261021-n-mainline/artifacts/02-plan.md)、[历史技术摘要](reference/delivery-runs/20261021-n-mainline/artifacts/02-continuation-extension-plan.md) |
 | 活动文件索引、交付记录 | [PLAN_INDEX](active/PLAN_INDEX.md)、[黑板](reference/delivery-runs/20261021-n-mainline/board.md) |
 
-已有实施资产与后继衔接见[N177合同](reference/PLAN-N1-177_joint_cognition_slice_20261026.md)；已训资产收束仍按[N176冻结合同](reference/SPEC-N1-176_F0_F1_pilot_20261026.md)，N175原合同与未完成S留原位，不混用资格。
+已有实施资产与后继衔接见[N177合同](reference/PLAN-N1-177_joint_cognition_slice_20261026.md)；N176已消费部分沿原结案保留，其余边界仍按[N176冻结合同](reference/SPEC-N1-176_F0_F1_pilot_20261026.md)，N175原合同与未完成S留原位，不混用资格。
 
 ## plans的分层与维护入口
 
@@ -51,7 +51,7 @@
 ## 继承与纪律
 
 - M5批准退出、M6限定收官和成长/发布/设备等排除继续按原批准范围继承，不宣称原生对话或L3/L4已通过。N1-166与原封存面边界保持；W5b恢复v2按原结案继承，不重新当未来战役。
-- 训练先验证checkpoint保存/独立恢复；未变合同内已授权工作自动推进，实质预算/题面/冻结协议变动到10对应D节点裁决。
+- 训练先验证checkpoint保存/独立恢复；本阶段实际实施由用户推进，助手维护方案。预算/题面/冻结协议变动仍按10的决策节点记录。
 - 成功、负结果、partial和不可判分别记账；同一bundle的真实能力是验收对象，不用多个研究runner成绩拼出一个模型。
 - 旧方向退出活动指令与队首，冻结合同、失败、原始输出与谱系保留。目录与产物按[目录规范](../docs/FOLDER_STRUCTURE_RULES.md)管理。
 
