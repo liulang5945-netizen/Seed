@@ -1,0 +1,165 @@
+{
+  "schema": "taiji-n177-e1-value-feature-restore-v1",
+  "status": "zero_step_restore_passed",
+  "bundle": "data\\checkpoints\\n1_plan177_e1_value_feature_bundle_20261029\\bundle.pt",
+  "bundle_sha256": "2ba4b599f670cbf60946e70f55fa66f1bf43f6d0c9a4b80a0f6a606f6c271098",
+  "bundle_source_sha256": {
+    "readout": "87ea46aff3a1c6ba9b71381a9fb75c26ab36d35eaca96207c8fcac972ac6256f",
+    "prototypes": "d7e9b596bac375c1b6be51a56eb2caa7527256b0589cb9570b770547f9dcf3c8",
+    "source_report": "d2b8e777f10d99acb3045fc57c942a6f1fd488ab3ed34239ce79004bda096e59"
+  },
+  "feature_dim": 64,
+  "hidden_dim": 256,
+  "parent_controls": {
+    "baseline": {
+      "selected_feature_id": "e1-feature:55f6519a7c3f2686c4bc",
+      "selected_value": "蓝色",
+      "logits": [
+        0.0001248568296432495,
+        0.9991258978843689,
+        0.0001248568296432495,
+        0.0001249164342880249,
+        0.0001249164342880249,
+        0.0001249462366104126,
+        0.00012487173080444336,
+        0.0001248568296432495
+      ],
+      "copy_only_value": "蓝色",
+      "copy_only_matches": true
+    },
+    "relevant_swap": {
+      "selected_feature_id": "e1-feature:643be735d7f3926d6f69",
+      "selected_value": "绿色",
+      "logits": [
+        0.00012484192848205566,
+        0.0001248866319656372,
+        0.9991257190704346,
+        0.0001249164342880249,
+        0.00012493133544921875,
+        0.00012493133544921875,
+        0.00012484192848205566,
+        0.00012484192848205566
+      ],
+      "copy_only_value": "绿色",
+      "copy_only_matches": true
+    },
+    "irrelevant_swap": {
+      "selected_feature_id": "e1-feature:643be735d7f3926d6f69",
+      "selected_value": "绿色",
+      "logits": [
+        0.00012484192848205566,
+        0.0001248866319656372,
+        0.9991257190704346,
+        0.0001249164342880249,
+        0.00012493133544921875,
+        0.00012493133544921875,
+        0.00012484192848205566,
+        0.00012484192848205566
+      ],
+      "copy_only_value": "绿色",
+      "copy_only_matches": true
+    },
+    "cut": null,
+    "rescue": {
+      "selected_feature_id": "e1-feature:643be735d7f3926d6f69",
+      "selected_value": "绿色",
+      "logits": [
+        0.00012484192848205566,
+        0.0001248866319656372,
+        0.9991257190704346,
+        0.0001249164342880249,
+        0.00012493133544921875,
+        0.00012493133544921875,
+        0.00012484192848205566,
+        0.00012484192848205566
+      ],
+      "copy_only_value": "绿色",
+      "copy_only_matches": true
+    }
+  },
+  "child_controls": {
+    "baseline": {
+      "selected_feature_id": "e1-feature:55f6519a7c3f2686c4bc",
+      "selected_value": "蓝色",
+      "logits": [
+        0.0001248568296432495,
+        0.9991258978843689,
+        0.0001248568296432495,
+        0.0001249164342880249,
+        0.0001249164342880249,
+        0.0001249462366104126,
+        0.00012487173080444336,
+        0.0001248568296432495
+      ],
+      "copy_only_value": "蓝色",
+      "copy_only_matches": true
+    },
+    "relevant_swap": {
+      "selected_feature_id": "e1-feature:643be735d7f3926d6f69",
+      "selected_value": "绿色",
+      "logits": [
+        0.00012484192848205566,
+        0.0001248866319656372,
+        0.9991257190704346,
+        0.0001249164342880249,
+        0.00012493133544921875,
+        0.00012493133544921875,
+        0.00012484192848205566,
+        0.00012484192848205566
+      ],
+      "copy_only_value": "绿色",
+      "copy_only_matches": true
+    },
+    "irrelevant_swap": {
+      "selected_feature_id": "e1-feature:643be735d7f3926d6f69",
+      "selected_value": "绿色",
+      "logits": [
+        0.00012484192848205566,
+        0.0001248866319656372,
+        0.9991257190704346,
+        0.0001249164342880249,
+        0.00012493133544921875,
+        0.00012493133544921875,
+        0.00012484192848205566,
+        0.00012484192848205566
+      ],
+      "copy_only_value": "绿色",
+      "copy_only_matches": true
+    },
+    "cut": null,
+    "rescue": {
+      "selected_feature_id": "e1-feature:643be735d7f3926d6f69",
+      "selected_value": "绿色",
+      "logits": [
+        0.00012484192848205566,
+        0.0001248866319656372,
+        0.9991257190704346,
+        0.0001249164342880249,
+        0.00012493133544921875,
+        0.00012493133544921875,
+        0.00012484192848205566,
+        0.00012484192848205566
+      ],
+      "copy_only_value": "绿色",
+      "copy_only_matches": true
+    }
+  },
+  "comparison": {
+    "same_selected_values": true,
+    "max_logit_difference": 0.0,
+    "passed": true
+  },
+  "copy_only": {
+    "baseline": "蓝色",
+    "relevant_swap": "绿色",
+    "matches_main": true,
+    "interpretation": "copy-only is a lower-bound shortcut over the discrete value span; it is not evidence of learned selection"
+  },
+  "optimizer_updates": 0,
+  "model_calls": 0,
+  "sealed_text_read": 0,
+  "checkpoint_loads": 2,
+  "can_promote": false,
+  "cpu_seconds": 0.546875,
+  "wall_seconds": 10.625
+}

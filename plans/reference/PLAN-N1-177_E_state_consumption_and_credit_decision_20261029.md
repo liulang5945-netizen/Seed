@@ -82,6 +82,8 @@ E0可与E2实现并行，但旧资产恢复及新候选的必要恢复门未闭�
 
 2026-10-29 E2b-2 读出结果：producer的mean特征、value-span mean特征与value-span逐字节特征在8色上均只有rank 2，任意两色最低余弦约0.93/0.93/0.798；闭式读出仅25%原型准确，8色不可分。改用可训练value-token嵌入fixture（one-hot初始化）后，原型8/8、相关交换蓝→绿、无关交换保持、切断无候选、救援恢复；query-only路径只有1个binding/1个observation且无事实字节。判决：**解码器读出与选择接口已通；producer连续编码本身不保留值身份，不能直接进F**。下一步E2b-3做value-preserving可学习特征（value-token嵌入或producer值身份辅助目标）并重跑producer特征读数；fixture通过不冒充producer特征通过。证据见[mean特征](../../reports/taiji_n1_plan177_e1_value_readout_20261029.json)、[value-span mean](../../reports/taiji_n1_plan177_e1_value_readout_value_feature_20261029.json)、[value-span逐字节](../../reports/taiji_n1_plan177_e1_value_readout_value_bytes_20261029.json)与[value-token fixture](../../reports/taiji_n1_plan177_e1_value_readout_value_token_20261029.json)。
 
+2026-10-29 E2b-3 组件恢复预检：把value-token encoder、query selector、closed-form readout、active store与替换事实打成bundle；独立进程恢复后baseline/相关/无关/切断/救援的选中值与logits完全一致（max logit diff 0.0），bundle/source SHA可核验，optimizer更新0、sealed读取0。但copy-only与主路径一致，说明当前value-token一热特征仍是**离散值复制的下界**；组件级恢复通过不等于完整E3，也不证明学习型选择。下一步F候选改为**字节级value encoder + answer loss + copy-only消融**：主路径不得读原始值字节，只读encoder输出；若copy-only仍能替代，则特征未被学习。E0与完整E3（producer/V4/decoder）闭合前不启动F。证据见[组件恢复](../../reports/taiji_n1_plan177_e1_value_feature_restore_20261029.json)。
+
 ## 6. 验收与有限出口
 
 | 判据 | E阶段要求 | F阶段才裁决的内容 |
