@@ -450,10 +450,49 @@ def verdict(scores: dict[str, float], retention_pp: float | None) -> dict[str, A
     }
 
 
+def recompute_from_report(report: dict[str, Any]) -> dict[str, Any]:
+    """从已发布的逐 episode 数据重算门表与判定——不重读任何 sealed 面。
+
+    2026-10-29 的教训：`scores` 原先只装了 `answer_exact` 与三个差值，另外六道门
+    （value/state/交换/切断/救援）取值恒为 None ⇒ 永远判假。这里按宏表重算，
+    并把重算结果与件里记的判定并列，差异如实暴露。
+    """
+
+    seeds = (0, 1, 2)
+    macro_by_arm = {name: run["macro"] for name, run in report["runs"].items()}
+    scores = {
+        key: statistics.median(macro_by_arm[f"main_credit_on__seed_{seed}"][key] for seed in seeds)
+        for key in METRICS
+    }
+    scores.update(contrasts(macro_by_arm, seeds))
+    scores["copy_only_median"] = statistics.median(
+        macro_by_arm[f"copy_only__seed_{seed}"]["answer_exact"] for seed in seeds
+    )
+    scores["no_state_median"] = statistics.median(
+        macro_by_arm[f"no_state__seed_{seed}"]["answer_exact"] for seed in seeds
+    )
+    retention = report.get("old_retention", {}).get("worst_drop_pp")
+    decision = verdict(scores, retention)
+    return {
+        "scores": scores,
+        "gates": gate_report(scores),
+        "decision": decision,
+        "recorded_decision": report.get("decision"),
+        "decision_differs_from_recorded": report.get("decision", {}).get("verdict")
+        != decision["verdict"],
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="N177 F1 holdout 一次性评分")
     parser.add_argument("--report", type=Path, default=REPORT)
     parser.add_argument("--run-root", type=Path, default=RUN_ROOT)
+    parser.add_argument(
+        "--recompute-from",
+        type=Path,
+        default=None,
+        help="从已发布报告重算门表与判定（不重读 sealed）",
+    )
     parser.add_argument(
         "--partition",
         choices=("holdout", "query"),
@@ -519,6 +558,31 @@ def main(argv: list[str] | None = None) -> int:
         for item in detail:
             print(json.dumps(item, ensure_ascii=False, sort_keys=True))
         return 0
+    if args.recompute_from is not None:
+        source = json.loads(args.recompute_from.read_text(encoding="utf-8"))
+        result = recompute_from_report(source)
+        out = args.recompute_from.with_suffix(".recomputed.json")
+        out.write_text(
+            json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+            newline="\n",
+        )
+        print(
+            json.dumps(
+                {
+                    k: (round(v, 4) if isinstance(v, float) else v)
+                    for k, v in result["scores"].items()
+                },
+                ensure_ascii=False,
+                sort_keys=True,
+            )
+        )
+        print(
+            f"VERDICT={result['decision']['verdict']} "
+            f"recorded={result['recorded_decision'].get('verdict')} "
+            f"differs={result['decision_differs_from_recorded']}"
+        )
+        return 0
     if args.report.exists():
         raise ValueError("F1 holdout report is write-once")
     assert_runs_complete(args.run_root)
@@ -543,7 +607,11 @@ def main(argv: list[str] | None = None) -> int:
             result = arm_scores(trainer, arm_name, seed, episodes, args.run_root)
             runs[f"{arm_name}__seed_{seed}"] = result
             macro_by_arm[f"{arm_name}__seed_{seed}"] = result["macro"]
-    scores = contrasts(macro_by_arm, seeds)
+    scores = {
+        key: statistics.median(macro_by_arm[f"main_credit_on__seed_{seed}"][key] for seed in seeds)
+        for key in METRICS
+    }
+    scores.update(contrasts(macro_by_arm, seeds))
     scores["copy_only_median"] = statistics.median(
         macro_by_arm[f"copy_only__seed_{seed}"]["answer_exact"] for seed in seeds
     )

@@ -89,6 +89,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--retention", type=Path, default=RETENTION)
     parser.add_argument("--holdout", type=Path, default=HOLDOUT)
     parser.add_argument("--report", type=Path, default=REPORT)
+    parser.add_argument(
+        "--attempt",
+        type=Path,
+        default=None,
+        help="一次性 attempt 文件；缺省按 holdout 同名查找",
+    )
     args = parser.parse_args(argv)
     if args.report.exists():
         raise ValueError("F1 closeout is write-once")
@@ -101,8 +107,12 @@ def main(argv: list[str] | None = None) -> int:
     if not args.holdout.is_file():
         raise FileNotFoundError("holdout report is missing")
     holdout = json.loads(args.holdout.read_text(encoding="utf-8"))
-    attempts = list(args.holdout.parent.glob(args.holdout.stem + ".attempt.json"))
-    if len(attempts) != 1:
+    attempts = (
+        [args.attempt]
+        if args.attempt is not None
+        else list(args.holdout.parent.glob(args.holdout.stem + ".attempt.json"))
+    )
+    if len(attempts) != 1 or not attempts[0].is_file():
         raise ValueError(f"holdout must have exactly one attempt file, found {len(attempts)}")
     recomputed = verdict(holdout["scores"], retention_pp)
     recorded = holdout.get("decision", {})

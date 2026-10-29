@@ -1,0 +1,105 @@
+{
+  "decision": {
+    "all_numeric_gates_passed": false,
+    "old_retention_measured": true,
+    "old_retention_pp": 6.25,
+    "pass_blocked_by": [
+      "FAIL_COPY_ONLY",
+      "FAIL_NO_STATE_EFFECT",
+      "FAIL_NO_LEARNING",
+      "FAIL_NO_GENERALIZATION"
+    ],
+    "reasons": [
+      "FAIL_COPY_ONLY",
+      "FAIL_NO_STATE_EFFECT",
+      "FAIL_NO_LEARNING",
+      "FAIL_NO_GENERALIZATION"
+    ],
+    "verdict": "FAIL_COPY_ONLY"
+  },
+  "decision_differs_from_recorded": false,
+  "gates": {
+    "answer_exact": {
+      "passed": false,
+      "threshold": 0.85,
+      "value": 0.015625
+    },
+    "credit_gap": {
+      "passed": false,
+      "threshold": 0.1,
+      "value": -0.00390625
+    },
+    "cut_drop": {
+      "passed": true,
+      "threshold": 0.3,
+      "value": 0.3072916666666667
+    },
+    "irrelevant_swap_keep": {
+      "passed": true,
+      "threshold": 0.95,
+      "value": 1.0
+    },
+    "main_minus_copy_only": {
+      "passed": false,
+      "threshold": 0.1,
+      "value": -0.005859375
+    },
+    "main_minus_no_state": {
+      "passed": false,
+      "threshold": 0.1,
+      "value": -0.01953125
+    },
+    "relevant_swap_delta": {
+      "passed": false,
+      "threshold": 0.3,
+      "value": 0.0
+    },
+    "rescue_gain": {
+      "passed": true,
+      "threshold": 0.2,
+      "value": 1.0
+    },
+    "state_exact": {
+      "passed": false,
+      "threshold": 0.9,
+      "value": 0.3177083333333333
+    },
+    "value_exact": {
+      "passed": false,
+      "threshold": 0.9,
+      "value": 0.05208333333333333
+    }
+  },
+  "recorded_decision": {
+    "all_numeric_gates_passed": false,
+    "old_retention_measured": true,
+    "old_retention_pp": 6.25,
+    "pass_blocked_by": [
+      "FAIL_COPY_ONLY",
+      "FAIL_NO_STATE_EFFECT",
+      "FAIL_NO_LEARNING",
+      "FAIL_NO_GENERALIZATION"
+    ],
+    "reasons": [
+      "FAIL_COPY_ONLY",
+      "FAIL_NO_STATE_EFFECT",
+      "FAIL_NO_LEARNING",
+      "FAIL_NO_GENERALIZATION"
+    ],
+    "verdict": "FAIL_COPY_ONLY"
+  },
+  "scores": {
+    "answer_exact": 0.015625,
+    "copy_only_median": 0.021484375,
+    "credit_gap": -0.00390625,
+    "cut_drop": 0.3072916666666667,
+    "irrelevant_swap_keep": 1.0,
+    "main_minus_copy_only": -0.005859375,
+    "main_minus_no_state": -0.01953125,
+    "no_state_median": 0.03515625,
+    "relevant_swap_delta": 0.0,
+    "rescue_gain": 1.0,
+    "state_exact": 0.3177083333333333,
+    "value_exact": 0.05208333333333333
+  }
+}

@@ -226,3 +226,28 @@ owner 同日签了 F1：候选只训 encoder/bias（V4 冻结）、预算上限 
 2. **解析缺口在训练侧同样存在**：43% 的查询轮解析不出实体，与 holdout 同比例；这条与 DEBT-G184 是同一把尺子，只是从"家族"细化到了"轮次"。
 
 因此 F1 的 `FAIL_COPY_ONLY` 保留为**该候选在该训练面下的正式出口**，但不能被读成"状态消费机制不成立"；下一步是在同一合同下换训练面（用全部可解析的训练查询轮）重跑，并换一个**从未读过的评价面**（`query` 分区，16 家族／64 episode）以保住独立性。
+
+## 14. F1b：换训练面 + 换评价面（query 分区，从未读过）——仍 FAIL_NO_STATE_EFFECT
+
+按 owner 2026-10-29 裁定：训练面从"每家族 :0"换成**全部可解析训练查询轮（108 条）**；评价面换成 **query 分区（16 家族／64 episode／123 查询轮，此前从未读过）**。12 run × 1,280 步，合计 1,569.9 CPU 秒。旧保持 main 臂三 seed 全为 0.00pp（对照臂 copy 12.5、no_state 18.75）。
+
+**门表（修好取值后的真数）**
+
+| 门 | 值 | 阈值 | 过否 |
+|---|---|---|---|
+| answer_exact | 0.041 | 0.85 | ✗ |
+| value_exact | 0.141 | 0.90 | ✗ |
+| state_exact | 0.346 | 0.90 | ✗ |
+| relevant_swap_delta | 0.096 | 0.30 | ✗ |
+| irrelevant_swap_keep | 1.000 | 0.95 | ✓ |
+| cut_drop | 0.333 | 0.30 | ✓ |
+| rescue_gain | 1.000 | 0.20 | ✓ |
+| main − copy_only | +0.002 | 0.10 | ✗ |
+| main − no_state | 0.000 | 0.10 | ✗ |
+| credit_gap | 0.000 | 0.10 | ✗ |
+
+判决 **FAIL_NO_STATE_EFFECT**（同时命中 NO_LEARNING、NO_GENERALIZATION，优先级取第一个）。读法：特征不是完全没用——`cut_drop 0.333` 与 `rescue_gain 1.0` 过线，`relevant_swap_delta` 也从 F1 的 0 升到 0.096——但绝对正确率、跨臂差值与信用差都在地板；且 **54/123（44%）查询轮仍然没解析出实体**，被查询的还有一半实体是 producer 见都没见过的。
+
+**同时修掉评分器一个结构性错**：`scores` 原先只装 `answer_exact` 与三个差值，另外六道门取值恒为 None ⇒ 永远判假。已改为按宏表取 main 三 seed 中位，并加 `--recompute-from`：**从已发布的逐 episode 数据离线重算，不重读任何 sealed 面**。两份已发布件的重算结果：F1 仍 `FAIL_COPY_ONLY`、F1b 仍 `FAIL_NO_STATE_EFFECT`——判词没变，但门表从"六个 None"变成真数。两份 `.recomputed.json` 与原件并列入库。
+
+**下一步的形状因此明确了**：不是继续调信用或阈值，而是**先补 producer 在未见实体与未见表面形式上的解析**（44% 查询轮无状态，跨两套 sealed 面同比例）。状态路径没接上之前，任何关于"学没学会消费状态"的读数都不可解释。

@@ -161,7 +161,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     cpu_start = time.process_time()
     model = _parent_model()
-    results = [measure(arm, seed, rows, ids, model, args.checkpoint) for arm, seed in runs]
+    results = [
+        measure(arm, seed, rows, ids, model, args.run_root, args.checkpoint) for arm, seed in runs
+    ]
     main_results = [item for item in results if item["arm"] == "main_credit_on"]
     main_worst = max((item["drop_pp"] for item in main_results), default=None)
     report = {

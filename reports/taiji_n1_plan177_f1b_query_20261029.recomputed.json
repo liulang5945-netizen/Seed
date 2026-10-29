@@ -1,0 +1,101 @@
+{
+  "decision": {
+    "all_numeric_gates_passed": false,
+    "old_retention_measured": true,
+    "old_retention_pp": 0.0,
+    "pass_blocked_by": [
+      "FAIL_NO_STATE_EFFECT",
+      "FAIL_NO_LEARNING",
+      "FAIL_NO_GENERALIZATION"
+    ],
+    "reasons": [
+      "FAIL_NO_STATE_EFFECT",
+      "FAIL_NO_LEARNING",
+      "FAIL_NO_GENERALIZATION"
+    ],
+    "verdict": "FAIL_NO_STATE_EFFECT"
+  },
+  "decision_differs_from_recorded": false,
+  "gates": {
+    "answer_exact": {
+      "passed": false,
+      "threshold": 0.85,
+      "value": 0.041015625
+    },
+    "credit_gap": {
+      "passed": false,
+      "threshold": 0.1,
+      "value": 0.0
+    },
+    "cut_drop": {
+      "passed": true,
+      "threshold": 0.3,
+      "value": 0.3333333333333333
+    },
+    "irrelevant_swap_keep": {
+      "passed": true,
+      "threshold": 0.95,
+      "value": 1.0
+    },
+    "main_minus_copy_only": {
+      "passed": false,
+      "threshold": 0.1,
+      "value": 0.001953125
+    },
+    "main_minus_no_state": {
+      "passed": false,
+      "threshold": 0.1,
+      "value": 0.0
+    },
+    "relevant_swap_delta": {
+      "passed": false,
+      "threshold": 0.3,
+      "value": 0.09635416666666666
+    },
+    "rescue_gain": {
+      "passed": true,
+      "threshold": 0.2,
+      "value": 1.0
+    },
+    "state_exact": {
+      "passed": false,
+      "threshold": 0.9,
+      "value": 0.34635416666666663
+    },
+    "value_exact": {
+      "passed": false,
+      "threshold": 0.9,
+      "value": 0.140625
+    }
+  },
+  "recorded_decision": {
+    "all_numeric_gates_passed": false,
+    "old_retention_measured": true,
+    "old_retention_pp": 0.0,
+    "pass_blocked_by": [
+      "FAIL_NO_STATE_EFFECT",
+      "FAIL_NO_LEARNING",
+      "FAIL_NO_GENERALIZATION"
+    ],
+    "reasons": [
+      "FAIL_NO_STATE_EFFECT",
+      "FAIL_NO_LEARNING",
+      "FAIL_NO_GENERALIZATION"
+    ],
+    "verdict": "FAIL_NO_STATE_EFFECT"
+  },
+  "scores": {
+    "answer_exact": 0.041015625,
+    "copy_only_median": 0.0390625,
+    "credit_gap": 0.0,
+    "cut_drop": 0.3333333333333333,
+    "irrelevant_swap_keep": 1.0,
+    "main_minus_copy_only": 0.001953125,
+    "main_minus_no_state": 0.0,
+    "no_state_median": 0.041015625,
+    "relevant_swap_delta": 0.09635416666666666,
+    "rescue_gain": 1.0,
+    "state_exact": 0.34635416666666663,
+    "value_exact": 0.140625
+  }
+}
