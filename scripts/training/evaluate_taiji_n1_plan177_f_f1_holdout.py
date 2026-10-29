@@ -461,12 +461,39 @@ def main(argv: list[str] | None = None) -> int:
         help="只在 train 的一条 episode 上跑通链路（不碰 holdout、不写 holdout 报告）",
     )
     parser.add_argument(
+        "--smoke-train-all",
+        action="store_true",
+        help="在全部 train episode 上跑一遍（训练侧对照，不碰 holdout）",
+    )
+    parser.add_argument(
         "--smoke-checkpoint",
         type=Path,
         default=ROOT / "data/checkpoints/n1_plan177_f_f0b_20261029/copy_only__seed_0/zero.pt",
     )
     args = parser.parse_args(argv)
     torch.set_num_threads(1)
+    if args.smoke_train_all:
+        from taiji.joint_state_consumption_course import build_train_episodes
+
+        trainer_data = load_trainer()
+        arm_data = _Arm.from_checkpoint(
+            torch.load(args.smoke_checkpoint, map_location="cpu", weights_only=False)
+        )
+        rows = [
+            score_episode(trainer_data, arm_data, QueryConditionedSelectorV1(), episode)
+            for episode in build_train_episodes()
+        ]
+        macro = family_macro(rows)
+        print(
+            json.dumps({"macro": macro, "episodes": len(rows)}, ensure_ascii=False, sort_keys=True)
+        )
+        print(
+            "query_unparsed_total",
+            sum(row["query_unparsed"] for row in rows),
+            "query_turns",
+            sum(row["query_turns"] for row in rows),
+        )
+        return 0
     if args.smoke_train:
         from taiji.joint_state_consumption_course import build_train_episodes
 
