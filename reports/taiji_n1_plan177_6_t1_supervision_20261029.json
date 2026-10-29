@@ -13,7 +13,7 @@
     "wall_seconds": 220000
   },
   "checkpoints": {
-    "artifact_bytes_reported": 4209550969,
+    "artifact_bytes_reported": 4716524618,
     "completed_arms_with_missing_final": [],
     "per_arm": {
       "correct__seed_0": {
@@ -134,12 +134,12 @@
   "durable_cursor": 38400,
   "format": "taiji-n177-6-t1-supervision-v1",
   "lock": {
-    "marker": "plan177_6_t1_pilot",
-    "pid": 21324,
-    "pid_alive": true,
-    "taken_local": "2026-10-29 10:57:37"
+    "marker": null,
+    "pid": null,
+    "pid_alive": null,
+    "taken_local": null
   },
-  "observed_utc": "2026-10-29T02:59:51Z",
+  "observed_utc": "2026-10-29T05:04:07Z",
   "per_arm_cost": {
     "correct__seed_0": {
       "cpu_per_update": 56.4236,
@@ -257,9 +257,9 @@
     "投影用各模式自己测得的单位成本，剩余臂含在跑臂的未完成部分",
     "轮次成本受宿主争用影响，投影随争用漂移"
   ],
-  "status": "training_complete_evaluation_pending",
+  "status": "evaluation_complete",
   "used": {
-    "artifact_ratio": 0.4900562308030203,
+    "artifact_ratio": 0.5490757313091308,
     "process_cpu_ratio": 0.6434300325520833,
     "wall_ratio": 0.6366850459226566
   },
