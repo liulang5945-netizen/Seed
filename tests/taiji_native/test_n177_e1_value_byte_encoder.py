@@ -6,7 +6,7 @@ import pytest
 import torch
 
 from taiji.joint_state_consumption_course import E1_COLORS
-from taiji.joint_state_value_encoder import ValueByteEncoderV1
+from taiji.joint_state_value_encoder import FeatureByteBiasV1, ValueByteEncoderV1
 
 
 def test_single_and_batched_shapes() -> None:
@@ -32,3 +32,13 @@ def test_encoder_parameters_receive_gradients() -> None:
     assert encoder.embedding.weight.grad is not None
     assert encoder.gru.weight_ih_l0.grad is not None
     assert float(encoder.embedding.weight.grad.abs().sum()) > 0
+
+
+def test_feature_byte_bias_shape_and_gradients() -> None:
+    bias = FeatureByteBiasV1()
+    feature = torch.ones(bias.feature_dim)
+    logits = bias(feature)
+    assert logits.shape == (bias.byte_vocab,)
+    logits.sum().backward()
+    assert bias.linear.weight.grad is not None
+    assert float(bias.linear.weight.grad.abs().sum()) > 0

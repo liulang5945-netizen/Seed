@@ -44,3 +44,20 @@ class ValueByteEncoderV1(nn.Module):
             raise ValueError("value encoder received a value outside the frozen colour set")
         raw = torch.tensor(list(value.encode("utf-8")), dtype=torch.long)
         return self.forward(raw)
+
+
+class FeatureByteBiasV1(nn.Module):
+    """Map a selected content feature to a 256-byte next-logit bias."""
+
+    def __init__(self, *, feature_dim: int = 64, byte_vocab: int = 256) -> None:
+        super().__init__()
+        if feature_dim <= 0 or byte_vocab <= 0:
+            raise ValueError("feature byte bias dimensions must be positive")
+        self.feature_dim = feature_dim
+        self.byte_vocab = byte_vocab
+        self.linear = nn.Linear(feature_dim, byte_vocab)
+
+    def forward(self, feature: torch.Tensor) -> torch.Tensor:
+        if feature.numel() != self.feature_dim:
+            raise ValueError("feature byte bias input width differs from its declaration")
+        return self.linear(feature.reshape(-1))
