@@ -134,7 +134,7 @@ N176是独立已训资产，按其原SPEC有限评价或保留可复现运行图
 | 子步 | 交付 | 前置/出口 |
 |---|---|---|
 | E0 | 终点独立恢复/parse-answer回执，B真实链与隔离补证 | 不重训、不重评；不否定已发布数值结果 |
-| E1 | 同query配独立事实/更正/干扰，允许证据面及state→query→answer合同 | 答案证据与state记分分开，相关/无关/切断/救援可定向裁决 |
+| E1 | [合同已冻结](../../reference/SPEC-N1-177_E1_state_consumption_contract_20261029.md)：同query配独立事实/更正/干扰，允许证据面及state→query→answer合同 | 答案证据与state记分分开，相关/无关/切断/救援可定向裁决 |
 | E2 | 持久内容读出及连续任务信用；同图stop-gradient控制 | 同父/曝光/辅助目标/资源；连续feature与离散span/act分账 |
 | E3 | 前向等价、逐loss接收者/禁写、完整零步checkpoint恢复 | 通过后交F冻结新资源与数值门，不覆盖旧候选 |
 
