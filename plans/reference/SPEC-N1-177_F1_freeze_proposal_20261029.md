@@ -23,6 +23,12 @@
 
 **已裁 A（owner 2026-10-29）**：main 臂**只训 encoder/bias，V4 冻结**。理由同建议：F1 测的是"状态特征是否被消费、信用是否到特征"；V4 训练另立合同、另测单价，不混进本轮归因。
 
+## 2.5 答案生成口径（2026-10-29 补记，实现面发现）
+
+F 合同 §5 的主读数 `answer_exact` 要求完整中文回答，而本轮候选只训 encoder/bias、V4 冻结——必须明确"冻结 V4 如何用上这个 feature"。本件冻结为：**回答仍由冻结 V4 贪心逐步生成，生成时把同一 `bias(feature)` 加到每一步的下一字节 logits 上**。实现入口是 `ConditionalLanguageCandidateV4._generate_from_joint_cache(..., logit_bias=None)`：默认 `None` 时生成路径与旧版逐字节相同（有测：`tests/taiji_native/test_n177_f1_generation_bias.py` 两支——不给 bias 与原贪心一致；给了 bias 当场改选中字节）。这只加了一个默认为空的入口，不改旧生成语义。
+
+未采纳的另一条：把评分降级为"答案首字节/值 token 精确"（会让 `answer_exact` 变成不适用，等于改冻结门）。
+
 ## 2. 更新、曝光与批量
 
 - 1,280 updates/run × batch 4 = 5,120 episode-exposures（owner 2026-10-29 裁 A 口径；"5 epoch"仍是已登记的勘误）。

@@ -306,6 +306,7 @@ class ConditionalLanguageCandidateV4(ConditionalLanguageCandidateV3):
         cache: _WorkspaceEvidenceCache,
         *,
         max_new_bytes: int,
+        logit_bias: torch.Tensor | None = None,
     ) -> tuple[bytes, JointTaskStateV1]:
         if max_new_bytes <= 0:
             raise ValueError("generation byte allowance must be positive")
@@ -317,6 +318,8 @@ class ConditionalLanguageCandidateV4(ConditionalLanguageCandidateV3):
             if state.generated.endswith(b"<|end|>"):
                 break
             logits, hidden = self.next_logits(state, cache=cache)
+            if logit_bias is not None:
+                logits = logits + logit_bias
             allowed = utf8_allowed(state.utf8_remaining, state.utf8_lead)
             choices = torch.tensor(allowed, dtype=torch.long, device=logits.device)
             symbol = int(choices[logits[choices].argmax()])
