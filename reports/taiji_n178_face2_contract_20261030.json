@@ -1,0 +1,431 @@
+{
+  "covered_entities": [
+    "钥匙",
+    "杯子",
+    "书",
+    "盒子"
+  ],
+  "date": "2026-10-30",
+  "entities": [
+    "钥匙",
+    "杯子",
+    "书",
+    "盒子",
+    "球",
+    "手机",
+    "笔",
+    "眼镜"
+  ],
+  "face_sha256": "4f8801b54af916f3a0ff963c6d74e6c57990245d20cafddb69081413e52948a6",
+  "format": "taiji-n178-face2-query-coverage-v1",
+  "item_count": 64,
+  "items": [
+    {
+      "entity": "钥匙",
+      "item_id": "face2:ordinary:0:0",
+      "template_class": "ordinary",
+      "text": "请问，钥匙是什么颜色的？"
+    },
+    {
+      "entity": "杯子",
+      "item_id": "face2:ordinary:0:1",
+      "template_class": "ordinary",
+      "text": "请问，杯子是什么颜色的？"
+    },
+    {
+      "entity": "书",
+      "item_id": "face2:ordinary:0:2",
+      "template_class": "ordinary",
+      "text": "请问，书是什么颜色的？"
+    },
+    {
+      "entity": "盒子",
+      "item_id": "face2:ordinary:0:3",
+      "template_class": "ordinary",
+      "text": "请问，盒子是什么颜色的？"
+    },
+    {
+      "entity": "球",
+      "item_id": "face2:ordinary:0:4",
+      "template_class": "ordinary",
+      "text": "请问，球是什么颜色的？"
+    },
+    {
+      "entity": "手机",
+      "item_id": "face2:ordinary:0:5",
+      "template_class": "ordinary",
+      "text": "请问，手机是什么颜色的？"
+    },
+    {
+      "entity": "笔",
+      "item_id": "face2:ordinary:0:6",
+      "template_class": "ordinary",
+      "text": "请问，笔是什么颜色的？"
+    },
+    {
+      "entity": "眼镜",
+      "item_id": "face2:ordinary:0:7",
+      "template_class": "ordinary",
+      "text": "请问，眼镜是什么颜色的？"
+    },
+    {
+      "entity": "钥匙",
+      "item_id": "face2:ordinary:1:0",
+      "template_class": "ordinary",
+      "text": "钥匙的颜色，能告诉我吗？"
+    },
+    {
+      "entity": "杯子",
+      "item_id": "face2:ordinary:1:1",
+      "template_class": "ordinary",
+      "text": "杯子的颜色，能告诉我吗？"
+    },
+    {
+      "entity": "书",
+      "item_id": "face2:ordinary:1:2",
+      "template_class": "ordinary",
+      "text": "书的颜色，能告诉我吗？"
+    },
+    {
+      "entity": "盒子",
+      "item_id": "face2:ordinary:1:3",
+      "template_class": "ordinary",
+      "text": "盒子的颜色，能告诉我吗？"
+    },
+    {
+      "entity": "球",
+      "item_id": "face2:ordinary:1:4",
+      "template_class": "ordinary",
+      "text": "球的颜色，能告诉我吗？"
+    },
+    {
+      "entity": "手机",
+      "item_id": "face2:ordinary:1:5",
+      "template_class": "ordinary",
+      "text": "手机的颜色，能告诉我吗？"
+    },
+    {
+      "entity": "笔",
+      "item_id": "face2:ordinary:1:6",
+      "template_class": "ordinary",
+      "text": "笔的颜色，能告诉我吗？"
+    },
+    {
+      "entity": "眼镜",
+      "item_id": "face2:ordinary:1:7",
+      "template_class": "ordinary",
+      "text": "眼镜的颜色，能告诉我吗？"
+    },
+    {
+      "entity": "钥匙",
+      "item_id": "face2:ordinary:2:0",
+      "template_class": "ordinary",
+      "text": "我想知道一下钥匙的颜色。"
+    },
+    {
+      "entity": "杯子",
+      "item_id": "face2:ordinary:2:1",
+      "template_class": "ordinary",
+      "text": "我想知道一下杯子的颜色。"
+    },
+    {
+      "entity": "书",
+      "item_id": "face2:ordinary:2:2",
+      "template_class": "ordinary",
+      "text": "我想知道一下书的颜色。"
+    },
+    {
+      "entity": "盒子",
+      "item_id": "face2:ordinary:2:3",
+      "template_class": "ordinary",
+      "text": "我想知道一下盒子的颜色。"
+    },
+    {
+      "entity": "球",
+      "item_id": "face2:ordinary:2:4",
+      "template_class": "ordinary",
+      "text": "我想知道一下球的颜色。"
+    },
+    {
+      "entity": "手机",
+      "item_id": "face2:ordinary:2:5",
+      "template_class": "ordinary",
+      "text": "我想知道一下手机的颜色。"
+    },
+    {
+      "entity": "笔",
+      "item_id": "face2:ordinary:2:6",
+      "template_class": "ordinary",
+      "text": "我想知道一下笔的颜色。"
+    },
+    {
+      "entity": "眼镜",
+      "item_id": "face2:ordinary:2:7",
+      "template_class": "ordinary",
+      "text": "我想知道一下眼镜的颜色。"
+    },
+    {
+      "entity": "钥匙",
+      "item_id": "face2:ordinary:3:0",
+      "template_class": "ordinary",
+      "text": "帮我查查钥匙是什么色。"
+    },
+    {
+      "entity": "杯子",
+      "item_id": "face2:ordinary:3:1",
+      "template_class": "ordinary",
+      "text": "帮我查查杯子是什么色。"
+    },
+    {
+      "entity": "书",
+      "item_id": "face2:ordinary:3:2",
+      "template_class": "ordinary",
+      "text": "帮我查查书是什么色。"
+    },
+    {
+      "entity": "盒子",
+      "item_id": "face2:ordinary:3:3",
+      "template_class": "ordinary",
+      "text": "帮我查查盒子是什么色。"
+    },
+    {
+      "entity": "球",
+      "item_id": "face2:ordinary:3:4",
+      "template_class": "ordinary",
+      "text": "帮我查查球是什么色。"
+    },
+    {
+      "entity": "手机",
+      "item_id": "face2:ordinary:3:5",
+      "template_class": "ordinary",
+      "text": "帮我查查手机是什么色。"
+    },
+    {
+      "entity": "笔",
+      "item_id": "face2:ordinary:3:6",
+      "template_class": "ordinary",
+      "text": "帮我查查笔是什么色。"
+    },
+    {
+      "entity": "眼镜",
+      "item_id": "face2:ordinary:3:7",
+      "template_class": "ordinary",
+      "text": "帮我查查眼镜是什么色。"
+    },
+    {
+      "entity": "钥匙",
+      "item_id": "face2:old:0:0",
+      "template_class": "old",
+      "text": "钥匙原来是什么颜色？"
+    },
+    {
+      "entity": "杯子",
+      "item_id": "face2:old:0:1",
+      "template_class": "old",
+      "text": "杯子原来是什么颜色？"
+    },
+    {
+      "entity": "书",
+      "item_id": "face2:old:0:2",
+      "template_class": "old",
+      "text": "书原来是什么颜色？"
+    },
+    {
+      "entity": "盒子",
+      "item_id": "face2:old:0:3",
+      "template_class": "old",
+      "text": "盒子原来是什么颜色？"
+    },
+    {
+      "entity": "球",
+      "item_id": "face2:old:0:4",
+      "template_class": "old",
+      "text": "球原来是什么颜色？"
+    },
+    {
+      "entity": "手机",
+      "item_id": "face2:old:0:5",
+      "template_class": "old",
+      "text": "手机原来是什么颜色？"
+    },
+    {
+      "entity": "笔",
+      "item_id": "face2:old:0:6",
+      "template_class": "old",
+      "text": "笔原来是什么颜色？"
+    },
+    {
+      "entity": "眼镜",
+      "item_id": "face2:old:0:7",
+      "template_class": "old",
+      "text": "眼镜原来是什么颜色？"
+    },
+    {
+      "entity": "钥匙",
+      "item_id": "face2:old:1:0",
+      "template_class": "old",
+      "text": "之前那个钥匙是什么色的？"
+    },
+    {
+      "entity": "杯子",
+      "item_id": "face2:old:1:1",
+      "template_class": "old",
+      "text": "之前那个杯子是什么色的？"
+    },
+    {
+      "entity": "书",
+      "item_id": "face2:old:1:2",
+      "template_class": "old",
+      "text": "之前那个书是什么色的？"
+    },
+    {
+      "entity": "盒子",
+      "item_id": "face2:old:1:3",
+      "template_class": "old",
+      "text": "之前那个盒子是什么色的？"
+    },
+    {
+      "entity": "球",
+      "item_id": "face2:old:1:4",
+      "template_class": "old",
+      "text": "之前那个球是什么色的？"
+    },
+    {
+      "entity": "手机",
+      "item_id": "face2:old:1:5",
+      "template_class": "old",
+      "text": "之前那个手机是什么色的？"
+    },
+    {
+      "entity": "笔",
+      "item_id": "face2:old:1:6",
+      "template_class": "old",
+      "text": "之前那个笔是什么色的？"
+    },
+    {
+      "entity": "眼镜",
+      "item_id": "face2:old:1:7",
+      "template_class": "old",
+      "text": "之前那个眼镜是什么色的？"
+    },
+    {
+      "entity": "钥匙",
+      "item_id": "face2:old:2:0",
+      "template_class": "old",
+      "text": "钥匙以前是什么色儿？"
+    },
+    {
+      "entity": "杯子",
+      "item_id": "face2:old:2:1",
+      "template_class": "old",
+      "text": "杯子以前是什么色儿？"
+    },
+    {
+      "entity": "书",
+      "item_id": "face2:old:2:2",
+      "template_class": "old",
+      "text": "书以前是什么色儿？"
+    },
+    {
+      "entity": "盒子",
+      "item_id": "face2:old:2:3",
+      "template_class": "old",
+      "text": "盒子以前是什么色儿？"
+    },
+    {
+      "entity": "球",
+      "item_id": "face2:old:2:4",
+      "template_class": "old",
+      "text": "球以前是什么色儿？"
+    },
+    {
+      "entity": "手机",
+      "item_id": "face2:old:2:5",
+      "template_class": "old",
+      "text": "手机以前是什么色儿？"
+    },
+    {
+      "entity": "笔",
+      "item_id": "face2:old:2:6",
+      "template_class": "old",
+      "text": "笔以前是什么色儿？"
+    },
+    {
+      "entity": "眼镜",
+      "item_id": "face2:old:2:7",
+      "template_class": "old",
+      "text": "眼镜以前是什么色儿？"
+    },
+    {
+      "entity": "钥匙",
+      "item_id": "face2:old:3:0",
+      "template_class": "old",
+      "text": "那个钥匙原先是什么颜色？"
+    },
+    {
+      "entity": "杯子",
+      "item_id": "face2:old:3:1",
+      "template_class": "old",
+      "text": "那个杯子原先是什么颜色？"
+    },
+    {
+      "entity": "书",
+      "item_id": "face2:old:3:2",
+      "template_class": "old",
+      "text": "那个书原先是什么颜色？"
+    },
+    {
+      "entity": "盒子",
+      "item_id": "face2:old:3:3",
+      "template_class": "old",
+      "text": "那个盒子原先是什么颜色？"
+    },
+    {
+      "entity": "球",
+      "item_id": "face2:old:3:4",
+      "template_class": "old",
+      "text": "那个球原先是什么颜色？"
+    },
+    {
+      "entity": "手机",
+      "item_id": "face2:old:3:5",
+      "template_class": "old",
+      "text": "那个手机原先是什么颜色？"
+    },
+    {
+      "entity": "笔",
+      "item_id": "face2:old:3:6",
+      "template_class": "old",
+      "text": "那个笔原先是什么颜色？"
+    },
+    {
+      "entity": "眼镜",
+      "item_id": "face2:old:3:7",
+      "template_class": "old",
+      "text": "那个眼镜原先是什么颜色？"
+    }
+  ],
+  "leakage_scope": "train 文本；query/holdout 未参与建面",
+  "leakage_vs_train": {
+    "clean": true,
+    "duplicate_texts": [],
+    "skeleton_hits_in_existing": {
+      "old": 0,
+      "ordinary": 0
+    }
+  },
+  "templates": {
+    "old": [
+      "{entity}原来是什么颜色？",
+      "之前那个{entity}是什么色的？",
+      "{entity}以前是什么色儿？",
+      "那个{entity}原先是什么颜色？"
+    ],
+    "ordinary": [
+      "请问，{entity}是什么颜色的？",
+      "{entity}的颜色，能告诉我吗？",
+      "我想知道一下{entity}的颜色。",
+      "帮我查查{entity}是什么色。"
+    ]
+  }
+}
