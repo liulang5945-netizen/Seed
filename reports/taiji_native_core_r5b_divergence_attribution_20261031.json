@@ -1,0 +1,36 @@
+{
+  "format": "taiji-native-core-r5b-divergence-attribution-v1",
+  "version": 1,
+  "date": "2026-10-31",
+  "contract": "plans/reference/SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md",
+  "run": "q1_new_core_v2_seed0",
+  "manifest": {
+    "path": "plans/manifests/native_core_r1_train_v1.json",
+    "sha256": "5d151ba9f994670ccc2968b4d4547d280c52c056e991cf831e4f18c818dfedfd",
+    "episodes_sampled": 216,
+    "sample_seed": 20261030
+  },
+  "definition": "at the first divergence byte: guided argmax under the correct prefix, and exact recovery of the full answer when continuing freely from that prefix",
+  "tally": {
+    "current_query": {
+      "guided_wrong_guided_not_recovered": 295
+    },
+    "previous_query": {
+      "guided_wrong_guided_not_recovered": 79
+    },
+    "unknown_query": {
+      "guided_wrong_guided_not_recovered": 55
+    }
+  },
+  "read_boundaries": {
+    "query_split_read": false,
+    "holdout_split_read": false,
+    "sealed_read": false,
+    "optimizer_updates": 0
+  },
+  "cost": {
+    "cpu_seconds": 270.109375
+  },
+  "started_at": "2026-10-30T19:14:26.193831+00:00",
+  "finished_at": "2026-10-30T19:14:49.948073+00:00"
+}

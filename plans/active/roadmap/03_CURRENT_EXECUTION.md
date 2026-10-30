@@ -131,6 +131,10 @@ runner（`b78bdfdce`）另补 `--run-id`（默认 20261031），避免与已停�
 
 裁定弹窗两次提请未获答复，裁定保持开放。等待期内按 owner 常设自主推进指令备好选项①的执行载体：[R5c 复制执行精度候选合同草案](../../reference/SPEC-NATIVE-CONTENT-CORE_R5C_COPYEXPR_CANDIDATE_20261031.md)（候选 `new_core_v3`＝指针辅助监督 C＋自前缀一致探针 D；同数据/同门，基线与前身 v2 端点按 sha 复用；独立预算 60,000 CPU 秒/48h）——**草案待批，未授权实现/训练**；用户选②或③则本件作废。三选项不变：①批准 R5c 草案（回复①或 `--approve-r5c`）／②转 09 静态方案／③暂停。
 
+### 08 后继裁定支持证据之三（2026-10-31，发散点归因，`diagnosis_complete`）
+
+[回执](../../../reports/taiji_native_core_r5b_divergence_attribution_20261031.json)、[探针](../../../scripts/training/diagnose_native_content_r5b_divergence.py)（q1 seed0，同 216 episode 样本；270 CPU 秒，train-only 只读）。**429 个错误答案在首个分歧字节处 100% `guided_wrong`**——喂入完全正确的目标前缀后 argmax 仍选错字节且无恢复。机制判定冻结：训练信号问题（模型在这些位置自信学错分布），非推理漂移、非解码脆弱。R5c 草案 §2.1-D 已据此冻结为完整可批形态（C＝值字节辅助 CE 对表面 A；表面 B 预声明修订＝同预算内 current 类自前缀暴露加权）。裁定三选项保持开放；诊断累计 ≈1,100 CPU 秒，预算账累计约 8.07 万/12 万。
+
 ## 继承的历史事实与限制
 
 | 历史资产 | 已有事实 | 保留边界 |
