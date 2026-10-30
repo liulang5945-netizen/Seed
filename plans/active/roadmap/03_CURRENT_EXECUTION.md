@@ -6,11 +6,13 @@
 
 持续Goal（2026-10-27修订）：沿N主线，发展由态极自身可学习、可恢复的认知机制参与决策与表达的原生认知模型，使其能够以自然中文可靠完成连续任务，跨会话积累和纠正经验，从可核验的经验与反馈中学习并保持旧能力；在授权和资源边界内，必要时即使没有新提示，也能根据目标与状态自主选择继续、求证、求助或等待。各阶段预先声明任务范围和收官条件，以身份可追溯的同一候选及其前后版本，对照合理基线，按范围验证未见任务表现、必要机制的实际贡献、反馈对负责模块的作用、旧能力保持、主动选择效果及真实资源成本；成功、负结果、不可判、工程失败或预算停止均按预定出口结案。
 
-## 当前唯一下一步：重构-2 新共同内容主图与三类基线合同
+## 当前唯一下一步：重构-3b 修正旧图基线接入
 
 用户已采纳共同内容核心为计划主方向，现按[重构方案](../../reference/PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)推进：语义合同→共同主图/基线→隔离实现/零步恢复→预算冻结→一次比较→条件能力接力。旧N177/F/N178结果与费用继续保留，已有授权N178b按原终点/预算结案。本轮仅修方案，用户负责实施。
 
-R1设计级已闭合。当前写R2合同：[候选与三类基线比较合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md)。R2只定义完整候选、修正旧图/普通端到端基线、接口责任、同数据/权限/资源和Q1/Q2比较问题；不实现、不训练、不评价、不读新sealed。待用户评审后进入R3实现。
+R1设计级已闭合。R2合同已写：[候选与三类基线比较合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md)，待用户评审；未评审前不进入R4训练/定价与R5评价。
+
+R3新核心已实现并通过结构门：[R3记录](../../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md)、[模块](../../../taiji/native_content_core.py)、[测试](../../../tests/taiji_native/test_native_content_core.py)、[结构探针报告](../../../reports/taiji_native_core_r3_probe_20261030.json)。公开fixture 17案结构检查53/53通过；零步bundle在独立进程恢复digest一致；0 optimizer updates、未读新sealed。零步相关/无关比1.57，明确不构成判别力证据。
 
 R1完成证据：[统一语义合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md)五项边界确认；世界审计（360-history/216-72-72/1,440 episodes/11,520 turns/0.80–1.11MB）；公开fixture 17案通过；§2.2接口审计与§2.3合同矛盾自检完成。
 
@@ -50,7 +52,9 @@ F1（holdout 面）与 F1b（query 面，从未读过）都结案为负结果：
 | 工作包 | 具体任务 | 验收/边界 |
 |---|---|---|
 | 重构-1 | [统一语义合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md) | 设计级闭合：五项边界、世界/17案fixture、§2.2接口审计；未实现/训练 |
-| 重构-2 | [候选与三类基线合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md) | 待用户评审；R3实现前不训练/不评价 |
+| 重构-2 | [候选与三类基线合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md) | 设计已写；待用户评审；未评审前不进入R4训练/定价与R5评价 |
+| 重构-3 | [新核心隔离实现与零步恢复](../../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md) | 结构门通过：53/53检查、cut/rescue、首字节监督、独立进程恢复；未训练、不称学会 |
+| 重构-3b | 修正旧图基线：byte对齐、固定分母、current/previous选择接入同一评分器 | 待实现；与R3同fixture读数后才可进入Q1 |
 | E0 | 已完成：15臂终点fresh-process parse/answer回执；B真实输入、有效mask及隔离矩阵 | 三份件＋三支仪器自带机检判据（见收束记录§8）；未重训/未重评holdout |
 | CI | 修复四模块9处mypy类型错误 | 精确记录当前源码身份；本机核心类型/受影响回归及实际CI重新核验 |
 | 训练态E3 | 已完成：credit-on/stop、禁写组及optimizer/RNG/cursor往返 | E2c 12/12×2 用例、E3 17/17；选择器无回答信用、真实链解析覆盖仅1/4 单列（收束记录§9） |
