@@ -45,7 +45,13 @@
 
 ## 步骤08的证据入口
 
-[已批准合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md)保留原候选、两项改动、9-run清单、门值、预算及审批。实现、定价与结果的现状只更新[总计划](../../MAINLINE.md#执行位置)；有真实交付后在此追加对应代码revision、报告与费用，不用“计划已写”填成完成。
+[已批准合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md)保留原候选、两项改动、9-run清单、门值、预算及审批。提交`dc7a43354`提供[native_content_core_v2.py](../../../taiji/native_content_core_v2.py)、[训练适配器](../../../taiji/native_content_training_v2.py)、评价适配及[11个定向测试定义](../../../tests/taiji_native/test_native_content_core_v2.py)；本轮只读代码与提交，不运行测试，不能据文件存在签工程门通过。
+
+静态对照发现的待核项：批准合同按episode抽样，适配器按turn抽样且缩短自前缀路径的实际监督字节；50步pilot不覆盖257后分支，草拟额外分支探针需具体方法/更新账修订。原合同不在本轮改写，细项及处置顺序已写入总计划08。后续真实工程/定价/训练/评价回执到位后再追加身份与费用；并行草稿不计完成。
+
+提交`b78bdfdce`追加[定价执行件](../../../scripts/training/price_native_content_core_r5b.py)、[训练执行件](../../../scripts/training/run_native_content_core_r5b.py)、[评价执行件](../../../scripts/training/evaluate_native_content_core_r5b.py)；本轮未运行，未见对应正式机器结果，不能据此签定价或训练完成。
+
+项目所有者已正式将[总计划](../../MAINLINE.md)定位为新的N主线。03继续仅登记证据与审批；09–13详细方案不因此成为已冻结训练合同或默认模型采用批准。
 
 ## 继承的历史事实与限制
 

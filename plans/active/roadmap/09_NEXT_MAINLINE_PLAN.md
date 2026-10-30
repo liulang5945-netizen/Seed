@@ -1,10 +1,10 @@
-# 09 N主线机制设计与下一主线交汇
+# N主线机制词典与历史映射（兼容路径09）
 
 > 文档状态：[组件] — 只作 N1–N6 机制词典；不发布当前队首。
 
-> 2026-10-30现行计划修订：共同可学习事件/内容状态→query/时间条件读取→逐步内容生成→合法任务信用，已采纳为新主候选方向；现按[统一重构方案](../../reference/PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)的工作包推进。原N1–N6/M/CC身份、能力阈值与冻结件保持原义，旧硬解析/局部头路线留作基线而不再默认续推。本轮仅改方案，尚未实施或证明新图优越。
+> 2026-10-30定位：项目所有者已确定[MAINLINE](../../MAINLINE.md)为新的N主线，按步骤01–13及详细落地卡推进。本页仅保留原N1–N6/M/CC的机制与历史身份，不与总计划步骤09混用，也不产生另一套“下一主线”；冻结阈值和历史证据不改。
 
-更新：2026-10-29。研究执行只由[03](03_CURRENT_EXECUTION.md)调度，方向只由[MAINLINE](../../MAINLINE.md)定义；[10](10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)负责执行接力。本页保留 N1–N6 机制身份、已核验差距与历史映射，不再承担“下一主线”职责。[VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)是长期储备，不是当前工单。
+更新：2026-10-30。方向、顺序、状态和实际执行位置均由[MAINLINE](../../MAINLINE.md)维护；[03](03_CURRENT_EXECUTION.md)作证据台账，[10](10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)作兼容导航。本页保留 N1–N6 机制身份、已核验差距与历史映射，不再承担“下一主线”职责。[VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)是长期储备，不是当前工单。
 
 旧N编号、原实验判据、正负结果及未消费面保留。旧详稿按[历史恢复](../../reference/PROJECT_HISTORY_CONSOLIDATION_20261023.md)从Git读取；§1.3首四列保留原条款身份，其“章节”是旧VISION来源定位，第五列给出现行承接，不以旧章节号代替新方案执行顺序。
 
