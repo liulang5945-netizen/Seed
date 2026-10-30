@@ -128,8 +128,10 @@ def _summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
 def _train_one(
     seed: int, episodes: list[Any], weights: torch.Tensor, updates: int
 ) -> dict[str, Any]:
-    torch.manual_seed(seed)
     trainer = _trainer()
+    # 种必须在**加载检查点之后**设：from_native_checkpoint 会恢复 torch_rng_state，
+    # 先设就会被覆盖（2026-10-30 实测：三个 seed 端点逐字节相同）。
+    torch.manual_seed(seed)
     run_root = RUN_ROOT / f"seed_{seed}"
     run_root.mkdir(parents=True, exist_ok=True)
     cpu_start = time.process_time()
