@@ -49,7 +49,7 @@
 
 静态对照发现的待核项：批准合同按episode抽样，适配器按turn抽样且缩短自前缀路径的实际监督字节；50步pilot不覆盖257后分支，草拟额外分支探针需具体方法/更新账修订。原合同不在本轮改写，细项及处置顺序已写入总计划08。后续真实工程/定价/训练/评价回执到位后再追加身份与费用；并行草稿不计完成。
 
-提交`b78bdfdce`追加[定价执行件](../../../scripts/training/price_native_content_core_r5b.py)、[训练执行件](../../../scripts/training/run_native_content_core_r5b.py)、[评价执行件](../../../scripts/training/evaluate_native_content_core_r5b.py)；本轮未运行，未见对应正式机器结果，不能据此签定价或训练完成。
+提交`b78bdfdce`追加[定价执行件](../../../scripts/training/price_native_content_core_r5b.py)、[训练执行件](../../../scripts/training/run_native_content_core_r5b.py)、[评价执行件](../../../scripts/training/evaluate_native_content_core_r5b.py)；本轮未运行；执行件存在不等于工程/训练完成。收尾核对时工作区出现`reports/taiji_native_core_r5b_pricing_20261030.json`，status为`r5b_priced`，登记60更新、约572.56 CPU秒、约59.00墙钟秒，零步/两阶段端点同进程和新进程恢复均记相等，query/holdout/sealed读取均记false。本次未提交该并行机器件；原50步与60步差异、实际日程分支及监督字节仍需按总计划08审计，不凭status补签全部前置门。
 
 项目所有者已正式将[总计划](../../MAINLINE.md)定位为新的N主线。03继续仅登记证据与审批；09–13详细方案不因此成为已冻结训练合同或默认模型采用批准。
 
