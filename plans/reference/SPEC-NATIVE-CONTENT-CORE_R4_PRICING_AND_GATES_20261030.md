@@ -93,6 +93,8 @@ R4 报告必须给出三组单位成本、15-run 投影、峰值内存、恢复�
 - 合法救援必须恢复正确率：rescue 后 exact 恢复到 cut 前的 ≥ 0.90。
 - 以上只用正确答案，不用“输出是否变化”。
 
+评分实现：[native_content_evaluator.py](../../taiji/native_content_evaluator.py)。分母由声明的 answer-turn 列表决定，缺失/解析失败/拒答都计错；cut/rescue 只在 baseline 正确且 cut 错误的 case 上计算；swap 按期望答案判正确。3 项测试覆盖固定分母、状态值、cut/rescue 与 swap。
+
 ### 4.3 保持门
 
 - 训练分布内插（train-like probe）exact ≥ 0.85；

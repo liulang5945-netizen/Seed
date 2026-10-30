@@ -67,7 +67,7 @@
 | 重构-3b-2 结构门已过 | [普通端到端基线](../../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md#7-r3b2-普通端到端基线20261030)、[基线探针](../../../reports/taiji_native_core_r3b2_ordinary_20261030.json) | 11/11；固定分母17/17；全文prompt/无硬门/全参数可训练；未训练 |
 | 重构-4-prep 已完成 | 课程与分区物化：[split](../../../plans/manifests/native_core_r1_split_v1.json)、[train](../../../plans/manifests/native_core_r1_train_v1.json)、[query](../../../plans/manifests/native_core_r1_query_v1.json)、[holdout](../../../plans/manifests/native_core_r1_holdout_v1.json) | 216/72/72；1,440 episodes；5,760 answer turns；无模型调用 |
 | 重构-4 合同已写+预检通过 | [定价与R5数值门](../../reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md)、[预检报告](../../../reports/taiji_native_core_r4_preflight_20261030.json) | 三组同train/曝光/seed/预算；512×15 run；200k CPU/48h；前向+反向有限、零步恢复通过、0 optimizer step | 执行待R2评审+批准；未批准不跑pilot、不训练 |
-| 重构-5 | 一次有界独立比较 | 行为/保持/恢复/成本合取，正负均结案 |
+| 重构-5 | 一次有界独立比较 | 固定分母评分器已实现；待R4定价与批准；行为/保持/恢复/成本合取，正负均结案 |
 | 重构-6 | T2/任务所需T3、自然连续任务、跨会话及条件扩域 | 沿下列后继任务卡与07，能力门不改 |
 
 精确模块分工、对照、用户实施清单及退出见重构方案。当前实现不再被永久限定为封闭词表硬解析、current-only读取或冻结V4旁固定bias。它们作为修正语义后的可比较基线；TSK/identity/复制/GRU按影响面继承，不同时推倒所有器官。结构化状态/权限/来源仍是硬边界，不由软学习绕过。
