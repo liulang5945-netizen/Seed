@@ -135,6 +135,10 @@ runner（`b78bdfdce`）另补 `--run-id`（默认 20261031），避免与已停�
 
 [回执](../../../reports/taiji_native_core_r5b_divergence_attribution_20261031.json)、[探针](../../../scripts/training/diagnose_native_content_r5b_divergence.py)（q1 seed0，同 216 episode 样本；270 CPU 秒，train-only 只读）。**429 个错误答案在首个分歧字节处 100% `guided_wrong`**——喂入完全正确的目标前缀后 argmax 仍选错字节且无恢复。机制判定冻结：训练信号问题（模型在这些位置自信学错分布），非推理漂移、非解码脆弱。R5c 草案 §2.1-D 已据此冻结为完整可批形态（C＝值字节辅助 CE 对表面 A；表面 B 预声明修订＝同预算内 current 类自前缀暴露加权）。裁定三选项保持开放；诊断累计 ≈1,100 CPU 秒，预算账累计约 8.07 万/12 万。
 
+### 08 后继裁定支持证据之四（2026-10-31，R5c 设计冻结支持，`freeze_support_complete`）
+
+[冻结回执](../../../reports/taiji_native_core_r5c_design_freeze_20261031.json)、[探针](../../../scripts/training/freeze_native_content_r5c_design.py)（train manifest 统计＋seed0 端点只读梯度探针，≈3.4 CPU 秒）。R5c 草案 §2.1-C 全部自由参数已预冻结：指针 CE 目标规则（value 子串单次出现 91.67% 覆盖、零出现 216 轮剔除、从不多次）、辅助权重 0.3、梯度路径实测通过。**草案至此零悬空项，批准即 Fully executable**；三选项裁定保持开放，未批准不执行 §5 任何一步。
+
 ## 继承的历史事实与限制
 
 | 历史资产 | 已有事实 | 保留边界 |

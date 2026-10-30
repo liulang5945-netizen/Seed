@@ -1,0 +1,55 @@
+{
+  "format": "taiji-native-core-r5c-design-freeze-v1",
+  "version": 1,
+  "date": "2026-10-31",
+  "draft_contract": "plans/reference/SPEC-NATIVE-CONTENT-CORE_R5C_COPYEXPR_CANDIDATE_20261031.md",
+  "run": "q1_new_core_v2_seed0",
+  "manifest": {
+    "path": "plans/manifests/native_core_r1_train_v1.json",
+    "sha256": "5d151ba9f994670ccc2968b4d4547d280c52c056e991cf831e4f18c818dfedfd",
+    "episodes": 864
+  },
+  "pointer_ce_target_rule": {
+    "occurrence_stats": {
+      "fact_turns": 2592,
+      "single": 2376,
+      "multiple": 0,
+      "absent": 216
+    },
+    "declared_rule": "supervise the copy pointer on the value-substring byte positions when the value occurs exactly once in the selected span; turns without an occurrence are excluded from the auxiliary term",
+    "coverage": 0.9166666666666666
+  },
+  "gradient_probe": {
+    "selected_span": "顺便说一下，背包的颜色是蓝色。",
+    "value": "蓝色",
+    "value_occurrences_in_span": 1,
+    "pointer_ce_weight_declared": 0.3,
+    "auxiliary_loss_finite": true,
+    "copy_gradients_finite": {
+      "copy_query.weight": true,
+      "copy_key.weight": true,
+      "copy_gate.weight": null,
+      "copy_gate.bias": null
+    },
+    "gradient_path_ok": true
+  },
+  "exposure_weighting_contingency": {
+    "scored_turns_by_category": {
+      "current_query": 1728,
+      "previous_query": 864,
+      "unknown_query": 864
+    },
+    "current_fraction": 0.5
+  },
+  "read_boundaries": {
+    "query_split_read": false,
+    "holdout_split_read": false,
+    "sealed_read": false,
+    "optimizer_updates": 0
+  },
+  "cost": {
+    "cpu_seconds": 3.15625
+  },
+  "started_at": "2026-10-30T19:30:39.131699+00:00",
+  "finished_at": "2026-10-30T19:30:40.193793+00:00"
+}
