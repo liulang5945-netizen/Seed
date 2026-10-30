@@ -306,8 +306,11 @@ def train_run(
     return record
 
 
+_RUN_ID = "20261031"
+
+
 def run_id() -> str:
-    return "20261030"
+    return _RUN_ID
 
 
 def _train(*, approve: bool) -> int:
@@ -445,12 +448,18 @@ def _train(*, approve: bool) -> int:
 
 
 def main() -> int:
+    global _RUN_ID
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--restore-probe",
         type=Path,
         default=None,
         help="child mode: load one run checkpoint and print its probe digest",
+    )
+    parser.add_argument(
+        "--run-id",
+        default=_RUN_ID,
+        help="checkpoint directory suffix; the report itself stays write-once",
     )
     parser.add_argument(
         "--approve-r5b",
@@ -460,6 +469,7 @@ def main() -> int:
     args = parser.parse_args()
     if args.restore_probe is not None:
         return _restore_probe(args.restore_probe)
+    _RUN_ID = str(args.run_id)
     return _train(approve=args.approve_r5b)
 
 

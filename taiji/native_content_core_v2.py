@@ -186,12 +186,15 @@ class NativeContentCoreV2(NativeContentCoreV1):
         store: NativeContentStoreV1,
         native_state_ref: str = "native-content:train",
     ) -> tuple[torch.Tensor, int]:
-        """Own greedy prefix, then teacher forcing on the declared suffix.
+        """Full-target supervision with the declared prefix source swapped.
 
-        The prefix is generated greedily from the model itself (no gradient,
-        no target information); the remaining target bytes are supervised on
-        top of that prefix.  Returns the logit rows for the supervised suffix
-        and the prefix length actually consumed.
+        Contract reading (R5b 2.1 change B): the target bytes stay supervised
+        unchanged; only the SOURCE of the conditioning prefix changes.  For the
+        first ``own_prefix_len`` steps the fed input byte is the model's own
+        greedy choice instead of the target byte, while every step still
+        produces a supervised logit row for the unchanged target.  The second
+        half resumes ordinary teacher forcing, so exposure (supervised byte
+        count and targets) is identical to the pure teacher-forced branch.
         """
 
         if not target or len(target) > self.config.max_generation_bytes:
@@ -202,18 +205,17 @@ class NativeContentCoreV2(NativeContentCoreV1):
             condition, scope_id=scope_id, session_id=session_id, native_state_ref=native_state_ref
         )
         cache = self.content_read_cache(state, condition, store=store)
-        with torch.no_grad():
-            for _ in range(own_prefix_len):
-                logits, hidden = self.next_logits(state, cache=cache)
+        rows: list[torch.Tensor] = []
+        for index, expected_symbol in enumerate(target):
+            logits, hidden = self.next_logits(state, cache=cache)
+            rows.append(logits)
+            if index < own_prefix_len:
                 allowed = utf8_allowed(state.utf8_remaining, state.utf8_lead)
                 choices = torch.tensor(allowed, dtype=torch.long, device=logits.device)
-                symbol = int(choices[logits[choices].argmax()])
-                state = self.observe_response(state, symbol, hidden)
-        rows: list[torch.Tensor] = []
-        for symbol in target[own_prefix_len:]:
-            current, hidden = self.next_logits(state, cache=cache)
-            rows.append(current)
-            state = self.observe_response(state, symbol, hidden)
+                fed = int(choices[logits[choices].argmax()])
+            else:
+                fed = int(expected_symbol)
+            state = self.observe_response(state, fed, hidden)
         return torch.stack(rows), own_prefix_len
 
     @torch.no_grad()

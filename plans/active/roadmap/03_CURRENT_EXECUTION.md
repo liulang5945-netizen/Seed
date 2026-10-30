@@ -53,6 +53,26 @@
 
 项目所有者已正式将[总计划](../../MAINLINE.md)定位为新的N主线。03继续仅登记证据与审批；09–13详细方案不因此成为已冻结训练合同或默认模型采用批准。
 
+### 08.1 合同—实现对照表（2026-10-31 实施方交付，偏差已按原合同纠正）
+
+「原要求→实现→处置→证据」四栏对照。原实现（`dc7a43354`）存在三处与批准合同的偏差，均已纠正；纠正后 12/12 定向测试＋13/13 R5 回归测试绿（本轮实测运行，非仅文件存在）。
+
+| 合同要求（R5b §2.1/§5/§7） | 原实现 | 处置 | 证据（定向测试，本轮实测绿） |
+|---|---|---|---|
+| §2.1-A 复制轨：读取路径选记录，被选记录 value span 原始字节经指针分布进入字节分布，与词表 softmax 按 gate 混合 | `next_logits`：`_read` 选 top-1→span 字节 `copy_key/copy_query` 位置 softmax→`index_add` 成 257 维 copy 分布→`copy_gate(cat(updated,read))` 混合取 log | 一致，未改 | `test_copy_track_math_is_the_declared_mixture`（混合公式逐步复算 allclose） |
+| §2.1-A/§5 通道不接触 gold；宿主伪造选择必须被拒 | teacher/answer/scheduled 全部要求 store 绑定；`content_read_cache` 校验每条 condition 记录的 `record_sha256`+`raw_span` 属于声明 store | 一致，未改 | `test_forged_condition_record_is_rejected` |
+| §2.1-A copy 参数归 decoder 信用组（Q2 stop 仍恰为 reader+decoder） | `credit_group_of("copy_*")→decoder` | 一致，未改 | `test_credit_stop_freezes_copy_parameters` |
+| 空 store/切断退化＝v1 逐字节 | 空 content_ids 直接返回 v1 raw logits | 一致，未改 | `test_copy_track_reduces_to_v1_without_content`、`test_cut_store_degenerates_to_v1` |
+| §2.1-B 抽样单位＝**每 episode** 以 0.5 概率 | coin 按 `episode_id+turn_index` 逐应答轮抽样 | **偏差①纠正**：coin 去掉 `turn_index`，只按 (seed, update, episode_id) | `test_own_prefix_coin_is_pure_and_declared` |
+| §2.1-B 教师强制**目标字节不变，仅换前缀来源** | 自前缀分支只监督后半段（监督字节缩短为 len−len//2） | **偏差②纠正**：scheduled 分支对**全目标**产出监督行，仅前半段的输入源换成自身贪心字节；曝光（监督字节数与目标）与纯 TF 分支逐字节一致；行数≠目标长度即抛错 | `test_scheduled_forced_conditioned_is_deterministic_and_byte_exact`（rows=len(target)）、`test_v2_adapter_loss_terms_byte_accounting`（两分支 supervised_bytes 相等） |
+| §7/08.3 探针须证明**实际执行的分支**、日程位置与监督字节 | 原 phase B 强设 `schedule_update=300` 被 `R5BRunTrainer.update()` 每次重置回 `steps+1`（**phase B 实测的是纯 TF**；已产出的定价报告失真） | **偏差③方法修订**：新增 `R5BRunTrainer.schedule_position_override` 声明式探针机制，逐更新记账 `schedule_position/schedule_override_active/episodes_scheduled/scheduled_supervised_bytes`；定价脚本 phase A 断言 0 scheduled、phase B 断言 >0，否则工程失败 | `test_trainer_override_keeps_probe_on_declared_branch`；失真报告 `reports/taiji_native_core_r5b_pricing_20261030.json`（未提交）已删除，定价按修订方法在 08.3 重跑 |
+
+runner（`b78bdfdce`）另补 `--run-id`（默认 20261031），避免与已停草稿的写一次目录冲突。
+
+**并行草稿账（不计任何回执）**：按偏差纠正前的实现启动的 9-run 训练已按 08.1 停止，停在 `checkpoints/native_core_r5b/20261030/`（3 个端点 seed0/1/2＋q2_credit_on_seed0 零步，无报告）；耗 CPU 约 1.5 万秒，按 R5b §7 计入同一 120,000 CPU 秒总预算账。作废定价件 60 更新约 572.56 CPU 秒同样计入。预算余量约 10.4 万 CPU 秒，覆盖修订后重定价（≈0.1 万）、正式 9×512 训练（≈4.3 万）与评价（≈1 万）。
+
+08.1 对照表不能代替 08.2 工程回执；下一步按总计划 08.2 交付信用/隔离/训练态恢复证据（含 256→257 边界与恢复后下一次更新）。
+
 ## 继承的历史事实与限制
 
 | 历史资产 | 已有事实 | 保留边界 |

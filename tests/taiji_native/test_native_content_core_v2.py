@@ -205,7 +205,7 @@ def test_scheduled_forced_conditioned_is_deterministic_and_byte_exact() -> None:
         condition, TARGET, own_prefix_len=2, scope_id="w", session_id="s", store=bundle.store
     )
     assert prefix == 2
-    assert first.shape[0] == len(TARGET) - 2
+    assert first.shape[0] == len(TARGET)
     assert torch.equal(first, second)
     full = bundle.score_target(
         query=QUERY, target=TARGET, time_intent="current", owner="u", scope="w", session="s"
@@ -267,7 +267,7 @@ def test_credit_stop_freezes_copy_parameters() -> None:
 
 
 def test_own_prefix_coin_is_pure_and_declared() -> None:
-    kwargs = {"seed": 0, "update": SCHEDULE_OWN_PREFIX_START, "episode_id": "e:1", "turn_index": 1}
+    kwargs = {"seed": 0, "update": SCHEDULE_OWN_PREFIX_START, "episode_id": "e:1"}
     assert own_prefix_coin(**kwargs) == own_prefix_coin(**kwargs)
     assert SCHEDULE_OWN_PREFIX_START == 257
 
@@ -282,17 +282,49 @@ def test_v2_adapter_loss_terms_byte_accounting(monkeypatch: pytest.MonkeyPatch) 
     terms, total = adapter.loss_terms(model, episode, owner="u", scope="w")
     assert total == target_length
     assert all(bool(torch.isfinite(term)) for term in terms)
+    assert adapter.branch_counters["episodes_scheduled"] == 0
+    assert adapter.branch_counters["supervised_bytes"] == target_length
 
     monkeypatch.setattr("taiji.native_content_training_v2.own_prefix_coin", lambda **kwargs: True)
     adapter.schedule_update = 300
     terms, total = adapter.loss_terms(model, episode, owner="u", scope="w")
-    assert 0 < total < target_length
+    assert total == target_length
     assert all(bool(torch.isfinite(term)) for term in terms)
+    assert adapter.branch_counters["episodes_scheduled"] == 1
+    assert adapter.branch_counters["supervised_bytes"] == 2 * target_length
 
     monkeypatch.setattr("taiji.native_content_training_v2.own_prefix_coin", lambda **kwargs: False)
     adapter.schedule_update = 300
     terms, total = adapter.loss_terms(model, episode, owner="u", scope="w")
     assert total == target_length
+    assert adapter.branch_counters["episodes_scheduled"] == 1
+
+
+def test_trainer_override_keeps_probe_on_declared_branch(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from taiji.native_content_training import batch_schedule
+    from taiji.native_content_training_v2 import R5BRunTrainer
+
+    monkeypatch.setattr("taiji.native_content_training_v2.own_prefix_coin", lambda **kwargs: True)
+    adapter = NativeContentV2Adapter()
+    trainer = R5BRunTrainer.create(adapter)
+    trainer.cursor.update({"run_id": "probe", "seed": 0})
+    episodes = [_episode()]
+    batches = batch_schedule(episodes, seed=0, updates=2, batch_size=1)
+
+    trainer.schedule_position_override = 300
+    rows = [trainer.update(batch.episodes) for batch in batches]
+    assert all(row["schedule_position"] == 300 for row in rows)
+    assert all(row["schedule_override_active"] is True for row in rows)
+    assert all(row["episodes_scheduled"] == 1 for row in rows)
+    assert all(row["scheduled_supervised_bytes"] == row["target_bytes"] for row in rows)
+
+    trainer.schedule_position_override = None
+    row = trainer.update(batches[0].episodes)
+    assert row["schedule_position"] == 3
+    assert row["schedule_override_active"] is False
+    assert row["episodes_scheduled"] == 0
 
 
 def test_replay_episode_supports_v2_adapter() -> None:

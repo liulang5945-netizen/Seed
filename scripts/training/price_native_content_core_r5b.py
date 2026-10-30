@@ -75,18 +75,26 @@ def _fresh_probe(path: Path) -> dict[str, Any]:
 
 
 def _pilot(
-    adapter: NativeContentV2Adapter,
     trainer: R5BRunTrainer,
     episodes: list[dict[str, Any]],
     *,
     updates: int,
-    schedule_update: int,
+    schedule_override: int | None,
 ) -> dict[str, Any]:
-    adapter.schedule_update = schedule_update
-    adapter.schedule_seed = 0
+    """Run declared updates with the trainer-owned schedule position.
+
+    ``schedule_override`` is the declared branch-probe mechanism: the trainer
+    keeps every update on that exact position and records it, so the phase
+    report proves which branch actually executed.
+    """
+
+    trainer.schedule_position_override = schedule_override
     losses: list[float] = []
     cpu_samples: list[float] = []
     wall_samples: list[float] = []
+    positions: list[int] = []
+    scheduled_episodes = 0
+    supervised_bytes = 0
     for batch in batch_schedule(episodes, seed=0, updates=updates, batch_size=BATCH_SIZE):
         started_cpu = time.process_time()
         started_wall = time.perf_counter()
@@ -94,6 +102,9 @@ def _pilot(
         cpu_samples.append(time.process_time() - started_cpu)
         wall_samples.append(time.perf_counter() - started_wall)
         losses.append(float(metrics["loss_nats"]))
+        positions.append(int(metrics["schedule_position"]))
+        scheduled_episodes += int(metrics["episodes_scheduled"])
+        supervised_bytes += int(metrics["scheduled_supervised_bytes"])
     return {
         "updates": updates,
         "loss_first5_median": statistics.median(losses[:5]),
@@ -103,6 +114,9 @@ def _pilot(
         "wall_seconds_median": statistics.median(wall_samples),
         "cpu_samples": cpu_samples,
         "wall_samples": wall_samples,
+        "schedule_positions": positions,
+        "scheduled_episodes": scheduled_episodes,
+        "supervised_bytes": supervised_bytes,
     }
 
 
@@ -155,18 +169,22 @@ def _price(*, approve: bool) -> int:
         if not (gate["in_process_equal"] and gate["fresh_process_equal"]):
             failures.append(f"recovery {gate['label']} differs")
     if not failures:
-        phase_a = _pilot(adapter, trainer, episodes, updates=UPDATES, schedule_update=0)
+        phase_a = _pilot(trainer, episodes, updates=UPDATES, schedule_override=None)
         digest_a = trainer.probe_digest()
         recovery_a = _recovery(trainer, CHECKPOINT_DIR / "pricing-phase-a.pt", digest_a, PHASE_A)
         if not (recovery_a["in_process_equal"] and recovery_a["fresh_process_equal"]):
             failures.append(f"recovery {PHASE_A} differs")
-        phase_b = _pilot(adapter, trainer, episodes, updates=PROBE_UPDATES, schedule_update=300)
+        phase_b = _pilot(trainer, episodes, updates=PROBE_UPDATES, schedule_override=300)
         digest_b = trainer.probe_digest()
         recovery_b = _recovery(trainer, CHECKPOINT_DIR / "pricing-phase-b.pt", digest_b, PHASE_B)
         if not (recovery_b["in_process_equal"] and recovery_b["fresh_process_equal"]):
             failures.append(f"recovery {PHASE_B} differs")
         if not (phase_a["loss_all_finite"] and phase_b["loss_all_finite"]):
             failures.append("pilot loss is not finite")
+        if phase_a["scheduled_episodes"] != 0:
+            failures.append("phase A must stay on the pure teacher-forced branch")
+        if phase_b["scheduled_episodes"] <= 0:
+            failures.append("phase B branch probe executed no scheduled episode")
 
     unit: float | None = None
     unit_wall: float | None = None
