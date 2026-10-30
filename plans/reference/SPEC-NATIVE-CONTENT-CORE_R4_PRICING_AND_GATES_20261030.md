@@ -1,6 +1,6 @@
 # 共同内容核心：重构-4 定价与 R5 数值门合同
 
-日期：2026-10-30，Asia/Shanghai。状态：**已执行（2026-10-30），结论 `r4_priced`。** 用户已评审 R2 并批准 R4；本件冻结 R5 的预算与数值门，但 R5 执行仍需用户另行批准。方向见[唯一主线](../MAINLINE.md)，当前状态见[03](../active/roadmap/03_CURRENT_EXECUTION.md)，候选定义见[R2](SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md)，执行结果见§7。
+日期：2026-10-30，Asia/Shanghai。状态：**R4 已执行（`r4_priced`）；R5 已执行并结案（`FAIL_BEHAVIOR`，见§9）。** 用户已评审 R2 并批准 R4 与 R5；4.1–4.5 的门在开训前冻结，结果按原门判读，不追改。方向见[唯一主线](../MAINLINE.md)，当前状态见[03](../active/roadmap/03_CURRENT_EXECUTION.md)，候选定义见[R2](SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md)，R4 执行结果见§7。
 
 ## 1. 目的与边界
 
@@ -194,3 +194,39 @@ Pilot 判读（不构成能力）：
 - 逐 run 门：零步与端点各做同进程+新进程恢复 digest；任一更新出现 NaN、或运行中位 CPU 超过 R4 单价的 1.5 倍，即记工程失败并停该 run；总 CPU 触 200,000 秒或 wall 触 48 小时即预算停止。
 - Q1 新核心与 Q2 `credit_on` 是同一配置的重复 run，报告只把两者端点 digest 相等记为可复现性证据，不作为通过门。
 - 覆盖：[test_native_content_r5_runner.py](../../tests/taiji_native/test_native_content_r5_runner.py) 4 项（15-run 清单、单价来源、单 run 恢复与冻结组、审批门）；训练模块另有 13 项测试。未读 query/holdout。
+- 评价执行件：[evaluate_native_content_core_r5.py](../../scripts/training/evaluate_native_content_core_r5.py)、[native_content_eval.py](../../taiji/native_content_eval.py)、[test_native_content_r5_eval.py](../../tests/taiji_native/test_native_content_r5_eval.py)。固定分母覆盖 holdout/query 全部 episode 与全部应答轮；机制探针只对新核心，每 seed 取 128 个 baseline 正确 case（seed 20261030），做 cut/rescue/相关交换/无关交换；保持探针取 72 个 train episode；收据定义为“正确轮的选中值逐字出现在期望字节中”；Q2 比较 credit_on/credit_stop 的 holdout answer_exact。判定按 4.6 输出 `PASS_Q1`、对应 `FAIL_*` 或 `INCONCLUSIVE`。评价仍待训练完成后执行，未读 query/holdout。
+
+## 9. R5 执行结果（2026-10-30）
+
+状态：**`FAIL_BEHAVIOR`**。训练报告：[taiji_native_core_r5_training_20261030.json](../../reports/taiji_native_core_r5_training_20261030.json)；评价报告：[taiji_native_core_r5_evaluation_20261030.json](../../reports/taiji_native_core_r5_evaluation_20261030.json)。训练 15/15 run、7,680 更新，墙钟 1.09 h、CPU 42,109 s；15/15 零步/端点恢复通过；三个 seed 的 Q1 新核心与 Q2 credit_on 端点 digest 相同；评价耗时 6,530 CPU s / 564 s wall。sealed 未读。
+
+### 9.1 逐门真数（holdout 全量 1,152 轮 × 3 seed）
+
+| 门 | 实测 | 门槛 | 判定 |
+|---|---|---|---|
+| 全轮 `answer_exact` | 0.323 | ≥0.80 | 失败 |
+| `current_query` | 0.173 | ≥0.85 | 失败 |
+| `previous_query` | 0.207 | ≥0.75 | 失败 |
+| `unknown_query` | 0.737 | ≥0.85 | 失败 |
+| `state_exact` | 0.750 | ≥0.90 | 失败 |
+| `cut_drop` | 0.166（350 例） | ≥0.50 | 失败 |
+| `rescue_gain` | 1.000 | ≥0.90 | 通过 |
+| 相关/无关交换改变差 CI 下界 | 0.020（相关 0.040、无关 0.000） | >0 | 通过 |
+| 训练内插 `answer_exact` | 0.329 | ≥0.85 | 失败 |
+| holdout 与内插差距 | −0.006 | ≤0.10 | 通过 |
+| 收据 `exact` | 0.429（478/1,115） | ≥0.95 | 失败 |
+| 恢复 | 15/15 | 全通过 | 通过 |
+| 新核心/最高基线 CPU | 0.714 | ≤2.0 | 通过 |
+
+比较门通过：新核心 holdout `answer_exact` 比最好基线（普通端到端 0.154）高 **0.169**，bootstrap 95% CI [0.150, 0.188]；query 高 0.150（CI [0.132, 0.168]），不低于基线。Q2 通过：credit_on 0.323 vs credit_stop 0.207，差 **0.117**，CI [0.095, 0.137]。三 seed holdout 为 0.332/0.372/0.264。
+
+### 9.2 架构判读
+
+- **有真实但不足的净收益**：比两条基线高约 0.17，且 CI 下界远大于 0；不是“完全没学到”。但绝对行为离 0.80 很远，因此不能晋级，也不能进入 R6。
+- **答案未稳定经过选中内容（架构级旁路）**：收据只有 0.429，说明过半正确回答的选中值与答案不对应；cut 掉选中事实只降 0.166 正确率。任务收益更可能来自 query/输出头/回合内记忆等旁路。Q2 的 +0.117 又证明 reader/decoder 信用确有部分作用——旁路与内容路径并存，不是全有全无。
+- **自由生成与教师强制差距（架构级目标/解码问题）**：train loss 降到 0.08 nats，但同一训练分布在自由生成下 exact 只有 0.329。模型在 teacher forcing 下几乎拟合，却在自回归生成时漂移；这不是加更新数能解决的。
+- **基线限制照实记录**：修正旧图 holdout answer 0.0、state 1.0（冻结语言头生成不出句子，选择本身正确）；普通端到端 0.154。
+
+### 9.3 结案与唯一后继
+
+按 4.6，R5 以 `FAIL_BEHAVIOR` 结案：不因一次失败自动加更新、加 seed、换题或重跑；本件 4.1–4.5 的门保持原值。R6 条件能力接力未准入。唯一后继是另立一个有界候选合同，目标是让答案必须消费选中内容（例如把选中值作为原子复制片段交给解码器），同时缩小自由生成差距；同一数据、同一基线、同一预算、同一门重新比较。本件不授权该候选的实现或训练。

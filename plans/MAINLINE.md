@@ -40,13 +40,14 @@
 | **R3b-1** | **修正旧图基线** | **已完成（结构门）** | 22/22 检查；固定分母 17/17；仅 value bias 可训练 |
 | **R3b-2** | **普通端到端基线** | **已完成（结构门）** | 11/11 检查；固定分母 17/17；全部参数可训练 |
 | R4 | train-only 定价与合同冻结 | 已完成（`r4_priced`，2026-10-30） | 单价 5.45/0.94/8.20 CPU 秒；恢复 6/6；投影 78,750 CPU 秒/1.88 h；冻结 512 更新 |
-| R5 | 一次有界独立比较 | 评分器与 15-run 训练执行件已备；待用户批准 | Q1 架构包 + Q2 信用单因素；正负均结案 |
-| R6 | 条件能力接力 | 仅在 R5 有净收益后 | T2/T3/自然连续任务/跨会话，按 07 分别验收 |
+| R5 | 一次有界独立比较 | 已执行并结案（`FAIL_BEHAVIOR`，2026-10-30） | 15/15 run、7,680 更新；holdout 0.323（门 0.80）、cut 0.166、内插 0.329、收据 0.429 未达门；比基线高 0.169、Q2 差 0.117、成本/恢复过门 |
+| R5b | 内容落地生成候选（候选） | 未立合同、未批准 | 让答案必须消费选中内容并缩小自由生成差距；同数据/基线/预算/门重新比较 |
+| R6 | 条件能力接力 | 未准入（R5 未过绝对行为/机制/保持门） | T2/T3/自然连续任务/跨会话，按 07 分别验收 |
 
 规则：
 
 - 只能按序推进；跳级必须在本表留下书面修订与理由。
-- R5 训练/评价需要用户单独批准；R4 定价与 R2 评审已于 2026-10-30 完成。
+- R5 已于 2026-10-30 执行并结案；R5b 是新的有界候选，需先写合同并由用户批准，不能把 R5 的失败直接续跑或加剂量。
 - 任何新方向先作为“候选”写进本表，不允许另建一份并列主线文档。
 - 每阶段结束：更新本表状态、[03](active/roadmap/03_CURRENT_EXECUTION.md) 与[10](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)，并在对应合同记录证据。
 
@@ -70,7 +71,7 @@
 
 | 类别 | 路径 | 使用规则 |
 |---|---|---|
-| 当前主线 | `taiji/native_content_core.py`、`taiji/native_content_training.py`、`taiji/corrected_old_baseline.py`、`taiji/ordinary_baseline.py`、`tests/taiji_native/test_native_content_*.py`、`scripts/training/probe_native_content_core_r3.py`、`scripts/training/price_native_content_core_r4.py`、`scripts/training/run_native_content_core_r5.py` | 只按 R4/R5 合同扩展；改动走测试与探针 |
+| 当前主线 | `taiji/native_content_core.py`、`taiji/native_content_training.py`、`taiji/native_content_eval.py`、`taiji/native_content_evaluator.py`、`taiji/corrected_old_baseline.py`、`taiji/ordinary_baseline.py`、`tests/taiji_native/test_native_content_*.py`、`scripts/training/probe_native_content_core_r3.py`、`scripts/training/price_native_content_core_r4.py`、`scripts/training/run_native_content_core_r5.py`、`scripts/training/evaluate_native_content_core_r5.py` | 只按 R4/R5 合同扩展；改动走测试与探针 |
 | 旧基线来源 | `taiji/joint_state_consumption*.py`、`conditional_language_v4.py`、`joint_input_producer.py`、`joint_t1_trainer.py`、`scripts/training/run_taiji_n1_plan177_f_f1.py`、`evaluate_taiji_n1_plan177_f_f1_holdout.py` | 只用于 `corrected_old_v1`；不在此路径继续叠局部头 |
 | 数据与身份 | `plans/manifests/native_core_r1_public_fixture_v1.json`、`plans/manifests/` | 公开面可复用；sealed 面按原边界 |
 | 运营与门禁 | `scripts/training/audit_*.py`、`check_plans_markdown_links.py`、`02`/`05`/`07`/`08` | 维护质量，不定义方向 |

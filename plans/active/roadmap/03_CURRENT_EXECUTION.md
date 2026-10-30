@@ -8,11 +8,11 @@
 
 持续Goal（2026-10-27修订）：沿N主线，发展由态极自身可学习、可恢复的认知机制参与决策与表达的原生认知模型，使其能够以自然中文可靠完成连续任务，跨会话积累和纠正经验，从可核验的经验与反馈中学习并保持旧能力；在授权和资源边界内，必要时即使没有新提示，也能根据目标与状态自主选择继续、求证、求助或等待。各阶段预先声明任务范围和收官条件，以身份可追溯的同一候选及其前后版本，对照合理基线，按范围验证未见任务表现、必要机制的实际贡献、反馈对负责模块的作用、旧能力保持、主动选择效果及真实资源成本；成功、负结果、不可判、工程失败或预算停止均按预定出口结案。
 
-## 当前唯一下一步：重构-5 一次有界独立比较（R4 已定价、R5 执行件已备，待用户批准 R5）
+## 当前唯一下一步：重构-5b 内容落地生成候选（R5 已结案 FAIL_BEHAVIOR，需新合同与批准）
 
-用户已采纳共同内容核心为唯一计划方向，现按[重构方案](../../reference/PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)推进：语义合同→共同主图/基线→隔离实现/零步恢复→预算冻结→一次比较→条件能力接力。旧N177/F/N178结果与费用继续保留，已有授权N178b按原终点/预算结案；它们不再是主候选。训练与预算按 MAINLINE 队列准入：R4 定价已执行，R5 训练/评价需用户另行批准。
+用户已采纳共同内容核心为唯一计划方向，现按[重构方案](../../reference/PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)推进：语义合同→共同主图/基线→隔离实现/零步恢复→预算冻结→一次比较→条件能力接力。旧N177/F/N178结果与费用继续保留，已有授权N178b按原终点/预算结案；它们不再是主候选。R4 定价与 R5 比较均已执行；R5 以 `FAIL_BEHAVIOR` 结案，R6 未准入。
 
-R1设计级已闭合。R2合同已评审：[候选与三类基线比较合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md)，用户于2026-10-30批准R2/R4并授权执行R4定价；R2内容不再改动，R5执行仍待单独批准。
+R1设计级已闭合。R2合同已评审：[候选与三类基线比较合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md)，用户于2026-10-30批准R2/R4与R5；R2内容不再改动，R5已执行并结案。
 
 R3新核心已实现并通过结构门：[R3记录](../../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md)、[模块](../../../taiji/native_content_core.py)、[测试](../../../tests/taiji_native/test_native_content_core.py)、[结构探针报告](../../../reports/taiji_native_core_r3_probe_20261030.json)。公开fixture 17案结构检查53/53通过；零步bundle在独立进程恢复digest一致；0 optimizer updates、未读新sealed。零步相关/无关比1.57，明确不构成判别力证据。
 
@@ -20,7 +20,7 @@ R3b-1修正旧图基线已接入：[模块](../../../taiji/corrected_old_baselin
 
 R3b-2普通端到端基线已接入：[模块](../../../taiji/ordinary_baseline.py)、[测试](../../../tests/taiji_native/test_ordinary_baseline.py)、[结构探针报告](../../../reports/taiji_native_core_r3b2_ordinary_20261030.json)。11/11结构检查通过；历史全文进入prompt、无硬解析门/无离散store；cut 0.02211/rescue 0.0、首字节监督、固定分母17/17；120,097参数全部可训练；零步独立进程恢复一致。零步三组answer_exact均为0，不构成能力证据。
 
-三组对象（R3新核心、R3b-1修正旧图、R3b-2普通端到端）现已齐备，R4 定价已完成（`r4_priced`）；下一阶段R5比较，准入条件是用户批准R5。未获准入前不跑Q1/Q2训练、不读query/holdout。
+三组对象（R3新核心、R3b-1修正旧图、R3b-2普通端到端）现已齐备，R4 定价与 R5 比较均已完成；R5 结案 `FAIL_BEHAVIOR`，R6 未准入。
 
 R4-prep数据已物化：[分区](../../../plans/manifests/native_core_r1_split_v1.json)、[train](../../../plans/manifests/native_core_r1_train_v1.json)、[query](../../../plans/manifests/native_core_r1_query_v1.json)、[holdout](../../../plans/manifests/native_core_r1_holdout_v1.json)、[审计报告](../../../reports/taiji_native_core_r1_course_audit_20261030.json)。432个可能历史取360：216/72/72，另72 unused；每槽6/2/2，反事实成对不跨分区；4 episodes/history、8 turns/episode，1,440 episodes/11,520 turns/5,760 answer turns；实际文本452,160字节；train/query/holdout分文件写入，仅train可读；无模型调用、无sealed读取。精确成本已由R4定价给出（见下）。
 
@@ -30,7 +30,7 @@ R4预检已通过（不训练）：[报告](../../../reports/taiji_native_core_r
 
 R5固定分母评分器已实现：[模块](../../../taiji/native_content_evaluator.py)、[测试](../../../tests/taiji_native/test_native_content_evaluator.py)。分母由声明的answer-turn列表决定，缺失/解析失败/拒答计错；cut/rescue只在baseline正确且cut错误的case上计算；swap按期望答案判对。3/3测试通过。
 
-R5训练执行件已备、未执行：[运行器](../../../scripts/training/run_native_content_core_r5.py)、[训练模块](../../../taiji/native_content_training.py)、[runner测试](../../../tests/taiji_native/test_native_content_r5_runner.py)。声明15 run（Q1 9 + Q2 6）、512更新、seed 0/1/2；`credit_stop`在AdamW前冻结reader/decoder两组；不带`--approve-r5`直接拒绝；逐run零步/端点新进程恢复、NaN与1.5倍单价停止线、总200k CPU/48h预算；报告只写一次。4项runner测试与13项训练测试通过；未读query/holdout、未生成训练报告。
+R5训练与评价已执行并结案：[训练运行器](../../../scripts/training/run_native_content_core_r5.py)、[评价运行器](../../../scripts/training/evaluate_native_content_core_r5.py)、[训练报告](../../../reports/taiji_native_core_r5_training_20261030.json)、[评价报告](../../../reports/taiji_native_core_r5_evaluation_20261030.json)。15/15 run、7,680更新、1.09墙钟小时、42,109 CPU秒；恢复15/15；无NaN/无预算停止。结案 `FAIL_BEHAVIOR`：holdout answer_exact 0.323（门槛0.80）、current 0.173、previous 0.207、unknown 0.737、state 0.750；cut_drop 0.166（门槛0.50）；训练内插0.329（门槛0.85）；收据0.429（门槛0.95）。通过项：比最好基线高0.169（CI下界0.150）、query高0.150、Q2 credit_on−stop差0.117（CI [0.095,0.137]）、rescue 1.0、交换差CI下界0.020、保持差距−0.006、成本0.714、恢复全过。归因：存在真实但不足的基线净收益；答案未稳定经过选中内容（收据0.429、cut 0.166，Q2 +0.117 说明reader/decoder信用仍有部分作用）；自由生成与teacher forcing差距显著（train loss 0.08 vs 内插exact 0.329）。
 
 R1完成证据：[统一语义合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md)五项边界确认；世界审计（360-history/216-72-72/1,440 episodes/11,520 turns/0.80–1.11MB）；公开fixture 17案通过；§2.2接口审计与§2.3合同矛盾自检完成。
 
@@ -76,7 +76,8 @@ F1（holdout 面）与 F1b（query 面，从未读过）都结案为负结果：
 | 重构-3b-2 | [普通端到端基线](../../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md#7-r3b2-普通端到端基线20261030) | 结构门通过：11/11、固定分母17/17、全参数可训练；未训练 |
 | 重构-4-prep | [课程与分区物化](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md#31-首版世界形状本轮确认) | 已完成：216/72/72、1,440 episodes、5,760 answer turns；无模型调用 |
 | 重构-4 | [定价与R5数值门合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md) | 已执行（`r4_priced`）：单价5.45/0.94/8.20 CPU秒、恢复6/6、投影78,750 CPU秒/1.88h、冻结512更新；未读query/holdout |
-| 重构-5 | 一次有界独立比较：Q1 9 run + Q2 6 run | 待用户批准R5；固定分母评分器已实现；4.1–4.5门冻结；正负均结案 |
+| 重构-5 | 一次有界独立比较：Q1 9 run + Q2 6 run | 已执行并结案 `FAIL_BEHAVIOR`：holdout 0.323、cut 0.166、内插 0.329、收据 0.429 未达门；比基线高 0.169、Q2 差 0.117、成本/恢复过门 |
+| 重构-5b | 内容落地生成候选：答案必须消费选中内容并缩小自由生成差距 | 待用户批准并另立有界合同；本轮不实现、不训练 |
 | E0 | 已完成：15臂终点fresh-process parse/answer回执；B真实输入、有效mask及隔离矩阵 | 三份件＋三支仪器自带机检判据（见收束记录§8）；未重训/未重评holdout |
 | CI | 修复四模块9处mypy类型错误 | 精确记录当前源码身份；本机核心类型/受影响回归及实际CI重新核验 |
 | 训练态E3 | 已完成：credit-on/stop、禁写组及optimizer/RNG/cursor往返 | E2c 12/12×2 用例、E3 17/17；选择器无回答信用、真实链解析覆盖仅1/4 单列（收束记录§9） |

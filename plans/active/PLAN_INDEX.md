@@ -26,7 +26,8 @@
 | R3 实现 | [SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md](../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md) | 结构门通过，未训练 |
 | R3b-1 修正旧图基线 | [R3 记录 §6](../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md#6-r3b1-修正旧图基线20261030) | 22/22 结构门；仅 value bias 可训练；未训练 |
 | R3b-2 普通端到端基线 | [R3 记录 §7](../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md#7-r3b2-普通端到端基线20261030) | 11/11 结构门；全参数可训练；未训练 |
-| R4 定价与门 | [定价与R5数值门](../reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md) | 已执行 `r4_priced`；512 更新/run 冻结；R5 执行件已备，待批准 |
+| R4 定价与门 | [定价与R5数值门](../reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md) | 已执行 `r4_priced`；512 更新/run 冻结；R5 已结案 |
+| R5 执行结果 | [R4 合同 §9](../reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md#9-r5-执行结果20261030) | 已执行：`FAIL_BEHAVIOR`；R5b 候选待合同与批准 |
 
 ## 旧资产
 
