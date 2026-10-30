@@ -6,14 +6,15 @@
 
 | 文档 | 文档状态 | 维护职责 |
 |---|---|---|
+| [共同内容核心重构方案](PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md) | 现行主方案 | 任务语义、共同主图、动态读取/生成、对照及有限退出 |
 | [20261030核心设计重审](TAIJI_CORE_DESIGN_REVIEW_20261030.md) | 设计评审建议 | 核心计算图、旧正证、F/N178混杂、保留/重构/退出与新合同前提 |
 | [20261029阶段收束](PROJECT_CONSOLIDATION_20261029.md) | 当前收束记录 | E/F0a资产、E3子门、失败、CI/契约待办及用户执行边界 |
 | [E1消费合同](SPEC-N1-177_E1_state_consumption_contract_20261029.md) | 冻结原规则 | 状态依赖任务与内容消费；进度以03为准 |
 | [F值编码器合同](SPEC-N1-177_F_value_encoder_20261029.md) | 方向/四臂及预检规则冻结 | F0a/F0b分账；F1数字/预算及曝光冲突仍须定稿 |
 | [F1冻结提案](SPEC-N1-177_F1_freeze_proposal_20261029.md) | 待owner签署（未启动） | 候选范围、12-run预算(≈121,500 CPU秒)、数值门与停止线；签后写回F合同 |
 | [N178解析覆盖扩展提案](SPEC-N1-178_parse_coverage_extension_proposal_20261030.md) | 待owner签署（未启动） | F1/F1b 负结果的共同瓶颈；四格覆盖率基线；先测价再定预算 |
-| [E状态消费/信用决策](PLAN-N1-177_E_state_consumption_and_credit_decision_20261029.md) | 当前设计决策 | A–D证据复核/勘误、选项取舍及E0–E3出口 |
-| [N177实施计划](PLAN-N1-177_joint_cognition_slice_20261026.md) | 活动交接 | 已有资产、A–F实施边界及后继接口 |
+| [E状态消费/信用决策](PLAN-N1-177_E_state_consumption_and_credit_decision_20261029.md) | 历史设计依据 | 保留A–D复核与E设计取舍；现行方向取共同核心重构方案 |
+| [N177实施计划](PLAN-N1-177_joint_cognition_slice_20261026.md) | 原实施资产 | 已有接口/A–F边界与回执，作为可比较基线 |
 | [177.5 T1 SPEC](SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md) | 原合同冻结 | 五模式×三seed、数据/更新权限、阈值和预算 |
 | [03执行看板](../active/roadmap/03_CURRENT_EXECUTION.md) | 随耐久进度维护 | 当前运行、臂矩阵及累计资源 |
 | [10工作包](../active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md) | 随阶段交接维护 | 训练＋并行准备、评价、诊断、后继候选的依赖与验收 |
