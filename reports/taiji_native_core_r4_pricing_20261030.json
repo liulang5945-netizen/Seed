@@ -1,0 +1,404 @@
+{
+  "format": "taiji-native-core-r4-pricing-v1",
+  "version": 1,
+  "date": "2026-10-30",
+  "contract": "plans/reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md",
+  "manifest": {
+    "path": "plans/manifests/native_core_r1_train_v1.json",
+    "sha256": "5d151ba9f994670ccc2968b4d4547d280c52c056e991cf831e4f18c818dfedfd",
+    "episodes": 864,
+    "split": "train",
+    "training_read": true
+  },
+  "environment": {
+    "python": "3.12.10",
+    "torch": "2.13.0+cpu",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "cpu_count": 24,
+    "torch_threads": 12
+  },
+  "protocol": {
+    "seed": 0,
+    "batch_size": 4,
+    "updates": 50,
+    "warmup_updates": 5,
+    "measured_updates": 20,
+    "checkpoint_step": 25,
+    "target_updates_per_run": 512,
+    "fallback_updates_per_run": 256,
+    "projected_runs": 15,
+    "safety_factor": 1.25,
+    "cpu_cap_seconds": 200000,
+    "wall_cap_hours": 48.0,
+    "run_id": "20261030"
+  },
+  "objects": {
+    "new_core_v1": {
+      "object": "new_core_v1",
+      "parameter_counts": {
+        "total": 144355,
+        "trainable": 144355
+      },
+      "updates_executed": 50,
+      "restore_ok": true,
+      "zero_step_restore": {
+        "checkpoint": "checkpoints/native_core_r4_pricing/new_core_v1-zero-20261030.pt",
+        "checkpoint_mb": 0.597145,
+        "save_seconds": 0.032840900123119354,
+        "in_process_equal": true,
+        "fresh_process_equal": true,
+        "fresh_restore_seconds": 2.46843699994497
+      },
+      "target_byte_exposures": 21860,
+      "cpu_seconds_per_update_median": 5.453125,
+      "wall_seconds_per_update_median": 0.4643448500428349,
+      "cpu_seconds_per_update_samples": [
+        5.84375,
+        5.796875,
+        5.328125,
+        5.5,
+        5.6875,
+        5.84375,
+        5.796875,
+        5.328125,
+        5.34375,
+        5.28125,
+        5.484375,
+        5.421875,
+        5.40625,
+        5.359375,
+        5.875,
+        5.25,
+        5.328125,
+        6.96875,
+        5.34375,
+        5.828125
+      ],
+      "wall_seconds_per_update_samples": [
+        0.5073558001313359,
+        0.47090770001523197,
+        0.46429659985005856,
+        0.465547600062564,
+        0.4841803000308573,
+        0.49702530005015433,
+        0.4842800998594612,
+        0.456781700020656,
+        0.4587075999006629,
+        0.4473091000691056,
+        0.46350920014083385,
+        0.46432550018653274,
+        0.4574000001884997,
+        0.464364199899137,
+        0.49583599995821714,
+        0.4394600000232458,
+        0.4419161998666823,
+        0.5966157000511885,
+        0.4632882000878453,
+        0.4872511001303792
+      ],
+      "warmup_cpu_seconds": [
+        5.53125,
+        5.8125,
+        5.59375,
+        5.671875,
+        5.515625
+      ],
+      "warmup_wall_seconds": [
+        0.48628460010513663,
+        0.47630139999091625,
+        0.4903710000216961,
+        0.4718257999047637,
+        0.4745783999096602
+      ],
+      "target_bytes_per_update": 433.3,
+      "loss_first10_median": 5.401855763828389,
+      "loss_last10_median": 3.1261249447181836,
+      "loss_delta": 2.2757308191102057,
+      "loss_all_finite": true,
+      "parameters_finite": true,
+      "first_update_gradient_group_norms": {
+        "attention": 0.0030174054741644563,
+        "core": 0.10816665420153435,
+        "decoder": 0.19483721750678237,
+        "output": 0.32987453457082894,
+        "query_encoder": 1.4376048456716631e-06,
+        "reader": 0.08124325448510979
+      },
+      "trainable_without_gradient": [
+        "content_encoder.bias_hh_l0",
+        "content_encoder.bias_ih_l0",
+        "content_encoder.weight_hh_l0",
+        "content_encoder.weight_ih_l0"
+      ],
+      "peak_rss_mb": 358.44096,
+      "checkpoint_step": {
+        "checkpoint": "checkpoints/native_core_r4_pricing/new_core_v1-step25-20261030.pt",
+        "checkpoint_mb": 1.730893,
+        "save_seconds": 6.6330295000225306,
+        "in_process_equal": true,
+        "fresh_process_equal": true,
+        "fresh_restore_seconds": 2.443710899911821
+      }
+    },
+    "corrected_old_v1": {
+      "object": "corrected_old_v1",
+      "parameter_counts": {
+        "total": 123438,
+        "trainable": 3341
+      },
+      "updates_executed": 50,
+      "restore_ok": true,
+      "zero_step_restore": {
+        "checkpoint": "checkpoints/native_core_r4_pricing/corrected_old_v1-zero-20261030.pt",
+        "checkpoint_mb": 0.508053,
+        "save_seconds": 0.028331599896773696,
+        "in_process_equal": true,
+        "fresh_process_equal": true,
+        "fresh_restore_seconds": 2.572527199983597
+      },
+      "target_byte_exposures": 21860,
+      "cpu_seconds_per_update_median": 0.9375,
+      "wall_seconds_per_update_median": 0.0833228500559926,
+      "cpu_seconds_per_update_samples": [
+        1.09375,
+        1.125,
+        0.921875,
+        1.125,
+        0.9375,
+        1.109375,
+        1.015625,
+        0.9375,
+        0.921875,
+        0.75,
+        0.9375,
+        0.921875,
+        0.9375,
+        0.921875,
+        1.171875,
+        0.90625,
+        0.9375,
+        1.109375,
+        0.921875,
+        0.9375
+      ],
+      "wall_seconds_per_update_samples": [
+        0.09359889989718795,
+        0.08632569992914796,
+        0.08331899996846914,
+        0.08385359984822571,
+        0.08564259996637702,
+        0.0898883999325335,
+        0.09265040000900626,
+        0.08003630000166595,
+        0.07564100017771125,
+        0.07425250019878149,
+        0.07228600000962615,
+        0.08082859986461699,
+        0.07762970007024705,
+        0.08121999981813133,
+        0.09675789996981621,
+        0.08332670014351606,
+        0.07847309997305274,
+        0.08613370009697974,
+        0.08085319981910288,
+        0.08525230013765395
+      ],
+      "warmup_cpu_seconds": [
+        1.125,
+        0.9375,
+        0.921875,
+        0.9375,
+        1.0625
+      ],
+      "warmup_wall_seconds": [
+        0.0887207998894155,
+        0.07741299993358552,
+        0.08231540000997484,
+        0.08472039992921054,
+        0.09419810003601015
+      ],
+      "target_bytes_per_update": 433.3,
+      "loss_first10_median": 5.5402765453986405,
+      "loss_last10_median": 5.494428684400475,
+      "loss_delta": 0.0458478609981654,
+      "loss_all_finite": true,
+      "parameters_finite": true,
+      "first_update_gradient_group_norms": {
+        "value_bias": 0.11097156579203184
+      },
+      "trainable_without_gradient": [],
+      "peak_rss_mb": 354.38592,
+      "checkpoint_step": {
+        "checkpoint": "checkpoints/native_core_r4_pricing/corrected_old_v1-step25-20261030.pt",
+        "checkpoint_mb": 0.535729,
+        "save_seconds": 6.500019900035113,
+        "in_process_equal": true,
+        "fresh_process_equal": true,
+        "fresh_restore_seconds": 2.4331392000894994
+      }
+    },
+    "ordinary_v1": {
+      "object": "ordinary_v1",
+      "parameter_counts": {
+        "total": 120097,
+        "trainable": 120097
+      },
+      "updates_executed": 50,
+      "restore_ok": true,
+      "zero_step_restore": {
+        "checkpoint": "checkpoints/native_core_r4_pricing/ordinary_v1-zero-20261030.pt",
+        "checkpoint_mb": 0.494195,
+        "save_seconds": 0.019646500004455447,
+        "in_process_equal": true,
+        "fresh_process_equal": true,
+        "fresh_restore_seconds": 2.52164029981941
+      },
+      "target_byte_exposures": 21860,
+      "cpu_seconds_per_update_median": 8.203125,
+      "wall_seconds_per_update_median": 0.7031556000001729,
+      "cpu_seconds_per_update_samples": [
+        8.4375,
+        8.3125,
+        8.625,
+        7.859375,
+        7.859375,
+        8.609375,
+        8.140625,
+        7.9375,
+        8.015625,
+        7.390625,
+        8.265625,
+        8.359375,
+        8.6875,
+        7.859375,
+        8.3125,
+        7.890625,
+        7.8125,
+        8.578125,
+        8.078125,
+        8.515625
+      ],
+      "wall_seconds_per_update_samples": [
+        0.7187078001443297,
+        0.7101648000534624,
+        0.7547258001286536,
+        0.6645008998457342,
+        0.6825334001332521,
+        0.746270899893716,
+        0.6960571999661624,
+        0.6696947999298573,
+        0.7029288001358509,
+        0.6301626998465508,
+        0.7033823998644948,
+        0.7280258999671787,
+        0.7220574000384659,
+        0.7016682999674231,
+        0.7276955000124872,
+        0.676098900148645,
+        0.6666610999964178,
+        0.7372330001089722,
+        0.6826683001127094,
+        0.7180011998862028
+      ],
+      "warmup_cpu_seconds": [
+        7.8125,
+        8.3125,
+        8.671875,
+        8.109375,
+        8.3125
+      ],
+      "warmup_wall_seconds": [
+        0.6761262000072747,
+        0.6935219001024961,
+        0.7491084998473525,
+        0.6800081999972463,
+        0.7089404000435024
+      ],
+      "target_bytes_per_update": 433.3,
+      "loss_first10_median": 5.37014536729579,
+      "loss_last10_median": 3.199113945339037,
+      "loss_delta": 2.1710314219567532,
+      "loss_all_finite": true,
+      "parameters_finite": true,
+      "first_update_gradient_group_norms": {
+        "core": 0.11450412443037274,
+        "decoder": 0.19832914995409906,
+        "input_position": 0.0004255234660403747,
+        "output": 0.33230857487215587,
+        "output_position": 0.0004454482055350901,
+        "query": 0.0010361290717119207
+      },
+      "trainable_without_gradient": [],
+      "peak_rss_mb": 414.277632,
+      "checkpoint_step": {
+        "checkpoint": "checkpoints/native_core_r4_pricing/ordinary_v1-step25-20261030.pt",
+        "checkpoint_mb": 1.471772,
+        "save_seconds": 6.972242100164294,
+        "in_process_equal": true,
+        "fresh_process_equal": true,
+        "fresh_restore_seconds": 2.5173195998650044
+      }
+    }
+  },
+  "projection": {
+    "basis": "max median CPU/wall per update across the priced objects",
+    "per_object": {
+      "new_core_v1": {
+        "updates_per_run": 512,
+        "projected_runs": 15,
+        "safety_factor": 1.25,
+        "cpu_seconds": 52350.0,
+        "wall_seconds": 4457.710560411215,
+        "wall_hours": 1.2382529334475596
+      },
+      "corrected_old_v1": {
+        "updates_per_run": 512,
+        "projected_runs": 15,
+        "safety_factor": 1.25,
+        "cpu_seconds": 9000.0,
+        "wall_seconds": 799.899360537529,
+        "wall_hours": 0.22219426681598028
+      },
+      "ordinary_v1": {
+        "updates_per_run": 512,
+        "projected_runs": 15,
+        "safety_factor": 1.25,
+        "cpu_seconds": 78750.0,
+        "wall_seconds": 6750.293760001659,
+        "wall_hours": 1.8750816000004609
+      }
+    },
+    "updates_512": {
+      "updates_per_run": 512,
+      "projected_runs": 15,
+      "safety_factor": 1.25,
+      "cpu_seconds": 78750.0,
+      "wall_seconds": 6750.293760001659,
+      "wall_hours": 1.8750816000004609
+    },
+    "updates_256": {
+      "updates_per_run": 256,
+      "projected_runs": 15,
+      "safety_factor": 1.25,
+      "cpu_seconds": 39375.0,
+      "wall_seconds": 3375.1468800008297,
+      "wall_hours": 0.9375408000002304
+    },
+    "frozen_updates_per_run": 512,
+    "budget_note": "512-update projection is within the declared caps"
+  },
+  "cost_gate_precondition": {
+    "new_core_over_best_baseline_cpu": 0.6647619047619048,
+    "within_two_times_best_baseline": true
+  },
+  "status": "r4_priced",
+  "engineering_failures": [],
+  "read_boundaries": {
+    "query_split_read": false,
+    "holdout_split_read": false,
+    "sealed_read": false,
+    "optimizer_updates": 150
+  },
+  "started_at": "2026-10-30T11:44:09.269159+00:00",
+  "finished_at": "2026-10-30T11:45:55.242380+00:00"
+}

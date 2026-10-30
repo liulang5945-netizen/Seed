@@ -1,6 +1,6 @@
 # 共同内容核心：重构-4 定价与 R5 数值门合同
 
-日期：2026-10-30，Asia/Shanghai。状态：**设计合同，未执行。执行前需要用户评审 R2 并批准 R4；本件不授权训练、评价或读取 query/holdout。** 方向见[唯一主线](../MAINLINE.md)，当前状态见[03](../active/roadmap/03_CURRENT_EXECUTION.md)，候选定义见[R2](SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md)。
+日期：2026-10-30，Asia/Shanghai。状态：**已执行（2026-10-30），结论 `r4_priced`。** 用户已评审 R2 并批准 R4；本件冻结 R5 的预算与数值门，但 R5 执行仍需用户另行批准。方向见[唯一主线](../MAINLINE.md)，当前状态见[03](../active/roadmap/03_CURRENT_EXECUTION.md)，候选定义见[R2](SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md)，执行结果见§7。
 
 ## 1. 目的与边界
 
@@ -141,3 +141,45 @@ R4 报告必须给出三组单位成本、15-run 投影、峰值内存、恢复�
 - 不把 pilot loss 下降当能力；
 - 不因为新核心参数更多或更少而改公平口径；
 - 不在看到 R5 结果后修改 4.1–4.5 的门。
+
+## 7. 执行结果（2026-10-30）
+
+报告：[taiji_native_core_r4_pricing_20261030.json](../../reports/taiji_native_core_r4_pricing_20261030.json)，状态 `r4_priced`。执行件：[训练模块](../../taiji/native_content_training.py)、[定价脚本](../../scripts/training/price_native_content_core_r4.py)、[测试](../../tests/taiji_native/test_native_content_training.py)。只读 train manifest（sha256 `5d151ba9…dfedfd`，864 episodes）；`query_split_read=false`、`holdout_split_read=false`、`sealed_read=false`；optimizer updates = 150（3×50）。
+
+环境：Python 3.12.10，torch 2.13.0+cpu，Windows 11，24 逻辑核，torch 线程 12。
+
+### 7.1 单位成本与 pilot（train-only）
+
+每更新 = 4 episodes × 4 应答轮，目标字节/更新 433.3；预热 5 步后计 20 步中位数。
+
+| 对象 | 参数（总/可训） | CPU 秒/更新 | wall 秒/更新 | loss 首10中位 → 末10中位 | 第25步 checkpoint MB | 新进程恢复秒 | 峰值 RSS MB |
+|---|---|---|---|---|---|---|---|
+| 新核心 `new_core_v1` | 144,355 / 144,355 | 5.45 | 0.46 | 5.402 → 3.126 | 1.73 | 2.44 | 358 |
+| 修正旧图 `corrected_old_v1` | 123,438 / 3,341 | 0.94 | 0.08 | 5.540 → 5.494 | 0.54 | 2.43 | 354 |
+| 普通端到端 `ordinary_v1` | 120,097 / 120,097 | 8.20 | 0.70 | 5.370 → 3.199 | 1.47 | 2.52 | 414 |
+
+恢复门：3 对象 ×（零步 + 第25步）×（同进程 + 新进程），6/6 digest 完全一致；零步 checkpoint 0.49–0.60 MB，第25步 0.54–1.73 MB。训练后参数全部有限，无 NaN。
+
+Pilot 判读（不构成能力）：
+
+- 新核心与普通端到端的训练 loss 都下降约 2.2 nats，修正旧图只降 0.046 nats；后者只有 3,341 个 value bias 可训、语言头冻结，是声明中的基线限制，不是新发现。
+- 新核心单步 CPU 比普通端到端低约 34%（5.45 vs 8.20）：普通基线把全文历史拼进 prompt，读取长度随轮次增长；新核心只读少量内容候选。这是信息路径导致的架构成本差，不是工程偶然。
+- 新核心的 `content_encoder` 四个参数在任务 loss 下全部无梯度（持久 latent 边界按设计生效）；reader/decoder/core/query/attention/output 有梯度。
+- loss 下降只说明优化可跑、数据可适配；R5 才比较未见表现与机制贡献。
+
+### 7.2 预算投影与冻结
+
+按三对象中最贵单位成本（普通端到端 8.20 CPU / 0.70 wall）：
+
+| 更新/run | CPU 秒（×15 run ×1.25） | 占 200,000 上限 | wall 小时 | 占 48h 上限 |
+|---|---|---|---|---|
+| 512 | 78,750 | 39.4% | 1.88 | 3.9% |
+| 256（备用） | 39,375 | 19.7% | 0.94 | 2.0% |
+
+结论：**冻结 512 更新/run**，256 备用未启用；无预算停止。成本门前置条件成立：新核心 CPU 为最高基线（普通端到端）的 0.665 倍，满足 ≤2.0 倍。
+
+### 7.3 对 R5 的直接影响
+
+- 15 run（Q1 9 + Q2 6）按 512 更新、seed 0/1/2、批次 4 episodes 执行，预计 ≤78,750 CPU 秒、≤1.88 wall 小时；实际仍按 4.4 的单 run 1.5 倍停止线逐 run 检查。
+- 第25步新进程恢复已证同 digest，可作为 R5 的中途恢复基线；但 R5 端点仍须重新做零步/端点恢复门。
+- R5 未获用户批准前不执行；本件 4.1–4.5 的门不再改动。

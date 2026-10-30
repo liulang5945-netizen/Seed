@@ -35,18 +35,18 @@
 | 顺序 | 阶段 | 当前状态 | 出口/边界 |
 |---|---|---|---|
 | R1 | 统一语义合同 | 已完成（设计级） | 时间/byte/固定分母/cut-rescue/来源/fixture 统一 |
-| R2 | 候选与三类基线合同 | 已写，待用户评审 | 新核心/修正旧图/普通基线，Q1 与 Q2 分离 |
+| R2 | 候选与三类基线合同 | 已评审（用户 2026-10-30 批准 R2/R4） | 新核心/修正旧图/普通基线，Q1 与 Q2 分离 |
 | R3 | 新核心隔离实现与零步恢复 | 已完成（结构门） | 53/53 结构检查；未训练，不称学会 |
 | **R3b-1** | **修正旧图基线** | **已完成（结构门）** | 22/22 检查；固定分母 17/17；仅 value bias 可训练 |
 | **R3b-2** | **普通端到端基线** | **已完成（结构门）** | 11/11 检查；固定分母 17/17；全部参数可训练 |
-| R4 | train-only 定价与合同冻结 | 合同已写+预检通过，执行待 R2 评审+批准 | 课程 split 已物化（216/72/72）；单位成本、数据/保持/数值门/预算/停止线 |
-| R5 | 一次有界独立比较 | 评分器已实现；待 R4 | Q1 架构包 + Q2 信用单因素；正负均结案 |
+| R4 | train-only 定价与合同冻结 | 已完成（`r4_priced`，2026-10-30） | 单价 5.45/0.94/8.20 CPU 秒；恢复 6/6；投影 78,750 CPU 秒/1.88 h；冻结 512 更新 |
+| R5 | 一次有界独立比较 | 评分器已实现；待用户批准 | Q1 架构包 + Q2 信用单因素；正负均结案 |
 | R6 | 条件能力接力 | 仅在 R5 有净收益后 | T2/T3/自然连续任务/跨会话，按 07 分别验收 |
 
 规则：
 
 - 只能按序推进；跳级必须在本表留下书面修订与理由。
-- R2 用户评审未完成前不进入 R4 训练/定价与 R5 评价；R3b 的隔离实现可在评审并行。
+- R5 训练/评价需要用户单独批准；R4 定价与 R2 评审已于 2026-10-30 完成。
 - 任何新方向先作为“候选”写进本表，不允许另建一份并列主线文档。
 - 每阶段结束：更新本表状态、[03](active/roadmap/03_CURRENT_EXECUTION.md) 与[10](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)，并在对应合同记录证据。
 
@@ -70,7 +70,7 @@
 
 | 类别 | 路径 | 使用规则 |
 |---|---|---|
-| 当前主线 | `taiji/native_content_core.py`、`tests/taiji_native/test_native_content_core.py`、`scripts/training/probe_native_content_core_r3.py` | 只按 R3b/R4 合同扩展；改动走测试与探针 |
+| 当前主线 | `taiji/native_content_core.py`、`taiji/native_content_training.py`、`taiji/corrected_old_baseline.py`、`taiji/ordinary_baseline.py`、`tests/taiji_native/test_native_content_*.py`、`scripts/training/probe_native_content_core_r3.py`、`scripts/training/price_native_content_core_r4.py` | 只按 R4/R5 合同扩展；改动走测试与探针 |
 | 旧基线来源 | `taiji/joint_state_consumption*.py`、`conditional_language_v4.py`、`joint_input_producer.py`、`joint_t1_trainer.py`、`scripts/training/run_taiji_n1_plan177_f_f1.py`、`evaluate_taiji_n1_plan177_f_f1_holdout.py` | 只用于 `corrected_old_v1`；不在此路径继续叠局部头 |
 | 数据与身份 | `plans/manifests/native_core_r1_public_fixture_v1.json`、`plans/manifests/` | 公开面可复用；sealed 面按原边界 |
 | 运营与门禁 | `scripts/training/audit_*.py`、`check_plans_markdown_links.py`、`02`/`05`/`07`/`08` | 维护质量，不定义方向 |
