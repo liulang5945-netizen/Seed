@@ -21,6 +21,23 @@
 | cut 计“颜色与 baseline 不同”，rescue 计“恢复后又等于 baseline” | §6.3 cut 必须降低正确率、rescue 必须恢复正确率；复现一致只算复现 |
 | 硬解析失败时内容不能入库，回答 loss 也到不了解析门 | §4.1 解析是辅助视图，不是唯一准入门；未解析内容可带来源/歧义进入，任务信用可到达声明模块 |
 
+### 2.1 当前代码触点（只读基线 22cd81b25）
+
+下表只用于把 R1 条款落到具体文件，不代表已实现或已批准修改；行号对应当前 HEAD，代码未在本轮改动。
+
+| R1 条款 | 当前触点 | 已确认事实 | 实现顺序 |
+|---|---|---|---|
+| 第 t 步 byte 目标 | [run_taiji_n1_plan177_f_f1.py](../../scripts/training/run_taiji_n1_plan177_f_f1.py) L87–L101；[conditional_language_v4.py](../../taiji/conditional_language_v4.py) `next_logits` | `for symbol in target[:-1]` 先取当前 logits、后 observe 当前 symbol，loss 用 `target[1:]`；首字节被跳过，目标与调用顺序错位 | 1. 先修为 `logits_t -> target_t`，首字节监督；训练/评分共用同一 target 切片 |
+| 固定分母 | [evaluate_taiji_n1_plan177_f_f1_holdout.py](../../scripts/training/evaluate_taiji_n1_plan177_f_f1_holdout.py) L258–L343 | `answer_exact` 分母是 `len(rows)`，但 `value_exact/state_exact` 只用解析成功且 act=query 的 `query_turns`；`query_unparsed` 在 L279–L281 直接 `continue`，被筛出分母 | 2. 建 `task_units` 固定分母；解析失败/拒答/错误计对应类别；query-only 与全轮分开 |
+| 当前/旧值 | [joint_state_consumption_course.py](../../taiji/joint_state_consumption_course.py) L275–L361；[joint_state_consumption.py](../../taiji/joint_state_consumption.py) L232–L252、L355–L441；评分器 L262 | 课程有 old_value 和“之前”查询；store 有 current/history；selector 只按 entity/attribute 打分；评分器对两轮都取 `store.current` | 3. 查询带 `time_intent`；selector 输入 time；current/previous 走不同合法版本；不用 `store.current` 统一回答 |
+| cut/rescue 正确性 | 评分器 L321–L324 | cut 计 `cut != baseline`，rescue 计 `rescue == baseline`；错误 baseline 也能 rescue=1 | 4. 改为正确率下降/恢复；baseline 错误 case 单列 |
+| 固定 bias/逐步读取 | [run_taiji_n1_plan177_f_f1.py](../../scripts/training/run_taiji_n1_plan177_f_f1.py) L92–L101；`_replay`/`_answer` | 整句每步加同一个 `bias(feature(value))`；V4 冻结 | 5. 新核心每步读 query/time + 选中内容 + 前缀；固定 bias 只作修正基线 |
+| hidden/query-only | 评分器 `_replay`/`_answer` 路径；[conditional_language_v4.py](../../taiji/conditional_language_v4.py) | `_answer` 只过滤 evidence sources，仍用同一 `language_state`；hidden 可保留事实 | 6. 重建 query-only hidden/workspace/source cache，并做隐藏通道探针 |
+| 解析准入与信用 | [joint_input_producer.py](../../taiji/joint_input_producer.py)；[joint_t1_trainer.py](../../taiji/joint_t1_trainer.py) | slot/act 离散化/detach；回答 loss 未到 producer；解析失败内容不能入库 | 7. 未解析内容带来源/状态入库；任务信用到达声明模块；辅助 CE 单列 |
+| 来源/版本/恢复 | [joint_state_consumption.py](../../taiji/joint_state_consumption.py) 的 feature/store 结构；F0/F1 checkpoint | 现有 feature 有 source/revision，但缺统一 encoder revision/valid_to/status 迁移规则 | 8. 补 schema 与 checkpoint 迁移；训练前零步恢复 |
+
+**最小修改顺序**：先 1（byte 对齐）与 2（固定分母），得到可解释的修正旧基线；再 3（time/selector/history），再做 6（hidden 隔离）；最后 5（动态读取）与 7（解析准入/信用）。第 1/2 条不修就开训，任何结果都不能作为新架构证据。
+
 ## 3. 任务与时间语义
 
 ### 3.1 最小世界（暂定形状）
