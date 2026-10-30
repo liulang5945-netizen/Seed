@@ -63,7 +63,8 @@
 | 重构-1 已完成 | [统一语义合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md)；[世界审计](../../../reports/taiji_native_core_r1_world_audit_20261030.json)与[公开fixture](../../../reports/taiji_native_core_r1_public_fixture_audit_20261030.json)已做 | 设计级闭合：五项边界、世界/17案fixture、§2.2接口审计；未实现/训练 |
 | 重构-2 设计已写 | [候选与三类基线合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md)：新核心、修正旧图、普通端到端基线；Q1架构包/ Q2信用分离 | 待用户评审；同数据/权限/资源；未评审前不进入R4训练/定价与R5评价 |
 | 重构-3 结构门已过 | [新核心隔离实现与零步恢复](../../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md)、[结构探针](../../../reports/taiji_native_core_r3_probe_20261030.json) | 53/53结构检查、cut/rescue、首字节监督、独立进程恢复；未训练、不称学会 |
-| 重构-3b 当前队首 | 修正旧图基线：byte对齐、固定分母、current/previous选择接入同一评分器 | 与R3同fixture读数后才进入Q1；不训练 |
+| 重构-3b-1 结构门已过 | [修正旧图基线](../../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md#6-r3b1-修正旧图基线20261030)、[基线探针](../../../reports/taiji_native_core_r3b_baseline_20261030.json) | 22/22；固定分母17/17；硬解析/离散store/current-previous/固定bias/冻结头；未训练 |
+| 重构-3b-2 当前队首 | 普通端到端基线：同V3字节脊/同数据/同目标，无硬解析门、无离散store | 与R3、R3b-1同fixture读数后才进入R4 |
 | 重构-4 | train-only定价、数据/保持/数值门/预算与停止线 | 标定先限额，正式合同冻结后准入 |
 | 重构-5 | 一次有界独立比较 | 行为/保持/恢复/成本合取，正负均结案 |
 | 重构-6 | T2/任务所需T3、自然连续任务、跨会话及条件扩域 | 沿下列后继任务卡与07，能力门不改 |

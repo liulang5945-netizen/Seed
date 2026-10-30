@@ -9,7 +9,7 @@
 | [重构方案](PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md) | 现行主方案 | 共同内容主图、动态读取/生成、三类基线、有限退出 |
 | [R1 统一语义合同](SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md) | 设计级闭合 | 任务/时间/byte目标/固定分母/cut-rescue/来源/fixture |
 | [R2 候选与基线合同](SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md) | 待用户评审 | 新核心/修正旧图/普通基线、Q1 与 Q2、公平性 |
-| [R3 隔离实现与零步恢复](SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md) | 结构门通过，未训练 | 新核心模块、信用组、bundle 恢复、结构探针读数 |
+| [R3 隔离实现与零步恢复](SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md) | 结构门通过，未训练 | 新核心模块、信用组、bundle 恢复、结构探针；§6 含 R3b-1 修正旧图基线 |
 | [20261030 核心设计重审](TAIJI_CORE_DESIGN_REVIEW_20261030.md) | 设计依据 | 目标/底座/当前候选分层、旧实验混杂、重构建议 |
 | [20261029 阶段收束](PROJECT_CONSOLIDATION_20261029.md) | 当前证据账 | E/F0a 资产、E3 子门、失败、CI/契约待办 |
 

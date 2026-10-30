@@ -1,0 +1,309 @@
+{
+  "schema": "taiji-corrected-old-r3b-probe-v1",
+  "status": "r3b_structure_passed",
+  "fixture": {
+    "path": "plans/manifests/native_core_r1_public_fixture_v1.json",
+    "sha256": "84e1296ff59182c651f3bce9037c29866833ab72c7c99861572747d5b913268b",
+    "cases": 17
+  },
+  "config": {
+    "width": 64,
+    "embedding_width": 32,
+    "key_width": 32,
+    "slots": 8,
+    "chunk_bytes": 8,
+    "max_observation_bytes": 512,
+    "max_input_evidence_bytes": 512,
+    "max_output_position": 128,
+    "max_generation_bytes": 64,
+    "seed": 201,
+    "position_extension_seed": 202
+  },
+  "parameters": 123438,
+  "trainable_parameters": [
+    "value_bias.weight"
+  ],
+  "cases": [
+    {
+      "fixture_id": "same-query-current-a",
+      "group_id": "same-query-current",
+      "query_text": "雨伞的颜色是什么？",
+      "time_intent": "current",
+      "parse_ok": true,
+      "reason": "selected",
+      "selected_value": "蓝色",
+      "current_facts": 1,
+      "logits_digest": "f16fdba3b5376c614983c75a0fa0473e79afc3d456834a0d3562ae77f8f28ab8"
+    },
+    {
+      "fixture_id": "same-query-current-b",
+      "group_id": "same-query-current",
+      "query_text": "雨伞的颜色是什么？",
+      "time_intent": "current",
+      "parse_ok": true,
+      "reason": "selected",
+      "selected_value": "绿色",
+      "current_facts": 1,
+      "logits_digest": "2ace9d96fc421082191cc694001d6986c58ef4d14953d8dc9319eef7313e60c8"
+    },
+    {
+      "fixture_id": "same-current-history-a",
+      "group_id": "same-current-history",
+      "query_text": "水杯的颜色是什么？",
+      "time_intent": "current",
+      "parse_ok": true,
+      "reason": "selected",
+      "selected_value": "蓝色",
+      "current_facts": 1,
+      "logits_digest": "21936ccfb4b81a1a32de51fd0d2ff745903890288296ff6b72e23f9c17cbc6a3"
+    },
+    {
+      "fixture_id": "same-current-history-b",
+      "group_id": "same-current-history",
+      "query_text": "水杯的颜色是什么？",
+      "time_intent": "current",
+      "parse_ok": true,
+      "reason": "selected",
+      "selected_value": "蓝色",
+      "current_facts": 1,
+      "logits_digest": "21936ccfb4b81a1a32de51fd0d2ff745903890288296ff6b72e23f9c17cbc6a3"
+    },
+    {
+      "fixture_id": "same-query-time-current",
+      "group_id": "same-query-time",
+      "query_text": "背包的颜色是什么？",
+      "time_intent": "current",
+      "parse_ok": true,
+      "reason": "selected",
+      "selected_value": "蓝色",
+      "current_facts": 1,
+      "logits_digest": "61738b504625faba796e40c50b4dbce3d34227bd4c21aacc6ec5b3672f6868a4"
+    },
+    {
+      "fixture_id": "same-query-time-previous",
+      "group_id": "same-query-time",
+      "query_text": "背包的颜色是什么？",
+      "time_intent": "previous",
+      "parse_ok": true,
+      "reason": "selected",
+      "selected_value": "红色",
+      "current_facts": 1,
+      "logits_digest": "a2327ff8cb8f974f34c968ee518444c40a5388b3b22cb71e54ef0da3e731ce4a"
+    },
+    {
+      "fixture_id": "correction",
+      "group_id": "correction",
+      "query_text": "耳机的颜色是什么？",
+      "time_intent": "current",
+      "parse_ok": true,
+      "reason": "selected",
+      "selected_value": "蓝色",
+      "current_facts": 1,
+      "logits_digest": "1cb59a156bf24e5aeeb5232941dd5b0c31fba8d933bbab4adffc4a61859b18ab"
+    },
+    {
+      "fixture_id": "three-versions",
+      "group_id": "three-versions",
+      "query_text": "背包的颜色是什么？",
+      "time_intent": "previous",
+      "parse_ok": true,
+      "reason": "selected",
+      "selected_value": "蓝色",
+      "current_facts": 1,
+      "logits_digest": "61738b504625faba796e40c50b4dbce3d34227bd4c21aacc6ec5b3672f6868a4"
+    },
+    {
+      "fixture_id": "same-value-version",
+      "group_id": "same-value-version",
+      "query_text": "雨伞的颜色是什么？",
+      "time_intent": "previous",
+      "parse_ok": true,
+      "reason": "selected",
+      "selected_value": "蓝色",
+      "current_facts": 1,
+      "logits_digest": "f16fdba3b5376c614983c75a0fa0473e79afc3d456834a0d3562ae77f8f28ab8"
+    },
+    {
+      "fixture_id": "distractor",
+      "group_id": "distractor",
+      "query_text": "水杯的颜色是什么？",
+      "time_intent": "current",
+      "parse_ok": true,
+      "reason": "selected",
+      "selected_value": "红色",
+      "current_facts": 2,
+      "logits_digest": "5b60322846290d809ca8034dc32d8e7fe2084470ad0c2b7874b1487d9942e695"
+    },
+    {
+      "fixture_id": "location",
+      "group_id": "location",
+      "query_text": "水杯的位置在哪里？",
+      "time_intent": "current",
+      "parse_ok": true,
+      "reason": "selected",
+      "selected_value": "抽屉",
+      "current_facts": 1,
+      "logits_digest": "a86139466e08ce852d3a40924697294d3e6b9949aaf5e99ce0ca8b87a2b0b43e"
+    },
+    {
+      "fixture_id": "owner",
+      "group_id": "owner",
+      "query_text": "台灯归谁？",
+      "time_intent": "current",
+      "parse_ok": true,
+      "reason": "selected",
+      "selected_value": "你的",
+      "current_facts": 1,
+      "logits_digest": "395a89b84ad72c456d0819285eece9042d812ebf07840d600d3ff5993a5e2405"
+    },
+    {
+      "fixture_id": "unknown-current",
+      "group_id": "unknown-current",
+      "query_text": "耳机的位置在哪里？",
+      "time_intent": "current",
+      "parse_ok": true,
+      "reason": "no_fact",
+      "selected_value": null,
+      "current_facts": 0,
+      "logits_digest": "5ff55d416ad54fdc220a23d553a53ac0f09c2826a5e7caf143032b5477226da6"
+    },
+    {
+      "fixture_id": "unknown-previous",
+      "group_id": "unknown-previous",
+      "query_text": "耳机的颜色是什么？",
+      "time_intent": "previous",
+      "parse_ok": true,
+      "reason": "no_fact",
+      "selected_value": null,
+      "current_facts": 1,
+      "logits_digest": "65c633e5383a918687294983ae9ac736055ada9597165404b06e219db714e8a1"
+    },
+    {
+      "fixture_id": "ambiguous",
+      "group_id": "ambiguous",
+      "query_text": "雨伞的颜色是什么？",
+      "time_intent": "current",
+      "parse_ok": true,
+      "reason": "no_fact",
+      "selected_value": null,
+      "current_facts": 0,
+      "logits_digest": "fb1f6d6b52f4d8791d5597b7fb7fa0e647ed8c90d054d28d8211a1ceb91d5e10"
+    },
+    {
+      "fixture_id": "negation",
+      "group_id": "negation",
+      "query_text": "雨伞的颜色是什么？",
+      "time_intent": "current",
+      "parse_ok": true,
+      "reason": "no_fact",
+      "selected_value": null,
+      "current_facts": 0,
+      "logits_digest": "fb1f6d6b52f4d8791d5597b7fb7fa0e647ed8c90d054d28d8211a1ceb91d5e10"
+    },
+    {
+      "fixture_id": "non-query",
+      "group_id": "non-query",
+      "query_text": null,
+      "time_intent": null,
+      "parse_ok": true,
+      "reason": "non_query",
+      "selected_value": null,
+      "current_facts": 1
+    }
+  ],
+  "checks": {
+    "pass": [
+      "hard parser covers every public query text",
+      "same query with different current values changes the readout",
+      "same current value keeps current readout identical",
+      "same-current pair has different previous values",
+      "same current value with different history changes the previous readout",
+      "same query text with different time intent changes the readout",
+      "three versions: previous is revision 1",
+      "same-value correction keeps a distinct previous revision",
+      "previous without a predecessor has no fact and does not fall back",
+      "unknown-current: empty candidate and no fabricated value",
+      "ambiguous: empty candidate and no fabricated value",
+      "negation: empty candidate and no fabricated value",
+      "owner boundary: another owner sees no fact",
+      "cut removed the selected fact",
+      "cut changes the readout",
+      "legal rescue restores the exact baseline readout",
+      "step-0 logits do not depend on target[0]",
+      "step-1 logits depend on the observed first target byte",
+      "fixed denominator counts every declared turn",
+      "every public query parsed; parse failures would still be counted",
+      "zero-step baseline restores in-process",
+      "zero-step baseline restores in a fresh process"
+    ],
+    "fail": []
+  },
+  "readouts": {
+    "cut_delta": 0.08798005431890488,
+    "rescue_delta": 0.0,
+    "step0_target_byte_delta": 0.0,
+    "step1_prefix_delta": 0.44248923659324646
+  },
+  "fixed_denominator": {
+    "format": "taiji-corrected-old-fixed-denominator-score-v1",
+    "version": 1,
+    "scored_turns": 17,
+    "exact": 0,
+    "parse_failures": 0,
+    "abstentions": 1,
+    "missing_predictions": [],
+    "answer_exact": 0.0,
+    "by_category": {
+      "current_query": {
+        "turns": 9,
+        "exact": 0,
+        "parse_failures": 0
+      },
+      "previous_query": {
+        "turns": 3,
+        "exact": 0,
+        "parse_failures": 0
+      },
+      "unknown_query": {
+        "turns": 2,
+        "exact": 0,
+        "parse_failures": 0
+      },
+      "ambiguous_query": {
+        "turns": 2,
+        "exact": 0,
+        "parse_failures": 0
+      },
+      "non_query": {
+        "turns": 1,
+        "exact": 0,
+        "parse_failures": 0
+      }
+    }
+  },
+  "restore": {
+    "saved_parameter_revision": 0,
+    "saved_facts": 2,
+    "expected_digest": "b7d3d612fdc8574b3682cad56fc6a48fb25ae5337e21d7145eb3f85e225b6634",
+    "in_process_digest": "b7d3d612fdc8574b3682cad56fc6a48fb25ae5337e21d7145eb3f85e225b6634",
+    "fresh_process_digest": "b7d3d612fdc8574b3682cad56fc6a48fb25ae5337e21d7145eb3f85e225b6634",
+    "in_process_equal": true,
+    "fresh_process_equal": true
+  },
+  "model_calls": {
+    "teacher_forced": 18,
+    "generated_answers": 16,
+    "restore_probe": 2,
+    "fresh_process": 1
+  },
+  "optimizer_updates": 0,
+  "training_started": false,
+  "sealed_text_read": 0,
+  "can_promote": false,
+  "source_sha256": {
+    "taiji/corrected_old_baseline.py": "320abc67994c8ebdb5020712e4467dc4094ede51abea534d37c8a543dbd7f46c",
+    "tests/taiji_native/test_corrected_old_baseline.py": "2a493ad35141c55c6fb6faded46d10880e064bb6a18cb055227825c8a2431433"
+  },
+  "cpu_seconds": 4.3125,
+  "wall_seconds": 3.7826688000932336
+}

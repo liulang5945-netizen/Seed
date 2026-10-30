@@ -58,11 +58,38 @@
 
 ## 4. 明确未实现
 
-- `corrected_old_v1`（修正 byte 对齐/固定分母/时间后的旧图）与 `ordinary_v1`（同资源普通端到端基线）尚未实现。
+- `corrected_old_v1` 已在 2026-10-30 接入（见 §6）；`ordinary_v1`（同资源普通端到端基线）尚未实现。
 - 训练循环、单位成本标定、数据分区求解器、数值门与预算尚未冻结（属重构-4）。
 - 自然中文长上下文、真实多轮任务、跨会话过期/撤销/冲突合并尚未接入；当前 store 只覆盖顺序版本链与 owner/scope/session 边界。
-- 答案正确性未评价：探针目标是任意字节，不是 fixture 的期望答案。
+- 答案正确性未评价：结构探针的目标是任意字节，不是 fixture 的期望答案。
 
 ## 5. 出口与下一步
 
-R3 的隔离实现与零步恢复门已通过；**下一唯一动作是实现 `corrected_old_v1` 基线**：按 R1 §2.1 先修 byte 对齐（第 t 步 logits 对第 t 个目标字节）、固定分母与 current/previous 选择，再用同一评分器与同一公开 fixture 产出基线读数。基线未接入前不做 Q1 比较，不进入训练。
+R3 的隔离实现与零步恢复门已通过，`corrected_old_v1` 也已通过结构门（§6）。**下一唯一动作是实现 `ordinary_v1` 普通端到端基线**：同一 V3 字节脊、同一数据/目标/权限，但不设硬解析门、不建离散 store，历史以文本进入 prompt；产出同 fixture 的结构读数与固定分母结果。三组齐备后才进入 R4 定价；R4/R5 仍需 R2 用户评审。
+
+## 6. R3b-1 修正旧图基线（2026-10-30）
+
+| 交付 | 路径 | 证据 |
+|---|---|---|
+| 基线模块 | [corrected_old_baseline.py](../../taiji/corrected_old_baseline.py) | 硬解析门、离散 store、current/previous 选择、冻结 V3 头、每步同一 value bias |
+| 定向测试 | [test_corrected_old_baseline.py](../../tests/taiji_native/test_corrected_old_baseline.py) | 10/10 通过：版本链、硬门、查询解析、冻结组、首字节、时间意图、cut/rescue、固定分母、零步恢复 |
+| 结构探针 | [probe_corrected_old_r3b.py](../../scripts/training/probe_corrected_old_r3b.py) | 读取同一 17 案公开 fixture；22/22 检查通过 |
+| 机器报告 | [taiji_native_core_r3b_baseline_20261030.json](../../reports/taiji_native_core_r3b_baseline_20261030.json) | `r3b_structure_passed`；17 轮固定分母；0 optimizer updates；0 sealed reads |
+
+读数与解释：
+
+| 项 | 读数 | 解释 |
+|---|---|---|
+| 硬解析覆盖 | 16/16 查询文本解析成功（含“归谁/在哪”同义词） | 在公开词表内可用；换措辞会暴露硬门 |
+| cut / rescue | `0.08798` / `0.0` | 移除被选事实改变输出；恢复逐位相同 |
+| 首字节对齐 | 第 0 步 `0.0`，第 1 步 `0.44249` | 第 t 步 logits 对第 t 个目标字节，首字节被监督 |
+| 固定分母 | `scored_turns=17`、`parse_failures=0`、`exact=0`、`answer_exact=0.0` | 分母不再随解析或预测筛选；零步正确率必然为 0 |
+| 参数/可训练 | 123,438 / 仅 `value_bias.weight`（3,341） | 语言头冻结，符合旧图定义 |
+| 恢复 | in-process 与独立进程 digest 相同 | 参数、离散 store、cursor 完整 |
+
+已声明的基线限制：
+
+- `unknown` 时间意图没有独立路径，退回 current（探针记录 `unknown_fallback_current`），这是旧图的缺口，不是新核心的对照优势。
+- `current` 条件只读当前事实，因此“同当前值、不同历史”在当前读出上完全相同；旧值只有 `previous` 条件才读取。
+- 解析失败内容直接丢弃（硬门），不进入 store；这与新核心“辅助解析、非唯一准入”形成明确对照。
+- value bias 在每个生成步相同，不能随解码前缀变化；这正是新核心每步读取要比较的机制差异。
