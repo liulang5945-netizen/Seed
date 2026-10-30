@@ -1,0 +1,66 @@
+{
+  "baseline_face2": {
+    "old_covered": {
+      "parsed": 0,
+      "total": 16
+    },
+    "old_uncovered": {
+      "parsed": 0,
+      "total": 16
+    },
+    "ordinary_covered": {
+      "parsed": 6,
+      "total": 16
+    },
+    "ordinary_uncovered": {
+      "parsed": 1,
+      "total": 16
+    },
+    "overall": {
+      "parsed": 7,
+      "total": 64
+    }
+  },
+  "batch": 2,
+  "date": "2026-10-30",
+  "face2_sha256": "4f8801b54af916f3a0ff963c6d74e6c57990245d20cafddb69081413e52948a6",
+  "format": "taiji-n178-v1",
+  "parent": "data/checkpoints/n1_plan177_6_t1_pilot_20261027/correct__seed_0/update_002560.pt",
+  "runs": [
+    {
+      "endpoint": "data/checkpoints/n1_plan178_20261030_dose/seed_3/endpoint_update_2560.pt",
+      "episodes_seen": 5120,
+      "face2": {
+        "old_covered": {
+          "parsed": 4,
+          "total": 16
+        },
+        "old_uncovered": {
+          "parsed": 7,
+          "total": 16
+        },
+        "ordinary_covered": {
+          "parsed": 8,
+          "total": 16
+        },
+        "ordinary_uncovered": {
+          "parsed": 8,
+          "total": 16
+        },
+        "overall": {
+          "parsed": 27,
+          "total": 64
+        }
+      },
+      "last_parser_loss": 0.0005479393294081092,
+      "process_cpu_seconds": 6712.59375,
+      "seed": 3,
+      "status": "completed_updates",
+      "updates": 2560
+    }
+  ],
+  "scope": "parser-only pressure on the existing train course; face2 (pre-registered, 64 unseen query phrasings) read once after training; no V4 update",
+  "total_cpu_cap": 15000.0,
+  "total_process_cpu_seconds": 6712.59375,
+  "updates_per_seed": 1280
+}
