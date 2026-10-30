@@ -138,6 +138,7 @@ def _train_one(
     weights: torch.Tensor,
     updates: int,
     run_root_base: Path,
+    seed_cpu_cap: float = SEED_CPU_CAP,
 ) -> dict[str, Any]:
     trainer = _trainer()
     # 种必须在**加载检查点之后**设：from_native_checkpoint 会恢复 torch_rng_state，
@@ -150,7 +151,7 @@ def _train_one(
     last_loss = None
     status = "completed_updates"
     for _ in range(updates):
-        if time.process_time() - cpu_start >= SEED_CPU_CAP:
+        if time.process_time() - cpu_start >= seed_cpu_cap:
             status = "seed_cpu_cap"
             break
         picks = torch.multinomial(weights, BATCH, replacement=True).tolist()
@@ -190,6 +191,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--report", type=Path, default=REPORT)
     parser.add_argument("--updates", type=int, default=UPDATES)
     parser.add_argument("--seeds", default="0,1,2")
+    parser.add_argument("--seed-cpu-cap", type=float, default=SEED_CPU_CAP)
     parser.add_argument("--run-root", type=Path, default=RUN_ROOT)
     args = parser.parse_args(argv)
     torch.set_num_threads(1)
@@ -211,7 +213,7 @@ def main(argv: list[str] | None = None) -> int:
     for seed in (int(item) for item in args.seeds.split(",") if item.strip()):
         if total_cpu >= TOTAL_CPU_CAP:
             break
-        run = _train_one(seed, episodes, weights, args.updates, args.run_root)
+        run = _train_one(seed, episodes, weights, args.updates, args.run_root, args.seed_cpu_cap)
         trainer = run.pop("_trainer")
         total_cpu += run["process_cpu_seconds"]
         run["face2"] = _summary(_face2_rows(trainer))
