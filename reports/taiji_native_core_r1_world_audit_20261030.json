@@ -1,0 +1,140 @@
+{
+  "schema": "taiji-native-core-r1-world-audit-v1",
+  "status": "read_only_feasibility_audit",
+  "world": {
+    "entities": 12,
+    "attributes": 3,
+    "values_per_attribute": 4,
+    "versions": 3,
+    "slots": 36,
+    "slot_version_records": 108,
+    "value_position_grid": 432,
+    "possible_different_value_histories": 432,
+    "possible_histories_note": "different-value two-version histories; not the same object as the 432 value-position grid",
+    "sample_histories": 360,
+    "episodes_per_history": 4,
+    "episodes": 1440,
+    "turns_per_episode": 8,
+    "turns": 11520,
+    "note": "432 is the value-position grid, not sample/episode count"
+  },
+  "split_proposal": {
+    "train_histories": 216,
+    "query_histories": 72,
+    "holdout_histories": 72,
+    "split_policy": "split whole history chains; keep counterfactual pairs in the same split",
+    "note": "360-history sample is a subset of 432 possible different-value histories; exact coverage/hash split is frozen in R2/R4"
+  },
+  "vocabulary": {
+    "entities": [
+      "雨伞",
+      "背包",
+      "水杯",
+      "耳机",
+      "遥控器",
+      "台灯",
+      "剪刀",
+      "尺子",
+      "闹钟",
+      "钱包",
+      "帽子",
+      "围巾"
+    ],
+    "attributes": {
+      "颜色": [
+        "红色",
+        "蓝色",
+        "绿色",
+        "黄色"
+      ],
+      "位置": [
+        "桌上",
+        "抽屉",
+        "柜子",
+        "包里"
+      ],
+      "归属": [
+        "我的",
+        "你的",
+        "他的",
+        "她的"
+      ]
+    },
+    "attribute_templates": 48,
+    "delay_templates": 2
+  },
+  "old_e1_train": {
+    "partition": "train_only",
+    "families": 32,
+    "episodes": 128,
+    "turns": 1024,
+    "prompt_bytes": 35451,
+    "target_bytes": 35275,
+    "prompt_bytes_per_turn": 34.6201171875,
+    "target_bytes_per_turn": 34.4482421875
+  },
+  "byte_estimate": {
+    "method": "old E1 train prompt+target bytes per turn × new turns × 1.0–1.4",
+    "low_total_bytes": 795667,
+    "high_total_bytes": 1113934,
+    "note": "estimate only; no new data generated"
+  },
+  "old_face_overlap": {
+    "new_entities": [
+      "雨伞",
+      "背包",
+      "水杯",
+      "耳机",
+      "遥控器",
+      "台灯",
+      "剪刀",
+      "尺子",
+      "闹钟",
+      "钱包",
+      "帽子",
+      "围巾"
+    ],
+    "old_entities": [
+      "杯子",
+      "盒子",
+      "钥匙",
+      "书",
+      "球",
+      "笔",
+      "手机",
+      "眼镜"
+    ],
+    "exact_entity_overlap": [],
+    "old_attribute_reused": "颜色",
+    "old_colours_reused_as_atoms": [
+      "红色",
+      "绿色",
+      "蓝色",
+      "黄色"
+    ],
+    "old_query_holdout_text_read": 0,
+    "note": "new entity set; old exact facts/queries are not reused"
+  },
+  "cost_evidence": {
+    "old_f0b_cpu_per_update": 4.68,
+    "old_f1_projection_cpu": 121500,
+    "note": "not a budget; the new core needs its own R2/R4 calibration"
+  },
+  "risks": [
+    "Chinese templates for location/owner need naturalness review",
+    "4 episodes/history and 216/72/72 split need a coverage solver",
+    "byte prompt length may exceed the chosen context window",
+    "new core cost is not inferred from the old F0b unit cost"
+  ],
+  "recommendation": "world vocabulary/templates and the 360-history sample plan are feasible for a first finite task; freeze exact split/coverage and cost in R2/R4",
+  "source_sha256": {
+    "scripts\\training\\audit_native_core_r1_world.py": "31a404eba40772cfe43fe02f65aec9a89191b9caafe1cd6f0caea57d8216e999",
+    "taiji\\joint_state_consumption_course.py": "3cc14467e88858867db04eadc9587391f600b142b243a84b222985989014f898"
+  },
+  "model_calls": 0,
+  "optimizer_updates": 0,
+  "sealed_text_read": 0,
+  "can_promote": false,
+  "cpu_seconds": 0.078125,
+  "wall_seconds": 0.07899999991059303
+}
