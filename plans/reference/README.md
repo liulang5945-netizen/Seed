@@ -1,23 +1,30 @@
 # 研究合同、裁决与历史证据索引
 
-> 文档状态：[索引] — 本页只区分“当前合同”与“旧资产”。方向见[唯一主线](../MAINLINE.md)，队首见[03](../active/roadmap/03_CURRENT_EXECUTION.md)。
+> 文档状态：[索引] — 本页只导航合同、设计依据和旧资产。按序推进只读[MAINLINE 总计划](../MAINLINE.md)，从其[执行位置](../MAINLINE.md#执行位置)进入。
 
-## 1. 当前合同（唯一可被当前队列引用）
+## 1. 总计划步骤对应的原合同
 
-| 文档 | 状态 | 维护职责 |
+R 编号保留原合同与实验身份；实施统一使用总计划步骤 01–13。本页不复制阶段状态、审批或队首，实际进度与准入见[总计划](../MAINLINE.md#3-唯一执行队列)，原始批准与读数见[03 台账](../active/roadmap/03_CURRENT_EXECUTION.md)。
+
+| 总计划步骤 | 原合同 | 约定范围 |
 |---|---|---|
-| [重构方案](PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md) | 现行主方案 | 共同内容主图、动态读取/生成、三类基线、有限退出 |
-| [R1 统一语义合同](SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md) | 设计级闭合 | 任务/时间/byte目标/固定分母/cut-rescue/来源/fixture |
-| [R2 候选与基线合同](SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md) | 已评审批准（2026-10-30） | 新核心/修正旧图/普通基线、Q1 与 Q2、公平性 |
-| [R3 隔离实现与零步恢复](SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md) | 结构门通过，未训练 | 新核心模块、信用组、bundle 恢复、结构探针；§6/§7 含 R3b-1/R3b-2 基线 |
-| [R4 定价与 R5 数值门](SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md) | 已执行；R5 结案 `FAIL_BEHAVIOR` | 三组同预算、512×15 run、200k CPU/48h、行为/机制/保持/恢复/成本门；§9.3 预定义唯一后继 |
-| [R5b 复制轨候选合同](SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md) | 合同草案，待批准；未授权实现/训练 | `new_core_v2`＝复制轨＋自前缀日程；同数据/同门，基线复用 R5 端点；120k CPU/48h |
-| [20261030 核心设计重审](TAIJI_CORE_DESIGN_REVIEW_20261030.md) | 设计依据 | 目标/底座/当前候选分层、旧实验混杂、重构建议 |
-| [20261029 阶段收束](PROJECT_CONSOLIDATION_20261029.md) | 当前证据账 | E/F0a 资产、E3 子门、失败、CI/契约待办 |
+| [01](../MAINLINE.md#3-唯一执行队列) | [R1 统一语义合同](SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md) | 任务、时间、byte 目标、固定分母、cut/rescue、来源与 fixture |
+| [02](../MAINLINE.md#3-唯一执行队列) | [R2 候选与基线合同](SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md) | 新核心、修正旧图、普通基线，Q1 与 Q2、公平性 |
+| [03](../MAINLINE.md#3-唯一执行队列) | [R3 隔离实现与零步恢复](SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md) | 新核心模块、信用组、bundle 恢复与结构探针 |
+| [04](../MAINLINE.md#3-唯一执行队列) | [R3b-1（R3 §6）](SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md#6-r3b1-修正旧图基线20261030) | 修正旧图基线 |
+| [05](../MAINLINE.md#3-唯一执行队列) | [R3b-2（R3 §7）](SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md#7-r3b2-普通端到端基线20261030) | 普通端到端基线 |
+| [06](../MAINLINE.md#3-唯一执行队列) | [R4 定价与 R5 数值门](SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md) | 课程准备、成本、预算、行为/机制/保持/恢复/成本门 |
+| [07](../MAINLINE.md#3-唯一执行队列) | [R5 执行记录（R4 §9）](SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md#9-r5-执行结果20261030) | 有界比较、评价与原结案 |
+| [08](../MAINLINE.md#3-唯一执行队列) | [R5b 复制轨候选合同](SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md) | 复制轨、自前缀日程、基线复用与有限出口 |
+| [09](../MAINLINE.md#3-唯一执行队列) | T2 合同按对应准入建立 | 经历选择 |
+| [10](../MAINLINE.md#3-唯一执行队列) | T3 合同按任务需要建立 | 自然目标、有限行动与后果 |
+| [11](../MAINLINE.md#3-唯一执行队列) | 自然连续任务合同按对应准入建立 | 自然中文连续任务与 L3 |
+| [12](../MAINLINE.md#3-唯一执行队列) | 跨会话合同按对应准入建立 | 反馈学习、旧能力保持与 L4 |
+| [13](../MAINLINE.md#3-唯一执行队列) | 自主扩域合同按对应准入建立 | 有边界主动选择、条件扩域与 L5 |
 
-论文、报告和机器读数的身份仍以 `plans/manifests/` 与 `reports/` 为准；合同不复制逐轮数字。
+设计依据：[重构设计方案](PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)、[20261030 核心设计重审](TAIJI_CORE_DESIGN_REVIEW_20261030.md)。它们解释设计选择，不另排实施队列。历史证据账见[20261029 阶段收束](PROJECT_CONSOLIDATION_20261029.md)。
 
-课程与分区（R4 准备，未训练）：[split](../manifests/native_core_r1_split_v1.json)、[train](../manifests/native_core_r1_train_v1.json)、[query](../manifests/native_core_r1_query_v1.json)、[holdout](../manifests/native_core_r1_holdout_v1.json)、[审计报告](../../reports/taiji_native_core_r1_course_audit_20261030.json)。216/72/72；反事实成对不跨分区；query/holdout 文件 `training_read=false`，训练只读 train。
+论文、报告和机器读数的身份仍以 `plans/manifests/` 与 `reports/` 为准。课程与分区入口：[split](../manifests/native_core_r1_split_v1.json)、[train](../manifests/native_core_r1_train_v1.json)、[query](../manifests/native_core_r1_query_v1.json)、[holdout](../manifests/native_core_r1_holdout_v1.json)、[审计报告](../../reports/taiji_native_core_r1_course_audit_20261030.json)；数据访问按对应冻结合同，不因索引可见而扩权。
 
 ## 2. 旧资产（不是当前合同）
 
@@ -37,11 +44,11 @@
 
 ## 3. 使用规则
 
-- 当前工作包只能引用本页第 1 节的合同；引用第 2 节时只能作证据、基线或背景。
+- 当前工作包以总计划中链接的合同为准；引用本页第 2 节时只能作证据、基线或背景。
 - 旧文档中的“当前/下一步/唯一动作”只解释其写作时点，不产生当前指令。
 - 冻结 SPEC 与报告保持路径、字节和 Git 身份；本页不因收敛改写原规则。
 - 新合同必须先在[MAINLINE](../MAINLINE.md)第 3 节登记阶段，才能成为“当前合同”。
 
 ## 4. 如何查具体实验
 
-按 `PLAN-N1/N2/N5`、`SPEC`、`EXP`、`execution_closeout`、`APPROVAL` 命名族检索 `plans/reference`，再读对应合同/结案。机器结果看 `reports/README.md`；历史结构见 `plans/archive/README.md`。未完成条款保留在 03/10 或债表，不因整理改变状态。
+按 `PLAN-N1/N2/N5`、`SPEC`、`EXP`、`execution_closeout`、`APPROVAL` 命名族检索 `plans/reference`，再读对应合同/结案。机器结果看 `reports/README.md`；历史结构见 `plans/archive/README.md`。未完成步骤维护在总计划，证据和审批维护在 03，运营债务沿原债表；整理不改变原结论或授权。

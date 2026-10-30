@@ -1,5 +1,7 @@
 # 共同内容核心：重构-3 隔离实现与零步恢复记录
 
+> 状态阅读说明：本件记录统一步骤03–05的结构交付；下文“未训练/未评价”只描述零步记录时点。三对象后续已参加步骤07，结果见[R4 §9](SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md#9-r5-执行结果20261030)；当前顺序统一见[总计划](../MAINLINE.md)。
+
 日期：2026-10-30，Asia/Shanghai。状态：**新核心 `new_core_v1` 已在隔离路径实现；结构探针 53/53 通过；未训练、未评价、未读新 sealed 面；不称已学会，不作能力主张。** 上级合同见[重构-2 候选/基线比较合同](SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md)、[重构-1 统一语义合同](SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md)；当前队首只看[03](../active/roadmap/03_CURRENT_EXECUTION.md)。
 
 ## 1. 交付物

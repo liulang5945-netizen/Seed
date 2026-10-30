@@ -1,5 +1,7 @@
 # 共同内容核心：重构-2 候选与三类基线比较合同
 
+> 状态阅读说明：本件对应统一步骤02，已由用户批准（依据[R4页首批准记录](SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md)）；下文“草案/待评审”为起草时快照，不再表示当前审批状态。进度与动作统一见[总计划](../MAINLINE.md)，本注不改比较合同。
+
 日期：2026-10-30，Asia/Shanghai。状态：**设计合同草案，待用户评审；R3 隔离实现已在其下推进（见[R3 记录](SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md)），但不授权训练、评价或读取新 sealed 面。** 上级方向见[共同内容核心重构方案](PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)、[R1 统一语义合同](SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md)；当前队首与进度只看[03](../active/roadmap/03_CURRENT_EXECUTION.md)。
 
 ## 1. 目的与边界

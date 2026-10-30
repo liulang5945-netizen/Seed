@@ -1,14 +1,14 @@
 # Seed / Taiji 活动计划索引
 
-> 文档状态：[索引] — 只分类和导航。方向见[唯一主线](../MAINLINE.md)，队首见[03](roadmap/03_CURRENT_EXECUTION.md)。
+> 文档状态：[索引] — 只分类和导航。按序推进只读[MAINLINE 总计划](../MAINLINE.md)，从其[执行位置](../MAINLINE.md#执行位置)进入。
 
 ## 唯一分类
 
 | 状态 | 文档 | 维护边界 |
 |---|---|---|
-| 主线 | [MAINLINE](../MAINLINE.md) | 唯一方向、主计算图、执行队列、旧方向处置 |
-| 状态 | [03_CURRENT_EXECUTION.md](roadmap/03_CURRENT_EXECUTION.md) | 唯一队首、运行/预算/停止/恢复事实 |
-| 工作包 | [10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md](roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md) | 工作包依赖、出口、失败回流、条件后继 |
+| 主线 | [MAINLINE](../MAINLINE.md) | 统一步骤 01–13、执行位置、工作卡、状态、出口及条件后继 |
+| 状态 | [03_CURRENT_EXECUTION.md](roadmap/03_CURRENT_EXECUTION.md) | 证据与审批台账；唯一队首标题只静态跳转总计划 |
+| 索引 | [10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md](roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md) | 兼容旧章节入口；不另排工作包或复制阶段状态 |
 | 规范 | [TAIJI_CORE_REQUIREMENTS.md](TAIJI_CORE_REQUIREMENTS.md)、[TAIJI_NATIVE_ARCHITECTURE_V1.md](TAIJI_NATIVE_ARCHITECTURE_V1.md) | 长期约束与认知所有权，不冒称实现 |
 | 运营 | [02_GATES_AND_CI.md](roadmap/02_GATES_AND_CI.md)、[05_TECH_DEBT_REGISTER.md](roadmap/05_TECH_DEBT_REGISTER.md)、[07_MINI_MODEL_DELIVERY.md](roadmap/07_MINI_MODEL_DELIVERY.md)、[08_UPSTREAM_SYNC_PLAYBOOK.md](roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md) | 门禁、债、能力/交付、上游重放；不定义方向 |
 | 组件 | [09_NEXT_MAINLINE_PLAN.md](roadmap/09_NEXT_MAINLINE_PLAN.md) | N1–N6 机制词典与历史映射；**不是当前主计算图** |
@@ -16,27 +16,36 @@
 | 证据 | [11_CI_FLOAT_EVIDENCE_FOR_OWNER_20261025.md](roadmap/11_CI_FLOAT_EVIDENCE_FOR_OWNER_20261025.md)、[12_LINE2_EVIDENCE_CLOSEOUT_20261025.md](roadmap/12_LINE2_EVIDENCE_CLOSEOUT_20261025.md) | 机器读数与结案回执；不改写为能力通过 |
 | 索引 | [PLAN_INDEX.md](PLAN_INDEX.md)（本页）、[plans/README.md](../README.md) | 只导航 |
 
-## 当前合同（位于 reference，不在 active）
+## 步骤与原合同映射（不登记阶段状态）
 
-| 合同 | 文档 | 状态 |
+实际状态、准入与实施次序只见[总计划](../MAINLINE.md#3-唯一执行队列)；原合同路径和实验身份保持不变。
+
+| 总计划步骤 | 原合同身份 | 文档 |
 |---|---|---|
-| 重构方案 | [PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md](../reference/PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md) | 现行主方案 |
-| R1 语义 | [SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md](../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md) | 设计级闭合 |
-| R2 基线 | [SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md](../reference/SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md) | 用户 2026-10-30 已批准 |
-| R3 实现 | [SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md](../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md) | 结构门通过，未训练 |
-| R3b-1 修正旧图基线 | [R3 记录 §6](../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md#6-r3b1-修正旧图基线20261030) | 22/22 结构门；仅 value bias 可训练；未训练 |
-| R3b-2 普通端到端基线 | [R3 记录 §7](../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md#7-r3b2-普通端到端基线20261030) | 11/11 结构门；全参数可训练；未训练 |
-| R4 定价与门 | [定价与R5数值门](../reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md) | 已执行 `r4_priced`；512 更新/run 冻结；R5 已结案 |
-| R5 执行结果 | [R4 合同 §9](../reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md#9-r5-执行结果20261030) | 已执行：`FAIL_BEHAVIOR`；R5b 候选待合同与批准 |
+| [01](../MAINLINE.md#3-唯一执行队列) | R1 语义 | [SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md](../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md) |
+| [02](../MAINLINE.md#3-唯一执行队列) | R2 候选与比较 | [SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md](../reference/SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md) |
+| [03](../MAINLINE.md#3-唯一执行队列) | R3 新核心实现 | [SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md](../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md) |
+| [04](../MAINLINE.md#3-唯一执行队列) | R3b-1 修正旧图基线 | [R3 记录 §6](../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md#6-r3b1-修正旧图基线20261030) |
+| [05](../MAINLINE.md#3-唯一执行队列) | R3b-2 普通端到端基线 | [R3 记录 §7](../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md#7-r3b2-普通端到端基线20261030) |
+| [06](../MAINLINE.md#3-唯一执行队列) | R4，含课程准备 | [定价与 R5 数值门](../reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md) |
+| [07](../MAINLINE.md#3-唯一执行队列) | R5 比较与结案 | [R4 合同 §9](../reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md#9-r5-执行结果20261030) |
+| [08](../MAINLINE.md#3-唯一执行队列) | R5b 复制轨候选 | [SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md](../reference/SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md) |
+| [09](../MAINLINE.md#3-唯一执行队列) | T2 经历选择 | 工作卡统一见总计划，合同随对应准入建立 |
+| [10](../MAINLINE.md#3-唯一执行队列) | 按任务需要的 T3 | 工作卡统一见总计划，合同随对应准入建立 |
+| [11](../MAINLINE.md#3-唯一执行队列) | 自然中文连续任务 / L3 | 工作卡统一见总计划，合同随对应准入建立 |
+| [12](../MAINLINE.md#3-唯一执行队列) | 跨会话学习与保持 / L4 | 工作卡统一见总计划，合同随对应准入建立 |
+| [13](../MAINLINE.md#3-唯一执行队列) | 条件自主选择与扩域 / L5 | 工作卡统一见总计划，合同随对应准入建立 |
+
+[重构方案](../reference/PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)仅作设计依据，不是另一份实施排期。
 
 ## 旧资产
 
-N177/F/N178、VISION、T2/T3、M0–M8、R2 日对话、UI 生命页等旧文档全部登记在[LEGACY_ASSET_INDEX](../reference/LEGACY_ASSET_INDEX.md)。它们只作证据、基线或长期储备，其“当前/下一步”只解释写作时点。
+N177/F/N178、VISION、旧 T2/T3、M0–M8、R2 日对话、UI 生命页等旧文档全部登记在[LEGACY_ASSET_INDEX](../reference/LEGACY_ASSET_INDEX.md)。它们只作证据、基线或长期储备，其“当前/下一步”只解释写作时点；总计划步骤 09/10 的新工作卡与旧实现身份分开。
 
 ## 维护规则
 
 1. 新方向只能进[MAINLINE](../MAINLINE.md)第 3 节，不新增并列主线。
-2. 只有 03 写“当前唯一下一步”。
+2. 03 的“当前唯一下一步”入口只跳转总计划；本页不登记动作、审批或阶段状态。
 3. active 文档前 10 行必须有 `> 文档状态：[...]`。
 4. 本页必须覆盖 `plans/active/` 下全部 `.md`；由单主线审计脚本检查。
 5. 旧文不因收敛删除或改名；只降级调度权。

@@ -1,5 +1,7 @@
 # 共同内容核心：重构-5b 复制轨候选合同
 
+> 审批状态勘误：用户已于2026-10-30批准本合同，原始记录见§10；下文页首、§1/§9等“待批准/本件不授权”措辞仅保留起草时点，不覆盖该批准。当前顺序为[总计划步骤08.1–08.5](../MAINLINE.md#3-唯一执行队列)；本注只统一状态，不改候选、数据、门值、预算或既有授权范围。
+
 日期：2026-10-30，Asia/Shanghai。状态：**合同草案，待用户批准；未授权实现或训练。** 依据 [R4 §9.3](SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md)预定义的唯一后继起草；方向见[唯一主线](../MAINLINE.md)，当前状态见[03](../active/roadmap/03_CURRENT_EXECUTION.md)，候选定义见[R2](SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md)，重构框架见[重构方案](PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)。
 
 ## 1. 目的与边界
