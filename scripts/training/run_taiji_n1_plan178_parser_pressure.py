@@ -45,6 +45,13 @@ SEED_CPU_CAP = 4500.0
 TOTAL_CPU_CAP = 15000.0
 
 
+def _rel(path: Path) -> str:
+    try:
+        return str(path.resolve().relative_to(ROOT)).replace("\\", "/")
+    except ValueError:
+        return str(path.resolve()).replace("\\", "/")
+
+
 def _trainer() -> JointT1TrainerV1:
     cache = JointT1TraceCacheV1.from_payload(
         torch.load(TRACE_CACHE, map_location="cpu", weights_only=False)
@@ -126,13 +133,17 @@ def _summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def _train_one(
-    seed: int, episodes: list[Any], weights: torch.Tensor, updates: int
+    seed: int,
+    episodes: list[Any],
+    weights: torch.Tensor,
+    updates: int,
+    run_root_base: Path,
 ) -> dict[str, Any]:
     trainer = _trainer()
     # 种必须在**加载检查点之后**设：from_native_checkpoint 会恢复 torch_rng_state，
     # 先设就会被覆盖（2026-10-30 实测：三个 seed 端点逐字节相同）。
     torch.manual_seed(seed)
-    run_root = RUN_ROOT / f"seed_{seed}"
+    run_root = run_root_base / f"seed_{seed}"
     run_root.mkdir(parents=True, exist_ok=True)
     cpu_start = time.process_time()
     steps = 0
@@ -166,7 +177,7 @@ def _train_one(
         "seed": seed,
         "updates": steps,
         "status": status,
-        "endpoint": str(endpoint.relative_to(ROOT)).replace("\\", "/"),
+        "endpoint": _rel(endpoint),
         "last_parser_loss": last_loss,
         "process_cpu_seconds": time.process_time() - cpu_start,
         "episodes_seen": steps * BATCH,
@@ -178,6 +189,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="N178 parser 加压正式阶段")
     parser.add_argument("--report", type=Path, default=REPORT)
     parser.add_argument("--updates", type=int, default=UPDATES)
+    parser.add_argument("--seeds", default="0,1,2")
+    parser.add_argument("--run-root", type=Path, default=RUN_ROOT)
     args = parser.parse_args(argv)
     torch.set_num_threads(1)
     if args.report.exists():
@@ -195,10 +208,10 @@ def main(argv: list[str] | None = None) -> int:
     baseline_rows = _face2_rows(_trainer())
     runs = []
     total_cpu = 0.0
-    for seed in (0, 1, 2):
+    for seed in (int(item) for item in args.seeds.split(",") if item.strip()):
         if total_cpu >= TOTAL_CPU_CAP:
             break
-        run = _train_one(seed, episodes, weights, args.updates)
+        run = _train_one(seed, episodes, weights, args.updates, args.run_root)
         trainer = run.pop("_trainer")
         total_cpu += run["process_cpu_seconds"]
         run["face2"] = _summary(_face2_rows(trainer))
