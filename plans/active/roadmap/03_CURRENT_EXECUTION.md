@@ -10,6 +10,8 @@
 
 用户已采纳共同内容核心为计划主方向，现按[重构方案](../../reference/PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)推进：语义合同→共同主图/基线→隔离实现/零步恢复→预算冻结→一次比较→条件能力接力。旧N177/F/N178结果与费用继续保留，已有授权N178b按原终点/预算结案。本轮仅修方案，用户负责实施。
 
+重构-1合同草案已写：[统一语义合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md)。状态：**待用户评审；未实现、未训练、未读新 sealed 面。** 合同先钉住同query不同当前值/不同历史值、同query文本不同time_intent、固定分母、第t步byte目标、cut/rescue正确性、来源/版本/恢复和三类基线；§10 出口清单全过才进入重构-2。
+
 F1（holdout 面）与 F1b（query 面，从未读过）都结案为负结果：F1 判 `FAIL_COPY_ONLY`、F1b 判 `FAIL_NO_STATE_EFFECT`（[收束记录 §13–§14](../../reference/PROJECT_CONSOLIDATION_20261029.md)）。F1b 的门表给出真数：`cut_drop 0.333` 与 `rescue_gain 1.0` 过线、`relevant_swap_delta` 0.096（F1 为 0），但 `answer_exact 0.041`、三条差值为 0；**54/123（44%）查询轮连实体都没解析出来**，两套 sealed 面同比例。
 
 解析覆盖确是重要缺口，但不能再将两次低分唯一解释为“状态路径没接上”。[20261030核心重审](../../reference/TAIJI_CORE_DESIGN_REVIEW_20261030.md)进一步确认：当前/旧值目标与current-only接口不匹配，F字节目标相对原trainer错位，历史可能经hidden旁路进入，cut/rescue也不是正确性因果指标。原FAIL与费用保留，具体归因须受这些混杂限制；原N178提案仅作解析诊断，不替代核心方案重审。
@@ -45,6 +47,7 @@ F1（holdout 面）与 F1b（query 面，从未读过）都结案为负结果：
 
 | 工作包 | 具体任务 | 验收/边界 |
 |---|---|---|
+| 重构-1 | [统一语义合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md) | 草案待用户评审；§10清单全过才进入重构-2；未实现/未训练/未读新sealed |
 | E0 | 已完成：15臂终点fresh-process parse/answer回执；B真实输入、有效mask及隔离矩阵 | 三份件＋三支仪器自带机检判据（见收束记录§8）；未重训/未重评holdout |
 | CI | 修复四模块9处mypy类型错误 | 精确记录当前源码身份；本机核心类型/受影响回归及实际CI重新核验 |
 | 训练态E3 | 已完成：credit-on/stop、禁写组及optimizer/RNG/cursor往返 | E2c 12/12×2 用例、E3 17/17；选择器无回答信用、真实链解析覆盖仅1/4 单列（收束记录§9） |

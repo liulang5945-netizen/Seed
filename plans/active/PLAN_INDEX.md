@@ -7,6 +7,7 @@
 | 职责 | 入口 | 维护边界 |
 |---|---|---|
 | 现行重构主方案 | [共同内容核心重构](../reference/PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md) | 用户已采纳方向；重构-1…6的交付/对照/准入，尚未实施 |
+| 重构-1语义合同 | [统一语义合同草案](../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md) | 任务/时间/byte目标/生成/评分/来源；待用户评审，未实施/未训练 |
 | 核心设计重审与后继决策 | [20261030核心重审](../reference/TAIJI_CORE_DESIGN_REVIEW_20261030.md) | 目标/底座/当前候选分层，结构事实、实验混杂和design-only重构建议 |
 | 项目根需求与认知所有权 | [核心需求](TAIJI_CORE_REQUIREMENTS.md)、[原生架构](TAIJI_NATIVE_ARCHITECTURE_V1.md) | 长期约束，设计不冒称实现 |
 | 大阶段资产/排除项 | [01阶段地图](roadmap/01_SCOPE_AND_PHASES.md) | M0–M8历史批准/残余＋N现行发展层次；不发布另一条队首 |
