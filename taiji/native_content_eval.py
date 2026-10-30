@@ -44,6 +44,8 @@ TIME_FOR_CATEGORY = {
     "unknown_query": "unknown",
 }
 FACT_ROLES = frozenset({"fact_v0", "correction", "distractor"})
+# R5b adds new_core_v2 (copy-track candidate); the native replay path is shared.
+NATIVE_CORE_ADAPTER_NAMES = frozenset({"new_core_v1", "new_core_v2"})
 PREDICTION_BYTES = 48
 VALUE_GROUPS = {
     "颜色": ("红色", "蓝色", "绿色", "黄色"),
@@ -174,7 +176,7 @@ def replay_episode(
                 if swapped is None:
                     raise ValueError("swap mutation cannot rewrite the fact text")
                 text, value, suffix = swapped, str(mutation.value), "swap"
-            if adapter.name == "new_core_v1":
+            if adapter.name in NATIVE_CORE_ADAPTER_NAMES:
                 _ingest_native(bundle, episode, turn, text, value, suffix)
             elif adapter.name == "corrected_old_v1":
                 _ingest_corrected(bundle, episode, turn, text, value, suffix)
@@ -187,7 +189,7 @@ def replay_episode(
         query = str(turn["text"]).encode("utf-8")
         time_intent = TIME_FOR_CATEGORY[turn["category"]]
         key = (str(episode["episode_id"]), index)
-        if adapter.name == "new_core_v1":
+        if adapter.name in NATIVE_CORE_ADAPTER_NAMES:
             answer = bundle.answer(
                 query=query,
                 time_intent=time_intent,
