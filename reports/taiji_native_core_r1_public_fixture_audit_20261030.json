@@ -1,0 +1,41 @@
+{
+  "schema": "taiji-native-core-r1-public-fixture-audit-v1",
+  "status": "public_fixture_audit_passed",
+  "manifest": "plans\\manifests\\native_core_r1_public_fixture_v1.json",
+  "manifest_sha256": "84e1296ff59182c651f3bce9037c29866833ab72c7c99861572747d5b913268b",
+  "cases": 17,
+  "groups": {
+    "ambiguous": 1,
+    "correction": 1,
+    "distractor": 1,
+    "location": 1,
+    "negation": 1,
+    "non-query": 1,
+    "owner": 1,
+    "same-current-history": 2,
+    "same-query-current": 2,
+    "same-query-time": 2,
+    "same-value-version": 1,
+    "three-versions": 1,
+    "unknown-current": 1,
+    "unknown-previous": 1
+  },
+  "attributes": [
+    "位置",
+    "归属",
+    "颜色"
+  ],
+  "issues": [],
+  "byte_protocol": {
+    "end_marker": "<|end|>",
+    "supervision": "target_t_at_step_t",
+    "first_byte_supervised": true,
+    "forbidden": "target[1:]"
+  },
+  "model_calls": 0,
+  "optimizer_updates": 0,
+  "sealed_text_read": 0,
+  "can_promote": false,
+  "cpu_seconds": 0.0,
+  "wall_seconds": 0.015999999828636646
+}

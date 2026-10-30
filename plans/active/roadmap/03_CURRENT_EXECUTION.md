@@ -10,7 +10,7 @@
 
 用户已采纳共同内容核心为计划主方向，现按[重构方案](../../reference/PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)推进：语义合同→共同主图/基线→隔离实现/零步恢复→预算冻结→一次比较→条件能力接力。旧N177/F/N178结果与费用继续保留，已有授权N178b按原终点/预算结案。本轮仅修方案，用户负责实施。
 
-重构-1合同草案已写：[统一语义合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md)，并补了[§2.1 当前代码触点](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md#21-当前代码触点只读基线-22cd81b25)。状态：**五项首版边界已确认；世界只读审计已完成（360-history/216-72-72/1,440 episodes/11,520 turns/0.80–1.11MB），其余合同矛盾、公开fixture与接口审计待执行；未实现、未训练、未读新sealed面。** 合同先钉住同query不同当前值/不同历史值、同query文本不同time_intent、固定分母、第t步byte目标、cut/rescue正确性、来源/版本/恢复和三类基线；§10 出口清单全过才进入重构-2。
+重构-1合同草案已写：[统一语义合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md)，并补了[§2.1 当前代码触点](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md#21-当前代码触点只读基线-22cd81b25)。状态：**五项首版边界已确认；世界只读审计已完成（360-history/216-72-72/1,440 episodes/11,520 turns/0.80–1.11MB）；公开fixture 17案审计通过；其余合同矛盾与接口审计待执行；未实现、未训练、未读新sealed面。** 合同先钉住同query不同当前值/不同历史值、同query文本不同time_intent、固定分母、第t步byte目标、cut/rescue正确性、来源/版本/恢复和三类基线；§10 出口清单全过才进入重构-2。
 
 F1（holdout 面）与 F1b（query 面，从未读过）都结案为负结果：F1 判 `FAIL_COPY_ONLY`、F1b 判 `FAIL_NO_STATE_EFFECT`（[收束记录 §13–§14](../../reference/PROJECT_CONSOLIDATION_20261029.md)）。F1b 的门表给出真数：`cut_drop 0.333` 与 `rescue_gain 1.0` 过线、`relevant_swap_delta` 0.096（F1 为 0），但 `answer_exact 0.041`、三条差值为 0；**54/123（44%）查询轮连实体都没解析出来**，两套 sealed 面同比例。
 
