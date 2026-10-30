@@ -40,7 +40,7 @@
 | **R3b-1** | **修正旧图基线** | **已完成（结构门）** | 22/22 检查；固定分母 17/17；仅 value bias 可训练 |
 | **R3b-2** | **普通端到端基线** | **已完成（结构门）** | 11/11 检查；固定分母 17/17；全部参数可训练 |
 | R4 | train-only 定价与合同冻结 | 已完成（`r4_priced`，2026-10-30） | 单价 5.45/0.94/8.20 CPU 秒；恢复 6/6；投影 78,750 CPU 秒/1.88 h；冻结 512 更新 |
-| R5 | 一次有界独立比较 | 评分器已实现；待用户批准 | Q1 架构包 + Q2 信用单因素；正负均结案 |
+| R5 | 一次有界独立比较 | 评分器与 15-run 训练执行件已备；待用户批准 | Q1 架构包 + Q2 信用单因素；正负均结案 |
 | R6 | 条件能力接力 | 仅在 R5 有净收益后 | T2/T3/自然连续任务/跨会话，按 07 分别验收 |
 
 规则：
@@ -70,7 +70,7 @@
 
 | 类别 | 路径 | 使用规则 |
 |---|---|---|
-| 当前主线 | `taiji/native_content_core.py`、`taiji/native_content_training.py`、`taiji/corrected_old_baseline.py`、`taiji/ordinary_baseline.py`、`tests/taiji_native/test_native_content_*.py`、`scripts/training/probe_native_content_core_r3.py`、`scripts/training/price_native_content_core_r4.py` | 只按 R4/R5 合同扩展；改动走测试与探针 |
+| 当前主线 | `taiji/native_content_core.py`、`taiji/native_content_training.py`、`taiji/corrected_old_baseline.py`、`taiji/ordinary_baseline.py`、`tests/taiji_native/test_native_content_*.py`、`scripts/training/probe_native_content_core_r3.py`、`scripts/training/price_native_content_core_r4.py`、`scripts/training/run_native_content_core_r5.py` | 只按 R4/R5 合同扩展；改动走测试与探针 |
 | 旧基线来源 | `taiji/joint_state_consumption*.py`、`conditional_language_v4.py`、`joint_input_producer.py`、`joint_t1_trainer.py`、`scripts/training/run_taiji_n1_plan177_f_f1.py`、`evaluate_taiji_n1_plan177_f_f1_holdout.py` | 只用于 `corrected_old_v1`；不在此路径继续叠局部头 |
 | 数据与身份 | `plans/manifests/native_core_r1_public_fixture_v1.json`、`plans/manifests/` | 公开面可复用；sealed 面按原边界 |
 | 运营与门禁 | `scripts/training/audit_*.py`、`check_plans_markdown_links.py`、`02`/`05`/`07`/`08` | 维护质量，不定义方向 |

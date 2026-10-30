@@ -183,3 +183,14 @@ Pilot 判读（不构成能力）：
 - 15 run（Q1 9 + Q2 6）按 512 更新、seed 0/1/2、批次 4 episodes 执行，预计 ≤78,750 CPU 秒、≤1.88 wall 小时；实际仍按 4.4 的单 run 1.5 倍停止线逐 run 检查。
 - 第25步新进程恢复已证同 digest，可作为 R5 的中途恢复基线；但 R5 端点仍须重新做零步/端点恢复门。
 - R5 未获用户批准前不执行；本件 4.1–4.5 的门不再改动。
+
+## 8. R5 训练执行件（已备，未执行）
+
+2026-10-30 已写好 R5 的 train-only 执行件，但**尚未运行**，因为 R5 仍需用户批准。执行件不读 query/holdout/sealed，也不改写 4.1–4.5 的门。
+
+- 运行器：[run_native_content_core_r5.py](../../scripts/training/run_native_content_core_r5.py)。声明 15 个 run：Q1 三对象 × seed 0/1/2（9），Q2 新核心 `credit_on`/`credit_stop` × seed 0/1/2（6）；每个 run 512 更新、批次 4、同 seed 同数据顺序。
+- `credit_stop` 定义：在 AdamW 建立前冻结 reader 与 decoder 两组参数（`credit_stop_configure`），结构与前向路径不变，只切这两组的任务信用；`credit_on` 不冻结任何组。`frozen_groups` 随 checkpoint 保存并恢复，旧 v1 checkpoint 仍可加载。
+- 审批门：不带 `--approve-r5` 时运行器直接拒绝；报告只写一次到 `reports/taiji_native_core_r5_training_20261030.json`（尚未生成）。
+- 逐 run 门：零步与端点各做同进程+新进程恢复 digest；任一更新出现 NaN、或运行中位 CPU 超过 R4 单价的 1.5 倍，即记工程失败并停该 run；总 CPU 触 200,000 秒或 wall 触 48 小时即预算停止。
+- Q1 新核心与 Q2 `credit_on` 是同一配置的重复 run，报告只把两者端点 digest 相等记为可复现性证据，不作为通过门。
+- 覆盖：[test_native_content_r5_runner.py](../../tests/taiji_native/test_native_content_r5_runner.py) 4 项（15-run 清单、单价来源、单 run 恢复与冻结组、审批门）；训练模块另有 13 项测试。未读 query/holdout。

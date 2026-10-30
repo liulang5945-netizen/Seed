@@ -1,18 +1,20 @@
-"""R4 pricing-only trainer: fixed exposure schedule, episode replay, full checkpoints.
+"""Bounded train-only runner shared by R4 pricing and R5 training.
 
-This module exists to price the three R2 comparison objects on the train split
-``plans/manifests/native_core_r1_train_v1.json``.  It is not a capability
-trainer:
+The runner works on the train split only (``plans/manifests/native_core_r1_train_v1.json``).
+It declares a deterministic exposure schedule, replays each episode's 8-turn
+timeline with a fresh store/history, builds teacher-forced losses, and saves a
+complete restore point (parameters, AdamW moments, counters, frozen credit
+groups, cursor, generator state).
 
-* the exposure schedule is a pure function of (seed, batch index), so all three
-  objects -- and later the Q2 arms -- see the same episodes in the same order;
-* every episode is replayed with a fresh store/history on the 8-turn timeline,
-  and only scored turns contribute teacher-forced cross-entropy;
+Design boundaries:
+
+* the schedule is a pure function of (seed, batch index), so all three objects
+  and both Q2 arms see the same episodes in the same order;
 * the native core keeps its persisted content latents, so the content encoder
   receives no task gradient and ``parameter_revision`` stays at the encoder
   revision that produced the latents;
-* a checkpoint carries parameters, AdamW moments, counters, cursor and the
-  model generator state, so a fresh process resumes to the same digest.
+* ``credit_stop`` freezes the declared reader/decoder recipients before AdamW,
+  so the same structure and forward path run with a cut task-credit path.
 
 No query/holdout split and no sealed data are read here.
 """
@@ -22,7 +24,7 @@ from __future__ import annotations
 import copy
 import math
 import random
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -47,7 +49,7 @@ from .native_content_core import (
 from .ordinary_baseline import OrdinaryBundleV1, OrdinaryEndToEndV1
 from .persistence import atomic_save
 
-PRICING_TRAINER_FORMAT = "taiji-native-content-pricing-trainer-v1"
+PRICING_TRAINER_FORMAT = "taiji-native-content-pricing-trainer-v1"  # value kept for R4 checkpoints
 TIME_FOR_CATEGORY = {
     "current_query": "current",
     "previous_query": "previous",
@@ -461,8 +463,30 @@ def adapter_for(name: str) -> EpisodeAdapterV1:
     return factory()
 
 
-class PricingTrainerV1:
-    """AdamW with declared clipping plus a complete, digest-checked checkpoint."""
+CREDIT_STOP_GROUPS = ("reader", "decoder")
+
+
+def credit_on_configure(model: Any) -> tuple[str, ...]:
+    """The declared recipient path stays trainable."""
+
+    del model
+    return ()
+
+
+def credit_stop_configure(model: Any) -> tuple[str, ...]:
+    """Freeze the declared reader/decoder task-credit recipients before AdamW."""
+
+    for group in CREDIT_STOP_GROUPS:
+        model.set_credit_group(group, False)
+    return CREDIT_STOP_GROUPS
+
+
+class NativeRunTrainerV1:
+    """AdamW with declared clipping plus a complete, digest-checked checkpoint.
+
+    The same trainer serves R4 pricing (50 updates) and R5 training runs (512
+    updates); callers declare the schedule and the credit mode.
+    """
 
     def __init__(
         self,
@@ -479,8 +503,9 @@ class PricingTrainerV1:
         self.steps = 0
         self.target_byte_exposures = 0
         self.cursor: dict[str, Any] = {"batch_index": 0, "seed": 0}
+        self.frozen_groups: tuple[str, ...] = ()
         self.owner = "train"
-        self.scope = "pricing"
+        self.scope = "train"
 
     @classmethod
     def create(
@@ -488,14 +513,20 @@ class PricingTrainerV1:
         adapter: EpisodeAdapterV1,
         *,
         learning_rate: float = 0.001,
-    ) -> PricingTrainerV1:
-        return cls(adapter, adapter.create_model(), learning_rate=learning_rate)
+        configure: Callable[[Any], Sequence[str]] | None = None,
+    ) -> NativeRunTrainerV1:
+        model = adapter.create_model()
+        frozen_groups = tuple(configure(model)) if configure is not None else ()
+        trainer = cls(adapter, model, learning_rate=learning_rate)
+        trainer.frozen_groups = frozen_groups
+        trainer.cursor["frozen_groups"] = list(frozen_groups)
+        return trainer
 
     # --- training ---------------------------------------------------------
 
     def update(self, episodes: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         if not episodes:
-            raise ValueError("pricing update requires at least one episode")
+            raise ValueError("bounded update requires at least one episode")
         self.optimizer.zero_grad(set_to_none=True)
         terms: list[torch.Tensor] = []
         total = 0
@@ -506,12 +537,12 @@ class PricingTrainerV1:
             terms.extend(episode_terms)
             total += episode_bytes
         if total <= 0:
-            raise ValueError("pricing update has no supervised bytes")
+            raise ValueError("bounded update has no supervised bytes")
         loss_sum = 0.0
         for term in terms:
             value = float(term.detach())
             if not torch.isfinite(term.detach()).all():
-                raise ValueError("pricing loss is not finite")
+                raise ValueError("bounded loss is not finite")
             loss_sum += value
             (term / total).backward()
             del term
@@ -546,13 +577,14 @@ class PricingTrainerV1:
         bundle = self.adapter.fresh_bundle(self.model)
         payload: dict[str, Any] = {
             "format": PRICING_TRAINER_FORMAT,
-            "version": 1,
+            "version": 2,
             "object": self.adapter.name,
             "bundle": bundle.checkpoint(),
             "optimizer": copy.deepcopy(self.optimizer.state_dict()),
             "learning_rate": self.learning_rate,
             "steps": self.steps,
             "target_byte_exposures": self.target_byte_exposures,
+            "frozen_groups": list(self.frozen_groups),
             "cursor": copy.deepcopy(self.cursor),
             "rng_state": self.model.generator.get_state().clone(),
         }
@@ -562,7 +594,7 @@ class PricingTrainerV1:
     def save(self, path: Path) -> Path:
         target = Path(path)
         if target.exists():
-            raise ValueError("pricing checkpoint is write-once")
+            raise ValueError("run checkpoint is write-once")
         atomic_save(self.checkpoint(), target)
         return target
 
@@ -572,8 +604,8 @@ class PricingTrainerV1:
         payload: Mapping[str, Any],
         *,
         adapter: EpisodeAdapterV1 | None = None,
-    ) -> PricingTrainerV1:
-        expected = {
+    ) -> NativeRunTrainerV1:
+        expected_v1 = {
             "format",
             "version",
             "object",
@@ -586,26 +618,43 @@ class PricingTrainerV1:
             "rng_state",
             "checkpoint_digest",
         }
-        if not isinstance(payload, Mapping) or set(payload) != expected:
-            raise ValueError("pricing checkpoint schema differs")
-        if (payload["format"], payload["version"]) != (PRICING_TRAINER_FORMAT, 1):
-            raise ValueError("unsupported pricing checkpoint version")
+        if not isinstance(payload, Mapping):
+            raise ValueError("run checkpoint must be a mapping")
+        version = payload.get("version")
+        if version == 1:
+            expected = expected_v1
+            frozen: tuple[str, ...] = ()
+        elif version == 2:
+            expected = expected_v1 | {"frozen_groups"}
+            frozen = tuple(str(item) for item in payload["frozen_groups"])
+        else:
+            raise ValueError("unsupported run checkpoint version")
+        if set(payload) != expected:
+            raise ValueError("run checkpoint schema differs")
+        if payload["format"] != PRICING_TRAINER_FORMAT:
+            raise ValueError("unsupported run checkpoint format")
         if (
             content_digest(
                 {name: value for name, value in payload.items() if name != "checkpoint_digest"}
             )
             != payload["checkpoint_digest"]
         ):
-            raise ValueError("pricing checkpoint digest differs")
+            raise ValueError("run checkpoint digest differs")
         resolved = adapter_for(str(payload["object"])) if adapter is None else adapter
         if resolved.name != payload["object"]:
-            raise ValueError("pricing checkpoint object differs from the adapter")
+            raise ValueError("run checkpoint object differs from the adapter")
         bundle = resolved.from_bundle_payload(payload["bundle"])
+        model = bundle.model
+        for group in frozen:
+            if not hasattr(model, "set_credit_group"):
+                raise ValueError("frozen credit groups require the native core")
+            model.set_credit_group(group, False)
         trainer = cls(
             resolved,
-            bundle.model,
+            model,
             learning_rate=float(payload["learning_rate"]),
         )
+        trainer.frozen_groups = frozen
         trainer.optimizer.load_state_dict(payload["optimizer"])
         trainer.steps = int(payload["steps"])
         trainer.target_byte_exposures = int(payload["target_byte_exposures"])
@@ -614,7 +663,7 @@ class PricingTrainerV1:
         return trainer
 
     @classmethod
-    def load(cls, path: Path) -> PricingTrainerV1:
+    def load(cls, path: Path) -> NativeRunTrainerV1:
         payload = torch.load(Path(path), map_location="cpu", weights_only=False)
         return cls.from_checkpoint(payload)
 

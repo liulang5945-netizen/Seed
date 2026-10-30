@@ -9,11 +9,16 @@ import sys
 from pathlib import Path
 
 import pytest
+import torch
 
+from taiji.internalization import content_digest
 from taiji.native_content_training import (
-    PricingTrainerV1,
+    CREDIT_STOP_GROUPS,
+    NativeRunTrainerV1,
     adapter_for,
     batch_schedule,
+    credit_on_configure,
+    credit_stop_configure,
 )
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -67,13 +72,13 @@ def test_parameter_counts_match_the_declared_r4_contract():
         "ordinary_v1": (120_097, 120_097),
     }
     for name, (total, trainable) in expected.items():
-        trainer = PricingTrainerV1.create(adapter_for(name))
+        trainer = NativeRunTrainerV1.create(adapter_for(name))
         counts = trainer.parameter_counts()
         assert (counts["total"], counts["trainable"]) == (total, trainable)
 
 
 def test_native_update_keeps_persistent_latent_boundary():
-    trainer = PricingTrainerV1.create(adapter_for("new_core_v1"))
+    trainer = NativeRunTrainerV1.create(adapter_for("new_core_v1"))
     episode = _episodes(1)[0]
     metrics = trainer.update([episode])
     assert metrics["step"] == 1
@@ -92,7 +97,7 @@ def test_native_update_keeps_persistent_latent_boundary():
 
 
 def test_corrected_update_only_trains_the_value_bias():
-    trainer = PricingTrainerV1.create(adapter_for("corrected_old_v1"))
+    trainer = NativeRunTrainerV1.create(adapter_for("corrected_old_v1"))
     metrics = trainer.update(_episodes(1))
     assert metrics["step"] == 1
     assert metrics["loss_nats"] > 5.0
@@ -102,7 +107,7 @@ def test_corrected_update_only_trains_the_value_bias():
 
 
 def test_ordinary_update_trains_every_parameter():
-    trainer = PricingTrainerV1.create(adapter_for("ordinary_v1"))
+    trainer = NativeRunTrainerV1.create(adapter_for("ordinary_v1"))
     counts = trainer.parameter_counts()
     assert counts["trainable"] == counts["total"]
     metrics = trainer.update(_episodes(1))
@@ -113,22 +118,22 @@ def test_ordinary_update_trains_every_parameter():
 
 def test_zero_step_checkpoint_restores_probe_digest(tmp_path):
     for name in ("new_core_v1", "corrected_old_v1", "ordinary_v1"):
-        trainer = PricingTrainerV1.create(adapter_for(name))
+        trainer = NativeRunTrainerV1.create(adapter_for(name))
         digest = trainer.probe_digest()
         path = tmp_path / f"{name}-zero.pt"
         trainer.save(path)
-        restored = PricingTrainerV1.load(path)
+        restored = NativeRunTrainerV1.load(path)
         assert restored.steps == 0
         assert restored.probe_digest() == digest
 
 
 def test_midtraining_checkpoint_resumes_to_the_same_update(tmp_path):
     episode = _episodes(1)
-    trainer = PricingTrainerV1.create(adapter_for("new_core_v1"))
+    trainer = NativeRunTrainerV1.create(adapter_for("new_core_v1"))
     trainer.update(episode)
     path = tmp_path / "native-step1.pt"
     trainer.save(path)
-    restored = PricingTrainerV1.load(path)
+    restored = NativeRunTrainerV1.load(path)
     assert restored.steps == 1
     left = trainer.update(episode)
     right = restored.update(episode)
@@ -140,8 +145,60 @@ def test_midtraining_checkpoint_resumes_to_the_same_update(tmp_path):
     assert restored.steps == 2
 
 
+def test_credit_on_keeps_reader_and_decoder_receiving_task_gradient():
+    trainer = NativeRunTrainerV1.create(adapter_for("new_core_v1"), configure=credit_on_configure)
+    metrics = trainer.update(_episodes(1))
+    assert trainer.frozen_groups == ()
+    assert metrics["gradient_group_norms"].get("reader", 0.0) > 0
+    assert metrics["gradient_group_norms"].get("decoder", 0.0) > 0
+
+
+def test_credit_stop_freezes_reader_and_decoder_before_adamw():
+    trainer = NativeRunTrainerV1.create(adapter_for("new_core_v1"), configure=credit_stop_configure)
+    assert trainer.frozen_groups == CREDIT_STOP_GROUPS
+    groups = trainer.model.credit_groups()
+    frozen = tuple(groups["reader"]) + tuple(groups["decoder"])
+    before = {
+        name: parameter.detach().clone()
+        for name, parameter in trainer.model.named_parameters()
+        if name in frozen
+    }
+    metrics = trainer.update(_episodes(1))
+    assert "reader" not in metrics["gradient_group_norms"]
+    assert "decoder" not in metrics["gradient_group_norms"]
+    parameters = dict(trainer.model.named_parameters())
+    assert all(torch.equal(value, parameters[name]) for name, value in before.items())
+    assert metrics["gradient_group_norms"].get("core", 0.0) > 0
+
+
+def test_credit_stop_checkpoint_restores_frozen_groups(tmp_path):
+    trainer = NativeRunTrainerV1.create(adapter_for("new_core_v1"), configure=credit_stop_configure)
+    digest = trainer.probe_digest()
+    path = tmp_path / "credit-stop-zero.pt"
+    trainer.save(path)
+    restored = NativeRunTrainerV1.load(path)
+    assert restored.frozen_groups == CREDIT_STOP_GROUPS
+    assert len(restored.trainable) == len(trainer.trainable)
+    assert restored.probe_digest() == digest
+
+
+def test_version1_checkpoint_without_frozen_groups_still_loads(tmp_path):
+    trainer = NativeRunTrainerV1.create(adapter_for("new_core_v1"))
+    payload = trainer.checkpoint()
+    payload.pop("frozen_groups")
+    payload["version"] = 1
+    payload["checkpoint_digest"] = content_digest(
+        {name: value for name, value in payload.items() if name != "checkpoint_digest"}
+    )
+    path = tmp_path / "native-v1.pt"
+    torch.save(payload, path)
+    restored = NativeRunTrainerV1.load(path)
+    assert restored.frozen_groups == ()
+    assert restored.steps == 0
+
+
 def test_fresh_process_restores_pricing_checkpoint(tmp_path):
-    trainer = PricingTrainerV1.create(adapter_for("new_core_v1"))
+    trainer = NativeRunTrainerV1.create(adapter_for("new_core_v1"))
     digest = trainer.probe_digest()
     path = tmp_path / "fresh.pt"
     trainer.save(path)
@@ -149,8 +206,8 @@ def test_fresh_process_restores_pricing_checkpoint(tmp_path):
     env["PYTHONPATH"] = str(ROOT) + os.pathsep + env.get("PYTHONPATH", "")
     code = (
         "import sys; "
-        "from taiji.native_content_training import PricingTrainerV1; "
-        "print(PricingTrainerV1.load(sys.argv[1]).probe_digest())"
+        "from taiji.native_content_training import NativeRunTrainerV1; "
+        "print(NativeRunTrainerV1.load(sys.argv[1]).probe_digest())"
     )
     completed = subprocess.run(
         [sys.executable, "-c", code, str(path)],

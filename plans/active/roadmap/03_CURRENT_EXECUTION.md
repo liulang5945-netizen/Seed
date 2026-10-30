@@ -8,7 +8,7 @@
 
 持续Goal（2026-10-27修订）：沿N主线，发展由态极自身可学习、可恢复的认知机制参与决策与表达的原生认知模型，使其能够以自然中文可靠完成连续任务，跨会话积累和纠正经验，从可核验的经验与反馈中学习并保持旧能力；在授权和资源边界内，必要时即使没有新提示，也能根据目标与状态自主选择继续、求证、求助或等待。各阶段预先声明任务范围和收官条件，以身份可追溯的同一候选及其前后版本，对照合理基线，按范围验证未见任务表现、必要机制的实际贡献、反馈对负责模块的作用、旧能力保持、主动选择效果及真实资源成本；成功、负结果、不可判、工程失败或预算停止均按预定出口结案。
 
-## 当前唯一下一步：重构-5 一次有界独立比较（R4 已定价，待用户批准 R5）
+## 当前唯一下一步：重构-5 一次有界独立比较（R4 已定价、R5 执行件已备，待用户批准 R5）
 
 用户已采纳共同内容核心为唯一计划方向，现按[重构方案](../../reference/PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)推进：语义合同→共同主图/基线→隔离实现/零步恢复→预算冻结→一次比较→条件能力接力。旧N177/F/N178结果与费用继续保留，已有授权N178b按原终点/预算结案；它们不再是主候选。训练与预算按 MAINLINE 队列准入：R4 定价已执行，R5 训练/评价需用户另行批准。
 
@@ -29,6 +29,8 @@ R4合同与定价已执行：[定价与R5数值门](../../reference/SPEC-NATIVE-
 R4预检已通过（不训练）：[报告](../../../reports/taiji_native_core_r4_preflight_20261030.json)。4个真实train episode、每对象16应答轮/460目标字节；三组前向+反向有限；新核心reader/decoder/core/query/attention有梯度、content_encoder无（持久latent边界）；修正旧图仅bias可训练；普通基线全参数可训练；零步独立进程恢复一致；`optimizer_updates=0`、query/holdout未读。forward+backward的17.27 CPU/4.69 wall只是下界，不是R4单价。
 
 R5固定分母评分器已实现：[模块](../../../taiji/native_content_evaluator.py)、[测试](../../../tests/taiji_native/test_native_content_evaluator.py)。分母由声明的answer-turn列表决定，缺失/解析失败/拒答计错；cut/rescue只在baseline正确且cut错误的case上计算；swap按期望答案判对。3/3测试通过。
+
+R5训练执行件已备、未执行：[运行器](../../../scripts/training/run_native_content_core_r5.py)、[训练模块](../../../taiji/native_content_training.py)、[runner测试](../../../tests/taiji_native/test_native_content_r5_runner.py)。声明15 run（Q1 9 + Q2 6）、512更新、seed 0/1/2；`credit_stop`在AdamW前冻结reader/decoder两组；不带`--approve-r5`直接拒绝；逐run零步/端点新进程恢复、NaN与1.5倍单价停止线、总200k CPU/48h预算；报告只写一次。4项runner测试与13项训练测试通过；未读query/holdout、未生成训练报告。
 
 R1完成证据：[统一语义合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md)五项边界确认；世界审计（360-history/216-72-72/1,440 episodes/11,520 turns/0.80–1.11MB）；公开fixture 17案通过；§2.2接口审计与§2.3合同矛盾自检完成。
 

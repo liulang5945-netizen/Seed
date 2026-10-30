@@ -40,7 +40,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from taiji.native_content_training import (  # noqa: E402
-    PricingTrainerV1,
+    NativeRunTrainerV1,
     adapter_for,
     batch_schedule,
 )
@@ -69,7 +69,7 @@ WALL_CAP_HOURS = 48.0
 
 def _restore_probe(path: Path) -> int:
     started = time.perf_counter()
-    trainer = PricingTrainerV1.load(Path(path))
+    trainer = NativeRunTrainerV1.load(Path(path))
     restore_seconds = time.perf_counter() - started
     payload = {
         "object": trainer.adapter.name,
@@ -110,7 +110,7 @@ def _price_object(
     process: psutil.Process,
 ) -> dict[str, Any]:
     adapter = adapter_for(name)
-    trainer = PricingTrainerV1.create(adapter)
+    trainer = NativeRunTrainerV1.create(adapter)
     record: dict[str, Any] = {
         "object": name,
         "parameter_counts": trainer.parameter_counts(),
@@ -127,7 +127,7 @@ def _price_object(
         "checkpoint_mb": zero_path.stat().st_size / 1e6,
         "save_seconds": time.perf_counter() - started,
     }
-    in_process = PricingTrainerV1.load(zero_path)
+    in_process = NativeRunTrainerV1.load(zero_path)
     record["zero_step_restore"]["in_process_equal"] = in_process.probe_digest() == zero_digest
     fresh = _fresh_probe(zero_path)
     record["zero_step_restore"]["fresh_process_equal"] = fresh["digest"] == zero_digest
@@ -175,7 +175,7 @@ def _price_object(
             mid_digest = trainer.probe_digest()
             save_started = time.perf_counter()
             trainer.save(checkpoint_path)
-            in_process_mid = PricingTrainerV1.load(checkpoint_path)
+            in_process_mid = NativeRunTrainerV1.load(checkpoint_path)
             fresh_mid = _fresh_probe(checkpoint_path)
             checkpoint_record = {
                 "checkpoint": checkpoint_path.relative_to(ROOT).as_posix(),
