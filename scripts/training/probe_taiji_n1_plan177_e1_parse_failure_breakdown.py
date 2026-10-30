@@ -35,9 +35,10 @@ COVERED = ("钥匙", "杯子", "书", "盒子")
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="N177 解析缺口分解（训练侧）")
     parser.add_argument("--report", type=Path, default=REPORT)
+    parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args(argv)
     torch.set_num_threads(1)
-    if args.report.exists():
+    if args.report.exists() and not args.overwrite:
         raise ValueError("breakdown report is write-once")
 
     entity_by_family = {family.family_id: family.entity for family in e1_families()["train"]}
@@ -49,6 +50,11 @@ def main(argv: list[str] | None = None) -> int:
             if row["act"] != "query":
                 continue
             roles = {role: value for role, value in row["spans"].items() if value}
+            raw = bytes(row["turn"].frame.payload)
+            try:
+                decoded = raw.decode("utf-8")
+            except UnicodeDecodeError:
+                decoded = ""
             rows.append(
                 {
                     "episode": episode.episode_id,
@@ -57,6 +63,9 @@ def main(argv: list[str] | None = None) -> int:
                     "entity_covered": entity in COVERED,
                     "parsed_entity": bool(roles.get("entity")),
                     "roles_present": sorted(roles),
+                    "act": row["act"],
+                    "text": decoded,
+                    "text_mentions_entity": entity in decoded,
                 }
             )
 
@@ -85,6 +94,12 @@ def main(argv: list[str] | None = None) -> int:
             "uncovered_unparsed": by_group[("uncovered", False)],
         },
         "missing_roles_when_unparsed": dict(missing_roles),
+        "unparsed_without_entity_in_text": sum(
+            1 for row in rows if not row["parsed_entity"] and not row["text_mentions_entity"]
+        ),
+        "unparsed_with_entity_in_text": sum(
+            1 for row in rows if not row["parsed_entity"] and row["text_mentions_entity"]
+        ),
         "rows": rows,
     }
     report["reading"] = "未覆盖实体全部失败 ⇒ 词表缺口为主；已覆盖实体也大量失败 ⇒ 表面形式缺口为主"
