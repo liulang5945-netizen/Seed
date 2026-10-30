@@ -1,6 +1,6 @@
 # 共同内容核心：重构-1 统一语义合同
 
-日期：2026-10-30，Asia/Shanghai。状态：**五项首版设计边界已确认；世界只读审计已完成（名单/模板/样本计划）；精确split/覆盖/成本仍待R2/R4；其余语义一致性审计待执行，不授权训练、评价或读取新sealed面。** 上级方向见[共同内容核心重构方案](PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)、[20261030核心设计重审](TAIJI_CORE_DESIGN_REVIEW_20261030.md)；当前队首与进度只看[03](../active/roadmap/03_CURRENT_EXECUTION.md)。本件不修改 N177/F/N178 已发布结果、冻结阈值、费用或旧 sealed 面。
+日期：2026-10-30，Asia/Shanghai。状态：**五项首版设计边界已确认；世界只读审计已完成（名单/模板/样本计划）；精确split/覆盖已物化为 216/72/72 课程；成本仍待R4；不授权训练、评价或读取新sealed面。** 上级方向见[共同内容核心重构方案](PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)、[20261030核心设计重审](TAIJI_CORE_DESIGN_REVIEW_20261030.md)；当前队首与进度只看[03](../active/roadmap/03_CURRENT_EXECUTION.md)。本件不修改 N177/F/N178 已发布结果、冻结阈值、费用或旧 sealed 面。
 
 ## 1. 目的与范围
 
@@ -83,6 +83,8 @@
 2026-10-30 只读世界审计已登记：[世界审计报告](../../reports/taiji_native_core_r1_world_audit_20261030.json)。12 个实体、3 属性、每属性 4 值、48 个属性模板 + 2 个延迟模板；36 个实体属性槽、108 条槽版本记录、432 个值位置组合格。审计提出 **360 条不同值双版本历史的样本计划**（216 train / 72 query / 72 holdout，4 episodes/history，1,440 episodes / 11,520 turns，字节估算 0.80–1.11 MB）；这只是可行性提案，精确覆盖/split/成本留重构-2/4，未生成数据、未调用模型。
 
 2026-10-30 公开语义 fixture 已建并通过审计：[fixture](../../plans/manifests/native_core_r1_public_fixture_v1.json)、[审计报告](../../reports/taiji_native_core_r1_public_fixture_audit_20261030.json)。17 案覆盖同 query 不同当前值、同当前值不同历史、同 query 文本不同 time_intent、更正、三版本、同值版本、干扰、未知、未知历史、歧义、否定和非应答；三属性全覆盖，新实体与旧 E1 无交集，全部 `sealed=false`，逐案 target 首字节/目标切片/固定分母检查通过。fixture 是公开合成面，不是训练数据，未调用模型。
+
+2026-10-30 课程与分区已物化（R4 准备，不训练）：[分区 manifest](../../plans/manifests/native_core_r1_split_v1.json)、[train](../../plans/manifests/native_core_r1_train_v1.json)、[query](../../plans/manifests/native_core_r1_query_v1.json)、[holdout](../../plans/manifests/native_core_r1_holdout_v1.json)、[审计报告](../../reports/taiji_native_core_r1_course_audit_20261030.json)。432 个可能历史中取 360：216 train / 72 query / 72 holdout，另 72 unused；每个槽 6/2/2，反事实成对不跨分区；4 episodes/history、8 turns/episode，共 1,440 episodes / 11,520 turns / 5,760 answer turns；实际文本 452,160 字节（低于 R1 旧 E1 外推的下界，计划只保留上界门）。train/query/holdout 分文件写入，`training_read` 仅 train 为 true；无模型调用、无 sealed 读取。精确成本仍待 R4 标定。
 
 ### 3.2 family 与必须存在的对照
 

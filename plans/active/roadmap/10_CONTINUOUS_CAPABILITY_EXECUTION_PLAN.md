@@ -65,6 +65,7 @@
 | 重构-3 结构门已过 | [新核心隔离实现与零步恢复](../../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md)、[结构探针](../../../reports/taiji_native_core_r3_probe_20261030.json) | 53/53结构检查、cut/rescue、首字节监督、独立进程恢复；未训练、不称学会 |
 | 重构-3b-1 结构门已过 | [修正旧图基线](../../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md#6-r3b1-修正旧图基线20261030)、[基线探针](../../../reports/taiji_native_core_r3b_baseline_20261030.json) | 22/22；固定分母17/17；硬解析/离散store/current-previous/固定bias/冻结头；未训练 |
 | 重构-3b-2 结构门已过 | [普通端到端基线](../../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md#7-r3b2-普通端到端基线20261030)、[基线探针](../../../reports/taiji_native_core_r3b2_ordinary_20261030.json) | 11/11；固定分母17/17；全文prompt/无硬门/全参数可训练；未训练 |
+| 重构-4-prep 已完成 | 课程与分区物化：[split](../../../plans/manifests/native_core_r1_split_v1.json)、[train](../../../plans/manifests/native_core_r1_train_v1.json)、[query](../../../plans/manifests/native_core_r1_query_v1.json)、[holdout](../../../plans/manifests/native_core_r1_holdout_v1.json) | 216/72/72；1,440 episodes；5,760 answer turns；无模型调用 |
 | 重构-4 当前阶段 | train-only定价、保持集、数值门、预算与停止线 | 准入=用户评审R2；准入前不训练 |
 | 重构-5 | 一次有界独立比较 | 行为/保持/恢复/成本合取，正负均结案 |
 | 重构-6 | T2/任务所需T3、自然连续任务、跨会话及条件扩域 | 沿下列后继任务卡与07，能力门不改 |

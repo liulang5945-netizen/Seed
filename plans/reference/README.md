@@ -15,6 +15,8 @@
 
 论文、报告和机器读数的身份仍以 `plans/manifests/` 与 `reports/` 为准；合同不复制逐轮数字。
 
+课程与分区（R4 准备，未训练）：[split](../manifests/native_core_r1_split_v1.json)、[train](../manifests/native_core_r1_train_v1.json)、[query](../manifests/native_core_r1_query_v1.json)、[holdout](../manifests/native_core_r1_holdout_v1.json)、[审计报告](../../reports/taiji_native_core_r1_course_audit_20261030.json)。216/72/72；反事实成对不跨分区；query/holdout 文件 `training_read=false`，训练只读 train。
+
 ## 2. 旧资产（不是当前合同）
 
 | 资产族 | 代表文档 | 处置 |

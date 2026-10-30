@@ -1,0 +1,4344 @@
+{
+  "format": "taiji-native-core-r1-split-v1",
+  "version": 1,
+  "salt": "native-core-r1-split-v1-20261030",
+  "split_policy": {
+    "allowed_splits": [
+      "train",
+      "query",
+      "holdout"
+    ],
+    "train_histories": 216,
+    "query_histories": 72,
+    "holdout_histories": 72,
+    "unused_histories": 72,
+    "unit": "history chain; counterfactual pairs stay in one split",
+    "training_read": {
+      "train": true,
+      "query": false,
+      "holdout": false
+    }
+  },
+  "histories": [
+    {
+      "history_id": "r1h:f98f33b36088e260f20d",
+      "entity": "雨伞",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "红色",
+      "slot": "雨伞|颜色",
+      "pair_id": "雨伞|颜色|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:3461e875833488bbe132",
+      "entity": "雨伞",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "绿色",
+      "slot": "雨伞|颜色",
+      "pair_id": "雨伞|颜色|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:419dc8b255f0e35d5adb",
+      "entity": "雨伞",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "黄色",
+      "slot": "雨伞|颜色",
+      "pair_id": "雨伞|颜色|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:167ca1ea95c5b385d6c8",
+      "entity": "雨伞",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "黄色",
+      "slot": "雨伞|颜色",
+      "pair_id": "雨伞|颜色|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:7b56b17b7037d4ff4082",
+      "entity": "雨伞",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "蓝色",
+      "slot": "雨伞|颜色",
+      "pair_id": "雨伞|颜色|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:5996251d16f8b5ce9f2e",
+      "entity": "雨伞",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "绿色",
+      "slot": "雨伞|颜色",
+      "pair_id": "雨伞|颜色|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:b081532ea3cf40cbae5b",
+      "entity": "雨伞",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "红色",
+      "slot": "雨伞|颜色",
+      "pair_id": "雨伞|颜色|pair2",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:218905e79d33c9df0f38",
+      "entity": "雨伞",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "蓝色",
+      "slot": "雨伞|颜色",
+      "pair_id": "雨伞|颜色|pair2",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:71292a89347419bbd979",
+      "entity": "雨伞",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "黄色",
+      "slot": "雨伞|颜色",
+      "pair_id": "雨伞|颜色|pair5",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:a3d2536d8c70ec5bd73d",
+      "entity": "雨伞",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "绿色",
+      "slot": "雨伞|颜色",
+      "pair_id": "雨伞|颜色|pair5",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:d7fb44490733c659c6d6",
+      "entity": "雨伞",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "红色",
+      "slot": "雨伞|颜色",
+      "pair_id": "雨伞|颜色|pair3",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:a82bf0b205ee95c973db",
+      "entity": "雨伞",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "蓝色",
+      "slot": "雨伞|颜色",
+      "pair_id": "雨伞|颜色|pair3",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:fd52a6f8e81540315219",
+      "entity": "雨伞",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "桌上",
+      "slot": "雨伞|位置",
+      "pair_id": "雨伞|位置|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:afe4bf7000f743f3f4bb",
+      "entity": "雨伞",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "抽屉",
+      "slot": "雨伞|位置",
+      "pair_id": "雨伞|位置|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:83d8076de4f329d1ba66",
+      "entity": "雨伞",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "包里",
+      "slot": "雨伞|位置",
+      "pair_id": "雨伞|位置|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:bbf671869a953a36728f",
+      "entity": "雨伞",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "包里",
+      "slot": "雨伞|位置",
+      "pair_id": "雨伞|位置|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:7d4dad4db24a76a23139",
+      "entity": "雨伞",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "桌上",
+      "slot": "雨伞|位置",
+      "pair_id": "雨伞|位置|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:349e976cd8541a38b515",
+      "entity": "雨伞",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "抽屉",
+      "slot": "雨伞|位置",
+      "pair_id": "雨伞|位置|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:e356258b7828221d2d58",
+      "entity": "雨伞",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "包里",
+      "slot": "雨伞|位置",
+      "pair_id": "雨伞|位置|pair5",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:30d79b0c127f4dfe51f1",
+      "entity": "雨伞",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "柜子",
+      "slot": "雨伞|位置",
+      "pair_id": "雨伞|位置|pair5",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:bd92a1007dd381a39844",
+      "entity": "雨伞",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "桌上",
+      "slot": "雨伞|位置",
+      "pair_id": "雨伞|位置|pair1",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:6ca34bd38b54cca64801",
+      "entity": "雨伞",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "柜子",
+      "slot": "雨伞|位置",
+      "pair_id": "雨伞|位置|pair1",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:28aadb02ae293eb737ca",
+      "entity": "雨伞",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "抽屉",
+      "slot": "雨伞|位置",
+      "pair_id": "雨伞|位置|pair0",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:5059c0560197af85df3f",
+      "entity": "雨伞",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "柜子",
+      "slot": "雨伞|位置",
+      "pair_id": "雨伞|位置|pair0",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:f54a6f1cb63aaa7a7e85",
+      "entity": "雨伞",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "我的",
+      "slot": "雨伞|归属",
+      "pair_id": "雨伞|归属|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:ac7a83409f140f0b4c1c",
+      "entity": "雨伞",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "他的",
+      "slot": "雨伞|归属",
+      "pair_id": "雨伞|归属|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:e79b56b47cc5ec22f87d",
+      "entity": "雨伞",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "你的",
+      "slot": "雨伞|归属",
+      "pair_id": "雨伞|归属|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:b9c7fe91316fcef2c982",
+      "entity": "雨伞",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "他的",
+      "slot": "雨伞|归属",
+      "pair_id": "雨伞|归属|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:eb9b9ae612b5b91f93ef",
+      "entity": "雨伞",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "我的",
+      "slot": "雨伞|归属",
+      "pair_id": "雨伞|归属|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:9f4e21159ec777f2e753",
+      "entity": "雨伞",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "你的",
+      "slot": "雨伞|归属",
+      "pair_id": "雨伞|归属|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:c6f1c5b2d9aadb6df102",
+      "entity": "雨伞",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "她的",
+      "slot": "雨伞|归属",
+      "pair_id": "雨伞|归属|pair5",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:5d11094ffcfc1f568d5c",
+      "entity": "雨伞",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "他的",
+      "slot": "雨伞|归属",
+      "pair_id": "雨伞|归属|pair5",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:3a448d4c92576a9802b3",
+      "entity": "雨伞",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "我的",
+      "slot": "雨伞|归属",
+      "pair_id": "雨伞|归属|pair2",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:c71a763069edb292c747",
+      "entity": "雨伞",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "你的",
+      "slot": "雨伞|归属",
+      "pair_id": "雨伞|归属|pair2",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:a8726f20c4dfe70816d0",
+      "entity": "雨伞",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "她的",
+      "slot": "雨伞|归属",
+      "pair_id": "雨伞|归属|pair4",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:833844006a5376a2e7b8",
+      "entity": "雨伞",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "她的",
+      "slot": "雨伞|归属",
+      "pair_id": "雨伞|归属|pair4",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:48e7ba277a1cdd780ace",
+      "entity": "背包",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "黄色",
+      "slot": "背包|颜色",
+      "pair_id": "背包|颜色|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:99f6f06dbc3bb9000ec9",
+      "entity": "背包",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "绿色",
+      "slot": "背包|颜色",
+      "pair_id": "背包|颜色|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:b083ec8c73739bf0cad7",
+      "entity": "背包",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "红色",
+      "slot": "背包|颜色",
+      "pair_id": "背包|颜色|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:02d68a8581f0bd0ceb07",
+      "entity": "背包",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "蓝色",
+      "slot": "背包|颜色",
+      "pair_id": "背包|颜色|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:5d59bd57d5bad6f96fc5",
+      "entity": "背包",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "红色",
+      "slot": "背包|颜色",
+      "pair_id": "背包|颜色|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:d716fabb127d82475cb5",
+      "entity": "背包",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "蓝色",
+      "slot": "背包|颜色",
+      "pair_id": "背包|颜色|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:8ed02d7a5bf3e4040c93",
+      "entity": "背包",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "黄色",
+      "slot": "背包|颜色",
+      "pair_id": "背包|颜色|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:c4ebfc971089ebb1b85d",
+      "entity": "背包",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "黄色",
+      "slot": "背包|颜色",
+      "pair_id": "背包|颜色|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:3511221d349db6a518fc",
+      "entity": "背包",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "蓝色",
+      "slot": "背包|颜色",
+      "pair_id": "背包|颜色|pair0",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:a02ddae65f860147dbff",
+      "entity": "背包",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "绿色",
+      "slot": "背包|颜色",
+      "pair_id": "背包|颜色|pair0",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:fc8c7fb52aec7388b39f",
+      "entity": "背包",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "红色",
+      "slot": "背包|颜色",
+      "pair_id": "背包|颜色|pair1",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:5240cb17580a1ad3e5b6",
+      "entity": "背包",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "绿色",
+      "slot": "背包|颜色",
+      "pair_id": "背包|颜色|pair1",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:5e44792934976d55ac1f",
+      "entity": "背包",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "桌上",
+      "slot": "背包|位置",
+      "pair_id": "背包|位置|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:ccf9a32fa6a9c3bfa83f",
+      "entity": "背包",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "抽屉",
+      "slot": "背包|位置",
+      "pair_id": "背包|位置|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:27163ed4910e65e6e51e",
+      "entity": "背包",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "抽屉",
+      "slot": "背包|位置",
+      "pair_id": "背包|位置|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:9879d4bcd182df261ba5",
+      "entity": "背包",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "柜子",
+      "slot": "背包|位置",
+      "pair_id": "背包|位置|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:67dc218c8ba0bc893c36",
+      "entity": "背包",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "包里",
+      "slot": "背包|位置",
+      "pair_id": "背包|位置|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:7a1294b6838f438be901",
+      "entity": "背包",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "柜子",
+      "slot": "背包|位置",
+      "pair_id": "背包|位置|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:01b94fe16fe3922bfbec",
+      "entity": "背包",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "包里",
+      "slot": "背包|位置",
+      "pair_id": "背包|位置|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:3444a74217422724c4cf",
+      "entity": "背包",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "包里",
+      "slot": "背包|位置",
+      "pair_id": "背包|位置|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:f2bb6d568ca60a5b7c2b",
+      "entity": "背包",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "桌上",
+      "slot": "背包|位置",
+      "pair_id": "背包|位置|pair3",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:e42291370d5d355cc8bc",
+      "entity": "背包",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "抽屉",
+      "slot": "背包|位置",
+      "pair_id": "背包|位置|pair3",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:9fec29050e33f0964f51",
+      "entity": "背包",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "桌上",
+      "slot": "背包|位置",
+      "pair_id": "背包|位置|pair1",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:bdb05796d3faf8a6eeb9",
+      "entity": "背包",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "柜子",
+      "slot": "背包|位置",
+      "pair_id": "背包|位置|pair1",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:ec5bb123e3973cf7d596",
+      "entity": "背包",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "你的",
+      "slot": "背包|归属",
+      "pair_id": "背包|归属|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:abc174dcefbd2d8b87c3",
+      "entity": "背包",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "他的",
+      "slot": "背包|归属",
+      "pair_id": "背包|归属|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:3185d8342004a6b957c9",
+      "entity": "背包",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "我的",
+      "slot": "背包|归属",
+      "pair_id": "背包|归属|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:e1abdac7edfd7aa02427",
+      "entity": "背包",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "他的",
+      "slot": "背包|归属",
+      "pair_id": "背包|归属|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:30b7f41f3b7d4a5d2579",
+      "entity": "背包",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "她的",
+      "slot": "背包|归属",
+      "pair_id": "背包|归属|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:e1b8260a488bcca47c13",
+      "entity": "背包",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "她的",
+      "slot": "背包|归属",
+      "pair_id": "背包|归属|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:6c3c6158727f6dd19790",
+      "entity": "背包",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "她的",
+      "slot": "背包|归属",
+      "pair_id": "背包|归属|pair5",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:e0fad4569b4d07fdac21",
+      "entity": "背包",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "他的",
+      "slot": "背包|归属",
+      "pair_id": "背包|归属|pair5",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:7e97c03b53f9610318b0",
+      "entity": "背包",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "我的",
+      "slot": "背包|归属",
+      "pair_id": "背包|归属|pair3",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:23d3ec0428d6e7fcb31a",
+      "entity": "背包",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "你的",
+      "slot": "背包|归属",
+      "pair_id": "背包|归属|pair3",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:bc1b97e283104791e8d8",
+      "entity": "背包",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "我的",
+      "slot": "背包|归属",
+      "pair_id": "背包|归属|pair2",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:4333158a13e08c3ab420",
+      "entity": "背包",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "你的",
+      "slot": "背包|归属",
+      "pair_id": "背包|归属|pair2",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:1f0ac8340ca15c75a452",
+      "entity": "水杯",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "红色",
+      "slot": "水杯|颜色",
+      "pair_id": "水杯|颜色|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:70ddd2a3c63d526b9727",
+      "entity": "水杯",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "蓝色",
+      "slot": "水杯|颜色",
+      "pair_id": "水杯|颜色|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:50d07b3b471e44cc2127",
+      "entity": "水杯",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "红色",
+      "slot": "水杯|颜色",
+      "pair_id": "水杯|颜色|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:cf5e88d86e19420944ed",
+      "entity": "水杯",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "蓝色",
+      "slot": "水杯|颜色",
+      "pair_id": "水杯|颜色|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:ee68be8ebef8f6c1e968",
+      "entity": "水杯",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "红色",
+      "slot": "水杯|颜色",
+      "pair_id": "水杯|颜色|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:876d7361fa0752978f62",
+      "entity": "水杯",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "绿色",
+      "slot": "水杯|颜色",
+      "pair_id": "水杯|颜色|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:857ca97d8d0215646240",
+      "entity": "水杯",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "蓝色",
+      "slot": "水杯|颜色",
+      "pair_id": "水杯|颜色|pair0",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:f543a88dd0e3356bdf71",
+      "entity": "水杯",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "绿色",
+      "slot": "水杯|颜色",
+      "pair_id": "水杯|颜色|pair0",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:5893350bbc5f42ea054c",
+      "entity": "水杯",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "黄色",
+      "slot": "水杯|颜色",
+      "pair_id": "水杯|颜色|pair5",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:2424a9efafa2b53c1038",
+      "entity": "水杯",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "绿色",
+      "slot": "水杯|颜色",
+      "pair_id": "水杯|颜色|pair5",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:4f171b0326a8aa3b9e57",
+      "entity": "水杯",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "黄色",
+      "slot": "水杯|颜色",
+      "pair_id": "水杯|颜色|pair4",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:435c1760569a1989a46f",
+      "entity": "水杯",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "黄色",
+      "slot": "水杯|颜色",
+      "pair_id": "水杯|颜色|pair4",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:717063e958047ad27dda",
+      "entity": "水杯",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "抽屉",
+      "slot": "水杯|位置",
+      "pair_id": "水杯|位置|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:0ffac5b4836f6b95a23f",
+      "entity": "水杯",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "柜子",
+      "slot": "水杯|位置",
+      "pair_id": "水杯|位置|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:e7ae1d50e231fc017933",
+      "entity": "水杯",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "桌上",
+      "slot": "水杯|位置",
+      "pair_id": "水杯|位置|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:40e7fff56d886ac6589a",
+      "entity": "水杯",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "柜子",
+      "slot": "水杯|位置",
+      "pair_id": "水杯|位置|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:72cc7ef6efffcf1e6062",
+      "entity": "水杯",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "包里",
+      "slot": "水杯|位置",
+      "pair_id": "水杯|位置|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:f52f0a64fbe7935982bf",
+      "entity": "水杯",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "包里",
+      "slot": "水杯|位置",
+      "pair_id": "水杯|位置|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:5c2de70434e82bb8ea42",
+      "entity": "水杯",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "桌上",
+      "slot": "水杯|位置",
+      "pair_id": "水杯|位置|pair2",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:0cc0110dd0f480eec56b",
+      "entity": "水杯",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "抽屉",
+      "slot": "水杯|位置",
+      "pair_id": "水杯|位置|pair2",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:7b196b0d58cbb810912c",
+      "entity": "水杯",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "桌上",
+      "slot": "水杯|位置",
+      "pair_id": "水杯|位置|pair3",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:58f472b4d62dde059c76",
+      "entity": "水杯",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "抽屉",
+      "slot": "水杯|位置",
+      "pair_id": "水杯|位置|pair3",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:1ee654faf2dcce87cab3",
+      "entity": "水杯",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "包里",
+      "slot": "水杯|位置",
+      "pair_id": "水杯|位置|pair5",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:c7a5d6518876c7e042ed",
+      "entity": "水杯",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "柜子",
+      "slot": "水杯|位置",
+      "pair_id": "水杯|位置|pair5",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:5e92ae02dbbacae30aaa",
+      "entity": "水杯",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "我的",
+      "slot": "水杯|归属",
+      "pair_id": "水杯|归属|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:1e45e9b75f5729061c03",
+      "entity": "水杯",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "你的",
+      "slot": "水杯|归属",
+      "pair_id": "水杯|归属|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:074f1ca8954da0af7f5c",
+      "entity": "水杯",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "我的",
+      "slot": "水杯|归属",
+      "pair_id": "水杯|归属|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:8d3f6e12f9f1de274390",
+      "entity": "水杯",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "他的",
+      "slot": "水杯|归属",
+      "pair_id": "水杯|归属|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:c92a59e8faf0201d1a50",
+      "entity": "水杯",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "你的",
+      "slot": "水杯|归属",
+      "pair_id": "水杯|归属|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:e7d782b1f6a2282841ef",
+      "entity": "水杯",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "他的",
+      "slot": "水杯|归属",
+      "pair_id": "水杯|归属|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:d68ee719a3e553e224ad",
+      "entity": "水杯",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "她的",
+      "slot": "水杯|归属",
+      "pair_id": "水杯|归属|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:213794ab92594d2f448b",
+      "entity": "水杯",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "她的",
+      "slot": "水杯|归属",
+      "pair_id": "水杯|归属|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:06651f3e27a364d9febe",
+      "entity": "水杯",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "她的",
+      "slot": "水杯|归属",
+      "pair_id": "水杯|归属|pair5",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:6a900440c5fbff5bf61d",
+      "entity": "水杯",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "他的",
+      "slot": "水杯|归属",
+      "pair_id": "水杯|归属|pair5",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:c10078b710ef6a8ff530",
+      "entity": "水杯",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "我的",
+      "slot": "水杯|归属",
+      "pair_id": "水杯|归属|pair2",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:055267d1ac21695578f4",
+      "entity": "水杯",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "你的",
+      "slot": "水杯|归属",
+      "pair_id": "水杯|归属|pair2",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:29f5c8425bc1a51b8835",
+      "entity": "耳机",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "红色",
+      "slot": "耳机|颜色",
+      "pair_id": "耳机|颜色|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:b74472e706276481ecae",
+      "entity": "耳机",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "蓝色",
+      "slot": "耳机|颜色",
+      "pair_id": "耳机|颜色|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:05ee65409bf30a99ceee",
+      "entity": "耳机",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "红色",
+      "slot": "耳机|颜色",
+      "pair_id": "耳机|颜色|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:96104f7def304dac04de",
+      "entity": "耳机",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "绿色",
+      "slot": "耳机|颜色",
+      "pair_id": "耳机|颜色|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:89bd28d1648783e3ac35",
+      "entity": "耳机",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "红色",
+      "slot": "耳机|颜色",
+      "pair_id": "耳机|颜色|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:1e55ed3ac9dea97e5e9d",
+      "entity": "耳机",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "蓝色",
+      "slot": "耳机|颜色",
+      "pair_id": "耳机|颜色|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:6370fe9d39bfcc65f036",
+      "entity": "耳机",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "黄色",
+      "slot": "耳机|颜色",
+      "pair_id": "耳机|颜色|pair5",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:1e602211aa654141c875",
+      "entity": "耳机",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "绿色",
+      "slot": "耳机|颜色",
+      "pair_id": "耳机|颜色|pair5",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:1e282893f75357e85fc3",
+      "entity": "耳机",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "蓝色",
+      "slot": "耳机|颜色",
+      "pair_id": "耳机|颜色|pair0",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:99521e22a69930f1f793",
+      "entity": "耳机",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "绿色",
+      "slot": "耳机|颜色",
+      "pair_id": "耳机|颜色|pair0",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:34021b47c1a43eb31e0f",
+      "entity": "耳机",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "黄色",
+      "slot": "耳机|颜色",
+      "pair_id": "耳机|颜色|pair4",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:cae4d91fb57278e40ec7",
+      "entity": "耳机",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "黄色",
+      "slot": "耳机|颜色",
+      "pair_id": "耳机|颜色|pair4",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:cbb2b0b096d5197b4f2c",
+      "entity": "耳机",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "桌上",
+      "slot": "耳机|位置",
+      "pair_id": "耳机|位置|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:ded71ddac35518683855",
+      "entity": "耳机",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "抽屉",
+      "slot": "耳机|位置",
+      "pair_id": "耳机|位置|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:144fc8ec48e2f34d50b5",
+      "entity": "耳机",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "包里",
+      "slot": "耳机|位置",
+      "pair_id": "耳机|位置|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:6555c887e8bfda19f1f5",
+      "entity": "耳机",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "包里",
+      "slot": "耳机|位置",
+      "pair_id": "耳机|位置|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:7cbc095669943a8f25b4",
+      "entity": "耳机",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "包里",
+      "slot": "耳机|位置",
+      "pair_id": "耳机|位置|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:8db66bd1ecbe7836b8f5",
+      "entity": "耳机",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "柜子",
+      "slot": "耳机|位置",
+      "pair_id": "耳机|位置|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:a57e74684a9705b2c491",
+      "entity": "耳机",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "桌上",
+      "slot": "耳机|位置",
+      "pair_id": "耳机|位置|pair2",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:e8e7cd4275ccfc67d0d5",
+      "entity": "耳机",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "抽屉",
+      "slot": "耳机|位置",
+      "pair_id": "耳机|位置|pair2",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:0fe60d3ba5d5befcb14a",
+      "entity": "耳机",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "抽屉",
+      "slot": "耳机|位置",
+      "pair_id": "耳机|位置|pair0",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:a75ed13f2993a4c8af1d",
+      "entity": "耳机",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "柜子",
+      "slot": "耳机|位置",
+      "pair_id": "耳机|位置|pair0",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:80e636d3aac735fe341b",
+      "entity": "耳机",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "桌上",
+      "slot": "耳机|位置",
+      "pair_id": "耳机|位置|pair1",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:9ac8b3a614aa6953f43c",
+      "entity": "耳机",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "柜子",
+      "slot": "耳机|位置",
+      "pair_id": "耳机|位置|pair1",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:ea54a83e4659bab15570",
+      "entity": "耳机",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "我的",
+      "slot": "耳机|归属",
+      "pair_id": "耳机|归属|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:8a893141dd1b3152fd20",
+      "entity": "耳机",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "他的",
+      "slot": "耳机|归属",
+      "pair_id": "耳机|归属|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:48066ed4934c137ac0f8",
+      "entity": "耳机",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "我的",
+      "slot": "耳机|归属",
+      "pair_id": "耳机|归属|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:712125010b2e4676d475",
+      "entity": "耳机",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "你的",
+      "slot": "耳机|归属",
+      "pair_id": "耳机|归属|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:b51ae3823b4a61b0ff19",
+      "entity": "耳机",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "她的",
+      "slot": "耳机|归属",
+      "pair_id": "耳机|归属|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:2b6e4751ea0aee0a2dff",
+      "entity": "耳机",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "他的",
+      "slot": "耳机|归属",
+      "pair_id": "耳机|归属|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:0628a93752e08f76a58b",
+      "entity": "耳机",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "你的",
+      "slot": "耳机|归属",
+      "pair_id": "耳机|归属|pair0",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:6dc0fc65b552898290b0",
+      "entity": "耳机",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "他的",
+      "slot": "耳机|归属",
+      "pair_id": "耳机|归属|pair0",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:f9aa9cd91f28d5a83f40",
+      "entity": "耳机",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "我的",
+      "slot": "耳机|归属",
+      "pair_id": "耳机|归属|pair3",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:4f1b9368d4cbe44d05e6",
+      "entity": "耳机",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "你的",
+      "slot": "耳机|归属",
+      "pair_id": "耳机|归属|pair3",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:55afc3cd839f7f24fdaf",
+      "entity": "耳机",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "她的",
+      "slot": "耳机|归属",
+      "pair_id": "耳机|归属|pair4",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:805cb8046d834ab1d9e5",
+      "entity": "耳机",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "她的",
+      "slot": "耳机|归属",
+      "pair_id": "耳机|归属|pair4",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:f0e5524b0bdfe7879a5d",
+      "entity": "遥控器",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "红色",
+      "slot": "遥控器|颜色",
+      "pair_id": "遥控器|颜色|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:748317b6c7fa5ef6f6c6",
+      "entity": "遥控器",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "蓝色",
+      "slot": "遥控器|颜色",
+      "pair_id": "遥控器|颜色|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:410aa8531a3d3c3ec071",
+      "entity": "遥控器",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "红色",
+      "slot": "遥控器|颜色",
+      "pair_id": "遥控器|颜色|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:d9f39bb647bddc6bb3a4",
+      "entity": "遥控器",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "绿色",
+      "slot": "遥控器|颜色",
+      "pair_id": "遥控器|颜色|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:d300960a7f73ce27c161",
+      "entity": "遥控器",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "蓝色",
+      "slot": "遥控器|颜色",
+      "pair_id": "遥控器|颜色|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:877dabf6c992dee1fcf1",
+      "entity": "遥控器",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "绿色",
+      "slot": "遥控器|颜色",
+      "pair_id": "遥控器|颜色|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:c51a5b3a5c66aa28813a",
+      "entity": "遥控器",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "黄色",
+      "slot": "遥控器|颜色",
+      "pair_id": "遥控器|颜色|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:505ad5450cca717a3e46",
+      "entity": "遥控器",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "黄色",
+      "slot": "遥控器|颜色",
+      "pair_id": "遥控器|颜色|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:2e52f1891244d8152f26",
+      "entity": "遥控器",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "红色",
+      "slot": "遥控器|颜色",
+      "pair_id": "遥控器|颜色|pair2",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:9cea812383439ae9e5ee",
+      "entity": "遥控器",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "蓝色",
+      "slot": "遥控器|颜色",
+      "pair_id": "遥控器|颜色|pair2",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:7f185b977ddb3bb72f2c",
+      "entity": "遥控器",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "黄色",
+      "slot": "遥控器|颜色",
+      "pair_id": "遥控器|颜色|pair5",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:d39923ed73ae8fa7fc7a",
+      "entity": "遥控器",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "绿色",
+      "slot": "遥控器|颜色",
+      "pair_id": "遥控器|颜色|pair5",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:df91d6c7cc22884832ad",
+      "entity": "遥控器",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "包里",
+      "slot": "遥控器|位置",
+      "pair_id": "遥控器|位置|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:4520c5ea2e7eb70f1ec9",
+      "entity": "遥控器",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "柜子",
+      "slot": "遥控器|位置",
+      "pair_id": "遥控器|位置|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:1b568e6cce20e626b511",
+      "entity": "遥控器",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "桌上",
+      "slot": "遥控器|位置",
+      "pair_id": "遥控器|位置|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:bd09af1b959752952cb0",
+      "entity": "遥控器",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "抽屉",
+      "slot": "遥控器|位置",
+      "pair_id": "遥控器|位置|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:d3b9fff077c5ddc5c57d",
+      "entity": "遥控器",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "桌上",
+      "slot": "遥控器|位置",
+      "pair_id": "遥控器|位置|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:347f592488ff57618555",
+      "entity": "遥控器",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "抽屉",
+      "slot": "遥控器|位置",
+      "pair_id": "遥控器|位置|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:fef9677276db31e1809f",
+      "entity": "遥控器",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "桌上",
+      "slot": "遥控器|位置",
+      "pair_id": "遥控器|位置|pair1",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:a514e447b9a128e309ca",
+      "entity": "遥控器",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "柜子",
+      "slot": "遥控器|位置",
+      "pair_id": "遥控器|位置|pair1",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:86ec9dd65f49f9436f93",
+      "entity": "遥控器",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "抽屉",
+      "slot": "遥控器|位置",
+      "pair_id": "遥控器|位置|pair0",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:87c637781391f9c83178",
+      "entity": "遥控器",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "柜子",
+      "slot": "遥控器|位置",
+      "pair_id": "遥控器|位置|pair0",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:32bbc6d6d905569e59e0",
+      "entity": "遥控器",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "包里",
+      "slot": "遥控器|位置",
+      "pair_id": "遥控器|位置|pair4",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:fb520427b60b75bbf226",
+      "entity": "遥控器",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "包里",
+      "slot": "遥控器|位置",
+      "pair_id": "遥控器|位置|pair4",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:50a6b61e4d624de78af7",
+      "entity": "遥控器",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "我的",
+      "slot": "遥控器|归属",
+      "pair_id": "遥控器|归属|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:8b2be988e9eed2548c85",
+      "entity": "遥控器",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "你的",
+      "slot": "遥控器|归属",
+      "pair_id": "遥控器|归属|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:efd1b4e5316b8801db1f",
+      "entity": "遥控器",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "我的",
+      "slot": "遥控器|归属",
+      "pair_id": "遥控器|归属|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:275bf31838f6f8ccc854",
+      "entity": "遥控器",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "你的",
+      "slot": "遥控器|归属",
+      "pair_id": "遥控器|归属|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:e89b6a2e66fedcd4d498",
+      "entity": "遥控器",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "她的",
+      "slot": "遥控器|归属",
+      "pair_id": "遥控器|归属|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:5a663e6882b7217f916e",
+      "entity": "遥控器",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "他的",
+      "slot": "遥控器|归属",
+      "pair_id": "遥控器|归属|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:f1dc1084ce0cd2bce31d",
+      "entity": "遥控器",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "她的",
+      "slot": "遥控器|归属",
+      "pair_id": "遥控器|归属|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:f4584a75a545d3731512",
+      "entity": "遥控器",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "她的",
+      "slot": "遥控器|归属",
+      "pair_id": "遥控器|归属|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:d48662411f7495b605c5",
+      "entity": "遥控器",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "我的",
+      "slot": "遥控器|归属",
+      "pair_id": "遥控器|归属|pair1",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:21e1d18822b603ced964",
+      "entity": "遥控器",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "他的",
+      "slot": "遥控器|归属",
+      "pair_id": "遥控器|归属|pair1",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:03f5741d91fe3a5d4198",
+      "entity": "遥控器",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "你的",
+      "slot": "遥控器|归属",
+      "pair_id": "遥控器|归属|pair0",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:aa04eed8501935c392b4",
+      "entity": "遥控器",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "他的",
+      "slot": "遥控器|归属",
+      "pair_id": "遥控器|归属|pair0",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:2664d1abcac5e8c0eb57",
+      "entity": "台灯",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "红色",
+      "slot": "台灯|颜色",
+      "pair_id": "台灯|颜色|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:ee94f2091655e87a0c36",
+      "entity": "台灯",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "绿色",
+      "slot": "台灯|颜色",
+      "pair_id": "台灯|颜色|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:97a03ac6eced67a22bac",
+      "entity": "台灯",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "蓝色",
+      "slot": "台灯|颜色",
+      "pair_id": "台灯|颜色|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:675a80a3e1c12329c7b2",
+      "entity": "台灯",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "绿色",
+      "slot": "台灯|颜色",
+      "pair_id": "台灯|颜色|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:ee23ec7a358b11875230",
+      "entity": "台灯",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "红色",
+      "slot": "台灯|颜色",
+      "pair_id": "台灯|颜色|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:68c7234eae3bc0b8c0c8",
+      "entity": "台灯",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "蓝色",
+      "slot": "台灯|颜色",
+      "pair_id": "台灯|颜色|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:00f823dd3c1598aea329",
+      "entity": "台灯",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "黄色",
+      "slot": "台灯|颜色",
+      "pair_id": "台灯|颜色|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:6b0e7a23f96f51b3d3a6",
+      "entity": "台灯",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "黄色",
+      "slot": "台灯|颜色",
+      "pair_id": "台灯|颜色|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:3118a16b91254ae9cfa6",
+      "entity": "台灯",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "红色",
+      "slot": "台灯|颜色",
+      "pair_id": "台灯|颜色|pair2",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:e28ef69a93706648638e",
+      "entity": "台灯",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "蓝色",
+      "slot": "台灯|颜色",
+      "pair_id": "台灯|颜色|pair2",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:4c7ead6722d221d37d6e",
+      "entity": "台灯",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "黄色",
+      "slot": "台灯|颜色",
+      "pair_id": "台灯|颜色|pair5",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:42099b8dee67ff3ad26c",
+      "entity": "台灯",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "绿色",
+      "slot": "台灯|颜色",
+      "pair_id": "台灯|颜色|pair5",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:a7628223621f0366f56e",
+      "entity": "台灯",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "桌上",
+      "slot": "台灯|位置",
+      "pair_id": "台灯|位置|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:9a40e2bcac3a9c3807f5",
+      "entity": "台灯",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "抽屉",
+      "slot": "台灯|位置",
+      "pair_id": "台灯|位置|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:f60dfdd009f28d6499e6",
+      "entity": "台灯",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "包里",
+      "slot": "台灯|位置",
+      "pair_id": "台灯|位置|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:b5791db617508cda781c",
+      "entity": "台灯",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "包里",
+      "slot": "台灯|位置",
+      "pair_id": "台灯|位置|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:2452d558285faa4109a2",
+      "entity": "台灯",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "包里",
+      "slot": "台灯|位置",
+      "pair_id": "台灯|位置|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:447f0da408ccd7a57666",
+      "entity": "台灯",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "柜子",
+      "slot": "台灯|位置",
+      "pair_id": "台灯|位置|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:979c19be71cc8f26c9df",
+      "entity": "台灯",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "抽屉",
+      "slot": "台灯|位置",
+      "pair_id": "台灯|位置|pair0",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:bdf4483b9a685f931eab",
+      "entity": "台灯",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "柜子",
+      "slot": "台灯|位置",
+      "pair_id": "台灯|位置|pair0",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:ccffa5168f30fbdc1361",
+      "entity": "台灯",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "桌上",
+      "slot": "台灯|位置",
+      "pair_id": "台灯|位置|pair3",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:20b37862aeb84bc837fe",
+      "entity": "台灯",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "抽屉",
+      "slot": "台灯|位置",
+      "pair_id": "台灯|位置|pair3",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:df7b2af9e431489106a6",
+      "entity": "台灯",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "桌上",
+      "slot": "台灯|位置",
+      "pair_id": "台灯|位置|pair1",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:f861170e4e0aa95ec1e5",
+      "entity": "台灯",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "柜子",
+      "slot": "台灯|位置",
+      "pair_id": "台灯|位置|pair1",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:acba59753123424d340e",
+      "entity": "台灯",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "她的",
+      "slot": "台灯|归属",
+      "pair_id": "台灯|归属|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:6ab5d1409ec0129b7352",
+      "entity": "台灯",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "她的",
+      "slot": "台灯|归属",
+      "pair_id": "台灯|归属|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:140dbd49c14487feb2da",
+      "entity": "台灯",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "我的",
+      "slot": "台灯|归属",
+      "pair_id": "台灯|归属|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:27b7ad24b776a6da4025",
+      "entity": "台灯",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "你的",
+      "slot": "台灯|归属",
+      "pair_id": "台灯|归属|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:cff00fb83d0ed391cbb8",
+      "entity": "台灯",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "我的",
+      "slot": "台灯|归属",
+      "pair_id": "台灯|归属|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:163db159fe04d4cbbbf6",
+      "entity": "台灯",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "他的",
+      "slot": "台灯|归属",
+      "pair_id": "台灯|归属|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:1734df6cf5116397b2bf",
+      "entity": "台灯",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "你的",
+      "slot": "台灯|归属",
+      "pair_id": "台灯|归属|pair0",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:cae099fa738bfcb95256",
+      "entity": "台灯",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "他的",
+      "slot": "台灯|归属",
+      "pair_id": "台灯|归属|pair0",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:453c0ad966640a949288",
+      "entity": "台灯",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "她的",
+      "slot": "台灯|归属",
+      "pair_id": "台灯|归属|pair5",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:6efcb3e5b26089b442ac",
+      "entity": "台灯",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "他的",
+      "slot": "台灯|归属",
+      "pair_id": "台灯|归属|pair5",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:746856bacd8c1ece5b0b",
+      "entity": "台灯",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "我的",
+      "slot": "台灯|归属",
+      "pair_id": "台灯|归属|pair2",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:c248758a00259f2a60b5",
+      "entity": "台灯",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "你的",
+      "slot": "台灯|归属",
+      "pair_id": "台灯|归属|pair2",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:3ea2576f650d4f4b6e80",
+      "entity": "剪刀",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "红色",
+      "slot": "剪刀|颜色",
+      "pair_id": "剪刀|颜色|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:688c414dc7dade584093",
+      "entity": "剪刀",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "蓝色",
+      "slot": "剪刀|颜色",
+      "pair_id": "剪刀|颜色|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:2ea5d7b6af9dacc1dd16",
+      "entity": "剪刀",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "红色",
+      "slot": "剪刀|颜色",
+      "pair_id": "剪刀|颜色|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:1863721544e376a21be1",
+      "entity": "剪刀",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "绿色",
+      "slot": "剪刀|颜色",
+      "pair_id": "剪刀|颜色|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:766ccb68c49314e9fd3c",
+      "entity": "剪刀",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "红色",
+      "slot": "剪刀|颜色",
+      "pair_id": "剪刀|颜色|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:33ee4200407ce966fff5",
+      "entity": "剪刀",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "蓝色",
+      "slot": "剪刀|颜色",
+      "pair_id": "剪刀|颜色|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:1ac034049253a182dc22",
+      "entity": "剪刀",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "黄色",
+      "slot": "剪刀|颜色",
+      "pair_id": "剪刀|颜色|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:a4d39c7ee1672a884233",
+      "entity": "剪刀",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "黄色",
+      "slot": "剪刀|颜色",
+      "pair_id": "剪刀|颜色|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:34f0af1aa073e786100e",
+      "entity": "剪刀",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "黄色",
+      "slot": "剪刀|颜色",
+      "pair_id": "剪刀|颜色|pair5",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:77fcba9fb8ff6d2dd570",
+      "entity": "剪刀",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "绿色",
+      "slot": "剪刀|颜色",
+      "pair_id": "剪刀|颜色|pair5",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:d4feee4b0ba6d9bdea6f",
+      "entity": "剪刀",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "蓝色",
+      "slot": "剪刀|颜色",
+      "pair_id": "剪刀|颜色|pair0",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:926da682f6e0e000d5c9",
+      "entity": "剪刀",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "绿色",
+      "slot": "剪刀|颜色",
+      "pair_id": "剪刀|颜色|pair0",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:cc7b3ce808ce278f1177",
+      "entity": "剪刀",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "桌上",
+      "slot": "剪刀|位置",
+      "pair_id": "剪刀|位置|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:93abd9644fc88b46f5f2",
+      "entity": "剪刀",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "抽屉",
+      "slot": "剪刀|位置",
+      "pair_id": "剪刀|位置|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:c42bf19685493708a3a8",
+      "entity": "剪刀",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "抽屉",
+      "slot": "剪刀|位置",
+      "pair_id": "剪刀|位置|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:5ec0f32fcc05330c946d",
+      "entity": "剪刀",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "柜子",
+      "slot": "剪刀|位置",
+      "pair_id": "剪刀|位置|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:7d302b6b3ef3599fe223",
+      "entity": "剪刀",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "桌上",
+      "slot": "剪刀|位置",
+      "pair_id": "剪刀|位置|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:63ad14a1294bfe67c285",
+      "entity": "剪刀",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "柜子",
+      "slot": "剪刀|位置",
+      "pair_id": "剪刀|位置|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:7fdb63e76a8eebd55bb6",
+      "entity": "剪刀",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "桌上",
+      "slot": "剪刀|位置",
+      "pair_id": "剪刀|位置|pair3",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:c22888aa0032cda9c0a9",
+      "entity": "剪刀",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "抽屉",
+      "slot": "剪刀|位置",
+      "pair_id": "剪刀|位置|pair3",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:1dae60ac5c8f6a4427bb",
+      "entity": "剪刀",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "包里",
+      "slot": "剪刀|位置",
+      "pair_id": "剪刀|位置|pair4",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:758d13861fca0d51568c",
+      "entity": "剪刀",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "包里",
+      "slot": "剪刀|位置",
+      "pair_id": "剪刀|位置|pair4",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:0a8af6af20c99dbe6487",
+      "entity": "剪刀",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "包里",
+      "slot": "剪刀|位置",
+      "pair_id": "剪刀|位置|pair5",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:7712728851a51ee0ae22",
+      "entity": "剪刀",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "柜子",
+      "slot": "剪刀|位置",
+      "pair_id": "剪刀|位置|pair5",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:32a5b99391f2916025b7",
+      "entity": "剪刀",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "我的",
+      "slot": "剪刀|归属",
+      "pair_id": "剪刀|归属|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:d40c65a12caba8d4522d",
+      "entity": "剪刀",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "你的",
+      "slot": "剪刀|归属",
+      "pair_id": "剪刀|归属|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:8d45d16e4924318922b5",
+      "entity": "剪刀",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "你的",
+      "slot": "剪刀|归属",
+      "pair_id": "剪刀|归属|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:f672511336391aa2b697",
+      "entity": "剪刀",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "他的",
+      "slot": "剪刀|归属",
+      "pair_id": "剪刀|归属|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:f4d7a5fb192b95418874",
+      "entity": "剪刀",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "她的",
+      "slot": "剪刀|归属",
+      "pair_id": "剪刀|归属|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:73c01090140791ee7398",
+      "entity": "剪刀",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "她的",
+      "slot": "剪刀|归属",
+      "pair_id": "剪刀|归属|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:cf7695a7b1b8775cdf04",
+      "entity": "剪刀",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "我的",
+      "slot": "剪刀|归属",
+      "pair_id": "剪刀|归属|pair2",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:efe31c523448fbb9110b",
+      "entity": "剪刀",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "你的",
+      "slot": "剪刀|归属",
+      "pair_id": "剪刀|归属|pair2",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:e46a377a9f415ed1f196",
+      "entity": "剪刀",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "她的",
+      "slot": "剪刀|归属",
+      "pair_id": "剪刀|归属|pair5",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:71b808f5e80c5e57e944",
+      "entity": "剪刀",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "他的",
+      "slot": "剪刀|归属",
+      "pair_id": "剪刀|归属|pair5",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:a59109efcacc827fcc49",
+      "entity": "剪刀",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "我的",
+      "slot": "剪刀|归属",
+      "pair_id": "剪刀|归属|pair1",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:db998e865ed503992ed5",
+      "entity": "剪刀",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "他的",
+      "slot": "剪刀|归属",
+      "pair_id": "剪刀|归属|pair1",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:7e40e148d6da8ead7c1a",
+      "entity": "尺子",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "蓝色",
+      "slot": "尺子|颜色",
+      "pair_id": "尺子|颜色|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:171edac840fc9e91646f",
+      "entity": "尺子",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "绿色",
+      "slot": "尺子|颜色",
+      "pair_id": "尺子|颜色|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:7855163060fb49710af0",
+      "entity": "尺子",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "红色",
+      "slot": "尺子|颜色",
+      "pair_id": "尺子|颜色|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:04e5d76a506bd8dc9ff3",
+      "entity": "尺子",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "绿色",
+      "slot": "尺子|颜色",
+      "pair_id": "尺子|颜色|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:2e1b4fc6e1d0e9e49695",
+      "entity": "尺子",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "红色",
+      "slot": "尺子|颜色",
+      "pair_id": "尺子|颜色|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:f5fe31a1493aa63b6f38",
+      "entity": "尺子",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "蓝色",
+      "slot": "尺子|颜色",
+      "pair_id": "尺子|颜色|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:6633b7f66a2499310a03",
+      "entity": "尺子",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "黄色",
+      "slot": "尺子|颜色",
+      "pair_id": "尺子|颜色|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:e4bcb95371c6c0f30192",
+      "entity": "尺子",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "黄色",
+      "slot": "尺子|颜色",
+      "pair_id": "尺子|颜色|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:51873dda99a20e4cb8a7",
+      "entity": "尺子",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "红色",
+      "slot": "尺子|颜色",
+      "pair_id": "尺子|颜色|pair3",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:65539902da04a3117488",
+      "entity": "尺子",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "蓝色",
+      "slot": "尺子|颜色",
+      "pair_id": "尺子|颜色|pair3",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:4e13847c595850bc8306",
+      "entity": "尺子",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "黄色",
+      "slot": "尺子|颜色",
+      "pair_id": "尺子|颜色|pair5",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:7d55a53de6ad28ab41f2",
+      "entity": "尺子",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "绿色",
+      "slot": "尺子|颜色",
+      "pair_id": "尺子|颜色|pair5",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:6b6a4c55256ab7976369",
+      "entity": "尺子",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "抽屉",
+      "slot": "尺子|位置",
+      "pair_id": "尺子|位置|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:1c4b1b9fe4a98882866d",
+      "entity": "尺子",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "柜子",
+      "slot": "尺子|位置",
+      "pair_id": "尺子|位置|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:b8a2efff21ceb6a7d0b8",
+      "entity": "尺子",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "桌上",
+      "slot": "尺子|位置",
+      "pair_id": "尺子|位置|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:c37ad97a113b541a36a2",
+      "entity": "尺子",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "抽屉",
+      "slot": "尺子|位置",
+      "pair_id": "尺子|位置|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:6f263b27f238365664ec",
+      "entity": "尺子",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "包里",
+      "slot": "尺子|位置",
+      "pair_id": "尺子|位置|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:31e96a90f8a78e0090bb",
+      "entity": "尺子",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "包里",
+      "slot": "尺子|位置",
+      "pair_id": "尺子|位置|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:5006f1be2bf0f07f7f0c",
+      "entity": "尺子",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "包里",
+      "slot": "尺子|位置",
+      "pair_id": "尺子|位置|pair5",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:3dcd6fb74957b3880207",
+      "entity": "尺子",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "柜子",
+      "slot": "尺子|位置",
+      "pair_id": "尺子|位置|pair5",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:37e6bdffd591ace3117f",
+      "entity": "尺子",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "桌上",
+      "slot": "尺子|位置",
+      "pair_id": "尺子|位置|pair2",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:62a2a370ac2040d4baba",
+      "entity": "尺子",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "抽屉",
+      "slot": "尺子|位置",
+      "pair_id": "尺子|位置|pair2",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:1d6d3dcb83ab5f260414",
+      "entity": "尺子",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "桌上",
+      "slot": "尺子|位置",
+      "pair_id": "尺子|位置|pair1",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:43ec5126e020767f9f50",
+      "entity": "尺子",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "柜子",
+      "slot": "尺子|位置",
+      "pair_id": "尺子|位置|pair1",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:0a39869892f91819b916",
+      "entity": "尺子",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "她的",
+      "slot": "尺子|归属",
+      "pair_id": "尺子|归属|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:a4983db1fce288bf3ae8",
+      "entity": "尺子",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "她的",
+      "slot": "尺子|归属",
+      "pair_id": "尺子|归属|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:440fdd513bf2cdf43ccd",
+      "entity": "尺子",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "我的",
+      "slot": "尺子|归属",
+      "pair_id": "尺子|归属|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:86d29a5137d66e28f53e",
+      "entity": "尺子",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "你的",
+      "slot": "尺子|归属",
+      "pair_id": "尺子|归属|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:1c962ef3aae5935d43d3",
+      "entity": "尺子",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "我的",
+      "slot": "尺子|归属",
+      "pair_id": "尺子|归属|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:e69fd85e89f8a6fd6aba",
+      "entity": "尺子",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "你的",
+      "slot": "尺子|归属",
+      "pair_id": "尺子|归属|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:f90bc72363dbd60dbd76",
+      "entity": "尺子",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "她的",
+      "slot": "尺子|归属",
+      "pair_id": "尺子|归属|pair5",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:dc0b0865e2bddce6fa72",
+      "entity": "尺子",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "他的",
+      "slot": "尺子|归属",
+      "pair_id": "尺子|归属|pair5",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:7c6c977763eca203f2a4",
+      "entity": "尺子",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "你的",
+      "slot": "尺子|归属",
+      "pair_id": "尺子|归属|pair0",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:b0d19aef38a3ae9a4c77",
+      "entity": "尺子",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "他的",
+      "slot": "尺子|归属",
+      "pair_id": "尺子|归属|pair0",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:de32ed96729186559cc7",
+      "entity": "尺子",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "我的",
+      "slot": "尺子|归属",
+      "pair_id": "尺子|归属|pair1",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:d8a5e18e3df84efc1e46",
+      "entity": "尺子",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "他的",
+      "slot": "尺子|归属",
+      "pair_id": "尺子|归属|pair1",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:bc5dbe565743a5d76c24",
+      "entity": "闹钟",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "黄色",
+      "slot": "闹钟|颜色",
+      "pair_id": "闹钟|颜色|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:9ba9898a240e994a5ce3",
+      "entity": "闹钟",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "黄色",
+      "slot": "闹钟|颜色",
+      "pair_id": "闹钟|颜色|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:105864034fcb3b981686",
+      "entity": "闹钟",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "黄色",
+      "slot": "闹钟|颜色",
+      "pair_id": "闹钟|颜色|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:6fa149f2d88dc022c54f",
+      "entity": "闹钟",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "绿色",
+      "slot": "闹钟|颜色",
+      "pair_id": "闹钟|颜色|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:a9191858480efc7a9ae6",
+      "entity": "闹钟",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "红色",
+      "slot": "闹钟|颜色",
+      "pair_id": "闹钟|颜色|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:79122ab2b75da081677e",
+      "entity": "闹钟",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "绿色",
+      "slot": "闹钟|颜色",
+      "pair_id": "闹钟|颜色|pair1",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:ef1ca8b83f3b372b86eb",
+      "entity": "闹钟",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "蓝色",
+      "slot": "闹钟|颜色",
+      "pair_id": "闹钟|颜色|pair0",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:b81b0434e6621152df87",
+      "entity": "闹钟",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "绿色",
+      "slot": "闹钟|颜色",
+      "pair_id": "闹钟|颜色|pair0",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:b3a985fc9a867cd35f2c",
+      "entity": "闹钟",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "红色",
+      "slot": "闹钟|颜色",
+      "pair_id": "闹钟|颜色|pair3",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:5b26a731256476fbdf21",
+      "entity": "闹钟",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "蓝色",
+      "slot": "闹钟|颜色",
+      "pair_id": "闹钟|颜色|pair3",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:08e53d49eb897695b44a",
+      "entity": "闹钟",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "红色",
+      "slot": "闹钟|颜色",
+      "pair_id": "闹钟|颜色|pair2",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:f378b5c7e0f71044e091",
+      "entity": "闹钟",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "蓝色",
+      "slot": "闹钟|颜色",
+      "pair_id": "闹钟|颜色|pair2",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:050e19e78d9df0a90eb6",
+      "entity": "闹钟",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "桌上",
+      "slot": "闹钟|位置",
+      "pair_id": "闹钟|位置|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:6ba1c0eb2ae4af0b2e3f",
+      "entity": "闹钟",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "抽屉",
+      "slot": "闹钟|位置",
+      "pair_id": "闹钟|位置|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:463c6ad2d0ad26eb23e5",
+      "entity": "闹钟",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "包里",
+      "slot": "闹钟|位置",
+      "pair_id": "闹钟|位置|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:d066a7c32813f34c3f7e",
+      "entity": "闹钟",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "柜子",
+      "slot": "闹钟|位置",
+      "pair_id": "闹钟|位置|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:13f4dc22ca2910a930cd",
+      "entity": "闹钟",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "包里",
+      "slot": "闹钟|位置",
+      "pair_id": "闹钟|位置|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:3bcfa17d4aab83c03b53",
+      "entity": "闹钟",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "包里",
+      "slot": "闹钟|位置",
+      "pair_id": "闹钟|位置|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:1a5fdd2cd8e325cfdb44",
+      "entity": "闹钟",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "抽屉",
+      "slot": "闹钟|位置",
+      "pair_id": "闹钟|位置|pair0",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:aba786c0a29f744eea44",
+      "entity": "闹钟",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "柜子",
+      "slot": "闹钟|位置",
+      "pair_id": "闹钟|位置|pair0",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:6e6d88e2fcef0d315aad",
+      "entity": "闹钟",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "桌上",
+      "slot": "闹钟|位置",
+      "pair_id": "闹钟|位置|pair1",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:66e553c97c48d0d2ac4f",
+      "entity": "闹钟",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "柜子",
+      "slot": "闹钟|位置",
+      "pair_id": "闹钟|位置|pair1",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:565af711ce71f266dcec",
+      "entity": "闹钟",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "桌上",
+      "slot": "闹钟|位置",
+      "pair_id": "闹钟|位置|pair2",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:d8ae61e1ac90b70e9e3b",
+      "entity": "闹钟",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "抽屉",
+      "slot": "闹钟|位置",
+      "pair_id": "闹钟|位置|pair2",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:c805a6585daa46654b4a",
+      "entity": "闹钟",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "我的",
+      "slot": "闹钟|归属",
+      "pair_id": "闹钟|归属|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:e40fd4208a45a13f5edd",
+      "entity": "闹钟",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "你的",
+      "slot": "闹钟|归属",
+      "pair_id": "闹钟|归属|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:3ad60d06ce20ffcaec93",
+      "entity": "闹钟",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "她的",
+      "slot": "闹钟|归属",
+      "pair_id": "闹钟|归属|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:34a9071be9786c9336fa",
+      "entity": "闹钟",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "她的",
+      "slot": "闹钟|归属",
+      "pair_id": "闹钟|归属|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:2ad7a3a2c02a638f4809",
+      "entity": "闹钟",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "我的",
+      "slot": "闹钟|归属",
+      "pair_id": "闹钟|归属|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:eb3e469fbfe9580501a1",
+      "entity": "闹钟",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "你的",
+      "slot": "闹钟|归属",
+      "pair_id": "闹钟|归属|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:eaf160b663eff28b1e63",
+      "entity": "闹钟",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "我的",
+      "slot": "闹钟|归属",
+      "pair_id": "闹钟|归属|pair1",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:19792dbcaf3769599b57",
+      "entity": "闹钟",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "他的",
+      "slot": "闹钟|归属",
+      "pair_id": "闹钟|归属|pair1",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:00232f52c7af5f2bda33",
+      "entity": "闹钟",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "你的",
+      "slot": "闹钟|归属",
+      "pair_id": "闹钟|归属|pair0",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:99ecc9efd60d8047fe84",
+      "entity": "闹钟",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "他的",
+      "slot": "闹钟|归属",
+      "pair_id": "闹钟|归属|pair0",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:7aed6c7a9363094eb360",
+      "entity": "闹钟",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "她的",
+      "slot": "闹钟|归属",
+      "pair_id": "闹钟|归属|pair5",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:055f35c17b07d263bb69",
+      "entity": "闹钟",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "他的",
+      "slot": "闹钟|归属",
+      "pair_id": "闹钟|归属|pair5",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:ec4ad87240e4b7671088",
+      "entity": "钱包",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "红色",
+      "slot": "钱包|颜色",
+      "pair_id": "钱包|颜色|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:2d645856c4f0161b692e",
+      "entity": "钱包",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "蓝色",
+      "slot": "钱包|颜色",
+      "pair_id": "钱包|颜色|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:de4a803590565e92f35a",
+      "entity": "钱包",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "黄色",
+      "slot": "钱包|颜色",
+      "pair_id": "钱包|颜色|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:87c5bf8b1f8f33a22fe3",
+      "entity": "钱包",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "黄色",
+      "slot": "钱包|颜色",
+      "pair_id": "钱包|颜色|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:ddb53fa1ec4aeea7ad60",
+      "entity": "钱包",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "红色",
+      "slot": "钱包|颜色",
+      "pair_id": "钱包|颜色|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:e7d4fe5779e345eb2afa",
+      "entity": "钱包",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "蓝色",
+      "slot": "钱包|颜色",
+      "pair_id": "钱包|颜色|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:54e687470d78c875e419",
+      "entity": "钱包",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "红色",
+      "slot": "钱包|颜色",
+      "pair_id": "钱包|颜色|pair1",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:d32e5ad446aa282b4bfc",
+      "entity": "钱包",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "绿色",
+      "slot": "钱包|颜色",
+      "pair_id": "钱包|颜色|pair1",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:1bc43d41886f8bdae280",
+      "entity": "钱包",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "蓝色",
+      "slot": "钱包|颜色",
+      "pair_id": "钱包|颜色|pair0",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:b9c1382b387f17fedf2d",
+      "entity": "钱包",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "绿色",
+      "slot": "钱包|颜色",
+      "pair_id": "钱包|颜色|pair0",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:8ef523017908e01321b0",
+      "entity": "钱包",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "黄色",
+      "slot": "钱包|颜色",
+      "pair_id": "钱包|颜色|pair5",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:f5e85e62447182e0213f",
+      "entity": "钱包",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "绿色",
+      "slot": "钱包|颜色",
+      "pair_id": "钱包|颜色|pair5",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:a79832ebebdd682cacb1",
+      "entity": "钱包",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "包里",
+      "slot": "钱包|位置",
+      "pair_id": "钱包|位置|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:a6a810beb8e37a7e1461",
+      "entity": "钱包",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "包里",
+      "slot": "钱包|位置",
+      "pair_id": "钱包|位置|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:f0f4aa4b357e591c6945",
+      "entity": "钱包",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "桌上",
+      "slot": "钱包|位置",
+      "pair_id": "钱包|位置|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:fac091dc64c824fcbafe",
+      "entity": "钱包",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "抽屉",
+      "slot": "钱包|位置",
+      "pair_id": "钱包|位置|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:7adeb4530b23686ceedf",
+      "entity": "钱包",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "抽屉",
+      "slot": "钱包|位置",
+      "pair_id": "钱包|位置|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:df90c9652b5d442fa40f",
+      "entity": "钱包",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "柜子",
+      "slot": "钱包|位置",
+      "pair_id": "钱包|位置|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:bc499d760208abee9e80",
+      "entity": "钱包",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "包里",
+      "slot": "钱包|位置",
+      "pair_id": "钱包|位置|pair5",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:0ef1ffd95f719390e140",
+      "entity": "钱包",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "柜子",
+      "slot": "钱包|位置",
+      "pair_id": "钱包|位置|pair5",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:08ef0d16b593a98b648b",
+      "entity": "钱包",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "桌上",
+      "slot": "钱包|位置",
+      "pair_id": "钱包|位置|pair1",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:3729cc3508c29794fe3d",
+      "entity": "钱包",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "柜子",
+      "slot": "钱包|位置",
+      "pair_id": "钱包|位置|pair1",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:f04de7cfd104104d9004",
+      "entity": "钱包",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "桌上",
+      "slot": "钱包|位置",
+      "pair_id": "钱包|位置|pair2",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:0dd7006b5b9567fcce1e",
+      "entity": "钱包",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "抽屉",
+      "slot": "钱包|位置",
+      "pair_id": "钱包|位置|pair2",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:886c5166f5be7d86e6eb",
+      "entity": "钱包",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "你的",
+      "slot": "钱包|归属",
+      "pair_id": "钱包|归属|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:024efbc1c73ac77324a5",
+      "entity": "钱包",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "他的",
+      "slot": "钱包|归属",
+      "pair_id": "钱包|归属|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:9062e3f62e7004962c04",
+      "entity": "钱包",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "我的",
+      "slot": "钱包|归属",
+      "pair_id": "钱包|归属|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:fef406a77e04e9493a47",
+      "entity": "钱包",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "你的",
+      "slot": "钱包|归属",
+      "pair_id": "钱包|归属|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:a6efddac1eb7db448de8",
+      "entity": "钱包",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "她的",
+      "slot": "钱包|归属",
+      "pair_id": "钱包|归属|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:ddd223313ae80329608b",
+      "entity": "钱包",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "他的",
+      "slot": "钱包|归属",
+      "pair_id": "钱包|归属|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:487372d04cc2e7297143",
+      "entity": "钱包",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "她的",
+      "slot": "钱包|归属",
+      "pair_id": "钱包|归属|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:97b431bee496f0c1608d",
+      "entity": "钱包",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "她的",
+      "slot": "钱包|归属",
+      "pair_id": "钱包|归属|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:458b9e62f8c18645550a",
+      "entity": "钱包",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "我的",
+      "slot": "钱包|归属",
+      "pair_id": "钱包|归属|pair1",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:a307ffd58eef0b48e07d",
+      "entity": "钱包",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "他的",
+      "slot": "钱包|归属",
+      "pair_id": "钱包|归属|pair1",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:ae64f80b529d5e140ba9",
+      "entity": "钱包",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "我的",
+      "slot": "钱包|归属",
+      "pair_id": "钱包|归属|pair2",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:e0438f132beaf57ab955",
+      "entity": "钱包",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "你的",
+      "slot": "钱包|归属",
+      "pair_id": "钱包|归属|pair2",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:4fea7333c9ad3cfc7496",
+      "entity": "帽子",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "蓝色",
+      "slot": "帽子|颜色",
+      "pair_id": "帽子|颜色|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:779de944e5964dddae9c",
+      "entity": "帽子",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "绿色",
+      "slot": "帽子|颜色",
+      "pair_id": "帽子|颜色|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:a96e241bcec0c0d940c1",
+      "entity": "帽子",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "黄色",
+      "slot": "帽子|颜色",
+      "pair_id": "帽子|颜色|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:153cc0842e30b3d468e4",
+      "entity": "帽子",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "黄色",
+      "slot": "帽子|颜色",
+      "pair_id": "帽子|颜色|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:d09b6bf967657682afff",
+      "entity": "帽子",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "黄色",
+      "slot": "帽子|颜色",
+      "pair_id": "帽子|颜色|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:7794f65f132786335e0a",
+      "entity": "帽子",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "绿色",
+      "slot": "帽子|颜色",
+      "pair_id": "帽子|颜色|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:c36c7e9dd16c755aa009",
+      "entity": "帽子",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "红色",
+      "slot": "帽子|颜色",
+      "pair_id": "帽子|颜色|pair3",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:b0f2ffd1a44694951159",
+      "entity": "帽子",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "蓝色",
+      "slot": "帽子|颜色",
+      "pair_id": "帽子|颜色|pair3",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:793c63a73b607fbdd384",
+      "entity": "帽子",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "红色",
+      "slot": "帽子|颜色",
+      "pair_id": "帽子|颜色|pair2",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:d4ad60eb0b19eae86f2e",
+      "entity": "帽子",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "蓝色",
+      "slot": "帽子|颜色",
+      "pair_id": "帽子|颜色|pair2",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:cc59879893461e43daf5",
+      "entity": "帽子",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "红色",
+      "slot": "帽子|颜色",
+      "pair_id": "帽子|颜色|pair1",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:40ed20c95a2e5fc45c52",
+      "entity": "帽子",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "绿色",
+      "slot": "帽子|颜色",
+      "pair_id": "帽子|颜色|pair1",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:6bdfae469fc25d199329",
+      "entity": "帽子",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "包里",
+      "slot": "帽子|位置",
+      "pair_id": "帽子|位置|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:00b8598572dbba6cb3ba",
+      "entity": "帽子",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "柜子",
+      "slot": "帽子|位置",
+      "pair_id": "帽子|位置|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:8b8732a84ab6a379e9df",
+      "entity": "帽子",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "桌上",
+      "slot": "帽子|位置",
+      "pair_id": "帽子|位置|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:d9510d474c52a4b803ae",
+      "entity": "帽子",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "抽屉",
+      "slot": "帽子|位置",
+      "pair_id": "帽子|位置|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:c311d63dd093957a4be7",
+      "entity": "帽子",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "桌上",
+      "slot": "帽子|位置",
+      "pair_id": "帽子|位置|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:b3850e152279924020c7",
+      "entity": "帽子",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "抽屉",
+      "slot": "帽子|位置",
+      "pair_id": "帽子|位置|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:10a765be49c605a3ee5f",
+      "entity": "帽子",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "桌上",
+      "slot": "帽子|位置",
+      "pair_id": "帽子|位置|pair1",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:6ec5220dd2cc0b5cbeb0",
+      "entity": "帽子",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "柜子",
+      "slot": "帽子|位置",
+      "pair_id": "帽子|位置|pair1",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:faab3a7792f76d01a148",
+      "entity": "帽子",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "包里",
+      "slot": "帽子|位置",
+      "pair_id": "帽子|位置|pair4",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:c8a652fe327c21b97a3c",
+      "entity": "帽子",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "包里",
+      "slot": "帽子|位置",
+      "pair_id": "帽子|位置|pair4",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:9aa2818b45b246737ae9",
+      "entity": "帽子",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "抽屉",
+      "slot": "帽子|位置",
+      "pair_id": "帽子|位置|pair0",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:1badfafd172581b3b032",
+      "entity": "帽子",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "柜子",
+      "slot": "帽子|位置",
+      "pair_id": "帽子|位置|pair0",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:cafd8ed0f0aa952472c0",
+      "entity": "帽子",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "我的",
+      "slot": "帽子|归属",
+      "pair_id": "帽子|归属|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:e695f456c625e626d276",
+      "entity": "帽子",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "你的",
+      "slot": "帽子|归属",
+      "pair_id": "帽子|归属|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:7b5aad094b57e941c9ee",
+      "entity": "帽子",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "她的",
+      "slot": "帽子|归属",
+      "pair_id": "帽子|归属|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:661962ba177ab40b254c",
+      "entity": "帽子",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "她的",
+      "slot": "帽子|归属",
+      "pair_id": "帽子|归属|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:971f84e2f36145fdd9f2",
+      "entity": "帽子",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "你的",
+      "slot": "帽子|归属",
+      "pair_id": "帽子|归属|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:fe098a90024e11e51121",
+      "entity": "帽子",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "他的",
+      "slot": "帽子|归属",
+      "pair_id": "帽子|归属|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:ad1951536b2519652beb",
+      "entity": "帽子",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "她的",
+      "slot": "帽子|归属",
+      "pair_id": "帽子|归属|pair5",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:fedf88ed09eb30dc5a97",
+      "entity": "帽子",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "他的",
+      "slot": "帽子|归属",
+      "pair_id": "帽子|归属|pair5",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:cf62a443c3839cd17c71",
+      "entity": "帽子",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "我的",
+      "slot": "帽子|归属",
+      "pair_id": "帽子|归属|pair2",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:c44633a0ef1a74f9ba88",
+      "entity": "帽子",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "你的",
+      "slot": "帽子|归属",
+      "pair_id": "帽子|归属|pair2",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:c97f7070eabaecd6275b",
+      "entity": "帽子",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "我的",
+      "slot": "帽子|归属",
+      "pair_id": "帽子|归属|pair1",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:bd0b5bb89bb7e8621ebd",
+      "entity": "帽子",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "他的",
+      "slot": "帽子|归属",
+      "pair_id": "帽子|归属|pair1",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:fb15f8f14215730f8df4",
+      "entity": "围巾",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "蓝色",
+      "slot": "围巾|颜色",
+      "pair_id": "围巾|颜色|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:38c0553239cc84cb5114",
+      "entity": "围巾",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "绿色",
+      "slot": "围巾|颜色",
+      "pair_id": "围巾|颜色|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:2783b197f02a78b2da02",
+      "entity": "围巾",
+      "attribute": "颜色",
+      "v0": "红色",
+      "v1": "黄色",
+      "slot": "围巾|颜色",
+      "pair_id": "围巾|颜色|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:e594e5b65097df3d7026",
+      "entity": "围巾",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "黄色",
+      "slot": "围巾|颜色",
+      "pair_id": "围巾|颜色|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:ef00cbc49c47da3d4af7",
+      "entity": "围巾",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "红色",
+      "slot": "围巾|颜色",
+      "pair_id": "围巾|颜色|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:8289bbd95626f0f7bbb4",
+      "entity": "围巾",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "蓝色",
+      "slot": "围巾|颜色",
+      "pair_id": "围巾|颜色|pair2",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:a615b8eb0ba80e7bcea0",
+      "entity": "围巾",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "红色",
+      "slot": "围巾|颜色",
+      "pair_id": "围巾|颜色|pair3",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:2a2ff695d20925f16190",
+      "entity": "围巾",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "蓝色",
+      "slot": "围巾|颜色",
+      "pair_id": "围巾|颜色|pair3",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:977f66e97c59cf96c9e5",
+      "entity": "围巾",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "红色",
+      "slot": "围巾|颜色",
+      "pair_id": "围巾|颜色|pair1",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:c68821bbe233782c4bd1",
+      "entity": "围巾",
+      "attribute": "颜色",
+      "v0": "蓝色",
+      "v1": "绿色",
+      "slot": "围巾|颜色",
+      "pair_id": "围巾|颜色|pair1",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:37394d6101f0c6a3c393",
+      "entity": "围巾",
+      "attribute": "颜色",
+      "v0": "绿色",
+      "v1": "黄色",
+      "slot": "围巾|颜色",
+      "pair_id": "围巾|颜色|pair5",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:6c7f72c0c7cb406a59de",
+      "entity": "围巾",
+      "attribute": "颜色",
+      "v0": "黄色",
+      "v1": "绿色",
+      "slot": "围巾|颜色",
+      "pair_id": "围巾|颜色|pair5",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:3469df061dff0bc0da1f",
+      "entity": "围巾",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "桌上",
+      "slot": "围巾|位置",
+      "pair_id": "围巾|位置|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:cc6f585d7068224b8b36",
+      "entity": "围巾",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "抽屉",
+      "slot": "围巾|位置",
+      "pair_id": "围巾|位置|pair3",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:89fee800324e259b2392",
+      "entity": "围巾",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "抽屉",
+      "slot": "围巾|位置",
+      "pair_id": "围巾|位置|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:5b3ca3c8ff7dad297603",
+      "entity": "围巾",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "柜子",
+      "slot": "围巾|位置",
+      "pair_id": "围巾|位置|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:36555a70a0b335917550",
+      "entity": "围巾",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "包里",
+      "slot": "围巾|位置",
+      "pair_id": "围巾|位置|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:71de777f77117fbeb0f7",
+      "entity": "围巾",
+      "attribute": "位置",
+      "v0": "包里",
+      "v1": "柜子",
+      "slot": "围巾|位置",
+      "pair_id": "围巾|位置|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:7c4f2326b9c9d9606039",
+      "entity": "围巾",
+      "attribute": "位置",
+      "v0": "桌上",
+      "v1": "包里",
+      "slot": "围巾|位置",
+      "pair_id": "围巾|位置|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:b9af8e71b13d2e992fb0",
+      "entity": "围巾",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "包里",
+      "slot": "围巾|位置",
+      "pair_id": "围巾|位置|pair4",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:df15dcf1fa4962b459d6",
+      "entity": "围巾",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "桌上",
+      "slot": "围巾|位置",
+      "pair_id": "围巾|位置|pair1",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:27d198dabb5ad9c2e324",
+      "entity": "围巾",
+      "attribute": "位置",
+      "v0": "抽屉",
+      "v1": "柜子",
+      "slot": "围巾|位置",
+      "pair_id": "围巾|位置|pair1",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:155e62bd9bb8fa415887",
+      "entity": "围巾",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "桌上",
+      "slot": "围巾|位置",
+      "pair_id": "围巾|位置|pair2",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:3962ca3a77fef76f54e1",
+      "entity": "围巾",
+      "attribute": "位置",
+      "v0": "柜子",
+      "v1": "抽屉",
+      "slot": "围巾|位置",
+      "pair_id": "围巾|位置|pair2",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:a418e179c191d2e3d29a",
+      "entity": "围巾",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "她的",
+      "slot": "围巾|归属",
+      "pair_id": "围巾|归属|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:8644c7d2af9e7a2184ba",
+      "entity": "围巾",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "她的",
+      "slot": "围巾|归属",
+      "pair_id": "围巾|归属|pair4",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:8c908e654df76e38da2c",
+      "entity": "围巾",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "你的",
+      "slot": "围巾|归属",
+      "pair_id": "围巾|归属|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:8e3f085c0eea89a2f7ae",
+      "entity": "围巾",
+      "attribute": "归属",
+      "v0": "我的",
+      "v1": "他的",
+      "slot": "围巾|归属",
+      "pair_id": "围巾|归属|pair0",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:b74798655b39f8aeaf55",
+      "entity": "围巾",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "她的",
+      "slot": "围巾|归属",
+      "pair_id": "围巾|归属|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:06348192216d79341243",
+      "entity": "围巾",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "他的",
+      "slot": "围巾|归属",
+      "pair_id": "围巾|归属|pair5",
+      "split": "train"
+    },
+    {
+      "history_id": "r1h:46f3eda9a04e9b9302bc",
+      "entity": "围巾",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "我的",
+      "slot": "围巾|归属",
+      "pair_id": "围巾|归属|pair2",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:133e207e4c42c95cf05b",
+      "entity": "围巾",
+      "attribute": "归属",
+      "v0": "他的",
+      "v1": "你的",
+      "slot": "围巾|归属",
+      "pair_id": "围巾|归属|pair2",
+      "split": "query"
+    },
+    {
+      "history_id": "r1h:295eac59520c728677dd",
+      "entity": "围巾",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "我的",
+      "slot": "围巾|归属",
+      "pair_id": "围巾|归属|pair1",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:1138a0fc0fd4b26500cd",
+      "entity": "围巾",
+      "attribute": "归属",
+      "v0": "你的",
+      "v1": "他的",
+      "slot": "围巾|归属",
+      "pair_id": "围巾|归属|pair1",
+      "split": "holdout"
+    },
+    {
+      "history_id": "r1h:2e8d127512e5f86a31e7",
+      "entity": "围巾",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "我的",
+      "slot": "围巾|归属",
+      "pair_id": "围巾|归属|pair3",
+      "split": "unused"
+    },
+    {
+      "history_id": "r1h:2739ad9cf3ca6859791e",
+      "entity": "围巾",
+      "attribute": "归属",
+      "v0": "她的",
+      "v1": "你的",
+      "slot": "围巾|归属",
+      "pair_id": "围巾|归属|pair3",
+      "split": "unused"
+    }
+  ]
+}

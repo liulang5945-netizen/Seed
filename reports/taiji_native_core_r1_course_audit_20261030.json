@@ -1,0 +1,371 @@
+{
+  "schema": "taiji-native-core-r1-course-audit-v1",
+  "status": "course_built",
+  "checks": [
+    "36 slots x 6 pairs x 2 histories",
+    "train histories = 216",
+    "query histories = 72",
+    "holdout histories = 72",
+    "unused histories = 72",
+    "no counterfactual pair crosses splits",
+    "every slot appears 6/2/2 across splits",
+    "every entity appears 18/6/6 across splits",
+    "4 episodes x 360 histories",
+    "every episode has 8 turns",
+    "every episode has 4 scored answer turns",
+    "answer targets match current/corrected/previous/unknown",
+    "scored answer turns = 5760",
+    "actual text bytes are non-zero",
+    "actual text bytes stay under the R1 upper estimate",
+    "course is public synthetic and not sealed",
+    "no model call",
+    "no optimizer update"
+  ],
+  "failures": [],
+  "coverage": {
+    "split_counts": {
+      "holdout": 72,
+      "query": 72,
+      "train": 216
+    },
+    "slot_counts": {
+      "剪刀|位置": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "剪刀|归属": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "剪刀|颜色": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "台灯|位置": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "台灯|归属": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "台灯|颜色": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "围巾|位置": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "围巾|归属": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "围巾|颜色": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "尺子|位置": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "尺子|归属": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "尺子|颜色": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "帽子|位置": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "帽子|归属": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "帽子|颜色": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "水杯|位置": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "水杯|归属": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "水杯|颜色": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "耳机|位置": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "耳机|归属": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "耳机|颜色": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "背包|位置": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "背包|归属": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "背包|颜色": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "遥控器|位置": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "遥控器|归属": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "遥控器|颜色": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "钱包|位置": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "钱包|归属": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "钱包|颜色": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "闹钟|位置": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "闹钟|归属": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "闹钟|颜色": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "雨伞|位置": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "雨伞|归属": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      },
+      "雨伞|颜色": {
+        "holdout": 2,
+        "query": 2,
+        "train": 6
+      }
+    },
+    "entity_counts": {
+      "剪刀": {
+        "holdout": 6,
+        "query": 6,
+        "train": 18
+      },
+      "台灯": {
+        "holdout": 6,
+        "query": 6,
+        "train": 18
+      },
+      "围巾": {
+        "holdout": 6,
+        "query": 6,
+        "train": 18
+      },
+      "尺子": {
+        "holdout": 6,
+        "query": 6,
+        "train": 18
+      },
+      "帽子": {
+        "holdout": 6,
+        "query": 6,
+        "train": 18
+      },
+      "水杯": {
+        "holdout": 6,
+        "query": 6,
+        "train": 18
+      },
+      "耳机": {
+        "holdout": 6,
+        "query": 6,
+        "train": 18
+      },
+      "背包": {
+        "holdout": 6,
+        "query": 6,
+        "train": 18
+      },
+      "遥控器": {
+        "holdout": 6,
+        "query": 6,
+        "train": 18
+      },
+      "钱包": {
+        "holdout": 6,
+        "query": 6,
+        "train": 18
+      },
+      "闹钟": {
+        "holdout": 6,
+        "query": 6,
+        "train": 18
+      },
+      "雨伞": {
+        "holdout": 6,
+        "query": 6,
+        "train": 18
+      }
+    },
+    "attribute_counts": {
+      "位置": {
+        "holdout": 24,
+        "query": 24,
+        "train": 72
+      },
+      "归属": {
+        "holdout": 24,
+        "query": 24,
+        "train": 72
+      },
+      "颜色": {
+        "holdout": 24,
+        "query": 24,
+        "train": 72
+      }
+    },
+    "value_counts": {
+      "他的": {
+        "holdout": 15,
+        "query": 15,
+        "train": 28
+      },
+      "你的": {
+        "holdout": 12,
+        "query": 9,
+        "train": 37
+      },
+      "包里": {
+        "holdout": 10,
+        "query": 12,
+        "train": 44
+      },
+      "她的": {
+        "holdout": 10,
+        "query": 14,
+        "train": 40
+      },
+      "我的": {
+        "holdout": 11,
+        "query": 10,
+        "train": 39
+      },
+      "抽屉": {
+        "holdout": 16,
+        "query": 11,
+        "train": 31
+      },
+      "柜子": {
+        "holdout": 8,
+        "query": 14,
+        "train": 34
+      },
+      "桌上": {
+        "holdout": 14,
+        "query": 11,
+        "train": 35
+      },
+      "红色": {
+        "holdout": 12,
+        "query": 13,
+        "train": 39
+      },
+      "绿色": {
+        "holdout": 16,
+        "query": 7,
+        "train": 34
+      },
+      "蓝色": {
+        "holdout": 10,
+        "query": 12,
+        "train": 41
+      },
+      "黄色": {
+        "holdout": 10,
+        "query": 16,
+        "train": 30
+      }
+    },
+    "pairs_crossing_splits": []
+  },
+  "bytes": {
+    "turn_text_bytes": 294480,
+    "target_bytes": 157680,
+    "total_bytes": 452160,
+    "answer_turns": 5760
+  },
+  "byte_estimate_note": "R1 projected 795,667-1,113,934 bytes from old E1 per-turn bytes; the materialised templates are shorter, so only the upper bound is gated.",
+  "digest": "eabf6fa49877408f8f4d9aed2451e742db76c3fedf9f300da977f960a5de65e2",
+  "cpu_seconds": 0.21875,
+  "files": {
+    "plans/manifests/native_core_r1_split_v1.json": "df21fee4fbe3ccfcf323427ba0814d2e56597914ff8090ac704aa67c9327b3fa",
+    "plans/manifests/native_core_r1_train_v1.json": "5d151ba9f994670ccc2968b4d4547d280c52c056e991cf831e4f18c818dfedfd",
+    "plans/manifests/native_core_r1_query_v1.json": "f4f03b3d64edf39231f12322c5d34412f6aca28a4ae6aff4ddc2c9a8d2e72fd4",
+    "plans/manifests/native_core_r1_holdout_v1.json": "3968bdf3f219867712e63c41f625b06fe4c098ceface54d3f0b0e3ff160dc165"
+  }
+}

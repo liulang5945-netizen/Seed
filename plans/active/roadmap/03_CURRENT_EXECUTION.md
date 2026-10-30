@@ -22,6 +22,8 @@ R3b-2普通端到端基线已接入：[模块](../../../taiji/ordinary_baseline.
 
 三组对象（R3新核心、R3b-1修正旧图、R3b-2普通端到端）现已齐备；下一阶段R4 train-only定价，准入条件是用户评审R2合同。R4未获准入前不训练。
 
+R4-prep数据已物化：[分区](../../../plans/manifests/native_core_r1_split_v1.json)、[train](../../../plans/manifests/native_core_r1_train_v1.json)、[query](../../../plans/manifests/native_core_r1_query_v1.json)、[holdout](../../../plans/manifests/native_core_r1_holdout_v1.json)、[审计报告](../../../reports/taiji_native_core_r1_course_audit_20261030.json)。432个可能历史取360：216/72/72，另72 unused；每槽6/2/2，反事实成对不跨分区；4 episodes/history、8 turns/episode，1,440 episodes/11,520 turns/5,760 answer turns；实际文本452,160字节；train/query/holdout分文件写入，仅train可读；无模型调用、无sealed读取。精确成本仍待R4。
+
 R1完成证据：[统一语义合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md)五项边界确认；世界审计（360-history/216-72-72/1,440 episodes/11,520 turns/0.80–1.11MB）；公开fixture 17案通过；§2.2接口审计与§2.3合同矛盾自检完成。
 
 F1（holdout 面）与 F1b（query 面，从未读过）都结案为负结果：F1 判 `FAIL_COPY_ONLY`、F1b 判 `FAIL_NO_STATE_EFFECT`（[收束记录 §13–§14](../../reference/PROJECT_CONSOLIDATION_20261029.md)）。F1b 的门表给出真数：`cut_drop 0.333` 与 `rescue_gain 1.0` 过线、`relevant_swap_delta` 0.096（F1 为 0），但 `answer_exact 0.041`、三条差值为 0；**54/123（44%）查询轮连实体都没解析出来**，两套 sealed 面同比例。
@@ -64,6 +66,7 @@ F1（holdout 面）与 F1b（query 面，从未读过）都结案为负结果：
 | 重构-3 | [新核心隔离实现与零步恢复](../../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md) | 结构门通过：53/53检查、cut/rescue、首字节监督、独立进程恢复；未训练、不称学会 |
 | 重构-3b-1 | [修正旧图基线](../../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md#6-r3b1-修正旧图基线20261030) | 结构门通过：22/22、固定分母17/17、仅value bias可训练；未训练 |
 | 重构-3b-2 | [普通端到端基线](../../reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md#7-r3b2-普通端到端基线20261030) | 结构门通过：11/11、固定分母17/17、全参数可训练；未训练 |
+| 重构-4-prep | [课程与分区物化](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md#31-首版世界形状本轮确认) | 已完成：216/72/72、1,440 episodes、5,760 answer turns；无模型调用；成本待R4 |
 | 重构-4 | train-only定价、保持集、数值门、预算与停止线 | 待R2用户评审准入；准入前不训练 |
 | E0 | 已完成：15臂终点fresh-process parse/answer回执；B真实输入、有效mask及隔离矩阵 | 三份件＋三支仪器自带机检判据（见收束记录§8）；未重训/未重评holdout |
 | CI | 修复四模块9处mypy类型错误 | 精确记录当前源码身份；本机核心类型/受影响回归及实际CI重新核验 |
