@@ -1,0 +1,60 @@
+{
+  "batch": 2,
+  "cost": {
+    "cpu_per_update": 2.20257568359375,
+    "process_cpu_seconds": 846.75
+  },
+  "coverage_after": {
+    "old_covered": {
+      "parsed": 32,
+      "total": 32
+    },
+    "old_uncovered": {
+      "parsed": 32,
+      "total": 32
+    },
+    "ordinary_covered": {
+      "parsed": 156,
+      "total": 160
+    },
+    "ordinary_uncovered": {
+      "parsed": 156,
+      "total": 160
+    }
+  },
+  "coverage_before": {
+    "old_covered": {
+      "parsed": 8,
+      "total": 32
+    },
+    "old_uncovered": {
+      "parsed": 4,
+      "total": 32
+    },
+    "ordinary_covered": {
+      "parsed": 152,
+      "total": 160
+    },
+    "ordinary_uncovered": {
+      "parsed": 96,
+      "total": 160
+    }
+  },
+  "coverage_denominator_after": 384,
+  "coverage_denominator_before": 384,
+  "coverage_denominators_stable": true,
+  "cpu_cap": 5000.0,
+  "date": "2026-10-30",
+  "endpoint": "data/checkpoints/n1_plan178_price_20261030/parser_pressure_256.pt",
+  "first_parser_loss": 1.2156296968460083,
+  "format": "taiji-n178-price-v1",
+  "last_parser_loss": 0.012478046119213104,
+  "parent": "data/checkpoints/n1_plan177_6_t1_pilot_20261027/correct__seed_0/update_002560.pt",
+  "projection": {
+    "one_arm_1280_updates_cpu": 2819.296875,
+    "with_1_3_margin": 3665.0859375
+  },
+  "scope": "parser-only loss on the existing train course, weighted sampling, no V4 update, no sealed read",
+  "status": "completed_updates",
+  "updates": 256
+}
