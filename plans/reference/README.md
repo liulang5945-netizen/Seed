@@ -16,6 +16,7 @@ R 编号保留原合同与实验身份；实施统一使用总计划步骤 01–
 | [06](../MAINLINE.md#3-唯一执行队列) | [R4 定价与 R5 数值门](SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md) | 课程准备、成本、预算、行为/机制/保持/恢复/成本门 |
 | [07](../MAINLINE.md#3-唯一执行队列) | [R5 执行记录（R4 §9）](SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md#9-r5-执行结果20261030) | 有界比较、评价与原结案 |
 | [08](../MAINLINE.md#3-唯一执行队列) | [R5b 复制轨候选合同](SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md) | 复制轨、自前缀日程、基线复用与有限出口 |
+| [08 后继（待裁定）](../MAINLINE.md#3-唯一执行队列) | [R5c 复制执行精度候选合同（草案）](SPEC-NATIVE-CONTENT-CORE_R5C_COPYEXPR_CANDIDATE_20261031.md) | `new_core_v3`＝指针辅助监督＋发散点归因探针；同数据/同门，独立预算 60k CPU 秒；**草案待 owner 裁定，未批准不执行** |
 | [09](../MAINLINE.md#3-唯一执行队列) | 自然经历合同按对应准入建立 | 自然内容/时间绑定与经历选择 |
 | [10](../MAINLINE.md#3-唯一执行队列) | T3 合同按任务需要建立 | 自然目标、有限行动与后果 |
 | [11](../MAINLINE.md#3-唯一执行队列) | 自然连续任务合同按对应准入建立 | 自然中文连续任务与 L3 |

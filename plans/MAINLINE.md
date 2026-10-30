@@ -49,7 +49,7 @@ R1、R3b、R5b等保留为原合同/实验身份，不再另作排期编号；N1
 | 05 | 接入普通端到端基线 | 结构交付完成，后已参加步骤07 | [R3b-2记录](reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md#7-r3b2-普通端到端基线20261030)：11/11，全文输入、无硬解析门、全参数可训 |
 | 06 | 物化课程、测成本并冻结比较合同 | 已完成：`r4_priced` | [R4合同](reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md)：216/72/72历史分区，恢复6/6，冻结512更新/run及原数值门 |
 | 07 | 执行首轮有界比较并结案 | 已结案：`FAIL_BEHAVIOR` | [R5结果](reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md#9-r5-执行结果20261030)：有相对净收益，绝对行为/内容依赖/内插等门未全过；不自动追加训练 |
-| **08** | **实现并检验复制轨候选** | **已结案：`FAIL_BEHAVIOR`（2026-10-31，08.1–08.5按序走完）** | [R5b合同](reference/SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md)＋[评价报告](../reports/taiji_native_core_r5b_evaluation_20261030.json)：机制/比较/成本/恢复过、行为五门＋内插＋收据败；内容消费因果成立，绝对正确率0.505/0.80；同面回归，不称新独立确认 |
+| **08** | **实现并检验复制轨候选** | **已结案：`FAIL_BEHAVIOR`（2026-10-31，08.1–08.5按序走完）；后继[R5c草案](reference/SPEC-NATIVE-CONTENT-CORE_R5C_COPYEXPR_CANDIDATE_20261031.md)待 owner 三选项裁定（①批准②转09静态③暂停），未批准不执行** | [R5b合同](reference/SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md)＋[评价报告](../reports/taiji_native_core_r5b_evaluation_20261030.json)：机制/比较/成本/恢复过、行为五门＋内插＋收据败；内容消费因果成立，绝对正确率0.505/0.80；三份诊断＝选择零错误、缺口为选中后复制/表达执行（训练信号问题）；同面回归，不称新独立确认 |
 | 09 | 自然内容/时间绑定与真实经历选择 | 落地方案已列；实验未准入 | 父候选所需内容贡献有适用证据，另冻结T2范围、基线、资源及出口 |
 | 10 | 自然目标、后果预测与有限行动 | 按任务需要进入，未准入 | 只有声明行动/规划能力时启用；不成为首次L3的普遍前置 |
 | 11 | 同一候选的自然中文连续任务与最小验收 | 条件规划，未准入 | 按07满足L2＋至少一项代表能力＋安全/恢复/性能，才触发L3范围的用户验收 |
