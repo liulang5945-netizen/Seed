@@ -1,0 +1,66 @@
+{
+  "schema": "taiji-native-core-r4-preflight-v1",
+  "episodes": 4,
+  "train_only": true,
+  "query_read": false,
+  "holdout_read": false,
+  "optimizer_updates": 0,
+  "training_started": false,
+  "sealed_text_read": 0,
+  "can_promote": false,
+  "objects": {
+    "new_core_v1": {
+      "loss_nats": 5.590646743774414,
+      "finite_loss": true,
+      "finite_gradients": true,
+      "gradient_groups": {
+        "attention": true,
+        "content_encoder": false,
+        "core": true,
+        "decoder": true,
+        "output": true,
+        "query_encoder": true,
+        "reader": true
+      },
+      "target_bytes": 460,
+      "scored_turns": 16,
+      "parameters": 144355,
+      "trainable_parameters": 144355
+    },
+    "corrected_old_v1": {
+      "loss_nats": 5.551945209503174,
+      "finite_loss": true,
+      "finite_gradients": true,
+      "gradient_groups": {},
+      "target_bytes": 460,
+      "scored_turns": 16,
+      "parameters": 123438,
+      "trainable_parameters": 3341
+    },
+    "ordinary_v1": {
+      "loss_nats": 5.54887056350708,
+      "finite_loss": true,
+      "finite_gradients": true,
+      "gradient_groups": {},
+      "target_bytes": 460,
+      "scored_turns": 16,
+      "parameters": 120097,
+      "trainable_parameters": 120097
+    }
+  },
+  "restore": {
+    "in_process_equal": true,
+    "fresh_process_equal": true,
+    "expected_digest": "0b09bb12df4de8990511f0379a8b528dddd9647c42563d93e7f3118b294f5f3e",
+    "in_process_digest": "0b09bb12df4de8990511f0379a8b528dddd9647c42563d93e7f3118b294f5f3e",
+    "fresh_process_digest": "0b09bb12df4de8990511f0379a8b528dddd9647c42563d93e7f3118b294f5f3e"
+  },
+  "cpu_seconds": 17.75,
+  "wall_seconds": 4.861754300072789,
+  "status": "r4_preflight_passed",
+  "failures": [],
+  "source_sha256": {
+    "scripts/training/preflight_native_content_core_r4.py": "6c541da154ff8d329ad905b9fc87b9178db24319ff5ac6be006451c02cd5fbd2"
+  },
+  "digest": "7b58c3a66cb5ef5888cfa4f39c198072be848a51777708cabec059b379986519"
+}

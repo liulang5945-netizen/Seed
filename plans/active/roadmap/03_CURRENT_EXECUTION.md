@@ -26,6 +26,8 @@ R4-prep数据已物化：[分区](../../../plans/manifests/native_core_r1_split_
 
 R4合同已写：[定价与R5数值门](../../reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md)。三组同train/同曝光/同seed/同预算；512更新×15 run（Q1 9 + Q2 6）；200,000 CPU秒/48小时上限；行为、机制、保持、恢复、成本门已冻结。执行前需用户评审R2并批准R4；未批准不跑pilot、不训练。
 
+R4预检已通过（不训练）：[报告](../../../reports/taiji_native_core_r4_preflight_20261030.json)。4个真实train episode、每对象16应答轮/460目标字节；三组前向+反向有限；新核心reader/decoder/core/query/attention有梯度、content_encoder无（持久latent边界）；修正旧图仅bias可训练；普通基线全参数可训练；零步独立进程恢复一致；`optimizer_updates=0`、query/holdout未读。forward+backward的17.27 CPU/4.69 wall只是下界，不是R4单价。
+
 R1完成证据：[统一语义合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md)五项边界确认；世界审计（360-history/216-72-72/1,440 episodes/11,520 turns/0.80–1.11MB）；公开fixture 17案通过；§2.2接口审计与§2.3合同矛盾自检完成。
 
 F1（holdout 面）与 F1b（query 面，从未读过）都结案为负结果：F1 判 `FAIL_COPY_ONLY`、F1b 判 `FAIL_NO_STATE_EFFECT`（[收束记录 §13–§14](../../reference/PROJECT_CONSOLIDATION_20261029.md)）。F1b 的门表给出真数：`cut_drop 0.333` 与 `rescue_gain 1.0` 过线、`relevant_swap_delta` 0.096（F1 为 0），但 `answer_exact 0.041`、三条差值为 0；**54/123（44%）查询轮连实体都没解析出来**，两套 sealed 面同比例。

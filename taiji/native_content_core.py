@@ -1080,7 +1080,7 @@ class NativeContentCoreV1(ConditionalLanguageCandidateV3):
             return "decoder"
         if name.startswith("output."):
             return "output"
-        if name in {"query", "input_position", "output_position"}:
+        if name.startswith(("query.", "input_position.", "output_position.")):
             return "attention"
         return "reader"
 

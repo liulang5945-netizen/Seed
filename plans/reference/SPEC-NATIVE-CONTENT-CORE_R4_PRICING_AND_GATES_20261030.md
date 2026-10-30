@@ -25,7 +25,7 @@ R4 不训练能力候选、不评价 query/holdout、不读 sealed。定价中�
 | 权限 | 只读 `native_core_r1_train_v1.json`；query/holdout 与旧 sealed 不读 |
 | 评分 | R1 固定分母；解析失败/拒答/错误都计入；首字节/第 t 步对齐 |
 
-参数现状（R3 结构门实测）：新核心 144,355（reader+decoder 可训练）；修正旧图 123,438（仅 value bias 3,341 可训练）；普通端到端 120,097（全部可训练）。R4 不按参数量直接比较，报告参数量并检查计算预算。
+参数现状（R3 结构门实测）：新核心 144,355，全部参数 `requires_grad`；但 store 路径只有 reader/decoder/core/query/attention 实际接收任务梯度，content_encoder 需 `reencode` 才回传。修正旧图 123,438（仅 value bias 3,341 可训练）；普通端到端 120,097（全部可训练）。R4 不按参数量直接比较，报告参数量并检查计算预算。
 
 ## 3. R4 定价流程
 
@@ -35,6 +35,8 @@ R4 不训练能力候选、不评价 query/holdout、不读 sealed。定价中�
 2. 新进程加载；
 3. 同一 probe 输入的 selection/read/logits/answer digest 必须完全一致；
 4. 任一对象失败即停止 R4，记工程失败，不进入定价。
+
+2026-10-30 工程预检已跑（不训练）：用 4 个真实 train episode、每对象 16 个应答轮/460 目标字节，三组前向+反向均有限，新核心 reader/decoder/core/query/attention 组有梯度、content_encoder 无（符合持久 latent 边界），修正旧图仅 bias 可训练，普通基线全参数可训练；零步保存在新进程恢复 digest 一致；`optimizer_updates=0`。这只是数据适配与恢复预检，forward+backward 的 17.27 CPU/4.69 wall 是下界，不是 R4 单价。
 
 ### 3.2 单位成本
 
