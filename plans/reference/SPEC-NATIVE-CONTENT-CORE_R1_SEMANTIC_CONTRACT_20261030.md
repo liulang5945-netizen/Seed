@@ -38,6 +38,27 @@
 
 **最小修改顺序**：先 1（byte 对齐）与 2（固定分母），得到可解释的修正旧基线；再 3（time/selector/history），再做 6（hidden 隔离）；最后 5（动态读取）与 7（解析准入/信用）。第 1/2 条不修就开训，任何结果都不能作为新架构证据。
 
+### 2.2 R2 接口审计（设计级，2026-10-30）
+
+本表只定义 R2 必须提供的接口与验收，不表示已实现；当前实现列用于识别缺口。
+
+| 接口 | 当前实现 | R2 必须提供 | 验收 |
+|---|---|---|---|
+| `ContentState` | [PersistentContentFeatureV1](../../taiji/joint_state_consumption.py) 有 entity/attribute/value/source/turn/revision/valid_from/superseded_by/confidence/continuous | `valid_to`、`status`(resolved/ambiguous/unresolved)、`encoder_revision`、`owner/scope/session`；latent 与 exact_ref 指向同一 `feature_id` | schema 往返；来源/版本；encoder 更新后旧 latent 失效/重编码/迁移 |
+| `TimeIntent` | selector 只按 entity/attribute 打分 | `current/previous/unknown` 进入 `score_candidates`；合法候选 mask；无 gold | 同 query 文本不同 time 的 fixture；previous 无前驱时未知，不退回 current |
+| `ContentReader` | [FeatureValueReadoutV1](../../taiji/joint_state_consumption.py) 一次线性读出 | 每步读 `(query/time, selected content, prefix)`，输出 read vector；不是整句固定 bias | 同一 query 相关交换/无关交换；cut/rescue 走生产接口 |
+| `DynamicDecoder` | [conditional_language_v4](../../taiji/conditional_language_v4.py) `next_logits` + 固定 value bias | 每步把内容 read 注入 hidden/attention/decoder；固定 bias 只作基线 | 首字节/第 t 步目标对齐；每步 read 可区分；无 gold 模板 |
+| `CreditMatrix` | [joint_t1_trainer](../../taiji/joint_t1_trainer.py) producer/V4 组 | 声明 encoder/writer/reader/decoder 可训练、冻结、stop 组；任务 loss 与辅助 CE 分账；credit on/stop | 梯度实际接收者/禁写组；任务信用到达读取组与表达组；不以梯度替代收益 |
+| `Checkpoint` | store/feature payload 与 F0/F1 checkpoint | `encoder_revision/valid_to/status/owner/scope`；迁移规则；不保存 autograd 图 | 零步保存/独立恢复；同输入 parse/read/logits 一致 |
+| `PublicFixture` | [17 案 fixture](../../plans/manifests/native_core_r1_public_fixture_v1.json) | 作为只读接口/零步测试，不作训练数据 | 17 案全过；sealed=false；固定分母 |
+| `Baselines` | 修正旧图尚需实现；普通基线未实现；新核心未实现 | 三组同数据/权限/资源；架构包与 credit 单因素分开 | R2 合同明确比较问题；R4 定价后再训练 |
+
+### 2.3 合同矛盾自检
+
+- §2 的八项旧矛盾均有对应条款：byte 对齐→§5；固定分母→§5.3；当前/旧值→§3.4/§4.3；连续内容身份→§4.2；固定 bias→§4.4；hidden 旁路→§4.5；cut/rescue→§6.3；解析准入/信用→§4.1/§7。
+- 未发现未归属的旧矛盾；代码触点见§2.1，接口缺口见§2.2。
+- 本自检只证明合同映射完整，不证明实现或行为通过；R2 实现后需用 fixture/接口测试重新验证。
+
 ## 3. 任务与时间语义
 
 ### 3.1 首版世界形状（本轮确认）
@@ -271,7 +292,7 @@
 - [ ] 修正旧图、普通基线、新核心同资源比较方案已写；credit on/stop 单独定义。
 - [x] 公开 fixture 与 sealed 分离；未读新 sealed；训练前 checkpoint/恢复门已定义（17 案审计通过，见报告）。
 - [x] 首版五项设计边界已由本轮用户授权拍板确认；不代表其余语义检查已通过。
-- [ ] 其余合同矛盾、公开fixture和数据/接口审计闭合后才转重构-2；实现/训练仍依对应工作包与预算准入。
+- [x] 合同矛盾映射、公开fixture与世界数据审计已在设计级闭合；接口审计见§2.2。实现/训练仍依R2/R4工作包与预算准入。
 
 ## 11. 明确不做
 
@@ -283,4 +304,4 @@
 
 ## 12. 本轮决策边界
 
-本轮仅确认世界形状、时间语义、固定评分、候选内容准入与三组比较/任务信用要求，并同步计划状态。2026-10-30 已运行只读世界审计（名单/模板/360-history 样本计划）和公开 fixture 审计（17 案通过），未生成数据、未调用模型；精确分区/覆盖、其余合同矛盾与接口审计、模型与预算仍待各包实施/审计。
+本轮仅确认世界形状、时间语义、固定评分、候选内容准入与三组比较/任务信用要求，并同步计划状态。2026-10-30 已运行只读世界审计（名单/模板/360-history 样本计划）和公开 fixture 审计（17 案通过），并完成设计级接口审计（§2.2）；未生成数据、未调用模型。精确分区/覆盖、R2 实现与模型/预算仍待各包实施/审计。

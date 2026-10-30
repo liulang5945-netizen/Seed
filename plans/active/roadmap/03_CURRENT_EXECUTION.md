@@ -6,11 +6,13 @@
 
 持续Goal（2026-10-27修订）：沿N主线，发展由态极自身可学习、可恢复的认知机制参与决策与表达的原生认知模型，使其能够以自然中文可靠完成连续任务，跨会话积累和纠正经验，从可核验的经验与反馈中学习并保持旧能力；在授权和资源边界内，必要时即使没有新提示，也能根据目标与状态自主选择继续、求证、求助或等待。各阶段预先声明任务范围和收官条件，以身份可追溯的同一候选及其前后版本，对照合理基线，按范围验证未见任务表现、必要机制的实际贡献、反馈对负责模块的作用、旧能力保持、主动选择效果及真实资源成本；成功、负结果、不可判、工程失败或预算停止均按预定出口结案。
 
-## 当前唯一下一步：重构-1任务、时间读取与训练/生成/评分合同
+## 当前唯一下一步：重构-2 新共同内容主图与三类基线合同
 
 用户已采纳共同内容核心为计划主方向，现按[重构方案](../../reference/PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)推进：语义合同→共同主图/基线→隔离实现/零步恢复→预算冻结→一次比较→条件能力接力。旧N177/F/N178结果与费用继续保留，已有授权N178b按原终点/预算结案。本轮仅修方案，用户负责实施。
 
-重构-1合同草案已写：[统一语义合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md)，并补了[§2.1 当前代码触点](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md#21-当前代码触点只读基线-22cd81b25)。状态：**五项首版边界已确认；世界只读审计已完成（360-history/216-72-72/1,440 episodes/11,520 turns/0.80–1.11MB）；公开fixture 17案审计通过；其余合同矛盾与接口审计待执行；未实现、未训练、未读新sealed面。** 合同先钉住同query不同当前值/不同历史值、同query文本不同time_intent、固定分母、第t步byte目标、cut/rescue正确性、来源/版本/恢复和三类基线；§10 出口清单全过才进入重构-2。
+R1设计级已闭合。当前写R2合同：[候选与三类基线比较合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md)。R2只定义完整候选、修正旧图/普通端到端基线、接口责任、同数据/权限/资源和Q1/Q2比较问题；不实现、不训练、不评价、不读新sealed。待用户评审后进入R3实现。
+
+R1完成证据：[统一语义合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md)五项边界确认；世界审计（360-history/216-72-72/1,440 episodes/11,520 turns/0.80–1.11MB）；公开fixture 17案通过；§2.2接口审计与§2.3合同矛盾自检完成。
 
 F1（holdout 面）与 F1b（query 面，从未读过）都结案为负结果：F1 判 `FAIL_COPY_ONLY`、F1b 判 `FAIL_NO_STATE_EFFECT`（[收束记录 §13–§14](../../reference/PROJECT_CONSOLIDATION_20261029.md)）。F1b 的门表给出真数：`cut_drop 0.333` 与 `rescue_gain 1.0` 过线、`relevant_swap_delta` 0.096（F1 为 0），但 `answer_exact 0.041`、三条差值为 0；**54/123（44%）查询轮连实体都没解析出来**，两套 sealed 面同比例。
 
@@ -47,7 +49,8 @@ F1（holdout 面）与 F1b（query 面，从未读过）都结案为负结果：
 
 | 工作包 | 具体任务 | 验收/边界 |
 |---|---|---|
-| 重构-1 | [统一语义合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md) | 草案待用户评审；§10清单全过才进入重构-2；未实现/未训练/未读新sealed |
+| 重构-1 | [统一语义合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md) | 设计级闭合：五项边界、世界/17案fixture、§2.2接口审计；未实现/训练 |
+| 重构-2 | [候选与三类基线合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md) | 待用户评审；R3实现前不训练/不评价 |
 | E0 | 已完成：15臂终点fresh-process parse/answer回执；B真实输入、有效mask及隔离矩阵 | 三份件＋三支仪器自带机检判据（见收束记录§8）；未重训/未重评holdout |
 | CI | 修复四模块9处mypy类型错误 | 精确记录当前源码身份；本机核心类型/受影响回归及实际CI重新核验 |
 | 训练态E3 | 已完成：credit-on/stop、禁写组及optimizer/RNG/cursor往返 | E2c 12/12×2 用例、E3 17/17；选择器无回答信用、真实链解析覆盖仅1/4 单列（收束记录§9） |

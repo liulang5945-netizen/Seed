@@ -58,8 +58,8 @@
 
 | 顺序 | 核心交付 | 准入/出口 |
 |---|---|---|
-| 重构-1 当前队首 | [统一语义合同草案](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md)：任务、时间选择、byte目标/生成/评分及来源合同；[世界审计](../../../reports/taiji_native_core_r1_world_audit_20261030.json)与[公开fixture](../../../reports/taiji_native_core_r1_public_fixture_audit_20261030.json)已做 | 五项边界已确认；世界审计与17案fixture通过；其余§10/接口审计待执行；不开训 |
-| 重构-2 | 新共同内容主图、修正旧图及普通学习基线 | 明确完整任务及架构包/信用比较问题 |
+| 重构-1 已完成 | [统一语义合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md)；[世界审计](../../../reports/taiji_native_core_r1_world_audit_20261030.json)与[公开fixture](../../../reports/taiji_native_core_r1_public_fixture_audit_20261030.json)已做 | 设计级闭合：五项边界、世界/17案fixture、§2.2接口审计；未实现/训练；R2待进入 |
+| 重构-2 当前队首 | [候选与三类基线合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md)：新核心、修正旧图、普通端到端基线；Q1架构包/ Q2信用分离 | 待用户评审；同数据/权限/资源；R3前不实现/训练 |
 | 重构-3 | 隔离实现、逐步内容读取、真实信用/禁写及零步恢复 | 公开反例、来源与完整训练状态验收 |
 | 重构-4 | train-only定价、数据/保持/数值门/预算与停止线 | 标定先限额，正式合同冻结后准入 |
 | 重构-5 | 一次有界独立比较 | 行为/保持/恢复/成本合取，正负均结案 |
