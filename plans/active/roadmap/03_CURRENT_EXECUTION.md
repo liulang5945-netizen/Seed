@@ -119,6 +119,10 @@ runner（`b78bdfdce`）另补 `--run-id`（默认 20261031），避免与已停�
 
 费用：训练 40,259＋评价 4,769＋定价 569＋08.2 探针 4,707＋作废跑约 1.4 万＋并行草稿约 1.56 万 ≈ **8.01 万/120,000 CPU 秒**（合同 §7 预算内收案，非 budget_stop）。
 
+### 08.5 后继裁定支持证据（2026-10-31，train-only 只读诊断，`diagnosis_complete`）
+
+[诊断回执](../../../reports/taiji_native_core_r5b_selection_diagnosis_20261031.json)、[脚本](../../../scripts/training/diagnose_native_content_r5b_selection.py)。2,592 个采样 train 应答轮（216 episode×3 q1 端点，seed 20261030；query/holdout/sealed 未读、0 优化器更新）：**选择错误桶（选错记录/检索失败）为零——读取对正确记录的选择在 train 上已是 100%**；全部缺口在 `selection_correct_answer_wrong`＝0.435（选中正确内容后复制/表达执行产出错误字节；current 0.681、previous 0.376、unknown 0.282）。**裁定框架修正**：若立后继合同，靶点应是「选中正确内容后的复制/表达执行精度」（复制指针分布/gate/解码器执行），而非「选中正确值」的读取精度（该环节无错可选）。owner 裁定点保持开放：立后继合同（靶点依此修正）／全局收束转 09 静态方案／暂停保留现场。诊断成本 475 CPU 秒，计入预算账（累计约 8.06 万/12 万）。
+
 ## 继承的历史事实与限制
 
 | 历史资产 | 已有事实 | 保留边界 |

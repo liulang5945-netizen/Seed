@@ -1,0 +1,131 @@
+{
+  "format": "taiji-native-core-r5b-selection-diagnosis-v1",
+  "version": 1,
+  "date": "2026-10-31",
+  "contract": "plans/reference/SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md",
+  "training_report": {
+    "path": "reports/taiji_native_core_r5b_training_20261030.json",
+    "sha256": "28159cc30f0c7407796a50b721f638204490408cc2fefe21166e589d12ad94d5"
+  },
+  "manifest": {
+    "path": "plans/manifests/native_core_r1_train_v1.json",
+    "sha256": "5d151ba9f994670ccc2968b4d4547d280c52c056e991cf831e4f18c818dfedfd",
+    "episodes_total": 864,
+    "episodes_sampled": 216,
+    "sample_seed": 20261030
+  },
+  "definition": "train-only selection-error taxonomy over frozen q1 endpoints; first non-empty step selection vs course ground truth",
+  "runs": [
+    {
+      "run": "q1_new_core_v2_seed0",
+      "turns": 864,
+      "tally": {
+        "selection_correct_answer_wrong": 374,
+        "selection_correct_answer_correct": 435,
+        "unknown_answer_wrong": 55
+      },
+      "per_category": {
+        "current_query": {
+          "selection_correct_answer_wrong": 295,
+          "selection_correct_answer_correct": 137
+        },
+        "previous_query": {
+          "selection_correct_answer_wrong": 79,
+          "selection_correct_answer_correct": 137
+        },
+        "unknown_query": {
+          "selection_correct_answer_correct": 161,
+          "unknown_answer_wrong": 55
+        }
+      }
+    },
+    {
+      "run": "q1_new_core_v2_seed1",
+      "turns": 864,
+      "tally": {
+        "selection_correct_answer_wrong": 385,
+        "selection_correct_answer_correct": 406,
+        "unknown_answer_wrong": 73
+      },
+      "per_category": {
+        "current_query": {
+          "selection_correct_answer_wrong": 309,
+          "selection_correct_answer_correct": 123
+        },
+        "previous_query": {
+          "selection_correct_answer_correct": 140,
+          "selection_correct_answer_wrong": 76
+        },
+        "unknown_query": {
+          "selection_correct_answer_correct": 143,
+          "unknown_answer_wrong": 73
+        }
+      }
+    },
+    {
+      "run": "q1_new_core_v2_seed2",
+      "turns": 864,
+      "tally": {
+        "selection_correct_answer_wrong": 368,
+        "selection_correct_answer_correct": 441,
+        "unknown_answer_wrong": 55
+      },
+      "per_category": {
+        "current_query": {
+          "selection_correct_answer_wrong": 279,
+          "selection_correct_answer_correct": 153
+        },
+        "previous_query": {
+          "selection_correct_answer_wrong": 89,
+          "selection_correct_answer_correct": 127
+        },
+        "unknown_query": {
+          "selection_correct_answer_correct": 161,
+          "unknown_answer_wrong": 55
+        }
+      }
+    }
+  ],
+  "merged": {
+    "turns": 2592,
+    "tally": {
+      "selection_correct_answer_wrong": 1127,
+      "selection_correct_answer_correct": 1282,
+      "unknown_answer_wrong": 183
+    },
+    "rates": {
+      "selection_correct_answer_correct": 0.49459876543209874,
+      "selection_correct_answer_wrong": 0.4347993827160494,
+      "unknown_answer_wrong": 0.07060185185185185
+    },
+    "per_category": {
+      "current_query": {
+        "turns": 1296,
+        "selection_correct_answer_correct": 0.31867283950617287,
+        "selection_correct_answer_wrong": 0.6813271604938271
+      },
+      "previous_query": {
+        "turns": 648,
+        "selection_correct_answer_correct": 0.6234567901234568,
+        "selection_correct_answer_wrong": 0.3765432098765432
+      },
+      "unknown_query": {
+        "turns": 648,
+        "selection_correct_answer_correct": 0.7175925925925926,
+        "unknown_answer_wrong": 0.2824074074074074
+      }
+    }
+  },
+  "read_boundaries": {
+    "query_split_read": false,
+    "holdout_split_read": false,
+    "sealed_read": false,
+    "optimizer_updates": 0
+  },
+  "cost": {
+    "cpu_seconds": 475.375,
+    "wall_seconds": 41.25015489989892
+  },
+  "started_at": "2026-10-30T18:38:08.182687+00:00",
+  "finished_at": "2026-10-30T18:38:49.432570+00:00"
+}
