@@ -39,7 +39,7 @@
 | R3 | 新核心隔离实现与零步恢复 | 已完成（结构门） | 53/53 结构检查；未训练，不称学会 |
 | **R3b-1** | **修正旧图基线** | **已完成（结构门）** | 22/22 检查；固定分母 17/17；仅 value bias 可训练 |
 | **R3b-2** | **普通端到端基线** | **已完成（结构门）** | 11/11 检查；固定分母 17/17；全部参数可训练 |
-| R4 | train-only 定价与合同冻结 | 当前阶段（准入待 R2 评审） | 课程 split 已物化（216/72/72）；单位成本、数据/保持/数值门/预算/停止线 |
+| R4 | train-only 定价与合同冻结 | 合同已写，执行待 R2 评审+批准 | 课程 split 已物化（216/72/72）；单位成本、数据/保持/数值门/预算/停止线 |
 | R5 | 一次有界独立比较 | 待 R4 | Q1 架构包 + Q2 信用单因素；正负均结案 |
 | R6 | 条件能力接力 | 仅在 R5 有净收益后 | T2/T3/自然连续任务/跨会话，按 07 分别验收 |
 
@@ -83,7 +83,7 @@
 | 方向（唯一） | 本文件 |
 | 状态与队首（唯一） | [03 当前执行](active/roadmap/03_CURRENT_EXECUTION.md) |
 | 工作包与依赖 | [10 持续能力执行计划](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md) |
-| 当前合同 | [重构方案](reference/PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)、[R1](reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md)、[R2](reference/SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md)、[R3](reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md) |
+| 当前合同 | [重构方案](reference/PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)、[R1](reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md)、[R2](reference/SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md)、[R3](reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md)、[R4](reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md) |
 | 规范约束 | [核心需求](active/TAIJI_CORE_REQUIREMENTS.md)、[原生架构](active/TAIJI_NATIVE_ARCHITECTURE_V1.md) |
 | 运营 | [02 门禁/CI](active/roadmap/02_GATES_AND_CI.md)、[05 技术债](active/roadmap/05_TECH_DEBT_REGISTER.md)、[07 交付](active/roadmap/07_MINI_MODEL_DELIVERY.md)、[08 重放](active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md) |
 | 旧资产 | [LEGACY_ASSET_INDEX](reference/LEGACY_ASSET_INDEX.md) |
