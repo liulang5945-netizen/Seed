@@ -127,6 +127,10 @@ runner（`b78bdfdce`）另补 `--run-id`（默认 20261031），避免与已停�
 
 [回执](../../../reports/taiji_native_core_r5b_copyexpr_diagnosis_20261031.json)、[脚本](../../../scripts/training/diagnose_native_content_r5b_copyexpr.py)（q1 seed0 端点，同 216 episode 样本；train-only 只读，357 CPU 秒）。三个发现：①**纯教师强制 argmax 已不是有效探针**——TF 下 value 字节 argmax 仅 0.157、template 仅 0.038-0.053，与训练末段 loss 0.145 nats 矛盾的唯解释是自前缀日程刻意改变了输入分布，模型技能存在于自生成 regime（与 08.2 边界回执一致）；②**current 类错误 79% 在值字节之前的模板早期发散**（自生成时模板句式先错），previous 类 91% 在值字节本身；③unknown 全部为模板类发散。**对裁定①的含义**：后继合同若立，靶点＝生成侧复制/模板执行（双表面：current 的早期模板发散＋previous 的值字节拷贝），且设计冻结前需用与自前缀 regime 一致的探针（TF 探针无效）。owner 三选项裁定保持开放；诊断累计 ≈830 CPU 秒，预算账累计约 8.07 万/12 万。
 
+### 08 后继裁定状态（2026-10-31，裁定开放，草案已备）
+
+裁定弹窗两次提请未获答复，裁定保持开放。等待期内按 owner 常设自主推进指令备好选项①的执行载体：[R5c 复制执行精度候选合同草案](../../reference/SPEC-NATIVE-CONTENT-CORE_R5C_COPYEXPR_CANDIDATE_20261031.md)（候选 `new_core_v3`＝指针辅助监督 C＋自前缀一致探针 D；同数据/同门，基线与前身 v2 端点按 sha 复用；独立预算 60,000 CPU 秒/48h）——**草案待批，未授权实现/训练**；用户选②或③则本件作废。三选项不变：①批准 R5c 草案（回复①或 `--approve-r5c`）／②转 09 静态方案／③暂停。
+
 ## 继承的历史事实与限制
 
 | 历史资产 | 已有事实 | 保留边界 |
