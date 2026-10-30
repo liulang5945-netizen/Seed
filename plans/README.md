@@ -1,64 +1,32 @@
-# Seed / Taiji 计划与架构入口
+# Seed / Taiji 计划入口
 
-正式持续Goal：**沿N主线，把态极发展成由自身认知机制驱动、能通过自然中文可靠完成连续任务、跨会话积累和修正经验、从反馈中学会新能力并保持旧能力的原生认知模型；以同一可恢复版本的未见表现、旧能力保持和实际成本验收每轮进步。** Seed负责产品与运行承载。
+> 文档状态：[索引] — 本页只导航，不定义方向、不发布队首。
 
-## 当前路线与文档职责
+正式持续 Goal：**沿 N 主线，把态极发展成由自身认知机制驱动、能通过自然中文可靠完成连续任务、跨会话积累和修正经验、从反馈中学会新能力并保持旧能力的原生认知模型；以同一可恢复版本的未见表现、旧能力保持和实际成本验收每轮进步。** Seed 负责产品与运行承载。
 
-2026-10-30整体修订：主线采用[共同内容核心重构方案](reference/PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)。任务/目标/评分语义统一→共同事件状态、时间读取与动态生成主图→隔离实现/恢复→新预算冻结→一次有界比较→条件进入T2/T3、自然连续任务和跨会话适应。原生目标、精确来源与旧正负证据继承；旧硬解析/局部头变体不再自动续推。当前唯一队首由03维护，具体实施由用户推进。
+## 阅读顺序
 
-| 要查什么 | 主要入口 |
-|---|---|
-| N宏观发展层次与编号分工 | [01阶段地图](active/roadmap/01_SCOPE_AND_PHASES.md#0-n主线的现行发展阶段) |
-| F结案分流及F后任务/能力接力 | [10后继工作包](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md#38-f结案后的分流与扩面准入) |
-| 当前队首、运行/预算事实及停止/恢复 | [03当前执行](active/roadmap/03_CURRENT_EXECUTION.md) |
-| 详细分阶段工作包、依赖、产物、证据、失败回流和决策 | [10持续能力执行计划](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md) |
-| 前序语言负结果的原因、初始化与评价边界 | [原因复盘](reference/PLAN-N1-175_prior_results_cause_review_20261026.md) |
-| CC-2早期诊断及模型路线历史 | [N1-167](reference/PLAN-N1-167_execution_closeout_20261025.md)、[N1-168](reference/PLAN-N1-168_execution_closeout_20261025.md)、[N1-169候选设计](reference/PLAN-N1-169_shared_language_chain_design_20261025.md) |
-| 旧计划继承/合并/退役/历史/条件保留 | [17过渡与收束](reference/delivery-runs/20261021-n-mainline/artifacts/17-plan-transition-and-reconciliation.md) |
-| N1–N6及42条设计责任 | [09主线设计](active/roadmap/09_NEXT_MAINLINE_PLAN.md) |
-| 根需求、认知所有权、现有架构 | [核心需求](active/TAIJI_CORE_REQUIREMENTS.md)、[原生架构](active/TAIJI_NATIVE_ARCHITECTURE_V1.md) |
-| 下一主线统一架构、驱动力及VX开发包 | [VISION现行方案](reference/VISION_FUTURE_TECHNOLOGY.md) |
-| 生命页重设计、字段来源及VX6子包 | [生命页实施设计](reference/UI_LIFE_UX_SPEC_20261003.md)、[视觉方向](reference/UI_LIFE_VISUAL_DIRECTION_20261003.md) |
-| M0–M8资产与范围排除 | [01阶段地图](active/roadmap/01_SCOPE_AND_PHASES.md)、[既有项目收束](reference/M0_M7_PROJECT_CONSOLIDATION_20261006.md) |
-| 能力、用户验收与采用/发布 | [07整模型交付](active/roadmap/07_MINI_MODEL_DELIVERY.md)、[02门禁/CI](active/roadmap/02_GATES_AND_CI.md) |
-| 历史CC-1实施交接与R2冻结技术约束 | [工程交接](reference/delivery-runs/20261021-n-mainline/artifacts/02-plan.md)、[历史技术摘要](reference/delivery-runs/20261021-n-mainline/artifacts/02-continuation-extension-plan.md) |
-| 活动文件索引、交付记录 | [PLAN_INDEX](active/PLAN_INDEX.md)、[黑板](reference/delivery-runs/20261021-n-mainline/board.md) |
+1. [唯一主线](MAINLINE.md)：方向、主计算图、执行队列、旧方向处置。**任何计划冲突以本文件为准。**
+2. [03 当前执行](active/roadmap/03_CURRENT_EXECUTION.md)：当前状态、唯一队首、预算与停止事实。
+3. [10 持续能力执行计划](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)：工作包依赖、出口、失败回流。
+4. 当前合同：[重构方案](reference/PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)、[R1 语义](reference/SPEC-NATIVE-CONTENT-CORE_R1_SEMANTIC_CONTRACT_20261030.md)、[R2 基线](reference/SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md)、[R3 实现](reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md)。
+5. 规范约束：[核心需求](active/TAIJI_CORE_REQUIREMENTS.md)、[原生架构](active/TAIJI_NATIVE_ARCHITECTURE_V1.md)。
+6. 旧资产：[LEGACY_ASSET_INDEX](reference/LEGACY_ASSET_INDEX.md)。旧 N177/F/N178、VISION、T2/T3、09 机制词典都在这里被明确标注为基线/组件/历史，不再产生当前指令。
+7. 运营：[02 门禁/CI](active/roadmap/02_GATES_AND_CI.md)、[05 技术债](active/roadmap/05_TECH_DEBT_REGISTER.md)、[07 整模型交付](active/roadmap/07_MINI_MODEL_DELIVERY.md)、[08 重放手册](active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md)。
 
-已有实施资产与后继衔接见[N177合同](reference/PLAN-N1-177_joint_cognition_slice_20261026.md)；N176已消费部分沿原结案保留，其余边界仍按[N176冻结合同](reference/SPEC-N1-176_F0_F1_pilot_20261026.md)，N175原合同与未完成S留原位，不混用资格。
+## 维护规则
 
-## plans的分层与维护入口
+- 方向上只能有一份文件：[MAINLINE](MAINLINE.md)。新方向只能作为“候选”进入其第 3 节，不允许另建并列主线。
+- 只有 03 可以写“当前唯一下一步”；其他文档不得发布队首。
+- `plans/active/` 每份文档前 10 行必须有 `> 文档状态：[...]`；取值限主线、状态、工作包、合同、运营、规范、组件、历史、证据、索引。
+- 旧文档里的“当前/下一步/唯一动作”只解释写作时点；当前调度只看 MAINLINE 与 03。
+- 冻结 SPEC、审批、原始输出和 Git 身份不因收敛改名或删除；只降级其调度权。
+- 目录与产物按[目录规范](../docs/FOLDER_STRUCTURE_RULES.md)管理；训练前先验证 checkpoint 保存/恢复。
 
-按“目标约束→当前执行→工作包→合同→证据/历史”查找；沿既有目录细化职责，冻结原件保持路径与身份。
+## 守卫
 
-| 层次 | 位置/入口 | 保存内容 | 更新触发 |
-|---|---|---|---|
-| 项目约束 | active核心需求/架构、roadmap的01/02/07/09 | 目标、机制、范围与能力规则 | 真实设计或采用范围变化 |
-| 当前执行 | active/roadmap/03 | 主实验、阶段状态、臂矩阵、资源快照 | durable/运行/停止状态变化 |
-| 工作包 | active/roadmap/10 | 父子关系、依赖、产物、验收与决策卡 | 阶段交接或方案决策 |
-| 合同与交接 | reference的PLAN/SPEC/APPROVAL；[分类索引](reference/README.md) | PLAN实施衔接；SPEC原冻结；批准范围 | PLAN按实际推进；冻结件按版本纪律 |
-| 身份与证据 | manifests、仓根reports | 候选/数据身份与机器原始读数 | 有实际来源的报告产出 |
-| 历史 | archive、原结案件及Git恢复身份 | 旧路线、失败、审批与过程快照 | 有明确恢复索引的归档/收束 |
-
-### 活动计划表格约定
-
-| 表类型 | 推荐字段 | 使用原则 |
-|---|---|---|
-| 阶段总表 | 阶段、状态、前置、产物、转交 | 每行一个可交付阶段；控制在五列，细节下沉卡片 |
-| 工作包卡片 | 字段、设计 | 分别写输入/来源、动作/交付、验收、失败出口与权限；不把几百字塞进总表 |
-| 实验进度 | 模式、各seed耐久步 | 只在03维护；正式阈值取SPEC，其他计划引用03 |
-| 证据/决策 | 主张、适用范围、证据/裁决 | 事实、假说、候选方案及能力通过分开 |
-
-状态统一使用“进行中、可并行准备、待前置、待裁决、条件触发、已完成、暂停、已结案”。“可并行准备”不是已实施完成；并行项写清资源/源码/writer边界。总表引用工作包，工作包引用SPEC/报告；进度与数值门各有一个维护处。当前主线先按此规范整理，历史结案及冻结表格保留原义与身份，不为排版重新冻结。
-
-## 继承与纪律
-
-- M5批准退出、M6限定收官和成长/发布/设备等排除继续按原批准范围继承，不宣称原生对话或L3/L4已通过。N1-166与原封存面边界保持；W5b恢复v2按原结案继承，不重新当未来战役。
-- 训练先验证checkpoint保存/独立恢复；本阶段实际实施由用户推进，助手维护方案。预算/题面/冻结协议变动仍按10的决策节点记录。
-- 成功、负结果、partial和不可判分别记账；同一bundle的真实能力是验收对象，不用多个研究runner成绩拼出一个模型。
-- 旧方向退出活动指令与队首，冻结合同、失败、原始输出与谱系保留。目录与产物按[目录规范](../docs/FOLDER_STRUCTURE_RULES.md)管理。
+`scripts/training/audit_plan_single_mainline.py` 与 `tests/taiji_native/test_plan_single_mainline_contract.py` 检查：唯一队首标题、active 文档状态标签、索引覆盖、旧文档不得自称主线。违反时测试失败。
 
 ## 历史
 
-2026-10-23已执行[全项目历史整理](reference/PROJECT_HISTORY_CONSOLIDATION_20261023.md)：删除旧测试/缓存与6份整篇重复快照，08保留重放手册及登记标题，reference改为主题索引；完整旧文按Git精确恢复，不再重复存放。
-
-16保留[目标提出时的评审](reference/delivery-runs/20261021-n-mainline/artifacts/16-project-review-and-continuous-objective.md)，17登记本轮正式衔接。更早逐轮状态见[20261022索引快照](archive/history/PLANS_INDEX_BEFORE_N_CONSOLIDATION_20261022.md)与[旧执行快照](archive/history/N_MAINLINE_EXECUTION_BEFORE_CONSOLIDATION_20261022.md)，本轮六份过渡前全文由17导航；旧“下一步”不再调度。
+2026-10-23 的[全项目历史整理](reference/PROJECT_HISTORY_CONSOLIDATION_20261023.md)保留旧路径与 Git 恢复身份；更早的逐轮状态在 `plans/archive/`。历史失败、审批与排除项继续有效，旧队首只解释当时时点。

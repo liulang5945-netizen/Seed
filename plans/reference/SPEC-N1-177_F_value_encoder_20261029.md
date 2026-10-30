@@ -1,5 +1,7 @@
 # N177 F 字节级值编码器候选合同
 
+> 文档状态：[证据] — 旧 F 编码器证据；不发布当前队首。
+
 日期：2026-10-29，Asia/Shanghai。状态：**合同冻结；F0a已完成；F0b（完整候选12-run成本/恢复短标定）待做；完整E3 v11/v12严格通过；E0与F0b为F1前置；F1未启动。** 前置 [E决策](PLAN-N1-177_E_state_consumption_and_credit_decision_20261029.md)、[E1合同](SPEC-N1-177_E1_state_consumption_contract_20261029.md)、[03当前执行](../active/roadmap/03_CURRENT_EXECUTION.md)。本件不修改 N177.5 v2、N177.6 冻结 SPEC 或已发布评价。
 
 ## 1. 要解决的问题与范围

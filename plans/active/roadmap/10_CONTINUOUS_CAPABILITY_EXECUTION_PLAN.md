@@ -1,6 +1,8 @@
 # 态极持续能力执行与主线接力计划
 
-更新：2026-10-29，Asia/Shanghai。当前主实验、并行准备和有效权限由[03](03_CURRENT_EXECUTION.md)维护；本页负责依赖、交付物、出口和决策点。[09](09_NEXT_MAINLINE_PLAN.md)保留机制身份，[N177](../../reference/PLAN-N1-177_joint_cognition_slice_20261026.md)保留实施合同，[07](07_MINI_MODEL_DELIVERY.md)负责能力采用。此次将讨论收敛为推进顺序，不改冻结SPEC、不启动训练。
+> 文档状态：[工作包] — 只作工作包与依赖；不发布当前队首。
+
+更新：2026-10-30，Asia/Shanghai。方向与队列只由[MAINLINE](../../MAINLINE.md)定义；当前主实验、并行准备和有效权限由[03](03_CURRENT_EXECUTION.md)维护；本页负责依赖、交付物、出口和决策点。[09](09_NEXT_MAINLINE_PLAN.md)只作机制词典，旧[N177](../../reference/PLAN-N1-177_joint_cognition_slice_20261026.md)只作基线，[07](07_MINI_MODEL_DELIVERY.md)负责能力采用。本次收敛不改冻结SPEC、不启动训练。
 
 ## 1. 目标、现状与继承
 

@@ -1,5 +1,7 @@
 # N175 固定评价交接与当前结论
 
+> 文档状态：[历史] — N175 冻结评价交接；不发布当前队首。
+
 日期：2026-10-26。状态：`INCONCLUSIVE_ROLLOUT_PENDING_SEMANTIC_REVIEW`。
 
 ## 已完成与当前出口

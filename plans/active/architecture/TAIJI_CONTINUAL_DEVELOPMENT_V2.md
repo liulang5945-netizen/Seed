@@ -1,5 +1,7 @@
 # Taiji 继承式成长架构 v2
 
+> 文档状态：[历史] — 只解释当时路线；不发布当前队首。
+
 > 状态：当前 M4 架构设计，2026-09-09 生效。
 >
 > 本文只定义“如何在原有能力上继续生长”的架构与验收语义；唯一执行顺序仍由 [03_CURRENT_EXECUTION.md](../roadmap/03_CURRENT_EXECUTION.md) 决定。M4.R0～R12 的历史报告不改写，修订后的证据解释见 [M4 固定容量证据链复盘](../../reference/M4_FIXED_CAPACITY_EVIDENCE_REVIEW_2026_09_09.md)。

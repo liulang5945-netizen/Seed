@@ -1,5 +1,7 @@
 # CI 浮点判侧证据包（族 A 第五例）——供 owner 裁定
 
+> 文档状态：[证据] — 只作机器读数；不发布当前队首。
+
 状态：**owner 已于 2026-10-25 裁定方案乙并实施**（admission 阈值判定改
 `math.isclose` 相对容差，`taiji/interaction_group_online.py` 的
 `ADMISSION_FLOAT_TOLERANCE = 1e-12`；族 A 全部 8 条 deselect 同日摘除，

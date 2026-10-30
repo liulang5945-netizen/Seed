@@ -1,6 +1,8 @@
 # N主线当前执行
 
-更新：2026-10-29，Asia/Shanghai。03是当前主实验状态的唯一登记处；[10](10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)负责阶段依赖与工作包，[N177](../../reference/PLAN-N1-177_joint_cognition_slice_20261026.md)负责实施衔接，[原SPEC](../../reference/SPEC-N1-177_5_T1_F0_F1_pilot_20261027.md)负责冻结实验。进度数字只在本页登记，其他计划引用，不复制快照。
+> 文档状态：[状态] — 唯一队首登记处；方向由[MAINLINE](../../MAINLINE.md)定义。
+
+更新：2026-10-30，Asia/Shanghai。03是当前主实验状态的唯一登记处；方向与队列只由[MAINLINE](../../MAINLINE.md)定义，[10](10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)负责阶段依赖与工作包。旧N177/F/N178只作基线/证据，不再负责实施衔接。进度数字只在本页登记，其他计划引用，不复制快照。
 
 ## 长期目标
 
@@ -8,7 +10,7 @@
 
 ## 当前唯一下一步：重构-3b 修正旧图基线接入
 
-用户已采纳共同内容核心为计划主方向，现按[重构方案](../../reference/PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)推进：语义合同→共同主图/基线→隔离实现/零步恢复→预算冻结→一次比较→条件能力接力。旧N177/F/N178结果与费用继续保留，已有授权N178b按原终点/预算结案。本轮仅修方案，用户负责实施。
+用户已采纳共同内容核心为唯一计划方向，现按[重构方案](../../reference/PLAN-NATIVE-CONTENT-CORE_REDESIGN_20261030.md)推进：语义合同→共同主图/基线→隔离实现/零步恢复→预算冻结→一次比较→条件能力接力。旧N177/F/N178结果与费用继续保留，已有授权N178b按原终点/预算结案；它们不再是主候选。训练与预算按 MAINLINE 队列准入，未到 R4 不训练。
 
 R1设计级已闭合。R2合同已写：[候选与三类基线比较合同](../../reference/SPEC-NATIVE-CONTENT-CORE_R2_CANDIDATE_COMPARISON_20261030.md)，待用户评审；未评审前不进入R4训练/定价与R5评价。
 

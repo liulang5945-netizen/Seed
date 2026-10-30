@@ -1,5 +1,7 @@
 # 内存守卫与 fast-ledger 恢复更新
 
+> 文档状态：[历史] — 旧交付产物；不发布当前队首。
+
 本文已转为历史快照；当前操作、状态及替代入口见[训练系统精简](15-training-system-simplification.md)和[03当前执行](../../../../active/roadmap/03_CURRENT_EXECUTION.md)。
 
 更新：2026-10-23 11:54 Asia/Shanghai。本文是执行快照；当前progress、receipt、账本摘要和资源采样优先。
