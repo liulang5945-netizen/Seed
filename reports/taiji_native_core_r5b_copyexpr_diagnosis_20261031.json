@@ -1,0 +1,55 @@
+{
+  "format": "taiji-native-core-r5b-copyexpr-diagnosis-v1",
+  "version": 1,
+  "date": "2026-10-31",
+  "contract": "plans/reference/SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md",
+  "run": "q1_new_core_v2_seed0",
+  "manifest": {
+    "path": "plans/manifests/native_core_r1_train_v1.json",
+    "sha256": "5d151ba9f994670ccc2968b4d4547d280c52c056e991cf831e4f18c818dfedfd",
+    "episodes_sampled": 216,
+    "sample_seed": 20261030
+  },
+  "definition": "TF-guided argmax exact over value/template bytes plus first-divergence classes of wrong free generations",
+  "tf_guided_argmax": {
+    "current_query": {
+      "turns": 432,
+      "value_argmax_exact": 0.15760030864197513,
+      "template_argmax_exact": 0.03799480157254103
+    },
+    "previous_query": {
+      "turns": 216,
+      "value_argmax_exact": 0.15637860082304536,
+      "template_argmax_exact": 0.05254180773571355
+    },
+    "unknown_query": {
+      "turns": 216,
+      "value_argmax_exact": null,
+      "template_argmax_exact": 0.04485192837465571
+    }
+  },
+  "free_generation_divergence": {
+    "current_query": {
+      "value_bytes": 62,
+      "template_before_value": 233
+    },
+    "previous_query": {
+      "value_bytes": 72,
+      "template_before_value": 7
+    },
+    "unknown_query": {
+      "template_no_value_span": 55
+    }
+  },
+  "read_boundaries": {
+    "query_split_read": false,
+    "holdout_split_read": false,
+    "sealed_read": false,
+    "optimizer_updates": 0
+  },
+  "cost": {
+    "cpu_seconds": 356.8125
+  },
+  "started_at": "2026-10-30T18:49:12.268513+00:00",
+  "finished_at": "2026-10-30T18:49:43.501362+00:00"
+}

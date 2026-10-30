@@ -123,6 +123,10 @@ runner（`b78bdfdce`）另补 `--run-id`（默认 20261031），避免与已停�
 
 [诊断回执](../../../reports/taiji_native_core_r5b_selection_diagnosis_20261031.json)、[脚本](../../../scripts/training/diagnose_native_content_r5b_selection.py)。2,592 个采样 train 应答轮（216 episode×3 q1 端点，seed 20261030；query/holdout/sealed 未读、0 优化器更新）：**选择错误桶（选错记录/检索失败）为零——读取对正确记录的选择在 train 上已是 100%**；全部缺口在 `selection_correct_answer_wrong`＝0.435（选中正确内容后复制/表达执行产出错误字节；current 0.681、previous 0.376、unknown 0.282）。**裁定框架修正**：若立后继合同，靶点应是「选中正确内容后的复制/表达执行精度」（复制指针分布/gate/解码器执行），而非「选中正确值」的读取精度（该环节无错可选）。owner 裁定点保持开放：立后继合同（靶点依此修正）／全局收束转 09 静态方案／暂停保留现场。诊断成本 475 CPU 秒，计入预算账（累计约 8.06 万/12 万）。
 
+### 08.5 后继裁定支持证据之二（2026-10-31，复制/表达失败分解，`diagnosis_complete`）
+
+[回执](../../../reports/taiji_native_core_r5b_copyexpr_diagnosis_20261031.json)、[脚本](../../../scripts/training/diagnose_native_content_r5b_copyexpr.py)（q1 seed0 端点，同 216 episode 样本；train-only 只读，357 CPU 秒）。三个发现：①**纯教师强制 argmax 已不是有效探针**——TF 下 value 字节 argmax 仅 0.157、template 仅 0.038-0.053，与训练末段 loss 0.145 nats 矛盾的唯解释是自前缀日程刻意改变了输入分布，模型技能存在于自生成 regime（与 08.2 边界回执一致）；②**current 类错误 79% 在值字节之前的模板早期发散**（自生成时模板句式先错），previous 类 91% 在值字节本身；③unknown 全部为模板类发散。**对裁定①的含义**：后继合同若立，靶点＝生成侧复制/模板执行（双表面：current 的早期模板发散＋previous 的值字节拷贝），且设计冻结前需用与自前缀 regime 一致的探针（TF 探针无效）。owner 三选项裁定保持开放；诊断累计 ≈830 CPU 秒，预算账累计约 8.07 万/12 万。
+
 ## 继承的历史事实与限制
 
 | 历史资产 | 已有事实 | 保留边界 |
