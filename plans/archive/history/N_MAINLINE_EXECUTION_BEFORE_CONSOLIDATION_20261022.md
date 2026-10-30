@@ -254,7 +254,7 @@ N02/C4 remains unresolved: the material-floor adjudicator reports `cost_persists
 | B/G 人工评分 | 两臂共80题仍欠 | 能力/安全出版时必须补齐，不阻挡 C1 工程验证 |
 | 整族/远端 CI | 当前零并发汇总仍欠；最近远端 eaf53e7 的根CI失败、m7-ci成功 | 先相关门，候选出版取绑定HEAD全量，采用/发布核对目标提交远端 |
 
-原 G115 第二轮队首保存于 [修订前快照](n_mainline_plan_revision_20261014/EXECUTION_QUEUE_BEFORE_REVISION.md)，没有删除债或撤销守卫。历史台账与下方执行日志只证明对应批次；它们的旧队首不得覆盖本轮调度。交接以 [本轮停靠件](../../reference/HANDOFF_N_MAINLINE_PLAN_REVISION_20261014.md) 为准。
+原 G115 第二轮队首保存于 [修订前快照](n_mainline_plan_revision_20261014/EXECUTION_QUEUE_BEFORE_REVISION.md)，没有删除债或撤销守卫。历史台账与下方执行日志只证明对应批次；它们的旧队首不得覆盖本轮调度。交接以 [本轮停靠件](n_mainline_20261030/HANDOFF_N_MAINLINE_PLAN_REVISION_20261014.md) 为准。
 
 【2026-10-14 · C0 载体实施规格冻结（只读核对，无代码/机时）】按 PLAN-N-01 §7 队首把 PLAN-N1-06 升为 r1：输入元数据从 `SeedRuntime.chat` 的 `InputFrame` 穿过 `Seed.generate_input` 与 `TSKV8Adapter.generate_input` 进入 `Taiji.generate`；逐字节在 boundary stop 判断后、append/observe 前记录 `cortical_cue()`，唯一 episode id 使用持久 serial＋输入 id 来源字段（不假定 `chat:{tick}` 全局唯一）；payload 选 Taiji v10 kernel 的可选键 `persistent_stepwise_carrier`，schema `taiji-persistent-stepwise-carrier-v1`，旧缺键读作空、默认关闭不增 schema，独立进程恢复沿 `SeedRuntime.save/load`。实读母档 `output/a31_chunked_self/checkpoint.pt` 区域 `[256,192,128]` ⇒ context dim 1152；冻结 manifest 前 96 items 实有 288 turns，最大容量 288×256×1152×4＝339,738,624 B（324 MiB），满载失败、不静默逐出；这只是 C1 面上限，C2 前仍需产品保留政策。测试命令、open/off 两面与恢复审计命令见 PLAN-N1-06 §2.1。容量上限还未计时验证，批⑵预算须维持 ≤30 分钟，否则回 owner 重定价；不裁短轨迹以凑时。当前即待 owner 决定批⑴＋批⑵。
 
@@ -279,7 +279,7 @@ N02/C4 remains unresolved: the material-floor adjudicator reports `cost_persists
 - **主线调度（N 系列第五版）**：[09](../../active/roadmap/09_NEXT_MAINLINE_PLAN.md)保留N编号与VISION条款对账；现行顺序为C0证据/合同→C1载体→C2消费→C3信用→C4净增益→C5联合能力，完整出口见 [PLAN-N-01](../../reference/PLAN-N-01_development_revision_20261014.md)。原N2/N3并行开跑安排为历史，不再决定当前队列。
 - **项目收束**：[M0_M7_PROJECT_CONSOLIDATION_20261006](../../reference/M0_M7_PROJECT_CONSOLIDATION_20261006.md)——逐阶段终态、跨阶段遗留登记（10 项带重启条件）、继承资产。
 - **连续台账**：[08_UPSTREAM_SYNC_PLAYBOOK.md](../../active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md)（㊵-455＝M6 收官条；㊵-456 起＝M7/N 系列时代；更早条目为 M 时代历史）。
-- **会话停靠交接**：先读 [本轮停靠件](../../reference/HANDOFF_N_MAINLINE_PLAN_REVISION_20261014.md)；[旧HANDOFF](../../reference/HANDOFF_N_MAINLINE_20261014.md)只保留㊵-834的历史命令与当时状态。
+- **会话停靠交接**：先读 [本轮停靠件](n_mainline_20261030/HANDOFF_N_MAINLINE_PLAN_REVISION_20261014.md)；[旧HANDOFF](../../reference/HANDOFF_N_MAINLINE_20261014.md)只保留㊵-834的历史命令与当时状态。
 
 ## N 系列执行日志（自下而上追加，每项开工前预注册判据）
 

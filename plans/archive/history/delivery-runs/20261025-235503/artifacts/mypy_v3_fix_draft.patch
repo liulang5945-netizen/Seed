@@ -1,0 +1,96 @@
+# ============================================================================
+# mypy 修复草案 — taiji/conditional_language_v3.py（12 条错误，类型标注 only）
+# 基准 commit: 7ba470563（起草时该文件与 HEAD bc019e517 完全一致，git diff 为空）
+# 适用方式: git apply mypy_v3_fix_draft.patch（在基准 commit 或文件未变的 HEAD 上）
+# 注意: N175 线可能对同文件在飞修改，落地前必须 rebase 校验本 patch 仍干净适用
+# 范围: 仅注解/注释/定向 type: ignore；运行时语句零改动（逐行 diff 已核验）
+# 验证: mypy==2.3.1 scoped 0 错 + 完整门禁 `mypy --follow-imports=silent seed taiji`
+#       恢复 "Success: no issues found in 149 source files"（baseline 0）
+# 作者: backend-architect (韩契约) / run 20261025-235503
+# ============================================================================
+diff --git a/taiji/conditional_language_v3.py b/taiji/conditional_language_v3.py
+index bea8b57ee..d1901bc60 100644
+--- a/taiji/conditional_language_v3.py
++++ b/taiji/conditional_language_v3.py
+@@ -178,6 +178,12 @@ class TaskCoreV3(TaskCoreV2):
+ 
+ 
+ class ConditionalLanguageCandidateV3(ConditionalLanguageCandidateV2):
++    # core/config 类级注解：V3 在 __init__ 中以独立版本号的 V3 core 与 V3 配置替换了
++    # V2 父类构造所建的同名属性，此处仅向类型检查器声明真实类型，运行时零改动。
++    core: TaskCoreV3
++    # V2/V3 配置是平行版本类（非继承），V3 有意在子类把 config 收窄为 V3 配置
++    config: TaskCoreConfigV3  # type: ignore[assignment]
++
+     def __init__(
+         self, config: TaskCoreConfigV3 | None = None, *, bundle_id: str = "task-language-v3"
+     ):
+@@ -194,12 +200,14 @@ class ConditionalLanguageCandidateV3(ConditionalLanguageCandidateV2):
+             max_generation_bytes=min(config.max_generation_bytes, 512),
+             seed=config.seed,
+         )
+-        super().__init__(legacy_shell, bundle_id=bundle_id)
++        # legacy_shell 只供给 V2 构造所需的同名字段（鸭子兼容），V3 配置并非其子类属有意组合
++        super().__init__(legacy_shell, bundle_id=bundle_id)  # type: ignore[arg-type]
+         self.config = config
+         del self.position
+         with torch.random.fork_rng(devices=[]):
+             torch.default_generator.manual_seed(config.position_extension_seed)
+-            self.core = TaskCoreV3(config)
++            # TaskCoreV3 未重写 __init__，继承签名按 V2 配置标注；运行时读取的是传入 V3 配置的同名字段
++            self.core = TaskCoreV3(config)  # type: ignore[arg-type]
+             self.input_position = nn.Embedding(
+                 config.max_input_evidence_bytes, config.key_width, dtype=torch.float32
+             )
+@@ -217,7 +225,9 @@ class ConditionalLanguageCandidateV3(ConditionalLanguageCandidateV2):
+             parameter_revision=self.parameter_revision,
+         )
+ 
+-    def validate(self, state: TaskStateV3) -> None:
++    # 以下三个 override 有意收窄参数至独立版本状态的 TaskStateV3（LSP 收窄），
++    # 版本隔离由 validate() 运行时 isinstance 强制，放宽签名反而会放过跨版本状态。
++    def validate(self, state: TaskStateV3) -> None:  # type: ignore[override]
+         if not isinstance(state, TaskStateV3):
+             raise ValueError("V3 requires an independently versioned task state")
+         if state.bundle_id != self.bundle_id or state.parameter_revision != self.parameter_revision:
+@@ -227,7 +237,7 @@ class ConditionalLanguageCandidateV3(ConditionalLanguageCandidateV2):
+         if len(state.byte_memory) > self.config.max_input_evidence_bytes:
+             raise ValueError("V3 input evidence exceeds its configured bound")
+ 
+-    def evidence_cache(self, state: TaskStateV3) -> _EvidenceCache:
++    def evidence_cache(self, state: TaskStateV3) -> _EvidenceCache:  # type: ignore[override]
+         self.validate(state)
+         if not len(state.byte_memory):
+             raise ValueError("language generation requires actual per-byte task evidence")
+@@ -243,7 +253,7 @@ class ConditionalLanguageCandidateV3(ConditionalLanguageCandidateV2):
+             self.core.values(state.byte_memory),
+         )
+ 
+-    def attention_weights(
++    def attention_weights(  # type: ignore[override]
+         self, state: TaskStateV3, *, cache: _EvidenceCache | None = None
+     ) -> torch.Tensor:
+         self.validate(state)
+@@ -259,6 +269,10 @@ class ConditionalLanguageCandidateV3(ConditionalLanguageCandidateV2):
+ class ConditionalLanguageTrainerV3(ConditionalLanguageTrainerV2):
+     FORMAT = "taiji-conditional-language-trainer-v3"
+ 
++    # lineage 仅在迁移（from_v2_checkpoint）与加载 checkpoint（from_checkpoint）路径赋值，
++    # 构造时不初始化；只声明不赋值，保持 :457 处 getattr 默认值语义与运行时零改动。
++    lineage: dict[str, Any]
++
+     def update(self, examples: Sequence[tuple[bytes, bytes]]) -> dict[str, Any]:
+         if not examples:
+             raise ValueError("update requires a declared nonempty batch")
+@@ -438,7 +452,10 @@ class ConditionalLanguageTrainerV3(ConditionalLanguageTrainerV2):
+         }
+         return trainer
+ 
+-    def checkpoint(self, state: TaskStateV3, *, cursor: dict[str, Any]) -> dict[str, Any]:
++    # 同上：checkpoint 参数收窄至 TaskStateV3 属有意版本隔离（运行时先 validate）
++    def checkpoint(  # type: ignore[override]
++        self, state: TaskStateV3, *, cursor: dict[str, Any]
++    ) -> dict[str, Any]:
+         self.model.validate(state)
+         payload = {
+             "format": self.FORMAT,

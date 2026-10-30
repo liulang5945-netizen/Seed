@@ -339,3 +339,6 @@ reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_aggregate_cpu_
 
 # Generated output JSON stays local; versioned historical evidence lives in reports/legacy/output/.
 /output/**/*.json
+
+# Machine-local Zcode plugin preferences; preserve locally.
+/.zcode/

@@ -66,7 +66,7 @@
 ### E 工具缓存与状态（ignored，随时可删）
 `.black_cache/` · `.mypy_cache/` · `.ruff_cache/` · `.npm-cache/` · `.vscode/` ·
 `__pycache__/` · `neuroplex.egg-info/` · `_libs/` · `node_modules/`（各处依赖树）·
-`.electron-cache/`（harness 侧的 Electron 二进制）· `.dsh-sbx*/`（harness 起服用的沙箱
+`.electron-cache/`（harness 侧的 Electron 二进制） · `.zcode/`（本机插件启用配置，保留本地、不入库）· `.dsh-sbx*/`（harness 起服用的沙箱
 HOME，内含其会话日志与凭据，全为本机运行态）
 
 **两个例外不在此列**：`.codex/`（含 git worktree 副本，删它等于销毁 worktree）、

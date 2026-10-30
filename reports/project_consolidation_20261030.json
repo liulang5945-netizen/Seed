@@ -1,0 +1,344 @@
+{
+  "schema": "seed-project-consolidation-v1",
+  "date": "2026-10-30",
+  "baseline": "f43b51b344ad067a092e8df03895c9faba8d7f1e",
+  "scope": "repository inventory; bounded deletion and archival; no model execution",
+  "tracked_counts": {
+    ".devcontainer": 1,
+    ".dockerignore": 1,
+    ".gitattributes": 1,
+    ".github": 4,
+    ".gitignore": 1,
+    ".pre-commit-config.yaml": 1,
+    ".workbuddy": 24,
+    "CONTRIBUTING.md": 1,
+    "Dockerfile": 1,
+    "INTERFACE_REFERENCE.md": 1,
+    "LICENSE": 1,
+    "README.md": 1,
+    "README.zh-CN.md": 1,
+    "TAIJI_CODE_WIKI.md": 1,
+    "api": 55,
+    "checkpoints": 1,
+    "design": 61,
+    "docker-compose.yml": 1,
+    "docs": 5,
+    "icon.ico": 1,
+    "instruments": 2,
+    "neuroplex": 133,
+    "output": 31,
+    "outputs": 1,
+    "plans": 917,
+    "pyproject.toml": 1,
+    "reports": 3268,
+    "requirements-legacy.txt": 1,
+    "requirements.txt": 1,
+    "scripts": 1432,
+    "seed": 11,
+    "seed_platform": 32,
+    "taiji-harness": 13195,
+    "taiji": 160,
+    "tests": 899,
+    "uv.lock": 1
+  },
+  "actions": [
+    {
+      "source": "delivery-runs/20261025-235503/_junit_probe.xml",
+      "destination": null,
+      "kind": "delete_probe_xml_after_summary",
+      "bytes": 2958,
+      "sha256": "a5b84d051dd2ce3343988fcb849d3c67d7737bb5f457902c23510610054149d6",
+      "status": "completed"
+    },
+    {
+      "source": "delivery-runs/20261025-235503/_junit_seed.xml",
+      "destination": null,
+      "kind": "delete_probe_xml_after_summary",
+      "bytes": 386,
+      "sha256": "19cb5afd41a14d52af37f5d85e53f8f1195b380f6903db22cd49f5cedaeb983c",
+      "status": "completed"
+    },
+    {
+      "source": "delivery-runs/20261025-235503/artifacts/01-intake.md",
+      "destination": "plans/archive/history/delivery-runs/20261025-235503/artifacts/01-intake.md",
+      "kind": "archive",
+      "bytes": 10877,
+      "sha256": "38e29d8627eaf22aa135a42152a24d59d227f92d4d1a9eb2b78eadb7143d02f5",
+      "status": "completed",
+      "archived_sha256": "38e29d8627eaf22aa135a42152a24d59d227f92d4d1a9eb2b78eadb7143d02f5",
+      "git_archived_sha256": "38e29d8627eaf22aa135a42152a24d59d227f92d4d1a9eb2b78eadb7143d02f5",
+      "git_archive_bytes": 10877
+    },
+    {
+      "source": "delivery-runs/20261025-235503/artifacts/02-plan.md",
+      "destination": "plans/archive/history/delivery-runs/20261025-235503/artifacts/02-plan.md",
+      "kind": "archive",
+      "bytes": 60657,
+      "sha256": "7541436324887a8b816cb473725c4fad802ad236dec1a252a7f82c89c5334ed6",
+      "status": "completed",
+      "archived_sha256": "7541436324887a8b816cb473725c4fad802ad236dec1a252a7f82c89c5334ed6",
+      "git_archived_sha256": "7541436324887a8b816cb473725c4fad802ad236dec1a252a7f82c89c5334ed6",
+      "git_archive_bytes": 60657
+    },
+    {
+      "source": "delivery-runs/20261025-235503/artifacts/04-architecture.md",
+      "destination": "plans/archive/history/delivery-runs/20261025-235503/artifacts/04-architecture.md",
+      "kind": "archive",
+      "bytes": 118724,
+      "sha256": "78ad692596cd2e3698952fb8c18c87821e076691cdd354fc8bc4c11fbceacea5",
+      "status": "completed",
+      "archived_sha256": "78ad692596cd2e3698952fb8c18c87821e076691cdd354fc8bc4c11fbceacea5",
+      "git_archived_sha256": "78ad692596cd2e3698952fb8c18c87821e076691cdd354fc8bc4c11fbceacea5",
+      "git_archive_bytes": 118724
+    },
+    {
+      "source": "delivery-runs/20261025-235503/artifacts/06-implementation-backend.md",
+      "destination": "plans/archive/history/delivery-runs/20261025-235503/artifacts/06-implementation-backend.md",
+      "kind": "archive",
+      "bytes": 19705,
+      "sha256": "1f4f1732608134a4a1cf8e8de473ded38c69c9c67ec72f8d3b381d6932869cc9",
+      "status": "completed",
+      "archived_sha256": "1f4f1732608134a4a1cf8e8de473ded38c69c9c67ec72f8d3b381d6932869cc9",
+      "git_archived_sha256": "1f4f1732608134a4a1cf8e8de473ded38c69c9c67ec72f8d3b381d6932869cc9",
+      "git_archive_bytes": 19705
+    },
+    {
+      "source": "delivery-runs/20261025-235503/artifacts/08-test.md",
+      "destination": "plans/archive/history/delivery-runs/20261025-235503/artifacts/08-test.md",
+      "kind": "archive",
+      "bytes": 61861,
+      "sha256": "89fe2b7a677901653d32676b9f14a844724c8d4c60d34201646a899265af471b",
+      "status": "completed",
+      "archived_sha256": "89fe2b7a677901653d32676b9f14a844724c8d4c60d34201646a899265af471b",
+      "git_archived_sha256": "89fe2b7a677901653d32676b9f14a844724c8d4c60d34201646a899265af471b",
+      "git_archive_bytes": 61861
+    },
+    {
+      "source": "delivery-runs/20261025-235503/artifacts/09-injection-experiment-brief.md",
+      "destination": "plans/archive/history/delivery-runs/20261025-235503/artifacts/09-injection-experiment-brief.md",
+      "kind": "archive",
+      "bytes": 9727,
+      "sha256": "ea1c6c4fb5aa8f23965fd0fbc49bc1fa6887e0f079e7ed43247d1abc0ea1a586",
+      "status": "completed",
+      "archived_sha256": "ea1c6c4fb5aa8f23965fd0fbc49bc1fa6887e0f079e7ed43247d1abc0ea1a586",
+      "git_archived_sha256": "ea1c6c4fb5aa8f23965fd0fbc49bc1fa6887e0f079e7ed43247d1abc0ea1a586",
+      "git_archive_bytes": 9727
+    },
+    {
+      "source": "delivery-runs/20261025-235503/artifacts/mypy_v3_fix_draft.patch",
+      "destination": "plans/archive/history/delivery-runs/20261025-235503/artifacts/mypy_v3_fix_draft.patch",
+      "kind": "archive",
+      "bytes": 5680,
+      "sha256": "e128624a4cbda858b89e0d77b71b5bba55ac5f3e56c674af748b1cf960621523",
+      "status": "completed",
+      "archived_sha256": "e128624a4cbda858b89e0d77b71b5bba55ac5f3e56c674af748b1cf960621523",
+      "git_archived_sha256": "e128624a4cbda858b89e0d77b71b5bba55ac5f3e56c674af748b1cf960621523",
+      "git_archive_bytes": 5680
+    },
+    {
+      "source": "delivery-runs/20261025-235503/board.md",
+      "destination": "plans/archive/history/delivery-runs/20261025-235503/board.md",
+      "kind": "archive",
+      "bytes": 81213,
+      "sha256": "43d687a77b25ed42312546596902abe260f29e291a16598ed962dd19dbc64983",
+      "status": "completed",
+      "archived_sha256": "43d687a77b25ed42312546596902abe260f29e291a16598ed962dd19dbc64983",
+      "git_archived_sha256": "43d687a77b25ed42312546596902abe260f29e291a16598ed962dd19dbc64983",
+      "git_archive_bytes": 81213
+    },
+    {
+      "source": "output/playwright/client-ui-20261024/life-after.png",
+      "destination": "design/archive/client-ui-20261024/life-after.png",
+      "kind": "archive",
+      "bytes": 81491,
+      "sha256": "7ae82f1d13d731c12ab8558c3b964a05913e27baebe45d16131096f401e6c08d",
+      "status": "completed",
+      "archived_sha256": "7ae82f1d13d731c12ab8558c3b964a05913e27baebe45d16131096f401e6c08d",
+      "git_archived_sha256": "7ae82f1d13d731c12ab8558c3b964a05913e27baebe45d16131096f401e6c08d",
+      "git_archive_bytes": 81491
+    },
+    {
+      "source": "output/playwright/client-ui-20261024/life-before.png",
+      "destination": "design/archive/client-ui-20261024/life-before.png",
+      "kind": "archive",
+      "bytes": 9205,
+      "sha256": "a97a86ce004af3c7d49b3c34c8b358cd16129e3d029258c1a97c91c038ca2b29",
+      "status": "completed",
+      "archived_sha256": "a97a86ce004af3c7d49b3c34c8b358cd16129e3d029258c1a97c91c038ca2b29",
+      "git_archived_sha256": "a97a86ce004af3c7d49b3c34c8b358cd16129e3d029258c1a97c91c038ca2b29",
+      "git_archive_bytes": 9205
+    },
+    {
+      "source": "plans/reference/HANDOFF_N_MAINLINE_PLAN_REVISION_20261014.md",
+      "destination": "plans/archive/history/n_mainline_20261030/HANDOFF_N_MAINLINE_PLAN_REVISION_20261014.md",
+      "kind": "archive_links_rebased",
+      "bytes": 51732,
+      "sha256": "7ce86b0f12d0e6a0a3e9455aac3ab44d71aab66bd2ac075acd425baee5f03363",
+      "git_blob": "84d21d3875b7bbc871fd22655fc27e5aa2399c19",
+      "git_lf_sha256": "b439bcac68e9ee94024bff21eaa787220fb94aaf8d49484813c6e8c02dca06e3",
+      "status": "completed",
+      "archived_sha256": "ba35ec695244103d28bdace6b165303e26a5182d1ef25b9164cb9573a34fc700",
+      "git_archived_sha256": "ba35ec695244103d28bdace6b165303e26a5182d1ef25b9164cb9573a34fc700",
+      "git_archive_bytes": 52665
+    },
+    {
+      "source": "plans/active/roadmap/HANDOVER_N1_ATTRIBUTION_20261007.md",
+      "destination": null,
+      "kind": "delete_superseded_handover",
+      "bytes": 8123,
+      "sha256": "ee9a652c81cb852cbc65949c84724d247ad3ad8162816932134543a8fea459d9",
+      "git_blob": "f27c7fa82d4347a31fea9677e2b9b36ecb98a87a",
+      "git_lf_sha256": "ee9a652c81cb852cbc65949c84724d247ad3ad8162816932134543a8fea459d9",
+      "status": "completed"
+    },
+    {
+      "source": ".black_cache",
+      "destination": null,
+      "kind": "delete_regenerable_cache",
+      "files": 5,
+      "bytes": 354289,
+      "status": "completed"
+    },
+    {
+      "source": ".mypy_cache",
+      "destination": null,
+      "kind": "delete_regenerable_cache",
+      "files": 18,
+      "bytes": 108384485,
+      "status": "completed"
+    },
+    {
+      "source": "update_frontend",
+      "destination": null,
+      "kind": "delete_regenerable_cache",
+      "files": 0,
+      "bytes": 0,
+      "status": "completed"
+    },
+    {
+      "source": ".screenshots",
+      "destination": null,
+      "kind": "delete_empty_root_with_empty_tmp_child",
+      "files": 0,
+      "bytes": 0,
+      "status": "completed"
+    }
+  ],
+  "protected": [
+    "R5b code, runners and pending pricing report",
+    "data, checkpoints, taiji_data, .seed_test_tmp source overlays",
+    "runtime/CI-read legacy sources and frozen contracts",
+    "recent .ruff_cache and local tool configuration"
+  ],
+  "junit_probe_summary": [
+    {
+      "source": "delivery-runs/20261025-235503/_junit_probe.xml",
+      "testcases": [
+        {
+          "class": "tests.resonance.test_ensemble_side_channels",
+          "name": "test_ensemble_passes_side_signals",
+          "status": "passed"
+        },
+        {
+          "class": "tests.resonance.test_ensemble_side_channels",
+          "name": "test_side_signals_affect_round2",
+          "status": "passed"
+        },
+        {
+          "class": "tests.resonance.test_ensemble_state_dict",
+          "name": "test_state_dict_roundtrip_field",
+          "status": "passed"
+        },
+        {
+          "class": "tests.resonance.test_ensemble_state_dict",
+          "name": "test_state_dict_includes_cross_spec_mixed",
+          "status": "passed"
+        },
+        {
+          "class": "tests.resonance.test_ensemble_state_dict",
+          "name": "test_load_state_dict_skips_missing_module",
+          "status": "passed"
+        },
+        {
+          "class": "tests.resonance.test_ensemble_state_dict",
+          "name": "test_load_state_dict_skips_unknown_neuron",
+          "status": "passed"
+        },
+        {
+          "class": "tests.resonance.test_forward_train_smoke",
+          "name": "test_forward_train_smoke",
+          "status": "passed"
+        },
+        {
+          "class": "tests.resonance.test_real_checkpoint_slow",
+          "name": "test_collab_ckpt_field_w_cond_contract",
+          "status": "skipped"
+        },
+        {
+          "class": "tests.resonance.test_real_checkpoint_slow",
+          "name": "test_hub_ckpt_spec_contract",
+          "status": "skipped"
+        },
+        {
+          "class": "tests.resonance.test_real_checkpoint_slow",
+          "name": "test_dialogue_std0_ckpt_loadable",
+          "status": "skipped"
+        },
+        {
+          "class": "tests.resonance.test_real_checkpoint_slow",
+          "name": "test_memory_component_products",
+          "status": "skipped"
+        },
+        {
+          "class": "tests.resonance.test_side_channels",
+          "name": "test_establish_side_channel",
+          "status": "passed"
+        },
+        {
+          "class": "tests.resonance.test_side_channels",
+          "name": "test_establish_inhibit_channel",
+          "status": "passed"
+        },
+        {
+          "class": "tests.resonance.test_side_channels",
+          "name": "test_forward_with_side_signals_changes_output",
+          "status": "passed"
+        },
+        {
+          "class": "tests.resonance.test_side_channels",
+          "name": "test_forward_without_side_signals",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "source": "delivery-runs/20261025-235503/_junit_seed.xml",
+      "testcases": [
+        {
+          "class": "tests.seed.test_verify_metrics_contract",
+          "name": "test_verify_report_separates_heldout_and_train_fit",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "archived_files": 11,
+    "deleted_files": 26,
+    "deleted_bytes": 108750241,
+    "source_runtime_changes": false,
+    "model_execution": false
+  },
+  "verification": {
+    "single_mainline_audit": "passed",
+    "current_plan_links": "0 broken links",
+    "repository_structure_and_secret_guards": "14 passed",
+    "initial_test_environment": "default OS temp refused creation; rerun with dedicated workspace basetemp",
+    "root_guard_repair": ".screenshots contained only an empty .tmp directory; both removed",
+    "remote_ci": "not run",
+    "model_training_or_eval": "not run",
+    "archive_patch_whitespace": "Original unified-diff blank context lines contain required prefix spaces; kept byte-for-byte; all other staged paths pass diff --check.",
+    "focused_checks_after_staging": "16 passed: folder structure, secret guard, single-mainline contract"
+  },
+  "completed_date": "2026-10-31"
+}
