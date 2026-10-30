@@ -1,0 +1,132 @@
+{
+  "format": "taiji-native-core-r5b-082-engineering-v1",
+  "version": 1,
+  "date": "2026-10-31",
+  "contract": "plans/reference/SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md",
+  "mainline": "plans/MAINLINE.md step 08.2",
+  "implementation_revision": "1315ff959",
+  "code_sha256": {
+    "taiji/native_content_core_v2.py": "6f9c27382114bdc7f76337157a90d9516eafb4694ef1daf8a0dac73c968aee55",
+    "taiji/native_content_training_v2.py": "b325392c0086f161c8eeb86449fa89bcaa7e132e0af57518c5bc8d144fe90b2b",
+    "taiji/native_content_eval.py": "77e35ec47bf7f0732aaab6060c7e9ed3a9dbf5e7bbebd88dbe4596cc4f593c0a",
+    "scripts/training/run_native_content_core_r5b.py": "d73fb58901b77b1ccc4428059d9d9e1c4f7a06d2ccaa9ededb7f0f1ff990c3e1",
+    "scripts/training/evaluate_native_content_core_r5b.py": "76d00b0c71cde50d084beecbed4145da665f29977fe908ffe08d2fc515b6c80b"
+  },
+  "manifest": {
+    "path": "plans/manifests/native_core_r1_train_v1.json",
+    "sha256": "5d151ba9f994670ccc2968b4d4547d280c52c056e991cf831e4f18c818dfedfd",
+    "episodes": 864
+  },
+  "protocol": {
+    "boundary_updates": 257,
+    "batch_size": 4,
+    "schedule_seed": 0,
+    "optimizer_updates_total": 515
+  },
+  "probes": {
+    "credit": {
+      "frozen_groups": [
+        "reader",
+        "decoder"
+      ],
+      "forward_parity_same_initial_state": true,
+      "grad_groups_credit_on": {
+        "reader": 10,
+        "core": 9,
+        "attention": 4,
+        "decoder": 8,
+        "output": 2,
+        "query_encoder": 4
+      },
+      "grad_groups_credit_stop": {
+        "core": 9,
+        "attention": 4,
+        "output": 2,
+        "query_encoder": 4
+      },
+      "credit_on_has_reader_decoder_grad": true,
+      "credit_stop_reader_decoder_grad_free": true,
+      "frozen_parameters_unchanged": true,
+      "other_groups_moved_on_stop": true,
+      "probe": "credit",
+      "cpu_seconds": 3.703125,
+      "wall_seconds": 1.1034927000291646
+    },
+    "gold_scope": {
+      "forged_condition_rejected": true,
+      "cross_scope_records": 0,
+      "own_scope_records": 1,
+      "own_scope_answer_digest": "53d2691a303fe0fb14f056449d3c74e3ea2dba063ba96640a8bee612dd0b4473",
+      "cross_scope_isolated": true,
+      "probe": "gold_scope",
+      "cpu_seconds": 1.5,
+      "wall_seconds": 0.12248779996298254
+    },
+    "degenerate": {
+      "copy_active_with_content": true,
+      "empty_store_equals_v1": true,
+      "baseline_answer_digest": "5babce189f0308119a7f642303e3d381eae1f2d67cd689a8ff80b6592a4c38b3",
+      "rescue_answer_digest": "5babce189f0308119a7f642303e3d381eae1f2d67cd689a8ff80b6592a4c38b3",
+      "rescue_byte_identical": true,
+      "probe": "degenerate",
+      "cpu_seconds": 0.84375,
+      "wall_seconds": 0.0677961001638323
+    },
+    "v1_loadable": {
+      "v1_endpoint": "q1_new_core_v1_seed0-endpoint.pt",
+      "recorded_digest": "e8550592567385196152cd38bc60bb57a763be6d3cd055e9d9d0072bac593b91",
+      "loaded_digest": "e8550592567385196152cd38bc60bb57a763be6d3cd055e9d9d0072bac593b91",
+      "v1_loadable": true,
+      "probe": "v1_loadable",
+      "cpu_seconds": 0.65625,
+      "wall_seconds": 0.057935499818995595
+    },
+    "boundary": {
+      "updates_trained_path_a": 257,
+      "update_256_schedule_position": 256,
+      "update_256_scheduled_episodes": 0,
+      "update_257_schedule_position": 257,
+      "update_257_scheduled_episodes": 2,
+      "update_257_loss_nats": 0.3529213984619896,
+      "restored_update_schedule_position": 257,
+      "restored_update_override_active": false,
+      "restored_update_scheduled_episodes": 2,
+      "restored_update_loss_nats": 0.3529213984619896,
+      "restored_cursor": {
+        "run_id": "082-boundary-b",
+        "seed": 0,
+        "frozen_groups": [],
+        "optimizer_steps_restored": 257,
+        "target_byte_exposures_restored": 112568
+      },
+      "in_process_restore_equal": true,
+      "fresh_process_restore_equal": true,
+      "boundary_position_ok": true,
+      "restored_next_update_matches": true,
+      "post_restore_digest_equals_continuous": true,
+      "path_a_endpoint_digest": "8ee2b74136b938e459226a513443aef4f3d64a8a9cf566da1cb181ac45c865fc",
+      "path_b_post_restore_digest": "8ee2b74136b938e459226a513443aef4f3d64a8a9cf566da1cb181ac45c865fc",
+      "probe": "boundary",
+      "cpu_seconds": 4700.375,
+      "wall_seconds": 403.5457538999617
+    }
+  },
+  "failed_gates": [],
+  "status": "r5b_082_ok",
+  "probe_cost": {
+    "cpu_seconds": 4707.078125,
+    "wall_seconds": 404.8974659999367
+  },
+  "read_boundaries": {
+    "query_split_read": false,
+    "holdout_split_read": false,
+    "sealed_read": false
+  },
+  "environment": {
+    "python": "3.12.10",
+    "torch": "2.13.0+cpu",
+    "platform": "Windows-11-10.0.26300-SP0"
+  },
+  "started_at": "2026-10-30T17:05:44.037239+00:00",
+  "finished_at": "2026-10-30T17:12:28.964627+00:00"
+}

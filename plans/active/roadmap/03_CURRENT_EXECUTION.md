@@ -73,6 +73,18 @@ runner（`b78bdfdce`）另补 `--run-id`（默认 20261031），避免与已停�
 
 08.1 对照表不能代替 08.2 工程回执；下一步按总计划 08.2 交付信用/隔离/训练态恢复证据（含 256→257 边界与恢复后下一次更新）。
 
+### 08.2 工程回执（2026-10-31 实测，`r5b_082_ok`）
+
+[回执](../../../reports/taiji_native_core_r5b_082_engineering_20261031.json)、[探针脚本](../../../scripts/training/probe_native_content_core_r5b_082.py)、实现 `1315ff959`。五族门全过（无 failed_gates）：
+
+- **信用**：同初态 credit_on/stop 前向逐位一致；逐 loss 组读数——on 侧 reader/decoder/core/attention/output/query_encoder 全部有梯度，stop 侧 reader+decoder 零梯度、冻结参数逐位不变、其余组确认位移（optimizer 真实生效）。
+- **gold 与隔离**：宿主伪造 condition 记录（含可复制 span 的外来记录）被 store 绑定校验拒绝；跨 scope 读取为空、本 scope 恰 1 条。
+- **退化与切断/救援**：带内容时复制轨激活（与 v1 分歧）；空 store 下 v2 与 v1 在**同一 cut condition** 下逐字节相等；救援答案与基线逐字节一致。
+- **旧 v1 可加载**：R5 冻结端点 `q1_new_core_v1_seed0` 以原报告记录 digest（e8550592…）一致加载。
+- **256→257 日程边界与训练态恢复**：连续 257 更新 vs 256 处 checkpoint 新进程恢复后下一更新——schedule 位置 256（0 scheduled）→257（2 scheduled，coin 按声明触发）；恢复后下一更新 loss 与连续 run **逐位相等**（0.3529213984619896）；恢复后端点 probe digest 与连续 run 端点一致（8ee2b741…）；cursor（run_id/seed/frozen_groups）、optimizer 步数、exposures 恢复记账在回执。
+
+账目与作废记录：工程探针共 515 优化器更新、正式回执 4,707 CPU 秒/405 墙钟秒；此前三次脚本缺陷（函数序 NameError、GATES 键名 KeyError、写一次残留）与一次探针比较 bug（误把 V2 空 store 对 V1 带内容比较；实现无缺陷）各作废一跑，累计约 1.4 万 CPU 秒，连同作废回执（未提交已删）一并计入预算账。**累计已耗约 3.5 万/120,000 CPU 秒，余约 8.5 万**，覆盖 08.3 重定价（≈0.06 万）、08.4 正式 9×512（≈4.3 万）与评价（≈1 万）。08.2 是工程门，不代能力；query/holdout/sealed 未读。
+
 ## 继承的历史事实与限制
 
 | 历史资产 | 已有事实 | 保留边界 |
