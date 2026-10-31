@@ -84,6 +84,16 @@
 
 提交后按钩子要求重跑Mimosa深扫（focusFiles=本包三个代码/实现文件）：jobId `scan-job-mvwfho3z`，scanId `scan-2026-10-31T13-22-24.513Z-ef51fc8b7725`，**封印`sha256:6da506b4ecd7348849af483a998cf465c7df358c9cbb115b9746d35bbac86260`**，1,652项findings为既有普查基线、无新假设、离线advisory零匹配；同提交先跑单主线审计（ok）与全仓sha-drift普查（117,275份报告/5,216条sha声明，12条drift与3,174条missing均为历史checkpoint/pytest临时文件及并行清退会话删除所致，不涉本包证据链）。
 
+## 2026-10-31 R023信用覆盖出生与有界迁移（09.2.3）
+
+先冻结[R023合同](../../reference/SPEC-TAIJI-CORE_GROWTH_R023_20261031.md)，再交付[growth_credit.py](../../../taiji/growth_credit.py)、[state_migration.py](../../../taiji/state_migration.py)、[检查](../../../tests/taiji_native/test_growth_credit_r023.py)与[报告](../../../reports/taiji_core_r023_growth_birth_20261031.json)。`taiji/living_core.py`字节经SHA核对与R021/R022绑定一致；报告`passed_r023_birth_engineering_only`、8/8检查通过、backward_calls仪表计数落账、optimizer_steps=0、data_splits_read=[]、费用1.97/900 CPU秒。
+
+交付事实：K=2门控信用构造（copy/generate混合门，图内量可审计）；逐(支路,群)128次置换噪声标定（每群独立零假设）；信号条件与max-min整数分配（R_max=8、枚举81态/群、tie-break=min rho→total rho→少用单元→稳定支路id，预算停实现）；`GatedGrowthCore`门控出生算子（`pre += Σ_c g_c·B_c·tanh(R_c x)`，镜像R021步进体＋唯一声明新增，父行不分门）；全局SVD基线对照臂（本夹具8单元/群 vs 覆盖分配1+1，判别性差异入账）；共享支路整体信用守卫。§10.3迁移：journal恒等重放逐位相等、编码变更shadow事务提交revision+1（非encoder参数逐字节不变、重放无参数突变/无奖励/无外部动作）、事件/字节预算拒绝保父。
+
+读数：出生中性逐位成立；4个出生单元启动梯度与算子预测`B^T C_c`在1e-12一致（8.5e-4..2.5e-3＞1e-8）；L_start=1.0、独立方向比例1.0、kappa=0.998；P新列出生时刻梯度精确0；启动零信用准入失败→lesion回滚逐字节恢复；Hadamard反例（秩1但4行范数0.5）、`C₁=−C₂`整体抵消（全局基线拒绝＋共享守卫拒绝）、软门N=1秩和2、重放非单调（秩2→1按有效结果接受）全部按声明判定。
+
+执行期发现（按纪律落账，不改阈值）：①§24.4新生单元是门控的（R021 §4"实际新支路和诊断必须使用同一个g"），门控前向为v1.2候选声明实现；②稠密`[n,m,p]`布局下逐群不对称出生需R/P零填充，padding单元梯度恒0且永不启动；③**冻结0.99置换噪声bar在本夹具不拒绝随机门**——真实门与随机门的σ₁/τ_noise余量同为1.03–1.05倍，时间平滑生涯的共同模结构使置换零假设膨胀；已如实记录校准不可分辨性，作为R021 §4标定协议owner决策输入（分块置换/去均值零假设等候选留其后），本合同不缩quantile。分配/出生/标定/迁移均不签任务收益、保持或恢复；唯一下一步见总计划（09.2.4完整主体恢复）。
+
 ## 当前候选的审批依据
 
 | 统一步骤 | 批准/边界事实 | 原始依据 |

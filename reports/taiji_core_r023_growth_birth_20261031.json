@@ -1,0 +1,423 @@
+{
+  "schema": "taiji-r023-growth-birth-v1",
+  "date": "2026-10-31",
+  "baseline_commit": "47b0d1bb3",
+  "contract": "plans/reference/SPEC-TAIJI-CORE_GROWTH_R023_20261031.md",
+  "status": "passed_r023_birth_engineering_only",
+  "config": {
+    "groups": 2,
+    "width": 8,
+    "units": 12,
+    "adapter_rank": 2,
+    "fast_heads": 2,
+    "key_width": 4,
+    "value_width": 4,
+    "output_heads": 2,
+    "fast_limit": 16.0,
+    "max_event_bytes": 512,
+    "max_source_bytes": 512,
+    "max_target_bytes": 128,
+    "seed": 20261031
+  },
+  "dtype": "torch.float64",
+  "torch_version": "2.13.0+cpu",
+  "lineage_binding": {
+    "living_core_sha256": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "matches_r022_receipt": true,
+    "r022_status": "passed_r022_credit_only"
+  },
+  "frozen_bounds": {
+    "r_max": 8,
+    "tau_g": 1e-08,
+    "floor_frobenius": 1e-06,
+    "cosine_min": 0.1,
+    "window_min_positions": 32,
+    "permutations": 128,
+    "noise_quantile": 0.99,
+    "c_scale": 1.0,
+    "enumeration_cap": 6561,
+    "proposal_cpu_seconds": 1.0,
+    "proposal_wall_seconds": 2.0
+  },
+  "checks": [
+    {
+      "id": "test_r023_admission_failure_rolls_back",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_growth_credit_r023.py",
+        "symbol": "test_r023_admission_failure_rolls_back",
+        "line": 179,
+        "last_line": 192
+      }
+    },
+    {
+      "id": "test_r023_allocation_optimality_ties_caps_and_budget",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_growth_credit_r023.py",
+        "symbol": "test_r023_allocation_optimality_ties_caps_and_budget",
+        "line": 231,
+        "last_line": 257
+      }
+    },
+    {
+      "id": "test_r023_birth_neutral_startup_and_lesion",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_growth_credit_r023.py",
+        "symbol": "test_r023_birth_neutral_startup_and_lesion",
+        "line": 129,
+        "last_line": 176
+      }
+    },
+    {
+      "id": "test_r023_calibration_non_discrimination_recorded",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_growth_credit_r023.py",
+        "symbol": "test_r023_calibration_non_discrimination_recorded",
+        "line": 195,
+        "last_line": 228
+      }
+    },
+    {
+      "id": "test_r023_migration_identity_commit_and_budget_refusal",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_growth_credit_r023.py",
+        "symbol": "test_r023_migration_identity_commit_and_budget_refusal",
+        "line": 311,
+        "last_line": 350
+      }
+    },
+    {
+      "id": "test_r023_rank_capping_hadamard_and_soft_gate",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_growth_credit_r023.py",
+        "symbol": "test_r023_rank_capping_hadamard_and_soft_gate",
+        "line": 260,
+        "last_line": 293
+      }
+    },
+    {
+      "id": "test_r023_replay_non_monotonic_accepted",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_growth_credit_r023.py",
+        "symbol": "test_r023_replay_non_monotonic_accepted",
+        "line": 296,
+        "last_line": 308
+      }
+    },
+    {
+      "id": "test_r023_signal_conditions_on_reference_gates",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_growth_credit_r023.py",
+        "symbol": "test_r023_signal_conditions_on_reference_gates",
+        "line": 110,
+        "last_line": 126
+      }
+    }
+  ],
+  "summary": {
+    "career_steps": 109,
+    "round_count": 101,
+    "loss_aggregate": 3.177954234357359,
+    "branch_gate_definition": "K=2: copy=trace mixing m_s, generate=1-m_s (auditable graph quantity)",
+    "branch_verdicts": [
+      {
+        "branch": "copy",
+        "group": 0,
+        "frobenius": 0.00940116912001062,
+        "sigma": [
+          0.009353340032654825,
+          0.0009002431438748872,
+          0.00026564787062264346,
+          0.00010179936387688538,
+          5.89936201342018e-05,
+          3.4296623295640054e-05,
+          3.0197747985626107e-05,
+          8.545599027627317e-06
+        ],
+        "tau": 0.009040566065706423,
+        "tau_noise": 0.009040566065706423,
+        "noise_margin": 1.0345967237753892,
+        "rank_num": 1,
+        "enter_V": true,
+        "alignment": [
+          {
+            "unit": 0,
+            "fit_norm": 0.0007220163367696803,
+            "check_norm": 0.0009653198108885943,
+            "cosine": 0.9947258850289673,
+            "check_norm_ok": true,
+            "cosine_ok": true
+          }
+        ]
+      },
+      {
+        "branch": "copy",
+        "group": 1,
+        "frobenius": 0.005148636962115502,
+        "sigma": [
+          0.0051371887677449405,
+          0.0002919777373753621,
+          0.00015803031597340386,
+          7.271404792984818e-05,
+          4.4025954841551386e-05,
+          1.4309583367228269e-05,
+          9.376836204309083e-06,
+          3.3534502022409073e-06
+        ],
+        "tau": 0.004978112777954766,
+        "tau_noise": 0.004978112777954766,
+        "noise_margin": 1.031955079542318,
+        "rank_num": 1,
+        "enter_V": true,
+        "alignment": [
+          {
+            "unit": 0,
+            "fit_norm": 0.0004437323355536342,
+            "check_norm": 0.00046692376029620555,
+            "cosine": 0.9975372476732689,
+            "check_norm_ok": true,
+            "cosine_ok": true
+          }
+        ]
+      },
+      {
+        "branch": "generate",
+        "group": 0,
+        "frobenius": 0.007068045816587816,
+        "sigma": [
+          0.007022255790875661,
+          0.0007755459212459803,
+          0.00018980643183307182,
+          6.422806207576422e-05,
+          5.049484659017788e-05,
+          2.2175242178747647e-05,
+          2.094087671796398e-05,
+          9.595842729556283e-06
+        ],
+        "tau": 0.006715450337938846,
+        "tau_noise": 0.006715450337938846,
+        "noise_margin": 1.0456865046270274,
+        "rank_num": 1,
+        "enter_V": true,
+        "alignment": [
+          {
+            "unit": 0,
+            "fit_norm": 0.0010995724896983425,
+            "check_norm": 0.001402979501329383,
+            "cosine": 0.9977798977394602,
+            "check_norm_ok": true,
+            "cosine_ok": true
+          }
+        ]
+      },
+      {
+        "branch": "generate",
+        "group": 1,
+        "frobenius": 0.004029970241113659,
+        "sigma": [
+          0.0040206092140789,
+          0.00022991902231310853,
+          0.00013994546645128332,
+          3.80358236541512e-05,
+          3.630523351125726e-05,
+          9.623978321968244e-06,
+          7.168466947988513e-06,
+          2.3237438281854685e-06
+        ],
+        "tau": 0.0038419084598067545,
+        "tau_noise": 0.0038419084598067545,
+        "noise_margin": 1.046513537774696,
+        "rank_num": 1,
+        "enter_V": true,
+        "alignment": [
+          {
+            "unit": 0,
+            "fit_norm": 0.00043400405007656143,
+            "check_norm": 0.00041672028720227236,
+            "cosine": 0.9960808703682881,
+            "check_norm_ok": true,
+            "cosine_ok": true
+          }
+        ]
+      }
+    ],
+    "allocation_per_group": {
+      "0": {
+        "status": "allocated",
+        "allocation": {
+          "copy": 1,
+          "generate": 1
+        },
+        "uncovered": [],
+        "states_checked": 4,
+        "min_rho": 0.9870849847793579,
+        "total_rho": 1.9769356846809387,
+        "total_units": 2
+      },
+      "1": {
+        "status": "allocated",
+        "allocation": {
+          "copy": 1,
+          "generate": 1
+        },
+        "uncovered": [],
+        "states_checked": 4,
+        "min_rho": 0.9953598380088806,
+        "total_rho": 1.9909178018569946,
+        "total_units": 2
+      }
+    },
+    "allocation_merged": {
+      "copy": 1,
+      "generate": 1
+    },
+    "birth_plan": {
+      "parent_r_shape": [
+        2,
+        12,
+        56
+      ],
+      "child_r_shape": [
+        2,
+        14,
+        56
+      ],
+      "parent_p_shape": [
+        2,
+        8,
+        12
+      ],
+      "child_p_shape": [
+        2,
+        8,
+        14
+      ],
+      "c_scale": 1.0,
+      "unit_keys": [
+        "copy.0.0",
+        "copy.1.0",
+        "generate.0.0",
+        "generate.1.0"
+      ],
+      "units_per_group": {
+        "0": 2,
+        "1": 2
+      },
+      "padded_units_per_group": {
+        "0": 0,
+        "1": 0
+      },
+      "unit_branches": [
+        [
+          "copy",
+          "generate"
+        ],
+        [
+          "copy",
+          "generate"
+        ]
+      ]
+    },
+    "startup_report": {
+      "units": [
+        {
+          "unit": "copy.0.0",
+          "incoming_norm": 0.0016851561960174938,
+          "started": true
+        },
+        {
+          "unit": "copy.1.0",
+          "incoming_norm": 0.0009100956068920082,
+          "started": true
+        },
+        {
+          "unit": "generate.0.0",
+          "incoming_norm": 0.0025011830527695896,
+          "started": true
+        },
+        {
+          "unit": "generate.1.0",
+          "incoming_norm": 0.0008498907481863655,
+          "started": true
+        }
+      ],
+      "l_start": 1.0
+    },
+    "independence_ratio": {
+      "ratio": 1.0,
+      "numerator": 4,
+      "denominator": 4,
+      "blocks": {
+        "copy.0": 1,
+        "copy.1": 1,
+        "generate.0": 1,
+        "generate.1": 1
+      }
+    },
+    "kappa": 0.9979672952509715,
+    "global_svd_baseline": {
+      "groups": [
+        {
+          "group": 0,
+          "units": 8,
+          "refused": false,
+          "tau": 1.6339746523186398e-07,
+          "sigma_top3": [
+            0.016339746523186396,
+            0.0016804785333661228,
+            0.00046309975311451353
+          ]
+        },
+        {
+          "group": 1,
+          "units": 8,
+          "refused": false,
+          "tau": 9.14720429540227e-08,
+          "sigma_top3": [
+            0.00914720429540227,
+            0.0005192748859762554,
+            0.00030473759988404534
+          ]
+        }
+      ]
+    }
+  },
+  "calibration_finding": {
+    "headline": "frozen 0.99 permutation bar does not reject random gates on this fixture",
+    "cause_hypothesis": "temporal common-mode structure inflates the permuted null",
+    "disposition": "recorded for the R021 §4 calibration-protocol owner decision; thresholds unchanged"
+  },
+  "backward_calls": 2,
+  "gradient_calls": 2,
+  "backward_calls_direct": 0,
+  "optimizer_steps": 0,
+  "data_splits_read": [],
+  "full_subject_restore": false,
+  "default_model_replaced": false,
+  "persistent_subject": false,
+  "training_run": false,
+  "task_capability_claimed": false,
+  "growth_net_benefit_claimed": false,
+  "cpu_seconds_checks_only": 2.125,
+  "wall_seconds_checks_only": 2.1521012999583036,
+  "budget": {
+    "cpu_seconds": 900,
+    "wall_seconds": 1200
+  },
+  "source_hashes": {
+    "plans/reference/SPEC-TAIJI-CORE_GROWTH_R023_20261031.md": "de5e2a0a63c2c8e3979959c62b6325f6e16c110a30da884ea8001813f9f1dd6e",
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/growth_credit.py": "fdb925d0499589202272c5c33fe66ba4b44aaafca041f267e2cccae560ff0949",
+    "taiji/state_migration.py": "7a675dd8644b900cf71d7032317b89af1330fa1ffa726f590dd4d28fc7aa2fe5",
+    "tests/taiji_native/test_growth_credit_r023.py": "2e9572570ec406727a0660832a76d888948056eb538b546a4eaf854ae3018a53",
+    "scripts/training/verify_taiji_growth_credit_r023.py": "8e790859c7c3aa9e37aed0f3c37a6a6d0979dbd4c279e3be41c061f85433dbf3"
+  },
+  "limits": "Coverage allocation, gated birth, noise calibration, diagnostics and the bounded replay migration on one synthetic fixture. No task benefit, retention, recovery, pricing or growth-net-benefit approval. The calibration non-discrimination finding awaits an R021 §4 owner decision."
+}
