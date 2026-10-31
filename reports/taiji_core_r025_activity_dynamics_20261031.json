@@ -1,0 +1,294 @@
+{
+  "schema": "taiji-r025-activity-dynamics-v1",
+  "date": "2026-10-31",
+  "baseline_commit": "6194a984a",
+  "contract": "plans/reference/SPEC-TAIJI-CORE_ACTIVITY_R025_20261031.md",
+  "status": "passed_r025_activity_engineering_only",
+  "config": {
+    "groups": 2,
+    "width": 8,
+    "units": 12,
+    "adapter_rank": 2,
+    "fast_heads": 2,
+    "key_width": 4,
+    "value_width": 4,
+    "output_heads": 2,
+    "fast_limit": 16.0,
+    "max_event_bytes": 512,
+    "max_source_bytes": 512,
+    "max_target_bytes": 128,
+    "seed": 20261031
+  },
+  "dtype": "torch.float64",
+  "torch_version": "2.13.0+cpu",
+  "lineage_binding": {
+    "living_core_sha256": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "matches_r024_receipt": true,
+    "r024_status": "passed_r024_restore_engineering_only"
+  },
+  "activities": [
+    "interact",
+    "recall",
+    "imagine",
+    "explore",
+    "maintain",
+    "wait"
+  ],
+  "policy_head": {
+    "input_dim": 35,
+    "hidden": 16,
+    "init": "seeded 20261031",
+    "trained": false,
+    "selection": "deterministic argmax over masked softmax; probs journaled"
+  },
+  "control_arm": "fixed ladder: queue>0 -> interact; error>0.10 and store -> recall; pending>0 -> maintain; else wait",
+  "checks": [
+    {
+      "id": "test_r025_loop_runs_without_user_messages",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_native_activity_r025.py",
+        "symbol": "test_r025_loop_runs_without_user_messages",
+        "line": 72,
+        "last_line": 99
+      }
+    },
+    {
+      "id": "test_r025_model_policy_differs_from_fixed_threshold_control",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_native_activity_r025.py",
+        "symbol": "test_r025_model_policy_differs_from_fixed_threshold_control",
+        "line": 102,
+        "last_line": 134
+      }
+    },
+    {
+      "id": "test_r025_policy_unchanged_and_loop_restore_bitwise",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_native_activity_r025.py",
+        "symbol": "test_r025_policy_unchanged_and_loop_restore_bitwise",
+        "line": 217,
+        "last_line": 270
+      }
+    },
+    {
+      "id": "test_r025_triggers_reachable_and_recorded",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_native_activity_r025.py",
+        "symbol": "test_r025_triggers_reachable_and_recorded",
+        "line": 137,
+        "last_line": 181
+      }
+    },
+    {
+      "id": "test_r025_wait_and_maintain_semantics",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_native_activity_r025.py",
+        "symbol": "test_r025_wait_and_maintain_semantics",
+        "line": 184,
+        "last_line": 214
+      }
+    }
+  ],
+  "reference_journal_sample": [
+    {
+      "seq": 0,
+      "kind": "activity_decision",
+      "activity": "imagine",
+      "logits": [
+        -0.10605434754980603,
+        -0.0285592185081327,
+        0.23618910165659396,
+        0.08099785237865975,
+        0.13509462714691772,
+        0.05420503300834699
+      ],
+      "probs": [
+        0.0,
+        0.1759640514671574,
+        0.2292992780383956,
+        0.1963378288392371,
+        0.20725161091653066,
+        0.19114723073867926
+      ],
+      "chosen_by": "model",
+      "triggers": {
+        "queue_count": 0,
+        "pending_count": 0,
+        "store_count": 2,
+        "prediction_error": 0.0
+      },
+      "h_norm_after": 0.4547082682437184,
+      "h_changed": true,
+      "step_delta": 1,
+      "imagined": true,
+      "store_size_after": 2,
+      "note": {},
+      "clock": 10
+    },
+    {
+      "seq": 1,
+      "kind": "activity_decision",
+      "activity": "imagine",
+      "logits": [
+        -0.1561108362638303,
+        -0.07709259951560438,
+        0.2904910191184256,
+        0.09891427561322884,
+        0.2336092922222896,
+        0.114578881153415
+      ],
+      "probs": [
+        0.0,
+        0.1609698946677349,
+        0.23247925064153752,
+        0.19194794836113438,
+        0.21962449554149105,
+        0.19497841078810219
+      ],
+      "chosen_by": "model",
+      "triggers": {
+        "queue_count": 0,
+        "pending_count": 0,
+        "store_count": 2,
+        "prediction_error": 0.69121268179866
+      },
+      "h_norm_after": 0.6659204517643612,
+      "h_changed": true,
+      "step_delta": 1,
+      "imagined": true,
+      "store_size_after": 2,
+      "note": {},
+      "clock": 10
+    },
+    {
+      "seq": 2,
+      "kind": "activity_decision",
+      "activity": "imagine",
+      "logits": [
+        -0.15415977011477355,
+        -0.07760351469164031,
+        0.29397782497190805,
+        0.1015868299237177,
+        0.23970056108136661,
+        0.1144612323849564
+      ],
+      "probs": [
+        0.0,
+        0.16047646588076567,
+        0.2326950135595102,
+        0.19196971906906815,
+        0.2204016089890623,
+        0.19445719250159388
+      ],
+      "chosen_by": "model",
+      "triggers": {
+        "queue_count": 0,
+        "pending_count": 0,
+        "store_count": 2,
+        "prediction_error": 0.7046757268910288
+      },
+      "h_norm_after": 0.7775203136381713,
+      "h_changed": true,
+      "step_delta": 1,
+      "imagined": true,
+      "store_size_after": 2,
+      "note": {},
+      "clock": 10
+    },
+    {
+      "seq": 3,
+      "kind": "activity_decision",
+      "activity": "imagine",
+      "logits": [
+        -0.1533912283327571,
+        -0.07868916499041362,
+        0.2975261506654068,
+        0.10250692026240023,
+        0.2406596500505908,
+        0.1129807748470257
+      ],
+      "probs": [
+        0.0,
+        0.16018163553247255,
+        0.23334632166163968,
+        0.19200174848658147,
+        0.2204469791219313,
+        0.19402331519737492
+      ],
+      "chosen_by": "model",
+      "triggers": {
+        "queue_count": 0,
+        "pending_count": 0,
+        "store_count": 2,
+        "prediction_error": 0.7115505077311101
+      },
+      "h_norm_after": 0.8849611486278375,
+      "h_changed": true,
+      "step_delta": 1,
+      "imagined": true,
+      "store_size_after": 2,
+      "note": {},
+      "clock": 10
+    },
+    {
+      "seq": 4,
+      "kind": "activity_decision",
+      "activity": "imagine",
+      "logits": [
+        -0.15638683440436488,
+        -0.08235933573170484,
+        0.3045741110551724,
+        0.10047675830872545,
+        0.24602696111543687,
+        0.113484087515649
+      ],
+      "probs": [
+        0.0,
+        0.15928289911013255,
+        0.23453745729261571,
+        0.1912378526196344,
+        0.22120019645524808,
+        0.19374159452236936
+      ],
+      "chosen_by": "model",
+      "triggers": {
+        "queue_count": 0,
+        "pending_count": 0,
+        "store_count": 2,
+        "prediction_error": 0.7338605782883278
+      },
+      "h_norm_after": 0.9752072404536858,
+      "h_changed": true,
+      "step_delta": 1,
+      "imagined": true,
+      "store_size_after": 2,
+      "note": {},
+      "clock": 10
+    }
+  ],
+  "data_splits_read": [],
+  "activity_learned_claimed": false,
+  "autonomy_claimed": false,
+  "task_capability_claimed": false,
+  "training_run": false,
+  "default_model_replaced": false,
+  "cpu_seconds_checks_only": 0.15625,
+  "wall_seconds_checks_only": 0.15512480004690588,
+  "budget": {
+    "cpu_seconds": 900,
+    "wall_seconds": 1200
+  },
+  "source_hashes": {
+    "plans/reference/SPEC-TAIJI-CORE_ACTIVITY_R025_20261031.md": "c0db5f2d15fb9d1b31fc1435633d1b1374866985fcec363d03a9cb3ef96b09fe",
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/native_activity.py": "24a1abbb98d98948add23b6bef583da868ce81db172cceeef2ff1a6aff5bdbdf",
+    "tests/taiji_native/test_native_activity_r025.py": "c06e07147f87897b49a35b1653075d54419a4da468eda1d26200c28aaab3e985",
+    "scripts/training/verify_taiji_native_activity_r025.py": "a210aa92da4f118298213ac0de1313002c4687c5c0172ef208600ce25eb058a6"
+  },
+  "limits": "Activity loop, traceable model-owned selection, imagined-event isolation, wait/maintain semantics, the control-arm differentiation check and bundle-carried policy restore on one synthetic fixture. No claim that the model learned to choose, no activity-policy quality claim, no autonomy, task capability, training or pricing. World-EMA targets and learnable activity credit belong to 09.4."
+}

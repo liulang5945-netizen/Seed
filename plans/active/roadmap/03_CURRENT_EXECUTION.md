@@ -106,6 +106,14 @@
 
 提交后按钩子要求重跑Mimosa深扫（focusFiles=本包四个代码文件）：jobId `scan-job-mvwj70dh`，scanId `scan-2026-10-31T15-05-26.437Z-71a2162c069e`，**封印`sha256:919231ee5cd8d383802216b21b46c349b9b8676ffa81978c9ac162048fbcf345`**，1,652项findings为既有普查基线、无新假设、离线advisory零匹配；同提交单主线审计ok。
 
+## 2026-10-31 R025活动循环与可追溯选择（09.3）
+
+先冻结[R025合同](../../reference/SPEC-TAIJI-CORE_ACTIVITY_R025_20261031.md)，再交付[native_activity.py](../../../taiji/native_activity.py)、[检查](../../../tests/taiji_native/test_native_activity_r025.py)与[报告](../../../reports/taiji_core_r025_activity_dynamics_20261031.json)。`taiji/living_core.py`字节经SHA核对与R021–R024绑定一致；报告`passed_r025_activity_engineering_only`、5/5检查通过、无optimizer、data_splits_read=[]、费用0.16/900 CPU秒。
+
+交付事实：六活动（interact/recall/imagine/explore/maintain/wait）循环——策略头（seeded init、未训练、hash前后一致）从主体自身状态量（池化N(h)、goal向量、nu特征（EMA重建＋unknown标志）、预测误差、未结数、队列数）读入→掩码softmax→确定性argmax，宿主只提供时钟/预算/合法mask（interact需队列、recall需store、wait恒合法）；触发量快照在执行前取并逐轮入单调journal（logits/probs/chosen_by/触发量/h范数/step_delta/imagined/store_size）。想象事件＝最后事件编码＋声明种子固定范数扰动，**不写store**（store_size逐轮不变落账）；wait无前向步（H逐位不变、时钟推进）；maintain限位复查显式no-op。无新消息6轮内journal逐轮decision且非wait活动产生状态变化；模型臂与固定阈值对照臂在同一轨迹决策序列分岔（工程分岔核验，不签优劣）；policy头经bundle extra逐位恢复。
+
+声明读数：预测误差＝世界头对**池化后继表示**（mean_i N(h_i)）的读数——世界头从z预测主体级d维后继，与逐群h形状不同；真实世界损失、EMA目标与可学习活动信用属09.4。模型政策未训练，其选择由声明头决定；本报告不签"模型学会选择"、活动策略优劣或自主性。唯一下一步见总计划（09.4持续可塑性与结构出生）。
+
 ## 当前候选的审批依据
 
 | 统一步骤 | 批准/边界事实 | 原始依据 |
