@@ -409,9 +409,17 @@ def _train(*, approve: bool) -> int:
 def main() -> int:
     global _RUN_ID
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--restore-probe",
+        type=Path,
+        default=None,
+        help="child mode: load one checkpoint and print its probe digest",
+    )
     parser.add_argument("--run-id", default=_RUN_ID, help="checkpoint directory suffix")
     parser.add_argument("--approve-r5c", action="store_true", help="required: user approval")
     args = parser.parse_args()
+    if args.restore_probe is not None:
+        return _restore_probe(args.restore_probe)
     _RUN_ID = str(args.run_id)
     return _train(approve=args.approve_r5c)
 
