@@ -1,0 +1,133 @@
+{
+  "schema": "taiji-r024-subject-restore-v1",
+  "date": "2026-10-31",
+  "baseline_commit": "5137597a1",
+  "contract": "plans/reference/SPEC-TAIJI-CORE_RESTORE_R024_20261031.md",
+  "status": "passed_r024_restore_engineering_only",
+  "config": {
+    "groups": 2,
+    "width": 8,
+    "units": 12,
+    "adapter_rank": 2,
+    "fast_heads": 2,
+    "key_width": 4,
+    "value_width": 4,
+    "output_heads": 2,
+    "fast_limit": 16.0,
+    "max_event_bytes": 512,
+    "max_source_bytes": 512,
+    "max_target_bytes": 128,
+    "seed": 20261031
+  },
+  "dtype": "torch.float64",
+  "torch_version": "2.13.0+cpu",
+  "lineage_binding": {
+    "living_core_sha256": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "matches_r023_receipt": true,
+    "r023_status": "passed_r023_birth_engineering_only"
+  },
+  "bundle_schema": "taiji-subject-bundle-r024-v1 (weights_only loadable)",
+  "boundaries": [
+    "no-input idle (cursor at end, nothing consumed, nothing mutated)",
+    "after first declared learning update (next update and microstep bitwise)",
+    "after gated birth (gated continuation bitwise via carried gate table)",
+    "after encoder migration commit (revision+1, first declared update bitwise)",
+    "pending outcome (idempotent resolution against the current journal)"
+  ],
+  "checks": [
+    {
+      "id": "test_r024_birth_boundary_gated_continuation",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_subject_restore_r024.py",
+        "symbol": "test_r024_birth_boundary_gated_continuation",
+        "line": 203,
+        "last_line": 265
+      }
+    },
+    {
+      "id": "test_r024_first_learning_boundary_update_and_microstep",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_subject_restore_r024.py",
+        "symbol": "test_r024_first_learning_boundary_update_and_microstep",
+        "line": 117,
+        "last_line": 200
+      }
+    },
+    {
+      "id": "test_r024_journal_monotonicity_across_restore",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_subject_restore_r024.py",
+        "symbol": "test_r024_journal_monotonicity_across_restore",
+        "line": 365,
+        "last_line": 402
+      }
+    },
+    {
+      "id": "test_r024_migration_boundary_and_rng",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_subject_restore_r024.py",
+        "symbol": "test_r024_migration_boundary_and_rng",
+        "line": 268,
+        "last_line": 316
+      }
+    },
+    {
+      "id": "test_r024_no_input_boundary_preserves_idle_subject",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_subject_restore_r024.py",
+        "symbol": "test_r024_no_input_boundary_preserves_idle_subject",
+        "line": 82,
+        "last_line": 114
+      }
+    },
+    {
+      "id": "test_r024_pending_outcome_idempotence",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_subject_restore_r024.py",
+        "symbol": "test_r024_pending_outcome_idempotence",
+        "line": 319,
+        "last_line": 362
+      }
+    }
+  ],
+  "worker": {
+    "job": "taiji/state_migration.py:run_worker_job",
+    "cli": "scripts/training/r024_restore_worker.py",
+    "independent_process": "multiprocessing spawn, fresh interpreter per boundary",
+    "transport": "file-based (tensors do not cross process queues here)"
+  },
+  "declared_instruments": {
+    "update": "one Adam(lr=1e-2, betas=(0.9,0.999), eps=1e-8) step on the teacher-forced replay branch NLL; synthetic expression, not training",
+    "eligibility": "e <- 0.99*e + mean_i ||x_i||_2/sqrt(p) per consumed step; recorded quantity, no forward change; real rules belong to 09.4"
+  },
+  "gradient_calls": 1,
+  "backward_calls": 4,
+  "optimizer_steps_in_checks": 3,
+  "data_splits_read": [],
+  "semantic_preservation_claimed": false,
+  "task_capability_claimed": false,
+  "full_lifecycle_claimed": false,
+  "default_model_replaced": false,
+  "cpu_seconds_checks_only": 6.15625,
+  "wall_seconds_checks_only": 22.777850599959493,
+  "budget": {
+    "cpu_seconds": 900,
+    "wall_seconds": 1200
+  },
+  "source_hashes": {
+    "plans/reference/SPEC-TAIJI-CORE_RESTORE_R024_20261031.md": "ef725c8bc08b33bf850daf3f421abe882c0810f92ea9f85d613c3adbd08ed8f0",
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/growth_credit.py": "fdb925d0499589202272c5c33fe66ba4b44aaafca041f267e2cccae560ff0949",
+    "taiji/state_migration.py": "4de32933cfc23151478c7bbaf9ecfe6a7b51d7e56803b4e905b817af827ff98b",
+    "tests/taiji_native/test_subject_restore_r024.py": "6db51c6ddae27ea21110a8148f329b5ac5acafffa3ee35e524be904021026ddc",
+    "scripts/training/r024_restore_worker.py": "56789b6e5c6faf5fe3ff1b3d80e67bb7c85142a19d54077259f1182932061a86",
+    "scripts/training/verify_taiji_subject_restore_r024.py": "156dfc425a5a8b12d3fa6be527ca54846d5ae54b9c7694b38ee63081526637b7"
+  },
+  "limits": "Bundle save/restore, fresh-process bitwise continuation, RNG/eligibility/fee continuity, the declared update expression and resolution idempotence on one synthetic fixture. Migration-restore passing does NOT sign semantic preservation, old-capability retention, task capability or subject autonomy. Pricing/bounded-comparison contract decisions come after 09.2.1-09.2.4 are all closed."
+}

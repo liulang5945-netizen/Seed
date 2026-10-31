@@ -96,6 +96,14 @@
 
 提交后按钩子要求重跑Mimosa深扫（focusFiles=本包四个代码文件）：jobId `scan-job-mvwhkswo`，scanId `scan-2026-10-31T14-20-21.713Z-1875cac11fde`，**封印`sha256:5df80279f075d3494802b55453abeb409448b5d8f7bc20d54e37b3f8c8b2ed0e`**，1,652项findings为既有普查基线、无新假设、离线advisory零匹配；同提交单主线审计ok。
 
+## 2026-10-31 R024完整主体恢复（09.2.4）
+
+先冻结[R024合同](../../reference/SPEC-TAIJI-CORE_RESTORE_R024_20261031.md)，再交付[state_migration.py扩展](../../../taiji/state_migration.py)（显式step序列/断点续推/save_subject/load_subject/resume_subject/run_worker_job）、[worker CLI](../../../scripts/training/r024_restore_worker.py)、[检查](../../../tests/taiji_native/test_subject_restore_r024.py)与[报告](../../../reports/taiji_core_r024_subject_restore_20261031.json)。`taiji/living_core.py`字节经SHA核对与R021/R022/R023绑定一致；报告`passed_r024_restore_engineering_only`、6/6检查通过、optimizer_steps=3（声明合成更新表达式）、data_splits_read=[]、费用6.16/900 CPU秒。
+
+主体bundle（`taiji-subject-bundle-r024-v1`，`weights_only=True`可读）覆盖：主体id/revision/step/config、出生结构与门值表（来自出生时父端点trace的审计量）、全部参数、H/F/nu_ema/coverage/prior/keys、声明Adam(lr=1e-2,betas=0.9/0.999)状态、资格迹替身（e←0.99e+mean‖x‖/√p，纯记录量）、RNG状态、生涯spec与游标、单调journal（fee/outcome/resolve/restore条目，seq严格递增）与未结结果。五个边界各保存并由**multiprocessing spawn独立解释器进程**续推：下一微步h/probabilities、下一次声明更新后参数/矩/更新后再微步与父端逐位相等；RNG探针、资格迹与费用按公式延续不清零；resolution以当前journal唯一闸实现幂等（旧快照重放拒绝重复领奖）；journal seq单调。
+
+执行期工程事实（落账）：Windows下torch张量不能过进程队列，结果改走文件传递；spawn目标必须按名可导入（worker job直挂`taiji.state_migration.run_worker_job`）；"下一次更新"的比较要求父端同样执行续更新再逐位比对，bundle中保存的是上次更新后的参数与矩。声明更新为合成表达式（教师强制重放分支一步Adam），不签训练；迁移恢复通过明列**不替代语义保持**。09.2.1–09.2.4全部关闭；唯一下一步见总计划（09.3连续动力学与内容活动），训练/定价仍未准入。
+
 ## 当前候选的审批依据
 
 | 统一步骤 | 批准/边界事实 | 原始依据 |

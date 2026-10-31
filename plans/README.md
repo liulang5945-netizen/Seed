@@ -16,6 +16,7 @@ R1、R3b、R5b 等保留为原合同和实验身份，N1–N6 保留为机制责
 - [R021工程接口](reference/SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md)：六项唯一前向接口、凸分区软门和覆盖工程界；当前实际交付/后继只查总计划。
 - [R022信用判别](reference/SPEC-TAIJI-CORE_CREDIT_R022_20261031.md)：09.2.2负责参数信用、导数判别与声明更新表达式的合同；当前实际交付/后继只查总计划。
 - [R023覆盖出生](reference/SPEC-TAIJI-CORE_GROWTH_R023_20261031.md)：09.2.3覆盖分配、门控出生、噪声标定与有界迁移的合同；当前实际交付/后继只查总计划。
+- [R024主体恢复](reference/SPEC-TAIJI-CORE_RESTORE_R024_20261031.md)：09.2.4主体bundle、独立进程恢复与声明更新表达式的合同；当前实际交付/后继只查总计划。
 
 - [03 证据与审批台账](active/roadmap/03_CURRENT_EXECUTION.md)：核验报告、批准、预算、恢复与历史限制；只跳转总计划的执行位置。
 - [10 兼容导航](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)：保留旧章节入口，转到总计划，不另排工作包。

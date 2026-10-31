@@ -30,7 +30,7 @@
 | [06](../MAINLINE.md#3-唯一执行队列) | R4，含课程准备 | [定价与 R5 数值门](../reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md) |
 | [07](../MAINLINE.md#3-唯一执行队列) | R5 比较与结案 | [R4 合同 §9](../reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md#9-r5-执行结果20261030) |
 | [08](../MAINLINE.md#3-唯一执行队列) | R5b 复制轨候选 | [SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md](../reference/SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md) |
-| [09](../MAINLINE.md#3-唯一执行队列) | 连续生命/递归进化共同内核 | [算法主稿](../reference/TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md)＋[R021工程接口](../reference/SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md)＋[R022信用判别](../reference/SPEC-TAIJI-CORE_CREDIT_R022_20261031.md)＋[R023覆盖出生](../reference/SPEC-TAIJI-CORE_GROWTH_R023_20261031.md)；实验权限与正式冻结合同另定 |
+| [09](../MAINLINE.md#3-唯一执行队列) | 连续生命/递归进化共同内核 | [算法主稿](../reference/TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md)＋[R021工程接口](../reference/SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md)＋[R022信用判别](../reference/SPEC-TAIJI-CORE_CREDIT_R022_20261031.md)＋[R023覆盖出生](../reference/SPEC-TAIJI-CORE_GROWTH_R023_20261031.md)＋[R024主体恢复](../reference/SPEC-TAIJI-CORE_RESTORE_R024_20261031.md)；实验权限与正式冻结合同另定 |
 | [10](../MAINLINE.md#3-唯一执行队列) | 按任务需要的 T3 | 工作卡统一见总计划，合同随对应准入建立 |
 | [11](../MAINLINE.md#3-唯一执行队列) | 自然中文连续任务 / L3 | 工作卡统一见总计划，合同随对应准入建立 |
 | [12](../MAINLINE.md#3-唯一执行队列) | 跨会话学习与保持 / L4 | 工作卡统一见总计划，合同随对应准入建立 |
