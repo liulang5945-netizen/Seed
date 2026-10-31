@@ -1,0 +1,77 @@
+{
+  "schema": "taiji-core-algorithm-v1-synthetic-math-checks",
+  "date": "2026-10-31",
+  "seed": 20261031,
+  "verification_script_sha256": "601dc0fed5bcc74fbd2a70bd8b4fa87296c2cf2d69bf2a4dd7e5de387492d3f9",
+  "numpy_version": "2.5.1",
+  "array_dtype": "float64",
+  "status": "passed_static_properties_only",
+  "checks": [
+    {
+      "name": "bounded_neural_state",
+      "passed": true,
+      "max_abs": 0.9750190899224648
+    },
+    {
+      "name": "read_before_write_and_next_read",
+      "passed": true,
+      "next_read_error": 2.220446049250313e-16
+    },
+    {
+      "name": "permission_zero_no_write",
+      "passed": true
+    },
+    {
+      "name": "fast_memory_norm_bound",
+      "passed": true,
+      "norm": 2.0
+    },
+    {
+      "name": "birth_function_neutral",
+      "passed": true,
+      "max_delta": 0.0
+    },
+    {
+      "name": "newborn_incoming_credit",
+      "passed": true,
+      "gradient_norm": 0.15125173105277945,
+      "finite_difference_error": 1.3195000647669985e-13,
+      "singular_values": [
+        1.159070945422753,
+        0.9717320402883911
+      ]
+    },
+    {
+      "name": "all_zero_birth_negative_control",
+      "passed": true
+    },
+    {
+      "name": "inner_write_gate_to_later_task_loss",
+      "passed": true,
+      "derivative": -0.22201000204899757,
+      "finite_difference_error": 5.55974155602712e-11
+    },
+    {
+      "name": "copy_normalization_position_and_source_mask",
+      "passed": true,
+      "probability_sum": 1.0,
+      "duplicate_byte_position_weights": [
+        0.6310485023372358,
+        0.08540312779985004
+      ]
+    },
+    {
+      "name": "no_source_uses_generation_only",
+      "passed": true
+    },
+    {
+      "name": "one_anchor_first_order_projection",
+      "passed": true,
+      "dot": 4.0332119748887e-16
+    }
+  ],
+  "optimizer_updates": 0,
+  "full_model_created": false,
+  "data_splits_read": [],
+  "limits": "No language, lifelong-learning, autonomous-activity or growth-efficacy claim follows from these array checks."
+}

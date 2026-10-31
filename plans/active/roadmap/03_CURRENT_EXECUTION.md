@@ -24,6 +24,10 @@
 
 [合成代数报告](../../../reports/taiji_core_algorithm_v1_math_checks_20261031.json)由[检查脚本](../../../scripts/training/check_taiji_core_algorithm_v1_math.py)生成，11项局部性质通过，绑定代码SHA/NumPy版本；无完整模型、无optimizer更新、无数据分区读取。它不代表完整信用、语言、生命活动或结构成长通过，正式执行与下一步仍由总计划发布。已有R5c等独立运行不因设计交付被停止/删除或追加。
 
+## 同轮并行实验产物的状态边界
+
+新算法设计收尾时工作区出现`reports/taiji_native_core_r5c_evaluation_20261031.json`，只读摘要为`FAIL_BEHAVIOR`、Q1 answer约0.4580、cut_drop=1.0。该产物及并行源码改动不纳本次算法设计提交，正式实验结案仍由其绑定回执核验；本轮不据工作区摘要给出唯一原因或修改原门。新设计依据根目标及已发布历史，并不以这一新负结果作充分反证。
+
 ## 当前候选的审批依据
 
 | 统一步骤 | 批准/边界事实 | 原始依据 |
