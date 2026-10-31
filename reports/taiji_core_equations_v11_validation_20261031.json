@@ -1,0 +1,179 @@
+{
+  "schema": "taiji-core-equation-v11-coupled-validation",
+  "date": "2026-10-31",
+  "baseline_design": "a760ce06e",
+  "script_sha256": "fdc2602d9a2fb53e241b65f0f415b203910549a41a422ca0d05861176a6959a3",
+  "numpy_version": "2.5.1",
+  "torch_version": "2.13.0+cpu",
+  "dtype": "float64",
+  "device": "cpu",
+  "original_counterexamples": {
+    "erase_only": {
+      "write": 0,
+      "decay": 0.99,
+      "original_two_step_spectral_radius": 1.0723016066649984,
+      "original_final_norm": 16.0,
+      "original_clip_count": 121,
+      "revised_final_norm": 4.799986288871882e-08
+    },
+    "zero_rms_reference": {
+      "original_epsilon": 1e-06,
+      "original_jacobian": 1000.0,
+      "revised_jacobian": 1.0
+    },
+    "birth_extra_averaging": {
+      "weighted_loss_steps": 16,
+      "wrong_to_true_norm_ratio": 0.0625
+    },
+    "variable_duration_td": {
+      "duration": 32,
+      "old_bootstrap_discount": 0.99,
+      "correct_bootstrap_discount": 0.7249803359578534,
+      "old_td": 0.6398903000729995,
+      "revised_td": 0.4808785016477114
+    }
+  },
+  "checks": [
+    {
+      "name": "original_erase_counterexample_reproduced",
+      "passed": true
+    },
+    {
+      "name": "revised_same_erase_trace_no_amplification",
+      "passed": true
+    },
+    {
+      "name": "proximal_erase_random_operator_bound",
+      "passed": true,
+      "largest_norm": 0.9990233916566276
+    },
+    {
+      "name": "state_normalizer_zero_jacobian_bound",
+      "passed": true
+    },
+    {
+      "name": "query_key_zero_normalization_finite",
+      "passed": true
+    },
+    {
+      "name": "coupled_zero_state_jacobian_diagnostic",
+      "passed": true,
+      "original_norm": 342.5984040872624,
+      "revised_norm": 0.8756738349690403,
+      "scope": "One fixed synthetic case; not a whole-model contraction theorem."
+    },
+    {
+      "name": "coupled_window_finite_and_bounded",
+      "passed": true
+    },
+    {
+      "name": "task_credit_through_encoder_state_and_memory",
+      "passed": true,
+      "gradient_norms": {
+        "encoder": 0.0008625540666033504,
+        "w": 0.007703283003980261,
+        "r": 0.0018732530570957319,
+        "p": 0.0020102472726558447,
+        "tau_logit": 0.0001025083404688115,
+        "erase_bias": 2.0658341294663182e-07,
+        "write_bias": 1.3439011845535655e-07,
+        "decay_bias": 5.104556216229812e-07,
+        "strength": 1.2056242967881497e-07
+      }
+    },
+    {
+      "name": "coupled_gradients_finite_difference",
+      "passed": true,
+      "absolute_errors": {
+        "encoder": 9.077141843076911e-14,
+        "tau_logit": 1.4508357673749658e-14,
+        "erase_bias": 1.330418853137494e-13,
+        "write_bias": 8.528972326264665e-15,
+        "decay_bias": 1.3211701588350065e-13,
+        "strength": 6.70059822279436e-14
+      }
+    },
+    {
+      "name": "coupled_birth_neutral_outputs_and_states",
+      "passed": true
+    },
+    {
+      "name": "coupled_birth_true_aggregate_credit",
+      "passed": true,
+      "error": 5.421010862427522e-20,
+      "norm": 0.000565402593964448,
+      "singular_values": [
+        0.0056515735366350645,
+        0.00016651091909797254,
+        3.2975759961628114e-05,
+        1.2739043546558816e-05
+      ]
+    },
+    {
+      "name": "extra_mean_negative_control_detected",
+      "passed": true
+    },
+    {
+      "name": "coupled_birth_finite_difference",
+      "passed": true,
+      "error": 1.8679062609812044e-13
+    },
+    {
+      "name": "birth_credit_transitions_from_incoming_to_outgoing",
+      "passed": true,
+      "incoming_norm": 0.000565402593964448,
+      "outgoing_at_birth": 0.0,
+      "outgoing_after_one_synthetic_incoming_expression": 3.194023765190033e-08
+    },
+    {
+      "name": "memory_gate_second_order_credit",
+      "passed": true,
+      "error": 1.1704531221370212e-18
+    },
+    {
+      "name": "support_update_to_query_meta_credit",
+      "passed": true,
+      "gradient": 9.367845679495414e-09,
+      "error": 8.035474539783291e-15
+    },
+    {
+      "name": "all_blocked_writes_preserve_memory_and_forbid_gate_credit",
+      "passed": true,
+      "allowed_projection_norm": 3.9999999999999996,
+      "scope": "The oversized input is a branch-control fixture, not a valid restored live state."
+    },
+    {
+      "name": "longer_coupled_and_no_new_input_trace_finite",
+      "passed": true,
+      "steps": 64,
+      "silent_steps": 32,
+      "max_abs_state": 0.14394777531684175,
+      "gradient_norm": 0.0026777427475955626
+    },
+    {
+      "name": "float32_coupled_trace_and_credit_finite",
+      "passed": true,
+      "dtype": "torch.float32",
+      "gradient_norm": 0.0006620078347623348
+    },
+    {
+      "name": "semi_markov_td_matches_reward_timeline",
+      "passed": true
+    },
+    {
+      "name": "duration_eligibility_matches_micro_decay",
+      "passed": true
+    },
+    {
+      "name": "terminal_bootstrap_is_zero",
+      "passed": true
+    }
+  ],
+  "status": "passed_equation_properties_only",
+  "optimizer_steps": 0,
+  "synthetic_inner_update_expressions": 2,
+  "data_splits_read": [],
+  "cpu_seconds": 0.4375,
+  "wall_seconds": 0.4371438000816852,
+  "limits": "No full subject, semantic/task training, lifetime behavior, actual structural benefit or checkpoint recovery is validated here."
+}
