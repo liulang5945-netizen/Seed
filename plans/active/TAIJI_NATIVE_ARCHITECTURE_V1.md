@@ -121,6 +121,8 @@ ordered-pair 规模上，slot binding、boundary consistency 和 random binding 
 
 2026-10-31方程审查更新：当前算法主稿已修订v1.1，使用带尺度地板归一化、近端非扩张擦除、整体loss尺度的出生信用与变时长TD；[22项方程核验](../../reports/taiji_core_equations_v11_validation_20261031.json)覆盖局部性质与小维度耦合，不是全局稳定或能力证明。
 
+类别说明：当前候选主状态是泄漏积分式非线性RNN，传播采用递归神经图消息传递，F为近端关联快权重，活动学习包含半马尔可夫actor–critic。图节点是神经群而非宿主知识图谱实体；这是一种明确组合候选，不是已成立的全新算法门类。历史证据与条件化出生修改意见见[算法§22](../reference/TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md#22-算法类别与历史驱动的修改意见20261031)。
+
 ## 1. 身份与所有权
 
 ```text
