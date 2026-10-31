@@ -19,6 +19,7 @@ R1、R3b、R5b 等保留为原合同和实验身份，N1–N6 保留为机制责
 - [R024主体恢复](reference/SPEC-TAIJI-CORE_RESTORE_R024_20261031.md)：09.2.4主体bundle、独立进程恢复与声明更新表达式的合同；当前实际交付/后继只查总计划。
 - [R025活动动力学](reference/SPEC-TAIJI-CORE_ACTIVITY_R025_20261031.md)：09.3六活动循环、可追溯选择与对照臂的合同；当前实际交付/后继只查总计划。
 - [R026六臂比较](reference/SPEC-TAIJI-CORE_PLASTICITY_R026_20261031.md)：09.4同父六臂预注册比较合同（裁决negative）；当前实际交付/后继只查总计划。
+- [R027恢复门](reference/SPEC-TAIJI-CORE_GATES_R027_20261031.md)：09.5八边界主体恢复门与清单合拢合同；当前实际交付/后继只查总计划。
 
 - [03 证据与审批台账](active/roadmap/03_CURRENT_EXECUTION.md)：核验报告、批准、预算、恢复与历史限制；只跳转总计划的执行位置。
 - [10 兼容导航](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)：保留旧章节入口，转到总计划，不另排工作包。

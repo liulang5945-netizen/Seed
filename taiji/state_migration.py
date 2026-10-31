@@ -374,11 +374,16 @@ def run_worker_job(spec: dict) -> dict:
     rng_probe = torch.rand(3)
     journal = journal_from_dict(bundle["career"])
     gate_table = bundle["growth_gates"]
-    provider = (
-        None
-        if gate_table is None
-        else lambda index: {"copy": gate_table[index][0], "generate": gate_table[index][1]}
-    )
+    if gate_table is None:
+        provider = None
+    else:
+
+        def provider(index: int) -> dict:
+            item = gate_table[index % len(gate_table)]
+            if isinstance(item, dict):
+                return dict(item)
+            return {"copy": item[0], "generate": item[1]}
+
     eligibility = bundle["eligibility"]
     extra = dict(bundle["extra"])
     entries = [dict(entry) for entry in bundle["journal_entries"]]
@@ -459,6 +464,37 @@ def run_worker_job(spec: dict) -> dict:
             append_journal(entries, "resolve_outcome", outcome_id=outcome_id)
             result.update({"resolved": True, "reward_delta": pending["reward"], "guard": "applied"})
             pending = {**pending, "resolved": True}
+    elif spec["mode"] == "activity_round":
+        from taiji.native_activity import ActivityPolicy, env_from_extra, env_to_extra, run_round
+
+        extra = dict(bundle["extra"])
+        policy = ActivityPolicy(bundle["config"]["width"]).double()
+        policy.load_state_dict(extra["policy_state"])
+        env = env_from_extra(extra["activity_env"])
+        state, env, entry, last_event_out, error_out = run_round(
+            model,
+            state,
+            env,
+            policy,
+            entries,
+            last_event=torch.tensor(extra["activity_env"]["last_event"], dtype=torch.float64),
+            prediction_error_value=extra["activity_env"]["prediction_error"],
+            gate_provider=provider,
+            gate_index=bundle["journal_cursor"],
+        )
+        extra["activity_env"] = {
+            **env_to_extra(env),
+            "last_event": list(last_event_out.detach()),
+            "prediction_error": error_out,
+        }
+        result.update(
+            {
+                "activity": entry["activity"],
+                "decision_entry": entry,
+                "h": state.h.detach().clone(),
+                "fee_total": extra.get("fee_total", 0.0),
+            }
+        )
     else:
         raise ValueError(f"Unknown worker mode {spec['mode']}")
     if spec.get("out_bundle") is not None:
@@ -506,6 +542,7 @@ def replay_transaction(
     journal: CareerJournal,
     coordinate_change=None,
     budget: MigrationBudget | None = None,
+    growth_gate_provider=None,
 ) -> dict:
     """Bounded causal replay: shadow rebuild, optional declared coordinate change.
 
@@ -529,7 +566,7 @@ def replay_transaction(
         encoder_changed = parameter_digest(shadow) != before
     after_change = parameter_digest(shadow)
     with torch.no_grad():
-        rebuilt_state, _ = run_career(shadow, journal)
+        rebuilt_state, _ = run_career(shadow, journal, growth_gate_provider=growth_gate_provider)
     cpu_seconds = time.process_time() - cpu_start
     wall_seconds = time.perf_counter() - wall_start
     no_replay_mutation = parameter_digest(shadow) == after_change

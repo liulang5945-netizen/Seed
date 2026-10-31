@@ -126,6 +126,14 @@
 
 提交后按钩子要求重跑Mimosa深扫（focusFiles=本包三个代码文件）：jobId `scan-job-mvwl7vy5`，scanId `scan-2026-10-31T16-02-01.030Z-fbdb0f2f2b13`，**封印`sha256:1e687ebaec1221a0553e5580ec0d74cbd268c832bc7bff803ececad179229c42`**，1,652项findings为既有普查基线、无新假设、离线advisory零匹配；同提交单主线审计ok。
 
+## 2026-11-01 R027主体恢复门合拢（09.5）
+
+先冻结[R027合同](../../reference/SPEC-TAIJI-CORE_GATES_R027_20261031.md)，再交付[native_activity.py扩展](../../../taiji/native_activity.py)（env序列化/来源合法性过滤/轮级门控索引）、[worker activity_round模式](../../../taiji/state_migration.py)与[检查](../../../tests/taiji_native/test_subject_gates_r027.py)、[报告](../../../reports/taiji_core_r027_subject_gates_20261101.json)。`taiji/living_core.py`字节经SHA核对与R021–R026绑定一致；报告`passed_r027_gates_engineering_only`、2/2检查通过、费用3.53/900 CPU秒。
+
+统一主体生命序列八次边界保存×spawn独立解释器进程恢复：交互后（宿主注入消息、host-driven轮消费）、无新提示两轮（endogenous分账）、睡眠等待（无前向步、时钟推进、H逐位不变）、首次声明学习后（worker重复更新逐位一致）、出生前/出生后（门控子带门值表续推活动轮逐位）、编码迁移提交后（revision+1）、未结Outcome（resolution幂等闸拒绝重复领奖）。09.5清单十二项核验落账：参数/拓扑、optimizer/eligibility、RNG探针、游标（career cursor＋seq单调）、记忆（store逐字节）、编码revision、预算（fee/probe延续不清零）、receipt、无越权来源（foreign记录剔除带provenance）、无清账重放、query-only隔离（detached副本探针subject状态逐位不变）、外控/内生根因分账（external_trigger字段）。
+
+执行期事实（落账）：①门控子模型的迁移重放与活动轮必须携带门表——replay_transaction新增provider参数，worker门表对career外步按模回绕（声明仪器，兼容对值对与字典两种格式）；②worker provider重构时曾丢失None守卫致spawn子进程崩溃，R024回归立即捕获并修复（三臂回归全过）。本报告不签语义保持、自主性或任务能力；**唯一下一步＝09.6定价与冻结（owner裁定节点：训练准入在09.6合同上裁定）**。
+
 ## 当前候选的审批依据
 
 | 统一步骤 | 批准/边界事实 | 原始依据 |

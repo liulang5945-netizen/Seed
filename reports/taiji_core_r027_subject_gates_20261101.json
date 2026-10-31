@@ -1,0 +1,101 @@
+{
+  "schema": "taiji-r027-subject-gates-v1",
+  "date": "2026-11-01",
+  "baseline_commit": "a237e6dac",
+  "contract": "plans/reference/SPEC-TAIJI-CORE_GATES_R027_20261031.md",
+  "status": "passed_r027_gates_engineering_only",
+  "config": {
+    "groups": 2,
+    "width": 8,
+    "units": 12,
+    "adapter_rank": 2,
+    "fast_heads": 2,
+    "key_width": 4,
+    "value_width": 4,
+    "output_heads": 2,
+    "fast_limit": 16.0,
+    "max_event_bytes": 512,
+    "max_source_bytes": 512,
+    "max_target_bytes": 128,
+    "seed": 20261031
+  },
+  "dtype": "torch.float64",
+  "torch_version": "2.13.0+cpu",
+  "lineage_binding": {
+    "living_core_sha256": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "matches_r026_receipt": true,
+    "r026_status": "passed_r026_preregistered_comparison"
+  },
+  "boundaries": [
+    "after_interaction (host-injected message consumed by a host-driven round)",
+    "no_prompt_activity (two endogenous model rounds, empty queue)",
+    "sleep_wait (forced wait: no forward step, clock advance, H bitwise)",
+    "first_learning (declared update; worker repeats it bitwise)",
+    "before_birth / after_birth (R023 gated birth with the carried gate table)",
+    "after_migration (encoder revision+1 committed on the gated child)",
+    "pending_outcome (idempotent resolution against the current journal)"
+  ],
+  "checklist": [
+    "parameters and topology (R/P shapes with growth structure) carried and restored",
+    "optimizer state and eligibility stand-in carried across every boundary",
+    "RNG state carried (probe drawn after restore matches the parent)",
+    "cursors: career journal_cursor plus monotonic activity/ledger seq",
+    "memory: store records serialized per byte, illegal sources filtered with provenance",
+    "encoder revision: migration commit advances revision and rides the bundle",
+    "budget: fee_total/probe_exposures continue and are never cleared",
+    "receipt: pending-outcome resolution idempotent against the current journal",
+    "no unauthorized or wrong-source records enter memory or updates",
+    "no ledger clearing, no replay double-claim, no external-action re-send",
+    "query-only probes run on detached copies and leave hidden/cache bitwise",
+    "external triggers and endogenous policy choices accounted separately"
+  ],
+  "checks": [
+    {
+      "id": "test_r027_illegal_source_filtered_and_isolation",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_subject_gates_r027.py",
+        "symbol": "test_r027_illegal_source_filtered_and_isolation",
+        "line": 456,
+        "last_line": 482
+      }
+    },
+    {
+      "id": "test_r027_unified_life_sequence_gates",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_subject_gates_r027.py",
+        "symbol": "test_r027_unified_life_sequence_gates",
+        "line": 129,
+        "last_line": 402
+      }
+    }
+  ],
+  "worker_modes": [
+    "microstep",
+    "update",
+    "resolve",
+    "activity_round"
+  ],
+  "data_splits_read": [],
+  "semantic_preservation_claimed": false,
+  "autonomy_claimed": false,
+  "task_capability_claimed": false,
+  "training_run": false,
+  "default_model_replaced": false,
+  "cpu_seconds_checks_only": 3.53125,
+  "wall_seconds_checks_only": 17.6614270999562,
+  "budget": {
+    "cpu_seconds": 900,
+    "wall_seconds": 1200
+  },
+  "source_hashes": {
+    "plans/reference/SPEC-TAIJI-CORE_GATES_R027_20261031.md": "bf3585aee32dc679cbe2f3924a87670e63513fcb05c33f9829ce05184626adc6",
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/native_activity.py": "16c2f81623a13ea75b3539a57d2bc75eca312eefece37f7b55a56b3eece8bf2b",
+    "taiji/state_migration.py": "9c3536f032fdfc7bc13a3de42d16d10c63922f5a93097c4a09278553cba31129",
+    "tests/taiji_native/test_subject_gates_r027.py": "170f0e4096d37e45b8b7eadf88c5e7bd19663173e87c356266e6a70ba10c20fa",
+    "scripts/training/verify_taiji_subject_gates_r027.py": "8dabe13b240c650a5bdeb597f0eb0748e8e5ce76a6b17102c27efb01160cd9c9"
+  },
+  "limits": "Gate consolidation of the R024 bundle and R025 activity loop on one synthetic life sequence. Passing does NOT sign semantic preservation, autonomy, task capability, training or pricing admission."
+}

@@ -16,7 +16,7 @@ from dataclasses import replace
 import torch
 from torch import nn
 
-from taiji.living_core import LivingCoreReference, LivingState, state_normalize
+from taiji.living_core import LivingCoreReference, LivingState, RawSource, state_normalize
 
 ACTIVITIES = ("interact", "recall", "imagine", "explore", "maintain", "wait")
 HIDDEN = 16
@@ -50,6 +50,73 @@ class ActivityEnvironment:
         self.goal = goal
         self.pending_outcomes: list[str] = []
         self.now = now
+        self.owner = "owner"
+        self.scope = "scope"
+
+
+def legal_store(store, owner: str, scope: str, now: int):
+    """Filter illegal records (wrong owner/scope, future, unreal) before use."""
+    legal, rejected = [], []
+    for record in store:
+        if (
+            record.owner == owner
+            and record.scope == scope
+            and record.observed_at <= now
+            and record.real
+            and record.source_id
+        ):
+            legal.append(record)
+        else:
+            rejected.append(record.source_id)
+    return tuple(legal), rejected
+
+
+def env_to_extra(env: ActivityEnvironment) -> dict:
+    """Serialize the activity environment into bundle-extra-safe plain data."""
+    return {
+        "message_queue": [list(message) for message in env.message_queue],
+        "store": [
+            {
+                "source_id": record.source_id,
+                "raw": list(record.raw),
+                "version": record.version,
+                "observed_at": record.observed_at,
+                "owner": record.owner,
+                "scope": record.scope,
+                "real": record.real,
+            }
+            for record in env.store
+        ],
+        "pending_outcomes": list(env.pending_outcomes),
+        "goal": list(env.goal),
+        "now": env.now,
+        "owner": env.owner,
+        "scope": env.scope,
+    }
+
+
+def env_from_extra(data: dict) -> ActivityEnvironment:
+    env = ActivityEnvironment(
+        store=tuple(
+            RawSource(
+                source_id=record["source_id"],
+                raw=bytes(record["raw"]),
+                version=record["version"],
+                observed_at=record["observed_at"],
+                owner=record.get("owner", "owner"),
+                scope=record.get("scope", "scope"),
+                real=record.get("real", True),
+            )
+            for record in data["store"]
+        ),
+        goal=bytes(data["goal"]),
+        now=data["now"],
+    )
+    env.message_queue = [bytes(message) for message in data["message_queue"]]
+    env.pending_outcomes = list(data["pending_outcomes"])
+    env.owner = data.get("owner", "owner")
+    env.scope = data.get("scope", "scope")
+    return env
 
 
 def prediction_error(output, next_state: LivingState) -> float:
@@ -117,9 +184,11 @@ def imagined_event(last_event: torch.Tensor, seq: int) -> torch.Tensor:
     return last_event + IMAGINE_NORM * noise
 
 
-def _consume_raw(model, state, raw, env, mode):
+def _consume_raw(model, state, raw, env, mode, growth_gates=None):
     """Observe raw bytes step by step, keeping the last output and event."""
     kwargs = {"goal": env.goal, "records": env.store, "mode": mode, "now": env.now}
+    if growth_gates is not None:
+        kwargs["growth_gates"] = growth_gates
     last_output, last_event = None, None
     for event in model.encoder.patches(raw):
         output = model.step(state, event=event, **kwargs)
@@ -151,8 +220,13 @@ def run_round(
     last_event: torch.Tensor,
     prediction_error_value: float,
     chooser=None,
+    gate_provider=None,
+    gate_index: int = 0,
 ):
     """One activity round: select, execute, journal. Returns the updated five-tuple."""
+    legal_records, rejected = legal_store(env.store, env.owner, env.scope, env.now)
+    if rejected:
+        env.store = legal_records
     goal_vector = model.encoder.goal_vector(env.goal)
     features = build_features(state, goal_vector, prediction_error_value, env)
     legal = legal_mask(env)
@@ -169,7 +243,8 @@ def run_round(
     step_before = state.step
     imagined = False
     last_output = None
-    note: dict = {}
+    note: dict = {"rejected_sources": rejected}
+    gates = None if gate_provider is None else gate_provider(gate_index)
     triggers = {
         "queue_count": len(env.message_queue),
         "pending_count": len(env.pending_outcomes),
@@ -178,20 +253,21 @@ def run_round(
     }
     if activity == "interact":
         raw = env.message_queue.pop(0)
-        state, last_output, last_event = _consume_raw(model, state, raw, env, 0)
+        state, last_output, last_event = _consume_raw(model, state, raw, env, 0, gates)
     elif activity == "recall":
         record = max(env.store, key=lambda item: item.observed_at)
-        state, last_output, last_event = _consume_raw(model, state, record.raw, env, 1)
+        state, last_output, last_event = _consume_raw(model, state, record.raw, env, 1, gates)
     elif activity == "imagine":
         imagined = True
         event = imagined_event(last_event, len(journal))
-        output = model.step(
-            state, event=event, goal=env.goal, records=env.store, mode=2, now=env.now
-        )
+        step_kwargs = {"goal": env.goal, "records": env.store, "mode": 2, "now": env.now}
+        if gates is not None:
+            step_kwargs["growth_gates"] = gates
+        output = model.step(state, event=event, **step_kwargs)
         state = output.state
         last_output, last_event = output, event.detach().clone()
     elif activity == "explore":
-        state, last_output, last_event = _consume_raw(model, state, NOVEL_PROBE, env, 3)
+        state, last_output, last_event = _consume_raw(model, state, NOVEL_PROBE, env, 3, gates)
     elif activity == "maintain":
         state, note = _maintain(model, state)
     else:
@@ -210,6 +286,7 @@ def run_round(
         "step_delta": state.step - step_before,
         "imagined": imagined,
         "store_size_after": len(env.store),
+        "external_trigger": activity == "interact" and triggers["queue_count"] > 0,
         "note": note,
         "clock": env.now,
     }

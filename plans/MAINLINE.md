@@ -18,7 +18,9 @@
 
 **09.4已于2026-10-31按[R026合同](reference/SPEC-TAIJI-CORE_PLASTICITY_R026_20261031.md)完成同父主体六臂预注册比较：`passed_r026_preregistered_comparison`，预注册裁决＝`negative`（[报告](../reports/taiji_core_r026_plasticity_arms_20261031.json)，费用45.9/900 CPU秒）。** [native_development.py](../taiji/native_development.py)实现六臂（coverage_birth/gradmax_schedule/conditional_svd/random_gate/replay_only/capacity_random，每臂独立父副本、8步声明Adam更新、独立holdout/retention探针生涯）。结果：coverage_birth的ΔNLL_holdout（−0.1370）未优于对照（min=−0.1402，差+0.0032＞1e-3边际）；六臂全部超出0.05保持容差（0.144–0.148，声明更新幅度主导）；臂间holdout差≤0.0035。**诚实结论：在合成夹具与声明更新规模下，"覆盖/信用改善转为后继净收益"被预注册判据否定；出生方向在8步内未自我偿付，更新幅度本身破坏保持**。按合同不追加剂量/seed/臂；该负结果不证伪v1.2候选于真实条件，09.5按序进入。
 
-唯一下一步是：**09.5，主体工程与恢复门**——在交互、无新提示活动、睡眠/等待、首次合法学习、结构出生前后及未结Outcome边界保存并独立恢复；检查参数/拓扑、optimizer/eligibility、RNG、游标、记忆、编码revision、预算与receipt（R024/R025机制在此按09.5清单合拢）。09.6定价须待09.5完成后按合同进入。
+**09.5已于2026-11-01按[R027合同](reference/SPEC-TAIJI-CORE_GATES_R027_20261031.md)通过结案：`passed_r027_gates_engineering_only`（[报告](../reports/taiji_core_r027_subject_gates_20261101.json)，费用3.5/900 CPU秒）。** R024主体bundle与R025活动循环按09.5清单合拢：统一主体生命序列上八次边界保存（交互后/无新提示两轮/睡眠等待/首次声明学习后/出生前/出生后/编码迁移提交后/未结Outcome），每次由spawn独立解释器进程恢复续推，活动轮决策logits与h、下一次声明更新后参数、resolution幂等全部与父端逐位一致。清单逐项核验落账：参数/拓扑（含增长结构）、optimizer/eligibility、RNG探针、游标（career cursor＋活动/账本seq单调）、记忆（store逐字节＋非法来源过滤带provenance）、编码revision（迁移提交revision+1）、预算（fee/probe延续不清零）、receipt（当前journal唯一闸）。query-only探针在detached副本上运行，subject状态逐位不变；外控触发（external_trigger）与内生轮（chosen_by）分账。执行期修正：门控子模型的迁移重放与活动轮必须携带门表（replay_transaction新增provider参数；fit门表对career外步按模回绕，声明仪器）。
+
+唯一下一步是：**09.6，生命片段定价与冻结**——限定pilot自身活动/更新/结构事件/CPU/wall与可见性；v1.2主比较按算法§24.6，已知快记忆算子只做其实际主张所需的比较；冻结秩/噪声/对齐/覆盖阈值、最小任务效应、各臂/搜索预算与P_R/P_A/P_C累计暴露。**定价与有界比较须先形成合同并冻结数值门，训练准入在该合同中裁定**——这是owner裁定节点。
 
 08/R5c已经批准的有限实验按原预算/终点独立收束，结果作为内容/表达资产；本次不停止、恢复或追加进程，也不改冻结门。新核心设计不以R5c过门或旧模型兼容为前提，现有权重可不再采用；历史证据保留；09后续实现/计时/实验需按新算法规格与资源边界进入。本轮只修订计划，不启动持续服务或新训练。
 
@@ -78,7 +80,7 @@ R1、R3b、R5b等保留为原合同/实验身份，不再另作排期编号；N1
 | 06 | 物化课程、测成本并冻结比较合同 | 已完成：`r4_priced` | [R4合同](reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md)：216/72/72历史分区，恢复6/6，冻结512更新/run及原数值门 |
 | 07 | 执行首轮有界比较并结案 | 已结案：`FAIL_BEHAVIOR` | [R5结果](reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md#9-r5-执行结果20261030)：有相对净收益，绝对行为/内容依赖/内插等门未全过；不自动追加训练 |
 | **08** | **实现并检验复制轨候选** | **已两轮按预定出口结案：R5b `FAIL_BEHAVIOR`＋R5c `FAIL_BEHAVIOR`（2026-10-31，结果为内容/表达资产）；[R5c评价](../reports/taiji_native_core_r5c_evaluation_20261031.json)已入账** | [R5b合同](reference/SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md)（answer 0.505/0.80，内容消费因果成立，选择零错误）＋[R5c合同](reference/SPEC-NATIVE-CONTENT-CORE_R5C_COPYEXPR_CANDIDATE_20261031.md)（指针辅助监督机制性负结果：0.458 vs 前身 0.505，current 更差；内容消费与比较门保持）；同面回归，不称新独立确认 |
-| **09** | **连续生命与递归进化共同内核，包含自然内容/经历能力** | **09.2全部关闭；09.3活动循环已交付（R025）；09.4六臂预注册比较已结案（R026，裁决negative）；09.5主体恢复门待推进；训练未准入** | 同一主体连续活动、学习与结构出生/有效接入/保持/恢复；v1.2增量以信用覆盖与重放—生长假说为主，不把前向通过、秩或活单元数当能力 |
+| **09** | **连续生命与递归进化共同内核，包含自然内容/经历能力** | **09.2关闭；09.3活动循环（R025）；09.4六臂预注册negative（R026）；09.5恢复门已过（R027）；09.6定价与冻结待owner裁定；训练未准入** | 同一主体连续活动、学习与结构出生/有效接入/保持/恢复；v1.2增量以信用覆盖与重放—生长假说为主，不把前向通过、秩或活单元数当能力 |
 | 10 | 自然目标、后果预测与有限行动 | 按任务需要进入，未准入 | 只有声明行动/规划能力时启用；不成为首次L3的普遍前置 |
 | 11 | 同一候选的自然中文连续任务与最小验收 | 条件规划，未准入 | 按07满足L2＋至少一项代表能力＋安全/恢复/性能，才触发L3范围的用户验收 |
 | 12 | 跨会话纠错、持续学习与保持的长跨度验收 | 后继范围，未准入；基本学习从09开始 | 在09同一主体基础上检验多session/分布变化/长期保持，按L4范围举证，不把参数学习推迟到本步才开始 |
@@ -142,8 +144,8 @@ R5报告的`retention_parent=none`：其中“保持门”实际含训练内插�
 | 09.3 连续动力学与内容活动（R025范围完成，2026-10-31） | [合同](reference/SPEC-TAIJI-CORE_ACTIVITY_R025_20261031.md)＋[native_activity.py](../../taiji/native_activity.py)：六活动循环、模型所有策略头（掩码softmax＋argmax，触发量逐轮入journal）、想象不写store、wait/maintain语义、固定阈值对照臂、bundle携带policy恢复；[报告](../reports/taiji_core_r025_activity_dynamics_20261031.json) | 无新消息6轮journal逐轮decision＋非wait状态变化；两臂序列分岔核验（不签优劣）；策略头未训练（hash前后一致）；预测误差=世界头对池化后继的声明读数（真实世界损失属09.4）。不签模型学会选择或自主性 |
 | 09.4 持续可塑性与结构出生（R026范围完成，2026-10-31） | [合同](reference/SPEC-TAIJI-CORE_PLASTICITY_R026_20261031.md)预注册六臂同父比较＋[native_development.py](../../taiji/native_development.py)（声明反馈更新/四类出生臂/独立holdout-retention探针）；[报告](../reports/taiji_core_r026_plasticity_arms_20261031.json) | **预注册裁决negative**：coverage_birth未优于replay_only/capacity_random（差+0.0032＞1e-3）；六臂全部超0.05保持容差（声明更新幅度主导）；臂间差≤0.0035。按合同不追加剂量；负结果不证伪真实条件下的v1.2候选；新容量与功能贡献未分开成立 |
 | 09.4.1 预期自我修改研究 | 仅在09.4基础证据与保持/恢复成立后，冻结世界模型预测出生/巩固/重放的旧损伤、新收益和成本的最小测试 | 当前09.4保持全臂超限，本子项**不触发**，待决策 |
-| 09.5 主体工程与恢复门（当前入口） | 在交互、无新提示活动、睡眠/等待、首次合法学习、结构出生前后及未结Outcome边界保存并独立恢复；检查参数/拓扑、optimizer/eligibility、RNG、游标、记忆、编码revision、预算与receipt（R024/R025机制按本清单合拢） | 新单元可以启动学习；无越权/错来源、无清账重放或外部动作重发；query-only隔离含hidden/cache。受控原型的外控触发与实际内生策略分账，不据接口签成熟自主性 |
-| 09.6 生命片段定价与冻结 | 限定pilot自身活动/更新/结构事件/CPU/wall与可见性；v1.2主比较按§24.6，已知快记忆算子只做其实际主张所需的比较，不扩成并行新研究线 | 冻结秩/噪声/对齐/覆盖阈值、最小任务效应、各臂/搜索预算与P_R/P_A/P_C累计暴露；门形成、SVD、分配/重放、迁移、恢复和评价均计费。覆盖/秩不替代任务净收益门 |
+| 09.5 主体工程与恢复门（R027范围完成，2026-11-01） | [合同](reference/SPEC-TAIJI-CORE_GATES_R027_20261031.md)＋[native_activity扩展](../../taiji/native_activity.py)（env序列化/来源过滤/门控索引）＋[worker activity_round模式](../../taiji/state_migration.py)：八次边界保存×spawn独立恢复、清单逐项核验、query-only隔离、外控/内生根因分账；[报告](../reports/taiji_core_r027_subject_gates_20261101.json) | 活动轮决策与h、下一次声明更新、resolution幂等逐位一致；非法来源剔除带provenance；fee/probe不清零；seq单调；query-only探针subject状态逐位不变。不签语义保持或自主性 |
+| 09.6 生命片段定价与冻结（当前入口，owner裁定节点） | 限定pilot自身活动/更新/结构事件/CPU/wall与可见性；v1.2主比较按§24.6，已知快记忆算子只做其实际主张所需的比较，不扩成并行新研究线 | 冻结秩/噪声/对齐/覆盖阈值、最小任务效应、各臂/搜索预算与P_R/P_A/P_C累计暴露；门形成、SVD、分配/重放、迁移、恢复和评价均计费。覆盖/秩不替代任务净收益门；**合同形成后训练准入由owner在该合同上裁定** |
 | 09.7 一次有界联合片段 | 同一主体经历交互→无新提示活动→合法反馈/重放→依据可靠信用的覆盖出生/学习→新query与父任务→中断恢复；保留自然内容/时间及全部轮次分母 | 裁决重放—信用—生长的实际收益链是否成立，同时看活动、保持与全成本；不以局部rank/L_start升高签能力。冻结评价在隔离禁写副本，正负/不可判/工程/预算按原出口结案 |
 | 09.8 全局收束 | 留完整主体bundle、实际活动轨迹、父/子结构映射、参数继承、原始输出及能力/资源卡；按冻结范围判正负/不可判/工程/预算 | 不能用短期语言分数替代生命/成长交付。失败回一个主要缺口；通过只形成声明范围的连续主体原型，后续10–13扩大能力/时程/自主范围，不再回到只交静态权重 |
 
@@ -332,5 +334,7 @@ R5报告的`retention_parent=none`：其中“保持门”实际含训练内插�
 2026-10-31 R025活动循环交付：先冻结[R025合同](reference/SPEC-TAIJI-CORE_ACTIVITY_R025_20261031.md)，再交付[native_activity.py](../taiji/native_activity.py)（六活动算子/策略头/触发量/固定阈值对照）与五项检查，按`passed_r025_activity_engineering_only`结案。执行期声明：预测误差＝世界头对**池化后继表示**的读数（世界头从z预测主体级d维后继，与逐群h形状不同——真实世界损失与EMA目标属09.4）；触发快照在执行前取（队列pop后计数才不失真）；模型政策在未训练下的选择由掩码softmax＋argmax决定，测试只断言可追溯性与合法性、不断言具体选择。想象不写store、wait无前向步、maintain显式no-op均逐轮入journal；策略头参数hash前后一致。执行入口推进到09.4持续可塑性与结构出生，不授予训练/定价。
 
 2026-10-31 R026六臂预注册比较交付：先冻结[R026合同](reference/SPEC-TAIJI-CORE_PLASTICITY_R026_20261031.md)（预注册主终点/保持探针/净收益判据/预算判停），再交付[native_development.py](../taiji/native_development.py)（声明反馈更新/覆盖出生/GradMax固定日程/仅条件SVD/随机门/仅重放/容量匹配随机臂）与四项检查，按`passed_r026_preregistered_comparison`结案、**预注册裁决＝negative**。执行期事实：①保持探针必须独立于更新数据（fit journal的NLL下降是学习不是保持——合同在正式运行前修正定义）；②六臂必须各自持有独立父副本（replay_only原地更新共享parent曾污染后续臂——修复为每臂deepcopy）；③在声明更新规模下六臂全部超出0.05保持容差（0.144–0.148），coverage_birth未优于对照（差+0.0032＞1e-3边际），臂间holdout差≤0.0035——出生方向8步内未自我偿付，更新幅度本身破坏保持。按合同不追加剂量/seed/臂；负结果不证伪真实条件下的v1.2候选。09.4.1预期自我修改不触发。执行入口推进到09.5主体恢复门，不授予训练/定价。
+
+2026-11-01 R027恢复门合拢交付：先冻结[R027合同](reference/SPEC-TAIJI-CORE_GATES_R027_20261031.md)，再交付native_activity扩展（env序列化/来源合法性过滤/轮级门控索引）、worker `activity_round`模式（门表兼容对值对与字典两种格式、career外步按模回绕）与两项检查，按`passed_r027_gates_engineering_only`结案。执行期事实：①门控子模型的迁移重放与活动轮必须携带门表——replay_transaction新增provider参数，worker对career外步按模回绕门表（声明仪器）；②R024 provider重构时曾丢失None守卫致spawn子进程崩溃，回归立即捕获并修复。八次边界（交互/无新提示/睡眠等待/首次学习/出生前后/迁移提交/未结Outcome）全部spawn独立恢复逐位一致；清单十二项核验落账。执行入口推进到09.6定价与冻结——**owner裁定节点：训练准入在09.6合同上裁定**。
 
 2026-10-31长期目标文字收束：保留自然中文、连续任务、反馈学习、旧能力与有限出口，明确连续状态/持续可塑/继承式真实规模生长；将“参与”收紧为认知机制实际承担决策与表达，并把生长整合、主体连续性/恢复及全过程成本纳入按范围验收。阶段方法不写入根目标，13明确为成熟与扩域，不再后置基础生长。执行位置和实验权限不变。
