@@ -1,0 +1,81 @@
+{
+  "format": "taiji-native-core-r5c-engineering-v1",
+  "version": 1,
+  "date": "2026-10-31",
+  "contract": "plans/reference/SPEC-NATIVE-CONTENT-CORE_R5C_COPYEXPR_CANDIDATE_20261031.md",
+  "implementation_revision": "a3f0cf60e",
+  "manifest": {
+    "path": "plans/manifests/native_core_r1_train_v1.json",
+    "sha256": "5d151ba9f994670ccc2968b4d4547d280c52c056e991cf831e4f18c818dfedfd",
+    "episodes": 864
+  },
+  "probes": {
+    "identity": {
+      "architecture_byte_identical_to_v2": true,
+      "auxiliary_ce_finite": true,
+      "auxiliary_gradient_finite": {
+        "copy_key.weight": true,
+        "copy_query.weight": true
+      },
+      "auxiliary_gradient_path_ok": true
+    },
+    "credit": {
+      "frozen_groups": [
+        "reader",
+        "decoder"
+      ],
+      "grad_groups_credit_on": {
+        "reader": 10,
+        "core": 9,
+        "attention": 4,
+        "decoder": 8,
+        "output": 2,
+        "query_encoder": 4
+      },
+      "grad_groups_credit_stop": {
+        "core": 9,
+        "attention": 4,
+        "output": 2,
+        "query_encoder": 4
+      },
+      "credit_on_has_reader_decoder_grad": true,
+      "credit_stop_reader_decoder_grad_free": true,
+      "frozen_parameters_unchanged": true,
+      "other_groups_moved_on_stop": true
+    },
+    "gold_scope": {
+      "forged_condition_rejected": true,
+      "cross_scope_records": 0,
+      "own_scope_records": 1,
+      "cross_scope_isolated": true
+    },
+    "boundary": {
+      "update_256_schedule_position": 256,
+      "update_256_scheduled_episodes": 0,
+      "update_257_schedule_position": 257,
+      "update_257_scheduled_episodes": 2,
+      "update_257_loss_nats": 0.5833664989134051,
+      "restored_update_schedule_position": 257,
+      "restored_update_scheduled_episodes": 2,
+      "restored_update_loss_nats": 0.5833664989134051,
+      "in_process_restore_equal": true,
+      "fresh_process_restore_equal": true,
+      "boundary_position_ok": true,
+      "restored_next_update_matches": true,
+      "post_restore_digest_equals_continuous": true
+    }
+  },
+  "failed_gates": [],
+  "status": "r5c_engineering_ok",
+  "probe_cost": {
+    "cpu_seconds": 5159.578125
+  },
+  "read_boundaries": {
+    "query_split_read": false,
+    "holdout_split_read": false,
+    "sealed_read": false,
+    "optimizer_updates": 515
+  },
+  "started_at": "2026-10-31T02:54:20.883279+00:00",
+  "finished_at": "2026-10-31T03:01:48.734900+00:00"
+}
