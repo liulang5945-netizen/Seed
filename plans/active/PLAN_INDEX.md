@@ -6,7 +6,7 @@
 
 | 状态 | 文档 | 维护边界 |
 |---|---|---|
-| 主线 | [MAINLINE](../MAINLINE.md) | 项目当前新的N主线；统一步骤01–13、执行位置、详细落地卡、状态与出口 |
+| 主线 | [MAINLINE](../MAINLINE.md) | 连续生命主体与递归进化的新N主线；统一步骤01–13及实际执行位置 |
 | 状态 | [03_CURRENT_EXECUTION.md](roadmap/03_CURRENT_EXECUTION.md) | 证据与审批台账；唯一队首标题只静态跳转总计划 |
 | 索引 | [10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md](roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md) | 兼容旧章节入口；不另排工作包或复制阶段状态 |
 | 规范 | [TAIJI_CORE_REQUIREMENTS.md](TAIJI_CORE_REQUIREMENTS.md)、[TAIJI_NATIVE_ARCHITECTURE_V1.md](TAIJI_NATIVE_ARCHITECTURE_V1.md) | 长期约束与认知所有权，不冒称实现 |
@@ -30,7 +30,7 @@
 | [06](../MAINLINE.md#3-唯一执行队列) | R4，含课程准备 | [定价与 R5 数值门](../reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md) |
 | [07](../MAINLINE.md#3-唯一执行队列) | R5 比较与结案 | [R4 合同 §9](../reference/SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md#9-r5-执行结果20261030) |
 | [08](../MAINLINE.md#3-唯一执行队列) | R5b 复制轨候选 | [SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md](../reference/SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md) |
-| [09](../MAINLINE.md#3-唯一执行队列) | 自然内容/时间绑定与T2经历选择 | 工作卡统一见总计划，合同随对应准入建立 |
+| [09](../MAINLINE.md#3-唯一执行队列) | 连续生命/递归进化共同内核，含自然内容与经历选择 | 工作卡统一见总计划，基础定义按根需求，合同随对应准入建立 |
 | [10](../MAINLINE.md#3-唯一执行队列) | 按任务需要的 T3 | 工作卡统一见总计划，合同随对应准入建立 |
 | [11](../MAINLINE.md#3-唯一执行队列) | 自然中文连续任务 / L3 | 工作卡统一见总计划，合同随对应准入建立 |
 | [12](../MAINLINE.md#3-唯一执行队列) | 跨会话学习与保持 / L4 | 工作卡统一见总计划，合同随对应准入建立 |
@@ -51,3 +51,5 @@ N177/F/N178、VISION、旧 T2/T3、M0–M8、R2 日对话、UI 生命页等旧�
 5. 旧文不因收敛删除或改名；只降级调度权。
 
 本轮项目级整理的删除/归档与恢复索引见[历史整理](../archive/history/n_mainline_20261030/README.md)；旧N1归因交接已由原收官判读取代，不再留活动快照。
+
+2026-10-31根目标纠偏：09.1共同内核合同设计前置；12/13是长期与成熟自主范围验收，不是首次接入生命、学习或生长。局部固定容量实验不作为最终主体形态。
