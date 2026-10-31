@@ -41,7 +41,7 @@ R 编号保留原合同与实验身份；实施统一使用总计划步骤 01–
 | UI 生命页 | [UX 规范](UI_LIFE_UX_SPEC_20261003.md)、[视觉方向](UI_LIFE_VISUAL_DIRECTION_20261003.md) | 发布面；不属于研究主线 |
 | 历史整理 | [整理与 Git 恢复](PROJECT_HISTORY_CONSOLIDATION_20261023.md)、[墓碑](DISTILLATION_TOMBSTONE_20261007.md) | 追溯身份；不重复全文 |
 
-完整清单与统一规则见[LEGACY_ASSET_INDEX](LEGACY_ASSET_INDEX.md)。
+完整清单与统一规则见[LEGACY_ASSET_INDEX](LEGACY_ASSET_INDEX.md)。新核心复用/适配/重新实现以及权重、数据和实际删除条件集中见该页§5；合同映射不表示旧候选仍是当前主模型。
 
 ## 3. 使用规则
 
