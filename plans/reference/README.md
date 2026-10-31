@@ -16,8 +16,8 @@ R 编号保留原合同与实验身份；实施统一使用总计划步骤 01–
 | [06](../MAINLINE.md#3-唯一执行队列) | [R4 定价与 R5 数值门](SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md) | 课程准备、成本、预算、行为/机制/保持/恢复/成本门 |
 | [07](../MAINLINE.md#3-唯一执行队列) | [R5 执行记录（R4 §9）](SPEC-NATIVE-CONTENT-CORE_R4_PRICING_AND_GATES_20261030.md#9-r5-执行结果20261030) | 有界比较、评价与原结案 |
 | [08](../MAINLINE.md#3-唯一执行队列) | [R5b 复制轨候选合同](SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md) | 复制轨、自前缀日程、基线复用与有限出口 |
-| [08 后继（待裁定）](../MAINLINE.md#3-唯一执行队列) | [R5c 复制执行精度候选合同（草案）](SPEC-NATIVE-CONTENT-CORE_R5C_COPYEXPR_CANDIDATE_20261031.md) | `new_core_v3`＝指针辅助监督＋发散点归因探针；同数据/同门，独立预算 60k CPU 秒；**草案待 owner 裁定，未批准不执行** |
-| [09](../MAINLINE.md#3-唯一执行队列) | [核心算法v1.1草案](TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md) | 多时间尺度可塑神经图：明确计算/信用/生长/活动规则；不是冻结实验或已实现模型 |
+| [08 同面后继](../MAINLINE.md#3-唯一执行队列) | [R5c 复制执行精度候选合同](SPEC-NATIVE-CONTENT-CORE_R5C_COPYEXPR_CANDIDATE_20261031.md) | 已批准并按原合同结案`FAIL_BEHAVIOR`，证据见总计划与原合同；保留内容/表达资产，不再发布待批准指令 |
+| [09](../MAINLINE.md#3-唯一执行队列) | [核心算法主稿：v1.1底座＋v1.2生长信用候选](TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md) | §24集中局部秩界、覆盖出生、重放耦合假说与反例；不是冻结实验或已实现模型 |
 | [10](../MAINLINE.md#3-唯一执行队列) | T3 合同按任务需要建立 | 自然目标、有限行动与后果 |
 | [11](../MAINLINE.md#3-唯一执行队列) | 自然连续任务合同按对应准入建立 | 自然中文连续任务与 L3 |
 | [12](../MAINLINE.md#3-唯一执行队列) | 跨会话合同按对应准入建立 | 反馈学习、旧能力保持与 L4 |

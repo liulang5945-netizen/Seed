@@ -12,7 +12,7 @@ R1、R3b、R5b 等保留为原合同和实验身份，N1–N6 保留为机制责
 
 ## 需要核验时再查
 
-- [核心算法v1主稿](reference/TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md)：09.1的具体方程、信用、结构出生、时序和反证，不另发执行队列。
+- [核心算法主稿](reference/TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md)：v1.1底座与§24的v1.2生长信用/覆盖出生候选，具体方程、证据与反证统一维护，不另发执行队列。
 
 - [03 证据与审批台账](active/roadmap/03_CURRENT_EXECUTION.md)：核验报告、批准、预算、恢复与历史限制；只跳转总计划的执行位置。
 - [10 兼容导航](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)：保留旧章节入口，转到总计划，不另排工作包。

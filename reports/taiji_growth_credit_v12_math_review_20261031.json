@@ -1,0 +1,145 @@
+{
+  "schema": "taiji-growth-credit-v12-local-math-review",
+  "date": "2026-10-31",
+  "baseline_commit": "d545b3ccc",
+  "script_sha256": "5ad487b9664c371b5208b9180136c713411204ca73490bd68646b95c7e44595f",
+  "numpy_version": "2.5.1",
+  "torch_version": "2.13.0+cpu",
+  "seed": 20261031,
+  "dtype": "float64",
+  "rank_tolerance_for_fixtures": 1e-10,
+  "checks": [
+    {
+      "name": "independent_gradient_rank_bound",
+      "passed": true,
+      "category": "local_identity",
+      "random_cases": 50
+    },
+    {
+      "name": "nonzero_unit_count_is_not_bounded_by_credit_rank",
+      "passed": true,
+      "category": "counterexample",
+      "credit_rank": 1,
+      "nonzero_rows": 4,
+      "gradient_rank": 1,
+      "per_unit_norms": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "scope": "Even orthonormal outgoing columns can give redundant nonzero gradients."
+    },
+    {
+      "name": "top_svd_zero_credit_fraction_has_limited_scope",
+      "passed": true,
+      "category": "local_identity",
+      "request": 4,
+      "rank": 1,
+      "zero_credit_fraction": 0.75,
+      "scope": "Exact-rank statement for this top-SVD initializer, not every neutral birth."
+    },
+    {
+      "name": "hard_partition_exact_rank_bounds",
+      "passed": true,
+      "category": "local_identity",
+      "random_cases": 50
+    },
+    {
+      "name": "conditional_block_rank_can_exceed_global_rank",
+      "passed": true,
+      "category": "witness",
+      "global_rank": 0,
+      "sum_branch_ranks": 2,
+      "scope": "Blockwise credit ranks, not a theorem about total network capacity."
+    },
+    {
+      "name": "soft_partition_rank_sum_can_exceed_sample_count",
+      "passed": true,
+      "category": "counterexample",
+      "sample_slots": 1,
+      "sum_branch_ranks": 2,
+      "lifted_feature_rank": 1,
+      "scope": "Duplicate soft gates count the same sample twice; no hard-partition upper bound."
+    },
+    {
+      "name": "numerical_rank_sum_does_not_inherit_exact_rank_inequality",
+      "passed": true,
+      "category": "counterexample",
+      "absolute_rank_threshold": 0.1
+    },
+    {
+      "name": "duplicate_replay_does_not_create_rank",
+      "passed": true,
+      "category": "counterexample"
+    },
+    {
+      "name": "adding_a_residual_sample_can_reduce_aggregate_rank",
+      "passed": true,
+      "category": "counterexample",
+      "before_rank": 2,
+      "after_rank": 1,
+      "scope": "More distinct sample directions do not imply larger aggregate credit rank."
+    },
+    {
+      "name": "low_hidden_rank_does_not_bound_full_input_credit_rank",
+      "passed": true,
+      "category": "counterexample",
+      "hidden_rank": 0,
+      "full_input_credit_rank": 2
+    },
+    {
+      "name": "random_gates_can_have_all_units_receive_nonzero_credit",
+      "passed": true,
+      "category": "counterexample",
+      "random_gate_nonzero_unit_fraction": 1.0,
+      "median_gradient_norm": 0.03474708217360906,
+      "scope": "Raw live fraction cannot by itself distinguish true from random gates."
+    },
+    {
+      "name": "shared_branch_cluster_coverage_can_still_cancel",
+      "passed": true,
+      "category": "counterexample",
+      "scope": "A per-cluster max-min objective also needs aggregate-credit feasibility."
+    },
+    {
+      "name": "coverage_allocation_differs_from_total_energy_allocation",
+      "passed": true,
+      "category": "operator_fixture",
+      "allocation": [
+        1,
+        1
+      ],
+      "per_branch_coverage": [
+        0.5524861878453039,
+        1.0
+      ],
+      "total_energy_allocation": [
+        2,
+        0
+      ],
+      "total_energy_minimum_coverage": 0,
+      "scope": "Finite integer optimum only; no task or growth advantage is inferred."
+    },
+    {
+      "name": "conditioned_birth_actual_forward_credit_and_negative_controls",
+      "passed": true,
+      "category": "local_derivative",
+      "autograd_absolute_error": 6.938893903907228e-18,
+      "finite_difference_errors": {
+        "0.0001": 6.219016794595245e-10,
+        "1e-05": 6.219016621122897e-12,
+        "1e-06": 6.218983661376853e-14
+      },
+      "atol": 1e-11,
+      "rtol": 1e-06,
+      "zero_gradient_rejected": true,
+      "reversed_gradient_rejected": true
+    }
+  ],
+  "status": "passed_local_review_only",
+  "optimizer_steps": 0,
+  "data_splits_read": [],
+  "full_subject_created": false,
+  "limits": "Counterexamples and local identities only. No rank-monotone replay, neuron-count impossibility, novel theory, actual growth benefit or task ability is established."
+}

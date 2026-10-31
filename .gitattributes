@@ -40,3 +40,6 @@ scripts/training/launch_taiji_n1_transition_factorial_lr_decay_run88.ps1 text eo
 plans/reference/PLAN-N1-88_position_final_cycle_lr_decay_review_20261016.md text eol=lf
 scripts/training/launch_taiji_n1_transition_factorial_lr_decay_run88b.ps1 text eol=lf
 scripts/training/launch_taiji_n1_transition_factorial_lr_decay_run88c.ps1 text eol=lf
+
+# Local growth-credit evidence binds this verification source by byte hash.
+scripts/training/check_taiji_growth_credit_v12_math.py text eol=lf
