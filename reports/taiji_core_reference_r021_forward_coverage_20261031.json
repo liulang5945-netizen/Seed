@@ -1,0 +1,2023 @@
+{
+  "schema": "taiji-r021-formal-forward-coverage-v1",
+  "date": "2026-10-31",
+  "baseline_commit": "da4415e58",
+  "status": "passed_r021_forward_only",
+  "config": {
+    "groups": 2,
+    "width": 8,
+    "units": 12,
+    "adapter_rank": 2,
+    "fast_heads": 2,
+    "key_width": 4,
+    "value_width": 4,
+    "output_heads": 2,
+    "fast_limit": 16.0,
+    "max_event_bytes": 512,
+    "max_source_bytes": 512,
+    "max_target_bytes": 128,
+    "seed": 20261031
+  },
+  "dtype": "torch.float64",
+  "torch_version": "2.13.0+cpu",
+  "device": "cpu",
+  "fixture_parameter_sha256": "39fe89041eca2e64ecdfcfe016bb22566dc500a078fba5f39a49443ede3cabdb",
+  "forward_tolerances": {
+    "atol": 1e-12,
+    "rtol": 1e-12
+  },
+  "subject_id": "r021-subject",
+  "checks": [
+    {
+      "id": "test_r021_budgets_and_malformed_interfaces_fail",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_living_core_reference.py",
+        "symbol": "test_r021_budgets_and_malformed_interfaces_fail",
+        "line": 285,
+        "last_line": 296
+      }
+    },
+    {
+      "id": "test_r021_continuous_fast_update_and_permissions",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_living_core_reference.py",
+        "symbol": "test_r021_continuous_fast_update_and_permissions",
+        "line": 155,
+        "last_line": 198
+      }
+    },
+    {
+      "id": "test_r021_current_encoding_and_world_heads",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_living_core_reference.py",
+        "symbol": "test_r021_current_encoding_and_world_heads",
+        "line": 267,
+        "last_line": 282
+      }
+    },
+    {
+      "id": "test_r021_fast_read_and_dynamics",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_living_core_reference.py",
+        "symbol": "test_r021_fast_read_and_dynamics",
+        "line": 118,
+        "last_line": 152
+      }
+    },
+    {
+      "id": "test_r021_i1_patch_pooling_and_causality",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_living_core_reference.py",
+        "symbol": "test_r021_i1_patch_pooling_and_causality",
+        "line": 40,
+        "last_line": 54
+      }
+    },
+    {
+      "id": "test_r021_i2_nu_missing_and_projection",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_living_core_reference.py",
+        "symbol": "test_r021_i2_nu_missing_and_projection",
+        "line": 57,
+        "last_line": 70
+      }
+    },
+    {
+      "id": "test_r021_i3_legal_sources_null_and_two_tanh",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_living_core_reference.py",
+        "symbol": "test_r021_i3_legal_sources_null_and_two_tanh",
+        "line": 73,
+        "last_line": 99
+      }
+    },
+    {
+      "id": "test_r021_i4_formal_group_qkv",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_living_core_reference.py",
+        "symbol": "test_r021_i4_formal_group_qkv",
+        "line": 102,
+        "last_line": 115
+      }
+    },
+    {
+      "id": "test_r021_i5_query_read_and_head_order",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_living_core_reference.py",
+        "symbol": "test_r021_i5_query_read_and_head_order",
+        "line": 201,
+        "last_line": 220
+      }
+    },
+    {
+      "id": "test_r021_i6_coverage_stays_inside_source",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_living_core_reference.py",
+        "symbol": "test_r021_i6_coverage_stays_inside_source",
+        "line": 238,
+        "last_line": 251
+      }
+    },
+    {
+      "id": "test_r021_i6_mixture_and_no_source",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_living_core_reference.py",
+        "symbol": "test_r021_i6_mixture_and_no_source",
+        "line": 223,
+        "last_line": 235
+      }
+    },
+    {
+      "id": "test_r021_target_is_consumed_after_prediction",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_living_core_reference.py",
+        "symbol": "test_r021_target_is_consumed_after_prediction",
+        "line": 254,
+        "last_line": 264
+      }
+    }
+  ],
+  "coverage_matrix": [
+    {
+      "equation": "I1",
+      "spec": "plans/reference/SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md",
+      "sources": [
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "BytePatchEncoder.context",
+          "line": 130,
+          "last_line": 137
+        },
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "BytePatchEncoder.patches",
+          "line": 139,
+          "last_line": 143
+        },
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "BytePatchEncoder.goal_vector",
+          "line": 145,
+          "last_line": 151
+        },
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "LivingCoreReference.observe",
+          "line": 619,
+          "last_line": 624
+        }
+      ],
+      "parameters": [
+        "encoder.embedding.weight",
+        "encoder.input.weight",
+        "encoder.input.bias",
+        "encoder.convolutions.0.weight",
+        "encoder.convolutions.0.bias",
+        "encoder.convolutions.1.weight",
+        "encoder.convolutions.1.bias",
+        "encoder.convolutions.2.weight",
+        "encoder.convolutions.2.bias",
+        "encoder.event.weight",
+        "encoder.event.bias",
+        "encoder.goal.weight",
+        "encoder.goal.bias"
+      ],
+      "registered_parameter_prefixes": [
+        "encoder"
+      ],
+      "state_or_intermediate": [
+        "event patches",
+        "goal",
+        "raw-byte positions"
+      ],
+      "check_ids": [
+        "test_r021_i1_patch_pooling_and_causality",
+        "test_r021_target_is_consumed_after_prediction"
+      ],
+      "status": "forward_checked"
+    },
+    {
+      "equation": "I2",
+      "spec": "plans/reference/SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md",
+      "sources": [
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "LivingCoreReference.update_nu",
+          "line": 348,
+          "last_line": 362
+        }
+      ],
+      "parameters": [
+        "nu_projection.weight",
+        "nu_projection.bias"
+      ],
+      "registered_parameter_prefixes": [
+        "nu_projection"
+      ],
+      "state_or_intermediate": [
+        "nu_ema",
+        "known/missing"
+      ],
+      "check_ids": [
+        "test_r021_i2_nu_missing_and_projection"
+      ],
+      "status": "forward_checked"
+    },
+    {
+      "equation": "I3",
+      "spec": "plans/reference/SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md",
+      "sources": [
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "LivingCoreReference.source_view",
+          "line": 311,
+          "last_line": 346
+        },
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "EpisodicRead.forward",
+          "line": 168,
+          "last_line": 178
+        }
+      ],
+      "parameters": [
+        "episodic.null_key",
+        "episodic.null_value",
+        "episodic.a.weight",
+        "episodic.h.weight",
+        "episodic.g.weight",
+        "episodic.meta.weight",
+        "episodic.meta.bias",
+        "episodic.second.weight",
+        "episodic.second.bias",
+        "episodic.score.weight",
+        "episodic.score.bias",
+        "episodic.value.weight",
+        "episodic.value.bias",
+        "episodic.value_meta.weight"
+      ],
+      "registered_parameter_prefixes": [
+        "episodic"
+      ],
+      "state_or_intermediate": [
+        "legal source positions",
+        "null",
+        "r_i"
+      ],
+      "check_ids": [
+        "test_r021_i3_legal_sources_null_and_two_tanh",
+        "test_r021_current_encoding_and_world_heads"
+      ],
+      "status": "forward_checked"
+    },
+    {
+      "equation": "I4",
+      "spec": "plans/reference/SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md",
+      "sources": [
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "LivingCoreReference.messages",
+          "line": 364,
+          "last_line": 370
+        }
+      ],
+      "parameters": [
+        "message_q.0.weight",
+        "message_q.1.weight",
+        "message_k.0.weight",
+        "message_k.1.weight",
+        "message_v.0.weight",
+        "message_v.1.weight",
+        "message_goal.weight"
+      ],
+      "registered_parameter_prefixes": [
+        "message_q",
+        "message_k",
+        "message_v",
+        "message_goal"
+      ],
+      "state_or_intermediate": [
+        "old H",
+        "messages"
+      ],
+      "check_ids": [
+        "test_r021_i4_formal_group_qkv"
+      ],
+      "status": "forward_checked"
+    },
+    {
+      "equation": "F_READ",
+      "spec": "plans/reference/SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md",
+      "sources": [
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "LivingCoreReference.read_fast",
+          "line": 372,
+          "last_line": 389
+        }
+      ],
+      "parameters": [
+        "fast_queries.0.weight",
+        "fast_queries.0.bias",
+        "fast_queries.1.weight",
+        "fast_queries.1.bias",
+        "fast_queries.2.weight",
+        "fast_queries.2.bias",
+        "fast_queries.3.weight",
+        "fast_queries.3.bias",
+        "fast_outputs.0.weight",
+        "fast_outputs.0.bias",
+        "fast_outputs.1.weight",
+        "fast_outputs.1.bias"
+      ],
+      "registered_parameter_prefixes": [
+        "fast_queries",
+        "fast_outputs"
+      ],
+      "state_or_intermediate": [
+        "old F",
+        "F transpose query",
+        "f_i"
+      ],
+      "check_ids": [
+        "test_r021_fast_read_and_dynamics"
+      ],
+      "status": "forward_checked"
+    },
+    {
+      "equation": "I5",
+      "spec": "plans/reference/SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md",
+      "sources": [
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "QueryRead.forward",
+          "line": 194,
+          "last_line": 207
+        },
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "LivingCoreReference.step",
+          "line": 464,
+          "last_line": 595
+        }
+      ],
+      "parameters": [
+        "xi.weight",
+        "xi.bias",
+        "readout.query.0.weight",
+        "readout.query.1.weight",
+        "readout.keys.0.weight",
+        "readout.keys.1.weight",
+        "readout.keys.2.weight",
+        "readout.keys.3.weight",
+        "readout.values.0.weight",
+        "readout.values.1.weight",
+        "readout.values.2.weight",
+        "readout.values.3.weight",
+        "readout.output.weight"
+      ],
+      "registered_parameter_prefixes": [
+        "xi",
+        "readout"
+      ],
+      "state_or_intermediate": [
+        "updated H",
+        "xi",
+        "z",
+        "ordered head concatenation"
+      ],
+      "check_ids": [
+        "test_r021_i5_query_read_and_head_order"
+      ],
+      "status": "forward_checked"
+    },
+    {
+      "equation": "I6",
+      "spec": "plans/reference/SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md",
+      "sources": [
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "CopyExpression.forward",
+          "line": 224,
+          "last_line": 244
+        },
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "LivingCoreReference.consume_output",
+          "line": 597,
+          "last_line": 617
+        },
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "LivingCoreReference.align_positions",
+          "line": 446,
+          "last_line": 462
+        },
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "LivingCoreReference.score_targets",
+          "line": 626,
+          "last_line": 652
+        }
+      ],
+      "parameters": [
+        "expression.coverage",
+        "expression.z.weight",
+        "expression.a.weight",
+        "expression.meta.weight",
+        "expression.position.weight",
+        "expression.goal.weight",
+        "expression.goal.bias",
+        "expression.score.weight",
+        "expression.generate.weight",
+        "expression.generate.bias",
+        "expression.mix.weight",
+        "expression.mix.bias",
+        "expression.continuation.weight",
+        "expression.continuation.bias"
+      ],
+      "registered_parameter_prefixes": [
+        "expression"
+      ],
+      "state_or_intermediate": [
+        "copy/generation distribution",
+        "coverage",
+        "prior",
+        "position keys"
+      ],
+      "check_ids": [
+        "test_r021_i6_mixture_and_no_source",
+        "test_r021_i6_coverage_stays_inside_source",
+        "test_r021_target_is_consumed_after_prediction"
+      ],
+      "status": "forward_checked"
+    },
+    {
+      "equation": "DYNAMICS",
+      "spec": "plans/reference/SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md",
+      "sources": [
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "state_normalize",
+          "line": 101,
+          "last_line": 102
+        },
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "unit_ball",
+          "line": 105,
+          "last_line": 106
+        },
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "LivingCoreReference.step",
+          "line": 464,
+          "last_line": 595
+        }
+      ],
+      "parameters": [
+        "W",
+        "U",
+        "V",
+        "R",
+        "P",
+        "tau_logit"
+      ],
+      "registered_parameter_prefixes": [
+        "W",
+        "U",
+        "V",
+        "R",
+        "P",
+        "tau_logit"
+      ],
+      "state_or_intermediate": [
+        "H",
+        "seven-block x",
+        "preactivation"
+      ],
+      "check_ids": [
+        "test_r021_fast_read_and_dynamics",
+        "test_r021_budgets_and_malformed_interfaces_fail"
+      ],
+      "status": "forward_checked"
+    },
+    {
+      "equation": "F_WRITE",
+      "spec": "plans/reference/SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md",
+      "sources": [
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "LivingCoreReference.edit_fast",
+          "line": 391,
+          "last_line": 403
+        },
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "LivingCoreReference.write_fast",
+          "line": 405,
+          "last_line": 444
+        }
+      ],
+      "parameters": [
+        "write_heads.0.0.weight",
+        "write_heads.0.0.bias",
+        "write_heads.0.2.weight",
+        "write_heads.0.2.bias",
+        "write_heads.1.0.weight",
+        "write_heads.1.0.bias",
+        "write_heads.1.2.weight",
+        "write_heads.1.2.bias"
+      ],
+      "registered_parameter_prefixes": [
+        "write_heads"
+      ],
+      "state_or_intermediate": [
+        "F",
+        "continuous chi",
+        "per-head hard permission"
+      ],
+      "check_ids": [
+        "test_r021_continuous_fast_update_and_permissions"
+      ],
+      "status": "forward_checked"
+    },
+    {
+      "equation": "WORLD_FORWARD",
+      "spec": "plans/reference/SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md",
+      "sources": [
+        {
+          "file": "taiji/living_core.py",
+          "symbol": "LivingCoreReference.step",
+          "line": 464,
+          "last_line": 595
+        }
+      ],
+      "parameters": [
+        "world.0.0.weight",
+        "world.0.0.bias",
+        "world.0.2.weight",
+        "world.0.2.bias",
+        "world.1.0.weight",
+        "world.1.0.bias",
+        "world.1.2.weight",
+        "world.1.2.bias",
+        "world.2.0.weight",
+        "world.2.0.bias",
+        "world.2.2.weight",
+        "world.2.2.bias"
+      ],
+      "registered_parameter_prefixes": [
+        "world"
+      ],
+      "state_or_intermediate": [
+        "3 prediction/reward heads; no targets or update"
+      ],
+      "check_ids": [
+        "test_r021_current_encoding_and_world_heads"
+      ],
+      "status": "forward_checked"
+    }
+  ],
+  "parameter_inventory": [
+    {
+      "name": "W",
+      "shape": [
+        2,
+        8,
+        56
+      ],
+      "numel": 896,
+      "requires_grad": true,
+      "forward_owner": [
+        "DYNAMICS"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "U",
+      "shape": [
+        2,
+        8,
+        2
+      ],
+      "numel": 32,
+      "requires_grad": true,
+      "forward_owner": [
+        "DYNAMICS"
+      ],
+      "update_owner": "Psi",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "V",
+      "shape": [
+        2,
+        56,
+        2
+      ],
+      "numel": 224,
+      "requires_grad": true,
+      "forward_owner": [
+        "DYNAMICS"
+      ],
+      "update_owner": "Psi",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "R",
+      "shape": [
+        2,
+        12,
+        56
+      ],
+      "numel": 1344,
+      "requires_grad": true,
+      "forward_owner": [
+        "DYNAMICS"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "P",
+      "shape": [
+        2,
+        8,
+        12
+      ],
+      "numel": 192,
+      "requires_grad": true,
+      "forward_owner": [
+        "DYNAMICS"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "tau_logit",
+      "shape": [
+        2
+      ],
+      "numel": 2,
+      "requires_grad": true,
+      "forward_owner": [
+        "DYNAMICS"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "encoder.embedding.weight",
+      "shape": [
+        257,
+        64
+      ],
+      "numel": 16448,
+      "requires_grad": true,
+      "forward_owner": [
+        "I1"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "encoder.input.weight",
+      "shape": [
+        8,
+        64
+      ],
+      "numel": 512,
+      "requires_grad": true,
+      "forward_owner": [
+        "I1"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "encoder.input.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "I1"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "encoder.convolutions.0.weight",
+      "shape": [
+        8,
+        8,
+        3
+      ],
+      "numel": 192,
+      "requires_grad": true,
+      "forward_owner": [
+        "I1"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "encoder.convolutions.0.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "I1"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "encoder.convolutions.1.weight",
+      "shape": [
+        8,
+        8,
+        3
+      ],
+      "numel": 192,
+      "requires_grad": true,
+      "forward_owner": [
+        "I1"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "encoder.convolutions.1.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "I1"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "encoder.convolutions.2.weight",
+      "shape": [
+        8,
+        8,
+        3
+      ],
+      "numel": 192,
+      "requires_grad": true,
+      "forward_owner": [
+        "I1"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "encoder.convolutions.2.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "I1"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "encoder.event.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I1"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "encoder.event.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "I1"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "encoder.goal.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I1"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "encoder.goal.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "I1"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "nu_projection.weight",
+      "shape": [
+        8,
+        16
+      ],
+      "numel": 128,
+      "requires_grad": true,
+      "forward_owner": [
+        "I2"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "nu_projection.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "I2"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "message_q.0.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I4"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "message_q.1.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I4"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "message_k.0.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I4"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "message_k.1.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I4"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "message_v.0.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I4"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "message_v.1.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I4"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "message_goal.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I4"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "fast_queries.0.weight",
+      "shape": [
+        4,
+        32
+      ],
+      "numel": 128,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_READ"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "fast_queries.0.bias",
+      "shape": [
+        4
+      ],
+      "numel": 4,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_READ"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "fast_queries.1.weight",
+      "shape": [
+        4,
+        32
+      ],
+      "numel": 128,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_READ"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "fast_queries.1.bias",
+      "shape": [
+        4
+      ],
+      "numel": 4,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_READ"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "fast_queries.2.weight",
+      "shape": [
+        4,
+        32
+      ],
+      "numel": 128,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_READ"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "fast_queries.2.bias",
+      "shape": [
+        4
+      ],
+      "numel": 4,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_READ"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "fast_queries.3.weight",
+      "shape": [
+        4,
+        32
+      ],
+      "numel": 128,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_READ"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "fast_queries.3.bias",
+      "shape": [
+        4
+      ],
+      "numel": 4,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_READ"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "fast_outputs.0.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_READ"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "fast_outputs.0.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_READ"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "fast_outputs.1.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_READ"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "fast_outputs.1.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_READ"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "episodic.null_key",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "I3"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "episodic.null_value",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "I3"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "episodic.a.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I3"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "episodic.h.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I3"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "episodic.g.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I3"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "episodic.meta.weight",
+      "shape": [
+        8,
+        4
+      ],
+      "numel": 32,
+      "requires_grad": true,
+      "forward_owner": [
+        "I3"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "episodic.meta.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "I3"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "episodic.second.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I3"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "episodic.second.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "I3"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "episodic.score.weight",
+      "shape": [
+        1,
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "I3"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "episodic.score.bias",
+      "shape": [
+        1
+      ],
+      "numel": 1,
+      "requires_grad": true,
+      "forward_owner": [
+        "I3"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "episodic.value.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I3"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "episodic.value.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "I3"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "episodic.value_meta.weight",
+      "shape": [
+        8,
+        4
+      ],
+      "numel": 32,
+      "requires_grad": true,
+      "forward_owner": [
+        "I3"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "xi.weight",
+      "shape": [
+        8,
+        87
+      ],
+      "numel": 696,
+      "requires_grad": true,
+      "forward_owner": [
+        "I5"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "xi.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "I5"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "readout.query.0.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I5"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "readout.query.1.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I5"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "readout.keys.0.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I5"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "readout.keys.1.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I5"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "readout.keys.2.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I5"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "readout.keys.3.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I5"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "readout.values.0.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I5"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "readout.values.1.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I5"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "readout.values.2.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I5"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "readout.values.3.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I5"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "readout.output.weight",
+      "shape": [
+        8,
+        16
+      ],
+      "numel": 128,
+      "requires_grad": true,
+      "forward_owner": [
+        "I5"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "expression.coverage",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "I6"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "expression.z.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I6"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "expression.a.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I6"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "expression.meta.weight",
+      "shape": [
+        8,
+        4
+      ],
+      "numel": 32,
+      "requires_grad": true,
+      "forward_owner": [
+        "I6"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "expression.position.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I6"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "expression.goal.weight",
+      "shape": [
+        8,
+        8
+      ],
+      "numel": 64,
+      "requires_grad": true,
+      "forward_owner": [
+        "I6"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "expression.goal.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "I6"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "expression.score.weight",
+      "shape": [
+        1,
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "I6"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "expression.generate.weight",
+      "shape": [
+        257,
+        72
+      ],
+      "numel": 18504,
+      "requires_grad": true,
+      "forward_owner": [
+        "I6"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "expression.generate.bias",
+      "shape": [
+        257
+      ],
+      "numel": 257,
+      "requires_grad": true,
+      "forward_owner": [
+        "I6"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "expression.mix.weight",
+      "shape": [
+        1,
+        80
+      ],
+      "numel": 80,
+      "requires_grad": true,
+      "forward_owner": [
+        "I6"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "expression.mix.bias",
+      "shape": [
+        1
+      ],
+      "numel": 1,
+      "requires_grad": true,
+      "forward_owner": [
+        "I6"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "expression.continuation.weight",
+      "shape": [
+        1,
+        72
+      ],
+      "numel": 72,
+      "requires_grad": true,
+      "forward_owner": [
+        "I6"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "expression.continuation.bias",
+      "shape": [
+        1
+      ],
+      "numel": 1,
+      "requires_grad": true,
+      "forward_owner": [
+        "I6"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "write_heads.0.0.weight",
+      "shape": [
+        8,
+        41
+      ],
+      "numel": 328,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_WRITE"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "write_heads.0.0.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_WRITE"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "write_heads.0.2.weight",
+      "shape": [
+        44,
+        8
+      ],
+      "numel": 352,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_WRITE"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "write_heads.0.2.bias",
+      "shape": [
+        44
+      ],
+      "numel": 44,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_WRITE"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "write_heads.1.0.weight",
+      "shape": [
+        8,
+        41
+      ],
+      "numel": 328,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_WRITE"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "write_heads.1.0.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_WRITE"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "write_heads.1.2.weight",
+      "shape": [
+        44,
+        8
+      ],
+      "numel": 352,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_WRITE"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "write_heads.1.2.bias",
+      "shape": [
+        44
+      ],
+      "numel": 44,
+      "requires_grad": true,
+      "forward_owner": [
+        "F_WRITE"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "world.0.0.weight",
+      "shape": [
+        8,
+        16
+      ],
+      "numel": 128,
+      "requires_grad": true,
+      "forward_owner": [
+        "WORLD_FORWARD"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "world.0.0.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "WORLD_FORWARD"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "world.0.2.weight",
+      "shape": [
+        9,
+        8
+      ],
+      "numel": 72,
+      "requires_grad": true,
+      "forward_owner": [
+        "WORLD_FORWARD"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "world.0.2.bias",
+      "shape": [
+        9
+      ],
+      "numel": 9,
+      "requires_grad": true,
+      "forward_owner": [
+        "WORLD_FORWARD"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "world.1.0.weight",
+      "shape": [
+        8,
+        16
+      ],
+      "numel": 128,
+      "requires_grad": true,
+      "forward_owner": [
+        "WORLD_FORWARD"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "world.1.0.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "WORLD_FORWARD"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "world.1.2.weight",
+      "shape": [
+        9,
+        8
+      ],
+      "numel": 72,
+      "requires_grad": true,
+      "forward_owner": [
+        "WORLD_FORWARD"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "world.1.2.bias",
+      "shape": [
+        9
+      ],
+      "numel": 9,
+      "requires_grad": true,
+      "forward_owner": [
+        "WORLD_FORWARD"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "world.2.0.weight",
+      "shape": [
+        8,
+        16
+      ],
+      "numel": 128,
+      "requires_grad": true,
+      "forward_owner": [
+        "WORLD_FORWARD"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "world.2.0.bias",
+      "shape": [
+        8
+      ],
+      "numel": 8,
+      "requires_grad": true,
+      "forward_owner": [
+        "WORLD_FORWARD"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "world.2.2.weight",
+      "shape": [
+        9,
+        8
+      ],
+      "numel": 72,
+      "requires_grad": true,
+      "forward_owner": [
+        "WORLD_FORWARD"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    },
+    {
+      "name": "world.2.2.bias",
+      "shape": [
+        9
+      ],
+      "numel": 9,
+      "requires_grad": true,
+      "forward_owner": [
+        "WORLD_FORWARD"
+      ],
+      "update_owner": "Theta",
+      "gradient_validation": "not_run_stage_09.2.2"
+    }
+  ],
+  "unowned_parameters": [],
+  "explicitly_not_implemented": [
+    {
+      "equation": "learning_ownership_and_actual_updates",
+      "stage": "09.2.2"
+    },
+    {
+      "equation": "coverage_birth_and_noise_calibration",
+      "stage": "09.2.3"
+    },
+    {
+      "equation": "encoder_state_migration",
+      "stage": "09.2.3"
+    },
+    {
+      "equation": "full_subject_restore_and_next_update",
+      "stage": "09.2.4"
+    },
+    {
+      "equation": "learned_endogenous_activity_and_world_targets",
+      "stage": "09.3/09.4"
+    },
+    {
+      "equation": "meta_learning_consolidation_and_retention",
+      "stage": "09.4"
+    }
+  ],
+  "source_hashes": {
+    "plans/reference/SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md": "56832066aa11f590331b7c55c4a0ede245c42ac7afb6763d374de09a9a193a8e",
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "tests/taiji_native/test_living_core_reference.py": "087fa3c84518bfd3d423679a9509b59914aa275d0e3e2d3fa100026a0d46cb9b",
+    "scripts/training/verify_taiji_living_core_reference.py": "23bad4620f3b619da5e2baea5ae589a91fac10a17ae2154a11235a6357a22226"
+  },
+  "optimizer_steps": 0,
+  "backward_calls": 0,
+  "data_splits_read": [],
+  "full_subject_restore": false,
+  "default_model_replaced": false,
+  "cpu_seconds_checks_only": 1.609375,
+  "wall_seconds_checks_only": 1.8384702999610454,
+  "limits": "Forward and explicit coverage only. Trainable registration is not gradient ownership validation. No full subject, learning, growth, retention, recovery, pricing or capability approval is implied."
+}

@@ -656,7 +656,7 @@ v1从出生时就创建完整主体状态与事件钟，bootstrap是它的学习
 
 这些是实现划分而非五个独立认知模型；参数/状态只有一个主体所有者和事件时间线。必要时可合并文件，不能以文件齐备作算法完成标准。
 
-**唯一推荐下一步：先实现并审查一个纯计算参考微步及一次结构出生，覆盖实际梯度和完整状态恢复；再根据实测定义最小生命片段与定价合同。** 首个算子应覆盖H/F/软寻址/输出/credit与出生的一条完整链，而非先搭UI或复制所有外围服务。
+首次实现要求是审查实际H/F/软寻址/输出，再依次验证credit、出生与完整恢复；不能先搭UI或复制外围服务。R021参考前向现见§25，实际阶段和唯一后继只在[MAINLINE](../MAINLINE.md#执行位置)维护，本节不保留另一条队首。
 
 本件完成09.1的首稿算法设计交付；并不意味着算法已定型、09.2实现已通过、实验获准或模型可采用。根目标与现行约束保持，现有训练进程不在本轮操作范围。
 
@@ -976,4 +976,31 @@ C=\Delta X^\top,\qquad G_{new}=\nabla_{R_{new}}L=B^\top C.
 
 条件化出生的**实际前向含门**，以autograd和所有6个入边坐标、eps=1e-4/1e-5/1e-6核对；尺度匹配atol=1e-11、rtol=1e-6，置零与翻符号导数负对照均被拒绝。全程float64、0优化器步骤、未读数据分区、未建完整主体；报告绑定脚本SHA。其passed表示预审检查成立，特别包含原命题被反例推翻，不表示全部提案为真。
 
-默认复核命令：`python scripts/training/check_taiji_growth_credit_v12_math.py`；`--output`只写不存在的目标，不覆盖旧证据。09.2.1仍先交付正式图，09.2.3把本节候选放入该图检验，09.4/09.7后续按冻结合同判断真实效力。未通过不变式、信用、恢复或资源门，不进入定价/正式训练；负结果、不确定、工程失败和预算停止仍按原出口结案。
+默认复核命令：`python scripts/training/check_taiji_growth_credit_v12_math.py`；`--output`只写不存在的目标，不覆盖旧证据。该局部预审不代签正式图：09.2.1交付现见§25，09.2.3仍需把出生候选放入该图检验，09.4/09.7按后继冻结合同判断真实效力。未通过不变式、信用、恢复或资源门，不进入定价/正式训练；负结果、不确定、工程失败和预算停止仍按原出口结案。
+
+## 25. R021正式参考图与接口冻结（2026-10-31）
+
+[R021工程合同](SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md)在实现前唯一确定六项接口：I1逐8字节patch均值与投影、I2八读数/缺失映射、I3两层tanh情景/null/value、I4群间Q/K/V形状、I5查询多头拼接、I6位置先验及coverage递推。它补充实现约定，不改写v1.1历史报告或授予训练。
+
+诊断/覆盖软门固定为非负且和为1的softmax凸分区，实际支路与诊断共用同一门。覆盖比较不再容许未归一任意门。首版K≤4、R_max=8、枚举最多6561状态及1CPU秒/2墙钟秒；数值秩、噪声标定、每支路绝对信用底线、跨窗检查与超限/不可判停止规则见合同§4。未标定不准出生，工程参数不是任务收益阈值；它们仍待09.2.3实现。
+
+正式代码为[living_core.py](../../taiji/living_core.py)，检查为[12项前向oracle](../../tests/taiji_native/test_living_core_reference.py)，机器矩阵为[R021回执](../../reports/taiji_core_reference_r021_forward_coverage_20261031.json)。矩阵含真实源码行号、101个注册参数张量/形状/定义归属、状态与检查ID；没有用h.mean输出、固定读矩阵或总梯度范数代签。
+
+| 方程/接口 | 实际源码符号 | 参数/状态 | 检查ID后缀（完整前缀test_r021_） |
+|---|---|---|---|
+| I1 | BytePatchEncoder.context/patches/goal_vector、observe | embedding/conv/投影，逐字节和patch事件 | i1_patch_pooling_and_causality |
+| I2 | update_nu | nu_projection、nu_ema、known/missing | i2_nu_missing_and_projection |
+| I3 | source_view、EpisodicRead.forward | 两层打分/value/null，当前原文图 | i3_legal_sources_null_and_two_tanh |
+| I4 | messages | 逐群Q/K/V、共享Q_g、旧H | i4_formal_group_qkv |
+| 快读 | read_fast | 可学Q^F/W^F、旧F | fast_read_and_dynamics |
+| I5 | QueryRead.forward、step | xi、多头Q/K/V、W_z、更新H | i5_query_read_and_head_order |
+| I6 | CopyExpression.forward、consume_output、score_targets | 生成/复制/连续门、coverage/prior/位置keys | i6_mixture_and_no_source、i6_coverage_stays_inside_source、target_is_consumed_after_prediction |
+| 动力学 | step | W/U/V/R/P/tau、完整7d输入 | fast_read_and_dynamics |
+| 快写 | write_fast/edit_fast | 可学状态条件门、整体chi、F、硬许可 | continuous_fast_update_and_permissions |
+| 世界前向 | step | 三个实际神经预测/reward头，无目标/更新 | current_encoding_and_world_heads |
+
+12项float64前向检查采用atol=rtol=1e-12（因果前缀等另用逐值相等），无backward、optimizer、数据分区或产品默认替换。小配置与首版形状使用相同算子/矩阵结构，回执明确列出小配置，不借它推定默认规模成本。requires_grad只表示注册，不表示负责参数已获正确或有效信用。
+
+09.2.1只完成R021范围。09.2.2逐组一阶/二阶/float32实际更新；09.2.3覆盖出生/随机门/抵消/非单调重放与编码迁移；09.2.4完整主体保存/独立恢复/下一更新都尚未验收。当前状态包含H/F/nu与输出位置状态及id，不含完整经历journal/optimizer等，因此不称完整主体已交付；活动策略与慢学习闭环同样明确未实现。
+
+五份[历史独立审计](TAIJI_CORE_ALGORITHM_V1_EVALUATION_20261031.md)已按[入库身份](../manifests/taiji_core_v11_e1_audit_admission_20261031.json)固定为64fdf8576的v1.1/E1。原CRLF源码/JSON字节封存，可读件仅做LF/静态兼容、历史版本保护和范围标记；历史方法局限保留说明，不将旧通过或其玩具优化转移到v1.2。当前未重跑该优化，旧11/22/14报告保持不变。

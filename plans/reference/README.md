@@ -18,6 +18,8 @@ R 编号保留原合同与实验身份；实施统一使用总计划步骤 01–
 | [08](../MAINLINE.md#3-唯一执行队列) | [R5b 复制轨候选合同](SPEC-NATIVE-CONTENT-CORE_R5B_COPYTRACK_CANDIDATE_20261030.md) | 复制轨、自前缀日程、基线复用与有限出口 |
 | [08 同面后继](../MAINLINE.md#3-唯一执行队列) | [R5c 复制执行精度候选合同](SPEC-NATIVE-CONTENT-CORE_R5C_COPYEXPR_CANDIDATE_20261031.md) | 已批准并按原合同结案`FAIL_BEHAVIOR`，证据见总计划与原合同；保留内容/表达资产，不再发布待批准指令 |
 | [09](../MAINLINE.md#3-唯一执行队列) | [核心算法主稿：v1.1底座＋v1.2生长信用候选](TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md) | §24集中局部秩界、覆盖出生、重放耦合假说与反例；不是冻结实验或已实现模型 |
+| [09工程接口](../MAINLINE.md#3-唯一执行队列) | [R021正式参考图接口](SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md) | 六项唯一接口、凸分区软门、覆盖工程界和阶段边界；不授予训练 |
+| [09历史证据](../MAINLINE.md#3-唯一执行队列) | [v1.1/E1独立审计](TAIJI_CORE_ALGORITHM_V1_EVALUATION_20261031.md) | 对象64fdf8576；原字节/可读件映射见入库身份，不是v1.2重新裁决 |
 | [10](../MAINLINE.md#3-唯一执行队列) | T3 合同按任务需要建立 | 自然目标、有限行动与后果 |
 | [11](../MAINLINE.md#3-唯一执行队列) | 自然连续任务合同按对应准入建立 | 自然中文连续任务与 L3 |
 | [12](../MAINLINE.md#3-唯一执行队列) | 跨会话合同按对应准入建立 | 反馈学习、旧能力保持与 L4 |

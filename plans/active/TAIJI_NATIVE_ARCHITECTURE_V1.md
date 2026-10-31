@@ -127,6 +127,8 @@ ordered-pair 规模上，slot binding、boundary consistency 和 random binding 
 
 v1.2生长信用与覆盖候选见主稿§24：秩只约束局部独立梯度方向，条件软门的秩和可包含重复，重放/巩固不保证单调增秩；覆盖分配与随机/置换门、全局SVD/GradMax、仅重放、无生长及同最终容量比较。14项局部预审包含这些反例，不签正式图、真实成长或新颖性。预期自我修改模型在09.4基础证据后研究，当前不新增认知组件。
 
+R021工程交付：六项实现接口和覆盖门的softmax凸分区已冻结，实际神经前向位于`taiji/living_core.py`。12项前向oracle与参数/状态/源码覆盖矩阵只签09.2.1范围；完整信用/实际更新、出生/迁移、完整主体恢复尚未通过。规范补全见[工程合同](../reference/SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md)，当前交付边界见[算法§25](../reference/TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md#25-r021正式参考图与接口冻结20261031)。
+
 ## 1. 身份与所有权
 
 ```text

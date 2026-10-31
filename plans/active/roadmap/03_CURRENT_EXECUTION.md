@@ -58,6 +58,16 @@
 
 针对性查重发现GradMax、TINY、Low-Rank Learning by Design、GSS、Subspace Trap及Neurogenesis Deep Learning等直接相关先例；不能据当前证据声称“唯一未被覆盖”或确定新颖性等级。保留覆盖算子/耦合为候选贡献，第二阶段与延期范围按总计划决策，本台账不另发队首。
 
+## 2026-10-31 R021正式前向与历史审计入库
+
+按所有者要求，先冻结[六接口/凸分区门/覆盖工程界](../../reference/SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md)，再交付实际编码、情景/null读取、可学群间/快QKV、查询多头、动力学、连续chi与位置复制/生成。 [R021回执](../../../reports/taiji_core_reference_r021_forward_coverage_20261031.json)给出12项严格float64前向检查、10行方程覆盖矩阵和101个参数张量清单；backward_calls=0、optimizer_steps=0、data_splits_read=[]。小配置44,905参数只作同构工程夹具，不是默认模型规模或定价。
+
+覆盖出生/噪声标定、实际学习信用、编码迁移和完整主体恢复都明列未实现/未验；不据前向通过签新模型有效。当前后继只见总计划，不在本台账新增队列。
+
+五份v1.1/E1独立审计按[历史入库身份](../../manifests/taiji_core_v11_e1_audit_admission_20261031.json)与[原字节包](../../../reports/taiji_core_v11_e1_originals_20261031.tar.gz)保存。历史设计64fdf8576及原脚本/report绑定经核对；可读脚本加历史版本检查、两处静态修正及LF规范化，原报告不冒称绑定新兼容脚本，已知方法局限留在历史说明中。未重跑其300步玩具优化，亦非v1.2重新裁决。
+
+入库维护检查：参考前向、架构/命名、单主线、报告索引行尾与凭据守卫合计50项通过；Ruff主规则/B-SIM、Black、298条相关内部链接及source/hash绑定通过。历史脚本在探针执行前拒绝当前v1.2设计，未创建输出或运行优化。只代表本地受影响检查，不宣称远端CI或能力门通过。
+
 ## 当前候选的审批依据
 
 | 统一步骤 | 批准/边界事实 | 原始依据 |

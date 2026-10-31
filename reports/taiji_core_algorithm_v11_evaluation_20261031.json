@@ -1,0 +1,629 @@
+{
+  "schema": "taiji-core-algorithm-v11-evaluation-evidence",
+  "date": "2026-10-31",
+  "script": "scripts/training/evaluate_taiji_core_algorithm_v11.py",
+  "script_sha256": "18ced651e50fb79efee260b635067c084131323e5e12fbd8070bebaa437c2927",
+  "draft": "plans/reference/TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md",
+  "draft_sha256": "1937449b2e3491eb9b227d122bbaef6e1944343920ace927fff7970d7eb283a1",
+  "baseline_commit": "64fdf8576ce29343f8bf0109de2834cb872a6ac9",
+  "scope": "Independent equation/evaluation probes and evidence audit for the 09.1 core-algorithm v1.1 draft. Synthetic tensors only; no corpus, checkpoint, query, holdout or sealed surface; no model training.",
+  "environment": {
+    "python": "3.12.10",
+    "numpy": "2.5.1",
+    "torch": "2.13.0+cpu",
+    "device": "cpu",
+    "seed": 20261031
+  },
+  "checks": [
+    {
+      "name": "state_box_preserved_all_tau_dt",
+      "category": "math",
+      "passed": true,
+      "value": 0.9999999999995665,
+      "limit": 1.0,
+      "scope": "Synthetic bounded initial state; does not prove attractors or semantics."
+    },
+    {
+      "name": "tau_bounded_sigmoid_mapping",
+      "category": "math",
+      "passed": true,
+      "value": {
+        "initial_tau_inverse": {
+          "1.0": {
+            "rho": -5.537334267018537,
+            "recovered_tau": 1.0
+          },
+          "4.0": {
+            "rho": -3.567518597109669,
+            "recovered_tau": 4.0
+          },
+          "16.0": {
+            "rho": -1.9776588473698935,
+            "recovered_tau": 16.0
+          },
+          "64.0": {
+            "rho": -0.007843177461025893,
+            "recovered_tau": 64.0
+          }
+        },
+        "leak_tau_min_dt1": 0.8646647167633873
+      },
+      "scope": "Logical microstep dt=1; the draft does not fix a mapping from microsteps to discount time units (§9.2)."
+    },
+    {
+      "name": "state_and_query_normalisers_jacobian",
+      "category": "math",
+      "passed": true,
+      "value": {
+        "state_norm_zero_jacobian": 1.0,
+        "unit_ball_zero_jacobian": 1.0,
+        "state_norm_worst_spectral_norm": 0.9999999980147436,
+        "unit_ball_worst_spectral_norm": 0.9999999835589353,
+        "old_eps_reference_gain_on_1e-8_input": 999.9999999500001
+      },
+      "scope": "Fixed spectral-norm claim only; float32 tail behaviour is not the model's."
+    },
+    {
+      "name": "proximal_erase_closed_form_and_bound",
+      "category": "math",
+      "passed": true,
+      "value": {
+        "max_eigenvalue_error": 2.914335439641036e-16,
+        "max_objective_gradient": 7.51620987671231e-14,
+        "worst_composed_operator_norm": 0.9999990878943713,
+        "trials": 300
+      },
+      "scope": "Per-step fixed-gate bound. The draft itself does not claim a whole-network contraction result."
+    },
+    {
+      "name": "no_legal_fast_memory_amplification",
+      "category": "math",
+      "passed": true,
+      "value": {
+        "worst_norm_ratio_over_2000_no_write_steps": 0.7947045647592101,
+        "legacy_eps_normalised_tiny_key_norm": 0.009900990099009903,
+        "smooth_unit_ball_tiny_key_norm": 1e-08,
+        "scope_note": "The normative bound depends on the B(x) map; an implementation that keeps an epsilon normaliser loses it."
+      }
+    },
+    {
+      "name": "chi_couples_write_permission_and_decay",
+      "category": "semantics",
+      "passed": true,
+      "value": {
+        "frozen_norm_after_1000_permission_off_steps": 3.0200009392744005,
+        "norm_if_decay_ran_independently": 0.00013037720772983427,
+        "decay_fraction_applied_at_chi_0_05": 0.975
+      },
+      "limit": "Not a mathematical failure: the draft says permission 0 skips the whole update. It is a semantic contract gap: forgetting is gated by the write-strength scalar, so memory does not decay while writes are suppressed unless a separate rule is declared."
+    },
+    {
+      "name": "birth_neutrality_and_aggregate_credit",
+      "category": "math",
+      "passed": true,
+      "value": {
+        "well_conditioned": {
+          "singular_values": [
+            0.2897346204238204,
+            4.24773475371835e-17,
+            0.0,
+            0.0
+          ],
+          "effective_rank": 1,
+          "requested_units": 2,
+          "neutrality_max_abs_delta": 0.0,
+          "gradient_relative_error": 2.3817312395224645e-16,
+          "extra_mean_negative_control_ratio": 0.0625,
+          "per_unit_startup_gradient_norms": [
+            0.028973462042382048,
+            4.887692786657175e-18
+          ]
+        },
+        "rank_deficient": {
+          "singular_values": [
+            0.2897346204238204,
+            4.24773475371835e-17,
+            0.0,
+            0.0
+          ],
+          "effective_rank": 1,
+          "requested_units": 4,
+          "neutrality_max_abs_delta": 2.7755575615628914e-17,
+          "gradient_relative_error": 2.6800083889164226e-16,
+          "extra_mean_negative_control_ratio": 0.0625,
+          "per_unit_startup_gradient_norms": [
+            0.028973462042382048,
+            4.887692786657175e-18,
+            1.8650167159179167e-19,
+            1.8650167159179167e-19
+          ]
+        }
+      },
+      "limit": "When requested units exceed rank(C_i), the surplus units get exactly zero startup gradient (see per_unit_startup_gradient_norms). The draft states the non-zero-singular-value condition but fixes no rank-aware rule for r."
+    },
+    {
+      "name": "conditional_birth_four_point_witness",
+      "category": "math",
+      "passed": true,
+      "value": {
+        "C_plus": [
+          0.0,
+          -0.3807970779778824,
+          0.0
+        ],
+        "C_minus": [
+          0.0,
+          0.3807970779778823,
+          0.0
+        ],
+        "startup_gradient_norm": 0.05385283921883663,
+        "finite_difference_error": 1.734723475976807e-18,
+        "explicit_witness_max_error": 3.3306690738754696e-16,
+        "uniform_gate_C": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "random_content_blind_gate": {
+          "draws": 2000,
+          "expected_norm": 0.0,
+          "median_startup_norm": 0.034747082173609056,
+          "p90_startup_norm": 0.0478977989244761,
+          "max_startup_norm": 0.06376987329499668,
+          "true_gate_startup_norm": 0.05385283921883663,
+          "note": "The expectation over content-blind gates is zero, but a single four-point draw has large variance; a random gate can produce a large but directionally meaningless startup gradient."
+        }
+      },
+      "limit": "The witness uses a hand-chosen gate aligned with x1. Content-blind gates cancel in expectation; the draft's 'unsupervised content cluster' route for gates is an assumption, not a guarantee."
+    },
+    {
+      "name": "conditional_birth_learnability_smoke",
+      "category": "smoke",
+      "passed": true,
+      "value": {
+        "conditioned_gate": {
+          "final_loss": 4.335193858034579e-15,
+          "history": [
+            [
+              0,
+              0.5
+            ],
+            [
+              50,
+              0.00253742
+            ],
+            [
+              100,
+              6.68e-06
+            ],
+            [
+              150,
+              1e-07
+            ],
+            [
+              200,
+              0.0
+            ],
+            [
+              250,
+              0.0
+            ]
+          ],
+          "startup_gradient_norms": {
+            "r_plus": 0.03807970779778824,
+            "r_minus": 0.038079707797788236
+          }
+        },
+        "uniform_content_blind_gate": {
+          "final_loss": 0.5,
+          "history": [
+            [
+              0,
+              0.5
+            ],
+            [
+              50,
+              0.5
+            ],
+            [
+              100,
+              0.5
+            ],
+            [
+              150,
+              0.5
+            ],
+            [
+              200,
+              0.5
+            ],
+            [
+              250,
+              0.5
+            ]
+          ],
+          "startup_gradient_norms": {
+            "r_plus": 0.0,
+            "r_minus": 0.0
+          }
+        }
+      },
+      "limit": "Toy four-point optimisation only; not evidence of model-level learning, generalisation or growth benefit."
+    },
+    {
+      "name": "semi_markov_td_and_trace_reference",
+      "category": "math",
+      "passed": true,
+      "value": {
+        "durations": [
+          3,
+          7,
+          1,
+          12,
+          5
+        ],
+        "dense_delta": [
+          0.5178419437203576,
+          0.03750654649283092,
+          0.703172818418573,
+          -1.4581664404149737,
+          -0.36398123713591957
+        ],
+        "compact_delta": [
+          0.5178419437203576,
+          0.03750654649283092,
+          0.703172818418573,
+          -1.4581664404149737,
+          -0.36398123713591957
+        ],
+        "old_one_gamma_delta": [
+          0.5348540262228814,
+          0.0817542536388024,
+          0.703172818418573,
+          -1.4581664404149737,
+          -0.3624592660511545
+        ],
+        "max_old_vs_dense_gap": 0.04424770714597148,
+        "max_trace_error_compact_vs_dense": 0.0,
+        "note": "The archived check compares the same hand-written expression through numpy.power; this probe builds a per-event reference instead."
+      }
+    },
+    {
+      "name": "meta_derivative_signal_and_tolerance",
+      "category": "audit",
+      "passed": true,
+      "value": {
+        "meta_gradient": -0.1716017611805916,
+        "finite_difference_error": 3.7948158504441665e-10,
+        "author_atol": 1e-07,
+        "author_abs_threshold_over_signal": 5.82744601873644e-07,
+        "relative_error_at_author_threshold": 5.82744601873644e-07,
+        "author_reported_signal_9_37e-9_over_atol": 0.09367845679495414,
+        "interpretation": "An absolute criterion larger than the signal admits relative errors above 100%; consistency checks of autograd vs finite differences also validate the implementation, not the equation."
+      }
+    },
+    {
+      "name": "e1_fast_read_shape_and_chi_derivative",
+      "category": "math",
+      "passed": true,
+      "value": {
+        "u_dim": 32,
+        "q_dim": 5,
+        "v_read_dim": 4,
+        "f_read_dim": 8,
+        "chi_derivative_autograd": 1.3242983302694908,
+        "chi_derivative_closed_form": 1.3242983302694908,
+        "note": "Local derivative only: E1 states it holds with F_t and F_tilde fixed and away from the projection boundary; the full graph also contains gate/state dependencies."
+      }
+    },
+    {
+      "name": "archived_reports_reproduce_and_hashes_match",
+      "category": "audit",
+      "passed": true,
+      "value": {
+        "equations_rerun_identical": true,
+        "math_rerun_identical": true,
+        "sha256_match": {
+          "equations": true,
+          "math": true
+        },
+        "versions_match": true,
+        "write_once_reenforced": true,
+        "rating_counts": {
+          "strong": 8,
+          "medium": 11,
+          "weak": 10,
+          "identity": 3,
+          "trivial": 1
+        }
+      },
+      "scope": "Reproduction and integrity only; it does not upgrade the strength of individual checks."
+    }
+  ],
+  "evidence_audit": {
+    "rerun": {
+      "equations": {
+        "returncode": 0,
+        "stdout_tail": "{\"status\": \"passed_equation_properties_only\", \"checks\": 22, \"failed\": [], \"wall_seconds\": 0.4188738001976162}",
+        "stderr_tail": "",
+        "output_exists": true
+      },
+      "math_v1": {
+        "returncode": 0,
+        "stdout_tail": "{\"status\": \"passed_static_properties_only\", \"checks\": 11}",
+        "stderr_tail": "",
+        "output_exists": true
+      },
+      "write_once_second_run": {
+        "returncode": 1,
+        "stdout_tail": "",
+        "stderr_tail": "ceback (most recent call last):\n  File \"E:\\Seed\\scripts\\training\\validate_taiji_core_equations_v11.py\", line 568, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"E:\\Seed\\scripts\\training\\validate_taiji_core_equations_v11.py\", line 549, in main\n    raise FileExistsError(\"equation-validation report is write-once\")\nFileExistsError: equation-validation report is write-once",
+        "output_exists": true
+      }
+    },
+    "comparison": {
+      "equations": {
+        "identical": true,
+        "mismatches": []
+      },
+      "math_v1": {
+        "identical": true,
+        "mismatches": []
+      }
+    },
+    "hashes": {
+      "author_script": "fdc2602d9a2fb53e241b65f0f415b203910549a41a422ca0d05861176a6959a3",
+      "author_math_script": "601dc0fed5bcc74fbd2a70bd8b4fa87296c2cf2d69bf2a4dd7e5de387492d3f9",
+      "draft": "1937449b2e3491eb9b227d122bbaef6e1944343920ace927fff7970d7eb283a1",
+      "archived_report": "0b894c16c95791508d52442016de5fd440eac9e16f4e1e29ed46b922e59e73d2",
+      "archived_math_report": "3fbfc0de9bee132d2152a36e59c3c70d8e376f89cb1a31390bee5197d738b5e3"
+    },
+    "claimed_sha256": {
+      "archive_script_sha256": "fdc2602d9a2fb53e241b65f0f415b203910549a41a422ca0d05861176a6959a3",
+      "archive_math_script_sha256": "601dc0fed5bcc74fbd2a70bd8b4fa87296c2cf2d69bf2a4dd7e5de387492d3f9",
+      "actual_script_sha256": "fdc2602d9a2fb53e241b65f0f415b203910549a41a422ca0d05861176a6959a3",
+      "actual_math_script_sha256": "601dc0fed5bcc74fbd2a70bd8b4fa87296c2cf2d69bf2a4dd7e5de387492d3f9"
+    },
+    "claimed_sha256_match": {
+      "equations": true,
+      "math": true
+    },
+    "versions": {
+      "python": "3.12.10",
+      "numpy": "2.5.1",
+      "torch": "2.13.0+cpu",
+      "archive_numpy": "2.5.1",
+      "archive_torch": "2.13.0+cpu",
+      "archive_math_numpy": "2.5.1"
+    },
+    "versions_match": true,
+    "check_ratings": {
+      "original_erase_counterexample_reproduced": {
+        "rating": "strong",
+        "reason": "Reproduces the claimed growth numerically; the assertion itself only needs >1 and clips>0.",
+        "suite": "v11"
+      },
+      "revised_same_erase_trace_no_amplification": {
+        "rating": "medium",
+        "reason": "The <=1 assertion is weak on its own; the reported 4.80e-8 value is informative.",
+        "suite": "v11"
+      },
+      "proximal_erase_random_operator_bound": {
+        "rating": "weak",
+        "reason": "The operator norm bound is provable; 200 random trials only sanity-check the sampler.",
+        "suite": "v11"
+      },
+      "state_normalizer_zero_jacobian_bound": {
+        "rating": "medium",
+        "reason": "Zero-point only; the old>100 contrast is a real discriminator but the revised claim is local.",
+        "suite": "v11"
+      },
+      "query_key_zero_normalization_finite": {
+        "rating": "weak",
+        "reason": "Only finiteness and a zero-point norm bound are asserted.",
+        "suite": "v11"
+      },
+      "coupled_zero_state_jacobian_diagnostic": {
+        "rating": "weak",
+        "reason": "No bound: pass condition is merely new_norm < old_norm on one fixed case.",
+        "suite": "v11"
+      },
+      "coupled_window_finite_and_bounded": {
+        "rating": "weak",
+        "reason": "Finite scalar plus the state box that the leaky rule already guarantees.",
+        "suite": "v11"
+      },
+      "task_credit_through_encoder_state_and_memory": {
+        "rating": "weak",
+        "reason": "Passes for any gradient norm > 1e-12; measured memory-gate gradients ~1e-7 are not assessed for usefulness.",
+        "suite": "v11"
+      },
+      "coupled_gradients_finite_difference": {
+        "rating": "medium",
+        "reason": "Only the first coordinate of each parameter is compared; the threshold 1e-7 is far above the ~1e-13 errors, so it is a consistency check, not full-coordinate coverage.",
+        "suite": "v11"
+      },
+      "coupled_birth_neutral_outputs_and_states": {
+        "rating": "strong",
+        "reason": "Exact tensor equality of outputs and states at birth.",
+        "suite": "v11"
+      },
+      "coupled_birth_true_aggregate_credit": {
+        "rating": "strong",
+        "reason": "Autograd credit equals B^T C to 5e-20 against a norm of 5.7e-4.",
+        "suite": "v11"
+      },
+      "extra_mean_negative_control_detected": {
+        "rating": "medium",
+        "reason": "The negative control differs by exactly 16x, so detection is easy; it validates the intended bug only.",
+        "suite": "v11"
+      },
+      "coupled_birth_finite_difference": {
+        "rating": "strong",
+        "reason": "Directional derivative matched at 1.9e-13 in float64.",
+        "suite": "v11"
+      },
+      "birth_credit_transitions_from_incoming_to_outgoing": {
+        "rating": "medium",
+        "reason": "Qualitative transition is asserted with 1e-12/1e-14 thresholds; the values (0 / 3.2e-8) are informative but see the weak thresholds.",
+        "suite": "v11"
+      },
+      "memory_gate_second_order_credit": {
+        "rating": "strong",
+        "reason": "Second derivative matched finite differences at 1.2e-18.",
+        "suite": "v11"
+      },
+      "support_update_to_query_meta_credit": {
+        "rating": "weak",
+        "reason": "Given signal 9.37e-9, the 1e-7 absolute error criterion admits >1000% relative error (draft §23.1 already admits this).",
+        "suite": "v11"
+      },
+      "all_blocked_writes_preserve_memory_and_forbid_gate_credit": {
+        "rating": "medium",
+        "reason": "Checks the early-return branch and zero gate gradients; the oversized fixture is not a live state.",
+        "suite": "v11"
+      },
+      "longer_coupled_and_no_new_input_trace_finite": {
+        "rating": "weak",
+        "reason": "Finite and bounded only; no claim about useful internal activity is tested.",
+        "suite": "v11"
+      },
+      "float32_coupled_trace_and_credit_finite": {
+        "rating": "weak",
+        "reason": "Finiteness only; no tolerance, scale or stability assertion.",
+        "suite": "v11"
+      },
+      "semi_markov_td_matches_reward_timeline": {
+        "rating": "identity",
+        "reason": "Compares two hand-written expressions of the same arithmetic; no independent learning-rule implementation is exercised.",
+        "suite": "v11"
+      },
+      "duration_eligibility_matches_micro_decay": {
+        "rating": "identity",
+        "reason": "Dense loop vs compact power of the same formula; an algebraic identity, not an implementation.",
+        "suite": "v11"
+      },
+      "terminal_bootstrap_is_zero": {
+        "rating": "trivial",
+        "reason": "Arithmetic with a zero multiplier.",
+        "suite": "v11"
+      },
+      "bounded_neural_state": {
+        "rating": "medium",
+        "reason": "Samples the bound but the rule already guarantees it.",
+        "suite": "v1"
+      },
+      "read_before_write_and_next_read": {
+        "rating": "medium",
+        "reason": "Ordering and next-read consistency at machine precision.",
+        "suite": "v1"
+      },
+      "permission_zero_no_write": {
+        "rating": "medium",
+        "reason": "Early-return branch behaviour.",
+        "suite": "v1"
+      },
+      "fast_memory_norm_bound": {
+        "rating": "weak",
+        "reason": "Norm check against a fixed projection cap.",
+        "suite": "v1"
+      },
+      "birth_function_neutral": {
+        "rating": "strong",
+        "reason": "max_delta exactly 0.",
+        "suite": "v1"
+      },
+      "newborn_incoming_credit": {
+        "rating": "strong",
+        "reason": "Finite-difference error 1.3e-13 on a 0.15-norm gradient.",
+        "suite": "v1"
+      },
+      "all_zero_birth_negative_control": {
+        "rating": "medium",
+        "reason": "Confirms the zero-birth failure mode is detected.",
+        "suite": "v1"
+      },
+      "inner_write_gate_to_later_task_loss": {
+        "rating": "strong",
+        "reason": "Derivative -0.222 matched at 5.6e-11.",
+        "suite": "v1"
+      },
+      "copy_normalization_position_and_source_mask": {
+        "rating": "medium",
+        "reason": "Probability normalisation and duplicate-position weights; not the full copy/generation mixture.",
+        "suite": "v1"
+      },
+      "no_source_uses_generation_only": {
+        "rating": "weak",
+        "reason": "Branch-selection assertion only.",
+        "suite": "v1"
+      },
+      "one_anchor_first_order_projection": {
+        "rating": "identity",
+        "reason": "Dot product 4e-16 against a one-anchor constraint; effectively checks the projection formula algebra.",
+        "suite": "v1"
+      }
+    },
+    "rating_counts": {
+      "strong": 8,
+      "medium": 11,
+      "weak": 10,
+      "identity": 3,
+      "trivial": 1
+    },
+    "coverage_notes": [
+      "The 2026-10-31 E1 erratum (§21 gap table) now says the committed 22 checks are a synthetic coupled *proxy* and lists five missing rows (continuous chi, formal fast read, formal inter-group Q/K/V, query-conditioned common read/expression, float32 effective updates/meta-learning). This evaluation confirms that list and adds three residual points E1 does not state: (a) the three semi-Markov checks are arithmetic identities, not implementations; (b) the finite-difference checks cover only the first coordinate of each parameter; (c) several pass conditions are weak/non-discriminating (finite-only, nonzero-gradient-only, ordering-only).",
+      "The committed coupled reference is a reduced analogue, not a full instance of §4-§13: it uses fixed sigmoid gates instead of state/error-conditioned gate MLPs, a single fast head with k=v=3, no chi interpolation (hard on/off only), no copy/pointer head, no low-rank U/V adaptation inside the coupled checks, no policy/actor-critic implementation, and no consolidation projection (except one synthetic anchor in the v1 suite).",
+      "§7.2 expression (copy/pointer mixture), §8 world-prediction heads, §10.2 consolidation, §11.3 group/memory growth, §12 mode policy and §13 transaction recovery have no computed check in either archived suite.",
+      "The three semi-Markov checks are arithmetic identities over hand-written expressions; there is no TD or eligibility-trace implementation in the repository yet, so they cannot validate one.",
+      "The birth-credit checks validate the aggregate-loss convention and neutrality, not that a newborn unit receives useful credit in a real forward pass (draft §21 says this explicitly)."
+    ],
+    "all_archived_checks_count": {
+      "v11": 22,
+      "v1": 11
+    },
+    "all_passed": {
+      "v11": true,
+      "v1": true
+    }
+  },
+  "resource_estimate": {
+    "assumptions": {
+      "d": 128,
+      "groups": 4,
+      "mid_units_per_group": 256,
+      "fast_heads_per_group": 2,
+      "fast_key_value": [
+        32,
+        32
+      ],
+      "low_rank_adapter_rank": 16,
+      "note": "Rank, head merge, patch-to-event projection and g/D_nu interfaces are not fixed by the draft; counts are an order-of-magnitude audit."
+    },
+    "parameters": {
+      "per_group": {
+        "W_7d_to_d": 114816,
+        "U_d_to_r": 2048,
+        "V_7d_to_r": 14336,
+        "R_m_to_7d": 229632,
+        "P_d_to_m": 32768
+      },
+      "groups_total": 1574400,
+      "fast_heads_total": 8192,
+      "byte_encoder_estimate": 139648,
+      "output_and_scorer_heads_estimate": 73728,
+      "total_estimate": 1795968
+    },
+    "flops_per_microstep_forward_estimate": 34742272.0,
+    "bptt_window": {
+      "microsteps": 32,
+      "activation_float32_mb_order": 1.245184,
+      "note": "Graph memory for create_graph/meta steps is excluded and must be measured by 09.2."
+    }
+  },
+  "status": "passed_hard_invariants",
+  "limits": "Local algebraic/optimisation/smoke evidence only. No claim of model capability, lifetime continuity, language ability, growth benefit, retention or recovery follows from this report. Sign conventions, thresholds and coverage are stated per check; smoke checks are labelled.",
+  "repro_command": "python scripts/training/evaluate_taiji_core_algorithm_v11.py --output reports/taiji_core_algorithm_v11_evaluation_20261031.json",
+  "cpu_seconds": 2.734375,
+  "wall_seconds": 7.579039100091904
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "taiji-historical-audit-admission-v1",
+  "date": "2026-10-31",
+  "scope": "Historical v1.1/E1 audit only, not an adjudication of current v1.2 or R021",
+  "historical_design_commit": "64fdf8576ce29343f8bf0109de2834cb872a6ac9",
+  "historical_design_sha256": "1937449b2e3491eb9b227d122bbaef6e1944343920ace927fff7970d7eb283a1",
+  "archive": "reports/taiji_core_v11_e1_originals_20261031.tar.gz",
+  "archive_sha256": "c9cdd5733c7768a7c3ed37f1b0bbc225df6eb93f9f59079d6a51175d3d06e61a",
+  "original_report_script_binding_verified": true,
+  "historical_design_binding_verified": true,
+  "files": [
+    {
+      "path": "plans/reference/TAIJI_CORE_ALGORITHM_V1_EVALUATION_20261031.md",
+      "original_sha256": "31eb813490231b0852102755d9aa5adf2ac134c246a6e5b17112c34016d3d878",
+      "admitted_sha256": "5a1573bc4c96222624a41c1a51f3ff183810b53dc6f87c9d2f977ace583d7027",
+      "original_bytes": 20760,
+      "admitted_bytes": 21915,
+      "unchanged": false
+    },
+    {
+      "path": "reports/taiji_core_algorithm_v11_evaluation_20261031.json",
+      "original_sha256": "9aa691f74aea2abed902623742de50b7e48dcef673f53653f20a80d6b786f7e7",
+      "admitted_sha256": "b45e963f4c217d5d987eb0bd382da9ac09ca8b77273df09a670a2ed183835566",
+      "original_bytes": 24603,
+      "admitted_bytes": 23974,
+      "unchanged": false
+    },
+    {
+      "path": "reports/taiji_core_algorithm_v11_prior_art_20261031.md",
+      "original_sha256": "82146ba84b84340dec6e6fae758292532d0e0267a4342d3727b691eba4c2e38d",
+      "admitted_sha256": "dca2eb2c69d71b625115d6559d2b77a82de4be1ba6e3c292342eaed1be4c8820",
+      "original_bytes": 6805,
+      "admitted_bytes": 6997,
+      "unchanged": false
+    },
+    {
+      "path": "reports/taiji_core_algorithm_v11_protocol_review_20261031.md",
+      "original_sha256": "702ff90d2ec7e68c83a472ddff6646eb3cbb17bb3fa67c2e93b340aabfb06ba8",
+      "admitted_sha256": "17a40795af51962b048a92f6e8329db90684c22299c962cc4c92729e62004e96",
+      "original_bytes": 4506,
+      "admitted_bytes": 4698,
+      "unchanged": false
+    },
+    {
+      "path": "scripts/training/evaluate_taiji_core_algorithm_v11.py",
+      "original_sha256": "18ced651e50fb79efee260b635067c084131323e5e12fbd8070bebaa437c2927",
+      "admitted_sha256": "4aecb573422eeae9a2fdf2bee5e4b9c10bfd1db456b27e25cd6a5c0f2a0ed3c5",
+      "original_bytes": 51827,
+      "admitted_bytes": 51132,
+      "unchanged": false
+    }
+  ],
+  "admission_changes": [
+    "Readable JSON and Python use LF for repository CI; original CRLF bytes remain in archive.",
+    "Readable script: unused loop binding and strict zip corrected; historical design hash guard added before probes.",
+    "Markdown: prominent historical scope and known-method limits added; original text remains in archive."
+  ],
+  "original_method_limits": [
+    "expected_norm=0 is not the expectation of a norm.",
+    "Historical conditioned finite-difference objective omits its gates and cancels opposite perturbations.",
+    "Proximal erase nonexpansion does not require unit-norm keys."
+  ],
+  "reproduction": "Restore archived originals and historical design in a separate authorized checkout; do not run the historical audit against current v1.2.",
+  "historical_smoke_optimizer_steps_not_rerun_this_turn": true,
+  "current_stage_optimizer_steps": 0,
+  "current_stage_data_splits_read": []
+}

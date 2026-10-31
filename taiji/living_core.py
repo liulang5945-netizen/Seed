@@ -1,0 +1,652 @@
+"""R021 formal neural forward reference; no trainer, growth or lifecycle service.
+
+The engineering interfaces are frozen in SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021.
+Persistent tensors are caller-owned. No serialized latent or parser selects an answer.
+"""
+
+from __future__ import annotations
+
+import math
+from dataclasses import dataclass, replace
+
+import torch
+from torch import nn
+from torch.nn import functional as F
+
+R021_SCHEMA = "taiji-living-core-r021-v1"
+EOS = 256
+
+
+@dataclass(frozen=True)
+class LivingCoreConfig:
+    groups: int = 4
+    width: int = 128
+    units: int = 256
+    adapter_rank: int = 16
+    fast_heads: int = 2
+    key_width: int = 32
+    value_width: int = 32
+    output_heads: int = 2
+    fast_limit: float = 16.0
+    max_event_bytes: int = 512
+    max_source_bytes: int = 512
+    max_target_bytes: int = 128
+    seed: int = 20261031
+
+    def __post_init__(self) -> None:
+        if not 1 <= self.groups <= 4 or self.width < 2 or self.width % 2:
+            raise ValueError("R021 requires 1..4 groups and an even communication width")
+        if (
+            min(
+                self.units,
+                self.adapter_rank,
+                self.fast_heads,
+                self.key_width,
+                self.value_width,
+                self.output_heads,
+                self.max_event_bytes,
+                self.max_source_bytes,
+                self.max_target_bytes,
+            )
+            < 1
+            or self.fast_limit <= 0
+        ):
+            raise ValueError("R021 dimensions and bounds must be positive")
+
+
+@dataclass(frozen=True)
+class RawSource:
+    source_id: str
+    raw: bytes
+    observed_at: int = 0
+    version: int = 0
+    owner: str = "owner"
+    scope: str = "scope"
+    real: bool = True
+
+
+@dataclass(frozen=True)
+class SourceView:
+    keys: tuple[tuple[str, int], ...]
+    byte_ids: torch.Tensor
+    positions: torch.Tensor
+    positional: torch.Tensor
+    metadata: torch.Tensor
+
+
+@dataclass(frozen=True)
+class LivingState:
+    subject_id: str
+    revision: int
+    step: int
+    h: torch.Tensor
+    fast: torch.Tensor
+    nu_ema: torch.Tensor
+    keys: tuple[tuple[str, int], ...]
+    coverage: torch.Tensor
+    prior: torch.Tensor
+
+
+@dataclass(frozen=True)
+class LivingStep:
+    state: LivingState
+    probabilities: torch.Tensor
+    copy_weights: torch.Tensor
+    sources: SourceView
+    prediction: torch.Tensor
+    predicted_reward: torch.Tensor
+    trace: dict[str, torch.Tensor]
+
+
+def state_normalize(value: torch.Tensor) -> torch.Tensor:
+    return value / torch.sqrt(1 + value.square().mean(dim=-1, keepdim=True))
+
+
+def unit_ball(value: torch.Tensor) -> torch.Tensor:
+    return value / torch.sqrt(1 + value.square().sum(dim=-1, keepdim=True))
+
+
+def position_features(length: int, width: int, reference: torch.Tensor) -> torch.Tensor:
+    positions = torch.arange(length, device=reference.device, dtype=reference.dtype)[:, None]
+    rates = torch.exp(
+        -math.log(10000)
+        * torch.arange(0, width, 2, device=reference.device, dtype=reference.dtype)
+        / width
+    )
+    return torch.stack([torch.sin(positions * rates), torch.cos(positions * rates)], -1).flatten(1)
+
+
+class BytePatchEncoder(nn.Module):
+    def __init__(self, width: int) -> None:
+        super().__init__()
+        self.embedding = nn.Embedding(257, 64)
+        self.input = nn.Linear(64, width)
+        self.convolutions = nn.ModuleList(
+            nn.Conv1d(width, width, 3, dilation=dilation) for dilation in (1, 2, 4)
+        )
+        self.event = nn.Linear(width, width)
+        self.goal = nn.Linear(width, width)
+
+    def context(self, raw: bytes) -> torch.Tensor:
+        ids = torch.tensor(list(raw), dtype=torch.long, device=self.embedding.weight.device)
+        if not raw:
+            return self.input.weight.new_empty((0, self.input.out_features))
+        value = self.input(self.embedding(ids)).T.unsqueeze(0)
+        for convolution in self.convolutions:
+            value = value + torch.tanh(convolution(F.pad(value, (2 * convolution.dilation[0], 0))))
+        return value.squeeze(0).T
+
+    def patches(self, raw: bytes) -> torch.Tensor:
+        context = self.context(raw)
+        if not raw:
+            return context
+        return self.event(torch.stack([block.mean(0) for block in context.split(8)]))
+
+    def goal_vector(self, raw: bytes) -> torch.Tensor:
+        context = self.context(raw)
+        return (
+            self.goal(context.mean(0))
+            if raw
+            else self.goal.weight.new_zeros(self.goal.out_features)
+        )
+
+
+class EpisodicRead(nn.Module):
+    def __init__(self, width: int) -> None:
+        super().__init__()
+        self.a = nn.Linear(width, width, bias=False)
+        self.h = nn.Linear(width, width, bias=False)
+        self.g = nn.Linear(width, width, bias=False)
+        self.meta = nn.Linear(4, width)
+        self.second = nn.Linear(width, width)
+        self.score = nn.Linear(width, 1)
+        self.value = nn.Linear(width, width)
+        self.value_meta = nn.Linear(4, width, bias=False)
+        self.null_key = nn.Parameter(torch.randn(width) / math.sqrt(width))
+        self.null_value = nn.Parameter(torch.randn(width) / math.sqrt(width))
+
+    def forward(self, h: torch.Tensor, goal: torch.Tensor, view: SourceView):
+        keys = torch.cat([view.positions, self.null_key[None]], dim=0)
+        metadata = torch.cat([view.metadata, view.metadata.new_zeros((1, 4))], dim=0)
+        first = self.a(keys)[None] + self.meta(metadata)[None]
+        first = first + self.h(state_normalize(h))[:, None] + self.g(goal)[None, None]
+        scores = self.score(torch.tanh(self.second(torch.tanh(first)))).squeeze(-1)
+        attention = torch.softmax(scores, dim=-1)
+        values = torch.cat(
+            [self.value(view.positions) + self.value_meta(view.metadata), self.null_value[None]], 0
+        )
+        return attention @ values, attention
+
+
+class QueryRead(nn.Module):
+    def __init__(self, groups: int, width: int, heads: int) -> None:
+        super().__init__()
+        self.query = nn.ModuleList(nn.Linear(width, width, bias=False) for _ in range(heads))
+        self.keys = nn.ModuleList(
+            nn.Linear(width, width, bias=False) for _ in range(groups * heads)
+        )
+        self.values = nn.ModuleList(
+            nn.Linear(width, width, bias=False) for _ in range(groups * heads)
+        )
+        self.output = nn.Linear(heads * width, width, bias=False)
+        self.groups, self.width = groups, width
+
+    def forward(self, h: torch.Tensor, xi: torch.Tensor):
+        heads, weights = [], []
+        for head, query in enumerate(self.query):
+            keys = torch.stack(
+                [self.keys[head * self.groups + i](h[i]) for i in range(self.groups)]
+            )
+            values = torch.stack(
+                [self.values[head * self.groups + i](h[i]) for i in range(self.groups)]
+            )
+            attention = torch.softmax(keys @ query(xi) / math.sqrt(self.width), dim=0)
+            heads.append(attention @ values)
+            weights.append(attention)
+        joined = torch.cat(heads, dim=-1)
+        return self.output(joined), torch.stack(weights), joined
+
+
+class CopyExpression(nn.Module):
+    def __init__(self, width: int) -> None:
+        super().__init__()
+        self.z = nn.Linear(width, width, bias=False)
+        self.a = nn.Linear(width, width, bias=False)
+        self.meta = nn.Linear(4, width, bias=False)
+        self.position = nn.Linear(width, width, bias=False)
+        self.goal = nn.Linear(width, width)
+        self.coverage = nn.Parameter(torch.randn(width) / math.sqrt(width))
+        self.score = nn.Linear(width, 1, bias=False)
+        self.generate = nn.Linear(width + 64, 257)
+        self.mix = nn.Linear(2 * width + 64, 1)
+        self.continuation = nn.Linear(width + 64, 1)
+
+    def forward(self, z, recalled, goal, previous, view, coverage, prior):
+        generated = torch.softmax(self.generate(torch.cat([z, previous])), -1)
+        mixing = torch.sigmoid(self.mix(torch.cat([z, recalled, previous]))).squeeze(0)
+        continuation = torch.sigmoid(self.continuation(torch.cat([z, previous]))).squeeze(0)
+        if not view.keys:
+            return (
+                generated,
+                generated.new_empty(0),
+                generated.new_ones(()),
+                continuation,
+                generated,
+            )
+        score_input = self.z(z) + self.a(view.positions) + self.meta(view.metadata)
+        score_input = score_input + self.position(view.positional) + self.goal(goal)
+        score_input = score_input + coverage[:, None] * self.coverage
+        base = torch.softmax(self.score(torch.tanh(score_input)).squeeze(-1), 0)
+        weights = (
+            (1 - continuation) * base + continuation * prior if bool(prior.sum() > 0) else base
+        )
+        copied = generated.new_zeros(257).scatter_add(0, view.byte_ids, weights)
+        return mixing * generated + (1 - mixing) * copied, weights, mixing, continuation, generated
+
+
+class LivingCoreReference(nn.Module):
+    def __init__(self, config: LivingCoreConfig = LivingCoreConfig()) -> None:
+        super().__init__()
+        self.config = config
+        with torch.random.fork_rng(devices=[]):
+            torch.manual_seed(config.seed)
+            self._build()
+
+    def _build(self) -> None:
+        c = self.config
+        n, d, p = c.groups, c.width, 7 * c.width
+        self.encoder = BytePatchEncoder(d)
+        self.nu_projection = nn.Linear(16, d)
+        self.message_q = nn.ModuleList(nn.Linear(d, d, bias=False) for _ in range(n))
+        self.message_k = nn.ModuleList(nn.Linear(d, d, bias=False) for _ in range(n))
+        self.message_v = nn.ModuleList(nn.Linear(d, d, bias=False) for _ in range(n))
+        self.message_goal = nn.Linear(d, d, bias=False)
+        self.fast_queries = nn.ModuleList(
+            nn.Linear(4 * d, c.key_width) for _ in range(n * c.fast_heads)
+        )
+        self.fast_outputs = nn.ModuleList(
+            nn.Linear(c.fast_heads * c.value_width, d) for _ in range(n)
+        )
+        self.episodic = EpisodicRead(d)
+        self.W = nn.Parameter(torch.randn(n, d, p) / math.sqrt(p))
+        self.U = nn.Parameter(torch.zeros(n, d, c.adapter_rank))
+        self.V = nn.Parameter(torch.randn(n, p, c.adapter_rank) / math.sqrt(p))
+        self.R = nn.Parameter(torch.randn(n, c.units, p) / math.sqrt(p))
+        self.P = nn.Parameter(torch.randn(n, d, c.units) / math.sqrt(c.units))
+        initial_tau = torch.tensor([1.0, 4.0, 16.0, 64.0][:n])
+        self.tau_logit = nn.Parameter(torch.logit((initial_tau - 0.5) / 127.5))
+        self.xi = nn.Linear(2 * d + 64 + 7, d)
+        self.readout = QueryRead(n, d, c.output_heads)
+        self.expression = CopyExpression(d)
+        outputs = c.fast_heads * (3 * c.key_width + 2 * c.value_width + 2)
+        self.write_heads = nn.ModuleList(
+            nn.Sequential(nn.Linear(4 * d + 9, d), nn.Tanh(), nn.Linear(d, outputs))
+            for _ in range(n)
+        )
+        with torch.no_grad():
+            for network in self.write_heads:
+                biases = network[-1].bias.view(c.fast_heads, -1)
+                biases[:, c.key_width + c.value_width : 2 * c.key_width + c.value_width] = 4
+                biases[:, -1] = -2
+        self.world = nn.ModuleList(
+            nn.Sequential(nn.Linear(2 * d, d), nn.Tanh(), nn.Linear(d, d + 1)) for _ in range(3)
+        )
+
+    def initial_state(self, subject_id: str, revision: int = 0) -> LivingState:
+        if not subject_id:
+            raise ValueError("The reference requires a subject identity")
+        c, ref = self.config, self.W
+        return LivingState(
+            subject_id,
+            revision,
+            0,
+            ref.new_zeros((c.groups, c.width)),
+            ref.new_zeros((c.groups, c.fast_heads, c.key_width, c.value_width)),
+            ref.new_zeros(8),
+            (),
+            ref.new_empty(0),
+            ref.new_empty(0),
+        )
+
+    def source_view(
+        self, records: tuple[RawSource, ...], owner: str, scope: str, now: int
+    ) -> SourceView:
+        c, ref = self.config, self.W
+        if len({record.source_id for record in records}) != len(records):
+            raise ValueError("Source identities must be unique")
+        legal = [
+            r
+            for r in records
+            if r.owner == owner and r.scope == scope and r.observed_at <= now and r.real
+        ]
+        if sum(len(r.raw) for r in legal) > c.max_source_bytes:
+            raise ValueError("R021 source-byte budget exceeded")
+        keys, ids, positions, positional, metadata = [], [], [], [], []
+        for record in legal:
+            if record.observed_at < 0 or record.version < 0 or not record.source_id:
+                raise ValueError("Malformed source metadata")
+            if not record.raw:
+                continue
+            context = self.encoder.context(record.raw)
+            pe = position_features(len(record.raw), c.width, ref)
+            positions.append(context + pe)
+            positional.append(pe)
+            time = ref.new_tensor(
+                [(now - record.observed_at) / 64, record.observed_at / 64, record.version / 16]
+            ).tanh()
+            metadata.append(torch.cat([time, ref.new_ones(1)]).expand(len(record.raw), -1))
+            ids.extend(record.raw)
+            keys.extend((record.source_id, p) for p in range(len(record.raw)))
+        return SourceView(
+            tuple(keys),
+            torch.tensor(ids, dtype=torch.long, device=ref.device),
+            torch.cat(positions) if positions else ref.new_empty((0, c.width)),
+            torch.cat(positional) if positional else ref.new_empty((0, c.width)),
+            torch.cat(metadata) if metadata else ref.new_empty((0, 4)),
+        )
+
+    def update_nu(self, state: LivingState, raw: torch.Tensor, known: torch.Tensor):
+        if raw.shape != (8,) or known.shape != (8,) or known.dtype != torch.bool:
+            raise ValueError("nu requires eight readings and explicit boolean availability")
+        if not bool(torch.isfinite(raw[known]).all()):
+            raise ValueError("Known readings must be finite")
+        safe = torch.where(known, raw, torch.zeros_like(raw))
+        smoothed = 0.95 * state.nu_ema + 0.05 * safe
+        direct = torch.tensor(
+            [True, False, False, False, True, False, False, False], device=raw.device
+        )
+        ema = torch.where(known, torch.where(direct, safe, smoothed), state.nu_ema)
+        scale = raw.new_tensor([1, 1, 1, 1, 16, 1, 1, 1])
+        value = torch.where(known, torch.tanh(ema / scale), torch.zeros_like(ema))
+        features = torch.cat([value, (~known).to(raw.dtype)])
+        return ema, self.nu_projection(features), features
+
+    def messages(self, h: torch.Tensor, goal: torch.Tensor):
+        q = torch.stack([layer(row) for layer, row in zip(self.message_q, h, strict=True)])
+        q = q + self.message_goal(goal)
+        k = torch.stack([layer(row) for layer, row in zip(self.message_k, h, strict=True)])
+        v = torch.stack([layer(row) for layer, row in zip(self.message_v, h, strict=True)])
+        attention = torch.softmax(q @ k.T / math.sqrt(self.config.width), dim=-1)
+        return attention @ v, attention, q, k, v
+
+    def read_fast(self, h, memory, event, goal, nu):
+        c = self.config
+        inputs = torch.cat(
+            [state_normalize(h), event.expand_as(h), goal.expand_as(h), nu.expand_as(h)], dim=-1
+        )
+        queries, values, merged = [], [], []
+        for group in range(c.groups):
+            q = torch.stack(
+                [
+                    unit_ball(self.fast_queries[group * c.fast_heads + head](inputs[group]))
+                    for head in range(c.fast_heads)
+                ]
+            )
+            value = torch.einsum("hkv,hk->hv", memory[group], q)
+            queries.append(q)
+            values.append(value)
+            merged.append(self.fast_outputs[group](value.flatten()))
+        return torch.stack(merged), torch.stack(queries), torch.stack(values)
+
+    @staticmethod
+    def edit_fast(memory, key, value, decay, erase, write, strength, chi, allowed, limit):
+        if not allowed:
+            return memory
+        decayed = decay[:, None] * memory
+        direction = erase * key
+        eta = 16 * torch.sigmoid(strength)
+        factor = eta / (1 + eta * direction.square().sum())
+        erased = decayed - factor * torch.outer(direction, direction @ decayed)
+        edited = erased + torch.outer(key, write * value)
+        candidate = (1 - chi) * memory + chi * edited
+        norm = torch.linalg.vector_norm(candidate)
+        return candidate if bool(norm <= limit) else candidate * (limit / norm)
+
+    def write_fast(self, h, memory, event, goal, nu, mode, past_error, error_missing, allowed):
+        c = self.config
+        if allowed.shape != (c.groups, c.fast_heads) or allowed.dtype != torch.bool:
+            raise ValueError("Fast write permissions require a per-group/per-head boolean mask")
+        result, all_chi, all_keys = [], [], []
+        for group, network in enumerate(self.write_heads):
+            context = torch.cat(
+                [
+                    state_normalize(h[group]),
+                    event,
+                    goal,
+                    nu,
+                    past_error.reshape(1),
+                    event.new_tensor([error_missing]),
+                    mode,
+                ]
+            )
+            raw = network(context).view(c.fast_heads, -1)
+            splits = (c.key_width, c.value_width, c.key_width, c.key_width, c.value_width, 1, 1)
+            key, value, decay, erase, write, strength, chi = raw.split(splits, dim=-1)
+            key, value, chi = unit_ball(key), unit_ball(torch.tanh(value)), torch.sigmoid(chi)
+            heads = [
+                self.edit_fast(
+                    memory[group, head],
+                    key[head],
+                    value[head],
+                    torch.sigmoid(decay[head]),
+                    torch.sigmoid(erase[head]),
+                    torch.sigmoid(write[head]),
+                    strength[head, 0],
+                    chi[head, 0],
+                    bool(allowed[group, head]),
+                    c.fast_limit,
+                )
+                for head in range(c.fast_heads)
+            ]
+            result.append(torch.stack(heads))
+            all_chi.append(chi.squeeze(-1))
+            all_keys.append(key)
+        return torch.stack(result), torch.stack(all_chi), torch.stack(all_keys)
+
+    @staticmethod
+    def align_positions(state: LivingState, keys):
+        old = {key: index for index, key in enumerate(state.keys)}
+        zero = state.h.new_zeros(())
+        coverage = (
+            torch.stack([state.coverage[old[k]] if k in old else zero for k in keys])
+            if keys
+            else zero.new_empty(0)
+        )
+        prior = (
+            torch.stack([state.prior[old[k]] if k in old else zero for k in keys])
+            if keys
+            else zero.new_empty(0)
+        )
+        if bool(prior.sum() > 0):
+            prior = prior / prior.sum()
+        return coverage, prior
+
+    def step(
+        self,
+        state: LivingState,
+        *,
+        event: torch.Tensor,
+        goal: bytes,
+        records: tuple[RawSource, ...] = (),
+        previous_byte: int = EOS,
+        raw_nu: torch.Tensor | None = None,
+        known_nu: torch.Tensor | None = None,
+        mode: int = 0,
+        past_error: float = 0.0,
+        error_missing: bool = True,
+        allowed: torch.Tensor | None = None,
+        action: torch.Tensor | None = None,
+        owner: str = "owner",
+        scope: str = "scope",
+        now: int = 0,
+    ) -> LivingStep:
+        c, ref = self.config, self.W
+        if state.h.shape != (c.groups, c.width) or event.shape != (c.width,):
+            raise ValueError("State/event dimensions differ from R021")
+        if state.fast.shape != (c.groups, c.fast_heads, c.key_width, c.value_width):
+            raise ValueError("Fast state dimensions differ from R021")
+        if not 0 <= previous_byte <= EOS or not 0 <= mode < 7 or len(goal) > c.max_event_bytes:
+            raise ValueError("Invalid preceding byte, mode or goal budget")
+        if not bool(
+            torch.isfinite(state.h).all()
+            and torch.isfinite(state.fast).all()
+            and torch.isfinite(event).all()
+        ) or bool(state.h.abs().max() > 1):
+            raise ValueError("Invalid neural state or event")
+        raw_nu = ref.new_zeros(8) if raw_nu is None else raw_nu
+        known_nu = (
+            torch.zeros(8, dtype=torch.bool, device=ref.device) if known_nu is None else known_nu
+        )
+        allowed = (
+            torch.zeros((c.groups, c.fast_heads), dtype=torch.bool, device=ref.device)
+            if allowed is None
+            else allowed
+        )
+        goal_vector = self.encoder.goal_vector(goal)
+        ema, nu, nu_features = self.update_nu(state, raw_nu, known_nu)
+        view = self.source_view(records, owner, scope, now)
+        coverage, prior = self.align_positions(state, view.keys)
+        message, message_weights, mq, mk, mv = self.messages(state.h, goal_vector)
+        fast, fast_queries, fast_values = self.read_fast(
+            state.h, state.fast, event, goal_vector, nu
+        )
+        recalled, episodic_weights = self.episodic(state.h, goal_vector, view)
+        x = torch.cat(
+            [
+                state_normalize(state.h),
+                event.expand_as(state.h),
+                message,
+                fast,
+                recalled,
+                goal_vector.expand_as(state.h),
+                nu.expand_as(state.h),
+            ],
+            -1,
+        )
+        effective = self.W + self.U @ self.V.transpose(1, 2)
+        pre = torch.einsum("ndp,np->nd", effective, x)
+        pre = pre + torch.einsum(
+            "ndm,nm->nd", self.P, torch.tanh(torch.einsum("nmp,np->nm", self.R, x))
+        )
+        tau = 0.5 + 127.5 * torch.sigmoid(self.tau_logit)
+        leak = (1 - torch.exp(-1 / tau))[:, None]
+        h = (1 - leak) * state.h + leak * torch.tanh(pre)
+        mode_vector = F.one_hot(torch.tensor(mode, device=ref.device), 7).to(ref.dtype)
+        previous = self.encoder.embedding(torch.tensor(previous_byte, device=ref.device))
+        xi = self.xi(torch.cat([goal_vector, previous, mode_vector, nu]))
+        z, query_weights, joined = self.readout(h, xi)
+        r_task = query_weights.mean(0) @ recalled
+        probabilities, copied, mixing, continuation, generated = self.expression(
+            z, r_task, goal_vector, previous, view, coverage, prior
+        )
+        action = ref.new_zeros(c.width) if action is None else action
+        predictions = torch.stack([head(torch.cat([z, action])) for head in self.world])
+        memory, chi, write_keys = self.write_fast(
+            h,
+            state.fast,
+            event,
+            goal_vector,
+            nu,
+            mode_vector,
+            ref.new_tensor(past_error),
+            error_missing,
+            allowed,
+        )
+        child = replace(
+            state,
+            step=state.step + 1,
+            h=h,
+            fast=memory,
+            nu_ema=ema,
+            keys=view.keys,
+            coverage=coverage,
+            prior=prior,
+        )
+        trace = {
+            "event": event,
+            "goal": goal_vector,
+            "nu": nu,
+            "nu_features": nu_features,
+            "message": message,
+            "message_weights": message_weights,
+            "message_q": mq,
+            "message_k": mk,
+            "message_v": mv,
+            "fast_read": fast,
+            "fast_queries": fast_queries,
+            "fast_values": fast_values,
+            "recalled": recalled,
+            "episodic_weights": episodic_weights,
+            "x": x,
+            "preactivation": pre,
+            "tau": tau,
+            "query": xi,
+            "z": z,
+            "joined_heads": joined,
+            "query_weights": query_weights,
+            "mixing": mixing,
+            "continuation": continuation,
+            "generated": generated,
+            "chi": chi,
+            "write_keys": write_keys,
+        }
+        return LivingStep(
+            child, probabilities, copied, view, predictions[:, :-1], predictions[:, -1], trace
+        )
+
+    @staticmethod
+    def consume_output(output: LivingStep, byte: int) -> LivingState:
+        if not 0 <= byte <= EOS:
+            raise ValueError("Output must be a byte or EOS")
+        state, view = output.state, output.sources
+        matched = output.copy_weights * (view.byte_ids == byte)
+        mass = matched.sum()
+        if byte == EOS or not bool(mass > 0):
+            return replace(state, prior=torch.zeros_like(state.prior))
+        posterior = matched / mass
+        old = {key: index for index, key in enumerate(view.keys)}
+        zero = posterior.new_zeros(())
+        shifted = torch.stack(
+            [
+                posterior[old[(source, position - 1)]] if (source, position - 1) in old else zero
+                for source, position in view.keys
+            ]
+        )
+        if bool(shifted.sum() > 0):
+            shifted = shifted / shifted.sum()
+        return replace(state, coverage=state.coverage + posterior, prior=shifted)
+
+    def observe(self, state: LivingState, raw: bytes, **kwargs) -> LivingState:
+        if len(raw) > self.config.max_event_bytes:
+            raise ValueError("R021 event-byte budget exceeded")
+        for event in self.encoder.patches(raw):
+            state = self.step(state, event=event, **kwargs).state
+        return state
+
+    def score_targets(
+        self,
+        state: LivingState,
+        *,
+        prompt: bytes,
+        target: bytes,
+        goal: bytes,
+        records: tuple[RawSource, ...] = (),
+        **kwargs,
+    ):
+        if len(target) > self.config.max_target_bytes:
+            raise ValueError("R021 target-byte budget exceeded")
+        state = self.observe(state, prompt, goal=goal, records=records, **kwargs)
+        previous, distributions = EOS, []
+        for byte in (*target, EOS):
+            event = (
+                self.W.new_zeros(self.config.width)
+                if previous == EOS
+                else self.encoder.patches(bytes([previous]))[0]
+            )
+            output = self.step(
+                state, event=event, goal=goal, records=records, previous_byte=previous, **kwargs
+            )
+            distributions.append(output.probabilities)
+            state = self.consume_output(output, byte)
+            previous = byte
+        return torch.stack(distributions), state
