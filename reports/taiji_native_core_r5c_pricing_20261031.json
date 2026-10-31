@@ -1,0 +1,151 @@
+{
+  "format": "taiji-native-core-r5c-pricing-v1",
+  "version": 1,
+  "date": "2026-10-31",
+  "contract": "plans/reference/SPEC-NATIVE-CONTENT-CORE_R5C_COPYEXPR_CANDIDATE_20261031.md",
+  "manifest": {
+    "path": "plans/manifests/native_core_r1_train_v1.json",
+    "sha256": "5d151ba9f994670ccc2968b4d4547d280c52c056e991cf831e4f18c818dfedfd",
+    "episodes": 864,
+    "split": "train",
+    "training_read": true
+  },
+  "protocol": {
+    "batch_size": 4,
+    "updates_phase_a": 50,
+    "updates_phase_b": 10,
+    "schedule": {
+      "own_prefix_start": 257,
+      "own_prefix_prob": 0.5,
+      "prefix_fraction": "len(target)//2"
+    },
+    "approval": "explicit user approval (--approve-r5c)"
+  },
+  "phases": {
+    "teacher_forced_50": {
+      "updates": 50,
+      "loss_first5_median": 4.855166012741798,
+      "loss_last5_median": 2.7365070939651264,
+      "loss_all_finite": true,
+      "cpu_seconds_median": 10.4609375,
+      "wall_seconds_median": 0.8973339500371367,
+      "schedule_positions": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50
+      ],
+      "scheduled_episodes": 0,
+      "supervised_bytes": 21860,
+      "aux_loss_sum": 9777.71791267395
+    },
+    "self_prefix_10": {
+      "updates": 10,
+      "loss_first5_median": 2.709732236905335,
+      "loss_last5_median": 2.5961005676925453,
+      "loss_all_finite": true,
+      "cpu_seconds_median": 9.9765625,
+      "wall_seconds_median": 0.8597864999901503,
+      "schedule_positions": [
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300
+      ],
+      "scheduled_episodes": 19,
+      "supervised_bytes": 4336,
+      "aux_loss_sum": 1961.615592956543
+    }
+  },
+  "recovery": {
+    "zero": {
+      "checkpoint": "pricing-zero.pt",
+      "label": "zero",
+      "probe_digest": "2f4237b5a50468dc5c5e790497910474dc13c8a4137a2f30bf0f957a60584346",
+      "in_process_equal": true,
+      "fresh_process_equal": true
+    },
+    "phase_a": {
+      "checkpoint": "pricing-phase-a.pt",
+      "label": "teacher_forced_50",
+      "probe_digest": "c26f1aa831d8b9dd327cf5f94b7abe338ead1cb28651e00bbd65ed9bf3cee25b",
+      "in_process_equal": true,
+      "fresh_process_equal": true
+    },
+    "phase_b": {
+      "checkpoint": "pricing-phase-b.pt",
+      "label": "self_prefix_10",
+      "probe_digest": "7bc4a3640306e3f311092270b444cd2b0eb5e845bb4781aec6bd7a02fc70ceca",
+      "in_process_equal": true,
+      "fresh_process_equal": true
+    }
+  },
+  "unit_cpu_seconds_per_update": 10.4609375,
+  "unit_wall_seconds_per_update": 0.8973339500371367,
+  "pricing_cost": {
+    "cpu_seconds": 650.984375,
+    "wall_seconds": 69.2965124999173
+  },
+  "status": "r5c_priced",
+  "engineering_failures": [],
+  "read_boundaries": {
+    "query_split_read": false,
+    "holdout_split_read": false,
+    "sealed_read": false,
+    "optimizer_updates": 60
+  },
+  "started_at": "2026-10-31T03:05:46.088822+00:00",
+  "finished_at": "2026-10-31T03:06:55.385804+00:00"
+}
