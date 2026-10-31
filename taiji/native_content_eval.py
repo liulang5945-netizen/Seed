@@ -44,8 +44,8 @@ TIME_FOR_CATEGORY = {
     "unknown_query": "unknown",
 }
 FACT_ROLES = frozenset({"fact_v0", "correction", "distractor"})
-# R5b adds new_core_v2 (copy-track candidate); the native replay path is shared.
-NATIVE_CORE_ADAPTER_NAMES = frozenset({"new_core_v1", "new_core_v2"})
+# R5b adds new_core_v2, R5c adds new_core_v3; the native replay path is shared.
+NATIVE_CORE_ADAPTER_NAMES = frozenset({"new_core_v1", "new_core_v2", "new_core_v3"})
 PREDICTION_BYTES = 48
 VALUE_GROUPS = {
     "颜色": ("红色", "蓝色", "绿色", "黄色"),
