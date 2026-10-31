@@ -1,0 +1,249 @@
+{
+  "schema": "taiji-r026-plasticity-arms-v1",
+  "date": "2026-10-31",
+  "baseline_commit": "4cfc3125e",
+  "contract": "plans/reference/SPEC-TAIJI-CORE_PLASTICITY_R026_20261031.md",
+  "status": "passed_r026_preregistered_comparison",
+  "config": {
+    "groups": 2,
+    "width": 8,
+    "units": 12,
+    "adapter_rank": 2,
+    "fast_heads": 2,
+    "key_width": 4,
+    "value_width": 4,
+    "output_heads": 2,
+    "fast_limit": 16.0,
+    "max_event_bytes": 512,
+    "max_source_bytes": 512,
+    "max_target_bytes": 128,
+    "seed": 20261031
+  },
+  "dtype": "torch.float64",
+  "torch_version": "2.13.0+cpu",
+  "lineage_binding": {
+    "living_core_sha256": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "matches_r025_receipt": true,
+    "r025_status": "passed_r025_activity_engineering_only"
+  },
+  "preregistration": {
+    "endpoint": "delta_nll_holdout = NLL_holdout(post) - NLL_holdout(parent), teacher-forced from the canonical initial state",
+    "retention_probe": "third declared career, tolerance 0.05",
+    "net_margin": 0.001,
+    "update_schedule": "8 Adam(lr=1e-3) steps per arm on the replay branch, identical arms"
+  },
+  "arms": [
+    {
+      "arm": "coverage_birth",
+      "units_total": 4,
+      "allocation": {
+        "copy": 1,
+        "generate": 1
+      },
+      "nll_fit_pre": 3.178030003211085,
+      "nll_fit_post": 2.8388045693384103,
+      "drift_retention": 0.14471001872307143,
+      "delta_nll_holdout": -0.13699822022265185,
+      "update_losses": [
+        3.178030003211085,
+        3.1336328821333463,
+        3.0900111069859317,
+        3.0470735003422944,
+        3.0047192322156966,
+        2.962829754925108,
+        2.9212855113197524,
+        2.879976274824788
+      ],
+      "cpu_seconds": 8.09375,
+      "wall_seconds": 8.436547599965706
+    },
+    {
+      "arm": "gradmax_schedule",
+      "units_total": 8,
+      "allocation": null,
+      "nll_fit_pre": 3.178030003211085,
+      "nll_fit_post": 2.8381951050548646,
+      "drift_retention": 0.14589569095686006,
+      "delta_nll_holdout": -0.13823051747730064,
+      "update_losses": [
+        3.178030003211085,
+        3.133563479360559,
+        3.0898857251979632,
+        3.0468928724516084,
+        3.0044761768574504,
+        2.9625129714104883,
+        2.920882467465813,
+        2.8794753569937437
+      ],
+      "cpu_seconds": 7.453125,
+      "wall_seconds": 7.609069199999794
+    },
+    {
+      "arm": "conditional_svd",
+      "units_total": 4,
+      "allocation": null,
+      "nll_fit_pre": 3.178030003211085,
+      "nll_fit_post": 2.8388045693384103,
+      "drift_retention": 0.14471001872307143,
+      "delta_nll_holdout": -0.13699822022265185,
+      "update_losses": [
+        3.178030003211085,
+        3.1336328821333463,
+        3.0900111069859317,
+        3.0470735003422944,
+        3.0047192322156966,
+        2.962829754925108,
+        2.9212855113197524,
+        2.879976274824788
+      ],
+      "cpu_seconds": 7.359375,
+      "wall_seconds": 7.508561099879444
+    },
+    {
+      "arm": "random_gate",
+      "units_total": 4,
+      "allocation": null,
+      "nll_fit_pre": 3.178030003211085,
+      "nll_fit_post": 2.838970916437366,
+      "drift_retention": 0.14455912420850447,
+      "delta_nll_holdout": -0.13685004373526777,
+      "update_losses": [
+        3.178030003211085,
+        3.1336398696281162,
+        3.0900270281383135,
+        3.0471018542353008,
+        3.0047647676068503,
+        2.962897871059364,
+        2.9213816960486443,
+        2.880105492117549
+      ],
+      "cpu_seconds": 7.53125,
+      "wall_seconds": 7.6910345000214875
+    },
+    {
+      "arm": "replay_only",
+      "units_total": 0,
+      "allocation": null,
+      "nll_fit_pre": 3.178030003211085,
+      "nll_fit_post": 2.839221860406603,
+      "drift_retention": 0.14449921993396275,
+      "delta_nll_holdout": -0.13670486477639887,
+      "update_losses": [
+        3.178030003211085,
+        3.1336721110957813,
+        3.0900938508349434,
+        3.0472041739484546,
+        3.0049016179339003,
+        2.9630671347251925,
+        2.921580704725132,
+        2.880331646428689
+      ],
+      "cpu_seconds": 7.171875,
+      "wall_seconds": 7.3598486999981105
+    },
+    {
+      "arm": "capacity_random",
+      "units_total": 4,
+      "allocation": null,
+      "nll_fit_pre": 3.178030003211085,
+      "nll_fit_post": 2.837250102088851,
+      "drift_retention": 0.1477021266308718,
+      "delta_nll_holdout": -0.14016569655680744,
+      "update_losses": [
+        3.178030003211085,
+        3.133397129070852,
+        3.0895764322786032,
+        3.0464660314342167,
+        3.0039490536779585,
+        2.9618902069499926,
+        2.9201607845806277,
+        2.8786474519029217
+      ],
+      "cpu_seconds": 7.484375,
+      "wall_seconds": 7.638173499843106
+    }
+  ],
+  "adjudication": {
+    "verdict": "negative",
+    "retention_breaches": [
+      "coverage_birth",
+      "gradmax_schedule",
+      "conditional_svd",
+      "random_gate",
+      "replay_only",
+      "capacity_random"
+    ]
+  },
+  "preregistered_verdict": "negative",
+  "credit_diagnostics": {
+    "kappa": 0.9979726511951164,
+    "branch_group_ranks": {
+      "copy": 8,
+      "generate": 8
+    }
+  },
+  "checks": [
+    {
+      "id": "test_r026_credit_diagnostics_present",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_plasticity_arms_r026.py",
+        "symbol": "test_r026_credit_diagnostics_present",
+        "line": 200,
+        "last_line": 211
+      }
+    },
+    {
+      "id": "test_r026_preregistered_adjudication_recorded",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_plasticity_arms_r026.py",
+        "symbol": "test_r026_preregistered_adjudication_recorded",
+        "line": 187,
+        "last_line": 197
+      }
+    },
+    {
+      "id": "test_r026_six_arms_run_from_same_parent",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_plasticity_arms_r026.py",
+        "symbol": "test_r026_six_arms_run_from_same_parent",
+        "line": 159,
+        "last_line": 173
+      }
+    },
+    {
+      "id": "test_r026_unit_counts_match_contract",
+      "passed": true,
+      "test": {
+        "file": "tests/taiji_native/test_plasticity_arms_r026.py",
+        "symbol": "test_r026_unit_counts_match_contract",
+        "line": 176,
+        "last_line": 184
+      }
+    }
+  ],
+  "gradient_calls": 1,
+  "backward_calls": 49,
+  "data_splits_read": [],
+  "task_capability_claimed": false,
+  "real_world_benefit_claimed": false,
+  "training_admitted_afterwards": false,
+  "default_model_replaced": false,
+  "cpu_seconds_checks_only": 45.765625,
+  "wall_seconds_checks_only": 46.9099894000683,
+  "budget": {
+    "cpu_seconds": 900,
+    "wall_seconds": 1200
+  },
+  "source_hashes": {
+    "plans/reference/SPEC-TAIJI-CORE_PLASTICITY_R026_20261031.md": "8b0870dcab533738b733982704bb5662529fa2bd100ac96e15754a4960e9db64",
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/growth_credit.py": "fdb925d0499589202272c5c33fe66ba4b44aaafca041f267e2cccae560ff0949",
+    "taiji/native_development.py": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+    "tests/taiji_native/test_plasticity_arms_r026.py": "f496ecc359bb05b59b368f6b4aadf642bee80440574c803d992b30f983c7b87f",
+    "scripts/training/verify_taiji_plasticity_arms_r026.py": "a7fe33dc38fac70b35553d6e996be66fe3c816962c0043b1eda4f908b8d4fc69"
+  },
+  "limits": "Six-arm preregistered comparison on one synthetic parent with the declared update expression. A positive verdict does NOT sign task capability, real-world benefit or training admission; a negative verdict does not falsify the v1.2 candidate under real conditions. Retention breaches are recorded verbatim."
+}

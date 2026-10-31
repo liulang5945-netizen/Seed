@@ -116,6 +116,14 @@
 
 提交后按钩子要求重跑Mimosa深扫（focusFiles=本包三个代码文件）：jobId `scan-job-mvwjzj1g`，scanId `scan-2026-10-31T15-27-31.295Z-9dcd94362c0a`，**封印`sha256:11e603a8ef3f3d4708d0d71c4c9b5ad3b7b8ec1cd942e78c7b7899cbd7c61be6`**，1,652项findings为既有普查基线、无新假设、离线advisory零匹配；同提交单主线审计ok、三套件回归19项全过。
 
+## 2026-10-31 R026六臂预注册比较（09.4）
+
+先冻结[R026合同](../../reference/SPEC-TAIJI-CORE_PLASTICITY_R026_20261031.md)（预注册主终点＝独立holdout生涯NLL差、保持探针＝第三独立生涯、净收益判据含1e-3边际与0.05保持容差、六臂同父同更新日程），再交付[native_development.py](../../../taiji/native_development.py)、[检查](../../../tests/taiji_native/test_plasticity_arms_r026.py)与[报告](../../../reports/taiji_core_r026_plasticity_arms_20261031.json)。`taiji/living_core.py`字节经SHA核对与R021–R025绑定一致；报告`passed_r026_preregistered_comparison`、4/4检查通过、费用45.9/900 CPU秒、每臂独立父副本、每臂8步声明Adam更新外无任何更新。
+
+**预注册裁决＝negative**：coverage_birth的ΔNLL_holdout＝−0.1370，未优于对照min(replay_only −0.1367, capacity_random −0.1402)（差+0.0032＞1e-3边际）；六臂全部超出0.05保持容差（0.144–0.148，声明更新幅度主导——8×lr=1e-3全参数更新即破坏通用行为）；臂间holdout差≤0.0035；kappa=0.998。诚实结论：在合成夹具与声明更新规模下，"覆盖/信用改善转为后继净收益"被预注册判据否定——出生方向在8步内未自我偿付，且保持破坏与生长无关（无生长臂同样超限）。按合同不追加剂量/seed/臂；负结果不证伪真实条件下的v1.2候选。
+
+执行期两处纪律事件（落账）：①保持探针最初误写为fit journal（其NLL下降是学习不是保持），正式运行前修正为第三独立生涯；②发现replay_only原地更新共享parent会污染后续臂（烟测与独立运行verdict不同），修复为每臂deepcopy独立父副本后重跑——两次修正均发生在预注册读数被消费之前，报告绑定修复后字节。09.4.1预期自我修改不触发（保持全臂超限）。唯一下一步见总计划（09.5主体恢复门）。
+
 ## 当前候选的审批依据
 
 | 统一步骤 | 批准/边界事实 | 原始依据 |
