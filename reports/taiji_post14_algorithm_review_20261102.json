@@ -1,0 +1,362 @@
+{
+  "schema": "taiji-post14-algorithm-review-v1",
+  "date": "2026-11-02",
+  "status": "read_only_evidence_review_and_n15_rev2_design",
+  "baseline_commit": "0460dcbf6eee95b5a196897504bfec034e685df2",
+  "historical_inputs_preserved": [
+    {
+      "path": "reports/taiji_core_record_relation_14_6_20261102.json",
+      "sha256_raw": "becf9bd70c20db7ee00d554e9f7a40345280d2761b555d9ab34046e75bcdc226",
+      "status_preserved": "native_byte_task_failed"
+    },
+    {
+      "path": "reports/taiji_core_record_relation_14_8_closeout_20261102.json",
+      "sha256_raw": "324d9e941c14891747e9bc9331e39800225e97200a8d08333db9ccdf74f5858b",
+      "status_preserved": "closed_negative_with_followup_design"
+    }
+  ],
+  "current_source_bindings_verified": [
+    {
+      "path": "taiji/record_relation.py",
+      "sha256_raw": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+      "matches_declared": true
+    },
+    {
+      "path": "taiji/record_relation_core.py",
+      "sha256_raw": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+      "matches_declared": true
+    },
+    {
+      "path": "taiji/native_composition_fixture.py",
+      "sha256_raw": "18ca7f7ce19530d153e5396359870ff4661e5033b089da4960dea128a33c83b4",
+      "matches_declared": true
+    },
+    {
+      "path": "scripts/training/verify_taiji_record_relation_14_6.py",
+      "sha256_raw": "37424556a55f8e19122e6caf318e5c63042d5ca43457e22877b75fe551c6e56f",
+      "matches_declared": true
+    },
+    {
+      "path": "scripts/training/audit_taiji_record_relation_14_6_scores.py",
+      "sha256_raw": "85c90413838b8cc999e6d9c9472b2d1ea3ad42a2ec1a666b45ed8e74f3e88660",
+      "matches_declared": true
+    },
+    {
+      "path": "reports/taiji_core_14_1_split_audit_20261102.json",
+      "sha256_raw": "3fee5f37755f46b33ee858046f75e91c676a243af428aaab95b70b90c44a7f4c",
+      "matches_declared": true
+    },
+    {
+      "path": "reports/taiji_core_14_2_split_rerun_20261102.json",
+      "sha256_raw": "2cc1536e531bd0f803ff1c031916f604a829aa31e9f2629db4520c3acafcf166",
+      "matches_declared": true
+    },
+    {
+      "path": "reports/taiji_core_read_source_14_3_20261102.json",
+      "sha256_raw": "4c1ed5fee0534892e367cd9c7f664cf0b5b89e0716ab71a8997e1183725098f6",
+      "matches_declared": true
+    },
+    {
+      "path": "reports/taiji_core_record_relation_14_4_20261102.json",
+      "sha256_raw": "f79cef75f18a1ba873ca339ffd5cf1407dfa945868e7d09995d91f8a066a36f2",
+      "matches_declared": true
+    },
+    {
+      "path": "reports/taiji_core_record_relation_14_5_20261102.json",
+      "sha256_raw": "d50f2bfa9aa8d689792a2634777cd44c3b3a9495e3678c108d8ca5aec1f67ef1",
+      "matches_declared": true
+    },
+    {
+      "path": "reports/taiji_core_record_relation_14_6_preflight_20261102.json",
+      "sha256_raw": "f99c9e5317db8574fc1dfe3b95acccd0ffb2ade775efbfa5cc0d85d71a2b7bda",
+      "matches_declared": true
+    },
+    {
+      "path": "reports/taiji_core_record_relation_14_6_20261102.json",
+      "sha256_raw": "becf9bd70c20db7ee00d554e9f7a40345280d2761b555d9ab34046e75bcdc226",
+      "matches_declared": true
+    },
+    {
+      "path": "reports/taiji_core_record_relation_14_6_20261102_v1_engineering_failure.json",
+      "sha256_raw": "57d524141d1b6a6203619fd7b4191364eb226c269f3a6c7bef9ede235f39674f",
+      "matches_declared": true
+    },
+    {
+      "path": "plans/manifests/taiji_core_record_relation_14_6_20261102.json",
+      "sha256_raw": "c648e1d033956b5c22b784480408a44db2f0b8db4628673b215ac06f0c2d0c2d",
+      "matches_declared": true
+    },
+    {
+      "path": "plans/manifests/taiji_core_record_relation_14_6_20261102_v1_engineering_failure.json",
+      "sha256_raw": "bbe2bd32f66c8f8f2af5b6eff0672d6d13c567c0697b324ed52707e59e4090c9",
+      "matches_declared": true
+    },
+    {
+      "path": "plans/reference/PLAN-N15-01_SPAN_BOUND_CONTINUOUS_20261102.md",
+      "sha256_raw": "51cfe08a20cb87af16c3a10939ccf487db1af63d4b693007fc98921102df6897",
+      "matches_declared": true
+    },
+    {
+      "path": "scripts/training/closeout_taiji_record_relation_14_8.py",
+      "sha256_raw": "2fdff0b9a95bacfc18c70c49e998efea3b47c450e412b80df85d4a3581275568",
+      "matches_declared": true
+    }
+  ],
+  "stored_generation_rows_checked": 4032,
+  "primary_A_real_outputs": [
+    {
+      "seed": 27031,
+      "n": 160,
+      "correct": 97,
+      "utf8_valid": 125,
+      "reverse_raw_and_eos_agreement": 160,
+      "crossed_novelty": {
+        "descriptor_new=false,output_name_new=false": {
+          "n": 90,
+          "correct": 80,
+          "utf8_valid": 80,
+          "tf_mean_nll": 0.019689919560032746
+        },
+        "descriptor_new=true,output_name_new=true": {
+          "n": 10,
+          "correct": 0,
+          "utf8_valid": 10,
+          "tf_mean_nll": 3.575625065029952
+        },
+        "descriptor_new=false,output_name_new=true": {
+          "n": 30,
+          "correct": 0,
+          "utf8_valid": 10,
+          "tf_mean_nll": 2.267204768640785
+        },
+        "descriptor_new=true,output_name_new=false": {
+          "n": 30,
+          "correct": 17,
+          "utf8_valid": 25,
+          "tf_mean_nll": 0.08619459763689008
+        }
+      },
+      "first_error_region": {
+        "object": 53,
+        "connector": 10
+      }
+    },
+    {
+      "seed": 27032,
+      "n": 160,
+      "correct": 90,
+      "utf8_valid": 133,
+      "reverse_raw_and_eos_agreement": 160,
+      "crossed_novelty": {
+        "descriptor_new=false,output_name_new=false": {
+          "n": 90,
+          "correct": 90,
+          "utf8_valid": 90,
+          "tf_mean_nll": 0.0002723006084582193
+        },
+        "descriptor_new=true,output_name_new=true": {
+          "n": 10,
+          "correct": 0,
+          "utf8_valid": 10,
+          "tf_mean_nll": 4.198120755593771
+        },
+        "descriptor_new=false,output_name_new=true": {
+          "n": 30,
+          "correct": 0,
+          "utf8_valid": 14,
+          "tf_mean_nll": 1.7513909870069502
+        },
+        "descriptor_new=true,output_name_new=false": {
+          "n": 30,
+          "correct": 0,
+          "utf8_valid": 19,
+          "tf_mean_nll": 2.2965900737852207
+        }
+      },
+      "first_error_region": {
+        "object": 70
+      }
+    }
+  ],
+  "first_error_regions_all_A_real": {
+    "object": 123,
+    "connector": 10
+  },
+  "limitations": [
+    "Stored raw generations do not contain per-byte gamma/copy posterior; they cannot identify a single failure cause.",
+    "The original unseen_entity layer denotes novel input description; output entity novelty must be scored separately.",
+    "Historical task failure is preserved; raw reversal agreement and the compound rescue interpretation are prospective protocol corrections."
+  ],
+  "source_findings": {
+    "old_rescue": {
+      "source": "scripts/training/verify_taiji_record_relation_14_6.py",
+      "lines": [
+        666,
+        693,
+        958,
+        965
+      ],
+      "meaning": "Force only the first output read and gamma=1; copying is disabled at that step. Not an identity restoration."
+    },
+    "old_source_top1": {
+      "source": "scripts/training/verify_taiji_record_relation_14_6.py",
+      "lines": [
+        619,
+        643,
+        657
+      ],
+      "meaning": "Only first read before the first output byte; not an entity-phase alignment metric."
+    },
+    "old_coverage": {
+      "source": "taiji/record_relation_core.py",
+      "lines": [
+        512,
+        519
+      ],
+      "meaning": "Accumulates soft copy/read weights regardless of actual generation/copy posterior; changing this semantics is a new algorithm hypothesis, not a declared old-contract violation."
+    }
+  },
+  "proposed_parent": {
+    "path": "output/taiji_core_record_relation_14_6/27031_A_full_step300.pt",
+    "sha256_raw": "b75a83a0a474c041c2a61bed8c4e0a51de11197d67a9b196262e7e039a9a4cef",
+    "bytes": 64983135,
+    "parameter_candidate_as_recorded": "a3104b3e17c4259cc49347855f53ebc437cf2ec445f6965e857a685e5b8ab756",
+    "selection": "14 preregistered primary seed 27031, not posthoc best-seed search",
+    "neural_model_loaded": false
+  },
+  "static_design_checks": {
+    "new_parameters": 30133,
+    "parameter_table_rows": 9,
+    "proposed_data_counts": {
+      "train": 288,
+      "dev": 240,
+      "confirm": 240
+    },
+    "proposed_source_max_bytes": {
+      "train": 243,
+      "dev": 279,
+      "confirm": 279
+    },
+    "posterior_probability_cases": 27,
+    "conditional_posterior_cases": 80,
+    "scope": "Pure scalar algebra and Markdown arithmetic; formal neural graph is not implemented or tested.",
+    "navigation": {
+      "files": 8,
+      "relative_links": 949,
+      "broken": 0
+    },
+    "commands": {
+      "single_mainline": {
+        "exit_code": 0,
+        "stdout": "status: ok"
+      },
+      "diff_check": {
+        "exit_code": 0,
+        "stdout": ""
+      }
+    }
+  },
+  "proposal": {
+    "path": "plans/reference/SPEC-N15-01_BINDING_COPY_V2_20261102.md",
+    "status": "not_executed",
+    "arms": [
+      "R0P0",
+      "R1P0",
+      "R0P1",
+      "R1P1"
+    ],
+    "formal_max_adam_calls": 2400,
+    "formal_cpu_cap_proposal": 24000,
+    "prior_three_arm_budget_not_inherited": true,
+    "next_step": "15.1.0a data/scoring/logging and interface preflight"
+  },
+  "documents": [
+    {
+      "path": "plans/MAINLINE.md",
+      "sha256_raw": "ef727eeab05356af679ec486a453785b84e3f4c0508dfc3b7619f00e86ed45fa",
+      "sha256_utf8_lf": "ef727eeab05356af679ec486a453785b84e3f4c0508dfc3b7619f00e86ed45fa"
+    },
+    {
+      "path": "plans/README.md",
+      "sha256_raw": "5a4ab386b22565cf462e23cd4a7fc3732ccb96744190da6886392a9fbf7f405b",
+      "sha256_utf8_lf": "5a4ab386b22565cf462e23cd4a7fc3732ccb96744190da6886392a9fbf7f405b"
+    },
+    {
+      "path": "plans/reference/README.md",
+      "sha256_raw": "8168273c81b37475d5be828e174492b49b57c88fbfe066b236c95b153e677f09",
+      "sha256_utf8_lf": "8168273c81b37475d5be828e174492b49b57c88fbfe066b236c95b153e677f09"
+    },
+    {
+      "path": "plans/reference/REVIEW-PACKET_20261102.md",
+      "sha256_raw": "6c216d2b053c66975366cb4a06817b09eaf6f199361ca539f03847c078eca3de",
+      "sha256_utf8_lf": "6c216d2b053c66975366cb4a06817b09eaf6f199361ca539f03847c078eca3de"
+    },
+    {
+      "path": "plans/reference/TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md",
+      "sha256_raw": "dac5af0504043e467b4843723785f77ed2af174b42fb266d024847d04d799328",
+      "sha256_utf8_lf": "dac5af0504043e467b4843723785f77ed2af174b42fb266d024847d04d799328"
+    },
+    {
+      "path": "plans/reference/SPEC-N15-01_BINDING_COPY_V2_20261102.md",
+      "sha256_raw": "5d429fe7af106c6fe0ecdd40768afd036bc143429faf209eb8b6a9e98176c1fd",
+      "sha256_utf8_lf": "5d429fe7af106c6fe0ecdd40768afd036bc143429faf209eb8b6a9e98176c1fd"
+    },
+    {
+      "path": "plans/active/roadmap/03_CURRENT_EXECUTION.md",
+      "sha256_raw": "dd4e7a07e8535c3114b1b2cd4523c7e654db59f9101d3c1e0712bc24a77cd9e6",
+      "sha256_utf8_lf": "dd4e7a07e8535c3114b1b2cd4523c7e654db59f9101d3c1e0712bc24a77cd9e6"
+    },
+    {
+      "path": "plans/archive/history/n15_review_20261102/README.md",
+      "sha256_raw": "69bea964667e1c8fe01c04d7edfae4885cae6985fb357919fb13a8bc04668ad8",
+      "sha256_utf8_lf": "69bea964667e1c8fe01c04d7edfae4885cae6985fb357919fb13a8bc04668ad8"
+    }
+  ],
+  "primary_references": [
+    {
+      "title": "Incorporating Copying Mechanism in Sequence-to-Sequence Learning",
+      "url": "https://aclanthology.org/P16-1154/"
+    },
+    {
+      "title": "Scheduled Sampling for Sequence Prediction with Recurrent Neural Networks",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2015/hash/e995f98d56967d946471af29d7bf99f1-Abstract.html"
+    },
+    {
+      "title": "How (not) to Train your Generative Model",
+      "url": "https://arxiv.org/abs/1511.05101"
+    }
+  ],
+  "actual_execution": {
+    "neural_forward_calls": 0,
+    "optimizer_calls": 0,
+    "runtime_code_modified": false,
+    "checkpoints_modified": false,
+    "new_v2_data_generated": false,
+    "sealed_data_read": false,
+    "historical_reports_rewritten": false
+  },
+  "delivery_policy": "Only the reviewed documentation/evidence family; do not push or commit unrelated runtime changes.",
+  "document_snapshot_policy": "Final drafting snapshots for this planning-only receipt; all historical input reports and their declared bindings are immutable and reverified.",
+  "stage_manifests_verified": [
+    {
+      "path": "plans/manifests/taiji_core_record_relation_14_4_20261102.json",
+      "sha256_raw": "84f8bbb77dac2f5b4f3f529eeda2ce9ac52ab912d6dab2ee7040d2108883aa66"
+    },
+    {
+      "path": "plans/manifests/taiji_core_record_relation_14_5_20261102.json",
+      "sha256_raw": "18d5461749f1a4e5259a450089c4792a9fa1a2221f5f6ce32b9c5d8088afba3c"
+    },
+    {
+      "path": "plans/manifests/taiji_core_record_relation_14_6_preflight_20261102.json",
+      "sha256_raw": "80e3557e2fa5187d1b84f736bae876d52cb2b2ccb470536130074bf59e03d796"
+    },
+    {
+      "path": "plans/manifests/taiji_core_record_relation_14_6_20261102.json",
+      "sha256_raw": "c648e1d033956b5c22b784480408a44db2f0b8db4628673b215ac06f0c2d0c2d"
+    },
+    {
+      "path": "plans/manifests/taiji_core_record_relation_14_8_closeout_20261102.json",
+      "sha256_raw": "49110cfc426795fb2c97fbb48565b63e66a4e81aa15624330d8316ce5fea5614"
+    }
+  ]
+}
