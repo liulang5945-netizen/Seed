@@ -1,0 +1,284 @@
+{
+  "schema": "taiji-record-relation-manifest-v1",
+  "step": "14.4",
+  "date": "2026-11-02",
+  "content_schema": "taiji-record-relation-v1",
+  "parent": {
+    "candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+    "bundle": "output/taiji_core_09/subject_bundle.pt",
+    "sha256": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf",
+    "bytes": 77609636,
+    "subject_id": "taiji-core-09",
+    "revision": 0,
+    "step": 1,
+    "config": {
+      "groups": 4,
+      "width": 128,
+      "units": 256,
+      "adapter_rank": 16,
+      "fast_heads": 2,
+      "key_width": 32,
+      "value_width": 32,
+      "fast_limit": 16.0,
+      "max_event_bytes": 512,
+      "max_source_bytes": 512,
+      "max_target_bytes": 128,
+      "seed": 20261031
+    },
+    "growth_parent_units": 256,
+    "growth_unit_branches": [
+      [
+        "consensus",
+        "consensus",
+        "consensus"
+      ],
+      [
+        "consensus",
+        "consensus",
+        "consensus"
+      ],
+      [
+        "consensus",
+        "consensus",
+        "consensus"
+      ],
+      [
+        "consensus",
+        "consensus",
+        "consensus"
+      ]
+    ],
+    "growth_gates": [
+      {
+        "consensus": 1.0
+      }
+    ]
+  },
+  "candidate": {
+    "candidate_id": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+    "arm": "A_full",
+    "relation_config": {
+      "width": 128,
+      "key_width": 32,
+      "hidden": 64,
+      "chunk": 8,
+      "seed": 27031
+    },
+    "total_parameters": 3496348,
+    "trainable_parameters": 2301123,
+    "new_parameters": 172801,
+    "new_groups": {
+      "gru_forward": 37248,
+      "gru_backward": 37248,
+      "W_c": 16512,
+      "pool": 16640,
+      "Q_goal": 4128,
+      "K_goal": 4096,
+      "V_goal": 16512,
+      "Q_read": 10272,
+      "K_record": 4224,
+      "null_record": 160,
+      "Q_value": 5152,
+      "K_position": 4096,
+      "V_position": 16512,
+      "eta": 1
+    },
+    "inherited_groups": {
+      "embedding": 16448,
+      "input": 8320,
+      "convolutions": 147840,
+      "event": 16512,
+      "xi": 41984,
+      "query_read": 327680,
+      "W": 458752,
+      "P": 132608,
+      "R": 928256,
+      "generate": 49601,
+      "mix": 321
+    },
+    "disabled": {
+      "names": [],
+      "elements": 0,
+      "groups": []
+    },
+    "internal_mode": 0,
+    "fast_write": "disabled",
+    "function_neutral_birth": false
+  },
+  "arms": {
+    "A_full": {
+      "disabled_groups": [],
+      "disabled_names": []
+    },
+    "B_local": {
+      "disabled_groups": [
+        "gru_forward",
+        "gru_backward",
+        "W_c"
+      ],
+      "disabled_names": [
+        "relation.encoder.gru.weight_ih_l0",
+        "relation.encoder.gru.weight_hh_l0",
+        "relation.encoder.gru.bias_ih_l0",
+        "relation.encoder.gru.bias_hh_l0",
+        "relation.encoder.gru.weight_ih_l0_reverse",
+        "relation.encoder.gru.weight_hh_l0_reverse",
+        "relation.encoder.gru.bias_ih_l0_reverse",
+        "relation.encoder.gru.bias_hh_l0_reverse",
+        "relation.encoder.W_c.weight",
+        "relation.encoder.W_c.bias"
+      ]
+    },
+    "C_flat": {
+      "disabled_groups": [
+        "K_record",
+        "Q_value"
+      ],
+      "disabled_names": [
+        "relation.reader.K_record.weight",
+        "relation.reader.Q_value.weight",
+        "relation.reader.Q_value.bias",
+        "relation.reader.null_value"
+      ]
+    }
+  },
+  "state_schema": {
+    "content_revision": 1,
+    "keys": "tuple[(source_id, version, byte_offset)]",
+    "coverage": "float tensor aligned to keys, zero at answer start",
+    "h": [
+      4,
+      128
+    ],
+    "fast": [
+      4,
+      2,
+      32,
+      32
+    ],
+    "per_sample": "isolated zero H/F copy"
+  },
+  "fixtures": [
+    {
+      "name": "records",
+      "goal": "让圆口的器皿到四方木台。",
+      "records": [
+        {
+          "source_id": "glossary-0",
+          "raw": "圆口的器皿是蓝色杯子。"
+        },
+        {
+          "source_id": "glossary-1",
+          "raw": "带纹路的方块是红色印章。"
+        },
+        {
+          "source_id": "glossary-2",
+          "raw": "四方木台是木桌。"
+        },
+        {
+          "source_id": "glossary-3",
+          "raw": "靠窗的台面是窗台。"
+        },
+        {
+          "source_id": "glossary-4",
+          "raw": "左边的匣子是左盒。"
+        }
+      ],
+      "target_action": "把蓝色杯子放到木桌",
+      "target_bytes": [
+        230,
+        138,
+        138,
+        232,
+        147,
+        157,
+        232,
+        137,
+        178,
+        230,
+        157,
+        175,
+        229,
+        173,
+        144,
+        230,
+        148,
+        190,
+        229,
+        136,
+        176,
+        230,
+        156,
+        168,
+        230,
+        161,
+        140,
+        256
+      ],
+      "goal_bytes": 36,
+      "action_bytes": 27,
+      "sha256": "ae660d363d7a19ff499362c693bb7a932c906b445f63c88c9be88ba4aad9ba05"
+    },
+    {
+      "name": "null_only",
+      "goal": "让带纹路的方块到靠窗的台面。",
+      "records": [],
+      "target_action": "把红色印章放到窗台",
+      "target_bytes": [
+        230,
+        138,
+        138,
+        231,
+        186,
+        162,
+        232,
+        137,
+        178,
+        229,
+        141,
+        176,
+        231,
+        171,
+        160,
+        230,
+        148,
+        190,
+        229,
+        136,
+        176,
+        231,
+        170,
+        151,
+        229,
+        143,
+        176,
+        256
+      ],
+      "goal_bytes": 42,
+      "action_bytes": 27,
+      "sha256": "b83df3b80f077f33bf355a286bdbcff7eb00a97403624ba5ead55a7003d6a7e5"
+    }
+  ],
+  "seeds": {
+    "relation_module": 27031,
+    "relation_reader": 27032,
+    "data_order": [
+      37031,
+      37032
+    ]
+  },
+  "budget": {
+    "cpu_seconds": 600,
+    "wall_seconds": 1200,
+    "adam_calls": 12,
+    "product_bytes": 2147483648,
+    "peak_ram_gib": 8
+  },
+  "source_hashes": {
+    "taiji/record_relation.py": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+    "taiji/record_relation_core.py": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+    "scripts/training/verify_taiji_record_relation_14.py": "b4c53a76d633b86f71fafe2036d32d62cf22636230190361521652be9dff4437",
+    "tests/taiji_native/test_record_relation_14_4.py": "98fa4c87f5a00021255e7a79299b8da0fc54cc363478ddd8f7087003e0ed7c0c"
+  },
+  "limits": "Engineering graph/intervention/credit/restore gate only. Public synthetic fixtures; no task data, no pricing, no capability claim, no adoption."
+}

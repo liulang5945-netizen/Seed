@@ -1,0 +1,1805 @@
+{
+  "schema": "taiji-record-relation-14-6-preflight-v1",
+  "step": "14.6.0",
+  "date": "2026-11-02",
+  "status": "passed_14_6_checkpoint_preflight",
+  "checks": [
+    {
+      "id": "parent_identity",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+        "sha256": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf"
+      },
+      "note": ""
+    },
+    {
+      "id": "gate_chain",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "graph": "passed_record_relation_graph_engineering_only",
+        "price": "priced_within_compare_cap",
+        "admitted": true
+      },
+      "note": ""
+    },
+    {
+      "id": "data_contract",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "train": 192,
+        "dev": 160,
+        "digest": "cee43f9c8dd9b68c4ebcb64b444ab0fec42e5c9a553eff5eb1102e81e17a0401"
+      },
+      "note": ""
+    },
+    {
+      "id": "seed_identity",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "seed_27031": {
+          "candidate_id": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+          "relation_digest": "2a3c7ac598d4a7ef92a0fe3e77a3f6b72566b57703389b61bf370ad4847a901d",
+          "new_parameters": 172801,
+          "disabled": 0
+        },
+        "seed_27032": {
+          "candidate_id": "2cfb88970d77b1bcfa11e9bae362a6068f71b066a644646aa2a89acffe016705",
+          "relation_digest": "1f48adef32d1582e90e990197b7347c7cb5dcd713e2e9400fc1d59b6b03137de",
+          "new_parameters": 172801,
+          "disabled": 0
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "arm_structure",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "27031": {
+          "A_full": 0,
+          "B_local": 91008,
+          "C_flat": 9504
+        },
+        "27032": {
+          "A_full": 0,
+          "B_local": 91008,
+          "C_flat": 9504
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "formal_budget_alignment",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "formal_updates": 1800,
+        "formal_adam": 1800,
+        "formal_estimate_cpu": 12427.490625,
+        "cap": 14400
+      },
+      "note": ""
+    },
+    {
+      "id": "checkpoint_restore_chain",
+      "passed": true,
+      "required": true,
+      "observed": [
+        {
+          "seed": 27031,
+          "arm": "A_full",
+          "step0": true,
+          "step1": true,
+          "parameters": true,
+          "optimizer": true,
+          "post": true
+        },
+        {
+          "seed": 27031,
+          "arm": "B_local",
+          "step0": true,
+          "step1": true,
+          "parameters": true,
+          "optimizer": true,
+          "post": true
+        },
+        {
+          "seed": 27031,
+          "arm": "C_flat",
+          "step0": true,
+          "step1": true,
+          "parameters": true,
+          "optimizer": true,
+          "post": true
+        },
+        {
+          "seed": 27032,
+          "arm": "A_full",
+          "step0": true,
+          "step1": true,
+          "parameters": true,
+          "optimizer": true,
+          "post": true
+        },
+        {
+          "seed": 27032,
+          "arm": "B_local",
+          "step0": true,
+          "step1": true,
+          "parameters": true,
+          "optimizer": true,
+          "post": true
+        },
+        {
+          "seed": 27032,
+          "arm": "C_flat",
+          "step0": true,
+          "step1": true,
+          "parameters": true,
+          "optimizer": true,
+          "post": true
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "engineering_update_sane",
+      "passed": true,
+      "required": true,
+      "observed": [
+        {
+          "seed": 27031,
+          "arm": "A_full",
+          "step1": 4.669808231744306,
+          "step2": 4.040809165441238,
+          "worker": 4.040809165441238
+        },
+        {
+          "seed": 27031,
+          "arm": "B_local",
+          "step1": 4.680509484847186,
+          "step2": 4.125157828329055,
+          "worker": 4.125157828329055
+        },
+        {
+          "seed": 27031,
+          "arm": "C_flat",
+          "step1": 4.640633665827997,
+          "step2": 3.973135189843514,
+          "worker": 3.973135189843514
+        },
+        {
+          "seed": 27032,
+          "arm": "A_full",
+          "step1": 4.533224114350723,
+          "step2": 3.95313117351768,
+          "worker": 3.95313117351768
+        },
+        {
+          "seed": 27032,
+          "arm": "B_local",
+          "step1": 4.530160242609187,
+          "step2": 4.035239526220798,
+          "worker": 4.035239526220798
+        },
+        {
+          "seed": 27032,
+          "arm": "C_flat",
+          "step1": 4.581831511595484,
+          "step2": 3.985650070896533,
+          "worker": 3.985650070896533
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "engineering_adam_separate_from_formal",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "engineering_adam": 18,
+        "formal_adam": 0
+      },
+      "note": ""
+    },
+    {
+      "id": "parent_bundle_unchanged",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "before": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf",
+        "after": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf"
+      },
+      "note": ""
+    },
+    {
+      "id": "products_within_limit",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "max_live_bytes": 93089378,
+        "cumulative_bytes": 555297396,
+        "cap": 1073741824
+      },
+      "note": ""
+    },
+    {
+      "id": "preflight_cost_within_budget",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "main_cpu_seconds": 77.21875,
+        "worker_cpu_seconds": 63.625,
+        "total_cpu_seconds": 140.796875,
+        "wall_seconds": 205.1391904000193,
+        "engineering_adam_calls": 18,
+        "max_live_product_bytes": 93089378,
+        "cumulative_product_bytes": 555297396,
+        "peak_ram_mb": 1422.34765625
+      },
+      "note": ""
+    },
+    {
+      "id": "type_check",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "returncode": 0,
+        "errors": 0,
+        "output": "pyproject.toml: note: unused section(s): module = ['neuroplex.life.*', 'neuroplex.loader', 'neuroplex.multimodal.*', 'neuroplex.safety.*', 'neuroplex.tools.browser', 'neuroplex.tools.browser_crawler', 'neuroplex.tools.builtin_tools', 'neuroplex.tools.desktop', 'neuroplex.tools.mini_search', 'neuroplex.tools.search.*', 'neuroplex.tools.searxng', 'neuroplex.tools.web']\nSuccess: no issues found in 4 source files",
+        "passed": true
+      },
+      "note": ""
+    },
+    {
+      "id": "lint",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "ruff": {
+          "returncode": 0,
+          "output": "All checks passed!"
+        },
+        "black": {
+          "returncode": 0,
+          "output": ""
+        },
+        "passed": true
+      },
+      "note": ""
+    },
+    {
+      "id": "manifest_identity",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "written": true,
+        "drift": {}
+      },
+      "note": ""
+    }
+  ],
+  "identity": {
+    "parent_candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+    "parent_bundle_sha256": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf",
+    "parent_bundle_bytes": 77609636,
+    "graph_report": "reports/taiji_core_record_relation_14_4_20261102.json",
+    "graph_report_sha256": "f79cef75f18a1ba873ca339ffd5cf1407dfa945868e7d09995d91f8a066a36f2",
+    "graph_candidate_id": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+    "price_report": "reports/taiji_core_record_relation_14_5_20261102.json",
+    "price_report_sha256": "d50f2bfa9aa8d689792a2634777cd44c3b3a9495e3678c108d8ca5aec1f67ef1",
+    "price_candidate_id": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+    "price_manifest": "plans/manifests/taiji_core_record_relation_14_5_20261102.json",
+    "price_manifest_sha256": "18d5461749f1a4e5259a450089c4792a9fa1a2221f5f6ce32b9c5d8088afba3c",
+    "frozen_train_update_batch8_cpu": 5.3828125,
+    "formal_estimate_cpu": 12427.490625,
+    "source_hashes": {
+      "taiji/record_relation.py": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+      "taiji/record_relation_core.py": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+      "taiji/native_composition_fixture.py": "18ca7f7ce19530d153e5396359870ff4661e5033b089da4960dea128a33c83b4",
+      "scripts/training/verify_taiji_record_relation_14_6_preflight.py": "b43d279cb95eb4fde58a379a04af0316ec561b665545240a6d8e3db16844a9b7"
+    },
+    "graph_source_hashes": {
+      "taiji/record_relation.py": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+      "taiji/record_relation_core.py": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+      "scripts/training/verify_taiji_record_relation_14.py": "b4c53a76d633b86f71fafe2036d32d62cf22636230190361521652be9dff4437",
+      "tests/taiji_native/test_record_relation_14_4.py": "98fa4c87f5a00021255e7a79299b8da0fc54cc363478ddd8f7087003e0ed7c0c"
+    },
+    "price_source_hashes": {
+      "taiji/record_relation.py": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+      "taiji/record_relation_core.py": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+      "taiji/native_composition_fixture.py": "18ca7f7ce19530d153e5396359870ff4661e5033b089da4960dea128a33c83b4",
+      "scripts/training/verify_taiji_record_relation_14_5.py": "58927489a0cb142c42e487ed875f90a4542c487ebd3590523c4d9814da260dc4"
+    }
+  },
+  "data": {
+    "schema": "taiji-composition-fixture-v1",
+    "train_worlds": 16,
+    "dev_worlds": 8,
+    "train_examples": 192,
+    "dev_examples": 160,
+    "digest": "cee43f9c8dd9b68c4ebcb64b444ab0fec42e5c9a553eff5eb1102e81e17a0401",
+    "payload": {
+      "schema": "taiji-composition-fixture-v1",
+      "data_seed": 47021,
+      "order_seed": 27021,
+      "confirm_seed": 47022,
+      "confirm_order_seed": 27022,
+      "declared_worlds": {
+        "train": 16,
+        "dev": 8,
+        "confirm": 8
+      },
+      "lengths": {
+        "goal_bytes": 36,
+        "action_bytes": 27,
+        "train_records": [
+          8,
+          219
+        ],
+        "dev_records": [
+          9,
+          252
+        ]
+      },
+      "vocabulary": {
+        "object_names": [
+          "棕漆木箱",
+          "银灰铁盒",
+          "深绿陶碗",
+          "米白瓷碟",
+          "墨黑石砚"
+        ],
+        "object_descriptions": [
+          "方口的容器",
+          "圆盖的器具",
+          "窄沿的坛子",
+          "有纹的磁盘",
+          "沉手的石块"
+        ],
+        "place_names": [
+          "窗台",
+          "书架",
+          "门后",
+          "廊下",
+          "柜顶"
+        ],
+        "place_descriptions": [
+          "靠墙高处",
+          "向阳角上",
+          "进门右侧",
+          "屋角一侧",
+          "高处横板"
+        ],
+        "train_objects": 3,
+        "held_out_object": {
+          "dev": 3,
+          "confirm": 4
+        }
+      },
+      "combinations": {
+        "seen_per_world": 12,
+        "unseen_combination_per_world": 3,
+        "unseen_entity_per_world": 5,
+        "train_kept": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ]
+        ],
+        "diagonal_excluded": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ]
+      },
+      "price_picks": {
+        "train": [
+          0,
+          1,
+          2,
+          4,
+          5,
+          6,
+          8,
+          10
+        ],
+        "dev_seen": [
+          0,
+          3,
+          6,
+          9
+        ],
+        "dev_unseen_combination": [
+          0,
+          1
+        ],
+        "dev_unseen_entity": [
+          0,
+          1
+        ]
+      },
+      "worlds": [
+        {
+          "split": "train",
+          "world": 0,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "棕漆木箱",
+            "窄沿的坛子": "深绿陶碗"
+          },
+          "place_mapping": {
+            "靠墙高处": "廊下",
+            "向阳角上": "柜顶",
+            "进门右侧": "门后",
+            "屋角一侧": "窗台",
+            "高处横板": "书架"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx6890a949fd1b-00",
+            "cx6890a949fd1b-01",
+            "cx6890a949fd1b-02",
+            "cx6890a949fd1b-03",
+            "cx6890a949fd1b-04",
+            "cx6890a949fd1b-05",
+            "cx6890a949fd1b-06",
+            "cx6890a949fd1b-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 1,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "棕漆木箱",
+            "窄沿的坛子": "深绿陶碗"
+          },
+          "place_mapping": {
+            "靠墙高处": "廊下",
+            "向阳角上": "窗台",
+            "进门右侧": "柜顶",
+            "屋角一侧": "门后",
+            "高处横板": "书架"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cxc80b838af21c-00",
+            "cxc80b838af21c-01",
+            "cxc80b838af21c-02",
+            "cxc80b838af21c-03",
+            "cxc80b838af21c-04",
+            "cxc80b838af21c-05",
+            "cxc80b838af21c-06",
+            "cxc80b838af21c-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 2,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "深绿陶碗",
+            "圆盖的器具": "银灰铁盒",
+            "窄沿的坛子": "棕漆木箱"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "柜顶",
+            "进门右侧": "窗台",
+            "屋角一侧": "门后",
+            "高处横板": "廊下"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx1b71de414c1e-00",
+            "cx1b71de414c1e-01",
+            "cx1b71de414c1e-02",
+            "cx1b71de414c1e-03",
+            "cx1b71de414c1e-04",
+            "cx1b71de414c1e-05",
+            "cx1b71de414c1e-06",
+            "cx1b71de414c1e-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 3,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "棕漆木箱",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "银灰铁盒"
+          },
+          "place_mapping": {
+            "靠墙高处": "窗台",
+            "向阳角上": "门后",
+            "进门右侧": "柜顶",
+            "屋角一侧": "廊下",
+            "高处横板": "书架"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx4e9d897da189-00",
+            "cx4e9d897da189-01",
+            "cx4e9d897da189-02",
+            "cx4e9d897da189-03",
+            "cx4e9d897da189-04",
+            "cx4e9d897da189-05",
+            "cx4e9d897da189-06",
+            "cx4e9d897da189-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 4,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "棕漆木箱"
+          },
+          "place_mapping": {
+            "靠墙高处": "柜顶",
+            "向阳角上": "书架",
+            "进门右侧": "廊下",
+            "屋角一侧": "门后",
+            "高处横板": "窗台"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cxa38cdfcb8da1-00",
+            "cxa38cdfcb8da1-01",
+            "cxa38cdfcb8da1-02",
+            "cxa38cdfcb8da1-03",
+            "cxa38cdfcb8da1-04",
+            "cxa38cdfcb8da1-05",
+            "cxa38cdfcb8da1-06",
+            "cxa38cdfcb8da1-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 5,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "深绿陶碗",
+            "圆盖的器具": "银灰铁盒",
+            "窄沿的坛子": "棕漆木箱"
+          },
+          "place_mapping": {
+            "靠墙高处": "窗台",
+            "向阳角上": "门后",
+            "进门右侧": "书架",
+            "屋角一侧": "柜顶",
+            "高处横板": "廊下"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cxde32a2cb407f-00",
+            "cxde32a2cb407f-01",
+            "cxde32a2cb407f-02",
+            "cxde32a2cb407f-03",
+            "cxde32a2cb407f-04",
+            "cxde32a2cb407f-05",
+            "cxde32a2cb407f-06",
+            "cxde32a2cb407f-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 6,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "深绿陶碗",
+            "圆盖的器具": "银灰铁盒",
+            "窄沿的坛子": "棕漆木箱"
+          },
+          "place_mapping": {
+            "靠墙高处": "门后",
+            "向阳角上": "书架",
+            "进门右侧": "廊下",
+            "屋角一侧": "窗台",
+            "高处横板": "柜顶"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx73f31cd97750-00",
+            "cx73f31cd97750-01",
+            "cx73f31cd97750-02",
+            "cx73f31cd97750-03",
+            "cx73f31cd97750-04",
+            "cx73f31cd97750-05",
+            "cx73f31cd97750-06",
+            "cx73f31cd97750-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 7,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "深绿陶碗",
+            "圆盖的器具": "银灰铁盒",
+            "窄沿的坛子": "棕漆木箱"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "窗台",
+            "进门右侧": "门后",
+            "屋角一侧": "柜顶",
+            "高处横板": "廊下"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx53fd97e7005e-00",
+            "cx53fd97e7005e-01",
+            "cx53fd97e7005e-02",
+            "cx53fd97e7005e-03",
+            "cx53fd97e7005e-04",
+            "cx53fd97e7005e-05",
+            "cx53fd97e7005e-06",
+            "cx53fd97e7005e-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 8,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "棕漆木箱",
+            "窄沿的坛子": "深绿陶碗"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "窗台",
+            "进门右侧": "柜顶",
+            "屋角一侧": "廊下",
+            "高处横板": "门后"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cxaaefc3d1d121-00",
+            "cxaaefc3d1d121-01",
+            "cxaaefc3d1d121-02",
+            "cxaaefc3d1d121-03",
+            "cxaaefc3d1d121-04",
+            "cxaaefc3d1d121-05",
+            "cxaaefc3d1d121-06",
+            "cxaaefc3d1d121-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 9,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "棕漆木箱"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "廊下",
+            "进门右侧": "柜顶",
+            "屋角一侧": "门后",
+            "高处横板": "窗台"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx2838365b97c2-00",
+            "cx2838365b97c2-01",
+            "cx2838365b97c2-02",
+            "cx2838365b97c2-03",
+            "cx2838365b97c2-04",
+            "cx2838365b97c2-05",
+            "cx2838365b97c2-06",
+            "cx2838365b97c2-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 10,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "棕漆木箱",
+            "窄沿的坛子": "深绿陶碗"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "门后",
+            "进门右侧": "窗台",
+            "屋角一侧": "柜顶",
+            "高处横板": "廊下"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx21cbdab5e1ba-00",
+            "cx21cbdab5e1ba-01",
+            "cx21cbdab5e1ba-02",
+            "cx21cbdab5e1ba-03",
+            "cx21cbdab5e1ba-04",
+            "cx21cbdab5e1ba-05",
+            "cx21cbdab5e1ba-06",
+            "cx21cbdab5e1ba-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 11,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "棕漆木箱"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "柜顶",
+            "进门右侧": "廊下",
+            "屋角一侧": "窗台",
+            "高处横板": "门后"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx76eddc021ea7-00",
+            "cx76eddc021ea7-01",
+            "cx76eddc021ea7-02",
+            "cx76eddc021ea7-03",
+            "cx76eddc021ea7-04",
+            "cx76eddc021ea7-05",
+            "cx76eddc021ea7-06",
+            "cx76eddc021ea7-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 12,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "棕漆木箱",
+            "圆盖的器具": "银灰铁盒",
+            "窄沿的坛子": "深绿陶碗"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "门后",
+            "进门右侧": "窗台",
+            "屋角一侧": "柜顶",
+            "高处横板": "廊下"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cxfc63e8ea99ac-00",
+            "cxfc63e8ea99ac-01",
+            "cxfc63e8ea99ac-02",
+            "cxfc63e8ea99ac-03",
+            "cxfc63e8ea99ac-04",
+            "cxfc63e8ea99ac-05",
+            "cxfc63e8ea99ac-06",
+            "cxfc63e8ea99ac-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 13,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "深绿陶碗",
+            "圆盖的器具": "棕漆木箱",
+            "窄沿的坛子": "银灰铁盒"
+          },
+          "place_mapping": {
+            "靠墙高处": "门后",
+            "向阳角上": "窗台",
+            "进门右侧": "廊下",
+            "屋角一侧": "书架",
+            "高处横板": "柜顶"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx0579e9f0fb4e-00",
+            "cx0579e9f0fb4e-01",
+            "cx0579e9f0fb4e-02",
+            "cx0579e9f0fb4e-03",
+            "cx0579e9f0fb4e-04",
+            "cx0579e9f0fb4e-05",
+            "cx0579e9f0fb4e-06",
+            "cx0579e9f0fb4e-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 14,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "棕漆木箱",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "银灰铁盒"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "廊下",
+            "进门右侧": "柜顶",
+            "屋角一侧": "窗台",
+            "高处横板": "门后"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cxef279fab030e-00",
+            "cxef279fab030e-01",
+            "cxef279fab030e-02",
+            "cxef279fab030e-03",
+            "cxef279fab030e-04",
+            "cxef279fab030e-05",
+            "cxef279fab030e-06",
+            "cxef279fab030e-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 15,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "棕漆木箱"
+          },
+          "place_mapping": {
+            "靠墙高处": "廊下",
+            "向阳角上": "窗台",
+            "进门右侧": "书架",
+            "屋角一侧": "柜顶",
+            "高处横板": "门后"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx9581a9f27bd9-00",
+            "cx9581a9f27bd9-01",
+            "cx9581a9f27bd9-02",
+            "cx9581a9f27bd9-03",
+            "cx9581a9f27bd9-04",
+            "cx9581a9f27bd9-05",
+            "cx9581a9f27bd9-06",
+            "cx9581a9f27bd9-07"
+          ]
+        },
+        {
+          "split": "dev",
+          "world": 0,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "棕漆木箱",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "银灰铁盒",
+            "有纹的磁盘": "米白瓷碟"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "柜顶",
+            "进门右侧": "门后",
+            "屋角一侧": "窗台",
+            "高处横板": "廊下"
+          },
+          "record_lines": 9,
+          "record_bytes": 252,
+          "examples": 20,
+          "layers": {
+            "seen_combination": 12,
+            "unseen_combination": 3,
+            "unseen_entity": 5
+          },
+          "actions": 20,
+          "record_ids": [
+            "cx1919b0d6ec58-00",
+            "cx1919b0d6ec58-01",
+            "cx1919b0d6ec58-02",
+            "cx1919b0d6ec58-03",
+            "cx1919b0d6ec58-04",
+            "cx1919b0d6ec58-05",
+            "cx1919b0d6ec58-06",
+            "cx1919b0d6ec58-07",
+            "cx1919b0d6ec58-08"
+          ]
+        },
+        {
+          "split": "dev",
+          "world": 1,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "棕漆木箱",
+            "窄沿的坛子": "米白瓷碟",
+            "有纹的磁盘": "深绿陶碗"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "门后",
+            "进门右侧": "窗台",
+            "屋角一侧": "柜顶",
+            "高处横板": "廊下"
+          },
+          "record_lines": 9,
+          "record_bytes": 252,
+          "examples": 20,
+          "layers": {
+            "seen_combination": 12,
+            "unseen_combination": 3,
+            "unseen_entity": 5
+          },
+          "actions": 20,
+          "record_ids": [
+            "cx2a9a18fcb1af-00",
+            "cx2a9a18fcb1af-01",
+            "cx2a9a18fcb1af-02",
+            "cx2a9a18fcb1af-03",
+            "cx2a9a18fcb1af-04",
+            "cx2a9a18fcb1af-05",
+            "cx2a9a18fcb1af-06",
+            "cx2a9a18fcb1af-07",
+            "cx2a9a18fcb1af-08"
+          ]
+        },
+        {
+          "split": "dev",
+          "world": 2,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "棕漆木箱",
+            "有纹的磁盘": "米白瓷碟"
+          },
+          "place_mapping": {
+            "靠墙高处": "门后",
+            "向阳角上": "柜顶",
+            "进门右侧": "廊下",
+            "屋角一侧": "书架",
+            "高处横板": "窗台"
+          },
+          "record_lines": 9,
+          "record_bytes": 252,
+          "examples": 20,
+          "layers": {
+            "seen_combination": 12,
+            "unseen_combination": 3,
+            "unseen_entity": 5
+          },
+          "actions": 20,
+          "record_ids": [
+            "cx5a1d5e69cb8d-00",
+            "cx5a1d5e69cb8d-01",
+            "cx5a1d5e69cb8d-02",
+            "cx5a1d5e69cb8d-03",
+            "cx5a1d5e69cb8d-04",
+            "cx5a1d5e69cb8d-05",
+            "cx5a1d5e69cb8d-06",
+            "cx5a1d5e69cb8d-07",
+            "cx5a1d5e69cb8d-08"
+          ]
+        },
+        {
+          "split": "dev",
+          "world": 3,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "米白瓷碟",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "银灰铁盒",
+            "有纹的磁盘": "棕漆木箱"
+          },
+          "place_mapping": {
+            "靠墙高处": "窗台",
+            "向阳角上": "书架",
+            "进门右侧": "柜顶",
+            "屋角一侧": "门后",
+            "高处横板": "廊下"
+          },
+          "record_lines": 9,
+          "record_bytes": 252,
+          "examples": 20,
+          "layers": {
+            "seen_combination": 12,
+            "unseen_combination": 3,
+            "unseen_entity": 5
+          },
+          "actions": 20,
+          "record_ids": [
+            "cxea6aac546a42-00",
+            "cxea6aac546a42-01",
+            "cxea6aac546a42-02",
+            "cxea6aac546a42-03",
+            "cxea6aac546a42-04",
+            "cxea6aac546a42-05",
+            "cxea6aac546a42-06",
+            "cxea6aac546a42-07",
+            "cxea6aac546a42-08"
+          ]
+        },
+        {
+          "split": "dev",
+          "world": 4,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "米白瓷碟",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "棕漆木箱",
+            "有纹的磁盘": "银灰铁盒"
+          },
+          "place_mapping": {
+            "靠墙高处": "廊下",
+            "向阳角上": "书架",
+            "进门右侧": "门后",
+            "屋角一侧": "柜顶",
+            "高处横板": "窗台"
+          },
+          "record_lines": 9,
+          "record_bytes": 252,
+          "examples": 20,
+          "layers": {
+            "seen_combination": 12,
+            "unseen_combination": 3,
+            "unseen_entity": 5
+          },
+          "actions": 20,
+          "record_ids": [
+            "cx30361ce3633c-00",
+            "cx30361ce3633c-01",
+            "cx30361ce3633c-02",
+            "cx30361ce3633c-03",
+            "cx30361ce3633c-04",
+            "cx30361ce3633c-05",
+            "cx30361ce3633c-06",
+            "cx30361ce3633c-07",
+            "cx30361ce3633c-08"
+          ]
+        },
+        {
+          "split": "dev",
+          "world": 5,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "米白瓷碟",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "棕漆木箱",
+            "有纹的磁盘": "银灰铁盒"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "柜顶",
+            "进门右侧": "窗台",
+            "屋角一侧": "廊下",
+            "高处横板": "门后"
+          },
+          "record_lines": 9,
+          "record_bytes": 252,
+          "examples": 20,
+          "layers": {
+            "seen_combination": 12,
+            "unseen_combination": 3,
+            "unseen_entity": 5
+          },
+          "actions": 20,
+          "record_ids": [
+            "cxbc3e51a5bcfa-00",
+            "cxbc3e51a5bcfa-01",
+            "cxbc3e51a5bcfa-02",
+            "cxbc3e51a5bcfa-03",
+            "cxbc3e51a5bcfa-04",
+            "cxbc3e51a5bcfa-05",
+            "cxbc3e51a5bcfa-06",
+            "cxbc3e51a5bcfa-07",
+            "cxbc3e51a5bcfa-08"
+          ]
+        },
+        {
+          "split": "dev",
+          "world": 6,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "棕漆木箱",
+            "圆盖的器具": "米白瓷碟",
+            "窄沿的坛子": "深绿陶碗",
+            "有纹的磁盘": "银灰铁盒"
+          },
+          "place_mapping": {
+            "靠墙高处": "柜顶",
+            "向阳角上": "书架",
+            "进门右侧": "门后",
+            "屋角一侧": "窗台",
+            "高处横板": "廊下"
+          },
+          "record_lines": 9,
+          "record_bytes": 252,
+          "examples": 20,
+          "layers": {
+            "seen_combination": 12,
+            "unseen_combination": 3,
+            "unseen_entity": 5
+          },
+          "actions": 20,
+          "record_ids": [
+            "cxb1d3144c6973-00",
+            "cxb1d3144c6973-01",
+            "cxb1d3144c6973-02",
+            "cxb1d3144c6973-03",
+            "cxb1d3144c6973-04",
+            "cxb1d3144c6973-05",
+            "cxb1d3144c6973-06",
+            "cxb1d3144c6973-07",
+            "cxb1d3144c6973-08"
+          ]
+        },
+        {
+          "split": "dev",
+          "world": 7,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "深绿陶碗",
+            "圆盖的器具": "米白瓷碟",
+            "窄沿的坛子": "棕漆木箱",
+            "有纹的磁盘": "银灰铁盒"
+          },
+          "place_mapping": {
+            "靠墙高处": "廊下",
+            "向阳角上": "门后",
+            "进门右侧": "柜顶",
+            "屋角一侧": "窗台",
+            "高处横板": "书架"
+          },
+          "record_lines": 9,
+          "record_bytes": 252,
+          "examples": 20,
+          "layers": {
+            "seen_combination": 12,
+            "unseen_combination": 3,
+            "unseen_entity": 5
+          },
+          "actions": 20,
+          "record_ids": [
+            "cx6b8a6d5e7986-00",
+            "cx6b8a6d5e7986-01",
+            "cx6b8a6d5e7986-02",
+            "cx6b8a6d5e7986-03",
+            "cx6b8a6d5e7986-04",
+            "cx6b8a6d5e7986-05",
+            "cx6b8a6d5e7986-06",
+            "cx6b8a6d5e7986-07",
+            "cx6b8a6d5e7986-08"
+          ]
+        }
+      ],
+      "digest": "cee43f9c8dd9b68c4ebcb64b444ab0fec42e5c9a553eff5eb1102e81e17a0401"
+    },
+    "confirm_read": false
+  },
+  "seeds": [
+    {
+      "seed": 27031,
+      "arm": "A_full",
+      "candidate_id": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+      "relation_digest": "2a3c7ac598d4a7ef92a0fe3e77a3f6b72566b57703389b61bf370ad4847a901d",
+      "new_parameters": 172801,
+      "disabled": 0
+    },
+    {
+      "seed": 27031,
+      "arm": "B_local",
+      "candidate_id": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+      "relation_digest": "2a3c7ac598d4a7ef92a0fe3e77a3f6b72566b57703389b61bf370ad4847a901d",
+      "new_parameters": 172801,
+      "disabled": 91008
+    },
+    {
+      "seed": 27031,
+      "arm": "C_flat",
+      "candidate_id": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+      "relation_digest": "2a3c7ac598d4a7ef92a0fe3e77a3f6b72566b57703389b61bf370ad4847a901d",
+      "new_parameters": 172801,
+      "disabled": 9504
+    },
+    {
+      "seed": 27032,
+      "arm": "A_full",
+      "candidate_id": "2cfb88970d77b1bcfa11e9bae362a6068f71b066a644646aa2a89acffe016705",
+      "relation_digest": "1f48adef32d1582e90e990197b7347c7cb5dcd713e2e9400fc1d59b6b03137de",
+      "new_parameters": 172801,
+      "disabled": 0
+    },
+    {
+      "seed": 27032,
+      "arm": "B_local",
+      "candidate_id": "2cfb88970d77b1bcfa11e9bae362a6068f71b066a644646aa2a89acffe016705",
+      "relation_digest": "1f48adef32d1582e90e990197b7347c7cb5dcd713e2e9400fc1d59b6b03137de",
+      "new_parameters": 172801,
+      "disabled": 91008
+    },
+    {
+      "seed": 27032,
+      "arm": "C_flat",
+      "candidate_id": "2cfb88970d77b1bcfa11e9bae362a6068f71b066a644646aa2a89acffe016705",
+      "relation_digest": "1f48adef32d1582e90e990197b7347c7cb5dcd713e2e9400fc1d59b6b03137de",
+      "new_parameters": 172801,
+      "disabled": 9504
+    }
+  ],
+  "preflight": [
+    {
+      "seed": 27031,
+      "arm": "A_full",
+      "candidate_id": "7944d9aaef88f77548f51cb0de02a4510e1117b3af888ca1325923652270c987",
+      "relation_digest": "1504f6f87ff449a61cf6d6772e5422c69de011d99d5c6b3f393b20cc826e2adf",
+      "parameter_count": 3496348,
+      "trainable_count": 2301123,
+      "disabled": {
+        "names": [],
+        "elements": 0,
+        "groups": []
+      },
+      "batch_indices": [
+        0,
+        9,
+        11,
+        0,
+        6,
+        11,
+        6,
+        1
+      ],
+      "batch_includes_dev0": true,
+      "losses": {
+        "step1": 4.669808231744306,
+        "step2": 4.040809165441238,
+        "worker_step2": 4.040809165441238
+      },
+      "clip_scale": {
+        "step1": 3.0712403787754328,
+        "step2": 2.059837727580885
+      },
+      "step0_restore": {
+        "ok": true,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "step1_restore": {
+        "ok": true,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "next_update": {
+        "ok": true,
+        "parameters_equal": true,
+        "optimizer_equal": true,
+        "post_probabilities_equal": true,
+        "post_max_abs_diff": 0.0
+      },
+      "engineering_adam_calls": 2
+    },
+    {
+      "seed": 27031,
+      "arm": "B_local",
+      "candidate_id": "e570ef17d72cd433bac6d9e29f3e3611a7f88d1a34d2d55db48043369031d40a",
+      "relation_digest": "ef97da3fba9557cc109c4297011a428301f59010053d2209bd9c9fade04d2566",
+      "parameter_count": 3496348,
+      "trainable_count": 2210115,
+      "disabled": {
+        "names": [
+          "relation.encoder.gru.weight_ih_l0",
+          "relation.encoder.gru.weight_hh_l0",
+          "relation.encoder.gru.bias_ih_l0",
+          "relation.encoder.gru.bias_hh_l0",
+          "relation.encoder.gru.weight_ih_l0_reverse",
+          "relation.encoder.gru.weight_hh_l0_reverse",
+          "relation.encoder.gru.bias_ih_l0_reverse",
+          "relation.encoder.gru.bias_hh_l0_reverse",
+          "relation.encoder.W_c.weight",
+          "relation.encoder.W_c.bias"
+        ],
+        "elements": 91008,
+        "groups": [
+          "gru_forward",
+          "gru_backward",
+          "W_c"
+        ]
+      },
+      "batch_indices": [
+        0,
+        9,
+        11,
+        0,
+        6,
+        11,
+        6,
+        1
+      ],
+      "batch_includes_dev0": true,
+      "losses": {
+        "step1": 4.680509484847186,
+        "step2": 4.125157828329055,
+        "worker_step2": 4.125157828329055
+      },
+      "clip_scale": {
+        "step1": 2.5210087307256765,
+        "step2": 1.8996385277255752
+      },
+      "step0_restore": {
+        "ok": true,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "step1_restore": {
+        "ok": true,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "next_update": {
+        "ok": true,
+        "parameters_equal": true,
+        "optimizer_equal": true,
+        "post_probabilities_equal": true,
+        "post_max_abs_diff": 0.0
+      },
+      "engineering_adam_calls": 2
+    },
+    {
+      "seed": 27031,
+      "arm": "C_flat",
+      "candidate_id": "75dabcf1f122fe07971eaff6fe2cc9c0513eaebb8e3770bebcab0cb0cbf4dca5",
+      "relation_digest": "32097e827146868e2a2f3e69243c449529032ec4b763b0af40cf6242277fecba",
+      "parameter_count": 3496348,
+      "trainable_count": 2291619,
+      "disabled": {
+        "names": [
+          "relation.reader.K_record.weight",
+          "relation.reader.Q_value.weight",
+          "relation.reader.Q_value.bias",
+          "relation.reader.null_value"
+        ],
+        "elements": 9504,
+        "groups": [
+          "K_record",
+          "Q_value"
+        ]
+      },
+      "batch_indices": [
+        0,
+        9,
+        11,
+        0,
+        6,
+        11,
+        6,
+        1
+      ],
+      "batch_includes_dev0": true,
+      "losses": {
+        "step1": 4.640633665827997,
+        "step2": 3.973135189843514,
+        "worker_step2": 3.973135189843514
+      },
+      "clip_scale": {
+        "step1": 2.673170194399208,
+        "step2": 2.179144724896435
+      },
+      "step0_restore": {
+        "ok": true,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "step1_restore": {
+        "ok": true,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "next_update": {
+        "ok": true,
+        "parameters_equal": true,
+        "optimizer_equal": true,
+        "post_probabilities_equal": true,
+        "post_max_abs_diff": 0.0
+      },
+      "engineering_adam_calls": 2
+    },
+    {
+      "seed": 27032,
+      "arm": "A_full",
+      "candidate_id": "0dabd8fc68eb050f0446c98ddba7d468c00a1221fbb6cdd8f490b2e070aab2eb",
+      "relation_digest": "83fc1c44b2602c0c4c2aa1876899beeab689710416dfb2532a0bb6472b6dd09a",
+      "parameter_count": 3496348,
+      "trainable_count": 2301123,
+      "disabled": {
+        "names": [],
+        "elements": 0,
+        "groups": []
+      },
+      "batch_indices": [
+        0,
+        11,
+        1,
+        6,
+        11,
+        6,
+        4,
+        5
+      ],
+      "batch_includes_dev0": true,
+      "losses": {
+        "step1": 4.533224114350723,
+        "step2": 3.95313117351768,
+        "worker_step2": 3.95313117351768
+      },
+      "clip_scale": {
+        "step1": 3.0697134144861677,
+        "step2": 1.7843124187329686
+      },
+      "step0_restore": {
+        "ok": true,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "step1_restore": {
+        "ok": true,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "next_update": {
+        "ok": true,
+        "parameters_equal": true,
+        "optimizer_equal": true,
+        "post_probabilities_equal": true,
+        "post_max_abs_diff": 0.0
+      },
+      "engineering_adam_calls": 2
+    },
+    {
+      "seed": 27032,
+      "arm": "B_local",
+      "candidate_id": "7c950689a82378ad1b28d44f920b4c04cd36169ee2d8f5169b3663fc43290e30",
+      "relation_digest": "ce44a1128e917e4ddd6fa86781985efdd4b37c9885ee4877196a2db266ed4907",
+      "parameter_count": 3496348,
+      "trainable_count": 2210115,
+      "disabled": {
+        "names": [
+          "relation.encoder.gru.weight_ih_l0",
+          "relation.encoder.gru.weight_hh_l0",
+          "relation.encoder.gru.bias_ih_l0",
+          "relation.encoder.gru.bias_hh_l0",
+          "relation.encoder.gru.weight_ih_l0_reverse",
+          "relation.encoder.gru.weight_hh_l0_reverse",
+          "relation.encoder.gru.bias_ih_l0_reverse",
+          "relation.encoder.gru.bias_hh_l0_reverse",
+          "relation.encoder.W_c.weight",
+          "relation.encoder.W_c.bias"
+        ],
+        "elements": 91008,
+        "groups": [
+          "gru_forward",
+          "gru_backward",
+          "W_c"
+        ]
+      },
+      "batch_indices": [
+        0,
+        11,
+        1,
+        6,
+        11,
+        6,
+        4,
+        5
+      ],
+      "batch_includes_dev0": true,
+      "losses": {
+        "step1": 4.530160242609187,
+        "step2": 4.035239526220798,
+        "worker_step2": 4.035239526220798
+      },
+      "clip_scale": {
+        "step1": 2.427402197821011,
+        "step2": 1.5681508561390598
+      },
+      "step0_restore": {
+        "ok": true,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "step1_restore": {
+        "ok": true,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "next_update": {
+        "ok": true,
+        "parameters_equal": true,
+        "optimizer_equal": true,
+        "post_probabilities_equal": true,
+        "post_max_abs_diff": 0.0
+      },
+      "engineering_adam_calls": 2
+    },
+    {
+      "seed": 27032,
+      "arm": "C_flat",
+      "candidate_id": "29266d4c28ff19c33f175c3e6a5a7ab69e95733279b0aaf5b981ea36f52e4624",
+      "relation_digest": "cd9fa1408c9acaff1ec4f13c5179ce84fe4ed7dfc73a34bc41ccb0fede8e1b3f",
+      "parameter_count": 3496348,
+      "trainable_count": 2291619,
+      "disabled": {
+        "names": [
+          "relation.reader.K_record.weight",
+          "relation.reader.Q_value.weight",
+          "relation.reader.Q_value.bias",
+          "relation.reader.null_value"
+        ],
+        "elements": 9504,
+        "groups": [
+          "K_record",
+          "Q_value"
+        ]
+      },
+      "batch_indices": [
+        0,
+        11,
+        1,
+        6,
+        11,
+        6,
+        4,
+        5
+      ],
+      "batch_includes_dev0": true,
+      "losses": {
+        "step1": 4.581831511595484,
+        "step2": 3.985650070896533,
+        "worker_step2": 3.985650070896533
+      },
+      "clip_scale": {
+        "step1": 2.7962837792830526,
+        "step2": 2.4891810354594006
+      },
+      "step0_restore": {
+        "ok": true,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "step1_restore": {
+        "ok": true,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "next_update": {
+        "ok": true,
+        "parameters_equal": true,
+        "optimizer_equal": true,
+        "post_probabilities_equal": true,
+        "post_max_abs_diff": 0.0
+      },
+      "engineering_adam_calls": 2
+    }
+  ],
+  "formal_run": {
+    "started": false,
+    "formal_adam_calls": 0
+  },
+  "cost": {
+    "main_cpu_seconds": 77.21875,
+    "worker_cpu_seconds": 63.625,
+    "total_cpu_seconds": 140.796875,
+    "wall_seconds": 205.1391904000193,
+    "engineering_adam_calls": 18,
+    "max_live_product_bytes": 93089378,
+    "cumulative_product_bytes": 555297396,
+    "peak_ram_mb": 1422.34765625
+  },
+  "type_check": {
+    "returncode": 0,
+    "errors": 0,
+    "output": "pyproject.toml: note: unused section(s): module = ['neuroplex.life.*', 'neuroplex.loader', 'neuroplex.multimodal.*', 'neuroplex.safety.*', 'neuroplex.tools.browser', 'neuroplex.tools.browser_crawler', 'neuroplex.tools.builtin_tools', 'neuroplex.tools.desktop', 'neuroplex.tools.mini_search', 'neuroplex.tools.search.*', 'neuroplex.tools.searxng', 'neuroplex.tools.web']\nSuccess: no issues found in 4 source files",
+    "passed": true
+  },
+  "lint": {
+    "ruff": {
+      "returncode": 0,
+      "output": "All checks passed!"
+    },
+    "black": {
+      "returncode": 0,
+      "output": ""
+    },
+    "passed": true
+  },
+  "limits": "Checkpoint preflight only. The formal 14.6 1,800-update run is not started; no task capability claim, no confirm read, no retained engineering parameters.",
+  "manifest": {
+    "path": "plans\\manifests\\taiji_core_record_relation_14_6_preflight_20261102.json",
+    "sha256": "80e3557e2fa5187d1b84f736bae876d52cb2b2ccb470536130074bf59e03d796",
+    "written": true,
+    "drift": {}
+  },
+  "error": null,
+  "required_checks": 15,
+  "failed_required": [],
+  "passed": true
+}

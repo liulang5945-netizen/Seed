@@ -1,0 +1,2317 @@
+{
+  "schema": "taiji-record-relation-14-6-manifest-v1",
+  "step": "14.6",
+  "date": "2026-11-02",
+  "content_schema": "taiji-record-relation-v1",
+  "content_revision": 1,
+  "parent": {
+    "candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+    "bundle": "output/taiji_core_09/subject_bundle.pt",
+    "sha256": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf",
+    "bytes": 77609636
+  },
+  "gate_chain": {
+    "graph": {
+      "report": "reports/taiji_core_record_relation_14_4_20261102.json",
+      "sha256": "f79cef75f18a1ba873ca339ffd5cf1407dfa945868e7d09995d91f8a066a36f2",
+      "candidate_id": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352"
+    },
+    "price": {
+      "report": "reports/taiji_core_record_relation_14_5_20261102.json",
+      "sha256": "d50f2bfa9aa8d689792a2634777cd44c3b3a9495e3678c108d8ca5aec1f67ef1",
+      "manifest": "plans/manifests/taiji_core_record_relation_14_5_20261102.json",
+      "manifest_sha256": "18d5461749f1a4e5259a450089c4792a9fa1a2221f5f6ce32b9c5d8088afba3c",
+      "candidate_id": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+      "train_update_batch8_cpu": 5.3828125,
+      "formal_estimate_cpu": 12427.490625
+    },
+    "preflight": {
+      "report": "reports/taiji_core_record_relation_14_6_preflight_20261102.json",
+      "sha256": "f99c9e5317db8574fc1dfe3b95acccd0ffb2ade775efbfa5cc0d85d71a2b7bda",
+      "manifest": "plans/manifests/taiji_core_record_relation_14_6_preflight_20261102.json",
+      "manifest_sha256": "80e3557e2fa5187d1b84f736bae876d52cb2b2ccb470536130074bf59e03d796"
+    }
+  },
+  "data": {
+    "schema": "taiji-composition-fixture-v1",
+    "train_worlds": 16,
+    "dev_worlds": 8,
+    "train_examples": 192,
+    "dev_examples": 160,
+    "layers": {
+      "train": {
+        "seen_combination": 192
+      },
+      "dev": {
+        "seen_combination": 96,
+        "unseen_combination": 24,
+        "unseen_entity": 40
+      }
+    },
+    "digest": "cee43f9c8dd9b68c4ebcb64b444ab0fec42e5c9a553eff5eb1102e81e17a0401",
+    "payload": {
+      "schema": "taiji-composition-fixture-v1",
+      "data_seed": 47021,
+      "order_seed": 27021,
+      "confirm_seed": 47022,
+      "confirm_order_seed": 27022,
+      "declared_worlds": {
+        "train": 16,
+        "dev": 8,
+        "confirm": 8
+      },
+      "lengths": {
+        "goal_bytes": 36,
+        "action_bytes": 27,
+        "train_records": [
+          8,
+          219
+        ],
+        "dev_records": [
+          9,
+          252
+        ]
+      },
+      "vocabulary": {
+        "object_names": [
+          "棕漆木箱",
+          "银灰铁盒",
+          "深绿陶碗",
+          "米白瓷碟",
+          "墨黑石砚"
+        ],
+        "object_descriptions": [
+          "方口的容器",
+          "圆盖的器具",
+          "窄沿的坛子",
+          "有纹的磁盘",
+          "沉手的石块"
+        ],
+        "place_names": [
+          "窗台",
+          "书架",
+          "门后",
+          "廊下",
+          "柜顶"
+        ],
+        "place_descriptions": [
+          "靠墙高处",
+          "向阳角上",
+          "进门右侧",
+          "屋角一侧",
+          "高处横板"
+        ],
+        "train_objects": 3,
+        "held_out_object": {
+          "dev": 3,
+          "confirm": 4
+        }
+      },
+      "combinations": {
+        "seen_per_world": 12,
+        "unseen_combination_per_world": 3,
+        "unseen_entity_per_world": 5,
+        "train_kept": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ]
+        ],
+        "diagonal_excluded": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ]
+      },
+      "price_picks": {
+        "train": [
+          0,
+          1,
+          2,
+          4,
+          5,
+          6,
+          8,
+          10
+        ],
+        "dev_seen": [
+          0,
+          3,
+          6,
+          9
+        ],
+        "dev_unseen_combination": [
+          0,
+          1
+        ],
+        "dev_unseen_entity": [
+          0,
+          1
+        ]
+      },
+      "worlds": [
+        {
+          "split": "train",
+          "world": 0,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "棕漆木箱",
+            "窄沿的坛子": "深绿陶碗"
+          },
+          "place_mapping": {
+            "靠墙高处": "廊下",
+            "向阳角上": "柜顶",
+            "进门右侧": "门后",
+            "屋角一侧": "窗台",
+            "高处横板": "书架"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx6890a949fd1b-00",
+            "cx6890a949fd1b-01",
+            "cx6890a949fd1b-02",
+            "cx6890a949fd1b-03",
+            "cx6890a949fd1b-04",
+            "cx6890a949fd1b-05",
+            "cx6890a949fd1b-06",
+            "cx6890a949fd1b-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 1,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "棕漆木箱",
+            "窄沿的坛子": "深绿陶碗"
+          },
+          "place_mapping": {
+            "靠墙高处": "廊下",
+            "向阳角上": "窗台",
+            "进门右侧": "柜顶",
+            "屋角一侧": "门后",
+            "高处横板": "书架"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cxc80b838af21c-00",
+            "cxc80b838af21c-01",
+            "cxc80b838af21c-02",
+            "cxc80b838af21c-03",
+            "cxc80b838af21c-04",
+            "cxc80b838af21c-05",
+            "cxc80b838af21c-06",
+            "cxc80b838af21c-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 2,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "深绿陶碗",
+            "圆盖的器具": "银灰铁盒",
+            "窄沿的坛子": "棕漆木箱"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "柜顶",
+            "进门右侧": "窗台",
+            "屋角一侧": "门后",
+            "高处横板": "廊下"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx1b71de414c1e-00",
+            "cx1b71de414c1e-01",
+            "cx1b71de414c1e-02",
+            "cx1b71de414c1e-03",
+            "cx1b71de414c1e-04",
+            "cx1b71de414c1e-05",
+            "cx1b71de414c1e-06",
+            "cx1b71de414c1e-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 3,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "棕漆木箱",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "银灰铁盒"
+          },
+          "place_mapping": {
+            "靠墙高处": "窗台",
+            "向阳角上": "门后",
+            "进门右侧": "柜顶",
+            "屋角一侧": "廊下",
+            "高处横板": "书架"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx4e9d897da189-00",
+            "cx4e9d897da189-01",
+            "cx4e9d897da189-02",
+            "cx4e9d897da189-03",
+            "cx4e9d897da189-04",
+            "cx4e9d897da189-05",
+            "cx4e9d897da189-06",
+            "cx4e9d897da189-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 4,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "棕漆木箱"
+          },
+          "place_mapping": {
+            "靠墙高处": "柜顶",
+            "向阳角上": "书架",
+            "进门右侧": "廊下",
+            "屋角一侧": "门后",
+            "高处横板": "窗台"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cxa38cdfcb8da1-00",
+            "cxa38cdfcb8da1-01",
+            "cxa38cdfcb8da1-02",
+            "cxa38cdfcb8da1-03",
+            "cxa38cdfcb8da1-04",
+            "cxa38cdfcb8da1-05",
+            "cxa38cdfcb8da1-06",
+            "cxa38cdfcb8da1-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 5,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "深绿陶碗",
+            "圆盖的器具": "银灰铁盒",
+            "窄沿的坛子": "棕漆木箱"
+          },
+          "place_mapping": {
+            "靠墙高处": "窗台",
+            "向阳角上": "门后",
+            "进门右侧": "书架",
+            "屋角一侧": "柜顶",
+            "高处横板": "廊下"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cxde32a2cb407f-00",
+            "cxde32a2cb407f-01",
+            "cxde32a2cb407f-02",
+            "cxde32a2cb407f-03",
+            "cxde32a2cb407f-04",
+            "cxde32a2cb407f-05",
+            "cxde32a2cb407f-06",
+            "cxde32a2cb407f-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 6,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "深绿陶碗",
+            "圆盖的器具": "银灰铁盒",
+            "窄沿的坛子": "棕漆木箱"
+          },
+          "place_mapping": {
+            "靠墙高处": "门后",
+            "向阳角上": "书架",
+            "进门右侧": "廊下",
+            "屋角一侧": "窗台",
+            "高处横板": "柜顶"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx73f31cd97750-00",
+            "cx73f31cd97750-01",
+            "cx73f31cd97750-02",
+            "cx73f31cd97750-03",
+            "cx73f31cd97750-04",
+            "cx73f31cd97750-05",
+            "cx73f31cd97750-06",
+            "cx73f31cd97750-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 7,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "深绿陶碗",
+            "圆盖的器具": "银灰铁盒",
+            "窄沿的坛子": "棕漆木箱"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "窗台",
+            "进门右侧": "门后",
+            "屋角一侧": "柜顶",
+            "高处横板": "廊下"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx53fd97e7005e-00",
+            "cx53fd97e7005e-01",
+            "cx53fd97e7005e-02",
+            "cx53fd97e7005e-03",
+            "cx53fd97e7005e-04",
+            "cx53fd97e7005e-05",
+            "cx53fd97e7005e-06",
+            "cx53fd97e7005e-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 8,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "棕漆木箱",
+            "窄沿的坛子": "深绿陶碗"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "窗台",
+            "进门右侧": "柜顶",
+            "屋角一侧": "廊下",
+            "高处横板": "门后"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cxaaefc3d1d121-00",
+            "cxaaefc3d1d121-01",
+            "cxaaefc3d1d121-02",
+            "cxaaefc3d1d121-03",
+            "cxaaefc3d1d121-04",
+            "cxaaefc3d1d121-05",
+            "cxaaefc3d1d121-06",
+            "cxaaefc3d1d121-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 9,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "棕漆木箱"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "廊下",
+            "进门右侧": "柜顶",
+            "屋角一侧": "门后",
+            "高处横板": "窗台"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx2838365b97c2-00",
+            "cx2838365b97c2-01",
+            "cx2838365b97c2-02",
+            "cx2838365b97c2-03",
+            "cx2838365b97c2-04",
+            "cx2838365b97c2-05",
+            "cx2838365b97c2-06",
+            "cx2838365b97c2-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 10,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "棕漆木箱",
+            "窄沿的坛子": "深绿陶碗"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "门后",
+            "进门右侧": "窗台",
+            "屋角一侧": "柜顶",
+            "高处横板": "廊下"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx21cbdab5e1ba-00",
+            "cx21cbdab5e1ba-01",
+            "cx21cbdab5e1ba-02",
+            "cx21cbdab5e1ba-03",
+            "cx21cbdab5e1ba-04",
+            "cx21cbdab5e1ba-05",
+            "cx21cbdab5e1ba-06",
+            "cx21cbdab5e1ba-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 11,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "棕漆木箱"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "柜顶",
+            "进门右侧": "廊下",
+            "屋角一侧": "窗台",
+            "高处横板": "门后"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx76eddc021ea7-00",
+            "cx76eddc021ea7-01",
+            "cx76eddc021ea7-02",
+            "cx76eddc021ea7-03",
+            "cx76eddc021ea7-04",
+            "cx76eddc021ea7-05",
+            "cx76eddc021ea7-06",
+            "cx76eddc021ea7-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 12,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "棕漆木箱",
+            "圆盖的器具": "银灰铁盒",
+            "窄沿的坛子": "深绿陶碗"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "门后",
+            "进门右侧": "窗台",
+            "屋角一侧": "柜顶",
+            "高处横板": "廊下"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cxfc63e8ea99ac-00",
+            "cxfc63e8ea99ac-01",
+            "cxfc63e8ea99ac-02",
+            "cxfc63e8ea99ac-03",
+            "cxfc63e8ea99ac-04",
+            "cxfc63e8ea99ac-05",
+            "cxfc63e8ea99ac-06",
+            "cxfc63e8ea99ac-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 13,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "深绿陶碗",
+            "圆盖的器具": "棕漆木箱",
+            "窄沿的坛子": "银灰铁盒"
+          },
+          "place_mapping": {
+            "靠墙高处": "门后",
+            "向阳角上": "窗台",
+            "进门右侧": "廊下",
+            "屋角一侧": "书架",
+            "高处横板": "柜顶"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx0579e9f0fb4e-00",
+            "cx0579e9f0fb4e-01",
+            "cx0579e9f0fb4e-02",
+            "cx0579e9f0fb4e-03",
+            "cx0579e9f0fb4e-04",
+            "cx0579e9f0fb4e-05",
+            "cx0579e9f0fb4e-06",
+            "cx0579e9f0fb4e-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 14,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "棕漆木箱",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "银灰铁盒"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "廊下",
+            "进门右侧": "柜顶",
+            "屋角一侧": "窗台",
+            "高处横板": "门后"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cxef279fab030e-00",
+            "cxef279fab030e-01",
+            "cxef279fab030e-02",
+            "cxef279fab030e-03",
+            "cxef279fab030e-04",
+            "cxef279fab030e-05",
+            "cxef279fab030e-06",
+            "cxef279fab030e-07"
+          ]
+        },
+        {
+          "split": "train",
+          "world": 15,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "棕漆木箱"
+          },
+          "place_mapping": {
+            "靠墙高处": "廊下",
+            "向阳角上": "窗台",
+            "进门右侧": "书架",
+            "屋角一侧": "柜顶",
+            "高处横板": "门后"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx9581a9f27bd9-00",
+            "cx9581a9f27bd9-01",
+            "cx9581a9f27bd9-02",
+            "cx9581a9f27bd9-03",
+            "cx9581a9f27bd9-04",
+            "cx9581a9f27bd9-05",
+            "cx9581a9f27bd9-06",
+            "cx9581a9f27bd9-07"
+          ]
+        },
+        {
+          "split": "dev",
+          "world": 0,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "棕漆木箱",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "银灰铁盒",
+            "有纹的磁盘": "米白瓷碟"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "柜顶",
+            "进门右侧": "门后",
+            "屋角一侧": "窗台",
+            "高处横板": "廊下"
+          },
+          "record_lines": 9,
+          "record_bytes": 252,
+          "examples": 20,
+          "layers": {
+            "seen_combination": 12,
+            "unseen_combination": 3,
+            "unseen_entity": 5
+          },
+          "actions": 20,
+          "record_ids": [
+            "cx1919b0d6ec58-00",
+            "cx1919b0d6ec58-01",
+            "cx1919b0d6ec58-02",
+            "cx1919b0d6ec58-03",
+            "cx1919b0d6ec58-04",
+            "cx1919b0d6ec58-05",
+            "cx1919b0d6ec58-06",
+            "cx1919b0d6ec58-07",
+            "cx1919b0d6ec58-08"
+          ]
+        },
+        {
+          "split": "dev",
+          "world": 1,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "棕漆木箱",
+            "窄沿的坛子": "米白瓷碟",
+            "有纹的磁盘": "深绿陶碗"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "门后",
+            "进门右侧": "窗台",
+            "屋角一侧": "柜顶",
+            "高处横板": "廊下"
+          },
+          "record_lines": 9,
+          "record_bytes": 252,
+          "examples": 20,
+          "layers": {
+            "seen_combination": 12,
+            "unseen_combination": 3,
+            "unseen_entity": 5
+          },
+          "actions": 20,
+          "record_ids": [
+            "cx2a9a18fcb1af-00",
+            "cx2a9a18fcb1af-01",
+            "cx2a9a18fcb1af-02",
+            "cx2a9a18fcb1af-03",
+            "cx2a9a18fcb1af-04",
+            "cx2a9a18fcb1af-05",
+            "cx2a9a18fcb1af-06",
+            "cx2a9a18fcb1af-07",
+            "cx2a9a18fcb1af-08"
+          ]
+        },
+        {
+          "split": "dev",
+          "world": 2,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "棕漆木箱",
+            "有纹的磁盘": "米白瓷碟"
+          },
+          "place_mapping": {
+            "靠墙高处": "门后",
+            "向阳角上": "柜顶",
+            "进门右侧": "廊下",
+            "屋角一侧": "书架",
+            "高处横板": "窗台"
+          },
+          "record_lines": 9,
+          "record_bytes": 252,
+          "examples": 20,
+          "layers": {
+            "seen_combination": 12,
+            "unseen_combination": 3,
+            "unseen_entity": 5
+          },
+          "actions": 20,
+          "record_ids": [
+            "cx5a1d5e69cb8d-00",
+            "cx5a1d5e69cb8d-01",
+            "cx5a1d5e69cb8d-02",
+            "cx5a1d5e69cb8d-03",
+            "cx5a1d5e69cb8d-04",
+            "cx5a1d5e69cb8d-05",
+            "cx5a1d5e69cb8d-06",
+            "cx5a1d5e69cb8d-07",
+            "cx5a1d5e69cb8d-08"
+          ]
+        },
+        {
+          "split": "dev",
+          "world": 3,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "米白瓷碟",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "银灰铁盒",
+            "有纹的磁盘": "棕漆木箱"
+          },
+          "place_mapping": {
+            "靠墙高处": "窗台",
+            "向阳角上": "书架",
+            "进门右侧": "柜顶",
+            "屋角一侧": "门后",
+            "高处横板": "廊下"
+          },
+          "record_lines": 9,
+          "record_bytes": 252,
+          "examples": 20,
+          "layers": {
+            "seen_combination": 12,
+            "unseen_combination": 3,
+            "unseen_entity": 5
+          },
+          "actions": 20,
+          "record_ids": [
+            "cxea6aac546a42-00",
+            "cxea6aac546a42-01",
+            "cxea6aac546a42-02",
+            "cxea6aac546a42-03",
+            "cxea6aac546a42-04",
+            "cxea6aac546a42-05",
+            "cxea6aac546a42-06",
+            "cxea6aac546a42-07",
+            "cxea6aac546a42-08"
+          ]
+        },
+        {
+          "split": "dev",
+          "world": 4,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "米白瓷碟",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "棕漆木箱",
+            "有纹的磁盘": "银灰铁盒"
+          },
+          "place_mapping": {
+            "靠墙高处": "廊下",
+            "向阳角上": "书架",
+            "进门右侧": "门后",
+            "屋角一侧": "柜顶",
+            "高处横板": "窗台"
+          },
+          "record_lines": 9,
+          "record_bytes": 252,
+          "examples": 20,
+          "layers": {
+            "seen_combination": 12,
+            "unseen_combination": 3,
+            "unseen_entity": 5
+          },
+          "actions": 20,
+          "record_ids": [
+            "cx30361ce3633c-00",
+            "cx30361ce3633c-01",
+            "cx30361ce3633c-02",
+            "cx30361ce3633c-03",
+            "cx30361ce3633c-04",
+            "cx30361ce3633c-05",
+            "cx30361ce3633c-06",
+            "cx30361ce3633c-07",
+            "cx30361ce3633c-08"
+          ]
+        },
+        {
+          "split": "dev",
+          "world": 5,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "米白瓷碟",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "棕漆木箱",
+            "有纹的磁盘": "银灰铁盒"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "柜顶",
+            "进门右侧": "窗台",
+            "屋角一侧": "廊下",
+            "高处横板": "门后"
+          },
+          "record_lines": 9,
+          "record_bytes": 252,
+          "examples": 20,
+          "layers": {
+            "seen_combination": 12,
+            "unseen_combination": 3,
+            "unseen_entity": 5
+          },
+          "actions": 20,
+          "record_ids": [
+            "cxbc3e51a5bcfa-00",
+            "cxbc3e51a5bcfa-01",
+            "cxbc3e51a5bcfa-02",
+            "cxbc3e51a5bcfa-03",
+            "cxbc3e51a5bcfa-04",
+            "cxbc3e51a5bcfa-05",
+            "cxbc3e51a5bcfa-06",
+            "cxbc3e51a5bcfa-07",
+            "cxbc3e51a5bcfa-08"
+          ]
+        },
+        {
+          "split": "dev",
+          "world": 6,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "棕漆木箱",
+            "圆盖的器具": "米白瓷碟",
+            "窄沿的坛子": "深绿陶碗",
+            "有纹的磁盘": "银灰铁盒"
+          },
+          "place_mapping": {
+            "靠墙高处": "柜顶",
+            "向阳角上": "书架",
+            "进门右侧": "门后",
+            "屋角一侧": "窗台",
+            "高处横板": "廊下"
+          },
+          "record_lines": 9,
+          "record_bytes": 252,
+          "examples": 20,
+          "layers": {
+            "seen_combination": 12,
+            "unseen_combination": 3,
+            "unseen_entity": 5
+          },
+          "actions": 20,
+          "record_ids": [
+            "cxb1d3144c6973-00",
+            "cxb1d3144c6973-01",
+            "cxb1d3144c6973-02",
+            "cxb1d3144c6973-03",
+            "cxb1d3144c6973-04",
+            "cxb1d3144c6973-05",
+            "cxb1d3144c6973-06",
+            "cxb1d3144c6973-07",
+            "cxb1d3144c6973-08"
+          ]
+        },
+        {
+          "split": "dev",
+          "world": 7,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "深绿陶碗",
+            "圆盖的器具": "米白瓷碟",
+            "窄沿的坛子": "棕漆木箱",
+            "有纹的磁盘": "银灰铁盒"
+          },
+          "place_mapping": {
+            "靠墙高处": "廊下",
+            "向阳角上": "门后",
+            "进门右侧": "柜顶",
+            "屋角一侧": "窗台",
+            "高处横板": "书架"
+          },
+          "record_lines": 9,
+          "record_bytes": 252,
+          "examples": 20,
+          "layers": {
+            "seen_combination": 12,
+            "unseen_combination": 3,
+            "unseen_entity": 5
+          },
+          "actions": 20,
+          "record_ids": [
+            "cx6b8a6d5e7986-00",
+            "cx6b8a6d5e7986-01",
+            "cx6b8a6d5e7986-02",
+            "cx6b8a6d5e7986-03",
+            "cx6b8a6d5e7986-04",
+            "cx6b8a6d5e7986-05",
+            "cx6b8a6d5e7986-06",
+            "cx6b8a6d5e7986-07",
+            "cx6b8a6d5e7986-08"
+          ]
+        }
+      ],
+      "digest": "cee43f9c8dd9b68c4ebcb64b444ab0fec42e5c9a553eff5eb1102e81e17a0401"
+    },
+    "confirm_read": false
+  },
+  "seeds": [
+    27031,
+    27032
+  ],
+  "order_seeds": [
+    37031,
+    37032
+  ],
+  "arms": [
+    "A_full",
+    "B_local",
+    "C_flat"
+  ],
+  "updates_per_arm": 300,
+  "batch": 8,
+  "evaluation_endpoints": [
+    0,
+    300
+  ],
+  "candidates": [
+    {
+      "seed": 27031,
+      "arm": "A_full",
+      "order_seed": 37031,
+      "candidate_initial": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+      "candidate_final": "a3104b3e17c4259cc49347855f53ebc437cf2ec445f6965e857a685e5b8ab756",
+      "relation_initial": "2a3c7ac598d4a7ef92a0fe3e77a3f6b72566b57703389b61bf370ad4847a901d",
+      "relation_final": "7ae86add29b3574796193eb37ba52f0a722f3eb1fab9d3c610827d449d362eac",
+      "parameter_count": 3496348,
+      "trainable_count": 2301123,
+      "disabled": {
+        "names": [],
+        "elements": 0,
+        "groups": []
+      },
+      "training": {
+        "recovered": false,
+        "updates": 300,
+        "adam_calls": 300,
+        "summary": {
+          "updates": 300,
+          "adam_calls": 300,
+          "cpu_seconds": 1929.90625,
+          "first_loss": 4.672576435863104,
+          "last_loss": 0.0001314442395550489,
+          "mean_first_16": 3.1074472238598143,
+          "mean_last_16": 0.00015586239452263287,
+          "batch_digest": "14eccf0dafc0d314df040dc1a08dc232a463d20da190c6339d7be08defc711be"
+        }
+      },
+      "step300_summary": {
+        "n": 160,
+        "completed": 0.0,
+        "full_sentence": 0.0,
+        "entity_exact": 0.0,
+        "eos": 1.0,
+        "utf8": 0.78125,
+        "source_top1": 0.3125,
+        "layers": {
+          "seen_combination": {
+            "n": 96,
+            "completed": 0.0
+          },
+          "unseen_combination": {
+            "n": 24,
+            "completed": 0.0
+          },
+          "unseen_entity": {
+            "n": 40,
+            "completed": 0.0
+          }
+        }
+      }
+    },
+    {
+      "seed": 27031,
+      "arm": "B_local",
+      "order_seed": 37031,
+      "candidate_initial": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+      "candidate_final": "ab31edc1c31bf91b988413c3841181fdda8646fac5521b5b88f09be10638ea24",
+      "relation_initial": "2a3c7ac598d4a7ef92a0fe3e77a3f6b72566b57703389b61bf370ad4847a901d",
+      "relation_final": "8b3fd73848846f5cc70472a18364b0bcca3b1b82ea0beeeed72380b1d7ce427d",
+      "parameter_count": 3496348,
+      "trainable_count": 2210115,
+      "disabled": {
+        "names": [
+          "relation.encoder.gru.weight_ih_l0",
+          "relation.encoder.gru.weight_hh_l0",
+          "relation.encoder.gru.bias_ih_l0",
+          "relation.encoder.gru.bias_hh_l0",
+          "relation.encoder.gru.weight_ih_l0_reverse",
+          "relation.encoder.gru.weight_hh_l0_reverse",
+          "relation.encoder.gru.bias_ih_l0_reverse",
+          "relation.encoder.gru.bias_hh_l0_reverse",
+          "relation.encoder.W_c.weight",
+          "relation.encoder.W_c.bias"
+        ],
+        "elements": 91008,
+        "groups": [
+          "gru_forward",
+          "gru_backward",
+          "W_c"
+        ]
+      },
+      "training": {
+        "recovered": false,
+        "updates": 300,
+        "adam_calls": 300,
+        "summary": {
+          "updates": 300,
+          "adam_calls": 300,
+          "cpu_seconds": 1600.9375,
+          "first_loss": 4.680511475788053,
+          "last_loss": 0.0001046216367125792,
+          "mean_first_16": 3.1328862507404818,
+          "mean_last_16": 0.00011997184300380478,
+          "batch_digest": "14eccf0dafc0d314df040dc1a08dc232a463d20da190c6339d7be08defc711be"
+        }
+      },
+      "step300_summary": {
+        "n": 160,
+        "completed": 0.0,
+        "full_sentence": 0.0,
+        "entity_exact": 0.0,
+        "eos": 1.0,
+        "utf8": 0.84375,
+        "source_top1": 0.0,
+        "layers": {
+          "seen_combination": {
+            "n": 96,
+            "completed": 0.0
+          },
+          "unseen_combination": {
+            "n": 24,
+            "completed": 0.0
+          },
+          "unseen_entity": {
+            "n": 40,
+            "completed": 0.0
+          }
+        }
+      }
+    },
+    {
+      "seed": 27031,
+      "arm": "C_flat",
+      "order_seed": 37031,
+      "candidate_initial": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+      "candidate_final": "8a1cb9eb92e3756020041fd8a217cdb5e65c78edb3eebb9483670e45ea42f9a4",
+      "relation_initial": "2a3c7ac598d4a7ef92a0fe3e77a3f6b72566b57703389b61bf370ad4847a901d",
+      "relation_final": "645a0dcb4b966edc6db399e9115e1d051ab06052f7954e1b6a56f51f07091b12",
+      "parameter_count": 3496348,
+      "trainable_count": 2291619,
+      "disabled": {
+        "names": [
+          "relation.reader.K_record.weight",
+          "relation.reader.Q_value.weight",
+          "relation.reader.Q_value.bias",
+          "relation.reader.null_value"
+        ],
+        "elements": 9504,
+        "groups": [
+          "K_record",
+          "Q_value"
+        ]
+      },
+      "training": {
+        "recovered": false,
+        "updates": 300,
+        "adam_calls": 300,
+        "summary": {
+          "updates": 300,
+          "adam_calls": 300,
+          "cpu_seconds": 1473.28125,
+          "first_loss": 4.645697348345281,
+          "last_loss": 0.00016434592198463972,
+          "mean_first_16": 2.5071318249145342,
+          "mean_last_16": 0.00013131760116708464,
+          "batch_digest": "14eccf0dafc0d314df040dc1a08dc232a463d20da190c6339d7be08defc711be"
+        }
+      },
+      "step300_summary": {
+        "n": 160,
+        "completed": 0.0,
+        "full_sentence": 0.0,
+        "entity_exact": 0.0,
+        "eos": 1.0,
+        "utf8": 1.0,
+        "source_top1": 0.03125,
+        "layers": {
+          "seen_combination": {
+            "n": 96,
+            "completed": 0.0
+          },
+          "unseen_combination": {
+            "n": 24,
+            "completed": 0.0
+          },
+          "unseen_entity": {
+            "n": 40,
+            "completed": 0.0
+          }
+        }
+      }
+    },
+    {
+      "seed": 27032,
+      "arm": "A_full",
+      "order_seed": 37032,
+      "candidate_initial": "2cfb88970d77b1bcfa11e9bae362a6068f71b066a644646aa2a89acffe016705",
+      "candidate_final": "8ef15d91a3e8e3cc75aba61fc517958197cdf2f490d94fd6bc6df86bf4ced181",
+      "relation_initial": "1f48adef32d1582e90e990197b7347c7cb5dcd713e2e9400fc1d59b6b03137de",
+      "relation_final": "ea5f8b089dc54942cadd65cec23f401d3174890123c33b32961ccf2ecf5b3214",
+      "parameter_count": 3496348,
+      "trainable_count": 2301123,
+      "disabled": {
+        "names": [],
+        "elements": 0,
+        "groups": []
+      },
+      "training": {
+        "recovered": false,
+        "updates": 300,
+        "adam_calls": 300,
+        "summary": {
+          "updates": 300,
+          "adam_calls": 300,
+          "cpu_seconds": 1919.65625,
+          "first_loss": 4.52148979408271,
+          "last_loss": 0.00017190450769366772,
+          "mean_first_16": 3.0782973430659064,
+          "mean_last_16": 0.000198973168998155,
+          "batch_digest": "16d0631f94d157fedba1ff49caeb2edc655f7448066ffd9eb1dce2d5201203a6"
+        }
+      },
+      "step300_summary": {
+        "n": 160,
+        "completed": 0.0,
+        "full_sentence": 0.0,
+        "entity_exact": 0.0,
+        "eos": 1.0,
+        "utf8": 0.83125,
+        "source_top1": 0.0,
+        "layers": {
+          "seen_combination": {
+            "n": 96,
+            "completed": 0.0
+          },
+          "unseen_combination": {
+            "n": 24,
+            "completed": 0.0
+          },
+          "unseen_entity": {
+            "n": 40,
+            "completed": 0.0
+          }
+        }
+      }
+    },
+    {
+      "seed": 27032,
+      "arm": "B_local",
+      "order_seed": 37032,
+      "candidate_initial": "2cfb88970d77b1bcfa11e9bae362a6068f71b066a644646aa2a89acffe016705",
+      "candidate_final": "2c9b6efdf9614200ce59c54a88391a7e472f9e19c835b3860e139c0f2b53352e",
+      "relation_initial": "1f48adef32d1582e90e990197b7347c7cb5dcd713e2e9400fc1d59b6b03137de",
+      "relation_final": "2794b4187eaec39021206336f2378030d2bbac5982ae7cb3fb2fdf1ad43c6082",
+      "parameter_count": 3496348,
+      "trainable_count": 2210115,
+      "disabled": {
+        "names": [
+          "relation.encoder.gru.weight_ih_l0",
+          "relation.encoder.gru.weight_hh_l0",
+          "relation.encoder.gru.bias_ih_l0",
+          "relation.encoder.gru.bias_hh_l0",
+          "relation.encoder.gru.weight_ih_l0_reverse",
+          "relation.encoder.gru.weight_hh_l0_reverse",
+          "relation.encoder.gru.bias_ih_l0_reverse",
+          "relation.encoder.gru.bias_hh_l0_reverse",
+          "relation.encoder.W_c.weight",
+          "relation.encoder.W_c.bias"
+        ],
+        "elements": 91008,
+        "groups": [
+          "gru_forward",
+          "gru_backward",
+          "W_c"
+        ]
+      },
+      "training": {
+        "recovered": false,
+        "updates": 300,
+        "adam_calls": 300,
+        "summary": {
+          "updates": 300,
+          "adam_calls": 300,
+          "cpu_seconds": 1372.84375,
+          "first_loss": 4.5225727784252525,
+          "last_loss": 7.166588020714262e-05,
+          "mean_first_16": 3.120200153759465,
+          "mean_last_16": 7.685500757212124e-05,
+          "batch_digest": "16d0631f94d157fedba1ff49caeb2edc655f7448066ffd9eb1dce2d5201203a6"
+        }
+      },
+      "step300_summary": {
+        "n": 160,
+        "completed": 0.0,
+        "full_sentence": 0.0,
+        "entity_exact": 0.0,
+        "eos": 1.0,
+        "utf8": 0.8,
+        "source_top1": 0.75,
+        "layers": {
+          "seen_combination": {
+            "n": 96,
+            "completed": 0.0
+          },
+          "unseen_combination": {
+            "n": 24,
+            "completed": 0.0
+          },
+          "unseen_entity": {
+            "n": 40,
+            "completed": 0.0
+          }
+        }
+      }
+    },
+    {
+      "seed": 27032,
+      "arm": "C_flat",
+      "order_seed": 37032,
+      "candidate_initial": "2cfb88970d77b1bcfa11e9bae362a6068f71b066a644646aa2a89acffe016705",
+      "candidate_final": "4093c6999a8cba0d38e49755f99a97c1f3b7ac4b77ee6d146414e942823945c3",
+      "relation_initial": "1f48adef32d1582e90e990197b7347c7cb5dcd713e2e9400fc1d59b6b03137de",
+      "relation_final": "cb29da3e15f91082091d1e2f429cd1c83c826667588c5333a29efd92aaa5c0b4",
+      "parameter_count": 3496348,
+      "trainable_count": 2291619,
+      "disabled": {
+        "names": [
+          "relation.reader.K_record.weight",
+          "relation.reader.Q_value.weight",
+          "relation.reader.Q_value.bias",
+          "relation.reader.null_value"
+        ],
+        "elements": 9504,
+        "groups": [
+          "K_record",
+          "Q_value"
+        ]
+      },
+      "training": {
+        "recovered": false,
+        "updates": 300,
+        "adam_calls": 300,
+        "summary": {
+          "updates": 300,
+          "adam_calls": 300,
+          "cpu_seconds": 1425.53125,
+          "first_loss": 4.57500414475552,
+          "last_loss": 0.015776290306191543,
+          "mean_first_16": 2.566226229973448,
+          "mean_last_16": 0.0220983687058821,
+          "batch_digest": "16d0631f94d157fedba1ff49caeb2edc655f7448066ffd9eb1dce2d5201203a6"
+        }
+      },
+      "step300_summary": {
+        "n": 160,
+        "completed": 0.0,
+        "full_sentence": 0.0,
+        "entity_exact": 0.0,
+        "eos": 1.0,
+        "utf8": 0.90625,
+        "source_top1": 0.0,
+        "layers": {
+          "seen_combination": {
+            "n": 96,
+            "completed": 0.0
+          },
+          "unseen_combination": {
+            "n": 24,
+            "completed": 0.0
+          },
+          "unseen_entity": {
+            "n": 40,
+            "completed": 0.0
+          }
+        }
+      }
+    }
+  ],
+  "checkpoints": [
+    {
+      "seed": 27031,
+      "arm": "A_full",
+      "update_index": 0,
+      "path": "output\\taiji_core_record_relation_14_6\\27031_A_full_step0.pt",
+      "sha256": "543dcefbb996b9e62ecbdc4f22bb1344b71b7d2d4ce390116f097fa90f0b9b91",
+      "bytes": 28107387,
+      "candidate_at_save": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+      "kept": true,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+        "update_index": 0,
+        "arm": "A_full"
+      },
+      "worker_restore": {
+        "ok": true,
+        "equal_probabilities": true,
+        "equal_h": true,
+        "equal_coverage": true,
+        "max_abs_diff": 0.0,
+        "cpu_seconds": 2.65625,
+        "wall_seconds": 2.8294154999312013
+      }
+    },
+    {
+      "seed": 27031,
+      "arm": "A_full",
+      "update_index": 100,
+      "path": "output\\taiji_core_record_relation_14_6\\27031_A_full_step100.pt",
+      "sha256": "aebd7ee1ceeddf84a3a0a785100d8f0821f5401f6cbf27823c61f818e53ab9fd",
+      "bytes": 64983135,
+      "candidate_at_save": "66ceee35b8f7317b83b3c0109766bd60d47a2628053bda174f691fdce8d6fb33",
+      "kept": false,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "66ceee35b8f7317b83b3c0109766bd60d47a2628053bda174f691fdce8d6fb33",
+        "update_index": 100,
+        "arm": "A_full"
+      },
+      "deleted": true
+    },
+    {
+      "seed": 27031,
+      "arm": "A_full",
+      "update_index": 200,
+      "path": "output\\taiji_core_record_relation_14_6\\27031_A_full_step200.pt",
+      "sha256": "3e785fe617b929d338f937eedd3c67927bb06fe5a5a7e320f574ffcb1352f380",
+      "bytes": 64983135,
+      "candidate_at_save": "139a0f81e1435231b361f5444381488f9f3e5e4c9b7bdc49a431c6c059101335",
+      "kept": false,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "139a0f81e1435231b361f5444381488f9f3e5e4c9b7bdc49a431c6c059101335",
+        "update_index": 200,
+        "arm": "A_full"
+      },
+      "deleted": true
+    },
+    {
+      "seed": 27031,
+      "arm": "A_full",
+      "update_index": 300,
+      "path": "output\\taiji_core_record_relation_14_6\\27031_A_full_step300.pt",
+      "sha256": "b75a83a0a474c041c2a61bed8c4e0a51de11197d67a9b196262e7e039a9a4cef",
+      "bytes": 64983135,
+      "candidate_at_save": "a3104b3e17c4259cc49347855f53ebc437cf2ec445f6965e857a685e5b8ab756",
+      "kept": true,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "a3104b3e17c4259cc49347855f53ebc437cf2ec445f6965e857a685e5b8ab756",
+        "update_index": 300,
+        "arm": "A_full"
+      },
+      "worker_restore": {
+        "ok": true,
+        "equal_probabilities": true,
+        "equal_h": true,
+        "equal_coverage": true,
+        "max_abs_diff": 0.0,
+        "cpu_seconds": 3.046875,
+        "wall_seconds": 3.4494717000052333
+      }
+    },
+    {
+      "seed": 27031,
+      "arm": "B_local",
+      "update_index": 0,
+      "path": "output\\taiji_core_record_relation_14_6\\27031_B_local_step0.pt",
+      "sha256": "0108e004b9febab8639d0f8e4a644b227a4af856c659dbe6153c9934de6c0ed1",
+      "bytes": 28107563,
+      "candidate_at_save": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+      "kept": true,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+        "update_index": 0,
+        "arm": "B_local"
+      },
+      "worker_restore": {
+        "ok": true,
+        "equal_probabilities": true,
+        "equal_h": true,
+        "equal_coverage": true,
+        "max_abs_diff": 0.0,
+        "cpu_seconds": 2.609375,
+        "wall_seconds": 3.1062085998710245
+      }
+    },
+    {
+      "seed": 27031,
+      "arm": "B_local",
+      "update_index": 100,
+      "path": "output\\taiji_core_record_relation_14_6\\27031_B_local_step100.pt",
+      "sha256": "fd4bfb80947bafdaa9dfc193ce80b5cc55e42b00220afe597a3c9777b3e29e06",
+      "bytes": 63518899,
+      "candidate_at_save": "b8ccea921554d5c39e84a6a52e6c5d73064e032520df5e2d4d009adc4c6c67a4",
+      "kept": false,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "b8ccea921554d5c39e84a6a52e6c5d73064e032520df5e2d4d009adc4c6c67a4",
+        "update_index": 100,
+        "arm": "B_local"
+      },
+      "deleted": true
+    },
+    {
+      "seed": 27031,
+      "arm": "B_local",
+      "update_index": 200,
+      "path": "output\\taiji_core_record_relation_14_6\\27031_B_local_step200.pt",
+      "sha256": "b4162ad7d5fb39787a38bc628fa72b034247875d878ca56d13e847c2f1360dda",
+      "bytes": 63518899,
+      "candidate_at_save": "0376bdc7b24ebf00ef65842d483f1f8d59d846f7f01f5fcc08a34667b001856a",
+      "kept": false,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "0376bdc7b24ebf00ef65842d483f1f8d59d846f7f01f5fcc08a34667b001856a",
+        "update_index": 200,
+        "arm": "B_local"
+      },
+      "deleted": true
+    },
+    {
+      "seed": 27031,
+      "arm": "B_local",
+      "update_index": 300,
+      "path": "output\\taiji_core_record_relation_14_6\\27031_B_local_step300.pt",
+      "sha256": "1cbd79d01825cb34ff6c3430abc36a9137de4223090b8acf7d571a67e05e68f1",
+      "bytes": 63518899,
+      "candidate_at_save": "ab31edc1c31bf91b988413c3841181fdda8646fac5521b5b88f09be10638ea24",
+      "kept": true,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "ab31edc1c31bf91b988413c3841181fdda8646fac5521b5b88f09be10638ea24",
+        "update_index": 300,
+        "arm": "B_local"
+      },
+      "worker_restore": {
+        "ok": true,
+        "equal_probabilities": true,
+        "equal_h": true,
+        "equal_coverage": true,
+        "max_abs_diff": 0.0,
+        "cpu_seconds": 4.125,
+        "wall_seconds": 4.703845900017768
+      }
+    },
+    {
+      "seed": 27031,
+      "arm": "C_flat",
+      "update_index": 0,
+      "path": "output\\taiji_core_record_relation_14_6\\27031_C_flat_step0.pt",
+      "sha256": "4e5b475d59c7b672667437422d23dfbd20583fe7c94ebd418eef3f2ca15d41c7",
+      "bytes": 28107387,
+      "candidate_at_save": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+      "kept": true,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+        "update_index": 0,
+        "arm": "C_flat"
+      },
+      "worker_restore": {
+        "ok": true,
+        "equal_probabilities": true,
+        "equal_h": true,
+        "equal_coverage": true,
+        "max_abs_diff": 0.0,
+        "cpu_seconds": 3.3125,
+        "wall_seconds": 3.7950342998374254
+      }
+    },
+    {
+      "seed": 27031,
+      "arm": "C_flat",
+      "update_index": 100,
+      "path": "output\\taiji_core_record_relation_14_6\\27031_C_flat_step100.pt",
+      "sha256": "c73bcec3271e09761eedacf8f71053b54632f8f561ba50e2edff3b623801f07f",
+      "bytes": 64827675,
+      "candidate_at_save": "d09d0e9cdafd3b51cd977d304031f95fddbb50f5b1d8888ecafb282648108196",
+      "kept": false,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "d09d0e9cdafd3b51cd977d304031f95fddbb50f5b1d8888ecafb282648108196",
+        "update_index": 100,
+        "arm": "C_flat"
+      },
+      "deleted": true
+    },
+    {
+      "seed": 27031,
+      "arm": "C_flat",
+      "update_index": 200,
+      "path": "output\\taiji_core_record_relation_14_6\\27031_C_flat_step200.pt",
+      "sha256": "4e1fa19a567df806eb9ae5c44d5e3fb94e8a1dd966ba3fdd5add0ac0d875392c",
+      "bytes": 64827675,
+      "candidate_at_save": "352168473629378ce9e184e259a2b58b6109b8c825bed9a75e86ea3b757f5ddf",
+      "kept": false,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "352168473629378ce9e184e259a2b58b6109b8c825bed9a75e86ea3b757f5ddf",
+        "update_index": 200,
+        "arm": "C_flat"
+      },
+      "deleted": true
+    },
+    {
+      "seed": 27031,
+      "arm": "C_flat",
+      "update_index": 300,
+      "path": "output\\taiji_core_record_relation_14_6\\27031_C_flat_step300.pt",
+      "sha256": "f4caace0c0ffa90bf0acd44bf33c083c1f37086056b7326fb27d0e3193f72471",
+      "bytes": 64827675,
+      "candidate_at_save": "8a1cb9eb92e3756020041fd8a217cdb5e65c78edb3eebb9483670e45ea42f9a4",
+      "kept": true,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "8a1cb9eb92e3756020041fd8a217cdb5e65c78edb3eebb9483670e45ea42f9a4",
+        "update_index": 300,
+        "arm": "C_flat"
+      },
+      "worker_restore": {
+        "ok": true,
+        "equal_probabilities": true,
+        "equal_h": true,
+        "equal_coverage": true,
+        "max_abs_diff": 0.0,
+        "cpu_seconds": 3.96875,
+        "wall_seconds": 4.385947899892926
+      }
+    },
+    {
+      "seed": 27032,
+      "arm": "A_full",
+      "update_index": 0,
+      "path": "output\\taiji_core_record_relation_14_6\\27032_A_full_step0.pt",
+      "sha256": "be1658f52e7415e8586ceb1f7a6413eb94042a5ce5ebdb3cd5eff9a8fb8da74c",
+      "bytes": 28107387,
+      "candidate_at_save": "2cfb88970d77b1bcfa11e9bae362a6068f71b066a644646aa2a89acffe016705",
+      "kept": true,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "2cfb88970d77b1bcfa11e9bae362a6068f71b066a644646aa2a89acffe016705",
+        "update_index": 0,
+        "arm": "A_full"
+      },
+      "worker_restore": {
+        "ok": true,
+        "equal_probabilities": true,
+        "equal_h": true,
+        "equal_coverage": true,
+        "max_abs_diff": 0.0,
+        "cpu_seconds": 4.0,
+        "wall_seconds": 4.420066499849781
+      }
+    },
+    {
+      "seed": 27032,
+      "arm": "A_full",
+      "update_index": 100,
+      "path": "output\\taiji_core_record_relation_14_6\\27032_A_full_step100.pt",
+      "sha256": "4f6778ce9f7d52b3f6db08d970c536b48f840c7dcf204d3798dba35a6aebccd5",
+      "bytes": 64983135,
+      "candidate_at_save": "d708895eae1fd714cad8ef3cf398f127701ddf08ef26587f584a0c6f1d6767d5",
+      "kept": false,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "d708895eae1fd714cad8ef3cf398f127701ddf08ef26587f584a0c6f1d6767d5",
+        "update_index": 100,
+        "arm": "A_full"
+      },
+      "deleted": true
+    },
+    {
+      "seed": 27032,
+      "arm": "A_full",
+      "update_index": 200,
+      "path": "output\\taiji_core_record_relation_14_6\\27032_A_full_step200.pt",
+      "sha256": "a95f183f2937166ad6fd8bf4d2a10b07fabe56fa32356343a1d1d32c35b7cb93",
+      "bytes": 64983135,
+      "candidate_at_save": "4833e45c2e4389d075361a6238a38bd7ed15f14906c9618231686fad1bf6765f",
+      "kept": false,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "4833e45c2e4389d075361a6238a38bd7ed15f14906c9618231686fad1bf6765f",
+        "update_index": 200,
+        "arm": "A_full"
+      },
+      "deleted": true
+    },
+    {
+      "seed": 27032,
+      "arm": "A_full",
+      "update_index": 300,
+      "path": "output\\taiji_core_record_relation_14_6\\27032_A_full_step300.pt",
+      "sha256": "9c4f8b13568df1dbffb3a65c41d8f55aac35921b80090d8423bdd0530c8ab00c",
+      "bytes": 64983135,
+      "candidate_at_save": "8ef15d91a3e8e3cc75aba61fc517958197cdf2f490d94fd6bc6df86bf4ced181",
+      "kept": true,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "8ef15d91a3e8e3cc75aba61fc517958197cdf2f490d94fd6bc6df86bf4ced181",
+        "update_index": 300,
+        "arm": "A_full"
+      },
+      "worker_restore": {
+        "ok": true,
+        "equal_probabilities": true,
+        "equal_h": true,
+        "equal_coverage": true,
+        "max_abs_diff": 0.0,
+        "cpu_seconds": 3.234375,
+        "wall_seconds": 3.962792999809608
+      }
+    },
+    {
+      "seed": 27032,
+      "arm": "B_local",
+      "update_index": 0,
+      "path": "output\\taiji_core_record_relation_14_6\\27032_B_local_step0.pt",
+      "sha256": "e592f828944e275a4b8ee0fb3fbcd5dd5ae00cc7bfc7082d17ae541ce23fe672",
+      "bytes": 28107563,
+      "candidate_at_save": "2cfb88970d77b1bcfa11e9bae362a6068f71b066a644646aa2a89acffe016705",
+      "kept": true,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "2cfb88970d77b1bcfa11e9bae362a6068f71b066a644646aa2a89acffe016705",
+        "update_index": 0,
+        "arm": "B_local"
+      },
+      "worker_restore": {
+        "ok": true,
+        "equal_probabilities": true,
+        "equal_h": true,
+        "equal_coverage": true,
+        "max_abs_diff": 0.0,
+        "cpu_seconds": 2.96875,
+        "wall_seconds": 3.22513770009391
+      }
+    },
+    {
+      "seed": 27032,
+      "arm": "B_local",
+      "update_index": 100,
+      "path": "output\\taiji_core_record_relation_14_6\\27032_B_local_step100.pt",
+      "sha256": "d827d92d584f0d6064a48750b7333ff4879e7161d8142bb3a6e0deb209283392",
+      "bytes": 63518899,
+      "candidate_at_save": "09ad95458a348ef248912b67e5d23e7a1a36a8478bd694ce4857219e9849797f",
+      "kept": false,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "09ad95458a348ef248912b67e5d23e7a1a36a8478bd694ce4857219e9849797f",
+        "update_index": 100,
+        "arm": "B_local"
+      },
+      "deleted": true
+    },
+    {
+      "seed": 27032,
+      "arm": "B_local",
+      "update_index": 200,
+      "path": "output\\taiji_core_record_relation_14_6\\27032_B_local_step200.pt",
+      "sha256": "7bae3016e60b9a455d7045ceedc9c6100bacd8213f2a6c85923751e9f33d62a2",
+      "bytes": 63518899,
+      "candidate_at_save": "435d2536029b72883f29e8d7ec334a68be125859922ddcba98e0cd9824566ac9",
+      "kept": false,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "435d2536029b72883f29e8d7ec334a68be125859922ddcba98e0cd9824566ac9",
+        "update_index": 200,
+        "arm": "B_local"
+      },
+      "deleted": true
+    },
+    {
+      "seed": 27032,
+      "arm": "B_local",
+      "update_index": 300,
+      "path": "output\\taiji_core_record_relation_14_6\\27032_B_local_step300.pt",
+      "sha256": "4df8d26a72746863593ffaddb46a4aedc60e3a11f5d048ed374c2f7344772aaa",
+      "bytes": 63518899,
+      "candidate_at_save": "2c9b6efdf9614200ce59c54a88391a7e472f9e19c835b3860e139c0f2b53352e",
+      "kept": true,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "2c9b6efdf9614200ce59c54a88391a7e472f9e19c835b3860e139c0f2b53352e",
+        "update_index": 300,
+        "arm": "B_local"
+      },
+      "worker_restore": {
+        "ok": true,
+        "equal_probabilities": true,
+        "equal_h": true,
+        "equal_coverage": true,
+        "max_abs_diff": 0.0,
+        "cpu_seconds": 2.953125,
+        "wall_seconds": 3.410935499938205
+      }
+    },
+    {
+      "seed": 27032,
+      "arm": "C_flat",
+      "update_index": 0,
+      "path": "output\\taiji_core_record_relation_14_6\\27032_C_flat_step0.pt",
+      "sha256": "ccbdaa8bc84124415e4103251a869f7d3850919b557703c188b8a21d8e4dfeda",
+      "bytes": 28107387,
+      "candidate_at_save": "2cfb88970d77b1bcfa11e9bae362a6068f71b066a644646aa2a89acffe016705",
+      "kept": true,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "2cfb88970d77b1bcfa11e9bae362a6068f71b066a644646aa2a89acffe016705",
+        "update_index": 0,
+        "arm": "C_flat"
+      },
+      "worker_restore": {
+        "ok": true,
+        "equal_probabilities": true,
+        "equal_h": true,
+        "equal_coverage": true,
+        "max_abs_diff": 0.0,
+        "cpu_seconds": 2.5625,
+        "wall_seconds": 2.7508036999497563
+      }
+    },
+    {
+      "seed": 27032,
+      "arm": "C_flat",
+      "update_index": 100,
+      "path": "output\\taiji_core_record_relation_14_6\\27032_C_flat_step100.pt",
+      "sha256": "60eb705c9db0d87f23f96a7092c65a2eb65afde9c268f8daaa276bd394d5544f",
+      "bytes": 64827675,
+      "candidate_at_save": "622849b6bc804e561e24c597f1ef72f3f5199777778c4da7e22ecd352ae28365",
+      "kept": false,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "622849b6bc804e561e24c597f1ef72f3f5199777778c4da7e22ecd352ae28365",
+        "update_index": 100,
+        "arm": "C_flat"
+      },
+      "deleted": true
+    },
+    {
+      "seed": 27032,
+      "arm": "C_flat",
+      "update_index": 200,
+      "path": "output\\taiji_core_record_relation_14_6\\27032_C_flat_step200.pt",
+      "sha256": "f95fdca7f49a25253554b741cfe259d8aba9e01ee174be7f235ab07d9835c19d",
+      "bytes": 64827675,
+      "candidate_at_save": "7a204c1b8ab74469ebcf4dab79edb70c974770212acac6e4458de03d530491b6",
+      "kept": false,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "7a204c1b8ab74469ebcf4dab79edb70c974770212acac6e4458de03d530491b6",
+        "update_index": 200,
+        "arm": "C_flat"
+      },
+      "deleted": true
+    },
+    {
+      "seed": 27032,
+      "arm": "C_flat",
+      "update_index": 300,
+      "path": "output\\taiji_core_record_relation_14_6\\27032_C_flat_step300.pt",
+      "sha256": "641e984af288eaa7c3af86b41403d21c4a5a92d346be4a153f6f656c9e661b06",
+      "bytes": 64827675,
+      "candidate_at_save": "4093c6999a8cba0d38e49755f99a97c1f3b7ac4b77ee6d146414e942823945c3",
+      "kept": true,
+      "probe_gate_index": 5,
+      "reload": {
+        "ok": true,
+        "loaded_digest": "4093c6999a8cba0d38e49755f99a97c1f3b7ac4b77ee6d146414e942823945c3",
+        "update_index": 300,
+        "arm": "C_flat"
+      },
+      "worker_restore": {
+        "ok": true,
+        "equal_probabilities": true,
+        "equal_h": true,
+        "equal_coverage": true,
+        "max_abs_diff": 0.0,
+        "cpu_seconds": 3.421875,
+        "wall_seconds": 3.8789806000422686
+      }
+    }
+  ],
+  "retained": [
+    {
+      "seed": 27031,
+      "arm": "A_full",
+      "update_index": 0,
+      "path": "output\\taiji_core_record_relation_14_6\\27031_A_full_step0.pt",
+      "sha256": "543dcefbb996b9e62ecbdc4f22bb1344b71b7d2d4ce390116f097fa90f0b9b91",
+      "bytes": 28107387,
+      "candidate_at_save": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352"
+    },
+    {
+      "seed": 27031,
+      "arm": "A_full",
+      "update_index": 300,
+      "path": "output\\taiji_core_record_relation_14_6\\27031_A_full_step300.pt",
+      "sha256": "b75a83a0a474c041c2a61bed8c4e0a51de11197d67a9b196262e7e039a9a4cef",
+      "bytes": 64983135,
+      "candidate_at_save": "a3104b3e17c4259cc49347855f53ebc437cf2ec445f6965e857a685e5b8ab756"
+    },
+    {
+      "seed": 27031,
+      "arm": "B_local",
+      "update_index": 0,
+      "path": "output\\taiji_core_record_relation_14_6\\27031_B_local_step0.pt",
+      "sha256": "0108e004b9febab8639d0f8e4a644b227a4af856c659dbe6153c9934de6c0ed1",
+      "bytes": 28107563,
+      "candidate_at_save": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352"
+    },
+    {
+      "seed": 27031,
+      "arm": "B_local",
+      "update_index": 300,
+      "path": "output\\taiji_core_record_relation_14_6\\27031_B_local_step300.pt",
+      "sha256": "1cbd79d01825cb34ff6c3430abc36a9137de4223090b8acf7d571a67e05e68f1",
+      "bytes": 63518899,
+      "candidate_at_save": "ab31edc1c31bf91b988413c3841181fdda8646fac5521b5b88f09be10638ea24"
+    },
+    {
+      "seed": 27031,
+      "arm": "C_flat",
+      "update_index": 0,
+      "path": "output\\taiji_core_record_relation_14_6\\27031_C_flat_step0.pt",
+      "sha256": "4e5b475d59c7b672667437422d23dfbd20583fe7c94ebd418eef3f2ca15d41c7",
+      "bytes": 28107387,
+      "candidate_at_save": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352"
+    },
+    {
+      "seed": 27031,
+      "arm": "C_flat",
+      "update_index": 300,
+      "path": "output\\taiji_core_record_relation_14_6\\27031_C_flat_step300.pt",
+      "sha256": "f4caace0c0ffa90bf0acd44bf33c083c1f37086056b7326fb27d0e3193f72471",
+      "bytes": 64827675,
+      "candidate_at_save": "8a1cb9eb92e3756020041fd8a217cdb5e65c78edb3eebb9483670e45ea42f9a4"
+    },
+    {
+      "seed": 27032,
+      "arm": "A_full",
+      "update_index": 0,
+      "path": "output\\taiji_core_record_relation_14_6\\27032_A_full_step0.pt",
+      "sha256": "be1658f52e7415e8586ceb1f7a6413eb94042a5ce5ebdb3cd5eff9a8fb8da74c",
+      "bytes": 28107387,
+      "candidate_at_save": "2cfb88970d77b1bcfa11e9bae362a6068f71b066a644646aa2a89acffe016705"
+    },
+    {
+      "seed": 27032,
+      "arm": "A_full",
+      "update_index": 300,
+      "path": "output\\taiji_core_record_relation_14_6\\27032_A_full_step300.pt",
+      "sha256": "9c4f8b13568df1dbffb3a65c41d8f55aac35921b80090d8423bdd0530c8ab00c",
+      "bytes": 64983135,
+      "candidate_at_save": "8ef15d91a3e8e3cc75aba61fc517958197cdf2f490d94fd6bc6df86bf4ced181"
+    },
+    {
+      "seed": 27032,
+      "arm": "B_local",
+      "update_index": 0,
+      "path": "output\\taiji_core_record_relation_14_6\\27032_B_local_step0.pt",
+      "sha256": "e592f828944e275a4b8ee0fb3fbcd5dd5ae00cc7bfc7082d17ae541ce23fe672",
+      "bytes": 28107563,
+      "candidate_at_save": "2cfb88970d77b1bcfa11e9bae362a6068f71b066a644646aa2a89acffe016705"
+    },
+    {
+      "seed": 27032,
+      "arm": "B_local",
+      "update_index": 300,
+      "path": "output\\taiji_core_record_relation_14_6\\27032_B_local_step300.pt",
+      "sha256": "4df8d26a72746863593ffaddb46a4aedc60e3a11f5d048ed374c2f7344772aaa",
+      "bytes": 63518899,
+      "candidate_at_save": "2c9b6efdf9614200ce59c54a88391a7e472f9e19c835b3860e139c0f2b53352e"
+    },
+    {
+      "seed": 27032,
+      "arm": "C_flat",
+      "update_index": 0,
+      "path": "output\\taiji_core_record_relation_14_6\\27032_C_flat_step0.pt",
+      "sha256": "ccbdaa8bc84124415e4103251a869f7d3850919b557703c188b8a21d8e4dfeda",
+      "bytes": 28107387,
+      "candidate_at_save": "2cfb88970d77b1bcfa11e9bae362a6068f71b066a644646aa2a89acffe016705"
+    },
+    {
+      "seed": 27032,
+      "arm": "C_flat",
+      "update_index": 300,
+      "path": "output\\taiji_core_record_relation_14_6\\27032_C_flat_step300.pt",
+      "sha256": "641e984af288eaa7c3af86b41403d21c4a5a92d346be4a153f6f656c9e661b06",
+      "bytes": 64827675,
+      "candidate_at_save": "4093c6999a8cba0d38e49755f99a97c1f3b7ac4b77ee6d146414e942823945c3"
+    }
+  ],
+  "retained_count": 12,
+  "gates": {
+    "task": {
+      "passed": false,
+      "bars": {
+        "total": 0.8,
+        "unseen_combination": 0.6,
+        "unseen_entity": 0.6,
+        "both_sides": 0.6,
+        "reverse": 0.95
+      },
+      "observed": {
+        "total": 0.0,
+        "total_n": 320,
+        "unseen_combination": 0.0,
+        "unseen_entity": 0.0,
+        "both_sides": 0.0,
+        "both_sides_n": 320,
+        "reverse": 0.0,
+        "reverse_n": 320
+      }
+    },
+    "structure": {
+      "passed": false,
+      "bar": 0.1,
+      "rows": [
+        {
+          "seed": 27031,
+          "comparison": "A_minus_B",
+          "gain": 0.0,
+          "bootstrap": {
+            "rounds": 2000,
+            "seed": 57031,
+            "mean": 0.0,
+            "lower_95": 0.0,
+            "upper_95": 0.0
+          },
+          "passed": false,
+          "saturated": false,
+          "complete_worlds": true,
+          "a_accuracy": 0.0,
+          "other_accuracy": 0.0,
+          "world_differences": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "seed": 27031,
+          "comparison": "A_minus_C",
+          "gain": 0.0,
+          "bootstrap": {
+            "rounds": 2000,
+            "seed": 57031,
+            "mean": 0.0,
+            "lower_95": 0.0,
+            "upper_95": 0.0
+          },
+          "passed": false,
+          "saturated": false,
+          "complete_worlds": true,
+          "a_accuracy": 0.0,
+          "other_accuracy": 0.0,
+          "world_differences": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "seed": 27032,
+          "comparison": "A_minus_B",
+          "gain": 0.0,
+          "bootstrap": {
+            "rounds": 2000,
+            "seed": 57031,
+            "mean": 0.0,
+            "lower_95": 0.0,
+            "upper_95": 0.0
+          },
+          "passed": false,
+          "saturated": false,
+          "complete_worlds": true,
+          "a_accuracy": 0.0,
+          "other_accuracy": 0.0,
+          "world_differences": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "seed": 27032,
+          "comparison": "A_minus_C",
+          "gain": 0.0,
+          "bootstrap": {
+            "rounds": 2000,
+            "seed": 57031,
+            "mean": 0.0,
+            "lower_95": 0.0,
+            "upper_95": 0.0
+          },
+          "passed": false,
+          "saturated": false,
+          "complete_worlds": true,
+          "a_accuracy": 0.0,
+          "other_accuracy": 0.0,
+          "world_differences": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "reason": null
+    },
+    "content": {
+      "passed": false,
+      "bar": 0.1,
+      "conditions": {
+        "no_source": {
+          "n": 16,
+          "real_accuracy": 0.0,
+          "condition_accuracy": 0.0,
+          "drop": 0.0,
+          "passed": false
+        },
+        "wrong_record": {
+          "n": 16,
+          "real_accuracy": 0.0,
+          "condition_accuracy": 0.0,
+          "drop": 0.0,
+          "passed": false
+        },
+        "wrong_position": {
+          "n": 16,
+          "real_accuracy": 0.0,
+          "condition_accuracy": 0.0,
+          "drop": 0.0,
+          "passed": false
+        }
+      },
+      "rescue": {
+        "n": 16,
+        "real_accuracy": 0.0,
+        "rescue_accuracy": 0.0,
+        "delta": 0.0
+      },
+      "fixed_names": [
+        "dev-0-0",
+        "dev-0-3",
+        "dev-0-6",
+        "dev-0-9",
+        "dev-0-12",
+        "dev-0-13",
+        "dev-0-15",
+        "dev-0-16"
+      ]
+    }
+  },
+  "status": "engineering_failure",
+  "cost": {
+    "main_cpu_seconds": 10859.3125,
+    "worker_cpu_seconds": 38.859375,
+    "total_cpu_seconds": 10898.171875,
+    "wall_seconds": 11340.517557899933,
+    "worker_wall_seconds": 43.91864089923911,
+    "adam_calls_executed": 1800,
+    "adam_calls_recovered": 0,
+    "adam_calls_total": 1800,
+    "max_live_product_bytes": 555304092,
+    "cumulative_product_bytes": 1328622928,
+    "peak_ram_mb": 1442.20703125
+  },
+  "source_hashes": {
+    "taiji/record_relation.py": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+    "taiji/record_relation_core.py": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+    "taiji/native_composition_fixture.py": "18ca7f7ce19530d153e5396359870ff4661e5033b089da4960dea128a33c83b4",
+    "scripts/training/verify_taiji_record_relation_14_6.py": "37424556a55f8e19122e6caf318e5c63042d5ca43457e22877b75fe551c6e56f"
+  },
+  "confirm_read": false,
+  "next": "14.8 closeout of this package"
+}

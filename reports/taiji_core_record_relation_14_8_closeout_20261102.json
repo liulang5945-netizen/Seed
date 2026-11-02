@@ -1,0 +1,777 @@
+{
+  "schema": "taiji-record-relation-14-8-closeout-v1",
+  "step": "14.8",
+  "date": "2026-11-02",
+  "started_at": "2026-11-02T18:43:22+0800",
+  "status": "closed_negative_with_followup_design",
+  "passed": true,
+  "package_exit": "native_byte_task_failed",
+  "release_14_7": false,
+  "owner_approval_required": true,
+  "checks": [
+    {
+      "id": "stage_cards",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "statuses": {
+          "14.1": "split_defect_confirmed",
+          "14.2": "goal_copy_shortcut_confirmed",
+          "14.3": "pathway_unreachable",
+          "14.4": "passed_record_relation_graph_engineering_only",
+          "14.5": "priced_within_compare_cap",
+          "14.6.0": "passed_14_6_checkpoint_preflight",
+          "14.6": "native_byte_task_failed",
+          "14.6.v1": "engineering_failure"
+        },
+        "v1_report": "reports/taiji_core_record_relation_14_6_20261102_v1_engineering_failure.json",
+        "v1_report_sha256": "57d524141d1b6a6203619fd7b4191364eb226c269f3a6c7bef9ede235f39674f",
+        "corrected_report": "reports/taiji_core_record_relation_14_6_20261102.json",
+        "corrected_report_sha256": "becf9bd70c20db7ee00d554e9f7a40345280d2761b555d9ab34046e75bcdc226"
+      },
+      "note": ""
+    },
+    {
+      "id": "package_exit",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "package_exit": "native_byte_task_failed",
+        "14_7": "not_released",
+        "task_gate": false,
+        "content_gate": true,
+        "structure_gate": false
+      },
+      "note": ""
+    },
+    {
+      "id": "cost_ledger",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "stages": [
+          {
+            "step": "14.1",
+            "status": "split_defect_confirmed",
+            "card": "reports/taiji_core_14_1_split_audit_20261102.json",
+            "sha256": "3fee5f37755f46b33ee858046f75e91c676a243af428aaab95b70b90c44a7f4c",
+            "cpu_seconds": 0.0,
+            "wall_seconds": 0.0,
+            "adam_calls": 0,
+            "cap_cpu_seconds": null,
+            "cap_wall_seconds": null,
+            "within": true
+          },
+          {
+            "step": "14.2",
+            "status": "goal_copy_shortcut_confirmed",
+            "card": "reports/taiji_core_14_2_split_rerun_20261102.json",
+            "sha256": "2cc1536e531bd0f803ff1c031916f604a829aa31e9f2629db4520c3acafcf166",
+            "cpu_seconds": 36.65625,
+            "wall_seconds": 37.66421570000239,
+            "adam_calls": 0,
+            "cap_cpu_seconds": 40.0,
+            "cap_wall_seconds": 120.0,
+            "within": true
+          },
+          {
+            "step": "14.3",
+            "status": "pathway_unreachable",
+            "card": "reports/taiji_core_read_source_14_3_20261102.json",
+            "sha256": "4c1ed5fee0534892e367cd9c7f664cf0b5b89e0716ab71a8997e1183725098f6",
+            "cpu_seconds": 3.625,
+            "wall_seconds": 3.9987558000721037,
+            "adam_calls": 0,
+            "cap_cpu_seconds": 90.0,
+            "cap_wall_seconds": 240.0,
+            "within": true
+          },
+          {
+            "step": "14.4",
+            "status": "passed_record_relation_graph_engineering_only",
+            "card": "reports/taiji_core_record_relation_14_4_20261102.json",
+            "sha256": "f79cef75f18a1ba873ca339ffd5cf1407dfa945868e7d09995d91f8a066a36f2",
+            "cpu_seconds": 183.359375,
+            "wall_seconds": 217.06808499991894,
+            "adam_calls": 12,
+            "cap_cpu_seconds": 600.0,
+            "cap_wall_seconds": 1200.0,
+            "within": true
+          },
+          {
+            "step": "14.5",
+            "status": "priced_within_compare_cap",
+            "card": "reports/taiji_core_record_relation_14_5_20261102.json",
+            "sha256": "d50f2bfa9aa8d689792a2634777cd44c3b3a9495e3678c108d8ca5aec1f67ef1",
+            "cpu_seconds": 102.0,
+            "wall_seconds": 137.25582219986245,
+            "adam_calls": 12,
+            "cap_cpu_seconds": 600.0,
+            "cap_wall_seconds": 1200.0,
+            "within": true
+          },
+          {
+            "step": "14.6.0",
+            "status": "passed_14_6_checkpoint_preflight",
+            "card": "reports/taiji_core_record_relation_14_6_preflight_20261102.json",
+            "sha256": "f99c9e5317db8574fc1dfe3b95acccd0ffb2ade775efbfa5cc0d85d71a2b7bda",
+            "cpu_seconds": 140.796875,
+            "wall_seconds": 205.1391904000193,
+            "adam_calls": 18,
+            "cap_cpu_seconds": 300.0,
+            "cap_wall_seconds": 600.0,
+            "within": true
+          },
+          {
+            "step": "14.6",
+            "status": "native_byte_task_failed",
+            "card": "reports/taiji_core_record_relation_14_6_20261102.json",
+            "sha256": "becf9bd70c20db7ee00d554e9f7a40345280d2761b555d9ab34046e75bcdc226",
+            "cpu_seconds": 10898.625,
+            "wall_seconds": 11341.15464279987,
+            "adam_calls": 1800,
+            "cap_cpu_seconds": 14400.0,
+            "cap_wall_seconds": 28800.0,
+            "within": true
+          },
+          {
+            "step": "14.7",
+            "status": "not_released",
+            "card": null,
+            "sha256": null,
+            "cpu_seconds": 0.0,
+            "wall_seconds": 0.0,
+            "adam_calls": 0,
+            "cap_cpu_seconds": null,
+            "cap_wall_seconds": null,
+            "within": true,
+            "note": "14.6 task gate did not pass; the sealed confirm was not consumed"
+          },
+          {
+            "step": "14.8",
+            "status": "closed_negative_with_followup_design",
+            "card": "reports/taiji_core_record_relation_14_8_closeout_20261102.json",
+            "sha256": null,
+            "cpu_seconds": 1.0831985000986606,
+            "wall_seconds": 1.0685195999685675,
+            "adam_calls": 0,
+            "cap_cpu_seconds": 300,
+            "cap_wall_seconds": 600,
+            "within": true,
+            "note": "no model forward, no Adam, no weight change"
+          }
+        ],
+        "package_cpu_seconds": 11365.0625,
+        "package_wall_seconds": 11942.280711899744,
+        "package_adam_calls": 1842,
+        "closeout_cpu_seconds": 1.0831985000986606,
+        "closeout_wall_seconds": 1.0685195999685675,
+        "closeout_product_cap_bytes": 1073741824,
+        "closeout_product_note": "report and manifest JSON cards",
+        "total_cpu_seconds": 11366.145698500099,
+        "total_wall_seconds": 11943.349231499713,
+        "cap_cpu_sum": 16030.0,
+        "cap_wall_sum": 32160.0
+      },
+      "note": ""
+    },
+    {
+      "id": "design_document",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "path": "plans/reference/PLAN-N15-01_SPAN_BOUND_CONTINUOUS_20261102.md",
+        "sha256": "51cfe08a20cb87af16c3a10939ccf487db1af63d4b693007fc98921102df6897",
+        "required_strings": {
+          "N15.1": true,
+          "span-bound": true,
+          "24 train / 12 dev / 12 confirm": true,
+          "18,000 CPU/36,000 wall/1,800 Adam/4GiB": true,
+          "N15.2": true,
+          "唯一下一步": true
+        },
+        "declares_no_training_yet": true,
+        "declares_owner_approval": true
+      },
+      "note": ""
+    },
+    {
+      "id": "no_model_forward",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "model_forwards": 0,
+        "adam_calls": 0,
+        "parameter_changes": 0,
+        "closeout_cpu_seconds": 1.0831985000986606,
+        "closeout_wall_seconds": 1.0685195999685675,
+        "evidence_rows_rescored_by_14_6": 4032,
+        "note": "14.8 only reads cards and the proposal; the 14.6 rows were already re-scored by the 14.6 audit card"
+      },
+      "note": ""
+    },
+    {
+      "id": "type_check",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "returncode": 0,
+        "errors": 0,
+        "output": "pyproject.toml: note: unused section(s): module = ['neuroplex.life.*', 'neuroplex.loader', 'neuroplex.multimodal.*', 'neuroplex.safety.*', 'neuroplex.tools.browser', 'neuroplex.tools.browser_crawler', 'neuroplex.tools.builtin_tools', 'neuroplex.tools.desktop', 'neuroplex.tools.mini_search', 'neuroplex.tools.search.*', 'neuroplex.tools.searxng', 'neuroplex.tools.web']\nSuccess: no issues found in 1 source file",
+        "wall_seconds": 0.6046508001163602,
+        "passed": true
+      },
+      "note": ""
+    },
+    {
+      "id": "lint",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "ruff": {
+          "returncode": 0,
+          "output": "All checks passed!"
+        },
+        "ruff_format": {
+          "returncode": 0,
+          "output": "1 file already formatted"
+        },
+        "black": {
+          "returncode": null,
+          "status": "not_run",
+          "reason": "the installed black 26.5.1 does not terminate on the stage runners in this environment; ruff format is the declared formatter check"
+        },
+        "wall_seconds": 0.3535476999823004,
+        "passed": true
+      },
+      "note": ""
+    },
+    {
+      "id": "manifest_identity",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "path": "plans\\manifests\\taiji_core_record_relation_14_8_closeout_20261102.json",
+        "sha256": "49110cfc426795fb2c97fbb48565b63e66a4e81aa15624330d8316ce5fea5614"
+      },
+      "note": ""
+    }
+  ],
+  "decision": {
+    "14_7": "not_released",
+    "package_exit": "native_byte_task_failed",
+    "continue_same_interface": false,
+    "no_new_dose_seed_step": true,
+    "next_package": "N15.1",
+    "next_executable_step": "N15.1.0 data/graph/pricing/preflight"
+  },
+  "stage_ledger": [
+    {
+      "step": "14.1",
+      "status": "split_defect_confirmed",
+      "card": "reports/taiji_core_14_1_split_audit_20261102.json",
+      "sha256": "3fee5f37755f46b33ee858046f75e91c676a243af428aaab95b70b90c44a7f4c",
+      "cpu_seconds": 0.0,
+      "wall_seconds": 0.0,
+      "adam_calls": 0,
+      "cap_cpu_seconds": null,
+      "cap_wall_seconds": null,
+      "within": true
+    },
+    {
+      "step": "14.2",
+      "status": "goal_copy_shortcut_confirmed",
+      "card": "reports/taiji_core_14_2_split_rerun_20261102.json",
+      "sha256": "2cc1536e531bd0f803ff1c031916f604a829aa31e9f2629db4520c3acafcf166",
+      "cpu_seconds": 36.65625,
+      "wall_seconds": 37.66421570000239,
+      "adam_calls": 0,
+      "cap_cpu_seconds": 40.0,
+      "cap_wall_seconds": 120.0,
+      "within": true
+    },
+    {
+      "step": "14.3",
+      "status": "pathway_unreachable",
+      "card": "reports/taiji_core_read_source_14_3_20261102.json",
+      "sha256": "4c1ed5fee0534892e367cd9c7f664cf0b5b89e0716ab71a8997e1183725098f6",
+      "cpu_seconds": 3.625,
+      "wall_seconds": 3.9987558000721037,
+      "adam_calls": 0,
+      "cap_cpu_seconds": 90.0,
+      "cap_wall_seconds": 240.0,
+      "within": true
+    },
+    {
+      "step": "14.4",
+      "status": "passed_record_relation_graph_engineering_only",
+      "card": "reports/taiji_core_record_relation_14_4_20261102.json",
+      "sha256": "f79cef75f18a1ba873ca339ffd5cf1407dfa945868e7d09995d91f8a066a36f2",
+      "cpu_seconds": 183.359375,
+      "wall_seconds": 217.06808499991894,
+      "adam_calls": 12,
+      "cap_cpu_seconds": 600.0,
+      "cap_wall_seconds": 1200.0,
+      "within": true
+    },
+    {
+      "step": "14.5",
+      "status": "priced_within_compare_cap",
+      "card": "reports/taiji_core_record_relation_14_5_20261102.json",
+      "sha256": "d50f2bfa9aa8d689792a2634777cd44c3b3a9495e3678c108d8ca5aec1f67ef1",
+      "cpu_seconds": 102.0,
+      "wall_seconds": 137.25582219986245,
+      "adam_calls": 12,
+      "cap_cpu_seconds": 600.0,
+      "cap_wall_seconds": 1200.0,
+      "within": true
+    },
+    {
+      "step": "14.6.0",
+      "status": "passed_14_6_checkpoint_preflight",
+      "card": "reports/taiji_core_record_relation_14_6_preflight_20261102.json",
+      "sha256": "f99c9e5317db8574fc1dfe3b95acccd0ffb2ade775efbfa5cc0d85d71a2b7bda",
+      "cpu_seconds": 140.796875,
+      "wall_seconds": 205.1391904000193,
+      "adam_calls": 18,
+      "cap_cpu_seconds": 300.0,
+      "cap_wall_seconds": 600.0,
+      "within": true
+    },
+    {
+      "step": "14.6",
+      "status": "native_byte_task_failed",
+      "card": "reports/taiji_core_record_relation_14_6_20261102.json",
+      "sha256": "becf9bd70c20db7ee00d554e9f7a40345280d2761b555d9ab34046e75bcdc226",
+      "cpu_seconds": 10898.625,
+      "wall_seconds": 11341.15464279987,
+      "adam_calls": 1800,
+      "cap_cpu_seconds": 14400.0,
+      "cap_wall_seconds": 28800.0,
+      "within": true
+    },
+    {
+      "step": "14.7",
+      "status": "not_released",
+      "card": null,
+      "sha256": null,
+      "cpu_seconds": 0.0,
+      "wall_seconds": 0.0,
+      "adam_calls": 0,
+      "cap_cpu_seconds": null,
+      "cap_wall_seconds": null,
+      "within": true,
+      "note": "14.6 task gate did not pass; the sealed confirm was not consumed"
+    },
+    {
+      "step": "14.8",
+      "status": "closed_negative_with_followup_design",
+      "card": "reports/taiji_core_record_relation_14_8_closeout_20261102.json",
+      "sha256": null,
+      "cpu_seconds": 1.0831985000986606,
+      "wall_seconds": 1.0685195999685675,
+      "adam_calls": 0,
+      "cap_cpu_seconds": 300,
+      "cap_wall_seconds": 600,
+      "within": true,
+      "note": "no model forward, no Adam, no weight change"
+    }
+  ],
+  "root_hypothesis_review": {
+    "supported": [
+      "内容通路必要：无来源/错误记录相对 A 真实固定 8 例各降 0.75/0.75；错误位置降 0.38",
+      "记录条件行为部分成立：A_full 两 seed 总体 completed_action_exact 0.5844；未见组合 0.7083",
+      "记录反序与真实同分：读取对记录顺序不敏感",
+      "checkpoint/独立恢复、父身份与 1,800/1,800 正式更新全部成立"
+    ],
+    "not_supported": [
+      "任务门未过：总体 0.5844/0.80、未见实体 0.2125/0.60、真/置换双侧 0.4437/0.60、反序 0.5844/0.95",
+      "结构增量不稳健：27031 A−B/A−C 下界 -0.0375/-0.0375；27032 A−C 下界 0.0188",
+      "retention_not_admissible：没有合格父能力集，不签旧能力保持",
+      "连续状态、跨 session、反馈纠错、主动选择、生长均未检验"
+    ],
+    "architecture_attribution": [
+      "最弱轴是绑定而非“读不读”：未见实体 0.2125、真/置换双侧 0.4438；source top-1 仅 0.3125；池化摘要选记录不能稳定绑定新描述",
+      "记录级寻址 A−C 点估计 +0.106/+0.131 为正，但 8 world bootstrap 仅 1/4 过；局部编码 B_local 接近 A；不能整体归因“层级架构无效”，也不能签其必要增量",
+      "rescue 从 0.75 降到 0.00：当前读取→H→表达接口对一次正确内容注入不稳定，新候选须把 rescue 升为门"
+    ],
+    "data_training_attribution": [
+      "不是剂量不足：训练批次 NLL 约 1e-4，开发教师强制 0.8487，自由生成 0.5844；继续贴合教师强制前缀不会自动修好自由生成与未见实体",
+      "自由生成与教师强制有差：14.6 训练只用教师强制前缀；N15.1 加入声明的自前缀课程",
+      "数据面已消费：14.6 dev 不再作为新证据；N15.1 用新的 24/12/12 v2 数据与新词表，旧 confirm 保持封存"
+    ],
+    "do_not_claim": [
+      "general Chinese / free language",
+      "L3/L4",
+      "continuous internal life",
+      "cross-session experience / correction / feedback",
+      "active choice without prompt",
+      "retention of a qualified old capability",
+      "structural growth benefit"
+    ]
+  },
+  "coverage": {
+    "native_chinese": "partial: A_full two-seed completed_action_exact 0.5844; task gate failed",
+    "continuous_state": "not tested; 14.6 uses per-example resets, not one continuous session",
+    "plasticity": "parameters updated; no qualified retention set",
+    "cross_session": "not run; no qualified parent capability",
+    "feedback_correction": "not run; belongs to the conditional N15.2 contract",
+    "active_choice": "not run",
+    "growth": "not claimed; 09 negative evidence retained",
+    "confirm": "14.6 confirm sealed and unread; N15.1 confirm to be sealed until N15.1.2",
+    "general_chinese": false,
+    "L3_L4": false
+  },
+  "next_design": {
+    "package": "N15.1",
+    "design_doc": "plans/reference/PLAN-N15-01_SPAN_BOUND_CONTINUOUS_20261102.md",
+    "design_doc_sha256": "51cfe08a20cb87af16c3a10939ccf487db1af63d4b693007fc98921102df6897",
+    "mechanism": "span-bound compositional reader + self-prefix training",
+    "not_another_head": "replaces the 14.4 pooled-record selection with a learned goal-description to record-description span alignment; keeps the same subject H/F, inherited encoder, generate/mix heads and recovery protocol",
+    "data": "taiji-composition-fixture-v2: 24 train / 12 dev / 12 confirm worlds, 288/240/240 examples, new seeds 48021/48022 and order seeds 28021/28022, new five-object/five-place vocabulary; 14.6 dev retired, 14.6 confirm sealed",
+    "feedback": "raw 27-byte action plus EOS byte NLL and the declared self-prefix curriculum; no entity span, action id, host repair, gold record label or cross-session feedback",
+    "stages": [
+      {
+        "id": "N15.1.0a",
+        "name": "v2 data",
+        "cpu": 60,
+        "wall": 120,
+        "adam": 0
+      },
+      {
+        "id": "N15.1.0b",
+        "name": "graph engineering",
+        "cpu": 600,
+        "wall": 1200,
+        "adam": 12
+      },
+      {
+        "id": "N15.1.0c",
+        "name": "pricing",
+        "cpu": 600,
+        "wall": 1200,
+        "adam": 12
+      },
+      {
+        "id": "N15.1.0d",
+        "name": "checkpoint preflight",
+        "cpu": 300,
+        "wall": 600,
+        "adam": 18
+      },
+      {
+        "id": "N15.1.1",
+        "name": "formal comparison",
+        "cpu": 18000,
+        "wall": 36000,
+        "adam": 1800,
+        "product_bytes": 4294967296
+      },
+      {
+        "id": "N15.1.2",
+        "name": "confirmation",
+        "cpu": 2000,
+        "wall": 4000,
+        "adam": 0,
+        "product_bytes": 1073741824
+      }
+    ],
+    "budget": {
+      "formal_cpu_seconds": 18000,
+      "formal_wall_seconds": 36000,
+      "formal_adam_calls": 1800,
+      "formal_product_bytes": 4294967296,
+      "single_thread": true,
+      "peak_ram_gib": 8
+    },
+    "gates": {
+      "task": {
+        "total": 0.8,
+        "unseen_combination": 0.6,
+        "unseen_entity": 0.6,
+        "both_sides": 0.6,
+        "reverse": 0.95
+      },
+      "structure": {
+        "gain": 0.1,
+        "bootstrap": "per-seed 8-world paired 2000, 95% lower > 0"
+      },
+      "span_binding": {
+        "source_top1": 0.6
+      },
+      "content_path": {
+        "drop": 0.1
+      },
+      "rescue": {
+        "max_drop": 0.1
+      },
+      "retention": "retention_not_admissible when no qualified parent set",
+      "confirm": "only after the N15.1.1 task gate"
+    },
+    "exits": [
+      "engineering_failure",
+      "instrument_invalid",
+      "budget_not_admitted",
+      "budget_stop",
+      "native_byte_task_failed",
+      "span_binding_component_gain_unresolved",
+      "content_path_not_necessary",
+      "span_intervention_unstable",
+      "span_binding_supported_on_declared_task"
+    ],
+    "conditional_N15_2": "only after the N15.1.2 confirmation on the same qualified parent; separate two-session feedback/correction/active-choice contract; does not auto-approve 12/13",
+    "owner_approval_required": true,
+    "next_executable_step": "N15.1.0 data v2, then graph engineering, pricing and checkpoint preflight; no training before pricing and preflight"
+  },
+  "cost": {
+    "package_stages": [
+      {
+        "step": "14.1",
+        "status": "split_defect_confirmed",
+        "card": "reports/taiji_core_14_1_split_audit_20261102.json",
+        "sha256": "3fee5f37755f46b33ee858046f75e91c676a243af428aaab95b70b90c44a7f4c",
+        "cpu_seconds": 0.0,
+        "wall_seconds": 0.0,
+        "adam_calls": 0,
+        "cap_cpu_seconds": null,
+        "cap_wall_seconds": null,
+        "within": true
+      },
+      {
+        "step": "14.2",
+        "status": "goal_copy_shortcut_confirmed",
+        "card": "reports/taiji_core_14_2_split_rerun_20261102.json",
+        "sha256": "2cc1536e531bd0f803ff1c031916f604a829aa31e9f2629db4520c3acafcf166",
+        "cpu_seconds": 36.65625,
+        "wall_seconds": 37.66421570000239,
+        "adam_calls": 0,
+        "cap_cpu_seconds": 40.0,
+        "cap_wall_seconds": 120.0,
+        "within": true
+      },
+      {
+        "step": "14.3",
+        "status": "pathway_unreachable",
+        "card": "reports/taiji_core_read_source_14_3_20261102.json",
+        "sha256": "4c1ed5fee0534892e367cd9c7f664cf0b5b89e0716ab71a8997e1183725098f6",
+        "cpu_seconds": 3.625,
+        "wall_seconds": 3.9987558000721037,
+        "adam_calls": 0,
+        "cap_cpu_seconds": 90.0,
+        "cap_wall_seconds": 240.0,
+        "within": true
+      },
+      {
+        "step": "14.4",
+        "status": "passed_record_relation_graph_engineering_only",
+        "card": "reports/taiji_core_record_relation_14_4_20261102.json",
+        "sha256": "f79cef75f18a1ba873ca339ffd5cf1407dfa945868e7d09995d91f8a066a36f2",
+        "cpu_seconds": 183.359375,
+        "wall_seconds": 217.06808499991894,
+        "adam_calls": 12,
+        "cap_cpu_seconds": 600.0,
+        "cap_wall_seconds": 1200.0,
+        "within": true
+      },
+      {
+        "step": "14.5",
+        "status": "priced_within_compare_cap",
+        "card": "reports/taiji_core_record_relation_14_5_20261102.json",
+        "sha256": "d50f2bfa9aa8d689792a2634777cd44c3b3a9495e3678c108d8ca5aec1f67ef1",
+        "cpu_seconds": 102.0,
+        "wall_seconds": 137.25582219986245,
+        "adam_calls": 12,
+        "cap_cpu_seconds": 600.0,
+        "cap_wall_seconds": 1200.0,
+        "within": true
+      },
+      {
+        "step": "14.6.0",
+        "status": "passed_14_6_checkpoint_preflight",
+        "card": "reports/taiji_core_record_relation_14_6_preflight_20261102.json",
+        "sha256": "f99c9e5317db8574fc1dfe3b95acccd0ffb2ade775efbfa5cc0d85d71a2b7bda",
+        "cpu_seconds": 140.796875,
+        "wall_seconds": 205.1391904000193,
+        "adam_calls": 18,
+        "cap_cpu_seconds": 300.0,
+        "cap_wall_seconds": 600.0,
+        "within": true
+      },
+      {
+        "step": "14.6",
+        "status": "native_byte_task_failed",
+        "card": "reports/taiji_core_record_relation_14_6_20261102.json",
+        "sha256": "becf9bd70c20db7ee00d554e9f7a40345280d2761b555d9ab34046e75bcdc226",
+        "cpu_seconds": 10898.625,
+        "wall_seconds": 11341.15464279987,
+        "adam_calls": 1800,
+        "cap_cpu_seconds": 14400.0,
+        "cap_wall_seconds": 28800.0,
+        "within": true
+      },
+      {
+        "step": "14.7",
+        "status": "not_released",
+        "card": null,
+        "sha256": null,
+        "cpu_seconds": 0.0,
+        "wall_seconds": 0.0,
+        "adam_calls": 0,
+        "cap_cpu_seconds": null,
+        "cap_wall_seconds": null,
+        "within": true,
+        "note": "14.6 task gate did not pass; the sealed confirm was not consumed"
+      },
+      {
+        "step": "14.8",
+        "status": "closed_negative_with_followup_design",
+        "card": "reports/taiji_core_record_relation_14_8_closeout_20261102.json",
+        "sha256": null,
+        "cpu_seconds": 1.0831985000986606,
+        "wall_seconds": 1.0685195999685675,
+        "adam_calls": 0,
+        "cap_cpu_seconds": 300,
+        "cap_wall_seconds": 600,
+        "within": true,
+        "note": "no model forward, no Adam, no weight change"
+      }
+    ],
+    "package_cpu_seconds": 11365.0625,
+    "package_wall_seconds": 11942.280711899744,
+    "package_adam_calls": 1842,
+    "closeout_cpu_seconds": 1.0831985000986606,
+    "closeout_wall_seconds": 1.0685195999685675,
+    "closeout_product_cap_bytes": 1073741824,
+    "closeout_product_note": "report and manifest JSON cards",
+    "total_cpu_seconds": 11366.145698500099,
+    "total_wall_seconds": 11943.349231499713,
+    "adam_calls": 0,
+    "model_forwards": 0,
+    "parameter_changes": 0
+  },
+  "within": {
+    "stages": [
+      {
+        "step": "14.1",
+        "within": true,
+        "cap_cpu_seconds": null,
+        "cap_wall_seconds": null
+      },
+      {
+        "step": "14.2",
+        "within": true,
+        "cap_cpu_seconds": 40.0,
+        "cap_wall_seconds": 120.0
+      },
+      {
+        "step": "14.3",
+        "within": true,
+        "cap_cpu_seconds": 90.0,
+        "cap_wall_seconds": 240.0
+      },
+      {
+        "step": "14.4",
+        "within": true,
+        "cap_cpu_seconds": 600.0,
+        "cap_wall_seconds": 1200.0
+      },
+      {
+        "step": "14.5",
+        "within": true,
+        "cap_cpu_seconds": 600.0,
+        "cap_wall_seconds": 1200.0
+      },
+      {
+        "step": "14.6.0",
+        "within": true,
+        "cap_cpu_seconds": 300.0,
+        "cap_wall_seconds": 600.0
+      },
+      {
+        "step": "14.6",
+        "within": true,
+        "cap_cpu_seconds": 14400.0,
+        "cap_wall_seconds": 28800.0
+      },
+      {
+        "step": "14.7",
+        "within": true,
+        "cap_cpu_seconds": null,
+        "cap_wall_seconds": null
+      },
+      {
+        "step": "14.8",
+        "within": true,
+        "cap_cpu_seconds": 300,
+        "cap_wall_seconds": 600
+      }
+    ],
+    "all_stage_caps_within": true,
+    "closeout_within": true,
+    "package_cpu_seconds": 11365.0625,
+    "package_wall_seconds": 11942.280711899744,
+    "package_cpu_cap_sum": 16030.0,
+    "package_wall_cap_sum": 32160.0,
+    "package_within": true,
+    "all_within": true,
+    "limits": {
+      "closeout_cpu_seconds": 300,
+      "closeout_wall_seconds": 600,
+      "closeout_product_bytes": 1073741824,
+      "package_cpu_cap_sum": 16030.0,
+      "package_wall_cap_sum": 32160.0
+    }
+  },
+  "source_hashes": {
+    "reports/taiji_core_14_1_split_audit_20261102.json": "3fee5f37755f46b33ee858046f75e91c676a243af428aaab95b70b90c44a7f4c",
+    "reports/taiji_core_14_2_split_rerun_20261102.json": "2cc1536e531bd0f803ff1c031916f604a829aa31e9f2629db4520c3acafcf166",
+    "reports/taiji_core_read_source_14_3_20261102.json": "4c1ed5fee0534892e367cd9c7f664cf0b5b89e0716ab71a8997e1183725098f6",
+    "reports/taiji_core_record_relation_14_4_20261102.json": "f79cef75f18a1ba873ca339ffd5cf1407dfa945868e7d09995d91f8a066a36f2",
+    "reports/taiji_core_record_relation_14_5_20261102.json": "d50f2bfa9aa8d689792a2634777cd44c3b3a9495e3678c108d8ca5aec1f67ef1",
+    "reports/taiji_core_record_relation_14_6_preflight_20261102.json": "f99c9e5317db8574fc1dfe3b95acccd0ffb2ade775efbfa5cc0d85d71a2b7bda",
+    "reports/taiji_core_record_relation_14_6_20261102.json": "becf9bd70c20db7ee00d554e9f7a40345280d2761b555d9ab34046e75bcdc226",
+    "reports/taiji_core_record_relation_14_6_20261102_v1_engineering_failure.json": "57d524141d1b6a6203619fd7b4191364eb226c269f3a6c7bef9ede235f39674f",
+    "plans/manifests/taiji_core_record_relation_14_6_20261102.json": "c648e1d033956b5c22b784480408a44db2f0b8db4628673b215ac06f0c2d0c2d",
+    "plans/manifests/taiji_core_record_relation_14_6_20261102_v1_engineering_failure.json": "bbe2bd32f66c8f8f2af5b6eff0672d6d13c567c0697b324ed52707e59e4090c9",
+    "plans/reference/PLAN-N15-01_SPAN_BOUND_CONTINUOUS_20261102.md": "51cfe08a20cb87af16c3a10939ccf487db1af63d4b693007fc98921102df6897",
+    "scripts/training/closeout_taiji_record_relation_14_8.py": "2fdff0b9a95bacfc18c70c49e998efea3b47c450e412b80df85d4a3581275568"
+  },
+  "confirm_read": false,
+  "no_model_forward": true,
+  "no_adam_call": true,
+  "no_weight_change": true,
+  "limits": "Closeout and proposal only: 0 model forward, 0 Adam, 0 weight change; N15.1 requires owner approval; no general Chinese, L3/L4, continuous state, cross-session, growth, or active-choice claim; confirm sealed.",
+  "error": null,
+  "type_check": {
+    "returncode": 0,
+    "errors": 0,
+    "output": "pyproject.toml: note: unused section(s): module = ['neuroplex.life.*', 'neuroplex.loader', 'neuroplex.multimodal.*', 'neuroplex.safety.*', 'neuroplex.tools.browser', 'neuroplex.tools.browser_crawler', 'neuroplex.tools.builtin_tools', 'neuroplex.tools.desktop', 'neuroplex.tools.mini_search', 'neuroplex.tools.search.*', 'neuroplex.tools.searxng', 'neuroplex.tools.web']\nSuccess: no issues found in 1 source file",
+    "wall_seconds": 0.6046508001163602,
+    "passed": true
+  },
+  "lint": {
+    "ruff": {
+      "returncode": 0,
+      "output": "All checks passed!"
+    },
+    "ruff_format": {
+      "returncode": 0,
+      "output": "1 file already formatted"
+    },
+    "black": {
+      "returncode": null,
+      "status": "not_run",
+      "reason": "the installed black 26.5.1 does not terminate on the stage runners in this environment; ruff format is the declared formatter check"
+    },
+    "wall_seconds": 0.3535476999823004,
+    "passed": true
+  },
+  "finished_at": "2026-11-02T18:43:22+0800",
+  "manifest": {
+    "path": "plans\\manifests\\taiji_core_record_relation_14_8_closeout_20261102.json",
+    "sha256": "49110cfc426795fb2c97fbb48565b63e66a4e81aa15624330d8316ce5fea5614",
+    "bytes": 18410
+  },
+  "required_checks": 8,
+  "failed_required": []
+}

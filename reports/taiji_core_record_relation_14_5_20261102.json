@@ -1,0 +1,2248 @@
+{
+  "schema": "taiji-record-relation-price-v1",
+  "step": "14.5",
+  "date": "2026-11-02",
+  "status": "priced_within_compare_cap",
+  "checks": [
+    {
+      "id": "parent_identity",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+        "sha256": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf",
+        "bytes": 77609636
+      },
+      "note": ""
+    },
+    {
+      "id": "graph_admission",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "status": "passed_record_relation_graph_engineering_only",
+        "candidate_id": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352"
+      },
+      "note": ""
+    },
+    {
+      "id": "data_contract",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "train": 8,
+        "dev": 8,
+        "declared_worlds": {
+          "train": 16,
+          "dev": 8,
+          "confirm": 8
+        },
+        "digest": "6728fc3713e165c21e15e28feb88c9e409cb821675715a7bad5b039392aa6f1b"
+      },
+      "note": ""
+    },
+    {
+      "id": "candidate_pedigree",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "candidate_id": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352"
+      },
+      "note": ""
+    },
+    {
+      "id": "same_form_contract",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "arms": [
+          "A_full",
+          "B_local",
+          "C_flat"
+        ],
+        "updates": [
+          4,
+          4,
+          4
+        ],
+        "adam_calls": 12,
+        "initial_restore": [
+          true,
+          true,
+          true
+        ],
+        "final_restore": [
+          true,
+          true,
+          true
+        ]
+      },
+      "note": ""
+    },
+    {
+      "id": "update_losses_finite",
+      "passed": true,
+      "required": true,
+      "observed": [
+        [
+          4.669104660036416,
+          4.00892522531002,
+          3.708763044107921,
+          3.5454570682911464
+        ],
+        [
+          4.683183774977894,
+          4.103698588848264,
+          3.7480766269454024,
+          3.5510350082833755
+        ],
+        [
+          4.649064904770567,
+          3.96414707499381,
+          3.498565091083411,
+          3.1505398974490295
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "id": "price_formula_frozen",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "train_updates": 1800,
+        "train_batch": 8,
+        "eval_generations": 1920,
+        "eval_scores": 1920,
+        "interventions": 13440,
+        "restores": 6,
+        "overhead_fraction": 0.1,
+        "startup_wall_seconds": 60.0
+      },
+      "note": ""
+    },
+    {
+      "id": "compare_budget_admission",
+      "passed": true,
+      "required": false,
+      "observed": {
+        "cpu": true,
+        "wall": true,
+        "adam": true,
+        "products": true
+      },
+      "note": "If false the named exit is budget_not_admitted; the dose and denominator are not changed."
+    },
+    {
+      "id": "parent_bundle_unchanged",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "before": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf",
+        "after": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf"
+      },
+      "note": ""
+    },
+    {
+      "id": "products_within_limit",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "max_live_bytes": 64983007,
+        "cumulative_bytes": 277653774,
+        "cap": 1073741824
+      },
+      "note": ""
+    },
+    {
+      "id": "price_cost_within_budget",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "main_cpu_seconds": 87.484375,
+        "worker_cpu_seconds": 14.5625,
+        "total_cpu_seconds": 102.0,
+        "wall_seconds": 137.25582219986245,
+        "adam_calls": 12,
+        "max_live_product_bytes": 64983007,
+        "cumulative_product_bytes": 277653774,
+        "peak_ram_mb": 600.72265625
+      },
+      "note": ""
+    },
+    {
+      "id": "type_check",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "returncode": 0,
+        "errors": 0,
+        "output": "pyproject.toml: note: unused section(s): module = ['neuroplex.life.*', 'neuroplex.loader', 'neuroplex.multimodal.*', 'neuroplex.safety.*', 'neuroplex.tools.browser', 'neuroplex.tools.browser_crawler', 'neuroplex.tools.builtin_tools', 'neuroplex.tools.desktop', 'neuroplex.tools.mini_search', 'neuroplex.tools.search.*', 'neuroplex.tools.searxng', 'neuroplex.tools.web']\nSuccess: no issues found in 4 source files",
+        "passed": true
+      },
+      "note": ""
+    },
+    {
+      "id": "lint",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "ruff": {
+          "returncode": 0,
+          "output": "All checks passed!"
+        },
+        "black": {
+          "returncode": 0,
+          "output": ""
+        },
+        "passed": true
+      },
+      "note": ""
+    },
+    {
+      "id": "manifest_identity",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "written": true,
+        "drift": {}
+      },
+      "note": ""
+    }
+  ],
+  "identity": {
+    "parent_candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+    "parent_bundle_sha256": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf",
+    "parent_bundle_bytes": 77609636,
+    "parent_subject_id": "taiji-core-09",
+    "parent_revision": 0,
+    "parent_step": 1,
+    "graph_manifest": "plans/manifests/taiji_core_record_relation_14_4_20261102.json",
+    "graph_manifest_sha256": "84f8bbb77dac2f5b4f3f529eeda2ce9ac52ab912d6dab2ee7040d2108883aa66",
+    "graph_report": "reports/taiji_core_record_relation_14_4_20261102.json",
+    "graph_report_sha256": "f79cef75f18a1ba873ca339ffd5cf1407dfa945868e7d09995d91f8a066a36f2",
+    "graph_candidate_id": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+    "source_hashes": {
+      "taiji/record_relation.py": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+      "taiji/record_relation_core.py": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+      "taiji/native_composition_fixture.py": "18ca7f7ce19530d153e5396359870ff4661e5033b089da4960dea128a33c83b4",
+      "scripts/training/verify_taiji_record_relation_14_5.py": "58927489a0cb142c42e487ed875f90a4542c487ebd3590523c4d9814da260dc4"
+    },
+    "graph_source_hashes": {
+      "taiji/record_relation.py": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+      "taiji/record_relation_core.py": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+      "scripts/training/verify_taiji_record_relation_14.py": "b4c53a76d633b86f71fafe2036d32d62cf22636230190361521652be9dff4437",
+      "tests/taiji_native/test_record_relation_14_4.py": "98fa4c87f5a00021255e7a79299b8da0fc54cc363478ddd8f7087003e0ed7c0c"
+    }
+  },
+  "data": {
+    "schema": "taiji-composition-fixture-v1",
+    "declared_worlds": {
+      "train": 16,
+      "dev": 8,
+      "confirm": 8
+    },
+    "price_worlds": {
+      "train": {
+        "split": "train",
+        "world": 0,
+        "data_seed": 47021,
+        "order_seed": 27021,
+        "object_mapping": {
+          "方口的容器": "银灰铁盒",
+          "圆盖的器具": "棕漆木箱",
+          "窄沿的坛子": "深绿陶碗"
+        },
+        "place_mapping": {
+          "靠墙高处": "廊下",
+          "向阳角上": "柜顶",
+          "进门右侧": "门后",
+          "屋角一侧": "窗台",
+          "高处横板": "书架"
+        },
+        "record_lines": 8,
+        "record_bytes": 219,
+        "examples": 12,
+        "layers": {
+          "seen_combination": 12
+        },
+        "actions": 15,
+        "record_ids": [
+          "cx6890a949fd1b-00",
+          "cx6890a949fd1b-01",
+          "cx6890a949fd1b-02",
+          "cx6890a949fd1b-03",
+          "cx6890a949fd1b-04",
+          "cx6890a949fd1b-05",
+          "cx6890a949fd1b-06",
+          "cx6890a949fd1b-07"
+        ]
+      },
+      "dev": {
+        "split": "dev",
+        "world": 0,
+        "data_seed": 47021,
+        "order_seed": 27021,
+        "object_mapping": {
+          "方口的容器": "棕漆木箱",
+          "圆盖的器具": "深绿陶碗",
+          "窄沿的坛子": "银灰铁盒",
+          "有纹的磁盘": "米白瓷碟"
+        },
+        "place_mapping": {
+          "靠墙高处": "书架",
+          "向阳角上": "柜顶",
+          "进门右侧": "门后",
+          "屋角一侧": "窗台",
+          "高处横板": "廊下"
+        },
+        "record_lines": 9,
+        "record_bytes": 252,
+        "examples": 20,
+        "layers": {
+          "seen_combination": 12,
+          "unseen_combination": 3,
+          "unseen_entity": 5
+        },
+        "actions": 20,
+        "record_ids": [
+          "cx1919b0d6ec58-00",
+          "cx1919b0d6ec58-01",
+          "cx1919b0d6ec58-02",
+          "cx1919b0d6ec58-03",
+          "cx1919b0d6ec58-04",
+          "cx1919b0d6ec58-05",
+          "cx1919b0d6ec58-06",
+          "cx1919b0d6ec58-07",
+          "cx1919b0d6ec58-08"
+        ]
+      }
+    },
+    "price_examples": {
+      "train": [
+        {
+          "name": "train-0",
+          "index": 0,
+          "layer": "seen_combination",
+          "goal": "让方口的容器到向阳角上。",
+          "records": [
+            {
+              "source_id": "cx6890a949fd1b-00",
+              "raw": "向阳角上是柜顶。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-01",
+              "raw": "方口的容器是银灰铁盒。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-02",
+              "raw": "圆盖的器具是棕漆木箱。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-03",
+              "raw": "屋角一侧是窗台。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-04",
+              "raw": "高处横板是书架。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-05",
+              "raw": "进门右侧是门后。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-06",
+              "raw": "窄沿的坛子是深绿陶碗。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-07",
+              "raw": "靠墙高处是廊下。"
+            }
+          ],
+          "action_bytes": 27,
+          "target_bytes": [
+            230,
+            138,
+            138,
+            233,
+            147,
+            182,
+            231,
+            129,
+            176,
+            233,
+            147,
+            129,
+            231,
+            155,
+            146,
+            230,
+            148,
+            190,
+            229,
+            136,
+            176,
+            230,
+            159,
+            156,
+            233,
+            161,
+            182,
+            256
+          ]
+        },
+        {
+          "name": "train-1",
+          "index": 1,
+          "layer": "seen_combination",
+          "goal": "让方口的容器到进门右侧。",
+          "records": [
+            {
+              "source_id": "cx6890a949fd1b-00",
+              "raw": "向阳角上是柜顶。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-01",
+              "raw": "方口的容器是银灰铁盒。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-02",
+              "raw": "圆盖的器具是棕漆木箱。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-03",
+              "raw": "屋角一侧是窗台。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-04",
+              "raw": "高处横板是书架。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-05",
+              "raw": "进门右侧是门后。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-06",
+              "raw": "窄沿的坛子是深绿陶碗。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-07",
+              "raw": "靠墙高处是廊下。"
+            }
+          ],
+          "action_bytes": 27,
+          "target_bytes": [
+            230,
+            138,
+            138,
+            233,
+            147,
+            182,
+            231,
+            129,
+            176,
+            233,
+            147,
+            129,
+            231,
+            155,
+            146,
+            230,
+            148,
+            190,
+            229,
+            136,
+            176,
+            233,
+            151,
+            168,
+            229,
+            144,
+            142,
+            256
+          ]
+        },
+        {
+          "name": "train-2",
+          "index": 2,
+          "layer": "seen_combination",
+          "goal": "让方口的容器到屋角一侧。",
+          "records": [
+            {
+              "source_id": "cx6890a949fd1b-00",
+              "raw": "向阳角上是柜顶。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-01",
+              "raw": "方口的容器是银灰铁盒。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-02",
+              "raw": "圆盖的器具是棕漆木箱。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-03",
+              "raw": "屋角一侧是窗台。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-04",
+              "raw": "高处横板是书架。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-05",
+              "raw": "进门右侧是门后。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-06",
+              "raw": "窄沿的坛子是深绿陶碗。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-07",
+              "raw": "靠墙高处是廊下。"
+            }
+          ],
+          "action_bytes": 27,
+          "target_bytes": [
+            230,
+            138,
+            138,
+            233,
+            147,
+            182,
+            231,
+            129,
+            176,
+            233,
+            147,
+            129,
+            231,
+            155,
+            146,
+            230,
+            148,
+            190,
+            229,
+            136,
+            176,
+            231,
+            170,
+            151,
+            229,
+            143,
+            176,
+            256
+          ]
+        },
+        {
+          "name": "train-4",
+          "index": 4,
+          "layer": "seen_combination",
+          "goal": "让圆盖的器具到靠墙高处。",
+          "records": [
+            {
+              "source_id": "cx6890a949fd1b-00",
+              "raw": "向阳角上是柜顶。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-01",
+              "raw": "方口的容器是银灰铁盒。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-02",
+              "raw": "圆盖的器具是棕漆木箱。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-03",
+              "raw": "屋角一侧是窗台。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-04",
+              "raw": "高处横板是书架。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-05",
+              "raw": "进门右侧是门后。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-06",
+              "raw": "窄沿的坛子是深绿陶碗。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-07",
+              "raw": "靠墙高处是廊下。"
+            }
+          ],
+          "action_bytes": 27,
+          "target_bytes": [
+            230,
+            138,
+            138,
+            230,
+            163,
+            149,
+            230,
+            188,
+            134,
+            230,
+            156,
+            168,
+            231,
+            174,
+            177,
+            230,
+            148,
+            190,
+            229,
+            136,
+            176,
+            229,
+            187,
+            138,
+            228,
+            184,
+            139,
+            256
+          ]
+        },
+        {
+          "name": "train-5",
+          "index": 5,
+          "layer": "seen_combination",
+          "goal": "让圆盖的器具到进门右侧。",
+          "records": [
+            {
+              "source_id": "cx6890a949fd1b-00",
+              "raw": "向阳角上是柜顶。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-01",
+              "raw": "方口的容器是银灰铁盒。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-02",
+              "raw": "圆盖的器具是棕漆木箱。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-03",
+              "raw": "屋角一侧是窗台。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-04",
+              "raw": "高处横板是书架。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-05",
+              "raw": "进门右侧是门后。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-06",
+              "raw": "窄沿的坛子是深绿陶碗。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-07",
+              "raw": "靠墙高处是廊下。"
+            }
+          ],
+          "action_bytes": 27,
+          "target_bytes": [
+            230,
+            138,
+            138,
+            230,
+            163,
+            149,
+            230,
+            188,
+            134,
+            230,
+            156,
+            168,
+            231,
+            174,
+            177,
+            230,
+            148,
+            190,
+            229,
+            136,
+            176,
+            233,
+            151,
+            168,
+            229,
+            144,
+            142,
+            256
+          ]
+        },
+        {
+          "name": "train-6",
+          "index": 6,
+          "layer": "seen_combination",
+          "goal": "让圆盖的器具到屋角一侧。",
+          "records": [
+            {
+              "source_id": "cx6890a949fd1b-00",
+              "raw": "向阳角上是柜顶。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-01",
+              "raw": "方口的容器是银灰铁盒。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-02",
+              "raw": "圆盖的器具是棕漆木箱。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-03",
+              "raw": "屋角一侧是窗台。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-04",
+              "raw": "高处横板是书架。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-05",
+              "raw": "进门右侧是门后。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-06",
+              "raw": "窄沿的坛子是深绿陶碗。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-07",
+              "raw": "靠墙高处是廊下。"
+            }
+          ],
+          "action_bytes": 27,
+          "target_bytes": [
+            230,
+            138,
+            138,
+            230,
+            163,
+            149,
+            230,
+            188,
+            134,
+            230,
+            156,
+            168,
+            231,
+            174,
+            177,
+            230,
+            148,
+            190,
+            229,
+            136,
+            176,
+            231,
+            170,
+            151,
+            229,
+            143,
+            176,
+            256
+          ]
+        },
+        {
+          "name": "train-8",
+          "index": 8,
+          "layer": "seen_combination",
+          "goal": "让窄沿的坛子到靠墙高处。",
+          "records": [
+            {
+              "source_id": "cx6890a949fd1b-00",
+              "raw": "向阳角上是柜顶。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-01",
+              "raw": "方口的容器是银灰铁盒。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-02",
+              "raw": "圆盖的器具是棕漆木箱。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-03",
+              "raw": "屋角一侧是窗台。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-04",
+              "raw": "高处横板是书架。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-05",
+              "raw": "进门右侧是门后。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-06",
+              "raw": "窄沿的坛子是深绿陶碗。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-07",
+              "raw": "靠墙高处是廊下。"
+            }
+          ],
+          "action_bytes": 27,
+          "target_bytes": [
+            230,
+            138,
+            138,
+            230,
+            183,
+            177,
+            231,
+            187,
+            191,
+            233,
+            153,
+            182,
+            231,
+            162,
+            151,
+            230,
+            148,
+            190,
+            229,
+            136,
+            176,
+            229,
+            187,
+            138,
+            228,
+            184,
+            139,
+            256
+          ]
+        },
+        {
+          "name": "train-10",
+          "index": 10,
+          "layer": "seen_combination",
+          "goal": "让窄沿的坛子到屋角一侧。",
+          "records": [
+            {
+              "source_id": "cx6890a949fd1b-00",
+              "raw": "向阳角上是柜顶。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-01",
+              "raw": "方口的容器是银灰铁盒。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-02",
+              "raw": "圆盖的器具是棕漆木箱。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-03",
+              "raw": "屋角一侧是窗台。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-04",
+              "raw": "高处横板是书架。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-05",
+              "raw": "进门右侧是门后。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-06",
+              "raw": "窄沿的坛子是深绿陶碗。"
+            },
+            {
+              "source_id": "cx6890a949fd1b-07",
+              "raw": "靠墙高处是廊下。"
+            }
+          ],
+          "action_bytes": 27,
+          "target_bytes": [
+            230,
+            138,
+            138,
+            230,
+            183,
+            177,
+            231,
+            187,
+            191,
+            233,
+            153,
+            182,
+            231,
+            162,
+            151,
+            230,
+            148,
+            190,
+            229,
+            136,
+            176,
+            231,
+            170,
+            151,
+            229,
+            143,
+            176,
+            256
+          ]
+        }
+      ],
+      "dev": [
+        {
+          "name": "dev-0",
+          "index": 0,
+          "layer": "seen_combination",
+          "goal": "让方口的容器到向阳角上。",
+          "records": [
+            {
+              "source_id": "cx1919b0d6ec58-00",
+              "raw": "圆盖的器具是深绿陶碗。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-01",
+              "raw": "屋角一侧是窗台。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-02",
+              "raw": "方口的容器是棕漆木箱。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-03",
+              "raw": "窄沿的坛子是银灰铁盒。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-04",
+              "raw": "靠墙高处是书架。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-05",
+              "raw": "向阳角上是柜顶。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-06",
+              "raw": "有纹的磁盘是米白瓷碟。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-07",
+              "raw": "高处横板是廊下。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-08",
+              "raw": "进门右侧是门后。"
+            }
+          ],
+          "action_bytes": 27,
+          "target_bytes": [
+            230,
+            138,
+            138,
+            230,
+            163,
+            149,
+            230,
+            188,
+            134,
+            230,
+            156,
+            168,
+            231,
+            174,
+            177,
+            230,
+            148,
+            190,
+            229,
+            136,
+            176,
+            230,
+            159,
+            156,
+            233,
+            161,
+            182,
+            256
+          ]
+        },
+        {
+          "name": "dev-3",
+          "index": 3,
+          "layer": "seen_combination",
+          "goal": "让方口的容器到高处横板。",
+          "records": [
+            {
+              "source_id": "cx1919b0d6ec58-00",
+              "raw": "圆盖的器具是深绿陶碗。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-01",
+              "raw": "屋角一侧是窗台。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-02",
+              "raw": "方口的容器是棕漆木箱。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-03",
+              "raw": "窄沿的坛子是银灰铁盒。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-04",
+              "raw": "靠墙高处是书架。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-05",
+              "raw": "向阳角上是柜顶。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-06",
+              "raw": "有纹的磁盘是米白瓷碟。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-07",
+              "raw": "高处横板是廊下。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-08",
+              "raw": "进门右侧是门后。"
+            }
+          ],
+          "action_bytes": 27,
+          "target_bytes": [
+            230,
+            138,
+            138,
+            230,
+            163,
+            149,
+            230,
+            188,
+            134,
+            230,
+            156,
+            168,
+            231,
+            174,
+            177,
+            230,
+            148,
+            190,
+            229,
+            136,
+            176,
+            229,
+            187,
+            138,
+            228,
+            184,
+            139,
+            256
+          ]
+        },
+        {
+          "name": "dev-6",
+          "index": 6,
+          "layer": "seen_combination",
+          "goal": "让圆盖的器具到屋角一侧。",
+          "records": [
+            {
+              "source_id": "cx1919b0d6ec58-00",
+              "raw": "圆盖的器具是深绿陶碗。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-01",
+              "raw": "屋角一侧是窗台。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-02",
+              "raw": "方口的容器是棕漆木箱。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-03",
+              "raw": "窄沿的坛子是银灰铁盒。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-04",
+              "raw": "靠墙高处是书架。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-05",
+              "raw": "向阳角上是柜顶。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-06",
+              "raw": "有纹的磁盘是米白瓷碟。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-07",
+              "raw": "高处横板是廊下。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-08",
+              "raw": "进门右侧是门后。"
+            }
+          ],
+          "action_bytes": 27,
+          "target_bytes": [
+            230,
+            138,
+            138,
+            230,
+            183,
+            177,
+            231,
+            187,
+            191,
+            233,
+            153,
+            182,
+            231,
+            162,
+            151,
+            230,
+            148,
+            190,
+            229,
+            136,
+            176,
+            231,
+            170,
+            151,
+            229,
+            143,
+            176,
+            256
+          ]
+        },
+        {
+          "name": "dev-9",
+          "index": 9,
+          "layer": "seen_combination",
+          "goal": "让窄沿的坛子到向阳角上。",
+          "records": [
+            {
+              "source_id": "cx1919b0d6ec58-00",
+              "raw": "圆盖的器具是深绿陶碗。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-01",
+              "raw": "屋角一侧是窗台。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-02",
+              "raw": "方口的容器是棕漆木箱。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-03",
+              "raw": "窄沿的坛子是银灰铁盒。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-04",
+              "raw": "靠墙高处是书架。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-05",
+              "raw": "向阳角上是柜顶。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-06",
+              "raw": "有纹的磁盘是米白瓷碟。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-07",
+              "raw": "高处横板是廊下。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-08",
+              "raw": "进门右侧是门后。"
+            }
+          ],
+          "action_bytes": 27,
+          "target_bytes": [
+            230,
+            138,
+            138,
+            233,
+            147,
+            182,
+            231,
+            129,
+            176,
+            233,
+            147,
+            129,
+            231,
+            155,
+            146,
+            230,
+            148,
+            190,
+            229,
+            136,
+            176,
+            230,
+            159,
+            156,
+            233,
+            161,
+            182,
+            256
+          ]
+        },
+        {
+          "name": "dev-12",
+          "index": 12,
+          "layer": "unseen_combination",
+          "goal": "让方口的容器到靠墙高处。",
+          "records": [
+            {
+              "source_id": "cx1919b0d6ec58-00",
+              "raw": "圆盖的器具是深绿陶碗。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-01",
+              "raw": "屋角一侧是窗台。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-02",
+              "raw": "方口的容器是棕漆木箱。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-03",
+              "raw": "窄沿的坛子是银灰铁盒。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-04",
+              "raw": "靠墙高处是书架。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-05",
+              "raw": "向阳角上是柜顶。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-06",
+              "raw": "有纹的磁盘是米白瓷碟。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-07",
+              "raw": "高处横板是廊下。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-08",
+              "raw": "进门右侧是门后。"
+            }
+          ],
+          "action_bytes": 27,
+          "target_bytes": [
+            230,
+            138,
+            138,
+            230,
+            163,
+            149,
+            230,
+            188,
+            134,
+            230,
+            156,
+            168,
+            231,
+            174,
+            177,
+            230,
+            148,
+            190,
+            229,
+            136,
+            176,
+            228,
+            185,
+            166,
+            230,
+            158,
+            182,
+            256
+          ]
+        },
+        {
+          "name": "dev-13",
+          "index": 13,
+          "layer": "unseen_combination",
+          "goal": "让圆盖的器具到向阳角上。",
+          "records": [
+            {
+              "source_id": "cx1919b0d6ec58-00",
+              "raw": "圆盖的器具是深绿陶碗。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-01",
+              "raw": "屋角一侧是窗台。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-02",
+              "raw": "方口的容器是棕漆木箱。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-03",
+              "raw": "窄沿的坛子是银灰铁盒。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-04",
+              "raw": "靠墙高处是书架。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-05",
+              "raw": "向阳角上是柜顶。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-06",
+              "raw": "有纹的磁盘是米白瓷碟。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-07",
+              "raw": "高处横板是廊下。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-08",
+              "raw": "进门右侧是门后。"
+            }
+          ],
+          "action_bytes": 27,
+          "target_bytes": [
+            230,
+            138,
+            138,
+            230,
+            183,
+            177,
+            231,
+            187,
+            191,
+            233,
+            153,
+            182,
+            231,
+            162,
+            151,
+            230,
+            148,
+            190,
+            229,
+            136,
+            176,
+            230,
+            159,
+            156,
+            233,
+            161,
+            182,
+            256
+          ]
+        },
+        {
+          "name": "dev-15",
+          "index": 15,
+          "layer": "unseen_entity",
+          "goal": "让有纹的磁盘到靠墙高处。",
+          "records": [
+            {
+              "source_id": "cx1919b0d6ec58-00",
+              "raw": "圆盖的器具是深绿陶碗。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-01",
+              "raw": "屋角一侧是窗台。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-02",
+              "raw": "方口的容器是棕漆木箱。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-03",
+              "raw": "窄沿的坛子是银灰铁盒。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-04",
+              "raw": "靠墙高处是书架。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-05",
+              "raw": "向阳角上是柜顶。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-06",
+              "raw": "有纹的磁盘是米白瓷碟。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-07",
+              "raw": "高处横板是廊下。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-08",
+              "raw": "进门右侧是门后。"
+            }
+          ],
+          "action_bytes": 27,
+          "target_bytes": [
+            230,
+            138,
+            138,
+            231,
+            177,
+            179,
+            231,
+            153,
+            189,
+            231,
+            147,
+            183,
+            231,
+            162,
+            159,
+            230,
+            148,
+            190,
+            229,
+            136,
+            176,
+            228,
+            185,
+            166,
+            230,
+            158,
+            182,
+            256
+          ]
+        },
+        {
+          "name": "dev-16",
+          "index": 16,
+          "layer": "unseen_entity",
+          "goal": "让有纹的磁盘到向阳角上。",
+          "records": [
+            {
+              "source_id": "cx1919b0d6ec58-00",
+              "raw": "圆盖的器具是深绿陶碗。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-01",
+              "raw": "屋角一侧是窗台。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-02",
+              "raw": "方口的容器是棕漆木箱。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-03",
+              "raw": "窄沿的坛子是银灰铁盒。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-04",
+              "raw": "靠墙高处是书架。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-05",
+              "raw": "向阳角上是柜顶。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-06",
+              "raw": "有纹的磁盘是米白瓷碟。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-07",
+              "raw": "高处横板是廊下。"
+            },
+            {
+              "source_id": "cx1919b0d6ec58-08",
+              "raw": "进门右侧是门后。"
+            }
+          ],
+          "action_bytes": 27,
+          "target_bytes": [
+            230,
+            138,
+            138,
+            231,
+            177,
+            179,
+            231,
+            153,
+            189,
+            231,
+            147,
+            183,
+            231,
+            162,
+            159,
+            230,
+            148,
+            190,
+            229,
+            136,
+            176,
+            230,
+            159,
+            156,
+            233,
+            161,
+            182,
+            256
+          ]
+        }
+      ]
+    },
+    "digest": "6728fc3713e165c21e15e28feb88c9e409cb821675715a7bad5b039392aa6f1b",
+    "payload": {
+      "schema": "taiji-composition-fixture-v1",
+      "data_seed": 47021,
+      "order_seed": 27021,
+      "confirm_seed": 47022,
+      "confirm_order_seed": 27022,
+      "declared_worlds": {
+        "train": 16,
+        "dev": 8,
+        "confirm": 8
+      },
+      "lengths": {
+        "goal_bytes": 36,
+        "action_bytes": 27,
+        "train_records": [
+          8,
+          219
+        ],
+        "dev_records": [
+          9,
+          252
+        ]
+      },
+      "vocabulary": {
+        "object_names": [
+          "棕漆木箱",
+          "银灰铁盒",
+          "深绿陶碗",
+          "米白瓷碟",
+          "墨黑石砚"
+        ],
+        "object_descriptions": [
+          "方口的容器",
+          "圆盖的器具",
+          "窄沿的坛子",
+          "有纹的磁盘",
+          "沉手的石块"
+        ],
+        "place_names": [
+          "窗台",
+          "书架",
+          "门后",
+          "廊下",
+          "柜顶"
+        ],
+        "place_descriptions": [
+          "靠墙高处",
+          "向阳角上",
+          "进门右侧",
+          "屋角一侧",
+          "高处横板"
+        ],
+        "train_objects": 3,
+        "held_out_object": {
+          "dev": 3,
+          "confirm": 4
+        }
+      },
+      "combinations": {
+        "seen_per_world": 12,
+        "unseen_combination_per_world": 3,
+        "unseen_entity_per_world": 5,
+        "train_kept": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ]
+        ],
+        "diagonal_excluded": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ]
+      },
+      "price_picks": {
+        "train": [
+          0,
+          1,
+          2,
+          4,
+          5,
+          6,
+          8,
+          10
+        ],
+        "dev_seen": [
+          0,
+          3,
+          6,
+          9
+        ],
+        "dev_unseen_combination": [
+          0,
+          1
+        ],
+        "dev_unseen_entity": [
+          0,
+          1
+        ]
+      },
+      "worlds": [
+        {
+          "split": "train",
+          "world": 0,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "银灰铁盒",
+            "圆盖的器具": "棕漆木箱",
+            "窄沿的坛子": "深绿陶碗"
+          },
+          "place_mapping": {
+            "靠墙高处": "廊下",
+            "向阳角上": "柜顶",
+            "进门右侧": "门后",
+            "屋角一侧": "窗台",
+            "高处横板": "书架"
+          },
+          "record_lines": 8,
+          "record_bytes": 219,
+          "examples": 12,
+          "layers": {
+            "seen_combination": 12
+          },
+          "actions": 15,
+          "record_ids": [
+            "cx6890a949fd1b-00",
+            "cx6890a949fd1b-01",
+            "cx6890a949fd1b-02",
+            "cx6890a949fd1b-03",
+            "cx6890a949fd1b-04",
+            "cx6890a949fd1b-05",
+            "cx6890a949fd1b-06",
+            "cx6890a949fd1b-07"
+          ]
+        },
+        {
+          "split": "dev",
+          "world": 0,
+          "data_seed": 47021,
+          "order_seed": 27021,
+          "object_mapping": {
+            "方口的容器": "棕漆木箱",
+            "圆盖的器具": "深绿陶碗",
+            "窄沿的坛子": "银灰铁盒",
+            "有纹的磁盘": "米白瓷碟"
+          },
+          "place_mapping": {
+            "靠墙高处": "书架",
+            "向阳角上": "柜顶",
+            "进门右侧": "门后",
+            "屋角一侧": "窗台",
+            "高处横板": "廊下"
+          },
+          "record_lines": 9,
+          "record_bytes": 252,
+          "examples": 20,
+          "layers": {
+            "seen_combination": 12,
+            "unseen_combination": 3,
+            "unseen_entity": 5
+          },
+          "actions": 20,
+          "record_ids": [
+            "cx1919b0d6ec58-00",
+            "cx1919b0d6ec58-01",
+            "cx1919b0d6ec58-02",
+            "cx1919b0d6ec58-03",
+            "cx1919b0d6ec58-04",
+            "cx1919b0d6ec58-05",
+            "cx1919b0d6ec58-06",
+            "cx1919b0d6ec58-07",
+            "cx1919b0d6ec58-08"
+          ]
+        }
+      ],
+      "digest": "6728fc3713e165c21e15e28feb88c9e409cb821675715a7bad5b039392aa6f1b"
+    },
+    "confirm_read": false
+  },
+  "prices": {
+    "train_update_batch8_cpu": 5.3828125,
+    "forward_batch8_cpu": 1.96875,
+    "bptt_batch8_cpu": 3.4375,
+    "adam_step_batch8_cpu": 0.015625,
+    "encode_example_cpu": 0.02734375,
+    "self_generate_example_cpu": 0.3828125,
+    "eval_score_example_cpu": 0.173828125,
+    "intervention_example_cpu": 0.0390625,
+    "restore_cpu": 2.484375,
+    "bundle_mib": 61.82436656951904
+  },
+  "extrapolation": {
+    "formula": {
+      "train_updates": 1800,
+      "train_batch": 8,
+      "eval_generations": 1920,
+      "eval_scores": 1920,
+      "interventions": 13440,
+      "restores": 6,
+      "overhead_fraction": 0.1,
+      "startup_wall_seconds": 60.0
+    },
+    "components": {
+      "training_cpu": 9689.0625,
+      "generation_cpu": 735.0,
+      "eval_score_cpu": 333.75,
+      "intervention_cpu": 525.0,
+      "restore_cpu": 14.90625,
+      "subtotal_cpu": 11297.71875,
+      "overhead_cpu": 1129.7718750000001,
+      "total_cpu": 12427.490625,
+      "estimated_wall_seconds": 12487.490625,
+      "estimated_products_mib": 470.94619941711426
+    },
+    "cap": {
+      "cpu_seconds": 14400,
+      "wall_seconds": 28800,
+      "adam_calls": 1800,
+      "product_bytes": 4294967296
+    },
+    "within": {
+      "cpu": true,
+      "wall": true,
+      "adam": true,
+      "products": true
+    },
+    "admitted": true
+  },
+  "arms": [
+    {
+      "arm": "A_full",
+      "candidate_digest": "80a13ae0f31f4100e793b8d1209c7a2df9c7d661af20a1e9935ae916b8f2cf32",
+      "parameter_count": 3496348,
+      "trainable_count": 2301123,
+      "disabled": {
+        "names": [],
+        "elements": 0,
+        "groups": []
+      },
+      "encoding_cpu": 0.046875,
+      "updates": [
+        {
+          "loss": 4.669104660036416,
+          "forward_cpu": 2.453125,
+          "bptt_cpu": 3.90625,
+          "step_cpu": 0.015625,
+          "total_cpu": 6.375,
+          "clip_scale": 3.0822217182067333,
+          "index": 0
+        },
+        {
+          "loss": 4.00892522531002,
+          "forward_cpu": 2.203125,
+          "bptt_cpu": 3.890625,
+          "step_cpu": 0.015625,
+          "total_cpu": 6.109375,
+          "clip_scale": 1.9476122845196016,
+          "index": 1
+        },
+        {
+          "loss": 3.708763044107921,
+          "forward_cpu": 2.109375,
+          "bptt_cpu": 4.25,
+          "step_cpu": 0.015625,
+          "total_cpu": 6.375,
+          "clip_scale": 1.6857371334800368,
+          "index": 2
+        },
+        {
+          "loss": 3.5454570682911464,
+          "forward_cpu": 2.3125,
+          "bptt_cpu": 4.03125,
+          "step_cpu": 0.015625,
+          "total_cpu": 6.359375,
+          "clip_scale": 1.759564758557685,
+          "index": 3
+        }
+      ],
+      "generation_cpu": 0.3828125,
+      "generation": [
+        {
+          "index": 0,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "28987579018572f8a37b4c3a5f539eb5584e5ff56c6432d065e8a84b1f3878ac"
+        },
+        {
+          "index": 3,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "28987579018572f8a37b4c3a5f539eb5584e5ff56c6432d065e8a84b1f3878ac"
+        },
+        {
+          "index": 6,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "28987579018572f8a37b4c3a5f539eb5584e5ff56c6432d065e8a84b1f3878ac"
+        },
+        {
+          "index": 9,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "28987579018572f8a37b4c3a5f539eb5584e5ff56c6432d065e8a84b1f3878ac"
+        },
+        {
+          "index": 12,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "28987579018572f8a37b4c3a5f539eb5584e5ff56c6432d065e8a84b1f3878ac"
+        },
+        {
+          "index": 13,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "28987579018572f8a37b4c3a5f539eb5584e5ff56c6432d065e8a84b1f3878ac"
+        },
+        {
+          "index": 15,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "28987579018572f8a37b4c3a5f539eb5584e5ff56c6432d065e8a84b1f3878ac"
+        },
+        {
+          "index": 16,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "28987579018572f8a37b4c3a5f539eb5584e5ff56c6432d065e8a84b1f3878ac"
+        }
+      ],
+      "eval_score_cpu": 0.19140625,
+      "intervention_cpu": 0.04296875,
+      "initial_restore": {
+        "ok": true,
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "save_cpu": 0.0625,
+        "worker_cpu": 2.6875,
+        "wall_seconds": 3.3790854001417756,
+        "elapsed_cpu": 2.75,
+        "parent_wait_cpu": 0.0,
+        "bundle_bytes": 28108091,
+        "bundle_mib": 26.805964469909668,
+        "adam_calls": 0
+      },
+      "final_restore": {
+        "ok": true,
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "save_cpu": 0.109375,
+        "worker_cpu": 2.546875,
+        "wall_seconds": 2.844456300139427,
+        "elapsed_cpu": 2.65625,
+        "parent_wait_cpu": 0.015625,
+        "bundle_bytes": 64983007,
+        "bundle_mib": 61.97262477874756,
+        "adam_calls": 0
+      },
+      "adam_calls": 4
+    },
+    {
+      "arm": "B_local",
+      "candidate_digest": "ae5aee29e16b6d4cd0f1db86244fac86af1cbaefb8a384eb27ce5019ba9fda89",
+      "parameter_count": 3496348,
+      "trainable_count": 2210115,
+      "disabled": {
+        "names": [
+          "relation.encoder.gru.weight_ih_l0",
+          "relation.encoder.gru.weight_hh_l0",
+          "relation.encoder.gru.bias_ih_l0",
+          "relation.encoder.gru.bias_hh_l0",
+          "relation.encoder.gru.weight_ih_l0_reverse",
+          "relation.encoder.gru.weight_hh_l0_reverse",
+          "relation.encoder.gru.bias_ih_l0_reverse",
+          "relation.encoder.gru.bias_hh_l0_reverse",
+          "relation.encoder.W_c.weight",
+          "relation.encoder.W_c.bias"
+        ],
+        "elements": 91008,
+        "groups": [
+          "gru_forward",
+          "gru_backward",
+          "W_c"
+        ]
+      },
+      "encoding_cpu": 0.009765625,
+      "updates": [
+        {
+          "loss": 4.683183774977894,
+          "forward_cpu": 2.171875,
+          "bptt_cpu": 3.40625,
+          "step_cpu": 0.015625,
+          "total_cpu": 5.59375,
+          "clip_scale": 2.5282992059849345,
+          "index": 0
+        },
+        {
+          "loss": 4.103698588848264,
+          "forward_cpu": 1.9375,
+          "bptt_cpu": 3.359375,
+          "step_cpu": 0.015625,
+          "total_cpu": 5.3125,
+          "clip_scale": 1.9255253700425705,
+          "index": 1
+        },
+        {
+          "loss": 3.7480766269454024,
+          "forward_cpu": 2.0,
+          "bptt_cpu": 3.421875,
+          "step_cpu": 0.015625,
+          "total_cpu": 5.4375,
+          "clip_scale": 1.2727231600174818,
+          "index": 2
+        },
+        {
+          "loss": 3.5510350082833755,
+          "forward_cpu": 1.859375,
+          "bptt_cpu": 3.453125,
+          "step_cpu": 0.015625,
+          "total_cpu": 5.328125,
+          "clip_scale": 1.362917793136714,
+          "index": 3
+        }
+      ],
+      "generation_cpu": 0.369140625,
+      "generation": [
+        {
+          "index": 0,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "28987579018572f8a37b4c3a5f539eb5584e5ff56c6432d065e8a84b1f3878ac"
+        },
+        {
+          "index": 3,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "28987579018572f8a37b4c3a5f539eb5584e5ff56c6432d065e8a84b1f3878ac"
+        },
+        {
+          "index": 6,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "28987579018572f8a37b4c3a5f539eb5584e5ff56c6432d065e8a84b1f3878ac"
+        },
+        {
+          "index": 9,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "28987579018572f8a37b4c3a5f539eb5584e5ff56c6432d065e8a84b1f3878ac"
+        },
+        {
+          "index": 12,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "28987579018572f8a37b4c3a5f539eb5584e5ff56c6432d065e8a84b1f3878ac"
+        },
+        {
+          "index": 13,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "28987579018572f8a37b4c3a5f539eb5584e5ff56c6432d065e8a84b1f3878ac"
+        },
+        {
+          "index": 15,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "28987579018572f8a37b4c3a5f539eb5584e5ff56c6432d065e8a84b1f3878ac"
+        },
+        {
+          "index": 16,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "28987579018572f8a37b4c3a5f539eb5584e5ff56c6432d065e8a84b1f3878ac"
+        }
+      ],
+      "eval_score_cpu": 0.173828125,
+      "intervention_cpu": 0.037109375,
+      "initial_restore": {
+        "ok": true,
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "save_cpu": 0.171875,
+        "worker_cpu": 2.390625,
+        "wall_seconds": 2.7321941000409424,
+        "elapsed_cpu": 2.5625,
+        "parent_wait_cpu": 0.0,
+        "bundle_bytes": 28108267,
+        "bundle_mib": 26.806132316589355,
+        "adam_calls": 0
+      },
+      "final_restore": {
+        "ok": true,
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "save_cpu": 0.09375,
+        "worker_cpu": 2.390625,
+        "wall_seconds": 2.7646659000311047,
+        "elapsed_cpu": 2.484375,
+        "parent_wait_cpu": 0.15625,
+        "bundle_bytes": 63518771,
+        "bundle_mib": 60.57622051239014,
+        "adam_calls": 0
+      },
+      "adam_calls": 4
+    },
+    {
+      "arm": "C_flat",
+      "candidate_digest": "2de764bc23dace8d2843a3a3d45f0bbefd50edd841ef6d6c7258b64ec65a6a46",
+      "parameter_count": 3496348,
+      "trainable_count": 2291619,
+      "disabled": {
+        "names": [
+          "relation.reader.K_record.weight",
+          "relation.reader.Q_value.weight",
+          "relation.reader.Q_value.bias",
+          "relation.reader.null_value"
+        ],
+        "elements": 9504,
+        "groups": [
+          "K_record",
+          "Q_value"
+        ]
+      },
+      "encoding_cpu": 0.02734375,
+      "updates": [
+        {
+          "loss": 4.649064904770567,
+          "forward_cpu": 1.828125,
+          "bptt_cpu": 3.1875,
+          "step_cpu": 0.015625,
+          "total_cpu": 5.03125,
+          "clip_scale": 2.7354584091265544,
+          "index": 0
+        },
+        {
+          "loss": 3.96414707499381,
+          "forward_cpu": 1.609375,
+          "bptt_cpu": 3.0,
+          "step_cpu": 0.015625,
+          "total_cpu": 4.625,
+          "clip_scale": 2.152751327504059,
+          "index": 1
+        },
+        {
+          "loss": 3.498565091083411,
+          "forward_cpu": 1.59375,
+          "bptt_cpu": 2.890625,
+          "step_cpu": 0.015625,
+          "total_cpu": 4.5,
+          "clip_scale": 2.060852122239725,
+          "index": 2
+        },
+        {
+          "loss": 3.1505398974490295,
+          "forward_cpu": 1.5625,
+          "bptt_cpu": 3.6875,
+          "step_cpu": 0.015625,
+          "total_cpu": 5.265625,
+          "clip_scale": 2.089099600994817,
+          "index": 3
+        }
+      ],
+      "generation_cpu": 0.404296875,
+      "generation": [
+        {
+          "index": 0,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "91242e696386008bb210aeecf70550ff24d750ea39b6cea285c8c358ebb4fabe"
+        },
+        {
+          "index": 3,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "3cdd5b8d09111474e561962fdcefc6d721da7659184cf569438d9361290af3f9"
+        },
+        {
+          "index": 6,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "d0805d12c95a16fd50a5379a932f17b3b4c15da1e4afba31ed7eb3ee8558ce81"
+        },
+        {
+          "index": 9,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "8e17fc58d91fb3a7699641b91f124f5ee609f2b7dac5c6550a42607ec3dfc279"
+        },
+        {
+          "index": 12,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "6cdba7223980b641340fa41513998f8991ba45bc32187d567c8045eaac676c1c"
+        },
+        {
+          "index": 13,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "f276142a8ee0fe7e8cfcada8ac537ff3213c78d54cbd01002c100c555e581011"
+        },
+        {
+          "index": 15,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "a6e68ed363423497f7486c9b8d00b12263bdce96431b2d65b5c20f352cfe56cd"
+        },
+        {
+          "index": 16,
+          "terminated": false,
+          "raw_bytes": 65,
+          "raw_sha256": "91242e696386008bb210aeecf70550ff24d750ea39b6cea285c8c358ebb4fabe"
+        }
+      ],
+      "eval_score_cpu": 0.16015625,
+      "intervention_cpu": 0.0390625,
+      "initial_restore": {
+        "ok": true,
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "save_cpu": 0.078125,
+        "worker_cpu": 2.3125,
+        "wall_seconds": 2.557952399831265,
+        "elapsed_cpu": 2.390625,
+        "parent_wait_cpu": 0.015625,
+        "bundle_bytes": 28108091,
+        "bundle_mib": 26.805964469909668,
+        "adam_calls": 0
+      },
+      "final_restore": {
+        "ok": true,
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "save_cpu": 0.125,
+        "worker_cpu": 2.234375,
+        "wall_seconds": 2.5476947999559343,
+        "elapsed_cpu": 2.359375,
+        "parent_wait_cpu": 0.015625,
+        "bundle_bytes": 64827547,
+        "bundle_mib": 61.82436656951904,
+        "adam_calls": 0
+      },
+      "adam_calls": 4
+    }
+  ],
+  "cost": {
+    "main_cpu_seconds": 87.484375,
+    "worker_cpu_seconds": 14.5625,
+    "total_cpu_seconds": 102.0,
+    "wall_seconds": 137.25582219986245,
+    "adam_calls": 12,
+    "max_live_product_bytes": 64983007,
+    "cumulative_product_bytes": 277653774,
+    "peak_ram_mb": 600.72265625
+  },
+  "type_check": {
+    "returncode": 0,
+    "errors": 0,
+    "output": "pyproject.toml: note: unused section(s): module = ['neuroplex.life.*', 'neuroplex.loader', 'neuroplex.multimodal.*', 'neuroplex.safety.*', 'neuroplex.tools.browser', 'neuroplex.tools.browser_crawler', 'neuroplex.tools.builtin_tools', 'neuroplex.tools.desktop', 'neuroplex.tools.mini_search', 'neuroplex.tools.search.*', 'neuroplex.tools.searxng', 'neuroplex.tools.web']\nSuccess: no issues found in 4 source files",
+    "passed": true
+  },
+  "lint": {
+    "ruff": {
+      "returncode": 0,
+      "output": "All checks passed!"
+    },
+    "black": {
+      "returncode": 0,
+      "output": ""
+    },
+    "passed": true
+  },
+  "limits": "Same-form price measurement only. No task training, no capability claim, no adoption, no confirm read; engineering parameter copies discarded.",
+  "candidate": {
+    "candidate_id": "16f7e33cfc24101b3d702c5020e9b1aa1bacaacf4144de27acd8d25c98176352",
+    "total_parameters": 3496348,
+    "trainable_parameters": 2301123,
+    "new_parameters": 172801,
+    "relation_config": {
+      "width": 128,
+      "key_width": 32,
+      "hidden": 64,
+      "chunk": 8,
+      "seed": 27031
+    }
+  },
+  "decision": {
+    "admitted": true,
+    "reason": null
+  },
+  "manifest": {
+    "path": "plans\\manifests\\taiji_core_record_relation_14_5_20261102.json",
+    "sha256": "18d5461749f1a4e5259a450089c4792a9fa1a2221f5f6ce32b9c5d8088afba3c",
+    "written": true,
+    "drift": {}
+  },
+  "error": null,
+  "required_checks": 13,
+  "failed_required": [],
+  "passed": true
+}
