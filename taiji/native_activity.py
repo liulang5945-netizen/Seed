@@ -147,12 +147,22 @@ def build_features(
     return torch.cat([pooled, goal_vector, _carried_nu_features(state), scalars])
 
 
-def select_activity(policy: ActivityPolicy, features: torch.Tensor, legal: dict[str, bool]):
+def select_activity(
+    policy: ActivityPolicy,
+    features: torch.Tensor,
+    legal: dict[str, bool],
+    action: str | None = None,
+):
     logits = policy(features)
     mask = torch.tensor([bool(legal[name]) for name in ACTIVITIES], dtype=logits.dtype)
     masked = logits.masked_fill(mask == 0, float("-inf"))
     probabilities = torch.softmax(masked, dim=-1)
-    index = int(torch.argmax(probabilities))
+    if action is None:
+        index = int(torch.argmax(probabilities))
+    else:
+        if not legal[action]:
+            raise ValueError(f"Illegal sampled activity: {action}")
+        index = ACTIVITIES.index(action)
     return ACTIVITIES[index], probabilities.detach(), logits.detach()
 
 
@@ -220,10 +230,19 @@ def run_round(
     last_event: torch.Tensor,
     prediction_error_value: float,
     chooser=None,
+    model_action: str | None = None,
     gate_provider=None,
     gate_index: int = 0,
+    arrivals=None,
 ):
-    """One activity round: select, execute, journal. Returns the updated five-tuple."""
+    """One activity round: select, execute, journal. Returns the updated five-tuple.
+
+    ``arrivals(env)`` is an optional host hook run before selection so a declared
+    schedule can enqueue messages as the clock advances. Default ``None`` keeps the
+    R025/R027 path byte-identical and adds no bundle key.
+    """
+    if arrivals is not None:
+        arrivals(env)
     legal_records, rejected = legal_store(env.store, env.owner, env.scope, env.now)
     if rejected:
         env.store = legal_records
@@ -231,8 +250,8 @@ def run_round(
     features = build_features(state, goal_vector, prediction_error_value, env)
     legal = legal_mask(env)
     if chooser is None:
-        activity, probabilities, logits = select_activity(policy, features, legal)
-        chosen_by = "model"
+        activity, probabilities, logits = select_activity(policy, features, legal, model_action)
+        chosen_by = "model" if model_action is None else "model_sampled"
     else:
         activity = chooser(env, prediction_error_value)
         logits = policy(features).detach()

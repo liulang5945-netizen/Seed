@@ -115,8 +115,14 @@ def resume_career(
     start: int = 0,
     growth_gate_provider=None,
     limit: int | None = None,
+    retain_outputs: bool = True,
 ):
-    """Consume specs[start:stop] from the given state; returns (state, [(output, byte)])."""
+    """Consume specs[start:stop] from the given state.
+
+    With ``retain_outputs=False`` only the probability tensor and supervised byte
+    are kept, so loss-only traversals do not retain every step trace. The default
+    preserves the R024/R027 contract exactly.
+    """
     kwargs = _shared_kwargs(model, journal)
     specs = career_step_specs(journal)
     stop = len(specs) if limit is None else min(len(specs), start + limit)
@@ -129,8 +135,10 @@ def resume_career(
         if spec["kind"] == "patch":
             event = model.encoder.patches(spec["event_raw"])[0]
             output = model.step(state, event=event, **step_kwargs)
-            steps.append((output, None))
+            steps.append((output, None) if retain_outputs else (output.probabilities, None))
             state = output.state
+            if not retain_outputs:
+                del output
         else:
             if spec["event_raw"] is None:
                 event = model.W.new_zeros(model.config.width)
@@ -139,18 +147,25 @@ def resume_career(
             output = model.step(
                 state, event=event, previous_byte=spec["previous_byte"], **step_kwargs
             )
-            steps.append((output, spec["round_byte"]))
-            state = model.consume_output(output, spec["round_byte"])
+            byte = spec["round_byte"]
+            steps.append((output, byte) if retain_outputs else (output.probabilities, byte))
+            state = model.consume_output(output, byte)
+            if not retain_outputs:
+                del output
     return state, steps
 
 
-def run_career(model: LivingCoreReference, journal: CareerJournal, growth_gate_provider=None):
-    """Consume the journal in visible order; returns (state, [(output, round_byte)]).
-
-    ``growth_gate_provider`` optionally maps the career step index to the declared
-    per-step branch gates consumed by gated newborn units (v1.2 candidate)."""
+def run_career(
+    model: LivingCoreReference,
+    journal: CareerJournal,
+    growth_gate_provider=None,
+    retain_outputs: bool = True,
+):
+    """Consume the journal in visible order from the canonical initial state."""
     state = model.initial_state(journal.subject_id)
-    return resume_career(model, state, journal, 0, growth_gate_provider)
+    return resume_career(
+        model, state, journal, 0, growth_gate_provider, retain_outputs=retain_outputs
+    )
 
 
 def journal_from_dict(data: dict) -> CareerJournal:
@@ -368,6 +383,7 @@ def run_worker_job(spec: dict) -> dict:
     immediately after restore. Deterministic; no task data.
     """
 
+    worker_cpu_start, worker_wall_start = time.process_time(), time.perf_counter()
     torch.set_num_threads(1)
     bundle = load_subject(Path(spec["bundle"]))
     model, state, optimizer = resume_subject(bundle)
@@ -497,6 +513,8 @@ def run_worker_job(spec: dict) -> dict:
         )
     else:
         raise ValueError(f"Unknown worker mode {spec['mode']}")
+    result["worker_cpu_seconds"] = time.process_time() - worker_cpu_start
+    result["worker_wall_seconds"] = time.perf_counter() - worker_wall_start
     if spec.get("out_bundle") is not None:
         save_subject(
             Path(spec["out_bundle"]),

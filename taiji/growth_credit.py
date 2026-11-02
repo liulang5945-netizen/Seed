@@ -508,6 +508,24 @@ def lesion(child: GatedGrowthCore, plan: dict) -> None:
     child.growth_unit_branches = []
 
 
+def lesion_trained(child: GatedGrowthCore) -> dict:
+    """Remove only newborn units, preserving whatever the parent rows learned."""
+    parent_units = child.growth_parent_units
+    if parent_units is None:
+        raise ValueError("lesion_trained requires a gated child")
+    removed_r = child.R[:, parent_units:, :].detach().clone()
+    removed_p = child.P[:, :, parent_units:].detach().clone()
+    child.R = torch.nn.Parameter(child.R[:, :parent_units, :].detach().clone())
+    child.P = torch.nn.Parameter(child.P[:, :, :parent_units].detach().clone())
+    child.growth_parent_units = None
+    child.growth_unit_branches = []
+    return {
+        "removed_units_per_group": int(removed_r.shape[1]),
+        "removed_r_norm": float(removed_r.norm()),
+        "removed_p_norm": float(removed_p.norm()),
+    }
+
+
 def cancellation_index(
     credits: dict[str, torch.Tensor], credit_global: torch.Tensor
 ) -> float | None:
