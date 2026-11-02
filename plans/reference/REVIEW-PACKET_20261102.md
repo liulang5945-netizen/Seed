@@ -22,8 +22,8 @@
 
 ## 4. 唯一下一步与边界
 
-**15.1.0a数据/评分/日志与接口预检、15.1.0b图谱工程均已于2026-11-02通过。0a：16项required全过、0模型/0Adam；24 train/288＋12 dev/240、300来源、axes 135/45/45/15、三记录样式、confirm规格封存；14.6 4,032行重评分一致；[报告](../../reports/taiji_binding_copy_15_1_data_20261102.json)。0b：16项required全过；30133新增/48481停用/16672复用；FD f64 26组全分辨、f32披露；record/position/gamma干预分离、identity rescue逐位一致；四profile各3 Adam（12）初始/step1/step2恢复逐位一致；父bundle逐位不变；55.5/600 CPU、84.2/1200墙；[报告](../../reports/taiji_binding_copy_15_1_graph_20261102.json)。** 之后才是定价、检查点预检、一轮比较、一次确认、全局收束。四臂2400更新/24000CPU是新提案上限，须实测定价，不能借旧1800更新预算执行。
+**15.1.0a数据/评分/日志与接口预检、15.1.0b图谱工程均已于2026-11-02通过；15.1.0c定价判`budget_not_admitted`。0a：16项required全过、0模型/0Adam；24 train/288＋12 dev/240、300来源、axes 135/45/45/15、三记录样式、confirm规格封存；14.6 4,032行重评分一致；[报告](../../reports/taiji_binding_copy_15_1_data_20261102.json)。0b：16项required全过；30133新增/48481停用/16672复用；FD f64 26组全分辨、f32披露；record/position/gamma干预分离、identity rescue逐位一致；四profile各3 Adam（12）初始/step1/step2恢复逐位一致；父bundle逐位不变；55.5/600 CPU、84.2/1200墙；[报告](../../reports/taiji_binding_copy_15_1_graph_20261102.json)。0c：`budget_not_admitted`；四臂各3 Adam（12）；三次运行loss逐位一致（确定性），仅CPU计时~3.5%噪声；三次外推CPU=17920/18556/18473，2/3超cap，中位数18473>18000；最终train_update=6.13、forward=2.34、bptt=3.75、self_gen=0.30、eval=0.20、intervention=0.048、restore=0.148 CPU秒、bundle=61.94MiB；wall≈18533/36000充裕；99.8/600 CPU、101.8/1200 wall；[报告](../../reports/taiji_binding_copy_15_1_price_20261102.json)。** 之后才是检查点预检、一轮比较、一次确认、全局收束，但0c未过，不开始0d/1.1，待owner裁定边际超支处置。四臂2400更新的正式cap按owner授权为**18000 CPU/36000 wall**（原提案24000/48000废止），0c实测价中位数18473超该cap。
 
 若任务成立而新结构无额外收益，按预定较少改动优先规则选合格父；不为保复杂结构阻止连续机制研究。15.2给出两session、有限经验/纠错/反馈/无提示选择的量化设计输入，实际父/价格/更新组仍须在确认后冻结。没有合格父则15.1.3负结案，不继续加步数或新头。
 
-15.1.0a与0b已于2026-11-02执行并通过；confirm未生成；新读取/参数/训练/确认未开始。原14.6/14.8及旧提案的hash绑定保留。
+15.1.0a与0b已于2026-11-02通过；0c定价判budget_not_admitted（三次运行17920/18556/18473 CPU，2/3超18000 cap），不开始0d/1.1，待owner裁定边际超支处置；confirm未生成；新读取/参数/训练/确认未开始。原14.6/14.8及旧提案的hash绑定保留。

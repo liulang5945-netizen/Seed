@@ -1,0 +1,29 @@
+{
+  "schema": "taiji-binding-copy-manifest-v1",
+  "step": "15.1.0c",
+  "status": "budget_not_admitted",
+  "report": "reports/taiji_binding_copy_15_1_price_20261102.json",
+  "parent_bundle": "output/taiji_core_record_relation_14_6/27031_A_full_step300.pt",
+  "source_hashes": {
+    "taiji/binding_copy.py": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+    "taiji/binding_copy_data.py": "aa001023519996b190bfd5f6faa42c6905c205766e1a3d0b34b0ab11c8b79495",
+    "taiji/binding_copy_scoring.py": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+    "taiji/record_relation.py": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+    "taiji/record_relation_core.py": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+    "scripts/training/verify_taiji_binding_copy_15_1_price.py": "586db783b38abc08a64479bf391cdb18770fd87b30b10f2cecb9e8c1ba3324f1"
+  },
+  "admitted": false,
+  "frozen_prices": {
+    "train_update_batch8_cpu": 6.125,
+    "forward_batch8_cpu": 2.3515625,
+    "self_gen_batch8_cpu": 0.0,
+    "bptt_batch8_cpu": 3.7109375,
+    "adam_step_batch8_cpu": 0.015625,
+    "encode_example_cpu": 0.03125,
+    "self_generate_example_cpu": 0.302734375,
+    "eval_score_example_cpu": 0.1943359375,
+    "intervention_example_cpu": 0.0478515625,
+    "restore_cpu": 0.15625,
+    "bundle_mib": 61.94001770019531
+  }
+}

@@ -1,0 +1,489 @@
+{
+  "schema": "taiji-binding-copy-price-v1",
+  "step": "15.1.0c",
+  "date": "2026-11-02",
+  "status": "budget_not_admitted",
+  "arms": [
+    {
+      "arm": "R0P0",
+      "reader": "R0",
+      "prefix_mode": "TF",
+      "parameter_count": 3496348,
+      "trainable_count": 2301123,
+      "encoding_cpu": 0.03125,
+      "updates": [
+        {
+          "loss": 5.4803634685045886,
+          "forward_cpu": 1.984375,
+          "self_gen_cpu": 0.0,
+          "bptt_cpu": 3.609375,
+          "step_cpu": 0.015625,
+          "total_cpu": 5.609375,
+          "clip_scale": 27.110363803827823,
+          "position": 1,
+          "self_count": 0
+        },
+        {
+          "loss": 4.297001086264368,
+          "forward_cpu": 2.046875,
+          "self_gen_cpu": 0.0,
+          "bptt_cpu": 3.609375,
+          "step_cpu": 0.015625,
+          "total_cpu": 5.671875,
+          "clip_scale": 20.00984608662464,
+          "position": 101,
+          "self_count": 0
+        },
+        {
+          "loss": 2.9784430301934033,
+          "forward_cpu": 1.984375,
+          "self_gen_cpu": 0.0,
+          "bptt_cpu": 3.6875,
+          "step_cpu": 0.015625,
+          "total_cpu": 5.6875,
+          "clip_scale": 12.39070762321356,
+          "position": 201,
+          "self_count": 0
+        }
+      ],
+      "generation_cpu": 0.16015625,
+      "generation": [
+        {
+          "index": 0,
+          "terminated": true,
+          "raw_bytes": 20
+        },
+        {
+          "index": 1,
+          "terminated": true,
+          "raw_bytes": 20
+        },
+        {
+          "index": 2,
+          "terminated": true,
+          "raw_bytes": 29
+        },
+        {
+          "index": 3,
+          "terminated": true,
+          "raw_bytes": 31
+        },
+        {
+          "index": 4,
+          "terminated": true,
+          "raw_bytes": 20
+        },
+        {
+          "index": 5,
+          "terminated": true,
+          "raw_bytes": 14
+        },
+        {
+          "index": 6,
+          "terminated": true,
+          "raw_bytes": 21
+        },
+        {
+          "index": 7,
+          "terminated": true,
+          "raw_bytes": 21
+        }
+      ],
+      "eval_score_cpu": 0.177734375,
+      "intervention_cpu": 0.04296875,
+      "initial_restore": {
+        "save_cpu": 0.03125,
+        "load_cpu": 0.046875,
+        "elapsed_cpu": 0.078125,
+        "bundle_mib": 26.797816276550293,
+        "restore_ok": true
+      },
+      "final_restore": {
+        "save_cpu": 0.09375,
+        "load_cpu": 0.0625,
+        "elapsed_cpu": 0.15625,
+        "bundle_mib": 61.962592124938965,
+        "restore_ok": true
+      },
+      "adam_calls": 3
+    },
+    {
+      "arm": "R1P0",
+      "reader": "R1",
+      "prefix_mode": "TF",
+      "parameter_count": 3526481,
+      "trainable_count": 2282775,
+      "encoding_cpu": 0.03125,
+      "updates": [
+        {
+          "loss": 3.8075828736486046,
+          "forward_cpu": 2.3125,
+          "self_gen_cpu": 0.0,
+          "bptt_cpu": 3.796875,
+          "step_cpu": 0.03125,
+          "total_cpu": 6.140625,
+          "clip_scale": 19.53982078968517,
+          "position": 1,
+          "self_count": 0
+        },
+        {
+          "loss": 2.53390027346773,
+          "forward_cpu": 2.390625,
+          "self_gen_cpu": 0.0,
+          "bptt_cpu": 3.78125,
+          "step_cpu": 0.015625,
+          "total_cpu": 6.1875,
+          "clip_scale": 13.945395196738934,
+          "position": 101,
+          "self_count": 0
+        },
+        {
+          "loss": 1.9603683411870587,
+          "forward_cpu": 2.34375,
+          "self_gen_cpu": 0.0,
+          "bptt_cpu": 3.78125,
+          "step_cpu": 0.015625,
+          "total_cpu": 6.140625,
+          "clip_scale": 10.671545644222606,
+          "position": 201,
+          "self_count": 0
+        }
+      ],
+      "generation_cpu": 0.453125,
+      "generation": [
+        {
+          "index": 0,
+          "terminated": false,
+          "raw_bytes": 65
+        },
+        {
+          "index": 1,
+          "terminated": false,
+          "raw_bytes": 65
+        },
+        {
+          "index": 2,
+          "terminated": false,
+          "raw_bytes": 65
+        },
+        {
+          "index": 3,
+          "terminated": false,
+          "raw_bytes": 65
+        },
+        {
+          "index": 4,
+          "terminated": false,
+          "raw_bytes": 65
+        },
+        {
+          "index": 5,
+          "terminated": false,
+          "raw_bytes": 65
+        },
+        {
+          "index": 6,
+          "terminated": false,
+          "raw_bytes": 65
+        },
+        {
+          "index": 7,
+          "terminated": false,
+          "raw_bytes": 65
+        }
+      ],
+      "eval_score_cpu": 0.21484375,
+      "intervention_cpu": 0.05078125,
+      "initial_restore": {
+        "save_cpu": 0.03125,
+        "load_cpu": 0.046875,
+        "elapsed_cpu": 0.078125,
+        "bundle_mib": 27.03192901611328,
+        "restore_ok": true
+      },
+      "final_restore": {
+        "save_cpu": 0.078125,
+        "load_cpu": 0.078125,
+        "elapsed_cpu": 0.15625,
+        "bundle_mib": 61.91744327545166,
+        "restore_ok": true
+      },
+      "adam_calls": 3
+    },
+    {
+      "arm": "R0P1",
+      "reader": "R0",
+      "prefix_mode": "self",
+      "parameter_count": 3496348,
+      "trainable_count": 2301123,
+      "encoding_cpu": 0.03125,
+      "updates": [
+        {
+          "loss": 5.4803634685045886,
+          "forward_cpu": 1.984375,
+          "self_gen_cpu": 0.0,
+          "bptt_cpu": 3.59375,
+          "step_cpu": 0.015625,
+          "total_cpu": 5.59375,
+          "clip_scale": 27.110363803827823,
+          "position": 1,
+          "self_count": 0
+        },
+        {
+          "loss": 5.070009904925858,
+          "forward_cpu": 2.546875,
+          "self_gen_cpu": 0.546875,
+          "bptt_cpu": 3.53125,
+          "step_cpu": 0.015625,
+          "total_cpu": 6.09375,
+          "clip_scale": 17.929416017526265,
+          "position": 101,
+          "self_count": 5
+        },
+        {
+          "loss": 1.8006528960498878,
+          "forward_cpu": 2.75,
+          "self_gen_cpu": 0.890625,
+          "bptt_cpu": 3.609375,
+          "step_cpu": 0.0,
+          "total_cpu": 6.359375,
+          "clip_scale": 16.62626065567797,
+          "position": 201,
+          "self_count": 7
+        }
+      ],
+      "generation_cpu": 0.125,
+      "generation": [
+        {
+          "index": 0,
+          "terminated": true,
+          "raw_bytes": 16
+        },
+        {
+          "index": 1,
+          "terminated": true,
+          "raw_bytes": 16
+        },
+        {
+          "index": 2,
+          "terminated": true,
+          "raw_bytes": 16
+        },
+        {
+          "index": 3,
+          "terminated": true,
+          "raw_bytes": 16
+        },
+        {
+          "index": 4,
+          "terminated": true,
+          "raw_bytes": 16
+        },
+        {
+          "index": 5,
+          "terminated": true,
+          "raw_bytes": 15
+        },
+        {
+          "index": 6,
+          "terminated": true,
+          "raw_bytes": 16
+        },
+        {
+          "index": 7,
+          "terminated": true,
+          "raw_bytes": 16
+        }
+      ],
+      "eval_score_cpu": 0.181640625,
+      "intervention_cpu": 0.044921875,
+      "initial_restore": {
+        "save_cpu": 0.03125,
+        "load_cpu": 0.046875,
+        "elapsed_cpu": 0.078125,
+        "bundle_mib": 26.797816276550293,
+        "restore_ok": true
+      },
+      "final_restore": {
+        "save_cpu": 0.078125,
+        "load_cpu": 0.046875,
+        "elapsed_cpu": 0.125,
+        "bundle_mib": 61.962592124938965,
+        "restore_ok": true
+      },
+      "adam_calls": 3
+    },
+    {
+      "arm": "R1P1",
+      "reader": "R1",
+      "prefix_mode": "self",
+      "parameter_count": 3526481,
+      "trainable_count": 2282775,
+      "encoding_cpu": 0.03125,
+      "updates": [
+        {
+          "loss": 3.8075828736486046,
+          "forward_cpu": 2.359375,
+          "self_gen_cpu": 0.0,
+          "bptt_cpu": 3.734375,
+          "step_cpu": 0.015625,
+          "total_cpu": 6.109375,
+          "clip_scale": 19.53982078968517,
+          "position": 1,
+          "self_count": 0
+        },
+        {
+          "loss": 2.077601863370318,
+          "forward_cpu": 4.140625,
+          "self_gen_cpu": 1.703125,
+          "bptt_cpu": 3.765625,
+          "step_cpu": 0.015625,
+          "total_cpu": 7.921875,
+          "clip_scale": 9.621199117232734,
+          "position": 101,
+          "self_count": 4
+        },
+        {
+          "loss": 0.8227813044448855,
+          "forward_cpu": 5.203125,
+          "self_gen_cpu": 2.9375,
+          "bptt_cpu": 3.75,
+          "step_cpu": 0.015625,
+          "total_cpu": 8.96875,
+          "clip_scale": 5.62519496569172,
+          "position": 201,
+          "self_count": 7
+        }
+      ],
+      "generation_cpu": 0.4453125,
+      "generation": [
+        {
+          "index": 0,
+          "terminated": false,
+          "raw_bytes": 65
+        },
+        {
+          "index": 1,
+          "terminated": false,
+          "raw_bytes": 65
+        },
+        {
+          "index": 2,
+          "terminated": false,
+          "raw_bytes": 65
+        },
+        {
+          "index": 3,
+          "terminated": false,
+          "raw_bytes": 65
+        },
+        {
+          "index": 4,
+          "terminated": false,
+          "raw_bytes": 65
+        },
+        {
+          "index": 5,
+          "terminated": false,
+          "raw_bytes": 65
+        },
+        {
+          "index": 6,
+          "terminated": false,
+          "raw_bytes": 65
+        },
+        {
+          "index": 7,
+          "terminated": false,
+          "raw_bytes": 65
+        }
+      ],
+      "eval_score_cpu": 0.20703125,
+      "intervention_cpu": 0.052734375,
+      "initial_restore": {
+        "save_cpu": 0.03125,
+        "load_cpu": 0.046875,
+        "elapsed_cpu": 0.078125,
+        "bundle_mib": 27.03192901611328,
+        "restore_ok": true
+      },
+      "final_restore": {
+        "save_cpu": 0.09375,
+        "load_cpu": 0.0625,
+        "elapsed_cpu": 0.15625,
+        "bundle_mib": 61.91744327545166,
+        "restore_ok": true
+      },
+      "adam_calls": 3
+    }
+  ],
+  "prices": {
+    "train_update_batch8_cpu": 6.125,
+    "forward_batch8_cpu": 2.3515625,
+    "self_gen_batch8_cpu": 0.0,
+    "bptt_batch8_cpu": 3.7109375,
+    "adam_step_batch8_cpu": 0.015625,
+    "encode_example_cpu": 0.03125,
+    "self_generate_example_cpu": 0.302734375,
+    "eval_score_example_cpu": 0.1943359375,
+    "intervention_example_cpu": 0.0478515625,
+    "restore_cpu": 0.15625,
+    "bundle_mib": 61.94001770019531
+  },
+  "extrapolation": {
+    "formula": {
+      "train_updates": 2400,
+      "train_batch": 8,
+      "eval_generations": 3840,
+      "eval_scores": 3840,
+      "interventions": 3840,
+      "restores": 8,
+      "overhead_fraction": 0.1,
+      "startup_wall_seconds": 60.0
+    },
+    "components": {
+      "training_cpu": 14700.0,
+      "generation_cpu": 1162.5,
+      "eval_score_cpu": 746.25,
+      "intervention_cpu": 183.75,
+      "restore_cpu": 1.25,
+      "subtotal_cpu": 16793.75,
+      "overhead_cpu": 1679.375,
+      "total_cpu": 18473.125,
+      "estimated_wall_seconds": 18533.125,
+      "estimated_products_mib": 595.5201416015625
+    },
+    "cap": {
+      "cpu_seconds": 18000,
+      "wall_seconds": 36000,
+      "adam_calls": 2400,
+      "product_bytes": 4294967296
+    },
+    "admitted": false
+  },
+  "decision": {
+    "admitted": false,
+    "reason": "price exceeds 15.1.1 cap"
+  },
+  "cost": {
+    "cpu_seconds": 99.84375,
+    "wall_seconds": 101.81670120009221,
+    "adam_calls": 12,
+    "product_bytes": 372684422
+  },
+  "budget": {
+    "cpu_seconds": 600.0,
+    "wall_seconds": 1200.0,
+    "adam_calls": 12,
+    "product_bytes": 1073741824
+  },
+  "source_hashes": {
+    "taiji/binding_copy.py": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+    "taiji/binding_copy_data.py": "aa001023519996b190bfd5f6faa42c6905c205766e1a3d0b34b0ab11c8b79495",
+    "taiji/binding_copy_scoring.py": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+    "taiji/record_relation.py": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+    "taiji/record_relation_core.py": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+    "scripts/training/verify_taiji_binding_copy_15_1_price.py": "586db783b38abc08a64479bf391cdb18770fd87b30b10f2cecb9e8c1ba3324f1"
+  },
+  "limits": "Pricing only. No training for adoption, no confirm read, no capability claim. Parent bundle is read-only."
+}
