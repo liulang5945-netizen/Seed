@@ -1,0 +1,79 @@
+{
+  "schema": "taiji-binding-copy-midcursor-repair-v1",
+  "step": "15.1.0d-supplement",
+  "date": "2026-11-02",
+  "status": "midcursor_repaired",
+  "rows": [
+    {
+      "applicable": true,
+      "nonvacuous": true,
+      "prefix_cursor": 4,
+      "m_abs_sum": 0.999999998596377,
+      "save_bundle_bytes": 28360831,
+      "worker_ok": true,
+      "worker_message": null,
+      "worker_prefix_cursor": 4,
+      "bytes_equal": true,
+      "raw_length": 65,
+      "seed": 28031,
+      "arm": "R1P0",
+      "fixture_position": 55
+    },
+    {
+      "applicable": true,
+      "nonvacuous": true,
+      "prefix_cursor": 4,
+      "m_abs_sum": 0.999999998596377,
+      "save_bundle_bytes": 28360831,
+      "worker_ok": true,
+      "worker_message": null,
+      "worker_prefix_cursor": 4,
+      "bytes_equal": true,
+      "raw_length": 65,
+      "seed": 28031,
+      "arm": "R1P1",
+      "fixture_position": 55
+    },
+    {
+      "applicable": true,
+      "nonvacuous": true,
+      "prefix_cursor": 4,
+      "m_abs_sum": 0.9999997231085019,
+      "save_bundle_bytes": 28360959,
+      "worker_ok": true,
+      "worker_message": null,
+      "worker_prefix_cursor": 4,
+      "bytes_equal": true,
+      "raw_length": 65,
+      "seed": 28032,
+      "arm": "R1P0",
+      "fixture_position": 98
+    },
+    {
+      "applicable": true,
+      "nonvacuous": true,
+      "prefix_cursor": 4,
+      "m_abs_sum": 0.9999997231085019,
+      "save_bundle_bytes": 28360959,
+      "worker_ok": true,
+      "worker_message": null,
+      "worker_prefix_cursor": 4,
+      "bytes_equal": true,
+      "raw_length": 65,
+      "seed": 28032,
+      "arm": "R1P1",
+      "fixture_position": 98
+    }
+  ],
+  "accounting": {
+    "actual_adam_calls": 0,
+    "effective_adam_calls": 0
+  },
+  "cost": {
+    "cpu_seconds": 16.46875,
+    "wall_seconds": 31.1738156999927,
+    "adam_calls": 0,
+    "peak_live_product_bytes": 28362480
+  },
+  "note": "Attempt-1 mid-cursor probe indexed the fixture by its global example id instead of its position in the train list, so the worker rebuilt a different record view. This repair re-measures only that probe at initial parameters (0 Adam), with the positional index fixed. The 24 Adam boundary comparisons of attempt 1 are not rerun."
+}

@@ -1,0 +1,692 @@
+{
+  "schema": "taiji-binding-copy-preflight-final-v1",
+  "step": "15.1.0d",
+  "date": "2026-11-02",
+  "status": "passed_15_1_0d_preflight",
+  "checks": {
+    "parent_identity": true,
+    "preflight_grid": true,
+    "initial_restore_exact": true,
+    "step1_restore_exact": true,
+    "next_update_replay_exact": true,
+    "mid_cursor_restore_exact": true,
+    "mid_cursor_nonvacuous": true,
+    "adam_budget": true,
+    "product_limit": true,
+    "stage_budget": true,
+    "independent_process": true,
+    "parent_bundle_unchanged": true,
+    "no_confirm_or_dev_read": true,
+    "products_cleaned": true,
+    "engineering_only": true
+  },
+  "required": [
+    "parent_identity",
+    "preflight_grid",
+    "initial_restore_exact",
+    "step1_restore_exact",
+    "next_update_replay_exact",
+    "adam_budget",
+    "product_limit",
+    "stage_budget",
+    "independent_process",
+    "parent_bundle_unchanged",
+    "no_confirm_or_dev_read",
+    "products_cleaned",
+    "engineering_only"
+  ],
+  "optional": [
+    "mid_cursor_restore_exact",
+    "mid_cursor_nonvacuous"
+  ],
+  "failed": [],
+  "configs": [
+    {
+      "seed": 28031,
+      "arm": "R0P0",
+      "reader": "R0",
+      "prefix_mode": "TF",
+      "order_seed": 38031,
+      "profile": "R0P0-f64",
+      "parameter_count": 3496348,
+      "boundaries": [
+        {
+          "boundary": "initial",
+          "compare": {
+            "equal": true,
+            "tensor_count": 169,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "bundle_bytes": 28100731,
+          "worker_ok": true
+        },
+        {
+          "boundary": "step1",
+          "compare": {
+            "equal": true,
+            "tensor_count": 373,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "bundle_bytes": 64980975,
+          "loss": 6.866080505741247,
+          "self_count": 0,
+          "worker_ok": true
+        },
+        {
+          "boundary": "step2_replay",
+          "compare": {
+            "equal": true,
+            "tensor_count": 373,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "worker_loss": 4.9797011182678705,
+          "in_process_loss": 4.9797011182678705,
+          "worker_self_count": 0,
+          "in_process_self_count": 0,
+          "bundle_bytes": 64984019,
+          "worker_ok": true
+        }
+      ],
+      "mid_cursor": {
+        "applicable": false,
+        "reason": "R0 state carries no copy prefix cursor"
+      },
+      "cpu_seconds": 10.6875,
+      "adam_calls": 3,
+      "step1_loss": 6.866080505741247,
+      "step2_loss": 4.9797011182678705,
+      "step1_self_count": 0,
+      "step2_self_count": 0,
+      "step1_worker_bytes": 64980975
+    },
+    {
+      "seed": 28031,
+      "arm": "R1P0",
+      "reader": "R1",
+      "prefix_mode": "TF",
+      "order_seed": 38031,
+      "profile": "R1P0-f64",
+      "parameter_count": 3526481,
+      "boundaries": [
+        {
+          "boundary": "initial",
+          "compare": {
+            "equal": true,
+            "tensor_count": 184,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "bundle_bytes": 28346306,
+          "worker_ok": true
+        },
+        {
+          "boundary": "step1",
+          "compare": {
+            "equal": true,
+            "tensor_count": 391,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "bundle_bytes": 64941677,
+          "loss": 3.4447213007764175,
+          "self_count": 0,
+          "worker_ok": true
+        },
+        {
+          "boundary": "step2_replay",
+          "compare": {
+            "equal": true,
+            "tensor_count": 391,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "worker_loss": 2.192768262170479,
+          "in_process_loss": 2.192768262170479,
+          "worker_self_count": 0,
+          "in_process_self_count": 0,
+          "bundle_bytes": 64944847,
+          "worker_ok": true
+        }
+      ],
+      "mid_cursor": {
+        "applicable": true,
+        "nonvacuous": true,
+        "prefix_cursor": 4,
+        "m_abs_sum": 0.999999998596377,
+        "save_bundle_bytes": 28360831,
+        "worker_ok": true,
+        "worker_message": null,
+        "worker_prefix_cursor": 4,
+        "bytes_equal": true,
+        "raw_length": 65,
+        "seed": 28031,
+        "arm": "R1P0",
+        "fixture_position": 55
+      },
+      "cpu_seconds": 12.203125,
+      "adam_calls": 3,
+      "step1_loss": 3.4447213007764175,
+      "step2_loss": 2.192768262170479,
+      "step1_self_count": 0,
+      "step2_self_count": 0,
+      "step1_worker_bytes": 64941677
+    },
+    {
+      "seed": 28031,
+      "arm": "R0P1",
+      "reader": "R0",
+      "prefix_mode": "self",
+      "order_seed": 38031,
+      "profile": "R0P1-f64",
+      "parameter_count": 3496348,
+      "boundaries": [
+        {
+          "boundary": "initial",
+          "compare": {
+            "equal": true,
+            "tensor_count": 169,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "bundle_bytes": 28100731,
+          "worker_ok": true
+        },
+        {
+          "boundary": "step1",
+          "compare": {
+            "equal": true,
+            "tensor_count": 373,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "bundle_bytes": 64980975,
+          "loss": 6.866080505741247,
+          "self_count": 0,
+          "worker_ok": true
+        },
+        {
+          "boundary": "step2_replay",
+          "compare": {
+            "equal": true,
+            "tensor_count": 373,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "worker_loss": 6.706819199049443,
+          "in_process_loss": 6.706819199049443,
+          "worker_self_count": 4,
+          "in_process_self_count": 4,
+          "bundle_bytes": 64984019,
+          "worker_ok": true
+        }
+      ],
+      "mid_cursor": {
+        "applicable": false,
+        "reason": "R0 state carries no copy prefix cursor"
+      },
+      "cpu_seconds": 10.9375,
+      "adam_calls": 3,
+      "step1_loss": 6.866080505741247,
+      "step2_loss": 6.706819199049443,
+      "step1_self_count": 0,
+      "step2_self_count": 4,
+      "step1_worker_bytes": 64980975
+    },
+    {
+      "seed": 28031,
+      "arm": "R1P1",
+      "reader": "R1",
+      "prefix_mode": "self",
+      "order_seed": 38031,
+      "profile": "R1P1-f64",
+      "parameter_count": 3526481,
+      "boundaries": [
+        {
+          "boundary": "initial",
+          "compare": {
+            "equal": true,
+            "tensor_count": 184,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "bundle_bytes": 28346306,
+          "worker_ok": true
+        },
+        {
+          "boundary": "step1",
+          "compare": {
+            "equal": true,
+            "tensor_count": 391,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "bundle_bytes": 64941677,
+          "loss": 3.4447213007764175,
+          "self_count": 0,
+          "worker_ok": true
+        },
+        {
+          "boundary": "step2_replay",
+          "compare": {
+            "equal": true,
+            "tensor_count": 391,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "worker_loss": 1.541641648424589,
+          "in_process_loss": 1.541641648424589,
+          "worker_self_count": 4,
+          "in_process_self_count": 4,
+          "bundle_bytes": 64944847,
+          "worker_ok": true
+        }
+      ],
+      "mid_cursor": {
+        "applicable": true,
+        "nonvacuous": true,
+        "prefix_cursor": 4,
+        "m_abs_sum": 0.999999998596377,
+        "save_bundle_bytes": 28360831,
+        "worker_ok": true,
+        "worker_message": null,
+        "worker_prefix_cursor": 4,
+        "bytes_equal": true,
+        "raw_length": 65,
+        "seed": 28031,
+        "arm": "R1P1",
+        "fixture_position": 55
+      },
+      "cpu_seconds": 13.515625,
+      "adam_calls": 3,
+      "step1_loss": 3.4447213007764175,
+      "step2_loss": 1.541641648424589,
+      "step1_self_count": 0,
+      "step2_self_count": 4,
+      "step1_worker_bytes": 64941677
+    },
+    {
+      "seed": 28032,
+      "arm": "R0P0",
+      "reader": "R0",
+      "prefix_mode": "TF",
+      "order_seed": 38032,
+      "profile": "R0P0-f64",
+      "parameter_count": 3496348,
+      "boundaries": [
+        {
+          "boundary": "initial",
+          "compare": {
+            "equal": true,
+            "tensor_count": 169,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "bundle_bytes": 28100731,
+          "worker_ok": true
+        },
+        {
+          "boundary": "step1",
+          "compare": {
+            "equal": true,
+            "tensor_count": 373,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "bundle_bytes": 64981039,
+          "loss": 6.410325910391585,
+          "self_count": 0,
+          "worker_ok": true
+        },
+        {
+          "boundary": "step2_replay",
+          "compare": {
+            "equal": true,
+            "tensor_count": 373,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "worker_loss": 4.829685323391598,
+          "in_process_loss": 4.829685323391598,
+          "worker_self_count": 0,
+          "in_process_self_count": 0,
+          "bundle_bytes": 64984083,
+          "worker_ok": true
+        }
+      ],
+      "mid_cursor": {
+        "applicable": false,
+        "reason": "R0 state carries no copy prefix cursor"
+      },
+      "cpu_seconds": 10.484375,
+      "adam_calls": 3,
+      "step1_loss": 6.410325910391585,
+      "step2_loss": 4.829685323391598,
+      "step1_self_count": 0,
+      "step2_self_count": 0,
+      "step1_worker_bytes": 64981039
+    },
+    {
+      "seed": 28032,
+      "arm": "R1P0",
+      "reader": "R1",
+      "prefix_mode": "TF",
+      "order_seed": 38032,
+      "profile": "R1P0-f64",
+      "parameter_count": 3526481,
+      "boundaries": [
+        {
+          "boundary": "initial",
+          "compare": {
+            "equal": true,
+            "tensor_count": 184,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "bundle_bytes": 28346306,
+          "worker_ok": true
+        },
+        {
+          "boundary": "step1",
+          "compare": {
+            "equal": true,
+            "tensor_count": 391,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "bundle_bytes": 64941805,
+          "loss": 3.5783811425667746,
+          "self_count": 0,
+          "worker_ok": true
+        },
+        {
+          "boundary": "step2_replay",
+          "compare": {
+            "equal": true,
+            "tensor_count": 391,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "worker_loss": 2.3788957283905403,
+          "in_process_loss": 2.3788957283905403,
+          "worker_self_count": 0,
+          "in_process_self_count": 0,
+          "bundle_bytes": 64944911,
+          "worker_ok": true
+        }
+      ],
+      "mid_cursor": {
+        "applicable": true,
+        "nonvacuous": true,
+        "prefix_cursor": 4,
+        "m_abs_sum": 0.9999997231085019,
+        "save_bundle_bytes": 28360959,
+        "worker_ok": true,
+        "worker_message": null,
+        "worker_prefix_cursor": 4,
+        "bytes_equal": true,
+        "raw_length": 65,
+        "seed": 28032,
+        "arm": "R1P0",
+        "fixture_position": 98
+      },
+      "cpu_seconds": 12.15625,
+      "adam_calls": 3,
+      "step1_loss": 3.5783811425667746,
+      "step2_loss": 2.3788957283905403,
+      "step1_self_count": 0,
+      "step2_self_count": 0,
+      "step1_worker_bytes": 64941805
+    },
+    {
+      "seed": 28032,
+      "arm": "R0P1",
+      "reader": "R0",
+      "prefix_mode": "self",
+      "order_seed": 38032,
+      "profile": "R0P1-f64",
+      "parameter_count": 3496348,
+      "boundaries": [
+        {
+          "boundary": "initial",
+          "compare": {
+            "equal": true,
+            "tensor_count": 169,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "bundle_bytes": 28100731,
+          "worker_ok": true
+        },
+        {
+          "boundary": "step1",
+          "compare": {
+            "equal": true,
+            "tensor_count": 373,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "bundle_bytes": 64981039,
+          "loss": 6.410325910391585,
+          "self_count": 0,
+          "worker_ok": true
+        },
+        {
+          "boundary": "step2_replay",
+          "compare": {
+            "equal": true,
+            "tensor_count": 373,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "worker_loss": 4.772118033781284,
+          "in_process_loss": 4.772118033781284,
+          "worker_self_count": 6,
+          "in_process_self_count": 6,
+          "bundle_bytes": 64984083,
+          "worker_ok": true
+        }
+      ],
+      "mid_cursor": {
+        "applicable": false,
+        "reason": "R0 state carries no copy prefix cursor"
+      },
+      "cpu_seconds": 10.90625,
+      "adam_calls": 3,
+      "step1_loss": 6.410325910391585,
+      "step2_loss": 4.772118033781284,
+      "step1_self_count": 0,
+      "step2_self_count": 6,
+      "step1_worker_bytes": 64981039
+    },
+    {
+      "seed": 28032,
+      "arm": "R1P1",
+      "reader": "R1",
+      "prefix_mode": "self",
+      "order_seed": 38032,
+      "profile": "R1P1-f64",
+      "parameter_count": 3526481,
+      "boundaries": [
+        {
+          "boundary": "initial",
+          "compare": {
+            "equal": true,
+            "tensor_count": 184,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "bundle_bytes": 28346306,
+          "worker_ok": true
+        },
+        {
+          "boundary": "step1",
+          "compare": {
+            "equal": true,
+            "tensor_count": 391,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "bundle_bytes": 64941805,
+          "loss": 3.5783811425667746,
+          "self_count": 0,
+          "worker_ok": true
+        },
+        {
+          "boundary": "step2_replay",
+          "compare": {
+            "equal": true,
+            "tensor_count": 391,
+            "missing_or_extra": [],
+            "mismatched_tensors": [],
+            "mismatched_meta": {},
+            "max_abs_diff": 0.0
+          },
+          "worker_loss": 1.8025172858792031,
+          "in_process_loss": 1.8025172858792031,
+          "worker_self_count": 6,
+          "in_process_self_count": 6,
+          "bundle_bytes": 64944911,
+          "worker_ok": true
+        }
+      ],
+      "mid_cursor": {
+        "applicable": true,
+        "nonvacuous": true,
+        "prefix_cursor": 4,
+        "m_abs_sum": 0.9999997231085019,
+        "save_bundle_bytes": 28360959,
+        "worker_ok": true,
+        "worker_message": null,
+        "worker_prefix_cursor": 4,
+        "bytes_equal": true,
+        "raw_length": 65,
+        "seed": 28032,
+        "arm": "R1P1",
+        "fixture_position": 98
+      },
+      "cpu_seconds": 13.421875,
+      "adam_calls": 3,
+      "step1_loss": 3.5783811425667746,
+      "step2_loss": 1.8025172858792031,
+      "step1_self_count": 0,
+      "step2_self_count": 6,
+      "step1_worker_bytes": 64941805
+    }
+  ],
+  "attempts": [
+    {
+      "name": "attempt_1",
+      "report": "reports/taiji_binding_copy_15_1_preflight_20261102.json",
+      "status": "engineering_failure",
+      "failed_checks": [
+        "mid_cursor_restore_exact",
+        "independent_process"
+      ],
+      "cost": {
+        "cpu_seconds": 198.359375,
+        "main_cpu_seconds": 96.890625,
+        "worker_cpu_seconds": 101.46875,
+        "wall_seconds": 298.47148559987545,
+        "adam_calls": 24,
+        "peak_live_product_bytes": 64984083,
+        "cumulative_product_bytes": 1524964428,
+        "products_remaining_bytes": 0
+      },
+      "note": "24 Adam boundary comparisons; mid-cursor probe had a fixture-index bug."
+    },
+    {
+      "name": "attempt_2_midcursor_repair",
+      "report": "reports/taiji_binding_copy_15_1_preflight_midcursor_20261102.json",
+      "status": "midcursor_repaired",
+      "cost": {
+        "cpu_seconds": 16.46875,
+        "wall_seconds": 31.1738156999927,
+        "adam_calls": 0,
+        "peak_live_product_bytes": 28362480
+      },
+      "note": "0 Adam; only the failed mid-cursor probe re-measured with the index fixed."
+    }
+  ],
+  "accounting": {
+    "actual_adam_calls": 24,
+    "effective_adam_calls": 0,
+    "consumed_train_examples": 192,
+    "consumed_dev_examples": 0,
+    "consumed_confirm_examples": 0,
+    "engineering_only": true,
+    "retries": 1,
+    "retry_reason": "instrument_fixture_index_bug"
+  },
+  "cost": {
+    "cpu_seconds": 214.828125,
+    "wall_seconds": 329.64530129986815,
+    "adam_calls": 24,
+    "peak_live_product_bytes": 64984083,
+    "cumulative_product_bytes": 1553326908,
+    "products_remaining_bytes": 0
+  },
+  "budget": {
+    "cpu_seconds": 400.0,
+    "wall_seconds": 800.0,
+    "adam_calls": 24,
+    "product_bytes": 2147483648
+  },
+  "source_hashes": {
+    "taiji/binding_copy.py": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+    "taiji/binding_copy_data.py": "aa001023519996b190bfd5f6faa42c6905c205766e1a3d0b34b0ab11c8b79495",
+    "taiji/binding_copy_scoring.py": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+    "taiji/record_relation.py": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+    "taiji/record_relation_core.py": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+    "scripts/training/verify_taiji_binding_copy_15_1_preflight.py": "90da2b16b83103337aaa8fb9707099a9a9a7bac505e591961b7332ebe0d2dc15"
+  },
+  "limits": "Preflight only. No adoption training, no confirm read, no capability claim. Engineering Adam calls and consumed samples are booked separately and discarded."
+}
