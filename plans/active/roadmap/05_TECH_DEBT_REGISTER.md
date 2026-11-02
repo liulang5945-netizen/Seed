@@ -510,6 +510,31 @@
   以及三支 W7 modularization 门（它们**以读源码为判据本身**，锚点失配 ⇒ 指标 False ⇒ 门红）。
   ⇒ 不存在"统一改为钉接口"这件事；剩下的只是可观测性：那三支门的失败信息此前不说是哪条指标，
   已在 `353d0e3d` 补上"报出未通过的指标名"。
+- **DEBT-I11（新，2026-11-01 登记，owner 裁定"只登记不修"）mypy 核心面在 CI 基线 0 下实测 43 处错误 ⇒ 该门在推送后必红，且红的原因分两批、其中一批比本地领先 21 个提交更旧**。
+  面＝CI 那句 `mypy --follow-imports=silent seed taiji`（`MYPY_CORE_BASELINE=0`，见 `.github/workflows/ci.yml:384`）。
+  本机实测（mypy 2.3.1，与 CI 同版）`Found 44 errors in 11 files (checked 181 source files)`；其中 1 处在
+  `taiji/activity_learning.py` 已由 09.6.1 当场修掉，余 43 处按三组精确归因，**分组单跑求和＝整树数**：
+  - **A 组 20 处 / 5 文件**（`native_content_core_v2` 8、`native_content_training_v3` 7、
+    `native_content_training_v2` 2、`native_content_core` 2、`corrected_old_baseline` 1）：
+    与 CI 在上一次推送（run `41169350479`，commit "docs(plans): record the R5c closeout…"）报的
+    `Found 20 errors in 5 files (checked 173 source files)` **逐数吻合** ⇒ 该门在 09.6.1 之前已经红，
+    不是本轮引入。
+  - **B 组 23 处 / 5 文件**（`native_activity` 8、`living_core` 7、`growth_credit` 5、
+    `native_development` 2、`state_migration` 1）：属 R021–09.6 参考图族，由本地领先 `origin/main`
+    的 **21 个未推送提交**带入，CI 从未见过这批文件（181 对 173 源文件之差即此）。
+    落在 09.6.1 改动文件里的错误全在**未改动行**：`native_activity.py:41/277`＝R025 策略头 `forward`
+    与 imagine 分支的 `**dict[str, object]` 展开、`growth_credit.py:408-417`＝R023 `allocate` 的
+    `best`/`best_key` 可选值解引用、`state_migration.py:301`＝R024 `load_subject` 的 `no-any-return`。
+  - **C 组 0 处**：09.6.1 三个新模块 `constrained_learning`/`activity_learning`/`native_task_fixtures`
+    单跑为 `Success: no issues found in 3 source files`。
+  **后果**：推送这 21 个提交后 CI 仍会在该门红（43 > 0）；`ci.yml` 的失败信息只报总数，
+  不区分 A/B 两批 ⇒ 红会被误读成"最新那轮引入的退化"。
+  **owner 裁定（2026-11-01）**：只登记为债、本轮不修；理由＝修 B 组要动被 R021–09.6 报告 SHA 钉住的
+  参考图族字节，风险高于收益。**未消化的部分**：棘轮基线仍是 0 而实际是 43，
+  这条门当前不具备"新增退化"的判别力（任何 ≤43 的新增都被总数掩盖不了、但也没人把它抬回 0）。
+  结清路线二选一，届时须连同本条与 `ci.yml:384` 一起改口：①按 A/B 分批实修到 0；
+  ②把 `MYPY_CORE_BASELINE` 改为实测值 43 并按单向棘轮逐步下调（与本仓 lint 的 advisory→blocking 惯例一致）。
+  证据：[03 台账 09.6.1 段](03_CURRENT_EXECUTION.md)、[09.6.1 合同 §5](../../reference/SPEC-TAIJI-CORE_ENGINEERING_20261101.md)。
 - 出口④的对照基线：上一节所述 **1408 / 0 失败 / 6 跳过** 已被后续轮次超出。2026-09-18 本地三次全量：
   `1727 / 0 / 6 + 1 xfailed`（批次二前的同码复采，20:12）→ `1732 / 2 / 6 + 1 xfailed`（批次二后，
   两道 `natural_language_workbench_*_modularization` 门红；单跑绿、与 cap0 同跑也绿 ⇒ 套件内跨测试污染，
