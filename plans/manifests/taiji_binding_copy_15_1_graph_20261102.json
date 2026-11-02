@@ -1,0 +1,25 @@
+{
+  "schema": "taiji-binding-copy-graph-manifest-v1",
+  "step": "15.1.0b",
+  "candidate": {
+    "new_parameter_count": 30133
+  },
+  "parent": {
+    "sha256": "b75a83a0a474c041c2a61bed8c4e0a51de11197d67a9b196262e7e039a9a4cef",
+    "bytes": 64983135
+  },
+  "source_hashes": {
+    "taiji/binding_copy.py": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+    "taiji/record_relation.py": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+    "taiji/record_relation_core.py": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+    "scripts/training/verify_taiji_binding_copy_15_1_graph.py": "3c6d38219f60b996fdd5e2baec7ebd8d1c246df5b40dc0d490a4a6c47a5142bf"
+  },
+  "report_sha256": null,
+  "profiles": [
+    "R0-f64",
+    "R1-f64",
+    "R1-f32",
+    "R1-small-f64"
+  ],
+  "status": "passed"
+}

@@ -1426,8 +1426,33 @@ owner 批准"执行整包"后按[设计件](../../reference/SPEC-TAIJI-CORE_READ
 
 交付[15.1 rev2唯一规范](../../reference/SPEC-N15-01_BINDING_COPY_V2_20261102.md)，取代原提案当前排期但不改其14.8绑定字节。继承预定14主seed step300，保留编码/H/F/生成mix；新增30133参数的原文对齐/内容转移/后验连续复制，coverage改为已输出复制后验。读取×TF/自前缀2×2、数据288/240/240及输入描述/输出名分轴、三记录样式、实体阶段轨迹/干预、24kCPU/2400正式Adam提案、确认/选择父/负出口与15.2有限连续设计输入均写实。四臂预算尚未准入，不沿用原三臂cap。
 
-当前唯一下一步15.1.0a；本次只读取已发布输出/源码和制品身份，0模型前向、0Adam、未生成v2数据、未打开14或15确认、未改运行代码。14.8源码hash绑定的旧N15提案保持原位原字节；活动总计划/复审前稿已[封存](../../archive/history/n15_review_20261102/README.md)。旧审计回执保持写作时快照，不原地升级为新算法通过。
+当前（设计时）唯一下一步15.1.0a；本段只读取已发布输出/源码和制品身份，0模型前向、0Adam、未生成v2数据、未打开14或15确认、未改运行代码。14.8源码hash绑定的旧N15提案保持原位原字节；活动总计划/复审前稿已[封存](../../archive/history/n15_review_20261102/README.md)。旧审计回执保持写作时快照，不原地升级为新算法通过。
+
+## 2026-11-02 15.1.0a 数据/评分/日志/接口预检（rev2）
+
+按[15.1 rev2](../../reference/SPEC-N15-01_BINDING_COPY_V2_20261102.md)与用户指令执行0a，交付[报告](../../../reports/taiji_binding_copy_15_1_data_20261102.json)与[manifest](../../manifests/taiji_binding_copy_15_1_data_20261102.json)：**`passed_15_1_0a_data_scoring_interface`，16项required全过、0失败；0模型前向、0 Adam、0权重改动。** 0a只建数据、评分、日志/干预/接口协议并核对父身份，不训练、不建模型、不读确认。
+
+- **数据**：24 train world×12=288例、12 dev world×20=240例；train 192记录/5,256B、dev 108记录/3,024B；300个opaque来源ID不重叠；dev层144 seen/36 unseen combination/60 new description；**新描述与新输出名分轴**：135/45/45/15（描述旧名旧/描述新名旧/描述旧名新/两者新），新描述60、新输出名60、两者15；4个对象名各3world轮换；三记录样式（stated/aka/mapped，训练64/64/64、开发36/36/36），train记录234–237B/≤243、dev 270B/≤279；goal不含实体名；payload 2.01MB。
+- **确认**：12 confirm world/240例、4对象（前三＋第5个）/9行/≤279B、axes 135/45/45/15、data_seed48022、order_seed48024，**规格封存、未生成任何confirm例/记录/来源ID**；公开confirm build拒绝。
+- **评分**：唯一bytes/整数tuple/list规范化；strict UTF-8、27字节规范动作＋EOS、64字节/65预测；oracle/constant/list/wrong name/truncation/byte-type/empty/early EOS/invalid UTF-8/not-terminated先验全过；**14.6全部4,032行用新评分器重评分4,032一致**（completed 1,541、entity 1,580、UTF-8 2,576）；实体阶段对象byte3–14、地点21–26。
+- **日志/干预/接口**：每步原始字节/EOS原因/gamma/lambda/Q_null/总复制后验/argmax来源/位置；完整Q只存预定24例；记录/位置/gamma分开干预，identity rescue逐位恢复，oracle只在实体阶段、gamma=0强制复制/gamma=1 generator_only；状态schema含m/coverage/源版本/H/F/新Adam/模式RNG/前缀cursor/预算/回执/恢复/重放；模型接口仍是256字节＋EOS，样式ID/来源ID不进前向。
+- **父**：14.6主seed27031 A_full step300，bundle `b75a83a0…`/64,983,135B/候选`a3104b3e…`逐字节验证；这是局部行为资产，不是合格长期保持父；新Adam从0，旧Adam归档。
+- **费用**：**1.07/60 CPU秒、1.05/120墙秒**、0 Adam、payload 2.01MB/≤100MiB；type/lint全绿；confirm未读。
+- **边界与下一步**：不签任务能力/一般中文/L3/L4/连续状态/跨session/保持/生长；confirm未生成。**唯一下一步为15.1.0b图谱工程**（30133新增＋继承/停用组；原文对齐/内容转移/连续cursor后验；FD、身份标签隔离、新schema保存/独立恢复；600CPU/1200wall/≤12工程Adam，待owner准入）；0b未过前不开始0c定价/0d预检/15.1.1。
+
+## 2026-11-02 15.1.0b 图谱工程（rev2）
+
+按[15.1 rev2](../../reference/SPEC-N15-01_BINDING_COPY_V2_20261102.md) §0b执行，交付[报告](../../../reports/taiji_binding_copy_15_1_graph_20261102.json)与[manifest](../../manifests/taiji_binding_copy_15_1_graph_20261102.json)：**`passed_15_1_0b_graph`，16项required全过、1项optional披露。** 0b只建正式span读取图、白名单、后验/cursor、干预接口、FD与恢复；不读新train/dev/confirm做训练、不执行0c定价、不启动正式训练、不释放14.7/confirm。
+
+- **参数**：新增30,133（E_goal/E_source 4096×2、Q_w/Q_s/Q_transport 5152×3、K_transport 4096、v_relative 16、continuation 321、v_meta 4）；继承3,496,348；停用48,481（R0旧读取12项：goal attention Q/K/V、旧reader Q_read/K_record/Q_value/K_position/eta）；复用16,672（V_position 16,512＋null_key 32＋null_value 128）；总参数3,526,481、可训2,282,775。
+- **方程→源码→张量/状态→检查矩阵**：goal/source span对齐（logsumexp匹配＋v_meta）、记录内transport（PE16相对位置）、`Q = λ·m + (1−λ·h)·S`、归一化、content = Q·V_position + q_null·null_value；状态含living/m/coverage/keys/record_offsets/prefix_cursor；R1 reader参数名`reader.*`，继承参数名保持`subject.*`/`relation.*`。
+- **FD**：f64 26组全分辨（R1九组grad_norm 0.088–6.10，eps 1e-4/1e-5/1e-6三档一致，sign-flip/zero-param/ascent控制全过）；f32未分辨如实披露，不代签、不做主信用门。
+- **干预**：record/position/gamma三干预分离（分布差0.723/0.480/0.874）；**identity rescue** = 移除干预后分布逐位回到原分布（max_abs_diff=0）；正确记录/位置oracle另名，不设"oracle必须提高整句自由生成"伪门。
+- **恢复**：四profile（R0-f64/R1-f64/R1-f32/R1-small-f64）各3次实际Adam合计12；先验新schema初始保存＋独立进程恢复逐位一致、step1恢复一致、step2参数与Adam矩逐位一致；R1-small用key_width=16（null_key新建16个，不复用父32），其余复用。
+- **父**：14.6 bundle sha `b75a83a0…`逐位不变；新Adam从0，旧Adam归档。
+- **费用**：**55.5/600 CPU秒、84.2/1200墙秒**、12/12 Adam、峰值产物93MB/≤2GiB；type/lint全绿。
+- **边界与下一步**：不签任务能力；**唯一下一步为15.1.0c定价**（600CPU/1200wall、≤12实际Adam、参数废弃；价不落15.1.1正式cap则`budget_not_admitted`）；0c未过前不开始0d预检/15.1.1。
 
 ## 2026-11-02 规划窗口裁定：先收束15.1，再编制后继合同
 
-当前执行计划完整到15.1.3，继续补齐本包必要接口/数据/信用/恢复/定价细节；不提前新增15.2/16执行卡。15.2只保留接力责任，16/8/8等数字降为待结果重审的规模示意，不当已注册分母。15.1结案交候选可靠范围、机制贡献/未决归因、旧行为/恢复/实际成本、下一任务适用性四项依据；成功后据实际父写后继合同，失败/不可判/预算按原出口收束，不用新增计划延长本包。当前队首15.1.0a、算法候选、正式数据/门/预算均不改变；本次仅文档修订，未执行实验。
+当前执行计划完整到15.1.3，继续补齐本包必要接口/数据/信用/恢复/定价细节；不提前新增15.2/16执行卡。15.2只保留接力责任，16/8/8等数字降为待结果重审的规模示意，不当已注册分母。15.1结案交候选可靠范围、机制贡献/未决归因、旧行为/恢复/实际成本、下一任务适用性四项依据；成功后据实际父写后继合同，失败/不可判/预算按原出口收束，不用新增计划延长本包。当前（设计时）队首15.1.0c定价；算法候选、正式数据/门/预算均不改变；本段为规划窗口裁定。15.1.0a与15.1.0b已于2026-11-02执行并通过；当前队首15.1.0c。

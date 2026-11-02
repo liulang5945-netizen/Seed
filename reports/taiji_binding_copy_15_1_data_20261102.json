@@ -1,0 +1,1606 @@
+{
+  "schema": "taiji-binding-copy-15-1-data-v1",
+  "step": "15.1.0a",
+  "date": "2026-11-02",
+  "started_at": "2026-11-02T21:12:08+0800",
+  "status": "passed_15_1_0a_data_scoring_interface",
+  "passed": true,
+  "failed_required": [],
+  "next": "15.1.0b graph engineering",
+  "owner_approval_required_for_next": true,
+  "authorization": {
+    "spec": "plans/reference/SPEC-N15-01_BINDING_COPY_V2_20261102.md",
+    "spec_sha256": "443610fbf093494a4fc3fbe21873cb6dfdd2df52e70bd8281291ca932e9a66ef",
+    "mainline": "plans/MAINLINE.md",
+    "mainline_sha256": "889833304c73f6367ef994969c576d4b686499caf1173fc9ee0ad0c089b994b9",
+    "old_n15_proposal": "plans/reference/PLAN-N15-01_SPAN_BOUND_CONTINUOUS_20261102.md",
+    "old_n15_proposal_sha256": "51cfe08a20cb87af16c3a10939ccf487db1af63d4b693007fc98921102df6897",
+    "old_n15_proposal_not_executed": true,
+    "approved_scope": "15.1.0a",
+    "user_instruction": "15.1.0a沿继续推进"
+  },
+  "parent": {
+    "bundle": "output\\taiji_core_record_relation_14_6\\27031_A_full_step300.pt",
+    "expected_sha256": "b75a83a0a474c041c2a61bed8c4e0a51de11197d67a9b196262e7e039a9a4cef",
+    "actual_sha256": "b75a83a0a474c041c2a61bed8c4e0a51de11197d67a9b196262e7e039a9a4cef",
+    "expected_bytes": 64983135,
+    "actual_bytes": 64983135,
+    "candidate": "a3104b3e17c4259cc49347855f53ebc437cf2ec445f6965e857a685e5b8ab756",
+    "parameter_count": 3496348,
+    "trainable_count": 2301123,
+    "source": "14.6 seed 27031 A_full step300",
+    "local_behavior_asset": true,
+    "qualified_hold_parent": false,
+    "new_adam_from_zero": true,
+    "old_adam_archived": true,
+    "file_verified": true
+  },
+  "data": {
+    "schema": "taiji-binding-copy-data-v2",
+    "split_worlds": {
+      "train": 24,
+      "dev": 12,
+      "confirm": 12
+    },
+    "split_seeds": {
+      "train": [
+        48021,
+        48023
+      ],
+      "dev": [
+        48021,
+        48023
+      ],
+      "confirm": [
+        48022,
+        48024
+      ]
+    },
+    "train": {
+      "worlds": 24,
+      "examples": 288,
+      "layers": {
+        "seen_combination": 288
+      },
+      "records": 192,
+      "source_ids": 192,
+      "record_bytes_min": 234,
+      "record_bytes_max": 237,
+      "styles": {
+        "stated": 64,
+        "aka": 64,
+        "mapped": 64
+      },
+      "digest": "ffe721a6b5fef8c4a86765ba0f83e064ec97111590fbc8c0aa16b85ede37e5f4",
+      "world_digests": 24
+    },
+    "dev": {
+      "worlds": 12,
+      "examples": 240,
+      "layers": {
+        "unseen_combination": 36,
+        "seen_combination": 144,
+        "new_description": 60
+      },
+      "records": 108,
+      "source_ids": 108,
+      "record_bytes_min": 270,
+      "record_bytes_max": 270,
+      "styles": {
+        "stated": 36,
+        "aka": 36,
+        "mapped": 36
+      },
+      "digest": "84dc10d78b798577335c30dee59a4d3b348a90b951f867a14d89da87200fb9c3",
+      "world_digests": 12
+    },
+    "total": {
+      "examples": 528,
+      "records": 300,
+      "source_ids": 300,
+      "record_bytes": 8880,
+      "world_digests": 36
+    },
+    "axes": {
+      "train": {
+        "seen_description_seen_name": 288,
+        "new_description_seen_name": 0,
+        "seen_description_new_name": 0,
+        "new_description_new_name": 0,
+        "new_description": 0,
+        "unseen_output_name": 0,
+        "both_new": 0,
+        "unseen_combination": 0,
+        "seen_combination": 288
+      },
+      "dev": {
+        "seen_description_seen_name": 135,
+        "new_description_seen_name": 45,
+        "seen_description_new_name": 45,
+        "new_description_new_name": 15,
+        "new_description": 60,
+        "unseen_output_name": 60,
+        "both_new": 15,
+        "unseen_combination": 36,
+        "seen_combination": 144
+      },
+      "target": {
+        "seen_description_seen_name": 135,
+        "new_description_seen_name": 45,
+        "seen_description_new_name": 45,
+        "new_description_new_name": 15,
+        "new_description": 60,
+        "unseen_output_name": 60,
+        "both_new": 15,
+        "unseen_combination": 36,
+        "seen_combination": 144
+      }
+    },
+    "layers": {
+      "seen_combination": 144,
+      "unseen_combination": 36,
+      "new_description": 60
+    },
+    "rotation": {
+      "new_description_name_counts": {
+        "青釉瓷瓶": 3,
+        "铁灰木匣": 3,
+        "素白陶罐": 3,
+        "赭红石臼": 3
+      },
+      "seen_name_on_new_description": 9,
+      "new_name_on_seen_description": 9,
+      "both_new_worlds": 3
+    },
+    "styles": {
+      "train": {
+        "stated": 64,
+        "aka": 64,
+        "mapped": 64
+      },
+      "dev": {
+        "stated": 36,
+        "aka": 36,
+        "mapped": 36
+      }
+    },
+    "digests": {
+      "train": "ffe721a6b5fef8c4a86765ba0f83e064ec97111590fbc8c0aa16b85ede37e5f4",
+      "dev": "84dc10d78b798577335c30dee59a4d3b348a90b951f867a14d89da87200fb9c3",
+      "train_dev": "bb3ca3030b99fb795c021f6416a9d815f8da90f5403d9e40b104a9222dc29785"
+    },
+    "vocabulary": {
+      "object_names": [
+        "青釉瓷瓶",
+        "铁灰木匣",
+        "素白陶罐",
+        "赭红石臼",
+        "黛蓝布囊"
+      ],
+      "place_names": [
+        "炉边",
+        "檐下",
+        "案头",
+        "墙角",
+        "梯口"
+      ]
+    },
+    "confirm_spec": {
+      "split": "confirm",
+      "generated": false,
+      "sealed": true,
+      "data_seed": 48022,
+      "order_seed": 48024,
+      "worlds": 12,
+      "examples": 240,
+      "examples_per_world": 20,
+      "objects": 4,
+      "object_indices": [
+        0,
+        1,
+        2,
+        4
+      ],
+      "place_count": 5,
+      "record_lines": 9,
+      "record_bytes_max": 279,
+      "layers": {
+        "seen_combination": 144,
+        "unseen_combination": 36,
+        "new_description": 60
+      },
+      "axes": {
+        "seen_description_seen_name": 135,
+        "new_description_seen_name": 45,
+        "seen_description_new_name": 45,
+        "new_description_new_name": 15,
+        "new_description": 60,
+        "unseen_output_name": 60,
+        "both_new": 15,
+        "unseen_combination": 36,
+        "seen_combination": 144
+      },
+      "styles": [
+        "stated",
+        "aka",
+        "mapped"
+      ],
+      "rotation": {
+        "new_description_maps_to_each_of_4_names": 3,
+        "new_name_on_a_seen_description": 9,
+        "seen_name_on_new_description": 9,
+        "both_new_worlds": 3
+      },
+      "source_budget": 512,
+      "note": "generated only after the candidate and evaluator are frozen, by an independent data process; no confirm example or source id exists here"
+    },
+    "data_payload": {
+      "path": "E:\\Seed\\output\\taiji_core_binding_copy_15_1\\data_v2.json",
+      "sha256": "55385f6ba4b309f9b0cf7a28eaa524205943946aa5bbac7d593d296e172bf6ad",
+      "bytes": 2006572
+    },
+    "train_combinations": [
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        2,
+        4
+      ]
+    ],
+    "diagonal_combinations": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        2
+      ]
+    ]
+  },
+  "scoring": {
+    "protocol": {
+      "main": "completed_action_exact: strict UTF-8, one canonical 27-byte action raw bytes exactly equal and EOS terminated; max 64 bytes/65 predictions; early EOS, parse failure and truncation stay in the denominator",
+      "normalization": "bytes or integer tuple/list -> bytes; no display-text inference",
+      "priors": [
+        "oracle",
+        "constant",
+        "list",
+        "wrong_name",
+        "truncation",
+        "byte_type_swap",
+        "empty",
+        "early_eos",
+        "invalid_utf8",
+        "not_terminated"
+      ],
+      "axes": [
+        "overall",
+        "unseen_input_description",
+        "unseen_output_name",
+        "both_new",
+        "unseen_combination",
+        "per_world"
+      ],
+      "reverse": "accuracy plus paired raw-byte/EOS consistency",
+      "entity_stage": "object byte 3-14 and place byte 21-26 for the 27-byte canonical action; teacher-prefix probe under the correct history; free-prefix trajectory and first divergence; Q record/position/null/gamma/R; argmax source/position",
+      "trace_identity": [
+        "parent",
+        "parameters",
+        "state",
+        "source",
+        "schema",
+        "data_order"
+      ]
+    },
+    "self_test": {
+      "passed": true,
+      "cases": {
+        "oracle": {
+          "schema": "taiji-binding-copy-scoring-v1",
+          "bytes": 27,
+          "predictions": 28,
+          "utf8": true,
+          "terminated": true,
+          "full_sentence": true,
+          "object_exact": true,
+          "place_exact": true,
+          "entity_exact": true,
+          "completed": true,
+          "empty": false,
+          "early_eos": false,
+          "truncated": false,
+          "parsed": true,
+          "first_divergence": -1,
+          "reason": "completed",
+          "expected_bytes": 27,
+          "denominator": true
+        },
+        "constant": {
+          "schema": "taiji-binding-copy-scoring-v1",
+          "bytes": 27,
+          "predictions": 28,
+          "utf8": true,
+          "terminated": true,
+          "full_sentence": false,
+          "object_exact": false,
+          "place_exact": false,
+          "entity_exact": false,
+          "completed": false,
+          "empty": false,
+          "early_eos": false,
+          "truncated": false,
+          "parsed": true,
+          "first_divergence": 4,
+          "reason": "wrong_bytes",
+          "expected_bytes": 27,
+          "denominator": true
+        },
+        "list": {
+          "schema": "taiji-binding-copy-scoring-v1",
+          "bytes": 540,
+          "predictions": 65,
+          "utf8": true,
+          "terminated": true,
+          "full_sentence": false,
+          "object_exact": false,
+          "place_exact": false,
+          "entity_exact": false,
+          "completed": false,
+          "empty": false,
+          "early_eos": false,
+          "truncated": false,
+          "parsed": true,
+          "first_divergence": 4,
+          "reason": "wrong_bytes",
+          "expected_bytes": 27,
+          "denominator": true
+        },
+        "wrong_name": {
+          "schema": "taiji-binding-copy-scoring-v1",
+          "bytes": 27,
+          "predictions": 28,
+          "utf8": true,
+          "terminated": true,
+          "full_sentence": false,
+          "object_exact": false,
+          "place_exact": false,
+          "entity_exact": false,
+          "completed": false,
+          "empty": false,
+          "early_eos": false,
+          "truncated": false,
+          "parsed": true,
+          "first_divergence": 4,
+          "reason": "wrong_bytes",
+          "expected_bytes": 27,
+          "denominator": true
+        },
+        "truncation": {
+          "schema": "taiji-binding-copy-scoring-v1",
+          "bytes": 64,
+          "predictions": 65,
+          "utf8": false,
+          "terminated": false,
+          "full_sentence": false,
+          "object_exact": false,
+          "place_exact": false,
+          "entity_exact": false,
+          "completed": false,
+          "empty": false,
+          "early_eos": false,
+          "truncated": true,
+          "parsed": false,
+          "first_divergence": 27,
+          "reason": "truncated",
+          "expected_bytes": 27,
+          "denominator": true
+        },
+        "byte_type": {
+          "schema": "taiji-binding-copy-scoring-v1",
+          "bytes": 27,
+          "predictions": 28,
+          "utf8": true,
+          "terminated": true,
+          "full_sentence": true,
+          "object_exact": true,
+          "place_exact": true,
+          "entity_exact": true,
+          "completed": true,
+          "empty": false,
+          "early_eos": false,
+          "truncated": false,
+          "parsed": true,
+          "first_divergence": -1,
+          "reason": "completed",
+          "expected_bytes": 27,
+          "denominator": true
+        },
+        "empty": {
+          "schema": "taiji-binding-copy-scoring-v1",
+          "bytes": 0,
+          "predictions": 1,
+          "utf8": true,
+          "terminated": true,
+          "full_sentence": false,
+          "object_exact": false,
+          "place_exact": false,
+          "entity_exact": false,
+          "completed": false,
+          "empty": true,
+          "early_eos": false,
+          "truncated": false,
+          "parsed": true,
+          "first_divergence": 0,
+          "reason": "empty",
+          "expected_bytes": 27,
+          "denominator": true
+        },
+        "early_eos": {
+          "schema": "taiji-binding-copy-scoring-v1",
+          "bytes": 10,
+          "predictions": 11,
+          "utf8": false,
+          "terminated": true,
+          "full_sentence": false,
+          "object_exact": false,
+          "place_exact": false,
+          "entity_exact": false,
+          "completed": false,
+          "empty": false,
+          "early_eos": true,
+          "truncated": false,
+          "parsed": false,
+          "first_divergence": 10,
+          "reason": "early_eos",
+          "expected_bytes": 27,
+          "denominator": true
+        },
+        "invalid_utf8": {
+          "schema": "taiji-binding-copy-scoring-v1",
+          "bytes": 22,
+          "predictions": 23,
+          "utf8": false,
+          "terminated": true,
+          "full_sentence": false,
+          "object_exact": false,
+          "place_exact": false,
+          "entity_exact": false,
+          "completed": false,
+          "empty": false,
+          "early_eos": true,
+          "truncated": false,
+          "parsed": false,
+          "first_divergence": 0,
+          "reason": "early_eos",
+          "expected_bytes": 27,
+          "denominator": true
+        },
+        "not_terminated": {
+          "schema": "taiji-binding-copy-scoring-v1",
+          "bytes": 27,
+          "predictions": 28,
+          "utf8": true,
+          "terminated": false,
+          "full_sentence": true,
+          "object_exact": true,
+          "place_exact": true,
+          "entity_exact": true,
+          "completed": false,
+          "empty": false,
+          "early_eos": false,
+          "truncated": false,
+          "parsed": false,
+          "first_divergence": -1,
+          "reason": "not_terminated",
+          "expected_bytes": 27,
+          "denominator": true
+        }
+      }
+    },
+    "14_6": {
+      "rows": 4032,
+      "matched": 4032,
+      "mismatches": 0,
+      "counts": {
+        "completed": 1541,
+        "full_sentence": 1541,
+        "entity_exact": 1580,
+        "utf8": 2576,
+        "n": 4032
+      },
+      "stored_counts": {
+        "completed": 1541,
+        "full_sentence": 1541,
+        "entity_exact": 1580,
+        "utf8": 2576,
+        "n": 4032
+      }
+    },
+    "entity": {
+      "object_bytes": [
+        3,
+        15
+      ],
+      "place_bytes": [
+        21,
+        27
+      ],
+      "stored_entity_exact": 1580,
+      "current_entity_exact": 1580
+    },
+    "max_output_bytes": 64,
+    "schema": "taiji-binding-copy-scoring-v1"
+  },
+  "logs": {
+    "per_step": [
+      "raw_byte",
+      "eos_reason",
+      "gamma",
+      "lambda",
+      "q_null",
+      "total_copy_posterior",
+      "argmax_source",
+      "argmax_position"
+    ],
+    "full_q_examples": 24,
+    "short_trace": "all output steps for every evaluated example",
+    "teacher_prefix": "correct history probe at the entity stage",
+    "free_prefix": "full trajectory and first divergence",
+    "identity": [
+      "parent",
+      "parameters",
+      "state",
+      "source",
+      "schema",
+      "data_order"
+    ],
+    "source": "protocol only; 0a emits no model log"
+  },
+  "interventions": {
+    "separate": [
+      "record",
+      "position",
+      "gamma"
+    ],
+    "rescue_identity": "remove the intervention and restore the original content/state; the distribution returns bitwise",
+    "oracle": "entity-stage oracle; gamma=0 forced copy; gamma=1 generator_only",
+    "examples_per_candidate": 24,
+    "fixed_names": "per-world target 0 and 15; names frozen in the data manifest",
+    "conditions": [
+      "no_source",
+      "wrong_content",
+      "wrong_position",
+      "continuation_zero",
+      "identity_rescue"
+    ],
+    "full_q_examples": 24,
+    "source": "protocol only; 0a runs no model"
+  },
+  "interface": {
+    "model_interface": "256 raw bytes plus EOS; no name list or style id",
+    "style_not_forward": true,
+    "source_id_not_forward": true,
+    "gold_only_loss_or_oracle": true,
+    "parent": "inherited 14.6 A_full step300, rebuilt with new Adam from zero",
+    "new_reader": "declared for 15.1.0b; not built in 0a"
+  },
+  "state_schema": {
+    "m": "sub-probability over (source_id, version, byte_offset), mass h<=1; zero at answer start; shift within the same record by +1 byte",
+    "coverage": "output copy posterior, not the 14 soft-read coverage",
+    "source_version": "registered per copied byte",
+    "H": "inherited recursive state",
+    "F": "inherited fast/plastic state",
+    "optimizer": "new Adam from zero; old Adam archived",
+    "mode_rng": "separate saved random stream",
+    "prefix_cursor": "per-example prefix mode and cursor",
+    "budget": "charged per stage",
+    "receipt": "legal restore receipt",
+    "restore": "at least one non-empty cursor boundary mid-output",
+    "replay": "next BPTT from stored original/actual prefix and random stream",
+    "revision": "new schema/revision; no old R0 value equality signature"
+  },
+  "confirm_spec": {
+    "split": "confirm",
+    "generated": false,
+    "sealed": true,
+    "data_seed": 48022,
+    "order_seed": 48024,
+    "worlds": 12,
+    "examples": 240,
+    "examples_per_world": 20,
+    "objects": 4,
+    "object_indices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "place_count": 5,
+    "record_lines": 9,
+    "record_bytes_max": 279,
+    "layers": {
+      "seen_combination": 144,
+      "unseen_combination": 36,
+      "new_description": 60
+    },
+    "axes": {
+      "seen_description_seen_name": 135,
+      "new_description_seen_name": 45,
+      "seen_description_new_name": 45,
+      "new_description_new_name": 15,
+      "new_description": 60,
+      "unseen_output_name": 60,
+      "both_new": 15,
+      "unseen_combination": 36,
+      "seen_combination": 144
+    },
+    "styles": [
+      "stated",
+      "aka",
+      "mapped"
+    ],
+    "rotation": {
+      "new_description_maps_to_each_of_4_names": 3,
+      "new_name_on_a_seen_description": 9,
+      "seen_name_on_new_description": 9,
+      "both_new_worlds": 3
+    },
+    "source_budget": 512,
+    "note": "generated only after the candidate and evaluator are frozen, by an independent data process; no confirm example or source id exists here"
+  },
+  "confirm_read": false,
+  "confirm_generated": false,
+  "no_model_forward": true,
+  "no_adam_call": true,
+  "no_weight_change": true,
+  "checks": [
+    {
+      "id": "data_counts",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "expected": {
+          "train": {
+            "worlds": 24,
+            "examples": 288,
+            "layers": {
+              "seen_combination": 288
+            },
+            "records": 192,
+            "source_ids": 192
+          },
+          "dev": {
+            "worlds": 12,
+            "examples": 240,
+            "layers": {
+              "seen_combination": 144,
+              "unseen_combination": 36,
+              "new_description": 60
+            },
+            "records": 108,
+            "source_ids": 108
+          },
+          "total": {
+            "examples": 528,
+            "records": 300,
+            "source_ids": 300
+          }
+        },
+        "observed": {
+          "train": {
+            "worlds": 24,
+            "examples": 288,
+            "layers": {
+              "seen_combination": 288
+            },
+            "records": 192,
+            "source_ids": 192
+          },
+          "dev": {
+            "worlds": 12,
+            "examples": 240,
+            "layers": {
+              "unseen_combination": 36,
+              "seen_combination": 144,
+              "new_description": 60
+            },
+            "records": 108,
+            "source_ids": 108
+          },
+          "total": {
+            "examples": 528,
+            "records": 300,
+            "source_ids": 300
+          }
+        },
+        "record_bytes": {
+          "train_min": 234,
+          "train_max": 237,
+          "dev_min": 270,
+          "dev_max": 270
+        },
+        "styles": {
+          "train": {
+            "stated": 64,
+            "aka": 64,
+            "mapped": 64
+          },
+          "dev": {
+            "stated": 36,
+            "aka": 36,
+            "mapped": 36
+          }
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "data_contract",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "worlds_validated": 36,
+        "train_dev_examples": 528,
+        "train_dev_records": 300,
+        "source_ids": {
+          "train": 192,
+          "dev": 108,
+          "union": 300,
+          "disjoint": true
+        },
+        "goal_bytes": 36,
+        "action_bytes": 27,
+        "train_dev_digest": "bb3ca3030b99fb795c021f6416a9d815f8da90f5403d9e40b104a9222dc29785",
+        "styles": {
+          "train": {
+            "stated": 64,
+            "aka": 64,
+            "mapped": 64
+          },
+          "dev": {
+            "stated": 36,
+            "aka": 36,
+            "mapped": 36
+          }
+        }
+      },
+      "note": "Every train/dev world was validated by the generator and re-checked here; the confirm split has no public build."
+    },
+    {
+      "id": "axes",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "train": {
+          "seen_description_seen_name": 288,
+          "new_description_seen_name": 0,
+          "seen_description_new_name": 0,
+          "new_description_new_name": 0,
+          "new_description": 0,
+          "unseen_output_name": 0,
+          "both_new": 0,
+          "unseen_combination": 0,
+          "seen_combination": 288
+        },
+        "dev": {
+          "seen_description_seen_name": 135,
+          "new_description_seen_name": 45,
+          "seen_description_new_name": 45,
+          "new_description_new_name": 15,
+          "new_description": 60,
+          "unseen_output_name": 60,
+          "both_new": 15,
+          "unseen_combination": 36,
+          "seen_combination": 144
+        },
+        "target": {
+          "seen_description_seen_name": 135,
+          "new_description_seen_name": 45,
+          "seen_description_new_name": 45,
+          "new_description_new_name": 15,
+          "new_description": 60,
+          "unseen_output_name": 60,
+          "both_new": 15,
+          "unseen_combination": 36,
+          "seen_combination": 144
+        },
+        "layers": {
+          "seen_combination": 144,
+          "unseen_combination": 36,
+          "new_description": 60
+        },
+        "rotation": {
+          "new_description_name_counts": {
+            "青釉瓷瓶": 3,
+            "铁灰木匣": 3,
+            "素白陶罐": 3,
+            "赭红石臼": 3
+          },
+          "seen_name_on_new_description": 9,
+          "new_name_on_seen_description": 9,
+          "both_new_worlds": 3
+        },
+        "per_world": {
+          "seen_combination": 12,
+          "unseen_combination": 3,
+          "new_description": 5
+        },
+        "worlds": 12
+      },
+      "note": "The new input description and the new output name are separate axes; the cross is 135/45/45/15, not one combined unseen entity layer."
+    },
+    {
+      "id": "styles",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "styles": [
+          "stated",
+          "aka",
+          "mapped"
+        ],
+        "style_codes": {
+          "train": 0,
+          "dev": 1,
+          "confirm": 2
+        },
+        "style_index": "world*5 + record_index*7 + split_code*11 mod 3",
+        "record_lines": {
+          "train": 8,
+          "dev": 9
+        },
+        "record_bytes": {
+          "train_min": 234,
+          "train_max": 237,
+          "dev_min": 270,
+          "dev_max": 270,
+          "train_cap": 243,
+          "dev_cap": 279,
+          "source_cap": 512
+        },
+        "train": {
+          "stated": 64,
+          "aka": 64,
+          "mapped": 64
+        },
+        "dev": {
+          "stated": 36,
+          "aka": 36,
+          "mapped": 36
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "confirm_spec",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "public_build_raises": "confirm data is not generated; only the specification is sealed",
+        "spec": {
+          "split": "confirm",
+          "generated": false,
+          "sealed": true,
+          "data_seed": 48022,
+          "order_seed": 48024,
+          "worlds": 12,
+          "examples": 240,
+          "examples_per_world": 20,
+          "objects": 4,
+          "object_indices": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "place_count": 5,
+          "record_lines": 9,
+          "record_bytes_max": 279,
+          "layers": {
+            "seen_combination": 144,
+            "unseen_combination": 36,
+            "new_description": 60
+          },
+          "axes": {
+            "seen_description_seen_name": 135,
+            "new_description_seen_name": 45,
+            "seen_description_new_name": 45,
+            "new_description_new_name": 15,
+            "new_description": 60,
+            "unseen_output_name": 60,
+            "both_new": 15,
+            "unseen_combination": 36,
+            "seen_combination": 144
+          },
+          "styles": [
+            "stated",
+            "aka",
+            "mapped"
+          ],
+          "rotation": {
+            "new_description_maps_to_each_of_4_names": 3,
+            "new_name_on_a_seen_description": 9,
+            "seen_name_on_new_description": 9,
+            "both_new_worlds": 3
+          },
+          "source_budget": 512,
+          "note": "generated only after the candidate and evaluator are frozen, by an independent data process; no confirm example or source id exists here"
+        },
+        "payload_examples": 528,
+        "payload_worlds": 36,
+        "payload_confirm": {
+          "split": "confirm",
+          "generated": false,
+          "sealed": true,
+          "data_seed": 48022,
+          "order_seed": 48024,
+          "worlds": 12,
+          "examples": 240,
+          "examples_per_world": 20,
+          "objects": 4,
+          "object_indices": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "place_count": 5,
+          "record_lines": 9,
+          "record_bytes_max": 279,
+          "layers": {
+            "seen_combination": 144,
+            "unseen_combination": 36,
+            "new_description": 60
+          },
+          "axes": {
+            "seen_description_seen_name": 135,
+            "new_description_seen_name": 45,
+            "seen_description_new_name": 45,
+            "new_description_new_name": 15,
+            "new_description": 60,
+            "unseen_output_name": 60,
+            "both_new": 15,
+            "unseen_combination": 36,
+            "seen_combination": 144
+          },
+          "styles": [
+            "stated",
+            "aka",
+            "mapped"
+          ],
+          "rotation": {
+            "new_description_maps_to_each_of_4_names": 3,
+            "new_name_on_a_seen_description": 9,
+            "seen_name_on_new_description": 9,
+            "both_new_worlds": 3
+          },
+          "source_budget": 512,
+          "note": "generated only after the candidate and evaluator are frozen, by an independent data process; no confirm example or source id exists here"
+        }
+      },
+      "note": "The confirm specification is sealed; no confirm example, record or source id is written, and the public confirm build refuses."
+    },
+    {
+      "id": "scoring",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "self_test": {
+          "passed": true,
+          "cases": {
+            "oracle": {
+              "schema": "taiji-binding-copy-scoring-v1",
+              "bytes": 27,
+              "predictions": 28,
+              "utf8": true,
+              "terminated": true,
+              "full_sentence": true,
+              "object_exact": true,
+              "place_exact": true,
+              "entity_exact": true,
+              "completed": true,
+              "empty": false,
+              "early_eos": false,
+              "truncated": false,
+              "parsed": true,
+              "first_divergence": -1,
+              "reason": "completed",
+              "expected_bytes": 27,
+              "denominator": true
+            },
+            "constant": {
+              "schema": "taiji-binding-copy-scoring-v1",
+              "bytes": 27,
+              "predictions": 28,
+              "utf8": true,
+              "terminated": true,
+              "full_sentence": false,
+              "object_exact": false,
+              "place_exact": false,
+              "entity_exact": false,
+              "completed": false,
+              "empty": false,
+              "early_eos": false,
+              "truncated": false,
+              "parsed": true,
+              "first_divergence": 4,
+              "reason": "wrong_bytes",
+              "expected_bytes": 27,
+              "denominator": true
+            },
+            "list": {
+              "schema": "taiji-binding-copy-scoring-v1",
+              "bytes": 540,
+              "predictions": 65,
+              "utf8": true,
+              "terminated": true,
+              "full_sentence": false,
+              "object_exact": false,
+              "place_exact": false,
+              "entity_exact": false,
+              "completed": false,
+              "empty": false,
+              "early_eos": false,
+              "truncated": false,
+              "parsed": true,
+              "first_divergence": 4,
+              "reason": "wrong_bytes",
+              "expected_bytes": 27,
+              "denominator": true
+            },
+            "wrong_name": {
+              "schema": "taiji-binding-copy-scoring-v1",
+              "bytes": 27,
+              "predictions": 28,
+              "utf8": true,
+              "terminated": true,
+              "full_sentence": false,
+              "object_exact": false,
+              "place_exact": false,
+              "entity_exact": false,
+              "completed": false,
+              "empty": false,
+              "early_eos": false,
+              "truncated": false,
+              "parsed": true,
+              "first_divergence": 4,
+              "reason": "wrong_bytes",
+              "expected_bytes": 27,
+              "denominator": true
+            },
+            "truncation": {
+              "schema": "taiji-binding-copy-scoring-v1",
+              "bytes": 64,
+              "predictions": 65,
+              "utf8": false,
+              "terminated": false,
+              "full_sentence": false,
+              "object_exact": false,
+              "place_exact": false,
+              "entity_exact": false,
+              "completed": false,
+              "empty": false,
+              "early_eos": false,
+              "truncated": true,
+              "parsed": false,
+              "first_divergence": 27,
+              "reason": "truncated",
+              "expected_bytes": 27,
+              "denominator": true
+            },
+            "byte_type": {
+              "schema": "taiji-binding-copy-scoring-v1",
+              "bytes": 27,
+              "predictions": 28,
+              "utf8": true,
+              "terminated": true,
+              "full_sentence": true,
+              "object_exact": true,
+              "place_exact": true,
+              "entity_exact": true,
+              "completed": true,
+              "empty": false,
+              "early_eos": false,
+              "truncated": false,
+              "parsed": true,
+              "first_divergence": -1,
+              "reason": "completed",
+              "expected_bytes": 27,
+              "denominator": true
+            },
+            "empty": {
+              "schema": "taiji-binding-copy-scoring-v1",
+              "bytes": 0,
+              "predictions": 1,
+              "utf8": true,
+              "terminated": true,
+              "full_sentence": false,
+              "object_exact": false,
+              "place_exact": false,
+              "entity_exact": false,
+              "completed": false,
+              "empty": true,
+              "early_eos": false,
+              "truncated": false,
+              "parsed": true,
+              "first_divergence": 0,
+              "reason": "empty",
+              "expected_bytes": 27,
+              "denominator": true
+            },
+            "early_eos": {
+              "schema": "taiji-binding-copy-scoring-v1",
+              "bytes": 10,
+              "predictions": 11,
+              "utf8": false,
+              "terminated": true,
+              "full_sentence": false,
+              "object_exact": false,
+              "place_exact": false,
+              "entity_exact": false,
+              "completed": false,
+              "empty": false,
+              "early_eos": true,
+              "truncated": false,
+              "parsed": false,
+              "first_divergence": 10,
+              "reason": "early_eos",
+              "expected_bytes": 27,
+              "denominator": true
+            },
+            "invalid_utf8": {
+              "schema": "taiji-binding-copy-scoring-v1",
+              "bytes": 22,
+              "predictions": 23,
+              "utf8": false,
+              "terminated": true,
+              "full_sentence": false,
+              "object_exact": false,
+              "place_exact": false,
+              "entity_exact": false,
+              "completed": false,
+              "empty": false,
+              "early_eos": true,
+              "truncated": false,
+              "parsed": false,
+              "first_divergence": 0,
+              "reason": "early_eos",
+              "expected_bytes": 27,
+              "denominator": true
+            },
+            "not_terminated": {
+              "schema": "taiji-binding-copy-scoring-v1",
+              "bytes": 27,
+              "predictions": 28,
+              "utf8": true,
+              "terminated": false,
+              "full_sentence": true,
+              "object_exact": true,
+              "place_exact": true,
+              "entity_exact": true,
+              "completed": false,
+              "empty": false,
+              "early_eos": false,
+              "truncated": false,
+              "parsed": false,
+              "first_divergence": -1,
+              "reason": "not_terminated",
+              "expected_bytes": 27,
+              "denominator": true
+            }
+          }
+        },
+        "14_6": {
+          "rows": 4032,
+          "matched": 4032,
+          "mismatches": 0,
+          "counts": {
+            "completed": 1541,
+            "full_sentence": 1541,
+            "entity_exact": 1580,
+            "utf8": 2576,
+            "n": 4032
+          },
+          "stored_counts": {
+            "completed": 1541,
+            "full_sentence": 1541,
+            "entity_exact": 1580,
+            "utf8": 2576,
+            "n": 4032
+          }
+        },
+        "entity_exact_stored": 1580,
+        "normalization": "bytes or integer tuple/list -> bytes; no display text",
+        "prior_cases": [
+          "byte_type",
+          "constant",
+          "early_eos",
+          "empty",
+          "invalid_utf8",
+          "list",
+          "not_terminated",
+          "oracle",
+          "truncation",
+          "wrong_name"
+        ]
+      },
+      "note": "The new scorer re-scores all 4,032 stored 14.6 rows and matches every stored completed/full/entity/utf8/byte count exactly."
+    },
+    {
+      "id": "logs",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "protocol": {
+          "per_step": [
+            "raw_byte",
+            "eos_reason",
+            "gamma",
+            "lambda",
+            "q_null",
+            "total_copy_posterior",
+            "argmax_source",
+            "argmax_position"
+          ],
+          "full_q_examples": 24,
+          "short_trace": "all output steps for every evaluated example",
+          "teacher_prefix": "correct history probe at the entity stage",
+          "free_prefix": "full trajectory and first divergence",
+          "identity": [
+            "parent",
+            "parameters",
+            "state",
+            "source",
+            "schema",
+            "data_order"
+          ],
+          "source": "protocol only; 0a emits no model log"
+        },
+        "full_q_examples": 24,
+        "short_trace": "all output steps",
+        "source": "protocol only; 0a emits no model log"
+      },
+      "note": ""
+    },
+    {
+      "id": "interventions",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "protocol": {
+          "separate": [
+            "record",
+            "position",
+            "gamma"
+          ],
+          "rescue_identity": "remove the intervention and restore the original content/state; the distribution returns bitwise",
+          "oracle": "entity-stage oracle; gamma=0 forced copy; gamma=1 generator_only",
+          "examples_per_candidate": 24,
+          "fixed_names": "per-world target 0 and 15; names frozen in the data manifest",
+          "conditions": [
+            "no_source",
+            "wrong_content",
+            "wrong_position",
+            "continuation_zero",
+            "identity_rescue"
+          ],
+          "full_q_examples": 24,
+          "source": "protocol only; 0a runs no model"
+        },
+        "source": "protocol only; 0a runs no model"
+      },
+      "note": ""
+    },
+    {
+      "id": "parent",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "bundle": "output\\taiji_core_record_relation_14_6\\27031_A_full_step300.pt",
+        "expected_sha256": "b75a83a0a474c041c2a61bed8c4e0a51de11197d67a9b196262e7e039a9a4cef",
+        "actual_sha256": "b75a83a0a474c041c2a61bed8c4e0a51de11197d67a9b196262e7e039a9a4cef",
+        "expected_bytes": 64983135,
+        "actual_bytes": 64983135,
+        "candidate": "a3104b3e17c4259cc49347855f53ebc437cf2ec445f6965e857a685e5b8ab756",
+        "parameter_count": 3496348,
+        "trainable_count": 2301123,
+        "source": "14.6 seed 27031 A_full step300",
+        "local_behavior_asset": true,
+        "qualified_hold_parent": false,
+        "new_adam_from_zero": true,
+        "old_adam_archived": true,
+        "file_verified": true
+      },
+      "note": "The 14.6 A_full step300 bundle is a local behavior asset; it is not a qualified long-term hold parent, and the new Adam starts from zero."
+    },
+    {
+      "id": "interface",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "state_schema": {
+          "m": "sub-probability over (source_id, version, byte_offset), mass h<=1; zero at answer start; shift within the same record by +1 byte",
+          "coverage": "output copy posterior, not the 14 soft-read coverage",
+          "source_version": "registered per copied byte",
+          "H": "inherited recursive state",
+          "F": "inherited fast/plastic state",
+          "optimizer": "new Adam from zero; old Adam archived",
+          "mode_rng": "separate saved random stream",
+          "prefix_cursor": "per-example prefix mode and cursor",
+          "budget": "charged per stage",
+          "receipt": "legal restore receipt",
+          "restore": "at least one non-empty cursor boundary mid-output",
+          "replay": "next BPTT from stored original/actual prefix and random stream",
+          "revision": "new schema/revision; no old R0 value equality signature"
+        },
+        "interface": {
+          "model_interface": "256 raw bytes plus EOS; no name list or style id",
+          "style_not_forward": true,
+          "source_id_not_forward": true,
+          "gold_only_loss_or_oracle": true,
+          "parent": "inherited 14.6 A_full step300, rebuilt with new Adam from zero",
+          "new_reader": "declared for 15.1.0b; not built in 0a"
+        },
+        "data_fields": [
+          "goal",
+          "records",
+          "expected",
+          "action",
+          "target",
+          "actions",
+          "flags"
+        ],
+        "no_model": true
+      },
+      "note": ""
+    },
+    {
+      "id": "no_model_forward",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "model_forwards": 0,
+        "adam_calls": 0,
+        "parameter_changes": 0,
+        "note": "0a builds data, scoring and protocol declarations only"
+      },
+      "note": ""
+    },
+    {
+      "id": "type_check",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "returncode": 0,
+        "errors": 0,
+        "output": "pyproject.toml: note: unused section(s): module = ['neuroplex.life.*', 'neuroplex.loader', 'neuroplex.multimodal.*', 'neuroplex.safety.*', 'neuroplex.tools.browser', 'neuroplex.tools.browser_crawler', 'neuroplex.tools.builtin_tools', 'neuroplex.tools.desktop', 'neuroplex.tools.mini_search', 'neuroplex.tools.search.*', 'neuroplex.tools.searxng', 'neuroplex.tools.web']\nSuccess: no issues found in 3 source files",
+        "wall_seconds": 0.5378268000204116,
+        "passed": true
+      },
+      "note": ""
+    },
+    {
+      "id": "lint",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "ruff": {
+          "returncode": 0,
+          "output": "All checks passed!"
+        },
+        "ruff_format": {
+          "returncode": 0,
+          "output": "3 files already formatted"
+        },
+        "black": {
+          "returncode": null,
+          "status": "not_run",
+          "reason": "the installed black 26.5.1 does not terminate on the stage runners in this environment; ruff format is the declared formatter check"
+        },
+        "wall_seconds": 0.3100145999342203,
+        "passed": true
+      },
+      "note": ""
+    },
+    {
+      "id": "cost",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "cpu": true,
+        "wall": true,
+        "adam": true,
+        "product": true,
+        "all": true,
+        "limits": {
+          "cpu_seconds": 60.0,
+          "wall_seconds": 120.0,
+          "adam_calls": 0,
+          "product_bytes": 104857600
+        },
+        "observed": {
+          "cpu_seconds": 1.066591399954632,
+          "wall_seconds": 1.0465506999753416,
+          "adam_calls": 0,
+          "data_payload_bytes": 2006572,
+          "report_bytes_upper_bound": 1048576,
+          "product_bytes_upper_bound": 3055148
+        }
+      },
+      "note": "The data payload is exact; the report is charged at its declared 1 MiB upper bound instead of a self-referential size."
+    },
+    {
+      "id": "authorization",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "spec": "plans/reference/SPEC-N15-01_BINDING_COPY_V2_20261102.md",
+        "spec_sha256": "443610fbf093494a4fc3fbe21873cb6dfdd2df52e70bd8281291ca932e9a66ef",
+        "mainline": "plans/MAINLINE.md",
+        "mainline_sha256": "889833304c73f6367ef994969c576d4b686499caf1173fc9ee0ad0c089b994b9",
+        "old_n15_proposal": "plans/reference/PLAN-N15-01_SPAN_BOUND_CONTINUOUS_20261102.md",
+        "old_n15_proposal_sha256": "51cfe08a20cb87af16c3a10939ccf487db1af63d4b693007fc98921102df6897",
+        "old_n15_proposal_not_executed": true,
+        "approved_scope": "15.1.0a",
+        "user_instruction": "15.1.0a沿继续推进"
+      },
+      "note": "The old N15.1 proposal remains the 14.8-bound historical bytes; the current execution follows the 15.1 rev2 specification only."
+    },
+    {
+      "id": "manifest_identity",
+      "passed": true,
+      "required": true,
+      "observed": {
+        "path": "plans\\manifests\\taiji_binding_copy_15_1_data_20261102.json",
+        "sha256": "2e5bc4f98c06c7f19568f9c4a647cd43c01be5ae5802867eca25a104faa8c663"
+      },
+      "note": ""
+    }
+  ],
+  "cost": {
+    "stage": "15.1.0a",
+    "stage_cpu_seconds": 1.066591399954632,
+    "stage_wall_seconds": 1.0465506999753416,
+    "stage_adam_calls": 0,
+    "model_forwards": 0,
+    "parameter_changes": 0,
+    "data_payload_bytes": 2006572,
+    "report_bytes_upper_bound": 1048576,
+    "product_bytes_upper_bound": 3055148,
+    "product_bytes_cap": 104857600,
+    "within": {
+      "cpu": true,
+      "wall": true,
+      "adam": true,
+      "product": true,
+      "all": true,
+      "limits": {
+        "cpu_seconds": 60.0,
+        "wall_seconds": 120.0,
+        "adam_calls": 0,
+        "product_bytes": 104857600
+      },
+      "observed": {
+        "cpu_seconds": 1.066591399954632,
+        "wall_seconds": 1.0465506999753416,
+        "adam_calls": 0,
+        "data_payload_bytes": 2006572,
+        "report_bytes_upper_bound": 1048576,
+        "product_bytes_upper_bound": 3055148
+      }
+    }
+  },
+  "within": {
+    "cpu": true,
+    "wall": true,
+    "adam": true,
+    "product": true,
+    "all": true,
+    "limits": {
+      "cpu_seconds": 60.0,
+      "wall_seconds": 120.0,
+      "adam_calls": 0,
+      "product_bytes": 104857600
+    },
+    "observed": {
+      "cpu_seconds": 1.066591399954632,
+      "wall_seconds": 1.0465506999753416,
+      "adam_calls": 0,
+      "data_payload_bytes": 2006572,
+      "report_bytes_upper_bound": 1048576,
+      "product_bytes_upper_bound": 3055148
+    }
+  },
+  "source_hashes": {
+    "taiji/binding_copy_data.py": "aa001023519996b190bfd5f6faa42c6905c205766e1a3d0b34b0ab11c8b79495",
+    "taiji/binding_copy_scoring.py": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+    "scripts/training/verify_taiji_binding_copy_15_1.py": "fd00f2acb49a07f337005eee8ac78134d115eb14cd8984e0931811d01faa4cc5",
+    "plans/reference/SPEC-N15-01_BINDING_COPY_V2_20261102.md": "443610fbf093494a4fc3fbe21873cb6dfdd2df52e70bd8281291ca932e9a66ef",
+    "plans/MAINLINE.md": "889833304c73f6367ef994969c576d4b686499caf1173fc9ee0ad0c089b994b9",
+    "plans/reference/PLAN-N15-01_SPAN_BOUND_CONTINUOUS_20261102.md": "51cfe08a20cb87af16c3a10939ccf487db1af63d4b693007fc98921102df6897",
+    "reports/taiji_core_record_relation_14_6_20261102.json": "becf9bd70c20db7ee00d554e9f7a40345280d2761b555d9ab34046e75bcdc226",
+    "plans/manifests/taiji_core_record_relation_14_6_20261102.json": "c648e1d033956b5c22b784480408a44db2f0b8db4628673b215ac06f0c2d0c2d",
+    "output/taiji_core_record_relation_14_6/27031_A_full_step300.pt": "b75a83a0a474c041c2a61bed8c4e0a51de11197d67a9b196262e7e039a9a4cef",
+    "reports/taiji_post14_algorithm_review_20261102.json": "2f759aa769cb3cb8592a6dfeeebad572634a157e7dca7194d86478467dcddf50",
+    "reports/taiji_core_record_relation_14_8_closeout_20261102.json": "324d9e941c14891747e9bc9331e39800225e97200a8d08333db9ccdf74f5858b"
+  },
+  "limits": "0a data/scoring/logging/interface only: 0 model forward, 0 Adam, 0 weight change, no confirm data; no task capability, general Chinese, L3/L4, continuous state, cross-session or growth is claimed.",
+  "type_check": {
+    "returncode": 0,
+    "errors": 0,
+    "output": "pyproject.toml: note: unused section(s): module = ['neuroplex.life.*', 'neuroplex.loader', 'neuroplex.multimodal.*', 'neuroplex.safety.*', 'neuroplex.tools.browser', 'neuroplex.tools.browser_crawler', 'neuroplex.tools.builtin_tools', 'neuroplex.tools.desktop', 'neuroplex.tools.mini_search', 'neuroplex.tools.search.*', 'neuroplex.tools.searxng', 'neuroplex.tools.web']\nSuccess: no issues found in 3 source files",
+    "wall_seconds": 0.5378268000204116,
+    "passed": true
+  },
+  "lint": {
+    "ruff": {
+      "returncode": 0,
+      "output": "All checks passed!"
+    },
+    "ruff_format": {
+      "returncode": 0,
+      "output": "3 files already formatted"
+    },
+    "black": {
+      "returncode": null,
+      "status": "not_run",
+      "reason": "the installed black 26.5.1 does not terminate on the stage runners in this environment; ruff format is the declared formatter check"
+    },
+    "wall_seconds": 0.3100145999342203,
+    "passed": true
+  },
+  "manifest": {
+    "path": "plans\\manifests\\taiji_binding_copy_15_1_data_20261102.json",
+    "sha256": "2e5bc4f98c06c7f19568f9c4a647cd43c01be5ae5802867eca25a104faa8c663",
+    "bytes": 21807
+  },
+  "required_checks": 16,
+  "finished_at": "2026-11-02T21:12:08+0800"
+}
