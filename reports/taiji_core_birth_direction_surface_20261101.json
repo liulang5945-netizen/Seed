@@ -1,0 +1,511 @@
+{
+  "schema": "taiji-birth-direction-surface-v1",
+  "step": "09.6.7",
+  "date": "2026-11-01",
+  "status": "platform_supported",
+  "config": {
+    "groups": 4,
+    "width": 128,
+    "units": 256,
+    "adapter_rank": 16,
+    "fast_heads": 2,
+    "key_width": 32,
+    "value_width": 32,
+    "output_heads": 2,
+    "fast_limit": 16.0,
+    "max_event_bytes": 512,
+    "max_source_bytes": 512,
+    "max_target_bytes": 128,
+    "seed": 20261031
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "declared": {
+    "parts_grid": [
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "units_grid": [
+      1,
+      2,
+      3
+    ],
+    "random_seeds": [
+      20261101,
+      20261112
+    ],
+    "absolute_gate": 0.0001,
+    "retention_gate": 0.03,
+    "baseline_reference": 4.33e-07,
+    "baseline_band": [
+      0.2,
+      5.0
+    ],
+    "platform_cells": 6,
+    "platform_parts": 3
+  },
+  "cells": [
+    {
+      "parts": 2,
+      "units_per_group": 1,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.360944640100995,
+      "holdout_after_lesion": 4.361051110264587,
+      "benefit": 0.02029921897642417,
+      "newborn_contribution": 0.00010647016359133232,
+      "newborn_share": 0.0052450374428192744,
+      "retention_drift": 0.022179241059620658,
+      "removed_units_per_group": 1,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409157722621064,
+      "cpu_seconds": 22.65625,
+      "wall_seconds": 23.416546400170773
+    },
+    {
+      "parts": 3,
+      "units_per_group": 1,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.360951851109639,
+      "holdout_after_lesion": 4.361051267024744,
+      "benefit": 0.020292007967780634,
+      "newborn_contribution": 9.941591510553849e-05,
+      "newborn_share": 0.004899264541162692,
+      "retention_drift": 0.022159004156208972,
+      "removed_units_per_group": 1,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409174627084935,
+      "cpu_seconds": 23.125,
+      "wall_seconds": 23.827585000079125
+    },
+    {
+      "parts": 4,
+      "units_per_group": 1,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.361019202714102,
+      "holdout_after_lesion": 4.3610516469652865,
+      "benefit": 0.020224656363317273,
+      "newborn_contribution": 3.244425118431593e-05,
+      "newborn_share": 0.0016041929514887632,
+      "retention_drift": 0.022066622367710842,
+      "removed_units_per_group": 1,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409355058141345,
+      "cpu_seconds": 22.421875,
+      "wall_seconds": 23.33168109995313
+    },
+    {
+      "parts": 5,
+      "units_per_group": 1,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.36097158243385,
+      "holdout_after_lesion": 4.361051526603194,
+      "benefit": 0.020272276643569676,
+      "newborn_contribution": 7.994416934398174e-05,
+      "newborn_share": 0.003943522020223607,
+      "retention_drift": 0.022137991976488358,
+      "removed_units_per_group": 1,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409246765824117,
+      "cpu_seconds": 22.375,
+      "wall_seconds": 23.14696229994297
+    },
+    {
+      "parts": 6,
+      "units_per_group": 1,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.361011335098335,
+      "holdout_after_lesion": 4.361051088682758,
+      "benefit": 0.02023252397908415,
+      "newborn_contribution": 3.975358442254162e-05,
+      "newborn_share": 0.0019648356509369682,
+      "retention_drift": 0.02212851757738754,
+      "removed_units_per_group": 1,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409306497356365,
+      "cpu_seconds": 22.640625,
+      "wall_seconds": 23.37174219987355
+    },
+    {
+      "parts": 2,
+      "units_per_group": 2,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.360908413984541,
+      "holdout_after_lesion": 4.3610510422202005,
+      "benefit": 0.020335445092878324,
+      "newborn_contribution": 0.0001426282356593589,
+      "newborn_share": 0.007013774963268875,
+      "retention_drift": 0.022215876189246586,
+      "removed_units_per_group": 2,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409087414044169,
+      "cpu_seconds": 22.46875,
+      "wall_seconds": 23.17993009998463
+    },
+    {
+      "parts": 3,
+      "units_per_group": 2,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.360916621560786,
+      "holdout_after_lesion": 4.361050907522756,
+      "benefit": 0.020327237516633012,
+      "newborn_contribution": 0.00013428596196973785,
+      "newborn_share": 0.006606208141163142,
+      "retention_drift": 0.022218046818997195,
+      "removed_units_per_group": 2,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409114846053132,
+      "cpu_seconds": 22.796875,
+      "wall_seconds": 23.722145300125703
+    },
+    {
+      "parts": 4,
+      "units_per_group": 2,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.360978428578256,
+      "holdout_after_lesion": 4.361051632066244,
+      "benefit": 0.020265430499163628,
+      "newborn_contribution": 7.320348798778298e-05,
+      "newborn_share": 0.0036122345385558993,
+      "retention_drift": 0.022098190460698497,
+      "removed_units_per_group": 2,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409250395109262,
+      "cpu_seconds": 22.375,
+      "wall_seconds": 23.099380200030282
+    },
+    {
+      "parts": 5,
+      "units_per_group": 2,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.360930411673341,
+      "holdout_after_lesion": 4.361051356663397,
+      "benefit": 0.020313447404078033,
+      "newborn_contribution": 0.00012094499005588233,
+      "newborn_share": 0.005953937194904789,
+      "retention_drift": 0.022184987324478378,
+      "removed_units_per_group": 2,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409155437875735,
+      "cpu_seconds": 22.421875,
+      "wall_seconds": 23.21804459998384
+    },
+    {
+      "parts": 6,
+      "units_per_group": 2,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.36095653462229,
+      "holdout_after_lesion": 4.361051243197436,
+      "benefit": 0.020287324455129152,
+      "newborn_contribution": 9.470857514592979e-05,
+      "newborn_share": 0.00466836202848745,
+      "retention_drift": 0.022124178652338955,
+      "removed_units_per_group": 2,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409201940588526,
+      "cpu_seconds": 22.65625,
+      "wall_seconds": 23.32595909992233
+    },
+    {
+      "parts": 2,
+      "units_per_group": 3,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.3608943841873415,
+      "holdout_after_lesion": 4.361050967082353,
+      "benefit": 0.02034947489007788,
+      "newborn_contribution": 0.00015658289501185862,
+      "newborn_share": 0.007694689708588317,
+      "retention_drift": 0.02223275282109416,
+      "removed_units_per_group": 3,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.40903511362411,
+      "cpu_seconds": 22.46875,
+      "wall_seconds": 23.264508000109345
+    },
+    {
+      "parts": 3,
+      "units_per_group": 3,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.360877751438101,
+      "holdout_after_lesion": 4.361050865710233,
+      "benefit": 0.02036610763931801,
+      "newborn_contribution": 0.00017311427213151376,
+      "newborn_share": 0.008500115741179043,
+      "retention_drift": 0.022259072133018698,
+      "removed_units_per_group": 3,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409029619660199,
+      "cpu_seconds": 22.5625,
+      "wall_seconds": 23.377432799898088
+    },
+    {
+      "parts": 4,
+      "units_per_group": 3,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.360956063693727,
+      "holdout_after_lesion": 4.361051057477073,
+      "benefit": 0.020287795383692853,
+      "newborn_contribution": 9.499378334609787e-05,
+      "newborn_share": 0.0046823117815183125,
+      "retention_drift": 0.022152834154883116,
+      "removed_units_per_group": 3,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409175235315738,
+      "cpu_seconds": 23.1875,
+      "wall_seconds": 24.078523099888116
+    },
+    {
+      "parts": 5,
+      "units_per_group": 3,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.3608775333460095,
+      "holdout_after_lesion": 4.361051273076141,
+      "benefit": 0.02036632573140995,
+      "newborn_contribution": 0.0001737397301315724,
+      "newborn_share": 0.008530735117509312,
+      "retention_drift": 0.02226857396675186,
+      "removed_units_per_group": 3,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409094195605715,
+      "cpu_seconds": 22.640625,
+      "wall_seconds": 23.066988500067964
+    },
+    {
+      "parts": 6,
+      "units_per_group": 3,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.360922668601931,
+      "holdout_after_lesion": 4.361051195829834,
+      "benefit": 0.02032119047548875,
+      "newborn_contribution": 0.00012852722790324123,
+      "newborn_share": 0.006324788306977866,
+      "retention_drift": 0.022177175557114737,
+      "removed_units_per_group": 3,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.4091408927630305,
+      "cpu_seconds": 22.546875,
+      "wall_seconds": 22.984104000031948
+    }
+  ],
+  "random_arms": [
+    {
+      "units_per_group": 1,
+      "seed": 20261101,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.361048536555158,
+      "holdout_after_lesion": 4.361051500097084,
+      "benefit": 0.020195322522261527,
+      "newborn_contribution": 2.9635419265261476e-06,
+      "newborn_share": 0.00014674397614890293,
+      "retention_drift": 0.022086758930650596,
+      "removed_units_per_group": 1,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409371309289251,
+      "cpu_seconds": 22.484375,
+      "wall_seconds": 23.325070099905133
+    },
+    {
+      "units_per_group": 1,
+      "seed": 20261112,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.361040693273548,
+      "holdout_after_lesion": 4.361051399206212,
+      "benefit": 0.020203165803871492,
+      "newborn_contribution": 1.0705932663945816e-05,
+      "newborn_share": 0.000529913616899301,
+      "retention_drift": 0.022062849826825826,
+      "removed_units_per_group": 1,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409375614229471,
+      "cpu_seconds": 22.5,
+      "wall_seconds": 23.2132529001683
+    },
+    {
+      "units_per_group": 2,
+      "seed": 20261101,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.361031358018559,
+      "holdout_after_lesion": 4.36105123972813,
+      "benefit": 0.020212501058860077,
+      "newborn_contribution": 1.9881709570235273e-05,
+      "newborn_share": 0.000983634311871573,
+      "retention_drift": 0.022086252003787443,
+      "removed_units_per_group": 2,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409353257001563,
+      "cpu_seconds": 22.546875,
+      "wall_seconds": 23.444802299840376
+    },
+    {
+      "units_per_group": 2,
+      "seed": 20261112,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.3610529669521565,
+      "holdout_after_lesion": 4.361051246525366,
+      "benefit": 0.020190892125262927,
+      "newborn_contribution": -1.7204267903636605e-06,
+      "newborn_share": -8.520806211485105e-05,
+      "retention_drift": 0.022084990946262373,
+      "removed_units_per_group": 2,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409359593630136,
+      "cpu_seconds": 22.875,
+      "wall_seconds": 23.820860999869183
+    },
+    {
+      "units_per_group": 3,
+      "seed": 20261101,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.3610241010267545,
+      "holdout_after_lesion": 4.361051443335462,
+      "benefit": 0.020219758050664893,
+      "newborn_contribution": 2.7342308707822838e-05,
+      "newborn_share": 0.0013522569676309125,
+      "retention_drift": 0.022100848496109826,
+      "removed_units_per_group": 3,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.40933679747314,
+      "cpu_seconds": 22.53125,
+      "wall_seconds": 22.8551191999577
+    },
+    {
+      "units_per_group": 3,
+      "seed": 20261112,
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.361009737522777,
+      "holdout_after_lesion": 4.361051697576298,
+      "benefit": 0.020234121554642215,
+      "newborn_contribution": 4.196005352063992e-05,
+      "newborn_share": 0.002073727461176254,
+      "retention_drift": 0.022085783579210094,
+      "removed_units_per_group": 3,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409342305231578,
+      "cpu_seconds": 22.515625,
+      "wall_seconds": 22.773255300009623
+    }
+  ],
+  "baseline_fit_svd": {
+    "holdout_pre": 4.381243859077419,
+    "holdout_post": 4.361050985264841,
+    "holdout_after_lesion": 4.361051418506736,
+    "benefit": 0.020192873812578505,
+    "newborn_contribution": 4.3324189480387076e-07,
+    "newborn_share": 2.1455187549084597e-05,
+    "retention_drift": 0.02205745719443719,
+    "removed_units_per_group": 2,
+    "first_update_loss": 4.436565322597274,
+    "last_update_loss": 4.409377067227552,
+    "cpu_seconds": 22.921875,
+    "wall_seconds": 23.246106800157577
+  },
+  "passing_cells": [
+    {
+      "parts": 2,
+      "units_per_group": 1
+    },
+    {
+      "parts": 2,
+      "units_per_group": 2
+    },
+    {
+      "parts": 3,
+      "units_per_group": 2
+    },
+    {
+      "parts": 5,
+      "units_per_group": 2
+    },
+    {
+      "parts": 2,
+      "units_per_group": 3
+    },
+    {
+      "parts": 3,
+      "units_per_group": 3
+    },
+    {
+      "parts": 5,
+      "units_per_group": 3
+    },
+    {
+      "parts": 6,
+      "units_per_group": 3
+    }
+  ],
+  "passing_parts": [
+    2,
+    3,
+    5,
+    6
+  ],
+  "baseline_ratio": 1.0005586485077846,
+  "checks": [
+    {
+      "id": "no_leak_in_rule_source",
+      "passed": true,
+      "observed": {
+        "HOLDOUT": 0,
+        "RETENTION": 0,
+        "pricing": 0,
+        "case_eval": 0
+      }
+    },
+    {
+      "id": "baseline_face_reproduced",
+      "passed": true,
+      "observed": 1.0005586485077846
+    },
+    {
+      "id": "random_controls_below_gate",
+      "passed": true,
+      "observed": []
+    },
+    {
+      "id": "grid_fully_published",
+      "passed": true,
+      "observed": [
+        15,
+        15
+      ]
+    },
+    {
+      "id": "platform_supported",
+      "passed": true,
+      "observed": {
+        "cells": 8,
+        "parts": [
+          2,
+          3,
+          5,
+          6
+        ]
+      }
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true,
+      "observed": [
+        756.453125,
+        780.368031400023
+      ]
+    }
+  ],
+  "training_admitted": false,
+  "limits": "Absolute contribution on one deterministic subject over synthetic Chinese careers. The baseline arm allocates its own units, so it is independent of units_per_group and was run once instead of three times. Nothing here prices the birth cost or shows a capability, and 09.7 is not admitted.",
+  "cpu_seconds": 756.453125,
+  "wall_seconds": 780.368031400023,
+  "budget": {
+    "cpu_seconds": 1800,
+    "wall_seconds": 3600
+  },
+  "source_hashes": {
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/growth_credit.py": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+    "taiji/native_development.py": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+    "taiji/birth_direction.py": "a723075011a42c3a4d44b24267de2c40dc7db3229c0e546480942538d2274ad9",
+    "scripts/training/verify_taiji_birth_direction.py": "a3734fe9f99bf6fc6c5dcf0510b30675badef4306cc99e300fad625cc63171de",
+    "scripts/training/verify_taiji_birth_direction_surface.py": "14518eda8109e2adc680389a93a98d1bcdceb164bc7ecd8dc30456a5d66ec6e1"
+  }
+}

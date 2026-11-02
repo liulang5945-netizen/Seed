@@ -1,0 +1,74 @@
+{
+  "schema": "taiji-split-audit-v1",
+  "step": "14.1",
+  "date": "2026-11-02",
+  "status": "split_defect_confirmed",
+  "question": "10.7f 的 readout_selection_absent 能否用来支持「动作打分的参数化形状是瓶颈」这一推论",
+  "method": "read-only audit of existing fixture and report; no training, no new checkpoint",
+  "fixture": {
+    "source": "taiji/native_goal_world.py OBJECTS/PLACES + taiji/goal_conditioned_training.py samples()",
+    "objects": ["蓝色杯子", "红色印章"],
+    "places": ["木桌", "窗台", "左盒"],
+    "total_samples": 12,
+    "action_space": "OBJECTS x PLACES = 6",
+    "split_rule": "scripts/training/verify_taiji_selection_10_7f.py:153 - rows[:6] train, rows[6:] held; ordered slice, not random, not stratified"
+  },
+  "coverage": {
+    "train": [
+      {"i": 0, "goal": "把蓝色杯子放到左盒", "correct_place": "左盒", "state": "红印章@窗台, 蓝杯子@木桌"},
+      {"i": 1, "goal": "把红色印章放到左盒", "correct_place": "左盒", "state": "红印章@窗台, 蓝杯子@木桌"},
+      {"i": 2, "goal": "把蓝色杯子放到窗台", "correct_place": "窗台", "state": "红印章@左盒, 蓝杯子@木桌"},
+      {"i": 3, "goal": "把红色印章放到窗台", "correct_place": "窗台", "state": "红印章@左盒, 蓝杯子@木桌"},
+      {"i": 4, "goal": "把蓝色杯子放到左盒", "correct_place": "左盒", "state": "红印章@木桌, 蓝杯子@窗台"},
+      {"i": 5, "goal": "把红色印章放到左盒", "correct_place": "左盒", "state": "红印章@木桌, 蓝杯子@窗台"}
+    ],
+    "held": [
+      {"i": 6, "goal": "把蓝色杯子放到木桌", "correct_place": "木桌", "state": "红印章@左盒, 蓝杯子@窗台"},
+      {"i": 7, "goal": "把红色印章放到木桌", "correct_place": "木桌", "state": "红印章@左盒, 蓝杯子@窗台"},
+      {"i": 8, "goal": "把蓝色杯子放到窗台", "correct_place": "窗台", "state": "红印章@木桌, 蓝杯子@左盒"},
+      {"i": 9, "goal": "把红色印章放到窗台", "correct_place": "窗台", "state": "红印章@木桌, 蓝杯子@左盒"},
+      {"i": 10, "goal": "把蓝色杯子放到木桌", "correct_place": "木桌", "state": "红印章@窗台, 蓝杯子@左盒"},
+      {"i": 11, "goal": "把红色印章放到木桌", "correct_place": "木桌", "state": "红印章@窗台, 蓝杯子@左盒"}
+    ],
+    "train_correct_place_counts": {"左盒": 4, "窗台": 2, "木桌": 0},
+    "held_correct_place_counts": {"木桌": 4, "窗台": 2, "左盒": 0},
+    "held_with_zero_shot_correct_place": 4,
+    "held_with_zero_shot_correct_place_ratio": 0.6666666666666666,
+    "state_overlap": "none; train states and held states are disjoint placements of the same two objects",
+    "conclusion": "held 集 2/3 的正确动作对应的地点在训练中从未作为正确答案出现，且 held 的状态与 train 的状态完全不重叠"
+  },
+  "finding": "10.7f 的负结果是切分缺陷下的零样本泛化测试：模型在训练中只见过「左盒/窗台」作为答案，留出主要考「木桌」。任何参数化形状在同一划分上都无法把「木桌」作为答案选出，因为该标签在训练分布中概率为零。因此 readout_selection_absent 不构成对参数化形状的否证。",
+  "what_it_does_not_overturn": [
+    "10.7f 的原始读数有效：该实验确实测了「6 样本顺序切分能否泛化」，答案是不能",
+    "10.7f 的训练内拟合成 5.03e-06 有效：1,536 参数在 6 样本上可以完全记住",
+    "10.7 的二级结论有效：主体在该任务上学到的是常量偏置",
+    "报告自承的「读出只读 goal/state/action 编码、不读循环状态 h」这一限制仍然成立"
+  ],
+  "what_it_does_overturn": [
+    "把 10.7f 用作「参数化形状是瓶颈」的证据 —— 该推论不成立",
+    "第 05 号裁决中「最窄可证伪缺口＝在同一 6 样本夹具上换外积读出」的前提 —— 同一划分下换任何参数化都会空转",
+    "把 10.7f 与 10.7e-1 的失败合并成一句「读出线整体不可行」—— 两者都在不同切分缺陷下测了别的东西"
+  ],
+  "same_pattern_elsewhere": [
+    {"step": "10.16", "defect": "按局面切分，480 样本只有 20 个目标，一个目标都没留出，三臂 100%", "verdict": "control_not_null, void"},
+    {"step": "10.17", "defect": "按目标对象留出，旧三臂 0%，报告自陈不能排除表示/优化/样本量", "verdict": "attribution undetermined"},
+    {"step": "10.7f", "defect": "顺序切分，留出 4/6 是零样本地点", "verdict": "this audit"}
+  ],
+  "next": {
+    "step": "14.2",
+    "design": "stratified split: every place and every object must appear as a correct answer in train; held-out is unseen (object, place) combination only, never an unseen label value",
+    "comparison": "flat scoring vs input-conditioned outer product, same data, same budget",
+    "criterion": "held-out six-way top-1 strictly greater than best constant; both arms reported",
+    "budget_cpu_seconds": 40
+  },
+  "followup_14_2": {
+    "status": "goal_copy_shortcut_confirmed",
+    "report": "reports/taiji_core_14_2_split_rerun_20261102.json",
+    "reading": "fair stratified split: held 6/6 vs best constant 1/6; zero-state control 6/6; shuffled-state control 6/6",
+    "conclusion": "state is not read at all. The 6/6 comes from copying the goal string, which is byte-identical to the correct action string (both are 把X放到Y). The fixture leaks the answer through the goal text.",
+    "impact": "10.7f cannot be used as evidence for or against the parameterisation shape; its failure is a fixture leak plus a zero-shot-label split. The only leak-free selection fixture in the repo is 10.21 (goal omits entity names, vocabulary only from records), where 10.21.4 already returned reader_selection_absent.",
+    "what_it_strengthens": "10.21.4's negative verdict is not explainable by a goal-copy shortcut, because its goal text never names the entity."
+  },
+  "cost": {"cpu_seconds": 0.0, "wall_seconds": 0.0, "note": "read-only; one import of the fixture and one ordered listing"},
+  "limits": "Audit only. Does not retrain, does not change any frozen verdict, does not claim any capability. 10.7f report and checkpoint are untouched."
+}

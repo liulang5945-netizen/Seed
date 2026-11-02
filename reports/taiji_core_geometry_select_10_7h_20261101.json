@@ -1,0 +1,264 @@
+{
+  "schema": "taiji-geometry-10-7h-v1",
+  "step": "10.7h",
+  "date": "2026-11-01",
+  "status": "geometry_does_not_select",
+  "declared": {
+    "samples": 12,
+    "actions": 6,
+    "parameters_fitted": 0,
+    "scorer": "cos(goal, d_object) + cos(goal, d_place)",
+    "pass_top1": 5,
+    "absent_top1": 2,
+    "chance_top1": 0.16666666666666666,
+    "control": "held rows scored with the next sample's goal"
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "held_out": {
+    "top1": 0,
+    "total": 6,
+    "rows": [
+      {
+        "goal": "把蓝色杯子放到木桌",
+        "correct_move": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "rank": 6,
+        "top_move": [
+          "红色印章",
+          "左盒"
+        ]
+      },
+      {
+        "goal": "把红色印章放到木桌",
+        "correct_move": [
+          "红色印章",
+          "木桌"
+        ],
+        "rank": 4,
+        "top_move": [
+          "红色印章",
+          "左盒"
+        ]
+      },
+      {
+        "goal": "把蓝色杯子放到窗台",
+        "correct_move": [
+          "蓝色杯子",
+          "窗台"
+        ],
+        "rank": 4,
+        "top_move": [
+          "红色印章",
+          "左盒"
+        ]
+      },
+      {
+        "goal": "把红色印章放到窗台",
+        "correct_move": [
+          "红色印章",
+          "窗台"
+        ],
+        "rank": 3,
+        "top_move": [
+          "红色印章",
+          "左盒"
+        ]
+      },
+      {
+        "goal": "把蓝色杯子放到木桌",
+        "correct_move": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "rank": 6,
+        "top_move": [
+          "红色印章",
+          "左盒"
+        ]
+      },
+      {
+        "goal": "把红色印章放到木桌",
+        "correct_move": [
+          "红色印章",
+          "木桌"
+        ],
+        "rank": 4,
+        "top_move": [
+          "红色印章",
+          "左盒"
+        ]
+      }
+    ]
+  },
+  "train": {
+    "top1": 4,
+    "total": 6,
+    "rows": [
+      {
+        "goal": "把蓝色杯子放到左盒",
+        "correct_move": [
+          "蓝色杯子",
+          "左盒"
+        ],
+        "rank": 1,
+        "top_move": [
+          "蓝色杯子",
+          "左盒"
+        ]
+      },
+      {
+        "goal": "把红色印章放到左盒",
+        "correct_move": [
+          "红色印章",
+          "左盒"
+        ],
+        "rank": 1,
+        "top_move": [
+          "红色印章",
+          "左盒"
+        ]
+      },
+      {
+        "goal": "把蓝色杯子放到窗台",
+        "correct_move": [
+          "蓝色杯子",
+          "窗台"
+        ],
+        "rank": 4,
+        "top_move": [
+          "红色印章",
+          "左盒"
+        ]
+      },
+      {
+        "goal": "把红色印章放到窗台",
+        "correct_move": [
+          "红色印章",
+          "窗台"
+        ],
+        "rank": 3,
+        "top_move": [
+          "红色印章",
+          "左盒"
+        ]
+      },
+      {
+        "goal": "把蓝色杯子放到左盒",
+        "correct_move": [
+          "蓝色杯子",
+          "左盒"
+        ],
+        "rank": 1,
+        "top_move": [
+          "蓝色杯子",
+          "左盒"
+        ]
+      },
+      {
+        "goal": "把红色印章放到左盒",
+        "correct_move": [
+          "红色印章",
+          "左盒"
+        ],
+        "rank": 1,
+        "top_move": [
+          "红色印章",
+          "左盒"
+        ]
+      }
+    ]
+  },
+  "control": {
+    "top1": 0,
+    "total": 6,
+    "rows": [
+      {
+        "goal": "把蓝色杯子放到木桌",
+        "correct_move": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "rank": 6,
+        "top_move": [
+          "红色印章",
+          "左盒"
+        ]
+      },
+      {
+        "goal": "把红色印章放到木桌",
+        "correct_move": [
+          "红色印章",
+          "木桌"
+        ],
+        "rank": 5,
+        "top_move": [
+          "红色印章",
+          "左盒"
+        ]
+      },
+      {
+        "goal": "把蓝色杯子放到窗台",
+        "correct_move": [
+          "蓝色杯子",
+          "窗台"
+        ],
+        "rank": 5,
+        "top_move": [
+          "红色印章",
+          "左盒"
+        ]
+      },
+      {
+        "goal": "把红色印章放到窗台",
+        "correct_move": [
+          "红色印章",
+          "窗台"
+        ],
+        "rank": 3,
+        "top_move": [
+          "红色印章",
+          "左盒"
+        ]
+      },
+      {
+        "goal": "把蓝色杯子放到木桌",
+        "correct_move": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "rank": 6,
+        "top_move": [
+          "红色印章",
+          "左盒"
+        ]
+      },
+      {
+        "goal": "把红色印章放到木桌",
+        "correct_move": [
+          "红色印章",
+          "木桌"
+        ],
+        "rank": 4,
+        "top_move": [
+          "红色印章",
+          "左盒"
+        ]
+      }
+    ]
+  },
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Zero fitted parameters: the directions come from the encoder's own action vectors and the goal enters as its encoding. It says whether the existing geometry already supports six-way choice on this fixture; it does not show the subject choosing, not natural language, not P2.",
+  "cpu_seconds": 33.453125,
+  "wall_seconds": 34.260128299938515,
+  "budget": {
+    "cpu_seconds": 180,
+    "wall_seconds": 360
+  },
+  "source_hashes": {
+    "scripts/training/probe_geometry_select_10_7h.py": "979b02bffa10804b01f62aac5cd00af82c72adb556254bea6c4d0bdd1f7530dd"
+  }
+}

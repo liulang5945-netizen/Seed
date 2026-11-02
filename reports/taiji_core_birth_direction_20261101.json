@@ -1,0 +1,147 @@
+{
+  "schema": "taiji-birth-direction-v1",
+  "step": "09.6.4",
+  "date": "2026-11-01",
+  "status": "metric_not_discriminating",
+  "config": {
+    "groups": 4,
+    "width": 128,
+    "units": 256,
+    "adapter_rank": 16,
+    "fast_heads": 2,
+    "key_width": 32,
+    "value_width": 32,
+    "output_heads": 2,
+    "fast_limit": 16.0,
+    "max_event_bytes": 512,
+    "max_source_bytes": 512,
+    "max_target_bytes": 128,
+    "seed": 20261031
+  },
+  "declared": {
+    "lr": 1e-05,
+    "steps": 8,
+    "units_per_group": 2,
+    "parts_grid": [
+      2,
+      4
+    ],
+    "share_gate": 0.0001,
+    "retention_gate": 0.03,
+    "baseline_share": 2.146e-05,
+    "baseline_tolerance": 0.2
+  },
+  "arms": {
+    "consensus_k2": {
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.360908413984541,
+      "holdout_after_lesion": 4.3610510422202005,
+      "benefit": 0.020335445092878324,
+      "newborn_contribution": 0.0001426282356593589,
+      "newborn_share": 0.007013774963268875,
+      "retention_drift": 0.022215876189246586,
+      "removed_units_per_group": 2,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409087414044169,
+      "cpu_seconds": 22.078125,
+      "wall_seconds": 22.442588199861348
+    },
+    "consensus_k4": {
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.360978428578256,
+      "holdout_after_lesion": 4.361051632066244,
+      "benefit": 0.020265430499163628,
+      "newborn_contribution": 7.320348798778298e-05,
+      "newborn_share": 0.0036122345385558993,
+      "retention_drift": 0.022098190460698497,
+      "removed_units_per_group": 2,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409250395109262,
+      "cpu_seconds": 21.71875,
+      "wall_seconds": 21.978799999924377
+    },
+    "healthy_baseline_fit_svd": {
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.361050985264841,
+      "holdout_after_lesion": 4.361051418506736,
+      "benefit": 0.020192873812578505,
+      "newborn_contribution": 4.3324189480387076e-07,
+      "newborn_share": 2.1455187549084597e-05,
+      "retention_drift": 0.02205745719443719,
+      "removed_units_per_group": 2,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409377067227552,
+      "cpu_seconds": 21.921875,
+      "wall_seconds": 22.136560700135306
+    },
+    "random_control": {
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.361031358018559,
+      "holdout_after_lesion": 4.36105123972813,
+      "benefit": 0.020212501058860077,
+      "newborn_contribution": 1.9881709570235273e-05,
+      "newborn_share": 0.000983634311871573,
+      "retention_drift": 0.022086252003787443,
+      "removed_units_per_group": 2,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409353257001563,
+      "cpu_seconds": 21.796875,
+      "wall_seconds": 22.02312480006367
+    }
+  },
+  "checks": [
+    {
+      "id": "no_leak_in_rule_source",
+      "passed": true,
+      "observed": {
+        "HOLDOUT": 0,
+        "RETENTION": 0,
+        "pricing": 0,
+        "case_eval": 0
+      }
+    },
+    {
+      "id": "baseline_face_reproduced",
+      "passed": true,
+      "observed": 2.1455187549084597e-05
+    },
+    {
+      "id": "random_control_below_gate",
+      "passed": false,
+      "observed": 0.000983634311871573
+    },
+    {
+      "id": "hypothesis_h1_supported",
+      "passed": true,
+      "observed": [
+        0.007013774963268875,
+        0.0036122345385558993
+      ]
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true,
+      "observed": [
+        128.21875,
+        130.0177207000088
+      ]
+    }
+  ],
+  "absolute_gate_claim": false,
+  "training_admitted": false,
+  "limits": "Share gate only. Reaching it means the newborn units carry a measurable fraction of the holdout benefit, not that the absolute benefit reaches the 1e-4 NLL bar used elsewhere, and not that any capability was gained.",
+  "cpu_seconds": 128.21875,
+  "wall_seconds": 130.0177207000088,
+  "budget": {
+    "cpu_seconds": 1800,
+    "wall_seconds": 3600
+  },
+  "source_hashes": {
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/growth_credit.py": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+    "taiji/native_development.py": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+    "taiji/birth_direction.py": "a723075011a42c3a4d44b24267de2c40dc7db3229c0e546480942538d2274ad9",
+    "scripts/training/verify_taiji_birth_direction.py": "a3734fe9f99bf6fc6c5dcf0510b30675badef4306cc99e300fad625cc63171de",
+    "scripts/training/verify_taiji_living_fragment_pricing_r028.py": "295d11ed70aeedd78f6e8380ac148f8508519da90363d07f65d07dad9478a34b"
+  }
+}

@@ -1,0 +1,264 @@
+{
+  "schema": "taiji-glossary-10-10-v1",
+  "step": "10.10",
+  "date": "2026-11-01",
+  "status": "glossary_not_used",
+  "declared": {
+    "goals": 6,
+    "actions_per_goal": 2,
+    "arms": [
+      "real glossary",
+      "reversed glossary"
+    ],
+    "pass_hits": 5,
+    "absent_hits": 2,
+    "chance_hits": 0.5,
+    "training": "none"
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "results": {
+    "real": {
+      "hits": 0,
+      "total": 6,
+      "rows": [
+        {
+          "goal": "让圆口的器皿到左边的匣子。",
+          "correct": [
+            "蓝色杯子",
+            "左盒"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": false,
+          "nll_correct": 5.471799082117732,
+          "nll_other": 5.458593978733636
+        },
+        {
+          "goal": "让带纹路的方块到靠窗的台面。",
+          "correct": [
+            "红色印章",
+            "窗台"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": false,
+          "nll_correct": 5.547845197323116,
+          "nll_other": 5.458728338779963
+        },
+        {
+          "goal": "让圆口的器皿到左边的匣子。",
+          "correct": [
+            "蓝色杯子",
+            "左盒"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": false,
+          "nll_correct": 5.471799082117732,
+          "nll_other": 5.458593978733636
+        },
+        {
+          "goal": "让带纹路的方块到四方木台。",
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": false,
+          "nll_correct": 5.5227633982332955,
+          "nll_other": 5.45863255051094
+        },
+        {
+          "goal": "让圆口的器皿到靠窗的台面。",
+          "correct": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": false,
+          "nll_correct": 5.4836987291492205,
+          "nll_other": 5.4587428881612725
+        },
+        {
+          "goal": "让带纹路的方块到四方木台。",
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": false,
+          "nll_correct": 5.5227633982332955,
+          "nll_other": 5.45863255051094
+        }
+      ]
+    },
+    "reversed": {
+      "hits": 0,
+      "total": 6,
+      "rows": [
+        {
+          "goal": "让圆口的器皿到左边的匣子。",
+          "correct": [
+            "蓝色杯子",
+            "左盒"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": false,
+          "nll_correct": 5.471767151027969,
+          "nll_other": 5.458563249123386
+        },
+        {
+          "goal": "让带纹路的方块到靠窗的台面。",
+          "correct": [
+            "红色印章",
+            "窗台"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": false,
+          "nll_correct": 5.54784220161212,
+          "nll_other": 5.458699445493873
+        },
+        {
+          "goal": "让圆口的器皿到左边的匣子。",
+          "correct": [
+            "蓝色杯子",
+            "左盒"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": false,
+          "nll_correct": 5.471767151027969,
+          "nll_other": 5.458563249123386
+        },
+        {
+          "goal": "让带纹路的方块到四方木台。",
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": false,
+          "nll_correct": 5.5227689473318815,
+          "nll_other": 5.45860402138633
+        },
+        {
+          "goal": "让圆口的器皿到靠窗的台面。",
+          "correct": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": false,
+          "nll_correct": 5.483661193833976,
+          "nll_other": 5.458711509109742
+        },
+        {
+          "goal": "让带纹路的方块到四方木台。",
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": false,
+          "nll_correct": 5.5227689473318815,
+          "nll_other": 5.45860402138633
+        }
+      ]
+    }
+  },
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Untrained pairwise reading only: six goals, two moves each, glossary prepended to the prompt. It says whether the existing subject reads a glossary at all; it is not six-way selection, not task capability and not P2.",
+  "cpu_seconds": 494.40625,
+  "wall_seconds": 42.80162220005877,
+  "budget": {
+    "cpu_seconds": 900,
+    "wall_seconds": 1800
+  },
+  "source_hashes": {
+    "taiji/native_goal_attributes.py": "f33679904f61b0bea82c968713e8821104e53604bd3b7dcc7798d35b4ec6bf7e",
+    "taiji/subject_action_scorer.py": "08ccdb1a4b927b7237581fb585a20423792d9e64d1f7e6d00ada1e710ff61aa0",
+    "scripts/training/probe_glossary_use_10_10.py": "a3d1f4b60a4725ffc6743f73e34636d6ece8f791064d5ca322c3bf26d0a8598d"
+  }
+}

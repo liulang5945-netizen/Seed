@@ -1,0 +1,27 @@
+{
+  "schema": "taiji-task-entry-11-2b-v1",
+  "step": "11.2b",
+  "date": "2026-11-01",
+  "status": "entry_roundtrip_verified",
+  "candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+  "answer_after_load_identical": true,
+  "continuation_identical": true,
+  "outcome_state_unchanged": true,
+  "outcome_result": "success",
+  "act_refused": "no_action_channel",
+  "foreign_snapshot_refused": true,
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Entry round-trip only: snapshots restore the state bit-identically, outcomes are logged without learning, and act is refused because there is no action path. It does not test answer quality and does not pretend the entry is complete.",
+  "cpu_seconds": 1.21875,
+  "wall_seconds": 1.4726287999656051,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "taiji/candidate_session.py": "fd906a348e8dea385966ebaaae4b901623850b346438bf916d3827240bf38326",
+    "scripts/training/verify_taiji_task_entry_roundtrip_11_2b.py": "e6329a98973b3ed56ef955c6e856470cc8e97a8914a6c318c869f9fec2b7eff8"
+  }
+}

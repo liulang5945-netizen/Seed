@@ -1,0 +1,522 @@
+{
+  "schema": "taiji-query-binding-graph-v2",
+  "step": "10.21.2",
+  "revision": 2,
+  "date": "2026-11-01",
+  "status": "engineering_failure",
+  "checks": [
+    {
+      "id": "parent_identity",
+      "passed": true,
+      "observed": {
+        "candidate": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+        "sha256": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf",
+        "bytes": 77609636
+      },
+      "note": ""
+    },
+    {
+      "id": "parent_frozen",
+      "passed": true,
+      "observed": 0,
+      "note": ""
+    },
+    {
+      "id": "module_parameter_count_default",
+      "passed": true,
+      "observed": {
+        "module": 105760,
+        "formula": 105760
+      },
+      "note": ""
+    },
+    {
+      "id": "module_parameter_group_counts",
+      "passed": true,
+      "observed": {
+        "K_goal": 4096,
+        "V_goal": 16512,
+        "role": 64,
+        "W_state": 4128,
+        "Q_source": 9248,
+        "K_source": 4224,
+        "V_source": 17024,
+        "source_null": 160,
+        "W_bind": 49280,
+        "U": 512,
+        "V": 512
+      },
+      "note": ""
+    },
+    {
+      "id": "module_parameter_count_small",
+      "passed": true,
+      "observed": {
+        "module": 904,
+        "formula": 904
+      },
+      "note": ""
+    },
+    {
+      "id": "s_trainable_count",
+      "passed": true,
+      "observed": 50304,
+      "note": ""
+    },
+    {
+      "id": "manifest_identity",
+      "passed": true,
+      "observed": {
+        "written": false,
+        "drift": {
+          "module_id": false,
+          "candidate_id": false,
+          "module_config": false,
+          "source_hashes": false
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "forward_finite",
+      "passed": true,
+      "observed": {
+        "scores": [
+          1.0190278897694756e-05,
+          -6.286589526019551e-05
+        ],
+        "loss": 0.693110653140017,
+        "probability_sum": 1.0
+      },
+      "note": ""
+    },
+    {
+      "id": "s_initial_forward_bitwise_equal",
+      "passed": true,
+      "observed": {
+        "scores_diff": 0.0,
+        "h_diff": 0.0
+      },
+      "note": ""
+    },
+    {
+      "id": "event_changes_h",
+      "passed": true,
+      "observed": {
+        "zero": {
+          "h_diff": 0.44507663339749937,
+          "score_diff": 5.14082675313091e-05
+        },
+        "other": {
+          "h_diff": 0.4089488554534812,
+          "score_diff": 5.252667402949455e-05
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "event_changes_scores",
+      "passed": true,
+      "observed": {
+        "zero": {
+          "h_diff": 0.44507663339749937,
+          "score_diff": 5.14082675313091e-05
+        },
+        "other": {
+          "h_diff": 0.4089488554534812,
+          "score_diff": 5.252667402949455e-05
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "event_fast_unchanged",
+      "passed": true,
+      "observed": true,
+      "note": ""
+    },
+    {
+      "id": "graph_binding",
+      "passed": true,
+      "observed": {
+        "b_goal_grad_fn": "<TanhBackward0 object at 0x000001A32611BE20>",
+        "z_grad_fn": "<SqueezeBackward4 object at 0x000001A32E353730>",
+        "score_grad_fn": "<MvBackward0 object at 0x000001A32C9C4F70>"
+      },
+      "note": ""
+    },
+    {
+      "id": "graph_credit_reaches_binding",
+      "passed": true,
+      "observed": {
+        "W_bind": 0.0003437182185026132,
+        "U": 0.002159691968238346,
+        "V": 0.0015573946259304988
+      },
+      "note": ""
+    },
+    {
+      "id": "parent_parameters_receive_no_grad",
+      "passed": true,
+      "observed": 0,
+      "note": ""
+    },
+    {
+      "id": "parent_input_gradients_preserved",
+      "passed": true,
+      "observed": {
+        "goal_features": 6.131464485539773e-05,
+        "source_positions": 0.0003381571483879921,
+        "s": 0.000458542837764964
+      },
+      "note": ""
+    },
+    {
+      "id": "null_only_zero_class_declared",
+      "passed": false,
+      "observed": {
+        "zero_classes": [
+          "K_goal",
+          "V_goal",
+          "role",
+          "W_state",
+          "Q_source",
+          "K_source",
+          "V_source"
+        ],
+        "expected": [
+          "W_state",
+          "Q_source",
+          "K_source",
+          "V_source"
+        ],
+        "records_grad_norms": {
+          "W_state": 5.154012368159752e-07,
+          "Q_source": 2.724667935519323e-05,
+          "K_source": 1.7515124371896145e-05,
+          "V_source": 0.00012281552644910251
+        },
+        "null_path_grad_norm": 3.634213276250496e-05
+      },
+      "note": ""
+    }
+  ],
+  "identity": {
+    "parent_candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+    "parent_bundle": {
+      "path": "output/taiji_core_09/subject_bundle.pt",
+      "sha256": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf",
+      "bytes": 77609636
+    },
+    "parent_subject_id": "taiji-core-09",
+    "parent_revision": 0,
+    "parent_step": 1,
+    "parent_config": {
+      "groups": 4,
+      "width": 128,
+      "units": 256,
+      "adapter_rank": 16,
+      "fast_heads": 2,
+      "key_width": 32,
+      "value_width": 32,
+      "fast_limit": 16.0,
+      "max_event_bytes": 512,
+      "max_source_bytes": 512,
+      "max_target_bytes": 128,
+      "seed": 20261031
+    },
+    "growth_parent_units": 256,
+    "growth_unit_branches": [
+      [
+        "consensus",
+        "consensus",
+        "consensus"
+      ],
+      [
+        "consensus",
+        "consensus",
+        "consensus"
+      ],
+      [
+        "consensus",
+        "consensus",
+        "consensus"
+      ],
+      [
+        "consensus",
+        "consensus",
+        "consensus"
+      ]
+    ],
+    "growth_gates": [
+      {
+        "consensus": 1.0
+      }
+    ],
+    "closeout_source_comparison": {
+      "taiji/living_core.py": {
+        "closeout": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+        "current": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+        "same": true
+      },
+      "taiji/growth_credit.py": {
+        "closeout": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+        "current": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+        "same": true
+      },
+      "taiji/state_migration.py": {
+        "closeout": "c067dcd043fc189a53051eba72f0b9794ed4b2d3fc77907a89f82aa2817299c6",
+        "current": "c067dcd043fc189a53051eba72f0b9794ed4b2d3fc77907a89f82aa2817299c6",
+        "same": true
+      },
+      "taiji/native_development.py": {
+        "closeout": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+        "current": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+        "same": true
+      }
+    },
+    "source_hashes": {
+      "taiji/query_binding.py": "a7b8aea9b944b9c1b1edb4557912aab1cc5709395ccbd1b5df49c0352c1ac07b",
+      "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+      "taiji/growth_credit.py": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+      "taiji/state_migration.py": "c067dcd043fc189a53051eba72f0b9794ed4b2d3fc77907a89f82aa2817299c6",
+      "taiji/candidate_manifest.py": "6fc05ca4bcee45203594ba80448ed8f2c3d5d89e9df92ccf48c4ab23544db1f0",
+      "taiji/native_development.py": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+      "taiji/native_goal_attributes.py": "f33679904f61b0bea82c968713e8821104e53604bd3b7dcc7798d35b4ec6bf7e",
+      "taiji/native_goal_glossary.py": "b40ffa22dbd5adae1285e425047f1c4113d083115bada3e7b0dd07f944a62f03",
+      "scripts/training/verify_taiji_composition_10_21.py": "6f9ab29fe8e00047d65c06d4045f01f6b93ceca8179ef1a4294828aa52a80a50"
+    }
+  },
+  "module": {
+    "name": "QueryBindingCandidate",
+    "config": {
+      "width": 128,
+      "query_width": 32,
+      "roles": 2,
+      "rank": 4,
+      "seed": 17021,
+      "mode": 6
+    },
+    "parameter_count": 105760,
+    "parameter_groups": {
+      "K_goal": 4096,
+      "V_goal": 16512,
+      "role": 64,
+      "W_state": 4128,
+      "Q_source": 9248,
+      "K_source": 4224,
+      "V_source": 17024,
+      "source_null": 160,
+      "W_bind": 49280,
+      "U": 512,
+      "V": 512
+    },
+    "parameter_names": [
+      "K_goal",
+      "V_goal",
+      "V_goal_bias",
+      "role",
+      "W_state",
+      "W_state_bias",
+      "Q_source",
+      "Q_source_bias",
+      "K_source",
+      "V_source",
+      "V_source_bias",
+      "source_null_key",
+      "source_null_value",
+      "W_bind",
+      "W_bind_bias",
+      "U",
+      "V"
+    ],
+    "s_trainable_groups": [
+      "W_bind",
+      "U",
+      "V"
+    ],
+    "s_trainable_count": 50304,
+    "internal_mode": 6,
+    "fast_write": "disabled",
+    "function_neutral_birth": false,
+    "small_config": {
+      "width": 8,
+      "query_width": 8,
+      "roles": 2,
+      "rank": 4,
+      "seed": 17021,
+      "mode": 6
+    },
+    "small_parameter_count": 904,
+    "frozen_groups": {
+      "K_goal": {
+        "parameter_count": 4096,
+        "requires_grad": false
+      },
+      "V_goal": {
+        "parameter_count": 16512,
+        "requires_grad": false
+      },
+      "role": {
+        "parameter_count": 64,
+        "requires_grad": false
+      },
+      "W_state": {
+        "parameter_count": 4128,
+        "requires_grad": false
+      },
+      "Q_source": {
+        "parameter_count": 9248,
+        "requires_grad": false
+      },
+      "K_source": {
+        "parameter_count": 4224,
+        "requires_grad": false
+      },
+      "V_source": {
+        "parameter_count": 17024,
+        "requires_grad": false
+      },
+      "source_null": {
+        "parameter_count": 160,
+        "requires_grad": false
+      },
+      "W_bind": {
+        "parameter_count": 49280,
+        "requires_grad": true
+      },
+      "U": {
+        "parameter_count": 512,
+        "requires_grad": true
+      },
+      "V": {
+        "parameter_count": 512,
+        "requires_grad": true
+      }
+    }
+  },
+  "fixtures": [
+    {
+      "name": "records",
+      "goal": "让圆口的器皿到四方木台。",
+      "records": [
+        {
+          "source_id": "glossary-0",
+          "raw": "圆口的器皿是蓝色杯子。"
+        },
+        {
+          "source_id": "glossary-1",
+          "raw": "带纹路的方块是红色印章。"
+        },
+        {
+          "source_id": "glossary-2",
+          "raw": "四方木台是木桌。"
+        },
+        {
+          "source_id": "glossary-3",
+          "raw": "靠窗的台面是窗台。"
+        },
+        {
+          "source_id": "glossary-4",
+          "raw": "左边的匣子是左盒。"
+        }
+      ],
+      "actions": [
+        [
+          "蓝色杯子",
+          "木桌"
+        ],
+        [
+          "红色印章",
+          "窗台"
+        ]
+      ],
+      "target": 0,
+      "sha256": "2836b999fe8033fe7cf8cf066232d73251a470b2dc1afde76357efbcada76aff"
+    },
+    {
+      "name": "null_only",
+      "goal": "让带纹路的方块到靠窗的台面。",
+      "records": [],
+      "actions": [
+        [
+          "红色印章",
+          "窗台"
+        ],
+        [
+          "蓝色杯子",
+          "木桌"
+        ]
+      ],
+      "target": 0,
+      "sha256": "3d32ae1656bf44448540c5181092fbce8fd891cea331eb27f274e1209c5900dc"
+    }
+  ],
+  "fd": {},
+  "events": {
+    "binding_mode": 6,
+    "fast_write": "disabled",
+    "store_writes": 0,
+    "outcomes": 0,
+    "event_diffs": {
+      "zero": {
+        "h_diff": 0.44507663339749937,
+        "score_diff": 5.14082675313091e-05
+      },
+      "other": {
+        "h_diff": 0.4089488554534812,
+        "score_diff": 5.252667402949455e-05
+      }
+    },
+    "fast_unchanged": true,
+    "b_goal_requires_grad": true,
+    "z_bind_requires_grad": true,
+    "scores_requires_grad": true,
+    "credit": {
+      "W_bind_grad_norm": 0.0003437182185026132,
+      "U_grad_norm": 0.002159691968238346,
+      "V_grad_norm": 0.0015573946259304988,
+      "parent_grad_tensors": 0
+    },
+    "input_gradients": {
+      "goal_features": 6.131464485539773e-05,
+      "source_positions": 0.0003381571483879921,
+      "s": 0.000458542837764964
+    }
+  },
+  "profiles": [],
+  "type_check": {},
+  "lint": {},
+  "cost": {},
+  "limits": "Engineering graph/recovery gate only. The parent is the single deterministic 09.8 child; fixtures are public synthetic strings; the small profile is module-only. No capability, no task data, no pricing, no training admission, and no published weights.",
+  "manifest": {
+    "path": "plans/manifests/taiji_core_10_21_graph_v2_20261101.json",
+    "sha256": "b75cdb4ab8c4c9b0f0351224508129087d3fbe10c87bf4d49e61ad0d29199f09",
+    "candidate_id": "3bca02548066f10acfc06b8e9930b0384e70ca0bcfd1eee399e178a265a192ed",
+    "module_id": "4795e7280e50fc2dfd7a0980e887a4767a91aa253c183f55ee370fb94e524f4f",
+    "written": false,
+    "drift": {
+      "module_id": false,
+      "candidate_id": false,
+      "module_config": false,
+      "source_hashes": false
+    }
+  },
+  "engineering_failure": {
+    "type": "KeyError",
+    "message": "'K_goal'",
+    "traceback": "Traceback (most recent call last):\n  File \"E:\\Seed\\scripts\\training\\verify_taiji_composition_10_21.py\", line 1114, in main\n    \"records_grad_norm\": records_norms[group],\n                         ~~~~~~~~~~~~~^^^^^^^\nKeyError: 'K_goal'\n"
+  },
+  "failed_checks": [
+    "null_only_zero_class_declared"
+  ],
+  "cpu_seconds": 6.0625,
+  "wall_seconds": 6.353088200092316,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "pricing_admitted": false,
+  "weights_published": false,
+  "data_splits_read": [
+    "public engineering fixtures: native_goal_attributes/native_goal_glossary"
+  ]
+}

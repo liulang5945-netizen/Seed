@@ -1,0 +1,133 @@
+{
+  "schema": "taiji-netbenefit-second-v1",
+  "step": "09.6.9",
+  "date": "2026-11-01",
+  "status": "replicated_on_second_holdout",
+  "config": {
+    "groups": 4,
+    "width": 128,
+    "units": 256,
+    "adapter_rank": 16,
+    "fast_heads": 2,
+    "key_width": 32,
+    "value_width": 32,
+    "output_heads": 2,
+    "fast_limit": 16.0,
+    "max_event_bytes": 512,
+    "max_source_bytes": 512,
+    "max_target_bytes": 128,
+    "seed": 20261031
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "second_holdout": {
+    "subject_id": "second-holdout",
+    "prompt_bytes": 540,
+    "target_bytes": 60,
+    "events": 129,
+    "first_declared_here": true
+  },
+  "declared": {
+    "parts": 5,
+    "units_per_group": 3,
+    "steps": 8,
+    "lr": 1e-05,
+    "net_gate": 0.0001,
+    "retention_gate": 0.03,
+    "reference_net": 0.000173924,
+    "face_tolerance": 0.2,
+    "retention_journal_is_not_an_evaluation_face": true
+  },
+  "arms": {
+    "replay_only": {
+      "pre": {
+        "holdout": 4.381243859077419,
+        "second_holdout": 4.422615102351937
+      },
+      "post": {
+        "holdout": 4.361051457267363,
+        "second_holdout": 4.411288997987491
+      },
+      "delta": {
+        "holdout": -0.020192401810056104,
+        "second_holdout": -0.011326104364446365
+      },
+      "retention_drift": 0.022069889315990743,
+      "train_cpu_seconds": 21.5625,
+      "train_wall_seconds": 22.3800999999512,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409392151712617
+    },
+    "consensus_birth": {
+      "pre": {
+        "holdout": 4.381243859077419,
+        "second_holdout": 4.422615102351937
+      },
+      "post": {
+        "holdout": 4.3608775333460095,
+        "second_holdout": 4.41109865912141
+      },
+      "delta": {
+        "holdout": -0.02036632573140995,
+        "second_holdout": -0.011516443230527251
+      },
+      "retention_drift": 0.02226857396675186,
+      "train_cpu_seconds": 23.515625,
+      "train_wall_seconds": 24.37696969998069,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409094195605715,
+      "birth_cpu_seconds": 10.578125,
+      "birth_wall_seconds": 10.893453700002283,
+      "birth_plus_train_cpu_seconds": 34.09375
+    }
+  },
+  "net_benefit": {
+    "holdout": 0.00017392392135384682,
+    "second_holdout": 0.0001903388660808858
+  },
+  "checks": [
+    {
+      "id": "retention_within_gate",
+      "passed": true,
+      "observed": [
+        0.022069889315990743,
+        0.02226857396675186
+      ]
+    },
+    {
+      "id": "arm_matches_09_6_8",
+      "passed": true,
+      "observed": 0.00017392392135384682
+    },
+    {
+      "id": "net_benefit_on_both_careers",
+      "passed": true,
+      "observed": {
+        "holdout": 0.00017392392135384682,
+        "second_holdout": 0.0001903388660808858
+      }
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true,
+      "observed": [
+        70.828125,
+        73.39746880019084
+      ]
+    }
+  ],
+  "training_admitted": false,
+  "limits": "Two synthetic Chinese evaluation careers on one deterministic subject. The second career is a fixture, not an unseen task. No capability is shown and 09.7 is not admitted.",
+  "cpu_seconds": 70.828125,
+  "wall_seconds": 73.39746880019084,
+  "budget": {
+    "cpu_seconds": 600,
+    "wall_seconds": 1200
+  },
+  "source_hashes": {
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/growth_credit.py": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+    "taiji/native_development.py": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+    "taiji/birth_direction.py": "a723075011a42c3a4d44b24267de2c40dc7db3229c0e546480942538d2274ad9",
+    "scripts/training/verify_taiji_netbenefit_second.py": "ba0c4a7e2dd113b0e27264fceec091ff02b3a21f3c1efd5ef3d05d5ccd088703"
+  }
+}

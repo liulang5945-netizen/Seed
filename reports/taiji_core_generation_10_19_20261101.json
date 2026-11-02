@@ -1,0 +1,77 @@
+{
+  "schema": "taiji-generation-10-19-v1",
+  "step": "10.19",
+  "date": "2026-11-01",
+  "status": "generation_absent",
+  "declared": {
+    "goals": 6,
+    "decode": "greedy, 16 bytes",
+    "hit_rule": "continuation names the goal's object before its place",
+    "pass_hits": 5,
+    "absent_hits": 2,
+    "control": "same prompt with no records",
+    "training": "none"
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "hits": 0,
+  "hits_without_records": 0,
+  "total": 6,
+  "rows": [
+    {
+      "goal": "让圆口的器皿到四方木台。",
+      "expected": "把蓝色杯子放到木桌",
+      "generated": "台是木桌。�",
+      "generated_without_records": "\u001d��g���R���nC\u0017�\f",
+      "hit": false
+    },
+    {
+      "goal": "让圆口的器皿到靠窗的台面。",
+      "expected": "把蓝色杯子放到窗台",
+      "generated": "台是木桌。�",
+      "generated_without_records": "\u001d��g���R���nC\u0017�\f",
+      "hit": false
+    },
+    {
+      "goal": "让圆口的器皿到手边的匣子。",
+      "expected": "把蓝色杯子放到左盒",
+      "generated": "台是木桌。�",
+      "generated_without_records": "\u001d��g���R���nC\u0017�\f",
+      "hit": false
+    },
+    {
+      "goal": "让带纹路的方块到四方木台。",
+      "expected": "把红色印章放到木桌",
+      "generated": "台是木桌。�",
+      "generated_without_records": "\u001d��g���R���nC\u0017�\f",
+      "hit": false
+    },
+    {
+      "goal": "让带纹路的方块到靠窗的台面。",
+      "expected": "把红色印章放到窗台",
+      "generated": "台是木桌。�",
+      "generated_without_records": "\u001d��g���R���nC\u0017�\f",
+      "hit": false
+    },
+    {
+      "goal": "让带纹路的方块到手边的匣子。",
+      "expected": "把红色印章放到左盒",
+      "generated": "台是木桌。�",
+      "generated_without_records": "\u001d��g���R���nC\u0017�\f",
+      "hit": false
+    }
+  ],
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Free generation only: a hit means the subject's own greedy continuation names the right object before the right place. It is one synthetic fixture, not P2, not natural-language capability, and it traains nothing.",
+  "cpu_seconds": 34.859375,
+  "wall_seconds": 35.65427549998276,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "taiji/native_goal_glossary.py": "b40ffa22dbd5adae1285e425047f1c4113d083115bada3e7b0dd07f944a62f03",
+    "scripts/training/verify_taiji_generation_10_19.py": "4a8e6aa8c81d9245537197bbef29fe8ff6d7494a1081adcb6597a2ee14b8a596"
+  }
+}

@@ -1,0 +1,135 @@
+{
+  "schema": "taiji-wide-selection-10-16-v1",
+  "step": "10.16",
+  "date": "2026-11-01",
+  "status": "control_not_null",
+  "declared": {
+    "states": 120,
+    "samples": 480,
+    "train_samples": 320,
+    "held_out_samples": 160,
+    "actions": 20,
+    "state_width": 512,
+    "parameters": 2560,
+    "steps": 300,
+    "lr": 0.05,
+    "pass_share": 0.4,
+    "absent_share": 0.1,
+    "control_max_share": 0.1,
+    "chance_share": 0.05,
+    "feature_calls": 40
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "arms": {
+    "A_real_to_real": {
+      "hits": 160,
+      "total": 160,
+      "share": 1.0,
+      "picks": [
+        [
+          0,
+          12
+        ],
+        [
+          5,
+          12
+        ],
+        [
+          10,
+          12
+        ],
+        [
+          15,
+          12
+        ],
+        [
+          1,
+          10
+        ]
+      ],
+      "train_loss": 0.0036644861610510677
+    },
+    "B_real_to_permuted": {
+      "hits": 160,
+      "total": 160,
+      "share": 1.0,
+      "picks": [
+        [
+          0,
+          12
+        ],
+        [
+          5,
+          12
+        ],
+        [
+          10,
+          12
+        ],
+        [
+          15,
+          12
+        ],
+        [
+          1,
+          10
+        ]
+      ],
+      "train_loss": 0.0036644861610510677
+    },
+    "C_permuted_to_real": {
+      "hits": 160,
+      "total": 160,
+      "share": 1.0,
+      "picks": [
+        [
+          0,
+          12
+        ],
+        [
+          5,
+          12
+        ],
+        [
+          10,
+          12
+        ],
+        [
+          15,
+          12
+        ],
+        [
+          1,
+          10
+        ]
+      ],
+      "train_loss": 0.003668994859955703
+    }
+  },
+  "best_constant": {
+    "move": [
+      "蓝色杯子",
+      "木桌"
+    ],
+    "hits": 12,
+    "total": 160
+  },
+  "backbone_frozen": true,
+  "weights_published": false,
+  "default_model_replaced": false,
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "One bounded run on a synthetic wide fixture. The readout sees the frozen subject's state after the goal prompt; the glossary enters only through records. A pass would mean 20-way selection is learnable from this state at this data size -- not P2, not natural language, not the subject acting.",
+  "cpu_seconds": 41.09375,
+  "wall_seconds": 41.98476139991544,
+  "budget": {
+    "cpu_seconds": 600,
+    "wall_seconds": 1200
+  },
+  "source_hashes": {
+    "taiji/native_goal_world_wide.py": "3ebe92fb36f44b73bbdc01d17e63ce732b54e39ac0f1d4ff0352adb9cb533344",
+    "taiji/state_action_readout.py": "e417fa885e543821d57abd5db175b289c7137ff16c361696196fa722ae5bf4bd",
+    "scripts/training/verify_taiji_wide_selection_10_16.py": "51f7e4cab6dbe83be84b78437cf5c515380f4f97aee474ec796562e475bba314"
+  }
+}

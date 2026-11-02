@@ -1,0 +1,2177 @@
+{
+  "schema": "taiji-goal-planner-10-3-v1",
+  "step": "10.3",
+  "date": "2026-11-01",
+  "status": "passed_10_3_prediction_contract_only",
+  "declared": {
+    "depth": 2,
+    "arms": [
+      "planner",
+      "greedy",
+      "no_prediction",
+      "perturbed_model",
+      "wrong_goal"
+    ],
+    "fixtures": 6,
+    "capacity_one": true
+  },
+  "fixtures": [
+    {
+      "fixture_id": "f1-cup-to-sill-from-table",
+      "optimal_score": 0.99,
+      "binding": [
+        [
+          "蓝色杯子",
+          "窗台",
+          1
+        ]
+      ],
+      "arms": {
+        "planner": {
+          "score": 0.99,
+          "steps": 1,
+          "imagined_lengths": [
+            1
+          ],
+          "all_predictions_match": true,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "蓝色杯子",
+                "窗台"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "左盒"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "窗台"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "predicted_matches_actual": true
+            }
+          ]
+        },
+        "greedy": {
+          "score": 0.99,
+          "steps": 1,
+          "imagined_lengths": [
+            0
+          ],
+          "all_predictions_match": true,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "蓝色杯子",
+                "窗台"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "predicted_matches_actual": true
+            }
+          ]
+        },
+        "no_prediction": {
+          "score": -0.04,
+          "steps": 4,
+          "imagined_lengths": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "all_predictions_match": true,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "红色印章",
+                "窗台"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": true
+            },
+            {
+              "step": 1,
+              "action": [
+                "蓝色杯子",
+                "左盒"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "predicted_matches_actual": true
+            },
+            {
+              "step": 2,
+              "action": [
+                "红色印章",
+                "木桌"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "predicted_matches_actual": true
+            },
+            {
+              "step": 3,
+              "action": [
+                "红色印章",
+                "窗台"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "predicted_matches_actual": true
+            }
+          ]
+        },
+        "perturbed_model": {
+          "score": 0.99,
+          "steps": 1,
+          "imagined_lengths": [
+            2
+          ],
+          "all_predictions_match": false,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "蓝色杯子",
+                "窗台"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "左盒"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "左盒"
+                  ]
+                ],
+                [
+                  [
+                    "红色印章",
+                    "左盒"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "窗台"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "predicted_matches_actual": false
+            }
+          ]
+        },
+        "wrong_goal": {
+          "score": 0.98,
+          "steps": 2,
+          "imagined_lengths": [
+            2,
+            1
+          ],
+          "all_predictions_match": true,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "红色印章",
+                "窗台"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "窗台"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "木桌"
+                  ]
+                ],
+                [
+                  [
+                    "红色印章",
+                    "窗台"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "左盒"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": true
+            },
+            {
+              "step": 1,
+              "action": [
+                "蓝色杯子",
+                "左盒"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "窗台"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "左盒"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "predicted_matches_actual": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fixture_id": "f2-seal-to-table-from-box",
+      "optimal_score": 0.98,
+      "binding": [
+        [
+          "红色印章",
+          "木桌",
+          1
+        ]
+      ],
+      "arms": {
+        "planner": {
+          "score": 0.98,
+          "steps": 2,
+          "imagined_lengths": [
+            2,
+            1
+          ],
+          "all_predictions_match": true,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "蓝色杯子",
+                "窗台"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "左盒"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "窗台"
+                  ]
+                ],
+                [
+                  [
+                    "红色印章",
+                    "木桌"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "窗台"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "predicted_matches_actual": true
+            },
+            {
+              "step": 1,
+              "action": [
+                "红色印章",
+                "木桌"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "木桌"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "窗台"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "predicted_matches_actual": true
+            }
+          ]
+        },
+        "greedy": {
+          "score": -0.04,
+          "steps": 4,
+          "imagined_lengths": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "all_predictions_match": true,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "红色印章",
+                "窗台"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": true
+            },
+            {
+              "step": 1,
+              "action": [
+                "红色印章",
+                "左盒"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": true
+            },
+            {
+              "step": 2,
+              "action": [
+                "红色印章",
+                "窗台"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": true
+            },
+            {
+              "step": 3,
+              "action": [
+                "红色印章",
+                "左盒"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": true
+            }
+          ]
+        },
+        "no_prediction": {
+          "score": 0.97,
+          "steps": 3,
+          "imagined_lengths": [
+            0,
+            0,
+            0
+          ],
+          "all_predictions_match": true,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "红色印章",
+                "窗台"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": true
+            },
+            {
+              "step": 1,
+              "action": [
+                "蓝色杯子",
+                "左盒"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "predicted_matches_actual": true
+            },
+            {
+              "step": 2,
+              "action": [
+                "红色印章",
+                "木桌"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "predicted_matches_actual": true
+            }
+          ]
+        },
+        "perturbed_model": {
+          "score": -0.04,
+          "steps": 4,
+          "imagined_lengths": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "all_predictions_match": false,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "红色印章",
+                "窗台"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "木桌"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "木桌"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": false
+            },
+            {
+              "step": 1,
+              "action": [
+                "红色印章",
+                "左盒"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "木桌"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "木桌"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": false
+            },
+            {
+              "step": 2,
+              "action": [
+                "红色印章",
+                "窗台"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "木桌"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "木桌"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": false
+            },
+            {
+              "step": 3,
+              "action": [
+                "红色印章",
+                "左盒"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "木桌"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "木桌"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": false
+            }
+          ]
+        },
+        "wrong_goal": {
+          "score": 0.99,
+          "steps": 1,
+          "imagined_lengths": [
+            1
+          ],
+          "all_predictions_match": true,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "红色印章",
+                "窗台"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "窗台"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "木桌"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fixture_id": "f3-cup-already-on-sill",
+      "optimal_score": 1.0,
+      "binding": [
+        [
+          "蓝色杯子",
+          "窗台",
+          1
+        ]
+      ],
+      "arms": {
+        "planner": {
+          "score": 1.0,
+          "steps": 0,
+          "imagined_lengths": [],
+          "all_predictions_match": null,
+          "ledger": []
+        },
+        "greedy": {
+          "score": 1.0,
+          "steps": 0,
+          "imagined_lengths": [],
+          "all_predictions_match": null,
+          "ledger": []
+        },
+        "no_prediction": {
+          "score": 1.0,
+          "steps": 0,
+          "imagined_lengths": [],
+          "all_predictions_match": null,
+          "ledger": []
+        },
+        "perturbed_model": {
+          "score": 1.0,
+          "steps": 0,
+          "imagined_lengths": [],
+          "all_predictions_match": null,
+          "ledger": []
+        },
+        "wrong_goal": {
+          "score": 0.99,
+          "steps": 1,
+          "imagined_lengths": [
+            1
+          ],
+          "all_predictions_match": true,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "蓝色杯子",
+                "左盒"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "木桌"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "左盒"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "predicted_matches_actual": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fixture_id": "f4-seal-to-table-from-sill",
+      "optimal_score": 0.99,
+      "binding": [
+        [
+          "红色印章",
+          "木桌",
+          1
+        ]
+      ],
+      "arms": {
+        "planner": {
+          "score": 0.99,
+          "steps": 1,
+          "imagined_lengths": [
+            1
+          ],
+          "all_predictions_match": true,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "红色印章",
+                "木桌"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "木桌"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "左盒"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "predicted_matches_actual": true
+            }
+          ]
+        },
+        "greedy": {
+          "score": 0.99,
+          "steps": 1,
+          "imagined_lengths": [
+            0
+          ],
+          "all_predictions_match": true,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "红色印章",
+                "木桌"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "predicted_matches_actual": true
+            }
+          ]
+        },
+        "no_prediction": {
+          "score": 0.99,
+          "steps": 1,
+          "imagined_lengths": [
+            0
+          ],
+          "all_predictions_match": true,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "红色印章",
+                "木桌"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "predicted_matches_actual": true
+            }
+          ]
+        },
+        "perturbed_model": {
+          "score": -0.04,
+          "steps": 4,
+          "imagined_lengths": [
+            2,
+            1,
+            1,
+            1
+          ],
+          "all_predictions_match": false,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "蓝色杯子",
+                "木桌"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "窗台"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "窗台"
+                  ]
+                ],
+                [
+                  [
+                    "红色印章",
+                    "木桌"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "窗台"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": false
+            },
+            {
+              "step": 1,
+              "action": [
+                "红色印章",
+                "左盒"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "木桌"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "木桌"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": false
+            },
+            {
+              "step": 2,
+              "action": [
+                "红色印章",
+                "窗台"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "木桌"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "木桌"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": false
+            },
+            {
+              "step": 3,
+              "action": [
+                "红色印章",
+                "左盒"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "木桌"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "木桌"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": false
+            }
+          ]
+        },
+        "wrong_goal": {
+          "score": 1.0,
+          "steps": 0,
+          "imagined_lengths": [],
+          "all_predictions_match": null,
+          "ledger": []
+        }
+      }
+    },
+    {
+      "fixture_id": "g1-sill-blocked-by-seal",
+      "optimal_score": 0.98,
+      "binding": [
+        [
+          "蓝色杯子",
+          "窗台",
+          1
+        ]
+      ],
+      "arms": {
+        "planner": {
+          "score": 0.98,
+          "steps": 2,
+          "imagined_lengths": [
+            2,
+            1
+          ],
+          "all_predictions_match": true,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "红色印章",
+                "左盒"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "左盒"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "木桌"
+                  ]
+                ],
+                [
+                  [
+                    "红色印章",
+                    "左盒"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "窗台"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": true
+            },
+            {
+              "step": 1,
+              "action": [
+                "蓝色杯子",
+                "窗台"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "左盒"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "窗台"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "predicted_matches_actual": true
+            }
+          ]
+        },
+        "greedy": {
+          "score": -0.04,
+          "steps": 4,
+          "imagined_lengths": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "all_predictions_match": true,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "蓝色杯子",
+                "左盒"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "predicted_matches_actual": true
+            },
+            {
+              "step": 1,
+              "action": [
+                "蓝色杯子",
+                "木桌"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": true
+            },
+            {
+              "step": 2,
+              "action": [
+                "蓝色杯子",
+                "左盒"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "predicted_matches_actual": true
+            },
+            {
+              "step": 3,
+              "action": [
+                "蓝色杯子",
+                "木桌"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": true
+            }
+          ]
+        },
+        "no_prediction": {
+          "score": 0.98,
+          "steps": 2,
+          "imagined_lengths": [
+            0,
+            0
+          ],
+          "all_predictions_match": true,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "红色印章",
+                "左盒"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": true
+            },
+            {
+              "step": 1,
+              "action": [
+                "蓝色杯子",
+                "窗台"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "imagined": [],
+              "actual": [
+                [
+                  "红色印章",
+                  "左盒"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "predicted_matches_actual": true
+            }
+          ]
+        },
+        "perturbed_model": {
+          "score": -0.04,
+          "steps": 4,
+          "imagined_lengths": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "all_predictions_match": false,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "蓝色杯子",
+                "左盒"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "窗台"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "窗台"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "predicted_matches_actual": false
+            },
+            {
+              "step": 1,
+              "action": [
+                "蓝色杯子",
+                "木桌"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "窗台"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "窗台"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": false
+            },
+            {
+              "step": 2,
+              "action": [
+                "蓝色杯子",
+                "左盒"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "窗台"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "窗台"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "predicted_matches_actual": false
+            },
+            {
+              "step": 3,
+              "action": [
+                "蓝色杯子",
+                "木桌"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "窗台"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "窗台"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "木桌"
+                ]
+              ],
+              "predicted_matches_actual": false
+            }
+          ]
+        },
+        "wrong_goal": {
+          "score": 0.99,
+          "steps": 1,
+          "imagined_lengths": [
+            1
+          ],
+          "all_predictions_match": true,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "蓝色杯子",
+                "左盒"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "窗台"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "左盒"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "窗台"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "predicted_matches_actual": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fixture_id": "g2-box-blocked-by-seal",
+      "optimal_score": 1.0,
+      "binding": [
+        [
+          "蓝色杯子",
+          "窗台",
+          1
+        ]
+      ],
+      "arms": {
+        "planner": {
+          "score": 1.0,
+          "steps": 0,
+          "imagined_lengths": [],
+          "all_predictions_match": null,
+          "ledger": []
+        },
+        "greedy": {
+          "score": 1.0,
+          "steps": 0,
+          "imagined_lengths": [],
+          "all_predictions_match": null,
+          "ledger": []
+        },
+        "no_prediction": {
+          "score": 1.0,
+          "steps": 0,
+          "imagined_lengths": [],
+          "all_predictions_match": null,
+          "ledger": []
+        },
+        "perturbed_model": {
+          "score": 1.0,
+          "steps": 0,
+          "imagined_lengths": [],
+          "all_predictions_match": null,
+          "ledger": []
+        },
+        "wrong_goal": {
+          "score": 0.98,
+          "steps": 2,
+          "imagined_lengths": [
+            2,
+            1
+          ],
+          "all_predictions_match": true,
+          "ledger": [
+            {
+              "step": 0,
+              "action": [
+                "红色印章",
+                "木桌"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "木桌"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "窗台"
+                  ]
+                ],
+                [
+                  [
+                    "红色印章",
+                    "木桌"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "左盒"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              ],
+              "predicted_matches_actual": true
+            },
+            {
+              "step": 1,
+              "action": [
+                "蓝色杯子",
+                "左盒"
+              ],
+              "predicted": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "imagined": [
+                [
+                  [
+                    "红色印章",
+                    "木桌"
+                  ],
+                  [
+                    "蓝色杯子",
+                    "左盒"
+                  ]
+                ]
+              ],
+              "actual": [
+                [
+                  "红色印章",
+                  "木桌"
+                ],
+                [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              ],
+              "predicted_matches_actual": true
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "ledger_not_separated",
+      "passed": true,
+      "observed": true
+    },
+    {
+      "id": "prediction_column_blind",
+      "passed": true,
+      "observed": {
+        "planner_all_match": true,
+        "perturbed_mismatch": true
+      }
+    },
+    {
+      "id": "planner_no_advantage",
+      "passed": true,
+      "observed": {
+        "planner": [
+          0.99,
+          0.98,
+          1.0,
+          0.99,
+          0.98,
+          1.0
+        ],
+        "greedy": [
+          0.99,
+          -0.04,
+          1.0,
+          0.99,
+          -0.04,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "goal_condition_unused",
+      "passed": true,
+      "observed": [
+        0.98,
+        0.99,
+        0.99,
+        1.0,
+        0.99,
+        0.98
+      ]
+    },
+    {
+      "id": "explanation_scored",
+      "passed": true,
+      "observed": true
+    },
+    {
+      "id": "fixture_too_narrow",
+      "passed": true,
+      "observed": {
+        "random": [
+          -0.04,
+          0.97,
+          1.0,
+          0.99,
+          0.98,
+          1.0
+        ],
+        "planner": [
+          0.99,
+          0.98,
+          1.0,
+          0.99,
+          0.98,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true,
+      "observed": [
+        0.0,
+        0.005562699865549803
+      ]
+    }
+  ],
+  "model_involved": false,
+  "training_admitted": false,
+  "task_capability_claimed": false,
+  "limits": "Reference planner baseline only. If the planner does not beat a greedy heuristic, the declared world is too shallow for this step and the task must be deepened before any planning claim; no model was involved and no capability is claimed.",
+  "cpu_seconds": 0.0,
+  "wall_seconds": 0.005562699865549803,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "taiji/native_goal_world.py": "5adf9fd571cb1bb62e4dcea7d9a222eaf5ab7b193c10a0750a3f6f313f283b78",
+    "taiji/goal_binding.py": "7081245ca2b612be9c5f372b46879794d26940691e25f67d8b5adaae75560c85",
+    "taiji/goal_planner.py": "5819bbf3530df7e27e186832883f3a57afdbd13a746d50c109178240f456a8d3",
+    "scripts/training/verify_taiji_goal_planner_10_3.py": "28283c6c5786eca076c03e07d6535c6a1267221447de493161f643d49586c0d5",
+    "tests/taiji_native/test_goal_planner.py": "26f7afe893cdb2af61d7c224687e8dda161bf93b7401a48b91e22bd60738d1ef"
+  }
+}

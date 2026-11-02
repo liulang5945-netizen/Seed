@@ -1,0 +1,54 @@
+{
+  "schema": "taiji-readout-closeout-10-14-v1",
+  "step": "10.14",
+  "date": "2026-11-01",
+  "status": "readout_line_closed_negative",
+  "cards_expected": 20,
+  "cards_read": 20,
+  "missing": [],
+  "statuses": {
+    "10.4": "model_below_random",
+    "10.5": "contrast_below_floor",
+    "10.6": "action_gap_below_floor",
+    "10.7": "training_below_chance_plus",
+    "10.7a": "weights_replay_bitwise",
+    "10.7b": "training_groups_pull_together",
+    "10.7c": "residual_group_structure",
+    "10.7d": "margin_isolates_differential",
+    "10.7e": "readout_binding_supported",
+    "10.7e-1": "readout_rank_below",
+    "10.7e-2": "budget_stop",
+    "10.7f": "readout_selection_absent",
+    "10.7g": "features_additive",
+    "10.7h": "geometry_does_not_select",
+    "10.9": "attribute_fixture_fair",
+    "10.10": "glossary_not_used",
+    "10.11": "records_channel_live",
+    "10.11b": "control_also_wins",
+    "10.12": "records_reach_state",
+    "10.13": "state_selection_absent"
+  },
+  "claims": [
+    "10.7e"
+  ],
+  "withdrawn": [
+    "10.7e",
+    "10.7e-1"
+  ],
+  "withdrawal_recorded": true,
+  "weights_clean": true,
+  "line_cpu_seconds": 2996.578125,
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Closeout only: it checks that the line's cards agree and that every claim but one was already withdrawn by the line itself. It does not re-run anything, does not show the subject cannot ever select, and does not change step 11.",
+  "cpu_seconds": 0.0,
+  "wall_seconds": 0.0017131001222878695,
+  "budget": {
+    "cpu_seconds": 60,
+    "wall_seconds": 120
+  },
+  "source_hashes": {
+    "scripts/training/verify_taiji_readout_closeout_10_14.py": "8be09657d8f50765ac25fa58c44880c7440901c5b97cf2630c9de998102a303c"
+  }
+}

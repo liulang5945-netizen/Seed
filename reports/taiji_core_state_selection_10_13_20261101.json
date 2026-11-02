@@ -1,0 +1,295 @@
+{
+  "schema": "taiji-state-selection-10-13-v1",
+  "step": "10.13",
+  "date": "2026-11-01",
+  "status": "state_selection_absent",
+  "declared": {
+    "samples": 12,
+    "train_samples": 6,
+    "held_out_samples": 6,
+    "actions": 6,
+    "state_width": 512,
+    "parameters": 4608,
+    "steps": 300,
+    "lr": 0.05,
+    "pass_top1": 5,
+    "absent_top1": 2,
+    "control_max_top1": 2,
+    "chance_top1": 0.16666666666666666
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "arms": {
+    "A_real_to_real": {
+      "top1": 2,
+      "total": 6,
+      "rows": [
+        {
+          "goal": "让圆口的器皿到四方木台。",
+          "correct": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "hit": false
+        },
+        {
+          "goal": "让带纹路的方块到四方木台。",
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "hit": false
+        },
+        {
+          "goal": "让圆口的器皿到靠窗的台面。",
+          "correct": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "让带纹路的方块到靠窗的台面。",
+          "correct": [
+            "红色印章",
+            "窗台"
+          ],
+          "picked": [
+            "红色印章",
+            "窗台"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "让圆口的器皿到四方木台。",
+          "correct": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "hit": false
+        },
+        {
+          "goal": "让带纹路的方块到四方木台。",
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "hit": false
+        }
+      ],
+      "train_loss": 0.00012156418417694475
+    },
+    "B_real_to_permuted": {
+      "top1": 2,
+      "total": 6,
+      "rows": [
+        {
+          "goal": "让圆口的器皿到四方木台。",
+          "correct": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "hit": false
+        },
+        {
+          "goal": "让带纹路的方块到四方木台。",
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "hit": false
+        },
+        {
+          "goal": "让圆口的器皿到靠窗的台面。",
+          "correct": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "让带纹路的方块到靠窗的台面。",
+          "correct": [
+            "红色印章",
+            "窗台"
+          ],
+          "picked": [
+            "红色印章",
+            "窗台"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "让圆口的器皿到四方木台。",
+          "correct": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "hit": false
+        },
+        {
+          "goal": "让带纹路的方块到四方木台。",
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "hit": false
+        }
+      ],
+      "train_loss": 0.00012156418417694475
+    },
+    "C_permuted_to_real": {
+      "top1": 2,
+      "total": 6,
+      "rows": [
+        {
+          "goal": "让圆口的器皿到四方木台。",
+          "correct": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "hit": false
+        },
+        {
+          "goal": "让带纹路的方块到四方木台。",
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "hit": false
+        },
+        {
+          "goal": "让圆口的器皿到靠窗的台面。",
+          "correct": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "让带纹路的方块到靠窗的台面。",
+          "correct": [
+            "红色印章",
+            "窗台"
+          ],
+          "picked": [
+            "红色印章",
+            "窗台"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "让圆口的器皿到四方木台。",
+          "correct": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "hit": false
+        },
+        {
+          "goal": "让带纹路的方块到四方木台。",
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "hit": false
+        }
+      ],
+      "train_loss": 0.00011759818056795606
+    }
+  },
+  "backbone_frozen": true,
+  "held_out_losses_before": [
+    11.205578006886643,
+    11.206194730444045,
+    11.20649978680531,
+    11.207133360994938,
+    11.205596532723579,
+    11.206213071974068
+  ],
+  "held_out_losses_after": [
+    11.205578006886643,
+    11.206194730444045,
+    11.20649978680531,
+    11.207133360994938,
+    11.205596532723579,
+    11.206213071974068
+  ],
+  "weights_path": "output\\taiji_core_10_13\\state_action_rank4.pt",
+  "weights_published": false,
+  "default_model_replaced": false,
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "One bounded run on six training samples of a synthetic fixture. Features are the frozen subject's recurrent state after the goal prompt; the glossary only reaches the model through records. A pass means six-way selection is learnable from this state at this data size, not that the subject selects, not natural language, not P2.",
+  "cpu_seconds": 38.78125,
+  "wall_seconds": 39.53294249996543,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "taiji/state_action_readout.py": "e417fa885e543821d57abd5db175b289c7137ff16c361696196fa722ae5bf4bd",
+    "taiji/native_goal_glossary.py": "b40ffa22dbd5adae1285e425047f1c4113d083115bada3e7b0dd07f944a62f03",
+    "scripts/training/verify_taiji_state_selection_10_13.py": "dfef0f27ad8189fc9a6ff0e79a533dae2748b722b1a4bad327e2858b1c5c8b83"
+  }
+}

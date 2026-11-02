@@ -1,0 +1,39 @@
+{
+  "schema": "taiji-interrupt-11-4c-v1",
+  "step": "11.4c",
+  "date": "2026-11-01",
+  "status": "interrupt_recovery_verified",
+  "candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+  "child_a_returncode": 0,
+  "child_b_returncode": 0,
+  "child_a_stderr_tail": [],
+  "child_b_stderr_tail": [],
+  "snapshot_written": true,
+  "hard_exit_used": "os._exit(0)",
+  "answers_identical": true,
+  "parent_answer": {
+    "top_byte": 29,
+    "top_probability": 0.0090810043755688,
+    "entropy": 5.496026640418321
+  },
+  "child_answer": {
+    "top_byte": 29,
+    "top_probability": 0.0090810043755688,
+    "entropy": 5.496026640418321
+  },
+  "parent_state_after_observe": "451b047f3a84fc5d1398fe1ddb2b5097ae24facc330fca892bb71e6fbfd10d22",
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Interrupt semantics only: a child wrote a checkpoint and died without cleanup; a fresh process resumed it and produced the same answer. It does not test mid-computation crashes or OS-level power loss.",
+  "cpu_seconds": 1.0625,
+  "wall_seconds": 7.68187199998647,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "taiji/candidate_session.py": "1427e25628858afb08a42b23087385f07eb1e27eb6e30a7b85b5e2ac46017eb7",
+    "scripts/training/verify_taiji_interrupt_recovery_11_4c.py": "f2e0872a5ae9e1c9df490225994b23e4061a34d362b208516e2fe4958ef83fef"
+  }
+}

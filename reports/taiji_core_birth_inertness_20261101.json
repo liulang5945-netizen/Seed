@@ -1,0 +1,100 @@
+{
+  "schema": "taiji-birth-inertness-diagnosis-v1",
+  "step": "09.6.3",
+  "date": "2026-11-01",
+  "config": {
+    "groups": 4,
+    "width": 128,
+    "units": 256,
+    "adapter_rank": 16,
+    "fast_heads": 2,
+    "key_width": 32,
+    "value_width": 32,
+    "output_heads": 2,
+    "fast_limit": 16.0,
+    "max_event_bytes": 512,
+    "max_source_bytes": 512,
+    "max_target_bytes": 128,
+    "seed": 20261031
+  },
+  "declared": {
+    "steps": 8,
+    "lr": 1e-05,
+    "units_total": 8
+  },
+  "parent_units": 256,
+  "newborn_units": 0,
+  "birth_parameter_norms": {
+    "R_parent_norm": 32.0180091765803,
+    "R_newborn_norm": 0.0,
+    "P_parent_norm": 22.741943160744103,
+    "P_newborn_norm": 2.815251613064161,
+    "P_newborn_over_parent": 0.12379116389331649
+  },
+  "trained_parameter_norms": {
+    "R_parent_norm": 32.018176262134666,
+    "R_newborn_norm": 0.006730653433433794,
+    "P_parent_norm": 22.742094023907754,
+    "P_newborn_norm": 2.815342794467342,
+    "R_newborn_abs_change": 0.006730653433433794,
+    "P_newborn_relative_change": 1.0000323883672626,
+    "R_newborn_started_at_zero": true
+  },
+  "gradients_at_birth": {
+    "holdout": {
+      "loss": 4.381243859077419,
+      "R_total": 0.06761582085979674,
+      "P_total": 0.03469845311408957,
+      "R_parent": 0.06748911094294913,
+      "R_newborn": 0.0041375276040735145,
+      "P_parent": 0.034698453114089846,
+      "P_newborn": 0.0
+    },
+    "fit": {
+      "loss": 4.436565322597274,
+      "R_total": 0.08150572923371392,
+      "P_total": 0.04451935015467979,
+      "R_parent": 0.08139049540612121,
+      "R_newborn": 0.004332569152990738,
+      "P_parent": 0.04451935015467966,
+      "P_newborn": 0.0
+    }
+  },
+  "newborn_to_parent_gradient_ratio": {
+    "holdout_R": 0.061306595186460665,
+    "fit_R": 0.05323188084028905
+  },
+  "nll": {
+    "fit_before": 4.436565322597274,
+    "holdout_before": 4.381243859077419,
+    "holdout_after_training": 4.361050985264841,
+    "holdout_after_lesion": 4.361051418506736,
+    "holdout_benefit": 0.020192873812578505,
+    "newborn_contribution": 4.3324189480387076e-07
+  },
+  "update_losses": [
+    4.436565322597274,
+    4.432645121264757,
+    4.428737442601572,
+    4.424842061757047,
+    4.4209587039456135,
+    4.4170870149337205,
+    4.4132266084849645,
+    4.409377067227552
+  ],
+  "cpu_seconds": 37.921875,
+  "wall_seconds": 39.180819700006396,
+  "budget": {
+    "cpu_seconds": 600,
+    "wall_seconds": 1200
+  },
+  "training_admitted": false,
+  "source_hashes": {
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/growth_credit.py": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+    "taiji/native_development.py": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+    "taiji/constrained_learning.py": "1c0f77ecf04e62b21f11802b127a52a150cbfcc9e61497c2bac3377ffbfde24e",
+    "scripts/training/diagnose_birth_inertness.py": "356a88975608169a86e6530f6abfc6cd2411e58ae1b10ba360c916b6a3d0bc19",
+    "scripts/training/verify_taiji_living_fragment_pricing_r028.py": "295d11ed70aeedd78f6e8380ac148f8508519da90363d07f65d07dad9478a34b"
+  }
+}

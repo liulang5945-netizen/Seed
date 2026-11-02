@@ -1,0 +1,847 @@
+{
+  "schema": "taiji-subject-selection-10-4-v1",
+  "step": "10.4",
+  "date": "2026-11-01",
+  "status": "model_below_random",
+  "declared": {
+    "parts": 5,
+    "units_per_group": 3,
+    "steps": 8,
+    "lr": 1e-05,
+    "limit": 6,
+    "advantage_margin": 0.05,
+    "fixtures": 6,
+    "selection": "subject conditional NLL over rendered action sentences, lowest wins"
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "fixtures": [
+    {
+      "fixture_id": "f1-cup-to-sill-from-table",
+      "goal_text": "把蓝色杯子放到窗台",
+      "optimal_score": 0.99,
+      "subject": {
+        "score": 0.99,
+        "actions": [
+          [
+            "蓝色杯子",
+            "窗台"
+          ]
+        ],
+        "tables": [
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "窗台"
+              ],
+              "sentence": "把蓝色杯子放到窗台",
+              "nll": 5.483210245375891
+            },
+            {
+              "move": [
+                "红色印章",
+                "窗台"
+              ],
+              "sentence": "把红色印章放到窗台",
+              "nll": 5.548005685895825
+            }
+          ]
+        ]
+      },
+      "greedy": {
+        "score": 0.99,
+        "actions": [
+          [
+            "蓝色杯子",
+            "窗台"
+          ]
+        ]
+      },
+      "random": {
+        "score": -0.06,
+        "actions": [
+          [
+            "红色印章",
+            "窗台"
+          ],
+          [
+            "红色印章",
+            "左盒"
+          ],
+          [
+            "红色印章",
+            "窗台"
+          ],
+          [
+            "红色印章",
+            "左盒"
+          ],
+          [
+            "红色印章",
+            "窗台"
+          ],
+          [
+            "红色印章",
+            "左盒"
+          ]
+        ]
+      },
+      "deterministic": true,
+      "scored_counts": [
+        2
+      ],
+      "legal_counts": [
+        2
+      ]
+    },
+    {
+      "fixture_id": "f2-seal-to-table-from-box",
+      "goal_text": "把红色印章放到木桌",
+      "optimal_score": 0.98,
+      "subject": {
+        "score": -0.06,
+        "actions": [
+          [
+            "蓝色杯子",
+            "窗台"
+          ],
+          [
+            "蓝色杯子",
+            "木桌"
+          ],
+          [
+            "蓝色杯子",
+            "窗台"
+          ],
+          [
+            "蓝色杯子",
+            "木桌"
+          ],
+          [
+            "蓝色杯子",
+            "窗台"
+          ],
+          [
+            "蓝色杯子",
+            "木桌"
+          ]
+        ],
+        "tables": [
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "窗台"
+              ],
+              "sentence": "把蓝色杯子放到窗台",
+              "nll": 5.483283683500256
+            },
+            {
+              "move": [
+                "红色印章",
+                "窗台"
+              ],
+              "sentence": "把红色印章放到窗台",
+              "nll": 5.548273162390261
+            }
+          ],
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "木桌"
+              ],
+              "sentence": "把蓝色杯子放到木桌",
+              "nll": 5.457692724934555
+            },
+            {
+              "move": [
+                "红色印章",
+                "木桌"
+              ],
+              "sentence": "把红色印章放到木桌",
+              "nll": 5.522507621665761
+            }
+          ],
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "窗台"
+              ],
+              "sentence": "把蓝色杯子放到窗台",
+              "nll": 5.483283683500256
+            },
+            {
+              "move": [
+                "红色印章",
+                "窗台"
+              ],
+              "sentence": "把红色印章放到窗台",
+              "nll": 5.548273162390261
+            }
+          ],
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "木桌"
+              ],
+              "sentence": "把蓝色杯子放到木桌",
+              "nll": 5.457692724934555
+            },
+            {
+              "move": [
+                "红色印章",
+                "木桌"
+              ],
+              "sentence": "把红色印章放到木桌",
+              "nll": 5.522507621665761
+            }
+          ],
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "窗台"
+              ],
+              "sentence": "把蓝色杯子放到窗台",
+              "nll": 5.483283683500256
+            },
+            {
+              "move": [
+                "红色印章",
+                "窗台"
+              ],
+              "sentence": "把红色印章放到窗台",
+              "nll": 5.548273162390261
+            }
+          ],
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "木桌"
+              ],
+              "sentence": "把蓝色杯子放到木桌",
+              "nll": 5.457692724934555
+            },
+            {
+              "move": [
+                "红色印章",
+                "木桌"
+              ],
+              "sentence": "把红色印章放到木桌",
+              "nll": 5.522507621665761
+            }
+          ]
+        ]
+      },
+      "greedy": {
+        "score": -0.06,
+        "actions": [
+          [
+            "红色印章",
+            "窗台"
+          ],
+          [
+            "红色印章",
+            "左盒"
+          ],
+          [
+            "红色印章",
+            "窗台"
+          ],
+          [
+            "红色印章",
+            "左盒"
+          ],
+          [
+            "红色印章",
+            "窗台"
+          ],
+          [
+            "红色印章",
+            "左盒"
+          ]
+        ]
+      },
+      "random": {
+        "score": -0.06,
+        "actions": [
+          [
+            "红色印章",
+            "窗台"
+          ],
+          [
+            "红色印章",
+            "左盒"
+          ],
+          [
+            "红色印章",
+            "窗台"
+          ],
+          [
+            "红色印章",
+            "左盒"
+          ],
+          [
+            "红色印章",
+            "窗台"
+          ],
+          [
+            "红色印章",
+            "左盒"
+          ]
+        ]
+      },
+      "deterministic": true,
+      "scored_counts": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "legal_counts": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "fixture_id": "f3-cup-already-on-sill",
+      "goal_text": "把蓝色杯子放到窗台",
+      "optimal_score": 1.0,
+      "subject": {
+        "score": 1.0,
+        "actions": [],
+        "tables": []
+      },
+      "greedy": {
+        "score": 1.0,
+        "actions": []
+      },
+      "random": {
+        "score": 1.0,
+        "actions": []
+      },
+      "deterministic": true,
+      "scored_counts": [],
+      "legal_counts": []
+    },
+    {
+      "fixture_id": "f4-seal-to-table-from-sill",
+      "goal_text": "把红色印章放到木桌",
+      "optimal_score": 0.99,
+      "subject": {
+        "score": -0.06,
+        "actions": [
+          [
+            "蓝色杯子",
+            "木桌"
+          ],
+          [
+            "蓝色杯子",
+            "左盒"
+          ],
+          [
+            "蓝色杯子",
+            "木桌"
+          ],
+          [
+            "蓝色杯子",
+            "左盒"
+          ],
+          [
+            "蓝色杯子",
+            "木桌"
+          ],
+          [
+            "蓝色杯子",
+            "左盒"
+          ]
+        ],
+        "tables": [
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "木桌"
+              ],
+              "sentence": "把蓝色杯子放到木桌",
+              "nll": 5.457692724934555
+            },
+            {
+              "move": [
+                "红色印章",
+                "木桌"
+              ],
+              "sentence": "把红色印章放到木桌",
+              "nll": 5.522507621665761
+            }
+          ],
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "左盒"
+              ],
+              "sentence": "把蓝色杯子放到左盒",
+              "nll": 5.471265011045704
+            },
+            {
+              "move": [
+                "红色印章",
+                "左盒"
+              ],
+              "sentence": "把红色印章放到左盒",
+              "nll": 5.536305143282176
+            }
+          ],
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "木桌"
+              ],
+              "sentence": "把蓝色杯子放到木桌",
+              "nll": 5.457692724934555
+            },
+            {
+              "move": [
+                "红色印章",
+                "木桌"
+              ],
+              "sentence": "把红色印章放到木桌",
+              "nll": 5.522507621665761
+            }
+          ],
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "左盒"
+              ],
+              "sentence": "把蓝色杯子放到左盒",
+              "nll": 5.471265011045704
+            },
+            {
+              "move": [
+                "红色印章",
+                "左盒"
+              ],
+              "sentence": "把红色印章放到左盒",
+              "nll": 5.536305143282176
+            }
+          ],
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "木桌"
+              ],
+              "sentence": "把蓝色杯子放到木桌",
+              "nll": 5.457692724934555
+            },
+            {
+              "move": [
+                "红色印章",
+                "木桌"
+              ],
+              "sentence": "把红色印章放到木桌",
+              "nll": 5.522507621665761
+            }
+          ],
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "左盒"
+              ],
+              "sentence": "把蓝色杯子放到左盒",
+              "nll": 5.471265011045704
+            },
+            {
+              "move": [
+                "红色印章",
+                "左盒"
+              ],
+              "sentence": "把红色印章放到左盒",
+              "nll": 5.536305143282176
+            }
+          ]
+        ]
+      },
+      "greedy": {
+        "score": 0.99,
+        "actions": [
+          [
+            "红色印章",
+            "木桌"
+          ]
+        ]
+      },
+      "random": {
+        "score": 0.99,
+        "actions": [
+          [
+            "红色印章",
+            "木桌"
+          ]
+        ]
+      },
+      "deterministic": true,
+      "scored_counts": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "legal_counts": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "fixture_id": "g1-sill-blocked-by-seal",
+      "goal_text": "把蓝色杯子放到窗台",
+      "optimal_score": 0.98,
+      "subject": {
+        "score": -0.06,
+        "actions": [
+          [
+            "蓝色杯子",
+            "左盒"
+          ],
+          [
+            "蓝色杯子",
+            "木桌"
+          ],
+          [
+            "蓝色杯子",
+            "左盒"
+          ],
+          [
+            "蓝色杯子",
+            "木桌"
+          ],
+          [
+            "蓝色杯子",
+            "左盒"
+          ],
+          [
+            "蓝色杯子",
+            "木桌"
+          ]
+        ],
+        "tables": [
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "左盒"
+              ],
+              "sentence": "把蓝色杯子放到左盒",
+              "nll": 5.470793605322683
+            },
+            {
+              "move": [
+                "红色印章",
+                "左盒"
+              ],
+              "sentence": "把红色印章放到左盒",
+              "nll": 5.535638226328672
+            }
+          ],
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "木桌"
+              ],
+              "sentence": "把蓝色杯子放到木桌",
+              "nll": 5.457566637612382
+            },
+            {
+              "move": [
+                "红色印章",
+                "木桌"
+              ],
+              "sentence": "把红色印章放到木桌",
+              "nll": 5.522186462863347
+            }
+          ],
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "左盒"
+              ],
+              "sentence": "把蓝色杯子放到左盒",
+              "nll": 5.470793605322683
+            },
+            {
+              "move": [
+                "红色印章",
+                "左盒"
+              ],
+              "sentence": "把红色印章放到左盒",
+              "nll": 5.535638226328672
+            }
+          ],
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "木桌"
+              ],
+              "sentence": "把蓝色杯子放到木桌",
+              "nll": 5.457566637612382
+            },
+            {
+              "move": [
+                "红色印章",
+                "木桌"
+              ],
+              "sentence": "把红色印章放到木桌",
+              "nll": 5.522186462863347
+            }
+          ],
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "左盒"
+              ],
+              "sentence": "把蓝色杯子放到左盒",
+              "nll": 5.470793605322683
+            },
+            {
+              "move": [
+                "红色印章",
+                "左盒"
+              ],
+              "sentence": "把红色印章放到左盒",
+              "nll": 5.535638226328672
+            }
+          ],
+          [
+            {
+              "move": [
+                "蓝色杯子",
+                "木桌"
+              ],
+              "sentence": "把蓝色杯子放到木桌",
+              "nll": 5.457566637612382
+            },
+            {
+              "move": [
+                "红色印章",
+                "木桌"
+              ],
+              "sentence": "把红色印章放到木桌",
+              "nll": 5.522186462863347
+            }
+          ]
+        ]
+      },
+      "greedy": {
+        "score": -0.06,
+        "actions": [
+          [
+            "蓝色杯子",
+            "左盒"
+          ],
+          [
+            "蓝色杯子",
+            "木桌"
+          ],
+          [
+            "蓝色杯子",
+            "左盒"
+          ],
+          [
+            "蓝色杯子",
+            "木桌"
+          ],
+          [
+            "蓝色杯子",
+            "左盒"
+          ],
+          [
+            "蓝色杯子",
+            "木桌"
+          ]
+        ]
+      },
+      "random": {
+        "score": -0.06,
+        "actions": [
+          [
+            "红色印章",
+            "左盒"
+          ],
+          [
+            "红色印章",
+            "窗台"
+          ],
+          [
+            "红色印章",
+            "左盒"
+          ],
+          [
+            "红色印章",
+            "窗台"
+          ],
+          [
+            "红色印章",
+            "左盒"
+          ],
+          [
+            "红色印章",
+            "窗台"
+          ]
+        ]
+      },
+      "deterministic": true,
+      "scored_counts": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "legal_counts": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "fixture_id": "g2-box-blocked-by-seal",
+      "goal_text": "把蓝色杯子放到窗台",
+      "optimal_score": 1.0,
+      "subject": {
+        "score": 1.0,
+        "actions": [],
+        "tables": []
+      },
+      "greedy": {
+        "score": 1.0,
+        "actions": []
+      },
+      "random": {
+        "score": 1.0,
+        "actions": []
+      },
+      "deterministic": true,
+      "scored_counts": [],
+      "legal_counts": []
+    }
+  ],
+  "totals": {
+    "subject": 2.81,
+    "greedy": 3.86,
+    "random": 2.81
+  },
+  "model_involved": true,
+  "capability_passed": false,
+  "checks": [
+    {
+      "id": "candidate_identity_mismatch",
+      "passed": true,
+      "observed": [
+        "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+        "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3"
+      ]
+    },
+    {
+      "id": "nondeterministic_selection",
+      "passed": true,
+      "observed": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "selector_degenerate",
+      "passed": true,
+      "observed": [
+        [
+          2
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        [],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        []
+      ]
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true,
+      "observed": [
+        48.78125,
+        49.55777939991094
+      ]
+    }
+  ],
+  "training_admitted": false,
+  "limits": "Six synthetic Chinese fixtures in the 10.1b world. A positive outcome means the subject beat random selection here; it is not natural-language continuous-task capability, not L3 evidence, and it does not close the other 11 preconditions.",
+  "cpu_seconds": 48.78125,
+  "wall_seconds": 49.55777939991094,
+  "budget": {
+    "cpu_seconds": 600,
+    "wall_seconds": 1200
+  },
+  "source_hashes": {
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/growth_credit.py": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+    "taiji/native_development.py": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+    "taiji/birth_direction.py": "a723075011a42c3a4d44b24267de2c40dc7db3229c0e546480942538d2274ad9",
+    "taiji/native_goal_world.py": "5adf9fd571cb1bb62e4dcea7d9a222eaf5ab7b193c10a0750a3f6f313f283b78",
+    "taiji/goal_binding.py": "7081245ca2b612be9c5f372b46879794d26940691e25f67d8b5adaae75560c85",
+    "taiji/subject_action_scorer.py": "08ccdb1a4b927b7237581fb585a20423792d9e64d1f7e6d00ada1e710ff61aa0",
+    "scripts/training/verify_taiji_subject_selection_10_4.py": "8a0a310e17bdd6428a715b100694d48dbee5faaa05e69bdb83bbeda9858ff203"
+  }
+}

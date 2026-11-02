@@ -1,0 +1,356 @@
+{
+  "schema": "taiji-goal-world-10-1-v1",
+  "step": "10.1",
+  "date": "2026-11-01",
+  "status": "passed_10_1_environment_only",
+  "declared": {
+    "objects": [
+      "蓝色杯子",
+      "红色印章"
+    ],
+    "places": [
+      "木桌",
+      "窗台",
+      "左盒"
+    ],
+    "max_steps": 4,
+    "action_seed": 20261101,
+    "shortcut_policies": [
+      "first_legal",
+      "lowest_id",
+      "fixed_object",
+      "cycle"
+    ],
+    "search": "exhaustive breadth-first over 9 world states"
+  },
+  "fixtures": [
+    {
+      "fixture_id": "f1-cup-to-sill-from-table",
+      "goal_id": "cup-to-sill",
+      "goal_text": "把蓝色杯子放到窗台",
+      "initial": [
+        [
+          "红色印章",
+          "左盒"
+        ],
+        [
+          "蓝色杯子",
+          "木桌"
+        ]
+      ],
+      "optimal_score": 0.99,
+      "optimal_moves": [
+        [
+          "蓝色杯子",
+          "窗台"
+        ]
+      ],
+      "optimal_steps": 1,
+      "policies": {
+        "first_legal": {
+          "score": -0.04,
+          "actions": [
+            "a3",
+            "a0",
+            "a3",
+            "a3"
+          ],
+          "reaches_optimal": false
+        },
+        "lowest_id": {
+          "score": -0.04,
+          "actions": [
+            "a0",
+            "a0",
+            "a0",
+            "a0"
+          ],
+          "reaches_optimal": false
+        },
+        "fixed_object": {
+          "score": 0.97,
+          "actions": [
+            "a1",
+            "a1",
+            "a1"
+          ],
+          "reaches_optimal": false
+        },
+        "cycle": {
+          "score": 0.99,
+          "actions": [
+            "a2"
+          ],
+          "reaches_optimal": true
+        }
+      }
+    },
+    {
+      "fixture_id": "f2-seal-to-table-from-box",
+      "goal_id": "seal-to-table",
+      "goal_text": "把红色印章放到木桌",
+      "initial": [
+        [
+          "红色印章",
+          "左盒"
+        ],
+        [
+          "蓝色杯子",
+          "木桌"
+        ]
+      ],
+      "optimal_score": 0.99,
+      "optimal_moves": [
+        [
+          "红色印章",
+          "木桌"
+        ]
+      ],
+      "optimal_steps": 1,
+      "policies": {
+        "first_legal": {
+          "score": 0.99,
+          "actions": [
+            "a3"
+          ],
+          "reaches_optimal": true
+        },
+        "lowest_id": {
+          "score": -0.04,
+          "actions": [
+            "a0",
+            "a0",
+            "a0",
+            "a0"
+          ],
+          "reaches_optimal": false
+        },
+        "fixed_object": {
+          "score": -0.04,
+          "actions": [
+            "a1",
+            "a1",
+            "a1",
+            "a0"
+          ],
+          "reaches_optimal": false
+        },
+        "cycle": {
+          "score": -0.04,
+          "actions": [
+            "a2",
+            "a1",
+            "a1",
+            "a2"
+          ],
+          "reaches_optimal": false
+        }
+      }
+    },
+    {
+      "fixture_id": "f3-cup-already-on-sill",
+      "goal_id": "cup-to-sill",
+      "goal_text": "把蓝色杯子放到窗台",
+      "initial": [
+        [
+          "红色印章",
+          "木桌"
+        ],
+        [
+          "蓝色杯子",
+          "窗台"
+        ]
+      ],
+      "optimal_score": 1.0,
+      "optimal_moves": [],
+      "optimal_steps": 0,
+      "policies": {
+        "first_legal": {
+          "score": 1.0,
+          "actions": [],
+          "reaches_optimal": true
+        },
+        "lowest_id": {
+          "score": 1.0,
+          "actions": [],
+          "reaches_optimal": true
+        },
+        "fixed_object": {
+          "score": 1.0,
+          "actions": [],
+          "reaches_optimal": true
+        },
+        "cycle": {
+          "score": 1.0,
+          "actions": [],
+          "reaches_optimal": true
+        }
+      }
+    },
+    {
+      "fixture_id": "f4-seal-to-table-from-sill",
+      "goal_id": "seal-to-table",
+      "goal_text": "把红色印章放到木桌",
+      "initial": [
+        [
+          "红色印章",
+          "窗台"
+        ],
+        [
+          "蓝色杯子",
+          "左盒"
+        ]
+      ],
+      "optimal_score": 0.99,
+      "optimal_moves": [
+        [
+          "红色印章",
+          "木桌"
+        ]
+      ],
+      "optimal_steps": 1,
+      "policies": {
+        "first_legal": {
+          "score": 0.98,
+          "actions": [
+            "a0",
+            "a2"
+          ],
+          "reaches_optimal": false
+        },
+        "lowest_id": {
+          "score": -0.04,
+          "actions": [
+            "a0",
+            "a0",
+            "a0",
+            "a0"
+          ],
+          "reaches_optimal": false
+        },
+        "fixed_object": {
+          "score": -0.04,
+          "actions": [
+            "a1",
+            "a1",
+            "a1",
+            "a0"
+          ],
+          "reaches_optimal": false
+        },
+        "cycle": {
+          "score": -0.04,
+          "actions": [
+            "a1",
+            "a1",
+            "a1",
+            "a2"
+          ],
+          "reaches_optimal": false
+        }
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "goal_changes_optimal_behavior",
+      "passed": true,
+      "observed": {
+        "f1-cup-to-sill-from-table": [
+          [
+            "蓝色杯子",
+            "窗台"
+          ]
+        ],
+        "f2-seal-to-table-from-box": [
+          [
+            "红色印章",
+            "木桌"
+          ]
+        ],
+        "f3-cup-already-on-sill": [],
+        "f4-seal-to-table-from-sill": [
+          [
+            "红色印章",
+            "木桌"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "partition_complete",
+      "passed": true,
+      "observed": {
+        "fixtures": 4,
+        "shared_initial_groups": 1,
+        "shared_goal_pairs": 2
+      }
+    },
+    {
+      "id": "shortcuts_cannot_solve",
+      "passed": true,
+      "observed": {
+        "first_legal": {
+          "fails_some_fixture": true,
+          "optimal_on_all": false
+        },
+        "lowest_id": {
+          "fails_some_fixture": true,
+          "optimal_on_all": false
+        },
+        "fixed_object": {
+          "fails_some_fixture": true,
+          "optimal_on_all": false
+        },
+        "cycle": {
+          "fails_some_fixture": true,
+          "optimal_on_all": false
+        }
+      }
+    },
+    {
+      "id": "action_ids_carry_no_correctness",
+      "passed": true,
+      "observed": [
+        [
+          "a0",
+          "a1",
+          "a2",
+          "a3"
+        ],
+        [
+          "a0",
+          "a1",
+          "a2",
+          "a3"
+        ]
+      ]
+    },
+    {
+      "id": "scoring_reads_terminal_state_only",
+      "passed": true,
+      "observed": true
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true,
+      "observed": [
+        0.0,
+        0.0006717001087963581
+      ]
+    }
+  ],
+  "model_involved": false,
+  "training_admitted": false,
+  "task_capability_claimed": false,
+  "cpu_seconds": 0.0,
+  "wall_seconds": 0.0006717001087963581,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "taiji/native_goal_world.py": "66657b0cd400efa868509e37a423e4e4e11f0a0a80f97628c99ea66913dbf24c",
+    "scripts/training/verify_taiji_goal_world_10_1.py": "4c9b704334380555a3b3773c0b03cbaaf73768ea9a285606bdac91c2e342705f"
+  }
+}

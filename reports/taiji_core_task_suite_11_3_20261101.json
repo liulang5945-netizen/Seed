@@ -1,0 +1,109 @@
+{
+  "schema": "taiji-task-suite-11-3-v1",
+  "step": "11.3",
+  "date": "2026-11-01",
+  "status": "task_suite_floor_measured",
+  "candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+  "rubric": "exact match after stripping whitespace and terminal punctuation",
+  "tasks": 7,
+  "scored_tasks": 5,
+  "excluded_tasks": 2,
+  "exclusion_reason": "clarify and unknown have no model-driven channel in this entry",
+  "exact_hits": 0,
+  "exact_rate": 0.0,
+  "max_bytes": 16,
+  "rows": [
+    {
+      "id": "qa-1",
+      "category": "问答",
+      "prompt": "中国的首都是哪里？答：",
+      "expected": "北京",
+      "answer": "\u001d��g���R���nC\u0017�\f",
+      "bytes": 16,
+      "scored": true,
+      "hit": false,
+      "note": null
+    },
+    {
+      "id": "material-1",
+      "category": "材料任务",
+      "prompt": "材料：钥匙在抽屉里。问：钥匙在哪里？答：",
+      "expected": "抽屉",
+      "answer": "\u001d��g���R����R���",
+      "bytes": 16,
+      "scored": true,
+      "hit": false,
+      "note": null
+    },
+    {
+      "id": "followup-1",
+      "category": "追问",
+      "prompt": "刚才的钥匙在哪里？答：",
+      "expected": "抽屉",
+      "answer": "\u001d��g���R���nC\u0017�\f",
+      "bytes": 16,
+      "scored": true,
+      "hit": false,
+      "note": null
+    },
+    {
+      "id": "correct-1",
+      "category": "更正",
+      "prompt": "更正：钥匙在桌上。问：钥匙在哪里？答：",
+      "expected": "桌上",
+      "answer": "\u001d��g���R���nC\u0017GJ",
+      "bytes": 16,
+      "scored": true,
+      "hit": false,
+      "note": null
+    },
+    {
+      "id": "instruct-1",
+      "category": "指令",
+      "prompt": "请把「今天下雨」改成否定句。答：",
+      "expected": "今天不下雨",
+      "answer": "\u001d��g���R���nC\u0017GJ",
+      "bytes": 16,
+      "scored": true,
+      "hit": false,
+      "note": null
+    },
+    {
+      "id": "clarify-1",
+      "category": "澄清",
+      "prompt": "把那个东西放到那里。",
+      "expected": null,
+      "answer": "\u001d��g���R���nC\u0017GJ",
+      "bytes": 16,
+      "scored": false,
+      "hit": null,
+      "note": "correct handling is a model-driven clarify; the entry has no such channel"
+    },
+    {
+      "id": "unknown-1",
+      "category": "未知",
+      "prompt": "火星上第一座城市叫什么？答：",
+      "expected": null,
+      "answer": "\u001d��g���R���nC\u0017GJ",
+      "bytes": 16,
+      "scored": false,
+      "hit": null,
+      "note": "correct handling is abstain; the entry has no such channel"
+    }
+  ],
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Floor reading only: a byte-level generative candidate answering a fixed-answer suite through the raw-first entry. Two items are excluded because the entry has no clarify/abstain channel; that exclusion is itself a gap in the entry, not a result about the candidate.",
+  "cpu_seconds": 2.15625,
+  "wall_seconds": 2.4131577000953257,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "taiji/native_task_suite_11_3.py": "1bd4aef2a308e285bcb0674f4e26e9230c9e0a4aa32edbd71216932c475d6edd",
+    "taiji/candidate_session.py": "2ed2c455bacff63f95bf10df8b963e5efd51eb6efcb7a216626b0eeb4411f35d",
+    "scripts/training/verify_taiji_task_suite_11_3.py": "1159601775ba34ae1f054cbfc5074fa51e32c3564d4157fb9cb96f69bdd1fc0d"
+  }
+}

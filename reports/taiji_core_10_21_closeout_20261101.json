@@ -1,0 +1,127 @@
+{
+  "schema": "taiji-composition-closeout-v1",
+  "step": "10.21.6",
+  "date": "2026-11-01",
+  "status": "closeout_negative",
+  "exit_reason": "10.21.4 判 reader_selection_absent：四格完整 20 候选 top-1 全部停在 chance（0.05），读取注意力的 source top-1 为 0.0969-0.1187（chance 0.10），两 seed 相对 S_stop_read 的增益均未过 0.10 门且 bootstrap 下界非正。新读取/绑定路径在本夹具上未建立可学的源选择。",
+  "scope": "10.21 六步全部按 SPEC 结算；10.21.5 因无候选可释放而 not_released。不含一般中文、P2、L3 或自主生长。",
+  "sub_steps": [
+    {
+      "step": "10.21.1",
+      "status": "preflight_measured",
+      "role": "只读前置：仪器自检与继承路径诊断",
+      "reading": "15/15 仪器自检过；生成三组均 0/6、0 次 EOS、64 字节截断；读取真/置换各 1/5 且恒选 glossary-1、反序同源 5/5",
+      "cpu_seconds": 14.84,
+      "note": "三次仪器迭代合计 21.83 CPU 秒；0 更新"
+    },
+    {
+      "step": "10.21.2",
+      "status": "passed_10_21_graph_engineering_only",
+      "role": "候选图与工程门：105,760 参数（S 可训 50,304）、12 次 Adam、恢复 4/4 逐位",
+      "reading": "38/38 检查；FD J/S/small 全分辨；null-only 零类 7 组精确 0",
+      "cpu_seconds": 26.27,
+      "note": "工程通过不等于语义成立"
+    },
+    {
+      "step": "10.21.3",
+      "status": "priced",
+      "role": "有限定价：四类单价分列，先验恢复再定价",
+      "reading": "cpu_per_train_step 0.1328 / cpu_per_restore 0.9531 / cpu_per_eval_example 0.1074 / cpu_per_bundle_MiB 0.00178；外推 305.06 秒，within_cap true",
+      "cpu_seconds": 6.17,
+      "note": "17/17 检查；8 例开发读数 J/S 均 0/8，属两步更新必然，已单列为已消费开发反馈，不构成门"
+    },
+    {
+      "step": "10.21.4",
+      "status": "reader_selection_absent",
+      "role": "两臂比较：2 seed × 2 臂 × 300 步、batch 8、仅 step0/step300 两点评价",
+      "reading": "四格 top-1 0.0500-0.0625（chance 0.05、最佳常量 0.05）；两层（未见组合 0.0000-0.0417、未见实体 0.0750-0.1000）均未过 0.40；增益 -0.0125/+0.0063，bootstrap 下界 -0.0312/-0.0188",
+      "cpu_seconds": 200.25,
+      "note": "12/12 工程门过；两 seed 新增模块摘要不同（4795e7… / 00dada…）；J/S 初始前向逐位相同；step300 子进程恢复逐位一致"
+    },
+    {
+      "step": "10.21.5",
+      "status": "not_released",
+      "role": "固定干预套件确认（未执行）",
+      "reading": null,
+      "cpu_seconds": 0.0,
+      "note": "无候选可释放：主端点全部停在 chance，确认运行只消费确认面不产生新信息。按 SPEC §7.3 负结果直接回已定位缺口，不改门、不增加剂量"
+    }
+  ],
+  "exits": {
+    "10.21.4": "reader_selection_absent",
+    "10.21.5": "not_released",
+    "10.21.6": "closeout_negative"
+  },
+  "diagnosis": {
+    "what_was_ruled_out": [
+      "仪器不可达：10.21.3 的 64 字节/至多 65 预测协议容得下 27 字节规范动作，且 10.21.4 的评价是 no_grad 前向打分，不涉及生成长度",
+      "头容量或训练不足：J 臂 105,760 可塑参数、300 步、1200 次 Adam 全跑满，loss 端点仍对应均匀分布",
+      "种子轴失效：两 seed 的新增模块摘要不同（4795e7… / 00dada…），读数逐格一致，不是同一配置跑两遍",
+      "信用未到达新模块：10.21.2 的 FD 已证 J/S/small 组全分辨，null-only 零类精确 0",
+      "恢复或缓存污染：J/S 初始前向逐位相同、12 个 checkpoint 可重新加载且摘要一致、父 bundle 逐位未变"
+    ],
+    "what_remains": "读取得分对源记录的注意力停在 chance（0.0969-0.1187 vs 0.10），说明角色查询没有把目标条件化到记录选择上。与前序 10.11b（真/置换同分）、10.12（映射进 state 但不可用）同向：条件化分量存在于状态，但不足以驱动选择。"
+  },
+  "capability_claims": [],
+  "cannot_claim": [
+    "不能声称具备任何任务能力（本包无一条能力门通过）",
+    "不能声称可靠自然中文、连续任务、P2 或 L3",
+    "不能声称读取/绑定机制无效于所有条件：本结论只覆盖合成夹具、单一确定性父、单参考图、300 步、lr 1e-3",
+    "不能把 10.21.2 的工程通过读成语义成立",
+    "不能把 10.21.3 的定价读成能力判据",
+    "不能用本次负结果否证 v1.2 在真实语料或更大规模下的条件化"
+  ],
+  "deviations": [
+    {
+      "id": "D1",
+      "what": "10.21.4 的 step0 提前杀预算规则按解释执行（applied=false）",
+      "why": "step0 是未训练参照，四格必然停在 chance（实测均 0.05）；按字面执行只能得到 vacuous absent，且 SPEC §7.2 禁止中间点读开发面，杀后无合法第二次读可改变结论",
+      "recorded_in": "reports/taiji_core_10_21_4_compare_20261101.json:verdicts.early_kill_guard",
+      "impact": "实际消耗 200.25/1200 CPU 秒，规则要省的预算本就充裕；判据与端点未改"
+    },
+    {
+      "id": "D2",
+      "what": "10.21.3 的 manifest 绑定了共享 runner 自身 hash，runner 新增 --stage compare 后该 manifest 命中漂移门",
+      "why": "graph 阶段的 MANIFEST_SOURCE_FILES 排除 runner 自身，price 阶段未沿用该惯例，是口径不一致而非结论错误",
+      "recorded_in": "本次收束",
+      "impact": "重跑 price 时 17 门中 16 门通过、四类单价重测一致、within_cap 仍 true，唯一失败项为 manifest_identity（drift 仅 source_hashes=true）。10.21.3 结论不受影响；原 manifest 保留不改，后续阶段按 graph 惯例处理 runner 绑定"
+    }
+  ],
+  "costs": {
+    "executed_cpu_seconds": 247.53,
+    "by_step": {
+      "10.21.1": 14.84,
+      "10.21.2": 26.27,
+      "10.21.3": 6.17,
+      "10.21.4": 200.25,
+      "10.21.5": 0.0
+    },
+    "with_iterations_cpu_seconds": 254.52,
+    "budget_cpu_seconds": 2700,
+    "wall_seconds_10_21_4": 207.06,
+    "peak_ram_mb_10_21_4": 691.73,
+    "products": {
+      "checkpoints": 12,
+      "checkpoint_bytes": 341874000,
+      "note": "output/taiji_core_10_21_4_compare/ 保号存档未删"
+    },
+    "caliber": "只含 10.21 六步；不含 09 线、R5b/R5c 与 08 之前实验；不含人工时间"
+  },
+  "identity": {
+    "parent_candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+    "parent_bundle_sha256": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf",
+    "parent_bundle_bytes": 77609636,
+    "binding_seed_digests": {
+      "17021": "4795e7280e50fc2dfd7a0980e887a4767a91aa253c183f55ee370fb94e524f4f",
+      "17022": "00dada69c370422452c1614595093f45d7aa115cdaf9ffa9411f96240978f10f"
+    },
+    "reports": {
+      "10.21.1": "reports/taiji_core_10_21_1_preflight_20261101.json",
+      "10.21.2": "reports/taiji_core_10_21_graph_v2_20261101.json",
+      "10.21.3": "reports/taiji_core_10_21_3_price_20261101.json",
+      "10.21.4": "reports/taiji_core_10_21_4_compare_20261101.json"
+    }
+  },
+  "next": "10 线按负结果结案；不追加 seed、剂量、头或换损失重跑。下一轮若继续条件化选择，须先补仪器（旧能力保持的有符号门与能力集、主动选择效果的夹具）并另立有界包，不在本轮续写 10.22。",
+  "limits": "本卡只记录 10.21 六步测到了什么、测不到什么、花了多少。不构成能力声称，不推动 11 准入。"
+}

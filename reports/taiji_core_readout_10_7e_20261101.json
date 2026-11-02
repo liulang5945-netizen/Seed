@@ -1,0 +1,258 @@
+{
+  "schema": "taiji-readout-10-7e-v1",
+  "step": "10.7e",
+  "date": "2026-11-01",
+  "status": "readout_binding_supported",
+  "declared": {
+    "samples": 12,
+    "train_samples": 6,
+    "held_out_samples": 6,
+    "steps": 300,
+    "lr": 0.05,
+    "seed": 0,
+    "parameters": 1024,
+    "pass_hits": 5,
+    "absent_hits": 3,
+    "control_max_hits": 3,
+    "backbone_frozen": "parameters and held-out sample losses bitwise identical"
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "arm": {
+    "hits": 6,
+    "total": 6,
+    "ties": 0,
+    "rows": [
+      {
+        "goal": "把蓝色杯子放到木桌",
+        "correct_move": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "correct_score": 42.4930849348754,
+        "other_score": -35.49806710077456,
+        "hit": true
+      },
+      {
+        "goal": "把红色印章放到木桌",
+        "correct_move": [
+          "红色印章",
+          "木桌"
+        ],
+        "correct_score": 10.107254250181825,
+        "other_score": -12.098922040386304,
+        "hit": true
+      },
+      {
+        "goal": "把蓝色杯子放到窗台",
+        "correct_move": [
+          "蓝色杯子",
+          "窗台"
+        ],
+        "correct_score": 9.409206675498163,
+        "other_score": -35.63679526738726,
+        "hit": true
+      },
+      {
+        "goal": "把红色印章放到窗台",
+        "correct_move": [
+          "红色印章",
+          "窗台"
+        ],
+        "correct_score": 42.87112809986632,
+        "other_score": -11.319288160788695,
+        "hit": true
+      },
+      {
+        "goal": "把蓝色杯子放到木桌",
+        "correct_move": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "correct_score": 42.4930849348754,
+        "other_score": -35.49806710077456,
+        "hit": true
+      },
+      {
+        "goal": "把红色印章放到木桌",
+        "correct_move": [
+          "红色印章",
+          "木桌"
+        ],
+        "correct_score": 10.107254250181825,
+        "other_score": -12.098922040386304,
+        "hit": true
+      }
+    ],
+    "final_loss": 1.9325150352980986e-20
+  },
+  "control": {
+    "hits": 0,
+    "total": 6,
+    "ties": 0,
+    "rows": [
+      {
+        "goal": "把蓝色杯子放到木桌",
+        "correct_move": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "correct_score": -42.4930849348754,
+        "other_score": 35.49806710077456,
+        "hit": false
+      },
+      {
+        "goal": "把红色印章放到木桌",
+        "correct_move": [
+          "红色印章",
+          "木桌"
+        ],
+        "correct_score": -10.107254250181825,
+        "other_score": 12.098922040386304,
+        "hit": false
+      },
+      {
+        "goal": "把蓝色杯子放到窗台",
+        "correct_move": [
+          "蓝色杯子",
+          "窗台"
+        ],
+        "correct_score": -9.409206675498163,
+        "other_score": 35.63679526738726,
+        "hit": false
+      },
+      {
+        "goal": "把红色印章放到窗台",
+        "correct_move": [
+          "红色印章",
+          "窗台"
+        ],
+        "correct_score": -42.87112809986632,
+        "other_score": 11.319288160788695,
+        "hit": false
+      },
+      {
+        "goal": "把蓝色杯子放到木桌",
+        "correct_move": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "correct_score": -42.4930849348754,
+        "other_score": 35.49806710077456,
+        "hit": false
+      },
+      {
+        "goal": "把红色印章放到木桌",
+        "correct_move": [
+          "红色印章",
+          "木桌"
+        ],
+        "correct_score": -10.107254250181825,
+        "other_score": 12.098922040386304,
+        "hit": false
+      }
+    ],
+    "final_loss": 1.9325150352980986e-20
+  },
+  "untrained": {
+    "hits": 0,
+    "total": 6,
+    "ties": 6,
+    "rows": [
+      {
+        "goal": "把蓝色杯子放到木桌",
+        "correct_move": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "correct_score": 0.0,
+        "other_score": 0.0,
+        "hit": false
+      },
+      {
+        "goal": "把红色印章放到木桌",
+        "correct_move": [
+          "红色印章",
+          "木桌"
+        ],
+        "correct_score": 0.0,
+        "other_score": 0.0,
+        "hit": false
+      },
+      {
+        "goal": "把蓝色杯子放到窗台",
+        "correct_move": [
+          "蓝色杯子",
+          "窗台"
+        ],
+        "correct_score": 0.0,
+        "other_score": 0.0,
+        "hit": false
+      },
+      {
+        "goal": "把红色印章放到窗台",
+        "correct_move": [
+          "红色印章",
+          "窗台"
+        ],
+        "correct_score": 0.0,
+        "other_score": 0.0,
+        "hit": false
+      },
+      {
+        "goal": "把蓝色杯子放到木桌",
+        "correct_move": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "correct_score": 0.0,
+        "other_score": 0.0,
+        "hit": false
+      },
+      {
+        "goal": "把红色印章放到木桌",
+        "correct_move": [
+          "红色印章",
+          "木桌"
+        ],
+        "correct_score": 0.0,
+        "other_score": 0.0,
+        "hit": false
+      }
+    ]
+  },
+  "backbone_frozen": true,
+  "held_out_losses_before": [
+    11.205578006886643,
+    11.206194730444045,
+    11.20649978680531,
+    11.207133360994938,
+    11.205596532723579,
+    11.206213071974068
+  ],
+  "held_out_losses_after": [
+    11.205578006886643,
+    11.206194730444045,
+    11.20649978680531,
+    11.207133360994938,
+    11.205596532723579,
+    11.206213071974068
+  ],
+  "weights_path": "output\\taiji_core_10_7e\\readout_rank4.pt",
+  "weights_published": false,
+  "default_model_replaced": false,
+  "model_involved": true,
+  "capability_claimed": true,
+  "training_admitted": false,
+  "limits": "One bounded run on a six-sample synthetic fixture. The readout sees the subject's goal and action encodings only -- not the recurrent state, not the world -- so a pass means word-level binding is learnable from these features here; it is not natural-language task capability, not P2, and authorises no further training.",
+  "cpu_seconds": 35.8125,
+  "wall_seconds": 36.61732960003428,
+  "budget": {
+    "cpu_seconds": 120,
+    "wall_seconds": 240
+  },
+  "source_hashes": {
+    "taiji/goal_action_readout.py": "d2f228f991f2517b9f6316ed4d48d4497a5ce36dc4da71c357ccddfc640d4b2c",
+    "taiji/goal_conditioned_training.py": "2e0b3e643fc9b7a6ffb8637ab0b9a59d109f93630d4ddd22587b94eca022fc27",
+    "scripts/training/verify_taiji_readout_10_7e.py": "5b55b5a93c2312af2a2f553c860bdead0c14f143e2146e38ea6acf7ac40c57f3"
+  }
+}

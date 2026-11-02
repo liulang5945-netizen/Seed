@@ -1,0 +1,289 @@
+{
+  "schema": "taiji-read-source-14-3-v1",
+  "step": "14.3",
+  "date": "2026-11-02",
+  "supersedes": "reports/taiji_core_read_source_14_3_20261102_v1_engineering_failure.json",
+  "status": "pathway_unreachable",
+  "note": "D3 fails: the value side cannot carry entity identity, so no readout head, sample size or training dose can rescue this read.",
+  "candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+  "attention_groups": 4,
+  "dev_worlds_used": 4,
+  "bars": {
+    "d1_floor": 0.001,
+    "d2_present": 0.4,
+    "d2_absent": 0.1,
+    "d3_reach": 0.5,
+    "d3_unreachable": 0.2
+  },
+  "readings": {
+    "cells": 108,
+    "d1_rows": 324,
+    "d1_median_slot_distance": 0.001072139516615638,
+    "d1_min_slot_distance": 0.0004599528546782418,
+    "d1_median_attention_l1": 0.021845070376726373,
+    "d1_mapping_rotation_slot_distance": 0.006868615235614873,
+    "d2_top1_by_group": [
+      0.1111111111111111,
+      0.1111111111111111,
+      0.1111111111111111,
+      0.1111111111111111
+    ],
+    "d2_mean_over_groups": 0.1111111111111111,
+    "d2_entropy_by_group": [
+      0.9989562372868486,
+      0.9989562844377535,
+      0.9989476995592388,
+      0.9989535570118557
+    ],
+    "d2_null_mass_median_by_group": [
+      0.00360943026048908,
+      0.0035792435698760085,
+      0.003593806728754273,
+      0.0035960429323174253
+    ],
+    "d3_median_entity_only": 0.13621690148704166,
+    "d3_median_descriptor_only": 0.14381880072194753,
+    "d3_record_mass_above_null_share": 1.0,
+    "null_anchor_max_abs_difference": 0.0,
+    "d1_examples": [
+      {
+        "kind": "other_descriptor",
+        "descriptor": "方口的容器",
+        "slot_relative_distance": 0.0005368482904405187,
+        "attention_l1": 0.013266939555817415
+      },
+      {
+        "kind": "other_descriptor",
+        "descriptor": "方口的容器",
+        "slot_relative_distance": 0.0008100466756401798,
+        "attention_l1": 0.018697365232022856
+      },
+      {
+        "kind": "other_descriptor",
+        "descriptor": "方口的容器",
+        "slot_relative_distance": 0.0010020727907440543,
+        "attention_l1": 0.02293754971241293
+      },
+      {
+        "kind": "other_descriptor",
+        "descriptor": "方口的容器",
+        "slot_relative_distance": 0.001295955114876879,
+        "attention_l1": 0.022709755671887204
+      }
+    ],
+    "d2_examples": [
+      {
+        "world": 0,
+        "descriptor": "方口的容器",
+        "group_hits": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "null_mass": [
+          0.0036078051763411873,
+          0.003577406030780937,
+          0.0035919848018275734,
+          0.00359418217021095
+        ],
+        "normalised_entropy": [
+          0.9989478292090684,
+          0.9989512031328486,
+          0.9989423198354054,
+          0.99894781738247
+        ]
+      },
+      {
+        "world": 0,
+        "descriptor": "圆盖的器具",
+        "group_hits": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "null_mass": [
+          0.0036286879687017263,
+          0.0035934961475109673,
+          0.003608105600964717,
+          0.0036103645210403823
+        ],
+        "normalised_entropy": [
+          0.9989442884468386,
+          0.998948062679834,
+          0.9989397639289284,
+          0.9989451233397807
+        ]
+      },
+      {
+        "world": 0,
+        "descriptor": "窄沿的坛子",
+        "group_hits": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "null_mass": [
+          0.0036317777084349813,
+          0.003594376216030595,
+          0.0036116780979915802,
+          0.003614397495468398
+        ],
+        "normalised_entropy": [
+          0.9989541519427622,
+          0.9989503701653806,
+          0.998943884146521,
+          0.9989496522322998
+        ]
+      },
+      {
+        "world": 0,
+        "descriptor": "有纹的磁盘",
+        "group_hits": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "null_mass": [
+          0.0036228845802086878,
+          0.0035909934049426252,
+          0.003607116540159432,
+          0.0036101208056852287
+        ],
+        "normalised_entropy": [
+          0.9989498225923877,
+          0.99894951616041,
+          0.998942585911001,
+          0.9989487934327423
+        ]
+      }
+    ],
+    "d3_examples": [
+      {
+        "world": 0,
+        "descriptor": "方口的容器",
+        "entity_only_distance": 0.12390523044617892,
+        "descriptor_only_distance": 0.09815621192083633,
+        "record_mass": [
+          0.9733202222991455,
+          0.9735209315488109,
+          0.9734169900374539,
+          0.9734068512455228
+        ],
+        "null_mass": [
+          0.02667977770085449,
+          0.026479068451189032,
+          0.02658300996254628,
+          0.02659314875447723
+        ]
+      },
+      {
+        "world": 0,
+        "descriptor": "圆盖的器具",
+        "entity_only_distance": 0.13606158403214103,
+        "descriptor_only_distance": 0.10896136918244442,
+        "record_mass": [
+          0.9735398575085598,
+          0.9737883298249004,
+          0.9736902140271745,
+          0.9736745490380607
+        ],
+        "null_mass": [
+          0.026460142491440266,
+          0.026211670175099604,
+          0.026309785972825503,
+          0.026325450961939265
+        ]
+      },
+      {
+        "world": 0,
+        "descriptor": "窄沿的坛子",
+        "entity_only_distance": 0.11550453681050715,
+        "descriptor_only_distance": 0.1420429135012083,
+        "record_mass": [
+          0.9736187247606062,
+          0.9738976713159256,
+          0.9737821556890222,
+          0.9737614440116895
+        ],
+        "null_mass": [
+          0.026381275239393855,
+          0.026102328684074298,
+          0.02621784431097773,
+          0.026238555988310475
+        ]
+      },
+      {
+        "world": 0,
+        "descriptor": "有纹的磁盘",
+        "entity_only_distance": 0.1651558905350376,
+        "descriptor_only_distance": 0.21650669218409002,
+        "record_mass": [
+          0.9740163599284364,
+          0.9742505047774725,
+          0.9741426240743016,
+          0.9741165650877592
+        ],
+        "null_mass": [
+          0.02598364007156349,
+          0.025749495222527483,
+          0.025857375925697996,
+          0.025883434912240787
+        ]
+      }
+    ],
+    "null_anchor_rows": [
+      {
+        "world": 0,
+        "max_abs_difference_from_null_value": 0.0
+      },
+      {
+        "world": 1,
+        "max_abs_difference_from_null_value": 0.0
+      },
+      {
+        "world": 2,
+        "max_abs_difference_from_null_value": 0.0
+      },
+      {
+        "world": 3,
+        "max_abs_difference_from_null_value": 0.0
+      }
+    ],
+    "cpu_per_read_estimate": 0.03356481481481482
+  },
+  "cpu_seconds": 3.625,
+  "wall_seconds": 3.9987558000721037,
+  "budget": {
+    "cpu_seconds": 90,
+    "wall_seconds": 240
+  },
+  "reserve_cpu_seconds": 30,
+  "model_involved": true,
+  "parameters_changed": false,
+  "optimizer_calls": 0,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "p1_claimed": false,
+  "p2_claimed": false,
+  "status_meanings": {
+    "query_side_dead": "D1 fails: the descriptor moves neither the query nor the attention. Wiring or encoding, not selection.",
+    "pathway_unreachable": "D3 fails: the value side cannot carry entity identity, so no readout head, sample size or training dose can rescue this read.",
+    "conditional_reads_present": "D2 clears the 0.40 bar read-only. That contradicts the recorded 0.1125 of trained 10.21.4, so the instrument is suspect first.",
+    "selection_bottleneck": "D1 and D3 hold while D2 fails: the query carries information and the value path carries the entity, so the missing piece is selection itself.",
+    "not_resolved": "the stages do not line up into one declared shape, or a reading has no dynamic range.",
+    "budget_stop": "the declared CPU or wall allowance was exceeded.",
+    "engineering_failure": "an exception escaped the measurement."
+  },
+  "limits": "Read-only mechanism reading on one synthetic fixture. It produces no output bytes, so it says nothing about P1 (Chinese expression); it trains nothing, so it says nothing about P2. The 10.7 face is excluded because 14.1/14.2 showed the goal equals the correct action sentence there.",
+  "source_hashes": {
+    "taiji/composition_read_probe.py": "50abe982c348c51145dd3573a35a4a7f54f97f5c51c20988023b4ab643e5c6de",
+    "taiji/slot_composition_head.py": "1f2103f39fa60111edbe44ec4dad2d5c2d6e2b7b672360c79b8dce63224d00a5",
+    "taiji/native_composition_fixture.py": "18ca7f7ce19530d153e5396359870ff4661e5033b089da4960dea128a33c83b4",
+    "taiji/candidate_manifest.py": "6fc05ca4bcee45203594ba80448ed8f2c3d5d89e9df92ccf48c4ab23544db1f0",
+    "scripts/training/verify_taiji_read_source_14_3.py": "78476ab7c468cbb2f612dbdc26f18995a930f56231bca2111b07be3d1d4105c9"
+  }
+}

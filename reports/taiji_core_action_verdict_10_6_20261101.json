@@ -1,0 +1,98 @@
+{
+  "schema": "taiji-action-verdict-10-6-v1",
+  "step": "10.6",
+  "date": "2026-11-01",
+  "status": "action_gap_below_floor",
+  "declared": {
+    "goal": "把蓝色杯子放到窗台",
+    "gap_floor": 0.001,
+    "answer_floor": 1e-06,
+    "construction": "prefix = state + goal + action sentence; answers yes/no",
+    "direction_judged": false
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "rows": [
+    {
+      "move": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "sentence": "把蓝色杯子放到窗台",
+      "prefix": "红色印章在左盒，蓝色杯子在木桌。目标：把蓝色杯子放到窗台。执行：把蓝色杯子放到窗台。是否达成？",
+      "nll_yes": 5.6745491422611725,
+      "nll_no": 5.531002575453579,
+      "answer_gap": 0.14354656680759348,
+      "verdict": -0.14354656680759348
+    },
+    {
+      "move": [
+        "红色印章",
+        "窗台"
+      ],
+      "sentence": "把红色印章放到窗台",
+      "prefix": "红色印章在左盒，蓝色杯子在木桌。目标：把蓝色杯子放到窗台。执行：把红色印章放到窗台。是否达成？",
+      "nll_yes": 5.674960200362695,
+      "nll_no": 5.531894019241763,
+      "answer_gap": 0.14306618112093172,
+      "verdict": -0.14306618112093172
+    }
+  ],
+  "gap": 0.0004803856866617551,
+  "correct_action_higher": false,
+  "repeat_zero": 0.0,
+  "model_involved": true,
+  "capability_claimed": false,
+  "checks": [
+    {
+      "id": "candidate_identity_mismatch",
+      "passed": true,
+      "observed": [
+        "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+        "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3"
+      ]
+    },
+    {
+      "id": "nondeterministic_selection",
+      "passed": true,
+      "observed": [
+        true,
+        0.0
+      ]
+    },
+    {
+      "id": "answer_tokens_indistinguishable",
+      "passed": true,
+      "observed": [
+        0.14354656680759348,
+        0.14306618112093172
+      ]
+    },
+    {
+      "id": "action_gap_below_floor",
+      "passed": false,
+      "observed": 0.0004803856866617551
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true,
+      "observed": [
+        36.234375,
+        37.107228100067005
+      ]
+    }
+  ],
+  "training_admitted": false,
+  "limits": "Construction probe only. A separable gap means this construction gives the subject an action-specific signal here; it is not correct selection, not task capability and not P2.",
+  "cpu_seconds": 36.234375,
+  "wall_seconds": 37.107228100067005,
+  "budget": {
+    "cpu_seconds": 600,
+    "wall_seconds": 1200
+  },
+  "source_hashes": {
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/native_goal_world.py": "5adf9fd571cb1bb62e4dcea7d9a222eaf5ab7b193c10a0750a3f6f313f283b78",
+    "taiji/action_verdict_scorer.py": "c52f7ed99dbd9a3ba1607d1f9cc19124da03f6c47a36aa1bb8578f60cdac216f",
+    "scripts/training/verify_taiji_action_verdict_10_6.py": "0915cd19638baa8fa604b58405dde84c9e1fc4be973c396dca9637f679c4f455"
+  }
+}

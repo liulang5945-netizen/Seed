@@ -1,0 +1,565 @@
+{
+  "schema": "taiji-r028-life-fragment-pricing-v1",
+  "date": "2026-11-01",
+  "baseline_commit": "084431117",
+  "status": "passed_r028_pricing_engineering_only",
+  "configs": {
+    "small_reference": {
+      "groups": 2,
+      "width": 8,
+      "units": 12,
+      "adapter_rank": 2,
+      "fast_heads": 2,
+      "key_width": 4,
+      "value_width": 4,
+      "output_heads": 2,
+      "fast_limit": 16.0,
+      "max_event_bytes": 512,
+      "max_source_bytes": 512,
+      "max_target_bytes": 128,
+      "seed": 20261031
+    },
+    "principle_reference": {
+      "groups": 4,
+      "width": 128,
+      "units": 256,
+      "adapter_rank": 16,
+      "fast_heads": 2,
+      "key_width": 32,
+      "value_width": 32,
+      "output_heads": 2,
+      "fast_limit": 16.0,
+      "max_event_bytes": 512,
+      "max_source_bytes": 512,
+      "max_target_bytes": 128,
+      "seed": 20261031
+    },
+    "principle_parameters": 3311259
+  },
+  "natural_fixture": {
+    "prompt_bytes": 522,
+    "target_bytes": 60,
+    "events": 127,
+    "note": "UTF-8 byte workload prices Chinese text; it does not claim semantic correctness."
+  },
+  "workloads": {
+    "small_short_forward": {
+      "repetitions": 3,
+      "samples": [
+        {
+          "cpu_seconds": 0.03125,
+          "wall_seconds": 0.032111499924212694
+        },
+        {
+          "cpu_seconds": 0.03125,
+          "wall_seconds": 0.03043430019170046
+        },
+        {
+          "cpu_seconds": 0.03125,
+          "wall_seconds": 0.030196999898180366
+        }
+      ],
+      "total_cpu_seconds": 0.09375,
+      "total_wall_seconds": 0.09274280001409352,
+      "mean_cpu_seconds": 0.03125,
+      "mean_wall_seconds": 0.030914266671364505
+    },
+    "principle_short_forward": {
+      "repetitions": 3,
+      "samples": [
+        {
+          "cpu_seconds": 0.09375,
+          "wall_seconds": 0.10872650006785989
+        },
+        {
+          "cpu_seconds": 0.09375,
+          "wall_seconds": 0.11876119999215007
+        },
+        {
+          "cpu_seconds": 0.109375,
+          "wall_seconds": 0.10624290001578629
+        }
+      ],
+      "total_cpu_seconds": 0.296875,
+      "total_wall_seconds": 0.33373060007579625,
+      "mean_cpu_seconds": 0.09895833333333333,
+      "mean_wall_seconds": 0.11124353335859875
+    },
+    "small_short_update": {
+      "repetitions": 3,
+      "samples": [
+        {
+          "cpu_seconds": 0.09375,
+          "wall_seconds": 0.10409040004014969
+        },
+        {
+          "cpu_seconds": 0.09375,
+          "wall_seconds": 0.10721009992994368
+        },
+        {
+          "cpu_seconds": 0.109375,
+          "wall_seconds": 0.10241589997895062
+        }
+      ],
+      "total_cpu_seconds": 0.296875,
+      "total_wall_seconds": 0.313716399949044,
+      "mean_cpu_seconds": 0.09895833333333333,
+      "mean_wall_seconds": 0.104572133316348
+    },
+    "principle_short_update": {
+      "repetitions": 3,
+      "samples": [
+        {
+          "cpu_seconds": 0.34375,
+          "wall_seconds": 0.3515445999801159
+        },
+        {
+          "cpu_seconds": 0.34375,
+          "wall_seconds": 0.3561108000576496
+        },
+        {
+          "cpu_seconds": 0.328125,
+          "wall_seconds": 0.3504504000302404
+        }
+      ],
+      "total_cpu_seconds": 1.015625,
+      "total_wall_seconds": 1.058105800068006,
+      "mean_cpu_seconds": 0.3385416666666667,
+      "mean_wall_seconds": 0.352701933356002
+    },
+    "principle_long_forward": {
+      "repetitions": 3,
+      "samples": [
+        {
+          "cpu_seconds": 0.796875,
+          "wall_seconds": 0.814016800140962
+        },
+        {
+          "cpu_seconds": 0.796875,
+          "wall_seconds": 0.8063517999835312
+        },
+        {
+          "cpu_seconds": 0.78125,
+          "wall_seconds": 0.8182938999962062
+        }
+      ],
+      "total_cpu_seconds": 2.375,
+      "total_wall_seconds": 2.4386625001206994,
+      "mean_cpu_seconds": 0.7916666666666666,
+      "mean_wall_seconds": 0.8128875000402331
+    },
+    "principle_long_update": {
+      "repetitions": 1,
+      "samples": [
+        {
+          "cpu_seconds": 2.5,
+          "wall_seconds": 2.5579496999271214
+        }
+      ],
+      "total_cpu_seconds": 2.5,
+      "total_wall_seconds": 2.5579496999271214,
+      "mean_cpu_seconds": 2.5,
+      "mean_wall_seconds": 2.5579496999271214
+    },
+    "activity_rounds": {
+      "interact": {
+        "repetitions": 1,
+        "samples": [
+          {
+            "cpu_seconds": 0.046875,
+            "wall_seconds": 0.04527959995903075
+          }
+        ],
+        "total_cpu_seconds": 0.046875,
+        "total_wall_seconds": 0.04527959995903075,
+        "mean_cpu_seconds": 0.046875,
+        "mean_wall_seconds": 0.04527959995903075,
+        "values": [
+          {
+            "activity": "interact",
+            "step_delta": 8
+          }
+        ]
+      },
+      "recall": {
+        "repetitions": 1,
+        "samples": [
+          {
+            "cpu_seconds": 0.015625,
+            "wall_seconds": 0.012797100003808737
+          }
+        ],
+        "total_cpu_seconds": 0.015625,
+        "total_wall_seconds": 0.012797100003808737,
+        "mean_cpu_seconds": 0.015625,
+        "mean_wall_seconds": 0.012797100003808737,
+        "values": [
+          {
+            "activity": "recall",
+            "step_delta": 2
+          }
+        ]
+      },
+      "imagine": {
+        "repetitions": 1,
+        "samples": [
+          {
+            "cpu_seconds": 0.0,
+            "wall_seconds": 0.006566300056874752
+          }
+        ],
+        "total_cpu_seconds": 0.0,
+        "total_wall_seconds": 0.006566300056874752,
+        "mean_cpu_seconds": 0.0,
+        "mean_wall_seconds": 0.006566300056874752,
+        "values": [
+          {
+            "activity": "imagine",
+            "step_delta": 1
+          }
+        ]
+      },
+      "explore": {
+        "repetitions": 1,
+        "samples": [
+          {
+            "cpu_seconds": 0.03125,
+            "wall_seconds": 0.021039600018411875
+          }
+        ],
+        "total_cpu_seconds": 0.03125,
+        "total_wall_seconds": 0.021039600018411875,
+        "mean_cpu_seconds": 0.03125,
+        "mean_wall_seconds": 0.021039600018411875,
+        "values": [
+          {
+            "activity": "explore",
+            "step_delta": 3
+          }
+        ]
+      },
+      "maintain": {
+        "repetitions": 1,
+        "samples": [
+          {
+            "cpu_seconds": 0.0,
+            "wall_seconds": 0.001160099869593978
+          }
+        ],
+        "total_cpu_seconds": 0.0,
+        "total_wall_seconds": 0.001160099869593978,
+        "mean_cpu_seconds": 0.0,
+        "mean_wall_seconds": 0.001160099869593978,
+        "values": [
+          {
+            "activity": "maintain",
+            "step_delta": 0
+          }
+        ]
+      },
+      "wait": {
+        "repetitions": 1,
+        "samples": [
+          {
+            "cpu_seconds": 0.0,
+            "wall_seconds": 0.001248599961400032
+          }
+        ],
+        "total_cpu_seconds": 0.0,
+        "total_wall_seconds": 0.001248599961400032,
+        "mean_cpu_seconds": 0.0,
+        "mean_wall_seconds": 0.001248599961400032,
+        "values": [
+          {
+            "activity": "wait",
+            "step_delta": 0
+          }
+        ]
+      }
+    }
+  },
+  "birth_pipeline": {
+    "events": 127,
+    "journal_bytes": 630,
+    "collect_credit": {
+      "cpu_seconds": 1.671875,
+      "wall_seconds": 1.694029700011015
+    },
+    "noise_calibration": {
+      "permutations": 128,
+      "quantile": 0.99,
+      "samples": [
+        {
+          "branch": "copy",
+          "cpu_seconds": 1.6875,
+          "wall_seconds": 1.71855410002172
+        },
+        {
+          "branch": "generate",
+          "cpu_seconds": 1.640625,
+          "wall_seconds": 1.7037121001631021
+        }
+      ],
+      "total_cpu_seconds": 3.328125,
+      "total_wall_seconds": 3.422266200184822
+    },
+    "branch_credits": {
+      "cpu_seconds": 0.0625,
+      "wall_seconds": 0.0723397999536246
+    },
+    "signal_verdicts": {
+      "cpu_seconds": 0.109375,
+      "wall_seconds": 0.12253459985367954
+    },
+    "allocation": {
+      "cpu_seconds": 0.0,
+      "wall_seconds": 0.0010089001152664423,
+      "states_checked": {
+        "0": 4,
+        "1": 4,
+        "2": 4,
+        "3": 4
+      },
+      "units_per_group": {
+        "0": 2,
+        "1": 2,
+        "2": 2,
+        "3": 2
+      },
+      "padded_units_per_group": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0
+      }
+    },
+    "directions": {
+      "cpu_seconds": 0.046875,
+      "wall_seconds": 0.03693289984948933
+    },
+    "birth": {
+      "cpu_seconds": 0.015625,
+      "wall_seconds": 0.02212380012497306
+    },
+    "startup": {
+      "cpu_seconds": 0.0,
+      "wall_seconds": 7.999991066753864e-05,
+      "l_start": 1.0,
+      "units": [
+        "copy.0.0",
+        "copy.1.0",
+        "copy.2.0",
+        "copy.3.0",
+        "generate.0.0",
+        "generate.1.0",
+        "generate.2.0",
+        "generate.3.0"
+      ]
+    },
+    "neutral_forward": {
+      "cpu_seconds": 1.578125,
+      "wall_seconds": 1.6274047000333667,
+      "bitwise_equal": true
+    },
+    "book_state": {
+      "state_step": 127,
+      "round_count": 61
+    }
+  },
+  "six_arm_pilot": {
+    "unit_probe": {
+      "units_total": 8,
+      "cpu_seconds": 0.046875,
+      "wall_seconds": 0.05602949997410178
+    },
+    "updates_per_arm": 8,
+    "arms": [
+      {
+        "arm": "replay_only",
+        "units_total": 0,
+        "allocation": null,
+        "nll_fit_pre": 4.436565322597274,
+        "nll_fit_post": 2.464061175803202,
+        "delta_nll_holdout": -0.3056634728215526,
+        "drift_retention": 0.11115252242452467,
+        "first_update_loss": 4.436565322597274,
+        "last_update_loss": 2.6098130631951326,
+        "internal_cpu_seconds": 27.5625,
+        "internal_wall_seconds": 28.536625700071454,
+        "external_cpu_seconds": 27.59375,
+        "external_wall_seconds": 28.55084850010462
+      },
+      {
+        "arm": "coverage_birth",
+        "units_total": 8,
+        "allocation": {
+          "copy": 1,
+          "generate": 1
+        },
+        "nll_fit_pre": 4.436565322597274,
+        "nll_fit_post": 2.4635251372656435,
+        "delta_nll_holdout": -0.30432290652662797,
+        "drift_retention": 0.11045452888549612,
+        "first_update_loss": 4.436565322597274,
+        "last_update_loss": 2.609644512299626,
+        "internal_cpu_seconds": 28.515625,
+        "internal_wall_seconds": 29.383344099856913,
+        "external_cpu_seconds": 28.515625,
+        "external_wall_seconds": 29.392639700090513
+      },
+      {
+        "arm": "gradmax_schedule",
+        "units_total": 8,
+        "allocation": null,
+        "nll_fit_pre": 4.436565322597274,
+        "nll_fit_post": 2.462913446083115,
+        "delta_nll_holdout": -0.3067054344459077,
+        "drift_retention": 0.1124104592466324,
+        "first_update_loss": 4.436565322597274,
+        "last_update_loss": 2.6092011379304823,
+        "internal_cpu_seconds": 28.65625,
+        "internal_wall_seconds": 29.51642659981735,
+        "external_cpu_seconds": 28.65625,
+        "external_wall_seconds": 29.527239700080827
+      },
+      {
+        "arm": "conditional_svd",
+        "units_total": 8,
+        "allocation": null,
+        "nll_fit_pre": 4.436565322597274,
+        "nll_fit_post": 2.4635251372656435,
+        "delta_nll_holdout": -0.30432290652662797,
+        "drift_retention": 0.11045452888549612,
+        "first_update_loss": 4.436565322597274,
+        "last_update_loss": 2.609644512299626,
+        "internal_cpu_seconds": 28.421875,
+        "internal_wall_seconds": 29.2187948001083,
+        "external_cpu_seconds": 28.453125,
+        "external_wall_seconds": 29.236069899983704
+      },
+      {
+        "arm": "random_gate",
+        "units_total": 8,
+        "allocation": null,
+        "nll_fit_pre": 4.436565322597274,
+        "nll_fit_post": 2.4643465947052747,
+        "delta_nll_holdout": -0.30589961459997994,
+        "drift_retention": 0.11091918066802986,
+        "first_update_loss": 4.436565322597274,
+        "last_update_loss": 2.6096731508762723,
+        "internal_cpu_seconds": 28.578125,
+        "internal_wall_seconds": 29.32388489996083,
+        "external_cpu_seconds": 28.578125,
+        "external_wall_seconds": 29.334131699986756
+      },
+      {
+        "arm": "capacity_random",
+        "units_total": 8,
+        "allocation": null,
+        "nll_fit_pre": 4.436565322597274,
+        "nll_fit_post": 2.4643255679853793,
+        "delta_nll_holdout": -0.30730076686236263,
+        "drift_retention": 0.11257709924331838,
+        "first_update_loss": 4.436565322597274,
+        "last_update_loss": 2.609946027451062,
+        "internal_cpu_seconds": 28.640625,
+        "internal_wall_seconds": 29.48943700012751,
+        "external_cpu_seconds": 28.640625,
+        "external_wall_seconds": 29.498056899989024
+      }
+    ],
+    "total_cpu_seconds": 170.4375,
+    "total_wall_seconds": 175.53898640023544
+  },
+  "save_restore": {
+    "career_events": 17,
+    "declared_update_for_bundle": {
+      "cpu_seconds": 0.34375,
+      "wall_seconds": 0.3571037999354303
+    },
+    "save_subject": {
+      "cpu_seconds": 0.109375,
+      "wall_seconds": 0.1037235998082906,
+      "bundle_sha256": "aea2963f5e41871dd97d06e9006cc8d9206e769aed3fd43e94730923b6d7e7a6",
+      "bundle_bytes": 77304316
+    },
+    "in_process_load": {
+      "cpu_seconds": 0.03125,
+      "wall_seconds": 0.033674399834126234
+    },
+    "in_process_resume": {
+      "cpu_seconds": 0.015625,
+      "wall_seconds": 0.020544999977573752
+    },
+    "fresh_spawn_worker": {
+      "cpu_seconds": 0.0,
+      "wall_seconds": 2.6779728999827057,
+      "h_bitwise_equal": true,
+      "probabilities_bitwise_equal": true
+    }
+  },
+  "migration": {
+    "identity_replay": {
+      "outcome": "identity_checked",
+      "bitwise_equal": true,
+      "cpu_seconds": 0.15625,
+      "wall_seconds": 0.1602390999905765,
+      "events": 17
+    },
+    "coordinate_commit": {
+      "outcome": "committed",
+      "coordinate_changed": true,
+      "no_parameter_mutation_during_replay": true,
+      "cpu_seconds": 0.171875,
+      "wall_seconds": 0.17925880011171103
+    },
+    "budget_refusal": {
+      "outcome": "refused_budget",
+      "reason": "event_cap",
+      "cpu_seconds": 0.0,
+      "wall_seconds": 1.100008375942707e-05
+    }
+  },
+  "optimizer_updates_observed": 56,
+  "data_splits_read": [],
+  "cpu_seconds": 190.515625,
+  "wall_seconds": 198.86695290007629,
+  "budget": {
+    "cpu_seconds": 1800,
+    "wall_seconds": 1800
+  },
+  "checks": [
+    {
+      "id": "birth_neutral_bitwise",
+      "passed": true
+    },
+    {
+      "id": "arm_results_finite",
+      "passed": true
+    },
+    {
+      "id": "identity_migration_bitwise",
+      "passed": true
+    },
+    {
+      "id": "fresh_restore_bitwise",
+      "passed": true
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true
+    }
+  ],
+  "training_admitted": false,
+  "task_capability_claimed": false,
+  "default_model_replaced": false,
+  "source_hashes": {
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/growth_credit.py": "fdb925d0499589202272c5c33fe66ba4b44aaafca041f267e2cccae560ff0949",
+    "taiji/native_development.py": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+    "taiji/native_activity.py": "16c2f81623a13ea75b3539a57d2bc75eca312eefece37f7b55a56b3eece8bf2b",
+    "taiji/state_migration.py": "9c3536f032fdfc7bc13a3de42d16d10c63922f5a93097c4a09278553cba31129",
+    "scripts/training/verify_taiji_living_fragment_pricing_r028.py": "295d11ed70aeedd78f6e8380ac148f8508519da90363d07f65d07dad9478a34b"
+  },
+  "limits": "Engineering pricing only. Costs depend on the fixed CPU and thread setting; no task performance, retention, growth benefit, novelty or training admission is established."
+}

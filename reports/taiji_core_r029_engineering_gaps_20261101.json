@@ -1,0 +1,1342 @@
+{
+  "schema": "taiji-r029-engineering-gaps-v1",
+  "date": "2026-11-01",
+  "baseline_commit": "084431117",
+  "status": "failed_lesion",
+  "configs": {
+    "small_reference": {
+      "groups": 2,
+      "width": 8,
+      "units": 12,
+      "adapter_rank": 2,
+      "fast_heads": 2,
+      "key_width": 4,
+      "value_width": 4,
+      "output_heads": 2,
+      "fast_limit": 16.0,
+      "max_event_bytes": 512,
+      "max_source_bytes": 512,
+      "max_target_bytes": 128,
+      "seed": 20261031
+    },
+    "principle_reference": {
+      "groups": 4,
+      "width": 128,
+      "units": 256,
+      "adapter_rank": 16,
+      "fast_heads": 2,
+      "key_width": 32,
+      "value_width": 32,
+      "output_heads": 2,
+      "fast_limit": 16.0,
+      "max_event_bytes": 512,
+      "max_source_bytes": 512,
+      "max_target_bytes": 128,
+      "seed": 20261031
+    }
+  },
+  "faces": {
+    "constraint": "principle shape, R028 long Chinese career as fit journal",
+    "control": "principle shape, same journals, unconstrained Adam lr=1e-3",
+    "activity": "small shape, R028 short career as P_R probe journal",
+    "lesion": "principle shape, coverage_birth arm at the R028 frozen lr",
+    "fixture": "shape independent generator and shortcut probe",
+    "worker": "principle shape fresh-spawn microstep",
+    "boundary": "R027 declared eight-boundary life sequence"
+  },
+  "sections": {
+    "constraint": {
+      "shape": "principle",
+      "fit_journal_events": 127,
+      "old_journals": [
+        "r028-retention"
+      ],
+      "holdout_journal": "r028-holdout (evaluation only, never constrained)",
+      "declared": {
+        "steps": 8,
+        "eta": 1.0,
+        "epsilon": 0.002,
+        "rho": 0.02,
+        "actual_epsilon": 0.00375,
+        "max_retries": 4
+      },
+      "nll": {
+        "fit_pre": 4.436565322597274,
+        "fit_post": 4.405783584258702,
+        "fit_drop": 0.030781738338571785,
+        "holdout_pre": 4.381243859077419,
+        "holdout_post": 4.363982540825169,
+        "delta_nll_holdout": -0.017261318252250746,
+        "retention_pre": 4.462635412115773,
+        "retention_post": 4.446345006009665,
+        "drift_retention": 0.016290406106108435
+      },
+      "parameter_norm_before": 162.44689570682652,
+      "parameter_norm_after": 162.44690025587684,
+      "ulp": 3.607045677852006e-14,
+      "delta_norm_over_ulp": 554470383416.6732,
+      "max_kkt_residual": 1.9447059974478907e-16,
+      "max_violation": 0.0,
+      "max_complementarity": 5.3667543605795414e-14,
+      "accepted_steps": 8,
+      "total_attempts": 11,
+      "cpu_seconds": 70.640625,
+      "wall_seconds": 71.46302499994636,
+      "steps": [
+        {
+          "fit_loss_before": 4.436565322597274,
+          "gradient_norm": 1.5459880994581192,
+          "pre_projection_norm": 1.5459880994581192,
+          "delta_norm": 0.0025000000000000603,
+          "ball_active": true,
+          "active_constraints": [],
+          "multipliers": [
+            0.0
+          ],
+          "kkt_residual": 1.613075497532527e-16,
+          "complementarity_residual": 3.7217598070189456e-14,
+          "constraint_values": [
+            -0.0020560137772634183
+          ],
+          "constraint_slacks": [
+            0.004056013777263418
+          ],
+          "max_violation": 0.0,
+          "attempts": 4,
+          "accepted": true,
+          "rho_used": 0.0025,
+          "actual_old_max_abs_change": 0.0020542155690321806,
+          "cpu_seconds": 6.28125,
+          "timings": {
+            "evaluate_before": 0.703125,
+            "evaluate_after": 0.71875,
+            "fit_gradient": 2.578125,
+            "old_gradients": 2.25,
+            "solve": 0.03125,
+            "apply": 0.0
+          }
+        },
+        {
+          "fit_loss_before": 4.4327025800880175,
+          "gradient_norm": 1.5442124954241636,
+          "pre_projection_norm": 1.5442124954241636,
+          "delta_norm": 0.0025000000000000777,
+          "ball_active": true,
+          "active_constraints": [],
+          "multipliers": [
+            0.0
+          ],
+          "kkt_residual": 1.828041653467022e-16,
+          "complementarity_residual": 4.787256297644157e-14,
+          "constraint_values": [
+            -0.0020506987864829128
+          ],
+          "constraint_slacks": [
+            0.004050698786482913
+          ],
+          "max_violation": 0.0,
+          "attempts": 1,
+          "accepted": true,
+          "rho_used": 0.0025,
+          "actual_old_max_abs_change": 0.0020489292498853118,
+          "cpu_seconds": 6.375,
+          "timings": {
+            "evaluate_before": 0.6875,
+            "evaluate_after": 0.71875,
+            "fit_gradient": 2.546875,
+            "old_gradients": 2.390625,
+            "solve": 0.03125,
+            "apply": 0.0
+          }
+        },
+        {
+          "fit_loss_before": 4.428844246280513,
+          "gradient_norm": 1.5424610014518694,
+          "pre_projection_norm": 1.5424610014518694,
+          "delta_norm": 0.002500000000000068,
+          "ball_active": true,
+          "active_constraints": [],
+          "multipliers": [
+            0.0
+          ],
+          "kkt_residual": 1.7492784718608908e-16,
+          "complementarity_residual": 4.194108207052479e-14,
+          "constraint_values": [
+            -0.002045470691718017
+          ],
+          "constraint_slacks": [
+            0.004045470691718017
+          ],
+          "max_violation": 0.0,
+          "attempts": 1,
+          "accepted": true,
+          "rho_used": 0.0025,
+          "actual_old_max_abs_change": 0.0020437291544066483,
+          "cpu_seconds": 6.296875,
+          "timings": {
+            "evaluate_before": 0.703125,
+            "evaluate_after": 0.71875,
+            "fit_gradient": 2.5625,
+            "old_gradients": 2.28125,
+            "solve": 0.03125,
+            "apply": 0.0
+          }
+        },
+        {
+          "fit_loss_before": 4.424990261595865,
+          "gradient_norm": 1.5407330633104712,
+          "pre_projection_norm": 1.5407330633104712,
+          "delta_norm": 0.0025000000000000634,
+          "ball_active": true,
+          "active_constraints": [],
+          "multipliers": [
+            0.0
+          ],
+          "kkt_residual": 1.491267827203231e-16,
+          "complementarity_residual": 3.8958771494146534e-14,
+          "constraint_values": [
+            -0.0020403275956194142
+          ],
+          "constraint_slacks": [
+            0.004040327595619415
+          ],
+          "max_violation": 0.0,
+          "attempts": 1,
+          "accepted": true,
+          "rho_used": 0.0025,
+          "actual_old_max_abs_change": 0.0020386133988710142,
+          "cpu_seconds": 6.328125,
+          "timings": {
+            "evaluate_before": 0.671875,
+            "evaluate_after": 0.703125,
+            "fit_gradient": 2.640625,
+            "old_gradients": 2.28125,
+            "solve": 0.03125,
+            "apply": 0.0
+          }
+        },
+        {
+          "fit_loss_before": 4.421140567826943,
+          "gradient_norm": 1.5390281377746564,
+          "pre_projection_norm": 1.5390281377746564,
+          "delta_norm": 0.00250000000000008,
+          "ball_active": true,
+          "active_constraints": [],
+          "multipliers": [
+            0.0
+          ],
+          "kkt_residual": 1.492265561155878e-16,
+          "complementarity_residual": 4.904430635057785e-14,
+          "constraint_values": [
+            -0.002035267633781402
+          ],
+          "constraint_slacks": [
+            0.004035267633781402
+          ],
+          "max_violation": 0.0,
+          "attempts": 1,
+          "accepted": true,
+          "rho_used": 0.0025,
+          "actual_old_max_abs_change": 0.002033580132298596,
+          "cpu_seconds": 6.3125,
+          "timings": {
+            "evaluate_before": 0.671875,
+            "evaluate_after": 0.703125,
+            "fit_gradient": 2.671875,
+            "old_gradients": 2.25,
+            "solve": 0.015625,
+            "apply": 0.0
+          }
+        },
+        {
+          "fit_loss_before": 4.417295108111066,
+          "gradient_norm": 1.5373456924719793,
+          "pre_projection_norm": 1.5373456924719793,
+          "delta_norm": 0.0025000000000000608,
+          "ball_active": true,
+          "active_constraints": [],
+          "multipliers": [
+            0.0
+          ],
+          "kkt_residual": 1.3981729657362135e-16,
+          "complementarity_residual": 3.7275459966262297e-14,
+          "constraint_values": [
+            -0.0020302889744506173
+          ],
+          "constraint_slacks": [
+            0.004030288974450617
+          ],
+          "max_violation": 0.0,
+          "attempts": 1,
+          "accepted": true,
+          "rho_used": 0.0025,
+          "actual_old_max_abs_change": 0.002028627536156513,
+          "cpu_seconds": 6.328125,
+          "timings": {
+            "evaluate_before": 0.703125,
+            "evaluate_after": 0.703125,
+            "fit_gradient": 2.5625,
+            "old_gradients": 2.328125,
+            "solve": 0.03125,
+            "apply": 0.0
+          }
+        },
+        {
+          "fit_loss_before": 4.413453826903065,
+          "gradient_norm": 1.5356852057264991,
+          "pre_projection_norm": 1.5356852057264991,
+          "delta_norm": 0.0025000000000000573,
+          "ball_active": true,
+          "active_constraints": [],
+          "multipliers": [
+            0.0
+          ],
+          "kkt_residual": 1.6143858245331529e-16,
+          "complementarity_residual": 3.5107411276001965e-14,
+          "constraint_values": [
+            -0.0020253898182150147
+          ],
+          "constraint_slacks": [
+            0.004025389818215015
+          ],
+          "max_violation": 0.0,
+          "attempts": 1,
+          "accepted": true,
+          "rho_used": 0.0025,
+          "actual_old_max_abs_change": 0.0020237538240559516,
+          "cpu_seconds": 6.578125,
+          "timings": {
+            "evaluate_before": 0.6875,
+            "evaluate_after": 0.703125,
+            "fit_gradient": 2.640625,
+            "old_gradients": 2.5,
+            "solve": 0.03125,
+            "apply": 0.015625
+          }
+        },
+        {
+          "fit_loss_before": 4.409616669948737,
+          "gradient_norm": 1.5340461663996838,
+          "pre_projection_norm": 1.5340461663996838,
+          "delta_norm": 0.0025000000000000877,
+          "ball_active": true,
+          "active_constraints": [],
+          "multipliers": [
+            0.0
+          ],
+          "kkt_residual": 1.9447059974478907e-16,
+          "complementarity_residual": 5.3667543605795414e-14,
+          "constraint_values": [
+            -0.0020205683976716724
+          ],
+          "constraint_slacks": [
+            0.004020568397671672
+          ],
+          "max_violation": 0.0,
+          "attempts": 1,
+          "accepted": true,
+          "rho_used": 0.0025,
+          "actual_old_max_abs_change": 0.0020189572414022194,
+          "cpu_seconds": 6.328125,
+          "timings": {
+            "evaluate_before": 0.6875,
+            "evaluate_after": 0.703125,
+            "fit_gradient": 2.5625,
+            "old_gradients": 2.34375,
+            "solve": 0.03125,
+            "apply": 0.0
+          }
+        }
+      ]
+    },
+    "control": {
+      "shape": "principle",
+      "declared": {
+        "lr": 0.001,
+        "steps": 8,
+        "optimizer": "Adam"
+      },
+      "update_losses": [
+        4.436565322597274,
+        4.130156527076905,
+        3.8566069871998714,
+        3.5891569410120896,
+        3.296253163555285,
+        3.0057277334819017,
+        2.7737525458256047,
+        2.6098130631951326
+      ],
+      "fit_drop": 1.9725041467940723,
+      "delta_nll_holdout": -0.3056634728215526,
+      "drift_retention": 0.11115252242452467,
+      "cpu_seconds": 20.90625,
+      "wall_seconds": 21.196650199824944
+    },
+    "activity": {
+      "shape": "small",
+      "declared": {
+        "train_rounds": 256,
+        "eval_rounds": 32,
+        "max_exposures": 256,
+        "trace_lambda": 0.0,
+        "gamma": 0.99,
+        "policy_lr": 1.0,
+        "critic_lr": 0.1,
+        "epsilon": 0.5,
+        "interact_reward": 0.05,
+        "compute_cost": 0.001,
+        "retention_penalty": 0.1,
+        "arm_seed": 20261102,
+        "note": "TRACE_LAMBDA=0.0 is the declared value for this immediate-reward fixture."
+      },
+      "policy_sha256_before": "1cdcd085727d703441a0fe9fb5da5839b7032aa2b8363b4934d5e4ed94b32737",
+      "policy_sha256_after": "3d4e7f92bb0b0b61bb2ea7e68f1cebfe2b559f1e77afe5861ab11b1a04785bac",
+      "critic_sha256_before": "dfff12de8d691f0f780b175ebe7efe9e02d15f1f650913b49f0780873d2701f8",
+      "critic_sha256_after": "21bb4d9d37313e7633e8d4f477c080ae344d678966fae00f65efa4882b431b01",
+      "policy_changed": true,
+      "critic_changed": true,
+      "state_roundtrip_bitwise": true,
+      "exposures": 256,
+      "core_parameter_digests_identical_across_arms": true,
+      "core_parameter_digests": {
+        "trained_model": "39fe89041eca2e64ecdfcfe016bb22566dc500a078fba5f39a49443ede3cabdb",
+        "untrained_model": "39fe89041eca2e64ecdfcfe016bb22566dc500a078fba5f39a49443ede3cabdb",
+        "fixed_threshold": "39fe89041eca2e64ecdfcfe016bb22566dc500a078fba5f39a49443ede3cabdb"
+      },
+      "training": {
+        "rows": 256,
+        "updated": 256,
+        "stopped": [],
+        "ledger": {
+          "rows": 256,
+          "idle_rows": 110,
+          "idle_rows_with_microsteps": 0,
+          "imagined_rows": 54,
+          "imagined_store_sizes": [
+            2
+          ],
+          "chosen_by": [
+            "model_sampled"
+          ],
+          "exposures": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131,
+            132,
+            133,
+            134,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159,
+            160,
+            161,
+            162,
+            163,
+            164,
+            165,
+            166,
+            167,
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            183,
+            184,
+            185,
+            186,
+            187,
+            188,
+            189,
+            190,
+            191,
+            192,
+            193,
+            194,
+            195,
+            196,
+            197,
+            198,
+            199,
+            200,
+            201,
+            202,
+            203,
+            204,
+            205,
+            206,
+            207,
+            208,
+            209,
+            210,
+            211,
+            212,
+            213,
+            214,
+            215,
+            216,
+            217,
+            218,
+            219,
+            220,
+            221,
+            222,
+            223,
+            224,
+            225,
+            226,
+            227,
+            228,
+            229,
+            230,
+            231,
+            232,
+            233,
+            234,
+            235,
+            236,
+            237,
+            238,
+            239,
+            240,
+            241,
+            242,
+            243,
+            244,
+            245,
+            246,
+            247,
+            248,
+            249,
+            250,
+            251,
+            252,
+            253,
+            254,
+            255,
+            256
+          ],
+          "mean_round_cpu_seconds": 0.46673583984375
+        },
+        "first_reward": 0.0,
+        "last_reward": 0.0,
+        "cpu_seconds": 119.484375,
+        "wall_seconds": 120.95180769986473
+      },
+      "greedy_probabilities_trained": [
+        0.2256604493687238,
+        0.09915032735222534,
+        0.15366836858518912,
+        0.1885145439928021,
+        0.25512922110981023,
+        0.0778770895912493
+      ],
+      "greedy_probabilities_seeded": [
+        0.13944539691413618,
+        0.15017599887361277,
+        0.20163149170456776,
+        0.15543440114390433,
+        0.1846132651181408,
+        0.1686994462456382
+      ],
+      "arms": {
+        "trained_model": {
+          "cumulative_reward": 0.0,
+          "activities": [
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain",
+            "maintain"
+          ],
+          "distinct_activities": [
+            "maintain"
+          ],
+          "external_triggers": 0,
+          "compute_cost_total": 0.0,
+          "ledger": {
+            "rows": 32,
+            "idle_rows": 32,
+            "idle_rows_with_microsteps": 0,
+            "imagined_rows": 0,
+            "imagined_store_sizes": [],
+            "chosen_by": [
+              "model"
+            ],
+            "exposures": [],
+            "mean_round_cpu_seconds": 0.46728515625
+          }
+        },
+        "untrained_model": {
+          "cumulative_reward": -0.03191970856135275,
+          "activities": [
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine",
+            "imagine"
+          ],
+          "distinct_activities": [
+            "imagine"
+          ],
+          "external_triggers": 0,
+          "compute_cost_total": 0.032,
+          "ledger": {
+            "rows": 32,
+            "idle_rows": 0,
+            "idle_rows_with_microsteps": 0,
+            "imagined_rows": 32,
+            "imagined_store_sizes": [
+              2
+            ],
+            "chosen_by": [
+              "model"
+            ],
+            "exposures": [],
+            "mean_round_cpu_seconds": 0.466796875
+          }
+        },
+        "fixed_threshold": {
+          "cumulative_reward": -0.01989438937000212,
+          "activities": [
+            "interact",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall",
+            "recall"
+          ],
+          "distinct_activities": [
+            "interact",
+            "recall"
+          ],
+          "external_triggers": 1,
+          "compute_cost_total": 0.07,
+          "ledger": {
+            "rows": 32,
+            "idle_rows": 0,
+            "idle_rows_with_microsteps": 0,
+            "imagined_rows": 0,
+            "imagined_store_sizes": [],
+            "chosen_by": [
+              "control"
+            ],
+            "exposures": [],
+            "mean_round_cpu_seconds": 0.46484375
+          }
+        }
+      },
+      "advantage_over_best_control": 0.01989438937000212,
+      "verdict": "activity_learning_advantage",
+      "trained_arm_chose_only_idle_activities": true,
+      "advantage_is_idle_cost_avoidance": true,
+      "advantage_disclosure": "The trained arm's cumulative P_R is exactly zero when it only selects idle activities, so a positive advantage over the controls measures avoided compute cost, not task gain. The declared fixture places one external message in the queue, so the reward-bearing interact activity is legal in at most one of the evaluation rounds; 09.7 must design a recurring-trigger activity fixture before any autonomy or activity-learning claim is made.",
+      "journal_entries": 256
+    },
+    "lesion": {
+      "shape": "principle",
+      "declared": {
+        "lr": 1e-05,
+        "updates": 8,
+        "benefit_gate": 0.0001,
+        "lr_source": "R028 frozen learning rate",
+        "restoration_face": "untrained deepcopy of the same coverage_birth child",
+        "contribution_face": "the trained coverage_birth child"
+      },
+      "units_total": 8,
+      "allocation": {
+        "copy": 1,
+        "generate": 1
+      },
+      "birth_units_before_lesion": 258,
+      "birth_units_after_lesion": 256,
+      "growth_parent_units": 256,
+      "neutral_birth_bitwise": true,
+      "lesion_restores_parent_bitwise": true,
+      "lesion_preserves_trained_parent_rows": true,
+      "untrained_lesion_report": {
+        "removed_units_per_group": 2,
+        "removed_r_norm": 0.0,
+        "removed_p_norm": 2.8152516130641625
+      },
+      "update_losses": [
+        4.436565322597274,
+        4.432645121264757,
+        4.428737442601572,
+        4.424842061757047,
+        4.4209587039456135,
+        4.4170870149337205,
+        4.4132266084849645,
+        4.409377067227552
+      ],
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.361050985264841,
+      "holdout_after_lesion": 4.361051418506736,
+      "benefit": 0.020192873812578505,
+      "benefit_after_lesion": 0.0201924405706837,
+      "benefit_removed": 4.3324189480387076e-07,
+      "trained_lesion_report": {
+        "removed_units_per_group": 2,
+        "removed_r_norm": 0.006730653433433791,
+        "removed_p_norm": 2.8153427944673415
+      },
+      "verdict": "lesion_does_not_remove_benefit",
+      "contribution_disclosure": {
+        "benefit_from_training": 0.020192873812578505,
+        "benefit_attributable_to_newborn_units": 4.3324189480387076e-07,
+        "newborn_share_of_benefit": 2.1455187549084597e-05,
+        "reading": "Newborn units account for the share above of the measured holdout benefit; the remainder is carried by the inherited parent rows that training changed. A share below the declared gate means the growth mechanism has no measurable contribution on this fixture and must not be signed off as effective."
+      },
+      "credit_build": {
+        "cpu_seconds": 5.453125,
+        "wall_seconds": 5.562200699932873
+      },
+      "birth": {
+        "cpu_seconds": 0.0625,
+        "wall_seconds": 0.05778770009055734
+      },
+      "untrained_lesion": {
+        "cpu_seconds": 0.0,
+        "wall_seconds": 0.00101200002245605
+      },
+      "training": {
+        "cpu_seconds": 21.859375,
+        "wall_seconds": 22.295089199906215
+      }
+    },
+    "fixture": {
+      "fixtures": [
+        {
+          "fixture_id": "current-correction",
+          "category": "current",
+          "prompt_bytes": 30,
+          "target_bytes": 24,
+          "answer_denominator": 25,
+          "answer_rounds": 25,
+          "events": 29,
+          "records": 2,
+          "shortcut_label": "latest_source"
+        },
+        {
+          "fixture_id": "previous-before-correction",
+          "category": "previous",
+          "prompt_bytes": 33,
+          "target_bytes": 27,
+          "answer_denominator": 28,
+          "answer_rounds": 28,
+          "events": 33,
+          "records": 2,
+          "shortcut_label": "earliest_source"
+        },
+        {
+          "fixture_id": "unknown-missing",
+          "category": "unknown",
+          "prompt_bytes": 30,
+          "target_bytes": 9,
+          "answer_denominator": 10,
+          "answer_rounds": 10,
+          "events": 14,
+          "records": 2,
+          "shortcut_label": "abstain"
+        },
+        {
+          "fixture_id": "alias-current",
+          "category": "alias",
+          "prompt_bytes": 24,
+          "target_bytes": 24,
+          "answer_denominator": 25,
+          "answer_rounds": 25,
+          "events": 28,
+          "records": 2,
+          "shortcut_label": "latest_source"
+        },
+        {
+          "fixture_id": "source-conflict",
+          "category": "conflict",
+          "prompt_bytes": 30,
+          "target_bytes": 15,
+          "answer_denominator": 16,
+          "answer_rounds": 16,
+          "events": 20,
+          "records": 2,
+          "shortcut_label": "abstain"
+        }
+      ],
+      "shortcut_probe": {
+        "as_given": {
+          "latest_source": {
+            "correct": 2,
+            "total": 5,
+            "per_fixture": {
+              "current-correction": true,
+              "previous-before-correction": false,
+              "unknown-missing": false,
+              "alias-current": true,
+              "source-conflict": false
+            }
+          },
+          "earliest_source": {
+            "correct": 1,
+            "total": 5,
+            "per_fixture": {
+              "current-correction": false,
+              "previous-before-correction": true,
+              "unknown-missing": false,
+              "alias-current": false,
+              "source-conflict": false
+            }
+          },
+          "abstain": {
+            "correct": 2,
+            "total": 5,
+            "per_fixture": {
+              "current-correction": false,
+              "previous-before-correction": false,
+              "unknown-missing": true,
+              "alias-current": false,
+              "source-conflict": true
+            }
+          }
+        },
+        "record_order_reversed": {
+          "latest_source": 1,
+          "earliest_source": 2,
+          "abstain": 2
+        }
+      },
+      "runtime_source_token_counts": {
+        "taiji/activity_learning.py": {
+          "expected_target": 0,
+          "shortcut_label": 0,
+          "category": 0,
+          "gold": 0
+        },
+        "taiji/constrained_learning.py": {
+          "expected_target": 0,
+          "shortcut_label": 0,
+          "category": 0,
+          "gold": 0
+        }
+      },
+      "sealed_read": false,
+      "corpus_split_read": []
+    },
+    "worker": {
+      "shape": "principle",
+      "bundle_bytes": 77304316,
+      "r028_bundle_bytes": 77304316,
+      "r028_spawn_parent_cpu_seconds": 0.0,
+      "bundle_face_matches_r028": true,
+      "optimizer_state_entries": 123,
+      "bundle_sha256": "2d41b6f07a2b8ffd9000abdf16e47e9826c9d1a4ba6abb8471c37033ff71dcf0",
+      "declared_update_for_bundle": {
+        "cpu_seconds": 0.359375,
+        "wall_seconds": 0.360813400009647
+      },
+      "save_subject": {
+        "cpu_seconds": 0.09375,
+        "wall_seconds": 0.1023837998509407
+      },
+      "worker_cpu_seconds": 0.8125,
+      "worker_wall_seconds": 0.9675165999215096,
+      "parent_wait_cpu_seconds": 0.0,
+      "parent_wait_wall_seconds": 2.6607323000207543,
+      "child_cpu_exceeds_parent_wait_cpu": true,
+      "h_bitwise_equal": true,
+      "probabilities_bitwise_equal": true
+    },
+    "boundary": {
+      "shape": "r027 declared small shape",
+      "worker_calls": 8,
+      "calls": [
+        {
+          "mode": "activity_round",
+          "worker_cpu_seconds": 0.015625,
+          "worker_wall_seconds": 0.012884600088000298
+        },
+        {
+          "mode": "activity_round",
+          "worker_cpu_seconds": 0.015625,
+          "worker_wall_seconds": 0.013365799793973565
+        },
+        {
+          "mode": "activity_round",
+          "worker_cpu_seconds": 0.015625,
+          "worker_wall_seconds": 0.01284529990516603
+        },
+        {
+          "mode": "update",
+          "worker_cpu_seconds": 1.25,
+          "worker_wall_seconds": 1.541421900037676
+        },
+        {
+          "mode": "activity_round",
+          "worker_cpu_seconds": 0.0,
+          "worker_wall_seconds": 0.013665799982845783
+        },
+        {
+          "mode": "activity_round",
+          "worker_cpu_seconds": 0.015625,
+          "worker_wall_seconds": 0.016461800085380673
+        },
+        {
+          "mode": "resolve",
+          "worker_cpu_seconds": 0.015625,
+          "worker_wall_seconds": 0.011934699956327677
+        },
+        {
+          "mode": "resolve",
+          "worker_cpu_seconds": 0.0,
+          "worker_wall_seconds": 0.011131999781355262
+        }
+      ],
+      "calls_missing_child_cpu": 0,
+      "child_cpu_total": 1.328125,
+      "child_wall_total": 1.6337118996307254,
+      "sequence_parent_cpu_seconds": 2.390625,
+      "sequence_wall_seconds": 16.11741630011238,
+      "note": "sequence_parent_cpu_seconds excludes child CPU; child_cpu_total is self-reported."
+    }
+  },
+  "incomplete_sections": [],
+  "cpu_seconds": 306.265625,
+  "wall_seconds": 326.83107399987057,
+  "budget": {
+    "cpu_seconds": 1800,
+    "wall_seconds": 3600
+  },
+  "checks": [
+    {
+      "id": "constraint_kkt_within_tolerance",
+      "passed": true,
+      "observed": 1.9447059974478907e-16
+    },
+    {
+      "id": "constraint_violation_within_tolerance",
+      "passed": true,
+      "observed": 0.0
+    },
+    {
+      "id": "constraint_complementarity_within_tolerance",
+      "passed": true,
+      "observed": 5.3667543605795414e-14
+    },
+    {
+      "id": "constraint_all_steps_accepted",
+      "passed": true,
+      "observed": 8
+    },
+    {
+      "id": "constraint_fit_drop_gate",
+      "passed": true,
+      "observed": 0.030781738338571785
+    },
+    {
+      "id": "constraint_retention_gate",
+      "passed": true,
+      "observed": 0.016290406106108435
+    },
+    {
+      "id": "constraint_negative_control_drift",
+      "passed": true,
+      "observed": 0.11115252242452467
+    },
+    {
+      "id": "activity_parameters_changed",
+      "passed": true,
+      "observed": [
+        true,
+        true
+      ]
+    },
+    {
+      "id": "activity_state_roundtrip_bitwise",
+      "passed": true,
+      "observed": true
+    },
+    {
+      "id": "activity_exposure_budget_respected",
+      "passed": true,
+      "observed": 256
+    },
+    {
+      "id": "activity_idle_rows_fabricate_no_microsteps",
+      "passed": true,
+      "observed": 0
+    },
+    {
+      "id": "activity_arms_share_the_same_core",
+      "passed": true,
+      "observed": [
+        "39fe89041eca2e64ecdfcfe016bb22566dc500a078fba5f39a49443ede3cabdb"
+      ]
+    },
+    {
+      "id": "activity_verdict_has_advantage",
+      "passed": true,
+      "observed": 0.01989438937000212
+    },
+    {
+      "id": "lesion_birth_neutral_bitwise",
+      "passed": true,
+      "observed": true
+    },
+    {
+      "id": "lesion_restores_parent_bitwise",
+      "passed": true,
+      "observed": true
+    },
+    {
+      "id": "lesion_preserves_trained_parent_rows",
+      "passed": true,
+      "observed": true
+    },
+    {
+      "id": "lesion_verdict_declared",
+      "passed": false,
+      "observed": "lesion_does_not_remove_benefit"
+    },
+    {
+      "id": "fixture_shortcut_ruler_bounded",
+      "passed": true,
+      "observed": {
+        "latest_source": 2,
+        "earliest_source": 1,
+        "abstain": 2
+      }
+    },
+    {
+      "id": "fixture_denominator_matches_answer_rounds",
+      "passed": true,
+      "observed": [
+        25,
+        28,
+        10,
+        25,
+        16
+      ]
+    },
+    {
+      "id": "fixture_runtime_modules_read_no_gold",
+      "passed": true,
+      "observed": {
+        "taiji/activity_learning.py": {
+          "expected_target": 0,
+          "shortcut_label": 0,
+          "category": 0,
+          "gold": 0
+        },
+        "taiji/constrained_learning.py": {
+          "expected_target": 0,
+          "shortcut_label": 0,
+          "category": 0,
+          "gold": 0
+        }
+      }
+    },
+    {
+      "id": "worker_bundle_face_matches_r028",
+      "passed": true,
+      "observed": [
+        77304316,
+        123
+      ]
+    },
+    {
+      "id": "worker_self_reports_cpu",
+      "passed": true,
+      "observed": 0.8125
+    },
+    {
+      "id": "worker_cpu_not_a_parent_copy",
+      "passed": true,
+      "observed": [
+        0.8125,
+        0.0
+      ]
+    },
+    {
+      "id": "worker_restore_bitwise",
+      "passed": true,
+      "observed": [
+        true,
+        true
+      ]
+    },
+    {
+      "id": "boundary_worker_calls_all_reported",
+      "passed": true,
+      "observed": [
+        8,
+        0
+      ]
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true,
+      "observed": [
+        306.265625,
+        326.83107399987057
+      ]
+    }
+  ],
+  "training_admitted": false,
+  "task_capability_claimed": false,
+  "default_model_replaced": false,
+  "data_splits_read": [],
+  "source_hashes": {
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/growth_credit.py": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+    "taiji/native_development.py": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+    "taiji/native_activity.py": "4ebcfbbef52ee15849df6797d1b7fd651439527c5c3e022f2556e572e175de65",
+    "taiji/state_migration.py": "c067dcd043fc189a53051eba72f0b9794ed4b2d3fc77907a89f82aa2817299c6",
+    "taiji/constrained_learning.py": "1c0f77ecf04e62b21f11802b127a52a150cbfcc9e61497c2bac3377ffbfde24e",
+    "taiji/activity_learning.py": "c77085951a234d6d47c9f4c7d9782466ed52d0d3d3f73e36678746f60d8a1e0e",
+    "taiji/native_task_fixtures.py": "2bf64643bc0e8f3980f89d53e559bede7907083eba5100808811c1a32909e8ab",
+    "scripts/training/verify_taiji_living_fragment_pricing_r028.py": "295d11ed70aeedd78f6e8380ac148f8508519da90363d07f65d07dad9478a34b",
+    "scripts/training/verify_taiji_r029_engineering_gaps.py": "f88bf7f2493452df31c777f07c2d00833a44d979bbefe69377083904c85cb654",
+    "tests/taiji_native/test_r029_engineering_gaps.py": "75377161786697b95931b51127c3b9a55622701a1cfb0268fb4e246c6ec40e2b",
+    "tests/taiji_native/test_subject_gates_r027.py": "170f0e4096d37e45b8b7eadf88c5e7bd19663173e87c356266e6a70ba10c20fa"
+  },
+  "limits": "Engineering gaps only. Passing means the five declared mechanisms run and satisfy their declared gates on synthetic Chinese fixtures; it does not establish task capability, growth benefit, autonomy, retention of real skills or training admission. Two readings are disclosed rather than smoothed over: the activity arm's advantage can be pure compute-cost avoidance when the trained policy only selects idle activities, and the lesion arm can show that newborn units carry no measurable share of the holdout benefit. See sections.activity.advantage_disclosure and sections.lesion.contribution_disclosure for the measured values."
+}

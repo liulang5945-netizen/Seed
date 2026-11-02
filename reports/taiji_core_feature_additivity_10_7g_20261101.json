@@ -1,0 +1,43 @@
+{
+  "schema": "taiji-feature-additivity-10-7g-v1",
+  "step": "10.7g",
+  "date": "2026-11-01",
+  "status": "features_additive",
+  "declared": {
+    "design": "2 objects x 3 places",
+    "null_share": 0.6,
+    "additive_share": 0.8,
+    "entangled_share": 0.45,
+    "training": "none"
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "stats": {
+    "ss_total": 5.481151589826972,
+    "ss_main": 5.480451783456046,
+    "ss_residual": 0.0006998063709258251,
+    "additive_share": 0.9998723249376601,
+    "object_effect_norms": {
+      "蓝色杯子": 0.7668429286131264,
+      "红色印章": 0.7668429286131264
+    },
+    "place_effect_norms": {
+      "木桌": 0.621878925640209,
+      "窗台": 0.516658510910118,
+      "左盒": 0.5678135655167746
+    }
+  },
+  "verdict": "features_additive",
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Feature geometry only: it decomposes the encoder's action vectors and says nothing about any task reading. Additive features would make a factorised readout plausible; entangled ones would not. No parameter changes.",
+  "cpu_seconds": 34.640625,
+  "wall_seconds": 35.40664940001443,
+  "budget": {
+    "cpu_seconds": 120,
+    "wall_seconds": 240
+  },
+  "source_hashes": {
+    "scripts/training/probe_feature_additivity_10_7g.py": "472ece1ed04acbed6e925a03138317641e3d8ff1986643f1ca0855f7a4897864"
+  }
+}

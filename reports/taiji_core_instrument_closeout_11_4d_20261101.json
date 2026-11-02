@@ -1,0 +1,39 @@
+{
+  "schema": "taiji-instrument-closeout-11-4d-v1",
+  "step": "11.4d",
+  "date": "2026-11-01",
+  "status": "instrument_closed_pending_realism_and_capability",
+  "measured_facets": 9,
+  "measured": [
+    "来源/manifest",
+    "缺权重/未发布",
+    "原始生成",
+    "重复运行",
+    "中断恢复",
+    "峰值内存",
+    "p50/p95",
+    "代表机制F",
+    "设备H"
+  ],
+  "unmeasured": [
+    "真实性A"
+  ],
+  "mechanism_status": "capability_line_closed_negative",
+  "candidate_usable": false,
+  "usable_reason": "representative mechanism F is negative (10.20) and realism A is unmeasured",
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Closeout of the instrument work only: nine of ten facets have a card, realism A does not, and F is negative. The candidate is therefore not usable, and 11 stays not admitted; nothing here changes the capability line.",
+  "cpu_seconds": 0.0,
+  "wall_seconds": 0.00023250002413988113,
+  "budget": {
+    "cpu_seconds": 60,
+    "wall_seconds": 120
+  },
+  "source_hashes": {
+    "reports/taiji_core_instrument_inventory_11_4_v3_20261101.json": "a5518fc22ce35c4852e77798dd2014e41a42333feec55a89087d098e33470184",
+    "reports/taiji_core_capability_closeout_10_20_20261101.json": "ded94121b1aacb1909d706c9194ac2cbce831d0dbc15b961b406097714e14418",
+    "scripts/training/verify_taiji_instrument_closeout_11_4d.py": "5f9e0a0b6f8e011828203420a5c70c04cfbd34520876ba05b03df6ce39235f41"
+  }
+}

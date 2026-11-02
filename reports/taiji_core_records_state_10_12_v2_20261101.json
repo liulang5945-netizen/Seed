@@ -1,0 +1,74 @@
+{
+  "schema": "taiji-records-state-10-12-v1",
+  "step": "10.12",
+  "date": "2026-11-01",
+  "status": "records_reach_state",
+  "declared": {
+    "tasks": 6,
+    "comparison": "goal prompt only; real vs permuted glossary in records",
+    "relative_floor": 1e-09,
+    "training": "none"
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "mapping_differences": 6,
+  "records_change_state": 6,
+  "median_relative_distance": 0.0029509431703401874,
+  "rows": [
+    {
+      "goal": "让圆口的器皿到左边的匣子。",
+      "state_differs_when_mapping_changes": true,
+      "records_change_state": true,
+      "relative_distance_real_vs_wrong": 0.0029696929688783377,
+      "relative_distance_real_vs_plain": 1.0637018056791623
+    },
+    {
+      "goal": "让带纹路的方块到靠窗的台面。",
+      "state_differs_when_mapping_changes": true,
+      "records_change_state": true,
+      "relative_distance_real_vs_wrong": 0.002865406659091723,
+      "relative_distance_real_vs_plain": 1.0333618837210463
+    },
+    {
+      "goal": "让圆口的器皿到左边的匣子。",
+      "state_differs_when_mapping_changes": true,
+      "records_change_state": true,
+      "relative_distance_real_vs_wrong": 0.0029696929688783377,
+      "relative_distance_real_vs_plain": 1.0637018056791623
+    },
+    {
+      "goal": "让带纹路的方块到四方木台。",
+      "state_differs_when_mapping_changes": true,
+      "records_change_state": true,
+      "relative_distance_real_vs_wrong": 0.0029509431703401874,
+      "relative_distance_real_vs_plain": 1.0779827579055847
+    },
+    {
+      "goal": "让圆口的器皿到靠窗的台面。",
+      "state_differs_when_mapping_changes": true,
+      "records_change_state": true,
+      "relative_distance_real_vs_wrong": 0.0029498957205974044,
+      "relative_distance_real_vs_plain": 1.0640175398759848
+    },
+    {
+      "goal": "让带纹路的方块到四方木台。",
+      "state_differs_when_mapping_changes": true,
+      "records_change_state": true,
+      "relative_distance_real_vs_wrong": 0.0029509431703401874,
+      "relative_distance_real_vs_plain": 1.0779827579055847
+    }
+  ],
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Necessary-condition check only: if the state moves when the mapping changes, a head on that state could in principle read it. It does not show that any head does, and nothing is trained.",
+  "cpu_seconds": 33.015625,
+  "wall_seconds": 33.9784068998415,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "taiji/native_goal_glossary.py": "b40ffa22dbd5adae1285e425047f1c4113d083115bada3e7b0dd07f944a62f03",
+    "scripts/training/verify_taiji_records_state_10_12.py": "9aa0cfa3717dc2d0f993b0c83c857198dc4cfcb2bdbc29c925858e2dcb073ef8"
+  }
+}

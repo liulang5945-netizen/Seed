@@ -1,0 +1,156 @@
+{
+  "schema": "taiji-glossary-records-10-11-v1",
+  "step": "10.11",
+  "date": "2026-11-01",
+  "status": "records_channel_live",
+  "declared": {
+    "goals": 6,
+    "records": 5,
+    "copy_allowed": 2,
+    "prompt": "goal only, entity-free",
+    "records_channel": "CareerJournal.records via dataclasses.replace",
+    "training": "none"
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "copy_top1": 0,
+  "records_comparisons": 12,
+  "records_differences": 12,
+  "pairwise_hits_with_records": 6,
+  "rows": [
+    {
+      "goal": "让圆口的器皿到左边的匣子。",
+      "correct": [
+        "蓝色杯子",
+        "左盒"
+      ],
+      "other": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "hit_with_records": true,
+      "nll_with": [
+        3.038042545055608,
+        3.0670695680345132
+      ],
+      "nll_without": [
+        5.470782141776973,
+        5.457527461042857
+      ]
+    },
+    {
+      "goal": "让带纹路的方块到靠窗的台面。",
+      "correct": [
+        "红色印章",
+        "窗台"
+      ],
+      "other": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "hit_with_records": true,
+      "nll_with": [
+        3.022136112053121,
+        3.0662560164950654
+      ],
+      "nll_without": [
+        5.548166996994756,
+        5.45866282946716
+      ]
+    },
+    {
+      "goal": "让圆口的器皿到左边的匣子。",
+      "correct": [
+        "蓝色杯子",
+        "左盒"
+      ],
+      "other": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "hit_with_records": true,
+      "nll_with": [
+        3.038042545055608,
+        3.0670695680345132
+      ],
+      "nll_without": [
+        5.470782141776973,
+        5.457527461042857
+      ]
+    },
+    {
+      "goal": "让带纹路的方块到四方木台。",
+      "correct": [
+        "红色印章",
+        "木桌"
+      ],
+      "other": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "hit_with_records": true,
+      "nll_with": [
+        3.0393444873545823,
+        3.067167247279353
+      ],
+      "nll_without": [
+        5.522640386983424,
+        5.458031349661873
+      ]
+    },
+    {
+      "goal": "让圆口的器皿到靠窗的台面。",
+      "correct": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "other": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "hit_with_records": true,
+      "nll_with": [
+        3.0504892704238884,
+        3.066422346314332
+      ],
+      "nll_without": [
+        5.483183384408373,
+        5.458123297197993
+      ]
+    },
+    {
+      "goal": "让带纹路的方块到四方木台。",
+      "correct": [
+        "红色印章",
+        "木桌"
+      ],
+      "other": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "hit_with_records": true,
+      "nll_with": [
+        3.0393444873545823,
+        3.067167247279353
+      ],
+      "nll_without": [
+        5.522640386983424,
+        5.458031349661873
+      ]
+    }
+  ],
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Channel check only: it proves the glossary reaches the subject through records and that the prompt alone is copy-proof. The pairwise hits are a floor reading, not a capability: nothing is trained and no parameter moves.",
+  "cpu_seconds": 490.84375,
+  "wall_seconds": 42.73831859999336,
+  "budget": {
+    "cpu_seconds": 600,
+    "wall_seconds": 1200
+  },
+  "source_hashes": {
+    "taiji/native_goal_glossary.py": "b40ffa22dbd5adae1285e425047f1c4113d083115bada3e7b0dd07f944a62f03",
+    "taiji/native_goal_attributes.py": "f33679904f61b0bea82c968713e8821104e53604bd3b7dcc7798d35b4ec6bf7e",
+    "scripts/training/verify_taiji_glossary_records_10_11.py": "66a0566cfba17c56b02f854659694407b9b8a0dcf4f8440f7f8e11dd7810ba19"
+  }
+}

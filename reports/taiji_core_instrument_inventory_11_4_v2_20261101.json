@@ -1,0 +1,92 @@
+{
+  "schema": "taiji-instrument-inventory-11-4-v1",
+  "step": "11.4",
+  "date": "2026-11-01",
+  "status": "instrument_facets_inventoried",
+  "facets": [
+    {
+      "facet": "来源/manifest",
+      "state": "measured",
+      "source": "11.1a:modules=6"
+    },
+    {
+      "facet": "缺权重/未发布",
+      "state": "measured",
+      "source": "11.1a:weights 未发布（manifest 只绑摘要与来源）"
+    },
+    {
+      "facet": "原始生成",
+      "state": "measured",
+      "source": "11.3b:rows=7 原始 top/熵"
+    },
+    {
+      "facet": "重复运行",
+      "state": "measured",
+      "source": "11.7:deterministic=True; 11.2a:two_sessions=True"
+    },
+    {
+      "facet": "中断恢复",
+      "state": "partial",
+      "source": "11.2b:snapshot=True（仅快照往返，未做进程 kill）"
+    },
+    {
+      "facet": "峰值内存",
+      "state": "measured",
+      "source": "11.7:start/after_build/after_calls = 216961024/1483685888/1483685888"
+    },
+    {
+      "facet": "p50/p95",
+      "state": "measured",
+      "source": "11.7:p50=0.12/p95=0.1252"
+    },
+    {
+      "facet": "真实性A",
+      "state": "unmeasured",
+      "source": "未做真实语料/真实入口的真实性读数"
+    },
+    {
+      "facet": "代表机制F",
+      "state": "measured",
+      "source": "10.20:capability_line_closed_negative（F 的代表能力未成立）"
+    },
+    {
+      "facet": "设备H",
+      "state": "measured",
+      "source": "11.4b:cpu=24 logical/12 torch threads, cuda=False, ram_kib=50331648"
+    }
+  ],
+  "measured": [
+    "来源/manifest",
+    "缺权重/未发布",
+    "原始生成",
+    "重复运行",
+    "峰值内存",
+    "p50/p95",
+    "代表机制F",
+    "设备H"
+  ],
+  "partial_or_unmeasured": [
+    "中断恢复",
+    "真实性A"
+  ],
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Inventory only: it says which instrument facets have a card behind them and which do not. A measured facet is not a capability reading, and the two unmeasured ones stay unmeasured until someone records them.",
+  "cpu_seconds": 0.0,
+  "wall_seconds": 0.0009666001424193382,
+  "budget": {
+    "cpu_seconds": 60,
+    "wall_seconds": 120
+  },
+  "source_hashes": {
+    "reports/taiji_core_candidate_manifest_11_1_20261101.json": "f7eb7e85ee90e092100fe699516dc3eea36375ee80794144186da6fecb3f4f3f",
+    "reports/taiji_core_task_entry_11_2_20261101.json": "9f09da1014ff135e27cc1825e4f3d0b3b8db670efded05e3e94b8fe2ffc4dc59",
+    "reports/taiji_core_task_entry_roundtrip_11_2b_20261101.json": "1290d195bfddf3e869251a8b7f4afd9347d3557ede40c3eb3ff06a8e208927eb",
+    "reports/taiji_core_task_suite_11_3_20261101.json": "01340e818153278acc992cc7910a6d696da12d8453e84087ec224c7608745280",
+    "reports/taiji_core_abstain_11_3b_20261101.json": "894684684237fb8d2f3817fe82e7d2c9693803335453303fb05b45a866e58283",
+    "reports/taiji_core_device_profile_11_4b_20261101.json": "0d1c41222c07f8cb3aee6f3f1322a85a20cb8e75a0c3911a7cddabe1d981cccd",
+    "reports/taiji_core_instrument_11_7_v2_20261101.json": "fc9f381559a7f3079dfd5d6c9241ad4e6c986bfabc397639f5c16d35c269d4fb",
+    "reports/taiji_core_capability_closeout_10_20_20261101.json": "ded94121b1aacb1909d706c9194ac2cbce831d0dbc15b961b406097714e14418"
+  }
+}

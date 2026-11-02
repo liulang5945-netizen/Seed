@@ -1,0 +1,82 @@
+{
+  "schema": "taiji-margin-probe-10-7d-v1",
+  "step": "10.7d",
+  "date": "2026-11-01",
+  "status": "margin_isolates_differential",
+  "declared": {
+    "samples": 6,
+    "plain_loss": "NLL(yes|correct) + NLL(no|other) (10.7's loss)",
+    "margin_loss": "softplus(-(verdict_other - verdict_correct)), verdict = NLL(no)-NLL(yes)",
+    "structure_floor": 0.5,
+    "collinear_ceiling": 0.9,
+    "coherence_floor": 0.5,
+    "plain_cross_check": "plain.explained_fraction should match 10.7c's 0.645858"
+  },
+  "rebuilt_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "verdict": "margin_isolates_differential",
+  "stats": {
+    "margins": [
+      0.000493915500735298,
+      -0.0004892267018892227,
+      0.0004803856866617551,
+      -0.000475810276477695,
+      0.000494325324539524,
+      -0.0004896167291770226
+    ],
+    "plain": {
+      "norms": [
+        5.459567559005685,
+        5.459610290530074,
+        5.459422446528686,
+        5.459455404830576,
+        5.459565491333176,
+        5.459609667288483
+      ],
+      "mean_norm": 5.459490610810865,
+      "pairwise_cosine_min": 0.9999620432166656,
+      "pairwise_cosine_median": 0.9999773566488243,
+      "pairwise_cosine_max": 0.9999998008252672,
+      "explained_fraction": 0.6458583648042849,
+      "within_group_cosine": {
+        "蓝色杯子": 0.5225499745121255,
+        "红色印章": 0.5086944247737373
+      }
+    },
+    "margin": {
+      "norms": [
+        0.012064426584907313,
+        0.012051619530895487,
+        0.012067823089214611,
+        0.012056355608602423,
+        0.012064119522756326,
+        0.01205104373445885
+      ],
+      "mean_norm": 6.818946123519841e-05,
+      "pairwise_cosine_min": -0.9999391726659131,
+      "pairwise_cosine_median": -0.9995141591310238,
+      "pairwise_cosine_max": 0.9999996029271414,
+      "explained_fraction": 0.9998126900173143,
+      "within_group_cosine": {
+        "蓝色杯子": 0.9997187097837146,
+        "红色印章": 0.9997195141605358
+      }
+    },
+    "cos_plain_margin": -0.004650531019308816
+  },
+  "failure": null,
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Diagnostic only: six samples, one deterministic subject, both gradients read and discarded. A clean margin gradient says the loss has something to aim at, not that training it moves held-out selection; that would need its own authorisation. No parameter was updated and no capability is claimed.",
+  "cpu_seconds": 48.3125,
+  "wall_seconds": 49.43675530003384,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "taiji/goal_conditioned_training.py": "2e0b3e643fc9b7a6ffb8637ab0b9a59d109f93630d4ddd22587b94eca022fc27",
+    "taiji/action_verdict_scorer.py": "c52f7ed99dbd9a3ba1607d1f9cc19124da03f6c47a36aa1bb8578f60cdac216f",
+    "scripts/training/diagnose_margin_objective_10_7d.py": "f7df892d25ee3a681c1429d5423a044f50cedb4b9e813dd585bc6e3163d957b5"
+  }
+}

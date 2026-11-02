@@ -1,0 +1,40 @@
+{
+  "schema": "taiji-confidence-separable-11-3c-v1",
+  "step": "11.3c",
+  "date": "2026-11-01",
+  "status": "confidence_not_separable",
+  "source": "reports/taiji_core_abstain_11_3b_20261101.json",
+  "scorable_range_top_p": [
+    0.00900517279094652,
+    0.009137179220458473
+  ],
+  "unscorable_range_top_p": [
+    0.009091660046158257,
+    0.009106227564105764
+  ],
+  "scorable_range_entropy": [
+    5.496026390792192,
+    5.496144829037199
+  ],
+  "unscorable_range_entropy": [
+    5.495988138086187,
+    5.496221260469711
+  ],
+  "uniform_entropy_reference": 5.549,
+  "p_separable": false,
+  "entropy_separable": false,
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Separability of a signal, checked on seven prompts: ranges overlap, so no threshold can split the groups. It does not show the model never has useful confidence elsewhere, only that this channel cannot be calibrated here.",
+  "cpu_seconds": 0.0,
+  "wall_seconds": 0.00015690014697611332,
+  "budget": {
+    "cpu_seconds": 60,
+    "wall_seconds": 120
+  },
+  "source_hashes": {
+    "reports/taiji_core_abstain_11_3b_20261101.json": "894684684237fb8d2f3817fe82e7d2c9693803335453303fb05b45a866e58283",
+    "scripts/training/verify_taiji_confidence_separable_11_3c.py": "2f376baf143387fe661d85233757b2ac507ebf402b67fc369a8ad3b2d32b438d"
+  }
+}

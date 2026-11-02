@@ -1,0 +1,172 @@
+{
+  "schema": "taiji-10-closeout-v1",
+  "step": "10",
+  "date": "2026-11-01",
+  "status": "closeout_10_evidence_complete",
+  "stage_exits": {
+    "10.4": "model_below_random",
+    "10.5": "contrast_below_floor",
+    "10.6": "action_gap_below_floor",
+    "10.7": "training_below_chance_plus"
+  },
+  "p2_satisfied": false,
+  "step11_status": "step11_not_admitted",
+  "stage_close_decision": "owner_pending",
+  "mechanism": "untrained FTFTFT / lr=1e-05 FTFTFT / lr=0.0001 TFTFTF",
+  "identity": {
+    "closeout_card": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+    "probes": {
+      "10.4": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+      "10.5": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+      "10.6": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+      "10.7": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3"
+    }
+  },
+  "checks": [
+    {
+      "id": "identity",
+      "passed": true,
+      "observed": {
+        "closeout_card": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+        "probes": {
+          "10.4": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+          "10.5": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+          "10.6": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+          "10.7": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3"
+        }
+      }
+    },
+    {
+      "id": "exits",
+      "passed": true,
+      "observed": {
+        "10.4": "model_below_random",
+        "10.5": "contrast_below_floor",
+        "10.6": "action_gap_below_floor",
+        "10.7": "training_below_chance_plus"
+      }
+    },
+    {
+      "id": "capability",
+      "passed": true,
+      "observed": {
+        "10.4": {
+          "capability_passed": false,
+          "training_admitted": false
+        },
+        "10.5": {
+          "capability_claimed": false,
+          "training_admitted": false
+        },
+        "10.6": {
+          "capability_claimed": false,
+          "training_admitted": false
+        },
+        "10.7": {
+          "capability_claimed": false,
+          "training_admitted": false
+        }
+      }
+    },
+    {
+      "id": "mechanism",
+      "passed": true,
+      "observed": {
+        "untrained": {
+          "sequence": "FTFTFT",
+          "hits": 3
+        },
+        "arms": [
+          {
+            "lr": 1e-05,
+            "sequence": "FTFTFT",
+            "hits": 3
+          },
+          {
+            "lr": 0.0001,
+            "sequence": "TFTFTF",
+            "hits": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "retention",
+      "passed": true,
+      "observed": {
+        "lr_1e-5": 0.0026325283419996737,
+        "lr_1e-4": 0.0321778354984108,
+        "gate": 0.03
+      }
+    },
+    {
+      "id": "loss",
+      "passed": true,
+      "observed": {
+        "first": 11.206858000592518,
+        "last": 7.099676528767446,
+        "ratio": 0.633511777198576,
+        "floor": 0.7
+      }
+    },
+    {
+      "id": "weights",
+      "passed": true,
+      "observed": {
+        "weights_published": false,
+        "default_model_replaced": false
+      }
+    },
+    {
+      "id": "admission",
+      "passed": true,
+      "observed": {
+        "status": "step11_not_admitted",
+        "training_admitted": false,
+        "l3_scope_started": false,
+        "P2_passed": false
+      }
+    },
+    {
+      "id": "budget",
+      "passed": true,
+      "observed": {
+        "10.4": {
+          "cpu_seconds": 48.78125,
+          "cap": 600
+        },
+        "10.5": {
+          "cpu_seconds": 37.609375,
+          "cap": 600
+        },
+        "10.6": {
+          "cpu_seconds": 36.234375,
+          "cap": 600
+        },
+        "10.7": {
+          "cpu_seconds": 392.625,
+          "cap": 600
+        }
+      }
+    }
+  ],
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Evidence card only. A pass means the four pre-declared exits are all negative, the readings recompute and no capability is claimed. It does not show that the subject can select, plan or bind; it is not task capability; it does not approve closing step 10 (that decision is the owner's) and it authorises no training.",
+  "cpu_seconds": 0.0,
+  "wall_seconds": 0.0009696001652628183,
+  "budget": {
+    "cpu_seconds": 120,
+    "wall_seconds": 240
+  },
+  "source_hashes": {
+    "reports/taiji_core_subject_selection_10_4_20261101.json": "5de1048fa64d543e885e2a2032d7aabf9eb52acd7fb2fcc4d0cea635688d1dbe",
+    "reports/taiji_core_goal_conditioned_10_5_20261101.json": "100854acba74a56b9e3452c454681eaa7a336236c83dae5b4e83ffcdcb45a449",
+    "reports/taiji_core_action_verdict_10_6_20261101.json": "395a4db2b4b46a782a00fa987439a9786fdcf33a5675c09270100f014c04f514",
+    "reports/taiji_core_goal_training_10_7_20261101.json": "e4b941a24d4952d1f7e5f1a1c73e686cd53402d19ba707c1f1f76f33a849698e",
+    "reports/taiji_core_l3_admission_11_20261101.json": "af20c61b652cf8b58333e860b27003b728a99f86185acd0fe85c919bbc2fcb3f",
+    "reports/taiji_core_09_closeout_20261101.json": "f80097f1fdacac36354e7c653230a598d60bbe22d9cab7bcc503aa18f9630738",
+    "scripts/training/verify_taiji_closeout_10.py": "918d87ac99e4207ac6059166776f4291ad710508962e630bbdfd4dc27e623d69"
+  }
+}

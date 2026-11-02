@@ -1,0 +1,154 @@
+{
+  "schema": "taiji-goal-conditioned-10-5-v1",
+  "step": "10.5",
+  "date": "2026-11-01",
+  "status": "contrast_below_floor",
+  "declared": {
+    "goal_a": "把蓝色杯子放到窗台",
+    "goal_b": "把红色印章放到窗台",
+    "gap_floor": 0.001,
+    "initial": [
+      [
+        "红色印章",
+        "左盒"
+      ],
+      [
+        "蓝色杯子",
+        "木桌"
+      ]
+    ],
+    "legal_moves": [
+      [
+        "蓝色杯子",
+        "窗台"
+      ],
+      [
+        "红色印章",
+        "窗台"
+      ]
+    ],
+    "direction_judged": false
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "contrast": [
+    {
+      "move": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "sentence": "把蓝色杯子放到窗台",
+      "nll_matched": 5.483210245375891,
+      "nll_mismatched": 5.483782790539779,
+      "contrast": 0.0005725451638882717
+    },
+    {
+      "move": [
+        "红色印章",
+        "窗台"
+      ],
+      "sentence": "把红色印章放到窗台",
+      "nll_matched": 5.548005685895825,
+      "nll_mismatched": 5.548658412307218,
+      "contrast": 0.0006527264113929121
+    }
+  ],
+  "null_control": [
+    {
+      "move": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "sentence": "把蓝色杯子放到窗台",
+      "nll_matched": 5.483210245375891,
+      "nll_mismatched": 5.483210245375891,
+      "contrast": 0.0
+    },
+    {
+      "move": [
+        "红色印章",
+        "窗台"
+      ],
+      "sentence": "把红色印章放到窗台",
+      "nll_matched": 5.548005685895825,
+      "nll_mismatched": 5.548005685895825,
+      "contrast": 0.0
+    }
+  ],
+  "gap": {
+    "correct": 0.0005725451638882717,
+    "other": 0.0006527264113929121,
+    "gap": 8.01812475046404e-05,
+    "correct_higher": false
+  },
+  "null_gap": {
+    "correct": 0.0,
+    "other": 0.0,
+    "gap": 0.0,
+    "correct_higher": false
+  },
+  "selection_under_goal_a": {
+    "action": [
+      "红色印章",
+      "窗台"
+    ],
+    "contrast": 0.0006527264113929121
+  },
+  "model_involved": true,
+  "capability_claimed": false,
+  "checks": [
+    {
+      "id": "candidate_identity_mismatch",
+      "passed": true,
+      "observed": [
+        "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+        "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3"
+      ]
+    },
+    {
+      "id": "nondeterministic_selection",
+      "passed": true,
+      "observed": true
+    },
+    {
+      "id": "nonzero_null",
+      "passed": true,
+      "observed": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "id": "contrast_below_floor",
+      "passed": false,
+      "observed": {
+        "correct": 0.0005725451638882717,
+        "other": 0.0006527264113929121,
+        "gap": 8.01812475046404e-05,
+        "correct_higher": false
+      }
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true,
+      "observed": [
+        37.609375,
+        38.47205849993043
+      ]
+    }
+  ],
+  "training_admitted": false,
+  "limits": "Interface probe only. With two candidate actions the winning action is decided by the sign, so only the contrast gap is judged. Passing does not show correct selection, task capability, or that P2 is satisfied.",
+  "cpu_seconds": 37.609375,
+  "wall_seconds": 38.47205849993043,
+  "budget": {
+    "cpu_seconds": 600,
+    "wall_seconds": 1200
+  },
+  "source_hashes": {
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/native_goal_world.py": "5adf9fd571cb1bb62e4dcea7d9a222eaf5ab7b193c10a0750a3f6f313f283b78",
+    "taiji/subject_action_scorer.py": "08ccdb1a4b927b7237581fb585a20423792d9e64d1f7e6d00ada1e710ff61aa0",
+    "taiji/goal_conditioned_scorer.py": "e6864c8fe9e2da749608b8b989514386c0819a31d4009a5847583eb7312f2698",
+    "scripts/training/verify_taiji_goal_conditioned_10_5.py": "42482f38b314ade6060c7c94233df13db7e32bb429b41fdf2ece902788776e62"
+  }
+}

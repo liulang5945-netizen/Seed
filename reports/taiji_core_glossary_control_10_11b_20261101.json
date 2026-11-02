@@ -1,0 +1,212 @@
+{
+  "schema": "taiji-glossary-control-10-11b-v1",
+  "step": "10.11b",
+  "date": "2026-11-01",
+  "status": "control_also_wins",
+  "declared": {
+    "goals": 6,
+    "arms": [
+      "real records",
+      "reversed records"
+    ],
+    "decision": "control_also_wins if reversed >=5; mapping_used if real - reversed >=3",
+    "training": "none"
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "arms": {
+    "real": {
+      "hits": 6,
+      "total": 6,
+      "rows": [
+        {
+          "goal": "让圆口的器皿到左边的匣子。",
+          "correct": [
+            "蓝色杯子",
+            "左盒"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": true,
+          "nll_correct": 3.038042545055608,
+          "nll_other": 3.0670695680345132
+        },
+        {
+          "goal": "让带纹路的方块到靠窗的台面。",
+          "correct": [
+            "红色印章",
+            "窗台"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": true,
+          "nll_correct": 3.022136112053121,
+          "nll_other": 3.0662560164950654
+        },
+        {
+          "goal": "让圆口的器皿到左边的匣子。",
+          "correct": [
+            "蓝色杯子",
+            "左盒"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": true,
+          "nll_correct": 3.038042545055608,
+          "nll_other": 3.0670695680345132
+        },
+        {
+          "goal": "让带纹路的方块到四方木台。",
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": true,
+          "nll_correct": 3.0393444873545823,
+          "nll_other": 3.067167247279353
+        },
+        {
+          "goal": "让圆口的器皿到靠窗的台面。",
+          "correct": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": true,
+          "nll_correct": 3.0504892704238884,
+          "nll_other": 3.066422346314332
+        },
+        {
+          "goal": "让带纹路的方块到四方木台。",
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": true,
+          "nll_correct": 3.0393444873545823,
+          "nll_other": 3.067167247279353
+        }
+      ]
+    },
+    "reversed": {
+      "hits": 6,
+      "total": 6,
+      "rows": [
+        {
+          "goal": "让圆口的器皿到左边的匣子。",
+          "correct": [
+            "蓝色杯子",
+            "左盒"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": true,
+          "nll_correct": 3.0362399917159992,
+          "nll_other": 3.0736760233204707
+        },
+        {
+          "goal": "让带纹路的方块到靠窗的台面。",
+          "correct": [
+            "红色印章",
+            "窗台"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": true,
+          "nll_correct": 3.0242878563899653,
+          "nll_other": 3.0727350454113496
+        },
+        {
+          "goal": "让圆口的器皿到左边的匣子。",
+          "correct": [
+            "蓝色杯子",
+            "左盒"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": true,
+          "nll_correct": 3.0362399917159992,
+          "nll_other": 3.0736760233204707
+        },
+        {
+          "goal": "让带纹路的方块到四方木台。",
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": true,
+          "nll_correct": 3.0556130651735076,
+          "nll_other": 3.0738423333258007
+        },
+        {
+          "goal": "让圆口的器皿到靠窗的台面。",
+          "correct": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": true,
+          "nll_correct": 3.0427844602411533,
+          "nll_other": 3.0729541159959948
+        },
+        {
+          "goal": "让带纹路的方块到四方木台。",
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "other": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": true,
+          "nll_correct": 3.0556130651735076,
+          "nll_other": 3.0738423333258007
+        }
+      ]
+    }
+  },
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Null control only: it decides whether 10.11's 6/6 reflects the mapping or something generic about records. Nothing is trained.",
+  "cpu_seconds": 509.03125,
+  "wall_seconds": 44.007655899971724,
+  "budget": {
+    "cpu_seconds": 600,
+    "wall_seconds": 1200
+  },
+  "source_hashes": {
+    "taiji/native_goal_glossary.py": "b40ffa22dbd5adae1285e425047f1c4113d083115bada3e7b0dd07f944a62f03",
+    "scripts/training/probe_glossary_control_10_11b.py": "ce27bb6e604b3a0053a6988515b62e2d938b1ddf27331be36d6f9d8a81280876"
+  }
+}

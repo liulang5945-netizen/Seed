@@ -1,0 +1,185 @@
+{
+  "schema": "taiji-l3-admission-11-v1",
+  "step": "11",
+  "date": "2026-11-01",
+  "status": "step11_not_admitted",
+  "preconditions": [
+    {
+      "name": "P1_l2_holds",
+      "passed": false,
+      "evidence": "reports/taiji_native_core_r5c_evaluation_20261031.json:status=FAIL_BEHAVIOR"
+    },
+    {
+      "name": "P2_one_capability_by_the_model",
+      "passed": false,
+      "evidence": {
+        "candidates": [
+          {
+            "report": "reports/taiji_core_goal_world_10_1_20261101.json",
+            "status": "passed_10_1_environment_only",
+            "model_involved": false
+          },
+          {
+            "report": "reports/taiji_core_goal_world_10_1b_20261101.json",
+            "status": "passed_10_1b_environment_deepened",
+            "model_involved": false
+          },
+          {
+            "report": "reports/taiji_core_goal_binding_10_2_20261101.json",
+            "status": "passed_10_2_binding_contract_only",
+            "model_involved": false
+          },
+          {
+            "report": "reports/taiji_core_goal_planner_10_3_20261101.json",
+            "status": "planner_no_advantage",
+            "model_involved": false
+          },
+          {
+            "report": "reports/taiji_core_goal_planner_10_3b_20261101.json",
+            "status": "passed_10_3_prediction_contract_only",
+            "model_involved": false
+          },
+          {
+            "report": "reports/taiji_core_subject_selection_10_4_20261101.json",
+            "status": "model_below_random",
+            "model_involved": true
+          },
+          {
+            "report": "reports/taiji_core_goal_conditioned_10_5_20261101.json",
+            "status": "contrast_below_floor",
+            "model_involved": true
+          },
+          {
+            "report": "reports/taiji_core_action_verdict_10_6_20261101.json",
+            "status": "action_gap_below_floor",
+            "model_involved": true
+          },
+          {
+            "report": "reports/taiji_core_goal_training_10_7_20261101.json",
+            "status": "training_below_chance_plus",
+            "model_involved": true
+          },
+          {
+            "report": "reports/taiji_core_10_21_4_compare_20261101.json",
+            "status": "reader_selection_absent",
+            "model_involved": true
+          }
+        ],
+        "passing": 0,
+        "note": "10.21.4 added in v4: 2 seeds x 2 arms x 300 steps, four-cell top-1 0.0500-0.0625 vs chance 0.05, gain over S -0.0125/+0.0063, bootstrap lower bound non-positive; reader source top-1 0.0969-0.1187 vs chance 0.10."
+      }
+    },
+    {
+      "name": "P3_safety_recovery_performance",
+      "passed": true,
+      "evidence": {
+        "recovery": {
+          "passed": true,
+          "source": "reports/taiji_core_09_closeout_20261101.json:restore/inheritance"
+        },
+        "performance": {
+          "passed": true,
+          "source": "reports/taiji_core_r028_life_fragment_pricing_20261101.json:status"
+        },
+        "safety": {
+          "passed": true,
+          "sources": [
+            "reports/taiji_core_instrument_11_7_v2_20261101.json"
+          ],
+          "scope": [
+            "static_declared_path",
+            "runtime_hooked_open_socket_subprocess"
+          ]
+        }
+      }
+    },
+    {
+      "name": "P4_same_candidate_identity",
+      "passed": false,
+      "evidence": {
+        "closeout_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+        "capability_reports": []
+      }
+    }
+  ],
+  "blockers": [
+    "P1_l2_holds",
+    "P2_one_capability_by_the_model",
+    "P4_same_candidate_identity"
+  ],
+  "candidate_reports": [
+    {
+      "report": "reports/taiji_core_goal_world_10_1_20261101.json",
+      "status": "passed_10_1_environment_only",
+      "model_involved": false
+    },
+    {
+      "report": "reports/taiji_core_goal_world_10_1b_20261101.json",
+      "status": "passed_10_1b_environment_deepened",
+      "model_involved": false
+    },
+    {
+      "report": "reports/taiji_core_goal_binding_10_2_20261101.json",
+      "status": "passed_10_2_binding_contract_only",
+      "model_involved": false
+    },
+    {
+      "report": "reports/taiji_core_goal_planner_10_3_20261101.json",
+      "status": "planner_no_advantage",
+      "model_involved": false
+    },
+    {
+      "report": "reports/taiji_core_goal_planner_10_3b_20261101.json",
+      "status": "passed_10_3_prediction_contract_only",
+      "model_involved": false
+    },
+    {
+      "report": "reports/taiji_core_subject_selection_10_4_20261101.json",
+      "status": "model_below_random",
+      "model_involved": true
+    },
+    {
+      "report": "reports/taiji_core_goal_conditioned_10_5_20261101.json",
+      "status": "contrast_below_floor",
+      "model_involved": true
+    },
+    {
+      "report": "reports/taiji_core_action_verdict_10_6_20261101.json",
+      "status": "action_gap_below_floor",
+      "model_involved": true
+    },
+    {
+      "report": "reports/taiji_core_goal_training_10_7_20261101.json",
+      "status": "training_below_chance_plus",
+      "model_involved": true
+    },
+    {
+      "report": "reports/taiji_core_10_21_4_compare_20261101.json",
+      "status": "reader_selection_absent",
+      "model_involved": true
+    },
+    {
+      "report": "reports/taiji_core_10_21_closeout_20261101.json",
+      "status": "closeout_negative",
+      "model_involved": true
+    }
+  ],
+  "training_admitted": false,
+  "l3_scope_started": false,
+  "limits": "Admission gate only. A not-admitted verdict closes nothing except step 11's opening; it does not invalidate any 09/10 engineering result. Admission still would not be the L3 acceptance itself and would not authorise training. v4 adds the 10.21.4 reader_selection_absent reading to the P2 scan; the verdict is unchanged. Read-only recheck, no new model run.",
+  "cpu_seconds": 0.0,
+  "wall_seconds": 0.0,
+  "budget": {
+    "cpu_seconds": 120,
+    "wall_seconds": 240
+  },
+  "source_hashes": {
+    "reports/taiji_native_core_r5c_evaluation_20261031.json": "c4a8cebb4a50818843d7f69ee5f67d34ae1f310d91cfb61ff9fb272ed8164b0d",
+    "reports/taiji_core_09_closeout_20261101.json": "f80097f1fdacac36354e7c653230a598d60bbe22d9cab7bcc503aa18f9630738",
+    "reports/taiji_core_r028_life_fragment_pricing_20261101.json": "ec22db0690a24a37caa8d386fa31be4529bfe99291420894ccc6bf8ba76533cd",
+    "reports/taiji_core_instrument_11_7_v2_20261101.json": "fc9f381559a7f3079dfd5d6c9241ad4e6c986bfabc397639f5c16d35c269d4fb",
+    "scripts/training/verify_taiji_l3_admission_11.py": "b2a7f8b966013f099318a0ac31a55673c3f1ae4e41e0c65ec7cc4a76a72a86d9"
+  },
+  "revision": 4,
+  "supersedes": "reports/taiji_core_l3_admission_11_v3_20261101.json"
+}

@@ -1,0 +1,367 @@
+{
+  "schema": "taiji-composition-price-manifest-v1",
+  "step": "10.21.3",
+  "date": "2026-11-01",
+  "parent": {
+    "candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+    "bundle": "output/taiji_core_09/subject_bundle.pt",
+    "bundle_sha256": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf",
+    "bundle_bytes": 77609636
+  },
+  "module": {
+    "name": "QueryBindingCandidate",
+    "config": {
+      "width": 128,
+      "query_width": 32,
+      "roles": 2,
+      "rank": 4,
+      "seed": 17021,
+      "mode": 6
+    },
+    "dtype": "float64",
+    "parameter_count": 105760,
+    "parameter_groups": {
+      "K_goal": 4096,
+      "V_goal": 16512,
+      "role": 64,
+      "W_state": 4128,
+      "Q_source": 9248,
+      "K_source": 4224,
+      "V_source": 17024,
+      "source_null": 160,
+      "W_bind": 49280,
+      "U": 512,
+      "V": 512
+    },
+    "parameter_digest_initial": "4795e7280e50fc2dfd7a0980e887a4767a91aa253c183f55ee370fb94e524f4f",
+    "internal_mode": 6,
+    "fast_write": "disabled",
+    "optimizer": {
+      "name": "Adam",
+      "lr": 0.001,
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "eps": 1e-08,
+      "weight_decay": 0.0,
+      "clip_norm": 1.0,
+      "batch": 8
+    }
+  },
+  "arms": {
+    "J_joint": {
+      "trainable_groups": [
+        "K_goal",
+        "V_goal",
+        "role",
+        "W_state",
+        "Q_source",
+        "K_source",
+        "V_source",
+        "source_null",
+        "W_bind",
+        "U",
+        "V"
+      ],
+      "trainable_parameter_count": 105760,
+      "parameter_digest_before": "4795e7280e50fc2dfd7a0980e887a4767a91aa253c183f55ee370fb94e524f4f",
+      "parameter_digest_after": "c76e26a3206fb32fdc41f9bd3ae4926698d1a13f36438796e01bcfde77841e39"
+    },
+    "S_stop_read": {
+      "trainable_groups": [
+        "W_bind",
+        "U",
+        "V"
+      ],
+      "trainable_parameter_count": 50304,
+      "parameter_digest_before": "4795e7280e50fc2dfd7a0980e887a4767a91aa253c183f55ee370fb94e524f4f",
+      "parameter_digest_after": "6bd25eb51e835c39ed862f30cdd9d27151a45b795de307f883a317f6be3928d1"
+    }
+  },
+  "fixture": {
+    "schema": "taiji-composition-fixture-v1",
+    "data_seed": 47021,
+    "order_seed": 27021,
+    "confirm_seed": 47022,
+    "confirm_order_seed": 27022,
+    "declared_worlds": {
+      "train": 16,
+      "dev": 8,
+      "confirm": 8
+    },
+    "lengths": {
+      "goal_bytes": 36,
+      "action_bytes": 27,
+      "train_records": [
+        8,
+        219
+      ],
+      "dev_records": [
+        9,
+        252
+      ]
+    },
+    "vocabulary": {
+      "object_names": [
+        "棕漆木箱",
+        "银灰铁盒",
+        "深绿陶碗",
+        "米白瓷碟",
+        "墨黑石砚"
+      ],
+      "object_descriptions": [
+        "方口的容器",
+        "圆盖的器具",
+        "窄沿的坛子",
+        "有纹的磁盘",
+        "沉手的石块"
+      ],
+      "place_names": [
+        "窗台",
+        "书架",
+        "门后",
+        "廊下",
+        "柜顶"
+      ],
+      "place_descriptions": [
+        "靠墙高处",
+        "向阳角上",
+        "进门右侧",
+        "屋角一侧",
+        "高处横板"
+      ],
+      "train_objects": 3,
+      "held_out_object": {
+        "dev": 3,
+        "confirm": 4
+      }
+    },
+    "combinations": {
+      "seen_per_world": 12,
+      "unseen_combination_per_world": 3,
+      "unseen_entity_per_world": 5,
+      "train_kept": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ]
+      ],
+      "diagonal_excluded": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          2
+        ]
+      ]
+    },
+    "price_picks": {
+      "train": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        8,
+        10
+      ],
+      "dev_seen": [
+        0,
+        3,
+        6,
+        9
+      ],
+      "dev_unseen_combination": [
+        0,
+        1
+      ],
+      "dev_unseen_entity": [
+        0,
+        1
+      ]
+    },
+    "worlds": [
+      {
+        "split": "train",
+        "world": 0,
+        "data_seed": 47021,
+        "order_seed": 27021,
+        "object_mapping": {
+          "方口的容器": "银灰铁盒",
+          "圆盖的器具": "棕漆木箱",
+          "窄沿的坛子": "深绿陶碗"
+        },
+        "place_mapping": {
+          "靠墙高处": "廊下",
+          "向阳角上": "柜顶",
+          "进门右侧": "门后",
+          "屋角一侧": "窗台",
+          "高处横板": "书架"
+        },
+        "record_lines": 8,
+        "record_bytes": 219,
+        "examples": 12,
+        "layers": {
+          "seen_combination": 12
+        },
+        "actions": 15,
+        "record_ids": [
+          "cx6890a949fd1b-00",
+          "cx6890a949fd1b-01",
+          "cx6890a949fd1b-02",
+          "cx6890a949fd1b-03",
+          "cx6890a949fd1b-04",
+          "cx6890a949fd1b-05",
+          "cx6890a949fd1b-06",
+          "cx6890a949fd1b-07"
+        ]
+      },
+      {
+        "split": "dev",
+        "world": 0,
+        "data_seed": 47021,
+        "order_seed": 27021,
+        "object_mapping": {
+          "方口的容器": "棕漆木箱",
+          "圆盖的器具": "深绿陶碗",
+          "窄沿的坛子": "银灰铁盒",
+          "有纹的磁盘": "米白瓷碟"
+        },
+        "place_mapping": {
+          "靠墙高处": "书架",
+          "向阳角上": "柜顶",
+          "进门右侧": "门后",
+          "屋角一侧": "窗台",
+          "高处横板": "廊下"
+        },
+        "record_lines": 9,
+        "record_bytes": 252,
+        "examples": 20,
+        "layers": {
+          "seen_combination": 12,
+          "unseen_combination": 3,
+          "unseen_entity": 5
+        },
+        "actions": 20,
+        "record_ids": [
+          "cx1919b0d6ec58-00",
+          "cx1919b0d6ec58-01",
+          "cx1919b0d6ec58-02",
+          "cx1919b0d6ec58-03",
+          "cx1919b0d6ec58-04",
+          "cx1919b0d6ec58-05",
+          "cx1919b0d6ec58-06",
+          "cx1919b0d6ec58-07",
+          "cx1919b0d6ec58-08"
+        ]
+      }
+    ],
+    "digest": "6728fc3713e165c21e15e28feb88c9e409cb821675715a7bad5b039392aa6f1b"
+  },
+  "source_hashes": {
+    "taiji/query_binding.py": "a7b8aea9b944b9c1b1edb4557912aab1cc5709395ccbd1b5df49c0352c1ac07b",
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/growth_credit.py": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+    "taiji/state_migration.py": "c067dcd043fc189a53051eba72f0b9794ed4b2d3fc77907a89f82aa2817299c6",
+    "taiji/candidate_manifest.py": "6fc05ca4bcee45203594ba80448ed8f2c3d5d89e9df92ccf48c4ab23544db1f0",
+    "taiji/native_development.py": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+    "taiji/native_goal_attributes.py": "f33679904f61b0bea82c968713e8821104e53604bd3b7dcc7798d35b4ec6bf7e",
+    "taiji/native_goal_glossary.py": "b40ffa22dbd5adae1285e425047f1c4113d083115bada3e7b0dd07f944a62f03",
+    "scripts/training/verify_taiji_composition_10_21.py": "5beebea375e8f888cf9ccff7d297b4cea28d4eab36dc15c8d35bf9f159fc300f",
+    "taiji/native_composition_fixture.py": "18ca7f7ce19530d153e5396359870ff4661e5033b089da4960dea128a33c83b4"
+  },
+  "unit_prices": {
+    "cpu_per_train_step": 0.1328125,
+    "cpu_per_restore": 0.953125,
+    "cpu_per_eval_example": 0.107421875,
+    "cpu_per_bundle_MiB": 0.0017832162390223744
+  },
+  "extrapolation": {
+    "formula": "total_cpu_seconds = cpu_per_train_step * train_steps + cpu_per_restore * restore_count + cpu_per_eval_example * eval_example_count + cpu_per_bundle_MiB * bundle_io_MiB",
+    "inputs": {
+      "seeds": 2,
+      "arms": 2,
+      "steps_per_arm": 300,
+      "train_steps": 1200,
+      "restore_count": 8,
+      "eval_points_per_arm": 2,
+      "dev_examples_per_point": 160,
+      "eval_example_count": 1280,
+      "bundle_cycles": 12
+    },
+    "terms": {
+      "train": 159.375,
+      "restore": 7.625,
+      "eval": 137.5,
+      "bundle_io": 0.5625
+    },
+    "total_cpu_seconds": 305.0625,
+    "cap_cpu_seconds": 1200.0,
+    "within_cap": true
+  },
+  "budget": {
+    "cpu_seconds": 180,
+    "wall_seconds": 360,
+    "products_bytes": 536870912,
+    "cap_cpu_seconds_10_21_4": 1200.0
+  },
+  "exit": {
+    "success": "priced",
+    "not_admitted": "budget_not_admitted",
+    "budget": "budget_stop",
+    "failure": "engineering_failure"
+  },
+  "claim": "pricing only; no comparison, no capability, no 10.21.4 admission"
+}

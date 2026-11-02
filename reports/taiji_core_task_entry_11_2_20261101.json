@@ -1,0 +1,42 @@
+{
+  "schema": "taiji-task-entry-11-2-v1",
+  "step": "11.2",
+  "date": "2026-11-01",
+  "status": "entry_contract_verified",
+  "prompt": "目标是让圆口的器皿到四方木台。",
+  "candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+  "mode": "frozen_eval",
+  "raw_first": true,
+  "decoded_channel_ok": true,
+  "clarify_content": null,
+  "observe_changed_state": true,
+  "reset_restores_initial": true,
+  "two_sessions_identical": true,
+  "frozen_mutation_refused": true,
+  "answer_raw": {
+    "top_byte": 29,
+    "top_probability": 0.00908337634566069,
+    "entropy": 5.4961324297637235
+  },
+  "answer_decoded": "\u001d",
+  "not_delivered": [
+    "save",
+    "load",
+    "outcome",
+    "act"
+  ],
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Entry contract only: it checks that raw output is stored first, that the decoded channel cannot invent content, and that the frozen mode refuses mutation. save/load/outcome/act are NOT delivered. It says nothing about answer quality.",
+  "cpu_seconds": 1.15625,
+  "wall_seconds": 1.4313731999136508,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "taiji/candidate_session.py": "e04760bed565524b133f5c2674ed555925b6e6e396861729857f5d854b745fa5",
+    "scripts/training/verify_taiji_task_entry_11_2.py": "7adebe5082bbb8942775404769bd4fe9bfaa39b58030accc43ac33d27178ab50"
+  }
+}

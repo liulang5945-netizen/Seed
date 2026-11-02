@@ -1,0 +1,65 @@
+{
+  "schema": "taiji-capability-closeout-10-20-v1",
+  "step": "10.20",
+  "date": "2026-11-01",
+  "status": "capability_line_closed_negative",
+  "cards_expected": 18,
+  "cards_read": 18,
+  "missing": [],
+  "statuses": {
+    "10.4": "model_below_random",
+    "10.5": "contrast_below_floor",
+    "10.6": "action_gap_below_floor",
+    "10.7": "training_below_chance_plus",
+    "10.7e": "readout_binding_supported",
+    "10.7e-1": "readout_rank_below",
+    "10.7e-2": "budget_stop",
+    "10.7f": "readout_selection_absent",
+    "10.7h": "geometry_does_not_select",
+    "10.10": "glossary_not_used",
+    "10.11": "records_channel_live",
+    "10.11b": "control_also_wins",
+    "10.12": "records_reach_state",
+    "10.13": "state_selection_absent",
+    "10.16": "control_not_null",
+    "10.17": "wide_selection_absent",
+    "10.18": "records_copy_inconclusive",
+    "10.19": "generation_absent"
+  },
+  "claims": [
+    "10.7e"
+  ],
+  "withdrawal_recorded": true,
+  "negative_cards": [
+    "10.13",
+    "10.17",
+    "10.19"
+  ],
+  "negatives_checked": true,
+  "copy_evidence": {
+    "card": "10.18",
+    "status": "records_copy_inconclusive"
+  },
+  "frozen_cards": {
+    "10.7e": true,
+    "10.7f": true,
+    "10.13": true,
+    "10.16": true,
+    "10.17": true
+  },
+  "line_cpu_seconds": 2945.84375,
+  "mechanism": "single-hop copy is present (10.18) and composition is not (10.19 copies one glossary line and stops; 10.17 state readout scores 0% on an unseen object)",
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Closeout only: it checks that the line's cards agree with the stated mechanism and that no capability claim survives. It does not prove the subject can never select, does not change step 11, and authorises nothing.",
+  "cpu_seconds": 0.0,
+  "wall_seconds": 0.001763500040397048,
+  "budget": {
+    "cpu_seconds": 60,
+    "wall_seconds": 120
+  },
+  "source_hashes": {
+    "scripts/training/verify_taiji_capability_closeout_10_20.py": "972a988120ce0180c3781c1667404d13fbf0f4abca3eefaba82234219050481d"
+  }
+}

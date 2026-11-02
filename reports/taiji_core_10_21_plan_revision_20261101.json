@@ -1,0 +1,366 @@
+{
+  "schema": "taiji.core.plan-revision.v1",
+  "date": "2026-11-01",
+  "status": "plan_revision_complete_not_executed",
+  "baseline_commit": "084431117736603bd0465efe8e0fe59a52836ab8",
+  "scope": "10.21 rev2 planning and historical interpretation only; this is not a neural, restore, training or capability result.",
+  "review_input": {
+    "path": "reports/taiji_algorithm_review_20261101.json",
+    "sha256_raw": "5b2ecfdb69e36de13424af0d710a460d5ea1f265f18ae7a4493cd346bac62513"
+  },
+  "hash_scope": "Raw SHA256 records current bytes. UTF8-LF SHA256 normalizes newlines for documentation comparisons; neither identifies a future executed model.",
+  "revised_documents": [
+    {
+      "path": "plans/MAINLINE.md",
+      "sha256_raw": "9de461ed218ae4b0814dd034d8450154f3b6a44526fd836970c412dbd94c42bc",
+      "sha256_utf8_lf": "9de461ed218ae4b0814dd034d8450154f3b6a44526fd836970c412dbd94c42bc"
+    },
+    {
+      "path": "plans/README.md",
+      "sha256_raw": "8c8cfb9f62f5720280645a7be8544da6eb33d777c69fab0fa4f89ed9ab1f294f",
+      "sha256_utf8_lf": "8c8cfb9f62f5720280645a7be8544da6eb33d777c69fab0fa4f89ed9ab1f294f"
+    },
+    {
+      "path": "plans/active/roadmap/03_CURRENT_EXECUTION.md",
+      "sha256_raw": "b231b09c1f70f37b1a2c2d15e922c93ea057dfb778bb3c598e9f5efbb728672c",
+      "sha256_utf8_lf": "b231b09c1f70f37b1a2c2d15e922c93ea057dfb778bb3c598e9f5efbb728672c"
+    },
+    {
+      "path": "plans/reference/README.md",
+      "sha256_raw": "85e0ef073f5f5ca95c53ae6b8e240cdf4a3a2d4cd2c373cc58c2862adba833ac",
+      "sha256_utf8_lf": "85e0ef073f5f5ca95c53ae6b8e240cdf4a3a2d4cd2c373cc58c2862adba833ac"
+    },
+    {
+      "path": "plans/reference/SPEC-TAIJI-CORE_COMPOSITION_10_21_20261101.md",
+      "sha256_raw": "ab276009753317490ece4a4748db249462a45e475f52d6ff37bd6f0244581d51",
+      "sha256_utf8_lf": "ab276009753317490ece4a4748db249462a45e475f52d6ff37bd6f0244581d51"
+    },
+    {
+      "path": "plans/reference/DESIGN-CANDIDATE-COMPOSITION_20261101.md",
+      "sha256_raw": "98c7c1a5b99eb0c44203fbe696acd95ccb61fe807d8e4a9c0e3a0d693ca0ad3b",
+      "sha256_utf8_lf": "98c7c1a5b99eb0c44203fbe696acd95ccb61fe807d8e4a9c0e3a0d693ca0ad3b"
+    },
+    {
+      "path": "plans/reference/TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md",
+      "sha256_raw": "53e40a2058f0c81694a23f2696d2840deb2e8bf8fadb11536f9c4fd9cac2e694",
+      "sha256_utf8_lf": "53e40a2058f0c81694a23f2696d2840deb2e8bf8fadb11536f9c4fd9cac2e694"
+    },
+    {
+      "path": "plans/archive/history/n_mainline_20261101/README.md",
+      "sha256_raw": "dcd62d91a2892e82404c273e3bc61d92e9e0260ba9168559c100c6e2fad72167",
+      "sha256_utf8_lf": "dcd62d91a2892e82404c273e3bc61d92e9e0260ba9168559c100c6e2fad72167"
+    }
+  ],
+  "archive_snapshots": [
+    {
+      "original_path": "plans/reference/SPEC-TAIJI-CORE_COMPOSITION_10_21_20261101.md",
+      "archive_path": "plans/archive/history/n_mainline_20261101/COMPOSITION_10_21_BEFORE_REV2.md",
+      "sha256_raw": "609b423f6671f23b4182e7e83c222ebe79ce18b9e1218773157f22086dd8c253",
+      "sha256_utf8_lf": "609b423f6671f23b4182e7e83c222ebe79ce18b9e1218773157f22086dd8c253",
+      "matches_archive_register": true
+    },
+    {
+      "original_path": "plans/reference/DESIGN-CANDIDATE-COMPOSITION_20261101.md",
+      "archive_path": "plans/archive/history/n_mainline_20261101/CANDIDATE_DESIGN_BEFORE_REV2.md",
+      "sha256_raw": "cd0dfa61599df7f8478f664924c40e773fb1f0ff37683b1b042ba6ee94f5545e",
+      "sha256_utf8_lf": "cd0dfa61599df7f8478f664924c40e773fb1f0ff37683b1b042ba6ee94f5545e",
+      "matches_archive_register": true
+    },
+    {
+      "original_path": "plans/MAINLINE.md",
+      "archive_path": "plans/archive/history/n_mainline_20261101/MAINLINE_BEFORE_10_21_REV2.md",
+      "sha256_raw": "0e9b2fe429398df29f59cf28f3dab3aa9bf92f84feeca109a6ae48d62f234eb2",
+      "sha256_utf8_lf": "0e9b2fe429398df29f59cf28f3dab3aa9bf92f84feeca109a6ae48d62f234eb2",
+      "matches_archive_register": true
+    }
+  ],
+  "static_checks": {
+    "single_mainline": {
+      "exit_code": 0,
+      "result": "status: ok"
+    },
+    "git_diff_check": {
+      "exit_code": 0,
+      "scope": "Entire existing tracked working diff; newline warnings do not constitute validation failures."
+    },
+    "relative_links": {
+      "files": 8,
+      "links_checked": 840,
+      "broken": 0,
+      "scope": "Revised navigation/specification files and archive README; frozen historical snapshot links retain their original-directory semantics."
+    },
+    "parameter_table": {
+      "rows": 10,
+      "total_new": 105760,
+      "stop_read_plastic": 50304,
+      "query_read_parameters_stopped": 55456,
+      "kind": "Specification arithmetic, not implemented tensor enumeration."
+    },
+    "declared_data": {
+      "train": 192,
+      "dev": 160,
+      "confirm": 160,
+      "train_source_utf8_bytes": 219,
+      "evaluation_source_utf8_bytes": 252,
+      "kind": "Declared design arithmetic only; no data split generated or opened."
+    },
+    "existing_goal_byte_reachability": {
+      "cases": [
+        {
+          "object": "蓝色杯子",
+          "place": "木桌",
+          "minimum_old_bytes": 18,
+          "canonical_action_bytes": 27
+        },
+        {
+          "object": "蓝色杯子",
+          "place": "窗台",
+          "minimum_old_bytes": 18,
+          "canonical_action_bytes": 27
+        },
+        {
+          "object": "蓝色杯子",
+          "place": "左盒",
+          "minimum_old_bytes": 18,
+          "canonical_action_bytes": 27
+        },
+        {
+          "object": "红色印章",
+          "place": "木桌",
+          "minimum_old_bytes": 18,
+          "canonical_action_bytes": 27
+        },
+        {
+          "object": "红色印章",
+          "place": "窗台",
+          "minimum_old_bytes": 18,
+          "canonical_action_bytes": 27
+        },
+        {
+          "object": "红色印章",
+          "place": "左盒",
+          "minimum_old_bytes": 18,
+          "canonical_action_bytes": 27
+        }
+      ],
+      "proposed_new_cap": 64,
+      "kind": "Static UTF8 length check; no scorer implementation or neural generation was tested."
+    }
+  },
+  "unchanged_reviewed_runtime_sources": [
+    {
+      "path": "taiji/living_core.py",
+      "sha256": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+      "unchanged": true
+    },
+    {
+      "path": "taiji/slot_composition_head.py",
+      "sha256": "5aefda4fb394e39aafbfd788727c1b0e92514c656e14713691323fd2fff6da18",
+      "unchanged": true
+    },
+    {
+      "path": "taiji/goal_action_readout.py",
+      "sha256": "d2f228f991f2517b9f6316ed4d48d4497a5ce36dc4da71c357ccddfc640d4b2c",
+      "unchanged": true
+    },
+    {
+      "path": "taiji/constrained_learning.py",
+      "sha256": "1c0f77ecf04e62b21f11802b127a52a150cbfcc9e61497c2bac3377ffbfde24e",
+      "unchanged": true
+    },
+    {
+      "path": "taiji/activity_learning.py",
+      "sha256": "7fa2ae9ea16c5269ce7d65761b5ed057e94c50fbfd26026f54892375d7524b4d",
+      "unchanged": true
+    },
+    {
+      "path": "taiji/birth_direction.py",
+      "sha256": "a723075011a42c3a4d44b24267de2c40dc7db3229c0e546480942538d2274ad9",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/training/verify_taiji_subject_selection_10_4.py",
+      "sha256": "8a0a310e17bdd6428a715b100694d48dbee5faaa05e69bdb83bbeda9858ff203",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/training/verify_taiji_readout_10_7e.py",
+      "sha256": "5b55b5a93c2312af2a2f553c860bdead0c14f143e2146e38ea6acf7ac40c57f3",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/training/verify_taiji_closeout_09.py",
+      "sha256": "71721b06d24e5b563e6b6b7851f91fdb93ce3e6a281f07d55bf0b36b8bb298fe",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/training/verify_taiji_fragment_horizon.py",
+      "sha256": "237dbbc7dde733df3538acbd513485834fc8127fd2ae5dfbac8458108c896eec",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/training/verify_taiji_generation_10_19.py",
+      "sha256": "4a8e6aa8c81d9245537197bbef29fe8ff6d7494a1081adcb6597a2ee14b8a596",
+      "unchanged": true
+    },
+    {
+      "path": "taiji/native_task_suite_11_3.py",
+      "sha256": "1bd4aef2a308e285bcb0674f4e26e9230c9e0a4aa32edbd71216932c475d6edd",
+      "unchanged": true
+    }
+  ],
+  "unchanged_historical_evidence_cards": [
+    {
+      "path": "reports/taiji_core_r027_subject_gates_20261101.json",
+      "sha256": "937a74e5e671009c8217b942def815572333e846408f53dcc669c5d26d150d26",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_r029_engineering_gaps_20261101.json",
+      "sha256": "05fbdcdc5ae0ed1908b081d675ceb8cf30cfa9bf2f03fb5849b9298f51cba6c1",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_birth_direction_abs_20261101.json",
+      "sha256": "892b90a62065b9283eba7ca94971d9362f0614120ca72437ade711328a2f1715",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_birth_direction_surface_20261101.json",
+      "sha256": "a262b48805d13fa529d7ab560d7daf8e0ad9a3c9b488d93208f780a507bda21a",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_birth_netbenefit_20261101.json",
+      "sha256": "07a0888e560afc85b93a88397f649ff154adba1f770b066a22e22b10b85134f8",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_netbenefit_second_20261101.json",
+      "sha256": "42304de720e10ea3b06e9aeeb2453f07a3bfd16bf7e080779c5011777a935505",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_fragment_horizon_20261101.json",
+      "sha256": "030235e295cc70203aabdc9c434a45f5e4f24c494b98d4d174b8c5c3e9068f00",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_goal_training_10_7_20261101.json",
+      "sha256": "e4b941a24d4952d1f7e5f1a1c73e686cd53402d19ba707c1f1f76f33a849698e",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_training_direction_10_7b_20261101.json",
+      "sha256": "8e39e5c0a7229de8afcf4469335202d61a0390beba55400ffa17c415467dad1f",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_margin_objective_10_7d_20261101.json",
+      "sha256": "58a0dc4ec2872d09910a212bb04032e46d697a868bf76a06e2e0d862fa1e8138",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_readout_10_7e_20261101.json",
+      "sha256": "cecc16e9a9ae821b188572d3142934a677aaf1f3c4869e08a022d59a928a3c19",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_readout_rank_10_7e1_20261101.json",
+      "sha256": "f3c109081ee2267569e92936d0dadf7d9fa782f2b78fdd600da50081b502c504",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_wide_object_split_10_17_20261101.json",
+      "sha256": "69f276d7ca9f6a591d7eec958e62061cbfc603cdfffd3cb8e82fbadfed486209",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_records_copy_10_18_20261101.json",
+      "sha256": "ca7e4863dbc234a0c508acfda1c28ca817202e5fbd8dc7b697522b9bbd1a7f27",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_generation_10_19_20261101.json",
+      "sha256": "a1846d57aa06248ab19ad15e2342f61416ea33a4f51dd2f6018ce47af1fbe6af",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_task_suite_11_3_20261101.json",
+      "sha256": "01340e818153278acc992cc7910a6d696da12d8453e84087ec224c7608745280",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_capability_closeout_10_20_20261101.json",
+      "sha256": "ded94121b1aacb1909d706c9194ac2cbce831d0dbc15b961b406097714e14418",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_slot_channel_10_21a_20261101.json",
+      "sha256": "046a7dca608d27a104cedb7ee8c6b62646fb5c3e89265e1091c616095cbac2ba",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_slot_descriptor_10_21a2_20261101_void.json",
+      "sha256": "154cf63e9fd034fa7e4759141902598284b16e4bbec60aa6955dafeeb56446a6",
+      "unchanged": true
+    },
+    {
+      "path": "reports/taiji_core_instrument_closeout_11_4d_20261101.json",
+      "sha256": "ab5b33527331c8e5a9530cb583b274fac880ca1c54aea21c6cad76dfcdbbe15b",
+      "unchanged": true
+    }
+  ],
+  "proposed_execution_packages": {
+    "P": {
+      "stages": [
+        "10.21.1"
+      ],
+      "cpu_seconds": 600,
+      "wall_seconds": 1200,
+      "generation_cases": 18,
+      "descriptor_read_cases": 15,
+      "optimizer_calls": 0
+    },
+    "E": {
+      "stages": [
+        "10.21.2",
+        "10.21.3"
+      ],
+      "graph_cpu_seconds": 300,
+      "graph_wall_seconds": 600,
+      "graph_max_physical_adam_calls": 12,
+      "pricing_cpu_seconds": 180,
+      "pricing_wall_seconds": 360,
+      "pricing_max_physical_adam_calls": 4
+    },
+    "T": {
+      "stages": [
+        "10.21.4",
+        "10.21.5"
+      ],
+      "comparison_cpu_seconds": 1200,
+      "comparison_wall_seconds": 2400,
+      "comparison_arms": 2,
+      "incremental_initialization_seeds": 2,
+      "max_updates_per_arm_seed": 300,
+      "confirmation_cpu_seconds": 600,
+      "confirmation_wall_seconds": 1200,
+      "confirmation_optimizer_calls": 0
+    },
+    "status": "Design proposals only; this revision grants no execution permission. Approved packages may proceed through their technical gates without per-script reapproval."
+  },
+  "actual_work_this_revision": {
+    "neural_forward_calls": 0,
+    "optimizer_calls": 0,
+    "new_data_splits_generated": false,
+    "new_data_splits_read": [],
+    "sealed_material_opened": false,
+    "runtime_code_modified": false,
+    "historical_cards_rewritten": false,
+    "commit_created": false,
+    "push_performed": false
+  },
+  "submission_policy": "Existing owner hold in MAINLINE remains in force. Changes remain in the working tree; unrelated pending work is preserved.",
+  "next_step": "Decision on 10.21.1 bounded read-only scoring and current-candidate source-selection preflight."
+}

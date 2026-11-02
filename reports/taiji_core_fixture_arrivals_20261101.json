@@ -1,0 +1,467 @@
+{
+  "schema": "taiji-fixture-arrivals-v1",
+  "date": "2026-11-01",
+  "step": "09.6.2",
+  "baseline_commit": "084431117",
+  "status": "failed_activity_fixture",
+  "configs": {
+    "small_reference": {
+      "groups": 2,
+      "width": 8,
+      "units": 12,
+      "adapter_rank": 2,
+      "fast_heads": 2,
+      "key_width": 4,
+      "value_width": 4,
+      "output_heads": 2,
+      "fast_limit": 16.0,
+      "max_event_bytes": 512,
+      "max_source_bytes": 512,
+      "max_target_bytes": 128,
+      "seed": 20261031
+    },
+    "principle_reference": {
+      "groups": 4,
+      "width": 128,
+      "units": 256,
+      "adapter_rank": 16,
+      "fast_heads": 2,
+      "key_width": 32,
+      "value_width": 32,
+      "output_heads": 2,
+      "fast_limit": 16.0,
+      "max_event_bytes": 512,
+      "max_source_bytes": 512,
+      "max_target_bytes": 128,
+      "seed": 20261031
+    }
+  },
+  "sections": {
+    "activity": {
+      "shape": "small",
+      "declared": {
+        "rounds": 32,
+        "train_rounds": 256,
+        "max_exposures": 256,
+        "interval_ticks": 1,
+        "message_count": 32,
+        "patches_per_message": 6,
+        "oracle_floor": 0.5,
+        "trained_oracle_share_gate": 0.9,
+        "min_non_idle_rounds": 8
+      },
+      "oracle": {
+        "rounds": 32,
+        "interval_ticks": 1,
+        "legal_interactions": 16,
+        "per_interaction_reward_floor": 0.044000000000000004,
+        "oracle_reward": 0.7040000000000001,
+        "idle_reward": 0.0
+      },
+      "scripted": {
+        "idle": {
+          "cumulative_reward": 0.0,
+          "activities": [
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait",
+            "wait"
+          ],
+          "interactions": 0,
+          "idle_rounds": 32,
+          "distinct_activities": [
+            "wait"
+          ]
+        },
+        "greedy_interact": {
+          "cumulative_reward": 0.7039971414031112,
+          "activities": [
+            "interact",
+            "wait",
+            "interact",
+            "wait",
+            "interact",
+            "wait",
+            "interact",
+            "wait",
+            "interact",
+            "wait",
+            "interact",
+            "wait",
+            "interact",
+            "wait",
+            "interact",
+            "wait",
+            "interact",
+            "wait",
+            "interact",
+            "wait",
+            "interact",
+            "wait",
+            "interact",
+            "wait",
+            "interact",
+            "wait",
+            "interact",
+            "wait",
+            "interact",
+            "wait",
+            "interact",
+            "wait"
+          ],
+          "interactions": 16,
+          "idle_rounds": 16,
+          "distinct_activities": [
+            "interact",
+            "wait"
+          ]
+        }
+      },
+      "trained_model": {
+        "cumulative_reward": 0.04410624875104526,
+        "interactions": 1,
+        "idle_rounds": 31,
+        "distinct_activities": [
+          "interact",
+          "maintain"
+        ],
+        "oracle_share": 0.0626509215213711
+      },
+      "untrained_model": {
+        "cumulative_reward": -0.031852844431501895,
+        "interactions": 0,
+        "idle_rounds": 0,
+        "distinct_activities": [
+          "imagine"
+        ],
+        "oracle_share": -0.04524551765838337
+      },
+      "fixed_threshold": {
+        "cumulative_reward": -0.01783292111137256,
+        "interactions": 1,
+        "idle_rounds": 0,
+        "distinct_activities": [
+          "interact",
+          "recall"
+        ],
+        "oracle_share": -0.025330853851381473
+      },
+      "trained_advantage_over_best_control": 0.06193916986241782,
+      "trained_advantage_over_idle": 0.04410624875104526,
+      "fixed_control_at_oracle": false,
+      "training": {
+        "rows": 256,
+        "updated": 256,
+        "exposures": 256,
+        "cpu_seconds": 130.1875,
+        "wall_seconds": 135.50496180006303
+      },
+      "disclosure": "The fixed ladder already reaches the declared oracle, so a trained policy matching it demonstrates learning a simple rule, not the discovery of a better strategy. Idle stays at zero by construction."
+    },
+    "growth": {
+      "shape": "principle",
+      "declared": {
+        "lr_grid": [
+          1e-05,
+          0.0001
+        ],
+        "steps_grid": [
+          8,
+          32,
+          128
+        ],
+        "newborn_share_gate": 0.0001,
+        "retention_gate": 0.03
+      },
+      "cells": [
+        {
+          "lr": 1e-05,
+          "steps": 8,
+          "units_total": 8,
+          "growth_parent_units": 256,
+          "removed_units_per_group": 2,
+          "holdout_pre": 4.381243859077419,
+          "holdout_post": 4.361050985264841,
+          "holdout_after_lesion": 4.361051418506736,
+          "benefit": 0.020192873812578505,
+          "benefit_removed_by_lesion": 4.3324189480387076e-07,
+          "newborn_share": 2.1455187549084597e-05,
+          "retention_drift": 0.02205745719443719,
+          "first_update_loss": 4.436565322597274,
+          "last_update_loss": 4.409377067227552,
+          "reaches_gate": false,
+          "cpu_seconds": 22.1875,
+          "wall_seconds": 23.260513999965042
+        },
+        {
+          "lr": 1e-05,
+          "steps": 32,
+          "units_total": 8,
+          "growth_parent_units": 256,
+          "removed_units_per_group": 2,
+          "holdout_pre": 4.381243859077419,
+          "holdout_post": 4.3035035171269405,
+          "holdout_after_lesion": 4.303503302354148,
+          "benefit": 0.07774034195047896,
+          "benefit_removed_by_lesion": -2.1477279243953262e-07,
+          "newborn_share": -2.7626942080643804e-06,
+          "retention_drift": 0.08470158467410016,
+          "first_update_loss": 4.436565322597274,
+          "last_update_loss": 4.318603968157735,
+          "reaches_gate": false,
+          "cpu_seconds": 87.6875,
+          "wall_seconds": 91.66142149991356
+        },
+        {
+          "lr": 1e-05,
+          "steps": 128,
+          "units_total": 8,
+          "growth_parent_units": 256,
+          "removed_units_per_group": 2,
+          "holdout_pre": 4.381243859077419,
+          "holdout_post": 4.057048844886563,
+          "holdout_after_lesion": 4.057025732765976,
+          "benefit": 0.32419501419085606,
+          "benefit_removed_by_lesion": -2.311212058714318e-05,
+          "newborn_share": -7.129079589588291e-05,
+          "retention_drift": 0.3346699475180914,
+          "first_update_loss": 4.436565322597274,
+          "last_update_loss": 3.8485386901102556,
+          "reaches_gate": false,
+          "cpu_seconds": 355.71875,
+          "wall_seconds": 365.7076354001183
+        },
+        {
+          "lr": 0.0001,
+          "steps": 8,
+          "units_total": 8,
+          "growth_parent_units": 256,
+          "removed_units_per_group": 2,
+          "holdout_pre": 4.381243859077419,
+          "holdout_post": 4.202023984423673,
+          "holdout_after_lesion": 4.202010937425508,
+          "benefit": 0.17921987465374656,
+          "benefit_removed_by_lesion": -1.3046998164512047e-05,
+          "newborn_share": -7.279883545125168e-05,
+          "retention_drift": 0.19483636638547708,
+          "first_update_loss": 4.436565322597274,
+          "last_update_loss": 4.181631210408608,
+          "reaches_gate": false,
+          "cpu_seconds": 21.796875,
+          "wall_seconds": 22.10898969997652
+        },
+        {
+          "lr": 0.0001,
+          "steps": 32,
+          "units_total": 8,
+          "growth_parent_units": 256,
+          "removed_units_per_group": 2,
+          "holdout_pre": 4.381243859077419,
+          "holdout_post": 3.8135593980576217,
+          "holdout_after_lesion": 3.8134736663868587,
+          "benefit": 0.5676844610197977,
+          "benefit_removed_by_lesion": -8.57316707629785e-05,
+          "newborn_share": -0.00015101993563284912,
+          "retention_drift": 0.5511421756061212,
+          "first_update_loss": 4.436565322597274,
+          "last_update_loss": 3.191430815118672,
+          "reaches_gate": false,
+          "cpu_seconds": 87.40625,
+          "wall_seconds": 88.71872300002724
+        },
+        {
+          "lr": 0.0001,
+          "steps": 128,
+          "units_total": 8,
+          "growth_parent_units": 256,
+          "removed_units_per_group": 2,
+          "holdout_pre": 4.381243859077419,
+          "holdout_post": 4.845563761663838,
+          "holdout_after_lesion": 4.8450163107957165,
+          "benefit": -0.46431990258641864,
+          "benefit_removed_by_lesion": -0.0005474508681215795,
+          "newborn_share": 0.0011790381266710587,
+          "retention_drift": 1.1699521661815098,
+          "first_update_loss": 4.436565322597274,
+          "last_update_loss": 0.7577371313994109,
+          "reaches_gate": false,
+          "cpu_seconds": 349.265625,
+          "wall_seconds": 355.84685229999013
+        }
+      ],
+      "cells_published": 6,
+      "cells_expected": 6,
+      "reachable_cells": [],
+      "best_cell": {
+        "lr": 0.0001,
+        "steps": 128,
+        "newborn_share": 0.0011790381266710587,
+        "retention_drift": 1.1699521661815098
+      },
+      "verdict": "growth_fixture_no_reachable_cell",
+      "credit_build": {
+        "cpu_seconds": 5.71875,
+        "wall_seconds": 5.963524299906567
+      },
+      "total_cpu_seconds": 924.0625
+    }
+  },
+  "incomplete_sections": [],
+  "runtime_source_token_counts": {
+    "taiji/activity_learning.py": {
+      "expected_target": 0,
+      "shortcut_label": 0,
+      "category": 0,
+      "gold": 0
+    },
+    "taiji/native_activity_fixture.py": {
+      "expected_target": 0,
+      "shortcut_label": 0,
+      "category": 0,
+      "gold": 0
+    }
+  },
+  "cpu_seconds": 1172.5625,
+  "wall_seconds": 1205.358434600057,
+  "budget": {
+    "cpu_seconds": 1800,
+    "wall_seconds": 3600
+  },
+  "checks": [
+    {
+      "id": "activity_fixture_reachable",
+      "passed": true,
+      "observed": [
+        0.7040000000000001,
+        16
+      ]
+    },
+    {
+      "id": "activity_oracle_matches_scripted_policy",
+      "passed": false,
+      "observed": [
+        0.7039971414031112,
+        0.7040000000000001
+      ]
+    },
+    {
+      "id": "activity_idle_is_zero",
+      "passed": true,
+      "observed": 0.0
+    },
+    {
+      "id": "activity_trained_meets_oracle_share",
+      "passed": false,
+      "observed": 0.0626509215213711
+    },
+    {
+      "id": "activity_trained_beats_idle",
+      "passed": false,
+      "observed": 0.04410624875104526
+    },
+    {
+      "id": "activity_trained_not_idle_only",
+      "passed": false,
+      "observed": 31
+    },
+    {
+      "id": "activity_fixed_control_disclosed",
+      "passed": true,
+      "observed": false
+    },
+    {
+      "id": "growth_grid_fully_published",
+      "passed": true,
+      "observed": [
+        6,
+        6
+      ]
+    },
+    {
+      "id": "growth_grid_cells_all_measured",
+      "passed": true,
+      "observed": [
+        4.409377067227552,
+        4.318603968157735,
+        3.8485386901102556,
+        4.181631210408608,
+        3.191430815118672,
+        0.7577371313994109
+      ]
+    },
+    {
+      "id": "growth_verdict_recorded",
+      "passed": true,
+      "observed": "growth_fixture_no_reachable_cell"
+    },
+    {
+      "id": "runtime_modules_read_no_gold",
+      "passed": true,
+      "observed": {
+        "taiji/activity_learning.py": {
+          "expected_target": 0,
+          "shortcut_label": 0,
+          "category": 0,
+          "gold": 0
+        },
+        "taiji/native_activity_fixture.py": {
+          "expected_target": 0,
+          "shortcut_label": 0,
+          "category": 0,
+          "gold": 0
+        }
+      }
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true,
+      "observed": [
+        1172.5625,
+        1205.358434600057
+      ]
+    }
+  ],
+  "training_admitted": false,
+  "task_capability_claimed": false,
+  "data_splits_read": [],
+  "limits": "Reachability instrumentation only. A reachable activity fixture and a reachable growth cell mean the question can be asked, not that the subject learned useful autonomy or that structural birth pays for itself.",
+  "source_hashes": {
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/growth_credit.py": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+    "taiji/native_development.py": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+    "taiji/native_activity.py": "3569a54ded60e3422497d59f97fb6dc005881a623697905727ba9376d4531e88",
+    "taiji/activity_learning.py": "7fa2ae9ea16c5269ce7d65761b5ed057e94c50fbfd26026f54892375d7524b4d",
+    "taiji/native_activity_fixture.py": "06fb6f0e60f742d0cbf3b8158e5c09bb748c11f848af93d6154c94488315527d",
+    "scripts/training/verify_taiji_living_fragment_pricing_r028.py": "295d11ed70aeedd78f6e8380ac148f8508519da90363d07f65d07dad9478a34b",
+    "scripts/training/verify_taiji_fixture_arrivals.py": "0eb981589dea75b82de9d2c45e2d8a98380a75bdccb92d768d2ee0b374710256",
+    "tests/taiji_native/test_fixture_arrivals.py": "0b80bf753fd6cdcd4ece98f09c1104b0144b706a1178528814119c354cd36036"
+  }
+}

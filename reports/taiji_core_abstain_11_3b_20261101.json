@@ -1,0 +1,112 @@
+{
+  "schema": "taiji-abstain-11-3b-v1",
+  "step": "11.3b",
+  "date": "2026-11-01",
+  "status": "abstain_gate_degenerate",
+  "candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+  "gate": {
+    "confidence": 0.5,
+    "entropy": 3.0
+  },
+  "tasks": 7,
+  "scorable": 5,
+  "unscorable": 2,
+  "abstain_on_scorable": 5,
+  "abstain_on_unscorable": 2,
+  "answered_scorable": 0,
+  "exact_hits": 0,
+  "rows": [
+    {
+      "id": "qa-1",
+      "category": "问答",
+      "scored": true,
+      "kind": "abstain",
+      "content_byte": null,
+      "text": "",
+      "top_probability": 0.00900517279094652,
+      "entropy": 5.496144829037199,
+      "hit": null
+    },
+    {
+      "id": "material-1",
+      "category": "材料任务",
+      "scored": true,
+      "kind": "abstain",
+      "content_byte": null,
+      "text": "",
+      "top_probability": 0.009034843027608715,
+      "entropy": 5.496026390792192,
+      "hit": null
+    },
+    {
+      "id": "followup-1",
+      "category": "追问",
+      "scored": true,
+      "kind": "abstain",
+      "content_byte": null,
+      "text": "",
+      "top_probability": 0.009053500987453703,
+      "entropy": 5.4960657010933165,
+      "hit": null
+    },
+    {
+      "id": "correct-1",
+      "category": "更正",
+      "scored": true,
+      "kind": "abstain",
+      "content_byte": null,
+      "text": "",
+      "top_probability": 0.009071785243469913,
+      "entropy": 5.496027161120758,
+      "hit": null
+    },
+    {
+      "id": "instruct-1",
+      "category": "指令",
+      "scored": true,
+      "kind": "abstain",
+      "content_byte": null,
+      "text": "",
+      "top_probability": 0.009137179220458473,
+      "entropy": 5.496054909475818,
+      "hit": null
+    },
+    {
+      "id": "clarify-1",
+      "category": "澄清",
+      "scored": false,
+      "kind": "abstain",
+      "content_byte": null,
+      "text": "",
+      "top_probability": 0.009106227564105764,
+      "entropy": 5.495988138086187,
+      "hit": null
+    },
+    {
+      "id": "unknown-1",
+      "category": "未知",
+      "scored": false,
+      "kind": "abstain",
+      "content_byte": null,
+      "text": "",
+      "top_probability": 0.009091660046158257,
+      "entropy": 5.496221260469711,
+      "hit": null
+    }
+  ],
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Channel check only: the gate reads the model's own top probability and entropy, not any text. A discriminating gate says the channel carries information; it does not make the two items scorable in a capability sense.",
+  "cpu_seconds": 1.515625,
+  "wall_seconds": 1.7394226999022067,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "taiji/candidate_session.py": "1427e25628858afb08a42b23087385f07eb1e27eb6e30a7b85b5e2ac46017eb7",
+    "taiji/native_task_suite_11_3.py": "1bd4aef2a308e285bcb0674f4e26e9230c9e0a4aa32edbd71216932c475d6edd",
+    "scripts/training/verify_taiji_abstain_11_3b.py": "ed9badd867b4d5b0f186146ba492dff958aa00e4601afe9a21d39217f5b3759f"
+  }
+}

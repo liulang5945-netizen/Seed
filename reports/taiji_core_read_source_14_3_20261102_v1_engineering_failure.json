@@ -1,0 +1,49 @@
+{
+  "schema": "taiji-read-source-14-3-v1",
+  "step": "14.3",
+  "date": "2026-11-02",
+  "status": "engineering_failure",
+  "note": "AttributeError: 'str' object has no attribute 'stat'",
+  "candidate_id": null,
+  "attention_groups": 0,
+  "dev_worlds_used": 4,
+  "bars": {
+    "d1_floor": 0.001,
+    "d2_present": 0.4,
+    "d2_absent": 0.1,
+    "d3_reach": 0.5,
+    "d3_unreachable": 0.2
+  },
+  "readings": {},
+  "cpu_seconds": 0.046875,
+  "wall_seconds": 0.06120950006879866,
+  "budget": {
+    "cpu_seconds": 90,
+    "wall_seconds": 240
+  },
+  "reserve_cpu_seconds": 30,
+  "model_involved": true,
+  "parameters_changed": false,
+  "optimizer_calls": 0,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "p1_claimed": false,
+  "p2_claimed": false,
+  "status_meanings": {
+    "query_side_dead": "D1 fails: the descriptor moves neither the query nor the attention. Wiring or encoding, not selection.",
+    "pathway_unreachable": "D3 fails: the value side cannot carry entity identity, so no readout head, sample size or training dose can rescue this read.",
+    "conditional_reads_present": "D2 clears the 0.40 bar read-only. That contradicts the recorded 0.1125 of trained 10.21.4, so the instrument is suspect first.",
+    "selection_bottleneck": "D1 and D3 hold while D2 fails: the query carries information and the value path carries the entity, so the missing piece is selection itself.",
+    "not_resolved": "the stages do not line up into one declared shape, or a reading has no dynamic range.",
+    "budget_stop": "the declared CPU or wall allowance was exceeded.",
+    "engineering_failure": "an exception escaped the measurement."
+  },
+  "limits": "Read-only mechanism reading on one synthetic fixture. It produces no output bytes, so it says nothing about P1 (Chinese expression); it trains nothing, so it says nothing about P2. The 10.7 face is excluded because 14.1/14.2 showed the goal equals the correct action sentence there.",
+  "source_hashes": {
+    "taiji/composition_read_probe.py": "50abe982c348c51145dd3573a35a4a7f54f97f5c51c20988023b4ab643e5c6de",
+    "taiji/slot_composition_head.py": "1f2103f39fa60111edbe44ec4dad2d5c2d6e2b7b672360c79b8dce63224d00a5",
+    "taiji/native_composition_fixture.py": "18ca7f7ce19530d153e5396359870ff4661e5033b089da4960dea128a33c83b4",
+    "taiji/candidate_manifest.py": "6fc05ca4bcee45203594ba80448ed8f2c3d5d89e9df92ccf48c4ab23544db1f0",
+    "scripts/training/verify_taiji_read_source_14_3.py": "47e6a07f936026a96e3a861e1e93a0c1144b96953870dece14cc30237f55648d"
+  }
+}

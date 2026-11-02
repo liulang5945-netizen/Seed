@@ -1,0 +1,237 @@
+{
+  "schema": "taiji-birth-direction-abs-v1",
+  "step": "09.6.5",
+  "date": "2026-11-01",
+  "status": "hypothesis_h1_supported",
+  "config": {
+    "groups": 4,
+    "width": 128,
+    "units": 256,
+    "adapter_rank": 16,
+    "fast_heads": 2,
+    "key_width": 32,
+    "value_width": 32,
+    "output_heads": 2,
+    "fast_limit": 16.0,
+    "max_event_bytes": 512,
+    "max_source_bytes": 512,
+    "max_target_bytes": 128,
+    "seed": 20261031
+  },
+  "declared": {
+    "seeds": [
+      20261101,
+      20261112,
+      20261113
+    ],
+    "parts": 2,
+    "units_per_group": 2,
+    "absolute_gate": 0.0001,
+    "retention_gate": 0.03,
+    "baseline_reference": 4.33e-07,
+    "baseline_band": [
+      0.2,
+      5.0
+    ],
+    "required_support": 2
+  },
+  "rows": [
+    {
+      "seed": 20261101,
+      "consensus": {
+        "holdout_pre": 4.381243859077419,
+        "holdout_post": 4.360908413984541,
+        "holdout_after_lesion": 4.3610510422202005,
+        "benefit": 0.020335445092878324,
+        "newborn_contribution": 0.0001426282356593589,
+        "newborn_share": 0.007013774963268875,
+        "retention_drift": 0.022215876189246586,
+        "removed_units_per_group": 2,
+        "first_update_loss": 4.436565322597274,
+        "last_update_loss": 4.409087414044169,
+        "cpu_seconds": 22.984375,
+        "wall_seconds": 23.519923199899495
+      },
+      "random": {
+        "holdout_pre": 4.381243859077419,
+        "holdout_post": 4.361031358018559,
+        "holdout_after_lesion": 4.36105123972813,
+        "benefit": 0.020212501058860077,
+        "newborn_contribution": 1.9881709570235273e-05,
+        "newborn_share": 0.000983634311871573,
+        "retention_drift": 0.022086252003787443,
+        "removed_units_per_group": 2,
+        "first_update_loss": 4.436565322597274,
+        "last_update_loss": 4.409353257001563,
+        "cpu_seconds": 21.5625,
+        "wall_seconds": 21.96210080012679
+      },
+      "baseline_fit_svd": {
+        "holdout_pre": 4.381243859077419,
+        "holdout_post": 4.361050985264841,
+        "holdout_after_lesion": 4.361051418506736,
+        "benefit": 0.020192873812578505,
+        "newborn_contribution": 4.3324189480387076e-07,
+        "newborn_share": 2.1455187549084597e-05,
+        "retention_drift": 0.02205745719443719,
+        "removed_units_per_group": 2,
+        "first_update_loss": 4.436565322597274,
+        "last_update_loss": 4.409377067227552,
+        "cpu_seconds": 21.546875,
+        "wall_seconds": 22.0323443999514
+      }
+    },
+    {
+      "seed": 20261112,
+      "consensus": {
+        "holdout_pre": 4.381243859077419,
+        "holdout_post": 4.360908413984541,
+        "holdout_after_lesion": 4.3610510422202005,
+        "benefit": 0.020335445092878324,
+        "newborn_contribution": 0.0001426282356593589,
+        "newborn_share": 0.007013774963268875,
+        "retention_drift": 0.022215876189246586,
+        "removed_units_per_group": 2,
+        "first_update_loss": 4.436565322597274,
+        "last_update_loss": 4.409087414044169,
+        "cpu_seconds": 22.171875,
+        "wall_seconds": 22.738553300034255
+      },
+      "random": {
+        "holdout_pre": 4.381243859077419,
+        "holdout_post": 4.3610529669521565,
+        "holdout_after_lesion": 4.361051246525366,
+        "benefit": 0.020190892125262927,
+        "newborn_contribution": -1.7204267903636605e-06,
+        "newborn_share": -8.520806211485105e-05,
+        "retention_drift": 0.022084990946262373,
+        "removed_units_per_group": 2,
+        "first_update_loss": 4.436565322597274,
+        "last_update_loss": 4.409359593630136,
+        "cpu_seconds": 21.9375,
+        "wall_seconds": 22.494907499989495
+      },
+      "baseline_fit_svd": {
+        "holdout_pre": 4.381243859077419,
+        "holdout_post": 4.361050985264841,
+        "holdout_after_lesion": 4.361051418506736,
+        "benefit": 0.020192873812578505,
+        "newborn_contribution": 4.3324189480387076e-07,
+        "newborn_share": 2.1455187549084597e-05,
+        "retention_drift": 0.02205745719443719,
+        "removed_units_per_group": 2,
+        "first_update_loss": 4.436565322597274,
+        "last_update_loss": 4.409377067227552,
+        "cpu_seconds": 21.578125,
+        "wall_seconds": 22.064107399899513
+      }
+    },
+    {
+      "seed": 20261113,
+      "consensus": {
+        "holdout_pre": 4.381243859077419,
+        "holdout_post": 4.360908413984541,
+        "holdout_after_lesion": 4.3610510422202005,
+        "benefit": 0.020335445092878324,
+        "newborn_contribution": 0.0001426282356593589,
+        "newborn_share": 0.007013774963268875,
+        "retention_drift": 0.022215876189246586,
+        "removed_units_per_group": 2,
+        "first_update_loss": 4.436565322597274,
+        "last_update_loss": 4.409087414044169,
+        "cpu_seconds": 21.53125,
+        "wall_seconds": 22.156100400025025
+      },
+      "random": {
+        "holdout_pre": 4.381243859077419,
+        "holdout_post": 4.361044242251332,
+        "holdout_after_lesion": 4.361051526287081,
+        "benefit": 0.02019961682608784,
+        "newborn_contribution": 7.284035749677287e-06,
+        "newborn_share": 0.00036060266946598424,
+        "retention_drift": 0.022112636142033182,
+        "removed_units_per_group": 2,
+        "first_update_loss": 4.436565322597274,
+        "last_update_loss": 4.409354051615738,
+        "cpu_seconds": 21.875,
+        "wall_seconds": 22.478031700011343
+      },
+      "baseline_fit_svd": {
+        "holdout_pre": 4.381243859077419,
+        "holdout_post": 4.361050985264841,
+        "holdout_after_lesion": 4.361051418506736,
+        "benefit": 0.020192873812578505,
+        "newborn_contribution": 4.3324189480387076e-07,
+        "newborn_share": 2.1455187549084597e-05,
+        "retention_drift": 0.02205745719443719,
+        "removed_units_per_group": 2,
+        "first_update_loss": 4.436565322597274,
+        "last_update_loss": 4.409377067227552,
+        "cpu_seconds": 22.140625,
+        "wall_seconds": 22.539276800118387
+      }
+    }
+  ],
+  "supported_seeds": [
+    20261101,
+    20261112,
+    20261113
+  ],
+  "random_breaches": [],
+  "baseline_geometric_mean": 4.332417802288546e-07,
+  "checks": [
+    {
+      "id": "no_leak_in_rule_source",
+      "passed": true,
+      "observed": {
+        "HOLDOUT": 0,
+        "RETENTION": 0,
+        "pricing": 0,
+        "case_eval": 0
+      }
+    },
+    {
+      "id": "baseline_face_reproduced",
+      "passed": true,
+      "observed": 4.332417802288546e-07
+    },
+    {
+      "id": "random_control_below_gate",
+      "passed": true,
+      "observed": []
+    },
+    {
+      "id": "hypothesis_h1_supported",
+      "passed": true,
+      "observed": [
+        20261101,
+        20261112,
+        20261113
+      ]
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true,
+      "observed": [
+        277.328125,
+        283.92060239985585
+      ]
+    }
+  ],
+  "training_admitted": false,
+  "limits": "Absolute contribution on synthetic Chinese careers only. It does not show that birth pays for its own cost, that any task capability exists, or that 09.7 is admitted.",
+  "cpu_seconds": 277.328125,
+  "wall_seconds": 283.92060239985585,
+  "budget": {
+    "cpu_seconds": 1800,
+    "wall_seconds": 3600
+  },
+  "source_hashes": {
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/growth_credit.py": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+    "taiji/native_development.py": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+    "taiji/birth_direction.py": "a723075011a42c3a4d44b24267de2c40dc7db3229c0e546480942538d2274ad9",
+    "scripts/training/verify_taiji_birth_direction.py": "a3734fe9f99bf6fc6c5dcf0510b30675badef4306cc99e300fad625cc63171de",
+    "scripts/training/verify_taiji_birth_direction_abs.py": "3e0db426f9ea84d94a3a7207b6bd05cf114cfee34e33ddf2d4627948e70d881e"
+  }
+}

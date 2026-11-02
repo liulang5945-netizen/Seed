@@ -1,0 +1,593 @@
+{
+  "schema": "taiji-goal-paraphrase-10-8-v1",
+  "step": "10.8",
+  "date": "2026-11-01",
+  "status": "paraphrase_still_copyable",
+  "declared": {
+    "styles": [
+      "needs",
+      "hope",
+      "state"
+    ],
+    "goals": 36,
+    "actions": 6,
+    "matcher": "character-bigram Jaccard between goal and action sentence",
+    "still_copyable": 32,
+    "breaks_copy": 12,
+    "chance_top1": 0.16666666666666666,
+    "training": "none"
+  },
+  "copy_top1": 36,
+  "per_style": {
+    "needs": {
+      "hits": 12,
+      "total": 12
+    },
+    "hope": {
+      "hits": 12,
+      "total": 12
+    },
+    "state": {
+      "hits": 12,
+      "total": 12
+    }
+  },
+  "identical_to_action_sentence": 0,
+  "indeterminate_goals": 0,
+  "rows": [
+    {
+      "style": "needs",
+      "goal": "蓝色杯子该待在左盒。",
+      "correct_move": [
+        "蓝色杯子",
+        "左盒"
+      ],
+      "picked": [
+        "蓝色杯子",
+        "左盒"
+      ],
+      "hit": true,
+      "top_overlap": 0.3076923076923077,
+      "second_overlap": 0.21428571428571427
+    },
+    {
+      "style": "needs",
+      "goal": "红色印章该待在左盒。",
+      "correct_move": [
+        "红色印章",
+        "左盒"
+      ],
+      "picked": [
+        "红色印章",
+        "左盒"
+      ],
+      "hit": true,
+      "top_overlap": 0.3076923076923077,
+      "second_overlap": 0.21428571428571427
+    },
+    {
+      "style": "needs",
+      "goal": "蓝色杯子该待在窗台。",
+      "correct_move": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "picked": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "hit": true,
+      "top_overlap": 0.3076923076923077,
+      "second_overlap": 0.21428571428571427
+    },
+    {
+      "style": "needs",
+      "goal": "红色印章该待在窗台。",
+      "correct_move": [
+        "红色印章",
+        "窗台"
+      ],
+      "picked": [
+        "红色印章",
+        "窗台"
+      ],
+      "hit": true,
+      "top_overlap": 0.3076923076923077,
+      "second_overlap": 0.21428571428571427
+    },
+    {
+      "style": "needs",
+      "goal": "蓝色杯子该待在左盒。",
+      "correct_move": [
+        "蓝色杯子",
+        "左盒"
+      ],
+      "picked": [
+        "蓝色杯子",
+        "左盒"
+      ],
+      "hit": true,
+      "top_overlap": 0.3076923076923077,
+      "second_overlap": 0.21428571428571427
+    },
+    {
+      "style": "needs",
+      "goal": "红色印章该待在左盒。",
+      "correct_move": [
+        "红色印章",
+        "左盒"
+      ],
+      "picked": [
+        "红色印章",
+        "左盒"
+      ],
+      "hit": true,
+      "top_overlap": 0.3076923076923077,
+      "second_overlap": 0.21428571428571427
+    },
+    {
+      "style": "needs",
+      "goal": "蓝色杯子该待在木桌。",
+      "correct_move": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "picked": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "hit": true,
+      "top_overlap": 0.3076923076923077,
+      "second_overlap": 0.21428571428571427
+    },
+    {
+      "style": "needs",
+      "goal": "红色印章该待在木桌。",
+      "correct_move": [
+        "红色印章",
+        "木桌"
+      ],
+      "picked": [
+        "红色印章",
+        "木桌"
+      ],
+      "hit": true,
+      "top_overlap": 0.3076923076923077,
+      "second_overlap": 0.21428571428571427
+    },
+    {
+      "style": "needs",
+      "goal": "蓝色杯子该待在窗台。",
+      "correct_move": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "picked": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "hit": true,
+      "top_overlap": 0.3076923076923077,
+      "second_overlap": 0.21428571428571427
+    },
+    {
+      "style": "needs",
+      "goal": "红色印章该待在窗台。",
+      "correct_move": [
+        "红色印章",
+        "窗台"
+      ],
+      "picked": [
+        "红色印章",
+        "窗台"
+      ],
+      "hit": true,
+      "top_overlap": 0.3076923076923077,
+      "second_overlap": 0.21428571428571427
+    },
+    {
+      "style": "needs",
+      "goal": "蓝色杯子该待在木桌。",
+      "correct_move": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "picked": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "hit": true,
+      "top_overlap": 0.3076923076923077,
+      "second_overlap": 0.21428571428571427
+    },
+    {
+      "style": "needs",
+      "goal": "红色印章该待在木桌。",
+      "correct_move": [
+        "红色印章",
+        "木桌"
+      ],
+      "picked": [
+        "红色印章",
+        "木桌"
+      ],
+      "hit": true,
+      "top_overlap": 0.3076923076923077,
+      "second_overlap": 0.21428571428571427
+    },
+    {
+      "style": "hope",
+      "goal": "我希望蓝色杯子出现在左盒。",
+      "correct_move": [
+        "蓝色杯子",
+        "左盒"
+      ],
+      "picked": [
+        "蓝色杯子",
+        "左盒"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "hope",
+      "goal": "我希望红色印章出现在左盒。",
+      "correct_move": [
+        "红色印章",
+        "左盒"
+      ],
+      "picked": [
+        "红色印章",
+        "左盒"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "hope",
+      "goal": "我希望蓝色杯子出现在窗台。",
+      "correct_move": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "picked": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "hope",
+      "goal": "我希望红色印章出现在窗台。",
+      "correct_move": [
+        "红色印章",
+        "窗台"
+      ],
+      "picked": [
+        "红色印章",
+        "窗台"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "hope",
+      "goal": "我希望蓝色杯子出现在左盒。",
+      "correct_move": [
+        "蓝色杯子",
+        "左盒"
+      ],
+      "picked": [
+        "蓝色杯子",
+        "左盒"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "hope",
+      "goal": "我希望红色印章出现在左盒。",
+      "correct_move": [
+        "红色印章",
+        "左盒"
+      ],
+      "picked": [
+        "红色印章",
+        "左盒"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "hope",
+      "goal": "我希望蓝色杯子出现在木桌。",
+      "correct_move": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "picked": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "hope",
+      "goal": "我希望红色印章出现在木桌。",
+      "correct_move": [
+        "红色印章",
+        "木桌"
+      ],
+      "picked": [
+        "红色印章",
+        "木桌"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "hope",
+      "goal": "我希望蓝色杯子出现在窗台。",
+      "correct_move": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "picked": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "hope",
+      "goal": "我希望红色印章出现在窗台。",
+      "correct_move": [
+        "红色印章",
+        "窗台"
+      ],
+      "picked": [
+        "红色印章",
+        "窗台"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "hope",
+      "goal": "我希望蓝色杯子出现在木桌。",
+      "correct_move": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "picked": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "hope",
+      "goal": "我希望红色印章出现在木桌。",
+      "correct_move": [
+        "红色印章",
+        "木桌"
+      ],
+      "picked": [
+        "红色印章",
+        "木桌"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "state",
+      "goal": "目标状态：蓝色杯子在左盒。",
+      "correct_move": [
+        "蓝色杯子",
+        "左盒"
+      ],
+      "picked": [
+        "蓝色杯子",
+        "左盒"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "state",
+      "goal": "目标状态：红色印章在左盒。",
+      "correct_move": [
+        "红色印章",
+        "左盒"
+      ],
+      "picked": [
+        "红色印章",
+        "左盒"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "state",
+      "goal": "目标状态：蓝色杯子在窗台。",
+      "correct_move": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "picked": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "state",
+      "goal": "目标状态：红色印章在窗台。",
+      "correct_move": [
+        "红色印章",
+        "窗台"
+      ],
+      "picked": [
+        "红色印章",
+        "窗台"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "state",
+      "goal": "目标状态：蓝色杯子在左盒。",
+      "correct_move": [
+        "蓝色杯子",
+        "左盒"
+      ],
+      "picked": [
+        "蓝色杯子",
+        "左盒"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "state",
+      "goal": "目标状态：红色印章在左盒。",
+      "correct_move": [
+        "红色印章",
+        "左盒"
+      ],
+      "picked": [
+        "红色印章",
+        "左盒"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "state",
+      "goal": "目标状态：蓝色杯子在木桌。",
+      "correct_move": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "picked": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "state",
+      "goal": "目标状态：红色印章在木桌。",
+      "correct_move": [
+        "红色印章",
+        "木桌"
+      ],
+      "picked": [
+        "红色印章",
+        "木桌"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "state",
+      "goal": "目标状态：蓝色杯子在窗台。",
+      "correct_move": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "picked": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "state",
+      "goal": "目标状态：红色印章在窗台。",
+      "correct_move": [
+        "红色印章",
+        "窗台"
+      ],
+      "picked": [
+        "红色印章",
+        "窗台"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "state",
+      "goal": "目标状态：蓝色杯子在木桌。",
+      "correct_move": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "picked": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    },
+    {
+      "style": "state",
+      "goal": "目标状态：红色印章在木桌。",
+      "correct_move": [
+        "红色印章",
+        "木桌"
+      ],
+      "picked": [
+        "红色印章",
+        "木桌"
+      ],
+      "hit": true,
+      "top_overlap": 0.25,
+      "second_overlap": 0.17647058823529413
+    }
+  ],
+  "model_involved": false,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "String-level check only: it says whether a trivial overlap matcher still wins after rewording. It is not a model reading and does not by itself make the fixture adequate for a capability claim.",
+  "cpu_seconds": 0.0,
+  "wall_seconds": 0.0005164998583495617,
+  "budget": {
+    "cpu_seconds": 60,
+    "wall_seconds": 120
+  },
+  "source_hashes": {
+    "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+    "scripts/training/verify_taiji_goal_paraphrase_10_8.py": "7e0dcecc9570f9fd8298a7153871bd45a78c9a62bb3fee64362a21b4634d8e92"
+  }
+}

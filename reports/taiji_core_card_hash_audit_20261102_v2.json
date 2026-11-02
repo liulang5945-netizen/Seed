@@ -1,0 +1,1040 @@
+{
+  "schema": "taiji-card-hash-audit-v1",
+  "supersedes": "reports/taiji_core_card_hash_audit_10_12_v2_20261101.json",
+  "step": "10.12",
+  "date": "2026-11-01",
+  "status": "cards_stale_unresolved",
+  "counts": {
+    "fresh": 62,
+    "unresolved": 43,
+    "no_hashes": 10,
+    "superseded": 8
+  },
+  "unresolved_cards": [
+    "taiji_core_10_21_1_preflight_20261101.json",
+    "taiji_core_10_21_1_preflight_20261101_v1_engineering_failure.json",
+    "taiji_core_10_21_1_preflight_20261101_v2_instrument_invalid_config_key.json",
+    "taiji_core_10_21_1_preflight_20261101_v3_instrument_invalid_effective_config.json",
+    "taiji_core_10_21_3_price_20261101.json",
+    "taiji_core_10_21_3_price_20261101_v1_engineering_failure_status_bug.json",
+    "taiji_core_10_21_3_price_20261101_v2_cache_bound_wording.json",
+    "taiji_core_10_21_3_price_20261101_v3_pre_manifest.json",
+    "taiji_core_10_21_4_compare_20261101_v1_peak_ram_unavailable.json",
+    "taiji_core_10_21_graph_v2_20261101.json",
+    "taiji_core_10_21_graph_v2_20261101_v2_engineering_failure_f32_eps.json",
+    "taiji_core_10_21_graph_v2_20261101_v3_engineering_failure_small_z.json",
+    "taiji_core_10_21_graph_v2_20261101_v4_engineering_failure_small_initial.json",
+    "taiji_core_10_21_graph_v2_20261101_v5_passed_pre_null_zero.json",
+    "taiji_core_10_21_graph_v2_20261101_v6_engineering_failure_null_only.json",
+    "taiji_core_card_hash_audit_10_12_20261101.json",
+    "taiji_core_card_hash_audit_10_12_v2_20261101.json",
+    "taiji_core_card_hash_audit_20261102.json",
+    "taiji_core_cost_ledger_20261101.json",
+    "taiji_core_cost_ledger_v2_20261101.json",
+    "taiji_core_cost_ledger_v3_20261102.json",
+    "taiji_core_fixture_arrivals_20261101.json",
+    "taiji_core_fixture_arrivals_v2_20261101.json",
+    "taiji_core_fixture_fairness_audit_20261102_void.json",
+    "taiji_core_fragment_09_7_20261101.json",
+    "taiji_core_goal_binding_10_2_20261101.json",
+    "taiji_core_goal_planner_10_3_20261101.json",
+    "taiji_core_goal_world_10_1_20261101.json",
+    "taiji_core_l3_admission_11_20261101.json",
+    "taiji_core_l3_admission_11_v2_20261101.json",
+    "taiji_core_r023_growth_birth_20261031.json",
+    "taiji_core_r024_subject_restore_20261031.json",
+    "taiji_core_r025_activity_dynamics_20261031.json",
+    "taiji_core_r026_plasticity_arms_20261031.json",
+    "taiji_core_r027_subject_gates_20261101.json",
+    "taiji_core_r028_life_fragment_pricing_20261101.json",
+    "taiji_core_r029_engineering_gaps_20261101.json",
+    "taiji_core_read_source_14_3_20261102_v1_engineering_failure.json",
+    "taiji_core_task_entry_11_2_20261101.json",
+    "taiji_core_task_entry_roundtrip_11_2b_20261101.json",
+    "taiji_core_task_suite_11_3_20261101.json",
+    "taiji_core_wide_fixture_10_15_20261101.json",
+    "taiji_core_wide_fixture_10_15_v2_20261101.json"
+  ],
+  "stale_paths": [
+    "scripts/training/audit_taiji_card_hashes.py",
+    "scripts/training/audit_taiji_cost_ledger.py",
+    "scripts/training/audit_taiji_goal_fixture_fairness.py",
+    "scripts/training/diagnose_residual_structure_10_7c.py",
+    "scripts/training/probe_slot_descriptor_10_21a2.py",
+    "scripts/training/verify_taiji_10_21_1.py",
+    "scripts/training/verify_taiji_closeout_10.py",
+    "scripts/training/verify_taiji_composition_10_21.py",
+    "scripts/training/verify_taiji_fixture_arrivals.py",
+    "scripts/training/verify_taiji_fragment_09_7.py",
+    "scripts/training/verify_taiji_goal_planner_10_3.py",
+    "scripts/training/verify_taiji_instrument_11_7.py",
+    "scripts/training/verify_taiji_l3_admission_11.py",
+    "scripts/training/verify_taiji_read_source_14_3.py",
+    "scripts/training/verify_taiji_records_state_10_12.py",
+    "scripts/training/verify_taiji_state_selection_10_13.py",
+    "scripts/training/verify_taiji_training_replay_10_7a.py",
+    "scripts/training/verify_taiji_wide_fixture_10_15.py",
+    "taiji/activity_learning.py",
+    "taiji/candidate_session.py",
+    "taiji/goal_fixture_fairness.py",
+    "taiji/goal_planner.py",
+    "taiji/growth_credit.py",
+    "taiji/native_activity.py",
+    "taiji/native_activity_fixture.py",
+    "taiji/native_goal_world.py",
+    "taiji/native_goal_world_wide.py",
+    "taiji/query_binding.py",
+    "taiji/slot_composition_head.py",
+    "taiji/state_migration.py"
+  ],
+  "cards": [
+    {
+      "card": "taiji_core_09_closeout_20261101.json",
+      "status": "fresh",
+      "bound": 8
+    },
+    {
+      "card": "taiji_core_10_21_1_preflight_20261101.json",
+      "status": "unresolved",
+      "bound": 11,
+      "stale": [
+        "taiji/slot_composition_head.py",
+        "scripts/training/verify_taiji_10_21_1.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_10_21_1_preflight_20261101_v1_engineering_failure.json",
+      "status": "unresolved",
+      "bound": 11,
+      "stale": [
+        "taiji/slot_composition_head.py",
+        "scripts/training/verify_taiji_10_21_1.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_10_21_1_preflight_20261101_v2_instrument_invalid_config_key.json",
+      "status": "unresolved",
+      "bound": 11,
+      "stale": [
+        "taiji/slot_composition_head.py",
+        "scripts/training/verify_taiji_10_21_1.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_10_21_1_preflight_20261101_v3_instrument_invalid_effective_config.json",
+      "status": "unresolved",
+      "bound": 11,
+      "stale": [
+        "taiji/slot_composition_head.py",
+        "scripts/training/verify_taiji_10_21_1.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_10_21_3_price_20261101.json",
+      "status": "unresolved",
+      "bound": 10,
+      "stale": [
+        "scripts/training/verify_taiji_composition_10_21.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_10_21_3_price_20261101_v1_engineering_failure_status_bug.json",
+      "status": "unresolved",
+      "bound": 10,
+      "stale": [
+        "scripts/training/verify_taiji_composition_10_21.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_10_21_3_price_20261101_v2_cache_bound_wording.json",
+      "status": "unresolved",
+      "bound": 10,
+      "stale": [
+        "scripts/training/verify_taiji_composition_10_21.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_10_21_3_price_20261101_v3_pre_manifest.json",
+      "status": "unresolved",
+      "bound": 10,
+      "stale": [
+        "scripts/training/verify_taiji_composition_10_21.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_10_21_4_compare_20261101.json",
+      "status": "fresh",
+      "bound": 10
+    },
+    {
+      "card": "taiji_core_10_21_4_compare_20261101_v1_peak_ram_unavailable.json",
+      "status": "unresolved",
+      "bound": 10,
+      "stale": [
+        "scripts/training/verify_taiji_composition_10_21.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_10_21_closeout_20261101.json",
+      "status": "no_hashes",
+      "bound": 0
+    },
+    {
+      "card": "taiji_core_10_21_graph_v2_20261101.json",
+      "status": "unresolved",
+      "bound": 9,
+      "stale": [
+        "scripts/training/verify_taiji_composition_10_21.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_10_21_graph_v2_20261101_v1_engineering_failure.json",
+      "status": "no_hashes",
+      "bound": 0
+    },
+    {
+      "card": "taiji_core_10_21_graph_v2_20261101_v2_engineering_failure_f32_eps.json",
+      "status": "unresolved",
+      "bound": 9,
+      "stale": [
+        "taiji/query_binding.py",
+        "scripts/training/verify_taiji_composition_10_21.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_10_21_graph_v2_20261101_v3_engineering_failure_small_z.json",
+      "status": "unresolved",
+      "bound": 9,
+      "stale": [
+        "taiji/query_binding.py",
+        "scripts/training/verify_taiji_composition_10_21.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_10_21_graph_v2_20261101_v4_engineering_failure_small_initial.json",
+      "status": "unresolved",
+      "bound": 9,
+      "stale": [
+        "scripts/training/verify_taiji_composition_10_21.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_10_21_graph_v2_20261101_v5_passed_pre_null_zero.json",
+      "status": "unresolved",
+      "bound": 9,
+      "stale": [
+        "scripts/training/verify_taiji_composition_10_21.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_10_21_graph_v2_20261101_v6_engineering_failure_null_only.json",
+      "status": "unresolved",
+      "bound": 9,
+      "stale": [
+        "scripts/training/verify_taiji_composition_10_21.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_10_21_plan_revision_20261101.json",
+      "status": "no_hashes",
+      "bound": 0
+    },
+    {
+      "card": "taiji_core_10_closeout_20261101.json",
+      "status": "superseded",
+      "bound": 7,
+      "stale": [
+        "scripts/training/verify_taiji_closeout_10.py"
+      ],
+      "v2_sibling": "taiji_core_10_closeout_v2_20261101.json",
+      "declared_successor": null,
+      "successor_fresh": true
+    },
+    {
+      "card": "taiji_core_10_closeout_v2_20261101.json",
+      "status": "fresh",
+      "bound": 7
+    },
+    {
+      "card": "taiji_core_13_closeout_20261101.json",
+      "status": "no_hashes",
+      "bound": 0
+    },
+    {
+      "card": "taiji_core_14_1_split_audit_20261102.json",
+      "status": "no_hashes",
+      "bound": 0
+    },
+    {
+      "card": "taiji_core_14_2_split_rerun_20261102.json",
+      "status": "no_hashes",
+      "bound": 0
+    },
+    {
+      "card": "taiji_core_14_2_split_rerun_v1_no_control_20261102.json",
+      "status": "no_hashes",
+      "bound": 0
+    },
+    {
+      "card": "taiji_core_abstain_11_3b_20261101.json",
+      "status": "fresh",
+      "bound": 3
+    },
+    {
+      "card": "taiji_core_action_verdict_10_6_20261101.json",
+      "status": "fresh",
+      "bound": 4
+    },
+    {
+      "card": "taiji_core_algorithm_v11_evaluation_20261031.json",
+      "status": "no_hashes",
+      "bound": 0
+    },
+    {
+      "card": "taiji_core_algorithm_v1_math_checks_20261031.json",
+      "status": "no_hashes",
+      "bound": 0
+    },
+    {
+      "card": "taiji_core_birth_direction_20261101.json",
+      "status": "fresh",
+      "bound": 6
+    },
+    {
+      "card": "taiji_core_birth_direction_abs_20261101.json",
+      "status": "fresh",
+      "bound": 6
+    },
+    {
+      "card": "taiji_core_birth_direction_parts_20261101.json",
+      "status": "fresh",
+      "bound": 6
+    },
+    {
+      "card": "taiji_core_birth_direction_surface_20261101.json",
+      "status": "fresh",
+      "bound": 6
+    },
+    {
+      "card": "taiji_core_birth_inertness_20261101.json",
+      "status": "fresh",
+      "bound": 6
+    },
+    {
+      "card": "taiji_core_birth_netbenefit_20261101.json",
+      "status": "fresh",
+      "bound": 5
+    },
+    {
+      "card": "taiji_core_candidate_manifest_11_1_20261101.json",
+      "status": "fresh",
+      "bound": 2
+    },
+    {
+      "card": "taiji_core_capability_closeout_10_20_20261101.json",
+      "status": "fresh",
+      "bound": 1
+    },
+    {
+      "card": "taiji_core_card_hash_audit_10_12_20261101.json",
+      "status": "unresolved",
+      "bound": 1,
+      "stale": [
+        "scripts/training/audit_taiji_card_hashes.py"
+      ],
+      "v2_sibling": "taiji_core_card_hash_audit_10_12_v2_20261101.json",
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_card_hash_audit_10_12_v2_20261101.json",
+      "status": "unresolved",
+      "bound": 1,
+      "stale": [
+        "scripts/training/audit_taiji_card_hashes.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_card_hash_audit_20261102.json",
+      "status": "unresolved",
+      "bound": 1,
+      "stale": [
+        "scripts/training/audit_taiji_card_hashes.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_confidence_separable_11_3c_20261101.json",
+      "status": "fresh",
+      "bound": 2
+    },
+    {
+      "card": "taiji_core_cost_ledger_20261101.json",
+      "status": "unresolved",
+      "bound": 1,
+      "stale": [
+        "scripts/training/audit_taiji_cost_ledger.py"
+      ],
+      "v2_sibling": "taiji_core_cost_ledger_v2_20261101.json",
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_cost_ledger_v2_20261101.json",
+      "status": "unresolved",
+      "bound": 1,
+      "stale": [
+        "scripts/training/audit_taiji_cost_ledger.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_cost_ledger_v3_20261102.json",
+      "status": "unresolved",
+      "bound": 1,
+      "stale": [
+        "scripts/training/audit_taiji_cost_ledger.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": "taiji_core_cost_ledger_v3_v2_20261102_conflict_record.json",
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_cost_ledger_v3_v2_20261102_conflict_record.json",
+      "status": "superseded",
+      "bound": 1,
+      "stale": [
+        "scripts/training/audit_taiji_cost_ledger.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": "taiji_core_cost_ledger_v5_20261102.json",
+      "successor_fresh": true
+    },
+    {
+      "card": "taiji_core_cost_ledger_v4_20261102.json",
+      "status": "fresh",
+      "bound": 1
+    },
+    {
+      "card": "taiji_core_cost_ledger_v5_20261102.json",
+      "status": "fresh",
+      "bound": 1
+    },
+    {
+      "card": "taiji_core_device_profile_11_4b_20261101.json",
+      "status": "fresh",
+      "bound": 1
+    },
+    {
+      "card": "taiji_core_direction_oracle_20261101.json",
+      "status": "fresh",
+      "bound": 6
+    },
+    {
+      "card": "taiji_core_equations_v11_validation_20261031.json",
+      "status": "no_hashes",
+      "bound": 0
+    },
+    {
+      "card": "taiji_core_feature_additivity_10_7g_20261101.json",
+      "status": "fresh",
+      "bound": 1
+    },
+    {
+      "card": "taiji_core_fixture_arrivals_20261101.json",
+      "status": "unresolved",
+      "bound": 9,
+      "stale": [
+        "taiji/native_activity_fixture.py",
+        "scripts/training/verify_taiji_fixture_arrivals.py"
+      ],
+      "v2_sibling": "taiji_core_fixture_arrivals_v2_20261101.json",
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_fixture_arrivals_v2_20261101.json",
+      "status": "unresolved",
+      "bound": 9,
+      "stale": [
+        "taiji/native_activity_fixture.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_fixture_fairness_audit_20261102.json",
+      "status": "fresh",
+      "bound": 6
+    },
+    {
+      "card": "taiji_core_fixture_fairness_audit_20261102_void.json",
+      "status": "unresolved",
+      "bound": 6,
+      "stale": [
+        "taiji/goal_fixture_fairness.py",
+        "scripts/training/audit_taiji_goal_fixture_fairness.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_fragment_09_7_20261101.json",
+      "status": "unresolved",
+      "bound": 5,
+      "stale": [
+        "scripts/training/verify_taiji_fragment_09_7.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_fragment_horizon_20261101.json",
+      "status": "fresh",
+      "bound": 5
+    },
+    {
+      "card": "taiji_core_generation_10_19_20261101.json",
+      "status": "fresh",
+      "bound": 2
+    },
+    {
+      "card": "taiji_core_geometry_select_10_7h_20261101.json",
+      "status": "fresh",
+      "bound": 1
+    },
+    {
+      "card": "taiji_core_glossary_10_10_20261101.json",
+      "status": "fresh",
+      "bound": 3
+    },
+    {
+      "card": "taiji_core_glossary_control_10_11b_20261101.json",
+      "status": "fresh",
+      "bound": 2
+    },
+    {
+      "card": "taiji_core_glossary_records_10_11_20261101.json",
+      "status": "fresh",
+      "bound": 3
+    },
+    {
+      "card": "taiji_core_goal_attributes_10_9_20261101.json",
+      "status": "fresh",
+      "bound": 2
+    },
+    {
+      "card": "taiji_core_goal_binding_10_2_20261101.json",
+      "status": "unresolved",
+      "bound": 4,
+      "stale": [
+        "taiji/native_goal_world.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_goal_conditioned_10_5_20261101.json",
+      "status": "fresh",
+      "bound": 5
+    },
+    {
+      "card": "taiji_core_goal_paraphrase_10_8_20261101.json",
+      "status": "fresh",
+      "bound": 2
+    },
+    {
+      "card": "taiji_core_goal_planner_10_3_20261101.json",
+      "status": "unresolved",
+      "bound": 5,
+      "stale": [
+        "taiji/native_goal_world.py",
+        "taiji/goal_planner.py",
+        "scripts/training/verify_taiji_goal_planner_10_3.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_goal_planner_10_3b_20261101.json",
+      "status": "fresh",
+      "bound": 5
+    },
+    {
+      "card": "taiji_core_goal_training_10_7_20261101.json",
+      "status": "fresh",
+      "bound": 5
+    },
+    {
+      "card": "taiji_core_goal_world_10_1_20261101.json",
+      "status": "unresolved",
+      "bound": 2,
+      "stale": [
+        "taiji/native_goal_world.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_goal_world_10_1b_20261101.json",
+      "status": "fresh",
+      "bound": 4
+    },
+    {
+      "card": "taiji_core_instrument_11_7_20261101.json",
+      "status": "superseded",
+      "bound": 3,
+      "stale": [
+        "scripts/training/verify_taiji_instrument_11_7.py"
+      ],
+      "v2_sibling": "taiji_core_instrument_11_7_v2_20261101.json",
+      "declared_successor": null,
+      "successor_fresh": true
+    },
+    {
+      "card": "taiji_core_instrument_11_7_v2_20261101.json",
+      "status": "fresh",
+      "bound": 3
+    },
+    {
+      "card": "taiji_core_instrument_closeout_11_4d_20261101.json",
+      "status": "fresh",
+      "bound": 3
+    },
+    {
+      "card": "taiji_core_instrument_inventory_11_4_20261101.json",
+      "status": "fresh",
+      "bound": 7
+    },
+    {
+      "card": "taiji_core_instrument_inventory_11_4_v2_20261101.json",
+      "status": "fresh",
+      "bound": 8
+    },
+    {
+      "card": "taiji_core_instrument_inventory_11_4_v3_20261101.json",
+      "status": "fresh",
+      "bound": 9
+    },
+    {
+      "card": "taiji_core_interrupt_recovery_11_4c_20261101.json",
+      "status": "fresh",
+      "bound": 2
+    },
+    {
+      "card": "taiji_core_l3_admission_11_20261101.json",
+      "status": "unresolved",
+      "bound": 4,
+      "stale": [
+        "scripts/training/verify_taiji_l3_admission_11.py"
+      ],
+      "v2_sibling": "taiji_core_l3_admission_11_v2_20261101.json",
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_l3_admission_11_v2_20261101.json",
+      "status": "unresolved",
+      "bound": 5,
+      "stale": [
+        "scripts/training/verify_taiji_l3_admission_11.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_l3_admission_11_v3_20261101.json",
+      "status": "fresh",
+      "bound": 5
+    },
+    {
+      "card": "taiji_core_l3_admission_11_v4_20261101.json",
+      "status": "fresh",
+      "bound": 5
+    },
+    {
+      "card": "taiji_core_margin_objective_10_7d_20261101.json",
+      "status": "fresh",
+      "bound": 3
+    },
+    {
+      "card": "taiji_core_netbenefit_second_20261101.json",
+      "status": "fresh",
+      "bound": 5
+    },
+    {
+      "card": "taiji_core_r022_credit_validation_20261031.json",
+      "status": "fresh",
+      "bound": 4
+    },
+    {
+      "card": "taiji_core_r023_growth_birth_20261031.json",
+      "status": "unresolved",
+      "bound": 6,
+      "stale": [
+        "taiji/growth_credit.py",
+        "taiji/state_migration.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_r024_subject_restore_20261031.json",
+      "status": "unresolved",
+      "bound": 7,
+      "stale": [
+        "taiji/growth_credit.py",
+        "taiji/state_migration.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_r025_activity_dynamics_20261031.json",
+      "status": "unresolved",
+      "bound": 5,
+      "stale": [
+        "taiji/native_activity.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_r026_plasticity_arms_20261031.json",
+      "status": "unresolved",
+      "bound": 6,
+      "stale": [
+        "taiji/growth_credit.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_r027_subject_gates_20261101.json",
+      "status": "unresolved",
+      "bound": 6,
+      "stale": [
+        "taiji/native_activity.py",
+        "taiji/state_migration.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_r028_life_fragment_pricing_20261101.json",
+      "status": "unresolved",
+      "bound": 6,
+      "stale": [
+        "taiji/growth_credit.py",
+        "taiji/native_activity.py",
+        "taiji/state_migration.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_r029_engineering_gaps_20261101.json",
+      "status": "unresolved",
+      "bound": 12,
+      "stale": [
+        "taiji/native_activity.py",
+        "taiji/activity_learning.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_raw_rank_10_7e2_20261101.json",
+      "status": "fresh",
+      "bound": 2
+    },
+    {
+      "card": "taiji_core_read_source_14_3_20261102.json",
+      "status": "fresh",
+      "bound": 5
+    },
+    {
+      "card": "taiji_core_read_source_14_3_20261102_v1_engineering_failure.json",
+      "status": "unresolved",
+      "bound": 5,
+      "stale": [
+        "scripts/training/verify_taiji_read_source_14_3.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_readout_10_7e_20261101.json",
+      "status": "fresh",
+      "bound": 3
+    },
+    {
+      "card": "taiji_core_readout_closeout_10_14_20261101.json",
+      "status": "fresh",
+      "bound": 1
+    },
+    {
+      "card": "taiji_core_readout_rank_10_7e1_20261101.json",
+      "status": "fresh",
+      "bound": 3
+    },
+    {
+      "card": "taiji_core_records_copy_10_18_20261101.json",
+      "status": "fresh",
+      "bound": 2
+    },
+    {
+      "card": "taiji_core_records_state_10_12_20261101.json",
+      "status": "superseded",
+      "bound": 2,
+      "stale": [
+        "scripts/training/verify_taiji_records_state_10_12.py"
+      ],
+      "v2_sibling": "taiji_core_records_state_10_12_v2_20261101.json",
+      "declared_successor": null,
+      "successor_fresh": true
+    },
+    {
+      "card": "taiji_core_records_state_10_12_v2_20261101.json",
+      "status": "fresh",
+      "bound": 2
+    },
+    {
+      "card": "taiji_core_reference_r021_forward_coverage_20261031.json",
+      "status": "fresh",
+      "bound": 4
+    },
+    {
+      "card": "taiji_core_residual_structure_10_7c_20261101.json",
+      "status": "superseded",
+      "bound": 2,
+      "stale": [
+        "scripts/training/diagnose_residual_structure_10_7c.py"
+      ],
+      "v2_sibling": "taiji_core_residual_structure_10_7c_v2_20261101.json",
+      "declared_successor": null,
+      "successor_fresh": true
+    },
+    {
+      "card": "taiji_core_residual_structure_10_7c_v2_20261101.json",
+      "status": "fresh",
+      "bound": 2
+    },
+    {
+      "card": "taiji_core_selection_10_7f_20261101.json",
+      "status": "fresh",
+      "bound": 3
+    },
+    {
+      "card": "taiji_core_slot_channel_10_21a_20261101.json",
+      "status": "fresh",
+      "bound": 3
+    },
+    {
+      "card": "taiji_core_slot_descriptor_10_21a2_20261101.json",
+      "status": "fresh",
+      "bound": 5
+    },
+    {
+      "card": "taiji_core_slot_descriptor_10_21a2_20261101_void.json",
+      "status": "superseded",
+      "bound": 4,
+      "stale": [
+        "scripts/training/probe_slot_descriptor_10_21a2.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": "taiji_core_slot_descriptor_10_21a2_20261101.json",
+      "successor_fresh": true
+    },
+    {
+      "card": "taiji_core_state_selection_10_13_20261101.json",
+      "status": "superseded",
+      "bound": 3,
+      "stale": [
+        "scripts/training/verify_taiji_state_selection_10_13.py"
+      ],
+      "v2_sibling": "taiji_core_state_selection_10_13_v2_20261101.json",
+      "declared_successor": null,
+      "successor_fresh": true
+    },
+    {
+      "card": "taiji_core_state_selection_10_13_v2_20261101.json",
+      "status": "fresh",
+      "bound": 3
+    },
+    {
+      "card": "taiji_core_subject_selection_10_4_20261101.json",
+      "status": "fresh",
+      "bound": 8
+    },
+    {
+      "card": "taiji_core_task_entry_11_2_20261101.json",
+      "status": "unresolved",
+      "bound": 2,
+      "stale": [
+        "taiji/candidate_session.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_task_entry_roundtrip_11_2b_20261101.json",
+      "status": "unresolved",
+      "bound": 2,
+      "stale": [
+        "taiji/candidate_session.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_task_suite_11_3_20261101.json",
+      "status": "unresolved",
+      "bound": 3,
+      "stale": [
+        "taiji/candidate_session.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_training_direction_10_7b_20261101.json",
+      "status": "fresh",
+      "bound": 3
+    },
+    {
+      "card": "taiji_core_training_replay_10_7a_20261101.json",
+      "status": "superseded",
+      "bound": 3,
+      "stale": [
+        "scripts/training/verify_taiji_training_replay_10_7a.py"
+      ],
+      "v2_sibling": "taiji_core_training_replay_10_7a_v2_20261101.json",
+      "declared_successor": null,
+      "successor_fresh": true
+    },
+    {
+      "card": "taiji_core_training_replay_10_7a_v2_20261101.json",
+      "status": "fresh",
+      "bound": 3
+    },
+    {
+      "card": "taiji_core_wide_fixture_10_15_20261101.json",
+      "status": "unresolved",
+      "bound": 2,
+      "stale": [
+        "taiji/native_goal_world_wide.py",
+        "scripts/training/verify_taiji_wide_fixture_10_15.py"
+      ],
+      "v2_sibling": "taiji_core_wide_fixture_10_15_v2_20261101.json",
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_wide_fixture_10_15_v2_20261101.json",
+      "status": "unresolved",
+      "bound": 2,
+      "stale": [
+        "taiji/native_goal_world_wide.py"
+      ],
+      "v2_sibling": null,
+      "declared_successor": null,
+      "successor_fresh": false
+    },
+    {
+      "card": "taiji_core_wide_fixture_10_15_v3_20261101.json",
+      "status": "fresh",
+      "bound": 2
+    },
+    {
+      "card": "taiji_core_wide_object_split_10_17_20261101.json",
+      "status": "fresh",
+      "bound": 4
+    },
+    {
+      "card": "taiji_core_wide_selection_10_16_20261101.json",
+      "status": "fresh",
+      "bound": 3
+    }
+  ],
+  "limits": "Bookkeeping only. A stale binding does not invalidate the reading: the card bound the bytes that existed when it ran. It does mean the number cannot be reproduced from today's tree, which is what 'unresolved' names. Nothing is re-run, re-hashed in place or deleted.",
+  "cpu_seconds": 0.3125,
+  "wall_seconds": 0.3318935001734644,
+  "budget": {
+    "cpu_seconds": 120,
+    "wall_seconds": 240
+  },
+  "source_hashes": {
+    "scripts/training/audit_taiji_card_hashes.py": "bf85967e6ca28299c0016b937f336d524fff702fe2305ab55e8343d88ab4403d"
+  }
+}

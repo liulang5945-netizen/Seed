@@ -1,0 +1,208 @@
+{
+  "schema": "taiji-joint-fragment-09-7-v1",
+  "step": "09.7",
+  "date": "2026-11-01",
+  "status": "retention_breach",
+  "config": {
+    "groups": 4,
+    "width": 128,
+    "units": 256,
+    "adapter_rank": 16,
+    "fast_heads": 2,
+    "key_width": 32,
+    "value_width": 32,
+    "output_heads": 2,
+    "fast_limit": 16.0,
+    "max_event_bytes": 512,
+    "max_source_bytes": 512,
+    "max_target_bytes": 128,
+    "seed": 20261031
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "declared": {
+    "parts": 5,
+    "units_per_group": 3,
+    "block": 8,
+    "blocks": 4,
+    "lr": 1e-05,
+    "net_gate": 0.0001,
+    "retention_gate": 0.03,
+    "reference_net_at_8": 0.000173924,
+    "face_tolerance": 0.2,
+    "cpu_per_gate_reference": 6.6,
+    "parts_4_must_not_be_substituted": true
+  },
+  "arms": {
+    "replay_only": {
+      "pre": {
+        "holdout": 4.381243859077419,
+        "second_holdout": 4.422615102351937
+      },
+      "checkpoints": [
+        {
+          "steps": 8,
+          "delta": {
+            "holdout": -0.020192401810056104,
+            "second_holdout": -0.011326104364446365
+          },
+          "loss_last": 4.409392151712617
+        },
+        {
+          "steps": 16,
+          "delta": {
+            "holdout": -0.03974011702136693,
+            "second_holdout": -0.022147803099183072
+          },
+          "loss_last": 4.378941098516809
+        },
+        {
+          "steps": 24,
+          "delta": {
+            "holdout": -0.05884913806149328,
+            "second_holdout": -0.032630686303405376
+          },
+          "loss_last": 4.348834175522418
+        },
+        {
+          "steps": 32,
+          "delta": {
+            "holdout": -0.07774035466621854,
+            "second_holdout": -0.04294974112651673
+          },
+          "loss_last": 4.318675101863283
+        }
+      ],
+      "retention_drift": 0.08475241711031423,
+      "train_cpu_seconds": 87.015625,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.318675101863283
+    },
+    "consensus_birth": {
+      "pre": {
+        "holdout": 4.381243859077419,
+        "second_holdout": 4.422615102351937
+      },
+      "checkpoints": [
+        {
+          "steps": 8,
+          "delta": {
+            "holdout": -0.02036632573140995,
+            "second_holdout": -0.011516443230527251
+          },
+          "loss_last": 4.409094195605715
+        },
+        {
+          "steps": 16,
+          "delta": {
+            "holdout": -0.04008871287148352,
+            "second_holdout": -0.022537219586767243
+          },
+          "loss_last": 4.378292130996851
+        },
+        {
+          "steps": 24,
+          "delta": {
+            "holdout": -0.059379029546715145,
+            "second_holdout": -0.03322846805704671
+          },
+          "loss_last": 4.3478123841099805
+        },
+        {
+          "steps": 32,
+          "delta": {
+            "holdout": -0.07845903430706258,
+            "second_holdout": -0.043764435997548645
+          },
+          "loss_last": 4.31724841782646
+        }
+      ],
+      "retention_drift": 0.08563097669414788,
+      "train_cpu_seconds": 91.234375,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.31724841782646,
+      "birth_cpu_seconds": 10.5625,
+      "birth_plus_train_cpu_seconds": 101.796875,
+      "holdout_after_lesion": 4.3034920085809825
+    }
+  },
+  "net_by_checkpoint": [
+    {
+      "steps": 8,
+      "net_benefit": {
+        "holdout": 0.00017392392135384682,
+        "second_holdout": 0.0001903388660808858
+      }
+    },
+    {
+      "steps": 16,
+      "net_benefit": {
+        "holdout": 0.00034859585011659533,
+        "second_holdout": 0.000389416487584171
+      }
+    },
+    {
+      "steps": 24,
+      "net_benefit": {
+        "holdout": 0.0005298914852218672,
+        "second_holdout": 0.0005977817536413355
+      }
+    },
+    {
+      "steps": 32,
+      "net_benefit": {
+        "holdout": 0.0007186796408440443,
+        "second_holdout": 0.000814694871031918
+      }
+    }
+  ],
+  "extra_cpu_seconds": 14.78125,
+  "checks": [
+    {
+      "id": "retention_within_gate",
+      "passed": false,
+      "observed": [
+        0.08475241711031423,
+        0.08563097669414788
+      ]
+    },
+    {
+      "id": "eight_step_face_reproduced",
+      "passed": true,
+      "observed": {
+        "holdout": 0.00017392392135384682,
+        "second_holdout": 0.0001903388660808858
+      }
+    },
+    {
+      "id": "net_benefit_held_at_32_steps",
+      "passed": true,
+      "observed": {
+        "holdout": 0.0007186796408440443,
+        "second_holdout": 0.000814694871031918
+      }
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true,
+      "observed": [
+        219.265625,
+        223.993271100102
+      ]
+    }
+  ],
+  "training_admitted": false,
+  "limits": "One deterministic subject, synthetic Chinese careers, single direction rule. Holding the net benefit across 32 steps is not a capability, not a long-horizon solvency proof and not training admission.",
+  "cpu_seconds": 219.265625,
+  "wall_seconds": 223.993271100102,
+  "budget": {
+    "cpu_seconds": 1800,
+    "wall_seconds": 3600
+  },
+  "source_hashes": {
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/growth_credit.py": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+    "taiji/native_development.py": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+    "taiji/birth_direction.py": "a723075011a42c3a4d44b24267de2c40dc7db3229c0e546480942538d2274ad9",
+    "scripts/training/verify_taiji_fragment_09_7.py": "749bf11431d99cf6c40eb9d031d86d7d9070396470b8ba90ae737c5ebf11b4ee"
+  }
+}

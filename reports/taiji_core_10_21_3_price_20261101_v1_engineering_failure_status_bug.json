@@ -1,0 +1,1108 @@
+{
+  "schema": "taiji-composition-price-v1",
+  "step": "10.21.3",
+  "date": "2026-11-01",
+  "status": "engineering_failure",
+  "checks": [
+    {
+      "id": "parent_identity",
+      "passed": true,
+      "observed": {
+        "candidate": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+        "sha256": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf",
+        "bytes": 77609636
+      },
+      "note": ""
+    },
+    {
+      "id": "parent_frozen",
+      "passed": true,
+      "observed": 0,
+      "note": ""
+    },
+    {
+      "id": "fixture_declared_lengths",
+      "passed": true,
+      "observed": {
+        "train_examples": 8,
+        "dev_examples": 8,
+        "train_records": [
+          8,
+          219
+        ],
+        "dev_records": [
+          9,
+          252
+        ]
+      },
+      "note": ""
+    },
+    {
+      "id": "arm_parameter_counts",
+      "passed": true,
+      "observed": {
+        "J_joint": 105760,
+        "S_stop_read": 50304
+      },
+      "note": ""
+    },
+    {
+      "id": "arm_initial_forward_bitwise_equal",
+      "passed": true,
+      "observed": {
+        "scores_diff": 0.0,
+        "h_diff": 0.0
+      },
+      "note": ""
+    },
+    {
+      "id": "initial_forward_finite",
+      "passed": true,
+      "observed": {
+        "loss": 2.70809642396263,
+        "probability_sum": 0.9999999999999999
+      },
+      "note": ""
+    },
+    {
+      "id": "restore_J_joint",
+      "passed": true,
+      "observed": {
+        "arm": "J_joint",
+        "ok": true,
+        "message": null,
+        "features_sha_equal": true,
+        "scores_bitwise_equal": true,
+        "h_bitwise_equal": true,
+        "loss_abs_diff": 0.0,
+        "child_cpu_seconds": 0.9375,
+        "child_wall_seconds": 1.2881550998426974,
+        "child_load_cpu_seconds": 0.84375,
+        "child_features_cpu_seconds": 0.078125,
+        "child_forward_cpu_seconds": 0.015625,
+        "parent_wall_wait_seconds": 3.254893699893728,
+        "bundle_bytes": 27563679,
+        "bundle_sha256": "ee99641aa8f8db7d3151979475eefb4afcd0523a662d4b429e253d41ff08dd9f",
+        "passed": true
+      },
+      "note": ""
+    },
+    {
+      "id": "restore_S_stop_read",
+      "passed": true,
+      "observed": {
+        "arm": "S_stop_read",
+        "ok": true,
+        "message": null,
+        "features_sha_equal": true,
+        "scores_bitwise_equal": true,
+        "h_bitwise_equal": true,
+        "loss_abs_diff": 0.0,
+        "child_cpu_seconds": 0.84375,
+        "child_wall_seconds": 1.1855981000699103,
+        "child_load_cpu_seconds": 0.75,
+        "child_features_cpu_seconds": 0.078125,
+        "child_forward_cpu_seconds": 0.015625,
+        "parent_wall_wait_seconds": 3.0741051000077277,
+        "bundle_bytes": 27564275,
+        "bundle_sha256": "b49aef721c16bdf68489fb3645e102232acb4c2b548f603ba61dec4249843e52",
+        "passed": true
+      },
+      "note": ""
+    },
+    {
+      "id": "parent_no_grad_J_joint",
+      "passed": true,
+      "observed": 0,
+      "note": ""
+    },
+    {
+      "id": "step_loss_finite_J_joint",
+      "passed": true,
+      "observed": [
+        2.708041747229035,
+        2.7078885482525883
+      ],
+      "note": ""
+    },
+    {
+      "id": "parent_no_grad_S_stop_read",
+      "passed": true,
+      "observed": 0,
+      "note": ""
+    },
+    {
+      "id": "step_loss_finite_S_stop_read",
+      "passed": true,
+      "observed": [
+        2.708041747229035,
+        2.707903320223816
+      ],
+      "note": ""
+    },
+    {
+      "id": "parent_bundle_unchanged",
+      "passed": true,
+      "observed": {
+        "before": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf",
+        "after": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf"
+      },
+      "note": ""
+    },
+    {
+      "id": "parent_parameters_unchanged",
+      "passed": true,
+      "observed": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+      "note": ""
+    },
+    {
+      "id": "product_bytes_within_budget",
+      "passed": true,
+      "observed": {
+        "bundle_bytes": 55127954.0,
+        "limit": 536870912
+      },
+      "note": ""
+    },
+    {
+      "id": "budget",
+      "passed": true,
+      "observed": {
+        "cpu_seconds": 5.921875,
+        "wall_seconds": 10.905526499962434,
+        "cpu_budget": 180,
+        "wall_budget": 360,
+        "child_cpu_seconds": 1.78125,
+        "child_wall_seconds": 2.4737531999126077
+      },
+      "note": ""
+    }
+  ],
+  "identity": {
+    "parent_candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+    "parent_bundle": {
+      "path": "output/taiji_core_09/subject_bundle.pt",
+      "sha256": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf",
+      "bytes": 77609636
+    },
+    "parent_subject_id": "taiji-core-09",
+    "parent_revision": 0,
+    "parent_step": 1,
+    "parent_config": {
+      "groups": 4,
+      "width": 128,
+      "units": 256,
+      "adapter_rank": 16,
+      "fast_heads": 2,
+      "key_width": 32,
+      "value_width": 32,
+      "fast_limit": 16.0,
+      "max_event_bytes": 512,
+      "max_source_bytes": 512,
+      "max_target_bytes": 128,
+      "seed": 20261031
+    },
+    "growth_parent_units": 256,
+    "growth_unit_branches": [
+      [
+        "consensus",
+        "consensus",
+        "consensus"
+      ],
+      [
+        "consensus",
+        "consensus",
+        "consensus"
+      ],
+      [
+        "consensus",
+        "consensus",
+        "consensus"
+      ],
+      [
+        "consensus",
+        "consensus",
+        "consensus"
+      ]
+    ],
+    "growth_gates": [
+      {
+        "consensus": 1.0
+      }
+    ],
+    "source_hashes": {
+      "taiji/query_binding.py": "a7b8aea9b944b9c1b1edb4557912aab1cc5709395ccbd1b5df49c0352c1ac07b",
+      "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+      "taiji/growth_credit.py": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+      "taiji/state_migration.py": "c067dcd043fc189a53051eba72f0b9794ed4b2d3fc77907a89f82aa2817299c6",
+      "taiji/candidate_manifest.py": "6fc05ca4bcee45203594ba80448ed8f2c3d5d89e9df92ccf48c4ab23544db1f0",
+      "taiji/native_development.py": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+      "taiji/native_goal_attributes.py": "f33679904f61b0bea82c968713e8821104e53604bd3b7dcc7798d35b4ec6bf7e",
+      "taiji/native_goal_glossary.py": "b40ffa22dbd5adae1285e425047f1c4113d083115bada3e7b0dd07f944a62f03",
+      "scripts/training/verify_taiji_composition_10_21.py": "f43ac5ec1807a9d30b6860100491eb1053d792ccb1b015b47280351085963cb0",
+      "taiji/native_composition_fixture.py": "18ca7f7ce19530d153e5396359870ff4661e5033b089da4960dea128a33c83b4"
+    },
+    "fixture": {
+      "digest": "6728fc3713e165c21e15e28feb88c9e409cb821675715a7bad5b039392aa6f1b",
+      "declared_worlds": {
+        "train": 16,
+        "dev": 8,
+        "confirm": 8
+      },
+      "generated_worlds": {
+        "train": 1,
+        "dev": 1
+      },
+      "train_world": {
+        "split": "train",
+        "world": 0,
+        "data_seed": 47021,
+        "order_seed": 27021,
+        "object_mapping": {
+          "方口的容器": "银灰铁盒",
+          "圆盖的器具": "棕漆木箱",
+          "窄沿的坛子": "深绿陶碗"
+        },
+        "place_mapping": {
+          "靠墙高处": "廊下",
+          "向阳角上": "柜顶",
+          "进门右侧": "门后",
+          "屋角一侧": "窗台",
+          "高处横板": "书架"
+        },
+        "record_lines": 8,
+        "record_bytes": 219,
+        "examples": 12,
+        "layers": {
+          "seen_combination": 12
+        },
+        "actions": 15,
+        "record_ids": [
+          "cx6890a949fd1b-00",
+          "cx6890a949fd1b-01",
+          "cx6890a949fd1b-02",
+          "cx6890a949fd1b-03",
+          "cx6890a949fd1b-04",
+          "cx6890a949fd1b-05",
+          "cx6890a949fd1b-06",
+          "cx6890a949fd1b-07"
+        ]
+      },
+      "dev_world": {
+        "split": "dev",
+        "world": 0,
+        "data_seed": 47021,
+        "order_seed": 27021,
+        "object_mapping": {
+          "方口的容器": "棕漆木箱",
+          "圆盖的器具": "深绿陶碗",
+          "窄沿的坛子": "银灰铁盒",
+          "有纹的磁盘": "米白瓷碟"
+        },
+        "place_mapping": {
+          "靠墙高处": "书架",
+          "向阳角上": "柜顶",
+          "进门右侧": "门后",
+          "屋角一侧": "窗台",
+          "高处横板": "廊下"
+        },
+        "record_lines": 9,
+        "record_bytes": 252,
+        "examples": 20,
+        "layers": {
+          "seen_combination": 12,
+          "unseen_combination": 3,
+          "unseen_entity": 5
+        },
+        "actions": 20,
+        "record_ids": [
+          "cx1919b0d6ec58-00",
+          "cx1919b0d6ec58-01",
+          "cx1919b0d6ec58-02",
+          "cx1919b0d6ec58-03",
+          "cx1919b0d6ec58-04",
+          "cx1919b0d6ec58-05",
+          "cx1919b0d6ec58-06",
+          "cx1919b0d6ec58-07",
+          "cx1919b0d6ec58-08"
+        ]
+      },
+      "train_examples": [
+        {
+          "index": 0,
+          "layer": "seen_combination",
+          "goal": "让方口的容器到向阳角上。",
+          "object_text": "银灰铁盒",
+          "place_text": "柜顶",
+          "action": "把银灰铁盒放到柜顶",
+          "target": 9,
+          "action_count": 15
+        },
+        {
+          "index": 1,
+          "layer": "seen_combination",
+          "goal": "让方口的容器到进门右侧。",
+          "object_text": "银灰铁盒",
+          "place_text": "门后",
+          "action": "把银灰铁盒放到门后",
+          "target": 7,
+          "action_count": 15
+        },
+        {
+          "index": 2,
+          "layer": "seen_combination",
+          "goal": "让方口的容器到屋角一侧。",
+          "object_text": "银灰铁盒",
+          "place_text": "窗台",
+          "action": "把银灰铁盒放到窗台",
+          "target": 5,
+          "action_count": 15
+        },
+        {
+          "index": 4,
+          "layer": "seen_combination",
+          "goal": "让圆盖的器具到靠墙高处。",
+          "object_text": "棕漆木箱",
+          "place_text": "廊下",
+          "action": "把棕漆木箱放到廊下",
+          "target": 3,
+          "action_count": 15
+        },
+        {
+          "index": 5,
+          "layer": "seen_combination",
+          "goal": "让圆盖的器具到进门右侧。",
+          "object_text": "棕漆木箱",
+          "place_text": "门后",
+          "action": "把棕漆木箱放到门后",
+          "target": 2,
+          "action_count": 15
+        },
+        {
+          "index": 6,
+          "layer": "seen_combination",
+          "goal": "让圆盖的器具到屋角一侧。",
+          "object_text": "棕漆木箱",
+          "place_text": "窗台",
+          "action": "把棕漆木箱放到窗台",
+          "target": 0,
+          "action_count": 15
+        },
+        {
+          "index": 8,
+          "layer": "seen_combination",
+          "goal": "让窄沿的坛子到靠墙高处。",
+          "object_text": "深绿陶碗",
+          "place_text": "廊下",
+          "action": "把深绿陶碗放到廊下",
+          "target": 13,
+          "action_count": 15
+        },
+        {
+          "index": 10,
+          "layer": "seen_combination",
+          "goal": "让窄沿的坛子到屋角一侧。",
+          "object_text": "深绿陶碗",
+          "place_text": "窗台",
+          "action": "把深绿陶碗放到窗台",
+          "target": 10,
+          "action_count": 15
+        }
+      ],
+      "dev_examples": [
+        {
+          "index": 0,
+          "layer": "seen_combination",
+          "goal": "让方口的容器到向阳角上。",
+          "target": 4
+        },
+        {
+          "index": 3,
+          "layer": "seen_combination",
+          "goal": "让方口的容器到高处横板。",
+          "target": 3
+        },
+        {
+          "index": 6,
+          "layer": "seen_combination",
+          "goal": "让圆盖的器具到屋角一侧。",
+          "target": 10
+        },
+        {
+          "index": 9,
+          "layer": "seen_combination",
+          "goal": "让窄沿的坛子到向阳角上。",
+          "target": 9
+        },
+        {
+          "index": 12,
+          "layer": "unseen_combination",
+          "goal": "让方口的容器到靠墙高处。",
+          "target": 1
+        },
+        {
+          "index": 13,
+          "layer": "unseen_combination",
+          "goal": "让圆盖的器具到向阳角上。",
+          "target": 14
+        },
+        {
+          "index": 15,
+          "layer": "unseen_entity",
+          "goal": "让有纹的磁盘到靠墙高处。",
+          "target": 16
+        },
+        {
+          "index": 16,
+          "layer": "unseen_entity",
+          "goal": "让有纹的磁盘到向阳角上。",
+          "target": 19
+        }
+      ]
+    }
+  },
+  "module": {
+    "name": "QueryBindingCandidate",
+    "config": {
+      "width": 128,
+      "query_width": 32,
+      "roles": 2,
+      "rank": 4,
+      "seed": 17021,
+      "mode": 6
+    },
+    "dtype": "float64",
+    "parameter_count": 105760,
+    "parameter_groups": {
+      "K_goal": 4096,
+      "V_goal": 16512,
+      "role": 64,
+      "W_state": 4128,
+      "Q_source": 9248,
+      "K_source": 4224,
+      "V_source": 17024,
+      "source_null": 160,
+      "W_bind": 49280,
+      "U": 512,
+      "V": 512
+    },
+    "parameter_digest_initial": "4795e7280e50fc2dfd7a0980e887a4767a91aa253c183f55ee370fb94e524f4f",
+    "s_trainable_groups": [
+      "W_bind",
+      "U",
+      "V"
+    ],
+    "s_trainable_count": 50304,
+    "internal_mode": 6,
+    "fast_write": "disabled",
+    "optimizer": {
+      "name": "Adam",
+      "lr": 0.001,
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "eps": 1e-08,
+      "weight_decay": 0.0,
+      "clip_norm": 1.0,
+      "batch": 8
+    }
+  },
+  "arms": {
+    "J_joint": {
+      "trainable_groups": [
+        "K_goal",
+        "V_goal",
+        "role",
+        "W_state",
+        "Q_source",
+        "K_source",
+        "V_source",
+        "source_null",
+        "W_bind",
+        "U",
+        "V"
+      ],
+      "trainable_parameter_count": 105760,
+      "parameter_digest_before": "4795e7280e50fc2dfd7a0980e887a4767a91aa253c183f55ee370fb94e524f4f",
+      "parameter_digest_after": "c76e26a3206fb32fdc41f9bd3ae4926698d1a13f36438796e01bcfde77841e39",
+      "steps": [
+        {
+          "index": 0,
+          "cpu_seconds": 0.125,
+          "loss": 2.708041747229035,
+          "clip_scale": 0.0037737003330327755,
+          "batch_losses": [
+            2.70809642396263,
+            2.7079864548051256,
+            2.7080681583659,
+            2.7080717577941975,
+            2.70802042110741,
+            2.7081003726018893,
+            2.7079812862424735,
+            2.7080091029526505
+          ]
+        },
+        {
+          "index": 1,
+          "cpu_seconds": 0.109375,
+          "loss": 2.7078885482525883,
+          "clip_scale": 0.007951266149100727,
+          "batch_losses": [
+            2.7081587772258233,
+            2.7077376570188005,
+            2.7077713094527627,
+            2.7078944593062504,
+            2.7078081889046866,
+            2.707831124107162,
+            2.7079913929325334,
+            2.707915477072684
+          ]
+        }
+      ],
+      "train_step_cpu_seconds": {
+        "values": [
+          0.125,
+          0.109375
+        ],
+        "mean": 0.1171875,
+        "median": 0.1171875
+      },
+      "restore": {
+        "arm": "J_joint",
+        "ok": true,
+        "message": null,
+        "features_sha_equal": true,
+        "scores_bitwise_equal": true,
+        "h_bitwise_equal": true,
+        "loss_abs_diff": 0.0,
+        "child_cpu_seconds": 0.9375,
+        "child_wall_seconds": 1.2881550998426974,
+        "child_load_cpu_seconds": 0.84375,
+        "child_features_cpu_seconds": 0.078125,
+        "child_forward_cpu_seconds": 0.015625,
+        "parent_wall_wait_seconds": 3.254893699893728,
+        "bundle_bytes": 27563679,
+        "bundle_sha256": "ee99641aa8f8db7d3151979475eefb4afcd0523a662d4b429e253d41ff08dd9f",
+        "passed": true
+      },
+      "parent_gradient_tensors": 0,
+      "development_reading": {
+        "count": 8,
+        "correct": 0,
+        "cpu_per_example": 0.10546875
+      }
+    },
+    "S_stop_read": {
+      "trainable_groups": [
+        "W_bind",
+        "U",
+        "V"
+      ],
+      "trainable_parameter_count": 50304,
+      "parameter_digest_before": "4795e7280e50fc2dfd7a0980e887a4767a91aa253c183f55ee370fb94e524f4f",
+      "parameter_digest_after": "6bd25eb51e835c39ed862f30cdd9d27151a45b795de307f883a317f6be3928d1",
+      "steps": [
+        {
+          "index": 0,
+          "cpu_seconds": 0.125,
+          "loss": 2.708041747229035,
+          "clip_scale": 0.003773258076603915,
+          "batch_losses": [
+            2.70809642396263,
+            2.7079864548051256,
+            2.7080681583659,
+            2.7080717577941975,
+            2.70802042110741,
+            2.7081003726018893,
+            2.7079812862424735,
+            2.7080091029526505
+          ]
+        },
+        {
+          "index": 1,
+          "cpu_seconds": 0.109375,
+          "loss": 2.707903320223816,
+          "clip_scale": 0.007448662796733604,
+          "batch_losses": [
+            2.7081585181514116,
+            2.7077623078177164,
+            2.707804400652926,
+            2.707909287814819,
+            2.707823252219976,
+            2.707854354915998,
+            2.707989708725713,
+            2.7079247314919677
+          ]
+        }
+      ],
+      "train_step_cpu_seconds": {
+        "values": [
+          0.125,
+          0.109375
+        ],
+        "mean": 0.1171875,
+        "median": 0.1171875
+      },
+      "restore": {
+        "arm": "S_stop_read",
+        "ok": true,
+        "message": null,
+        "features_sha_equal": true,
+        "scores_bitwise_equal": true,
+        "h_bitwise_equal": true,
+        "loss_abs_diff": 0.0,
+        "child_cpu_seconds": 0.84375,
+        "child_wall_seconds": 1.1855981000699103,
+        "child_load_cpu_seconds": 0.75,
+        "child_features_cpu_seconds": 0.078125,
+        "child_forward_cpu_seconds": 0.015625,
+        "parent_wall_wait_seconds": 3.0741051000077277,
+        "bundle_bytes": 27564275,
+        "bundle_sha256": "b49aef721c16bdf68489fb3645e102232acb4c2b548f603ba61dec4249843e52",
+        "passed": true
+      },
+      "parent_gradient_tensors": 0,
+      "development_reading": {
+        "count": 8,
+        "correct": 0,
+        "cpu_per_example": 0.107421875
+      }
+    }
+  },
+  "unit_prices": {
+    "cpu_per_train_step": {
+      "value": 0.1171875,
+      "caliber": "J_joint, mean of the two measured 8-example steps on cached frozen features",
+      "median": 0.1171875,
+      "values": [
+        0.125,
+        0.109375
+      ],
+      "by_arm": {
+        "J_joint": {
+          "mean": 0.1171875,
+          "median": 0.1171875,
+          "values": [
+            0.125,
+            0.109375
+          ]
+        },
+        "S_stop_read": {
+          "mean": 0.1171875,
+          "median": 0.1171875,
+          "values": [
+            0.125,
+            0.109375
+          ]
+        }
+      },
+      "batch": 8,
+      "included": "8 x (forward + binding step + score + loss), mean, backward, global grad clip 1.0, Adam(1e-3)",
+      "excluded": "frozen-parent feature build (reported as cache_once)"
+    },
+    "cpu_per_restore": {
+      "value": 0.890625,
+      "caliber": "child self-reported cpu_seconds for load_binding_bundle plus one forward on features rebuilt from the raw goal/records; mean over the two arms",
+      "by_arm": {
+        "J_joint": {
+          "child_cpu_seconds": 0.9375,
+          "child_load_cpu_seconds": 0.84375,
+          "child_features_cpu_seconds": 0.078125,
+          "child_forward_cpu_seconds": 0.015625,
+          "parent_wall_wait_seconds": 3.254893699893728
+        },
+        "S_stop_read": {
+          "child_cpu_seconds": 0.84375,
+          "child_load_cpu_seconds": 0.75,
+          "child_features_cpu_seconds": 0.078125,
+          "child_forward_cpu_seconds": 0.015625,
+          "parent_wall_wait_seconds": 3.0741051000077277
+        }
+      },
+      "parent_wall_wait_seconds": [
+        3.254893699893728,
+        3.0741051000077277
+      ]
+    },
+    "cpu_per_eval_example": {
+      "value": 0.10546875,
+      "caliber": "J_joint mean over the 8 declared dev examples of: fresh zero state, frozen feature build, module forward, mode-6 binding step, rank-4 score, under no_grad",
+      "by_arm": {
+        "J_joint": {
+          "cpu_seconds": 0.84375,
+          "count": 8,
+          "cpu_per_example": 0.10546875,
+          "features_cpu_seconds": 0.75,
+          "forward_cpu_seconds": 0.09375,
+          "correct": 0
+        },
+        "S_stop_read": {
+          "cpu_seconds": 0.859375,
+          "count": 8,
+          "cpu_per_example": 0.107421875,
+          "features_cpu_seconds": 0.765625,
+          "forward_cpu_seconds": 0.09375,
+          "correct": 0
+        }
+      }
+    },
+    "cpu_per_bundle_MiB": {
+      "value": 0.0023776216520298324,
+      "caliber": "one save_binding_bundle write plus one torch.load read of the same new bundle, divided by its MiB; parent-side process_time only",
+      "bundle_mib": 26.28677272796631,
+      "write_cpu_seconds": 0.046875,
+      "read_cpu_seconds": 0.015625,
+      "total_cpu_seconds": 0.0625,
+      "write_cpu_seconds_by_arm": {
+        "J_joint": 0.046875,
+        "S_stop_read": 0.046875
+      }
+    },
+    "cache_once": {
+      "cpu_seconds": 0.65625,
+      "examples": 8,
+      "cpu_per_example": 0.08203125,
+      "caliber": "one-off frozen-parent feature build for the 8 declared training examples; identical across arms and steps, so paid once, not per step"
+    }
+  },
+  "extrapolation": {
+    "formula": "total_cpu_seconds = cpu_per_train_step * train_steps + cpu_per_restore * restore_count + cpu_per_eval_example * eval_example_count + cpu_per_bundle_MiB * bundle_io_MiB",
+    "inputs": {
+      "seeds": 2,
+      "arms": 2,
+      "steps_per_arm": 300,
+      "train_steps": 1200,
+      "restore_count": 8,
+      "eval_points_per_arm": 2,
+      "dev_examples_per_point": 160,
+      "eval_example_count": 1280,
+      "bundle_cycles": 12
+    },
+    "unit_prices_used": {
+      "cpu_per_train_step": 0.1171875,
+      "cpu_per_restore": 0.890625,
+      "cpu_per_eval_example": 0.10546875,
+      "cpu_per_bundle_MiB": 0.0023776216520298324
+    },
+    "terms": {
+      "train": 140.625,
+      "restore": 7.125,
+      "eval": 135.0,
+      "bundle_io": 0.75
+    },
+    "total_cpu_seconds": 283.5,
+    "cap_cpu_seconds": 1200.0,
+    "within_cap": true,
+    "written_before_timing": true,
+    "bundle_io_MiB": 315.4412727355957,
+    "not_in_formula": {
+      "one_off_feature_cache_cpu_seconds": 31.5,
+      "why": "the contract formula has four terms and prices the cached-feature step; the frozen-parent feature cache is a one-off, so 192 train examples x 2 arms are priced apart and added here for honesty",
+      "total_including_cache": 315.0,
+      "within_cap_including_cache": true
+    }
+  },
+  "consumed_development_feedback": {
+    "count": 8,
+    "note": "not a gate; does not tune hyperparameters",
+    "world": "dev[0]",
+    "layers": {
+      "seen_combination": 12,
+      "unseen_combination": 3,
+      "unseen_entity": 5
+    },
+    "examples": [
+      {
+        "index": 0,
+        "layer": "seen_combination",
+        "goal": "让方口的容器到向阳角上。",
+        "target": 4
+      },
+      {
+        "index": 3,
+        "layer": "seen_combination",
+        "goal": "让方口的容器到高处横板。",
+        "target": 3
+      },
+      {
+        "index": 6,
+        "layer": "seen_combination",
+        "goal": "让圆盖的器具到屋角一侧。",
+        "target": 10
+      },
+      {
+        "index": 9,
+        "layer": "seen_combination",
+        "goal": "让窄沿的坛子到向阳角上。",
+        "target": 9
+      },
+      {
+        "index": 12,
+        "layer": "unseen_combination",
+        "goal": "让方口的容器到靠墙高处。",
+        "target": 1
+      },
+      {
+        "index": 13,
+        "layer": "unseen_combination",
+        "goal": "让圆盖的器具到向阳角上。",
+        "target": 14
+      },
+      {
+        "index": 15,
+        "layer": "unseen_entity",
+        "goal": "让有纹的磁盘到靠墙高处。",
+        "target": 16
+      },
+      {
+        "index": 16,
+        "layer": "unseen_entity",
+        "goal": "让有纹的磁盘到向阳角上。",
+        "target": 19
+      }
+    ],
+    "readings": {
+      "J_joint": [
+        {
+          "index": 0,
+          "layer": "seen_combination",
+          "goal": "让方口的容器到向阳角上。",
+          "target": 4,
+          "prediction": 7,
+          "correct": false,
+          "loss": 2.996484077316513
+        },
+        {
+          "index": 3,
+          "layer": "seen_combination",
+          "goal": "让方口的容器到高处横板。",
+          "target": 3,
+          "prediction": 7,
+          "correct": false,
+          "loss": 2.9953071305155032
+        },
+        {
+          "index": 6,
+          "layer": "seen_combination",
+          "goal": "让圆盖的器具到屋角一侧。",
+          "target": 10,
+          "prediction": 7,
+          "correct": false,
+          "loss": 2.99527933244052
+        },
+        {
+          "index": 9,
+          "layer": "seen_combination",
+          "goal": "让窄沿的坛子到向阳角上。",
+          "target": 9,
+          "prediction": 7,
+          "correct": false,
+          "loss": 2.996162799090251
+        },
+        {
+          "index": 12,
+          "layer": "unseen_combination",
+          "goal": "让方口的容器到靠墙高处。",
+          "target": 1,
+          "prediction": 7,
+          "correct": false,
+          "loss": 2.996886298411687
+        },
+        {
+          "index": 13,
+          "layer": "unseen_combination",
+          "goal": "让圆盖的器具到向阳角上。",
+          "target": 14,
+          "prediction": 7,
+          "correct": false,
+          "loss": 2.9967810732608395
+        },
+        {
+          "index": 15,
+          "layer": "unseen_entity",
+          "goal": "让有纹的磁盘到靠墙高处。",
+          "target": 16,
+          "prediction": 7,
+          "correct": false,
+          "loss": 2.9968532233452825
+        },
+        {
+          "index": 16,
+          "layer": "unseen_entity",
+          "goal": "让有纹的磁盘到向阳角上。",
+          "target": 19,
+          "prediction": 7,
+          "correct": false,
+          "loss": 2.9964487651037386
+        }
+      ],
+      "S_stop_read": [
+        {
+          "index": 0,
+          "layer": "seen_combination",
+          "goal": "让方口的容器到向阳角上。",
+          "target": 4,
+          "prediction": 7,
+          "correct": false,
+          "loss": 2.9963977527492816
+        },
+        {
+          "index": 3,
+          "layer": "seen_combination",
+          "goal": "让方口的容器到高处横板。",
+          "target": 3,
+          "prediction": 7,
+          "correct": false,
+          "loss": 2.9953572355893225
+        },
+        {
+          "index": 6,
+          "layer": "seen_combination",
+          "goal": "让圆盖的器具到屋角一侧。",
+          "target": 10,
+          "prediction": 7,
+          "correct": false,
+          "loss": 2.995325092484313
+        },
+        {
+          "index": 9,
+          "layer": "seen_combination",
+          "goal": "让窄沿的坛子到向阳角上。",
+          "target": 9,
+          "prediction": 7,
+          "correct": false,
+          "loss": 2.996128031759986
+        },
+        {
+          "index": 12,
+          "layer": "unseen_combination",
+          "goal": "让方口的容器到靠墙高处。",
+          "target": 1,
+          "prediction": 7,
+          "correct": false,
+          "loss": 2.9967535196929425
+        },
+        {
+          "index": 13,
+          "layer": "unseen_combination",
+          "goal": "让圆盖的器具到向阳角上。",
+          "target": 14,
+          "prediction": 7,
+          "correct": false,
+          "loss": 2.9966472086725378
+        },
+        {
+          "index": 15,
+          "layer": "unseen_entity",
+          "goal": "让有纹的磁盘到靠墙高处。",
+          "target": 16,
+          "prediction": 7,
+          "correct": false,
+          "loss": 2.9967270744143213
+        },
+        {
+          "index": 16,
+          "layer": "unseen_entity",
+          "goal": "让有纹的磁盘到向阳角上。",
+          "target": 19,
+          "prediction": 7,
+          "correct": false,
+          "loss": 2.9963671489463506
+        }
+      ]
+    },
+    "correct_by_arm": {
+      "J_joint": 0,
+      "S_stop_read": 0
+    },
+    "used_as_gate": false,
+    "hyperparameters_changed": false
+  },
+  "optimizer_calls": 4,
+  "effective_cursor": {
+    "examples_per_step": 8,
+    "steps_per_arm": 2,
+    "arms": 2,
+    "examples_consumed": 32,
+    "declared_world": "train[0]",
+    "next_example_index": 0,
+    "note": "the declared batch repeats; the cursor and optimizer_calls are recorded apart, and no arm consumed a different example than declared"
+  },
+  "restore": {
+    "arms": {
+      "J_joint": {
+        "arm": "J_joint",
+        "ok": true,
+        "message": null,
+        "features_sha_equal": true,
+        "scores_bitwise_equal": true,
+        "h_bitwise_equal": true,
+        "loss_abs_diff": 0.0,
+        "child_cpu_seconds": 0.9375,
+        "child_wall_seconds": 1.2881550998426974,
+        "child_load_cpu_seconds": 0.84375,
+        "child_features_cpu_seconds": 0.078125,
+        "child_forward_cpu_seconds": 0.015625,
+        "parent_wall_wait_seconds": 3.254893699893728,
+        "bundle_bytes": 27563679,
+        "bundle_sha256": "ee99641aa8f8db7d3151979475eefb4afcd0523a662d4b429e253d41ff08dd9f",
+        "passed": true
+      },
+      "S_stop_read": {
+        "arm": "S_stop_read",
+        "ok": true,
+        "message": null,
+        "features_sha_equal": true,
+        "scores_bitwise_equal": true,
+        "h_bitwise_equal": true,
+        "loss_abs_diff": 0.0,
+        "child_cpu_seconds": 0.84375,
+        "child_wall_seconds": 1.1855981000699103,
+        "child_load_cpu_seconds": 0.75,
+        "child_features_cpu_seconds": 0.078125,
+        "child_forward_cpu_seconds": 0.015625,
+        "parent_wall_wait_seconds": 3.0741051000077277,
+        "bundle_bytes": 27564275,
+        "bundle_sha256": "b49aef721c16bdf68489fb3645e102232acb4c2b548f603ba61dec4249843e52",
+        "passed": true
+      }
+    },
+    "same_bundle_restored": true,
+    "child_cpu_seconds": 1.78125,
+    "child_wall_seconds": 2.4737531999126077,
+    "note": "child self-reported cpu is the unit price; the parent-side wait is reported separately and never substituted for it"
+  },
+  "cost": {
+    "bundle_records": [
+      {
+        "path": "E:\\Seed\\output\\taiji_core_10_21_3_price\\J_joint_step0.pt",
+        "bytes": 27563679,
+        "sha256": "ee99641aa8f8db7d3151979475eefb4afcd0523a662d4b429e253d41ff08dd9f"
+      },
+      {
+        "path": "E:\\Seed\\output\\taiji_core_10_21_3_price\\S_stop_read_step0.pt",
+        "bytes": 27564275,
+        "sha256": "b49aef721c16bdf68489fb3645e102232acb4c2b548f603ba61dec4249843e52"
+      }
+    ],
+    "recorded_bundle_bytes": 55127954.0,
+    "temporary_bundles_deleted": 4,
+    "cpu_seconds": 5.921875,
+    "cpu_seconds_parent": 4.140625,
+    "cpu_seconds_child": 1.78125,
+    "wall_seconds": 10.905526499962434,
+    "wall_seconds_child": 2.4737531999126077,
+    "budget": {
+      "cpu_seconds": 180,
+      "wall_seconds": 360,
+      "products_bytes": 536870912
+    }
+  },
+  "limits": "Pricing only: four separate unit prices measured once on this machine, one binding seed, two arms x two steps, one train world and one dev world. This is not a comparison of J and S, not a capability measurement, and not an admission for 10.21.4. The 8 developmental examples are recorded as consumed feedback and are not a gate; no hyperparameter, no sample and no step count was chosen from them. The extrapolation inherits the declared 10.21.4 shape (2 seeds x 2 arms x 300 steps, 2 evaluation points per arm x 160 dev examples, 12 bundle write/read cycles) and only multiplies measured prices by it.",
+  "failed_checks": [],
+  "capability_claimed": false,
+  "training_admitted": false,
+  "comparison_run": false,
+  "weights_published": false
+}

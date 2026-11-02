@@ -1,0 +1,54 @@
+{
+  "schema": "taiji-slot-channel-10-21a-v1",
+  "step": "10.21a",
+  "date": "2026-11-01",
+  "status": "slots_partially_respond",
+  "candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+  "descriptors": 5,
+  "moved_by_mapping": 5,
+  "max_mapping_distance": 0.013738661621454006,
+  "descriptor_contrast": 0.0009610413361168695,
+  "mapping_floor": 1e-06,
+  "rows": [
+    {
+      "descriptor": "圆口的器皿",
+      "distance_real_vs_permuted": 0.013738661621454006,
+      "moved": true
+    },
+    {
+      "descriptor": "带纹路的方块",
+      "distance_real_vs_permuted": 0.013692413445117218,
+      "moved": true
+    },
+    {
+      "descriptor": "四方木台",
+      "distance_real_vs_permuted": 0.013717925215664206,
+      "moved": true
+    },
+    {
+      "descriptor": "靠窗的台面",
+      "distance_real_vs_permuted": 0.013676745515849598,
+      "moved": true
+    },
+    {
+      "descriptor": "左边的匣子",
+      "distance_real_vs_permuted": 0.013662816324873586,
+      "moved": true
+    }
+  ],
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Channel check only: the slots are the model's own episodic read, and the test asks whether the glossary mapping moves them. It does not train, does not score actions, and does not show composition works.",
+  "cpu_seconds": 1.015625,
+  "wall_seconds": 1.2600923001300544,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "taiji/slot_composition_head.py": "1f2103f39fa60111edbe44ec4dad2d5c2d6e2b7b672360c79b8dce63224d00a5",
+    "taiji/candidate_manifest.py": "6fc05ca4bcee45203594ba80448ed8f2c3d5d89e9df92ccf48c4ab23544db1f0",
+    "scripts/training/verify_taiji_slot_channel_10_21a.py": "1777d7ad974edbf74841686c975d13ac0ec1c332d9e1464519ccba42b3914de8"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "taiji-direction-oracle-v1",
+  "step": "09.6.3b",
+  "date": "2026-11-01",
+  "config": {
+    "groups": 4,
+    "width": 128,
+    "units": 256,
+    "adapter_rank": 16,
+    "fast_heads": 2,
+    "key_width": 32,
+    "value_width": 32,
+    "output_heads": 2,
+    "fast_limit": 16.0,
+    "max_event_bytes": 512,
+    "max_source_bytes": 512,
+    "max_target_bytes": 128,
+    "seed": 20261031
+  },
+  "declared": {
+    "steps": 8,
+    "lr": 1e-05,
+    "units_per_group": 2,
+    "newborn_share_gate": 0.0001,
+    "absolute_contribution_gate": 0.0001,
+    "oracle_uses_holdout": true,
+    "units_total": 8
+  },
+  "parent_units": 256,
+  "nll": {
+    "holdout_pre": 4.381243859077419,
+    "holdout_post": 4.361045478808426,
+    "holdout_after_lesion": 4.36105136714932,
+    "holdout_benefit": 0.020198380268993787,
+    "newborn_contribution": 5.888340893989152e-06,
+    "newborn_share": 0.00029152540033263217
+  },
+  "reaches_share_gate": true,
+  "reaches_absolute_gate": false,
+  "update_losses": [
+    4.436565322597274,
+    4.432642656088169,
+    4.428732482486973,
+    4.424834573943982,
+    4.420948653438774,
+    4.417074365623351,
+    4.413211323802465,
+    4.409359109671719
+  ],
+  "reading": "If an oracle direction still yields a newborn share below the gate, no direction rule can rescue coverage birth on this task family and the growth line is closed on this reference graph. If it clears the gate, the direction rule is the bottleneck and a new mechanism hypothesis is warranted.",
+  "cpu_seconds": 29.375,
+  "wall_seconds": 30.163802800001577,
+  "budget": {
+    "cpu_seconds": 600,
+    "wall_seconds": 1200
+  },
+  "training_admitted": false,
+  "method_claim": false,
+  "source_hashes": {
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/growth_credit.py": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+    "taiji/native_development.py": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+    "taiji/constrained_learning.py": "1c0f77ecf04e62b21f11802b127a52a150cbfcc9e61497c2bac3377ffbfde24e",
+    "scripts/training/diagnose_direction_oracle.py": "4325b4cc956561fc00f399b0eac158e3fd69a02617a11328e5306a5ddcd24659",
+    "scripts/training/verify_taiji_living_fragment_pricing_r028.py": "295d11ed70aeedd78f6e8380ac148f8508519da90363d07f65d07dad9478a34b"
+  }
+}

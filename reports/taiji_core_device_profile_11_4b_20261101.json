@@ -1,0 +1,31 @@
+{
+  "schema": "taiji-device-profile-11-4b-v1",
+  "step": "11.4b",
+  "date": "2026-11-01",
+  "status": "device_profile_measured",
+  "profile": {
+    "os": "Windows-11-10.0.26300-SP0",
+    "machine": "AMD64",
+    "python": "3.12.10",
+    "torch": "2.13.0+cpu",
+    "cpu_name": "AMD Ryzen 9 9900X 12-Core Processor",
+    "cpu_logical": 24,
+    "torch_threads": 12,
+    "cuda_available": false,
+    "total_memory_kib": 50331648,
+    "total_memory_source": "GetPhysicallyInstalledSystemMemory"
+  },
+  "model_involved": false,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Device profile only: it records the host, not the candidate. Thresholds quoted elsewhere are bound to this host and do not transfer without re-measuring.",
+  "cpu_seconds": 0.015625,
+  "wall_seconds": 0.02633659983985126,
+  "budget": {
+    "cpu_seconds": 60,
+    "wall_seconds": 120
+  },
+  "source_hashes": {
+    "scripts/training/verify_taiji_device_profile_11_4b.py": "a52b6c5ab1b278337317553cea5c9c4cd55f74b2ea9ff913b238bfa4d00618e8"
+  }
+}

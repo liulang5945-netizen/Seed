@@ -1,0 +1,53 @@
+{
+  "schema": "taiji-instrument-11-7-v1",
+  "step": "11.7",
+  "date": "2026-11-01",
+  "status": "engineering_failure",
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "rebuilt_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "identity_match": true,
+  "path": "taiji.action_verdict_scorer.answer_nll",
+  "no_grad": true,
+  "prompt_bytes": 141,
+  "repeats": 20,
+  "wall_seconds_per_call": [
+    0.12833109986968338
+  ],
+  "p50_seconds": 0.12833109986968338,
+  "p95_seconds": 0.12833109986968338,
+  "peak_working_set_before_bytes": 1479811072,
+  "peak_working_set_after_bytes": 1479811072,
+  "peak_working_set_delta_bytes": 0,
+  "deterministic_outputs": true,
+  "side_effects": {
+    "writes": [],
+    "sockets": 0,
+    "subprocesses": 0,
+    "system_calls": 0,
+    "allowed": [
+      "read-only opens",
+      "__pycache__ writes"
+    ]
+  },
+  "safety_checked": true,
+  "safety_scope": [
+    "static_declared_path",
+    "runtime_hooked_open_socket_subprocess"
+  ],
+  "failure": "AttributeError: 'float' object has no attribute 'detach'",
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Instrument reading only: one process, one machine, one scoring path, twenty calls. It does not show that the subject is safe (it has no action channel, so this face is small by construction); it does not cover training, growth, recovery or migration paths; p50/p95 and memory do not extrapolate to other devices or larger inputs; and it is not task capability.",
+  "cpu_seconds": 32.28125,
+  "wall_seconds": 33.13942079991102,
+  "budget": {
+    "cpu_seconds": 240,
+    "wall_seconds": 480
+  },
+  "source_hashes": {
+    "reports/taiji_core_09_closeout_20261101.json": "f80097f1fdacac36354e7c653230a598d60bbe22d9cab7bcc503aa18f9630738",
+    "taiji/action_verdict_scorer.py": "c52f7ed99dbd9a3ba1607d1f9cc19124da03f6c47a36aa1bb8578f60cdac216f",
+    "scripts/training/verify_taiji_instrument_11_7.py": "152f803a225ee23e44adbba557c9aa79cbe7f232ba46e0c8827af34d08da4ae6"
+  }
+}

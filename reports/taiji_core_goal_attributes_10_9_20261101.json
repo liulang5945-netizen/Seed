@@ -1,0 +1,256 @@
+{
+  "schema": "taiji-goal-attributes-10-9-v1",
+  "step": "10.9",
+  "date": "2026-11-01",
+  "status": "attribute_fixture_fair",
+  "declared": {
+    "goals": 12,
+    "actions_per_goal": 6,
+    "copy_allowed": 2,
+    "chance_top1": 0.16666666666666666,
+    "descriptions": {
+      "蓝色杯子": "圆口的器皿",
+      "红色印章": "带纹路的方块",
+      "木桌": "四方木台",
+      "窗台": "靠窗的台面",
+      "左盒": "左边的匣子"
+    },
+    "glossary_entries": 5,
+    "training": "none"
+  },
+  "entity_leaks": 0,
+  "resolved_by_glossary": 12,
+  "copy_top1": 2,
+  "rows": [
+    {
+      "goal": "让圆口的器皿到左边的匣子。",
+      "correct_move": [
+        "蓝色杯子",
+        "左盒"
+      ],
+      "named_entities": [],
+      "resolved": [
+        "蓝色杯子",
+        "左盒"
+      ],
+      "copy_pick": [
+        "红色印章",
+        "左盒"
+      ],
+      "copy_hit": false,
+      "top_overlap": 0.05263157894736842
+    },
+    {
+      "goal": "让带纹路的方块到左边的匣子。",
+      "correct_move": [
+        "红色印章",
+        "左盒"
+      ],
+      "named_entities": [],
+      "resolved": [
+        "红色印章",
+        "左盒"
+      ],
+      "copy_pick": [
+        "红色印章",
+        "左盒"
+      ],
+      "copy_hit": true,
+      "top_overlap": 0.05
+    },
+    {
+      "goal": "让圆口的器皿到靠窗的台面。",
+      "correct_move": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "named_entities": [],
+      "resolved": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "copy_pick": [
+        "红色印章",
+        "左盒"
+      ],
+      "copy_hit": false,
+      "top_overlap": 0.0
+    },
+    {
+      "goal": "让带纹路的方块到靠窗的台面。",
+      "correct_move": [
+        "红色印章",
+        "窗台"
+      ],
+      "named_entities": [],
+      "resolved": [
+        "红色印章",
+        "窗台"
+      ],
+      "copy_pick": [
+        "红色印章",
+        "左盒"
+      ],
+      "copy_hit": false,
+      "top_overlap": 0.0
+    },
+    {
+      "goal": "让圆口的器皿到左边的匣子。",
+      "correct_move": [
+        "蓝色杯子",
+        "左盒"
+      ],
+      "named_entities": [],
+      "resolved": [
+        "蓝色杯子",
+        "左盒"
+      ],
+      "copy_pick": [
+        "红色印章",
+        "左盒"
+      ],
+      "copy_hit": false,
+      "top_overlap": 0.05263157894736842
+    },
+    {
+      "goal": "让带纹路的方块到左边的匣子。",
+      "correct_move": [
+        "红色印章",
+        "左盒"
+      ],
+      "named_entities": [],
+      "resolved": [
+        "红色印章",
+        "左盒"
+      ],
+      "copy_pick": [
+        "红色印章",
+        "左盒"
+      ],
+      "copy_hit": true,
+      "top_overlap": 0.05
+    },
+    {
+      "goal": "让圆口的器皿到四方木台。",
+      "correct_move": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "named_entities": [],
+      "resolved": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "copy_pick": [
+        "红色印章",
+        "左盒"
+      ],
+      "copy_hit": false,
+      "top_overlap": 0.0
+    },
+    {
+      "goal": "让带纹路的方块到四方木台。",
+      "correct_move": [
+        "红色印章",
+        "木桌"
+      ],
+      "named_entities": [],
+      "resolved": [
+        "红色印章",
+        "木桌"
+      ],
+      "copy_pick": [
+        "红色印章",
+        "左盒"
+      ],
+      "copy_hit": false,
+      "top_overlap": 0.0
+    },
+    {
+      "goal": "让圆口的器皿到靠窗的台面。",
+      "correct_move": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "named_entities": [],
+      "resolved": [
+        "蓝色杯子",
+        "窗台"
+      ],
+      "copy_pick": [
+        "红色印章",
+        "左盒"
+      ],
+      "copy_hit": false,
+      "top_overlap": 0.0
+    },
+    {
+      "goal": "让带纹路的方块到靠窗的台面。",
+      "correct_move": [
+        "红色印章",
+        "窗台"
+      ],
+      "named_entities": [],
+      "resolved": [
+        "红色印章",
+        "窗台"
+      ],
+      "copy_pick": [
+        "红色印章",
+        "左盒"
+      ],
+      "copy_hit": false,
+      "top_overlap": 0.0
+    },
+    {
+      "goal": "让圆口的器皿到四方木台。",
+      "correct_move": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "named_entities": [],
+      "resolved": [
+        "蓝色杯子",
+        "木桌"
+      ],
+      "copy_pick": [
+        "红色印章",
+        "左盒"
+      ],
+      "copy_hit": false,
+      "top_overlap": 0.0
+    },
+    {
+      "goal": "让带纹路的方块到四方木台。",
+      "correct_move": [
+        "红色印章",
+        "木桌"
+      ],
+      "named_entities": [],
+      "resolved": [
+        "红色印章",
+        "木桌"
+      ],
+      "copy_pick": [
+        "红色印章",
+        "左盒"
+      ],
+      "copy_hit": false,
+      "top_overlap": 0.0
+    }
+  ],
+  "model_involved": false,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Fixture fairness only. A fair fixture makes a later capability reading interpretable; it is not one. The glossary is data a subject would have to be given; this step does not connect it to any model.",
+  "cpu_seconds": 0.0,
+  "wall_seconds": 0.0002180000301450491,
+  "budget": {
+    "cpu_seconds": 60,
+    "wall_seconds": 120
+  },
+  "source_hashes": {
+    "taiji/native_goal_attributes.py": "f33679904f61b0bea82c968713e8821104e53604bd3b7dcc7798d35b4ec6bf7e",
+    "scripts/training/verify_taiji_goal_attributes_10_9.py": "f550250b42d11180fe928407cee6221b25e04c16756338353965b478d6fd3188"
+  }
+}

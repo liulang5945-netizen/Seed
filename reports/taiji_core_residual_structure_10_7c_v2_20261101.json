@@ -1,0 +1,81 @@
+{
+  "schema": "taiji-residual-structure-10-7c-v1",
+  "step": "10.7c",
+  "date": "2026-11-01",
+  "status": "residual_group_structure",
+  "declared": {
+    "samples": 6,
+    "grouping": "correct object (3 vs 3)",
+    "explained_floor": 0.5,
+    "noise_ceiling": 0.35,
+    "coherence_floor": 0.5
+  },
+  "rebuilt_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "verdict": "residual_group_structure",
+  "stats": {
+    "residual_norms": [
+      0.02063067850458235,
+      0.020995011842425217,
+      0.027024642056342262,
+      0.026032054725412593,
+      0.020307272046348464,
+      0.021192429142892728
+    ],
+    "explained_fraction": 0.6458583648042849,
+    "expected_fraction_under_random_split": 0.2,
+    "permutation_fractions": [
+      0.07669563361290643,
+      0.07203298693153512,
+      0.24115594584649583,
+      0.2554190981338706,
+      0.25610480937854446,
+      0.6458583648042849,
+      0.07182902369780853,
+      0.07179494783345483,
+      0.07184800766037183,
+      0.2372611821006544
+    ],
+    "permutation_at_least_observed": 1,
+    "permutation_total": 10,
+    "permutation_p": 0.1,
+    "within_group_cosine": {
+      "蓝色杯子": 0.5225499745121255,
+      "红色印章": 0.5086944247737373
+    },
+    "group_order": [
+      0.07179494783345483,
+      0.07182902369780853,
+      0.07184800766037183,
+      0.07203298693153512,
+      0.07669563361290643,
+      0.2372611821006544,
+      0.24115594584649583,
+      0.2554190981338706,
+      0.25610480937854446,
+      0.6458583648042849
+    ]
+  },
+  "per_sample_losses": [
+    11.206579183359507,
+    11.207196820461494,
+    11.206443161502936,
+    11.207077617761684,
+    11.206617151654317,
+    11.207234068815175
+  ],
+  "failure": null,
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Diagnostic only: six samples, one deterministic subject, gradients read and discarded. Ten distinct balanced relabelings make the smallest attainable permutation p 0.1, so this can order the true split against other splits but cannot certify a signal. No parameter was updated.",
+  "cpu_seconds": 37.671875,
+  "wall_seconds": 38.47604960016906,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "taiji/goal_conditioned_training.py": "2e0b3e643fc9b7a6ffb8637ab0b9a59d109f93630d4ddd22587b94eca022fc27",
+    "scripts/training/diagnose_residual_structure_10_7c.py": "babf9bc4233b1f8f463ba537444a96733a3fbd1993766e7371a7231c05f69c47"
+  }
+}

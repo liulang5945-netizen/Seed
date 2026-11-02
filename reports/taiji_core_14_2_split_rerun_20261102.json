@@ -1,0 +1,412 @@
+{
+  "schema": "taiji-split-rerun-v1",
+  "step": "14.2",
+  "date": "2026-11-02",
+  "revision": 2,
+  "supersedes": "reports/taiji_core_14_2_split_rerun_v1_no_control_20261102.json",
+  "supersede_reason": "v1 measured only the original-state arm. The goal string and the correct action string are byte-identical in this fixture, so a 6/6 held-out score cannot be attributed to conditioning without state-removal controls.",
+  "status": "goal_copy_shortcut_confirmed",
+  "design": {
+    "only_variable": "train/held partition",
+    "held_from_10_7f": "rows[:6] / rows[6:] (ordered slice)",
+    "held_14_2": "one state pair per correct place in train, the other in held",
+    "steps": 300,
+    "lr": 0.05,
+    "seed": 0,
+    "rank": 4,
+    "width": 128,
+    "readout": "StateGoalActionReadout, bilinear ([g;s]U).(aV)",
+    "changed_from_10_7f": "partition only; subject, encoder, readout shape, steps, lr and seed are identical"
+  },
+  "coverage": {
+    "objects": [
+      "蓝色杯子",
+      "红色印章"
+    ],
+    "places": [
+      "木桌",
+      "窗台",
+      "左盒"
+    ],
+    "total_samples": 12,
+    "action_space": 6,
+    "train_index": [
+      0,
+      1,
+      2,
+      3,
+      6,
+      7
+    ],
+    "held_index": [
+      4,
+      5,
+      8,
+      9,
+      10,
+      11
+    ],
+    "train_correct_places": {
+      "木桌": 2,
+      "窗台": 2,
+      "左盒": 2
+    },
+    "held_correct_places": {
+      "木桌": 2,
+      "窗台": 2,
+      "左盒": 2
+    },
+    "every_place_in_train": true,
+    "every_object_in_train": true,
+    "state_overlap": [],
+    "layout": {
+      "木桌": {
+        "train_state": [
+          [
+            "红色印章",
+            "左盒"
+          ],
+          [
+            "蓝色杯子",
+            "窗台"
+          ]
+        ],
+        "held_state": [
+          [
+            "红色印章",
+            "窗台"
+          ],
+          [
+            "蓝色杯子",
+            "左盒"
+          ]
+        ]
+      },
+      "窗台": {
+        "train_state": [
+          [
+            "红色印章",
+            "左盒"
+          ],
+          [
+            "蓝色杯子",
+            "木桌"
+          ]
+        ],
+        "held_state": [
+          [
+            "红色印章",
+            "木桌"
+          ],
+          [
+            "蓝色杯子",
+            "左盒"
+          ]
+        ]
+      },
+      "左盒": {
+        "train_state": [
+          [
+            "红色印章",
+            "窗台"
+          ],
+          [
+            "蓝色杯子",
+            "木桌"
+          ]
+        ],
+        "held_state": [
+          [
+            "红色印章",
+            "木桌"
+          ],
+          [
+            "蓝色杯子",
+            "窗台"
+          ]
+        ]
+      }
+    }
+  },
+  "readings": {
+    "arm": {
+      "train_top1": 6,
+      "train_total": 6,
+      "held_top1": 6,
+      "held_total": 6,
+      "final_loss": 3.2578166347720806e-06,
+      "initial_loss": 1.7917594692280547,
+      "parameters": 1536,
+      "held_picks": [
+        {
+          "goal": "把蓝色杯子放到左盒",
+          "correct": [
+            "蓝色杯子",
+            "左盒"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "左盒"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "把红色印章放到左盒",
+          "correct": [
+            "红色印章",
+            "左盒"
+          ],
+          "picked": [
+            "红色印章",
+            "左盒"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "把蓝色杯子放到窗台",
+          "correct": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "把红色印章放到窗台",
+          "correct": [
+            "红色印章",
+            "窗台"
+          ],
+          "picked": [
+            "红色印章",
+            "窗台"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "把蓝色杯子放到木桌",
+          "correct": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "把红色印章放到木桌",
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "picked": [
+            "红色印章",
+            "木桌"
+          ],
+          "hit": true
+        }
+      ]
+    },
+    "control_zero_state": {
+      "train_top1": 6,
+      "train_total": 6,
+      "held_top1": 6,
+      "held_total": 6,
+      "final_loss": 9.640765316835956e-06,
+      "initial_loss": 1.7917594692280547,
+      "parameters": 1536,
+      "held_picks": [
+        {
+          "goal": "把蓝色杯子放到左盒",
+          "correct": [
+            "蓝色杯子",
+            "左盒"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "左盒"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "把红色印章放到左盒",
+          "correct": [
+            "红色印章",
+            "左盒"
+          ],
+          "picked": [
+            "红色印章",
+            "左盒"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "把蓝色杯子放到窗台",
+          "correct": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "把红色印章放到窗台",
+          "correct": [
+            "红色印章",
+            "窗台"
+          ],
+          "picked": [
+            "红色印章",
+            "窗台"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "把蓝色杯子放到木桌",
+          "correct": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "把红色印章放到木桌",
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "picked": [
+            "红色印章",
+            "木桌"
+          ],
+          "hit": true
+        }
+      ]
+    },
+    "control_shuffled_state": {
+      "train_top1": 6,
+      "train_total": 6,
+      "held_top1": 6,
+      "held_total": 6,
+      "final_loss": 1.198199718510875e-05,
+      "initial_loss": 1.7917594692280547,
+      "parameters": 1536,
+      "held_picks": [
+        {
+          "goal": "把蓝色杯子放到左盒",
+          "correct": [
+            "蓝色杯子",
+            "左盒"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "左盒"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "把红色印章放到左盒",
+          "correct": [
+            "红色印章",
+            "左盒"
+          ],
+          "picked": [
+            "红色印章",
+            "左盒"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "把蓝色杯子放到窗台",
+          "correct": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "把红色印章放到窗台",
+          "correct": [
+            "红色印章",
+            "窗台"
+          ],
+          "picked": [
+            "红色印章",
+            "窗台"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "把蓝色杯子放到木桌",
+          "correct": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "picked": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "hit": true
+        },
+        {
+          "goal": "把红色印章放到木桌",
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "picked": [
+            "红色印章",
+            "木桌"
+          ],
+          "hit": true
+        }
+      ]
+    },
+    "best_constant": {
+      "label": 2,
+      "hits": 1,
+      "total": 6,
+      "rate": 0.16666666666666666
+    },
+    "chance_top1": 0.16666666666666666,
+    "pass_bar": "held_top1 > best_constant.hits",
+    "train_fit_top1": "6/6",
+    "held_top1": "6/6",
+    "controls_held_top1": {
+      "zero_state": 6,
+      "shuffled_state": 6
+    }
+  },
+  "verdict": {
+    "passed_over_constant": true,
+    "state_contributes": false,
+    "shortcut_suspected": true,
+    "summary": "held 6/6 vs best constant 1/6; zero-state 6/6, shuffled-state 6/6"
+  },
+  "cost": {
+    "cpu_seconds": 36.65625,
+    "wall_seconds": 37.66421570000239,
+    "budget": {
+      "cpu_seconds": 40,
+      "wall_seconds": 120
+    },
+    "over_budget": false
+  },
+  "limits": "Split audit rerun only. Same synthetic eleven-token world, four hundred and eighty byte budget untouched, single deterministic parent. A pass means goal-conditioned selection is learnable from these features under a fair split; it is not natural-language capability, not P2 and not L3."
+}

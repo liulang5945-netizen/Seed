@@ -1,0 +1,814 @@
+{
+  "schema": "taiji-fixture-fairness-audit-v1",
+  "step": "audit",
+  "date": "2026-11-02",
+  "status": "void_instrument_defect",
+  "rules": [
+    "goal_not_identical_to_action",
+    "goal_names_no_answer_entity",
+    "goal_shares_no_bigram_with_action",
+    "goal_carries_no_action_template",
+    "mapping_only_reachable_through_records",
+    "split_holds_out_entities_and_novel_goals",
+    "control_is_fixed_point_free_permutation"
+  ],
+  "fixtures": [
+    {
+      "fixture": "legacy_fixture",
+      "samples": 12,
+      "rules_checked": 7,
+      "failed": [
+        "goal_not_identical_to_action",
+        "goal_names_no_answer_entity",
+        "goal_shares_no_bigram_with_action",
+        "goal_carries_no_action_template",
+        "mapping_only_reachable_through_records",
+        "split_holds_out_entities_and_novel_goals"
+      ],
+      "not_applicable": [
+        "control_is_fixed_point_free_permutation"
+      ],
+      "fair": false,
+      "checks": [
+        {
+          "rule": "goal_not_identical_to_action",
+          "passed": false,
+          "observed": {
+            "samples": 12,
+            "identical": 12,
+            "examples": [
+              {
+                "index": 0,
+                "goal": "把蓝色杯子放到左盒"
+              },
+              {
+                "index": 1,
+                "goal": "把红色印章放到左盒"
+              },
+              {
+                "index": 2,
+                "goal": "把蓝色杯子放到窗台"
+              }
+            ]
+          }
+        },
+        {
+          "rule": "goal_names_no_answer_entity",
+          "passed": false,
+          "observed": {
+            "entities": 5,
+            "samples_naming_an_entity": 12,
+            "examples": [
+              {
+                "index": 0,
+                "goal": "把蓝色杯子放到左盒",
+                "named": [
+                  "蓝色杯子",
+                  "左盒"
+                ]
+              },
+              {
+                "index": 1,
+                "goal": "把红色印章放到左盒",
+                "named": [
+                  "红色印章",
+                  "左盒"
+                ]
+              },
+              {
+                "index": 2,
+                "goal": "把蓝色杯子放到窗台",
+                "named": [
+                  "蓝色杯子",
+                  "窗台"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "rule": "goal_shares_no_bigram_with_action",
+          "passed": false,
+          "observed": {
+            "samples": 12,
+            "shared_bigram_total": 96,
+            "worst_index": 0,
+            "worst_shared": [
+              "到左",
+              "子放",
+              "左盒",
+              "把蓝",
+              "放到",
+              "杯子",
+              "色杯",
+              "蓝色"
+            ]
+          }
+        },
+        {
+          "rule": "goal_carries_no_action_template",
+          "passed": false,
+          "observed": {
+            "templates": [
+              "把",
+              "放到"
+            ],
+            "samples_with_template": 12,
+            "examples": [
+              {
+                "index": 0,
+                "goal": "把蓝色杯子放到左盒",
+                "templates": [
+                  "把",
+                  "放到"
+                ]
+              },
+              {
+                "index": 1,
+                "goal": "把红色印章放到左盒",
+                "templates": [
+                  "把",
+                  "放到"
+                ]
+              },
+              {
+                "index": 2,
+                "goal": "把蓝色杯子放到窗台",
+                "templates": [
+                  "把",
+                  "放到"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "rule": "mapping_only_reachable_through_records",
+          "passed": false,
+          "observed": {
+            "samples": 12,
+            "answer_names_missing_from_records": 4,
+            "examples_missing": [
+              {
+                "index": 6,
+                "absent_from_records": [
+                  "木桌"
+                ]
+              },
+              {
+                "index": 7,
+                "absent_from_records": [
+                  "木桌"
+                ]
+              },
+              {
+                "index": 10,
+                "absent_from_records": [
+                  "木桌"
+                ]
+              }
+            ],
+            "answer_names_also_in_goal": 24,
+            "examples_in_goal": [
+              {
+                "index": 0,
+                "name": "蓝色杯子"
+              },
+              {
+                "index": 0,
+                "name": "左盒"
+              },
+              {
+                "index": 1,
+                "name": "红色印章"
+              }
+            ]
+          }
+        },
+        {
+          "rule": "split_holds_out_entities_and_novel_goals",
+          "passed": false,
+          "observed": {
+            "train": 6,
+            "holdout": 6,
+            "holdout_goals_unseen_in_train": 4,
+            "novel_goal_fraction": 0.6666666666666666,
+            "entities_shared_between_train_and_holdout": [
+              "窗台"
+            ]
+          }
+        },
+        {
+          "rule": "control_is_fixed_point_free_permutation",
+          "passed": null,
+          "observed": {
+            "note": "fixture exposes no control mapping to check"
+          }
+        }
+      ]
+    },
+    {
+      "fixture": "wide_fixture",
+      "samples": 480,
+      "rules_checked": 7,
+      "failed": [
+        "control_is_fixed_point_free_permutation"
+      ],
+      "not_applicable": [
+        "split_holds_out_entities_and_novel_goals"
+      ],
+      "fair": false,
+      "checks": [
+        {
+          "rule": "goal_not_identical_to_action",
+          "passed": true,
+          "observed": {
+            "samples": 480,
+            "identical": 0,
+            "examples": []
+          }
+        },
+        {
+          "rule": "goal_names_no_answer_entity",
+          "passed": true,
+          "observed": {
+            "entities": 9,
+            "samples_naming_an_entity": 0,
+            "examples": []
+          }
+        },
+        {
+          "rule": "goal_shares_no_bigram_with_action",
+          "passed": true,
+          "observed": {
+            "samples": 480,
+            "shared_bigram_total": 0,
+            "worst_index": null,
+            "worst_shared": []
+          }
+        },
+        {
+          "rule": "goal_carries_no_action_template",
+          "passed": true,
+          "observed": {
+            "templates": [
+              "把",
+              "放到"
+            ],
+            "samples_with_template": 0,
+            "examples": []
+          }
+        },
+        {
+          "rule": "mapping_only_reachable_through_records",
+          "passed": true,
+          "observed": {
+            "samples": 480,
+            "answer_names_missing_from_records": 0,
+            "examples_missing": [],
+            "answer_names_also_in_goal": 0,
+            "examples_in_goal": []
+          }
+        },
+        {
+          "rule": "split_holds_out_entities_and_novel_goals",
+          "passed": null,
+          "observed": {
+            "note": "fixture publishes no train/dev labels; rule not exercised"
+          }
+        },
+        {
+          "rule": "control_is_fixed_point_free_permutation",
+          "passed": false,
+          "observed": {
+            "pairs": 9,
+            "bijective": false,
+            "fixed_points": []
+          }
+        }
+      ]
+    },
+    {
+      "fixture": "composition_fixture",
+      "samples": 64,
+      "rules_checked": 7,
+      "failed": [
+        "split_holds_out_entities_and_novel_goals",
+        "control_is_fixed_point_free_permutation"
+      ],
+      "not_applicable": [],
+      "fair": false,
+      "checks": [
+        {
+          "rule": "goal_not_identical_to_action",
+          "passed": true,
+          "observed": {
+            "samples": 64,
+            "identical": 0,
+            "examples": []
+          }
+        },
+        {
+          "rule": "goal_names_no_answer_entity",
+          "passed": true,
+          "observed": {
+            "entities": 9,
+            "samples_naming_an_entity": 0,
+            "examples": []
+          }
+        },
+        {
+          "rule": "goal_shares_no_bigram_with_action",
+          "passed": true,
+          "observed": {
+            "samples": 64,
+            "shared_bigram_total": 0,
+            "worst_index": null,
+            "worst_shared": []
+          }
+        },
+        {
+          "rule": "goal_carries_no_action_template",
+          "passed": true,
+          "observed": {
+            "templates": [
+              "把",
+              "放到"
+            ],
+            "samples_with_template": 0,
+            "examples": []
+          }
+        },
+        {
+          "rule": "mapping_only_reachable_through_records",
+          "passed": true,
+          "observed": {
+            "samples": 64,
+            "answer_names_missing_from_records": 0,
+            "examples_missing": [],
+            "answer_names_also_in_goal": 0,
+            "examples_in_goal": []
+          }
+        },
+        {
+          "rule": "split_holds_out_entities_and_novel_goals",
+          "passed": false,
+          "observed": {
+            "train": 24,
+            "holdout": 40,
+            "holdout_goals_unseen_in_train": 16,
+            "novel_goal_fraction": 0.4,
+            "entities_shared_between_train_and_holdout": [
+              "棕漆木箱",
+              "深绿陶碗",
+              "银灰铁盒"
+            ]
+          }
+        },
+        {
+          "rule": "control_is_fixed_point_free_permutation",
+          "passed": false,
+          "observed": {
+            "pairs": 14,
+            "bijective": false,
+            "fixed_points": []
+          }
+        }
+      ]
+    }
+  ],
+  "unfair_fixtures": [
+    "legacy_fixture",
+    "wide_fixture",
+    "composition_fixture"
+  ],
+  "model_involved": false,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "String-level checks only: a fixture passing every rule is not shown to be learnable, and a fixture failing one rule is not shown to be useless -- it only means a copy shortcut exists on that face, so no selection conclusion may be drawn from it. The legacy face is listed because goal_conditioned_training is still imported by the 10.7f and 14.2 runners. The 10.21 face samples the first two train and two dev worlds of the declared 16/8, not the whole split.",
+  "torch_threads": 1,
+  "cpu_seconds": 0.0,
+  "wall_seconds": 0.002717499854043126,
+  "budget": {
+    "cpu_seconds": 60,
+    "wall_seconds": 180
+  },
+  "source_hashes": {
+    "taiji/goal_fixture_fairness.py": "b4d4e01966e240ae460f92c48249532d245a7ba208d822303807ff901476b73c",
+    "taiji/native_goal_world_wide.py": "3ebe92fb36f44b73bbdc01d17e63ce732b54e39ac0f1d4ff0352adb9cb533344",
+    "taiji/native_goal_world.py": "5adf9fd571cb1bb62e4dcea7d9a222eaf5ab7b193c10a0750a3f6f313f283b78",
+    "taiji/goal_conditioned_training.py": "2e0b3e643fc9b7a6ffb8637ab0b9a59d109f93630d4ddd22587b94eca022fc27",
+    "taiji/native_composition_fixture.py": "18ca7f7ce19530d153e5396359870ff4661e5033b089da4960dea128a33c83b4",
+    "scripts/training/audit_taiji_goal_fixture_fairness.py": "8e93c906371bc5c86207c8db195acef4a55709c5372b90f09159e7175a0a46dc"
+  },
+  "void_reason": "Two rule failures in this run were bugs in the rules, not in the fixtures: the control check demanded sources and targets live in one universe (a glossary maps descriptors to entities, so it never does), and split novelty was measured on the goal string alone although the 10.21 fixture reuses goal strings across worlds by design and permutes the mapping per world. Both rules are fixed in the replacement card. The legacy 10.7f verdict -- six of seven rules failed -- is unchanged by the fixes.",
+  "second_void": {
+    "schema": "taiji-fixture-fairness-audit-v1",
+    "step": "audit",
+    "date": "2026-11-02",
+    "status": "void_instrument_defect",
+    "rules": [
+      "goal_not_identical_to_action",
+      "goal_names_no_answer_entity",
+      "goal_shares_no_bigram_with_action",
+      "goal_carries_no_action_template",
+      "mapping_only_reachable_through_records",
+      "split_holds_out_entities_and_novel_goals",
+      "control_is_fixed_point_free_permutation"
+    ],
+    "fixtures": [
+      {
+        "fixture": "legacy_fixture",
+        "samples": 12,
+        "rules_checked": 7,
+        "failed": [
+          "goal_not_identical_to_action",
+          "goal_names_no_answer_entity",
+          "goal_shares_no_bigram_with_action",
+          "goal_carries_no_action_template",
+          "mapping_only_reachable_through_records",
+          "split_holds_out_entities_and_novel_goals"
+        ],
+        "not_applicable": [
+          "control_is_fixed_point_free_permutation"
+        ],
+        "fair": false,
+        "checks": [
+          {
+            "rule": "goal_not_identical_to_action",
+            "passed": false,
+            "observed": {
+              "samples": 12,
+              "identical": 12,
+              "examples": [
+                {
+                  "index": 0,
+                  "goal": "把蓝色杯子放到左盒"
+                },
+                {
+                  "index": 1,
+                  "goal": "把红色印章放到左盒"
+                },
+                {
+                  "index": 2,
+                  "goal": "把蓝色杯子放到窗台"
+                }
+              ]
+            }
+          },
+          {
+            "rule": "goal_names_no_answer_entity",
+            "passed": false,
+            "observed": {
+              "entities": 5,
+              "samples_naming_an_entity": 12,
+              "examples": [
+                {
+                  "index": 0,
+                  "goal": "把蓝色杯子放到左盒",
+                  "named": [
+                    "蓝色杯子",
+                    "左盒"
+                  ]
+                },
+                {
+                  "index": 1,
+                  "goal": "把红色印章放到左盒",
+                  "named": [
+                    "红色印章",
+                    "左盒"
+                  ]
+                },
+                {
+                  "index": 2,
+                  "goal": "把蓝色杯子放到窗台",
+                  "named": [
+                    "蓝色杯子",
+                    "窗台"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "rule": "goal_shares_no_bigram_with_action",
+            "passed": false,
+            "observed": {
+              "samples": 12,
+              "shared_bigram_total": 96,
+              "worst_index": 0,
+              "worst_shared": [
+                "到左",
+                "子放",
+                "左盒",
+                "把蓝",
+                "放到",
+                "杯子",
+                "色杯",
+                "蓝色"
+              ]
+            }
+          },
+          {
+            "rule": "goal_carries_no_action_template",
+            "passed": false,
+            "observed": {
+              "templates": [
+                "把",
+                "放到"
+              ],
+              "samples_with_template": 12,
+              "examples": [
+                {
+                  "index": 0,
+                  "goal": "把蓝色杯子放到左盒",
+                  "templates": [
+                    "把",
+                    "放到"
+                  ]
+                },
+                {
+                  "index": 1,
+                  "goal": "把红色印章放到左盒",
+                  "templates": [
+                    "把",
+                    "放到"
+                  ]
+                },
+                {
+                  "index": 2,
+                  "goal": "把蓝色杯子放到窗台",
+                  "templates": [
+                    "把",
+                    "放到"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "rule": "mapping_only_reachable_through_records",
+            "passed": false,
+            "observed": {
+              "samples": 12,
+              "answer_names_missing_from_records": 4,
+              "examples_missing": [
+                {
+                  "index": 6,
+                  "absent_from_records": [
+                    "木桌"
+                  ]
+                },
+                {
+                  "index": 7,
+                  "absent_from_records": [
+                    "木桌"
+                  ]
+                },
+                {
+                  "index": 10,
+                  "absent_from_records": [
+                    "木桌"
+                  ]
+                }
+              ],
+              "answer_names_also_in_goal": 24,
+              "examples_in_goal": [
+                {
+                  "index": 0,
+                  "name": "蓝色杯子"
+                },
+                {
+                  "index": 0,
+                  "name": "左盒"
+                },
+                {
+                  "index": 1,
+                  "name": "红色印章"
+                }
+              ]
+            }
+          },
+          {
+            "rule": "split_holds_out_entities_and_novel_goals",
+            "passed": false,
+            "observed": {
+              "train": 6,
+              "holdout": 6,
+              "holdout_tasks_unseen_in_train": 4,
+              "novel_task_fraction": 0.6666666666666666,
+              "holdout_goals_unseen_in_train": 4,
+              "novel_goal_only_fraction": 0.6666666666666666,
+              "entities_shared_between_train_and_holdout": [
+                "窗台"
+              ]
+            }
+          },
+          {
+            "rule": "control_is_fixed_point_free_permutation",
+            "passed": null,
+            "observed": {
+              "note": "fixture exposes no control mapping to check"
+            }
+          }
+        ]
+      },
+      {
+        "fixture": "wide_fixture",
+        "samples": 480,
+        "rules_checked": 7,
+        "failed": [],
+        "not_applicable": [
+          "split_holds_out_entities_and_novel_goals"
+        ],
+        "fair": true,
+        "checks": [
+          {
+            "rule": "goal_not_identical_to_action",
+            "passed": true,
+            "observed": {
+              "samples": 480,
+              "identical": 0,
+              "examples": []
+            }
+          },
+          {
+            "rule": "goal_names_no_answer_entity",
+            "passed": true,
+            "observed": {
+              "entities": 9,
+              "samples_naming_an_entity": 0,
+              "examples": []
+            }
+          },
+          {
+            "rule": "goal_shares_no_bigram_with_action",
+            "passed": true,
+            "observed": {
+              "samples": 480,
+              "shared_bigram_total": 0,
+              "worst_index": null,
+              "worst_shared": []
+            }
+          },
+          {
+            "rule": "goal_carries_no_action_template",
+            "passed": true,
+            "observed": {
+              "templates": [
+                "把",
+                "放到"
+              ],
+              "samples_with_template": 0,
+              "examples": []
+            }
+          },
+          {
+            "rule": "mapping_only_reachable_through_records",
+            "passed": true,
+            "observed": {
+              "samples": 480,
+              "answer_names_missing_from_records": 0,
+              "examples_missing": [],
+              "answer_names_also_in_goal": 0,
+              "examples_in_goal": []
+            }
+          },
+          {
+            "rule": "split_holds_out_entities_and_novel_goals",
+            "passed": null,
+            "observed": {
+              "note": "fixture publishes no train/dev labels; rule not exercised"
+            }
+          },
+          {
+            "rule": "control_is_fixed_point_free_permutation",
+            "passed": true,
+            "observed": {
+              "pairs": 9,
+              "same_domain": true,
+              "same_codomain": true,
+              "bijective": true,
+              "assignments_unchanged_from_real": []
+            }
+          }
+        ]
+      },
+      {
+        "fixture": "composition_fixture",
+        "samples": 64,
+        "rules_checked": 7,
+        "failed": [
+          "split_holds_out_entities_and_novel_goals"
+        ],
+        "not_applicable": [],
+        "fair": false,
+        "checks": [
+          {
+            "rule": "goal_not_identical_to_action",
+            "passed": true,
+            "observed": {
+              "samples": 64,
+              "identical": 0,
+              "examples": []
+            }
+          },
+          {
+            "rule": "goal_names_no_answer_entity",
+            "passed": true,
+            "observed": {
+              "entities": 9,
+              "samples_naming_an_entity": 0,
+              "examples": []
+            }
+          },
+          {
+            "rule": "goal_shares_no_bigram_with_action",
+            "passed": true,
+            "observed": {
+              "samples": 64,
+              "shared_bigram_total": 0,
+              "worst_index": null,
+              "worst_shared": []
+            }
+          },
+          {
+            "rule": "goal_carries_no_action_template",
+            "passed": true,
+            "observed": {
+              "templates": [
+                "把",
+                "放到"
+              ],
+              "samples_with_template": 0,
+              "examples": []
+            }
+          },
+          {
+            "rule": "mapping_only_reachable_through_records",
+            "passed": true,
+            "observed": {
+              "samples": 64,
+              "answer_names_missing_from_records": 0,
+              "examples_missing": [],
+              "answer_names_also_in_goal": 0,
+              "examples_in_goal": []
+            }
+          },
+          {
+            "rule": "split_holds_out_entities_and_novel_goals",
+            "passed": false,
+            "observed": {
+              "train": 24,
+              "holdout": 40,
+              "holdout_tasks_unseen_in_train": 16,
+              "novel_task_fraction": 0.4,
+              "holdout_goals_unseen_in_train": 16,
+              "novel_goal_only_fraction": 0.4,
+              "entities_shared_between_train_and_holdout": [
+                "棕漆木箱",
+                "深绿陶碗",
+                "银灰铁盒"
+              ]
+            }
+          },
+          {
+            "rule": "control_is_fixed_point_free_permutation",
+            "passed": true,
+            "observed": {
+              "pairs": 3,
+              "same_domain": true,
+              "same_codomain": true,
+              "bijective": true,
+              "assignments_unchanged_from_real": []
+            }
+          }
+        ]
+      }
+    ],
+    "unfair_fixtures": [
+      "legacy_fixture",
+      "composition_fixture"
+    ],
+    "model_involved": false,
+    "capability_claimed": false,
+    "training_admitted": false,
+    "limits": "String-level checks only: a fixture passing every rule is not shown to be learnable, and a fixture failing one rule is not shown to be useless -- it only means a copy shortcut exists on that face, so no selection conclusion may be drawn from it. The legacy face is listed because goal_conditioned_training is still imported by the 10.7f and 14.2 runners. The 10.21 face samples the first two train and two dev worlds of the declared 16/8, not the whole split.",
+    "torch_threads": 1,
+    "cpu_seconds": 0.0,
+    "wall_seconds": 0.0023904000408947468,
+    "budget": {
+      "cpu_seconds": 60,
+      "wall_seconds": 180
+    },
+    "source_hashes": {
+      "taiji/goal_fixture_fairness.py": "ff34b65391f97be04e1761320191a91bec39520e09cca235c368962a2039cf1d",
+      "taiji/native_goal_world_wide.py": "3ebe92fb36f44b73bbdc01d17e63ce732b54e39ac0f1d4ff0352adb9cb533344",
+      "taiji/native_goal_world.py": "5adf9fd571cb1bb62e4dcea7d9a222eaf5ab7b193c10a0750a3f6f313f283b78",
+      "taiji/goal_conditioned_training.py": "2e0b3e643fc9b7a6ffb8637ab0b9a59d109f93630d4ddd22587b94eca022fc27",
+      "taiji/native_composition_fixture.py": "18ca7f7ce19530d153e5396359870ff4661e5033b089da4960dea128a33c83b4",
+      "scripts/training/audit_taiji_goal_fixture_fairness.py": "f35f252df575396decac912ebbf14ffc61a79f7c218b1c726756d14a80190852"
+    },
+    "void_reason": "The composition face was judged on a world-level train/dev split, which is an axis this fixture never claims: its holdout is declared inside each world by example layer, and dev worlds deliberately reuse three of the four object names. The replacement card gates on the declared layer axis and reports the world axis as a non-gating observation."
+  }
+}

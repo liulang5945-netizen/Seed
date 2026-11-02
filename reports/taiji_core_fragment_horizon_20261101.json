@@ -1,0 +1,195 @@
+{
+  "schema": "taiji-fragment-horizon-v1",
+  "step": "09.7b",
+  "date": "2026-11-01",
+  "status": "sustainable_horizon_found",
+  "config": {
+    "groups": 4,
+    "width": 128,
+    "units": 256,
+    "adapter_rank": 16,
+    "fast_heads": 2,
+    "key_width": 32,
+    "value_width": 32,
+    "output_heads": 2,
+    "fast_limit": 16.0,
+    "max_event_bytes": 512,
+    "max_source_bytes": 512,
+    "max_target_bytes": 128,
+    "seed": 20261031
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "declared": {
+    "parts": 5,
+    "units_per_group": 3,
+    "block": 8,
+    "blocks": 4,
+    "lr": 1e-05,
+    "net_gate": 0.0001,
+    "retention_gate": 0.03,
+    "reference_net_at_8": 0.000173924,
+    "face_tolerance": 0.2
+  },
+  "timeline": [
+    {
+      "steps": 8,
+      "replay_retention_drift": 0.022069889315990743,
+      "birth_retention_drift": 0.02226857396675186,
+      "net_benefit": {
+        "holdout": 0.00017392392135384682,
+        "second_holdout": 0.0001903388660808858
+      }
+    },
+    {
+      "steps": 16,
+      "replay_retention_drift": 0.043446523239466295,
+      "birth_retention_drift": 0.043861025877077076,
+      "net_benefit": {
+        "holdout": 0.00034859585011659533,
+        "second_holdout": 0.000389416487584171
+      }
+    },
+    {
+      "steps": 24,
+      "replay_retention_drift": 0.06426870935696627,
+      "birth_retention_drift": 0.06490963190820853,
+      "net_benefit": {
+        "holdout": 0.0005298914852218672,
+        "second_holdout": 0.0005977817536413355
+      }
+    },
+    {
+      "steps": 32,
+      "replay_retention_drift": 0.08475241711031423,
+      "birth_retention_drift": 0.08563097669414788,
+      "net_benefit": {
+        "holdout": 0.0007186796408440443,
+        "second_holdout": 0.000814694871031918
+      }
+    }
+  ],
+  "sustainable_horizon_steps": 8,
+  "arms": {
+    "replay_only": {
+      "checkpoints": [
+        {
+          "steps": 8,
+          "delta": {
+            "holdout": -0.020192401810056104,
+            "second_holdout": -0.011326104364446365
+          },
+          "retention_drift": 0.022069889315990743
+        },
+        {
+          "steps": 16,
+          "delta": {
+            "holdout": -0.03974011702136693,
+            "second_holdout": -0.022147803099183072
+          },
+          "retention_drift": 0.043446523239466295
+        },
+        {
+          "steps": 24,
+          "delta": {
+            "holdout": -0.05884913806149328,
+            "second_holdout": -0.032630686303405376
+          },
+          "retention_drift": 0.06426870935696627
+        },
+        {
+          "steps": 32,
+          "delta": {
+            "holdout": -0.07774035466621854,
+            "second_holdout": -0.04294974112651673
+          },
+          "retention_drift": 0.08475241711031423
+        }
+      ],
+      "train_cpu_seconds": 87.578125
+    },
+    "consensus_birth": {
+      "checkpoints": [
+        {
+          "steps": 8,
+          "delta": {
+            "holdout": -0.02036632573140995,
+            "second_holdout": -0.011516443230527251
+          },
+          "retention_drift": 0.02226857396675186
+        },
+        {
+          "steps": 16,
+          "delta": {
+            "holdout": -0.04008871287148352,
+            "second_holdout": -0.022537219586767243
+          },
+          "retention_drift": 0.043861025877077076
+        },
+        {
+          "steps": 24,
+          "delta": {
+            "holdout": -0.059379029546715145,
+            "second_holdout": -0.03322846805704671
+          },
+          "retention_drift": 0.06490963190820853
+        },
+        {
+          "steps": 32,
+          "delta": {
+            "holdout": -0.07845903430706258,
+            "second_holdout": -0.043764435997548645
+          },
+          "retention_drift": 0.08563097669414788
+        }
+      ],
+      "train_cpu_seconds": 90.3125,
+      "birth_cpu_seconds": 10.4375
+    }
+  },
+  "checks": [
+    {
+      "id": "eight_step_face_reproduced",
+      "passed": true,
+      "observed": {
+        "holdout": 0.00017392392135384682,
+        "second_holdout": 0.0001903388660808858
+      }
+    },
+    {
+      "id": "sustainable_horizon_exists",
+      "passed": true,
+      "observed": 8
+    },
+    {
+      "id": "net_benefit_at_horizon",
+      "passed": true,
+      "observed": {
+        "holdout": 0.00017392392135384682,
+        "second_holdout": 0.0001903388660808858
+      }
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true,
+      "observed": [
+        224.53125,
+        232.76222419994883
+      ]
+    }
+  ],
+  "training_admitted": false,
+  "limits": "The horizon is the longest declared checkpoint where both arms keep retention inside the gate on this deterministic subject. It is not a sustainable limit of the mechanism, not a capability and not training admission.",
+  "cpu_seconds": 224.53125,
+  "wall_seconds": 232.76222419994883,
+  "budget": {
+    "cpu_seconds": 1800,
+    "wall_seconds": 3600
+  },
+  "source_hashes": {
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/growth_credit.py": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+    "taiji/native_development.py": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+    "taiji/birth_direction.py": "a723075011a42c3a4d44b24267de2c40dc7db3229c0e546480942538d2274ad9",
+    "scripts/training/verify_taiji_fragment_horizon.py": "237dbbc7dde733df3538acbd513485834fc8127fd2ae5dfbac8458108c896eec"
+  }
+}

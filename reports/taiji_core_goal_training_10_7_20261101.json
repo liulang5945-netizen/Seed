@@ -1,0 +1,483 @@
+{
+  "schema": "taiji-goal-training-10-7-v1",
+  "step": "10.7",
+  "date": "2026-11-01",
+  "status": "training_below_chance_plus",
+  "declared": {
+    "steps": 32,
+    "lr_grid": [
+      1e-05,
+      0.0001
+    ],
+    "train_samples": 6,
+    "held_out_samples": 6,
+    "held_out_states": 3,
+    "retention_gate": 0.03,
+    "both_lrs_published": true
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "untrained_held_out": {
+    "hits": 3,
+    "total": 6,
+    "rows": [
+      {
+        "goal": "把蓝色杯子放到木桌",
+        "state": [
+          [
+            "红色印章",
+            "左盒"
+          ],
+          [
+            "蓝色杯子",
+            "窗台"
+          ]
+        ],
+        "correct": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "correct_verdict": -0.14428358017484033,
+        "other_verdict": -0.14377962318943371,
+        "hit": false
+      },
+      {
+        "goal": "把红色印章放到木桌",
+        "state": [
+          [
+            "红色印章",
+            "左盒"
+          ],
+          [
+            "蓝色杯子",
+            "窗台"
+          ]
+        ],
+        "correct": [
+          "红色印章",
+          "木桌"
+        ],
+        "correct_verdict": -0.14344362188214,
+        "other_verdict": -0.14394340199398847,
+        "hit": true
+      },
+      {
+        "goal": "把蓝色杯子放到窗台",
+        "state": [
+          [
+            "红色印章",
+            "木桌"
+          ],
+          [
+            "蓝色杯子",
+            "左盒"
+          ]
+        ],
+        "correct": [
+          "蓝色杯子",
+          "窗台"
+        ],
+        "correct_verdict": -0.14351512895404728,
+        "other_verdict": -0.14303442553456147,
+        "hit": false
+      },
+      {
+        "goal": "把红色印章放到窗台",
+        "state": [
+          [
+            "红色印章",
+            "木桌"
+          ],
+          [
+            "蓝色杯子",
+            "左盒"
+          ]
+        ],
+        "correct": [
+          "红色印章",
+          "窗台"
+        ],
+        "correct_verdict": -0.14271974838489943,
+        "other_verdict": -0.14319584258704054,
+        "hit": true
+      },
+      {
+        "goal": "把蓝色杯子放到木桌",
+        "state": [
+          [
+            "红色印章",
+            "窗台"
+          ],
+          [
+            "蓝色杯子",
+            "左盒"
+          ]
+        ],
+        "correct": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "correct_verdict": -0.14429685981364226,
+        "other_verdict": -0.1437929698074969,
+        "hit": false
+      },
+      {
+        "goal": "把红色印章放到木桌",
+        "state": [
+          [
+            "红色印章",
+            "窗台"
+          ],
+          [
+            "蓝色杯子",
+            "左盒"
+          ]
+        ],
+        "correct": [
+          "红色印章",
+          "木桌"
+        ],
+        "correct_verdict": -0.14345704351572497,
+        "other_verdict": -0.14395674358656052,
+        "hit": true
+      }
+    ]
+  },
+  "runs": [
+    {
+      "lr": 1e-05,
+      "steps": 32,
+      "first_loss": 11.206858000592518,
+      "last_loss": 11.047549957295649,
+      "train_cpu_seconds": 169.28125,
+      "retention_drift": 0.0026325283419996737,
+      "held_out_hits": 3,
+      "held_out_total": 6,
+      "held_out": [
+        {
+          "goal": "把蓝色杯子放到木桌",
+          "state": [
+            [
+              "红色印章",
+              "左盒"
+            ],
+            [
+              "蓝色杯子",
+              "窗台"
+            ]
+          ],
+          "correct": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "correct_verdict": -0.15003055372463248,
+          "other_verdict": -0.14960599003914954,
+          "hit": false
+        },
+        {
+          "goal": "把红色印章放到木桌",
+          "state": [
+            [
+              "红色印章",
+              "左盒"
+            ],
+            [
+              "蓝色杯子",
+              "窗台"
+            ]
+          ],
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "correct_verdict": -0.14930226509445532,
+          "other_verdict": -0.14972531517352472,
+          "hit": true
+        },
+        {
+          "goal": "把蓝色杯子放到窗台",
+          "state": [
+            [
+              "红色印章",
+              "木桌"
+            ],
+            [
+              "蓝色杯子",
+              "左盒"
+            ]
+          ],
+          "correct": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "correct_verdict": -0.14936110594697993,
+          "other_verdict": -0.14895624966820353,
+          "hit": false
+        },
+        {
+          "goal": "把红色印章放到窗台",
+          "state": [
+            [
+              "红色印章",
+              "木桌"
+            ],
+            [
+              "蓝色杯子",
+              "左盒"
+            ]
+          ],
+          "correct": [
+            "红色印章",
+            "窗台"
+          ],
+          "correct_verdict": -0.1486708229977065,
+          "other_verdict": -0.14907376677015716,
+          "hit": true
+        },
+        {
+          "goal": "把蓝色杯子放到木桌",
+          "state": [
+            [
+              "红色印章",
+              "窗台"
+            ],
+            [
+              "蓝色杯子",
+              "左盒"
+            ]
+          ],
+          "correct": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "correct_verdict": -0.15004270484113302,
+          "other_verdict": -0.14961814937956586,
+          "hit": false
+        },
+        {
+          "goal": "把红色印章放到木桌",
+          "state": [
+            [
+              "红色印章",
+              "窗台"
+            ],
+            [
+              "蓝色杯子",
+              "左盒"
+            ]
+          ],
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "correct_verdict": -0.1493143834137305,
+          "other_verdict": -0.14973741070098967,
+          "hit": true
+        }
+      ],
+      "weights_path": "output/taiji_core_10_7/trained_lr1e-05.pt",
+      "weights_bytes": 26633881,
+      "wall_seconds": 175.453125
+    },
+    {
+      "lr": 0.0001,
+      "steps": 32,
+      "first_loss": 11.206858000592518,
+      "last_loss": 7.099676528767446,
+      "train_cpu_seconds": 169.5625,
+      "retention_drift": 0.0321778354984108,
+      "held_out_hits": 3,
+      "held_out_total": 6,
+      "held_out": [
+        {
+          "goal": "把蓝色杯子放到木桌",
+          "state": [
+            [
+              "红色印章",
+              "左盒"
+            ],
+            [
+              "蓝色杯子",
+              "窗台"
+            ]
+          ],
+          "correct": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "correct_verdict": -0.2605523474844311,
+          "other_verdict": -0.2605624721308968,
+          "hit": true
+        },
+        {
+          "goal": "把红色印章放到木桌",
+          "state": [
+            [
+              "红色印章",
+              "左盒"
+            ],
+            [
+              "蓝色杯子",
+              "窗台"
+            ]
+          ],
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "correct_verdict": -0.2605528905567831,
+          "other_verdict": -0.26054226080981113,
+          "hit": false
+        },
+        {
+          "goal": "把蓝色杯子放到窗台",
+          "state": [
+            [
+              "红色印章",
+              "木桌"
+            ],
+            [
+              "蓝色杯子",
+              "左盒"
+            ]
+          ],
+          "correct": [
+            "蓝色杯子",
+            "窗台"
+          ],
+          "correct_verdict": -0.25964579871402993,
+          "other_verdict": -0.2596579498798115,
+          "hit": true
+        },
+        {
+          "goal": "把红色印章放到窗台",
+          "state": [
+            [
+              "红色印章",
+              "木桌"
+            ],
+            [
+              "蓝色杯子",
+              "左盒"
+            ]
+          ],
+          "correct": [
+            "红色印章",
+            "窗台"
+          ],
+          "correct_verdict": -0.2596506660071016,
+          "other_verdict": -0.25963806088853936,
+          "hit": false
+        },
+        {
+          "goal": "把蓝色杯子放到木桌",
+          "state": [
+            [
+              "红色印章",
+              "窗台"
+            ],
+            [
+              "蓝色杯子",
+              "左盒"
+            ]
+          ],
+          "correct": [
+            "蓝色杯子",
+            "木桌"
+          ],
+          "correct_verdict": -0.26050551308005954,
+          "other_verdict": -0.2605158669531793,
+          "hit": true
+        },
+        {
+          "goal": "把红色印章放到木桌",
+          "state": [
+            [
+              "红色印章",
+              "窗台"
+            ],
+            [
+              "蓝色杯子",
+              "左盒"
+            ]
+          ],
+          "correct": [
+            "红色印章",
+            "木桌"
+          ],
+          "correct_verdict": -0.26050654402860385,
+          "other_verdict": -0.2604956862122463,
+          "hit": false
+        }
+      ],
+      "weights_path": "output/taiji_core_10_7/trained_lr0.0001.pt",
+      "weights_bytes": 26634022,
+      "wall_seconds": 175.640625
+    }
+  ],
+  "training_direction": "train_learned",
+  "weights_published": false,
+  "default_model_replaced": false,
+  "model_involved": true,
+  "capability_claimed": false,
+  "checks": [
+    {
+      "id": "candidate_identity_mismatch",
+      "passed": true,
+      "observed": [
+        "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+        "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3"
+      ]
+    },
+    {
+      "id": "held_out_states_never_trained",
+      "passed": true,
+      "observed": 6
+    },
+    {
+      "id": "training_learned_selection",
+      "passed": false,
+      "observed": [
+        {
+          "lr": 1e-05,
+          "hits": 3,
+          "drift": 0.0026325283419996737
+        },
+        {
+          "lr": 0.0001,
+          "hits": 3,
+          "drift": 0.0321778354984108
+        }
+      ]
+    },
+    {
+      "id": "retention_within_gate",
+      "passed": false,
+      "observed": [
+        0.0001
+      ]
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true,
+      "observed": [
+        392.625,
+        398.43507889984176
+      ]
+    }
+  ],
+  "training_admitted": false,
+  "limits": "Twelve synthetic samples, six held-out from three unseen states. A pass means the bounded run learned this toy selection on this fixture; it is not natural-language task capability, does not satisfy P2 on its own, and authorises no further training.",
+  "cpu_seconds": 392.625,
+  "wall_seconds": 398.43507889984176,
+  "budget": {
+    "cpu_seconds": 600,
+    "wall_seconds": 1200
+  },
+  "source_hashes": {
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/native_goal_world.py": "5adf9fd571cb1bb62e4dcea7d9a222eaf5ab7b193c10a0750a3f6f313f283b78",
+    "taiji/action_verdict_scorer.py": "c52f7ed99dbd9a3ba1607d1f9cc19124da03f6c47a36aa1bb8578f60cdac216f",
+    "taiji/goal_conditioned_training.py": "2e0b3e643fc9b7a6ffb8637ab0b9a59d109f93630d4ddd22587b94eca022fc27",
+    "scripts/training/verify_taiji_goal_training_10_7.py": "4fda77cc90ee981fdb8ab58c0d166d5f8ef39374e376fc35ddb9bbf00d0f58c8"
+  }
+}

@@ -1,0 +1,266 @@
+{
+  "schema": "taiji-cost-ledger-v2",
+  "step": "ledger",
+  "date": "2026-11-02",
+  "status": "void_guard_ill_posed",
+  "supersedes": "reports/taiji_core_cost_ledger_v3_20261102.json",
+  "revision_reason": "v3 read only the top-level cpu_seconds, so 20 cards -- including the 10.21.4 training run and 14.1/14.2 -- were listed as costless while they publish the number under a nested key. v2 resolves a declared path list, one source per card.",
+  "cards_measured": 111,
+  "cards_without_cost": [
+    {
+      "card": "taiji_core_10_21_plan_revision_20261101.json",
+      "reason": "no declared cost path"
+    },
+    {
+      "card": "taiji_core_13_closeout_20261101.json",
+      "reason": "no declared cost path"
+    },
+    {
+      "card": "taiji_core_algorithm_v1_math_checks_20261031.json",
+      "reason": "no declared cost path"
+    }
+  ],
+  "total_cpu_seconds": 9827.328125,
+  "total_wall_seconds": 8350.22232540138,
+  "top_level_only_cpu_seconds": 9215.28125,
+  "nested_recovered_cpu_seconds": 612.046875,
+  "cost_sources": {
+    "cpu_seconds": {
+      "cards": 95,
+      "cpu_seconds": 9215.28125
+    },
+    "cost.cpu_seconds": {
+      "cards": 9,
+      "cpu_seconds": 496.484375
+    },
+    "cpu_seconds_checks_only": {
+      "cards": 7,
+      "cpu_seconds": 115.5625
+    }
+  },
+  "aggregate_cards": [
+    {
+      "card": "taiji_core_10_21_closeout_20261101.json",
+      "step": "10.21.6",
+      "stated": {
+        "costs.with_iterations_cpu_seconds": 254.52,
+        "costs.executed_cpu_seconds": 247.53
+      },
+      "excluded_from_sum": true
+    }
+  ],
+  "cross_check": [
+    {
+      "aggregate_step": "10.21.6",
+      "member_prefix": "10.21",
+      "member_cards": 17,
+      "member_cpu_seconds": 574.28125,
+      "present": true,
+      "stated": {
+        "costs.with_iterations_cpu_seconds": 254.52,
+        "costs.executed_cpu_seconds": 247.53
+      },
+      "all_differences": {
+        "costs.with_iterations_cpu_seconds": 319.76125,
+        "costs.executed_cpu_seconds": 326.75125
+      },
+      "matched_source": "costs.with_iterations_cpu_seconds",
+      "difference_seconds": 319.76125,
+      "within_band": false
+    }
+  ],
+  "cross_check_band_seconds": 2.0,
+  "by_family": {
+    "09": {
+      "cards": 13,
+      "cpu_seconds": 5190.328125,
+      "wall_seconds": 5333.555016600294
+    },
+    "10": {
+      "cards": 63,
+      "cpu_seconds": 3874.125,
+      "wall_seconds": 2172.7966660014354
+    },
+    "14": {
+      "cards": 3,
+      "cpu_seconds": 71.875,
+      "wall_seconds": 74.03936019982211
+    },
+    "11": {
+      "cards": 18,
+      "cpu_seconds": 74.671875,
+      "wall_seconds": 85.60421380004846
+    },
+    "09-r": {
+      "cards": 10,
+      "cpu_seconds": 615.078125,
+      "wall_seconds": 682.9291061998811
+    },
+    "ledger": {
+      "cards": 3,
+      "cpu_seconds": 0.8125,
+      "wall_seconds": 0.8608187998179346
+    },
+    "unlabeled": {
+      "cards": 1,
+      "cpu_seconds": 0.4375,
+      "wall_seconds": 0.4371438000816852
+    }
+  },
+  "goal_line_cpu_seconds": 3874.125,
+  "p2_probe_cpu_seconds": 1509.875,
+  "p2_probe_cards": [
+    "taiji_core_action_verdict_10_6_20261101.json",
+    "taiji_core_feature_additivity_10_7g_20261101.json",
+    "taiji_core_geometry_select_10_7h_20261101.json",
+    "taiji_core_goal_conditioned_10_5_20261101.json",
+    "taiji_core_goal_training_10_7_20261101.json",
+    "taiji_core_margin_objective_10_7d_20261101.json",
+    "taiji_core_raw_rank_10_7e2_20261101.json",
+    "taiji_core_readout_10_7e_20261101.json",
+    "taiji_core_readout_rank_10_7e1_20261101.json",
+    "taiji_core_residual_structure_10_7c_20261101.json",
+    "taiji_core_residual_structure_10_7c_v2_20261101.json",
+    "taiji_core_selection_10_7f_20261101.json",
+    "taiji_core_subject_selection_10_4_20261101.json",
+    "taiji_core_training_direction_10_7b_20261101.json",
+    "taiji_core_training_replay_10_7a_20261101.json",
+    "taiji_core_training_replay_10_7a_v2_20261101.json"
+  ],
+  "top_costs": [
+    {
+      "card": "taiji_core_fixture_arrivals_v2_20261101.json",
+      "family": "09",
+      "step": "09.6.2",
+      "status": "failed_activity_fixture",
+      "cpu_seconds": 1415.25,
+      "wall_seconds": 1452.1707358001731,
+      "cpu_source": "cpu_seconds",
+      "wall_source": "wall_seconds"
+    },
+    {
+      "card": "taiji_core_fixture_arrivals_20261101.json",
+      "family": "09",
+      "step": "09.6.2",
+      "status": "failed_activity_fixture",
+      "cpu_seconds": 1172.5625,
+      "wall_seconds": 1205.358434600057,
+      "cpu_source": "cpu_seconds",
+      "wall_source": "wall_seconds"
+    },
+    {
+      "card": "taiji_core_birth_direction_surface_20261101.json",
+      "family": "09",
+      "step": "09.6.7",
+      "status": "platform_supported",
+      "cpu_seconds": 756.453125,
+      "wall_seconds": 780.368031400023,
+      "cpu_source": "cpu_seconds",
+      "wall_source": "wall_seconds"
+    },
+    {
+      "card": "taiji_core_raw_rank_10_7e2_20261101.json",
+      "family": "10",
+      "step": "10.7e-2",
+      "status": "budget_stop",
+      "cpu_seconds": 571.75,
+      "wall_seconds": 49.342680000001565,
+      "cpu_source": "cpu_seconds",
+      "wall_source": "wall_seconds"
+    },
+    {
+      "card": "taiji_core_glossary_control_10_11b_20261101.json",
+      "family": "10",
+      "step": "10.11b",
+      "status": "control_also_wins",
+      "cpu_seconds": 509.03125,
+      "wall_seconds": 44.007655899971724,
+      "cpu_source": "cpu_seconds",
+      "wall_source": "wall_seconds"
+    },
+    {
+      "card": "taiji_core_glossary_10_10_20261101.json",
+      "family": "10",
+      "step": "10.10",
+      "status": "glossary_not_used",
+      "cpu_seconds": 494.40625,
+      "wall_seconds": 42.80162220005877,
+      "cpu_source": "cpu_seconds",
+      "wall_source": "wall_seconds"
+    },
+    {
+      "card": "taiji_core_glossary_records_10_11_20261101.json",
+      "family": "10",
+      "step": "10.11",
+      "status": "records_channel_live",
+      "cpu_seconds": 490.84375,
+      "wall_seconds": 42.73831859999336,
+      "cpu_source": "cpu_seconds",
+      "wall_source": "wall_seconds"
+    },
+    {
+      "card": "taiji_core_09_closeout_20261101.json",
+      "family": "09",
+      "step": "09.8",
+      "status": "closeout_passed_engineering_only",
+      "cpu_seconds": 435.21875,
+      "wall_seconds": 446.7683966001496,
+      "cpu_source": "cpu_seconds",
+      "wall_source": "wall_seconds"
+    },
+    {
+      "card": "taiji_core_goal_training_10_7_20261101.json",
+      "family": "10",
+      "step": "10.7",
+      "status": "training_below_chance_plus",
+      "cpu_seconds": 392.625,
+      "wall_seconds": 398.43507889984176,
+      "cpu_source": "cpu_seconds",
+      "wall_source": "wall_seconds"
+    },
+    {
+      "card": "taiji_core_birth_direction_parts_20261101.json",
+      "family": "09",
+      "step": "09.6.6",
+      "status": "hypothesis_h1_supported",
+      "cpu_seconds": 357.203125,
+      "wall_seconds": 366.37038389989175,
+      "cpu_source": "cpu_seconds",
+      "wall_source": "wall_seconds"
+    }
+  ],
+  "re_runs_counted": [
+    "taiji_core_10_21_1_preflight_20261101_v2_instrument_invalid_config_key.json",
+    "taiji_core_10_21_3_price_20261101_v2_cache_bound_wording.json",
+    "taiji_core_10_21_graph_v2_20261101.json",
+    "taiji_core_10_21_graph_v2_20261101_v1_engineering_failure.json",
+    "taiji_core_10_21_graph_v2_20261101_v2_engineering_failure_f32_eps.json",
+    "taiji_core_10_21_graph_v2_20261101_v3_engineering_failure_small_z.json",
+    "taiji_core_10_21_graph_v2_20261101_v4_engineering_failure_small_initial.json",
+    "taiji_core_10_21_graph_v2_20261101_v5_passed_pre_null_zero.json",
+    "taiji_core_10_21_graph_v2_20261101_v6_engineering_failure_null_only.json",
+    "taiji_core_10_closeout_v2_20261101.json",
+    "taiji_core_card_hash_audit_10_12_v2_20261101.json",
+    "taiji_core_cost_ledger_v2_20261101.json",
+    "taiji_core_fixture_arrivals_v2_20261101.json",
+    "taiji_core_instrument_11_7_v2_20261101.json",
+    "taiji_core_instrument_inventory_11_4_v2_20261101.json",
+    "taiji_core_l3_admission_11_v2_20261101.json",
+    "taiji_core_records_state_10_12_v2_20261101.json",
+    "taiji_core_residual_structure_10_7c_v2_20261101.json",
+    "taiji_core_state_selection_10_13_v2_20261101.json",
+    "taiji_core_training_replay_10_7a_v2_20261101.json",
+    "taiji_core_wide_fixture_10_15_v2_20261101.json"
+  ],
+  "limits": "Bookkeeping only: sums fields the cards already publish, through a declared path list, one source per card (top-level cpu_seconds wins over cost.cpu_seconds wins over cpu_seconds_checks_only), so component keys and budgets are never added on top of the totals they belong to. Cards that publish no declared path are listed, never imputed. Roll-up cards (costs.executed_cpu_seconds) are kept out of the sum and compared against it instead. Re-runs are separate runs and are counted. Wall seconds overlap across runs, so only the CPU sum is additive.",
+  "cpu_seconds": 0.28125,
+  "wall_seconds": 0.2839982998557389,
+  "budget": {
+    "cpu_seconds": 120,
+    "wall_seconds": 240
+  },
+  "source_hashes": {
+    "scripts/training/audit_taiji_cost_ledger.py": "98a178835faf1f7c5010331cbb216e5961b81e34c7a969e792df0639ee5fb7aa"
+  },
+  "void_reason": "The nested cost paths in this card are correct and are reused by the next card; what was wrong is the guard: it judged the 10.21.6 roll-up by an equality band, while that closeout declares a canonical-cards-only caliber (247.53 s over five steps) and the tree also holds its discarded iteration cards (574.28 s over 15 cards). The resulting cost_source_conflict measured my comparison, not the line."
+}

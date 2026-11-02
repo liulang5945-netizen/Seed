@@ -1,0 +1,310 @@
+{
+  "schema": "taiji-selection-10-7f-v1",
+  "step": "10.7f",
+  "date": "2026-11-01",
+  "status": "readout_selection_absent",
+  "declared": {
+    "samples": 12,
+    "train_samples": 6,
+    "held_out_samples": 6,
+    "actions_per_sample": 6,
+    "steps": 300,
+    "lr": 0.05,
+    "seed": 0,
+    "parameters": 1536,
+    "pass_top1": 5,
+    "absent_top1": 2,
+    "control_max_top1": 2,
+    "chance_top1": 0.16666666666666666
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "arm": {
+    "top1": 2,
+    "total": 6,
+    "rows": [
+      {
+        "goal": "把蓝色杯子放到木桌",
+        "correct_move": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "picked": [
+          "蓝色杯子",
+          "左盒"
+        ],
+        "hit": false,
+        "margin": -22.612989334374596
+      },
+      {
+        "goal": "把红色印章放到木桌",
+        "correct_move": [
+          "红色印章",
+          "木桌"
+        ],
+        "picked": [
+          "红色印章",
+          "左盒"
+        ],
+        "hit": false,
+        "margin": -17.13924353100591
+      },
+      {
+        "goal": "把蓝色杯子放到窗台",
+        "correct_move": [
+          "蓝色杯子",
+          "窗台"
+        ],
+        "picked": [
+          "蓝色杯子",
+          "窗台"
+        ],
+        "hit": true,
+        "margin": 0.0
+      },
+      {
+        "goal": "把红色印章放到窗台",
+        "correct_move": [
+          "红色印章",
+          "窗台"
+        ],
+        "picked": [
+          "红色印章",
+          "窗台"
+        ],
+        "hit": true,
+        "margin": 0.0
+      },
+      {
+        "goal": "把蓝色杯子放到木桌",
+        "correct_move": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "picked": [
+          "蓝色杯子",
+          "左盒"
+        ],
+        "hit": false,
+        "margin": -23.87202930365614
+      },
+      {
+        "goal": "把红色印章放到木桌",
+        "correct_move": [
+          "红色印章",
+          "木桌"
+        ],
+        "picked": [
+          "红色印章",
+          "左盒"
+        ],
+        "hit": false,
+        "margin": -18.406647308183327
+      }
+    ],
+    "final_loss": 5.0321389339978134e-06
+  },
+  "control": {
+    "top1": 0,
+    "total": 6,
+    "rows": [
+      {
+        "goal": "把蓝色杯子放到木桌",
+        "correct_move": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "picked": [
+          "红色印章",
+          "左盒"
+        ],
+        "hit": false,
+        "margin": -39.044508236694725
+      },
+      {
+        "goal": "把红色印章放到木桌",
+        "correct_move": [
+          "红色印章",
+          "木桌"
+        ],
+        "picked": [
+          "蓝色杯子",
+          "左盒"
+        ],
+        "hit": false,
+        "margin": -22.660701388037296
+      },
+      {
+        "goal": "把蓝色杯子放到窗台",
+        "correct_move": [
+          "蓝色杯子",
+          "窗台"
+        ],
+        "picked": [
+          "红色印章",
+          "窗台"
+        ],
+        "hit": false,
+        "margin": -11.334739760805022
+      },
+      {
+        "goal": "把红色印章放到窗台",
+        "correct_move": [
+          "红色印章",
+          "窗台"
+        ],
+        "picked": [
+          "蓝色杯子",
+          "窗台"
+        ],
+        "hit": false,
+        "margin": -16.11740738685154
+      },
+      {
+        "goal": "把蓝色杯子放到木桌",
+        "correct_move": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "picked": [
+          "红色印章",
+          "左盒"
+        ],
+        "hit": false,
+        "margin": -41.88779944879312
+      },
+      {
+        "goal": "把红色印章放到木桌",
+        "correct_move": [
+          "红色印章",
+          "木桌"
+        ],
+        "picked": [
+          "蓝色杯子",
+          "左盒"
+        ],
+        "hit": false,
+        "margin": -24.129530308475616
+      }
+    ],
+    "final_loss": 4.7032965376033046e-05
+  },
+  "untrained": {
+    "top1": 2,
+    "total": 6,
+    "rows": [
+      {
+        "goal": "把蓝色杯子放到木桌",
+        "correct_move": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "picked": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "hit": true,
+        "margin": 0.0
+      },
+      {
+        "goal": "把红色印章放到木桌",
+        "correct_move": [
+          "红色印章",
+          "木桌"
+        ],
+        "picked": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "hit": false,
+        "margin": 0.0
+      },
+      {
+        "goal": "把蓝色杯子放到窗台",
+        "correct_move": [
+          "蓝色杯子",
+          "窗台"
+        ],
+        "picked": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "hit": false,
+        "margin": 0.0
+      },
+      {
+        "goal": "把红色印章放到窗台",
+        "correct_move": [
+          "红色印章",
+          "窗台"
+        ],
+        "picked": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "hit": false,
+        "margin": 0.0
+      },
+      {
+        "goal": "把蓝色杯子放到木桌",
+        "correct_move": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "picked": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "hit": true,
+        "margin": 0.0
+      },
+      {
+        "goal": "把红色印章放到木桌",
+        "correct_move": [
+          "红色印章",
+          "木桌"
+        ],
+        "picked": [
+          "蓝色杯子",
+          "木桌"
+        ],
+        "hit": false,
+        "margin": 0.0
+      }
+    ]
+  },
+  "backbone_frozen": true,
+  "held_out_losses_before": [
+    11.205578006886643,
+    11.206194730444045,
+    11.20649978680531,
+    11.207133360994938,
+    11.205596532723579,
+    11.206213071974068
+  ],
+  "held_out_losses_after": [
+    11.205578006886643,
+    11.206194730444045,
+    11.20649978680531,
+    11.207133360994938,
+    11.205596532723579,
+    11.206213071974068
+  ],
+  "weights_path": "output\\taiji_core_10_7f\\readout_state_goal_rank4.pt",
+  "weights_published": false,
+  "default_model_replaced": false,
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "One bounded run on a six-sample synthetic fixture with six actions. The readout reads the subject's goal/state/action encodings only, not its recurrent state; a pass means six-way goal-conditioned selection is learnable from these features here, not that the subject does it, not natural-language capability, not P2.",
+  "cpu_seconds": 39.3125,
+  "wall_seconds": 40.44181460002437,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "taiji/goal_state_readout.py": "7b17a83c382d4cda1b15aed9159bff112a5da7e5c6d1d7bd734e0f5b8dd8af87",
+    "taiji/action_verdict_scorer.py": "c52f7ed99dbd9a3ba1607d1f9cc19124da03f6c47a36aa1bb8578f60cdac216f",
+    "scripts/training/verify_taiji_selection_10_7f.py": "0d389a89e4e3622089acf8baa66c92ed473f1d2842b0704b51596d6c41cc6a8b"
+  }
+}

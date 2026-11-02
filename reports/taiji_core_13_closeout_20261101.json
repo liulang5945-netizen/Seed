@@ -1,0 +1,127 @@
+{
+  "schema": "taiji-round-closeout-v1",
+  "step": "13.7",
+  "date": "2026-11-01",
+  "status": "round_closed_early",
+  "trigger": "MAINLINE 105 early closeout: capability line negative, 11 not admitted, 12-13 not started",
+  "source_document": "plans/reference/SPEC-TAIJI-CORE_CLOSEOUT_13_20261101.md",
+  "steps": {
+    "01-06": "completed",
+    "07": "FAIL_BEHAVIOR",
+    "08": "FAIL_BEHAVIOR (R5b and R5c)",
+    "09": "closeout_passed_engineering_only",
+    "10": "negative (10.4-10.20 capability line); 10.21 closeout_negative / 10.21.4 reader_selection_absent",
+    "11": "step11_not_admitted (v4)",
+    "12": "not_started",
+    "13": "not_started; 13.7 delivered by this closeout"
+  },
+  "accounts": {
+    "capability": {
+      "subject_chain": {
+        "candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+        "bundle_sha256": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf",
+        "bundle_bytes": 77609636,
+        "module_digests": {
+          "17021": "4795e7280e50fc2dfd7a0980e887a4767a91aa253c183f55ee370fb94e524f4f",
+          "17022": "00dada69c370422452c1614595093f45d7aa115cdaf9ffa9411f96240978f10f"
+        },
+        "chain_intact_from": "09.8",
+        "chain_intact_to": "10.21.4"
+      },
+      "can_do": [
+        "save/restore full subject state with bitwise identity across eight boundaries",
+        "obtain FD-confirmed credit on declared responsible parameters",
+        "gated birth with 135/135 parent parameter inheritance",
+        "traceable six-activity loop",
+        "four-way unit pricing",
+        "run a two-arm comparison on a synthetic fixture"
+      ],
+      "cannot_do": [
+        "natural Chinese question answering (11.3a scored 0/5)",
+        "select the correct action by goal (four cells at chance)",
+        "retain verified still-valid old abilities (gate measures abs dNLL symmetry, not signed forgetting)",
+        "choose activities without prompts and produce measurable effect (fixture structurally untestable)",
+        "recycle/merge units and form populations (no carrier)"
+      ],
+      "claims": []
+    },
+    "assets": {
+      "kept_as_substrate": [
+        "taiji/living_core.py",
+        "taiji/growth_credit.py",
+        "taiji/state_migration.py",
+        "taiji/native_activity.py",
+        "taiji/native_development.py"
+      ],
+      "kept_as_candidate_not_proven": [
+        "taiji/query_binding.py",
+        "taiji/native_composition_fixture.py",
+        "scripts/training/verify_taiji_composition_10_21.py (stages graph/price/compare)"
+      ],
+      "kept_as_evidence": {
+        "checkpoints": "output/taiji_core_10_21_4_compare/ (12 files, 341874000 bytes, numbered, not deleted)",
+        "parent_bundle": "output/taiji_core_09/subject_bundle.pt (bitwise unchanged)"
+      },
+      "invalidated_for_any_criterion": [
+        "10.16 (control_not_null, void)",
+        "10.19 (16-byte gate shorter than 18-byte shortest evidence)"
+      ]
+    },
+    "goal_coverage": {
+      "clauses_total": 29,
+      "distribution": {
+        "engineering": 7,
+        "fixture_positive": 4,
+        "negative": 11,
+        "undeterminable": 3,
+        "no_carrier": 1,
+        "not_admitted": 3,
+        "capability": 0
+      },
+      "source": "plans/reference/delivery-runs/20261101-n-goal-coverage/artifacts/03-requirements-coverage.md",
+      "structural_gaps": [
+        "instrument: retention gate lacks signed criterion and ability set; active-selection fixture structurally untestable; 10.19 gate 2 bytes too short",
+        "attribution: 10.7f family (sample size vs parameterisation), 10.17 (undetermined), 10.16/10.19 (split and instrument defects) - no training budget needed",
+        "mechanism: no evidence-supported alternative path for goal-conditioned read/selection; recycle and population have no carrier",
+        "capability: natural Chinese (P1) has zero work in flight since R5c"
+      ]
+    },
+    "cost": {
+      "ledger_lower_bound_cpu_seconds": 8985.4,
+      "ledger_cards": 63,
+      "ledger_caveat": "8 cards without cost field; child CPU was once recorded as 0.0; lower bound only",
+      "added_this_segment_cpu_seconds": 206.42,
+      "added_breakdown": {
+        "10.21.3": 6.17,
+        "10.21.4": 200.25,
+        "10.21.5": 0.0
+      },
+      "round_lower_bound_cpu_seconds": 9191.82,
+      "round_lower_bound_assumption": "assumes ledger already includes 10.21.1/2; not verified card by card, hence lower bound",
+      "excludes": [
+        "wall clock",
+        "human time",
+        "R5b/R5c and pre-08 experiments"
+      ]
+    }
+  },
+  "next_round": {
+    "question": "Can the first-order credit path carry input conditioning at all?",
+    "criterion": "same 6-example fixture, same 1536-parameter scale, replace flat scoring with input-conditioned outer product, prereregistered held-out six-way top-1 strictly greater than 2/6 (best constant); must report train fit and held-out/train gap together",
+    "budget_cpu_seconds": 40,
+    "seeds": 1,
+    "prerequisites_zero_training": [
+      "resolve 10.7f family: sample size vs parameterisation",
+      "resolve 10.17: representation vs optimisation vs sample size",
+      "confirm whether 10.16 split and 10.19 gate masked a real reading"
+    ],
+    "not_doing": [
+      "do not reopen 10.22 or add dose under a new name",
+      "do not read the 10.21 negative as target unreachable",
+      "do not explain any held-out gap with more training steps"
+    ]
+  },
+  "training_admitted": false,
+  "l3_started": false,
+  "limits": "Round-level accounting only. No capability is claimed. 12 and 13 are recorded as not started, not as passed. This closeout does not change any frozen gate, prior negative verdict, report or checkpoint identity."
+}

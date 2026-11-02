@@ -1,0 +1,1138 @@
+{
+  "schema": "taiji-09-closeout-v1",
+  "step": "09.8",
+  "date": "2026-11-01",
+  "status": "closeout_passed_engineering_only",
+  "identity": {
+    "config": {
+      "groups": 4,
+      "width": 128,
+      "units": 256,
+      "adapter_rank": 16,
+      "fast_heads": 2,
+      "key_width": 32,
+      "value_width": 32,
+      "output_heads": 2,
+      "fast_limit": 16.0,
+      "max_event_bytes": 512,
+      "max_source_bytes": 512,
+      "max_target_bytes": 128,
+      "seed": 20261031
+    },
+    "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+    "direction_rule": {
+      "name": "consensus",
+      "parts": 5,
+      "units_per_group": 3
+    },
+    "declared_updates": 8,
+    "lr": 1e-05
+  },
+  "bundle": {
+    "path": "output/taiji_core_09/subject_bundle.pt",
+    "sha256": "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf",
+    "bytes": 77609636,
+    "in_git": false,
+    "reproduce": "python scripts/training/verify_taiji_closeout_09.py --output <path>"
+  },
+  "structure": {
+    "parent_parameters": 3311259,
+    "child_parameters": 3323547,
+    "growth_parent_units": 256,
+    "newborn_units_per_group": 3,
+    "units_total": 12
+  },
+  "inheritance": {
+    "equal": 135,
+    "total": 135,
+    "parameters": [
+      {
+        "name": "W",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "U",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "V",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "R",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "P",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "tau_logit",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "encoder.embedding.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "encoder.input.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "encoder.input.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "encoder.convolutions.0.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "encoder.convolutions.0.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "encoder.convolutions.1.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "encoder.convolutions.1.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "encoder.convolutions.2.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "encoder.convolutions.2.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "encoder.event.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "encoder.event.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "encoder.goal.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "encoder.goal.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "nu_projection.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "nu_projection.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "message_q.0.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "message_q.1.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "message_q.2.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "message_q.3.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "message_k.0.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "message_k.1.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "message_k.2.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "message_k.3.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "message_v.0.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "message_v.1.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "message_v.2.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "message_v.3.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "message_goal.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_queries.0.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_queries.0.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_queries.1.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_queries.1.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_queries.2.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_queries.2.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_queries.3.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_queries.3.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_queries.4.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_queries.4.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_queries.5.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_queries.5.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_queries.6.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_queries.6.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_queries.7.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_queries.7.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_outputs.0.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_outputs.0.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_outputs.1.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_outputs.1.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_outputs.2.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_outputs.2.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_outputs.3.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "fast_outputs.3.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "episodic.null_key",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "episodic.null_value",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "episodic.a.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "episodic.h.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "episodic.g.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "episodic.meta.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "episodic.meta.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "episodic.second.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "episodic.second.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "episodic.score.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "episodic.score.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "episodic.value.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "episodic.value.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "episodic.value_meta.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "xi.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "xi.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.query.0.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.query.1.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.keys.0.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.keys.1.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.keys.2.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.keys.3.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.keys.4.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.keys.5.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.keys.6.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.keys.7.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.values.0.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.values.1.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.values.2.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.values.3.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.values.4.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.values.5.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.values.6.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.values.7.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "readout.output.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "expression.coverage",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "expression.z.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "expression.a.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "expression.meta.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "expression.position.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "expression.goal.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "expression.goal.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "expression.score.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "expression.generate.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "expression.generate.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "expression.mix.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "expression.mix.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "expression.continuation.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "expression.continuation.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "write_heads.0.0.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "write_heads.0.0.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "write_heads.0.2.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "write_heads.0.2.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "write_heads.1.0.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "write_heads.1.0.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "write_heads.1.2.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "write_heads.1.2.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "write_heads.2.0.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "write_heads.2.0.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "write_heads.2.2.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "write_heads.2.2.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "write_heads.3.0.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "write_heads.3.0.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "write_heads.3.2.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "write_heads.3.2.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "world.0.0.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "world.0.0.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "world.0.2.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "world.0.2.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "world.1.0.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "world.1.0.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "world.1.2.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "world.1.2.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "world.2.0.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "world.2.0.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "world.2.2.weight",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "world.2.2.bias",
+        "bitwise_equal": true,
+        "max_abs_diff": 0.0
+      }
+    ]
+  },
+  "restore": {
+    "spawn_bitwise_equal": true
+  },
+  "training": {
+    "losses": [
+      4.436565322597274,
+      4.43260487652905,
+      4.428656953002412,
+      4.424721297995782,
+      4.420797594757709,
+      4.416885454128223,
+      4.412984466850087,
+      4.409094195605715
+    ],
+    "cpu_seconds": 22.078125,
+    "wall_seconds": 22.473273599985987
+  },
+  "activity_trace": [
+    {
+      "activity": "interact",
+      "chosen_by": "model",
+      "step_delta": 6,
+      "external_trigger": true,
+      "triggers": {
+        "queue_count": 1,
+        "pending_count": 0,
+        "store_count": 1,
+        "prediction_error": 0.0
+      }
+    },
+    {
+      "activity": "interact",
+      "chosen_by": "model",
+      "step_delta": 6,
+      "external_trigger": true,
+      "triggers": {
+        "queue_count": 1,
+        "pending_count": 0,
+        "store_count": 1,
+        "prediction_error": 0.0
+      }
+    },
+    {
+      "activity": "interact",
+      "chosen_by": "model",
+      "step_delta": 6,
+      "external_trigger": true,
+      "triggers": {
+        "queue_count": 1,
+        "pending_count": 0,
+        "store_count": 1,
+        "prediction_error": 0.0
+      }
+    },
+    {
+      "activity": "interact",
+      "chosen_by": "model",
+      "step_delta": 6,
+      "external_trigger": true,
+      "triggers": {
+        "queue_count": 1,
+        "pending_count": 0,
+        "store_count": 1,
+        "prediction_error": 0.0
+      }
+    },
+    {
+      "activity": "interact",
+      "chosen_by": "model",
+      "step_delta": 6,
+      "external_trigger": true,
+      "triggers": {
+        "queue_count": 1,
+        "pending_count": 0,
+        "store_count": 1,
+        "prediction_error": 0.0
+      }
+    },
+    {
+      "activity": "interact",
+      "chosen_by": "model",
+      "step_delta": 6,
+      "external_trigger": true,
+      "triggers": {
+        "queue_count": 1,
+        "pending_count": 0,
+        "store_count": 1,
+        "prediction_error": 0.0
+      }
+    },
+    {
+      "activity": "interact",
+      "chosen_by": "model",
+      "step_delta": 6,
+      "external_trigger": true,
+      "triggers": {
+        "queue_count": 1,
+        "pending_count": 0,
+        "store_count": 1,
+        "prediction_error": 0.0
+      }
+    },
+    {
+      "activity": "interact",
+      "chosen_by": "model",
+      "step_delta": 6,
+      "external_trigger": true,
+      "triggers": {
+        "queue_count": 1,
+        "pending_count": 0,
+        "store_count": 1,
+        "prediction_error": 0.0
+      }
+    }
+  ],
+  "activity_policy": {
+    "source": "trained_in_this_closeout",
+    "train_rounds": 256,
+    "fixture": "per_round arrivals (owner-approved activity face)",
+    "claim": "sequence recorded; under per-round supply interact is legal and paid every round"
+  },
+  "raw_outputs": {
+    "holdout": {
+      "top1_byte": 229,
+      "top3_probabilities": [
+        0.05912999110750133,
+        0.03588334212421856,
+        0.03552513215070511
+      ]
+    },
+    "second_holdout": {
+      "top1_byte": 229,
+      "top3_probabilities": [
+        0.059067127950054275,
+        0.03583347737151916,
+        0.035495873958296356
+      ]
+    }
+  },
+  "sub_steps": [
+    {
+      "step": "09.6",
+      "report": "reports/taiji_core_r028_life_fragment_pricing_20261101.json",
+      "exists": true,
+      "status": "passed_r028_pricing_engineering_only",
+      "sha256": "ec22db0690a24a37caa8d386fa31be4529bfe99291420894ccc6bf8ba76533cd",
+      "claimable": "费用与单价已按声明夹具实测",
+      "not_claimable": "不签任务表现、保持或生长收益"
+    },
+    {
+      "step": "09.6.1",
+      "report": "reports/taiji_core_r029_engineering_gaps_20261101.json",
+      "exists": true,
+      "status": "failed_lesion",
+      "sha256": "05fbdcdc5ae0ed1908b081d675ceb8cf30cfa9bf2f03fb5849b9298f51cba6c1",
+      "claimable": "五项工程缺口已实现并各自过门",
+      "not_claimable": "lesion 贡献判负，不签结构有效"
+    },
+    {
+      "step": "09.6.2",
+      "report": "reports/taiji_core_fixture_arrivals_v2_20261101.json",
+      "exists": true,
+      "status": "failed_activity_fixture",
+      "sha256": "cd383378fbac6c9f522ab276bbe7864234bfe69696d6e13b757fb2dc6541f99e",
+      "claimable": "活动夹具具备动态范围，生长网格六格全发布",
+      "not_claimable": "不签自主性，生长面四次否证"
+    },
+    {
+      "step": "09.6.3",
+      "report": "reports/taiji_core_birth_inertness_20261101.json",
+      "exists": true,
+      "status": "recorded",
+      "sha256": "34e78f1186883cdcaea12fc8b6438f169765744b8e849c322fce4c644cba33cb",
+      "claimable": "新生支路确实被训练但仍无可测贡献",
+      "not_claimable": "不签结构有效"
+    },
+    {
+      "step": "09.6.3b",
+      "report": "reports/taiji_core_direction_oracle_20261101.json",
+      "exists": true,
+      "status": "recorded",
+      "sha256": "9f7c8de23108233af08e666d945e489175242841f80627ca23ea64e749a757d4",
+      "claimable": "方向可见评估集时新生份额上升",
+      "not_claimable": "神谕是可达性上界，不是可用方法"
+    },
+    {
+      "step": "09.6.4",
+      "report": "reports/taiji_core_birth_direction_20261101.json",
+      "exists": true,
+      "status": "metric_not_discriminating",
+      "sha256": "f9953a7807660ea223f5a93d040918a3e15abecbfca3d8d6811b46a8b27b0223",
+      "claimable": "份额判据被自身随机对照证伪",
+      "not_claimable": "该轮不构成对 H1 的支持"
+    },
+    {
+      "step": "09.6.5",
+      "report": "reports/taiji_core_birth_direction_abs_20261101.json",
+      "exists": true,
+      "status": "hypothesis_h1_supported",
+      "sha256": "892b90a62065b9283eba7ca94971d9362f0614120ca72437ade711328a2f1715",
+      "claimable": "种子轴无效，结论作废",
+      "not_claimable": "该状态不得引用"
+    },
+    {
+      "step": "09.6.6",
+      "report": "reports/taiji_core_birth_direction_parts_20261101.json",
+      "exists": true,
+      "status": "hypothesis_h1_supported",
+      "sha256": "1efa1bdbb26d5bf7404fe25a760f780093dfbc075448057951c3c7f3edc1ad37",
+      "claimable": "窗口数轴上 2/3 格过绝对门",
+      "not_claimable": "单轴复现，不外推"
+    },
+    {
+      "step": "09.6.7",
+      "report": "reports/taiji_core_birth_direction_surface_20261101.json",
+      "exists": true,
+      "status": "platform_supported",
+      "sha256": "a262b48805d13fa529d7ab560d7daf8e0ad9a3c9b488d93208f780a507bda21a",
+      "claimable": "15 格中 8 格过门，覆盖 4 个 parts",
+      "not_claimable": "薄平台，parts=4 三档全败"
+    },
+    {
+      "step": "09.6.8",
+      "report": "reports/taiji_core_birth_netbenefit_20261101.json",
+      "exists": true,
+      "status": "net_benefit_supported",
+      "sha256": "07a0888e560afc85b93a88397f649ff154adba1f770b066a22e22b10b85134f8",
+      "claimable": "出生比不出生多改善 1.739e-4，代价 11.50 CPU 秒",
+      "not_claimable": "单一确定性主体、合成夹具"
+    },
+    {
+      "step": "09.6.9",
+      "report": "reports/taiji_core_netbenefit_second_20261101.json",
+      "exists": true,
+      "status": "replicated_on_second_holdout",
+      "sha256": "42304de720e10ea3b06e9aeeb2453f07a3bfd16bf7e080779c5011777a935505",
+      "claimable": "第二条评估生涯上净收益复现",
+      "not_claimable": "两条均为合成夹具"
+    },
+    {
+      "step": "09.7",
+      "report": "reports/taiji_core_fragment_09_7_20261101.json",
+      "exists": true,
+      "status": "retention_breach",
+      "sha256": "d57d08930168fa252c9bae426444a8991630c15e0940fb7234dd7a695921ad1d",
+      "claimable": "32 步净收益升到 7.187e-4／8.147e-4",
+      "not_claimable": "两臂同时破保持门，卡在训练预算"
+    },
+    {
+      "step": "09.7b",
+      "report": "reports/taiji_core_fragment_horizon_20261101.json",
+      "exists": true,
+      "status": "sustainable_horizon_found",
+      "sha256": "030235e295cc70203aabdc9c434a45f5e4f24c494b98d4d174b8c5c3e9068f00",
+      "claimable": "保持门内最长声明检查点为 8 步",
+      "not_claimable": "不是机制的可持续上限"
+    }
+  ],
+  "checks": [
+    {
+      "id": "all_sub_step_reports_present",
+      "passed": true,
+      "observed": 13
+    },
+    {
+      "id": "restore_bitwise",
+      "passed": true,
+      "observed": true
+    },
+    {
+      "id": "inheritance_bitwise",
+      "passed": true,
+      "observed": [
+        135,
+        135
+      ]
+    },
+    {
+      "id": "activity_trace_non_degenerate",
+      "passed": true,
+      "observed": [
+        {
+          "activity": "interact",
+          "chosen_by": "model",
+          "step_delta": 6,
+          "external_trigger": true,
+          "triggers": {
+            "queue_count": 1,
+            "pending_count": 0,
+            "store_count": 1,
+            "prediction_error": 0.0
+          }
+        },
+        {
+          "activity": "interact",
+          "chosen_by": "model",
+          "step_delta": 6,
+          "external_trigger": true,
+          "triggers": {
+            "queue_count": 1,
+            "pending_count": 0,
+            "store_count": 1,
+            "prediction_error": 0.0
+          }
+        },
+        {
+          "activity": "interact",
+          "chosen_by": "model",
+          "step_delta": 6,
+          "external_trigger": true,
+          "triggers": {
+            "queue_count": 1,
+            "pending_count": 0,
+            "store_count": 1,
+            "prediction_error": 0.0
+          }
+        },
+        {
+          "activity": "interact",
+          "chosen_by": "model",
+          "step_delta": 6,
+          "external_trigger": true,
+          "triggers": {
+            "queue_count": 1,
+            "pending_count": 0,
+            "store_count": 1,
+            "prediction_error": 0.0
+          }
+        },
+        {
+          "activity": "interact",
+          "chosen_by": "model",
+          "step_delta": 6,
+          "external_trigger": true,
+          "triggers": {
+            "queue_count": 1,
+            "pending_count": 0,
+            "store_count": 1,
+            "prediction_error": 0.0
+          }
+        },
+        {
+          "activity": "interact",
+          "chosen_by": "model",
+          "step_delta": 6,
+          "external_trigger": true,
+          "triggers": {
+            "queue_count": 1,
+            "pending_count": 0,
+            "store_count": 1,
+            "prediction_error": 0.0
+          }
+        },
+        {
+          "activity": "interact",
+          "chosen_by": "model",
+          "step_delta": 6,
+          "external_trigger": true,
+          "triggers": {
+            "queue_count": 1,
+            "pending_count": 0,
+            "store_count": 1,
+            "prediction_error": 0.0
+          }
+        },
+        {
+          "activity": "interact",
+          "chosen_by": "model",
+          "step_delta": 6,
+          "external_trigger": true,
+          "triggers": {
+            "queue_count": 1,
+            "pending_count": 0,
+            "store_count": 1,
+            "prediction_error": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "no_capability_claim",
+      "passed": true,
+      "observed": []
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true,
+      "observed": [
+        435.21875,
+        446.7683966001496
+      ]
+    }
+  ],
+  "training_admitted": false,
+  "task_capability_claimed": false,
+  "limits": "Engineering closeout of step 09 only. The subject is a synthetic-fixture candidate on one deterministic reference graph; the card records what each sub-step measured and what it cannot claim. No capability, no autonomy and no training admission.",
+  "cpu_seconds": 435.21875,
+  "wall_seconds": 446.7683966001496,
+  "budget": {
+    "cpu_seconds": 900,
+    "wall_seconds": 1800
+  },
+  "source_hashes": {
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/growth_credit.py": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+    "taiji/native_development.py": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+    "taiji/native_activity.py": "3569a54ded60e3422497d59f97fb6dc005881a623697905727ba9376d4531e88",
+    "taiji/native_activity_fixture.py": "df246ad866e45ee41daf889296d453c11f32e0dd23fc3d090dc09092f0094da9",
+    "taiji/birth_direction.py": "a723075011a42c3a4d44b24267de2c40dc7db3229c0e546480942538d2274ad9",
+    "taiji/state_migration.py": "c067dcd043fc189a53051eba72f0b9794ed4b2d3fc77907a89f82aa2817299c6",
+    "scripts/training/verify_taiji_closeout_09.py": "71721b06d24e5b563e6b6b7851f91fdb93ce3e6a281f07d55bf0b36b8bb298fe"
+  }
+}

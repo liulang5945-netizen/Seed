@@ -1,0 +1,558 @@
+{
+  "schema": "taiji-goal-world-10-1b-v1",
+  "step": "10.1b",
+  "date": "2026-11-01",
+  "status": "passed_10_1b_environment_deepened",
+  "declared": {
+    "capacity": 1,
+    "depth": 2,
+    "fixtures": 6,
+    "default_occupy": false,
+    "old_optima": {
+      "f1-cup-to-sill-from-table": 0.99,
+      "f2-seal-to-table-from-box": 0.99,
+      "f3-cup-already-on-sill": 1.0,
+      "f4-seal-to-table-from-sill": 0.99
+    }
+  },
+  "old_path": [
+    {
+      "fixture_id": "f1-cup-to-sill-from-table",
+      "goal_id": "cup-to-sill",
+      "initial": [
+        [
+          "红色印章",
+          "左盒"
+        ],
+        [
+          "蓝色杯子",
+          "木桌"
+        ]
+      ],
+      "optimal_score": 0.99,
+      "optimal_moves": [
+        [
+          "蓝色杯子",
+          "窗台"
+        ]
+      ],
+      "policies": {
+        "first_legal": {
+          "score": -0.04,
+          "reaches_optimal": false
+        },
+        "lowest_id": {
+          "score": -0.04,
+          "reaches_optimal": false
+        },
+        "fixed_object": {
+          "score": 0.97,
+          "reaches_optimal": false
+        },
+        "cycle": {
+          "score": 0.99,
+          "reaches_optimal": true
+        }
+      }
+    },
+    {
+      "fixture_id": "f2-seal-to-table-from-box",
+      "goal_id": "seal-to-table",
+      "initial": [
+        [
+          "红色印章",
+          "左盒"
+        ],
+        [
+          "蓝色杯子",
+          "木桌"
+        ]
+      ],
+      "optimal_score": 0.99,
+      "optimal_moves": [
+        [
+          "红色印章",
+          "木桌"
+        ]
+      ],
+      "policies": {
+        "first_legal": {
+          "score": 0.99,
+          "reaches_optimal": true
+        },
+        "lowest_id": {
+          "score": -0.04,
+          "reaches_optimal": false
+        },
+        "fixed_object": {
+          "score": -0.04,
+          "reaches_optimal": false
+        },
+        "cycle": {
+          "score": -0.04,
+          "reaches_optimal": false
+        }
+      }
+    },
+    {
+      "fixture_id": "f3-cup-already-on-sill",
+      "goal_id": "cup-to-sill",
+      "initial": [
+        [
+          "红色印章",
+          "木桌"
+        ],
+        [
+          "蓝色杯子",
+          "窗台"
+        ]
+      ],
+      "optimal_score": 1.0,
+      "optimal_moves": [],
+      "policies": {
+        "first_legal": {
+          "score": 1.0,
+          "reaches_optimal": true
+        },
+        "lowest_id": {
+          "score": 1.0,
+          "reaches_optimal": true
+        },
+        "fixed_object": {
+          "score": 1.0,
+          "reaches_optimal": true
+        },
+        "cycle": {
+          "score": 1.0,
+          "reaches_optimal": true
+        }
+      }
+    },
+    {
+      "fixture_id": "f4-seal-to-table-from-sill",
+      "goal_id": "seal-to-table",
+      "initial": [
+        [
+          "红色印章",
+          "窗台"
+        ],
+        [
+          "蓝色杯子",
+          "左盒"
+        ]
+      ],
+      "optimal_score": 0.99,
+      "optimal_moves": [
+        [
+          "红色印章",
+          "木桌"
+        ]
+      ],
+      "policies": {
+        "first_legal": {
+          "score": 0.98,
+          "reaches_optimal": false
+        },
+        "lowest_id": {
+          "score": -0.04,
+          "reaches_optimal": false
+        },
+        "fixed_object": {
+          "score": -0.04,
+          "reaches_optimal": false
+        },
+        "cycle": {
+          "score": -0.04,
+          "reaches_optimal": false
+        }
+      }
+    }
+  ],
+  "deep_path": [
+    {
+      "fixture_id": "f1-cup-to-sill-from-table",
+      "goal_id": "cup-to-sill",
+      "initial": [
+        [
+          "红色印章",
+          "左盒"
+        ],
+        [
+          "蓝色杯子",
+          "木桌"
+        ]
+      ],
+      "optimal_score": 0.99,
+      "optimal_moves": [
+        [
+          "蓝色杯子",
+          "窗台"
+        ]
+      ],
+      "policies": {
+        "first_legal": {
+          "score": -0.04,
+          "reaches_optimal": false
+        },
+        "lowest_id": {
+          "score": 0.99,
+          "reaches_optimal": true
+        },
+        "fixed_object": {
+          "score": 0.99,
+          "reaches_optimal": true
+        },
+        "cycle": {
+          "score": 0.99,
+          "reaches_optimal": true
+        }
+      }
+    },
+    {
+      "fixture_id": "f2-seal-to-table-from-box",
+      "goal_id": "seal-to-table",
+      "initial": [
+        [
+          "红色印章",
+          "左盒"
+        ],
+        [
+          "蓝色杯子",
+          "木桌"
+        ]
+      ],
+      "optimal_score": 0.98,
+      "optimal_moves": [
+        [
+          "蓝色杯子",
+          "窗台"
+        ],
+        [
+          "红色印章",
+          "木桌"
+        ]
+      ],
+      "policies": {
+        "first_legal": {
+          "score": -0.04,
+          "reaches_optimal": false
+        },
+        "lowest_id": {
+          "score": 0.98,
+          "reaches_optimal": true
+        },
+        "fixed_object": {
+          "score": -0.04,
+          "reaches_optimal": false
+        },
+        "cycle": {
+          "score": -0.04,
+          "reaches_optimal": false
+        }
+      }
+    },
+    {
+      "fixture_id": "f3-cup-already-on-sill",
+      "goal_id": "cup-to-sill",
+      "initial": [
+        [
+          "红色印章",
+          "木桌"
+        ],
+        [
+          "蓝色杯子",
+          "窗台"
+        ]
+      ],
+      "optimal_score": 1.0,
+      "optimal_moves": [],
+      "policies": {
+        "first_legal": {
+          "score": 1.0,
+          "reaches_optimal": true
+        },
+        "lowest_id": {
+          "score": 1.0,
+          "reaches_optimal": true
+        },
+        "fixed_object": {
+          "score": 1.0,
+          "reaches_optimal": true
+        },
+        "cycle": {
+          "score": 1.0,
+          "reaches_optimal": true
+        }
+      }
+    },
+    {
+      "fixture_id": "f4-seal-to-table-from-sill",
+      "goal_id": "seal-to-table",
+      "initial": [
+        [
+          "红色印章",
+          "窗台"
+        ],
+        [
+          "蓝色杯子",
+          "左盒"
+        ]
+      ],
+      "optimal_score": 0.99,
+      "optimal_moves": [
+        [
+          "红色印章",
+          "木桌"
+        ]
+      ],
+      "policies": {
+        "first_legal": {
+          "score": 0.99,
+          "reaches_optimal": true
+        },
+        "lowest_id": {
+          "score": -0.04,
+          "reaches_optimal": false
+        },
+        "fixed_object": {
+          "score": -0.04,
+          "reaches_optimal": false
+        },
+        "cycle": {
+          "score": -0.04,
+          "reaches_optimal": false
+        }
+      }
+    },
+    {
+      "fixture_id": "g1-sill-blocked-by-seal",
+      "goal_id": "cup-to-sill",
+      "initial": [
+        [
+          "红色印章",
+          "窗台"
+        ],
+        [
+          "蓝色杯子",
+          "木桌"
+        ]
+      ],
+      "optimal_score": 0.98,
+      "optimal_moves": [
+        [
+          "红色印章",
+          "左盒"
+        ],
+        [
+          "蓝色杯子",
+          "窗台"
+        ]
+      ],
+      "policies": {
+        "first_legal": {
+          "score": -0.04,
+          "reaches_optimal": false
+        },
+        "lowest_id": {
+          "score": 0.97,
+          "reaches_optimal": false
+        },
+        "fixed_object": {
+          "score": -0.04,
+          "reaches_optimal": false
+        },
+        "cycle": {
+          "score": -0.04,
+          "reaches_optimal": false
+        }
+      }
+    },
+    {
+      "fixture_id": "g2-box-blocked-by-seal",
+      "goal_id": "cup-to-sill",
+      "initial": [
+        [
+          "红色印章",
+          "左盒"
+        ],
+        [
+          "蓝色杯子",
+          "窗台"
+        ]
+      ],
+      "optimal_score": 1.0,
+      "optimal_moves": [],
+      "policies": {
+        "first_legal": {
+          "score": 1.0,
+          "reaches_optimal": true
+        },
+        "lowest_id": {
+          "score": 1.0,
+          "reaches_optimal": true
+        },
+        "fixed_object": {
+          "score": 1.0,
+          "reaches_optimal": true
+        },
+        "cycle": {
+          "score": 1.0,
+          "reaches_optimal": true
+        }
+      }
+    }
+  ],
+  "planning": [
+    {
+      "fixture_id": "f1-cup-to-sill-from-table",
+      "optimal_score": 0.99,
+      "planner_score": 0.99,
+      "greedy_score": 0.99,
+      "planner_steps": 1,
+      "greedy_steps": 1
+    },
+    {
+      "fixture_id": "f2-seal-to-table-from-box",
+      "optimal_score": 0.98,
+      "planner_score": 0.98,
+      "greedy_score": -0.04,
+      "planner_steps": 2,
+      "greedy_steps": 4
+    },
+    {
+      "fixture_id": "f3-cup-already-on-sill",
+      "optimal_score": 1.0,
+      "planner_score": 1.0,
+      "greedy_score": 1.0,
+      "planner_steps": 0,
+      "greedy_steps": 0
+    },
+    {
+      "fixture_id": "f4-seal-to-table-from-sill",
+      "optimal_score": 0.99,
+      "planner_score": 0.99,
+      "greedy_score": 0.99,
+      "planner_steps": 1,
+      "greedy_steps": 1
+    },
+    {
+      "fixture_id": "g1-sill-blocked-by-seal",
+      "optimal_score": 0.98,
+      "planner_score": 0.98,
+      "greedy_score": -0.04,
+      "planner_steps": 2,
+      "greedy_steps": 4
+    },
+    {
+      "fixture_id": "g2-box-blocked-by-seal",
+      "optimal_score": 1.0,
+      "planner_score": 1.0,
+      "greedy_score": 1.0,
+      "planner_steps": 0,
+      "greedy_steps": 0
+    }
+  ],
+  "checks": [
+    {
+      "id": "default_path_changed",
+      "passed": true,
+      "observed": {
+        "f1-cup-to-sill-from-table": 0.99,
+        "f2-seal-to-table-from-box": 0.99,
+        "f3-cup-already-on-sill": 1.0,
+        "f4-seal-to-table-from-sill": 0.99
+      }
+    },
+    {
+      "id": "goal_insensitive",
+      "passed": true,
+      "observed": {
+        "goal_sensitive": true,
+        "partition_ok": true,
+        "shortcuts_blocked": true,
+        "shared_initial_groups": 1,
+        "shared_goal_pairs": 2
+      }
+    },
+    {
+      "id": "partition_incomplete",
+      "passed": true,
+      "observed": {
+        "goal_sensitive": true,
+        "partition_ok": true,
+        "shortcuts_blocked": true,
+        "shared_initial_groups": 1,
+        "shared_goal_pairs": 4
+      }
+    },
+    {
+      "id": "shortcut_can_solve",
+      "passed": true,
+      "observed": {
+        "goal_sensitive": true,
+        "partition_ok": true,
+        "shortcuts_blocked": true,
+        "shared_initial_groups": 1,
+        "shared_goal_pairs": 4
+      }
+    },
+    {
+      "id": "no_planner_separation",
+      "passed": true,
+      "observed": {
+        "planner": [
+          0.99,
+          0.98,
+          1.0,
+          0.99,
+          0.98,
+          1.0
+        ],
+        "greedy": [
+          0.99,
+          -0.04,
+          1.0,
+          0.99,
+          -0.04,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "blocking_not_effective",
+      "passed": true,
+      "observed": {
+        "fixture_id": "g1-sill-blocked-by-seal",
+        "optimal_score": 0.98,
+        "planner_score": 0.98,
+        "greedy_score": -0.04,
+        "planner_steps": 2,
+        "greedy_steps": 4
+      }
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true,
+      "observed": [
+        0.0,
+        0.001841000048443675
+      ]
+    }
+  ],
+  "model_involved": false,
+  "training_admitted": false,
+  "task_capability_claimed": false,
+  "limits": "Environment deepening only. Separation between the reference planner and a greedy heuristic says the task can now distinguish them, not that any model plans.",
+  "cpu_seconds": 0.0,
+  "wall_seconds": 0.001841000048443675,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "taiji/native_goal_world.py": "5adf9fd571cb1bb62e4dcea7d9a222eaf5ab7b193c10a0750a3f6f313f283b78",
+    "taiji/goal_binding.py": "7081245ca2b612be9c5f372b46879794d26940691e25f67d8b5adaae75560c85",
+    "taiji/goal_planner.py": "5819bbf3530df7e27e186832883f3a57afdbd13a746d50c109178240f456a8d3",
+    "scripts/training/verify_taiji_goal_world_10_1b.py": "1acb3ddfa82381b2b37ef27f10000b3fb796e459133bbb77103d9de917bcadfb"
+  }
+}

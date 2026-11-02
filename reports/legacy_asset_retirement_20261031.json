@@ -1,0 +1,1789 @@
+{
+  "schema": "legacy-asset-retirement",
+  "date": "2026-10-31",
+  "status": "deleted",
+  "scope": "zero-reference, untracked legacy model weights and run artifacts",
+  "reference_census": {
+    "method": "exact normalized path, directory prefix, child path, and bare directory name across tracked and local text sources",
+    "zero_reference_candidates": 115,
+    "kept_family_prefixes": [
+      "checkpoints/seed_n2b_",
+      "outputs/taiji-m2-f1f5-foundation-seed29",
+      "outputs/taiji-m2-f1f5-foundation-seed47",
+      "outputs/project-audit",
+      "output/seed_corpus_smoke.pt.history"
+    ],
+    "protected_by_rule": "product default, rollback, sealed test assets, R5/R5b/R5c endpoints, tracked files, any referenced path or family"
+  },
+  "planned_bytes": 785477160,
+  "planned_files": 169,
+  "items": [
+    {
+      "path": "outputs/r2_h3_6b_dev_20260916",
+      "kind": "dir",
+      "bytes": 296913222,
+      "file_count": 18,
+      "files": [
+        {
+          "path": "outputs/r2_h3_6b_dev_20260916/control_seed_20260916/checkpoint.pt",
+          "bytes": 16498456,
+          "mtime": 1789572363,
+          "sha256": "5edb2b5a6f1656f669f899f6ae8db5f918c3ed23ec8107538f9dd2095e4ba14e"
+        },
+        {
+          "path": "outputs/r2_h3_6b_dev_20260916/control_seed_20260916/preflight/child.pt",
+          "bytes": 16487507,
+          "mtime": 1789572313,
+          "sha256": "028b9a52c4af24e5e2918cfdca4c7a55a6b11ebb1e75ad2ce23c8d6e3f7017b4"
+        },
+        {
+          "path": "outputs/r2_h3_6b_dev_20260916/control_seed_20260916/preflight/zero.pt",
+          "bytes": 16486148,
+          "mtime": 1789572310,
+          "sha256": "4b8afeb76a1fbc848b86ef0c32ed9d88eda1ebec0003a20d10fd8bb2d520c261"
+        },
+        {
+          "path": "outputs/r2_h3_6b_dev_20260916/control_seed_20260917/checkpoint.pt",
+          "bytes": 16498456,
+          "mtime": 1789572760,
+          "sha256": "a57b4d7012a9b230add777d68f795e13684981a17a957fa26ccea3a7878b7b7a"
+        },
+        {
+          "path": "outputs/r2_h3_6b_dev_20260916/control_seed_20260917/preflight/child.pt",
+          "bytes": 16487507,
+          "mtime": 1789572711,
+          "sha256": "18be6914575d8f2c3b31e0f0cac68994688bcae30d2d1588a6372d84e18929b5"
+        },
+        {
+          "path": "outputs/r2_h3_6b_dev_20260916/control_seed_20260917/preflight/zero.pt",
+          "bytes": 16486148,
+          "mtime": 1789572708,
+          "sha256": "9ae223f563fca831dde6018ab766e2b09a9869f3eb2ed41a66cbea1069e1b787"
+        },
+        {
+          "path": "outputs/r2_h3_6b_dev_20260916/control_seed_20260918/checkpoint.pt",
+          "bytes": 16498456,
+          "mtime": 1789573111,
+          "sha256": "43788cc4d874d3088ecc3ba1d4782ea75551fe19325ddff3f30a49f455b6f263"
+        },
+        {
+          "path": "outputs/r2_h3_6b_dev_20260916/control_seed_20260918/preflight/child.pt",
+          "bytes": 16487507,
+          "mtime": 1789573062,
+          "sha256": "8ad4eeddc9c508b4414c1eadc8c51c98be5fafe0a89b00b31f8dad1372b0d3f5"
+        },
+        {
+          "path": "outputs/r2_h3_6b_dev_20260916/control_seed_20260918/preflight/zero.pt",
+          "bytes": 16486148,
+          "mtime": 1789573059,
+          "sha256": "4e3f6d3148d402aa37650f8e370730aad7df782591e764d3d145397c439e3e4c"
+        },
+        {
+          "path": "outputs/r2_h3_6b_dev_20260916/treatment_seed_20260916/checkpoint.pt",
+          "bytes": 16507291,
+          "mtime": 1789573503,
+          "sha256": "dc411ea4e897b8b1af792dc304854d70e63edb0f6b6eed079d8933778866e30e"
+        },
+        {
+          "path": "outputs/r2_h3_6b_dev_20260916/treatment_seed_20260916/preflight/child.pt",
+          "bytes": 16496651,
+          "mtime": 1789573454,
+          "sha256": "55d35ac0f5049128bbf6f66722e133a40161442b1f8cba033c24cbf24a726f59"
+        },
+        {
+          "path": "outputs/r2_h3_6b_dev_20260916/treatment_seed_20260916/preflight/zero.pt",
+          "bytes": 16495021,
+          "mtime": 1789573451,
+          "sha256": "b5082a3c790dde00f1e2e4bb53e26871813793664e47993b9e4dda4878dd282a"
+        },
+        {
+          "path": "outputs/r2_h3_6b_dev_20260916/treatment_seed_20260917/checkpoint.pt",
+          "bytes": 16507291,
+          "mtime": 1789573864,
+          "sha256": "2a05b13a94c803356b46468dd46141aa6b1ea987842237a983d4e3af21e250d8"
+        },
+        {
+          "path": "outputs/r2_h3_6b_dev_20260916/treatment_seed_20260917/preflight/child.pt",
+          "bytes": 16496651,
+          "mtime": 1789573816,
+          "sha256": "0dfa1bce28f8cacf0414945f322eba46ea2d003f76907ab1a64309484d50bbe1"
+        },
+        {
+          "path": "outputs/r2_h3_6b_dev_20260916/treatment_seed_20260917/preflight/zero.pt",
+          "bytes": 16495021,
+          "mtime": 1789573813,
+          "sha256": "2185cc389fbbb8e7a1e21c40685eab937215405c686e5aa318a38d687c43f496"
+        },
+        {
+          "path": "outputs/r2_h3_6b_dev_20260916/treatment_seed_20260918/checkpoint.pt",
+          "bytes": 16507291,
+          "mtime": 1789574224,
+          "sha256": "84b6c75bc776c3ee8c502368e1422e19995559466def6670e059530b77f86e37"
+        },
+        {
+          "path": "outputs/r2_h3_6b_dev_20260916/treatment_seed_20260918/preflight/child.pt",
+          "bytes": 16496651,
+          "mtime": 1789574176,
+          "sha256": "1bd26c11981869fb09f5dec312df5f2a293a20de1aef778fa55f9a5b14006b4e"
+        },
+        {
+          "path": "outputs/r2_h3_6b_dev_20260916/treatment_seed_20260918/preflight/zero.pt",
+          "bytes": 16495021,
+          "mtime": 1789574172,
+          "sha256": "80c4ae01441da8d83f71535dc18480d0e5c67ba4121b6240b8aae9f7fe34a6ab"
+        }
+      ]
+    },
+    {
+      "path": "outputs/r2_h3_7_dev_20260917",
+      "kind": "dir",
+      "bytes": 296839524,
+      "file_count": 18,
+      "files": [
+        {
+          "path": "outputs/r2_h3_7_dev_20260917/control_seed_20260917/checkpoint.pt",
+          "bytes": 16485911,
+          "mtime": 1789578759,
+          "sha256": "f121979ee1a496acc71d3565fdc2d8a076f0aeb80687500f9d3484a23d43a625"
+        },
+        {
+          "path": "outputs/r2_h3_7_dev_20260917/control_seed_20260917/preflight/child.pt",
+          "bytes": 16475051,
+          "mtime": 1789578707,
+          "sha256": "f7bf5e936927709cad9d9b672ae3c73d5664ad2d20316e30150a2b1c5cb6b017"
+        },
+        {
+          "path": "outputs/r2_h3_7_dev_20260917/control_seed_20260917/preflight/zero.pt",
+          "bytes": 16474479,
+          "mtime": 1789578703,
+          "sha256": "b892d45e93575c8a9ac2bc1cf210aab0604dcc6e1831ea946d4cc2bbc4dff6d0"
+        },
+        {
+          "path": "outputs/r2_h3_7_dev_20260917/control_seed_20260918/checkpoint.pt",
+          "bytes": 16485911,
+          "mtime": 1789579696,
+          "sha256": "e42dbe914ff1d4055df5fd88cefd705b5107f095ff20f72a43895baa6be73626"
+        },
+        {
+          "path": "outputs/r2_h3_7_dev_20260917/control_seed_20260918/preflight/child.pt",
+          "bytes": 16475051,
+          "mtime": 1789579645,
+          "sha256": "5d2a7f789b05783e82b636e661c94bb2bdf81b249523507feb9821564e7d4f22"
+        },
+        {
+          "path": "outputs/r2_h3_7_dev_20260917/control_seed_20260918/preflight/zero.pt",
+          "bytes": 16474479,
+          "mtime": 1789579641,
+          "sha256": "acf8f856679dbf41d16d91a422f1764fcd536b2f4140ab3a2d716e5d6faace25"
+        },
+        {
+          "path": "outputs/r2_h3_7_dev_20260917/control_seed_20260919/checkpoint.pt",
+          "bytes": 16485911,
+          "mtime": 1789580230,
+          "sha256": "f3394d01f654a4a453d3d84ff7970d5bd7089c8403d5e9a51b3f323141c92718"
+        },
+        {
+          "path": "outputs/r2_h3_7_dev_20260917/control_seed_20260919/preflight/child.pt",
+          "bytes": 16475051,
+          "mtime": 1789580179,
+          "sha256": "9c813baf1862f583f2b29301361fbdbd61efcbe93f5ebd8c176007f8eda6f287"
+        },
+        {
+          "path": "outputs/r2_h3_7_dev_20260917/control_seed_20260919/preflight/zero.pt",
+          "bytes": 16474479,
+          "mtime": 1789580175,
+          "sha256": "a3892f2c58892814e15b661507e16b5abc2675703b3aad87504f0e40a5d76155"
+        },
+        {
+          "path": "outputs/r2_h3_7_dev_20260917/treatment_seed_20260917/checkpoint.pt",
+          "bytes": 16511297,
+          "mtime": 1789578757,
+          "sha256": "5f83ed5435d8c91200f274cf7b7f08fcd9bcba70529717c654c55b5401371381"
+        },
+        {
+          "path": "outputs/r2_h3_7_dev_20260917/treatment_seed_20260917/preflight/child.pt",
+          "bytes": 16500731,
+          "mtime": 1789578702,
+          "sha256": "e37f5493465137c18ddd7326a93c0a2608130a78d4c4dd3db809aa0466f7012b"
+        },
+        {
+          "path": "outputs/r2_h3_7_dev_20260917/treatment_seed_20260917/preflight/zero.pt",
+          "bytes": 16499039,
+          "mtime": 1789578698,
+          "sha256": "03a8e39b17d41755611bbf8f628348da456ca3b132b371be6c6abd2f6b3a1db1"
+        },
+        {
+          "path": "outputs/r2_h3_7_dev_20260917/treatment_seed_20260918/checkpoint.pt",
+          "bytes": 16511297,
+          "mtime": 1789579605,
+          "sha256": "6694b417b8ac322024ac6a7bd20835117f103f1bf356b75a4d9e0e1ee11f1855"
+        },
+        {
+          "path": "outputs/r2_h3_7_dev_20260917/treatment_seed_20260918/preflight/child.pt",
+          "bytes": 16500731,
+          "mtime": 1789579550,
+          "sha256": "c485c9a169665d8fffb22aef45e80d8b96272a9e13c16b8b5db583aa074d8079"
+        },
+        {
+          "path": "outputs/r2_h3_7_dev_20260917/treatment_seed_20260918/preflight/zero.pt",
+          "bytes": 16499039,
+          "mtime": 1789579546,
+          "sha256": "882af4d5bf97d8aa2671f786edaa1ffccd803e88cc9f3a044b23cb37622531a8"
+        },
+        {
+          "path": "outputs/r2_h3_7_dev_20260917/treatment_seed_20260919/checkpoint.pt",
+          "bytes": 16511297,
+          "mtime": 1789580231,
+          "sha256": "f6f61ffd12c60ec0a32cd3b91271fac438fd1cea3e735bffe255a3c7d690bfb7"
+        },
+        {
+          "path": "outputs/r2_h3_7_dev_20260917/treatment_seed_20260919/preflight/child.pt",
+          "bytes": 16500731,
+          "mtime": 1789580175,
+          "sha256": "910131812412465ca8995f1d6126a5e02a00cd42eba350a21fc3c147a89c38ea"
+        },
+        {
+          "path": "outputs/r2_h3_7_dev_20260917/treatment_seed_20260919/preflight/zero.pt",
+          "bytes": 16499039,
+          "mtime": 1789580171,
+          "sha256": "683a774edcf8c4611f2eff2f3655ba4745102d3ed8dc4897e4421bf452f96ca3"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji-m2-pipe-check-seed11",
+      "kind": "dir",
+      "bytes": 53594581,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji-m2-pipe-check-seed11/best-holdout.pt",
+          "bytes": 17877465,
+          "mtime": 1788451489,
+          "sha256": "355673d89ceddb048179b4c3e54d8717b1955f35d559dc0fcdaa15ce876532ce"
+        },
+        {
+          "path": "outputs/taiji-m2-pipe-check-seed11/last.pt",
+          "bytes": 17877105,
+          "mtime": 1788451611,
+          "sha256": "18f415845bb0c7b1bd9e5f088c9e86e45c6e57c93491b029599a1840676bd256"
+        },
+        {
+          "path": "outputs/taiji-m2-pipe-check-seed11/parent.pt",
+          "bytes": 17840011,
+          "mtime": 1788451172,
+          "sha256": "6e3cc3e9a3b2cb64168b83980cef26625bab16577e3927ba0125f704ae4c7b7e"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f5_full_seed11_20260901",
+      "kind": "dir",
+      "bytes": 5471977,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f5_full_seed11_20260901/best-holdout.pt",
+          "bytes": 1979255,
+          "mtime": 1788274328,
+          "sha256": "86711aa765dc3c8f65c6de9b12686481aab804b26c8331bc427c2c3f6428de76"
+        },
+        {
+          "path": "outputs/taiji_m1_f5_full_seed11_20260901/last.pt",
+          "bytes": 1977703,
+          "mtime": 1788275022,
+          "sha256": "711d4ead3c54928415cb8ba93b7b76e2691ffa80f44f3ca8230c9688b5b8ee9c"
+        },
+        {
+          "path": "outputs/taiji_m1_f5_full_seed11_20260901/parent.pt",
+          "bytes": 1515019,
+          "mtime": 1788268340,
+          "sha256": "7476bf82b0ce5b2c5362a8ecab32f99ff3dda45303b302aafb0e2b9578a630db"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f8_full_memory_replay_seed11_20260902",
+      "kind": "dir",
+      "bytes": 5460073,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f8_full_memory_replay_seed11_20260902/best-holdout.pt",
+          "bytes": 1973111,
+          "mtime": 1788298371,
+          "sha256": "d257ca27cb6603911f124932328b1213543c76365fefb1db698c00d050646397"
+        },
+        {
+          "path": "outputs/taiji_m1_f8_full_memory_replay_seed11_20260902/last.pt",
+          "bytes": 1971751,
+          "mtime": 1788299519,
+          "sha256": "0fd330cb2d5da286fd450106a36be56fd8587ef748d1f619b86cb75ba843a5e9"
+        },
+        {
+          "path": "outputs/taiji_m1_f8_full_memory_replay_seed11_20260902/parent.pt",
+          "bytes": 1515211,
+          "mtime": 1788293007,
+          "sha256": "541d0ba5c152c57871ec0abb1adc7db2ebb9364df1470dc6ff27a5ec0bd41873"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f8_full_memory_replay_seed47_20260902",
+      "kind": "dir",
+      "bytes": 5460073,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f8_full_memory_replay_seed47_20260902/best-holdout.pt",
+          "bytes": 1973111,
+          "mtime": 1788313736,
+          "sha256": "5b53e84b3d96fa147d970af904e7451fbe14f4a28045e1a22ff56165aca00355"
+        },
+        {
+          "path": "outputs/taiji_m1_f8_full_memory_replay_seed47_20260902/last.pt",
+          "bytes": 1971751,
+          "mtime": 1788314884,
+          "sha256": "ac0c391bb4b11b3e1d15467b2d526159a96f5e56576871275a48922e4ae40339"
+        },
+        {
+          "path": "outputs/taiji_m1_f8_full_memory_replay_seed47_20260902/parent.pt",
+          "bytes": 1515211,
+          "mtime": 1788308342,
+          "sha256": "2240c51327e26421657bafd5c5674879111b6011b0a83cde16c1f55ebfed48b3"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f5_full_seed47_20260901",
+      "kind": "dir",
+      "bytes": 5459113,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f5_full_seed47_20260901/best-holdout.pt",
+          "bytes": 1972855,
+          "mtime": 1788288841,
+          "sha256": "e9af9864cc99c1a64c4746eef8ceeba5e06c215949d133135df3425e37b1735a"
+        },
+        {
+          "path": "outputs/taiji_m1_f5_full_seed47_20260901/last.pt",
+          "bytes": 1971239,
+          "mtime": 1788289574,
+          "sha256": "c598e343055b1424ba44e0ddb2370b77226ace88ab3a1067405220d44eb22a62"
+        },
+        {
+          "path": "outputs/taiji_m1_f5_full_seed47_20260901/parent.pt",
+          "bytes": 1515019,
+          "mtime": 1788283515,
+          "sha256": "1c2d6e80d925b4289103e32812a912761fd42e9c27d7b305abec9bf730acc06e"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji-m1-b18-joint-seed11",
+      "kind": "dir",
+      "bytes": 5216837,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji-m1-b18-joint-seed11/best-holdout.pt",
+          "bytes": 1742049,
+          "mtime": 1788326940,
+          "sha256": "6f028358d72b4a47b940f2d4a94cca3fcfcfa5fba0b91cbf1767fd71707f9082"
+        },
+        {
+          "path": "outputs/taiji-m1-b18-joint-seed11/last.pt",
+          "bytes": 1740249,
+          "mtime": 1788326944,
+          "sha256": "f58408f1b799c4a41d86eadd80ef09da238aeed3fa423f8584ef820bcfe36167"
+        },
+        {
+          "path": "outputs/taiji-m1-b18-joint-seed11/parent.pt",
+          "bytes": 1734539,
+          "mtime": 1788326883,
+          "sha256": "202ba27ce025456f48a910eb08aab8fa463814c448f79ae8c6f90a41fb46862c"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji-m1-b18-joint-seed29",
+      "kind": "dir",
+      "bytes": 5216837,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji-m1-b18-joint-seed29/best-holdout.pt",
+          "bytes": 1742049,
+          "mtime": 1788326941,
+          "sha256": "a4260e5a1b97d3ae8afa219f42fb90b95b6138bcb1fdb3fc93d71369f00c0531"
+        },
+        {
+          "path": "outputs/taiji-m1-b18-joint-seed29/last.pt",
+          "bytes": 1740249,
+          "mtime": 1788326946,
+          "sha256": "edfdbd78890459e4fe47e996dfbe5a55b64a0006dcb0a4cd039506eb2edcf721"
+        },
+        {
+          "path": "outputs/taiji-m1-b18-joint-seed29/parent.pt",
+          "bytes": 1734539,
+          "mtime": 1788326883,
+          "sha256": "ef9f1c38c713c5d4c8eb3712a36ee813fea420ba06538817e7328de0d4b503cd"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji-m1-b18-joint-seed47",
+      "kind": "dir",
+      "bytes": 5216645,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji-m1-b18-joint-seed47/best-holdout.pt",
+          "bytes": 1741857,
+          "mtime": 1788326937,
+          "sha256": "4462fd3a93349a19b44c26649a64f8cdbbf24be5fe0c8d3e638c9c7f3d9ade59"
+        },
+        {
+          "path": "outputs/taiji-m1-b18-joint-seed47/last.pt",
+          "bytes": 1740249,
+          "mtime": 1788326946,
+          "sha256": "b61a6dddefe7e31d2276a701c232f682349acf0515428a15b2db05caac92d9e7"
+        },
+        {
+          "path": "outputs/taiji-m1-b18-joint-seed47/parent.pt",
+          "bytes": 1734539,
+          "mtime": 1788326883,
+          "sha256": "49b4c2a3a63872a6588af5bf63bacc48522f77f5033de3e3a19c88f321b23abc"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f5_full_seed29_20260901",
+      "kind": "dir",
+      "bytes": 5008873,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f5_full_seed29_20260901/best-holdout.pt",
+          "bytes": 1516343,
+          "mtime": 1788278635,
+          "sha256": "e62ace3ecf71ff527dbfeac729542ce7d7727a459aa879113fd36ee834da0a7b"
+        },
+        {
+          "path": "outputs/taiji_m1_f5_full_seed29_20260901/last.pt",
+          "bytes": 1977511,
+          "mtime": 1788282316,
+          "sha256": "d72b3761ca9c490ff252cc13ed7d622262f4e0e79a8587a530b97f29ce863be0"
+        },
+        {
+          "path": "outputs/taiji_m1_f5_full_seed29_20260901/parent.pt",
+          "bytes": 1515019,
+          "mtime": 1788276119,
+          "sha256": "d27c0f73389323b48624596bdddcd8303f4196ca2fc08788fc7b4736acfb2b99"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f8_full_memory_replay_seed29_20260902",
+      "kind": "dir",
+      "bytes": 5003561,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f8_full_memory_replay_seed29_20260902/best-holdout.pt",
+          "bytes": 1516599,
+          "mtime": 1788303175,
+          "sha256": "ddc70e46de0c37913c5d89c4f1959e5aa8776ed6c5bffee145ed299c032f95ee"
+        },
+        {
+          "path": "outputs/taiji_m1_f8_full_memory_replay_seed29_20260902/last.pt",
+          "bytes": 1971751,
+          "mtime": 1788307228,
+          "sha256": "2f8b6d35c41e6fca024badbbcbdfb86588b78c85603c316f2cfc2c099b1956ec"
+        },
+        {
+          "path": "outputs/taiji_m1_f8_full_memory_replay_seed29_20260902/parent.pt",
+          "bytes": 1515211,
+          "mtime": 1788300628,
+          "sha256": "5b3a7ab9fd3e8d5260c943214c1e41bb31d49da8bfcc398ee8c5acaf081c4aeb"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f5_replay_canary_20260901",
+      "kind": "dir",
+      "bytes": 4548969,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f5_replay_canary_20260901/best-holdout.pt",
+          "bytes": 1517879,
+          "mtime": 1788267512,
+          "sha256": "dbd0ea71c238c1a2cba8591d3398686316ff6bd8164def5821339d1de673df2e"
+        },
+        {
+          "path": "outputs/taiji_m1_f5_replay_canary_20260901/last.pt",
+          "bytes": 1516071,
+          "mtime": 1788267515,
+          "sha256": "c4006582c9e15c5d4f0b6a22d11be12ca3a13be861f531043d863b0ad85dc3ac"
+        },
+        {
+          "path": "outputs/taiji_m1_f5_replay_canary_20260901/parent.pt",
+          "bytes": 1515019,
+          "mtime": 1788267449,
+          "sha256": "63c5a36b84b63fa7a1b448c0d65cf8a813de729ba51f849c3d75de166cead1f3"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f5_continuation_canary_20260901",
+      "kind": "dir",
+      "bytes": 4548649,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f5_continuation_canary_20260901/best-holdout.pt",
+          "bytes": 1517495,
+          "mtime": 1788266865,
+          "sha256": "17ff96d87f94a161b2cd5304bc3673f61a8472f34f23cd851437c368c5f6b9a7"
+        },
+        {
+          "path": "outputs/taiji_m1_f5_continuation_canary_20260901/last.pt",
+          "bytes": 1516327,
+          "mtime": 1788266876,
+          "sha256": "3f99de126d725b8a13fdca85f612e581da74dbc49c614011e0c8df3e0795f8be"
+        },
+        {
+          "path": "outputs/taiji_m1_f5_continuation_canary_20260901/parent.pt",
+          "bytes": 1514827,
+          "mtime": 1788266833,
+          "sha256": "73ce9a4a7894f4b9145094c84cfaf93a70a6a73d2308a7fffc969825386cc7d0"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f4_pilot_seed11_20260901",
+      "kind": "dir",
+      "bytes": 4486693,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f4_pilot_seed11_20260901/best-holdout.pt",
+          "bytes": 1509937,
+          "mtime": 1788265012,
+          "sha256": "cbdb64a6146f29f6d7605ccad9299b0bcec2ac173899a3ba5bf6c1beabe18500"
+        },
+        {
+          "path": "outputs/taiji_m1_f4_pilot_seed11_20260901/last.pt",
+          "bytes": 1508329,
+          "mtime": 1788265036,
+          "sha256": "1eea483d74c550669579a6639624aa73a99cf11ca563a043e33c7908c72e6d01"
+        },
+        {
+          "path": "outputs/taiji_m1_f4_pilot_seed11_20260901/parent.pt",
+          "bytes": 1468427,
+          "mtime": 1788264397,
+          "sha256": "362ad33a8d1e091703391ff2e917b724f80387d6d2f0a05af7b69415ca9c04b5"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f4_pilot_seed29_20260901",
+      "kind": "dir",
+      "bytes": 4474341,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f4_pilot_seed29_20260901/best-holdout.pt",
+          "bytes": 1503665,
+          "mtime": 1788265226,
+          "sha256": "08d28c65477d3efa99a182c8a1db7d413646f9ede66de9f02726f3cbb9e575f0"
+        },
+        {
+          "path": "outputs/taiji_m1_f4_pilot_seed29_20260901/last.pt",
+          "bytes": 1502249,
+          "mtime": 1788265262,
+          "sha256": "e1f7c883792c5511dccc5a9bc3e87e1ebad5effe3f30f829807aa12d9090615d"
+        },
+        {
+          "path": "outputs/taiji_m1_f4_pilot_seed29_20260901/parent.pt",
+          "bytes": 1468427,
+          "mtime": 1788265067,
+          "sha256": "f084a6d5520ff24361d88d13f8a7ee9bcf1f7f47045f2b69fb83ebb31646e069"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f4_pilot_seed47_20260901",
+      "kind": "dir",
+      "bytes": 4474085,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f4_pilot_seed47_20260901/best-holdout.pt",
+          "bytes": 1503409,
+          "mtime": 1788265437,
+          "sha256": "1c328a586230942fe903801ed770adc18afdf0e79fbfbd54d3e7da40405334e6"
+        },
+        {
+          "path": "outputs/taiji_m1_f4_pilot_seed47_20260901/last.pt",
+          "bytes": 1502249,
+          "mtime": 1788265486,
+          "sha256": "1d2cf53628adb7a32b73bd8e033f80525437b2e4eb093dd4642aa22e1e8d567b"
+        },
+        {
+          "path": "outputs/taiji_m1_f4_pilot_seed47_20260901/parent.pt",
+          "bytes": 1468427,
+          "mtime": 1788265291,
+          "sha256": "352421283773cf7df25404f66e5774d223d9f21f1414e6e4803c9b79fcde5227"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f3_pilot_seed11_20260901",
+      "kind": "dir",
+      "bytes": 4467745,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f3_pilot_seed11_20260901/best-holdout.pt",
+          "bytes": 1500715,
+          "mtime": 1788263736,
+          "sha256": "0d6e5d6f722e5bc2e3d5a383907ece97757d15e9e852b9a95c56eca1463d4b34"
+        },
+        {
+          "path": "outputs/taiji_m1_f3_pilot_seed11_20260901/last.pt",
+          "bytes": 1499115,
+          "mtime": 1788263740,
+          "sha256": "b3f95a6b5754d32ce7dc13444481936fcb406b5106459f46c6aa9b07bb2acc05"
+        },
+        {
+          "path": "outputs/taiji_m1_f3_pilot_seed11_20260901/parent.pt",
+          "bytes": 1467915,
+          "mtime": 1788263730,
+          "sha256": "6807bda9f5bc7bb32cb9e884b53b29d922944453c863ad42fa3099acf839766c"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f3_pilot_seed29_20260901",
+      "kind": "dir",
+      "bytes": 4467745,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f3_pilot_seed29_20260901/best-holdout.pt",
+          "bytes": 1500715,
+          "mtime": 1788263736,
+          "sha256": "b2b2f863aa0186b0b1692b0b8770b48e07e682c8f018f90ee83bede4cd6d6394"
+        },
+        {
+          "path": "outputs/taiji_m1_f3_pilot_seed29_20260901/last.pt",
+          "bytes": 1499115,
+          "mtime": 1788263740,
+          "sha256": "3ac75278cf7555bcef62a182ae55382a12248b620d2db5156d856e9119a3c54f"
+        },
+        {
+          "path": "outputs/taiji_m1_f3_pilot_seed29_20260901/parent.pt",
+          "bytes": 1467915,
+          "mtime": 1788263730,
+          "sha256": "5b1a3b96cdd380182e8c4d974d96b1416f7cc7b0041257b31123402dfeae41ab"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f3_pilot_seed47_20260901",
+      "kind": "dir",
+      "bytes": 4467745,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f3_pilot_seed47_20260901/best-holdout.pt",
+          "bytes": 1500715,
+          "mtime": 1788263736,
+          "sha256": "983bc9959e5cc8a6310dab4fe90d78915914a299632a1a008612fe5bac515ca0"
+        },
+        {
+          "path": "outputs/taiji_m1_f3_pilot_seed47_20260901/last.pt",
+          "bytes": 1499115,
+          "mtime": 1788263740,
+          "sha256": "d25c21f7483a7fd94adcc445778e225163ffe4ed54db454c17becb46ab9807c5"
+        },
+        {
+          "path": "outputs/taiji_m1_f3_pilot_seed47_20260901/parent.pt",
+          "bytes": 1467915,
+          "mtime": 1788263730,
+          "sha256": "6257b5b5d3e1c38f2b5ac938d1a2b50f7476995d6d94c3bf5ffa053c495910bd"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_m9_exact_memory_canary_v2_20260902",
+      "kind": "dir",
+      "bytes": 4426853,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_m9_exact_memory_canary_v2_20260902/best-holdout.pt",
+          "bytes": 1479601,
+          "mtime": 1788317363,
+          "sha256": "60cc7e9d29c8a054a48397e876843d7d684b38b896a03cf5ed77b87f190f00de"
+        },
+        {
+          "path": "outputs/taiji_m1_m9_exact_memory_canary_v2_20260902/last.pt",
+          "bytes": 1478313,
+          "mtime": 1788317373,
+          "sha256": "deb1403e6f67c2212c575d1ffbe46dfa632e4bbfe30e6c708437481038f44e27"
+        },
+        {
+          "path": "outputs/taiji_m1_m9_exact_memory_canary_v2_20260902/parent.pt",
+          "bytes": 1468939,
+          "mtime": 1788317344,
+          "sha256": "d2e270d6bed89c1f1c4c8cbb662aaeadd1f01dc1d948dd2097175a1dab40a9b1"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_m9_exact_memory_canary_20260902",
+      "kind": "dir",
+      "bytes": 4426597,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_m9_exact_memory_canary_20260902/best-holdout.pt",
+          "bytes": 1479537,
+          "mtime": 1788316545,
+          "sha256": "e409713b8ff793136598f2e1fed7da44287e08f377259e065585371d8ef212be"
+        },
+        {
+          "path": "outputs/taiji_m1_m9_exact_memory_canary_20260902/last.pt",
+          "bytes": 1478185,
+          "mtime": 1788316555,
+          "sha256": "7048ff70591af6b6f4013cc900ab28d6a60457815a0a29ac67636c521f97ee9a"
+        },
+        {
+          "path": "outputs/taiji_m1_m9_exact_memory_canary_20260902/parent.pt",
+          "bytes": 1468875,
+          "mtime": 1788316525,
+          "sha256": "8ece9b03d53494e508e8f29fb72d7253102414f8b49406a7929f7f7528a74cb4"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f7_memory_replay_canary_20260902",
+      "kind": "dir",
+      "bytes": 4418661,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f7_memory_replay_canary_20260902/best-holdout.pt",
+          "bytes": 1475825,
+          "mtime": 1788291959,
+          "sha256": "22c9a8ac1423116457e4e7e860381a0fcaa734d3c442af7e53bd07c44bcea5f8"
+        },
+        {
+          "path": "outputs/taiji_m1_f7_memory_replay_canary_20260902/last.pt",
+          "bytes": 1474025,
+          "mtime": 1788291962,
+          "sha256": "95cf7e37b3e970e645aa49df5fd624a47c4c2d439cf22481f581741ab5554998"
+        },
+        {
+          "path": "outputs/taiji_m1_f7_memory_replay_canary_20260902/parent.pt",
+          "bytes": 1468811,
+          "mtime": 1788291938,
+          "sha256": "67ec7c8d1f6e57e820f89806a628ab44cb7f714178c3a72fab371aeeb0671506"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f4_smoke_20260901",
+      "kind": "dir",
+      "bytes": 4418021,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f4_smoke_20260901/best-holdout.pt",
+          "bytes": 1475697,
+          "mtime": 1788264275,
+          "sha256": "49601f76974a124f5eccdb29d7475b7587cef68b88a748967ee7391df9a14704"
+        },
+        {
+          "path": "outputs/taiji_m1_f4_smoke_20260901/last.pt",
+          "bytes": 1473897,
+          "mtime": 1788264278,
+          "sha256": "b6cbe2ab9961de7a5bd825f907b82357cafb96149e1bf7ff2344b8032cbc86f1"
+        },
+        {
+          "path": "outputs/taiji_m1_f4_smoke_20260901/parent.pt",
+          "bytes": 1468427,
+          "mtime": 1788264248,
+          "sha256": "28b738f081dc6c95791daa8e27d6a87c0a3a84fd589354fb24992401f38d1ca4"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f4_smoke_precommit_20260901",
+      "kind": "dir",
+      "bytes": 4418021,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f4_smoke_precommit_20260901/best-holdout.pt",
+          "bytes": 1475697,
+          "mtime": 1788264137,
+          "sha256": "6f3bb1653cf2966f71176c6b948aba3eca32f7b78ca62f37c395882b58e91787"
+        },
+        {
+          "path": "outputs/taiji_m1_f4_smoke_precommit_20260901/last.pt",
+          "bytes": 1473897,
+          "mtime": 1788264140,
+          "sha256": "9b00bc789343dfdbfe8b55c453818a9c5f16197e4e609aff973c442af3cd7fd5"
+        },
+        {
+          "path": "outputs/taiji_m1_f4_smoke_precommit_20260901/parent.pt",
+          "bytes": 1468427,
+          "mtime": 1788264111,
+          "sha256": "cfd1b1a735da31e9e90ae32b3c175d3b08c660e28ad1eea5b8eaf103cabaaf2b"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f3_smoke_20260901",
+      "kind": "dir",
+      "bytes": 4412897,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f3_smoke_20260901/best-holdout.pt",
+          "bytes": 1473387,
+          "mtime": 1788263645,
+          "sha256": "4704bfa7b0e4c260250e999ffc533073dd24b3ef757ef89b143d05ec4352049c"
+        },
+        {
+          "path": "outputs/taiji_m1_f3_smoke_20260901/last.pt",
+          "bytes": 1471595,
+          "mtime": 1788263645,
+          "sha256": "fc4457bdc716867773c883620567d654288cdc49afefdb37fcbfe6f30a5d9311"
+        },
+        {
+          "path": "outputs/taiji_m1_f3_smoke_20260901/parent.pt",
+          "bytes": 1467915,
+          "mtime": 1788263644,
+          "sha256": "5e9e42c73fcfd564e72ad96da0237743fd557a09cd5f74cde6d55e2c5d88b7ee"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f3_smoke_v2_20260901",
+      "kind": "dir",
+      "bytes": 4412897,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f3_smoke_v2_20260901/best-holdout.pt",
+          "bytes": 1473387,
+          "mtime": 1788263731,
+          "sha256": "3eae2bda437dd2c0f6a67f0fb9462ba1957104a12209de5a7e69e2e2df9dde8a"
+        },
+        {
+          "path": "outputs/taiji_m1_f3_smoke_v2_20260901/last.pt",
+          "bytes": 1471595,
+          "mtime": 1788263731,
+          "sha256": "96bbc7d376262ea6e604773f600eedf86bacfbf71688d9719a80f5cc08cfb8dd"
+        },
+        {
+          "path": "outputs/taiji_m1_f3_smoke_v2_20260901/parent.pt",
+          "bytes": 1467915,
+          "mtime": 1788263730,
+          "sha256": "2e117df3387719384d982f943e32ba6e8b245f11da898ba28a612b7b0d510853"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f2_smoke_20260901",
+      "kind": "dir",
+      "bytes": 2191476,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f2_smoke_20260901/best-holdout.pt",
+          "bytes": 731481,
+          "mtime": 1788262420,
+          "sha256": "1ad3b634f067ea4f2b595671ea68f07f9f843fc172b1ff96d7b97e5187d5782e"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_smoke_20260901/last.pt",
+          "bytes": 730489,
+          "mtime": 1788262421,
+          "sha256": "0343156085909c3e3ec2576ec60607134e61b80cf24cae7edd5ef1797e50f945"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_smoke_20260901/parent.pt",
+          "bytes": 729506,
+          "mtime": 1788262420,
+          "sha256": "c409d9004a25d2f447771a498ec95c069ac65ded45105dabbdd8c5d35be6efcf"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f2_smoke_v2_20260901",
+      "kind": "dir",
+      "bytes": 2191476,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f2_smoke_v2_20260901/best-holdout.pt",
+          "bytes": 731481,
+          "mtime": 1788262480,
+          "sha256": "1ad3b634f067ea4f2b595671ea68f07f9f843fc172b1ff96d7b97e5187d5782e"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_smoke_v2_20260901/last.pt",
+          "bytes": 730489,
+          "mtime": 1788262480,
+          "sha256": "0343156085909c3e3ec2576ec60607134e61b80cf24cae7edd5ef1797e50f945"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_smoke_v2_20260901/parent.pt",
+          "bytes": 729506,
+          "mtime": 1788262479,
+          "sha256": "c409d9004a25d2f447771a498ec95c069ac65ded45105dabbdd8c5d35be6efcf"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f2_smoke_v3_20260901",
+      "kind": "dir",
+      "bytes": 2191476,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f2_smoke_v3_20260901/best-holdout.pt",
+          "bytes": 731481,
+          "mtime": 1788262937,
+          "sha256": "14fc7002650cde0589c8c3da1963fe5d30f017f61a80e7dbd89c6b2a19107bac"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_smoke_v3_20260901/last.pt",
+          "bytes": 730489,
+          "mtime": 1788262938,
+          "sha256": "00ad46ea83be7b8cfac9fd1bf3c7120f5d92fab0a48b3fd0d02d99894fe61fdd"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_smoke_v3_20260901/parent.pt",
+          "bytes": 729506,
+          "mtime": 1788262935,
+          "sha256": "02ce5594c49c9dd5ed5315c4c85fbcee3fbcff3ccb4adcc4cfa79c9dc04e1a98"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f2_pilot_diag_20260901",
+      "kind": "dir",
+      "bytes": 2190900,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f2_pilot_diag_20260901/best-holdout.pt",
+          "bytes": 731289,
+          "mtime": 1788262799,
+          "sha256": "a6db4a583b338c44bc8039dfedeb8a08ab7f32d8f22dc70eca0958ac88a5f584"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_pilot_diag_20260901/last.pt",
+          "bytes": 730105,
+          "mtime": 1788262799,
+          "sha256": "724f86ef0aa6aefcefc9121ddd1723fc4f3bb846a0a49157268d88b083b1aab8"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_pilot_diag_20260901/parent.pt",
+          "bytes": 729506,
+          "mtime": 1788262795,
+          "sha256": "ef35f28241cd6cf6fe1213e5a5122db7b76f2e1e4ae0582e3664907151dfc659"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f2_pilot_seed11_20260901",
+      "kind": "dir",
+      "bytes": 2190900,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f2_pilot_seed11_20260901/best-holdout.pt",
+          "bytes": 731289,
+          "mtime": 1788262823,
+          "sha256": "a6db4a583b338c44bc8039dfedeb8a08ab7f32d8f22dc70eca0958ac88a5f584"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_pilot_seed11_20260901/last.pt",
+          "bytes": 730105,
+          "mtime": 1788262824,
+          "sha256": "724f86ef0aa6aefcefc9121ddd1723fc4f3bb846a0a49157268d88b083b1aab8"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_pilot_seed11_20260901/parent.pt",
+          "bytes": 729506,
+          "mtime": 1788262814,
+          "sha256": "ef35f28241cd6cf6fe1213e5a5122db7b76f2e1e4ae0582e3664907151dfc659"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f2_pilot_seed11_v2_20260901",
+      "kind": "dir",
+      "bytes": 2190900,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f2_pilot_seed11_v2_20260901/best-holdout.pt",
+          "bytes": 731289,
+          "mtime": 1788262944,
+          "sha256": "f3a42a718bc1b0f7a97a8108364ea46e7aa24cb564f4b39f600fbf20be37fc87"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_pilot_seed11_v2_20260901/last.pt",
+          "bytes": 730105,
+          "mtime": 1788262945,
+          "sha256": "f63715e66b109364c59909cb06913943ae540b9780cab07f534bf045c67221e8"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_pilot_seed11_v2_20260901/parent.pt",
+          "bytes": 729506,
+          "mtime": 1788262935,
+          "sha256": "bbca94ac9b0e68f58d057f4d23b39d998a8c4ea6905cc3b73c2a15175c02bd1f"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f2_pilot_seed29_20260901",
+      "kind": "dir",
+      "bytes": 2190772,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f2_pilot_seed29_20260901/best-holdout.pt",
+          "bytes": 731161,
+          "mtime": 1788262821,
+          "sha256": "0e1479325d621dd62f461f11d23f5f9f895c00ea049471f1c1662be8688a1ff0"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_pilot_seed29_20260901/last.pt",
+          "bytes": 730105,
+          "mtime": 1788262824,
+          "sha256": "c87d43f1cb5c1e4422afa148e473e339fabd953cd23ebd3fbf211ace9f7bd2c6"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_pilot_seed29_20260901/parent.pt",
+          "bytes": 729506,
+          "mtime": 1788262815,
+          "sha256": "bfd37527fec55751607dfdb900c400294a79ef34ce950d93c736862ceda1fcc6"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f2_pilot_seed29_v2_20260901",
+      "kind": "dir",
+      "bytes": 2190772,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f2_pilot_seed29_v2_20260901/best-holdout.pt",
+          "bytes": 731161,
+          "mtime": 1788262941,
+          "sha256": "aa99b9163ac6b3991532cb10c3d6deb4a7678a3c5c060fdf4e3f61cb89784317"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_pilot_seed29_v2_20260901/last.pt",
+          "bytes": 730105,
+          "mtime": 1788262945,
+          "sha256": "d81a709c4664fce8b48681adfdf57e83bde353b0de2d0a05d9f6fbe467880de3"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_pilot_seed29_v2_20260901/parent.pt",
+          "bytes": 729506,
+          "mtime": 1788262935,
+          "sha256": "659e0084ae9dc1b866cebe039f771be42b002130fd5a11459fa4a6da70f4edd1"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f2_pilot_seed47_20260901",
+      "kind": "dir",
+      "bytes": 2190772,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f2_pilot_seed47_20260901/best-holdout.pt",
+          "bytes": 731161,
+          "mtime": 1788262821,
+          "sha256": "60cb53f2483349829f46637a1c2c09b3d0c8a716a8d6f1b7a42aa87e9d943ab8"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_pilot_seed47_20260901/last.pt",
+          "bytes": 730105,
+          "mtime": 1788262824,
+          "sha256": "610f11a3a3984781164c23759e7011df57c4dbda4dc30d39f827063831f05b1a"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_pilot_seed47_20260901/parent.pt",
+          "bytes": 729506,
+          "mtime": 1788262815,
+          "sha256": "436be922a190db8e866d2c4e44372581372b01293fa245fc974132a6fbd8c5ec"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_f2_pilot_seed47_v2_20260901",
+      "kind": "dir",
+      "bytes": 2190772,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_f2_pilot_seed47_v2_20260901/best-holdout.pt",
+          "bytes": 731161,
+          "mtime": 1788262941,
+          "sha256": "48b920f0a7708563469febd74926fbc2027b14034e0b14a9751c768851f42d83"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_pilot_seed47_v2_20260901/last.pt",
+          "bytes": 730105,
+          "mtime": 1788262945,
+          "sha256": "6a6240172b85114ed42971642e3713dfd7ff638456361166f41db93799dc10c2"
+        },
+        {
+          "path": "outputs/taiji_m1_f2_pilot_seed47_v2_20260901/parent.pt",
+          "bytes": 729506,
+          "mtime": 1788262935,
+          "sha256": "a79a5e3b4142362ce22e466964ca7aa90a315ea2fc533a21a939fd2cf9ee181c"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_pilot_20260901",
+      "kind": "dir",
+      "bytes": 222562,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_pilot_20260901/best-holdout.pt",
+          "bytes": 74820,
+          "mtime": 1788261845,
+          "sha256": "76f9150e5b56cd0e2509a57350881eee5daf521db2f44f1cfb587d1dd2bba5e7"
+        },
+        {
+          "path": "outputs/taiji_m1_pilot_20260901/last.pt",
+          "bytes": 74028,
+          "mtime": 1788261847,
+          "sha256": "a1a9c9c84d0334d5871506a03b53824a4464983bcb039892f3e856c6c48d0bcb"
+        },
+        {
+          "path": "outputs/taiji_m1_pilot_20260901/parent.pt",
+          "bytes": 73714,
+          "mtime": 1788261814,
+          "sha256": "c88f5e0d2717c2dd5a3871d7656635fb10671601912e902aed4e70e0419fc25c"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_pilot_seed11_20260901",
+      "kind": "dir",
+      "bytes": 222562,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_pilot_seed11_20260901/best-holdout.pt",
+          "bytes": 74820,
+          "mtime": 1788262104,
+          "sha256": "8cd14951fb6bf477f000ec0ddc10ce45f85bd2fbd965f1ea2b62bf9d92a2c76c"
+        },
+        {
+          "path": "outputs/taiji_m1_pilot_seed11_20260901/last.pt",
+          "bytes": 74028,
+          "mtime": 1788262107,
+          "sha256": "cdb26c2e2bb618240c4c4a12c48491abe494ce3186393a8c12c1ca5526ff3f7f"
+        },
+        {
+          "path": "outputs/taiji_m1_pilot_seed11_20260901/parent.pt",
+          "bytes": 73714,
+          "mtime": 1788261963,
+          "sha256": "b4009564dcda8cfad858d0b4c3978a66d1f01d3c32a25409d4e967e04d4de536"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_pilot_seed29_20260901",
+      "kind": "dir",
+      "bytes": 222562,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_pilot_seed29_20260901/best-holdout.pt",
+          "bytes": 74820,
+          "mtime": 1788262104,
+          "sha256": "eb8059253ea7b87f57d32115e986c8a2b99bc4332f8f585e8d3fe8f6b32c1f04"
+        },
+        {
+          "path": "outputs/taiji_m1_pilot_seed29_20260901/last.pt",
+          "bytes": 74028,
+          "mtime": 1788262107,
+          "sha256": "cd36673ee83a329017e3618cb31f5664a6ea2c21e2b9c89817114ab102b3dfac"
+        },
+        {
+          "path": "outputs/taiji_m1_pilot_seed29_20260901/parent.pt",
+          "bytes": 73714,
+          "mtime": 1788261963,
+          "sha256": "3dc78961dfaa5e9b1ecaf5690e044c19908774f1597dd3952123f2f455ed1ae1"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_pilot_seed47_20260901",
+      "kind": "dir",
+      "bytes": 222562,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_pilot_seed47_20260901/best-holdout.pt",
+          "bytes": 74820,
+          "mtime": 1788262104,
+          "sha256": "5b53a9101eddde5e8da8fea0d5c0507dfdf9b5a31ef837a9ed43218a66fcdd78"
+        },
+        {
+          "path": "outputs/taiji_m1_pilot_seed47_20260901/last.pt",
+          "bytes": 74028,
+          "mtime": 1788262107,
+          "sha256": "c01d9d3830bfb806fe9c63df87641543de2254fa32dc8ed06a0a3f243380a9f3"
+        },
+        {
+          "path": "outputs/taiji_m1_pilot_seed47_20260901/parent.pt",
+          "bytes": 73714,
+          "mtime": 1788261963,
+          "sha256": "165543013b7b9aeceeae8ef364188f686faa98f6369bc256bd1a1ae739159f83"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_smoke_v2_20260901",
+      "kind": "dir",
+      "bytes": 221794,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_smoke_v2_20260901/best-holdout.pt",
+          "bytes": 74372,
+          "mtime": 1788261660,
+          "sha256": "553ebdc27cead44042bc64f050ce606c99206aac8d32e0305db3c991bcf0a6c3"
+        },
+        {
+          "path": "outputs/taiji_m1_smoke_v2_20260901/last.pt",
+          "bytes": 73708,
+          "mtime": 1788261662,
+          "sha256": "2a9ea0554f69268863cbcaf96a3a385b203ac1f33e2ded119378d37661ca62e1"
+        },
+        {
+          "path": "outputs/taiji_m1_smoke_v2_20260901/parent.pt",
+          "bytes": 73714,
+          "mtime": 1788261656,
+          "sha256": "a5a809e31ccee1a2b75f6d4b6cf4d6ab2313a1727dad59240b78bbb3839ce03f"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_smoke_v3_20260901",
+      "kind": "dir",
+      "bytes": 221794,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_smoke_v3_20260901/best-holdout.pt",
+          "bytes": 74372,
+          "mtime": 1788261755,
+          "sha256": "a03d771e3aa29e1b62a9df97ec45c301630330b1fe8946f0cabcac3598f931f4"
+        },
+        {
+          "path": "outputs/taiji_m1_smoke_v3_20260901/last.pt",
+          "bytes": 73708,
+          "mtime": 1788261757,
+          "sha256": "69346de38fb2723e9233dbcfd751af7444e196b25515492f5d7bd51752f100e5"
+        },
+        {
+          "path": "outputs/taiji_m1_smoke_v3_20260901/parent.pt",
+          "bytes": 73714,
+          "mtime": 1788261751,
+          "sha256": "f7855e9caa5343a550844c68d2fe3ba91c99dc7a0202a84e6f385f893ab3c34d"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji_m1_smoke_20260901",
+      "kind": "dir",
+      "bytes": 221730,
+      "file_count": 3,
+      "files": [
+        {
+          "path": "outputs/taiji_m1_smoke_20260901/best-holdout.pt",
+          "bytes": 74372,
+          "mtime": 1788261563,
+          "sha256": "846268127ca43a07f24c1908a2bb787cfd6c1bbfb9f450849bc6d282ec19a27c"
+        },
+        {
+          "path": "outputs/taiji_m1_smoke_20260901/last.pt",
+          "bytes": 73708,
+          "mtime": 1788261565,
+          "sha256": "5a8ace61ca3ba78765f6d3e38dadd43faff6529581fa3d4eae334c205548efd5"
+        },
+        {
+          "path": "outputs/taiji_m1_smoke_20260901/parent.pt",
+          "bytes": 73650,
+          "mtime": 1788261559,
+          "sha256": "ea8d914afe6825db62d7ebec2bfb4626a7821b76dd9ae54e5dd52c87994ed4cc"
+        }
+      ]
+    },
+    {
+      "path": "outputs/taiji-m1-b18-checkpoint-preflight",
+      "kind": "dir",
+      "bytes": 183746,
+      "file_count": 2,
+      "files": [
+        {
+          "path": "outputs/taiji-m1-b18-checkpoint-preflight/child-after-fresh-restore.pt",
+          "bytes": 93677,
+          "mtime": 1788326862,
+          "sha256": "b841fea7a1230c22e70f6644ce2c014e5e816b86e9b66bcb904ecf2b37d96e6c"
+        },
+        {
+          "path": "outputs/taiji-m1-b18-checkpoint-preflight/parent.pt",
+          "bytes": 90069,
+          "mtime": 1788326860,
+          "sha256": "05d9bd773bf5b85217a379d5970446e886a175964dd8770608793b29e2031a58"
+        }
+      ]
+    },
+    {
+      "path": "output/n4_cost_quote",
+      "kind": "dir",
+      "bytes": 93154,
+      "file_count": 2,
+      "files": [
+        {
+          "path": "output/n4_cost_quote/materials.jsonl",
+          "bytes": 83773,
+          "mtime": 1791516697,
+          "sha256": "238fe21db706176523823db5ad6edd0494c5ef97f2efa1d9180cfd101161ccf0"
+        },
+        {
+          "path": "output/n4_cost_quote/queries.jsonl",
+          "bytes": 9381,
+          "mtime": 1791516697,
+          "sha256": "462f181d9944e0a2b99a5535f95dbe940b3369fdea0527d22bd62096db03b954"
+        }
+      ]
+    },
+    {
+      "path": "output/.tmp_splice_734.py",
+      "kind": "file",
+      "bytes": 2106,
+      "file_count": 1,
+      "files": [
+        {
+          "path": "output/.tmp_splice_734.py",
+          "bytes": 2106,
+          "mtime": 1791797412,
+          "sha256": "b829591b3f710157570eb53aa62eee3989312cd93cc1e874e05ee886231e50fd"
+        }
+      ]
+    },
+    {
+      "path": "output/n5_rebase_off",
+      "kind": "dir",
+      "bytes": 569,
+      "file_count": 1,
+      "files": [
+        {
+          "path": "output/n5_rebase_off/stdout.log",
+          "bytes": 569,
+          "mtime": 1791546873,
+          "sha256": "ff432cce4f1bb519fc18bb0099909a023beb8dee32e0713aad6d2f7007ac11d9"
+        }
+      ]
+    },
+    {
+      "path": "output/n5_rebase_on",
+      "kind": "dir",
+      "bytes": 568,
+      "file_count": 1,
+      "files": [
+        {
+          "path": "output/n5_rebase_on/stdout.log",
+          "bytes": 568,
+          "mtime": 1791546872,
+          "sha256": "3eb01ac4f5855e7fc18838d3fc1850e06e2600e0278eb164b7518a85a7a6e071"
+        }
+      ]
+    },
+    {
+      "path": "output/n5_617_smoke",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/n5_rebase_probe",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-doccheck-20261017-01",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-doccheck-20261017-02",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-doccheck-20261017-04",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-doccheck-20261017-05",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-doccheck-20261017-06",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-doccheck-20261017-07",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-doccheck-20261017-08",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-doccheck-20261017-09",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-doccheck-20261017-10",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-doccheck-20261017-11",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-doccheck-20261017-12",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-doccheck-20261017-13",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-doccheck-20261017-14",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-doccheck-20261017-15",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-doccheck-20261018-01",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-doccheck-20261018-02",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-doccheck-20261018-03",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-doccheck-20261018-04",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-n1-run106-20261017-01",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-n1-run107-20261017-01",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-n1-run108-20261017-01",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-n1-run109-20261017-01",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-plan110-runner-20261018-01",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-plan110-runner-20261018-02",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-plan110-runner-20261018-03",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-plan110-runner-20261018-04",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-plan110-runner-20261018-05",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-plan110-schedule-20261018-01",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-plan110-schedule-20261018-02",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-plan110-schedule-20261018-03",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-plan110-v9-shared-module-green-20261018-01",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest-plan110-v9-shared-module-red-20261018-01",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest_n118_1cde4e376157426b81dafa3dd87fdaac",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest_n118_75d9733cd8114344baa413884dd9d985",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest_n118_80dbef8757a34e50a81862e2c0de944a",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest_n120_d5ce28e348ba4c6abe116a2c4a17bc66",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest_n121_1a4adfe26f7949cca383b0133d36890f",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest_n121_3f68caa16dd443b5abb1095d4945be41",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest_n121_45deab0066a64bdda2bc2d72f2c79623",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest_n121_7663e4c272b54a59b5e04c029a864390",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest_n121_81e36794f70e4157828807e42bbfe7b0",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest_n121_928e1c53faa24ac09b2d96376251418b",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest_n121_9bb63bc4a10f4fedb604c4fb47fa7e6e",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest_n121_a021fef51d9b4425a1533bce8b142b8b",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest_n121_a7d72476782c401f9be610142a7e5c5a",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest_n121_be49ed8fc6f847ee93c0383b0ff32920",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest_n121_c4595c1669e647d5ae7a9e572be81d5d",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest_n121_eb244d51734d401eb1c77549fe52ed4b",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    },
+    {
+      "path": "output/pytest_n124_20261019",
+      "kind": "dir",
+      "bytes": 0,
+      "file_count": 0,
+      "files": []
+    }
+  ],
+  "completed_utc": "2026-10-31T12:28:35.560005+00:00",
+  "deleted_items": 100,
+  "deleted_bytes": 785477160,
+  "failures": []
+}

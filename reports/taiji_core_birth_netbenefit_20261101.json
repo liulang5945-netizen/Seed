@@ -1,0 +1,113 @@
+{
+  "schema": "taiji-birth-netbenefit-v1",
+  "step": "09.6.8",
+  "date": "2026-11-01",
+  "status": "net_benefit_supported",
+  "config": {
+    "groups": 4,
+    "width": 128,
+    "units": 256,
+    "adapter_rank": 16,
+    "fast_heads": 2,
+    "key_width": 32,
+    "value_width": 32,
+    "output_heads": 2,
+    "fast_limit": 16.0,
+    "max_event_bytes": 512,
+    "max_source_bytes": 512,
+    "max_target_bytes": 128,
+    "seed": 20261031
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "declared": {
+    "parts": 5,
+    "units_per_group": 3,
+    "steps": 8,
+    "lr": 1e-05,
+    "net_gate": 0.0001,
+    "retention_gate": 0.03,
+    "reference_contribution": 0.00017374,
+    "face_tolerance": 0.2
+  },
+  "arms": {
+    "replay_only": {
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.361051457267363,
+      "delta_holdout": -0.020192401810056104,
+      "retention_drift": 0.022069889315990743,
+      "parameters_before": 3311259,
+      "parameters_after": 3311259,
+      "train_cpu_seconds": 21.6875,
+      "train_wall_seconds": 22.63271169993095,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409392151712617
+    },
+    "consensus_birth": {
+      "holdout_pre": 4.381243859077419,
+      "holdout_post": 4.3608775333460095,
+      "delta_holdout": -0.02036632573140995,
+      "retention_drift": 0.02226857396675186,
+      "parameters_before": 3323547,
+      "parameters_after": 3323547,
+      "train_cpu_seconds": 22.65625,
+      "train_wall_seconds": 23.798921100096777,
+      "first_update_loss": 4.436565322597274,
+      "last_update_loss": 4.409094195605715,
+      "newborn_contribution": 0.0001737397301315724,
+      "lesion_report": {
+        "removed_units_per_group": 3,
+        "removed_r_norm": 0.008073006435065042,
+        "removed_p_norm": 3.4649604383990313
+      },
+      "birth_cpu_seconds": 10.53125,
+      "birth_wall_seconds": 10.842361999908462,
+      "birth_plus_train_cpu_seconds": 33.1875
+    }
+  },
+  "net_benefit": 0.00017392392135384682,
+  "extra_cpu_seconds": 11.5,
+  "extra_cpu_per_gate_of_nll": 6.612086428642177,
+  "checks": [
+    {
+      "id": "retention_within_gate",
+      "passed": true,
+      "observed": [
+        0.022069889315990743,
+        0.02226857396675186
+      ]
+    },
+    {
+      "id": "birth_face_matches_09_6_7",
+      "passed": true,
+      "observed": 0.0001737397301315724
+    },
+    {
+      "id": "net_benefit_supported",
+      "passed": true,
+      "observed": 0.00017392392135384682
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true,
+      "observed": [
+        66.171875,
+        69.0831245998852
+      ]
+    }
+  ],
+  "training_admitted": false,
+  "limits": "Net benefit on one deterministic subject over synthetic Chinese careers. The cost figures are a pricing input, not a threshold: no cost gate was declared. No task capability is shown and 09.7 is not admitted.",
+  "cpu_seconds": 66.171875,
+  "wall_seconds": 69.0831245998852,
+  "budget": {
+    "cpu_seconds": 600,
+    "wall_seconds": 1200
+  },
+  "source_hashes": {
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/growth_credit.py": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+    "taiji/native_development.py": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+    "taiji/birth_direction.py": "a723075011a42c3a4d44b24267de2c40dc7db3229c0e546480942538d2274ad9",
+    "scripts/training/verify_taiji_birth_netbenefit.py": "fd68b8f1b011c9a44f18499cf9750c219e0f61fcb7322f4c9aab2374cb62b7cb"
+  }
+}

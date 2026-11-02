@@ -1,0 +1,133 @@
+{
+  "schema": "taiji-wide-object-split-10-17-v1",
+  "step": "10.17",
+  "date": "2026-11-01",
+  "status": "wide_selection_absent",
+  "declared": {
+    "held_out_object": "黄色球",
+    "train_samples": 360,
+    "held_out_samples": 120,
+    "unseen_goals_in_training": true,
+    "actions": 20,
+    "parameters": 2560,
+    "pass_share": 0.4,
+    "absent_share": 0.1,
+    "control_max_share": 0.1,
+    "chance_share": 0.05,
+    "note": "10.16 split by state and scored 100% in all arms; that split holds no goal out"
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "arms": {
+    "A_real_to_real": {
+      "hits": 0,
+      "total": 120,
+      "share": 0.0,
+      "picks": [
+        [
+          14,
+          24
+        ],
+        [
+          13,
+          24
+        ],
+        [
+          12,
+          24
+        ],
+        [
+          11,
+          24
+        ],
+        [
+          10,
+          24
+        ]
+      ],
+      "train_loss": 0.001624671617189624
+    },
+    "B_real_to_permuted": {
+      "hits": 0,
+      "total": 120,
+      "share": 0.0,
+      "picks": [
+        [
+          14,
+          24
+        ],
+        [
+          13,
+          24
+        ],
+        [
+          12,
+          24
+        ],
+        [
+          11,
+          24
+        ],
+        [
+          10,
+          24
+        ]
+      ],
+      "train_loss": 0.001624671617189624
+    },
+    "C_permuted_to_real": {
+      "hits": 0,
+      "total": 120,
+      "share": 0.0,
+      "picks": [
+        [
+          14,
+          24
+        ],
+        [
+          13,
+          24
+        ],
+        [
+          12,
+          24
+        ],
+        [
+          11,
+          24
+        ],
+        [
+          10,
+          24
+        ]
+      ],
+      "train_loss": 0.0017098636618379968
+    }
+  },
+  "best_constant": {
+    "move": [
+      "黄色球",
+      "地毯"
+    ],
+    "hits": 24,
+    "total": 120
+  },
+  "backbone_frozen": true,
+  "weights_published": false,
+  "default_model_replaced": false,
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "One bounded run with one whole object held out of training. A pass would mean the readout generalises to an unseen object's descriptor through the glossary; it is still a synthetic fixture, not P2 and not the subject acting.",
+  "cpu_seconds": 38.5,
+  "wall_seconds": 39.18073010002263,
+  "budget": {
+    "cpu_seconds": 600,
+    "wall_seconds": 1200
+  },
+  "source_hashes": {
+    "taiji/native_goal_world_wide.py": "3ebe92fb36f44b73bbdc01d17e63ce732b54e39ac0f1d4ff0352adb9cb533344",
+    "taiji/state_action_readout.py": "e417fa885e543821d57abd5db175b289c7137ff16c361696196fa722ae5bf4bd",
+    "scripts/training/verify_taiji_wide_object_split_10_17.py": "0a9fbef2ff86f434c0642a3dd35440a5f375a7cd4a1f0b1d311a1b3178ed4edb",
+    "scripts/training/verify_taiji_wide_selection_10_16.py": "51f7e4cab6dbe83be84b78437cf5c515380f4f97aee474ec796562e475bba314"
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "schema": "taiji-slot-descriptor-10-21a2-v2",
+  "step": "10.21a-2",
+  "revision": 2,
+  "date": "2026-11-01",
+  "status": "slots_content_dominated",
+  "candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+  "declared_before_running": true,
+  "criterion": "Headline status uses the full five-line table. shares_descriptor = SS_descriptor / SS_total, shares_glossary = SS_glossary / SS_total. slots_query_conditioned when shares_descriptor >= 2*shares_glossary and the F tail p <= 0.10; slots_content_dominated when shares_glossary >= 2*shares_descriptor; slots_mixed otherwise. The single-line condition is a diagnostic contrast and does not set the status.",
+  "supersedes": "reports/taiji_core_slot_descriptor_10_21a2_20261101_void.json",
+  "revision_reason": "rev1 used leave-one-out 1-NN with one sample per class and labels equal to the class index; that statistic cannot exceed zero by construction. Voided before any document cited it; rev2 uses a two-way decomposition.",
+  "note": "Diagnostic only. 10.21a's pre-registered channel criterion stays as the verdict for the channel gate; these readings explain its unregistered descriptor contrast and cannot overturn it.",
+  "determinism_max_gap": 0.0,
+  "label_shuffle_max_relative_move": 1.3227864567520836e-16,
+  "label_shuffle_null_is_degenerate": true,
+  "descriptors": 5,
+  "tables": 5,
+  "full_table": {
+    "rows": 5,
+    "columns": 5,
+    "ss_total": 0.25822030649776645,
+    "ss_descriptor": 0.0010245438397778227,
+    "ss_glossary": 0.2571735588892986,
+    "ss_residual": 2.2203768690023462e-05,
+    "share_descriptor": 0.0039677121202188834,
+    "share_glossary": 0.9959463001858186,
+    "share_residual": 8.598769396246348e-05,
+    "f_descriptor": 184.57116070357336,
+    "f_tail_p": 3.619539597635425e-13,
+    "df": [
+      4,
+      16
+    ]
+  },
+  "single_line": {
+    "rows": 5,
+    "columns": 5,
+    "ss_total": 48.62468939172662,
+    "ss_descriptor": 24.991420879398227,
+    "ss_glossary": 0.31692100710902976,
+    "ss_residual": 23.316347505219362,
+    "share_descriptor": 0.5139656662495917,
+    "share_glossary": 0.006517697307141116,
+    "share_residual": 0.47951663644326714,
+    "f_descriptor": 4.287364626694451,
+    "f_tail_p": 0.015135669178309491,
+    "df": [
+      4,
+      16
+    ]
+  },
+  "neighbour_identity": 0,
+  "neighbour_rows": [
+    {
+      "descriptor": "圆口的器皿",
+      "own_rotated_distance": 0.15365833857909184,
+      "nearest_other_descriptor": "靠窗的台面",
+      "nearest_other_distance": 0.007014405766077937,
+      "closer_to_own_rotated": false
+    },
+    {
+      "descriptor": "带纹路的方块",
+      "own_rotated_distance": 0.15314257223090502,
+      "nearest_other_descriptor": "左边的匣子",
+      "nearest_other_distance": 0.007221942059766464,
+      "closer_to_own_rotated": false
+    },
+    {
+      "descriptor": "四方木台",
+      "own_rotated_distance": 0.15343673743642347,
+      "nearest_other_descriptor": "带纹路的方块",
+      "nearest_other_distance": 0.009195883589216813,
+      "closer_to_own_rotated": false
+    },
+    {
+      "descriptor": "靠窗的台面",
+      "own_rotated_distance": 0.1529851134520471,
+      "nearest_other_descriptor": "圆口的器皿",
+      "nearest_other_distance": 0.007014405766077937,
+      "closer_to_own_rotated": false
+    },
+    {
+      "descriptor": "左边的匣子",
+      "own_rotated_distance": 0.15281516744847423,
+      "nearest_other_descriptor": "圆口的器皿",
+      "nearest_other_distance": 0.007076965197662497,
+      "closer_to_own_rotated": false
+    }
+  ],
+  "median_relative_same_descriptor_across_tables": 0.013560717189593388,
+  "attention_l1_across_descriptor": 0.017856118398248834,
+  "attention_l1_across_glossary": 0.3347980903284353,
+  "attention_rows": [
+    {
+      "positions": 592,
+      "max_weight": 0.008917771483471745,
+      "normalized_entropy": 3.128226946707009
+    },
+    {
+      "positions": 592,
+      "max_weight": 0.008868355671081877,
+      "normalized_entropy": 3.128277246690052
+    },
+    {
+      "positions": 592,
+      "max_weight": 0.008906670300579319,
+      "normalized_entropy": 3.1282162911197107
+    },
+    {
+      "positions": 592,
+      "max_weight": 0.008945362619485336,
+      "normalized_entropy": 3.1281831429861047
+    },
+    {
+      "positions": 592,
+      "max_weight": 0.008866169766574908,
+      "normalized_entropy": 3.12823209134881
+    }
+  ],
+  "model_involved": true,
+  "parameters_changed": false,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Five descriptors, five rotations, one fixture. With one observation per cell the only null for the descriptor factor is the interaction residual, so the reported p assumes additivity; it is a mechanism reading, not a capability gate. The single-line condition is a diagnostic, not part of the 10.15 fixture.",
+  "cpu_seconds": 1.296875,
+  "wall_seconds": 1.5625172001309693,
+  "budget": {
+    "cpu_seconds": 180,
+    "wall_seconds": 400
+  },
+  "source_hashes": {
+    "taiji/slot_composition_head.py": "1f2103f39fa60111edbe44ec4dad2d5c2d6e2b7b672360c79b8dce63224d00a5",
+    "taiji/candidate_manifest.py": "6fc05ca4bcee45203594ba80448ed8f2c3d5d89e9df92ccf48c4ab23544db1f0",
+    "taiji/native_goal_attributes.py": "f33679904f61b0bea82c968713e8821104e53604bd3b7dcc7798d35b4ec6bf7e",
+    "scripts/training/probe_slot_descriptor_10_21a2.py": "abfbf9c93bb10ee4e6825e08de8a1566374b7e63a121fd50b8499b1a969a8212",
+    "reports/taiji_core_slot_descriptor_10_21a2_20261101_void.json": "154cf63e9fd034fa7e4759141902598284b16e4bbec60aa6955dafeeb56446a6"
+  }
+}

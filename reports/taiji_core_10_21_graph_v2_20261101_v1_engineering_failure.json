@@ -1,0 +1,32 @@
+{
+  "schema": "taiji-query-binding-graph-v2",
+  "step": "10.21.2",
+  "revision": 2,
+  "date": "2026-11-01",
+  "status": "engineering_failure",
+  "checks": [],
+  "identity": {},
+  "module": {},
+  "fixtures": [],
+  "fd": {},
+  "events": {},
+  "profiles": [],
+  "type_check": {},
+  "lint": {},
+  "cost": {},
+  "limits": "Engineering graph/recovery gate only. The parent is the single deterministic 09.8 child; fixtures are public synthetic strings; the small profile is module-only. No capability, no task data, no pricing, no training admission, and no published weights.",
+  "engineering_failure": {
+    "type": "KeyError",
+    "message": "'taiji/native_development.py'",
+    "traceback": "Traceback (most recent call last):\n  File \"E:\\Seed\\scripts\\training\\verify_taiji_composition_10_21.py\", line 707, in main\n    \"current\": source_hashes[relative],\n               ~~~~~~~~~~~~~^^^^^^^^^^\nKeyError: 'taiji/native_development.py'\n"
+  },
+  "cpu_seconds": 2.390625,
+  "wall_seconds": 2.5954838001634926,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "pricing_admitted": false,
+  "weights_published": false,
+  "data_splits_read": [
+    "public engineering fixtures: native_goal_attributes/native_goal_glossary"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "schema": "taiji-training-replay-10-7a-v1",
+  "step": "10.7a",
+  "date": "2026-11-01",
+  "status": "weights_replay_bitwise",
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "rebuilt_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "identity_match": true,
+  "steps": 32,
+  "held_out_samples": 6,
+  "tolerance": 1e-09,
+  "arms": [
+    {
+      "lr": 1e-05,
+      "steps": 32,
+      "weights_path": "output/taiji_core_10_7/trained_lr1e-05.pt",
+      "weights_bytes": 26633881,
+      "file_bytes": 26633881,
+      "file_bytes_match": true,
+      "weights_sha256": "dee3431a2e16ed700deaedabe184e7a9a5459857d20cd06739f6f4a8fff4a4ed",
+      "load_strict": true,
+      "rows": 6,
+      "stored_rows": 6,
+      "hits": 3,
+      "stored_hits": 3,
+      "hits_match": true,
+      "max_abs_delta": 0.0,
+      "bitwise_equal": true
+    },
+    {
+      "lr": 0.0001,
+      "steps": 32,
+      "weights_path": "output/taiji_core_10_7/trained_lr0.0001.pt",
+      "weights_bytes": 26634022,
+      "file_bytes": 26634022,
+      "file_bytes_match": true,
+      "weights_sha256": "92a9fdb31764f3666021118fddb31a61f24844fb0fa1f8ec29dc81a551589132",
+      "load_strict": true,
+      "rows": 6,
+      "stored_rows": 6,
+      "hits": 3,
+      "stored_hits": 3,
+      "hits_match": true,
+      "max_abs_delta": 0.0,
+      "bitwise_equal": true
+    }
+  ],
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "weights_published": false,
+  "limits": "Replay check only: it reloads already-saved weights and recomputes twelve verdicts. It trains nothing, changes no default and adds no capability evidence. A bitwise replay shows the saved artifact reproduces its published reading; it does not show that the arm learned goal-conditioned selection.",
+  "cpu_seconds": 40.625,
+  "wall_seconds": 41.26839910005219,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "reports/taiji_core_goal_training_10_7_20261101.json": "e4b941a24d4952d1f7e5f1a1c73e686cd53402d19ba707c1f1f76f33a849698e",
+    "scripts/training/verify_taiji_training_replay_10_7a.py": "6222275b8efb94dc76fc3126d4206f3e4eb2641f28d7cb2011fab16fb1cfe8ab",
+    "taiji/goal_conditioned_training.py": "2e0b3e643fc9b7a6ffb8637ab0b9a59d109f93630d4ddd22587b94eca022fc27"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "schema": "taiji-training-direction-10-7b-v1",
+  "step": "10.7b",
+  "date": "2026-11-01",
+  "status": "training_groups_pull_together",
+  "declared": {
+    "samples": 6,
+    "grouping": "correct object (3 vs 3)",
+    "loss": "taiji.goal_conditioned_training.sample_loss",
+    "delta": "lr=1e-4 weights (output/taiji_core_10_7/trained_lr0.0001.pt) minus rebuilt subject",
+    "together_floor": 0.9,
+    "oppose_ceiling": -0.9
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "rebuilt_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "identity_match": true,
+  "alignment": {
+    "group_sizes": {
+      "蓝色杯子": 3,
+      "红色印章": 3
+    },
+    "group_names": [
+      "蓝色杯子",
+      "红色印章"
+    ],
+    "gradient_norms": [
+      5.459567559005685,
+      5.459610290530074,
+      5.459422446528686,
+      5.459455404830576,
+      5.459565491333176,
+      5.459609667288483
+    ],
+    "mean_norm": 5.459490610810865,
+    "mean_over_average_norm": 0.9999912326334076,
+    "pairwise_cosine_min": 0.9999620432166656,
+    "pairwise_cosine_median": 0.9999773566488243,
+    "pairwise_cosine_max": 0.9999998008252672,
+    "residual_fraction": 1.7534836179252316e-05,
+    "cos_group_means": 0.9999773498450467
+  },
+  "delta_norm": 4.439089626014452,
+  "cos_delta_mean_gradient": -0.04786628952477267,
+  "verdict": "groups_pull_together",
+  "per_sample_losses": [
+    11.206579183359507,
+    11.207196820461494,
+    11.206443161502936,
+    11.207077617761684,
+    11.206617151654317,
+    11.207234068815175
+  ],
+  "failure": null,
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Diagnostic only: six samples, one deterministic subject, one saved update. First-order alignment says what these six gradients agree on, not what a different loss, more samples or another architecture would do; no parameter was updated and no capability is claimed.",
+  "cpu_seconds": 37.921875,
+  "wall_seconds": 38.95969709986821,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "reports/taiji_core_goal_training_10_7_20261101.json": "e4b941a24d4952d1f7e5f1a1c73e686cd53402d19ba707c1f1f76f33a849698e",
+    "taiji/goal_conditioned_training.py": "2e0b3e643fc9b7a6ffb8637ab0b9a59d109f93630d4ddd22587b94eca022fc27",
+    "scripts/training/diagnose_training_direction_10_7b.py": "d362c035b0c94fb399ce4ba494b0a34de4e9a471562b4bdd7eee36e5d1930f6a"
+  }
+}

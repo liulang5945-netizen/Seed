@@ -1,0 +1,152 @@
+{
+  "schema": "taiji-slot-descriptor-10-21a2-v1",
+  "step": "10.21a-2",
+  "date": "2026-11-01",
+  "status": "void_instrument_defect",
+  "candidate_id": "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd",
+  "declared_before_running": true,
+  "criterion": "descriptors_separable = 1-NN leave-one-out accuracy on the five real slots is 1.0 and the exact permutation null p <= 0.10; mapping_dominates = median distance across glossaries exceeds median distance across descriptors. Status is slots_query_conditioned when separable and not dominated, slots_content_dominated when dominated and not separable, slots_mixed otherwise.",
+  "note": "Diagnostic only. 10.21a's pre-registered channel criterion stays as the verdict for the channel gate; these readings explain its unregistered descriptor contrast and cannot overturn it.",
+  "determinism_max_gap": 0.0,
+  "descriptors": 5,
+  "median_relative_across_glossary": 0.013692413445117218,
+  "median_relative_across_descriptor": 0.00086834166870506,
+  "median_absolute_across_glossary": 0.15314257223090502,
+  "median_absolute_across_descriptor": 0.00970060389944217,
+  "mapping_dominates": true,
+  "neighbour_identity": 0,
+  "neighbour_rows": [
+    {
+      "descriptor": "圆口的器皿",
+      "own_permuted_distance": 0.15365833857909184,
+      "nearest_other_descriptor": "靠窗的台面",
+      "nearest_other_distance": 0.007014405766077937,
+      "closer_to_own_permuted": false
+    },
+    {
+      "descriptor": "带纹路的方块",
+      "own_permuted_distance": 0.15314257223090502,
+      "nearest_other_descriptor": "左边的匣子",
+      "nearest_other_distance": 0.007221942059766464,
+      "closer_to_own_permuted": false
+    },
+    {
+      "descriptor": "四方木台",
+      "own_permuted_distance": 0.15343673743642347,
+      "nearest_other_descriptor": "带纹路的方块",
+      "nearest_other_distance": 0.009195883589216813,
+      "closer_to_own_permuted": false
+    },
+    {
+      "descriptor": "靠窗的台面",
+      "own_permuted_distance": 0.1529851134520471,
+      "nearest_other_descriptor": "圆口的器皿",
+      "nearest_other_distance": 0.007014405766077937,
+      "closer_to_own_permuted": false
+    },
+    {
+      "descriptor": "左边的匣子",
+      "own_permuted_distance": 0.15281516744847423,
+      "nearest_other_descriptor": "圆口的器皿",
+      "nearest_other_distance": 0.007076965197662497,
+      "closer_to_own_permuted": false
+    }
+  ],
+  "nn_accuracy": 0.0,
+  "nn_null_p": 1.0,
+  "nn_null_permutations": 120,
+  "labels_separable": false,
+  "attention_l1_across_descriptor": 0.017856118398248834,
+  "attention_l1_across_glossary": 0.3307923739451958,
+  "attention_rows": [
+    {
+      "positions": 592,
+      "max_weight": 0.008917771483471745,
+      "entropy": 19.969057469727126,
+      "normalized_entropy": 3.128226946707009
+    },
+    {
+      "positions": 592,
+      "max_weight": 0.008868355671081877,
+      "entropy": 19.969378560002617,
+      "normalized_entropy": 3.128277246690052
+    },
+    {
+      "positions": 592,
+      "max_weight": 0.008906670300579319,
+      "entropy": 19.968989449714908,
+      "normalized_entropy": 3.1282162911197107
+    },
+    {
+      "positions": 592,
+      "max_weight": 0.008945362619485336,
+      "entropy": 19.9687778483841,
+      "normalized_entropy": 3.1281831429861047
+    },
+    {
+      "positions": 592,
+      "max_weight": 0.008866169766574908,
+      "entropy": 19.969090310582196,
+      "normalized_entropy": 3.12823209134881
+    }
+  ],
+  "single_line_median_relative": 0.21887507089287295,
+  "single_line_nn_accuracy": 0.0,
+  "single_line_positions": 33,
+  "norms": [
+    {
+      "descriptor": "圆口的器皿",
+      "norm_real": 11.170589426192151,
+      "norm_permuted": 11.198159846901845,
+      "relative_real_vs_permuted": 0.013738661621454006
+    },
+    {
+      "descriptor": "带纹路的方块",
+      "norm_real": 11.17066331362764,
+      "norm_permuted": 11.198303683277704,
+      "relative_real_vs_permuted": 0.013692413445117218
+    },
+    {
+      "descriptor": "四方木台",
+      "norm_real": 11.171226718166537,
+      "norm_permuted": 11.199027532996364,
+      "relative_real_vs_permuted": 0.013717925215664206
+    },
+    {
+      "descriptor": "靠窗的台面",
+      "norm_real": 11.17207455603168,
+      "norm_permuted": 11.199492316329428,
+      "relative_real_vs_permuted": 0.013676745515849598
+    },
+    {
+      "descriptor": "左边的匣子",
+      "norm_real": 11.171181099601664,
+      "norm_permuted": 11.198316347314815,
+      "relative_real_vs_permuted": 0.013662816324873586
+    }
+  ],
+  "model_involved": true,
+  "parameters_changed": false,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Five descriptors, one glossary, one fixture. 1-NN over five points is a weak statistic; the exact null controls for its chance level but not for the small n. The single-line condition is a diagnostic, not part of the 10.15 fixture.",
+  "cpu_seconds": 0.96875,
+  "wall_seconds": 1.2032820999156684,
+  "budget": {
+    "cpu_seconds": 120,
+    "wall_seconds": 300
+  },
+  "source_hashes": {
+    "taiji/slot_composition_head.py": "1f2103f39fa60111edbe44ec4dad2d5c2d6e2b7b672360c79b8dce63224d00a5",
+    "taiji/candidate_manifest.py": "6fc05ca4bcee45203594ba80448ed8f2c3d5d89e9df92ccf48c4ab23544db1f0",
+    "taiji/native_goal_attributes.py": "f33679904f61b0bea82c968713e8821104e53604bd3b7dcc7798d35b4ec6bf7e",
+    "scripts/training/probe_slot_descriptor_10_21a2.py": "55a61977b86ba2b9d9ce34a05e9042f6713fb4b26cb854001e37000c127b8dc2"
+  },
+  "void_reason": "nn_accuracy/exact_null were tautological: with one sample per class and labels equal to the class index, leave-one-out 1-NN can never score above 0. No document referenced this card; the corrected instrument writes a new card at the canonical path and is disclosed as revision 2.",
+  "voided_findings_retained_as_untrusted": {
+    "determinism_max_gap": 0.0,
+    "neighbour_identity": 0,
+    "median_relative_across_glossary": 0.013692413445117218,
+    "median_relative_across_descriptor": 0.00086834166870506
+  }
+}

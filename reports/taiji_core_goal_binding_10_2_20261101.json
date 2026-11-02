@@ -1,0 +1,268 @@
+{
+  "schema": "taiji-goal-binding-10-2-v1",
+  "step": "10.2",
+  "date": "2026-11-01",
+  "status": "passed_10_2_binding_contract_only",
+  "declared": {
+    "binder": "rule_baseline",
+    "reasons": [
+      "missing_referent",
+      "ambiguous",
+      "unsupported"
+    ],
+    "fixtures": 6,
+    "denominator": 6,
+    "model_binding_delivered": false
+  },
+  "fixtures": [
+    {
+      "fixture_id": "b1-paraphrase-a",
+      "goal_text": "把蓝色杯子放到窗台",
+      "conditions": [
+        [
+          "蓝色杯子",
+          "窗台",
+          1
+        ]
+      ],
+      "abstain": false,
+      "reason": null,
+      "unknowns": [],
+      "expectation": {
+        "conditions": [
+          [
+            "蓝色杯子",
+            "窗台",
+            1
+          ]
+        ],
+        "abstain": false,
+        "reason": null
+      }
+    },
+    {
+      "fixture_id": "b2-paraphrase-b",
+      "goal_text": "蓝色杯子应该出现在窗台上",
+      "conditions": [
+        [
+          "蓝色杯子",
+          "窗台",
+          1
+        ]
+      ],
+      "abstain": false,
+      "reason": null,
+      "unknowns": [],
+      "expectation": {
+        "conditions": [
+          [
+            "蓝色杯子",
+            "窗台",
+            1
+          ]
+        ],
+        "abstain": false,
+        "reason": null
+      }
+    },
+    {
+      "fixture_id": "b3-negation",
+      "goal_text": "红色印章不要留在左盒",
+      "conditions": [
+        [
+          "红色印章",
+          "左盒",
+          -1
+        ]
+      ],
+      "abstain": false,
+      "reason": null,
+      "unknowns": [],
+      "expectation": {
+        "conditions": [
+          [
+            "红色印章",
+            "左盒",
+            -1
+          ]
+        ],
+        "abstain": false,
+        "reason": null
+      }
+    },
+    {
+      "fixture_id": "b4-conjunction",
+      "goal_text": "把蓝色杯子放到窗台，并且红色印章不要留在左盒",
+      "conditions": [
+        [
+          "蓝色杯子",
+          "窗台",
+          1
+        ],
+        [
+          "红色印章",
+          "左盒",
+          -1
+        ]
+      ],
+      "abstain": false,
+      "reason": null,
+      "unknowns": [],
+      "expectation": {
+        "conditions": [
+          [
+            "蓝色杯子",
+            "窗台",
+            1
+          ],
+          [
+            "红色印章",
+            "左盒",
+            -1
+          ]
+        ],
+        "abstain": false,
+        "reason": null
+      }
+    },
+    {
+      "fixture_id": "b5-missing",
+      "goal_text": "把它放到窗台",
+      "conditions": [],
+      "abstain": true,
+      "reason": "missing_referent",
+      "unknowns": [
+        "object"
+      ],
+      "expectation": {
+        "conditions": [],
+        "abstain": true,
+        "reason": "missing_referent"
+      }
+    },
+    {
+      "fixture_id": "b6-ambiguous",
+      "goal_text": "把蓝色杯子放到窗台或木桌",
+      "conditions": [],
+      "abstain": true,
+      "reason": "ambiguous",
+      "unknowns": [
+        "multiple_targets"
+      ],
+      "expectation": {
+        "conditions": [],
+        "abstain": true,
+        "reason": "ambiguous"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "fixture_dropped",
+      "passed": true,
+      "observed": [
+        6,
+        6
+      ]
+    },
+    {
+      "id": "paraphrase_mismatch",
+      "passed": true,
+      "observed": [
+        [
+          [
+            "蓝色杯子",
+            "窗台",
+            1
+          ]
+        ],
+        [
+          [
+            "蓝色杯子",
+            "窗台",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "negation_or_conjunction_wrong",
+      "passed": true,
+      "observed": [
+        [
+          [
+            "红色印章",
+            "左盒",
+            -1
+          ]
+        ],
+        [
+          [
+            "蓝色杯子",
+            "窗台",
+            1
+          ],
+          [
+            "红色印章",
+            "左盒",
+            -1
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "abstain_not_enforced",
+      "passed": true,
+      "observed": {
+        "b5-missing": [
+          true,
+          "missing_referent"
+        ],
+        "b6-ambiguous": [
+          true,
+          "ambiguous"
+        ]
+      }
+    },
+    {
+      "id": "gold_leaked_into_binder",
+      "passed": true,
+      "observed": {
+        "Goal": 0,
+        "gold": 0,
+        "terminal_state": 0,
+        "reward": 0,
+        "score": 0
+      }
+    },
+    {
+      "id": "model_binding_claimed",
+      "passed": true,
+      "observed": false
+    },
+    {
+      "id": "budget_not_exceeded",
+      "passed": true,
+      "observed": [
+        0.0,
+        0.001128799980506301
+      ]
+    }
+  ],
+  "model_involved": false,
+  "training_admitted": false,
+  "task_capability_claimed": false,
+  "limits": "Binding contract and counter-examples only. The binder is a rule baseline over the 10.1 vocabulary; model-side binding of natural Chinese goals is not delivered and no task capability is claimed.",
+  "cpu_seconds": 0.0,
+  "wall_seconds": 0.001128799980506301,
+  "budget": {
+    "cpu_seconds": 120,
+    "wall_seconds": 240
+  },
+  "source_hashes": {
+    "taiji/native_goal_world.py": "66657b0cd400efa868509e37a423e4e4e11f0a0a80f97628c99ea66913dbf24c",
+    "taiji/goal_binding.py": "7081245ca2b612be9c5f372b46879794d26940691e25f67d8b5adaae75560c85",
+    "scripts/training/verify_taiji_goal_binding_10_2.py": "7078bebc5143816c5762defa9e1dcb5164b7d9ca82ee4065274248ec035d0a81",
+    "tests/taiji_native/test_goal_binding.py": "27da93dbcd3e3648e6355c2c129736c30545f962843515aaddba839e0039f927"
+  }
+}

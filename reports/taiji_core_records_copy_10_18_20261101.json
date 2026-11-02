@@ -1,0 +1,79 @@
+{
+  "schema": "taiji-records-copy-10-18-v1",
+  "step": "10.18",
+  "date": "2026-11-01",
+  "status": "records_copy_inconclusive",
+  "declared": {
+    "pairs": 5,
+    "prompt": "<descriptor>是",
+    "target": "<entity>",
+    "gain_floor": 1.0,
+    "control": "same prompt, a different entity as target",
+    "training": "none"
+  },
+  "parent_model_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "mean_copy_gain": 3.1140027226843623,
+  "improved": 5,
+  "wrong_target_harder": 4,
+  "rows": [
+    {
+      "descriptor": "圆口的器皿",
+      "entity": "蓝色杯子",
+      "wrong": "红色印章",
+      "nll_with_records": 2.0793666761743053,
+      "nll_without_records": 5.476694199645521,
+      "nll_wrong_target": 2.0237637276640816,
+      "copy_gain": 3.3973275234712155
+    },
+    {
+      "descriptor": "带纹路的方块",
+      "entity": "红色印章",
+      "wrong": "木桌",
+      "nll_with_records": 2.0228879924684646,
+      "nll_without_records": 5.473056979197408,
+      "nll_wrong_target": 2.8015182217920125,
+      "copy_gain": 3.4501689867289436
+    },
+    {
+      "descriptor": "四方木台",
+      "entity": "木桌",
+      "wrong": "窗台",
+      "nll_with_records": 2.801755601816935,
+      "nll_without_records": 5.598379878226797,
+      "nll_wrong_target": 2.717761105828102,
+      "copy_gain": 2.7966242764098617
+    },
+    {
+      "descriptor": "靠窗的台面",
+      "entity": "窗台",
+      "wrong": "左盒",
+      "nll_with_records": 2.7129918022350386,
+      "nll_without_records": 5.618356630804188,
+      "nll_wrong_target": 2.656487298423491,
+      "copy_gain": 2.9053648285691493
+    },
+    {
+      "descriptor": "左边的匣子",
+      "entity": "左盒",
+      "wrong": "蓝色杯子",
+      "nll_with_records": 2.658443714647775,
+      "nll_without_records": 5.678971712890417,
+      "nll_wrong_target": 2.077011659432897,
+      "copy_gain": 3.020527998242642
+    }
+  ],
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Copy check only: it asks whether records make the entity name more likely, not whether the subject selects an action. A pass means a two-stage design has a model-native first hop; it is not P2 and authorises nothing.",
+  "cpu_seconds": 33.984375,
+  "wall_seconds": 34.992714000167325,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "taiji/native_goal_glossary.py": "b40ffa22dbd5adae1285e425047f1c4113d083115bada3e7b0dd07f944a62f03",
+    "scripts/training/verify_taiji_records_copy_10_18.py": "ec5f46e1ca6f9601defb1e9dc591c9582271e35d9f36007cce6a992f6ed208d5"
+  }
+}

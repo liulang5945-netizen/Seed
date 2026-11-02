@@ -1,0 +1,101 @@
+{
+  "schema": "taiji-residual-structure-10-7c-v1",
+  "step": "10.7c",
+  "date": "2026-11-01",
+  "status": "residual_group_structure",
+  "declared": {
+    "samples": 6,
+    "grouping": "correct object (3 vs 3)",
+    "explained_floor": 0.5,
+    "noise_ceiling": 0.35,
+    "coherence_floor": 0.5
+  },
+  "rebuilt_digest": "921dc9981187406a8d5cc5b069ef967215371738b5c7d82a469d67a439a133e3",
+  "verdict": "residual_group_structure",
+  "stats": {
+    "residual_norms": [
+      0.02063067850458235,
+      0.020995011842425217,
+      0.027024642056342262,
+      0.026032054725412593,
+      0.020307272046348464,
+      0.021192429142892728
+    ],
+    "explained_fraction": 0.6458583648042849,
+    "expected_fraction_under_random_split": 0.2,
+    "permutation_fractions": [
+      0.07669563361290643,
+      0.07203298693153512,
+      0.24115594584649583,
+      0.2554190981338706,
+      0.25610480937854446,
+      0.6458583648042849,
+      0.07182902369780853,
+      0.07179494783345483,
+      0.07184800766037183,
+      0.2372611821006544,
+      0.2372611821006544,
+      0.07184800766037183,
+      0.07179494783345483,
+      0.07182902369780853,
+      0.6458583648042849,
+      0.25610480937854446,
+      0.2554190981338706,
+      0.24115594584649583,
+      0.07203298693153512,
+      0.07669563361290643
+    ],
+    "permutation_worse_or_equal": 0,
+    "permutation_total": 20,
+    "permutation_p": 0.05,
+    "within_group_cosine": {
+      "蓝色杯子": 0.5225499745121255,
+      "红色印章": 0.5086944247737373
+    },
+    "group_order": [
+      0.07179494783345483,
+      0.07179494783345483,
+      0.07182902369780853,
+      0.07182902369780853,
+      0.07184800766037183,
+      0.07184800766037183,
+      0.07203298693153512,
+      0.07203298693153512,
+      0.07669563361290643,
+      0.07669563361290643,
+      0.2372611821006544,
+      0.2372611821006544,
+      0.24115594584649583,
+      0.24115594584649583,
+      0.2554190981338706,
+      0.2554190981338706,
+      0.25610480937854446,
+      0.25610480937854446,
+      0.6458583648042849,
+      0.6458583648042849
+    ]
+  },
+  "per_sample_losses": [
+    11.206579183359507,
+    11.207196820461494,
+    11.206443161502936,
+    11.207077617761684,
+    11.206617151654317,
+    11.207234068815175
+  ],
+  "failure": null,
+  "model_involved": true,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Diagnostic only: six samples, one deterministic subject, gradients read and discarded. Twenty balanced relabelings (each split counted twice) make the smallest attainable permutation p about 0.05, so this cannot certify a signal -- only show whether the residual clears the random-split level. No parameter was updated.",
+  "cpu_seconds": 38.53125,
+  "wall_seconds": 39.221887400140986,
+  "budget": {
+    "cpu_seconds": 300,
+    "wall_seconds": 600
+  },
+  "source_hashes": {
+    "taiji/goal_conditioned_training.py": "2e0b3e643fc9b7a6ffb8637ab0b9a59d109f93630d4ddd22587b94eca022fc27",
+    "scripts/training/diagnose_residual_structure_10_7c.py": "d15c700573433c48b1cb3e582efa49d7196367cfbcc63c00b335d1355b4f0609"
+  }
+}

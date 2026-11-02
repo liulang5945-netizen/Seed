@@ -1,0 +1,38 @@
+{
+  "schema": "taiji-wide-fixture-10-15-v1",
+  "step": "10.15",
+  "date": "2026-11-01",
+  "status": "wide_fixture_ready",
+  "declared": {
+    "objects": 4,
+    "places": 5,
+    "states": 120,
+    "samples": 480,
+    "actions_per_state": 20,
+    "logit_constraints": 9600,
+    "copy_share_allowed": 0.1,
+    "chance_top1": 0.05,
+    "training": "none"
+  },
+  "state_count": 120,
+  "sample_count": 480,
+  "entity_leaks": 0,
+  "resolved_by_glossary": 480,
+  "copy_top1": 24,
+  "goals_sharing_bigram_with_correct": 0,
+  "copy_share": 0.05,
+  "model_involved": false,
+  "capability_claimed": false,
+  "training_admitted": false,
+  "limits": "Fixture fairness and size only. 480 samples make a readout identifiable in principle; it says nothing about whether this candidate can learn them.",
+  "cpu_seconds": 0.015625,
+  "wall_seconds": 0.01874540001153946,
+  "budget": {
+    "cpu_seconds": 120,
+    "wall_seconds": 240
+  },
+  "source_hashes": {
+    "taiji/native_goal_world_wide.py": "3ebe92fb36f44b73bbdc01d17e63ce732b54e39ac0f1d4ff0352adb9cb533344",
+    "scripts/training/verify_taiji_wide_fixture_10_15.py": "45630942ca90bd06e77bec306f1f5eafda699716d5c0a42cf84160297560b91b"
+  }
+}

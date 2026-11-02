@@ -1,0 +1,199 @@
+{
+  "schema": "taiji-cost-ledger-v1",
+  "step": "ledger",
+  "date": "2026-11-01",
+  "status": "cost_ledger_built",
+  "cards_measured": 63,
+  "cards_without_cost": [
+    {
+      "card": "taiji_core_algorithm_v1_math_checks_20261031.json",
+      "reason": "no cost field"
+    },
+    {
+      "card": "taiji_core_r022_credit_validation_20261031.json",
+      "reason": "no cost field"
+    },
+    {
+      "card": "taiji_core_r023_growth_birth_20261031.json",
+      "reason": "no cost field"
+    },
+    {
+      "card": "taiji_core_r024_subject_restore_20261031.json",
+      "reason": "no cost field"
+    },
+    {
+      "card": "taiji_core_r025_activity_dynamics_20261031.json",
+      "reason": "no cost field"
+    },
+    {
+      "card": "taiji_core_r026_plasticity_arms_20261031.json",
+      "reason": "no cost field"
+    },
+    {
+      "card": "taiji_core_r027_subject_gates_20261101.json",
+      "reason": "no cost field"
+    },
+    {
+      "card": "taiji_core_reference_r021_forward_coverage_20261031.json",
+      "reason": "no cost field"
+    }
+  ],
+  "total_cpu_seconds": 8985.359375,
+  "total_wall_seconds": 7299.353572000517,
+  "by_family": {
+    "09": {
+      "cards": 13,
+      "cpu_seconds": 5190.328125,
+      "wall_seconds": 5333.555016600294
+    },
+    "10": {
+      "cards": 40,
+      "cpu_seconds": 3227.71875,
+      "wall_seconds": 1363.2589512001723
+    },
+    "09-r": {
+      "cards": 3,
+      "cpu_seconds": 499.515625,
+      "wall_seconds": 533.2770660000388
+    },
+    "ledger": {
+      "cards": 1,
+      "cpu_seconds": 0.265625,
+      "wall_seconds": 0.26589159993454814
+    },
+    "unlabeled": {
+      "cards": 1,
+      "cpu_seconds": 0.4375,
+      "wall_seconds": 0.4371438000816852
+    },
+    "11": {
+      "cards": 5,
+      "cpu_seconds": 67.09375,
+      "wall_seconds": 68.55950279999524
+    }
+  },
+  "goal_line_cpu_seconds": 3227.71875,
+  "p2_probe_cpu_seconds": 1509.875,
+  "p2_probe_cards": [
+    "taiji_core_action_verdict_10_6_20261101.json",
+    "taiji_core_feature_additivity_10_7g_20261101.json",
+    "taiji_core_geometry_select_10_7h_20261101.json",
+    "taiji_core_goal_conditioned_10_5_20261101.json",
+    "taiji_core_goal_training_10_7_20261101.json",
+    "taiji_core_margin_objective_10_7d_20261101.json",
+    "taiji_core_raw_rank_10_7e2_20261101.json",
+    "taiji_core_readout_10_7e_20261101.json",
+    "taiji_core_readout_rank_10_7e1_20261101.json",
+    "taiji_core_residual_structure_10_7c_20261101.json",
+    "taiji_core_residual_structure_10_7c_v2_20261101.json",
+    "taiji_core_selection_10_7f_20261101.json",
+    "taiji_core_subject_selection_10_4_20261101.json",
+    "taiji_core_training_direction_10_7b_20261101.json",
+    "taiji_core_training_replay_10_7a_20261101.json",
+    "taiji_core_training_replay_10_7a_v2_20261101.json"
+  ],
+  "top_costs": [
+    {
+      "card": "taiji_core_fixture_arrivals_v2_20261101.json",
+      "family": "09",
+      "step": "09.6.2",
+      "status": "failed_activity_fixture",
+      "cpu_seconds": 1415.25,
+      "wall_seconds": 1452.1707358001731
+    },
+    {
+      "card": "taiji_core_fixture_arrivals_20261101.json",
+      "family": "09",
+      "step": "09.6.2",
+      "status": "failed_activity_fixture",
+      "cpu_seconds": 1172.5625,
+      "wall_seconds": 1205.358434600057
+    },
+    {
+      "card": "taiji_core_birth_direction_surface_20261101.json",
+      "family": "09",
+      "step": "09.6.7",
+      "status": "platform_supported",
+      "cpu_seconds": 756.453125,
+      "wall_seconds": 780.368031400023
+    },
+    {
+      "card": "taiji_core_raw_rank_10_7e2_20261101.json",
+      "family": "10",
+      "step": "10.7e-2",
+      "status": "budget_stop",
+      "cpu_seconds": 571.75,
+      "wall_seconds": 49.342680000001565
+    },
+    {
+      "card": "taiji_core_glossary_control_10_11b_20261101.json",
+      "family": "10",
+      "step": "10.11b",
+      "status": "control_also_wins",
+      "cpu_seconds": 509.03125,
+      "wall_seconds": 44.007655899971724
+    },
+    {
+      "card": "taiji_core_glossary_10_10_20261101.json",
+      "family": "10",
+      "step": "10.10",
+      "status": "glossary_not_used",
+      "cpu_seconds": 494.40625,
+      "wall_seconds": 42.80162220005877
+    },
+    {
+      "card": "taiji_core_glossary_records_10_11_20261101.json",
+      "family": "10",
+      "step": "10.11",
+      "status": "records_channel_live",
+      "cpu_seconds": 490.84375,
+      "wall_seconds": 42.73831859999336
+    },
+    {
+      "card": "taiji_core_09_closeout_20261101.json",
+      "family": "09",
+      "step": "09.8",
+      "status": "closeout_passed_engineering_only",
+      "cpu_seconds": 435.21875,
+      "wall_seconds": 446.7683966001496
+    },
+    {
+      "card": "taiji_core_goal_training_10_7_20261101.json",
+      "family": "10",
+      "step": "10.7",
+      "status": "training_below_chance_plus",
+      "cpu_seconds": 392.625,
+      "wall_seconds": 398.43507889984176
+    },
+    {
+      "card": "taiji_core_birth_direction_parts_20261101.json",
+      "family": "09",
+      "step": "09.6.6",
+      "status": "hypothesis_h1_supported",
+      "cpu_seconds": 357.203125,
+      "wall_seconds": 366.37038389989175
+    }
+  ],
+  "re_runs_counted": [
+    "taiji_core_10_closeout_v2_20261101.json",
+    "taiji_core_card_hash_audit_10_12_v2_20261101.json",
+    "taiji_core_fixture_arrivals_v2_20261101.json",
+    "taiji_core_instrument_11_7_v2_20261101.json",
+    "taiji_core_l3_admission_11_v2_20261101.json",
+    "taiji_core_records_state_10_12_v2_20261101.json",
+    "taiji_core_residual_structure_10_7c_v2_20261101.json",
+    "taiji_core_state_selection_10_13_v2_20261101.json",
+    "taiji_core_training_replay_10_7a_v2_20261101.json",
+    "taiji_core_wide_fixture_10_15_v2_20261101.json"
+  ],
+  "limits": "Bookkeeping only: sums the published cpu_seconds/wall_seconds fields. Cards that predate the cost field are listed, never imputed. Re-runs are separate runs and are counted. Wall seconds are cumulative per run and overlap with each other, so only the CPU sum is additive across cards.",
+  "cpu_seconds": 0.265625,
+  "wall_seconds": 0.2993568000383675,
+  "budget": {
+    "cpu_seconds": 120,
+    "wall_seconds": 240
+  },
+  "source_hashes": {
+    "scripts/training/audit_taiji_cost_ledger.py": "5f69fb1eb5a94b5bebdae551e61102b0d81701b1cfa0e277ffbc4b96af738e96"
+  }
+}
