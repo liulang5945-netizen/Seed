@@ -1,0 +1,6 @@
+# 2026-11-02 记录关系读取修订前快照
+
+历史原稿，不发布当前排期。相对链接按原目录解释；原报告与退出不改写。当前入口见plans/MAINLINE.md。
+
+- `MAINLINE_BEFORE_RELATION_REVISION.md`：原路径`plans/MAINLINE.md`；原始SHA-256 `01767cc8b5894e193cdddc34323ec31fa2823b81dd5d42733fe0abbf809768fc`。
+- `REVIEW_PACKET_BEFORE_RELATION_REVISION.md`：原路径`plans/reference/REVIEW-PACKET_20261102.md`；原始SHA-256 `61b1dce18e9e9d85fdb1ba8637a44632c76c8c17e85c849f1c6029214202fd16`。

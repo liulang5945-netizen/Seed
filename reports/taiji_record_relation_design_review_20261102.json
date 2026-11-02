@@ -1,0 +1,285 @@
+{
+  "schema": "taiji-record-relation-design-review-v1",
+  "date": "2026-11-02",
+  "status": "design_revision_static_checks_only",
+  "baseline_commit": "4b5de2a2e3e9c84bd8574fe9d1e9a4a26e52225e",
+  "scope": "Evidence interpretation, algorithm proposal and ordered implementation plan; no neural graph was implemented or executed.",
+  "historical_reports_preserved": [
+    {
+      "path": "reports/taiji_core_read_source_14_3_20261102.json",
+      "sha256_raw": "4c1ed5fee0534892e367cd9c7f664cf0b5b89e0716ab71a8997e1183725098f6",
+      "recorded_status_preserved": "pathway_unreachable"
+    },
+    {
+      "path": "reports/taiji_core_10_21_4_compare_20261101.json",
+      "sha256_raw": "e6b55b7eb0a7e20a34a8dbfef21399b4f7c4f3e9870a55b1c4ab1bb565d5fa9c",
+      "recorded_status_preserved": "reader_selection_absent"
+    }
+  ],
+  "runtime_source_bindings": [
+    {
+      "report": "reports/taiji_core_read_source_14_3_20261102.json",
+      "path": "taiji/composition_read_probe.py",
+      "sha256_raw": "50abe982c348c51145dd3573a35a4a7f54f97f5c51c20988023b4ab643e5c6de",
+      "matches_recorded_binding": true
+    },
+    {
+      "report": "reports/taiji_core_read_source_14_3_20261102.json",
+      "path": "taiji/slot_composition_head.py",
+      "sha256_raw": "1f2103f39fa60111edbe44ec4dad2d5c2d6e2b7b672360c79b8dce63224d00a5",
+      "matches_recorded_binding": true
+    },
+    {
+      "report": "reports/taiji_core_read_source_14_3_20261102.json",
+      "path": "taiji/native_composition_fixture.py",
+      "sha256_raw": "18ca7f7ce19530d153e5396359870ff4661e5033b089da4960dea128a33c83b4",
+      "matches_recorded_binding": true
+    },
+    {
+      "report": "reports/taiji_core_read_source_14_3_20261102.json",
+      "path": "taiji/candidate_manifest.py",
+      "sha256_raw": "6fc05ca4bcee45203594ba80448ed8f2c3d5d89e9df92ccf48c4ab23544db1f0",
+      "matches_recorded_binding": true
+    },
+    {
+      "report": "reports/taiji_core_read_source_14_3_20261102.json",
+      "path": "scripts/training/verify_taiji_read_source_14_3.py",
+      "sha256_raw": "78476ab7c468cbb2f612dbdc26f18995a930f56231bca2111b07be3d1d4105c9",
+      "matches_recorded_binding": true
+    },
+    {
+      "report": "reports/taiji_core_10_21_4_compare_20261101.json",
+      "path": "taiji/query_binding.py",
+      "sha256_raw": "a7b8aea9b944b9c1b1edb4557912aab1cc5709395ccbd1b5df49c0352c1ac07b",
+      "matches_recorded_binding": true
+    },
+    {
+      "report": "reports/taiji_core_10_21_4_compare_20261101.json",
+      "path": "taiji/living_core.py",
+      "sha256_raw": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+      "matches_recorded_binding": true
+    },
+    {
+      "report": "reports/taiji_core_10_21_4_compare_20261101.json",
+      "path": "taiji/growth_credit.py",
+      "sha256_raw": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+      "matches_recorded_binding": true
+    },
+    {
+      "report": "reports/taiji_core_10_21_4_compare_20261101.json",
+      "path": "taiji/state_migration.py",
+      "sha256_raw": "c067dcd043fc189a53051eba72f0b9794ed4b2d3fc77907a89f82aa2817299c6",
+      "matches_recorded_binding": true
+    },
+    {
+      "report": "reports/taiji_core_10_21_4_compare_20261101.json",
+      "path": "taiji/candidate_manifest.py",
+      "sha256_raw": "6fc05ca4bcee45203594ba80448ed8f2c3d5d89e9df92ccf48c4ab23544db1f0",
+      "matches_recorded_binding": true
+    },
+    {
+      "report": "reports/taiji_core_10_21_4_compare_20261101.json",
+      "path": "taiji/native_development.py",
+      "sha256_raw": "d9d04d698d186ef10a2cf994c4e6d490336cdac6c4fb7a5e4b03552c41034857",
+      "matches_recorded_binding": true
+    },
+    {
+      "report": "reports/taiji_core_10_21_4_compare_20261101.json",
+      "path": "taiji/native_goal_attributes.py",
+      "sha256_raw": "f33679904f61b0bea82c968713e8821104e53604bd3b7dcc7798d35b4ec6bf7e",
+      "matches_recorded_binding": true
+    },
+    {
+      "report": "reports/taiji_core_10_21_4_compare_20261101.json",
+      "path": "taiji/native_goal_glossary.py",
+      "sha256_raw": "b40ffa22dbd5adae1285e425047f1c4113d083115bada3e7b0dd07f944a62f03",
+      "matches_recorded_binding": true
+    },
+    {
+      "report": "reports/taiji_core_10_21_4_compare_20261101.json",
+      "path": "scripts/training/verify_taiji_composition_10_21.py",
+      "sha256_raw": "2fef77a4b15460b13b391d842ffa7fe5e4f8c2dce0dd797b299c3530b056bc67",
+      "matches_recorded_binding": true
+    },
+    {
+      "report": "reports/taiji_core_10_21_4_compare_20261101.json",
+      "path": "taiji/native_composition_fixture.py",
+      "sha256_raw": "18ca7f7ce19530d153e5396359870ff4661e5033b089da4960dea128a33c83b4",
+      "matches_recorded_binding": true
+    }
+  ],
+  "archive_snapshots": [
+    {
+      "path": "plans/archive/history/n_algorithm_review_20261102/MAINLINE_BEFORE_RELATION_REVISION.md",
+      "original_path": "plans/MAINLINE.md",
+      "sha256_raw": "01767cc8b5894e193cdddc34323ec31fa2823b81dd5d42733fe0abbf809768fc",
+      "sha256_utf8_lf": "01767cc8b5894e193cdddc34323ec31fa2823b81dd5d42733fe0abbf809768fc"
+    },
+    {
+      "path": "plans/archive/history/n_algorithm_review_20261102/REVIEW_PACKET_BEFORE_RELATION_REVISION.md",
+      "original_path": "plans/reference/REVIEW-PACKET_20261102.md",
+      "sha256_raw": "61b1dce18e9e9d85fdb1ba8637a44632c76c8c17e85c849f1c6029214202fd16",
+      "sha256_utf8_lf": "61b1dce18e9e9d85fdb1ba8637a44632c76c8c17e85c849f1c6029214202fd16"
+    }
+  ],
+  "documents": [
+    {
+      "path": "plans/MAINLINE.md",
+      "sha256_raw": "ced0f57009ed388727c40ab58eac27bb8fac3de9d1742abbd7ea95dc04cd1c8f",
+      "sha256_utf8_lf": "ced0f57009ed388727c40ab58eac27bb8fac3de9d1742abbd7ea95dc04cd1c8f"
+    },
+    {
+      "path": "plans/README.md",
+      "sha256_raw": "e0fd013d434dc2814cf3c7641a031f027ab80e946695e8a2de157ab3e8860ea3",
+      "sha256_utf8_lf": "e0fd013d434dc2814cf3c7641a031f027ab80e946695e8a2de157ab3e8860ea3"
+    },
+    {
+      "path": "plans/active/roadmap/03_CURRENT_EXECUTION.md",
+      "sha256_raw": "580f1359056b632cfe4aacd3f9ecdc0e73371e11dccd9f75123e5311694a4079",
+      "sha256_utf8_lf": "580f1359056b632cfe4aacd3f9ecdc0e73371e11dccd9f75123e5311694a4079"
+    },
+    {
+      "path": "plans/reference/README.md",
+      "sha256_raw": "0043efe072a00433a867544422a6c526608fa3db559f56d963986e48aad8fa7a",
+      "sha256_utf8_lf": "0043efe072a00433a867544422a6c526608fa3db559f56d963986e48aad8fa7a"
+    },
+    {
+      "path": "plans/reference/REVIEW-PACKET_20261102.md",
+      "sha256_raw": "87233d4a439ef1be7d04ea078651c7fe43c08a083b9151b2da1aa9ca10d34c1e",
+      "sha256_utf8_lf": "87233d4a439ef1be7d04ea078651c7fe43c08a083b9151b2da1aa9ca10d34c1e"
+    },
+    {
+      "path": "plans/reference/TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md",
+      "sha256_raw": "d67ff64866150c84d7b06e0d76ba05fbe32eaf636ad190e347195b9ca7a2779c",
+      "sha256_utf8_lf": "d67ff64866150c84d7b06e0d76ba05fbe32eaf636ad190e347195b9ca7a2779c"
+    },
+    {
+      "path": "plans/reference/SPEC-TAIJI-CORE_RECORD_RELATION_14_4_20261102.md",
+      "sha256_raw": "c2ace7a3a7cf5a22eb8cdd5e92e6d116c0383422d3f322695ff46a66b2a84d3b",
+      "sha256_utf8_lf": "c2ace7a3a7cf5a22eb8cdd5e92e6d116c0383422d3f322695ff46a66b2a84d3b"
+    },
+    {
+      "path": "plans/archive/history/n_algorithm_review_20261102/README.md",
+      "sha256_raw": "ca2ebbdff224c351533d15673050e4436867804660e2eb1577498a48cce0f927",
+      "sha256_utf8_lf": "ca2ebbdff224c351533d15673050e4436867804660e2eb1577498a48cce0f927"
+    }
+  ],
+  "static_checks": {
+    "commands": {
+      "single_mainline": {
+        "exit_code": 0,
+        "stdout": "status: ok"
+      },
+      "diff_check": {
+        "exit_code": 0,
+        "stdout": ""
+      }
+    },
+    "relative_links": {
+      "files": 8,
+      "checked": 906,
+      "broken": 0
+    },
+    "parameter_table": {
+      "rows": 13,
+      "new_parameters": 172801,
+      "inherited_plastic_parameters": "Must be enumerated from the 14.4 formal implementation; not included in the 172801 count."
+    },
+    "causal_receptive_field": {
+      "kernel": 3,
+      "dilations": [
+        1,
+        2,
+        4
+      ],
+      "reachable_past_offsets": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "bytes": 15,
+      "scope": "AST and convolution dependency arithmetic; not an empirical learned-capacity result."
+    },
+    "small_distance_counterexample": {
+      "vectors": [
+        [
+          1,
+          0.068
+        ],
+        [
+          1,
+          -0.068
+        ]
+      ],
+      "relative_distance": 0.1356866542652383,
+      "old_absence_threshold": 0.2,
+      "linear_rule": "class = sign(second_coordinate)",
+      "both_classified_correctly": true,
+      "scope": "Algebraic counterexample to distance-based impossibility; not evidence that the current model has a working decoder."
+    },
+    "probability_conservation": {
+      "identity": "gamma + (1-gamma)*alpha_null + (1-gamma)*(1-alpha_null) = 1",
+      "corner_cases_checked": 5,
+      "formal_network_tested": false
+    }
+  },
+  "interpretation": {
+    "old_recipe_stop_retained": true,
+    "original_14_3_status_preserved": true,
+    "14_3_path": "composition_read_probe -> read_slot -> inherited EpisodicRead",
+    "10_21_path": "trained QueryBindingCandidate on frozen BytePatchEncoder features",
+    "not_proven": [
+      "all training doses and capacities exhausted",
+      "small relative distance means zero entity information",
+      "14.3 diagnoses the trained QueryBindingCandidate itself"
+    ]
+  },
+  "algorithm_proposal": {
+    "name": "record_relation_v1",
+    "new_parameters": 172801,
+    "width": 128,
+    "query_width": 32,
+    "bidirectional_gru_hidden_per_direction": 64,
+    "endpoint": "native UTF-8 byte generation with EOS",
+    "stages": [
+      "14.4",
+      "14.5",
+      "14.6",
+      "14.7",
+      "14.8"
+    ],
+    "status": "proposed_not_executed"
+  },
+  "primary_references": [
+    {
+      "title": "Key-Value Memory Networks for Directly Reading Documents",
+      "url": "https://aclanthology.org/D16-1147/"
+    },
+    {
+      "title": "Get To The Point: Summarization with Pointer-Generator Networks",
+      "url": "https://aclanthology.org/P17-1099/"
+    }
+  ],
+  "actual_work": {
+    "neural_forward_calls": 0,
+    "optimizer_calls": 0,
+    "runtime_code_edits": false,
+    "new_training_data_generated": false,
+    "sealed_data_opened": false,
+    "old_scientific_reports_rewritten": false
+  },
+  "delivery_policy": "Commit only this design/documentation family under the current recorded family-by-family instruction; do not push or include unrelated runtime changes.",
+  "next_step": "14.4 formal reference graph, information interventions, per-group task credit, and checkpoint/restore checks under the proposed bounded contract."
+}

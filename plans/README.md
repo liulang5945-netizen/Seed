@@ -79,8 +79,8 @@ R1、R3b、R5b 等保留为原合同和实验身份，N1–N6 保留为机制责
 - [11.4c中断恢复](reference/SPEC-TAIJI-CORE_L3_ADMISSION_20261101.md)：子进程硬退后由新进程续跑、答案逐位相同；台账 v3 ⇒ **9/10**，只剩真实性 A。
 - [11.4d仪器收口](reference/SPEC-TAIJI-CORE_L3_ADMISSION_20261101.md)：9/10 有卡、F 为负 ⇒ 卡里写死 `candidate_usable=false`，11 仍不准入。
 - [10.21 rev2条件读取与绑定学习](reference/SPEC-TAIJI-CORE_COMPOSITION_10_21_20261101.md)：当前单一方案，阶段编号10.21.1–10.21.6；10.21.1/2已执行（量尺有效、图/信用/恢复38/38），后继10.21.3定价逐项准入，不自动批准训练或新模块比较。
-- [项目复审材料](reference/REVIEW-PACKET_20261102.md)：14.3 结案后把"走哪条路线"变成一次可读的判断——甲（现底座上把选择建成可学对象，先跑零训练的 oracle 上界包，≤60 CPU 秒）、乙（另立跨会话经验／反馈更新机制合同，先 pilot 定价）、丙（收束为工程结论）；含"已被排除的下一步变量"表与可引用单价，不立项不授权。
-- [14.3读源条件化前置判别](reference/SPEC-TAIJI-CORE_READ_SOURCE_14_3_20261102.md)：已按 owner 准入执行并结案 **`pathway_unreachable`**（[读数卡](../reports/taiji_core_read_source_14_3_20261102.json)，3.016 CPU 秒／0 优化器调用／0 参数改动）。D2 四个注意力组的 source top-1 全等于 1/9 随机、熵 0.99896；D3 即使把词表缩到只剩该读的那一行，换实体也只让槽移动 0.136（门限 0.50）⇒ 这条读通路承载不了"描述词↔实体"的映射，10.21.4 的负结果至此有了机制归属，而"再加训练／换头／扩样本"按预注册不再是合法下一步变量。前置 14.3.0 的提升先过锚点测试：10.21.1 的 420 个已发布字段逐位重现。
+- [项目复审结论](reference/REVIEW-PACKET_20261102.md)：已收敛为记录关系读取与原生字节表达一个修订方向；原三路线材料归档，先按14.4验证正式图。
+- [14.3原诊断](reference/SPEC-TAIJI-CORE_READ_SOURCE_14_3_20261102.md)：保留pathway_unreachable原卡；实际测旧EpisodicRead，几何阈值不推广为信息不可解码。当前解释及后继见[14.4起修订](reference/SPEC-TAIJI-CORE_RECORD_RELATION_14_4_20261102.md)。
 - [候选设计依据](reference/DESIGN-CANDIDATE-COMPOSITION_20261101.md)：保留有效结果、撤回过强归因，解释为何采用内部绑定事件与同构停读取信用对照；数值细则只在SPEC维护。
 - [03 证据与审批台账](active/roadmap/03_CURRENT_EXECUTION.md)：核验报告、批准、预算、恢复与历史限制；只跳转总计划的执行位置。
 - [10 兼容导航](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)：保留旧章节入口，转到总计划，不另排工作包。
