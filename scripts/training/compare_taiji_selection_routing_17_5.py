@@ -691,7 +691,7 @@ def evaluate_dev(candidate, dev, arm: str, tag: str, full: bool) -> dict:
                 state,
                 EOS,
                 context,
-                ForcedRouteHead(prepared.base.view.record_count),
+                ForcedRouteHead(prepared.base.view.record_count, candidate.head.config),
                 arm=arm,
                 gate_index=gate_index,
                 span_head=candidate.span_head,
@@ -844,7 +844,9 @@ def run_one(seed: int, arm: str, resume: bool = False) -> dict:
     step0 = evaluate_dev(candidate, dev, arm, tag, full=False)
     resumed_from = 0
     checkpoint_path = OUTPUT_DIR / f"{tag}-step{CHECKPOINT_UPDATE}.pt"
-    if resume and checkpoint_path.exists():
+    if resume:
+        if not checkpoint_path.exists():
+            raise FileNotFoundError(f"resume requested but {checkpoint_path} is missing")
         (
             candidate,
             optimizer,
@@ -853,7 +855,6 @@ def run_one(seed: int, arm: str, resume: bool = False) -> dict:
             _payload,
         ) = load_routing_bundle(checkpoint_path)
         candidate.configure_trainable()
-        step0 = {"resumed": True, "skipped_baseline": True}
 
     rows = []
     grad_rows = []
@@ -926,7 +927,6 @@ def run_one(seed: int, arm: str, resume: bool = False) -> dict:
                 {"seed": seed, "arm": arm, "bundle": info, "probe": readiness},
             )
 
-    final = evaluate_dev(candidate, dev, arm, tag, full=True)
     final_path = OUTPUT_DIR / f"{tag}-step{UPDATES}.pt"
     final_info = save_routing_bundle(
         final_path,
@@ -937,6 +937,32 @@ def run_one(seed: int, arm: str, resume: bool = False) -> dict:
         {"sha256": parent_sha, "path": str(PARENTS[seed])},
         initial_binding_state(candidate.binding, f"final-{tag}"),
     )
+    progress_path = OUTPUT_DIR / f"progress-{tag}.json"
+    progress_update = int(json.loads(progress_path.read_text(encoding="utf-8"))["update"])
+    bundle_update = int(load_routing_bundle(final_path)[3])
+    consistency = {
+        "progress_update": progress_update,
+        "bundle_update": bundle_update,
+        "bundle_exists": final_path.exists(),
+        "expected_update": UPDATES,
+    }
+    if not (final_path.exists() and progress_update == UPDATES and bundle_update == UPDATES):
+        raise RuntimeError(f"artifact inconsistency for {tag}: {consistency}")
+    try:
+        final = evaluate_dev(candidate, dev, arm, tag, full=True)
+    except Exception:
+        write_json(
+            OUTPUT_DIR / f"evaluation-{tag}.json",
+            {
+                "seed": seed,
+                "arm": arm,
+                "status": "evaluation_failed_weights_preserved",
+                "bundle": final_info,
+                "consistency": consistency,
+                "traceback": traceback.format_exc(),
+            },
+        )
+        raise
 
     def stage_rows(name: str) -> list[dict]:
         return [row for row in rows if row["stage"] == name]
@@ -1011,6 +1037,8 @@ def run_one(seed: int, arm: str, resume: bool = False) -> dict:
             },
             "step300_bundle": {"path": str(final_info["path"]), "bytes": final_info["bytes"]},
         },
+        "consistency": consistency,
+        "evaluation": {"ok": True},
         "timing": {"cpu_seconds": cpu, "wall_seconds": wall},
     }
 
@@ -1114,7 +1142,7 @@ def aggregate(results: list[dict], prior: dict) -> dict:
     return {
         "schema": "taiji-selection-routing-17-5-compare-v1",
         "step": "N17.5",
-        "date": "2026-11-03",
+        "date": "2026-11-04",
         "dtype": "float64",
         "threads": 1,
         "config": {
@@ -1250,6 +1278,30 @@ def smoke(seed: int = 28031) -> dict:
     return out
 
 
+def evaluate_check() -> dict:
+    """Zero-update regression: evaluate_dev(full=True) must run on every arm/seed."""
+    _train, dev = load_fixtures()
+    sample = dev[:24]
+    cells = []
+    for seed in SEEDS:
+        for arm in ARMS:
+            candidate, optimizer = build_routing_candidate(ROOT / PARENTS[seed], seed, arm)
+            out = evaluate_dev(candidate, sample, arm, f"evalcheck-{seed}-{arm}", full=True)
+            cells.append(
+                {
+                    "seed": seed,
+                    "arm": arm,
+                    "examples": out["examples"],
+                    "overall_completed": out["overall"]["completed"],
+                    "selection_object_top1": out["selection"]["object_top1"],
+                    "identity_rescue_equal": out["identity_rescue"]["equal"],
+                    "mean_nll": out["nll"]["mean_nll"],
+                }
+            )
+            del candidate, optimizer
+    return {"status": "evaluate_dev_full_check", "cells": cells, "ok": True}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--worker", action="store_true")
@@ -1258,10 +1310,14 @@ def main() -> int:
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--preflight", action="store_true")
     parser.add_argument("--smoke", action="store_true")
+    parser.add_argument("--evalcheck", action="store_true")
     arguments = parser.parse_args()
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     if arguments.smoke:
         print(json.dumps(smoke(), ensure_ascii=False, indent=2))
+        return 0
+    if arguments.evalcheck:
+        print(json.dumps(evaluate_check(), ensure_ascii=False, indent=2))
         return 0
     if arguments.preflight:
         print(json.dumps([preflight_roundtrip(seed) for seed in SEEDS]))
@@ -1282,6 +1338,8 @@ def main() -> int:
         return 0
     start_cpu = time.process_time()
     start_wall = time.perf_counter()
+    check = evaluate_check()
+    print(json.dumps({"evalcheck": "ok", "cells": len(check["cells"])}, ensure_ascii=False))
     results = []
     failures = []
     with ProcessPoolExecutor(max_workers=len(SEEDS) * len(ARMS)) as pool:

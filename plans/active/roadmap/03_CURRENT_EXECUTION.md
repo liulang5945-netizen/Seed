@@ -1,14 +1,24 @@
 # N主线执行证据与审批台账
 
-> 当前进度：N17.2R 已完成语义身份迁移：`candidate_sha_v2` 773dcec2…（旧 964a8c68… 仅作历史）；图文件已按 black-100 合并并全绿；零更新等价探针逐位一致（权重 8、720 步 gold、selection 16、三臂 loss 531、游标 1377，全部 `max_abs_diff=0`），四份旧证据保持有效并挂 `.identity.json` 旁挂。17.5 已开跑：6 格（2 seed × 3 臂 × 300 更新），开训前 preflight 185 参数 `max_abs_diff=0`、smoke 通过，非零复制状态恢复沿用 17.4 v2。
-> 下一步：等 17.5 六格落盘 → 汇总 step0/step300、开发闸门与信用方差 → 按计划推进 17.6；到观察线（20,000 CPU / 30,000 wall）先回报外推再继续。
-> 最后提交：`b8a0a6f40`（17.5 runner）；代码 `9ccf29307`、证据 `e8e250ef7`；此前 `fe06783f1`、`34c5ec8ca`、`4289fb488`。
+> 当前进度：17.5 首跑六格训练全部到 300 步，但最终评估在第二个 `ForcedRouteHead` 调用点崩溃（漏传 `config`），step300 包与读数丢失；已修复全部调用点、加 `evaluate_dev(full=True)` 零更新回归自检、把“存包→三者一致性校验→评估”的顺序改正；六格正从 step150 包续跑（Adam 矩与 RNG 已存，轨迹同源）。
+> 下一步：等续跑六格落盘 → 汇总 step0/150/300 与冻结闸门判定（三臂任务门、A−C 两 seed 世界 bootstrap 下界、信用方差）→ 17.6（任务门通过才释放 confirm）→ 17.7；观察线将越线约 103.5% CPU，owner 已批准越线不停并在回执单列。
+> 最后提交：`f075a35b3`（17.5 开跑状态）；代码 `b8a0a6f40`、`9ccf29307`、证据 `e8e250ef7`。
 
 > 文档状态：[状态] — 只登记执行证据、审批、费用与适用限制；统一编号、阶段状态和实际动作集中在[总计划](../../MAINLINE.md)。
 
 更新：2026-11-04，Asia/Shanghai。本页原执行表已整合进总计划，不再发布第二套顺序或复制待办。以下按统一步骤关联证据，阶段记录只解释当时，不能把零步时“未训练”当作后续现状。
 
 **头条状态（2026-11-04，语义身份）：** 身份从“字节绑定”改为“语义哈希”：组成项是图名/契约、配置常量、模块清单、`routing_rule_version`、解码与路由规则、输入白名单、参数名/形状/dtype、声明可塑归属；`source_sha` 与 `weights_sha256` 只记录不决定身份。black-100 合并后 v1 字节摘要从 964a8c68… 漂到 1af63213…，但 `candidate_sha_v2` 恒为 773dcec2…。零更新等价探针（[报告](../../../reports/taiji_selection_routing_17_2r_format_equivalence_20261104.json)）全部逐位一致，60.80 CPU / 62.80 wall、0 优化器步、0 训练更新、0 confirm 读取；四份 2026-11-03 证据维持原字节与有效性（T3 v3 720/720、17.4 v2、新价、17.2R），身份登记见[注册报告](../../../reports/taiji_selection_routing_17_2r_identity_20261104.json)。17.5 准入只剩 checkpoint 保存/恢复复验。本页是按时间追加的流水，旧条目里的“唯一阻塞/唯一下一步”均已被最新条目覆盖。
+
+## 2026-11-04 17.5 首跑失败与处置（训练完成、评估崩溃）
+
+- 失败读数：六格均到 300/300（`progress-*.json` update=300），合计 CPU 12,743.30 / wall 2,215.36（6 格并行）；六份 step150 包与 readiness 齐全。`evaluate_dev(full=True)` 的 identity_rescue 段在 L694 构造 `ForcedRouteHead` 时漏传 `config`，崩溃发生在 step300 包保存之前 → **step300 权重与 dev 读数全部丢失**，进度 JSON 显示 300 但无对应包。归因：代码缺陷（调用点漏参），非架构断点、非剂量问题。
+- 修复：①全文件 `ForcedRouteHead` 构造点补 `config`（L694；L462 此前已修）；②新增零更新回归自检 `--evalcheck`（6 格 × 24 例 `evaluate_dev(full=True)`），主入口开训前强制运行，任何一格抛错即不进入训练；③落盘顺序改为“先存 step300 包 → 校验 进度更新数 = 包存在性 = 包内 step → 再评估”，评估失败只写 `evaluation-<tag>.json` 回执并保留权重；④续跑时 step150 包缺失直接报错，不静默从头训练。
+- 续跑：六格均从 step150 包续跑（包内含 Adam 矩与 RNG 状态，批次调度按 seed 重建），轨迹与不中断跑同源；未做全量重跑。
+
+## 2026-11-04 运维清理：残留 black 进程
+
+06:19 只读快照发现 4 棵与 17.5 无关的 `python -m black` 进程树（PID 23368 / 16612 / 6416 / 41268，起于 2026-11-03 23:50 至 2026-11-04 0:08），仍在空转，累计约 78,800 CPU 秒（单棵 19,527–20,372 CPU 秒）。来源为此前 `python -m black --check/--workers` 调用挂起。按 owner 批准已强制终止，登记于此。自本条起，格式化只走 [`black_check_gate.py`](../../../scripts/training/black_check_gate.py)（in-process black、line-length=100），不再直接调用 `python -m black`，`ruff format` 不再作为格式权威。
 
 ## 2026-11-03 17.4恢复预检与17.2 T3补跑
 
