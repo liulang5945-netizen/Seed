@@ -1,0 +1,53 @@
+{
+  "schema": "taiji-selection-routing-17-2r-supersession-v1",
+  "step": "N17.2R",
+  "date": "2026-11-03",
+  "policy": "pre-change evidence files are never overwritten; reruns write a new file and the old file gets a sidecar",
+  "entries": [
+    {
+      "path": "reports/taiji_selection_routing_17_2_t3_supplement_20261103.json",
+      "bytes": 386216,
+      "sha256": "86bc513dd08c56c86b6ccd20cf5c188b4328baaee3a2e003ebf9e0c0fa0a0017",
+      "superseded_by": "reports/taiji_selection_routing_17_2_t3_supplement_20261103_r2_postfix_20261103.json",
+      "superseded_at": "2026-11-03",
+      "reason": "pre-change T3 baseline (701/720 fail, min 2.08e-36) overwritten by the new-graph rerun",
+      "sidecar": "reports\\taiji_selection_routing_17_2_t3_supplement_20261103.json.superseded.json"
+    },
+    {
+      "path": "reports/taiji_selection_routing_17_4_preflight_20261103.json",
+      "bytes": 41242,
+      "sha256": "d8312c163858f252104d63dee0b581b6062eb08e1fce3cec800c63bdbe93bb07",
+      "superseded_by": "reports/taiji_selection_routing_17_4_preflight_20261103_r2_postfix_20261103.json",
+      "superseded_at": "2026-11-03",
+      "reason": "pre-change 17.4 preflight (46.08 CPU / 18 Adam) overwritten by the new-graph preflight",
+      "sidecar": "reports\\taiji_selection_routing_17_4_preflight_20261103.json.superseded.json"
+    },
+    {
+      "path": "reports/taiji_selection_routing_17_3_verify_20261103.json",
+      "bytes": 18434,
+      "sha256": "7e193f219544770056045843668f82ef215bc814f3cff5c40a01866dae0404a8",
+      "superseded_by": "reports/taiji_selection_routing_17_3_verify_20261103_r2_postfix_20261103.json",
+      "superseded_at": "2026-11-03",
+      "reason": "pre-change 17.3 verify readings overwritten by the new-graph rerun",
+      "sidecar": "reports\\taiji_selection_routing_17_3_verify_20261103.json.superseded.json"
+    },
+    {
+      "path": "plans/manifests/taiji_selection_routing_17_2_t3_supplement_20261103.json",
+      "bytes": 3705,
+      "sha256": "775358a8f4795a2981c9532bb56f86f308b4b85f095c452a8739628cce8525ea",
+      "superseded_by": "plans/manifests/taiji_selection_routing_17_2_t3_supplement_20261103_r2_postfix_20261103.json",
+      "superseded_at": "2026-11-03",
+      "reason": "manifest of the overwritten pre-change T3 report",
+      "sidecar": "plans\\manifests\\taiji_selection_routing_17_2_t3_supplement_20261103.json.superseded.json"
+    },
+    {
+      "path": "plans/manifests/taiji_selection_routing_17_4_preflight_20261103.json",
+      "bytes": 11069,
+      "sha256": "67273f7df71bf63183094d59c5f361598702b627369bf666e459141dfdd01456",
+      "superseded_by": "plans/manifests/taiji_selection_routing_17_4_preflight_20261103_r2_postfix_20261103.json",
+      "superseded_at": "2026-11-03",
+      "reason": "manifest of the overwritten pre-change 17.4 preflight",
+      "sidecar": "plans\\manifests\\taiji_selection_routing_17_4_preflight_20261103.json.superseded.json"
+    }
+  ]
+}

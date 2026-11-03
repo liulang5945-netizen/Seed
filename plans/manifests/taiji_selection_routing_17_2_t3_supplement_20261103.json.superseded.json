@@ -1,0 +1,7 @@
+{
+  "status": "superseded",
+  "superseded_by": "plans/manifests/taiji_selection_routing_17_2_t3_supplement_20261103_r2_postfix_20261103.json",
+  "superseded_at": "2026-11-03",
+  "reason": "manifest of the overwritten pre-change T3 report",
+  "note": "original file bytes untouched; this sidecar carries the status"
+}

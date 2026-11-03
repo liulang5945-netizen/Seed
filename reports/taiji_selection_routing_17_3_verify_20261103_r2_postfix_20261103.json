@@ -1,0 +1,1137 @@
+{
+  "schema": "taiji-selection-routing-17-3-verify-v1",
+  "step": "N17.3.0b",
+  "date": "2026-11-03",
+  "training_updates": 0,
+  "adam_steps": 0,
+  "confirm_reads": 0,
+  "bundle": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28031-A-locked-step300.pt",
+  "bundle_sha256": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169",
+  "r1_calibration": {
+    "n_pairs": 20,
+    "rows": [
+      {
+        "index": 0,
+        "permutation": "reversed",
+        "representation_relative_l2": 0.42923681196586483,
+        "score_max_abs_diff": 0.11799102811616125
+      },
+      {
+        "index": 0,
+        "permutation": "sorted",
+        "representation_relative_l2": 0.4668580927436133,
+        "score_max_abs_diff": 0.18766753898861632
+      },
+      {
+        "index": 1,
+        "permutation": "reversed",
+        "representation_relative_l2": 0.5070896539865263,
+        "score_max_abs_diff": 0.23834399560506744
+      },
+      {
+        "index": 1,
+        "permutation": "sorted",
+        "representation_relative_l2": 0.5537976560781106,
+        "score_max_abs_diff": 0.0885219703374086
+      },
+      {
+        "index": 2,
+        "permutation": "reversed",
+        "representation_relative_l2": 0.5137210559802543,
+        "score_max_abs_diff": 0.2337382141526319
+      },
+      {
+        "index": 2,
+        "permutation": "sorted",
+        "representation_relative_l2": 0.5826646665948102,
+        "score_max_abs_diff": 0.056682803859669284
+      },
+      {
+        "index": 3,
+        "permutation": "reversed",
+        "representation_relative_l2": 0.47993135356370314,
+        "score_max_abs_diff": 0.11435418728890617
+      },
+      {
+        "index": 3,
+        "permutation": "sorted",
+        "representation_relative_l2": 0.6848997376795308,
+        "score_max_abs_diff": 0.13031015390471135
+      },
+      {
+        "index": 4,
+        "permutation": "reversed",
+        "representation_relative_l2": 0.5453815410582354,
+        "score_max_abs_diff": 0.23182847115537178
+      },
+      {
+        "index": 4,
+        "permutation": "sorted",
+        "representation_relative_l2": 0.6295903618013424,
+        "score_max_abs_diff": 0.052837673394406814
+      },
+      {
+        "index": 5,
+        "permutation": "reversed",
+        "representation_relative_l2": 0.42852639116135594,
+        "score_max_abs_diff": 0.1324094089428408
+      },
+      {
+        "index": 5,
+        "permutation": "sorted",
+        "representation_relative_l2": 0.4987497134478075,
+        "score_max_abs_diff": 0.1558345933704669
+      },
+      {
+        "index": 6,
+        "permutation": "reversed",
+        "representation_relative_l2": 0.4902742560720763,
+        "score_max_abs_diff": 0.2250339903494214
+      },
+      {
+        "index": 6,
+        "permutation": "sorted",
+        "representation_relative_l2": 0.5103853588061099,
+        "score_max_abs_diff": 0.06136426197206213
+      },
+      {
+        "index": 7,
+        "permutation": "reversed",
+        "representation_relative_l2": 0.46524443478353045,
+        "score_max_abs_diff": 0.1369169799678968
+      },
+      {
+        "index": 7,
+        "permutation": "sorted",
+        "representation_relative_l2": 0.4748268059413527,
+        "score_max_abs_diff": 0.11077197682066764
+      },
+      {
+        "index": 8,
+        "permutation": "reversed",
+        "representation_relative_l2": 0.4953751800987919,
+        "score_max_abs_diff": 0.10506634449959107
+      },
+      {
+        "index": 8,
+        "permutation": "sorted",
+        "representation_relative_l2": 0.5582420934687432,
+        "score_max_abs_diff": 0.07961348256189116
+      },
+      {
+        "index": 9,
+        "permutation": "reversed",
+        "representation_relative_l2": 0.49105057607911295,
+        "score_max_abs_diff": 0.18211942196048114
+      },
+      {
+        "index": 9,
+        "permutation": "sorted",
+        "representation_relative_l2": 0.49977746934875344,
+        "score_max_abs_diff": 0.14795818411782308
+      }
+    ],
+    "median_repr": 0.49926359139828047,
+    "median_score": 0.13135978142377608,
+    "theta_repr": 0.01,
+    "theta_score": 0.001,
+    "noise_floor": {
+      "prior_16_1_repr": 1.67e-16,
+      "prior_16_1_score": 8.88e-16,
+      "this_run_old_head_witness_repr": 0.0,
+      "this_run_old_head_witness_score": 0.0
+    },
+    "new_head_witness": {
+      "representation_relative_l2": 0.19823816567772942,
+      "score_max_abs_diff": 0.1113205393544025
+    },
+    "old_head_witness": {
+      "representation_max_abs_diff": 0.0,
+      "score_max_abs_diff": 0.0
+    },
+    "cases": {
+      "pass_witness_new_head": true,
+      "pass_one_byte_new_head": true,
+      "fail_old_head_order_blind": true,
+      "fail_same_input_numeric_noise": true
+    },
+    "one_byte_example": {
+      "representation_relative_l2": 0.3012616073266968,
+      "score_max_abs_diff": 0.09999110524880883
+    },
+    "same_input_example": {
+      "representation_relative_l2": 0.0,
+      "score_max_abs_diff": 0.0
+    }
+  },
+  "ledger_mapping": {
+    "t3_gold_span_gate": "SPEC 9.1 early gate R2b, not ledger T3",
+    "t11_api": "interface audit plus zero confirm reads, not ledger T11",
+    "applicability_keys": "ledger T1-T16"
+  },
+  "t1_label_separation": {
+    "distribution_rows_equal": true,
+    "nll_first": 2.443767448579674,
+    "nll_shifted": 13.323412447196295,
+    "loss_differs": true,
+    "passed": true
+  },
+  "t2_r1_gate": {
+    "theta_repr": 0.01,
+    "theta_score": 0.001,
+    "cases": {
+      "pass_witness_new_head": true,
+      "pass_one_byte_new_head": true,
+      "fail_old_head_order_blind": true,
+      "fail_same_input_numeric_noise": true
+    },
+    "distribution_checks": {
+      "median_repr_ge_1e-6": true,
+      "pairs_repr_gt_1e-8": 20,
+      "at_least_18_of_20": true,
+      "median_score_ge_1e-6": true
+    },
+    "passed": true
+  },
+  "t3_gold_span_gate": {
+    "n": 40,
+    "object_exact_rate": 0.0,
+    "place_exact_rate": 0.025,
+    "completed_rate": 0.0,
+    "method": "alpha/beta forced only; pointer and cursor stay natural (frozen pre-Plan-A method)",
+    "gold_span_gate": ">=0.8 pass; 0.1-0.8 not_naked; <=0.1 force position supervision",
+    "band": "force_position_supervision",
+    "rows": [
+      {
+        "index": 0,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 1,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 2,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 3,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 4,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 5,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 6,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 7,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 8,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 9,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 10,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 11,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 12,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 13,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 14,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 15,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 16,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 17,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 18,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 19,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 0,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 1,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 2,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 3,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 4,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 5,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 6,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 7,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 8,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 9,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": true,
+        "completed": false
+      },
+      {
+        "index": 10,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 11,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 12,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 13,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 14,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 15,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 16,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 17,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 18,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      },
+      {
+        "index": 19,
+        "forced_steps": 1,
+        "object_exact": false,
+        "place_exact": false,
+        "completed": false
+      }
+    ]
+  },
+  "t4_span_provenance": {
+    "n": 40,
+    "teacher_span_digest": "55cb68433700e0ab763af2174371ae7d2db3c8e44769e247f00a30f64c031659",
+    "model_argmax_span_digest": "9ebfb82aa5cac9e078a5acb59a6d488a99c1bca3eb2fa0d82de7f03f04454cb4",
+    "digests_differ": true,
+    "source": "object_name/place_name inside frozen raw records; no model argmax used",
+    "passed": true
+  },
+  "counter_probe_wrong_position": {
+    "n": 40,
+    "threshold": 1e-12,
+    "control_gold_min": 1.0,
+    "wrong_gold_max": 0.0,
+    "wrong_byte_min": 1.0,
+    "passed": true,
+    "rows": [
+      {
+        "index": 0,
+        "gold_byte": 233,
+        "wrong_byte": 231,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 1,
+        "gold_byte": 233,
+        "wrong_byte": 231,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 2,
+        "gold_byte": 233,
+        "wrong_byte": 231,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 3,
+        "gold_byte": 233,
+        "wrong_byte": 231,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 4,
+        "gold_byte": 233,
+        "wrong_byte": 231,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 5,
+        "gold_byte": 231,
+        "wrong_byte": 229,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 6,
+        "gold_byte": 231,
+        "wrong_byte": 229,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 7,
+        "gold_byte": 231,
+        "wrong_byte": 229,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 8,
+        "gold_byte": 231,
+        "wrong_byte": 229,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 9,
+        "gold_byte": 231,
+        "wrong_byte": 229,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 10,
+        "gold_byte": 232,
+        "wrong_byte": 181,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 11,
+        "gold_byte": 232,
+        "wrong_byte": 181,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 12,
+        "gold_byte": 232,
+        "wrong_byte": 181,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 13,
+        "gold_byte": 232,
+        "wrong_byte": 181,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 14,
+        "gold_byte": 232,
+        "wrong_byte": 181,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 15,
+        "gold_byte": 233,
+        "wrong_byte": 230,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 16,
+        "gold_byte": 233,
+        "wrong_byte": 230,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 17,
+        "gold_byte": 233,
+        "wrong_byte": 230,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 18,
+        "gold_byte": 233,
+        "wrong_byte": 230,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 19,
+        "gold_byte": 233,
+        "wrong_byte": 230,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 0,
+        "gold_byte": 231,
+        "wrong_byte": 180,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 1,
+        "gold_byte": 231,
+        "wrong_byte": 180,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 2,
+        "gold_byte": 231,
+        "wrong_byte": 180,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 3,
+        "gold_byte": 231,
+        "wrong_byte": 180,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 4,
+        "gold_byte": 231,
+        "wrong_byte": 180,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 5,
+        "gold_byte": 232,
+        "wrong_byte": 229,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 6,
+        "gold_byte": 232,
+        "wrong_byte": 229,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 7,
+        "gold_byte": 232,
+        "wrong_byte": 229,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 8,
+        "gold_byte": 232,
+        "wrong_byte": 229,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 9,
+        "gold_byte": 232,
+        "wrong_byte": 229,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 10,
+        "gold_byte": 233,
+        "wrong_byte": 229,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 11,
+        "gold_byte": 233,
+        "wrong_byte": 229,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 12,
+        "gold_byte": 233,
+        "wrong_byte": 229,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 13,
+        "gold_byte": 233,
+        "wrong_byte": 229,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 14,
+        "gold_byte": 233,
+        "wrong_byte": 229,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 15,
+        "gold_byte": 233,
+        "wrong_byte": 147,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 16,
+        "gold_byte": 233,
+        "wrong_byte": 147,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 17,
+        "gold_byte": 233,
+        "wrong_byte": 147,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 18,
+        "gold_byte": 233,
+        "wrong_byte": 147,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      },
+      {
+        "index": 19,
+        "gold_byte": 233,
+        "wrong_byte": 147,
+        "control_gold": 1.0,
+        "wrong_gold": 0.0,
+        "wrong_wrong": 1.0
+      }
+    ],
+    "note": "forced pointer on a different byte; gamma=0 and q_null=0, so probabilities = copy mass"
+  },
+  "counter_probe_head_ablation": {
+    "n": 40,
+    "object_exact_rate": 0.0,
+    "place_exact_rate": 0.025,
+    "completed_rate": 0.0,
+    "accuracy_threshold": 0.1,
+    "point_mass_kept": true,
+    "point_rows": [
+      {
+        "record": 0,
+        "max": 1.0,
+        "sum": 1.0
+      },
+      {
+        "record": 1,
+        "max": 1.0,
+        "sum": 1.0
+      },
+      {
+        "record": 2,
+        "max": 1.0,
+        "sum": 1.0
+      },
+      {
+        "record": 3,
+        "max": 1.0,
+        "sum": 1.0
+      },
+      {
+        "record": 4,
+        "max": 1.0,
+        "sum": 1.0
+      },
+      {
+        "record": 5,
+        "max": 1.0,
+        "sum": 1.0
+      },
+      {
+        "record": 6,
+        "max": 1.0,
+        "sum": 1.0
+      },
+      {
+        "record": 7,
+        "max": 1.0,
+        "sum": 1.0
+      },
+      {
+        "record": 8,
+        "max": 1.0,
+        "sum": 1.0
+      }
+    ],
+    "passed": true,
+    "note": "uniform route prior over records and null; the pointer stays a one-hot point"
+  },
+  "t5_fd": {
+    "checks": [
+      {
+        "name": "selection_ce",
+        "rows": [
+          {
+            "eps": 0.0001,
+            "analytic": -0.00015821419435579939,
+            "numeric": -0.00015821419507844325,
+            "relative_mismatch": 2.2837516882254664e-09,
+            "passed": true
+          },
+          {
+            "eps": 1e-05,
+            "analytic": -0.00015821419435579939,
+            "numeric": -0.0001582141972988893,
+            "relative_mismatch": 9.30096664977825e-09,
+            "passed": true
+          },
+          {
+            "eps": 1e-06,
+            "analytic": -0.00015821419435579939,
+            "numeric": -0.00015821410848104733,
+            "relative_mismatch": 2.713877086287919e-07,
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      {
+        "name": "span_pointer_ce",
+        "rows": [
+          {
+            "eps": 0.0001,
+            "analytic": 3.1926899823335457,
+            "numeric": 3.1926899852763313,
+            "relative_mismatch": 4.608630317550844e-10,
+            "passed": true
+          },
+          {
+            "eps": 1e-05,
+            "analytic": 3.1926899823335457,
+            "numeric": 3.192689982345342,
+            "relative_mismatch": 1.847398548950788e-12,
+            "passed": true
+          },
+          {
+            "eps": 1e-06,
+            "analytic": 3.1926899823335457,
+            "numeric": 3.1926899817236176,
+            "relative_mismatch": 9.551946970311419e-11,
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      {
+        "name": "span_pointer_into_copy_nll",
+        "rows": [
+          {
+            "eps": 0.0001,
+            "analytic": 0.0011621749098954801,
+            "numeric": 0.0011621749695933659,
+            "relative_mismatch": 2.5683691714181555e-08,
+            "passed": true
+          },
+          {
+            "eps": 1e-05,
+            "analytic": 0.0011621749098954801,
+            "numeric": 0.001162174889657308,
+            "relative_mismatch": 8.707025094165508e-09,
+            "passed": true
+          },
+          {
+            "eps": 1e-06,
+            "analytic": 0.0011621749098954801,
+            "numeric": 0.001162175022884071,
+            "relative_mismatch": 4.861083493894475e-08,
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      {
+        "name": "locked_nll_stop_lock",
+        "rows": [
+          {
+            "eps": 0.0001,
+            "analytic": -0.018118419043131898,
+            "numeric": -0.018118419082835402,
+            "relative_mismatch": 1.095666907666797e-09,
+            "passed": true
+          },
+          {
+            "eps": 1e-05,
+            "analytic": -0.018118419043131898,
+            "numeric": -0.018118419053969603,
+            "relative_mismatch": 2.9907978460498454e-10,
+            "passed": true
+          },
+          {
+            "eps": 1e-06,
+            "analytic": -0.018118419043131898,
+            "numeric": -0.018118419209400827,
+            "relative_mismatch": 4.5883950476487164e-09,
+            "passed": true
+          }
+        ],
+        "passed": true,
+        "note": "Arm A straight-through is a surrogate gradient and is not FD-comparable to the hard-route forward; its VJP check belongs to 17.2."
+      }
+    ],
+    "passed": true
+  },
+  "t7_parameters": {
+    "base": 3526481,
+    "head": 37120,
+    "head_expected": 37120,
+    "span": 258,
+    "span_expected": 258,
+    "span_bottleneck": 4194,
+    "container_head": 3563601,
+    "container_head_span": 3563859,
+    "container_head_span_max": 3567795,
+    "passed": true
+  },
+  "t11_api": {
+    "public_functions": [
+      "expected_head_parameter_count",
+      "expected_span_parameter_count",
+      "__init__",
+      "pooled",
+      "score_rows",
+      "__init__",
+      "logits",
+      "span_loss",
+      "teacher_span",
+      "build_context",
+      "_s_t",
+      "_hard_route",
+      "_locked_quantities",
+      "routing_step",
+      "_advanced_state",
+      "resolve_prefix",
+      "routing_loss",
+      "selection_ce",
+      "routing_generate",
+      "route_labels",
+      "load_thresholds"
+    ],
+    "forbidden_hits": [],
+    "passed": true,
+    "confirm_reads": 0
+  },
+  "t10_retention": {
+    "status": "retention_not_admissible",
+    "reason": "no qualified parent capability set exists; the 16.1 closeout parent arm is not a qualified parent"
+  },
+  "t12_arm_fairness": {
+    "passed": true,
+    "detail": "same parent sha, seed, updates, and stage split for A/B/C; only the route gradient and lock differ"
+  },
+  "applicability": {
+    "T1": {
+      "stage": "17.2",
+      "judged": false,
+      "blocked": "full whitelist audit belongs to the formal graph"
+    },
+    "T2": {
+      "stage": "0b",
+      "judged": true,
+      "blocked": null
+    },
+    "T3": {
+      "stage": "17.2",
+      "judged": false,
+      "blocked": "R2a final-Q exact mass needs the formal graph"
+    },
+    "T4": {
+      "stage": "0b",
+      "judged": true,
+      "blocked": null
+    },
+    "T5": {
+      "stage": "0b",
+      "judged": true,
+      "blocked": null
+    },
+    "T6": {
+      "stage": "17.5 step300",
+      "judged": false,
+      "blocked": "task gate only after full dose"
+    },
+    "T7": {
+      "stage": "0b",
+      "judged": true,
+      "blocked": null
+    },
+    "T8": {
+      "stage": "17.4",
+      "judged": false,
+      "blocked": "restore bit check belongs to 0d"
+    },
+    "T9": {
+      "stage": "17.5",
+      "judged": false,
+      "blocked": "needs trained candidate"
+    },
+    "T10": {
+      "stage": "17.1 / 17.4",
+      "judged": true,
+      "blocked": "parent set empty -> retention_not_admissible"
+    },
+    "T11": {
+      "stage": "17.7",
+      "judged": false,
+      "blocked": "experience_surface_absent is declared, not a capability"
+    },
+    "T12": {
+      "stage": "17.3",
+      "judged": true,
+      "blocked": null
+    },
+    "T13": {
+      "stage": "17.1 onward",
+      "judged": true,
+      "blocked": null
+    },
+    "T14": {
+      "stage": "17.2",
+      "judged": false,
+      "blocked": "prefix/target contract belongs to 17.2"
+    },
+    "T15": {
+      "stage": "17.2 / 17.4",
+      "judged": false,
+      "blocked": "gate-state identity belongs to 17.2/17.4"
+    },
+    "T16": {
+      "stage": "17.2 / 17.4",
+      "judged": false,
+      "blocked": "cache credit belongs to 17.2/17.4"
+    }
+  },
+  "timing": {
+    "cpu_seconds": 48.828125,
+    "wall_seconds": 51.22182710003108
+  },
+  "limits": {
+    "no_task_training": true,
+    "no_adam": true,
+    "no_confirm_read": true,
+    "position_supervision_not_trained": true
+  }
+}

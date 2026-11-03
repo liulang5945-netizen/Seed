@@ -1,0 +1,38 @@
+{
+  "schema": "taiji-selection-routing-17-2r-price-manifest-v1",
+  "step": "N17.2R.price",
+  "date": "2026-11-03",
+  "candidate_sha": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+  "parameter_counts": {
+    "binding": 3526481,
+    "head": 37120,
+    "span": 258,
+    "container_head_span": 3563859,
+    "declared_trainable_elements": 37378
+  },
+  "report": "reports\\taiji_selection_routing_17_2r_price_20261103.json",
+  "three_arm_total_cpu": 15018.521875,
+  "two_arm_total_cpu": 10182.681250000001,
+  "three_arm_wall_estimate": 17271.30015625,
+  "two_arm_wall_estimate": 11710.083437500001,
+  "engineering_adam": 1,
+  "formal_adam": 0,
+  "confirm_reads": 0,
+  "dtype": "float64",
+  "threads": 1,
+  "batch": 8,
+  "lr": 0.001,
+  "span_lambda": 0.5,
+  "pointer_temperature_floor": 0.05,
+  "pointer_entropy_coef": 0.01,
+  "old_baseline": {
+    "status": "superseded",
+    "three_arm_total_cpu": 13092.250000000002,
+    "two_arm_total_cpu": 8750.34375,
+    "path": "reports\\taiji_selection_routing_17_3_price_20261103.json"
+  },
+  "timing": {
+    "cpu_seconds": 142.125,
+    "wall_seconds": 147.04201569990255
+  }
+}

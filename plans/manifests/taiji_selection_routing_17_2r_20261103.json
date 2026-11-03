@@ -1,0 +1,109 @@
+{
+  "schema": "taiji-selection-routing-17-2r-manifest-v1",
+  "step": "N17.2R",
+  "date": "2026-11-03",
+  "candidate_sha": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+  "candidate_sha_consistent": true,
+  "parameter_counts": {
+    "binding": 3526481,
+    "head": 37120,
+    "span": 258,
+    "container_head_span": 3563859,
+    "declared_trainable_elements": 37378
+  },
+  "passed": true,
+  "stop_reason": null,
+  "carriers": [
+    {
+      "stage": "17.2R",
+      "path": "reports\\taiji_selection_routing_17_2r_20261103.json",
+      "candidate_sha": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+      "status": "current"
+    },
+    {
+      "stage": "T3",
+      "path": "reports\\taiji_selection_routing_17_2_t3_supplement_20261103_v3.json",
+      "candidate_sha": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+      "status": "current"
+    },
+    {
+      "stage": "17.2R.price",
+      "path": "reports\\taiji_selection_routing_17_2r_price_20261103.json",
+      "candidate_sha": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+      "status": "current"
+    },
+    {
+      "stage": "17.4",
+      "path": "reports\\taiji_selection_routing_17_4_preflight_20261103_v2.json",
+      "candidate_sha": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+      "status": "current"
+    },
+    {
+      "stage": "17.5",
+      "path": "reports/taiji_selection_routing_17_5_compare_20261103.json",
+      "candidate_sha": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+      "status": "pending",
+      "note": "runner emits the same identity block from build_routing_candidate"
+    }
+  ],
+  "ledger_status": {
+    "T1": "pass",
+    "T2": "pass",
+    "T3": "pass",
+    "T4": "pass",
+    "T5": "pass",
+    "T6": "not_applicable",
+    "T7": "pass",
+    "T8": "pass",
+    "T9": "not_applicable",
+    "T10": "not_applicable",
+    "T11": "pass",
+    "T12": "pass",
+    "T13": "pass",
+    "T14": "pass",
+    "T15": "pass",
+    "T16": "pass"
+  },
+  "restore_precheck_passed": true,
+  "engineering_adam": 18,
+  "formal_adam": 0,
+  "confirm_reads": 0,
+  "old_baseline": [
+    {
+      "path": "reports\\taiji_selection_routing_17_3_price_20261103.json",
+      "status": "superseded",
+      "superseded_by": "reports\\taiji_selection_routing_17_2r_price_20261103.json",
+      "bytes": 10857,
+      "sha256": "ebfb0a48bc636b4b00c6607fc8b539a73c3737a2f19825e835695d983f315fba"
+    },
+    {
+      "path": "reports\\taiji_selection_routing_17_4_preflight_20261103.json",
+      "status": "superseded",
+      "superseded_by": "reports\\taiji_selection_routing_17_4_preflight_20261103_v2.json",
+      "bytes": 42425,
+      "sha256": "2c8d9cc48585f84b9075a7e8c5dd7dd2bf044b80db74ca5cb220ac0914f2a106"
+    },
+    {
+      "path": "reports\\taiji_selection_routing_17_2_t3_supplement_20261103.json",
+      "status": "superseded",
+      "superseded_by": "reports\\taiji_selection_routing_17_2_t3_supplement_20261103_v3.json",
+      "bytes": 16606,
+      "sha256": "d278f1971194d917d152b9e92b47a4983b3354bc669a1d62b3d15d7abbd0046b"
+    },
+    {
+      "path": "reports\\taiji_selection_routing_17_3_verify_20261103.json",
+      "status": "superseded",
+      "superseded_by": "reports\\taiji_selection_routing_17_2r_20261103.json",
+      "bytes": 28737,
+      "sha256": "f9cea6b5afd494e707be3f813c6cd9d838a26b583644df58e01801659215fe2d"
+    }
+  ],
+  "price": {
+    "three_arm_total_cpu": 15018.521875,
+    "two_arm_total_cpu": 10182.681250000001
+  },
+  "timing": {
+    "cpu_seconds": 21.78125,
+    "wall_seconds": 23.47179330000654
+  }
+}

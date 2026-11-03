@@ -1,0 +1,638 @@
+{
+  "schema": "taiji-selection-routing-17-2r-price-v1",
+  "step": "N17.2R.price",
+  "date": "2026-11-03",
+  "candidate": {
+    "candidate_sha": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+    "contract_version": "taiji-selection-routing-17-v1",
+    "bundle_schema": "taiji-selection-routing-bundle-17-v1",
+    "config": {
+      "width": 128,
+      "prev_width": 64,
+      "hidden": 64,
+      "gamma_floor": 0.2,
+      "span_bottleneck": 0
+    },
+    "arms": [
+      "A_route_lock",
+      "B_stop_lock",
+      "C_unlocked"
+    ],
+    "stage_plan": [
+      [
+        "selection",
+        1,
+        100
+      ],
+      [
+        "copy",
+        101,
+        200
+      ],
+      [
+        "joint",
+        201,
+        300
+      ]
+    ],
+    "parameter_counts": {
+      "binding": 3526481,
+      "head": 37120,
+      "span": 258,
+      "container_head_span": 3563859,
+      "declared_trainable_elements": 37378
+    },
+    "parameter_names_sha256": "bfd5fb39aad378539a98e46a2741b92a9fd0427413e28b6e0a8072bc97d981f1",
+    "parameter_count": 185,
+    "declared_trainable": {
+      "binding": [
+        "subject.W",
+        "subject.R",
+        "subject.P",
+        "subject.encoder.embedding.weight",
+        "subject.encoder.input.weight",
+        "subject.encoder.input.bias",
+        "subject.encoder.convolutions.0.weight",
+        "subject.encoder.convolutions.0.bias",
+        "subject.encoder.convolutions.1.weight",
+        "subject.encoder.convolutions.1.bias",
+        "subject.encoder.convolutions.2.weight",
+        "subject.encoder.convolutions.2.bias",
+        "subject.encoder.event.weight",
+        "subject.encoder.event.bias",
+        "subject.xi.weight",
+        "subject.xi.bias",
+        "subject.readout.query.0.weight",
+        "subject.readout.query.1.weight",
+        "subject.readout.keys.0.weight",
+        "subject.readout.keys.1.weight",
+        "subject.readout.keys.2.weight",
+        "subject.readout.keys.3.weight",
+        "subject.readout.keys.4.weight",
+        "subject.readout.keys.5.weight",
+        "subject.readout.keys.6.weight",
+        "subject.readout.keys.7.weight",
+        "subject.readout.values.0.weight",
+        "subject.readout.values.1.weight",
+        "subject.readout.values.2.weight",
+        "subject.readout.values.3.weight",
+        "subject.readout.values.4.weight",
+        "subject.readout.values.5.weight",
+        "subject.readout.values.6.weight",
+        "subject.readout.values.7.weight",
+        "subject.readout.output.weight",
+        "subject.expression.generate.weight",
+        "subject.expression.generate.bias",
+        "subject.expression.mix.weight",
+        "subject.expression.mix.bias",
+        "relation.encoder.gru.weight_ih_l0",
+        "relation.encoder.gru.weight_hh_l0",
+        "relation.encoder.gru.bias_ih_l0",
+        "relation.encoder.gru.bias_hh_l0",
+        "relation.encoder.gru.weight_ih_l0_reverse",
+        "relation.encoder.gru.weight_hh_l0_reverse",
+        "relation.encoder.gru.bias_ih_l0_reverse",
+        "relation.encoder.gru.bias_hh_l0_reverse",
+        "relation.encoder.W_c.weight",
+        "relation.encoder.W_c.bias",
+        "relation.encoder.A_pool.weight",
+        "relation.encoder.A_pool.bias",
+        "relation.encoder.v_pool.weight",
+        "relation.reader.null_key",
+        "relation.reader.null_value",
+        "relation.reader.V_position.weight",
+        "relation.reader.V_position.bias",
+        "reader.v_relative",
+        "reader.v_meta",
+        "reader.E_goal.weight",
+        "reader.E_source.weight",
+        "reader.Q_w.weight",
+        "reader.Q_w.bias",
+        "reader.Q_s.weight",
+        "reader.Q_s.bias",
+        "reader.Q_transport.weight",
+        "reader.Q_transport.bias",
+        "reader.K_transport.weight",
+        "reader.continuation.weight",
+        "reader.continuation.bias"
+      ],
+      "head": [
+        "head.k_null",
+        "head.W_hidden.weight",
+        "head.W_hidden.bias",
+        "head.w_out.weight"
+      ],
+      "span": [
+        "span.start.weight",
+        "span.start.bias",
+        "span.end.weight",
+        "span.end.bias"
+      ]
+    },
+    "source_files": {
+      "taiji/selection_routing.py": "5a85be1e564ed22f08a07a087fef923f39cb0a2762fdb958bd33553bfdb2c83b",
+      "taiji/binding_copy.py": "3205ca89100ffdfeeac1bb2e7918b295d39426565616ddbdef3bfac2af7eb8f9",
+      "taiji/binding_select.py": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+      "taiji/record_relation_core.py": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+      "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+      "taiji/selection_routing_checkpoint.py": "cbaa347a00b614edea13839a0b1818db10440ac4605c6d42e7a0856a3f27fee3"
+    }
+  },
+  "candidate_sha": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+  "graph": "hard point transport + position supervision; pointer T 1.00->0.05, entropy 0.01",
+  "dtype": "float64",
+  "threads": 1,
+  "batch": 8,
+  "lr": 0.001,
+  "span_lambda": 0.5,
+  "pointer_temperature": {
+    "selection_free": 1.0,
+    "copy_joint": 0.05,
+    "inference": 0.05
+  },
+  "pointer_entropy_coef": 0.01,
+  "engineering_adam": 1,
+  "formal_updates_three_arm": 1800,
+  "formal_updates_two_arm": 1200,
+  "components": {
+    "selection|B_stop_lock|span=True": {
+      "stage": "selection",
+      "arm": "B_stop_lock",
+      "span": true,
+      "forward_cpu": 2.5703125,
+      "forward_backward_cpu": 3.0703125,
+      "bptt_cpu": 0.5,
+      "forward_rows": [
+        2.5625,
+        2.578125
+      ],
+      "backward_rows": [
+        3.0625,
+        3.078125
+      ]
+    },
+    "copy|B_stop_lock|span=True": {
+      "stage": "copy",
+      "arm": "B_stop_lock",
+      "span": true,
+      "forward_cpu": 2.4921875,
+      "forward_backward_cpu": 8.25,
+      "bptt_cpu": 5.7578125,
+      "forward_rows": [
+        2.484375,
+        2.5
+      ],
+      "backward_rows": [
+        8.3125,
+        8.1875
+      ]
+    },
+    "joint|A_route_lock|span=True": {
+      "stage": "joint",
+      "arm": "A_route_lock",
+      "span": true,
+      "forward_cpu": 2.4296875,
+      "forward_backward_cpu": 8.6328125,
+      "bptt_cpu": 6.203125,
+      "forward_rows": [
+        2.453125,
+        2.40625
+      ],
+      "backward_rows": [
+        8.578125,
+        8.6875
+      ]
+    },
+    "joint|B_stop_lock|span=True": {
+      "stage": "joint",
+      "arm": "B_stop_lock",
+      "span": true,
+      "forward_cpu": 2.453125,
+      "forward_backward_cpu": 8.6796875,
+      "bptt_cpu": 6.2265625,
+      "forward_rows": [
+        2.484375,
+        2.421875
+      ],
+      "backward_rows": [
+        8.640625,
+        8.71875
+      ]
+    },
+    "joint|C_unlocked|span=True": {
+      "stage": "joint",
+      "arm": "C_unlocked",
+      "span": true,
+      "forward_cpu": 2.421875,
+      "forward_backward_cpu": 7.59375,
+      "bptt_cpu": 5.171875,
+      "forward_rows": [
+        2.421875,
+        2.421875
+      ],
+      "backward_rows": [
+        8.578125,
+        6.609375
+      ]
+    },
+    "joint|A_route_lock|span=False": {
+      "stage": "joint",
+      "arm": "A_route_lock",
+      "span": false,
+      "forward_cpu": 1.625,
+      "forward_backward_cpu": 7.0859375,
+      "bptt_cpu": 5.4609375,
+      "forward_rows": [
+        1.625,
+        1.625
+      ],
+      "backward_rows": [
+        5.859375,
+        8.3125
+      ]
+    }
+  },
+  "adam": {
+    "cpu": 0.03125,
+    "wall": 0.02764220000244677,
+    "parameter_groups": 185,
+    "note": "one joint Adam step including first-step state allocation (17 routing candidate)"
+  },
+  "prices": {
+    "selection_with": 3.1015625,
+    "copy_with": 8.28125,
+    "joint_A_route_lock_with": 8.6640625,
+    "joint_B_stop_lock_with": 8.7109375,
+    "joint_C_unlocked_with": 7.625,
+    "joint_A_route_lock_without": 7.1171875,
+    "joint_span_increment_A": 1.546875
+  },
+  "generation": {
+    "A_route_lock": {
+      "examples": 8,
+      "cpu": 2.15625,
+      "cpu_per_example": 0.2734375,
+      "rows": [
+        0.21875,
+        0.296875,
+        0.28125,
+        0.234375,
+        0.296875,
+        0.234375,
+        0.265625,
+        0.328125
+      ],
+      "pointer_hard": true,
+      "pointer_temperature": 0.05,
+      "steps": [
+        21,
+        31,
+        27,
+        26,
+        28,
+        23,
+        27,
+        32
+      ],
+      "median_steps": 27.0,
+      "terminated": 8
+    },
+    "C_unlocked": {
+      "examples": 8,
+      "cpu": 2.234375,
+      "cpu_per_example": 0.28125,
+      "rows": [
+        0.28125,
+        0.28125,
+        0.28125,
+        0.28125,
+        0.265625,
+        0.265625,
+        0.28125,
+        0.296875
+      ],
+      "pointer_hard": true,
+      "pointer_temperature": 0.05,
+      "steps": [
+        28,
+        28,
+        28,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "median_steps": 28.0,
+      "terminated": 8
+    },
+    "B_stop_lock": {
+      "examples": 8,
+      "cpu": 2.15625,
+      "cpu_per_example": 0.2734375,
+      "rows": [
+        0.21875,
+        0.296875,
+        0.28125,
+        0.234375,
+        0.296875,
+        0.234375,
+        0.265625,
+        0.328125
+      ],
+      "pointer_hard": true,
+      "pointer_temperature": 0.05,
+      "steps": [
+        21,
+        31,
+        27,
+        26,
+        28,
+        23,
+        27,
+        32
+      ],
+      "median_steps": 27.0,
+      "terminated": 8
+    },
+    "A_oldstyle_soft_T1": {
+      "examples": 8,
+      "cpu": 2.09375,
+      "cpu_per_example": 0.25,
+      "rows": [
+        0.234375,
+        0.25,
+        0.3125,
+        0.25,
+        0.28125,
+        0.25,
+        0.25,
+        0.265625
+      ],
+      "pointer_hard": false,
+      "pointer_temperature": 1.0,
+      "steps": [
+        24,
+        24,
+        31,
+        23,
+        28,
+        24,
+        24,
+        26
+      ],
+      "median_steps": 24.0,
+      "terminated": 8
+    }
+  },
+  "evaluation": {
+    "examples": 8,
+    "cpu": 0.0,
+    "cpu_per_example": 0.0
+  },
+  "selection_forward": {
+    "examples": 8,
+    "cpu": 2.703125,
+    "wall": 2.793306899955496,
+    "cpu_per_example": 0.337890625
+  },
+  "restore": {
+    "cpu": 0.0703125,
+    "rows": [
+      0.078125,
+      0.0625
+    ],
+    "bytes": 28650343,
+    "mib": 27.32309627532959,
+    "note": "load_routing_bundle: rebuild binding+head+span, load Adam moments and state"
+  },
+  "bundle": {
+    "inherited_mib": 27.2307,
+    "delta_bytes_replace_old_head": 282624,
+    "mib_replace_old_head": 27.50023125,
+    "mib_keep_old_head": 28.086214526367186,
+    "note": "3x = parameter + two Adam moments, float64; inherited bytes from the frozen 16.1 bundle"
+  },
+  "three_arm": {
+    "arms": [
+      "A_route_lock",
+      "B_stop_lock",
+      "C_unlocked"
+    ],
+    "runs": 6,
+    "updates": 1800,
+    "adam_formal": 1800,
+    "training_cpu": 11829.6875,
+    "training_cpu_per_run": 1971.6145833333333,
+    "per_arm_seed_training_cpu": {
+      "A_route_lock": 2004.6875,
+      "B_stop_lock": 2009.375,
+      "C_unlocked": 1900.78125
+    },
+    "generation_cpu": 795.0,
+    "evaluation_cpu": 0.0,
+    "selection_probe_cpu": 973.125,
+    "restore_cpu": 0.84375,
+    "subtotal_cpu": 13598.65625,
+    "total_cpu": 15018.521875,
+    "total_wall_estimate": 17271.30015625,
+    "product_bundles": 12,
+    "bundle_mib_final": 330.002775,
+    "bundle_mib_step150_checkpoint": 165.0013875,
+    "peak_product_mib": 495.0041625
+  },
+  "two_arm": {
+    "arms": [
+      "A_route_lock",
+      "B_stop_lock"
+    ],
+    "runs": 4,
+    "updates": 1200,
+    "adam_formal": 1200,
+    "training_cpu": 8028.125,
+    "training_cpu_per_run": 2007.03125,
+    "per_arm_seed_training_cpu": {
+      "A_route_lock": 2004.6875,
+      "B_stop_lock": 2009.375
+    },
+    "generation_cpu": 525.0,
+    "evaluation_cpu": 0.0,
+    "selection_probe_cpu": 648.75,
+    "restore_cpu": 0.5625,
+    "subtotal_cpu": 9202.4375,
+    "total_cpu": 10182.681250000001,
+    "total_wall_estimate": 11710.083437500001,
+    "product_bundles": 8,
+    "bundle_mib_final": 220.00185,
+    "bundle_mib_step150_checkpoint": 110.000925,
+    "peak_product_mib": 330.002775
+  },
+  "position_supervision": {
+    "parameter_count": 258,
+    "bottleneck_parameter_count": 4194,
+    "joint_increment_cpu": 1.546875,
+    "enabled_from": "stage 1 selection through stage 3 joint"
+  },
+  "baseline_before": {
+    "status": "superseded",
+    "three_arm_total_cpu": 13092.250000000002,
+    "two_arm_total_cpu": 8750.34375,
+    "path": "reports\\taiji_selection_routing_17_3_price_20261103.json",
+    "note": "frozen pre-change price, never used as the current value"
+  },
+  "difference_table": [
+    {
+      "item": "selection.B_stop_lock.forward_backward_cpu",
+      "before": 2.625,
+      "after": 3.1015625,
+      "delta": 0.4765625,
+      "ratio": 1.181547619047619,
+      "reason": "selection CE and span heads are unchanged, but the teacher-forced step it drives now runs the point transport (source softmax + row softmax) instead of the old single soft row"
+    },
+    {
+      "item": "copy.B_stop_lock.forward_backward_cpu",
+      "before": 7.28125,
+      "after": 8.28125,
+      "delta": 1.0,
+      "ratio": 1.1373390557939915,
+      "reason": "point transport replaces soft diffusion and the span start bias is built every step; same tensor volume, one extra normalise/index_add and per-record start logits"
+    },
+    {
+      "item": "joint.A_route_lock.forward_backward_cpu",
+      "before": 7.7734375,
+      "after": 8.6640625,
+      "delta": 0.890625,
+      "ratio": 1.114572864321608,
+      "reason": "point transport replaces soft diffusion and the span start bias is built every step; same tensor volume, one extra normalise/index_add and per-record start logits"
+    },
+    {
+      "item": "adam_cpu",
+      "before": 0.03125,
+      "after": 0.03125,
+      "delta": 0.0,
+      "ratio": 1.0,
+      "reason": "same trainable parameter set and Adam defaults; delta is allocator/timer noise"
+    },
+    {
+      "item": "generation_cpu_per_example.A",
+      "before": 0.1640625,
+      "after": 0.2734375,
+      "delta": 0.109375,
+      "ratio": 1.6666666666666667,
+      "reason": "frozen inference: hard argmax pointer at T=0.05 plus the per-record span start bias; the point switch also changes which byte is copied and therefore when generation terminates"
+    },
+    {
+      "item": "generation_cpu_per_example.A_oldstyle_soft_T1",
+      "before": 0.1640625,
+      "after": 0.25,
+      "delta": 0.0859375,
+      "ratio": 1.5238095238095237,
+      "reason": "same soft semantics and temperature as the old pricer, now with the span start bias and the point-transport row; isolates the hard-pointer switch from the span/trajectory change"
+    },
+    {
+      "item": "generation_median_steps.A",
+      "before": null,
+      "after": 27.0,
+      "delta": null,
+      "ratio": null,
+      "reason": "steps actually emitted by the new hard pointer (old pricer did not record steps)"
+    },
+    {
+      "item": "generation_median_steps.A_oldstyle_soft_T1",
+      "before": null,
+      "after": 24.0,
+      "delta": null,
+      "ratio": null,
+      "reason": "steps emitted by the soft probe; a lower step count at the same fixture means the hard pointer is running longer trajectories"
+    },
+    {
+      "item": "evaluation_cpu_per_example",
+      "before": 0.0,
+      "after": 0.0,
+      "delta": 0.0,
+      "ratio": null,
+      "reason": "score_generation untouched"
+    },
+    {
+      "item": "selection_probe_cpu_per_example",
+      "before": 0.26953125,
+      "after": 0.337890625,
+      "delta": 0.068359375,
+      "ratio": 1.2536231884057971,
+      "reason": "the selection CE term itself is untouched, but each probed example still runs the teacher-forced step under the new point transport"
+    },
+    {
+      "item": "restore_cpu",
+      "before": 0.078125,
+      "after": 0.0703125,
+      "delta": -0.0078125,
+      "ratio": 0.9,
+      "reason": "the old figure timed the inherited 16.1 bundle; restore now reloads the 17 routing bundle (head + span + Adam moments + state)"
+    },
+    {
+      "item": "bundle_mib_final",
+      "before": 27.50023125,
+      "after": 27.50023125,
+      "delta": 0.0,
+      "ratio": 1.0,
+      "reason": "parameter count and dtype unchanged (head 37,120 + span 258)"
+    },
+    {
+      "item": "bundle_mib_saved_probe",
+      "before": 27.50023125,
+      "after": 27.32309627532959,
+      "delta": -0.17713497467040895,
+      "ratio": 0.9935587823585881,
+      "reason": "actual saved routing bundle: parameter + two Adam moments + state, float64 with torch zip padding"
+    },
+    {
+      "item": "training_cpu_per_run.A_route_lock",
+      "before": 1777.34375,
+      "after": 2004.6875,
+      "delta": 227.34375,
+      "ratio": 1.1279120879120879,
+      "reason": "aggregate of the stage unit prices above over 300 updates (100 selection + 100 copy + 100 joint)"
+    },
+    {
+      "item": "training_cpu_per_run.B_stop_lock",
+      "before": 1756.25,
+      "after": 2009.375,
+      "delta": 253.125,
+      "ratio": 1.1441281138790036,
+      "reason": "aggregate of the stage unit prices above over 300 updates (100 selection + 100 copy + 100 joint)"
+    },
+    {
+      "item": "training_cpu_per_run.C_unlocked",
+      "before": 1739.0625,
+      "after": 1900.78125,
+      "delta": 161.71875,
+      "ratio": 1.0929919137466306,
+      "reason": "aggregate of the stage unit prices above over 300 updates (100 selection + 100 copy + 100 joint)"
+    },
+    {
+      "item": "total_cpu.three_arm",
+      "before": 13092.250000000002,
+      "after": 15018.521875,
+      "delta": 1926.2718749999985,
+      "ratio": 1.1471306975500772,
+      "reason": "sum of training, generation, probe, restore, overrun and fixed 60 s"
+    },
+    {
+      "item": "total_cpu.two_arm",
+      "before": 8750.34375,
+      "after": 10182.681250000001,
+      "delta": 1432.3375000000015,
+      "ratio": 1.163689283635286,
+      "reason": "computed below"
+    }
+  ],
+  "timing": {
+    "cpu_seconds": 142.125,
+    "wall_seconds": 147.04201569990255
+  },
+  "limits": {
+    "confirm_reads": 0,
+    "formal_adam": 0,
+    "engineering_adam": 1
+  }
+}

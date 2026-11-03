@@ -1,0 +1,106 @@
+{
+  "schema": "taiji-selection-routing-17-2-t3-supplement-manifest-v3",
+  "step": "N17.2-supplement",
+  "date": "2026-11-03",
+  "candidate_sha": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+  "parameter_counts": {
+    "binding": 3526481,
+    "head": 37120,
+    "span": 258,
+    "container_head_span": 3563859,
+    "declared_trainable_elements": 37378
+  },
+  "supersedes": {
+    "path": "plans/manifests/taiji_selection_routing_17_2_t3_supplement_20261103.json",
+    "report": "reports/taiji_selection_routing_17_2_t3_supplement_20261103.json",
+    "status": "superseded",
+    "reason": "v2 manifest lacks candidate_sha"
+  },
+  "passed": true,
+  "report": {
+    "path": "reports\\taiji_selection_routing_17_2_t3_supplement_20261103_v3.json",
+    "bytes": 21767,
+    "sha256": "7037bcc3e3c4b5fefcc278a59f4500dc2fd9455f3343d6d15cfcad94a0ce7f85"
+  },
+  "source_sha256": {
+    "taiji/selection_routing.py": "5a85be1e564ed22f08a07a087fef923f39cb0a2762fdb958bd33553bfdb2c83b",
+    "taiji/binding_copy.py": "3205ca89100ffdfeeac1bb2e7918b295d39426565616ddbdef3bfac2af7eb8f9",
+    "taiji/binding_select.py": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+    "taiji/record_relation.py": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+    "taiji/record_relation_core.py": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "taiji/candidate_identity.py": "b124f6188682e0a0b9cb340f1c11ece212cfeab7b4f08c593ed12328ed341b08",
+    "scripts/training/verify_taiji_binding_select_16_1_compare.py": "5382a02113922ebba60d03f0b964e6198df47e5d5df1a07986f9b5b70ac30ef6",
+    "scripts\\training\\verify_taiji_selection_routing_17_2_t3_supplement.py": "fa9a185e2de601d089a6596c2fb8326482a277c7025fbd134aa017b10ff9c92d"
+  },
+  "parent_bundle": {
+    "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28031-A-locked-step300.pt",
+    "bytes": 65557565,
+    "sha256": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169"
+  },
+  "data": [
+    {
+      "path": "output\\taiji_core_binding_select_16_1\\select_v1.json",
+      "bytes": 722294,
+      "sha256": "48f942867537e862909b5495d3b9ec18dde7251ad731a818a04730e1cb85044f"
+    },
+    {
+      "path": "output\\taiji_core_binding_copy_15_1\\data_v2.json",
+      "bytes": 2006572,
+      "sha256": "55385f6ba4b309f9b0cf7a28eaa524205943946aa5bbac7d593d296e172bf6ad"
+    }
+  ],
+  "criteria": {
+    "t3_quote": "R2a 最终Q正确源字节一点质量、q_null=gamma=0 时，正确字节概率 f64≥1−1e-12、f32≥1−1e-6",
+    "thresholds": {
+      "f64": 0.999999999999,
+      "f32": 0.999999,
+      "tolerance": 1e-12
+    },
+    "intervention": "alpha one-hot gold record, beta one-hot gold byte position, gamma_override=0, q_null=0",
+    "gate": "all 720 record steps pass in both dtypes",
+    "f32_method": "forced read replayed on a float32 copy of the reader with the same state; routing_step elsewhere is float64 by contract",
+    "demoted": "route argmax is a diagnostic, not a gate",
+    "frozen": "never relaxed"
+  },
+  "readings": {
+    "n": 40,
+    "steps": 720,
+    "p64": {
+      "min": 1.0,
+      "median": 1.0,
+      "max": 1.0,
+      "failed_steps": 0
+    },
+    "p32": {
+      "min": 1.0,
+      "median": 1.0,
+      "max": 1.0,
+      "failed_steps": 0
+    },
+    "transport_diffusion_steps": 0,
+    "cursor_mixing_steps": 0,
+    "instrument_error_steps": 0,
+    "transport_row_delta_steps": 720,
+    "gold_position_context_matched_steps": 640,
+    "failure_layer": "none",
+    "route_agreement_rate": 0.19732142857142856
+  },
+  "products": {
+    "report": {
+      "path": "reports\\taiji_selection_routing_17_2_t3_supplement_20261103_v3.json",
+      "bytes": 21767,
+      "sha256": "7037bcc3e3c4b5fefcc278a59f4500dc2fd9455f3343d6d15cfcad94a0ce7f85"
+    },
+    "script": {
+      "path": "scripts\\training\\verify_taiji_selection_routing_17_2_t3_supplement.py",
+      "bytes": 31863,
+      "sha256": "fa9a185e2de601d089a6596c2fb8326482a277c7025fbd134aa017b10ff9c92d"
+    }
+  },
+  "limits": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "confirm_reads": 0
+  }
+}

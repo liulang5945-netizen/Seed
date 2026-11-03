@@ -1,0 +1,1451 @@
+{
+  "schema": "taiji-selection-routing-17-2r-v1",
+  "step": "N17.2R",
+  "date": "2026-11-03",
+  "candidate": {
+    "candidate_sha": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+    "contract_version": "taiji-selection-routing-17-v1",
+    "bundle_schema": "taiji-selection-routing-bundle-17-v1",
+    "config": {
+      "width": 128,
+      "prev_width": 64,
+      "hidden": 64,
+      "gamma_floor": 0.2,
+      "span_bottleneck": 0
+    },
+    "arms": [
+      "A_route_lock",
+      "B_stop_lock",
+      "C_unlocked"
+    ],
+    "stage_plan": [
+      [
+        "selection",
+        1,
+        100
+      ],
+      [
+        "copy",
+        101,
+        200
+      ],
+      [
+        "joint",
+        201,
+        300
+      ]
+    ],
+    "parameter_counts": {
+      "binding": 3526481,
+      "head": 37120,
+      "span": 258,
+      "container_head_span": 3563859,
+      "declared_trainable_elements": 37378
+    },
+    "parameter_names_sha256": "bfd5fb39aad378539a98e46a2741b92a9fd0427413e28b6e0a8072bc97d981f1",
+    "parameter_count": 185,
+    "declared_trainable": {
+      "binding": [
+        "subject.W",
+        "subject.R",
+        "subject.P",
+        "subject.encoder.embedding.weight",
+        "subject.encoder.input.weight",
+        "subject.encoder.input.bias",
+        "subject.encoder.convolutions.0.weight",
+        "subject.encoder.convolutions.0.bias",
+        "subject.encoder.convolutions.1.weight",
+        "subject.encoder.convolutions.1.bias",
+        "subject.encoder.convolutions.2.weight",
+        "subject.encoder.convolutions.2.bias",
+        "subject.encoder.event.weight",
+        "subject.encoder.event.bias",
+        "subject.xi.weight",
+        "subject.xi.bias",
+        "subject.readout.query.0.weight",
+        "subject.readout.query.1.weight",
+        "subject.readout.keys.0.weight",
+        "subject.readout.keys.1.weight",
+        "subject.readout.keys.2.weight",
+        "subject.readout.keys.3.weight",
+        "subject.readout.keys.4.weight",
+        "subject.readout.keys.5.weight",
+        "subject.readout.keys.6.weight",
+        "subject.readout.keys.7.weight",
+        "subject.readout.values.0.weight",
+        "subject.readout.values.1.weight",
+        "subject.readout.values.2.weight",
+        "subject.readout.values.3.weight",
+        "subject.readout.values.4.weight",
+        "subject.readout.values.5.weight",
+        "subject.readout.values.6.weight",
+        "subject.readout.values.7.weight",
+        "subject.readout.output.weight",
+        "subject.expression.generate.weight",
+        "subject.expression.generate.bias",
+        "subject.expression.mix.weight",
+        "subject.expression.mix.bias",
+        "relation.encoder.gru.weight_ih_l0",
+        "relation.encoder.gru.weight_hh_l0",
+        "relation.encoder.gru.bias_ih_l0",
+        "relation.encoder.gru.bias_hh_l0",
+        "relation.encoder.gru.weight_ih_l0_reverse",
+        "relation.encoder.gru.weight_hh_l0_reverse",
+        "relation.encoder.gru.bias_ih_l0_reverse",
+        "relation.encoder.gru.bias_hh_l0_reverse",
+        "relation.encoder.W_c.weight",
+        "relation.encoder.W_c.bias",
+        "relation.encoder.A_pool.weight",
+        "relation.encoder.A_pool.bias",
+        "relation.encoder.v_pool.weight",
+        "relation.reader.null_key",
+        "relation.reader.null_value",
+        "relation.reader.V_position.weight",
+        "relation.reader.V_position.bias",
+        "reader.v_relative",
+        "reader.v_meta",
+        "reader.E_goal.weight",
+        "reader.E_source.weight",
+        "reader.Q_w.weight",
+        "reader.Q_w.bias",
+        "reader.Q_s.weight",
+        "reader.Q_s.bias",
+        "reader.Q_transport.weight",
+        "reader.Q_transport.bias",
+        "reader.K_transport.weight",
+        "reader.continuation.weight",
+        "reader.continuation.bias"
+      ],
+      "head": [
+        "head.k_null",
+        "head.W_hidden.weight",
+        "head.W_hidden.bias",
+        "head.w_out.weight"
+      ],
+      "span": [
+        "span.start.weight",
+        "span.start.bias",
+        "span.end.weight",
+        "span.end.bias"
+      ]
+    },
+    "source_files": {
+      "taiji/selection_routing.py": "5a85be1e564ed22f08a07a087fef923f39cb0a2762fdb958bd33553bfdb2c83b",
+      "taiji/binding_copy.py": "3205ca89100ffdfeeac1bb2e7918b295d39426565616ddbdef3bfac2af7eb8f9",
+      "taiji/binding_select.py": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+      "taiji/record_relation_core.py": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+      "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+      "taiji/selection_routing_checkpoint.py": "cbaa347a00b614edea13839a0b1818db10440ac4605c6d42e7a0856a3f27fee3"
+    }
+  },
+  "candidate_shas_across_cells": [
+    "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c"
+  ],
+  "candidate_sha_consistent": true,
+  "carriers": [
+    {
+      "stage": "17.2R",
+      "path": "reports\\taiji_selection_routing_17_2r_20261103.json",
+      "candidate_sha": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+      "status": "current"
+    },
+    {
+      "stage": "T3",
+      "path": "reports\\taiji_selection_routing_17_2_t3_supplement_20261103_v3.json",
+      "candidate_sha": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+      "status": "current"
+    },
+    {
+      "stage": "17.2R.price",
+      "path": "reports\\taiji_selection_routing_17_2r_price_20261103.json",
+      "candidate_sha": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+      "status": "current"
+    },
+    {
+      "stage": "17.4",
+      "path": "reports\\taiji_selection_routing_17_4_preflight_20261103_v2.json",
+      "candidate_sha": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+      "status": "current"
+    },
+    {
+      "stage": "17.5",
+      "path": "reports/taiji_selection_routing_17_5_compare_20261103.json",
+      "candidate_sha": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+      "status": "pending",
+      "note": "runner emits the same identity block from build_routing_candidate"
+    }
+  ],
+  "passed": true,
+  "stop_reason": null,
+  "ledger": [
+    {
+      "id": "T1",
+      "status": "pass",
+      "judged_at": "17.2R",
+      "reading": {
+        "generate_forbidden_params": [],
+        "step_forbidden_params": [],
+        "forward_source_forbidden": {
+          "target_bytes_in_generate": false,
+          "route_index_in_generate": false,
+          "gold_in_generate": false,
+          "span_in_step": false,
+          "target_bytes_in_step": false
+        }
+      },
+      "note": "routing_generate and routing_step see only prefix/records/goal; labels are consumed only inside routing_loss"
+    },
+    {
+      "id": "T2",
+      "status": "pass",
+      "judged_at": "17.2R",
+      "reading": {
+        "theta_repr": 0.01,
+        "theta_score": 0.001,
+        "median_repr": 0.49926359139828047,
+        "median_score": 0.13135978142377608,
+        "cases": {
+          "pass_witness_new_head": true,
+          "pass_one_byte_new_head": true,
+          "fail_old_head_order_blind": true,
+          "fail_same_input_numeric_noise": true
+        }
+      }
+    },
+    {
+      "id": "T3",
+      "status": "pass",
+      "judged_at": "17.2R",
+      "reading": {
+        "new_forced_gold_probability": {
+          "f64_threshold": 0.999999999999,
+          "f32_threshold": 0.999999,
+          "steps": 720,
+          "f64": {
+            "min": 1.0,
+            "median": 1.0,
+            "max": 1.0,
+            "passed_steps": 720,
+            "failed_steps": 0,
+            "passed": true
+          },
+          "f32": {
+            "min": 1.0,
+            "median": 1.0,
+            "max": 1.0,
+            "passed_steps": 720,
+            "failed_steps": 0,
+            "passed": true
+          },
+          "passed": true
+        },
+        "old_method_before": {
+          "method": "alpha/beta forced only; pointer and cursor stay natural (pre-Plan-A method)",
+          "steps": 720,
+          "f64_failed_steps": 701,
+          "f64_pass_rate": 0.02638888888888889,
+          "f64": {
+            "min": 2.1353877710039533e-31,
+            "median": 0.0001967382765236473,
+            "max": 1.0
+          },
+          "f32_failed_steps": 669,
+          "f32": {
+            "min": 2.1353390908110828e-31,
+            "median": 0.0001967378193512559,
+            "max": 1.0
+          },
+          "threshold_f64": 0.999999999999,
+          "threshold_f32": 0.999999
+        },
+        "new_passed": true,
+        "comparison": "x/720 vs 701/720 fail before; the old baseline stays superseded"
+      }
+    },
+    {
+      "id": "T4",
+      "status": "pass",
+      "judged_at": "17.2R",
+      "reading": {
+        "n": 40,
+        "teacher_span_digest": "55cb68433700e0ab763af2174371ae7d2db3c8e44769e247f00a30f64c031659",
+        "model_argmax_span_digest": "326618c0ccdad4deed7d06f0e6c2a8a7f2255b61cdf4e220d64b61adde2f0719",
+        "digests_differ": true,
+        "source": "object_name/place_name inside frozen raw records; no model argmax used",
+        "passed": true
+      }
+    },
+    {
+      "id": "T5",
+      "status": "pass",
+      "judged_at": "17.2R",
+      "reading": {
+        "checks": [
+          {
+            "name": "selection_ce",
+            "rows": [
+              {
+                "eps": 0.0001,
+                "analytic": -0.00015821419435579939,
+                "numeric": -0.00015821419507844325,
+                "relative_mismatch": 2.2837516882254664e-09,
+                "passed": true
+              },
+              {
+                "eps": 1e-05,
+                "analytic": -0.00015821419435579939,
+                "numeric": -0.0001582141972988893,
+                "relative_mismatch": 9.30096664977825e-09,
+                "passed": true
+              },
+              {
+                "eps": 1e-06,
+                "analytic": -0.00015821419435579939,
+                "numeric": -0.00015821410848104733,
+                "relative_mismatch": 2.713877086287919e-07,
+                "passed": true
+              }
+            ],
+            "passed": true
+          },
+          {
+            "name": "span_pointer_ce",
+            "rows": [
+              {
+                "eps": 0.0001,
+                "analytic": 3.1926899823335457,
+                "numeric": 3.1926899852763313,
+                "relative_mismatch": 4.608630317550844e-10,
+                "passed": true
+              },
+              {
+                "eps": 1e-05,
+                "analytic": 3.1926899823335457,
+                "numeric": 3.192689982345342,
+                "relative_mismatch": 1.847398548950788e-12,
+                "passed": true
+              },
+              {
+                "eps": 1e-06,
+                "analytic": 3.1926899823335457,
+                "numeric": 3.1926899817236176,
+                "relative_mismatch": 9.551946970311419e-11,
+                "passed": true
+              }
+            ],
+            "passed": true
+          },
+          {
+            "name": "span_pointer_into_copy_nll",
+            "rows": [
+              {
+                "eps": 0.0001,
+                "analytic": 0.0011621749098954801,
+                "numeric": 0.0011621749695933659,
+                "relative_mismatch": 2.5683691714181555e-08,
+                "passed": true
+              },
+              {
+                "eps": 1e-05,
+                "analytic": 0.0011621749098954801,
+                "numeric": 0.001162174889657308,
+                "relative_mismatch": 8.707025094165508e-09,
+                "passed": true
+              },
+              {
+                "eps": 1e-06,
+                "analytic": 0.0011621749098954801,
+                "numeric": 0.001162175022884071,
+                "relative_mismatch": 4.861083493894475e-08,
+                "passed": true
+              }
+            ],
+            "passed": true
+          },
+          {
+            "name": "locked_nll_stop_lock",
+            "rows": [
+              {
+                "eps": 0.0001,
+                "analytic": -0.018118419043131898,
+                "numeric": -0.018118419082835402,
+                "relative_mismatch": 1.095666907666797e-09,
+                "passed": true
+              },
+              {
+                "eps": 1e-05,
+                "analytic": -0.018118419043131898,
+                "numeric": -0.018118419053969603,
+                "relative_mismatch": 2.9907978460498454e-10,
+                "passed": true
+              },
+              {
+                "eps": 1e-06,
+                "analytic": -0.018118419043131898,
+                "numeric": -0.018118419209400827,
+                "relative_mismatch": 4.5883950476487164e-09,
+                "passed": true
+              }
+            ],
+            "passed": true,
+            "note": "Arm A straight-through is a surrogate gradient and is not FD-comparable to the hard-route forward; its VJP check belongs to 17.2."
+          }
+        ],
+        "passed": true
+      }
+    },
+    {
+      "id": "T6",
+      "status": "not_applicable",
+      "judged_at": "17.5 development evaluation",
+      "reading": null,
+      "note": "new-description generation is a task outcome, not a 17.2R graph invariant"
+    },
+    {
+      "id": "T7",
+      "status": "pass",
+      "judged_at": "17.2R",
+      "reading": {
+        "base": 3526481,
+        "head": 37120,
+        "head_expected": 37120,
+        "span": 258,
+        "span_expected": 258,
+        "span_bottleneck": 4194,
+        "container_head": 3563601,
+        "container_head_span": 3563859,
+        "container_head_span_max": 3567795,
+        "passed": true
+      }
+    },
+    {
+      "id": "T8",
+      "status": "pass",
+      "judged_at": "17.2R pre-check, source: 17.4 v2 restart preflight",
+      "reading": {
+        "source": "reports\\taiji_selection_routing_17_4_preflight_20261103_v2.json",
+        "cells": [
+          {
+            "seed": 28031,
+            "arm": "A_route_lock",
+            "non_empty_position": 10,
+            "m_nonzero": 2,
+            "coverage_nonzero": 2,
+            "prefix_cursor": 0,
+            "m_at_position_8": 0,
+            "params_max_abs_diff": 0.0,
+            "moments_max_abs_diff": 0.0,
+            "probs_max_abs_diff": 0.0,
+            "continuation_bitwise": {
+              "2": true,
+              "4": true,
+              "6": true,
+              "8": true,
+              "10": true,
+              "12": true,
+              "14": true,
+              "15": true
+            },
+            "passed": true
+          },
+          {
+            "seed": 28031,
+            "arm": "B_stop_lock",
+            "non_empty_position": 10,
+            "m_nonzero": 2,
+            "coverage_nonzero": 2,
+            "prefix_cursor": 0,
+            "m_at_position_8": 0,
+            "params_max_abs_diff": 0.0,
+            "moments_max_abs_diff": 0.0,
+            "probs_max_abs_diff": 0.0,
+            "continuation_bitwise": {
+              "2": true,
+              "4": true,
+              "6": true,
+              "8": true,
+              "10": true,
+              "12": true,
+              "14": true,
+              "15": true
+            },
+            "passed": true
+          },
+          {
+            "seed": 28031,
+            "arm": "C_unlocked",
+            "non_empty_position": 4,
+            "m_nonzero": 7,
+            "coverage_nonzero": 22,
+            "prefix_cursor": 0,
+            "m_at_position_8": 5,
+            "params_max_abs_diff": 0.0,
+            "moments_max_abs_diff": 0.0,
+            "probs_max_abs_diff": 0.0,
+            "continuation_bitwise": {
+              "2": true,
+              "4": true,
+              "6": true,
+              "8": true,
+              "10": true,
+              "12": true,
+              "14": true,
+              "15": true
+            },
+            "passed": true
+          },
+          {
+            "seed": 28032,
+            "arm": "A_route_lock",
+            "non_empty_position": 4,
+            "m_nonzero": 1,
+            "coverage_nonzero": 1,
+            "prefix_cursor": 0,
+            "m_at_position_8": 0,
+            "params_max_abs_diff": 0.0,
+            "moments_max_abs_diff": 0.0,
+            "probs_max_abs_diff": 0.0,
+            "continuation_bitwise": {
+              "2": true,
+              "4": true,
+              "6": true,
+              "8": true,
+              "10": true,
+              "12": true,
+              "14": true,
+              "15": true
+            },
+            "passed": true
+          },
+          {
+            "seed": 28032,
+            "arm": "B_stop_lock",
+            "non_empty_position": 4,
+            "m_nonzero": 1,
+            "coverage_nonzero": 1,
+            "prefix_cursor": 0,
+            "m_at_position_8": 0,
+            "params_max_abs_diff": 0.0,
+            "moments_max_abs_diff": 0.0,
+            "probs_max_abs_diff": 0.0,
+            "continuation_bitwise": {
+              "2": true,
+              "4": true,
+              "6": true,
+              "8": true,
+              "10": true,
+              "12": true,
+              "14": true,
+              "15": true
+            },
+            "passed": true
+          },
+          {
+            "seed": 28032,
+            "arm": "C_unlocked",
+            "non_empty_position": 4,
+            "m_nonzero": 7,
+            "coverage_nonzero": 22,
+            "prefix_cursor": 0,
+            "m_at_position_8": 5,
+            "params_max_abs_diff": 0.0,
+            "moments_max_abs_diff": 0.0,
+            "probs_max_abs_diff": 0.0,
+            "continuation_bitwise": {
+              "2": true,
+              "4": true,
+              "6": true,
+              "8": true,
+              "10": true,
+              "12": true,
+              "14": true,
+              "15": true
+            },
+            "passed": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "T9",
+      "status": "not_applicable",
+      "judged_at": "17.5 / 17.6",
+      "reading": null,
+      "note": "base retention is a task gate; the base modules are unchanged in this working tree"
+    },
+    {
+      "id": "T10",
+      "status": "not_applicable",
+      "judged_at": "17.6",
+      "reading": null,
+      "note": "no memory, sleep, evolution or admission surface is exercised in 17.5"
+    },
+    {
+      "id": "T11",
+      "status": "pass",
+      "judged_at": "17.2R",
+      "reading": {
+        "public_functions": [
+          "expected_head_parameter_count",
+          "expected_span_parameter_count",
+          "__init__",
+          "pooled",
+          "score_rows",
+          "__init__",
+          "logits",
+          "span_loss",
+          "teacher_span",
+          "build_context",
+          "_s_t",
+          "_hard_route",
+          "_locked_quantities",
+          "routing_step",
+          "_advanced_state",
+          "resolve_prefix",
+          "routing_loss",
+          "selection_ce",
+          "routing_generate",
+          "route_labels",
+          "load_thresholds"
+        ],
+        "forbidden_hits": [],
+        "passed": true,
+        "confirm_reads": 0
+      }
+    },
+    {
+      "id": "T12",
+      "status": "pass",
+      "judged_at": "17.2R",
+      "reading": {
+        "parent": "28031 / 28032 16.1 A-locked step300",
+        "dose": "100 selection + 100 copy + 100 joint, 2 seeds x 3 arms",
+        "seed_rule": "28031/28032 parents, 38031/38032 order seeds, frozen"
+      }
+    },
+    {
+      "id": "T13",
+      "status": "pass",
+      "judged_at": "17.2R",
+      "reading": {
+        "confirm_materialised": false,
+        "confirm_examples": 0
+      }
+    },
+    {
+      "id": "T14",
+      "status": "pass",
+      "judged_at": "17.2R",
+      "reading": {
+        "distribution_rows_equal": true,
+        "nll_first": 2.443767448579674,
+        "nll_shifted": 13.323412447196295,
+        "loss_differs": true
+      }
+    },
+    {
+      "id": "T15",
+      "status": "pass",
+      "judged_at": "17.2R",
+      "reading": {
+        "content_max_abs_diff": 0.0,
+        "probabilities_max_abs_diff": 0.0,
+        "content_bitwise_equal": true,
+        "probabilities_bitwise_equal": true,
+        "next_h_bitwise_equal": true,
+        "gate_after_byte": 2,
+        "passed": true
+      }
+    },
+    {
+      "id": "T16",
+      "status": "pass",
+      "judged_at": "17.2R",
+      "reading": {
+        "stage_gradients": {
+          "copy": {
+            "A_route_lock": {
+              "head_exact_zero": false,
+              "head_norm": 405256.1328406948,
+              "binding_norm": 297317.1080066505,
+              "span_norm": 39.07182038123474
+            },
+            "B_stop_lock": {
+              "head_exact_zero": true,
+              "head_norm": 0.0,
+              "binding_norm": 19.981814360441298,
+              "span_norm": 26.98732922263394
+            },
+            "C_unlocked": {
+              "head_exact_zero": true,
+              "head_norm": 0.0,
+              "binding_norm": 16.362582910884594,
+              "span_norm": 27.02352508597107
+            }
+          },
+          "joint": {
+            "A_route_lock": {
+              "head_exact_zero": false,
+              "head_norm": 405256.22829202755,
+              "binding_norm": 297317.37746112427,
+              "span_norm": 39.074459045492524
+            },
+            "B_stop_lock": {
+              "head_exact_zero": false,
+              "head_norm": 1.430539377204228,
+              "binding_norm": 20.243153926985126,
+              "span_norm": 26.98914855563197
+            },
+            "C_unlocked": {
+              "head_exact_zero": false,
+              "head_norm": 1.3803008317652543,
+              "binding_norm": 16.38700211030497,
+              "span_norm": 27.022196031983388
+            }
+          }
+        },
+        "step0_selection_ce": {
+          "loss_a": 9.586998074001475,
+          "loss_b": 9.586998074001475,
+          "loss_bitwise_equal": true,
+          "head_grad_bitwise_equal": true,
+          "head_grad_max_abs_diff": 0.0,
+          "passed": true
+        }
+      },
+      "note": "the copy stage is rebuilt from the actual saved state each time, so no detached feature is reused across a restore"
+    }
+  ],
+  "credit": {
+    "estimator": {
+      "A_route_lock": {
+        "form": "a_train = a_hard + (a_soft - a_soft.detach()); forward value hard, VJP of the soft route",
+        "baseline": "none; pathwise/straight-through, not REINFORCE",
+        "bias": "targets the soft relaxation at the hard forward point; |bias| <= L_a * max_i |a_soft - a_hard|, shrinking with T -> 0.05"
+      },
+      "B_stop_lock": {
+        "form": "a_train = a_hard.detach(); no route gradient reaches the loss",
+        "baseline": "not applicable",
+        "bias": "none; route credit is exactly zero by construction"
+      },
+      "C_unlocked": {
+        "form": "inherited R1 read; head scores are not on the task-credit path",
+        "baseline": "not applicable",
+        "bias": "none for the head; selection CE still trains the head"
+      }
+    },
+    "gradients": {
+      "copy": {
+        "A_route_lock": {
+          "head": {
+            "tensors_with_grad": 4,
+            "tensors_total": 0,
+            "norm": 405256.1328406948,
+            "max_abs": 64040.46447007683,
+            "exact_zero": false
+          },
+          "binding": {
+            "tensors_with_grad": 69,
+            "tensors_total": 0,
+            "norm": 297317.1080066505,
+            "max_abs": 23983.69330656801,
+            "exact_zero": false
+          },
+          "span": {
+            "tensors_with_grad": 4,
+            "tensors_total": 0,
+            "norm": 39.07182038123474,
+            "max_abs": 8.572104849082951,
+            "exact_zero": false
+          },
+          "loss": 8.74717519726677
+        },
+        "B_stop_lock": {
+          "head": {
+            "tensors_with_grad": 0,
+            "tensors_total": 0,
+            "norm": 0.0,
+            "max_abs": 0.0,
+            "exact_zero": true
+          },
+          "binding": {
+            "tensors_with_grad": 69,
+            "tensors_total": 0,
+            "norm": 19.981814360441298,
+            "max_abs": 0.4612734984444067,
+            "exact_zero": false
+          },
+          "span": {
+            "tensors_with_grad": 4,
+            "tensors_total": 0,
+            "norm": 26.98732922263394,
+            "max_abs": 4.5301735974002435,
+            "exact_zero": false
+          },
+          "loss": 8.74717519726677
+        },
+        "C_unlocked": {
+          "head": {
+            "tensors_with_grad": 0,
+            "tensors_total": 0,
+            "norm": 0.0,
+            "max_abs": 0.0,
+            "exact_zero": true
+          },
+          "binding": {
+            "tensors_with_grad": 69,
+            "tensors_total": 0,
+            "norm": 16.362582910884594,
+            "max_abs": 0.4007112645251148,
+            "exact_zero": false
+          },
+          "span": {
+            "tensors_with_grad": 4,
+            "tensors_total": 0,
+            "norm": 27.02352508597107,
+            "max_abs": 4.545580754176032,
+            "exact_zero": false
+          },
+          "loss": 7.858481710318801
+        }
+      },
+      "joint": {
+        "A_route_lock": {
+          "head": {
+            "tensors_with_grad": 4,
+            "tensors_total": 0,
+            "norm": 405256.22829202755,
+            "max_abs": 64040.46818566348,
+            "exact_zero": false
+          },
+          "binding": {
+            "tensors_with_grad": 69,
+            "tensors_total": 0,
+            "norm": 297317.37746112427,
+            "max_abs": 23983.72137692327,
+            "exact_zero": false
+          },
+          "span": {
+            "tensors_with_grad": 4,
+            "tensors_total": 0,
+            "norm": 39.074459045492524,
+            "max_abs": 8.573077243720412,
+            "exact_zero": false
+          },
+          "loss": 11.134221817355611
+        },
+        "B_stop_lock": {
+          "head": {
+            "tensors_with_grad": 4,
+            "tensors_total": 0,
+            "norm": 1.430539377204228,
+            "max_abs": 0.2633295121116518,
+            "exact_zero": false
+          },
+          "binding": {
+            "tensors_with_grad": 69,
+            "tensors_total": 0,
+            "norm": 20.243153926985126,
+            "max_abs": 0.45684523900423285,
+            "exact_zero": false
+          },
+          "span": {
+            "tensors_with_grad": 4,
+            "tensors_total": 0,
+            "norm": 26.98914855563197,
+            "max_abs": 4.5306916907509756,
+            "exact_zero": false
+          },
+          "loss": 11.134221817355611
+        },
+        "C_unlocked": {
+          "head": {
+            "tensors_with_grad": 4,
+            "tensors_total": 0,
+            "norm": 1.3803008317652543,
+            "max_abs": 0.2598111312786491,
+            "exact_zero": false
+          },
+          "binding": {
+            "tensors_with_grad": 69,
+            "tensors_total": 0,
+            "norm": 16.38700211030497,
+            "max_abs": 0.4022542658592918,
+            "exact_zero": false
+          },
+          "span": {
+            "tensors_with_grad": 4,
+            "tensors_total": 0,
+            "norm": 27.022196031983388,
+            "max_abs": 4.545589601753928,
+            "exact_zero": false
+          },
+          "loss": 10.248525189160194
+        }
+      }
+    },
+    "step0_selection_ce": {
+      "loss_a": 9.586998074001475,
+      "loss_b": 9.586998074001475,
+      "loss_bitwise_equal": true,
+      "head_grad_bitwise_equal": true,
+      "head_grad_max_abs_diff": 0.0,
+      "passed": true
+    },
+    "comparability_with_old_soft_diffusion": {
+      "comparable": false,
+      "reason": "old A-B differed through the soft within-record transport; the hard point transport removes the position spread, so A-B now isolates record-route credit only. The 0.10 gate is re-established in 17.5, never carried over from old readings."
+    }
+  },
+  "cursor_semantics": {
+    "pointer": {
+      "definition": "per-record transport distribution over ordered record units; training uses softmax(logits/T) with T annealed 1.00 -> 0.05 over selection updates 1-100, copy/joint at 0.05; inference is one-hot argmax",
+      "support": "[0, record_unit_count)",
+      "empty_semantics": "a record with no units yields no pointer mass; the selected record's mass is carried by q_bytes"
+    },
+    "m": {
+      "definition": "carried copy posterior over the concatenated unit space; shifted by one unit for each accepted byte",
+      "support": "non-negative, sums to <= 1, zero at episode start",
+      "non_empty": "m_j > 0 means the next accepted byte is planned to come from unit j",
+      "empty": "all zero before any copy byte and after the carried copy has been consumed"
+    },
+    "coverage": {
+      "definition": "cumulative accepted-byte mass per unit",
+      "support": "[0, accepted record bytes]",
+      "non_empty": "coverage_j > 0 means unit j has already contributed a copied byte"
+    },
+    "prefix_cursor": {
+      "definition": "inherited R1 field stored in BindingState",
+      "range": "0 in the 17 graph; routing advances state via teacher-forced target bytes and never writes a generated prefix back into the state",
+      "empty_semantics": "0 is the correct value for every 17 step; the operative cursor is m plus coverage"
+    },
+    "s_bytes_q_bytes": {
+      "s_bytes": "mass * pointer, the fresh point transport of this step",
+      "q_bytes": "lambda * m + (1 - lambda * m_mass) * s_bytes; lambda = gamma_floor = 0.2"
+    },
+    "empty_example": {
+      "position": 0,
+      "m_nonzero": 0,
+      "m_sum": 0.0,
+      "coverage_nonzero": 0,
+      "coverage_sum": 0.0,
+      "prefix_cursor": 0,
+      "pointer_mass": 0.9999999999999324,
+      "pointer_argmax": 262,
+      "gate_index": 0,
+      "previous_byte": 256,
+      "note": "episode start; m and coverage are both empty, the next pointer is fresh transport"
+    },
+    "mid_copy_examples": {
+      "28031-A_route_lock": {
+        "checkpoint_position": 10,
+        "m_nonzero": 2,
+        "coverage_nonzero": 2,
+        "coverage_sum": 2.320647535889129e-18,
+        "prefix_cursor": 0
+      },
+      "28031-B_stop_lock": {
+        "checkpoint_position": 10,
+        "m_nonzero": 2,
+        "coverage_nonzero": 2,
+        "coverage_sum": 2.320647535889129e-18,
+        "prefix_cursor": 0
+      },
+      "28031-C_unlocked": {
+        "checkpoint_position": 4,
+        "m_nonzero": 7,
+        "coverage_nonzero": 22,
+        "coverage_sum": 0.03926625988454041,
+        "prefix_cursor": 0
+      },
+      "28032-A_route_lock": {
+        "checkpoint_position": 4,
+        "m_nonzero": 1,
+        "coverage_nonzero": 1,
+        "coverage_sum": 4.296220256832928e-23,
+        "prefix_cursor": 0
+      },
+      "28032-B_stop_lock": {
+        "checkpoint_position": 4,
+        "m_nonzero": 1,
+        "coverage_nonzero": 1,
+        "coverage_sum": 4.296220256832928e-23,
+        "prefix_cursor": 0
+      },
+      "28032-C_unlocked": {
+        "checkpoint_position": 4,
+        "m_nonzero": 7,
+        "coverage_nonzero": 22,
+        "coverage_sum": 0.9999999872810289,
+        "prefix_cursor": 0
+      }
+    }
+  },
+  "restore_precheck": {
+    "source": "reports\\taiji_selection_routing_17_4_preflight_20261103_v2.json",
+    "checkpoints": [
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      15
+    ],
+    "checkpoint_labels": {
+      "2": "prefix_before_object",
+      "4": "object_first_2_bytes",
+      "6": "object_4_bytes",
+      "8": "mid_object_copy",
+      "10": "object_7_bytes",
+      "12": "object_9_bytes",
+      "14": "object_last_byte",
+      "15": "object_to_place_switch"
+    },
+    "adam_calls": 18,
+    "cells": [
+      {
+        "seed": 28031,
+        "arm": "A_route_lock",
+        "adam_calls": 3,
+        "m_nonzero": 2,
+        "coverage_nonzero": 2,
+        "prefix_cursor": 0,
+        "empty_at_position_8": 0,
+        "passed": true,
+        "continuation_bitwise": {
+          "2": true,
+          "4": true,
+          "6": true,
+          "8": true,
+          "10": true,
+          "12": true,
+          "14": true,
+          "15": true
+        },
+        "params_max_abs_diff": 0.0,
+        "adam_max_abs_diff": 0.0,
+        "probs_max_abs_diff": 0.0
+      },
+      {
+        "seed": 28031,
+        "arm": "B_stop_lock",
+        "adam_calls": 3,
+        "m_nonzero": 2,
+        "coverage_nonzero": 2,
+        "prefix_cursor": 0,
+        "empty_at_position_8": 0,
+        "passed": true,
+        "continuation_bitwise": {
+          "2": true,
+          "4": true,
+          "6": true,
+          "8": true,
+          "10": true,
+          "12": true,
+          "14": true,
+          "15": true
+        },
+        "params_max_abs_diff": 0.0,
+        "adam_max_abs_diff": 0.0,
+        "probs_max_abs_diff": 0.0
+      },
+      {
+        "seed": 28031,
+        "arm": "C_unlocked",
+        "adam_calls": 3,
+        "m_nonzero": 7,
+        "coverage_nonzero": 22,
+        "prefix_cursor": 0,
+        "empty_at_position_8": 5,
+        "passed": true,
+        "continuation_bitwise": {
+          "2": true,
+          "4": true,
+          "6": true,
+          "8": true,
+          "10": true,
+          "12": true,
+          "14": true,
+          "15": true
+        },
+        "params_max_abs_diff": 0.0,
+        "adam_max_abs_diff": 0.0,
+        "probs_max_abs_diff": 0.0
+      },
+      {
+        "seed": 28032,
+        "arm": "A_route_lock",
+        "adam_calls": 3,
+        "m_nonzero": 1,
+        "coverage_nonzero": 1,
+        "prefix_cursor": 0,
+        "empty_at_position_8": 0,
+        "passed": true,
+        "continuation_bitwise": {
+          "2": true,
+          "4": true,
+          "6": true,
+          "8": true,
+          "10": true,
+          "12": true,
+          "14": true,
+          "15": true
+        },
+        "params_max_abs_diff": 0.0,
+        "adam_max_abs_diff": 0.0,
+        "probs_max_abs_diff": 0.0
+      },
+      {
+        "seed": 28032,
+        "arm": "B_stop_lock",
+        "adam_calls": 3,
+        "m_nonzero": 1,
+        "coverage_nonzero": 1,
+        "prefix_cursor": 0,
+        "empty_at_position_8": 0,
+        "passed": true,
+        "continuation_bitwise": {
+          "2": true,
+          "4": true,
+          "6": true,
+          "8": true,
+          "10": true,
+          "12": true,
+          "14": true,
+          "15": true
+        },
+        "params_max_abs_diff": 0.0,
+        "adam_max_abs_diff": 0.0,
+        "probs_max_abs_diff": 0.0
+      },
+      {
+        "seed": 28032,
+        "arm": "C_unlocked",
+        "adam_calls": 3,
+        "m_nonzero": 7,
+        "coverage_nonzero": 22,
+        "prefix_cursor": 0,
+        "empty_at_position_8": 5,
+        "passed": true,
+        "continuation_bitwise": {
+          "2": true,
+          "4": true,
+          "6": true,
+          "8": true,
+          "10": true,
+          "12": true,
+          "14": true,
+          "15": true
+        },
+        "params_max_abs_diff": 0.0,
+        "adam_max_abs_diff": 0.0,
+        "probs_max_abs_diff": 0.0
+      }
+    ],
+    "passed": true,
+    "contrast": {
+      "before_empty_state": {
+        "position": 0,
+        "m_nonzero": 0,
+        "coverage_nonzero": 0,
+        "prefix_cursor": 0
+      },
+      "after_non_empty_state": {
+        "position": {
+          "28031-A_route_lock": 10,
+          "28031-B_stop_lock": 10,
+          "28031-C_unlocked": 4,
+          "28032-A_route_lock": 4,
+          "28032-B_stop_lock": 4,
+          "28032-C_unlocked": 4
+        },
+        "m_nonzero": {
+          "28031-A_route_lock": 2,
+          "28031-B_stop_lock": 2,
+          "28031-C_unlocked": 7,
+          "28032-A_route_lock": 1,
+          "28032-B_stop_lock": 1,
+          "28032-C_unlocked": 7
+        },
+        "coverage_nonzero": {
+          "28031-A_route_lock": 2,
+          "28031-B_stop_lock": 2,
+          "28031-C_unlocked": 22,
+          "28032-A_route_lock": 1,
+          "28032-B_stop_lock": 1,
+          "28032-C_unlocked": 22
+        },
+        "prefix_cursor": {
+          "28031-A_route_lock": 0,
+          "28031-B_stop_lock": 0,
+          "28031-C_unlocked": 0,
+          "28032-A_route_lock": 0,
+          "28032-B_stop_lock": 0,
+          "28032-C_unlocked": 0
+        }
+      },
+      "natural_empty_mid_state": {
+        "position": 8,
+        "m_nonzero": {
+          "28031-A_route_lock": 0,
+          "28031-B_stop_lock": 0,
+          "28031-C_unlocked": 5,
+          "28032-A_route_lock": 0,
+          "28032-B_stop_lock": 0,
+          "28032-C_unlocked": 5
+        },
+        "note": "arm A/B lose the carried copy mass at position 8; arm C keeps it. This is the empty/non-empty contrast the owner asked for"
+      }
+    }
+  },
+  "handover_table": [
+    {
+      "item": "17.1 contract / label source / byte whitelist",
+      "status": "carried_forward",
+      "evidence": "reports\\taiji_selection_routing_17_3_verify_20261103.json",
+      "reading": "T1 label separation and T11 API audit passed before the graph change",
+      "reason": "the forward whitelist and the target-byte source are unchanged; the point transport only changes how the selected record's units are addressed, not which inputs the forward may see"
+    },
+    {
+      "item": "R1 order thresholds theta_repr=1e-2 theta_score=1e-3",
+      "status": "carried_forward",
+      "evidence": "plans\\manifests\\taiji_selection_routing_17_3_r1_thresholds_20261103.json",
+      "reading": "median_repr=0.499264 median_score=0.13136",
+      "reason": "the ordered head pooling/score code is untouched, and the 20-pair calibration is re-measured below with the same thresholds"
+    },
+    {
+      "item": "position supervision finite difference",
+      "status": "carried_forward",
+      "evidence": "reports\\taiji_selection_routing_17_3_verify_20261103.json",
+      "reading": "span pointer CE mismatches 4.61e-10 / 1.85e-12 / 9.55e-11 before the change",
+      "reason": "span_loss and the teacher-span index path are untouched; the point transport is downstream of the pointer bias and does not enter the span CE"
+    },
+    {
+      "item": "untouched module verification",
+      "status": "carried_forward",
+      "evidence": "reports\\taiji_selection_routing_17_3_verify_20261103.json",
+      "reading": "ordered encoding, alpha one-hot + betas, null route and input whitelist all passed at 0b",
+      "reason": "source hashes for binding_select, record_relation_core and living_core are unchanged; only binding_copy transport and selection_routing internals changed"
+    }
+  ],
+  "superseded_table": [
+    {
+      "item": "17.3 price (pre-change)",
+      "status": "superseded",
+      "path": "reports\\taiji_selection_routing_17_3_price_20261103.json",
+      "value_before": "13092.25 CPU three-arm / 8750.34 CPU two-arm",
+      "superseded_by": "reports\\taiji_selection_routing_17_2r_price_20261103.json",
+      "role": "17.3 price (pre-change)",
+      "bytes": 10857,
+      "sha256": "ebfb0a48bc636b4b00c6607fc8b539a73c3737a2f19825e835695d983f315fba"
+    },
+    {
+      "item": "17.4 preflight (pre-change)",
+      "status": "superseded",
+      "path": "reports\\taiji_selection_routing_17_4_preflight_20261103.json",
+      "value_before": "46.08 CPU / 18 Adam / no mid-copy checkpoint",
+      "superseded_by": "reports\\taiji_selection_routing_17_4_preflight_20261103_v2.json",
+      "role": "17.4 preflight (pre-change)",
+      "bytes": 42425,
+      "sha256": "2c8d9cc48585f84b9075a7e8c5dd7dd2bf044b80db74ca5cb220ac0914f2a106"
+    },
+    {
+      "item": "T3 gold-span gate (pre-change)",
+      "status": "superseded",
+      "path": "reports\\taiji_selection_routing_17_2_t3_supplement_20261103.json",
+      "value_before": "701/720 fail, min forced gold probability 2.08e-36 (owner baseline; this file's own old-method rerun reads 2.135e-31)",
+      "superseded_by": "reports\\taiji_selection_routing_17_2_t3_supplement_20261103_v3.json",
+      "role": "T3 gold-span gate (pre-change)",
+      "bytes": 16606,
+      "sha256": "d278f1971194d917d152b9e92b47a4983b3354bc669a1d62b3d15d7abbd0046b"
+    },
+    {
+      "item": "0b graph verification (pre-change)",
+      "status": "superseded",
+      "path": "reports\\taiji_selection_routing_17_3_verify_20261103.json",
+      "value_before": "T1/T2/T4/T5/T7/T11/T13 readings on the soft-transport graph",
+      "superseded_by": "reports\\taiji_selection_routing_17_2r_20261103.json",
+      "role": "0b graph verification (pre-change)",
+      "bytes": 28737,
+      "sha256": "f9cea6b5afd494e707be3f813c6cd9d838a26b583644df58e01801659215fe2d"
+    }
+  ],
+  "difference_table": [
+    {
+      "item": "selection.B_stop_lock.forward_backward_cpu",
+      "before": 2.625,
+      "after": 3.1015625,
+      "delta": 0.4765625,
+      "ratio": 1.181547619047619,
+      "reason": "selection CE and span heads are unchanged, but the teacher-forced step it drives now runs the point transport (source softmax + row softmax) instead of the old single soft row"
+    },
+    {
+      "item": "copy.B_stop_lock.forward_backward_cpu",
+      "before": 7.28125,
+      "after": 8.28125,
+      "delta": 1.0,
+      "ratio": 1.1373390557939915,
+      "reason": "point transport replaces soft diffusion and the span start bias is built every step; same tensor volume, one extra normalise/index_add and per-record start logits"
+    },
+    {
+      "item": "joint.A_route_lock.forward_backward_cpu",
+      "before": 7.7734375,
+      "after": 8.6640625,
+      "delta": 0.890625,
+      "ratio": 1.114572864321608,
+      "reason": "point transport replaces soft diffusion and the span start bias is built every step; same tensor volume, one extra normalise/index_add and per-record start logits"
+    },
+    {
+      "item": "adam_cpu",
+      "before": 0.03125,
+      "after": 0.03125,
+      "delta": 0.0,
+      "ratio": 1.0,
+      "reason": "same trainable parameter set and Adam defaults; delta is allocator/timer noise"
+    },
+    {
+      "item": "generation_cpu_per_example.A",
+      "before": 0.1640625,
+      "after": 0.2734375,
+      "delta": 0.109375,
+      "ratio": 1.6666666666666667,
+      "reason": "frozen inference: hard argmax pointer at T=0.05 plus the per-record span start bias; the point switch also changes which byte is copied and therefore when generation terminates"
+    },
+    {
+      "item": "generation_cpu_per_example.A_oldstyle_soft_T1",
+      "before": 0.1640625,
+      "after": 0.25,
+      "delta": 0.0859375,
+      "ratio": 1.5238095238095237,
+      "reason": "same soft semantics and temperature as the old pricer, now with the span start bias and the point-transport row; isolates the hard-pointer switch from the span/trajectory change"
+    },
+    {
+      "item": "generation_median_steps.A",
+      "before": null,
+      "after": 27.0,
+      "delta": null,
+      "ratio": null,
+      "reason": "steps actually emitted by the new hard pointer (old pricer did not record steps)"
+    },
+    {
+      "item": "generation_median_steps.A_oldstyle_soft_T1",
+      "before": null,
+      "after": 24.0,
+      "delta": null,
+      "ratio": null,
+      "reason": "steps emitted by the soft probe; a lower step count at the same fixture means the hard pointer is running longer trajectories"
+    },
+    {
+      "item": "evaluation_cpu_per_example",
+      "before": 0.0,
+      "after": 0.0,
+      "delta": 0.0,
+      "ratio": null,
+      "reason": "score_generation untouched"
+    },
+    {
+      "item": "selection_probe_cpu_per_example",
+      "before": 0.26953125,
+      "after": 0.337890625,
+      "delta": 0.068359375,
+      "ratio": 1.2536231884057971,
+      "reason": "the selection CE term itself is untouched, but each probed example still runs the teacher-forced step under the new point transport"
+    },
+    {
+      "item": "restore_cpu",
+      "before": 0.078125,
+      "after": 0.0703125,
+      "delta": -0.0078125,
+      "ratio": 0.9,
+      "reason": "the old figure timed the inherited 16.1 bundle; restore now reloads the 17 routing bundle (head + span + Adam moments + state)"
+    },
+    {
+      "item": "bundle_mib_final",
+      "before": 27.50023125,
+      "after": 27.50023125,
+      "delta": 0.0,
+      "ratio": 1.0,
+      "reason": "parameter count and dtype unchanged (head 37,120 + span 258)"
+    },
+    {
+      "item": "bundle_mib_saved_probe",
+      "before": 27.50023125,
+      "after": 27.32309627532959,
+      "delta": -0.17713497467040895,
+      "ratio": 0.9935587823585881,
+      "reason": "actual saved routing bundle: parameter + two Adam moments + state, float64 with torch zip padding"
+    },
+    {
+      "item": "training_cpu_per_run.A_route_lock",
+      "before": 1777.34375,
+      "after": 2004.6875,
+      "delta": 227.34375,
+      "ratio": 1.1279120879120879,
+      "reason": "aggregate of the stage unit prices above over 300 updates (100 selection + 100 copy + 100 joint)"
+    },
+    {
+      "item": "training_cpu_per_run.B_stop_lock",
+      "before": 1756.25,
+      "after": 2009.375,
+      "delta": 253.125,
+      "ratio": 1.1441281138790036,
+      "reason": "aggregate of the stage unit prices above over 300 updates (100 selection + 100 copy + 100 joint)"
+    },
+    {
+      "item": "training_cpu_per_run.C_unlocked",
+      "before": 1739.0625,
+      "after": 1900.78125,
+      "delta": 161.71875,
+      "ratio": 1.0929919137466306,
+      "reason": "aggregate of the stage unit prices above over 300 updates (100 selection + 100 copy + 100 joint)"
+    },
+    {
+      "item": "total_cpu.three_arm",
+      "before": 13092.250000000002,
+      "after": 15018.521875,
+      "delta": 1926.2718749999985,
+      "ratio": 1.1471306975500772,
+      "reason": "sum of training, generation, probe, restore, overrun and fixed 60 s"
+    },
+    {
+      "item": "total_cpu.two_arm",
+      "before": 8750.34375,
+      "after": 10182.681250000001,
+      "delta": 1432.3375000000015,
+      "ratio": 1.163689283635286,
+      "reason": "computed below"
+    }
+  ],
+  "price": {
+    "report": "reports\\taiji_selection_routing_17_2r_price_20261103.json",
+    "candidate_sha": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+    "three_arm_total_cpu": 15018.521875,
+    "two_arm_total_cpu": 10182.681250000001,
+    "three_arm_wall_estimate": 17271.30015625,
+    "two_arm_wall_estimate": 11710.083437500001,
+    "baseline_before": {
+      "status": "superseded",
+      "three_arm_total_cpu": 13092.250000000002,
+      "two_arm_total_cpu": 8750.34375,
+      "path": "reports\\taiji_selection_routing_17_3_price_20261103.json",
+      "note": "frozen pre-change price, never used as the current value"
+    },
+    "position_supervision": {
+      "parameter_count": 258,
+      "bottleneck_parameter_count": 4194,
+      "joint_increment_cpu": 1.546875,
+      "enabled_from": "stage 1 selection through stage 3 joint"
+    }
+  },
+  "timing": {
+    "cpu_seconds": 21.78125,
+    "wall_seconds": 23.47179330000654
+  },
+  "limits": {
+    "formal_adam": 0,
+    "engineering_adam": 18,
+    "confirm_reads": 0
+  }
+}

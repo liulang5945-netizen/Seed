@@ -1,0 +1,7 @@
+{
+  "status": "superseded",
+  "superseded_by": "reports/taiji_selection_routing_17_3_verify_20261103_r2_postfix_20261103.json",
+  "superseded_at": "2026-11-03",
+  "reason": "pre-change 17.3 verify readings overwritten by the new-graph rerun",
+  "note": "original file bytes untouched; this sidecar carries the status"
+}

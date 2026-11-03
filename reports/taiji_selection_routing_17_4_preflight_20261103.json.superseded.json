@@ -1,0 +1,7 @@
+{
+  "status": "superseded",
+  "superseded_by": "reports/taiji_selection_routing_17_4_preflight_20261103_r2_postfix_20261103.json",
+  "superseded_at": "2026-11-03",
+  "reason": "pre-change 17.4 preflight (46.08 CPU / 18 Adam) overwritten by the new-graph preflight",
+  "note": "original file bytes untouched; this sidecar carries the status"
+}
