@@ -10,12 +10,13 @@
 
 | 项 | 结果 |
 |---|---|
-| 当前提交 | `14adac4be`（17.3 定价，14 文件）；其上无新提交 |
-| 未推送提交 | 2 笔（`4dcf58b76` 计划复核、`14adac4be` 定价）；**按纪律不推送** |
+| 体检时点提交 | `14adac4be`（17.3 定价，14 文件） |
+| 体检时点未推送提交 | 2 笔（`4dcf58b76` 计划复核、`14adac4be` 定价）；**按纪律不推送** |
 | 未提交修改 | 2 个文件：`SPEC-TAIJI-CORE_COMPOSITION_10_21_20261101.md`、`SPEC-TAIJI-CORE_RECORD_RELATION_14_4_20261102.md`（内容为状态行更新，与 MAINLINE 一致，但**来源不明**） |
 | 未跟踪文件 | 67 个 / 985,219 B（40 个 `scripts/training/*`、8 个 `taiji/*.py`、19 个 `tests/taiji_native/*`） |
 | 处理决定 | 上述 2 个改动与 67 个未跟踪文件**一律不并入本轮提交**，避免吞掉他人未提交内容；已在 §9 登记为头号遗留风险 |
 | 索引锁 | 体检时发现一次陈旧 `.git/index.lock`，已回收，未丢改动 |
+| 收束产出 | `0bd27a31f`（文档类：9 文件）、`d9a51bb61`（清理类：33 文件，含 30 删除＋2 移档＋1 manifest）；均**不推送** |
 
 > 说明：67 个未跟踪文件覆盖 10.1–14.6 的实现与测试，其中 [record_relation_core.py](../../taiji/record_relation_core.py) 是已入库的 [selection_routing.py](../../taiji/selection_routing.py) 的**必需依赖**。干净克隆下 17 号代码无法 import，这是真实的可复现性缺口，不是格式问题。
 
