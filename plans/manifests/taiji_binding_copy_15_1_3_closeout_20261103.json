@@ -1,0 +1,62 @@
+{
+  "schema": "taiji-binding-copy-manifest-v1",
+  "step": "15.1.3",
+  "status": "closed_negative_with_followup_candidate",
+  "report": "reports/taiji_binding_copy_15_1_3_closeout_20261103.json",
+  "inputs": {
+    "reports/taiji_binding_copy_15_1_compare_20261102.json": "fe60b34df44f84ff4708f4f1a5e7a65c86d3757e279ac953baaf164120ffcaa5",
+    "plans/manifests/taiji_binding_copy_15_1_compare_20261102.json": "cc56ff8be193a55604f4cfba63272aa3e6f4b77ed7401936e2f8117d6c070e6d",
+    "reports/taiji_binding_copy_15_1_closeout_20261103.json": "ee7ed9171680ec651494f76ca82879be31f380ba97bdcc5a14919f76092b42b2",
+    "plans/manifests/taiji_binding_copy_15_1_closeout_20261103.json": "a79237896808126e699976babe8df63d96bce6f9ce1e13739648aa71b6053237",
+    "reports/taiji_binding_copy_15_1_price_20261102.json": "2e2ddc0db85378feee672d0d3b49550645314e740206e0032ea2a2645c2a4fe7",
+    "reports/taiji_binding_copy_15_1_graph_20261102.json": "14f80412663029a2d21e583a0009701d77f83629110732d8ab72852d36c4ada2",
+    "reports/taiji_binding_copy_15_1_preflight_final_20261102.json": "8442ebd2e2dae2d095561167abe33781602cdb7403063ab34be1e3d8e9f2b69d",
+    "reports/taiji_binding_copy_15_1_attribution_20261103.json": "4eddaeb093407f76cbce985a955b8b19a8b2f0fdc83aa4934739ca45d1a86a00",
+    "reports/taiji_binding_copy_15_1_attribution_bundles_20261103.json": "67256ccd87ea2426b8a2cfb467dced1e84bc8ca05c3b77fb9ce4e3d41f6733bc"
+  },
+  "retained_products": [
+    {
+      "path": "output/taiji_core_binding_copy_15_1_compare/28031-R0P1-step300.pt",
+      "bytes": 64975719,
+      "sha256": "d216650e8f5c36a49568661b8b5684c31a07c4b638717a1c823006a82524bb90"
+    },
+    {
+      "path": "output/taiji_core_binding_copy_15_1_compare/28031-R1P0-step300.pt",
+      "bytes": 64928521,
+      "sha256": "f9e4a57d4f9a689c5da8d76234be3b42a88f75343a3902e4d45cad0a92bc437e"
+    },
+    {
+      "path": "output/taiji_core_binding_copy_15_1_compare/28031-R1P1-step300.pt",
+      "bytes": 64928521,
+      "sha256": "2d8d021721ebaa49676280f986977c14d20bf9ed8f49f1c09b72ec54e52ef734"
+    },
+    {
+      "path": "output/taiji_core_binding_copy_15_1_compare/28032-R1P0-step300.pt",
+      "bytes": 64928521,
+      "sha256": "abb5b8bf1691335ae69e002ead23404cb6e2d162cce4c865b1bed15039cfd686"
+    },
+    {
+      "path": "output/taiji_core_binding_copy_15_1_compare/28032-R1P1-step300.pt",
+      "bytes": 64928521,
+      "sha256": "c9a45e13498b28853d7f2e132ebb530bf4033243f9bf41b06d86ff1702bd67c9"
+    }
+  ],
+  "checks": {
+    "no_forward_no_adam": true,
+    "stage_budget": true,
+    "product_budget": true,
+    "parent_unchanged": true,
+    "retained_bundles_match": true,
+    "alpha_recheck_consistent": true,
+    "verdict_consistent": true,
+    "runtime_adam_recovered": true,
+    "evidence_files_present": true
+  },
+  "cost": {
+    "cpu_seconds": 0.25,
+    "wall_seconds": 0.2697138001676649,
+    "adam_calls": 0,
+    "product_bytes": 0
+  },
+  "limits": "Read-only closeout. No rerun, no re-evaluation, no confirm read, no product change."
+}

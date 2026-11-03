@@ -1,0 +1,44 @@
+{
+  "schema": "taiji-binding-select-manifest-v1",
+  "step": "N16.1.0d",
+  "status": "passed_16_1_0d_preflight",
+  "report": "reports/taiji_binding_select_16_1_preflight_20261103.json",
+  "seeds": [
+    28031,
+    28032
+  ],
+  "profiles": [
+    "A-locked-f64",
+    "B-select-f64"
+  ],
+  "checks": {
+    "parent_identity": true,
+    "grid": true,
+    "initial_restore": true,
+    "step1_restore": true,
+    "replay_update": true,
+    "independent_process": true,
+    "adam_budget": true,
+    "product_limit": true,
+    "stage_budget": true,
+    "products_cleaned": true,
+    "confirm_untouched": true
+  },
+  "cost": {
+    "cpu_seconds": 39.03125,
+    "wall_seconds": 81.98126640007831,
+    "adam_calls": 12,
+    "peak_live_product_bytes": 376459416
+  },
+  "source_hashes": {
+    "taiji/binding_select.py": "56cb2d584dc0881c3cae83d3224a7f505dd7a2ee0e9716d899b3647f1ad55387",
+    "scripts/training/verify_taiji_binding_select_16_1_preflight.py": "bae16fe4d2b020b65b7cb5c3027dfba1e997a59aff4a7d9f59da50d373d3bd98"
+  },
+  "post_run_cleanup": {
+    "scripts/training/verify_taiji_binding_select_16_1_preflight.py": {
+      "ran_sha256": "f8ce2071cefe20bf26bd303ce9e44f5825878968f996e027fbeffc466fa29a7b",
+      "now_sha256": "bae16fe4d2b020b65b7cb5c3027dfba1e997a59aff4a7d9f59da50d373d3bd98",
+      "change": "removed one unused import after the run; no logic changed"
+    }
+  }
+}

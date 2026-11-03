@@ -1,0 +1,184 @@
+{
+  "schema": "taiji-binding-copy-closeout-v1",
+  "step": "15.1.3",
+  "date": "2026-11-03",
+  "status": "closed_negative_with_followup_candidate",
+  "verdict_source": "15.1.1 native_byte_task_failed",
+  "item_1_candidate_scope": {
+    "qualified_parent": null,
+    "reason": "no arm passed the task gate",
+    "cannot_carry": [
+      "unseen output names",
+      "new descriptions",
+      "both-new combinations"
+    ],
+    "can_carry_with_caveat": "template-plus-memorised-name answers only (0.5625 overall, 0.1125 unseen combination)"
+  },
+  "item_2_component_contribution": {
+    "content_path_necessary": true,
+    "content_drops": {
+      "true_completed_rate": 0.4167,
+      "no_source": {
+        "completed_rate": 0.0,
+        "drop": 0.4167
+      },
+      "wrong_record": {
+        "completed_rate_seed28031": 0.0417,
+        "completed_rate_seed28032": 0.1667,
+        "drop_seed28031": 0.375,
+        "drop_seed28032": 0.25
+      },
+      "wrong_position": {
+        "completed_rate": 0.0,
+        "drop": 0.4167
+      },
+      "gamma0": {
+        "completed_rate": 0.4167,
+        "drop": 0.0
+      },
+      "passed_for_no_source_wrong_record_wrong_position": true,
+      "gamma0_note": "Forcing gamma=0 does not change completions at all, so the learned gate is already near zero: the byte-level copy path is not in use."
+    },
+    "content_path_necessary_reading": "removing records drops completions from 0.4167 to 0.0; wrong record 0.375/0.25; wrong position 0.4167",
+    "binding_not_established": true,
+    "gamma_in_use": false,
+    "gamma_evidence": "forcing gamma=0 leaves completions unchanged (drop 0.0), so the copy path is not engaged",
+    "record_selection_accuracy": 0.0,
+    "record_selection_denominator": 240,
+    "curriculum_inert_by_construction": true,
+    "curriculum_evidence": "greedy self-prefix equals the teacher prefix on 8/8 train probes after training"
+  },
+  "item_3_restore_and_cost": {
+    "identity_rescue_equal": 8,
+    "identity_rescue_denominator": 8,
+    "identity_rescue_exact": true,
+    "parent_bundle_sha": "b75a83a0a474c041c2a61bed8c4e0a51de11197d67a9b196262e7e039a9a4cef",
+    "parent_unchanged": true,
+    "total_cpu_seconds": 14580.640625,
+    "total_wall_seconds": 14798.46202870016,
+    "adam_calls": 2400,
+    "stage_totals": {
+      "0a_cpu": 1.066591399954632,
+      "0b_cpu": 55.453125,
+      "0c_cpu": 99.84375,
+      "0d_cpu": 214.828125,
+      "attribution_probe_cpu": 90.078125
+    }
+  },
+  "item_4_next_task_fit": {
+    "fit": false,
+    "reason": "no qualified parent; the current candidate cannot carry cross-session experience or feedback tasks",
+    "next_candidate": "plans/reference/SPEC-N16-01_SELECTION_LOCKED_BINDING_DRAFT_20261103.md",
+    "method": "A: explicit record selection with selection-locked copy",
+    "training_started": true,
+    "training_note": "N16.1 is a separate ruled package; this receipt does not consume its results"
+  },
+  "explicit_registrations": {
+    "1.2": "not_released",
+    "1.2_reason": "task gate not satisfied",
+    "confirm": "sealed_and_unread",
+    "14_7": "not_released",
+    "N15_2": "not_started",
+    "step_12": "not_started",
+    "step_13": "not_started",
+    "no_additional_seed": true,
+    "no_additional_steps": true,
+    "no_additional_dose": true,
+    "no_head_swap_retry": true
+  },
+  "less_change_first_rationale": {
+    "rule": "prefer the least-change qualified option before complex structures",
+    "why_not_B_only_selection_supervision": "B keeps the soft record mixture and the self-referential copy posterior, so the 15.1 shortcut (memorised pooled content) survives; expected ceiling is lower",
+    "why_not_C_curriculum_only": "C was falsified: the R1 curriculum is inert by construction and the decode gate never opens, so a curriculum-only change cannot separate causes",
+    "why_A": "A changes exactly three interfaces: the record-level alpha source, the copy-gate floor and the curriculum trigger; it makes selection a separately measurable quantity and keeps the dose unchanged",
+    "three_interfaces": [
+      "record-level alpha is replaced by a one-hot from the selection head while the model's byte betas are kept",
+      "gamma is floored at 0.2 instead of being free to collapse",
+      "the self-prefix curriculum triggers on per-batch teacher-forced completion instead of fixed update indices"
+    ]
+  },
+  "alpha_recheck_consistent": true,
+  "retained_bundle_checks": [
+    {
+      "path": "output/taiji_core_binding_copy_15_1_compare/28031-R0P1-step300.pt",
+      "exists": true,
+      "expected_sha256": "d216650e8f5c36a49568661b8b5684c31a07c4b638717a1c823006a82524bb90",
+      "sha256_matches": true,
+      "bytes_matches": true
+    },
+    {
+      "path": "output/taiji_core_binding_copy_15_1_compare/28031-R1P0-step300.pt",
+      "exists": true,
+      "expected_sha256": "f9e4a57d4f9a689c5da8d76234be3b42a88f75343a3902e4d45cad0a92bc437e",
+      "sha256_matches": true,
+      "bytes_matches": true
+    },
+    {
+      "path": "output/taiji_core_binding_copy_15_1_compare/28031-R1P1-step300.pt",
+      "exists": true,
+      "expected_sha256": "2d8d021721ebaa49676280f986977c14d20bf9ed8f49f1c09b72ec54e52ef734",
+      "sha256_matches": true,
+      "bytes_matches": true
+    },
+    {
+      "path": "output/taiji_core_binding_copy_15_1_compare/28032-R1P0-step300.pt",
+      "exists": true,
+      "expected_sha256": "abb5b8bf1691335ae69e002ead23404cb6e2d162cce4c865b1bed15039cfd686",
+      "sha256_matches": true,
+      "bytes_matches": true
+    },
+    {
+      "path": "output/taiji_core_binding_copy_15_1_compare/28032-R1P1-step300.pt",
+      "exists": true,
+      "expected_sha256": "c9a45e13498b28853d7f2e132ebb530bf4033243f9bf41b06d86ff1702bd67c9",
+      "sha256_matches": true,
+      "bytes_matches": true
+    }
+  ],
+  "retained_bundles_all_match": true,
+  "confirm_note": {
+    "spec": "Bounded native-byte task only. No confirm read, no N15.2, no step 12/13, no 14.7 release; no claim beyond this task and these arms.",
+    "materialised": false,
+    "read": false
+  },
+  "evidence": {
+    "compare_report": "reports/taiji_binding_copy_15_1_compare_20261102.json",
+    "compare_manifest": "plans/manifests/taiji_binding_copy_15_1_compare_20261102.json",
+    "closeout_report": "reports/taiji_binding_copy_15_1_closeout_20261103.json",
+    "closeout_manifest": "plans/manifests/taiji_binding_copy_15_1_closeout_20261103.json",
+    "attribution_report": "reports/taiji_binding_copy_15_1_attribution_20261103.json",
+    "attribution_bundles": "reports/taiji_binding_copy_15_1_attribution_bundles_20261103.json",
+    "price_report": "reports/taiji_binding_copy_15_1_price_20261102.json",
+    "graph_report": "reports/taiji_binding_copy_15_1_graph_20261102.json",
+    "preflight_report": "reports/taiji_binding_copy_15_1_preflight_final_20261102.json"
+  },
+  "accounting": {
+    "actual_adam_calls": 0,
+    "effective_adam_calls": 0
+  },
+  "cost": {
+    "cpu_seconds": 0.25,
+    "wall_seconds": 0.2697138001676649,
+    "adam_calls": 0,
+    "product_bytes": 0
+  },
+  "budget": {
+    "cpu_seconds": 300.0,
+    "wall_seconds": 600.0,
+    "adam_calls": 0,
+    "product_bytes": 104857600
+  },
+  "limits": "Read-only closeout. No rerun, no re-evaluation, no confirm read, no product change.",
+  "checks": {
+    "no_forward_no_adam": true,
+    "stage_budget": true,
+    "product_budget": true,
+    "parent_unchanged": true,
+    "retained_bundles_match": true,
+    "alpha_recheck_consistent": true,
+    "verdict_consistent": true,
+    "runtime_adam_recovered": true,
+    "evidence_files_present": true
+  },
+  "failed": []
+}

@@ -1,0 +1,102 @@
+{
+  "schema": "taiji-binding-select-preflight-v1",
+  "step": "N16.1.0d",
+  "date": "2026-11-03",
+  "status": "passed_16_1_0d_preflight",
+  "checks": {
+    "parent_identity": true,
+    "grid": true,
+    "initial_restore": true,
+    "step1_restore": true,
+    "replay_update": true,
+    "independent_process": true,
+    "adam_budget": true,
+    "product_limit": true,
+    "stage_budget": true,
+    "products_cleaned": true,
+    "confirm_untouched": true
+  },
+  "failed": [],
+  "configs": [
+    {
+      "seed": 28031,
+      "profile": "A-locked-f64",
+      "initial_restore_equal": true,
+      "step1_restore_equal": true,
+      "replay_equal": true,
+      "initial_worker_ok": true,
+      "step1_worker_ok": true,
+      "replay_worker_ok": true,
+      "step1_loss": 7.99916110948741,
+      "step2_loss": 6.321436745106871,
+      "replay_worker_loss": 6.321436745106871
+    },
+    {
+      "seed": 28031,
+      "profile": "B-select-f64",
+      "initial_restore_equal": true,
+      "step1_restore_equal": true,
+      "replay_equal": true,
+      "initial_worker_ok": true,
+      "step1_worker_ok": true,
+      "replay_worker_ok": true,
+      "step1_loss": 11.823340450599943,
+      "step2_loss": 6.868244348214806,
+      "replay_worker_loss": 6.868244348214806
+    },
+    {
+      "seed": 28032,
+      "profile": "A-locked-f64",
+      "initial_restore_equal": true,
+      "step1_restore_equal": true,
+      "replay_equal": true,
+      "initial_worker_ok": true,
+      "step1_worker_ok": true,
+      "replay_worker_ok": true,
+      "step1_loss": 12.106145623010129,
+      "step2_loss": 6.99842716995874,
+      "replay_worker_loss": 6.99842716995874
+    },
+    {
+      "seed": 28032,
+      "profile": "B-select-f64",
+      "initial_restore_equal": true,
+      "step1_restore_equal": true,
+      "replay_equal": true,
+      "initial_worker_ok": true,
+      "step1_worker_ok": true,
+      "replay_worker_ok": true,
+      "step1_loss": 11.547900768065633,
+      "step2_loss": 9.140806709470622,
+      "replay_worker_loss": 9.140806709470622
+    }
+  ],
+  "accounting": {
+    "actual_adam_calls": 12,
+    "effective_adam_calls": 0
+  },
+  "cost": {
+    "cpu_seconds": 39.03125,
+    "wall_seconds": 81.98126640007831,
+    "adam_calls": 12,
+    "peak_live_product_bytes": 376459416
+  },
+  "budget": {
+    "cpu_seconds": 400.0,
+    "wall_seconds": 800.0,
+    "adam_calls": 24,
+    "product_bytes": 2147483648
+  },
+  "source_hashes": {
+    "taiji/binding_select.py": "56cb2d584dc0881c3cae83d3224a7f505dd7a2ee0e9716d899b3647f1ad55387",
+    "scripts/training/verify_taiji_binding_select_16_1_preflight.py": "bae16fe4d2b020b65b7cb5c3027dfba1e997a59aff4a7d9f59da50d373d3bd98"
+  },
+  "limits": "Preflight only. No adoption training, no confirm read, no capability claim.",
+  "post_run_cleanup": {
+    "scripts/training/verify_taiji_binding_select_16_1_preflight.py": {
+      "ran_sha256": "f8ce2071cefe20bf26bd303ce9e44f5825878968f996e027fbeffc466fa29a7b",
+      "now_sha256": "bae16fe4d2b020b65b7cb5c3027dfba1e997a59aff4a7d9f59da50d373d3bd98",
+      "change": "removed one unused import after the run; no logic changed"
+    }
+  }
+}
