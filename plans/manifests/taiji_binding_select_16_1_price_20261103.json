@@ -1,0 +1,63 @@
+{
+  "schema": "taiji-binding-select-manifest-v1",
+  "step": "N16.1.0c",
+  "status": "priced_within_watch_line",
+  "report": "reports/taiji_binding_select_16_1_price_20261103.json",
+  "prices": {
+    "select_cpu": 0.0,
+    "locked_generate_cpu": 0.515625,
+    "restore_cpu": 0.078125,
+    "bundle_mib": 27.230700492858887,
+    "update_selection_cpu": 0.0,
+    "update_copy_cpu": 8.265625,
+    "update_joint_cpu": 8.328125
+  },
+  "extrapolation": {
+    "formula": {
+      "formal_updates": 1200,
+      "stage_weights": {
+        "selection": 0.3333333333333333,
+        "copy": 0.3333333333333333,
+        "joint": 0.3333333333333333
+      },
+      "generations": 1920,
+      "eval_endpoints": 2,
+      "overhead_fraction": 0.1,
+      "startup_wall_seconds": 60.0
+    },
+    "components": {
+      "training_cpu": 6637.5,
+      "generation_cpu": 990.0,
+      "selection_cpu": 0.0,
+      "restore_cpu": 0.625,
+      "subtotal_cpu": 7628.125,
+      "overhead_cpu": 762.8125,
+      "total_cpu": 8390.9375,
+      "estimated_wall_seconds": 8450.9375
+    },
+    "watch_line": {
+      "cpu_seconds": 20000.0,
+      "wall_seconds": 30000.0
+    },
+    "within_watch_line": true,
+    "cap": "owner sufficient budget; observation line only"
+  },
+  "cost": {
+    "cpu_seconds": 55.015625,
+    "wall_seconds": 55.94873880012892,
+    "adam_calls": 9,
+    "peak_live_product_bytes": 57106918
+  },
+  "source_hashes": {
+    "taiji/binding_select.py": "56cb2d584dc0881c3cae83d3224a7f505dd7a2ee0e9716d899b3647f1ad55387",
+    "scripts/training/verify_taiji_binding_select_16_1_price.py": "d1459cf95f2c8581702931756418b3037b50f2e165908be79e9422ce553e81a1"
+  },
+  "post_run_cleanup": {
+    "scripts/training/verify_taiji_binding_select_16_1_price.py": {
+      "ran_sha256": "a1ba2a8daf915f8381062c4cdba3f6507cd7326d3d8f3879aebd169963efb703",
+      "now_sha256": "d1459cf95f2c8581702931756418b3037b50f2e165908be79e9422ce553e81a1",
+      "change": "removed two unused imports after the timed run; no logic changed",
+      "note": "selection-stage cost is below the Windows process-time resolution (<16ms per update), so update_selection_cpu and select_cpu read 0.0"
+    }
+  }
+}

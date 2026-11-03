@@ -1,0 +1,165 @@
+{
+  "schema": "taiji-binding-select-price-v1",
+  "step": "N16.1.0c",
+  "date": "2026-11-03",
+  "status": "priced_within_watch_line",
+  "prices": {
+    "select_cpu": 0.0,
+    "locked_generate_cpu": 0.515625,
+    "restore_cpu": 0.078125,
+    "bundle_mib": 27.230700492858887,
+    "update_selection_cpu": 0.0,
+    "update_copy_cpu": 8.265625,
+    "update_joint_cpu": 8.328125
+  },
+  "updates": {
+    "selection": [
+      {
+        "stage": "selection",
+        "loss": 2.0812348516862036,
+        "forward_cpu": 0.0,
+        "bptt_cpu": 0.015625,
+        "step_cpu": 0.0,
+        "total_cpu": 0.015625,
+        "clip_scale": 3.0925041858719555
+      },
+      {
+        "stage": "selection",
+        "loss": 2.2659083856373496,
+        "forward_cpu": 0.0,
+        "bptt_cpu": 0.0,
+        "step_cpu": 0.0,
+        "total_cpu": 0.0,
+        "clip_scale": 3.4208540891363803
+      },
+      {
+        "stage": "selection",
+        "loss": 2.260670178523627,
+        "forward_cpu": 0.0,
+        "bptt_cpu": 0.0,
+        "step_cpu": 0.0,
+        "total_cpu": 0.0,
+        "clip_scale": 3.313424417568576
+      }
+    ],
+    "copy": [
+      {
+        "stage": "copy",
+        "loss": 8.331023162080559,
+        "forward_cpu": 3.28125,
+        "bptt_cpu": 5.0625,
+        "step_cpu": 0.015625,
+        "total_cpu": 8.359375,
+        "clip_scale": 26.768035357644788
+      },
+      {
+        "stage": "copy",
+        "loss": 6.395602273023493,
+        "forward_cpu": 3.265625,
+        "bptt_cpu": 5.0,
+        "step_cpu": 0.0,
+        "total_cpu": 8.265625,
+        "clip_scale": 11.031409809158296
+      },
+      {
+        "stage": "copy",
+        "loss": 4.444032021132111,
+        "forward_cpu": 3.109375,
+        "bptt_cpu": 5.0625,
+        "step_cpu": 0.015625,
+        "total_cpu": 8.1875,
+        "clip_scale": 8.243680565185272
+      }
+    ],
+    "joint": [
+      {
+        "stage": "joint",
+        "loss": 5.680941432949068,
+        "forward_cpu": 3.265625,
+        "bptt_cpu": 5.0,
+        "step_cpu": 0.015625,
+        "total_cpu": 8.28125,
+        "clip_scale": 5.525565675485788
+      },
+      {
+        "stage": "joint",
+        "loss": 6.294183146209826,
+        "forward_cpu": 3.28125,
+        "bptt_cpu": 5.03125,
+        "step_cpu": 0.015625,
+        "total_cpu": 8.328125,
+        "clip_scale": 6.232668866125334
+      },
+      {
+        "stage": "joint",
+        "loss": 5.683738219097013,
+        "forward_cpu": 3.25,
+        "bptt_cpu": 5.25,
+        "step_cpu": 0.0,
+        "total_cpu": 8.5,
+        "clip_scale": 9.48293142097074
+      }
+    ]
+  },
+  "restore": {
+    "save_cpu": 0.03125,
+    "load_cpu": 0.046875,
+    "elapsed_cpu": 0.078125,
+    "bundle_mib": 27.230700492858887
+  },
+  "extrapolation": {
+    "formula": {
+      "formal_updates": 1200,
+      "stage_weights": {
+        "selection": 0.3333333333333333,
+        "copy": 0.3333333333333333,
+        "joint": 0.3333333333333333
+      },
+      "generations": 1920,
+      "eval_endpoints": 2,
+      "overhead_fraction": 0.1,
+      "startup_wall_seconds": 60.0
+    },
+    "components": {
+      "training_cpu": 6637.5,
+      "generation_cpu": 990.0,
+      "selection_cpu": 0.0,
+      "restore_cpu": 0.625,
+      "subtotal_cpu": 7628.125,
+      "overhead_cpu": 762.8125,
+      "total_cpu": 8390.9375,
+      "estimated_wall_seconds": 8450.9375
+    },
+    "watch_line": {
+      "cpu_seconds": 20000.0,
+      "wall_seconds": 30000.0
+    },
+    "within_watch_line": true,
+    "cap": "owner sufficient budget; observation line only"
+  },
+  "cost": {
+    "cpu_seconds": 55.015625,
+    "wall_seconds": 55.94873880012892,
+    "adam_calls": 9,
+    "peak_live_product_bytes": 57106918
+  },
+  "budget": {
+    "cpu_seconds": 600.0,
+    "wall_seconds": 1200.0,
+    "adam_calls": 12,
+    "product_bytes": 1073741824
+  },
+  "source_hashes": {
+    "taiji/binding_select.py": "56cb2d584dc0881c3cae83d3224a7f505dd7a2ee0e9716d899b3647f1ad55387",
+    "scripts/training/verify_taiji_binding_select_16_1_price.py": "d1459cf95f2c8581702931756418b3037b50f2e165908be79e9422ce553e81a1"
+  },
+  "limits": "Pricing only. No adoption training, no confirm read, no capability claim.",
+  "post_run_cleanup": {
+    "scripts/training/verify_taiji_binding_select_16_1_price.py": {
+      "ran_sha256": "a1ba2a8daf915f8381062c4cdba3f6507cd7326d3d8f3879aebd169963efb703",
+      "now_sha256": "d1459cf95f2c8581702931756418b3037b50f2e165908be79e9422ce553e81a1",
+      "change": "removed two unused imports after the timed run; no logic changed",
+      "note": "selection-stage cost is below the Windows process-time resolution (<16ms per update), so update_selection_cpu and select_cpu read 0.0"
+    }
+  }
+}

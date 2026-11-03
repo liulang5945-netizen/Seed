@@ -70,7 +70,7 @@
 |---|---|---|
 | N16.1.0a | 选择标签与记录关键片段物化（复用 v2 数据，不新增 train/dev/confirm 读取） | **已执行（2026-11-03）：`passed_16_1_0a_selection_interface`，14 项检查全过、0 模型前向/0 Adam；288/240 例、标签唯一、dev 2×2 轴 135/45/45/15＋unseen_combination 36；键片段不含 name/action；confirm 密封未物化；载荷 722,294B；2.31/60 CPU、2.6/120 墙。[报告](../../reports/taiji_binding_select_16_1_data_20261103.json)** | 60 CPU/120 wall，0 Adam，≤100MB |
 | N16.1.0b | 选择头/锁定复制/γ 下限接线，FD、干预、独立恢复 | **已执行（2026-11-03）：`passed_16_1_0b_graph`，21 项检查全过。选择头 25,602 参数（与公式逐位一致），总参数 3,552,083；CE 在 eps 1e-4/1e-5/1e-6 三档全分辨，锁定 NLL 梯度范数 43.3/44.7；α 锁定为 one-hot（null=0、betas 保留、输出改变）；**模型 γ 0.00073/0.00383 → 下限强制 0.2**；identity rescue 逐位；两 profile 初态/step1/恢复端下一更新独立进程逐位一致；课程接口阈值 0.5、确定性。两次尝试合计 **12/12 工程 Adam**、65.4/600 CPU、峰值 62.5MiB（首跑因 bundle schema 缺 `parameters` 与计数公式错误失败 4 项，修复后重跑一次）。[报告](../../reports/taiji_binding_select_16_1_graph_20261103.json)** | 600 CPU/1200 wall，≤12 Adam，≤2GiB |
-| N16.1.0c | 定价（选择头前向、锁定复制的双 read、γ 下限、各阶段训练与评价、恢复） | 600 CPU/1200 wall，≤12 Adam，≤1GiB |
+| N16.1.0c | 定价（选择头前向、锁定复制的双 read、γ 下限、各阶段训练与评价、恢复） | **已执行（2026-11-03）：`priced_within_watch_line`。单价：locked_generate 0.516 CPU/例、copy 更新 8.27、joint 更新 8.33、restore 0.078、bundle 27.2MiB；selection 前向/更新低于 Windows 计时分辨率（读 0.0，占 joint <0.2%，已披露）。外推 2 seed×2 臂×300 更新＝1200 更新：8,390.9 CPU、wall≈8,450.9，**远低于 20,000/30,000 观察线**。9/12 Adam、55.0/600 CPU、产物 27.2MiB。[报告](../../reports/taiji_binding_select_16_1_price_20261103.json)** | 600 CPU/1200 wall，≤12 Adam，≤1GiB |
 | N16.1.0d | 两 seed×两臂初态/step1/恢复端下一更新独立进程逐位一致 | 400 CPU/800 wall，≤24 工程 Adam，≤2GiB |
 | N16.1.1 | 2 seed × 2 臂（A=选择锁定 / B=仅选择头、不锁 α）× 300 更新 | 按 0c 实测冻结；观察线 20,000 CPU/30,000 wall 到线先回报 |
 | N16.1.2 | 主 seed 确认（240 新 confirm，仍封存至任务门通过） | 2,000 CPU/4,000 wall，0 更新 |
