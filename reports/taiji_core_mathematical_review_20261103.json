@@ -1,0 +1,380 @@
+{
+  "schema": "taiji-core-mathematical-review-v1",
+  "date": "2026-11-03",
+  "observed_at": "2026-11-03T22:44:50+08:00",
+  "baseline_commit": "0087c6eb030bece0bb0967007044a021fc09215a",
+  "status": "pure_algebra_counterexample_and_source_specification_review",
+  "attachment": {
+    "path": "C:/Users/23747/.codex/attachments/dbb2e97d-9a70-47f4-8b23-fd396bf1c76c/已粘贴的文本.txt",
+    "bytes": 13324,
+    "sha256_raw": "6a9ec0e817261d75db287e98d841f5a441a60c1e50bbeca568140caee7837064",
+    "sha256_utf8_lf": "006db68c88acfa8d7961461300df8d8ad172a798594d78b7f25b519b54b63ed4"
+  },
+  "source_snapshots": [
+    {
+      "path": "taiji/living_core.py",
+      "bytes": 26609,
+      "sha256_raw": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+      "sha256_utf8_lf": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200"
+    },
+    {
+      "path": "taiji/binding_copy.py",
+      "bytes": 43937,
+      "sha256_raw": "3205ca89100ffdfeeac1bb2e7918b295d39426565616ddbdef3bfac2af7eb8f9",
+      "sha256_utf8_lf": "3205ca89100ffdfeeac1bb2e7918b295d39426565616ddbdef3bfac2af7eb8f9"
+    },
+    {
+      "path": "taiji/selection_routing.py",
+      "bytes": 23251,
+      "sha256_raw": "f63b9a7fcf388c7cdf8c77b1101467548b60e017200fcd93993a4581af9e9c3b",
+      "sha256_utf8_lf": "f63b9a7fcf388c7cdf8c77b1101467548b60e017200fcd93993a4581af9e9c3b"
+    },
+    {
+      "path": "taiji/record_relation.py",
+      "bytes": 20802,
+      "sha256_raw": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+      "sha256_utf8_lf": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18"
+    },
+    {
+      "path": "taiji/record_relation_core.py",
+      "bytes": 35798,
+      "sha256_raw": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+      "sha256_utf8_lf": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37"
+    }
+  ],
+  "local_algebra_checks": {
+    "nonzero_window_credit_counterexample": {
+      "passed": true,
+      "rows": [
+        {
+          "tau": 64.0,
+          "per_step_leak": 0.015503562994591595,
+          "drive_derivative": 0.3934693402873666,
+          "initial_state_derivative": 0.6065306597126334,
+          "log_tau_derivative": -0.3032653298563167,
+          "bounded_tau_rho_derivative": -0.1510380270264793,
+          "tau128_scope": "finite parameter"
+        },
+        {
+          "tau": 128.0,
+          "per_step_leak": 0.007782061739756488,
+          "drive_derivative": 0.22119921692859512,
+          "initial_state_derivative": 0.7788007830714049,
+          "log_tau_derivative": -0.19470019576785122,
+          "bounded_tau_rho_derivative": -0.0,
+          "tau128_scope": "endpoint limit"
+        },
+        {
+          "tau": 127.0,
+          "per_step_leak": 0.007843096891108093,
+          "drive_derivative": 0.2227307813963051,
+          "initial_state_derivative": 0.7772692186036949,
+          "log_tau_derivative": -0.19584736216786014,
+          "bounded_tau_rho_derivative": -0.001530010271065883,
+          "tau128_scope": "finite parameter"
+        }
+      ],
+      "scope": "Constant shared drive only; no claim about full-task trainability."
+    },
+    "source_scale_dependence": {
+      "passed": true,
+      "beta": [
+        0.9,
+        0.1
+      ],
+      "temperature": 0.05,
+      "cases": [
+        {
+          "alpha": 0.001,
+          "source_first": 0.5039999146688512,
+          "hard_source": 0
+        },
+        {
+          "alpha": 1.0,
+          "source_first": 0.9999998874648379,
+          "hard_source": 0
+        }
+      ],
+      "normalized_log_beta_at_T1": [
+        0.9,
+        0.1
+      ],
+      "scope": "Old alpha scaling changes soft weights with identical beta; hard source for positive alpha remains the same."
+    },
+    "lambda_override_semantics": {
+      "passed": true,
+      "override0_effective_lambda": 0.5,
+      "override1_effective_lambda": 0.7310585786300049,
+      "scope": "Matches current pre-sigmoid override operator; intended value-vs-logit contract needs freezing."
+    },
+    "greedy_vs_sampling_counterexample": {
+      "passed": true,
+      "gamma": 0.2,
+      "q_null": 0,
+      "copy": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "generated": [
+        0.01,
+        0.98,
+        0.01
+      ],
+      "mixed": [
+        0.802,
+        0.196,
+        0.002
+      ],
+      "greedy_all12_correct": true,
+      "sampling12_probability_in_ideal_zero_gold_generator_case": 0.06871947673600004,
+      "equal_step_sampling_target_0_8": {
+        "per_step_probability": 0.9815765298737517,
+        "required_generator_gold_if_copy_perfect_gamma_point2": 0.9078826493687581
+      }
+    },
+    "implicit_regression_subfamily": {
+      "passed": true,
+      "c": "1/2",
+      "eta_e": "1",
+      "beta_e": "1/4",
+      "write_gate": "36/157",
+      "prox_solution": [
+        [
+          "2487/3140",
+          "2121/1570"
+        ],
+        [
+          "-1157/1570",
+          "3417/1570"
+        ]
+      ],
+      "optimality_residual_exactly_zero": true,
+      "scope": "One exact rational instance supports the derived identity under stated tied-gate conditions; arbitrary independent gates and projection are separate."
+    },
+    "consolidation_geometry_counterexample": {
+      "passed": true,
+      "new_gradient": 1,
+      "eta": 1,
+      "rho": 1,
+      "epsilon": 0,
+      "aligned_old_gradient": 1,
+      "aligned_optimal_step": -1,
+      "opposed_old_gradient": -1,
+      "opposed_optimal_step": 0,
+      "scope": "No universal fixed efficiency ratio."
+    },
+    "ordered_context_then_mean_counterexample": {
+      "passed": true,
+      "a": 1,
+      "b": 0,
+      "context": "[a, b+tanh(a)]",
+      "swapped_mean_difference": 0.3807970779778824,
+      "scope": "A contextual mean need not be permutation invariant; not a claim all information survives pooling."
+    },
+    "linear_association_compatibility": {
+      "passed": true,
+      "key_dimension": 1,
+      "patterns": 2,
+      "keys": [
+        "1",
+        "1"
+      ],
+      "compatible_values": [
+        "2",
+        "2"
+      ],
+      "compatible_solution_F": "2",
+      "incompatible_values": [
+        "0",
+        "1"
+      ],
+      "ker_witness": [
+        "1",
+        "-1"
+      ],
+      "scope": "More samples than key dimension can be representable for compatible targets; arbitrary labels require compatibility."
+    }
+  },
+  "claims_scope": "These checks validate specified scalar/rational identities and counterexamples only. They are not a full theorem audit, formal graph validation or model-capability test.",
+  "primary_sources": [
+    {
+      "url": "https://arxiv.org/abs/2605.22791",
+      "submission": "2026-05-21",
+      "use": "GDN2 erase/write and affine/chunk design; distinguish future2026-12-09 conference date"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.26834",
+      "submission": "2026-10-19",
+      "use": "Kronecker delta family; no transfer of benchmark claims"
+    },
+    {
+      "url": "https://arxiv.org/abs/2407.04620",
+      "use": "TTT inner learning model family, not proof of universal necessity"
+    },
+    {
+      "url": "https://arxiv.org/abs/2501.12352",
+      "use": "Associative memory regression design axes"
+    },
+    {
+      "url": "https://arxiv.org/abs/2504.13173",
+      "use": "MIRAS memory/objective/retention/optimizer axes"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v139/schlag21a.html",
+      "use": "Primary fast-weight/linear-attention equivalence source"
+    },
+    {
+      "url": "https://arxiv.org/abs/1706.08840",
+      "use": "GEM multiple-gradient preservation context"
+    },
+    {
+      "url": "https://arxiv.org/abs/1812.00420",
+      "use": "A-GEM averaged constraint context"
+    }
+  ],
+  "unverified_specific_links": [
+    {
+      "url": "https://openreview.net/pdf?id=c2kIMaUCXj",
+      "reason": "browser challenge"
+    },
+    {
+      "url": "https://icml.cc/virtual/2026/poster/61979",
+      "reason": "fetch/cache miss"
+    }
+  ],
+  "design_disposition": {
+    "static_tau": "Current5.3/implementation baseline. Runtime conditional-tau9.3 is marked a separateDYN1 candidate.",
+    "M_COPY": "First mathematical input within current17.2R: conditional source-scale invariance, source/target temperature and lambda value/logit semantics.",
+    "M_DYN": "Window, saturation, full-state Jacobian and affine/input-only vs feedback scan boundaries.",
+    "M_MEM": "Independent gated proximal / tied error-correction proximal / explicit gradient / actual TTT-Linear, same information/state/cost.",
+    "M_CAP": "Rank/Gram/minimum norm/clip/error under load.",
+    "M_GROW": "Local descent under curvature versus heldout benefit/retention/cost.",
+    "v1_3": "No direct adoption of GDN+TTT as uniquely necessary based on the attachment. Define candidates and their conditions first."
+  },
+  "documents": [
+    {
+      "path": "plans/reference/MATH-REVIEW_CORE_DYNAMICS_MEMORY_COPY_20261103.md",
+      "bytes": 13865,
+      "sha256_raw": "f2c5862a0a179a0be09f73e38d967c4fa31713e7a8338b4eb2701fd7803995a0",
+      "sha256_utf8_lf": "f2c5862a0a179a0be09f73e38d967c4fa31713e7a8338b4eb2701fd7803995a0"
+    },
+    {
+      "path": "plans/reference/TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md",
+      "bytes": 125337,
+      "sha256_raw": "a748bdffb8913839175544ecadcdbab56755541110d250a5159539ef5255f4d6",
+      "sha256_utf8_lf": "a748bdffb8913839175544ecadcdbab56755541110d250a5159539ef5255f4d6"
+    },
+    {
+      "path": "plans/reference/PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md",
+      "bytes": 39923,
+      "sha256_raw": "82c44ffe71498a704734fc232cf3fe346ded6f51acae815c8abbc55ecdf6e269",
+      "sha256_utf8_lf": "82c44ffe71498a704734fc232cf3fe346ded6f51acae815c8abbc55ecdf6e269"
+    },
+    {
+      "path": "plans/MAINLINE.md",
+      "bytes": 171339,
+      "sha256_raw": "4f0be9e8b77111bcd67fada186ddf7c11228b5d87c5ab237219984a2862384af",
+      "sha256_utf8_lf": "4f0be9e8b77111bcd67fada186ddf7c11228b5d87c5ab237219984a2862384af"
+    },
+    {
+      "path": "plans/reference/README.md",
+      "bytes": 19635,
+      "sha256_raw": "b70913f95cc6b244f7e847c710a2948b311945194905e2ac9d9a1aae2af28255",
+      "sha256_utf8_lf": "b70913f95cc6b244f7e847c710a2948b311945194905e2ac9d9a1aae2af28255"
+    },
+    {
+      "path": "plans/active/roadmap/03_CURRENT_EXECUTION.md",
+      "bytes": 255565,
+      "sha256_raw": "26827cfd83e95b3138bce36eaab1001b4f5c7537ec4c1bd83d072e9d374d8547",
+      "sha256_utf8_lf": "26827cfd83e95b3138bce36eaab1001b4f5c7537ec4c1bd83d072e9d374d8547"
+    }
+  ],
+  "actual_execution": {
+    "model_forward_calls": 0,
+    "optimizer_calls": 0,
+    "weights_loaded": false,
+    "model_libraries_imported": false,
+    "pure_algebra_checks": 8,
+    "runtime_code_modified_by_this_task": false,
+    "sealed_data_read": false,
+    "old_reports_rewritten": false
+  },
+  "validation": {
+    "local_links": {
+      "files": 6,
+      "checked": 969,
+      "issues": []
+    },
+    "single_mainline": {
+      "schema": "taiji-plan-single-mainline-audit-v1",
+      "status": "ok",
+      "checks": [
+        "MAINLINE.md present",
+        "README entry present",
+        "active docs checked: 19",
+        "current contracts checked: 4",
+        "legacy banners checked: 10"
+      ],
+      "failures": [],
+      "rc": 0
+    },
+    "diff_check": {
+      "exit_code": 0,
+      "scope": "Mathematics-review document family before staging"
+    },
+    "local_algebra_only": true
+  },
+  "delivery_policy": "Only this mathematics review, associated plan clarification and receipt. Preserve concurrent N17 runtime/source/report edits.",
+  "source_excerpts": [
+    {
+      "path": "taiji/binding_copy.py",
+      "name": "_point_transport",
+      "start_line": 392,
+      "end_line": 433,
+      "source_sha256_raw": "3205ca89100ffdfeeac1bb2e7918b295d39426565616ddbdef3bfac2af7eb8f9",
+      "source_utf8_lf": "    def _point_transport(\n        self,\n        anchor: torch.Tensor,\n        units: torch.Tensor,\n        q_w: torch.Tensor,\n        pointer_bias: torch.Tensor | None,\n        temperature: float,\n        hard: bool,\n    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:\n        \"\"\"Unit/hard point transport: one target position, not a soft row.\n\n        The source position is the anchor's mode (betas), the target score is the\n        learned transport row for that source, optionally biased by the span\n        start head.  Training uses a temperature-annealed softmax; inference\n        takes the argmax, so the copied position is a single point.\n        \"\"\"\n        key_width = self.config.key_width\n        length = units.shape[0]\n        keys = self.K_transport(units)\n        queries = self.Q_transport(torch.cat([q_w.expand(length, -1), units], dim=-1))\n        relative = pe16(\n            torch.arange(length, dtype=units.dtype, device=units.device).unsqueeze(0)\n            - torch.arange(length, dtype=units.dtype, device=units.device).unsqueeze(1)\n        )\n        relative_score = relative @ self.v_relative\n        logits = queries @ keys.T / math.sqrt(key_width) + relative_score\n        if hard:\n            source = int(torch.argmax(anchor))\n            row_logits = logits[source]\n        else:\n            source_weights = torch.softmax(anchor / temperature, dim=-1)\n            row_logits = (source_weights.unsqueeze(0) @ logits).squeeze(0)\n        if pointer_bias is not None:\n            row_logits = row_logits + pointer_bias\n        mass = anchor.sum()\n        if hard:\n            index = int(torch.argmax(row_logits))\n            pointer = torch.zeros(length, dtype=row_logits.dtype, device=row_logits.device)\n            pointer[index] = 1.0\n        else:\n            pointer = torch.softmax(row_logits / temperature, dim=-1)\n        return mass * pointer, pointer, row_logits"
+    },
+    {
+      "path": "taiji/binding_copy.py",
+      "name": "advance_copy",
+      "start_line": 656,
+      "end_line": 678,
+      "source_sha256_raw": "3205ca89100ffdfeeac1bb2e7918b295d39426565616ddbdef3bfac2af7eb8f9",
+      "source_utf8_lf": "def advance_copy(\n    reader: BindingCopyReader,\n    state: BindingState,\n    read: BindingRead,\n    probabilities: torch.Tensor,\n    gamma: torch.Tensor,\n    accepted: int,\n    view: RecordSourceView,\n) -> tuple[torch.Tensor, torch.Tensor]:\n    if accepted < 0 or accepted >= MAX_COVERAGE:\n        return state.m.new_zeros(state.m.shape), state.coverage\n    p = probabilities[accepted]\n    if accepted == EOS or float(p.detach()) <= 0:\n        return state.m.new_zeros(state.m.shape), state.coverage\n    raw_byte = reader.inherited.V_position.weight.new_tensor(accepted)\n    mask = view.byte_ids == raw_byte\n    r = (1 - gamma) * torch.where(mask, read.copy_weights / p, read.copy_weights.new_zeros(()))\n    m_next = state.m.new_zeros(state.m.shape)\n    for start, end in view.record_offsets:\n        if end - start > 1:\n            m_next[start + 1 : end] = r[start : end - 1]\n    coverage = state.coverage + r\n    return m_next, coverage"
+    },
+    {
+      "path": "taiji/living_core.py",
+      "name": "messages",
+      "start_line": 364,
+      "end_line": 370,
+      "source_sha256_raw": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+      "source_utf8_lf": "    def messages(self, h: torch.Tensor, goal: torch.Tensor):\n        q = torch.stack([layer(row) for layer, row in zip(self.message_q, h, strict=True)])\n        q = q + self.message_goal(goal)\n        k = torch.stack([layer(row) for layer, row in zip(self.message_k, h, strict=True)])\n        v = torch.stack([layer(row) for layer, row in zip(self.message_v, h, strict=True)])\n        attention = torch.softmax(q @ k.T / math.sqrt(self.config.width), dim=-1)\n        return attention @ v, attention, q, k, v"
+    },
+    {
+      "path": "taiji/living_core.py",
+      "name": "edit_fast",
+      "start_line": 392,
+      "end_line": 403,
+      "source_sha256_raw": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+      "source_utf8_lf": "    def edit_fast(memory, key, value, decay, erase, write, strength, chi, allowed, limit):\n        if not allowed:\n            return memory\n        decayed = decay[:, None] * memory\n        direction = erase * key\n        eta = 16 * torch.sigmoid(strength)\n        factor = eta / (1 + eta * direction.square().sum())\n        erased = decayed - factor * torch.outer(direction, direction @ decayed)\n        edited = erased + torch.outer(key, write * value)\n        candidate = (1 - chi) * memory + chi * edited\n        norm = torch.linalg.vector_norm(candidate)\n        return candidate if bool(norm <= limit) else candidate * (limit / norm)"
+    },
+    {
+      "path": "taiji/record_relation.py",
+      "name": "encode_units",
+      "start_line": 201,
+      "end_line": 217,
+      "source_sha256_raw": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+      "source_utf8_lf": "    def encode_units(self, subject, raw: bytes) -> torch.Tensor:\n        \"\"\"Encode one already-complete record (or the goal) into width units.\n\n        ``a_ij`` is the inherited causal byte context plus a record-local\n        position; the two GRU directions then see the whole record.  The\n        inherited encoder parameters stay plastic in this candidate.\n        \"\"\"\n        reference = self.W_c.weight\n        if not raw:\n            return reference.new_empty((0, self.config.width))\n        context = subject.encoder.context(raw)\n        local = position_features(len(raw), self.config.width, reference)\n        activated = context + local\n        if getattr(self, \"local\", False):\n            return activated\n        forward, _ = self.gru(activated.unsqueeze(1))\n        return activated + self.W_c(forward[:, 0, :])"
+    },
+    {
+      "path": "taiji/binding_copy.py",
+      "name": "lambda_override_operator",
+      "start_line": 288,
+      "end_line": 291,
+      "source_sha256_raw": "3205ca89100ffdfeeac1bb2e7918b295d39426565616ddbdef3bfac2af7eb8f9",
+      "source_utf8_lf": "        if lambda_override is not None:\n            continuation = torch.as_tensor(lambda_override, dtype=s.dtype, device=s.device)\n        lam = torch.sigmoid(continuation)\n        null_key = self.null_key if not self.reuse_null_key else self.inherited.null_key"
+    }
+  ],
+  "source_version_scope": "Source hashes/snippets describe the reviewed working-tree operators. Concurrent later edits require their own binding; this receipt does not assert full current-tree graph coverage."
+}
