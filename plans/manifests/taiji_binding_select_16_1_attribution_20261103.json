@@ -1,0 +1,69 @@
+{
+  "schema": "taiji-binding-select-manifest-v1",
+  "step": "N16.1.1-attribution",
+  "status": "instrument_partial_fault_true_negative",
+  "report": "reports/taiji_binding_select_16_1_attribution_20261103.json",
+  "source_report": "reports/taiji_binding_select_16_1_compare_20261103.json",
+  "source_report_sha256": "122305a52152b06273092065b56b53e1fda312b4e00979adede7e1157c17cc97",
+  "checks": {
+    "report_is_negative": true,
+    "config_grid": true,
+    "full_dose": true,
+    "precheck_passed": true,
+    "precheck_instrument_parity": true,
+    "no_confirm": true,
+    "step0_equal_across_arms": true,
+    "selection_symmetry": true,
+    "lock_changes_decode": true,
+    "no_rerun": true,
+    "wall_matches_cpu": true,
+    "under_watch_line": true,
+    "primary_task_readings_cache_free": true,
+    "selection_denominators_240": true
+  },
+  "failed": [],
+  "verdict": "native_byte_task_failed",
+  "task_pass": false,
+  "mechanism_pass": false,
+  "withdrawn": [
+    "subset rates with a 240 denominator (15.1-style aggregation fault)",
+    "content-necessity true side keyed by the local index cache",
+    "counterfactual true side keyed by the local index cache",
+    "selection-by-subset grouping keyed by the local index cache",
+    "reverse-pair rate keyed by the local index cache (not rebuildable without stored raw)",
+    "gamma read as a 'copy gate'; gamma is the generation weight"
+  ],
+  "instrument_faults": {
+    "subset_denominators": "the runner's summarize() divided every subset by 240 instead of its own n; corrected values are 0.05/0.0167 for new descriptions, not 0.0125/0.0042",
+    "index_cache": "true_gen/flags were keyed by the world-local index (20 values for 240 rows); the content and counterfactual true sides are recomputed from the stored per-row scores with (world, index), and the reverse-pair rate is withdrawn",
+    "gamma_direction": "gamma multiplies the generated branch, so the 0.2 clamp is a generation floor; the copy weight at step300 is 0.1788/0.2529 in A and 0.9384/0.9608 in B, but B's alpha is null so its copy mass is zero.  The floor does not carry the score (removing it changes completion by 0.0/+0.0167)",
+    "reversed_pair": "stored raw bytes are absent, so the correct paired rate cannot be rebuilt without rerunning 240+240 deterministic generations; the reading is withdrawn, not replaced"
+  },
+  "contract_fault": {
+    "self_prefix_labels": "batch_objective passes the self-generated prefix as target_prefix to locked_loss/score_example, so labels become the model's own bytes; the curriculum is self-imitation, not correction.  A never triggered (0 updates); B triggered 127/121 updates.  The A-B contrast is therefore confounded and is not used as a clean mechanism test.",
+    "self_prefix_triggers": {
+      "28031": {
+        "A": 0,
+        "B": 127
+      },
+      "28032": {
+        "A": 0,
+        "B": 121
+      }
+    },
+    "affected_reading": "A-B increment"
+  },
+  "next_step": {
+    "single": "N16.1.3 全局收束（只读：用本修正读数、弃用反序配对、登记仪器/合同缺陷），再由 owner 裁定是否准入 17 号逐步选择路由候选",
+    "candidate_reference": "plans/reference/DESIGN-POST-N16_SELECTION_ROUTING_20261103.md",
+    "candidate_state": "design only; not launched",
+    "why_not_launch": "17 requires the 16.1.3 score/attribution calibration and an owner ruling; the current 1.1 card does not release 1.2 or any new training."
+  },
+  "cost": {
+    "cpu_seconds": 0.0,
+    "wall_seconds": 0.0,
+    "adam_calls": 0,
+    "forward_calls": 0
+  },
+  "limits": "Read-only correction of the frozen report: 0 updates, 0 forward, 0 confirm.  It does not re-run the comparison, change the eligible dose or release 1.2."
+}

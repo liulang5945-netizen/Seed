@@ -1,0 +1,1287 @@
+{
+  "schema": "taiji-binding-select-attribution-corrected-v1",
+  "step": "N16.1.1-attribution",
+  "date": "2026-11-03",
+  "status": "instrument_partial_fault_true_negative",
+  "checks": {
+    "report_is_negative": true,
+    "config_grid": true,
+    "full_dose": true,
+    "precheck_passed": true,
+    "precheck_instrument_parity": true,
+    "no_confirm": true,
+    "step0_equal_across_arms": true,
+    "selection_symmetry": true,
+    "lock_changes_decode": true,
+    "no_rerun": true,
+    "wall_matches_cpu": true,
+    "under_watch_line": true,
+    "primary_task_readings_cache_free": true,
+    "selection_denominators_240": true
+  },
+  "failed": [],
+  "readings": {
+    "28031-A-locked": {
+      "seed": 28031,
+      "arm": "A-locked",
+      "overall": 0.05,
+      "subsets": {
+        "new_description": {
+          "completed": 3,
+          "n": 60,
+          "rate": 0.05
+        },
+        "unseen_output_name": {
+          "completed": 0,
+          "n": 60,
+          "rate": 0.0
+        },
+        "both_new": {
+          "completed": 0,
+          "n": 15,
+          "rate": 0.0
+        },
+        "unseen_combination": {
+          "completed": 3,
+          "n": 36,
+          "rate": 0.08333333333333333
+        },
+        "seen": {
+          "completed": 6,
+          "n": 108,
+          "rate": 0.05555555555555555
+        }
+      },
+      "selection": {
+        "correct": 92,
+        "n": 240,
+        "top1": 0.38333333333333336
+      },
+      "selection_by_subset": {
+        "unseen_combination": {
+          "correct": 18,
+          "n": 36,
+          "rate": 0.5
+        },
+        "seen": {
+          "correct": 66,
+          "n": 108,
+          "rate": 0.6111111111111112
+        },
+        "unseen_output_name": {
+          "correct": 10,
+          "n": 60,
+          "rate": 0.16666666666666666
+        },
+        "new_description": {
+          "correct": 0,
+          "n": 60,
+          "rate": 0.0
+        },
+        "both_new": {
+          "correct": 0,
+          "n": 15,
+          "rate": 0.0
+        }
+      },
+      "object_exact": 0.25,
+      "first_divergence_3": 0.5,
+      "given_correct_selection": {
+        "n": 92,
+        "object_exact": 0.33695652173913043,
+        "completed": 0.07608695652173914
+      },
+      "alpha_top1": 0.17083333333333334,
+      "byte_top1": 0.17083333333333334,
+      "gamma": {
+        "gamma_model_mean": 0.8211897759938862,
+        "gamma_used_mean": 0.8464046960037249,
+        "copy_weight_mean": 0.1788102240061138,
+        "floored_step_fraction": 0.14583333333333334,
+        "examples_with_any_floored": 240,
+        "step0_model_mean": 0.000183736136637163,
+        "direction": "gamma multiplies the generated branch: P = [gamma + (1-gamma)*q_null]*P_gen + (1-gamma)*P_copy.  gamma is the generation weight; the 0.2 clamp is a generation floor and does not force copying."
+      },
+      "reversed_accuracy": 0.05,
+      "reversed_paired": {
+        "stored": 0.7458333333333333,
+        "status": "withdrawn_index_cache_no_stored_raw"
+      },
+      "content": {
+        "applicable": true,
+        "n": 24,
+        "true_completed": 4,
+        "true_rate": 0.16666666666666666,
+        "intervention_rates": {
+          "no_source": 0.0,
+          "wrong_record": 0.125,
+          "wrong_position": 0.041666666666666664
+        },
+        "drops": {
+          "no_source": 0.16666666666666666,
+          "wrong_record": 0.04166666666666666,
+          "wrong_position": 0.125
+        },
+        "degenerate": false
+      },
+      "counterfactual": {
+        "n": 240,
+        "true_completed": 12,
+        "both_correct": 0.0,
+        "counterfactual_completed": 6
+      },
+      "identity_rescue": [
+        8,
+        8
+      ],
+      "nll": 1.5253125044571585,
+      "curriculum": {
+        "rate_max": 0.375,
+        "self_prefix_updates": 0
+      },
+      "train": {
+        "first_loss": 2.2505766496443815,
+        "last_loss": 1.1870879315839933,
+        "last20": 1.1758719684938121
+      },
+      "sensitivity": {
+        "examples": 40,
+        "completed_rate": 0.05,
+        "gamma_mean": 0.8285005519641848,
+        "rows": [
+          {
+            "index": 0,
+            "completed": false,
+            "gamma_mean": 0.8429323362691655
+          },
+          {
+            "index": 1,
+            "completed": false,
+            "gamma_mean": 0.8441869731334428
+          },
+          {
+            "index": 2,
+            "completed": false,
+            "gamma_mean": 0.8477066258648875
+          },
+          {
+            "index": 3,
+            "completed": false,
+            "gamma_mean": 0.845574757278488
+          },
+          {
+            "index": 4,
+            "completed": true,
+            "gamma_mean": 0.8435903711508126
+          },
+          {
+            "index": 5,
+            "completed": false,
+            "gamma_mean": 0.8441963543985717
+          },
+          {
+            "index": 6,
+            "completed": false,
+            "gamma_mean": 0.8457526273114646
+          },
+          {
+            "index": 7,
+            "completed": false,
+            "gamma_mean": 0.8500505693681666
+          },
+          {
+            "index": 8,
+            "completed": false,
+            "gamma_mean": 0.8471843593250354
+          },
+          {
+            "index": 9,
+            "completed": false,
+            "gamma_mean": 0.8449106917731452
+          },
+          {
+            "index": 10,
+            "completed": false,
+            "gamma_mean": 0.8442985474678795
+          },
+          {
+            "index": 11,
+            "completed": false,
+            "gamma_mean": 0.8461063770637551
+          },
+          {
+            "index": 12,
+            "completed": false,
+            "gamma_mean": 0.8498740143418331
+          },
+          {
+            "index": 13,
+            "completed": false,
+            "gamma_mean": 0.8477095629770133
+          },
+          {
+            "index": 14,
+            "completed": false,
+            "gamma_mean": 0.845091951286028
+          },
+          {
+            "index": 15,
+            "completed": false,
+            "gamma_mean": 0.8429974602574458
+          },
+          {
+            "index": 16,
+            "completed": false,
+            "gamma_mean": 0.8444914852580595
+          },
+          {
+            "index": 17,
+            "completed": false,
+            "gamma_mean": 0.8479284573337937
+          },
+          {
+            "index": 18,
+            "completed": false,
+            "gamma_mean": 0.8459084745017351
+          },
+          {
+            "index": 19,
+            "completed": false,
+            "gamma_mean": 0.843986790057749
+          },
+          {
+            "index": 0,
+            "completed": false,
+            "gamma_mean": 0.812414093090562
+          },
+          {
+            "index": 1,
+            "completed": false,
+            "gamma_mean": 0.8161365074974233
+          },
+          {
+            "index": 2,
+            "completed": false,
+            "gamma_mean": 0.8196729474291482
+          },
+          {
+            "index": 3,
+            "completed": false,
+            "gamma_mean": 0.8172461280069013
+          },
+          {
+            "index": 4,
+            "completed": false,
+            "gamma_mean": 0.8143345102496075
+          },
+          {
+            "index": 5,
+            "completed": false,
+            "gamma_mean": 0.8076211943374022
+          },
+          {
+            "index": 6,
+            "completed": false,
+            "gamma_mean": 0.8103510016548084
+          },
+          {
+            "index": 7,
+            "completed": false,
+            "gamma_mean": 0.8123506331773692
+          },
+          {
+            "index": 8,
+            "completed": false,
+            "gamma_mean": 0.8108336769872652
+          },
+          {
+            "index": 9,
+            "completed": false,
+            "gamma_mean": 0.8087872412442986
+          },
+          {
+            "index": 10,
+            "completed": false,
+            "gamma_mean": 0.8072475048768721
+          },
+          {
+            "index": 11,
+            "completed": false,
+            "gamma_mean": 0.810186531817874
+          },
+          {
+            "index": 12,
+            "completed": false,
+            "gamma_mean": 0.812374434089004
+          },
+          {
+            "index": 13,
+            "completed": false,
+            "gamma_mean": 0.8108775884925097
+          },
+          {
+            "index": 14,
+            "completed": false,
+            "gamma_mean": 0.8088015391816418
+          },
+          {
+            "index": 15,
+            "completed": false,
+            "gamma_mean": 0.8067656122441166
+          },
+          {
+            "index": 16,
+            "completed": false,
+            "gamma_mean": 0.8096579217548902
+          },
+          {
+            "index": 17,
+            "completed": false,
+            "gamma_mean": 0.8115352432493018
+          },
+          {
+            "index": 18,
+            "completed": false,
+            "gamma_mean": 0.8101009032197638
+          },
+          {
+            "index": 19,
+            "completed": true,
+            "gamma_mean": 0.8082480795481622
+          }
+        ],
+        "true_completed_rate_on_same_subset": 0.05,
+        "delta": 0.0
+      },
+      "step0": {
+        "overall": 0.0,
+        "selection_top1": 0.08333333333333333
+      },
+      "cost": {
+        "cpu_seconds": 3966.828125,
+        "wall_seconds": 4050.054255099967,
+        "adam_calls": 300,
+        "prior_cpu_seconds": 0.0,
+        "prior_wall_seconds": 0.0
+      },
+      "updates": 300,
+      "resumed_from": 0
+    },
+    "28031-B-select": {
+      "seed": 28031,
+      "arm": "B-select",
+      "overall": 0.3375,
+      "subsets": {
+        "new_description": {
+          "completed": 0,
+          "n": 60,
+          "rate": 0.0
+        },
+        "unseen_output_name": {
+          "completed": 0,
+          "n": 60,
+          "rate": 0.0
+        },
+        "both_new": {
+          "completed": 0,
+          "n": 15,
+          "rate": 0.0
+        },
+        "unseen_combination": {
+          "completed": 7,
+          "n": 36,
+          "rate": 0.19444444444444445
+        },
+        "seen": {
+          "completed": 74,
+          "n": 108,
+          "rate": 0.6851851851851852
+        }
+      },
+      "selection": {
+        "correct": 94,
+        "n": 240,
+        "top1": 0.39166666666666666
+      },
+      "selection_by_subset": {
+        "unseen_combination": {
+          "correct": 17,
+          "n": 36,
+          "rate": 0.4722222222222222
+        },
+        "seen": {
+          "correct": 67,
+          "n": 108,
+          "rate": 0.6203703703703703
+        },
+        "unseen_output_name": {
+          "correct": 12,
+          "n": 60,
+          "rate": 0.2
+        },
+        "new_description": {
+          "correct": 0,
+          "n": 60,
+          "rate": 0.0
+        },
+        "both_new": {
+          "correct": 0,
+          "n": 15,
+          "rate": 0.0
+        }
+      },
+      "object_exact": 0.6416666666666667,
+      "first_divergence_3": 0.3125,
+      "given_correct_selection": {
+        "n": 94,
+        "object_exact": 0.9574468085106383,
+        "completed": 0.5212765957446809
+      },
+      "alpha_top1": 0.0,
+      "byte_top1": 0.0,
+      "gamma": {
+        "gamma_model_mean": 0.061647748355314835,
+        "gamma_used_mean": 0.061647748355314835,
+        "copy_weight_mean": 0.9383522516446852,
+        "floored_step_fraction": 0.0,
+        "examples_with_any_floored": 0,
+        "step0_model_mean": 0.0027912172411488096,
+        "direction": "gamma multiplies the generated branch: P = [gamma + (1-gamma)*q_null]*P_gen + (1-gamma)*P_copy.  gamma is the generation weight; the 0.2 clamp is a generation floor and does not force copying."
+      },
+      "reversed_accuracy": 0.3375,
+      "reversed_paired": {
+        "stored": 0.1625,
+        "status": "withdrawn_index_cache_no_stored_raw"
+      },
+      "content": {
+        "applicable": false,
+        "reason": "arm B has no selection lock; content interventions are not defined"
+      },
+      "counterfactual": {
+        "n": 240,
+        "true_completed": 81,
+        "both_correct": 0.075,
+        "counterfactual_completed": 48
+      },
+      "identity_rescue": [
+        8,
+        8
+      ],
+      "nll": 0.4229484399549771,
+      "curriculum": {
+        "rate_max": 1.0,
+        "self_prefix_updates": 127
+      },
+      "train": {
+        "first_loss": 2.2505766496443815,
+        "last_loss": 1.043840539844314,
+        "last20": 1.0881723020225693
+      },
+      "sensitivity": {
+        "applicable": false,
+        "reason": "arm B has no gamma floor",
+        "true_completed_rate_on_same_subset": null,
+        "delta": null
+      },
+      "step0": {
+        "overall": 0.0,
+        "selection_top1": 0.08333333333333333
+      },
+      "cost": {
+        "cpu_seconds": 2611.4375,
+        "wall_seconds": 2686.4209041998256,
+        "adam_calls": 300,
+        "prior_cpu_seconds": 3966.84375,
+        "prior_wall_seconds": 4050.0753244000953
+      },
+      "updates": 300,
+      "resumed_from": 0
+    },
+    "28032-A-locked": {
+      "seed": 28032,
+      "arm": "A-locked",
+      "overall": 0.016666666666666666,
+      "subsets": {
+        "new_description": {
+          "completed": 1,
+          "n": 60,
+          "rate": 0.016666666666666666
+        },
+        "unseen_output_name": {
+          "completed": 0,
+          "n": 60,
+          "rate": 0.0
+        },
+        "both_new": {
+          "completed": 0,
+          "n": 15,
+          "rate": 0.0
+        },
+        "unseen_combination": {
+          "completed": 0,
+          "n": 36,
+          "rate": 0.0
+        },
+        "seen": {
+          "completed": 3,
+          "n": 108,
+          "rate": 0.027777777777777776
+        }
+      },
+      "selection": {
+        "correct": 85,
+        "n": 240,
+        "top1": 0.3541666666666667
+      },
+      "selection_by_subset": {
+        "unseen_combination": {
+          "correct": 15,
+          "n": 36,
+          "rate": 0.4166666666666667
+        },
+        "seen": {
+          "correct": 46,
+          "n": 108,
+          "rate": 0.42592592592592593
+        },
+        "unseen_output_name": {
+          "correct": 31,
+          "n": 60,
+          "rate": 0.5166666666666667
+        },
+        "new_description": {
+          "correct": 0,
+          "n": 60,
+          "rate": 0.0
+        },
+        "both_new": {
+          "correct": 0,
+          "n": 15,
+          "rate": 0.0
+        }
+      },
+      "object_exact": 0.09166666666666666,
+      "first_divergence_3": 0.6291666666666667,
+      "given_correct_selection": {
+        "n": 85,
+        "object_exact": 0.1411764705882353,
+        "completed": 0.023529411764705882
+      },
+      "alpha_top1": 0.25,
+      "byte_top1": 0.25,
+      "gamma": {
+        "gamma_model_mean": 0.7471114092464505,
+        "gamma_used_mean": 0.7851223489708274,
+        "copy_weight_mean": 0.2528885907535495,
+        "floored_step_fraction": 0.2298165137614679,
+        "examples_with_any_floored": 240,
+        "step0_model_mean": 3.947148989434589e-05,
+        "direction": "gamma multiplies the generated branch: P = [gamma + (1-gamma)*q_null]*P_gen + (1-gamma)*P_copy.  gamma is the generation weight; the 0.2 clamp is a generation floor and does not force copying."
+      },
+      "reversed_accuracy": 0.025,
+      "reversed_paired": {
+        "stored": 0.24583333333333332,
+        "status": "withdrawn_index_cache_no_stored_raw"
+      },
+      "content": {
+        "applicable": true,
+        "n": 24,
+        "true_completed": 0,
+        "true_rate": 0.0,
+        "intervention_rates": {
+          "no_source": 0.0,
+          "wrong_record": 0.0,
+          "wrong_position": 0.0
+        },
+        "drops": {
+          "no_source": 0.0,
+          "wrong_record": 0.0,
+          "wrong_position": 0.0
+        },
+        "degenerate": true
+      },
+      "counterfactual": {
+        "n": 240,
+        "true_completed": 4,
+        "both_correct": 0.0,
+        "counterfactual_completed": 2
+      },
+      "identity_rescue": [
+        8,
+        8
+      ],
+      "nll": 1.259687440504046,
+      "curriculum": {
+        "rate_max": 0.25,
+        "self_prefix_updates": 0
+      },
+      "train": {
+        "first_loss": 2.2041897769353254,
+        "last_loss": 1.30446753387619,
+        "last20": 1.2992861007113512
+      },
+      "sensitivity": {
+        "examples": 40,
+        "completed_rate": 0.0,
+        "gamma_mean": 0.7585881663191103,
+        "rows": [
+          {
+            "index": 0,
+            "completed": false,
+            "gamma_mean": 0.7519916514077608
+          },
+          {
+            "index": 1,
+            "completed": false,
+            "gamma_mean": 0.7507219340071271
+          },
+          {
+            "index": 2,
+            "completed": false,
+            "gamma_mean": 0.779686828031037
+          },
+          {
+            "index": 3,
+            "completed": false,
+            "gamma_mean": 0.7510145772934479
+          },
+          {
+            "index": 4,
+            "completed": false,
+            "gamma_mean": 0.7503473325563408
+          },
+          {
+            "index": 5,
+            "completed": false,
+            "gamma_mean": 0.7510545919566043
+          },
+          {
+            "index": 6,
+            "completed": false,
+            "gamma_mean": 0.779320952711957
+          },
+          {
+            "index": 7,
+            "completed": false,
+            "gamma_mean": 0.7790844698145943
+          },
+          {
+            "index": 8,
+            "completed": false,
+            "gamma_mean": 0.7501519641647306
+          },
+          {
+            "index": 9,
+            "completed": false,
+            "gamma_mean": 0.7790511802397245
+          },
+          {
+            "index": 10,
+            "completed": false,
+            "gamma_mean": 0.7476976601358104
+          },
+          {
+            "index": 11,
+            "completed": false,
+            "gamma_mean": 0.7512573895578367
+          },
+          {
+            "index": 12,
+            "completed": false,
+            "gamma_mean": 0.7796801901742395
+          },
+          {
+            "index": 13,
+            "completed": false,
+            "gamma_mean": 0.7509914077329022
+          },
+          {
+            "index": 14,
+            "completed": false,
+            "gamma_mean": 0.7507038141275973
+          },
+          {
+            "index": 15,
+            "completed": false,
+            "gamma_mean": 0.7519218655009622
+          },
+          {
+            "index": 16,
+            "completed": false,
+            "gamma_mean": 0.7795457748432825
+          },
+          {
+            "index": 17,
+            "completed": false,
+            "gamma_mean": 0.7793129171180788
+          },
+          {
+            "index": 18,
+            "completed": false,
+            "gamma_mean": 0.7506465485805102
+          },
+          {
+            "index": 19,
+            "completed": false,
+            "gamma_mean": 0.7791455431758152
+          },
+          {
+            "index": 0,
+            "completed": false,
+            "gamma_mean": 0.7255125949131397
+          },
+          {
+            "index": 1,
+            "completed": false,
+            "gamma_mean": 0.7569699691819768
+          },
+          {
+            "index": 2,
+            "completed": false,
+            "gamma_mean": 0.7571459151982299
+          },
+          {
+            "index": 3,
+            "completed": false,
+            "gamma_mean": 0.7573188166383028
+          },
+          {
+            "index": 4,
+            "completed": false,
+            "gamma_mean": 0.757003459355189
+          },
+          {
+            "index": 5,
+            "completed": false,
+            "gamma_mean": 0.7283556094219061
+          },
+          {
+            "index": 6,
+            "completed": false,
+            "gamma_mean": 0.7565213414329808
+          },
+          {
+            "index": 7,
+            "completed": false,
+            "gamma_mean": 0.7562001361888258
+          },
+          {
+            "index": 8,
+            "completed": false,
+            "gamma_mean": 0.756684989200605
+          },
+          {
+            "index": 9,
+            "completed": false,
+            "gamma_mean": 0.7564156626933775
+          },
+          {
+            "index": 10,
+            "completed": false,
+            "gamma_mean": 0.7592323010718733
+          },
+          {
+            "index": 11,
+            "completed": false,
+            "gamma_mean": 0.76355189608029
+          },
+          {
+            "index": 12,
+            "completed": false,
+            "gamma_mean": 0.7578467735642714
+          },
+          {
+            "index": 13,
+            "completed": false,
+            "gamma_mean": 0.7636175652964909
+          },
+          {
+            "index": 14,
+            "completed": false,
+            "gamma_mean": 0.7634395134702493
+          },
+          {
+            "index": 15,
+            "completed": false,
+            "gamma_mean": 0.7577414740799111
+          },
+          {
+            "index": 16,
+            "completed": false,
+            "gamma_mean": 0.7566709082992749
+          },
+          {
+            "index": 17,
+            "completed": false,
+            "gamma_mean": 0.7566048987627327
+          },
+          {
+            "index": 18,
+            "completed": false,
+            "gamma_mean": 0.7568475153167317
+          },
+          {
+            "index": 19,
+            "completed": false,
+            "gamma_mean": 0.7565167194676924
+          }
+        ],
+        "true_completed_rate_on_same_subset": 0.016666666666666666,
+        "delta": 0.016666666666666666
+      },
+      "step0": {
+        "overall": 0.0,
+        "selection_top1": 0.125
+      },
+      "cost": {
+        "cpu_seconds": 4068.671875,
+        "wall_seconds": 4205.03719990002,
+        "adam_calls": 300,
+        "prior_cpu_seconds": 10545.15625,
+        "prior_wall_seconds": 10786.596351100132
+      },
+      "updates": 300,
+      "resumed_from": 0
+    },
+    "28032-B-select": {
+      "seed": 28032,
+      "arm": "B-select",
+      "overall": 0.2833333333333333,
+      "subsets": {
+        "new_description": {
+          "completed": 0,
+          "n": 60,
+          "rate": 0.0
+        },
+        "unseen_output_name": {
+          "completed": 0,
+          "n": 60,
+          "rate": 0.0
+        },
+        "both_new": {
+          "completed": 0,
+          "n": 15,
+          "rate": 0.0
+        },
+        "unseen_combination": {
+          "completed": 11,
+          "n": 36,
+          "rate": 0.3055555555555556
+        },
+        "seen": {
+          "completed": 57,
+          "n": 108,
+          "rate": 0.5277777777777778
+        }
+      },
+      "selection": {
+        "correct": 84,
+        "n": 240,
+        "top1": 0.35
+      },
+      "selection_by_subset": {
+        "unseen_combination": {
+          "correct": 18,
+          "n": 36,
+          "rate": 0.5
+        },
+        "seen": {
+          "correct": 50,
+          "n": 108,
+          "rate": 0.46296296296296297
+        },
+        "unseen_output_name": {
+          "correct": 21,
+          "n": 60,
+          "rate": 0.35
+        },
+        "new_description": {
+          "correct": 0,
+          "n": 60,
+          "rate": 0.0
+        },
+        "both_new": {
+          "correct": 0,
+          "n": 15,
+          "rate": 0.0
+        }
+      },
+      "object_exact": 0.375,
+      "first_divergence_3": 0.3125,
+      "given_correct_selection": {
+        "n": 84,
+        "object_exact": 0.2976190476190476,
+        "completed": 0.20238095238095238
+      },
+      "alpha_top1": 0.0,
+      "byte_top1": 0.0,
+      "gamma": {
+        "gamma_model_mean": 0.03924410104812976,
+        "gamma_used_mean": 0.03924410104812976,
+        "copy_weight_mean": 0.9607558989518702,
+        "floored_step_fraction": 0.0,
+        "examples_with_any_floored": 0,
+        "step0_model_mean": 0.0027912172411488096,
+        "direction": "gamma multiplies the generated branch: P = [gamma + (1-gamma)*q_null]*P_gen + (1-gamma)*P_copy.  gamma is the generation weight; the 0.2 clamp is a generation floor and does not force copying."
+      },
+      "reversed_accuracy": 0.2833333333333333,
+      "reversed_paired": {
+        "stored": 0.1375,
+        "status": "withdrawn_index_cache_no_stored_raw"
+      },
+      "content": {
+        "applicable": false,
+        "reason": "arm B has no selection lock; content interventions are not defined"
+      },
+      "counterfactual": {
+        "n": 240,
+        "true_completed": 68,
+        "both_correct": 0.06666666666666667,
+        "counterfactual_completed": 68
+      },
+      "identity_rescue": [
+        8,
+        8
+      ],
+      "nll": 0.6167692986725385,
+      "curriculum": {
+        "rate_max": 1.0,
+        "self_prefix_updates": 121
+      },
+      "train": {
+        "first_loss": 2.2041897769353254,
+        "last_loss": 1.106655037040861,
+        "last20": 1.2778314911657427
+      },
+      "sensitivity": {
+        "applicable": false,
+        "reason": "arm B has no gamma floor",
+        "true_completed_rate_on_same_subset": null,
+        "delta": null
+      },
+      "step0": {
+        "overall": 0.0,
+        "selection_top1": 0.125
+      },
+      "cost": {
+        "cpu_seconds": 2786.9375,
+        "wall_seconds": 2852.545683000004,
+        "adam_calls": 300,
+        "prior_cpu_seconds": 10647.0,
+        "prior_wall_seconds": 25778.248062900268
+      },
+      "updates": 300,
+      "resumed_from": 0
+    }
+  },
+  "gates": {
+    "task": {
+      "28031": {
+        "overall": {
+          "value": 0.05,
+          "threshold": 0.8,
+          "pass": false
+        },
+        "unseen_output_name": {
+          "value": 0.0,
+          "count": 0,
+          "n": 60,
+          "threshold": 0.8,
+          "pass": false
+        },
+        "new_description": {
+          "value": 0.05,
+          "count": 3,
+          "n": 60,
+          "threshold": 0.8,
+          "pass": false
+        },
+        "reversed_paired": {
+          "status": "withdrawn",
+          "reason": "local-index true_raw cache; raw bytes not stored",
+          "pass": null
+        }
+      },
+      "28032": {
+        "overall": {
+          "value": 0.016666666666666666,
+          "threshold": 0.8,
+          "pass": false
+        },
+        "unseen_output_name": {
+          "value": 0.0,
+          "count": 0,
+          "n": 60,
+          "threshold": 0.8,
+          "pass": false
+        },
+        "new_description": {
+          "value": 0.016666666666666666,
+          "count": 1,
+          "n": 60,
+          "threshold": 0.8,
+          "pass": false
+        },
+        "reversed_paired": {
+          "status": "withdrawn",
+          "reason": "local-index true_raw cache; raw bytes not stored",
+          "pass": null
+        }
+      }
+    },
+    "mechanism": {
+      "28031": {
+        "selection": {
+          "value": 0.38333333333333336,
+          "threshold": 0.9,
+          "pass": false
+        },
+        "gamma_raw": {
+          "value": 0.8211897759938862,
+          "threshold": 0.2,
+          "pass": true,
+          "intent_reading": "passes as a generation-weight gate; copy_weight_mean is 0.1788, so it does not support 'copy in use'"
+        },
+        "content": {
+          "evaluable": true,
+          "true_rate": 0.16666666666666666,
+          "drops": {
+            "no_source": {
+              "drop": 0.16666666666666666,
+              "pass": true
+            },
+            "wrong_record": {
+              "drop": 0.04166666666666666,
+              "pass": false
+            },
+            "wrong_position": {
+              "drop": 0.125,
+              "pass": true
+            }
+          },
+          "pass": false
+        },
+        "identity_rescue": {
+          "equal": 8,
+          "n": 8,
+          "pass": true
+        }
+      },
+      "28032": {
+        "selection": {
+          "value": 0.3541666666666667,
+          "threshold": 0.9,
+          "pass": false
+        },
+        "gamma_raw": {
+          "value": 0.7471114092464505,
+          "threshold": 0.2,
+          "pass": true,
+          "intent_reading": "passes as a generation-weight gate; copy_weight_mean is 0.2529, so it does not support 'copy in use'"
+        },
+        "content": {
+          "evaluable": false,
+          "true_rate": 0.0,
+          "drops": {
+            "no_source": {
+              "drop": 0.0,
+              "pass": false
+            },
+            "wrong_record": {
+              "drop": 0.0,
+              "pass": false
+            },
+            "wrong_position": {
+              "drop": 0.0,
+              "pass": false
+            }
+          },
+          "pass": false
+        },
+        "identity_rescue": {
+          "equal": 8,
+          "n": 8,
+          "pass": true
+        }
+      },
+      "increment": {
+        "pooled_mean": -0.27708333333333335,
+        "bootstrap_lower": {
+          "28031": -0.325,
+          "28032": -0.3541666666666667
+        },
+        "pass": false,
+        "reason": "negative and confounded: the unlocked arm ran the accuracy-triggered self-prefix 127/121 updates with self-imitation labels, so A-B mixes the lock with a different curriculum target"
+      }
+    }
+  },
+  "task_pass": false,
+  "mechanism_pass": false,
+  "verdict": "native_byte_task_failed",
+  "instrument_faults": {
+    "subset_denominators": "the runner's summarize() divided every subset by 240 instead of its own n; corrected values are 0.05/0.0167 for new descriptions, not 0.0125/0.0042",
+    "index_cache": "true_gen/flags were keyed by the world-local index (20 values for 240 rows); the content and counterfactual true sides are recomputed from the stored per-row scores with (world, index), and the reverse-pair rate is withdrawn",
+    "gamma_direction": "gamma multiplies the generated branch, so the 0.2 clamp is a generation floor; the copy weight at step300 is 0.1788/0.2529 in A and 0.9384/0.9608 in B, but B's alpha is null so its copy mass is zero.  The floor does not carry the score (removing it changes completion by 0.0/+0.0167)",
+    "reversed_pair": "stored raw bytes are absent, so the correct paired rate cannot be rebuilt without rerunning 240+240 deterministic generations; the reading is withdrawn, not replaced"
+  },
+  "contract_fault": {
+    "self_prefix_labels": "batch_objective passes the self-generated prefix as target_prefix to locked_loss/score_example, so labels become the model's own bytes; the curriculum is self-imitation, not correction.  A never triggered (0 updates); B triggered 127/121 updates.  The A-B contrast is therefore confounded and is not used as a clean mechanism test.",
+    "self_prefix_triggers": {
+      "28031": {
+        "A": 0,
+        "B": 127
+      },
+      "28032": {
+        "A": 0,
+        "B": 121
+      }
+    },
+    "affected_reading": "A-B increment"
+  },
+  "corrected_headline": {
+    "overall": {
+      "28031": 0.05,
+      "28032": 0.016666666666666666
+    },
+    "new_description": {
+      "28031": {
+        "completed": 3,
+        "n": 60,
+        "rate": 0.05
+      },
+      "28032": {
+        "completed": 1,
+        "n": 60,
+        "rate": 0.016666666666666666
+      }
+    },
+    "unseen_output_name": {
+      "28031": {
+        "completed": 0,
+        "n": 60,
+        "rate": 0.0
+      },
+      "28032": {
+        "completed": 0,
+        "n": 60,
+        "rate": 0.0
+      }
+    },
+    "selection": {
+      "28031": 0.38333333333333336,
+      "28032": 0.3541666666666667
+    },
+    "selection_new_description": {
+      "28031": {
+        "correct": 0,
+        "n": 60,
+        "rate": 0.0
+      },
+      "28032": {
+        "correct": 0,
+        "n": 60,
+        "rate": 0.0
+      }
+    },
+    "content": {
+      "28031": {
+        "applicable": true,
+        "n": 24,
+        "true_completed": 4,
+        "true_rate": 0.16666666666666666,
+        "intervention_rates": {
+          "no_source": 0.0,
+          "wrong_record": 0.125,
+          "wrong_position": 0.041666666666666664
+        },
+        "drops": {
+          "no_source": 0.16666666666666666,
+          "wrong_record": 0.04166666666666666,
+          "wrong_position": 0.125
+        },
+        "degenerate": false
+      },
+      "28032": {
+        "applicable": true,
+        "n": 24,
+        "true_completed": 0,
+        "true_rate": 0.0,
+        "intervention_rates": {
+          "no_source": 0.0,
+          "wrong_record": 0.0,
+          "wrong_position": 0.0
+        },
+        "drops": {
+          "no_source": 0.0,
+          "wrong_record": 0.0,
+          "wrong_position": 0.0
+        },
+        "degenerate": true
+      }
+    },
+    "gamma": {
+      "28031": {
+        "gamma_model_mean": 0.8211897759938862,
+        "gamma_used_mean": 0.8464046960037249,
+        "copy_weight_mean": 0.1788102240061138,
+        "floored_step_fraction": 0.14583333333333334,
+        "examples_with_any_floored": 240,
+        "step0_model_mean": 0.000183736136637163,
+        "direction": "gamma multiplies the generated branch: P = [gamma + (1-gamma)*q_null]*P_gen + (1-gamma)*P_copy.  gamma is the generation weight; the 0.2 clamp is a generation floor and does not force copying."
+      },
+      "28032": {
+        "gamma_model_mean": 0.7471114092464505,
+        "gamma_used_mean": 0.7851223489708274,
+        "copy_weight_mean": 0.2528885907535495,
+        "floored_step_fraction": 0.2298165137614679,
+        "examples_with_any_floored": 240,
+        "step0_model_mean": 3.947148989434589e-05,
+        "direction": "gamma multiplies the generated branch: P = [gamma + (1-gamma)*q_null]*P_gen + (1-gamma)*P_copy.  gamma is the generation weight; the 0.2 clamp is a generation floor and does not force copying."
+      }
+    },
+    "reversed_accuracy": {
+      "28031": 0.05,
+      "28032": 0.025
+    }
+  },
+  "withdrawn": [
+    "subset rates with a 240 denominator (15.1-style aggregation fault)",
+    "content-necessity true side keyed by the local index cache",
+    "counterfactual true side keyed by the local index cache",
+    "selection-by-subset grouping keyed by the local index cache",
+    "reverse-pair rate keyed by the local index cache (not rebuildable without stored raw)",
+    "gamma read as a 'copy gate'; gamma is the generation weight"
+  ],
+  "architecture_diagnosis": "Three independent breaks remain: (1) the selection head's mean byte embedding gives 0/60 on new descriptions in both arms (seen ~0.43-0.61); (2) the locked arm's copy weight is only 0.18-0.25 and the entity start is still wrong (object_exact 0.25/0.09, first divergence at byte 3 in 50%/63%); (3) the gamma floor is a generation floor, not a copy floor, so it cannot force the missing copy.  The unlocked arm retains a memorized generation shortcut (0.3375/0.2833 overall, 0 on unseen names) whose curriculum was self-imitation.  This is an interface/representation problem, not dose or seed.",
+  "next_step": {
+    "single": "N16.1.3 全局收束（只读：用本修正读数、弃用反序配对、登记仪器/合同缺陷），再由 owner 裁定是否准入 17 号逐步选择路由候选",
+    "candidate_reference": "plans/reference/DESIGN-POST-N16_SELECTION_ROUTING_20261103.md",
+    "candidate_state": "design only; not launched",
+    "why_not_launch": "17 requires the 16.1.3 score/attribution calibration and an owner ruling; the current 1.1 card does not release 1.2 or any new training."
+  },
+  "cost": {
+    "configs_cpu_seconds": 13433.875,
+    "configs_wall_seconds": 13794.058042199817,
+    "precheck_cpu_seconds": 4.15625,
+    "precheck_wall_seconds": 15.677808800013736,
+    "aggregate_cpu_seconds": 0.03125,
+    "aggregate_wall_seconds": 0.028910099994391203,
+    "total_cpu_seconds": 13438.0625,
+    "total_wall_seconds": 13809.764761099825
+  },
+  "post_run_changes": {
+    "script": "scripts/training/verify_taiji_binding_select_16_1_compare.py",
+    "ran_sha256": "dad3883e66b9f35fbfd8430c6f8c956907a8e4d1a4f0216b1900b4fb4644c844",
+    "now_sha256": "5382a02113922ebba60d03f0b964e6198df47e5d5df1a07986f9b5b70ac30ef6",
+    "changes": "aggregation only: subset denominators, (world,index) keys for the true side, stored true raw for reverse pairing, selection rows carry flags, copy_weight_mean reported.  The training recipe is unchanged; the self-prefix label behavior is left frozen and annotated."
+  },
+  "price_deviation": {
+    "frozen_price_cpu_seconds": 8390.9375,
+    "actual_cpu_seconds": 13438.0625,
+    "ratio_to_0c_price": 1.601497150944099,
+    "pre_run_projection_cpu_seconds": 14300.0,
+    "actual_vs_pre_run_projection": 0.9397246503496504,
+    "attribution": "0c did not price the per-batch teacher-forced curriculum probe (a second full forward over the same 28-step prefix; copy/joint ~16.5 CPU vs 8.3 priced) nor the extra reversed/counterfactual/intervention/sensitivity generations.  The pre-run projection was ~14,300 CPU; actual 13,438.1 is 94%.  No rerun, no duplicate config, wall==cpu, single thread, under the 20,000/30,000 observation line."
+  },
+  "limits": "Read-only correction of the frozen report: 0 updates, 0 forward, 0 confirm.  It does not re-run the comparison, change the eligible dose or release 1.2."
+}

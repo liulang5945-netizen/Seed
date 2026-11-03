@@ -181,8 +181,14 @@ def locked_step(
     gate_index: int,
     chosen_record: int,
     gamma_floor: float = GAMMA_FLOOR,
+    trace: list | None = None,
 ) -> Any:
-    """One decoding step with alpha locked to the selected record."""
+    """One decoding step with alpha locked to the selected record.
+
+    ``trace`` is a read-only reporting hook: when a list is supplied, one row is
+    appended per step with the model gamma and the gamma actually used.  It does
+    not alter any tensor or arithmetic.
+    """
     base = candidate.binding
     probe = answer_step(base, prepared, state, previous, gate_index=gate_index)
     view = prepared.base.view
@@ -190,6 +196,14 @@ def locked_step(
     alpha[max(0, min(chosen_record, view.record_count - 1))] = 1.0
     force = {"alpha": alpha, "betas": probe.read.betas}
     gamma = torch.clamp(probe.gamma, min=gamma_floor)
+    if trace is not None:
+        trace.append(
+            {
+                "gamma_model": float(probe.gamma.detach()),
+                "gamma_used": float(gamma.detach()),
+                "floor": float(gamma_floor),
+            }
+        )
     return answer_step(
         base,
         prepared,
@@ -210,9 +224,16 @@ def locked_generate(
     subject_id: str,
     gamma_floor: float = GAMMA_FLOOR,
     max_predictions: int = 65,
+    trace: list | None = None,
+    chosen_record: int | None = None,
 ) -> dict:
     base = candidate.binding
-    choice = select(candidate, goal, keys)
+    if keys:
+        choice = select(candidate, goal, keys)
+        target = int(choice["chosen"]) if chosen_record is None else int(chosen_record)
+    else:
+        choice = {"chosen": -1, "confidence": 0.0, "null_mass": 1.0, "scores": []}
+        target = -1
     state = initial_binding_state(base, subject_id)
     prepared = prepare(base, state, goal, records)
     state, gate_index = observe_goal(base, prepared)
@@ -227,8 +248,9 @@ def locked_generate(
             state,
             previous,
             gate_index=gate_index,
-            chosen_record=int(choice["chosen"]),
+            chosen_record=target,
             gamma_floor=gamma_floor,
+            trace=trace,
         )
         endpoint = decode_endpoint(step.probabilities)
         if endpoint["eos"]:
@@ -259,6 +281,12 @@ def locked_generate(
         "selection": choice,
         "gamma_mean": (sum(gamma_values) / len(gamma_values)) if gamma_values else 0.0,
         "gamma_floor": gamma_floor,
+        "gamma_model_mean": (
+            sum(item["gamma_model"] for item in trace) / len(trace) if trace else None
+        ),
+        "gamma_floored_steps": (
+            sum(1 for item in trace if item["gamma_model"] < item["floor"]) if trace else None
+        ),
     }
 
 
@@ -271,6 +299,7 @@ def locked_loss(
     *,
     subject_id: str,
     gamma_floor: float = GAMMA_FLOOR,
+    trace: list | None = None,
 ) -> torch.Tensor:
     """Teacher-forced NLL with alpha locked to the head's choice."""
     base = candidate.binding
@@ -290,6 +319,7 @@ def locked_loss(
             gate_index=gate_index,
             chosen_record=int(choice["chosen"]),
             gamma_floor=gamma_floor,
+            trace=trace,
         )
         losses.append(-torch.log(step.probabilities[label].clamp_min(1e-12)))
         if position == len(labels) - 1:
