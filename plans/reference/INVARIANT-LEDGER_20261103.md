@@ -97,4 +97,13 @@ P3首步强制实体起点的时点与目标实体阶段不同。P4只在alpha/b
 
 **规则。** 任何重跑、改图后复测或仪器修订，**不得复用既有证据文件名**：必须写入带阶段变体后缀的新文件（`_r2_postfix_YYYYMMDD`、`_v2`、`_v3` 等），旧文件字节保持不变。旧文件的状态不在其 JSON 正文里追加字段，而是由旁挂 `<原文件名>.superseded.json` 声明 `status: superseded`、`superseded_by`、`superseded_at` 和一句原因；旁挂与清单（`plans/manifests/taiji_selection_routing_17_2r_supersession_20261103.json`）共同构成可引用的状态来源。报告、manifest 与 plans 引用旧数字时必须同时引用旁挂或标 `superseded`。
 
-**事故案例（2026-11-03）。** 17 图由软扩散 transport 改为点 transport 后，重跑脚本沿用原名，覆盖了 5 份改前证据：`reports/taiji_selection_routing_17_2_t3_supplement_20261103.json`（701/720 失败、min 2.08e-36 被写成 720/720 通过）、`reports/taiji_selection_routing_17_4_preflight_20261103.json`（46.08 CPU / 18 Adam 与 step1 哈希被新图读数替换）、`reports/taiji_selection_routing_17_3_verify_20261103.json`（T1/T3 读数漂移），以及对应的两份 `plans/manifests/...`。恢复方式：先把新读数另存为 `_r2_postfix_20261103`，再从 `HEAD` 取回旧字节（不用 `git checkout HEAD --`），最后以旁挂标注 superseded；恢复后读数为旧 T3 701/720 失败、旧预检 step1 `1f1bd64d…`、旧 verify T1 nll 2.4209521。本条为当前唯一权威表述，后续包引用本节而非事故叙述本身。
+**格式/注释改动（2026-11-04）。** 仅格式或注释类改动**不得触发证据重跑**，条件是语义哈希 `candidate_sha_v2` 不变且零更新等价探针逐位一致（`max_abs_diff=0`：权重、720 步 gold 强制、selection logits、三臂 loss、游标状态）。只有行为相关要素（模块清单、配置常量、参数名/形状、路由与解码规则、输入白名单）变化，才需重新验证并按本节以新文件名重跑、重定价。字节哈希降为附属 `source_sha`，不再决定身份。
+
+## 9. 语义候选身份（`candidate_sha_v2`）
+
+**定义。** 身份只由行为相关要素组成：图名与契约/bundle schema；配置常量（`width`、`prev_width`、`hidden`、`gamma_floor`、`span_bottleneck`）；模块清单；`routing_rule_version`；解码/路由规则（点 transport、指针温度退火与 0.05 下限、推理 argmax、指针熵系数 0.01、span 监督权重 0.5、gamma 下限 0.2、三臂信用）；`routing_step` 输入白名单；有序参数名/形状/dtype；声明可塑归属。实现与组成项见 `taiji/candidate_identity.py`，设计说明见[17设计 §16](DESIGN-POST-N16_SELECTION_ROUTING_20261103.md#16-候选身份语义哈希2026-11-04)。
+
+**附属字段（记录但不进入摘要）。** `source_sha` 逐模块字节哈希；`weights_sha256` 逐张量值摘要；`candidate_state_sha256` 权重汇总。权重作为运行态逐格记录，因为两 seed 的父 bundle 与头初始化不同，身份必须在六格内保持同值。
+
+**2026-11-04 的迁移读数。** 旧字节（`source_sha` `5a85be1e…`）的 v1 摘要为 `964a8c68…`，与四份 2026-11-03 证据记录一致；black-100 合并后新字节（`source_sha` `79dd714e…`）的 v1 漂到 `1af63213…`，而语义身份 `candidate_sha_v2` 保持 `773dcec2e1131d1f3c8784153633d85a9144268a4d5167790740cdd488153aa1`。零更新等价探针（[报告](../../reports/taiji_selection_routing_17_2r_format_equivalence_20261104.json)、[manifest](../../plans/manifests/taiji_selection_routing_17_2r_format_equivalence_20261104.json)）逐项 `max_abs_diff=0`：权重 8 项、gold 强制 1120 行（其中 720 记录步）、selection CE 16 项、三臂 loss 531 项、游标状态 1377 项；60.80 CPU / 62.80 wall，0 优化器步。结论：四份旧证据（T3 v3、17.4 v2、新价、17.2R）**保持有效**，身份登记在[注册报告](../../reports/taiji_selection_routing_17_2r_identity_20261104.json)，逐文件旁挂 `<原名>.identity.json`（`identity_basis: semantic`，列出旧/新 `source_sha`）。此前条目的“改一个字节就全链重验”不再是默认做法，以本节为准。
+

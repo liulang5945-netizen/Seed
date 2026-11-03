@@ -1,0 +1,21 @@
+{
+  "schema": "taiji-selection-routing-17-format-equivalence-manifest-v1",
+  "report": "reports\\taiji_selection_routing_17_2r_format_equivalence_20261104.json",
+  "report_sha256": "a4bed7e263a5509b66cd3e89a2b9b3e7b0aa905c0e3363cafce2ecb5eb2e03c8",
+  "old_source": "output\\equiv_17_2r\\pre_format_selection_routing.py.txt",
+  "old_source_sha256": "5a85be1e564ed22f08a07a087fef923f39cb0a2762fdb958bd33553bfdb2c83b",
+  "new_source": "taiji/selection_routing.py",
+  "new_source_sha256": "79dd714ea2318aa8c2528dd3058df0efd6b91fcaebbaa8d8ccec3a1015e12678",
+  "script": "scripts/training/probe_taiji_selection_routing_17_2r_format_equivalence.py",
+  "script_sha256": "bbe09cb30b2662b1764546a397f4b09b80d8a7da6b35a216d11d9079defec6ee",
+  "data": {
+    "bundle": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28031-A-locked-step300.pt",
+    "bundle_sha256": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169",
+    "fixtures_used": 40
+  },
+  "passed": true,
+  "cost": {
+    "cpu": 59.9375,
+    "wall": 62.01009220001288
+  }
+}

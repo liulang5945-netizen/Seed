@@ -1,0 +1,16 @@
+{
+  "schema": "taiji-selection-routing-17-identity-sidecar-v1",
+  "report": "reports\\taiji_selection_routing_17_2r_price_20261103.json",
+  "report_sha256": "872ef0afadc616b3551a9512688460a06372ceb3d85682c6c5ab45218c0f7073",
+  "recorded_candidate_sha": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+  "identity_basis": "semantic",
+  "candidate_sha_v2": "773dcec2e1131d1f3c8784153633d85a9144268a4d5167790740cdd488153aa1",
+  "candidate_sha_v1_preformat": "964a8c68e6316a1c9c2466e5de520f05e02c16f0655dec1707d3a23ddef4a88c",
+  "candidate_sha_v1_postformat": "1af63213bf3718a5f4455193cb79f50260a0943fcc4971d2e7ad22ae17376330",
+  "old_source_sha": "5a85be1e564ed22f08a07a087fef923f39cb0a2762fdb958bd33553bfdb2c83b",
+  "new_source_sha": "79dd714ea2318aa8c2528dd3058df0efd6b91fcaebbaa8d8ccec3a1015e12678",
+  "equivalence_report": "reports\\taiji_selection_routing_17_2r_format_equivalence_20261104.json",
+  "equivalence_report_sha256": "a4bed7e263a5509b66cd3e89a2b9b3e7b0aa905c0e3363cafce2ecb5eb2e03c8",
+  "status": "valid",
+  "reason": "black-100 line merge only; the zero-update probe is bitwise identical, so the recorded evidence stays valid"
+}
