@@ -2,11 +2,11 @@
 
 > 文档状态：[主线] — 本文件是项目当前N方向的唯一主线，集中维护统一编号、执行位置、阶段状态、落地工作项及出口。专项合同提供细则，其他计划不再重复排期。
 
-更新：2026-11-03，Asia/Shanghai。15.1 已关账；N16.1 方案 A 的 0a/0b/0c/0d 通过，N16.1.1 判 `native_byte_task_failed`（1.2 未释放、confirm 封存），N16.1.3 已全局收束。架构/算法分层归因（只读）确认：算法层三处缺陷已被 16.1 修掉，剩余为两处架构不变式（字节袋选择表示、记录内定位无位置监督），详见 [ATTRIBUTION-ARCH-VS-ALG](reference/ATTRIBUTION-ARCH-VS-ALG_20261103.md)。当前唯一下一步为 owner 裁定 17 号（裁决＝保留主选＋两条强制修订：图阶段复跑换序/gold 跨度探针，跨度探针不过则追加实体跨度位置监督；准入需 17.3 定价与资源裁定）；不预启动训练。
+更新：2026-11-03，Asia/Shanghai。15.1 已关账；N16.1 方案 A 的 0a/0b/0c/0d 通过，N16.1.1 判 `native_byte_task_failed`（1.2 未释放、confirm 封存），N16.1.3 已全局收束。架构/算法分层归因（只读）确认：算法层修掉了选择接线与 γ 死门，自前缀标签缺陷（D16-4）未修、A−B 仍混淆；剩余为两处架构不变式（字节袋选择表示、记录内定位无位置监督），详见 [ATTRIBUTION-ARCH-VS-ALG](reference/ATTRIBUTION-ARCH-VS-ALG_20261103.md)。当前唯一下一步为 **17.3 定价并在同次实测标定 R1 阈值（θ_repr/θ_score）**；不预启动训练。
 
 ## 执行位置
 
-**15.1已完成2400次正式更新并按native_byte_task_failed结案，15.1.2未释放，15.1.3合格父为空。N16原版A已经裁定，0a–0d、16.1.1正式比较与16.1.3全局收束已完成。** 16.1.1判 `native_byte_task_failed`（1.2未释放、confirm封存），主任务读数有效，归因另登记子集分母、局部index缓存、γ方向与自前缀标签四处口径/合同缺陷；16.1.3判 `closed_negative_with_followup_candidate`（四项总账、D16-1..4、S1–S6、17准入评估）。[本轮算法复审](reference/REVIEW-PACKET_20261102.md)记录评分/符号问题，[架构/算法分层归因](reference/ATTRIBUTION-ARCH-VS-ALG_20261103.md)确认两处架构不变式；[逐步路由候选](reference/DESIGN-POST-N16_SELECTION_ROUTING_20261103.md)裁决为保留主选＋两条强制修订，留待 owner 裁定；唯一下一步为 owner 裁定 17 号（准入需 17.3 定价与资源裁定，或二臂范围；不预启动训练）。
+**15.1已完成2400次正式更新并按native_byte_task_failed结案，15.1.2未释放，15.1.3合格父为空。N16原版A已经裁定，0a–0d、16.1.1正式比较与16.1.3全局收束已完成。** 16.1.1判 `native_byte_task_failed`（1.2未释放、confirm封存），主任务读数有效，归因另登记子集分母、局部index缓存、γ方向与自前缀标签四处口径/合同缺陷；16.1.3判 `closed_negative_with_followup_candidate`（四项总账、D16-1..4、S1–S6、17准入评估）。[本轮算法复审](reference/REVIEW-PACKET_20261102.md)记录评分/符号问题，[架构/算法分层归因](reference/ATTRIBUTION-ARCH-VS-ALG_20261103.md)确认两处架构不变式；[逐步路由候选](reference/DESIGN-POST-N16_SELECTION_ROUTING_20261103.md)裁决为保留主选＋两条强制修订；[核心命题账本](reference/INVARIANT-LEDGER_20261103.md)已完成只读连续性审计。唯一下一步为 17.3 定价并在同次标定 R1 阈值（准入仍需资源裁定或二臂范围；不预启动训练）。
 
 以下已结阶段条目保留其交付时点的证据。段内历史后继用于解释当时顺序，当前调度统一按本节首段与步骤16执行。
 
@@ -433,6 +433,7 @@ R5报告的`retention_parent=none`：其中“保持门”实际含训练内插�
 | 16.1.1结案复核 | 已执行（0更新/0前向）：子集分母、复合ID、γ方向、自前缀标签修正；反序配对撤回 | 主读数有效；任务负结论不变；1.2=not_released |
 | 16.1.2 | 原任务门未过，not_released；confirm 保持封存 | 0 更新，无确认消费 |
 | 16.1.3 | 已完成：closed_negative_with_followup_candidate；四项总账、D16-1..4、S1–S6、17 准入评估 | 只读 0 更新/0 前向、0.22CPU/0.24wall、产物27,053B |
+| 16.1.4 | 已完成：核心命题账本（只读连续性审计）；14 条命题、17 状态矩阵、丢失项三选项、T1–T13 | 0 更新/0 前向/0 产物；L3/L5 弱化、L9/L13 未落地；详见[账本](reference/INVARIANT-LEDGER_20261103.md) |
 
 本轮只读审计重算了15.1逐例评分。未见组合27/36=0.75，原卡27/240=0.1125。N16当前runner复用了同一聚合方式，正式结案须据已存逐例结果确定性重评分。先保留原始报告/输出/manifest，再产生带supersedes与修正原因的审计卡，使用原门值；现有总体/新名字/新描述失败结论按各自有效读数保留。
 
