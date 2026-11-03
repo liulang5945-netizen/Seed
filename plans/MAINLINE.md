@@ -2,11 +2,11 @@
 
 > 文档状态：[主线] — 本文件是项目当前N方向的唯一主线，集中维护统一编号、执行位置、阶段状态、落地工作项及出口。专项合同提供细则，其他计划不再重复排期。
 
-更新日期2026-11-03，Asia/Shanghai。15.1与N16.1均已按负结果收束，N16.1.3合格任务父为空、确认未释放。当前算法修订聚焦有序内容表示、逐步记录/null路由、同一状态下的表达与回答信用，以及自前缀输入/正确标签分离。**17.1契约校准与17.3定价已交付：R1阈值冻结、价格与step150两段预算落盘；当前停在“17号已定价、未准入；待owner裁定臂范围（建议三臂）后重启”，本轮收束后停工，不启动正式训练。项目收束见[CONSOLIDATION_20261103](reference/CONSOLIDATION_20261103.md)，能力表述以[能力卡](reference/CAPABILITY-CARD_20261103.md)为准。**
+更新日期2026-11-03，Asia/Shanghai。15.1与N16.1均已按负结果收束，N16.1.3合格任务父为空、确认未释放。当前算法修订聚焦有序内容表示、逐步记录/null路由、同一状态下的表达与回答信用，以及自前缀输入/正确标签分离。**17.1契约校准、17.3定价与17.4恢复预检已交付；但补跑 17.2 的 T3「最终Q一点复制」闸门失败：720 个 record 步中 701 步的 gold 字节概率低于 1−1e-12（transport 为 softmax 软扩散，不是点复制）。当前停在“17.2 T3 架构闸门失败；17.5 未准入；待 owner 决定是否实现 R2a 精确点复制后重跑 T3/17.4”，本轮不启动正式训练。项目收束见[CONSOLIDATION_20261103](reference/CONSOLIDATION_20261103.md)，能力表述以[能力卡](reference/CAPABILITY-CARD_20261103.md)为准。**
 
 ## 执行位置
 
-**N16.1.1已完成1200正式Adam，A两seed总体0.0500/0.0167、新输出名字0/60；16.1.3已按closed_negative_with_followup_candidate结案，确认未释放。** 当前进入17的开发设计，顺序为17.1合同/仪器→17.2正式图/信用/恢复→17.3同形定价→17.4预检→17.5三臂比较→17.6条件确认→17.7全局收束。**17.1与17.3已交付：[定价报告](reference/PRICING-17_3_SELECTION_ROUTING_20261103.md)（三臂13,092.25 CPU/1,800 Adam/495.0 MiB，二臂8,750.34 CPU/1,200 Adam/330.0 MiB；位置监督单列；θ_repr=1e-2、θ_score=1e-3，冻结值见[阈值manifest](manifests/taiji_selection_routing_17_3_r1_thresholds_20261103.json)；step150只作准备度闸门）＋[定价manifest](manifests/taiji_selection_routing_17_3_price_20261103.json)。**当前停在“17号已定价、未准入；待owner裁定臂范围（建议三臂）后重启”**：本轮不启动任何正式训练、不物化父候选，训练更新0、confirm读取0；裁定后先做17.4预检，不跳步。** 执行细则和数值提案见[17详细计划](reference/DESIGN-POST-N16_SELECTION_ROUTING_20261103.md)。[归因复核](reference/ATTRIBUTION-ARCH-VS-ALG_20261103.md)修正旧P4的干预层级与局部评分解释，[命题账本](reference/INVARIANT-LEDGER_20261103.md)维护根目标责任。
+**N16.1.1已完成1200正式Adam，A两seed总体0.0500/0.0167、新输出名字0/60；16.1.3已按closed_negative_with_followup_candidate结案，确认未释放。** 当前进入17的开发设计，顺序为17.1合同/仪器→17.2正式图/信用/恢复→17.3同形定价→17.4预检→17.5三臂比较→17.6条件确认→17.7全局收束。**17.1与17.3已交付：[定价报告](reference/PRICING-17_3_SELECTION_ROUTING_20261103.md)（三臂13,092.25 CPU/1,800 Adam/495.0 MiB，二臂8,750.34 CPU/1,200 Adam/330.0 MiB；位置监督单列；θ_repr=1e-2、θ_score=1e-3，冻结值见[阈值manifest](manifests/taiji_selection_routing_17_3_r1_thresholds_20261103.json)；step150只作准备度闸门）＋[定价manifest](manifests/taiji_selection_routing_17_3_price_20261103.json)。** 17.4恢复预检已跑（6格×3工程Adam＝18）：[报告](../reports/taiji_selection_routing_17_4_preflight_20261103.json)＋[manifest](manifests/taiji_selection_routing_17_4_preflight_20261103.json)，参数/Adam矩/概率逐位一致，父bundle未变；但A/B四格的m在step2为空（coverage非空）。**17.2的T3补跑失败：[报告](../reports/taiji_selection_routing_17_2_t3_supplement_20261103.json)＋[manifest](manifests/taiji_selection_routing_17_2_t3_supplement_20261103.json)，强制alpha/beta one-hot且q_null=gamma=0后，gold字节概率最小值2.08e-36、701/720步<1−1e-12；干预与映射无误，失败层为transport的softmax软扩散（缺R2a精确点复制）。当前停在“17.2 T3架构闸门失败；17.5未准入；待owner决定是否实现R2a精确点复制后重跑T3/17.4”，训练更新0（仅18次工程Adam）、confirm读取0。** 执行细则和数值提案见[17详细计划](reference/DESIGN-POST-N16_SELECTION_ROUTING_20261103.md)。[归因复核](reference/ATTRIBUTION-ARCH-VS-ALG_20261103.md)修正旧P4的干预层级与局部评分解释，[命题账本](reference/INVARIANT-LEDGER_20261103.md)维护根目标责任。
 
 以下已结阶段条目保留其交付时点的证据。段内历史后继用于解释当时顺序，当前调度统一按本节首段与步骤16执行。
 
@@ -164,7 +164,7 @@ R1、R3b、R5b等保留为原合同/实验身份，不再另作排期编号；N1
 | 14 | 记录关系读取与原生中文内容接口 | 14.1–14.6执行并结案，14.6任务负；14.7未释放，14.8已交总账和当时提案 | 保留内容通路正读数与原负退出；当前接力见步骤15，原[14细则](reference/SPEC-TAIJI-CORE_RECORD_RELATION_14_4_20261102.md)/报告不改 |
 | 15 | 新名字绑定与后验连续复制 | 15.1已完成2400更新，包增量0，新描述/新名字0，R1改善UTF-8；15.1.3已收束，确认封存 | 子集比率和配对存在评估问题，整体任务仍由总体与新颖轴判负；[原规格](reference/SPEC-N15-01_BINDING_COPY_V2_20261102.md)及原卡留存，接力已进入16.1 |
 | 16 | 显式选择与选择锁定复制 | 0a–0d及1200正式Adam完成，任务负；16.1.3/16.1.4已收束与复核，确认未释放 | 选择表示换序不变性成立；旧P4经transport且合取整句长度，位置监督必要性尚未证实；[原规格](reference/SPEC-N16-01_SELECTION_LOCKED_BINDING_DRAFT_20261103.md)保留 |
-| 17 | 有序内容、逐步路由与任务信用 | 17.1校准与17.3定价已交付，17号已定价、未准入；队首（待owner裁定后）为17.4预检 | 三臂、正确标签课程、R1/R2分层探针、图验/定价/恢复/确认/出口写实；[定价报告](reference/PRICING-17_3_SELECTION_ROUTING_20261103.md)＋[唯一细则](reference/DESIGN-POST-N16_SELECTION_ROUTING_20261103.md) |
+| 17 | 有序内容、逐步路由与任务信用 | 17.1校准、17.3定价、17.4恢复预检已交付；补跑17.2的T3「最终Q一点复制」失败，17.5未准入；队首为owner裁定是否实现R2a | 三臂、正确标签课程、R1/R2分层探针、图验/定价/恢复/确认/出口写实；[定价报告](reference/PRICING-17_3_SELECTION_ROUTING_20261103.md)＋[唯一细则](reference/DESIGN-POST-N16_SELECTION_ROUTING_20261103.md) |
 
 宏观关系是：01–08保留局部研究与资产；09建立连续生命/可塑性/结构发展的共同内核，10–11验证它的任务和中文表达能力，12–13扩大持续学习、内生发展与规模范围。连续状态、学习和结构生长贯穿共同内核，不再排成“静态模型学好→最后可选加生命”。成熟自主策略和长跨度能力仍分阶段举证，既不删除目标，也不一次要求全部长期机制完成。
 
@@ -437,8 +437,8 @@ D16-1子集分母、D16-2局部index缓存、D16-3 gamma语义、D16-4自前缀�
 | 17.1 契约与仪器校准 | 父/数据摘要、六项接口、正确目标/路由标签、R1/R2分层探针、确认权利；方程到检查覆盖表 | 自检S1–S6与目标/配对反例通过，字段齐全；120CPU/240wall、0Adam |
 | 17.2 正式图/信用/恢复 | binding_routing及协议模块，R1、R2a/b/c/d、条件FD/ST-VJP、逐组有效更新与首次独立恢复 | 正式图覆盖完整，正确标签未被自前缀替换，控制作用层级正确；600CPU/1200wall、≤12工程Adam |
 | 17.3 同形定价（已完成） | 组件分解定价替代9次端到端更新，含生成、评价、探针、恢复与bundle；两套臂范围外推 | 价格、外推、每臂上限与step150两段预算冻结；600CPU/1200wall、≤9工程Adam（实际13，超支4，见报告） |
-| 17.4 检查点预检 | 两seed×三臂step0/step1/恢复端下一更新，以及非空cursor切换恢复 | 参数/Adam矩/后继概率逐位一致；400CPU/800wall、≤18工程Adam |
-| 17.5 一轮三臂比较 | 2seed×A/B/C×300，正确目标下的同规则课程；step0/300开发评价，step150保存 | 任务/组件信用分别判；1800正式Adam，比较提案24000CPU/48000wall、4GiB |
+| 17.4 检查点预检（已完成·通过） | 两seed×三臂step0/step1/恢复端下一更新，以及非空cursor切换恢复 | 参数/Adam矩/后继概率逐位一致（max_abs_diff=0.0）；400CPU/800wall、≤18工程Adam（实际18、46.08 CPU） |
+| 17.5 一轮三臂比较 | 2seed×A/B/C×300，正确目标下的同规则课程；step0/300开发评价，step150保存 | 任务/组件信用分别判；1800正式Adam，按17.3冻结三臂13,092.25CPU/15,056.09 wall、4GiB；**17.2 T3闸门未过，不启动** |
 | 17.6 独立确认 | 固定主seed28031三臂一次专属confirm_n17，共240例/臂 | 开发任务门通过才解封；2000CPU/4000wall、0更新 |
 | 17.7 全局收束 | 可靠任务范围、机制贡献、适用保持/状态/成本和下一任务适用性四账 | 正负/不可判/工程/预算均结案；300CPU/600wall、0更新 |
 

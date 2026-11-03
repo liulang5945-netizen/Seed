@@ -1,6 +1,6 @@
 # N16结案后的算法修订与17开发计划
 
-> 文档状态 [当前复审结论]。更新日期2026-11-03。N16.1.1及16.1.3已按负结果收束，确认未释放。**17.1校准与17.3定价已交付；当前停在“17号已定价、未准入；待owner裁定臂范围（建议三臂）后重启”，本轮停工，训练更新0、confirm读取0，唯一下一步为裁定后的17.4预检。** 唯一调度见[MAINLINE](../MAINLINE.md)；能力表述以[能力卡](CAPABILITY-CARD_20261103.md)为准，全局体检见[收束文档](CONSOLIDATION_20261103.md)。前稿按Git b054450ac、99e3e69c9及4dcf58b76追溯，实验原卡与数据身份保留。
+> 文档状态 [当前复审结论]。更新日期2026-11-03。N16.1.1及16.1.3已按负结果收束，确认未释放。**17.1校准、17.3定价、17.4恢复预检已交付；但补跑17.2的T3「最终Q一点复制」闸门失败（701/720 record步 gold字节概率<1−1e-12，transport软扩散），17.5未准入。当前停在“17.2 T3架构闸门失败；待owner决定是否实现R2a精确点复制后重跑T3/17.4”，训练更新0（仅18工程Adam）、confirm读取0。** 唯一调度见[MAINLINE](../MAINLINE.md)；能力表述以[能力卡](CAPABILITY-CARD_20261103.md)为准，全局体检见[收束文档](CONSOLIDATION_20261103.md)。前稿按Git b054450ac、99e3e69c9及4dcf58b76追溯，实验原卡与数据身份保留。
 
 ## 1. 已有任务结果
 
@@ -47,4 +47,8 @@
 
 **17.1/17.3 已交付（2026-11-03）**：R1 θ_repr=1e-2、θ_score=1e-3 冻结（20对最小0.428526/0.052838，旧头0.0，噪声底≤8.88e-16）；T3 gold跨度object_exact=0/40→强制位置监督（17.5第1阶段，不重定价）。三臂外推13,092.25 CPU/15,056.09 wall/1,800 Adam/495.0 MiB，二臂8,750.34/10,062.90/1,200/330.0 MiB，三/二CPU比1.496；step150只作准备度闸门，任务判定只在step300。首版0.1×中位阈值规则因未预注册且与DESIGN §10冲突，记D17-1撤回重跑。定价实际工程Adam13（超卡4）、正式更新0、confirm读取0。[定价报告](PRICING-17_3_SELECTION_ROUTING_20261103.md)
 
-唯一下一步为**owner裁定臂范围（建议三臂）**。裁定后先做17.4恢复预检，符合任务门后才打开confirm_n17；本轮不启动训练、不物化父候选。17执行入口及工程/训练回执由对应阶段交付。
+**17.4 已跑（2026-11-03）**：两seed×三臂共6格、每格3次工程Adam＝18；参数/Adam矩/teacher-forced概率逐位一致（max_abs_diff=0.0），对象→地点/null续推13位一致，父bundle与非可训练参数未变；CPU 46.08/wall 126.24；6个step1临时bundle 352,009,238B已删并登记。状态旁证：A/B四格step2的m为零（未训练头把最后对象字节路由到null），coverage非空。[报告](../../reports/taiji_selection_routing_17_4_preflight_20261103.json)、[manifest](../manifests/taiji_selection_routing_17_4_preflight_20261103.json)
+
+**17.2 T3 补跑失败（2026-11-03）**：强制alpha/beta one-hot到gold字节且q_null=gamma=0，720个record步的gold字节概率最小2.08e-36、中位4.57e-6，701/720<1−1e-12（f32 658/720<1−1e-6）。干预/映射对照无误（概率和误差4.4e-16、copy重建0、instrument_error_steps=0），transport行仅17/720为delta、行内gold位中位1.36e-7。归因：架构缺R2a精确点复制（`anchor @ transport`为softmax软扩散），不是剂量或未训练头。[报告](../../reports/taiji_selection_routing_17_2_t3_supplement_20261103.json)、[manifest](../manifests/taiji_selection_routing_17_2_t3_supplement_20261103.json)
+
+唯一下一步为**owner决定是否在17图实现R2a精确点复制**（做法：复制位置改为硬点选择/单位transport，gold强制时直接落到正确字节；不改判据、不加训练剂量），然后重跑T3（0更新）与17.4（18工程Adam），两者过门才进17.5。若不实现，则按17.2闸门失败判负，17.5不启动。本轮不启动正式训练、不物化父候选；confirm仍未释放。

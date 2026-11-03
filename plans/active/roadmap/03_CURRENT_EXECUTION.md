@@ -4,7 +4,13 @@
 
 更新：2026-11-03，Asia/Shanghai。本页原执行表已整合进总计划，不再发布第二套顺序或复制待办。以下按统一步骤关联证据，阶段记录只解释当时，不能把零步时“未训练”当作后续现状。
 
-**头条状态（2026-11-03 收束后）：当前停在“17号已定价、未准入；待owner裁定臂范围（建议三臂）后重启”；训练更新0、confirm读取0，本轮停工。** 本页是按时间追加的流水，旧条目里的“唯一下一步／待裁定／在途”均已被最新条目与总计划覆盖，不再具有调度效力；全局体检见[收束文档](../../reference/CONSOLIDATION_20261103.md)。
+**头条状态（2026-11-03）：17.4恢复预检已跑并通过逐位恢复；但补跑17.2的T3「最终Q一点复制」闸门失败（701/720 record步 gold字节概率<1−1e-12，transport为softmax软扩散），17.5未准入。当前停在“17.2 T3架构闸门失败；待owner决定是否实现R2a精确点复制后重跑T3/17.4”；训练更新0（仅18次工程Adam）、confirm读取0。** 本页是按时间追加的流水，旧条目里的“唯一下一步／待裁定／在途”均已被最新条目与总计划覆盖，不再具有调度效力；全局体检见[收束文档](../../reference/CONSOLIDATION_20261103.md)。
+
+## 2026-11-03 17.4恢复预检与17.2 T3补跑
+
+17.4按两seed×三臂共6格执行，每格原端step1、step2与独立spawn恢复端step2，共18次工程Adam：[报告](../../../reports/taiji_selection_routing_17_4_preflight_20261103.json)＋[manifest](../../manifests/taiji_selection_routing_17_4_preflight_20261103.json)。参数、Adam矩、dev[0] teacher-forced概率的`max_abs_diff`全为0.0；对象→地点/null续推13个位置概率逐位一致；父bundle sha与所有非可训练参数摘要未变；CPU 46.08/wall 126.24；6个step1临时bundle共352,009,238B已删除并登记。A/B四格在step2的`m`为零、`coverage`非空（未训练头把最后一个对象字节路由到null所致），记为状态旁证，不影响恢复结论。
+
+同一日补跑17.2遗留的T3：[报告](../../../reports/taiji_selection_routing_17_2_t3_supplement_20261103.json)＋[manifest](../../manifests/taiji_selection_routing_17_2_t3_supplement_20261103.json)。强制alpha/beta one-hot到gold字节且`q_null=gamma=0`后，720个record步的gold字节概率最小值2.08e-36、中位4.57e-6，701/720低于1−1e-12；f32 658/720低于1−1e-6。干预与映射对照：概率和误差4.4e-16、copy_byte_mass重建误差0、instrument_error_steps=0；transport行仅17/720为delta、行内gold位中位1.36e-7。失败层为架构：当前图以`anchor @ transport`的softmax软扩散复制，缺R2a精确点复制。CPU 26.22/wall 27.42，0优化器步、0训练更新、0 confirm读取。按闸门纪律，17.5不启动。
 
 ## 当前唯一下一步：见总计划的执行位置
 

@@ -1,0 +1,300 @@
+{
+  "schema": "taiji-selection-routing-17-4-preflight-manifest-v1",
+  "step": "N17.4",
+  "date": "2026-11-03",
+  "report": {
+    "path": "reports\\taiji_selection_routing_17_4_preflight_20261103.json",
+    "bytes": 42417,
+    "sha256": "86477a234abebc0b2384f7fcce56feea3c4fdcb390d8baa14c375b9e848797cb"
+  },
+  "source_sha256": {
+    "taiji/selection_routing.py": "ce77d6364acdad823141255b2d501ac790b5f6e054292e6ffb4b9696a81c6b1f",
+    "taiji/selection_routing_checkpoint.py": "a88611679286ea01fa8970629a8552ce9eb1ceb0e46273f8f5c1ffd9d7827910",
+    "taiji/binding_select.py": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+    "taiji/binding_copy.py": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+    "taiji/record_relation_core.py": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+    "taiji/living_core.py": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+    "scripts/training/verify_taiji_binding_select_16_1_compare.py": "5382a02113922ebba60d03f0b964e6198df47e5d5df1a07986f9b5b70ac30ef6",
+    "scripts/training/verify_taiji_selection_routing_17_4_preflight.py": "769d108334954dc3d76dc2245228fb8567e5b0d2a7fa60edbcf7cb5c7de25247"
+  },
+  "parent_bundles": [
+    {
+      "path": "output/taiji_core_binding_select_16_1_compare/bundles/28031-A-locked-step300.pt",
+      "bytes": 65557565,
+      "sha256": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169"
+    },
+    {
+      "path": "output/taiji_core_binding_select_16_1_compare/bundles/28032-A-locked-step300.pt",
+      "bytes": 65557565,
+      "sha256": "3d55bff6d51e7c3d7079e068caf70f1b131ce43e0be830abb1f71b5a39b556a5"
+    }
+  ],
+  "data": [
+    {
+      "path": "output/taiji_core_binding_select_16_1/select_v1.json",
+      "bytes": 722294,
+      "sha256": "48f942867537e862909b5495d3b9ec18dde7251ad731a818a04730e1cb85044f"
+    },
+    {
+      "path": "output/taiji_core_binding_copy_15_1/data_v2.json",
+      "bytes": 2006572,
+      "sha256": "55385f6ba4b309f9b0cf7a28eaa524205943946aa5bbac7d593d296e172bf6ad"
+    }
+  ],
+  "frozen_dose": {
+    "stage": "selection",
+    "updates": "1-100 formal; 2 in this preflight",
+    "batch": 8,
+    "dtype": "float64",
+    "adam": {
+      "lr": 0.001,
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "eps": 1e-08,
+      "weight_decay": 0.0,
+      "clip_norm": 1.0
+    },
+    "order_seeds": {
+      "28031": 38031,
+      "28032": 38032
+    }
+  },
+  "adam_per_cell": 3,
+  "adam_total": 18,
+  "cells": [
+    {
+      "seed": 28031,
+      "arm": "A_route_lock",
+      "adam_calls": 3,
+      "step1_sha256": "1f1bd64df055ccaa6da05038df806c64a9cb68681bbee7ca7bf44ee729d4db2f",
+      "step1_bytes": 29246892,
+      "restore_all_bitwise_equal": true,
+      "continuation_all_bitwise_equal": true
+    },
+    {
+      "seed": 28031,
+      "arm": "B_stop_lock",
+      "adam_calls": 3,
+      "step1_sha256": "54d7fbcf835a47c8351d80b623fd64836ed6a89013d5325388282830385b5567",
+      "step1_bytes": 29246685,
+      "restore_all_bitwise_equal": true,
+      "continuation_all_bitwise_equal": true
+    },
+    {
+      "seed": 28031,
+      "arm": "C_unlocked",
+      "adam_calls": 3,
+      "step1_sha256": "7bc2e55883f20a6fa77ea10c78f4fbc02ab4254f47f6b617adc2a944bd9e89b1",
+      "step1_bytes": 29246478,
+      "restore_all_bitwise_equal": true,
+      "continuation_all_bitwise_equal": true
+    },
+    {
+      "seed": 28032,
+      "arm": "A_route_lock",
+      "adam_calls": 3,
+      "step1_sha256": "f30a984ef6800e939ac8d6f96292f2f7461df08f01b44f2e0fcc67691f8bfb23",
+      "step1_bytes": 29246892,
+      "restore_all_bitwise_equal": true,
+      "continuation_all_bitwise_equal": true
+    },
+    {
+      "seed": 28032,
+      "arm": "B_stop_lock",
+      "adam_calls": 3,
+      "step1_sha256": "0f51f86c15a8a67d018716ea9dbfe38e613476c4422ecc4c882f67c8327bfb9b",
+      "step1_bytes": 29246685,
+      "restore_all_bitwise_equal": true,
+      "continuation_all_bitwise_equal": true
+    },
+    {
+      "seed": 28032,
+      "arm": "C_unlocked",
+      "adam_calls": 3,
+      "step1_sha256": "b02fa698834daf41d3087450a9ad5c7ab3d8c89df9eb9c08538801decb1eeb9d",
+      "step1_bytes": 29246478,
+      "restore_all_bitwise_equal": true,
+      "continuation_all_bitwise_equal": true
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-A_route_lock-step1.pt",
+      "kind": "routing_step1_bundle",
+      "bytes": 29246892,
+      "sha256": "1f1bd64df055ccaa6da05038df806c64a9cb68681bbee7ca7bf44ee729d4db2f",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-A_route_lock-reference.pt",
+      "kind": "prototype_reference",
+      "bytes": 29261263,
+      "sha256": "71dc79789adbd3192c8ad18a53ad704003d057b66b99d6c6a3dc3d49fb82d9f8",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-A_route_lock-state.pt",
+      "kind": "continuation_state",
+      "bytes": 159757,
+      "sha256": "b796624ee3f076443d4ace0d5947ecb71ae7bd926ac36974dffa7f15d8dea5d4",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-A_route_lock-restore.json",
+      "kind": "restore_result",
+      "bytes": 1013,
+      "sha256": "9f54534e43844dc0fa85672259f6e2c66a921383dcaa28b852f81bcaa7f94a53",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-B_stop_lock-step1.pt",
+      "kind": "routing_step1_bundle",
+      "bytes": 29246685,
+      "sha256": "54d7fbcf835a47c8351d80b623fd64836ed6a89013d5325388282830385b5567",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-B_stop_lock-reference.pt",
+      "kind": "prototype_reference",
+      "bytes": 29261027,
+      "sha256": "385c9f36a4c2c83bbfef2f21e0d8fee377990e7305c4d4cee8bf81ee485dab36",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-B_stop_lock-state.pt",
+      "kind": "continuation_state",
+      "bytes": 159481,
+      "sha256": "b84929524cdd8ebeac4ab9d8b6f5b7d7f23fc422884b12198d79b6c5672b07e2",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-B_stop_lock-restore.json",
+      "kind": "restore_result",
+      "bytes": 1013,
+      "sha256": "36027d48a94101926be17cdf18b130f87b4d7def083eb5077dcb96fef6085179",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-C_unlocked-step1.pt",
+      "kind": "routing_step1_bundle",
+      "bytes": 29246478,
+      "sha256": "7bc2e55883f20a6fa77ea10c78f4fbc02ab4254f47f6b617adc2a944bd9e89b1",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-C_unlocked-reference.pt",
+      "kind": "prototype_reference",
+      "bytes": 29260791,
+      "sha256": "8267872243cc148ff582c67b288e6f6195c3b99d7a920b30413fd8d005a6b5c1",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-C_unlocked-state.pt",
+      "kind": "continuation_state",
+      "bytes": 159205,
+      "sha256": "e66e382cbe23562ac7b3b58ec7a2eab40b8aad85d01a565cb6c1af2036c0eade",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-C_unlocked-restore.json",
+      "kind": "restore_result",
+      "bytes": 1012,
+      "sha256": "54b64380090def2952e7e68f04a43c6f16176f5624b7c5317ec5443d8be19fd2",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-A_route_lock-step1.pt",
+      "kind": "routing_step1_bundle",
+      "bytes": 29246892,
+      "sha256": "f30a984ef6800e939ac8d6f96292f2f7461df08f01b44f2e0fcc67691f8bfb23",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-A_route_lock-reference.pt",
+      "kind": "prototype_reference",
+      "bytes": 29261263,
+      "sha256": "11917578b7fd05eab398b0851836ce6bfda0fe510418ccb09bc781d997958e2f",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-A_route_lock-state.pt",
+      "kind": "continuation_state",
+      "bytes": 159757,
+      "sha256": "060f5a3d1d1b05c13d3203f70cd2189a252c70d0380dc5e37feabb54bf5ee615",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-A_route_lock-restore.json",
+      "kind": "restore_result",
+      "bytes": 1013,
+      "sha256": "32ec98cc14fcfa322caeb50eb12dac6047b420297d21ef256c1849bd31a3c8f8",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-B_stop_lock-step1.pt",
+      "kind": "routing_step1_bundle",
+      "bytes": 29246685,
+      "sha256": "0f51f86c15a8a67d018716ea9dbfe38e613476c4422ecc4c882f67c8327bfb9b",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-B_stop_lock-reference.pt",
+      "kind": "prototype_reference",
+      "bytes": 29261027,
+      "sha256": "a4e2bf4e433fd36f139b1c6e1d2b07fdac01cf5e77f83f64c51e04e23cf52a4e",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-B_stop_lock-state.pt",
+      "kind": "continuation_state",
+      "bytes": 159481,
+      "sha256": "f1cf267fe81f2339a04079d90afd835dc2175c20a56870ae1737d233c73b4ee8",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-B_stop_lock-restore.json",
+      "kind": "restore_result",
+      "bytes": 1015,
+      "sha256": "2cc6ea863d2781072dbb7dcab70f4160cf477a5610758738b1bc519926740d5f",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-C_unlocked-step1.pt",
+      "kind": "routing_step1_bundle",
+      "bytes": 29246478,
+      "sha256": "b02fa698834daf41d3087450a9ad5c7ab3d8c89df9eb9c08538801decb1eeb9d",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-C_unlocked-reference.pt",
+      "kind": "prototype_reference",
+      "bytes": 29260791,
+      "sha256": "a7d9fa6679626e276b97bc5ab0deed54e135d98936446846c7dee13ab5ddb069",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-C_unlocked-state.pt",
+      "kind": "continuation_state",
+      "bytes": 159205,
+      "sha256": "26bdd53fb462dfb197826ae1d69aea8daf6dd815a7d23fcf9142b2acb02d7b4f",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-C_unlocked-restore.json",
+      "kind": "restore_result",
+      "bytes": 1014,
+      "sha256": "3643a175f24ae213c1d4c6d0ac904f63ade670461495d788a203793e06019f15",
+      "deleted": true
+    }
+  ],
+  "deleted": {
+    "files": 24,
+    "bytes": 352009238
+  },
+  "limits": {
+    "confirm_reads": 0,
+    "formal_training": false
+  }
+}

@@ -1,0 +1,1175 @@
+{
+  "schema": "taiji-selection-routing-17-4-preflight-v1",
+  "step": "N17.4",
+  "date": "2026-11-03",
+  "passed": true,
+  "stop_reason": null,
+  "cells": [
+    {
+      "seed": 28031,
+      "arm": "A_route_lock",
+      "adam_calls": 3,
+      "step1_sha256": "1f1bd64df055ccaa6da05038df806c64a9cb68681bbee7ca7bf44ee729d4db2f",
+      "step1_bytes": 29246892,
+      "updates": [
+        {
+          "update": 1,
+          "loss": 2.234350726043001,
+          "clip_scale": 0.6719740250575496
+        },
+        {
+          "update": 2,
+          "loss": 2.190233625042155,
+          "clip_scale": 0.620403188767152
+        }
+      ],
+      "restore": {
+        "params_max_abs_diff": 0.0,
+        "adam_max_abs_diff": 0.0,
+        "probs_max_abs_diff": 0.0,
+        "all_bitwise_equal": true,
+        "prototype_parameter_sha256": "e91b3f4151576f5717c4c21187cc50b03e6e3b3eae809b6961c0ad49744df69b",
+        "restored_parameter_sha256": "e91b3f4151576f5717c4c21187cc50b03e6e3b3eae809b6961c0ad49744df69b",
+        "prototype_adam_sha256": "87fc661626db1ecfe1021a622ed0bc19d3e8d91488e625dad32e4a900787be45",
+        "restored_adam_sha256": "87fc661626db1ecfe1021a622ed0bc19d3e8d91488e625dad32e4a900787be45",
+        "prototype_probs_sha256": "2211144a67287e7d8b6c24f8c69738e51b7e3035ba3ae39d2e0a1d610a0540f6",
+        "restored_probs_sha256": "2211144a67287e7d8b6c24f8c69738e51b7e3035ba3ae39d2e0a1d610a0540f6"
+      },
+      "continuation": {
+        "fixture_index": 0,
+        "checkpoint_position": 15,
+        "bytes_consumed": 15,
+        "prefix_bytes": 3,
+        "object_bytes_advanced": 12,
+        "steps_compared": 13,
+        "probs_max_abs_diff": 0.0,
+        "restored_rows": 13,
+        "all_bitwise_equal": true,
+        "prototype_sha256": "ea40b76d2e3159b71074b2b4a09d45bfbc6d8c4b038b8120d06d78733411010b",
+        "restored_sha256": "ea40b76d2e3159b71074b2b4a09d45bfbc6d8c4b038b8120d06d78733411010b",
+        "keys_match": true,
+        "previous_byte": 163,
+        "gate_index": 0,
+        "previous_byte_is_last_object_byte": true,
+        "state": {
+          "m_numel": 270,
+          "coverage_numel": 270,
+          "m_nonzero": 0,
+          "coverage_nonzero": 8,
+          "m_shape": [
+            270
+          ],
+          "coverage_shape": [
+            270
+          ],
+          "keys": 270,
+          "record_offsets": 9,
+          "prefix_cursor": 0
+        },
+        "route": {
+          "object_positions": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "null_positions_in_sequence": [
+            0,
+            1,
+            2,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            27
+          ],
+          "null_positions_after_checkpoint": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            27
+          ],
+          "record_count": 9,
+          "null_route_covered": true
+        }
+      },
+      "non_empty_state": true,
+      "parent_unchanged": true,
+      "protection": {
+        "binding_unchanged": true,
+        "nontrainable_unchanged": true,
+        "child_binding_sha256": "be1953b9ea4314202d960c4ec460fdc2c43fd5ca5558d9e77e3ace617d17a97e",
+        "child_nontrainable_sha256": "a1626103575b33f56ed1e5b7f8c56005da2820d35a0a0712b9585410339478f5",
+        "child_binding_matches": true,
+        "child_nontrainable_matches": true
+      },
+      "parameter_names_sha256": "97dd0b5ecc71a21275200fbffc68a45b358b86c30932661c90014f42441cf6e1",
+      "trainable_parameters": 73,
+      "binding_sha256": "be1953b9ea4314202d960c4ec460fdc2c43fd5ca5558d9e77e3ace617d17a97e",
+      "nontrainable_sha256": "a1626103575b33f56ed1e5b7f8c56005da2820d35a0a0712b9585410339478f5",
+      "prototype": {
+        "parameter_sha256": "e91b3f4151576f5717c4c21187cc50b03e6e3b3eae809b6961c0ad49744df69b",
+        "adam_sha256": "87fc661626db1ecfe1021a622ed0bc19d3e8d91488e625dad32e4a900787be45",
+        "probs_sha256": "2211144a67287e7d8b6c24f8c69738e51b7e3035ba3ae39d2e0a1d610a0540f6",
+        "continuation_sha256": "ea40b76d2e3159b71074b2b4a09d45bfbc6d8c4b038b8120d06d78733411010b"
+      },
+      "parent": {
+        "path": "output/taiji_core_binding_select_16_1_compare/bundles/28031-A-locked-step300.pt",
+        "sha256_before": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169",
+        "sha256_after": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169",
+        "bytes": 65557565
+      },
+      "child": {
+        "ok": true,
+        "cpu_seconds": 6.9375,
+        "message": null
+      },
+      "artifacts": [
+        {
+          "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-A_route_lock-reference.pt",
+          "kind": "prototype_reference",
+          "bytes": 29261263,
+          "sha256": "71dc79789adbd3192c8ad18a53ad704003d057b66b99d6c6a3dc3d49fb82d9f8",
+          "deleted": true
+        },
+        {
+          "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-A_route_lock-state.pt",
+          "kind": "continuation_state",
+          "bytes": 159757,
+          "sha256": "b796624ee3f076443d4ace0d5947ecb71ae7bd926ac36974dffa7f15d8dea5d4",
+          "deleted": true
+        },
+        {
+          "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-A_route_lock-restore.json",
+          "kind": "restore_result",
+          "bytes": 1013,
+          "sha256": "9f54534e43844dc0fa85672259f6e2c66a921383dcaa28b852f81bcaa7f94a53",
+          "deleted": true
+        }
+      ]
+    },
+    {
+      "seed": 28031,
+      "arm": "B_stop_lock",
+      "adam_calls": 3,
+      "step1_sha256": "54d7fbcf835a47c8351d80b623fd64836ed6a89013d5325388282830385b5567",
+      "step1_bytes": 29246685,
+      "updates": [
+        {
+          "update": 1,
+          "loss": 2.234350726043001,
+          "clip_scale": 0.6719740250575496
+        },
+        {
+          "update": 2,
+          "loss": 2.190233625042155,
+          "clip_scale": 0.620403188767152
+        }
+      ],
+      "restore": {
+        "params_max_abs_diff": 0.0,
+        "adam_max_abs_diff": 0.0,
+        "probs_max_abs_diff": 0.0,
+        "all_bitwise_equal": true,
+        "prototype_parameter_sha256": "e91b3f4151576f5717c4c21187cc50b03e6e3b3eae809b6961c0ad49744df69b",
+        "restored_parameter_sha256": "e91b3f4151576f5717c4c21187cc50b03e6e3b3eae809b6961c0ad49744df69b",
+        "prototype_adam_sha256": "87fc661626db1ecfe1021a622ed0bc19d3e8d91488e625dad32e4a900787be45",
+        "restored_adam_sha256": "87fc661626db1ecfe1021a622ed0bc19d3e8d91488e625dad32e4a900787be45",
+        "prototype_probs_sha256": "2211144a67287e7d8b6c24f8c69738e51b7e3035ba3ae39d2e0a1d610a0540f6",
+        "restored_probs_sha256": "2211144a67287e7d8b6c24f8c69738e51b7e3035ba3ae39d2e0a1d610a0540f6"
+      },
+      "continuation": {
+        "fixture_index": 0,
+        "checkpoint_position": 15,
+        "bytes_consumed": 15,
+        "prefix_bytes": 3,
+        "object_bytes_advanced": 12,
+        "steps_compared": 13,
+        "probs_max_abs_diff": 0.0,
+        "restored_rows": 13,
+        "all_bitwise_equal": true,
+        "prototype_sha256": "ea40b76d2e3159b71074b2b4a09d45bfbc6d8c4b038b8120d06d78733411010b",
+        "restored_sha256": "ea40b76d2e3159b71074b2b4a09d45bfbc6d8c4b038b8120d06d78733411010b",
+        "keys_match": true,
+        "previous_byte": 163,
+        "gate_index": 0,
+        "previous_byte_is_last_object_byte": true,
+        "state": {
+          "m_numel": 270,
+          "coverage_numel": 270,
+          "m_nonzero": 0,
+          "coverage_nonzero": 8,
+          "m_shape": [
+            270
+          ],
+          "coverage_shape": [
+            270
+          ],
+          "keys": 270,
+          "record_offsets": 9,
+          "prefix_cursor": 0
+        },
+        "route": {
+          "object_positions": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "null_positions_in_sequence": [
+            0,
+            1,
+            2,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            27
+          ],
+          "null_positions_after_checkpoint": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            27
+          ],
+          "record_count": 9,
+          "null_route_covered": true
+        }
+      },
+      "non_empty_state": true,
+      "parent_unchanged": true,
+      "protection": {
+        "binding_unchanged": true,
+        "nontrainable_unchanged": true,
+        "child_binding_sha256": "be1953b9ea4314202d960c4ec460fdc2c43fd5ca5558d9e77e3ace617d17a97e",
+        "child_nontrainable_sha256": "a1626103575b33f56ed1e5b7f8c56005da2820d35a0a0712b9585410339478f5",
+        "child_binding_matches": true,
+        "child_nontrainable_matches": true
+      },
+      "parameter_names_sha256": "97dd0b5ecc71a21275200fbffc68a45b358b86c30932661c90014f42441cf6e1",
+      "trainable_parameters": 73,
+      "binding_sha256": "be1953b9ea4314202d960c4ec460fdc2c43fd5ca5558d9e77e3ace617d17a97e",
+      "nontrainable_sha256": "a1626103575b33f56ed1e5b7f8c56005da2820d35a0a0712b9585410339478f5",
+      "prototype": {
+        "parameter_sha256": "e91b3f4151576f5717c4c21187cc50b03e6e3b3eae809b6961c0ad49744df69b",
+        "adam_sha256": "87fc661626db1ecfe1021a622ed0bc19d3e8d91488e625dad32e4a900787be45",
+        "probs_sha256": "2211144a67287e7d8b6c24f8c69738e51b7e3035ba3ae39d2e0a1d610a0540f6",
+        "continuation_sha256": "ea40b76d2e3159b71074b2b4a09d45bfbc6d8c4b038b8120d06d78733411010b"
+      },
+      "parent": {
+        "path": "output/taiji_core_binding_select_16_1_compare/bundles/28031-A-locked-step300.pt",
+        "sha256_before": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169",
+        "sha256_after": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169",
+        "bytes": 65557565
+      },
+      "child": {
+        "ok": true,
+        "cpu_seconds": 6.78125,
+        "message": null
+      },
+      "artifacts": [
+        {
+          "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-B_stop_lock-reference.pt",
+          "kind": "prototype_reference",
+          "bytes": 29261027,
+          "sha256": "385c9f36a4c2c83bbfef2f21e0d8fee377990e7305c4d4cee8bf81ee485dab36",
+          "deleted": true
+        },
+        {
+          "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-B_stop_lock-state.pt",
+          "kind": "continuation_state",
+          "bytes": 159481,
+          "sha256": "b84929524cdd8ebeac4ab9d8b6f5b7d7f23fc422884b12198d79b6c5672b07e2",
+          "deleted": true
+        },
+        {
+          "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-B_stop_lock-restore.json",
+          "kind": "restore_result",
+          "bytes": 1013,
+          "sha256": "36027d48a94101926be17cdf18b130f87b4d7def083eb5077dcb96fef6085179",
+          "deleted": true
+        }
+      ]
+    },
+    {
+      "seed": 28031,
+      "arm": "C_unlocked",
+      "adam_calls": 3,
+      "step1_sha256": "7bc2e55883f20a6fa77ea10c78f4fbc02ab4254f47f6b617adc2a944bd9e89b1",
+      "step1_bytes": 29246478,
+      "updates": [
+        {
+          "update": 1,
+          "loss": 2.234350726043001,
+          "clip_scale": 0.6719740250575496
+        },
+        {
+          "update": 2,
+          "loss": 2.190233625042155,
+          "clip_scale": 0.620403188767152
+        }
+      ],
+      "restore": {
+        "params_max_abs_diff": 0.0,
+        "adam_max_abs_diff": 0.0,
+        "probs_max_abs_diff": 0.0,
+        "all_bitwise_equal": true,
+        "prototype_parameter_sha256": "e91b3f4151576f5717c4c21187cc50b03e6e3b3eae809b6961c0ad49744df69b",
+        "restored_parameter_sha256": "e91b3f4151576f5717c4c21187cc50b03e6e3b3eae809b6961c0ad49744df69b",
+        "prototype_adam_sha256": "87fc661626db1ecfe1021a622ed0bc19d3e8d91488e625dad32e4a900787be45",
+        "restored_adam_sha256": "87fc661626db1ecfe1021a622ed0bc19d3e8d91488e625dad32e4a900787be45",
+        "prototype_probs_sha256": "733d32853a9c3437ef9d42ebda554e2847d68aaf7da93a7699b2d108a8be5fd5",
+        "restored_probs_sha256": "733d32853a9c3437ef9d42ebda554e2847d68aaf7da93a7699b2d108a8be5fd5"
+      },
+      "continuation": {
+        "fixture_index": 0,
+        "checkpoint_position": 15,
+        "bytes_consumed": 15,
+        "prefix_bytes": 3,
+        "object_bytes_advanced": 12,
+        "steps_compared": 13,
+        "probs_max_abs_diff": 0.0,
+        "restored_rows": 13,
+        "all_bitwise_equal": true,
+        "prototype_sha256": "4152bef109d362bcb3bda870abb027119cbac2f724fc9eb83f007466a0636b31",
+        "restored_sha256": "4152bef109d362bcb3bda870abb027119cbac2f724fc9eb83f007466a0636b31",
+        "keys_match": true,
+        "previous_byte": 163,
+        "gate_index": 0,
+        "previous_byte_is_last_object_byte": true,
+        "state": {
+          "m_numel": 270,
+          "coverage_numel": 270,
+          "m_nonzero": 5,
+          "coverage_nonzero": 89,
+          "m_shape": [
+            270
+          ],
+          "coverage_shape": [
+            270
+          ],
+          "keys": 270,
+          "record_offsets": 9,
+          "prefix_cursor": 0
+        },
+        "route": {
+          "object_positions": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "null_positions_in_sequence": [
+            0,
+            1,
+            2,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            27
+          ],
+          "null_positions_after_checkpoint": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            27
+          ],
+          "record_count": 9,
+          "null_route_covered": true
+        }
+      },
+      "non_empty_state": true,
+      "parent_unchanged": true,
+      "protection": {
+        "binding_unchanged": true,
+        "nontrainable_unchanged": true,
+        "child_binding_sha256": "be1953b9ea4314202d960c4ec460fdc2c43fd5ca5558d9e77e3ace617d17a97e",
+        "child_nontrainable_sha256": "a1626103575b33f56ed1e5b7f8c56005da2820d35a0a0712b9585410339478f5",
+        "child_binding_matches": true,
+        "child_nontrainable_matches": true
+      },
+      "parameter_names_sha256": "97dd0b5ecc71a21275200fbffc68a45b358b86c30932661c90014f42441cf6e1",
+      "trainable_parameters": 73,
+      "binding_sha256": "be1953b9ea4314202d960c4ec460fdc2c43fd5ca5558d9e77e3ace617d17a97e",
+      "nontrainable_sha256": "a1626103575b33f56ed1e5b7f8c56005da2820d35a0a0712b9585410339478f5",
+      "prototype": {
+        "parameter_sha256": "e91b3f4151576f5717c4c21187cc50b03e6e3b3eae809b6961c0ad49744df69b",
+        "adam_sha256": "87fc661626db1ecfe1021a622ed0bc19d3e8d91488e625dad32e4a900787be45",
+        "probs_sha256": "733d32853a9c3437ef9d42ebda554e2847d68aaf7da93a7699b2d108a8be5fd5",
+        "continuation_sha256": "4152bef109d362bcb3bda870abb027119cbac2f724fc9eb83f007466a0636b31"
+      },
+      "parent": {
+        "path": "output/taiji_core_binding_select_16_1_compare/bundles/28031-A-locked-step300.pt",
+        "sha256_before": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169",
+        "sha256_after": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169",
+        "bytes": 65557565
+      },
+      "child": {
+        "ok": true,
+        "cpu_seconds": 7.03125,
+        "message": null
+      },
+      "artifacts": [
+        {
+          "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-C_unlocked-reference.pt",
+          "kind": "prototype_reference",
+          "bytes": 29260791,
+          "sha256": "8267872243cc148ff582c67b288e6f6195c3b99d7a920b30413fd8d005a6b5c1",
+          "deleted": true
+        },
+        {
+          "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-C_unlocked-state.pt",
+          "kind": "continuation_state",
+          "bytes": 159205,
+          "sha256": "e66e382cbe23562ac7b3b58ec7a2eab40b8aad85d01a565cb6c1af2036c0eade",
+          "deleted": true
+        },
+        {
+          "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-C_unlocked-restore.json",
+          "kind": "restore_result",
+          "bytes": 1012,
+          "sha256": "54b64380090def2952e7e68f04a43c6f16176f5624b7c5317ec5443d8be19fd2",
+          "deleted": true
+        }
+      ]
+    },
+    {
+      "seed": 28032,
+      "arm": "A_route_lock",
+      "adam_calls": 3,
+      "step1_sha256": "f30a984ef6800e939ac8d6f96292f2f7461df08f01b44f2e0fcc67691f8bfb23",
+      "step1_bytes": 29246892,
+      "updates": [
+        {
+          "update": 1,
+          "loss": 2.167183717785223,
+          "clip_scale": 0.882129357297784
+        },
+        {
+          "update": 2,
+          "loss": 2.122242905621707,
+          "clip_scale": 0.7625890090446367
+        }
+      ],
+      "restore": {
+        "params_max_abs_diff": 0.0,
+        "adam_max_abs_diff": 0.0,
+        "probs_max_abs_diff": 0.0,
+        "all_bitwise_equal": true,
+        "prototype_parameter_sha256": "e0389d39906afa548db5c32b844764ecfa1ee089501d1b1f598e4dfc55a53c0f",
+        "restored_parameter_sha256": "e0389d39906afa548db5c32b844764ecfa1ee089501d1b1f598e4dfc55a53c0f",
+        "prototype_adam_sha256": "8fd76351c884b4bf08cc02a718c8311895d4b03861f834dc50262d22cb890280",
+        "restored_adam_sha256": "8fd76351c884b4bf08cc02a718c8311895d4b03861f834dc50262d22cb890280",
+        "prototype_probs_sha256": "116c474c708c8de44d2c4c71c303ae0ee9c7d37560e2e9c24dfa0d540763c278",
+        "restored_probs_sha256": "116c474c708c8de44d2c4c71c303ae0ee9c7d37560e2e9c24dfa0d540763c278"
+      },
+      "continuation": {
+        "fixture_index": 0,
+        "checkpoint_position": 15,
+        "bytes_consumed": 15,
+        "prefix_bytes": 3,
+        "object_bytes_advanced": 12,
+        "steps_compared": 13,
+        "probs_max_abs_diff": 0.0,
+        "restored_rows": 13,
+        "all_bitwise_equal": true,
+        "prototype_sha256": "976c037fffc3656f1d97043e87d33f9178279ac47a5190712e42ee10b0526426",
+        "restored_sha256": "976c037fffc3656f1d97043e87d33f9178279ac47a5190712e42ee10b0526426",
+        "keys_match": true,
+        "previous_byte": 163,
+        "gate_index": 0,
+        "previous_byte_is_last_object_byte": true,
+        "state": {
+          "m_numel": 270,
+          "coverage_numel": 270,
+          "m_nonzero": 0,
+          "coverage_nonzero": 4,
+          "m_shape": [
+            270
+          ],
+          "coverage_shape": [
+            270
+          ],
+          "keys": 270,
+          "record_offsets": 9,
+          "prefix_cursor": 0
+        },
+        "route": {
+          "object_positions": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "null_positions_in_sequence": [
+            0,
+            1,
+            2,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            27
+          ],
+          "null_positions_after_checkpoint": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            27
+          ],
+          "record_count": 9,
+          "null_route_covered": true
+        }
+      },
+      "non_empty_state": true,
+      "parent_unchanged": true,
+      "protection": {
+        "binding_unchanged": true,
+        "nontrainable_unchanged": true,
+        "child_binding_sha256": "ac0361995660317b714a7c9047966e31a49a3fa535ce96e1bf018f6f38785999",
+        "child_nontrainable_sha256": "a1626103575b33f56ed1e5b7f8c56005da2820d35a0a0712b9585410339478f5",
+        "child_binding_matches": true,
+        "child_nontrainable_matches": true
+      },
+      "parameter_names_sha256": "97dd0b5ecc71a21275200fbffc68a45b358b86c30932661c90014f42441cf6e1",
+      "trainable_parameters": 73,
+      "binding_sha256": "ac0361995660317b714a7c9047966e31a49a3fa535ce96e1bf018f6f38785999",
+      "nontrainable_sha256": "a1626103575b33f56ed1e5b7f8c56005da2820d35a0a0712b9585410339478f5",
+      "prototype": {
+        "parameter_sha256": "e0389d39906afa548db5c32b844764ecfa1ee089501d1b1f598e4dfc55a53c0f",
+        "adam_sha256": "8fd76351c884b4bf08cc02a718c8311895d4b03861f834dc50262d22cb890280",
+        "probs_sha256": "116c474c708c8de44d2c4c71c303ae0ee9c7d37560e2e9c24dfa0d540763c278",
+        "continuation_sha256": "976c037fffc3656f1d97043e87d33f9178279ac47a5190712e42ee10b0526426"
+      },
+      "parent": {
+        "path": "output/taiji_core_binding_select_16_1_compare/bundles/28032-A-locked-step300.pt",
+        "sha256_before": "3d55bff6d51e7c3d7079e068caf70f1b131ce43e0be830abb1f71b5a39b556a5",
+        "sha256_after": "3d55bff6d51e7c3d7079e068caf70f1b131ce43e0be830abb1f71b5a39b556a5",
+        "bytes": 65557565
+      },
+      "child": {
+        "ok": true,
+        "cpu_seconds": 6.875,
+        "message": null
+      },
+      "artifacts": [
+        {
+          "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-A_route_lock-reference.pt",
+          "kind": "prototype_reference",
+          "bytes": 29261263,
+          "sha256": "11917578b7fd05eab398b0851836ce6bfda0fe510418ccb09bc781d997958e2f",
+          "deleted": true
+        },
+        {
+          "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-A_route_lock-state.pt",
+          "kind": "continuation_state",
+          "bytes": 159757,
+          "sha256": "060f5a3d1d1b05c13d3203f70cd2189a252c70d0380dc5e37feabb54bf5ee615",
+          "deleted": true
+        },
+        {
+          "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-A_route_lock-restore.json",
+          "kind": "restore_result",
+          "bytes": 1013,
+          "sha256": "32ec98cc14fcfa322caeb50eb12dac6047b420297d21ef256c1849bd31a3c8f8",
+          "deleted": true
+        }
+      ]
+    },
+    {
+      "seed": 28032,
+      "arm": "B_stop_lock",
+      "adam_calls": 3,
+      "step1_sha256": "0f51f86c15a8a67d018716ea9dbfe38e613476c4422ecc4c882f67c8327bfb9b",
+      "step1_bytes": 29246685,
+      "updates": [
+        {
+          "update": 1,
+          "loss": 2.167183717785223,
+          "clip_scale": 0.882129357297784
+        },
+        {
+          "update": 2,
+          "loss": 2.122242905621707,
+          "clip_scale": 0.7625890090446367
+        }
+      ],
+      "restore": {
+        "params_max_abs_diff": 0.0,
+        "adam_max_abs_diff": 0.0,
+        "probs_max_abs_diff": 0.0,
+        "all_bitwise_equal": true,
+        "prototype_parameter_sha256": "e0389d39906afa548db5c32b844764ecfa1ee089501d1b1f598e4dfc55a53c0f",
+        "restored_parameter_sha256": "e0389d39906afa548db5c32b844764ecfa1ee089501d1b1f598e4dfc55a53c0f",
+        "prototype_adam_sha256": "8fd76351c884b4bf08cc02a718c8311895d4b03861f834dc50262d22cb890280",
+        "restored_adam_sha256": "8fd76351c884b4bf08cc02a718c8311895d4b03861f834dc50262d22cb890280",
+        "prototype_probs_sha256": "116c474c708c8de44d2c4c71c303ae0ee9c7d37560e2e9c24dfa0d540763c278",
+        "restored_probs_sha256": "116c474c708c8de44d2c4c71c303ae0ee9c7d37560e2e9c24dfa0d540763c278"
+      },
+      "continuation": {
+        "fixture_index": 0,
+        "checkpoint_position": 15,
+        "bytes_consumed": 15,
+        "prefix_bytes": 3,
+        "object_bytes_advanced": 12,
+        "steps_compared": 13,
+        "probs_max_abs_diff": 0.0,
+        "restored_rows": 13,
+        "all_bitwise_equal": true,
+        "prototype_sha256": "976c037fffc3656f1d97043e87d33f9178279ac47a5190712e42ee10b0526426",
+        "restored_sha256": "976c037fffc3656f1d97043e87d33f9178279ac47a5190712e42ee10b0526426",
+        "keys_match": true,
+        "previous_byte": 163,
+        "gate_index": 0,
+        "previous_byte_is_last_object_byte": true,
+        "state": {
+          "m_numel": 270,
+          "coverage_numel": 270,
+          "m_nonzero": 0,
+          "coverage_nonzero": 4,
+          "m_shape": [
+            270
+          ],
+          "coverage_shape": [
+            270
+          ],
+          "keys": 270,
+          "record_offsets": 9,
+          "prefix_cursor": 0
+        },
+        "route": {
+          "object_positions": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "null_positions_in_sequence": [
+            0,
+            1,
+            2,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            27
+          ],
+          "null_positions_after_checkpoint": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            27
+          ],
+          "record_count": 9,
+          "null_route_covered": true
+        }
+      },
+      "non_empty_state": true,
+      "parent_unchanged": true,
+      "protection": {
+        "binding_unchanged": true,
+        "nontrainable_unchanged": true,
+        "child_binding_sha256": "ac0361995660317b714a7c9047966e31a49a3fa535ce96e1bf018f6f38785999",
+        "child_nontrainable_sha256": "a1626103575b33f56ed1e5b7f8c56005da2820d35a0a0712b9585410339478f5",
+        "child_binding_matches": true,
+        "child_nontrainable_matches": true
+      },
+      "parameter_names_sha256": "97dd0b5ecc71a21275200fbffc68a45b358b86c30932661c90014f42441cf6e1",
+      "trainable_parameters": 73,
+      "binding_sha256": "ac0361995660317b714a7c9047966e31a49a3fa535ce96e1bf018f6f38785999",
+      "nontrainable_sha256": "a1626103575b33f56ed1e5b7f8c56005da2820d35a0a0712b9585410339478f5",
+      "prototype": {
+        "parameter_sha256": "e0389d39906afa548db5c32b844764ecfa1ee089501d1b1f598e4dfc55a53c0f",
+        "adam_sha256": "8fd76351c884b4bf08cc02a718c8311895d4b03861f834dc50262d22cb890280",
+        "probs_sha256": "116c474c708c8de44d2c4c71c303ae0ee9c7d37560e2e9c24dfa0d540763c278",
+        "continuation_sha256": "976c037fffc3656f1d97043e87d33f9178279ac47a5190712e42ee10b0526426"
+      },
+      "parent": {
+        "path": "output/taiji_core_binding_select_16_1_compare/bundles/28032-A-locked-step300.pt",
+        "sha256_before": "3d55bff6d51e7c3d7079e068caf70f1b131ce43e0be830abb1f71b5a39b556a5",
+        "sha256_after": "3d55bff6d51e7c3d7079e068caf70f1b131ce43e0be830abb1f71b5a39b556a5",
+        "bytes": 65557565
+      },
+      "child": {
+        "ok": true,
+        "cpu_seconds": 7.015625,
+        "message": null
+      },
+      "artifacts": [
+        {
+          "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-B_stop_lock-reference.pt",
+          "kind": "prototype_reference",
+          "bytes": 29261027,
+          "sha256": "a4e2bf4e433fd36f139b1c6e1d2b07fdac01cf5e77f83f64c51e04e23cf52a4e",
+          "deleted": true
+        },
+        {
+          "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-B_stop_lock-state.pt",
+          "kind": "continuation_state",
+          "bytes": 159481,
+          "sha256": "f1cf267fe81f2339a04079d90afd835dc2175c20a56870ae1737d233c73b4ee8",
+          "deleted": true
+        },
+        {
+          "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-B_stop_lock-restore.json",
+          "kind": "restore_result",
+          "bytes": 1015,
+          "sha256": "2cc6ea863d2781072dbb7dcab70f4160cf477a5610758738b1bc519926740d5f",
+          "deleted": true
+        }
+      ]
+    },
+    {
+      "seed": 28032,
+      "arm": "C_unlocked",
+      "adam_calls": 3,
+      "step1_sha256": "b02fa698834daf41d3087450a9ad5c7ab3d8c89df9eb9c08538801decb1eeb9d",
+      "step1_bytes": 29246478,
+      "updates": [
+        {
+          "update": 1,
+          "loss": 2.167183717785223,
+          "clip_scale": 0.882129357297784
+        },
+        {
+          "update": 2,
+          "loss": 2.122242905621707,
+          "clip_scale": 0.7625890090446367
+        }
+      ],
+      "restore": {
+        "params_max_abs_diff": 0.0,
+        "adam_max_abs_diff": 0.0,
+        "probs_max_abs_diff": 0.0,
+        "all_bitwise_equal": true,
+        "prototype_parameter_sha256": "e0389d39906afa548db5c32b844764ecfa1ee089501d1b1f598e4dfc55a53c0f",
+        "restored_parameter_sha256": "e0389d39906afa548db5c32b844764ecfa1ee089501d1b1f598e4dfc55a53c0f",
+        "prototype_adam_sha256": "8fd76351c884b4bf08cc02a718c8311895d4b03861f834dc50262d22cb890280",
+        "restored_adam_sha256": "8fd76351c884b4bf08cc02a718c8311895d4b03861f834dc50262d22cb890280",
+        "prototype_probs_sha256": "8e855ad31515043b1db6f679d8c63f5cb1d26b77099904483ae1c0b6c29c8fcd",
+        "restored_probs_sha256": "8e855ad31515043b1db6f679d8c63f5cb1d26b77099904483ae1c0b6c29c8fcd"
+      },
+      "continuation": {
+        "fixture_index": 0,
+        "checkpoint_position": 15,
+        "bytes_consumed": 15,
+        "prefix_bytes": 3,
+        "object_bytes_advanced": 12,
+        "steps_compared": 13,
+        "probs_max_abs_diff": 0.0,
+        "restored_rows": 13,
+        "all_bitwise_equal": true,
+        "prototype_sha256": "0a77b2107bb27f456d5ddd15a6aaa6cfdbf14295714c24ffa04643cabd454917",
+        "restored_sha256": "0a77b2107bb27f456d5ddd15a6aaa6cfdbf14295714c24ffa04643cabd454917",
+        "keys_match": true,
+        "previous_byte": 163,
+        "gate_index": 0,
+        "previous_byte_is_last_object_byte": true,
+        "state": {
+          "m_numel": 270,
+          "coverage_numel": 270,
+          "m_nonzero": 5,
+          "coverage_nonzero": 89,
+          "m_shape": [
+            270
+          ],
+          "coverage_shape": [
+            270
+          ],
+          "keys": 270,
+          "record_offsets": 9,
+          "prefix_cursor": 0
+        },
+        "route": {
+          "object_positions": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "null_positions_in_sequence": [
+            0,
+            1,
+            2,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            27
+          ],
+          "null_positions_after_checkpoint": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            27
+          ],
+          "record_count": 9,
+          "null_route_covered": true
+        }
+      },
+      "non_empty_state": true,
+      "parent_unchanged": true,
+      "protection": {
+        "binding_unchanged": true,
+        "nontrainable_unchanged": true,
+        "child_binding_sha256": "ac0361995660317b714a7c9047966e31a49a3fa535ce96e1bf018f6f38785999",
+        "child_nontrainable_sha256": "a1626103575b33f56ed1e5b7f8c56005da2820d35a0a0712b9585410339478f5",
+        "child_binding_matches": true,
+        "child_nontrainable_matches": true
+      },
+      "parameter_names_sha256": "97dd0b5ecc71a21275200fbffc68a45b358b86c30932661c90014f42441cf6e1",
+      "trainable_parameters": 73,
+      "binding_sha256": "ac0361995660317b714a7c9047966e31a49a3fa535ce96e1bf018f6f38785999",
+      "nontrainable_sha256": "a1626103575b33f56ed1e5b7f8c56005da2820d35a0a0712b9585410339478f5",
+      "prototype": {
+        "parameter_sha256": "e0389d39906afa548db5c32b844764ecfa1ee089501d1b1f598e4dfc55a53c0f",
+        "adam_sha256": "8fd76351c884b4bf08cc02a718c8311895d4b03861f834dc50262d22cb890280",
+        "probs_sha256": "8e855ad31515043b1db6f679d8c63f5cb1d26b77099904483ae1c0b6c29c8fcd",
+        "continuation_sha256": "0a77b2107bb27f456d5ddd15a6aaa6cfdbf14295714c24ffa04643cabd454917"
+      },
+      "parent": {
+        "path": "output/taiji_core_binding_select_16_1_compare/bundles/28032-A-locked-step300.pt",
+        "sha256_before": "3d55bff6d51e7c3d7079e068caf70f1b131ce43e0be830abb1f71b5a39b556a5",
+        "sha256_after": "3d55bff6d51e7c3d7079e068caf70f1b131ce43e0be830abb1f71b5a39b556a5",
+        "bytes": 65557565
+      },
+      "child": {
+        "ok": true,
+        "cpu_seconds": 7.015625,
+        "message": null
+      },
+      "artifacts": [
+        {
+          "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-C_unlocked-reference.pt",
+          "kind": "prototype_reference",
+          "bytes": 29260791,
+          "sha256": "a7d9fa6679626e276b97bc5ab0deed54e135d98936446846c7dee13ab5ddb069",
+          "deleted": true
+        },
+        {
+          "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-C_unlocked-state.pt",
+          "kind": "continuation_state",
+          "bytes": 159205,
+          "sha256": "26bdd53fb462dfb197826ae1d69aea8daf6dd815a7d23fcf9142b2acb02d7b4f",
+          "deleted": true
+        },
+        {
+          "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-C_unlocked-restore.json",
+          "kind": "restore_result",
+          "bytes": 1014,
+          "sha256": "3643a175f24ae213c1d4c6d0ac904f63ade670461495d788a203793e06019f15",
+          "deleted": true
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "cells": 6,
+    "completed_cells": 6,
+    "adam_steps": 18,
+    "adam_per_cell": 3,
+    "training_updates_per_cell": 2
+  },
+  "limits": {
+    "confirm_reads": 0,
+    "confirm_materialised": false,
+    "confirm_examples_read": 0,
+    "formal_training": false,
+    "formal_updates": false,
+    "selection_head_only": true
+  },
+  "data": {
+    "splits": [
+      "dev",
+      "train"
+    ],
+    "examples": 528
+  },
+  "dose": {
+    "stage": "selection",
+    "formal_updates": "1-100",
+    "preflight_updates": 2,
+    "batch": 8,
+    "dtype": "float64",
+    "optimizer": "Adam",
+    "lr": 0.001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0,
+    "clip_norm": 1.0,
+    "head_seed": "parent seed (28031/28032)",
+    "arms": [
+      "A_route_lock",
+      "B_stop_lock",
+      "C_unlocked"
+    ]
+  },
+  "timing": {
+    "cpu_seconds": 46.078125,
+    "wall_seconds": 126.24279950000346
+  },
+  "protection": {
+    "parent_unchanged": true,
+    "nontrainable_unchanged": true,
+    "binding_unchanged": true,
+    "confirm_reads": 0
+  },
+  "artifacts": [
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-A_route_lock-step1.pt",
+      "bytes": 29246892,
+      "sha256": "1f1bd64df055ccaa6da05038df806c64a9cb68681bbee7ca7bf44ee729d4db2f",
+      "kind": "routing_step1_bundle",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-A_route_lock-reference.pt",
+      "kind": "prototype_reference",
+      "bytes": 29261263,
+      "sha256": "71dc79789adbd3192c8ad18a53ad704003d057b66b99d6c6a3dc3d49fb82d9f8",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-A_route_lock-state.pt",
+      "kind": "continuation_state",
+      "bytes": 159757,
+      "sha256": "b796624ee3f076443d4ace0d5947ecb71ae7bd926ac36974dffa7f15d8dea5d4",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-A_route_lock-restore.json",
+      "kind": "restore_result",
+      "bytes": 1013,
+      "sha256": "9f54534e43844dc0fa85672259f6e2c66a921383dcaa28b852f81bcaa7f94a53",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-B_stop_lock-step1.pt",
+      "bytes": 29246685,
+      "sha256": "54d7fbcf835a47c8351d80b623fd64836ed6a89013d5325388282830385b5567",
+      "kind": "routing_step1_bundle",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-B_stop_lock-reference.pt",
+      "kind": "prototype_reference",
+      "bytes": 29261027,
+      "sha256": "385c9f36a4c2c83bbfef2f21e0d8fee377990e7305c4d4cee8bf81ee485dab36",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-B_stop_lock-state.pt",
+      "kind": "continuation_state",
+      "bytes": 159481,
+      "sha256": "b84929524cdd8ebeac4ab9d8b6f5b7d7f23fc422884b12198d79b6c5672b07e2",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-B_stop_lock-restore.json",
+      "kind": "restore_result",
+      "bytes": 1013,
+      "sha256": "36027d48a94101926be17cdf18b130f87b4d7def083eb5077dcb96fef6085179",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-C_unlocked-step1.pt",
+      "bytes": 29246478,
+      "sha256": "7bc2e55883f20a6fa77ea10c78f4fbc02ab4254f47f6b617adc2a944bd9e89b1",
+      "kind": "routing_step1_bundle",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-C_unlocked-reference.pt",
+      "kind": "prototype_reference",
+      "bytes": 29260791,
+      "sha256": "8267872243cc148ff582c67b288e6f6195c3b99d7a920b30413fd8d005a6b5c1",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-C_unlocked-state.pt",
+      "kind": "continuation_state",
+      "bytes": 159205,
+      "sha256": "e66e382cbe23562ac7b3b58ec7a2eab40b8aad85d01a565cb6c1af2036c0eade",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28031-C_unlocked-restore.json",
+      "kind": "restore_result",
+      "bytes": 1012,
+      "sha256": "54b64380090def2952e7e68f04a43c6f16176f5624b7c5317ec5443d8be19fd2",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-A_route_lock-step1.pt",
+      "bytes": 29246892,
+      "sha256": "f30a984ef6800e939ac8d6f96292f2f7461df08f01b44f2e0fcc67691f8bfb23",
+      "kind": "routing_step1_bundle",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-A_route_lock-reference.pt",
+      "kind": "prototype_reference",
+      "bytes": 29261263,
+      "sha256": "11917578b7fd05eab398b0851836ce6bfda0fe510418ccb09bc781d997958e2f",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-A_route_lock-state.pt",
+      "kind": "continuation_state",
+      "bytes": 159757,
+      "sha256": "060f5a3d1d1b05c13d3203f70cd2189a252c70d0380dc5e37feabb54bf5ee615",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-A_route_lock-restore.json",
+      "kind": "restore_result",
+      "bytes": 1013,
+      "sha256": "32ec98cc14fcfa322caeb50eb12dac6047b420297d21ef256c1849bd31a3c8f8",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-B_stop_lock-step1.pt",
+      "bytes": 29246685,
+      "sha256": "0f51f86c15a8a67d018716ea9dbfe38e613476c4422ecc4c882f67c8327bfb9b",
+      "kind": "routing_step1_bundle",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-B_stop_lock-reference.pt",
+      "kind": "prototype_reference",
+      "bytes": 29261027,
+      "sha256": "a4e2bf4e433fd36f139b1c6e1d2b07fdac01cf5e77f83f64c51e04e23cf52a4e",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-B_stop_lock-state.pt",
+      "kind": "continuation_state",
+      "bytes": 159481,
+      "sha256": "f1cf267fe81f2339a04079d90afd835dc2175c20a56870ae1737d233c73b4ee8",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-B_stop_lock-restore.json",
+      "kind": "restore_result",
+      "bytes": 1015,
+      "sha256": "2cc6ea863d2781072dbb7dcab70f4160cf477a5610758738b1bc519926740d5f",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-C_unlocked-step1.pt",
+      "bytes": 29246478,
+      "sha256": "b02fa698834daf41d3087450a9ad5c7ab3d8c89df9eb9c08538801decb1eeb9d",
+      "kind": "routing_step1_bundle",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-C_unlocked-reference.pt",
+      "kind": "prototype_reference",
+      "bytes": 29260791,
+      "sha256": "a7d9fa6679626e276b97bc5ab0deed54e135d98936446846c7dee13ab5ddb069",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-C_unlocked-state.pt",
+      "kind": "continuation_state",
+      "bytes": 159205,
+      "sha256": "26bdd53fb462dfb197826ae1d69aea8daf6dd815a7d23fcf9142b2acb02d7b4f",
+      "deleted": true
+    },
+    {
+      "path": "output\\taiji_core_selection_routing_17_4_preflight\\28032-C_unlocked-restore.json",
+      "kind": "restore_result",
+      "bytes": 1014,
+      "sha256": "3643a175f24ae213c1d4c6d0ac904f63ade670461495d788a203793e06019f15",
+      "deleted": true
+    }
+  ],
+  "cleanup": {
+    "deleted_files": 24,
+    "deleted_bytes": 352009238,
+    "step1_bundles_deleted": 6
+  },
+  "manifest": "plans\\manifests\\taiji_selection_routing_17_4_preflight_20261103.json"
+}

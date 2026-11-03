@@ -44,7 +44,7 @@
 
 | # | 被否说法 | 实测 | 证据指针 | 白话解释 |
 |---|---|---|---|---|
-| N1 | “字节均值嵌入足以分辨同字不同序” | 旧头换序差 0.0 / 0.0 | `...17_3_verify...json` → `old_head_control`；16.1 P1 | 只取平均值，顺序信息被抹平了 |
+| N1 | “字节均值嵌入足以分辨同字不同序” | 旧头换序差 0.0 / 0.0 | `...17_3_verify...json` → `r1_calibration.old_head_witness`；16.1 P1 | 只取平均值，顺序信息被抹平了 |
 | N2 | “锁定复制比不锁更好”（A−C ≥ 0.10） | 14.6 A−C +0.1063，但 bootstrap 下界 −0.0375 | `...14_6...json` → `gates.task.structure` | 点估计为正但统计上站不住 |
 | N3 | “选择支路代理信用带来额外收益”（A−B） | 16.1 A−B −0.27708 | `...16_1_compare...json` → `contrast_A_minus_B` | 加了这条信用反而更差 |
 | N4 | “位置监督是必需项”（旧 P4 的推广） | 40 例中 7/40 对象字节已全对，错在后续句长；强制只在 alpha/beta 层 | `...14_6...json` 原始 0/40 保留；`ATTRIBUTION-ARCH-VS-ALG` §2 | 旧归因把“句子长度没对上”误记成“不会复制” |
@@ -52,6 +52,7 @@
 | N6 | “六臂可塑性选择能转为后继净收益” | ΔNLL_holdout −0.1370，未优于对照 −0.1402；六臂全超保持容差 | `reports/taiji_core_r026_plasticity_arms_20261031.json` | 合成夹具上，出生/生长方向 8 步内没回本 |
 | N7 | “出生方向能自我偿付” | 同上，按预注册判负 | `...r026...json` | 同上 |
 | N8 | “自演进 / 终身学习 / 自我改进已经接通” | 从未落地；17 也没有该合同 | `INVARIANT-LEDGER` L13；`...17_3_verify...json` → `t11_api`、`applicability.T11` | 这是长期目标，不是现状 |
+| N9 | “17图已实现最终Q一点复制”（正确源字节质量=1） | 强制alpha/beta one-hot且q_null=gamma=0后，720个record步中701步gold概率<1−1e-12，最小2.08e-36；transport行仅17/720为delta | `reports/taiji_selection_routing_17_2_t3_supplement_20261103.json` → `forced_gold_probability`、`failure_layer` | 复制是软混合，不是点到点搬运；这是17.2的R2a欠账 |
 
 > N2/N3/N6/N7 的“否”都限定在当时的夹具、剂量与预算；它们不证明原理在任何规模都不成立，但足以禁止把“已经证明有效”写进正文。
 
