@@ -208,6 +208,8 @@ class RoutingStep:
     next_h: torch.Tensor
     gate_index: int
     fallback_records: tuple[int, ...] = ()
+    pointer: tuple[torch.Tensor, ...] = ()
+    pointer_logits: tuple[torch.Tensor, ...] = ()
 
 
 def _s_t(candidate: Any, prepared: Any, state: Any, previous: int) -> torch.Tensor:
@@ -267,20 +269,50 @@ def routing_step(
     state: Any,
     previous: int,
     context: RoutingContext,
-    head: OrderedSelectionHead,
+    head: OrderedSelectionHead | None,
     *,
     arm: str = "A_route_lock",
     gate_index: int = 0,
+    span_head: SpanPointerHead | None = None,
+    pointer_temperature: float = 1.0,
+    pointer_hard: bool = False,
+    forced_pointer_bias: tuple[torch.Tensor, ...] | None = None,
 ) -> RoutingStep:
     subject = candidate.subject
     base = prepared.base
     view = base.view
     previous_embedding = subject.encoder.embedding(torch.tensor(previous, device=subject.W.device))
     s_t = _s_t(candidate, prepared, state, previous)
-    scores = head.score_rows(context.goal_vec, context.key_vecs, s_t, previous_embedding)
-    a_soft = torch.softmax(scores, dim=0)
-    a_hard = _hard_route(scores)
-    read = candidate.reader.read(s_t, previous_embedding, base.goal_units, view, state.m)
+    if head is None:
+        # Head-ablation probe: no route choice, a uniform prior over the records
+        # and null.  The position pointer stays active so the step still copies.
+        records = view.record_count
+        scores = torch.zeros(
+            records + 1, dtype=context.goal_vec.dtype, device=context.goal_vec.device
+        )
+        a_soft = torch.softmax(scores, dim=0)
+        a_hard = a_soft
+    else:
+        scores = head.score_rows(context.goal_vec, context.key_vecs, s_t, previous_embedding)
+        a_soft = torch.softmax(scores, dim=0)
+        a_hard = _hard_route(scores)
+    pointer_bias = None
+    if span_head is not None and view.record_count:
+        pointer_bias = tuple(
+            span_head.start(view.units[index]).squeeze(-1) for index in range(view.record_count)
+        )
+    if forced_pointer_bias is not None:
+        pointer_bias = forced_pointer_bias
+    read = candidate.reader.read(
+        s_t,
+        previous_embedding,
+        base.goal_units,
+        view,
+        state.m,
+        pointer_bias=pointer_bias,
+        pointer_temperature=pointer_temperature,
+        pointer_hard=pointer_hard,
+    )
     q_bytes, q_null, a_train, fallback = _locked_quantities(read, view, a_soft, a_hard, arm)
     inherited = candidate.reader.inherited
     units = torch.cat(view.units) if view.record_count else torch.zeros(0, dtype=torch.float64)
@@ -314,7 +346,8 @@ def routing_step(
         subject.expression.generate(torch.cat([z, previous_embedding])), dim=0
     )
     gamma_raw = torch.sigmoid(subject.expression.mix(torch.cat([z, content, previous_embedding])))
-    gamma_eff = head.config.gamma_floor + (1.0 - head.config.gamma_floor) * gamma_raw
+    floor = head.config.gamma_floor if head is not None else DEFAULT_ROUTING_CONFIG.gamma_floor
+    gamma_eff = floor + (1.0 - floor) * gamma_raw
     copy_byte_mass = torch.zeros(MAX_COVERAGE, dtype=torch.float64)
     if len(q_bytes):
         copy_byte_mass = copy_byte_mass.index_add(0, view.byte_ids, q_bytes)
@@ -338,6 +371,8 @@ def routing_step(
         next_h=next_h,
         gate_index=gate_index,
         fallback_records=fallback,
+        pointer=read.pointer,
+        pointer_logits=read.pointer_logits,
     )
 
 
@@ -397,6 +432,10 @@ def routing_loss(
     *,
     arm: str = "A_route_lock",
     collect: bool = False,
+    span_head: SpanPointerHead | None = None,
+    pointer_temperature: float = 1.0,
+    pointer_hard: bool = False,
+    pointer_entropy_coef: float = 0.0,
 ) -> dict[str, Any]:
     """Teacher-forced loss.  Only ``prefix[t]`` enters the step at time t."""
     state = prepared.state
@@ -404,6 +443,7 @@ def routing_loss(
     input_prefix = resolve_prefix(prefix, len(target_bytes) - 1)
     nll_terms: list[torch.Tensor] = []
     ce_terms: dict[int, list[torch.Tensor]] = {0: [], 1: [], 2: []}
+    entropy_terms: list[torch.Tensor] = []
     distributions: list[torch.Tensor] = []
     routes: list[torch.Tensor] = []
     previous = EOS
@@ -417,6 +457,9 @@ def routing_loss(
             head,
             arm=arm,
             gate_index=gate_index,
+            span_head=span_head,
+            pointer_temperature=pointer_temperature,
+            pointer_hard=pointer_hard,
         )
         nll_terms.append(-torch.log(step.probabilities[label] + 1e-30))
         route_label = route_index[t]
@@ -425,6 +468,11 @@ def routing_loss(
             ce_terms[stage].append(
                 F.cross_entropy(step.scores.unsqueeze(0), torch.tensor([route_label]))
             )
+            if pointer_entropy_coef and stage in (0, 1):
+                chosen = int(torch.argmax(step.scores))
+                if chosen < len(step.pointer_logits):
+                    probs = torch.softmax(step.pointer_logits[chosen] / pointer_temperature, dim=-1)
+                    entropy_terms.append(-(probs * torch.log(probs + 1e-30)).sum())
         if collect:
             distributions.append(step.probabilities.detach().clone())
             routes.append(step.scores.detach().clone())
@@ -440,7 +488,10 @@ def routing_loss(
     }
     present = [value for value in stage_means.values() if value is not None]
     ce = torch.stack(present).mean() if present else torch.zeros((), dtype=torch.float64)
-    result = {"nll": nll, "ce": ce, "stage_ce": stage_means}
+    entropy = (
+        torch.stack(entropy_terms).mean() if entropy_terms else torch.zeros((), dtype=torch.float64)
+    )
+    result = {"nll": nll, "ce": ce, "stage_ce": stage_means, "entropy": entropy}
     if collect:
         result["distributions"] = distributions
         result["routes"] = routes
@@ -502,15 +553,20 @@ def routing_generate(
     candidate: Any,
     prepared: Any,
     context: RoutingContext,
-    head: OrderedSelectionHead,
+    head: OrderedSelectionHead | None,
     *,
     arm: str = "A_route_lock",
+    span_head: SpanPointerHead | None = None,
+    pointer_temperature: float = 1.0,
+    pointer_hard: bool = False,
+    forced_pointer_bias: tuple[torch.Tensor, ...] | None = None,
 ) -> dict[str, Any]:
     state = prepared.state
     state, gate_index = observe_goal(candidate, prepared, gate_index=0)
     previous = EOS
     raw: list[int] = []
     probabilities: list[torch.Tensor] = []
+    gammas: list[float] = []
     terminated = False
     with torch.no_grad():
         for _prediction in range(MAX_PREDICTIONS):
@@ -523,8 +579,13 @@ def routing_generate(
                 head,
                 arm=arm,
                 gate_index=gate_index,
+                span_head=span_head,
+                pointer_temperature=pointer_temperature,
+                pointer_hard=pointer_hard,
+                forced_pointer_bias=forced_pointer_bias,
             )
             probabilities.append(step.probabilities.detach().clone())
+            gammas.append(float(step.gamma_eff.detach()))
             endpoint = decode_endpoint(step.probabilities)
             if endpoint["eos"]:
                 terminated = True
@@ -539,6 +600,7 @@ def routing_generate(
         "raw": raw,
         "terminated": terminated,
         "probabilities": probabilities,
+        "gamma": gammas,
     }
 
 

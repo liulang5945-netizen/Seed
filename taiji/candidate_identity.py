@@ -1,10 +1,16 @@
 """Single identity for the 17 selection-routing candidate graph.
 
 Every 17 report and manifest must carry the same ``candidate_sha`` and the same
-declared-parameter list.  The digest covers the graph contract (schema, config,
-arms, stage plan), the ordered parameter names/shapes/dtypes, and the source of
-the graph modules.  Runner scripts are deliberately excluded: they may change
-between stages without changing the graph.
+declared-parameter list.  The digest covers behaviour-relevant elements only:
+the graph contract (schema, config, arms, stage plan), the ordered parameter
+names/shapes/dtypes, the declared trainable ownership, the routing-step input
+whitelist and the routing/decode rule version.
+
+Source-file bytes and parameter values are recorded next to the digest but do
+**not** enter it: formatting or comments must not change candidate identity.
+Weights are runtime state (the parent bundle and the head initialisation differ
+per cell), so they are tracked as ``weights_sha256`` / ``candidate_state_sha256``
+instead of being folded into the graph identity.
 
 The module must stay free of graph code so hashing it never appears in its own
 payload.
@@ -16,6 +22,8 @@ import hashlib
 import json
 from pathlib import Path
 from typing import Any
+
+import torch
 
 from taiji.selection_routing import ARMS, ROUTING_SCHEMA, RoutingConfig
 from taiji.selection_routing_checkpoint import ROUTING_BUNDLE_SCHEMA, parameter_tensors
@@ -36,6 +44,40 @@ STAGE_PLAN = (
     ("copy", 101, 200),
     ("joint", 201, 300),
 )
+
+IDENTITY_BASIS = "semantic"
+ROUTING_RULE_VERSION = "17-r3"
+
+#: Keyword arguments ``routing_step`` accepts.  Any change here is behavioural:
+#: adding, removing or renaming an input changes what the graph can read.
+INPUT_WHITELIST = (
+    "arm",
+    "forced_pointer_bias",
+    "gate_index",
+    "head",
+    "pointer_hard",
+    "pointer_temperature",
+    "previous",
+    "span_head",
+    "state",
+)
+
+DECODE_RULES = {
+    "copy_transport": "point_transport",
+    "pointer_temperature": {
+        "schedule": "T(u)=1-0.95*(u-1)/99 for u<=100, then 0.05",
+        "floor": 0.05,
+    },
+    "pointer_inference": "argmax",
+    "pointer_entropy_coef": 0.01,
+    "span_supervision_weight": 0.5,
+    "gamma_floor": 0.2,
+    "credit": {
+        "A_route_lock": "straight-through hard route",
+        "B_stop_lock": "detached hard route",
+        "C_unlocked": "inherited R1 unlocked read",
+    },
+}
 
 
 def sha256_file(path: Path) -> str:
@@ -79,11 +121,81 @@ def _config_payload() -> dict[str, Any]:
     }
 
 
+def _tensor_bytes(tensor: torch.Tensor) -> bytes:
+    with torch.no_grad():
+        return tensor.detach().cpu().contiguous().numpy().tobytes()
+
+
+def weights_sha256(candidate: Any) -> dict[str, str]:
+    """Per-tensor value digests; runtime state, not part of the graph identity."""
+    digest = {}
+    for name, tensor in parameter_tensors(candidate).items():
+        payload = (
+            name.encode("utf-8")
+            + str(tuple(tensor.shape)).encode("utf-8")
+            + str(tensor.dtype).encode("utf-8")
+            + _tensor_bytes(tensor)
+        )
+        digest[name] = hashlib.sha256(payload).hexdigest()
+    return digest
+
+
+def _state_digest(digests: dict[str, str]) -> str:
+    payload = json.dumps(digests, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def _semantic_payload(
+    parameters: list[tuple[str, tuple[int, ...], str]],
+    trainable: dict[str, list[str]],
+) -> dict[str, Any]:
+    return {
+        "graph": "taiji-selection-routing-17",
+        "identity_basis": IDENTITY_BASIS,
+        "contract_version": ROUTING_SCHEMA,
+        "bundle_schema": ROUTING_BUNDLE_SCHEMA,
+        "config": _config_payload(),
+        "arms": list(ARMS),
+        "stage_plan": [list(row) for row in STAGE_PLAN],
+        "modules": list(GRAPH_MODULES),
+        "routing_rule_version": ROUTING_RULE_VERSION,
+        "decode_rules": DECODE_RULES,
+        "input_whitelist": list(INPUT_WHITELIST),
+        "parameters": [[name, list(shape), dtype] for name, shape, dtype in parameters],
+        "declared_trainable": trainable,
+    }
+
+
+def _digest(payload: dict[str, Any]) -> str:
+    return hashlib.sha256(
+        json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode(
+            "utf-8"
+        )
+    ).hexdigest()
+
+
+def _legacy_payload(
+    parameters: list[tuple[str, tuple[int, ...], str]],
+    trainable: dict[str, list[str]],
+    sources: dict[str, str],
+) -> dict[str, Any]:
+    """Pre-2026-11-04 identity: source bytes were part of the digest."""
+    payload = _semantic_payload(parameters, trainable)
+    payload.pop("identity_basis")
+    payload.pop("modules")
+    payload.pop("routing_rule_version")
+    payload.pop("decode_rules")
+    payload.pop("input_whitelist")
+    payload["source_files"] = sources
+    return payload
+
+
 def candidate_identity(candidate: Any) -> dict[str, Any]:
     """Return the shared identity block; call it once per process and reuse it."""
     parameters = declared_parameters(candidate)
     trainable = trainable_declarations(candidate)
     sources = graph_sources()
+    weights = weights_sha256(candidate)
     binding_elements = sum(
         parameter.numel() for _name, parameter in candidate.binding.named_parameters()
     )
@@ -97,29 +209,22 @@ def candidate_identity(candidate: Any) -> dict[str, Any]:
     names_digest = hashlib.sha256(
         json.dumps(parameter_names, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
     ).hexdigest()
-    payload = {
-        "graph": "taiji-selection-routing-17",
-        "contract_version": ROUTING_SCHEMA,
-        "bundle_schema": ROUTING_BUNDLE_SCHEMA,
-        "config": _config_payload(),
-        "arms": list(ARMS),
-        "stage_plan": [list(row) for row in STAGE_PLAN],
-        "parameters": [[name, list(shape), dtype] for name, shape, dtype in parameters],
-        "declared_trainable": trainable,
-        "source_files": sources,
-    }
-    candidate_sha = hashlib.sha256(
-        json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode(
-            "utf-8"
-        )
-    ).hexdigest()
+    semantic = _semantic_payload(parameters, trainable)
+    candidate_sha = _digest(semantic)
     return {
         "candidate_sha": candidate_sha,
+        "candidate_sha_v2": candidate_sha,
+        "identity_basis": IDENTITY_BASIS,
+        "candidate_sha_v1_byte_bound": _digest(_legacy_payload(parameters, trainable, sources)),
         "contract_version": ROUTING_SCHEMA,
         "bundle_schema": ROUTING_BUNDLE_SCHEMA,
-        "config": payload["config"],
-        "arms": payload["arms"],
-        "stage_plan": payload["stage_plan"],
+        "routing_rule_version": ROUTING_RULE_VERSION,
+        "config": semantic["config"],
+        "arms": semantic["arms"],
+        "stage_plan": semantic["stage_plan"],
+        "modules": semantic["modules"],
+        "decode_rules": semantic["decode_rules"],
+        "input_whitelist": semantic["input_whitelist"],
         "parameter_counts": {
             "binding": binding_elements,
             "head": head_elements,
@@ -135,4 +240,7 @@ def candidate_identity(candidate: Any) -> dict[str, Any]:
         "parameter_count": len(parameters),
         "declared_trainable": trainable,
         "source_files": sources,
+        "source_sha": sources,
+        "weights_sha256": weights,
+        "candidate_state_sha256": _state_digest(weights),
     }
