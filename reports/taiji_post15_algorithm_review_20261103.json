@@ -1,0 +1,1481 @@
+{
+  "schema": "taiji-post15-algorithm-review-v1",
+  "date": "2026-11-03",
+  "observed_at": "2026-11-03T12:07:21+08:00",
+  "status": "read_only_n15_audit_and_conditional_post_n16_design",
+  "baseline_commit": "65d34be6267fc35d34a5de7f3b14977dcd1003f7",
+  "historical_inputs_preserved": [
+    {
+      "path": "reports/taiji_binding_copy_15_1_compare_20261102.json",
+      "bytes": 4595100,
+      "sha256_raw": "fe60b34df44f84ff4708f4f1a5e7a65c86d3757e279ac953baaf164120ffcaa5",
+      "sha256_utf8_lf": "494277e92b347040882f8e45d0f287d5e062d55eac00eecaac9b4c750eade49f"
+    },
+    {
+      "path": "reports/taiji_binding_copy_15_1_closeout_20261103.json",
+      "bytes": 7766,
+      "sha256_raw": "ee7ed9171680ec651494f76ca82879be31f380ba97bdcc5a14919f76092b42b2",
+      "sha256_utf8_lf": "ee7ed9171680ec651494f76ca82879be31f380ba97bdcc5a14919f76092b42b2"
+    },
+    {
+      "path": "reports/taiji_binding_copy_15_1_3_closeout_20261103.json",
+      "bytes": 7754,
+      "sha256_raw": "0801e7afd9f001a8cc0c96658c4522e161feb8e2a72a94876d58b503bf3ed7c1",
+      "sha256_utf8_lf": "22e225c9bb7065ce511635810c22f0439d981d93b535b5fd9d183fc8575f922a"
+    },
+    {
+      "path": "reports/taiji_binding_copy_15_1_attribution_20261103.json",
+      "bytes": 2710,
+      "sha256_raw": "4eddaeb093407f76cbce985a955b8b19a8b2f0fdc83aa4934739ca45d1a86a00",
+      "sha256_utf8_lf": "1345983b39f58d7430305a1ebce53e057b1eb016336d241b5b23c15fb2389564"
+    },
+    {
+      "path": "reports/taiji_binding_copy_15_1_attribution_bundles_20261103.json",
+      "bytes": 1049,
+      "sha256_raw": "67256ccd87ea2426b8a2cfb467dced1e84bc8ca05c3b77fb9ce4e3d41f6733bc",
+      "sha256_utf8_lf": "997e3a24db2fe5eb3585c48895bc840077398868c185fd10b733443e58ed1e65"
+    },
+    {
+      "path": "reports/taiji_binding_select_16_1_data_20261103.json",
+      "bytes": 2645,
+      "sha256_raw": "aaf6f1d5ac2f4507789208e9e7a8d0341ce778157b889d4b8c6d4ed2e55b65be",
+      "sha256_utf8_lf": "56d0e02b6d00c365b516d97c78f79717cc504f650a1e23a824149ce5662f1b7a"
+    },
+    {
+      "path": "reports/taiji_binding_select_16_1_graph_20261103.json",
+      "bytes": 11238,
+      "sha256_raw": "a1bb1b79f02c540df91b3b11a84e1ee77cca67ce4cdea0da7c7898272bbde0df",
+      "sha256_utf8_lf": "13677252f7c61ae46798cafa694e3ba9e3f1cbf3c952ef306ecd7d6e373eba7c"
+    },
+    {
+      "path": "reports/taiji_binding_select_16_1_price_20261103.json",
+      "bytes": 4805,
+      "sha256_raw": "51bb0ab69754df9c88ce5c1d178d8bd5731e3f9b06a9f9cbcfb50e84bcd76947",
+      "sha256_utf8_lf": "daccd20ae87e8cd0261fc2d471027f2920e6a2bdb99df9df22896c17904b5913"
+    },
+    {
+      "path": "reports/taiji_binding_select_16_1_preflight_20261103.json",
+      "bytes": 3211,
+      "sha256_raw": "e00d57e2fd7594f9fcd9c82b39522ddd44ec02881caa1de686d693d713de6353",
+      "sha256_utf8_lf": "be3b3a9b61b55e059e33217219759f7db10dfd5a7ad05133230a4b6fd5de9889"
+    },
+    {
+      "path": "plans/reference/SPEC-N15-01_BINDING_COPY_V2_20261102.md",
+      "bytes": 35393,
+      "sha256_raw": "89f43dc036f8f84b88116967fe37e16a5534070553f45e1fa9c4cfde97738b26",
+      "sha256_utf8_lf": "89f43dc036f8f84b88116967fe37e16a5534070553f45e1fa9c4cfde97738b26"
+    },
+    {
+      "path": "plans/reference/SPEC-N16-01_SELECTION_LOCKED_BINDING_DRAFT_20261103.md",
+      "bytes": 10135,
+      "sha256_raw": "5f0eb347cdbda441fa17e37c6caef12a0d752fa86a6c9042fdc6411ecaae204d",
+      "sha256_utf8_lf": "5f0eb347cdbda441fa17e37c6caef12a0d752fa86a6c9042fdc6411ecaae204d"
+    }
+  ],
+  "source_bindings_checked": [
+    {
+      "report": "reports/taiji_binding_copy_15_1_compare_20261102.json",
+      "path": "taiji/binding_copy.py",
+      "bytes": 40874,
+      "sha256_raw": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+      "sha256_utf8_lf": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+      "declared_sha256": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+      "raw_matches": true,
+      "lf_matches": true
+    },
+    {
+      "report": "reports/taiji_binding_copy_15_1_compare_20261102.json",
+      "path": "taiji/binding_copy_data.py",
+      "bytes": 28646,
+      "sha256_raw": "aa001023519996b190bfd5f6faa42c6905c205766e1a3d0b34b0ab11c8b79495",
+      "sha256_utf8_lf": "aa001023519996b190bfd5f6faa42c6905c205766e1a3d0b34b0ab11c8b79495",
+      "declared_sha256": "aa001023519996b190bfd5f6faa42c6905c205766e1a3d0b34b0ab11c8b79495",
+      "raw_matches": true,
+      "lf_matches": true
+    },
+    {
+      "report": "reports/taiji_binding_copy_15_1_compare_20261102.json",
+      "path": "taiji/binding_copy_scoring.py",
+      "bytes": 9042,
+      "sha256_raw": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+      "sha256_utf8_lf": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+      "declared_sha256": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+      "raw_matches": true,
+      "lf_matches": true
+    },
+    {
+      "report": "reports/taiji_binding_copy_15_1_compare_20261102.json",
+      "path": "taiji/record_relation.py",
+      "bytes": 20802,
+      "sha256_raw": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+      "sha256_utf8_lf": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+      "declared_sha256": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+      "raw_matches": true,
+      "lf_matches": true
+    },
+    {
+      "report": "reports/taiji_binding_copy_15_1_compare_20261102.json",
+      "path": "taiji/record_relation_core.py",
+      "bytes": 35798,
+      "sha256_raw": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+      "sha256_utf8_lf": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+      "declared_sha256": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+      "raw_matches": true,
+      "lf_matches": true
+    },
+    {
+      "report": "reports/taiji_binding_copy_15_1_compare_20261102.json",
+      "path": "scripts/training/verify_taiji_binding_copy_15_1_compare.py",
+      "bytes": 44762,
+      "sha256_raw": "4e4a31e8898191217c095a9ac6bbeef12ff18657fb09a66c8b09470c0fc93e6f",
+      "sha256_utf8_lf": "4e4a31e8898191217c095a9ac6bbeef12ff18657fb09a66c8b09470c0fc93e6f",
+      "declared_sha256": "4e4a31e8898191217c095a9ac6bbeef12ff18657fb09a66c8b09470c0fc93e6f",
+      "raw_matches": true,
+      "lf_matches": true
+    },
+    {
+      "report": "reports/taiji_binding_select_16_1_data_20261103.json",
+      "path": "taiji/binding_copy.py",
+      "bytes": 40874,
+      "sha256_raw": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+      "sha256_utf8_lf": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+      "declared_sha256": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+      "raw_matches": true,
+      "lf_matches": true
+    },
+    {
+      "report": "reports/taiji_binding_select_16_1_data_20261103.json",
+      "path": "taiji/binding_copy_data.py",
+      "bytes": 28646,
+      "sha256_raw": "aa001023519996b190bfd5f6faa42c6905c205766e1a3d0b34b0ab11c8b79495",
+      "sha256_utf8_lf": "aa001023519996b190bfd5f6faa42c6905c205766e1a3d0b34b0ab11c8b79495",
+      "declared_sha256": "aa001023519996b190bfd5f6faa42c6905c205766e1a3d0b34b0ab11c8b79495",
+      "raw_matches": true,
+      "lf_matches": true
+    },
+    {
+      "report": "reports/taiji_binding_select_16_1_data_20261103.json",
+      "path": "taiji/binding_copy_scoring.py",
+      "bytes": 9042,
+      "sha256_raw": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+      "sha256_utf8_lf": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+      "declared_sha256": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+      "raw_matches": true,
+      "lf_matches": true
+    },
+    {
+      "report": "reports/taiji_binding_select_16_1_data_20261103.json",
+      "path": "scripts/training/verify_taiji_binding_select_16_1.py",
+      "bytes": 11522,
+      "sha256_raw": "a49684e0836b2665a1640ad80b086c70110063690aafd10c776b9d1f3f02fbbe",
+      "sha256_utf8_lf": "a49684e0836b2665a1640ad80b086c70110063690aafd10c776b9d1f3f02fbbe",
+      "declared_sha256": "a49684e0836b2665a1640ad80b086c70110063690aafd10c776b9d1f3f02fbbe",
+      "raw_matches": true,
+      "lf_matches": true
+    },
+    {
+      "report": "reports/taiji_binding_select_16_1_graph_20261103.json",
+      "path": "taiji/binding_select.py",
+      "bytes": 15331,
+      "sha256_raw": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+      "sha256_utf8_lf": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+      "declared_sha256": "56cb2d584dc0881c3cae83d3224a7f505dd7a2ee0e9716d899b3647f1ad55387",
+      "raw_matches": false,
+      "lf_matches": false
+    },
+    {
+      "report": "reports/taiji_binding_select_16_1_graph_20261103.json",
+      "path": "taiji/binding_copy.py",
+      "bytes": 40874,
+      "sha256_raw": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+      "sha256_utf8_lf": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+      "declared_sha256": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+      "raw_matches": true,
+      "lf_matches": true
+    },
+    {
+      "report": "reports/taiji_binding_select_16_1_graph_20261103.json",
+      "path": "taiji/binding_copy_data.py",
+      "bytes": 28646,
+      "sha256_raw": "aa001023519996b190bfd5f6faa42c6905c205766e1a3d0b34b0ab11c8b79495",
+      "sha256_utf8_lf": "aa001023519996b190bfd5f6faa42c6905c205766e1a3d0b34b0ab11c8b79495",
+      "declared_sha256": "aa001023519996b190bfd5f6faa42c6905c205766e1a3d0b34b0ab11c8b79495",
+      "raw_matches": true,
+      "lf_matches": true
+    },
+    {
+      "report": "reports/taiji_binding_select_16_1_graph_20261103.json",
+      "path": "taiji/binding_copy_scoring.py",
+      "bytes": 9042,
+      "sha256_raw": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+      "sha256_utf8_lf": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+      "declared_sha256": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+      "raw_matches": true,
+      "lf_matches": true
+    },
+    {
+      "report": "reports/taiji_binding_select_16_1_graph_20261103.json",
+      "path": "scripts/training/verify_taiji_binding_select_16_1_graph.py",
+      "bytes": 25527,
+      "sha256_raw": "0cb90adbec95283fc2c34dedaaa9826017e1608b05a7c69091640c8bb4a3297d",
+      "sha256_utf8_lf": "0cb90adbec95283fc2c34dedaaa9826017e1608b05a7c69091640c8bb4a3297d",
+      "declared_sha256": "0cb90adbec95283fc2c34dedaaa9826017e1608b05a7c69091640c8bb4a3297d",
+      "raw_matches": true,
+      "lf_matches": true
+    },
+    {
+      "report": "reports/taiji_binding_select_16_1_price_20261103.json",
+      "path": "taiji/binding_select.py",
+      "bytes": 15331,
+      "sha256_raw": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+      "sha256_utf8_lf": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+      "declared_sha256": "56cb2d584dc0881c3cae83d3224a7f505dd7a2ee0e9716d899b3647f1ad55387",
+      "raw_matches": false,
+      "lf_matches": false
+    },
+    {
+      "report": "reports/taiji_binding_select_16_1_price_20261103.json",
+      "path": "scripts/training/verify_taiji_binding_select_16_1_price.py",
+      "bytes": 13513,
+      "sha256_raw": "d1459cf95f2c8581702931756418b3037b50f2e165908be79e9422ce553e81a1",
+      "sha256_utf8_lf": "d1459cf95f2c8581702931756418b3037b50f2e165908be79e9422ce553e81a1",
+      "declared_sha256": "d1459cf95f2c8581702931756418b3037b50f2e165908be79e9422ce553e81a1",
+      "raw_matches": true,
+      "lf_matches": true
+    },
+    {
+      "report": "reports/taiji_binding_select_16_1_preflight_20261103.json",
+      "path": "taiji/binding_select.py",
+      "bytes": 15331,
+      "sha256_raw": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+      "sha256_utf8_lf": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+      "declared_sha256": "56cb2d584dc0881c3cae83d3224a7f505dd7a2ee0e9716d899b3647f1ad55387",
+      "raw_matches": false,
+      "lf_matches": false
+    },
+    {
+      "report": "reports/taiji_binding_select_16_1_preflight_20261103.json",
+      "path": "scripts/training/verify_taiji_binding_select_16_1_preflight.py",
+      "bytes": 15246,
+      "sha256_raw": "bae16fe4d2b020b65b7cb5c3027dfba1e997a59aff4a7d9f59da50d373d3bd98",
+      "sha256_utf8_lf": "bae16fe4d2b020b65b7cb5c3027dfba1e997a59aff4a7d9f59da50d373d3bd98",
+      "declared_sha256": "bae16fe4d2b020b65b7cb5c3027dfba1e997a59aff4a7d9f59da50d373d3bd98",
+      "raw_matches": true,
+      "lf_matches": true
+    }
+  ],
+  "binding_limit": "N16 engineering/preflight reports bind the prior binding_select.py. The current working tree adds trace/empty-key/selection-override support. Precheck records instrumentation parity. Review-time hashes and excerpts do not prove process-start source identity.",
+  "n15_original_status": "native_byte_task_failed",
+  "n15_original_resource_and_budget": {
+    "cost": {
+      "cpu_seconds": 14580.640625,
+      "wall_seconds": 14798.46202870016,
+      "adam_calls": 2400,
+      "peak_live_product_bytes": 1039233920,
+      "cumulative_product_bytes": 1039233920
+    },
+    "budget_ruling": {
+      "date": "2026-11-02",
+      "scope": "15.1 only",
+      "cpu_cap": null,
+      "wall_cap": null,
+      "observation_line_cpu": 20000.0,
+      "observation_line_wall": 30000.0,
+      "dose_unchanged": "2 seeds x 4 arms x 300 updates, batch 8, 288 train / 240 dev"
+    }
+  },
+  "n15_recomputed_scores": [
+    {
+      "seed": 28031,
+      "arm": "R0P0",
+      "overall_completed": 0.5625,
+      "utf8": 0.7833333333333333,
+      "subsets_recomputed": {
+        "unseen_combination": {
+          "correct": 27,
+          "denominator": 36,
+          "rate": 0.75,
+          "recorded_rate": 0.1125
+        },
+        "unseen_output_name": {
+          "correct": 0,
+          "denominator": 60,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        },
+        "new_description": {
+          "correct": 0,
+          "denominator": 60,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        },
+        "both_new": {
+          "correct": 0,
+          "denominator": 15,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        }
+      },
+      "identity": {
+        "examples": 240,
+        "unique_local_index": 20,
+        "unique_world_index": 240,
+        "split": "dev"
+      },
+      "reversal_audit": {
+        "recorded_paired_rate": 0.14583333333333334,
+        "both_exact_completed": 135,
+        "both_exact_but_recorded_unpaired": 108,
+        "raw_bytes_equality_lower_bound": 0.5625,
+        "raw_bytes_equality_upper_bound": 1.0,
+        "raw_bytes_and_eos_equality_upper_bound": 1.0,
+        "corrected_exact_rate": null,
+        "reason": "Raw generated bytes and EOS for every paired output are not stored in this report. Bounds do not establish exact reversal invariance.",
+        "contradictions_by_world": {
+          "0": 10,
+          "1": 10,
+          "2": 10,
+          "3": 6,
+          "4": 10,
+          "5": 9,
+          "6": 10,
+          "7": 15,
+          "8": 9,
+          "9": 9,
+          "10": 10
+        },
+        "contradiction_examples": [
+          {
+            "world": 0,
+            "index": 0
+          },
+          {
+            "world": 0,
+            "index": 1
+          },
+          {
+            "world": 0,
+            "index": 2
+          }
+        ]
+      }
+    },
+    {
+      "seed": 28031,
+      "arm": "R1P0",
+      "overall_completed": 0.5625,
+      "utf8": 0.9875,
+      "subsets_recomputed": {
+        "unseen_combination": {
+          "correct": 27,
+          "denominator": 36,
+          "rate": 0.75,
+          "recorded_rate": 0.1125
+        },
+        "unseen_output_name": {
+          "correct": 0,
+          "denominator": 60,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        },
+        "new_description": {
+          "correct": 0,
+          "denominator": 60,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        },
+        "both_new": {
+          "correct": 0,
+          "denominator": 15,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        }
+      },
+      "identity": {
+        "examples": 240,
+        "unique_local_index": 20,
+        "unique_world_index": 240,
+        "split": "dev"
+      },
+      "reversal_audit": {
+        "recorded_paired_rate": 0.15,
+        "both_exact_completed": 135,
+        "both_exact_but_recorded_unpaired": 108,
+        "raw_bytes_equality_lower_bound": 0.5625,
+        "raw_bytes_equality_upper_bound": 1.0,
+        "raw_bytes_and_eos_equality_upper_bound": 1.0,
+        "corrected_exact_rate": null,
+        "reason": "Raw generated bytes and EOS for every paired output are not stored in this report. Bounds do not establish exact reversal invariance.",
+        "contradictions_by_world": {
+          "0": 10,
+          "1": 10,
+          "2": 10,
+          "3": 6,
+          "4": 10,
+          "5": 9,
+          "6": 10,
+          "7": 15,
+          "8": 9,
+          "9": 9,
+          "10": 10
+        },
+        "contradiction_examples": [
+          {
+            "world": 0,
+            "index": 0
+          },
+          {
+            "world": 0,
+            "index": 1
+          },
+          {
+            "world": 0,
+            "index": 2
+          }
+        ]
+      }
+    },
+    {
+      "seed": 28031,
+      "arm": "R0P1",
+      "overall_completed": 0.0,
+      "utf8": 0.12916666666666668,
+      "subsets_recomputed": {
+        "unseen_combination": {
+          "correct": 0,
+          "denominator": 36,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        },
+        "unseen_output_name": {
+          "correct": 0,
+          "denominator": 60,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        },
+        "new_description": {
+          "correct": 0,
+          "denominator": 60,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        },
+        "both_new": {
+          "correct": 0,
+          "denominator": 15,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        }
+      },
+      "identity": {
+        "examples": 240,
+        "unique_local_index": 20,
+        "unique_world_index": 240,
+        "split": "dev"
+      },
+      "reversal_audit": {
+        "recorded_paired_rate": 0.0875,
+        "both_exact_completed": 0,
+        "both_exact_but_recorded_unpaired": 0,
+        "raw_bytes_equality_lower_bound": 0.0,
+        "raw_bytes_equality_upper_bound": 1.0,
+        "raw_bytes_and_eos_equality_upper_bound": 1.0,
+        "corrected_exact_rate": null,
+        "reason": "Raw generated bytes and EOS for every paired output are not stored in this report. Bounds do not establish exact reversal invariance.",
+        "contradictions_by_world": {},
+        "contradiction_examples": []
+      }
+    },
+    {
+      "seed": 28031,
+      "arm": "R1P1",
+      "overall_completed": 0.5625,
+      "utf8": 0.9875,
+      "subsets_recomputed": {
+        "unseen_combination": {
+          "correct": 27,
+          "denominator": 36,
+          "rate": 0.75,
+          "recorded_rate": 0.1125
+        },
+        "unseen_output_name": {
+          "correct": 0,
+          "denominator": 60,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        },
+        "new_description": {
+          "correct": 0,
+          "denominator": 60,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        },
+        "both_new": {
+          "correct": 0,
+          "denominator": 15,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        }
+      },
+      "identity": {
+        "examples": 240,
+        "unique_local_index": 20,
+        "unique_world_index": 240,
+        "split": "dev"
+      },
+      "reversal_audit": {
+        "recorded_paired_rate": 0.15,
+        "both_exact_completed": 135,
+        "both_exact_but_recorded_unpaired": 108,
+        "raw_bytes_equality_lower_bound": 0.5625,
+        "raw_bytes_equality_upper_bound": 1.0,
+        "raw_bytes_and_eos_equality_upper_bound": 1.0,
+        "corrected_exact_rate": null,
+        "reason": "Raw generated bytes and EOS for every paired output are not stored in this report. Bounds do not establish exact reversal invariance.",
+        "contradictions_by_world": {
+          "0": 10,
+          "1": 10,
+          "2": 10,
+          "3": 6,
+          "4": 10,
+          "5": 9,
+          "6": 10,
+          "7": 15,
+          "8": 9,
+          "9": 9,
+          "10": 10
+        },
+        "contradiction_examples": [
+          {
+            "world": 0,
+            "index": 0
+          },
+          {
+            "world": 0,
+            "index": 1
+          },
+          {
+            "world": 0,
+            "index": 2
+          }
+        ]
+      }
+    },
+    {
+      "seed": 28032,
+      "arm": "R0P0",
+      "overall_completed": 0.5625,
+      "utf8": 0.6791666666666667,
+      "subsets_recomputed": {
+        "unseen_combination": {
+          "correct": 27,
+          "denominator": 36,
+          "rate": 0.75,
+          "recorded_rate": 0.1125
+        },
+        "unseen_output_name": {
+          "correct": 0,
+          "denominator": 60,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        },
+        "new_description": {
+          "correct": 0,
+          "denominator": 60,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        },
+        "both_new": {
+          "correct": 0,
+          "denominator": 15,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        }
+      },
+      "identity": {
+        "examples": 240,
+        "unique_local_index": 20,
+        "unique_world_index": 240,
+        "split": "dev"
+      },
+      "reversal_audit": {
+        "recorded_paired_rate": 0.1375,
+        "both_exact_completed": 135,
+        "both_exact_but_recorded_unpaired": 108,
+        "raw_bytes_equality_lower_bound": 0.5625,
+        "raw_bytes_equality_upper_bound": 1.0,
+        "raw_bytes_and_eos_equality_upper_bound": 1.0,
+        "corrected_exact_rate": null,
+        "reason": "Raw generated bytes and EOS for every paired output are not stored in this report. Bounds do not establish exact reversal invariance.",
+        "contradictions_by_world": {
+          "0": 10,
+          "1": 10,
+          "2": 10,
+          "3": 6,
+          "4": 10,
+          "5": 9,
+          "6": 10,
+          "7": 15,
+          "8": 9,
+          "9": 9,
+          "10": 10
+        },
+        "contradiction_examples": [
+          {
+            "world": 0,
+            "index": 0
+          },
+          {
+            "world": 0,
+            "index": 1
+          },
+          {
+            "world": 0,
+            "index": 2
+          }
+        ]
+      }
+    },
+    {
+      "seed": 28032,
+      "arm": "R1P0",
+      "overall_completed": 0.5625,
+      "utf8": 1.0,
+      "subsets_recomputed": {
+        "unseen_combination": {
+          "correct": 27,
+          "denominator": 36,
+          "rate": 0.75,
+          "recorded_rate": 0.1125
+        },
+        "unseen_output_name": {
+          "correct": 0,
+          "denominator": 60,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        },
+        "new_description": {
+          "correct": 0,
+          "denominator": 60,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        },
+        "both_new": {
+          "correct": 0,
+          "denominator": 15,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        }
+      },
+      "identity": {
+        "examples": 240,
+        "unique_local_index": 20,
+        "unique_world_index": 240,
+        "split": "dev"
+      },
+      "reversal_audit": {
+        "recorded_paired_rate": 0.15416666666666667,
+        "both_exact_completed": 135,
+        "both_exact_but_recorded_unpaired": 108,
+        "raw_bytes_equality_lower_bound": 0.5625,
+        "raw_bytes_equality_upper_bound": 1.0,
+        "raw_bytes_and_eos_equality_upper_bound": 1.0,
+        "corrected_exact_rate": null,
+        "reason": "Raw generated bytes and EOS for every paired output are not stored in this report. Bounds do not establish exact reversal invariance.",
+        "contradictions_by_world": {
+          "0": 10,
+          "1": 10,
+          "2": 10,
+          "3": 6,
+          "4": 10,
+          "5": 9,
+          "6": 10,
+          "7": 15,
+          "8": 9,
+          "9": 9,
+          "10": 10
+        },
+        "contradiction_examples": [
+          {
+            "world": 0,
+            "index": 0
+          },
+          {
+            "world": 0,
+            "index": 1
+          },
+          {
+            "world": 0,
+            "index": 2
+          }
+        ]
+      }
+    },
+    {
+      "seed": 28032,
+      "arm": "R0P1",
+      "overall_completed": 0.14583333333333334,
+      "utf8": 0.38333333333333336,
+      "subsets_recomputed": {
+        "unseen_combination": {
+          "correct": 5,
+          "denominator": 36,
+          "rate": 0.1388888888888889,
+          "recorded_rate": 0.020833333333333332
+        },
+        "unseen_output_name": {
+          "correct": 0,
+          "denominator": 60,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        },
+        "new_description": {
+          "correct": 0,
+          "denominator": 60,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        },
+        "both_new": {
+          "correct": 0,
+          "denominator": 15,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        }
+      },
+      "identity": {
+        "examples": 240,
+        "unique_local_index": 20,
+        "unique_world_index": 240,
+        "split": "dev"
+      },
+      "reversal_audit": {
+        "recorded_paired_rate": 0.10416666666666667,
+        "both_exact_completed": 35,
+        "both_exact_but_recorded_unpaired": 26,
+        "raw_bytes_equality_lower_bound": 0.14583333333333334,
+        "raw_bytes_equality_upper_bound": 1.0,
+        "raw_bytes_and_eos_equality_upper_bound": 1.0,
+        "corrected_exact_rate": null,
+        "reason": "Raw generated bytes and EOS for every paired output are not stored in this report. Bounds do not establish exact reversal invariance.",
+        "contradictions_by_world": {
+          "1": 4,
+          "2": 3,
+          "3": 1,
+          "4": 2,
+          "5": 5,
+          "6": 2,
+          "7": 2,
+          "8": 2,
+          "9": 2,
+          "10": 3
+        },
+        "contradiction_examples": [
+          {
+            "world": 1,
+            "index": 0
+          },
+          {
+            "world": 1,
+            "index": 4
+          },
+          {
+            "world": 1,
+            "index": 10
+          }
+        ]
+      }
+    },
+    {
+      "seed": 28032,
+      "arm": "R1P1",
+      "overall_completed": 0.5625,
+      "utf8": 1.0,
+      "subsets_recomputed": {
+        "unseen_combination": {
+          "correct": 27,
+          "denominator": 36,
+          "rate": 0.75,
+          "recorded_rate": 0.1125
+        },
+        "unseen_output_name": {
+          "correct": 0,
+          "denominator": 60,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        },
+        "new_description": {
+          "correct": 0,
+          "denominator": 60,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        },
+        "both_new": {
+          "correct": 0,
+          "denominator": 15,
+          "rate": 0.0,
+          "recorded_rate": 0.0
+        }
+      },
+      "identity": {
+        "examples": 240,
+        "unique_local_index": 20,
+        "unique_world_index": 240,
+        "split": "dev"
+      },
+      "reversal_audit": {
+        "recorded_paired_rate": 0.15416666666666667,
+        "both_exact_completed": 135,
+        "both_exact_but_recorded_unpaired": 108,
+        "raw_bytes_equality_lower_bound": 0.5625,
+        "raw_bytes_equality_upper_bound": 1.0,
+        "raw_bytes_and_eos_equality_upper_bound": 1.0,
+        "corrected_exact_rate": null,
+        "reason": "Raw generated bytes and EOS for every paired output are not stored in this report. Bounds do not establish exact reversal invariance.",
+        "contradictions_by_world": {
+          "0": 10,
+          "1": 10,
+          "2": 10,
+          "3": 6,
+          "4": 10,
+          "5": 9,
+          "6": 10,
+          "7": 15,
+          "8": 9,
+          "9": 9,
+          "10": 10
+        },
+        "contradiction_examples": [
+          {
+            "world": 0,
+            "index": 0
+          },
+          {
+            "world": 0,
+            "index": 1
+          },
+          {
+            "world": 0,
+            "index": 2
+          }
+        ]
+      }
+    }
+  ],
+  "aggregation_oracle": [
+    {
+      "source": "scripts/training/verify_taiji_binding_copy_15_1_compare.py",
+      "input": "240 saved dev flag rows with every completion/UTF8/EOS/full_sentence flag set true",
+      "overall": 1.0,
+      "recorded_subset_rates": {
+        "unseen_combination": 0.15,
+        "unseen_output_name": 0.25,
+        "new_description": 0.25,
+        "both_new": 0.0625
+      },
+      "denominators": {
+        "unseen_combination": 36,
+        "unseen_output_name": 60,
+        "new_description": 60,
+        "both_new": 15
+      },
+      "expected_nonempty_subset_rates": {
+        "unseen_combination": 1.0,
+        "unseen_output_name": 1.0,
+        "new_description": 1.0,
+        "both_new": 1.0
+      },
+      "passes_conditional_rate_oracle": false
+    },
+    {
+      "source": "scripts/training/verify_taiji_binding_select_16_1_compare.py",
+      "input": "240 saved dev flag rows with every completion/UTF8/EOS/full_sentence flag set true",
+      "overall": 1.0,
+      "recorded_subset_rates": {
+        "unseen_combination": 0.15,
+        "unseen_output_name": 0.25,
+        "new_description": 0.25,
+        "both_new": 0.0625
+      },
+      "denominators": {
+        "unseen_combination": 36,
+        "unseen_output_name": 60,
+        "new_description": 60,
+        "both_new": 15
+      },
+      "expected_nonempty_subset_rates": {
+        "unseen_combination": 1.0,
+        "unseen_output_name": 1.0,
+        "new_description": 1.0,
+        "both_new": 1.0
+      },
+      "passes_conditional_rate_oracle": false
+    }
+  ],
+  "score_corrections": {
+    "formula": "sum(completed and flag) / sum(flag), empty subset = indeterminate",
+    "identity": "(split, world, index)",
+    "n15_counterfactual_scope": "N15 recomputes the true side per fixture. Its counterfactual evaluator is not the local-index cache implementation found in N16.",
+    "n16_counterfactual_scope": "N16 true_by_index collapses worlds. Join stored true completion rows by (world,index) to recompute both-correct without model calls.",
+    "reversal_scope": "Exact raw byte/EOS agreement is not reconstructed here. Both-correct contradictions establish the cache error. Existing endpoint bundles need separately accounted read-only re-evaluation if raw pairs are unavailable.",
+    "historical_verdict": "Overall completion below 0.8 and zero new-name/new-description performance still support the original negative task exit.",
+    "n16_content_intervention_scope": "True-side baselines also come from the collided true_gen cache. Stored original completion scores with composite IDs suffice for deterministic correction of true-rate and intervention drops."
+  },
+  "source_findings": [
+    {
+      "id": "gamma_direction",
+      "fact": "P=(gamma+(1-gamma)*q_null)*P_gen+(1-gamma)*P_copy. gamma is base generator mixing weight.",
+      "interpretation": "gamma near zero does not establish unused copying. Null fallback and realized target-byte posterior are needed."
+    },
+    {
+      "id": "source_metric_scope",
+      "fact": "N15 source_top1 is argmax over copy byte positions on a single EOS-prefix answer_step.",
+      "interpretation": "It is not alpha argmax or an entity-phase binding measure."
+    },
+    {
+      "id": "selection_credit",
+      "fact": "select returns int(argmax(scores).item()); locked_loss consumes that int. Selection head has its own embedding/MLP parameters.",
+      "interpretation": "Answer NLL has no path to independent selection-head parameters. Selection CE can update them. This is an optimization constraint, not a proved behavioral cause."
+    },
+    {
+      "id": "whole_response_choice",
+      "fact": "locked_generate selects once outside the response loop and keeps the same chosen record. select excludes null from argmax.",
+      "interpretation": "This fixes copy-source identity across object/place/template output. Generator and null fallback remain separate routes."
+    },
+    {
+      "id": "gamma_context",
+      "fact": "locked_step clamps gamma from an unforced probe and overrides gamma in a forced-alpha answer_step.",
+      "interpretation": "The gate is produced from the unforced H/content. Clamp has zero local derivative below the floor. Proposed same-context affine floor changes the algorithm."
+    },
+    {
+      "id": "alpha_q_support",
+      "fact": "R1 Q=lambda*m+(1-lambda*sum(m))*S can retain cursor mass from another record when choice changes.",
+      "interpretation": "The current fixed-choice run starts with zero cursor and can retain support in that record. The witness applies to switching/restored-cursor extensions, not an observed current-run leak."
+    },
+    {
+      "id": "assisted_key_interface",
+      "fact": "The approved N16 selector receives description fields from the annotated data interface.",
+      "interpretation": "Capability scope must declare supplied semantic keys. Raw-record-only key extraction is untested."
+    },
+    {
+      "id": "gamma_gate_mismatch",
+      "fact": "Frozen spec gamma_t is effective gamma after the floor. Runner mechanism_checks thresholds gamma_model_mean.",
+      "interpretation": "Preserve raw/effective fields and original test outputs. Resolve the symbol/implementation discrepancy explicitly at closeout under frozen authorization."
+    },
+    {
+      "id": "content_intervention_reference_cache",
+      "fact": "N16 evaluate_interventions fetches true_gen using fixture index only. The cache holds the last world for each local index.",
+      "interpretation": "Recompute the reference completion flags from saved original rows joined by world/index. Preserve original intervention outputs and report corrected drops separately."
+    },
+    {
+      "id": "wrong_position_multifactor",
+      "fact": "The current wrong-position control passes the gold object selection_label and forces offset0 on every step.",
+      "interpretation": "When model selection is incorrect, the intervention changes record identity and anchor position. It does not isolate a position-only effect."
+    }
+  ],
+  "review_time_source_excerpts": [
+    {
+      "path": "scripts/training/verify_taiji_binding_copy_15_1_compare.py",
+      "name": "summarize",
+      "start_line": 848,
+      "end_line": 884,
+      "source_sha256_raw": "4e4a31e8898191217c095a9ac6bbeef12ff18657fb09a66c8b09470c0fc93e6f",
+      "excerpt_utf8_lf": "def summarize(rows) -> dict:\n    def rate(pred) -> float:\n        return sum(1 for r in rows if pred(r)) / len(rows) if rows else 0.0\n\n    flags = {\n        \"unseen_combination\": rate(\n            lambda r: r[\"flags\"][\"unseen_combination\"] and r[\"score\"][\"completed\"]\n        ),\n        \"unseen_output_name\": rate(\n            lambda r: r[\"flags\"][\"unseen_output_name\"] and r[\"score\"][\"completed\"]\n        ),\n        \"new_description\": rate(\n            lambda r: r[\"flags\"][\"new_description\"] and r[\"score\"][\"completed\"]\n        ),\n        \"both_new\": rate(lambda r: r[\"flags\"][\"both_new\"] and r[\"score\"][\"completed\"]),\n    }\n    denominators = {\n        \"unseen_combination\": sum(1 for r in rows if r[\"flags\"][\"unseen_combination\"]),\n        \"unseen_output_name\": sum(1 for r in rows if r[\"flags\"][\"unseen_output_name\"]),\n        \"new_description\": sum(1 for r in rows if r[\"flags\"][\"new_description\"]),\n        \"both_new\": sum(1 for r in rows if r[\"flags\"][\"both_new\"]),\n    }\n    by_world = {}\n    for row in rows:\n        entry = by_world.setdefault(str(row[\"world\"]), {\"n\": 0, \"completed\": 0})\n        entry[\"n\"] += 1\n        entry[\"completed\"] += int(row[\"score\"][\"completed\"])\n    return {\n        \"completed\": rate(lambda r: r[\"score\"][\"completed\"]),\n        \"subsets\": flags,\n        \"subset_denominators\": denominators,\n        \"utf8\": rate(lambda r: r[\"score\"][\"utf8\"]),\n        \"eos\": rate(lambda r: r[\"score\"][\"terminated\"]),\n        \"full_sentence\": rate(lambda r: r[\"score\"][\"full_sentence\"]),\n        \"by_world\": by_world,\n        \"examples\": len(rows),\n    }"
+    },
+    {
+      "path": "scripts/training/verify_taiji_binding_select_16_1_compare.py",
+      "name": "summarize",
+      "start_line": 660,
+      "end_line": 686,
+      "source_sha256_raw": "b3135208f37a5ae7974fbdc9e6fca3676a35f1e88f3473cd470aff90fd15c96a",
+      "excerpt_utf8_lf": "def summarize(rows) -> dict:\n    def rate(pred) -> float:\n        return sum(1 for row in rows if pred(row)) / len(rows) if rows else 0.0\n\n    flag_keys = (\"unseen_combination\", \"unseen_output_name\", \"new_description\", \"both_new\")\n    flags = {\n        key: rate(lambda row, key=key: row[\"flags\"][key] and row[\"score\"][\"completed\"])\n        for key in flag_keys\n    }\n    denominators = {\n        key: sum(1 for row in rows if row[\"flags\"][key]) for key in flag_keys\n    }\n    by_world: dict[str, dict] = {}\n    for row in rows:\n        entry = by_world.setdefault(str(row[\"world\"]), {\"n\": 0, \"completed\": 0})\n        entry[\"n\"] += 1\n        entry[\"completed\"] += int(row[\"score\"][\"completed\"])\n    return {\n        \"completed\": rate(lambda row: row[\"score\"][\"completed\"]),\n        \"subsets\": flags,\n        \"subset_denominators\": denominators,\n        \"utf8\": rate(lambda row: row[\"score\"][\"utf8\"]),\n        \"eos\": rate(lambda row: row[\"score\"][\"terminated\"]),\n        \"full_sentence\": rate(lambda row: row[\"score\"][\"full_sentence\"]),\n        \"by_world\": by_world,\n        \"examples\": len(rows),\n    }"
+    },
+    {
+      "path": "taiji/binding_copy.py",
+      "name": "answer_step",
+      "start_line": 627,
+      "end_line": 708,
+      "source_sha256_raw": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+      "excerpt_utf8_lf": "def answer_step(\n    candidate: BindingCopyCandidate,\n    prepared: BindingPrepared,\n    state: BindingState,\n    previous_byte: int,\n    *,\n    gate_index: int,\n    accepted_byte: int | None = None,\n    force: dict | None = None,\n    gamma_override: torch.Tensor | float | None = None,\n    lambda_override: torch.Tensor | float | None = None,\n) -> BindingAnswerStep:\n    subject = candidate.subject\n    base = prepared.base\n    previous = subject.encoder.embedding(torch.tensor(previous_byte, device=subject.W.device))\n    mode_vector = _mode_vector(subject.W, 0)\n    xi = subject.xi(torch.cat([base.r_goal, previous, mode_vector, base.nu]))\n    s = subject.readout(state.living.h, xi)[0]\n    read = candidate.reader.read(\n        s,\n        previous,\n        base.goal_units,\n        base.view,\n        state.m,\n        force=force,\n        lambda_override=lambda_override,\n    )\n    if previous_byte == EOS:\n        event = subject.W.new_zeros(subject.config.width)\n    else:\n        units = candidate.base.relation.encode_units(subject, bytes([previous_byte]))\n        event = subject.encoder.event(units.mean(0))\n    h = advance_h(\n        subject,\n        state.living.h,\n        state.living.fast,\n        event,\n        base.goal_vector,\n        base.nu,\n        read.content,\n        _gate(candidate, gate_index),\n    )\n    z = subject.readout(h, xi)[0]\n    generated = torch.softmax(subject.expression.generate(torch.cat([z, previous])), dim=-1)\n    gamma = torch.sigmoid(subject.expression.mix(torch.cat([z, read.content, previous])).squeeze(0))\n    if gamma_override is not None:\n        gamma = torch.as_tensor(gamma_override, dtype=gamma.dtype, device=gamma.device)\n    probabilities = (gamma + (1 - gamma) * read.alpha_null) * generated + (\n        1 - gamma\n    ) * read.copy_byte_mass\n    if accepted_byte is None:\n        m_next = state.m\n        coverage_next = state.coverage\n    else:\n        m_next, coverage_next = advance_copy(\n            candidate.reader, state, read, probabilities, gamma, accepted_byte, base.view\n        )\n    living = replace(\n        state.living,\n        step=state.living.step + 1,\n        h=h,\n        prior=subject.W.new_empty(0),\n    )\n    child = BindingState(\n        living=living,\n        m=m_next,\n        coverage=coverage_next,\n        keys=state.keys,\n        record_offsets=state.record_offsets,\n        prefix_cursor=state.prefix_cursor + (0 if accepted_byte is None else 1),\n    )\n    return BindingAnswerStep(\n        probabilities=probabilities,\n        generated=generated,\n        read=read,\n        z=z,\n        gamma=gamma,\n        state=child,\n        coverage=coverage_next,\n        gate_index=gate_index + 1,\n        accepted=accepted_byte,\n    )"
+    },
+    {
+      "path": "taiji/binding_select.py",
+      "name": "SelectionHead",
+      "start_line": 69,
+      "end_line": 99,
+      "source_sha256_raw": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+      "excerpt_utf8_lf": "class SelectionHead(nn.Module):\n    \"\"\"Score each record description fragment against the goal.\"\"\"\n\n    def __init__(self, config: SelectionConfig | None = None) -> None:\n        super().__init__()\n        self.config = config or SelectionConfig()\n        c = self.config\n        self.byte_embed = nn.Embedding(c.byte_vocab, c.embed)\n        self.goal_proj = nn.Linear(c.embed, c.hidden)\n        self.key_proj = nn.Linear(c.embed, c.hidden)\n        self.pos_embed = nn.Embedding(c.max_records, c.hidden)\n        self.scorer1 = nn.Linear(3 * c.hidden, c.hidden)\n        self.scorer2 = nn.Linear(c.hidden, 1)\n        self.null_bias = nn.Parameter(torch.zeros(1))\n\n    def encode(self, text: bytes) -> torch.Tensor:\n        ids = torch.tensor(list(text), dtype=torch.long)\n        return self.byte_embed(ids).mean(0)\n\n    def scores(self, goal: bytes, keys: list[str]) -> torch.Tensor:\n        goal_vec = self.goal_proj(self.encode(goal))\n        rows = []\n        for index, key in enumerate(keys[: self.config.max_records]):\n            key_vec = self.key_proj(self.encode(key.encode(\"utf-8\")))\n            pos = self.pos_embed(torch.tensor(index, dtype=torch.long))\n            rows.append(torch.cat([goal_vec, key_vec, pos]))\n        stacked = torch.stack(rows)\n        return self.scorer2(torch.tanh(self.scorer1(stacked))).squeeze(-1)\n\n    def forward(self, goal: bytes, keys: list[str]) -> torch.Tensor:\n        return self.scores(goal, keys)"
+    },
+    {
+      "path": "taiji/binding_select.py",
+      "name": "select",
+      "start_line": 154,
+      "end_line": 172,
+      "source_sha256_raw": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+      "excerpt_utf8_lf": "def select(\n    candidate: SelectionCandidate,\n    goal: bytes,\n    keys: list[str],\n    *,\n    label: int | None = None,\n) -> dict:\n    scores = candidate.head(goal, keys)\n    probabilities = torch.softmax(torch.cat([scores, candidate.head.null_bias]), dim=-1)\n    chosen = int(torch.argmax(scores).item())\n    out: dict[str, Any] = {\n        \"chosen\": chosen,\n        \"confidence\": float(probabilities[chosen].detach()),\n        \"null_mass\": float(probabilities[-1].detach()),\n        \"scores\": [float(value.detach()) for value in scores],\n    }\n    if label is not None:\n        out[\"correct\"] = chosen == label\n    return out"
+    },
+    {
+      "path": "taiji/binding_select.py",
+      "name": "locked_step",
+      "start_line": 175,
+      "end_line": 215,
+      "source_sha256_raw": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+      "excerpt_utf8_lf": "def locked_step(\n    candidate: SelectionCandidate,\n    prepared,\n    state: BindingState,\n    previous: int,\n    *,\n    gate_index: int,\n    chosen_record: int,\n    gamma_floor: float = GAMMA_FLOOR,\n    trace: list | None = None,\n) -> Any:\n    \"\"\"One decoding step with alpha locked to the selected record.\n\n    ``trace`` is a read-only reporting hook: when a list is supplied, one row is\n    appended per step with the model gamma and the gamma actually used.  It does\n    not alter any tensor or arithmetic.\n    \"\"\"\n    base = candidate.binding\n    probe = answer_step(base, prepared, state, previous, gate_index=gate_index)\n    view = prepared.base.view\n    alpha = torch.zeros(view.record_count + 1, dtype=probe.read.alpha.dtype)\n    alpha[max(0, min(chosen_record, view.record_count - 1))] = 1.0\n    force = {\"alpha\": alpha, \"betas\": probe.read.betas}\n    gamma = torch.clamp(probe.gamma, min=gamma_floor)\n    if trace is not None:\n        trace.append(\n            {\n                \"gamma_model\": float(probe.gamma.detach()),\n                \"gamma_used\": float(gamma.detach()),\n                \"floor\": float(gamma_floor),\n            }\n        )\n    return answer_step(\n        base,\n        prepared,\n        state,\n        previous,\n        gate_index=gate_index,\n        force=force,\n        gamma_override=gamma,\n    )"
+    },
+    {
+      "path": "taiji/binding_select.py",
+      "name": "locked_generate",
+      "start_line": 218,
+      "end_line": 290,
+      "source_sha256_raw": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+      "excerpt_utf8_lf": "def locked_generate(\n    candidate: SelectionCandidate,\n    goal: bytes,\n    records: tuple,\n    keys: list[str],\n    *,\n    subject_id: str,\n    gamma_floor: float = GAMMA_FLOOR,\n    max_predictions: int = 65,\n    trace: list | None = None,\n    chosen_record: int | None = None,\n) -> dict:\n    base = candidate.binding\n    if keys:\n        choice = select(candidate, goal, keys)\n        target = int(choice[\"chosen\"]) if chosen_record is None else int(chosen_record)\n    else:\n        choice = {\"chosen\": -1, \"confidence\": 0.0, \"null_mass\": 1.0, \"scores\": []}\n        target = -1\n    state = initial_binding_state(base, subject_id)\n    prepared = prepare(base, state, goal, records)\n    state, gate_index = observe_goal(base, prepared)\n    previous = EOS\n    raw: list[int] = []\n    terminated = False\n    gamma_values: list[float] = []\n    for _prediction in range(max_predictions):\n        step = locked_step(\n            candidate,\n            prepared,\n            state,\n            previous,\n            gate_index=gate_index,\n            chosen_record=target,\n            gamma_floor=gamma_floor,\n            trace=trace,\n        )\n        endpoint = decode_endpoint(step.probabilities)\n        if endpoint[\"eos\"]:\n            terminated = True\n            break\n        raw.append(int(endpoint[\"byte\"]))\n        m_next, coverage_next = advance_copy(\n            base.reader,\n            state,\n            step.read,\n            step.probabilities,\n            step.gamma,\n            endpoint[\"byte\"],\n            prepared.base.view,\n        )\n        state = replace(\n            step.state,\n            m=m_next,\n            coverage=coverage_next,\n            prefix_cursor=step.state.prefix_cursor + 1,\n        )\n        gamma_values.append(float(step.gamma))\n        gate_index = step.gate_index\n        previous = int(endpoint[\"byte\"])\n    return {\n        \"raw_bytes\": bytes(raw),\n        \"terminated\": terminated,\n        \"selection\": choice,\n        \"gamma_mean\": (sum(gamma_values) / len(gamma_values)) if gamma_values else 0.0,\n        \"gamma_floor\": gamma_floor,\n        \"gamma_model_mean\": (\n            sum(item[\"gamma_model\"] for item in trace) / len(trace) if trace else None\n        ),\n        \"gamma_floored_steps\": (\n            sum(1 for item in trace if item[\"gamma_model\"] < item[\"floor\"]) if trace else None\n        ),\n    }"
+    },
+    {
+      "path": "taiji/binding_select.py",
+      "name": "locked_loss",
+      "start_line": 293,
+      "end_line": 344,
+      "source_sha256_raw": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+      "excerpt_utf8_lf": "def locked_loss(\n    candidate: SelectionCandidate,\n    goal: bytes,\n    records: tuple,\n    keys: list[str],\n    target_prefix: tuple[int, ...],\n    *,\n    subject_id: str,\n    gamma_floor: float = GAMMA_FLOOR,\n    trace: list | None = None,\n) -> torch.Tensor:\n    \"\"\"Teacher-forced NLL with alpha locked to the head's choice.\"\"\"\n    base = candidate.binding\n    choice = select(candidate, goal, keys)\n    state = initial_binding_state(base, subject_id)\n    prepared = prepare(base, state, goal, records)\n    state, gate_index = observe_goal(base, prepared)\n    previous = EOS\n    losses = []\n    labels = tuple(target_prefix) + (EOS,)\n    for position, label in enumerate(labels):\n        step = locked_step(\n            candidate,\n            prepared,\n            state,\n            previous,\n            gate_index=gate_index,\n            chosen_record=int(choice[\"chosen\"]),\n            gamma_floor=gamma_floor,\n            trace=trace,\n        )\n        losses.append(-torch.log(step.probabilities[label].clamp_min(1e-12)))\n        if position == len(labels) - 1:\n            break\n        m_next, coverage_next = advance_copy(\n            base.reader,\n            state,\n            step.read,\n            step.probabilities,\n            step.gamma,\n            label,\n            prepared.base.view,\n        )\n        state = replace(\n            step.state,\n            m=m_next,\n            coverage=coverage_next,\n            prefix_cursor=step.state.prefix_cursor + 1,\n        )\n        gate_index = step.gate_index\n        previous = int(label)\n    return sum(losses) / len(losses)"
+    },
+    {
+      "path": "scripts/training/verify_taiji_binding_copy_15_1_compare.py",
+      "name": "evaluate_reversed",
+      "start_line": 497,
+      "end_line": 522,
+      "source_sha256_raw": "4e4a31e8898191217c095a9ac6bbeef12ff18657fb09a66c8b09470c0fc93e6f",
+      "excerpt_utf8_lf": "def evaluate_reversed(candidate, dev, *, r1: bool, budget: Budget, true_raw: dict) -> dict:\n    rows = []\n    for fixture in dev:\n        generated = generate_one(\n            candidate,\n            fixture,\n            r1=r1,\n            records=reversed_records(fixture),\n            subject_id=f\"cmp-rev-{fixture['index']}\",\n        )\n        scored = score_generation(\n            generated[\"raw_bytes\"], fixture[\"target_bytes\"][:-1], generated[\"terminated\"]\n        )\n        paired = generated[\"raw_bytes\"] == true_raw.get(fixture[\"index\"], b\"\")\n        rows.append(\n            {\n                \"index\": fixture[\"index\"],\n                \"world\": fixture[\"world\"],\n                \"score\": scored,\n                \"paired_with_true\": bool(paired),\n            }\n        )\n        budget.ensure(context={\"phase\": \"reversed\"})\n    accuracy = sum(1 for r in rows if r[\"score\"][\"completed\"]) / len(rows)\n    paired_rate = sum(1 for r in rows if r[\"paired_with_true\"]) / len(rows)\n    return {\"accuracy\": accuracy, \"paired_rate\": paired_rate, \"rows\": rows}"
+    },
+    {
+      "path": "scripts/training/verify_taiji_binding_copy_15_1_compare.py",
+      "name": "evaluate_source_top1",
+      "start_line": 564,
+      "end_line": 601,
+      "source_sha256_raw": "4e4a31e8898191217c095a9ac6bbeef12ff18657fb09a66c8b09470c0fc93e6f",
+      "excerpt_utf8_lf": "def evaluate_source_top1(candidate, dev, *, r1: bool, budget: Budget) -> dict:\n    if not r1:\n        return {\"applicable\": False, \"reason\": \"R0 has no span reader to attribute\"}\n    rows = []\n    for fixture in dev:\n        gen_state = initial_binding_state(candidate, f\"cmp-src-{fixture['index']}\")\n        prepared = prepare(candidate, gen_state, fixture[\"goal\"].encode(), fixture[\"records\"])\n        state, gate_index = observe_goal(candidate, prepared)\n        step = answer_step(candidate, prepared, state, EOS, gate_index=gate_index)\n        weights = step.read.copy_weights\n        offsets = prepared.base.view.record_offsets\n        object_index = next(\n            (\n                index\n                for index, record in enumerate(fixture[\"raw_example\"][\"records\"])\n                if record[\"kind\"] == \"object\"\n                and record[\"description\"] == fixture[\"object_description\"]\n            ),\n            None,\n        )\n        chosen = int(torch.argmax(weights).item()) if weights.numel() else -1\n        chosen_record = None\n        for index, (start, end) in enumerate(offsets):\n            if start <= chosen < end:\n                chosen_record = index\n                break\n        correct = bool(object_index is not None and chosen_record == object_index)\n        rows.append(\n            {\n                \"index\": fixture[\"index\"],\n                \"world\": fixture[\"world\"],\n                \"chosen_record\": chosen_record,\n                \"object_record\": object_index,\n                \"correct\": correct,\n            }\n        )\n        budget.ensure(context={\"phase\": \"source_top1\"})\n    return {\"top1\": sum(1 for r in rows if r[\"correct\"]) / len(rows), \"rows\": rows}"
+    },
+    {
+      "path": "scripts/training/verify_taiji_binding_select_16_1_compare.py",
+      "name": "evaluate_reversed",
+      "start_line": 897,
+      "end_line": 928,
+      "source_sha256_raw": "b3135208f37a5ae7974fbdc9e6fca3676a35f1e88f3473cd470aff90fd15c96a",
+      "excerpt_utf8_lf": "def evaluate_reversed(\n    candidate, dev, *, arm: str, true_gen: dict, budget: Budget, tag: str\n) -> dict:\n    rows = []\n    for fixture in dev:\n        generated = generate(\n            candidate,\n            fixture,\n            arm=arm,\n            records=tuple(reversed(fixture[\"records\"])),\n            keys=list(reversed(fixture[\"record_keys\"])),\n            subject_id=f\"{tag}-rev-{fixture['index']}\",\n        )\n        scored = score_generation(\n            generated[\"raw_bytes\"], fixture[\"target_prefix\"], generated[\"terminated\"]\n        )\n        rows.append(\n            {\n                \"index\": fixture[\"index\"],\n                \"world\": fixture[\"world\"],\n                \"score\": scored,\n                \"paired_with_true\": generated[\"raw_bytes\"]\n                == true_gen.get(fixture[\"index\"], {}).get(\"raw\", b\"\"),\n            }\n        )\n        budget.ensure(context={\"phase\": \"reversed\"})\n    return {\n        \"accuracy\": sum(1 for row in rows if row[\"score\"][\"completed\"]) / len(rows),\n        \"paired_rate\": sum(1 for row in rows if row[\"paired_with_true\"]) / len(rows),\n        \"examples\": len(rows),\n        \"rows\": rows,\n    }"
+    },
+    {
+      "path": "scripts/training/verify_taiji_binding_select_16_1_compare.py",
+      "name": "evaluate_counterfactual",
+      "start_line": 931,
+      "end_line": 962,
+      "source_sha256_raw": "b3135208f37a5ae7974fbdc9e6fca3676a35f1e88f3473cd470aff90fd15c96a",
+      "excerpt_utf8_lf": "def evaluate_counterfactual(candidate, dev, *, arm: str, rows, budget: Budget, tag: str) -> dict:\n    true_by_index = {row[\"index\"]: row[\"score\"][\"completed\"] for row in rows}\n    out = []\n    for fixture in dev:\n        swapped = swap_object_name(fixture)\n        if swapped is None:\n            continue\n        generated = generate(\n            candidate,\n            fixture,\n            arm=arm,\n            records=swapped[\"records\"],\n            subject_id=f\"{tag}-map-{fixture['index']}\",\n        )\n        scored = score_generation(\n            generated[\"raw_bytes\"], swapped[\"target_prefix\"], generated[\"terminated\"]\n        )\n        out.append(\n            {\n                \"index\": fixture[\"index\"],\n                \"world\": fixture[\"world\"],\n                \"counterfactual_completed\": scored[\"completed\"],\n                \"true_completed\": true_by_index.get(fixture[\"index\"], False),\n            }\n        )\n        budget.ensure(context={\"phase\": \"counterfactual\"})\n    both = sum(1 for row in out if row[\"counterfactual_completed\"] and row[\"true_completed\"])\n    return {\n        \"applicable\": len(out),\n        \"both_correct\": both / len(out) if out else 0.0,\n        \"rows\": out,\n    }"
+    },
+    {
+      "path": "scripts/training/verify_taiji_binding_select_16_1_compare.py",
+      "name": "task_checks",
+      "start_line": 1720,
+      "end_line": 1727,
+      "source_sha256_raw": "b3135208f37a5ae7974fbdc9e6fca3676a35f1e88f3473cd470aff90fd15c96a",
+      "excerpt_utf8_lf": "def task_checks(entry: dict) -> dict:\n    overall = entry[\"step300\"][\"overall\"]\n    return {\n        \"unseen_output_name\": overall[\"subsets\"][\"unseen_output_name\"] >= GATE_UNSEEN,\n        \"new_description\": overall[\"subsets\"][\"new_description\"] >= GATE_NEW_DESCRIPTION,\n        \"overall\": overall[\"completed\"] >= GATE_OVERALL,\n        \"reversed_paired\": entry[\"step300\"][\"reversed\"][\"paired_rate\"] >= GATE_REVERSED,\n    }"
+    },
+    {
+      "path": "scripts/training/verify_taiji_binding_select_16_1_compare.py",
+      "name": "mechanism_checks",
+      "start_line": 1730,
+      "end_line": 1745,
+      "source_sha256_raw": "b3135208f37a5ae7974fbdc9e6fca3676a35f1e88f3473cd470aff90fd15c96a",
+      "excerpt_utf8_lf": "def mechanism_checks(entry: dict, increment: dict) -> dict:\n    gamma = entry[\"step300\"][\"gamma\"]\n    rescue = entry[\"step300\"][\"identity_rescue\"]\n    interventions = entry[\"step300\"][\"content_interventions\"]\n    return {\n        \"selection_top1\": entry[\"step300\"][\"selection\"][\"top1\"] >= GATE_SELECTION,\n        \"gamma_model_mean\": gamma[\"gamma_model_mean\"] >= GATE_GAMMA,\n        \"identity_rescue\": rescue[\"equal\"] == rescue[\"denominator\"] == GATE_RESCUE,\n        \"content_no_source\": interventions[\"drops\"][\"no_source\"][\"drop\"] >= GATE_CONTENT_DROP,\n        \"content_wrong_record\": interventions[\"drops\"][\"wrong_record\"][\"drop\"] >= GATE_CONTENT_DROP,\n        \"content_wrong_position\": interventions[\"drops\"][\"wrong_position\"][\"drop\"] >= GATE_CONTENT_DROP,\n        \"increment_pooled\": increment[\"pooled_mean\"] >= GATE_INCREMENT,\n        \"increment_bootstrap\": all(\n            stat[\"bootstrap\"][\"lower\"] > 0 for stat in increment[\"per_seed\"].values()\n        ),\n    }"
+    },
+    {
+      "path": "scripts/training/verify_taiji_binding_select_16_1_compare.py",
+      "name": "evaluate",
+      "start_line": 833,
+      "end_line": 894,
+      "source_sha256_raw": "b3135208f37a5ae7974fbdc9e6fca3676a35f1e88f3473cd470aff90fd15c96a",
+      "excerpt_utf8_lf": "def evaluate(candidate, dev, *, arm: str, full: bool, budget: Budget, tag: str) -> tuple[dict, dict]:\n    rows = []\n    true_gen: dict[int, dict] = {}\n    per_example = []\n    for fixture in dev:\n        trace: list = []\n        generated = generate(\n            candidate,\n            fixture,\n            arm=arm,\n            trace=trace,\n            subject_id=f\"{tag}-dev-{fixture['index']}\",\n        )\n        true_gen[fixture[\"index\"]] = {\n            \"raw\": generated[\"raw_bytes\"],\n            \"terminated\": generated[\"terminated\"],\n        }\n        scored = score_generation(\n            generated[\"raw_bytes\"], fixture[\"target_prefix\"], generated[\"terminated\"]\n        )\n        rows.append(\n            {\n                \"index\": fixture[\"index\"],\n                \"world\": fixture[\"world\"],\n                \"flags\": fixture[\"flags\"],\n                \"score\": scored,\n            }\n        )\n        emitted = len(generated[\"raw_bytes\"])\n        stats = gamma_row(trace, emitted=min(emitted, len(trace)))\n        per_example.append({\"index\": fixture[\"index\"], **stats})\n        budget.ensure(context={\"phase\": \"dev_generate\", \"index\": fixture[\"index\"]})\n    out: dict = {\n        \"overall\": summarize(rows),\n        \"gamma\": aggregate_gamma(per_example),\n        \"selection\": selection_report(candidate, dev),\n        \"examples\": len(dev),\n    }\n    if not full:\n        out[\"rows\"] = None\n        return out, true_gen\n\n    out[\"rows\"] = rows\n    out[\"reversed\"] = evaluate_reversed(\n        candidate, dev, arm=arm, true_gen=true_gen, budget=budget, tag=tag\n    )\n    out[\"counterfactual\"] = evaluate_counterfactual(\n        candidate, dev, arm=arm, rows=rows, budget=budget, tag=tag\n    )\n    out[\"alpha_reading\"] = alpha_reading(candidate, dev)\n    out[\"identity_rescue\"] = evaluate_identity_rescue(candidate, dev, budget=budget, tag=tag)\n    if ARM_LOCKED[arm]:\n        out[\"content_interventions\"] = evaluate_interventions(\n            candidate, dev, arm=arm, true_gen=true_gen, budget=budget, tag=tag\n        )\n    else:\n        out[\"content_interventions\"] = {\n            \"applicable\": False,\n            \"reason\": \"arm B has no selection lock; content interventions are not defined\",\n        }\n    out[\"nll\"] = evaluate_nll(candidate, dev, arm=arm, budget=budget, tag=tag)\n    return out, true_gen"
+    },
+    {
+      "path": "scripts/training/verify_taiji_binding_select_16_1_compare.py",
+      "name": "evaluate_interventions",
+      "start_line": 1000,
+      "end_line": 1064,
+      "source_sha256_raw": "b3135208f37a5ae7974fbdc9e6fca3676a35f1e88f3473cd470aff90fd15c96a",
+      "excerpt_utf8_lf": "def evaluate_interventions(\n    candidate, dev, *, arm: str, true_gen: dict, budget: Budget, tag: str\n) -> dict:\n    targets = [fixture for fixture in dev if fixture[\"index\"] % 15 == 0]\n    rows = []\n    for fixture in targets:\n        reference = true_gen.get(fixture[\"index\"], {\"raw\": b\"\", \"terminated\": False})\n        true_scored = score_generation(\n            reference[\"raw\"], fixture[\"target_prefix\"], reference[\"terminated\"]\n        )\n        no_source = generate(\n            candidate,\n            fixture,\n            arm=arm,\n            records=(),\n            keys=(),\n            subject_id=f\"{tag}-int-nosrc-{fixture['index']}\",\n        )\n        alternate = alternate_object_index(fixture)\n        if alternate is None:\n            continue\n        wrong_record = generate(\n            candidate,\n            fixture,\n            arm=arm,\n            chosen_record=alternate,\n            subject_id=f\"{tag}-int-wrec-{fixture['index']}\",\n        )\n        wrong_position = locked_generate_offset0(\n            candidate,\n            fixture,\n            record_index=fixture[\"selection_label\"],\n            subject_id=f\"{tag}-int-wpos-{fixture['index']}\",\n        )\n        rows.append(\n            {\n                \"index\": fixture[\"index\"],\n                \"world\": fixture[\"world\"],\n                \"true_completed\": true_scored[\"completed\"],\n                \"no_source_completed\": score_generation(\n                    no_source[\"raw_bytes\"], fixture[\"target_prefix\"], no_source[\"terminated\"]\n                )[\"completed\"],\n                \"wrong_record_completed\": score_generation(\n                    wrong_record[\"raw_bytes\"], fixture[\"target_prefix\"], wrong_record[\"terminated\"]\n                )[\"completed\"],\n                \"wrong_position_completed\": score_generation(\n                    wrong_position[\"raw_bytes\"], fixture[\"target_prefix\"], wrong_position[\"terminated\"]\n                )[\"completed\"],\n            }\n        )\n        budget.ensure(context={\"phase\": \"content_interventions\"})\n    true_rate = sum(1 for row in rows if row[\"true_completed\"]) / len(rows)\n    drops = {\n        name: {\n            \"completed_rate\": sum(1 for row in rows if row[f\"{name}_completed\"]) / len(rows),\n            \"drop\": true_rate - sum(1 for row in rows if row[f\"{name}_completed\"]) / len(rows),\n        }\n        for name in (\"no_source\", \"wrong_record\", \"wrong_position\")\n    }\n    return {\n        \"applicable\": len(rows),\n        \"true_completed_rate\": true_rate,\n        \"drops\": drops,\n        \"rows\": rows,\n    }"
+    },
+    {
+      "path": "scripts/training/verify_taiji_binding_select_16_1_compare.py",
+      "name": "_locked_generate_offset0",
+      "start_line": 443,
+      "end_line": 495,
+      "source_sha256_raw": "b3135208f37a5ae7974fbdc9e6fca3676a35f1e88f3473cd470aff90fd15c96a",
+      "excerpt_utf8_lf": "def _locked_generate_offset0(\n    candidate,\n    fixture: dict,\n    *,\n    record_index: int,\n    subject_id: str,\n    floor: float = GAMMA_FLOOR,\n) -> dict:\n    \"\"\"Correct record alpha, beta pinned at record offset 0 on every step.\"\"\"\n    base = candidate.binding\n    goal = fixture[\"goal\"].encode(\"utf-8\")\n    state = initial_binding_state(base, subject_id)\n    prepared = prepare(base, state, goal, fixture[\"records\"])\n    state, gate_index = observe_goal(base, prepared)\n    previous = EOS\n    raw: list[int] = []\n    terminated = False\n    for _prediction in range(MAX_PREDICTIONS):\n        probe = answer_step(base, prepared, state, previous, gate_index=gate_index)\n        gamma = torch.clamp(probe.gamma, min=floor)\n        step = forced_read(\n            base,\n            prepared,\n            state,\n            previous,\n            record_index=record_index,\n            offset=0,\n            gate_index=gate_index,\n            gamma_override=gamma,\n        )\n        endpoint = decode_endpoint(step.probabilities)\n        if endpoint[\"eos\"]:\n            terminated = True\n            break\n        raw.append(int(endpoint[\"byte\"]))\n        m_next, coverage_next = advance_copy(\n            base.reader,\n            state,\n            step.read,\n            step.probabilities,\n            step.gamma,\n            endpoint[\"byte\"],\n            prepared.base.view,\n        )\n        state = replace(\n            step.state,\n            m=m_next,\n            coverage=coverage_next,\n            prefix_cursor=step.state.prefix_cursor + 1,\n        )\n        gate_index = step.gate_index\n        previous = int(endpoint[\"byte\"])\n    return {\"raw_bytes\": bytes(raw), \"terminated\": terminated}"
+    }
+  ],
+  "scalar_design_checks": {
+    "gamma_mixture_mass": [
+      {
+        "gamma": 0.0,
+        "q_null": 0.0,
+        "generate_mass": 0.0,
+        "copy_mass": 1.0
+      },
+      {
+        "gamma": 0.0,
+        "q_null": 1.0,
+        "generate_mass": 1.0,
+        "copy_mass": 0.0
+      },
+      {
+        "gamma": 0.1,
+        "q_null": 0.0,
+        "generate_mass": 0.1,
+        "copy_mass": 0.9
+      },
+      {
+        "gamma": 0.1,
+        "q_null": 1.0,
+        "generate_mass": 1.0,
+        "copy_mass": 0.0
+      },
+      {
+        "gamma": 0.9,
+        "q_null": 0.0,
+        "generate_mass": 0.9,
+        "copy_mass": 0.09999999999999998
+      },
+      {
+        "gamma": 0.9,
+        "q_null": 1.0,
+        "generate_mass": 1.0,
+        "copy_mass": 0.0
+      }
+    ],
+    "clamp_vs_affine": {
+      "gamma_raw": 0.1,
+      "old_effective": 0.2,
+      "old_logit_derivative": 0.0,
+      "proposed_effective": 0.28,
+      "proposed_logit_derivative": 0.07200000000000002
+    },
+    "switching_cursor_counterexample": {
+      "S": [
+        1,
+        0
+      ],
+      "m": [
+        0,
+        1
+      ],
+      "lambda": 0.8,
+      "Q": [
+        0.2,
+        0.8
+      ],
+      "scope": "Switching/restored old cursor; not current fixed-choice-zero-cursor behavior."
+    },
+    "proposed_head_parameters": {
+      "input": 576,
+      "hidden_weight_and_bias": 36928,
+      "output_no_bias": 64,
+      "null_key": 128,
+      "new_head_total": 37120,
+      "base_total": 3526481,
+      "proposed_total": 3563601,
+      "registered_tensor_verification": "pending implementation"
+    },
+    "softmax_surrogate_vjp": {
+      "scores": [
+        0.2,
+        -0.4,
+        0.1
+      ],
+      "fixed_upstream_v": [
+        1.2,
+        -0.7,
+        0.5
+      ],
+      "analytic_vjp": [
+        0.2784084214525842,
+        -0.2721822790999974,
+        -0.006226142352586868
+      ],
+      "continuous_surrogate_fd": [
+        0.27840842142801137,
+        -0.2721822791040829,
+        -0.0062261423794396364
+      ],
+      "hard_argmax_fd": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "epsilon": 1e-06,
+      "max_abs_mismatch": 2.6852768272855876e-11,
+      "scope": "Scalar proxy for the proposed ST VJP check only. No full graph or task-learning evidence."
+    }
+  },
+  "current_n16_observation": {
+    "run_root": "output/taiji_core_binding_select_16_1_compare",
+    "precheck": {
+      "path": "output/taiji_core_binding_select_16_1_compare/precheck.json",
+      "bytes": 1206,
+      "sha256_raw": "625d9a80de42969d8cb8f02820e1e787bfc22d3225efd67c66cd6855cb793afd",
+      "sha256_utf8_lf": "565569d5af755b642c00062164e4b21a2f2dab9011c7f3c978148079945f7fca",
+      "contents": {
+        "schema": "taiji-binding-select-compare-precheck-v1",
+        "step": "N16.1.1",
+        "status": "passed",
+        "checks": {
+          "grid": true,
+          "save": true,
+          "independent_load": true,
+          "snapshot": true,
+          "probability": true,
+          "instrument_parity": true,
+          "zero_adam": true
+        },
+        "arms": [
+          {
+            "arm": "A-locked",
+            "bundle_bytes": 28554331,
+            "save_ok": true,
+            "load_worker_ok": true,
+            "snapshot_equal": true,
+            "probability_equal": true
+          },
+          {
+            "arm": "B-select",
+            "bundle_bytes": 28554331,
+            "save_ok": true,
+            "load_worker_ok": true,
+            "snapshot_equal": true,
+            "probability_equal": true
+          }
+        ],
+        "instrument": [
+          {
+            "arm": "A-locked",
+            "loss_trace_equal": true,
+            "generation_trace_equal": true,
+            "teacher_forced_loss_equal": true,
+            "trace_rows": 28,
+            "gamma_model_mean": 4.829512130691833e-07,
+            "gamma_floored_steps": 18
+          },
+          {
+            "arm": "B-select",
+            "generation_trace_equal": true,
+            "trace_rows": 65
+          }
+        ],
+        "cost": {
+          "cpu_seconds": 4.15625,
+          "wall_seconds": 15.677808800013736,
+          "adam_calls": 0
+        }
+      }
+    },
+    "progress": [
+      {
+        "path": "output/taiji_core_binding_select_16_1_compare/progress-28031-B-select.json",
+        "bytes": 331,
+        "sha256_raw": "2860dc04cce367b3322e0955fa954a38b631bf598156ac62cfd84117763853ac",
+        "sha256_utf8_lf": "628e0269055eebe3e2b7f8d4733c2a67b3de07d18a3eb9d3725831b6c073a7e3",
+        "contents": {
+          "stage": "N16.1.1",
+          "seed": 28031,
+          "arm": "B-select",
+          "update": 160,
+          "updates_total": 300,
+          "last_loss": 0.3106217543718149,
+          "curriculum_rate_max": 1.0,
+          "self_prefix_updates": 14,
+          "floored_step_fraction": 0.0,
+          "cost": {
+            "cpu_seconds": 4758.046875,
+            "wall_seconds": 4867.52705959999
+          }
+        }
+      }
+    ],
+    "completed_arm_result_artifacts": [
+      {
+        "path": "output/taiji_core_binding_select_16_1_compare/results/28031-A-locked.json",
+        "bytes": 844111,
+        "sha256_raw": "a170fcdbb3cee3934712af406295c9a2bf49816cd319aa17847db7305dc9c61f",
+        "sha256_utf8_lf": "7acf69d03e19b541cb4150ebe6f58f8412622f154acc76b1cab891b6656b310a",
+        "seed": 28031,
+        "arm": "A-locked",
+        "updates": 300,
+        "result_rows_have_raw_bytes": false
+      }
+    ],
+    "final_report_exists": false,
+    "status_inference": "Original run is in progress according to progress/result artifacts. No process ownership or lifecycle action taken.",
+    "current_runner": {
+      "path": "scripts/training/verify_taiji_binding_select_16_1_compare.py",
+      "bytes": 74015,
+      "sha256_raw": "b3135208f37a5ae7974fbdc9e6fca3676a35f1e88f3473cd470aff90fd15c96a",
+      "sha256_utf8_lf": "b3135208f37a5ae7974fbdc9e6fca3676a35f1e88f3473cd470aff90fd15c96a",
+      "ast": "parsed successfully"
+    }
+  },
+  "current_next_step": "Finish the already-authorized original N16 grid to its predefined exit, preserve outputs, audit subset denominators and compound pairing, then apply frozen gates for conditional confirmation and 16.1.3 closeout.",
+  "conditional_proposal": {
+    "path": "plans/reference/DESIGN-POST-N16_SELECTION_ROUTING_20261103.md",
+    "status": "Unimplemented post-N16 design input, adoption and execution number pending 16.1.3 review",
+    "changes": [
+      "state/prefix-conditioned per-output record/null choice",
+      "shared ordered encoding without record-index embedding",
+      "final-Q routing with explicit zero-mass fresh-anchor fallback",
+      "same-context affine generator floor",
+      "declared straight-through task-credit estimator",
+      "paired stop-credit and unlocked controls"
+    ],
+    "requested_scope": "Planning and read-only evidence review",
+    "proposed_formal_grid": "2 seeds x 3 arms x 300 updates = 1800; new pricing and contract required",
+    "current_grid_unchanged": "2 seeds x 2 arms x 300 updates = 1200",
+    "credit_control_scope": "Stop-credit control cuts the choice-output task branch, including extra shared-encoder/H gradients. A-B isolates that whole branch, not independent-head-only plasticity."
+  },
+  "documents": [
+    {
+      "path": "plans/MAINLINE.md",
+      "bytes": 162687,
+      "sha256_raw": "c853dc55098841bba494a82b9b1683310bf2237ab8832997d6974072e7fa2cb7",
+      "sha256_utf8_lf": "c853dc55098841bba494a82b9b1683310bf2237ab8832997d6974072e7fa2cb7"
+    },
+    {
+      "path": "plans/README.md",
+      "bytes": 16404,
+      "sha256_raw": "4ce25fdc5c1f638d84e1b88840050cba5fc5502171956764f5af0f5ba79496ab",
+      "sha256_utf8_lf": "4ce25fdc5c1f638d84e1b88840050cba5fc5502171956764f5af0f5ba79496ab"
+    },
+    {
+      "path": "plans/active/roadmap/03_CURRENT_EXECUTION.md",
+      "bytes": 238964,
+      "sha256_raw": "7980bcdf2ce05a9624a9e753604885d7a18dd6b78d3ccd9f8f8553ed3c44088c",
+      "sha256_utf8_lf": "7980bcdf2ce05a9624a9e753604885d7a18dd6b78d3ccd9f8f8553ed3c44088c"
+    },
+    {
+      "path": "plans/reference/README.md",
+      "bytes": 18828,
+      "sha256_raw": "60930ce60f916e1d3a94312e5b5f29b1cf0f05e05952b929fb2087f1e46a329d",
+      "sha256_utf8_lf": "60930ce60f916e1d3a94312e5b5f29b1cf0f05e05952b929fb2087f1e46a329d"
+    },
+    {
+      "path": "plans/reference/REVIEW-PACKET_20261102.md",
+      "bytes": 3378,
+      "sha256_raw": "47d2b139178f70b22741258a083d92318c9e2227dab4253182c6c43c02b6e240",
+      "sha256_utf8_lf": "47d2b139178f70b22741258a083d92318c9e2227dab4253182c6c43c02b6e240"
+    },
+    {
+      "path": "plans/reference/TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md",
+      "bytes": 119150,
+      "sha256_raw": "d48fc20c8d53353429eaa94d82ceb79437de2db6bba4ddfc9c027f3eeec64e1c",
+      "sha256_utf8_lf": "d48fc20c8d53353429eaa94d82ceb79437de2db6bba4ddfc9c027f3eeec64e1c"
+    },
+    {
+      "path": "plans/reference/DESIGN-POST-N16_SELECTION_ROUTING_20261103.md",
+      "bytes": 18387,
+      "sha256_raw": "a55a77827e5e3d5f91c08c2ceafe5d7e79284d0ac0db2c92d56362c5a20a1acd",
+      "sha256_utf8_lf": "a55a77827e5e3d5f91c08c2ceafe5d7e79284d0ac0db2c92d56362c5a20a1acd"
+    },
+    {
+      "path": "plans/archive/history/n16_review_20261103/README.md",
+      "bytes": 671,
+      "sha256_raw": "a7c33337ec251ca31b02a2bd2ccfbc4d5045bab532afd4cfa1391a431cae57c3",
+      "sha256_utf8_lf": "a7c33337ec251ca31b02a2bd2ccfbc4d5045bab532afd4cfa1391a431cae57c3"
+    },
+    {
+      "path": "plans/archive/history/n16_review_20261103/MAINLINE_BEFORE_N16_REV2.md",
+      "bytes": 161958,
+      "sha256_raw": "c4e5114f1e8e8c1cd4a95088ce6a9d0828e5ea8958ca96788de066ea1e199739",
+      "sha256_utf8_lf": "c4e5114f1e8e8c1cd4a95088ce6a9d0828e5ea8958ca96788de066ea1e199739"
+    },
+    {
+      "path": "plans/archive/history/n16_review_20261103/REVIEW_PACKET_BEFORE_N16_REV2.md",
+      "bytes": 6167,
+      "sha256_raw": "e6f160219f04941327ee6f4f5bec0e9e61857b7a1dceda9c32eaf49ac01d92fe",
+      "sha256_utf8_lf": "e6f160219f04941327ee6f4f5bec0e9e61857b7a1dceda9c32eaf49ac01d92fe"
+    }
+  ],
+  "primary_references": [
+    {
+      "title": "Estimating or Propagating Gradients Through Stochastic Neurons for Conditional Computation",
+      "url": "https://arxiv.org/abs/1308.3432",
+      "scope": "Straight-through estimator prior work and its surrogate-gradient character."
+    }
+  ],
+  "actual_execution": {
+    "neural_forward_calls": 0,
+    "optimizer_calls": 0,
+    "runtime_code_modified_by_this_review": false,
+    "checkpoints_modified": false,
+    "sealed_data_read": false,
+    "historical_reports_rewritten": false,
+    "pure_score_oracle_calls": 2,
+    "n15_stored_true_score_rows": 1920,
+    "n15_stored_reversed_score_rows": 1920,
+    "cost_scope": "Only the final read-only receipt construction is timed below. Earlier file inspection/document editing is not experiment resource accounting.",
+    "receipt_cpu_seconds": 0.1875,
+    "receipt_wall_seconds": 0.23620550008490682,
+    "n16_saved_true_score_rows_audited": 240
+  },
+  "delivery_policy": "Commit only reviewed documentation and this evidence receipt. Concurrent runtime work remains outside this change family.",
+  "checks": {
+    "n15_all_8_configs_have_240_distinct_world_index_pairs": true,
+    "n15_unseen_combination_corrected_for_six_configs": true,
+    "perfect_subset_oracle_reproduces_bug_in_both_runners": true,
+    "historical_negative_task_evidence_preserved": true,
+    "no_full_model_validation_claimed": true,
+    "historical_input_bytes_still_match": true
+  },
+  "validation": {
+    "scoped_markdown_links": {
+      "files": 8,
+      "links_checked": 1003,
+      "issues": []
+    },
+    "single_mainline_guard": {
+      "schema": "taiji-plan-single-mainline-audit-v1",
+      "status": "ok",
+      "checks": [
+        "MAINLINE.md present",
+        "README entry present",
+        "active docs checked: 19",
+        "current contracts checked: 4",
+        "legacy banners checked: 10"
+      ],
+      "failures": [],
+      "rc": 0
+    },
+    "git_diff_check": {
+      "exit_code": 0,
+      "scope": "All 11 staged review-family files; final metadata-only refresh follows the same whitespace rules."
+    }
+  },
+  "n16_partial_saved_score_audit": [
+    {
+      "artifact": "output/taiji_core_binding_select_16_1_compare/results/28031-A-locked.json",
+      "artifact_sha256": "a170fcdbb3cee3934712af406295c9a2bf49816cd319aa17847db7305dc9c61f",
+      "seed": 28031,
+      "arm": "A-locked",
+      "counterfactual": {
+        "examples": 240,
+        "reference_flags_changed": 20,
+        "recorded_both_correct": 0.0,
+        "corrected_both_correct": 0.0
+      },
+      "content_interventions": {
+        "examples": 24,
+        "reference_flags_changed": 0,
+        "recorded_true_rate": 0.16666666666666666,
+        "corrected_true_rate": 0.16666666666666666,
+        "corrected_drops": {
+          "no_source": 0.16666666666666666,
+          "wrong_record": 0.04166666666666666,
+          "wrong_position": 0.125
+        }
+      },
+      "scope": "Saved first-arm scores only. All original files preserved; no whole-run decision."
+    }
+  ]
+}

@@ -6,7 +6,7 @@
 
 ## 按顺序推进只读一份
 
-[MAINLINE 新N主线落地计划](MAINLINE.md)统一方向、编号、依赖和有限出口：01–13与14均已收束，15.1 rev2为接续设计。直接从[执行位置](MAINLINE.md#执行位置)进入，实际状态和唯一后继只在总计划维护。**任何计划冲突以总计划为准。**
+[MAINLINE 新N主线落地计划](MAINLINE.md)统一编号、依赖与有限出口。15.1已结案，原版N16.1.1正式比较在途，按[执行位置](MAINLINE.md#执行位置)与原manifest推进。当前结案须先校准统计，再据原任务门确定确认与收束。
 
 本轮规划边界及下一轮立项规则见[总计划](MAINLINE.md#本轮规划边界与下一轮立项)；阶段编号不表示长期能力的完成比例。
 
@@ -78,8 +78,8 @@ R1、R3b、R5b 等保留为原合同和实验身份，N1–N6 保留为机制责
 - [11.4b设备档](reference/SPEC-TAIJI-CORE_L3_ADMISSION_20261101.md)：24 CPU／12 线程／无 CUDA／48 GiB；台账 v2 ⇒ **8/10**，剩中断恢复与真实性 A。
 - [11.4c中断恢复](reference/SPEC-TAIJI-CORE_L3_ADMISSION_20261101.md)：子进程硬退后由新进程续跑、答案逐位相同；台账 v3 ⇒ **9/10**，只剩真实性 A。
 - [11.4d仪器收口](reference/SPEC-TAIJI-CORE_L3_ADMISSION_20261101.md)：9/10 有卡、F 为负 ⇒ 卡里写死 `candidate_usable=false`，11 仍不准入。
-- [10.21 rev2条件读取与绑定学习](reference/SPEC-TAIJI-CORE_COMPOSITION_10_21_20261101.md)：当前单一方案，阶段编号10.21.1–10.21.6；10.21.1/2已执行（量尺有效、图/信用/恢复38/38），后继10.21.3定价逐项准入，不自动批准训练或新模块比较。
-- [14.8后项目复审](reference/REVIEW-PACKET_20261102.md)：保留内容通路局部正结果，校准新描述/新输出名、反序与干预归因，下一包采用有因果对照的算法修订。
+- [10.21原条件读取与绑定学习](reference/SPEC-TAIJI-CORE_COMPOSITION_10_21_20261101.md)保留该阶段合同与reader_selection_absent负结果，当前执行位置统一见MAINLINE。
+- [当前项目复审](reference/REVIEW-PACKET_20261102.md)汇总15.1结果、子集/配对/gamma解释修正、原版N16在途边界和结案后条件候选。
 - [14.3原诊断](reference/SPEC-TAIJI-CORE_READ_SOURCE_14_3_20261102.md)：保留pathway_unreachable原卡；实际测旧EpisodicRead，几何阈值不推广为信息不可解码。当前解释及后继见[14.4起修订](reference/SPEC-TAIJI-CORE_RECORD_RELATION_14_4_20261102.md)。
 - [候选设计依据](reference/DESIGN-CANDIDATE-COMPOSITION_20261101.md)：保留有效结果、撤回过强归因，解释为何采用内部绑定事件与同构停读取信用对照；数值细则只在SPEC维护。
 - [03 证据与审批台账](active/roadmap/03_CURRENT_EXECUTION.md)：核验报告、批准、预算、恢复与历史限制；只跳转总计划的执行位置。
@@ -105,4 +105,6 @@ R1、R3b、R5b 等保留为原合同和实验身份，N1–N6 保留为机制责
 
 2026-10-23 的[全项目历史整理](reference/PROJECT_HISTORY_CONSOLIDATION_20261023.md)保留旧路径与 Git 恢复身份；更早的逐轮状态在 `plans/archive/`。历史失败、审批与排除项继续有效，旧队首只解释当时时点。
 
-- [15.1 rev2详细方案](reference/SPEC-N15-01_BINDING_COPY_V2_20261102.md)：原文对齐、后验连续复制与读取×前缀四臂；数据/评分/正式图/定价/预检/比较/确认/收束逐步写实。14.8绑定旧提案按原字节保留，当前只以rev2排期。
+- [15.1原执行规格](reference/SPEC-N15-01_BINDING_COPY_V2_20261102.md)保留原网格与退出，原确认封存，后续已进入N16。
+
+- [N16已裁原版A](reference/SPEC-N16-01_SELECTION_LOCKED_BINDING_DRAFT_20261103.md)提供当前在途合同。[结案后路由候选](reference/DESIGN-POST-N16_SELECTION_ROUTING_20261103.md)供16.1.3复审，正式采用按结果确定。

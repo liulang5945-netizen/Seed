@@ -52,11 +52,11 @@ R 编号保留原合同与实验身份；实施统一使用总计划步骤 01–
 | [11.7仪器读数](../MAINLINE.md#3-唯一执行队列) | [11.7候选仪器读数合同](SPEC-TAIJI-CORE_INSTRUMENT_11_7_20261101.md) | 20 次打分逐位可重复、p50 0.120 s／p95 0.125 s、峰值 1.483 GB（打分再抬 0）、评分期 0 写／0 socket／0 子进程 ⇒ `instrument_measured_quiet`；并入 11 门后 P3 翻真，准入仍 `step11_not_admitted` |
 | [09历史证据](../MAINLINE.md#3-唯一执行队列) | [v1.1/E1独立审计](TAIJI_CORE_ALGORITHM_V1_EVALUATION_20261031.md) | 对象64fdf8576；原字节/可读件映射见入库身份，不是v1.2重新裁决 |
 | [算法重审设计输入](../MAINLINE.md#执行位置) | [09/10结果与算法修订建议](TAIJI_ALGORITHM_REVIEW_20261101.md) | 生成成功门可达性、条件读取/联合信用、保持语义与生长正例范围；不批准训练 |
-| [10.21 rev2](../MAINLINE.md#执行位置) | [目标条件读取与绑定学习方案](SPEC-TAIJI-CORE_COMPOSITION_10_21_20261101.md) | 唯一现行规范；原冻结头方案已归档。10.21.1/2已执行（`preflight_measured`＋`passed_10_21_graph_engineering_only`），后继逐项准入 |
+| [10.21](../MAINLINE.md#执行位置) | [目标条件读取与绑定学习原规格](SPEC-TAIJI-CORE_COMPOSITION_10_21_20261101.md) | 原合同与reader_selection_absent负结果保留，现已由后继阶段接力 |
 | [14.3](../MAINLINE.md#执行位置) | [读源条件化原合同](SPEC-TAIJI-CORE_READ_SOURCE_14_3_20261102.md) | 原pathway_unreachable退出保留；旧读取与新读取的路径差异、小距离的可声称边界见14.4起修订 |
-| [复审结论](../MAINLINE.md#执行位置) | [14.8后底座与路线重审](REVIEW-PACKET_20261102.md) | 基于已存输出和源码重新分轴/校准干预，算法与接力收敛为15.1 rev2 |
-| [14.4–14.8](../MAINLINE.md#执行位置) | [记录关系读取与原生字节表达](SPEC-TAIJI-CORE_RECORD_RELATION_14_4_20261102.md) | 已按原出口执行/收束，14.7未释放；局部正读数与任务负结果均保留，当前后继转15.1 rev2 |
-| [15.1 rev2](../MAINLINE.md#执行位置) | [未见名字绑定与后验连续复制](SPEC-N15-01_BINDING_COPY_V2_20261102.md) | 当前唯一接续规范；四臂分开读取/前缀，先15.1.0a，未执行 |
+| [复审结论](../MAINLINE.md#执行位置) | [15.1结案与原版N16在途复审](REVIEW-PACKET_20261102.md) | 子集/配对/gamma解释核对，按当前运行结果形成后继 |
+| [14.4–14.8](../MAINLINE.md#执行位置) | [记录关系读取与原生字节表达](SPEC-TAIJI-CORE_RECORD_RELATION_14_4_20261102.md) | 已按原出口执行/收束，14.7未释放，局部正读数与任务负结果保留 |
+| [15.1](../MAINLINE.md#执行位置) | [原文绑定与后验连续复制原规格](SPEC-N15-01_BINDING_COPY_V2_20261102.md) | 已按任务负结果收束，评分/归因修正见当前复审，原卡与确认封存留存 |
 | [15.1原提案](../MAINLINE.md#执行位置) | [14.8绑定的历史原件](PLAN-N15-01_SPAN_BOUND_CONTINUOUS_20261102.md) | hash绑定原字节保留，已由rev2取代当前要求，不并行发布排期 |
 | [10](../MAINLINE.md#3-唯一执行队列) | T3 合同按任务需要建立 | 自然目标、有限行动与后果 |
 | [11](../MAINLINE.md#3-唯一执行队列) | 自然连续任务合同按对应准入建立 | 自然中文连续任务与 L3 |
@@ -93,3 +93,8 @@ R 编号保留原合同与实验身份；实施统一使用总计划步骤 01–
 ## 4. 如何查具体实验
 
 按 `PLAN-N1/N2/N5`、`SPEC`、`EXP`、`execution_closeout`、`APPROVAL` 命名族检索 `plans/reference`，再读对应合同/结案。机器结果看 `reports/README.md`；历史结构见 `plans/archive/README.md`。未完成步骤维护在总计划，证据和审批维护在 03，运营债务沿原债表；整理不改变原结论或授权。
+
+| 当前责任 | 文档 | 范围 |
+|---|---|---|
+| N16原版A | [已裁规格](SPEC-N16-01_SELECTION_LOCKED_BINDING_DRAFT_20261103.md) | 原0a–0d已交付，原16.1.1在途 |
+| 结案后条件候选 | [逐步选择路由](DESIGN-POST-N16_SELECTION_ROUTING_20261103.md) | 16.1.3据结果判断采用和编号 |
