@@ -14,7 +14,7 @@ Taiji's design centers on five connected ideas:
 - **Memory with different roles:** working memory for the current task, episodic memory for experiences, semantic memory for shared knowledge, and procedural memory for skills.
 - **Specialization and cooperation:** heterogeneous groups that contribute different representations and learning rules, with computation selected according to the task, uncertainty and resource budget.
 - **Learning through action:** language, tools and environment interaction connected to observable outcomes that can inform later decisions.
-- **Lifelong development:** learning, replay, consolidation and structural adaptation that preserve useful prior capabilities.
+- **Long-horizon development:** learning, replay, consolidation and structural adaptation that preserve useful prior capabilities. This is a research goal, not a demonstrated capability.
 
 These are architecture goals under investigation. The current implementation contains research kernels and bounded prototypes; the complete architecture and general conversational ability remain open research goals. The [core requirements](plans/active/TAIJI_CORE_REQUIREMENTS.md) explain the motivation and the [architecture design](plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md) defines the intended mechanisms and interfaces.
 
@@ -79,7 +79,7 @@ Client setup and build instructions are in [Taiji Harness contributing](taiji-ha
 
 ## Recent research
 
-As of 2026-10-20, the N mainline is studying learned reading, entity binding, state transitions and question-surface robustness. N1-162B completed 55,296 matched continuation updates and 7,488 train-only scores with all six final bundles independently restored. Only two of six endpoints passed the original training gate, so no new face was queried and no N-series model was promoted. Offline attribution found that transition errors in two seeds often became the inverse-turn answer under question-surface training. See the [N1-162B closeout](plans/reference/PLAN-N1-162B_execution_closeout_20261020.md) and [current execution](plans/active/roadmap/03_CURRENT_EXECUTION.md) for the evidence and next step.
+As of 2026-11-03, the N mainline has closed N16.1 as a negative task result: the selection-and-copy candidate reached 0.0500 / 0.0167 overall completion and 0/60 new output names after 1,200 formal updates, so no model was promoted and the confirmation split remains sealed (0 reads). The successor package N17 ("selection-locked binding") is priced but **not admitted**: 13,092.25 CPU / 1,800 Adam / 495.0 MiB for three arms, or 8,750.34 CPU / 1,200 Adam / 330.0 MiB for two arms. Nothing is training now; the only next step is the owner's arm-scope decision. Capability claims are governed by the [capability card](plans/reference/CAPABILITY-CARD_20261103.md); the project-wide audit is in [CONSOLIDATION_20261103](plans/reference/CONSOLIDATION_20261103.md).
 
 ## Read more
 
