@@ -54,7 +54,7 @@ R 编号保留原合同与实验身份；实施统一使用总计划步骤 01–
 | [算法重审设计输入](../MAINLINE.md#执行位置) | [09/10结果与算法修订建议](TAIJI_ALGORITHM_REVIEW_20261101.md) | 生成成功门可达性、条件读取/联合信用、保持语义与生长正例范围；不批准训练 |
 | [10.21](../MAINLINE.md#执行位置) | [目标条件读取与绑定学习原规格](SPEC-TAIJI-CORE_COMPOSITION_10_21_20261101.md) | 原合同与reader_selection_absent负结果保留，现已由后继阶段接力 |
 | [14.3](../MAINLINE.md#执行位置) | [读源条件化原合同](SPEC-TAIJI-CORE_READ_SOURCE_14_3_20261102.md) | 原pathway_unreachable退出保留；旧读取与新读取的路径差异、小距离的可声称边界见14.4起修订 |
-| [复审结论](../MAINLINE.md#执行位置) | [15.1结案与原版N16在途复审](REVIEW-PACKET_20261102.md) | 子集/配对/gamma解释核对，按当前运行结果形成后继 |
+| [复审结论](../MAINLINE.md#执行位置) | [N16结案与17开发复审](REVIEW-PACKET_20261102.md) | 子集/目标/探针层级复核，按17.1–17.7开发 |
 | [14.4–14.8](../MAINLINE.md#执行位置) | [记录关系读取与原生字节表达](SPEC-TAIJI-CORE_RECORD_RELATION_14_4_20261102.md) | 已按原出口执行/收束，14.7未释放，局部正读数与任务负结果保留 |
 | [15.1](../MAINLINE.md#执行位置) | [原文绑定与后验连续复制原规格](SPEC-N15-01_BINDING_COPY_V2_20261102.md) | 已按任务负结果收束，评分/归因修正见当前复审，原卡与确认封存留存 |
 | [15.1原提案](../MAINLINE.md#执行位置) | [14.8绑定的历史原件](PLAN-N15-01_SPAN_BOUND_CONTINUOUS_20261102.md) | hash绑定原字节保留，已由rev2取代当前要求，不并行发布排期 |
@@ -96,5 +96,7 @@ R 编号保留原合同与实验身份；实施统一使用总计划步骤 01–
 
 | 当前责任 | 文档 | 范围 |
 |---|---|---|
-| N16原版A | [已裁规格](SPEC-N16-01_SELECTION_LOCKED_BINDING_DRAFT_20261103.md) | 原0a–0d已交付，原16.1.1在途 |
-| 结案后条件候选 | [逐步选择路由](DESIGN-POST-N16_SELECTION_ROUTING_20261103.md) | 16.1.3据结果判断采用和编号 |
+| N16已结案 | [原执行规格](SPEC-N16-01_SELECTION_LOCKED_BINDING_DRAFT_20261103.md) | 1200正式更新、任务负、16.1.3已收束，确认未释放 |
+| 17待实施 | [逐步选择路由与详细开发计划](DESIGN-POST-N16_SELECTION_ROUTING_20261103.md) | 当前17.1，顺序至17.7，含六接口/正确目标/R1与R2/三臂/资源/专属确认 |
+
+[架构与算法归因](ATTRIBUTION-ARCH-VS-ALG_20261103.md)按最新源码收窄P3/P4的解释，[命题账本](INVARIANT-LEDGER_20261103.md)将连续性、信用、来源、保持和经验责任映射到17的可检验范围。

@@ -1,0 +1,651 @@
+{
+  "schema": "taiji-selection-routing-plan-review-v1",
+  "date": "2026-11-03",
+  "observed_at": "2026-11-03T17:40:44+08:00",
+  "baseline_commit": "4dcf58b7696f505a152eaa6129658028052a6703",
+  "status": "read_only_evidence_reconciliation_and_detailed_17_development_plan",
+  "historical_inputs_preserved": [
+    {
+      "path": "reports/taiji_binding_select_16_1_compare_20261103.json",
+      "bytes": 3833847,
+      "sha256_raw": "122305a52152b06273092065b56b53e1fda312b4e00979adede7e1157c17cc97",
+      "sha256_utf8_lf": "316c7f8b46f3359897ced47bb645e3f1f278d669d4de204c9d33fdfa5bcc5e80"
+    },
+    {
+      "path": "reports/taiji_binding_select_16_1_attribution_20261103.json",
+      "bytes": 38382,
+      "sha256_raw": "74e308e26a9af06d40eacb8166cce2599b461fa2cd9117a658793c5855d6835f",
+      "sha256_utf8_lf": "b985ffc84a9a44404baf3d6c9706c0e2fec3ac2b1fdc258edaf1dc0a62c6effb"
+    },
+    {
+      "path": "reports/taiji_binding_select_16_1_3_closeout_20261103.json",
+      "bytes": 22969,
+      "sha256_raw": "025256c5bbe2841522c0c2f0d4fbf74659592e626c4e3bc05706fe1f28ca0c6a",
+      "sha256_utf8_lf": "c01182e64451f85fba0a4bf12c5399a332480f4ac22e40274614cba375f7f84d"
+    },
+    {
+      "path": "reports/taiji_binding_select_16_1_arch_probe_20261103.json",
+      "bytes": 28185,
+      "sha256_raw": "1ab8ee973f101d014895aecd00ca3b4cdf8774437475e997606355aa0d0b7619",
+      "sha256_utf8_lf": "0fdebe534e83e999ec96078acff47b042562089aa255483c469c61405f69a655"
+    },
+    {
+      "path": "plans/manifests/taiji_binding_select_16_1_compare_20261103.json",
+      "bytes": 27651,
+      "sha256_raw": "22ede2b54c15ae2991ed6d6b8440ab4ea5ee065cc2e2cca92846f7df7b9537e4",
+      "sha256_utf8_lf": "90aec974ef1852a228d38c9b9c3b63a1c2697c397a87223827d9b0323d12b006"
+    },
+    {
+      "path": "plans/reference/SPEC-N16-01_SELECTION_LOCKED_BINDING_DRAFT_20261103.md",
+      "bytes": 24210,
+      "sha256_raw": "0bff7c43dcd0bc6c197d67c90594ca7601fa33dcc37035aea70fe0ab65c2ec42",
+      "sha256_utf8_lf": "0bff7c43dcd0bc6c197d67c90594ca7601fa33dcc37035aea70fe0ab65c2ec42"
+    },
+    {
+      "path": "reports/taiji_post15_algorithm_review_20261103.json",
+      "bytes": 79713,
+      "sha256_raw": "16ed6b759ae5fba7f2061c04a4644f2b02c64f008736343cd35bdabec4f858dd",
+      "sha256_utf8_lf": "16ed6b759ae5fba7f2061c04a4644f2b02c64f008736343cd35bdabec4f858dd"
+    }
+  ],
+  "parent_asset_checked_without_deserialization": {
+    "path": "output/taiji_core_record_relation_14_6/27031_A_full_step300.pt",
+    "bytes": 64983135,
+    "sha256_raw": "b75a83a0a474c041c2a61bed8c4e0a51de11197d67a9b196262e7e039a9a4cef"
+  },
+  "n16_final": {
+    "compare_status": "native_byte_task_failed",
+    "closeout_status": "closed_negative_with_followup_candidate",
+    "actual_adam": 1200,
+    "formal_cost": {
+      "cpu_seconds": 13433.875,
+      "wall_seconds": 13794.058042199817,
+      "adam_calls": 1200
+    },
+    "total_cpu": 13438.0625,
+    "confirm_examples": 0,
+    "headline": {
+      "overall": {
+        "28031": 0.05,
+        "28032": 0.016666666666666666
+      },
+      "new_description": {
+        "28031": {
+          "completed": 3,
+          "n": 60,
+          "rate": 0.05
+        },
+        "28032": {
+          "completed": 1,
+          "n": 60,
+          "rate": 0.016666666666666666
+        }
+      },
+      "unseen_output_name": {
+        "28031": {
+          "completed": 0,
+          "n": 60,
+          "rate": 0.0
+        },
+        "28032": {
+          "completed": 0,
+          "n": 60,
+          "rate": 0.0
+        }
+      },
+      "selection": {
+        "28031": 0.38333333333333336,
+        "28032": 0.3541666666666667
+      }
+    },
+    "reverse_pairing": "withdrawn_unreconstructable_from_stored_report"
+  },
+  "current_source_excerpts": [
+    {
+      "path": "taiji/binding_select.py",
+      "name": "SelectionHead",
+      "start_line": 69,
+      "end_line": 99,
+      "source_sha256": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+      "excerpt_utf8_lf": "class SelectionHead(nn.Module):\n    \"\"\"Score each record description fragment against the goal.\"\"\"\n\n    def __init__(self, config: SelectionConfig | None = None) -> None:\n        super().__init__()\n        self.config = config or SelectionConfig()\n        c = self.config\n        self.byte_embed = nn.Embedding(c.byte_vocab, c.embed)\n        self.goal_proj = nn.Linear(c.embed, c.hidden)\n        self.key_proj = nn.Linear(c.embed, c.hidden)\n        self.pos_embed = nn.Embedding(c.max_records, c.hidden)\n        self.scorer1 = nn.Linear(3 * c.hidden, c.hidden)\n        self.scorer2 = nn.Linear(c.hidden, 1)\n        self.null_bias = nn.Parameter(torch.zeros(1))\n\n    def encode(self, text: bytes) -> torch.Tensor:\n        ids = torch.tensor(list(text), dtype=torch.long)\n        return self.byte_embed(ids).mean(0)\n\n    def scores(self, goal: bytes, keys: list[str]) -> torch.Tensor:\n        goal_vec = self.goal_proj(self.encode(goal))\n        rows = []\n        for index, key in enumerate(keys[: self.config.max_records]):\n            key_vec = self.key_proj(self.encode(key.encode(\"utf-8\")))\n            pos = self.pos_embed(torch.tensor(index, dtype=torch.long))\n            rows.append(torch.cat([goal_vec, key_vec, pos]))\n        stacked = torch.stack(rows)\n        return self.scorer2(torch.tanh(self.scorer1(stacked))).squeeze(-1)\n\n    def forward(self, goal: bytes, keys: list[str]) -> torch.Tensor:\n        return self.scores(goal, keys)"
+    },
+    {
+      "path": "taiji/binding_select.py",
+      "name": "select",
+      "start_line": 154,
+      "end_line": 172,
+      "source_sha256": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+      "excerpt_utf8_lf": "def select(\n    candidate: SelectionCandidate,\n    goal: bytes,\n    keys: list[str],\n    *,\n    label: int | None = None,\n) -> dict:\n    scores = candidate.head(goal, keys)\n    probabilities = torch.softmax(torch.cat([scores, candidate.head.null_bias]), dim=-1)\n    chosen = int(torch.argmax(scores).item())\n    out: dict[str, Any] = {\n        \"chosen\": chosen,\n        \"confidence\": float(probabilities[chosen].detach()),\n        \"null_mass\": float(probabilities[-1].detach()),\n        \"scores\": [float(value.detach()) for value in scores],\n    }\n    if label is not None:\n        out[\"correct\"] = chosen == label\n    return out"
+    },
+    {
+      "path": "taiji/binding_select.py",
+      "name": "locked_generate",
+      "start_line": 218,
+      "end_line": 290,
+      "source_sha256": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+      "excerpt_utf8_lf": "def locked_generate(\n    candidate: SelectionCandidate,\n    goal: bytes,\n    records: tuple,\n    keys: list[str],\n    *,\n    subject_id: str,\n    gamma_floor: float = GAMMA_FLOOR,\n    max_predictions: int = 65,\n    trace: list | None = None,\n    chosen_record: int | None = None,\n) -> dict:\n    base = candidate.binding\n    if keys:\n        choice = select(candidate, goal, keys)\n        target = int(choice[\"chosen\"]) if chosen_record is None else int(chosen_record)\n    else:\n        choice = {\"chosen\": -1, \"confidence\": 0.0, \"null_mass\": 1.0, \"scores\": []}\n        target = -1\n    state = initial_binding_state(base, subject_id)\n    prepared = prepare(base, state, goal, records)\n    state, gate_index = observe_goal(base, prepared)\n    previous = EOS\n    raw: list[int] = []\n    terminated = False\n    gamma_values: list[float] = []\n    for _prediction in range(max_predictions):\n        step = locked_step(\n            candidate,\n            prepared,\n            state,\n            previous,\n            gate_index=gate_index,\n            chosen_record=target,\n            gamma_floor=gamma_floor,\n            trace=trace,\n        )\n        endpoint = decode_endpoint(step.probabilities)\n        if endpoint[\"eos\"]:\n            terminated = True\n            break\n        raw.append(int(endpoint[\"byte\"]))\n        m_next, coverage_next = advance_copy(\n            base.reader,\n            state,\n            step.read,\n            step.probabilities,\n            step.gamma,\n            endpoint[\"byte\"],\n            prepared.base.view,\n        )\n        state = replace(\n            step.state,\n            m=m_next,\n            coverage=coverage_next,\n            prefix_cursor=step.state.prefix_cursor + 1,\n        )\n        gamma_values.append(float(step.gamma))\n        gate_index = step.gate_index\n        previous = int(endpoint[\"byte\"])\n    return {\n        \"raw_bytes\": bytes(raw),\n        \"terminated\": terminated,\n        \"selection\": choice,\n        \"gamma_mean\": (sum(gamma_values) / len(gamma_values)) if gamma_values else 0.0,\n        \"gamma_floor\": gamma_floor,\n        \"gamma_model_mean\": (\n            sum(item[\"gamma_model\"] for item in trace) / len(trace) if trace else None\n        ),\n        \"gamma_floored_steps\": (\n            sum(1 for item in trace if item[\"gamma_model\"] < item[\"floor\"]) if trace else None\n        ),\n    }"
+    },
+    {
+      "path": "taiji/binding_select.py",
+      "name": "locked_loss",
+      "start_line": 293,
+      "end_line": 344,
+      "source_sha256": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+      "excerpt_utf8_lf": "def locked_loss(\n    candidate: SelectionCandidate,\n    goal: bytes,\n    records: tuple,\n    keys: list[str],\n    target_prefix: tuple[int, ...],\n    *,\n    subject_id: str,\n    gamma_floor: float = GAMMA_FLOOR,\n    trace: list | None = None,\n) -> torch.Tensor:\n    \"\"\"Teacher-forced NLL with alpha locked to the head's choice.\"\"\"\n    base = candidate.binding\n    choice = select(candidate, goal, keys)\n    state = initial_binding_state(base, subject_id)\n    prepared = prepare(base, state, goal, records)\n    state, gate_index = observe_goal(base, prepared)\n    previous = EOS\n    losses = []\n    labels = tuple(target_prefix) + (EOS,)\n    for position, label in enumerate(labels):\n        step = locked_step(\n            candidate,\n            prepared,\n            state,\n            previous,\n            gate_index=gate_index,\n            chosen_record=int(choice[\"chosen\"]),\n            gamma_floor=gamma_floor,\n            trace=trace,\n        )\n        losses.append(-torch.log(step.probabilities[label].clamp_min(1e-12)))\n        if position == len(labels) - 1:\n            break\n        m_next, coverage_next = advance_copy(\n            base.reader,\n            state,\n            step.read,\n            step.probabilities,\n            step.gamma,\n            label,\n            prepared.base.view,\n        )\n        state = replace(\n            step.state,\n            m=m_next,\n            coverage=coverage_next,\n            prefix_cursor=step.state.prefix_cursor + 1,\n        )\n        gate_index = step.gate_index\n        previous = int(label)\n    return sum(losses) / len(losses)"
+    },
+    {
+      "path": "taiji/binding_copy.py",
+      "name": "forced_read",
+      "start_line": 1149,
+      "end_line": 1181,
+      "source_sha256": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+      "excerpt_utf8_lf": "def forced_read(\n    candidate: BindingCopyCandidate,\n    prepared: BindingPrepared,\n    state: BindingState,\n    previous_byte: int,\n    *,\n    record_index: int | None,\n    offset: int | None,\n    gate_index: int = 0,\n    gamma_override: torch.Tensor | float | None = None,\n    lambda_override: torch.Tensor | float | None = None,\n) -> BindingAnswerStep:\n    view = prepared.base.view\n    dtype = next(candidate.parameters()).dtype\n    if record_index is None:\n        alpha = torch.zeros(view.record_count + 1, dtype=dtype)\n        alpha[-1] = 1.0\n        betas = tuple(torch.ones(view.lengths[i], dtype=dtype) for i in range(view.record_count))\n    else:\n        alpha = torch.zeros(view.record_count + 1, dtype=dtype)\n        alpha[record_index] = 1.0\n        betas = tuple(torch.zeros(view.lengths[i], dtype=dtype) for i in range(view.record_count))\n        betas[record_index][offset] = 1.0\n    return answer_step(\n        candidate,\n        prepared,\n        state,\n        previous_byte,\n        gate_index=gate_index,\n        force={\"alpha\": alpha, \"betas\": betas},\n        gamma_override=gamma_override,\n        lambda_override=lambda_override,\n    )"
+    },
+    {
+      "path": "taiji/binding_copy.py",
+      "name": "read",
+      "start_line": 258,
+      "end_line": 360,
+      "source_sha256": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+      "excerpt_utf8_lf": "    def read(\n        self,\n        s: torch.Tensor,\n        previous_embedding: torch.Tensor,\n        goal_units: torch.Tensor,\n        view: RecordSourceView,\n        m: torch.Tensor,\n        *,\n        force: dict | None = None,\n        lambda_override: torch.Tensor | float | None = None,\n    ) -> BindingRead:\n        key_width = self.config.key_width\n        width = self.config.width\n        query = torch.cat([s, previous_embedding])\n        q_w = self.Q_w(query)\n        q_s = self.Q_s(query)\n        goal = goal_units if goal_units.shape[0] else self.E_goal.weight.new_zeros((1, width))\n        g = self.E_goal(goal)\n        logits_goal = q_w @ g.T / math.sqrt(key_width)\n        w_p = torch.softmax(logits_goal, dim=-1)\n        weighted_goal = w_p @ goal\n        continuation = self.continuation(torch.cat([s, weighted_goal, previous_embedding])).squeeze(\n            -1\n        )\n        if lambda_override is not None:\n            continuation = torch.as_tensor(lambda_override, dtype=s.dtype, device=s.device)\n        lam = torch.sigmoid(continuation)\n        null_key = self.null_key if not self.reuse_null_key else self.inherited.null_key\n        null_logit = q_s @ null_key / math.sqrt(key_width)\n\n        if view.record_count == 0:\n            alpha = torch.softmax(torch.stack([null_logit]), dim=-1)\n            q_null = alpha[-1]\n            empty = m.new_zeros(0)\n            return BindingRead(\n                content=q_null * self.inherited.null_value,\n                copy_weights=empty,\n                copy_byte_mass=m.new_zeros(MAX_COVERAGE),\n                alpha=alpha,\n                betas=(),\n                alpha_null=q_null,\n                record_mass=empty,\n                s_bytes=empty,\n                q_bytes=empty,\n                q_null=q_null,\n                m_mass=m.new_zeros(()),\n                continuation=lam,\n                forced=False,\n            )\n\n        source_keys = [self.E_source(view.units[i]) for i in range(view.record_count)]\n        log_row = []\n        for index in range(view.record_count):\n            source = source_keys[index]\n            match = g @ source.T / math.sqrt(key_width)\n            l_ij = torch.logsumexp(torch.log(w_p).unsqueeze(-1) + match, dim=0)\n            l_ij = l_ij + q_s @ source.T / math.sqrt(key_width) + self.v_meta @ view.metadata[index]\n            log_row.append(l_ij)\n        log_sums = torch.stack([torch.logsumexp(row, -1) - math.log(len(row)) for row in log_row])\n        alpha = torch.softmax(torch.cat([log_sums, null_logit.reshape(1)]), dim=-1)\n        betas = tuple(torch.softmax(row, -1) for row in log_row)\n\n        if force is not None:\n            alpha = force[\"alpha\"].to(s.dtype)\n            betas = tuple(row.to(s.dtype) for row in force[\"betas\"])\n        s_pieces = []\n        for index in range(view.record_count):\n            anchor = alpha[index] * betas[index]\n            s_pieces.append(self._transport(anchor, view.units[index], q_w))\n        s_bytes = torch.cat(s_pieces)\n        alpha_null = alpha[-1]\n        m_bytes = m if m.numel() == s_bytes.numel() else s_bytes.new_zeros(s_bytes.shape)\n        m_mass = m_bytes.sum()\n        q_bytes = lam * m_bytes + (1 - lam * m_mass) * s_bytes\n        q_null = (1 - lam * m_mass) * alpha_null\n        q_total = torch.cat([q_bytes, q_null.reshape(1)])\n        normalizer = q_total.sum()\n        if float(normalizer.detach()) <= 0:\n            raise RuntimeError(\"R1 Q has zero total mass\")\n        q_total = q_total / normalizer\n        q_bytes = q_total[:-1]\n        q_null = q_total[-1]\n        units = torch.cat(view.units)\n        content = q_bytes @ self.inherited.V_position(units) + q_null * self.inherited.null_value\n        copy_byte_mass = q_bytes.new_zeros(MAX_COVERAGE).index_add_(0, view.byte_ids, q_bytes)\n        record_mass = torch.stack(\n            [q_bytes[view.slice(index)].sum() for index in range(view.record_count)]\n        )\n        return BindingRead(\n            content=content,\n            copy_weights=q_bytes,\n            copy_byte_mass=copy_byte_mass,\n            alpha=alpha,\n            betas=betas,\n            alpha_null=q_null,\n            record_mass=record_mass,\n            s_bytes=s_bytes,\n            q_bytes=q_bytes,\n            q_null=q_null,\n            m_mass=m_mass,\n            continuation=lam,\n            forced=force is not None,\n        )"
+    },
+    {
+      "path": "scripts/training/verify_taiji_binding_select_16_1_compare.py",
+      "name": "batch_objective",
+      "start_line": 591,
+      "end_line": 673,
+      "source_sha256": "5382a02113922ebba60d03f0b964e6198df47e5d5df1a07986f9b5b70ac30ef6",
+      "excerpt_utf8_lf": "def batch_objective(\n    candidate,\n    fixtures: tuple[dict, ...],\n    *,\n    arm: str,\n    stage: str,\n    self_prefix: bool,\n    subject_tag: str,\n) -> tuple[torch.Tensor, dict]:\n    if stage == \"selection\":\n        terms = [\n            selection_ce(\n                candidate,\n                fixture[\"goal\"].encode(\"utf-8\"),\n                fixture[\"record_keys\"],\n                fixture[\"selection_label\"],\n            )\n            for fixture in fixtures\n        ]\n        total = sum(terms) / len(terms)\n        return total, {\n            \"steps\": 0,\n            \"gamma_model_mean\": 0.0,\n            \"gamma_used_mean\": 0.0,\n            \"floored_steps\": 0,\n            \"floored_fraction\": 0.0,\n        }\n\n    trace: list = []\n    nll_terms = []\n    for fixture in fixtures:\n        prefix = fixture[\"target_prefix\"]\n        if self_prefix:\n            with torch.no_grad():\n                generated = generate(\n                    candidate,\n                    fixture,\n                    arm=arm,\n                    subject_id=f\"{subject_tag}-self-{fixture['index']}\",\n                )\n            own = tuple(generated[\"raw_bytes\"])[: len(prefix)]\n            if len(own) < len(prefix):\n                own = own + (EOS,) * (len(prefix) - len(own))\n            # Frozen 16.1.1 behavior: this self-prefix is passed to\n            # locked_loss/score_example as target_prefix, so the labels become the\n            # model's own bytes (self-imitation, not correction).  The N17 design\n            # separates the input prefix from the fixed target bytes.\n            prefix = own\n        if ARM_LOCKED[arm]:\n            nll_terms.append(\n                locked_loss(\n                    candidate,\n                    fixture[\"goal\"].encode(\"utf-8\"),\n                    fixture[\"records\"],\n                    fixture[\"record_keys\"],\n                    prefix,\n                    subject_id=f\"{subject_tag}-{fixture['index']}\",\n                    trace=trace,\n                )\n            )\n        else:\n            nll_terms.append(\n                score_example(\n                    candidate.binding,\n                    fixture[\"goal\"].encode(\"utf-8\"),\n                    fixture[\"records\"],\n                    prefix,\n                    subject_id=f\"{subject_tag}-{fixture['index']}\",\n                ).nll\n            )\n    nll = sum(nll_terms) / len(nll_terms)\n    if stage == \"copy\":\n        return nll, gamma_row(trace)\n    terms = [\n        selection_ce(\n            candidate,\n            fixture[\"goal\"].encode(\"utf-8\"),\n            fixture[\"record_keys\"],\n            fixture[\"selection_label\"],\n        )\n        for fixture in fixtures\n    ]\n    return nll + sum(terms) / len(terms), gamma_row(trace)"
+    },
+    {
+      "path": "scripts/training/probe_taiji_binding_select_16_1_arch.py",
+      "name": "oracle_entity_start",
+      "start_line": 160,
+      "end_line": 231,
+      "source_sha256": "d1d44d6eb890b07526af778cce0cf793e6f2af31f452da3ff83b04ef3d6f44c3",
+      "excerpt_utf8_lf": "def oracle_entity_start(candidate, fixture: dict, *, subject_id: str) -> dict:\n    base = candidate.binding\n    label = fixture[\"selection_label\"]\n    record = fixture[\"raw_example\"][\"records\"][label]\n    name_bytes = fixture[\"object_name\"].encode(\"utf-8\")\n    raw_bytes = record[\"raw\"].encode(\"utf-8\")\n    offset = raw_bytes.find(name_bytes)\n    goal = fixture[\"goal\"].encode(\"utf-8\")\n    state = initial_binding_state(base, subject_id)\n    prepared = prepare(base, state, goal, fixture[\"records\"])\n    state, gate_index = observe_goal(base, prepared)\n    previous = EOS\n    raw: list[int] = []\n    terminated = False\n    with torch.no_grad():\n        for step_index in range(MAX_PREDICTIONS):\n            if step_index == 0:\n                probe = answer_step(base, prepared, state, previous, gate_index=gate_index)\n                gamma = torch.clamp(probe.gamma, min=GAMMA_FLOOR)\n                step = forced_read(\n                    base,\n                    prepared,\n                    state,\n                    previous,\n                    record_index=label,\n                    offset=offset,\n                    gate_index=gate_index,\n                    gamma_override=gamma,\n                )\n            else:\n                step = locked_step(\n                    candidate,\n                    prepared,\n                    state,\n                    previous,\n                    gate_index=gate_index,\n                    chosen_record=label,\n                )\n            endpoint = decode_endpoint(step.probabilities)\n            if endpoint[\"eos\"]:\n                terminated = True\n                break\n            raw.append(int(endpoint[\"byte\"]))\n            m_next, coverage_next = advance_copy(\n                base.reader,\n                state,\n                step.read,\n                step.probabilities,\n                step.gamma,\n                endpoint[\"byte\"],\n                prepared.base.view,\n            )\n            state = replace(\n                step.state,\n                m=m_next,\n                coverage=coverage_next,\n                prefix_cursor=step.state.prefix_cursor + 1,\n            )\n            gate_index = step.gate_index\n            previous = int(endpoint[\"byte\"])\n    scored = score_generation(bytes(raw), fixture[\"target_prefix\"], terminated)\n    return {\n        \"index\": fixture[\"index\"],\n        \"world\": fixture[\"world\"],\n        \"record\": label,\n        \"name_offset\": offset,\n        \"completed\": scored[\"completed\"],\n        \"object_exact\": scored[\"object_exact\"],\n        \"place_exact\": scored[\"place_exact\"],\n        \"first_divergence\": scored[\"first_divergence\"],\n        \"bytes\": len(raw),\n    }"
+    },
+    {
+      "path": "scripts/training/probe_taiji_binding_select_16_1_arch.py",
+      "name": "oracle_full_object_span",
+      "start_line": 234,
+      "end_line": 311,
+      "source_sha256": "d1d44d6eb890b07526af778cce0cf793e6f2af31f452da3ff83b04ef3d6f44c3",
+      "excerpt_utf8_lf": "def oracle_full_object_span(candidate, fixture: dict, *, subject_id: str) -> dict:\n    \"\"\"While generation stays in sync, force every object-name byte (positions\n    3..14 of the 27-byte action) to be copied from the correct record with\n    gamma=0; the template and place segments follow the locked model.\"\"\"\n    base = candidate.binding\n    label = fixture[\"selection_label\"]\n    record = fixture[\"raw_example\"][\"records\"][label]\n    name_bytes = fixture[\"object_name\"].encode(\"utf-8\")\n    raw_record = record[\"raw\"].encode(\"utf-8\")\n    name_start = raw_record.find(name_bytes)\n    target = fixture[\"target_prefix\"]\n    goal = fixture[\"goal\"].encode(\"utf-8\")\n    state = initial_binding_state(base, subject_id)\n    prepared = prepare(base, state, goal, fixture[\"records\"])\n    state, gate_index = observe_goal(base, prepared)\n    previous = EOS\n    raw: list[int] = []\n    terminated = False\n    forced_steps = 0\n    with torch.no_grad():\n        for _prediction in range(MAX_PREDICTIONS):\n            emitted = len(raw)\n            in_sync = all(raw[i] == target[i] for i in range(emitted))\n            force = in_sync and 3 <= emitted < 15 and name_start >= 0\n            if force:\n                step = forced_read(\n                    base,\n                    prepared,\n                    state,\n                    previous,\n                    record_index=label,\n                    offset=name_start + (emitted - 3),\n                    gate_index=gate_index,\n                    gamma_override=0.0,\n                )\n                forced_steps += 1\n            else:\n                step = locked_step(\n                    candidate,\n                    prepared,\n                    state,\n                    previous,\n                    gate_index=gate_index,\n                    chosen_record=label,\n                )\n            endpoint = decode_endpoint(step.probabilities)\n            if endpoint[\"eos\"]:\n                terminated = True\n                break\n            raw.append(int(endpoint[\"byte\"]))\n            m_next, coverage_next = advance_copy(\n                base.reader,\n                state,\n                step.read,\n                step.probabilities,\n                step.gamma,\n                endpoint[\"byte\"],\n                prepared.base.view,\n            )\n            state = replace(\n                step.state,\n                m=m_next,\n                coverage=coverage_next,\n                prefix_cursor=step.state.prefix_cursor + 1,\n            )\n            gate_index = step.gate_index\n            previous = int(endpoint[\"byte\"])\n    scored = score_generation(bytes(raw), target, terminated)\n    return {\n        \"index\": fixture[\"index\"],\n        \"world\": fixture[\"world\"],\n        \"forced_steps\": forced_steps,\n        \"completed\": scored[\"completed\"],\n        \"object_exact\": scored[\"object_exact\"],\n        \"place_exact\": scored[\"place_exact\"],\n        \"first_divergence\": scored[\"first_divergence\"],\n        \"bytes\": len(raw),\n    }"
+    },
+    {
+      "path": "taiji/binding_copy_scoring.py",
+      "name": "normalize_expected",
+      "start_line": 22,
+      "end_line": 30,
+      "source_sha256": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+      "excerpt_utf8_lf": "def normalize_expected(value: bytes | tuple[int, ...] | list[int]) -> bytes:\n    \"\"\"One normalization for bytes and integer tuple/list; no text inference.\"\"\"\n    if isinstance(value, bytes):\n        return value\n    if isinstance(value, tuple) and all(isinstance(item, int) for item in value):\n        return bytes(value)\n    if isinstance(value, list) and all(isinstance(item, int) for item in value):\n        return bytes(value)\n    raise DataError(f\"expected must be bytes or an integer tuple/list, not {type(value)!r}\")"
+    },
+    {
+      "path": "taiji/binding_copy_scoring.py",
+      "name": "_first_divergence",
+      "start_line": 41,
+      "end_line": 47,
+      "source_sha256": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+      "excerpt_utf8_lf": "def _first_divergence(raw: bytes, expected: bytes) -> int:\n    for index in range(min(len(raw), len(expected))):\n        if raw[index] != expected[index]:\n            return index\n    if len(raw) != len(expected):\n        return min(len(raw), len(expected))\n    return -1"
+    },
+    {
+      "path": "taiji/binding_copy_scoring.py",
+      "name": "score_generation",
+      "start_line": 50,
+      "end_line": 105,
+      "source_sha256": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+      "excerpt_utf8_lf": "def score_generation(\n    raw: bytes,\n    expected: bytes | tuple[int, ...] | list[int],\n    terminated: bool,\n) -> dict[str, Any]:\n    expected_bytes = normalize_expected(expected)\n    raw_bytes = bytes(raw)\n    try:\n        raw_bytes.decode(\"utf-8\")\n        utf8 = True\n    except UnicodeDecodeError:\n        utf8 = False\n    full = raw_bytes == expected_bytes\n    object_exact = len(raw_bytes) == ACTION_BYTES and raw_bytes[3:15] == expected_bytes[3:15]\n    place_exact = len(raw_bytes) == ACTION_BYTES and raw_bytes[21:27] == expected_bytes[21:27]\n    entity_exact = bool(object_exact and place_exact)\n    completed = bool(full and terminated)\n    empty = len(raw_bytes) == 0\n    early_eos = bool(terminated and 0 < len(raw_bytes) < ACTION_BYTES)\n    truncated = bool(len(raw_bytes) >= MAX_OUTPUT_BYTES and not terminated)\n    parsed = bool(terminated and utf8)\n    first_divergence = _first_divergence(raw_bytes, expected_bytes)\n    if completed:\n        reason = \"completed\"\n    elif empty:\n        reason = \"empty\"\n    elif early_eos:\n        reason = \"early_eos\"\n    elif truncated:\n        reason = \"truncated\"\n    elif not utf8:\n        reason = \"invalid_utf8\"\n    elif not terminated:\n        reason = \"not_terminated\"\n    else:\n        reason = \"wrong_bytes\"\n    return {\n        \"schema\": SCORING_SCHEMA,\n        \"bytes\": len(raw_bytes),\n        \"predictions\": min(len(raw_bytes) + 1, MAX_PREDICTIONS),\n        \"utf8\": bool(utf8),\n        \"terminated\": bool(terminated),\n        \"full_sentence\": bool(full),\n        \"object_exact\": bool(object_exact),\n        \"place_exact\": bool(place_exact),\n        \"entity_exact\": entity_exact,\n        \"completed\": completed,\n        \"empty\": bool(empty),\n        \"early_eos\": bool(early_eos),\n        \"truncated\": bool(truncated),\n        \"parsed\": bool(parsed),\n        \"first_divergence\": first_divergence,\n        \"reason\": reason,\n        \"expected_bytes\": len(expected_bytes),\n        \"denominator\": True,\n    }"
+    }
+  ],
+  "source_version_scope": {
+    "comparison_post_run_changes": {
+      "script": "scripts/training/verify_taiji_binding_select_16_1_compare.py",
+      "ran_sha256": "dad3883e66b9f35fbfd8430c6f8c956907a8e4d1a4f0216b1900b4fb4644c844",
+      "now_sha256": "5382a02113922ebba60d03f0b964e6198df47e5d5df1a07986f9b5b70ac30ef6",
+      "changes": "aggregation only: subset denominators, (world,index) keys for the true side, stored true raw for reverse pairing, selection rows carry flags, copy_weight_mean reported.  The training recipe is unchanged; the self-prefix label behavior is left frozen and annotated."
+    },
+    "arch_probe_source_identity": {
+      "taiji/binding_select.py": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+      "scripts/training/verify_taiji_binding_select_16_1_compare.py": "5382a02113922ebba60d03f0b964e6198df47e5d5df1a07986f9b5b70ac30ef6",
+      "scripts/training/probe_taiji_binding_select_16_1_arch.py": {
+        "ran_sha256": "beceff32f1a05ebb90f89899f36b6cdc2d5cfbdd6877bf91052592df9120563c",
+        "now_sha256": "d1d44d6eb890b07526af778cce0cf793e6f2af31f452da3ff83b04ef3d6f44c3",
+        "change": "post-run lint only: witness strings use .encode() instead of .encode('utf-8') and the permutation zip gained strict=True; probe logic and all readings unchanged"
+      }
+    },
+    "note": "Reviewed current source plus the declared post-run/source-patch notes. Original reports are preserved and their source bindings remain version-scoped."
+  },
+  "order_witness": {
+    "texts": [
+      "把甲从乙搬到丙",
+      "把乙从甲搬到丙"
+    ],
+    "same_utf8_byte_histogram": true,
+    "same_raw_byte_sequence": false,
+    "scope": "Mean embedding permutation invariance up to summation noise. This does not prove all unseen-description tasks impossible."
+  },
+  "target_contract_finding": {
+    "caller": "batch_objective replaces prefix with generated own, then passes it into locked_loss or score_example",
+    "callee": "locked_loss uses target_prefix + EOS as labels",
+    "actual_treatment": "self-imitation when triggered",
+    "N16_A_triggers": [
+      0,
+      0
+    ],
+    "N16_B_triggers": [
+      127,
+      121
+    ],
+    "N17_rule": "input_prefix is distinct from correct target_bytes; all 28 original targets remain supervised; update copy state with the accepted conditioning prefix"
+  },
+  "p4_reassessment": {
+    "n": 40,
+    "original_completed": 0,
+    "original_object_exact_rate": 0.0,
+    "actual_forced_steps": 160,
+    "potential_object_steps": 480,
+    "guaranteed_correct_object_byte_rows": 7,
+    "guaranteed_rows": [
+      {
+        "index": 2,
+        "world": 0,
+        "forced_steps": 12,
+        "completed": false,
+        "object_exact": false,
+        "place_exact": false,
+        "first_divergence": 15,
+        "bytes": 28
+      },
+      {
+        "index": 4,
+        "world": 0,
+        "forced_steps": 12,
+        "completed": false,
+        "object_exact": false,
+        "place_exact": false,
+        "first_divergence": 15,
+        "bytes": 31
+      },
+      {
+        "index": 15,
+        "world": 1,
+        "forced_steps": 12,
+        "completed": false,
+        "object_exact": false,
+        "place_exact": false,
+        "first_divergence": 15,
+        "bytes": 30
+      },
+      {
+        "index": 16,
+        "world": 1,
+        "forced_steps": 12,
+        "completed": false,
+        "object_exact": false,
+        "place_exact": false,
+        "first_divergence": 15,
+        "bytes": 30
+      },
+      {
+        "index": 17,
+        "world": 1,
+        "forced_steps": 12,
+        "completed": false,
+        "object_exact": false,
+        "place_exact": false,
+        "first_divergence": 15,
+        "bytes": 30
+      },
+      {
+        "index": 18,
+        "world": 1,
+        "forced_steps": 12,
+        "completed": false,
+        "object_exact": false,
+        "place_exact": false,
+        "first_divergence": 15,
+        "bytes": 30
+      },
+      {
+        "index": 19,
+        "world": 1,
+        "forced_steps": 12,
+        "completed": false,
+        "object_exact": false,
+        "place_exact": false,
+        "first_divergence": 15,
+        "bytes": 30
+      }
+    ],
+    "guaranteed_output_lengths": {
+      "28": 1,
+      "31": 1,
+      "30": 5
+    },
+    "controls": "Alpha/beta are forced before transport and cursor mixing. Forcing stops after prefix desynchronizes.",
+    "metric_scope": "object_exact also requires total output length=27",
+    "revised_claim": "At least 7/40 rows have all object bytes correct despite object_exact=false. The old probe is not an exact final-Q copy oracle and does not establish position supervision as necessary.",
+    "raw_fragment_reconstruction": "No exact local fragment aggregate reconstructed from unavailable raw text."
+  },
+  "pure_score_cases": [
+    {
+      "raw_hex": "e68a8ae794b2e794b2e794b2e794b2e694bee588b0e4b999e4b999",
+      "expected_hex": "e68a8ae794b2e794b2e794b2e794b2e694bee588b0e4b999e4b999",
+      "score": {
+        "schema": "taiji-binding-copy-scoring-v1",
+        "bytes": 27,
+        "predictions": 28,
+        "utf8": true,
+        "terminated": true,
+        "full_sentence": true,
+        "object_exact": true,
+        "place_exact": true,
+        "entity_exact": true,
+        "completed": true,
+        "empty": false,
+        "early_eos": false,
+        "truncated": false,
+        "parsed": true,
+        "first_divergence": -1,
+        "reason": "completed",
+        "expected_bytes": 27,
+        "denominator": true
+      },
+      "local_object_bytes_equal": true
+    },
+    {
+      "raw_hex": "e68a8ae794b2e794b2e794b2e794b258e694bee588b0e4b999e4b999",
+      "expected_hex": "e68a8ae794b2e794b2e794b2e794b2e694bee588b0e4b999e4b999",
+      "score": {
+        "schema": "taiji-binding-copy-scoring-v1",
+        "bytes": 28,
+        "predictions": 29,
+        "utf8": true,
+        "terminated": true,
+        "full_sentence": false,
+        "object_exact": false,
+        "place_exact": false,
+        "entity_exact": false,
+        "completed": false,
+        "empty": false,
+        "early_eos": false,
+        "truncated": false,
+        "parsed": true,
+        "first_divergence": 15,
+        "reason": "wrong_bytes",
+        "expected_bytes": 27,
+        "denominator": true
+      },
+      "local_object_bytes_equal": true
+    }
+  ],
+  "pre_transport_vs_final_q_witness": {
+    "beta": [
+      1.0,
+      0.0
+    ],
+    "transport": [
+      [
+        0.2,
+        0.8
+      ],
+      [
+        0.6,
+        0.4
+      ]
+    ],
+    "m": [
+      0.0,
+      1.0
+    ],
+    "lambda": 0.5,
+    "S": [
+      0.2,
+      0.8
+    ],
+    "Q": [
+      0.1,
+      0.9
+    ],
+    "q_null": 0,
+    "gamma": 0,
+    "correct_byte_probability_if_beta_target_is_position0": 0.1,
+    "correct_byte_probability_if_final_Q_is_position0_delta": 1.0,
+    "scope": "Pure two-position algebra; no neural execution."
+  },
+  "p1_r1_gate_decision": "Freeze fixed engineering thresholds before candidate outputs. Reordering sensitivity verifies an available path; task generalization is a separate behavior test.",
+  "planning_decisions": {
+    "selected_candidate": "ordered shared encoding + per-byte record/null routing + final-Q conditioning + same-state smooth gamma + correct-target self-prefix + declared ST task credit",
+    "controls": [
+      "A_joint_lock",
+      "B_stop_lock",
+      "C_unlocked"
+    ],
+    "historical_B_use": "Background only; different objectives and interfaces do not replace a concurrent C arm.",
+    "position_supervision": "No automatic extra span head based on the old P4; separate R2a final-Q engineering, R2b anchor/transport, R2c learned position, R2d free generation first.",
+    "engineering_adam_cap": 39,
+    "formal_adam_proposal": 1800,
+    "independent_head_parameters": 37120,
+    "total_candidate_parameters_proposal": 3563601,
+    "total_cpu_hard_cap_proposal": 30000,
+    "total_wall_hard_cap_proposal": 60000,
+    "cpu_watch_line_proposal": 20000,
+    "wall_watch_line_proposal": 30000,
+    "stages": [
+      {
+        "id": "17.1",
+        "cpu_cap_proposal": 120,
+        "wall_cap_proposal": 240,
+        "adam_cap": 0,
+        "status": "planned"
+      },
+      {
+        "id": "17.2",
+        "cpu_cap_proposal": 600,
+        "wall_cap_proposal": 1200,
+        "adam_cap": 12,
+        "status": "planned"
+      },
+      {
+        "id": "17.3",
+        "cpu_cap_proposal": 600,
+        "wall_cap_proposal": 1200,
+        "adam_cap": 9,
+        "status": "planned"
+      },
+      {
+        "id": "17.4",
+        "cpu_cap_proposal": 400,
+        "wall_cap_proposal": 800,
+        "adam_cap": 18,
+        "status": "planned"
+      },
+      {
+        "id": "17.5",
+        "cpu_cap_proposal": 24000,
+        "wall_cap_proposal": 48000,
+        "adam_cap": 1800,
+        "status": "planned"
+      },
+      {
+        "id": "17.6",
+        "cpu_cap_proposal": 2000,
+        "wall_cap_proposal": 4000,
+        "adam_cap": 0,
+        "status": "planned_conditional_on_development_task_gates"
+      },
+      {
+        "id": "17.7",
+        "cpu_cap_proposal": 300,
+        "wall_cap_proposal": 600,
+        "adam_cap": 0,
+        "status": "planned"
+      }
+    ],
+    "budget_arithmetic": {
+      "stage_cpu_caps_sum": 28020,
+      "unallocated_overhead_cpu": 1980,
+      "old_total_cpu_per_formal_update": 11.198385416666667,
+      "old_package_scaled_to_1800_cpu": 20157.09375,
+      "old_price_scope": "Old whole-package average includes old evaluations. New graph pricing is pending."
+    },
+    "data": "288 train / 240 adaptive dev, inherited fixed digests; dedicated 12-world x 20-row confirm_n17=240; private generation commitment/access rules pending 17.1; confirm read only at17.6.",
+    "next_step": "17.1 contract and instrument calibration, before17.2 graph,17.3 pricing,17.4 preflight,17.5 comparison,17.6 confirmation,17.7 closeout",
+    "fundamental_goals": "Native bytes, lawful sources, state continuity, responsible learning credit, inherited growth, retention and endogenous activity remain responsibilities. Episode task evidence and untested persistent/retention scopes are reported separately.",
+    "cache_and_restore_credit": "Rebuild trainable loss graphs. Cache identity includes encoder revision, gradient mode and trainable-group signature. Mid-output snapshots restore values; a pending training graph needs prefix replay charged to the same budget."
+  },
+  "future_implementation_paths": [
+    {
+      "path": "taiji/binding_routing.py",
+      "exists_at_review": false
+    },
+    {
+      "path": "taiji/binding_routing_protocol.py",
+      "exists_at_review": false
+    },
+    {
+      "path": "scripts/training/verify_taiji_binding_routing_17_1.py",
+      "exists_at_review": false
+    },
+    {
+      "path": "scripts/training/verify_taiji_binding_routing_17_2_graph.py",
+      "exists_at_review": false
+    },
+    {
+      "path": "scripts/training/verify_taiji_binding_routing_17_3_price.py",
+      "exists_at_review": false
+    },
+    {
+      "path": "scripts/training/verify_taiji_binding_routing_17_4_preflight.py",
+      "exists_at_review": false
+    },
+    {
+      "path": "scripts/training/verify_taiji_binding_routing_17_5_compare.py",
+      "exists_at_review": false
+    },
+    {
+      "path": "scripts/training/verify_taiji_binding_routing_17_6_confirm.py",
+      "exists_at_review": false
+    },
+    {
+      "path": "scripts/training/closeout_taiji_binding_routing_17_7.py",
+      "exists_at_review": false
+    },
+    {
+      "path": "tests/taiji_native/test_binding_routing_contract.py",
+      "exists_at_review": false
+    },
+    {
+      "path": "tests/taiji_native/test_binding_routing_restore.py",
+      "exists_at_review": false
+    }
+  ],
+  "documents": [
+    {
+      "path": "plans/MAINLINE.md",
+      "bytes": 168148,
+      "sha256_raw": "dd7c4f13386d845498d246bdae7cd9f7ec6f465a48e15d6e048e7a06f3800ad4",
+      "sha256_utf8_lf": "dd7c4f13386d845498d246bdae7cd9f7ec6f465a48e15d6e048e7a06f3800ad4"
+    },
+    {
+      "path": "plans/README.md",
+      "bytes": 16481,
+      "sha256_raw": "4c36f16fee2f6543036c0c833976850ed649d9a86fb4568ff602940a7f39b4d2",
+      "sha256_utf8_lf": "4c36f16fee2f6543036c0c833976850ed649d9a86fb4568ff602940a7f39b4d2"
+    },
+    {
+      "path": "plans/active/roadmap/03_CURRENT_EXECUTION.md",
+      "bytes": 249166,
+      "sha256_raw": "8cbfa1cdd5061793199ec62da8eaaffb7eb9d798e411b3975b42fc592486b96f",
+      "sha256_utf8_lf": "8cbfa1cdd5061793199ec62da8eaaffb7eb9d798e411b3975b42fc592486b96f"
+    },
+    {
+      "path": "plans/reference/README.md",
+      "bytes": 19134,
+      "sha256_raw": "5850a51516c5660e2c9fd72251d481e133e918dff91929ba390f58645a04dc95",
+      "sha256_utf8_lf": "5850a51516c5660e2c9fd72251d481e133e918dff91929ba390f58645a04dc95"
+    },
+    {
+      "path": "plans/reference/REVIEW-PACKET_20261102.md",
+      "bytes": 4971,
+      "sha256_raw": "6f31183d916e49d99fc867c9013dc27eb8df96fea5bf3c7f24718d9f17323ef1",
+      "sha256_utf8_lf": "6f31183d916e49d99fc867c9013dc27eb8df96fea5bf3c7f24718d9f17323ef1"
+    },
+    {
+      "path": "plans/reference/TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md",
+      "bytes": 121101,
+      "sha256_raw": "1cdbe6ea9f13a3b10837d26ad9d7068ae31fc8b0fccacc9a7a997763ad030c6c",
+      "sha256_utf8_lf": "1cdbe6ea9f13a3b10837d26ad9d7068ae31fc8b0fccacc9a7a997763ad030c6c"
+    },
+    {
+      "path": "plans/reference/DESIGN-POST-N16_SELECTION_ROUTING_20261103.md",
+      "bytes": 37514,
+      "sha256_raw": "8dec05eb07175aee536a9a02b2b7a00da0ee778b77f3635c500102ef4bc61b65",
+      "sha256_utf8_lf": "8dec05eb07175aee536a9a02b2b7a00da0ee778b77f3635c500102ef4bc61b65"
+    },
+    {
+      "path": "plans/reference/ATTRIBUTION-ARCH-VS-ALG_20261103.md",
+      "bytes": 7345,
+      "sha256_raw": "dcbb5e8faff866127d0d888dd79c736ec0523e75236a3c0c5355675e3ab8ab37",
+      "sha256_utf8_lf": "dcbb5e8faff866127d0d888dd79c736ec0523e75236a3c0c5355675e3ab8ab37"
+    },
+    {
+      "path": "plans/reference/INVARIANT-LEDGER_20261103.md",
+      "bytes": 13295,
+      "sha256_raw": "e11afd68d8359018c014d3ef867d7ecbb3f10e975fcfdde6e692d26820a05d5a",
+      "sha256_utf8_lf": "e11afd68d8359018c014d3ef867d7ecbb3f10e975fcfdde6e692d26820a05d5a"
+    }
+  ],
+  "actual_execution": {
+    "neural_forward_calls": 0,
+    "optimizer_calls": 0,
+    "model_modules_imported": false,
+    "raw_parent_bundle_read_without_loading": true,
+    "synthetic_pure_scoring_cases": 2,
+    "stored_probe_rows_reviewed": 40,
+    "new_training_dataset_generated": false,
+    "sealed_data_read": false,
+    "runtime_code_modified": false,
+    "checkpoints_modified": false,
+    "historical_reports_rewritten": false,
+    "cost_scope": "Only this receipt generation is timed below; earlier read-only file review and document editing are not included in model experiment accounting.",
+    "receipt_cpu_seconds": 0.3125,
+    "receipt_wall_seconds": 0.45087720011360943
+  },
+  "checks": {
+    "stored_probe_guaranteed_object_count": true,
+    "stored_probe_forcing_not_full_480_steps": true,
+    "length_gate_reproduced_by_actual_pure_scorer": true,
+    "pre_transport_is_not_final_q_control": true,
+    "stage_budget_arithmetic": true,
+    "engineering_adam_arithmetic": true,
+    "whole_project_plan_reconciled_with_final_n16_reports": true
+  },
+  "validation": {
+    "single_mainline": {
+      "schema": "taiji-plan-single-mainline-audit-v1",
+      "status": "ok",
+      "checks": [
+        "MAINLINE.md present",
+        "README entry present",
+        "active docs checked: 19",
+        "current contracts checked: 4",
+        "legacy banners checked: 10"
+      ],
+      "failures": [],
+      "rc": 0
+    },
+    "scoped_markdown_links": {
+      "files": 9,
+      "links": 1073,
+      "issues": []
+    },
+    "git_diff_check": {
+      "exit_code": 0,
+      "scope": "All 10 staged review-family files; final validation-metadata refresh preserves JSON formatting."
+    },
+    "historical_input_raw_hashes_preserved": true
+  },
+  "delivery_policy": "Only the planning/review documents and this report; preserve unrelated work and original N16 execution artifacts."
+}
