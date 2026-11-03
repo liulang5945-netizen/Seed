@@ -190,6 +190,8 @@ class BindingRead:
     m_mass: torch.Tensor
     continuation: torch.Tensor
     forced: bool
+    pointer: tuple[torch.Tensor, ...] = ()
+    pointer_logits: tuple[torch.Tensor, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -265,6 +267,10 @@ class BindingCopyReader(nn.Module):
         *,
         force: dict | None = None,
         lambda_override: torch.Tensor | float | None = None,
+        pointer_bias: tuple[torch.Tensor, ...] | None = None,
+        pointer_temperature: float = 1.0,
+        pointer_hard: bool = False,
+        m_override: torch.Tensor | None = None,
     ) -> BindingRead:
         key_width = self.config.key_width
         width = self.config.width
@@ -321,12 +327,34 @@ class BindingCopyReader(nn.Module):
             alpha = force["alpha"].to(s.dtype)
             betas = tuple(row.to(s.dtype) for row in force["betas"])
         s_pieces = []
+        pointer_rows: list[torch.Tensor] = []
+        pointer_logit_rows: list[torch.Tensor] = []
+        forced_pointer = force.get("pointer") if force is not None else None
         for index in range(view.record_count):
             anchor = alpha[index] * betas[index]
-            s_pieces.append(self._transport(anchor, view.units[index], q_w))
+            bias = pointer_bias[index] if pointer_bias is not None else None
+            if forced_pointer is not None:
+                pointer = forced_pointer[index].to(s.dtype)
+                row_logits = pointer
+                s_piece = anchor.sum() * pointer
+            else:
+                s_piece, pointer, row_logits = self._point_transport(
+                    anchor,
+                    view.units[index],
+                    q_w,
+                    bias,
+                    pointer_temperature,
+                    pointer_hard,
+                )
+            s_pieces.append(s_piece)
+            pointer_rows.append(pointer)
+            pointer_logit_rows.append(row_logits)
         s_bytes = torch.cat(s_pieces)
         alpha_null = alpha[-1]
-        m_bytes = m if m.numel() == s_bytes.numel() else s_bytes.new_zeros(s_bytes.shape)
+        if m_override is not None:
+            m_bytes = m_override.to(s.dtype)
+        else:
+            m_bytes = m if m.numel() == s_bytes.numel() else s_bytes.new_zeros(s_bytes.shape)
         m_mass = m_bytes.sum()
         q_bytes = lam * m_bytes + (1 - lam * m_mass) * s_bytes
         q_null = (1 - lam * m_mass) * alpha_null
@@ -357,14 +385,26 @@ class BindingCopyReader(nn.Module):
             m_mass=m_mass,
             continuation=lam,
             forced=force is not None,
+            pointer=tuple(pointer_rows),
+            pointer_logits=tuple(pointer_logit_rows),
         )
 
-    def _transport(
+    def _point_transport(
         self,
         anchor: torch.Tensor,
         units: torch.Tensor,
         q_w: torch.Tensor,
-    ) -> torch.Tensor:
+        pointer_bias: torch.Tensor | None,
+        temperature: float,
+        hard: bool,
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Unit/hard point transport: one target position, not a soft row.
+
+        The source position is the anchor's mode (betas), the target score is the
+        learned transport row for that source, optionally biased by the span
+        start head.  Training uses a temperature-annealed softmax; inference
+        takes the argmax, so the copied position is a single point.
+        """
         key_width = self.config.key_width
         length = units.shape[0]
         keys = self.K_transport(units)
@@ -375,8 +415,22 @@ class BindingCopyReader(nn.Module):
         )
         relative_score = relative @ self.v_relative
         logits = queries @ keys.T / math.sqrt(key_width) + relative_score
-        transport = torch.softmax(logits, dim=-1)
-        return anchor @ transport
+        if hard:
+            source = int(torch.argmax(anchor))
+            row_logits = logits[source]
+        else:
+            source_weights = torch.softmax(anchor / temperature, dim=-1)
+            row_logits = (source_weights.unsqueeze(0) @ logits).squeeze(0)
+        if pointer_bias is not None:
+            row_logits = row_logits + pointer_bias
+        mass = anchor.sum()
+        if hard:
+            index = int(torch.argmax(row_logits))
+            pointer = torch.zeros(length, dtype=row_logits.dtype, device=row_logits.device)
+            pointer[index] = 1.0
+        else:
+            pointer = torch.softmax(row_logits / temperature, dim=-1)
+        return mass * pointer, pointer, row_logits
 
 
 class BindingCopyCandidate(nn.Module):
@@ -635,6 +689,7 @@ def answer_step(
     force: dict | None = None,
     gamma_override: torch.Tensor | float | None = None,
     lambda_override: torch.Tensor | float | None = None,
+    m_override: torch.Tensor | None = None,
 ) -> BindingAnswerStep:
     subject = candidate.subject
     base = prepared.base
@@ -650,6 +705,7 @@ def answer_step(
         state.m,
         force=force,
         lambda_override=lambda_override,
+        m_override=m_override,
     )
     if previous_byte == EOS:
         event = subject.W.new_zeros(subject.config.width)
@@ -1157,6 +1213,7 @@ def forced_read(
     gate_index: int = 0,
     gamma_override: torch.Tensor | float | None = None,
     lambda_override: torch.Tensor | float | None = None,
+    force_position: bool = True,
 ) -> BindingAnswerStep:
     view = prepared.base.view
     dtype = next(candidate.parameters()).dtype
@@ -1164,20 +1221,30 @@ def forced_read(
         alpha = torch.zeros(view.record_count + 1, dtype=dtype)
         alpha[-1] = 1.0
         betas = tuple(torch.ones(view.lengths[i], dtype=dtype) for i in range(view.record_count))
+        pointer = tuple(torch.zeros(view.lengths[i], dtype=dtype) for i in range(view.record_count))
+        m_override = torch.zeros_like(state.m)
     else:
         alpha = torch.zeros(view.record_count + 1, dtype=dtype)
         alpha[record_index] = 1.0
         betas = tuple(torch.zeros(view.lengths[i], dtype=dtype) for i in range(view.record_count))
         betas[record_index][offset] = 1.0
+        pointer = tuple(torch.zeros(view.lengths[i], dtype=dtype) for i in range(view.record_count))
+        pointer[record_index][offset] = 1.0
+        m_override = torch.zeros_like(state.m)
+        m_override[view.slice(record_index).start + offset] = 1.0
+    force = {"alpha": alpha, "betas": betas}
+    if force_position:
+        force["pointer"] = pointer
     return answer_step(
         candidate,
         prepared,
         state,
         previous_byte,
         gate_index=gate_index,
-        force={"alpha": alpha, "betas": betas},
+        force=force,
         gamma_override=gamma_override,
         lambda_override=lambda_override,
+        m_override=m_override if force_position else None,
     )
 
 

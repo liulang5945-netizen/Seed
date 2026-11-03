@@ -1606,3 +1606,7 @@ HEAD旧T3使用前置锚点时701/720失败；工作树新pointer/强制cursor�
 [数学审查](../../reference/MATH-REVIEW_CORE_DYNAMICS_MEMORY_COPY_20261103.md)对照当前方程、源码与原始论文，纠正将慢群视为不可训练、贪心复制率当0.8^12、CE无margin、快慢状态断链、固定规则无优化态适应等推论。GDN2的2026-12会期与2026-05预印本分开，未核验链接不承担关键论证。
 
 当前确定的算子问题是softmax(alpha*beta/T)的旧记录质量/记录内温度耦合，以及lambda_override在sigmoid前覆盖导致value/logit歧义。静态tau基线与条件tau元控制候选已在主稿区分。保留TTT/误差校正对照、F容量—干扰条件和局部成长收益分析，纳入既有17.2R及19–22对应责任。本轮纯数学和源码审阅，模型前向0、Adam0，局部标量/有理数核对见[回执](../../../reports/taiji_core_mathematical_review_20261103.json)。
+
+## 2026-11-03 17.2R 交付与证据保留
+
+17.2R已按六项交付完成：[报告](../../../reports/taiji_selection_routing_17_2r_20261103.json)＋[manifest](../../../plans/manifests/taiji_selection_routing_17_2r_20261103.json)。单一身份`candidate_sha` 964a8c68…、容器3,563,859参数（binding 3,526,481＋head 37,120＋span 258），T3 v3、新价、17.4 v2与本报告逐文件携带同一身份；账本T1–T16中12项通过、T6/T9/T10按阶段判；硬点信用A臂非0、B臂恒0且step0选择CE两臂逐位同值；语义游标给出非空复制中示例；非空m恢复18 Adam（来源17.4 v2六格×3）；新冻结价三臂15,018.521875 / 二臂10,182.68125 CPU，旧价13,092.25/8,750.34只作差额对照。改前证据（旧T3 701/720、旧17.4预检、旧17.3 verify及两份manifest）曾因重跑复用文件名被覆盖，已按“先另存`_r2_postfix_20261103`、再还原HEAD字节、再旁挂superseded”恢复；硬规则写入[账本§8](../../reference/INVARIANT-LEDGER_20261103.md)，当前队首为17.5三臂1,800更新。

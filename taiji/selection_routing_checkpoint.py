@@ -32,6 +32,8 @@ from taiji.selection_routing import (
     ARMS,
     OrderedSelectionHead,
     RoutingConfig,
+    SpanPointerHead,
+    expected_span_parameter_count,
 )
 
 ROUTING_BUNDLE_SCHEMA = "taiji-selection-routing-bundle-17-v1"
@@ -57,11 +59,13 @@ class RoutingCandidate:
         *,
         arm: str,
         seed: int,
+        span_head: SpanPointerHead | None = None,
     ) -> None:
         if arm not in ARMS:
             raise ValueError(f"unknown arm {arm!r}")
         self.binding = binding
         self.head = head
+        self.span_head = span_head
         self.arm = arm
         self.seed = int(seed)
 
@@ -84,18 +88,28 @@ class RoutingCandidate:
     def parameters(self) -> Iterable[nn.Parameter]:
         yield from self.binding.parameters()
         yield from self.head.parameters()
+        if self.span_head is not None:
+            yield from self.span_head.parameters()
 
     def trainable_parameters(self) -> list[nn.Parameter]:
-        return list(self.binding.trainable_parameters()) + list(self.head.parameters())
+        parameters = list(self.binding.trainable_parameters()) + list(self.head.parameters())
+        if self.span_head is not None:
+            parameters += list(self.span_head.parameters())
+        return parameters
 
     def configure_trainable(self) -> None:
         self.binding.configure_trainable()
         for parameter in self.head.parameters():
             parameter.requires_grad_(True)
+        if self.span_head is not None:
+            for parameter in self.span_head.parameters():
+                parameter.requires_grad_(True)
 
     def to(self, dtype: torch.dtype) -> RoutingCandidate:
         self.binding.to(dtype)
         self.head.to(dtype)
+        if self.span_head is not None:
+            self.span_head.to(dtype)
         return self
 
     def parameter_count(self) -> int:
@@ -125,7 +139,8 @@ def build_routing_candidate(
     loaded = load_bundle(parent, torch.float64)
     binding = loaded[0].binding
     head = OrderedSelectionHead(RoutingConfig(), seed=int(seed))
-    candidate = RoutingCandidate(binding, head, arm=arm, seed=int(seed))
+    span_head = SpanPointerHead(RoutingConfig(), seed=int(seed))
+    candidate = RoutingCandidate(binding, head, arm=arm, seed=int(seed), span_head=span_head)
     candidate.configure_trainable()
     optimizer = make_routing_optimizer(candidate)
     return candidate, optimizer
@@ -138,6 +153,8 @@ def _trainable_names(candidate: RoutingCandidate) -> list[str]:
         if parameter.requires_grad
     ]
     names += [f"head.{name}" for name, _parameter in candidate.head.named_parameters()]
+    if candidate.span_head is not None:
+        names += [f"span.{name}" for name, _parameter in candidate.span_head.named_parameters()]
     return names
 
 
@@ -187,6 +204,14 @@ def save_routing_bundle(
         "parameters": candidate_parameter_map(candidate.binding),
         "head_parameters": dict(candidate.head.state_dict()),
         "head_parameter_count": sum(parameter.numel() for parameter in candidate.head.parameters()),
+        "span_head_parameters": (
+            dict(candidate.span_head.state_dict()) if candidate.span_head is not None else {}
+        ),
+        "span_head_parameter_count": (
+            sum(parameter.numel() for parameter in candidate.span_head.parameters())
+            if candidate.span_head is not None
+            else 0
+        ),
         "trainable_names": _trainable_names(candidate),
         "state": state.payload(),
         "optimizer": optimizer.state_dict(),
@@ -218,7 +243,23 @@ def load_routing_bundle(path: str | Path) -> tuple[
         RoutingConfig(**payload["routing_config"]), seed=int(payload["seed"])
     )
     head.load_state_dict(payload["head_parameters"])
-    candidate = RoutingCandidate(binding, head, arm=str(payload["arm"]), seed=int(payload["seed"]))
+    span_head = None
+    if payload.get("span_head_parameters"):
+        span_head = SpanPointerHead(
+            RoutingConfig(**payload["routing_config"]), seed=int(payload["seed"])
+        )
+        span_head.load_state_dict(payload["span_head_parameters"])
+        if int(payload["span_head_parameter_count"]) != expected_span_parameter_count(
+            RoutingConfig(**payload["routing_config"])
+        ):
+            raise ValueError("routing bundle span head parameter count drifted")
+    candidate = RoutingCandidate(
+        binding,
+        head,
+        arm=str(payload["arm"]),
+        seed=int(payload["seed"]),
+        span_head=span_head,
+    )
     candidate.configure_trainable()
     names = _trainable_names(candidate)
     if names != list(payload["trainable_names"]):
@@ -243,6 +284,9 @@ def parameter_tensors(candidate: RoutingCandidate) -> dict[str, torch.Tensor]:
         tensors[f"binding.{name}"] = parameter.detach().to(torch.float64).cpu().clone()
     for name, parameter in candidate.head.named_parameters():
         tensors[f"head.{name}"] = parameter.detach().to(torch.float64).cpu().clone()
+    if candidate.span_head is not None:
+        for name, parameter in candidate.span_head.named_parameters():
+            tensors[f"span.{name}"] = parameter.detach().to(torch.float64).cpu().clone()
     return tensors
 
 

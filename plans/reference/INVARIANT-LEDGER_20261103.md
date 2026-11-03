@@ -92,3 +92,9 @@ P3首步强制实体起点的时点与目标实体阶段不同。P4只在alpha/b
 工作树新pointer及强制cursor使T3隔离控制720/720通过，该结果与旧锚点失败分版本记录。完整主体f32、正常pointer/span配置、逐组信用、step/prefix_cursor和非零m恢复仍需补全。旧17.3价格、17.4值恢复不能直接覆盖变化后的图/schema。
 
 [系统计划](PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md)在17–22持续维护L1–L14。18原文绑定及跨轮状态、19经历与信念修订、20反馈保持及最小任务出生、21真实世界/有用活动、22扩规模与终审。当前无合格父时保持明确不可判，现有09快权重/出生/恢复资产按其范围复用，根目标不因当前任务范围而删除。
+
+## 8. 证据文件保留与命名硬规则（后续包可直接引用）
+
+**规则。** 任何重跑、改图后复测或仪器修订，**不得复用既有证据文件名**：必须写入带阶段变体后缀的新文件（`_r2_postfix_YYYYMMDD`、`_v2`、`_v3` 等），旧文件字节保持不变。旧文件的状态不在其 JSON 正文里追加字段，而是由旁挂 `<原文件名>.superseded.json` 声明 `status: superseded`、`superseded_by`、`superseded_at` 和一句原因；旁挂与清单（`plans/manifests/taiji_selection_routing_17_2r_supersession_20261103.json`）共同构成可引用的状态来源。报告、manifest 与 plans 引用旧数字时必须同时引用旁挂或标 `superseded`。
+
+**事故案例（2026-11-03）。** 17 图由软扩散 transport 改为点 transport 后，重跑脚本沿用原名，覆盖了 5 份改前证据：`reports/taiji_selection_routing_17_2_t3_supplement_20261103.json`（701/720 失败、min 2.08e-36 被写成 720/720 通过）、`reports/taiji_selection_routing_17_4_preflight_20261103.json`（46.08 CPU / 18 Adam 与 step1 哈希被新图读数替换）、`reports/taiji_selection_routing_17_3_verify_20261103.json`（T1/T3 读数漂移），以及对应的两份 `plans/manifests/...`。恢复方式：先把新读数另存为 `_r2_postfix_20261103`，再从 `HEAD` 取回旧字节（不用 `git checkout HEAD --`），最后以旁挂标注 superseded；恢复后读数为旧 T3 701/720 失败、旧预检 step1 `1f1bd64d…`、旧 verify T1 nll 2.4209521。本条为当前唯一权威表述，后续包引用本节而非事故叙述本身。

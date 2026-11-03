@@ -51,24 +51,29 @@ from taiji.binding_copy import (  # noqa: E402
     prepare,
 )
 from taiji.binding_select import load_bundle  # noqa: E402
+from taiji.candidate_identity import candidate_identity  # noqa: E402
 from taiji.living_core import EOS  # noqa: E402
 from taiji.selection_routing import (  # noqa: E402
     OrderedSelectionHead,
     RoutingConfig,
+    SpanPointerHead,
     _advanced_state,
     _s_t,
     build_context,
     route_labels,
     routing_step,
 )
+from taiji.selection_routing_checkpoint import RoutingCandidate  # noqa: E402
 
 BUNDLE = Path("output/taiji_core_binding_select_16_1_compare/bundles/28031-A-locked-step300.pt")
 COMPARE_SCRIPT = Path("scripts/training/verify_taiji_binding_select_16_1_compare.py")
 SELECT_PAYLOAD = Path("output/taiji_core_binding_select_16_1/select_v1.json")
 DATA_PAYLOAD = Path("output/taiji_core_binding_copy_15_1/data_v2.json")
 SCRIPT = Path("scripts/training/verify_taiji_selection_routing_17_2_t3_supplement.py")
-OUT = Path("reports/taiji_selection_routing_17_2_t3_supplement_20261103.json")
-MANIFEST = Path("plans/manifests/taiji_selection_routing_17_2_t3_supplement_20261103.json")
+OUT = Path("reports/taiji_selection_routing_17_2_t3_supplement_20261103_v3.json")
+MANIFEST = Path("plans/manifests/taiji_selection_routing_17_2_t3_supplement_20261103_v3.json")
+SUPERSEDED_REPORT = "reports/taiji_selection_routing_17_2_t3_supplement_20261103.json"
+SUPERSEDED_MANIFEST = "plans/manifests/taiji_selection_routing_17_2_t3_supplement_20261103.json"
 
 ARM = "B_stop_lock"
 HEAD_SEED = 1731
@@ -141,21 +146,33 @@ def forced_probability_f32(
     m: torch.Tensor,
     alpha: torch.Tensor,
     betas: tuple[torch.Tensor, ...],
+    pointer: tuple[torch.Tensor, ...],
+    m_override: torch.Tensor,
     gold: int,
+    force_position: bool,
 ) -> float:
     with torch.no_grad():
+        force = {
+            "alpha": alpha.float(),
+            "betas": tuple(row.float() for row in betas),
+        }
+        if force_position:
+            force["pointer"] = tuple(row.float() for row in pointer)
         read32 = reader32.read(
             s_t.float(),
             previous_embedding.float(),
             goal_units.float(),
             view32,
             m.float() if m.numel() else m,
-            force={"alpha": alpha.float(), "betas": tuple(row.float() for row in betas)},
+            force=force,
+            m_override=m_override.float() if force_position else None,
         )
     return float(read32.copy_byte_mass[gold])
 
 
-def evaluate_fixture(binding, reader32, head, fixture: dict) -> tuple[dict, list[dict]]:
+def evaluate_fixture(
+    binding, reader32, head, fixture: dict, *, force_position: bool = True
+) -> tuple[dict, list[dict]]:
     goal = fixture["goal"].encode("utf-8")
     prepared = prepare(
         binding,
@@ -240,6 +257,7 @@ def evaluate_fixture(binding, reader32, head, fixture: dict) -> tuple[dict, list
                     offset=offset,
                     gate_index=gate_index,
                     gamma_override=0.0,
+                    force_position=force_position,
                 )
                 read = forced.read
                 probabilities = forced.probabilities
@@ -260,9 +278,13 @@ def evaluate_fixture(binding, reader32, head, fixture: dict) -> tuple[dict, list
                 row_delta = bool(abs(float(row_values.max()) - 1.0) <= TOL)
                 lam = float(read.continuation)
                 m_mass = float(read.m_mass)
-                m_gold = float(byte_mass(state.m, view.byte_ids)[gold_byte])
+                m_gold = (
+                    1.0 if force_position else float(byte_mass(state.m, view.byte_ids)[gold_byte])
+                )
                 transport_component = (1.0 - lam * m_mass) * s_gold
                 cursor_component = lam * m_gold
+                m_override = torch.zeros_like(state.m)
+                m_override[view.slice(label).start + offset] = 1.0
                 p32 = forced_probability_f32(
                     reader32,
                     _s_t(binding, prepared, state, previous),
@@ -272,7 +294,10 @@ def evaluate_fixture(binding, reader32, head, fixture: dict) -> tuple[dict, list
                     state.m,
                     read.alpha,
                     read.betas,
+                    read.pointer,
+                    m_override,
                     gold_byte,
+                    force_position,
                 )
                 natural_q = step.q_bytes
                 if natural_q.numel() and float(natural_q.sum()) > 0.0:
@@ -365,6 +390,15 @@ def main() -> int:
     binding = load_bundle(ROOT / BUNDLE, torch.float64)[0].binding
     reader32 = make_reader32(binding)
     head = OrderedSelectionHead(RoutingConfig(), seed=HEAD_SEED)
+    identity_candidate = RoutingCandidate(
+        binding,
+        head,
+        arm=ARM,
+        seed=HEAD_SEED,
+        span_head=SpanPointerHead(RoutingConfig(), seed=HEAD_SEED),
+    )
+    identity_candidate.configure_trainable()
+    identity = candidate_identity(identity_candidate)
 
     summaries = []
     readings: list[dict] = []
@@ -383,6 +417,16 @@ def main() -> int:
                 ensure_ascii=False,
             )
         )
+
+    old_rows: list[dict] = []
+    for fixture in dev:
+        _summary, rows = evaluate_fixture(binding, reader32, head, fixture, force_position=False)
+        old_rows.extend(rows)
+    old_record_rows = [row for row in old_rows if row["kind"] == "record"]
+    old_p64 = [row["p64"] for row in old_record_rows]
+    old_fail64 = [row for row in old_record_rows if not row["pass64"]]
+    old_p32 = [row["p32"] for row in old_record_rows]
+    old_fail32 = [row for row in old_record_rows if not row["pass32"]]
 
     record_rows = [row for row in readings if row["kind"] == "record"]
     p64 = [row["p64"] for row in record_rows]
@@ -461,10 +505,29 @@ def main() -> int:
         "passed": bool(not fail64 and not fail32),
     }
 
+    old_comparison = {
+        "method": "alpha/beta forced only; pointer and cursor stay natural (pre-Plan-A method)",
+        "steps": len(old_record_rows),
+        "f64_failed_steps": len(old_fail64),
+        "f64_pass_rate": (len(old_record_rows) - len(old_fail64)) / max(1, len(old_record_rows)),
+        "f64": span(old_p64),
+        "f32_failed_steps": len(old_fail32),
+        "f32": span(old_p32),
+        "threshold_f64": 1.0 - TOL,
+        "threshold_f32": 1.0 - TOL_F32,
+    }
+
     report = {
-        "schema": "taiji-selection-routing-17-2-t3-supplement-v2",
+        "schema": "taiji-selection-routing-17-2-t3-supplement-v3",
         "step": "N17.2-supplement",
         "date": "2026-11-03",
+        "candidate": identity,
+        "supersedes": {
+            "path": SUPERSEDED_REPORT,
+            "manifest": SUPERSEDED_MANIFEST,
+            "status": "superseded",
+            "reason": "v2 has no candidate identity; v3 carries the same graph, the same readings and the single candidate_sha",
+        },
         "t3_definition": {
             "ledger": "INVARIANT-LEDGER_20261103 T3",
             "quote": (
@@ -474,7 +537,9 @@ def main() -> int:
             "failure_rule": "失败先查干预和映射，不能用追加位置训练代替",
             "intervention": (
                 "alpha one-hot gold record, beta one-hot gold byte position of that record, "
-                "gamma_override=0, q_null=0"
+                "pointer one-hot at the same gold byte, cursor m one-hot at the same gold byte, "
+                "gamma_override=0, q_null=0. The pre-Plan-A alpha/beta-only method is kept as "
+                "comparison_old_method, not as the pass gate."
             ),
             "population": "40 dev examples x 18 record steps = 720 steps",
             "gate": "f64 >= 1-1e-12 and f32 >= 1-1e-6 at every record step",
@@ -492,6 +557,7 @@ def main() -> int:
         },
         "data": audit,
         "forced_gold_probability": t3,
+        "comparison_old_method": old_comparison,
         "diagnostics": {
             "unforced_gold_probability": {
                 **span(natural_gold),
@@ -608,9 +674,17 @@ def main() -> int:
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     manifest = {
-        "schema": "taiji-selection-routing-17-2-t3-supplement-manifest-v2",
+        "schema": "taiji-selection-routing-17-2-t3-supplement-manifest-v3",
         "step": "N17.2-supplement",
         "date": "2026-11-03",
+        "candidate_sha": identity["candidate_sha"],
+        "parameter_counts": identity["parameter_counts"],
+        "supersedes": {
+            "path": SUPERSEDED_MANIFEST,
+            "report": SUPERSEDED_REPORT,
+            "status": "superseded",
+            "reason": "v2 manifest lacks candidate_sha",
+        },
         "passed": t3["passed"],
         "report": {
             "path": str(OUT),
@@ -626,6 +700,7 @@ def main() -> int:
                 "taiji/record_relation.py",
                 "taiji/record_relation_core.py",
                 "taiji/living_core.py",
+                "taiji/candidate_identity.py",
                 "scripts/training/verify_taiji_binding_select_16_1_compare.py",
                 str(SCRIPT),
             )

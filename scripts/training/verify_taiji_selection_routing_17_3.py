@@ -35,7 +35,12 @@ import torch  # noqa: E402
 
 torch.set_num_threads(1)
 
-from taiji.binding_copy import forced_read, initial_binding_state, prepare  # noqa: E402
+from taiji.binding_copy import (  # noqa: E402
+    forced_read,
+    initial_binding_state,
+    observe_goal,
+    prepare,
+)
 from taiji.binding_copy_scoring import score_generation  # noqa: E402
 from taiji.binding_select import (  # noqa: E402
     SelectionConfig,
@@ -49,11 +54,14 @@ from taiji.selection_routing import (  # noqa: E402
     OrderedSelectionHead,
     RoutingConfig,
     SpanPointerHead,
+    _advanced_state,
     build_context,
     expected_head_parameter_count,
     expected_span_parameter_count,
     route_labels,
+    routing_generate,
     routing_loss,
+    routing_step,
     selection_ce,
     span_loss,
     teacher_span,
@@ -332,6 +340,7 @@ def gold_span_gate(candidate, dev, limit: int = 40) -> dict:
                         offset=name_start + (emitted - 3),
                         gate_index=gate_index,
                         gamma_override=0.0,
+                        force_position=False,
                     )
                     forced_steps += 1
                 else:
@@ -386,6 +395,7 @@ def gold_span_gate(candidate, dev, limit: int = 40) -> dict:
         "object_exact_rate": object_rate,
         "place_exact_rate": place_rate,
         "completed_rate": completed_rate,
+        "method": "alpha/beta forced only; pointer and cursor stay natural (frozen pre-Plan-A method)",
         "gold_span_gate": ">=0.8 pass; 0.1-0.8 not_naked; <=0.1 force position supervision",
         "band": (
             "pass"
@@ -393,6 +403,177 @@ def gold_span_gate(candidate, dev, limit: int = 40) -> dict:
             else ("not_naked" if object_rate > 0.1 else "force_position_supervision")
         ),
         "rows": rows,
+    }
+
+
+def golden_offset(view, record_index: int, gold: int, previous: int) -> int:
+    raw = view.raw[record_index]
+    occurrences = [position for position, byte in enumerate(raw) if byte == gold]
+    if not occurrences:
+        raise RuntimeError(f"gold byte {gold} absent from record {record_index}")
+    matched = [
+        position
+        for position in occurrences
+        if previous != EOS and position > 0 and raw[position - 1] == previous
+    ]
+    return matched[0] if matched else occurrences[0]
+
+
+def probe_wrong_position(candidate, dev, head, limit: int = 40) -> dict:
+    """Counter-probe 1: force the pointer onto a wrong byte, gold must collapse."""
+    binding = candidate.binding if hasattr(candidate, "binding") else candidate
+    rows = []
+    with torch.no_grad():
+        for fixture in dev[:limit]:
+            goal = fixture["goal"].encode("utf-8")
+            prepared = prepare(
+                binding,
+                initial_binding_state(binding, f"17-wrong-{fixture['index']}"),
+                goal,
+                fixture["records"],
+            )
+            context = build_context(binding, goal, tuple(fixture["record_keys"]))
+            state, gate_index = observe_goal(binding, prepared, gate_index=0)
+            previous = EOS
+            for t in range(3):
+                step = routing_step(
+                    binding,
+                    prepared,
+                    state,
+                    previous,
+                    context,
+                    head,
+                    arm="B_stop_lock",
+                    gate_index=gate_index,
+                )
+                accepted = fixture["target_prefix"][t]
+                state, _, gate_index = _advanced_state(binding, prepared, step, accepted)
+                previous = accepted
+            label = int(fixture["selection_label"])
+            view = prepared.base.view
+            gold = int(fixture["target_bytes"][3])
+            gold_pos = golden_offset(view, label, gold, previous)
+            raw = view.raw[label]
+            wrong_pos = next(position for position in range(len(raw)) if raw[position] != gold)
+            control = forced_read(
+                binding,
+                prepared,
+                state,
+                previous,
+                record_index=label,
+                offset=gold_pos,
+                gate_index=gate_index,
+                gamma_override=0.0,
+                force_position=True,
+            )
+            wrong = forced_read(
+                binding,
+                prepared,
+                state,
+                previous,
+                record_index=label,
+                offset=wrong_pos,
+                gate_index=gate_index,
+                gamma_override=0.0,
+                force_position=True,
+            )
+            rows.append(
+                {
+                    "index": fixture["index"],
+                    "gold_byte": gold,
+                    "wrong_byte": int(raw[wrong_pos]),
+                    "control_gold": float(control.probabilities[gold]),
+                    "wrong_gold": float(wrong.probabilities[gold]),
+                    "wrong_wrong": float(wrong.probabilities[int(raw[wrong_pos])]),
+                }
+            )
+    control_min = min(row["control_gold"] for row in rows)
+    gold_max = max(row["wrong_gold"] for row in rows)
+    wrong_min = min(row["wrong_wrong"] for row in rows)
+    threshold = 1e-12
+    passed = bool(
+        control_min >= 1.0 - threshold and gold_max <= threshold and wrong_min >= 1.0 - threshold
+    )
+    return {
+        "n": len(rows),
+        "threshold": threshold,
+        "control_gold_min": control_min,
+        "wrong_gold_max": gold_max,
+        "wrong_byte_min": wrong_min,
+        "passed": passed,
+        "rows": rows,
+        "note": "forced pointer on a different byte; gamma=0 and q_null=0, so probabilities = copy mass",
+    }
+
+
+def probe_head_ablation(candidate, dev, span_head, limit: int = 40) -> dict:
+    """Counter-probe 2: remove the selection head, keep the position pointer."""
+    binding = candidate.binding if hasattr(candidate, "binding") else candidate
+    scores = []
+    point_rows = []
+    with torch.no_grad():
+        for fixture in dev[:limit]:
+            goal = fixture["goal"].encode("utf-8")
+            prepared = prepare(
+                binding,
+                initial_binding_state(binding, f"17-ablate-{fixture['index']}"),
+                goal,
+                fixture["records"],
+            )
+            context = build_context(binding, goal, tuple(fixture["record_keys"]))
+            generated = routing_generate(
+                binding,
+                prepared,
+                context,
+                None,
+                arm="A_route_lock",
+                span_head=span_head,
+                pointer_hard=True,
+            )
+            scored = score_generation(
+                generated["raw_bytes"], tuple(fixture["target_prefix"]), generated["terminated"]
+            )
+            scores.append(scored)
+            if fixture is dev[0]:
+                state, gate_index = observe_goal(binding, prepared, gate_index=0)
+                step = routing_step(
+                    binding,
+                    prepared,
+                    state,
+                    EOS,
+                    context,
+                    None,
+                    arm="A_route_lock",
+                    gate_index=gate_index,
+                    span_head=span_head,
+                    pointer_hard=True,
+                )
+                point_rows = [
+                    {
+                        "record": index,
+                        "max": float(pointer.max()),
+                        "sum": float(pointer.sum()),
+                    }
+                    for index, pointer in enumerate(step.pointer)
+                ]
+    n = len(scores)
+    object_rate = sum(1 for row in scores if row["object_exact"]) / n
+    place_rate = sum(1 for row in scores if row["place_exact"]) / n
+    completed_rate = sum(1 for row in scores if row["completed"]) / n
+    point_mass = all(
+        row["max"] >= 1.0 - 1e-12 and abs(row["sum"] - 1.0) <= 1e-12 for row in point_rows
+    )
+    threshold = 0.10
+    return {
+        "n": n,
+        "object_exact_rate": object_rate,
+        "place_exact_rate": place_rate,
+        "completed_rate": completed_rate,
+        "accuracy_threshold": threshold,
+        "point_mass_kept": point_mass,
+        "point_rows": point_rows,
+        "passed": bool(object_rate <= threshold and point_mass),
+        "note": "uniform route prior over records and null; the pointer stays a one-hot point",
     }
 
 
@@ -486,13 +667,19 @@ def finite_difference_block(candidate, dev) -> dict:
     fixture = dev[0]
     head = OrderedSelectionHead(RoutingConfig(), seed=1731)
     span_head = SpanPointerHead(RoutingConfig(), seed=1732)
-    prepared = prepare(
-        binding,
-        initial_binding_state(binding, "17-fd"),
-        fixture["goal"].encode("utf-8"),
-        fixture["records"],
-    )
-    context = build_context(binding, fixture["goal"].encode("utf-8"), tuple(fixture["record_keys"]))
+    with torch.no_grad():
+        # Frozen inputs: every FD below differentiates the head/span/mix
+        # parameters only, so the prepared view and context must not carry a
+        # shared graph that a previous backward would free.
+        prepared = prepare(
+            binding,
+            initial_binding_state(binding, "17-fd"),
+            fixture["goal"].encode("utf-8"),
+            fixture["records"],
+        )
+        context = build_context(
+            binding, fixture["goal"].encode("utf-8"), tuple(fixture["record_keys"])
+        )
     routes = route_labels(fixture)
 
     def selection_loss():
@@ -521,6 +708,24 @@ def finite_difference_block(candidate, dev) -> dict:
 
     candidate.configure_trainable()
 
+    def pointer_copy_objective():
+        return routing_loss(
+            binding,
+            prepared,
+            tuple(fixture["target_prefix"]),
+            tuple(fixture["target_bytes"]),
+            routes[0],
+            routes[1],
+            context,
+            head,
+            arm="B_stop_lock",
+            span_head=span_head,
+        )["nll"]
+
+    pointer_copy = fd_check(
+        "span_pointer_into_copy_nll", pointer_copy_objective, span_head.start.weight, (0, 0)
+    )
+
     def routing_objective():
         return routing_loss(
             binding,
@@ -544,7 +749,7 @@ def finite_difference_block(candidate, dev) -> dict:
         "Arm A straight-through is a surrogate gradient and is not FD-comparable "
         "to the hard-route forward; its VJP check belongs to 17.2."
     )
-    checks = [selection, span, routing]
+    checks = [selection, span, pointer_copy, routing]
     return {"checks": checks, "passed": all(item["passed"] for item in checks)}
 
 
@@ -658,7 +863,10 @@ def main() -> int:
     t1 = probe_target_label_separation(candidate, dev)
     t3 = gold_span_gate(candidate, dev)
     span_head = SpanPointerHead(RoutingConfig(), seed=1732)
+    probe_head = OrderedSelectionHead(RoutingConfig(), seed=1731)
     t4 = span_provenance(candidate, dev, span_head)
+    wrong_position = probe_wrong_position(candidate, dev, probe_head)
+    head_ablation = probe_head_ablation(candidate, dev, span_head)
     fd = finite_difference_block(candidate, dev)
     params = parameter_block(candidate)
     api = api_block()
@@ -696,6 +904,8 @@ def main() -> int:
         "t2_r1_gate": t2,
         "t3_gold_span_gate": t3,
         "t4_span_provenance": t4,
+        "counter_probe_wrong_position": wrong_position,
+        "counter_probe_head_ablation": head_ablation,
         "t5_fd": fd,
         "t7_parameters": params,
         "t11_api": api,
@@ -730,6 +940,8 @@ def main() -> int:
                 "t3_rate": t3["object_exact_rate"],
                 "t3_band": t3["band"],
                 "t4": t4["passed"],
+                "wrong_position": wrong_position["passed"],
+                "head_ablation": head_ablation["passed"],
                 "fd": fd["passed"],
                 "params": params["passed"],
                 "api": api["passed"],
@@ -747,6 +959,8 @@ def main() -> int:
                 t1["passed"],
                 t2["passed"],
                 t4["passed"],
+                wrong_position["passed"],
+                head_ablation["passed"],
                 fd["passed"],
                 params["passed"],
                 api["passed"],

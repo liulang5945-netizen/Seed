@@ -9,9 +9,11 @@ U1  Adam #1, selection stage, batch 8 -> save step-1 routing bundle;
 U2  Adam #2, same batch order -> prototype step-2 params/Adam/probability digests;
 R2  an independent spawn process loads the step-1 bundle, runs the same update 2
     as Adam #3, and must reproduce the three prototype digests bit for bit;
-C   teacher-force 12 object bytes to the object->place switch point, persist
-    BindingState (m/coverage/keys/prefix_cursor) plus previous byte and gate
-    index, restore in a process, and compare every later probability row.
+C   teacher-force the frozen target bytes to two checkpoints -- position 8
+    (mid-object copy, non-empty m) and position 15 (object->place switch, empty
+    m but non-empty coverage) -- persist BindingState (m/coverage/keys/
+    prefix_cursor) plus previous byte and gate index, restore in a process on
+    the *same* step-2 candidate, and compare every later probability row.
 
 A failure is reported with the observed differences; thresholds are never
 relaxed.  Temporary bundles are deleted after the comparison and their bytes
@@ -43,6 +45,7 @@ from taiji.binding_copy import (  # noqa: E402
     observe_goal,
     prepare,
 )
+from taiji.candidate_identity import candidate_identity  # noqa: E402
 from taiji.living_core import EOS  # noqa: E402
 from taiji.record_relation_core import CLIP_NORM  # noqa: E402
 from taiji.selection_routing import (  # noqa: E402
@@ -73,8 +76,8 @@ PARENTS = {
 COMPARE_SCRIPT = "scripts/training/verify_taiji_binding_select_16_1_compare.py"
 SELECT_PAYLOAD = "output/taiji_core_binding_select_16_1/select_v1.json"
 DATA_PAYLOAD = "output/taiji_core_binding_copy_15_1/data_v2.json"
-REPORT = Path("reports/taiji_selection_routing_17_4_preflight_20261103.json")
-MANIFEST = Path("plans/manifests/taiji_selection_routing_17_4_preflight_20261103.json")
+REPORT = Path("reports/taiji_selection_routing_17_4_preflight_20261103_v2.json")
+MANIFEST = Path("plans/manifests/taiji_selection_routing_17_4_preflight_20261103_v2.json")
 TMP_DIR = Path("output/taiji_core_selection_routing_17_4_preflight")
 
 SOURCE_FILES = (
@@ -84,13 +87,24 @@ SOURCE_FILES = (
     "taiji/binding_copy.py",
     "taiji/record_relation_core.py",
     "taiji/living_core.py",
+    "taiji/candidate_identity.py",
     "scripts/training/verify_taiji_binding_select_16_1_compare.py",
     "scripts/training/verify_taiji_selection_routing_17_4_preflight.py",
 )
 
 BATCH = 8
 UPDATES_PREFLIGHT = 2
-CHECKPOINT_T = 15  # 12 object bytes at [3, 15) plus the 3-byte "ba" prefix
+CHECKPOINTS = (2, 4, 6, 8, 10, 12, 14, 15)
+CHECKPOINT_LABELS = {
+    2: "prefix_before_object",
+    4: "object_first_2_bytes",
+    6: "object_4_bytes",
+    8: "mid_object_copy",
+    10: "object_7_bytes",
+    12: "object_9_bytes",
+    14: "object_last_byte",
+    15: "object_to_place_switch",
+}
 OBJECT_BYTES_ADVANCED = 12
 FIXTURE_INDEX = 0
 ADAM_PER_CELL = 3
@@ -156,6 +170,8 @@ def trainable_names(candidate) -> list[str]:
         if parameter.requires_grad
     ]
     names += [f"head.{name}" for name, _parameter in candidate.head.named_parameters()]
+    if candidate.span_head is not None:
+        names += [f"span.{name}" for name, _parameter in candidate.span_head.named_parameters()]
     return names
 
 
@@ -247,7 +263,7 @@ def teacher_forced_rows(candidate, fixture: dict, arm: str, tag: str) -> list[to
     return rows
 
 
-def continuation_prototype(candidate, fixture: dict, arm: str, tag: str) -> dict:
+def continuation_prototype(candidate, fixture: dict, arm: str, tag: str, checkpoint_t: int) -> dict:
     initial, prepared, state, gate_index, context = forward_inputs(candidate, fixture, tag)
     rows_full, _state, _gate, _previous = advance_rows(
         candidate, prepared, context, state, gate_index, EOS, fixture, arm, 0, None
@@ -265,7 +281,7 @@ def continuation_prototype(candidate, fixture: dict, arm: str, tag: str) -> dict
         fixture,
         arm,
         0,
-        CHECKPOINT_T,
+        checkpoint_t,
     )
     rows_cont, _state, _gate, _previous = advance_rows(
         candidate,
@@ -276,7 +292,7 @@ def continuation_prototype(candidate, fixture: dict, arm: str, tag: str) -> dict
         previous_mid,
         fixture,
         arm,
-        CHECKPOINT_T,
+        checkpoint_t,
         None,
     )
     return {
@@ -297,6 +313,7 @@ def state_statistics(state) -> dict:
         "coverage_numel": int(coverage.numel()),
         "m_nonzero": int((m != 0).sum()),
         "coverage_nonzero": int((coverage != 0).sum()),
+        "coverage_sum": float(coverage.sum()),
         "m_shape": list(m.shape),
         "coverage_shape": list(coverage.shape),
         "keys": len(state.keys),
@@ -360,9 +377,23 @@ def _restore_worker(spec: dict) -> None:
             teacher_forced_rows(candidate, fixture, spec["arm"], f"{spec['seed']}-restore-probs"),
             reference=reference["probabilities"],
         )
-        state_payload = torch.load(spec["state"], map_location="cpu", weights_only=True)
-        rows, state_ok = restored_continuation_rows(candidate, fixture, state_payload, spec["arm"])
-        continuation = digest_probabilities(rows, reference=reference["continuation"])
+        continuations = {}
+        for checkpoint_t in spec["checkpoints"]:
+            state_payload = torch.load(
+                spec["states"][str(checkpoint_t)], map_location="cpu", weights_only=True
+            )
+            rows, state_ok = restored_continuation_rows(
+                candidate, fixture, state_payload, spec["arm"]
+            )
+            digest = digest_probabilities(
+                rows, reference=reference["continuations"][int(checkpoint_t)]
+            )
+            continuations[str(checkpoint_t)] = {
+                "probs_max_abs_diff": digest["max_abs_diff"],
+                "rows_compared": digest["rows"],
+                "sha256": digest["sha256"],
+                "state_keys_match": bool(state_ok),
+            }
         result = {
             "ok": True,
             "seed": int(spec["seed"]),
@@ -373,17 +404,12 @@ def _restore_worker(spec: dict) -> None:
             "parameter_sha256": params["sha256"],
             "adam_sha256": moments["sha256"],
             "probs_sha256": probabilities["sha256"],
-            "continuation_sha256": continuation["sha256"],
             "restore": {
                 "params_max_abs_diff": params["max_abs_diff"],
                 "adam_max_abs_diff": moments["max_abs_diff"],
                 "probs_max_abs_diff": probabilities["max_abs_diff"],
             },
-            "continuation": {
-                "probs_max_abs_diff": continuation["max_abs_diff"],
-                "rows_compared": continuation["rows"],
-                "state_keys_match": bool(state_ok),
-            },
+            "continuation": continuations,
             "binding_sha256": binding_digest(candidate.binding),
             "nontrainable_sha256": binding_digest(candidate.binding, trainable=False),
         }
@@ -450,7 +476,10 @@ def route_audit(fixture: dict) -> dict:
         "record_count": record_count,
         "object_positions": object_positions[:12],
         "null_positions": null_positions,
-        "null_positions_after_checkpoint": [t for t in null_positions if t >= CHECKPOINT_T],
+        "null_positions_after_checkpoint": {
+            str(checkpoint_t): [t for t in null_positions if t >= checkpoint_t]
+            for checkpoint_t in CHECKPOINTS
+        },
         "stages": sorted(set(route_stage)),
     }
 
@@ -463,6 +492,7 @@ def run_cell(seed: int, arm: str, train, dev, module, artifacts: list[dict]) -> 
     parent_bytes = parent_path.stat().st_size
 
     candidate, optimizer = build_routing_candidate(parent_path, seed, arm)
+    identity = candidate_identity(candidate)
     binding_before = binding_digest(candidate.binding)
     nontrainable_before = binding_digest(candidate.binding, trainable=False)
     names = trainable_names(candidate)
@@ -500,46 +530,69 @@ def run_cell(seed: int, arm: str, train, dev, module, artifacts: list[dict]) -> 
     audit = route_audit(fixture)
     prototype_params = digest_parameters(candidate)
     prototype_moments = digest_optimizer_moments(optimizer)
-    continuation = continuation_prototype(candidate, fixture, arm, f"{tag}-continuation")
-    prototype_probs = digest_probabilities(continuation["rows_full"])
-    prototype_continuation = digest_probabilities(continuation["rows_continuation"])
-    stats = state_statistics(continuation["mid_state"])
+    continuations = {}
+    for checkpoint_t in CHECKPOINTS:
+        continuations[checkpoint_t] = continuation_prototype(
+            candidate,
+            fixture,
+            arm,
+            f"{tag}-continuation-{checkpoint_t}",
+            checkpoint_t,
+        )
+    prototype_probs = digest_probabilities(continuations[CHECKPOINTS[0]]["rows_full"])
+    prototype_continuations = {
+        checkpoint_t: digest_probabilities(row["rows_continuation"])
+        for checkpoint_t, row in continuations.items()
+    }
+    stats_by_checkpoint = {
+        checkpoint_t: state_statistics(row["mid_state"])
+        for checkpoint_t, row in continuations.items()
+    }
 
     reference_path = TMP_DIR / f"{tag}-reference.pt"
     torch.save(
         {
             "parameters": parameter_tensors(candidate),
             "moments": optimizer_moment_tensors(optimizer),
-            "probabilities": continuation["rows_full"],
-            "continuation": continuation["rows_continuation"],
+            "probabilities": continuations[CHECKPOINTS[0]]["rows_full"],
+            "continuations": {
+                checkpoint_t: row["rows_continuation"]
+                for checkpoint_t, row in continuations.items()
+            },
         },
         reference_path,
     )
     reference_entry = file_entry(reference_path, "prototype_reference")
     artifacts.append(reference_entry)
 
-    state_path = TMP_DIR / f"{tag}-state.pt"
-    torch.save(
-        {
-            "initial_state": continuation["initial_payload"],
-            "mid_state": continuation["mid_state"].payload(),
-            "previous": continuation["previous"],
-            "gate_index": continuation["gate_index"],
-            "checkpoint_t": CHECKPOINT_T,
-            "fixture_index": FIXTURE_INDEX,
-            "arm": arm,
-            "seed": seed,
-        },
-        state_path,
-    )
-    state_entry = file_entry(state_path, "continuation_state")
-    artifacts.append(state_entry)
+    state_entries = []
+    state_paths = {}
+    for checkpoint_t, row in continuations.items():
+        state_path = TMP_DIR / f"{tag}-state-{checkpoint_t}.pt"
+        torch.save(
+            {
+                "initial_state": row["initial_payload"],
+                "mid_state": row["mid_state"].payload(),
+                "previous": row["previous"],
+                "gate_index": row["gate_index"],
+                "checkpoint_t": checkpoint_t,
+                "fixture_index": FIXTURE_INDEX,
+                "arm": arm,
+                "seed": seed,
+            },
+            state_path,
+        )
+        state_paths[str(checkpoint_t)] = str(state_path.resolve())
+        entry = file_entry(state_path, f"continuation_state_{checkpoint_t}")
+        state_entries.append(entry)
+        artifacts.append(entry)
 
     result_path = TMP_DIR / f"{tag}-restore.json"
     spec = {
         "step1": str(step1_path.resolve()),
         "reference": str(reference_path.resolve()),
-        "state": str(state_path.resolve()),
+        "states": state_paths,
+        "checkpoints": list(CHECKPOINTS),
         "result": str(result_path.resolve()),
         "seed": seed,
         "arm": arm,
@@ -583,54 +636,89 @@ def run_cell(seed: int, arm: str, train, dev, module, artifacts: list[dict]) -> 
             and child.get("probs_sha256") == prototype_probs["sha256"]
         )
 
-    continuation_block = {
-        "fixture_index": FIXTURE_INDEX,
-        "checkpoint_position": CHECKPOINT_T,
-        "bytes_consumed": CHECKPOINT_T,
-        "prefix_bytes": CHECKPOINT_T - OBJECT_BYTES_ADVANCED,
-        "object_bytes_advanced": OBJECT_BYTES_ADVANCED,
-        "steps_compared": prototype_continuation["rows"],
-        "probs_max_abs_diff": child.get("continuation", {}).get("probs_max_abs_diff"),
-        "restored_rows": child.get("continuation", {}).get("rows_compared"),
-        "all_bitwise_equal": False,
-        "prototype_sha256": prototype_continuation["sha256"],
-        "restored_sha256": child.get("continuation_sha256"),
-        "keys_match": child.get("continuation", {}).get("state_keys_match"),
-        "previous_byte": continuation["previous"],
-        "gate_index": continuation["gate_index"],
-        "previous_byte_is_last_object_byte": continuation["previous"]
-        == fixture["target_prefix"][CHECKPOINT_T - 1],
-        "state": stats,
-        "route": {
-            "object_positions": audit["object_positions"],
-            "null_positions_in_sequence": audit["null_positions"],
-            "null_positions_after_checkpoint": audit["null_positions_after_checkpoint"],
-            "record_count": audit["record_count"],
-            "null_route_covered": bool(audit["null_positions_after_checkpoint"]),
-        },
+    continuation_blocks = {}
+    for checkpoint_t in CHECKPOINTS:
+        row = continuations[checkpoint_t]
+        child_cont = (child.get("continuation") or {}).get(str(checkpoint_t), {})
+        block = {
+            "label": CHECKPOINT_LABELS[checkpoint_t],
+            "fixture_index": FIXTURE_INDEX,
+            "checkpoint_position": checkpoint_t,
+            "bytes_consumed": checkpoint_t,
+            "prefix_bytes": checkpoint_t - OBJECT_BYTES_ADVANCED,
+            "object_bytes_advanced": checkpoint_t - 3,
+            "steps_compared": prototype_continuations[checkpoint_t]["rows"],
+            "probs_max_abs_diff": child_cont.get("probs_max_abs_diff"),
+            "restored_rows": child_cont.get("rows_compared"),
+            "all_bitwise_equal": False,
+            "prototype_sha256": prototype_continuations[checkpoint_t]["sha256"],
+            "restored_sha256": child_cont.get("sha256"),
+            "keys_match": child_cont.get("state_keys_match"),
+            "previous_byte": row["previous"],
+            "gate_index": row["gate_index"],
+            "previous_byte_is_target_prefix_at_checkpoint": row["previous"]
+            == fixture["target_prefix"][checkpoint_t - 1],
+            "state": stats_by_checkpoint[checkpoint_t],
+            "route": {
+                "object_positions": audit["object_positions"],
+                "null_positions_in_sequence": audit["null_positions"],
+                "null_positions_after_checkpoint": audit["null_positions_after_checkpoint"][
+                    str(checkpoint_t)
+                ],
+                "record_count": audit["record_count"],
+                "null_route_covered": bool(
+                    audit["null_positions_after_checkpoint"][str(checkpoint_t)]
+                ),
+            },
+        }
+        if child_ok:
+            block["all_bitwise_equal"] = bool(
+                child_cont.get("probs_max_abs_diff") == 0.0
+                and child_cont.get("sha256") == prototype_continuations[checkpoint_t]["sha256"]
+                and child_cont.get("rows_compared") == prototype_continuations[checkpoint_t]["rows"]
+                and child_cont.get("state_keys_match")
+            )
+        continuation_blocks[str(checkpoint_t)] = block
+
+    object_states = {
+        checkpoint_t: block["state"]
+        for checkpoint_t, block in continuation_blocks.items()
+        if 3 <= int(checkpoint_t) <= 14
     }
-    if child_ok:
-        continuation_block["all_bitwise_equal"] = bool(
-            child["continuation"]["probs_max_abs_diff"] == 0.0
-            and child.get("continuation_sha256") == prototype_continuation["sha256"]
-            and child["continuation"]["rows_compared"] == prototype_continuation["rows"]
-            and child["continuation"]["state_keys_match"]
-        )
-
-    non_empty_state = bool(
-        stats["m_numel"] > 0 and stats["coverage_numel"] > 0 and stats["coverage_nonzero"] > 0
-    )
-
+    non_empty_positions = [
+        int(checkpoint_t)
+        for checkpoint_t, state in object_states.items()
+        if state["m_numel"] > 0 and state["m_nonzero"] > 0 and state["coverage_nonzero"] > 0
+    ]
+    non_empty_state = bool(non_empty_positions)
+    mid_copy_contrast = continuation_blocks.get("8", {}).get("state")
+    switch_point = continuation_blocks[str(CHECKPOINTS[-1])]
     cell = {
         "seed": seed,
         "arm": arm,
+        "candidate": identity,
         "adam_calls": 2 + int(child.get("adam_calls", 0)),
         "step1_sha256": step1["sha256"],
         "step1_bytes": step1["bytes"],
         "updates": [update_1, update_2],
         "restore": restore,
-        "continuation": continuation_block,
+        "continuation": continuation_blocks,
         "non_empty_state": non_empty_state,
+        "non_empty_mid_copy": bool(non_empty_positions),
+        "non_empty_positions": non_empty_positions,
+        "object_state_table": {
+            checkpoint_t: {
+                "m_nonzero": state["m_nonzero"],
+                "m_numel": state["m_numel"],
+                "coverage_nonzero": state["coverage_nonzero"],
+                "coverage_sum": state["coverage_sum"],
+                "prefix_cursor": state.get("prefix_cursor"),
+            }
+            for checkpoint_t, state in object_states.items()
+        },
+        "empty_mid_contrast_at_8": mid_copy_contrast,
+        "switch_point_m": switch_point["state"]["m_nonzero"],
+        "switch_point_coverage_nonzero": switch_point["state"]["coverage_nonzero"],
         "parent_unchanged": parent_unchanged,
         "protection": protection,
         "parameter_names_sha256": names_digest,
@@ -641,7 +729,10 @@ def run_cell(seed: int, arm: str, train, dev, module, artifacts: list[dict]) -> 
             "parameter_sha256": prototype_params["sha256"],
             "adam_sha256": prototype_moments["sha256"],
             "probs_sha256": prototype_probs["sha256"],
-            "continuation_sha256": prototype_continuation["sha256"],
+            "continuation_sha256": {
+                str(checkpoint_t): row["sha256"]
+                for checkpoint_t, row in prototype_continuations.items()
+            },
         },
         "parent": {
             "path": parent_rel,
@@ -656,9 +747,9 @@ def run_cell(seed: int, arm: str, train, dev, module, artifacts: list[dict]) -> 
         },
         "artifacts": [],
     }
-    discard_entries = [entry for entry in (reference_entry, state_entry, result_entry) if entry]
+    discard_entries = [entry for entry in (reference_entry, *state_entries, result_entry) if entry]
     cell["artifacts"] = discard(discard_entries)
-    del candidate, optimizer, continuation
+    del candidate, optimizer, continuations
     gc.collect()
     torch.set_num_threads(1)
     return cell
@@ -667,8 +758,9 @@ def run_cell(seed: int, arm: str, train, dev, module, artifacts: list[dict]) -> 
 def cell_passed(cell: dict) -> bool:
     return bool(
         cell["restore"]["all_bitwise_equal"]
-        and cell["continuation"]["all_bitwise_equal"]
+        and all(block["all_bitwise_equal"] for block in cell["continuation"].values())
         and cell["non_empty_state"]
+        and cell["non_empty_mid_copy"]
         and cell["parent_unchanged"]
         and cell["protection"]["binding_unchanged"]
         and cell["protection"]["nontrainable_unchanged"]
@@ -687,9 +779,14 @@ def failure_reason(cell: dict) -> str:
             f"adam={cell['restore']['adam_max_abs_diff']} "
             f"probs={cell['restore']['probs_max_abs_diff']}"
         )
-    if not cell["continuation"]["all_bitwise_equal"]:
-        reasons.append(f"continuation mismatch diff={cell['continuation']['probs_max_abs_diff']}")
-    if not cell["non_empty_state"]:
+    for checkpoint_t, block in cell["continuation"].items():
+        if not block["all_bitwise_equal"]:
+            reasons.append(
+                f"continuation t={checkpoint_t} mismatch diff={block['probs_max_abs_diff']}"
+            )
+    if not cell["non_empty_mid_copy"]:
+        reasons.append("no non-empty m/coverage at any object-span checkpoint (3..14)")
+    elif not cell["non_empty_state"]:
         reasons.append("checkpoint m/coverage is empty")
     if not cell["parent_unchanged"]:
         reasons.append("parent bundle bytes changed")
@@ -708,7 +805,7 @@ def main() -> int:
     module = load_compare_module()
     artifacts: list[dict] = []
     cells: list[dict] = []
-    stop_reason = None
+    failures: list[str] = []
     for seed in SEEDS:
         for arm in ARMS:
             cell = run_cell(seed, arm, train, dev, module, artifacts)
@@ -719,28 +816,41 @@ def main() -> int:
                         "cell": f"{seed}-{arm}",
                         "adam": cell["adam_calls"],
                         "restore": cell["restore"]["all_bitwise_equal"],
-                        "continuation": cell["continuation"]["all_bitwise_equal"],
+                        "continuation": {
+                            key: block["all_bitwise_equal"]
+                            for key, block in cell["continuation"].items()
+                        },
+                        "non_empty_positions": cell["non_empty_positions"],
+                        "m_at_8": cell["empty_mid_contrast_at_8"]["m_nonzero"],
                         "state": cell["non_empty_state"],
+                        "candidate_sha": cell["candidate"]["candidate_sha"][:12],
                     },
                     ensure_ascii=False,
                 )
             )
             if not cell_passed(cell):
-                stop_reason = f"{seed}-{arm}: {failure_reason(cell)}"
-                break
-        if stop_reason:
-            break
+                failures.append(f"{seed}-{arm}: {failure_reason(cell)}")
+    stop_reason = "; ".join(failures) or None
 
     # Discard the six step-1 bundles after the comparison; bytes stay registered.
     step1_entries = [entry for entry in artifacts if entry["kind"] == "routing_step1_bundle"]
     discard(step1_entries)
 
-    passed = stop_reason is None and len(cells) == len(SEEDS) * len(ARMS)
+    identity_shas = sorted({cell["candidate"]["candidate_sha"] for cell in cells})
+    if len(identity_shas) != 1:
+        stop_reason = stop_reason or f"candidate_sha mismatch across cells: {identity_shas}"
+    candidate_block = cells[0]["candidate"] if cells else None
+
+    passed = (
+        stop_reason is None and len(cells) == len(SEEDS) * len(ARMS) and len(identity_shas) == 1
+    )
     adam_steps = sum(cell["adam_calls"] for cell in cells)
     report = {
-        "schema": "taiji-selection-routing-17-4-preflight-v1",
+        "schema": "taiji-selection-routing-17-4-preflight-v2",
         "step": "N17.4",
         "date": "2026-11-03",
+        "candidate": candidate_block,
+        "candidate_sha_consistent": bool(len(identity_shas) == 1),
         "passed": bool(passed),
         "stop_reason": stop_reason,
         "cells": cells,
@@ -801,9 +911,17 @@ def main() -> int:
     REPORT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     manifest = {
-        "schema": "taiji-selection-routing-17-4-preflight-manifest-v1",
+        "schema": "taiji-selection-routing-17-4-preflight-manifest-v2",
         "step": "N17.4",
         "date": "2026-11-03",
+        "candidate_sha": candidate_block["candidate_sha"] if candidate_block else None,
+        "parameter_counts": candidate_block["parameter_counts"] if candidate_block else None,
+        "candidate_sha_consistent": bool(len(identity_shas) == 1),
+        "supersedes": {
+            "path": "reports/taiji_selection_routing_17_4_preflight_20261103.json",
+            "status": "superseded",
+            "reason": "before hard-point transport and mid-copy checkpoint",
+        },
         "report": {
             "path": str(REPORT),
             "bytes": REPORT.stat().st_size,
@@ -850,7 +968,10 @@ def main() -> int:
                 "step1_sha256": cell["step1_sha256"],
                 "step1_bytes": cell["step1_bytes"],
                 "restore_all_bitwise_equal": cell["restore"]["all_bitwise_equal"],
-                "continuation_all_bitwise_equal": cell["continuation"]["all_bitwise_equal"],
+                "continuation_all_bitwise_equal": {
+                    key: block["all_bitwise_equal"] for key, block in cell["continuation"].items()
+                },
+                "non_empty_mid_copy": cell["non_empty_mid_copy"],
             }
             for cell in cells
         ],
