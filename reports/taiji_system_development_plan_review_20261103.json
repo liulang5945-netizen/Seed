@@ -1,0 +1,1136 @@
+{
+  "schema": "taiji-system-development-plan-review-v1",
+  "date": "2026-11-03",
+  "observed_at": "2026-11-03T21:37:30+08:00",
+  "baseline_commit": "afd6d3b3b55f6f5333df9cde613bafdd1c961f19",
+  "current_head_at_review": "afd6d3b3b55f6f5333df9cde613bafdd1c961f19",
+  "scope": "Planning and read-only source/report review; no model execution. Working-tree source/report changes are concurrent work and are separately versioned.",
+  "committed_evidence": [
+    {
+      "commit": "afd6d3b3b",
+      "path": "reports/taiji_selection_routing_17_2_t3_supplement_20261103.json",
+      "blob": "33d5ae65720bcaaf49c95e06b38f1250eccddbd4",
+      "sha256": "86bc513dd08c56c86b6ccd20cf5c188b4328baaee3a2e003ebf9e0c0fa0a0017",
+      "bytes": 386216
+    },
+    {
+      "commit": "afd6d3b3b",
+      "path": "reports/taiji_selection_routing_17_4_preflight_20261103.json",
+      "blob": "1ffac2cec3beea2f27dd25ee35241e7b8047b17b",
+      "sha256": "d8312c163858f252104d63dee0b581b6062eb08e1fce3cec800c63bdbe93bb07",
+      "bytes": 41242
+    },
+    {
+      "commit": "afd6d3b3b",
+      "path": "reports/taiji_selection_routing_17_3_price_20261103.json",
+      "blob": "5633ebc5a0a4ef8cd6e0fa57790b0851d0ba1e13",
+      "sha256": "f74c5ce9818ccc133dec3eaad1bf75c36676b60abbc996b859a5b0725c016506",
+      "bytes": 10469
+    },
+    {
+      "commit": "afd6d3b3b",
+      "path": "reports/taiji_selection_routing_17_3_verify_20261103.json",
+      "blob": "cb4e011ad236a7032bc7c56e079a9c4b27b0cd10",
+      "sha256": "7e193f219544770056045843668f82ef215bc814f3cff5c40a01866dae0404a8",
+      "bytes": 18434
+    },
+    {
+      "commit": "afd6d3b3b",
+      "path": "reports/taiji_binding_select_16_1_attribution_20261103.json",
+      "blob": "75961d27799a3566aaa8c7b5f07bd2b7ae079fd9",
+      "sha256": "b985ffc84a9a44404baf3d6c9706c0e2fec3ac2b1fdc258edaf1dc0a62c6effb",
+      "bytes": 37095
+    }
+  ],
+  "observed_working_evidence": [
+    {
+      "path": "reports/taiji_selection_routing_17_2_t3_supplement_20261103.json",
+      "bytes": 16606,
+      "sha256_raw": "d278f1971194d917d152b9e92b47a4983b3354bc669a1d62b3d15d7abbd0046b",
+      "sha256_utf8_lf": "84b01dac652c387166c7633ceea70a8d42ee8e9583002b11cfdc4940d43f1dea"
+    },
+    {
+      "path": "reports/taiji_selection_routing_17_4_preflight_20261103.json",
+      "bytes": 42425,
+      "sha256_raw": "2c8d9cc48585f84b9075a7e8c5dd7dd2bf044b80db74ca5cb220ac0914f2a106",
+      "sha256_utf8_lf": "c816ead928b98afd6b519c0372811d6a81d28f843a91e0d06f293f406bab34cf"
+    },
+    {
+      "path": "reports/taiji_selection_routing_17_3_price_20261103.json",
+      "bytes": 10857,
+      "sha256_raw": "ebfb0a48bc636b4b00c6607fc8b539a73c3737a2f19825e835695d983f315fba",
+      "sha256_utf8_lf": "f74c5ce9818ccc133dec3eaad1bf75c36676b60abbc996b859a5b0725c016506"
+    },
+    {
+      "path": "reports/taiji_selection_routing_17_3_verify_20261103.json",
+      "bytes": 28736,
+      "sha256_raw": "eb78b77cd41837bee30a1d4293f2c97a1409dca4285c6628f0eb59ab6998da2f",
+      "sha256_utf8_lf": "b2e053d241b75e600833d743a238c320fc6beae17d6dae1f0b735b14c169ddf0"
+    },
+    {
+      "path": "reports/taiji_binding_select_16_1_attribution_20261103.json",
+      "bytes": 38382,
+      "sha256_raw": "74e308e26a9af06d40eacb8166cce2599b461fa2cd9117a658793c5855d6835f",
+      "sha256_utf8_lf": "b985ffc84a9a44404baf3d6c9706c0e2fec3ac2b1fdc258edaf1dc0a62c6effb"
+    }
+  ],
+  "t3_versioned_interpretation": {
+    "committed_passed": false,
+    "committed_forced_probability": {
+      "f64_threshold": 0.999999999999,
+      "f32_threshold": 0.999999,
+      "steps": 720,
+      "f64": {
+        "min": 2.08059833851332e-36,
+        "median": 4.573238500947299e-06,
+        "max": 1.0,
+        "passed_steps": 19,
+        "failed_steps": 701,
+        "passed": false
+      },
+      "f32": {
+        "min": 2.0805860784893038e-36,
+        "median": 4.573244041239377e-06,
+        "max": 1.0,
+        "passed_steps": 62,
+        "failed_steps": 658,
+        "passed": false
+      },
+      "passed": false
+    },
+    "committed_failure_layer": {
+      "layer": "architecture_transport_softmax_diffusion",
+      "explanation": "one-hot alpha/beta is spread by reader._transport, whose rows are softmax, not the identity; the arm has no post-transport R2a point-mass insertion",
+      "steps_below_f64": 701,
+      "steps_below_f32": 658,
+      "transport_diffusion_steps": 701,
+      "cursor_mixing_steps": 0,
+      "instrument_error_steps": 0,
+      "representative": {
+        "world": 0,
+        "index": 12,
+        "t": 13,
+        "route": 8,
+        "gold": 135,
+        "offset": 10,
+        "occurrences": 1,
+        "context_matched": true,
+        "p64": 2.08059833851332e-36,
+        "p32": 2.0805860784893038e-36,
+        "transport_gold": 2.0805983385133196e-36,
+        "transport_row_gold": 2.0805983385133196e-36,
+        "transport_row_argmax": 29,
+        "transport_row_delta": false,
+        "lambda": 0.9796869283262696,
+        "m_mass": 0.0,
+        "cursor_gold": 0.0,
+        "transport_component": 2.0805983385133196e-36,
+        "q_bytes_sum_forced": 1.0,
+        "gamma_eff": 0.0,
+        "q_null_forced": 0.0,
+        "probability_sum": 1.0,
+        "rebuild_error": 0.0
+      }
+    },
+    "working_passed": true,
+    "working_forced_probability": {
+      "f64_threshold": 0.999999999999,
+      "f32_threshold": 0.999999,
+      "steps": 720,
+      "f64": {
+        "min": 1.0,
+        "median": 1.0,
+        "max": 1.0,
+        "passed_steps": 720,
+        "failed_steps": 0,
+        "passed": true
+      },
+      "f32": {
+        "min": 1.0,
+        "median": 1.0,
+        "max": 1.0,
+        "passed_steps": 720,
+        "failed_steps": 0,
+        "passed": true
+      },
+      "passed": true
+    },
+    "working_definition": {
+      "ledger": "INVARIANT-LEDGER_20261103 T3",
+      "quote": "R2a 最终Q正确源字节一点质量、q_null=gamma=0 时，正确字节概率 f64≥1−1e-12、f32≥1−1e-6",
+      "failure_rule": "失败先查干预和映射，不能用追加位置训练代替",
+      "intervention": "alpha one-hot gold record, beta one-hot gold byte position of that record, pointer one-hot at the same gold byte, cursor m one-hot at the same gold byte, gamma_override=0, q_null=0. The pre-Plan-A alpha/beta-only method is kept as comparison_old_method, not as the pass gate.",
+      "population": "40 dev examples x 18 record steps = 720 steps",
+      "gate": "f64 >= 1-1e-12 and f32 >= 1-1e-6 at every record step",
+      "excluded": "argmax(a_hard) vs gold route is not T3; kept only as route_agreement"
+    },
+    "interpretation": "Old alpha/beta-only control did not guarantee final-Q delta. Latest pointer and cursor are both forced to the same delta, so S=delta and Q=lambda*delta+(1-lambda)*delta=delta. Latest 720/720 f64 and reader-f32 control can establish engineering reachability. It does not establish autonomous position learning or full-subject float32.",
+    "equivalence_witness": {
+      "lambda": 0.7111889025506026,
+      "S": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "m": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "Q": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "gamma": 0.0,
+      "q_null": 0.0,
+      "correct_byte_probability": 1.0
+    },
+    "binding_scope": "Selection module continued to change after T3. Compare runtime/current source hashes before freezing a whole-candidate claim."
+  },
+  "preflight_scope": {
+    "reported_passed": true,
+    "totals": {
+      "cells": 6,
+      "completed_cells": 6,
+      "adam_steps": 18,
+      "adam_per_cell": 3,
+      "training_updates_per_cell": 2
+    },
+    "state_fields": [
+      {
+        "field": "cells[0].continuation.state.m_nonzero",
+        "value": 0
+      },
+      {
+        "field": "cells[0].continuation.state.coverage_nonzero",
+        "value": 7
+      },
+      {
+        "field": "cells[0].continuation.state.prefix_cursor",
+        "value": 0
+      },
+      {
+        "field": "cells[1].continuation.state.m_nonzero",
+        "value": 0
+      },
+      {
+        "field": "cells[1].continuation.state.coverage_nonzero",
+        "value": 7
+      },
+      {
+        "field": "cells[1].continuation.state.prefix_cursor",
+        "value": 0
+      },
+      {
+        "field": "cells[2].continuation.state.m_nonzero",
+        "value": 5
+      },
+      {
+        "field": "cells[2].continuation.state.coverage_nonzero",
+        "value": 89
+      },
+      {
+        "field": "cells[2].continuation.state.prefix_cursor",
+        "value": 0
+      },
+      {
+        "field": "cells[3].continuation.state.m_nonzero",
+        "value": 0
+      },
+      {
+        "field": "cells[3].continuation.state.coverage_nonzero",
+        "value": 4
+      },
+      {
+        "field": "cells[3].continuation.state.prefix_cursor",
+        "value": 0
+      },
+      {
+        "field": "cells[4].continuation.state.m_nonzero",
+        "value": 0
+      },
+      {
+        "field": "cells[4].continuation.state.coverage_nonzero",
+        "value": 4
+      },
+      {
+        "field": "cells[4].continuation.state.prefix_cursor",
+        "value": 0
+      },
+      {
+        "field": "cells[5].continuation.state.m_nonzero",
+        "value": 5
+      },
+      {
+        "field": "cells[5].continuation.state.coverage_nonzero",
+        "value": 89
+      },
+      {
+        "field": "cells[5].continuation.state.prefix_cursor",
+        "value": 0
+      }
+    ],
+    "interpretation": "Latest span-container six-cell selection-only value/Adam/probability restore and source binding have positive evidence. A/B nonzero-copy mass and semantic step/cursor advancement, answer/span update continuation and full f32/ST still require coverage.",
+    "timing": {
+      "cpu_seconds": 45.484375,
+      "wall_seconds": 138.24545970000327
+    },
+    "limits": {
+      "confirm_reads": 0,
+      "confirm_materialised": false,
+      "confirm_examples_read": 0,
+      "formal_training": false,
+      "formal_updates": false,
+      "selection_head_only": true
+    }
+  },
+  "candidate_scope_differences": [
+    {
+      "issue": "parent identity",
+      "old_design": "14 direct parent",
+      "implemented": "per-seed N16-A step300",
+      "decision": "R17c explicitly inherits fixed per-seed N16-A binding; record14 ancestry and failed-parent scope"
+    },
+    {
+      "issue": "span and price",
+      "old_price": "span auxiliary enabled with a different trainable set",
+      "old_restore": "binding plus ordered head without span",
+      "working_default": "span registration adds258 parameters, start can bias positions; end remains auxiliary",
+      "decision": "Main R17c adopts the now-consumed258-parameter position head across all3 arms; freeze actual NLL/CE wiring, groups, price and restore. No-span/direct-eta alternatives are separately versioned."
+    },
+    {
+      "issue": "normal read kernel",
+      "old": "anchor @ softmax(transport logits)",
+      "working": "two-stage point pointer, soft/hard and temperature arguments",
+      "decision": "Freeze normal point-pointer kernel, soft-train/hard-inference configuration, temperature/entropy and compatibility; validate gap and effects, preserve old kernel replay."
+    },
+    {
+      "issue": "graph coverage",
+      "observation": "Three single-element FD checks and old restoration cannot sign full ST task credit, f32, states or new normal pointer",
+      "decision": "Complete group ownership/VJP/actual updates, targets, tie/fallback, semantic counters and atomic bundles"
+    },
+    {
+      "issue": "reproducible checkout",
+      "observation": "record_relation_core.py is required and not tracked at the inspected baseline",
+      "decision": "Audit imported source ownership and clean-checkout reconstruction in the implementation package; no unrelated code staged by this task"
+    }
+  ],
+  "observed_source_snapshots": [
+    {
+      "path": "taiji/selection_routing.py",
+      "bytes": 23251,
+      "sha256_raw": "f63b9a7fcf388c7cdf8c77b1101467548b60e017200fcd93993a4581af9e9c3b",
+      "sha256_utf8_lf": "f63b9a7fcf388c7cdf8c77b1101467548b60e017200fcd93993a4581af9e9c3b"
+    },
+    {
+      "path": "taiji/selection_routing_checkpoint.py",
+      "bytes": 14827,
+      "sha256_raw": "cbaa347a00b614edea13839a0b1818db10440ac4605c6d42e7a0856a3f27fee3",
+      "sha256_utf8_lf": "cbaa347a00b614edea13839a0b1818db10440ac4605c6d42e7a0856a3f27fee3"
+    },
+    {
+      "path": "taiji/binding_copy.py",
+      "bytes": 43937,
+      "sha256_raw": "3205ca89100ffdfeeac1bb2e7918b295d39426565616ddbdef3bfac2af7eb8f9",
+      "sha256_utf8_lf": "3205ca89100ffdfeeac1bb2e7918b295d39426565616ddbdef3bfac2af7eb8f9"
+    },
+    {
+      "path": "taiji/living_core.py",
+      "bytes": 26609,
+      "sha256_raw": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+      "sha256_utf8_lf": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200"
+    },
+    {
+      "path": "taiji/growth_credit.py",
+      "bytes": 24902,
+      "sha256_raw": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0",
+      "sha256_utf8_lf": "f1c57461a851d7e2ec89ebb35f2948a0e099a9eefeac74bde7efad39753b97f0"
+    },
+    {
+      "path": "taiji/native_content_core.py",
+      "bytes": 52398,
+      "sha256_raw": "2633b2586efc753cb552c7c671384732c20dc63b3d80bc93ffa5568f20acc59f",
+      "sha256_utf8_lf": "2633b2586efc753cb552c7c671384732c20dc63b3d80bc93ffa5568f20acc59f"
+    },
+    {
+      "path": "taiji/native_activity.py",
+      "bytes": 11690,
+      "sha256_raw": "3569a54ded60e3422497d59f97fb6dc005881a623697905727ba9376d4531e88",
+      "sha256_utf8_lf": "3569a54ded60e3422497d59f97fb6dc005881a623697905727ba9376d4531e88"
+    },
+    {
+      "path": "taiji/activity_learning.py",
+      "bytes": 11622,
+      "sha256_raw": "7fa2ae9ea16c5269ce7d65761b5ed057e94c50fbfd26026f54892375d7524b4d",
+      "sha256_utf8_lf": "7fa2ae9ea16c5269ce7d65761b5ed057e94c50fbfd26026f54892375d7524b4d"
+    },
+    {
+      "path": "taiji/state_migration.py",
+      "bytes": 23629,
+      "sha256_raw": "c067dcd043fc189a53051eba72f0b9794ed4b2d3fc77907a89f82aa2817299c6",
+      "sha256_utf8_lf": "c067dcd043fc189a53051eba72f0b9794ed4b2d3fc77907a89f82aa2817299c6"
+    },
+    {
+      "path": "scripts/training/price_taiji_selection_routing_17_3.py",
+      "bytes": 27514,
+      "sha256_raw": "1adf5e76a192553849728f7c311ad24ab2a18d4b028a4c2d8a2d07f441410fbd",
+      "sha256_utf8_lf": "1adf5e76a192553849728f7c311ad24ab2a18d4b028a4c2d8a2d07f441410fbd"
+    },
+    {
+      "path": "scripts/training/verify_taiji_selection_routing_17_4_preflight.py",
+      "bytes": 34099,
+      "sha256_raw": "c06c4b2bedfa8cd96437f76d264020bb444c9f675a182218a2ebd53827f54add",
+      "sha256_utf8_lf": "c06c4b2bedfa8cd96437f76d264020bb444c9f675a182218a2ebd53827f54add"
+    },
+    {
+      "path": "scripts/training/verify_taiji_selection_routing_17_2_t3_supplement.py",
+      "bytes": 30534,
+      "sha256_raw": "234c6f918ec6b9186d820c3db125d67006f0efdaf520e2799aff5536a63eea2a",
+      "sha256_utf8_lf": "234c6f918ec6b9186d820c3db125d67006f0efdaf520e2799aff5536a63eea2a"
+    }
+  ],
+  "vision_sources": {
+    "current_file": "plans/reference/VISION_FUTURE_TECHNOLOGY.md",
+    "historical_commit": "c97d74d00",
+    "historical_blob": "e31e16af9a83c7da7c2e106a55e01fd7474e18d3",
+    "adopted": [
+      "semantic/evidence dual channel with continuous residual",
+      "reset domains and persistent commitments",
+      "state/fast/slow plasticity",
+      "lawful feedback and current belief over provenance ledger",
+      "candidate-state interaction value",
+      "action-conditioned world and outcome calibration",
+      "useful unprompted activity and internal intervention prediction",
+      "finite memory, structural shadow and inheritance",
+      "frozen/adaptive/confirmation separation"
+    ],
+    "deferred": [
+      "multi-modal expansion beyond a single validated need",
+      "global backbone replacement without a measured bottleneck",
+      "old TaskCore/VX execution numbering and arbitrary historical dimensions"
+    ],
+    "mapping": "All execution identifiers are N17–22, MAINLINE is the only dispatch source."
+  },
+  "system_phases": [
+    {
+      "id": "17",
+      "focus": "versioned content graph, task-credit, state and cost integration",
+      "status": "partially implemented; graph integration required"
+    },
+    {
+      "id": "18",
+      "focus": "raw text entity/event/relationship binding and continuous Chinese tasks",
+      "status": "design proposal"
+    },
+    {
+      "id": "19",
+      "focus": "cross-session experience and temporal belief correction",
+      "status": "design proposal"
+    },
+    {
+      "id": "20",
+      "focus": "responsible feedback plasticity, retention, migration, first real-task residual birth",
+      "status": "design proposal"
+    },
+    {
+      "id": "21",
+      "focus": "true world consequences, conditional value, useful unprompted activity and intervention prediction",
+      "status": "design proposal"
+    },
+    {
+      "id": "22",
+      "focus": "inherited residual/connection/group/state growth and22.7 global review",
+      "status": "design proposal"
+    }
+  ],
+  "planning_choices_to_verify": [
+    "Same-subject E/W/H/F and goal/outcome ownership, with raw evidence and continuous residual retained",
+    "Fixed per-seed N16-A failed research parents forR17c instead of old14 direct-parent proposal; no task-retention claim",
+    "Three concurrent arms, adopted258-parameter position head: start affects normal read, end auxiliary; total3,563,859; old no-span is a conditional fallback",
+    "Current method-A design uses soft training/hard inference, temperature1 to0.05 in100 updates and entropy0.01T; actual graph, soft/hard gap and costs require validation",
+    "State/growth contracts start in the common core; initial real-task birth at20 and wider structural/strategy validation at22",
+    "18–22 counts/thresholds are design proposals until actual parent, rights and pricing are frozen",
+    "One primary comparison and at most one versioned structural fallback per package, then finite closeout"
+  ],
+  "primary_research_references": [
+    {
+      "url": "https://arxiv.org/abs/1706.03762",
+      "role": "attention encoder fallback mechanism"
+    },
+    {
+      "url": "https://arxiv.org/abs/2312.00752",
+      "role": "selective state-space fallback after profiling"
+    },
+    {
+      "url": "https://arxiv.org/abs/2201.05125",
+      "role": "gradient-guided growth baseline, not novelty transferred to Taiji"
+    }
+  ],
+  "documents": [
+    {
+      "path": "plans/MAINLINE.md",
+      "bytes": 170692,
+      "sha256_raw": "86818dd2bfe9c2c8eddc643b23ff2ffd4a8ba1702bc9fe0f2907e3aeaa1c9041",
+      "sha256_utf8_lf": "86818dd2bfe9c2c8eddc643b23ff2ffd4a8ba1702bc9fe0f2907e3aeaa1c9041"
+    },
+    {
+      "path": "plans/README.md",
+      "bytes": 16882,
+      "sha256_raw": "1a5d0841c7b5924ae983aeebbdcb276ac7b29ebf9c919f622d3d3c1982c5a122",
+      "sha256_utf8_lf": "1a5d0841c7b5924ae983aeebbdcb276ac7b29ebf9c919f622d3d3c1982c5a122"
+    },
+    {
+      "path": "plans/reference/README.md",
+      "bytes": 19403,
+      "sha256_raw": "e04b0bca598fa2a706290dcaff7a1b129440288b2fdaf1a438238464b43815ac",
+      "sha256_utf8_lf": "e04b0bca598fa2a706290dcaff7a1b129440288b2fdaf1a438238464b43815ac"
+    },
+    {
+      "path": "plans/reference/PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md",
+      "bytes": 38303,
+      "sha256_raw": "bc554d25ae6e49cda139e76559621ff447d334f6671ab45a6c8d835b106dd6c9",
+      "sha256_utf8_lf": "bc554d25ae6e49cda139e76559621ff447d334f6671ab45a6c8d835b106dd6c9"
+    },
+    {
+      "path": "plans/reference/DESIGN-POST-N16_SELECTION_ROUTING_20261103.md",
+      "bytes": 43836,
+      "sha256_raw": "03ca47a45e3de26568619f24c0aae7b7cc884b6cfa45de2f42ba118bbfcd3d71",
+      "sha256_utf8_lf": "03ca47a45e3de26568619f24c0aae7b7cc884b6cfa45de2f42ba118bbfcd3d71"
+    },
+    {
+      "path": "plans/reference/VISION_FUTURE_TECHNOLOGY.md",
+      "bytes": 41468,
+      "sha256_raw": "f7bf7723e5c1b6e4e4027878960bfe4a3a1d47f21ed052d0c1df4e0176ef3c52",
+      "sha256_utf8_lf": "f7bf7723e5c1b6e4e4027878960bfe4a3a1d47f21ed052d0c1df4e0176ef3c52"
+    },
+    {
+      "path": "plans/reference/TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md",
+      "bytes": 122920,
+      "sha256_raw": "dcba109ecaece9f7e035e004af48a922a70157a54a20b3308ef7fd2939741d19",
+      "sha256_utf8_lf": "dcba109ecaece9f7e035e004af48a922a70157a54a20b3308ef7fd2939741d19"
+    },
+    {
+      "path": "plans/reference/REVIEW-PACKET_20261102.md",
+      "bytes": 7760,
+      "sha256_raw": "5f3d456906854f3c0aafcbb2d54f42e76f54fc3f06afa540f5b19d3b61b4d913",
+      "sha256_utf8_lf": "5f3d456906854f3c0aafcbb2d54f42e76f54fc3f06afa540f5b19d3b61b4d913"
+    },
+    {
+      "path": "plans/reference/INVARIANT-LEDGER_20261103.md",
+      "bytes": 14042,
+      "sha256_raw": "8054e4d3b5d17dbb8a73638cfca917405af91b96af231e1d1d6bf3b9df258d30",
+      "sha256_utf8_lf": "8054e4d3b5d17dbb8a73638cfca917405af91b96af231e1d1d6bf3b9df258d30"
+    },
+    {
+      "path": "plans/reference/CONSOLIDATION_20261103.md",
+      "bytes": 19641,
+      "sha256_raw": "a86affab6395052f112c3d26814db98662855d61e2826b02c4fed32715735e8b",
+      "sha256_utf8_lf": "a86affab6395052f112c3d26814db98662855d61e2826b02c4fed32715735e8b"
+    },
+    {
+      "path": "plans/reference/CAPABILITY-CARD_20261103.md",
+      "bytes": 9456,
+      "sha256_raw": "fc8e9a5bcb5bdeb2d53a4743870d7a146b3c3b5bc1f490bef905f0bc4934313b",
+      "sha256_utf8_lf": "fc8e9a5bcb5bdeb2d53a4743870d7a146b3c3b5bc1f490bef905f0bc4934313b"
+    },
+    {
+      "path": "plans/active/roadmap/03_CURRENT_EXECUTION.md",
+      "bytes": 254658,
+      "sha256_raw": "81f3a8ce8ce4dbdd43ee505639fc258b5804d51aeeee732e200c3a8cca676641",
+      "sha256_utf8_lf": "81f3a8ce8ce4dbdd43ee505639fc258b5804d51aeeee732e200c3a8cca676641"
+    }
+  ],
+  "actual_execution": {
+    "neural_forward_calls": 0,
+    "optimizer_calls": 0,
+    "weights_deserialized": false,
+    "new_dataset_generated": false,
+    "sealed_data_read": false,
+    "runtime_code_written_by_this_task": false,
+    "checkpoints_written_by_this_task": false,
+    "runtime_artifacts_deleted": false
+  },
+  "validation": {
+    "single_mainline": {
+      "schema": "taiji-plan-single-mainline-audit-v1",
+      "status": "ok",
+      "checks": [
+        "MAINLINE.md present",
+        "README entry present",
+        "active docs checked: 19",
+        "current contracts checked: 4",
+        "legacy banners checked: 10"
+      ],
+      "failures": [],
+      "rc": 0
+    },
+    "local_links": {
+      "files": 12,
+      "checked": 1118,
+      "issues": []
+    },
+    "diff_check": {
+      "status": "staged check required by the following commit command"
+    },
+    "json_parse": true
+  },
+  "delivery_policy": "Commit only this planning/review family. Preserve concurrent source/manifests/reports and unrelated two legacy SPEC edits.",
+  "latest_verify_fields": {
+    "t3_gold_span_gate": {
+      "n": 40,
+      "object_exact_rate": 0.0,
+      "place_exact_rate": 0.025,
+      "completed_rate": 0.0,
+      "method": "alpha/beta forced only; pointer and cursor stay natural (frozen pre-Plan-A method)",
+      "gold_span_gate": ">=0.8 pass; 0.1-0.8 not_naked; <=0.1 force position supervision",
+      "band": "force_position_supervision",
+      "rows": [
+        {
+          "index": 0,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 1,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 2,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 3,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 4,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 5,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 6,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 7,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 8,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 9,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 10,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 11,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 12,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 13,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 14,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 15,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 16,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 17,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 18,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 19,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 0,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 1,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 2,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 3,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 4,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 5,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 6,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 7,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 8,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 9,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": true,
+          "completed": false
+        },
+        {
+          "index": 10,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 11,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 12,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 13,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 14,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 15,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 16,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 17,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 18,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        },
+        {
+          "index": 19,
+          "forced_steps": 1,
+          "object_exact": false,
+          "place_exact": false,
+          "completed": false
+        }
+      ]
+    },
+    "t4_span_provenance": {
+      "n": 40,
+      "teacher_span_digest": "55cb68433700e0ab763af2174371ae7d2db3c8e44769e247f00a30f64c031659",
+      "model_argmax_span_digest": "9ebfb82aa5cac9e078a5acb59a6d488a99c1bca3eb2fa0d82de7f03f04454cb4",
+      "digests_differ": true,
+      "source": "object_name/place_name inside frozen raw records; no model argmax used",
+      "passed": true
+    },
+    "counter_probe_head_ablation": {
+      "n": 40,
+      "object_exact_rate": 0.0,
+      "place_exact_rate": 0.025,
+      "completed_rate": 0.0,
+      "accuracy_threshold": 0.1,
+      "point_mass_kept": true,
+      "point_rows": [
+        {
+          "record": 0,
+          "max": 1.0,
+          "sum": 1.0
+        },
+        {
+          "record": 1,
+          "max": 1.0,
+          "sum": 1.0
+        },
+        {
+          "record": 2,
+          "max": 1.0,
+          "sum": 1.0
+        },
+        {
+          "record": 3,
+          "max": 1.0,
+          "sum": 1.0
+        },
+        {
+          "record": 4,
+          "max": 1.0,
+          "sum": 1.0
+        },
+        {
+          "record": 5,
+          "max": 1.0,
+          "sum": 1.0
+        },
+        {
+          "record": 6,
+          "max": 1.0,
+          "sum": 1.0
+        },
+        {
+          "record": 7,
+          "max": 1.0,
+          "sum": 1.0
+        },
+        {
+          "record": 8,
+          "max": 1.0,
+          "sum": 1.0
+        }
+      ],
+      "passed": true,
+      "note": "uniform route prior over records and null; the pointer stays a one-hot point"
+    },
+    "t5_fd": {
+      "checks": [
+        {
+          "name": "selection_ce",
+          "rows": [
+            {
+              "eps": 0.0001,
+              "analytic": -0.00015821419435579939,
+              "numeric": -0.00015821419507844325,
+              "relative_mismatch": 2.2837516882254664e-09,
+              "passed": true
+            },
+            {
+              "eps": 1e-05,
+              "analytic": -0.00015821419435579939,
+              "numeric": -0.0001582141972988893,
+              "relative_mismatch": 9.30096664977825e-09,
+              "passed": true
+            },
+            {
+              "eps": 1e-06,
+              "analytic": -0.00015821419435579939,
+              "numeric": -0.00015821410848104733,
+              "relative_mismatch": 2.713877086287919e-07,
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "span_pointer_ce",
+          "rows": [
+            {
+              "eps": 0.0001,
+              "analytic": 3.1926899823335457,
+              "numeric": 3.1926899852763313,
+              "relative_mismatch": 4.608630317550844e-10,
+              "passed": true
+            },
+            {
+              "eps": 1e-05,
+              "analytic": 3.1926899823335457,
+              "numeric": 3.192689982345342,
+              "relative_mismatch": 1.847398548950788e-12,
+              "passed": true
+            },
+            {
+              "eps": 1e-06,
+              "analytic": 3.1926899823335457,
+              "numeric": 3.1926899817236176,
+              "relative_mismatch": 9.551946970311419e-11,
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "span_pointer_into_copy_nll",
+          "rows": [
+            {
+              "eps": 0.0001,
+              "analytic": 0.0011621749098954801,
+              "numeric": 0.0011621749695933659,
+              "relative_mismatch": 2.5683691714181555e-08,
+              "passed": true
+            },
+            {
+              "eps": 1e-05,
+              "analytic": 0.0011621749098954801,
+              "numeric": 0.001162174889657308,
+              "relative_mismatch": 8.707025094165508e-09,
+              "passed": true
+            },
+            {
+              "eps": 1e-06,
+              "analytic": 0.0011621749098954801,
+              "numeric": 0.001162175022884071,
+              "relative_mismatch": 4.861083493894475e-08,
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "locked_nll_stop_lock",
+          "rows": [
+            {
+              "eps": 0.0001,
+              "analytic": -0.018118419043131898,
+              "numeric": -0.018118419082835402,
+              "relative_mismatch": 1.095666907666797e-09,
+              "passed": true
+            },
+            {
+              "eps": 1e-05,
+              "analytic": -0.018118419043131898,
+              "numeric": -0.018118419053969603,
+              "relative_mismatch": 2.9907978460498454e-10,
+              "passed": true
+            },
+            {
+              "eps": 1e-06,
+              "analytic": -0.018118419043131898,
+              "numeric": -0.018118419209400827,
+              "relative_mismatch": 4.5883950476487164e-09,
+              "passed": true
+            }
+          ],
+          "passed": true,
+          "note": "Arm A straight-through is a surrogate gradient and is not FD-comparable to the hard-route forward; its VJP check belongs to 17.2."
+        }
+      ],
+      "passed": true
+    },
+    "applicability": {
+      "T1": {
+        "stage": "17.2",
+        "judged": false,
+        "blocked": "full whitelist audit belongs to the formal graph"
+      },
+      "T2": {
+        "stage": "0b",
+        "judged": true,
+        "blocked": null
+      },
+      "T3": {
+        "stage": "17.2",
+        "judged": false,
+        "blocked": "R2a final-Q exact mass needs the formal graph"
+      },
+      "T4": {
+        "stage": "0b",
+        "judged": true,
+        "blocked": null
+      },
+      "T5": {
+        "stage": "0b",
+        "judged": true,
+        "blocked": null
+      },
+      "T6": {
+        "stage": "17.5 step300",
+        "judged": false,
+        "blocked": "task gate only after full dose"
+      },
+      "T7": {
+        "stage": "0b",
+        "judged": true,
+        "blocked": null
+      },
+      "T8": {
+        "stage": "17.4",
+        "judged": false,
+        "blocked": "restore bit check belongs to 0d"
+      },
+      "T9": {
+        "stage": "17.5",
+        "judged": false,
+        "blocked": "needs trained candidate"
+      },
+      "T10": {
+        "stage": "17.1 / 17.4",
+        "judged": true,
+        "blocked": "parent set empty -> retention_not_admissible"
+      },
+      "T11": {
+        "stage": "17.7",
+        "judged": false,
+        "blocked": "experience_surface_absent is declared, not a capability"
+      },
+      "T12": {
+        "stage": "17.3",
+        "judged": true,
+        "blocked": null
+      },
+      "T13": {
+        "stage": "17.1 onward",
+        "judged": true,
+        "blocked": null
+      },
+      "T14": {
+        "stage": "17.2",
+        "judged": false,
+        "blocked": "prefix/target contract belongs to 17.2"
+      },
+      "T15": {
+        "stage": "17.2 / 17.4",
+        "judged": false,
+        "blocked": "gate-state identity belongs to 17.2/17.4"
+      },
+      "T16": {
+        "stage": "17.2 / 17.4",
+        "judged": false,
+        "blocked": "cache credit belongs to 17.2/17.4"
+      }
+    }
+  },
+  "evidence_refresh_at": "2026-11-03T21:52:40+08:00",
+  "cumulative_cost_warning": "Committed and working-tree reports may represent different runs under the same filename. Preserve run/source identities and reconcile failures/repeats; current18-step preflight count alone is not a complete historical17 cost ledger.",
+  "concurrent_plan_additions_reviewed": "DESIGN section15 records current methodA temperature/entropy/position supervision choices. Included in the reviewed design family, distinct from uncommitted runtime changes."
+}

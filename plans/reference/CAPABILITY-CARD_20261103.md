@@ -18,27 +18,32 @@
 
 | # | 能力/事实 | 证据指针（报告 + 字段） | 一句话白话 |
 |---|---|---|---|
-| C1 | 原生字节读写在同一张图内闭环：解码逐字节复制或生成，全程 257 字节 + EOS | `reports/taiji_core_record_relation_14_4_20261102.json` → `content`（`correct`/`wrong`/`null` 三个分支）；`reports/taiji_binding_copy_15_1_compare_20261102.json` → `gates.task` | 模型确实自己写字，不是让外部模型代写 |
-| C2 | 内容通路是必要的：去掉来源/换错记录/换错位置，分数会明显下降 | `reports/taiji_core_record_relation_14_6_20261102.json` → `gates.content.conditions`（8 例固定对照下降 0.75 / 0.75 / 0.375） | 模型确实在读提供的记录，不是背模板 |
+| C1 | 原生字节读写在同一张图内闭环：解码逐字节复制或生成，256字节值＋EOS，共257类 | `reports/taiji_core_record_relation_14_4_20261102.json` → `content`（`correct`/`wrong`/`null` 三个分支）；`reports/taiji_binding_copy_15_1_compare_20261102.json` → `gates.task` | 模型确实自己写字，不是让外部模型代写 |
+| C2 | 内容通路是必要的：去掉来源/换错记录/换错位置，分数会明显下降 | `reports/taiji_core_record_relation_14_6_20261102.json` → `gates.content.conditions`（8 例固定对照下降 0.75 / 0.75 / 0.375） | 记录信息对该范围任务有因果影响 |
 | C3 | 保存—新进程加载—继续训练，参数/优化器矩/后继分布逐位一致 | `reports/taiji_core_record_relation_14_6_preflight_20261102.json` → `checks`（6/6）；`reports/taiji_core_r027_subject_gates_20261101.json` → `boundaries`、`checks`（8/8） | 训练可以中断再续，结果不会漂 |
-| C4 | 对照公平：同父、同数据、同剂量、同预算 | `reports/taiji_binding_select_16_1_compare_20261103.json` → `configs`（2 seed × 2 臂 × 300 更新，240 开发例 = 12 world × 20） | 比较的是机制，不是谁多训了 |
-| C5 | 新增参数很小：选择头 37,120，容器 3,563,601 / 上限 3,567,795 | `reports/taiji_selection_routing_17_3_verify_20261103.json` → `t7_parameters` | 没有靠堆一个大模块来换分数 |
+| C4 | N16同父/剂量等条件有记录，目标处理存在D16-4差异 | reports/taiji_binding_select_16_1_attribution_20261103.json → contract_fault | B触发自模仿、A未触发，增量需保留目标差异解释 |
+| C5 | 有序头37120参数，旧无span容器3563601；工作树默认span另增258 | taiji/selection_routing_checkpoint.py；17.3验证回执按其版本 | 参数版本分别列明，实际能力仍待任务比较 |
 | C6 | 有序编码能把“字序不同”送到选择打分：20 对换序句最小差 0.428526 / 0.052838，旧头 0.0 | `reports/taiji_selection_routing_17_3_verify_20261103.json` → `r1_calibration`、`r1_calibration.old_head_witness` | 同一批字换个顺序，模型现在能看出不同 |
 | C7 | 确认面零污染：14.4–17.3 全部 `confirm` 读取 0 次 | `...14_6...json` → `accounting`；`...15_1_compare...json`、`...16_1_compare...json` → `accounting.consumed_confirm_examples=0`；`...17_3_verify...json` → `confirm_reads`（顶层）与 `t11_api.confirm_reads` | 最终考题一次都没提前看 |
-| C8 | 同形定价已完成：三臂 13,092.25 CPU / 1,800 Adam / 495.0 MiB；二臂 8,750.34 / 1,200 / 330.0 MiB | `reports/taiji_selection_routing_17_3_price_20261103.json` + `plans/manifests/taiji_selection_routing_17_3_price_20261103.json` | 要花多少钱已经算清，尚未开跑 |
+| C8 | 旧span/参数配置的价格分项已交付 | reports/taiji_selection_routing_17_3_price_20261103.json | 统一候选、pointer/loss/恢复变更后，受影响组件需补价 |
+| C9 | 工作树新精确复制控制720/720通过 | reports/taiji_selection_routing_17_2_t3_supplement_20261103.json → forced_gold_probability | 通过范围为gold控制下f64及reader-f32，正常定位/完整主体另验 |
 
 ## 2. 未证（还没有实验能支持，对外不得声称）
 
 | # | 待证能力 | 现状读数 | 证据指针 | 一句话白话 |
 |---|---|---|---|---|
 | U1 | 选择—解码绑定能提升任务成绩 | 16.1 总体完成率 0.0500 / 0.0167 | `...16_1_compare...json` → `configs.*.completed_rate` | 模型挑得不准，写完更不准 |
-| U2 | 新描述 / 新输出名字的泛化 | 16.1 新名字 0/60、新描述 0/60、未见组合 0/36；15.1 新名字/新描述 0 | `...16_1_compare...json` → `configs.*.subsets`（`subset_denominators` 60/60/36/15）；`...15_1_compare...json` → `gates.task` | 没见过的说法基本写不出来 |
+| U2 | 新描述/新名字泛化 | N16 A新名字0/60，新描述生成3/60、1/60，选择新描述0/60 | reports/taiji_binding_select_16_1_attribution_20261103.json → gates/readings | 生成与选择两个端点分开报告 |
 | U3 | 选择本身要准（教师条件下） | top-1 0.3833 / 0.3542，门 0.90 | `...16_1_compare...json` → `configs.*.selection_top1` | 给它答案线索，也只有三成多挑对 |
-| U4 | 未见实体 | 14.6 `unseen_entity` 0.2125，门 0.60 | `reports/taiji_core_record_relation_14_6_20261102.json` → `gates.task` | 换一批没见过的名字就基本失效 |
+| U4 | 真正未见输出名字 | 14.6两seed新名字各0/40；原unseen_entity主要为新描述轴 | reports/taiji_post14_algorithm_review_20261102.json | 未见名字和新描述分轴，不复用含混字段 |
 | U5 | 旧能力保持 | `retention_not_admissible`（当前没有合格父） | `...17_3_verify...json` → `t10_retention`；`INVARIANT-LEDGER` L9 | 还没资格谈“学新不忘旧” |
-| U6 | 跨会话经验写入 / 长期能力 | `experience_surface_absent`（声明缺失，不是能力） | `...17_3_verify...json` → `t11_api`、`applicability.T11`；`INVARIANT-LEDGER` L13 | 交互结束后不会自己变强，只能靠重新训练 |
-| U7 | 路线锁定（最终 Q 用选择结果锁复制分布）带来的任务增益 | 未测，17 未准入 | `PRICING-17_3_SELECTION_ROUTING_20261103.md` §0、§8 | 这是 17 唯一要回答的问题，钱还没花 |
+| U6 | 本候选跨session经验/长期学习 | experience_surface_absent描述当前17任务合同范围 | 17验证的t11_api；系统计划19–22 | 09及旧记忆有工程资产，当前共同任务还未完成该范围验证 |
+| U7 | 17路由/信用的任务增益 | 17.5尚未准入 | MAINLINE执行位置及系统计划§4 | 工程成本已发生，正式任务收益待测 |
 | U8 | 一般中文写作能力 | 14.6 完整动作 0.5844，门 0.80 | `...14_6...json` → `gates.task` | 能写对一半多，离可用还远 |
+
+| U9 | 回答代理信用的额外收益 | N16无该ST路径且A−B有目标处理混杂，17待测 | 16归因与17正式图 | 不能以N16负增量证否17的ST信用 |
+| U10 | 位置辅助监督是否必要 | 旧P4控制/长度条件不足以裁决必要性 | ATTRIBUTION-ARCH-VS-ALG及系统计划§4 | 先分层定位，再立学习对照 |
+| U11 | 正常pointer的自主定位/软硬泛化 | 工作树改变了读核，完整任务及新恢复/价未验 | 当前源码与17局部回执 | gold可达性和自主学得分开验收 |
 
 ## 3. 已证否（在已测条件下不成立，正文不得再宣称）
 
@@ -46,15 +51,12 @@
 |---|---|---|---|---|
 | N1 | “字节均值嵌入足以分辨同字不同序” | 旧头换序差 0.0 / 0.0 | `...17_3_verify...json` → `r1_calibration.old_head_witness`；16.1 P1 | 只取平均值，顺序信息被抹平了 |
 | N2 | “锁定复制比不锁更好”（A−C ≥ 0.10） | 14.6 A−C +0.1063，但 bootstrap 下界 −0.0375 | `...14_6...json` → `gates.task.structure` | 点估计为正但统计上站不住 |
-| N3 | “选择支路代理信用带来额外收益”（A−B） | 16.1 A−B −0.27708 | `...16_1_compare...json` → `contrast_A_minus_B` | 加了这条信用反而更差 |
-| N4 | “位置监督是必需项”（旧 P4 的推广） | 40 例中 7/40 对象字节已全对，错在后续句长；强制只在 alpha/beta 层 | `...14_6...json` 原始 0/40 保留；`ATTRIBUTION-ARCH-VS-ALG` §2 | 旧归因把“句子长度没对上”误记成“不会复制” |
 | N5 | “反序配对率可作任务门” | 16.1 原始字节不足，配对率撤回/不可判 | `SPEC-N16-01` §4 仪器缺陷；`...16_1_3_closeout...json` | 没存原始输出，配对重算不可信 |
 | N6 | “六臂可塑性选择能转为后继净收益” | ΔNLL_holdout −0.1370，未优于对照 −0.1402；六臂全超保持容差 | `reports/taiji_core_r026_plasticity_arms_20261031.json` | 合成夹具上，出生/生长方向 8 步内没回本 |
 | N7 | “出生方向能自我偿付” | 同上，按预注册判负 | `...r026...json` | 同上 |
 | N8 | “自演进 / 终身学习 / 自我改进已经接通” | 从未落地；17 也没有该合同 | `INVARIANT-LEDGER` L13；`...17_3_verify...json` → `t11_api`、`applicability.T11` | 这是长期目标，不是现状 |
-| N9 | “17图已实现最终Q一点复制”（正确源字节质量=1） | 强制alpha/beta one-hot且q_null=gamma=0后，720个record步中701步gold概率<1−1e-12，最小2.08e-36；transport行仅17/720为delta | `reports/taiji_selection_routing_17_2_t3_supplement_20261103.json` → `forced_gold_probability`、`failure_layer` | 复制是软混合，不是点到点搬运；这是17.2的R2a欠账 |
 
-> N2/N3/N6/N7 的“否”都限定在当时的夹具、剂量与预算；它们不证明原理在任何规模都不成立，但足以禁止把“已经证明有效”写进正文。
+> N2/N6/N7 的“否”都限定在当时的夹具、剂量与预算；它们不证明原理在任何规模都不成立，但足以禁止把“已经证明有效”写进正文。
 
 ## 4. 措辞审计
 
@@ -70,3 +72,9 @@
 - `plans/MAINLINE.md`：只引用本卡编号，不另写能力结论。
 - `plans/active/roadmap/03_CURRENT_EXECUTION.md`：执行流水，不承担能力表述。
 - 本卡是能力边界唯一权威；新增能力必须先有报告字段，再进本卡。
+
+## 6. 系统计划采用范围（2026-11-03）
+
+本轮撤回N3把16负增量当ST信用否证、N4把位置监督未证当证否、N9把旧前置锚点测试当最终Q架构失败的表述，分别纳入U9–U11。工作树新T3按C9限定范围记录。原报告与旧卡Git版本保留，当前算法/状态/价格/恢复由同候选manifest逐项核对。
+
+后续[系统计划](PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md)覆盖17–22，远期能力均为目标和待验证责任。现阶段的值恢复、有序信号及gold控制结果不代签整合后的任务、持续经验或规模生长能力。

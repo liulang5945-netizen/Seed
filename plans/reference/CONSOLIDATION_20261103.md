@@ -103,7 +103,7 @@
 
 | 卡 | 要求 | 代码/预检落点 | 状态 |
 |---|---|---|---|
-| D16-1 | 子集分母必须用该子集自己的样本数，禁止拿 overall 分母 | [16.1 判定脚本](../../scripts/training/verify_taiji_binding_select_16_1_compare.py#L676-L700) 逐 flag 计分母并导出 `subset_denominators`（60/60/36/15 已见于 16.1 报告） | **已落地** |
+| D16-1 | 子集分母必须用该子集自己的样本数，禁止拿 overall 分母 | [16.1 判定脚本](../../scripts/training/verify_taiji_binding_select_16_1_compare.py) 逐 flag 计分母并导出 `subset_denominators`（60/60/36/15 已见于 16.1 报告） | **已落地** |
 | D16-2 | 配对必须用复合键，禁止复用原行 local index | 16.1 判定脚本按 `(world, index)` 取真值；但原始字节未落盘，配对率仍撤回 | **部分落地**（键已改，证据面不足） |
 | D16-3 | gamma 语义必须有可执行单元检查（下限不可吃掉复制主导） | [selection_routing.py](../../taiji/selection_routing.py) 实现 `gamma_eff` 下限映射；**无对应单测** | **未落地**：缺 `tests/taiji_native/test_selection_routing_gamma.py` |
 | D16-4 | 输入前缀与正确标签必须分离 | [routing_loss](../../taiji/selection_routing.py) 显式分离 `prefix` 与 `target_bytes`；17.3 `t1_target_separation` 用“错前缀＋正确目标”实测 NLL 12.85 vs 2.42 | **已落地并已判** |
@@ -227,3 +227,9 @@
 ## 11. 唯一下一步
 
 **等待 owner 裁定臂范围（建议三臂 A/B/C）。** 裁定后第一件事是 17.4 预检（六格独立续推），不是 17.5 训练。除此之外不再推进任何阶段。
+
+## 12. 系统开发计划的现行衔接
+
+本件盘点与删除/移档量描述收束时点，当前实施状态以MAINLINE为准。随后17.4已有值恢复与工作树新T3控制回执，系统复核进一步列出参数/父/span/读核身份、正式信用、状态游标和非零m恢复差集。当前后续统一见[模型与架构系统计划](PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md)，队首17.2R整合，远期设计窗口截至22.7。
+
+本轮方案修订无训练、无权重加载、无删除运行产物。已有必需源码Git归属由对应实现包补齐，旧盘点数字与原始报告保持历史身份。

@@ -6,7 +6,7 @@
 
 ## 按顺序推进只读一份
 
-[MAINLINE 新N主线落地计划](MAINLINE.md)统一编号、依赖与有限出口。15.1与N16均已负结案，当前17.1契约与仪器校准为队首。17.1–17.7的算法接口、源码落点、图验/定价/恢复/三臂比较与专属确认已细化，当前执行位置以[总计划](MAINLINE.md#执行位置)为准。
+[MAINLINE 新N主线落地计划](MAINLINE.md)统一编号、依赖与有限出口。近端17已有实现和局部证据，当前17.2R整合候选、完整信用/状态及价格/恢复适用性；系统设计覆盖18原文绑定、19经验修订、20反馈保持、21世界/活动、22规模成长与终审。[系统详细计划](reference/PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md)提供算法、子卡、问题和备选，实际调度以总计划为准。
 
 本轮规划边界及下一轮立项规则见[总计划](MAINLINE.md#本轮规划边界与下一轮立项)；阶段编号不表示长期能力的完成比例。
 
@@ -108,3 +108,5 @@ R1、R3b、R5b 等保留为原合同和实验身份，N1–N6 保留为机制责
 - [15.1原执行规格](reference/SPEC-N15-01_BINDING_COPY_V2_20261102.md)保留原网格与退出，原确认封存，后续已进入N16。
 
 - [N16原执行规格](reference/SPEC-N16-01_SELECTION_LOCKED_BINDING_DRAFT_20261103.md)保留已结案比较与旧合同身份。[17详细开发计划](reference/DESIGN-POST-N16_SELECTION_ROUTING_20261103.md)覆盖17.1–17.7，当前从契约与仪器校准开始。
+
+[模型与架构系统开发计划](reference/PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md)将VISION适合的提案映射到同一N主体，包含持续状态/证据、学习信用、世界与活动、生长/迁移、评价和资源的实现责任。

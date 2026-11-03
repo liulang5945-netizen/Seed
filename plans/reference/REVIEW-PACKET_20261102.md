@@ -1,6 +1,6 @@
 # N16结案后的算法修订与17开发计划
 
-> 文档状态 [当前复审结论]。更新日期2026-11-03。N16.1.1及16.1.3已按负结果收束，确认未释放。**17.1校准、17.3定价、17.4恢复预检已交付；但补跑17.2的T3「最终Q一点复制」闸门失败（701/720 record步 gold字节概率<1−1e-12，transport软扩散），17.5未准入。当前停在“17.2 T3架构闸门失败；待owner决定是否实现R2a精确点复制后重跑T3/17.4”，训练更新0（仅18工程Adam）、confirm读取0。** 唯一调度见[MAINLINE](../MAINLINE.md)；能力表述以[能力卡](CAPABILITY-CARD_20261103.md)为准，全局体检见[收束文档](CONSOLIDATION_20261103.md)。前稿按Git b054450ac、99e3e69c9及4dcf58b76追溯，实验原卡与数据身份保留。
+> 文档状态 [当前复审结论]。更新日期2026-11-03。N16已负结案，17已有实现/价格/恢复资产；工作树新精确控制T3已720/720通过，统一候选图/信用、游标、非零m及变化后的成本/恢复适用性待补。当前队首17.2R整合，系统设计覆盖18–22，调度见[MAINLINE](../MAINLINE.md)。
 
 ## 1. 已有任务结果
 
@@ -49,6 +49,12 @@
 
 **17.4 已跑（2026-11-03）**：两seed×三臂共6格、每格3次工程Adam＝18；参数/Adam矩/teacher-forced概率逐位一致（max_abs_diff=0.0），对象→地点/null续推13位一致，父bundle与非可训练参数未变；CPU 46.08/wall 126.24；6个step1临时bundle 352,009,238B已删并登记。状态旁证：A/B四格step2的m为零（未训练头把最后对象字节路由到null），coverage非空。[报告](../../reports/taiji_selection_routing_17_4_preflight_20261103.json)、[manifest](../manifests/taiji_selection_routing_17_4_preflight_20261103.json)
 
-**17.2 T3 补跑失败（2026-11-03）**：强制alpha/beta one-hot到gold字节且q_null=gamma=0，720个record步的gold字节概率最小2.08e-36、中位4.57e-6，701/720<1−1e-12（f32 658/720<1−1e-6）。干预/映射对照无误（概率和误差4.4e-16、copy重建0、instrument_error_steps=0），transport行仅17/720为delta、行内gold位中位1.36e-7。归因：架构缺R2a精确点复制（`anchor @ transport`为softmax软扩散），不是剂量或未训练头。[报告](../../reports/taiji_selection_routing_17_2_t3_supplement_20261103.json)、[manifest](../manifests/taiji_selection_routing_17_2_t3_supplement_20261103.json)
+**旧HEAD T3记录及其修正解释。** 原前置锚点控制701/720失败属于旧源码范围，不能认定最终Q架构失败。工作树新pointer/m控制已720/720通过，正常位置学习与完整图信用仍待验。原版本按Git afd6d3b3b恢复，新回执及运行时hash分别记录。[当前报告](../../reports/taiji_selection_routing_17_2_t3_supplement_20261103.json)
 
-唯一下一步为**owner决定是否在17图实现R2a精确点复制**（做法：复制位置改为硬点选择/单位transport，gold强制时直接落到正确字节；不改判据、不加训练剂量），然后重跑T3（0更新）与17.4（18工程Adam），两者过门才进17.5。若不实现，则按17.2闸门失败判负，17.5不启动。本轮不启动正式训练、不物化父候选；confirm仍未释放。
+当前唯一下一步由MAINLINE的17.2R维护。最新受控复制与值恢复通过范围保留，补齐统一候选配置、完整信用、游标/非零m状态及变化组件定价之后再判17.5准入。
+
+## 6. 系统后续开发与当前实现适配
+
+本轮以afd6d3b3b及工作树新pointer/T3回执复核。新控制使S和m同为目标点质量，最新回执720/720通过，属于隔离读取可达性；完整主体f32、正常软/硬读核信用、状态游标、实际非零m恢复和版本/价格一致性仍待补。旧701/720不再作为架构不可能结论。
+
+[系统开发计划](PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md)将17整合到22.7终审，细化共同主体、原文自主绑定、跨session经验、反馈保持、世界/活动和结构生长。R17c主选固定每seed N16-A失败研究父，三臂同期含258参数位置头，start消费者/end辅助分账；方案A的训练软/推理hard、退火与熵项进入配置。完整模型、价格、恢复同一版本后才进入17.5。VISION提案只作来源，MAINLINE继续唯一调度。
