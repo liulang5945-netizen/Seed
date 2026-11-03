@@ -1,0 +1,388 @@
+{
+  "schema": "taiji-selection-routing-17-3-price-v1",
+  "step": "N17.3.price",
+  "date": "2026-11-03",
+  "dtype": "float64",
+  "threads": 1,
+  "batch": 8,
+  "lr": 0.001,
+  "span_lambda": 0.5,
+  "engineering_adam": 1,
+  "aborted_run_adam": 12,
+  "formal_updates_three_arm": 1800,
+  "formal_updates_two_arm": 1200,
+  "components": {
+    "selection|B_stop_lock|span=True": {
+      "stage": "selection",
+      "arm": "B_stop_lock",
+      "span": true,
+      "forward_cpu": 2.1875,
+      "forward_backward_cpu": 2.625,
+      "bptt_cpu": 0.4375,
+      "forward_rows": [
+        2.25,
+        2.125
+      ],
+      "backward_rows": [
+        2.6875,
+        2.5625
+      ]
+    },
+    "selection|B_stop_lock|span=False": {
+      "stage": "selection",
+      "arm": "B_stop_lock",
+      "span": false,
+      "forward_cpu": 2.1953125,
+      "forward_backward_cpu": 2.5390625,
+      "bptt_cpu": 0.34375,
+      "forward_rows": [
+        2.203125,
+        2.1875
+      ],
+      "backward_rows": [
+        2.5625,
+        2.515625
+      ]
+    },
+    "copy|B_stop_lock|span=True": {
+      "stage": "copy",
+      "arm": "B_stop_lock",
+      "span": true,
+      "forward_cpu": 2.1015625,
+      "forward_backward_cpu": 7.28125,
+      "bptt_cpu": 5.1796875,
+      "forward_rows": [
+        2.125,
+        2.078125
+      ],
+      "backward_rows": [
+        7.15625,
+        7.40625
+      ]
+    },
+    "copy|B_stop_lock|span=False": {
+      "stage": "copy",
+      "arm": "B_stop_lock",
+      "span": false,
+      "forward_cpu": 2.140625,
+      "forward_backward_cpu": 7.5390625,
+      "bptt_cpu": 5.3984375,
+      "forward_rows": [
+        2.109375,
+        2.171875
+      ],
+      "backward_rows": [
+        7.28125,
+        7.796875
+      ]
+    },
+    "joint|A_route_lock|span=True": {
+      "stage": "joint",
+      "arm": "A_route_lock",
+      "span": true,
+      "forward_cpu": 2.2421875,
+      "forward_backward_cpu": 7.7734375,
+      "bptt_cpu": 5.53125,
+      "forward_rows": [
+        2.234375,
+        2.25
+      ],
+      "backward_rows": [
+        7.9375,
+        7.609375
+      ]
+    },
+    "joint|A_route_lock|span=False": {
+      "stage": "joint",
+      "arm": "A_route_lock",
+      "span": false,
+      "forward_cpu": 2.0546875,
+      "forward_backward_cpu": 7.5,
+      "bptt_cpu": 5.4453125,
+      "forward_rows": [
+        2.046875,
+        2.0625
+      ],
+      "backward_rows": [
+        7.46875,
+        7.53125
+      ]
+    },
+    "joint|B_stop_lock|span=True": {
+      "stage": "joint",
+      "arm": "B_stop_lock",
+      "span": true,
+      "forward_cpu": 2.109375,
+      "forward_backward_cpu": 7.5625,
+      "bptt_cpu": 5.453125,
+      "forward_rows": [
+        2.125,
+        2.09375
+      ],
+      "backward_rows": [
+        7.46875,
+        7.65625
+      ]
+    },
+    "joint|C_unlocked|span=True": {
+      "stage": "joint",
+      "arm": "C_unlocked",
+      "span": true,
+      "forward_cpu": 2.0390625,
+      "forward_backward_cpu": 7.390625,
+      "bptt_cpu": 5.3515625,
+      "forward_rows": [
+        2.03125,
+        2.046875
+      ],
+      "backward_rows": [
+        7.40625,
+        7.375
+      ]
+    }
+  },
+  "adam": {
+    "cpu": 0.03125,
+    "wall": 0.02398589998483658,
+    "parameter_groups": 185,
+    "note": "one joint Adam step including first-step state allocation"
+  },
+  "prices": {
+    "selection_with": 2.65625,
+    "selection_without": 2.5703125,
+    "copy_with": 7.3125,
+    "copy_without": 7.5703125,
+    "joint_A_route_lock_with": 7.8046875,
+    "joint_A_route_lock_without": 7.53125,
+    "joint_B_stop_lock_with": 7.59375,
+    "joint_C_unlocked_with": 7.421875,
+    "selection_span_increment": 0.0859375,
+    "copy_span_increment": -0.2578125,
+    "joint_span_increment_A": 0.2734375,
+    "joint_B_span_increment_estimate": 0.2734375,
+    "joint_C_span_increment_estimate": 0.2734375
+  },
+  "generation": {
+    "A_route_lock": {
+      "examples": 8,
+      "cpu": 1.34375,
+      "cpu_per_example": 0.1640625,
+      "rows": [
+        0.171875,
+        0.15625,
+        0.203125,
+        0.171875,
+        0.15625,
+        0.171875,
+        0.15625,
+        0.15625
+      ]
+    },
+    "C_unlocked": {
+      "examples": 8,
+      "cpu": 1.765625,
+      "cpu_per_example": 0.21875,
+      "rows": [
+        0.21875,
+        0.21875,
+        0.21875,
+        0.21875,
+        0.21875,
+        0.203125,
+        0.21875,
+        0.25
+      ]
+    }
+  },
+  "evaluation": {
+    "examples": 8,
+    "cpu": 0.0,
+    "cpu_per_example": 0.0
+  },
+  "selection_forward": {
+    "examples": 8,
+    "cpu": 2.15625,
+    "wall": 2.236437800107524,
+    "cpu_per_example": 0.26953125
+  },
+  "restore": {
+    "cpu": 0.078125,
+    "wall": 0.07609859993681312
+  },
+  "bundle": {
+    "inherited_mib": 27.2307,
+    "delta_bytes_replace_old_head": 282624,
+    "mib_replace_old_head": 27.50023125,
+    "mib_keep_old_head": 28.086214526367186,
+    "note": "3x = parameter + two Adam moments, float64; inherited bytes from the frozen 16.1 bundle"
+  },
+  "three_arm": {
+    "arms": [
+      "A_route_lock",
+      "B_stop_lock",
+      "C_unlocked"
+    ],
+    "runs": 6,
+    "updates": 1800,
+    "adam_formal": 1800,
+    "training_cpu": 10545.3125,
+    "training_cpu_per_run": 1757.5520833333333,
+    "per_arm_seed_training_cpu": {
+      "A_route_lock": 1777.34375,
+      "B_stop_lock": 1756.25,
+      "C_unlocked": 1739.0625
+    },
+    "generation_cpu": 525.0,
+    "evaluation_cpu": 0.0,
+    "selection_probe_cpu": 776.25,
+    "restore_cpu": 0.9375,
+    "subtotal_cpu": 11847.5,
+    "total_cpu": 13092.250000000002,
+    "total_wall_estimate": 15056.087500000001,
+    "product_bundles": 12,
+    "bundle_mib_final": 330.002775,
+    "bundle_mib_step150_checkpoint": 165.0013875,
+    "peak_product_mib": 495.0041625
+  },
+  "two_arm": {
+    "arms": [
+      "A_route_lock",
+      "B_stop_lock"
+    ],
+    "runs": 4,
+    "updates": 1200,
+    "adam_formal": 1200,
+    "training_cpu": 7067.1875,
+    "training_cpu_per_run": 1766.796875,
+    "per_arm_seed_training_cpu": {
+      "A_route_lock": 1777.34375,
+      "B_stop_lock": 1756.25
+    },
+    "generation_cpu": 315.0,
+    "evaluation_cpu": 0.0,
+    "selection_probe_cpu": 517.5,
+    "restore_cpu": 0.625,
+    "subtotal_cpu": 7900.3125,
+    "total_cpu": 8750.34375,
+    "total_wall_estimate": 10062.895312499999,
+    "product_bundles": 8,
+    "bundle_mib_final": 220.00185,
+    "bundle_mib_step150_checkpoint": 110.000925,
+    "peak_product_mib": 330.002775
+  },
+  "step150_three_arm": {
+    "runs": 6,
+    "segment1": {
+      "updates": 150,
+      "stage_split": {
+        "selection": 100,
+        "copy": 50,
+        "joint": 0
+      },
+      "per_run_cpu": 859.0625,
+      "total_cpu": 5154.375,
+      "exit": "step150 readiness gate: selection teacher-prefix top-1 >= 0.90, R1 witnessed, gold-span object_exact >= 0.8 after position supervision; fail => early_gate_failed (no task claim)"
+    },
+    "segment2": {
+      "updates": 150,
+      "stage_split": {
+        "selection": 0,
+        "copy": 50,
+        "joint": 100
+      },
+      "per_run_cpu": 1245.5989583333333,
+      "total_cpu": 7473.59375,
+      "exit": "full step300 frozen task gates: object_exact >= 0.8 and A-C selection delta >= 0.10"
+    },
+    "stop_points": {
+      "after_100_selection_only": {
+        "per_run_cpu": 374.140625,
+        "total_cpu": 2244.84375,
+        "share_of_full": 0.16091186751623174
+      },
+      "after_150_segment1": {
+        "per_run_cpu": 859.0625,
+        "total_cpu": 5154.375,
+        "share_of_full": 0.3694689695570023
+      },
+      "after_300_full": {
+        "per_run_cpu": 2104.661458333333,
+        "total_cpu": 13950.765625000002,
+        "share_of_full": 1.0
+      }
+    },
+    "full_two_segment_cpu": 13950.765625000002,
+    "step150_checkpoint_mib": 165.0013875,
+    "dilution_note": "The final task gate stays at step300 and is the only task verdict. The step150 gate is a readiness/budget gate: a fail is labelled early_gate_failed, never task_failed, because the span head has only 50 updates by step150. Treating step150 as success or failure evidence would dilute the frozen judgment."
+  },
+  "step150_two_arm": {
+    "runs": 4,
+    "segment1": {
+      "updates": 150,
+      "stage_split": {
+        "selection": 100,
+        "copy": 50,
+        "joint": 0
+      },
+      "per_run_cpu": 850.3125,
+      "total_cpu": 3401.25,
+      "exit": "step150 readiness gate: selection teacher-prefix top-1 >= 0.90, R1 witnessed, gold-span object_exact >= 0.8 after position supervision; fail => early_gate_failed (no task claim)"
+    },
+    "segment2": {
+      "updates": 150,
+      "stage_split": {
+        "selection": 0,
+        "copy": 50,
+        "joint": 100
+      },
+      "per_run_cpu": 1250.46875,
+      "total_cpu": 5001.875,
+      "exit": "full step300 frozen task gates: object_exact >= 0.8 and A-C selection delta >= 0.10"
+    },
+    "stop_points": {
+      "after_100_selection_only": {
+        "per_run_cpu": 369.765625,
+        "total_cpu": 1479.0625,
+        "share_of_full": 0.15898021564609854
+      },
+      "after_150_segment1": {
+        "per_run_cpu": 850.3125,
+        "total_cpu": 3401.25,
+        "share_of_full": 0.36559067548957036
+      },
+      "after_300_full": {
+        "per_run_cpu": 2100.78125,
+        "total_cpu": 9303.4375,
+        "share_of_full": 1.0
+      }
+    },
+    "full_two_segment_cpu": 9303.4375,
+    "step150_checkpoint_mib": 110.000925,
+    "dilution_note": "The final task gate stays at step300 and is the only task verdict. The step150 gate is a readiness/budget gate: a fail is labelled early_gate_failed, never task_failed, because the span head has only 50 updates by step150. Treating step150 as success or failure evidence would dilute the frozen judgment."
+  },
+  "cost_ratios": {
+    "three_over_two_updates": 1.5,
+    "three_over_two_cpu": 1.4961983636357146,
+    "three_over_two_products": 1.5
+  },
+  "position_supervision": {
+    "enabled_from": "17.5 stage 1 (selection), because 0b T3 measured object_exact = 0/40",
+    "reprice_needed": false,
+    "reason": "the with-span rows are already measured; enabling at stage 1 uses those rows, changes no parameter count and no dosage",
+    "parameter_count": 258,
+    "bottleneck_parameter_count": 4194
+  },
+  "timing": {
+    "cpu_seconds": 154.28125,
+    "wall_seconds": 158.0278304000385
+  },
+  "limits": {
+    "task_training_updates": 0,
+    "engineering_adam": 1,
+    "aborted_run_adam": 12,
+    "no_new_seeds": true,
+    "no_dose_change": true,
+    "no_criterion_change": true,
+    "confirm_reads": 0
+  }
+}

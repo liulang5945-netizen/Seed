@@ -1,0 +1,162 @@
+{
+  "schema": "taiji-selection-routing-17-3-price-manifest-v1",
+  "step": "N17.3",
+  "status": "priced_not_admitted",
+  "date": "2026-11-03",
+  "report_md": "plans/reference/PRICING-17_3_SELECTION_ROUTING_20261103.md",
+  "price_report": "reports/taiji_selection_routing_17_3_price_20261103.json",
+  "copy_span_report": "reports/taiji_selection_routing_17_3_copy_span_20261103.json",
+  "verify_report": "reports/taiji_selection_routing_17_3_verify_20261103.json",
+  "r1_threshold_manifest": "plans/manifests/taiji_selection_routing_17_3_r1_thresholds_20261103.json",
+  "source_hashes": {
+    "reports/taiji_selection_routing_17_3_verify_20261103.json": "77d7c18239294447ad9b1e816fe16869d684f00f2c75d08bfb2a2438543383b8",
+    "reports/taiji_selection_routing_17_3_price_20261103.json": "ebfb0a48bc636b4b00c6607fc8b539a73c3737a2f19825e835695d983f315fba",
+    "reports/taiji_selection_routing_17_3_copy_span_20261103.json": "356c649ca440bd809b5efa7ea07979533514861dd99a0f12539c01d16dc5b965",
+    "plans/manifests/taiji_selection_routing_17_3_r1_thresholds_20261103.json": "2118edd6d6622068b91e988ad9f628d56d6c2f663aa85de77b63ce9973d382cb",
+    "taiji/selection_routing.py": "ce77d6364acdad823141255b2d501ac790b5f6e054292e6ffb4b9696a81c6b1f",
+    "scripts/training/verify_taiji_selection_routing_17_3.py": "4c3f7637ccfb461991525da425a3b9800e3b413a492966392d24515e96b98426",
+    "scripts/training/price_taiji_selection_routing_17_3.py": "1adf5e76a192553849728f7c311ad24ab2a18d4b028a4c2d8a2d07f441410fbd",
+    "plans/reference/PRICING-17_3_SELECTION_ROUTING_20261103.md": "0a431cc8fbb8e5c1669b3a89bbca066ca5816109e81fe6262e236fad8442e4bb"
+  },
+  "bytes": {
+    "verify": 19155,
+    "price": 10857,
+    "copy_span": 1513,
+    "r1_thresholds": 1181,
+    "report_md": 16611,
+    "total": 49320,
+    "note": "byte audit after black/ruff gate"
+  },
+  "frozen": {
+    "theta_repr": 0.01,
+    "theta_score": 0.001,
+    "theta_source": "SPEC 9.1 preliminary values, frozen before candidate output",
+    "withdrawn_rule": "max(1e-6, 0.1*median) -> D17-1",
+    "noise_floor_repr": 1.67e-16,
+    "noise_floor_score": 8.88e-16,
+    "r1_pairs": 20,
+    "r1_consumers": ["N17.3.T2", "N17.2.R1"],
+    "t3_gold_span_object_exact": 0.0,
+    "t3_band": "force_position_supervision",
+    "position_supervision_from": "N17.5 stage 1 (selection)",
+    "position_supervision_reprice": false
+  },
+  "unit_prices_cpu_per_update": {
+    "selection_with_span": 2.65625,
+    "selection_without_span": 2.5703125,
+    "copy_with_span": 7.3125,
+    "copy_without_span": 7.5703125,
+    "joint_A_with_span": 7.8046875,
+    "joint_A_without_span": 7.53125,
+    "joint_B_with_span": 7.59375,
+    "joint_C_with_span": 7.421875,
+    "span_increment_selection": 0.0859375,
+    "span_increment_copy": -0.6875,
+    "span_increment_copy_resolved": false,
+    "span_increment_copy_noise_band": 0.765625,
+    "span_increment_joint_A": 0.2734375,
+    "adam": 0.03125,
+    "generation_A_per_example": 0.1640625,
+    "generation_C_per_example": 0.21875,
+    "evaluation_per_example": 0.0,
+    "selection_probe_per_example": 0.26953125,
+    "restore": 0.078125
+  },
+  "extrapolation": {
+    "three_arm": {
+      "runs": 6,
+      "updates": 1800,
+      "adam_formal": 1800,
+      "cpu": 13092.25,
+      "wall": 15056.0875,
+      "peak_product_mib": 495.0041625,
+      "product_bundles": 12
+    },
+    "two_arm": {
+      "runs": 4,
+      "updates": 1200,
+      "adam_formal": 1200,
+      "cpu": 8750.34375,
+      "wall": 10062.895312499999,
+      "peak_product_mib": 330.002775,
+      "product_bundles": 8
+    },
+    "three_over_two_cpu": 1.4961983636357146
+  },
+  "step150": {
+    "three_arm": {
+      "segment1_cpu": 5154.375,
+      "segment2_cpu": 7473.59375,
+      "full_cpu": 13950.765625000002,
+      "stop_after_100_selection_cpu": 2244.84375,
+      "stop_share_100": 0.16091186751623174,
+      "stop_share_150": 0.3694689695570023
+    },
+    "two_arm": {
+      "segment1_cpu": 3401.25,
+      "segment2_cpu": 5001.875,
+      "full_cpu": 9303.4375,
+      "stop_after_100_selection_cpu": 1479.0625,
+      "stop_share_100": 0.15898021564609854,
+      "stop_share_150": 0.36559067548957036
+    },
+    "exit_rule": "step150 is a readiness/budget gate only (early_gate_failed); the task verdict exists only at step300"
+  },
+  "critical_numerics": {
+    "base_parameters": 3526481,
+    "head_parameters": 37120,
+    "span_parameters": 258,
+    "span_bottleneck_parameters": 4194,
+    "container_head": 3563601,
+    "container_head_span": 3563859,
+    "container_max": 3567795,
+    "bundle_replace_old_head_mib": 27.50023125,
+    "bundle_keep_old_head_mib": 28.086214526367186,
+    "fd_worst_relative_mismatch": 3.7865303001117755e-07,
+    "t1_nll_correct": 2.42095206322823,
+    "t1_nll_shifted": 12.851247758434763
+  },
+  "ledger_mapping": {
+    "script_t3_gold_span_gate": "SPEC 9.1 early gate R2b (gold span), not ledger T3",
+    "script_t11_api": "interface whitelist / zero confirm reads, not ledger T11",
+    "ledger_T3_final_q_exact_mass": "deferred to 17.2",
+    "ledger_T6_copy_quality": "deferred to 17.5",
+    "ledger_T8_restore_bits": "deferred to 17.4",
+    "ledger_T9_content_necessity": "deferred to 17.5",
+    "ledger_T11_experience_surface_absent": "declared here, adjudicated at 17.7",
+    "ledger_T14_prefix_target_contract": "deferred to 17.2",
+    "ledger_T15_gate_context": "deferred to 17.2/17.4",
+    "ledger_T16_cache_credit": "deferred to 17.2/17.4"
+  },
+  "deviations": [
+    "D17-1: the first R1 calibration used max(1e-6, 0.1*median), an unregistered rule that conflicts with DESIGN 10; withdrawn, thresholds restored to the SPEC 9.1 preliminary 1e-2/1e-3 and verification re-run",
+    "component pricing replaced the 9 end-to-end engineering updates; only 1 Adam was taken for the Adam unit price",
+    "the first end-to-end pricing attempt crashed after 12 engineering Adam; its CPU/wall are not recorded",
+    "copy-stage span increment is unresolved at the timing resolution; extrapolation uses the measured with-span rows, so no price is added twice"
+  ],
+  "cost": {
+    "cpu_seconds": 292.96875,
+    "wall_seconds": 299.344,
+    "engineering_adam": 1,
+    "aborted_run_adam": 12,
+    "total_engineering_adam": 13,
+    "verification_runs": 2,
+    "formal_updates": 0,
+    "confirm_reads": 0
+  },
+  "card": {
+    "cpu_limit": 600,
+    "wall_limit": 1200,
+    "adam_limit": 9,
+    "adam_overrun": 4,
+    "budget_status": "adam_overrun_engineering_only"
+  },
+  "release": {
+    "N17.5": "not_started",
+    "N17.4": "not_started",
+    "parent_materialized": false,
+    "arm_scope": "pending_owner_ruling_three_arm_recommended",
+    "extra_seeds_steps_dose": false,
+    "criterion_changed": false
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "taiji-selection-routing-17-r1-thresholds-v1",
+  "step": "N17.3",
+  "date": "2026-11-03",
+  "method": "frozen at SPEC 9.1 preliminary values (theta_repr=1e-2, theta_score=1e-3) before any candidate output; 20-pair calibration is margin evidence",
+  "withdrawn_method": "theta = max(1e-6, 0.1 * median) was never registered and is withdrawn (D17-1)",
+  "theta_repr": 0.01,
+  "theta_score": 0.001,
+  "noise_floor_repr": 1.67e-16,
+  "noise_floor_score": 8.88e-16,
+  "noise_floor_source": "prior 16.1 old-head float64 readings; this run old-head witness measured 0.0",
+  "pairs": 20,
+  "median_repr": 0.49926359139828047,
+  "median_score": 0.13135978142377608,
+  "min_repr": 0.42852639116135594,
+  "min_score": 0.052837673394406814,
+  "distribution_checks": {
+    "median_repr_ge_1e-6": true,
+    "pairs_repr_gt_1e-8": 20,
+    "at_least_18_of_20": true,
+    "median_score_ge_1e-6": true
+  },
+  "witness": {
+    "new": {
+      "representation_relative_l2": 0.19823816567772942,
+      "score_max_abs_diff": 0.1113205393544025
+    },
+    "old_control": {
+      "representation_max_abs_diff": 0.0,
+      "score_max_abs_diff": 0.0
+    }
+  }
+}

@@ -2,7 +2,7 @@
 
 > 文档状态：[状态] — 只登记执行证据、审批、费用与适用限制；统一编号、阶段状态和实际动作集中在[总计划](../../MAINLINE.md)。
 
-更新：2026-10-31，Asia/Shanghai。本页原执行表已整合进总计划，不再发布第二套顺序或复制待办。以下按统一步骤关联证据，阶段记录只解释当时，不能把零步时“未训练”当作后续现状。
+更新：2026-11-03，Asia/Shanghai。本页原执行表已整合进总计划，不再发布第二套顺序或复制待办。以下按统一步骤关联证据，阶段记录只解释当时，不能把零步时“未训练”当作后续现状。
 
 ## 当前唯一下一步：见总计划的执行位置
 
@@ -1573,3 +1573,12 @@ N16自前缀把own回填loss标签的D16-4纳入17硬回归，错误前缀下仍
 预算提案整包30000CPU/60000wall、正式比较24000CPU/48000wall，20000CPU/30000wall观察线。39次工程Adam与1800正式Adam分别记账，预算以实际图后的17.3定价冻结。confirm_n17为专属240例，17.6前读取数0。当前合格父能力集为空，retention_not_admissible；本任务跨session写入未冻，experience_surface_absent，根目标责任见[账本](../../reference/INVARIANT-LEDGER_20261103.md)。
 
 本轮交付为源码/已存结果只读分析与计划修订，模型前向0、Adam0。原报告、manifest、checkpoint及N16冻结合同保持原身份。当前唯一开发下一步为17.1契约与仪器校准，17正式图与执行入口待对应阶段交付。
+
+## 2026-11-03 17.1校准与17.3定价交付（17已定价、未准入）
+
+- **证据**：[定价报告](../../reference/PRICING-17_3_SELECTION_ROUTING_20261103.md)｜[定价JSON](../../../reports/taiji_selection_routing_17_3_price_20261103.json)｜[copy跨度复测](../../../reports/taiji_selection_routing_17_3_copy_span_20261103.json)｜[0a/0b验证](../../../reports/taiji_selection_routing_17_3_verify_20261103.json)｜[阈值manifest](../../manifests/taiji_selection_routing_17_3_r1_thresholds_20261103.json)｜[定价manifest](../../manifests/taiji_selection_routing_17_3_price_20261103.json)。
+- **冻结**：R1 θ_repr=1e-2、θ_score=1e-3（SPEC §9.1 预注册；20对最小0.428526/0.052838；旧头0.0；噪声底≤8.88e-16）；T3 gold跨度object_exact=0/40→强制位置监督，启用点17.5第1阶段，不重定价。
+- **价格**：三臂13,092.25 CPU/15,056.09 wall/1,800 Adam/495.0 MiB；二臂8,750.34 CPU/10,062.90 wall/1,200 Adam/330.0 MiB；三/二CPU比1.496。位置监督增量单列：selection +0.0859、copy未分辨（噪声带0.7656）、joint A +0.2734 CPU/更新。
+- **step150**：三臂seg1 5,154.38 CPU（36.9%）、seg2 7,473.59；二臂3,401.25（36.6%）/5,001.88。step150只作准备度/预算闸门，任务判定只在step300。
+- **偏差**：D17-1 首版0.1×中位阈值规则未预注册、与DESIGN §10冲突，已撤回并重跑；组件定价替代9次端到端更新；崩溃首跑烧12工程Adam、CPU/wall未留存。本轮工程Adam13（超17.3卡4）、正式更新0、confirm读取0；可登记成本292.97 CPU/299.34 wall。
+- **限制**：本轮不启动正式训练、不物化父候选；17未准入。**唯一下一步：owner裁定臂范围（建议三臂），裁定后先做17.4预检。**

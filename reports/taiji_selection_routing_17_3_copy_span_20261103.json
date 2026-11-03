@@ -1,0 +1,60 @@
+{
+  "schema": "taiji-selection-routing-17-3-copy-span-v1",
+  "step": "N17.3.price.copy_span",
+  "date": "2026-11-03",
+  "dtype": "float64",
+  "threads": 1,
+  "batch": 8,
+  "stage": "copy",
+  "arm": "B_stop_lock",
+  "repeats": 5,
+  "adam_steps": 0,
+  "blocks": {
+    "with_span": {
+      "forward_rows": [
+        2.140625,
+        2.140625,
+        2.078125,
+        2.15625,
+        2.109375
+      ],
+      "forward_backward_rows": [
+        7.03125,
+        7.078125,
+        7.15625,
+        7.109375,
+        7.328125
+      ],
+      "median_forward_cpu": 2.140625,
+      "median_forward_backward_cpu": 7.109375,
+      "median_total_cpu": 9.234375
+    },
+    "without_span": {
+      "forward_rows": [
+        2.234375,
+        2.21875,
+        2.203125,
+        2.21875,
+        2.265625
+      ],
+      "forward_backward_rows": [
+        7.796875,
+        7.609375,
+        7.71875,
+        7.703125,
+        7.765625
+      ],
+      "median_forward_cpu": 2.21875,
+      "median_forward_backward_cpu": 7.71875,
+      "median_total_cpu": 9.921875
+    }
+  },
+  "copy_span_increment_cpu": -0.6875,
+  "row_noise_band_cpu": 0.765625,
+  "resolved": false,
+  "note": "The first price pass reported -0.2578 CPU for the copy span increment, which is smaller than the between-row spread; this five-repeat interleaved re-measurement is the value used in the 17.3 report.",
+  "timing": {
+    "cpu_seconds": 98.640625,
+    "wall_seconds": 101.01656350004487
+  }
+}
