@@ -1,0 +1,43 @@
+{
+  "schema": "taiji-binding-copy-attribution-v1",
+  "step": "15.1.1-review-bundles",
+  "rows": [
+    {
+      "seed": 28031,
+      "arm": "R1P0",
+      "train_prefix_equal": 8,
+      "train_prefix_probes": 8,
+      "alpha_record_top1": 0.0,
+      "byte_level_top1": 0.0,
+      "dev_examples": 240
+    },
+    {
+      "seed": 28031,
+      "arm": "R1P1",
+      "train_prefix_equal": 8,
+      "train_prefix_probes": 8,
+      "alpha_record_top1": 0.0,
+      "byte_level_top1": 0.0,
+      "dev_examples": 240
+    },
+    {
+      "seed": 28032,
+      "arm": "R1P0",
+      "train_prefix_equal": 8,
+      "train_prefix_probes": 8,
+      "alpha_record_top1": 0.0,
+      "byte_level_top1": 0.0,
+      "dev_examples": 240
+    },
+    {
+      "seed": 28032,
+      "arm": "R1P1",
+      "train_prefix_equal": 8,
+      "train_prefix_probes": 8,
+      "alpha_record_top1": 0.0,
+      "byte_level_top1": 0.0,
+      "dev_examples": 240
+    }
+  ],
+  "note": "0 Adam. Record-level alpha accuracy is the intended source top-1."
+}

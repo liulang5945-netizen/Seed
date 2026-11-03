@@ -1,0 +1,56 @@
+{
+  "schema": "taiji-binding-copy-manifest-v1",
+  "step": "15.1.1-closeout",
+  "status": "native_byte_task_failed",
+  "date": "2026-11-03",
+  "closeout_report": "reports/taiji_binding_copy_15_1_closeout_20261103.json",
+  "source_report": "reports/taiji_binding_copy_15_1_compare_20261102.json",
+  "source_manifest": "plans/manifests/taiji_binding_copy_15_1_compare_20261102.json",
+  "attribution_reports": [
+    "reports/taiji_binding_copy_15_1_attribution_20261103.json",
+    "reports/taiji_binding_copy_15_1_attribution_bundles_20261103.json"
+  ],
+  "parent_bundle": "output/taiji_core_record_relation_14_6/27031_A_full_step300.pt",
+  "parent_sha256": "b75a83a0a474c041c2a61bed8c4e0a51de11197d67a9b196262e7e039a9a4cef",
+  "dose_frozen_before_run": true,
+  "dose_changed_after_run": false,
+  "retained_products": [
+    {
+      "path": "output/taiji_core_binding_copy_15_1_compare/28031-R0P1-step300.pt",
+      "bytes": 64975719,
+      "sha256": "d216650e8f5c36a49568661b8b5684c31a07c4b638717a1c823006a82524bb90"
+    },
+    {
+      "path": "output/taiji_core_binding_copy_15_1_compare/28031-R1P0-step300.pt",
+      "bytes": 64928521,
+      "sha256": "f9e4a57d4f9a689c5da8d76234be3b42a88f75343a3902e4d45cad0a92bc437e"
+    },
+    {
+      "path": "output/taiji_core_binding_copy_15_1_compare/28031-R1P1-step300.pt",
+      "bytes": 64928521,
+      "sha256": "2d8d021721ebaa49676280f986977c14d20bf9ed8f49f1c09b72ec54e52ef734"
+    },
+    {
+      "path": "output/taiji_core_binding_copy_15_1_compare/28032-R1P0-step300.pt",
+      "bytes": 64928521,
+      "sha256": "abb5b8bf1691335ae69e002ead23404cb6e2d162cce4c865b1bed15039cfd686"
+    },
+    {
+      "path": "output/taiji_core_binding_copy_15_1_compare/28032-R1P1-step300.pt",
+      "bytes": 64928521,
+      "sha256": "c9a45e13498b28853d7f2e132ebb530bf4033243f9bf41b06d86ff1702bd67c9"
+    }
+  ],
+  "retained_bytes": 324689803,
+  "removed_products": {
+    "count": 11,
+    "bytes": 714544117,
+    "reason": "eight step150 checkpoints and three step300 bundles not needed by the verdict"
+  },
+  "next_design": {
+    "document": "plans/reference/SPEC-N16-01_SELECTION_LOCKED_BINDING_DRAFT_20261103.md",
+    "status": "draft_for_owner_decision",
+    "training_started": false
+  },
+  "limits": "No confirm read, no N15.2, no step 12/13, no 14.7 release, no push."
+}

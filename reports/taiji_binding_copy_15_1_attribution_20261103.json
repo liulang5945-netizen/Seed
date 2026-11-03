@@ -1,0 +1,101 @@
+{
+  "schema": "taiji-binding-copy-attribution-v1",
+  "step": "15.1.1-review",
+  "reader_switch": {
+    "shared_parameters_bit_equal_at_init": true,
+    "shared_parameter_count": 164,
+    "r0_raw_hex": "e694b1e79a9ce994bee588b1e58fbe",
+    "r1_raw_hex": "e5ba94e5ba94e5ba94e594e7e6e7e6e7e68082e6e8e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6e6",
+    "outputs_differ": true,
+    "r1_has_reader_module": true
+  },
+  "self_prefix_vs_target_r1_init": [
+    {
+      "index": 0,
+      "generated_len": 65,
+      "target_len": 27,
+      "prefix_equals_target": false,
+      "terminated": false
+    },
+    {
+      "index": 1,
+      "generated_len": 65,
+      "target_len": 27,
+      "prefix_equals_target": false,
+      "terminated": false
+    },
+    {
+      "index": 2,
+      "generated_len": 65,
+      "target_len": 27,
+      "prefix_equals_target": false,
+      "terminated": false
+    },
+    {
+      "index": 3,
+      "generated_len": 65,
+      "target_len": 27,
+      "prefix_equals_target": false,
+      "terminated": false
+    }
+  ],
+  "self_prefix_equal_count": 0,
+  "curriculum": {
+    "R0": {
+      "steps": 5,
+      "tf_losses": [
+        5.4803634685045886,
+        9.228433967610467,
+        12.735121146097486,
+        15.982368339264111,
+        17.765040869876227
+      ],
+      "self_losses": [
+        1.9009659092278377,
+        0.6369901572219846,
+        0.040098846019709915,
+        0.002094603046721185,
+        0.00023176005125401117
+      ],
+      "max_abs_gap": 17.764809109824974,
+      "adam_calls": 5
+    },
+    "R1": {
+      "steps": 5,
+      "tf_losses": [
+        3.8075828736486046,
+        9.972521867935251,
+        12.72141850313315,
+        12.799801298087996,
+        11.448957730218542
+      ],
+      "self_losses": [
+        1.6993005924999125,
+        0.655763150514807,
+        0.5419731485740895,
+        0.3921557978334817,
+        0.20369684360318346
+      ],
+      "max_abs_gap": 12.407645500254514,
+      "adam_calls": 5
+    }
+  },
+  "source_top1_estimator": {
+    "first_target_byte": 230,
+    "first_target_byte_in_any_record": true,
+    "copy_weights_total_mass": 0.9996777389540497,
+    "copy_weights_argmax_position": 99,
+    "copy_weights_argmax_record": 3,
+    "object_record_index": 3,
+    "byte_level_hit": true,
+    "alpha_argmax_record": 8,
+    "alpha_null": 0.000322261045950451,
+    "record_level_hit": false,
+    "record_count": 9
+  },
+  "cost": {
+    "cpu_seconds": 90.078125,
+    "adam_calls": 10
+  },
+  "limits": "Instrument review only. It does not re-run the 300-update grid and makes no capability claim."
+}

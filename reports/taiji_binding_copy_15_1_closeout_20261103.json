@@ -1,0 +1,118 @@
+{
+  "schema": "taiji-binding-copy-closeout-v1",
+  "step": "15.1.1-closeout",
+  "date": "2026-11-03",
+  "status": "native_byte_task_failed",
+  "verdict": "native_byte_task_failed",
+  "source_report": "reports/taiji_binding_copy_15_1_compare_20261102.json",
+  "source_manifest": "plans/manifests/taiji_binding_copy_15_1_compare_20261102.json",
+  "dose": {
+    "seeds": [28031, 28032],
+    "arms": ["R0P0", "R1P0", "R0P1", "R1P1"],
+    "updates_per_arm": 300,
+    "batch": 8,
+    "train_examples": 288,
+    "dev_examples": 240,
+    "endpoints": ["step0", "step300"],
+    "adam_calls": 2400
+  },
+  "cost": {
+    "cpu_seconds": 14580.640625,
+    "wall_seconds": 14798.46202870016,
+    "adam_calls": 2400,
+    "peak_live_product_bytes": 1039233920,
+    "observation_line_cpu": 20000.0,
+    "observation_line_wall": 30000.0,
+    "observation_line_reached": false
+  },
+  "task_gate": {
+    "thresholds": {
+      "overall": 0.8,
+      "unseen_combination": 0.6,
+      "unseen_output_name": 0.6,
+      "new_description": 0.6,
+      "both_correct_counterfactual": 0.6,
+      "reversed_paired": 0.95,
+      "utf8": 0.98,
+      "eos": 0.95
+    },
+    "readings": {
+      "28031-R0P0": {"completed": 0.5625, "unseen_combination": 0.1125, "unseen_output_name": 0.0, "new_description": 0.0, "both_new": 0.0, "nll": 1.7272},
+      "28031-R1P0": {"completed": 0.5625, "unseen_combination": 0.1125, "unseen_output_name": 0.0, "new_description": 0.0, "both_new": 0.0, "nll": 0.4662},
+      "28031-R0P1": {"completed": 0.0, "unseen_combination": 0.0, "unseen_output_name": 0.0, "new_description": 0.0, "both_new": 0.0, "nll": 1.8521},
+      "28031-R1P1": {"completed": 0.5625, "unseen_combination": 0.1125, "unseen_output_name": 0.0, "new_description": 0.0, "both_new": 0.0, "nll": 0.4662},
+      "28032-R0P0": {"completed": 0.5625, "unseen_combination": 0.1125, "unseen_output_name": 0.0, "new_description": 0.0, "both_new": 0.0, "nll": 1.4166},
+      "28032-R1P0": {"completed": 0.5625, "unseen_combination": 0.1125, "unseen_output_name": 0.0, "new_description": 0.0, "both_new": 0.0, "nll": 0.4292},
+      "28032-R0P1": {"completed": 0.1458333, "unseen_combination": 0.0208333, "unseen_output_name": 0.0, "new_description": 0.0, "both_new": 0.0, "nll": 1.6863},
+      "28032-R1P1": {"completed": 0.5625, "unseen_combination": 0.1125, "unseen_output_name": 0.0, "new_description": 0.0, "both_new": 0.0, "nll": 0.4292}
+    },
+    "passed": {"all_seeds_all_arms": false}
+  },
+  "mechanism_gate": {
+    "package_gain_R1P1_minus_R0P0": {"pooled_mean": 0.0, "per_seed_bootstrap_lower": {"28031": 0.0, "28032": 0.0}, "passed": false},
+    "source_top1_record_level_alpha": {"28031-R1P0": 0.0, "28031-R1P1": 0.0, "28032-R1P0": 0.0, "28032-R1P1": 0.0, "denominator": 240, "passed": false},
+    "source_top1_byte_level": {"28031-R1P0": 0.0, "28031-R1P1": 0.0, "28032-R1P0": 0.0, "28032-R1P1": 0.0, "passed": false},
+    "identity_rescue": {"equal": 8, "denominator": 8, "all_four_r1_configs": true, "passed": true},
+    "content_necessity": {
+      "true_completed_rate": 0.4167,
+      "no_source": {"completed_rate": 0.0, "drop": 0.4167},
+      "wrong_record": {"completed_rate_seed28031": 0.0417, "completed_rate_seed28032": 0.1667, "drop_seed28031": 0.375, "drop_seed28032": 0.25},
+      "wrong_position": {"completed_rate": 0.0, "drop": 0.4167},
+      "gamma0": {"completed_rate": 0.4167, "drop": 0.0},
+      "passed_for_no_source_wrong_record_wrong_position": true,
+      "gamma0_note": "Forcing gamma=0 does not change completions at all, so the learned gate is already near zero: the byte-level copy path is not in use."
+    },
+    "forced_record_oracle": {
+      "completed_rate": 0.0,
+      "status": "oracle_not_reachable_by_construction",
+      "note": "It forced offset 0 of the object record, i.e. the description's first byte, while the answer starts with the template character. Reported only; no gate, per the revised rescue/oracle definition."
+    }
+  },
+  "attribution_review": {
+    "scope": "instrument, wiring and aggregation only; no 300-update rerun, no dose or seed change",
+    "probe_reports": [
+      "reports/taiji_binding_copy_15_1_attribution_20261103.json",
+      "reports/taiji_binding_copy_15_1_attribution_bundles_20261103.json"
+    ],
+    "probe_cost": {"cpu_seconds": 90.078125, "adam_calls": 10, "bundle_stage_adam_calls": 0},
+    "q1_reader_and_curriculum_wiring": {
+      "reader_switch": "wired: 164 shared parameters are bit-identical at init, outputs differ, and R0P0 vs R1P0 disagree on 74/240 (seed 28031) and 99/240 (seed 28032) dev examples; R1 dev NLL 0.466 vs R0 1.727",
+      "curriculum_switch": "wired: self_count_total is 984/979 for both R0P1 and R1P1 and 0 for P0 arms; a five-step probe shows a 12.4 (R1) and 17.8 (R0) TF-vs-self loss gap at init",
+      "why_R1P0_equals_R1P1": "the greedy self-prefix equals the teacher prefix on 8/8 train probes after training, and per-update losses are bit-identical for all 300 updates, so the P1 factor is inert for R1 by construction, not by a wiring bug",
+      "arm_config_mapping": "no misplacement; R1 arms carry reader.* parameters and trainable new groups"
+    },
+    "q2_source_top1_caliber": {
+      "both_can_hold": true,
+      "reason": "the generator alone reproduces memorized template-plus-name answers for 100/240 dev examples (gamma0 rate 0.4167) while the reader never selects the goal-named object record (alpha 0/240). Correct byte strings can therefore coexist with wrong record selection.",
+      "estimator_note": "the 1.1 report argmaxed byte-level copy weights at the first prediction; the intended record-level signal is alpha. Both give 0.0 on the saved step300 bundles, so the reading is real either way. Byte-level remains the weaker proxy and is recorded as such."
+    },
+    "q3_R0P1_collapse": {
+      "real_training_result": true,
+      "evidence": "198 updates differ from R0P0, final train loss 0.465 versus 8.65e-05, clip_max 1650.77 on seed 28031, and self_count 984. The old reader under a self-prefix curriculum is unstable at lr 1e-3 with the declared clip."
+    },
+    "instrument_failure_found": false
+  },
+  "architecture_diagnosis": {
+    "is_architecture_problem": true,
+    "which_link_breaks": [
+      "decoder gate: gamma is effectively zero after training, so the byte-level copy path never engages; gamma forcing changes nothing",
+      "selector: goal-conditioned record selection never forms; alpha accuracy is 0/240 on dev while train loss reaches 2e-05, i.e. train is satisfied by memorised pooled content",
+      "curriculum: the self-prefix factor arrives at update 101, after R1 has already copied train targets exactly, so it cannot test its hypothesis; on R0 the same dose destabilises training"
+    ],
+    "not_the_break": "the content vector is necessary (removing records drops completions from 0.4167 to 0.0), and identity rescue is bit-exact."
+  },
+  "products": {
+    "kept": [
+      "output/taiji_core_binding_copy_15_1_compare/28031-R1P0-step300.pt",
+      "output/taiji_core_binding_copy_15_1_compare/28031-R1P1-step300.pt",
+      "output/taiji_core_binding_copy_15_1_compare/28032-R1P0-step300.pt",
+      "output/taiji_core_binding_copy_15_1_compare/28032-R1P1-step300.pt",
+      "output/taiji_core_binding_copy_15_1_compare/28031-R0P1-step300.pt"
+    ],
+    "kept_reason": "the four R1 step300 bundles reproduce the alpha/self-prefix re-check; the R0P1 bundle reproduces the collapse",
+    "deleted": 11,
+    "deleted_reason": "eight step150 checkpoints and three step300 bundles (both R0P0, one R0P1) that the verdict does not need",
+    "deleted_bytes_registered": 714544117
+  },
+  "limits": "Bounded native-byte task only. No confirm read, no N15.2, no step 12/13, no 14.7 release; no claim beyond this task and these arms."
+}
