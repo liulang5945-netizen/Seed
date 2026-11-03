@@ -1,0 +1,75 @@
+{
+  "schema": "taiji_consolidation_cleanup/v1",
+  "date": "2026-11-03",
+  "timezone": "Asia/Shanghai",
+  "purpose": "登记项目级收束轮次的删除、移档与字节账，保证每字节可追溯；不回改任何已冻结判据。",
+  "policy": {
+    "evidence_bundles_never_deleted": true,
+    "negative_reports_never_deleted": true,
+    "manifest_and_receipt_references_checked": true,
+    "training_updates": 0,
+    "confirm_reads": 0,
+    "cpu_seconds": 0,
+    "wall_seconds": 0
+  },
+  "deleted": {
+    "transient_report_files": {
+      "files": 30,
+      "bytes": 801319,
+      "pattern": "reports/*_progress.json, *.attempt.json, *.attempt_crashed.json, *.recomputed.json",
+      "reference_check": "0 matches in plans/*.md, plans/active/roadmap/*.md, plans/reference/*.md, plans/manifests/*.json"
+    },
+    "caches": {
+      ".mypy_cache": { "files": 18, "bytes": 108597477 },
+      ".ruff_cache": { "files": 213, "bytes": 1629114 },
+      "__pycache__": { "files": 3545, "bytes": 66281648, "dirs_scope": ["taiji", "scripts", "tests", "api", "seed", "seed_platform", "instruments", "neuroplex"] }
+    },
+    "test_residue": {
+      ".seed_test_tmp": { "files": 25769, "bytes": 424851484, "note": "gitignored; last write 2026-11-01; no manifest or receipt reference" }
+    },
+    "logs": {
+      "web.log": { "files": 1, "bytes": 168 }
+    },
+    "empty_directories": {
+      "count": 13,
+      "bytes": 0,
+      "list": [
+        "output/n16_merge",
+        "output/n16_merge_backup",
+        "output/taiji_core_10_21_3_price",
+        "output/taiji_core_10_21_graph",
+        "output/taiji_core_binding_copy_15_1_preflight",
+        "output/taiji_core_binding_copy_15_1_price",
+        "output/taiji_core_binding_select_16_1_graph",
+        "output/taiji_core_binding_select_16_1_preflight",
+        "output/taiji_core_binding_select_16_1_price",
+        "output/taiji_core_record_relation_14",
+        "output/taiji_core_record_relation_14_5",
+        "output/taiji_core_record_relation_14_6_preflight",
+        "output/taiji_n15_1_data"
+      ]
+    },
+    "total_files": 29576,
+    "total_bytes": 602161210
+  },
+  "archived_not_deleted": {
+    "destination": "plans/archive/20261103_consolidation/",
+    "files": [
+      { "path": "taiji_n1_v13_v14_cross_face_position_effect_superseded_20261019.json", "bytes": 5551, "reason": "explicitly superseded duplicate reading" },
+      { "path": "taiji_n1_v14_after_n123_itemwise_attribution_superseded_20261019.json", "bytes": 11297, "reason": "explicitly superseded duplicate reading" }
+    ],
+    "total_files": 2,
+    "total_bytes": 16848
+  },
+  "retained_evidence_bundles": {
+    "taiji_core_record_relation_14_6": { "files": 17, "bytes": 555349680, "note": "12 step0/step300 bundles + logs, sha256 checked in 14.6 card" },
+    "taiji_core_binding_copy_15_1_compare": { "files": 5, "bytes": 324689803, "note": "5 retained bundles declared by 15.1.3 closeout" },
+    "taiji_core_binding_select_16_1_compare": { "files": 8, "bytes": 262231466, "note": "4 retained bundles + logs; 262231613 B deleted is recorded in 16.1 compare manifest" }
+  },
+  "not_committed_by_this_round": {
+    "untracked_files": 67,
+    "untracked_bytes": 985219,
+    "reason": "unknown provenance; not merged to avoid swallowing others' uncommitted work",
+    "critical_dependency": "taiji/record_relation_core.py is imported by the committed taiji/selection_routing.py"
+  }
+}
