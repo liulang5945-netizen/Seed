@@ -26,6 +26,6 @@
 
 若任务成立而新结构无额外收益，按预定较少改动优先规则选合格父；不为保复杂结构阻止连续机制研究。15.2给出两session、有限经验/纠错/反馈/无提示选择的量化设计输入，实际父/价格/更新组仍须在确认后冻结。没有合格父则15.1.3负结案，不继续加步数或新头。
 
-**N16.1（方案 A）已于 2026-11-03 获 owner 裁定并通过 0a。** 范围仅 N16.1：不含 N15.2/12/13、不释放 14.7、不读 confirm。0a `passed_16_1_0a_selection_interface`：选择标签唯一（`kind=object` 且 `description=object_description`）、键片段仅含 description（自动检查不含记录 name 与 action）、dev 2×2 轴 135/45/45/15、v2 digest 逐位不变、confirm 密封、0 模型前向/0 Adam、2.31/60 CPU、载荷 722,294B。七条与 15.1 证据对齐的修订点（锁定复制以 one-hot α 覆盖并保留模型 betas、γ 下限 0.2、按批完成率 0.5 触发课程、oracle 改实体起点、新增 0d）见 [SPEC-N16-01 §0](SPEC-N16-01_SELECTION_LOCKED_BINDING_DRAFT_20261103.md)。下一步为 N16.1.0b 图谱工程。
+**N16.1（方案 A）0a/0b 已通过（2026-11-03）。** 0a：选择标签唯一、键片段仅含 description、dev 2×2 轴 135/45/45/15、v2 digest 不变、confirm 密封、0 前向/0 Adam、722,294B、2.31 CPU。0b `passed_16_1_0b_graph`：选择头 25,602 参数、总 3,552,083；CE 三档 eps 全分辨；α 锁定为 one-hot 且保留模型 betas；**模型 γ 0.00073/0.00383 被下限强制到 0.2**（15.1 断点①的修复点）；identity rescue 逐位；两 profile 初态/step1/恢复端下一更新独立进程逐位一致。两次尝试合计 12/12 工程 Adam、65.4 CPU、峰值 62.5MiB。七条修订点见 [SPEC-N16-01 §0](SPEC-N16-01_SELECTION_LOCKED_BINDING_DRAFT_20261103.md)。下一步为 N16.1.0c 定价。
 
 15.1 已收束（负），1.2 未启动、confirm 未读、14.7 未释放、N15.2 与 12/13 未开展。原14.6/14.8及旧提案的hash绑定保留。

@@ -1505,7 +1505,8 @@ owner 批准"执行整包"后按[设计件](../../reference/SPEC-TAIJI-CORE_READ
 owner 裁定 **N16.1 走方案 A**（显式记录选择头＋选择锁定复制＋复制门下限＋按准确率触发的自前缀课程），裁定日期 2026-11-03；范围仅 N16.1，不含 N15.2/12/13，不释放 14.7、不读 confirm。立项依据为 15.1 的三处断点（γ≈0、选择器 0/240、课程按构造失效）。与 15.1 证据对齐的七条修订点（选择头输入只含 goal＋记录 description、标签只来自标注、锁定复制实现为「one-hot α 覆盖＋保留模型 betas」、γ 下限 0.2、按批完成率 0.5 触发课程、oracle 改为实体字节起点、新增 0d）已写入 [SPEC-N16-01 §0](../../reference/SPEC-N16-01_SELECTION_LOCKED_BINDING_DRAFT_20261103.md)。
 
 - **0a 已通过（2026-11-03）**：`passed_16_1_0a_selection_interface`，14 项检查全过、**0 模型前向/0 Adam**；train/dev 288/240；每例选择标签唯一（`kind=object` 且 `description=object_description`）；键片段仅含 description，自动检查不含记录 name 与 action；dev 2×2 轴 135/45/45/15 与 unseen_combination 36 与 0a 一致；v2 train/dev digest 逐位不变（`ffe721a6…`/`84dc10d7…`）；confirm 密封未物化；载荷 722,294B；**2.31/60 CPU、2.6/120 墙**。产物：[载荷](../../../output/taiji_core_binding_select_16_1/select_v1.json)、[报告](../../../reports/taiji_binding_select_16_1_data_20261103.json)、[manifest](../../manifests/taiji_binding_select_16_1_data_20261103.json)。
-- **唯一下一步**：N16.1.0b 图谱工程（选择头、one-hot α 锁定、γ 下限 0.2、准确率触发课程接口；FD、干预、独立恢复；600 CPU/1200 wall、≤12 Adam、≤2GiB）。
+- **0b 已通过（2026-11-03）**：`passed_16_1_0b_graph`，21 项检查全过。选择头 **25,602 参数**（与公式逐位一致），总参数 3,552,083（=15.1 R1 3,526,481＋25,602）；CE 三档 eps（1e-4/1e-5/1e-6）全分辨，锁定 NLL 梯度范数 43.3（A）/44.7（B）；α 锁定为 one-hot（`alpha_null=0`、模型 betas 逐位保留、分布改变）；**模型学到的 γ 为 0.00073/0.00383，下限把它强制到 0.2**——正是 15.1 断点①的修复点；identity rescue 逐位；两 profile 初态/step1/恢复端下一更新独立进程逐位一致；课程接口阈值 0.5、确定性。**两次尝试合计 12/12 工程 Adam**、65.4/600 CPU、51.7/1200 墙、峰值 62.5MiB；首跑因 bundle schema 缺 `parameters` 与参数计数公式错误失败 4 项，修复后重跑一次（未改剂量/判据）。产物：[报告](../../../reports/taiji_binding_select_16_1_graph_20261103.json)、[manifest](../../manifests/taiji_binding_select_16_1_graph_20261103.json)、模块 [binding_select.py](../../../taiji/binding_select.py)。
+- **唯一下一步**：N16.1.0c 定价（选择头前向、锁定复制双 read、γ 下限、分阶段训练与评价、恢复；600 CPU/1200 wall、≤12 Adam、≤1GiB）。
 
 ## 2026-11-02 规划窗口裁定：先收束15.1，再编制后继合同
 

@@ -1,0 +1,350 @@
+{
+  "schema": "taiji-binding-select-graph-v1",
+  "step": "N16.1.0b",
+  "date": "2026-11-03",
+  "status": "passed_16_1_0b_graph",
+  "checks": {
+    "parent_identity": true,
+    "profiles": true,
+    "head_parameter_count": true,
+    "head_trainable": true,
+    "selection_fd_resolved": true,
+    "locked_grad_resolved": true,
+    "alpha_locked_one_hot": true,
+    "alpha_null_zero": true,
+    "betas_preserved": true,
+    "gamma_floor_honoured": true,
+    "locking_changes_output": true,
+    "identity_rescue": true,
+    "curriculum_interface": true,
+    "initial_restore": true,
+    "step1_restore": true,
+    "replay_update": true,
+    "adam_budget": true,
+    "product_limit": true,
+    "stage_budget": true,
+    "products_cleaned": true,
+    "confirm_untouched": true
+  },
+  "failed": [],
+  "profiles": [
+    {
+      "profile": "A-locked-f64",
+      "head_parameters": 25602,
+      "head_parameters_expected": 25602,
+      "head_parameter_count_matches": true,
+      "base_parameters": 3526481,
+      "total_parameters": 3552083,
+      "trainable_tensors": 80,
+      "head_trainable_tensors": 11,
+      "initial_restore_equal": true,
+      "initial_worker_ok": true,
+      "initial_worker_message": null,
+      "step1_restore_equal": true,
+      "step1_worker_ok": true,
+      "step1_worker_message": null,
+      "replay_equal": true,
+      "replay_worker_ok": true,
+      "replay_worker_message": null,
+      "fd": {
+        "ce_rows": [
+          {
+            "eps": 0.0001,
+            "ce_analytic": [
+              0.10799342955302953,
+              0.025425706499646,
+              0.03531049916175792,
+              0.027558908754631784,
+              0.21240126671859652,
+              0.028738259420957077,
+              0.16819930579299658,
+              3.7037609982698694,
+              0.08198593336648895,
+              2.1599565832371943,
+              0.10799342955302937
+            ],
+            "ce_numeric": [
+              0.10799342967882097,
+              0.016777824192182322,
+              0.04360011744641845,
+              0.01686739308781604,
+              0.23884442906352277,
+              0.021775189588124633,
+              0.04870675922918899,
+              7.611882781256574,
+              0.042543451720389314,
+              1.7270843108729839,
+              0.10799342967882097
+            ],
+            "ce_resolved": true
+          },
+          {
+            "eps": 1e-05,
+            "ce_analytic": [
+              0.10799342955302953,
+              0.025425706499646,
+              0.03531049916175792,
+              0.027558908754631784,
+              0.21240126671859652,
+              0.028738259420957077,
+              0.16819930579299658,
+              3.7037609982698694,
+              0.08198593336648895,
+              2.1599565832371943,
+              0.10799342955302937
+            ],
+            "ce_numeric": [
+              0.10799342955447598,
+              0.016777824185520984,
+              0.04360011764958926,
+              0.016867393104469386,
+              0.23884443117738738,
+              0.02177518959589619,
+              0.048706759359085076,
+              7.6118824336890425,
+              0.042543451206356046,
+              1.7270843037042736,
+              0.10799342955447598
+            ],
+            "ce_resolved": true
+          },
+          {
+            "eps": 1e-06,
+            "ce_analytic": [
+              0.10799342955302953,
+              0.025425706499646,
+              0.03531049916175792,
+              0.027558908754631784,
+              0.21240126671859652,
+              0.028738259420957077,
+              0.16819930579299658,
+              3.7037609982698694,
+              0.08198593336648895,
+              2.1599565832371943,
+              0.10799342955302937
+            ],
+            "ce_numeric": [
+              0.10799342953227153,
+              0.016777824241032135,
+              0.043600117627384805,
+              0.016867393148878307,
+              0.23884443123289856,
+              0.021775189651407345,
+              0.0487067592924717,
+              7.611882430258454,
+              0.04254345120635605,
+              1.727084303571047,
+              0.10799342953227153
+            ],
+            "ce_resolved": true
+          }
+        ],
+        "ce_all_resolved": true,
+        "locked_grad_norm": 43.32328403962034,
+        "locked_grad_resolved": true
+      },
+      "alpha_lock": {
+        "chosen": 7,
+        "confidence": 0.21298720840043628,
+        "unforced_alpha_argmax": 7,
+        "locked_alpha_argmax": 7,
+        "alpha_is_one_hot": true,
+        "alpha_null_zero": true,
+        "betas_preserved": true,
+        "gamma_model": 0.000729647723049141,
+        "gamma_locked": 0.2,
+        "gamma_floor_honoured": true,
+        "probabilities_differ": true
+      },
+      "identity_rescue": {
+        "intervention_diff": 0.10689688487661825,
+        "rescue_equal": true
+      },
+      "curriculum": {
+        "threshold": 0.5,
+        "batch_completion_rate": 0.0,
+        "use_self_prefix": false,
+        "examples": 8
+      },
+      "gamma_mean": 0.2,
+      "gamma_floor": 0.2,
+      "selection_chosen": 7,
+      "selection_correct": true,
+      "step1_loss": 7.877893115496397
+    },
+    {
+      "profile": "B-select-f64",
+      "head_parameters": 25602,
+      "head_parameters_expected": 25602,
+      "head_parameter_count_matches": true,
+      "base_parameters": 3526481,
+      "total_parameters": 3552083,
+      "trainable_tensors": 80,
+      "head_trainable_tensors": 11,
+      "initial_restore_equal": true,
+      "initial_worker_ok": true,
+      "initial_worker_message": null,
+      "step1_restore_equal": true,
+      "step1_worker_ok": true,
+      "step1_worker_message": null,
+      "replay_equal": true,
+      "replay_worker_ok": true,
+      "replay_worker_message": null,
+      "fd": {
+        "ce_rows": [
+          {
+            "eps": 0.0001,
+            "ce_analytic": [
+              0.11698622473325918,
+              0.023390408822722083,
+              0.03189921725883736,
+              0.02782894864356786,
+              0.19940422119575202,
+              0.024606702958012476,
+              0.14174416155781386,
+              3.2706870865340423,
+              0.07943573676164915,
+              2.3235865531144944,
+              0.11698622473325926
+            ],
+            "ce_numeric": [
+              0.11698622486511212,
+              0.006724502138455435,
+              0.10352223369425317,
+              0.034409417424274835,
+              0.04114767465757119,
+              0.010029402077726957,
+              0.0264950348349835,
+              0.7279423376460592,
+              0.07268872129873039,
+              1.3493424721477965,
+              0.11698622486622234
+            ],
+            "ce_resolved": true
+          },
+          {
+            "eps": 1e-05,
+            "ce_analytic": [
+              0.11698622473325918,
+              0.023390408822722083,
+              0.03189921725883736,
+              0.02782894864356786,
+              0.19940422119575202,
+              0.024606702958012476,
+              0.14174416155781386,
+              3.2706870865340423,
+              0.07943573676164915,
+              2.3235865531144944,
+              0.11698622473325926
+            ],
+            "ce_numeric": [
+              0.11698622474076713,
+              0.006724502155108779,
+              0.10352223521747915,
+              0.03440941748200643,
+              0.041147682838804656,
+              0.01002940204219982,
+              0.026495034932683122,
+              0.7279425332518129,
+              0.07268872179722052,
+              1.3493424719124292,
+              0.11698622474076713
+            ],
+            "ce_resolved": true
+          },
+          {
+            "eps": 1e-06,
+            "ce_analytic": [
+              0.11698622473325918,
+              0.023390408822722083,
+              0.03189921725883736,
+              0.02782894864356786,
+              0.19940422119575202,
+              0.024606702958012476,
+              0.14174416155781386,
+              3.2706870865340423,
+              0.07943573676164915,
+              2.3235865531144944,
+              0.11698622473325926
+            ],
+            "ce_numeric": [
+              0.11698622470746045,
+              0.006724502288335543,
+              0.1035222352285814,
+              0.034409417537517584,
+              0.0411476829276225,
+              0.01002940208660874,
+              0.026495034943785356,
+              0.7279425352502145,
+              0.07268872181942498,
+              1.3493424719790426,
+              0.11698622470746045
+            ],
+            "ce_resolved": true
+          }
+        ],
+        "ce_all_resolved": true,
+        "locked_grad_norm": 44.673566831351245,
+        "locked_grad_resolved": true
+      },
+      "alpha_lock": {
+        "chosen": 7,
+        "confidence": 0.17925083829465377,
+        "unforced_alpha_argmax": 4,
+        "locked_alpha_argmax": 7,
+        "alpha_is_one_hot": true,
+        "alpha_null_zero": true,
+        "betas_preserved": true,
+        "gamma_model": 0.0038259718507101127,
+        "gamma_locked": 0.2,
+        "gamma_floor_honoured": true,
+        "probabilities_differ": true
+      },
+      "identity_rescue": {
+        "intervention_diff": 0.2536122657487976,
+        "rescue_equal": true
+      },
+      "curriculum": {
+        "threshold": 0.5,
+        "batch_completion_rate": 0.0,
+        "use_self_prefix": false,
+        "examples": 8
+      },
+      "gamma_mean": 0.20000000000000004,
+      "gamma_floor": 0.2,
+      "selection_chosen": 7,
+      "selection_correct": true,
+      "step1_loss": 12.293687321742219
+    }
+  ],
+  "curriculum_contract": {
+    "trigger": "batch teacher-forced completion rate",
+    "threshold": 0.5,
+    "dose": "per-example self-prefix once triggered; frozen before 0c"
+  },
+  "gamma_floor": 0.2,
+  "accounting": {
+    "actual_adam_calls": 6,
+    "effective_adam_calls": 0
+  },
+  "cost": {
+    "cpu_seconds": 31.8125,
+    "wall_seconds": 51.71943789999932,
+    "adam_calls": 6,
+    "peak_live_product_bytes": 65555477
+  },
+  "budget": {
+    "cpu_seconds": 600.0,
+    "wall_seconds": 1200.0,
+    "adam_calls": 12,
+    "product_bytes": 2147483648
+  },
+  "source_hashes": {
+    "taiji/binding_select.py": "56cb2d584dc0881c3cae83d3224a7f505dd7a2ee0e9716d899b3647f1ad55387",
+    "taiji/binding_copy.py": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+    "taiji/binding_copy_data.py": "aa001023519996b190bfd5f6faa42c6905c205766e1a3d0b34b0ab11c8b79495",
+    "taiji/binding_copy_scoring.py": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+    "scripts/training/verify_taiji_binding_select_16_1_graph.py": "0cb90adbec95283fc2c34dedaaa9826017e1608b05a7c69091640c8bb4a3297d"
+  },
+  "limits": "Graph engineering only. No adoption training, no confirm read, no capability claim."
+}
