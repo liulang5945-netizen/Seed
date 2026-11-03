@@ -1,0 +1,1056 @@
+{
+  "schema": "taiji-binding-select-arch-probe-v1",
+  "step": "N16.1.3-arch-probe",
+  "date": "2026-11-03",
+  "status": "read_only_probe",
+  "bundle": {
+    "path": "output/taiji_core_binding_select_16_1_compare/bundles/28031-A-locked-step300.pt",
+    "sha256": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169",
+    "profile": "A-locked-f64",
+    "update_index": 300
+  },
+  "probes": {
+    "P1_order_blindness": {
+      "permutation_rows": [
+        {
+          "index": 0,
+          "world": 0,
+          "permutation": "reversed",
+          "multiset_equal": true,
+          "max_abs_score_diff": 0.0
+        },
+        {
+          "index": 0,
+          "world": 0,
+          "permutation": "sorted",
+          "multiset_equal": true,
+          "max_abs_score_diff": 2.220446049250313e-16
+        },
+        {
+          "index": 1,
+          "world": 0,
+          "permutation": "reversed",
+          "multiset_equal": true,
+          "max_abs_score_diff": 2.220446049250313e-16
+        },
+        {
+          "index": 1,
+          "world": 0,
+          "permutation": "sorted",
+          "multiset_equal": true,
+          "max_abs_score_diff": 0.0
+        },
+        {
+          "index": 2,
+          "world": 0,
+          "permutation": "reversed",
+          "multiset_equal": true,
+          "max_abs_score_diff": 8.881784197001252e-16
+        },
+        {
+          "index": 2,
+          "world": 0,
+          "permutation": "sorted",
+          "multiset_equal": true,
+          "max_abs_score_diff": 0.0
+        },
+        {
+          "index": 3,
+          "world": 0,
+          "permutation": "reversed",
+          "multiset_equal": true,
+          "max_abs_score_diff": 8.881784197001252e-16
+        },
+        {
+          "index": 3,
+          "world": 0,
+          "permutation": "sorted",
+          "multiset_equal": true,
+          "max_abs_score_diff": 8.881784197001252e-16
+        },
+        {
+          "index": 4,
+          "world": 0,
+          "permutation": "reversed",
+          "multiset_equal": true,
+          "max_abs_score_diff": 4.440892098500626e-16
+        },
+        {
+          "index": 4,
+          "world": 0,
+          "permutation": "sorted",
+          "multiset_equal": true,
+          "max_abs_score_diff": 4.440892098500626e-16
+        },
+        {
+          "index": 5,
+          "world": 0,
+          "permutation": "reversed",
+          "multiset_equal": true,
+          "max_abs_score_diff": 2.220446049250313e-16
+        },
+        {
+          "index": 5,
+          "world": 0,
+          "permutation": "sorted",
+          "multiset_equal": true,
+          "max_abs_score_diff": 8.881784197001252e-16
+        },
+        {
+          "index": 6,
+          "world": 0,
+          "permutation": "reversed",
+          "multiset_equal": true,
+          "max_abs_score_diff": 2.220446049250313e-16
+        },
+        {
+          "index": 6,
+          "world": 0,
+          "permutation": "sorted",
+          "multiset_equal": true,
+          "max_abs_score_diff": 2.220446049250313e-16
+        },
+        {
+          "index": 7,
+          "world": 0,
+          "permutation": "reversed",
+          "multiset_equal": true,
+          "max_abs_score_diff": 8.881784197001252e-16
+        },
+        {
+          "index": 7,
+          "world": 0,
+          "permutation": "sorted",
+          "multiset_equal": true,
+          "max_abs_score_diff": 2.220446049250313e-16
+        }
+      ],
+      "max_abs_score_diff_over_rows": 8.881784197001252e-16,
+      "witness": {
+        "pair": [
+          "把甲从乙搬到丙",
+          "把乙从甲搬到丙"
+        ],
+        "byte_multiset_equal": true,
+        "encoding_max_abs_diff": 1.6653345369377348e-16,
+        "encoding_bit_equal": false
+      },
+      "invariant_holds": true,
+      "note": "SelectionHead.encode is a mean over byte embeddings, so the head sees only the byte multiset of the goal; any permutation of the goal bytes must give the same scores up to float64 summation order noise."
+    },
+    "P2_memorization": {
+      "train_top1": {
+        "correct": 165,
+        "n": 288,
+        "rate": 0.5729166666666666
+      },
+      "dev_seen": {
+        "correct": 66,
+        "n": 108,
+        "rate": 0.6111111111111112
+      },
+      "dev_unseen_output_name": {
+        "correct": 10,
+        "n": 60,
+        "rate": 0.16666666666666666
+      },
+      "dev_new_description": {
+        "correct": 0,
+        "n": 60,
+        "rate": 0.0
+      },
+      "dev_both_new": {
+        "correct": 0,
+        "n": 15,
+        "rate": 0.0
+      },
+      "dev_unseen_combination": {
+        "correct": 18,
+        "n": 36,
+        "rate": 0.5
+      }
+    },
+    "P3_entity_start_oracle": {
+      "examples": 40,
+      "completed": 3,
+      "completed_rate": 0.075,
+      "object_exact_rate": 0.25,
+      "place_exact_rate": 0.25,
+      "rows": [
+        {
+          "index": 0,
+          "world": 0,
+          "record": 3,
+          "name_offset": 21,
+          "completed": false,
+          "object_exact": true,
+          "place_exact": false,
+          "first_divergence": 21,
+          "bytes": 27
+        },
+        {
+          "index": 1,
+          "world": 0,
+          "record": 3,
+          "name_offset": 21,
+          "completed": false,
+          "object_exact": true,
+          "place_exact": false,
+          "first_divergence": 21,
+          "bytes": 27
+        },
+        {
+          "index": 2,
+          "world": 0,
+          "record": 3,
+          "name_offset": 21,
+          "completed": true,
+          "object_exact": true,
+          "place_exact": true,
+          "first_divergence": -1,
+          "bytes": 27
+        },
+        {
+          "index": 3,
+          "world": 0,
+          "record": 3,
+          "name_offset": 21,
+          "completed": false,
+          "object_exact": true,
+          "place_exact": false,
+          "first_divergence": 21,
+          "bytes": 27
+        },
+        {
+          "index": 4,
+          "world": 0,
+          "record": 3,
+          "name_offset": 21,
+          "completed": true,
+          "object_exact": true,
+          "place_exact": true,
+          "first_divergence": -1,
+          "bytes": 27
+        },
+        {
+          "index": 5,
+          "world": 0,
+          "record": 1,
+          "name_offset": 18,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 6,
+          "world": 0,
+          "record": 1,
+          "name_offset": 18,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 7,
+          "world": 0,
+          "record": 1,
+          "name_offset": 18,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 8,
+          "world": 0,
+          "record": 1,
+          "name_offset": 18,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 9,
+          "world": 0,
+          "record": 1,
+          "name_offset": 18,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": true,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 10,
+          "world": 0,
+          "record": 8,
+          "name_offset": 0,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 11,
+          "world": 0,
+          "record": 8,
+          "name_offset": 0,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 12,
+          "world": 0,
+          "record": 8,
+          "name_offset": 0,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 13,
+          "world": 0,
+          "record": 8,
+          "name_offset": 0,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 14,
+          "world": 0,
+          "record": 8,
+          "name_offset": 0,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": true,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 15,
+          "world": 0,
+          "record": 4,
+          "name_offset": 21,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 4,
+          "bytes": 27
+        },
+        {
+          "index": 16,
+          "world": 0,
+          "record": 4,
+          "name_offset": 21,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 4,
+          "bytes": 27
+        },
+        {
+          "index": 17,
+          "world": 0,
+          "record": 4,
+          "name_offset": 21,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": true,
+          "first_divergence": 4,
+          "bytes": 27
+        },
+        {
+          "index": 18,
+          "world": 0,
+          "record": 4,
+          "name_offset": 21,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 4,
+          "bytes": 27
+        },
+        {
+          "index": 19,
+          "world": 0,
+          "record": 4,
+          "name_offset": 21,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": true,
+          "first_divergence": 4,
+          "bytes": 27
+        },
+        {
+          "index": 0,
+          "world": 1,
+          "record": 8,
+          "name_offset": 0,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 1,
+          "world": 1,
+          "record": 8,
+          "name_offset": 0,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 2,
+          "world": 1,
+          "record": 8,
+          "name_offset": 0,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 3,
+          "world": 1,
+          "record": 8,
+          "name_offset": 0,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 4,
+          "world": 1,
+          "record": 8,
+          "name_offset": 0,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": true,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 5,
+          "world": 1,
+          "record": 1,
+          "name_offset": 21,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 6,
+          "world": 1,
+          "record": 1,
+          "name_offset": 21,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 7,
+          "world": 1,
+          "record": 1,
+          "name_offset": 21,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 8,
+          "world": 1,
+          "record": 1,
+          "name_offset": 21,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 9,
+          "world": 1,
+          "record": 1,
+          "name_offset": 21,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": true,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 10,
+          "world": 1,
+          "record": 3,
+          "name_offset": 18,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 4,
+          "bytes": 27
+        },
+        {
+          "index": 11,
+          "world": 1,
+          "record": 3,
+          "name_offset": 18,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 4,
+          "bytes": 27
+        },
+        {
+          "index": 12,
+          "world": 1,
+          "record": 3,
+          "name_offset": 18,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 4,
+          "bytes": 27
+        },
+        {
+          "index": 13,
+          "world": 1,
+          "record": 3,
+          "name_offset": 18,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 4,
+          "bytes": 27
+        },
+        {
+          "index": 14,
+          "world": 1,
+          "record": 3,
+          "name_offset": 18,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": true,
+          "first_divergence": 4,
+          "bytes": 27
+        },
+        {
+          "index": 15,
+          "world": 1,
+          "record": 2,
+          "name_offset": 0,
+          "completed": false,
+          "object_exact": true,
+          "place_exact": false,
+          "first_divergence": 21,
+          "bytes": 27
+        },
+        {
+          "index": 16,
+          "world": 1,
+          "record": 2,
+          "name_offset": 0,
+          "completed": false,
+          "object_exact": true,
+          "place_exact": false,
+          "first_divergence": 22,
+          "bytes": 27
+        },
+        {
+          "index": 17,
+          "world": 1,
+          "record": 2,
+          "name_offset": 0,
+          "completed": false,
+          "object_exact": true,
+          "place_exact": false,
+          "first_divergence": 21,
+          "bytes": 27
+        },
+        {
+          "index": 18,
+          "world": 1,
+          "record": 2,
+          "name_offset": 0,
+          "completed": false,
+          "object_exact": true,
+          "place_exact": false,
+          "first_divergence": 22,
+          "bytes": 27
+        },
+        {
+          "index": 19,
+          "world": 1,
+          "record": 2,
+          "name_offset": 0,
+          "completed": true,
+          "object_exact": true,
+          "place_exact": true,
+          "first_divergence": -1,
+          "bytes": 27
+        }
+      ],
+      "note": "First decoding step forced onto the name-span start of the correct record, then locked generation continues; this is the entity-start oracle (upper bound and reachability only, not a gate)."
+    },
+    "P4_full_object_span_oracle": {
+      "examples": 40,
+      "completed": 0,
+      "completed_rate": 0.0,
+      "object_exact_rate": 0.0,
+      "place_exact_rate": 0.05,
+      "rows": [
+        {
+          "index": 0,
+          "world": 0,
+          "forced_steps": 2,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 4,
+          "bytes": 23
+        },
+        {
+          "index": 1,
+          "world": 0,
+          "forced_steps": 2,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 4,
+          "bytes": 23
+        },
+        {
+          "index": 2,
+          "world": 0,
+          "forced_steps": 12,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 15,
+          "bytes": 28
+        },
+        {
+          "index": 3,
+          "world": 0,
+          "forced_steps": 2,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 4,
+          "bytes": 23
+        },
+        {
+          "index": 4,
+          "world": 0,
+          "forced_steps": 12,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 15,
+          "bytes": 31
+        },
+        {
+          "index": 5,
+          "world": 0,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 26
+        },
+        {
+          "index": 6,
+          "world": 0,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 26
+        },
+        {
+          "index": 7,
+          "world": 0,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 26
+        },
+        {
+          "index": 8,
+          "world": 0,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 26
+        },
+        {
+          "index": 9,
+          "world": 0,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 26
+        },
+        {
+          "index": 10,
+          "world": 0,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 26
+        },
+        {
+          "index": 11,
+          "world": 0,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 26
+        },
+        {
+          "index": 12,
+          "world": 0,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 26
+        },
+        {
+          "index": 13,
+          "world": 0,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 26
+        },
+        {
+          "index": 14,
+          "world": 0,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 26
+        },
+        {
+          "index": 15,
+          "world": 0,
+          "forced_steps": 5,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 7,
+          "bytes": 30
+        },
+        {
+          "index": 16,
+          "world": 0,
+          "forced_steps": 5,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 7,
+          "bytes": 30
+        },
+        {
+          "index": 17,
+          "world": 0,
+          "forced_steps": 5,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 7,
+          "bytes": 30
+        },
+        {
+          "index": 18,
+          "world": 0,
+          "forced_steps": 5,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 7,
+          "bytes": 30
+        },
+        {
+          "index": 19,
+          "world": 0,
+          "forced_steps": 5,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 7,
+          "bytes": 30
+        },
+        {
+          "index": 0,
+          "world": 1,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 26
+        },
+        {
+          "index": 1,
+          "world": 1,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 26
+        },
+        {
+          "index": 2,
+          "world": 1,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 26
+        },
+        {
+          "index": 3,
+          "world": 1,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 26
+        },
+        {
+          "index": 4,
+          "world": 1,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 26
+        },
+        {
+          "index": 5,
+          "world": 1,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 6,
+          "world": 1,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 7,
+          "world": 1,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 8,
+          "world": 1,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 9,
+          "world": 1,
+          "forced_steps": 1,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": true,
+          "first_divergence": 3,
+          "bytes": 27
+        },
+        {
+          "index": 10,
+          "world": 1,
+          "forced_steps": 5,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 7,
+          "bytes": 27
+        },
+        {
+          "index": 11,
+          "world": 1,
+          "forced_steps": 5,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 7,
+          "bytes": 27
+        },
+        {
+          "index": 12,
+          "world": 1,
+          "forced_steps": 5,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 7,
+          "bytes": 27
+        },
+        {
+          "index": 13,
+          "world": 1,
+          "forced_steps": 5,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 7,
+          "bytes": 27
+        },
+        {
+          "index": 14,
+          "world": 1,
+          "forced_steps": 5,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": true,
+          "first_divergence": 7,
+          "bytes": 27
+        },
+        {
+          "index": 15,
+          "world": 1,
+          "forced_steps": 12,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 15,
+          "bytes": 30
+        },
+        {
+          "index": 16,
+          "world": 1,
+          "forced_steps": 12,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 15,
+          "bytes": 30
+        },
+        {
+          "index": 17,
+          "world": 1,
+          "forced_steps": 12,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 15,
+          "bytes": 30
+        },
+        {
+          "index": 18,
+          "world": 1,
+          "forced_steps": 12,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 15,
+          "bytes": 30
+        },
+        {
+          "index": 19,
+          "world": 1,
+          "forced_steps": 12,
+          "completed": false,
+          "object_exact": false,
+          "place_exact": false,
+          "first_divergence": 15,
+          "bytes": 30
+        }
+      ],
+      "note": "Full object-span oracle: while in sync, every object-name byte is force-copied from the correct record with gamma=0; template and place follow the locked model. Separates object-copy reachability from downstream template/place generation."
+    }
+  },
+  "accounting": {
+    "updates": 0,
+    "adam_calls": 0,
+    "forward_training": 0,
+    "inference_generations": 80,
+    "confirm_examples": 0
+  },
+  "cost": {
+    "cpu_seconds": 47.90625,
+    "wall_seconds": 51.00778299989179,
+    "note": "two runs: 26.23 CPU (P1-P3) + 47.91 CPU (P1-P4 incl. P1-P3 rerun); 120 generations total incl. 40 rerun"
+  },
+  "source_hashes": {
+    "taiji/binding_select.py": "81667b9eed2db1e81b13d1f7cd83ec0d1570636b502ce74128e173a30813c846",
+    "scripts/training/verify_taiji_binding_select_16_1_compare.py": "5382a02113922ebba60d03f0b964e6198df47e5d5df1a07986f9b5b70ac30ef6",
+    "scripts/training/probe_taiji_binding_select_16_1_arch.py": {
+      "ran_sha256": "beceff32f1a05ebb90f89899f36b6cdc2d5cfbdd6877bf91052592df9120563c",
+      "now_sha256": "d1d44d6eb890b07526af778cce0cf793e6f2af31f452da3ff83b04ef3d6f44c3",
+      "change": "post-run lint only: witness strings use .encode() instead of .encode('utf-8') and the permutation zip gained strict=True; probe logic and all readings unchanged"
+    }
+  },
+  "limits": "Read-only probes on one stored bundle; no training, no confirm read."
+}

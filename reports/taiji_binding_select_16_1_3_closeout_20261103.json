@@ -410,7 +410,7 @@
   },
   "cost": {
     "cpu_seconds": 0.21875,
-    "wall_seconds": 0.23812610004097223,
+    "wall_seconds": 0.21609950019046664,
     "adam_calls": 0,
     "forward_calls": 0
   },

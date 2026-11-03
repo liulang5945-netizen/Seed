@@ -44,7 +44,7 @@
   "candidate_17_admission": "17 remains the primary on ceiling; admission should be conditional on 17.3 pricing and an owner resource ruling, or on an explicit two-arm A/B scope with the same graph.  Do not launch it in this closeout.",
   "cost": {
     "cpu_seconds": 0.21875,
-    "wall_seconds": 0.23812610004097223,
+    "wall_seconds": 0.21609950019046664,
     "adam_calls": 0,
     "forward_calls": 0
   },
