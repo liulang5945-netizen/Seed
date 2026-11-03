@@ -1,0 +1,263 @@
+{
+  "schema": "taiji-binding-copy-manifest-v1",
+  "step": "15.1.1",
+  "status": "native_byte_task_failed",
+  "report": "reports/taiji_binding_copy_15_1_compare_20261102.json",
+  "parent_bundle": "output/taiji_core_record_relation_14_6/27031_A_full_step300.pt",
+  "parent_sha256": "b75a83a0a474c041c2a61bed8c4e0a51de11197d67a9b196262e7e039a9a4cef",
+  "seeds": [
+    28031,
+    28032
+  ],
+  "arms": [
+    "R0P0",
+    "R1P0",
+    "R0P1",
+    "R1P1"
+  ],
+  "updates": 300,
+  "batch": 8,
+  "dev_examples": 240,
+  "source_hashes": {
+    "taiji/binding_copy.py": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+    "taiji/binding_copy_data.py": "aa001023519996b190bfd5f6faa42c6905c205766e1a3d0b34b0ab11c8b79495",
+    "taiji/binding_copy_scoring.py": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+    "taiji/record_relation.py": "6e38b889db732c405f41eefb86c34fe3c966b56b34bfe995c2d9c2a67f8a5f18",
+    "taiji/record_relation_core.py": "2ef9ef429913ee2d4c095e5a32666f4d8443e55df2251e62d255a926bf4d5e37",
+    "scripts/training/verify_taiji_binding_copy_15_1_compare.py": "4e4a31e8898191217c095a9ac6bbeef12ff18657fb09a66c8b09470c0fc93e6f"
+  },
+  "gates": {
+    "task": {
+      "28031-R0P0": {
+        "checks": {
+          "overall": false,
+          "unseen_combination": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "both_correct_counterfactual": false,
+          "reversed_paired": false,
+          "utf8": false,
+          "eos": true
+        },
+        "passed": false
+      },
+      "28031-R0P1": {
+        "checks": {
+          "overall": false,
+          "unseen_combination": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "both_correct_counterfactual": false,
+          "reversed_paired": false,
+          "utf8": false,
+          "eos": true
+        },
+        "passed": false
+      },
+      "28031-R1P0": {
+        "checks": {
+          "overall": false,
+          "unseen_combination": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "both_correct_counterfactual": false,
+          "reversed_paired": false,
+          "utf8": true,
+          "eos": true
+        },
+        "passed": false
+      },
+      "28031-R1P1": {
+        "checks": {
+          "overall": false,
+          "unseen_combination": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "both_correct_counterfactual": false,
+          "reversed_paired": false,
+          "utf8": true,
+          "eos": true
+        },
+        "passed": false
+      },
+      "28032-R0P0": {
+        "checks": {
+          "overall": false,
+          "unseen_combination": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "both_correct_counterfactual": false,
+          "reversed_paired": false,
+          "utf8": false,
+          "eos": true
+        },
+        "passed": false
+      },
+      "28032-R0P1": {
+        "checks": {
+          "overall": false,
+          "unseen_combination": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "both_correct_counterfactual": false,
+          "reversed_paired": false,
+          "utf8": false,
+          "eos": false
+        },
+        "passed": false
+      },
+      "28032-R1P0": {
+        "checks": {
+          "overall": false,
+          "unseen_combination": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "both_correct_counterfactual": false,
+          "reversed_paired": false,
+          "utf8": true,
+          "eos": true
+        },
+        "passed": false
+      },
+      "28032-R1P1": {
+        "checks": {
+          "overall": false,
+          "unseen_combination": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "both_correct_counterfactual": false,
+          "reversed_paired": false,
+          "utf8": true,
+          "eos": true
+        },
+        "passed": false
+      }
+    },
+    "mechanism": {
+      "package_gain": 0.0,
+      "package_gain_ok": false,
+      "package_bootstrap_ok": false,
+      "source_top1": {
+        "28031-R1P0": 0.0,
+        "28031-R1P1": 0.0,
+        "28032-R1P0": 0.0,
+        "28032-R1P1": 0.0
+      },
+      "source_top1_ok": false,
+      "identity_rescue": {
+        "28031-R1P0": 8,
+        "28031-R1P1": 8,
+        "28032-R1P0": 8,
+        "28032-R1P1": 8
+      },
+      "identity_rescue_ok": true,
+      "content_drops": {
+        "28031-R1P0": {
+          "no_source": {
+            "completed_rate": 0.0,
+            "drop": 0.4166666666666667
+          },
+          "wrong_record": {
+            "completed_rate": 0.041666666666666664,
+            "drop": 0.375
+          },
+          "wrong_position": {
+            "completed_rate": 0.0,
+            "drop": 0.4166666666666667
+          },
+          "gamma0": {
+            "completed_rate": 0.4166666666666667,
+            "drop": 0.0
+          }
+        },
+        "28031-R1P1": {
+          "no_source": {
+            "completed_rate": 0.0,
+            "drop": 0.4166666666666667
+          },
+          "wrong_record": {
+            "completed_rate": 0.041666666666666664,
+            "drop": 0.375
+          },
+          "wrong_position": {
+            "completed_rate": 0.0,
+            "drop": 0.4166666666666667
+          },
+          "gamma0": {
+            "completed_rate": 0.4166666666666667,
+            "drop": 0.0
+          }
+        },
+        "28032-R1P0": {
+          "no_source": {
+            "completed_rate": 0.0,
+            "drop": 0.4166666666666667
+          },
+          "wrong_record": {
+            "completed_rate": 0.16666666666666666,
+            "drop": 0.25
+          },
+          "wrong_position": {
+            "completed_rate": 0.0,
+            "drop": 0.4166666666666667
+          },
+          "gamma0": {
+            "completed_rate": 0.4166666666666667,
+            "drop": 0.0
+          }
+        },
+        "28032-R1P1": {
+          "no_source": {
+            "completed_rate": 0.0,
+            "drop": 0.4166666666666667
+          },
+          "wrong_record": {
+            "completed_rate": 0.16666666666666666,
+            "drop": 0.25
+          },
+          "wrong_position": {
+            "completed_rate": 0.0,
+            "drop": 0.4166666666666667
+          },
+          "gamma0": {
+            "completed_rate": 0.4166666666666667,
+            "drop": 0.0
+          }
+        }
+      },
+      "content_drops_ok": true
+    }
+  },
+  "cost": {
+    "cpu_seconds": 14580.640625,
+    "wall_seconds": 14798.46202870016,
+    "adam_calls": 2400,
+    "peak_live_product_bytes": 1039233920,
+    "cumulative_product_bytes": 1039233920
+  },
+  "accounting": {
+    "actual_adam_calls": 2400,
+    "effective_adam_calls": 2400,
+    "consumed_train_examples": 19200,
+    "consumed_dev_examples": 0,
+    "consumed_confirm_examples": 0
+  },
+  "products": [
+    "output\\taiji_core_binding_copy_15_1_compare\\28031-R0P0-step150.pt",
+    "output\\taiji_core_binding_copy_15_1_compare\\28031-R0P0-step300.pt",
+    "output\\taiji_core_binding_copy_15_1_compare\\28031-R0P1-step150.pt",
+    "output\\taiji_core_binding_copy_15_1_compare\\28031-R0P1-step300.pt",
+    "output\\taiji_core_binding_copy_15_1_compare\\28031-R1P0-step150.pt",
+    "output\\taiji_core_binding_copy_15_1_compare\\28031-R1P0-step300.pt",
+    "output\\taiji_core_binding_copy_15_1_compare\\28031-R1P1-step150.pt",
+    "output\\taiji_core_binding_copy_15_1_compare\\28031-R1P1-step300.pt",
+    "output\\taiji_core_binding_copy_15_1_compare\\28032-R0P0-step150.pt",
+    "output\\taiji_core_binding_copy_15_1_compare\\28032-R0P0-step300.pt",
+    "output\\taiji_core_binding_copy_15_1_compare\\28032-R0P1-step150.pt",
+    "output\\taiji_core_binding_copy_15_1_compare\\28032-R0P1-step300.pt",
+    "output\\taiji_core_binding_copy_15_1_compare\\28032-R1P0-step150.pt",
+    "output\\taiji_core_binding_copy_15_1_compare\\28032-R1P0-step300.pt",
+    "output\\taiji_core_binding_copy_15_1_compare\\28032-R1P1-step150.pt",
+    "output\\taiji_core_binding_copy_15_1_compare\\28032-R1P1-step300.pt"
+  ]
+}
