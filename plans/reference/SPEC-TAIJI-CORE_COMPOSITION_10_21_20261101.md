@@ -1,6 +1,6 @@
 # 10.21 rev2：目标条件读取与绑定学习方案
 
-> 文档状态：[提案·rev2·10.21.1/2已执行] — 10.21.1只读前置（`preflight_measured`）与10.21.2图/工程恢复（`passed_10_21_graph_engineering_only`）已于2026-11-01按原合同执行。本件其余阶段仍为提案，不自动批准定价、训练、确认或提交/推送。唯一调度见[MAINLINE](../MAINLINE.md)。
+> 文档状态：[提案·rev2·10.21全部结算：`closeout_negative`] — 10.21.1–4/6已结算，10.21.5`not_released`；10.21.4判`reader_selection_absent`（主端点停在chance、读取注意力停在chance）。10线按负结果结案，11仍不准入，12–13不开展；本件不再主张新结构有效。唯一调度见[MAINLINE](../MAINLINE.md)。
 
 日期：2026-11-01。依据[算法重审](TAIJI_ALGORITHM_REVIEW_20261101.md)及[阅读快照](../../reports/taiji_algorithm_review_20261101.json)。原冻结头提案与原设计已逐字节[归档](../archive/history/n_mainline_20261101/README.md)，不再与本件并列发布当前要求。原10.19/10.20及其他报告、退出、批准和预算不改写；旧≤4k/300步/600CPU不移植为本件授权。
 
@@ -162,9 +162,10 @@ world分区/映射无重合，记录顺序随机，source_id是版本化opaque�
 |---|---|---|
 | 10.21.1 | 600 CPU秒/1200墙钟秒；18次≤65预测的生成、15次读取、1次固定评分套件；产物≤128MiB | **已执行：`preflight_measured`；14.84 CPU秒（三次仪器迭代合计21.83）；0更新、参数逐位未变** |
 | 10.21.2 | 300 CPU秒/600墙钟秒；四profile各2个逻辑更新位置，含恢复回放合计≤12次实际Adam调用；产物≤1GiB | **已执行：`passed_10_21_graph_engineering_only`；26.27 CPU秒/55.36墙钟、12次Adam、记录bundle 141MB（检查后删除）** |
-| 10.21.3 | 180 CPU秒/360墙钟秒；一个seed、每臂≤2步，每臂≤8训练/8开发例；产物≤512MiB | 先验新checkpoint/恢复，再定价；不是正式比较 |
-| 10.21.4 | 1200 CPU秒/2400墙钟秒；2增量seed×2臂，每臂≤300步，batch=8；产物≤2GiB | 实测总价可落在此上限且正式门冻结后，再批准执行 |
-| 10.21.5 | 600 CPU秒/1200墙钟秒；一次确认，主seed及其S对照、固定干预套件 | 候选与评价器先冻结，不训练 |
+| 10.21.3 | 180 CPU秒/360墙钟秒；一个seed、每臂≤2步，每臂≤8训练/8开发例；产物≤512MiB | **已执行：`priced`；6.17 CPU秒、17/17；单价0.1328/0.9531/0.1074/0.00178；外推305.06/1200；8例开发J/S均0/8，已消费反馈** |
+| 10.21.4 | 1200 CPU秒/2400墙钟秒；2增量seed×2臂，每臂≤300步，batch=8；产物≤2GiB | **已执行：`reader_selection_absent`；200.25/1200 CPU秒、12/12工程门；四格top-1 0.0500–0.0625、两层未过0.40、两seed增益−0.0125/+0.0063、bootstrap下界负；确认未生成未读** |
+| 10.21.5 | 600 CPU秒/1200墙钟秒；一次确认，主seed及其S对照、固定干预套件 | **`not_released`：无候选可释放；0 CPU秒；确认面未消费** |
+| 10.21.6 | 六步身份/成本/出口汇总；无额外模型预算 | **已完成：`closeout_negative`；247.53/2700 CPU秒（含迭代254.52）；10线按负结果结案，不追加seed/剂量/头/损失** |
 
 全阶段峰值RAM≤8GiB，所有重试/恢复/源快照/特征提取/作废运行与评价计全过程成本；不能把缓存免费给某一臂，也不能把失败成本清零。若定价估算无法满足提案，当前包budget_not_admitted，停止回owner裁定，不自动提额/缩数据/改更新数。
 
@@ -192,18 +193,18 @@ binding_seed明确为17021/17022，data_order_seed为27021/27022，同一seed内
 - 全部范围门与确认通过：binding_mechanism_supported_on_declared_fixture；仍不是一般中文、P2、L3或自主生长。
 - 预算/源可见性/保护/恢复硬门失败：按原停止，保留父状态与费用；不自动改门、增加剂量或消费新面。
 
-## 8. 实现/产物职责（10.21.2已交付；price/compare/confirm仍未实现）
+## 8. 实现/产物职责（graph/price/compare已交付；confirm未释放）
 
 | 职责 | 路径提案 |
 |---|---|
 | 单一候选模块与注册/序列化 | `taiji/query_binding.py`（已交付） |
-| 一个阶段runner，避免一问题一个脚本 | `scripts/training/verify_taiji_composition_10_21.py`（`--stage graph`已实现；price/compare/confirm未实现）＋`scripts/training/verify_taiji_10_21_1.py`（P包preflight） |
+| 一个阶段runner，避免一问题一个脚本 | `scripts/training/verify_taiji_composition_10_21.py`（`--stage graph/price/compare`已实现；confirm未释放）＋`scripts/training/verify_taiji_10_21_1.py`（P包preflight） |
 | 评分/图/信用/恢复与对照检查 | `tests/taiji_native/test_query_binding.py`（已交付，6项测试） |
-| 候选/数据/源码身份 | `plans/manifests/taiji_core_10_21_graph_v2_20261101.json`（已写；旧`_v1_pre_fix`保留） |
-| 机器回执/完整概率压缩轨迹 | `reports/taiji_core_10_21_graph_v2_20261101.json`（已写；图阶段无逐字节概率轨迹） |
-| 受控数据与bundle（不入git） | `output/taiji_core_10_21_graph/`（工程bundle检查后删除；无新数据根） |
+| 候选/数据/源码身份 | `plans/manifests/taiji_core_10_21_graph_v2_20261101.json`、`..._3_price_...`、`..._4_compare_...`（已写） |
+| 机器回执/完整概率压缩轨迹 | `reports/taiji_core_10_21_graph_v2_...`、`..._3_price_...`、`..._4_compare_...`、`..._closeout_...`（已写；图阶段无逐字节概率轨迹） |
+| 受控数据与bundle（不入git） | `taiji/native_composition_fixture.py`（train/dev 192/160；confirm未生成）＋`output/taiji_core_10_21_4_compare/`（12 checkpoints 保号存档） |
 
-实际CLI已存在：`python scripts/training/verify_taiji_composition_10_21.py --stage graph --output <path>`。price/compare/confirm未实现，不登记为可执行命令。若仍不能提交源码，执行前须对**实际评分/控制依赖**作可恢复源码快照并绑定hash，不能只记一个将来会漂移的工作树SHA。候选bundle保存新模块配置/权重/优化器、原主体H/F/来源/拓扑/门表/目标与预算/RNG/游标；冻结继承的旧optimizer状态也不得为缩包丢弃。瞬时可塑图不序列化，恢复后从合法原文重建；若采用父块引用，所有依赖必须可定位并经独立恢复，不以悬空路径冒充完整bundle。产物上限已为既有约77.6MB父bundle和多个边界留量，实际仍须定价，不自动压缩丢状态。父bundle保持可恢复，提交只在owner解冻Git保留约束后进行。
+实际CLI已存在：`python scripts/training/verify_taiji_composition_10_21.py --stage graph|price|compare --output <path>`。`confirm`未释放/未实现，不登记为可执行命令。若仍不能提交源码，执行前须对**实际评分/控制依赖**作可恢复源码快照并绑定hash，不能只记一个将来会漂移的工作树SHA。候选bundle保存新模块配置/权重/优化器、原主体H/F/来源/拓扑/门表/目标与预算/RNG/游标；冻结继承的旧optimizer状态也不得为缩包丢弃。瞬时可塑图不序列化，恢复后从合法原文重建；若采用父块引用，所有依赖必须可定位并经独立恢复，不以悬空路径冒充完整bundle。产物上限已为既有约77.6MB父bundle和多个边界留量，实际仍须定价，不自动压缩丢状态。父bundle保持可恢复，提交只在owner解冻Git保留约束后进行。
 
 ## 9. 本次交付与唯一后继
 
@@ -215,4 +216,6 @@ rev2方案交付时只完成方案、旧草案归档和主线/设计/证据解�
 
 **10.21.2执行记录（2026-11-01）。** [模块](../../taiji/query_binding.py)＋[runner](../../scripts/training/verify_taiji_composition_10_21.py)＋[测试](../../tests/taiji_native/test_query_binding.py)＋[报告](../../reports/taiji_core_10_21_graph_v2_20261101.json)＋[manifest](../../plans/manifests/taiji_core_10_21_graph_v2_20261101.json)：105,760参数（small 904、S可训50,304），四profile各3次Adam共12次；初始与step1独立恢复4/4逐位一致；J/S/small的FD 11/11、3/3、11/11全分辨，f32的W_bind/U/V 3/3分辨、8个读取组落在f32 FD分辨率下并逐组披露；null-only零类7组（`K_goal/V_goal/role/W_state/Q_source/K_source/V_source`）精确为0——无记录时源读取只返回学习到的null值，整条目标→查询→记录key/value路径不被使用，而null路径3.63e-5、记录fixture下同组梯度>0；内部事件使H与动作分数实际改变（零/错事件H差0.445/0.409、分数差5.14/5.25e-5），快写关闭逐位不变，冻结父参数0梯度、输入导数保留；类型/格式检查0错误、6项定向测试通过；父bundle与参数逐位未变；26.27 CPU秒/55.36墙钟、记录bundle 141MB（检查后删除）。六次工程迭代（v1 KeyError、v2 f32 eps、v3 small z、v4 small initial、v5补null-only前通过快照、v6 null-only预期集）保留在reports；最终canonical卡为通过版；旧manifest `_v1_pre_fix`保留。没有训练/定价/能力声称。
 
-10.21.1/2已按上节执行并结案；当前可供裁定的下一项是10.21.3有限定价，实际队首见MAINLINE。其许可不包含10.21.4–10.21.5正式比较/确认。10.21.2的图/信用/恢复门已过，但这只证明新模块可构建、可导、可恢复；它是否实际选对源/动作，仍须10.21.3定价与10.21.4两臂比较回答。
+**10.21.3–6执行记录（2026-11-01）。** [10.21.3报告](../../reports/taiji_core_10_21_3_price_20261101.json)＋[10.21.4报告](../../reports/taiji_core_10_21_4_compare_20261101.json)＋[收束卡](../../reports/taiji_core_10_21_closeout_20261101.json)：10.21.3 `priced`（6.17 CPU秒、17/17；train_step 0.1328／restore 0.9531／eval_example 0.1074／bundle_MiB 0.00178；外推305.06/1200；8例开发J/S均0/8，已消费反馈、不构成门）。10.21.4 `reader_selection_absent`（200.25/1200 CPU秒、207.06墙钟、12/12工程门；四格20候选top-1 0.0500–0.0625、chance与最佳常量0.05；未见组合0–0.0417、未见实体0.075–0.100均未过0.40；两seed增益−0.0125/+0.0063、bootstrap下界−0.0312/−0.0188；读取source top-1 0.0969–0.1187；两seed新增模块摘要不同、J/S初始前向逐位相同、12 checkpoint恢复逐位、父bundle逐位未变、confirm未生成未读）。10.21.5 `not_released`（0 CPU秒；无候选可释放，确认面未消费）。10.21.6 `closeout_negative`（247.53/2700 CPU秒，含迭代254.52；D1 step0提前杀预算按解释执行、D2 price manifest绑定runner致重跑漂移，均登记不改判据）。10线按负结果结案，不追加seed/剂量/头/损失；11仍不准入；12–13不开展。
+
+10.21全部结算为`closeout_negative`；10.21.4主端点与读取注意力都停在chance，新读取/绑定路径在本夹具上未建立可学的源选择。10.21.5因无候选可释放记`not_released`，不消费确认面。10线不再追加seed/剂量/头/损失，11不准入，12–13不开展；下一轮若继续条件化选择，须先补旧能力保持的有符号门与能力集、主动选择夹具，另立有界包，不在本轮续写10.22。
