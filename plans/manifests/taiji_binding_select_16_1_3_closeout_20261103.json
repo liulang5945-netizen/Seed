@@ -1,0 +1,121 @@
+{
+  "schema": "taiji-binding-select-manifest-v1",
+  "step": "N16.1.3",
+  "status": "closed_negative_with_followup_candidate",
+  "report": "reports/taiji_binding_select_16_1_3_closeout_20261103.json",
+  "compare_report": "reports/taiji_binding_select_16_1_compare_20261103.json",
+  "attribution_report": "reports/taiji_binding_select_16_1_attribution_20261103.json",
+  "checks": {
+    "compare_is_negative": true,
+    "attribution_passed": true,
+    "task_gate_failed": true,
+    "mechanism_gate_failed": true,
+    "four_configs": true,
+    "full_dose": true,
+    "zero_confirm": true,
+    "reverse_pair_withdrawn": true,
+    "four_defects_registered": true,
+    "bundles_intact": true
+  },
+  "failed": [],
+  "release": {
+    "N16.1.2": "not_released",
+    "confirm": "sealed",
+    "14.7": "not_released",
+    "N15.2": "not_started",
+    "12_13": "not_started",
+    "extra_seeds_steps_dose": false,
+    "rerun": false
+  },
+  "defects": [
+    "D16-1",
+    "D16-2",
+    "D16-3",
+    "D16-4"
+  ],
+  "mandatory_self_checks": [
+    "S1",
+    "S2",
+    "S3",
+    "S4",
+    "S5",
+    "S6"
+  ],
+  "candidate_17_admission": "17 remains the primary on ceiling; admission should be conditional on 17.3 pricing and an owner resource ruling, or on an explicit two-arm A/B scope with the same graph.  Do not launch it in this closeout.",
+  "cost": {
+    "cpu_seconds": 0.21875,
+    "wall_seconds": 0.23812610004097223,
+    "adam_calls": 0,
+    "forward_calls": 0
+  },
+  "products": {
+    "retained_bundles": [
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28031-A-locked-step300.pt",
+        "bytes": 65557565,
+        "sha256": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169"
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28031-B-select-step300.pt",
+        "bytes": 65557565,
+        "sha256": "4ffa54528dc4e4006d71954a388a2cf81771f302a0dc724183cd548ae27bcdd7"
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28032-A-locked-step300.pt",
+        "bytes": 65557565,
+        "sha256": "3d55bff6d51e7c3d7079e068caf70f1b131ce43e0be830abb1f71b5a39b556a5"
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28032-B-select-step300.pt",
+        "bytes": 65557565,
+        "sha256": "c788c8cbb2d5565405c2372d676f237476119d2de7d58cf59fa9166a61b0fb1d"
+      }
+    ],
+    "retained_bundle_bytes": 262230260,
+    "deleted_in_1_1": [
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28031-A-locked-step150.pt",
+        "bytes": 65557565
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\progress-28031-A-locked.json",
+        "bytes": 350
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28031-B-select-step150.pt",
+        "bytes": 65557565
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\progress-28031-B-select.json",
+        "bytes": 332
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28032-A-locked-step150.pt",
+        "bytes": 65557565
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\progress-28032-A-locked.json",
+        "bytes": 337
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28032-B-select-step150.pt",
+        "bytes": 65557565
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\progress-28032-B-select.json",
+        "bytes": 334
+      }
+    ],
+    "deleted_in_1_1_bytes": 262231613,
+    "deleted_in_1_3": [],
+    "deleted_in_1_3_bytes": 0
+  },
+  "source_hashes": {
+    "reports/taiji_binding_select_16_1_compare_20261103.json": "122305a52152b06273092065b56b53e1fda312b4e00979adede7e1157c17cc97",
+    "reports/taiji_binding_select_16_1_attribution_20261103.json": "74e308e26a9af06d40eacb8166cce2599b461fa2cd9117a658793c5855d6835f",
+    "plans/manifests/taiji_binding_select_16_1_compare_20261103.json": "22ede2b54c15ae2991ed6d6b8440ab4ea5ee065cc2e2cca92846f7df7b9537e4",
+    "plans/reference/DESIGN-POST-N16_SELECTION_ROUTING_20261103.md": "51e759da1261c1bff249ddd3cb874df0f8059bdf5f2a6780931ef33e06f79308",
+    "scripts/training/closeout_taiji_binding_select_16_1_3.py": "09b5e0fc4c19e28f5a22b9075dc901042b2ad52d3fff6ebacc2c332f311f361b"
+  },
+  "limits": "Read-only closeout of the frozen 1.1 card: 0 updates, 0 forward, 0 confirm.  It does not re-run, change the dose/gates or release 1.2/14.7/N15.2/12/13."
+}

@@ -1,0 +1,494 @@
+{
+  "schema": "taiji-binding-select-closeout-v1",
+  "step": "N16.1.3",
+  "date": "2026-11-03",
+  "status": "closed_negative_with_followup_candidate",
+  "verdict": "native_byte_task_failed",
+  "release": {
+    "N16.1.2": "not_released",
+    "confirm": "sealed",
+    "14.7": "not_released",
+    "N15.2": "not_started",
+    "12_13": "not_started",
+    "extra_seeds_steps_dose": false,
+    "rerun": false
+  },
+  "checks": {
+    "compare_is_negative": true,
+    "attribution_passed": true,
+    "task_gate_failed": true,
+    "mechanism_gate_failed": true,
+    "four_configs": true,
+    "full_dose": true,
+    "zero_confirm": true,
+    "reverse_pair_withdrawn": true,
+    "four_defects_registered": true,
+    "bundles_intact": true
+  },
+  "failed": [],
+  "four_items": {
+    "1_reliable_range": {
+      "qualified_parent": false,
+      "reason": "The 14.6 A_full step300 parent can carry the same-distribution template and memorized names/places (unlocked control 0.3375/0.2833 overall) but not unseen output names (0/60 both seeds), not new descriptions (3/60 and 1/60), not both-new rows (0/15), and not description-conditioned record selection (0/60 selection on new descriptions).",
+      "supported_surface": "in-distribution template + memorized entity names through the generation branch; content is used when records are present",
+      "unsupported_surface": "description-compositional generalization, entity-start copy, unseen names, and the cross-session experience/feedback task"
+    },
+    "2_mechanism_contribution": {
+      "content_necessity": {
+        "28031": {
+          "applicable": true,
+          "n": 24,
+          "true_completed": 4,
+          "true_rate": 0.16666666666666666,
+          "intervention_rates": {
+            "no_source": 0.0,
+            "wrong_record": 0.125,
+            "wrong_position": 0.041666666666666664
+          },
+          "drops": {
+            "no_source": 0.16666666666666666,
+            "wrong_record": 0.04166666666666666,
+            "wrong_position": 0.125
+          },
+          "degenerate": false
+        },
+        "28032": {
+          "applicable": true,
+          "n": 24,
+          "true_completed": 0,
+          "true_rate": 0.0,
+          "intervention_rates": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "degenerate": true
+        }
+      },
+      "selection_decode_binding": "not established",
+      "selection": {
+        "28031": 0.38333333333333336,
+        "28032": 0.3541666666666667
+      },
+      "selection_new_description": {
+        "28031": {
+          "correct": 0,
+          "n": 60,
+          "rate": 0.0
+        },
+        "28032": {
+          "correct": 0,
+          "n": 60,
+          "rate": 0.0
+        }
+      },
+      "copy_weight": {
+        "28031": 0.1788,
+        "28032": 0.2529
+      },
+      "object_exact_given_correct_selection": {
+        "28031": 0.337,
+        "28032": 0.1412
+      },
+      "gamma_floor": {
+        "reading": "gamma is the generation weight; the 0.2 clamp is a generation floor, not a copy floor.  The floor was active on 14.6%/23.0% of dev steps and changing it to 0 moved completion by 0.0/+0.0167, so it does not carry the score."
+      },
+      "curriculum": {
+        "A_triggers": {
+          "28031": 0,
+          "28032": 0
+        },
+        "B_triggers": {
+          "28031": 127,
+          "28032": 121
+        },
+        "note": "A never reaches the 0.5 batch completion threshold; B fires 127/121 times with self-imitation labels, so A-B is confounded."
+      },
+      "increment": {
+        "pooled_mean": -0.27708333333333335,
+        "bootstrap_lower": {
+          "28031": -0.325,
+          "28032": -0.3541666666666667
+        },
+        "usable_as_clean_mechanism_test": false
+      }
+    },
+    "3_recovery_and_old_behavior": {
+      "identity_rescue": {
+        "28031": [
+          8,
+          8
+        ],
+        "28032": [
+          8,
+          8
+        ]
+      },
+      "parent_bundle_sha256": "b75a83a0a474c041c2a61bed8c4e0a51de11197d67a9b196262e7e039a9a4cef",
+      "parent_unchanged": true,
+      "total_cost_cpu_seconds": 13438.0625,
+      "total_cost_wall_seconds": 13809.764761099825,
+      "actual_adam_calls": 1200,
+      "consumed_train_examples": 9600,
+      "consumed_confirm_examples": 0,
+      "old_behavior": "Unlocked B keeps the memorization shortcut (0.3375/0.2833) with 0/60 unseen names; locked A removes the shortcut (0.0500/0.0167) without installing a correct copy.  Rescue is bit-exact 8/8 in both arms."
+    },
+    "4_next_task_applicability": {
+      "current_parent_can_carry_cross_session_experience_feedback": false,
+      "reason": "The parent cannot even carry description-compositional selection or entity-start alignment, so it cannot carry a cross-session experience/feedback task that requires revising which record/content is consumed from accumulated history.",
+      "next_candidate": "17 stepwise selection routing (design only, not launched)"
+    }
+  },
+  "corrected_headline": {
+    "overall": {
+      "28031": 0.05,
+      "28032": 0.016666666666666666
+    },
+    "new_description": {
+      "28031": {
+        "completed": 3,
+        "n": 60,
+        "rate": 0.05
+      },
+      "28032": {
+        "completed": 1,
+        "n": 60,
+        "rate": 0.016666666666666666
+      }
+    },
+    "unseen_output_name": {
+      "28031": {
+        "completed": 0,
+        "n": 60,
+        "rate": 0.0
+      },
+      "28032": {
+        "completed": 0,
+        "n": 60,
+        "rate": 0.0
+      }
+    },
+    "selection": {
+      "28031": 0.38333333333333336,
+      "28032": 0.3541666666666667
+    }
+  },
+  "recomputed_vs_preserved": {
+    "recomputed_read_only": [
+      "subset denominators/rates: 60/60/15/36/108 (was 240)",
+      "selection-by-subset grouped by (world,index)",
+      "content and counterfactual true side looked up by (world,index)",
+      "object_exact conditional on a correct record selection",
+      "copy weight 1-gamma from the model gamma mean",
+      "reverse accuracy from stored per-row scores (paired rate withdrawn)",
+      "per-config cost sums and bundle sha verification"
+    ],
+    "preserved_original": [
+      "overall completion over the 240 dev rows",
+      "selection top-1 over the 240 dev rows",
+      "model/used gamma means and step0 gamma",
+      "identity rescue 8/8 and teacher-forced NLL",
+      "per-row score dictionaries and bundle bytes/sha",
+      "raw reverse-pair flag (kept as evidence, withdrawn as a gate)",
+      "1.1 wall/cpu timing and parent bundle identity b75a83a0..."
+    ],
+    "superseded_fields": [
+      "compare card subset rates (240 denominator)",
+      "compare card content/counterfactual true side",
+      "compare card selection-by-subset grouping",
+      "compare card reverse-pair rate (withdrawn)",
+      "compare card gamma-as-copy-gate reading"
+    ]
+  },
+  "defects": [
+    {
+      "id": "D16-1",
+      "symptom": "subset rates divided by 240 instead of the subset length",
+      "impact": "new-description completion printed 0.0125/0.0042 instead of 3/60=0.05 and 1/60=0.0167; subset gates were evaluated on the wrong scale (pass/fail unchanged because the counts are small)",
+      "action": "recomputed read-only with 60/60/15/36/108; raw card preserved",
+      "next_contract_self_check": "S1 subset denominators from subset length; all-correct oracle = 1 per non-empty subset",
+      "status": "corrected_read_only"
+    },
+    {
+      "id": "D16-2",
+      "symptom": "true-side caches keyed by the world-local index (20 values for 240 rows)",
+      "impact": "content-necessity and counterfactual true sides and selection-by-subset grouping used another world's row; reverse pairing used the wrong true_raw",
+      "action": "recomputed content/counterfactual/selection by (world,index); reverse pairing withdrawn because the raw bytes were not stored",
+      "next_contract_self_check": "S2 all cross-world caches keyed by (split,world,index); store raw bytes for paired metrics",
+      "status": "corrected_read_only"
+    },
+    {
+      "id": "D16-3",
+      "symptom": "gamma read as a copy gate",
+      "impact": "gamma 0.8212/0.7471 was reported as copy use, but gamma multiplies the generated branch; the copy weight is 0.1788/0.2529 and the 0.2 clamp is a generation floor",
+      "action": "errata written; report gamma and 1-gamma; floor-removal sensitivity reported",
+      "next_contract_self_check": "S3 gamma semantic unit test (gamma=0 copy-dominant, gamma=1 generation-dominant; 0.2 is a generation floor)",
+      "status": "corrected_read_only"
+    },
+    {
+      "id": "D16-4",
+      "symptom": "self-prefix bytes passed as the target labels",
+      "impact": "when the accuracy trigger fired, the answer NLL trained self-imitation; B fired 127/121 updates, A fired 0, so A-B mixes the lock with a different curriculum",
+      "action": "registered as a contract fault; A's result is unaffected because it never triggered; B's result is reported as self-imitation; A-B is not used as a clean mechanism test",
+      "next_contract_self_check": "S4 input_prefix and target_bytes separate; labels always from the teacher target",
+      "status": "registered_contract_fault"
+    }
+  ],
+  "mandatory_self_checks": [
+    {
+      "id": "S1",
+      "check": "every subset rate uses its own denominator; a stored all-correct oracle scores 1.0 on each non-empty subset; an empty subset is reported not evaluable"
+    },
+    {
+      "id": "S2",
+      "check": "every cross-world cache/join is keyed by (split,world,index); paired metrics store raw bytes and EOS and normalize byte sequences before comparison"
+    },
+    {
+      "id": "S3",
+      "check": "gamma semantic unit test: with alpha one-hot, gamma=0 must be copy-dominant and gamma=1 generation-dominant; the 0.2 clamp is asserted on the generation weight and both gamma and 1-gamma are reported"
+    },
+    {
+      "id": "S4",
+      "check": "the self-prefix branch changes only input_prefix; target_bytes stay the original 28 labels; a wrong-prefix counterexample must keep the same 28 target IDs and the same target NLL and be distinguishable from self-imitation"
+    },
+    {
+      "id": "S5",
+      "check": "score-card preflight re-scores a stored card with the new aggregator: denominators, per-subset oracle=1, paired rate from stored raw; failures block the formal run"
+    },
+    {
+      "id": "S6",
+      "check": "if two arms use different curricula, the A-B contrast is reported as confounded; equal curricula or an independent mechanism probe is required before a mechanism claim"
+    }
+  ],
+  "terminology_errata": [
+    {
+      "term": "gamma",
+      "old_reading": "copy gate; gamma>=0.20 means copy in use",
+      "corrected_reading": "generation weight; copy weight is 1-gamma; gamma>=0.20 is a generation floor",
+      "source": "taiji/binding_copy.py answer_step probability formula"
+    },
+    {
+      "term": "source_top1 / alpha",
+      "old_reading": "entity-stage record selection",
+      "corrected_reading": "first-output-step max-byte record (15.1) / record-level alpha (16.1); entity-stage selection needs its own probe",
+      "source": "evaluate_source_top1 and selection_report"
+    },
+    {
+      "term": "reverse paired",
+      "old_reading": "a task gate at 0.95",
+      "corrected_reading": "paired bytes+EOS agreement, not reversed accuracy; withdrawn in 16.1.1 because the true_raw cache was world-local and raw bytes were not stored",
+      "source": "D16-2"
+    },
+    {
+      "term": "unseen entity",
+      "old_reading": "unseen output name",
+      "corrected_reading": "new-description axis in 15.1; unseen output name is a separate 60-row subset",
+      "source": "15.1 post-closeout audit"
+    }
+  ],
+  "architecture_diagnosis": {
+    "breakpoint_1": {
+      "name": "description matcher lacks compositional generalization",
+      "evidence": {
+        "selection_new_description": {
+          "28031": {
+            "correct": 0,
+            "n": 60,
+            "rate": 0.0
+          },
+          "28032": {
+            "correct": 0,
+            "n": 60,
+            "rate": 0.0
+          }
+        },
+        "selection_seen": {
+          "28031": 0.6111111111111112,
+          "28032": 0.42592592592592593
+        },
+        "selection_unseen_name": {
+          "28031": 0.16666666666666666,
+          "28032": 0.5166666666666667
+        },
+        "head": "mean byte embedding; byte-count permutations are indistinguishable; both arms train the same head"
+      }
+    },
+    "breakpoint_2": {
+      "name": "entity-start / beta alignment missing",
+      "evidence": {
+        "copy_weight": {
+          "28031": 0.1788,
+          "28032": 0.2529
+        },
+        "object_exact_given_correct_selection": {
+          "28031": 0.337,
+          "28032": 0.1412
+        },
+        "completed_given_correct_selection": {
+          "28031": 0.0761,
+          "28032": 0.0235
+        },
+        "first_divergence_at_byte_3": {
+          "28031": 0.5,
+          "28032": 0.6292
+        },
+        "teacher_forced_nll": {
+          "28031": 1.5253,
+          "28032": 1.2597
+        }
+      }
+    },
+    "refuted_alternatives": {
+      "dose": "loss/NLL fell (1.525/1.26) and gamma rose to 0.82/0.75, yet new descriptions stay 0/60 and overall 0.05/0.0167",
+      "seed": "both seeds show 0/60 new-description selection and 0/60 unseen names; no seed rescues the task",
+      "steps": "300 updates converged; the failure is a structural 0/60, not a mid-training snapshot",
+      "learning_rate_or_optimizer": "the same failure appears in both arms/seeds; clip/loss traces do not show a recoverable optimization gap (if '利润率' refers to another quantity, register it explicitly)",
+      "gamma_floor": "model gamma is 0.82/0.75, far above 0.2; removing the floor changes completion by 0.0/+0.0167, so the floor is not the binding constraint",
+      "capacity": "25,602 head parameters fail a simple description match; the mean embedding is order-blind, so more parameters do not add string matching",
+      "data_or_labels": "keys are descriptions and labels are asserted unique per row; new descriptions are unseen by construction, not mislabeled"
+    },
+    "conclusion": "Two independent architecture breaks: compositional description matching and entity-start copy alignment.  Fixing one alone leaves the other as the binding ceiling; no single small change clears the task."
+  },
+  "candidate_17_admission": {
+    "reference": "plans/reference/DESIGN-POST-N16_SELECTION_ROUTING_20261103.md",
+    "design_unchanged": true,
+    "differences_from_16_1": [
+      "shared ordered record encoder + attention pool for the selection head (37,120 params) instead of mean byte embeddings",
+      "per-output-step object/place/null routing instead of one record choice for the whole sentence",
+      "final-Q locking: selected record only; other record mass zero; null means zero copy mass",
+      "smooth generation floor gamma_eff = 0.2 + 0.8*gamma_raw instead of a clamp with zero gradient below 0.2",
+      "straight-through task credit for the hard routing choice, plus a stop-credit control arm",
+      "input_prefix and target_bytes separated, so the self-prefix branch keeps the original targets",
+      "three arms A_joint_lock / B_stop_lock / C_unlocked and a separate 240-row confirm set"
+    ],
+    "ceiling": [
+      "addresses both breakpoints in one graph: order-aware description matching plus phase-specific object/place routing and entity-start labels",
+      "removes the memorization shortcut from the mechanism contrast (C unlocked vs A/B locked)",
+      "repairs the curriculum target so the self-prefix factor is interpretable",
+      "the smooth floor keeps a gradient where 16.1's clamp was dead"
+    ],
+    "risks": [
+      "1,800 formal updates (3 arms x 2 seeds x 300); extrapolating 16.1's 11.19 CPU/update gives about 20,150 CPU before extra evaluation, likely crossing the 20,000 line; a pre-run resource ruling after 17.3 pricing is required",
+      "new routing/phase labels, final-Q invariants and ST-VJP add engineering surface; 0b/0d must prove them before 1.1",
+      "the shared encoder's generalization to new descriptions is still unproven; it is the main scientific risk",
+      "ST credit is an approximation; A-B only supports the extra task credit if both seeds' intervals clear zero",
+      "the separate confirm set requires its own frozen generation and access proof"
+    ],
+    "measured_budget_basis": {
+      "16_1_actual_cpu_seconds": 13438.0625,
+      "16_1_updates": 1200,
+      "cpu_per_update": 11.198,
+      "17_formal_updates": 1800,
+      "17_projected_cpu_seconds": 20157.1,
+      "observation_line_cpu_seconds": 20000.0,
+      "verdict": "likely over the line before extra evaluation; resource ruling required"
+    },
+    "smaller_alternatives": {
+      "only_description_encoder": "fixes the 0/60 new-description selection but leaves beta/entity alignment and place routing; the ceiling stays near object_exact 0.29/0.05 even with correct selection, so it cannot reach 0.80",
+      "only_entity_alignment": "fixes the copy start but leaves selection at 0/60 on new descriptions and no place routing; the ceiling stays near a 1/9-1/3 random record choice",
+      "only_label_separation_or_curriculum": "fixes B's self-imitation confound but neither breakpoint; it only makes the A-B contrast interpretable",
+      "minimal_sufficient_set": "ordered description encoder + per-step object/place/null routing + phase labels + separated self-prefix target + a task gradient for the hard choice (ST or equivalent).  This set is inherently multi-part; no single small change is sufficient."
+    },
+    "least_change_rule": "The least-change rule prefers the smallest change that clears the gate.  Here no single small change clears both independent breakpoints, so the minimal sufficient set is multi-part.  Candidate 17 contains that set plus a diagnostic third arm; it is the higher-ceiling primary.  Its cost is the binding risk, not its design: if the owner fixes the budget, a two-arm A/B version of the same design is the smaller variant (drop C), not a substitute for the design.",
+    "admission_recommendation": "17 remains the primary on ceiling; admission should be conditional on 17.3 pricing and an owner resource ruling, or on an explicit two-arm A/B scope with the same graph.  Do not launch it in this closeout."
+  },
+  "accounting": {
+    "updates": 0,
+    "forward_calls": 0,
+    "adam_calls": 0,
+    "confirm_examples": 0,
+    "source_reports_read": [
+      "reports/taiji_binding_select_16_1_compare_20261103.json",
+      "reports/taiji_binding_select_16_1_attribution_20261103.json",
+      "plans/manifests/taiji_binding_select_16_1_compare_20261103.json"
+    ]
+  },
+  "cost": {
+    "cpu_seconds": 0.21875,
+    "wall_seconds": 0.23812610004097223,
+    "adam_calls": 0,
+    "forward_calls": 0
+  },
+  "budget": {
+    "cpu_seconds": 300.0,
+    "wall_seconds": 600.0,
+    "adam_calls": 0,
+    "product_bytes": 104857600
+  },
+  "products": {
+    "retained_bundles": [
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28031-A-locked-step300.pt",
+        "bytes": 65557565,
+        "sha256": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169"
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28031-B-select-step300.pt",
+        "bytes": 65557565,
+        "sha256": "4ffa54528dc4e4006d71954a388a2cf81771f302a0dc724183cd548ae27bcdd7"
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28032-A-locked-step300.pt",
+        "bytes": 65557565,
+        "sha256": "3d55bff6d51e7c3d7079e068caf70f1b131ce43e0be830abb1f71b5a39b556a5"
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28032-B-select-step300.pt",
+        "bytes": 65557565,
+        "sha256": "c788c8cbb2d5565405c2372d676f237476119d2de7d58cf59fa9166a61b0fb1d"
+      }
+    ],
+    "retained_bundle_bytes": 262230260,
+    "deleted_in_1_1": [
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28031-A-locked-step150.pt",
+        "bytes": 65557565
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\progress-28031-A-locked.json",
+        "bytes": 350
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28031-B-select-step150.pt",
+        "bytes": 65557565
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\progress-28031-B-select.json",
+        "bytes": 332
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28032-A-locked-step150.pt",
+        "bytes": 65557565
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\progress-28032-A-locked.json",
+        "bytes": 337
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28032-B-select-step150.pt",
+        "bytes": 65557565
+      },
+      {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\progress-28032-B-select.json",
+        "bytes": 334
+      }
+    ],
+    "deleted_in_1_1_bytes": 262231613,
+    "deleted_in_1_3": [],
+    "deleted_in_1_3_bytes": 0
+  },
+  "source_hashes": {
+    "reports/taiji_binding_select_16_1_compare_20261103.json": "122305a52152b06273092065b56b53e1fda312b4e00979adede7e1157c17cc97",
+    "reports/taiji_binding_select_16_1_attribution_20261103.json": "74e308e26a9af06d40eacb8166cce2599b461fa2cd9117a658793c5855d6835f",
+    "plans/manifests/taiji_binding_select_16_1_compare_20261103.json": "22ede2b54c15ae2991ed6d6b8440ab4ea5ee065cc2e2cca92846f7df7b9537e4",
+    "plans/reference/DESIGN-POST-N16_SELECTION_ROUTING_20261103.md": "51e759da1261c1bff249ddd3cb874df0f8059bdf5f2a6780931ef33e06f79308",
+    "scripts/training/closeout_taiji_binding_select_16_1_3.py": "09b5e0fc4c19e28f5a22b9075dc901042b2ad52d3fff6ebacc2c332f311f361b"
+  },
+  "next_step": "owner ruling on candidate 17 (design unchanged; admission conditional on 17.3 pricing and a resource ruling, or a two-arm A/B scope); do not launch training",
+  "limits": "Read-only closeout of the frozen 1.1 card: 0 updates, 0 forward, 0 confirm.  It does not re-run, change the dose/gates or release 1.2/14.7/N15.2/12/13."
+}
