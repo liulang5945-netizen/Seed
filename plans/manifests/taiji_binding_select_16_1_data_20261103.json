@@ -1,0 +1,27 @@
+{
+  "schema": "taiji-binding-select-manifest-v1",
+  "step": "N16.1.0a",
+  "status": "passed_16_1_0a_selection_interface",
+  "report": "reports/taiji_binding_select_16_1_data_20261103.json",
+  "payload": "output\\taiji_core_binding_select_16_1\\select_v1.json",
+  "payload_bytes": 722294,
+  "digests": {
+    "train": "ffe721a6b5fef8c4a86765ba0f83e064ec97111590fbc8c0aa16b85ede37e5f4",
+    "dev": "84dc10d78b798577335c30dee59a4d3b348a90b951f867a14d89da87200fb9c3",
+    "select_payload": "1169186b5dfa1c9e433055eabe61153c30fba01adf6791c34f7ed854c73ea58d",
+    "train_select": "61995de46065a8c5c384a76de06005d0479f9756be362685442dde27c42454e0",
+    "dev_select": "04968dea489002e1f1163d25828d5fd1c4e40f759c82f6455669b7bf4b5168e6"
+  },
+  "source_hashes": {
+    "taiji/binding_copy.py": "663fb556799e01de208fe6a2bfafe70a5315977b81612cd9c018e13d58415677",
+    "taiji/binding_copy_data.py": "aa001023519996b190bfd5f6faa42c6905c205766e1a3d0b34b0ab11c8b79495",
+    "taiji/binding_copy_scoring.py": "7acc1fab74b804815ceba84afc12ac4a473329c8f8759511ee7bba48d923a984",
+    "scripts/training/verify_taiji_binding_select_16_1.py": "a49684e0836b2665a1640ad80b086c70110063690aafd10c776b9d1f3f02fbbe"
+  },
+  "cost": {
+    "cpu_seconds": 2.3125,
+    "wall_seconds": 2.655130699975416,
+    "adam_calls": 0,
+    "product_bytes": 722294
+  }
+}

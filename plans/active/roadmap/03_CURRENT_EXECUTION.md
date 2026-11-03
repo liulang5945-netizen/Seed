@@ -1500,6 +1500,13 @@ owner 批准"执行整包"后按[设计件](../../reference/SPEC-TAIJI-CORE_READ
 - **成本与产物**：2,400 Adam、14,580.6 CPU、14,798.5 wall、峰值 1.04GB，未触 20,000 CPU/30,000 wall 观察线。保留 5 个 step300 bundle（四个 R1＋28031-R0P1）复现选择/前缀/塌陷复核，删除 11 个不需要的 checkpoint（714,544,117B，已登记）；partial 回执与空日志已清理。
 - **后继**：[N16.1 草案](../../reference/SPEC-N16-01_SELECTION_LOCKED_BINDING_DRAFT_20261103.md)（显式记录选择＋选择锁定复制＋准确率触发课程；判据预注册、预算草案），**未启动训练**。1.2 未启动、confirm 未读、14.7 未释放、N15.2 与 12/13 未开展。
 
+## 2026-11-03 N16.1 立项（方案 A）与 0a 数据接口
+
+owner 裁定 **N16.1 走方案 A**（显式记录选择头＋选择锁定复制＋复制门下限＋按准确率触发的自前缀课程），裁定日期 2026-11-03；范围仅 N16.1，不含 N15.2/12/13，不释放 14.7、不读 confirm。立项依据为 15.1 的三处断点（γ≈0、选择器 0/240、课程按构造失效）。与 15.1 证据对齐的七条修订点（选择头输入只含 goal＋记录 description、标签只来自标注、锁定复制实现为「one-hot α 覆盖＋保留模型 betas」、γ 下限 0.2、按批完成率 0.5 触发课程、oracle 改为实体字节起点、新增 0d）已写入 [SPEC-N16-01 §0](../../reference/SPEC-N16-01_SELECTION_LOCKED_BINDING_DRAFT_20261103.md)。
+
+- **0a 已通过（2026-11-03）**：`passed_16_1_0a_selection_interface`，14 项检查全过、**0 模型前向/0 Adam**；train/dev 288/240；每例选择标签唯一（`kind=object` 且 `description=object_description`）；键片段仅含 description，自动检查不含记录 name 与 action；dev 2×2 轴 135/45/45/15 与 unseen_combination 36 与 0a 一致；v2 train/dev digest 逐位不变（`ffe721a6…`/`84dc10d7…`）；confirm 密封未物化；载荷 722,294B；**2.31/60 CPU、2.6/120 墙**。产物：[载荷](../../../output/taiji_core_binding_select_16_1/select_v1.json)、[报告](../../../reports/taiji_binding_select_16_1_data_20261103.json)、[manifest](../../manifests/taiji_binding_select_16_1_data_20261103.json)。
+- **唯一下一步**：N16.1.0b 图谱工程（选择头、one-hot α 锁定、γ 下限 0.2、准确率触发课程接口；FD、干预、独立恢复；600 CPU/1200 wall、≤12 Adam、≤2GiB）。
+
 ## 2026-11-02 规划窗口裁定：先收束15.1，再编制后继合同
 
 当前执行计划完整到15.1.3；15.1 已按 `native_byte_task_failed` 收束，未新增15.2/16执行卡。15.2只保留接力责任，16/8/8等数字仍为待结果重审的规模示意。后继候选 N16.1 只交设计与判据（[草案](../../reference/SPEC-N16-01_SELECTION_LOCKED_BINDING_DRAFT_20261103.md)），训练未启动，立项权在 owner。
