@@ -1124,6 +1124,21 @@ def aggregate(results: list[dict], prior: dict) -> dict:
             "passed": statistics.fmean(deltas) >= PLAN_GATES["a_minus_c"] and interval["lower"] > 0,
         }
         gate["passed"] = gate["passed"] and gate["a_minus_c"]["passed"]
+        b = runs[f"{seed}-B_stop_lock"]
+        b_by = b["step300"]["overall"]["by_world"]
+        ab_deltas = [
+            a_by[world]["completed"] / a_by[world]["n"]
+            - b_by[world]["completed"] / b_by[world]["n"]
+            for world in sorted(a_by)
+            if world in b_by
+        ]
+        ab_interval = bootstrap(ab_deltas)
+        gate["a_minus_b_report_only"] = {
+            "delta": statistics.fmean(ab_deltas),
+            "bootstrap": ab_interval,
+            "lower_positive": ab_interval["lower"] > 0,
+            "note": "owner-requested reading; not part of the frozen 17.5 gate",
+        }
         seed_gate[str(seed)] = gate
     readiness = {}
     for tag in runs:
@@ -1302,6 +1317,31 @@ def evaluate_check() -> dict:
     return {"status": "evaluate_dev_full_check", "cells": cells, "ok": True}
 
 
+def resume_check() -> dict:
+    """All six step150 bundles must load (order/schema/optimizer) before any resume."""
+    cells = []
+    for seed in SEEDS:
+        for arm in ARMS:
+            tag = f"{seed}-{arm}"
+            path = OUTPUT_DIR / f"{tag}-step{CHECKPOINT_UPDATE}.pt"
+            candidate, optimizer, _state, update, _payload = load_routing_bundle(path)
+            cells.append(
+                {
+                    "tag": tag,
+                    "update": update,
+                    "trainable": sum(1 for p in candidate.parameters() if p.requires_grad),
+                    "optimizer_states": len(optimizer.state),
+                    "bytes": path.stat().st_size,
+                }
+            )
+            del candidate, optimizer
+    return {
+        "status": "resume_check",
+        "cells": cells,
+        "ok": all(cell["update"] == CHECKPOINT_UPDATE for cell in cells),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--worker", action="store_true")
@@ -1338,6 +1378,10 @@ def main() -> int:
         return 0
     start_cpu = time.process_time()
     start_wall = time.perf_counter()
+    if arguments.resume:
+        resume_report = resume_check()
+        write_json(OUTPUT_DIR / "resume-check.json", resume_report)
+        print(json.dumps({"resumecheck": "ok", "cells": len(resume_report["cells"])}))
     check = evaluate_check()
     print(json.dumps({"evalcheck": "ok", "cells": len(check["cells"])}, ensure_ascii=False))
     results = []

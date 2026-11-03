@@ -262,7 +262,13 @@ def load_routing_bundle(path: str | Path) -> tuple[
     )
     candidate.configure_trainable()
     names = _trainable_names(candidate)
-    if names != list(payload["trainable_names"]):
+    recorded = list(payload["trainable_names"])
+    unknown = [name for name in recorded if name not in set(names)]
+    if unknown:
+        raise ValueError(f"routing bundle trainable names unknown: {unknown[:3]}")
+    # Stage subsets are saved during training; require the recorded order to be the
+    # same relative order as the declared one, which still detects real drift.
+    if [name for name in names if name in set(recorded)] != recorded:
         raise ValueError("routing bundle trainable parameter order drifted")
     optimizer = make_routing_optimizer(candidate)
     optimizer.load_state_dict(payload["optimizer"])
