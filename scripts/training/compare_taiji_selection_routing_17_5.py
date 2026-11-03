@@ -42,6 +42,7 @@ torch.set_num_threads(1)
 
 from taiji.binding_copy import initial_binding_state, prepare  # noqa: E402
 from taiji.binding_copy_scoring import score_generation  # noqa: E402
+from taiji.candidate_identity import candidate_identity  # noqa: E402
 from taiji.living_core import EOS  # noqa: E402
 from taiji.record_relation_core import MAX_PREDICTIONS, decode_endpoint  # noqa: E402
 from taiji.selection_routing import (  # noqa: E402
@@ -87,8 +88,8 @@ ENTROPY_COEF = 0.01
 SPAN_LAMBDA = 0.5
 
 OUTPUT_DIR = Path("output/taiji_selection_routing_17_5")
-REPORT = Path("reports/taiji_selection_routing_17_5_compare_20261103.json")
-MANIFEST = Path("plans/manifests/taiji_selection_routing_17_5_compare_20261103.json")
+REPORT = Path("reports/taiji_selection_routing_17_5_compare_20261104.json")
+MANIFEST = Path("plans/manifests/taiji_selection_routing_17_5_compare_20261104.json")
 THRESHOLDS = Path("plans/manifests/taiji_selection_routing_17_3_r1_thresholds_20261103.json")
 
 DEV = 240
@@ -409,8 +410,9 @@ class ForcedRouteHead:
     this diagnostic wrapper so the T1 input whitelist stays intact.
     """
 
-    def __init__(self, index: int) -> None:
+    def __init__(self, index: int, config) -> None:
         self.index = int(index)
+        self.config = config
 
     def score_rows(self, goal_vec, key_vecs, s_t, previous_embedding):
         scores = torch.full(
@@ -454,7 +456,11 @@ def generate(
             for index in range(prepared.base.view.record_count)
         )
     with torch.no_grad():
-        route_head = candidate.head if forced_route is None else ForcedRouteHead(forced_route)
+        route_head = (
+            candidate.head
+            if forced_route is None
+            else ForcedRouteHead(forced_route, candidate.head.config)
+        )
         return routing_generate(
             binding,
             prepared,
@@ -962,6 +968,7 @@ def run_one(seed: int, arm: str, resume: bool = False) -> dict:
         "seed": seed,
         "arm": arm,
         "parent": {"path": str(PARENTS[seed]), "sha256": parent_sha},
+        "candidate": {"candidate_sha": candidate_identity(candidate)["candidate_sha"]},
         "resumed_from": resumed_from,
         "step0": step0,
         "step300": final,
@@ -1320,13 +1327,30 @@ def main() -> int:
         "binding_copy": "taiji/binding_copy.py",
     }
     report["thresholds"] = json.loads((ROOT / THRESHOLDS).read_text(encoding="utf-8"))
+    reference, _ = build_routing_candidate(ROOT / PARENTS[SEEDS[0]], SEEDS[0], ARMS[0])
+    identity = candidate_identity(reference)
+    cell_shas = {
+        f"{result['seed']}-{result['arm']}": result["candidate"]["candidate_sha"]
+        for result in results
+    }
+    report["candidate"] = {
+        "candidate_sha": identity["candidate_sha"],
+        "candidate_sha_v2": identity["candidate_sha_v2"],
+        "identity_basis": identity["identity_basis"],
+        "parameter_counts": identity["parameter_counts"],
+        "source_sha": identity["source_sha"],
+        "consistent_across_cells": all(
+            value == identity["candidate_sha"] for value in cell_shas.values()
+        ),
+        "per_cell": cell_shas,
+    }
     write_json(REPORT, report)
     write_json(
         MANIFEST,
         {
             "schema": "taiji-selection-routing-17-5-manifest-v1",
             "step": "N17.5",
-            "date": "2026-11-03",
+            "date": "2026-11-04",
             "report": str(REPORT),
             "report_sha256": sha256_file(REPORT),
             "report_bytes": REPORT.stat().st_size,
