@@ -127,19 +127,24 @@ def make_routing_optimizer(candidate: RoutingCandidate) -> torch.optim.Adam:
 
 
 def build_routing_candidate(
-    parent_path: str | Path, seed: int, arm: str
+    parent_path: str | Path, seed: int, arm: str, span_bottleneck: int = 0
 ) -> tuple[RoutingCandidate, torch.optim.Adam]:
     """Load the 16.1 parent, keep only its binding, attach a fresh 17 head.
 
     The parent's legacy ``SelectionHead`` is discarded.  Module registration
     order is fixed by the class definitions, so two calls with the same parent
     produce the same parameter order.
+
+    ``span_bottleneck`` widens the teacher-span pointer only (0 keeps the frozen
+    258-parameter shape; 32 is the 19.2b start-supervision shape, 4,194
+    parameters).  No alpha/beta, encoder, transport or gate quantity is touched.
     """
     parent = Path(parent_path)
     loaded = load_bundle(parent, torch.float64)
     binding = loaded[0].binding
-    head = OrderedSelectionHead(RoutingConfig(), seed=int(seed))
-    span_head = SpanPointerHead(RoutingConfig(), seed=int(seed))
+    config = RoutingConfig(span_bottleneck=int(span_bottleneck))
+    head = OrderedSelectionHead(config, seed=int(seed))
+    span_head = SpanPointerHead(config, seed=int(seed))
     candidate = RoutingCandidate(binding, head, arm=arm, seed=int(seed), span_head=span_head)
     candidate.configure_trainable()
     optimizer = make_routing_optimizer(candidate)

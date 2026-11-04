@@ -1,0 +1,25 @@
+{
+  "schema": "taiji-package19-2b-lowupdate-manifest-v1",
+  "step": "N19.2b",
+  "report": "reports\\taiji_package19_2b_lowupdate_20261104.json",
+  "adam_steps": 60,
+  "start_hit_rising": false,
+  "deltas": {
+    "A_route_lock": {
+      "start_hit_object_delta": 0.0,
+      "start_hit_place_delta": 0.0,
+      "route_hit_object_delta": 0.032986111111111105,
+      "conditional_object_delta": 0.0
+    },
+    "B_stop_lock": {
+      "start_hit_object_delta": 0.0,
+      "start_hit_place_delta": 0.0,
+      "route_hit_object_delta": 0.032986111111111105,
+      "conditional_object_delta": 0.0
+    }
+  },
+  "cost": {
+    "cpu_seconds": 268.3125,
+    "wall_seconds": 275.79059380013496
+  }
+}

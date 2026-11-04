@@ -1,0 +1,87 @@
+{
+  "schema": "taiji-package19-2b-prereg-v1",
+  "step": "N19.2b",
+  "date": "2026-11-04",
+  "owner_authorization": "start supervision branch accepted; dose 19.2b",
+  "design": {
+    "cells": 6,
+    "seeds": [28031, 28032],
+    "arms": ["A_route_lock", "B_stop_lock", "C_unlocked"],
+    "updates_per_cell": 300,
+    "batch": 8,
+    "stages": {"selection": [1, 100], "copy": [101, 200], "joint": [201, 300]},
+    "parent": "output/taiji_core_binding_select_16_1_compare/bundles 16.1 A-locked step300",
+    "change_vs_19_5": "SpanPointerHead span_bottleneck 32 (4,194 parameters); gold start/end from teacher_span(record_raw, entity_bytes); start pointer injected into routing_step as pointer_bias",
+    "unchanged": [
+      "alpha/beta routing",
+      "record encoder",
+      "transport operator",
+      "gate numbers",
+      "data (no new examples)"
+    ],
+    "data": "output/taiji_data_premise_18_0/data.json (640 train / 192 dev / confirm sealed)",
+    "compare_baseline": "19.5 six step300 bundles, kept untouched in output/taiji_package19_compare"
+  },
+  "pricing": {
+    "manifest": "plans/manifests/taiji_pricing_19_2b_20261104.json",
+    "bare_six_cpu": 32256.6,
+    "protected_six_cpu": 68061.4,
+    "segments_bare_cpu": {"0_to_150": 7464.3, "150_to_300": 24792.3},
+    "measured_19_5_six_cpu": 29574.2,
+    "watchlines_cpu": [20000, 30000]
+  },
+  "stage_gate": {
+    "start_hit_object": 0.95,
+    "start_hit_place": 0.95,
+    "route_hit": 0.95,
+    "conditional_byte_object": 0.94,
+    "conditional_byte_place": 0.98,
+    "aggregation": "pooled across the six cells (mean); per-cell readings reported",
+    "conditional_byte_no_regression": "must not fall below the 19.5 pooled 0.941 / 0.980"
+  },
+  "final_gate": {
+    "byte_object": 0.95,
+    "byte_place": 0.95,
+    "new_name_copied": 0.60,
+    "overall": 0.80,
+    "unseen_output_name": 0.80,
+    "utf8_frozen_path": 0.98,
+    "eos": 0.95,
+    "new_description": 0.80,
+    "aggregation": "pooled across the six cells (mean); per-cell readings reported; pooled decides, per-cell reported"
+  },
+  "decision_tree": [
+    {
+      "branch": "stage_gate_failed",
+      "meaning": "19.2b insufficient at the start pointer; no confirm; attribute the main gap to start vs gate vs encoder with magnitudes"
+    },
+    {
+      "branch": "stage_gate_passed_final_failed_new_description",
+      "meaning": "start pointer moved but new_description still ~0.26; 19.2b insufficient; do NOT add more start dose; switch to sentence-frame attribution and report separately"
+    },
+    {
+      "branch": "stage_gate_passed_final_failed_else",
+      "meaning": "19.2b insufficient; no confirm; attribute to gate vs encoder with magnitudes"
+    },
+    {
+      "branch": "both_passed",
+      "meaning": "release confirm exactly once, then seal"
+    }
+  ],
+  "confirm_policy": {
+    "reads_allowed": 1,
+    "selection_rule": "cell with the highest pooled overall among the six; tie-break by arm order A, B, C then seed 28031 before 28032",
+    "seal": "output/taiji_package19_2b_confirm/SEALED.json; a second read must refuse",
+    "only_if": "stage gate and final gate both pass"
+  },
+  "attribution_rules": [
+    "gamma is always written as generation weight gamma / copy weight 1 - gamma",
+    "gamma never implies training credit (M3)",
+    "the main gap must carry a magnitude: start vs gate vs encoder vs sentence frame"
+  ],
+  "monitoring": {
+    "lines_cpu": [20000, 30000],
+    "extrapolation": "measured slope only; fixed start-up cost amplification is forbidden",
+    "crossing_action": "write watchline, continue, record the reason"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "schema": "taiji-package19-2b-decision-manifest-v1",
+  "step": "N19.2b",
+  "date": "2026-11-04",
+  "report": "reports/taiji_package19_2b_decision_20261104.json",
+  "status": "stopped_before_formal_compare",
+  "inputs": {
+    "pricing": "reports/taiji_pricing_19_2b_20261104.json",
+    "low_update": "reports/taiji_package19_2b_lowupdate_20261104.json",
+    "preflight": "reports/taiji_preflight_19_2b_20261104.json",
+    "pointer_diagnostic": "reports/taiji_package19_2b_pointer_diagnostic_20261104.json",
+    "pointer_untrained": "reports/taiji_package19_2b_pointer_untrained_20261104.json",
+    "prereg": "plans/manifests/taiji_package19_2b_prereg_20261104.json",
+    "baseline_bundles": "output/taiji_package19_compare/"
+  },
+  "budget": {
+    "six_cells_bare_cpu": 32256.6,
+    "six_cells_protected_cpu": 68061.426,
+    "actual_cpu_19_2b": 672.1715,
+    "adam_steps": 79,
+    "confirm_reads": 0,
+    "release_confirm_19": false
+  },
+  "verdict": {
+    "code": "stage_gate_reads_unscaled_quantity",
+    "owner_ruling_required": true,
+    "single_next_step": "measure the stage gate start_hit on the span pointer with all gate numbers unchanged, then verify the rise within <=60 Adam"
+  }
+}

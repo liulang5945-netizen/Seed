@@ -1,0 +1,165 @@
+{
+  "schema": "taiji-package19-2b-decision-v1",
+  "step": "N19.2b",
+  "date": "2026-11-04",
+  "status": "stopped_before_formal_compare",
+  "status_detail": "The stage gate reading cannot be moved by span supervision; 0 of the 32,256.6 CPU six-cell dose was spent. Owner ruling required before any further training.",
+  "order_followed": [
+    "pricing first (0 Adam), then low-update validation, then preflight, then stop for attribution",
+    "gate numbers unchanged (0.95 / 0.94 / 0.98 / 0.80 / 0.60 / 0.98 / 0.95)",
+    "no new data, alpha/beta/encoder/transport untouched",
+    "confirm reads 0, release_confirm_19 = false"
+  ],
+  "pricing": {
+    "report": "reports/taiji_pricing_19_2b_20261104.json",
+    "manifest": "plans/manifests/taiji_pricing_19_2b_20261104.json",
+    "method": "19.5 measured slopes (selection 4.0 / copy 10.0 / joint 29.0 CPU per update) plus explicit non-train line items; the 5.4 flat rate was not reused",
+    "six_cells_bare_cpu": 32256.6,
+    "six_cells_protected_cpu": 68061.426,
+    "segment_budget": {
+      "0_to_150_bare_cpu": 7464.3,
+      "0_to_150_protected_cpu": 15749.673,
+      "150_to_300_bare_cpu": 24792.3,
+      "150_to_300_protected_cpu": 52311.753
+    },
+    "measured_19_5_six_cpu": 29574.234375,
+    "bare_over_measured_19_5": 1.0907,
+    "methodology_correction_19_3": {
+      "bare_underestimate_ratio": 3.0391,
+      "over_protected_ratio": 1.113,
+      "root_cause": "flat 5.4 CPU/update applied to all 300 updates; the measured second half is 20.8-26.7 CPU/update all-in, and the step0/step150 light plus step300 full evaluations (about 344 + 732 CPU per cell) were priced as negligible",
+      "written_into": "reports/taiji_pricing_19_2b_20261104.json#methodology_correction_19_3"
+    },
+    "cost_cpu": 0.0
+  },
+  "low_update_validation": {
+    "report": "reports/taiji_package19_2b_lowupdate_20261104.json",
+    "manifest": "plans/manifests/taiji_package19_2b_lowupdate_20261104.json",
+    "design": "seed 28031, arms A_route_lock and B_stop_lock, 30 updates each, selection stage only, span bottleneck 32",
+    "adam_steps": 60,
+    "span_loss_first_last": [6.779489, 5.03436],
+    "span_loss_change": -0.2577,
+    "start_hit_curve_object": [0.0, 0.0, 0.0, 0.0],
+    "start_hit_curve_place": [0.0, 0.0, 0.0, 0.0],
+    "beta_start_hit_object": 0.208333,
+    "beta_start_hit_place": 0.0,
+    "route_hit_pooled_first_last": [0.078993, 0.095486],
+    "conditional_byte": 0.0,
+    "measurement_note": "The two arms produced bit-identical traces and an identical candidate_sha_v2 (6c5466ab...), because arm type only enters the copy/joint window; this 60 Adam is effectively one 30-update trajectory run twice. The reported start_hit is the beta reading of the frozen reader, so it cannot respond to span supervision; the span CE drop is the only reading in this report that measures the supervised quantity.",
+    "cost_cpu": 268.3125
+  },
+  "preflight": {
+    "report": "reports/taiji_preflight_19_2b_20261104.json",
+    "manifest": "plans/manifests/taiji_preflight_19_2b_20261104.json",
+    "passed": true,
+    "assertions": {
+      "checkpoint_roundtrip_all_cells": true,
+      "nonzero_copy_state": true,
+      "parent_and_identity_stable": true,
+      "save_before_eval": true,
+      "evaluate_dev_full": true,
+      "s1_denominators": true,
+      "triple": true,
+      "failure_injection": true
+    },
+    "assertions_passed": "8/8",
+    "candidate_sha_v2_prefix": "6c5466ab",
+    "span_parameters": 4194,
+    "span_parameters_expected": 4194,
+    "routing_head_parameter_increase_ratio": 0.113,
+    "adam_steps": 19,
+    "cost_cpu": 297.5,
+    "temporary_bundles_removed": true
+  },
+  "pointer_diagnostic": {
+    "report_19_5_bundles": "reports/taiji_package19_2b_pointer_diagnostic_20261104.json",
+    "report_untrained": "reports/taiji_package19_2b_pointer_untrained_20261104.json",
+    "reading": "gold start offset of the object/place record, teacher-forced prefix; beta_argmax is the 19.5 start_hit basis, pointer_logits/pointer are the span-head quantities",
+    "step300_pooled": {
+      "object": {"beta_argmax_hit_rate": 0.520833, "pointer_logits_hit_rate": 0.71875, "pointer_hit_rate": 0.71875},
+      "place": {"beta_argmax_hit_rate": 0.5, "pointer_logits_hit_rate": 0.697917, "pointer_hit_rate": 0.697917}
+    },
+    "step300_per_cell_beta_argmax": {
+      "28031-A_route_lock": [1.0, 1.0],
+      "28031-B_stop_lock": [1.0, 1.0],
+      "28031-C_unlocked": [0.0, 0.0],
+      "28032-A_route_lock": [0.125, 0.0],
+      "28032-B_stop_lock": [1.0, 1.0],
+      "28032-C_unlocked": [0.0, 0.0]
+    },
+    "untrained_32d": {
+      "object": {"beta_argmax_hit_rate": 0.25, "pointer_hit_rate": 0.25},
+      "place": {"beta_argmax_hit_rate": 0.0, "pointer_hit_rate": 0.0}
+    },
+    "note": "pointer_hit equals pointer_logits_hit on all six cells, so no carry bypass hid a span decision; the pointer is the quantity span supervision actually moves",
+    "cost_cpu": 106.4
+  },
+  "structural_finding": {
+    "claim": "The 19.2b stage gate start_hit >= 0.95 is measured on a quantity that spans supervision does not touch.",
+    "evidence_chain": [
+      "read.betas is the frozen reader's own within-record position posterior: taiji/binding_copy.py line 337 computes softmax(log_row) before any span term and is only replaced by an explicit force",
+      "the span pointer enters read() as pointer_bias and is added inside _point_transport to row_logits, which produces step.pointer and s_bytes (taiji/binding_copy.py lines 361, 386-396, 467-476); it never enters betas",
+      "span_loss trains only SpanPointerHead parameters; the alpha/beta encoder, transport operator and gate numbers are untouched by design",
+      "the ledger defines start_hit = route_hit and argmax(read.betas[record]) == gold_offset (scripts/training/probe_taiji_package19.py line 255)",
+      "therefore start_hit reads route_hit * beta; a perfectly supervised span head cannot raise it"
+    ],
+    "measured_19_5_ledger": {
+      "object": {"start_hit": 0.347222, "route_hit": 0.762153, "beta_start_hit": 0.395833, "start_byte_hit": 0.663194, "conditional_byte": 0.940909},
+      "place": {"start_hit": 0.340278, "route_hit": 0.694444, "beta_start_hit": 0.388889, "start_byte_hit": 0.625, "conditional_byte": 0.979592}
+    },
+    "why_six_cells_were_not_run": "With this reading fixed, all six cells fail the stage gate before any dose is applied; spending 32,256.6 CPU (68,061.4 protected) on it cannot change the verdict. The post-stage byte readings would still be informative, but the owner's decision tree keys on the stage gate first.",
+    "magnitude_attribution": {
+      "start_pointer": "moves under supervision: span CE -25.7% in 30 updates; 32-d untrained pointer 0.25/0.00 -> 19.5 step300 pointer 0.719/0.698",
+      "frozen_reader_position_beta": "not supervised and not movable: 0.396/0.389 on 19.5, 0.208/0.000 after 30 supervised updates",
+      "route": "0.762/0.694 on 19.5, needs 0.95; span supervision does not touch alpha",
+      "encoder": "not the main cause (19.7: c_gamma0 content 1.000 on 5/6)",
+      "sentence_frame": "second independent gap (B arm start correct but new_description 0.260/0.229)"
+    }
+  },
+  "gate_values_unchanged": {
+    "stage_start_hit": 0.95,
+    "stage_route_hit": 0.95,
+    "stage_conditional_byte_object": 0.94,
+    "stage_conditional_byte_place": 0.98,
+    "final_byte_object": 0.95,
+    "final_byte_place": 0.95,
+    "final_copied": 0.6,
+    "final_overall": 0.8,
+    "final_unseen": 0.8,
+    "final_utf8": 0.98,
+    "final_eos": 0.95,
+    "final_new_description": 0.8
+  },
+  "pending_owner_ruling": {
+    "question": "Should the stage gate start_hit be measured on the supervised quantity (the span pointer) while every gate number stays as written?",
+    "proposed_measurement_only_fix": "start_hit := argmax(step.pointer[gold record]) == gold offset; route_hit stays a separate 0.95 clause; conditional_byte is conditioned on pointer start hits instead of beta start hits. Numbers 0.95 / 0.94 / 0.98 / 0.60 / 0.80 / 0.98 / 0.95 unchanged.",
+    "why_not_simply_add_dose": "Owner rule: if start_hit passes but new_description stays near 0.26, do not add start dose. Here start_hit cannot pass at all under the current reading, so more dose is both unreadable and wasted.",
+    "verification_cost": "<=60 Adam on a single-arm selection-stage run with the pointer reading added, about 270 CPU; no saves, no confirm",
+    "rejected_alternative": "run the six cells anyway as a dual-reading experiment (32,256.6 CPU bare) while the stage gate is structurally unreachable"
+  },
+  "cost": {
+    "pricing": 0.0,
+    "low_update": 268.3125,
+    "preflight": 297.5,
+    "pointer_diagnostic_19_5": 88.859,
+    "pointer_diagnostic_untrained": 17.5,
+    "total_cpu_19_2b": 672.1715,
+    "six_cell_budget_not_spent_cpu": 32256.6,
+    "confirm_reads": 0
+  },
+  "baseline_kept": {
+    "path": "output/taiji_package19_compare/",
+    "bundles": 6,
+    "note": "the six 19.5 step300 bundles are untouched and remain the comparison baseline for any later 19.2b reading"
+  },
+  "cleanup_registry": {
+    "kept_logs": [
+      "output/taiji_package19_2b_lowupdate.log",
+      "output/taiji_package19_2b_preflight.log",
+      "output/taiji_package19_2b_pointer_diag.log"
+    ],
+    "kept_note": "three logs, 2.9 KB total, retained as run evidence; no training bundle was produced",
+    "removed": ["output/taiji_preflight_19_2b (temporary bundles, recycled by the preflight script)"],
+    "not_created": ["output/taiji_package19_2b_compare", "output/taiji_package19_2b_logs"]
+  }
+}

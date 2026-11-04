@@ -353,10 +353,16 @@ def utf8_scan(data: bytes, allow_truncated: bool = False) -> dict:
     return {"legal": not bad, "illegal_positions": bad}
 
 
-def run_cell(seed: int, arm: str, checkpoint: str, limit: int | None = None) -> dict:
+def run_cell(
+    seed: int,
+    arm: str,
+    checkpoint: str,
+    limit: int | None = None,
+    output_dir: str | None = None,
+) -> dict:
     start_cpu = time.process_time()
     start_wall = time.perf_counter()
-    path = OUTPUT_DIR / f"{seed}-{arm}-{checkpoint}.pt"
+    path = (Path(output_dir) if output_dir else OUTPUT_DIR) / f"{seed}-{arm}-{checkpoint}.pt"
     if not path.exists():
         raise FileNotFoundError(path)
     candidate, _optimizer, _state, update, _payload = probe_mod.load_routing_bundle(path)
@@ -514,11 +520,11 @@ def run_cell(seed: int, arm: str, checkpoint: str, limit: int | None = None) -> 
 
 
 def run_ledger_cell(
-    seed: int, arm: str, checkpoint: str, limit: int | None = None
+    seed: int, arm: str, checkpoint: str, limit: int | None = None, output_dir: str | None = None
 ) -> tuple[list[dict], dict]:
     """Teacher-forced ledger only: no sweep, no free decode, 0 updates."""
     start_cpu, start_wall = time.process_time(), time.perf_counter()
-    path = OUTPUT_DIR / f"{seed}-{arm}-{checkpoint}.pt"
+    path = (Path(output_dir) if output_dir else OUTPUT_DIR) / f"{seed}-{arm}-{checkpoint}.pt"
     candidate, _optimizer, _state, _update, _payload = probe_mod.load_routing_bundle(path)
     probe = probe_mod.ProbeContext(candidate)
     probe.arm = arm
@@ -588,12 +594,14 @@ def build_pooled(results: list[dict]) -> dict:
 
 
 def main() -> int:
-    global REPORT, MANIFEST, PREREG
+    global REPORT, MANIFEST, PREREG, OUTPUT_DIR
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint", default="step300", choices=sorted(probe_mod.CHECKPOINTS))
     parser.add_argument("--report", default=None, help="override report path")
     parser.add_argument("--manifest", default=None, help="override manifest path")
     parser.add_argument("--prereg", default=None, help="override byte-gate prereg path")
+    parser.add_argument("--output-dir", default=None, help="bundle directory to read")
+    parser.add_argument("--step", default="N19.5", help="step label written into the report")
     parser.add_argument("--cells", nargs="*", default=None)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument(
@@ -607,6 +615,8 @@ def main() -> int:
         help="re-measure only the teacher-forced ledger on finished cells and rewrite the report",
     )
     arguments = parser.parse_args()
+    if arguments.output_dir:
+        OUTPUT_DIR = Path(arguments.output_dir)
     if arguments.report:
         REPORT = Path(arguments.report)
     if arguments.manifest:
@@ -630,6 +640,7 @@ def main() -> int:
                     item["arm"],
                     arguments.checkpoint,
                     arguments.limit,
+                    arguments.output_dir,
                 ): key
                 for key, item in cells_by_key.items()
             }
@@ -695,7 +706,9 @@ def main() -> int:
     failures = []
     with ProcessPoolExecutor(max_workers=6) as pool:
         futures = {
-            pool.submit(run_cell, seed, arm, arguments.checkpoint, arguments.limit): (seed, arm)
+            pool.submit(
+                run_cell, seed, arm, arguments.checkpoint, arguments.limit, arguments.output_dir
+            ): (seed, arm)
             for seed, arm in cells
         }
         for future in as_completed(futures):
@@ -735,7 +748,7 @@ def main() -> int:
     pooled = build_pooled(results)
     report = {
         "schema": "taiji-package19-probe-v2",
-        "step": "N19.5",
+        "step": arguments.step,
         "date": "2026-11-04",
         "checkpoint": arguments.checkpoint,
         "dtype": "float64",

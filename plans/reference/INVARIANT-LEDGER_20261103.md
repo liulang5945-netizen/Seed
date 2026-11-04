@@ -289,3 +289,17 @@ P3首步强制实体起点的时点与目标实体阶段不同。P4只在alpha/b
 
 **分支（不预启动）**：唯一建议 **19.2b 起点监督**（启用既有 `SpanPointerHead` 32-d bottleneck，+4,194 参数；gold 起点来自 `teacher_span(record_raw, entity_bytes)`，无新数据；预算 ≤34,400 CPU；判据见 [ROADMAP-NEXT](ROADMAP-NEXT_20261104.md) §1）。**19.5b 仅调门**作为应急备选（≤5,200 CPU），因 γ 扫描无增益**不建议**。两条均须 owner 明示裁定才可训练。
 
+### 15.1 19.2b 前段：起点门读错了对象（2026-11-04）
+
+**状态**：`stopped_before_formal_compare`。证据：[19.2b 决策](../../reports/taiji_package19_2b_decision_20261104.json)、[定价](../../reports/taiji_pricing_19_2b_20261104.json)、[少更新](../../reports/taiji_package19_2b_lowupdate_20261104.json)、[预检](../../reports/taiji_preflight_19_2b_20261104.json)、[指针诊断](../../reports/taiji_package19_2b_pointer_diagnostic_20261104.json)。
+
+**机制事实（新增，永久生效）**：`read.betas` 是冻结 reader 自己的记录内位置后验（[binding_copy.py](../../taiji/binding_copy.py) 第 337 行 `torch.softmax(row)`）；span pointer 只经 `pointer_bias` 加进 `_point_transport` 的 `row_logits`，产出 `step.pointer` 与 `s_bytes`（第 361、386–396、467–476 行），**从不进入 betas**。因此 §15 定义的 `start_hit = route ∧ argmax(betas)==gold` 对 span 监督**结构性不可动**：监督再好，读数不会上升。19.5 的三项读数（物件 `route 0.762 / beta 0.396 / start_hit 0.347`；地点 `0.694 / 0.389 / 0.340`）就是这个乘法结构。
+
+**为什么监督确实在动**：60 Adam（2 臂 × 30，selection 阶段）span CE **6.779 → 5.034**（−25.7%），但 β 口径 `start_hit` 恒 **0.000**、`beta_start_hit` 物件恒 0.208 / 地点恒 0.000；指针口径在 19.5 六格 step300 为 **0.719 / 0.698**，未训练的 32-d 对照只有 **0.25 / 0.00**。即“指针被推起来了，门没看它”。
+
+**量级归因**（主因必须带量级）：起点指针（可动，span CE −25.7%）> 路由（0.762/0.694，需 0.95，span 不碰 α）≈ 冻结 β（0.396/0.389，不可动）> 编码器（非主因，c_γ0 1.000×5/6）> 句框（第二缺口，B 臂起点全对仍 `new_description` 0.260/0.229）。
+
+**待裁定（唯一）**：把阶段门 `start_hit` 的**读数对象**改为 `argmax(step.pointer[gold record])`，`route_hit` 仍单独 ≥0.95，`conditional_byte` 改为以指针起点命中为条件；**门值 0.95 / 0.94 / 0.98 一个不改**。裁定前不花六格 32,256.6 CPU（裸价）/ 68,061.4（保护价）。
+
+**成本**：19.2b 前段共 **672.2 CPU**（定价 0 + 少更新 268.3 + 预检 297.5 + 指针诊断 88.9 + 未训练对照 17.5）；confirm 读取 **0**；19.5 的 6 个 step300 bundle 原样保留作基线。
+

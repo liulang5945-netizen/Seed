@@ -1,0 +1,258 @@
+{
+  "schema": "taiji-package19-preflight-manifest-v1",
+  "step": "N19.2b",
+  "date": "2026-11-04",
+  "report": "E:\\Seed\\reports\\taiji_preflight_19_2b_20261104.json",
+  "report_sha256": "773eeb6cde761a29f7e9006b7f5662aa36661fd83f903748b1c72b398b79ff8d",
+  "verdict": "preflight_passed",
+  "assertions": {
+    "checkpoint_roundtrip_all_cells": true,
+    "nonzero_copy_state_all_cells": true,
+    "parent_and_identity_stable": true,
+    "save_before_eval": true,
+    "evaluate_dev_full_all_cells": true,
+    "s1_denominators_all_cells": true,
+    "triple_all_cells": true,
+    "failure_injection": true
+  },
+  "cells": [
+    {
+      "tag": "preflight-28031-A_route_lock",
+      "passed": true,
+      "diffs": {
+        "parameters_max_abs": 0.0,
+        "parameters_tensors": 187,
+        "adam_moments_max_abs": 0.0,
+        "teacher_forced_max_abs": 0.0,
+        "copy_state_max_abs": 0.0,
+        "copy_state_tensors": 7
+      },
+      "state": {
+        "m_abs_sum": 0.0003148279616726244,
+        "coverage_abs_sum": 0.0003148279616726244,
+        "prefix_cursor_real": 1,
+        "prefix_cursor_probed": 20,
+        "advanced_steps": 1,
+        "state_kind": "teacher_forced",
+        "keys": 243,
+        "record_offsets": 8,
+        "probe_fixture": 0
+      },
+      "new_name_copied": 0.0,
+      "denominator": 8,
+      "s1_equal": true,
+      "triple": {
+        "progress_update": 203,
+        "bundle_exists": true,
+        "bundle_update": 203,
+        "expected_update": 203,
+        "consistent": true
+      },
+      "cpu_seconds": 52.4
+    },
+    {
+      "tag": "preflight-28031-B_stop_lock",
+      "passed": true,
+      "diffs": {
+        "parameters_max_abs": 0.0,
+        "parameters_tensors": 187,
+        "adam_moments_max_abs": 0.0,
+        "teacher_forced_max_abs": 0.0,
+        "copy_state_max_abs": 0.0,
+        "copy_state_tensors": 7
+      },
+      "state": {
+        "m_abs_sum": 0.9707632146426293,
+        "coverage_abs_sum": 0.9707632146426293,
+        "prefix_cursor_real": 7,
+        "prefix_cursor_probed": 20,
+        "advanced_steps": 7,
+        "state_kind": "teacher_forced",
+        "keys": 243,
+        "record_offsets": 8,
+        "probe_fixture": 0
+      },
+      "new_name_copied": 0.0,
+      "denominator": 8,
+      "s1_equal": true,
+      "triple": {
+        "progress_update": 203,
+        "bundle_exists": true,
+        "bundle_update": 203,
+        "expected_update": 203,
+        "consistent": true
+      },
+      "cpu_seconds": 46.0
+    },
+    {
+      "tag": "preflight-28031-C_unlocked",
+      "passed": true,
+      "diffs": {
+        "parameters_max_abs": 0.0,
+        "parameters_tensors": 187,
+        "adam_moments_max_abs": 0.0,
+        "teacher_forced_max_abs": 0.0,
+        "copy_state_max_abs": 0.0,
+        "copy_state_tensors": 7
+      },
+      "state": {
+        "m_abs_sum": 0.023256970724243497,
+        "coverage_abs_sum": 0.023256970724243497,
+        "prefix_cursor_real": 1,
+        "prefix_cursor_probed": 20,
+        "advanced_steps": 1,
+        "state_kind": "teacher_forced",
+        "keys": 243,
+        "record_offsets": 8,
+        "probe_fixture": 0
+      },
+      "new_name_copied": 0.0,
+      "denominator": 8,
+      "s1_equal": true,
+      "triple": {
+        "progress_update": 203,
+        "bundle_exists": true,
+        "bundle_update": 203,
+        "expected_update": 203,
+        "consistent": true
+      },
+      "cpu_seconds": 45.6
+    },
+    {
+      "tag": "preflight-28032-A_route_lock",
+      "passed": true,
+      "diffs": {
+        "parameters_max_abs": 0.0,
+        "parameters_tensors": 187,
+        "adam_moments_max_abs": 0.0,
+        "teacher_forced_max_abs": 0.0,
+        "copy_state_max_abs": 0.0,
+        "copy_state_tensors": 7
+      },
+      "state": {
+        "m_abs_sum": 5.01882369575673e-12,
+        "coverage_abs_sum": 5.01882369575673e-12,
+        "prefix_cursor_real": 1,
+        "prefix_cursor_probed": 20,
+        "advanced_steps": 1,
+        "state_kind": "teacher_forced",
+        "keys": 246,
+        "record_offsets": 8,
+        "probe_fixture": 0
+      },
+      "new_name_copied": 0.0,
+      "denominator": 8,
+      "s1_equal": true,
+      "triple": {
+        "progress_update": 203,
+        "bundle_exists": true,
+        "bundle_update": 203,
+        "expected_update": 203,
+        "consistent": true
+      },
+      "cpu_seconds": 53.4
+    },
+    {
+      "tag": "preflight-28032-B_stop_lock",
+      "passed": true,
+      "diffs": {
+        "parameters_max_abs": 0.0,
+        "parameters_tensors": 187,
+        "adam_moments_max_abs": 0.0,
+        "teacher_forced_max_abs": 0.0,
+        "copy_state_max_abs": 0.0,
+        "copy_state_tensors": 7
+      },
+      "state": {
+        "m_abs_sum": 1.2172409122036903e-22,
+        "coverage_abs_sum": 1.2172409122036903e-22,
+        "prefix_cursor_real": 15,
+        "prefix_cursor_probed": 20,
+        "advanced_steps": 15,
+        "state_kind": "teacher_forced",
+        "keys": 246,
+        "record_offsets": 8,
+        "probe_fixture": 0
+      },
+      "new_name_copied": 0.0,
+      "denominator": 8,
+      "s1_equal": true,
+      "triple": {
+        "progress_update": 203,
+        "bundle_exists": true,
+        "bundle_update": 203,
+        "expected_update": 203,
+        "consistent": true
+      },
+      "cpu_seconds": 42.4
+    },
+    {
+      "tag": "preflight-28032-C_unlocked",
+      "passed": true,
+      "diffs": {
+        "parameters_max_abs": 0.0,
+        "parameters_tensors": 187,
+        "adam_moments_max_abs": 0.0,
+        "teacher_forced_max_abs": 0.0,
+        "copy_state_max_abs": 0.0,
+        "copy_state_tensors": 7
+      },
+      "state": {
+        "m_abs_sum": 8.378680366468234e-18,
+        "coverage_abs_sum": 8.378680366468234e-18,
+        "prefix_cursor_real": 1,
+        "prefix_cursor_probed": 20,
+        "advanced_steps": 1,
+        "state_kind": "teacher_forced",
+        "keys": 246,
+        "record_offsets": 8,
+        "probe_fixture": 0
+      },
+      "new_name_copied": 0.0,
+      "denominator": 8,
+      "s1_equal": true,
+      "triple": {
+        "progress_update": 203,
+        "bundle_exists": true,
+        "bundle_update": 203,
+        "expected_update": 203,
+        "consistent": true
+      },
+      "cpu_seconds": 45.5
+    }
+  ],
+  "failure_injection": {
+    "tag": "inject-28031-A_route_lock",
+    "triple": {
+      "progress_update": 301,
+      "bundle_exists": true,
+      "bundle_update": 301,
+      "expected_update": 301,
+      "consistent": true
+    },
+    "receipt": "E:\\Seed\\output\\taiji_preflight_19_2b\\evaluation-inject-28031-A_route_lock.json",
+    "receipt_status": "evaluation_failed_weights_preserved",
+    "receipt_exists": true,
+    "bundle_exists": true,
+    "bundle_step": 301,
+    "weights_preserved": true,
+    "weights_tensors": 187,
+    "injected_traceback_present": true,
+    "passed": true,
+    "bundle_sha256": "865fda3f27d0ac5946690ab96913664ffceb20939c773b383f3c07a9c5132ebf",
+    "cost_cpu": null
+  },
+  "cost": {
+    "cpu_seconds": 297.484375,
+    "wall_seconds": 303.71187649993226,
+    "engineering_adam": 19,
+    "training_updates": 0,
+    "confirm_reads": 0,
+    "caps": {
+      "engineering_adam": 60,
+      "cpu": 400.0
+    }
+  },
+  "stop_condition": "formal 18.1 dose requires explicit owner approval",
+  "package": "19.2b"
+}

@@ -1,0 +1,249 @@
+{
+  "schema": "taiji-package19-2b-lowupdate-v1",
+  "step": "N19.2b",
+  "date": "2026-11-04",
+  "purpose": "does start_hit rise with gold-start supervision inside 60 Adam",
+  "design": {
+    "seed": 28031,
+    "arms": [
+      "A_route_lock",
+      "B_stop_lock"
+    ],
+    "updates_per_arm": 30,
+    "stage": "selection (1-100 window); only selection CE + span CE are trained",
+    "span_head": "SpanPointerHead 32-d bottleneck (4,194 parameters)",
+    "supervision": "teacher_span(record_raw, entity_bytes) gold start/end on object and place records",
+    "pointer_injection": "span start logits enter routing_step as pointer_bias; no alpha/beta/encoder/transport change",
+    "dev_examples": 48,
+    "saves": 0,
+    "confirm_reads": 0
+  },
+  "cells": [
+    {
+      "seed": 28031,
+      "arm": "A_route_lock",
+      "span_bottleneck": 32,
+      "span_parameters": 4194,
+      "span_expected": 4194,
+      "candidate_sha_v2": "6c5466ab023e7234c250ca4f7a6c66104f5a1ba4f616eee7b3da3aab7436289e",
+      "updates": 30,
+      "probes": [
+        {
+          "update": 0,
+          "object": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.005208333333333333,
+            "beta_start_hit_rate": 0.20833333333333334,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.08333333333333333
+          },
+          "place": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.15277777777777776,
+            "beta_start_hit_rate": 0.0,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.1375
+          },
+          "pooled": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.07899305555555555
+          }
+        },
+        {
+          "update": 10,
+          "object": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.001736111111111111,
+            "beta_start_hit_rate": 0.20833333333333334,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.0928030303030303
+          },
+          "place": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.06944444444444443,
+            "beta_start_hit_rate": 0.0,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.14166666666666666
+          },
+          "pooled": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.03559027777777777
+          }
+        },
+        {
+          "update": 20,
+          "object": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.0,
+            "beta_start_hit_rate": 0.20833333333333334,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.09659090909090909
+          },
+          "place": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.027777777777777776,
+            "beta_start_hit_rate": 0.0,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.14166666666666666
+          },
+          "pooled": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.013888888888888888
+          }
+        },
+        {
+          "update": 30,
+          "object": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.03819444444444444,
+            "beta_start_hit_rate": 0.20833333333333334,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.0928030303030303
+          },
+          "place": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.15277777777777776,
+            "beta_start_hit_rate": 0.0,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.14166666666666666
+          },
+          "pooled": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.0954861111111111
+          }
+        }
+      ],
+      "span_loss": {
+        "first": 6.779488726287633,
+        "last": 5.03435972683867,
+        "mean": 5.6778072018187
+      }
+    },
+    {
+      "seed": 28031,
+      "arm": "B_stop_lock",
+      "span_bottleneck": 32,
+      "span_parameters": 4194,
+      "span_expected": 4194,
+      "candidate_sha_v2": "6c5466ab023e7234c250ca4f7a6c66104f5a1ba4f616eee7b3da3aab7436289e",
+      "updates": 30,
+      "probes": [
+        {
+          "update": 0,
+          "object": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.005208333333333333,
+            "beta_start_hit_rate": 0.20833333333333334,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.08333333333333333
+          },
+          "place": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.15277777777777776,
+            "beta_start_hit_rate": 0.0,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.1375
+          },
+          "pooled": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.07899305555555555
+          }
+        },
+        {
+          "update": 10,
+          "object": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.001736111111111111,
+            "beta_start_hit_rate": 0.20833333333333334,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.0928030303030303
+          },
+          "place": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.06944444444444443,
+            "beta_start_hit_rate": 0.0,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.14166666666666666
+          },
+          "pooled": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.03559027777777777
+          }
+        },
+        {
+          "update": 20,
+          "object": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.0,
+            "beta_start_hit_rate": 0.20833333333333334,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.09659090909090909
+          },
+          "place": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.027777777777777776,
+            "beta_start_hit_rate": 0.0,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.14166666666666666
+          },
+          "pooled": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.013888888888888888
+          }
+        },
+        {
+          "update": 30,
+          "object": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.03819444444444444,
+            "beta_start_hit_rate": 0.20833333333333334,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.0928030303030303
+          },
+          "place": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.15277777777777776,
+            "beta_start_hit_rate": 0.0,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.14166666666666666
+          },
+          "pooled": {
+            "start_hit_rate": 0.0,
+            "route_hit_rate": 0.0954861111111111
+          }
+        }
+      ],
+      "span_loss": {
+        "first": 6.779488726287633,
+        "last": 5.03435972683867,
+        "mean": 5.6778072018187
+      }
+    }
+  ],
+  "deltas": {
+    "A_route_lock": {
+      "start_hit_object_delta": 0.0,
+      "start_hit_place_delta": 0.0,
+      "route_hit_object_delta": 0.032986111111111105,
+      "conditional_object_delta": 0.0
+    },
+    "B_stop_lock": {
+      "start_hit_object_delta": 0.0,
+      "start_hit_place_delta": 0.0,
+      "route_hit_object_delta": 0.032986111111111105,
+      "conditional_object_delta": 0.0
+    }
+  },
+  "start_hit_rising_on_both_worlds": false,
+  "cost": {
+    "cpu_seconds": 268.3125,
+    "wall_seconds": 275.79059380013496,
+    "adam_steps": 60,
+    "adam_cap": 60
+  },
+  "limits": {
+    "formal_dose": false,
+    "training_bundles_kept": false,
+    "confirm_reads": 0
+  }
+}

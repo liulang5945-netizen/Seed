@@ -1,0 +1,26 @@
+{
+  "schema": "taiji-package19-pricing-manifest-v2",
+  "step": "N19.2b",
+  "report": "reports\\taiji_pricing_19_2b_20261104.json",
+  "budget_bare_cpu": 32256.600000000002,
+  "budget_protected_cpu": 68061.426,
+  "segment_bare_cpu": {
+    "0_to_150": 7464.299999999999,
+    "150_to_300": 24792.300000000003
+  },
+  "segment_protected_cpu": {
+    "0_to_150": 15749.672999999999,
+    "150_to_300": 52311.753
+  },
+  "slopes": {
+    "selection": 4.0,
+    "copy": 10.0,
+    "joint": 29.0
+  },
+  "protection": 2.11,
+  "watchlines": [
+    20000.0,
+    30000.0
+  ],
+  "measured_19_5_cpu": 29574.234375
+}

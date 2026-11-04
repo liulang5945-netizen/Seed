@@ -300,7 +300,7 @@ def routing_step(
     pointer_bias = None
     if span_head is not None and view.record_count:
         pointer_bias = tuple(
-            span_head.start(view.units[index]).squeeze(-1) for index in range(view.record_count)
+            span_head.logits(view.units[index])[0] for index in range(view.record_count)
         )
     if forced_pointer_bias is not None:
         pointer_bias = forced_pointer_bias

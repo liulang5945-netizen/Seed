@@ -1,0 +1,61 @@
+{
+  "schema": "taiji-package19-2b-pointer-diagnostic-v1",
+  "step": "N19.2b",
+  "date": "2026-11-04",
+  "bundle_dir": "output\\taiji_package19_compare",
+  "checkpoint": "step300",
+  "reading": "gold start position of the object/place record, teacher-forced prefix, model's own alpha route; beta_argmax_hit is the 19.5 start_hit definition, pointer_logits_hit / pointer_hit are the span-head quantities",
+  "cells": {
+    "untrained-bottleneck-32": {
+      "object": {
+        "examples": 16,
+        "beta_argmax_hit_rate": 0.25,
+        "pointer_logits_hit_rate": 0.25,
+        "pointer_hit_rate": 0.25,
+        "pointer_peak_histogram": {
+          "0": 4,
+          "3": 4,
+          "18": 2,
+          "21": 2,
+          "27": 4
+        }
+      },
+      "place": {
+        "examples": 16,
+        "beta_argmax_hit_rate": 0.0,
+        "pointer_logits_hit_rate": 0.0,
+        "pointer_hit_rate": 0.0,
+        "pointer_peak_histogram": {
+          "3": 1,
+          "6": 3,
+          "9": 7,
+          "12": 2,
+          "13": 1,
+          "18": 2
+        }
+      }
+    }
+  },
+  "pooled": {
+    "object": {
+      "beta_argmax_hit_rate": 0.25,
+      "pointer_logits_hit_rate": 0.25,
+      "pointer_hit_rate": 0.25
+    },
+    "place": {
+      "beta_argmax_hit_rate": 0.0,
+      "pointer_logits_hit_rate": 0.0,
+      "pointer_hit_rate": 0.0
+    }
+  },
+  "cost": {
+    "cpu_seconds": 17.46875,
+    "wall_seconds": 18.053887399844825,
+    "adam_steps": 0
+  },
+  "limits": {
+    "zero_updates": true,
+    "read_only": true,
+    "confirm_reads": 0
+  }
+}

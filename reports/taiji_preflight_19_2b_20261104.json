@@ -1,0 +1,1713 @@
+{
+  "schema": "taiji-package19-preflight-v1",
+  "step": "N19.2b",
+  "date": "2026-11-04",
+  "purpose": "pre-training preflight on the 18.0 premise; no formal dose, no confirm read",
+  "data": {
+    "file_sha256": "8242f2a82050f35c141380f0ee763c0496de05d987622f896d2ec16570492433",
+    "digest": "a320ac08aafa963b15574096d91db676b984e7028fd85d6efe29f4871153bdcd",
+    "train_examples": 640,
+    "dev_examples": 192
+  },
+  "cells": [
+    {
+      "seed": 28031,
+      "arm": "A_route_lock",
+      "tag": "preflight-28031-A_route_lock",
+      "updates": [
+        {
+          "update": 201,
+          "stage": "joint",
+          "loss": 18.20607484026281,
+          "nll": 9.172085857676404,
+          "clip_scale": 1.457215030721488e+16
+        },
+        {
+          "update": 202,
+          "stage": "joint",
+          "loss": 17.932961803966194,
+          "nll": 8.835597188100396,
+          "clip_scale": 68709256232.22782
+        },
+        {
+          "update": 203,
+          "stage": "joint",
+          "loss": 17.25312514441678,
+          "nll": 8.204176806192375,
+          "clip_scale": 81813114724.05739
+        }
+      ],
+      "state": {
+        "m_abs_sum": 0.0003148279616726244,
+        "coverage_abs_sum": 0.0003148279616726244,
+        "prefix_cursor_real": 1,
+        "prefix_cursor_probed": 20,
+        "advanced_steps": 1,
+        "state_kind": "teacher_forced",
+        "keys": 243,
+        "record_offsets": 8,
+        "probe_fixture": 0
+      },
+      "bundle": {
+        "path": "E:\\Seed\\output\\taiji_preflight_19_2b\\preflight-28031-A_route_lock-step203.pt",
+        "bytes": 65957693,
+        "sha256": "2fe4504f555296312fa56a081022c7cf1b4f318f99da6cb2f7f207db7543e2bf"
+      },
+      "progress": "E:\\Seed\\output\\taiji_preflight_19_2b\\progress-preflight-28031-A_route_lock.json",
+      "triple": {
+        "progress_update": 203,
+        "bundle_exists": true,
+        "bundle_update": 203,
+        "expected_update": 203,
+        "consistent": true
+      },
+      "order": [
+        "progress",
+        "save",
+        "triple_check",
+        "eval_probe"
+      ],
+      "diffs": {
+        "parameters_max_abs": 0.0,
+        "parameters_tensors": 187,
+        "adam_moments_max_abs": 0.0,
+        "teacher_forced_max_abs": 0.0,
+        "copy_state_max_abs": 0.0,
+        "copy_state_tensors": 7
+      },
+      "adam": {
+        "moment_max_abs_before": 0.025302743886179316,
+        "entries": 79,
+        "entry_counts_equal": true
+      },
+      "eval": {
+        "overall": 0.0,
+        "subset_rates": {
+          "unseen_combination": 0.0,
+          "unseen_output_name": 0.0,
+          "new_description": 0.0,
+          "both_new": 0.0
+        },
+        "denominators": {
+          "unseen_combination": 8,
+          "unseen_output_name": 8,
+          "new_description": 0,
+          "both_new": 0
+        },
+        "utf8": 1.0,
+        "selection_object": 0.0,
+        "selection_place": 0.25,
+        "examples": 8
+      },
+      "copy_probe": {
+        "new_name_copied": 0.0,
+        "denominator": 8,
+        "rows": [
+          {
+            "world": 0,
+            "index": 0,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 1,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 2,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 3,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 4,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 5,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 6,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 7,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          }
+        ]
+      },
+      "s1": {
+        "evaluator_denominators": {
+          "unseen_combination": 8,
+          "unseen_output_name": 8,
+          "new_description": 0,
+          "both_new": 0
+        },
+        "independent_denominators": {
+          "unseen_combination": 8,
+          "unseen_output_name": 8,
+          "new_description": 0,
+          "both_new": 0
+        },
+        "equal": true,
+        "unseen_rate_evaluator": 0.0,
+        "unseen_rate_independent": 0.0,
+        "rate_abs_diff": 0.0,
+        "new_name_copied": 0.0,
+        "new_name_copied_denominator": 8,
+        "unseen_denominator_nonzero": true,
+        "new_name_copied_finite": true,
+        "complete": true
+      },
+      "checks": {
+        "parameters_bitwise": true,
+        "adam_moments_bitwise": true,
+        "teacher_forced_bitwise": true,
+        "copy_state_nonempty": true,
+        "copy_state_bitwise": true,
+        "update_index": true,
+        "bundle_filename_matches_step": true,
+        "triple_consistent": true,
+        "parent_bundle_unchanged": true,
+        "candidate_sha_v2_unchanged": true,
+        "candidate_sha_v2_prefix": true,
+        "save_precedes_probe": true,
+        "evaluate_dev_full_ran": true,
+        "evaluation_denominator_s1": true,
+        "gamma_both_sides": {
+          "gamma_mean": 0.7475159767131094,
+          "one_minus_gamma": 0.25248402328689057
+        }
+      },
+      "passed": true,
+      "cost": {
+        "cpu_seconds": 52.390625,
+        "wall_seconds": 52.266066800104454
+      },
+      "parent_sha256": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169",
+      "candidate_sha_v2": "6c5466ab023e7234c250ca4f7a6c66104f5a1ba4f616eee7b3da3aab7436289e"
+    },
+    {
+      "seed": 28031,
+      "arm": "B_stop_lock",
+      "tag": "preflight-28031-B_stop_lock",
+      "updates": [
+        {
+          "update": 201,
+          "stage": "joint",
+          "loss": 18.20607484026281,
+          "nll": 9.172085857676404,
+          "clip_scale": 10.267263374023347
+        },
+        {
+          "update": 202,
+          "stage": "joint",
+          "loss": 16.428944592128158,
+          "nll": 7.571063570074917,
+          "clip_scale": 9.746698935423211
+        },
+        {
+          "update": 203,
+          "stage": "joint",
+          "loss": 14.395249180338098,
+          "nll": 5.87703974442805,
+          "clip_scale": 6.420876793698138
+        }
+      ],
+      "state": {
+        "m_abs_sum": 0.9707632146426293,
+        "coverage_abs_sum": 0.9707632146426293,
+        "prefix_cursor_real": 7,
+        "prefix_cursor_probed": 20,
+        "advanced_steps": 7,
+        "state_kind": "teacher_forced",
+        "keys": 243,
+        "record_offsets": 8,
+        "probe_fixture": 0
+      },
+      "bundle": {
+        "path": "E:\\Seed\\output\\taiji_preflight_19_2b\\preflight-28031-B_stop_lock-step203.pt",
+        "bytes": 65957255,
+        "sha256": "9a09651a5aaaaec9898f0c98554687f73616ac57263336f9fb64ed8bd4089d5d"
+      },
+      "progress": "E:\\Seed\\output\\taiji_preflight_19_2b\\progress-preflight-28031-B_stop_lock.json",
+      "triple": {
+        "progress_update": 203,
+        "bundle_exists": true,
+        "bundle_update": 203,
+        "expected_update": 203,
+        "consistent": true
+      },
+      "order": [
+        "progress",
+        "save",
+        "triple_check",
+        "eval_probe"
+      ],
+      "diffs": {
+        "parameters_max_abs": 0.0,
+        "parameters_tensors": 187,
+        "adam_moments_max_abs": 0.0,
+        "teacher_forced_max_abs": 0.0,
+        "copy_state_max_abs": 0.0,
+        "copy_state_tensors": 7
+      },
+      "adam": {
+        "moment_max_abs_before": 0.021135977475010635,
+        "entries": 79,
+        "entry_counts_equal": true
+      },
+      "eval": {
+        "overall": 0.0,
+        "subset_rates": {
+          "unseen_combination": 0.0,
+          "unseen_output_name": 0.0,
+          "new_description": 0.0,
+          "both_new": 0.0
+        },
+        "denominators": {
+          "unseen_combination": 8,
+          "unseen_output_name": 8,
+          "new_description": 0,
+          "both_new": 0
+        },
+        "utf8": 1.0,
+        "selection_object": 0.0,
+        "selection_place": 0.125,
+        "examples": 8
+      },
+      "copy_probe": {
+        "new_name_copied": 0.0,
+        "denominator": 8,
+        "rows": [
+          {
+            "world": 0,
+            "index": 0,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 1,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 2,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 3,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 4,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 5,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 6,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 7,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          }
+        ]
+      },
+      "s1": {
+        "evaluator_denominators": {
+          "unseen_combination": 8,
+          "unseen_output_name": 8,
+          "new_description": 0,
+          "both_new": 0
+        },
+        "independent_denominators": {
+          "unseen_combination": 8,
+          "unseen_output_name": 8,
+          "new_description": 0,
+          "both_new": 0
+        },
+        "equal": true,
+        "unseen_rate_evaluator": 0.0,
+        "unseen_rate_independent": 0.0,
+        "rate_abs_diff": 0.0,
+        "new_name_copied": 0.0,
+        "new_name_copied_denominator": 8,
+        "unseen_denominator_nonzero": true,
+        "new_name_copied_finite": true,
+        "complete": true
+      },
+      "checks": {
+        "parameters_bitwise": true,
+        "adam_moments_bitwise": true,
+        "teacher_forced_bitwise": true,
+        "copy_state_nonempty": true,
+        "copy_state_bitwise": true,
+        "update_index": true,
+        "bundle_filename_matches_step": true,
+        "triple_consistent": true,
+        "parent_bundle_unchanged": true,
+        "candidate_sha_v2_unchanged": true,
+        "candidate_sha_v2_prefix": true,
+        "save_precedes_probe": true,
+        "evaluate_dev_full_ran": true,
+        "evaluation_denominator_s1": true,
+        "gamma_both_sides": {
+          "gamma_mean": 0.884196060709673,
+          "one_minus_gamma": 0.11580393929032695
+        }
+      },
+      "passed": true,
+      "cost": {
+        "cpu_seconds": 46.046875,
+        "wall_seconds": 47.61637010006234
+      },
+      "parent_sha256": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169",
+      "candidate_sha_v2": "6c5466ab023e7234c250ca4f7a6c66104f5a1ba4f616eee7b3da3aab7436289e"
+    },
+    {
+      "seed": 28031,
+      "arm": "C_unlocked",
+      "tag": "preflight-28031-C_unlocked",
+      "updates": [
+        {
+          "update": 201,
+          "stage": "joint",
+          "loss": 15.291032541673145,
+          "nll": 6.256036169914138,
+          "clip_scale": 20.965652716549545
+        },
+        {
+          "update": 202,
+          "stage": "joint",
+          "loss": 14.848095054427558,
+          "nll": 5.913984919166888,
+          "clip_scale": 18.471572188644387
+        },
+        {
+          "update": 203,
+          "stage": "joint",
+          "loss": 13.413093194413232,
+          "nll": 4.748836058057438,
+          "clip_scale": 10.510869985643893
+        }
+      ],
+      "state": {
+        "m_abs_sum": 0.023256970724243497,
+        "coverage_abs_sum": 0.023256970724243497,
+        "prefix_cursor_real": 1,
+        "prefix_cursor_probed": 20,
+        "advanced_steps": 1,
+        "state_kind": "teacher_forced",
+        "keys": 243,
+        "record_offsets": 8,
+        "probe_fixture": 0
+      },
+      "bundle": {
+        "path": "E:\\Seed\\output\\taiji_preflight_19_2b\\preflight-28031-C_unlocked-step203.pt",
+        "bytes": 65956817,
+        "sha256": "1229b2631d3e1ed97dba4b8b12864e55d169e61a18d11a728dcf7048baf5625a"
+      },
+      "progress": "E:\\Seed\\output\\taiji_preflight_19_2b\\progress-preflight-28031-C_unlocked.json",
+      "triple": {
+        "progress_update": 203,
+        "bundle_exists": true,
+        "bundle_update": 203,
+        "expected_update": 203,
+        "consistent": true
+      },
+      "order": [
+        "progress",
+        "save",
+        "triple_check",
+        "eval_probe"
+      ],
+      "diffs": {
+        "parameters_max_abs": 0.0,
+        "parameters_tensors": 187,
+        "adam_moments_max_abs": 0.0,
+        "teacher_forced_max_abs": 0.0,
+        "copy_state_max_abs": 0.0,
+        "copy_state_tensors": 7
+      },
+      "adam": {
+        "moment_max_abs_before": 0.01136682359071698,
+        "entries": 79,
+        "entry_counts_equal": true
+      },
+      "eval": {
+        "overall": 0.0,
+        "subset_rates": {
+          "unseen_combination": 0.0,
+          "unseen_output_name": 0.0,
+          "new_description": 0.0,
+          "both_new": 0.0
+        },
+        "denominators": {
+          "unseen_combination": 8,
+          "unseen_output_name": 8,
+          "new_description": 0,
+          "both_new": 0
+        },
+        "utf8": 1.0,
+        "selection_object": 0.0,
+        "selection_place": 0.25,
+        "examples": 8
+      },
+      "copy_probe": {
+        "new_name_copied": 0.0,
+        "denominator": 8,
+        "rows": [
+          {
+            "world": 0,
+            "index": 0,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 1,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 2,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 3,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 4,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 5,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 6,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 7,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          }
+        ]
+      },
+      "s1": {
+        "evaluator_denominators": {
+          "unseen_combination": 8,
+          "unseen_output_name": 8,
+          "new_description": 0,
+          "both_new": 0
+        },
+        "independent_denominators": {
+          "unseen_combination": 8,
+          "unseen_output_name": 8,
+          "new_description": 0,
+          "both_new": 0
+        },
+        "equal": true,
+        "unseen_rate_evaluator": 0.0,
+        "unseen_rate_independent": 0.0,
+        "rate_abs_diff": 0.0,
+        "new_name_copied": 0.0,
+        "new_name_copied_denominator": 8,
+        "unseen_denominator_nonzero": true,
+        "new_name_copied_finite": true,
+        "complete": true
+      },
+      "checks": {
+        "parameters_bitwise": true,
+        "adam_moments_bitwise": true,
+        "teacher_forced_bitwise": true,
+        "copy_state_nonempty": true,
+        "copy_state_bitwise": true,
+        "update_index": true,
+        "bundle_filename_matches_step": true,
+        "triple_consistent": true,
+        "parent_bundle_unchanged": true,
+        "candidate_sha_v2_unchanged": true,
+        "candidate_sha_v2_prefix": true,
+        "save_precedes_probe": true,
+        "evaluate_dev_full_ran": true,
+        "evaluation_denominator_s1": true,
+        "gamma_both_sides": {
+          "gamma_mean": 0.686492898311615,
+          "one_minus_gamma": 0.313507101688385
+        }
+      },
+      "passed": true,
+      "cost": {
+        "cpu_seconds": 45.5625,
+        "wall_seconds": 46.83997640013695
+      },
+      "parent_sha256": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169",
+      "candidate_sha_v2": "6c5466ab023e7234c250ca4f7a6c66104f5a1ba4f616eee7b3da3aab7436289e"
+    },
+    {
+      "seed": 28032,
+      "arm": "A_route_lock",
+      "tag": "preflight-28032-A_route_lock",
+      "updates": [
+        {
+          "update": 201,
+          "stage": "joint",
+          "loss": 17.33404486864106,
+          "nll": 8.04001203479978,
+          "clip_scale": 3335866900.82012
+        },
+        {
+          "update": 202,
+          "stage": "joint",
+          "loss": 17.11709953622906,
+          "nll": 7.900529821917427,
+          "clip_scale": 16990146934696.566
+        },
+        {
+          "update": 203,
+          "stage": "joint",
+          "loss": 18.076719588601172,
+          "nll": 8.855720011620312,
+          "clip_scale": 5.546463058814394e+21
+        }
+      ],
+      "state": {
+        "m_abs_sum": 5.01882369575673e-12,
+        "coverage_abs_sum": 5.01882369575673e-12,
+        "prefix_cursor_real": 1,
+        "prefix_cursor_probed": 20,
+        "advanced_steps": 1,
+        "state_kind": "teacher_forced",
+        "keys": 246,
+        "record_offsets": 8,
+        "probe_fixture": 0
+      },
+      "bundle": {
+        "path": "E:\\Seed\\output\\taiji_preflight_19_2b\\preflight-28032-A_route_lock-step203.pt",
+        "bytes": 65958013,
+        "sha256": "46b6513357385c45bd1749e061c00cb2cf9305834068e26931f3538835604d72"
+      },
+      "progress": "E:\\Seed\\output\\taiji_preflight_19_2b\\progress-preflight-28032-A_route_lock.json",
+      "triple": {
+        "progress_update": 203,
+        "bundle_exists": true,
+        "bundle_update": 203,
+        "expected_update": 203,
+        "consistent": true
+      },
+      "order": [
+        "progress",
+        "save",
+        "triple_check",
+        "eval_probe"
+      ],
+      "diffs": {
+        "parameters_max_abs": 0.0,
+        "parameters_tensors": 187,
+        "adam_moments_max_abs": 0.0,
+        "teacher_forced_max_abs": 0.0,
+        "copy_state_max_abs": 0.0,
+        "copy_state_tensors": 7
+      },
+      "adam": {
+        "moment_max_abs_before": 0.013343373273056156,
+        "entries": 79,
+        "entry_counts_equal": true
+      },
+      "eval": {
+        "overall": 0.0,
+        "subset_rates": {
+          "unseen_combination": 0.0,
+          "unseen_output_name": 0.0,
+          "new_description": 0.0,
+          "both_new": 0.0
+        },
+        "denominators": {
+          "unseen_combination": 8,
+          "unseen_output_name": 8,
+          "new_description": 0,
+          "both_new": 0
+        },
+        "utf8": 0.125,
+        "selection_object": 0.0,
+        "selection_place": 0.25,
+        "examples": 8
+      },
+      "copy_probe": {
+        "new_name_copied": 0.0,
+        "denominator": 8,
+        "rows": [
+          {
+            "world": 0,
+            "index": 0,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 1,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 2,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 3,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 4,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 5,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 6,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 7,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          }
+        ]
+      },
+      "s1": {
+        "evaluator_denominators": {
+          "unseen_combination": 8,
+          "unseen_output_name": 8,
+          "new_description": 0,
+          "both_new": 0
+        },
+        "independent_denominators": {
+          "unseen_combination": 8,
+          "unseen_output_name": 8,
+          "new_description": 0,
+          "both_new": 0
+        },
+        "equal": true,
+        "unseen_rate_evaluator": 0.0,
+        "unseen_rate_independent": 0.0,
+        "rate_abs_diff": 0.0,
+        "new_name_copied": 0.0,
+        "new_name_copied_denominator": 8,
+        "unseen_denominator_nonzero": true,
+        "new_name_copied_finite": true,
+        "complete": true
+      },
+      "checks": {
+        "parameters_bitwise": true,
+        "adam_moments_bitwise": true,
+        "teacher_forced_bitwise": true,
+        "copy_state_nonempty": true,
+        "copy_state_bitwise": true,
+        "update_index": true,
+        "bundle_filename_matches_step": true,
+        "triple_consistent": true,
+        "parent_bundle_unchanged": true,
+        "candidate_sha_v2_unchanged": true,
+        "candidate_sha_v2_prefix": true,
+        "save_precedes_probe": true,
+        "evaluate_dev_full_ran": true,
+        "evaluation_denominator_s1": true,
+        "gamma_both_sides": {
+          "gamma_mean": 0.8125120344038574,
+          "one_minus_gamma": 0.18748796559614256
+        }
+      },
+      "passed": true,
+      "cost": {
+        "cpu_seconds": 53.40625,
+        "wall_seconds": 54.97163199982606
+      },
+      "parent_sha256": "3d55bff6d51e7c3d7079e068caf70f1b131ce43e0be830abb1f71b5a39b556a5",
+      "candidate_sha_v2": "6c5466ab023e7234c250ca4f7a6c66104f5a1ba4f616eee7b3da3aab7436289e"
+    },
+    {
+      "seed": 28032,
+      "arm": "B_stop_lock",
+      "tag": "preflight-28032-B_stop_lock",
+      "updates": [
+        {
+          "update": 201,
+          "stage": "joint",
+          "loss": 17.33404486864106,
+          "nll": 8.04001203479978,
+          "clip_scale": 9.127486507186969
+        },
+        {
+          "update": 202,
+          "stage": "joint",
+          "loss": 15.504823319089132,
+          "nll": 6.617574710050104,
+          "clip_scale": 6.831828572664098
+        },
+        {
+          "update": 203,
+          "stage": "joint",
+          "loss": 14.472975344658737,
+          "nll": 6.0073756863233285,
+          "clip_scale": 6.770013272181695
+        }
+      ],
+      "state": {
+        "m_abs_sum": 1.2172409122036903e-22,
+        "coverage_abs_sum": 1.2172409122036903e-22,
+        "prefix_cursor_real": 15,
+        "prefix_cursor_probed": 20,
+        "advanced_steps": 15,
+        "state_kind": "teacher_forced",
+        "keys": 246,
+        "record_offsets": 8,
+        "probe_fixture": 0
+      },
+      "bundle": {
+        "path": "E:\\Seed\\output\\taiji_preflight_19_2b\\preflight-28032-B_stop_lock-step203.pt",
+        "bytes": 65957575,
+        "sha256": "9257871fe192066608fb5b42eeb70cf3beb402b346f340b71c0a7ae7b0012395"
+      },
+      "progress": "E:\\Seed\\output\\taiji_preflight_19_2b\\progress-preflight-28032-B_stop_lock.json",
+      "triple": {
+        "progress_update": 203,
+        "bundle_exists": true,
+        "bundle_update": 203,
+        "expected_update": 203,
+        "consistent": true
+      },
+      "order": [
+        "progress",
+        "save",
+        "triple_check",
+        "eval_probe"
+      ],
+      "diffs": {
+        "parameters_max_abs": 0.0,
+        "parameters_tensors": 187,
+        "adam_moments_max_abs": 0.0,
+        "teacher_forced_max_abs": 0.0,
+        "copy_state_max_abs": 0.0,
+        "copy_state_tensors": 7
+      },
+      "adam": {
+        "moment_max_abs_before": 0.023666068636419596,
+        "entries": 79,
+        "entry_counts_equal": true
+      },
+      "eval": {
+        "overall": 0.0,
+        "subset_rates": {
+          "unseen_combination": 0.0,
+          "unseen_output_name": 0.0,
+          "new_description": 0.0,
+          "both_new": 0.0
+        },
+        "denominators": {
+          "unseen_combination": 8,
+          "unseen_output_name": 8,
+          "new_description": 0,
+          "both_new": 0
+        },
+        "utf8": 1.0,
+        "selection_object": 0.0,
+        "selection_place": 0.0,
+        "examples": 8
+      },
+      "copy_probe": {
+        "new_name_copied": 0.0,
+        "denominator": 8,
+        "rows": [
+          {
+            "world": 0,
+            "index": 0,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 1,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 2,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 3,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 4,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 5,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 6,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 7,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          }
+        ]
+      },
+      "s1": {
+        "evaluator_denominators": {
+          "unseen_combination": 8,
+          "unseen_output_name": 8,
+          "new_description": 0,
+          "both_new": 0
+        },
+        "independent_denominators": {
+          "unseen_combination": 8,
+          "unseen_output_name": 8,
+          "new_description": 0,
+          "both_new": 0
+        },
+        "equal": true,
+        "unseen_rate_evaluator": 0.0,
+        "unseen_rate_independent": 0.0,
+        "rate_abs_diff": 0.0,
+        "new_name_copied": 0.0,
+        "new_name_copied_denominator": 8,
+        "unseen_denominator_nonzero": true,
+        "new_name_copied_finite": true,
+        "complete": true
+      },
+      "checks": {
+        "parameters_bitwise": true,
+        "adam_moments_bitwise": true,
+        "teacher_forced_bitwise": true,
+        "copy_state_nonempty": true,
+        "copy_state_bitwise": true,
+        "update_index": true,
+        "bundle_filename_matches_step": true,
+        "triple_consistent": true,
+        "parent_bundle_unchanged": true,
+        "candidate_sha_v2_unchanged": true,
+        "candidate_sha_v2_prefix": true,
+        "save_precedes_probe": true,
+        "evaluate_dev_full_ran": true,
+        "evaluation_denominator_s1": true,
+        "gamma_both_sides": {
+          "gamma_mean": 0.8860679988958381,
+          "one_minus_gamma": 0.1139320011041619
+        }
+      },
+      "passed": true,
+      "cost": {
+        "cpu_seconds": 42.421875,
+        "wall_seconds": 43.454980900045484
+      },
+      "parent_sha256": "3d55bff6d51e7c3d7079e068caf70f1b131ce43e0be830abb1f71b5a39b556a5",
+      "candidate_sha_v2": "6c5466ab023e7234c250ca4f7a6c66104f5a1ba4f616eee7b3da3aab7436289e"
+    },
+    {
+      "seed": 28032,
+      "arm": "C_unlocked",
+      "tag": "preflight-28032-C_unlocked",
+      "updates": [
+        {
+          "update": 201,
+          "stage": "joint",
+          "loss": 16.12561708768789,
+          "nll": 6.832899234709357,
+          "clip_scale": 7.911932168425086
+        },
+        {
+          "update": 202,
+          "stage": "joint",
+          "loss": 14.398252372386596,
+          "nll": 5.52703534402551,
+          "clip_scale": 6.38225839896132
+        },
+        {
+          "update": 203,
+          "stage": "joint",
+          "loss": 13.166488793893095,
+          "nll": 4.728216018777994,
+          "clip_scale": 11.092165908577462
+        }
+      ],
+      "state": {
+        "m_abs_sum": 8.378680366468234e-18,
+        "coverage_abs_sum": 8.378680366468234e-18,
+        "prefix_cursor_real": 1,
+        "prefix_cursor_probed": 20,
+        "advanced_steps": 1,
+        "state_kind": "teacher_forced",
+        "keys": 246,
+        "record_offsets": 8,
+        "probe_fixture": 0
+      },
+      "bundle": {
+        "path": "E:\\Seed\\output\\taiji_preflight_19_2b\\preflight-28032-C_unlocked-step203.pt",
+        "bytes": 65957137,
+        "sha256": "d16bf1dd4dd4336799742528cf07687ad95f7f22bc49e5ebeaa9129eeb1c2de8"
+      },
+      "progress": "E:\\Seed\\output\\taiji_preflight_19_2b\\progress-preflight-28032-C_unlocked.json",
+      "triple": {
+        "progress_update": 203,
+        "bundle_exists": true,
+        "bundle_update": 203,
+        "expected_update": 203,
+        "consistent": true
+      },
+      "order": [
+        "progress",
+        "save",
+        "triple_check",
+        "eval_probe"
+      ],
+      "diffs": {
+        "parameters_max_abs": 0.0,
+        "parameters_tensors": 187,
+        "adam_moments_max_abs": 0.0,
+        "teacher_forced_max_abs": 0.0,
+        "copy_state_max_abs": 0.0,
+        "copy_state_tensors": 7
+      },
+      "adam": {
+        "moment_max_abs_before": 0.021328784651239323,
+        "entries": 79,
+        "entry_counts_equal": true
+      },
+      "eval": {
+        "overall": 0.0,
+        "subset_rates": {
+          "unseen_combination": 0.0,
+          "unseen_output_name": 0.0,
+          "new_description": 0.0,
+          "both_new": 0.0
+        },
+        "denominators": {
+          "unseen_combination": 8,
+          "unseen_output_name": 8,
+          "new_description": 0,
+          "both_new": 0
+        },
+        "utf8": 1.0,
+        "selection_object": 0.0,
+        "selection_place": 0.0,
+        "examples": 8
+      },
+      "copy_probe": {
+        "new_name_copied": 0.0,
+        "denominator": 8,
+        "rows": [
+          {
+            "world": 0,
+            "index": 0,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 1,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 2,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 3,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 4,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 5,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 6,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          },
+          {
+            "world": 0,
+            "index": 7,
+            "object_in_output": false,
+            "place_in_output": false,
+            "both_in_output": false,
+            "completed": false,
+            "flags": {
+              "name_seen": false,
+              "description_seen": true,
+              "unseen_output_name": true,
+              "new_description": false,
+              "unseen_combination": true,
+              "both_new": false
+            }
+          }
+        ]
+      },
+      "s1": {
+        "evaluator_denominators": {
+          "unseen_combination": 8,
+          "unseen_output_name": 8,
+          "new_description": 0,
+          "both_new": 0
+        },
+        "independent_denominators": {
+          "unseen_combination": 8,
+          "unseen_output_name": 8,
+          "new_description": 0,
+          "both_new": 0
+        },
+        "equal": true,
+        "unseen_rate_evaluator": 0.0,
+        "unseen_rate_independent": 0.0,
+        "rate_abs_diff": 0.0,
+        "new_name_copied": 0.0,
+        "new_name_copied_denominator": 8,
+        "unseen_denominator_nonzero": true,
+        "new_name_copied_finite": true,
+        "complete": true
+      },
+      "checks": {
+        "parameters_bitwise": true,
+        "adam_moments_bitwise": true,
+        "teacher_forced_bitwise": true,
+        "copy_state_nonempty": true,
+        "copy_state_bitwise": true,
+        "update_index": true,
+        "bundle_filename_matches_step": true,
+        "triple_consistent": true,
+        "parent_bundle_unchanged": true,
+        "candidate_sha_v2_unchanged": true,
+        "candidate_sha_v2_prefix": true,
+        "save_precedes_probe": true,
+        "evaluate_dev_full_ran": true,
+        "evaluation_denominator_s1": true,
+        "gamma_both_sides": {
+          "gamma_mean": 0.9408954123870319,
+          "one_minus_gamma": 0.05910458761296811
+        }
+      },
+      "passed": true,
+      "cost": {
+        "cpu_seconds": 45.546875,
+        "wall_seconds": 46.805310800205916
+      },
+      "parent_sha256": "3d55bff6d51e7c3d7079e068caf70f1b131ce43e0be830abb1f71b5a39b556a5",
+      "candidate_sha_v2": "6c5466ab023e7234c250ca4f7a6c66104f5a1ba4f616eee7b3da3aab7436289e"
+    }
+  ],
+  "failure_injection": {
+    "tag": "inject-28031-A_route_lock",
+    "triple": {
+      "progress_update": 301,
+      "bundle_exists": true,
+      "bundle_update": 301,
+      "expected_update": 301,
+      "consistent": true
+    },
+    "receipt": "E:\\Seed\\output\\taiji_preflight_19_2b\\evaluation-inject-28031-A_route_lock.json",
+    "receipt_status": "evaluation_failed_weights_preserved",
+    "receipt_exists": true,
+    "bundle_exists": true,
+    "bundle_step": 301,
+    "weights_preserved": true,
+    "weights_tensors": 187,
+    "injected_traceback_present": true,
+    "passed": true,
+    "bundle_sha256": "865fda3f27d0ac5946690ab96913664ffceb20939c773b383f3c07a9c5132ebf",
+    "cost_cpu": null
+  },
+  "assertions": {
+    "checkpoint_roundtrip_all_cells": true,
+    "nonzero_copy_state_all_cells": true,
+    "parent_and_identity_stable": true,
+    "save_before_eval": true,
+    "evaluate_dev_full_all_cells": true,
+    "s1_denominators_all_cells": true,
+    "triple_all_cells": true,
+    "failure_injection": true
+  },
+  "verdict": "preflight_passed",
+  "cost": {
+    "cpu_seconds": 297.484375,
+    "wall_seconds": 303.71187649993226,
+    "engineering_adam": 19,
+    "training_updates": 0,
+    "confirm_reads": 0,
+    "caps": {
+      "engineering_adam": 60,
+      "cpu": 400.0
+    }
+  },
+  "stop_condition": "formal 18.1 dose requires explicit owner approval",
+  "package": "19.2b",
+  "design": {
+    "span_head": "SpanPointerHead 32-d bottleneck, 4,194 parameters",
+    "expected_candidate_sha_v2_prefix": "6c5466ab",
+    "unchanged": [
+      "alpha/beta routing",
+      "encoder",
+      "transport operator",
+      "gate numbers"
+    ]
+  }
+}

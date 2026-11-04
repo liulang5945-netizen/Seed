@@ -2,9 +2,9 @@
 
 > 文档状态：[当前唯一入口·2026-11-04 单入口收敛]。本文件只保留状态、队首、链接与裁定指针；**唯一主线**全文（状态表、依赖、权威源、冲突消解）在 [MASTER-PLAN](MASTER-PLAN.md)。
 
-**一句话状态**：17 窗口判负（结构主张被 M1 否），18.1 六格判负；包 19（位置计数 + UTF-8 掩码）19.3 已定价、19.4 预检通过、19.5 六格正式比较完成并**判负**、19.7 已结案（confirm 未释放、0 次读取）。
+**一句话状态**：17 窗口判负（结构主张被 M1 否），18.1 六格判负；包 19（位置计数 + UTF-8 掩码）19.5 判负、19.7 已结案；**19.2b 起点监督前段已完成并停在六格之前**（阶段门 `start_hit` 读的是冻结 β，span 监督不可动；已花 672.2 CPU，六格 32,256.6 CPU 未花，confirm 0 次读取）。
 
-**队首（唯一）**：**等 owner 裁定是否启动 19.2b 起点监督**（包 19 已关包，不预启动训练）；判据、预算、分支见 [ROADMAP-NEXT](reference/ROADMAP-NEXT_20261104.md) §1/§4 与 [19.7 结案](../reports/taiji_package19_closeout_19_7_20261104.json)。
+**队首（唯一）**：**等 owner 裁定 19.2b 阶段门 `start_hit` 的读数对象**（数值 0.95 不变，读作 `argmax(step.pointer[gold record])`）；裁定前不训练、不出新 bundle。见 [ROADMAP-NEXT](reference/ROADMAP-NEXT_20261104.md) §4 与 [19.2b 决策](../reports/taiji_package19_2b_decision_20261104.json)。
 
 **继续读**：[MASTER-PLAN](MASTER-PLAN.md)（唯一权威主线：状态表、依赖、权威源、冲突消解、盘点）。
 **轨道**：[ROADMAP-NEXT](reference/ROADMAP-NEXT_20261104.md)（19/20/21 包：步骤、判据、预算、分支）。

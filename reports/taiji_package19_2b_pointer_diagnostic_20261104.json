@@ -1,0 +1,173 @@
+{
+  "schema": "taiji-package19-2b-pointer-diagnostic-v1",
+  "step": "N19.2b",
+  "date": "2026-11-04",
+  "bundle_dir": "output\\taiji_package19_compare",
+  "checkpoint": "step300",
+  "reading": "gold start position of the object/place record, teacher-forced prefix, model's own alpha route; beta_argmax_hit is the 19.5 start_hit definition, pointer_logits_hit / pointer_hit are the span-head quantities",
+  "cells": {
+    "28031-A_route_lock": {
+      "object": {
+        "examples": 16,
+        "beta_argmax_hit_rate": 1.0,
+        "pointer_logits_hit_rate": 0.75,
+        "pointer_hit_rate": 0.75,
+        "pointer_peak_histogram": {
+          "0": 12,
+          "3": 4
+        }
+      },
+      "place": {
+        "examples": 16,
+        "beta_argmax_hit_rate": 1.0,
+        "pointer_logits_hit_rate": 0.875,
+        "pointer_hit_rate": 0.875,
+        "pointer_peak_histogram": {
+          "0": 14,
+          "21": 2
+        }
+      }
+    },
+    "28031-B_stop_lock": {
+      "object": {
+        "examples": 16,
+        "beta_argmax_hit_rate": 1.0,
+        "pointer_logits_hit_rate": 0.625,
+        "pointer_hit_rate": 0.625,
+        "pointer_peak_histogram": {
+          "0": 10,
+          "15": 2,
+          "27": 2,
+          "28": 2
+        }
+      },
+      "place": {
+        "examples": 16,
+        "beta_argmax_hit_rate": 1.0,
+        "pointer_logits_hit_rate": 0.875,
+        "pointer_hit_rate": 0.875,
+        "pointer_peak_histogram": {
+          "0": 14,
+          "3": 2
+        }
+      }
+    },
+    "28031-C_unlocked": {
+      "object": {
+        "examples": 16,
+        "beta_argmax_hit_rate": 0.0,
+        "pointer_logits_hit_rate": 0.8125,
+        "pointer_hit_rate": 0.8125,
+        "pointer_peak_histogram": {
+          "0": 13,
+          "30": 3
+        }
+      },
+      "place": {
+        "examples": 16,
+        "beta_argmax_hit_rate": 0.0,
+        "pointer_logits_hit_rate": 0.6875,
+        "pointer_hit_rate": 0.6875,
+        "pointer_peak_histogram": {
+          "0": 11,
+          "6": 1,
+          "14": 2,
+          "19": 1,
+          "24": 1
+        }
+      }
+    },
+    "28032-A_route_lock": {
+      "object": {
+        "examples": 16,
+        "beta_argmax_hit_rate": 0.125,
+        "pointer_logits_hit_rate": 0.125,
+        "pointer_hit_rate": 0.125,
+        "pointer_peak_histogram": {
+          "0": 2,
+          "3": 3,
+          "21": 2,
+          "27": 6,
+          "32": 2,
+          "35": 1
+        }
+      },
+      "place": {
+        "examples": 16,
+        "beta_argmax_hit_rate": 0.0,
+        "pointer_logits_hit_rate": 0.0,
+        "pointer_hit_rate": 0.0,
+        "pointer_peak_histogram": {
+          "2": 4,
+          "14": 2,
+          "17": 4,
+          "23": 6
+        }
+      }
+    },
+    "28032-B_stop_lock": {
+      "object": {
+        "examples": 16,
+        "beta_argmax_hit_rate": 1.0,
+        "pointer_logits_hit_rate": 1.0,
+        "pointer_hit_rate": 1.0,
+        "pointer_peak_histogram": {
+          "0": 16
+        }
+      },
+      "place": {
+        "examples": 16,
+        "beta_argmax_hit_rate": 1.0,
+        "pointer_logits_hit_rate": 1.0,
+        "pointer_hit_rate": 1.0,
+        "pointer_peak_histogram": {
+          "0": 16
+        }
+      }
+    },
+    "28032-C_unlocked": {
+      "object": {
+        "examples": 16,
+        "beta_argmax_hit_rate": 0.0,
+        "pointer_logits_hit_rate": 1.0,
+        "pointer_hit_rate": 1.0,
+        "pointer_peak_histogram": {
+          "0": 16
+        }
+      },
+      "place": {
+        "examples": 16,
+        "beta_argmax_hit_rate": 0.0,
+        "pointer_logits_hit_rate": 0.75,
+        "pointer_hit_rate": 0.75,
+        "pointer_peak_histogram": {
+          "0": 12,
+          "9": 2,
+          "18": 2
+        }
+      }
+    }
+  },
+  "pooled": {
+    "object": {
+      "beta_argmax_hit_rate": 0.5208333333333334,
+      "pointer_logits_hit_rate": 0.71875,
+      "pointer_hit_rate": 0.71875
+    },
+    "place": {
+      "beta_argmax_hit_rate": 0.5,
+      "pointer_logits_hit_rate": 0.6979166666666666,
+      "pointer_hit_rate": 0.6979166666666666
+    }
+  },
+  "cost": {
+    "cpu_seconds": 88.859375,
+    "wall_seconds": 91.64278680016287,
+    "adam_steps": 0
+  },
+  "limits": {
+    "zero_updates": true,
+    "read_only": true,
+    "confirm_reads": 0
+  }
+}

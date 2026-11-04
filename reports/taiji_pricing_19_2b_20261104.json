@@ -1,0 +1,372 @@
+{
+  "schema": "taiji-package19-pricing-v2",
+  "step": "N19.2b",
+  "date": "2026-11-04",
+  "dataset": {
+    "file": "output/taiji_data_premise_18_0/data.json",
+    "train_examples": 640,
+    "dev_examples": 192,
+    "confirm_reads": 0
+  },
+  "design": {
+    "cells": 6,
+    "seeds": [
+      28031,
+      28032
+    ],
+    "arms": [
+      "A_route_lock",
+      "B_stop_lock",
+      "C_unlocked"
+    ],
+    "updates_per_cell": 300,
+    "stages": {
+      "selection": 100,
+      "copy": 100,
+      "joint": 100
+    },
+    "span_head": "SpanPointerHead with a 32-d bottleneck, 4,194 parameters",
+    "unchanged": [
+      "alpha/beta routing",
+      "record encoder",
+      "transport operator",
+      "gate numbers",
+      "no new data"
+    ]
+  },
+  "slopes_cpu_per_update": {
+    "selection": 4.0,
+    "copy": 10.0,
+    "joint": 29.0
+  },
+  "protection_factor": 2.11,
+  "nontrain_line_items_cpu_per_cell": {
+    "step0_light_eval": 172.0,
+    "step150_light_eval": 172.0,
+    "step300_full_eval": 732.0,
+    "save": 0.05,
+    "restore_preflight_only": 0.08,
+    "note": "measured on the same graph; the 19.3 price omitted these"
+  },
+  "methodology_correction_19_3": {
+    "19_3_bare_six_cpu": 9731.25,
+    "19_3_bare_six_note": "single flat 5.4 CPU/update x 300 x 6, evals treated as rounding",
+    "19_5_measured_six_cpu": 29574.234375,
+    "19_5_over_19_3_ratio": 3.0390992292870904,
+    "19_5_over_protected_19_3": 1.1130033284765193,
+    "root_causes": [
+      "19.3 metered four cold optimizer steps (selection 2.625 / copy 6.656 / joint 6.938) and applied one flat rate to all 300 updates",
+      "the 19.5 second half is the real cost: 20.8-26.7 CPU per update all-in (copy + joint + final full evaluation), not 5.4",
+      "light and full dev evaluations were priced as negligible; measured step0+step150 light evaluations are ~344 CPU per cell and the full step300 evaluation ~732 CPU per cell"
+    ],
+    "correction": "price every stage at its measured 19.5 slope and list the measured evaluation line items explicitly; do not reuse the 5.4 flat rate"
+  },
+  "measured_19_5": {
+    "cells": [
+      {
+        "cell": "28031-A_route_lock",
+        "first_half_cpu": 1461.46875,
+        "second_half_cpu": 4001.546875,
+        "total_cpu": 5463.015625,
+        "second_half_per_update": 26.676979166666666
+      },
+      {
+        "cell": "28031-B_stop_lock",
+        "first_half_cpu": 1451.359375,
+        "second_half_cpu": 3279.4375,
+        "total_cpu": 4730.796875,
+        "second_half_per_update": 21.862916666666667
+      },
+      {
+        "cell": "28031-C_unlocked",
+        "first_half_cpu": 1505.9375,
+        "second_half_cpu": 3117.0625,
+        "total_cpu": 4623.0,
+        "second_half_per_update": 20.780416666666667
+      },
+      {
+        "cell": "28032-A_route_lock",
+        "first_half_cpu": 1542.984375,
+        "second_half_cpu": 3724.90625,
+        "total_cpu": 5267.890625,
+        "second_half_per_update": 24.832708333333333
+      },
+      {
+        "cell": "28032-B_stop_lock",
+        "first_half_cpu": 1536.609375,
+        "second_half_cpu": 3222.1875,
+        "total_cpu": 4758.796875,
+        "second_half_per_update": 21.48125
+      },
+      {
+        "cell": "28032-C_unlocked",
+        "first_half_cpu": 1498.6875,
+        "second_half_cpu": 3232.046875,
+        "total_cpu": 4730.734375,
+        "second_half_per_update": 21.546979166666667
+      }
+    ],
+    "first_half_cpu_six": 8997.046875,
+    "second_half_cpu_six": 20577.1875,
+    "total_cpu_six": 29574.234375,
+    "second_half_per_update_band": [
+      20.780416666666667,
+      26.676979166666666
+    ],
+    "per_update_all_in": 16.430130208333335
+  },
+  "priced_cells": [
+    {
+      "seed": 28031,
+      "arm": "A_route_lock",
+      "segments": {
+        "0_to_150": {
+          "updates": 150,
+          "stage_updates": {
+            "selection": 100,
+            "copy": 50,
+            "joint": 0
+          },
+          "train_cpu": 900.0,
+          "nontrain_cpu": 344.05,
+          "bare_cpu": 1244.05,
+          "protected_cpu": 2624.9455
+        },
+        "150_to_300": {
+          "updates": 150,
+          "stage_updates": {
+            "selection": 0,
+            "copy": 50,
+            "joint": 100
+          },
+          "train_cpu": 3400.0,
+          "nontrain_cpu": 732.05,
+          "bare_cpu": 4132.05,
+          "protected_cpu": 8718.6255
+        }
+      },
+      "bare_cpu": 5376.1,
+      "protected_cpu": 11343.571
+    },
+    {
+      "seed": 28031,
+      "arm": "B_stop_lock",
+      "segments": {
+        "0_to_150": {
+          "updates": 150,
+          "stage_updates": {
+            "selection": 100,
+            "copy": 50,
+            "joint": 0
+          },
+          "train_cpu": 900.0,
+          "nontrain_cpu": 344.05,
+          "bare_cpu": 1244.05,
+          "protected_cpu": 2624.9455
+        },
+        "150_to_300": {
+          "updates": 150,
+          "stage_updates": {
+            "selection": 0,
+            "copy": 50,
+            "joint": 100
+          },
+          "train_cpu": 3400.0,
+          "nontrain_cpu": 732.05,
+          "bare_cpu": 4132.05,
+          "protected_cpu": 8718.6255
+        }
+      },
+      "bare_cpu": 5376.1,
+      "protected_cpu": 11343.571
+    },
+    {
+      "seed": 28031,
+      "arm": "C_unlocked",
+      "segments": {
+        "0_to_150": {
+          "updates": 150,
+          "stage_updates": {
+            "selection": 100,
+            "copy": 50,
+            "joint": 0
+          },
+          "train_cpu": 900.0,
+          "nontrain_cpu": 344.05,
+          "bare_cpu": 1244.05,
+          "protected_cpu": 2624.9455
+        },
+        "150_to_300": {
+          "updates": 150,
+          "stage_updates": {
+            "selection": 0,
+            "copy": 50,
+            "joint": 100
+          },
+          "train_cpu": 3400.0,
+          "nontrain_cpu": 732.05,
+          "bare_cpu": 4132.05,
+          "protected_cpu": 8718.6255
+        }
+      },
+      "bare_cpu": 5376.1,
+      "protected_cpu": 11343.571
+    },
+    {
+      "seed": 28032,
+      "arm": "A_route_lock",
+      "segments": {
+        "0_to_150": {
+          "updates": 150,
+          "stage_updates": {
+            "selection": 100,
+            "copy": 50,
+            "joint": 0
+          },
+          "train_cpu": 900.0,
+          "nontrain_cpu": 344.05,
+          "bare_cpu": 1244.05,
+          "protected_cpu": 2624.9455
+        },
+        "150_to_300": {
+          "updates": 150,
+          "stage_updates": {
+            "selection": 0,
+            "copy": 50,
+            "joint": 100
+          },
+          "train_cpu": 3400.0,
+          "nontrain_cpu": 732.05,
+          "bare_cpu": 4132.05,
+          "protected_cpu": 8718.6255
+        }
+      },
+      "bare_cpu": 5376.1,
+      "protected_cpu": 11343.571
+    },
+    {
+      "seed": 28032,
+      "arm": "B_stop_lock",
+      "segments": {
+        "0_to_150": {
+          "updates": 150,
+          "stage_updates": {
+            "selection": 100,
+            "copy": 50,
+            "joint": 0
+          },
+          "train_cpu": 900.0,
+          "nontrain_cpu": 344.05,
+          "bare_cpu": 1244.05,
+          "protected_cpu": 2624.9455
+        },
+        "150_to_300": {
+          "updates": 150,
+          "stage_updates": {
+            "selection": 0,
+            "copy": 50,
+            "joint": 100
+          },
+          "train_cpu": 3400.0,
+          "nontrain_cpu": 732.05,
+          "bare_cpu": 4132.05,
+          "protected_cpu": 8718.6255
+        }
+      },
+      "bare_cpu": 5376.1,
+      "protected_cpu": 11343.571
+    },
+    {
+      "seed": 28032,
+      "arm": "C_unlocked",
+      "segments": {
+        "0_to_150": {
+          "updates": 150,
+          "stage_updates": {
+            "selection": 100,
+            "copy": 50,
+            "joint": 0
+          },
+          "train_cpu": 900.0,
+          "nontrain_cpu": 344.05,
+          "bare_cpu": 1244.05,
+          "protected_cpu": 2624.9455
+        },
+        "150_to_300": {
+          "updates": 150,
+          "stage_updates": {
+            "selection": 0,
+            "copy": 50,
+            "joint": 100
+          },
+          "train_cpu": 3400.0,
+          "nontrain_cpu": 732.05,
+          "bare_cpu": 4132.05,
+          "protected_cpu": 8718.6255
+        }
+      },
+      "bare_cpu": 5376.1,
+      "protected_cpu": 11343.571
+    }
+  ],
+  "segment_budget": {
+    "0_to_150": {
+      "updates_per_cell": 150,
+      "stage_updates_per_cell": {
+        "selection": 100,
+        "copy": 50,
+        "joint": 0
+      },
+      "bare_cpu_six": 7464.299999999999,
+      "protected_cpu_six": 15749.672999999999,
+      "train_cpu_six": 5400.0,
+      "nontrain_cpu_six": 2064.3
+    },
+    "150_to_300": {
+      "updates_per_cell": 150,
+      "stage_updates_per_cell": {
+        "selection": 0,
+        "copy": 50,
+        "joint": 100
+      },
+      "bare_cpu_six": 24792.300000000003,
+      "protected_cpu_six": 52311.753,
+      "train_cpu_six": 20400.0,
+      "nontrain_cpu_six": 4392.299999999999
+    }
+  },
+  "budget": {
+    "six_cells_bare_cpu": 32256.600000000002,
+    "six_cells_protected_cpu": 68061.426,
+    "bare_over_measured_19_5": 1.0906994105405308,
+    "six_cells_19_5_measured_cpu": 29574.234375,
+    "watchlines_cpu": [
+      20000.0,
+      30000.0
+    ],
+    "watchline_rule": "crossing 20,000 / 30,000 writes watchline and continues; the reason must be recorded, extrapolation must use the measured slope, never a fixed start-up cost",
+    "hard_cap_protected_cpu": 68061.426
+  },
+  "comparison_baseline": {
+    "19_5_six_step300_bundles": "output/taiji_package19_compare/ (kept, not overwritten)",
+    "19_5_verdict": {
+      "package19": "negative",
+      "decision_tree_branch": "全负",
+      "rule": "all six cells miss the byte gate and the pre-registered task gate; overall 0.00-0.63, best cell 0.63 < 0.80",
+      "release_confirm_19": false,
+      "confirm_reads": 0,
+      "package19_status": "closed-negative; 17/18 must not be reopened"
+    }
+  },
+  "confirm_policy": {
+    "reads_allowed": 1,
+    "only_if": "stage gate and final gate both pass",
+    "sealed_after_read": true
+  },
+  "zero_cost_confirmation": {
+    "optimizer_steps": 0,
+    "forward_passes": 0,
+    "training": false,
+    "confirm_reads": 0
+  }
+}

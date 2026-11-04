@@ -1979,3 +1979,15 @@ HEAD旧T3使用前置锚点时701/720失败；工作树新pointer/强制cursor�
 19.5 结果：整句 0.000 / 0.000 / 0.630 / 0.583 / 0.401 / 0.469（门 0.80）；抄回仅 28031-B 0.630 过 0.60；逐字节 物件 0.678、地点 0.631（门 0.95）；A−C −0.4349（bootstrap [−0.50, −0.375]）。分账探针（0 更新、gold 前缀、模型自身 α/β/γ）：起点命中 0.347/0.340，起点命中后内容字节 0.941/0.980，未命中 0.678/0.631 → 主因是起点/记录选择；编码器（c_γ0 内容 1.000×5/6）与生成权重 γ 均非主因；B 臂起点全对时 `new_description` 仍仅 0.260/0.229，为第二道独立缺口。
 
 `release_confirm_19=false`，confirm 读取 0，19.6 未执行。观察线两次触发（2,266/外推 44,857；17,376.7/外推 20,063.8）均与终值 29,574.2 不符，已登记外推失真原因（首触放大固定成本、次触按受争用速率）。清理：保留 6 个 step300 bundle（395.1 MB）与 step0/midreport/run/eval300/failure/watchline 回执；删除 6 个 step150 bundle（175.5 MB，sha 已登记）。产物见 [19.5 比较](../../../reports/taiji_package19_compare_20261104.json)、[step300 分账探针](../../../reports/taiji_package19_probe_step300_20261104.json)、[19.7 结案](../../../reports/taiji_package19_closeout_19_7_20261104.json)。队首：等 owner 裁定是否启动 19.2b 起点监督；未裁定前不训练。
+
+## 2026-11-04 包 19.2b（前段）：定价、少更新验证、预检、指针诊断，止于六格之前
+
+19.2b 定价 0 CPU（0 Adam / 0 前向）：按 19.5 实测斜率（selection 4.0 / copy 10.0 / joint 29.0 CPU 每更新）加显式非训练项重算，六格裸价 32,256.6、保护价 68,061.4；分段 0→150 裸价 7,464.3 / 保护价 15,749.7，150→300 裸价 24,792.3 / 保护价 52,311.8。19.3 缺口写入方法论修正：裸价仅是实测 29,574.2 的 1/3.039，5.4 平单价把后 150 更新（实测 20.8–26.7 CPU/更新）与两次轻评加一次全评（约 344 + 732 CPU/格）都算成了零头；19.5 实测比 19.3 保护价高 11.3%。
+
+少更新验证 268.3 CPU / 60 Adam（28031，A/B 两臂 × 30，仅 selection 阶段）：span CE 6.779→5.034（−25.7%），但 β 口径 start_hit 恒 0.000、beta_start_hit 物件恒 0.208 / 地点恒 0.000、route_hit 仅 0.079→0.095。两臂在 selection 阶段逐位同轨迹、同一 candidate_sha_v2（6c5466ab…），按设计臂只在 copy/joint 生效，故实为一条 30 更新轨迹。预检 297.5 CPU / 19 工程 Adam：8/8 通过（身份、先存包后训、恢复逐位、模块漂移必拒），span 参数 4,194，临时 bundle 已回收。
+
+指针诊断 106.4 CPU（0 更新、0 confirm）：19.5 六格 step300 上同一 gold 起点，冻结 β 峰值命中 物件 0.521 / 地点 0.500，span 指针命中 0.719 / 0.698；未训练 32-d 对照仅 0.25 / 0.00；pointer 与 pointer_logits 全格一致（无 carry 绕过）。
+
+**结论（结构性）**：`read.betas` 是冻结 reader 的记录内位置后验（[binding_copy.py](../../../taiji/binding_copy.py) 337 行），span pointer 只经 `pointer_bias → row_logits → pointer/s_bytes`（361、386–396、467–476 行），从不进入 β；而 19.5 的 `start_hit` 读 `route ∧ argmax(betas)`。因此 span 监督再好也抬不动这个读数，六格 300 更新会结构性撞上阶段门、32,256.6 CPU 属注定浪费。已停在六格之前，未产生任何新训练 bundle，19.5 六个 step300 bundle 原样保留作基线。
+
+19.2b 前段合计 672.2 CPU（另含未训练对照 17.5），confirm 读取 0。产物：[19.2b 决策](../../../reports/taiji_package19_2b_decision_20261104.json)、[定价](../../../reports/taiji_pricing_19_2b_20261104.json)、[少更新](../../../reports/taiji_package19_2b_lowupdate_20261104.json)、[预检](../../../reports/taiji_preflight_19_2b_20261104.json)、[指针诊断](../../../reports/taiji_package19_2b_pointer_diagnostic_20261104.json)。队首：等 owner 裁定把阶段门 `start_hit` 的读数对象改为 span 指针（数值 0.95 不变）；裁定前不训练。
