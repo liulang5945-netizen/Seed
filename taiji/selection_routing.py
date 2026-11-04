@@ -29,6 +29,7 @@ from taiji.binding_copy import (
     MAX_COVERAGE,
     BindingRead,
     advance_copy,
+    advance_copy_cursor,
     observe_goal,
 )
 from taiji.living_core import EOS
@@ -312,6 +313,7 @@ def routing_step(
         pointer_bias=pointer_bias,
         pointer_temperature=pointer_temperature,
         pointer_hard=pointer_hard,
+        cursor=(state.copy_record, state.copy_cursor),
     )
     q_bytes, q_null, a_train, fallback = _locked_quantities(read, view, a_soft, a_hard, arm)
     inherited = candidate.reader.inherited
@@ -408,8 +410,25 @@ def _advanced_state(
         accepted,
         prepared.base.view,
     )
+    view = prepared.base.view
+    route_record = -1
+    if view.record_count:
+        route_index = int(torch.argmax(step.a_hard))
+        if route_index < view.record_count:
+            route_record = route_index
+    copy_record, copy_cursor = advance_copy_cursor(
+        step.state, step.read, view, accepted, route_record
+    )
     living = replace(step.state.living, h=step.next_h)
-    next_state = replace(step.state, living=living, m=next_m, coverage=next_coverage)
+    next_state = replace(
+        step.state,
+        living=living,
+        m=next_m,
+        coverage=next_coverage,
+        prefix_cursor=step.state.prefix_cursor + (0 if accepted is None else 1),
+        copy_record=copy_record,
+        copy_cursor=copy_cursor,
+    )
     next_gate = (step.gate_index + 1) % 4
     return next_state, next_coverage, next_gate
 
@@ -586,7 +605,7 @@ def routing_generate(
             )
             probabilities.append(step.probabilities.detach().clone())
             gammas.append(float(step.gamma_eff.detach()))
-            endpoint = decode_endpoint(step.probabilities)
+            endpoint = decode_endpoint(step.probabilities, prefix=bytes(raw))
             if endpoint["eos"]:
                 terminated = True
                 break

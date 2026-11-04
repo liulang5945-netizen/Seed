@@ -157,6 +157,12 @@ class BindingState:
     keys: tuple[tuple[str, int, int], ...]
     record_offsets: tuple[tuple[int, int], ...]
     prefix_cursor: int
+    # 18.2 explicit copy position state: which record the copy pointer is riding
+    # and which byte offset of that record it must read next.  ``-1`` means "no
+    # active carry"; both are persisted so a mid-string restore resumes at the
+    # same byte.  ``prefix_cursor`` counts accepted bytes across the whole answer.
+    copy_record: int = -1
+    copy_cursor: int = -1
 
     def payload(self) -> dict[str, Any]:
         return {
@@ -166,6 +172,8 @@ class BindingState:
             "keys": [[source, version, offset] for source, version, offset in self.keys],
             "record_offsets": [list(pair) for pair in self.record_offsets],
             "prefix_cursor": self.prefix_cursor,
+            "copy_record": self.copy_record,
+            "copy_cursor": self.copy_cursor,
         }
 
 
@@ -192,6 +200,10 @@ class BindingRead:
     forced: bool
     pointer: tuple[torch.Tensor, ...] = ()
     pointer_logits: tuple[torch.Tensor, ...] = ()
+    # Effective carried-copy peak (flattened byte index inside ``view``); used
+    # only to anchor a new copy run, never as a model output.
+    m_peak: int = -1
+    m_peak_value: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -271,6 +283,7 @@ class BindingCopyReader(nn.Module):
         pointer_temperature: float = 1.0,
         pointer_hard: bool = False,
         m_override: torch.Tensor | None = None,
+        cursor: tuple[int, int] | None = None,
     ) -> BindingRead:
         key_width = self.config.key_width
         width = self.config.width
@@ -326,6 +339,19 @@ class BindingCopyReader(nn.Module):
         if force is not None:
             alpha = force["alpha"].to(s.dtype)
             betas = tuple(row.to(s.dtype) for row in force["betas"])
+        flat = int(view.byte_ids.numel())
+        if m_override is not None:
+            m_bytes = m_override.to(s.dtype)
+        elif m.numel() == flat:
+            m_bytes = m
+        else:
+            m_bytes = m.new_zeros(flat)
+        m_peak, m_peak_value = -1, 0.0
+        if m_bytes.numel():
+            peak_index = int(torch.argmax(m_bytes))
+            peak_value = float(m_bytes[peak_index].detach())
+            if peak_value > 0:
+                m_peak, m_peak_value = peak_index, peak_value
         s_pieces = []
         pointer_rows: list[torch.Tensor] = []
         pointer_logit_rows: list[torch.Tensor] = []
@@ -333,7 +359,26 @@ class BindingCopyReader(nn.Module):
         for index in range(view.record_count):
             anchor = alpha[index] * betas[index]
             bias = pointer_bias[index] if pointer_bias is not None else None
-            if forced_pointer is not None:
+            length = int(view.units[index].shape[0])
+            extra = None
+            if m_peak >= 0 and float(alpha[index].detach()) >= 0.5:
+                start, end = view.record_offsets[index]
+                if start <= m_peak < end and m_peak - start < length:
+                    extra = anchor.new_zeros(length)
+                    extra[m_peak - start] = 1.0
+            elif cursor is not None and cursor[0] == index and cursor[1] >= 0:
+                if cursor[1] < length:
+                    extra = anchor.new_zeros(length)
+                    extra[cursor[1]] = 1.0
+            if extra is not None:
+                # Committed carry: the position is *known* (either the carried
+                # copy posterior peak or the explicit cursor), so the transport
+                # does not re-estimate it.  The transport still decides the start
+                # of a run and any step without a carry.
+                pointer = extra
+                row_logits = extra
+                s_piece = anchor.sum() * pointer
+            elif forced_pointer is not None:
                 pointer = forced_pointer[index].to(s.dtype)
                 row_logits = pointer
                 s_piece = anchor.sum() * pointer
@@ -351,10 +396,6 @@ class BindingCopyReader(nn.Module):
             pointer_logit_rows.append(row_logits)
         s_bytes = torch.cat(s_pieces)
         alpha_null = alpha[-1]
-        if m_override is not None:
-            m_bytes = m_override.to(s.dtype)
-        else:
-            m_bytes = m if m.numel() == s_bytes.numel() else s_bytes.new_zeros(s_bytes.shape)
         m_mass = m_bytes.sum()
         q_bytes = lam * m_bytes + (1 - lam * m_mass) * s_bytes
         q_null = (1 - lam * m_mass) * alpha_null
@@ -387,6 +428,8 @@ class BindingCopyReader(nn.Module):
             forced=force is not None,
             pointer=tuple(pointer_rows),
             pointer_logits=tuple(pointer_logit_rows),
+            m_peak=m_peak,
+            m_peak_value=m_peak_value,
         )
 
     def _point_transport(
@@ -571,6 +614,8 @@ def initial_binding_state(
         keys=(),
         record_offsets=(),
         prefix_cursor=0,
+        copy_record=-1,
+        copy_cursor=-1,
     )
 
 
@@ -596,6 +641,8 @@ def prepare(
         keys=keys,
         record_offsets=base_prepared.view.record_offsets,
         prefix_cursor=state.prefix_cursor,
+        copy_record=state.copy_record if state.copy_record < len(keys) else -1,
+        copy_cursor=state.copy_cursor if state.copy_record < len(keys) else -1,
     )
     return BindingPrepared(base=base_prepared, state=new_state)
 
@@ -653,6 +700,37 @@ def observe_goal(
     return state, gate_index
 
 
+def advance_copy_cursor(
+    state: BindingState,
+    read: BindingRead,
+    view: RecordSourceView,
+    accepted: int | None,
+    route_record: int,
+) -> tuple[int, int]:
+    """Carried byte position: one step forward while the same record is copied.
+
+    The first byte of a new copy run anchors on the effective carried copy (the
+    gold-start intervention when one is supplied), otherwise on the read's own
+    posterior peak.  Returns ``(copy_record, copy_cursor)`` where ``copy_cursor``
+    is the absolute byte offset inside the record that the *next* step must read.
+    """
+    if accepted is None or accepted < 0 or accepted >= MAX_COVERAGE:
+        return state.copy_record, state.copy_cursor
+    if accepted == EOS or route_record < 0 or route_record >= view.record_count:
+        return -1, -1
+    start, end = view.record_offsets[route_record]
+    length = int(end - start)
+    if read.m_peak >= start and read.m_peak < end and read.m_peak_value > 0:
+        offset = read.m_peak - start + 1
+    elif state.copy_record == route_record and state.copy_cursor >= 0:
+        offset = state.copy_cursor + 1
+    elif len(read.q_bytes):
+        offset = int(torch.argmax(read.q_bytes[start:end])) + 1
+    else:
+        offset = 0
+    return route_record, min(max(offset, 0), max(length - 1, 0))
+
+
 def advance_copy(
     reader: BindingCopyReader,
     state: BindingState,
@@ -706,6 +784,7 @@ def answer_step(
         force=force,
         lambda_override=lambda_override,
         m_override=m_override,
+        cursor=(state.copy_record, state.copy_cursor),
     )
     if previous_byte == EOS:
         event = subject.W.new_zeros(subject.config.width)
@@ -743,6 +822,14 @@ def answer_step(
         h=h,
         prior=subject.W.new_empty(0),
     )
+    route_record = -1
+    if base.view.record_count:
+        route_index = int(torch.argmax(read.alpha))
+        if route_index < base.view.record_count:
+            route_record = route_index
+    copy_record, copy_cursor = advance_copy_cursor(
+        state, read, base.view, accepted_byte, route_record
+    )
     child = BindingState(
         living=living,
         m=m_next,
@@ -750,6 +837,8 @@ def answer_step(
         keys=state.keys,
         record_offsets=state.record_offsets,
         prefix_cursor=state.prefix_cursor + (0 if accepted_byte is None else 1),
+        copy_record=copy_record,
+        copy_cursor=copy_cursor,
     )
     return BindingAnswerStep(
         probabilities=probabilities,
@@ -878,7 +967,7 @@ def generate_bytes(
             gate_index=gate_index,
         )
         probabilities.append(step.probabilities)
-        endpoint = decode_endpoint(step.probabilities)
+        endpoint = decode_endpoint(step.probabilities, prefix=bytes(raw))
         if endpoint["eos"]:
             terminated = True
             break
@@ -1098,6 +1187,8 @@ def load_bundle(path: Path, dtype: torch.dtype) -> tuple:
             (int(start), int(end)) for start, end in payload["state"]["record_offsets"]
         ),
         prefix_cursor=int(payload["state"]["prefix_cursor"]),
+        copy_record=int(payload["state"].get("copy_record", -1)),
+        copy_cursor=int(payload["state"].get("copy_cursor", -1)),
     )
     torch.set_rng_state(payload["rng_state"])
     return (

@@ -1,0 +1,249 @@
+{
+  "schema": "taiji-cursor-utf8-18-2-probe-v1",
+  "date": "2026-11-04",
+  "supersedes": "reports/taiji_gate_sweep_18_1_20261104.json (readings retained; 18.1 files untouched)",
+  "parent": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28031-A-locked-step300.pt",
+  "updates": 2,
+  "examples": 16,
+  "structure": {
+    "state_fields": [
+      "prefix_cursor",
+      "copy_record",
+      "copy_cursor"
+    ],
+    "carry_rule": "committed carry overrides the transport point; transport decides a run start",
+    "frozen_parameter_count_unchanged": true,
+    "decode_mask": "utf8_allowed_mask before argmax; prefix=None keeps 18.1 reading"
+  },
+  "cells": {
+    "A_route_lock": {
+      "arm": "A_route_lock",
+      "updates": 2,
+      "update_log": [
+        {
+          "update": 1,
+          "loss": 17.613292600168702,
+          "clip": 4.439748010931597e+45,
+          "ce": 0.0,
+          "span": 7.969050886222458,
+          "nll": 9.664251969472206
+        },
+        {
+          "update": 2,
+          "loss": 17.807317297389552,
+          "clip": 12477554.971960349,
+          "ce": 0.0,
+          "span": 7.917249503727847,
+          "nll": 9.91733992741959
+        }
+      ],
+      "b_pure": {
+        "examples": 16,
+        "content": 1.0,
+        "object": 1.0,
+        "place": 1.0,
+        "object_first": 1.0,
+        "object_last": 1.0,
+        "place_first": 1.0,
+        "place_last": 1.0,
+        "object_first_last_delta": 0.0,
+        "place_first_last_delta": 0.0
+      },
+      "c_gold": {
+        "examples": 16,
+        "content": 1.0,
+        "object": 1.0,
+        "place": 1.0,
+        "object_first": 1.0,
+        "object_last": 1.0,
+        "place_first": 1.0,
+        "place_last": 1.0,
+        "object_first_last_delta": 0.0,
+        "place_first_last_delta": 0.0
+      },
+      "cursor_trace_first": [
+        [
+          1,
+          18
+        ],
+        [
+          5,
+          22
+        ],
+        [
+          5,
+          23
+        ],
+        [
+          5,
+          24
+        ]
+      ],
+      "utf8": {
+        "generate_only_masked": 1.0,
+        "copy_only_masked": 1.0,
+        "generate_only_masked_complete": 0.0,
+        "copy_only_masked_complete": 0.0,
+        "generate_only_unmasked": 0.0,
+        "copy_only_unmasked": 0.0,
+        "generate_only_illegal_bytes": 16,
+        "copy_only_illegal_bytes": 16,
+        "generate_only_repaired": 260,
+        "copy_only_repaired": 281,
+        "generate_only_codes": {
+          "truncated": 16
+        },
+        "copy_only_codes": {
+          "truncated": 16
+        },
+        "examples": 16
+      },
+      "restore": {
+        "parameters_max_abs_diff": 0.0,
+        "adam_max_abs_diff": 0.0,
+        "copy_state_max_abs_diff": 0.0,
+        "cursor_fields": {
+          "prefix_cursor": [
+            16,
+            16
+          ],
+          "copy_record": [
+            1,
+            1
+          ],
+          "copy_cursor": [
+            18,
+            18
+          ]
+        },
+        "cursor_bitwise_equal": true,
+        "restored_update": 2
+      },
+      "gates": {
+        "b_pure_content": true,
+        "first_last_delta": true,
+        "utf8_free": true,
+        "restore_bitwise": true
+      },
+      "all_gates": true
+    },
+    "B_stop_lock": {
+      "arm": "B_stop_lock",
+      "updates": 2,
+      "update_log": [
+        {
+          "update": 1,
+          "loss": 17.613292600168702,
+          "clip": 26.42240951886756,
+          "ce": 0.0,
+          "span": 7.969050886222458,
+          "nll": 9.664251969472206
+        },
+        {
+          "update": 2,
+          "loss": 13.192301791825301,
+          "clip": 22.19668070354067,
+          "ce": 0.0,
+          "span": 4.97884451719384,
+          "nll": 8.236618036132954
+        }
+      ],
+      "b_pure": {
+        "examples": 16,
+        "content": 1.0,
+        "object": 1.0,
+        "place": 1.0,
+        "object_first": 1.0,
+        "object_last": 1.0,
+        "place_first": 1.0,
+        "place_last": 1.0,
+        "object_first_last_delta": 0.0,
+        "place_first_last_delta": 0.0
+      },
+      "c_gold": {
+        "examples": 16,
+        "content": 1.0,
+        "object": 1.0,
+        "place": 1.0,
+        "object_first": 1.0,
+        "object_last": 1.0,
+        "place_first": 1.0,
+        "place_last": 1.0,
+        "object_first_last_delta": 0.0,
+        "place_first_last_delta": 0.0
+      },
+      "cursor_trace_first": [
+        [
+          2,
+          21
+        ],
+        [
+          5,
+          22
+        ],
+        [
+          5,
+          23
+        ],
+        [
+          5,
+          24
+        ]
+      ],
+      "utf8": {
+        "generate_only_masked": 1.0,
+        "copy_only_masked": 1.0,
+        "generate_only_masked_complete": 0.375,
+        "copy_only_masked_complete": 0.0,
+        "generate_only_unmasked": 0.0,
+        "copy_only_unmasked": 0.0,
+        "generate_only_illegal_bytes": 16,
+        "copy_only_illegal_bytes": 16,
+        "generate_only_repaired": 286,
+        "copy_only_repaired": 209,
+        "generate_only_codes": {
+          "complete": 6,
+          "truncated": 10
+        },
+        "copy_only_codes": {
+          "truncated": 16
+        },
+        "examples": 16
+      },
+      "restore": {
+        "parameters_max_abs_diff": 0.0,
+        "adam_max_abs_diff": 0.0,
+        "copy_state_max_abs_diff": 0.0,
+        "cursor_fields": {
+          "prefix_cursor": [
+            16,
+            16
+          ],
+          "copy_record": [
+            2,
+            2
+          ],
+          "copy_cursor": [
+            16,
+            16
+          ]
+        },
+        "cursor_bitwise_equal": true,
+        "restored_update": 2
+      },
+      "gates": {
+        "b_pure_content": true,
+        "first_last_delta": true,
+        "utf8_free": true,
+        "restore_bitwise": true
+      },
+      "all_gates": true
+    }
+  },
+  "all_gates": true,
+  "cost": {
+    "cpu_seconds": 100.109375,
+    "wall_seconds": 102.22725599980913,
+    "adam_updates": 4
+  }
+}

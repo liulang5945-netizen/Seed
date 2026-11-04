@@ -171,6 +171,8 @@ def binding_state_from_payload(
         keys=tuple((source, version, offset) for source, version, offset in payload["keys"]),
         record_offsets=tuple((int(start), int(end)) for start, end in payload["record_offsets"]),
         prefix_cursor=int(payload["prefix_cursor"]),
+        copy_record=int(payload.get("copy_record", -1)),
+        copy_cursor=int(payload.get("copy_cursor", -1)),
     )
 
 

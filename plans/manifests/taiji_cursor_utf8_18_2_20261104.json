@@ -1,0 +1,74 @@
+{
+  "schema": "taiji-cursor-utf8-18-2-manifest-v1",
+  "step": "N18.2",
+  "date": "2026-11-04",
+  "status": "design_verified_pricing_allowed_not_priced_not_trained",
+  "supersedes": "none (18.1 evidence files kept byte-identical)",
+  "report": "reports\\taiji_cursor_utf8_18_2_20261104.json",
+  "report_sha256": "e289c48ded1e6ebf48ff8c4271f211ddbc88c390827049ccc393d881d3afdb09",
+  "report_bytes": 6248,
+  "evidence": {
+    "A_route_lock": {
+      "path": "reports\\taiji_cursor_utf8_18_2_probe_A_20261104.json",
+      "sha256": "f6c901e2afeb49241725c82cd150c4aa796ebf695b6c0954afba70b29169f56f",
+      "bytes": 91095
+    },
+    "B_stop_lock": {
+      "path": "reports\\taiji_cursor_utf8_18_2_probe_B_20261104.json",
+      "sha256": "b0384a4f7fa78a0a2aa9b8dd9bfabd1b38a80bf6127b2607dcbce27b74005284",
+      "bytes": 90697
+    }
+  },
+  "script": "scripts\\training\\probe_taiji_cursor_18_2.py",
+  "parent_bundle": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28031-A-locked-step300.pt",
+  "bundles": {
+    "A_route_lock": {
+      "path": "output\\taiji_cursor_18_2\\28031-A_route_lock-cursor-step2.pt",
+      "sha256": "7e39cb654ddf2497a04b1ebe367fa643efa078f58d3c9a91764176056f608373",
+      "bytes": 65261111
+    },
+    "B_stop_lock": {
+      "path": "output\\taiji_cursor_18_2\\28031-B_stop_lock-cursor-step2.pt",
+      "sha256": "5f8c6f4ac22ae16f2efbc63cf51fec6f9e708a9a16d63eb70fa841f5c6001fc5",
+      "bytes": 65260693
+    }
+  },
+  "conditions": {
+    "engineering_updates": 2,
+    "examples_per_arm": 16,
+    "arms": ["A_route_lock", "B_stop_lock"],
+    "confirm_read": 0,
+    "training_started": false
+  },
+  "gates": {
+    "b_pure_content_ge_0_95": true,
+    "first_last_delta_le_0_02": true,
+    "utf8_free_ge_0_99": true,
+    "restore_bitwise_zero": true,
+    "all_gates": true
+  },
+  "readings": {
+    "b_pure_content": 1.0,
+    "b_pure_object": 1.0,
+    "b_pure_place": 1.0,
+    "object_first_last_delta": 0.0,
+    "place_first_last_delta": 0.0,
+    "utf8_masked_no_illegal": 1.0,
+    "utf8_unmasked_no_illegal": 0.0,
+    "complete_rate": {"A": 0.0, "B": 0.375},
+    "restore_max_abs_diff": {"parameters": 0.0, "adam": 0.0, "copy_state": 0.0}
+  },
+  "cost": {
+    "cpu_seconds": 100.109375,
+    "wall_seconds": 102.22725599980913,
+    "adam_updates": 4
+  },
+  "m2_option": {
+    "implementation": "option_1_bitwise_inheritance_same_control_range",
+    "status": "suggested_pending_owner_decision"
+  },
+  "pricing": {
+    "published": false,
+    "reason": "new graph adds state fields and a decode rule; candidate_sha_v2 must be recomputed and per-update CPU re-timed on the new graph"
+  }
+}
