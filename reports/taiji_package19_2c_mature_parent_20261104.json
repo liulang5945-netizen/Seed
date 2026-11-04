@@ -1,0 +1,372 @@
+{
+  "schema": "taiji-package19-2c-mature-parent-v1",
+  "step": "N19.2c (diagnostic, not a 19.2b dose)",
+  "date": "2026-11-04",
+  "purpose": "separate the route ceiling from span-supervision ineffectiveness",
+  "design": {
+    "parent": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+    "parent_route_hit_19_5": {
+      "object": 0.998,
+      "place": 1.0
+    },
+    "parent_composite_start_19_5": {
+      "object": 0.917,
+      "place": 0.979
+    },
+    "seed": 28031,
+    "arm": "B_stop_lock",
+    "updates": 60,
+    "stage": "selection (1-100 window); only selection CE + span CE are trained",
+    "span_head": "fresh SpanPointerHead 32-d bottleneck (4,194 parameters)",
+    "probes_at": [
+      0,
+      5,
+      10,
+      15,
+      20,
+      25,
+      30,
+      45,
+      60
+    ],
+    "saves": 0,
+    "confirm_reads": 0,
+    "no_dose_extension": "independent diagnostic package; does not extend the 19.2b 60-update cap"
+  },
+  "parent_health": {
+    "path": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+    "parameter_tensors": 187,
+    "nan_parameters": 0,
+    "all_finite": true
+  },
+  "candidate_sha_v2": "6c5466ab023e7234c250ca4f7a6c66104f5a1ba4f616eee7b3da3aab7436289e",
+  "span_parameters": 4194,
+  "span_expected": 4194,
+  "probes": [
+    {
+      "update": 0,
+      "object": {
+        "beta_start_hit_rate": 1.0,
+        "pointer_start_hit_rate": 0.041666666666666664,
+        "composite_start_hit_rate": 0.625,
+        "decode_start_hit_rate": 1.0,
+        "route_hit_rate": 1.0,
+        "beta_row_hit_rate": 1.0,
+        "pointer_row_hit_rate": 0.041666666666666664,
+        "composite_row_hit_rate": 0.625,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 1.0,
+        "unconditional_byte": 1.0
+      },
+      "place": {
+        "beta_start_hit_rate": 1.0,
+        "pointer_start_hit_rate": 0.0,
+        "composite_start_hit_rate": 0.7916666666666666,
+        "decode_start_hit_rate": 1.0,
+        "route_hit_rate": 1.0,
+        "beta_row_hit_rate": 1.0,
+        "pointer_row_hit_rate": 0.0,
+        "composite_row_hit_rate": 0.7916666666666666,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 1.0,
+        "unconditional_byte": 1.0
+      },
+      "gamma_mean": 0.3595946629800739
+    },
+    {
+      "update": 5,
+      "object": {
+        "beta_start_hit_rate": 1.0,
+        "pointer_start_hit_rate": 1.0,
+        "composite_start_hit_rate": 0.625,
+        "decode_start_hit_rate": 1.0,
+        "route_hit_rate": 1.0,
+        "beta_row_hit_rate": 1.0,
+        "pointer_row_hit_rate": 1.0,
+        "composite_row_hit_rate": 0.625,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 1.0,
+        "unconditional_byte": 1.0
+      },
+      "place": {
+        "beta_start_hit_rate": 1.0,
+        "pointer_start_hit_rate": 0.9166666666666666,
+        "composite_start_hit_rate": 0.7916666666666666,
+        "decode_start_hit_rate": 1.0,
+        "route_hit_rate": 1.0,
+        "beta_row_hit_rate": 1.0,
+        "pointer_row_hit_rate": 0.9166666666666666,
+        "composite_row_hit_rate": 0.7916666666666666,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 1.0,
+        "unconditional_byte": 1.0
+      },
+      "gamma_mean": 0.3595946629800739
+    },
+    {
+      "update": 10,
+      "object": {
+        "beta_start_hit_rate": 1.0,
+        "pointer_start_hit_rate": 1.0,
+        "composite_start_hit_rate": 0.625,
+        "decode_start_hit_rate": 1.0,
+        "route_hit_rate": 1.0,
+        "beta_row_hit_rate": 1.0,
+        "pointer_row_hit_rate": 1.0,
+        "composite_row_hit_rate": 0.625,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 1.0,
+        "unconditional_byte": 1.0
+      },
+      "place": {
+        "beta_start_hit_rate": 1.0,
+        "pointer_start_hit_rate": 1.0,
+        "composite_start_hit_rate": 0.7916666666666666,
+        "decode_start_hit_rate": 1.0,
+        "route_hit_rate": 1.0,
+        "beta_row_hit_rate": 1.0,
+        "pointer_row_hit_rate": 1.0,
+        "composite_row_hit_rate": 0.7916666666666666,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 1.0,
+        "unconditional_byte": 1.0
+      },
+      "gamma_mean": 0.3595946629800739
+    },
+    {
+      "update": 15,
+      "object": {
+        "beta_start_hit_rate": 1.0,
+        "pointer_start_hit_rate": 1.0,
+        "composite_start_hit_rate": 0.625,
+        "decode_start_hit_rate": 1.0,
+        "route_hit_rate": 1.0,
+        "beta_row_hit_rate": 1.0,
+        "pointer_row_hit_rate": 1.0,
+        "composite_row_hit_rate": 0.625,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 1.0,
+        "unconditional_byte": 1.0
+      },
+      "place": {
+        "beta_start_hit_rate": 1.0,
+        "pointer_start_hit_rate": 1.0,
+        "composite_start_hit_rate": 0.7916666666666666,
+        "decode_start_hit_rate": 1.0,
+        "route_hit_rate": 1.0,
+        "beta_row_hit_rate": 1.0,
+        "pointer_row_hit_rate": 1.0,
+        "composite_row_hit_rate": 0.7916666666666666,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 1.0,
+        "unconditional_byte": 1.0
+      },
+      "gamma_mean": 0.3595946629800739
+    },
+    {
+      "update": 20,
+      "object": {
+        "beta_start_hit_rate": 1.0,
+        "pointer_start_hit_rate": 1.0,
+        "composite_start_hit_rate": 0.625,
+        "decode_start_hit_rate": 1.0,
+        "route_hit_rate": 1.0,
+        "beta_row_hit_rate": 1.0,
+        "pointer_row_hit_rate": 1.0,
+        "composite_row_hit_rate": 0.625,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 1.0,
+        "unconditional_byte": 1.0
+      },
+      "place": {
+        "beta_start_hit_rate": 1.0,
+        "pointer_start_hit_rate": 1.0,
+        "composite_start_hit_rate": 0.7916666666666666,
+        "decode_start_hit_rate": 1.0,
+        "route_hit_rate": 1.0,
+        "beta_row_hit_rate": 1.0,
+        "pointer_row_hit_rate": 1.0,
+        "composite_row_hit_rate": 0.7916666666666666,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 1.0,
+        "unconditional_byte": 1.0
+      },
+      "gamma_mean": 0.3595946629800739
+    },
+    {
+      "update": 25,
+      "object": {
+        "beta_start_hit_rate": 1.0,
+        "pointer_start_hit_rate": 1.0,
+        "composite_start_hit_rate": 0.625,
+        "decode_start_hit_rate": 1.0,
+        "route_hit_rate": 1.0,
+        "beta_row_hit_rate": 1.0,
+        "pointer_row_hit_rate": 1.0,
+        "composite_row_hit_rate": 0.625,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 1.0,
+        "unconditional_byte": 1.0
+      },
+      "place": {
+        "beta_start_hit_rate": 1.0,
+        "pointer_start_hit_rate": 1.0,
+        "composite_start_hit_rate": 0.7916666666666666,
+        "decode_start_hit_rate": 1.0,
+        "route_hit_rate": 1.0,
+        "beta_row_hit_rate": 1.0,
+        "pointer_row_hit_rate": 1.0,
+        "composite_row_hit_rate": 0.7916666666666666,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 1.0,
+        "unconditional_byte": 1.0
+      },
+      "gamma_mean": 0.3595946629800739
+    },
+    {
+      "update": 30,
+      "object": {
+        "beta_start_hit_rate": 1.0,
+        "pointer_start_hit_rate": 1.0,
+        "composite_start_hit_rate": 0.625,
+        "decode_start_hit_rate": 1.0,
+        "route_hit_rate": 1.0,
+        "beta_row_hit_rate": 1.0,
+        "pointer_row_hit_rate": 1.0,
+        "composite_row_hit_rate": 0.625,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 1.0,
+        "unconditional_byte": 1.0
+      },
+      "place": {
+        "beta_start_hit_rate": 1.0,
+        "pointer_start_hit_rate": 1.0,
+        "composite_start_hit_rate": 0.7916666666666666,
+        "decode_start_hit_rate": 1.0,
+        "route_hit_rate": 1.0,
+        "beta_row_hit_rate": 1.0,
+        "pointer_row_hit_rate": 1.0,
+        "composite_row_hit_rate": 0.7916666666666666,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 1.0,
+        "unconditional_byte": 1.0
+      },
+      "gamma_mean": 0.3595946629800739
+    },
+    {
+      "update": 45,
+      "object": {
+        "beta_start_hit_rate": 1.0,
+        "pointer_start_hit_rate": 1.0,
+        "composite_start_hit_rate": 0.625,
+        "decode_start_hit_rate": 1.0,
+        "route_hit_rate": 1.0,
+        "beta_row_hit_rate": 1.0,
+        "pointer_row_hit_rate": 1.0,
+        "composite_row_hit_rate": 0.625,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 1.0,
+        "unconditional_byte": 1.0
+      },
+      "place": {
+        "beta_start_hit_rate": 1.0,
+        "pointer_start_hit_rate": 1.0,
+        "composite_start_hit_rate": 0.8125,
+        "decode_start_hit_rate": 1.0,
+        "route_hit_rate": 1.0,
+        "beta_row_hit_rate": 1.0,
+        "pointer_row_hit_rate": 1.0,
+        "composite_row_hit_rate": 0.8125,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 1.0,
+        "unconditional_byte": 1.0
+      },
+      "gamma_mean": 0.3595946629800739
+    },
+    {
+      "update": 60,
+      "object": {
+        "beta_start_hit_rate": 1.0,
+        "pointer_start_hit_rate": 1.0,
+        "composite_start_hit_rate": 0.625,
+        "decode_start_hit_rate": 1.0,
+        "route_hit_rate": 1.0,
+        "beta_row_hit_rate": 1.0,
+        "pointer_row_hit_rate": 1.0,
+        "composite_row_hit_rate": 0.625,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 1.0,
+        "unconditional_byte": 1.0
+      },
+      "place": {
+        "beta_start_hit_rate": 1.0,
+        "pointer_start_hit_rate": 1.0,
+        "composite_start_hit_rate": 0.9166666666666666,
+        "decode_start_hit_rate": 1.0,
+        "route_hit_rate": 1.0,
+        "beta_row_hit_rate": 1.0,
+        "pointer_row_hit_rate": 1.0,
+        "composite_row_hit_rate": 0.9166666666666666,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 1.0,
+        "unconditional_byte": 1.0
+      },
+      "gamma_mean": 0.3595946629800739
+    }
+  ],
+  "deltas": {
+    "object": {
+      "composite_start_hit_rate": 0.0,
+      "composite_row_hit_rate": 0.0,
+      "pointer_start_hit_rate": 0.9583333333333334,
+      "beta_start_hit_rate": 0.0,
+      "route_hit_rate": 0.0,
+      "conditional_byte": 0.0
+    },
+    "place": {
+      "composite_start_hit_rate": 0.125,
+      "composite_row_hit_rate": 0.125,
+      "pointer_start_hit_rate": 1.0,
+      "beta_start_hit_rate": 0.0,
+      "route_hit_rate": 0.0,
+      "conditional_byte": 0.0
+    }
+  },
+  "composite_start_rising_on_both_worlds": false,
+  "composite_row_rising_on_both_worlds": false,
+  "separation_conclusion": "route is not the ceiling (route 1.0 throughout). The span head learns the gold start (pointer +0.958 object / +1.000 place), but the composite row argmax stays 0.625 on object and reaches 0.917 on place, so the frozen transport row outweighs the additive bias: the cap is architectural (additive bias vs reader position mass), not a route ceiling and not a failure of span supervision.",
+  "span_loss": {
+    "first": 6.770115438984525,
+    "last": 1.541336283333929,
+    "mean": 3.3863672843864694
+  },
+  "accounting": {
+    "adam_steps": 60,
+    "independent_trajectories": 1,
+    "package": "19.2c",
+    "excluded_from_19_2b_cap": true,
+    "prior_19_2b_independent_updates": 60
+  },
+  "attribution_rules": [
+    "gamma is the generation weight and 1 - gamma the copy weight",
+    "gamma never implies training credit (M3)"
+  ],
+  "cost": {
+    "cpu_seconds": 320.578125,
+    "wall_seconds": 331.41505269985646,
+    "adam_steps": 60
+  },
+  "mechanism_readout": {
+    "route_not_the_ceiling": true,
+    "pointer_learned_object": 0.9583333333333334,
+    "pointer_learned_place": 1.0,
+    "composite_final_object": 0.625,
+    "composite_final_place": 0.9166666666666666,
+    "conditional_byte_final": {
+      "object": 1.0,
+      "place": 1.0
+    },
+    "caveat": "no bundle saved (0 saves), so the post-training per-example composition cannot be inspected; the claim rests on the rate triple"
+  },
+  "manifest_note": "19.2c is an independent diagnostic package; parent swapped to 19.5 B step300, no dose increase, no trajectory extension, six-cell budget untouched."
+}

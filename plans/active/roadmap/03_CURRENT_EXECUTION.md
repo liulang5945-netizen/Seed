@@ -16,6 +16,26 @@
 
 **头条状态（2026-11-04，语义身份）：** 身份从“字节绑定”改为“语义哈希”：组成项是图名/契约、配置常量、模块清单、`routing_rule_version`、解码与路由规则、输入白名单、参数名/形状/dtype、声明可塑归属；`source_sha` 与 `weights_sha256` 只记录不决定身份。black-100 合并后 v1 字节摘要从 964a8c68… 漂到 1af63213…，但 `candidate_sha_v2` 恒为 773dcec2…。零更新等价探针（[报告](../../../reports/taiji_selection_routing_17_2r_format_equivalence_20261104.json)）全部逐位一致，60.80 CPU / 62.80 wall、0 优化器步、0 训练更新、0 confirm 读取；四份 2026-11-03 证据维持原字节与有效性（T3 v3 720/720、17.4 v2、新价、17.2R），身份登记见[注册报告](../../../reports/taiji_selection_routing_17_2r_identity_20261104.json)。17.5 的 checkpoint 保存/恢复复验已通过，六格跑完并结案为负结果（见下条 17.7）。本页是按时间追加的流水，旧条目里的“唯一阻塞/唯一下一步”均已被最新条目覆盖。
 
+## 2026-11-04 19.2c 成熟父包诊断 + 残差六类归因（0 存包 / 0 confirm）
+
+证据：[19.2c 报告](../../../reports/taiji_package19_2c_mature_parent_20261104.json)＋[manifest](../../manifests/taiji_package19_2c_mature_parent_20261104.json)、[残差归因](../../../reports/taiji_package19_2b_residual_attribution_20261104.json)＋[manifest](../../manifests/taiji_package19_2b_residual_attribution_20261104.json)。脚本 [`validate_taiji_package19_2c_mature_parent.py`](../../../scripts/training/validate_taiji_package19_2c_mature_parent.py)、[`attribute_taiji_package19_2b_residuals.py`](../../../scripts/training/attribute_taiji_package19_2b_residuals.py)。19.5 六格 bundle 只读，未改字节。
+
+**A. 19.2c（独立诊断包，不计入 19.2b 的 60 更新上限）**：父包换 19.5 **B 臂 step300**（route 0.998/1.0、composite 0.917/0.979、187 张量 0 NaN）；挂全新 32-d span 头（4,194），**同额 60 独立 Adam**、仅 selection；探针 0/5/10/15/20/25/30/45/60；**0 存包**。
+
+| 读数 | 0 | 30 | 45 | 60 |
+|---|---:|---:|---:|---:|
+| `composite_start_hit` 物件 | 0.625 | 0.625 | 0.625 | **0.625** |
+| `composite_start_hit` 地点 | 0.792 | 0.792 | 0.812 | **0.917** |
+| `pointer_start_hit` 物件/地点 | 0.042 / 0.000 | 1.000 / 1.000 | 1.000 / 1.000 | **1.000 / 1.000** |
+| `route_hit` 物件/地点 | 1.0 / 1.0 | 1.0 / 1.0 | 1.0 / 1.0 | **1.0 / 1.0** |
+| `conditional_byte` 物件/地点 | 1.0 / 1.0 | 1.0 / 1.0 | 1.0 / 1.0 | **1.0 / 1.0** |
+
+**可分离结论**：**route 不是穹顶**（全程 1.0）；**span 监督有效**（pointer +0.958 / +1.000、span CE 6.770→1.541）；**卡住的是合成**——标量 `pointer_bias` 加在冻结 `transport_logits` 上，幅度不足以翻越行质量差，物件恒定 0.625。属**架构上限**，不是训练不足。判据未改、未达标，六格仍不放行。**320.6 CPU / 60 Adam**。
+
+**B. 残差六类归因（0 更新）**：19.5 六格 step300、48 例/格、自由解码，按首差异互斥分类。D16-6（28031-A 全 NaN，2,320,153 参数）剔除后 5 健康格 pooled：整句 **0.6875**、理论上限 **0.7417**；`frame_byte_wrong` **20.83%**（模型 42 / 解码-EOS 8）、`start_miss` 6.25%、`content_byte_wrong` 3.75%、`eos_not_stopped` 0.42%、`route_miss` 0、`order_or_extra` 0。每臂：B **0.979**（句框仅 2.1pp）、C **0.740**（上限 0.875）、A 28032 **0.000**（frame-first 掩蔽 route）。B+C 池化 **0.8594 / 0.9271** → **句框不是主因，起点与架构为主**。**111.2 CPU / 0 Adam**。
+
+**成本与观察线**：本轮 320.6 + 111.2 = **431.8 CPU**；19.2b 线累计 **1,384.8 CPU**；六格 **32,256.6 CPU 未花**；confirm 读取 **0**；0 存包。
+
 ## 2026-11-04 18.2 位置计数 + UTF-8 掩码（验证达标，未定价、未训练）
 
 证据：[18.2 报告](../../../reports/taiji_cursor_utf8_18_2_20261104.json)＋[manifest](../../manifests/taiji_cursor_utf8_18_2_20261104.json)、[A 臂逐例](../../../reports/taiji_cursor_utf8_18_2_probe_A_20261104.json)、[B 臂逐例](../../../reports/taiji_cursor_utf8_18_2_probe_B_20261104.json)，脚本 [`probe_taiji_cursor_18_2.py`](../../../scripts/training/probe_taiji_cursor_18_2.py)。18.1 证据文件未改动（只读旁挂）。

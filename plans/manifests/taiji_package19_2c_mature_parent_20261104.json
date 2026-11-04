@@ -1,0 +1,38 @@
+{
+  "schema": "taiji-package19-2c-manifest-v1",
+  "step": "N19.2c",
+  "date": "2026-11-04",
+  "report": "reports\\taiji_package19_2c_mature_parent_20261104.json",
+  "parent": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+  "parent_sha256": {
+    "path": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+    "parameter_tensors": 187,
+    "nan_parameters": 0,
+    "all_finite": true
+  },
+  "candidate_sha_v2": "6c5466ab023e7234c250ca4f7a6c66104f5a1ba4f616eee7b3da3aab7436289e",
+  "adam_steps": 60,
+  "probes_at": [
+    0,
+    5,
+    10,
+    15,
+    20,
+    25,
+    30,
+    45,
+    60
+  ],
+  "cost_cpu": 320.578125,
+  "spent_six_cell_budget": false,
+  "confirm_reads": 0,
+  "verdict": "route is not the ceiling (route 1.0 throughout). The span head learns the gold start (pointer +0.958 object / +1.000 place), but the composite row argmax stays 0.625 on object and reaches 0.917 on place, so the frozen transport row outweighs the additive bias: the cap is architectural (additive bias vs reader position mass), not a route ceiling and not a failure of span supervision.",
+  "pointer_learned": {
+    "object": 0.9583333333333334,
+    "place": 1.0
+  },
+  "composite_final": {
+    "object": 0.625,
+    "place": 0.9166666666666666
+  }
+}

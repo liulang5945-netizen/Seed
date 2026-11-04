@@ -1,0 +1,2872 @@
+{
+  "schema": "taiji-package19-2b-residual-attribution-v1",
+  "step": "N19.2b / residual attribution (0 updates)",
+  "date": "2026-11-04",
+  "purpose": "bucket every non-passing dev example into exactly one death cause",
+  "design": {
+    "bundles": "output\\taiji_package19_compare",
+    "bundles_are": "19.5 six step300 cells (no 19.2b training)",
+    "examples_per_cell": 48,
+    "decode": "free decode, pointer_hard, temperature 1.0",
+    "bucket_rule": "first divergence against the target, content positions before frame positions",
+    "sentence_gate": "exact bytes and EOS",
+    "sensitivity": "ceiling_free ignores the route gate; ceiling_route keeps it",
+    "saves": 0,
+    "confirm_reads": 0,
+    "adam_steps": 0
+  },
+  "pooled_healthy_cells": [
+    "28031-B_stop_lock",
+    "28031-C_unlocked",
+    "28032-A_route_lock",
+    "28032-B_stop_lock",
+    "28032-C_unlocked"
+  ],
+  "contaminated_cells": [
+    "28031-A_route_lock"
+  ],
+  "d16_6_registration": {
+    "id": "D16-6 (candidate)",
+    "cell": "28031-A_route_lock-step300.pt",
+    "class": "engineering defect, not structural failure evidence",
+    "symptom": "all binding/head parameters NaN; decode readings unusable",
+    "origin": "NaN weight start in that cell's run; gamma readings missing; excluded from pooled gates",
+    "action": "excluded from every pooled statistic; bundle kept untouched"
+  },
+  "by_cell": {
+    "28031-A_route_lock": {
+      "seed": 28031,
+      "arm": "A_route_lock",
+      "examples": 48,
+      "passed": null,
+      "sentence_rate": null,
+      "failures": null,
+      "buckets": null,
+      "frame_split": null,
+      "ceiling_route": null,
+      "ceiling_free": null,
+      "skipped": true,
+      "nan_parameters": 2320153,
+      "examples_detail": []
+    },
+    "28031-B_stop_lock": {
+      "seed": 28031,
+      "arm": "B_stop_lock",
+      "examples": 48,
+      "passed": 48,
+      "sentence_rate": 1.0,
+      "failures": 0,
+      "buckets": {
+        "route_miss": {
+          "count": 0,
+          "share": 0.0
+        },
+        "start_miss": {
+          "count": 0,
+          "share": 0.0
+        },
+        "content_byte_wrong": {
+          "count": 0,
+          "share": 0.0
+        },
+        "frame_byte_wrong": {
+          "count": 0,
+          "share": 0.0
+        },
+        "eos_not_stopped": {
+          "count": 0,
+          "share": 0.0
+        },
+        "order_or_extra": {
+          "count": 0,
+          "share": 0.0
+        }
+      },
+      "frame_split": {
+        "model_generation": 0,
+        "decode_eos_logic": 0
+      },
+      "ceiling_route": 1.0,
+      "ceiling_free": 1.0,
+      "examples_detail": [
+        {
+          "world": 0,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 0,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 0,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 0,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 1,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 1,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 1,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 1,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 2,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 2,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 2,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 2,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 3,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 3,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 3,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 3,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 4,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 4,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 4,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 4,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 5,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 5,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 5,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 5,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 6,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 6,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 6,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 6,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 7,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 7,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 7,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 7,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 8,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 8,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 8,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 8,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 9,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 9,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 9,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 9,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 10,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 10,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 10,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 10,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 11,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 11,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 11,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 11,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        }
+      ],
+      "skipped": false,
+      "nan_parameters": 0
+    },
+    "28031-C_unlocked": {
+      "seed": 28031,
+      "arm": "C_unlocked",
+      "examples": 48,
+      "passed": 32,
+      "sentence_rate": 0.6666666666666666,
+      "failures": 16,
+      "buckets": {
+        "route_miss": {
+          "count": 0,
+          "share": 0.0
+        },
+        "start_miss": {
+          "count": 6,
+          "share": 0.125
+        },
+        "content_byte_wrong": {
+          "count": 7,
+          "share": 0.14583333333333334
+        },
+        "frame_byte_wrong": {
+          "count": 2,
+          "share": 0.041666666666666664
+        },
+        "eos_not_stopped": {
+          "count": 1,
+          "share": 0.020833333333333332
+        },
+        "order_or_extra": {
+          "count": 0,
+          "share": 0.0
+        }
+      },
+      "frame_split": {
+        "model_generation": 2,
+        "decode_eos_logic": 0
+      },
+      "ceiling_route": 0.75,
+      "ceiling_free": 0.75,
+      "examples_detail": [
+        {
+          "world": 0,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 0,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 0,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 0,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 1,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 1,
+          "index": 1,
+          "bucket": "start_miss",
+          "position": 3,
+          "frame_subtype": null,
+          "route": 2,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 1,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 1,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 2,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 2,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 2,
+          "index": 4,
+          "bucket": "start_miss",
+          "position": 21,
+          "frame_subtype": null,
+          "route": 6,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 2,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 3,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 3,
+          "index": 1,
+          "bucket": "content_byte_wrong",
+          "position": 22,
+          "frame_subtype": null,
+          "route": 7,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 3,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 3,
+          "index": 5,
+          "bucket": "content_byte_wrong",
+          "position": 22,
+          "frame_subtype": null,
+          "route": 7,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 4,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 4,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 4,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 4,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 5,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 5,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 5,
+          "index": 4,
+          "bucket": "content_byte_wrong",
+          "position": 4,
+          "frame_subtype": null,
+          "route": 0,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 5,
+          "index": 5,
+          "bucket": "content_byte_wrong",
+          "position": 4,
+          "frame_subtype": null,
+          "route": 0,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 6,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 6,
+          "index": 1,
+          "bucket": "start_miss",
+          "position": 21,
+          "frame_subtype": null,
+          "route": 1,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 6,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 6,
+          "index": 5,
+          "bucket": "start_miss",
+          "position": 21,
+          "frame_subtype": null,
+          "route": 1,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 7,
+          "index": 0,
+          "bucket": "start_miss",
+          "position": 21,
+          "frame_subtype": null,
+          "route": 6,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 7,
+          "index": 1,
+          "bucket": "content_byte_wrong",
+          "position": 25,
+          "frame_subtype": null,
+          "route": 4,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 7,
+          "index": 4,
+          "bucket": "start_miss",
+          "position": 21,
+          "frame_subtype": null,
+          "route": 6,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 7,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 8,
+          "index": 0,
+          "bucket": "frame_byte_wrong",
+          "position": 16,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 8,
+          "index": 1,
+          "bucket": "frame_byte_wrong",
+          "position": 16,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 8,
+          "index": 4,
+          "bucket": "eos_not_stopped",
+          "position": 24,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 8,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 9,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 9,
+          "index": 1,
+          "bucket": "content_byte_wrong",
+          "position": 22,
+          "frame_subtype": null,
+          "route": 4,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 9,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 9,
+          "index": 5,
+          "bucket": "content_byte_wrong",
+          "position": 22,
+          "frame_subtype": null,
+          "route": 4,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 10,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 10,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 10,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 10,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 11,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 11,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 11,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 11,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        }
+      ],
+      "skipped": false,
+      "nan_parameters": 0
+    },
+    "28032-A_route_lock": {
+      "seed": 28032,
+      "arm": "A_route_lock",
+      "examples": 48,
+      "passed": 0,
+      "sentence_rate": 0.0,
+      "failures": 48,
+      "buckets": {
+        "route_miss": {
+          "count": 0,
+          "share": 0.0
+        },
+        "start_miss": {
+          "count": 0,
+          "share": 0.0
+        },
+        "content_byte_wrong": {
+          "count": 0,
+          "share": 0.0
+        },
+        "frame_byte_wrong": {
+          "count": 48,
+          "share": 1.0
+        },
+        "eos_not_stopped": {
+          "count": 0,
+          "share": 0.0
+        },
+        "order_or_extra": {
+          "count": 0,
+          "share": 0.0
+        }
+      },
+      "frame_split": {
+        "model_generation": 40,
+        "decode_eos_logic": 8
+      },
+      "ceiling_route": 0.0,
+      "ceiling_free": 0.0,
+      "examples_detail": [
+        {
+          "world": 0,
+          "index": 0,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 0,
+          "index": 1,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 0,
+          "index": 4,
+          "bucket": "frame_byte_wrong",
+          "position": 1,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 0,
+          "index": 5,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 1,
+          "index": 0,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 1,
+          "index": 1,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 1,
+          "index": 4,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 1,
+          "index": 5,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 2,
+          "index": 0,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 2,
+          "index": 1,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 2,
+          "index": 4,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 2,
+          "index": 5,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 3,
+          "index": 0,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 3,
+          "index": 1,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 3,
+          "index": 4,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 3,
+          "index": 5,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 4,
+          "index": 0,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 4,
+          "index": 1,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "decode_eos_logic",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 4,
+          "index": 4,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 4,
+          "index": 5,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 5,
+          "index": 0,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 5,
+          "index": 1,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 5,
+          "index": 4,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "decode_eos_logic",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 5,
+          "index": 5,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 6,
+          "index": 0,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 6,
+          "index": 1,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "decode_eos_logic",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 6,
+          "index": 4,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 6,
+          "index": 5,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 7,
+          "index": 0,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 7,
+          "index": 1,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 7,
+          "index": 4,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 7,
+          "index": 5,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 8,
+          "index": 0,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 8,
+          "index": 1,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 8,
+          "index": 4,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 8,
+          "index": 5,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 9,
+          "index": 0,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 9,
+          "index": 1,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "decode_eos_logic",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 9,
+          "index": 4,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 9,
+          "index": 5,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 10,
+          "index": 0,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "decode_eos_logic",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 10,
+          "index": 1,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "decode_eos_logic",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 10,
+          "index": 4,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "decode_eos_logic",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 10,
+          "index": 5,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 11,
+          "index": 0,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 11,
+          "index": 1,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "decode_eos_logic",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 11,
+          "index": 4,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 11,
+          "index": 5,
+          "bucket": "frame_byte_wrong",
+          "position": 0,
+          "frame_subtype": "model_generation",
+          "route": null,
+          "ceiling_route": false,
+          "ceiling_free": false
+        }
+      ],
+      "skipped": false,
+      "nan_parameters": 0
+    },
+    "28032-B_stop_lock": {
+      "seed": 28032,
+      "arm": "B_stop_lock",
+      "examples": 48,
+      "passed": 46,
+      "sentence_rate": 0.9583333333333334,
+      "failures": 2,
+      "buckets": {
+        "route_miss": {
+          "count": 0,
+          "share": 0.0
+        },
+        "start_miss": {
+          "count": 2,
+          "share": 0.041666666666666664
+        },
+        "content_byte_wrong": {
+          "count": 0,
+          "share": 0.0
+        },
+        "frame_byte_wrong": {
+          "count": 0,
+          "share": 0.0
+        },
+        "eos_not_stopped": {
+          "count": 0,
+          "share": 0.0
+        },
+        "order_or_extra": {
+          "count": 0,
+          "share": 0.0
+        }
+      },
+      "frame_split": {
+        "model_generation": 0,
+        "decode_eos_logic": 0
+      },
+      "ceiling_route": 0.9583333333333334,
+      "ceiling_free": 0.9583333333333334,
+      "examples_detail": [
+        {
+          "world": 0,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 0,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 0,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 0,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 1,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 1,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 1,
+          "index": 4,
+          "bucket": "start_miss",
+          "position": 3,
+          "frame_subtype": null,
+          "route": 7,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 1,
+          "index": 5,
+          "bucket": "start_miss",
+          "position": 3,
+          "frame_subtype": null,
+          "route": 7,
+          "ceiling_route": false,
+          "ceiling_free": false
+        },
+        {
+          "world": 2,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 2,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 2,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 2,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 3,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 3,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 3,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 3,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 4,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 4,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 4,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 4,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 5,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 5,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 5,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 5,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 6,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 6,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 6,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 6,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 7,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 7,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 7,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 7,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 8,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 8,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 8,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 8,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 9,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 9,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 9,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 9,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 10,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 10,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 10,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 10,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 11,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 11,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 11,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 11,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        }
+      ],
+      "skipped": false,
+      "nan_parameters": 0
+    },
+    "28032-C_unlocked": {
+      "seed": 28032,
+      "arm": "C_unlocked",
+      "examples": 48,
+      "passed": 39,
+      "sentence_rate": 0.8125,
+      "failures": 9,
+      "buckets": {
+        "route_miss": {
+          "count": 0,
+          "share": 0.0
+        },
+        "start_miss": {
+          "count": 7,
+          "share": 0.14583333333333334
+        },
+        "content_byte_wrong": {
+          "count": 2,
+          "share": 0.041666666666666664
+        },
+        "frame_byte_wrong": {
+          "count": 0,
+          "share": 0.0
+        },
+        "eos_not_stopped": {
+          "count": 0,
+          "share": 0.0
+        },
+        "order_or_extra": {
+          "count": 0,
+          "share": 0.0
+        }
+      },
+      "frame_split": {
+        "model_generation": 0,
+        "decode_eos_logic": 0
+      },
+      "ceiling_route": 1.0,
+      "ceiling_free": 1.0,
+      "examples_detail": [
+        {
+          "world": 0,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 0,
+          "index": 1,
+          "bucket": "content_byte_wrong",
+          "position": 22,
+          "frame_subtype": null,
+          "route": 1,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 0,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 0,
+          "index": 5,
+          "bucket": "content_byte_wrong",
+          "position": 22,
+          "frame_subtype": null,
+          "route": 1,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 1,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 1,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 1,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 1,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 2,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 2,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 2,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 2,
+          "index": 5,
+          "bucket": "start_miss",
+          "position": 3,
+          "frame_subtype": null,
+          "route": 1,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 3,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 3,
+          "index": 1,
+          "bucket": "start_miss",
+          "position": 21,
+          "frame_subtype": null,
+          "route": 7,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 3,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 3,
+          "index": 5,
+          "bucket": "start_miss",
+          "position": 21,
+          "frame_subtype": null,
+          "route": 7,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 4,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 4,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 4,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 4,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 5,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 5,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 5,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 5,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 6,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 6,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 6,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 6,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 7,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 7,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 7,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 7,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 8,
+          "index": 0,
+          "bucket": "start_miss",
+          "position": 21,
+          "frame_subtype": null,
+          "route": 5,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 8,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 8,
+          "index": 4,
+          "bucket": "start_miss",
+          "position": 21,
+          "frame_subtype": null,
+          "route": 5,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 8,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 9,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 9,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 9,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 9,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 10,
+          "index": 0,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 10,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 10,
+          "index": 4,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 10,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 11,
+          "index": 0,
+          "bucket": "start_miss",
+          "position": 21,
+          "frame_subtype": null,
+          "route": 0,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 11,
+          "index": 1,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 11,
+          "index": 4,
+          "bucket": "start_miss",
+          "position": 21,
+          "frame_subtype": null,
+          "route": 0,
+          "ceiling_route": true,
+          "ceiling_free": true
+        },
+        {
+          "world": 11,
+          "index": 5,
+          "bucket": "pass",
+          "position": null,
+          "frame_subtype": null,
+          "route": null,
+          "ceiling_route": true,
+          "ceiling_free": true
+        }
+      ],
+      "skipped": false,
+      "nan_parameters": 0
+    }
+  },
+  "by_arm": {
+    "A_route_lock": {
+      "cells": [
+        "28032-A_route_lock"
+      ],
+      "examples": 48,
+      "sentence_rate": 0.0,
+      "ceiling_route": 0.0,
+      "buckets": {
+        "route_miss": {
+          "count": 0,
+          "share": 0.0
+        },
+        "start_miss": {
+          "count": 0,
+          "share": 0.0
+        },
+        "content_byte_wrong": {
+          "count": 0,
+          "share": 0.0
+        },
+        "frame_byte_wrong": {
+          "count": 48,
+          "share": 1.0
+        },
+        "eos_not_stopped": {
+          "count": 0,
+          "share": 0.0
+        },
+        "order_or_extra": {
+          "count": 0,
+          "share": 0.0
+        }
+      },
+      "frame_split": {
+        "model_generation": 40,
+        "decode_eos_logic": 8
+      }
+    },
+    "B_stop_lock": {
+      "cells": [
+        "28031-B_stop_lock",
+        "28032-B_stop_lock"
+      ],
+      "examples": 96,
+      "sentence_rate": 0.9791666666666667,
+      "ceiling_route": 0.9791666666666667,
+      "buckets": {
+        "route_miss": {
+          "count": 0,
+          "share": 0.0
+        },
+        "start_miss": {
+          "count": 2,
+          "share": 0.020833333333333332
+        },
+        "content_byte_wrong": {
+          "count": 0,
+          "share": 0.0
+        },
+        "frame_byte_wrong": {
+          "count": 0,
+          "share": 0.0
+        },
+        "eos_not_stopped": {
+          "count": 0,
+          "share": 0.0
+        },
+        "order_or_extra": {
+          "count": 0,
+          "share": 0.0
+        }
+      },
+      "frame_split": {
+        "model_generation": 0,
+        "decode_eos_logic": 0
+      }
+    },
+    "C_unlocked": {
+      "cells": [
+        "28031-C_unlocked",
+        "28032-C_unlocked"
+      ],
+      "examples": 96,
+      "sentence_rate": 0.7395833333333333,
+      "ceiling_route": 0.875,
+      "buckets": {
+        "route_miss": {
+          "count": 0,
+          "share": 0.0
+        },
+        "start_miss": {
+          "count": 13,
+          "share": 0.13541666666666669
+        },
+        "content_byte_wrong": {
+          "count": 9,
+          "share": 0.09375
+        },
+        "frame_byte_wrong": {
+          "count": 2,
+          "share": 0.020833333333333332
+        },
+        "eos_not_stopped": {
+          "count": 1,
+          "share": 0.010416666666666666
+        },
+        "order_or_extra": {
+          "count": 0,
+          "share": 0.0
+        }
+      },
+      "frame_split": {
+        "model_generation": 2,
+        "decode_eos_logic": 0
+      }
+    }
+  },
+  "pooled": {
+    "sentence_rate": 0.6875,
+    "ceiling_route": 0.7416666666666667,
+    "ceiling_free": 0.7416666666666667,
+    "buckets": {
+      "route_miss": {
+        "share": 0.0,
+        "count": 0
+      },
+      "start_miss": {
+        "share": 0.0625,
+        "count": 15
+      },
+      "content_byte_wrong": {
+        "share": 0.0375,
+        "count": 9
+      },
+      "frame_byte_wrong": {
+        "share": 0.20833333333333334,
+        "count": 50
+      },
+      "eos_not_stopped": {
+        "share": 0.004166666666666667,
+        "count": 1
+      },
+      "order_or_extra": {
+        "share": 0.0,
+        "count": 0
+      }
+    },
+    "frame_split": {
+      "model_generation": 42,
+      "decode_eos_logic": 8
+    }
+  },
+  "cost": {
+    "cpu_seconds": 111.234375,
+    "wall_seconds": 115.49973679985851,
+    "adam_steps": 0
+  },
+  "pooled_excluding_collapsed_A": {
+    "cells": [
+      "28031-B_stop_lock",
+      "28032-B_stop_lock",
+      "28031-C_unlocked",
+      "28032-C_unlocked"
+    ],
+    "sentence_rate": 0.859375,
+    "ceiling_route": 0.9270833333333334,
+    "buckets": {
+      "route_miss": {
+        "share": 0.0
+      },
+      "start_miss": {
+        "share": 0.078125
+      },
+      "content_byte_wrong": {
+        "share": 0.046875
+      },
+      "frame_byte_wrong": {
+        "share": 0.010416666666666666
+      },
+      "eos_not_stopped": {
+        "share": 0.005208333333333333
+      },
+      "order_or_extra": {
+        "share": 0.0
+      }
+    }
+  },
+  "readout": {
+    "b_arm": "sentence 0.979 pooled; the only residual is 2.1pp start_miss; the sentence frame presses almost nothing",
+    "c_arm": "sentence 0.740 pooled, ceiling 0.875: start_miss 13.5pp + content 9.4pp are copy-fixable; 12.5pp stays frame/EOS/length",
+    "a_arm_28032": "sentence 0.000; 47/48 failures diverge at frame position 0, so the collapsed route is masked by first-divergence priority and is not readable from this table",
+    "a_arm_28031": "D16-6 engineering defect (all parameters NaN), excluded from every pooled statistic",
+    "frame_pressing": "for the best arm B the frame presses 2.1pp; for C about 12.5pp; the pooled 20.8pp frame share is almost all the collapsed A cell",
+    "new_description_gate": "this table measures exact sentence bytes only; the 19.5 new_description ~0.26 gate is not in scope here"
+  },
+  "bucket_caveat": "first divergence decides; a frame error before a content position hides any route miss downstream",
+  "route_diagnostic_secondary": "route_miss reads 0.0 everywhere because no example first diverges at an entity start after an intact frame; it is a lower bound, not a route pass",
+  "manifest_note": "0 updates, 0 saves, 0 confirm reads"
+}

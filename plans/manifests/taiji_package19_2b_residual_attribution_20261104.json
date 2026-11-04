@@ -1,0 +1,41 @@
+{
+  "schema": "taiji-package19-2b-residual-attribution-manifest-v1",
+  "step": "N19.2b residual attribution",
+  "date": "2026-11-04",
+  "report": "reports\\taiji_package19_2b_residual_attribution_20261104.json",
+  "healthy_cells": [
+    "28031-B_stop_lock",
+    "28031-C_unlocked",
+    "28032-A_route_lock",
+    "28032-B_stop_lock",
+    "28032-C_unlocked"
+  ],
+  "contaminated_cells": [
+    "28031-A_route_lock"
+  ],
+  "pooled_buckets": {
+    "route_miss": 0.0,
+    "start_miss": 0.0625,
+    "content_byte_wrong": 0.0375,
+    "frame_byte_wrong": 0.2083,
+    "eos_not_stopped": 0.0042,
+    "order_or_extra": 0.0
+  },
+  "ceiling_route": 0.7417,
+  "ceiling_free": 0.7417,
+  "cost_cpu": 111.234375,
+  "adam_steps": 0,
+  "confirm_reads": 0,
+  "pooled_excluding_collapsed_A": {
+    "sentence": 0.8594,
+    "ceiling_route": 0.9271
+  },
+  "readout": {
+    "b_arm": "sentence 0.979 pooled; the only residual is 2.1pp start_miss; the sentence frame presses almost nothing",
+    "c_arm": "sentence 0.740 pooled, ceiling 0.875: start_miss 13.5pp + content 9.4pp are copy-fixable; 12.5pp stays frame/EOS/length",
+    "a_arm_28032": "sentence 0.000; 47/48 failures diverge at frame position 0, so the collapsed route is masked by first-divergence priority and is not readable from this table",
+    "a_arm_28031": "D16-6 engineering defect (all parameters NaN), excluded from every pooled statistic",
+    "frame_pressing": "for the best arm B the frame presses 2.1pp; for C about 12.5pp; the pooled 20.8pp frame share is almost all the collapsed A cell",
+    "new_description_gate": "this table measures exact sentence bytes only; the 19.5 new_description ~0.26 gate is not in scope here"
+  }
+}
