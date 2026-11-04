@@ -1,0 +1,9 @@
+{
+  "schema": "taiji-package19-2j-manifest-v1",
+  "step": "N19.2j",
+  "date": "2026-11-04",
+  "report": "reports\\taiji_package19_2j_from_scratch_selection_ab_20261104.json",
+  "branch": "budget_extrapolation_exceeds_cap",
+  "adam_updates": 5,
+  "cost_cpu": 52.9375
+}
