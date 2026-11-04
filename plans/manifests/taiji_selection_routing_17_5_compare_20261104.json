@@ -1,0 +1,44 @@
+{
+  "schema": "taiji-selection-routing-17-5-manifest-v1",
+  "step": "N17.5",
+  "date": "2026-11-04",
+  "report": "reports\\taiji_selection_routing_17_5_compare_20261104.json",
+  "report_sha256": "3f947db7e4cee7029830b1488ac2562226d25b1bbf69a593327b771823d10e50",
+  "report_bytes": 1171327,
+  "inputs": {
+    "parents": {
+      "28031": {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28031-A-locked-step300.pt",
+        "sha256": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169"
+      },
+      "28032": {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28032-A-locked-step300.pt",
+        "sha256": "3d55bff6d51e7c3d7079e068caf70f1b131ce43e0be830abb1f71b5a39b556a5"
+      }
+    },
+    "thresholds": {
+      "path": "plans\\manifests\\taiji_selection_routing_17_3_r1_thresholds_20261103.json",
+      "sha256": "2118edd6d6622068b91e988ad9f628d56d6c2f663aa85de77b63ce9973d382cb"
+    }
+  },
+  "outputs": {
+    "bundles": [
+      "output\\taiji_selection_routing_17_5\\28031-A_route_lock-step300.pt",
+      "output\\taiji_selection_routing_17_5\\28031-B_stop_lock-step300.pt",
+      "output\\taiji_selection_routing_17_5\\28031-C_unlocked-step300.pt",
+      "output\\taiji_selection_routing_17_5\\28032-A_route_lock-step300.pt",
+      "output\\taiji_selection_routing_17_5\\28032-B_stop_lock-step300.pt",
+      "output\\taiji_selection_routing_17_5\\28032-C_unlocked-step300.pt"
+    ],
+    "step150": [
+      "output\\taiji_selection_routing_17_5\\28031-A_route_lock-step150.pt",
+      "output\\taiji_selection_routing_17_5\\28031-B_stop_lock-step150.pt",
+      "output\\taiji_selection_routing_17_5\\28031-C_unlocked-step150.pt",
+      "output\\taiji_selection_routing_17_5\\28032-A_route_lock-step150.pt",
+      "output\\taiji_selection_routing_17_5\\28032-B_stop_lock-step150.pt",
+      "output\\taiji_selection_routing_17_5\\28032-C_unlocked-step150.pt"
+    ]
+  },
+  "formal_adam": 1800,
+  "confirm_reads": 0
+}

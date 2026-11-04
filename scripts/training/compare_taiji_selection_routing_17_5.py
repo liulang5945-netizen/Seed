@@ -97,12 +97,20 @@ POSITION_PROBE = 40
 CONTENT_SAMPLE_MODULO = 10
 PRIOR_CPU = 1584.7
 PRIOR_WALL = 1811.0
+ATTEMPT_ONE = {"cpu": 12743.296875, "wall": 2215.36}
+ATTEMPT_TWO = {"cpu": 1500.0, "wall": 480.0}
 PRIOR_BREAKDOWN = {
     "before_window": {"cpu": 552.8, "wall": 740.2},
     "verify_17_3_recent": {"cpu": 48.8, "wall": 51.2},
     "verify_17_3_two_invalid_runs": {"cpu": 105.0, "wall": 109.5},
     "engineering_pilot_20": {"cpu": 52.5, "wall": 60.0},
     "engineering_pilot_220": {"cpu": 825.6, "wall": 850.0},
+    "n17_5_attempt1_training_crash": ATTEMPT_ONE,
+    "n17_5_attempt2_gate_estimate": dict(ATTEMPT_TWO, estimate=True),
+}
+CUMULATIVE_PRIOR = {
+    "cpu": PRIOR_CPU + ATTEMPT_ONE["cpu"] + ATTEMPT_TWO["cpu"],
+    "wall": PRIOR_WALL + ATTEMPT_ONE["wall"] + ATTEMPT_TWO["wall"],
 }
 ENGINEERING_ADAM = 240 + 18
 WATCH_CPU = 20000.0
@@ -1000,8 +1008,8 @@ def run_one(seed: int, arm: str, resume: bool = False) -> dict:
         "step300": final,
         "train": {
             "updates": len(rows),
-            "first_loss": rows[0]["loss"],
-            "last_loss": rows[-1]["loss"],
+            "first_loss": rows[0]["loss"] if rows else None,
+            "last_loss": rows[-1]["loss"] if rows else None,
             "loss_by_stage": {
                 name: {
                     "updates": len(stage_rows(name)),
@@ -1013,9 +1021,10 @@ def run_one(seed: int, arm: str, resume: bool = False) -> dict:
                     "mean_entropy": statistics.fmean(row["entropy"] for row in stage_rows(name)),
                 }
                 for name in ("selection", "copy", "joint")
+                if stage_rows(name)
             },
             "self_prefix_updates": self_prefix_updates,
-            "curriculum_rate_max": max(row["curriculum_rate"] for row in rows),
+            "curriculum_rate_max": max(row["curriculum_rate"] for row in rows) if rows else None,
             "curriculum_by_stage": {
                 name: {
                     "updates": len(stage_rows(name)),
@@ -1025,9 +1034,10 @@ def run_one(seed: int, arm: str, resume: bool = False) -> dict:
                     "self_prefix_updates": sum(1 for row in stage_rows(name) if row["self_prefix"]),
                 }
                 for name in ("selection", "copy", "joint")
+                if stage_rows(name)
             },
-            "temperature_min": min(row["temperature"] for row in rows),
-            "temperature_max": max(row["temperature"] for row in rows),
+            "temperature_min": min(row["temperature"] for row in rows) if rows else None,
+            "temperature_max": max(row["temperature"] for row in rows) if rows else None,
             "grad_variance": variance,
         },
         "products": {
@@ -1040,6 +1050,69 @@ def run_one(seed: int, arm: str, resume: bool = False) -> dict:
         "consistency": consistency,
         "evaluation": {"ok": True},
         "timing": {"cpu_seconds": cpu, "wall_seconds": wall},
+    }
+
+
+def assemble_one(seed: int, arm: str) -> dict:
+    """Rebuild a run record from the saved step300 bundle without retraining."""
+    tag = f"{seed}-{arm}"
+    start_cpu = time.process_time()
+    start_wall = time.perf_counter()
+    parent = ROOT / PARENTS[seed]
+    parent_sha = sha256_file(parent)
+    train, dev = load_fixtures()
+    baseline, _optimizer = build_routing_candidate(parent, seed, arm)
+    step0 = evaluate_dev(baseline, dev, arm, tag, full=False)
+    del baseline, _optimizer
+    checkpoint_path = OUTPUT_DIR / f"{tag}-step{CHECKPOINT_UPDATE}.pt"
+    final_path = OUTPUT_DIR / f"{tag}-step{UPDATES}.pt"
+    candidate, optimizer, _state, bundle_update, _payload = load_routing_bundle(final_path)
+    final = evaluate_dev(candidate, dev, arm, tag, full=True)
+    progress = json.loads((OUTPUT_DIR / f"progress-{tag}.json").read_text(encoding="utf-8"))
+    progress_update = int(progress["update"])
+    consistency = {
+        "progress_update": progress_update,
+        "bundle_update": bundle_update,
+        "bundle_exists": final_path.exists(),
+        "expected_update": UPDATES,
+    }
+    if not (final_path.exists() and progress_update == UPDATES and bundle_update == UPDATES):
+        raise RuntimeError(f"artifact inconsistency for {tag}: {consistency}")
+    train_cpu = float(progress["cost"]["cpu_seconds"])
+    train_wall = float(progress["cost"]["wall_seconds"])
+    return {
+        "schema": "taiji-selection-routing-17-5-run-v1",
+        "step": "N17.5",
+        "seed": seed,
+        "arm": arm,
+        "parent": {"path": str(PARENTS[seed]), "sha256": parent_sha},
+        "candidate": {"candidate_sha": candidate_identity(candidate)["candidate_sha"]},
+        "resumed_from": CHECKPOINT_UPDATE,
+        "step0": step0,
+        "step300": final,
+        "train": {
+            "updates": UPDATES,
+            "last_loss": progress["last_loss"],
+            "self_prefix_updates": progress["self_prefix_updates"],
+            "note": "per-update trace was not persisted by the aborted assembly; "
+            "loss/cost come from progress-*.json",
+        },
+        "products": {
+            "step150_bundle": {
+                "path": str(checkpoint_path),
+                "bytes": checkpoint_path.stat().st_size if checkpoint_path.exists() else 0,
+            },
+            "step300_bundle": {
+                "path": str(final_path),
+                "bytes": final_path.stat().st_size,
+            },
+        },
+        "consistency": consistency,
+        "evaluation": {"ok": True, "mode": "assemble"},
+        "timing": {
+            "cpu_seconds": train_cpu + (time.process_time() - start_cpu),
+            "wall_seconds": train_wall + (time.perf_counter() - start_wall),
+        },
     }
 
 
@@ -1351,6 +1424,7 @@ def main() -> int:
     parser.add_argument("--preflight", action="store_true")
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--evalcheck", action="store_true")
+    parser.add_argument("--assemble", action="store_true")
     arguments = parser.parse_args()
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     if arguments.smoke:
@@ -1362,6 +1436,8 @@ def main() -> int:
     if arguments.preflight:
         print(json.dumps([preflight_roundtrip(seed) for seed in SEEDS]))
         return 0
+    if arguments.assemble:
+        return assemble_all()
     if arguments.worker:
         result = run_one(arguments.seed, arguments.arm, resume=arguments.resume)
         write_json(OUTPUT_DIR / f"run-{arguments.seed}-{arguments.arm}.json", result)
@@ -1417,11 +1493,59 @@ def main() -> int:
         write_json(OUTPUT_DIR / "failures.json", {"failures": failures})
         print(json.dumps({"failures": len(failures)}))
         return 1
-    report = aggregate(results, {"cpu": PRIOR_CPU, "wall": PRIOR_WALL})
+    return finalize(results, start_cpu, start_wall, assemble=False)
+
+
+def assemble_all() -> int:
+    """Rebuild the six run records from the persisted step300 bundles (no retrain)."""
+    start_cpu = time.process_time()
+    start_wall = time.perf_counter()
+    results = []
+    failures = []
+    with ProcessPoolExecutor(max_workers=len(SEEDS) * len(ARMS)) as pool:
+        futures = {
+            pool.submit(assemble_one, seed, arm): (seed, arm) for seed in SEEDS for arm in ARMS
+        }
+        for future in as_completed(futures):
+            seed, arm = futures[future]
+            try:
+                result = future.result()
+                results.append(result)
+                write_json(OUTPUT_DIR / f"run-{seed}-{arm}.json", result)
+                print(
+                    json.dumps(
+                        {
+                            "assembled": f"{seed}-{arm}",
+                            "cpu": round(result["timing"]["cpu_seconds"], 1),
+                            "step300_overall": result["step300"]["overall"]["completed"],
+                        },
+                        ensure_ascii=False,
+                    ),
+                    flush=True,
+                )
+            except Exception:  # noqa: BLE001 - record failures, do not hide them
+                failures.append({"seed": seed, "arm": arm, "traceback": traceback.format_exc()})
+                print(json.dumps({"failed": f"{seed}-{arm}"}), flush=True)
+    if failures:
+        write_json(OUTPUT_DIR / "assemble-failures.json", {"failures": failures})
+        print(json.dumps({"failures": len(failures)}))
+        return 1
+    return finalize(results, start_cpu, start_wall, assemble=True)
+
+
+def finalize(results: list[dict], start_cpu: float, start_wall: float, *, assemble: bool) -> int:
+    report = aggregate(results, CUMULATIVE_PRIOR)
     report["driver_timing"] = {
         "cpu_seconds": time.process_time() - start_cpu,
         "wall_seconds": time.perf_counter() - start_wall,
     }
+    if assemble:
+        report["assemble"] = {
+            "mode": "bundle_replay",
+            "retrained_updates": 0,
+            "note": "six run records rebuilt from the persisted step300 bundles and progress "
+            "files; only dev evaluation was recomputed, no additional optimisation step ran",
+        }
     report["source"] = {
         "compare_script": str(Path(__file__).resolve().relative_to(ROOT)),
         "routing": "taiji/selection_routing.py",
