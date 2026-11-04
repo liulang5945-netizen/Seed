@@ -1,9 +1,64 @@
 {
   "schema": "taiji-package19-2j-manifest-v1",
   "step": "N19.2j",
-  "date": "2026-11-04",
+  "date": "2026-11-05",
+  "mode": "assemble",
   "report": "reports\\taiji_package19_2j_from_scratch_selection_ab_20261104.json",
-  "branch": "budget_extrapolation_exceeds_cap",
-  "adam_updates": 5,
-  "cost_cpu": 52.9375
+  "parent": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+  "bundles": {
+    "28031-O": {
+      "path": "output\\taiji_package19_2j_from_scratch_selection_ab\\28031-O_baseline-step300.pt",
+      "bytes": 29289064,
+      "update_index": 300,
+      "alignment": false,
+      "head_parameters": 37120,
+      "candidate_sha_v2": "773dcec2e1131d1f3c8784153633d85a9144268a4d5167790740cdd488153aa1",
+      "file_sha256": "dadf755150f2fe12e8b46facbabda98bb3aad636537ef63609acd9528589d20b"
+    },
+    "28031-N": {
+      "path": "output\\taiji_package19_2j_from_scratch_selection_ab\\28031-N_alignment-step300.pt",
+      "bytes": 29323771,
+      "update_index": 300,
+      "alignment": true,
+      "head_parameters": 38440,
+      "candidate_sha_v2": "4b887487136e7f23a181d2085c862dcef5812de0491cf9b15c0e85fb7956e804",
+      "file_sha256": "b4533d22ef886bc6cd953f8559a7f16b0da9b4ad871831b24c712c73697daaa3"
+    },
+    "28032-O": {
+      "path": "output\\taiji_package19_2j_from_scratch_selection_ab\\28032-O_baseline-step300.pt",
+      "bytes": 29289064,
+      "update_index": 300,
+      "alignment": false,
+      "head_parameters": 37120,
+      "candidate_sha_v2": "773dcec2e1131d1f3c8784153633d85a9144268a4d5167790740cdd488153aa1",
+      "file_sha256": "9a90a80343017ba29afe979fcf793767fc154fa059d17ee85943d8db12cd5e6f"
+    },
+    "28032-N": {
+      "path": "output\\taiji_package19_2j_from_scratch_selection_ab\\28032-N_alignment-step300.pt",
+      "bytes": 29323771,
+      "update_index": 300,
+      "alignment": true,
+      "head_parameters": 38440,
+      "candidate_sha_v2": "4b887487136e7f23a181d2085c862dcef5812de0491cf9b15c0e85fb7956e804",
+      "file_sha256": "8d7e9de48707c4ee5a38ecf12f85621f03a277e9cff3ae8f57841ece10716949"
+    }
+  },
+  "branch": "scoring_form_is_not_the_bottleneck",
+  "gates": {
+    "new_route_hit_object": false,
+    "new_route_miss": false,
+    "swap_hard_argmax_new": false,
+    "old_route_hit_no_regression": true,
+    "new_composite_start_hit_object": false,
+    "new_conditional_byte_object": false,
+    "frozen_path_eos_frame": true
+  },
+  "pooled_completed_delta": 0.031249999999999972,
+  "pooled_completed_n_wins": 1855,
+  "training_adam_updates": 1200,
+  "rebuild_adam_updates": 0,
+  "training_wall_seconds": 4961.0,
+  "training_cpu_seconds": null,
+  "cpu_status": "instrumentation_gap",
+  "confirm_reads": 0
 }

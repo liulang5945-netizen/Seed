@@ -2144,7 +2144,7 @@ bootstrap 2000 轮（配对、seed 20261104）三项 **Δ=0.0、CI [0,0]、`excl
 
 本轮 **404.8 CPU / 420.7 wall / 60 Adam / 2 轨迹 / 1 包 / 0 confirm**；含首次失败尝试 **582.2 CPU**（观测值，未插桩）→ 本包合计 **987.0 CPU**（功能项 445×3.3=**1,468.5**，用 67.2%）；19.2b 线累计 **3,493.4 CPU**；**六格 111,293.5 CPU、选择段 37,547.6 CPU 仍不放行。**
 
-## 19.2j 从零选择段 A/B（2026-11-04；0 训练 / 停在价格闸门）
+## 19.2j 从零选择段 A/B（2026-11-05 收口；1,200 Adam 全完成，step300 只读重建）
 
 **A. 0 成本核查（写在报告最前面，owner ①）**：19.2i 拟用的 12 路 listwise CE 与训练中在跑的 `selection_loss` 同构——`score_rows` 输出 R+1 行（12 记录＋1 null），`F.cross_entropy` over 该行集合、gold 记录 NLL，每 stage 内容步均值再跨 stage 均值，τ=1。19.2i 的两处差异（τ→0.1、只在 2 个起点求和）都指向**更弱/更窄** → 判 **D16-11 `duplicate_objective`**，**19.2i 退役**，省 **1,089 CPU**；架构问题改走 19.2j。
 
@@ -2166,10 +2166,10 @@ N 新增块初始化：`W_align` U(±1/√32)=±0.177、`offset_embed` U(±1/√
 
 **D. 判据（8 项）**：新描述 `route_hit ≥0.90`、`route_miss ≤0.05`；换序硬 argmax **≥18/20**；旧描述 `route_hit ≥ O−0.02`；物件 `composite_start ≥0.70`、`conditional_byte ≥0.90`；EOS/UTF-8 冻结路径不回退；可辨识性 `|log10(新增 per-param RMS 梯度 / 主干 per-param RMS 梯度)| ≤1`（step 300）。归因：逐 seed 与 pooled 的 **N−O** 差值 + 12 world 聚类 bootstrap（2000 轮）。
 
-**E. 首批读数（0 训练）**：新增块梯度非零（`W_align` **1.81e-3**、`offset_embed` **1.01e-2**）；**per-parameter RMS 比 log10 = −1.425（聚合 −2.198）→ 初始化时不可辨识**；未训练新头 `need_fix` **96/96**（"从零"符合预期）；两臂共享初始化逐位一致、两条存包路径 `round_trip_ok`、删 `W_align.weight` 必拒。
+**E. 训练与记账（2026-11-05）**：**1,200 Adam 全部跑完**，4 个 step300 bundle 完整（28031-O/N、28032-O/N，02:10:20–02:13:49）；报告在 `training.first/last` 的 `(seed, arm)` 元组键上崩溃（`TypeError`），中途读数与 CPU 计时只在内存 → **工程失败，不是实验失败**（D16-15）。修复：键改 `f"{seed}|{arm}"`、全量 `sanitize_keys()`、`write_json_safe()`（tmp→replace）、`serialization_precheck()` 进 `--dry-run-pricing` 与主训练前必过项；运行期读数逐行 append 到 `progress-*.jsonl`。
 
-**F. 价格闸门（owner 规则：超 12,000 先报不跑）**：实测 **2.856 CPU/更新** → 外推 **12,960.75**（+8.0%）；复测 **2.70** → **12,342.0**（+2.9%）；两次均 > 12,000（＝(单价×1,200＋500)×3.3）→ **分支 `budget_extrapolation_exceeds_cap`，1,200 Adam 未执行、0 存包**。先验的 owner 估计（4 CPU/更新）外推则为 17,490，同样不放行。
+**F. step300 只读重建（0 Adam / 311.3 CPU / 319.3 wall）**：新描述整句 O **0.2396/0.2396**、N **0.2604/0.2812**；route_hit 物件 O **0.375/0.5312**、N **0.6146/0.5208**；route_miss O **0.4479/0.3333**、N **0.2604/0.3333**；旧描述两臂 **1.000**；EOS/UTF-8 **192/192**。Δ=N−O（12 world bootstrap 2000 轮，`n_wins`=Δ>0）：整句 +0.0208 [0.0000,0.0521] / +0.0417 [−0.0312,0.1042]，**pooled +0.0312 [−0.0104,0.0677]**（`n_wins` 1855/2000）；物件 route **pooled +0.1146 [0.0625,0.1615]**（2000/2000）；物件起点 pooled +0.0990 [0.0417,0.1562]。换序硬 argmax O 2/0、N 0/0（门 18/20）。step300 可辨识性 **log10 per-param RMS 比 −0.436**（聚合 −1.208）→ 可辨识；step100 记 **`inferred=过闸 / measured:false`**（28031-N 到达 step300 即证明 100 步闸未触发）；**step50/100/200/250 路由读数 `unrecoverable`**（无中间 checkpoint，step300 不得反推）。
 
-**G. 判定**：本次**没有**产出 N vs O 的任何行为读数，故 `n_wins` / `equivalent` / `n_loses` / `not_identifiable` **四个分支都未触发**；不得把"没跑"读成任一支。**唯一建议**：放行 **13,000 CPU 上限**（只改上限、设计变量一个不动）；若不放行，退到"1 seed × 2 臂 × 300"（外推 6,996 CPU），代价是失去跨 seed 复现、归因强度下降。
+**G. 判定**：分支 **`scoring_form_is_not_the_bottleneck`**（两 seed 同判；7 门过 2：旧描述不回退、EOS/UTF-8）。打分形式不是瓶颈：整句等价，物件 route 的显著增益被 conditional_byte（28031 物件 **0.813→0.643**）抵消，未转成句级增益。**唯一建议 19.2k「span 指针从零可训」**（O 臂为基线、唯一变量＝冻结 span 解冻并从零训练、2 seed × 300、`composite_start ≥0.70`），**未启动，等 owner 裁定与计价**。
 
-**H. 花费**：**108.5 CPU（55.6＋52.9 两次闸门）/ 10 次计价 Adam / 0 训练更新 / 0 存包 / 0 confirm**；累计 **3,601.9 CPU**。
+**H. 花费与缺口**：训练 wall **4,961 s（00:51:08→02:13:49）**；**CPU 不可得＝仪器缺口**（计时只在内存）；重建 **311.3 CPU**；**1,200 Adam / 4 包 / 0 confirm**。证据：报告＋manifest＋4 bundle＋`reports/taiji_package19_2j_rebuild_progress_20261105.jsonl`。

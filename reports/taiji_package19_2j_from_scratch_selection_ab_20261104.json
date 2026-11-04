@@ -1,189 +1,1301 @@
 {
   "schema": "taiji-package19-2j-from-scratch-selection-ab-v1",
   "step": "N19.2j from-scratch selection A/B",
-  "date": "2026-11-04",
-  "zero_cost_check": {
-    "item": "19.2i 12-way listwise CE vs the selection CE already trained against",
-    "existing": {
-      "where": "taiji/selection_routing.py :: head.selection_loss, used by every 19.x train script",
-      "formula": "F.cross_entropy(scores.unsqueeze(0), [route_label])",
-      "input_tensor": "score_rows(goal, keys, s_t, prev_emb) -> R+1 rows (12 records + null)",
-      "reduction": "mean over every content step in a stage, then mean across stages (18 steps)",
-      "temperature": 1.0,
-      "gold_objective": "record-level listwise NLL, null row competes"
+  "date": "2026-11-05",
+  "mode": "--assemble (read-only rebuild from the four step-300 bundles)",
+  "rebuild": {
+    "owner_item": "2026-11-05 item 1: rebuild the readings, zero Adam, <= 500 CPU",
+    "bundles": {
+      "28031-O": {
+        "path": "output\\taiji_package19_2j_from_scratch_selection_ab\\28031-O_baseline-step300.pt",
+        "bytes": 29289064,
+        "update_index": 300,
+        "alignment": false,
+        "head_parameters": 37120,
+        "candidate_sha_v2": "773dcec2e1131d1f3c8784153633d85a9144268a4d5167790740cdd488153aa1",
+        "file_sha256": "dadf755150f2fe12e8b46facbabda98bb3aad636537ef63609acd9528589d20b"
+      },
+      "28031-N": {
+        "path": "output\\taiji_package19_2j_from_scratch_selection_ab\\28031-N_alignment-step300.pt",
+        "bytes": 29323771,
+        "update_index": 300,
+        "alignment": true,
+        "head_parameters": 38440,
+        "candidate_sha_v2": "4b887487136e7f23a181d2085c862dcef5812de0491cf9b15c0e85fb7956e804",
+        "file_sha256": "b4533d22ef886bc6cd953f8559a7f16b0da9b4ad871831b24c712c73697daaa3"
+      },
+      "28032-O": {
+        "path": "output\\taiji_package19_2j_from_scratch_selection_ab\\28032-O_baseline-step300.pt",
+        "bytes": 29289064,
+        "update_index": 300,
+        "alignment": false,
+        "head_parameters": 37120,
+        "candidate_sha_v2": "773dcec2e1131d1f3c8784153633d85a9144268a4d5167790740cdd488153aa1",
+        "file_sha256": "9a90a80343017ba29afe979fcf793767fc154fa059d17ee85943d8db12cd5e6f"
+      },
+      "28032-N": {
+        "path": "output\\taiji_package19_2j_from_scratch_selection_ab\\28032-N_alignment-step300.pt",
+        "bytes": 29323771,
+        "update_index": 300,
+        "alignment": true,
+        "head_parameters": 38440,
+        "candidate_sha_v2": "4b887487136e7f23a181d2085c862dcef5812de0491cf9b15c0e85fb7956e804",
+        "file_sha256": "8d7e9de48707c4ee5a38ecf12f85621f03a277e9cff3ae8f57841ece10716949"
+      }
     },
-    "proposal_19_2i": {
-      "formula": "CE(softmax(scores[:R]/tau), gold_record)",
-      "input_tensor": "same tensor, first R rows (null dropped)",
-      "reduction": "sum over the 2 content starts only",
-      "temperature": 0.1,
-      "gold_objective": "same record-level NLL, null excluded"
-    },
-    "differences": [
-      "temperature 1 -> 0.1 (sharper, not new supervision)",
-      "coverage 18 content steps -> 2 starts (weaker, not new supervision)"
-    ],
-    "verdict": "duplicate_objective (D16-11): same objective family, both deltas narrower",
-    "action": "19.2i retired; 1,089 CPU not spent; architecture question routed to 19.2j"
+    "adam_updates": 0,
+    "cpu_seconds": 311.28125,
+    "wall_seconds": 319.3472720000427,
+    "cpu_cap": 500.0,
+    "within_cap": true,
+    "cpu_timer_logged": "reports\\taiji_package19_2j_rebuild_progress_20261105.jsonl"
   },
-  "preregistration": {
-    "written_before_training": true,
-    "variable_table": {
-      "shared_bit_for_bit": [
-        "head.W_hidden.weight[:, :576]",
-        "head.W_hidden.bias",
-        "head.w_out.weight",
-        "head.k_null",
-        "parent.binding (frozen)",
-        "parent.span_head (frozen, no span loss)"
-      ],
-      "only_difference": "N adds W_align(32x32) + offset_embed(5x8) + 4 extra W_hidden columns",
-      "same": [
-        "init seed 28031 / 28032",
-        "data order (premise.ORDER_SEED schedule over 640 train fixtures)",
-        "batch 8, LR 1e-3, clip 1.0, 300 updates, selection CE only",
-        "dev 192 (96 old + 96 new description), swap pairs 20"
-      ],
-      "design_error_rule": "any other difference between O and N voids the package"
+  "supersedes": {
+    "report": "reports\\taiji_package19_2j_from_scratch_selection_ab_20261104.json",
+    "branch": "budget_extrapolation_exceeds_cap",
+    "why": "the owner raised the cap to 13,000 and the 1,200-update run then executed"
+  },
+  "design": {
+    "question": "is the scoring form the object-side cause, tested from zero",
+    "oe_arm": "O = pooled description/record dot-product form",
+    "n_arm": "N = 19.2h sequence-surface form, re-initialised at trunk scale",
+    "held_equal": [
+      "parent binding graph (frozen, no copy/joint training)",
+      "parent span pointer (frozen, no span supervision)",
+      "initialisation seed (shared tensors copied bit for bit)",
+      "data order (one schedule over the same train fixtures)",
+      "batch 8 / LR 1e-3 / clip 1.0 / 300 updates / selection CE only"
+    ],
+    "only_difference": "scoring form (+1,320 parameters in N)",
+    "seeds": [
+      28031,
+      28032
+    ],
+    "updates_per_run": 300,
+    "adam_total": 1200
+  },
+  "training": {
+    "updates_completed": 1200,
+    "updates_by_run": {
+      "28031-O": 300,
+      "28031-N": 300,
+      "28032-O": 300,
+      "28032-N": 300
     },
-    "gates": {
-      "new_route_hit_object": ">= 0.9",
-      "new_route_miss": "<= 0.05",
-      "swap_hard_argmax_new": ">= 18/20",
-      "old_route_hit_object": ">= O - 0.02",
-      "new_composite_start_hit_object": ">= 0.7",
-      "new_conditional_byte_object": ">= 0.9",
-      "frozen_path_eos_frame": "no regression",
-      "identifiability": "|log10(added per-parameter RMS grad / trunk RMS grad)| <= 1 at step 300"
+    "wall_seconds": 4961.0,
+    "wall_source": "bundle file timestamps 00:51:08 -> 02:13:49 (82.7 min, owner snapshot)",
+    "cpu_seconds": null,
+    "cpu_status": "instrumentation_gap",
+    "readings_lost": "mid-run gate, activity pre-check, price guard, CE curve"
+  },
+  "readings": {
+    "28031-O": {
+      "update": 300,
+      "new_route_hit": 0.375,
+      "new_route_miss": 0.4479166666666667,
+      "old_route_hit": 1.0,
+      "new_sentence": 0.23958333333333334,
+      "old_sentence": 1.0,
+      "composite_start_object": 0.3020833333333333,
+      "composite_start_place": 0.4895833333333333,
+      "conditional_byte_object": 0.8132183908045977,
+      "conditional_byte_place": 0.9822695035460993,
+      "swap_argmax_changed": 2,
+      "swap_pairs": 20,
+      "encoding": {
+        "full_192": {
+          "examples": 192,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        },
+        "new_description_96": {
+          "examples": 96,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        },
+        "old_description_96": {
+          "examples": 96,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        }
+      },
+      "measured": true
     },
-    "attribution": "per-seed and pooled N-O deltas with a 12-world cluster bootstrap (2000 rounds); the sign is N minus O so that a lower bound above 0 means N wins",
-    "branches": {
-      "n_wins": "bootstrap lower bound > 0 -> scoring form is the object-side cause; wait for owner",
-      "equivalent": "interval contains 0 -> scoring form is not the bottleneck; go to byte-fingerprint oracle probe",
-      "n_loses": "record the negative, retire the form, no dose escalation",
-      "not_identifiable": "no structural claim at all"
+    "28031-N": {
+      "update": 300,
+      "new_route_hit": 0.6145833333333334,
+      "new_route_miss": 0.2604166666666667,
+      "old_route_hit": 1.0,
+      "new_sentence": 0.2604166666666667,
+      "old_sentence": 1.0,
+      "composite_start_object": 0.5104166666666666,
+      "composite_start_place": 0.4791666666666667,
+      "conditional_byte_object": 0.6428571428571429,
+      "conditional_byte_place": 0.9855072463768116,
+      "swap_argmax_changed": 0,
+      "swap_pairs": 20,
+      "encoding": {
+        "full_192": {
+          "examples": 192,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        },
+        "new_description_96": {
+          "examples": 96,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        },
+        "old_description_96": {
+          "examples": 96,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        }
+      },
+      "measured": true
+    },
+    "28032-O": {
+      "update": 300,
+      "new_route_hit": 0.53125,
+      "new_route_miss": 0.3333333333333333,
+      "old_route_hit": 1.0,
+      "new_sentence": 0.23958333333333334,
+      "old_sentence": 1.0,
+      "composite_start_object": 0.4270833333333333,
+      "composite_start_place": 0.5104166666666666,
+      "conditional_byte_object": 0.6910569105691057,
+      "conditional_byte_place": 1.0,
+      "swap_argmax_changed": 0,
+      "swap_pairs": 20,
+      "encoding": {
+        "full_192": {
+          "examples": 192,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        },
+        "new_description_96": {
+          "examples": 96,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        },
+        "old_description_96": {
+          "examples": 96,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        }
+      },
+      "measured": true
+    },
+    "28032-N": {
+      "update": 300,
+      "new_route_hit": 0.5208333333333334,
+      "new_route_miss": 0.3333333333333333,
+      "old_route_hit": 1.0,
+      "new_sentence": 0.28125,
+      "old_sentence": 1.0,
+      "composite_start_object": 0.4166666666666667,
+      "composite_start_place": 0.53125,
+      "conditional_byte_object": 0.7375,
+      "conditional_byte_place": 1.0,
+      "swap_argmax_changed": 0,
+      "swap_pairs": 20,
+      "encoding": {
+        "full_192": {
+          "examples": 192,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        },
+        "new_description_96": {
+          "examples": 96,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        },
+        "old_description_96": {
+          "examples": 96,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        }
+      },
+      "measured": true
     }
   },
-  "activity_precheck": {
-    "N": {
-      "gradient": {
-        "gradient": {
-          "k_null": 0.044846233800313044,
-          "offset_embed": 0.010052082195727832,
-          "W_hidden.weight": 1.3879729330904131,
-          "W_hidden.bias": 0.03497103958902029,
-          "w_out.weight": 0.8181871693104686,
-          "W_align.weight": 0.0018139512322684012
-        },
-        "added_norm": 0.010214439560872467,
-        "trunk_norm": 1.6121827642398028,
-        "added_parameters": 1064,
-        "trunk_parameters": 37376,
-        "log10_ratio": -2.198199730783239,
-        "added_rms": 0.00031314373627812245,
-        "trunk_rms": 0.008339074682425649,
-        "log10_rms_ratio": -1.4253741342146102,
-        "identifiable": false,
-        "meaning": "D16-12 identifiability gate: the added block's per-parameter RMS gradient must be within one order of magnitude of the trunk, otherwise no structural claim",
-        "non_zero": true
+  "unrecoverable": {
+    "step_route_readings": {
+      "50": {
+        "status": "unrecoverable",
+        "measured": false,
+        "reason": "no intermediate checkpoint was saved; the reading existed only in memory and the report died at serialisation",
+        "not_reconstructed": "step 300 readings are not used to infer earlier points"
       },
-      "need_fix": {
-        "examples": 96,
-        "wrong": 96,
-        "share": 1.0,
-        "bucket": {
-          "other_record": 96
-        },
-        "gate": 0.2,
-        "pass": true
+      "100": {
+        "status": "unrecoverable",
+        "measured": false,
+        "reason": "no intermediate checkpoint was saved; the reading existed only in memory and the report died at serialisation",
+        "not_reconstructed": "step 300 readings are not used to infer earlier points"
       },
-      "identifiable": false
+      "150": {
+        "status": "unrecoverable",
+        "measured": false,
+        "reason": "no intermediate checkpoint was saved; the reading existed only in memory and the report died at serialisation",
+        "not_reconstructed": "step 300 readings are not used to infer earlier points"
+      },
+      "200": {
+        "status": "unrecoverable",
+        "measured": false,
+        "reason": "no intermediate checkpoint was saved; the reading existed only in memory and the report died at serialisation",
+        "not_reconstructed": "step 300 readings are not used to infer earlier points"
+      },
+      "250": {
+        "status": "unrecoverable",
+        "measured": false,
+        "reason": "no intermediate checkpoint was saved; the reading existed only in memory and the report died at serialisation",
+        "not_reconstructed": "step 300 readings are not used to infer earlier points"
+      }
     },
-    "O": {
-      "gradient": {
-        "gradient": {
-          "k_null": 0.04526058803813727,
-          "W_hidden.weight": 1.3881374596732634,
-          "W_hidden.bias": 0.03490851720102418,
-          "w_out.weight": 0.8198657853985001
-        },
-        "added_norm": 0.0,
-        "trunk_norm": 1.6131871058305582,
-        "added_parameters": 0,
-        "trunk_parameters": 37120,
-        "log10_ratio": -Infinity,
-        "added_rms": 0.0,
-        "trunk_rms": 0.008372993581097794,
-        "log10_rms_ratio": -Infinity,
-        "identifiable": false,
-        "meaning": "D16-12 identifiability gate: the added block's per-parameter RMS gradient must be within one order of magnitude of the trunk, otherwise no structural claim"
-      },
-      "need_fix": {
+    "mid_run_identifiability_at_step100_step200": {
+      "status": "unrecoverable as numbers",
+      "measured": false,
+      "reason": "both probes ran in memory; neither was written before the crash"
+    },
+    "activity_precheck": {
+      "status": "unrecoverable",
+      "measured": false
+    },
+    "formal_price_guard": {
+      "status": "unrecoverable",
+      "measured": false,
+      "proxy": "reports\\taiji_package19_2j_dry_run_pricing_20261105.json"
+    },
+    "checkpoint_preflight": {
+      "status": "unrecoverable",
+      "measured": false
+    },
+    "training_ce_curve": {
+      "status": "unrecoverable",
+      "measured": false
+    },
+    "cpu_timing": {
+      "status": "unrecoverable",
+      "measured": false,
+      "reason": "the timer lived in memory only; this is the D16-15 trigger"
+    }
+  },
+  "inferred": {
+    "step100_identifiability": {
+      "status": "inferred",
+      "measured": false,
+      "reading": "log10 per-parameter RMS ratio > -1 (the step-100 gate did not fire)",
+      "basis": "28031-N reached step 300 and the gate is enforced at step 100; a value <= -1 would have stopped the package before any step-300 bundle existed",
+      "not_a_numeric_value": true
+    }
+  },
+  "identifiability_at_step300": {
+    "gradient": {
+      "k_null": 0.0013183297932027513,
+      "offset_embed": 0.0006170414370464583,
+      "W_hidden.weight": 0.012158548828821517,
+      "W_hidden.bias": 0.0004487653847142378,
+      "w_out.weight": 0.024458548836286266,
+      "W_align.weight": 0.0015757607493200418
+    },
+    "added_norm": 0.0016922653675266236,
+    "trunk_norm": 0.02734941141256976,
+    "added_parameters": 1064,
+    "trunk_parameters": 37376,
+    "log10_ratio": -1.2084795176745813,
+    "added_rms": 5.1879723483927846e-05,
+    "trunk_rms": 0.00014146583709282213,
+    "log10_rms_ratio": -0.43565392110595275,
+    "identifiable": true,
+    "meaning": "D16-12 identifiability gate: the added block's per-parameter RMS gradient must be within one order of magnitude of the trunk, otherwise no structural claim"
+  },
+  "cells": {
+    "28031-O": {
+      "aggregate": {
         "examples": 96,
-        "wrong": 96,
-        "share": 1.0,
-        "bucket": {
-          "other_record": 96
+        "completed_count": 23,
+        "completed": 0.23958333333333334,
+        "route_hit_object": 0.375,
+        "composite_start_hit_object": 0.3020833333333333,
+        "content_byte_object": 0.3637152777777778,
+        "conditional_byte_object": 0.8132183908045977,
+        "conditional_examples_object": 29,
+        "route_hit_place": 0.8229166666666666,
+        "composite_start_hit_place": 0.4895833333333333,
+        "content_byte_place": 0.5625,
+        "conditional_byte_place": 0.9822695035460993,
+        "conditional_examples_place": 47,
+        "route_hit_both": 0.3333333333333333,
+        "composite_start_hit_both": 0.22916666666666666,
+        "pass": 23,
+        "buckets_of_all": {
+          "route_miss": 0.4479166666666667,
+          "start_miss": 0.0,
+          "content_byte_wrong": 0.3125,
+          "frame_byte_wrong": 0.0,
+          "eos_not_stopped": 0.0,
+          "order_or_extra": 0.0
         },
-        "gate": 0.2,
-        "pass": true
+        "bucket_counts": {
+          "route_miss": 43,
+          "start_miss": 0,
+          "content_byte_wrong": 30,
+          "frame_byte_wrong": 0,
+          "eos_not_stopped": 0,
+          "order_or_extra": 0
+        },
+        "failures": 73,
+        "buckets_of_failures": {
+          "route_miss": 0.589041095890411,
+          "start_miss": 0.0,
+          "content_byte_wrong": 0.410958904109589,
+          "frame_byte_wrong": 0.0,
+          "eos_not_stopped": 0.0,
+          "order_or_extra": 0.0
+        },
+        "frame_split": {
+          "model_generation": 0,
+          "decode_eos_logic": 0
+        }
+      },
+      "aggregate_old": {
+        "examples": 96,
+        "completed_count": 96,
+        "completed": 1.0,
+        "route_hit_object": 1.0,
+        "composite_start_hit_object": 0.875,
+        "content_byte_object": 1.0,
+        "conditional_byte_object": 1.0,
+        "conditional_examples_object": 84,
+        "route_hit_place": 1.0,
+        "composite_start_hit_place": 0.9583333333333334,
+        "content_byte_place": 1.0,
+        "conditional_byte_place": 1.0,
+        "conditional_examples_place": 92,
+        "route_hit_both": 1.0,
+        "composite_start_hit_both": 0.8541666666666666,
+        "pass": 96,
+        "buckets_of_all": {
+          "route_miss": 0.0,
+          "start_miss": 0.0,
+          "content_byte_wrong": 0.0,
+          "frame_byte_wrong": 0.0,
+          "eos_not_stopped": 0.0,
+          "order_or_extra": 0.0
+        },
+        "bucket_counts": {
+          "route_miss": 0,
+          "start_miss": 0,
+          "content_byte_wrong": 0,
+          "frame_byte_wrong": 0,
+          "eos_not_stopped": 0,
+          "order_or_extra": 0
+        },
+        "failures": 0,
+        "buckets_of_failures": {
+          "route_miss": 0.0,
+          "start_miss": 0.0,
+          "content_byte_wrong": 0.0,
+          "frame_byte_wrong": 0.0,
+          "eos_not_stopped": 0.0,
+          "order_or_extra": 0.0
+        },
+        "frame_split": {
+          "model_generation": 0,
+          "decode_eos_logic": 0
+        }
+      },
+      "swap": {
+        "pairs": 20,
+        "median_repr": 0.2717269251995129,
+        "min_repr": 0.21455471046458657,
+        "median_score": 1.0538001762159812,
+        "min_score": 0.7216039271294123,
+        "pairs_repr_ge_theta": 20,
+        "pairs_score_ge_theta": 20,
+        "pairs_argmax_changed": 2,
+        "median_top_tv": 0.08160692134368937,
+        "zero_state_follow_a": 0,
+        "zero_state_follow_b": 18,
+        "median_decode_route_score": 0.8865053615615028,
+        "pairs_decode_route_score_ge_theta": 20,
+        "pairs_decode_route_argmax_changed": 6,
+        "decode_route_follow_a": 10,
+        "decode_route_follow_b": 4,
+        "order_sensitive": true
+      },
+      "rates": {
+        "examples": 96,
+        "completed": 0.23958333333333334,
+        "route_miss": 0.4479166666666667,
+        "object_route": 0.375,
+        "object_start": 0.3020833333333333
+      },
+      "completed_examples": 23,
+      "frame_model_generation": 0,
+      "encoding": {
+        "full_192": {
+          "examples": 192,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        },
+        "new_description_96": {
+          "examples": 96,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        },
+        "old_description_96": {
+          "examples": 96,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        }
+      }
+    },
+    "28031-N": {
+      "aggregate": {
+        "examples": 96,
+        "completed_count": 25,
+        "completed": 0.2604166666666667,
+        "route_hit_object": 0.6145833333333334,
+        "composite_start_hit_object": 0.5104166666666666,
+        "content_byte_object": 0.4270833333333333,
+        "conditional_byte_object": 0.6428571428571429,
+        "conditional_examples_object": 49,
+        "route_hit_place": 0.7708333333333334,
+        "composite_start_hit_place": 0.4791666666666667,
+        "content_byte_place": 0.5329861111111112,
+        "conditional_byte_place": 0.9855072463768116,
+        "conditional_examples_place": 46,
+        "route_hit_both": 0.4583333333333333,
+        "composite_start_hit_both": 0.2916666666666667,
+        "pass": 25,
+        "buckets_of_all": {
+          "route_miss": 0.2604166666666667,
+          "start_miss": 0.0,
+          "content_byte_wrong": 0.4791666666666667,
+          "frame_byte_wrong": 0.0,
+          "eos_not_stopped": 0.0,
+          "order_or_extra": 0.0
+        },
+        "bucket_counts": {
+          "route_miss": 25,
+          "start_miss": 0,
+          "content_byte_wrong": 46,
+          "frame_byte_wrong": 0,
+          "eos_not_stopped": 0,
+          "order_or_extra": 0
+        },
+        "failures": 71,
+        "buckets_of_failures": {
+          "route_miss": 0.352112676056338,
+          "start_miss": 0.0,
+          "content_byte_wrong": 0.647887323943662,
+          "frame_byte_wrong": 0.0,
+          "eos_not_stopped": 0.0,
+          "order_or_extra": 0.0
+        },
+        "frame_split": {
+          "model_generation": 0,
+          "decode_eos_logic": 0
+        }
+      },
+      "aggregate_old": {
+        "examples": 96,
+        "completed_count": 96,
+        "completed": 1.0,
+        "route_hit_object": 1.0,
+        "composite_start_hit_object": 0.875,
+        "content_byte_object": 1.0,
+        "conditional_byte_object": 1.0,
+        "conditional_examples_object": 84,
+        "route_hit_place": 1.0,
+        "composite_start_hit_place": 0.9583333333333334,
+        "content_byte_place": 1.0,
+        "conditional_byte_place": 1.0,
+        "conditional_examples_place": 92,
+        "route_hit_both": 1.0,
+        "composite_start_hit_both": 0.8541666666666666,
+        "pass": 96,
+        "buckets_of_all": {
+          "route_miss": 0.0,
+          "start_miss": 0.0,
+          "content_byte_wrong": 0.0,
+          "frame_byte_wrong": 0.0,
+          "eos_not_stopped": 0.0,
+          "order_or_extra": 0.0
+        },
+        "bucket_counts": {
+          "route_miss": 0,
+          "start_miss": 0,
+          "content_byte_wrong": 0,
+          "frame_byte_wrong": 0,
+          "eos_not_stopped": 0,
+          "order_or_extra": 0
+        },
+        "failures": 0,
+        "buckets_of_failures": {
+          "route_miss": 0.0,
+          "start_miss": 0.0,
+          "content_byte_wrong": 0.0,
+          "frame_byte_wrong": 0.0,
+          "eos_not_stopped": 0.0,
+          "order_or_extra": 0.0
+        },
+        "frame_split": {
+          "model_generation": 0,
+          "decode_eos_logic": 0
+        }
+      },
+      "swap": {
+        "pairs": 20,
+        "median_repr": 0.2717269251995129,
+        "min_repr": 0.21455471046458657,
+        "median_score": 1.077534178750232,
+        "min_score": 0.6197574174514662,
+        "pairs_repr_ge_theta": 20,
+        "pairs_score_ge_theta": 20,
+        "pairs_argmax_changed": 0,
+        "median_top_tv": 0.08932781748596208,
+        "zero_state_follow_a": 0,
+        "zero_state_follow_b": 20,
+        "median_decode_route_score": 0.9190284897110867,
+        "pairs_decode_route_score_ge_theta": 20,
+        "pairs_decode_route_argmax_changed": 3,
+        "decode_route_follow_a": 13,
+        "decode_route_follow_b": 3,
+        "order_sensitive": true
+      },
+      "rates": {
+        "examples": 96,
+        "completed": 0.2604166666666667,
+        "route_miss": 0.2604166666666667,
+        "object_route": 0.6145833333333334,
+        "object_start": 0.5104166666666666
+      },
+      "completed_examples": 25,
+      "frame_model_generation": 0,
+      "encoding": {
+        "full_192": {
+          "examples": 192,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        },
+        "new_description_96": {
+          "examples": 96,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        },
+        "old_description_96": {
+          "examples": 96,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        }
+      }
+    },
+    "28032-O": {
+      "aggregate": {
+        "examples": 96,
+        "completed_count": 23,
+        "completed": 0.23958333333333334,
+        "route_hit_object": 0.53125,
+        "composite_start_hit_object": 0.4270833333333333,
+        "content_byte_object": 0.4088541666666667,
+        "conditional_byte_object": 0.6910569105691057,
+        "conditional_examples_object": 41,
+        "route_hit_place": 0.7708333333333334,
+        "composite_start_hit_place": 0.5104166666666666,
+        "content_byte_place": 0.59375,
+        "conditional_byte_place": 1.0,
+        "conditional_examples_place": 49,
+        "route_hit_both": 0.4166666666666667,
+        "composite_start_hit_both": 0.2604166666666667,
+        "pass": 23,
+        "buckets_of_all": {
+          "route_miss": 0.3333333333333333,
+          "start_miss": 0.0,
+          "content_byte_wrong": 0.4270833333333333,
+          "frame_byte_wrong": 0.0,
+          "eos_not_stopped": 0.0,
+          "order_or_extra": 0.0
+        },
+        "bucket_counts": {
+          "route_miss": 32,
+          "start_miss": 0,
+          "content_byte_wrong": 41,
+          "frame_byte_wrong": 0,
+          "eos_not_stopped": 0,
+          "order_or_extra": 0
+        },
+        "failures": 73,
+        "buckets_of_failures": {
+          "route_miss": 0.4383561643835616,
+          "start_miss": 0.0,
+          "content_byte_wrong": 0.5616438356164384,
+          "frame_byte_wrong": 0.0,
+          "eos_not_stopped": 0.0,
+          "order_or_extra": 0.0
+        },
+        "frame_split": {
+          "model_generation": 0,
+          "decode_eos_logic": 0
+        }
+      },
+      "aggregate_old": {
+        "examples": 96,
+        "completed_count": 96,
+        "completed": 1.0,
+        "route_hit_object": 1.0,
+        "composite_start_hit_object": 0.875,
+        "content_byte_object": 1.0,
+        "conditional_byte_object": 1.0,
+        "conditional_examples_object": 84,
+        "route_hit_place": 1.0,
+        "composite_start_hit_place": 0.9583333333333334,
+        "content_byte_place": 1.0,
+        "conditional_byte_place": 1.0,
+        "conditional_examples_place": 92,
+        "route_hit_both": 1.0,
+        "composite_start_hit_both": 0.8541666666666666,
+        "pass": 96,
+        "buckets_of_all": {
+          "route_miss": 0.0,
+          "start_miss": 0.0,
+          "content_byte_wrong": 0.0,
+          "frame_byte_wrong": 0.0,
+          "eos_not_stopped": 0.0,
+          "order_or_extra": 0.0
+        },
+        "bucket_counts": {
+          "route_miss": 0,
+          "start_miss": 0,
+          "content_byte_wrong": 0,
+          "frame_byte_wrong": 0,
+          "eos_not_stopped": 0,
+          "order_or_extra": 0
+        },
+        "failures": 0,
+        "buckets_of_failures": {
+          "route_miss": 0.0,
+          "start_miss": 0.0,
+          "content_byte_wrong": 0.0,
+          "frame_byte_wrong": 0.0,
+          "eos_not_stopped": 0.0,
+          "order_or_extra": 0.0
+        },
+        "frame_split": {
+          "model_generation": 0,
+          "decode_eos_logic": 0
+        }
+      },
+      "swap": {
+        "pairs": 20,
+        "median_repr": 0.2717269251995129,
+        "min_repr": 0.21455471046458657,
+        "median_score": 0.8402543774279418,
+        "min_score": 0.42906891966461913,
+        "pairs_repr_ge_theta": 20,
+        "pairs_score_ge_theta": 20,
+        "pairs_argmax_changed": 0,
+        "median_top_tv": 0.04075723271530422,
+        "zero_state_follow_a": 0,
+        "zero_state_follow_b": 20,
+        "median_decode_route_score": 0.7736380692879532,
+        "pairs_decode_route_score_ge_theta": 20,
+        "pairs_decode_route_argmax_changed": 5,
+        "decode_route_follow_a": 14,
+        "decode_route_follow_b": 0,
+        "order_sensitive": true
+      },
+      "rates": {
+        "examples": 96,
+        "completed": 0.23958333333333334,
+        "route_miss": 0.3333333333333333,
+        "object_route": 0.53125,
+        "object_start": 0.4270833333333333
+      },
+      "completed_examples": 23,
+      "frame_model_generation": 0,
+      "encoding": {
+        "full_192": {
+          "examples": 192,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        },
+        "new_description_96": {
+          "examples": 96,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        },
+        "old_description_96": {
+          "examples": 96,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        }
+      }
+    },
+    "28032-N": {
+      "aggregate": {
+        "examples": 96,
+        "completed_count": 27,
+        "completed": 0.28125,
+        "route_hit_object": 0.5208333333333334,
+        "composite_start_hit_object": 0.4166666666666667,
+        "content_byte_object": 0.4479166666666667,
+        "conditional_byte_object": 0.7375,
+        "conditional_examples_object": 40,
+        "route_hit_place": 0.7395833333333334,
+        "composite_start_hit_place": 0.53125,
+        "content_byte_place": 0.5920138888888888,
+        "conditional_byte_place": 1.0,
+        "conditional_examples_place": 51,
+        "route_hit_both": 0.4166666666666667,
+        "composite_start_hit_both": 0.28125,
+        "pass": 27,
+        "buckets_of_all": {
+          "route_miss": 0.3333333333333333,
+          "start_miss": 0.0,
+          "content_byte_wrong": 0.3854166666666667,
+          "frame_byte_wrong": 0.0,
+          "eos_not_stopped": 0.0,
+          "order_or_extra": 0.0
+        },
+        "bucket_counts": {
+          "route_miss": 32,
+          "start_miss": 0,
+          "content_byte_wrong": 37,
+          "frame_byte_wrong": 0,
+          "eos_not_stopped": 0,
+          "order_or_extra": 0
+        },
+        "failures": 69,
+        "buckets_of_failures": {
+          "route_miss": 0.463768115942029,
+          "start_miss": 0.0,
+          "content_byte_wrong": 0.5362318840579711,
+          "frame_byte_wrong": 0.0,
+          "eos_not_stopped": 0.0,
+          "order_or_extra": 0.0
+        },
+        "frame_split": {
+          "model_generation": 0,
+          "decode_eos_logic": 0
+        }
+      },
+      "aggregate_old": {
+        "examples": 96,
+        "completed_count": 96,
+        "completed": 1.0,
+        "route_hit_object": 1.0,
+        "composite_start_hit_object": 0.875,
+        "content_byte_object": 1.0,
+        "conditional_byte_object": 1.0,
+        "conditional_examples_object": 84,
+        "route_hit_place": 1.0,
+        "composite_start_hit_place": 0.9583333333333334,
+        "content_byte_place": 1.0,
+        "conditional_byte_place": 1.0,
+        "conditional_examples_place": 92,
+        "route_hit_both": 1.0,
+        "composite_start_hit_both": 0.8541666666666666,
+        "pass": 96,
+        "buckets_of_all": {
+          "route_miss": 0.0,
+          "start_miss": 0.0,
+          "content_byte_wrong": 0.0,
+          "frame_byte_wrong": 0.0,
+          "eos_not_stopped": 0.0,
+          "order_or_extra": 0.0
+        },
+        "bucket_counts": {
+          "route_miss": 0,
+          "start_miss": 0,
+          "content_byte_wrong": 0,
+          "frame_byte_wrong": 0,
+          "eos_not_stopped": 0,
+          "order_or_extra": 0
+        },
+        "failures": 0,
+        "buckets_of_failures": {
+          "route_miss": 0.0,
+          "start_miss": 0.0,
+          "content_byte_wrong": 0.0,
+          "frame_byte_wrong": 0.0,
+          "eos_not_stopped": 0.0,
+          "order_or_extra": 0.0
+        },
+        "frame_split": {
+          "model_generation": 0,
+          "decode_eos_logic": 0
+        }
+      },
+      "swap": {
+        "pairs": 20,
+        "median_repr": 0.2717269251995129,
+        "min_repr": 0.21455471046458657,
+        "median_score": 0.8442130246650885,
+        "min_score": 0.41393802503167,
+        "pairs_repr_ge_theta": 20,
+        "pairs_score_ge_theta": 20,
+        "pairs_argmax_changed": 0,
+        "median_top_tv": 0.039171515235001626,
+        "zero_state_follow_a": 0,
+        "zero_state_follow_b": 20,
+        "median_decode_route_score": 0.842433627936503,
+        "pairs_decode_route_score_ge_theta": 20,
+        "pairs_decode_route_argmax_changed": 6,
+        "decode_route_follow_a": 12,
+        "decode_route_follow_b": 0,
+        "order_sensitive": true
+      },
+      "rates": {
+        "examples": 96,
+        "completed": 0.28125,
+        "route_miss": 0.3333333333333333,
+        "object_route": 0.5208333333333334,
+        "object_start": 0.4166666666666667
+      },
+      "completed_examples": 27,
+      "frame_model_generation": 0,
+      "encoding": {
+        "full_192": {
+          "examples": 192,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        },
+        "new_description_96": {
+          "examples": 96,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        },
+        "old_description_96": {
+          "examples": 96,
+          "eos_stopped_rate": 1.0,
+          "utf8_valid_rate": 1.0,
+          "eos_not_stopped": 0,
+          "utf8_invalid": 0
+        }
       }
     }
   },
-  "price_guard": {
-    "unit_cpu_per_update": 2.7,
-    "updates_measured": 5,
-    "projected_adam_cpu": 3240.0,
-    "ancillary_cpu": 500.0,
-    "projected_total_cpu": 12342.0,
-    "cap_cpu": 12000.0,
-    "within_cap": false,
-    "owner_estimate_cpu_per_update": 4.0,
-    "owner_estimate_total_cpu": 17490.0,
-    "basis": "measured marginal CPU on the first five updates of seed 28031 / O arm, plus 500 CPU of evaluation/probe items, then x3.3"
+  "delta": {
+    "28031": {
+      "completed": {
+        "metric": "completed (N - O)",
+        "worlds": 12,
+        "count": 96,
+        "n_rate": 0.2604166666666667,
+        "o_rate": 0.23958333333333334,
+        "delta": 0.020833333333333343,
+        "ci_low": 0.0,
+        "ci_high": 0.05208333333333334,
+        "excludes_zero": false,
+        "n_better": false,
+        "n_wins": 1750,
+        "n_losses": 0,
+        "n_ties": 250,
+        "win_share": 0.875,
+        "rounds": 2000
+      },
+      "route_miss": {
+        "metric": "route_miss (N - O)",
+        "worlds": 12,
+        "count": 96,
+        "n_rate": 0.2604166666666667,
+        "o_rate": 0.4479166666666667,
+        "delta": -0.1875,
+        "ci_low": -0.28125,
+        "ci_high": -0.09374999999999997,
+        "excludes_zero": true,
+        "n_better": false,
+        "n_wins": 0,
+        "n_losses": 2000,
+        "n_ties": 0,
+        "win_share": 0.0,
+        "rounds": 2000
+      },
+      "object_route": {
+        "metric": "object_route (N - O)",
+        "worlds": 12,
+        "count": 96,
+        "n_rate": 0.6145833333333334,
+        "o_rate": 0.375,
+        "delta": 0.23958333333333337,
+        "ci_low": 0.15625,
+        "ci_high": 0.32291666666666663,
+        "excludes_zero": true,
+        "n_better": true,
+        "n_wins": 2000,
+        "n_losses": 0,
+        "n_ties": 0,
+        "win_share": 1.0,
+        "rounds": 2000
+      },
+      "object_start": {
+        "metric": "object_start (N - O)",
+        "worlds": 12,
+        "count": 96,
+        "n_rate": 0.5104166666666666,
+        "o_rate": 0.3020833333333333,
+        "delta": 0.20833333333333331,
+        "ci_low": 0.11458333333333331,
+        "ci_high": 0.30208333333333337,
+        "excludes_zero": true,
+        "n_better": true,
+        "n_wins": 2000,
+        "n_losses": 0,
+        "n_ties": 0,
+        "win_share": 1.0,
+        "rounds": 2000
+      }
+    },
+    "28032": {
+      "completed": {
+        "metric": "completed (N - O)",
+        "worlds": 12,
+        "count": 96,
+        "n_rate": 0.28125,
+        "o_rate": 0.23958333333333334,
+        "delta": 0.04166666666666666,
+        "ci_low": -0.03125,
+        "ci_high": 0.10416666666666666,
+        "excludes_zero": false,
+        "n_better": false,
+        "n_wins": 1713,
+        "n_losses": 179,
+        "n_ties": 108,
+        "win_share": 0.8565,
+        "rounds": 2000
+      },
+      "route_miss": {
+        "metric": "route_miss (N - O)",
+        "worlds": 12,
+        "count": 96,
+        "n_rate": 0.3333333333333333,
+        "o_rate": 0.3333333333333333,
+        "delta": 0.0,
+        "ci_low": -0.04166666666666663,
+        "ci_high": 0.04166666666666666,
+        "excludes_zero": false,
+        "n_better": false,
+        "n_wins": 794,
+        "n_losses": 786,
+        "n_ties": 420,
+        "win_share": 0.397,
+        "rounds": 2000
+      },
+      "object_route": {
+        "metric": "object_route (N - O)",
+        "worlds": 12,
+        "count": 96,
+        "n_rate": 0.5208333333333334,
+        "o_rate": 0.53125,
+        "delta": -0.01041666666666663,
+        "ci_low": -0.04166666666666674,
+        "ci_high": 0.02083333333333337,
+        "excludes_zero": false,
+        "n_better": false,
+        "n_wins": 364,
+        "n_losses": 1209,
+        "n_ties": 427,
+        "win_share": 0.182,
+        "rounds": 2000
+      },
+      "object_start": {
+        "metric": "object_start (N - O)",
+        "worlds": 12,
+        "count": 96,
+        "n_rate": 0.4166666666666667,
+        "o_rate": 0.4270833333333333,
+        "delta": -0.01041666666666663,
+        "ci_low": -0.041666666666666685,
+        "ci_high": 0.02083333333333337,
+        "excludes_zero": false,
+        "n_better": false,
+        "n_wins": 364,
+        "n_losses": 1209,
+        "n_ties": 427,
+        "win_share": 0.182,
+        "rounds": 2000
+      }
+    },
+    "pooled": {
+      "completed": {
+        "metric": "completed (N - O)",
+        "worlds": 12,
+        "count": 192,
+        "n_rate": 0.2708333333333333,
+        "o_rate": 0.23958333333333334,
+        "delta": 0.031249999999999972,
+        "ci_low": -0.01041666666666663,
+        "ci_high": 0.06770833333333331,
+        "excludes_zero": false,
+        "n_better": false,
+        "n_wins": 1855,
+        "n_losses": 88,
+        "n_ties": 57,
+        "win_share": 0.9275,
+        "rounds": 2000
+      },
+      "route_miss": {
+        "metric": "route_miss (N - O)",
+        "worlds": 12,
+        "count": 192,
+        "n_rate": 0.296875,
+        "o_rate": 0.390625,
+        "delta": -0.09375,
+        "ci_low": -0.15104166666666669,
+        "ci_high": -0.04166666666666663,
+        "excludes_zero": true,
+        "n_better": false,
+        "n_wins": 2,
+        "n_losses": 1998,
+        "n_ties": 0,
+        "win_share": 0.001,
+        "rounds": 2000
+      },
+      "object_route": {
+        "metric": "object_route (N - O)",
+        "worlds": 12,
+        "count": 192,
+        "n_rate": 0.5677083333333334,
+        "o_rate": 0.453125,
+        "delta": 0.11458333333333337,
+        "ci_low": 0.0625,
+        "ci_high": 0.16145833333333337,
+        "excludes_zero": true,
+        "n_better": true,
+        "n_wins": 2000,
+        "n_losses": 0,
+        "n_ties": 0,
+        "win_share": 1.0,
+        "rounds": 2000
+      },
+      "object_start": {
+        "metric": "object_start (N - O)",
+        "worlds": 12,
+        "count": 192,
+        "n_rate": 0.4635416666666667,
+        "o_rate": 0.3645833333333333,
+        "delta": 0.09895833333333337,
+        "ci_low": 0.04166666666666663,
+        "ci_high": 0.15625,
+        "excludes_zero": true,
+        "n_better": true,
+        "n_wins": 1997,
+        "n_losses": 2,
+        "n_ties": 1,
+        "win_share": 0.9985,
+        "rounds": 2000
+      }
+    }
+  },
+  "gates": {
+    "28031": {
+      "new_route_hit_object": {
+        "o": 0.375,
+        "n": 0.6145833333333334,
+        "threshold": 0.9,
+        "pass": false
+      },
+      "new_route_miss": {
+        "o": 0.4479166666666667,
+        "n": 0.2604166666666667,
+        "threshold": 0.05,
+        "pass": false
+      },
+      "swap_hard_argmax_new": {
+        "o": 2,
+        "n": 0,
+        "of": 20,
+        "threshold": ">=18/20",
+        "pass": false
+      },
+      "old_route_hit_no_regression": {
+        "o": 1.0,
+        "n": 1.0,
+        "threshold": ">= O - 0.02",
+        "pass": true
+      },
+      "new_composite_start_hit_object": {
+        "o": 0.3020833333333333,
+        "n": 0.5104166666666666,
+        "threshold": 0.7,
+        "pass": false
+      },
+      "new_conditional_byte_object": {
+        "o": 0.8132183908045977,
+        "n": 0.6428571428571429,
+        "threshold": 0.9,
+        "pass": false
+      },
+      "frozen_path_eos_frame": {
+        "o": 0,
+        "n": 0,
+        "threshold": "no regression",
+        "pass": true
+      }
+    },
+    "28032": {
+      "new_route_hit_object": {
+        "o": 0.53125,
+        "n": 0.5208333333333334,
+        "threshold": 0.9,
+        "pass": false
+      },
+      "new_route_miss": {
+        "o": 0.3333333333333333,
+        "n": 0.3333333333333333,
+        "threshold": 0.05,
+        "pass": false
+      },
+      "swap_hard_argmax_new": {
+        "o": 0,
+        "n": 0,
+        "of": 20,
+        "threshold": ">=18/20",
+        "pass": false
+      },
+      "old_route_hit_no_regression": {
+        "o": 1.0,
+        "n": 1.0,
+        "threshold": ">= O - 0.02",
+        "pass": true
+      },
+      "new_composite_start_hit_object": {
+        "o": 0.4270833333333333,
+        "n": 0.4166666666666667,
+        "threshold": 0.7,
+        "pass": false
+      },
+      "new_conditional_byte_object": {
+        "o": 0.6910569105691057,
+        "n": 0.7375,
+        "threshold": 0.9,
+        "pass": false
+      },
+      "frozen_path_eos_frame": {
+        "o": 0,
+        "n": 0,
+        "threshold": "no regression",
+        "pass": true
+      }
+    }
   },
   "decision": {
-    "branch": "budget_extrapolation_exceeds_cap",
-    "rule": "owner rule: if the measured extrapolation exceeds 12,000 CPU, report first and do not run"
+    "branch": "scoring_form_is_not_the_bottleneck",
+    "all_gates_pass": false,
+    "old_regressed": false,
+    "n_better": false,
+    "equivalent": true,
+    "identifiable": true,
+    "rule": "D16-12: only a from-scratch, single-variable A/B may speak about architecture; a world-bootstrap lower bound above 0 for N-minus-O means the scoring form is the cause",
+    "per_seed_branches": {
+      "28031": "scoring_form_is_not_the_bottleneck",
+      "28032": "scoring_form_is_not_the_bottleneck"
+    }
   },
-  "notes": [
-    "only the five price-measurement updates ran; the 1,200-update A/B was not started",
-    "the D16-12 identifiability gate is pre-registered at step 300 and was never reached; the initialisation reading (log10 per-parameter RMS ratio -1.425) is reported but licenses no structural claim either way"
-  ],
-  "budget": {
-    "functional_items": [
-      {
-        "item": "1,200 from-scratch selection updates, re-priced at the measured 2.700 CPU/update",
-        "cpu": 3240.0
-      },
-      {
-        "item": "four full 192-example decode passes at step 300 (one per run, ~90 CPU each)",
-        "cpu": 380.0
-      },
-      {
-        "item": "four swap summaries on 20 new-description pairs",
-        "cpu": 40.0
-      },
-      {
-        "item": "identity rescue 8 examples + checkpoint dry-run + N-arm drift rejection",
-        "cpu": 40.0
-      },
-      {
-        "item": "gradient probe at init and step 300, payload, parent health, report",
-        "cpu": 40.0
-      }
+  "serialization_precheck": {
+    "passed": true,
+    "bytes": 16467,
+    "sections": [
+      "activity_precheck",
+      "budget",
+      "cells",
+      "checkpoint_preflight",
+      "cost",
+      "crash_log",
+      "decision",
+      "deliberate_tuple_probe",
+      "delta",
+      "design",
+      "gates",
+      "identities",
+      "mid_run_gate",
+      "operational_waste",
+      "preregistration",
+      "price_guard",
+      "saved_bundles",
+      "schema",
+      "training",
+      "zero_cost_check"
     ],
-    "functional_total_cpu": 3740.0,
-    "safety_factor": 3.3,
-    "budget_cpu": 12342.0,
-    "cap_cpu": 12000.0,
-    "within_cap": false,
-    "priced_on_measurement": true,
-    "spent_cpu": 52.9375
+    "tuple_key_normalised": true
+  },
+  "instrumentation_gap": {
+    "what_is_missing": [
+      "CPU seconds for the 1,200-update run",
+      "step-50/100/200/250 route readings",
+      "step-100/200 identifiability numbers",
+      "activity pre-check, formal price guard, checkpoint pre-flight, CE curve"
+    ],
+    "what_is_available": [
+      "four step-300 bundles (parameters + identity)",
+      "wall time from file timestamps (4,961 s)",
+      "the 00:47:54 six-Adam dry-run price report"
+    ],
+    "ruled_into": "D16-15: silent in-memory readings are a design defect, not bad luck"
+  },
+  "budget": {
+    "experiment_cap_cpu": 13000.0,
+    "experiment_cpu": null,
+    "experiment_cpu_status": "instrumentation_gap",
+    "rebuild_cap_cpu": 500.0,
+    "rebuild_cpu": 311.28125,
+    "rebuild_within_cap": true,
+    "training_wall_seconds": 4961.0
   },
   "cost": {
-    "cpu_seconds": 52.9375,
-    "adam_updates": 5,
-    "confirm_reads": 0
+    "training_adam_updates": 1200,
+    "rebuild_adam_updates": 0,
+    "confirm_reads": 0,
+    "rebuild_cpu_seconds": 311.28125,
+    "rebuild_wall_seconds": 319.3472720000427,
+    "training_wall_seconds": 4961.0,
+    "training_cpu_seconds": null
   }
 }
