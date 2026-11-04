@@ -1,0 +1,14 @@
+{
+  "schema": "taiji-package19-2l-manifest-v1",
+  "step": "N19.2l",
+  "phase": "activity_gate",
+  "date": "2026-11-05",
+  "report": "reports\\taiji_package19_2l_order_decoy_activity_20261105.json",
+  "verdict": "pass",
+  "activation_rate": 1.0,
+  "median_margin": -0.002946793588611829,
+  "readings": 128,
+  "adam_updates": 0,
+  "parameters_changed": 0,
+  "confirm_reads": 0
+}
