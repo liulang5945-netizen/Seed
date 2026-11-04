@@ -1,0 +1,223 @@
+{
+  "schema": "taiji-selection-routing-18-1-manifest-v1",
+  "step": "N18.1",
+  "date": "2026-11-04",
+  "report": "reports\\taiji_selection_routing_18_1_compare_20261104.json",
+  "report_sha256": "0635088fd299019b8fec77d1f645626c856e8050fdf70f716cb648838fbb9c46",
+  "report_bytes": 160182,
+  "prereg": {
+    "path": "plans\\manifests\\taiji_data_premise_18_0_prereg_20261104.json",
+    "sha256": "b476a767eeb01d28232b38623474448b6b0478db944d442cc190e786bbda78cb",
+    "gates": {
+      "overall": 0.8,
+      "unseen_output_name": 0.8,
+      "new_description": 0.8,
+      "reversed": 0.95,
+      "selection_object": 0.9,
+      "selection_place": 0.9,
+      "content_drop": 0.1,
+      "identity_rescue": 8,
+      "a_minus_c": 0.1,
+      "new_name_copied": 0.6
+    }
+  },
+  "pricing": {
+    "path": "plans\\manifests\\taiji_data_premise_18_0_pricing_20261104.json",
+    "sha256": "264793aae4ba3b398ef34d7aca557bd7d2087f28653c40c9b95224c427918f84"
+  },
+  "data": {
+    "file": "output\\taiji_data_premise_18_0\\data.json",
+    "file_sha256": "8242f2a82050f35c141380f0ee763c0496de05d987622f896d2ec16570492433",
+    "digest": "a320ac08aafa963b15574096d91db676b984e7028fd85d6efe29f4871153bdcd",
+    "train_examples": 640,
+    "dev_examples": 192,
+    "confirm_examples_sealed": 192,
+    "confirm_reads": 0
+  },
+  "inputs": {
+    "parents": {
+      "28031": {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28031-A-locked-step300.pt",
+        "sha256": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169"
+      },
+      "28032": {
+        "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28032-A-locked-step300.pt",
+        "sha256": "3d55bff6d51e7c3d7079e068caf70f1b131ce43e0be830abb1f71b5a39b556a5"
+      }
+    }
+  },
+  "outputs": {
+    "bundles": [
+      "output\\taiji_selection_routing_18_1\\28031-A_route_lock-step300.pt",
+      "output\\taiji_selection_routing_18_1\\28031-B_stop_lock-step300.pt",
+      "output\\taiji_selection_routing_18_1\\28031-C_unlocked-step300.pt",
+      "output\\taiji_selection_routing_18_1\\28032-A_route_lock-step300.pt",
+      "output\\taiji_selection_routing_18_1\\28032-B_stop_lock-step300.pt",
+      "output\\taiji_selection_routing_18_1\\28032-C_unlocked-step300.pt"
+    ],
+    "step150": [
+      "output\\taiji_selection_routing_18_1\\28031-A_route_lock-step150.pt",
+      "output\\taiji_selection_routing_18_1\\28031-B_stop_lock-step150.pt",
+      "output\\taiji_selection_routing_18_1\\28031-C_unlocked-step150.pt",
+      "output\\taiji_selection_routing_18_1\\28032-A_route_lock-step150.pt",
+      "output\\taiji_selection_routing_18_1\\28032-B_stop_lock-step150.pt",
+      "output\\taiji_selection_routing_18_1\\28032-C_unlocked-step150.pt"
+    ],
+    "midreports": [
+      "output\\taiji_selection_routing_18_1\\midreport-28031-A_route_lock.json",
+      "output\\taiji_selection_routing_18_1\\midreport-28031-B_stop_lock.json",
+      "output\\taiji_selection_routing_18_1\\midreport-28031-C_unlocked.json",
+      "output\\taiji_selection_routing_18_1\\midreport-28032-A_route_lock.json",
+      "output\\taiji_selection_routing_18_1\\midreport-28032-B_stop_lock.json",
+      "output\\taiji_selection_routing_18_1\\midreport-28032-C_unlocked.json"
+    ]
+  },
+  "formal_adam": 1800,
+  "confirm_reads": 0,
+  "cells": {
+    "28031-A_route_lock": {
+      "passed": false,
+      "passed_without_copy": false,
+      "recitation_remains": false,
+      "checks": {
+        "overall": false,
+        "unseen_output_name": false,
+        "new_description": false,
+        "reversed": false,
+        "selection_object": true,
+        "selection_place": false,
+        "content_drop": false,
+        "identity_rescue": true,
+        "new_name_copied": false
+      }
+    },
+    "28031-B_stop_lock": {
+      "passed": false,
+      "passed_without_copy": false,
+      "recitation_remains": false,
+      "checks": {
+        "overall": false,
+        "unseen_output_name": false,
+        "new_description": false,
+        "reversed": false,
+        "selection_object": false,
+        "selection_place": true,
+        "content_drop": false,
+        "identity_rescue": true,
+        "new_name_copied": false
+      }
+    },
+    "28031-C_unlocked": {
+      "passed": false,
+      "passed_without_copy": false,
+      "recitation_remains": false,
+      "checks": {
+        "overall": false,
+        "unseen_output_name": false,
+        "new_description": false,
+        "reversed": false,
+        "selection_object": true,
+        "selection_place": true,
+        "content_drop": false,
+        "identity_rescue": true,
+        "new_name_copied": false
+      }
+    },
+    "28032-A_route_lock": {
+      "passed": false,
+      "passed_without_copy": false,
+      "recitation_remains": false,
+      "checks": {
+        "overall": false,
+        "unseen_output_name": false,
+        "new_description": false,
+        "reversed": false,
+        "selection_object": false,
+        "selection_place": false,
+        "content_drop": false,
+        "identity_rescue": true,
+        "new_name_copied": false
+      }
+    },
+    "28032-B_stop_lock": {
+      "passed": false,
+      "passed_without_copy": false,
+      "recitation_remains": false,
+      "checks": {
+        "overall": false,
+        "unseen_output_name": false,
+        "new_description": false,
+        "reversed": false,
+        "selection_object": true,
+        "selection_place": true,
+        "content_drop": false,
+        "identity_rescue": true,
+        "new_name_copied": false
+      }
+    },
+    "28032-C_unlocked": {
+      "passed": false,
+      "passed_without_copy": false,
+      "recitation_remains": false,
+      "checks": {
+        "overall": false,
+        "unseen_output_name": false,
+        "new_description": false,
+        "reversed": false,
+        "selection_object": true,
+        "selection_place": true,
+        "content_drop": false,
+        "identity_rescue": true,
+        "new_name_copied": false
+      }
+    }
+  },
+  "development_gate": {
+    "passed": false,
+    "release_confirm_n18_2": false,
+    "note": "18.2 only if true; otherwise no confirm read and attribution opens"
+  },
+  "recitation_remains_cells": [],
+  "totals": {
+    "formal_adam": 1800,
+    "engineering_adam": 0,
+    "cpu_seconds": 16196.28125,
+    "wall_seconds_parallel": 2824.4281053000595,
+    "prior": {
+      "cpu_seconds": 34530.10625,
+      "wall_seconds": 7869.7849209999995,
+      "breakdown": {
+        "n17_5_cumulative": {
+          "cpu": 34020.465625,
+          "wall": 7798.156692
+        },
+        "n18_0_pricing_probe": {
+          "cpu": 69.640625,
+          "wall": 71.628229
+        },
+        "n18_0_data_build": {
+          "cpu": null,
+          "wall": null,
+          "note": "0 optimizer steps, unmetered"
+        },
+        "n18_1_preflight_cumulative": {
+          "cpu": 440.0,
+          "adam": 49,
+          "note": "includes two aborted rework attempts; owner-requested booking"
+        }
+      }
+    },
+    "cumulative": {
+      "run_cpu_seconds": 16196.28125,
+      "run_wall_seconds": 2824.4281053000595,
+      "watch_cpu": 19220.8471875,
+      "watch_wall": 30000.0,
+      "below_watch": true,
+      "headroom_cpu": 2440.8940624999996,
+      "cumulative_cpu_seconds": 51310.059375,
+      "cumulative_wall_seconds": 10694.213026300058,
+      "evaluation_only_cpu_seconds": 583.671875,
+      "evaluation_only_note": "by-world re-evaluation of saved step300 bundles; 0 optimizer steps"
+    }
+  }
+}

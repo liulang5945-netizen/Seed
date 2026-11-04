@@ -1,0 +1,45 @@
+{
+  "schema": "taiji-content-transport-probe-18-1-manifest-v1",
+  "step": "N18.1",
+  "checkpoint": "step150",
+  "report": "E:\\Seed\\reports\\taiji_content_transport_18_1_step150_20261104.json",
+  "report_sha256": "831fbef8086776ba731a84dbade0f730879a348468afbcde4159343ba1059baa",
+  "report_bytes": 1047823,
+  "bundles": {
+    "28031-A_route_lock": {
+      "path": "output\\taiji_selection_routing_18_1\\28031-A_route_lock-step150.pt",
+      "bytes": 29255130
+    },
+    "28031-B_stop_lock": {
+      "path": "output\\taiji_selection_routing_18_1\\28031-B_stop_lock-step150.pt",
+      "bytes": 29254907
+    },
+    "28031-C_unlocked": {
+      "path": "output\\taiji_selection_routing_18_1\\28031-C_unlocked-step150.pt",
+      "bytes": 29254684
+    },
+    "28032-A_route_lock": {
+      "path": "output\\taiji_selection_routing_18_1\\28032-A_route_lock-step150.pt",
+      "bytes": 29255130
+    },
+    "28032-B_stop_lock": {
+      "path": "output\\taiji_selection_routing_18_1\\28032-B_stop_lock-step150.pt",
+      "bytes": 29254907
+    },
+    "28032-C_unlocked": {
+      "path": "output\\taiji_selection_routing_18_1\\28032-C_unlocked-step150.pt",
+      "bytes": 29254684
+    }
+  },
+  "summary": {
+    "a_free_rate": 0.08236882716049383,
+    "b_transport_rate": 0.2883873456790123,
+    "b_pure_rate": 0.7513503086419754,
+    "c_gate_rate": 0.3900462962962963
+  },
+  "limits": {
+    "zero_updates": true,
+    "read_only": true,
+    "confirm_reads": 0
+  }
+}

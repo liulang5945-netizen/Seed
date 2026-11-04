@@ -96,7 +96,32 @@ C10 把 17.5 的失败归因从“算子坏了”改成“任务前提允许背�
 
 **18.0 落地（2026-11-04，仍待 owner 批准）**：A 的非训练部分已完成——数据前提（C11）、定价（六格裸价 9,109.4 / 保护价 19,220.8 CPU；step150 前段 3,088.9 / 6,517.5，后段 6,040.2 / 12,744.9）、判据预注册（10 门，其中 `new_name_copied ≥ 0.60` 为**独立门**，overall 过门但该门不达标一律标 `recitation_remains`；每格须 γ 与 1−γ 双报）。证据：`plans/manifests/taiji_data_premise_18_0_prereg_20261104.json`、`plans/manifests/taiji_data_premise_18_0_pricing_20261104.json`。
 
-**18.1 预检（2026-11-04，通过，0 训练）**：六格 × 3 工程 Adam + 1 次失败注入（19 Adam / 200.8 CPU）。参数、Adam 矩、教师强制分布、复制状态逐位差 0；父 bundle 与 `candidate_sha_v2` 773dcec2 不变；先存包后评估生效（失败注入只写 `evaluation_failed_weights_preserved`、权重保留）；`evaluate_dev(full=True)` 六格各 8 例跑通，`new_name_copied` / `unseen_output_name` 分母均为 8（S1 通过）。**18.1 正式比较仍未启动**，须 owner 明确批准 prereg 与预算。证据：`reports/taiji_preflight_18_1_20261104.json`。
+**18.1 预检（2026-11-04，通过，0 训练）**：六格 × 3 工程 Adam + 1 次失败注入（19 Adam / 200.8 CPU）。参数、Adam 矩、教师强制分布、复制状态逐位差 0；父 bundle 与 `candidate_sha_v2` 773dcec2 不变；先存包后评估生效（失败注入只写 `evaluation_failed_weights_preserved`、权重保留）；`evaluate_dev(full=True)` 六格各 8 例跑通，`new_name_copied` / `unseen_output_name` 分母均为 8（S1 通过）。证据：`reports/taiji_preflight_18_1_20261104.json`。
+
+**18.1 正式比较（2026-11-04，结案为负）**：六格 300 更新、1,800 Adam、16,196.3 CPU / 2,824.4 wall（未越保护价）；overall / `new_name_copied` / unseen 全为 0.000，四条任务门未过，A−C=0.000；**confirm 未释放、0 读取**。分层探针（0 更新）a/b/b_pure/c = 0.090 / 0.290 / 0.755 / 0.390：γ 门是最大单一压制，门开后 β/transport 残留约 24.5% 误差。证据：`reports/taiji_selection_routing_18_1_compare_20261104.json`、`reports/taiji_content_transport_18_1_step150_20261104.json`、`..._step300_20261104.json`。**不得据此声称任务能力；也不得把“输出变了”当作抄回率成立。**
 
 **18 号立项前提（钉住，不可回退）**：新字节串 + 大词表（各 ≥200）+ 组合 held-out。只满足其中一条的“扩词表”不算 A，读数不得用于泛化结论。
+
+## 8. 读数解读注意（2026-11-04）
+
+两条结构事实，读检查点、复制探针与 18.1 中途回报时必须先套用：
+
+| 字段 | 本图事实 | 不要误读成 |
+| --- | --- | --- |
+| `prefix_cursor`（复制游标） | 选择路由图的 `_advanced_state` 只推进 `living`/`m`/`coverage`，不递增复制游标，所以真实值**恒为 0**；检查点里该字段存在但为 0 是正常状态面 | “恢复时游标丢了”或“复制状态不完整” |
+| `m`（复制读出） | `advance_copy` 用**当前接受的字节**重建 `m`，不是跨步累积；冷候选/未命中记录末位时可为 1e-9～1e-33 | “复制路径没工作”或“检查点坏了” |
+
+复制是否承重看任务门与 `new_name_copied`（独立门 ≥0.60），不看单步 `m`。验证出处：18.1 预检六格真实状态探针（`prefix_cursor` 全 0；`m` 5/6 格 1e-9～1e-33、28031-B 0.925；保存/恢复逐位一致），见 `reports/taiji_preflight_18_1_20261104.json`。
+
+## 9. 子继承父的两层保持判据（2026-11-04 owner 修订）
+
+对外表述只允许如下口径，细则见 [INVARIANT-LEDGER §10](INVARIANT-LEDGER_20261103.md#10-子继承父的两层保持判据2026-11-04-owner-修订)。
+
+**一句人话。** “旧能力没被学新任务冲掉”不能靠感觉或“参数变化小”判断，要分两层：**底座必须逐位不变**；**能力允许小幅下降，但要看留存率区间**。
+
+- **硬不变量（零容忍）**：同 seed 同数据逐位恢复（参数、Adam 矩、复制状态、教师强制概率 `max_abs_diff=0`）；字节闭环（UTF-8 合法、EOS 正确）；identity rescue 8/8 逐位；confirm 读取 0；父 bundle 身份（`candidate_sha_v2` 与 weights sha）不变。任一不成立 → 该子不可继承（`inheritance_rejected`），不允许“允许遗忘”豁免。
+- **软能力（允许下降）**：任务 overall、unseen_output_name、new_name_copied、selection、旧分布 dev NLL。报**子/父比值＋绝对值**，用世界 bootstrap **下界 ≥0.85**；<0.85 判 `destructive_overwrite`。**不用点估计。**
+- **0.85 的依据**：与现有 12–20 world 重采样的噪声对齐；1.0 等于禁止任何表征更新，故不采用；0.80 偏松、0.90 偏严（在 12–20 world 下容易把正常更新判成破坏）。
+- **未来包必备对照臂**：只学新任务、不混合旧任务。留存率接近 → 旧能力未被依赖；差异显著 → 混合是必要代价，写入成本。缺臂按 `retention_control_absent` 不结案。
+- **现状**：无合格父能力集（17.5 负、18.1 六格全 0），输出 `retention_not_admissible`，不算留存率。18.1/18.2 若出现首个真实非零能力，它成为可测父，**下一包必须带留存率门**。本节只写规则：不改 18.1 判据、不启动训练。
 
