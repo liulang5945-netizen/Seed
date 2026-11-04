@@ -600,4 +600,4 @@ R17c主选保留A_route_lock/B_stop_lock/C_unlocked，固定每seed N16-A step30
 
 2026-11-03外部数学意见复核。区分静态tau基线与运行时条件tau候选，补近端回归子族/容量条件，纠正greedy概率帽、慢群不可达及scan唯一性推论，记录alpha/温度与lambda值/logit的当前算子问题。只做局部标量和有理数核对，0模型前向/0Adam。
 
-2026-11-04复制算子完整数学复推。新增[OP2规格](reference/SPEC-COPY_OPERATOR_OP2_MATH_20261104.md)与独立验证器，补正log-beta仅解决fresh层、直接责任梯度不等于总梯度；定义record-first受控概率模型、同packet后验、舍入与log-state规则。OP2为后继候选，当前在飞17.5按原冻结身份结案，采纳/比较在结案后明确新算子/对照/价格，主线执行位置不因本次数学工作迁移。
+2026-11-04复制算子完整数学复推。新增[OP2规格](reference/SPEC-COPY_OPERATOR_OP2_MATH_20261104.md)与独立验证器，补正log-beta仅解决fresh层、直接责任梯度不等于总梯度；定义record-first受控概率模型、同packet后验、舍入与log-state规则。补推说明指定a与原样继承lambda m需a_i≥lambda_i M_i，OP2有续读语义代价；大gamma不单独证明信用饥饿。OP2为后继候选，17.5已按原冻结身份负结案，当前先完成N18.1归因；若采纳，再以新版本明确算子/对照/迁移及价格，主线执行位置不因本次数学工作迁移。

@@ -1,0 +1,282 @@
+{
+  "schema": "taiji-copy-operator-op2-math-v1",
+  "passed": true,
+  "failures": [],
+  "checks": {
+    "probability_properties": {
+      "passed": true,
+      "details": {
+        "cases": 240,
+        "worst_mass_error": 3.3306690738754696e-16
+      }
+    },
+    "exact_latent_enumeration": {
+      "passed": true,
+      "details": {
+        "prefixes": 21,
+        "maximum_joint_error": 5.551115123125783e-17,
+        "coverage_is_not_smoothing": {
+          "sequence": [
+            0,
+            0
+          ],
+          "online_responsibility_count": 1.5365921053408964,
+          "all_history_smoothed_count": 1.5069741650196926
+        }
+      }
+    },
+    "counterexamples": {
+      "passed": true,
+      "details": {
+        "reachable_previous_cursor": [
+          0.0,
+          0.5
+        ],
+        "reachable_cursor_old_alpha_flip": [
+          [
+            "297/2300",
+            "2003/2300"
+          ],
+          [
+            "2673/4700",
+            "2027/4700"
+          ]
+        ],
+        "record_first_eta": [
+          "297/500",
+          "203/500"
+        ],
+        "arithmetic_target0": 0.541,
+        "geometric_target0": 0.47636927091154935,
+        "hard_fresh_not_final_delta": [
+          0.6,
+          0.4
+        ],
+        "legacy_source_tie_counterexample": {
+          "beta": [
+            0.5,
+            0.5
+          ],
+          "logits": [
+            [
+              2.0,
+              0.0
+            ],
+            [
+              0.0,
+              4.0
+            ]
+          ],
+          "soft_logit_pool_winner": 1,
+          "hard_first_source_winner": 0
+        }
+      }
+    },
+    "invariances_and_limits": {
+      "passed": true,
+      "details": {
+        "logit_shift_and_record_permutation": true,
+        "unique_gap_fresh_error": 0.006891248370942571,
+        "proved_gap_bound": 0.011479663918771909,
+        "scope": "Fresh pointer bound only. Cursor mixing and hard projection need separate margins."
+      }
+    },
+    "edge_cases": {
+      "passed": true,
+      "details": {
+        "immutable_forward_posterior_packet": true,
+        "empty_is_generator": true,
+        "underflow_log_likelihood": -2000.0,
+        "invalid_domains_rejected": 5,
+        "impossible_observation_rejected": true,
+        "disjoint_transition_masks": [
+          0.5,
+          0.5
+        ],
+        "last_position_and_singleton_restart": true
+      }
+    },
+    "finite_difference_checks": {
+      "passed": true,
+      "details": {
+        "checks": [
+          {
+            "sequence": [
+              0
+            ],
+            "declared_parameter_components": 33,
+            "maximum_absolute_fd_error_all_eps": 2.9151636660174063e-10,
+            "at_least_two_eps_pass_each": true
+          },
+          {
+            "sequence": [
+              0,
+              1,
+              3
+            ],
+            "declared_parameter_components": 33,
+            "maximum_absolute_fd_error_all_eps": 5.25143106777648e-09,
+            "at_least_two_eps_pass_each": true
+          }
+        ],
+        "FD_precision": "float64",
+        "normal_range_forward_and_three_step_gradient_precisions": [
+          "float64",
+          "float32"
+        ],
+        "scope": "33 declared conditional input components at fixed initial cursor and temperatures; probability/log graphs agree. Boundary/state/temperature derivatives are not covered. No Taiji model instantiated."
+      }
+    },
+    "analytic_partial_checks": {
+      "passed": true,
+      "details": {
+        "input_groups": 10,
+        "declared_parameter_components": 33,
+        "max_abs_error": 5.551115123125783e-17,
+        "single_step_temperature_partials_FD_max_error": 8.663404715836265e-11,
+        "initial_cursor_interior_partials": 3,
+        "initial_cursor_interior_FD_max_error": 8.023529063372337e-11,
+        "negative_entropy_gradient_error": 8.673617379884035e-19,
+        "shared_lambda_broadcast_FD_error": 4.6992701396852965e-11,
+        "scope": "Conditional operator inputs. Initial cursor/temperature partials are single-step interior scalar checks; active repairs, support boundaries and full neural content/H chains are not universal gradient claims."
+      }
+    },
+    "underflow_and_roundoff_regressions": {
+      "passed": true,
+      "details": {
+        "posterior_roundoff_witness_repaired": true,
+        "initial_repair_log_shift": 3.774758283725532e-15,
+        "recursive_closure_steps": 1024,
+        "additional_roundoff_repairs": 1,
+        "underflow_cases": [
+          {
+            "dtype": "torch.float32",
+            "target_logit": -110.0,
+            "probability_graph_failure_reproduced": true,
+            "log_graph_loss": 110.69314575195312,
+            "generator_gradient": [
+              0.5,
+              -1.0,
+              0.5
+            ]
+          },
+          {
+            "dtype": "torch.float64",
+            "target_logit": -800.0,
+            "probability_graph_failure_reproduced": true,
+            "log_graph_loss": 800.6931471805599,
+            "generator_gradient": [
+              0.5,
+              -1.0,
+              0.5
+            ]
+          }
+        ],
+        "balanced_rare_event_posterior": {
+          "log_likelihood_scale": -10000.0,
+          "generation": 0.5,
+          "copy": 0.5
+        },
+        "near_unit_cursor_restart_log": -46.051701859880914,
+        "separate_noncontinuation_log_preserves_rare_restart": -1000.0,
+        "log_cursor_retains_underflowed_probability": {
+          "first_copy_log": -110.0,
+          "second_log_likelihood": -111.04981994628906,
+          "sum_first_transition_credit": -1.0000014305114746
+        },
+        "scope": "Roundoff-only copy-mass shrink; low valid mass is never normalized to one. Finite gradients are asserted for the listed profiles, not arbitrary ill-conditioned boundary controls."
+      }
+    },
+    "gradient_scope_and_st": {
+      "passed": true,
+      "details": {
+        "zero_direct_copy_responsibility_nonzero_content_chain_pointer_gradient": 0.0018380919553246046,
+        "content_chain_analytic_error": 4.336808689942018e-19,
+        "ST_local_VJP_max_error": 2.7755575615628914e-17,
+        "ST_surrogate_FD_error": 1.2849138419923634e-10,
+        "ST_hard_forward_FD": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "ST_vs_soft_loss_gradient_difference": 0.12222047652655363,
+        "scope": "ST validates a surrogate VJP at hard values, not a hard-objective derivative or a descent guarantee."
+      }
+    },
+    "actual_byte_alphabet_profile": {
+      "passed": true,
+      "details": {
+        "vocabulary": 257,
+        "EOS": 256,
+        "probability_mass_error": 1.1102230246251565e-16,
+        "checks": [
+          {
+            "dtype": "torch.float64",
+            "generator_components": 257,
+            "analytic_gradient_max_error": 1.3877787807814457e-16
+          },
+          {
+            "dtype": "torch.float32",
+            "generator_components": 257,
+            "analytic_gradient_max_error": 2.9802322387695312e-08
+          }
+        ],
+        "scope": "Actual byte/EOS alphabet applied to a small conditional operator graph, not a Taiji candidate."
+      }
+    },
+    "runtime_helper_crosscheck": {
+      "passed": true,
+      "details": {
+        "runtime_record_conditional_alpha_flip": [
+          [
+            0.1291304347826087,
+            0.8708695652173913
+          ],
+          [
+            0.5687234042553191,
+            0.4312765957446808
+          ]
+        ],
+        "same_gamma_posterior_matches": true,
+        "wrong_gamma_mass_counterexample": 1.25,
+        "EOS_helper_clears_cursor": true,
+        "reviewed_function_sources": {
+          "selection_routing.py": "79dd714ea2318aa8c2528dd3058df0efd6b91fcaebbaa8d8ccec3a1015e12678",
+          "binding_copy.py": "3205ca89100ffdfeeac1bb2e7918b295d39426565616ddbdef3bfac2af7eb8f9"
+        },
+        "scope": "Only extracted helpers called. Generation-loop EOS commit and full model remain outside this check."
+      }
+    }
+  },
+  "accounting": {
+    "reference_calls": 2403,
+    "tensor_calls": 35,
+    "runtime_helper_calls": 5,
+    "candidate_models_constructed": 0,
+    "optimizer_steps": 0,
+    "weights_loaded": false
+  },
+  "scope": "Mathematical OP2 proposal and versioned helper checks, not task/model validation or adoption.",
+  "adoption_status": "design_only",
+  "objective_convention": "Sum token NLL for sequence gradients; model mean-loss scaling must be declared separately.",
+  "full_model_validated": false,
+  "counter_scope": "This verification process; development reruns are not a project-wide compute ledger.",
+  "review_findings": [
+    "Removing alpha from the fresh pointer alone does not remove alpha from legacy record conditioning.",
+    "Probability-domain tensor loss/recurrence underflow is retained as an expected negative control.",
+    "Roundoff can exceed cursor mass one; only tolerance-sized copy mass is shrunk and recorded.",
+    "Separate log noncontinuation preserves a rare restart tail when displayed copy mass rounds to one.",
+    "Direct responsibility-scaled gradients, full content chains and ST surrogate VJPs have distinct claims."
+  ],
+  "source_sha256": "7da04153fd016a05a2fb0f069bbe5eb8f894d276f92d33a94befc5229c09ac37",
+  "protocol_date": "2026-11-04",
+  "generated_at_utc": "2026-11-03T23:10:42+00:00",
+  "numeric_environment": {
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu",
+    "device": "CPU tensors",
+    "random_case_seed": 20261104,
+    "closure_seed": 731104
+  },
+  "baseline_commit": "77116d2231b6ae2a401c145c65cfc53374567841"
+}

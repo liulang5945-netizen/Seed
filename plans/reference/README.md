@@ -106,3 +106,5 @@ R 编号保留原合同与实验身份；实施统一使用总计划步骤 01–
 | N17–22算法与架构 | [系统开发计划](PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md) | 当前17.2R整合，后继原文/经验/学习/世界活动/规模成长；含VISION映射与备选触发 |
 
 [核心动力学、快记忆与复制的数学复核](MATH-REVIEW_CORE_DYNAMICS_MEMORY_COPY_20261103.md)逐项核验本轮外部意见，包含反例、近端回归子族、容量条件、当前读核耦合及对应数学工作。
+
+[OP2复制算子严格推导](SPEC-COPY_OPERATOR_OP2_MATH_20261104.md)及[独立数学验证器](../../scripts/training/verify_taiji_copy_operator_math_v2.py)闭合record-first概率与后验链，按局部/递归/数值/代理梯度范围记录结果。
