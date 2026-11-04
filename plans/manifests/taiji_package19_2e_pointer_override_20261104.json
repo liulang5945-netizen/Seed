@@ -1,0 +1,97 @@
+{
+  "schema": "taiji-package19-pointer-override-manifest-v1",
+  "step": "N19.2e reconciliation + forced pointer start",
+  "date": "2026-11-04",
+  "report": "reports\\taiji_package19_2e_pointer_override_20261104.json",
+  "cells": {
+    "reconcile": [
+      "28031-B_stop_lock",
+      "28032-B_stop_lock"
+    ],
+    "probe": [
+      "28031-B_stop_lock",
+      "28032-B_stop_lock",
+      "28031-C_unlocked",
+      "28032-C_unlocked"
+    ],
+    "skipped": [
+      "28031-A_route_lock (D16-6: 2,320,153 NaN parameters)"
+    ]
+  },
+  "reconciliation": {
+    "definition_agreement": "identical: raw == target_prefix (27 bytes) and EOS; both decode with prefix=bytes(raw), so the UTF-8 mask is the same",
+    "slice_fact": "the 48-example slice (indices 0/1/4/5) contains 0 of the 96 new_description examples",
+    "formal_full192": {
+      "28031-B": 0.6302,
+      "28032-B": 0.5833
+    },
+    "slice48_measured": {
+      "28031-B": 1.0,
+      "28032-B": 0.9583,
+      "pooled": 0.9792
+    },
+    "easy_stratum_from_archive": {
+      "28031-B": 1.0,
+      "28032-B": 0.9375
+    },
+    "verdict": "0.979 is slice optimism on the easy stratum, not the task gate; the formal 0.630/0.583 is correct; the 19.5 negative verdict is unaffected; no arm passes any gate",
+    "defect_id": "D16-7 (slice-bias scoring defect)"
+  },
+  "pointer_override": {
+    "design": "inference only; copy start forced to the span head argmax via a 1e9 one-hot on forced_pointer_bias; route alpha, gamma, transport row and decoder untouched",
+    "probe_set": "24 examples per cell (index 0 easy + index 8 new_description per world = 12 + 12)",
+    "b_arm": {
+      "28031-B": {
+        "natural_sentence": 0.7083,
+        "forced_sentence": 0.7083,
+        "scale_4_sentence": 0.7083,
+        "scale_16_sentence": 0.7083,
+        "natural_start_object_place": [0.625, 0.875],
+        "forced_start_object_place": [0.75, 0.875],
+        "pointer_hit_object_place": [0.75, 0.9583],
+        "content_bytes_natural_forced": [0.8403, 0.8125],
+        "ceiling": 0.75
+      },
+      "28032-B": {
+        "natural_sentence": 0.7083,
+        "forced_sentence": 0.7083,
+        "scale_4_sentence": 0.7083,
+        "scale_16_sentence": 0.7083,
+        "natural_start_object_place": [0.75, 0.75],
+        "forced_start_object_place": [0.75, 0.75],
+        "pointer_hit_object_place": [0.75, 1.0],
+        "content_bytes_natural_forced": [0.75, 0.75],
+        "ceiling": 0.7083
+      }
+    },
+    "c_arm_control": {
+      "28031-C": {
+        "natural_sentence": 0.4583,
+        "forced_sentence": 0.5,
+        "scale_4_sentence": 0.5,
+        "scale_16_sentence": 0.5,
+        "pointer_hit_object_place": [0.9167, 0.9583]
+      },
+      "28032-C": {
+        "natural_sentence": 0.4583,
+        "forced_sentence": 0.3333,
+        "scale_4_sentence": 0.4583,
+        "scale_16_sentence": 0.3333,
+        "pointer_hit_object_place": [0.75, 0.9167]
+      }
+    },
+    "log_scale_finding": "s=4 already moves the composite start exactly as far as the 1e9 force on 28031-B; s=16 adds nothing and degrades 28032-C. Bias magnitude is not the binding constraint; the copy pointer on the archived 19.5 bundles is 0.75/0.75-0.96, not the 1.0/1.0 trained head of 19.2c",
+    "verdict": "best arm B stays at 0.7083 <= 0.75 after forcing; pointer path is topped out; the remaining loss is content/frame/EOS, not the start choice"
+  },
+  "decision": {
+    "threshold": "forced sentence >= 0.80 and byte >= 0.95 -> pointer authorisation; otherwise pointer path is topped out",
+    "observed": "B forced 0.7083, bytes 0.8125-0.75",
+    "branch_taken": "pointer path topped out; no pointer authorisation; redirect to frame/decode gate attribution; no training pre-started",
+    "six_cell_32k": "not spent; confirm reads 0"
+  },
+  "cost_cpu": 171.641,
+  "adam_steps": 0,
+  "bundles_saved": 0,
+  "confirm_reads": 0,
+  "next": "zero-update frame/decode attribution: separate model-generation frame errors from decoder/EOS logic errors and price the minimal decoder fix (about 100 CPU, no training)"
+}

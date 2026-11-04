@@ -1,0 +1,909 @@
+{
+  "schema": "taiji-package19-pointer-override-v1",
+  "step": "N19.2e",
+  "date": "2026-11-04",
+  "data": {
+    "dev_examples_full": 192,
+    "attribution_slice_examples": 48,
+    "attribution_slice_rule": "indices 0/1/4/5 per world (12 worlds) = the easy stratum",
+    "probe_examples_per_cell": 24,
+    "probe_rule": "indices 0 (easy) and 8 (new_description) per world"
+  },
+  "definition": {
+    "formal": "raw == target_prefix (27 bytes) and EOS emitted",
+    "attribution": "first-divergence classifier, pass = same predicate",
+    "target_prefix_equals_target_bytes_minus_eos": true,
+    "decode_path": "both use decode_endpoint(prefix=bytes(raw)), so the UTF-8 mask is identical"
+  },
+  "cells": {
+    "28031-B_stop_lock": {
+      "seed": 28031,
+      "arm": "B_stop_lock",
+      "nan_parameters": 0,
+      "reconcile": {
+        "archived_formal_full192": {
+          "path": "output\\taiji_package19_compare\\eval300-28031-B_stop_lock.json",
+          "examples": 192,
+          "completed": 0.6302083333333334,
+          "subsets": {
+            "unseen_output_name": 0.6302083333333334,
+            "new_description": 0.2604166666666667,
+            "both_new": 0.2604166666666667
+          },
+          "subset_denominators": {
+            "unseen_output_name": 192,
+            "new_description": 96,
+            "both_new": 96
+          },
+          "easy_stratum": {
+            "examples": 96,
+            "completed": 1.0
+          },
+          "cpu_seconds": 141.0
+        },
+        "slice48_measured": {
+          "examples": 48,
+          "sentence_exact": 1.0,
+          "sentence_content": 1.0,
+          "object_content": 1.0,
+          "place_content": 1.0,
+          "content_bytes": 1.0,
+          "conditional_byte": 1.0,
+          "start_hit_object": 0.875,
+          "start_hit_place": 0.9583333333333334,
+          "pointer_hit_object": 1.0,
+          "pointer_hit_place": 1.0,
+          "route_hit_object": 1.0,
+          "route_hit_place": 1.0,
+          "terminated": 1.0,
+          "utf8": 1.0,
+          "ceiling": 1.0,
+          "gamma_mean": 0.3595946629800739,
+          "by_index": {
+            "0": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 1.0,
+              "content_bytes": 1.0,
+              "start_hit_object": 0.8333333333333334,
+              "start_hit_place": 0.9166666666666666,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "1": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 1.0,
+              "content_bytes": 1.0,
+              "start_hit_object": 0.8333333333333334,
+              "start_hit_place": 1.0,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "4": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 1.0,
+              "content_bytes": 1.0,
+              "start_hit_object": 0.9166666666666666,
+              "start_hit_place": 0.9166666666666666,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "5": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 1.0,
+              "content_bytes": 1.0,
+              "start_hit_object": 0.9166666666666666,
+              "start_hit_place": 1.0,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            }
+          }
+        },
+        "full192_attribution_definition": {
+          "examples": 192,
+          "sentence_exact": 0.6302083333333334,
+          "source": "same predicate as the formal scorer; no recompute"
+        },
+        "definition_agreement": {
+          "slice48_formal_equals_attribution": true,
+          "predicate": "raw == target_prefix and EOS"
+        },
+        "slice_new_description_examples": 0
+      },
+      "probe": {
+        "natural": {
+          "examples": 24,
+          "sentence_exact": 0.7083333333333334,
+          "sentence_content": 0.7083333333333334,
+          "object_content": 0.7083333333333334,
+          "place_content": 0.9583333333333334,
+          "content_bytes": 0.8402777777777778,
+          "conditional_byte": 0.915521978021978,
+          "start_hit_object": 0.625,
+          "start_hit_place": 0.875,
+          "pointer_hit_object": 0.75,
+          "pointer_hit_place": 1.0,
+          "route_hit_object": 0.75,
+          "route_hit_place": 1.0,
+          "terminated": 1.0,
+          "utf8": 1.0,
+          "ceiling": 0.75,
+          "gamma_mean": 0.3589741197852234,
+          "by_index": {
+            "0": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 1.0,
+              "content_bytes": 1.0,
+              "start_hit_object": 0.8333333333333334,
+              "start_hit_place": 0.9166666666666666,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "8": {
+              "examples": 12,
+              "new_description": true,
+              "sentence_exact": 0.4166666666666667,
+              "content_bytes": 0.6805555555555555,
+              "start_hit_object": 0.4166666666666667,
+              "start_hit_place": 0.8333333333333334,
+              "pointer_hit_object": 0.5,
+              "pointer_hit_place": 1.0
+            }
+          }
+        },
+        "scale_4": {
+          "examples": 24,
+          "sentence_exact": 0.7083333333333334,
+          "sentence_content": 0.7083333333333334,
+          "object_content": 0.7083333333333334,
+          "place_content": 0.875,
+          "content_bytes": 0.8115740740740741,
+          "conditional_byte": 0.8381410256410257,
+          "start_hit_object": 0.75,
+          "start_hit_place": 0.875,
+          "pointer_hit_object": 0.75,
+          "pointer_hit_place": 0.9583333333333334,
+          "route_hit_object": 0.75,
+          "route_hit_place": 0.9583333333333334,
+          "terminated": 1.0,
+          "utf8": 1.0,
+          "ceiling": 0.75,
+          "gamma_mean": 0.357712453060981,
+          "by_index": {
+            "0": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 1.0,
+              "content_bytes": 1.0,
+              "start_hit_object": 1.0,
+              "start_hit_place": 1.0,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "8": {
+              "examples": 12,
+              "new_description": true,
+              "sentence_exact": 0.4166666666666667,
+              "content_bytes": 0.6231481481481481,
+              "start_hit_object": 0.5,
+              "start_hit_place": 0.75,
+              "pointer_hit_object": 0.5,
+              "pointer_hit_place": 0.9166666666666666
+            }
+          }
+        },
+        "scale_16": {
+          "examples": 24,
+          "sentence_exact": 0.7083333333333334,
+          "sentence_content": 0.7083333333333334,
+          "object_content": 0.7083333333333334,
+          "place_content": 0.875,
+          "content_bytes": 0.8115740740740741,
+          "conditional_byte": 0.8381410256410257,
+          "start_hit_object": 0.75,
+          "start_hit_place": 0.875,
+          "pointer_hit_object": 0.75,
+          "pointer_hit_place": 0.9583333333333334,
+          "route_hit_object": 0.75,
+          "route_hit_place": 0.9583333333333334,
+          "terminated": 1.0,
+          "utf8": 1.0,
+          "ceiling": 0.75,
+          "gamma_mean": 0.357712453060981,
+          "by_index": {
+            "0": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 1.0,
+              "content_bytes": 1.0,
+              "start_hit_object": 1.0,
+              "start_hit_place": 1.0,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "8": {
+              "examples": 12,
+              "new_description": true,
+              "sentence_exact": 0.4166666666666667,
+              "content_bytes": 0.6231481481481481,
+              "start_hit_object": 0.5,
+              "start_hit_place": 0.75,
+              "pointer_hit_object": 0.5,
+              "pointer_hit_place": 0.9166666666666666
+            }
+          }
+        },
+        "forced": {
+          "examples": 24,
+          "sentence_exact": 0.7083333333333334,
+          "sentence_content": 0.7083333333333334,
+          "object_content": 0.7083333333333334,
+          "place_content": 0.875,
+          "content_bytes": 0.8115740740740741,
+          "conditional_byte": 0.8381410256410257,
+          "start_hit_object": 0.75,
+          "start_hit_place": 0.875,
+          "pointer_hit_object": 0.75,
+          "pointer_hit_place": 0.9583333333333334,
+          "route_hit_object": 0.75,
+          "route_hit_place": 0.9583333333333334,
+          "terminated": 1.0,
+          "utf8": 1.0,
+          "ceiling": 0.75,
+          "gamma_mean": 0.357712453060981,
+          "by_index": {
+            "0": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 1.0,
+              "content_bytes": 1.0,
+              "start_hit_object": 1.0,
+              "start_hit_place": 1.0,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "8": {
+              "examples": 12,
+              "new_description": true,
+              "sentence_exact": 0.4166666666666667,
+              "content_bytes": 0.6231481481481481,
+              "start_hit_object": 0.5,
+              "start_hit_place": 0.75,
+              "pointer_hit_object": 0.5,
+              "pointer_hit_place": 0.9166666666666666
+            }
+          }
+        }
+      }
+    },
+    "28032-B_stop_lock": {
+      "seed": 28032,
+      "arm": "B_stop_lock",
+      "nan_parameters": 0,
+      "reconcile": {
+        "archived_formal_full192": {
+          "path": "output\\taiji_package19_compare\\eval300-28032-B_stop_lock.json",
+          "examples": 192,
+          "completed": 0.5833333333333334,
+          "subsets": {
+            "unseen_output_name": 0.5833333333333334,
+            "new_description": 0.22916666666666666,
+            "both_new": 0.22916666666666666
+          },
+          "subset_denominators": {
+            "unseen_output_name": 192,
+            "new_description": 96,
+            "both_new": 96
+          },
+          "easy_stratum": {
+            "examples": 96,
+            "completed": 0.9375
+          },
+          "cpu_seconds": 142.0625
+        },
+        "slice48_measured": {
+          "examples": 48,
+          "sentence_exact": 0.9583333333333334,
+          "sentence_content": 0.9583333333333334,
+          "object_content": 0.9583333333333334,
+          "place_content": 0.9583333333333334,
+          "content_bytes": 0.9597222222222223,
+          "conditional_byte": 0.9600694444444445,
+          "start_hit_object": 0.9583333333333334,
+          "start_hit_place": 0.9583333333333334,
+          "pointer_hit_object": 1.0,
+          "pointer_hit_place": 1.0,
+          "route_hit_object": 1.0,
+          "route_hit_place": 1.0,
+          "terminated": 1.0,
+          "utf8": 1.0,
+          "ceiling": 0.9583333333333334,
+          "gamma_mean": 0.34022967268067134,
+          "by_index": {
+            "0": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 1.0,
+              "content_bytes": 1.0,
+              "start_hit_object": 1.0,
+              "start_hit_place": 1.0,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "1": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 1.0,
+              "content_bytes": 1.0,
+              "start_hit_object": 1.0,
+              "start_hit_place": 1.0,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "4": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 0.9166666666666666,
+              "content_bytes": 0.9222222222222222,
+              "start_hit_object": 0.9166666666666666,
+              "start_hit_place": 0.9166666666666666,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "5": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 0.9166666666666666,
+              "content_bytes": 0.9166666666666666,
+              "start_hit_object": 0.9166666666666666,
+              "start_hit_place": 0.9166666666666666,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            }
+          }
+        },
+        "full192_attribution_definition": {
+          "examples": 192,
+          "sentence_exact": 0.5833333333333334,
+          "source": "same predicate as the formal scorer; no recompute"
+        },
+        "definition_agreement": {
+          "slice48_formal_equals_attribution": true,
+          "predicate": "raw == target_prefix and EOS"
+        },
+        "slice_new_description_examples": 0
+      },
+      "probe": {
+        "natural": {
+          "examples": 24,
+          "sentence_exact": 0.7083333333333334,
+          "sentence_content": 0.7083333333333334,
+          "object_content": 0.7083333333333334,
+          "place_content": 0.75,
+          "content_bytes": 0.749537037037037,
+          "conditional_byte": 0.7708333333333334,
+          "start_hit_object": 0.75,
+          "start_hit_place": 0.75,
+          "pointer_hit_object": 0.75,
+          "pointer_hit_place": 1.0,
+          "route_hit_object": 0.75,
+          "route_hit_place": 1.0,
+          "terminated": 1.0,
+          "utf8": 1.0,
+          "ceiling": 0.7083333333333334,
+          "gamma_mean": 0.3436612266872148,
+          "by_index": {
+            "0": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 1.0,
+              "content_bytes": 1.0,
+              "start_hit_object": 1.0,
+              "start_hit_place": 1.0,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "8": {
+              "examples": 12,
+              "new_description": true,
+              "sentence_exact": 0.4166666666666667,
+              "content_bytes": 0.49907407407407406,
+              "start_hit_object": 0.5,
+              "start_hit_place": 0.5,
+              "pointer_hit_object": 0.5,
+              "pointer_hit_place": 1.0
+            }
+          }
+        },
+        "scale_4": {
+          "examples": 24,
+          "sentence_exact": 0.7083333333333334,
+          "sentence_content": 0.7083333333333334,
+          "object_content": 0.7083333333333334,
+          "place_content": 0.75,
+          "content_bytes": 0.749537037037037,
+          "conditional_byte": 0.7708333333333334,
+          "start_hit_object": 0.75,
+          "start_hit_place": 0.75,
+          "pointer_hit_object": 0.75,
+          "pointer_hit_place": 1.0,
+          "route_hit_object": 0.75,
+          "route_hit_place": 1.0,
+          "terminated": 1.0,
+          "utf8": 1.0,
+          "ceiling": 0.7083333333333334,
+          "gamma_mean": 0.34158713991440304,
+          "by_index": {
+            "0": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 1.0,
+              "content_bytes": 1.0,
+              "start_hit_object": 1.0,
+              "start_hit_place": 1.0,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "8": {
+              "examples": 12,
+              "new_description": true,
+              "sentence_exact": 0.4166666666666667,
+              "content_bytes": 0.49907407407407406,
+              "start_hit_object": 0.5,
+              "start_hit_place": 0.5,
+              "pointer_hit_object": 0.5,
+              "pointer_hit_place": 1.0
+            }
+          }
+        },
+        "scale_16": {
+          "examples": 24,
+          "sentence_exact": 0.7083333333333334,
+          "sentence_content": 0.7083333333333334,
+          "object_content": 0.7083333333333334,
+          "place_content": 0.75,
+          "content_bytes": 0.749537037037037,
+          "conditional_byte": 0.7708333333333334,
+          "start_hit_object": 0.75,
+          "start_hit_place": 0.75,
+          "pointer_hit_object": 0.75,
+          "pointer_hit_place": 1.0,
+          "route_hit_object": 0.75,
+          "route_hit_place": 1.0,
+          "terminated": 1.0,
+          "utf8": 1.0,
+          "ceiling": 0.7083333333333334,
+          "gamma_mean": 0.34158713991440304,
+          "by_index": {
+            "0": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 1.0,
+              "content_bytes": 1.0,
+              "start_hit_object": 1.0,
+              "start_hit_place": 1.0,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "8": {
+              "examples": 12,
+              "new_description": true,
+              "sentence_exact": 0.4166666666666667,
+              "content_bytes": 0.49907407407407406,
+              "start_hit_object": 0.5,
+              "start_hit_place": 0.5,
+              "pointer_hit_object": 0.5,
+              "pointer_hit_place": 1.0
+            }
+          }
+        },
+        "forced": {
+          "examples": 24,
+          "sentence_exact": 0.7083333333333334,
+          "sentence_content": 0.7083333333333334,
+          "object_content": 0.7083333333333334,
+          "place_content": 0.75,
+          "content_bytes": 0.749537037037037,
+          "conditional_byte": 0.7708333333333334,
+          "start_hit_object": 0.75,
+          "start_hit_place": 0.75,
+          "pointer_hit_object": 0.75,
+          "pointer_hit_place": 1.0,
+          "route_hit_object": 0.75,
+          "route_hit_place": 1.0,
+          "terminated": 1.0,
+          "utf8": 1.0,
+          "ceiling": 0.7083333333333334,
+          "gamma_mean": 0.34158713991440304,
+          "by_index": {
+            "0": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 1.0,
+              "content_bytes": 1.0,
+              "start_hit_object": 1.0,
+              "start_hit_place": 1.0,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "8": {
+              "examples": 12,
+              "new_description": true,
+              "sentence_exact": 0.4166666666666667,
+              "content_bytes": 0.49907407407407406,
+              "start_hit_object": 0.5,
+              "start_hit_place": 0.5,
+              "pointer_hit_object": 0.5,
+              "pointer_hit_place": 1.0
+            }
+          }
+        }
+      }
+    },
+    "28031-C_unlocked": {
+      "seed": 28031,
+      "arm": "C_unlocked",
+      "nan_parameters": 0,
+      "probe": {
+        "natural": {
+          "examples": 24,
+          "sentence_exact": 0.4583333333333333,
+          "sentence_content": 0.5,
+          "object_content": 0.5,
+          "place_content": 0.8333333333333334,
+          "content_bytes": 0.7060185185185185,
+          "conditional_byte": 0.7317810457516339,
+          "start_hit_object": 0.875,
+          "start_hit_place": 0.8333333333333334,
+          "pointer_hit_object": 0.875,
+          "pointer_hit_place": 0.9166666666666666,
+          "route_hit_object": 0.875,
+          "route_hit_place": 0.9166666666666666,
+          "terminated": 1.0,
+          "utf8": 1.0,
+          "ceiling": 0.75,
+          "gamma_mean": 0.48828735404682905,
+          "by_index": {
+            "0": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 0.8333333333333334,
+              "content_bytes": 0.9768518518518517,
+              "start_hit_object": 1.0,
+              "start_hit_place": 0.9166666666666666,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "8": {
+              "examples": 12,
+              "new_description": true,
+              "sentence_exact": 0.08333333333333333,
+              "content_bytes": 0.4351851851851852,
+              "start_hit_object": 0.75,
+              "start_hit_place": 0.75,
+              "pointer_hit_object": 0.75,
+              "pointer_hit_place": 0.8333333333333334
+            }
+          }
+        },
+        "scale_4": {
+          "examples": 24,
+          "sentence_exact": 0.5,
+          "sentence_content": 0.5416666666666666,
+          "object_content": 0.5416666666666666,
+          "place_content": 0.9583333333333334,
+          "content_bytes": 0.7395833333333334,
+          "conditional_byte": 0.7851239106753812,
+          "start_hit_object": 0.9166666666666666,
+          "start_hit_place": 0.9583333333333334,
+          "pointer_hit_object": 0.9166666666666666,
+          "pointer_hit_place": 0.9583333333333334,
+          "route_hit_object": 0.9166666666666666,
+          "route_hit_place": 0.9583333333333334,
+          "terminated": 1.0,
+          "utf8": 1.0,
+          "ceiling": 0.8333333333333334,
+          "gamma_mean": 0.4857088671848502,
+          "by_index": {
+            "0": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 0.9166666666666666,
+              "content_bytes": 1.0,
+              "start_hit_object": 1.0,
+              "start_hit_place": 1.0,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "8": {
+              "examples": 12,
+              "new_description": true,
+              "sentence_exact": 0.08333333333333333,
+              "content_bytes": 0.4791666666666667,
+              "start_hit_object": 0.8333333333333334,
+              "start_hit_place": 0.9166666666666666,
+              "pointer_hit_object": 0.8333333333333334,
+              "pointer_hit_place": 0.9166666666666666
+            }
+          }
+        },
+        "scale_16": {
+          "examples": 24,
+          "sentence_exact": 0.5,
+          "sentence_content": 0.5,
+          "object_content": 0.5,
+          "place_content": 0.875,
+          "content_bytes": 0.7178240740740741,
+          "conditional_byte": 0.7351239106753812,
+          "start_hit_object": 0.9166666666666666,
+          "start_hit_place": 0.9583333333333334,
+          "pointer_hit_object": 0.9166666666666666,
+          "pointer_hit_place": 0.9583333333333334,
+          "route_hit_object": 0.9166666666666666,
+          "route_hit_place": 0.9583333333333334,
+          "terminated": 1.0,
+          "utf8": 1.0,
+          "ceiling": 0.8333333333333334,
+          "gamma_mean": 0.47370263677714153,
+          "by_index": {
+            "0": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 0.9166666666666666,
+              "content_bytes": 0.9833333333333334,
+              "start_hit_object": 1.0,
+              "start_hit_place": 1.0,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "8": {
+              "examples": 12,
+              "new_description": true,
+              "sentence_exact": 0.08333333333333333,
+              "content_bytes": 0.45231481481481484,
+              "start_hit_object": 0.8333333333333334,
+              "start_hit_place": 0.9166666666666666,
+              "pointer_hit_object": 0.8333333333333334,
+              "pointer_hit_place": 0.9166666666666666
+            }
+          }
+        },
+        "forced": {
+          "examples": 24,
+          "sentence_exact": 0.5,
+          "sentence_content": 0.5,
+          "object_content": 0.5,
+          "place_content": 0.875,
+          "content_bytes": 0.7178240740740741,
+          "conditional_byte": 0.7351239106753812,
+          "start_hit_object": 0.9166666666666666,
+          "start_hit_place": 0.9583333333333334,
+          "pointer_hit_object": 0.9166666666666666,
+          "pointer_hit_place": 0.9583333333333334,
+          "route_hit_object": 0.9166666666666666,
+          "route_hit_place": 0.9583333333333334,
+          "terminated": 1.0,
+          "utf8": 1.0,
+          "ceiling": 0.8333333333333334,
+          "gamma_mean": 0.47370263677714153,
+          "by_index": {
+            "0": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 0.9166666666666666,
+              "content_bytes": 0.9833333333333334,
+              "start_hit_object": 1.0,
+              "start_hit_place": 1.0,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "8": {
+              "examples": 12,
+              "new_description": true,
+              "sentence_exact": 0.08333333333333333,
+              "content_bytes": 0.45231481481481484,
+              "start_hit_object": 0.8333333333333334,
+              "start_hit_place": 0.9166666666666666,
+              "pointer_hit_object": 0.8333333333333334,
+              "pointer_hit_place": 0.9166666666666666
+            }
+          }
+        }
+      }
+    },
+    "28032-C_unlocked": {
+      "seed": 28032,
+      "arm": "C_unlocked",
+      "nan_parameters": 0,
+      "probe": {
+        "natural": {
+          "examples": 24,
+          "sentence_exact": 0.4583333333333333,
+          "sentence_content": 0.4583333333333333,
+          "object_content": 0.5416666666666666,
+          "place_content": 0.7916666666666666,
+          "content_bytes": 0.6643518518518519,
+          "conditional_byte": 0.7235472180325121,
+          "start_hit_object": 0.75,
+          "start_hit_place": 0.875,
+          "pointer_hit_object": 0.75,
+          "pointer_hit_place": 0.9166666666666666,
+          "route_hit_object": 0.75,
+          "route_hit_place": 0.9166666666666666,
+          "terminated": 1.0,
+          "utf8": 1.0,
+          "ceiling": 0.6666666666666666,
+          "gamma_mean": 0.47303091141240466,
+          "by_index": {
+            "0": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 0.8333333333333334,
+              "content_bytes": 0.9490740740740741,
+              "start_hit_object": 1.0,
+              "start_hit_place": 0.9166666666666666,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "8": {
+              "examples": 12,
+              "new_description": true,
+              "sentence_exact": 0.08333333333333333,
+              "content_bytes": 0.3796296296296296,
+              "start_hit_object": 0.5,
+              "start_hit_place": 0.8333333333333334,
+              "pointer_hit_object": 0.5,
+              "pointer_hit_place": 0.8333333333333334
+            }
+          }
+        },
+        "scale_4": {
+          "examples": 24,
+          "sentence_exact": 0.4583333333333333,
+          "sentence_content": 0.4583333333333333,
+          "object_content": 0.5416666666666666,
+          "place_content": 0.7083333333333334,
+          "content_bytes": 0.6446759259259259,
+          "conditional_byte": 0.7077886710239651,
+          "start_hit_object": 0.75,
+          "start_hit_place": 0.875,
+          "pointer_hit_object": 0.75,
+          "pointer_hit_place": 0.875,
+          "route_hit_object": 0.75,
+          "route_hit_place": 0.875,
+          "terminated": 1.0,
+          "utf8": 1.0,
+          "ceiling": 0.625,
+          "gamma_mean": 0.4777910011589018,
+          "by_index": {
+            "0": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 0.8333333333333334,
+              "content_bytes": 0.9490740740740741,
+              "start_hit_object": 1.0,
+              "start_hit_place": 1.0,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 1.0
+            },
+            "8": {
+              "examples": 12,
+              "new_description": true,
+              "sentence_exact": 0.08333333333333333,
+              "content_bytes": 0.34027777777777773,
+              "start_hit_object": 0.5,
+              "start_hit_place": 0.75,
+              "pointer_hit_object": 0.5,
+              "pointer_hit_place": 0.75
+            }
+          }
+        },
+        "scale_16": {
+          "examples": 24,
+          "sentence_exact": 0.3333333333333333,
+          "sentence_content": 0.3333333333333333,
+          "object_content": 0.4583333333333333,
+          "place_content": 0.5,
+          "content_bytes": 0.5886574074074075,
+          "conditional_byte": 0.6505582788671024,
+          "start_hit_object": 0.75,
+          "start_hit_place": 0.6666666666666666,
+          "pointer_hit_object": 0.75,
+          "pointer_hit_place": 0.7916666666666666,
+          "route_hit_object": 0.75,
+          "route_hit_place": 0.7916666666666666,
+          "terminated": 1.0,
+          "utf8": 1.0,
+          "ceiling": 0.5,
+          "gamma_mean": 0.4901961903583718,
+          "by_index": {
+            "0": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 0.5833333333333334,
+              "content_bytes": 0.887037037037037,
+              "start_hit_object": 1.0,
+              "start_hit_place": 0.75,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 0.9166666666666666
+            },
+            "8": {
+              "examples": 12,
+              "new_description": true,
+              "sentence_exact": 0.08333333333333333,
+              "content_bytes": 0.2902777777777778,
+              "start_hit_object": 0.5,
+              "start_hit_place": 0.5833333333333334,
+              "pointer_hit_object": 0.5,
+              "pointer_hit_place": 0.6666666666666666
+            }
+          }
+        },
+        "forced": {
+          "examples": 24,
+          "sentence_exact": 0.3333333333333333,
+          "sentence_content": 0.3333333333333333,
+          "object_content": 0.4583333333333333,
+          "place_content": 0.5,
+          "content_bytes": 0.5886574074074075,
+          "conditional_byte": 0.6505582788671024,
+          "start_hit_object": 0.75,
+          "start_hit_place": 0.6666666666666666,
+          "pointer_hit_object": 0.75,
+          "pointer_hit_place": 0.7916666666666666,
+          "route_hit_object": 0.75,
+          "route_hit_place": 0.7916666666666666,
+          "terminated": 1.0,
+          "utf8": 1.0,
+          "ceiling": 0.5,
+          "gamma_mean": 0.4901961903583718,
+          "by_index": {
+            "0": {
+              "examples": 12,
+              "new_description": false,
+              "sentence_exact": 0.5833333333333334,
+              "content_bytes": 0.887037037037037,
+              "start_hit_object": 1.0,
+              "start_hit_place": 0.75,
+              "pointer_hit_object": 1.0,
+              "pointer_hit_place": 0.9166666666666666
+            },
+            "8": {
+              "examples": 12,
+              "new_description": true,
+              "sentence_exact": 0.08333333333333333,
+              "content_bytes": 0.2902777777777778,
+              "start_hit_object": 0.5,
+              "start_hit_place": 0.5833333333333334,
+              "pointer_hit_object": 0.5,
+              "pointer_hit_place": 0.6666666666666666
+            }
+          }
+        }
+      }
+    }
+  },
+  "cost": {
+    "cpu_seconds": 171.641,
+    "wall_seconds": 177.43,
+    "adam_updates": 0,
+    "confirm_reads": 0,
+    "bundles_saved": 0
+  },
+  "limits": {
+    "no_training": true,
+    "no_criterion_change": true,
+    "no_confirm": true
+  },
+  "readout": {
+    "reconciliation": "the 48-example slice is the easy stratum (indices 0/1/4/5, 0 of 96 new_description); formal full-192 is 0.6302/0.5833, slice48 measured 1.0/0.9583 (pooled 0.9792), and the archive-derived easy stratum is 1.0/0.9375. The two scorers are the same predicate, so 0.979 is slice optimism, not an understated formal score. 19.5 negative verdict unaffected (D16-7).",
+    "forced_pointer": "best arm B stays at 0.7083 with the start forced to the pointer argmax (natural 0.7083); start object rises 0.625->0.75 on 28031-B but content bytes fall 0.840->0.812, so the sentence does not move. 28032-B start is already at the pointer (0.75).",
+    "log_scale": "s=4 reproduces the full force on 28031-B; s=16 adds nothing and pushes 28032-C down to 0.333. The scalar bias is not the binding constraint.",
+    "pointer_quality_warning": "on the archived 19.5 bundles the span head pointer is 0.75/0.958-1.0, not the 1.0/1.0 of the unsaved 19.2c head; forcing to a 0.75 pointer can also hurt.",
+    "verdict": "forced sentence 0.7083 <= 0.75: pointer path topped out, no pointer authorisation, redirect to frame/decode attribution, no training pre-started"
+  }
+}

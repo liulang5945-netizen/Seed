@@ -2859,14 +2859,33 @@
     }
   },
   "readout": {
-    "b_arm": "sentence 0.979 pooled; the only residual is 2.1pp start_miss; the sentence frame presses almost nothing",
+    "b_arm": "on the 48-example easy slice only: sentence 0.979; on the full 192 the formal score is 0.630/0.583 (D16-7 slice-bias defect)",
     "c_arm": "sentence 0.740 pooled, ceiling 0.875: start_miss 13.5pp + content 9.4pp are copy-fixable; 12.5pp stays frame/EOS/length",
     "a_arm_28032": "sentence 0.000; 47/48 failures diverge at frame position 0, so the collapsed route is masked by first-divergence priority and is not readable from this table",
     "a_arm_28031": "D16-6 engineering defect (all parameters NaN), excluded from every pooled statistic",
-    "frame_pressing": "for the best arm B the frame presses 2.1pp; for C about 12.5pp; the pooled 20.8pp frame share is almost all the collapsed A cell",
+    "frame_pressing": "frame pressure is small inside the easy slice; it is NOT evidence that the full-sentence gate is nearly met",
     "new_description_gate": "this table measures exact sentence bytes only; the 19.5 new_description ~0.26 gate is not in scope here"
   },
   "bucket_caveat": "first divergence decides; a frame error before a content position hides any route miss downstream",
   "route_diagnostic_secondary": "route_miss reads 0.0 everywhere because no example first diverges at an entity start after an intact frame; it is a lower bound, not a route pass",
-  "manifest_note": "0 updates, 0 saves, 0 confirm reads"
+  "manifest_note": "0 updates, 0 saves, 0 confirm reads N19.2e resolved the 0.630/0.979 conflict: slice bias (D16-7), not a definition difference.",
+  "slice_conflict_correction": {
+    "status": "D16-7 slice-bias defect, resolved by N19.2e",
+    "fact": "the 48-example dev slice (indices 0/1/4/5 per world) contains 0 new_description examples out of 96; the other 96 examples are exactly the new_description stratum",
+    "formal_full192": {
+      "28031-B_stop_lock": 0.6302083333333334,
+      "28032-B_stop_lock": 0.5833333333333334
+    },
+    "measured_slice48": {
+      "28031-B_stop_lock": 1.0,
+      "28032-B_stop_lock": 0.9583333333333334,
+      "pooled": 0.9791666666666666
+    },
+    "easy_stratum": {
+      "28031-B_stop_lock": 1.0,
+      "28032-B_stop_lock": 0.9375
+    },
+    "conclusion": "0.979 is slice optimism on the easy stratum, not the task gate; the formal 0.630/0.583 is correct and the 19.5 negative verdict is unaffected",
+    "do_not_quote": "B 0.979 must never be quoted as the B-arm sentence rate"
+  }
 }

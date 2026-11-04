@@ -16,6 +16,37 @@
 
 **头条状态（2026-11-04，语义身份）：** 身份从“字节绑定”改为“语义哈希”：组成项是图名/契约、配置常量、模块清单、`routing_rule_version`、解码与路由规则、输入白名单、参数名/形状/dtype、声明可塑归属；`source_sha` 与 `weights_sha256` 只记录不决定身份。black-100 合并后 v1 字节摘要从 964a8c68… 漂到 1af63213…，但 `candidate_sha_v2` 恒为 773dcec2…。零更新等价探针（[报告](../../../reports/taiji_selection_routing_17_2r_format_equivalence_20261104.json)）全部逐位一致，60.80 CPU / 62.80 wall、0 优化器步、0 训练更新、0 confirm 读取；四份 2026-11-03 证据维持原字节与有效性（T3 v3 720/720、17.4 v2、新价、17.2R），身份登记见[注册报告](../../../reports/taiji_selection_routing_17_2r_identity_20261104.json)。17.5 的 checkpoint 保存/恢复复验已通过，六格跑完并结案为负结果（见下条 17.7）。本页是按时间追加的流水，旧条目里的“唯一阻塞/唯一下一步”均已被最新条目覆盖。
 
+## 2026-11-04 19.2e 口径对账 + 零更新强制覆盖探针（0 存包 / 0 confirm）
+
+证据：[19.2e 报告](../../../reports/taiji_package19_2e_pointer_override_20261104.json)＋[manifest](../../manifests/taiji_package19_2e_pointer_override_20261104.json)。脚本 [`probe_taiji_package19_pointer_override.py`](../../../scripts/training/probe_taiji_package19_pointer_override.py)。19.5 六格 bundle 只读，未改字节、未存包。
+
+**A. 口径对账（最高优先，D16-7）**：正式评（192 例/格）整句 0.630/0.583 与残差归因（48 例/格）0.979 的冲突，逐项对平结论：
+
+| 检查项 | 结论 |
+|---|---|
+| 定义差异 | **无**：正式 `completed` 与归因 `pass` 是同一谓词（`raw == target_prefix` 27 字节＋终止），均走 `prefix=bytes(raw)` UTF-8 掩码；`target_prefix` 恒为 `target_bytes` 去 EOS |
+| 切片分布 | 48 例 = 索引 0/1/4/5，**0 个 `new_description`**（96 例全在其余半）→ 纯**易层** |
+| 同一 48 例 under 正式口径（实测） | 28031-B **1.000**、28032-B **0.9583** |
+| 同一 192 例 under 归因口径（离线分解） | 28031-B 0.6302 = 易层 96/96 + new_desc 25/96；28032-B 0.5833 = 易层 90/96 + new_desc 22/96 |
+| 池化切片 | 94/96 = **0.9792**，精确复现归因报告的 0.979 |
+
+**结论**：0.979 是**切片乐观**，正式评**没有被低估**，**19.5 判负不受影响**；任何一臂在切片口径下不得表述为过门。
+
+**B. 强制覆盖探针（0 更新）**：24 例/格混合集（索引 0 易层 12 + 索引 8 `new_description` 12），推理期把复制起点强制成 span 指针 argmax（1e9 one-hot），α 路由 / γ / transport / 解码全部不动。
+
+| 格 | natural 整句 | forced 整句 | 起始物件 | 内容字节 | forced `start_hit` |
+|---|---:|---:|---:|---:|---:|
+| 28031-B | 0.7083 | **0.7083** | 0.625→**0.750** | 0.840→0.812 | 0.75（= pointer，强制生效） |
+| 28032-B | 0.7083 | **0.7083** | 0.750→0.750 | — | 0.75 |
+| 28031-C | 0.4583 | 0.5000 | — | — | — |
+| 28032-C | 0.4583 | 0.3333 | — | — | — |
+
+**C. log-scale 三档（纯推理，不改权重）**：s=1（natural）/ s=4 / s=16 对 B 臂整句**全部 0.7083**——s=4 已等价于 1e9 强制，s=16 无增益且使 28032-C 掉到 0.333。**量化结论：标量偏置从 +1 倍到 +16 倍都翻不动行，符合 19.2c 的"冻结 transport 行质量"判断。**
+
+**判定**：B forced **0.7083 ≤ 0.75** → **指针路径到顶**，不授权指针、不启动任何训练；转句框/解码门槛归因。
+
+**成本与观察线**：本轮 **171.6 CPU / 177.4 wall / 0 Adam / 0 存包 / 0 confirm**；19.2b 线累计 **1,556.4 CPU**；六格 **32,256.6 CPU 未花**。
+
 ## 2026-11-04 19.2c 成熟父包诊断 + 残差六类归因（0 存包 / 0 confirm）
 
 证据：[19.2c 报告](../../../reports/taiji_package19_2c_mature_parent_20261104.json)＋[manifest](../../manifests/taiji_package19_2c_mature_parent_20261104.json)、[残差归因](../../../reports/taiji_package19_2b_residual_attribution_20261104.json)＋[manifest](../../manifests/taiji_package19_2b_residual_attribution_20261104.json)。脚本 [`validate_taiji_package19_2c_mature_parent.py`](../../../scripts/training/validate_taiji_package19_2c_mature_parent.py)、[`attribute_taiji_package19_2b_residuals.py`](../../../scripts/training/attribute_taiji_package19_2b_residuals.py)。19.5 六格 bundle 只读，未改字节。

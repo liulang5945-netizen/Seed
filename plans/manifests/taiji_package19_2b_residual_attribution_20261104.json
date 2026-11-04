@@ -31,11 +31,21 @@
     "ceiling_route": 0.9271
   },
   "readout": {
-    "b_arm": "sentence 0.979 pooled; the only residual is 2.1pp start_miss; the sentence frame presses almost nothing",
+    "b_arm": "on the 48-example easy slice only: 0.979; full-192 formal score is 0.630/0.583 (D16-7)",
     "c_arm": "sentence 0.740 pooled, ceiling 0.875: start_miss 13.5pp + content 9.4pp are copy-fixable; 12.5pp stays frame/EOS/length",
     "a_arm_28032": "sentence 0.000; 47/48 failures diverge at frame position 0, so the collapsed route is masked by first-divergence priority and is not readable from this table",
     "a_arm_28031": "D16-6 engineering defect (all parameters NaN), excluded from every pooled statistic",
     "frame_pressing": "for the best arm B the frame presses 2.1pp; for C about 12.5pp; the pooled 20.8pp frame share is almost all the collapsed A cell",
     "new_description_gate": "this table measures exact sentence bytes only; the 19.5 new_description ~0.26 gate is not in scope here"
+  },
+  "slice_conflict_correction": {
+    "status": "D16-7 slice-bias defect, resolved by N19.2e",
+    "formal_full192": {
+      "28031-B": 0.6302083333333334,
+      "28032-B": 0.5833333333333334
+    },
+    "slice48_pooled": 0.9791666666666666,
+    "slice_new_description_examples": 0,
+    "conclusion": "slice optimism, not a definition difference; the 19.5 negative verdict is unaffected"
   }
 }
