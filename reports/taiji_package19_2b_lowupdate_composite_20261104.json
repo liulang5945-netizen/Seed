@@ -1,0 +1,299 @@
+{
+  "schema": "taiji-package19-2b-lowupdate-composite-v2",
+  "step": "N19.2b / D16-5",
+  "date": "2026-11-04",
+  "purpose": "does the composite row argmax rise with gold-start supervision",
+  "design": {
+    "seed": 28031,
+    "arm": "B_stop_lock",
+    "updates": 30,
+    "stage": "selection (1-100 window); only selection CE + span CE are trained",
+    "span_head": "SpanPointerHead 32-d bottleneck (4,194 parameters)",
+    "supervision": "teacher_span(record_raw, entity_bytes) gold start/end on object and place records",
+    "pointer_injection": "span start logits enter routing_step as pointer_bias; no alpha/beta/encoder/transport change",
+    "dev_examples": 48,
+    "saves": 0,
+    "confirm_reads": 0,
+    "release_reading": "composite_row_hit_rate must rise on both object and place; route is a separate gate and does not mature in this window"
+  },
+  "candidate_sha_v2": "6c5466ab023e7234c250ca4f7a6c66104f5a1ba4f616eee7b3da3aab7436289e",
+  "span_parameters": 4194,
+  "span_expected": 4194,
+  "probes": [
+    {
+      "update": 0,
+      "object": {
+        "beta_start_hit_rate": 0.0,
+        "pointer_start_hit_rate": 0.0,
+        "composite_start_hit_rate": 0.0,
+        "route_hit_rate": 0.005208333333333333,
+        "beta_row_hit_rate": 0.20833333333333334,
+        "pointer_row_hit_rate": 0.0,
+        "composite_row_hit_rate": 0.25,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 0.0,
+        "unconditional_byte": 0.08333333333333333
+      },
+      "place": {
+        "beta_start_hit_rate": 0.0,
+        "pointer_start_hit_rate": 0.0,
+        "composite_start_hit_rate": 0.041666666666666664,
+        "route_hit_rate": 0.15277777777777776,
+        "beta_row_hit_rate": 0.0,
+        "pointer_row_hit_rate": 0.041666666666666664,
+        "composite_row_hit_rate": 0.10416666666666667,
+        "carry_active_rate": 0.020833333333333332,
+        "conditional_byte": 0.0,
+        "unconditional_byte": 0.1375
+      },
+      "gamma_mean": 0.8283359000683373,
+      "pooled": {
+        "composite_row_hit_rate": 0.17708333333333334,
+        "composite_start_hit_rate": 0.020833333333333332
+      }
+    },
+    {
+      "update": 5,
+      "object": {
+        "beta_start_hit_rate": 0.0,
+        "pointer_start_hit_rate": 0.0,
+        "composite_start_hit_rate": 0.0,
+        "route_hit_rate": 0.001736111111111111,
+        "beta_row_hit_rate": 0.20833333333333334,
+        "pointer_row_hit_rate": 0.375,
+        "composite_row_hit_rate": 0.2916666666666667,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 0.0,
+        "unconditional_byte": 0.08522727272727272
+      },
+      "place": {
+        "beta_start_hit_rate": 0.0,
+        "pointer_start_hit_rate": 0.041666666666666664,
+        "composite_start_hit_rate": 0.0625,
+        "route_hit_rate": 0.125,
+        "beta_row_hit_rate": 0.0,
+        "pointer_row_hit_rate": 0.2916666666666667,
+        "composite_row_hit_rate": 0.10416666666666667,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 0.26666666666666666,
+        "unconditional_byte": 0.13333333333333333
+      },
+      "gamma_mean": 0.8005664525976753,
+      "pooled": {
+        "composite_row_hit_rate": 0.19791666666666669,
+        "composite_start_hit_rate": 0.03125
+      }
+    },
+    {
+      "update": 10,
+      "object": {
+        "beta_start_hit_rate": 0.0,
+        "pointer_start_hit_rate": 0.0,
+        "composite_start_hit_rate": 0.0,
+        "route_hit_rate": 0.001736111111111111,
+        "beta_row_hit_rate": 0.20833333333333334,
+        "pointer_row_hit_rate": 0.625,
+        "composite_row_hit_rate": 0.2916666666666667,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 0.0,
+        "unconditional_byte": 0.0928030303030303
+      },
+      "place": {
+        "beta_start_hit_rate": 0.0,
+        "pointer_start_hit_rate": 0.0,
+        "composite_start_hit_rate": 0.041666666666666664,
+        "route_hit_rate": 0.06944444444444443,
+        "beta_row_hit_rate": 0.0,
+        "pointer_row_hit_rate": 0.625,
+        "composite_row_hit_rate": 0.14583333333333334,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 0.4,
+        "unconditional_byte": 0.14166666666666666
+      },
+      "gamma_mean": 0.7912620279491263,
+      "pooled": {
+        "composite_row_hit_rate": 0.21875,
+        "composite_start_hit_rate": 0.020833333333333332
+      }
+    },
+    {
+      "update": 15,
+      "object": {
+        "beta_start_hit_rate": 0.0,
+        "pointer_start_hit_rate": 0.0,
+        "composite_start_hit_rate": 0.0,
+        "route_hit_rate": 0.003472222222222222,
+        "beta_row_hit_rate": 0.20833333333333334,
+        "pointer_row_hit_rate": 0.7916666666666666,
+        "composite_row_hit_rate": 0.2916666666666667,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 0.0,
+        "unconditional_byte": 0.09659090909090909
+      },
+      "place": {
+        "beta_start_hit_rate": 0.0,
+        "pointer_start_hit_rate": 0.0,
+        "composite_start_hit_rate": 0.0,
+        "route_hit_rate": 0.027777777777777776,
+        "beta_row_hit_rate": 0.0,
+        "pointer_row_hit_rate": 0.6666666666666666,
+        "composite_row_hit_rate": 0.14583333333333334,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 0.0,
+        "unconditional_byte": 0.1375
+      },
+      "gamma_mean": 0.7920746227484726,
+      "pooled": {
+        "composite_row_hit_rate": 0.21875,
+        "composite_start_hit_rate": 0.0
+      }
+    },
+    {
+      "update": 20,
+      "object": {
+        "beta_start_hit_rate": 0.0,
+        "pointer_start_hit_rate": 0.0,
+        "composite_start_hit_rate": 0.0,
+        "route_hit_rate": 0.0,
+        "beta_row_hit_rate": 0.20833333333333334,
+        "pointer_row_hit_rate": 0.75,
+        "composite_row_hit_rate": 0.2916666666666667,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 0.0,
+        "unconditional_byte": 0.09659090909090909
+      },
+      "place": {
+        "beta_start_hit_rate": 0.0,
+        "pointer_start_hit_rate": 0.0,
+        "composite_start_hit_rate": 0.0,
+        "route_hit_rate": 0.027777777777777776,
+        "beta_row_hit_rate": 0.0,
+        "pointer_row_hit_rate": 0.75,
+        "composite_row_hit_rate": 0.14583333333333334,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 0.0,
+        "unconditional_byte": 0.14166666666666666
+      },
+      "gamma_mean": 0.791957464594011,
+      "pooled": {
+        "composite_row_hit_rate": 0.21875,
+        "composite_start_hit_rate": 0.0
+      }
+    },
+    {
+      "update": 25,
+      "object": {
+        "beta_start_hit_rate": 0.0,
+        "pointer_start_hit_rate": 0.0,
+        "composite_start_hit_rate": 0.0,
+        "route_hit_rate": 0.012152777777777776,
+        "beta_row_hit_rate": 0.20833333333333334,
+        "pointer_row_hit_rate": 0.75,
+        "composite_row_hit_rate": 0.2916666666666667,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 0.0,
+        "unconditional_byte": 0.0928030303030303
+      },
+      "place": {
+        "beta_start_hit_rate": 0.0,
+        "pointer_start_hit_rate": 0.0,
+        "composite_start_hit_rate": 0.0,
+        "route_hit_rate": 0.06597222222222222,
+        "beta_row_hit_rate": 0.0,
+        "pointer_row_hit_rate": 0.7916666666666666,
+        "composite_row_hit_rate": 0.14583333333333334,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 0.0,
+        "unconditional_byte": 0.14166666666666666
+      },
+      "gamma_mean": 0.7930061827196128,
+      "pooled": {
+        "composite_row_hit_rate": 0.21875,
+        "composite_start_hit_rate": 0.0
+      }
+    },
+    {
+      "update": 30,
+      "object": {
+        "beta_start_hit_rate": 0.0,
+        "pointer_start_hit_rate": 0.0,
+        "composite_start_hit_rate": 0.0,
+        "route_hit_rate": 0.03819444444444444,
+        "beta_row_hit_rate": 0.20833333333333334,
+        "pointer_row_hit_rate": 0.75,
+        "composite_row_hit_rate": 0.2916666666666667,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 0.0,
+        "unconditional_byte": 0.0928030303030303
+      },
+      "place": {
+        "beta_start_hit_rate": 0.0,
+        "pointer_start_hit_rate": 0.14583333333333334,
+        "composite_start_hit_rate": 0.0625,
+        "route_hit_rate": 0.15277777777777776,
+        "beta_row_hit_rate": 0.0,
+        "pointer_row_hit_rate": 0.7916666666666666,
+        "composite_row_hit_rate": 0.14583333333333334,
+        "carry_active_rate": 0.0,
+        "conditional_byte": 0.26666666666666666,
+        "unconditional_byte": 0.14166666666666666
+      },
+      "gamma_mean": 0.7934499588241654,
+      "pooled": {
+        "composite_row_hit_rate": 0.21875,
+        "composite_start_hit_rate": 0.03125
+      }
+    }
+  ],
+  "deltas": {
+    "object": {
+      "beta_start_hit_rate": 0.0,
+      "pointer_start_hit_rate": 0.0,
+      "composite_start_hit_rate": 0.0,
+      "composite_row_hit_rate": 0.041666666666666685,
+      "route_hit_rate": 0.032986111111111105,
+      "conditional_byte": 0.0
+    },
+    "place": {
+      "beta_start_hit_rate": 0.0,
+      "pointer_start_hit_rate": 0.14583333333333334,
+      "composite_start_hit_rate": 0.020833333333333336,
+      "composite_row_hit_rate": 0.04166666666666667,
+      "route_hit_rate": 0.0,
+      "conditional_byte": 0.26666666666666666
+    }
+  },
+  "composite_row_rising_on_both_worlds": true,
+  "span_loss": {
+    "first": 6.779488726287633,
+    "last": 5.03435972683867,
+    "mean": 5.6778072018187
+  },
+  "accounting": {
+    "adam_steps": 30,
+    "independent_trajectories": 1,
+    "adam_cap": 60,
+    "prior_run": {
+      "charged_adam": 60,
+      "true_independent_updates": 30,
+      "reason": "A_route_lock and B_stop_lock are bit-identical in the selection stage, so the earlier 2 x 30 Adam was one 30-update trajectory run twice"
+    },
+    "cumulative_independent_updates": 60
+  },
+  "instrument": {
+    "object": "argmax(row_logits = transport_logits(alpha_i * betas_i) + span_bias)",
+    "legacy": "beta_start_hit_rate is the frozen-reader posterior, kept for continuity",
+    "gamma": "gamma = generation weight / 1 - gamma = copy weight; no credit inferred (M3)"
+  },
+  "cost": {
+    "cpu_seconds": 176.875,
+    "wall_seconds": 181.70649540005252,
+    "adam_steps": 30,
+    "adam_cap": 60
+  },
+  "limits": {
+    "formal_dose": false,
+    "training_bundles_kept": false,
+    "confirm_reads": 0
+  }
+}

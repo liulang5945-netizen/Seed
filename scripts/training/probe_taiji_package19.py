@@ -39,6 +39,7 @@ torch.set_num_threads(1)
 
 from dataclasses import replace  # noqa: E402
 
+import composite_start_instrument as instrument  # noqa: E402
 import probe_taiji_content_transport_18_1 as probe_mod  # noqa: E402
 
 from taiji.binding_copy import MAX_COVERAGE, observe_goal  # noqa: E402
@@ -166,146 +167,35 @@ def position_hits(raw: list[int], target: tuple[int, ...]) -> dict[int, int]:
 
 
 def ledger_teacher_forcing(probe, fixture: dict) -> dict:
-    """Gold-prefix ledger at the model's own alpha/beta/gamma (no overrides).
+    """Gold-prefix ledger at the model's own alpha/beta/gamma (D16-5 instrument).
 
-    For every target byte the frozen ``routing_step`` is read, then the *gold*
-    byte is accepted (teacher forcing), so the route keeps its own natural
-    trajectory while the sequence never drifts.  Three separate claims are
-    recorded per step, so "start vs gate vs encoder" is not conflated:
-
-    * ``route_hit``  - alpha's hard route chose the record that owns this byte
-      (the record-selection gate);
-    * ``beta_hit``   - argmax of that record's beta posterior equals the
-      entity's byte offset, i.e. beta put the copy start here;
-    * ``carry_hit``  - the carried pointer ``read.m_peak`` lands here.  m only
-      carries *inside* a copy run (``advance_copy`` shifts it by one), so this
-      is a continuation diagnostic, **never** a start claim.
-
-    ``start_hit`` = ``route_hit and beta_hit``.  gamma is the generation weight,
-    1 - gamma the copy weight; nothing here infers training credit (M3).
+    Every target byte is read with the frozen ``routing_step``, then the *gold*
+    byte is accepted (teacher forcing), so the route keeps its own trajectory
+    while the sequence never drifts.  The D16-5 erratum changed only the object
+    of measurement: ``composite_start_hit`` reads the final transport row argmax
+    (``transport_logits + span_bias``), i.e. the position the decode lands on,
+    instead of the frozen reader posterior ``beta``.  ``beta_start_hit`` and
+    ``pointer_start_hit`` are reported in the same table by the shared
+    ``composite_start_instrument`` module; no criterion moved.
     """
-    prepared, context = probe.prepare(fixture)
-    state, gate_index = observe_goal(probe.candidate, prepared, gate_index=0)
-    target = tuple(fixture["target_bytes"])
-    mapping = probe_mod.content_positions(fixture)
-    offsets = prepared.base.view.record_offsets
-    expected = {
-        position: int(offsets[record][0]) + offset for position, (record, offset) in mapping.items()
-    }
-    previous = EOS
-    steps = []
-    with torch.no_grad():
-        for position in range(len(target)):
-            step = routing_step(
-                probe.candidate,
-                prepared,
-                state,
-                previous,
-                context,
-                probe.candidate.head,
-                arm=probe.arm,
-                gate_index=gate_index,
-                span_head=probe.candidate.span_head,
-                pointer_temperature=1.0,
-                pointer_hard=True,
-            )
-            byte = int(torch.argmax(step.probabilities).item())
-            record, offset = mapping.get(position, (-1, -1))
-            route_hit = beta_hit = carry_hit = None
-            beta_peak = -1
-            if record >= 0:
-                route_hit = int(torch.argmax(step.a_hard)) == record
-                if record < len(step.read.betas):
-                    beta_peak = int(torch.argmax(step.read.betas[record]))
-                    beta_hit = beta_peak == offset
-                carry_hit = int(step.read.m_peak) == expected[position]
-            steps.append(
-                {
-                    "position": position,
-                    "hit": byte == target[position],
-                    "m_peak": int(step.read.m_peak),
-                    "beta_peak": beta_peak,
-                    "beta_hit": beta_hit,
-                    "carry_hit": carry_hit,
-                    "route_hit": route_hit,
-                    "gamma": float(step.gamma_eff.detach()),
-                }
-            )
-            state, _coverage, gate_index = _advanced_state(
-                probe.candidate, prepared, step, target[position]
-            )
-            previous = target[position]
-    return {"steps": steps}
-
-
-def _nanmean(values) -> float:
-    finite = [float(value) for value in values if value == value]
-    return statistics.fmean(finite) if finite else 0.0
+    return instrument.measure_fixture(probe, fixture)
 
 
 def ledger_metrics(ledger: dict) -> dict:
-    """Per-example ledger: start claims, tail accuracy, beta track rate."""
-    steps = {step["position"]: step for step in ledger["steps"]}
-    out = {"gamma_mean": _nanmean(step["gamma"] for step in ledger["steps"])}
-    for name, positions in (("object", OBJECT_POSITIONS), ("place", PLACE_POSITIONS)):
-        start = steps[positions[0]]
-        tail = [steps[position] for position in positions[1:]]
-        entity = [steps[position] for position in positions]
-        out[name] = {
-            "start_hit": bool(start["route_hit"]) and bool(start["beta_hit"]),
-            "route_hit": bool(start["route_hit"]),
-            "beta_start_hit": bool(start["beta_hit"]),
-            "carry_start_hit": bool(start["carry_hit"]),
-            "start_byte_hit": bool(start["hit"]),
-            "tail_hits": sum(1 for step in tail if step["hit"]),
-            "tail_total": len(tail),
-            "beta_hit_rate": sum(1 for step in entity if step["beta_hit"]) / len(entity),
-            "route_hit_rate": sum(1 for step in entity if step["route_hit"]) / len(entity),
-            "entity_byte_hits_all": sum(1 for step in entity if step["hit"]),
-        }
-    return out
+    """Per-example ledger: composite start claim, tail accuracy, beta track."""
+    return instrument.metrics(ledger)
 
 
 def ledger_summary(entries_all: list[dict]) -> dict:
-    """Aggregate the gold-prefix ledger over examples.
+    """Aggregate the gold-prefix ledger over examples (D16-5 instrument).
 
-    ``start_hit_rate`` = route true **and** beta's first byte correct;
-    ``conditional_byte`` is the follow-through **only among the examples whose
-    start hit**; ``unconditional_byte`` is the current pooled byte rate.
+    ``composite_start_hit_rate`` = route true **and** the final row argmax lands
+    on the entity's first byte; ``conditional_byte`` is the follow-through only
+    among those examples.  ``start_hit_rate`` stays as the route-and-beta alias
+    so the archived 19.5 shape still parses; the legacy numbers themselves live
+    in the 19.5 report and are labelled ``legacy_instrument`` there.
     """
-    out: dict[str, dict] = {}
-    for name in ("object", "place"):
-        entries = [entry[name] for entry in entries_all]
-        starts = sum(1 for entry in entries if entry["start_hit"])
-        start_bytes = sum(1 for entry in entries if entry["start_byte_hit"])
-        cond_hits = sum(entry["tail_hits"] for entry in entries if entry["start_hit"])
-        cond_total = sum(entry["tail_total"] for entry in entries if entry["start_hit"])
-        all_hits = sum(entry["tail_hits"] for entry in entries)
-        all_total = sum(entry["tail_total"] for entry in entries)
-        out[name] = {
-            "start_hit_rate": starts / len(entries) if entries else 0.0,
-            "start_hit_examples": starts,
-            "route_hit_rate": _nanmean(entry["route_hit_rate"] for entry in entries),
-            "beta_start_hit_rate": (
-                sum(1 for entry in entries if entry["beta_start_hit"]) / len(entries)
-                if entries
-                else 0.0
-            ),
-            "carry_start_hit_rate": (
-                sum(1 for entry in entries if entry["carry_start_hit"]) / len(entries)
-                if entries
-                else 0.0
-            ),
-            "start_byte_hit_rate": start_bytes / len(entries) if entries else 0.0,
-            "conditional_byte": cond_hits / cond_total if cond_total else 0.0,
-            "conditional_denominator_bytes": cond_total,
-            "conditional_examples": starts,
-            "unconditional_byte": all_hits / all_total if all_total else 0.0,
-            "beta_hit_rate": _nanmean(entry["beta_hit_rate"] for entry in entries),
-            "examples": len(entries),
-        }
-    out["gamma_mean"] = _nanmean(entry["gamma_mean"] for entry in entries_all)
-    return out
+    return instrument.summarize(entries_all)
 
 
 def forced_with_positions(probe, fixture: dict, mode: str, gamma_override: float) -> dict:
@@ -537,6 +427,11 @@ def run_ledger_cell(
         "wall_seconds": time.perf_counter() - start_wall,
         "adam_steps": 0,
     }
+
+
+def _nanmean(values) -> float:
+    finite = [float(value) for value in values if value == value]
+    return statistics.fmean(finite) if finite else 0.0
 
 
 def mean_of(results: list[dict], path: list[str]) -> float:

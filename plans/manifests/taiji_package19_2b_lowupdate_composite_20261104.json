@@ -1,0 +1,29 @@
+{
+  "schema": "taiji-package19-2b-lowupdate-composite-manifest-v1",
+  "step": "N19.2b / D16-5",
+  "report": "reports\\taiji_package19_2b_lowupdate_composite_20261104.json",
+  "adam_steps": 30,
+  "composite_row_rising": true,
+  "deltas": {
+    "object": {
+      "beta_start_hit_rate": 0.0,
+      "pointer_start_hit_rate": 0.0,
+      "composite_start_hit_rate": 0.0,
+      "composite_row_hit_rate": 0.041666666666666685,
+      "route_hit_rate": 0.032986111111111105,
+      "conditional_byte": 0.0
+    },
+    "place": {
+      "beta_start_hit_rate": 0.0,
+      "pointer_start_hit_rate": 0.14583333333333334,
+      "composite_start_hit_rate": 0.020833333333333336,
+      "composite_row_hit_rate": 0.04166666666666667,
+      "route_hit_rate": 0.0,
+      "conditional_byte": 0.26666666666666666
+    }
+  },
+  "cost": {
+    "cpu_seconds": 176.875,
+    "wall_seconds": 181.70649540005252
+  }
+}

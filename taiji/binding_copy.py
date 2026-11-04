@@ -200,6 +200,16 @@ class BindingRead:
     forced: bool
     pointer: tuple[torch.Tensor, ...] = ()
     pointer_logits: tuple[torch.Tensor, ...] = ()
+    # D16-1 instrument (read-only, not a model output): the ingredients of the
+    # final transport row, aligned with ``pointer``.  ``row_prebias`` is the
+    # transport row *before* the span bias, ``row_bias`` is the span bias that
+    # was added, and ``row_source`` says which branch produced the row:
+    # "transport" (prebias + bias), "carry" (committed carried position, no sum)
+    # or "forced" (an explicit force).  The decode uses ``pointer``, whose argmax
+    # equals ``argmax(pointer_logits)``; composite_start_hit reads that argmax.
+    row_prebias: tuple[torch.Tensor | None, ...] = ()
+    row_bias: tuple[torch.Tensor | None, ...] = ()
+    row_source: tuple[str, ...] = ()
     # Effective carried-copy peak (flattened byte index inside ``view``); used
     # only to anchor a new copy run, never as a model output.
     m_peak: int = -1
@@ -355,6 +365,9 @@ class BindingCopyReader(nn.Module):
         s_pieces = []
         pointer_rows: list[torch.Tensor] = []
         pointer_logit_rows: list[torch.Tensor] = []
+        prebias_rows: list[torch.Tensor | None] = []
+        bias_rows: list[torch.Tensor | None] = []
+        row_sources: list[str] = []
         forced_pointer = force.get("pointer") if force is not None else None
         for index in range(view.record_count):
             anchor = alpha[index] * betas[index]
@@ -377,13 +390,19 @@ class BindingCopyReader(nn.Module):
                 # of a run and any step without a carry.
                 pointer = extra
                 row_logits = extra
+                prebias = None
+                row_bias = None
+                source = "carry"
                 s_piece = anchor.sum() * pointer
             elif forced_pointer is not None:
                 pointer = forced_pointer[index].to(s.dtype)
                 row_logits = pointer
+                prebias = None
+                row_bias = None
+                source = "forced"
                 s_piece = anchor.sum() * pointer
             else:
-                s_piece, pointer, row_logits = self._point_transport(
+                s_piece, pointer, row_logits, prebias = self._point_transport(
                     anchor,
                     view.units[index],
                     q_w,
@@ -391,9 +410,14 @@ class BindingCopyReader(nn.Module):
                     pointer_temperature,
                     pointer_hard,
                 )
+                row_bias = bias
+                source = "transport"
             s_pieces.append(s_piece)
             pointer_rows.append(pointer)
             pointer_logit_rows.append(row_logits)
+            prebias_rows.append(prebias)
+            bias_rows.append(row_bias)
+            row_sources.append(source)
         s_bytes = torch.cat(s_pieces)
         alpha_null = alpha[-1]
         m_mass = m_bytes.sum()
@@ -428,6 +452,9 @@ class BindingCopyReader(nn.Module):
             forced=force is not None,
             pointer=tuple(pointer_rows),
             pointer_logits=tuple(pointer_logit_rows),
+            row_prebias=tuple(prebias_rows),
+            row_bias=tuple(bias_rows),
+            row_source=tuple(row_sources),
             m_peak=m_peak,
             m_peak_value=m_peak_value,
         )
@@ -440,13 +467,14 @@ class BindingCopyReader(nn.Module):
         pointer_bias: torch.Tensor | None,
         temperature: float,
         hard: bool,
-    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         """Unit/hard point transport: one target position, not a soft row.
 
         The source position is the anchor's mode (betas), the target score is the
         learned transport row for that source, optionally biased by the span
         start head.  Training uses a temperature-annealed softmax; inference
-        takes the argmax, so the copied position is a single point.
+        takes the argmax, so the copied position is a single point.  The fourth
+        return value is the row *before* the span bias (D16-1 instrument only).
         """
         key_width = self.config.key_width
         length = units.shape[0]
@@ -464,6 +492,7 @@ class BindingCopyReader(nn.Module):
         else:
             source_weights = torch.softmax(anchor / temperature, dim=-1)
             row_logits = (source_weights.unsqueeze(0) @ logits).squeeze(0)
+        prebias = row_logits
         if pointer_bias is not None:
             row_logits = row_logits + pointer_bias
         mass = anchor.sum()
@@ -473,7 +502,7 @@ class BindingCopyReader(nn.Module):
             pointer[index] = 1.0
         else:
             pointer = torch.softmax(row_logits / temperature, dim=-1)
-        return mass * pointer, pointer, row_logits
+        return mass * pointer, pointer, row_logits, prebias
 
 
 class BindingCopyCandidate(nn.Module):

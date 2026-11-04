@@ -303,3 +303,34 @@ P3首步强制实体起点的时点与目标实体阶段不同。P4只在alpha/b
 
 **成本**：19.2b 前段共 **672.2 CPU**（定价 0 + 少更新 268.3 + 预检 297.5 + 指针诊断 88.9 + 未训练对照 17.5）；confirm 读取 **0**；19.5 的 6 个 step300 bundle 原样保留作基线。
 
+### 15.2 D16-5 仪器勘误与修正后小验证（2026-11-04）
+
+**状态**：`instrument_erratum_completed` ＋ `low_update_not_rising`（六格不放行）。证据：[D16-5 复合仪器](../../reports/taiji_package19_2b_composite_instrument_20261104.json)、[修正后小验证](../../reports/taiji_package19_2b_lowupdate_composite_20261104.json)。
+
+**勘误内容（D16-5，编号延续 D16-x）**：**只改测量对象，不改任何判据数值**；改前 19.5 读数（β 条件 0.347/0.340、conditional 0.941/0.980）**已经看过**，属事后测量修正，登记留痕以免被读成"看到读数后换判据"。旧口径原样保留为 `legacy_instrument`，不覆盖、不删除 19.5 归档报告。
+
+**合成链（0 更新核对，永久生效）**：`source = argmax(alpha_i × betas_i)`（α 为标量，故 source 恒等于 β 的 mode）→ `transport_logits = transport(q_w, units)` → `row_logits = transport_logits + pointer_bias` → `pointer = one-hot(argmax(row_logits))`；carry 分支（m peak / cursor）**绕过合成**（`row_bias=None`，pointer=row_logits=one-hot(carried byte)）。实测：`row_logits` 重建逐元素最大差 **0.0**、pointer one-hot 不一致 **0**、source≠β-mode **0**；内容行 4,320 中 transport 1,073 / carry 3,247；起点 480 中 carry 仅 11。**因此"第一个内容输出字节所选的源字节位置"＝最终行 argmax，`composite_start_hit` 是正确门对象。**
+
+**三读并列（19.5 六格 step300，剔除 NaN 格，5 格 pooled）**：
+
+| 读数 | 物件 | 地点 | 说明 |
+|---|---|---|---|
+| `beta_start_hit`（旧口径） | **0.400** | **0.400** | route ∧ argmax(β)；冻结 reader，span 不可动 |
+| `pointer_start_hit` | **0.833** | **0.800** | route ∧ argmax(span bias) |
+| `composite_start_hit`（**D16-5 门**） | **0.767** | **0.746** | route ∧ argmax(最终行) |
+| `decode_start_hit`（诊断） | 0.788 | 0.738 | argmax(q_bytes)，受 carry 质量影响 |
+| `route_hit` | 0.865 | 0.800 | 单独 ≥0.95 门 |
+| `conditional_byte`（composite 条件） | 0.830 | 0.791 | B 臂 1.000/1.000、C 臂 1.000/0.977；缺口全部来自 A 臂（0.152/0） |
+| `conditional_byte`（β 条件诊断） | 0.392 | 0.400 | 零分母格按 0 计入的池化伪影；19.5 归档 0.941/0.980 为字节加权旧口径 |
+
+分臂（剔除 NaN）：B 臂 composite **0.917/0.979**、conditional **1.0/1.0**；C 臂 β **0.000/0.000** 而 composite **0.969/0.885**（直接证明旧仪器测错对象）；A 臂结构性失效（28031 全 NaN、28032 route 0.359/0.003）。
+
+**基线污染（新发现，永久登记）**：`output/taiji_package19_compare/28031-A_route_lock-step300.pt` 全部 binding/head 参数为 NaN（2,320,153 个），早于 probe（15:47 vs 17:02）。19.5 归档 pooled 0.347/0.340 **包含该污染格**；本勘误将其从 pooled 剔除并显式标注，**未修改 bundle 本身**。今后任何池化必须先做参数健康检查。
+
+**修正后小验证（30 独立 Adam，B 臂，盲父，仅 selection）**：`composite_row_hit` 物件 **0.250→0.292**、地点 **0.104→0.146**（双边 +4.17pp），但更新 5/10 后**走平**；`composite_start_hit`（含 route）物件 **0.000→0.000**、地点 **0.000→0.021**；route 0.005→0.038；span CE 6.779→5.034。按 owner 原文口径（门读 composite_start_hit）**未上升 → 不放行六格**。解释：`composite_start_hit = route ∧ row-argmax`，盲父 30 更新内 route 远未成熟（0.03），routed 门被 route 穹顶压住，与"监督不作用于落点"不可区分；不受 route 限制的 row 读数已见小幅上升但平台化。
+
+**记账修正（永久）**：前次"60 Adam"中 A/B 两臂在 selection 阶段逐位同轨迹（同一 `candidate_sha_v2`），实为**一条 30 更新轨迹跑两遍**，按真实独立轨迹计 **30**；本次再跑 30 → 累计独立更新 **60**，已达 owner 上限，**不得再加剂量**。
+
+**成本**：本轮 D16-5 核对 103.9 CPU + 小验证 176.9 CPU = **280.8 CPU**；19.2b 累计 **953.0 CPU**；confirm 读取 **0**；六格 32,256.6 CPU **未花**。
+
+

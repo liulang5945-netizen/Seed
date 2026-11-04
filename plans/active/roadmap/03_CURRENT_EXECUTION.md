@@ -1991,3 +1991,17 @@ HEAD旧T3使用前置锚点时701/720失败；工作树新pointer/强制cursor�
 **结论（结构性）**：`read.betas` 是冻结 reader 的记录内位置后验（[binding_copy.py](../../../taiji/binding_copy.py) 337 行），span pointer 只经 `pointer_bias → row_logits → pointer/s_bytes`（361、386–396、467–476 行），从不进入 β；而 19.5 的 `start_hit` 读 `route ∧ argmax(betas)`。因此 span 监督再好也抬不动这个读数，六格 300 更新会结构性撞上阶段门、32,256.6 CPU 属注定浪费。已停在六格之前，未产生任何新训练 bundle，19.5 六个 step300 bundle 原样保留作基线。
 
 19.2b 前段合计 672.2 CPU（另含未训练对照 17.5），confirm 读取 0。产物：[19.2b 决策](../../../reports/taiji_package19_2b_decision_20261104.json)、[定价](../../../reports/taiji_pricing_19_2b_20261104.json)、[少更新](../../../reports/taiji_package19_2b_lowupdate_20261104.json)、[预检](../../../reports/taiji_preflight_19_2b_20261104.json)、[指针诊断](../../../reports/taiji_package19_2b_pointer_diagnostic_20261104.json)。队首：等 owner 裁定把阶段门 `start_hit` 的读数对象改为 span 指针（数值 0.95 不变）；裁定前不训练。
+
+## 2026-11-04 包 19.2b：D16-5 测量修正（0 更新核对）与修正后小验证（30 独立 Adam）
+
+owner 授权"测量修正"并收紧口径：门读数对象改为**解码时真正使用的落点**。D16-5 核对 103.9 CPU（0 更新、0 confirm、0 训练）：在 19.5 六格 step300 上 teacher-forced 逐步重建合成链，`row_logits = transport_logits + pointer_bias` 逐元素最大差 **0.0**；`pointer = one-hot(argmax(row_logits))` 不一致 **0**；`source = argmax(α×β)` 恒等于 β 的 mode（不一致 0）；内容行 4,320（transport 1,073 / carry 3,247，carry 绕过合成，起点 carry 仅 11/480）。结论：**"第一个内容输出字节所选的源字节位置"＝最终行 argmax，`composite_start_hit` 是正确门对象**；旧 `start_hit` 读 β 属错对象。
+
+**三读并列（5 个有限格池化，剔除 28031-A）**：β **0.400/0.400**、pointer **0.833/0.800**、composite **0.767/0.746**、decode 0.788/0.738、route **0.865/0.800**、composite 条件 conditional **0.830/0.791**（B 臂 1.0/1.0、C 臂 1.0/0.977，缺口全在 A 臂）。分臂：C 臂 β **0.000/0.000** 而 composite **0.969/0.885**——直接证明旧仪器测错对象；B 臂 composite 0.917/0.979；A 臂结构性失效（28031 全 NaN、28032 route 0.359/0.003）。
+
+**基线污染（新登记）**：`28031-A_route_lock-step300.pt` 全部 binding/head 参数 NaN（2,320,153 个），mtime 早于 probe；19.5 归档 pooled 0.347/0.340 含该污染格。本次仅剔除、标注，不改 bundle。19.5 归档数值原样保留为 `legacy_instrument`。
+
+修正后小验证 176.9 CPU（1 条独立轨迹、30 Adam、B 臂、盲父、仅 selection；0 存包、0 confirm）：`composite_row_hit` 物件 **0.250→0.292**、地点 **0.104→0.146**（双边 +4.17pp），但更新 5/10 后走平；`composite_start_hit` 物件 **0.000→0.000**、地点 **0.000→0.021**；route 0.005→0.038；span CE 6.779→5.034。**按 owner 原文口径未上升 → 不放行六格 32,256.6 CPU**；解释为盲父 30 更新内 route 未成熟，routed 门被 route 穹顶压住，与"监督无效"不可区分。
+
+**记账修正**：前次"60 Adam"（A/B 两臂 × 30）在 selection 阶段逐位同轨迹（同一 `candidate_sha_v2`），实为**一条 30 更新轨迹跑两遍**；按真实独立轨迹计 30，本次再 30 → 累计 **60**，已达 owner 上限，不得再加剂量。
+
+本轮合计 280.8 CPU；19.2b 累计 **953.0 CPU**；六格未花；confirm 0。产物：[D16-5 复合仪器](../../../reports/taiji_package19_2b_composite_instrument_20261104.json)（[manifest](../../manifests/taiji_package19_2b_composite_instrument_20261104.json)）、[修正后小验证](../../../reports/taiji_package19_2b_lowupdate_composite_20261104.json)（[manifest](../../manifests/taiji_package19_2b_lowupdate_composite_20261104.json)）。队首：**不训练、不花钱，等 owner 裁定 D16-5 结案口径**；若要区分"route 穹顶"与"监督无效"，唯一动作是换 19.5 B step300 成熟父包复跑同额 ≤60 Adam（需授权）。

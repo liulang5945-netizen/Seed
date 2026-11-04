@@ -3,7 +3,14 @@
 Applies the owner-frozen gates exactly as written in
 ``plans/manifests/taiji_package19_2b_prereg_20261104.json``:
 
-stage gate  start_hit object/place >= 0.95, route_hit >= 0.95,
+D16-5 erratum (2026-11-04): the measured object is ``composite_start_hit`` --
+route owns the gold record AND ``argmax(row_logits = transport + span bias)``
+is the entity's first byte, i.e. the landing spot the decode actually uses.
+``beta_start_hit`` (the old 19.5 object) and ``pointer_start_hit`` (the bare span
+head) are reported beside it and never replace it; ``conditional_byte`` is
+conditioned on the composite hit, with beta/pointer conditions as diagnostics.
+
+stage gate  composite_start_hit object/place >= 0.95, route_hit >= 0.95,
             conditional_byte object >= 0.94 / place >= 0.98 (no regression);
 final gate  byte object/place >= 0.95, copied >= 0.60, overall >= 0.80,
             unseen >= 0.80, utf8 frozen path >= 0.98, EOS >= 0.95,
@@ -22,6 +29,7 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
+import math
 import statistics
 import sys
 import time
@@ -37,7 +45,8 @@ torch.set_num_threads(1)
 
 COMPARE = ROOT / "reports/taiji_package19_2b_compare_20261104.json"
 PROBE = ROOT / "reports/taiji_package19_2b_probe_step300_20261104.json"
-LOWUPDATE = ROOT / "reports/taiji_package19_2b_lowupdate_20261104.json"
+LOWUPDATE = ROOT / "reports/taiji_package19_2b_lowupdate_composite_20261104.json"
+LOWUPDATE_LEGACY = ROOT / "reports/taiji_package19_2b_lowupdate_20261104.json"
 PREFLIGHT = ROOT / "reports/taiji_preflight_19_2b_20261104.json"
 PRICING = ROOT / "plans/manifests/taiji_pricing_19_2b_20261104.json"
 PREREG = ROOT / "plans/manifests/taiji_package19_2b_prereg_20261104.json"
@@ -123,7 +132,11 @@ def main() -> int:
 
     compare = read_json(COMPARE)
     probe = read_json(PROBE)
-    lowupdate = read_json(LOWUPDATE) if LOWUPDATE.exists() else {}
+    lowupdate = (
+        read_json(LOWUPDATE)
+        if LOWUPDATE.exists()
+        else (read_json(LOWUPDATE_LEGACY) if LOWUPDATE_LEGACY.exists() else {})
+    )
     preflight = read_json(PREFLIGHT) if PREFLIGHT.exists() else {}
     pricing = read_json(PRICING)
 
@@ -137,27 +150,66 @@ def main() -> int:
         for cell in probe["cells"].values()
     }
 
-    def pooled(key: str) -> float:
-        return statistics.fmean(ledger[cell_key][key]["start_hit_rate"] for cell_key in ledger)
+    def healthy(cell_key: str) -> bool:
+        values = ledger[cell_key]
+        numbers = [
+            values[world][field]
+            for world in ("object", "place")
+            for field in (
+                "composite_start_hit_rate",
+                "beta_start_hit_rate",
+                "pointer_start_hit_rate",
+                "route_hit_rate",
+                "conditional_byte",
+            )
+        ]
+        return all(isinstance(value, (int, float)) and math.isfinite(value) for value in numbers)
 
-    def pooled_field(world: str, field: str) -> float:
-        return statistics.fmean(ledger[cell_key][world][field] for cell_key in ledger)
+    pooled_cells = [cell_key for cell_key in ledger if healthy(cell_key)]
+    excluded_cells = [cell_key for cell_key in ledger if cell_key not in pooled_cells]
+
+    def pooled_field_healthy(world: str, field: str) -> float:
+        return statistics.fmean(ledger[cell_key][world][field] for cell_key in pooled_cells)
 
     stage_readings = {
-        "start_hit_object": pooled_field("object", "start_hit_rate"),
-        "start_hit_place": pooled_field("place", "start_hit_rate"),
-        "route_hit_object": pooled_field("object", "route_hit_rate"),
-        "route_hit_place": pooled_field("place", "route_hit_rate"),
-        "conditional_byte_object": pooled_field("object", "conditional_byte"),
-        "conditional_byte_place": pooled_field("place", "conditional_byte"),
-        "unconditional_byte_object": pooled_field("object", "unconditional_byte"),
-        "unconditional_byte_place": pooled_field("place", "unconditional_byte"),
-        "beta_start_hit_object": pooled_field("object", "beta_start_hit_rate"),
-        "beta_start_hit_place": pooled_field("place", "beta_start_hit_rate"),
+        "composite_start_hit_object": pooled_field_healthy("object", "composite_start_hit_rate"),
+        "composite_start_hit_place": pooled_field_healthy("place", "composite_start_hit_rate"),
+        "beta_start_hit_object": pooled_field_healthy("object", "beta_start_hit_rate"),
+        "beta_start_hit_place": pooled_field_healthy("place", "beta_start_hit_rate"),
+        "pointer_start_hit_object": pooled_field_healthy("object", "pointer_start_hit_rate"),
+        "pointer_start_hit_place": pooled_field_healthy("place", "pointer_start_hit_rate"),
+        "decode_start_hit_object": pooled_field_healthy("object", "decode_start_hit_rate"),
+        "decode_start_hit_place": pooled_field_healthy("place", "decode_start_hit_rate"),
+        "route_hit_object": pooled_field_healthy("object", "route_hit_rate"),
+        "route_hit_place": pooled_field_healthy("place", "route_hit_rate"),
+        "conditional_byte_object": pooled_field_healthy("object", "conditional_byte"),
+        "conditional_byte_place": pooled_field_healthy("place", "conditional_byte"),
+        "conditional_byte_beta_diagnostic_object": pooled_field_healthy(
+            "object", "conditional_byte_beta_diagnostic"
+        ),
+        "conditional_byte_beta_diagnostic_place": pooled_field_healthy(
+            "place", "conditional_byte_beta_diagnostic"
+        ),
+        "conditional_byte_pointer_diagnostic_object": pooled_field_healthy(
+            "object", "conditional_byte_pointer_diagnostic"
+        ),
+        "conditional_byte_pointer_diagnostic_place": pooled_field_healthy(
+            "place", "conditional_byte_pointer_diagnostic"
+        ),
+        "unconditional_byte_object": pooled_field_healthy("object", "unconditional_byte"),
+        "unconditional_byte_place": pooled_field_healthy("place", "unconditional_byte"),
+    }
+    per_arm = {
+        arm: {
+            cell_key: {"object": ledger[cell_key]["object"], "place": ledger[cell_key]["place"]}
+            for cell_key in ledger
+            if cell_key.endswith(f"-{arm}")
+        }
+        for arm in ARMS
     }
     stage_gate = {
-        "start_hit_object_0.95": stage_readings["start_hit_object"] >= 0.95,
-        "start_hit_place_0.95": stage_readings["start_hit_place"] >= 0.95,
+        "composite_start_hit_object_0.95": stage_readings["composite_start_hit_object"] >= 0.95,
+        "composite_start_hit_place_0.95": stage_readings["composite_start_hit_place"] >= 0.95,
         "route_hit_0.95": min(stage_readings["route_hit_object"], stage_readings["route_hit_place"])
         >= 0.95,
         "conditional_object_0.94": stage_readings["conditional_byte_object"] >= 0.94,
@@ -194,16 +246,33 @@ def main() -> int:
     }
     final_pass = all(final_gate.values())
 
-    if not stage_pass:
+    low_start_deltas = lowupdate.get("deltas", {})
+    low_start_rising = all(
+        isinstance(low_start_deltas.get(world, {}).get("composite_start_hit_rate"), float)
+        and low_start_deltas[world]["composite_start_hit_rate"] > 0.0
+        for world in ("object", "place")
+    )
+    low_row_rising = bool(lowupdate.get("composite_row_rising_on_both_worlds"))
+
+    if not low_start_rising:
+        branch = "low_update_not_rising"
+        verdict = (
+            "D16-5 pre-spend reading did not rise on the gate object "
+            "(composite_start_hit); the six cells are not released, no extra dose, no 19.5b"
+        )
+    elif not stage_pass:
         branch = "stage_gate_failed"
         verdict = "19.2b insufficient at the start pointer; confirm sealed"
     elif stage_pass and final_pass:
         branch = "both_passed"
         verdict = "19.2b passed both gates; confirm released once"
-    elif stage_readings["start_hit_object"] >= 0.95 and final_readings["new_description"] < 0.80:
+    elif (
+        stage_readings["composite_start_hit_object"] >= 0.95
+        and final_readings["new_description"] < 0.80
+    ):
         branch = "stage_passed_new_description_failed"
         verdict = (
-            "start_hit reached the gate but new_description stayed below 0.80; "
+            "composite_start_hit reached the gate but new_description stayed below 0.80; "
             "19.2b insufficient, do not add start dose, switch to sentence-frame attribution"
         )
     else:
@@ -220,7 +289,10 @@ def main() -> int:
     )
     attribution = {
         "start_gap_magnitude": 1.0
-        - min(stage_readings["start_hit_object"], stage_readings["start_hit_place"]),
+        - min(
+            stage_readings["composite_start_hit_object"],
+            stage_readings["composite_start_hit_place"],
+        ),
         "gate_gap_magnitude": 1.0
         - min(stage_readings["route_hit_object"], stage_readings["route_hit_place"]),
         "encoder_gap_magnitude": 1.0 - encoder_content,
@@ -240,7 +312,14 @@ def main() -> int:
         reverse=True,
     )
 
-    confirm = {"read": False, "reason": "gates not both passed"}
+    confirm = {
+        "read": False,
+        "reason": (
+            "pre-spend reading did not rise; the six cells are sealed"
+            if branch == "low_update_not_rising"
+            else "gates not both passed"
+        ),
+    }
     if branch == "both_passed" and not arguments.no_confirm:
         candidates = sorted(
             cells.items(),
@@ -265,12 +344,49 @@ def main() -> int:
         "verdict": verdict,
         "branch": branch,
         "stage_gate": {"readings": stage_readings, "checks": stage_gate, "passed": stage_pass},
+        "instrument": {
+            "gate_object": "composite_start_hit = route owns gold record AND "
+            "argmax(row_logits = transport + span bias) is the first byte",
+            "side_by_side": {
+                "beta": {
+                    "object": stage_readings["beta_start_hit_object"],
+                    "place": stage_readings["beta_start_hit_place"],
+                },
+                "pointer": {
+                    "object": stage_readings["pointer_start_hit_object"],
+                    "place": stage_readings["pointer_start_hit_place"],
+                },
+                "composite": {
+                    "object": stage_readings["composite_start_hit_object"],
+                    "place": stage_readings["composite_start_hit_place"],
+                },
+                "decode": {
+                    "object": stage_readings["decode_start_hit_object"],
+                    "place": stage_readings["decode_start_hit_place"],
+                },
+            },
+            "legacy_instrument": "19.5 beta-conditioned readings stay archived; "
+            "see reports/taiji_package19_2b_composite_instrument_20261104.json",
+        },
+        "aggregation": {
+            "rule": "pooled across healthy cells; per-cell and per-arm reported",
+            "pooled_cells": pooled_cells,
+            "excluded_cells": excluded_cells,
+            "per_arm": per_arm,
+        },
         "final_gate": {"readings": final_readings, "checks": final_gate, "passed": final_pass},
         "attribution": attribution,
         "attribution_ranked": ranked,
         "low_update_validation": {
             "report": str(LOWUPDATE.relative_to(ROOT)) if LOWUPDATE.exists() else None,
-            "rising_beta_pointer": lowupdate.get("deltas"),
+            "composite_start_rising_on_both_worlds": low_start_rising,
+            "composite_row_rising_on_both_worlds": low_row_rising,
+            "deltas": lowupdate.get("deltas"),
+            "adam_steps": lowupdate.get("accounting", {}).get("adam_steps"),
+            "independent_trajectories": lowupdate.get("accounting", {}).get(
+                "independent_trajectories"
+            ),
+            "release_rule": "only a rising composite_start_hit releases the six cells",
             "cost": lowupdate.get("cost"),
         },
         "confirm": confirm,
@@ -291,7 +407,9 @@ def main() -> int:
         "per_cell": cells,
         "baseline_19_5": {
             "bundles": "output/taiji_package19_compare",
-            "verdict": "negative (overall 0.00-0.63; start_hit 0.347/0.340)",
+            "verdict": "negative (overall 0.00-0.63; legacy beta start_hit 0.347/0.340)",
+            "contaminated_cell": "28031-A_route_lock (all binding/head parameters NaN)",
+            "instrument_note": "19.5 gate read argmax(betas); D16-5 reads the final row argmax",
         },
         "prereg": str(PREREG.relative_to(ROOT)),
     }
@@ -325,6 +443,8 @@ def main() -> int:
                     for key, value in final_readings.items()
                 },
                 "final_pass": final_pass,
+                "composite_start_rising": low_start_rising,
+                "composite_row_rising": low_row_rising,
                 "attribution_ranked": [(name, round(value, 3)) for name, value in ranked],
                 "confirm": confirm.get("read"),
                 "cost_total": round(total, 1),

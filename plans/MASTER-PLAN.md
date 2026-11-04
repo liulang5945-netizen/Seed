@@ -6,8 +6,8 @@
 
 **唯一主线**：以原生字节为主体、同一主体内逐字节表达；按“数据前提 → 图验 → 定价 → 恢复预检 → 正式比较 → 条件确认”的窗口制推进，一个窗口判负就归因、修图、再验，不用训练掩盖结构缺口。
 
-**当前窗口**：包 19 已结案（**判负**）；owner 已接受 **19.2b 起点监督**分支，前段（定价、少更新验证、预检、指针诊断）已完成并**停在六格正式比较之前**——原因是阶段门的 `start_hit` 读的是冻结 reader 的 β 后验，span 监督不可动它（[19.2b 决策报告](../reports/taiji_package19_2b_decision_20261104.json)）。已花 672.2 CPU，六格 32,256.6 CPU 未花；confirm 未释放、0 次读取。
-**队首（下一条要做的唯一事）**：**等 owner 裁定 19.2b 阶段门 `start_hit` 的测量对象**（数值 0.95 不变，只把读数从 `argmax(read.betas)` 改为 `argmax(step.pointer)`）。裁定前不训练、不出新 bundle，见 [ROADMAP-NEXT](reference/ROADMAP-NEXT_20261104.md) §4。
+**当前窗口**：包 19 已结案（**判负**）；owner 已接受 **19.2b 起点监督**分支。**D16-5 仪器勘误已完成**：门读数对象从 `argmax(read.betas)` 改为解码实际落点 `argmax(row_logits = transport + span bias)`，判据数值一个不改（[D16-5 复合仪器](../reports/taiji_package19_2b_composite_instrument_20261104.json)）。修正后的 30 更新小验证按 owner 原文口径**未上升**（`composite_start_hit` 物件 0.000→0.000、地点 0.000→0.021；route 仅 0.005→0.038），因此**不放行六格**，停在 32,256.6 CPU 之前。累计 953.0 CPU；confirm 未释放、0 次读取。
+**队首（下一条要做的唯一事）**：**不训练、不花钱，等 owner 裁定 D16-5 的结案口径**：小验证从盲父起跑，`composite_start_hit = route ∧ row-argmax` 被 route 穹顶压住，无法区分"监督无效"与"route 未成熟"；若判定需要区分，唯一动作是换 19.5 B step300 成熟父包复跑同额 ≤60 Adam（约 180–270 CPU），须 owner 明示授权。见 [ROADMAP-NEXT](reference/ROADMAP-NEXT_20261104.md) §4。
 
 ## 1. 状态表
 
@@ -27,7 +27,7 @@
 | **18.1 六格正式比较** | **死** | overall 0.000、`new_name_copied` 0.000、unseen 0.000；16,196.3 CPU / 1,800 Adam；`release_confirm_n18_2=false` | 18.0 预注册＋图验 | 10 门 | `reports/taiji_selection_routing_18_1_compare_20261104.json` |
 | 18.2 归因（γ 扫描/UTF-8/漂移） | 完成（结论生效） | 复制命中 0.090；b 0.290；b_pure 0.755；c 0.390；c_γ0 1.000；γ 6 档整句全 0 | 18.1 判负 | 四条归因落账 | 账本 [§11](reference/INVARIANT-LEDGER_20261103.md)＋[§14](reference/INVARIANT-LEDGER_20261103.md) |
 | **包 19 位置计数＋UTF-8 掩码**（原 18.2 修复包 = 19.1–19.2） | **死（19.5 判负、19.7 结案）** | 19.5 六格 overall 0.000–0.630（门 0.80），最佳格 28031-B；逐字节门物件 0.678 / 地点 0.631；分账 ledger：起点命中 0.347/0.340，起点命中后内容字节 0.941/0.980；29,574.2 CPU / 1,800 Adam；`release_confirm_19=false` | 诊断归因（transport 指针＋解码掩码） | 19.5 逐字节门（物件/地点 ≥0.95、抄回 ≥0.60、整句 ≥0.80）＋预注册 10 门 | `reports/taiji_cursor_utf8_18_2_20261104.json`、`reports/taiji_package19_compare_20261104.json`、`reports/taiji_package19_probe_step300_20261104.json`、`reports/taiji_package19_closeout_19_7_20261104.json` |
-| **19.2b 起点监督**（owner 2026-11-04 接受分支） | **待裁定（前段已完成，停在六格前）** | 定价 32,256.6 裸价 / 68,061.4 保护价；60 Adam：span CE 6.779→5.034，但 β 口径 `start_hit` 恒 0；预检 8/8（sha `6c5466ab`、span 4,194 参数）；指针诊断：19.5 pointer 0.719/0.698 vs β 0.521/0.500，未训练 32-d 0.25/0.00；花费 672.2 CPU | 19.7 结案＋owner 分支授权 | 阶段门 `start_hit` ≥0.95（读数对象待裁定）→ 六格 → 最终门 | [19.2b 决策](../reports/taiji_package19_2b_decision_20261104.json)、[定价](../reports/taiji_pricing_19_2b_20261104.json)、[少更新](../reports/taiji_package19_2b_lowupdate_20261104.json)、[预检](../reports/taiji_preflight_19_2b_20261104.json)、[指针诊断](../reports/taiji_package19_2b_pointer_diagnostic_20261104.json) |
+| **19.2b 起点监督**（owner 2026-11-04 接受分支） | **停（D16-5 修正后按原文口径未上升，不放行六格）** | 定价 32,256.6 裸价 / 68,061.4 保护价；D16-5 合成核对：`row_logits = transport + span bias` 逐元素最大差 **0.0**、pointer one-hot 全一致、carry 绕过合成；19.5 五有限格三读：β 0.400/0.400、pointer 0.833/0.800、composite 0.767/0.746（route 0.832）；28031-A 全 NaN（2,320,153 参数）已剔除；30 独立 Adam 小验证：`composite_row` +4.17pp 双边后走平，`composite_start` 0.000→0.000 / 0.000→0.021，route 0.005→0.038；累计 953.0 CPU | 19.7 结案＋owner 分支授权＋D16-5 勘误 | 阶段门 `composite_start_hit` ≥0.95（物件/地点）＋route ≥0.95＋conditional 不回退 → 六格 → 最终门；当前未达标，六格不放行 | [D16-5 复合仪器](../reports/taiji_package19_2b_composite_instrument_20261104.json)、[小验证](../reports/taiji_package19_2b_lowupdate_composite_20261104.json)、[19.2b 决策](../reports/taiji_package19_2b_decision_20261104.json)、[定价](../reports/taiji_pricing_19_2b_20261104.json)、[预检](../reports/taiji_preflight_19_2b_20261104.json) |
 | 旧能力保持 | 不可判 | `retention_not_admissible`（首个合格父为空） | 首个合格父 | 两层判据：硬不变量 0 容忍＋留存率 bootstrap 下界 ≥0.85 | [账本 §10](reference/INVARIANT-LEDGER_20261103.md) |
 | 经验写入面 | 不存在 | `experience_surface_absent` | 跨 session 写入合同 | 经验面验收 | 账本 T11；前提见 ROADMAP §3 |
 | 18 窗口剩余（条件确认/跨轮状态/自主绑定） | 未启动 | — | 包 19 结案＋owner 批准 | 系统计划 §5 各阶段门 | [系统计划](reference/PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md) |
@@ -38,7 +38,7 @@
 
 ## 2. 依赖顺序（谁先做、谁必须等谁）
 
-1. **现在唯一可做**：等 owner 裁定 **19.2b 阶段门 `start_hit` 的读数对象**（当前读数落在冻结 β 上，span 监督不可动；数值 0.95 不变）。裁定前不训练、不出新 bundle、不重开 17/18；六格 32,256.6 CPU 不得先花。
+1. **现在唯一可做**：等 owner 裁定 **D16-5 的结案口径**（读数对象已改为解码实际落点 `argmax(row_logits)`，判据数值一个不改；30 更新小验证按原文"未上升"，六格不放行）。裁定前不训练、不出新 bundle、不重开 17/18；六格 32,256.6 CPU 不得先花；独立 Adam 已用满 60（前次 30 实为一条轨迹跑两遍，已按真实轨迹数记账）。
 2. 定价（已完成 19.3）之后，owner 已授权**直接推进** 19.4 预检 → 19.5 正式比较（新合同、新证据文件名），不再逐级等放行；任一步不达标按轨道分支处理并回报。
 3. **包 19 已判负**（19.7 结案）：主因是起点/记录选择（起点命中后内容字节 0.941/0.980，未命中时 0.678/0.631）；编码器与生成权重 γ 都不是主因；第二道独立缺口是 `new_description` 句框（B 臂起点全对仍只 0.26/0.23）。owner 已选 **19.2b 起点监督**；其前段证明“指针在动、门看不见指针”，故必须先裁定测量口径再花钱，包 20 不得抢先。
 4. S19 → S20 → S21 → S22，逐级解锁；每级结案才可开工下一级，**当前一律未调度**。

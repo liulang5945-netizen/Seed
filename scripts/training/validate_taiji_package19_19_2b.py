@@ -1,17 +1,27 @@
-"""19.2b low-update validation: does start_hit rise with gold-start supervision?
+"""19.2b low-update validation with the D16-5 composite instrument.
 
-At most 60 Adam steps (2 arms x 30 updates, seed 28031, selection stage only).
-No saves, no formal dose, no confirm read.  Measures the teacher-forced ledger
-every 10 updates on the frozen 48-example dev slice and reports:
+One independent trajectory, at most 30 more Adam updates (the earlier run spent
+60 Adam on two arms whose selection-stage trajectory is bit-identical, i.e. one
+30-update trajectory run twice; that run is charged as 30 independent updates).
+Seed 28031, selection stage only, no saves, no formal dose, no confirm read.
 
-* ``start_hit``  - alpha route owns the record AND the span pointer puts the
-  copy start on the entity's first byte (the supervised quantity);
-* ``route_hit``  - alpha's hard route only;
-* ``conditional_byte`` - tail bytes among start-hit examples;
-* span CE - the loss the head is actually trained on.
+The 19.5 ``start_hit`` read ``argmax(read.betas)`` -- a frozen-reader posterior
+that never sees the teacher-span pointer -- so it could not move under span
+supervision.  This script reads the D16-5 object instead:
 
-gamma is the generation weight and 1 - gamma the copy weight; the ledger reads
-the model's own route, no credit inference (M3).
+* ``composite_row_hit``   - the final transport row argmax for the gold record
+  equals the entity's first byte (the quantity span supervision acts on);
+* ``composite_start_hit`` - the same, additionally conditioned on the alpha
+  route owning the gold record (route is a separate >= 0.95 gate and does not
+  mature within 30 updates from the blind parent);
+* ``pointer_row_hit``     - the pure span-bias argmax lands on the first byte;
+* ``beta_start_hit``      - the legacy frozen-reader reading, kept for continuity;
+* ``conditional_byte``    - tail bytes among route-and-composite start hits;
+* span CE                 - the loss the head is actually trained on.
+
+The release reading is pre-registered as ``composite_row_hit`` rising on both
+worlds (object and place) between update 0 and update 30.  gamma is the
+generation weight and 1 - gamma the copy weight; no credit is inferred (M3).
 
 Run: ``python scripts/training/validate_taiji_package19_19_2b.py``
 """
@@ -33,8 +43,8 @@ import torch  # noqa: E402
 
 torch.set_num_threads(1)
 
+import composite_start_instrument as instrument  # noqa: E402
 import probe_taiji_content_transport_18_1 as probe_mod  # noqa: E402
-import probe_taiji_package19 as ledger_mod  # noqa: E402
 
 from taiji.candidate_identity import candidate_identity  # noqa: E402
 from taiji.selection_routing import RoutingConfig, expected_span_parameter_count  # noqa: E402
@@ -43,13 +53,15 @@ from taiji.selection_routing_checkpoint import build_routing_candidate  # noqa: 
 COMPARE_MODULE = ROOT / "scripts/training/compare_taiji_selection_routing_17_5.py"
 PARENT = ROOT / "output/taiji_core_binding_select_16_1_compare/bundles/28031-A-locked-step300.pt"
 SEED = 28031
-ARMS = ("A_route_lock", "B_stop_lock")
+ARM = "B_stop_lock"
 UPDATES = 30
-PROBE_EVERY = 10
+PROBE_EVERY = 5
 SPAN_BOTTLENECK = 32
+PRIOR_ADAM_RUN_TWICE = 60
+PRIOR_TRUE_TRAJECTORIES = 30
 
-REPORT = ROOT / "reports/taiji_package19_2b_lowupdate_20261104.json"
-MANIFEST = ROOT / "plans/manifests/taiji_package19_2b_lowupdate_20261104.json"
+REPORT = ROOT / "reports/taiji_package19_2b_lowupdate_composite_20261104.json"
+MANIFEST = ROOT / "plans/manifests/taiji_package19_2b_lowupdate_composite_20261104.json"
 
 
 def write_json(path: Path, payload: dict) -> None:
@@ -89,35 +101,37 @@ def schedule(seed: int, train: tuple[dict, ...], updates: int) -> list[tuple[dic
 def ledger_snapshot(candidate, arm: str, dev: tuple[dict, ...]) -> dict:
     probe = probe_mod.ProbeContext(candidate)
     probe.arm = arm
-    metrics = [
-        ledger_mod.ledger_metrics(ledger_mod.ledger_teacher_forcing(probe, fixture))
-        for fixture in dev
-    ]
-    summary = ledger_mod.ledger_summary(metrics)
-    return {
-        "object": {
-            "start_hit_rate": summary["object"]["start_hit_rate"],
-            "route_hit_rate": summary["object"]["route_hit_rate"],
-            "beta_start_hit_rate": summary["object"]["beta_start_hit_rate"],
-            "conditional_byte": summary["object"]["conditional_byte"],
-            "unconditional_byte": summary["object"]["unconditional_byte"],
-        },
-        "place": {
-            "start_hit_rate": summary["place"]["start_hit_rate"],
-            "route_hit_rate": summary["place"]["route_hit_rate"],
-            "beta_start_hit_rate": summary["place"]["beta_start_hit_rate"],
-            "conditional_byte": summary["place"]["conditional_byte"],
-            "unconditional_byte": summary["place"]["unconditional_byte"],
-        },
-        "pooled": {
-            "start_hit_rate": statistics.fmean(
-                [summary["object"]["start_hit_rate"], summary["place"]["start_hit_rate"]]
-            ),
-            "route_hit_rate": statistics.fmean(
-                [summary["object"]["route_hit_rate"], summary["place"]["route_hit_rate"]]
-            ),
-        },
+    metrics = [instrument.metrics(instrument.measure_fixture(probe, fixture)) for fixture in dev]
+    summary = instrument.summarize(metrics)
+    keys = (
+        "beta_start_hit_rate",
+        "pointer_start_hit_rate",
+        "composite_start_hit_rate",
+        "route_hit_rate",
+        "beta_row_hit_rate",
+        "pointer_row_hit_rate",
+        "composite_row_hit_rate",
+        "carry_active_rate",
+        "conditional_byte",
+        "unconditional_byte",
+    )
+    snapshot = {world: {key: summary[world][key] for key in keys} for world in ("object", "place")}
+    snapshot["gamma_mean"] = summary["gamma_mean"]
+    snapshot["pooled"] = {
+        "composite_row_hit_rate": statistics.fmean(
+            [
+                summary["object"]["composite_row_hit_rate"],
+                summary["place"]["composite_row_hit_rate"],
+            ]
+        ),
+        "composite_start_hit_rate": statistics.fmean(
+            [
+                summary["object"]["composite_start_hit_rate"],
+                summary["place"]["composite_start_hit_rate"],
+            ]
+        ),
     }
+    return snapshot
 
 
 def main() -> int:
@@ -132,90 +146,73 @@ def main() -> int:
     batches = schedule(SEED, train, UPDATES)
     config = RoutingConfig(span_bottleneck=SPAN_BOTTLENECK)
 
-    cells = []
+    candidate, optimizer = build_routing_candidate(
+        PARENT, SEED, ARM, span_bottleneck=SPAN_BOTTLENECK
+    )
+    identity = candidate_identity(candidate)
+    probes = [{"update": 0, **ledger_snapshot(candidate, ARM, dev)}]
+    span_losses = []
     total_adam = 0
-    for arm in ARMS:
-        candidate, optimizer = build_routing_candidate(
-            PARENT, SEED, arm, span_bottleneck=SPAN_BOTTLENECK
+    for update in range(1, UPDATES + 1):
+        stage = "selection"
+        parameters = module.set_trainable(candidate, stage)
+        loss, stats = module.batch_loss(
+            candidate, batches[update - 1], ARM, stage, False, update, f"low-{ARM}"
         )
-        identity = candidate_identity(candidate)
-        probes = [{"update": 0, **ledger_snapshot(candidate, arm, dev)}]
-        span_losses = []
-        for update in range(1, UPDATES + 1):
-            stage = "selection"
-            parameters = module.set_trainable(candidate, stage)
-            loss, stats = module.batch_loss(
-                candidate, batches[update - 1], arm, stage, False, update, f"low-{arm}"
+        optimizer.zero_grad()
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(parameters, 1.0)
+        optimizer.step()
+        total_adam += 1
+        span_losses.append(float(stats["span"]))
+        if update % PROBE_EVERY == 0:
+            probes.append({"update": update, **ledger_snapshot(candidate, ARM, dev)})
+            print(
+                json.dumps(
+                    {
+                        "arm": ARM,
+                        "update": update,
+                        "composite_obj": round(probes[-1]["object"]["composite_row_hit_rate"], 3),
+                        "composite_place": round(probes[-1]["place"]["composite_row_hit_rate"], 3),
+                        "composite_start_obj": round(
+                            probes[-1]["object"]["composite_start_hit_rate"], 3
+                        ),
+                        "route_obj": round(probes[-1]["object"]["route_hit_rate"], 3),
+                        "span": round(span_losses[-1], 3),
+                    },
+                    ensure_ascii=False,
+                ),
+                flush=True,
             )
-            optimizer.zero_grad()
-            loss.backward()
-            torch.nn.utils.clip_grad_norm_(parameters, 1.0)
-            optimizer.step()
-            total_adam += 1
-            span_losses.append(float(stats["span"]))
-            if update % PROBE_EVERY == 0:
-                probes.append({"update": update, **ledger_snapshot(candidate, arm, dev)})
-                print(
-                    json.dumps(
-                        {
-                            "arm": arm,
-                            "update": update,
-                            "start_obj": round(probes[-1]["object"]["start_hit_rate"], 3),
-                            "start_place": round(probes[-1]["place"]["start_hit_rate"], 3),
-                            "route_obj": round(probes[-1]["object"]["route_hit_rate"], 3),
-                            "span": round(span_losses[-1], 3),
-                        },
-                        ensure_ascii=False,
-                    ),
-                    flush=True,
-                )
-        cells.append(
-            {
-                "seed": SEED,
-                "arm": arm,
-                "span_bottleneck": SPAN_BOTTLENECK,
-                "span_parameters": sum(p.numel() for p in candidate.span_head.parameters()),
-                "span_expected": expected_span_parameter_count(config),
-                "candidate_sha_v2": identity["candidate_sha_v2"],
-                "updates": UPDATES,
-                "probes": probes,
-                "span_loss": {
-                    "first": span_losses[0],
-                    "last": span_losses[-1],
-                    "mean": statistics.fmean(span_losses),
-                },
-            }
-        )
+
+    first, last = probes[0], probes[-1]
+    deltas = {
+        world: {
+            key: last[world][key] - first[world][key]
+            for key in (
+                "beta_start_hit_rate",
+                "pointer_start_hit_rate",
+                "composite_start_hit_rate",
+                "composite_row_hit_rate",
+                "route_hit_rate",
+                "conditional_byte",
+            )
+        }
+        for world in ("object", "place")
+    }
+    rising = all(deltas[world]["composite_row_hit_rate"] > 0.0 for world in ("object", "place"))
 
     cpu = time.process_time() - start_cpu
     wall = time.perf_counter() - start_wall
-    deltas = {}
-    for arm_cell in cells:
-        first, last = arm_cell["probes"][0], arm_cell["probes"][-1]
-        deltas[arm_cell["arm"]] = {
-            "start_hit_object_delta": last["object"]["start_hit_rate"]
-            - first["object"]["start_hit_rate"],
-            "start_hit_place_delta": last["place"]["start_hit_rate"]
-            - first["place"]["start_hit_rate"],
-            "route_hit_object_delta": last["object"]["route_hit_rate"]
-            - first["object"]["route_hit_rate"],
-            "conditional_object_delta": last["object"]["conditional_byte"]
-            - first["object"]["conditional_byte"],
-        }
-    rising = all(
-        value["start_hit_object_delta"] > 0.0 and value["start_hit_place_delta"] > 0.0
-        for value in deltas.values()
-    )
-
     report = {
-        "schema": "taiji-package19-2b-lowupdate-v1",
-        "step": "N19.2b",
+        "schema": "taiji-package19-2b-lowupdate-composite-v2",
+        "step": "N19.2b / D16-5",
         "date": "2026-11-04",
-        "purpose": "does start_hit rise with gold-start supervision inside 60 Adam",
+        "purpose": "does the composite row argmax rise with gold-start supervision",
         "design": {
             "seed": SEED,
-            "arms": list(ARMS),
-            "updates_per_arm": UPDATES,
+            "arm": ARM,
+            "updates": UPDATES,
             "stage": "selection (1-100 window); only selection CE + span CE are trained",
             "span_head": "SpanPointerHead 32-d bottleneck (4,194 parameters)",
             "supervision": "teacher_span(record_raw, entity_bytes) gold start/end on object and place records",
@@ -223,10 +220,37 @@ def main() -> int:
             "dev_examples": len(dev),
             "saves": 0,
             "confirm_reads": 0,
+            "release_reading": "composite_row_hit_rate must rise on both object and place; "
+            "route is a separate gate and does not mature in this window",
         },
-        "cells": cells,
+        "candidate_sha_v2": identity["candidate_sha_v2"],
+        "span_parameters": sum(parameter.numel() for parameter in candidate.span_head.parameters()),
+        "span_expected": expected_span_parameter_count(config),
+        "probes": probes,
         "deltas": deltas,
-        "start_hit_rising_on_both_worlds": rising,
+        "composite_row_rising_on_both_worlds": rising,
+        "span_loss": {
+            "first": span_losses[0],
+            "last": span_losses[-1],
+            "mean": statistics.fmean(span_losses),
+        },
+        "accounting": {
+            "adam_steps": total_adam,
+            "independent_trajectories": 1,
+            "adam_cap": 60,
+            "prior_run": {
+                "charged_adam": PRIOR_ADAM_RUN_TWICE,
+                "true_independent_updates": PRIOR_TRUE_TRAJECTORIES,
+                "reason": "A_route_lock and B_stop_lock are bit-identical in the selection "
+                "stage, so the earlier 2 x 30 Adam was one 30-update trajectory run twice",
+            },
+            "cumulative_independent_updates": PRIOR_TRUE_TRAJECTORIES + total_adam,
+        },
+        "instrument": {
+            "object": "argmax(row_logits = transport_logits(alpha_i * betas_i) + span_bias)",
+            "legacy": "beta_start_hit_rate is the frozen-reader posterior, kept for continuity",
+            "gamma": "gamma = generation weight / 1 - gamma = copy weight; no credit inferred (M3)",
+        },
         "cost": {
             "cpu_seconds": cpu,
             "wall_seconds": wall,
@@ -239,11 +263,11 @@ def main() -> int:
     write_json(
         MANIFEST,
         {
-            "schema": "taiji-package19-2b-lowupdate-manifest-v1",
-            "step": "N19.2b",
+            "schema": "taiji-package19-2b-lowupdate-composite-manifest-v1",
+            "step": "N19.2b / D16-5",
             "report": str(REPORT.relative_to(ROOT)),
             "adam_steps": total_adam,
-            "start_hit_rising": rising,
+            "composite_row_rising": rising,
             "deltas": deltas,
             "cost": {"cpu_seconds": cpu, "wall_seconds": wall},
         },
