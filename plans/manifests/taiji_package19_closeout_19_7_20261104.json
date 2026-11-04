@@ -1,0 +1,24 @@
+{
+  "schema": "taiji-package19-closeout-manifest-v1",
+  "step": "N19.7",
+  "date": "2026-11-04",
+  "report": "reports\\taiji_package19_closeout_19_7_20261104.json",
+  "report_sha256": "a0b25b0c91874259757042ca4a888f34ce75921d945e67801542d4a860674a2f",
+  "verdict": {
+    "package19": "negative",
+    "decision_tree_branch": "全负",
+    "rule": "all six cells miss the byte gate and the pre-registered task gate; overall 0.00-0.63, best cell 0.63 < 0.80",
+    "release_confirm_19": false,
+    "confirm_reads": 0,
+    "package19_status": "closed-negative; 17/18 must not be reopened"
+  },
+  "branch": "19.2b 起点监督",
+  "cost_cpu_seconds": 33369.2,
+  "cumulative_cpu_seconds": 86139.9,
+  "limits": {
+    "zero_updates": true,
+    "confirm_reads": 0,
+    "training": false,
+    "reopen_17_18": false
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "schema": "taiji-gate-sweep-18-1-manifest-v1",
+  "step": "N18.1",
+  "checkpoint": "step150",
+  "report": "reports\\taiji_package19_probe_step150_20261104.json",
+  "report_sha256": "e1de9bd953f33d67b0ce58b5b97acb040e3b21fb5e4723ff2632cdf9f7f4068e",
+  "report_bytes": 1527914,
+  "prereg": "plans\\manifests\\taiji_byte_gate_prereg_19_5_step150_20261104.json",
+  "prereg_sha256": "70199fd9be9cbd655fe1ee2e4a01ff2d0d349f938a95f6eaabb14fe60b3bcb8f",
+  "bundles": {
+    "28031-A_route_lock": {
+      "path": "output\\taiji_package19_compare\\28031-A_route_lock-step150.pt",
+      "bytes": 29255194,
+      "sha256": "30782db5ee258df4c30057a3d9bb23b089c9b3a4c20aad1af76d07da03e917b2"
+    },
+    "28031-B_stop_lock": {
+      "path": "output\\taiji_package19_compare\\28031-B_stop_lock-step150.pt",
+      "bytes": 29254971,
+      "sha256": "9329df0731c6ca413dc2872a1fc12784c2d5fff44c72b7699eb84ca03e24176a"
+    },
+    "28031-C_unlocked": {
+      "path": "output\\taiji_package19_compare\\28031-C_unlocked-step150.pt",
+      "bytes": 29254748,
+      "sha256": "f63515c0117a8ca3980084ff7b694830ea6f5e04d16ef76e5134964550c728c4"
+    },
+    "28032-A_route_lock": {
+      "path": "output\\taiji_package19_compare\\28032-A_route_lock-step150.pt",
+      "bytes": 29255194,
+      "sha256": "5a65d298cf04f4e5a35661991d70a0091c5d638997169d9b2b8b3a8be46ceaa3"
+    },
+    "28032-B_stop_lock": {
+      "path": "output\\taiji_package19_compare\\28032-B_stop_lock-step150.pt",
+      "bytes": 29254971,
+      "sha256": "1f61401aa7b56f6275670ddeb5d303ee4984da6a5fb9e63da510931fc5399a9e"
+    },
+    "28032-C_unlocked": {
+      "path": "output\\taiji_package19_compare\\28032-C_unlocked-step150.pt",
+      "bytes": 29254748,
+      "sha256": "9976f143844f6b8fcc43578bfb386af8f67627c0a841359b11728fc1e0cf4a82"
+    }
+  },
+  "pooled": {
+    "sweep": {
+      "0.6": {
+        "overall": 0.0,
+        "new_name_copied": 0.0,
+        "unseen_output_name": 0.0,
+        "object_byte_rate": 0.0949074074074074,
+        "place_byte_rate": 0.006944444444444445,
+        "content_byte_rate": 0.06558641975308642
+      },
+      "0.5": {
+        "overall": 0.0,
+        "new_name_copied": 0.01736111111111111,
+        "unseen_output_name": 0.0,
+        "object_byte_rate": 0.16001157407407407,
+        "place_byte_rate": 0.03587962962962963,
+        "content_byte_rate": 0.11863425925925926
+      },
+      "0.4": {
+        "overall": 0.0,
+        "new_name_copied": 0.024305555555555552,
+        "unseen_output_name": 0.0,
+        "object_byte_rate": 0.15422453703703703,
+        "place_byte_rate": 0.027777777777777776,
+        "content_byte_rate": 0.11207561728395062
+      },
+      "0.3": {
+        "overall": 0.0,
+        "new_name_copied": 0.024305555555555552,
+        "unseen_output_name": 0.0,
+        "object_byte_rate": 0.15248842592592593,
+        "place_byte_rate": 0.028356481481481483,
+        "content_byte_rate": 0.1111111111111111
+      },
+      "0.2": {
+        "overall": 0.0,
+        "new_name_copied": 0.024305555555555552,
+        "unseen_output_name": 0.0,
+        "object_byte_rate": 0.15277777777777776,
+        "place_byte_rate": 0.028935185185185185,
+        "content_byte_rate": 0.11149691358024692
+      },
+      "0.0": {
+        "overall": 0.0,
+        "new_name_copied": 0.024305555555555552,
+        "unseen_output_name": 0.0,
+        "object_byte_rate": 0.15306712962962962,
+        "place_byte_rate": 0.026620370370370374,
+        "content_byte_rate": 0.11091820987654322
+      }
+    },
+    "c_gamma0": {
+      "overall": 0.0,
+      "content_byte_rate": 1.0,
+      "object_byte_rate": 1.0,
+      "place_byte_rate": 1.0
+    },
+    "positions": {
+      "b_pure": {
+        "object_first": 1.0,
+        "object_last": 1.0,
+        "place_first": 1.0,
+        "place_last": 1.0
+      },
+      "c_gamma0": {
+        "object_first": 1.0,
+        "object_last": 1.0,
+        "place_first": 1.0,
+        "place_last": 1.0
+      }
+    },
+    "utf8": {
+      "generate_only_legal_rate": 0.0,
+      "copy_only_legal_rate": 0.006944444444444444,
+      "c_gamma0_legal_rate": 0.14583333333333334
+    }
+  },
+  "cost": {
+    "cpu_seconds": 1513.703125,
+    "wall_seconds": 307.17974399984814,
+    "adam_steps": 0
+  },
+  "limits": {
+    "zero_updates": true,
+    "read_only": true,
+    "confirm_reads": 0,
+    "training": false
+  }
+}

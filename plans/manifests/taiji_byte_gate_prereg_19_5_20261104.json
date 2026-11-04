@@ -1,0 +1,28 @@
+{
+  "schema": "taiji-byte-gate-prereg-v1",
+  "step": "N19.0-proposal",
+  "date": "2026-11-04",
+  "status": "preregistered_for_next_package_not_retroactive",
+  "does_not_change_n18_1": true,
+  "gates": {
+    "object_byte_rate": 0.95,
+    "place_byte_rate": 0.95,
+    "new_name_copied": 0.6,
+    "overall": 0.8
+  },
+  "reason": "18 content bytes multiply: 0.80^(1/18) = 0.9877 per byte, unreachable at the current precision. Byte gates give a climbable gradient without relaxing the sentence gate.",
+  "per_byte_equivalent_of_overall": 0.9876796606081734,
+  "current_gap": {
+    "measured_at": "gate-only sweep: model alpha/beta route, best forced gamma per entity",
+    "object_byte_rate_best_gate_only": 0.6521990740740741,
+    "place_byte_rate_best_gate_only": 0.5827546296296297,
+    "object_gap_to_gate": 0.2978009259259259,
+    "place_gap_to_gate": 0.3672453703703703,
+    "object_byte_rate_at_c_gamma0": 0.8333333333333334,
+    "place_byte_rate_at_c_gamma0": 0.8333333333333334,
+    "note": "c_gamma0 is the routing-pinned ceiling (both entities 1.00), not the current operating point",
+    "new_name_copied_at_step300": 0.0,
+    "overall_at_step300": 0.0,
+    "evidence": "reports\\taiji_package19_probe_step300_20261104.json"
+  }
+}

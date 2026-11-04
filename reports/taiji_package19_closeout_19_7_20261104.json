@@ -1,0 +1,1280 @@
+{
+  "schema": "taiji-package19-closeout-v1",
+  "step": "N19.7",
+  "date": "2026-11-04",
+  "verdict": {
+    "package19": "negative",
+    "decision_tree_branch": "全负",
+    "rule": "all six cells miss the byte gate and the pre-registered task gate; overall 0.00-0.63, best cell 0.63 < 0.80",
+    "release_confirm_19": false,
+    "confirm_reads": 0,
+    "package19_status": "closed-negative; 17/18 must not be reopened"
+  },
+  "readouts": {
+    "cells": {
+      "28031-A_route_lock": {
+        "step300": {
+          "overall": 0.0,
+          "new_name_copied": 0.0,
+          "unseen_output_name": 0.0,
+          "new_description": 0.0,
+          "both_new": 0.0,
+          "eos": 0.0,
+          "utf8": 1.0,
+          "selection_object": 0.1458,
+          "selection_place": 0.1042,
+          "generation_weight_gamma": null,
+          "copy_weight_one_minus_gamma": null,
+          "cpu_seconds": 214.8
+        },
+        "ledger": {
+          "object": {
+            "start_hit": 0.0833,
+            "route_hit": 0.25,
+            "beta_start_hit": 0.3333,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.0,
+            "conditional_examples": 4
+          },
+          "place": {
+            "start_hit": 0.0417,
+            "route_hit": 0.1667,
+            "beta_start_hit": 0.3333,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.0,
+            "conditional_examples": 2
+          }
+        },
+        "gamma_sweep": {
+          "model": {
+            "generation_weight_gamma": "nan",
+            "copy_weight_one_minus_gamma": "nan",
+            "object_byte": 0.0,
+            "place_byte": 0.0,
+            "content_18_byte": 0.0,
+            "overall": 0.0,
+            "new_name_copied": 0.0
+          },
+          "0.6": {
+            "generation_weight_gamma": 0.6,
+            "copy_weight_one_minus_gamma": 0.4,
+            "object_byte": 0.0,
+            "place_byte": 0.0,
+            "content_18_byte": 0.0,
+            "overall": 0.0,
+            "new_name_copied": 0.0
+          },
+          "0.5": {
+            "generation_weight_gamma": 0.5,
+            "copy_weight_one_minus_gamma": 0.5,
+            "object_byte": 0.0,
+            "place_byte": 0.0,
+            "content_18_byte": 0.0,
+            "overall": 0.0,
+            "new_name_copied": 0.0
+          },
+          "0.4": {
+            "generation_weight_gamma": 0.4,
+            "copy_weight_one_minus_gamma": 0.6,
+            "object_byte": 0.0,
+            "place_byte": 0.0,
+            "content_18_byte": 0.0,
+            "overall": 0.0,
+            "new_name_copied": 0.0
+          },
+          "0.3": {
+            "generation_weight_gamma": 0.3,
+            "copy_weight_one_minus_gamma": 0.7,
+            "object_byte": 0.0,
+            "place_byte": 0.0,
+            "content_18_byte": 0.0,
+            "overall": 0.0,
+            "new_name_copied": 0.0
+          },
+          "0.2": {
+            "generation_weight_gamma": 0.2,
+            "copy_weight_one_minus_gamma": 0.8,
+            "object_byte": 0.0,
+            "place_byte": 0.0,
+            "content_18_byte": 0.0,
+            "overall": 0.0,
+            "new_name_copied": 0.0
+          },
+          "0.0": {
+            "generation_weight_gamma": 0.0,
+            "copy_weight_one_minus_gamma": 1.0,
+            "object_byte": 0.0,
+            "place_byte": 0.0,
+            "content_18_byte": 0.0,
+            "overall": 0.0,
+            "new_name_copied": 0.0
+          }
+        },
+        "gold_start_controls": {
+          "b_pure_object_first": 0.0,
+          "b_pure_object_last": 0.0,
+          "c_gamma0_content_byte": 0.0,
+          "c_gamma0_object_byte": 0.0,
+          "c_gamma0_place_byte": 0.0,
+          "note": "gold start (record + pinned content positions); never merged with the model's own route"
+        },
+        "utf8": {
+          "generate_only_legal": 1.0,
+          "copy_only_legal": 1.0,
+          "c_gamma0_legal": 1.0
+        }
+      },
+      "28031-B_stop_lock": {
+        "step300": {
+          "overall": 0.6302,
+          "new_name_copied": 0.6302,
+          "unseen_output_name": 0.6302,
+          "new_description": 0.2604,
+          "both_new": 0.2604,
+          "eos": 1.0,
+          "utf8": 1.0,
+          "selection_object": 0.7344,
+          "selection_place": 1.0,
+          "generation_weight_gamma": 0.3629,
+          "copy_weight_one_minus_gamma": 0.6371,
+          "cpu_seconds": 141.0
+        },
+        "ledger": {
+          "object": {
+            "start_hit": 1.0,
+            "route_hit": 1.0,
+            "beta_start_hit": 1.0,
+            "conditional_byte": 1.0,
+            "unconditional_byte": 1.0,
+            "conditional_examples": 48
+          },
+          "place": {
+            "start_hit": 1.0,
+            "route_hit": 1.0,
+            "beta_start_hit": 1.0,
+            "conditional_byte": 1.0,
+            "unconditional_byte": 1.0,
+            "conditional_examples": 48
+          }
+        },
+        "gamma_sweep": {
+          "model": {
+            "generation_weight_gamma": 0.3596,
+            "copy_weight_one_minus_gamma": 0.6404,
+            "object_byte": 1.0,
+            "place_byte": 1.0,
+            "content_18_byte": 1.0,
+            "overall": 1.0,
+            "new_name_copied": 1.0
+          },
+          "0.6": {
+            "generation_weight_gamma": 0.6,
+            "copy_weight_one_minus_gamma": 0.4,
+            "object_byte": 0.7083,
+            "place_byte": 0.191,
+            "content_18_byte": 0.5359,
+            "overall": 0.0833,
+            "new_name_copied": 0.125
+          },
+          "0.5": {
+            "generation_weight_gamma": 0.5,
+            "copy_weight_one_minus_gamma": 0.5,
+            "object_byte": 1.0,
+            "place_byte": 1.0,
+            "content_18_byte": 1.0,
+            "overall": 1.0,
+            "new_name_copied": 1.0
+          },
+          "0.4": {
+            "generation_weight_gamma": 0.4,
+            "copy_weight_one_minus_gamma": 0.6,
+            "object_byte": 1.0,
+            "place_byte": 1.0,
+            "content_18_byte": 1.0,
+            "overall": 1.0,
+            "new_name_copied": 1.0
+          },
+          "0.3": {
+            "generation_weight_gamma": 0.3,
+            "copy_weight_one_minus_gamma": 0.7,
+            "object_byte": 1.0,
+            "place_byte": 1.0,
+            "content_18_byte": 1.0,
+            "overall": 1.0,
+            "new_name_copied": 1.0
+          },
+          "0.2": {
+            "generation_weight_gamma": 0.2,
+            "copy_weight_one_minus_gamma": 0.8,
+            "object_byte": 1.0,
+            "place_byte": 1.0,
+            "content_18_byte": 1.0,
+            "overall": 1.0,
+            "new_name_copied": 1.0
+          },
+          "0.0": {
+            "generation_weight_gamma": 0.0,
+            "copy_weight_one_minus_gamma": 1.0,
+            "object_byte": 1.0,
+            "place_byte": 1.0,
+            "content_18_byte": 1.0,
+            "overall": 1.0,
+            "new_name_copied": 1.0
+          }
+        },
+        "gold_start_controls": {
+          "b_pure_object_first": 1.0,
+          "b_pure_object_last": 1.0,
+          "c_gamma0_content_byte": 1.0,
+          "c_gamma0_object_byte": 1.0,
+          "c_gamma0_place_byte": 1.0,
+          "note": "gold start (record + pinned content positions); never merged with the model's own route"
+        },
+        "utf8": {
+          "generate_only_legal": 0.3125,
+          "copy_only_legal": 1.0,
+          "c_gamma0_legal": 1.0
+        }
+      },
+      "28031-C_unlocked": {
+        "step300": {
+          "overall": 0.401,
+          "new_name_copied": 0.401,
+          "unseen_output_name": 0.401,
+          "new_description": 0.1042,
+          "both_new": 0.1042,
+          "eos": 1.0,
+          "utf8": 1.0,
+          "selection_object": 0.8906,
+          "selection_place": 1.0,
+          "generation_weight_gamma": 0.5006,
+          "copy_weight_one_minus_gamma": 0.4994,
+          "cpu_seconds": 137.6
+        },
+        "ledger": {
+          "object": {
+            "start_hit": 0.0,
+            "route_hit": 0.967,
+            "beta_start_hit": 0.0,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.9564,
+            "conditional_examples": 0
+          },
+          "place": {
+            "start_hit": 0.0,
+            "route_hit": 1.0,
+            "beta_start_hit": 0.0,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.8667,
+            "conditional_examples": 0
+          }
+        },
+        "gamma_sweep": {
+          "model": {
+            "generation_weight_gamma": 0.5065,
+            "copy_weight_one_minus_gamma": 0.4935,
+            "object_byte": 0.941,
+            "place_byte": 0.7257,
+            "content_18_byte": 0.8692,
+            "overall": 0.6667,
+            "new_name_copied": 0.7292
+          },
+          "0.6": {
+            "generation_weight_gamma": 0.6,
+            "copy_weight_one_minus_gamma": 0.4,
+            "object_byte": 0.7951,
+            "place_byte": 0.4792,
+            "content_18_byte": 0.6898,
+            "overall": 0.2917,
+            "new_name_copied": 0.2917
+          },
+          "0.5": {
+            "generation_weight_gamma": 0.5,
+            "copy_weight_one_minus_gamma": 0.5,
+            "object_byte": 0.1181,
+            "place_byte": 0.0208,
+            "content_18_byte": 0.0856,
+            "overall": 0.0,
+            "new_name_copied": 0.125
+          },
+          "0.4": {
+            "generation_weight_gamma": 0.4,
+            "copy_weight_one_minus_gamma": 0.6,
+            "object_byte": 0.0729,
+            "place_byte": 0.0278,
+            "content_18_byte": 0.0579,
+            "overall": 0.0,
+            "new_name_copied": 0.2917
+          },
+          "0.3": {
+            "generation_weight_gamma": 0.3,
+            "copy_weight_one_minus_gamma": 0.7,
+            "object_byte": 0.0764,
+            "place_byte": 0.0382,
+            "content_18_byte": 0.0637,
+            "overall": 0.0,
+            "new_name_copied": 0.3125
+          },
+          "0.2": {
+            "generation_weight_gamma": 0.2,
+            "copy_weight_one_minus_gamma": 0.8,
+            "object_byte": 0.0781,
+            "place_byte": 0.0382,
+            "content_18_byte": 0.0648,
+            "overall": 0.0,
+            "new_name_copied": 0.3125
+          },
+          "0.0": {
+            "generation_weight_gamma": 0.0,
+            "copy_weight_one_minus_gamma": 1.0,
+            "object_byte": 0.0764,
+            "place_byte": 0.0451,
+            "content_18_byte": 0.066,
+            "overall": 0.0,
+            "new_name_copied": 0.3125
+          }
+        },
+        "gold_start_controls": {
+          "b_pure_object_first": 1.0,
+          "b_pure_object_last": 1.0,
+          "c_gamma0_content_byte": 1.0,
+          "c_gamma0_object_byte": 1.0,
+          "c_gamma0_place_byte": 1.0,
+          "note": "gold start (record + pinned content positions); never merged with the model's own route"
+        },
+        "utf8": {
+          "generate_only_legal": 0.0833,
+          "copy_only_legal": 0.0,
+          "c_gamma0_legal": 1.0
+        }
+      },
+      "28032-A_route_lock": {
+        "step300": {
+          "overall": 0.0,
+          "new_name_copied": 0.0,
+          "unseen_output_name": 0.0,
+          "new_description": 0.0,
+          "both_new": 0.0,
+          "eos": 0.0052,
+          "utf8": 0.5104,
+          "selection_object": 0.4115,
+          "selection_place": 0.0,
+          "generation_weight_gamma": 0.259,
+          "copy_weight_one_minus_gamma": 0.741,
+          "cpu_seconds": 207.5
+        },
+        "ledger": {
+          "object": {
+            "start_hit": 0.0,
+            "route_hit": 0.3594,
+            "beta_start_hit": 0.0417,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.1496,
+            "conditional_examples": 0
+          },
+          "place": {
+            "start_hit": 0.0,
+            "route_hit": 0.0035,
+            "beta_start_hit": 0.0,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.0125,
+            "conditional_examples": 0
+          }
+        },
+        "gamma_sweep": {
+          "model": {
+            "generation_weight_gamma": 0.2882,
+            "copy_weight_one_minus_gamma": 0.7118,
+            "object_byte": 0.0347,
+            "place_byte": 0.0035,
+            "content_18_byte": 0.0243,
+            "overall": 0.0,
+            "new_name_copied": 0.0
+          },
+          "0.6": {
+            "generation_weight_gamma": 0.6,
+            "copy_weight_one_minus_gamma": 0.4,
+            "object_byte": 0.0087,
+            "place_byte": 0.0139,
+            "content_18_byte": 0.0104,
+            "overall": 0.0,
+            "new_name_copied": 0.0
+          },
+          "0.5": {
+            "generation_weight_gamma": 0.5,
+            "copy_weight_one_minus_gamma": 0.5,
+            "object_byte": 0.0226,
+            "place_byte": 0.0104,
+            "content_18_byte": 0.0185,
+            "overall": 0.0,
+            "new_name_copied": 0.0
+          },
+          "0.4": {
+            "generation_weight_gamma": 0.4,
+            "copy_weight_one_minus_gamma": 0.6,
+            "object_byte": 0.0295,
+            "place_byte": 0.0139,
+            "content_18_byte": 0.0243,
+            "overall": 0.0,
+            "new_name_copied": 0.0
+          },
+          "0.3": {
+            "generation_weight_gamma": 0.3,
+            "copy_weight_one_minus_gamma": 0.7,
+            "object_byte": 0.0295,
+            "place_byte": 0.0139,
+            "content_18_byte": 0.0243,
+            "overall": 0.0,
+            "new_name_copied": 0.0
+          },
+          "0.2": {
+            "generation_weight_gamma": 0.2,
+            "copy_weight_one_minus_gamma": 0.8,
+            "object_byte": 0.0295,
+            "place_byte": 0.0139,
+            "content_18_byte": 0.0243,
+            "overall": 0.0,
+            "new_name_copied": 0.0
+          },
+          "0.0": {
+            "generation_weight_gamma": 0.0,
+            "copy_weight_one_minus_gamma": 1.0,
+            "object_byte": 0.0295,
+            "place_byte": 0.0139,
+            "content_18_byte": 0.0243,
+            "overall": 0.0,
+            "new_name_copied": 0.0
+          }
+        },
+        "gold_start_controls": {
+          "b_pure_object_first": 1.0,
+          "b_pure_object_last": 1.0,
+          "c_gamma0_content_byte": 1.0,
+          "c_gamma0_object_byte": 1.0,
+          "c_gamma0_place_byte": 1.0,
+          "note": "gold start (record + pinned content positions); never merged with the model's own route"
+        },
+        "utf8": {
+          "generate_only_legal": 0.0,
+          "copy_only_legal": 0.0,
+          "c_gamma0_legal": 0.0417
+        }
+      },
+      "28032-B_stop_lock": {
+        "step300": {
+          "overall": 0.5833,
+          "new_name_copied": 0.5833,
+          "unseen_output_name": 0.5833,
+          "new_description": 0.2292,
+          "both_new": 0.2292,
+          "eos": 1.0,
+          "utf8": 1.0,
+          "selection_object": 0.6875,
+          "selection_place": 1.0,
+          "generation_weight_gamma": 0.3541,
+          "copy_weight_one_minus_gamma": 0.6459,
+          "cpu_seconds": 142.1
+        },
+        "ledger": {
+          "object": {
+            "start_hit": 1.0,
+            "route_hit": 0.9965,
+            "beta_start_hit": 1.0,
+            "conditional_byte": 0.9602,
+            "unconditional_byte": 0.9602,
+            "conditional_examples": 48
+          },
+          "place": {
+            "start_hit": 1.0,
+            "route_hit": 1.0,
+            "beta_start_hit": 1.0,
+            "conditional_byte": 1.0,
+            "unconditional_byte": 1.0,
+            "conditional_examples": 48
+          }
+        },
+        "gamma_sweep": {
+          "model": {
+            "generation_weight_gamma": 0.3402,
+            "copy_weight_one_minus_gamma": 0.6598,
+            "object_byte": 0.9583,
+            "place_byte": 0.9618,
+            "content_18_byte": 0.9595,
+            "overall": 0.9583,
+            "new_name_copied": 0.9583
+          },
+          "0.6": {
+            "generation_weight_gamma": 0.6,
+            "copy_weight_one_minus_gamma": 0.4,
+            "object_byte": 0.6979,
+            "place_byte": 0.4097,
+            "content_18_byte": 0.6019,
+            "overall": 0.0833,
+            "new_name_copied": 0.0833
+          },
+          "0.5": {
+            "generation_weight_gamma": 0.5,
+            "copy_weight_one_minus_gamma": 0.5,
+            "object_byte": 0.9583,
+            "place_byte": 0.9618,
+            "content_18_byte": 0.9595,
+            "overall": 0.9583,
+            "new_name_copied": 0.9583
+          },
+          "0.4": {
+            "generation_weight_gamma": 0.4,
+            "copy_weight_one_minus_gamma": 0.6,
+            "object_byte": 0.9583,
+            "place_byte": 0.9618,
+            "content_18_byte": 0.9595,
+            "overall": 0.9583,
+            "new_name_copied": 0.9583
+          },
+          "0.3": {
+            "generation_weight_gamma": 0.3,
+            "copy_weight_one_minus_gamma": 0.7,
+            "object_byte": 0.9583,
+            "place_byte": 0.9618,
+            "content_18_byte": 0.9595,
+            "overall": 0.9583,
+            "new_name_copied": 0.9583
+          },
+          "0.2": {
+            "generation_weight_gamma": 0.2,
+            "copy_weight_one_minus_gamma": 0.8,
+            "object_byte": 0.9583,
+            "place_byte": 0.9618,
+            "content_18_byte": 0.9595,
+            "overall": 0.9583,
+            "new_name_copied": 0.9583
+          },
+          "0.0": {
+            "generation_weight_gamma": 0.0,
+            "copy_weight_one_minus_gamma": 1.0,
+            "object_byte": 0.9583,
+            "place_byte": 0.9618,
+            "content_18_byte": 0.9595,
+            "overall": 0.9583,
+            "new_name_copied": 0.9583
+          }
+        },
+        "gold_start_controls": {
+          "b_pure_object_first": 1.0,
+          "b_pure_object_last": 1.0,
+          "c_gamma0_content_byte": 1.0,
+          "c_gamma0_object_byte": 1.0,
+          "c_gamma0_place_byte": 1.0,
+          "note": "gold start (record + pinned content positions); never merged with the model's own route"
+        },
+        "utf8": {
+          "generate_only_legal": 0.625,
+          "copy_only_legal": 1.0,
+          "c_gamma0_legal": 1.0
+        }
+      },
+      "28032-C_unlocked": {
+        "step300": {
+          "overall": 0.4688,
+          "new_name_copied": 0.4688,
+          "unseen_output_name": 0.4688,
+          "new_description": 0.1354,
+          "both_new": 0.1354,
+          "eos": 1.0,
+          "utf8": 1.0,
+          "selection_object": 0.7604,
+          "selection_place": 1.0,
+          "generation_weight_gamma": 0.4728,
+          "copy_weight_one_minus_gamma": 0.5272,
+          "cpu_seconds": 125.6
+        },
+        "ledger": {
+          "object": {
+            "start_hit": 0.0,
+            "route_hit": 1.0,
+            "beta_start_hit": 0.0,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 1.0,
+            "conditional_examples": 0
+          },
+          "place": {
+            "start_hit": 0.0,
+            "route_hit": 0.9965,
+            "beta_start_hit": 0.0,
+            "conditional_byte": 0.0,
+            "unconditional_byte": 0.9083,
+            "conditional_examples": 0
+          }
+        },
+        "gamma_sweep": {
+          "model": {
+            "generation_weight_gamma": 0.4675,
+            "copy_weight_one_minus_gamma": 0.5325,
+            "object_byte": 0.9792,
+            "place_byte": 0.8056,
+            "content_18_byte": 0.9213,
+            "overall": 0.7708,
+            "new_name_copied": 0.7708
+          },
+          "0.6": {
+            "generation_weight_gamma": 0.6,
+            "copy_weight_one_minus_gamma": 0.4,
+            "object_byte": 0.9444,
+            "place_byte": 0.4097,
+            "content_18_byte": 0.7662,
+            "overall": 0.2292,
+            "new_name_copied": 0.25
+          },
+          "0.5": {
+            "generation_weight_gamma": 0.5,
+            "copy_weight_one_minus_gamma": 0.5,
+            "object_byte": 0.7569,
+            "place_byte": 0.0521,
+            "content_18_byte": 0.522,
+            "overall": 0.0,
+            "new_name_copied": 0.3333
+          },
+          "0.4": {
+            "generation_weight_gamma": 0.4,
+            "copy_weight_one_minus_gamma": 0.6,
+            "object_byte": 0.0972,
+            "place_byte": 0.0174,
+            "content_18_byte": 0.0706,
+            "overall": 0.0,
+            "new_name_copied": 0.3125
+          },
+          "0.3": {
+            "generation_weight_gamma": 0.3,
+            "copy_weight_one_minus_gamma": 0.7,
+            "object_byte": 0.059,
+            "place_byte": 0.0174,
+            "content_18_byte": 0.0451,
+            "overall": 0.0,
+            "new_name_copied": 0.3542
+          },
+          "0.2": {
+            "generation_weight_gamma": 0.2,
+            "copy_weight_one_minus_gamma": 0.8,
+            "object_byte": 0.0712,
+            "place_byte": 0.0208,
+            "content_18_byte": 0.0544,
+            "overall": 0.0,
+            "new_name_copied": 0.3125
+          },
+          "0.0": {
+            "generation_weight_gamma": 0.0,
+            "copy_weight_one_minus_gamma": 1.0,
+            "object_byte": 0.0677,
+            "place_byte": 0.0208,
+            "content_18_byte": 0.0521,
+            "overall": 0.0,
+            "new_name_copied": 0.3542
+          }
+        },
+        "gold_start_controls": {
+          "b_pure_object_first": 1.0,
+          "b_pure_object_last": 1.0,
+          "c_gamma0_content_byte": 1.0,
+          "c_gamma0_object_byte": 1.0,
+          "c_gamma0_place_byte": 1.0,
+          "note": "gold start (record + pinned content positions); never merged with the model's own route"
+        },
+        "utf8": {
+          "generate_only_legal": 0.0417,
+          "copy_only_legal": 0.0,
+          "c_gamma0_legal": 0.9583
+        }
+      }
+    },
+    "pooled_ledger": {
+      "object": {
+        "start_hit_rate": 0.3472,
+        "start_hit_examples": 100,
+        "route_hit_rate": 0.7622,
+        "beta_start_hit_rate": 0.3958,
+        "carry_start_hit_rate": 0.0,
+        "start_byte_hit_rate": 0.6632,
+        "conditional_byte": 0.9409,
+        "conditional_denominator_bytes": 1100,
+        "conditional_examples": 100,
+        "unconditional_byte": 0.6777,
+        "beta_hit_rate": 0.0394,
+        "examples": 288
+      },
+      "place": {
+        "start_hit_rate": 0.3403,
+        "start_hit_examples": 98,
+        "route_hit_rate": 0.6944,
+        "beta_start_hit_rate": 0.3889,
+        "carry_start_hit_rate": 0.0,
+        "start_byte_hit_rate": 0.625,
+        "conditional_byte": 0.9796,
+        "conditional_denominator_bytes": 490,
+        "conditional_examples": 98,
+        "unconditional_byte": 0.6312,
+        "beta_hit_rate": 0.0781,
+        "examples": 288
+      },
+      "generation_weight_gamma_mean": 0.3363
+    },
+    "pooled_gamma_sweep": {
+      "model": {
+        "overall": 0.5659722222222222,
+        "new_name_copied": 0.576388888888889,
+        "unseen_output_name": 0.5659722222222222,
+        "object_byte_rate": 0.6521990740740741,
+        "place_byte_rate": 0.5827546296296297,
+        "content_byte_rate": 0.6290509259259259,
+        "gamma_effective": 0.39241756120189,
+        "copy_weight_mean": 0.60758243879811
+      },
+      "0.6": {
+        "overall": 0.11458333333333333,
+        "new_name_copied": 0.125,
+        "unseen_output_name": 0.11458333333333333,
+        "object_byte_rate": 0.5257523148148148,
+        "place_byte_rate": 0.25057870370370366,
+        "content_byte_rate": 0.43402777777777773,
+        "gamma_effective": 0.6,
+        "copy_weight_mean": 0.4
+      },
+      "0.5": {
+        "overall": 0.3263888888888889,
+        "new_name_copied": 0.40277777777777773,
+        "unseen_output_name": 0.3263888888888889,
+        "object_byte_rate": 0.4759837962962963,
+        "place_byte_rate": 0.34085648148148145,
+        "content_byte_rate": 0.4309413580246913,
+        "gamma_effective": 0.5,
+        "copy_weight_mean": 0.5
+      },
+      "0.4": {
+        "overall": 0.3263888888888889,
+        "new_name_copied": 0.4270833333333333,
+        "unseen_output_name": 0.3263888888888889,
+        "object_byte_rate": 0.35966435185185186,
+        "place_byte_rate": 0.3368055555555556,
+        "content_byte_rate": 0.35204475308641975,
+        "gamma_effective": 0.4000000000000001,
+        "copy_weight_mean": 0.5999999999999999
+      },
+      "0.3": {
+        "overall": 0.3263888888888889,
+        "new_name_copied": 0.4375,
+        "unseen_output_name": 0.3263888888888889,
+        "object_byte_rate": 0.3538773148148148,
+        "place_byte_rate": 0.3385416666666667,
+        "content_byte_rate": 0.3487654320987654,
+        "gamma_effective": 0.3,
+        "copy_weight_mean": 0.7
+      },
+      "0.2": {
+        "overall": 0.3263888888888889,
+        "new_name_copied": 0.4305555555555556,
+        "unseen_output_name": 0.3263888888888889,
+        "object_byte_rate": 0.3561921296296296,
+        "place_byte_rate": 0.3391203703703704,
+        "content_byte_rate": 0.35050154320987653,
+        "gamma_effective": 0.20000000000000004,
+        "copy_weight_mean": 0.7999999999999999
+      },
+      "0.0": {
+        "overall": 0.3263888888888889,
+        "new_name_copied": 0.4375,
+        "unseen_output_name": 0.3263888888888889,
+        "object_byte_rate": 0.3553240740740741,
+        "place_byte_rate": 0.34027777777777773,
+        "content_byte_rate": 0.3503086419753086,
+        "gamma_effective": 0.0,
+        "copy_weight_mean": 1.0
+      }
+    },
+    "gold_start_controls_pooled": {
+      "overall": 0.0,
+      "content_byte_rate": 0.8333333333333334,
+      "object_byte_rate": 0.8333333333333334,
+      "place_byte_rate": 0.8333333333333334
+    },
+    "utf8_pooled": {
+      "generate_only_legal_rate": 0.34375,
+      "copy_only_legal_rate": 0.5,
+      "c_gamma0_legal_rate": 0.8333333333333334
+    },
+    "development_gate": {
+      "passed": false,
+      "release_confirm_19": false,
+      "note": "package 19 only if true; otherwise no confirm read and attribution opens"
+    },
+    "pooled_a_minus_c": {
+      "delta": -0.4348958333333333,
+      "bootstrap": {
+        "mean": -0.4348958333333333,
+        "lower": -0.5,
+        "upper": -0.375,
+        "resamples": 2000,
+        "seed": 58051
+      },
+      "gate_delta": false,
+      "gate_lower": false,
+      "passed": false,
+      "n_world_deltas": 24,
+      "note": "two-seed world bootstrap: 12 dev worlds per seed pooled"
+    },
+    "cell_grades": {
+      "28031-A_route_lock": {
+        "checks": {
+          "overall": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "reversed": false,
+          "selection_object": false,
+          "selection_place": false,
+          "content_drop": false,
+          "identity_rescue": false,
+          "new_name_copied": false
+        },
+        "checks_without_copy": {
+          "overall": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "reversed": false,
+          "selection_object": false,
+          "selection_place": false,
+          "content_drop": false,
+          "identity_rescue": false
+        },
+        "passed": false,
+        "passed_without_copy": false,
+        "recitation_remains": false,
+        "reversed_paired_rate_report_only": 1.0,
+        "readings": {
+          "overall": 0.0,
+          "new_name_copied": 0.0
+        }
+      },
+      "28031-B_stop_lock": {
+        "checks": {
+          "overall": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "reversed": false,
+          "selection_object": false,
+          "selection_place": true,
+          "content_drop": true,
+          "identity_rescue": true,
+          "new_name_copied": true
+        },
+        "checks_without_copy": {
+          "overall": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "reversed": false,
+          "selection_object": false,
+          "selection_place": true,
+          "content_drop": true,
+          "identity_rescue": true
+        },
+        "passed": false,
+        "passed_without_copy": false,
+        "recitation_remains": false,
+        "reversed_paired_rate_report_only": 1.0,
+        "readings": {
+          "overall": 0.6302083333333334,
+          "new_name_copied": 0.6302083333333334
+        }
+      },
+      "28031-C_unlocked": {
+        "checks": {
+          "overall": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "reversed": false,
+          "selection_object": false,
+          "selection_place": true,
+          "content_drop": false,
+          "identity_rescue": true,
+          "new_name_copied": false
+        },
+        "checks_without_copy": {
+          "overall": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "reversed": false,
+          "selection_object": false,
+          "selection_place": true,
+          "content_drop": false,
+          "identity_rescue": true
+        },
+        "passed": false,
+        "passed_without_copy": false,
+        "recitation_remains": false,
+        "reversed_paired_rate_report_only": 1.0,
+        "readings": {
+          "overall": 0.4010416666666667,
+          "new_name_copied": 0.4114583333333333
+        }
+      },
+      "28032-A_route_lock": {
+        "checks": {
+          "overall": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "reversed": false,
+          "selection_object": false,
+          "selection_place": false,
+          "content_drop": false,
+          "identity_rescue": true,
+          "new_name_copied": false
+        },
+        "checks_without_copy": {
+          "overall": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "reversed": false,
+          "selection_object": false,
+          "selection_place": false,
+          "content_drop": false,
+          "identity_rescue": true
+        },
+        "passed": false,
+        "passed_without_copy": false,
+        "recitation_remains": false,
+        "reversed_paired_rate_report_only": 1.0,
+        "readings": {
+          "overall": 0.0,
+          "new_name_copied": 0.0
+        }
+      },
+      "28032-B_stop_lock": {
+        "checks": {
+          "overall": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "reversed": false,
+          "selection_object": false,
+          "selection_place": true,
+          "content_drop": true,
+          "identity_rescue": true,
+          "new_name_copied": false
+        },
+        "checks_without_copy": {
+          "overall": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "reversed": false,
+          "selection_object": false,
+          "selection_place": true,
+          "content_drop": true,
+          "identity_rescue": true
+        },
+        "passed": false,
+        "passed_without_copy": false,
+        "recitation_remains": false,
+        "reversed_paired_rate_report_only": 1.0,
+        "readings": {
+          "overall": 0.5833333333333334,
+          "new_name_copied": 0.5833333333333334
+        }
+      },
+      "28032-C_unlocked": {
+        "checks": {
+          "overall": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "reversed": false,
+          "selection_object": false,
+          "selection_place": true,
+          "content_drop": false,
+          "identity_rescue": true,
+          "new_name_copied": false
+        },
+        "checks_without_copy": {
+          "overall": false,
+          "unseen_output_name": false,
+          "new_description": false,
+          "reversed": false,
+          "selection_object": false,
+          "selection_place": true,
+          "content_drop": false,
+          "identity_rescue": true
+        },
+        "passed": false,
+        "passed_without_copy": false,
+        "recitation_remains": false,
+        "reversed_paired_rate_report_only": 1.0,
+        "readings": {
+          "overall": 0.46875,
+          "new_name_copied": 0.46875
+        }
+      }
+    }
+  },
+  "attribution": {
+    "main_cause": "start_and_route",
+    "statement": "复制侧的主因是起点/记录选择，而不是编码器，也不是生成权重 gamma。在起点命中的例子里后续内容字节达到 0.94(物件)/0.98(地点)，未命中时降到 0.68/0.63。",
+    "quantities": {
+      "start_hit_object": 0.3472,
+      "start_hit_place": 0.3403,
+      "conditional_byte_object": 0.9409,
+      "unconditional_byte_object": 0.6777,
+      "conditional_byte_place": 0.9796,
+      "unconditional_byte_place": 0.6312,
+      "start_gap_object": 0.2632,
+      "start_gap_place": 0.3483,
+      "route_hit_object": 0.7622,
+      "route_hit_place": 0.6944,
+      "carried_start_hit": 0.0,
+      "conditional_examples_object": 100,
+      "conditional_examples_place": 98
+    },
+    "not_causes": {
+      "encoder": "c_gamma0 (gold record + pinned content positions, generation weight 0) copies content at 1.00 in 5/6 cells; the one zero is 28031-A whose route never lands on the record",
+      "gate": "generation weight gamma is not the binding bar: in the B cells the model's own gamma 0.363/0.354 already gives 1.00/0.958 overall on the 48-example probe slice, forcing gamma to 0.6 collapses it to 0.083/0.083, forcing 0.5..0.0 changes nothing",
+      "note": "no training-credit inference from gamma (M3)"
+    },
+    "secondary_bar": {
+      "cells_with_perfect_start": [
+        "28031-B_stop_lock",
+        "28032-B_stop_lock"
+      ],
+      "new_description": {
+        "28031-B_stop_lock": 0.2604,
+        "28032-B_stop_lock": 0.2292
+      },
+      "note": "even with start_hit = 1.00, sentence completion stays near 0.60 because the new-description frame is wrong"
+    },
+    "diagnostic_note": "carry_start_hit = 0.00 everywhere: read.m_peak is the inside-run continuation pointer (advance_copy shifts it by one byte), so it was never a start claim.  The earlier step300 printout that reported start_hit = 0.00 for every cell was measured on m_peak and is superseded by this ledger; the start claim is beta's own posterior peak."
+  },
+  "decision_tree": {
+    "branch": "全负",
+    "checks": {
+      "byte_gate_object_at_least_0_95": {
+        "value": 0.6777,
+        "passed": false
+      },
+      "byte_gate_place_at_least_0_95": {
+        "value": 0.6312,
+        "passed": false
+      },
+      "copied_at_least_0_60": {
+        "value": 0.6302,
+        "passed": true,
+        "cells": 1,
+        "of": 6
+      },
+      "overall_at_least_0_80": {
+        "value": 0.6302,
+        "passed": false,
+        "cells": 0,
+        "of": 6
+      }
+    }
+  },
+  "cost": {
+    "n19_3_pricing": {
+      "cpu_seconds": 99.3,
+      "wall_seconds": 103.2,
+      "adam": 0
+    },
+    "n19_4_preflight": {
+      "cpu_seconds": 292.7,
+      "wall_seconds": 303.7,
+      "adam": 19,
+      "verdict": "preflight_passed"
+    },
+    "n19_5_compare": {
+      "cpu_seconds": 29574.2,
+      "wall_seconds_parallel": 5958.8,
+      "formal_adam": 1800
+    },
+    "n19_5_probe_step150": {
+      "cpu_seconds": 1513.7,
+      "wall_seconds": 307.2,
+      "adam": 0
+    },
+    "n19_5_probe_step300": {
+      "cpu_seconds": 2137.4,
+      "wall_seconds": 440.8,
+      "adam": 0
+    },
+    "n19_5_ledger_recheck": {
+      "cpu_seconds": 143.9,
+      "wall_seconds": 25.6,
+      "adam": 0
+    },
+    "n19_5_package_total": 33369.2,
+    "pricing_gap": {
+      "protected_price_cpu": 26571.6,
+      "measured_cpu": 29574.2,
+      "note": "19.5 exceeded the 19.3 protected price; the 19.3 per-update price was low by roughly 4x (5.4 vs 20-29 CPU per update)"
+    },
+    "cumulative_cpu_seconds": 86139.9
+  },
+  "watchline": {
+    "recorded": true,
+    "file": "output/taiji_package19_compare/watchline.json",
+    "first_observed_cpu": 17376.7,
+    "first_extrapolated_cpu": 20063.8,
+    "observed_cpu_at_end": 29574.2,
+    "distortion_reason": "the first trigger (update 10-20) extrapolated fixed start/evaluation cost over 300 updates; the second trigger (update 250-270) extrapolated a contended rate.  Neither estimate matches the measured end value, so both are kept as observation-line records only."
+  },
+  "data_quality": {
+    "28031-A_route_lock": {
+      "generation_weight_gamma": null,
+      "note": "gamma steps are empty in that cell (hard route never copies); pooled means skip non-finite values"
+    },
+    "driver_wall_print": "the aggregate-only CLI printed wall 0.0 because that mode does not meter wall; the measured wall is 5,958.8 parallel (single cell 3,800-5,200 s)"
+  },
+  "cleanup": {
+    "retained": {
+      "step300_bundles": [
+        "28031-A_route_lock-step300.pt",
+        "28031-B_stop_lock-step300.pt",
+        "28031-C_unlocked-step300.pt",
+        "28032-A_route_lock-step300.pt",
+        "28032-B_stop_lock-step300.pt",
+        "28032-C_unlocked-step300.pt"
+      ],
+      "step300_bundles_bytes": 395050626,
+      "mid_reports": [
+        "midreport-28031-A_route_lock.json",
+        "midreport-28031-B_stop_lock.json",
+        "midreport-28031-C_unlocked.json",
+        "midreport-28032-A_route_lock.json",
+        "midreport-28032-B_stop_lock.json",
+        "midreport-28032-C_unlocked.json"
+      ],
+      "run_receipts": [
+        "run-28031-A_route_lock.json",
+        "run-28031-B_stop_lock.json",
+        "run-28031-C_unlocked.json",
+        "run-28032-A_route_lock.json",
+        "run-28032-B_stop_lock.json",
+        "run-28032-C_unlocked.json"
+      ],
+      "eval_receipts": [
+        "eval300-28031-A_route_lock.json",
+        "eval300-28031-B_stop_lock.json",
+        "eval300-28031-C_unlocked.json",
+        "eval300-28032-A_route_lock.json",
+        "eval300-28032-B_stop_lock.json",
+        "eval300-28032-C_unlocked.json"
+      ],
+      "step0_receipts": [
+        "step0-28031-A_route_lock.json",
+        "step0-28031-B_stop_lock.json",
+        "step0-28031-C_unlocked.json",
+        "step0-28032-A_route_lock.json",
+        "step0-28032-B_stop_lock.json",
+        "step0-28032-C_unlocked.json"
+      ],
+      "failure_receipts": [
+        "failure-28031-A_route_lock.json",
+        "failures.json"
+      ],
+      "watchline": [
+        "watchline.json"
+      ],
+      "note": "step300 bundles stay because the 19.5 probe and any owner-approved audit read them"
+    },
+    "delete": {
+      "status": "deleted",
+      "step150_bundles": [
+        {
+          "path": "28031-A_route_lock-step150.pt",
+          "bytes": 29255194,
+          "sha256": "30782db5ee258df4c30057a3d9bb23b089c9b3a4c20aad1af76d07da03e917b2"
+        },
+        {
+          "path": "28031-B_stop_lock-step150.pt",
+          "bytes": 29254971,
+          "sha256": "9329df0731c6ca413dc2872a1fc12784c2d5fff44c72b7699eb84ca03e24176a"
+        },
+        {
+          "path": "28031-C_unlocked-step150.pt",
+          "bytes": 29254748,
+          "sha256": "f63515c0117a8ca3980084ff7b694830ea6f5e04d16ef76e5134964550c728c4"
+        },
+        {
+          "path": "28032-A_route_lock-step150.pt",
+          "bytes": 29255194,
+          "sha256": "5a65d298cf04f4e5a35661991d70a0091c5d638997169d9b2b8b3a8be46ceaa3"
+        },
+        {
+          "path": "28032-B_stop_lock-step150.pt",
+          "bytes": 29254971,
+          "sha256": "1f61401aa7b56f6275670ddeb5d303ee4984da6a5fb9e63da510931fc5399a9e"
+        },
+        {
+          "path": "28032-C_unlocked-step150.pt",
+          "bytes": 29254748,
+          "sha256": "9976f143844f6b8fcc43578bfb386af8f67627c0a841359b11728fc1e0cf4a82"
+        }
+      ],
+      "deleted_bytes": 175529826,
+      "note": "step150 readings are persisted in midreport/run receipts; the bundles are no longer a resume point"
+    }
+  },
+  "branches": {
+    "recommended": "19.2b 起点监督",
+    "n19_2b": {
+      "name": "19.2b start supervision",
+      "new_parameters": "SpanPointerHead with 32-d bottleneck: 4,194 (11.3% of the 37,120 route head)",
+      "gold_start_labels": "teacher_span(record_raw, entity_bytes) inside the frozen record; already implemented, no new data",
+      "change": "enable the span head and its cross-entropy start/end loss; inject the start pointer into routing_step so the copy start is a supervised position, beta heads untouched",
+      "new_bundle": true,
+      "preflight": "identity sha changes; full 19.4-style preflight required (0 Adam / <=400 CPU)",
+      "budget_cpu": 34400,
+      "budget_note": "6 cells x 300 updates at +8% of 29,574, plus 400 preflight and 2,300 probe",
+      "pass_criteria": [
+        "ledger start_hit >= 0.95 for object and place on all six cells",
+        "ledger route_hit >= 0.95 on all six cells",
+        "conditional byte does not regress below 0.94/0.98",
+        "byte gate object >= 0.95, place >= 0.95, copied >= 0.60, overall >= 0.80",
+        "new_description >= 0.80 (the second bar; if it stays near 0.26, close 19.2b as insufficient and open a frame attribution)"
+      ],
+      "not_started": true
+    },
+    "n19_5b": {
+      "name": "19.5b gate-only variant",
+      "new_parameters": "0 to 2 (gamma bias / floor)",
+      "change": "reshape only the generation-weight gamma gate; alpha/beta and encoder untouched",
+      "new_bundle": true,
+      "budget_cpu": 5200,
+      "budget_note": "2 seeds x 1 arm (B) x 150 updates, plus preflight and probe",
+      "pass_criteria": [
+        "object byte >= 0.95 and place byte >= 0.95 on both seeds",
+        "new_name_copied >= 0.60 on both seeds"
+      ],
+      "not_started": true,
+      "why_not_recommended": "the gamma sweep shows forcing gamma down never improves the B cells; gamma is not the binding bar"
+    }
+  },
+  "limits": {
+    "zero_updates": true,
+    "confirm_reads": 0,
+    "training": false,
+    "reopen_17_18": false
+  },
+  "source": {
+    "compare_report": {
+      "path": "reports\\taiji_package19_compare_20261104.json",
+      "sha256": "b464cf9766b23e614730eafac2de1fd9f39d3b9cbf4a2e42c7dad02556cef9cc"
+    },
+    "probe_report": {
+      "path": "reports\\taiji_package19_probe_step300_20261104.json",
+      "sha256": "6f33861b3412021b68eda3349cce24f774b788b4a06bb1b8911e7826320ef8ae"
+    },
+    "probe_step150_report": {
+      "path": "reports\\taiji_package19_probe_step150_20261104.json",
+      "sha256": "e1de9bd953f33d67b0ce58b5b97acb040e3b21fb5e4723ff2632cdf9f7f4068e"
+    },
+    "pricing_manifest": {
+      "path": "plans\\manifests\\taiji_pricing_19_3_20261104.json",
+      "sha256": "747aac06b4c573a6d54e6edb20ffff4f322ad7ef40e29ae19a23822a020493be"
+    },
+    "preflight_manifest": {
+      "path": "plans\\manifests\\taiji_preflight_19_4_20261104.json",
+      "sha256": "95619c0708bab42d69cbc56d93eb616fc7a95bae9ac28f90cf2ad13de7b70cef"
+    }
+  }
+}
