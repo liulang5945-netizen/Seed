@@ -1,0 +1,26 @@
+{
+  "schema": "taiji-selection-routing-17-7-closeout-manifest-v1",
+  "step": "N17.7",
+  "date": "2026-11-04",
+  "report": "reports\\taiji_selection_routing_17_7_closeout_20261104.json",
+  "report_sha256": "8cfdb321762f4a5c89e2e418bfc4de77c0f1ceac7174763e275c7eadc7809bd2",
+  "report_bytes": 19258,
+  "compare_manifest_sha256": "40137509eb06e7aefeb9886173789173b5af31b859f53785c365d0f69943aaa2",
+  "bundles": {
+    "output\\taiji_selection_routing_17_5\\28031-A_route_lock-step150.pt": "fd5afcd928ecaf9ee4ff288d160742f0be2b27d8ef95019cbf84960b06bd74b4",
+    "output\\taiji_selection_routing_17_5\\28031-A_route_lock-step300.pt": "f2827376ac7006708d6263d6688197359b0a1f1bdb7f35bffa1a37e9d9931f89",
+    "output\\taiji_selection_routing_17_5\\28031-B_stop_lock-step150.pt": "4e640844025c346b58faf7dd843473f5d117b8500175953141a1cefb9175b0b3",
+    "output\\taiji_selection_routing_17_5\\28031-B_stop_lock-step300.pt": "6678519e3ea86535738ede046bcf4e6425deb3bce60fd747d3644fe118a09225",
+    "output\\taiji_selection_routing_17_5\\28031-C_unlocked-step150.pt": "72a2921bd24648f834d7ed76af20a002437e665f575c3befa24c1e6377464da9",
+    "output\\taiji_selection_routing_17_5\\28031-C_unlocked-step300.pt": "02872a2d086ad1141ff8846b90f581a1e5cb5d534bea21fe7f0a5342b47d0136",
+    "output\\taiji_selection_routing_17_5\\28032-A_route_lock-step150.pt": "b79fd55ee1ec29e33d20223642c3f23e1d64c4e6dd75799d007c20e08a0dbd4e",
+    "output\\taiji_selection_routing_17_5\\28032-A_route_lock-step300.pt": "29923dac39dc31495b09c518f52416b8306e1ffc1f670853d97265daf5163c19",
+    "output\\taiji_selection_routing_17_5\\28032-B_stop_lock-step150.pt": "4146c0ffd022eab06c4a1e2b21576392dccbb01f379ad4d17978579aea61b584",
+    "output\\taiji_selection_routing_17_5\\28032-B_stop_lock-step300.pt": "3ac941cec3426421b79f087d1d3e6705e5eae505299b86e37698cd7b6285caaa",
+    "output\\taiji_selection_routing_17_5\\28032-C_unlocked-step150.pt": "1d756ffea5975d839f285142ec586fd838facd32f64bddb9972018c4dff8c945",
+    "output\\taiji_selection_routing_17_5\\28032-C_unlocked-step300.pt": "0e3b06ec87bcc416debf7ecbe4420498a3c7c491383c0f81c9940f764c362444"
+  },
+  "optimizer_steps": 0,
+  "training_updates": 0,
+  "confirm_reads": 0
+}

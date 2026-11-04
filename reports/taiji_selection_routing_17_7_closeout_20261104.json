@@ -1,0 +1,521 @@
+{
+  "schema": "taiji-selection-routing-17-7-closeout-v1",
+  "step": "N17.7",
+  "date": "2026-11-04",
+  "status": "n17_negative_closeout",
+  "verdict": {
+    "development_gate": {
+      "passed": false,
+      "release_confirm_n17": false,
+      "note": "17.6 only if this is true; otherwise not_released and 17.7 closes out"
+    },
+    "release_confirm_n17": false,
+    "n17_6": "not_released",
+    "n17_7": "closed_negative"
+  },
+  "inputs": {
+    "compare_report": {
+      "path": "reports\\taiji_selection_routing_17_5_compare_20261104.json",
+      "sha256": "3f947db7e4cee7029830b1488ac2562226d25b1bbf69a593327b771823d10e50"
+    },
+    "compare_manifest": {
+      "path": "plans\\manifests\\taiji_selection_routing_17_5_compare_20261104.json",
+      "sha256": "40137509eb06e7aefeb9886173789173b5af31b859f53785c365d0f69943aaa2"
+    },
+    "identity": true,
+    "format_equivalence": true,
+    "price": true,
+    "preflight": true
+  },
+  "ledgers": {
+    "reliable_range_same_candidate": {
+      "identity": {
+        "candidate_sha_v2": "773dcec2e1131d1f3c8784153633d85a9144268a4d5167790740cdd488153aa1",
+        "identity_basis": "semantic",
+        "parameter_counts": {
+          "binding": 3526481,
+          "head": 37120,
+          "span": 258,
+          "container_head_span": 3563859,
+          "declared_trainable_elements": 37378
+        },
+        "consistent_across_cells": true
+      },
+      "per_cell": {
+        "28031-A_route_lock": {
+          "step0_overall": 0.0,
+          "step300_overall": 0.06666666666666667,
+          "delta": 0.06666666666666667,
+          "step300_selection_object": 0.75,
+          "step300_selection_place": 1.0,
+          "step300_nll": 2.0909995516763287,
+          "reversed_paired_rate": 1.0,
+          "identity_rescue_equal": 8
+        },
+        "28031-B_stop_lock": {
+          "step0_overall": 0.0,
+          "step300_overall": 0.14166666666666666,
+          "delta": 0.14166666666666666,
+          "step300_selection_object": 0.75,
+          "step300_selection_place": 1.0,
+          "step300_nll": 1.3003037220548082,
+          "reversed_paired_rate": 1.0,
+          "identity_rescue_equal": 8
+        },
+        "28031-C_unlocked": {
+          "step0_overall": 0.05,
+          "step300_overall": 0.05,
+          "delta": 0.0,
+          "step300_selection_object": 0.75,
+          "step300_selection_place": 1.0,
+          "step300_nll": 1.7784645790446032,
+          "reversed_paired_rate": 1.0,
+          "identity_rescue_equal": 8
+        },
+        "28032-A_route_lock": {
+          "step0_overall": 0.0,
+          "step300_overall": 0.0,
+          "delta": 0.0,
+          "step300_selection_object": 0.3375,
+          "step300_selection_place": 0.1,
+          "step300_nll": 5.224519972578457,
+          "reversed_paired_rate": 1.0,
+          "identity_rescue_equal": 8
+        },
+        "28032-B_stop_lock": {
+          "step0_overall": 0.0,
+          "step300_overall": 0.2,
+          "delta": 0.2,
+          "step300_selection_object": 0.75,
+          "step300_selection_place": 1.0,
+          "step300_nll": 1.2243197722474113,
+          "reversed_paired_rate": 1.0,
+          "identity_rescue_equal": 8
+        },
+        "28032-C_unlocked": {
+          "step0_overall": 0.0,
+          "step300_overall": 0.05,
+          "delta": 0.05,
+          "step300_selection_object": 0.75,
+          "step300_selection_place": 1.0,
+          "step300_nll": 2.012623489734538,
+          "reversed_paired_rate": 1.0,
+          "identity_rescue_equal": 8
+        }
+      },
+      "reliable": [
+        "候选身份与参数清单逐格一致（语义哈希，六格同一个 candidate_sha_v2）",
+        "step300 包、进度与包内 step 三者一致；六格均可重放评估，权重不再丢失",
+        "identity_rescue 8/8 逐位成立：无干预的续推与干预后恢复完全一致",
+        "reversed 反序配对率 1.000-1.000（在 overall 接近 0 时属退化通过，不构成复制不变性证据）"
+      ],
+      "not_reliable": [
+        "自由运行整句复制：六格最好 0.200，门 0.80",
+        "有序选择：物件 top1 区间 0.338-0.750，门 0.90",
+        "新输出名字 0.000-0.000 / 新描述 0.000-0.083，门 0.80",
+        "跨 seed 稳定性：28032-A 的物件/地点选择 0.338/0.100、dev NLL 5.225，明显发散"
+      ]
+    },
+    "mechanism_actual_contribution": {
+      "selection_object_top1": {
+        "28031-A_route_lock": 0.75,
+        "28031-B_stop_lock": 0.75,
+        "28031-C_unlocked": 0.75,
+        "28032-A_route_lock": 0.3375,
+        "28032-B_stop_lock": 0.75,
+        "28032-C_unlocked": 0.75
+      },
+      "gamma_effective_mean": {
+        "28031-A_route_lock": 0.992179423290972,
+        "28031-B_stop_lock": 0.8835750456784648,
+        "28031-C_unlocked": 0.9357676951995468,
+        "28032-A_route_lock": 0.9415723423774282,
+        "28032-B_stop_lock": 0.8828179843892175,
+        "28032-C_unlocked": 0.8753069603762866
+      },
+      "gamma_floored_fraction": {
+        "28031-A_route_lock": 0.0,
+        "28031-B_stop_lock": 0.0,
+        "28031-C_unlocked": 0.0,
+        "28032-A_route_lock": 0.0,
+        "28032-B_stop_lock": 0.0,
+        "28032-C_unlocked": 0.0
+      },
+      "content_drops": {
+        "28031-A_route_lock": {
+          "no_source": {
+            "completed_rate": 0.125,
+            "drop": -0.04166666666666667,
+            "denominator": 24
+          },
+          "wrong_record": {
+            "completed_rate": 0.0,
+            "drop": 0.08333333333333333,
+            "denominator": 24
+          },
+          "wrong_position": {
+            "completed_rate": 0.0,
+            "drop": 0.08333333333333333,
+            "denominator": 24
+          }
+        },
+        "28031-B_stop_lock": {
+          "no_source": {
+            "completed_rate": 0.08333333333333333,
+            "drop": 0.04166666666666667,
+            "denominator": 24
+          },
+          "wrong_record": {
+            "completed_rate": 0.0,
+            "drop": 0.125,
+            "denominator": 24
+          },
+          "wrong_position": {
+            "completed_rate": 0.041666666666666664,
+            "drop": 0.08333333333333334,
+            "denominator": 24
+          }
+        },
+        "28031-C_unlocked": {
+          "no_source": {
+            "completed_rate": 0.0,
+            "drop": 0.125,
+            "denominator": 24
+          },
+          "wrong_record": {
+            "completed_rate": 0.125,
+            "drop": 0.0,
+            "denominator": 24
+          },
+          "wrong_position": {
+            "completed_rate": 0.0,
+            "drop": 0.125,
+            "denominator": 24
+          }
+        },
+        "28032-A_route_lock": {
+          "no_source": {
+            "completed_rate": 0.0,
+            "drop": 0.0,
+            "denominator": 24
+          },
+          "wrong_record": {
+            "completed_rate": 0.0,
+            "drop": 0.0,
+            "denominator": 24
+          },
+          "wrong_position": {
+            "completed_rate": 0.0,
+            "drop": 0.0,
+            "denominator": 24
+          }
+        },
+        "28032-B_stop_lock": {
+          "no_source": {
+            "completed_rate": 0.0,
+            "drop": 0.25,
+            "denominator": 24
+          },
+          "wrong_record": {
+            "completed_rate": 0.0,
+            "drop": 0.25,
+            "denominator": 24
+          },
+          "wrong_position": {
+            "completed_rate": 0.16666666666666666,
+            "drop": 0.08333333333333334,
+            "denominator": 24
+          }
+        },
+        "28032-C_unlocked": {
+          "no_source": {
+            "completed_rate": 0.0,
+            "drop": 0.08333333333333333,
+            "denominator": 24
+          },
+          "wrong_record": {
+            "completed_rate": 0.08333333333333333,
+            "drop": 0.0,
+            "denominator": 24
+          },
+          "wrong_position": {
+            "completed_rate": 0.0,
+            "drop": 0.08333333333333333,
+            "denominator": 24
+          }
+        }
+      },
+      "max_abs_content_drop_per_cell": {
+        "28031-A_route_lock": 0.08333333333333333,
+        "28031-B_stop_lock": 0.125,
+        "28031-C_unlocked": 0.125,
+        "28032-A_route_lock": 0.0,
+        "28032-B_stop_lock": 0.25,
+        "28032-C_unlocked": 0.08333333333333333
+      },
+      "max_abs_content_drop": 0.25,
+      "arm_content_dependence": {
+        "A_route_lock": 0.08333333333333333,
+        "B_stop_lock": 0.25,
+        "C_unlocked": 0.125
+      },
+      "a_minus_c": {
+        "28031": {
+          "delta": 0.016666666666666666,
+          "bootstrap": {
+            "mean": 0.016666666666666666,
+            "lower": -0.008333333333333333,
+            "upper": 0.041666666666666664,
+            "resamples": 2000,
+            "seed": 58031
+          },
+          "gate_delta": false,
+          "gate_lower": false,
+          "passed": false
+        },
+        "28032": {
+          "delta": -0.05000000000000001,
+          "bootstrap": {
+            "mean": -0.05000000000000001,
+            "lower": -0.05000000000000001,
+            "upper": -0.05000000000000001,
+            "resamples": 2000,
+            "seed": 58031
+          },
+          "gate_delta": false,
+          "gate_lower": false,
+          "passed": false
+        }
+      },
+      "a_minus_b_report_only": {
+        "28031": {
+          "delta": -0.075,
+          "bootstrap": {
+            "mean": -0.075,
+            "lower": -0.14166666666666666,
+            "upper": -0.016666666666666666,
+            "resamples": 2000,
+            "seed": 58031
+          },
+          "lower_positive": false,
+          "note": "owner-requested reading; not part of the frozen 17.5 gate"
+        },
+        "28032": {
+          "delta": -0.19999999999999998,
+          "bootstrap": {
+            "mean": -0.19999999999999998,
+            "lower": -0.2625,
+            "upper": -0.14166666666666666,
+            "resamples": 2000,
+            "seed": 58031
+          },
+          "lower_positive": false,
+          "note": "owner-requested reading; not part of the frozen 17.5 gate"
+        }
+      },
+      "self_prefix_updates": {
+        "28031-A_route_lock": 0,
+        "28031-B_stop_lock": 8,
+        "28031-C_unlocked": 0,
+        "28032-A_route_lock": 0,
+        "28032-B_stop_lock": 19,
+        "28032-C_unlocked": 0
+      },
+      "train_last_loss": {
+        "28031-A_route_lock": 0.14655509711469392,
+        "28031-B_stop_lock": 0.0987805019756728,
+        "28031-C_unlocked": 0.14952347460168858,
+        "28032-A_route_lock": 6.445761688906408,
+        "28032-B_stop_lock": 0.1476304489194216,
+        "28032-C_unlocked": 0.15182712937399398
+      },
+      "verdict": "copy is not load-bearing (completion stays <= 0.200); the route-credit arm depends on records less than detach (A max drop 0.083 vs B 0.250)"
+    },
+    "applicable_old_capability_state_resources": {
+      "parent": {
+        "28031": {
+          "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28031-A-locked-step300.pt",
+          "sha256": "73f19e36b159b4e0824bb24bdc7625454e4c7d63e9f308ddf28a78a3f2c8a169"
+        },
+        "28032": {
+          "path": "output\\taiji_core_binding_select_16_1_compare\\bundles\\28032-A-locked-step300.pt",
+          "sha256": "3d55bff6d51e7c3d7079e068caf70f1b131ce43e0be830abb1f71b5a39b556a5"
+        }
+      },
+      "parent_task_status": "N16.1.3 native_byte_task_failed; no eligible task parent",
+      "reusable": [
+        "binding 图（3,526,481 参数）与复制/生成两路",
+        "语义身份、bundle schema 与 step150 断点恢复（Adam 矩 + RNG + m/coverage）",
+        "17.3 冻结阈值与 17.4 恢复预检结论",
+        "三臂定义、阶段划分与冻结价格口径"
+      ],
+      "not_reusable_as_passed": [
+        "任务级复制能力（父代与 17.5 均未达标）",
+        "选择精度（0.75 < 0.90）作为 18 阶段输入"
+      ]
+    },
+    "next_task_applicability": {
+      "best_arm": "28032-B_stop_lock",
+      "best_overall": 0.2,
+      "reusable_for_18_22": [
+        "候选容器、语义身份、bundle schema、恢复与回放工具链",
+        "冻结阈值、评分器与内容干预三件套（可直接复用到新算子对照）",
+        "三臂/阶段/价格合同（换算子时只需重定价，不重建流程）"
+      ],
+      "must_be_replaced": [
+        "复制算子：当前 anchor@transport 的软扩散不足以让复制承重，OP2 候选要在结案后单独定价/对照",
+        "课程判据：阈值挂在自由运行完成率上，本剂量下从未触发（self_prefix_updates=0），需改为教师强制完成率或按位置触发",
+        "信用路径：ST 路由信用（A）未优于 detach（B），A−B 两 seed 均为负",
+        "剂量：300 更新 / batch 8 不足；训练末 loss 0.10-0.15 而 dev NLL 1.2-2.1，存在记忆化"
+      ],
+      "not_allowed_this_window": "不自动追加 seed、剂量或新头；17 窗口截至本步"
+    }
+  },
+  "stop_conditions": [
+    "17.6 专属 confirm 不释放：dev 任务门 false，confirm 保持封存（读取次数 0）",
+    "17.7 为 17 窗口终点：不追加 seed、不追加剂量、不新开头；后续 18–22 从设计卡重新准入",
+    "17.5 的六份 step300 包与 step150 包保留为证据资产，不因负结果删除",
+    "旧读数（17.1-17.4）保持原字节有效；本报告不改变任何冻结阈值"
+  ],
+  "remaining_competing_explanations": [
+    {
+      "explanation": "剂量不足/欠训练（300 更新、LR 1e-3、batch 8）",
+      "evidence": "训练末批 loss 0.10-6.45，而 dev NLL 1.22-5.22；选择 top1 最高 0.750 未达 0.90",
+      "status": "not_excluded"
+    },
+    {
+      "explanation": "架构：goal→字串的参数化捷径使复制非必需",
+      "evidence": "三类内容干预的单格最大绝对降幅 0.000-0.250；A 臂（ST 信用）0.083 低于 B 臂（detach）0.250，路由信用臂反而更不看记录",
+      "status": "supported"
+    },
+    {
+      "explanation": "训练/生成口径差（纯教师强制导致 exposure bias）",
+      "evidence": "课程按自由运行完成率触发：A/C 臂 self_prefix_updates 合计 0（从未触发，全程教师强制）；B 臂 27 次触发",
+      "status": "supported"
+    },
+    {
+      "explanation": "信用路径问题：ST 路由信用方向不佳",
+      "evidence": "A−B（参考读数）两 seed 为 -0.075 / -0.200；A−C 为 +0.017 / -0.050，门 +0.10",
+      "status": "supported"
+    },
+    {
+      "explanation": "评分/分母错误（历史 N16 曾出现分母与局部缓存缺陷）",
+      "evidence": "本脚本沿用 17.5 已冻结评分器与 17.3 阈值；退化 reversed 通过已在报告中标注",
+      "status": "not_excluded_for_reversed_only"
+    }
+  ],
+  "assets": {
+    "bundles": [
+      {
+        "seed": 28031,
+        "arm": "A_route_lock",
+        "step": 150,
+        "path": "output\\taiji_selection_routing_17_5\\28031-A_route_lock-step150.pt",
+        "bytes": 29255130,
+        "sha256": "fd5afcd928ecaf9ee4ff288d160742f0be2b27d8ef95019cbf84960b06bd74b4"
+      },
+      {
+        "seed": 28031,
+        "arm": "A_route_lock",
+        "step": 300,
+        "path": "output\\taiji_selection_routing_17_5\\28031-A_route_lock-step300.pt",
+        "bytes": 65842201,
+        "sha256": "f2827376ac7006708d6263d6688197359b0a1f1bdb7f35bffa1a37e9d9931f89"
+      },
+      {
+        "seed": 28031,
+        "arm": "B_stop_lock",
+        "step": 150,
+        "path": "output\\taiji_selection_routing_17_5\\28031-B_stop_lock-step150.pt",
+        "bytes": 29254907,
+        "sha256": "4e640844025c346b58faf7dd843473f5d117b8500175953141a1cefb9175b0b3"
+      },
+      {
+        "seed": 28031,
+        "arm": "B_stop_lock",
+        "step": 300,
+        "path": "output\\taiji_selection_routing_17_5\\28031-B_stop_lock-step300.pt",
+        "bytes": 65841707,
+        "sha256": "6678519e3ea86535738ede046bcf4e6425deb3bce60fd747d3644fe118a09225"
+      },
+      {
+        "seed": 28031,
+        "arm": "C_unlocked",
+        "step": 150,
+        "path": "output\\taiji_selection_routing_17_5\\28031-C_unlocked-step150.pt",
+        "bytes": 29254684,
+        "sha256": "72a2921bd24648f834d7ed76af20a002437e665f575c3befa24c1e6377464da9"
+      },
+      {
+        "seed": 28031,
+        "arm": "C_unlocked",
+        "step": 300,
+        "path": "output\\taiji_selection_routing_17_5\\28031-C_unlocked-step300.pt",
+        "bytes": 65841277,
+        "sha256": "02872a2d086ad1141ff8846b90f581a1e5cb5d534bea21fe7f0a5342b47d0136"
+      },
+      {
+        "seed": 28032,
+        "arm": "A_route_lock",
+        "step": 150,
+        "path": "output\\taiji_selection_routing_17_5\\28032-A_route_lock-step150.pt",
+        "bytes": 29255130,
+        "sha256": "b79fd55ee1ec29e33d20223642c3f23e1d64c4e6dd75799d007c20e08a0dbd4e"
+      },
+      {
+        "seed": 28032,
+        "arm": "A_route_lock",
+        "step": 300,
+        "path": "output\\taiji_selection_routing_17_5\\28032-A_route_lock-step300.pt",
+        "bytes": 65842201,
+        "sha256": "29923dac39dc31495b09c518f52416b8306e1ffc1f670853d97265daf5163c19"
+      },
+      {
+        "seed": 28032,
+        "arm": "B_stop_lock",
+        "step": 150,
+        "path": "output\\taiji_selection_routing_17_5\\28032-B_stop_lock-step150.pt",
+        "bytes": 29254907,
+        "sha256": "4146c0ffd022eab06c4a1e2b21576392dccbb01f379ad4d17978579aea61b584"
+      },
+      {
+        "seed": 28032,
+        "arm": "B_stop_lock",
+        "step": 300,
+        "path": "output\\taiji_selection_routing_17_5\\28032-B_stop_lock-step300.pt",
+        "bytes": 65841707,
+        "sha256": "3ac941cec3426421b79f087d1d3e6705e5eae505299b86e37698cd7b6285caaa"
+      },
+      {
+        "seed": 28032,
+        "arm": "C_unlocked",
+        "step": 150,
+        "path": "output\\taiji_selection_routing_17_5\\28032-C_unlocked-step150.pt",
+        "bytes": 29254684,
+        "sha256": "1d756ffea5975d839f285142ec586fd838facd32f64bddb9972018c4dff8c945"
+      },
+      {
+        "seed": 28032,
+        "arm": "C_unlocked",
+        "step": 300,
+        "path": "output\\taiji_selection_routing_17_5\\28032-C_unlocked-step300.pt",
+        "bytes": 65841277,
+        "sha256": "0e3b06ec87bcc416debf7ecbe4420498a3c7c491383c0f81c9940f764c362444"
+      }
+    ]
+  },
+  "cost": {
+    "optimizer_steps": 0,
+    "training_updates": 0,
+    "confirm_reads": 0,
+    "cpu_seconds": 0.359375,
+    "wall_seconds": 0.35190320014953613
+  },
+  "totals_reference": {
+    "n17_5_cumulative_cpu_seconds": 34020.465625,
+    "n17_5_cumulative_wall_seconds": 7798.156690000222,
+    "watch_cpu": 20000.0,
+    "watch_wall": 30000.0,
+    "watch_ratio_cpu": 1.70102328125
+  }
+}
