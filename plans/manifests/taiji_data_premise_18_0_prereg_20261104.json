@@ -1,0 +1,66 @@
+{
+  "schema": "taiji-data-premise-18-0-prereg-v1",
+  "step": "N18.0",
+  "date": "2026-11-04",
+  "status": "awaiting_owner_approval",
+  "binding": "frozen after owner approval; no training may start before that",
+  "data": {
+    "file_sha256": "8242f2a82050f35c141380f0ee763c0496de05d987622f896d2ec16570492433",
+    "digest": "a320ac08aafa963b15574096d91db676b984e7028fd85d6efe29f4871153bdcd",
+    "train_examples": 640,
+    "dev_examples": 192,
+    "confirm_examples_sealed": 192
+  },
+  "gates": {
+    "overall": 0.8,
+    "unseen_output_name": 0.8,
+    "new_description": 0.8,
+    "reversed": 0.95,
+    "selection_object": 0.9,
+    "selection_place": 0.9,
+    "content_drop": 0.1,
+    "identity_rescue": 8,
+    "a_minus_c": 0.1,
+    "new_name_copied": 0.6
+  },
+  "definitions": {
+    "overall": "dev completed rate: full 27-byte action plus EOS, denominator all dev examples",
+    "unseen_output_name": "completed rate on the unseen_output_name subset; denominator is the subset length",
+    "new_description": "completed rate on the new_description subset; denominator is the subset length",
+    "reversed": "completed rate when the record order is reversed",
+    "selection_object": "top-1 accuracy of the object record",
+    "selection_place": "top-1 accuracy of the place record",
+    "content_drop": "completed(with records) - completed(no records), on the content-intervention subset; records must be necessary, not decorative",
+    "new_name_copied": "fraction of dev examples where the object name AND the place name appear byte-exact in the output with records intact; this is an independent gate and must not be replaced by 'the output changed'",
+    "identity_rescue": "count of dev probes whose probabilities after a forced-route no-op round trip equal the baseline bitwise, denominator unchanged from 17.3",
+    "a_minus_c": "route-lock minus unlocked overall delta; two-seed world bootstrap lower bound must exceed zero"
+  },
+  "reporting": {
+    "gamma": "every cell reports gamma_mean and 1-gamma_mean side by side; a missing side is an invalid row",
+    "new_name_copied_floor": "a cell with overall >= 0.80 but new_name_copied < 0.60 is labelled recitation_remains, not a capability gain"
+  },
+  "axes": {
+    "dev_examples": 192,
+    "dev_unique_names": 60,
+    "dev_examples_unseen_output_name": 192,
+    "dev_examples_new_description": 96,
+    "dev_examples_both_new": 96,
+    "dev_combinations_seen_in_train": 0,
+    "train_names_in_dev_texts": 0
+  },
+  "ab_relation": {
+    "A": "this premise: large disjoint name pools plus combination held-out; run first",
+    "B": "gamma forced to 0 at content slots; interpretable only after A because without held-out names its gain cannot be separated from recitation",
+    "C": "rejected: A and B together change two variables and break attribution"
+  },
+  "budget_reference": {
+    "manifest": "plans/manifests/taiji_data_premise_18_0_pricing_20261104.json",
+    "note": "bare price plus the 2.11 external-contention protection; the manifest is the single source for the numbers, this file only points at it"
+  },
+  "stop_conditions": [
+    "owner approval is required before any training",
+    "task gate failure at step300 is a negative result; no seed or dose top-up",
+    "step150 readiness failure stops the cell before step300",
+    "no confirm read before the candidate and evaluator are frozen"
+  ]
+}

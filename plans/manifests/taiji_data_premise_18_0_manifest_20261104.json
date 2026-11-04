@@ -1,0 +1,146 @@
+{
+  "schema": "taiji-data-premise-18-0-manifest-v1",
+  "step": "N18.0",
+  "date": "2026-11-04",
+  "generated_by": "scripts\\training\\build_taiji_data_premise_18_0.py",
+  "generator_sha256": "d3931fa157efe3976d03d0b5e9283660d730823f0b206f81aa96870a3054ebf6",
+  "module_sha256": "b98b68534d26773091b234d5b7c92220def1059be56ab2c2bb0f3f8cc5791204",
+  "data_file": {
+    "path": "output\\taiji_data_premise_18_0\\data.json",
+    "sha256": "8242f2a82050f35c141380f0ee763c0496de05d987622f896d2ec16570492433",
+    "bytes": 2859104
+  },
+  "digest": "a320ac08aafa963b15574096d91db676b984e7028fd85d6efe29f4871153bdcd",
+  "vocabulary": {
+    "object_names": 220,
+    "place_names": 220,
+    "split_sizes": {
+      "train": 160,
+      "dev": 30,
+      "confirm": 30
+    },
+    "name_counts": {
+      "train": {
+        "object": 160,
+        "object_unique": 160,
+        "place": 160,
+        "place_unique": 160
+      },
+      "dev": {
+        "object": 30,
+        "object_unique": 30,
+        "place": 30,
+        "place_unique": 30
+      },
+      "confirm": {
+        "object": 30,
+        "object_unique": 30,
+        "place": 30,
+        "place_unique": 30
+      }
+    },
+    "object_name_bytes": 12,
+    "place_name_bytes": 6
+  },
+  "stats": {
+    "train_examples": 640,
+    "dev_examples": 192,
+    "train_worlds": 40,
+    "dev_worlds": 12,
+    "confirm_examples": 192,
+    "train_record_bytes": 9759,
+    "dev_record_bytes": 2928,
+    "train_action_bytes": 17280,
+    "dev_action_bytes": 5184,
+    "max_source_bytes": 246,
+    "source_budget": 512
+  },
+  "proofs": {
+    "occurrences": {
+      "train_object_names_in_dev": 0,
+      "train_place_names_in_dev": 0,
+      "dev_object_names_in_train": 0,
+      "dev_place_names_in_train": 0,
+      "confirm_object_names_in_train": 0,
+      "confirm_place_names_in_train": 0,
+      "confirm_object_names_in_dev": 0,
+      "confirm_place_names_in_dev": 0
+    },
+    "zero_occurrence_keys": [
+      "confirm_object_names_in_dev",
+      "confirm_object_names_in_train",
+      "confirm_place_names_in_dev",
+      "confirm_place_names_in_train",
+      "dev_object_names_in_train",
+      "dev_place_names_in_train",
+      "train_object_names_in_dev",
+      "train_place_names_in_dev"
+    ],
+    "nonzero_occurrence_keys": [],
+    "combination_intersection_train_dev": 0,
+    "combination_examples": {
+      "train": 640,
+      "dev": 156
+    },
+    "name_counts": {
+      "train": {
+        "object": 160,
+        "object_unique": 160,
+        "place": 160,
+        "place_unique": 160
+      },
+      "dev": {
+        "object": 30,
+        "object_unique": 30,
+        "place": 30,
+        "place_unique": 30
+      },
+      "confirm": {
+        "object": 30,
+        "object_unique": 30,
+        "place": 30,
+        "place_unique": 30
+      }
+    }
+  },
+  "constraints": {
+    "unseen_byte_strings": true,
+    "combination_held_out": true,
+    "pool_minimum": 200,
+    "pool_actual": {
+      "object_names": 220,
+      "place_names": 220
+    },
+    "confirm_examples_generated": 0
+  },
+  "capacity": {
+    "container_parameters": 3563859,
+    "trainable_tensors": 77,
+    "candidate_sha_v2": "773dcec2",
+    "parameter_delta": 0,
+    "reason": "names live in source bytes, not embeddings; the 27-byte action and 36-byte goal are unchanged",
+    "optional_scales": {
+      "default_220x220": {
+        "object_names": 220,
+        "place_names": 220,
+        "train_examples": 640,
+        "dev_examples": 192,
+        "parameter_delta": 0
+      },
+      "wide_440x440": {
+        "object_names": 440,
+        "place_names": 440,
+        "train_examples": 1280,
+        "dev_examples": 384,
+        "parameter_delta": 0,
+        "note": "only needed if held-out accuracy saturates with the default pool"
+      }
+    }
+  },
+  "cost": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "confirm_reads": 0,
+    "confirm_examples_generated": 0
+  }
+}

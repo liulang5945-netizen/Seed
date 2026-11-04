@@ -1,0 +1,167 @@
+{
+  "schema": "taiji-data-premise-18-0-pricing-v1",
+  "step": "N18.0",
+  "date": "2026-11-04",
+  "dataset": {
+    "file": "output/taiji_data_premise_18_0/data.json",
+    "digest": "a320ac08aafa963b15574096d91db676b984e7028fd85d6efe29f4871153bdcd",
+    "train_examples": 640,
+    "dev_examples": 192
+  },
+  "zero_update_probe": {
+    "examples": 2,
+    "optimizer_steps": 0,
+    "reasons": [
+      "invalid_utf8",
+      "invalid_utf8"
+    ],
+    "note": "the new records load and generate inside the frozen container"
+  },
+  "components_cpu": {
+    "generation_per_example": 0.20703125,
+    "eval_light_per_example": 0.416015625,
+    "eval_full_per_example": 1.3001302083333333,
+    "reversed_per_example": 0.2109375,
+    "counterfactual_per_example": 0.19921875,
+    "rescue_fixed": 0.46875,
+    "save": 0.046875,
+    "restore": 0.046875
+  },
+  "updates": [
+    {
+      "stage": "selection",
+      "update": 1,
+      "use_self_prefix": false,
+      "completion_rate": 0.0,
+      "loss": 11.190399455641323,
+      "parts": {
+        "curriculum": 0.0,
+        "forward": 1.796875,
+        "bptt": 0.015625,
+        "optimizer": 0.0
+      },
+      "total": 1.8125,
+      "diagnostics": {
+        "stage": "selection",
+        "ce": 2.244597629615822,
+        "nll": 0.0,
+        "span": 8.945801826025502,
+        "entropy": 0.0
+      }
+    },
+    {
+      "stage": "copy",
+      "update": 101,
+      "use_self_prefix": false,
+      "completion_rate": 0.0,
+      "loss": 17.096133326392255,
+      "parts": {
+        "curriculum": 1.53125,
+        "forward": 2.15625,
+        "bptt": 1.21875,
+        "optimizer": 0.0
+      },
+      "total": 4.90625,
+      "diagnostics": {
+        "stage": "copy",
+        "ce": 0.0,
+        "nll": 9.077603587727195,
+        "span": 8.018542713991124,
+        "entropy": 0.025950652130499692
+      }
+    },
+    {
+      "stage": "joint",
+      "update": 201,
+      "use_self_prefix": false,
+      "completion_rate": 0.0,
+      "loss": 19.086133458360887,
+      "parts": {
+        "curriculum": 1.78125,
+        "forward": 2.25,
+        "bptt": 1.234375,
+        "optimizer": 0.0
+      },
+      "total": 5.265625,
+      "diagnostics": {
+        "stage": "joint",
+        "ce": 2.197945167307471,
+        "nll": 8.451097232479754,
+        "span": 8.437101494581238,
+        "entropy": 0.02087201515021171
+      }
+    },
+    {
+      "stage": "joint",
+      "update": 202,
+      "use_self_prefix": false,
+      "completion_rate": 0.0,
+      "loss": 19.112005488671606,
+      "parts": {
+        "curriculum": 1.640625,
+        "forward": 2.09375,
+        "bptt": 1.234375,
+        "optimizer": 0.0
+      },
+      "total": 4.96875,
+      "diagnostics": {
+        "stage": "joint",
+        "ce": 2.180312025778553,
+        "nll": 8.514906471124004,
+        "span": 8.416803643660563,
+        "entropy": 0.03330378301684778
+      }
+    }
+  ],
+  "per_update_cpu": {
+    "selection": 1.8125,
+    "copy": 4.90625,
+    "joint": 5.1171875
+  },
+  "budget": {
+    "cells": 6,
+    "updates_per_stage": 100,
+    "eval_examples": 192,
+    "readiness_examples": 40,
+    "content_examples": 24,
+    "train_cell_bare": 1183.59375,
+    "eval_cell_bare": 334.5,
+    "save_cell_bare": 0.09375,
+    "restore_cell_bare": 0.046875,
+    "cell_bare": 1518.234375,
+    "six_cells_bare": 9109.40625,
+    "self_prefix_updates_b": 27,
+    "self_prefix_contingency_b_bare": 89.4375,
+    "self_prefix_contingency_b_protected": 188.713125,
+    "six_cells_with_contingency_b_bare": 9198.84375,
+    "six_cells_with_contingency_b_protected": 19409.560312499998,
+    "protection_coefficient": 2.11,
+    "six_cells_protected": 19220.8471875,
+    "step150_first_half_cell_bare": 514.8125,
+    "step150_second_half_cell_bare": 1006.703125,
+    "step150_first_half_six_cells_bare": 3088.875,
+    "step150_second_half_six_cells_bare": 6040.21875,
+    "step150_first_half_six_cells_protected": 6517.52625,
+    "step150_second_half_six_cells_protected": 12744.861562499998,
+    "eval_split_note": "step0 light + step150 readiness + step300 full; reversed/counterfactual/rescue/content are inside the measured full-eval per-example figure"
+  },
+  "assumptions": [
+    "same container and dose as 17.5: 2 seeds x 3 arms x 300 updates, batch 8",
+    "selection/copy/joint each 100 updates",
+    "step0 light eval, step150 readiness 40, step300 full eval",
+    "one restore per cell and two saves per cell",
+    "prices are CPU seconds on an idle machine; the 2.11 factor covers external contention only, not extra dose",
+    "the two measured joint steps run on a cold candidate whose teacher-forced completion rate is 0.0, which matches the 17.5 A/C arms; the 17.5 B arm triggered the self-prefix curriculum 27 times, so its extra generation cost is reported separately as a contingency and added in the *_with_contingency fields rather than baked into the base cell price"
+  ],
+  "cost": {
+    "optimizer_steps": 4,
+    "training_updates": 0,
+    "confirm_reads": 0,
+    "cpu_seconds": 69.640625,
+    "wall_seconds": 71.6282289000228
+  },
+  "caps": {
+    "max_adam": 4,
+    "max_cpu": 120.0
+  }
+}

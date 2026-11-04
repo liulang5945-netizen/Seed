@@ -1,0 +1,26 @@
+{
+  "schema": "taiji-data-premise-18-0-pricing-manifest-v1",
+  "step": "N18.0",
+  "date": "2026-11-04",
+  "generated_by": "scripts\\training\\price_taiji_data_premise_18_0.py",
+  "generator_sha256": "c7bf53506aab6e38f13e7aad0e84e5a96684652535c716c64f95a79da5eb8a85",
+  "report": {
+    "path": "reports\\taiji_data_premise_18_0_pricing_20261104.json",
+    "sha256": "8505e7c2abc72da238a5c5a17278c6e37f0a32bc1a9ccc22185f6a1fc9dd20a7",
+    "bytes": 5246
+  },
+  "budget": {
+    "six_cells_bare": 9109.40625,
+    "six_cells_protected": 19220.8471875,
+    "self_prefix_contingency_b_bare": 89.4375,
+    "six_cells_with_contingency_b_bare": 9198.84375,
+    "six_cells_with_contingency_b_protected": 19409.560312499998
+  },
+  "cost": {
+    "optimizer_steps": 4,
+    "training_updates": 0,
+    "confirm_reads": 0,
+    "cpu_seconds": 69.640625,
+    "wall_seconds": 71.6282289000228
+  }
+}

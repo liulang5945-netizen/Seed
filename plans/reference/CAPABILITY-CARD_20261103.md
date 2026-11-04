@@ -28,6 +28,7 @@
 | C8 | 改前span/参数配置的价格分项已交付并`superseded`（13,092.25 / 8,750.34 CPU，不得当作当前价）；当前价为三臂15,018.52 / 二臂10,182.68 CPU | `reports/taiji_selection_routing_17_3_price_20261103.json.superseded.json` → 新价指针；`reports/taiji_selection_routing_17_2r_price_20261103.json` → `frozen` | 旧价只作差额对照 |
 | C9 | 新图精确复制控制720/720通过（旧文件701/720为改前基线，已`superseded`） | `reports/taiji_selection_routing_17_2_t3_supplement_20261103_v3.json` → `forced_gold_probability` | 通过范围为gold控制下f64及reader-f32，正常定位/完整主体另验 |
 | C10 | 当前词表（3物件×5地点）下，模型对**未见过的新名字**逐字节正确率 0.000，且删记录/换错记录/换位置四种条件下新名字从未逐字出现；γ≈0.92（生成权重），复制权重约 0.08 | `reports/taiji_memory_dominance_probe_20261104.json` → `pooled`、`verdict`、`cells[*].criterion` | 训练从未需要复制：15 种组合可背诵，输出在已背名字池内换，内容不来自记录 |
+| C11 | 方案 A 的**数据前提已构建但未训练**：物件/地点名字池各 220（≥200），按**名字串**三向互斥切 160/30/30，train/dev 的（物件×地点）组合交集 0，八项跨向名字出现计数全 0；参数增量 0（名字是记录字节，不是嵌入），容器仍 3,563,859 参数 | `plans/manifests/taiji_data_premise_18_0_manifest_20261104.json` → `vocabulary`、`proofs`、`capacity`；`plans/manifests/taiji_data_premise_18_0_prereg_20261104.json` → `gates`、`axes` | 只证明“考题不再可背”，**不证明模型已能抄新名字**；能力结论要等 18.1 结果 |
 
 ## 2. 未证（还没有实验能支持，对外不得声称）
 
@@ -92,4 +93,8 @@ C10 把 17.5 的失败归因从“算子坏了”改成“任务前提允许背�
 | C | A+B 同时做 | ≈20–22k CPU | 最高 | 双变量同时改，读数无法归因 |
 
 建议**先 A**：它是根因（数据前提）的直接解，也是 B 能否被解释的前置条件（无 held-out 时 B 的增益与背诵不可区分）。C 仅在 A、B 各自读数清楚后才合并。
+
+**18.0 落地（2026-11-04，仍待 owner 批准）**：A 的非训练部分已完成——数据前提（C11）、定价（六格裸价 9,109.4 / 保护价 19,220.8 CPU；step150 前段 3,088.9 / 6,517.5，后段 6,040.2 / 12,744.9）、判据预注册（10 门，其中 `new_name_copied ≥ 0.60` 为**独立门**，overall 过门但该门不达标一律标 `recitation_remains`；每格须 γ 与 1−γ 双报）。18.1 正式比较**未启动**，须 owner 明确批准 prereg 与预算。证据：`plans/manifests/taiji_data_premise_18_0_prereg_20261104.json`、`plans/manifests/taiji_data_premise_18_0_pricing_20261104.json`。
+
+**18 号立项前提（钉住，不可回退）**：新字节串 + 大词表（各 ≥200）+ 组合 held-out。只满足其中一条的“扩词表”不算 A，读数不得用于泛化结论。
 
