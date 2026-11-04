@@ -161,3 +161,5 @@
 [14项意见的后续裁定](reference/MATH-ADJUDICATION_CORE_GRAPH_20261104.md)已纠正全域rank≤2、独立注入轴必要性、重复复制不可表达、KKT矛盾及OP2合法域的推广。生长保留“启动不等于功能增量”的强限定。统一在线目标继续作为候选，不由本次审查升为唯一v1.3默认。数学主张登记在[账本§17](reference/INVARIANT-LEDGER_20261103.md#17-e1e11数学审查的主张边界)。
 
 设计后继M-GRAPH-1在[系统计划§17](reference/PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md#17-e1e11数学裁定与单一候选图规格)，先闭合单一候选图、父可塑集合、信用/保持单位和约束更新。此处只登记数学设计责任，不另发布训练队列、不改变19.2j已到达的价格出口或请求预算。
+
+后续旧field/fabric附件按[数学裁定§9](reference/MATH-ADJUDICATION_CORE_GRAPH_20261104.md#9-补充附件旧fieldfabric底座的容量与统计界)分轨处理，撤回容量/JL/归一化的错误定量迁移。它不构成E1–E11新结论或新的执行队列，不改变M-GRAPH-1及当前价格出口。
