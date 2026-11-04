@@ -94,7 +94,9 @@ C10 把 17.5 的失败归因从“算子坏了”改成“任务前提允许背�
 
 建议**先 A**：它是根因（数据前提）的直接解，也是 B 能否被解释的前置条件（无 held-out 时 B 的增益与背诵不可区分）。C 仅在 A、B 各自读数清楚后才合并。
 
-**18.0 落地（2026-11-04，仍待 owner 批准）**：A 的非训练部分已完成——数据前提（C11）、定价（六格裸价 9,109.4 / 保护价 19,220.8 CPU；step150 前段 3,088.9 / 6,517.5，后段 6,040.2 / 12,744.9）、判据预注册（10 门，其中 `new_name_copied ≥ 0.60` 为**独立门**，overall 过门但该门不达标一律标 `recitation_remains`；每格须 γ 与 1−γ 双报）。18.1 正式比较**未启动**，须 owner 明确批准 prereg 与预算。证据：`plans/manifests/taiji_data_premise_18_0_prereg_20261104.json`、`plans/manifests/taiji_data_premise_18_0_pricing_20261104.json`。
+**18.0 落地（2026-11-04，仍待 owner 批准）**：A 的非训练部分已完成——数据前提（C11）、定价（六格裸价 9,109.4 / 保护价 19,220.8 CPU；step150 前段 3,088.9 / 6,517.5，后段 6,040.2 / 12,744.9）、判据预注册（10 门，其中 `new_name_copied ≥ 0.60` 为**独立门**，overall 过门但该门不达标一律标 `recitation_remains`；每格须 γ 与 1−γ 双报）。证据：`plans/manifests/taiji_data_premise_18_0_prereg_20261104.json`、`plans/manifests/taiji_data_premise_18_0_pricing_20261104.json`。
+
+**18.1 预检（2026-11-04，通过，0 训练）**：六格 × 3 工程 Adam + 1 次失败注入（19 Adam / 200.8 CPU）。参数、Adam 矩、教师强制分布、复制状态逐位差 0；父 bundle 与 `candidate_sha_v2` 773dcec2 不变；先存包后评估生效（失败注入只写 `evaluation_failed_weights_preserved`、权重保留）；`evaluate_dev(full=True)` 六格各 8 例跑通，`new_name_copied` / `unseen_output_name` 分母均为 8（S1 通过）。**18.1 正式比较仍未启动**，须 owner 明确批准 prereg 与预算。证据：`reports/taiji_preflight_18_1_20261104.json`。
 
 **18 号立项前提（钉住，不可回退）**：新字节串 + 大词表（各 ≥200）+ 组合 held-out。只满足其中一条的“扩词表”不算 A，读数不得用于泛化结论。
 
