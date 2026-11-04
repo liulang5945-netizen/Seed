@@ -1,0 +1,7 @@
+{
+  "status": "superseded",
+  "superseded_by": "plans/MASTER-PLAN.md",
+  "superseded_at": "2026-11-04",
+  "reason": "single-authority consolidation: status table, queue head, dependency order and pending decisions now live in MASTER-PLAN",
+  "note": "original file bytes untouched; this sidecar carries the status"
+}

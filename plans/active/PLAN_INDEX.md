@@ -1,17 +1,18 @@
 # Seed / Taiji 活动计划索引
 
-> 文档状态：[索引] — 只分类和导航。按序推进只读[MAINLINE 总计划](../MAINLINE.md)，从其[执行位置](../MAINLINE.md#执行位置)进入。
+> 文档状态：[索引] — 只分类和导航。当前唯一入口是[MAINLINE](../MAINLINE.md)，唯一权威主线是[MASTER-PLAN](../MASTER-PLAN.md)；本页只做指针，不写结论。
 
 ## 唯一分类
 
 | 状态 | 文档 | 维护边界 |
 |---|---|---|
-| 主线 | [MAINLINE](../MAINLINE.md) | 连续生命主体与递归进化的新N主线；统一步骤01–13及实际执行位置 |
+| 主线 | [MAINLINE](../MAINLINE.md) | 单入口：只留状态、队首、链接、待裁定指针 |
+| 权威 | [MASTER-PLAN](../MASTER-PLAN.md) | 唯一权威主线：状态表、依赖、权威源、冲突消解、盘点 |
 | 状态 | [03_CURRENT_EXECUTION.md](roadmap/03_CURRENT_EXECUTION.md) | 证据与审批台账；唯一队首标题只静态跳转总计划 |
 | 索引 | [10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md](roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md) | 兼容旧章节入口；不另排工作包或复制阶段状态 |
 | 规范 | [TAIJI_CORE_REQUIREMENTS.md](TAIJI_CORE_REQUIREMENTS.md)、[TAIJI_NATIVE_ARCHITECTURE_V1.md](TAIJI_NATIVE_ARCHITECTURE_V1.md) | 长期约束与认知所有权，不冒称实现 |
 | 运营 | [02_GATES_AND_CI.md](roadmap/02_GATES_AND_CI.md)、[05_TECH_DEBT_REGISTER.md](roadmap/05_TECH_DEBT_REGISTER.md)、[07_MINI_MODEL_DELIVERY.md](roadmap/07_MINI_MODEL_DELIVERY.md)、[08_UPSTREAM_SYNC_PLAYBOOK.md](roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md) | 门禁、债、能力/交付、上游重放；不定义方向 |
-| 组件 | [09_NEXT_MAINLINE_PLAN.md](roadmap/09_NEXT_MAINLINE_PLAN.md) | N1–N6 机制词典与历史映射；**不是当前主计算图** |
+| 组件 | [09_NEXT_MAINLINE_PLAN.md](roadmap/09_NEXT_MAINLINE_PLAN.md) | N1–N6 机制词典与历史映射；**已 superseded，不是当前主计算图** |
 | 历史 | [01_SCOPE_AND_PHASES.md](roadmap/01_SCOPE_AND_PHASES.md)、[04_EXECUTION_PLAN.md](roadmap/04_EXECUTION_PLAN.md)、[06_P5_2C_PRIME_NEXT_STEP_DECISION.md](roadmap/06_P5_2C_PRIME_NEXT_STEP_DECISION.md)、[ARCHITECTURE_DIRECTION_2026_08.md](ARCHITECTURE_DIRECTION_2026_08.md)、[SEED_ARCHITECTURE.md](SEED_ARCHITECTURE.md)、[SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)、[TAIJI_CONTINUAL_DEVELOPMENT_V2.md](architecture/TAIJI_CONTINUAL_DEVELOPMENT_V2.md) | 解释当时状态、批准与旧路线；不发布当前指令 |
 | 证据 | [11_CI_FLOAT_EVIDENCE_FOR_OWNER_20261025.md](roadmap/11_CI_FLOAT_EVIDENCE_FOR_OWNER_20261025.md)、[12_LINE2_EVIDENCE_CLOSEOUT_20261025.md](roadmap/12_LINE2_EVIDENCE_CLOSEOUT_20261025.md) | 机器读数与结案回执；不改写为能力通过 |
 | 索引 | [PLAN_INDEX.md](PLAN_INDEX.md)（本页）、[plans/README.md](../README.md) | 只导航 |

@@ -1,0 +1,7 @@
+{
+  "status": "superseded",
+  "superseded_by": "plans/MASTER-PLAN.md",
+  "superseded_at": "2026-11-04",
+  "reason": "previous mainline plan; its queue and stages are replaced by the 18/19-22 master plan",
+  "note": "original file bytes untouched; this sidecar carries the status"
+}

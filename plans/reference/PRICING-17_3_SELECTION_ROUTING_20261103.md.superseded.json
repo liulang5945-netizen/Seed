@@ -1,0 +1,7 @@
+{
+  "status": "superseded",
+  "superseded_by": "reports/taiji_data_premise_18_0_pricing_20261104.json",
+  "superseded_at": "2026-11-04",
+  "reason": "17.3 price was computed on the 17 graph; 18.0 repriced the 18 graph (six cells bare 9109.4 CPU / protection 19220.8 CPU), and 18.2 changes the graph again",
+  "note": "original file bytes untouched; this sidecar carries the status"
+}

@@ -6,7 +6,7 @@
 
 ## 按顺序推进只读一份
 
-[MAINLINE 新N主线落地计划](MAINLINE.md)统一编号、依赖与有限出口。近端17已有实现和局部证据，当前17.2R整合候选、完整信用/状态及价格/恢复适用性；系统设计覆盖18原文绑定、19经验修订、20反馈保持、21世界/活动、22规模成长与终审。[系统详细计划](reference/PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md)提供算法、子卡、问题和备选，实际调度以总计划为准。
+[MAINLINE](MAINLINE.md) 是唯一入口（只留状态、队首、链接与待裁定指针）；状态表、依赖顺序、权威源与冲突消解在 [MASTER-PLAN](MASTER-PLAN.md)，推进步骤与判据在 [ROADMAP-NEXT](reference/ROADMAP-NEXT_20261104.md)（唯一轨道）。2026-11-04 收敛：17 窗口判负、18.1 判负，包 19（位置计数 + UTF-8 掩码）19.1/19.2 达标、队首 19.3 定价；S19–S22 未调度。[系统详细计划](reference/PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md)提供算法、子卡、问题和备选，实际调度以 MASTER-PLAN 为准。
 
 本轮规划边界及下一轮立项规则见[总计划](MAINLINE.md#本轮规划边界与下一轮立项)；阶段编号不表示长期能力的完成比例。
 

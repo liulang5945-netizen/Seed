@@ -1,0 +1,7 @@
+{
+  "status": "superseded",
+  "superseded_by": "plans/MASTER-PLAN.md",
+  "superseded_at": "2026-11-04",
+  "reason": "review packet describes the 17 window, which closed negative (native_byte_task_failed; M1 denies structural separation); current readings live in the ledger and capability card",
+  "note": "original file bytes untouched; this sidecar carries the status"
+}

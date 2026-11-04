@@ -199,9 +199,11 @@ P3首步强制实体起点的时点与目标实体阶段不同。P4只在alpha/b
 
 **待 owner 裁定的唯一问题（尚未裁定，不得写成已裁定）**：M2 选 **① 保逐位继承（记录控制限定在同一控制范围）**，还是 **② 保全任意记录控制（恢复降为状态等价+可重放）**？建议 ①（理由：逐位恢复是 §10 硬不变量与已交付工程证据的基础，且 18.2 的 carry 实现已按 ① 验证逐位一致）。在此裁定前，任何新包不得同时声称两者；本文件中出现 ① 的文字均为**建议/临时实现口径**，不构成裁定。
 
-## 14. 18.2：位置计数 + UTF-8 掩码（验证达标，未定价、未训练）
+## 14. 18.2（= 轨道包 19.1–19.2）：位置计数 + UTF-8 掩码（验证达标，未定价、未训练）
 
-**状态。** `design_verified`（设计门通过）→ **允许进入定价**；**正式价未出、19 未启动、confirm 未释放**。证据：[总报告](../../reports/taiji_cursor_utf8_18_2_20261104.json)、[A 臂逐例](../../reports/taiji_cursor_utf8_18_2_probe_A_20261104.json)、[B 臂逐例](../../reports/taiji_cursor_utf8_18_2_probe_B_20261104.json)、[manifest](../manifests/taiji_cursor_utf8_18_2_20261104.json)，脚本 [`probe_taiji_cursor_18_2.py`](../../scripts/training/probe_taiji_cursor_18_2.py)。18.1 的证据文件字节未动（§8 命名规则：18.2 用新文件名，不改旧文件）。
+**编号。** 本节原名 18.2；2026-11-04 起与 [ROADMAP-NEXT](ROADMAP-NEXT_20261104.md) 对齐：**18.2 的设计与少更新验证 = 包 19 的 19.1–19.2**，定价即 19.3，正式比较即 19.5。历史证据文件名不改字节。
+
+**状态。** `design_verified`（设计门通过）→ **允许进入定价（19.3）**；**正式价未出、19.5 未启动、confirm 未释放**。证据：[总报告](../../reports/taiji_cursor_utf8_18_2_20261104.json)、[A 臂逐例](../../reports/taiji_cursor_utf8_18_2_probe_A_20261104.json)、[B 臂逐例](../../reports/taiji_cursor_utf8_18_2_probe_B_20261104.json)、[manifest](../manifests/taiji_cursor_utf8_18_2_20261104.json)，脚本 [`probe_taiji_cursor_18_2.py`](../../scripts/training/probe_taiji_cursor_18_2.py)。18.1 的证据文件字节未动（§8 命名规则：18.2 用新文件名，不改旧文件）。
 
 ### 14.1 机制（同包两项）
 
