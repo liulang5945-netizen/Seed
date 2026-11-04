@@ -1,0 +1,56 @@
+{
+  "schema": "taiji-resume-slowdown-probe-17-9-v1",
+  "step": "N17.9",
+  "date": "2026-11-04",
+  "status": "zero_persist_timing_probe",
+  "cell": "28031-B_stop_lock",
+  "bundle": {
+    "path": "output\\taiji_selection_routing_17_5\\28031-B_stop_lock-step150.pt",
+    "sha256": "4e640844025c346b58faf7dd843473f5d117b8500175953141a1cefb9175b0b3",
+    "resumed_from": 150
+  },
+  "caps": {
+    "adam_steps": 4,
+    "cpu_seconds": 60.0
+  },
+  "rows": [
+    {
+      "update": 201,
+      "stage": "joint",
+      "curriculum_cpu": 1.5,
+      "forward_cpu": 2.34375,
+      "backward_cpu": 3.609375,
+      "total_cpu": 7.453125,
+      "curriculum_rate": 0.0,
+      "self_prefix": false,
+      "clip_scale": 9.354559672587124
+    },
+    {
+      "update": 202,
+      "stage": "joint",
+      "curriculum_cpu": 1.5,
+      "forward_cpu": 2.40625,
+      "backward_cpu": 3.609375,
+      "total_cpu": 7.515625,
+      "curriculum_rate": 0.0,
+      "self_prefix": false,
+      "clip_scale": 9.838506071489572
+    }
+  ],
+  "measured_cpu_per_update": 7.484375,
+  "references": {
+    "attempt1_per_update": 7.079609375,
+    "attempt3_resume_per_update": 15.783000000000001,
+    "attempt1_basis": "12743.296875 CPU over 300 updates x 6 cells",
+    "attempt3_basis": "14204.7 CPU training over 150 updates x 6 cells"
+  },
+  "verdict": "external_contention_suspected",
+  "protection_coefficient": 2.108793319415449,
+  "cost": {
+    "optimizer_steps": 2,
+    "training_updates": 2,
+    "confirm_reads": 0,
+    "cpu_seconds": 17.015625,
+    "wall_seconds": 17.59777670004405
+  }
+}

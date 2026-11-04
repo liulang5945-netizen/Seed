@@ -1,0 +1,14 @@
+{
+  "schema": "taiji-resume-slowdown-probe-17-9-manifest-v1",
+  "step": "N17.9",
+  "date": "2026-11-04",
+  "report": "reports\\taiji_resume_slowdown_probe_20261104.json",
+  "report_sha256": "28442924ddcb2cc1e769670395aee25a76786fa56ab0d097bd9acdec80a32045",
+  "report_bytes": 1610,
+  "scripts": {
+    "scripts\\training\\probe_taiji_resume_slowdown_17_9.py": "0da12b6089fb3d117a4f5112b72f131d8a7f0bc4f2abd570d292d4eda78d417a"
+  },
+  "optimizer_steps": 2,
+  "training_updates": 2,
+  "confirm_reads": 0
+}

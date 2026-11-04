@@ -27,6 +27,7 @@
 | C7 | 确认面零污染：14.4–17.3 全部 `confirm` 读取 0 次 | `...14_6...json` → `accounting`；`...15_1_compare...json`、`...16_1_compare...json` → `accounting.consumed_confirm_examples=0`；`...17_3_verify...json` → `confirm_reads`（顶层）与 `t11_api.confirm_reads` | 最终考题一次都没提前看 |
 | C8 | 改前span/参数配置的价格分项已交付并`superseded`（13,092.25 / 8,750.34 CPU，不得当作当前价）；当前价为三臂15,018.52 / 二臂10,182.68 CPU | `reports/taiji_selection_routing_17_3_price_20261103.json.superseded.json` → 新价指针；`reports/taiji_selection_routing_17_2r_price_20261103.json` → `frozen` | 旧价只作差额对照 |
 | C9 | 新图精确复制控制720/720通过（旧文件701/720为改前基线，已`superseded`） | `reports/taiji_selection_routing_17_2_t3_supplement_20261103_v3.json` → `forced_gold_probability` | 通过范围为gold控制下f64及reader-f32，正常定位/完整主体另验 |
+| C10 | 当前词表（3物件×5地点）下，模型对**未见过的新名字**逐字节正确率 0.000，且删记录/换错记录/换位置四种条件下新名字从未逐字出现；γ≈0.92（生成权重），复制权重约 0.08 | `reports/taiji_memory_dominance_probe_20261104.json` → `pooled`、`verdict`、`cells[*].criterion` | 训练从未需要复制：15 种组合可背诵，输出在已背名字池内换，内容不来自记录 |
 
 ## 2. 未证（还没有实验能支持，对外不得声称）
 
@@ -38,8 +39,9 @@
 | U4 | 真正未见输出名字 | 14.6两seed新名字各0/40；原unseen_entity主要为新描述轴 | reports/taiji_post14_algorithm_review_20261102.json | 未见名字和新描述分轴，不复用含混字段 |
 | U5 | 旧能力保持 | `retention_not_admissible`（当前没有合格父） | `...17_3_verify...json` → `t10_retention`；`INVARIANT-LEDGER` L9 | 还没资格谈“学新不忘旧” |
 | U6 | 本候选跨session经验/长期学习 | experience_surface_absent描述当前17任务合同范围 | 17验证的t11_api；系统计划19–22 | 09及旧记忆有工程资产，当前共同任务还未完成该范围验证 |
-| U7 | 17路由/信用的任务增益 | 17.5尚未准入 | MAINLINE执行位置及系统计划§4 | 工程成本已发生，正式任务收益待测 |
+| U7 | 17路由/信用的任务增益 | 17.5 已判负：overall 0.000–0.200（门 0.80）、selection_object 0.338–0.750（门 0.90）、A−C +0.017/−0.050 | `reports/taiji_selection_routing_17_5_compare_20261104.json` → `configs`、`gates` | 工程成本已发生，任务收益未出现 |
 | U8 | 一般中文写作能力 | 14.6 完整动作 0.5844，门 0.80 | `...14_6...json` → `gates.task` | 能写对一半多，离可用还远 |
+| U12 | 自由运行时把未见过的新名字抄进输出 | 0.000（新名字逐字抄回率，六格全 0） | `reports/taiji_memory_dominance_probe_20261104.json` → `pooled.*.copy_rescue` | 只有给死路线时（T3）才抄得出，正常运行时不会抄 |
 
 | U9 | 回答代理信用的额外收益 | N16无该ST路径且A−B有目标处理混杂，17待测 | 16归因与17正式图 | 不能以N16负增量证否17的ST信用 |
 | U10 | 位置辅助监督是否必要 | 旧P4控制/长度条件不足以裁决必要性 | ATTRIBUTION-ARCH-VS-ALG及系统计划§4 | 先分层定位，再立学习对照 |
@@ -78,3 +80,16 @@
 本轮撤回N3把16负增量当ST信用否证、N4把位置监督未证当证否、N9把旧前置锚点测试当最终Q架构失败的表述，分别纳入U9–U11。工作树新T3按C9限定范围记录。原报告与旧卡Git版本保留，当前算法/状态/价格/恢复由同候选manifest逐项核对。
 
 后续[系统计划](PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md)覆盖17–22，远期能力均为目标和待验证责任。现阶段的值恢复、有序信号及gold控制结果不代签整合后的任务、持续经验或规模生长能力。
+
+## 7. 数据前提修订三选项（2026-11-04，待 owner 裁定，不得当作已批准）
+
+C10 把 17.5 的失败归因从“算子坏了”改成“任务前提允许背诵”。据此有三条互斥路径，裁定前 18–22 不启动训练：
+
+| 选项 | 内容 | 成本量级 | 能力上限 | 局限 |
+| --- | --- | --- | --- | --- |
+| A | 扩大物件/地点词表，并按（物件×地点）组合做 held-out 划分 | 数据≈0；训练 6 格 × 300 更新 ≈17k CPU | 上限最高：唯一能证明“换新名字也能抄对”的泛化 | 选择头（现 0.75）可能成为新瓶颈 |
+| B | 在物件/地点字位把 γ 压到 0，保留模板生成 | 工程改动约 1 天 + 同剂量 ≈17k CPU | 中：复制路径必然承重 | 仍可背词表，只证机制、不证泛化；可能伤模板 |
+| C | A+B 同时做 | ≈20–22k CPU | 最高 | 双变量同时改，读数无法归因 |
+
+建议**先 A**：它是根因（数据前提）的直接解，也是 B 能否被解释的前置条件（无 held-out 时 B 的增益与背诵不可区分）。C 仅在 A、B 各自读数清楚后才合并。
+

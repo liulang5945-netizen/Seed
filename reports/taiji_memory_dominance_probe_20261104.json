@@ -1,0 +1,4606 @@
+{
+  "schema": "taiji-memory-dominance-probe-17-8-v1",
+  "step": "N17.8",
+  "date": "2026-11-04",
+  "status": "zero_update_probe",
+  "design": {
+    "variants": [
+      "control",
+      "new_new",
+      "new_old",
+      "old_new"
+    ],
+    "base_dev_indices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "new_object_names": [
+      "玄铁罗盘",
+      "赤铜铃铛",
+      "青玉镇纸",
+      "墨色算筹"
+    ],
+    "new_place_names": [
+      "池畔",
+      "廊下",
+      "阶前",
+      "瓮侧"
+    ],
+    "train_vocabulary": {
+      "objects": [
+        "素白陶罐",
+        "铁灰木匣",
+        "青釉瓷瓶"
+      ],
+      "places": [
+        "墙角",
+        "案头",
+        "梯口",
+        "檐下",
+        "炉边"
+      ]
+    },
+    "note": "training could in principle memorize all 3x5 name combinations"
+  },
+  "self_checks": {
+    "s1_subset_ratio_denominator": {
+      "value": 0.5,
+      "expected": 0.5,
+      "ok": true
+    },
+    "s2_cache_keys": {
+      "key_shape": "(variant, world, index)",
+      "unique": true,
+      "cases": 16
+    },
+    "s2_raw_bytes": {
+      "pair_metrics": "raw_hex stored per row",
+      "decoded_copy_kept": false
+    }
+  },
+  "cells": [
+    {
+      "seed": 28032,
+      "arm": "A_route_lock",
+      "bundle": {
+        "path": "output\\taiji_selection_routing_17_5\\28032-A_route_lock-step300.pt",
+        "sha256": "29923dac39dc31495b09c518f52416b8306e1ffc1f670853d97265daf5163c19"
+      },
+      "by_variant": {
+        "control": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.0,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {},
+          "output_change": {},
+          "bite_rate": 0.0,
+          "slot_change": {},
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 32,
+            "gamma_mean": 0.9048124974995926,
+            "gamma_min": 0.20671786780142865,
+            "gamma_max": 0.999999983949351,
+            "low_fraction": 0.09375
+          }
+        },
+        "new_new": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.0,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "output_change": {
+            "no_source": 1.0,
+            "wrong_record": 1.0,
+            "wrong_position": 1.0
+          },
+          "bite_rate": 1.0,
+          "slot_change": {
+            "object": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            },
+            "place": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            }
+          },
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 32,
+            "gamma_mean": 0.9036261018995252,
+            "gamma_min": 0.20671261711437242,
+            "gamma_max": 0.9999999839125069,
+            "low_fraction": 0.09375
+          }
+        },
+        "new_old": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.0,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "output_change": {
+            "no_source": 1.0,
+            "wrong_record": 1.0,
+            "wrong_position": 1.0
+          },
+          "bite_rate": 1.0,
+          "slot_change": {
+            "object": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            },
+            "place": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            }
+          },
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 32,
+            "gamma_mean": 0.9036212990242999,
+            "gamma_min": 0.2067126171126305,
+            "gamma_max": 0.9999999839125069,
+            "low_fraction": 0.09375
+          }
+        },
+        "old_new": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.0,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "output_change": {
+            "no_source": 1.0,
+            "wrong_record": 1.0,
+            "wrong_position": 1.0
+          },
+          "bite_rate": 1.0,
+          "slot_change": {
+            "object": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            },
+            "place": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            }
+          },
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 40,
+            "gamma_mean": 0.9192601380804755,
+            "gamma_min": 0.20671375948364096,
+            "gamma_max": 0.999999996139096,
+            "low_fraction": 0.075
+          }
+        }
+      },
+      "criterion": {
+        "new_entity_exact": 0.0,
+        "new_copy_rescue": 0.0,
+        "new_no_source_drop_completed": 0.0,
+        "new_output_change": 1.0,
+        "near_zero_band": 0.1,
+        "note": "completed drops are degenerate when baseline completion is 0; the decisive test is whether any record condition ever transfers the unseen name verbatim",
+        "verdict": "memory_dominant"
+      },
+      "cost": {
+        "cpu_seconds": 13.3125,
+        "wall_seconds": 14.501129499869421
+      },
+      "rows": [
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 0,
+          "object_name": "铁灰木匣",
+          "place_name": "案头",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 9,
+            "predictions": 10,
+            "utf8": false,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": true,
+            "truncated": false,
+            "parsed": false,
+            "first_divergence": 0,
+            "reason": "early_eos",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "89e7e7938188e58fa3",
+          "gamma_mean": 0.7923178183716444
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 0,
+          "object_name": "玄铁罗盘",
+          "place_name": "池畔",
+          "unseen_hex": [
+            "e78e84e99381e7bd97e79b98",
+            "e6b1a0e79594"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 9,
+            "predictions": 10,
+            "utf8": false,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": true,
+            "truncated": false,
+            "parsed": false,
+            "first_divergence": 0,
+            "reason": "early_eos",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "89e7e7938188e58fa3",
+          "gamma_mean": 0.7922968863810025,
+          "no_source": false,
+          "no_source_hex": "e799e8a799e8a793a28fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "e7938188e588e58fa3",
+          "wrong_position": false,
+          "wrong_position_hex": "89e7938188e782e8e8a792"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 0,
+          "object_name": "玄铁罗盘",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e78e84e99381e7bd97e79b98"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 9,
+            "predictions": 10,
+            "utf8": false,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": true,
+            "truncated": false,
+            "parsed": false,
+            "first_divergence": 0,
+            "reason": "early_eos",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "89e7e7938188e58fa3",
+          "gamma_mean": 0.7922968863784348,
+          "no_source": false,
+          "no_source_hex": "e799e8a799e8a793a28fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "e7938188e588e58fa3",
+          "wrong_position": false,
+          "wrong_position_hex": "89e7938188e782e8e8a792"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 0,
+          "object_name": "素白陶罐",
+          "place_name": "池畔",
+          "unseen_hex": [
+            "e6b1a0e79594"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 9,
+            "predictions": 10,
+            "utf8": false,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": true,
+            "truncated": false,
+            "parsed": false,
+            "first_divergence": 0,
+            "reason": "early_eos",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "89e7e7938188e58fa3",
+          "gamma_mean": 0.7922994479674321,
+          "no_source": false,
+          "no_source_hex": "e799e8a799e8a793a28fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "89e7938188e782a2e782a2e8e8a792",
+          "wrong_position": false,
+          "wrong_position_hex": "89e7938188e782e8e8a792"
+        },
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 1,
+          "object_name": "铁灰木匣",
+          "place_name": "梯口",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 7,
+            "predictions": 8,
+            "utf8": false,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": true,
+            "truncated": false,
+            "parsed": false,
+            "first_divergence": 0,
+            "reason": "early_eos",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "9ca8e588e58fa3",
+          "gamma_mean": 0.9984115644938463
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 1,
+          "object_name": "赤铜铃铛",
+          "place_name": "廊下",
+          "unseen_hex": [
+            "e8b5a4e9939ce99383e9939b",
+            "e5bb8ae4b88b"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 7,
+            "predictions": 8,
+            "utf8": false,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": true,
+            "truncated": false,
+            "parsed": false,
+            "first_divergence": 0,
+            "reason": "early_eos",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "9ca8e588e58fa3",
+          "gamma_mean": 0.9984063165506041,
+          "no_source": false,
+          "no_source_hex": "e7938188e58fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "e694bee588e588b4",
+          "wrong_position": false,
+          "wrong_position_hex": "e8a7e799e8a7e782a28fa3"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 1,
+          "object_name": "赤铜铃铛",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e8b5a4e9939ce99383e9939b"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 7,
+            "predictions": 8,
+            "utf8": false,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": true,
+            "truncated": false,
+            "parsed": false,
+            "first_divergence": 0,
+            "reason": "early_eos",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "9ca8e588e58fa3",
+          "gamma_mean": 0.9984063165506034,
+          "no_source": false,
+          "no_source_hex": "e7938188e58fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "e694bee588e588b4",
+          "wrong_position": false,
+          "wrong_position_hex": "e8a7e799e8a7e782a28fa3"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 1,
+          "object_name": "素白陶罐",
+          "place_name": "廊下",
+          "unseen_hex": [
+            "e5bb8ae4b88b"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 7,
+            "predictions": 8,
+            "utf8": false,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": true,
+            "truncated": false,
+            "parsed": false,
+            "first_divergence": 0,
+            "reason": "early_eos",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "9ca8e588e58fa3",
+          "gamma_mean": 0.9984070555392472,
+          "no_source": false,
+          "no_source_hex": "e7938188e58fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "e694bee588e782a2e782a2e8e8a4b4",
+          "wrong_position": false,
+          "wrong_position_hex": "e8a7e799e8a7e782a28fa3"
+        },
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 2,
+          "object_name": "铁灰木匣",
+          "place_name": "檐下",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 8,
+            "predictions": 9,
+            "utf8": false,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": true,
+            "truncated": false,
+            "parsed": false,
+            "first_divergence": 1,
+            "reason": "early_eos",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e694bee588e588b4",
+          "gamma_mean": 0.9516499061648668
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 2,
+          "object_name": "青玉镇纸",
+          "place_name": "阶前",
+          "unseen_hex": [
+            "e99d92e78e89e99587e7bab8",
+            "e998b6e5898d"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 8,
+            "predictions": 9,
+            "utf8": false,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": true,
+            "truncated": false,
+            "parsed": false,
+            "first_divergence": 1,
+            "reason": "early_eos",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e694bee588e588b4",
+          "gamma_mean": 0.9516610008497501,
+          "no_source": false,
+          "no_source_hex": "e694bee588e58fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "e799e8a799e8a7938188b4",
+          "wrong_position": false,
+          "wrong_position_hex": "e694bee588e782a29381a28fa3"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 2,
+          "object_name": "青玉镇纸",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e99d92e78e89e99587e7bab8"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 8,
+            "predictions": 9,
+            "utf8": false,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": true,
+            "truncated": false,
+            "parsed": false,
+            "first_divergence": 1,
+            "reason": "early_eos",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e694bee588e588b4",
+          "gamma_mean": 0.9516439239681124,
+          "no_source": false,
+          "no_source_hex": "e694bee588e58fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "e799e8a799e8a7938188b4",
+          "wrong_position": false,
+          "wrong_position_hex": "e694bee588e782a29381a28fa3"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 2,
+          "object_name": "素白陶罐",
+          "place_name": "阶前",
+          "unseen_hex": [
+            "e998b6e5898d"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 8,
+            "predictions": 9,
+            "utf8": false,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": true,
+            "truncated": false,
+            "parsed": false,
+            "first_divergence": 1,
+            "reason": "early_eos",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e694bee588e588b4",
+          "gamma_mean": 0.9516515441066282,
+          "no_source": false,
+          "no_source_hex": "e694bee588e58fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "e799e8a7e782a2e782a2e782a2e8e8a4b4",
+          "wrong_position": false,
+          "wrong_position_hex": "e694bee588e782a29381a28fa3"
+        },
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 3,
+          "object_name": "铁灰木匣",
+          "place_name": "炉边",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 4,
+            "predictions": 5,
+            "utf8": false,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": true,
+            "truncated": false,
+            "parsed": false,
+            "first_divergence": 0,
+            "reason": "early_eos",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "90a0a4b4",
+          "gamma_mean": 0.8957360129671894
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 3,
+          "object_name": "墨色算筹",
+          "place_name": "瓮侧",
+          "unseen_hex": [
+            "e5a2a8e889b2e7ae97e7adb9",
+            "e793aee4bea7"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 4,
+            "predictions": 5,
+            "utf8": false,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": true,
+            "truncated": false,
+            "parsed": false,
+            "first_divergence": 0,
+            "reason": "early_eos",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "90a0a4b4",
+          "gamma_mean": 0.8881733713844391,
+          "no_source": false,
+          "no_source_hex": "e58fa3aa90e4b8e588e58fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "90bd90e4b88be8a792",
+          "wrong_position": false,
+          "wrong_position_hex": "e799e8a7e782a2e782e8e8a792"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 3,
+          "object_name": "墨色算筹",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e5a2a8e889b2e7ae97e7adb9"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 4,
+            "predictions": 5,
+            "utf8": false,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": true,
+            "truncated": false,
+            "parsed": false,
+            "first_divergence": 0,
+            "reason": "early_eos",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "90a0a4b4",
+          "gamma_mean": 0.8881733713750822,
+          "no_source": false,
+          "no_source_hex": "e58fa3aa90e4b8e588e58fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "90bd90e4b88be8a792",
+          "wrong_position": false,
+          "wrong_position_hex": "e799e8a7e782a2e782e8e8a792"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 3,
+          "object_name": "素白陶罐",
+          "place_name": "瓮侧",
+          "unseen_hex": [
+            "e793aee4bea7"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 12,
+            "predictions": 13,
+            "utf8": false,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": true,
+            "truncated": false,
+            "parsed": false,
+            "first_divergence": 0,
+            "reason": "early_eos",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "90a0e799e8a7938188e58fa3",
+          "gamma_mean": 0.9457915924823894,
+          "no_source": false,
+          "no_source_hex": "e58fa3aa90e4b8e588e58fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "e799e8a7e782e8e8a792",
+          "wrong_position": false,
+          "wrong_position_hex": "e799e8a7e782a2e782e8e8a792"
+        }
+      ]
+    },
+    {
+      "seed": 28032,
+      "arm": "C_unlocked",
+      "bundle": {
+        "path": "output\\taiji_selection_routing_17_5\\28032-C_unlocked-step300.pt",
+        "sha256": "0e3b06ec87bcc416debf7ecbe4420498a3c7c491383c0f81c9940f764c362444"
+      },
+      "by_variant": {
+        "control": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.25,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {},
+          "output_change": {},
+          "bite_rate": 0.0,
+          "slot_change": {},
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 112,
+            "gamma_mean": 0.8756218675468838,
+            "gamma_min": 0.20000028014815874,
+            "gamma_max": 0.9999999996217717,
+            "low_fraction": 0.14285714285714285
+          }
+        },
+        "new_new": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.0,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "output_change": {
+            "no_source": 1.0,
+            "wrong_record": 0.0,
+            "wrong_position": 1.0
+          },
+          "bite_rate": 1.0,
+          "slot_change": {
+            "object": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            },
+            "place": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            }
+          },
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 112,
+            "gamma_mean": 0.8756217794298395,
+            "gamma_min": 0.20000028014236543,
+            "gamma_max": 0.9999999996217233,
+            "low_fraction": 0.14285714285714285
+          }
+        },
+        "new_old": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.0,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "output_change": {
+            "no_source": 1.0,
+            "wrong_record": 0.0,
+            "wrong_position": 1.0
+          },
+          "bite_rate": 1.0,
+          "slot_change": {
+            "object": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            },
+            "place": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            }
+          },
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 112,
+            "gamma_mean": 0.8756217992232384,
+            "gamma_min": 0.20000028014236543,
+            "gamma_max": 0.9999999996217626,
+            "low_fraction": 0.14285714285714285
+          }
+        },
+        "old_new": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.0,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "output_change": {
+            "no_source": 1.0,
+            "wrong_record": 0.0,
+            "wrong_position": 1.0
+          },
+          "bite_rate": 1.0,
+          "slot_change": {
+            "object": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            },
+            "place": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            }
+          },
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 112,
+            "gamma_mean": 0.8752327058549698,
+            "gamma_min": 0.2000002498405901,
+            "gamma_max": 0.9999999996376214,
+            "low_fraction": 0.14285714285714285
+          }
+        }
+      },
+      "criterion": {
+        "new_entity_exact": 0.0,
+        "new_copy_rescue": 0.0,
+        "new_no_source_drop_completed": 0.0,
+        "new_output_change": 1.0,
+        "near_zero_band": 0.1,
+        "note": "completed drops are degenerate when baseline completion is 0; the decisive test is whether any record condition ever transfers the unseen name verbatim",
+        "verdict": "memory_dominant"
+      },
+      "cost": {
+        "cpu_seconds": 19.28125,
+        "wall_seconds": 20.408217599848285
+      },
+      "rows": [
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 0,
+          "object_name": "铁灰木匣",
+          "place_name": "案头",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 4,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.8756195096062757
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 0,
+          "object_name": "玄铁罗盘",
+          "place_name": "池畔",
+          "unseen_hex": [
+            "e78e84e99381e7bd97e79b98",
+            "e6b1a0e79594"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.8756193759019403,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a099bde999b6e999b6e999b6e98fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68ae8b5ade7b4a0e58ca3e694bee8a79292"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 0,
+          "object_name": "玄铁罗盘",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e78e84e99381e7bd97e79b98"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.8756194550761333,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a099bde999b6e999b6e999b6e98fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68ae8b5ade7b4a0e58ca3e694bee8a79292"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 0,
+          "object_name": "素白陶罐",
+          "place_name": "池畔",
+          "unseen_hex": [
+            "e6b1a0e79594"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.8751902718694147,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a099bde999b6e999b6e999b6e98fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68ae8b5ade7b4a0e799bde999b6e7bd90e694bee8a792"
+        },
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 1,
+          "object_name": "铁灰木匣",
+          "place_name": "梯口",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 4,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.8756279071468825
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 1,
+          "object_name": "赤铜铃铛",
+          "place_name": "廊下",
+          "unseen_hex": [
+            "e8b5a4e9939ce99383e9939b",
+            "e5bb8ae4b88b"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.875627829864702,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a099bde999b6e999b6e999b6e98fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68ae8b5ade7b4a0e58ca3e694bee8a79292"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 1,
+          "object_name": "赤铜铃铛",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e8b5a4e9939ce99383e9939b"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.8756278298648014,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a099bde999b6e999b6e999b6e98fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68ae8b5ade7b4a0e58ca3e694bee8a79292"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 1,
+          "object_name": "素白陶罐",
+          "place_name": "廊下",
+          "unseen_hex": [
+            "e5bb8ae4b88b"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.8752797573311192,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a099bde999b6e999b6e999b6e98fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68ae8b5ade7b4a0e799bde999b6e7bd90e694bee8a792"
+        },
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 2,
+          "object_name": "铁灰木匣",
+          "place_name": "檐下",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": true,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 4,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.8755178639050627
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 2,
+          "object_name": "青玉镇纸",
+          "place_name": "阶前",
+          "unseen_hex": [
+            "e99d92e78e89e99587e7bab8",
+            "e998b6e5898d"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 6,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.8755177911623899,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a099bde999b6e999b6e999b6e999e8a792",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68ae8b5ade7b4a0e58ca3e694bee8a79292"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 2,
+          "object_name": "青玉镇纸",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e99d92e78e89e99587e7bab8"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 6,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.8755177911624018,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a099bde999b6e999b6e999b6e999e8a792",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68ae8b5ade7b4a0e58ca3e694bee8a79292"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 2,
+          "object_name": "素白陶罐",
+          "place_name": "阶前",
+          "unseen_hex": [
+            "e998b6e5898d"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.8751669588913663,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a099bde999b6e999b6e999b6e999e8a792",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68ae8b5ade7b4a0e799bde999b6e7bd90e694bee8a792"
+        },
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 3,
+          "object_name": "铁灰木匣",
+          "place_name": "炉边",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 4,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.8757221895293139
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 3,
+          "object_name": "墨色算筹",
+          "place_name": "瓮侧",
+          "unseen_hex": [
+            "e5a2a8e889b2e7ae97e7adb9",
+            "e793aee4bea7"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.8757221207903261,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a099bde999b6e999b6e999b6e98fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68ae8b5ade7b4a0e58ca3e694bee8a79292"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 3,
+          "object_name": "墨色算筹",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e5a2a8e889b2e7ae97e7adb9"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.8757221207896169,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a099bde999b6e999b6e999b6e98fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68ae8b5ade7b4a0e58ca3e694bee8a79292"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 3,
+          "object_name": "素白陶罐",
+          "place_name": "瓮侧",
+          "unseen_hex": [
+            "e793aee4bea7"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.8752938353279792,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a099bde999b6e999b6e999b6e98fa3",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68ae8b5ade7b4a0e799bde999b6e7bd90e694bee8a792"
+        }
+      ]
+    },
+    {
+      "seed": 28031,
+      "arm": "C_unlocked",
+      "bundle": {
+        "path": "output\\taiji_selection_routing_17_5\\28031-C_unlocked-step300.pt",
+        "sha256": "02872a2d086ad1141ff8846b90f581a1e5cb5d534bea21fe7f0a5342b47d0136"
+      },
+      "by_variant": {
+        "control": {
+          "n": 4,
+          "object_exact": 1.0,
+          "place_exact": 0.25,
+          "entity_exact": 0.25,
+          "completed": 0.25,
+          "drops": {},
+          "output_change": {},
+          "bite_rate": 0.0,
+          "slot_change": {},
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 112,
+            "gamma_mean": 0.9280324885579017,
+            "gamma_min": 0.20026880666151228,
+            "gamma_max": 0.9999999990547284,
+            "low_fraction": 0.07142857142857142
+          }
+        },
+        "new_new": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.0,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "output_change": {
+            "no_source": 1.0,
+            "wrong_record": 0.0,
+            "wrong_position": 1.0
+          },
+          "bite_rate": 1.0,
+          "slot_change": {
+            "object": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            },
+            "place": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            }
+          },
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 112,
+            "gamma_mean": 0.9335830506915387,
+            "gamma_min": 0.2002591151347773,
+            "gamma_max": 0.9999999992221154,
+            "low_fraction": 0.07142857142857142
+          }
+        },
+        "new_old": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.0,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "output_change": {
+            "no_source": 1.0,
+            "wrong_record": 0.0,
+            "wrong_position": 1.0
+          },
+          "bite_rate": 1.0,
+          "slot_change": {
+            "object": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            },
+            "place": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            }
+          },
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 112,
+            "gamma_mean": 0.9335832956393763,
+            "gamma_min": 0.20025911763480958,
+            "gamma_max": 0.9999999992221169,
+            "low_fraction": 0.07142857142857142
+          }
+        },
+        "old_new": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.0,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "output_change": {
+            "no_source": 1.0,
+            "wrong_record": 0.0,
+            "wrong_position": 1.0
+          },
+          "bite_rate": 1.0,
+          "slot_change": {
+            "object": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            },
+            "place": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            }
+          },
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 112,
+            "gamma_mean": 0.9330758708548862,
+            "gamma_min": 0.20025769521976292,
+            "gamma_max": 0.9999999989588264,
+            "low_fraction": 0.07142857142857142
+          }
+        }
+      },
+      "criterion": {
+        "new_entity_exact": 0.0,
+        "new_copy_rescue": 0.0,
+        "new_no_source_drop_completed": 0.0,
+        "new_output_change": 1.0,
+        "near_zero_band": 0.1,
+        "note": "completed drops are degenerate when baseline completion is 0; the decisive test is whether any record condition ever transfers the unseen name verbatim",
+        "verdict": "memory_dominant"
+      },
+      "cost": {
+        "cpu_seconds": 19.796875,
+        "wall_seconds": 21.145916199777275
+      },
+      "rows": [
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 0,
+          "object_name": "铁灰木匣",
+          "place_name": "案头",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": true,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 22,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.926224710343833
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 0,
+          "object_name": "玄铁罗盘",
+          "place_name": "池畔",
+          "unseen_hex": [
+            "e78e84e99381e7bd97e79b98",
+            "e6b1a0e79594"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9334744542280303,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca894beb988b0e7bd90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99381e781b0e69ca8e8a792e999bd90e694bee8a792"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 0,
+          "object_name": "玄铁罗盘",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e78e84e99381e7bd97e79b98"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9334744421062162,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca894beb988b0e7bd90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99381e781b0e69ca8e8a792e999bd90e694bee8a792"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 0,
+          "object_name": "素白陶罐",
+          "place_name": "池畔",
+          "unseen_hex": [
+            "e6b1a0e79594"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.931532214846227,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca894beb988b0e7bd90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99381e781b0e69ca8e8a792bd90e694bee8a792"
+        },
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 1,
+          "object_name": "铁灰木匣",
+          "place_name": "梯口",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": true,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 22,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9338003227339283
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 1,
+          "object_name": "赤铜铃铛",
+          "place_name": "廊下",
+          "unseen_hex": [
+            "e8b5a4e9939ce99383e9939b",
+            "e5bb8ae4b88b"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9332758812057869,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca894beb988b0e7bd90e4b88b8289e8beb9",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99381e781b0e69ca8e8a79290e694bee8a792"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 1,
+          "object_name": "赤铜铃铛",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e8b5a4e9939ce99383e9939b"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9332760997022398,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca894beb988b0e7bd90e4b88b8289e8beb9",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99381e781b0e69ca8e8a79290e694bee8a792"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 1,
+          "object_name": "素白陶罐",
+          "place_name": "廊下",
+          "unseen_hex": [
+            "e5bb8ae4b88b"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9332938543159152,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca894beb988b0e7bd90e4b88b8289e8beb9",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99381e781b0e69ca8e8a792bd90e694bee8a792"
+        },
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 2,
+          "object_name": "铁灰木匣",
+          "place_name": "檐下",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": true,
+            "object_exact": true,
+            "place_exact": true,
+            "entity_exact": true,
+            "completed": true,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": -1,
+            "reason": "completed",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9258226969649934
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 2,
+          "object_name": "青玉镇纸",
+          "place_name": "阶前",
+          "unseen_hex": [
+            "e99d92e78e89e99587e7bab8",
+            "e998b6e5898d"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 4,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9334880676596946,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca894beb988b0e7bd90e4b88b8289e8beb9",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99381e781b0e69ca8e8a792bd90e4b88b"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 2,
+          "object_name": "青玉镇纸",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e99d92e78e89e99587e7bab8"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 4,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9334882547110798,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca894beb988b0e7bd90e4b88b8289e8beb9",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99381e781b0e69ca8e8a792bd90e4b88b"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 2,
+          "object_name": "素白陶罐",
+          "place_name": "阶前",
+          "unseen_hex": [
+            "e998b6e5898d"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9334328988687706,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca894beb988b0e7bd90e4b88b8289e8beb9",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99381e781b0e69ca8e8a792bd90e694bee8a792"
+        },
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 3,
+          "object_name": "铁灰木匣",
+          "place_name": "炉边",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": true,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 21,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9262822241888519
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 3,
+          "object_name": "墨色算筹",
+          "place_name": "瓮侧",
+          "unseen_hex": [
+            "e5a2a8e889b2e7ae97e7adb9",
+            "e793aee4bea7"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9340937996726428,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca894beb988b0e7bd90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99381e781b0e69ca8e8a792bd90e4b88b"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 3,
+          "object_name": "墨色算筹",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e5a2a8e889b2e7ae97e7adb9"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9340943860379689,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca894beb988b0e7bd90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99381e781b0e69ca8e8a792bd90e4b88b"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 3,
+          "object_name": "素白陶罐",
+          "place_name": "瓮侧",
+          "unseen_hex": [
+            "e793aee4bea7"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.934044515388632,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca894beb988b0e7bd90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99381e781b0e69ca8e8a792bd90e694bee8a792"
+        }
+      ]
+    },
+    {
+      "seed": 28032,
+      "arm": "B_stop_lock",
+      "bundle": {
+        "path": "output\\taiji_selection_routing_17_5\\28032-B_stop_lock-step300.pt",
+        "sha256": "3ac941cec3426421b79f087d1d3e6705e5eae505299b86e37698cd7b6285caaa"
+      },
+      "by_variant": {
+        "control": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.5,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {},
+          "output_change": {},
+          "bite_rate": 0.0,
+          "slot_change": {},
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 112,
+            "gamma_mean": 0.8965186586063573,
+            "gamma_min": 0.20480154750982263,
+            "gamma_max": 0.99999998664307,
+            "low_fraction": 0.07142857142857142
+          }
+        },
+        "new_new": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.0,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "output_change": {
+            "no_source": 1.0,
+            "wrong_record": 0.25,
+            "wrong_position": 0.0
+          },
+          "bite_rate": 1.0,
+          "slot_change": {
+            "object": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            },
+            "place": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            }
+          },
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 115,
+            "gamma_mean": 0.9206096725568248,
+            "gamma_min": 0.23048526872697295,
+            "gamma_max": 0.9999999897386165,
+            "low_fraction": 0.05217391304347826
+          }
+        },
+        "new_old": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.75,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "output_change": {
+            "no_source": 1.0,
+            "wrong_record": 0.75,
+            "wrong_position": 0.5
+          },
+          "bite_rate": 1.0,
+          "slot_change": {
+            "object": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            },
+            "place": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            }
+          },
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 112,
+            "gamma_mean": 0.9120845220201687,
+            "gamma_min": 0.23048526872767391,
+            "gamma_max": 0.9999999897386165,
+            "low_fraction": 0.0625
+          }
+        },
+        "old_new": {
+          "n": 4,
+          "object_exact": 0.75,
+          "place_exact": 0.0,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "output_change": {
+            "no_source": 1.0,
+            "wrong_record": 1.0,
+            "wrong_position": 0.0
+          },
+          "bite_rate": 1.0,
+          "slot_change": {
+            "object": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            },
+            "place": {
+              "valid_byte_pairs": 0,
+              "changed_pairs": 0,
+              "rate_over_all_rows": 0.0
+            }
+          },
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 115,
+            "gamma_mean": 0.919717107364228,
+            "gamma_min": 0.23055696833529565,
+            "gamma_max": 0.9999999408111209,
+            "low_fraction": 0.06086956521739131
+          }
+        }
+      },
+      "criterion": {
+        "new_entity_exact": 0.0,
+        "new_copy_rescue": 0.0,
+        "new_no_source_drop_completed": 0.0,
+        "new_output_change": 1.0,
+        "near_zero_band": 0.1,
+        "note": "completed drops are degenerate when baseline completion is 0; the decisive test is whether any record condition ever transfers the unseen name verbatim",
+        "verdict": "memory_dominant"
+      },
+      "cost": {
+        "cpu_seconds": 20.328125,
+        "wall_seconds": 21.557436699979007
+      },
+      "rows": [
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 0,
+          "object_name": "铁灰木匣",
+          "place_name": "案头",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9138562973868635
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 0,
+          "object_name": "玄铁罗盘",
+          "place_name": "池畔",
+          "unseen_hex": [
+            "e78e84e99381e7bd97e79b98",
+            "e6b1a0e79594"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 30,
+            "predictions": 31,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 4,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e78289e8beb9",
+          "gamma_mean": 0.9004728221326758,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e78289e8beb9"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 0,
+          "object_name": "玄铁罗盘",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e78e84e99381e7bd97e79b98"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 4,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.8978250625661334,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 0,
+          "object_name": "素白陶罐",
+          "place_name": "池畔",
+          "unseen_hex": [
+            "e6b1a0e79594"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 30,
+            "predictions": 31,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 22,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e78289e8beb9",
+          "gamma_mean": 0.9002834199122928,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae7b4a0e799bde999b6e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e78289e8beb9"
+        },
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 1,
+          "object_name": "铁灰木匣",
+          "place_name": "梯口",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6a188e5a4b4",
+          "gamma_mean": 0.913951243119444
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 1,
+          "object_name": "赤铜铃铛",
+          "place_name": "廊下",
+          "unseen_hex": [
+            "e8b5a4e9939ce99383e9939b",
+            "e5bb8ae4b88b"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9288137093599812,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 1,
+          "object_name": "赤铜铃铛",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e8b5a4e9939ce99383e9939b"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": true,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e5a299e8a792",
+          "gamma_mean": 0.9177929506728134,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e5a299e8a792"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 1,
+          "object_name": "素白陶罐",
+          "place_name": "廊下",
+          "unseen_hex": [
+            "e5bb8ae4b88b"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": true,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 21,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9269561055031815,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae7b4a0e799bde999b6e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 2,
+          "object_name": "铁灰木匣",
+          "place_name": "檐下",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": true,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.8439255895801633
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 2,
+          "object_name": "青玉镇纸",
+          "place_name": "阶前",
+          "unseen_hex": [
+            "e99d92e78e89e99587e7bab8",
+            "e998b6e5898d"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9316629125302965,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 2,
+          "object_name": "青玉镇纸",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e99d92e78e89e99587e7bab8"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": true,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e5a299e8a792",
+          "gamma_mean": 0.9182274472829322,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 2,
+          "object_name": "素白陶罐",
+          "place_name": "阶前",
+          "unseen_hex": [
+            "e998b6e5898d"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": true,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 21,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9295398719975553,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae7b4a0e799bde999b6e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 3,
+          "object_name": "铁灰木匣",
+          "place_name": "炉边",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": true,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e78289e8beb9",
+          "gamma_mean": 0.9143415043389583
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 3,
+          "object_name": "墨色算筹",
+          "place_name": "瓮侧",
+          "unseen_hex": [
+            "e5a2a8e889b2e7ae97e7adb9",
+            "e793aee4bea7"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9236467658926474,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 3,
+          "object_name": "墨色算筹",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e5a2a8e889b2e7ae97e7adb9"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": true,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e5a299e8a792",
+          "gamma_mean": 0.914492627558796,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 3,
+          "object_name": "素白陶罐",
+          "place_name": "瓮侧",
+          "unseen_hex": [
+            "e793aee4bea7"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": true,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 21,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9241712128423043,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae7b4a0e799bde999b6e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b"
+        }
+      ]
+    },
+    {
+      "seed": 28031,
+      "arm": "B_stop_lock",
+      "bundle": {
+        "path": "output\\taiji_selection_routing_17_5\\28031-B_stop_lock-step300.pt",
+        "sha256": "6678519e3ea86535738ede046bcf4e6425deb3bce60fd747d3644fe118a09225"
+      },
+      "by_variant": {
+        "control": {
+          "n": 4,
+          "object_exact": 1.0,
+          "place_exact": 0.0,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {},
+          "output_change": {},
+          "bite_rate": 0.0,
+          "slot_change": {},
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 112,
+            "gamma_mean": 0.9088237307810211,
+            "gamma_min": 0.20029806305955547,
+            "gamma_max": 0.9999999969465267,
+            "low_fraction": 0.07142857142857142
+          }
+        },
+        "new_new": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.0,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "output_change": {
+            "no_source": 1.0,
+            "wrong_record": 1.0,
+            "wrong_position": 1.0
+          },
+          "bite_rate": 1.0,
+          "slot_change": {
+            "object": {
+              "valid_byte_pairs": 2,
+              "changed_pairs": 2,
+              "rate_over_all_rows": 0.5
+            },
+            "place": {
+              "valid_byte_pairs": 2,
+              "changed_pairs": 1,
+              "rate_over_all_rows": 0.25
+            }
+          },
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 114,
+            "gamma_mean": 0.9200502805132879,
+            "gamma_min": 0.20003084839330923,
+            "gamma_max": 0.9999999956802763,
+            "low_fraction": 0.08771929824561403
+          }
+        },
+        "new_old": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.75,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "output_change": {
+            "no_source": 1.0,
+            "wrong_record": 1.0,
+            "wrong_position": 1.0
+          },
+          "bite_rate": 1.0,
+          "slot_change": {
+            "object": {
+              "valid_byte_pairs": 3,
+              "changed_pairs": 3,
+              "rate_over_all_rows": 0.75
+            },
+            "place": {
+              "valid_byte_pairs": 3,
+              "changed_pairs": 3,
+              "rate_over_all_rows": 0.75
+            }
+          },
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 111,
+            "gamma_mean": 0.9001191155305268,
+            "gamma_min": 0.20003084839330923,
+            "gamma_max": 0.9999999871803826,
+            "low_fraction": 0.0990990990990991
+          }
+        },
+        "old_new": {
+          "n": 4,
+          "object_exact": 0.5,
+          "place_exact": 0.0,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "output_change": {
+            "no_source": 0.75,
+            "wrong_record": 1.0,
+            "wrong_position": 0.25
+          },
+          "bite_rate": 1.0,
+          "slot_change": {
+            "object": {
+              "valid_byte_pairs": 3,
+              "changed_pairs": 1,
+              "rate_over_all_rows": 0.25
+            },
+            "place": {
+              "valid_byte_pairs": 3,
+              "changed_pairs": 1,
+              "rate_over_all_rows": 0.25
+            }
+          },
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 115,
+            "gamma_mean": 0.8758164884259868,
+            "gamma_min": 0.2025488058298666,
+            "gamma_max": 0.9999999921705514,
+            "low_fraction": 0.1391304347826087
+          }
+        }
+      },
+      "criterion": {
+        "new_entity_exact": 0.0,
+        "new_copy_rescue": 0.0,
+        "new_no_source_drop_completed": 0.0,
+        "new_output_change": 1.0,
+        "near_zero_band": 0.1,
+        "note": "completed drops are degenerate when baseline completion is 0; the decisive test is whether any record condition ever transfers the unseen name verbatim",
+        "verdict": "memory_dominant"
+      },
+      "cost": {
+        "cpu_seconds": 20.484375,
+        "wall_seconds": 21.711984199937433
+      },
+      "rows": [
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 0,
+          "object_name": "铁灰木匣",
+          "place_name": "案头",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": true,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 21,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e78289e8beb9",
+          "gamma_mean": 0.9114098030533231
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 0,
+          "object_name": "玄铁罗盘",
+          "place_name": "池畔",
+          "unseen_hex": [
+            "e78e84e99381e7bd97e79b98",
+            "e6b1a0e79594"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e78289e8beb9",
+          "gamma_mean": 0.9421415749068686,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e78289e8beb9"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 0,
+          "object_name": "玄铁罗盘",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e78e84e99381e7bd97e79b98"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": true,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e5a299e8a792",
+          "gamma_mean": 0.9235855171124239,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e78289e8beb9"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 0,
+          "object_name": "素白陶罐",
+          "place_name": "池畔",
+          "unseen_hex": [
+            "e6b1a0e79594"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": true,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 21,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e78289e8beb9",
+          "gamma_mean": 0.8367437444114666,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e78289e8beb9",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e78289e8beb9"
+        },
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 1,
+          "object_name": "铁灰木匣",
+          "place_name": "梯口",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": true,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 22,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9086076134020572
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 1,
+          "object_name": "赤铜铃铛",
+          "place_name": "廊下",
+          "unseen_hex": [
+            "e8b5a4e9939ce99383e9939b",
+            "e5bb8ae4b88b"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.933276738224527,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 1,
+          "object_name": "赤铜铃铛",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e8b5a4e9939ce99383e9939b"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": true,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e5a299e8a792",
+          "gamma_mean": 0.9088165103578795,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e5a2e58fa3"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 1,
+          "object_name": "素白陶罐",
+          "place_name": "廊下",
+          "unseen_hex": [
+            "e5bb8ae4b88b"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": true,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 21,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.8214933350987378,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e78289e8beb9",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 2,
+          "object_name": "铁灰木匣",
+          "place_name": "檐下",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": true,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 21,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e78289e8beb9",
+          "gamma_mean": 0.9093163926074608
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 2,
+          "object_name": "青玉镇纸",
+          "place_name": "阶前",
+          "unseen_hex": [
+            "e99d92e78e89e99587e7bab8",
+            "e998b6e5898d"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 30,
+            "predictions": 31,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 6,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e999bde999b6e7bd90e694bee588b0e993b6e6aa90e4b88b",
+          "gamma_mean": 0.8840408165981704,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 2,
+          "object_name": "青玉镇纸",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e99d92e78e89e99587e7bab8"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": true,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 6,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e999bde999b6e7bd90e694bee588b0e5a299e8a792",
+          "gamma_mean": 0.8476637833280142,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 2,
+          "object_name": "素白陶罐",
+          "place_name": "阶前",
+          "unseen_hex": [
+            "e998b6e5898d"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 30,
+            "predictions": 31,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e993b6e6aa90e4b88b",
+          "gamma_mean": 0.9185594880320261,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e78289e8beb9",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 3,
+          "object_name": "铁灰木匣",
+          "place_name": "炉边",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": true,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 21,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.905961114061243
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 3,
+          "object_name": "墨色算筹",
+          "place_name": "瓮侧",
+          "unseen_hex": [
+            "e5a2a8e889b2e7ae97e7adb9",
+            "e793aee4bea7"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 26,
+            "predictions": 27,
+            "utf8": false,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": true,
+            "truncated": false,
+            "parsed": false,
+            "first_divergence": 4,
+            "reason": "early_eos",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae58ce799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9247686628256466,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 3,
+          "object_name": "墨色算筹",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e5a2a8e889b2e7ae97e7adb9"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 26,
+            "predictions": 27,
+            "utf8": false,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": true,
+            "truncated": false,
+            "parsed": false,
+            "first_divergence": 4,
+            "reason": "early_eos",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae58ce799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9211621896865032,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 3,
+          "object_name": "素白陶罐",
+          "place_name": "瓮侧",
+          "unseen_hex": [
+            "e793aee4bea7"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9218897790610695,
+          "no_source": false,
+          "no_source_hex": "e68a8ae7b4a0e799bde999b6e7bd90e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e78289e8beb9",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b"
+        }
+      ]
+    },
+    {
+      "seed": 28031,
+      "arm": "A_route_lock",
+      "bundle": {
+        "path": "output\\taiji_selection_routing_17_5\\28031-A_route_lock-step300.pt",
+        "sha256": "f2827376ac7006708d6263d6688197359b0a1f1bdb7f35bffa1a37e9d9931f89"
+      },
+      "by_variant": {
+        "control": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.25,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {},
+          "output_change": {},
+          "bite_rate": 0.0,
+          "slot_change": {},
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 112,
+            "gamma_mean": 0.9923936191690547,
+            "gamma_min": 0.8869637911090531,
+            "gamma_max": 0.9999999812276257,
+            "low_fraction": 0.0
+          }
+        },
+        "new_new": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.0,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "output_change": {
+            "no_source": 1.0,
+            "wrong_record": 1.0,
+            "wrong_position": 0.0
+          },
+          "bite_rate": 1.0,
+          "slot_change": {
+            "object": {
+              "valid_byte_pairs": 4,
+              "changed_pairs": 4,
+              "rate_over_all_rows": 1.0
+            },
+            "place": {
+              "valid_byte_pairs": 4,
+              "changed_pairs": 1,
+              "rate_over_all_rows": 0.25
+            }
+          },
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 112,
+            "gamma_mean": 0.9920970364433751,
+            "gamma_min": 0.8867797880220165,
+            "gamma_max": 0.999999981996331,
+            "low_fraction": 0.0
+          }
+        },
+        "new_old": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.0,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "output_change": {
+            "no_source": 1.0,
+            "wrong_record": 1.0,
+            "wrong_position": 0.25
+          },
+          "bite_rate": 1.0,
+          "slot_change": {
+            "object": {
+              "valid_byte_pairs": 4,
+              "changed_pairs": 4,
+              "rate_over_all_rows": 1.0
+            },
+            "place": {
+              "valid_byte_pairs": 4,
+              "changed_pairs": 1,
+              "rate_over_all_rows": 0.25
+            }
+          },
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 112,
+            "gamma_mean": 0.9922083583777067,
+            "gamma_min": 0.8867797880220165,
+            "gamma_max": 0.999999981996331,
+            "low_fraction": 0.0
+          }
+        },
+        "old_new": {
+          "n": 4,
+          "object_exact": 0.0,
+          "place_exact": 0.0,
+          "entity_exact": 0.0,
+          "completed": 0.0,
+          "drops": {
+            "no_source": 0.0,
+            "wrong_record": 0.0,
+            "wrong_position": 0.0
+          },
+          "output_change": {
+            "no_source": 1.0,
+            "wrong_record": 1.0,
+            "wrong_position": 1.0
+          },
+          "bite_rate": 1.0,
+          "slot_change": {
+            "object": {
+              "valid_byte_pairs": 4,
+              "changed_pairs": 4,
+              "rate_over_all_rows": 1.0
+            },
+            "place": {
+              "valid_byte_pairs": 4,
+              "changed_pairs": 1,
+              "rate_over_all_rows": 0.25
+            }
+          },
+          "copy_rescue": 0.0,
+          "gamma": {
+            "steps": 112,
+            "gamma_mean": 0.9921086096857591,
+            "gamma_min": 0.8871993671219314,
+            "gamma_max": 0.9999999819250209,
+            "low_fraction": 0.0
+          }
+        }
+      },
+      "criterion": {
+        "new_entity_exact": 0.0,
+        "new_copy_rescue": 0.0,
+        "new_no_source_drop_completed": 0.0,
+        "new_output_change": 1.0,
+        "near_zero_band": 0.1,
+        "note": "completed drops are degenerate when baseline completion is 0; the decisive test is whether any record condition ever transfers the unseen name verbatim",
+        "verdict": "memory_dominant"
+      },
+      "cost": {
+        "cpu_seconds": 20.953125,
+        "wall_seconds": 22.114630499854684
+      },
+      "rows": [
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 0,
+          "object_name": "铁灰木匣",
+          "place_name": "案头",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 4,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9936332268006717
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 0,
+          "object_name": "玄铁罗盘",
+          "place_name": "池畔",
+          "unseen_hex": [
+            "e78e84e99381e7bd97e79b98",
+            "e6b1a0e79594"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9936257941100692,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 0,
+          "object_name": "玄铁罗盘",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e78e84e99381e7bd97e79b98"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9936125245207872,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 0,
+          "object_name": "素白陶罐",
+          "place_name": "池畔",
+          "unseen_hex": [
+            "e6b1a0e79594"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9936364334556641,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 1,
+          "object_name": "铁灰木匣",
+          "place_name": "梯口",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 4,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.992012705158405
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 1,
+          "object_name": "赤铜铃铛",
+          "place_name": "廊下",
+          "unseen_hex": [
+            "e8b5a4e9939ce99383e9939b",
+            "e5bb8ae4b88b"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9919944322865718,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 1,
+          "object_name": "赤铜铃铛",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e8b5a4e9939ce99383e9939b"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9919820018147991,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6a2afe58fa3"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 1,
+          "object_name": "素白陶罐",
+          "place_name": "廊下",
+          "unseen_hex": [
+            "e5bb8ae4b88b"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9919974146712258,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 2,
+          "object_name": "铁灰木匣",
+          "place_name": "檐下",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": true,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 4,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9922210221737476
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 2,
+          "object_name": "青玉镇纸",
+          "place_name": "阶前",
+          "unseen_hex": [
+            "e99d92e78e89e99587e7bab8",
+            "e998b6e5898d"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 6,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6a2afe58fa3",
+          "gamma_mean": 0.9909169014428866,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6a2afe58fa3"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 2,
+          "object_name": "青玉镇纸",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e99d92e78e89e99587e7bab8"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 6,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6a2afe58fa3",
+          "gamma_mean": 0.9913126100503024,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6a2afe58fa3"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 2,
+          "object_name": "素白陶罐",
+          "place_name": "阶前",
+          "unseen_hex": [
+            "e998b6e5898d"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6a2afe58fa3",
+          "gamma_mean": 0.9909231373643544,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6a2afe58fa3"
+        },
+        {
+          "variant": "control",
+          "world": 0,
+          "index": 3,
+          "object_name": "铁灰木匣",
+          "place_name": "炉边",
+          "unseen_hex": [],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 4,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9917075225433943
+        },
+        {
+          "variant": "new_new",
+          "world": 0,
+          "index": 3,
+          "object_name": "墨色算筹",
+          "place_name": "瓮侧",
+          "unseen_hex": [
+            "e5a2a8e889b2e7ae97e7adb9",
+            "e793aee4bea7"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.991851017933973,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "new_old",
+          "world": 0,
+          "index": 3,
+          "object_name": "墨色算筹",
+          "place_name": "墙角",
+          "unseen_hex": [
+            "e5a2a8e889b2e7ae97e7adb9"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9919262971249383,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b"
+        },
+        {
+          "variant": "old_new",
+          "world": 0,
+          "index": 3,
+          "object_name": "素白陶罐",
+          "place_name": "瓮侧",
+          "unseen_hex": [
+            "e793aee4bea7"
+          ],
+          "score": {
+            "schema": "taiji-binding-copy-scoring-v1",
+            "bytes": 27,
+            "predictions": 28,
+            "utf8": true,
+            "terminated": true,
+            "full_sentence": false,
+            "object_exact": false,
+            "place_exact": false,
+            "entity_exact": false,
+            "completed": false,
+            "empty": false,
+            "early_eos": false,
+            "truncated": false,
+            "parsed": true,
+            "first_divergence": 3,
+            "reason": "wrong_bytes",
+            "expected_bytes": 27,
+            "denominator": true
+          },
+          "raw_hex": "e68a8ae99d92e98789e793b7e793b6e694bee588b0e6aa90e4b88b",
+          "gamma_mean": 0.9918774532517923,
+          "no_source": false,
+          "no_source_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_record": false,
+          "wrong_record_hex": "e68a8ae99d92e98789e793b7e793b6e694bee58ca3e694bee588b0e6aa90e4b88b",
+          "wrong_position": false,
+          "wrong_position_hex": "e68a8ae99381e781b0e69ca8e58ca3e694bee588b0e6aa90e4b88b"
+        }
+      ]
+    }
+  ],
+  "pooled": {
+    "control": {
+      "n": 24,
+      "object_exact": 0.3333333333333333,
+      "place_exact": 0.20833333333333334,
+      "entity_exact": 0.041666666666666664,
+      "completed": 0.041666666666666664,
+      "drops": {},
+      "output_change": {},
+      "bite_rate": 0.0,
+      "copy_rescue": 0.0,
+      "gamma": {
+        "gamma_mean": 0.9177004770268019,
+        "gamma_min": 0.3165083927149218,
+        "gamma_max": 0.9999999912405122,
+        "low_fraction": 0.07514880952380952
+      },
+      "copy_weight_mean": 0.08229952297319809
+    },
+    "new_new": {
+      "n": 24,
+      "object_exact": 0.0,
+      "place_exact": 0.0,
+      "entity_exact": 0.0,
+      "completed": 0.0,
+      "drops": {
+        "no_source": 0.0,
+        "wrong_record": 0.0,
+        "wrong_position": 0.0
+      },
+      "output_change": {
+        "no_source": 1.0,
+        "wrong_record": 0.5416666666666666,
+        "wrong_position": 0.6666666666666666
+      },
+      "bite_rate": 1.0,
+      "copy_rescue": 0.0,
+      "gamma": {
+        "gamma_mean": 0.9242646535890652,
+        "gamma_min": 0.320711319588969,
+        "gamma_max": 0.9999999916952614,
+        "low_fraction": 0.07465482092913443
+      },
+      "copy_weight_mean": 0.07573534641093482
+    },
+    "new_old": {
+      "n": 24,
+      "object_exact": 0.0,
+      "place_exact": 0.25,
+      "entity_exact": 0.0,
+      "completed": 0.0,
+      "drops": {
+        "no_source": 0.0,
+        "wrong_record": 0.0,
+        "wrong_position": 0.0
+      },
+      "output_change": {
+        "no_source": 1.0,
+        "wrong_record": 0.625,
+        "wrong_position": 0.7916666666666666
+      },
+      "bite_rate": 1.0,
+      "copy_rescue": 0.0,
+      "gamma": {
+        "gamma_mean": 0.9195397316358861,
+        "gamma_min": 0.32071132000546754,
+        "gamma_max": 0.9999999902786194,
+        "low_fraction": 0.0782724688974689
+      },
+      "copy_weight_mean": 0.08046026836411391
+    },
+    "old_new": {
+      "n": 24,
+      "object_exact": 0.20833333333333334,
+      "place_exact": 0.0,
+      "entity_exact": 0.0,
+      "completed": 0.0,
+      "drops": {
+        "no_source": 0.0,
+        "wrong_record": 0.0,
+        "wrong_position": 0.0
+      },
+      "output_change": {
+        "no_source": 0.9583333333333334,
+        "wrong_record": 0.6666666666666666,
+        "wrong_position": 0.7083333333333334
+      },
+      "bite_rate": 1.0,
+      "copy_rescue": 0.0,
+      "gamma": {
+        "gamma_mean": 0.9192018200443842,
+        "gamma_min": 0.3212128076385146,
+        "gamma_max": 0.9999999849403728,
+        "low_fraction": 0.08154761904761905
+      },
+      "copy_weight_mean": 0.08079817995561578
+    }
+  },
+  "verdict": {
+    "memory_dominant_cells": 6,
+    "cells": 6,
+    "criterion": "new_new entity_exact <= 0.10 AND new_new copy_rescue <= 0.10",
+    "t3_relation": "T3 gold-forced 720/720 shows the operator can copy when the route is forced; this probe shows training never needed it"
+  },
+  "cost": {
+    "optimizer_steps": 0,
+    "training_updates": 0,
+    "confirm_reads": 0,
+    "worker_cpu_seconds": 114.15625,
+    "worker_wall_seconds": 121.4393146992661,
+    "driver_cpu_seconds": 0.09375,
+    "driver_wall_seconds": 27.434370399918407
+  }
+}
