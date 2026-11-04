@@ -1,0 +1,91 @@
+{
+  "schema": "taiji-package19-2h-sequence-surface-manifest-v1",
+  "step": "N19.2h",
+  "date": "2026-11-04",
+  "report": "reports\\taiji_package19_2h_sequence_surface_20261104.json",
+  "parent": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+  "candidate_sha_v2_parent": "773dcec2e1131d1f3c8784153633d85a9144268a4d5167790740cdd488153aa1",
+  "candidate_sha_v2_aligned": "4b887487136e7f23a181d2085c862dcef5812de0491cf9b15c0e85fb7956e804",
+  "candidate_sha_v2_control": "773dcec2e1131d1f3c8784153633d85a9144268a4d5167790740cdd488153aa1",
+  "identity_preflight_ok": true,
+  "activity_gradient_non_zero": true,
+  "activity_need_fix_share": 0.53125,
+  "activity_need_fix_wrong": 51,
+  "adam_updates": 60,
+  "bundles_saved": 1,
+  "saved_bundle": "E:\\Seed\\output\\taiji_package19_2h_sequence_surface\\28031-B_stop_lock-step30-align.pt",
+  "confirm_reads": 0,
+  "delta_completed": 0.0,
+  "delta_completed_ci": [
+    0.0,
+    0.0
+  ],
+  "delta_route_miss": 0.0,
+  "delta_object_start": 0.0,
+  "gates": {
+    "new_description_route_miss": {
+      "before": 0.3854166666666667,
+      "after": 0.3854166666666667,
+      "threshold": 0.05,
+      "pass": false
+    },
+    "composite_start_hit_object": {
+      "before": 0.3854166666666667,
+      "after": 0.3645833333333333,
+      "threshold": 0.7,
+      "pass": false
+    },
+    "composite_start_hit_place": {
+      "before": 0.53125,
+      "after": 0.625,
+      "threshold": 0.7,
+      "pass": false
+    },
+    "conditional_byte_object": {
+      "before": 0.7612612612612613,
+      "after": 0.6976190476190476,
+      "threshold": 0.9,
+      "pass": false
+    },
+    "conditional_byte_place": {
+      "before": 1.0,
+      "after": 1.0,
+      "threshold": 0.9,
+      "pass": true
+    },
+    "sentence_new_description_96": {
+      "before": 0.2604166666666667,
+      "after": 0.20833333333333334,
+      "threshold": 0.8,
+      "pass": false
+    },
+    "sentence_old_description_96": {
+      "before": 1.0,
+      "after": 1.0,
+      "threshold": 0.9375,
+      "pass": true
+    },
+    "t2_hard_argmax_changed_new": {
+      "before": 0,
+      "after": 0,
+      "of": 20,
+      "threshold": ">=18/20",
+      "pass": false
+    },
+    "frozen_path_eos_frame": {
+      "before": 0,
+      "after": 0,
+      "threshold": "no regression",
+      "pass": true
+    }
+  },
+  "branch": "gain_is_extra_training",
+  "route_miss_before_count": 37,
+  "route_miss_after_count": 37,
+  "swap_argmax_before": 0,
+  "swap_argmax_after": 0,
+  "six_cell_repriced_cpu": 111293.49,
+  "cost_cpu": 404.796875,
+  "budget_cpu": 1468.5,
+  "over_budget": false
+}

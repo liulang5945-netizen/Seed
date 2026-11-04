@@ -110,15 +110,20 @@ def trainable_declarations(candidate: Any) -> dict[str, list[str]]:
     return {"binding": binding, "head": head, "span": span}
 
 
-def _config_payload() -> dict[str, Any]:
+def _config_payload(alignment: bool = False) -> dict[str, Any]:
     config = RoutingConfig()
-    return {
+    payload = {
         "width": config.width,
         "prev_width": config.prev_width,
         "hidden": config.hidden,
         "gamma_floor": config.gamma_floor,
         "span_bottleneck": config.span_bottleneck,
     }
+    # The 19.2h alignment block is declared only when it is present, so every
+    # pre-19.2h candidate keeps its exact ``candidate_sha_v2``.
+    if alignment:
+        payload["alignment"] = True
+    return payload
 
 
 def _tensor_bytes(tensor: torch.Tensor) -> bytes:
@@ -148,13 +153,14 @@ def _state_digest(digests: dict[str, str]) -> str:
 def _semantic_payload(
     parameters: list[tuple[str, tuple[int, ...], str]],
     trainable: dict[str, list[str]],
+    alignment: bool = False,
 ) -> dict[str, Any]:
     return {
         "graph": "taiji-selection-routing-17",
         "identity_basis": IDENTITY_BASIS,
         "contract_version": ROUTING_SCHEMA,
         "bundle_schema": ROUTING_BUNDLE_SCHEMA,
-        "config": _config_payload(),
+        "config": _config_payload(alignment),
         "arms": list(ARMS),
         "stage_plan": [list(row) for row in STAGE_PLAN],
         "modules": list(GRAPH_MODULES),
@@ -178,9 +184,10 @@ def _legacy_payload(
     parameters: list[tuple[str, tuple[int, ...], str]],
     trainable: dict[str, list[str]],
     sources: dict[str, str],
+    alignment: bool = False,
 ) -> dict[str, Any]:
     """Pre-2026-11-04 identity: source bytes were part of the digest."""
-    payload = _semantic_payload(parameters, trainable)
+    payload = _semantic_payload(parameters, trainable, alignment)
     payload.pop("identity_basis")
     payload.pop("modules")
     payload.pop("routing_rule_version")
@@ -209,13 +216,16 @@ def candidate_identity(candidate: Any) -> dict[str, Any]:
     names_digest = hashlib.sha256(
         json.dumps(parameter_names, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
     ).hexdigest()
-    semantic = _semantic_payload(parameters, trainable)
+    alignment = bool(getattr(candidate.head.config, "alignment", False))
+    semantic = _semantic_payload(parameters, trainable, alignment)
     candidate_sha = _digest(semantic)
     return {
         "candidate_sha": candidate_sha,
         "candidate_sha_v2": candidate_sha,
         "identity_basis": IDENTITY_BASIS,
-        "candidate_sha_v1_byte_bound": _digest(_legacy_payload(parameters, trainable, sources)),
+        "candidate_sha_v1_byte_bound": _digest(
+            _legacy_payload(parameters, trainable, sources, alignment)
+        ),
         "contract_version": ROUTING_SCHEMA,
         "bundle_schema": ROUTING_BUNDLE_SCHEMA,
         "routing_rule_version": ROUTING_RULE_VERSION,

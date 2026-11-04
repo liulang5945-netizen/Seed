@@ -49,6 +49,15 @@ GAMMA_FLOOR = 0.2
 ROUTE_NULL = "null"
 ARMS = ("A_route_lock", "B_stop_lock", "C_unlocked")
 
+#: 19.2h sequence-surface alignment block.  The pooled 128-d encoding is read as
+#: four ordered 32-d subspaces; the block compares a record's subspace grid with
+#: the goal's grid at five relative displacements.  Cost is fixed by the owner
+#: at ``32*32 + 5*8 + 4*hidden = 1,320`` parameters (+3.6% of the 37,120 head).
+ALIGN_BLOCKS = 4
+ALIGN_OFFSETS = (-2, -1, 0, 1, 2)
+ALIGN_EMBED = 8
+ALIGN_FEATURES = 4
+
 
 @dataclass(frozen=True)
 class RoutingConfig:
@@ -57,19 +66,25 @@ class RoutingConfig:
     hidden: int = DEFAULT_HIDDEN
     gamma_floor: float = GAMMA_FLOOR
     span_bottleneck: int = 0
+    alignment: bool = False
 
 
 DEFAULT_ROUTING_CONFIG = RoutingConfig()
 
 
 def expected_head_parameter_count(config: RoutingConfig = DEFAULT_ROUTING_CONFIG) -> int:
-    """37,120 for width 128 / prev 64 / hidden 64."""
-    return (
+    """37,120 for width 128 / prev 64 / hidden 64; +1,320 with alignment."""
+    count = (
         config.hidden * (4 * config.width + config.prev_width)
         + config.hidden
         + config.hidden
         + config.width
     )
+    if config.alignment:
+        block = config.width // ALIGN_BLOCKS
+        count += block * block + len(ALIGN_OFFSETS) * ALIGN_EMBED
+        count += ALIGN_FEATURES * config.hidden
+    return count
 
 
 def expected_span_parameter_count(config: RoutingConfig = DEFAULT_ROUTING_CONFIG) -> int:
@@ -90,8 +105,9 @@ class OrderedSelectionHead(nn.Module):
         super().__init__()
         generator = torch.Generator().manual_seed(seed)
         self.config = config
+        extra = ALIGN_FEATURES if config.alignment else 0
         self.W_hidden = nn.Linear(
-            4 * config.width + config.prev_width, config.hidden, dtype=torch.float64
+            4 * config.width + config.prev_width + extra, config.hidden, dtype=torch.float64
         )
         self.w_out = nn.Linear(config.hidden, 1, bias=False, dtype=torch.float64)
         self.k_null = nn.Parameter(torch.zeros(config.width, dtype=torch.float64))
@@ -101,9 +117,49 @@ class OrderedSelectionHead(nn.Module):
             self.W_hidden.bias.zero_()
             self.w_out.weight.uniform_(-bound, bound, generator=generator)
             self.k_null.uniform_(-bound, bound, generator=generator)
+        if config.alignment:
+            block = config.width // ALIGN_BLOCKS
+            self.W_align = nn.Linear(block, block, bias=False, dtype=torch.float64)
+            self.offset_embed = nn.Parameter(
+                torch.zeros(len(ALIGN_OFFSETS), ALIGN_EMBED, dtype=torch.float64)
+            )
+            align_bound = 1.0 / float(block) ** 0.5
+            with torch.no_grad():
+                self.W_align.weight.uniform_(-align_bound, align_bound, generator=generator)
+                # Small non-zero init keeps every alignment tensor live on the first
+                # batch while leaving the parent's forward almost untouched.
+                self.offset_embed.uniform_(-0.01, 0.01, generator=generator)
+        else:
+            self.W_align = None
+            self.offset_embed = None
 
     def pooled(self, relation: Any, subject: Any, raw: bytes) -> torch.Tensor:
         return relation.pool(relation.encode_units(subject, raw))
+
+    def alignment_features(self, goal_vec: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
+        """Local cross-correlation of two pooled encodings over four subspaces.
+
+        Both vectors are read as ``ALIGN_BLOCKS`` ordered subspaces of ``width //
+        ALIGN_BLOCKS`` channels, projected by the shared ``W_align``.  At each of
+        the five relative displacements the block averages the cosine agreement
+        between block ``i`` of the record and block ``i + offset`` of the goal.
+        The five scalars are mixed by the ``5 x 8`` offset embedding and folded
+        into ``ALIGN_FEATURES`` row inputs, so the pooled features stay intact.
+        """
+        block = self.config.width // ALIGN_BLOCKS
+        goal_blocks = self.W_align(goal_vec.reshape(ALIGN_BLOCKS, block))
+        key_blocks = self.W_align(key.reshape(ALIGN_BLOCKS, block))
+        values = []
+        for offset in ALIGN_OFFSETS:
+            rows = []
+            for index in range(ALIGN_BLOCKS):
+                partner = min(ALIGN_BLOCKS - 1, max(0, index + offset))
+                rows.append(F.cosine_similarity(goal_blocks[partner], key_blocks[index], dim=0))
+            values.append(torch.stack(rows).mean())
+        correlations = torch.stack(values)
+        blend = (correlations.unsqueeze(-1) * self.offset_embed).sum(0)
+        half = ALIGN_EMBED // 2
+        return blend[:half] + blend[half:]
 
     def score_rows(
         self,
@@ -114,12 +170,23 @@ class OrderedSelectionHead(nn.Module):
     ) -> torch.Tensor:
         rows = []
         for key in key_vecs:
-            rows.append(torch.cat([goal_vec, key, s_t, previous_embedding, goal_vec * key]))
-        null_key = self.k_null
-        rows.append(torch.cat([goal_vec, null_key, s_t, previous_embedding, goal_vec * null_key]))
+            rows.append(self._row(goal_vec, key, s_t, previous_embedding))
+        rows.append(self._row(goal_vec, self.k_null, s_t, previous_embedding))
         stacked = torch.stack(rows)
         hidden = torch.tanh(self.W_hidden(stacked))
         return self.w_out(hidden).squeeze(-1)
+
+    def _row(
+        self,
+        goal_vec: torch.Tensor,
+        key: torch.Tensor,
+        s_t: torch.Tensor,
+        previous_embedding: torch.Tensor,
+    ) -> torch.Tensor:
+        pieces = [goal_vec, key, s_t, previous_embedding, goal_vec * key]
+        if self.W_align is not None:
+            pieces.append(self.alignment_features(goal_vec, key))
+        return torch.cat(pieces)
 
 
 class SpanPointerHead(nn.Module):

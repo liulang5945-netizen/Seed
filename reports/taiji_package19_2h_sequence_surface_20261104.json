@@ -1,0 +1,7690 @@
+{
+  "schema": "taiji-package19-2h-sequence-surface-v1",
+  "step": "N19.2h sequence-surface alignment (+1,320 parameters)",
+  "date": "2026-11-04",
+  "purpose": "test whether a parameterised local cross-correlation over the pooled encoding's four subspaces opens the object-side selection that 19.2f/19.2g could not move",
+  "design": {
+    "parent": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+    "parent_arm": "B_stop_lock",
+    "parent_update": 300,
+    "parent_old96": 1.0,
+    "parent_new96": 0.2604166666666667,
+    "block": "W_align 32x32 shared projection over four 32-d subspaces, cosine agreement at five offsets (-2..+2), 5x8 offset embedding, four extra W_hidden row inputs",
+    "new_parameters": 1320,
+    "head_parameters": 38440,
+    "span_parameters": 258,
+    "graph_change": "selection head only; binding, transport, pointer and decode untouched",
+    "loss": "selection CE + inherited span term (no margin term)",
+    "arms": {
+      "19.2h": "alignment head, 30 Adam updates",
+      "CE-only": "parent head verbatim, 30 Adam updates, same batches"
+    },
+    "stage": "selection only",
+    "updates_per_arm": 30,
+    "adam_cap": 60,
+    "batch": 8,
+    "order_seed": 48053,
+    "formal_eval": "192 examples, exact 27-byte action + EOS, free decode",
+    "swap_pairs_new": 20,
+    "saves": 1,
+    "confirm_reads": 0
+  },
+  "activity_precheck": {
+    "gradient": {
+      "per_tensor_norm": {
+        "W_align.weight": 3.039155620680348e-06,
+        "offset_embed": 8.329152366340173e-05,
+        "W_hidden.weight_new_columns": 1.3342561669513373e-05,
+        "W_hidden.weight_all": 0.025342181219645096,
+        "w_out.weight": 0.021738985993893047,
+        "k_null": 0.0010595025417594363,
+        "span_head": 0.0020594534863190295,
+        "loss": 0.006840434498787238,
+        "ce": 0.006644328830529072,
+        "span": 0.00019610566825816633
+      },
+      "non_zero_alignment": true,
+      "meaning": "the alignment tensors must carry gradient on the very first batch; a zero norm means the added block is unreachable from the loss (D16-8)"
+    },
+    "need_fix": {
+      "examples": 96,
+      "wrong": 51,
+      "share": 0.53125,
+      "bucket": {
+        "other_record": 26,
+        "gold": 45,
+        "null": 25
+      },
+      "gate": 0.2,
+      "pass": true
+    },
+    "pass": true,
+    "gate_rule": "non-zero gradient on every alignment tensor and need-fix share >= 0.20"
+  },
+  "identities": {
+    "parent_candidate_sha_v2": "773dcec2e1131d1f3c8784153633d85a9144268a4d5167790740cdd488153aa1",
+    "aligned_candidate_sha_v2": "4b887487136e7f23a181d2085c862dcef5812de0491cf9b15c0e85fb7956e804",
+    "control_candidate_sha_v2": "773dcec2e1131d1f3c8784153633d85a9144268a4d5167790740cdd488153aa1",
+    "changed": true
+  },
+  "identity_preflight": {
+    "rescue": {
+      "examples": 8,
+      "agree": 8,
+      "all_agree": true,
+      "max_abs_diff": 0.0,
+      "dry_run_bytes": 28712153,
+      "dry_run_sha256": "b42d156e01f6838769ea11570a6bbefc8c3af020303cf1990c582b47b8ac5e0e",
+      "meaning": "reloaded bundle must reproduce 8/8 teacher-forced trajectories exactly"
+    },
+    "save_restore": {
+      "dry_run_path": "output\\taiji_package19_2h_sequence_surface\\preflight-28031-B_stop_lock-step0-align.pt",
+      "dry_run_bytes": 29340701,
+      "dry_run_sha256": "dd9cd7b718727e9b47981064e70bd294a577c8b9225991ff1b9c54761dfc2e47",
+      "restored_update_index": 0,
+      "restored_cursor": {
+        "stage": "N19.2h-preflight",
+        "seed": 28031,
+        "arm": "B_stop_lock"
+      },
+      "max_abs_diff": 0.0,
+      "round_trip_ok": true
+    },
+    "module_drift": {
+      "corruption": "head_parameters.W_align.weight removed",
+      "rejected": true,
+      "message": "RuntimeError: Error(s) in loading state_dict for OrderedSelectionHead:\n\tMissing key(s) in state_dict: \"W_align.weight\". ",
+      "meaning": "module drift must raise, never load quietly"
+    },
+    "three_of_three": true
+  },
+  "before": {
+    "full_192": {
+      "examples": 192,
+      "completed_count": 121,
+      "completed": 0.6302083333333334,
+      "route_hit_object": 0.734375,
+      "composite_start_hit_object": 0.6302083333333334,
+      "content_byte_object": 0.7105034722222222,
+      "conditional_byte_object": 0.9269972451790633,
+      "conditional_examples_object": 121,
+      "route_hit_place": 0.921875,
+      "composite_start_hit_place": 0.7447916666666666,
+      "content_byte_place": 0.8072916666666666,
+      "conditional_byte_place": 1.0,
+      "conditional_examples_place": 143,
+      "route_hit_both": 0.703125,
+      "composite_start_hit_both": 0.5520833333333334,
+      "pass": 121,
+      "buckets_of_all": {
+        "route_miss": 0.19270833333333334,
+        "start_miss": 0.0,
+        "content_byte_wrong": 0.17708333333333334,
+        "frame_byte_wrong": 0.0,
+        "eos_not_stopped": 0.0,
+        "order_or_extra": 0.0
+      },
+      "bucket_counts": {
+        "route_miss": 37,
+        "start_miss": 0,
+        "content_byte_wrong": 34,
+        "frame_byte_wrong": 0,
+        "eos_not_stopped": 0,
+        "order_or_extra": 0
+      },
+      "failures": 71,
+      "buckets_of_failures": {
+        "route_miss": 0.5211267605633803,
+        "start_miss": 0.0,
+        "content_byte_wrong": 0.4788732394366197,
+        "frame_byte_wrong": 0.0,
+        "eos_not_stopped": 0.0,
+        "order_or_extra": 0.0
+      },
+      "frame_split": {
+        "model_generation": 0,
+        "decode_eos_logic": 0
+      }
+    },
+    "old_description_96": {
+      "examples": 96,
+      "completed_count": 96,
+      "completed": 1.0,
+      "route_hit_object": 1.0,
+      "composite_start_hit_object": 0.875,
+      "content_byte_object": 1.0,
+      "conditional_byte_object": 1.0,
+      "conditional_examples_object": 84,
+      "route_hit_place": 1.0,
+      "composite_start_hit_place": 0.9583333333333334,
+      "content_byte_place": 1.0,
+      "conditional_byte_place": 1.0,
+      "conditional_examples_place": 92,
+      "route_hit_both": 1.0,
+      "composite_start_hit_both": 0.8541666666666666,
+      "pass": 96,
+      "buckets_of_all": {
+        "route_miss": 0.0,
+        "start_miss": 0.0,
+        "content_byte_wrong": 0.0,
+        "frame_byte_wrong": 0.0,
+        "eos_not_stopped": 0.0,
+        "order_or_extra": 0.0
+      },
+      "bucket_counts": {
+        "route_miss": 0,
+        "start_miss": 0,
+        "content_byte_wrong": 0,
+        "frame_byte_wrong": 0,
+        "eos_not_stopped": 0,
+        "order_or_extra": 0
+      },
+      "failures": 0,
+      "buckets_of_failures": {
+        "route_miss": 0.0,
+        "start_miss": 0.0,
+        "content_byte_wrong": 0.0,
+        "frame_byte_wrong": 0.0,
+        "eos_not_stopped": 0.0,
+        "order_or_extra": 0.0
+      },
+      "frame_split": {
+        "model_generation": 0,
+        "decode_eos_logic": 0
+      }
+    },
+    "new_description_96": {
+      "examples": 96,
+      "completed_count": 25,
+      "completed": 0.2604166666666667,
+      "route_hit_object": 0.46875,
+      "composite_start_hit_object": 0.3854166666666667,
+      "content_byte_object": 0.4210069444444444,
+      "conditional_byte_object": 0.7612612612612613,
+      "conditional_examples_object": 37,
+      "route_hit_place": 0.84375,
+      "composite_start_hit_place": 0.53125,
+      "content_byte_place": 0.6145833333333334,
+      "conditional_byte_place": 1.0,
+      "conditional_examples_place": 51,
+      "route_hit_both": 0.40625,
+      "composite_start_hit_both": 0.25,
+      "pass": 25,
+      "buckets_of_all": {
+        "route_miss": 0.3854166666666667,
+        "start_miss": 0.0,
+        "content_byte_wrong": 0.3541666666666667,
+        "frame_byte_wrong": 0.0,
+        "eos_not_stopped": 0.0,
+        "order_or_extra": 0.0
+      },
+      "bucket_counts": {
+        "route_miss": 37,
+        "start_miss": 0,
+        "content_byte_wrong": 34,
+        "frame_byte_wrong": 0,
+        "eos_not_stopped": 0,
+        "order_or_extra": 0
+      },
+      "failures": 71,
+      "buckets_of_failures": {
+        "route_miss": 0.5211267605633803,
+        "start_miss": 0.0,
+        "content_byte_wrong": 0.4788732394366197,
+        "frame_byte_wrong": 0.0,
+        "eos_not_stopped": 0.0,
+        "order_or_extra": 0.0
+      },
+      "frame_split": {
+        "model_generation": 0,
+        "decode_eos_logic": 0
+      }
+    },
+    "swap_new": {
+      "pairs": 20,
+      "median_repr": 0.2717269251995129,
+      "min_repr": 0.21455471046458657,
+      "median_score": 1.2424790683427243,
+      "min_score": 0.6587237772870767,
+      "pairs_repr_ge_theta": 20,
+      "pairs_score_ge_theta": 20,
+      "pairs_argmax_changed": 0,
+      "median_top_tv": 0.010261502165575129,
+      "zero_state_follow_a": 0,
+      "zero_state_follow_b": 20,
+      "median_decode_route_score": 0.8420975012886551,
+      "pairs_decode_route_score_ge_theta": 20,
+      "pairs_decode_route_argmax_changed": 7,
+      "decode_route_follow_a": 13,
+      "decode_route_follow_b": 0,
+      "order_sensitive": true
+    },
+    "scores_new96": {
+      "examples": 96,
+      "points": 192,
+      "top1_probability": {
+        "count": 192,
+        "mean": 0.7183537983571924,
+        "median": 0.954547392055618,
+        "p10": 0.3029826108076645,
+        "p25": 0.3945382195961472,
+        "p75": 0.9989927714916211,
+        "p90": 0.9994761831876181,
+        "min": 0.24368778575465072,
+        "max": 0.9997537557840456
+      },
+      "route_share": {
+        "object": {
+          "points": 96,
+          "route_hit": 0.46875,
+          "top1_probability": {
+            "count": 96,
+            "mean": 0.43890571636367864,
+            "median": 0.3940134128352345,
+            "p10": 0.2948329472940562,
+            "p25": 0.31449986271010816,
+            "p75": 0.5236050986008821,
+            "p90": 0.6929987496786892,
+            "min": 0.24368778575465072,
+            "max": 0.9345284758436772
+          }
+        },
+        "place": {
+          "points": 96,
+          "route_hit": 1.0,
+          "top1_probability": {
+            "count": 96,
+            "mean": 0.9978018803507062,
+            "median": 0.9990034980238789,
+            "p10": 0.9968154731207916,
+            "p25": 0.9981251520474009,
+            "p75": 0.9993795458889948,
+            "p90": 0.9995878136865093,
+            "min": 0.9745663082675589,
+            "max": 0.9997537557840456
+          }
+        }
+      },
+      "share_top1_ge_0_99": 0.4739583333333333
+    },
+    "rows_new96": [
+      {
+        "world": 0,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 0,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 6
+      },
+      {
+        "world": 0,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 0,
+        "index": 11,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 0,
+        "index": 12,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 0,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 0,
+        "index": 14,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 0,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 1,
+        "index": 8,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 1,
+        "index": 9,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 1,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 7
+      },
+      {
+        "world": 1,
+        "index": 11,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 1,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 1,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 1,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 1,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 2,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 2,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 2,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 2,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 2,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 2,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 5,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 7
+      },
+      {
+        "world": 2,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 2,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 3,
+        "index": 8,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 3,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 3,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 3,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 3,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 3,
+        "index": 13,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 3,
+        "index": 14,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 3,
+        "index": 15,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 4,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 4,
+        "index": 9,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 4,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 4,
+        "index": 11,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 4,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 4,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 4,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 4,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 5,
+        "index": 8,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 5,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 5,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 5,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 5,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 5,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 6
+      },
+      {
+        "world": 5,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 5,
+        "index": 15,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 6,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 6,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 9
+      },
+      {
+        "world": 6,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 6
+      },
+      {
+        "world": 6,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 6
+      },
+      {
+        "world": 6,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 7,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 6,
+        "index": 12,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 6,
+        "index": 13,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 6,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 6,
+        "index": 15,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 7,
+        "index": 8,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 7,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 7,
+        "index": 10,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 7,
+        "index": 11,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 7,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 7,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 7,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 7,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 8,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 8,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 8,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 11,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 14
+      },
+      {
+        "world": 8,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 8,
+        "index": 12,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 8,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 5,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 8,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 8,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 9,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 9,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 9,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 7,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 9,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 9,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 6
+      },
+      {
+        "world": 9,
+        "index": 13,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 9,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 6
+      },
+      {
+        "world": 9,
+        "index": 15,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 10,
+        "index": 8,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 10,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 10,
+        "index": 10,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 10,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 10,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 10,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 10,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 10,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 5,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 5,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 8
+      },
+      {
+        "world": 11,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      }
+    ]
+  },
+  "after": {
+    "full_192": {
+      "examples": 192,
+      "completed_count": 116,
+      "completed": 0.6041666666666666,
+      "route_hit_object": 0.7083333333333334,
+      "composite_start_hit_object": 0.6197916666666666,
+      "content_byte_object": 0.6918402777777778,
+      "conditional_byte_object": 0.9110644257703081,
+      "conditional_examples_object": 119,
+      "route_hit_place": 0.953125,
+      "composite_start_hit_place": 0.7916666666666666,
+      "content_byte_place": 0.8237847222222222,
+      "conditional_byte_place": 1.0,
+      "conditional_examples_place": 152,
+      "route_hit_both": 0.6875,
+      "composite_start_hit_both": 0.5677083333333334,
+      "pass": 116,
+      "buckets_of_all": {
+        "route_miss": 0.19270833333333334,
+        "start_miss": 0.0,
+        "content_byte_wrong": 0.203125,
+        "frame_byte_wrong": 0.0,
+        "eos_not_stopped": 0.0,
+        "order_or_extra": 0.0
+      },
+      "bucket_counts": {
+        "route_miss": 37,
+        "start_miss": 0,
+        "content_byte_wrong": 39,
+        "frame_byte_wrong": 0,
+        "eos_not_stopped": 0,
+        "order_or_extra": 0
+      },
+      "failures": 76,
+      "buckets_of_failures": {
+        "route_miss": 0.4868421052631579,
+        "start_miss": 0.0,
+        "content_byte_wrong": 0.5131578947368421,
+        "frame_byte_wrong": 0.0,
+        "eos_not_stopped": 0.0,
+        "order_or_extra": 0.0
+      },
+      "frame_split": {
+        "model_generation": 0,
+        "decode_eos_logic": 0
+      }
+    },
+    "old_description_96": {
+      "examples": 96,
+      "completed_count": 96,
+      "completed": 1.0,
+      "route_hit_object": 1.0,
+      "composite_start_hit_object": 0.875,
+      "content_byte_object": 1.0,
+      "conditional_byte_object": 1.0,
+      "conditional_examples_object": 84,
+      "route_hit_place": 1.0,
+      "composite_start_hit_place": 0.9583333333333334,
+      "content_byte_place": 1.0,
+      "conditional_byte_place": 1.0,
+      "conditional_examples_place": 92,
+      "route_hit_both": 1.0,
+      "composite_start_hit_both": 0.8541666666666666,
+      "pass": 96,
+      "buckets_of_all": {
+        "route_miss": 0.0,
+        "start_miss": 0.0,
+        "content_byte_wrong": 0.0,
+        "frame_byte_wrong": 0.0,
+        "eos_not_stopped": 0.0,
+        "order_or_extra": 0.0
+      },
+      "bucket_counts": {
+        "route_miss": 0,
+        "start_miss": 0,
+        "content_byte_wrong": 0,
+        "frame_byte_wrong": 0,
+        "eos_not_stopped": 0,
+        "order_or_extra": 0
+      },
+      "failures": 0,
+      "buckets_of_failures": {
+        "route_miss": 0.0,
+        "start_miss": 0.0,
+        "content_byte_wrong": 0.0,
+        "frame_byte_wrong": 0.0,
+        "eos_not_stopped": 0.0,
+        "order_or_extra": 0.0
+      },
+      "frame_split": {
+        "model_generation": 0,
+        "decode_eos_logic": 0
+      }
+    },
+    "new_description_96": {
+      "examples": 96,
+      "completed_count": 20,
+      "completed": 0.20833333333333334,
+      "route_hit_object": 0.4166666666666667,
+      "composite_start_hit_object": 0.3645833333333333,
+      "content_byte_object": 0.3836805555555556,
+      "conditional_byte_object": 0.6976190476190476,
+      "conditional_examples_object": 35,
+      "route_hit_place": 0.90625,
+      "composite_start_hit_place": 0.625,
+      "content_byte_place": 0.6475694444444444,
+      "conditional_byte_place": 1.0,
+      "conditional_examples_place": 60,
+      "route_hit_both": 0.375,
+      "composite_start_hit_both": 0.28125,
+      "pass": 20,
+      "buckets_of_all": {
+        "route_miss": 0.3854166666666667,
+        "start_miss": 0.0,
+        "content_byte_wrong": 0.40625,
+        "frame_byte_wrong": 0.0,
+        "eos_not_stopped": 0.0,
+        "order_or_extra": 0.0
+      },
+      "bucket_counts": {
+        "route_miss": 37,
+        "start_miss": 0,
+        "content_byte_wrong": 39,
+        "frame_byte_wrong": 0,
+        "eos_not_stopped": 0,
+        "order_or_extra": 0
+      },
+      "failures": 76,
+      "buckets_of_failures": {
+        "route_miss": 0.4868421052631579,
+        "start_miss": 0.0,
+        "content_byte_wrong": 0.5131578947368421,
+        "frame_byte_wrong": 0.0,
+        "eos_not_stopped": 0.0,
+        "order_or_extra": 0.0
+      },
+      "frame_split": {
+        "model_generation": 0,
+        "decode_eos_logic": 0
+      }
+    },
+    "swap_new": {
+      "pairs": 20,
+      "median_repr": 0.2717269251995129,
+      "min_repr": 0.21455471046458657,
+      "median_score": 1.568960975440735,
+      "min_score": 0.8235242648167196,
+      "pairs_repr_ge_theta": 20,
+      "pairs_score_ge_theta": 20,
+      "pairs_argmax_changed": 0,
+      "median_top_tv": 0.007263459659970912,
+      "zero_state_follow_a": 0,
+      "zero_state_follow_b": 20,
+      "median_decode_route_score": 1.0169751631698922,
+      "pairs_decode_route_score_ge_theta": 20,
+      "pairs_decode_route_argmax_changed": 8,
+      "decode_route_follow_a": 12,
+      "decode_route_follow_b": 0,
+      "order_sensitive": true
+    },
+    "scores_new96": {
+      "examples": 96,
+      "points": 192,
+      "top1_probability": {
+        "count": 192,
+        "mean": 0.7514682197294705,
+        "median": 0.9657529864142291,
+        "p10": 0.4041577257247922,
+        "p25": 0.4679861729467325,
+        "p75": 0.9998664749306332,
+        "p90": 0.9999097879643769,
+        "min": 0.27785926580017506,
+        "max": 0.9999424453129361
+      },
+      "route_share": {
+        "object": {
+          "points": 96,
+          "route_hit": 0.4166666666666667,
+          "top1_probability": {
+            "count": 96,
+            "mean": 0.5031686268029357,
+            "median": 0.46701317893044014,
+            "p10": 0.3669942956953077,
+            "p25": 0.4127175335807581,
+            "p75": 0.5920144858643259,
+            "p90": 0.7043488076787584,
+            "min": 0.27785926580017506,
+            "max": 0.9331583080722317
+          }
+        },
+        "place": {
+          "points": 96,
+          "route_hit": 1.0,
+          "top1_probability": {
+            "count": 96,
+            "mean": 0.9997678126560053,
+            "median": 0.9998665627630904,
+            "p10": 0.999565374030707,
+            "p25": 0.999766564122046,
+            "p75": 0.9999030709963084,
+            "p90": 0.9999182053113859,
+            "min": 0.9983476647562265,
+            "max": 0.9999424453129361
+          }
+        }
+      },
+      "share_top1_ge_0_99": 0.5
+    },
+    "rows_new96": [
+      {
+        "world": 0,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 5,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 0,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 6
+      },
+      {
+        "world": 0,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 0,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 10,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 13
+      },
+      {
+        "world": 0,
+        "index": 12,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 0,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 0,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 0,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 1,
+        "index": 8,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 1,
+        "index": 9,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 1,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 1,
+        "index": 11,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 1,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 1,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 1,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 1,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 2,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 2,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 2,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 6,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 2,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 2,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 2,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 6
+      },
+      {
+        "world": 2,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 2,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 3,
+        "index": 8,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 3,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 3,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 3,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 3,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 3,
+        "index": 13,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 3,
+        "index": 14,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 3,
+        "index": 15,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 4,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 4,
+        "index": 9,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 4,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 4,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 4,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 4,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 4,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 4,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 5,
+        "index": 8,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 5,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 5,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 5,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 5,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 5,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 5,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 5,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 5,
+        "index": 15,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 6,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 6,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 9
+      },
+      {
+        "world": 6,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 6,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 6
+      },
+      {
+        "world": 6,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 5,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 6,
+        "index": 12,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 6,
+        "index": 13,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 6,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 6,
+        "index": 15,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 7,
+        "index": 8,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 7,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 7,
+        "index": 10,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 7,
+        "index": 11,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 7,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 7,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 7,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 7,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 8,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 8,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 8,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 8,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 8,
+        "index": 12,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 8,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 8,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 8,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 9,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 5,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 6
+      },
+      {
+        "world": 9,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 9,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 8,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 9,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 6,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 9,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 9,
+        "index": 13,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 9,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 9,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 10,
+        "index": 8,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 10,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 10,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 10,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 10,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 10,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 10,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 10,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 7,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 9
+      },
+      {
+        "world": 11,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      }
+    ]
+  },
+  "control_after": {
+    "new_description_96": {
+      "examples": 96,
+      "completed_count": 20,
+      "completed": 0.20833333333333334,
+      "route_hit_object": 0.4166666666666667,
+      "composite_start_hit_object": 0.3645833333333333,
+      "content_byte_object": 0.3836805555555556,
+      "conditional_byte_object": 0.6976190476190476,
+      "conditional_examples_object": 35,
+      "route_hit_place": 0.90625,
+      "composite_start_hit_place": 0.625,
+      "content_byte_place": 0.6475694444444444,
+      "conditional_byte_place": 1.0,
+      "conditional_examples_place": 60,
+      "route_hit_both": 0.375,
+      "composite_start_hit_both": 0.28125,
+      "pass": 20,
+      "buckets_of_all": {
+        "route_miss": 0.3854166666666667,
+        "start_miss": 0.0,
+        "content_byte_wrong": 0.40625,
+        "frame_byte_wrong": 0.0,
+        "eos_not_stopped": 0.0,
+        "order_or_extra": 0.0
+      },
+      "bucket_counts": {
+        "route_miss": 37,
+        "start_miss": 0,
+        "content_byte_wrong": 39,
+        "frame_byte_wrong": 0,
+        "eos_not_stopped": 0,
+        "order_or_extra": 0
+      },
+      "failures": 76,
+      "buckets_of_failures": {
+        "route_miss": 0.4868421052631579,
+        "start_miss": 0.0,
+        "content_byte_wrong": 0.5131578947368421,
+        "frame_byte_wrong": 0.0,
+        "eos_not_stopped": 0.0,
+        "order_or_extra": 0.0
+      },
+      "frame_split": {
+        "model_generation": 0,
+        "decode_eos_logic": 0
+      }
+    },
+    "rows_new96": [
+      {
+        "world": 0,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 5,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 0,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 6
+      },
+      {
+        "world": 0,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 0,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 10,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 13
+      },
+      {
+        "world": 0,
+        "index": 12,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 0,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 0,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 0,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 1,
+        "index": 8,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 1,
+        "index": 9,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 1,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 1,
+        "index": 11,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 1,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 1,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 1,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 1,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 2,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 2,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 2,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 6,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 2,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 2,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 2,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 6
+      },
+      {
+        "world": 2,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 2,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 3,
+        "index": 8,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 3,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 3,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 3,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 3,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 3,
+        "index": 13,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 3,
+        "index": 14,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 3,
+        "index": 15,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 4,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 4,
+        "index": 9,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 4,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 4,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 4,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 4,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 4,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 4,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 5,
+        "index": 8,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 5,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 5,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 5,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 5,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 5,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 5,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 5,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 5,
+        "index": 15,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 6,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 6,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 9
+      },
+      {
+        "world": 6,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 6,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 6
+      },
+      {
+        "world": 6,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 5,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 6,
+        "index": 12,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 6,
+        "index": 13,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 6,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 6,
+        "index": 15,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 7,
+        "index": 8,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 7,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 7,
+        "index": 10,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 7,
+        "index": 11,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 7,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 7,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 7,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 7,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 8,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 8,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 8,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 8,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 8,
+        "index": 12,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 8,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 8,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 8,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 9,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 5,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 6
+      },
+      {
+        "world": 9,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 9,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 8,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 5
+      },
+      {
+        "world": 9,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 6,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 9,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 9,
+        "index": 13,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 9,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 9,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 10,
+        "index": 8,
+        "new_description": true,
+        "completed": true,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 12,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "pass",
+        "frame_subtype": null,
+        "position": null
+      },
+      {
+        "world": 10,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 10,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 10,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 10,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      },
+      {
+        "world": 10,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 10,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 10,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 2,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 8,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 9,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 10,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 4,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 11,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 12,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 1,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 13,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "route_miss",
+        "frame_subtype": null,
+        "position": 3
+      },
+      {
+        "world": 11,
+        "index": 14,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 7,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": false,
+          "start_ok": false,
+          "byte_hits": 0,
+          "byte_total": 6
+        },
+        "route_both": false,
+        "start_both": false,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 9
+      },
+      {
+        "world": 11,
+        "index": 15,
+        "new_description": true,
+        "completed": false,
+        "object": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 3,
+          "byte_total": 12
+        },
+        "place": {
+          "route_ok": true,
+          "start_ok": true,
+          "byte_hits": 6,
+          "byte_total": 6
+        },
+        "route_both": true,
+        "start_both": true,
+        "bucket": "content_byte_wrong",
+        "frame_subtype": null,
+        "position": 4
+      }
+    ]
+  },
+  "training_log": {
+    "align": [
+      {
+        "update": 1,
+        "ce": 0.006644328830529072,
+        "span": 0.00019610566825816633
+      },
+      {
+        "update": 2,
+        "ce": 0.004084632753334997,
+        "span": 0.00013514030713980633
+      },
+      {
+        "update": 3,
+        "ce": 0.004170998761042629,
+        "span": 0.00043730741672148176
+      },
+      {
+        "update": 4,
+        "ce": 0.00366587914997483,
+        "span": 0.00014115278833356736
+      },
+      {
+        "update": 5,
+        "ce": 0.0028526634756023926,
+        "span": 0.00010000094531600527
+      },
+      {
+        "update": 6,
+        "ce": 0.002820148430050077,
+        "span": 0.0002048800129749504
+      },
+      {
+        "update": 7,
+        "ce": 0.003264130133377287,
+        "span": 0.00032911262909184226
+      },
+      {
+        "update": 8,
+        "ce": 0.0023279489121661254,
+        "span": 0.00039410213401179967
+      },
+      {
+        "update": 9,
+        "ce": 0.001901289044452374,
+        "span": 6.872970573634153e-05
+      },
+      {
+        "update": 10,
+        "ce": 0.002925803697115583,
+        "span": 5.9049380449791486e-05
+      },
+      {
+        "update": 11,
+        "ce": 0.001558575316029041,
+        "span": 0.00015380935452244867
+      },
+      {
+        "update": 12,
+        "ce": 0.005455218065651385,
+        "span": 0.00012590196748420515
+      },
+      {
+        "update": 13,
+        "ce": 0.0021056814755268157,
+        "span": 5.066906485021832e-05
+      },
+      {
+        "update": 14,
+        "ce": 0.0015979404250571947,
+        "span": 3.8311541997302636e-05
+      },
+      {
+        "update": 15,
+        "ce": 0.0014621361902412886,
+        "span": 7.043640081203962e-05
+      },
+      {
+        "update": 16,
+        "ce": 0.0011910534759243803,
+        "span": 8.435563774499908e-05
+      },
+      {
+        "update": 17,
+        "ce": 0.002308151856991958,
+        "span": 6.6491220539647e-05
+      },
+      {
+        "update": 18,
+        "ce": 0.001360921171245324,
+        "span": 0.00010620678997934293
+      },
+      {
+        "update": 19,
+        "ce": 0.0019086708765934306,
+        "span": 0.0002613443035376138
+      },
+      {
+        "update": 20,
+        "ce": 0.0011439511547533523,
+        "span": 6.236224104465874e-05
+      },
+      {
+        "update": 21,
+        "ce": 0.001069417999295197,
+        "span": 4.729786897076708e-05
+      },
+      {
+        "update": 22,
+        "ce": 0.0010358974704855408,
+        "span": 5.137326926966479e-05
+      },
+      {
+        "update": 23,
+        "ce": 0.001076748654144232,
+        "span": 9.424741542018399e-05
+      },
+      {
+        "update": 24,
+        "ce": 0.0008838171737362811,
+        "span": 2.768588482202921e-05
+      },
+      {
+        "update": 25,
+        "ce": 0.0010087100446866703,
+        "span": 5.7884872738082395e-05
+      },
+      {
+        "update": 26,
+        "ce": 0.0008984180059625321,
+        "span": 9.346756158015092e-05
+      },
+      {
+        "update": 27,
+        "ce": 0.0007115953563009798,
+        "span": 0.00017187451175631755
+      },
+      {
+        "update": 28,
+        "ce": 0.0008321297157878999,
+        "span": 4.404012942704939e-05
+      },
+      {
+        "update": 29,
+        "ce": 0.0009378333510419276,
+        "span": 2.1325651515770936e-05
+      },
+      {
+        "update": 30,
+        "ce": 0.0007323596000294887,
+        "span": 4.9734897482793644e-05
+      }
+    ],
+    "control": [
+      {
+        "update": 1,
+        "ce": 0.006645242493380409,
+        "span": 0.00019610566825816633
+      },
+      {
+        "update": 2,
+        "ce": 0.004083726750483003,
+        "span": 0.00013514030713980633
+      },
+      {
+        "update": 3,
+        "ce": 0.004170639202543205,
+        "span": 0.00043730741672148176
+      },
+      {
+        "update": 4,
+        "ce": 0.0036659789484588742,
+        "span": 0.00014115278833356736
+      },
+      {
+        "update": 5,
+        "ce": 0.002852789897185841,
+        "span": 0.00010000094531600527
+      },
+      {
+        "update": 6,
+        "ce": 0.002820147945334273,
+        "span": 0.0002048800129749504
+      },
+      {
+        "update": 7,
+        "ce": 0.003264816188980897,
+        "span": 0.00032911262909184226
+      },
+      {
+        "update": 8,
+        "ce": 0.0023283667126456054,
+        "span": 0.00039410213401179967
+      },
+      {
+        "update": 9,
+        "ce": 0.0019016068470962817,
+        "span": 6.872970573634153e-05
+      },
+      {
+        "update": 10,
+        "ce": 0.002926306470160646,
+        "span": 5.9049380449791486e-05
+      },
+      {
+        "update": 11,
+        "ce": 0.0015587466800495516,
+        "span": 0.00015380935452244867
+      },
+      {
+        "update": 12,
+        "ce": 0.005453324995245084,
+        "span": 0.00012590196748420515
+      },
+      {
+        "update": 13,
+        "ce": 0.0021056579295367635,
+        "span": 5.066906485021832e-05
+      },
+      {
+        "update": 14,
+        "ce": 0.0015980279277659872,
+        "span": 3.8311541997302636e-05
+      },
+      {
+        "update": 15,
+        "ce": 0.001462124767154906,
+        "span": 7.043640081203962e-05
+      },
+      {
+        "update": 16,
+        "ce": 0.0011911101218891175,
+        "span": 8.435563774499908e-05
+      },
+      {
+        "update": 17,
+        "ce": 0.002307824786209783,
+        "span": 6.6491220539647e-05
+      },
+      {
+        "update": 18,
+        "ce": 0.0013609382442874283,
+        "span": 0.00010620678997934293
+      },
+      {
+        "update": 19,
+        "ce": 0.001908566829260835,
+        "span": 0.0002613443035376138
+      },
+      {
+        "update": 20,
+        "ce": 0.0011439163469128938,
+        "span": 6.236224104465874e-05
+      },
+      {
+        "update": 21,
+        "ce": 0.0010696472211427787,
+        "span": 4.729786897076708e-05
+      },
+      {
+        "update": 22,
+        "ce": 0.0010360264395952576,
+        "span": 5.137326926966479e-05
+      },
+      {
+        "update": 23,
+        "ce": 0.0010767322434788377,
+        "span": 9.424741542018399e-05
+      },
+      {
+        "update": 24,
+        "ce": 0.0008838255718965379,
+        "span": 2.768588482202921e-05
+      },
+      {
+        "update": 25,
+        "ce": 0.001008669275610448,
+        "span": 5.7884872738082395e-05
+      },
+      {
+        "update": 26,
+        "ce": 0.0008985219976393772,
+        "span": 9.346756158015092e-05
+      },
+      {
+        "update": 27,
+        "ce": 0.0007116627771973984,
+        "span": 0.00017187451175631755
+      },
+      {
+        "update": 28,
+        "ce": 0.0008322739906489737,
+        "span": 4.404012942704939e-05
+      },
+      {
+        "update": 29,
+        "ce": 0.0009380697925076267,
+        "span": 2.1325651515770936e-05
+      },
+      {
+        "update": 30,
+        "ce": 0.0007323135374845951,
+        "span": 4.9734897482793644e-05
+      }
+    ]
+  },
+  "delta": {
+    "completed": {
+      "metric": "completed",
+      "count": 96,
+      "align_rate": 0.20833333333333334,
+      "control_rate": 0.20833333333333334,
+      "delta": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.0,
+      "excludes_zero": false,
+      "gain_is_real": false,
+      "rounds": 2000
+    },
+    "route_miss": {
+      "metric": "route_miss",
+      "count": 96,
+      "align_rate": 0.3854166666666667,
+      "control_rate": 0.3854166666666667,
+      "delta": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.0,
+      "excludes_zero": false,
+      "gain_is_real": false,
+      "rounds": 2000
+    },
+    "object_start": {
+      "metric": "object_start",
+      "count": 96,
+      "align_rate": 0.3645833333333333,
+      "control_rate": 0.3645833333333333,
+      "delta": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.0,
+      "excludes_zero": false,
+      "gain_is_real": false,
+      "rounds": 2000
+    }
+  },
+  "gates": {
+    "new_description_route_miss": {
+      "before": 0.3854166666666667,
+      "after": 0.3854166666666667,
+      "threshold": 0.05,
+      "pass": false
+    },
+    "composite_start_hit_object": {
+      "before": 0.3854166666666667,
+      "after": 0.3645833333333333,
+      "threshold": 0.7,
+      "pass": false
+    },
+    "composite_start_hit_place": {
+      "before": 0.53125,
+      "after": 0.625,
+      "threshold": 0.7,
+      "pass": false
+    },
+    "conditional_byte_object": {
+      "before": 0.7612612612612613,
+      "after": 0.6976190476190476,
+      "threshold": 0.9,
+      "pass": false
+    },
+    "conditional_byte_place": {
+      "before": 1.0,
+      "after": 1.0,
+      "threshold": 0.9,
+      "pass": true
+    },
+    "sentence_new_description_96": {
+      "before": 0.2604166666666667,
+      "after": 0.20833333333333334,
+      "threshold": 0.8,
+      "pass": false
+    },
+    "sentence_old_description_96": {
+      "before": 1.0,
+      "after": 1.0,
+      "threshold": 0.9375,
+      "pass": true
+    },
+    "t2_hard_argmax_changed_new": {
+      "before": 0,
+      "after": 0,
+      "of": 20,
+      "threshold": ">=18/20",
+      "pass": false
+    },
+    "frozen_path_eos_frame": {
+      "before": 0,
+      "after": 0,
+      "threshold": "no regression",
+      "pass": true
+    }
+  },
+  "decision": {
+    "branch": "gain_is_extra_training",
+    "all_gates_pass": false,
+    "old_description_regressed": false,
+    "delta_gain_is_real": false,
+    "control_equivalent": true,
+    "top1_still_saturated": true,
+    "rule": "full pass needs every gate and a positive Delta whose bootstrap interval excludes 0; otherwise an equivalent control arm means the gain is just the extra dose"
+  },
+  "six_cell_repricing": {
+    "measured_19_5_training_cpu": 29574.2,
+    "measured_probe_cpu": 3651.1000000000004,
+    "package_overhead_cpu": 500.0,
+    "functional_ideal_cpu": 33725.3,
+    "safety_factor": 3.3,
+    "repriced_cpu": 111293.49,
+    "staged": {
+      "stage": "selection only, 6 cells x updates 1-100",
+      "functional_ideal_cpu": 11378.066666666668,
+      "repriced_cpu": 37547.62,
+      "adam": 600
+    },
+    "note": "the six-cell rerun stays blocked until the owner rules; no branch of this package may imply a release"
+  },
+  "budget": {
+    "functional_items": [
+      {
+        "item": "2 x 30 Adam selection updates (alignment head + CE-only control), batch 8, CE + span",
+        "cpu": 140.0
+      },
+      {
+        "item": "two full 192-example decode passes (parent before, 19.2h after)",
+        "cpu": 180.0
+      },
+      {
+        "item": "one 96-example new-description decode pass (CE-only control after)",
+        "cpu": 30.0
+      },
+      {
+        "item": "two start-score extractions on the 96 new-description examples",
+        "cpu": 30.0
+      },
+      {
+        "item": "activity pre-check: first-batch gradient norms + object-start need-fix share",
+        "cpu": 25.0
+      },
+      {
+        "item": "payload, parent health, checkpoint dry-run, identity preflight, report",
+        "cpu": 40.0
+      }
+    ],
+    "functional_ideal_cpu": 445.0,
+    "safety_factor": 3.3,
+    "budget_cpu": 1468.5,
+    "cap_cpu": 1500.0,
+    "under_cap": true,
+    "rule": "budget = functional item list x 3.3; 19.2f 100-150 vs 500.5 actual is the source",
+    "spent_cpu": 404.796875,
+    "over_budget": false
+  },
+  "saved_bundle": {
+    "path": "E:\\Seed\\output\\taiji_package19_2h_sequence_surface\\28031-B_stop_lock-step30-align.pt",
+    "bytes": 29338430,
+    "sha256": "7fd6211374874dfaa4a76ebafc7916a510550a4f870c7d1e0bb170857a6ec9c5",
+    "reload_max_abs_diff": 0.0,
+    "reload_update_index": 30,
+    "reload_cursor": {
+      "stage": "N19.2h",
+      "seed": 28031,
+      "arm": "B_stop_lock",
+      "update": 30,
+      "loss": "selection_ce_plus_span",
+      "graph": "alignment_block"
+    }
+  },
+  "attribution_rules": [
+    "gamma is the generation weight and 1 - gamma the copy weight",
+    "gamma never implies training credit (M3)",
+    "the alignment block is a graph change; identity must change and the new bundle stands",
+    "gain is reported as Delta = 19.2h - CE-only with a paired bootstrap interval"
+  ],
+  "cost": {
+    "cpu_seconds": 404.796875,
+    "wall_seconds": 420.6854902000632,
+    "adam_updates": 60,
+    "independent_trajectories": 2,
+    "bundles_saved": 1,
+    "confirm_reads": 0
+  }
+}

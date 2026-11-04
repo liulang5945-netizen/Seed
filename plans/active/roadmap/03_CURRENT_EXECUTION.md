@@ -2116,3 +2116,30 @@ owner 授权"测量修正"并收紧口径：门读数对象改为**解码时真�
 **判定（写死）**：判据全不过 → 预注册分支 **`scoring_head_saturation_is_structural`**；但因 A 的零梯度事实，此判定读作"该 loss-only 方案在可训数据上无法干预"，不是打分头容量被直接证伪。唯一建议 **19.2h 序列表面对齐**（`score_rows` 加参数化局部互相关，约 +1,320 参数 / +3.6%），先 30 Adam 选择段诊断；**未启动，等 owner 裁定**。
 
 本轮 **449.5 CPU / 467.3 wall / 30 Adam / 1 包 / 0 confirm**（预算：功能项 430 × 3.3 = **1,419**，用 31.7%）；19.2b 线累计 **2,506.4 CPU**；六格 32,256.6 CPU 未花。**六格外推重算（3.3 系数）111,293.5 CPU、选择段分段价 37,547.6 CPU，仍不放行。**
+
+## 2026-11-04 19.2h 序列表面对齐（60 Adam / 2 轨迹 / 1 存包 / 0 confirm）
+
+证据：[19.2h 报告](../../../reports/taiji_package19_2h_sequence_surface_20261104.json)＋[manifest](../../manifests/taiji_package19_2h_sequence_surface_20261104.json)。脚本 [`train_taiji_package19_2h_sequence_surface.py`](../../../scripts/training/train_taiji_package19_2h_sequence_surface.py)。父包 `output/taiji_package19_compare/28031-B_stop_lock-step300.pt`（只读加载）；产物 `output/taiji_package19_2h_sequence_surface/28031-B_stop_lock-step30-align.pt`（29.34 MB，sha256 `7fd62113…`）。
+
+**A. 活性检查门（D16-8，开训前）**：新张量首批梯度 `W_align.weight` **3.04e-6**、`offset_embed` **8.33e-5**、`W_hidden` 新列 **1.33e-5**（全部非零）；参数化干预的"触发"读作**需修样本占比** → 新描述 96 例起点 argmax 错 **51/96 = 53.1%**（≥20%）。⇒ **放行**。（19.2g 的 0/128 激活是本门首号缺陷实例。）
+
+**B. 两臂并列（同父包、同 30 Adam、同数据顺序、同损失）**
+
+| 指标 | 父包（前） | 19.2h 对齐臂 | CE-only 对照臂 | Δ |
+|---|---:|---:|---:|---:|
+| 新描述 96 例整句 | 0.2604（25/96） | **0.2083（20/96）** | **0.2083（20/96）** | **0.0［0,0］** |
+| route_miss（96 例占比） | 0.3854（37/96） | 0.3854（37/96） | 0.3854（37/96） | 0.0［0,0］ |
+| composite_start 物件 / 地点 | 0.3854 / 0.5312 | 0.3646 / 0.6250 | 0.3646 / 0.6250 | 0.0［0,0］ |
+| conditional_byte 物件 / 地点 | 0.7613 / 1.0000 | 0.6976 / 1.0000 | 0.6976 / 1.0000 | 0.0 |
+| 旧描述 96 例整句 | 1.000 | 1.000 | 1.000 | 0.0 |
+| 全 192 | 0.6302 | 0.6042 | 0.6042 | 0.0 |
+| T2 硬 argmax 改变（新 20 对） | 0/20 | 0/20 | 0/20 | 0 |
+| EOS/UTF-8 冻结路径 | 0 | 0 | 0 | 0 |
+
+bootstrap 2000 轮（配对、seed 20261104）三项 **Δ=0.0、CI [0,0]、`excludes_zero=False`**。
+
+**C. 身份与预检**：父/对照 `candidate_sha_v2 = 773dcec2…`（`alignment` 仅在 True 时进 payload，旧身份逐字不变）；新图 **`4b887487…`**；identity rescue **8/8**；存包→回读 `max_abs_diff=0`；删除 `W_align.weight` 的 bundle **被 strict 加载拒绝**（3/3）。
+
+**判定（写死）**：分支 **`gain_is_extra_training`** ＋ **D16-10 `zero_identifiability`**——+1,320 参数（+3.56%，head 37,120→38,440）在 30 步选择段上有梯度但**未进入行为通路**（`offset_embed` 初值 ±0.01、余弦特征量级 1e-2 被淹没），逐例读数与对照臂完全一致；**该参数化退役**（代码保留 `alignment=False` 开关，历史 bundle 不删），不得读作结构上限、不得靠加剂量救。判据 9 门只过 3（`conditional_byte` 地点 1.0、旧描述 1.0、EOS/UTF-8 不回退）。唯一建议 **19.2i 描述-记录对比监督**（0 新参数：`scores[:R]` 上 12 路 listwise CE、两起点取和、τ=0.1；功能项 330×3.3＝**1,089 CPU**），**未启动，等 owner 裁定**。
+
+本轮 **404.8 CPU / 420.7 wall / 60 Adam / 2 轨迹 / 1 包 / 0 confirm**；含首次失败尝试 **582.2 CPU**（观测值，未插桩）→ 本包合计 **987.0 CPU**（功能项 445×3.3=**1,468.5**，用 67.2%）；19.2b 线累计 **3,493.4 CPU**；**六格 111,293.5 CPU、选择段 37,547.6 CPU 仍不放行。**
