@@ -1,0 +1,90 @@
+{
+  "schema": "taiji-package19-2g-record-margin-manifest-v1",
+  "step": "N19.2g",
+  "date": "2026-11-04",
+  "report": "reports\\taiji_package19_2g_record_margin_20261104.json",
+  "parent": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+  "parent_health": {
+    "path": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+    "parameter_tensors": 185,
+    "nan_parameters": 0,
+    "all_finite": true
+  },
+  "checkpoint_preflight_ok": true,
+  "candidate_sha_v2": "773dcec2e1131d1f3c8784153633d85a9144268a4d5167790740cdd488153aa1",
+  "adam_updates": 30,
+  "bundles_saved": 1,
+  "saved_bundle": "E:\\Seed\\output\\taiji_package19_2g_record_margin\\28031-B_stop_lock-step30-margin.pt",
+  "confirm_reads": 0,
+  "gates": {
+    "new_description_route_miss": {
+      "before": 0.3854166666666667,
+      "after": 0.3854166666666667,
+      "threshold": 0.05,
+      "pass": false
+    },
+    "composite_start_hit_object": {
+      "before": 0.3854166666666667,
+      "after": 0.3645833333333333,
+      "threshold": 0.7,
+      "pass": false
+    },
+    "composite_start_hit_place": {
+      "before": 0.53125,
+      "after": 0.625,
+      "threshold": 0.7,
+      "pass": false
+    },
+    "conditional_byte_object": {
+      "before": 0.7612612612612613,
+      "after": 0.6976190476190476,
+      "threshold": 0.9,
+      "pass": false
+    },
+    "conditional_byte_place": {
+      "before": 1.0,
+      "after": 1.0,
+      "threshold": 0.9,
+      "pass": true
+    },
+    "sentence_new_description_96": {
+      "before": 0.2604166666666667,
+      "after": 0.20833333333333334,
+      "threshold": 0.8,
+      "pass": false
+    },
+    "sentence_old_description_96": {
+      "before": 1.0,
+      "after": 1.0,
+      "threshold": 0.9375,
+      "pass": true
+    },
+    "t2_hard_argmax_changed_new": {
+      "before": 0,
+      "after": 0,
+      "of": 20,
+      "threshold": ">=18/20",
+      "pass": false
+    },
+    "frozen_path_eos_frame": {
+      "before": 0,
+      "after": 0,
+      "threshold": "no regression",
+      "pass": true
+    }
+  },
+  "branch": "scoring_head_saturation_is_structural",
+  "top1_before_median": 0.954547392055618,
+  "top1_after_median": 0.9658220909126378,
+  "route_miss_before_count": 37,
+  "route_miss_after_count": 37,
+  "swap_argmax_before": 0,
+  "swap_argmax_after": 0,
+  "train_margin_active_before": 0,
+  "train_margin_active_points_before": 128,
+  "train_margin_active_after": 0,
+  "six_cell_repriced_cpu": 111293.49,
+  "cost_cpu": 449.515625,
+  "budget_cpu": 1419.0,
+  "over_budget": false
+}

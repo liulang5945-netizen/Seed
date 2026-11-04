@@ -2087,3 +2087,32 @@ owner 授权"测量修正"并收紧口径：门读数对象改为**解码时真�
 **记账修正**：前次"60 Adam"（A/B 两臂 × 30）在 selection 阶段逐位同轨迹（同一 `candidate_sha_v2`），实为**一条 30 更新轨迹跑两遍**；按真实独立轨迹计 30，本次再 30 → 累计 **60**，已达 owner 上限，不得再加剂量。
 
 本轮合计 280.8 CPU；19.2b 累计 **953.0 CPU**；六格未花；confirm 0。产物：[D16-5 复合仪器](../../../reports/taiji_package19_2b_composite_instrument_20261104.json)（[manifest](../../manifests/taiji_package19_2b_composite_instrument_20261104.json)）、[修正后小验证](../../../reports/taiji_package19_2b_lowupdate_composite_20261104.json)（[manifest](../../manifests/taiji_package19_2b_lowupdate_composite_20261104.json)）。队首：**不训练、不花钱，等 owner 裁定 D16-5 结案口径**；若要区分"route 穹顶"与"监督无效"，唯一动作是换 19.5 B step300 成熟父包复跑同额 ≤60 Adam（需授权）。
+
+## 2026-11-04 19.2g 记录匹配对比边距（30 Adam / 1 存包 / 0 confirm）
+
+证据：[19.2g 报告](../../../reports/taiji_package19_2g_record_margin_20261104.json)＋[manifest](../../manifests/taiji_package19_2g_record_margin_20261104.json)。脚本 [`train_taiji_package19_2g_record_margin.py`](../../../scripts/training/train_taiji_package19_2g_record_margin.py)。父包 `output/taiji_package19_compare/28031-B_stop_lock-step300.pt`（只读加载）；产物 `output/taiji_package19_2g_record_margin/28031-B_stop_lock-step30-margin.pt`。
+
+**A. 预检（决定性读数）**：训练集抽样 64 例 / 128 个内容起点，m=1.0 下 **0 点激活**（gold-decoy 边距最小 5.313、中位 8.08 ≫ m，top-1 中位 0.996）→ `max(0, m−边距)` 在每个训练点被 clamp 到 0，**梯度恒为零**；30 Adam 实际只训 CE（0.0066→0.0007）与 span。**本包不是一次边距干预**。检查点 preflight 存包/回读 `max_abs_diff=0.0`，正式包 29.30 MB、回读 0.0、`candidate_sha_v2` 不变。
+
+**B. 训练前后（192 例/正式 `completed`）**
+
+| 指标 | 前 | 后 |
+|---|---:|---:|
+| 新描述 96 例整句 | 0.2604（25/96） | **0.2083（20/96）** |
+| 旧描述 96 例整句 | 1.000 | 1.000 |
+| 全 192 | 0.6302 | 0.6042 |
+| route_miss（96 例占比） | 0.3854（37/96） | **0.3854（37/96）** |
+| route_hit 物件 / 地点 | 0.4688 / 0.8438 | 0.4167 / 0.9062 |
+| composite_start 物件 / 地点 | 0.3854 / 0.5312 | 0.3646 / 0.6250 |
+| conditional_byte 物件 / 地点 | 0.7613 / 1.0000 | 0.6976 / 1.0000 |
+| T2 硬 argmax 改变（新 20 对） | 0/20 | **0/20** |
+| Δscore 中位（新 / 易） | 1.2425 / 1.3159 | 1.5689 / 1.4002 |
+| top-1 中位 | 0.9545 | 0.9658 |
+| gold-decoy 边距中位 | 4.70 | 7.34 |
+| EOS/UTF-8 冻结路径 | 0 | 0 |
+
+**C. 机制分层**：地点起点 top-1 中位 0.9990→**0.9999**、边距 10.42→**12.95**（已饱和）；物件起点 top-1 中位 0.3940→**0.4670**、边距 0.695→**0.828（< m）**（未饱和且选错）；route_miss 37/96 全在物件侧 → **新描述墙不是单一饱和现象**。
+
+**判定（写死）**：判据全不过 → 预注册分支 **`scoring_head_saturation_is_structural`**；但因 A 的零梯度事实，此判定读作"该 loss-only 方案在可训数据上无法干预"，不是打分头容量被直接证伪。唯一建议 **19.2h 序列表面对齐**（`score_rows` 加参数化局部互相关，约 +1,320 参数 / +3.6%），先 30 Adam 选择段诊断；**未启动，等 owner 裁定**。
+
+本轮 **449.5 CPU / 467.3 wall / 30 Adam / 1 包 / 0 confirm**（预算：功能项 430 × 3.3 = **1,419**，用 31.7%）；19.2b 线累计 **2,506.4 CPU**；六格 32,256.6 CPU 未花。**六格外推重算（3.3 系数）111,293.5 CPU、选择段分段价 37,547.6 CPU，仍不放行。**
