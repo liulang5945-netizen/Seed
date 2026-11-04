@@ -16,6 +16,37 @@
 
 **头条状态（2026-11-04，语义身份）：** 身份从“字节绑定”改为“语义哈希”：组成项是图名/契约、配置常量、模块清单、`routing_rule_version`、解码与路由规则、输入白名单、参数名/形状/dtype、声明可塑归属；`source_sha` 与 `weights_sha256` 只记录不决定身份。black-100 合并后 v1 字节摘要从 964a8c68… 漂到 1af63213…，但 `candidate_sha_v2` 恒为 773dcec2…。零更新等价探针（[报告](../../../reports/taiji_selection_routing_17_2r_format_equivalence_20261104.json)）全部逐位一致，60.80 CPU / 62.80 wall、0 优化器步、0 训练更新、0 confirm 读取；四份 2026-11-03 证据维持原字节与有效性（T3 v3 720/720、17.4 v2、新价、17.2R），身份登记见[注册报告](../../../reports/taiji_selection_routing_17_2r_identity_20261104.json)。17.5 的 checkpoint 保存/恢复复验已通过，六格跑完并结案为负结果（见下条 17.7）。本页是按时间追加的流水，旧条目里的“唯一阻塞/唯一下一步”均已被最新条目覆盖。
 
+## 2026-11-04 19.2f 新描述墙归因（0 存包 / 0 confirm）
+
+证据：[19.2f 报告](../../../reports/taiji_package19_2f_new_description_wall_20261104.json)＋[manifest](../../manifests/taiji_package19_2f_new_description_wall_20261104.json)。脚本 [`attribute_taiji_package19_2f_new_description_wall.py`](../../../scripts/training/attribute_taiji_package19_2f_new_description_wall.py)。19.5 六格 bundle 只读，0 Adam、0 存包、0 confirm。
+
+**A. 分层（同一 192 例/格、正式 `completed` 谓词）**：B 两 seed 与 C 对照；A 臂两 seed 均 0/192（28031-A＝D16-6 全 NaN，28032-A 有限但首字节即错，属已登记 A 臂塌缩），只作反例、不进池化。
+
+| 格 | 旧描述 96 例 | 新描述 96 例 | 整句 192 |
+|---|---:|---:|---:|
+| 28031-B | **1.000** | **0.2604（25/96）** | 0.6302 |
+| 28032-B | **0.9375** | **0.2292（22/96）** | 0.5833 |
+| 池化（B×2） | **0.9688** | **0.2448** | 0.6073 |
+| 28031-C | 0.6979 | 0.1042 | 0.4010 |
+| 28032-C | 0.8021 | 0.1354 | 0.4688 |
+
+新描述半的选择/起点（B）：物件 route 0.4688/0.3750、地点 0.8438/0.8229；composite_start 物件 0.3854/0.3750、地点 0.5312/0.4167；起点命中后 conditional_byte 物件 0.7613/0.8287、地点 1.0000/0.9458 → **起点（记录选择）错，内容字节才跟着崩**。
+
+**B. 换序探针（同字节多重集、只交换两个描述；17.3 T2 口径 θ_repr=1e-2 / θ_score=1e-3）**：每 seed 每层 20 对（B×2 合并 40 对）。
+
+| 层 | 表示相对 L2 中位 | 得分最大差中位 | ≥θ_score | 硬 argmax 改变 | top TV 中位 | decode 起点改变 | 跟对首实体（前→后） |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 新描述 | 0.2459 | **1.1925** | **40/40** | **0/40** | 0.0161 | 14/40 | 27/40 → 5/40 |
+| 旧描述 | 0.2548 | **1.2062** | **40/40** | **3/40** | 0.0591 | 0/40 | 40/40 → 0/40 |
+
+**读数**：顺序**信息**已进编码（表示差/得分差远超阈值），但 **top 记录概率 0.98–0.99、边距饱和**，1.2 的得分扰动翻不动硬排名；换序后新描述仍有 35/40 落回物件记录。→ **不是"有序编码未接线"，是"有序信号被边距吞掉"**。
+
+**C. 新描述 96 例六类（B 池化，互斥）**：`route_miss` **51.7%**（占失败）／**39.1%**（占 96 例）、`content_byte_wrong` 44.2%、`start_miss` 3.4%、`eos_not_stopped` 0.7%、`frame_byte_wrong` 0%、`order_or_extra` 0%、pass 24.5%。**route_miss 是单一最大死因且过半。**
+
+**判定**：换序打分敏感 + 新描述主因 route_miss → 分支 **"组合匹配容量/目标不足"**（训练目标问题，非图形接线）。唯一建议 **19.2g 记录匹配对比边距**：不改图、**+0 参数**、每个内容起点加同 world 同类 hard-negative 边距 `max(0, m − (score_gold − score_decoy))`，m=1.0；判据新描述 route_miss ≤0.05、composite_start ≥0.70、conditional_byte ≥0.90、新描述整句 ≥0.80、旧描述 ≥0.9375 不回退、T2 硬 argmax 改变 ≥18/20；预算 ≤30 Adam / ≤220 CPU / 1 包 / 0 confirm；**未启动，等 owner 裁定**。
+
+**成本与观察线**：本轮 **500.5 CPU / 545.5 wall / 0 Adam / 0 存包 / 0 confirm**，是 100–150 预算的 **3.3×**（主因：40 对 × 2 goal × 5 格的前 3 字节 teacher-forced decode 起点打分叠加 5×192 自由解码）；19.2b 线累计 **2,056.9 CPU**；六格 **32,256.6 CPU 未花**。
+
 ## 2026-11-04 19.2e 口径对账 + 零更新强制覆盖探针（0 存包 / 0 confirm）
 
 证据：[19.2e 报告](../../../reports/taiji_package19_2e_pointer_override_20261104.json)＋[manifest](../../manifests/taiji_package19_2e_pointer_override_20261104.json)。脚本 [`probe_taiji_package19_pointer_override.py`](../../../scripts/training/probe_taiji_package19_pointer_override.py)。19.5 六格 bundle 只读，未改字节、未存包。

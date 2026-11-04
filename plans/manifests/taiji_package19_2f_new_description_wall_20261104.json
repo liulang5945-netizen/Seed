@@ -1,0 +1,48 @@
+{
+  "schema": "taiji-package19-new-description-wall-manifest-v1",
+  "step": "N19.2f new-description wall attribution",
+  "date": "2026-11-04",
+  "report": "reports\\taiji_package19_2f_new_description_wall_20261104.json",
+  "cells": {
+    "healthy": [
+      "28031-B_stop_lock",
+      "28031-C_unlocked",
+      "28032-A_route_lock",
+      "28032-B_stop_lock",
+      "28032-C_unlocked"
+    ],
+    "skipped": [
+      "28031-A_route_lock"
+    ]
+  },
+  "B_strata": {
+    "old_description_96": 0.96875,
+    "new_description_96": 0.24479166666666669,
+    "pass_new": 47,
+    "fail_new": 145
+  },
+  "swap": {
+    "theta_repr": 0.01,
+    "theta_score": 0.001,
+    "order_sensitive": true,
+    "hard_argmax_saturated": true,
+    "easy_median_score": 1.2062239970913646,
+    "new_median_score": 1.192525986217371,
+    "new_argmax_changed": 0
+  },
+  "new_description_buckets_of_failures": {
+    "route_miss": 0.5173201370384468,
+    "start_miss": 0.033783783783783786,
+    "content_byte_wrong": 0.44213932242101256,
+    "frame_byte_wrong": 0.0,
+    "eos_not_stopped": 0.006756756756756757,
+    "order_or_extra": 0.0
+  },
+  "branch": "combination_matching_capacity",
+  "cost_cpu": 500.53125,
+  "budget_cpu": 150.0,
+  "over_budget": true,
+  "adam_steps": 0,
+  "bundles_saved": 0,
+  "confirm_reads": 0
+}
