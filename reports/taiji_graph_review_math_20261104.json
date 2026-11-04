@@ -1,0 +1,258 @@
+{
+  "schema": "taiji-graph-review-exact-witnesses-v1",
+  "protocol_date": "2026-11-04",
+  "generated_at_utc": "2026-11-04T15:19:38.340730+00:00",
+  "basis_commit": "f7cfadb1c6e342944f129ff13f3ce82e3cb77e00",
+  "source_sha256": "f1bb0ed9ec60f7964c471ea58d0de4a8dce626d68aa95176488001f0a5c14aa2",
+  "passed": true,
+  "checks": {
+    "additive_rank": {
+      "passed": true,
+      "details": {
+        "score_matrix": [
+          [
+            "0",
+            "1/3",
+            "3/5"
+          ],
+          [
+            "1/3",
+            "3/5",
+            "7/9"
+          ],
+          [
+            "1/2",
+            "5/7",
+            "11/13"
+          ]
+        ],
+        "determinant": "-94/61425",
+        "mixed_second_derivative_at_log2": "-96/125",
+        "scope": "Refutes global rank<=2 and universal third-order-only interaction."
+      }
+    },
+    "query_reordering": {
+      "passed": true,
+      "details": {
+        "additive_tanh_scores": [
+          [
+            "30/17",
+            "9/5"
+          ],
+          [
+            "15/17",
+            "-3/13"
+          ]
+        ],
+        "winners": [
+          1,
+          0
+        ],
+        "existing_goal_query_bilinear_scores": [
+          [
+            "1",
+            "-1"
+          ],
+          [
+            "-1",
+            "1"
+          ]
+        ],
+        "scope": "Finite legal scorer subfamilies; no claim that training finds them."
+      }
+    },
+    "independent_controls": {
+      "passed": true,
+      "details": {
+        "retention_write_control_jacobian": [
+          [
+            "2/7",
+            "0"
+          ],
+          [
+            "0",
+            "1/2"
+          ]
+        ],
+        "jacobian_determinant": "1/7",
+        "chi_partial_in_cancellation_case": "0",
+        "independent_forget_write_partials": [
+          "-1/2",
+          "1/2"
+        ],
+        "scope": "Unprojected interior controls; shared chi can cancel but does not force all gradients."
+      }
+    },
+    "erase_sensitivity": {
+      "passed": true,
+      "details": {
+        "Ae_keep": "4/19",
+        "complete_decay_erase_keep": "1/4750",
+        "bounded_forward_unbounded_direction_sensitivity_family": [
+          {
+            "eta": "4",
+            "direction": "1/2",
+            "abs_direction_partial": "1"
+          },
+          {
+            "eta": "400",
+            "direction": "1/20",
+            "abs_direction_partial": "10"
+          },
+          {
+            "eta": "40000",
+            "direction": "1/200",
+            "abs_direction_partial": "100"
+          }
+        ],
+        "scope": "Fixed-direction state norm is distinct from input/parameter sensitivity."
+      }
+    },
+    "time_and_units": {
+      "passed": true,
+      "details": {
+        "E_exp_minus_beta_duration": "5/16",
+        "exp_minus_beta_mean_duration": "1/4",
+        "head_count": 2,
+        "head_shape": [
+          32,
+          32
+        ],
+        "scalar_entries": 2048,
+        "block_diagonal_matrix_rank_upper_bound": 64,
+        "scope": "Matrix rank is not parameter count; no storage-capacity theorem inferred."
+      }
+    },
+    "kkt_example": {
+      "passed": true,
+      "details": {
+        "problem": "min .5*(x-2)^2+.5*x^2 subject to x<=1.5",
+        "solution": "1",
+        "soft_gradient": "1",
+        "hard_constraint_dual": "0",
+        "stationarity": "0",
+        "slack": "-1/2",
+        "scope": "A soft objective coefficient need not equal a hard-constraint dual variable."
+      }
+    },
+    "stability_notions": {
+      "passed": true,
+      "details": {
+        "pointwise_energy_factor": "3/4",
+        "full_derivative": "5/4",
+        "individual_triangular_spectral_radius": "1/2",
+        "switch_product": [
+          [
+            "1/4",
+            "1"
+          ],
+          [
+            "1",
+            "17/4"
+          ]
+        ],
+        "product_characteristic_at_one": "-55/16",
+        "implicit_scalar_J": "2",
+        "implicit_inverse_I_minus_J": "-1",
+        "scope": "Energy, contraction, switching stability and implicit differentiability differ."
+      }
+    },
+    "birth_tangent": {
+      "passed": true,
+      "details": {
+        "delta_W_equals_B_delta_R": [
+          [
+            "3",
+            "-1"
+          ],
+          [
+            "6",
+            "-2"
+          ]
+        ],
+        "birth_and_free_parent_tangent": [
+          "5",
+          "10"
+        ],
+        "initial_incoming_gradient": "-1",
+        "initial_outgoing_gradient": "0",
+        "outgoing_gradient_after_analytic_SGD_step": "-6/25",
+        "scope": "Free allowed parent W; constrained/frozen parent groups require a new tangent definition."
+      }
+    },
+    "op2_emission": {
+      "passed": true,
+      "details": {
+        "OP2_valid_below_preservation_requirement": true,
+        "position_Q": [
+          [
+            "297/5000",
+            "203/5000"
+          ],
+          [
+            "1/5",
+            "1/5"
+          ]
+        ],
+        "generator_mix": "13/20",
+        "identical_emission": [
+          "15579/50000",
+          "18171/50000",
+          "13/40"
+        ],
+        "scope": "Emission algebra only; head parameterizations and state kernels remain versioned."
+      }
+    },
+    "duplicate_copy": {
+      "passed": true,
+      "details": {
+        "raw": [
+          0,
+          1,
+          0,
+          0,
+          1,
+          0
+        ],
+        "copied": [
+          0,
+          1,
+          0,
+          0,
+          1,
+          0
+        ],
+        "scope": "Hard kernel with fixed record/start/length controls, not learned routing or EOS validation."
+      }
+    },
+    "projected_proximal_kkt": {
+      "passed": true,
+      "details": {
+        "unconstrained_optimum": [
+          "1/4",
+          "1/4"
+        ],
+        "radial_projection": [
+          "1/5",
+          "1/5"
+        ],
+        "radius_squared": "2/25",
+        "incompatible_KKT_multipliers": [
+          "5/16",
+          "1/4"
+        ],
+        "scope": "Euclidean clipping of a non-isotropic quadratic optimum need not solve its constrained problem."
+      }
+    }
+  },
+  "scope": "Exact algebraic witnesses and counterexamples, not a full-model capability assessment.",
+  "accounting": {
+    "model_constructions": 0,
+    "weights_loaded": false,
+    "autograd_calls": 0,
+    "optimizer_invocations": 0,
+    "analytic_SGD_step_witnesses": 1,
+    "project_data_reads": 0
+  },
+  "proof_boundary": "Finite counterexamples refute general claims; general theorems require the written derivations."
+}

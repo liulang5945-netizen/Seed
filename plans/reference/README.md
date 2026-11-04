@@ -108,3 +108,5 @@ R 编号保留原合同与实验身份；实施统一使用总计划步骤 01–
 [核心动力学、快记忆与复制的数学复核](MATH-REVIEW_CORE_DYNAMICS_MEMORY_COPY_20261103.md)逐项核验本轮外部意见，包含反例、近端回归子族、容量条件、当前读核耦合及对应数学工作。
 
 [OP2复制算子严格推导](SPEC-COPY_OPERATOR_OP2_MATH_20261104.md)及[独立数学验证器](../../scripts/training/verify_taiji_copy_operator_math_v2.py)闭合record-first概率与后验链，按局部/递归/数值/代理梯度范围记录结果。
+
+[E1–E11计算图审查的数学裁定](MATH-ADJUDICATION_CORE_GRAPH_20261104.md)复核[14项前沿意见](TAIJI_ALGORITHM_FRONTIER_MATH_REVIEW_20261104.md)，保留条件性风险，纠正表达性/KKT/OP2合法域推广，并给出生长父切空间与约束近端解的补充。算法设计责任见系统计划M-GRAPH-1，执行队首仍只查MASTER-PLAN。
