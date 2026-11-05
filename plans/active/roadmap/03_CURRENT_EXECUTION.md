@@ -2289,3 +2289,33 @@ owner 裁定 19.2m 方向作废并立 **D16-19**（池外负样本不受理、�
 **D. 判定与唯一建议**：**`twin_not_constructible`**（可构造比例 0.0 < 0.60，优先级最高）。机制：每把 key 只含一个描述实体、8 把互不相同、无任何同字节多重集对；记录行虽有描述+名字两个实体，但打分 key 只取描述，互换后要么 key 不变（重复项、分数差恒 0），要么变成名字（名字从不是候选 key）。**结论只回答“池内对手是否存在”，不回答“训练能否学会”**；唯一允许＝另立数据前提提案（key 改整行、池扩为描述×名字叉积），并给出池内编号、key 字节差与实测边距；禁止在现有 8 条池上再提池外负样本，禁止改 argmax 判据。
 
 **E. 花费**：**0.203 CPU / 0.99 wall**、预算 120 的 **0.17%**、**0 Adam / 0 包 / 0 confirm**、0 次格式化。证据：[19.2n 报告](../../../reports/taiji_package19_2n_twin_pool_20261105.json)＋[manifest](../../manifests/taiji_package19_2n_twin_pool_20261105.json)；脚本 [`probe_taiji_package19_2n_twin_pool.py`](../../../scripts/training/probe_taiji_package19_2n_twin_pool.py)。
+
+## 2026-11-05 19.2o：D16-20 三层验收落点 ＋ provenance 零更新补算
+
+> 纪律：0 Adam / 0 存包 / 0 confirm / 只读；读数逐行 fsync（D16-15）；本包不执行格式化（D16-18）；不重训、不改判据、不读 confirm。脚本 [`probe_taiji_package19_2o_provenance.py`](../../../scripts/training/probe_taiji_package19_2o_provenance.py)。
+
+**A. 口径（D16-20，已入账本 §16.13）**：L1 机械不变量 100% 零容忍（逐位恢复 / UTF-8 合法 / confirm 读取次数 / 父包与 `candidate_sha_v2` 身份）；L2 内容保真“不要求 100% 正确、要求 100% 可核验”（`provenance_rate` / `fabricated_bytes`，目标 0，有则显式计数）；L3 选择准确率只报 selection / 随机基线 / 可达上限三数，阈值按“bootstrap 下界 > 随机 + 相对上限比值”由 owner 后续裁定。**禁止为过门修改 argmax 规则、阈值或评测切片**。
+
+**B. 切片与定价（D16-17 一包只定价一次）**：4 包 × 8 例单次定价 **0.3145 CPU/例** → 选 96 例/包（预估 130.8 ≤ 150）；12 world 各 8 例，index 由 `round(k*15/7)` 取 `0,2,4,6,9,11,13,15`。实际 **384 例 / 768 个内容跨度 / 6,912 字节**。
+
+**C. L1 结果**：4 包 `file_sha256` 与 `candidate_sha_v2` 与 19.2j manifest **逐字相等**；UTF-8 非法例 **0/384**；confirm **0**；未存包（恢复引用 19.2l-B 往返 `max_abs_diff = 0.0`）。首跑把整块 identity dict 写进 `candidate_sha_v2` 字段 → 与 manifest 的字符串比较恒 false；摘要本身正确，用 `--identity-only`（零解码、**0.08 CPU**）复核并保留 `candidate_identity` 全块、原报告 sha。
+
+**D. L2 结果（未达标）**：`provenance_bytes` **4,926（0.7127）**、`misbound_bytes` **0（0.0000）**、`fabricated_bytes` **1,986（0.2873）**，三项相加恰等于 6,912（`accounting_closed = true`）；**目标 `fabricated_bytes = 0` 差 1,986 字节**。按年龄：**旧描述 3,456 字节 100% 可溯源、0 编造**；编造 **100% 落在新描述半**（新描述 3,456 字节中编造 57.5%）。
+
+**E. 选错 / 抄错拆分**：
+
+| 格 | 字节 | 占 6,912 | 跨度 | 说明 |
+|---|---|---|---|---|
+| 选对且抄对（aligned） | **4,650** | 67.3% | 534 | 计为 provenance |
+| 选对抄错 | **666** | 9.6% | 60 | 全部编造（不在任何记录） |
+| 选错但抄自己选中的记录 | **276** | 4.0% | 0 | 计为 provenance（可核验但选错） |
+| 选错且编造 | **966** | 14.0% | 115 | 全部编造 |
+| 截断未写完 | **354** | 5.1% | 59 | 计入 fabricated（长度按跨度算） |
+
+- `wrong_route_right_content`（选错却抄对 gold）＝ **0 跨度**，即 `misbound_bytes = 0`：**只要选错记录，就抄不出 gold 名字**；内容抄写绑定在所选记录上。
+- 编造 1,986 的来源占比：选对抄错 33.5%、截断 17.8%、选错且编造 48.6%。
+- 回答“0.05 是选错还是编造”：这不是编造噪声与选择误差的混合；它是**选错（145/768 跨度＝18.9%）＋ 起点后未写完（59 跨度）**两件事，且两者都只在新描述半发生。
+
+**F. L3 结果**：selection **0.8112（623/768）**、随机基线 **0.1111**（非空 1/8 = 0.125）、可达上限 **1.0**、相对上限比值 **0.7715–0.8184**（逐包）、逐包 bootstrap 下界最低 **0.7396**。绝对阈值待 owner 裁定。
+
+**G. 花费**：**141.5 CPU / 147.0 wall**（含身份复核 0.08），预算 150 的 **94.3%**；**0 Adam / 0 包 / 0 confirm**。证据：[19.2o 报告](../../../reports/taiji_package19_2o_provenance_20261105.json)＋[manifest](../../manifests/taiji_package19_2o_provenance_20261105.json)。

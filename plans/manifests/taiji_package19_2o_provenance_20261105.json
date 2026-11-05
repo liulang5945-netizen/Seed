@@ -1,0 +1,37 @@
+{
+  "schema": "taiji-package19-2o-manifest-v1",
+  "step": "19.2o",
+  "date": "2026-11-05",
+  "report": {
+    "path": "reports\\taiji_package19_2o_provenance_20261105.json",
+    "sha256": "d2da1593631db7c0e2cf18920647e78021c8a2dba003cf8e24d12f8a068cbce3"
+  },
+  "progress": {
+    "path": "reports\\taiji_package19_2o_provenance_progress_20261105.jsonl",
+    "sha256": "ae651841754f4d9cc463fb1c38998513cad3a90fb31b7df0dba6c536e4aa4a96"
+  },
+  "bundles": {
+    "28031-O": {
+      "file_sha256": "dadf755150f2fe12e8b46facbabda98bb3aad636537ef63609acd9528589d20b",
+      "candidate_sha_v2": "773dcec2e1131d1f3c8784153633d85a9144268a4d5167790740cdd488153aa1"
+    },
+    "28031-N": {
+      "file_sha256": "b4533d22ef886bc6cd953f8559a7f16b0da9b4ad871831b24c712c73697daaa3",
+      "candidate_sha_v2": "4b887487136e7f23a181d2085c862dcef5812de0491cf9b15c0e85fb7956e804"
+    },
+    "28032-O": {
+      "file_sha256": "9a90a80343017ba29afe979fcf793767fc154fa059d17ee85943d8db12cd5e6f",
+      "candidate_sha_v2": "773dcec2e1131d1f3c8784153633d85a9144268a4d5167790740cdd488153aa1"
+    },
+    "28032-N": {
+      "file_sha256": "8d7e9de48707c4ee5a38ecf12f85621f03a277e9cff3ae8f57841ece10716949",
+      "candidate_sha_v2": "4b887487136e7f23a181d2085c862dcef5812de0491cf9b15c0e85fb7956e804"
+    }
+  },
+  "provenance_rate": 0.7126736111111112,
+  "fabricated_bytes": 1986,
+  "cost_cpu": 141.578125,
+  "adam_updates": 0,
+  "bundles_saved": 0,
+  "confirm_reads": 0
+}
