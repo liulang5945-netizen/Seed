@@ -1,0 +1,631 @@
+{
+  "schema": "taiji-task-semantic-contract-v1",
+  "step": "task_semantic_contract",
+  "date": "2026-11-05",
+  "purpose": "state what the frozen 18.0 selection task is, in field names and verbatim samples, so later discussion can be pinned to the data rather than to internal words",
+  "record_schema": {
+    "total_records": 416,
+    "fields": {
+      "source_id": {
+        "type": "str",
+        "role": "line identifier only, never an input feature"
+      },
+      "raw": {
+        "type": "str",
+        "role": "the frozen line the model actually reads"
+      },
+      "style": {
+        "type": "int",
+        "role": "which of the three sentence templates was used"
+      },
+      "style_name": {
+        "type": "str",
+        "role": "stated / aka / mapped"
+      },
+      "kind": {
+        "type": "str",
+        "role": "object or place (metadata, not in raw)"
+      },
+      "description": {
+        "type": "str",
+        "role": "environment phrase; the only field the route sees"
+      },
+      "name": {
+        "type": "str",
+        "role": "entity name; the answer payload"
+      }
+    },
+    "records_by_split_and_kind": {
+      "train|place": 160,
+      "train|object": 160,
+      "dev|object": 48,
+      "dev|place": 48
+    },
+    "raw_bytes_by_template": {
+      "dev|object|style0": [
+        33
+      ],
+      "dev|object|style1": [
+        36
+      ],
+      "dev|object|style2": [
+        36
+      ],
+      "dev|place|style0": [
+        24
+      ],
+      "dev|place|style1": [
+        27
+      ],
+      "dev|place|style2": [
+        27
+      ],
+      "train|object|style0": [
+        33
+      ],
+      "train|object|style1": [
+        36
+      ],
+      "train|object|style2": [
+        36
+      ],
+      "train|place|style0": [
+        24
+      ],
+      "train|place|style1": [
+        27
+      ],
+      "train|place|style2": [
+        27
+      ]
+    },
+    "description_chars_by_kind": {
+      "place": [
+        4
+      ],
+      "object": [
+        5
+      ]
+    },
+    "name_chars_by_kind": {
+      "place": [
+        2
+      ],
+      "object": [
+        4
+      ]
+    },
+    "templates": {
+      "0": "{description}是{name}。",
+      "1": "{name}又叫{description}。",
+      "2": "{description}对应{name}。"
+    },
+    "samples": [
+      {
+        "split": "dev",
+        "world": 0,
+        "line_position": 0,
+        "source_id": "cx18df1f30cf3e87-00",
+        "raw": "扁圆的盒子对应朱砂算筹。",
+        "raw_bytes": 36,
+        "style": 2,
+        "style_name": "mapped",
+        "kind": "object",
+        "description": "扁圆的盒子",
+        "description_chars": 5,
+        "name": "朱砂算筹",
+        "name_chars": 4,
+        "description_in_raw": {
+          "piece": "扁圆的盒子",
+          "char_start": 0,
+          "char_end": 5,
+          "byte_start": 0,
+          "byte_end": 15
+        },
+        "name_in_raw": {
+          "piece": "朱砂算筹",
+          "char_start": 7,
+          "char_end": 11,
+          "byte_start": 21,
+          "byte_end": 33
+        }
+      },
+      {
+        "split": "dev",
+        "world": 0,
+        "line_position": 1,
+        "source_id": "cx18df1f30cf3e87-01",
+        "raw": "篱下又叫屋檐底下。",
+        "raw_bytes": 27,
+        "style": 1,
+        "style_name": "aka",
+        "kind": "place",
+        "description": "屋檐底下",
+        "description_chars": 4,
+        "name": "篱下",
+        "name_chars": 2,
+        "description_in_raw": {
+          "piece": "屋檐底下",
+          "char_start": 4,
+          "char_end": 8,
+          "byte_start": 12,
+          "byte_end": 24
+        },
+        "name_in_raw": {
+          "piece": "篱下",
+          "char_start": 0,
+          "char_end": 2,
+          "byte_start": 0,
+          "byte_end": 6
+        }
+      },
+      {
+        "split": "dev",
+        "world": 0,
+        "line_position": 2,
+        "source_id": "cx18df1f30cf3e87-02",
+        "raw": "书案上方对应阶尾。",
+        "raw_bytes": 27,
+        "style": 2,
+        "style_name": "mapped",
+        "kind": "place",
+        "description": "书案上方",
+        "description_chars": 4,
+        "name": "阶尾",
+        "name_chars": 2,
+        "description_in_raw": {
+          "piece": "书案上方",
+          "char_start": 0,
+          "char_end": 4,
+          "byte_start": 0,
+          "byte_end": 12
+        },
+        "name_in_raw": {
+          "piece": "阶尾",
+          "char_start": 6,
+          "char_end": 8,
+          "byte_start": 18,
+          "byte_end": 24
+        }
+      }
+    ]
+  },
+  "pool": {
+    "dev_worlds": 12,
+    "records_per_world": 8,
+    "object_records_per_world": 4,
+    "place_records_per_world": 4,
+    "candidate_strings_per_world": 8,
+    "candidate_strings_equal_descriptions": 192,
+    "candidate_strings_distinct_within_world": 192,
+    "selection_label_points_to_gold_object_record": 192,
+    "examples_checked": 192,
+    "distinct_object_descriptions_per_world": 4,
+    "distinct_place_descriptions_per_world": 4,
+    "what_the_eight_are": "four object descriptions and four place descriptions of the same world; the eight candidate strings are exactly those eight description strings, in the order the records are written, so the only dimension on which they differ is which environment phrase they name",
+    "gold_and_its_record": "the goal names one object description; the gold candidate is the object record carrying that description, and that record's name field is the answer payload"
+  },
+  "goals": [
+    {
+      "dev_index": 0,
+      "world": 0,
+      "goal": "让细颈的瓶子到生火近旁。",
+      "goal_bytes": 36,
+      "goal_pattern": "让{object_description}到{place_description}。",
+      "object_description": "细颈的瓶子",
+      "object_description_in_goal": {
+        "piece": "细颈的瓶子",
+        "char_start": 1,
+        "char_end": 6,
+        "byte_start": 3,
+        "byte_end": 18
+      },
+      "place_description": "生火近旁",
+      "place_description_in_goal": {
+        "piece": "生火近旁",
+        "char_start": 7,
+        "char_end": 11,
+        "byte_start": 21,
+        "byte_end": 33
+      },
+      "selection_label": 5,
+      "gold_record_kind": "object",
+      "gold_record_description": "细颈的瓶子",
+      "gold_record_name": "夜蓝镇纸",
+      "gold_record_raw": "细颈的瓶子对应夜蓝镇纸。",
+      "gold_record_line_position": 5,
+      "place_record_raw": "生火近旁是篱前。",
+      "place_record_line_position": 4,
+      "place_record_name": "篱前",
+      "action": "把夜蓝镇纸放到篱前",
+      "action_bytes": 27,
+      "action_pattern": "把{object_name}放到{place_name}",
+      "object_name": "夜蓝镇纸",
+      "object_name_in_action": {
+        "piece": "夜蓝镇纸",
+        "char_start": 1,
+        "char_end": 5,
+        "byte_start": 3,
+        "byte_end": 15
+      },
+      "place_name": "篱前",
+      "place_name_in_action": {
+        "piece": "篱前",
+        "char_start": 7,
+        "char_end": 9,
+        "byte_start": 21,
+        "byte_end": 27
+      }
+    },
+    {
+      "dev_index": 9,
+      "world": 0,
+      "goal": "让弧肩的坛子到屋檐底下。",
+      "goal_bytes": 36,
+      "goal_pattern": "让{object_description}到{place_description}。",
+      "object_description": "弧肩的坛子",
+      "object_description_in_goal": {
+        "piece": "弧肩的坛子",
+        "char_start": 1,
+        "char_end": 6,
+        "byte_start": 3,
+        "byte_end": 18
+      },
+      "place_description": "屋檐底下",
+      "place_description_in_goal": {
+        "piece": "屋檐底下",
+        "char_start": 7,
+        "char_end": 11,
+        "byte_start": 21,
+        "byte_end": 33
+      },
+      "selection_label": 3,
+      "gold_record_kind": "object",
+      "gold_record_description": "弧肩的坛子",
+      "gold_record_name": "玉髓罗盘",
+      "gold_record_raw": "玉髓罗盘又叫弧肩的坛子。",
+      "gold_record_line_position": 3,
+      "place_record_raw": "篱下又叫屋檐底下。",
+      "place_record_line_position": 1,
+      "place_record_name": "篱下",
+      "action": "把玉髓罗盘放到篱下",
+      "action_bytes": 27,
+      "action_pattern": "把{object_name}放到{place_name}",
+      "object_name": "玉髓罗盘",
+      "object_name_in_action": {
+        "piece": "玉髓罗盘",
+        "char_start": 1,
+        "char_end": 5,
+        "byte_start": 3,
+        "byte_end": 15
+      },
+      "place_name": "篱下",
+      "place_name_in_action": {
+        "piece": "篱下",
+        "char_start": 7,
+        "char_end": 9,
+        "byte_start": 21,
+        "byte_end": 27
+      }
+    },
+    {
+      "dev_index": 15,
+      "world": 0,
+      "goal": "让扁圆的盒子到屋角内侧。",
+      "goal_bytes": 36,
+      "goal_pattern": "让{object_description}到{place_description}。",
+      "object_description": "扁圆的盒子",
+      "object_description_in_goal": {
+        "piece": "扁圆的盒子",
+        "char_start": 1,
+        "char_end": 6,
+        "byte_start": 3,
+        "byte_end": 18
+      },
+      "place_description": "屋角内侧",
+      "place_description_in_goal": {
+        "piece": "屋角内侧",
+        "char_start": 7,
+        "char_end": 11,
+        "byte_start": 21,
+        "byte_end": 33
+      },
+      "selection_label": 0,
+      "gold_record_kind": "object",
+      "gold_record_description": "扁圆的盒子",
+      "gold_record_name": "朱砂算筹",
+      "gold_record_raw": "扁圆的盒子对应朱砂算筹。",
+      "gold_record_line_position": 0,
+      "place_record_raw": "屋角内侧是窗尾。",
+      "place_record_line_position": 6,
+      "place_record_name": "窗尾",
+      "action": "把朱砂算筹放到窗尾",
+      "action_bytes": 27,
+      "action_pattern": "把{object_name}放到{place_name}",
+      "object_name": "朱砂算筹",
+      "object_name_in_action": {
+        "piece": "朱砂算筹",
+        "char_start": 1,
+        "char_end": 5,
+        "byte_start": 3,
+        "byte_end": 15
+      },
+      "place_name": "窗尾",
+      "place_name_in_action": {
+        "piece": "窗尾",
+        "char_start": 7,
+        "char_end": 9,
+        "byte_start": 21,
+        "byte_end": 27
+      }
+    }
+  ],
+  "answer_assembly": {
+    "examples": 192,
+    "object_name_equals_gold_record_name": 192,
+    "goal_place_description_found_on_a_place_record": 192,
+    "place_name_equals_that_place_record_name": 192,
+    "place_name_equals_gold_record_name": 0,
+    "answer_needs_two_records": true,
+    "meaning": "the action has two name slots: the object name is read from the routed record, and the place name is read from the place record whose description the goal also mentions; only the object record is selected, the place record is never selected"
+  },
+  "name_and_role": {
+    "name_field": "name",
+    "name_also_appears_verbatim_inside_raw": true,
+    "name_char_offset_by_style": {
+      "0": [
+        5,
+        6
+      ],
+      "1": [
+        0
+      ],
+      "2": [
+        6,
+        7
+      ]
+    },
+    "role_field": "kind",
+    "role_word_inside_raw": 0,
+    "worlds_where_objects_occupy_the_first_four_lines": 2,
+    "worlds_checked": 52,
+    "role_by_position": "no consistent signal: the eight lines of a world are shuffled; only 2 of 52 worlds happen to put the four object lines first (about 1.4% under shuffling, i.e. chance)",
+    "role_by_word": "no: neither the word object/place nor any source/destination marker appears in raw",
+    "role_signal_that_exists": "only string length and vocabulary: object names are 12 bytes / 4 chars and place names 6 bytes / 2 chars; object descriptions 15 bytes / 5 chars and place descriptions 12 bytes / 4 chars",
+    "kind_is_visible_to_the_model": false
+  },
+  "description_age": {
+    "old": {
+      "split": "train",
+      "world": 0,
+      "description": "细颈的瓶子",
+      "raw": "细颈的瓶子是松绿罗盘。"
+    },
+    "new": {
+      "split": "dev",
+      "world": 0,
+      "description": "扁圆的盒子",
+      "raw": "扁圆的盒子对应朱砂算筹。"
+    },
+    "same_char_length": true,
+    "same_internal_pattern": true,
+    "new_string_occurs_in_train": false,
+    "shared_characters_with_train_descriptions": [
+      "子",
+      "的"
+    ],
+    "characters_absent_from_train_descriptions": [
+      "圆",
+      "扁",
+      "盒"
+    ],
+    "shared_character_count": 2,
+    "new_character_count": 3,
+    "difference_class": "same template, same 5-character pattern, different filled words: the new phrase uses characters that never appear in any train description",
+    "all_new_descriptions": [
+      {
+        "description": "弧肩的坛子",
+        "shared_characters": [
+          "子",
+          "的"
+        ],
+        "characters_absent_from_train_descriptions": [
+          "坛",
+          "弧",
+          "肩"
+        ],
+        "occurs_in_train": false
+      },
+      {
+        "description": "扁圆的盒子",
+        "shared_characters": [
+          "子",
+          "的"
+        ],
+        "characters_absent_from_train_descriptions": [
+          "圆",
+          "扁",
+          "盒"
+        ],
+        "occurs_in_train": false
+      },
+      {
+        "description": "高足的盘子",
+        "shared_characters": [
+          "子",
+          "的"
+        ],
+        "characters_absent_from_train_descriptions": [
+          "盘",
+          "足",
+          "高"
+        ],
+        "occurs_in_train": false
+      }
+    ]
+  },
+  "questions": {
+    "a_only_name_matching": {
+      "examples_checked": 832,
+      "goals_containing_any_record_name": 0,
+      "candidate_strings_containing_any_record_name": 0,
+      "dev_examples_whose_name_is_unseen_in_train": 192,
+      "dev_examples_total": 192,
+      "old_description_examples": 96,
+      "old_description_examples_with_unseen_name": 96,
+      "new_description_examples": 96,
+      "gold_is_an_object_record_carrying_the_goal_description": 192,
+      "evidence_19_2f": {
+        "source": "reports/taiji_package19_2f_new_description_wall_20261104.json",
+        "conclusions": [
+          "B 臂两 seed 旧描述 96 例整句 1.000/0.9375（池化 0.9688），新描述 96 例 0.2604/0.2292（池化 0.2448）：全部损失集中在新描述半，分层结论钉死。",
+          "新描述半的选择/起点才是缺口：物件 route 0.469/0.375、地点 route 0.844/0.823；composite_start 物件 0.385/0.375、地点 0.531/0.417；而起点对时 conditional_byte 物件 0.761/0.829、地点 1.000/0.946——起点错了以后内容字节才跟着崩。",
+          "换序读数：表示相对 L2 中位 0.246（新）/0.255（易），得分最大差中位 1.19/1.21；40/40 对超 theta_score=1e-3、40/40 对超 theta_repr=1e-2 → 有序信息确实进了编码。"
+        ]
+      }
+    },
+    "b_permutation_axis": {
+      "description_name_vocabulary_overlap": 0,
+      "names_occurring_in_goals": 0,
+      "names_occurring_in_candidate_strings": 0,
+      "scoring_input_on_the_candidate_side": "record description only (record_keys)",
+      "scoring_input_on_the_query_side": "goal string only"
+    },
+    "c_old_vs_new": {
+      "styles_present_by_split_and_kind": {
+        "dev|object": [
+          0,
+          1,
+          2
+        ],
+        "dev|place": [
+          0,
+          1,
+          2
+        ],
+        "train|object": [
+          0,
+          1,
+          2
+        ],
+        "train|place": [
+          0,
+          1,
+          2
+        ]
+      },
+      "train_name_characters": {
+        "object": [
+          "乌",
+          "墨",
+          "壶",
+          "夜",
+          "木",
+          "朱",
+          "松",
+          "漆",
+          "炉",
+          "烟",
+          "玄",
+          "玉",
+          "玦",
+          "痕",
+          "白",
+          "盒",
+          "盘",
+          "石",
+          "砂",
+          "砚",
+          "竹",
+          "筹",
+          "简",
+          "算",
+          "红",
+          "纸",
+          "绿",
+          "罗",
+          "羽",
+          "翠",
+          "色",
+          "苔",
+          "英",
+          "蓝",
+          "赤",
+          "赭",
+          "金",
+          "铁",
+          "铃",
+          "铛",
+          "铜",
+          "银",
+          "锡",
+          "镇",
+          "镜",
+          "霜",
+          "霞",
+          "青",
+          "香",
+          "髓"
+        ],
+        "place": [
+          "上",
+          "下",
+          "东",
+          "云",
+          "井",
+          "亭",
+          "侧",
+          "兰",
+          "前",
+          "北",
+          "圃",
+          "外",
+          "尾",
+          "崖",
+          "廊",
+          "松",
+          "桥",
+          "梅",
+          "池",
+          "沙",
+          "沿",
+          "溪",
+          "瓮",
+          "畔",
+          "窗",
+          "竹",
+          "篱",
+          "舟",
+          "角",
+          "阶",
+          "雾"
+        ]
+      },
+      "dev_name_characters_absent_from_train": {
+        "object": [],
+        "place": []
+      },
+      "new_description_characters_absent_from_train": [
+        "圆",
+        "扁",
+        "盒"
+      ],
+      "new_description_string_seen_in_train": false
+    }
+  },
+  "cost": {
+    "cpu_seconds": 0.21875,
+    "wall_seconds": 0.23201060015708208,
+    "cpu_cap": 30,
+    "over_budget": false
+  },
+  "discipline": {
+    "adam_updates": 0,
+    "forward_passes": 0,
+    "bundles_saved": 0,
+    "confirm_reads": 0,
+    "read_only": true,
+    "fsync_per_line": true
+  },
+  "progress": "reports/taiji_task_semantic_contract_progress_20261105.jsonl"
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "taiji-task-semantic-contract-manifest-v1",
+  "step": "task_semantic_contract",
+  "date": "2026-11-05",
+  "report": "reports/taiji_task_semantic_contract_20261105.json",
+  "records": 416,
+  "examples": 832,
+  "goals_containing_name": 0,
+  "keys_containing_name": 0,
+  "dev_unseen_name_examples": 192,
+  "cpu_seconds": 0.21875,
+  "adam_updates": 0,
+  "forward_passes": 0,
+  "confirm_reads": 0
+}
