@@ -866,5 +866,14 @@
   "postprocess": {
     "turns_forwarded_corrected_to": 204,
     "reason": "the original expression counted every turn of the primary world but only correction surfaces of the three robustness worlds; replay count is 4 worlds x 51 turns; no reading changed"
+  },
+  "failed_attempt": {
+    "reason": "NameError in decode_decision: the template byte map lacked the two decision positions; crashed after collect_primary",
+    "progress_stage_at_abort": "collect_primary",
+    "cpu_seconds_lower_bound": 25.75,
+    "cpu_seconds_exact": null,
+    "accounting": "missing; recorded as missing, not zero",
+    "report_written": false,
+    "rerun_cpu_seconds": 119.67
   }
 }

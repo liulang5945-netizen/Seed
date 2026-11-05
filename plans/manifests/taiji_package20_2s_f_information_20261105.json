@@ -3,7 +3,7 @@
   "date": "2026-11-05",
   "verdict": "inconclusive",
   "report": "reports\\taiji_package20_2s_f_information_20261105.json",
-  "report_sha256": "15b81a00c19e2c0c7d42a414844e74d973427816c6c61d957f464b8e6cbebbec",
+  "report_sha256": "0e7f0633f73056c51fef903c87ee9ce28df8e5e346d1143c48b39b1bad5fcd79",
   "runner": "scripts\\training\\probe_taiji_package20_2s_f_information.py",
   "runner_sha256": "3a3c587b51abfe3eb3d40e4a761115c60c1f5fe6deb381018afd0148c8c96898",
   "replayed_runner_sha256": "cd23ce2e06b4b6ad1455378f0d9df4f60bef98762893756f6302f3a709c04119",
@@ -30,5 +30,7 @@
   },
   "cost_cpu_seconds": 119.67,
   "submitted_runner_sha256": "ab9b73ec25a57e044eaa7b59f167e269e8bc520abe3eeb8e440a936836aca675",
-  "run_sha_matches_submitted": false
+  "run_sha_matches_submitted": false,
+  "failed_attempt_cpu_lower_bound": 25.75,
+  "failed_attempt_cpu_exact": null
 }
