@@ -1,0 +1,1519 @@
+{
+  "package": "20.3b",
+  "date": "2026-11-05",
+  "verdict": "authority_weak",
+  "scope": "F authority gate: measure the gap, construct an oracle F by a teacher-forced full-score replay, and test three closed-form readouts; 0 training",
+  "script": {
+    "runner_sha256": "380cdc132f0420cd26938832cded85ecced7393efaee182586cb7144870b3fc3",
+    "submitted_runner_sha256": "af76a6223519bc34029e300622597bf4591738c8f82859d9f2a0982abc7b70f9",
+    "p2_script_sha256": "cd23ce2e06b4b6ad1455378f0d9df4f60bef98762893756f6302f3a709c04119",
+    "p2_head_sha256": "cd23ce2e06b4b6ad1455378f0d9df4f60bef98762893756f6302f3a709c04119"
+  },
+  "fixture": {
+    "seed": 20261105,
+    "world_id": "w000",
+    "turns": 51
+  },
+  "thresholds": {
+    "decision_positions": [
+      7,
+      8
+    ],
+    "gain_grid": [
+      1.0,
+      10.0,
+      100.0,
+      1000.0,
+      10000.0
+    ],
+    "lambda_grid": [
+      0.0001,
+      0.001,
+      0.01,
+      0.1
+    ],
+    "ranks": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "target_margin": 1.0,
+    "oracle_definition": "teacher-forced full-score replay: every emitted byte is the gold byte, so F is the state accumulated under perfect answers; diagnostic only",
+    "uniform_gain_definition": "projection = oracle_logits - zero_logits at decision positions, both read from the same actual pre-turn state so only F differs; logits(g) = actual_logits + g * projection",
+    "ridge_y_definition": "per decision bit that the actual answer gets wrong, +1 on the fixed left action byte and -1 on the fixed right action byte (reversed when the gold side is right), 0 where the actual answer is already right; the columns are the two global action bytes, never the per-surface gold label, so no label is injected at decode time",
+    "target_margin_note": "the target magnitude is 1 while every measured surface deficit is <= 0.0087, so the readout is a sign test: any correctly signed increment above the deficit flips the byte",
+    "readout_baseline": "every readout is added to the actual-run decision scores at the same surface, so byte_diff counts movement away from what the model emits",
+    "verdict_rule": {
+      "restorable": "some readout reaches decision_correct >= 11 of 22 and byte_diff > 0 (byte_diff counted against the actual-run constrained bytes)",
+      "not_wired": "every readout at its extreme setting -- uniform gain g=1e4, ridge at the selected lambda, rank readout r=8 -- still has byte_diff == 0",
+      "weak": "flips occur but decision_correct stays below 11 of 22",
+      "written_before_reading": true
+    }
+  },
+  "gap": {
+    "decision_bits_total": 44,
+    "decision_gap_median": -3.955996163562679e-05,
+    "decision_gap_min": -0.008666656099958937,
+    "decision_gap_max": 0.008711592000979594,
+    "negative_gap_bits": 28,
+    "gold_rank_distribution": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      ">3": 44
+    },
+    "surface_min_gap_median": -0.00033759411491543685,
+    "surface_deficit_median": 0.00033759411491543685,
+    "surface_deficit_max": 0.008666656099958937,
+    "needed_template_flips": 269,
+    "template_flip_gap_median": -0.23420945976125251,
+    "template_flip_gap_max": -0.015223869508897401,
+    "logit_spread_median": 0.07392336676379685,
+    "scale_ratio_median": 0.004566811952628351,
+    "conclusion": "deficit median 0.0003 vs spread median 0.0739 -> 0.005x spread",
+    "surfaces": [
+      {
+        "turn": 6,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 143,
+            "other": 183,
+            "gap": -1.0626555658764297e-06,
+            "rank": 18,
+            "argmax_is_gold": false
+          },
+          {
+            "position": 8,
+            "gold": 179,
+            "other": 166,
+            "gap": -0.0015091054165734038,
+            "rank": 30,
+            "argmax_is_gold": false
+          }
+        ],
+        "min_gap": -0.0015091054165734038,
+        "deficit": 0.0015091054165734038,
+        "template_flip_positions": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.022130985094699285,
+          -0.07148031609090379,
+          -0.4546935965167854,
+          -0.3016312683090758,
+          -0.6897102034653947,
+          -0.15686585356709737,
+          -0.07881139509533874,
+          -0.07952125358933525,
+          -0.0182995306416741,
+          -0.1471807371306475,
+          -0.080435395210651
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 7,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 143,
+            "other": 183,
+            "gap": 1.186832023566191e-05,
+            "rank": 17,
+            "argmax_is_gold": true
+          },
+          {
+            "position": 8,
+            "gold": 179,
+            "other": 166,
+            "gap": -0.0015773092072004593,
+            "rank": 30,
+            "argmax_is_gold": false
+          }
+        ],
+        "min_gap": -0.0015773092072004593,
+        "deficit": 0.0015773092072004593,
+        "template_flip_positions": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.11198080040500784,
+          -0.024188057340253807,
+          -0.06713131408289703,
+          -0.45972860852224334,
+          -0.31756311693648814,
+          -0.696272045378343,
+          -0.1546567338956275,
+          -0.07915200475562878,
+          -0.0813622203751594,
+          -0.018717736212450334,
+          -0.1474177072378405,
+          -0.08053616775469323
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 8,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 143,
+            "other": 183,
+            "gap": 8.69173467364683e-06,
+            "rank": 17,
+            "argmax_is_gold": true
+          },
+          {
+            "position": 8,
+            "gold": 179,
+            "other": 166,
+            "gap": -0.001591533378394499,
+            "rank": 30,
+            "argmax_is_gold": false
+          }
+        ],
+        "min_gap": -0.001591533378394499,
+        "deficit": 0.001591533378394499,
+        "template_flip_positions": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.11728631867425793,
+          -0.022680162497024075,
+          -0.06501382666732812,
+          -0.44205444525408777,
+          -0.32020795979417016,
+          -0.6948804452885046,
+          -0.14848777452783493,
+          -0.07778166318125618,
+          -0.08365268461105475,
+          -0.018522203639825714,
+          -0.14261739617806074,
+          -0.07912416109934013
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 9,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 183,
+            "other": 143,
+            "gap": -5.154614251615228e-06,
+            "rank": 18,
+            "argmax_is_gold": false
+          },
+          {
+            "position": 8,
+            "gold": 166,
+            "other": 179,
+            "gap": 0.0016138168958222047,
+            "rank": 19,
+            "argmax_is_gold": true
+          }
+        ],
+        "min_gap": -5.154614251615228e-06,
+        "deficit": 5.154614251615228e-06,
+        "template_flip_positions": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.13024155194401021,
+          -0.023643795998887173,
+          -0.06491655608223963,
+          -0.44555291797268115,
+          -0.32075486578233053,
+          -0.7039981156413858,
+          -0.15214494054085922,
+          -0.07854653711982976,
+          -0.08212257849979239,
+          -0.018613830298655692,
+          -0.14707248595732414,
+          -0.0798853591507777
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 10,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 143,
+            "other": 183,
+            "gap": 1.6173251088301188e-05,
+            "rank": 17,
+            "argmax_is_gold": true
+          },
+          {
+            "position": 8,
+            "gold": 179,
+            "other": 166,
+            "gap": -0.0016054523749235417,
+            "rank": 30,
+            "argmax_is_gold": false
+          }
+        ],
+        "min_gap": -0.0016054523749235417,
+        "deficit": 0.0016054523749235417,
+        "template_flip_positions": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.1041730633460383,
+          -0.023176430546543933,
+          -0.06421856782525753,
+          -0.44927211838970427,
+          -0.3284909545174158,
+          -0.6951397165405862,
+          -0.15010700529202875,
+          -0.07731250000576095,
+          -0.08270598927599902,
+          -0.018374036923399905,
+          -0.14446069254870206,
+          -0.07868550114520188
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 18,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 183,
+            "other": 143,
+            "gap": -3.362554604454006e-05,
+            "rank": 23,
+            "argmax_is_gold": false
+          },
+          {
+            "position": 8,
+            "gold": 166,
+            "other": 179,
+            "gap": -0.0003276248169221739,
+            "rank": 29,
+            "argmax_is_gold": false
+          }
+        ],
+        "min_gap": -0.0003276248169221739,
+        "deficit": 0.0003276248169221739,
+        "template_flip_positions": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.1076572459851392,
+          -0.015223869508897401,
+          -0.07134143303174656,
+          -0.4250701661664949,
+          -0.30556130130502734,
+          -0.6615620388978983,
+          -0.13930303525224186,
+          -0.09102845890455474,
+          -0.025622267563562562,
+          -0.13955035939592014,
+          -0.7350509221611368,
+          -0.23420945976125251
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 19,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 143,
+            "other": 183,
+            "gap": 6.843113631939358e-05,
+            "rank": 30,
+            "argmax_is_gold": true
+          },
+          {
+            "position": 8,
+            "gold": 179,
+            "other": 166,
+            "gap": 0.008481731685311078,
+            "rank": 19,
+            "argmax_is_gold": true
+          }
+        ],
+        "min_gap": 6.843113631939358e-05,
+        "deficit": 0.0,
+        "template_flip_positions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.5354226636709686,
+          -0.3346303084777564,
+          -0.22821098179379348,
+          -0.18177912104971425,
+          -0.33027663431739757,
+          -0.42751972349643974,
+          -0.6807970825773373,
+          -0.09563803102600273,
+          -0.020252748402504184,
+          -0.07578815104536664,
+          -0.5232562566025357,
+          -0.3733856904565698,
+          -0.7097273100897814
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 20,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 183,
+            "other": 143,
+            "gap": -0.0007623103404496849,
+            "rank": 37,
+            "argmax_is_gold": false
+          },
+          {
+            "position": 8,
+            "gold": 166,
+            "other": 179,
+            "gap": -1.4142364118678718e-05,
+            "rank": 30,
+            "argmax_is_gold": false
+          }
+        ],
+        "min_gap": -0.0007623103404496849,
+        "deficit": 0.0007623103404496849,
+        "template_flip_positions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.6961057392239864,
+          -0.6824870507794238,
+          -0.4337258491371853,
+          -0.2106939707341176,
+          -0.18105172981941584,
+          -0.10415283838690433,
+          -0.17022077053635093,
+          -0.6095892307957248,
+          -0.4158498756059484,
+          -0.9010740474430352,
+          -0.3627437966424867,
+          -0.7078509555340718,
+          -0.023256343100069844
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 21,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 183,
+            "other": 143,
+            "gap": -5.999379179751134e-05,
+            "rank": 24,
+            "argmax_is_gold": false
+          },
+          {
+            "position": 8,
+            "gold": 166,
+            "other": 179,
+            "gap": -0.0003306313735180512,
+            "rank": 29,
+            "argmax_is_gold": false
+          }
+        ],
+        "min_gap": -0.0003306313735180512,
+        "deficit": 0.0003306313735180512,
+        "template_flip_positions": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.01734755586762512,
+          -0.0677618883915494,
+          -0.489104665497616,
+          -0.34054762683605894,
+          -0.7058938167922297,
+          -0.1530245170564344,
+          -0.10131597059848274,
+          -0.028604777502721387,
+          -0.15532802374887544,
+          -0.7588229135725836,
+          -0.24236502920586686
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 22,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 143,
+            "other": 183,
+            "gap": 6.593905226161078e-05,
+            "rank": 29,
+            "argmax_is_gold": true
+          },
+          {
+            "position": 8,
+            "gold": 179,
+            "other": 166,
+            "gap": 0.008338393361759785,
+            "rank": 19,
+            "argmax_is_gold": true
+          }
+        ],
+        "min_gap": 6.593905226161078e-05,
+        "deficit": 0.0,
+        "template_flip_positions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.5383012403575044,
+          -0.33206757394351505,
+          -0.22842991662879408,
+          -0.18230921561081506,
+          -0.32320236130570684,
+          -0.4166453492185236,
+          -0.6844631337233223,
+          -0.09596569930318533,
+          -0.01971667260023767,
+          -0.07719343704013457,
+          -0.5127585956670119,
+          -0.36174391701302655,
+          -0.705345356450458
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 23,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 183,
+            "other": 143,
+            "gap": -0.0007666636860204114,
+            "rank": 37,
+            "argmax_is_gold": false
+          },
+          {
+            "position": 8,
+            "gold": 166,
+            "other": 179,
+            "gap": -1.4137265389406825e-05,
+            "rank": 30,
+            "argmax_is_gold": false
+          }
+        ],
+        "min_gap": -0.0007666636860204114,
+        "deficit": 0.0007666636860204114,
+        "template_flip_positions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.6929698820586122,
+          -0.6363758984953829,
+          -0.3955035614240394,
+          -0.20591101768899375,
+          -0.17956899480234056,
+          -0.10300708960653936,
+          -0.17516691001931595,
+          -0.5751717240426053,
+          -0.39751067874865936,
+          -0.8984770445089907,
+          -0.3524065431917632,
+          -0.7003200138578127,
+          -0.024308569643902607
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 24,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 183,
+            "other": 143,
+            "gap": -5.4138015784802165e-05,
+            "rank": 24,
+            "argmax_is_gold": false
+          },
+          {
+            "position": 8,
+            "gold": 166,
+            "other": 179,
+            "gap": -0.0003422708073748267,
+            "rank": 29,
+            "argmax_is_gold": false
+          }
+        ],
+        "min_gap": -0.0003422708073748267,
+        "deficit": 0.0003422708073748267,
+        "template_flip_positions": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.016619503634716846,
+          -0.0686210621158633,
+          -0.4675219985070281,
+          -0.32568295096147526,
+          -0.6943998654388244,
+          -0.14762125396903847,
+          -0.09994575167085577,
+          -0.02728942194574647,
+          -0.14845296597932847,
+          -0.745385598492799,
+          -0.2385495389400246
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 25,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 143,
+            "other": 183,
+            "gap": 6.199013168633132e-05,
+            "rank": 30,
+            "argmax_is_gold": true
+          },
+          {
+            "position": 8,
+            "gold": 179,
+            "other": 166,
+            "gap": 0.008711592000979594,
+            "rank": 19,
+            "argmax_is_gold": true
+          }
+        ],
+        "min_gap": 6.199013168633132e-05,
+        "deficit": 0.0,
+        "template_flip_positions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.5410477013896857,
+          -0.32663407962320284,
+          -0.24072932826793372,
+          -0.18723617430319442,
+          -0.3458469875971353,
+          -0.43625281525782394,
+          -0.6914596344347836,
+          -0.09911406716030365,
+          -0.020636946697050067,
+          -0.0748122350578533,
+          -0.5199726854976974,
+          -0.3669166478742361,
+          -0.7153910356561947
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 26,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 143,
+            "other": 183,
+            "gap": 0.0007410832125954048,
+            "rank": 35,
+            "argmax_is_gold": true
+          },
+          {
+            "position": 8,
+            "gold": 179,
+            "other": 166,
+            "gap": 1.3616049126331963e-05,
+            "rank": 28,
+            "argmax_is_gold": true
+          }
+        ],
+        "min_gap": 1.3616049126331963e-05,
+        "deficit": 0.0,
+        "template_flip_positions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.6817008020779806,
+          -0.6614866395442548,
+          -0.4027388073564054,
+          -0.20866917061856083,
+          -0.17854380160888017,
+          -0.10727071105634452,
+          -0.16999337619286922,
+          -0.5833503562844604,
+          -0.3998154845291099,
+          -0.8981963086860557,
+          -0.36202944728309217,
+          -0.6977535286727715,
+          -0.024412094389271468
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 27,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 183,
+            "other": 143,
+            "gap": -4.5494377226713525e-05,
+            "rank": 24,
+            "argmax_is_gold": false
+          },
+          {
+            "position": 8,
+            "gold": 166,
+            "other": 179,
+            "gap": -0.00032776164238002177,
+            "rank": 29,
+            "argmax_is_gold": false
+          }
+        ],
+        "min_gap": -0.00032776164238002177,
+        "deficit": 0.00032776164238002177,
+        "template_flip_positions": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.017677302870352556,
+          -0.06764724057014837,
+          -0.4702397888088933,
+          -0.3274094028616938,
+          -0.7072898836415309,
+          -0.15258569624838553,
+          -0.10142230442361827,
+          -0.028481789880722773,
+          -0.15503882384517484,
+          -0.7579315017513516,
+          -0.2391749689640297
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 28,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 183,
+            "other": 143,
+            "gap": -5.8522903634846454e-05,
+            "rank": 34,
+            "argmax_is_gold": false
+          },
+          {
+            "position": 8,
+            "gold": 166,
+            "other": 179,
+            "gap": -0.008627691785365184,
+            "rank": 29,
+            "argmax_is_gold": false
+          }
+        ],
+        "min_gap": -0.008627691785365184,
+        "deficit": 0.008627691785365184,
+        "template_flip_positions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.5490381538807838,
+          -0.33295541616719104,
+          -0.23458707505643894,
+          -0.18386024140120524,
+          -0.3407366105860694,
+          -0.4381361244536468,
+          -0.6892225973324098,
+          -0.09946137599758056,
+          -0.019973656492576916,
+          -0.0742699706316482,
+          -0.520294560684413,
+          -0.3698022106845263,
+          -0.7176909147700279
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 29,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 143,
+            "other": 183,
+            "gap": 0.0006985104481149157,
+            "rank": 35,
+            "argmax_is_gold": true
+          },
+          {
+            "position": 8,
+            "gold": 179,
+            "other": 166,
+            "gap": 1.2662531712486278e-05,
+            "rank": 28,
+            "argmax_is_gold": true
+          }
+        ],
+        "min_gap": 1.2662531712486278e-05,
+        "deficit": 0.0,
+        "template_flip_positions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.692840593395374,
+          -0.7304251821267097,
+          -0.4321106403990741,
+          -0.2134604577405686,
+          -0.1763621031777744,
+          -0.10392019494411227,
+          -0.18552405988277543,
+          -0.6274691142003467,
+          -0.4111776819477336,
+          -0.9006274063665626,
+          -0.3639741821880052,
+          -0.7015602447781235,
+          -0.022501728761260525
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 30,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 183,
+            "other": 143,
+            "gap": -6.176702911748908e-05,
+            "rank": 24,
+            "argmax_is_gold": false
+          },
+          {
+            "position": 8,
+            "gold": 166,
+            "other": 179,
+            "gap": -0.000332917422456047,
+            "rank": 29,
+            "argmax_is_gold": false
+          }
+        ],
+        "min_gap": -0.000332917422456047,
+        "deficit": 0.000332917422456047,
+        "template_flip_positions": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.01642292510869897,
+          -0.06862109215856566,
+          -0.4734879307737134,
+          -0.3287859935548469,
+          -0.685987758497544,
+          -0.14805584863868557,
+          -0.0993210163683621,
+          -0.02736398781094444,
+          -0.14722787335172774,
+          -0.740527268121419,
+          -0.23657659848754595
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 31,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 183,
+            "other": 143,
+            "gap": -5.673650372240964e-05,
+            "rank": 34,
+            "argmax_is_gold": false
+          },
+          {
+            "position": 8,
+            "gold": 166,
+            "other": 179,
+            "gap": -0.008444028945825697,
+            "rank": 29,
+            "argmax_is_gold": false
+          }
+        ],
+        "min_gap": -0.008444028945825697,
+        "deficit": 0.008444028945825697,
+        "template_flip_positions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.543499751956329,
+          -0.33018704683026856,
+          -0.22098122948932988,
+          -0.17914835008845764,
+          -0.32080888687201287,
+          -0.41407352284186755,
+          -0.6821487735483098,
+          -0.09562679252368793,
+          -0.018936730556901395,
+          -0.07616676136486422,
+          -0.5098678916019568,
+          -0.3587382626272111,
+          -0.705608241521335
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 32,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 183,
+            "other": 143,
+            "gap": -0.0007195424637266735,
+            "rank": 37,
+            "argmax_is_gold": false
+          },
+          {
+            "position": 8,
+            "gold": 166,
+            "other": 179,
+            "gap": -1.2626919278177219e-05,
+            "rank": 30,
+            "argmax_is_gold": false
+          }
+        ],
+        "min_gap": -0.0007195424637266735,
+        "deficit": 0.0007195424637266735,
+        "template_flip_positions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.6786040871800016,
+          -0.6899902489349309,
+          -0.39863154613077967,
+          -0.2074957107786266,
+          -0.17515857495952056,
+          -0.10574177019737765,
+          -0.1684524959719569,
+          -0.5914449078543034,
+          -0.394229815362872,
+          -0.8966968209073957,
+          -0.3589255303116426,
+          -0.6911727819104432,
+          -0.023486973020768333
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 33,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 143,
+            "other": 183,
+            "gap": 4.906434360802374e-05,
+            "rank": 14,
+            "argmax_is_gold": true
+          },
+          {
+            "position": 8,
+            "gold": 179,
+            "other": 166,
+            "gap": 0.0003076999578629381,
+            "rank": 28,
+            "argmax_is_gold": true
+          }
+        ],
+        "min_gap": 4.906434360802374e-05,
+        "deficit": 0.0,
+        "template_flip_positions": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.01694498074465545,
+          -0.0682709484705597,
+          -0.47227988703135293,
+          -0.32331426034585564,
+          -0.6994671994879965,
+          -0.15274192609912668,
+          -0.10129566689253268,
+          -0.028083926521085885,
+          -0.15333928364367688,
+          -0.7545842691790259,
+          -0.23655341935775492
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      },
+      {
+        "turn": 34,
+        "decision_bits": [
+          {
+            "position": 7,
+            "gold": 183,
+            "other": 143,
+            "gap": -5.371271094217083e-05,
+            "rank": 34,
+            "argmax_is_gold": false
+          },
+          {
+            "position": 8,
+            "gold": 166,
+            "other": 179,
+            "gap": -0.008666656099958937,
+            "rank": 29,
+            "argmax_is_gold": false
+          }
+        ],
+        "min_gap": -0.008666656099958937,
+        "deficit": 0.008666656099958937,
+        "template_flip_positions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "template_flip_gaps": [
+          -0.5470130688611975,
+          -0.33731127429100577,
+          -0.23217384019830883,
+          -0.18148259390976745,
+          -0.3391138344769586,
+          -0.43222561640143903,
+          -0.6882427707175925,
+          -0.09940504278287356,
+          -0.019418540518893072,
+          -0.07450766790978872,
+          -0.5208519635007308,
+          -0.36806344881877034,
+          -0.7122918944916135
+        ],
+        "teacher_decision_correct": true,
+        "actual_decision_correct": false
+      }
+    ]
+  },
+  "oracle": {
+    "definition": "teacher-forced full-score replay: every emitted byte is the gold byte, so F is the state accumulated under perfect answers; diagnostic only",
+    "teacher_decision_correct": 22,
+    "self_readout": {
+      "decision_correct": 0,
+      "full_correct": 0,
+      "byte_diff_vs_actual": 0,
+      "note": "pure F swap on the same pre-turn state; diagnostic only, not in the verdict rule"
+    },
+    "teacher_fast_norms": [
+      0.9332042013668127,
+      0.9332042013668127,
+      0.9332042013668127,
+      0.9332042013668127,
+      0.9332042013668127,
+      1.2821180023199334,
+      1.2821180023199334,
+      1.2821180023199334,
+      1.2821180023199334,
+      1.2821180023199334,
+      1.2821180023199334,
+      1.2821180023199334,
+      1.2821180023199334,
+      1.2821180023199334,
+      1.2821180023199334,
+      1.2821180023199334,
+      1.2821180023199334,
+      1.2821180023199334,
+      1.2821180023199334,
+      1.2821180023199334,
+      1.2821180023199334,
+      1.2821180023199334
+    ],
+    "actual_fast_norms": [
+      0.9499950422503572,
+      0.9499950422503572,
+      0.9499950422503572,
+      0.9499950422503572,
+      0.9499950422503572,
+      1.2915287568783882,
+      1.2915287568783882,
+      1.2915287568783882,
+      1.2915287568783882,
+      1.2915287568783882,
+      1.2915287568783882,
+      1.2915287568783882,
+      1.2915287568783882,
+      1.2915287568783882,
+      1.2915287568783882,
+      1.2915287568783882,
+      1.2915287568783882,
+      1.2915287568783882,
+      1.2915287568783882,
+      1.2915287568783882,
+      1.2915287568783882,
+      1.2915287568783882
+    ]
+  },
+  "variants": {
+    "uniform_gain": {
+      "grid": [
+        {
+          "gain": 1.0,
+          "decision_correct": 0,
+          "full_correct": 0,
+          "decision_bit_accuracy": 0.0,
+          "byte_diff_vs_actual": 0
+        },
+        {
+          "gain": 10.0,
+          "decision_correct": 0,
+          "full_correct": 0,
+          "decision_bit_accuracy": 0.0,
+          "byte_diff_vs_actual": 0
+        },
+        {
+          "gain": 100.0,
+          "decision_correct": 0,
+          "full_correct": 0,
+          "decision_bit_accuracy": 0.0,
+          "byte_diff_vs_actual": 0
+        },
+        {
+          "gain": 1000.0,
+          "decision_correct": 0,
+          "full_correct": 0,
+          "decision_bit_accuracy": 0.0,
+          "byte_diff_vs_actual": 0
+        },
+        {
+          "gain": 10000.0,
+          "decision_correct": 0,
+          "full_correct": 0,
+          "decision_bit_accuracy": 0.0,
+          "byte_diff_vs_actual": 19
+        }
+      ],
+      "first_gain_with_byte_diff": 10000.0,
+      "decision_correct_at_first_flip": 0,
+      "byte_diff_at_first_flip": 19,
+      "needs_gradient_training": false,
+      "note": "g is a scalar multiplier on the existing F projection; no weights are learned",
+      "new_parameter_count": 1
+    },
+    "ridge": {
+      "lambda_grid": [
+        {
+          "decision_correct": 9,
+          "full_correct": 0,
+          "decision_bit_accuracy": 0.5454545454545454,
+          "flipped_to_gold_rate": 0.5454545454545454,
+          "sign_agreement": 0.6818181818181818,
+          "byte_diff_vs_actual": 35,
+          "byte_diff_vs_oracle": 35,
+          "lambda": 0.0001,
+          "loo_mse": 1.0241301338842972
+        },
+        {
+          "decision_correct": 9,
+          "full_correct": 0,
+          "decision_bit_accuracy": 0.5454545454545454,
+          "flipped_to_gold_rate": 0.5454545454545454,
+          "sign_agreement": 0.6818181818181818,
+          "byte_diff_vs_actual": 35,
+          "byte_diff_vs_oracle": 35,
+          "lambda": 0.001,
+          "loo_mse": 1.0239725723715147
+        },
+        {
+          "decision_correct": 9,
+          "full_correct": 0,
+          "decision_bit_accuracy": 0.5454545454545454,
+          "flipped_to_gold_rate": 0.5454545454545454,
+          "sign_agreement": 0.6818181818181818,
+          "byte_diff_vs_actual": 35,
+          "byte_diff_vs_oracle": 35,
+          "lambda": 0.01,
+          "loo_mse": 1.0224718102874417
+        },
+        {
+          "decision_correct": 9,
+          "full_correct": 0,
+          "decision_bit_accuracy": 0.5227272727272727,
+          "flipped_to_gold_rate": 0.5227272727272727,
+          "sign_agreement": 0.6818181818181818,
+          "byte_diff_vs_actual": 32,
+          "byte_diff_vs_oracle": 32,
+          "lambda": 0.1,
+          "loo_mse": 1.0131562555694957
+        }
+      ],
+      "selected_lambda": 0.1,
+      "selected": {
+        "decision_correct": 9,
+        "full_correct": 0,
+        "decision_bit_accuracy": 0.5227272727272727,
+        "flipped_to_gold_rate": 0.5227272727272727,
+        "sign_agreement": 0.6818181818181818,
+        "byte_diff_vs_actual": 32,
+        "byte_diff_vs_oracle": 32,
+        "lambda": 0.1,
+        "loo_mse": 1.0131562555694957
+      },
+      "weight_shape": [
+        4,
+        8192
+      ],
+      "weight_rank": 1,
+      "weight_frobenius_norm": 3.8273940522186516,
+      "weight_spectral_norm": 3.827394052218654,
+      "parameter_count_full": 32768,
+      "parameter_count_naive_full": 368640,
+      "needs_gradient_training": false,
+      "note": "W is solved by the ridge normal equations; Y is the fixed gold-margin target, not derived from F; the naive 8,192 x 15 x 3 form is 368,640 parameters, while the decision surface used here is 3 bits x 2 candidate bytes",
+      "new_parameter_count": 32768
+    },
+    "rank": {
+      "grid": [
+        {
+          "decision_correct": 9,
+          "full_correct": 0,
+          "decision_bit_accuracy": 0.5227272727272727,
+          "flipped_to_gold_rate": 0.5227272727272727,
+          "sign_agreement": 0.6818181818181818,
+          "byte_diff_vs_actual": 32,
+          "byte_diff_vs_oracle": 32,
+          "rank": 1,
+          "parameter_count": 8196
+        },
+        {
+          "decision_correct": 9,
+          "full_correct": 0,
+          "decision_bit_accuracy": 0.5227272727272727,
+          "flipped_to_gold_rate": 0.5227272727272727,
+          "sign_agreement": 0.6818181818181818,
+          "byte_diff_vs_actual": 32,
+          "byte_diff_vs_oracle": 32,
+          "rank": 2,
+          "parameter_count": 16392
+        },
+        {
+          "decision_correct": 9,
+          "full_correct": 0,
+          "decision_bit_accuracy": 0.5227272727272727,
+          "flipped_to_gold_rate": 0.5227272727272727,
+          "sign_agreement": 0.6818181818181818,
+          "byte_diff_vs_actual": 32,
+          "byte_diff_vs_oracle": 32,
+          "rank": 4,
+          "parameter_count": 32784
+        },
+        {
+          "decision_correct": 9,
+          "full_correct": 0,
+          "decision_bit_accuracy": 0.5227272727272727,
+          "flipped_to_gold_rate": 0.5227272727272727,
+          "sign_agreement": 0.6818181818181818,
+          "byte_diff_vs_actual": 32,
+          "byte_diff_vs_oracle": 32,
+          "rank": 8,
+          "parameter_count": 65568
+        }
+      ],
+      "selected_lambda": 0.1,
+      "full_matrix_parameter_count": 32768,
+      "note": "rank-r factorisation W = A B^T costs r x (8,192 + 6) parameters; the naive full-position form is 8,192 x 15 x 3 = 368,640",
+      "new_parameter_count": [
+        8196,
+        16392,
+        32784,
+        65568
+      ]
+    }
+  },
+  "verdict_rule": {
+    "restorable": "some readout reaches decision_correct >= 11 of 22 and byte_diff > 0 (byte_diff counted against the actual-run constrained bytes)",
+    "not_wired": "every readout at its extreme setting -- uniform gain g=1e4, ridge at the selected lambda, rank readout r=8 -- still has byte_diff == 0",
+    "weak": "flips occur but decision_correct stays below 11 of 22",
+    "written_before_reading": true
+  },
+  "gates": {
+    "p2_is_head_bytes": true,
+    "cf1_assembly_intact": true,
+    "surfaces_22": true,
+    "oracle_finite": true,
+    "oracle_differs_from_actual": true,
+    "no_training": true,
+    "no_optimizer_steps": true,
+    "no_backward_calls": true,
+    "no_new_parameters_persisted": true,
+    "graphs_unchanged": true
+  },
+  "cost": {
+    "cpu_seconds": 56.92,
+    "wall_seconds": 58.83,
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "backward_calls": 0,
+    "confirm_reads": 0,
+    "new_parameters_persisted": 0,
+    "attempts": 3,
+    "discarded_attempt_cpu": "missing"
+  },
+  "boundary": "No addressing fix, no tau/alpha change, no 20.4 entry, no pricing, no training proposal; result returns to owner",
+  "verdict_detail": "ridge LOO lambda=0.1: 9/22 decisions (23/44 bits), sign agreement 0.682, 32 decision bytes changed, rank-1 W, 49152 params, 0 gradient steps; uniform gain first byte change at g=1e4 with 0/22 correct; middle state, no side chosen"
+}

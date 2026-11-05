@@ -1,0 +1,36 @@
+{
+  "package": "20.3b",
+  "date": "2026-11-05",
+  "verdict": "authority_weak",
+  "report": "reports/taiji_package20_3b_f_authority_20261105.json",
+  "report_sha256": "0bb4a0cea25f66cc9c71a084335145a68d28d89c57692874c60ffeaa9d778066",
+  "runner_sha256": "380cdc132f0420cd26938832cded85ecced7393efaee182586cb7144870b3fc3",
+  "submitted_runner_sha256": "af76a6223519bc34029e300622597bf4591738c8f82859d9f2a0982abc7b70f9",
+  "p2_script_sha256": "cd23ce2e06b4b6ad1455378f0d9df4f60bef98762893756f6302f3a709c04119",
+  "fixture_seed": 20261105,
+  "correction_surfaces": 22,
+  "gates": {
+    "p2_is_head_bytes": true,
+    "cf1_assembly_intact": true,
+    "surfaces_22": true,
+    "oracle_finite": true,
+    "oracle_differs_from_actual": true,
+    "no_training": true,
+    "no_optimizer_steps": true,
+    "no_backward_calls": true,
+    "no_new_parameters_persisted": true,
+    "graphs_unchanged": true
+  },
+  "cost": {
+    "cpu_seconds": 56.92,
+    "wall_seconds": 58.83,
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "backward_calls": 0,
+    "confirm_reads": 0,
+    "new_parameters_persisted": 0,
+    "attempts": 3,
+    "discarded_attempt_cpu": "missing"
+  },
+  "verdict_detail": "ridge LOO lambda=0.1: 9/22 decisions (23/44 bits), sign agreement 0.682, 32 decision bytes changed, rank-1 W, 49152 params, 0 gradient steps; uniform gain first byte change at g=1e4 with 0/22 correct; middle state, no side chosen"
+}
