@@ -112,3 +112,5 @@ R 编号保留原合同与实验身份；实施统一使用总计划步骤 01–
 [E1–E11计算图审查的数学裁定](MATH-ADJUDICATION_CORE_GRAPH_20261104.md)复核[14项前沿意见](TAIJI_ALGORITHM_FRONTIER_MATH_REVIEW_20261104.md)，保留条件性风险，纠正表达性/KKT/OP2合法域推广，并给出生长父切空间与约束近端解的补充。算法设计责任见系统计划M-GRAPH-1，执行队首仍只查MASTER-PLAN。
 
 [执行包20 rev2：可变规则学习、迁移与反例纠正](PLAN-PACKAGE20_RULE_LEARNING_CORRECTION_20261105.md)承接Task1结构能力后的学习残余，含父组合身份、51轮分母、CF1与独立无F对照、误差/保持/预算及有限出口；本轮只有规划与公共规则静态预审。
+
+[多模态与物理世界的共同图设计](DESIGN-MULTIMODAL_PHYSICAL_WORLD_20261105.md)说明专用感知、共同对象/时空证据、动作后果和真实反馈的责任；接口前置，媒体训练条件准入，当前CF1不因此获得物理理解能力声明。
