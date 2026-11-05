@@ -1,0 +1,520 @@
+{
+  "package": "20.2",
+  "date": "2026-11-05",
+  "verdict": "ready",
+  "scope": "credit chain, negative controls, full save and independent restore; 0 training",
+  "credit": {
+    "a1": {
+      "probe_turn": 18,
+      "probe_kind": "current_v2",
+      "loss": 15.401160359114979,
+      "fast_grad_norm": 0.06883239778674924,
+      "fast_grad_by_head": [
+        [
+          0.0054797180218596146,
+          0.005223487889315048
+        ],
+        [
+          0.03783191415914206,
+          0.03574434021842648
+        ],
+        [
+          0.029793026802609687,
+          0.03291471690014736
+        ],
+        [
+          0.000548284781064461,
+          0.0006096000902635489
+        ]
+      ],
+      "finite": true,
+      "share_of_loss": 0.004469299467166914,
+      "verdict": "reachable"
+    },
+    "a2": {
+      "tensors": 135,
+      "grad_norms_present": 0,
+      "nonzero": 0,
+      "violations": [],
+      "pass": true
+    },
+    "a3": {
+      "design_freeze_param_grads": 0,
+      "design_freeze_fast_grad_norm": 0.06883239778674924,
+      "design_freeze_share": 1.0,
+      "thaw_control_forward_identical": 0.0,
+      "thaw_control_param_grad_norm": 73.50383029485624,
+      "thaw_control_tensors_with_grad": 107,
+      "thaw_control_fast_grad_norm": 0.06883239778674924,
+      "thaw_control_share": 0.0009355702956450458,
+      "zero_fast_loss": 15.4003736180611,
+      "f_influences_loss": 0.0007867410538793251,
+      "pass": true
+    },
+    "a4": {
+      "releases": [
+        {
+          "after_turn": 5,
+          "version": 1,
+          "lines": 5,
+          "source_ids": [
+            "0-fb-v1-0",
+            "0-fb-v1-1",
+            "0-fb-v1-2",
+            "0-fb-v1-3",
+            "0-fb-v1-4"
+          ],
+          "referenced_turns": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "write_enabled": true,
+          "written": 5,
+          "applied_receipts": 5,
+          "changed_heads": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              3,
+              1
+            ]
+          ],
+          "fast_max_delta": 0.07668693624374316,
+          "following_correction_turns": [
+            {
+              "turn": 6,
+              "kind": "query_v1"
+            },
+            {
+              "turn": 7,
+              "kind": "query_v1"
+            },
+            {
+              "turn": 8,
+              "kind": "query_v1"
+            },
+            {
+              "turn": 9,
+              "kind": "query_v1"
+            },
+            {
+              "turn": 10,
+              "kind": "query_v1"
+            }
+          ]
+        },
+        {
+          "after_turn": 17,
+          "version": 2,
+          "lines": 5,
+          "source_ids": [
+            "0-fb-v2-0",
+            "0-fb-v2-1",
+            "0-fb-v2-2",
+            "0-fb-v2-3",
+            "0-fb-v2-4"
+          ],
+          "referenced_turns": [
+            13,
+            14,
+            15,
+            16,
+            17
+          ],
+          "write_enabled": true,
+          "written": 5,
+          "applied_receipts": 5,
+          "changed_heads": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              3,
+              1
+            ]
+          ],
+          "fast_max_delta": 0.03182028988983364,
+          "following_correction_turns": [
+            {
+              "turn": 18,
+              "kind": "current_v2"
+            },
+            {
+              "turn": 19,
+              "kind": "current_v2"
+            },
+            {
+              "turn": 20,
+              "kind": "current_v2"
+            },
+            {
+              "turn": 21,
+              "kind": "current_v2"
+            },
+            {
+              "turn": 22,
+              "kind": "current_v2"
+            },
+            {
+              "turn": 23,
+              "kind": "current_v2"
+            },
+            {
+              "turn": 24,
+              "kind": "current_v2"
+            },
+            {
+              "turn": 25,
+              "kind": "current_v2"
+            },
+            {
+              "turn": 26,
+              "kind": "current_v2"
+            },
+            {
+              "turn": 27,
+              "kind": "current_v2"
+            },
+            {
+              "turn": 28,
+              "kind": "current_v2"
+            },
+            {
+              "turn": 29,
+              "kind": "previous_v1"
+            },
+            {
+              "turn": 30,
+              "kind": "previous_v1"
+            },
+            {
+              "turn": 31,
+              "kind": "previous_v1"
+            },
+            {
+              "turn": 32,
+              "kind": "previous_v1"
+            },
+            {
+              "turn": 33,
+              "kind": "previous_v1"
+            },
+            {
+              "turn": 34,
+              "kind": "previous_v1"
+            }
+          ]
+        }
+      ],
+      "binding": {
+        "released_lines": 10,
+        "query_matches_source_turn": 10,
+        "released_after_referenced_turn": 10,
+        "applied_receipts": 10,
+        "binding_ok": true
+      },
+      "pass": true
+    }
+  },
+  "controls": {
+    "b_eh": {
+      "fast_writes": 0,
+      "correction_accuracy": {
+        "correction_turns": 22,
+        "full_match": 0,
+        "decision_match": 0,
+        "full_rate": 0.0
+      },
+      "fast_grad_norm": 0.06880230040783417,
+      "share_of_loss": 0.00446756882200605,
+      "share_thaw": 0.0009352003382190375
+    },
+    "feedback_scrambled": {
+      "fast_writes": 10,
+      "correction_accuracy": {
+        "correction_turns": 22,
+        "full_match": 0,
+        "decision_match": 0,
+        "full_rate": 0.0
+      },
+      "fast_grad_norm": 0.05347854155786557,
+      "norm_change_vs_real": 0.22306147573780152,
+      "share_thaw": 0.0004112300040734734,
+      "share_change_vs_real": 0.560449913825082,
+      "direction_cosine_vs_real": -0.027943838611926865,
+      "fast_divergence_vs_real": 0.025379214296457907,
+      "probe_loss": 19.076001790240202,
+      "output_not_better": true
+    },
+    "parity_fast_off": {
+      "turns_compared": 51,
+      "bytes_compared": 765,
+      "byte_identical": 765,
+      "max_abs_logit_delta": 0.0,
+      "byte_mismatch_turns": 0
+    },
+    "real_correction_accuracy": {
+      "correction_turns": 22,
+      "full_match": 0,
+      "decision_match": 0,
+      "full_rate": 0.0
+    },
+    "real_share_thaw": 0.0009355702956450458,
+    "pass": true
+  },
+  "recovery": {
+    "full": {
+      "checkpoint": "output\\taiji_package20_2_recovery\\mid_session2_turn18.pt",
+      "sha256": "09a0ba02bb39c2d5d8df3c50ffe9a5f88b061618e13b53b8d495528343e61d5b",
+      "bytes": 88221,
+      "state_restore_exact": true,
+      "resumed_turns": 6,
+      "compare": {
+        "turns_compared": 6,
+        "bytes_compared": 90,
+        "byte_identical": 90,
+        "max_abs_logit_delta": 0.0,
+        "byte_mismatch_turns": 0
+      },
+      "pass": true
+    },
+    "cross_session": {
+      "checkpoint": "output\\taiji_package20_2_recovery\\end_session1_turn10.pt",
+      "sha256": "74960749107a8fdc43a2b4287f639cf29c23b69602b320c78cfe9b6da146a7f9",
+      "fast_written_before_boundary": true,
+      "fast_persisted_after_load": true,
+      "journal_persisted": true,
+      "f_reset_at_boundary": false,
+      "resumed_turns": 6,
+      "compare": {
+        "turns_compared": 6,
+        "bytes_compared": 90,
+        "byte_identical": 90,
+        "max_abs_logit_delta": 0.0,
+        "byte_mismatch_turns": 0
+      },
+      "pass": true
+    },
+    "crash": {
+      "artifact": "output\\taiji_package20_2_recovery\\mid_session2_turn18_truncated.pt",
+      "bytes": 29407,
+      "load_rejected": true,
+      "error": "OSError",
+      "canonical_unchanged": true,
+      "recovered_turns": 6,
+      "compare": {
+        "turns_compared": 6,
+        "bytes_compared": 90,
+        "byte_identical": 90,
+        "max_abs_logit_delta": 0.0,
+        "byte_mismatch_turns": 0
+      },
+      "pass": true
+    },
+    "state_fields": [
+      {
+        "name": "h",
+        "kind": "persistent",
+        "serialized": true,
+        "restored": true,
+        "byte_identical": true
+      },
+      {
+        "name": "fast",
+        "kind": "persistent",
+        "serialized": true,
+        "restored": true,
+        "byte_identical": true
+      },
+      {
+        "name": "nu_ema",
+        "kind": "persistent",
+        "serialized": true,
+        "restored": true,
+        "byte_identical": true
+      },
+      {
+        "name": "coverage",
+        "kind": "persistent",
+        "serialized": true,
+        "restored": true,
+        "byte_identical": true
+      },
+      {
+        "name": "prior",
+        "kind": "persistent",
+        "serialized": true,
+        "restored": true,
+        "byte_identical": true
+      },
+      {
+        "name": "keys",
+        "kind": "persistent",
+        "serialized": true,
+        "restored": true,
+        "byte_identical": true
+      },
+      {
+        "name": "journal",
+        "kind": "persistent",
+        "serialized": true,
+        "restored": true,
+        "byte_identical": true,
+        "entries": 18
+      },
+      {
+        "name": "previous_byte",
+        "kind": "session",
+        "serialized": true,
+        "restored": true,
+        "byte_identical": true,
+        "restore_semantics": "reset to EOS"
+      },
+      {
+        "name": "turn_cursor",
+        "kind": "session",
+        "serialized": true,
+        "restored": true,
+        "byte_identical": true,
+        "restore_semantics": "reset to 0"
+      }
+    ],
+    "pass": true
+  },
+  "dry_forward": {
+    "turns_forwarded": 51,
+    "logit_shape": [
+      15,
+      257
+    ],
+    "answer_bytes": 15,
+    "finite_logits": true,
+    "cf1_fast_writes": 10,
+    "b_eh_fast_writes": 0,
+    "backward_calls": 6,
+    "turns_covered": 224
+  },
+  "gates": {
+    "a1_credit_reachable": true,
+    "a2_session_freeze": true,
+    "a3_f_only": true,
+    "a4_binding": true,
+    "b_eh_zero_writes": true,
+    "feedback_shuffled_credit_changed": true,
+    "feedback_shuffled_not_better": true,
+    "parity_fast_off": true,
+    "full_restore": true,
+    "cross_session_restore": true,
+    "crash_recovery": true,
+    "zero_training": true,
+    "state_assets_untouched": true,
+    "parent_weights_unchanged": true
+  },
+  "cost": {
+    "cpu_seconds": 153.08,
+    "wall_seconds": 159.04,
+    "cpu_cap": 400.0,
+    "wall_cap": 3600.0,
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "backward_calls": 6,
+    "confirm_reads": 0,
+    "new_parameters": 0,
+    "frozen_parameters": 135,
+    "freeze_list": [
+      "W",
+      "R",
+      "P",
+      "encoder.embedding.weight",
+      "encoder.input.weight",
+      "encoder.input.bias",
+      "encoder.convolutions.0.weight",
+      "encoder.convolutions.0.bias",
+      "encoder.convolutions.1.weight",
+      "encoder.convolutions.1.bias",
+      "encoder.convolutions.2.weight",
+      "encoder.convolutions.2.bias",
+      "encoder.event.weight",
+      "encoder.event.bias",
+      "xi.weight",
+      "xi.bias",
+      "readout.query.0.weight",
+      "readout.query.1.weight",
+      "readout.keys.0.weight",
+      "readout.keys.1.weight",
+      "readout.keys.2.weight",
+      "readout.keys.3.weight",
+      "readout.keys.4.weight",
+      "readout.keys.5.weight",
+      "readout.keys.6.weight",
+      "readout.keys.7.weight",
+      "readout.values.0.weight",
+      "readout.values.1.weight",
+      "readout.values.2.weight",
+      "readout.values.3.weight",
+      "readout.values.4.weight",
+      "readout.values.5.weight",
+      "readout.values.6.weight",
+      "readout.values.7.weight",
+      "readout.output.weight",
+      "expression.generate.weight",
+      "expression.generate.bias",
+      "expression.mix.weight",
+      "expression.mix.bias"
+    ]
+  }
+}

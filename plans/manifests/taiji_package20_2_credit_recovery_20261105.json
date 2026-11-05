@@ -1,0 +1,112 @@
+{
+  "package": "20.2",
+  "date": "2026-11-05",
+  "verdict": "ready",
+  "report": "reports\\taiji_package20_2_credit_recovery_20261105.json",
+  "report_sha256": "957af941449030e28b3d257580b317e7eb9444fcbfcba8b87858dc88dac49bdb",
+  "fixture_digest": "feb19af1c1db46888a9ad679086958707b796986114ba657f8d7d7e8a80db49a",
+  "parent_bundle": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+  "parent_bundle_sha256": "fe04fbfb14aa0390877385a4429f2a851396a6fe6acb3107bae0a5e4e331dfca",
+  "parent_parameter_sha256": "c5ebe35b9bf9442383ba0f568f8b7825466ec97f31ee35625182270aee1934c6",
+  "reference_assemblies": {
+    "cf1": {
+      "path": "output\\taiji_package20_1_cf1_initialized_untrained.pt",
+      "sha256": "b62d6fe6a0721fd82c7c43d575e600c48ffc8e31ff959bfdf14ef9ff07d0039e",
+      "label": "initialized_untrained"
+    },
+    "b_eh": {
+      "path": "output\\taiji_package20_1_b_eh_initialized_untrained.pt",
+      "sha256": "64cb327e3a8442ef0c59e04b14445a08ab3dccbb8ac42cf6547e0efa4e6f7f46",
+      "label": "initialized_untrained"
+    },
+    "untouched": true
+  },
+  "saved_states": [
+    {
+      "path": "output\\taiji_package20_2_recovery\\mid_session2_turn18.pt",
+      "sha256": "09a0ba02bb39c2d5d8df3c50ffe9a5f88b061618e13b53b8d495528343e61d5b",
+      "label": "recovery_copy"
+    },
+    {
+      "path": "output\\taiji_package20_2_recovery\\end_session1_turn10.pt",
+      "sha256": "74960749107a8fdc43a2b4287f639cf29c23b69602b320c78cfe9b6da146a7f9",
+      "label": "recovery_copy"
+    },
+    {
+      "path": "output\\taiji_package20_2_recovery\\mid_session2_turn18_truncated.pt",
+      "sha256": "9c7cce4a3844799c5d7f3ae870f148aecff01cea7e3c0b0cb1f6d4be0acbee29",
+      "label": "crash_artifact"
+    }
+  ],
+  "saved_state_count": 3,
+  "gates": {
+    "a1_credit_reachable": true,
+    "a2_session_freeze": true,
+    "a3_f_only": true,
+    "a4_binding": true,
+    "b_eh_zero_writes": true,
+    "feedback_shuffled_credit_changed": true,
+    "feedback_shuffled_not_better": true,
+    "parity_fast_off": true,
+    "full_restore": true,
+    "cross_session_restore": true,
+    "crash_recovery": true,
+    "zero_training": true,
+    "state_assets_untouched": true,
+    "parent_weights_unchanged": true
+  },
+  "cost": {
+    "cpu_seconds": 153.08,
+    "wall_seconds": 159.04,
+    "cpu_cap": 400.0,
+    "wall_cap": 3600.0,
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "backward_calls": 6,
+    "confirm_reads": 0,
+    "new_parameters": 0,
+    "frozen_parameters": 135,
+    "freeze_list": [
+      "W",
+      "R",
+      "P",
+      "encoder.embedding.weight",
+      "encoder.input.weight",
+      "encoder.input.bias",
+      "encoder.convolutions.0.weight",
+      "encoder.convolutions.0.bias",
+      "encoder.convolutions.1.weight",
+      "encoder.convolutions.1.bias",
+      "encoder.convolutions.2.weight",
+      "encoder.convolutions.2.bias",
+      "encoder.event.weight",
+      "encoder.event.bias",
+      "xi.weight",
+      "xi.bias",
+      "readout.query.0.weight",
+      "readout.query.1.weight",
+      "readout.keys.0.weight",
+      "readout.keys.1.weight",
+      "readout.keys.2.weight",
+      "readout.keys.3.weight",
+      "readout.keys.4.weight",
+      "readout.keys.5.weight",
+      "readout.keys.6.weight",
+      "readout.keys.7.weight",
+      "readout.values.0.weight",
+      "readout.values.1.weight",
+      "readout.values.2.weight",
+      "readout.values.3.weight",
+      "readout.values.4.weight",
+      "readout.values.5.weight",
+      "readout.values.6.weight",
+      "readout.values.7.weight",
+      "readout.output.weight",
+      "expression.generate.weight",
+      "expression.generate.bias",
+      "expression.mix.weight",
+      "expression.mix.bias"
+    ]
+  },
+  "training_admitted": false
+}
