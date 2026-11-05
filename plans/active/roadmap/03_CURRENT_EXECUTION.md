@@ -2212,3 +2212,15 @@ O 臂 per-param：`W_hidden.weight` 1.3808、`w_out.weight` 0.80025、`W_hidden.
 **D. 开训前必查项**：N 首批边距项梯度 **2.1515 > 1e-6** → `gradient_cancels_at_source = false`（未触发停训条件）。N 初始化可辨识性 `log10 RMS 比` **−1.425**（`added_rms` 3.131e-4 / `trunk_rms` 8.339e-3，**不可辨识**，与 19.2j 价格闸初始化读数一致；step300 才 −0.436）→ 初始不可辨识不构成停训理由，但训练后必须复核。
 
 **E. 花费与边界**：**0 Adam / 0 参数改动 / 0 包 / 0 confirm / 21.9 CPU / 22.4 wall**（≤80 CPU 预算内）。不改判据、不改阈值、不放开 confirm、不上调任何能力等级。证据：[19.2l-A 报告](../../../reports/taiji_package19_2l_margin_gradient_20261105.json)＋[manifest](../../manifests/taiji_package19_2l_margin_gradient_20261105.json)；脚本 [`probe_taiji_package19_2l_margin_gradient_structure.py`](../../../scripts/training/probe_taiji_package19_2l_margin_gradient_structure.py)；账本 [§16.9 D16-16](../../reference/INVARIANT-LEDGER_20261103.md)。**唯一建议＝按 owner 的 B 设计开跑（N 两臂、30 更新、≤30 Adam/臂共 60、≤400 CPU、1 包、0 confirm），待 owner 批准，未启动。**
+
+## 2026-11-05 19.2l-B 定价闸（0 Adam / 0 包 / 0 confirm，未训练）
+
+owner 批准 B（设计照原文）并加了三项读数与一条互斥归因口径，同时要求"超价先报不跑"。本轮据此**只做 0 Adam 定价**，不做任何训练。
+
+**A. 设计（已固化进脚本，未改一字）**：父包 28031-B step300；两臂都 `build_run(parent, 28031, "N")`（含 `W_align`＋`offset_embed`），初始化逐位相同（`init_max_abs_diff = 0.0`，step0 `candidate_sha_v2` 相同）；实验臂＝CE＋order-decoy 边距项（m=1.0，每例 2 起点），对照臂＝CE-only；两臂同 seed、同 `h.schedule(train,30)` 数据顺序、各 30 更新（共 60 Adam）；step0 共用一次快照；step30 两臂各一次 192 例全量快照；新增 `key_diff_after` / `score_margin_after` / `decoy_margin_after` / `gradient_share_by_param`（边距项单独 backward，逐更新累计）；互斥判定 `washout_at_readout_proven` / `washout_upstream` / `margin_not_trainable_in_30` 与各自"下一步只许做什么"原文写死在报告里。
+
+**B. 定价读数（同进程稳态；0 Adam）**：CE 单步（batch 8）**6.02 CPU**、边距项单步（含 16 行状态）**2.17 CPU**、192 例全量快照 **94.1 CPU**。训练外推 **426.1**（30×6.02 ＋ 30×8.19）；快照两臂 step30 **188.2**；三读＋存包/开销 ≈34；已花 58.1。即便**去掉全部杂项与 15% 安全系数**，`训练 426.1 ＋ 两臂快照 188.2 = 614.3` 已 >400 → **`pricing_gate = over_budget`**（`floor_over_budget = true`），按纪律**停训**：0 Adam、0 包、0 confirm。参照：同规模 19.2h 在 2026-11-04 实花 404.8 CPU，今天同口径单价约 1.7–2×。
+
+**C. 为什么不是"再优化一下就能塞进 400"**：400 里 60% 是训练（60 次更新不可减，否则违反"同 30 更新"设计）、40% 是两臂 step30 快照（减掉就没有 Δ 与旧描述/conditional_byte 基线），三读还要额外 backward。任何"省"都等于改设计或砍判据，按 owner 纪律不许偷偷做。
+
+**D. 判定与唯一建议**：`pricing_gate_over_budget`，**设计未改、判据未改、归因口径未改、未训练**。唯一建议＝**把本轮 CPU 上限提到 ≥750 后原样开跑**（同一条命令：`python scripts/training/train_taiji_package19_2l_order_decoy_diagnostic.py`），等 owner 批准；本次 58.1 CPU、累计约 216 CPU（含定价校准）、0 Adam / 0 包 / 0 confirm。证据：[B 定价报告](../../../reports/taiji_package19_2l_order_decoy_diagnostic_20261105.json)＋[manifest](../../manifests/taiji_package19_2l_order_decoy_diagnostic_20261105.json)；脚本 [`train_taiji_package19_2l_order_decoy_diagnostic.py`](../../../scripts/training/train_taiji_package19_2l_order_decoy_diagnostic.py)。

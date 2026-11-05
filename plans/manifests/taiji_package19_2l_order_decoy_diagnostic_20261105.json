@@ -1,0 +1,12 @@
+{
+  "schema": "taiji-package19-2l-order-decoy-diagnostic-manifest-v1",
+  "step": "N19.2l-B",
+  "date": "2026-11-05",
+  "report": "reports\\taiji_package19_2l_order_decoy_diagnostic_20261105.json",
+  "pricing_gate": "over_budget",
+  "estimate_cpu": 929.7390624999999,
+  "minimum_floor_cpu": 708.375,
+  "adam_updates": 0,
+  "bundles_saved": 0,
+  "confirm_reads": 0
+}

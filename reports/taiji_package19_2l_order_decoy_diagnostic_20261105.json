@@ -1,0 +1,165 @@
+{
+  "schema": "taiji-package19-2l-order-decoy-diagnostic-v1",
+  "step": "N19.2l-B order-decoy margin diagnostic",
+  "phase": "pricing gate (stopped before any Adam step)",
+  "date": "2026-11-05",
+  "design": {
+    "parent": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+    "parent_arm": "B_stop_lock",
+    "parent_update": 300,
+    "seed": 28031,
+    "arms": {
+      "treatment": "N alignment structure x (selection CE + order-decoy margin, m = 1.0)",
+      "control": "N alignment structure x selection CE only"
+    },
+    "only_variable": "the objective (margin term present or absent); structure, init, data order, LR, clip and update count are shared",
+    "decoy_rule": "gold record key split at its character midpoint with the two halves swapped; byte multiset, byte length and byte inventory identical, only the order differs",
+    "margin_term": "per example 2 content starts (object start 3 / place start 21), one order decoy each; loss = mean(relu(1.0 - (score_gold - score_decoy))); the decoy key is binding.base.relation.pool(binding.base.relation.encode_units(subject, decoy))",
+    "training": {
+      "updates_per_arm": 30,
+      "batch": 8,
+      "lr": 0.001,
+      "clip": 1.0,
+      "adam_cap_total": 60,
+      "stage": "selection only, freeze_to_selection",
+      "data_order": "h.schedule(train, 30), identical batches for both arms",
+      "order_sha256": "6c05e6c66ec17944b2f9d1fec989821aefeea4bc428a641869c4b94ddd1a7664"
+    },
+    "evaluation": {
+      "dev_examples": 192,
+      "new_description_examples": 96,
+      "swap_pairs": 20,
+      "points": [
+        "step0 (shared by both arms)",
+        "step30"
+      ],
+      "shared_init_snapshot": true
+    },
+    "budget": {
+      "cpu_cap": 400.0,
+      "adam_cap": 60,
+      "bundles": 1,
+      "confirm_reads": 0
+    }
+  },
+  "pricing_gate": {
+    "code": "over_budget",
+    "stopped_before_training": true,
+    "note": "the fixed design cannot fit the 400 CPU cap on this machine even with zero overhead: training floor + three full 192-example snapshots already exceed it; nothing was trained and no bundle was written",
+    "formula": "estimate = ((30*ce_unit + 30*(ce_unit+margin_unit)) + 3*snapshot_estimate + 2*reading_cpu + save_overhead + cpu_already_spent) * 1.15; every unit is the steady-state (second) measurement of the same operation",
+    "ce_unit_cpu": 6.015625,
+    "margin_unit_cpu": 2.171875,
+    "snapshot_estimate_cpu": 94.09375,
+    "cold_start_units_cpu": {
+      "ce_update": 6.265625,
+      "margin_update": 2.328125,
+      "snapshot_estimate": 97.6875
+    },
+    "training_estimate_cpu": 426.09375,
+    "three_snapshots_estimate_cpu": 282.28125,
+    "minimum_floor_cpu": 708.375,
+    "floor_over_budget": true,
+    "floor_share": {
+      "training": 0.6015087347803071,
+      "three_full_192_snapshots": 0.39849126521969297
+    },
+    "readings_estimate_cpu": 34.03125,
+    "save_overhead_cpu": 8.0,
+    "spent_before_training_cpu": 58.0625,
+    "raw_estimate_cpu": 808.46875,
+    "safety_factor": 1.15,
+    "estimate_cpu": 929.7390624999999,
+    "budget_cpu": 400.0,
+    "over_budget": true,
+    "adam_updates": 0,
+    "extrapolated_not_measured": true,
+    "units": {
+      "warmup_slice_cpu": 0.484375,
+      "ce_update_cpu_cold": 6.265625,
+      "ce_update_cpu": 6.015625,
+      "margin_update_cpu_cold": 2.328125,
+      "margin_update_cpu": 2.171875,
+      "margin_rows": 16,
+      "decode_slice_examples": 24,
+      "decode_slice_cpu_cold": 9.0625,
+      "decode_slice_cpu": 8.625,
+      "swap_slice_pairs": 2,
+      "swap_slice_cpu_cold": 0.34375,
+      "swap_slice_cpu": 0.359375,
+      "score_slice_examples": 6,
+      "score_slice_cpu_cold": 1.359375,
+      "score_slice_cpu": 1.34375,
+      "decode_scale": 8.0,
+      "swap_scale": 10.0,
+      "score_scale": 16.0,
+      "snapshot_estimate_cpu_cold": 97.6875,
+      "snapshot_estimate_cpu": 94.09375,
+      "steady_state_units": "the second measurement of each unit is used for the estimate; the first (cold) measurement is reported for transparency"
+    }
+  },
+  "arms": {
+    "status": "not_run_over_budget",
+    "treatment": "N x (selection CE + order-decoy margin), 0/30 updates",
+    "control": "N x selection CE only, 0/30 updates"
+  },
+  "delta_bootstrap": {
+    "status": "not_run_over_budget"
+  },
+  "argmax": {
+    "status": "not_run_over_budget"
+  },
+  "readings": {
+    "key_diff_after": {
+      "status": "not_measured, 0 updates"
+    },
+    "score_margin_after": {
+      "status": "not_measured, 0 updates"
+    },
+    "decoy_margin_after": {
+      "status": "not_measured, 0 updates"
+    },
+    "gradient_share_by_param": {
+      "status": "not_measured, 0 updates"
+    }
+  },
+  "attribution_verdict": {
+    "code": null,
+    "status": "not_evaluated",
+    "reason": "pricing gate stopped the run before any Adam step",
+    "priority_rule": "1) key_diff drop > 20% versus 1.491 -> washout_upstream; 2) margin median still <= -0.003 or improvement < 0.01 -> margin_not_trainable_in_30; 3) otherwise washout_at_readout_proven"
+  },
+  "diagnostic_gates": {
+    "status": "not_run_over_budget"
+  },
+  "density": {
+    "planned_init_readings": 128,
+    "planned_first_batch_readings": 16,
+    "planned_dev_examples": 192,
+    "planned_swap_pairs": 20,
+    "planned_updates_per_arm": 30,
+    "planned_snapshot_points": 3
+  },
+  "basis": {
+    "kind": "diagnostic",
+    "not_a_task_gate": true,
+    "status": "not_run_over_budget"
+  },
+  "cost": {
+    "cpu_seconds": 58.0625,
+    "wall_seconds": 59.54201420000754,
+    "adam_updates": 0,
+    "bundles_saved": 0,
+    "confirm_reads": 0,
+    "over_budget_triggered": true
+  },
+  "identities": {
+    "treatment_sha_v2": "cab73880f0909a0d78dc8e6e4352d284bfbce4a6dd12e1bdc8dafa759b9a08a6",
+    "control_sha_v2": "cab73880f0909a0d78dc8e6e4352d284bfbce4a6dd12e1bdc8dafa759b9a08a6"
+  },
+  "reproducibility": {
+    "parent_bundle": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+    "parent_sha256": "fe04fbfb14aa0390877385a4429f2a851396a6fe6acb3107bae0a5e4e331dfca",
+    "seed": 28031,
+    "torch_threads": 1
+  }
+}
