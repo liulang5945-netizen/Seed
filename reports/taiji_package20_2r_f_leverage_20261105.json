@@ -1,0 +1,167 @@
+{
+  "package": "20.2r",
+  "date": "2026-11-05",
+  "verdict": "under_powered_f_channel",
+  "scope": "replay consistency and F leverage gate; 0 training, 0 optimizer steps",
+  "script": {
+    "runner_sha256": "e62b19b2ca1f79dfbf542cca918d016ed09b9bde5416026d97742f029ea7aef0",
+    "p2_script_sha256": "cd23ce2e06b4b6ad1455378f0d9df4f60bef98762893756f6302f3a709c04119",
+    "p2_committed_sha256": "cd23ce2e06b4b6ad1455378f0d9df4f60bef98762893756f6302f3a709c04119",
+    "20_2_report_script_sha256": null,
+    "note": "20.2 report carries no script sha; this run reuses the committed 20.2 bytes; formatting ran after the report was written, both shas recorded",
+    "submitted_runner_sha256": "9081bee1c7229bfa536c48e14bc6e81343dcedeeef61c905322a6e62df68775f",
+    "run_sha_matches_submitted": false
+  },
+  "replay": {
+    "probe_turn": 18,
+    "loss": 15.401160359114979,
+    "fast_grad_norm": 0.06883239778674924,
+    "fast_grad_by_head": [
+      [
+        0.0054797180218596146,
+        0.005223487889315048
+      ],
+      [
+        0.03783191415914206,
+        0.03574434021842648
+      ],
+      [
+        0.029793026802609687,
+        0.03291471690014736
+      ],
+      [
+        0.000548284781064461,
+        0.0006096000902635489
+      ]
+    ],
+    "share_of_loss": 0.004469299467166914,
+    "expected_loss": 15.401160359114979,
+    "expected_fast_grad_norm": 0.06883239778674924,
+    "expected_share_of_loss": 0.004469299467166914,
+    "loss_rel_diff": 0.0,
+    "grad_rel_diff": 0.0,
+    "share_rel_diff": 0.0,
+    "head_rel_diff": 0.0
+  },
+  "parity": {
+    "turns_compared": 51,
+    "bytes_compared": 765,
+    "byte_identical": 765,
+    "max_abs_logit_delta": 0.0,
+    "byte_mismatch_turns": 0
+  },
+  "leverage": {
+    "threshold": 0.01,
+    "leverage_max": 7.952659116961392e-05,
+    "verdict": "under_powered_f_channel",
+    "correction_turns": 22,
+    "baseline": {
+      "loss": 14.514390948245342,
+      "correct_full": 0,
+      "correct_decision": 0
+    },
+    "arms": {
+      "f_zero": {
+        "correction_turns": 22,
+        "correct_full": 0,
+        "correct_decision": 0,
+        "loss": 14.514002328230323,
+        "baseline_loss": 14.514390948245342,
+        "delta_loss": -0.0003886200150198249,
+        "byte_diff": 0,
+        "leverage": 2.677480690754065e-05
+      },
+      "f_half": {
+        "correction_turns": 22,
+        "correct_full": 0,
+        "correct_decision": 0,
+        "loss": 14.514196875946556,
+        "baseline_loss": 14.514390948245342,
+        "delta_loss": -0.00019407229878609655,
+        "byte_diff": 0,
+        "leverage": 1.337102600295868e-05
+      },
+      "f_double": {
+        "correction_turns": 22,
+        "correct_full": 0,
+        "correct_decision": 0,
+        "loss": 14.514777654468237,
+        "baseline_loss": 14.514390948245342,
+        "delta_loss": 0.000386706222894162,
+        "byte_diff": 0,
+        "leverage": 2.6642952106847532e-05
+      },
+      "f_quad": {
+        "correction_turns": 22,
+        "correct_full": 0,
+        "correct_decision": 0,
+        "loss": 14.51554522828036,
+        "baseline_loss": 14.514390948245342,
+        "delta_loss": 0.0011542800350170523,
+        "byte_diff": 0,
+        "leverage": 7.952659116961392e-05
+      },
+      "f_permuted": {
+        "correction_turns": 22,
+        "correct_full": 0,
+        "correct_decision": 0,
+        "loss": 14.513928194315024,
+        "baseline_loss": 14.514390948245342,
+        "delta_loss": -0.00046275393031791623,
+        "byte_diff": 0,
+        "leverage": 3.1882421519992126e-05
+      }
+    },
+    "oracle": {
+      "correction_turns": 22,
+      "correct_full": 0,
+      "correct_decision": 0,
+      "loss": 13.907193903072265,
+      "baseline_loss": 14.514390948245342,
+      "delta_loss": -0.607197045173077,
+      "byte_diff": 0,
+      "leverage": 0.04183413877565986,
+      "grad_norm_mean": 0.06371199734010377,
+      "scales": [
+        0.5,
+        2.0,
+        8.0
+      ],
+      "oracle_diagnostic_only": true
+    },
+    "oracle_ceiling_leverage": 0.04183413877565986,
+    "oracle_ceiling_below_1pct": false
+  },
+  "state": {
+    "fast_writes_baseline": 10,
+    "parent_weight_sha256": "c5ebe35b9bf9442383ba0f568f8b7825466ec97f31ee35625182270aee1934c6",
+    "assemblies": {
+      "cf1": "b62d6fe6a0721fd82c7c43d575e600c48ffc8e31ff959bfdf14ef9ff07d0039e",
+      "b_eh": "64cb327e3a8442ef0c59e04b14445a08ab3dccbb8ac42cf6547e0efa4e6f7f46"
+    }
+  },
+  "gates": {
+    "script_is_committed_bytes": true,
+    "replay_loss_within_1e_6": true,
+    "replay_grad_within_1e_6": true,
+    "replay_share_within_1e_6": true,
+    "replay_heads_within_1e_6": true,
+    "dry_forward_parity_765": true,
+    "baseline_readout_identity": true,
+    "ladder_five_arms": true,
+    "oracle_ceiling_measured": true,
+    "no_training": true,
+    "assemblies_intact": true
+  },
+  "cost": {
+    "cpu_cap": 300.0,
+    "cpu_seconds": 161.48,
+    "wall_seconds": 168.64,
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "backward_calls": 23,
+    "turns_forwarded": 391
+  }
+}

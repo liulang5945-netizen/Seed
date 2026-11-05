@@ -1,0 +1,15 @@
+{
+  "package": "20.2r",
+  "date": "2026-11-05",
+  "report": "reports\\taiji_package20_2r_f_leverage_20261105.json",
+  "report_sha256": "b6fcf57b9152d7a30cc9f9f349605326088e3b98758f762eaeb9e0fb7facfd54",
+  "runner": "scripts\\training\\probe_taiji_package20_2r_f_leverage.py",
+  "runner_sha256": "e62b19b2ca1f79dfbf542cca918d016ed09b9bde5416026d97742f029ea7aef0",
+  "replayed_runner_sha256": "cd23ce2e06b4b6ad1455378f0d9df4f60bef98762893756f6302f3a709c04119",
+  "verdict": "under_powered_f_channel",
+  "reference_assemblies_untouched": true,
+  "training_admitted": false,
+  "saved_states": [],
+  "cost_cpu_seconds": 161.48,
+  "submitted_runner_sha256": "9081bee1c7229bfa536c48e14bc6e81343dcedeeef61c905322a6e62df68775f"
+}
