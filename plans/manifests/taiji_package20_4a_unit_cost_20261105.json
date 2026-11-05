@@ -1,0 +1,12 @@
+{
+  "schema": "taiji-rule-learning-20-4a-manifest-v1",
+  "evidence": "20_4a",
+  "verdict": "pricing_still_over_budget",
+  "report_path": "reports\\taiji_package20_4a_unit_cost_20261105.json",
+  "report_sha256": "0deb18177bea4523a878f5bda29f09be940982de3874b4b3492e582767cbb907",
+  "runner_sha256": "7b19298b14039800f47bcf89866b2d88b823b69f33665dbb44ee5378bbd6be99",
+  "submitted_runner_sha256": "7b19298b14039800f47bcf89866b2d88b823b69f33665dbb44ee5378bbd6be99",
+  "equivalent_unit_cpu": 165.838,
+  "projection_cpu": 141451.6,
+  "training_started": false
+}

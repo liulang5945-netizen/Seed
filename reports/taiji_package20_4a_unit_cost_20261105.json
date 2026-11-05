@@ -1,0 +1,305 @@
+{
+  "schema": "taiji-rule-learning-20-4a-unit-cost-v1",
+  "evidence": "20_4a",
+  "verdict": "pricing_still_over_budget",
+  "detail": "best equivalent-tier unit is 165.8 CPU per batch-2 update (projected 141452 CPU, 5.89x the frozen budget); the forward pass alone already projects above the 2x ceiling",
+  "setup": {
+    "threads": 1,
+    "dtype": "float64",
+    "deterministic": true,
+    "addressed_store_enabled": false,
+    "batch_worlds": 2,
+    "samples_are_single_world": true,
+    "batch2_derivation": "two worlds run sequentially with no shared kernel; unit = 2x"
+  },
+  "breakdown": {
+    "per_world_update_cpu": 82.919,
+    "batch2_unit_cpu": 165.838,
+    "samples": 5,
+    "sample_cpu": [
+      83.578,
+      83.172,
+      81.172,
+      82.031,
+      84.625
+    ],
+    "phases": {
+      "seconds": {
+        "data_prep": 0.003,
+        "observe": 15.397,
+        "decode": 26.444,
+        "harness_bookkeeping": 2.05,
+        "backward": 38.956,
+        "optimizer_step": 0.047,
+        "zero_grad": 0.0
+      },
+      "shares": {
+        "data_prep": 0.0,
+        "observe": 0.1857,
+        "decode": 0.3189,
+        "harness_bookkeeping": 0.0247,
+        "backward": 0.4698,
+        "optimizer_step": 0.0006,
+        "zero_grad": 0.0
+      }
+    },
+    "top3": [
+      "backward",
+      "decode",
+      "observe"
+    ],
+    "per_turn_cpu": 1.6259,
+    "per_answer_step_cpu": 0.108391
+  },
+  "profiler": {
+    "turn": 6,
+    "released_lines": 5,
+    "forward_top": [
+      {
+        "op": "aten::slow_conv_dilated2d",
+        "self_cpu_s": 0.1395,
+        "calls": 306
+      },
+      {
+        "op": "aten::select",
+        "self_cpu_s": 0.1217,
+        "calls": 93636
+      },
+      {
+        "op": "aten::bmm",
+        "self_cpu_s": 0.0744,
+        "calls": 230
+      },
+      {
+        "op": "aten::addmm",
+        "self_cpu_s": 0.043,
+        "calls": 1019
+      },
+      {
+        "op": "aten::add",
+        "self_cpu_s": 0.0419,
+        "calls": 1519
+      },
+      {
+        "op": "aten::copy_",
+        "self_cpu_s": 0.0411,
+        "calls": 41955
+      },
+      {
+        "op": "aten::tanh",
+        "self_cpu_s": 0.037,
+        "calls": 988
+      },
+      {
+        "op": "aten::fill_",
+        "self_cpu_s": 0.0343,
+        "calls": 40612
+      },
+      {
+        "op": "aten::as_strided",
+        "self_cpu_s": 0.0329,
+        "calls": 114915
+      },
+      {
+        "op": "aten::mm",
+        "self_cpu_s": 0.0301,
+        "calls": 1081
+      }
+    ],
+    "backward_top": [
+      {
+        "op": "aten::bmm",
+        "self_cpu_s": 0.1149,
+        "calls": 368
+      },
+      {
+        "op": "aten::mm",
+        "self_cpu_s": 0.1028,
+        "calls": 2924
+      },
+      {
+        "op": "aten::convolution_backward",
+        "self_cpu_s": 0.0981,
+        "calls": 459
+      },
+      {
+        "op": "aten::add_",
+        "self_cpu_s": 0.0658,
+        "calls": 11834
+      },
+      {
+        "op": "aten::_slow_conv2d_backward",
+        "self_cpu_s": 0.0432,
+        "calls": 153
+      },
+      {
+        "op": "aten::fill_",
+        "self_cpu_s": 0.0304,
+        "calls": 2332
+      },
+      {
+        "op": "aten::copy_",
+        "self_cpu_s": 0.0215,
+        "calls": 9175
+      },
+      {
+        "op": "aten::select",
+        "self_cpu_s": 0.0206,
+        "calls": 16204
+      },
+      {
+        "op": "aten::select_backward",
+        "self_cpu_s": 0.019,
+        "calls": 7407
+      },
+      {
+        "op": "autograd::engine::evaluate_function: SelectBackward0",
+        "self_cpu_s": 0.017,
+        "calls": 7407
+      }
+    ]
+  },
+  "trials": [
+    {
+      "id": "T1_batched_worlds",
+      "status": "not_measured",
+      "reason": "merging two worlds into one batched forward requires a batched LivingCore.step/observe; the frozen R021 path takes a single event tensor, so this is a graph-level change that needs owner authorization"
+    },
+    {
+      "id": "T2_reuse_buffers",
+      "status": "not_measured",
+      "reason": "source_view / goal_vector / align_positions are rebuilt per byte step inside the graph; hoisting them is a graph edit, not a harness edit",
+      "profiler_pointer": [
+        {
+          "op": "aten::slow_conv_dilated2d",
+          "self_cpu_s": 0.1395,
+          "calls": 306
+        },
+        {
+          "op": "aten::select",
+          "self_cpu_s": 0.1217,
+          "calls": 93636
+        },
+        {
+          "op": "aten::bmm",
+          "self_cpu_s": 0.0744,
+          "calls": 230
+        }
+      ]
+    },
+    {
+      "id": "T3_readings_without_grad",
+      "status": "measured",
+      "samples": 5,
+      "no_grad_cpu_per_turn": 0.4844,
+      "inference_cpu_per_turn": 0.4531,
+      "speedup": 1.069,
+      "loss_abs_diff": 0.0,
+      "logits_max_abs_diff": 0.0,
+      "emitted_identical": true,
+      "equivalent": true,
+      "derived_eval_world_cpu": 23.109,
+      "note": "single reading-path turn measured 5 times per context; the dev/probe world cost in the projection is this per-turn cost x 51 turns"
+    },
+    {
+      "id": "T4_backward_window",
+      "status": "measured",
+      "samples": 5,
+      "before_cpu": 82.919,
+      "after_cpu": 62.659,
+      "speedup": 1.323,
+      "equivalent": false,
+      "loss_abs_diff": 0.0,
+      "grad_max_abs_diff": 2.39352119,
+      "note": "detaching at every turn boundary keeps only the current turn's credit; it is a relaxed tier and must not be mixed with the equivalent tier"
+    }
+  ],
+  "equivalence": {
+    "tolerance": 1e-06,
+    "reference": "full 51-turn window, baseline sample 0",
+    "truncated_loss_abs_diff": 0.0,
+    "truncated_grad_max_abs_diff": 2.39352119,
+    "t3_loss_abs_diff": 0.0,
+    "t3_logits_max_abs_diff": 0.0,
+    "verdict": "not_equivalent",
+    "equivalent_tier_trials": [
+      "T3_readings_without_grad"
+    ],
+    "relaxed_tier_trials": [
+      "T4_backward_window"
+    ]
+  },
+  "projection": {
+    "equivalent_tier": {
+      "unit_cpu": 165.838,
+      "train_cpu": 132670.1,
+      "dev_eval_cpu": 7395.0,
+      "early_stop_probe_cpu": 1386.6,
+      "total_cpu": 141451.6,
+      "ratio_to_frozen_budget": 5.89,
+      "within_ceiling": false
+    },
+    "relaxed_tier_truncated_window": {
+      "unit_cpu": 125.319,
+      "train_cpu": 100255.0,
+      "dev_eval_cpu": 7395.0,
+      "early_stop_probe_cpu": 1386.6,
+      "total_cpu": 109036.6,
+      "ratio_to_frozen_budget": 4.54,
+      "within_ceiling": false
+    },
+    "graph_level_floor_forward_only": {
+      "unit_cpu": 87.781,
+      "train_cpu": 70225.0,
+      "dev_eval_cpu": 7395.0,
+      "early_stop_probe_cpu": 1386.6,
+      "total_cpu": 79006.5,
+      "ratio_to_frozen_budget": 3.29,
+      "within_ceiling": false
+    },
+    "frozen_budget_cpu": 24000.0,
+    "magnitude_ceiling_cpu": 48000.0,
+    "runs": 4,
+    "updates_per_run": 200
+  },
+  "options_for_owner": [
+    {
+      "id": "O1_truncated_backward",
+      "ceiling_cpu": 109036.6,
+      "what_it_gives_up": "credit that spans turn boundaries: a correction surface can only move the parameters through its own turn, not through the 30 turns that built the session state"
+    },
+    {
+      "id": "O2_graph_level_batch_or_fuse",
+      "ceiling_cpu": 79006.5,
+      "what_it_gives_up": "nothing semantic, but it needs a batched/fused execution path inside R021, which is out of scope without owner authorization; the floor shown is forward-only at today's per-step cost"
+    },
+    {
+      "id": "O3_replay_fewer_turns",
+      "ceiling_cpu": 34081.2,
+      "what_it_gives_up": "the pre-feedback context that a later turn depends on; the 22 correction surfaces keep their loss but lose the session history needed to answer them"
+    }
+  ],
+  "training_started": false,
+  "formal_training_steps": 0,
+  "cost": {
+    "cpu_seconds": 56.297,
+    "wall_seconds": 58.671,
+    "earlier_measurement_pass_cpu_seconds": 727.891,
+    "total_cpu_seconds": 784.188,
+    "cap_cpu_seconds": 800.0,
+    "note": "the first measurement pass produced the 10 calibration samples but stopped before the reading-path A/B; this pass reuses those samples and only adds the T3 A/B and the micro profile"
+  },
+  "script": {
+    "runner_sha256": "7b19298b14039800f47bcf89866b2d88b823b69f33665dbb44ee5378bbd6be99",
+    "submitted_runner_sha256": "7b19298b14039800f47bcf89866b2d88b823b69f33665dbb44ee5378bbd6be99"
+  },
+  "invariants": {
+    "confirm_read": false,
+    "graph_modified": false,
+    "thresholds_changed": false,
+    "freeze_written": false,
+    "calibration_updates_executed_this_pass": 0,
+    "calibration_updates_total": 10,
+    "threads": 1
+  }
+}
