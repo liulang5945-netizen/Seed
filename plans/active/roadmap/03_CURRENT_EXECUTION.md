@@ -2234,3 +2234,32 @@ owner 把本轮上限从 400 提到 **800**（400 只是上一轮口径，不是
 **B. 定价（0 Adam，两次独立测量）**：本机当前稳态单价 CE 单步 **6.25 CPU**、边距项单步 **2.34 CPU**、192 例全量快照 **96.34 CPU**。外推拆分：训练 **445.3**（30×6.25 ＋ 30×8.59）＋ 三次 192 例快照 **289.0** ＋ 事后三读 19.3 ＋ 存包 8.0 ＋ 收工单价 8.6 ＋ 报告 3.0 ＋ 已花 38.9 = **812.1 CPU**；第二次独立复测 **813.6**。超 800 约 **1.5%** → `pricing_gate = over_budget`，**停训**：0 Adam、0 包、0 confirm、未训练、未存包。底板（训练＋三次快照）**734.3 本身没超 800**，超出的 78 全部来自 owner 要求的三读/存包/收工单价/报告。
 
 **C. 判定与唯一建议**：`price_verdict = not_evaluated`（无训练，收盘单价不测）；两次外推几乎一致 → **设计级价格、非测量抖动**。唯一建议＝**把 `CPU_BUDGET` 提到 850（设计、判据、三读一字不动；预计占用 95.5%）后原样开跑**，等 owner 裁定。证据：[B 定价报告](../../../reports/taiji_package19_2l_order_decoy_diagnostic_20261105.json)＋[manifest](../../manifests/taiji_package19_2l_order_decoy_diagnostic_20261105.json)。
+
+## 2026-11-05 19.2l-B 执行（D16-17 量级闸 / D16-18 格式化纪律）
+
+owner 改的是**规则本身**，不只是数字：预算闸改成量级闸（D16-17），格式化改成收尾一次且带硬超时（D16-18）。设计、判据、三读、互斥口径**一字未改**。
+
+**A. 规则落地（账本 §16.10 / §16.11）**：`CPU_BUDGET = 1200`；判定式 `estimate > 2 × CPU_BUDGET`（>2,400）才允许 `over_budget` 停，1%–10% 差距一律直接跑；同包定价只做一次、落盘即终值；登记 `budget_gate_precision_churn`（三次 1.5%–8% 拦停、两次纯定价 77.75 CPU ≈ 本实验 10%）。格式化只在收尾跑一次，硬超时 45 s，进程内超时即记 `format_gate: not_executed` 且不得后台补跑。
+
+**B. 开跑前读数（只作记录，不再当闸）**：python 进程 **0**、black python **0**；本包 0 Adam 定价 **866.6 CPU**（CE 6.77 / 边距项 2.42 / 192 例快照 102.22），866.6 ≤ 2,400 → `budget_gate = run`。
+
+**C. 两臂逐项（N×边距项 vs N×CE-only，30 更新/臂，共 60 Adam）**：
+
+| 指标（step30，新描述 96 例 / 旧描述 96 例） | CE 对照臂 | 边距臂 | 差（边距−对照） |
+|---|---|---|---|
+| route_miss（新） | 0.4896 | 0.5938 | **+0.1042 [0.0521,0.1563]** |
+| route_hit 物件 | 0.3542 | 0.1354 | **−0.2188 [−0.3021,−0.1458]** |
+| route_hit 地点 | 0.7813 | 0.7188 | −0.0625 [−0.1667,0.0417] |
+| completed | 0.1875 | 0.0521 | **−0.1354 [−0.2083,−0.0625]** |
+| 旧描述通过 | 0.9479 | 0.9688 | +0.0208（不回退） |
+| conditional_byte 物件/地点 | 0.7608 / 0.9797 | 0.7436 / 0.9598 | 不回退 >0.05 |
+| 换序硬 argmax（/20） | 3 | **1** | 门 ≥8 不过 |
+| 换序 decode 起点 argmax（/20） | 5 | 9 | — |
+
+step0 共用快照：route_miss 0.5417 / 物件 route_hit 0.0 / completed 0.0 / 旧描述 0.0 / 硬 argmax 4。
+
+**D. 三读（30/30 全程，不抽样）**：`key_diff_after` 中位 **1.4912**（基线同值，降幅 0.0，冻结 transport 未被冲掉）；`score_margin` 中位 **−0.0048 → 1.562**（配对 bootstrap **+1.5667 [1.4905,1.6412]**，128 读数，激活率 1.0→0.0）；首批 decoy 边距 0.0339 → **1.5533**；`gradient_share_by_param` = W_hidden **58.98%** / w_out **38.92%** / W_hidden.bias 1.69% / offset_embed 0.33% / W_align 0.084% / k_null 0，**新增块合计 0.416%**。
+
+**E. 互斥判定＝`washout_at_readout_proven`**：key 未降、边距已拉开 >1.5，但换序硬 argmax 只 4→1、route_miss 相对 CE 反而 +0.1042 → **差在打分差没穿过 argmax**，不是上游被冲掉、也不是边距不可训。诊断门 5 项过 3（conditional 物件/地点与旧描述不回退；argmax 与 route_miss 不过）。任务面同时变差（completed −0.1354、物件 route −0.2188）→ 该 loss 在 30 步剂量下**有害无益**。**下一步唯一允许**：readout 层顺序敏感重排（成对比较/top-1 抑制），禁止加步数、禁止动上游 key；属设计变更，先出 0 Adam 设计闸再问 owner。
+
+**F. 花费与包**：**784.9 CPU / 802.1 wall**、预算占用 **65.4%**、**60 Adam / 1 包 / 0 confirm**；`28031-N-alignment-step30-order-decoy.pt` sha256 `5c1c2c14…`，save→load 往返 **max_abs_diff 0.0**。开/收盘单价 CE **6.77 → 6.125**、边距项 **2.42 → 2.234**；6.125 > 6.02×0.7 → `price_regime_changed`（**非** `contention_at_start`），只报道、不改后续预算口径。收尾格式化按 D16-18 只跑一次：exit=0、0.31 s、无改动。证据：[B 报告](../../../reports/taiji_package19_2l_order_decoy_diagnostic_20261105.json)＋[manifest](../../manifests/taiji_package19_2l_order_decoy_diagnostic_20261105.json)。

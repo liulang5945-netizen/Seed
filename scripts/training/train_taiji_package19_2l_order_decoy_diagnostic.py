@@ -44,12 +44,15 @@ not-trainable-in-30, then at-readout washout).  Each outcome carries its own
 The gates below are *diagnostic* gates, not task gates: they only say whether
 the margin term reached the readout, never that a capability shipped.
 
-Pricing discipline: one forward+backward and a 24-example evaluation slice are
-measured with 0 Adam before training; the extrapolation is written into the
-report.  If the estimate exceeds 800 CPU the run stops and writes
-``pricing_gate: over_budget`` instead of training.  The same two units are
-measured again after the last update (same process, batch 8, same method) so the
-report can say whether the opening price was contention or a real price regime.
+Pricing discipline (D16-17): one forward+backward and a 24-example evaluation
+slice are measured with 0 Adam before training; the extrapolation is written
+into the report as the *opening* price reading and is not re-measured this
+package.  ``CPU_BUDGET`` is 1,200 and the gate is a magnitude gate, not a
+precision gate: the run proceeds whenever the estimate is at or below
+``2 * CPU_BUDGET`` (2,400); only an estimate above 2x may stop the run and write
+``pricing_gate: over_budget``.  The same two units are measured again after the
+last update (same process, batch 8, same method) so the report can say whether
+the opening price was contention or a real price regime.
 
 ``machine_hygiene`` is the owner's pre-run measurement, written in verbatim; it
 is not reconstructed by this script.
@@ -124,7 +127,8 @@ CONDITIONAL_SLACK = 0.05
 
 BOOTSTRAP_ROUNDS = 2000
 BOOTSTRAP_SEED = 20261105
-CPU_BUDGET = 800.0
+CPU_BUDGET = 1200.0
+BUDGET_GATE_MULTIPLE = 2.0  # D16-17: run unless estimate > 2 x budget (magnitude gate)
 ADAM_CAP = 60
 PRICING_SAFETY = 1.0
 SAVE_OVERHEAD_CPU = 8.0
@@ -153,7 +157,7 @@ MACHINE_HYGIENE = {
         "recheck_after_cleanup": {"python_process_count": 0, "black_python_processes": 0},
     },
     "operational_waste_cpu_s": 641.8,
-    "source": "owner-measured before the 800-budget run; not reconstructed",
+    "source": "owner-measured before the 1,200-budget run; not reconstructed",
 }
 
 OUTPUT_DIR = ROOT / "output/taiji_package19_2l_order_decoy_diagnostic"
@@ -545,7 +549,7 @@ def estimate_total(units: dict, spent_cpu: float, reading_cpu: float) -> dict:
         "training_estimate_cpu": training,
         "three_snapshots_estimate_cpu": snapshots,
         "minimum_floor_cpu": training + snapshots,
-        "floor_over_budget": (training + snapshots) > CPU_BUDGET,
+        "floor_over_budget": (training + snapshots) > BUDGET_GATE_MULTIPLE * CPU_BUDGET,
         "floor_share": {
             "training": training / (training + snapshots),
             "three_full_192_snapshots": snapshots / (training + snapshots),
@@ -559,7 +563,18 @@ def estimate_total(units: dict, spent_cpu: float, reading_cpu: float) -> dict:
         "safety_factor": PRICING_SAFETY,
         "estimate_cpu": estimate,
         "budget_cpu": CPU_BUDGET,
-        "over_budget": estimate > CPU_BUDGET,
+        "budget_gate": {
+            "rule": "le_2x_run",
+            "multiple": BUDGET_GATE_MULTIPLE,
+            "stop_threshold_cpu": BUDGET_GATE_MULTIPLE * CPU_BUDGET,
+            "decision": ("run" if estimate <= BUDGET_GATE_MULTIPLE * CPU_BUDGET else "over_budget"),
+            "ledger_invariant": "D16-17",
+            "note": (
+                "magnitude gate, not a precision gate: 1%-10% differences never stop the run; "
+                "this price reading is final for the package and is not re-measured"
+            ),
+        },
+        "over_budget": estimate > BUDGET_GATE_MULTIPLE * CPU_BUDGET,
         "adam_updates": 0,
         "extrapolated_not_measured": True,
     }
@@ -722,7 +737,8 @@ def over_budget_report(design, estimate, units, cost, identities, parent_sha) ->
             "code": "over_budget",
             "stopped_before_training": True,
             "note": (
-                f"the measured extrapolation exceeds the {CPU_BUDGET:g} CPU cap: training "
+                f"the measured extrapolation exceeds 2 x the {CPU_BUDGET:g} CPU budget "
+                f"({BUDGET_GATE_MULTIPLE * CPU_BUDGET:g}): training "
                 f"{estimate['training_estimate_cpu']:.2f} + three full 192-example snapshots "
                 f"{estimate['three_snapshots_estimate_cpu']:.2f} = "
                 f"{estimate['minimum_floor_cpu']:.2f} floor, plus readings, save, closing "
@@ -1241,7 +1257,7 @@ def main() -> int:
         "ce_ratio_vs_before": ce_after_unit / CE_BEFORE_REFERENCE,
         "rule": (
             "contention_at_start if ce_after <= 6.02 * 0.7; otherwise price_regime_changed "
-            "(recorded only, the 800 budget accounting is unchanged)"
+            "(recorded only; the D16-17 magnitude gate accounting at 1,200 is unchanged)"
         ),
         "price_verdict": price_verdict,
         "budget_occupancy": cpu / CPU_BUDGET,
@@ -1268,7 +1284,7 @@ def main() -> int:
             "margin_update": units["margin_update_cpu"],
             "snapshot_estimate": units["snapshot_estimate_cpu"],
         },
-        "over_budget_cpu": cpu > CPU_BUDGET,
+        "over_budget_cpu": cpu > BUDGET_GATE_MULTIPLE * CPU_BUDGET,
     }
 
     report = {
@@ -1408,7 +1424,7 @@ def main() -> int:
         "bundles_saved": 1,
         "confirm_reads": 0,
         "cost_cpu": cpu,
-        "over_budget": cpu > CPU_BUDGET,
+        "over_budget": cpu > BUDGET_GATE_MULTIPLE * CPU_BUDGET,
     }
     j.write_json_safe(MANIFEST, manifest)
     print(

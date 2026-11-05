@@ -3,10 +3,45 @@
   "step": "N19.2l-B",
   "date": "2026-11-05",
   "report": "reports\\taiji_package19_2l_order_decoy_diagnostic_20261105.json",
-  "pricing_gate": "over_budget",
-  "estimate_cpu": 812.125,
-  "minimum_floor_cpu": 734.34375,
-  "adam_updates": 0,
-  "bundles_saved": 0,
-  "confirm_reads": 0
+  "parent_sha256": "fe04fbfb14aa0390877385a4429f2a851396a6fe6acb3107bae0a5e4e331dfca",
+  "pricing_gate": "under_budget",
+  "pricing_estimate_cpu": 866.5625,
+  "attribution_verdict": "washout_at_readout_proven",
+  "key_diff_prior_median": 1.491174147595295,
+  "key_diff_after_median": 1.491174147595295,
+  "score_margin_before_median": -0.004753962276781376,
+  "score_margin_after_median": 1.5619628441625877,
+  "decoy_margin_after_median": 1.553339676784173,
+  "swap_argmax_step0": 4,
+  "swap_argmax_treatment": 1,
+  "swap_argmax_control": 3,
+  "new_route_miss_treatment": 0.59375,
+  "new_route_miss_control": 0.4895833333333333,
+  "old_pass_treatment": 0.96875,
+  "old_pass_control": 0.9479166666666666,
+  "delta_route_miss": 0.10416666666666669,
+  "delta_route_miss_ci": [
+    0.05208333333333337,
+    0.15625
+  ],
+  "diagnostic_gates_all_pass": false,
+  "price_verdict": "price_regime_changed",
+  "unit_price_before": {
+    "ce": 6.02,
+    "margin": 2.17
+  },
+  "unit_price_after": {
+    "ce": 6.125,
+    "margin": 2.234375
+  },
+  "budget_occupancy": 0.6540625,
+  "operational_waste_cpu_s": 641.8,
+  "saved_bundle": "E:\\Seed\\output\\taiji_package19_2l_order_decoy_diagnostic\\28031-N-alignment-step30-order-decoy.pt",
+  "saved_bundle_sha256": "5c1c2c14b6fe553e432152349e44124f9adc542c16c3ab85b6e205b3893597aa",
+  "round_trip_ok": true,
+  "adam_updates": 60,
+  "bundles_saved": 1,
+  "confirm_reads": 0,
+  "cost_cpu": 784.875,
+  "over_budget": false
 }
