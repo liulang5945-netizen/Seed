@@ -1,0 +1,917 @@
+{
+  "schema": "taiji-package19-2w-boundary-residual-v1",
+  "step": "N19.2w",
+  "date": "2026-11-05",
+  "purpose": "reproduce and fix the one-byte stop residual on synthetic data only",
+  "frozen_inputs": {
+    "source_assembly": "output\\taiji_package19_2u_assembled_zero_training_stopfix.pt",
+    "source_assembly_sha256": "f5bd80e780bf0cb48d18f7e27915549432c07932a28ae833290e8873d6959e88",
+    "source_candidate_sha_v2": "1d69e945ac149d436cc39426de5717b8a3e2b82de5e8f35565354028c0a33728",
+    "source_candidate_parameters": 3563859,
+    "parent_bundle_sha256": "fe04fbfb14aa0390877385a4429f2a851396a6fe6acb3107bae0a5e4e331dfca",
+    "place_suffix_classes": [
+      "上",
+      "下",
+      "东",
+      "侧",
+      "前",
+      "北",
+      "外",
+      "尾",
+      "沿",
+      "畔",
+      "角"
+    ],
+    "stop_position": 27,
+    "decode_rule_old": "stop only when the model emits EOS",
+    "decode_rule_new": "stop one byte past the final hop's declared field end"
+  },
+  "confirm_residual": {
+    "source": "reports\\taiji_package19_2v_confirm_holdout_20261105.json",
+    "confirm_examples": 192,
+    "failure_examples": 4,
+    "failure_rate": 0.020833333333333332,
+    "first_difference_categories": {
+      "null": 4
+    },
+    "first_difference_positions": {
+      "None": 4
+    },
+    "record_kind": {
+      "template": 4
+    },
+    "note": "structural fields only; the sealed byte bodies stay in the report and are not re-read here"
+  },
+  "reproduction": {
+    "tail": {
+      "examples": 64,
+      "byte_exact": 63,
+      "completed": 63,
+      "extra_examples": 1,
+      "extra_rate": 0.015625,
+      "extra_bytes_total": 3,
+      "extra_positions": {
+        "27": 1
+      },
+      "first_difference": {
+        "none": 63,
+        "extra_bytes": 1
+      },
+      "metrics": {
+        "examples": 64,
+        "selection_accuracy_object": 1.0,
+        "selection_accuracy_place": 1.0,
+        "selection_accuracy_both": 1.0,
+        "completion": 0.984375,
+        "byte_exact_rate": 0.984375,
+        "start_hit_object": 1.0,
+        "start_hit_place": 1.0,
+        "composite_start_hit_object": 1.0,
+        "composite_start_hit_place": 1.0,
+        "conditional_byte": 1.0,
+        "provenance_rate": 1.0,
+        "fabricated_bytes": 0,
+        "misbound_bytes": 0,
+        "truncation_rate": 0.0,
+        "wrong_route_right_content": 0,
+        "cells": {
+          "aligned": 128
+        },
+        "first_difference": {
+          "none": 63,
+          "extra_bytes": 1
+        },
+        "first_difference_positions": {
+          "none": 63,
+          "27": 1
+        },
+        "object_span_exact": 1.0,
+        "place_span_exact": 1.0
+      }
+    },
+    "control": {
+      "examples": 64,
+      "byte_exact": 64,
+      "completed": 64,
+      "extra_examples": 0,
+      "extra_rate": 0.0,
+      "extra_bytes_total": 0,
+      "extra_positions": {},
+      "first_difference": {
+        "none": 64
+      },
+      "metrics": {
+        "examples": 64,
+        "selection_accuracy_object": 1.0,
+        "selection_accuracy_place": 1.0,
+        "selection_accuracy_both": 1.0,
+        "completion": 1.0,
+        "byte_exact_rate": 1.0,
+        "start_hit_object": 1.0,
+        "start_hit_place": 1.0,
+        "composite_start_hit_object": 1.0,
+        "composite_start_hit_place": 1.0,
+        "conditional_byte": 1.0,
+        "provenance_rate": 1.0,
+        "fabricated_bytes": 0,
+        "misbound_bytes": 0,
+        "truncation_rate": 0.0,
+        "wrong_route_right_content": 0,
+        "cells": {
+          "aligned": 128
+        },
+        "first_difference": {
+          "none": 64
+        },
+        "first_difference_positions": {
+          "none": 64
+        },
+        "object_span_exact": 1.0,
+        "place_span_exact": 1.0
+      }
+    },
+    "tail_success_rate": 0.015625,
+    "tail_structural_note": {
+      "extra_examples": 1,
+      "place_name_last_byte": {
+        "190": 1
+      },
+      "extra_bytes_per_example": {
+        "3": 1
+      },
+      "first_difference_position": {
+        "27": 1
+      },
+      "record_kind": {
+        "null": 1
+      }
+    },
+    "diagnostics": [
+      {
+        "world": 0,
+        "index": 3,
+        "extra_bytes": 3,
+        "decoded_bytes": 30,
+        "target_bytes": 27,
+        "first_difference": {
+          "category": "extra_bytes",
+          "position": 27
+        },
+        "place_name_last_byte": 190,
+        "trace": [
+          {
+            "position": 26,
+            "emitted": 190,
+            "eos": false,
+            "eos_probability": 0.0,
+            "top_byte": 190,
+            "top_probability": 1.0,
+            "copy_content": 1,
+            "copy_mass_max": 1.0,
+            "emitted_in_records": true
+          },
+          {
+            "position": 27,
+            "emitted": 229,
+            "eos": false,
+            "eos_probability": 0.34922118416392917,
+            "top_byte": 229,
+            "top_probability": 0.39679967413176864,
+            "copy_content": 0,
+            "copy_mass_max": 0.0,
+            "emitted_in_records": true
+          },
+          {
+            "position": 28,
+            "emitted": 136,
+            "eos": false,
+            "eos_probability": 0.00034647367435382617,
+            "top_byte": 136,
+            "top_probability": 0.9357494511961992,
+            "copy_content": 0,
+            "copy_mass_max": 0.0,
+            "emitted_in_records": true
+          },
+          {
+            "position": 29,
+            "emitted": 176,
+            "eos": false,
+            "eos_probability": 0.008513042114909152,
+            "top_byte": 176,
+            "top_probability": 0.977123356024544,
+            "copy_content": 0,
+            "copy_mass_max": 0.0,
+            "emitted_in_records": true
+          },
+          {
+            "position": 30,
+            "emitted": 256,
+            "eos": true,
+            "eos_probability": 0.2525738567699352,
+            "top_byte": 256,
+            "top_probability": 0.2525738567699352,
+            "copy_content": 0,
+            "copy_mass_max": 0.0,
+            "emitted_in_records": false
+          }
+        ]
+      }
+    ],
+    "traces": {
+      "config": "repro_tail",
+      "gamma_override": 0.0,
+      "stopped_for_budget": false,
+      "examples": 64
+    },
+    "control_trace": {
+      "config": "repro_control",
+      "gamma_override": 0.0,
+      "stopped_for_budget": false,
+      "examples": 64
+    }
+  },
+  "candidate_identity": {
+    "candidate_sha_v2": "0d6a5df304f0bf952e97046822edf24fcba5371984c820063ef0b8331100cc42",
+    "parameters": 3563859,
+    "decode_rules": {
+      "copy_transport": "point_transport",
+      "pointer_temperature": {
+        "schedule": "T(u)=1-0.95*(u-1)/99 for u<=100, then 0.05",
+        "floor": 0.05
+      },
+      "pointer_inference": "argmax",
+      "pointer_entropy_coef": 0.01,
+      "span_supervision_weight": 0.5,
+      "gamma_floor": 0.2,
+      "sequence_stop": "decode terminates one byte past the final hop's field end",
+      "credit": {
+        "A_route_lock": "straight-through hard route",
+        "B_stop_lock": "detached hard route",
+        "C_unlocked": "inherited R1 unlocked read"
+      }
+    },
+    "modules": [
+      "taiji/selection_routing.py",
+      "taiji/binding_copy.py",
+      "taiji/binding_select.py",
+      "taiji/record_relation_core.py",
+      "taiji/living_core.py",
+      "taiji/selection_routing_checkpoint.py",
+      "taiji/byte_match_route.py",
+      "taiji/copy_stop_boundary.py"
+    ],
+    "stop_helper": "sequence_stop"
+  },
+  "cost": {
+    "runs": [
+      {
+        "stage": "repro_discarded",
+        "cpu": 39.84,
+        "wall": 41.93
+      },
+      {
+        "stage": "repro",
+        "cpu": 50.67,
+        "wall": 53.32
+      },
+      {
+        "stage": "fix",
+        "cpu": 148.56,
+        "wall": 155.39
+      },
+      {
+        "stage": "repro_final",
+        "cpu": 51.44,
+        "wall": 54.03
+      }
+    ],
+    "cpu_seconds_total": 290.51,
+    "wall_seconds_total": 304.67,
+    "cpu_cap": 400.0,
+    "wall_cap": 3600.0,
+    "over_budget": false
+  },
+  "discipline": {
+    "training_runs": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "parameters_added": 0,
+    "graph_changes": 0,
+    "progress_fsync_per_row": true,
+    "report_write_then_rename": true
+  },
+  "fix": {
+    "assembled_r2": "output\\taiji_package19_2w_assembled_stopfix_r2.pt",
+    "assembled_r2_sha256": "4e7ba75e83d8e7a26c8d60203a49b1e805e2fde9a8ea0d64651e3aad2ae7a6bb",
+    "candidate_sha_v2_before": "1d69e945ac149d436cc39426de5717b8a3e2b82de5e8f35565354028c0a33728",
+    "candidate_sha_v2_after": "0d6a5df304f0bf952e97046822edf24fcba5371984c820063ef0b8331100cc42",
+    "candidate_parameters": 3563859,
+    "rule": "decode terminates one byte past the final hop's declared field end",
+    "parameters_added": 0,
+    "sample_constants": 0,
+    "gap_constant": false,
+    "validation": {
+      "synthetic_tail": {
+        "examples": 64,
+        "byte_exact": 64,
+        "completed": 64,
+        "extra_examples": 0,
+        "extra_rate": 0.0,
+        "extra_bytes_total": 0,
+        "extra_positions": {},
+        "first_difference": {
+          "none": 64
+        },
+        "metrics": {
+          "examples": 64,
+          "selection_accuracy_object": 1.0,
+          "selection_accuracy_place": 1.0,
+          "selection_accuracy_both": 1.0,
+          "completion": 1.0,
+          "byte_exact_rate": 1.0,
+          "start_hit_object": 1.0,
+          "start_hit_place": 1.0,
+          "composite_start_hit_object": 1.0,
+          "composite_start_hit_place": 1.0,
+          "conditional_byte": 1.0,
+          "provenance_rate": 1.0,
+          "fabricated_bytes": 0,
+          "misbound_bytes": 0,
+          "truncation_rate": 0.0,
+          "wrong_route_right_content": 0,
+          "cells": {
+            "aligned": 128
+          },
+          "first_difference": {
+            "none": 64
+          },
+          "first_difference_positions": {
+            "none": 64
+          },
+          "object_span_exact": 1.0,
+          "place_span_exact": 1.0
+        }
+      },
+      "synthetic_control": {
+        "examples": 64,
+        "byte_exact": 64,
+        "completed": 64,
+        "extra_examples": 0,
+        "extra_rate": 0.0,
+        "extra_bytes_total": 0,
+        "extra_positions": {},
+        "first_difference": {
+          "none": 64
+        },
+        "metrics": {
+          "examples": 64,
+          "selection_accuracy_object": 1.0,
+          "selection_accuracy_place": 1.0,
+          "selection_accuracy_both": 1.0,
+          "completion": 1.0,
+          "byte_exact_rate": 1.0,
+          "start_hit_object": 1.0,
+          "start_hit_place": 1.0,
+          "composite_start_hit_object": 1.0,
+          "composite_start_hit_place": 1.0,
+          "conditional_byte": 1.0,
+          "provenance_rate": 1.0,
+          "fabricated_bytes": 0,
+          "misbound_bytes": 0,
+          "truncation_rate": 0.0,
+          "wrong_route_right_content": 0,
+          "cells": {
+            "aligned": 128
+          },
+          "first_difference": {
+            "none": 64
+          },
+          "first_difference_positions": {
+            "none": 64
+          },
+          "object_span_exact": 1.0,
+          "place_span_exact": 1.0
+        }
+      },
+      "dev": {
+        "examples": 192,
+        "byte_exact": 192,
+        "completion": 1.0,
+        "metrics": {
+          "examples": 192,
+          "selection_accuracy_object": 1.0,
+          "selection_accuracy_place": 1.0,
+          "selection_accuracy_both": 1.0,
+          "completion": 1.0,
+          "byte_exact_rate": 1.0,
+          "start_hit_object": 1.0,
+          "start_hit_place": 1.0,
+          "composite_start_hit_object": 1.0,
+          "composite_start_hit_place": 1.0,
+          "conditional_byte": 1.0,
+          "provenance_rate": 1.0,
+          "fabricated_bytes": 0,
+          "misbound_bytes": 0,
+          "truncation_rate": 0.0,
+          "wrong_route_right_content": 0,
+          "cells": {
+            "aligned": 384
+          },
+          "first_difference": {
+            "none": 192
+          },
+          "first_difference_positions": {
+            "none": 192
+          },
+          "object_span_exact": 1.0,
+          "place_span_exact": 1.0
+        },
+        "l1_pass": true,
+        "first_difference": {
+          "none": 192
+        },
+        "extra_examples": 0
+      },
+      "robustness": {
+        "上": {
+          "examples": 8,
+          "byte_exact": 8,
+          "completed": 8,
+          "extra_examples": 0,
+          "extra_rate": 0.0,
+          "extra_bytes_total": 0,
+          "extra_positions": {},
+          "first_difference": {
+            "none": 8
+          },
+          "metrics": {
+            "examples": 8,
+            "selection_accuracy_object": 1.0,
+            "selection_accuracy_place": 1.0,
+            "selection_accuracy_both": 1.0,
+            "completion": 1.0,
+            "byte_exact_rate": 1.0,
+            "start_hit_object": 1.0,
+            "start_hit_place": 1.0,
+            "composite_start_hit_object": 1.0,
+            "composite_start_hit_place": 1.0,
+            "conditional_byte": 1.0,
+            "provenance_rate": 1.0,
+            "fabricated_bytes": 0,
+            "misbound_bytes": 0,
+            "truncation_rate": 0.0,
+            "wrong_route_right_content": 0,
+            "cells": {
+              "aligned": 16
+            },
+            "first_difference": {
+              "none": 8
+            },
+            "first_difference_positions": {
+              "none": 8
+            },
+            "object_span_exact": 1.0,
+            "place_span_exact": 1.0
+          }
+        },
+        "下": {
+          "examples": 8,
+          "byte_exact": 8,
+          "completed": 8,
+          "extra_examples": 0,
+          "extra_rate": 0.0,
+          "extra_bytes_total": 0,
+          "extra_positions": {},
+          "first_difference": {
+            "none": 8
+          },
+          "metrics": {
+            "examples": 8,
+            "selection_accuracy_object": 1.0,
+            "selection_accuracy_place": 1.0,
+            "selection_accuracy_both": 1.0,
+            "completion": 1.0,
+            "byte_exact_rate": 1.0,
+            "start_hit_object": 1.0,
+            "start_hit_place": 1.0,
+            "composite_start_hit_object": 1.0,
+            "composite_start_hit_place": 1.0,
+            "conditional_byte": 1.0,
+            "provenance_rate": 1.0,
+            "fabricated_bytes": 0,
+            "misbound_bytes": 0,
+            "truncation_rate": 0.0,
+            "wrong_route_right_content": 0,
+            "cells": {
+              "aligned": 16
+            },
+            "first_difference": {
+              "none": 8
+            },
+            "first_difference_positions": {
+              "none": 8
+            },
+            "object_span_exact": 1.0,
+            "place_span_exact": 1.0
+          }
+        },
+        "东": {
+          "examples": 8,
+          "byte_exact": 8,
+          "completed": 8,
+          "extra_examples": 0,
+          "extra_rate": 0.0,
+          "extra_bytes_total": 0,
+          "extra_positions": {},
+          "first_difference": {
+            "none": 8
+          },
+          "metrics": {
+            "examples": 8,
+            "selection_accuracy_object": 1.0,
+            "selection_accuracy_place": 1.0,
+            "selection_accuracy_both": 1.0,
+            "completion": 1.0,
+            "byte_exact_rate": 1.0,
+            "start_hit_object": 1.0,
+            "start_hit_place": 1.0,
+            "composite_start_hit_object": 1.0,
+            "composite_start_hit_place": 1.0,
+            "conditional_byte": 1.0,
+            "provenance_rate": 1.0,
+            "fabricated_bytes": 0,
+            "misbound_bytes": 0,
+            "truncation_rate": 0.0,
+            "wrong_route_right_content": 0,
+            "cells": {
+              "aligned": 16
+            },
+            "first_difference": {
+              "none": 8
+            },
+            "first_difference_positions": {
+              "none": 8
+            },
+            "object_span_exact": 1.0,
+            "place_span_exact": 1.0
+          }
+        },
+        "侧": {
+          "examples": 8,
+          "byte_exact": 8,
+          "completed": 8,
+          "extra_examples": 0,
+          "extra_rate": 0.0,
+          "extra_bytes_total": 0,
+          "extra_positions": {},
+          "first_difference": {
+            "none": 8
+          },
+          "metrics": {
+            "examples": 8,
+            "selection_accuracy_object": 1.0,
+            "selection_accuracy_place": 1.0,
+            "selection_accuracy_both": 1.0,
+            "completion": 1.0,
+            "byte_exact_rate": 1.0,
+            "start_hit_object": 1.0,
+            "start_hit_place": 1.0,
+            "composite_start_hit_object": 1.0,
+            "composite_start_hit_place": 1.0,
+            "conditional_byte": 1.0,
+            "provenance_rate": 1.0,
+            "fabricated_bytes": 0,
+            "misbound_bytes": 0,
+            "truncation_rate": 0.0,
+            "wrong_route_right_content": 0,
+            "cells": {
+              "aligned": 16
+            },
+            "first_difference": {
+              "none": 8
+            },
+            "first_difference_positions": {
+              "none": 8
+            },
+            "object_span_exact": 1.0,
+            "place_span_exact": 1.0
+          }
+        },
+        "前": {
+          "examples": 8,
+          "byte_exact": 8,
+          "completed": 8,
+          "extra_examples": 0,
+          "extra_rate": 0.0,
+          "extra_bytes_total": 0,
+          "extra_positions": {},
+          "first_difference": {
+            "none": 8
+          },
+          "metrics": {
+            "examples": 8,
+            "selection_accuracy_object": 1.0,
+            "selection_accuracy_place": 1.0,
+            "selection_accuracy_both": 1.0,
+            "completion": 1.0,
+            "byte_exact_rate": 1.0,
+            "start_hit_object": 1.0,
+            "start_hit_place": 1.0,
+            "composite_start_hit_object": 1.0,
+            "composite_start_hit_place": 1.0,
+            "conditional_byte": 1.0,
+            "provenance_rate": 1.0,
+            "fabricated_bytes": 0,
+            "misbound_bytes": 0,
+            "truncation_rate": 0.0,
+            "wrong_route_right_content": 0,
+            "cells": {
+              "aligned": 16
+            },
+            "first_difference": {
+              "none": 8
+            },
+            "first_difference_positions": {
+              "none": 8
+            },
+            "object_span_exact": 1.0,
+            "place_span_exact": 1.0
+          }
+        },
+        "北": {
+          "examples": 8,
+          "byte_exact": 8,
+          "completed": 8,
+          "extra_examples": 0,
+          "extra_rate": 0.0,
+          "extra_bytes_total": 0,
+          "extra_positions": {},
+          "first_difference": {
+            "none": 8
+          },
+          "metrics": {
+            "examples": 8,
+            "selection_accuracy_object": 1.0,
+            "selection_accuracy_place": 1.0,
+            "selection_accuracy_both": 1.0,
+            "completion": 1.0,
+            "byte_exact_rate": 1.0,
+            "start_hit_object": 1.0,
+            "start_hit_place": 1.0,
+            "composite_start_hit_object": 1.0,
+            "composite_start_hit_place": 1.0,
+            "conditional_byte": 1.0,
+            "provenance_rate": 1.0,
+            "fabricated_bytes": 0,
+            "misbound_bytes": 0,
+            "truncation_rate": 0.0,
+            "wrong_route_right_content": 0,
+            "cells": {
+              "aligned": 16
+            },
+            "first_difference": {
+              "none": 8
+            },
+            "first_difference_positions": {
+              "none": 8
+            },
+            "object_span_exact": 1.0,
+            "place_span_exact": 1.0
+          }
+        },
+        "外": {
+          "examples": 8,
+          "byte_exact": 8,
+          "completed": 8,
+          "extra_examples": 0,
+          "extra_rate": 0.0,
+          "extra_bytes_total": 0,
+          "extra_positions": {},
+          "first_difference": {
+            "none": 8
+          },
+          "metrics": {
+            "examples": 8,
+            "selection_accuracy_object": 1.0,
+            "selection_accuracy_place": 1.0,
+            "selection_accuracy_both": 1.0,
+            "completion": 1.0,
+            "byte_exact_rate": 1.0,
+            "start_hit_object": 1.0,
+            "start_hit_place": 1.0,
+            "composite_start_hit_object": 1.0,
+            "composite_start_hit_place": 1.0,
+            "conditional_byte": 1.0,
+            "provenance_rate": 1.0,
+            "fabricated_bytes": 0,
+            "misbound_bytes": 0,
+            "truncation_rate": 0.0,
+            "wrong_route_right_content": 0,
+            "cells": {
+              "aligned": 16
+            },
+            "first_difference": {
+              "none": 8
+            },
+            "first_difference_positions": {
+              "none": 8
+            },
+            "object_span_exact": 1.0,
+            "place_span_exact": 1.0
+          }
+        },
+        "尾": {
+          "examples": 8,
+          "byte_exact": 8,
+          "completed": 8,
+          "extra_examples": 0,
+          "extra_rate": 0.0,
+          "extra_bytes_total": 0,
+          "extra_positions": {},
+          "first_difference": {
+            "none": 8
+          },
+          "metrics": {
+            "examples": 8,
+            "selection_accuracy_object": 1.0,
+            "selection_accuracy_place": 1.0,
+            "selection_accuracy_both": 1.0,
+            "completion": 1.0,
+            "byte_exact_rate": 1.0,
+            "start_hit_object": 1.0,
+            "start_hit_place": 1.0,
+            "composite_start_hit_object": 1.0,
+            "composite_start_hit_place": 1.0,
+            "conditional_byte": 1.0,
+            "provenance_rate": 1.0,
+            "fabricated_bytes": 0,
+            "misbound_bytes": 0,
+            "truncation_rate": 0.0,
+            "wrong_route_right_content": 0,
+            "cells": {
+              "aligned": 16
+            },
+            "first_difference": {
+              "none": 8
+            },
+            "first_difference_positions": {
+              "none": 8
+            },
+            "object_span_exact": 1.0,
+            "place_span_exact": 1.0
+          }
+        },
+        "沿": {
+          "examples": 8,
+          "byte_exact": 8,
+          "completed": 8,
+          "extra_examples": 0,
+          "extra_rate": 0.0,
+          "extra_bytes_total": 0,
+          "extra_positions": {},
+          "first_difference": {
+            "none": 8
+          },
+          "metrics": {
+            "examples": 8,
+            "selection_accuracy_object": 1.0,
+            "selection_accuracy_place": 1.0,
+            "selection_accuracy_both": 1.0,
+            "completion": 1.0,
+            "byte_exact_rate": 1.0,
+            "start_hit_object": 1.0,
+            "start_hit_place": 1.0,
+            "composite_start_hit_object": 1.0,
+            "composite_start_hit_place": 1.0,
+            "conditional_byte": 1.0,
+            "provenance_rate": 1.0,
+            "fabricated_bytes": 0,
+            "misbound_bytes": 0,
+            "truncation_rate": 0.0,
+            "wrong_route_right_content": 0,
+            "cells": {
+              "aligned": 16
+            },
+            "first_difference": {
+              "none": 8
+            },
+            "first_difference_positions": {
+              "none": 8
+            },
+            "object_span_exact": 1.0,
+            "place_span_exact": 1.0
+          }
+        },
+        "畔": {
+          "examples": 8,
+          "byte_exact": 8,
+          "completed": 8,
+          "extra_examples": 0,
+          "extra_rate": 0.0,
+          "extra_bytes_total": 0,
+          "extra_positions": {},
+          "first_difference": {
+            "none": 8
+          },
+          "metrics": {
+            "examples": 8,
+            "selection_accuracy_object": 1.0,
+            "selection_accuracy_place": 1.0,
+            "selection_accuracy_both": 1.0,
+            "completion": 1.0,
+            "byte_exact_rate": 1.0,
+            "start_hit_object": 1.0,
+            "start_hit_place": 1.0,
+            "composite_start_hit_object": 1.0,
+            "composite_start_hit_place": 1.0,
+            "conditional_byte": 1.0,
+            "provenance_rate": 1.0,
+            "fabricated_bytes": 0,
+            "misbound_bytes": 0,
+            "truncation_rate": 0.0,
+            "wrong_route_right_content": 0,
+            "cells": {
+              "aligned": 16
+            },
+            "first_difference": {
+              "none": 8
+            },
+            "first_difference_positions": {
+              "none": 8
+            },
+            "object_span_exact": 1.0,
+            "place_span_exact": 1.0
+          }
+        },
+        "角": {
+          "examples": 8,
+          "byte_exact": 8,
+          "completed": 8,
+          "extra_examples": 0,
+          "extra_rate": 0.0,
+          "extra_bytes_total": 0,
+          "extra_positions": {},
+          "first_difference": {
+            "none": 8
+          },
+          "metrics": {
+            "examples": 8,
+            "selection_accuracy_object": 1.0,
+            "selection_accuracy_place": 1.0,
+            "selection_accuracy_both": 1.0,
+            "completion": 1.0,
+            "byte_exact_rate": 1.0,
+            "start_hit_object": 1.0,
+            "start_hit_place": 1.0,
+            "composite_start_hit_object": 1.0,
+            "composite_start_hit_place": 1.0,
+            "conditional_byte": 1.0,
+            "provenance_rate": 1.0,
+            "fabricated_bytes": 0,
+            "misbound_bytes": 0,
+            "truncation_rate": 0.0,
+            "wrong_route_right_content": 0,
+            "cells": {
+              "aligned": 16
+            },
+            "first_difference": {
+              "none": 8
+            },
+            "first_difference_positions": {
+              "none": 8
+            },
+            "object_span_exact": 1.0,
+            "place_span_exact": 1.0
+          }
+        }
+      },
+      "trace_tail": {
+        "config": "fix_tail",
+        "gamma_override": 0.0,
+        "stopped_for_budget": false,
+        "examples": 64
+      },
+      "trace_control": {
+        "config": "fix_control",
+        "gamma_override": 0.0,
+        "stopped_for_budget": false,
+        "examples": 64
+      },
+      "trace_dev": {
+        "config": "fix_dev",
+        "gamma_override": 0.0,
+        "stopped_for_budget": false,
+        "examples": 192
+      }
+    },
+    "gates": {
+      "synthetic_tail_exact": true,
+      "synthetic_control_exact": true,
+      "dev_l1_exact": true,
+      "dev_sentence_exact": true,
+      "robustness_clean": true
+    },
+    "verdict": "fixed"
+  }
+}

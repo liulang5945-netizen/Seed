@@ -1,0 +1,37 @@
+{
+  "schema": "taiji-package19-2w-manifest-v1",
+  "report": "reports\\taiji_package19_2w_boundary_residual_20261105.json",
+  "candidate_sha_v2": "0d6a5df304f0bf952e97046822edf24fcba5371984c820063ef0b8331100cc42",
+  "verdict": "fixed",
+  "cost": {
+    "runs": [
+      {
+        "stage": "repro_discarded",
+        "cpu": 39.84,
+        "wall": 41.93
+      },
+      {
+        "stage": "repro",
+        "cpu": 50.67,
+        "wall": 53.32
+      },
+      {
+        "stage": "fix",
+        "cpu": 148.56,
+        "wall": 155.39
+      },
+      {
+        "stage": "repro_final",
+        "cpu": 51.44,
+        "wall": 54.03
+      }
+    ],
+    "cpu_seconds_total": 290.51,
+    "wall_seconds_total": 304.67,
+    "cpu_cap": 400.0,
+    "wall_cap": 3600.0,
+    "over_budget": false
+  },
+  "assembly_r2": "output\\taiji_package19_2w_assembled_stopfix_r2.pt",
+  "candidate_sha_v2_after": "0d6a5df304f0bf952e97046822edf24fcba5371984c820063ef0b8331100cc42"
+}

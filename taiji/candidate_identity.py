@@ -74,6 +74,7 @@ DECODE_RULES = {
     "pointer_entropy_coef": 0.01,
     "span_supervision_weight": 0.5,
     "gamma_floor": 0.2,
+    "sequence_stop": "decode terminates one byte past the final hop's field end",
     "credit": {
         "A_route_lock": "straight-through hard route",
         "B_stop_lock": "detached hard route",

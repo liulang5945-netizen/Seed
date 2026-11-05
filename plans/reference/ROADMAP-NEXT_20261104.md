@@ -6,10 +6,10 @@
 
 - **包号**：`19` = 位置计数 + UTF-8 掩码（即原“18.2 修复包”）；`20` = 逐字节门与抽取式任务判据落地；`21` = 经验写入面立项前提（只写前提，不写实现）。
 - **两条旧编号的处理**：系统计划（[PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md](PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md)）里的长期阶段改用 **S 前缀**（S19 跨 session 经验、S20 反馈塑形、S21 世界模型、S22 生长），与本轨包号 19–21 **不是同一坐标系**；S19–S22 一律**未调度**，调度权等本轨 21 结案后由 owner 重新分配。原“18.1”保留原名（历史证据），不再产生新编号。
-- **当前步**：**等 owner 对 19.2v 封存集独立确认读数作最终裁定；19.2 系列（19.2b–19.2v）整体关闭；本步不训练、不写提案、不建新包、不给建议**。已交付 19.2v（confirm **首次且唯一一次**读取 / 0 训练 / 0 Adam / **144.06 CPU** / 150.53 wall / 上限 400；1 次恢复重跑——首跑在夹具物化前中止、0 例 0 前向，已在报告标注）：confirm 192 例（旧/新各 96），答案长度实测 **27 字节**（模板 9＋物件名 12＋地名 6；request 所述"57 字节"与冻结夹具不符，已按实测登记）；**L1 机械不变量全过**（选择物件/地点/两跳、`start_hit` 物件/地点、`composite_start_hit`、`conditional_byte`、`provenance` 全 **1.0000**；`fabricated`/`misbound`/截断/`wrong_route_right_content` **0**；confirm 模板 fixed-length、终止符恒 `。`、反例 **0**）；**整句逐字节精确 188/192＝0.9792**（旧 95/96、新 93/96；γ=0 与 γ_floor 同值），4 例失败**全部是位 27 多写 1 个模板字节"到"**（27 字节正文全对、选择/起点/跨度全对齐）→ **`milestone_holds`**（≥0.95），与 dev 差 **−0.0208**（未达 −0.05 过拟合阈值）。**D16-26 已立**：封存集独立确认＋结构实现 L1 判据；任务 1（绑定复制＋选择）由结构实现达成，**训练路径对本任务贡献 0**；下一个能力必须是**有非算法残余的新任务**，否则不应再开训练包。证据：[报告](../../reports/taiji_package19_2v_confirm_holdout_20261105.json)＋[manifest](../manifests/taiji_package19_2v_confirm_holdout_20261105.json)＋[预注册](../manifests/taiji_package19_2v_preregistered_20261105.json)＋账本 §16.20。
+- **当前步**：**等 owner 对 19.2w 边界残差修复作最终裁定；本步不训练、不写提案、不建新包、不给建议**。已交付 19.2w（0 训练 / 0 Adam / **290.51 CPU** / 上限 400 / **0 confirm 读取**）：冻结外合成复现 **尾类 64 例 1 例外溢（1.56%）**、对照 64/64，与 confirm 4/192＝2.08% 同量级；诊断证明位 27 的 **EOS 0.3492 被模板续写 0xE5 0.3968 压过**、随后补齐三字节，且 **1,536 条记录中"到"0 次** → 外溢不来自复制通路（`copy_limits` 已清零），缺口是**序列末端没有停止边**；修复新增结构原语 `copy_stop_boundary.sequence_stop`（最后一跳字段停止边＝序列终点，**0 参数 / 0 样例常数 / 无字符特判 / `gap_constant=false`**）；三道门全过——合成尾 **64/64**、对照 **64/64**、dev **192/192 且 L1 全 1.0000**、11 类末字符各 8 例**全 0 外溢** → **`fixed`**；`candidate_sha_v2` `1d69e945…`→**`0d6a5df3…`**（参数 3,563,859 不变），新装配态 1 份 `assembled_stopfix_r2`（sha256 `4e7ba75e…`）；**confirm 0.9792 原样保留、未在封存集复核**（要新封存读数须另立前置注册，D16-27）。证据：[报告](../../reports/taiji_package19_2w_boundary_residual_20261105.json)＋[manifest](../manifests/taiji_package19_2w_boundary_residual_20261105.json)＋账本 §16.21。此前一步：19.2v（confirm **首次且唯一一次**读取 / 0 训练 / 0 Adam / **144.06 CPU** / 150.53 wall / 上限 400；1 次恢复重跑——首跑在夹具物化前中止、0 例 0 前向，已在报告标注）：confirm 192 例（旧/新各 96），答案长度实测 **27 字节**（模板 9＋物件名 12＋地名 6；request 所述"57 字节"与冻结夹具不符，已按实测登记）；**L1 机械不变量全过**（选择物件/地点/两跳、`start_hit` 物件/地点、`composite_start_hit`、`conditional_byte`、`provenance` 全 **1.0000**；`fabricated`/`misbound`/截断/`wrong_route_right_content` **0**；confirm 模板 fixed-length、终止符恒 `。`、反例 **0**）；**整句逐字节精确 188/192＝0.9792**（旧 95/96、新 93/96；γ=0 与 γ_floor 同值），4 例失败**全部是位 27 多写 1 个模板字节"到"**（27 字节正文全对、选择/起点/跨度全对齐）→ **`milestone_holds`**（≥0.95），与 dev 差 **−0.0208**（未达 −0.05 过拟合阈值）。**D16-26 已立**：封存集独立确认＋结构实现 L1 判据；任务 1（绑定复制＋选择）由结构实现达成，**训练路径对本任务贡献 0**；下一个能力必须是**有非算法残余的新任务**，否则不应再开训练包。证据：[报告](../../reports/taiji_package19_2v_confirm_holdout_20261105.json)＋[manifest](../manifests/taiji_package19_2v_confirm_holdout_20261105.json)＋[预注册](../manifests/taiji_package19_2v_preregistered_20261105.json)＋账本 §16.20。
 - **同步规则**：MASTER-PLAN §0 与 MAINLINE 的“队首”必须逐字等于本文件“当前步”；改步必须同一次提交里改三处，否则视为计划失同步。
 
-## 0b. 19.2 系列关闭（2026-11-05，19.2b–19.2v）
+## 0b. 19.2 系列关闭（2026-11-05，19.2b–19.2w）
 
 **状态：整体关闭。** 本线不再产生新步骤、不保留待办悬念；只留结论与证据索引。
 
@@ -22,8 +22,9 @@
 | 19.2t 零训练装配 | 内容层四项 1.000；整句 0.385/0.630；失败全在字节位 15 → 复制无停止边界 | 账本 §16.18（D16-24） |
 | 19.2u 停止边界＋消融 | dev 192/192；消融 0.9479、失败全在模板位 1 → 训练权重贡献 0 | 账本 §16.19（D16-25） |
 | 19.2v 封存集确认 | confirm 188/192＝0.9792、L1 全过、Δ vs dev −0.0208 → `milestone_holds` | [`报告`](../../reports/taiji_package19_2v_confirm_holdout_20261105.json)＋[manifest](../manifests/taiji_package19_2v_confirm_holdout_20261105.json)＋[预注册](../manifests/taiji_package19_2v_preregistered_20261105.json)＋账本 §16.20（D16-26） |
+| 19.2w 边界残差复现与修复 | 冻结外合成复现尾类 1/64（1.56%）／对照 0/64；诊断为**序列末端无停止边**（非复制通路）；`sequence_stop` 结构修复 0 参数 0 常数；三道门全过 → `fixed`；confirm 0.9792 不改写、未复核 | [`报告`](../../reports/taiji_package19_2w_boundary_residual_20261105.json)＋[manifest](../manifests/taiji_package19_2w_boundary_residual_20261105.json)＋账本 §16.21（D16-27） |
 
-**唯一未决**：owner 对 19.2v 的接收确认，不产生新实验。**下一个能力必须是有非算法残余的新任务**，否则不再开训练包。
+**唯一未决**：owner 对 19.2w 边界残差修复的接收确认，不产生新实验。**下一个能力必须是有非算法残余的新任务**，否则不再开训练包。
 
 ## 1. 包 19：位置计数 + UTF-8 掩码（19.5 是唯一允许的训练入口）
 

@@ -19,6 +19,11 @@ offsets, matching ``RecordSourceView.record_offsets``.
 
 Registered in ``candidate_identity.GRAPH_MODULES`` as of package 19.2u, so
 ``candidate_sha_v2`` changes by design; the module has no learnable parameters.
+
+Package 19.2w extends the same primitive to the *sequence* edge: the answer
+contract has no bytes after the final hop's name field, so reaching that field's
+stop edge also terminates decoding (``sequence_stop``).  That rule removes the
+1-byte tail residual without a parameter or a character special-case.
 """
 
 from __future__ import annotations
@@ -88,3 +93,16 @@ def copy_limits_for(
         _start, end = field_bounds(raw, description)
         limits[route] = end
     return tuple(limits)
+
+
+def sequence_stop(hop_positions: tuple[int, ...]) -> int:
+    """Answer byte position at which decoding must terminate.
+
+    19.2v showed that the stop edge of the final hop is also the end of the
+    sequence: the answer contract carries no bytes after the last name field.
+    The caller passes the declared answer span of that hop, so no sample
+    constant and no character special-case enters the rule.
+    """
+    if not hop_positions:
+        raise CopyBoundaryError("empty hop span has no stop edge")
+    return hop_positions[-1] + 1

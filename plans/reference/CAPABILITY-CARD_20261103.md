@@ -29,7 +29,7 @@
 | C9 | 新图精确复制控制720/720通过（旧文件701/720为改前基线，已`superseded`） | `reports/taiji_selection_routing_17_2_t3_supplement_20261103_v3.json` → `forced_gold_probability` | 通过范围为gold控制下f64及reader-f32，正常定位/完整主体另验 |
 | C10 | 当前词表（3物件×5地点）下，模型对**未见过的新名字**逐字节正确率 0.000，且删记录/换错记录/换位置四种条件下新名字从未逐字出现；γ≈0.92（生成权重），复制权重约 0.08 | `reports/taiji_memory_dominance_probe_20261104.json` → `pooled`、`verdict`、`cells[*].criterion` | 训练从未需要复制：15 种组合可背诵，输出在已背名字池内换，内容不来自记录 |
 | C11 | 方案 A 的**数据前提已构建但未训练**：物件/地点名字池各 220（≥200），按**名字串**三向互斥切 160/30/30，train/dev 的（物件×地点）组合交集 0，八项跨向名字出现计数全 0；参数增量 0（名字是记录字节，不是嵌入），容器仍 3,563,859 参数 | `plans/manifests/taiji_data_premise_18_0_manifest_20261104.json` → `vocabulary`、`proofs`、`capacity`；`plans/manifests/taiji_data_premise_18_0_prereg_20261104.json` → `gates`、`axes` | 只证明“考题不再可背”，**不证明模型已能抄新名字**；能力结论要等 18.1 结果 |
-| C12 | **绑定复制＋选择（本任务）由结构实现达成，训练权重贡献 0**：封存集 confirm 192 例（旧/新各 96）单次读取，**188/192＝0.9792** 整句逐字节精确（旧 95/96、新 93/96），L1 机械不变量全 **1.0000**（选择三类 / 双起点 / 复合起点 / 条件字节 / 来源率），编造、误绑、截断、`wrong_route_right_content` 全 **0**；与 dev 差 **−0.0208**（未达 −0.05）；4 例失败全为位 27 多写 1 个模板字节 | `reports/taiji_package19_2v_confirm_holdout_20261105.json` → `readings.gamma_0.total`、`decision`、`boundary_measurement_confirm`；账本 §16.20 / D16-26 | 现在这台模型**不靠训练**就能在这类题上做对：答案是逐字节从记录里抄出来的；训练只对模板字节发射有边际作用 |
+| C12 | **绑定复制＋选择（本任务）由结构实现达成，训练权重贡献 0**：封存集 confirm 192 例（旧/新各 96）单次读取，**188/192＝0.9792** 整句逐字节精确（旧 95/96、新 93/96），L1 机械不变量全 **1.0000**（选择三类 / 双起点 / 复合起点 / 条件字节 / 来源率），编造、误绑、截断、`wrong_route_right_content` 全 **0**；与 dev 差 **−0.0208**（未达 −0.05）；4 例失败全为位 27 多写 1 个模板字节。**已知残差：末端 1 字节外溢（实为模板"到"三字节），已在结构侧修复（19.2w 序列停止边），未在封存集复核。** | `reports/taiji_package19_2v_confirm_holdout_20261105.json` → `readings.gamma_0.total`、`decision`、`boundary_measurement_confirm`；`reports/taiji_package19_2w_boundary_residual_20261105.json` → `fix`；账本 §16.20–§16.21 / D16-26–D16-27 | 现在这台模型**不靠训练**就能在这类题上做对：答案是逐字节从记录里抄出来的；训练只对模板字节发射有边际作用 |
 
 ## 2. 未证（还没有实验能支持，对外不得声称）
 
@@ -306,6 +306,14 @@ C10 把 17.5 的失败归因从“算子坏了”改成“任务前提允许背�
 - **与 dev 并排（不合并）**：dev 1.0000 vs confirm 0.9792，**Δ −0.0208**（未达 −0.05 过拟合阈值）；其余各项 Δ＝0 → 判定 **`milestone_holds`**。
 - **升格登记**：**"绑定复制＋选择"由"已证"升格为已达成里程碑，注明"结构实现、训练权重贡献 0"**；本任务此后不得再以训练立项（D16-26）；下一个能力必须带**非算法残余**。
 - **花费**：144.06 CPU / 150.53 wall（上限 400 / 60 min，36.0%）；0 训练 / 0 Adam / 0 参数新增 / 0 图变更 / 1 次 confirm 读取。
+
+**19.2w 边界残差复现与修复与 D16-27（2026-11-05；0 训练 / 290.51 CPU；[报告](../../reports/taiji_package19_2w_boundary_residual_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2w_boundary_residual_20261105.json)＋新装配态 `assembled_stopfix_r2`＋账本 §16.21）**
+
+- **复现（冻结外，不读 confirm）**：尾类合成 64 例外溢 1 例（1.56%），对照 64/64；与 confirm 4/192＝2.08% 同量级 → 触发条件在现有生成器上可造。
+- **诊断**：位 27 的 EOS 概率 0.3492、顶位 0xE5 为 0.3968；随后两续字节高置信补齐，位 30 才 EOS。**1,536 条记录中"到"整串 0 次** → 非复制通路（`copy_limits` 在位 27 已清零）；实际缺口是**序列末端没有停止边**。
+- **修复**：`copy_stop_boundary.sequence_stop`——最后一跳字段停止边＝序列终点，解码到该位置终止；0 参数、0 样例常数、无字符特判、`gap_constant=false`。
+- **验证**：合成尾 64/64、对照 64/64、dev 192 全 L1 **1.0000**、11 个末字符类各 8 例全 0 外溢 → `fixed`。
+- **口径**：confirm 0.9792 **不改写、不在封存集复核**；要新封存读数须另立前置注册（D16-27）。`candidate_sha_v2` `1d69e945…`→**`0d6a5df3…`**，参数 3,563,859 不变。
 
 **19.2r 字节匹配设计闸与 D16-22（2026-11-05；0 Adam / 0 训练前向 / 1.88 CPU；[报告](../../reports/taiji_package19_2r_byte_match_gate_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2r_byte_match_gate_20261105.json)＋[通路](../../taiji/byte_match_route.py)＋账本 §16.16）**
 
