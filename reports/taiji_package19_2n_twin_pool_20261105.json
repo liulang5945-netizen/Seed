@@ -1,0 +1,125 @@
+{
+  "schema": "taiji-package19-2n-twin-pool-v1",
+  "step": "N19.2n in-pool swap-twin design gate",
+  "phase": "read-only, 0 Adam, 0 bundles, 0 confirm",
+  "date": "2026-11-05",
+  "purpose": "D16-19 requires any negative-sample proposal to prove the negative is inside the candidate pool before it may spend training budget",
+  "ledger": "D16-19 / INVARIANT-LEDGER section 16.12",
+  "design": {
+    "pool_definition": "fixture['record_keys']: 4 object descriptions + 4 place descriptions",
+    "pool_size": 8,
+    "starts": [
+      {
+        "byte": 3,
+        "name": "object"
+      },
+      {
+        "byte": 21,
+        "name": "place"
+      }
+    ],
+    "dev_examples": 192,
+    "train_examples": 640,
+    "readings": 384,
+    "twin_definition": "swap two non-overlapping spans of the gold key; same character length and same UTF-8 byte multiset; the result must be another key of the same pool",
+    "entity_restricted_definition": "same, but both spans must be entity strings of the world (descriptions and names)",
+    "margin_rule": "only twins that are in the pool and compete in argmax would be scored; there are none, so nothing is scored",
+    "bundle_identities": [
+      {
+        "path": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+        "sha256": "fe04fbfb14aa0390877385a4429f2a851396a6fe6acb3107bae0a5e4e331dfca"
+      },
+      {
+        "path": "output\\taiji_package19_compare\\28032-B_stop_lock-step300.pt",
+        "sha256": "39fad661d4862184c18147dd5a03d7618eced5c6475db02cf8fc20ac0c0ccb0e"
+      }
+    ]
+  },
+  "pool_correction": {
+    "owner_text": "12 条候选池 / argmax over 12",
+    "measured": 8,
+    "evidence": "len(fixture['record_keys']) == 8 for 832 fixtures; score_rows appends one null row, so the scored tensor has 9 rows",
+    "consequence": "后半段所有比例以 8 条池计算；12 为笔误，写回 ledger 16.12"
+  },
+  "constructibility": {
+    "readings": 384,
+    "general_twins": 0,
+    "general_ratio": 0.0,
+    "entity_twins": 0,
+    "entity_ratio": 0.0,
+    "unique_cases": 96,
+    "unique_constructible": 0,
+    "unique_ratio": 0.0,
+    "twins_per_start_histogram": {
+      "0": 384
+    },
+    "multiset_equal_pool_pairs": 0,
+    "share_of_readings_with_multiset_pair": 0.0,
+    "gate": 0.6
+  },
+  "generate_from_records": {
+    "line_twins_built": 384,
+    "line_twins_same_multiset": 384,
+    "line_twins_in_world": 0,
+    "line_first_entity_key_in_pool": 128,
+    "line_first_entity_key_is_gold": 128,
+    "line_swapped_name_in_pool": 0,
+    "line_ratio": 1.0,
+    "can_enter_pool_as_distinct_key": 0,
+    "mechanism": "the live key is the record description; after a description/name swap inside the raw line, the first entity is either the same description (duplicate key, byte-identical score) or the name (never a pool key), so no distinct in-pool key appears",
+    "cross_record_pairs": 336,
+    "description_swap_key_set_changes": 0,
+    "cross_record_mechanism": "swapping descriptions between records permutes the same 8 strings, so the key set is unchanged; swapping names never touches the key"
+  },
+  "margin": {
+    "status": "not_measured",
+    "samples": 0,
+    "median": null,
+    "distribution": null,
+    "bundles_loaded": 0,
+    "reason": "in-pool twins = 0, so score_gold - score_twin has an empty measurement set; no bundle was loaded and no forward pass was spent",
+    "identity_statement": "any twin that preserves the gold description key has score difference exactly 0 (identical key bytes); any twin whose key leaves the description pool is out-of-pool by definition (D16-19)"
+  },
+  "verdict": {
+    "code": "twin_not_constructible",
+    "priority": [
+      "constructible_ratio < 0.60 -> twin_not_constructible",
+      "else in-pool margin median >= 1.0 -> twin_already_separated",
+      "else -> twin_gate_pass"
+    ],
+    "constructible_ratio_gate": 0.6,
+    "margin_median_gate": 1.0,
+    "next_step_only": "只许做：若仍要测顺序敏感选择，必须另立“数据前提”提案（把候选 key 从描述改为整行、并把 8 条池扩成描述×名字的叉积），提案中必须写明孪生的池内编号、与 gold 的 key 字节差、以及当前 score_gold − score_twin 实测分布；禁止在现有 8 条候选池上再提池外负样本，禁止改 readout 判据。",
+    "scope": "只回答“池内对手是否存在”，不回答“训练能否学会”"
+  },
+  "discipline": {
+    "adam_updates": 0,
+    "bundles_saved": 0,
+    "confirm_reads": 0,
+    "fsync_per_line": true,
+    "report_write_then_rename": true,
+    "format_gate": "not_executed",
+    "format_note": "D16-18: formatting only at the closing commit; nothing was formatted here"
+  },
+  "cost": {
+    "cpu_seconds": 0.203125,
+    "wall_seconds": 0.9895503001753241,
+    "budget_cpu": 120.0,
+    "over_budget": false,
+    "units": "pure stdlib string scan; no torch, no forward pass, no bundle load"
+  },
+  "inputs": {
+    "data_json": {
+      "path": "output\\taiji_data_premise_18_0\\data.json",
+      "sha256": "8242f2a82050f35c141380f0ee763c0496de05d987622f896d2ec16570492433"
+    },
+    "premise_module": {
+      "path": "taiji\\data_premise_18_0.py",
+      "sha256": "b98b68534d26773091b234d5b7c92220def1059be56ab2c2bb0f3f8cc5791204"
+    },
+    "script": {
+      "path": "scripts\\training\\probe_taiji_package19_2n_twin_pool.py",
+      "sha256": "f985bb9c07368b3ab972fa8006d3e4dd9f4de3ab40b1f6bb830e2694d3add47f"
+    }
+  }
+}

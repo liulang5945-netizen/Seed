@@ -1,0 +1,32 @@
+{
+  "schema": "taiji-package19-2n-manifest-v1",
+  "step": "N19.2n",
+  "date": "2026-11-05",
+  "report": {
+    "path": "reports\\taiji_package19_2n_twin_pool_20261105.json",
+    "sha256": "18f1b27a2a93ff3e86c00647a5f2ede4c80e4bbd1c8782bd4111893185699ab2"
+  },
+  "progress": {
+    "path": "reports\\taiji_package19_2n_twin_pool_progress_20261105.jsonl",
+    "sha256": "b6d90870beb74d8372ea2df19175dca4d5e157cfa7d0dcd3335091c96b1f1987"
+  },
+  "inputs": {
+    "data_json": {
+      "path": "output\\taiji_data_premise_18_0\\data.json",
+      "sha256": "8242f2a82050f35c141380f0ee763c0496de05d987622f896d2ec16570492433"
+    },
+    "premise_module": {
+      "path": "taiji\\data_premise_18_0.py",
+      "sha256": "b98b68534d26773091b234d5b7c92220def1059be56ab2c2bb0f3f8cc5791204"
+    },
+    "script": {
+      "path": "scripts\\training\\probe_taiji_package19_2n_twin_pool.py",
+      "sha256": "f985bb9c07368b3ab972fa8006d3e4dd9f4de3ab40b1f6bb830e2694d3add47f"
+    }
+  },
+  "verdict": "twin_not_constructible",
+  "cost_cpu": 0.203125,
+  "adam_updates": 0,
+  "bundles": 0,
+  "confirm_reads": 0
+}

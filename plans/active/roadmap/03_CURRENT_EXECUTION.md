@@ -2260,6 +2260,32 @@ step0 共用快照：route_miss 0.5417 / 物件 route_hit 0.0 / completed 0.0 / 
 
 **D. 三读（30/30 全程，不抽样）**：`key_diff_after` 中位 **1.4912**（基线同值，降幅 0.0，冻结 transport 未被冲掉）；`score_margin` 中位 **−0.0048 → 1.562**（配对 bootstrap **+1.5667 [1.4905,1.6412]**，128 读数，激活率 1.0→0.0）；首批 decoy 边距 0.0339 → **1.5533**；`gradient_share_by_param` = W_hidden **58.98%** / w_out **38.92%** / W_hidden.bias 1.69% / offset_embed 0.33% / W_align 0.084% / k_null 0，**新增块合计 0.416%**。
 
-**E. 互斥判定＝`washout_at_readout_proven`**：key 未降、边距已拉开 >1.5，但换序硬 argmax 只 4→1、route_miss 相对 CE 反而 +0.1042 → **差在打分差没穿过 argmax**，不是上游被冲掉、也不是边距不可训。诊断门 5 项过 3（conditional 物件/地点与旧描述不回退；argmax 与 route_miss 不过）。任务面同时变差（completed −0.1354、物件 route −0.2188）→ 该 loss 在 30 步剂量下**有害无益**。**下一步唯一允许**：readout 层顺序敏感重排（成对比较/top-1 抑制），禁止加步数、禁止动上游 key；属设计变更，先出 0 Adam 设计闸再问 owner。
+**E. 互斥判定＝`washout_at_readout_proven`**：key 未降、边距已拉开 >1.5，但换序硬 argmax 只 4→1、route_miss 相对 CE 反而 +0.1042 → **差在打分差没穿过 argmax**，不是上游被冲掉、也不是边距不可训。诊断门 5 项过 3（conditional 物件/地点与旧描述不回退；argmax 与 route_miss 不过）。任务面同时变差（completed −0.1354、物件 route −0.2188）→ 该 loss 在 30 步剂量下**有害无益**。**下一步唯一允许**：readout 层顺序敏感重排（成对比较/top-1 抑制），禁止加步数、禁止动上游 key；属设计变更，先出 0 Adam 设计闸再问 owner。**注：该方向已于 2026-11-05 被 owner 否（D16-19，见下条 19.2n）**。
 
 **F. 花费与包**：**784.9 CPU / 802.1 wall**、预算占用 **65.4%**、**60 Adam / 1 包 / 0 confirm**；`28031-N-alignment-step30-order-decoy.pt` sha256 `5c1c2c14…`，save→load 往返 **max_abs_diff 0.0**。开/收盘单价 CE **6.77 → 6.125**、边距项 **2.42 → 2.234**；6.125 > 6.02×0.7 → `price_regime_changed`（**非** `contention_at_start`），只报道、不改后续预算口径。收尾格式化按 D16-18 只跑一次：exit=0、0.31 s、无改动。证据：[B 报告](../../../reports/taiji_package19_2l_order_decoy_diagnostic_20261105.json)＋[manifest](../../manifests/taiji_package19_2l_order_decoy_diagnostic_20261105.json)。
+
+## 2026-11-05 19.2n 同池孪生设计闸（0 Adam / 0 包 / 0 confirm / 0.203 CPU）
+
+owner 裁定 19.2m 方向作废并立 **D16-19**（池外负样本不受理、禁止改尺子），本包只回答“池内是否存在同池孪生”，0 Adam、0 存包、0 confirm、逐行 fsync、**本包不执行格式化**（D16-18）。
+
+**A. 池口径纠正（先于统计）**：候选池是**每个 world 的 8 条 record key**（4 物体描述 + 4 地点描述，`RECORD_LINES=8`），**不是 12**；`score_rows` 输出 9 行＝8 候选 + 1 null。owner 文案与 19.2j 注释里的“12 records”为笔误，已写回账本 §16.12；192/192 dev 与 160/160 train 实测均为 8。
+
+**B. 可构造性（192 dev 例 × 2 起点＝384 读数，96 个唯一 world×key×起点组合）**：
+
+| 量 | 读数 |
+|---|---:|
+| 池内可构造孪生（任意两段互换） | **0 / 384（0.0）** |
+| 实体受限孪生（描述/名字互换） | **0 / 384** |
+| 池内字节多重集相同的 key 对 | **0** |
+| 每起点孪生数分布 | **{0: 384}** |
+| 线级孪生（记录行内描述↔名字互换） | **384 / 384 同长同字节多重集** |
+| 线级孪生出现在册 | **0 / 384** |
+| 互换后首实体仍是原描述（key 不变＝重复项） | **128 / 384** |
+| 互换后首实体变成名字（池外） | **256 / 384** |
+| 跨记录互换描述改变 key 集 | **0 / 336** |
+
+**C. 当前边距**：池内孪生为 0 → `score_gold − score_twin` 的测量集为空，**未加载任何 step300 包、未做任何前向**（28031-B/28032-B 仅登记 sha256 作身份）；这不是省略，是无可测对象。**不许**用池外 decoy 的 1.56 边距替代本行读数（D16-19）。
+
+**D. 判定与唯一建议**：**`twin_not_constructible`**（可构造比例 0.0 < 0.60，优先级最高）。机制：每把 key 只含一个描述实体、8 把互不相同、无任何同字节多重集对；记录行虽有描述+名字两个实体，但打分 key 只取描述，互换后要么 key 不变（重复项、分数差恒 0），要么变成名字（名字从不是候选 key）。**结论只回答“池内对手是否存在”，不回答“训练能否学会”**；唯一允许＝另立数据前提提案（key 改整行、池扩为描述×名字叉积），并给出池内编号、key 字节差与实测边距；禁止在现有 8 条池上再提池外负样本，禁止改 argmax 判据。
+
+**E. 花费**：**0.203 CPU / 0.99 wall**、预算 120 的 **0.17%**、**0 Adam / 0 包 / 0 confirm**、0 次格式化。证据：[19.2n 报告](../../../reports/taiji_package19_2n_twin_pool_20261105.json)＋[manifest](../../manifests/taiji_package19_2n_twin_pool_20261105.json)；脚本 [`probe_taiji_package19_2n_twin_pool.py`](../../../scripts/training/probe_taiji_package19_2n_twin_pool.py)。
