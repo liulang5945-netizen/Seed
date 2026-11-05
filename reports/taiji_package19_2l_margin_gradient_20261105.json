@@ -1,0 +1,211 @@
+{
+  "schema": "taiji-package19-2l-margin-gradient-v1",
+  "step": "N19.2l-A order-decoy margin gradient structure",
+  "phase": "structural proof before phase 3 (owner amendment)",
+  "date": "2026-11-05",
+  "mode": "forward + backward of the margin term only; 0 Adam, 0 bundles, 0 confirm",
+  "proposition": "if the scorer output depends only on the record's byte multiset, then the margin term of any byte-permutation negative has gradient exactly 0",
+  "design": {
+    "arms": {
+      "O": "19.2j O baseline head; no W_align / offset_embed position features",
+      "N": "19.2j N alignment head; same trunk plus W_align 32x32 and 5x8 offset_embed"
+    },
+    "only_variable": "the scorer (head architecture); parent binding, states, data and loss are shared",
+    "margin_term": "mean over readings of max(0, m - (score_gold - score_decoy)), m = 1.0",
+    "state_definition": "teacher-forced content-start state from the 19.2l gate O head, held fixed and identical for both arms; the routing state path is constant (no gradient through routing), so the only differentiable path is the scorer",
+    "samples": {
+      "sample": "64 train examples / 128 starts (same even-stride set as the gate)",
+      "first_batch": "first training batch of the frozen 19.2j order / 16 starts"
+    },
+    "exact_zero_threshold": 1e-12,
+    "gradient_floor": 1e-06
+  },
+  "key_vector": {
+    "max_abs_delta_distribution": {
+      "count": 128,
+      "mean": 1.4428109674621268,
+      "median": 1.491174147595295,
+      "p10": 0.9943563444407078,
+      "p90": 1.8384490866305203,
+      "min": 0.9943563444407078,
+      "max": 1.8384490866305203
+    },
+    "all_identical": false,
+    "note": "if the frozen transport mapped a permutation to the same pooled key, every bag scorer would see identical rows; a non-zero delta is the reason an O-head gradient can be non-zero even though the head has no explicit position features"
+  },
+  "arms": {
+    "O": {
+      "loss": 0.9711721071579529,
+      "margin": {
+        "count": 128,
+        "mean": 0.028827892842047308,
+        "median": -0.002946793588611829,
+        "p10": -0.1504233309534717,
+        "p90": 0.2835366809434379,
+        "min": -0.16147900284266026,
+        "max": 0.40857499598176333
+      },
+      "activated": 128,
+      "readings": 128,
+      "gradient_norm": 1.59653309368842,
+      "max_abs_gradient": 0.32088903898166093,
+      "added_norm": 0.0,
+      "trunk_norm": 1.59653309368842,
+      "per_parameter": {
+        "k_null": 0.0,
+        "W_hidden.weight": 1.3808132119804732,
+        "W_hidden.bias": 0.04328499762217618,
+        "w_out.weight": 0.8002494622574473
+      },
+      "exactly_zero": false,
+      "below_1e_12": false,
+      "above_1e_6": true,
+      "head_parameters": 37120,
+      "added_parameters": 0,
+      "first_batch": {
+        "loss": 0.9298870134554669,
+        "margin": {
+          "count": 16,
+          "mean": 0.07011298654453321,
+          "median": 0.035560968515408464,
+          "p10": 0.0118774151357402,
+          "p90": 0.2517920739303595,
+          "min": -0.20926850847084055,
+          "max": 0.2727379515020454
+        },
+        "activated": 16,
+        "readings": 16,
+        "gradient_norm": 2.1366413792632812,
+        "max_abs_gradient": 0.3455890120433158,
+        "added_norm": 0.0,
+        "trunk_norm": 2.1366413792632812,
+        "per_parameter": {
+          "k_null": 0.0,
+          "W_hidden.weight": 1.8431598545132621,
+          "W_hidden.bias": 0.05678216744414482,
+          "w_out.weight": 1.079246922511754
+        },
+        "exactly_zero": false,
+        "below_1e_12": false,
+        "above_1e_6": true
+      }
+    },
+    "N": {
+      "loss": 0.9723784740096091,
+      "margin": {
+        "count": 128,
+        "mean": 0.02762152599039103,
+        "median": -0.004753962276781376,
+        "p10": -0.15219170212090039,
+        "p90": 0.28440249252125205,
+        "min": -0.16309802043608468,
+        "max": 0.4091574741654721
+      },
+      "activated": 128,
+      "readings": 128,
+      "gradient_norm": 1.6015350712498297,
+      "max_abs_gradient": 0.32068083283031595,
+      "added_norm": 0.008930447559779873,
+      "trunk_norm": 1.601510172165503,
+      "per_parameter": {
+        "k_null": 0.0,
+        "offset_embed": 0.008788805144752129,
+        "W_hidden.weight": 1.3870921035542625,
+        "W_hidden.bias": 0.0435923210651693,
+        "w_out.weight": 0.7993184830536209,
+        "W_align.weight": 0.0015842341195532934
+      },
+      "exactly_zero": false,
+      "below_1e_12": false,
+      "above_1e_6": true,
+      "head_parameters": 38440,
+      "added_parameters": 1064,
+      "first_batch": {
+        "loss": 0.9303994939683382,
+        "margin": {
+          "count": 16,
+          "mean": 0.0696005060316619,
+          "median": 0.033850028310209446,
+          "p10": 0.01095323487665012,
+          "p90": 0.25426666929879904,
+          "min": -0.20916526438181904,
+          "max": 0.27365478711468755
+        },
+        "activated": 16,
+        "readings": 16,
+        "gradient_norm": 2.1514890102956894,
+        "max_abs_gradient": 0.3432923608679388,
+        "added_norm": 0.007842492486352139,
+        "trunk_norm": 2.1514747167314625,
+        "per_parameter": {
+          "k_null": 0.0,
+          "offset_embed": 0.007699671266087578,
+          "W_hidden.weight": 1.8632419966922837,
+          "W_hidden.bias": 0.05752536556170342,
+          "w_out.weight": 1.0741804088764002,
+          "W_align.weight": 0.0014898828117254905
+        },
+        "exactly_zero": false,
+        "below_1e_12": false,
+        "above_1e_6": true
+      },
+      "init_identifiability": {
+        "gradient": {
+          "k_null": 0.044846233800313044,
+          "offset_embed": 0.010052082195727832,
+          "W_hidden.weight": 1.3879729330904131,
+          "W_hidden.bias": 0.03497103958902029,
+          "w_out.weight": 0.8181871693104686,
+          "W_align.weight": 0.0018139512322684012
+        },
+        "added_norm": 0.010214439560872467,
+        "trunk_norm": 1.6121827642398028,
+        "added_parameters": 1064,
+        "trunk_parameters": 37376,
+        "log10_ratio": -2.198199730783239,
+        "added_rms": 0.00031314373627812245,
+        "trunk_rms": 0.008339074682425649,
+        "log10_rms_ratio": -1.4253741342146102,
+        "identifiable": false,
+        "meaning": "D16-12 identifiability gate: the added block's per-parameter RMS gradient must be within one order of magnitude of the trunk, otherwise no structural claim"
+      }
+    }
+  },
+  "verdict": {
+    "code": "frozen_transport_is_order_sensitive",
+    "o_gradient_norm": 1.59653309368842,
+    "n_gradient_norm": 1.6015350712498297,
+    "n_first_batch_gradient_norm": 2.1514890102956894,
+    "o_meets_exact_zero": false,
+    "n_beats_gradient_floor": true,
+    "n_first_batch_beats_floor": true,
+    "gradient_cancels_at_source": false,
+    "proposition_confirmed": false,
+    "mechanism": "the proposition is conditional: it holds whenever the scorer's row input is a function of the byte multiset only.  The O and N readings say whether the current pipeline instantiates that premise, and whether the explicit position features give the margin term a usable gradient"
+  },
+  "d16_16": {
+    "rule": "D16-16: if the scorer output depends only on the record's byte multiset, the margin term of any byte-permutation negative has gradient exactly 0; every future hard-negative proposal must pass this structural reading before any training budget is spent",
+    "measured": {
+      "O": 1.59653309368842,
+      "N": 1.6015350712498297
+    }
+  },
+  "next": {
+    "phase_b": "pending owner approval after this report",
+    "plan": "N structure x order-decoy margin term (experiment) versus N structure x CE-only (control); same seed 28031, order, init, 30 updates; <=30 Adam per arm (60 total), <=400 CPU, 1 bundle, 0 confirm; diagnostic gates: swap hard argmax >=8/20, new-description route_miss down >=0.10 versus the CE arm, conditional_byte no regression >0.05, old description no regression, decoy_margin_after median clearly above -0.003"
+  },
+  "cost": {
+    "adam_updates": 0,
+    "parameters_changed": 0,
+    "bundles": 0,
+    "confirm_reads": 0,
+    "cpu_seconds": 21.921875,
+    "wall_seconds": 22.446093700127676
+  },
+  "reproducibility": {
+    "parent_bundle": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+    "parent_sha256": "fe04fbfb14aa0390877385a4429f2a851396a6fe6acb3107bae0a5e4e331dfca",
+    "seed": 28031,
+    "torch_threads": 1
+  }
+}

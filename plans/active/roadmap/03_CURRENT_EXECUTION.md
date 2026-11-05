@@ -2185,3 +2185,30 @@ owner 裁定：19.2j 已证对齐模块从零是活的（物件 route +0.1146、
 **C. 机制提醒（不是判据，但决定 ③ 首步）**：边距几乎贴在 0，说明冻结池化面对纯字节置换**近乎不可分**——这正是"难负样本"的定义，也意味着**激活成立 ≠ 梯度可用**：若 gold/decoy 关键向量近同，边距项的梯度会相互抵消（损失恒为 m，梯度为零）。因此 ③ 开训前必须先读**首批边距项梯度范数**，再谈 30 更新；否则会重复 19.2g 的"损失项看似激活、行为不变"。
 
 **D. 判定与下一步**：`diagnostic_verdict = activity_gate_pass`；**未训练**。唯一建议＝**批准 ③ 训练诊断**：1 seed 28031、O 臂基线、从零、30/300 更新；CE 对照臂＋唯一变量 order-decoy 边距项（同数据/顺序/初始化）；判据换序硬 argmax **≥8/20（诊断门，非任务门 18/20）**、新描述 route_miss 相对 CE 臂降 ≥0.10、`conditional_byte` 不回退 >0.05、旧描述不回退；预算 ≤30 独立 Adam/臂（共 60）、≤400 CPU、1 候选包、0 confirm。花费 **16.8 CPU / 17.7 wall / 0 Adam / 0 包 / 0 confirm**。证据：报告＋manifest＋`reports/taiji_package19_2l_progress_20261105.jsonl`（129 行，逐行 fsync，D16-15）。
+
+## 2026-11-05 19.2l-A 边距项梯度结构证明（0 Adam / 0 参数 / 0 包 / 0 confirm）
+
+owner 批准 ③ 但**改一处变量归属**：先做结构性证明（A），再谈训练（B）。A 的唯一目的：确认"字节置换负样本"的边距项梯度到底能不能进入参数。owner 原话的前提是"O 臂＝纯袋装、该损失梯度恒为 0，所以拿 O 做对照没有信息量"——本轮就是去实测这个前提。
+
+**A. 命题与判据**：命题"若打分器输出只依赖记录字节多重集，则任意字节置换负样本的边距项梯度恒为 0"**数学上成立**（条件式）。可操作判据必须成对给：① `max|key_gold − key_decoy|`、② 边距项对参数的梯度范数；①=0 ⇒ ② 必为 0；①≠0 时**必须实测**，不得用臂名代替测量。登记为 **D16-16**（账本 §16.9）：后续任何"加难负样本"提案必须先过这条——`≤1e-12` 记结构零、`>1e-6` 才允许进入训练。
+
+**B. 两臂实测（同一 teacher-forced 状态、同一 64 例样本、同一 margin m=1.0；state 视为常数，只对 scorer 求导）**：
+
+| 读数 | O 臂（`alignment=False`，无位置特征） | N 臂（`alignment=True`，含 `W_align`＋`offset_embed`） |
+|---|---|---|
+| 关键向量同一？ | **否**：128/128 全不同，`max|Δkey|` 中位 **1.491**（min 0.994 / max 1.838） | 同左（两臂用同一冻结 transport） |
+| 边距项 loss | 0.9712（激活 128/128） | 0.9724（激活 128/128） |
+| 梯度总范数 | **1.5965** | **1.6015** |
+| 其中新增块（`_is_added`） | 0（无新增块） | **0.0089（占 0.56%）** |
+| 其中主干 | 1.5965 | 1.6015 |
+| 首批（`h.schedule` 第 1 批） | 2.1366 | **2.1515** |
+| `max_abs_gradient` | 0.3209 | 0.3207 |
+| 参数数 | 37,120 | 38,440（`_is_added` 直计 1,064，另 256 列并入 `W_hidden.weight`） |
+
+O 臂 per-param：`W_hidden.weight` 1.3808、`w_out.weight` 0.80025、`W_hidden.bias` 0.04328、`k_null` 0。N 臂 per-param：`W_hidden.weight` 1.38709、`w_out.weight` 0.79932、`W_hidden.bias` 0.04359、`W_align.weight` **0.001584**、`offset_embed` **0.008789**、`k_null` 0。
+
+**C. 判定（与 owner 预期相反）**：`verdict = frozen_transport_is_order_sensitive`。冻结 transport（`record_relation.encode_units` 用**局部位置特征＋因果 GRU**）本身对字节顺序敏感，所以打分器输出**并不是**字节多重集的函数 → 命题成立但**前提未被 pipeline 实例化**。因此 **"O 臂梯度恒零"被实测推翻**（1.5965，远超 1e-12），**不能**把 O 当"无信息对照"；B 若沿用 O 作对照，会给出"两臂都动"的伪结论。B 的 N×边距项 vs N×CE-only 单变量设计仍成立，但归因必须改写为**"主干承担、位置块近乎惰性"**（新增块只占 0.56%）。
+
+**D. 开训前必查项**：N 首批边距项梯度 **2.1515 > 1e-6** → `gradient_cancels_at_source = false`（未触发停训条件）。N 初始化可辨识性 `log10 RMS 比` **−1.425**（`added_rms` 3.131e-4 / `trunk_rms` 8.339e-3，**不可辨识**，与 19.2j 价格闸初始化读数一致；step300 才 −0.436）→ 初始不可辨识不构成停训理由，但训练后必须复核。
+
+**E. 花费与边界**：**0 Adam / 0 参数改动 / 0 包 / 0 confirm / 21.9 CPU / 22.4 wall**（≤80 CPU 预算内）。不改判据、不改阈值、不放开 confirm、不上调任何能力等级。证据：[19.2l-A 报告](../../../reports/taiji_package19_2l_margin_gradient_20261105.json)＋[manifest](../../manifests/taiji_package19_2l_margin_gradient_20261105.json)；脚本 [`probe_taiji_package19_2l_margin_gradient_structure.py`](../../../scripts/training/probe_taiji_package19_2l_margin_gradient_structure.py)；账本 [§16.9 D16-16](../../reference/INVARIANT-LEDGER_20261103.md)。**唯一建议＝按 owner 的 B 设计开跑（N 两臂、30 更新、≤30 Adam/臂共 60、≤400 CPU、1 包、0 confirm），待 owner 批准，未启动。**

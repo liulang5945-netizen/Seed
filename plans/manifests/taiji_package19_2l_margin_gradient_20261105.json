@@ -1,0 +1,13 @@
+{
+  "schema": "taiji-package19-2l-margin-gradient-manifest-v1",
+  "step": "N19.2l-A",
+  "date": "2026-11-05",
+  "report": "reports\\taiji_package19_2l_margin_gradient_20261105.json",
+  "verdict": "frozen_transport_is_order_sensitive",
+  "o_gradient_norm": 1.59653309368842,
+  "n_gradient_norm": 1.6015350712498297,
+  "n_first_batch_gradient_norm": 2.1514890102956894,
+  "key_all_identical": false,
+  "adam_updates": 0,
+  "confirm_reads": 0
+}
