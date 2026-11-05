@@ -294,6 +294,7 @@ class BindingCopyReader(nn.Module):
         pointer_hard: bool = False,
         m_override: torch.Tensor | None = None,
         cursor: tuple[int, int] | None = None,
+        copy_limits: tuple[int, ...] | None = None,
     ) -> BindingRead:
         key_width = self.config.key_width
         width = self.config.width
@@ -430,6 +431,19 @@ class BindingCopyReader(nn.Module):
         q_total = q_total / normalizer
         q_bytes = q_total[:-1]
         q_null = q_total[-1]
+        # 19.2u structural copy stop: the template slot declares where a name
+        # field ends, so any copy mass beyond that boundary is removed before the
+        # byte histogram is built.  This does not depend on gamma or on generated
+        # weights, and it never alters bytes inside the field, so the copied
+        # content still reaches the state through the same read (M1 kept).
+        if copy_limits is not None:
+            limits = tuple(int(value) for value in copy_limits)
+            if len(limits) != view.record_count:
+                raise ValueError("copy_limits must match record_count")
+            q_bytes = q_bytes.clone()
+            for (start, end), limit in zip(view.record_offsets, limits, strict=True):
+                if 0 <= limit < end - start:
+                    q_bytes[start + limit : end] = 0
         units = torch.cat(view.units)
         content = q_bytes @ self.inherited.V_position(units) + q_null * self.inherited.null_value
         copy_byte_mass = q_bytes.new_zeros(MAX_COVERAGE).index_add_(0, view.byte_ids, q_bytes)
@@ -797,6 +811,7 @@ def answer_step(
     gamma_override: torch.Tensor | float | None = None,
     lambda_override: torch.Tensor | float | None = None,
     m_override: torch.Tensor | None = None,
+    copy_limits: tuple[int, ...] | None = None,
 ) -> BindingAnswerStep:
     subject = candidate.subject
     base = prepared.base
@@ -814,6 +829,7 @@ def answer_step(
         lambda_override=lambda_override,
         m_override=m_override,
         cursor=(state.copy_record, state.copy_cursor),
+        copy_limits=copy_limits,
     )
     if previous_byte == EOS:
         event = subject.W.new_zeros(subject.config.width)

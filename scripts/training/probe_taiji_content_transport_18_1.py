@@ -255,6 +255,7 @@ class ProbeContext:
         force,
         m_override,
         gamma_override,
+        copy_limits=None,
     ):
         base = prepared.base
         view = base.view
@@ -273,6 +274,7 @@ class ProbeContext:
             m_override=m_override,
             pointer_temperature=1.0,
             pointer_hard=True,
+            copy_limits=copy_limits,
         )
         return self._tail(prepared, state, previous, read, gamma_override, gate_index)
 

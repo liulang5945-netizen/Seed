@@ -812,6 +812,19 @@ owner 只批装配＋评测：不训练、不写提案、不进正式图、不�
 
 **纪律与花费**：**0 训练 / 0 优化器步 / 0 Adam / 0 confirm / 1 装配态**；**130.05 CPU / 136.32 wall**（上限 400 / 60 min，用量 32.5%）；逐行 append＋fsync（D16-15）；报告 write-then-rename；收尾 in-process `black_check_gate.py` 一次（D16-18）。本包不含提案、不含训练方案、不开启下一轮。
 
+### 16.19 19.2u 停止边界＋训练权重消融（2026-11-05，0 训练 / 256.72 CPU）＋ **D16-25 复制停止边界为结构原语；训练权重消融读数**
+
+owner 只批"停止边界＋消融"，仍然零训练；192 开发例（confirm **0**）。证据 [报告](../../reports/taiji_package19_2u_stop_boundary_ablation_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2u_stop_boundary_ablation_20261105.json)；脚本 [probe](../../../scripts/training/probe_taiji_package19_2u_stop_boundary_ablation.py)；结构原语 [copy_stop_boundary.py](../../../taiji/copy_stop_boundary.py)＋[binding_copy.py](../../../taiji/binding_copy.py)（`copy_limits`）；装配态 `output/taiji_package19_2u_assembled_zero_training_stopfix.pt`（**唯一一份**，标注 `assembled_zero_training_stopfix`）。
+
+- **A 字段范围实测**：dev 192 × 8 ＝ **1,536 条记录**，六格 (kind, style) 各 256 条。物件名字段恒 **12 字节**，地名恒 **6 字节**（distinct 均 1）；终止字节恒为 `。`（1,536/1,536）；名字末端到终止符的偏移**不是六格恒定**：style0/style2 为 **0**，style1 为 **21（物件）/18（地点）**（描述与分隔符位于名字之后）。字段起点表：object style0=18 / style1=0 / style2=21；place style0=15 / style1=0 / style2=18。反例 **0**（无名字含 `。`、无名字长度等于描述长度、无描述重复、无缺终止符）。结论：边界**既**由固定长度确定，**也**由模板槽位（是 / 又叫 / 对应）唯一确定；终止字节只对 style0/2 紧邻名字末端，**不能单独判边界**。
+- **B 接入**：`BindingCopyReader.read` / `answer_step` / probe `forced_step` 新增 `copy_limits`（逐记录的名字字段末端）；复制质量在边界之外被清零，**内容字节仍在同一 `read` 内影响 η（M1 保留）**；边界由模板分隔符＋终止符给出，**未写死"第 15 位"**；两跳各自持有自己的边界（物件从第 0 位起、地点从第 21 位起）。新模块注册进 `GRAPH_MODULES`（第 8 个）：`candidate_sha_v2` 旧 `95099768…` → 新 **`1d69e945ac149d436cc39426de5717b8a3e2b82de5e8f35565354028c0a33728`**（参数总数 3,563,859 不变）；装配态 **265,981 字节**、sha256 `f5bd80e7…`。
+- **C 评测（γ=0 主读 / γ_floor=0.2 副读）**：**整句完成率 1.0000（192/192）**，旧/新各 **1.0000**；选择（物件/地点/两跳）**1.0000**；`start_hit` / `composite_start_hit` **1.0000**；`conditional_byte` **1.0000**；`provenance_rate` **1.0000**；`fabricated_bytes` **0**、`misbound` **0**、截断 **0.0**、`wrong_route_right_content` **0**、384 跨度全对齐；**首差异 `{none: 192}`**（模板位 15 的失败消失）。γ_floor 与 γ=0 读数一致（不再需要生成权重混入）。
+- **D 消融（关键）**：`transport`（v_relative / Q_transport / K_transport）、`span_head`、`score_rows`（head）共 **12 个参数 / 46,642 元素**换成固定种子 **1902** 随机初始化，`byte_match_route` 与状态管线原样。结果：γ=0 整句 **0.9479（182/192；旧 0.9583 / 新 0.9375）**、γ_floor **0.9479**，Δ **-0.0521**；**全部 10 例失败都在字节位 1（固定模板"把"的第二个字节）**，选择 / `start_hit` / `conditional_byte` / `provenance` 仍 **1.0000**、`fabricated`/`misbound`/`wrong_route_right_content` 0。两种配置重复前向均 **8/8 一致**。
+
+**D16-25（2026-11-05，owner 裁定，永久有效）：复制停止边界为结构原语；训练权重消融读数。** ① 停止边界由模板槽位给出（分隔符＋终止符），不依赖 γ、不依赖生成权重、不含样例常数；加边界后零训练装配整句 **192/192**，说明 19.2t 的唯一缺口确为结构缺口，且该任务不需要训练权重。② 消融读数：把 transport / span 指针 / score_rows 换成固定种子随机初始化，整句仅降到 **0.9479**（差 0.0021 未达 0.95 阈值），**降幅全部落在固定模板字节（位置 1，10 例）**，选择与抄写全 1.0000 → **训练权重对任务能力贡献为 0，只对模板字节发射有边际作用**；后续不得再用"训练能修抄写边界"或"训练能提升该任务"作为理由。
+
+**纪律与花费**：**0 训练 / 0 优化器步 / 0 Adam / 0 confirm / 1 装配态**；**256.72 CPU / 268.55 wall**（上限 400 / 60 min，64.2%）；逐行 append＋fsync（D16-15）；报告 write-then-rename；收尾 in-process `black_check_gate.py` 一次（D16-18）。本包不含训练方案、不含新包、不开启下一阶段。
+
 ## 17. E1–E11数学审查的主张边界
 
 14条前沿意见按[数学裁定](MATH-ADJUDICATION_CORE_GRAPH_20261104.md)收窄，11组[精确算术回执](../../reports/taiji_graph_review_math_20261104.json)只核对有限见证和恒等式，不代签模型或一般定理。后续不得将以下已被反例否定的推广作为硬前提：加性tanh全域rank≤2、缺独立W_Q'不能目标重排、重复字节使OP2核不可复制、取消eta上界零稳定性代价、软正则权重必须等于KKT乘子、初始出边梯度0必须特殊重置。

@@ -1,0 +1,41 @@
+{
+  "step": "N19.2u",
+  "date": "2026-11-05",
+  "parent_bundle": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+  "candidate_sha_v2_new": "1d69e945ac149d436cc39426de5717b8a3e2b82de5e8f35565354028c0a33728",
+  "candidate_sha_v2_old": "95099768cc17a24c870e3b7d49cef0df022d5114f3312a4b3d5ede50179d0aa5",
+  "byte_match_parameters": 65807,
+  "copy_stop_boundary": true,
+  "copy_stop_module": "taiji/copy_stop_boundary.py",
+  "assembled_state": "output\\taiji_package19_2u_assembled_zero_training_stopfix.pt",
+  "assembled_tag": "assembled_zero_training_stopfix",
+  "assembled_sha256": "f5bd80e780bf0cb48d18f7e27915549432c07932a28ae833290e8873d6959e88",
+  "examples": 192,
+  "boundary_fixed_length": true,
+  "boundary_counterexample_total": 0,
+  "gamma_0_completion": 1.0,
+  "gamma_floor_completion": 1.0,
+  "gamma_0_conditional_byte": 1.0,
+  "gamma_0_start_hit_object": 1.0,
+  "gamma_0_start_hit_place": 1.0,
+  "wrong_route_right_content": 0,
+  "ablation_seed": 1902,
+  "ablation_parameters": 12,
+  "ablation_gamma_0_completion": 0.9479166666666666,
+  "ablation_completion_delta": -0.05208333333333337,
+  "cpu_seconds": 256.72,
+  "wall_seconds": 268.55,
+  "over_budget": false,
+  "determinism": {
+    "base": {
+      "examples": 8,
+      "identical": true
+    },
+    "ablation": {
+      "examples": 8,
+      "identical": true
+    }
+  },
+  "boundary_terminator_always": true,
+  "boundary_terminator_adjacent_all_cells": false
+}

@@ -2408,3 +2408,19 @@ owner 裁定 19.2m 方向作废并立 **D16-19**（池外负样本不受理、�
 **D. 判定与边界**：**D16-24 已立**（匹配层为算法原语：零训练装配是零更新评测的正确形态）。本包不含提案、不含训练方案、不开启下一轮。
 
 **E. 花费**：**130.05 CPU / 136.32 wall**（上限 400 CPU / 60 min，32.5%）；0 训练 / 0 优化器步 / 0 Adam / 0 confirm / 1 装配态；逐行 append＋fsync；报告 write-then-rename；收尾 in-process `black_check_gate.py` 一次。
+
+## 2026-11-05 19.2u 停止边界＋训练权重消融（0 训练 / 256.72 CPU）＋ D16-25
+
+> owner 只批"停止边界＋消融"，仍然零训练。脚本 [`probe_taiji_package19_2u_stop_boundary_ablation.py`](../../../scripts/training/probe_taiji_package19_2u_stop_boundary_ablation.py)，结构原语 [`copy_stop_boundary.py`](../../../taiji/copy_stop_boundary.py)＋[`binding_copy.py`](../../../taiji/binding_copy.py)（`copy_limits`）；证据 [报告](../../../reports/taiji_package19_2u_stop_boundary_ablation_20261105.json)＋[manifest](../../manifests/taiji_package19_2u_stop_boundary_ablation_20261105.json)；账本 §16.19。dev 192 例、confirm 0 读取。
+
+**A. 字段范围实测**：dev 192×8＝1,536 条记录，六格各 256 条；物件名恒 **12**、地名恒 **6** 字节；终止符恒 `。`；名字末端到终止符偏移 style0/2＝**0**、style1＝**21（物件）/18（地点）**；字段起点 object 18/0/21、place 15/0/18（style0/1/2）；反例 **0**。结论：边界＝固定长度可判＋模板槽位可判；终止字节只在 style0/2 紧邻名字末端，不能单独判边界。
+
+**B. 接入**：`read` / `answer_step` / `forced_step` 新增 `copy_limits`（逐记录名字字段末端），边界之外复制质量清零；内容字节仍在同一 `read` 影响 η（M1 保留）；不含"第 15 位"常数；两跳各自边界。新模块入 `GRAPH_MODULES`（第 8 个）：`candidate_sha_v2` `95099768…`→**`1d69e945ac149d436cc39426de5717b8a3e2b82de5e8f35565354028c0a33728`**；装配态 265,981 B、sha256 `f5bd80e7…`、唯一一份、标注 `assembled_zero_training_stopfix`。
+
+**C. 评测（γ=0 主读 / γ_floor=0.2 副读）**：整句 **1.0000（192/192；旧/新各 1.0000）**；选择/`start_hit`/`composite_start_hit`/`conditional_byte`/`provenance` 全 **1.0000**；`fabricated`/`misbound`/截断/`wrong_route_right_content` **0**；首差异 `{none: 192}`；384 跨度全对齐。
+
+**D. 消融**：transport（v_relative/Q_transport/K_transport）、span_head、score_rows 共 **12 参数 / 46,642 元素**固定种子 **1902** 随机初始化（byte_match 原样）：γ=0 整句 **0.9479（182/192；旧 0.9583 / 新 0.9375）**、γ_floor 同；Δ **-0.0521**，**10 例失败全在模板字节位 1**，选择/抄写/来源仍 1.0000；两种配置确定性 **8/8**。
+
+**E. 判定与边界**：**D16-25 已立**（复制停止边界为结构原语；训练权重对任务能力贡献为 0，只对模板字节发射有边际作用）。本包不含训练方案、不含新包、不开启下一阶段。
+
+**F. 花费**：**256.72 CPU / 268.55 wall**（上限 400 CPU / 60 min，64.2%）；0 训练 / 0 优化器步 / 0 Adam / 0 confirm / 1 装配态；逐行 append＋fsync；报告 write-then-rename；收尾 in-process `black_check_gate.py` 一次。

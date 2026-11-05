@@ -38,6 +38,7 @@ GRAPH_MODULES = (
     "taiji/living_core.py",
     "taiji/selection_routing_checkpoint.py",
     "taiji/byte_match_route.py",
+    "taiji/copy_stop_boundary.py",
 )
 
 STAGE_PLAN = (
