@@ -1,12 +1,12 @@
 # 核心命题账本（Invariant Ledger）
 
-> 文档状态 [当前责任账本·17待实施]。日期2026-11-03。原N16审计结果保留，当前归因以[分层复核](ATTRIBUTION-ARCH-VS-ALG_20261103.md)为准，开发细则见[17计划](DESIGN-POST-N16_SELECTION_ROUTING_20261103.md)。本次为源码与已有证据的只读规划，0模型前向、0Adam。
+> 文档状态 [当前责任账本·2026-11-05收束]。17–19各合同/判决按历史保留，当前执行归MASTER-PLAN。Task1确认父与停止修复父分开，包20的设计原则与未冻结提案见§18；本轮只规划和公共组合预审。
 
 ## 0. 根目标与本轮范围
 
-原生字节、主体状态、来源/权限、负责模块信用、继承式生长、旧能力保持和内源活动继续作为长期责任。17聚焦episode内的有序内容消费、选择和原始字节表达。已有09的状态、快权重、生长与恢复工程资产按原证据使用，跨session经验写入和长期能力仍需同候选任务检验。
+原生字节、主体状态、来源/权限、负责模块信用、继承式生长、旧能力保持和内源活动继续作为长期责任。17当时聚焦episode内有序内容消费；当前19.2结构Task1已收束，包20转向反馈条件适应与纠正。已有09的状态、快权重、生长与恢复工程资产按原证据使用，跨session经验写入和长期能力仍需同候选任务检验。
 
-当前可确认的选择头顺序不变性由P1和源码支持。P4的0/40合取整句长度且强制位于transport前，不能签为最终Q复制失败或位置监督必需。17采用分层R2工程/行为检查，R1固定阈值在候选读数前冻结，当前开发队首为17.2R。
+当前可确认的选择头顺序不变性由P1和源码支持。P4的0/40合取整句长度且强制位于transport前，不能签为最终Q复制失败或位置监督必需。17采用分层R2工程/行为检查，R1固定阈值在候选读数前冻结，该段为17开发时点记录，当前队首仅见MASTER-PLAN。
 
 ## 1. 核心命题表
 
@@ -29,7 +29,7 @@
 | L13 经验写入面 | “每个神经群同时拥有活动状态、可编辑快权重、可塑适配参数和较慢的知识参数” | [V1 L15](TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md)；[README L7](../../README.md) | 让主体从行动后果中改进，而不只是离线改权重 | 没有写入 API；交互结束即蒸发；跨会话只能靠重训 |
 | L14 主体所有权 | “实现为同一主体内的一个注册模块，不是外置答案模型”；“不声称函数中性出生” | [10.21 L63](SPEC-TAIJI-CORE_COMPOSITION_10_21_20261101.md) | 防止宿主/外部模型代做认知、防止偷换源码 | 新增模块不在同一 bundle；源码被悄悄改写；旧回执被挪用 |
 
-## 2. 17责任映射
+## 2. 17责任映射（历史交付）
 
 | 责任 | 17落点与状态 | 验收范围 |
 |---|---|---|
@@ -41,7 +41,7 @@
 | L6 合法目标与确认 | input_prefix/target分离，确认面独立封存 | 不接受自生成字节回填正确标签；confirm_n17在17.6前读取数为0 |
 | L7 小组件协同 | 独立头37120参数、总容器提案3563601，共享已有编码 | 正式图从注册张量核对参数与优化器所有权，无重复注册 |
 | L8 真实内容消费 | 完整字节任务、同来源内容干预和逐步来源后验 | 任务分与内容必要性分别报告，早EOS/解析失败仍计主分母 |
-| L9 旧能力保持 | 当前合格父能力集为空，输出retention_not_admissible | 首次获得合格父后，新学习包必须先冻结单侧保持合同 |
+| L9 旧能力保持 | 17当时父能力集为空；当前已有Task1确认参考父，学后保持仍未测 | 新学习包须先冻结新保持面，Task2还需合法历史查询；见§18 |
 | L10 能力上限 | 选择有序表示、跨记录/null路由与任务信用的同图候选 | 三臂同期检验，避免以历史自模仿B替换C来缩减对照 |
 | L11 恢复 | 17.2首次保存、17.4六格独立续推及切换中断恢复 | 参数/Adam矩/后继概率逐位一致，原父制品摘要不变 |
 | L12 公平资源 | 同父、同初态、同数据/剂量和同资源上限 | 实际CPU/wall单列，预算停止不按满剂量效能比较 |
@@ -77,17 +77,17 @@ P3首步强制实体起点的时点与目标实体阶段不同。P4只在alpha/b
 | T15 | 最终Q/content、H_next、gamma、输出概率和后验使用同一实际状态；每步仅提交一次H | 17.2/17.4，gate_context_mismatch或恢复失败 |
 | T16 | 可塑loss重建编码图；缓存含revision/梯度模式/可塑组签名，阶段切换及恢复不复用detached特征；中途图重放计费 | 17.2/17.4，cached_feature_credit_break |
 
-## 5. 预算与开发顺序
+## 5. 17开发时点的预算与顺序（历史）
 
-17.1合同→17.2图验→17.3定价→17.4恢复预检→17.5三臂比较→17.6条件确认→17.7全局收束。当前前两项未交付，不能先为不存在的正式图签17.3价格。图验12、定价9、预检18，最多39次工程Adam，正式1800次另账，所有失败尝试消耗原上限。
+17开发时点的顺序为17.1合同→17.2图验→17.3定价→17.4恢复预检→17.5三臂比较→17.6条件确认→17.7全局收束。当时前两项未交付，不能先为不存在的图签价。图验12、定价9、预检18、最多39工程Adam及正式1800为当时合同口径，不作当前执行20预算。
 
 17整包资源提案30000 CPU/60000 wall硬上限，20000 CPU/30000 wall观察线，正式比较24000 CPU/48000 wall。原16整包均摊约11.1984 CPU/正式更新，粗推1800约20157.1 CPU，已含旧评价成本，17.3按实际新图重测。
 
 ## 6. 文档与资产责任
 
-实验原卡、探针原始读数、bundle与已冻结合同按原提交保留。活动设计与调度使用本轮修正，历史归因前稿见Git99e3e69c9和4dcf58b76。所有新增正式机器回执入reports，manifest入plans/manifests；运行期载荷走既有可写数据根。当前唯一下一步为17.2R候选与完整图整合。
+实验原卡、探针原始读数、bundle与已冻结合同按原提交保留。历史归因前稿见Git99e3e69c9和4dcf58b76。所有新增正式机器回执入reports，manifest入plans/manifests；运行期载荷走既有可写数据根。17开发时点曾要求先做17.2R整合，当前执行只由MASTER-PLAN维护。
 
-## 7. 当前工程回执与系统责任衔接
+## 7. 17工程回执与系统责任衔接（历史）
 
 工作树新pointer及强制cursor使T3隔离控制720/720通过，该结果与旧锚点失败分版本记录。完整主体f32、正常pointer/span配置、逐组信用、step/prefix_cursor和非零m恢复仍需补全。旧17.3价格、17.4值恢复不能直接覆盖变化后的图/schema。
 
@@ -101,7 +101,7 @@ P3首步强制实体起点的时点与目标实体阶段不同。P4只在alpha/b
 
 ## 9. 语义候选身份（`candidate_sha_v2`）
 
-**定义。** 身份只由行为相关要素组成：图名与契约/bundle schema；配置常量（`width`、`prev_width`、`hidden`、`gamma_floor`、`span_bottleneck`）；模块清单；`routing_rule_version`；解码/路由规则（点 transport、指针温度退火与 0.05 下限、推理 argmax、指针熵系数 0.01、span 监督权重 0.5、gamma 下限 0.2、三臂信用）；`routing_step` 输入白名单；有序参数名/形状/dtype；声明可塑归属。实现与组成项见 `taiji/candidate_identity.py`，设计说明见[17设计 §16](DESIGN-POST-N16_SELECTION_ROUTING_20261103.md#16-候选身份语义哈希2026-11-04)。
+**定义。** 身份只由行为相关要素组成：图名与契约/bundle schema；配置常量（`width`、`prev_width`、`hidden`、`gamma_floor`、`span_bottleneck`）；模块清单；`routing_rule_version`；解码/路由规则（点 transport、指针温度退火与 0.05 下限、推理 argmax、指针熵系数 0.01、span 监督权重 0.5、gamma 下限 0.2、三臂信用）；`routing_step` 输入白名单；有序参数名/形状/dtype；声明可塑归属。实现与组成项见 `taiji/candidate_identity.py`，设计说明见[17设计 §16](DESIGN-POST-N16_SELECTION_ROUTING_20261103.md)。
 
 **附属字段（记录但不进入摘要）。** `source_sha` 逐模块字节哈希；`weights_sha256` 逐张量值摘要；`candidate_state_sha256` 权重汇总。权重作为运行态逐格记录，因为两 seed 的父 bundle 与头初始化不同，身份必须在六格内保持同值。
 
@@ -127,11 +127,11 @@ P3首步强制实体起点的时点与目标实体阶段不同。P4只在alpha/b
 
 **必备对照臂（写入未来包设计，不在本轮）。** 每个继承包必须加一臂：**只学新任务、不混合旧任务**。用途是把“遗忘”与“新任务干扰”分开：若该臂与混合臂留存率接近 → 旧能力未被依赖，混合不是必需；若差异显著 → 混合是必要代价，必须写入成本账。缺该臂的继承包按 `retention_control_absent` 不予结案。
 
-**现状核查（2026-11-04）。** 当前**没有**合格父能力集：17.5 为负结果，18.1 六格 overall 与抄回率均为 0，故输出 `retention_not_admissible`，不计算留存率。若 18.1/18.2 产生第一个真实非零能力，它即成为**可测父**；**下一包必须带留存率门**。T10 的表述由此从“不可判”改为“待父能力集成立后按留存率判”。
+**历史现状核查（2026-11-04，当前由§18更新）。** 当前**没有**合格父能力集：17.5 为负结果，18.1 六格 overall 与抄回率均为 0，故输出 `retention_not_admissible`，不计算留存率。若 18.1/18.2 产生第一个真实非零能力，它即成为**可测父**；**下一包必须带留存率门**。T10 的表述由此从“不可判”改为“待父能力集成立后按留存率判”。
 
 ## 11. 字节空间合法性结论与逐字节门（18.1 四探针，2026-11-04 登记）
 
-**结论（架构层，可引用）。** 当前解码端点 `decode_endpoint` 是纯 `argmax`，**没有 UTF-8 掩码、没有修复**；字节空间里不存在任何合法性约束。18.1 六格 step300 的 UTF-8 合法率在各格 0.010–1.000 之间大幅波动，正是“无约束”的直接读数，不是随机噪声或模型“乱码”。
+**结论（18.1被审查版本的架构层）。** 该版本解码端点 `decode_endpoint` 是纯 `argmax`，**没有 UTF-8 掩码、没有修复**。18.1六格step300的UTF-8合法率0.010–1.000保留为旧版本读数；后继已有掩码/停止边，不能将旧缺口引用为P1/CF1现状。
 
 **来源拆解（同一批 48 例/格、六格、0 更新）。**
 
@@ -177,7 +177,7 @@ P3首步强制实体起点的时点与目标实体阶段不同。P4只在alpha/b
 - **原文**：17 的设计同时要求“对象/地点/模板可在合法记录间切换”与“切换后旧 cursor 质量可原样续读/逐位恢复”。
 - **否决理由（§5.1）**：要让记录 i 的 Q 恰为 `a_i` 且保留旧续读 `λ_i·m_i`，对每条记录需 `a_i ≥ λ_i·M_i`。反例：`a_i=0.1, λ_i=0.8, M_i=0.5` → 续读需 0.4 而预算 0.1。**Q 锁定只保证未选记录为 0，不能保证被选记录同时拥有“任意控制”和“原样续读”**。17 设计第 70 行把“最终 Q 锁定”当作配套条件，只能锁住前者，锁不住后者。
 - **适用范围**：只要控制是“任意”的（可在对象/地点/模板间逐字节切换）且继承续读要求“原样（逐位/质量不变）”，二者不可同时保证；只有在同一控制范围（对每条可达记录 `a_i ≥ λ_i·M_i` 成立）内才可同时成立。
-- **依赖命中**：[17 设计第 15/18 行](DESIGN-POST-N16_SELECTION_ROUTING_20261103.md)（阶段间切换、切换时旧 cursor 占另一记录 Q 质量）、[第 200 行 17.4 预检](DESIGN-POST-N16_SELECTION_ROUTING_20261103.md)（“非空 m/coverage 及对象→地点/null 切换中断续推一致”）、[第 255 行](DESIGN-POST-N16_SELECTION_ROUTING_20261103.md)（“切换后未选记录最终 Q 质量=0”）、[第 257 行](DESIGN-POST-N16_SELECTION_ROUTING_20261103.md)（“非空 cursor 中断恢复一致”）；[账本 T8 第 70 行](#)（“非空 cursor 切换后逐位一致”）；[§10](#10-子继承父的两层保持判据2026-11-04-owner-修订) 硬不变量“复制状态逐位 max_abs_diff=0”；实现事实（18.1 时点）`prefix_cursor` 恒 0、`m` 按当前字节重建（[能力卡 §8](CAPABILITY-CARD_20261103.md)；18.2 已补 carry，定理本身不因此改变，见 §14）。
+- **依赖命中**：[17 设计第 15/18 行](DESIGN-POST-N16_SELECTION_ROUTING_20261103.md)（阶段间切换、切换时旧 cursor 占另一记录 Q 质量）、[第 200 行 17.4 预检](DESIGN-POST-N16_SELECTION_ROUTING_20261103.md)（“非空 m/coverage 及对象→地点/null 切换中断续推一致”）、[第 255 行](DESIGN-POST-N16_SELECTION_ROUTING_20261103.md)（“切换后未选记录最终 Q 质量=0”）、[第 257 行](DESIGN-POST-N16_SELECTION_ROUTING_20261103.md)（“非空 cursor 中断恢复一致”）；[账本 T8 第 70 行](#)（“非空 cursor 切换后逐位一致”）；[§10](INVARIANT-LEDGER_20261103.md) 硬不变量“复制状态逐位 max_abs_diff=0”；实现事实（18.1 时点）`prefix_cursor` 恒 0、`m` 按当前字节重建（[能力卡 §8](CAPABILITY-CARD_20261103.md)；18.2 已补 carry，定理本身不因此改变，见 §14）。
 - **处置**：`must_change`（把“任意切换 + 逐位一致”拆成可裁定选项或加预算条件）；`veto_if_reliance`（17 若把“任意切换且恢复逐位”当保证 → 结构性主张被否）。选项见 §13。
 
 ### M3（否）“γ 大就说明复制信用饥饿”
@@ -535,7 +535,7 @@ route_miss 37/96 **全在物件侧**；地点侧的失败是饱和吞顺序，�
 
 **任一不满足 → 禁止开训。** 只允许两条出路：改参数化方式（例如把 clamp 型边距换成参数化对齐）或换干预；**不得靠多跑更新去"等它触发"**。
 
-**第一号实例（登记在案）。** [§15.7①](#157-192g-记录匹配对比边距2026-11-0430-adam1-存包0-confirm) 的边距项在训练集 128 个内容起点上激活 **0**（gold-decoy 边距最小 5.313、中位 8.08，而 `m=1.0`）。这不是代码错误，是**干预在可训数据上没有定义域**；30 Adam 只重训了 CE。此后再有 loss 型方案，必须先过本门再谈预算。
+**第一号实例（登记在案）。** [§15.7①](INVARIANT-LEDGER_20261103.md) 的边距项在训练集 128 个内容起点上激活 **0**（gold-decoy 边距最小 5.313、中位 8.08，而 `m=1.0`）。这不是代码错误，是**干预在可训数据上没有定义域**；30 Adam 只重训了 CE。此后再有 loss 型方案，必须先过本门再谈预算。
 
 **参数化干预的读法。** 对不是 clamp 型、而是"新增结构/新增特征"的干预，"触发"读作 **目标行为需要修的样本占比**：19.2h 取新描述物件侧 route 错 **37/96 = 38.5%**（≥20% 通过），同时要求新增张量在首批次梯度非零。
 
@@ -758,7 +758,7 @@ owner 暂不批 19.2q 提案，先要一页只读《任务语义契约》。契�
 
 ### 16.16 19.2r 字节匹配设计闸（2026-11-05，0 Adam / 1.88 CPU）＋ **D16-22 选择＝逐字节查找、答案＝两跳两抄**
 
-owner 只批设计闸（0 Adam、不训练、不提方案）。192 个开发例 × 2 个内容起点 = **384 起点**。证据 [报告](../../reports/taiji_package19_2r_byte_match_gate_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2r_byte_match_gate_20261105.json)；通路 [byte_match_route.py](../../taiji/byte_match_route.py)；脚本 [probe](../../../scripts/training/probe_taiji_package19_2r_byte_match_gate.py)。
+owner 只批设计闸（0 Adam、不训练、不提方案）。192 个开发例 × 2 个内容起点 = **384 起点**。证据 [报告](../../reports/taiji_package19_2r_byte_match_gate_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2r_byte_match_gate_20261105.json)；通路 [byte_match_route.py](../../taiji/byte_match_route.py)；脚本 [probe](../../scripts/training/probe_taiji_package19_2r_byte_match_gate.py)。
 
 - **读数 1（唯一性）**：物件描述串在 8 条 `raw` 中"总出现次数＝1" **192/192**；地点描述串 **192/192**；合计 **384/384**。重复 **0**、未找到 **0**、跨类型出现 **0**、单行内重复 **0**，单起点最大出现次数 **1** → 无任何语义歧义样例可列。
 - **读数 2（可解性上界）**：纯字符串扫描（0 训练、0 前向）选择 **192/192（1.0）**；整句 `把{物件名}放到{地点名}` 逐字节 **192/192（1.0）**；旧描述半 96/96、新描述半 96/96 均 1.0。名字抽取只读行内模板字节，在 416/416 条记录上与 `name` 字段一致。
@@ -777,7 +777,7 @@ owner 只批设计闸（0 Adam、不训练、不提方案）。192 个开发例 
 
 ### 16.17 19.2s 扰动闸＋可学性探针（2026-11-05，0 候选训练 / 182.45 CPU）＋ **D16-23 匹配是结构性质，不是初始化站在答案上**
 
-owner 只批扰动闸：不训练候选、不写提案、不进正式图。384 起点 = 192 开发例 × 2 内容起点。证据 [报告](../../reports/taiji_package19_2s_perturbation_gate_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2s_perturbation_gate_20261105.json)；脚本 [probe](../../../scripts/training/probe_taiji_package19_2s_perturbation_gate.py)；通路线条见 §16.16。
+owner 只批扰动闸：不训练候选、不写提案、不进正式图。384 起点 = 192 开发例 × 2 内容起点。证据 [报告](../../reports/taiji_package19_2s_perturbation_gate_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2s_perturbation_gate_20261105.json)；脚本 [probe](../../scripts/training/probe_taiji_package19_2s_perturbation_gate.py)；通路线条见 §16.16。
 
 - **A1 ε 阶梯**（`E=(1-ε)I+εR`，R 固定种子、行归一化、PAD 行 0）：9 档 {0, .05, .1, .2, .3, .5, .8, 1.0}，每档选择 **1.000**、整句完成 **1.000**（旧/新各 96/96）、匹配起点复原 **1.000**、并列 **0**；边距中位 8.000 →（ε=.5 最低 **3.997**）→ 7.757，最小 7.000 → 3.325 → 6.613。崩塌点 **无**（阈值 0.90）。
 - **A2 σ 阶梯**（`E=I+σG`）：5 档 {.02, .05, .1, .2, .5}，选择/完成/复原全 **1.000**，并列 0；边距中位 8.834 → **496.138**（随 σ 增大）。崩塌点 **无**。
@@ -792,7 +792,7 @@ owner 只批扰动闸：不训练候选、不写提案、不进正式图。384 �
 
 ### 16.18 19.2t 端到端零训练装配评测（2026-11-05，0 训练 / 130.05 CPU）＋ **D16-24 匹配层为算法原语：零训练装配是零更新评测的正确形态**
 
-owner 只批装配＋评测：不训练、不写提案、不进正式图、不自行开下一轮。192 开发例（confirm **0** 读取）× 2 内容起点（物件 / 地点）。证据 [报告](../../reports/taiji_package19_2t_zero_training_assembly_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2t_zero_training_assembly_20261105.json)；脚本 [probe](../../../scripts/training/probe_taiji_package19_2t_zero_training_assembly.py)；装配态 `output/taiji_package19_2t_assembled_zero_training.pt`（标注 `assembled_zero_training`，**唯一一份**）。
+owner 只批装配＋评测：不训练、不写提案、不进正式图、不自行开下一轮。192 开发例（confirm **0** 读取）× 2 内容起点（物件 / 地点）。证据 [报告](../../reports/taiji_package19_2t_zero_training_assembly_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2t_zero_training_assembly_20261105.json)；脚本 [probe](../../scripts/training/probe_taiji_package19_2t_zero_training_assembly.py)；装配态 `output/taiji_package19_2t_assembled_zero_training.pt`（标注 `assembled_zero_training`，**唯一一份**）。
 
 - **A 装配**：`byte_match_route` 注册进 `candidate_identity.GRAPH_MODULES`（第 7 个模块），作为**选择读出**——问题句的物件描述、地点描述各跑一次自由搜索（同一组参数），8 条 `raw` 逐位匹配 → 起点 argmax；起点交给现有复制算子，`transport` / `span` 指针 / `score_rows` **全部保持原权重**。父包 `28031-B_stop_lock-step300.pt`。`candidate_sha_v2`：旧 `773dcec2…` → 新 **`95099768cc17a24c870e3b7d49cef0df022d5114f3312a4b3d5ede50179d0aa5`**（模块清单变化所致，参数总数 **3,563,859** 不变；`byte_match` 自身 **65,807**）；装配态 **265,853 字节**，sha256 `b2dc9f58…`。证据文件名全部用 `19_2t` 前缀，未复用 §8 既有证据名。
 - **B 读数（γ=0 主读 / γ_floor=0.2 副读；total＝192、old/new 各 96）**：
@@ -814,7 +814,7 @@ owner 只批装配＋评测：不训练、不写提案、不进正式图、不�
 
 ### 16.19 19.2u 停止边界＋训练权重消融（2026-11-05，0 训练 / 256.72 CPU）＋ **D16-25 复制停止边界为结构原语；训练权重消融读数**
 
-owner 只批"停止边界＋消融"，仍然零训练；192 开发例（confirm **0**）。证据 [报告](../../reports/taiji_package19_2u_stop_boundary_ablation_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2u_stop_boundary_ablation_20261105.json)；脚本 [probe](../../../scripts/training/probe_taiji_package19_2u_stop_boundary_ablation.py)；结构原语 [copy_stop_boundary.py](../../../taiji/copy_stop_boundary.py)＋[binding_copy.py](../../../taiji/binding_copy.py)（`copy_limits`）；装配态 `output/taiji_package19_2u_assembled_zero_training_stopfix.pt`（**唯一一份**，标注 `assembled_zero_training_stopfix`）。
+owner 只批"停止边界＋消融"，仍然零训练；192 开发例（confirm **0**）。证据 [报告](../../reports/taiji_package19_2u_stop_boundary_ablation_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2u_stop_boundary_ablation_20261105.json)；脚本 [probe](../../scripts/training/probe_taiji_package19_2u_stop_boundary_ablation.py)；结构原语 [copy_stop_boundary.py](../../taiji/copy_stop_boundary.py)＋[binding_copy.py](../../taiji/binding_copy.py)（`copy_limits`）；装配态 `output/taiji_package19_2u_assembled_zero_training_stopfix.pt`（**唯一一份**，标注 `assembled_zero_training_stopfix`）。
 
 - **A 字段范围实测**：dev 192 × 8 ＝ **1,536 条记录**，六格 (kind, style) 各 256 条。物件名字段恒 **12 字节**，地名恒 **6 字节**（distinct 均 1）；终止字节恒为 `。`（1,536/1,536）；名字末端到终止符的偏移**不是六格恒定**：style0/style2 为 **0**，style1 为 **21（物件）/18（地点）**（描述与分隔符位于名字之后）。字段起点表：object style0=18 / style1=0 / style2=21；place style0=15 / style1=0 / style2=18。反例 **0**（无名字含 `。`、无名字长度等于描述长度、无描述重复、无缺终止符）。结论：边界**既**由固定长度确定，**也**由模板槽位（是 / 又叫 / 对应）唯一确定；终止字节只对 style0/2 紧邻名字末端，**不能单独判边界**。
 - **B 接入**：`BindingCopyReader.read` / `answer_step` / probe `forced_step` 新增 `copy_limits`（逐记录的名字字段末端）；复制质量在边界之外被清零，**内容字节仍在同一 `read` 内影响 η（M1 保留）**；边界由模板分隔符＋终止符给出，**未写死"第 15 位"**；两跳各自持有自己的边界（物件从第 0 位起、地点从第 21 位起）。新模块注册进 `GRAPH_MODULES`（第 8 个）：`candidate_sha_v2` 旧 `95099768…` → 新 **`1d69e945ac149d436cc39426de5717b8a3e2b82de5e8f35565354028c0a33728`**（参数总数 3,563,859 不变）；装配态 **265,981 字节**、sha256 `f5bd80e7…`。
@@ -827,7 +827,7 @@ owner 只批"停止边界＋消融"，仍然零训练；192 开发例（confirm 
 
 ### 16.20 19.2v 封存集独立确认（2026-11-05，0 训练 / 144.06 CPU）＋ **D16-26 封存集独立确认与结构实现的 L1 判据**
 
-owner 只批"封存集独立确认"，零训练、零调参；confirm **首次且唯一一次**读取（过去全程 0 读取）。证据 [报告](../../reports/taiji_package19_2v_confirm_holdout_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2v_confirm_holdout_20261105.json)＋[预注册](../../plans/manifests/taiji_package19_2v_preregistered_20261105.json)（sha256 `6c4c7502…`）；脚本 [probe](../../../scripts/training/probe_taiji_package19_2v_confirm_holdout.py)；装配态沿用 19.2u 唯一一份 `output/taiji_package19_2u_assembled_zero_training_stopfix.pt`（**未新增、未改写**）。
+owner 只批"封存集独立确认"，零训练、零调参；confirm **首次且唯一一次**读取（过去全程 0 读取）。证据 [报告](../../reports/taiji_package19_2v_confirm_holdout_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2v_confirm_holdout_20261105.json)＋[预注册](../../plans/manifests/taiji_package19_2v_preregistered_20261105.json)（sha256 `6c4c7502…`）；脚本 [probe](../../scripts/training/probe_taiji_package19_2v_confirm_holdout.py)；装配态沿用 19.2u 唯一一份 `output/taiji_package19_2u_assembled_zero_training_stopfix.pt`（**未新增、未改写**）。
 
 - **预注册先行且只读**：装配态 sha256 `f5bd80e7…`（265,981 B）、`candidate_sha_v2` `1d69e945…`（参数 3,563,859、`byte_match` 65,807）、父包 sha256、`GRAPH_MODULES` 8 个、全部阈值与判定规则先落盘；运行端逐项比对，**任何漂移即拒跑**；预注册文件写后不再改写。
 - **读取纪律**：`confirm_reads=1`；progress 逐行 append＋fsync 留 `prereg`/`confirm_loaded`/逐例/`finish` 事件。**1 次恢复重跑**：首跑在 confirm 夹具物化前中止（`build_payload()` 不物化 confirm，返回 0 例、**0 前向**），按预注册恢复条款用同一配置重跑，报告标 `recovery_rerun=true` 并附 `recovery_note`——首次实际 confirm 前向发生在重跑里。
@@ -844,7 +844,7 @@ owner 只批"封存集独立确认"，零训练、零调参；confirm **首次�
 
 ### 16.21 19.2w 边界残差复现与修复（2026-11-05，0 训练 / 290.51 CPU）＋ **D16-27 残差须在合成侧复现修复**
 
-owner 在 19.2v 收下后授权对 4 例外溢做**冻结外复现与修复**；本包**不读 confirm、不碰封存夹具**，全部数据由冻结 18.0 生成器用自定义名字池物化。证据 [报告](../../reports/taiji_package19_2w_boundary_residual_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2w_boundary_residual_20261105.json)＋[新装配态](../../output/taiji_package19_2w_assembled_stopfix_r2.pt)；脚本 [probe](../../../scripts/training/probe_taiji_package19_2w_boundary_residual.py)；进度 jsonl 逐行 fsync。
+owner 在 19.2v 收下后授权对 4 例外溢做**冻结外复现与修复**；本包**不读 confirm、不碰封存夹具**，全部数据由冻结 18.0 生成器用自定义名字池物化。证据 [报告](../../reports/taiji_package19_2w_boundary_residual_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2w_boundary_residual_20261105.json)＋[新装配态](../../output/taiji_package19_2w_assembled_stopfix_r2.pt)；脚本 [probe](../../scripts/training/probe_taiji_package19_2w_boundary_residual.py)；进度 jsonl 逐行 fsync。
 
 - **复现（旧解码规则，模型与装配态与 19.2v 完全一致）**：地名全以"尾"结尾的合成集 **64 例 63 对**、外溢 **1 例＝1.56%**（位 27，多 3 字节）；地名全以"畔"结尾的对照 **64/64**、外溢 **0**。confirm 同类为 4/192＝2.08% → **同量级复现成立**（合成侧触发条件可用现有生成器造出）。
 - **诊断（唯一失败例的逐步 trace，只描述结构不贴封存字节）**：位 26 由复制通路给出末字节（顶位概率 1.0）；位 27 **EOS 0.3492 vs 顶位 0xE5 0.3968**，随后 0x88/0xB0 两个续字节以 0.936/0.977 高置信补齐，位 30 才回到 EOS。**冻结记录 1,536 行中，"到"整串出现 0 次** → 外溢字节不可能来自复制通路；复制边界（`copy_limits`）在位 27 已把质量清零。**结论：不是复制越过停止边界，而是序列末端缺少停止边——EOS 被模板续写以微弱优势压过。**
@@ -868,3 +868,13 @@ owner 在 19.2v 收下后授权对 4 例外溢做**冻结外复现与修复**；
 
 
 
+
+## 18. Task1收束与包20设计边界（2026-11-05）
+
+Task1已确认父为candidate 1d69e945…、组合assembly f5bd80e7…、根bundle fe04fbfb…，官方188/192；r2工程修复candidate 0d6a5df3…与assembly4e7ba75e…仅挂合成/dev，未新封存复核。D16-25/26结构归因限所测任务和12张量消融，不能外推所有继承参数。已有结构父可立保持合同，学后保持未验。
+
+[包20 rev2](PLAN-PACKAGE20_RULE_LEARNING_CORRECTION_20261105.md)的新任务与[草案manifest](../manifests/taiji_package20_learning_correction_draft_20261105.json)不改旧冻结门。20条规则由5anchor唯一辨识；51应答轮包含10盲答，22个新query首答另列；标签多重集7/11与全轮信息Bayes期望1753/1938是静态参考，不是模型分数或单样本硬上限。旧confirm不重读，新20确认面未物化/未读取。
+
+F机制需要独立训练的B_EH等资源对照；A-cutF只是当前候选必要性控制，不能替代独立无F基线。A-permute只改原子释放后的F key–label绑定，原始E/H观察不变。H足够时允许适应成功而F额外收益未证，不改题逼F赢。
+
+数值验收仍是设计提案，20.3实际图/数据/价格具备后、见正式dev结果前一次冻结。L1、51轮全分母、反馈因果与来源硬守；选择/纠正允许范围内统计误差，保持沿§10，Task2-v1合法历史保持另测。teacher-forced query标签不得进入后续状态；训练前必须先过完整checkpoint与独立恢复。静态规划回执不代签任何模型能力。

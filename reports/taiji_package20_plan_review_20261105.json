@@ -1,0 +1,58 @@
+{
+  "schema": "taiji-package20-planning-review-v1",
+  "date": "2026-11-05",
+  "generated_at_utc": "2026-11-05T07:35:13.562185+00:00",
+  "basis_commit": "3c04a7c2187de9dfba8a11f37f92603eb4affe55",
+  "source_sha256": "c8446c6c927a8deede413ea4cd8a49eb63561022e33d6cfd9accf6a483a91377",
+  "evidence_sha256": {
+    "plans/manifests/taiji_package20_learning_correction_draft_20261105.json": "a6983b2b1cf6360135a4b2f9a169606f9d618549e54e02068ed223194d9b9336",
+    "reports/taiji_package19_2v_confirm_holdout_20261105.json": "f0fa6a311a6ab5716bf8a210ae8789c42fabbd24286974fd693b9a1b72891cb1",
+    "reports/taiji_package19_2w_boundary_residual_20261105.json": "3c3e596e5b7f3a5965bdd27f800218d7b7626a590ed6f7a138c1779edc10edf0",
+    "reports/taiji_package19_2u_stop_boundary_ablation_20261105.json": "c989a7bf90074aea4f4605f6db9babb438180b5350fad01f02d382934eef7db6"
+  },
+  "status": "planning_static_checks_passed",
+  "passed": true,
+  "public_rule_checks": {
+    "rule_count": 20,
+    "unique_anchor_signatures": 20,
+    "non_anchor_queries": 11,
+    "ordered_distinct_rule_pairs": 380,
+    "changed_query_distribution": {
+      "11": 20,
+      "6": 120,
+      "5": 120,
+      "7": 60,
+      "4": 60
+    },
+    "label_multiset_shortcut": {
+      "correct": 140,
+      "total": 220,
+      "rate": "7/11"
+    },
+    "blind_old_rule_flip": {
+      "changed_only": "1",
+      "all_current_queries": "10/19"
+    },
+    "pooled_masking_counterexample": "9/11",
+    "all_rounds": 51,
+    "new_first_queries": 22,
+    "all_round_expected_information_reference": "1753/1938",
+    "reference_is_not_single_sample_hard_ceiling": true,
+    "five_cycle_always_changes_anchor_label_binding": true,
+    "scope": "Public rule family only; no world, source name, split or confirm example generated."
+  },
+  "parent_metadata_checked": true,
+  "same_queue_in_three_entries": true,
+  "candidate_confirmed": false,
+  "training_admitted": false,
+  "counts": {
+    "models_constructed": 0,
+    "weights_loaded": false,
+    "optimizer_steps": 0,
+    "candidate_evaluations": 0,
+    "actual_worlds_generated": 0,
+    "sealed_dataset_reads": 0
+  },
+  "static_audit_cpu_seconds": 0.03125,
+  "scope": "Planning and public finite-family proof only; no Task2 capability or promotion claim."
+}

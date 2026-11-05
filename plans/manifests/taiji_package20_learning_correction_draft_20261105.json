@@ -1,0 +1,95 @@
+{
+  "schema": "taiji-package20-learning-correction-plan-draft-v1",
+  "date": "2026-11-05",
+  "status": "planning_only",
+  "execution_package": "20-rev2",
+  "specification": "plans/reference/PLAN-PACKAGE20_RULE_LEARNING_CORRECTION_20261105.md",
+  "training_authorized": false,
+  "training_admitted": false,
+  "runtime_replaced": false,
+  "candidate_sha_v2": null,
+  "actual_active_parameter_count": null,
+  "actual_price": null,
+  "formal_data_sha256": null,
+  "confirm_seed": null,
+  "parent_assets": {
+    "root_bundle_sha256": "fe04fbfb14aa0390877385a4429f2a851396a6fe6acb3107bae0a5e4e331dfca",
+    "confirmed_reference": {
+      "candidate_sha_v2": "1d69e945ac149d436cc39426de5717b8a3e2b82de5e8f35565354028c0a33728",
+      "assembly_sha256": "f5bd80e780bf0cb48d18f7e27915549432c07932a28ae833290e8873d6959e88",
+      "confirm_correct": 188,
+      "confirm_total": 192
+    },
+    "development_parent": {
+      "candidate_sha_v2": "0d6a5df304f0bf952e97046822edf24fcba5371984c820063ef0b8331100cc42",
+      "assembly_sha256": "4e7ba75e83d8e7a26c8d60203a49b1e805e2fde9a8ea0d64651e3aad2ae7a6bb",
+      "independent_confirm_recheck": false
+    }
+  },
+  "public_task": {
+    "binary_attributes": 4,
+    "subset_sizes": [1, 2],
+    "offset_values": [0, 1],
+    "rule_count": 20,
+    "anchor_combinations": [0, 1, 2, 4, 8],
+    "non_anchor_count": 11,
+    "semantic_versions": 2,
+    "sessions": 3,
+    "session_answer_rounds": [10, 24, 17],
+    "all_answer_rounds": 51,
+    "blind_answer_rounds": 10,
+    "first_query_rounds": 22,
+    "feedbacks_per_version": 5,
+    "feedback_release": "atomic batch after five prediction receipts",
+    "rule_id_visible_to_model": false,
+    "bit_vectors_visible_to_model": false,
+    "symbolic_solver_in_runtime": false,
+    "v2_transition_tables_not_shared_across_world_blocks_or_splits": true,
+    "teacher_forced_query_targets_committed_to_history": false
+  },
+  "data_design": {
+    "train_worlds": 160,
+    "development_worlds": 80,
+    "fresh_confirmation_worlds": 80,
+    "actual_worlds_materialized_this_turn": 0,
+    "fresh_confirm_materialized": false,
+    "old_confirm_reread": false,
+    "raw_evidence_bytes_per_world": 4096,
+    "read_view_bytes": 512,
+    "output_byte_limit": 32
+  },
+  "comparison_design": {
+    "independently_trained_arms": ["A_F", "B_EH"],
+    "post_training_controls": ["A-cutF", "A-permute"],
+    "session_parameter_policy": "Psi and Theta frozen; H advances; A writes F only for released legal feedback",
+    "active_parameter_mismatch_proposal_max": 0.01,
+    "persistent_mutable_state_bytes_must_be_accounted_and_matched": true,
+    "unused_padding_does_not_count_as_capacity": true,
+    "seed_count_proposal": 2,
+    "outer_updates_per_seed_arm_proposal": 200,
+    "world_batch_proposal": 2,
+    "F_permutation": "fixed five-cycle after atomic feedback release"
+  },
+  "criterion_proposals": {
+    "status": "freeze at 20.3 before formal development outcomes",
+    "feedback_query_headroom_recovered_min": 0.5,
+    "v1_current_v2_previous_axes_must_pass_separately": true,
+    "changed_query_is_diagnostic_only": true,
+    "bitwise_restore_requires_identical_input_and_rng": true,
+    "paired_world_gain_interval_lower_min_exclusive": 0.0,
+    "F_extra_gain_point_min": 0.05,
+    "Task1_retention_ratio_interval_lower_min": 0.85,
+    "actual_F_credit_and_migration_checks_complete": false
+  },
+  "resource_proposals": {
+    "base_cpu_seconds": 24000,
+    "magnitude_cpu_ceiling_seconds": 48000,
+    "base_wall_seconds": 48000,
+    "magnitude_wall_ceiling_seconds": 96000,
+    "peak_ram_gib": 4,
+    "active_artifact_gib": 2,
+    "engineering_adam_proposal_max": 24,
+    "pricing_adam_proposal_max": 8,
+    "new_training_spend_authorized_this_turn": false
+  }
+}
