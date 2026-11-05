@@ -1,0 +1,92 @@
+{
+  "package": "20.2t",
+  "date": "2026-11-05",
+  "kind": "design_gate",
+  "verdict": "design_recommended_option_2_content_addressed_per_turn",
+  "memo": "plans\\reference\\DESIGN-20_2t_WRITE_GRANULARITY_20261105.md",
+  "memo_sha256": "f57a59a098dbc56f3f67cfcde9d6b63700f3360fde76572cba48c464902d24fb",
+  "runner": null,
+  "runner_sha256": "n/a",
+  "submitted_runner_sha256": "n/a",
+  "run_sha_matches_submitted": true,
+  "training_admitted": false,
+  "implementation_admitted": false,
+  "pricing_admitted": false,
+  "saved_states": [],
+  "zero_training": true,
+  "zero_optimizer_steps": true,
+  "zero_adam": true,
+  "zero_confirm_reads": true,
+  "zero_new_parameters": true,
+  "code_changed": false,
+  "reference_assemblies_untouched": true,
+  "budget_cpu_seconds": 40.0,
+  "budget_wall_seconds": 900.0,
+  "options": [
+    {
+      "id": 1,
+      "name": "per_turn_unattended_write",
+      "parameter_increment": 0,
+      "new_persistent_state_elements": 0,
+      "predicted_information_gate": "<= window-identity baseline, margin < 0.10",
+      "predicted_failure": "cosine median across 22 correction surfaces > 0.9 (single vector overwritten by rank-1 edits)"
+    },
+    {
+      "id": 2,
+      "name": "content_addressed_per_turn_write",
+      "parameter_increment": 0,
+      "new_persistent_state_elements": 266273,
+      "state_shapes": {
+        "memory_keys": [32, 128],
+        "memory_values": [32, 4, 2, 32, 32],
+        "memory_age": [32],
+        "memory_count": [1]
+      },
+      "predicted_information_gate": ">= 0.60 and margin >= 0.20 if variant top-1 hit holds",
+      "predicted_failure": "variant top-1 hit rate < 0.5 or FIFO eviction drops earlier turns"
+    },
+    {
+      "id": 3,
+      "name": "batch_write_decayed_accumulator",
+      "parameter_increment": 0,
+      "new_persistent_state_elements": 8193,
+      "predicted_information_gate": "<= window-identity baseline; structural gate fails (distinct F = 2)",
+      "predicted_failure": "F constant within window, distinct_f_vectors = 2"
+    }
+  ],
+  "recommended_option": 2,
+  "recommendation_reasons": [
+    "only option that makes per-query corrections representable (F value keyed by the current question)",
+    "zero trainable parameters; F remains the only plastic state",
+    "does not separate content and binding, so no M1 veto"
+  ],
+  "preregistered_gates": {
+    "written_before_reading": true,
+    "structural": "distinct_f_vectors >= distinct_error_directions_in_window, distinct_f_vectors > 2, and F varies per turn within the window",
+    "leverage": "five counterfactuals leverage_max >= 0.01 and at least one byte_diff > 0",
+    "information": "closed-form leave-one-out decision-bit accuracy >= 0.60 and margin >= 0.20 over the strongest of three controls",
+    "failure_rule": "any gate missed -> that option fails; thresholds not adjustable"
+  },
+  "exit_if_all_infeasible": "judge that the current F memory form cannot carry per-query corrections; 20 package moves to write-side form reset, owner must authorize separately",
+  "files_read_for_design": [
+    "taiji\\living_core.py",
+    "taiji\\rule_learning_20_1_net.py",
+    "taiji\\state_migration.py",
+    "plans\\manifests\\taiji_package20_2s_f_information_20261105.json"
+  ],
+  "files_to_change_if_authorized": [
+    "taiji\\living_core.py",
+    "taiji\\rule_learning_20_1_net.py",
+    "taiji\\rule_learning_20_1_identity.py",
+    "taiji\\state_migration.py"
+  ],
+  "assembly_state_touch": "no saved assembly state is touched; living_core.py is shared with 19.x modules, so any future change must be default-off with defaulted fields",
+  "plans_synced": [
+    "plans\\MASTER-PLAN.md",
+    "plans\\MAINLINE.md",
+    "plans\\reference\\ROADMAP-NEXT_20261104.md",
+    "plans\\active\\roadmap\\03_CURRENT_EXECUTION.md",
+    "plans\\reference\\INVARIANT-LEDGER_20261103.md",
+    "plans\\reference\\CAPABILITY-CARD_20261103.md"
+  ]
+}
