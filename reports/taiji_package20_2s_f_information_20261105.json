@@ -30,7 +30,10 @@
     "runner_sha256": "3a3c587b51abfe3eb3d40e4a761115c60c1f5fe6deb381018afd0148c8c96898",
     "p2_script_sha256": "cd23ce2e06b4b6ad1455378f0d9df4f60bef98762893756f6302f3a709c04119",
     "p2_committed_sha256": "cd23ce2e06b4b6ad1455378f0d9df4f60bef98762893756f6302f3a709c04119",
-    "note": "report written before formatting; submitted_runner_sha256 is recorded after the commit that stores the formatted bytes"
+    "note": "report written before formatting; submitted_runner_sha256 is recorded after the commit that stores the formatted bytes",
+    "submitted_runner_sha256": "ab9b73ec25a57e044eaa7b59f167e269e8bc520abe3eeb8e440a936836aca675",
+    "run_sha_matches_submitted": false,
+    "submitted_commit": "155400108"
   },
   "probe": {
     "primary": {
