@@ -88,6 +88,15 @@ def state_digest(state: RuleState) -> str:
         ("coverage", living.coverage.detach().cpu().numpy().tobytes()),
         ("prior", living.prior.detach().cpu().numpy().tobytes()),
     ]
+    if living.store_keys is not None:
+        rows.extend(
+            [
+                ("store_keys", living.store_keys.detach().cpu().numpy().tobytes()),
+                ("store_values", living.store_values.detach().cpu().numpy().tobytes()),
+                ("store_age", living.store_age.detach().cpu().numpy().tobytes()),
+                ("store_count", int(living.store_count)),
+            ]
+        )
     for entry in state.journal:
         rows.append(("journal", tuple(sorted(entry.items()))))
     payload = repr(rows).encode("utf-8")
@@ -103,6 +112,7 @@ class RuleLearningGraph(nn.Module):
         *,
         arm: str,
         growth_gates: dict[str, float] | None = None,
+        addressed_store_enabled: bool = False,
     ) -> None:
         super().__init__()
         if arm not in ARMS:
@@ -110,6 +120,8 @@ class RuleLearningGraph(nn.Module):
         self.subject = subject
         self.arm = arm
         self.fast_enabled = arm == FAST_ARM
+        self.addressed_store_enabled = bool(addressed_store_enabled)
+        self.store_enabled = bool(self.addressed_store_enabled and self.fast_enabled)
         grown = getattr(subject, "growth_parent_units", None) is not None
         self.step_kwargs: dict[str, Any] = (
             {"growth_gates": dict(growth_gates)} if grown and growth_gates else {}
@@ -217,7 +229,50 @@ class RuleLearningGraph(nn.Module):
                 "restore": "reset to 0",
                 "plastic": False,
             },
-        ]
+        ] + (
+            [
+                {
+                    "name": "store_keys",
+                    "kind": "session",
+                    "shape": [32, config.width],
+                    "dtype": "float64",
+                    "restore": "value; cleared at the first turn of a new session",
+                    "plastic": False,
+                },
+                {
+                    "name": "store_values",
+                    "kind": "session",
+                    "shape": [
+                        32,
+                        config.groups,
+                        config.fast_heads,
+                        config.key_width,
+                        config.value_width,
+                    ],
+                    "dtype": "float64",
+                    "restore": "value; cleared at the first turn of a new session",
+                    "plastic": False,
+                },
+                {
+                    "name": "store_age",
+                    "kind": "session",
+                    "shape": [32],
+                    "dtype": "int64",
+                    "restore": "value; cleared at the first turn of a new session",
+                    "plastic": False,
+                },
+                {
+                    "name": "store_count",
+                    "kind": "session",
+                    "shape": [1],
+                    "dtype": "int64",
+                    "restore": "value; cleared at the first turn of a new session",
+                    "plastic": False,
+                },
+            ]
+            if self.store_enabled
+            else []
+        )
 
     # ---- state ---------------------------------------------------------------
     def initial_state(self, world_id: str) -> RuleState:
@@ -226,7 +281,7 @@ class RuleLearningGraph(nn.Module):
 
     def save_state(self, state: RuleState) -> dict[str, Any]:
         living = state.living
-        return {
+        payload = {
             "subject_id": living.subject_id,
             "revision": living.revision,
             "step": living.step,
@@ -239,9 +294,23 @@ class RuleLearningGraph(nn.Module):
             "journal": copy.deepcopy(list(state.journal)),
             "graph_revision": state.revision,
         }
+        if living.store_keys is not None:
+            payload["store_keys"] = living.store_keys.detach().cpu().clone()
+            payload["store_values"] = living.store_values.detach().cpu().clone()
+            payload["store_age"] = living.store_age.detach().cpu().clone()
+            payload["store_count"] = living.store_count.detach().cpu().clone()
+        return payload
 
     def restore_state(self, payload: dict[str, Any]) -> RuleState:
         reference = self.subject.W
+        store = {}
+        if "store_keys" in payload:
+            store = {
+                "store_keys": payload["store_keys"].to(reference.dtype),
+                "store_values": payload["store_values"].to(reference.dtype),
+                "store_age": payload["store_age"].to(torch.long),
+                "store_count": payload["store_count"].to(torch.long),
+            }
         living = LivingState(
             subject_id=payload["subject_id"],
             revision=int(payload["revision"]),
@@ -252,9 +321,12 @@ class RuleLearningGraph(nn.Module):
             keys=tuple((source, int(offset)) for source, offset in payload["keys"]),
             coverage=payload["coverage"].to(reference.dtype),
             prior=payload["prior"].to(reference.dtype),
+            **store,
         )
         return RuleState(
-            living, tuple(copy.deepcopy(payload["journal"])), int(payload["graph_revision"])
+            living,
+            tuple(copy.deepcopy(payload["journal"])),
+            int(payload["graph_revision"]),
         )
 
     def _records(self, released: list[dict[str, Any]], now: int) -> tuple[RawSource, ...]:
@@ -296,6 +368,19 @@ class RuleLearningGraph(nn.Module):
             return {"source": "template", "refs": [], "position": position}
         return {"source": "generate", "refs": []}
 
+    def _with_store(self, state: RuleState, session: int) -> tuple[RuleState, dict[str, Any]]:
+        """Attach the store and clear it at the first turn of a new session."""
+        if not self.store_enabled:
+            return state, {"enabled": False}
+        scope = {"enabled": True, "cleared": False, "prior_occupied": 0}
+        if state.journal and int(state.journal[-1]["session"]) != int(session):
+            scope["cleared"] = True
+            if state.living.store_count is not None:
+                scope["prior_occupied"] = min(int(state.living.store_count), 32)
+            state = RuleState(self.subject.clear_store(state.living), state.journal, state.revision)
+        state = RuleState(self.subject.attach_store(state.living), state.journal, state.revision)
+        return state, scope
+
     @torch.no_grad()
     def run_turn(
         self,
@@ -308,9 +393,14 @@ class RuleLearningGraph(nn.Module):
         now: int = 0,
     ) -> dict[str, Any]:
         query = turn["query"].encode("utf-8")
+        base, scope = self._with_store(state, int(turn["session"]))
+        read_info = None
+        if self.store_enabled:
+            living, read_info = self.subject.addressed_read(base.living, query)
+            base = RuleState(living, base.journal, base.revision)
         records = self._records(released, now)
         living = self.subject.observe(
-            state.living,
+            base.living,
             query,
             goal=query,
             records=records,
@@ -362,7 +452,14 @@ class RuleLearningGraph(nn.Module):
             "released": False,
             "applied": False,
         }
-        child = RuleState(living, state.journal + (entry,), state.revision)
+        child = RuleState(living, base.journal + (entry,), base.revision)
+        store_info = None
+        if self.store_enabled:
+            living, write_info = self.subject.addressed_write(
+                living, query, read_info["key"] if read_info else None
+            )
+            child = RuleState(living, base.journal + (entry,), base.revision)
+            store_info = {"scope": scope, "read": read_info, "write": write_info}
         return {
             "turn": int(turn["turn"]),
             "bytes": tuple(emitted),
@@ -372,6 +469,7 @@ class RuleLearningGraph(nn.Module):
             "constrained_provenance": constrained_provenance,
             "state": child,
             "prediction_id": prediction_id,
+            "store": store_info,
         }
 
     @torch.no_grad()
@@ -387,11 +485,15 @@ class RuleLearningGraph(nn.Module):
         """Atomic batch release: every line is observed before any is readable."""
         write = self.fast_enabled if write_enabled is None else bool(write_enabled)
         records = self._records(released, now)
-        living = state.living
+        living = self.subject.attach_store(state.living) if self.store_enabled else state.living
         written = 0
+        events = []
         for item in release["items"]:
             feedback = item["feedback"].encode("utf-8")
             query = item["query"].encode("utf-8")
+            read_info = None
+            if self.store_enabled:
+                living, read_info = self.subject.addressed_read(living, query)
             before = living.fast.clone()
             living = self.subject.observe(
                 living,
@@ -404,6 +506,18 @@ class RuleLearningGraph(nn.Module):
             )
             if not torch.equal(before, living.fast):
                 written += 1
+            if self.store_enabled:
+                living, write_info = self.subject.addressed_write(
+                    living, query, read_info["key"] if read_info else None
+                )
+                events.append(
+                    {
+                        "source_id": item["source_id"],
+                        "turn": int(item["turn"]),
+                        "read": read_info,
+                        "write": write_info,
+                    }
+                )
         journal = []
         applied = 0
         for entry in state.journal:
@@ -422,12 +536,14 @@ class RuleLearningGraph(nn.Module):
             "applied_receipts": applied,
             "release_version": int(release["version"]),
             "after_turn": int(release["after_turn"]),
+            "store_events": events,
         }
 
     def candidate_payload(self) -> dict[str, Any]:
         return {
             "arm": self.arm,
             "fast_enabled": self.fast_enabled,
+            "addressed_store_enabled": self.store_enabled,
             "parameter_table": self.parameter_table(),
             "group_counts": self.group_counts(),
             "state_table": self.state_table(),

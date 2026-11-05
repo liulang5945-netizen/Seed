@@ -39,6 +39,20 @@ DECODE_RULES_20 = {
     "session_freeze": "every parameter frozen inside a session; F state is the only inference-plastic tensor",
     "truth_isolation": "rule id, signature, truth table and solver are scoring-only",
     "answer_contract": "应送(左|右)箱。; decision bytes at positions 7..8",
+    "store_write": (
+        "addressed_store_enabled only: value = the turn's post-read F copy, written at "
+        "every turn and at every released line; default off"
+    ),
+    "store_read": (
+        "cosine similarity between the 128-d mean of BytePatchEncoder.context(query) "
+        "and the stored keys; softmax temperature 0.1; F <- (1-a)F + a*sum p_i V_i, a=0.5"
+    ),
+    "addressed_write": "addressed store writes are structural, never gradient driven",
+    "fifo": "32 slots, eviction of the lowest insertion age when full",
+    "cross_session_clear": (
+        "the store is zeroed at the first turn of a new session and is never restored "
+        "across a session boundary"
+    ),
 }
 
 TASK_CONTRACT = {
@@ -80,6 +94,7 @@ def graph_identity(graph: Any) -> dict[str, Any]:
         "graph": "taiji-rule-learning-20-1",
         "arm": graph.arm,
         "fast_enabled": bool(graph.fast_enabled),
+        "addressed_store_enabled": bool(graph.store_enabled),
         "contract_version": "rule-learning-20-r1",
         "state_schema": STATE_SCHEMA,
         "init_scheme": INIT_SCHEME,
@@ -102,6 +117,7 @@ def graph_identity(graph: Any) -> dict[str, Any]:
         "candidate_sha_v2": sha,
         "arm": graph.arm,
         "fast_enabled": bool(graph.fast_enabled),
+        "addressed_store_enabled": bool(graph.store_enabled),
         "graph": "taiji-rule-learning-20-1",
         "modules": list(GRAPH_MODULES_20),
         "decode_rules": DECODE_RULES_20,

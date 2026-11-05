@@ -1,0 +1,2388 @@
+{
+  "package": "20.3a",
+  "date": "2026-11-05",
+  "verdict": "option2_failed",
+  "scope": "per-turn content-addressed store, default off; three pre-registered gates; 0 training, 0 optimizer steps, 0 Adam, 0 confirm, 0 new parameters",
+  "thresholds": {
+    "structural": {
+      "distinct_f_vectors_global_strictly_greater_than": 2,
+      "per_window_distinct_f_at_least_distinct_error_directions": true,
+      "per_window_every_consecutive_turn_differs": true,
+      "error_direction_definition": "per correction surface: tuple of (position, gold byte, predicted byte) for every position where the constrained answer differs from gold; two turns share a direction only when the tuples are identical"
+    },
+    "leverage": {
+      "tiers": [
+        "zero",
+        "half",
+        "double",
+        "quadruple",
+        "shuffle_same_norm"
+      ],
+      "leverage_definition": "abs(loss_cf - loss_base) / max(loss_base, 1e-12)",
+      "leverage_max_at_least": 0.01,
+      "at_least_one_byte_diff": true
+    },
+    "information": {
+      "primary_metric": "leave-one-out decision-bit accuracy: correct decision bytes at positions [7, 8] divided by 2 bits x 22 turns",
+      "accuracy_at_least": 0.6,
+      "margin_at_least": 0.2,
+      "strongest_control": "max(permutation per-seed max, random same-norm, no-F state)",
+      "controls": [
+        "label_permutation_5_seeds",
+        "random_projection_same_dim_same_norm",
+        "no_f_other_persistent_state"
+      ],
+      "decision_rule": "all three gates pass -> option2_passed; any fail -> option2_failed"
+    },
+    "written_before_reading": true
+  },
+  "script": {
+    "runner_sha256": "3e46c57ad87be6ca0a4d90c54973b16f403be2e8642efb7c8b93927581733052",
+    "submitted_runner_sha256": "6903857a86842c906ff7d71424ae66e6c79f137e6bc3914c9765aea79abd05d7",
+    "note": "report written before formatting; submitted bytes are recorded afterwards",
+    "post_format_note": "black reported one reformatted file (the probe script); the pre-commit ruff hook then removed one unused import and one redundant encode argument (both behaviour-neutral), so the submitted bytes are recorded after both steps; no measured value changed between the run-time bytes and the submitted bytes"
+  },
+  "mechanism": {
+    "key": "mean of BytePatchEncoder.context over the turn query bytes (128-d)",
+    "value": "the turn's post-read F copy, shape (4,2,32,32)",
+    "retrieval": "cosine + softmax, temperature 0.1",
+    "blend": "F <- (1-alpha)F + alpha * sum p_i V_i, alpha 0.5",
+    "slots": "32, FIFO by insertion age",
+    "scope": "session-only; cleared at the first turn of a new session",
+    "trainable_parameters": 0,
+    "non_trainable_store_elements": 266273
+  },
+  "gates": {
+    "structural": {
+      "correction_turns": 22,
+      "distinct_f_vectors": 22,
+      "distinct_f_vectors_strictly_above_2": true,
+      "window_distinct_f_not_below_error_directions": true,
+      "every_window_consecutive_turn_differs": true,
+      "per_window": [
+        {
+          "released_lines": 5,
+          "turns": [
+            6,
+            7,
+            8,
+            9,
+            10
+          ],
+          "distinct_f_vectors": 5,
+          "distinct_error_directions": 3,
+          "error_directions": [
+            [
+              [
+                2,
+                148,
+                229
+              ],
+              [
+                3,
+                233,
+                133
+              ],
+              [
+                4,
+                128,
+                239
+              ],
+              [
+                5,
+                129,
+                188
+              ],
+              [
+                6,
+                229,
+                154
+              ],
+              [
+                7,
+                143,
+                232
+              ],
+              [
+                8,
+                179,
+                229
+              ],
+              [
+                9,
+                231,
+                186
+              ],
+              [
+                10,
+                174,
+                154
+              ],
+              [
+                11,
+                177,
+                229
+              ],
+              [
+                12,
+                227,
+                229
+              ],
+              [
+                13,
+                128,
+                186
+              ],
+              [
+                14,
+                130,
+                154
+              ]
+            ],
+            [
+              [
+                1,
+                186,
+                175
+              ],
+              [
+                2,
+                148,
+                229
+              ],
+              [
+                3,
+                233,
+                133
+              ],
+              [
+                4,
+                128,
+                239
+              ],
+              [
+                5,
+                129,
+                188
+              ],
+              [
+                6,
+                229,
+                154
+              ],
+              [
+                7,
+                143,
+                232
+              ],
+              [
+                8,
+                179,
+                229
+              ],
+              [
+                9,
+                231,
+                186
+              ],
+              [
+                10,
+                174,
+                154
+              ],
+              [
+                11,
+                177,
+                229
+              ],
+              [
+                12,
+                227,
+                229
+              ],
+              [
+                13,
+                128,
+                186
+              ],
+              [
+                14,
+                130,
+                154
+              ]
+            ],
+            [
+              [
+                1,
+                186,
+                175
+              ],
+              [
+                2,
+                148,
+                229
+              ],
+              [
+                3,
+                233,
+                133
+              ],
+              [
+                4,
+                128,
+                239
+              ],
+              [
+                5,
+                129,
+                188
+              ],
+              [
+                6,
+                229,
+                154
+              ],
+              [
+                7,
+                183,
+                232
+              ],
+              [
+                8,
+                166,
+                229
+              ],
+              [
+                9,
+                231,
+                186
+              ],
+              [
+                10,
+                174,
+                154
+              ],
+              [
+                11,
+                177,
+                229
+              ],
+              [
+                12,
+                227,
+                229
+              ],
+              [
+                13,
+                128,
+                186
+              ],
+              [
+                14,
+                130,
+                154
+              ]
+            ]
+          ],
+          "every_consecutive_turn_differs": true,
+          "f_sha256_sequence": [
+            "7b6c196f4ce69fe67482798e231dd8a34f70e6ca32536ede626bdc29aabcf0bc",
+            "bad4d29cb1afb0940c0b2390a2fd1a9937b41b241c221fa9e8abeeba6103a6e4",
+            "a06d78a5f015ef1bc798ea3ad919014292329603b81530f55d1a88ceb9523154",
+            "71c57eb9cc6276fc68ee8bc2420f8ce82b39c8c3494a5d6f523501a9d22417cb",
+            "7b250925067d18a30b6830c78c3e623c29acda63c0bcd8184a837e016fd04fd3"
+          ],
+          "pass": true
+        },
+        {
+          "released_lines": 10,
+          "turns": [
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34
+          ],
+          "distinct_f_vectors": 17,
+          "distinct_error_directions": 7,
+          "error_directions": [
+            [
+              [
+                0,
+                229,
+                143
+              ],
+              [
+                1,
+                186,
+                179
+              ],
+              [
+                2,
+                148,
+                231
+              ],
+              [
+                3,
+                233,
+                174
+              ],
+              [
+                4,
+                128,
+                177
+              ],
+              [
+                5,
+                129,
+                227
+              ],
+              [
+                6,
+                229,
+                128
+              ],
+              [
+                7,
+                143,
+                130
+              ],
+              [
+                8,
+                179,
+                229
+              ],
+              [
+                9,
+                231,
+                186
+              ],
+              [
+                10,
+                174,
+                229
+              ],
+              [
+                11,
+                177,
+                133
+              ],
+              [
+                12,
+                227,
+                239
+              ],
+              [
+                13,
+                128,
+                188
+              ],
+              [
+                14,
+                130,
+                154
+              ]
+            ],
+            [
+              [
+                1,
+                186,
+                175
+              ],
+              [
+                2,
+                148,
+                229
+              ],
+              [
+                3,
+                233,
+                133
+              ],
+              [
+                4,
+                128,
+                239
+              ],
+              [
+                5,
+                129,
+                188
+              ],
+              [
+                6,
+                229,
+                154
+              ],
+              [
+                7,
+                183,
+                232
+              ],
+              [
+                8,
+                166,
+                229
+              ],
+              [
+                9,
+                231,
+                186
+              ],
+              [
+                10,
+                174,
+                148
+              ],
+              [
+                11,
+                177,
+                233
+              ],
+              [
+                12,
+                227,
+                128
+              ],
+              [
+                13,
+                128,
+                129
+              ],
+              [
+                14,
+                130,
+                229
+              ]
+            ],
+            [
+              [
+                0,
+                229,
+                232
+              ],
+              [
+                1,
+                186,
+                189
+              ],
+              [
+                2,
+                148,
+                175
+              ],
+              [
+                3,
+                233,
+                231
+              ],
+              [
+                4,
+                128,
+                169
+              ],
+              [
+                5,
+                129,
+                186
+              ],
+              [
+                6,
+                229,
+                184
+              ],
+              [
+                7,
+                143,
+                129
+              ],
+              [
+                8,
+                179,
+                232
+              ],
+              [
+                9,
+                231,
+                190
+              ],
+              [
+                10,
+                174,
+                176
+              ],
+              [
+                11,
+                177,
+                239
+              ],
+              [
+                12,
+                227,
+                188
+              ],
+              [
+                13,
+                128,
+                154
+              ],
+              [
+                14,
+                130,
+                232
+              ]
+            ],
+            [
+              [
+                2,
+                148,
+                229
+              ],
+              [
+                3,
+                233,
+                133
+              ],
+              [
+                4,
+                128,
+                239
+              ],
+              [
+                5,
+                129,
+                188
+              ],
+              [
+                6,
+                229,
+                154
+              ],
+              [
+                7,
+                183,
+                232
+              ],
+              [
+                8,
+                166,
+                229
+              ],
+              [
+                9,
+                231,
+                186
+              ],
+              [
+                10,
+                174,
+                148
+              ],
+              [
+                11,
+                177,
+                233
+              ],
+              [
+                12,
+                227,
+                128
+              ],
+              [
+                13,
+                128,
+                129
+              ],
+              [
+                14,
+                130,
+                229
+              ]
+            ],
+            [
+              [
+                0,
+                229,
+                232
+              ],
+              [
+                1,
+                186,
+                189
+              ],
+              [
+                2,
+                148,
+                175
+              ],
+              [
+                3,
+                233,
+                231
+              ],
+              [
+                4,
+                128,
+                169
+              ],
+              [
+                5,
+                129,
+                186
+              ],
+              [
+                6,
+                229,
+                184
+              ],
+              [
+                7,
+                183,
+                129
+              ],
+              [
+                8,
+                166,
+                232
+              ],
+              [
+                9,
+                231,
+                190
+              ],
+              [
+                10,
+                174,
+                176
+              ],
+              [
+                11,
+                177,
+                239
+              ],
+              [
+                12,
+                227,
+                188
+              ],
+              [
+                13,
+                128,
+                154
+              ],
+              [
+                14,
+                130,
+                232
+              ]
+            ],
+            [
+              [
+                2,
+                148,
+                229
+              ],
+              [
+                3,
+                233,
+                133
+              ],
+              [
+                4,
+                128,
+                239
+              ],
+              [
+                5,
+                129,
+                188
+              ],
+              [
+                6,
+                229,
+                154
+              ],
+              [
+                7,
+                143,
+                232
+              ],
+              [
+                8,
+                179,
+                229
+              ],
+              [
+                9,
+                231,
+                186
+              ],
+              [
+                10,
+                174,
+                148
+              ],
+              [
+                11,
+                177,
+                233
+              ],
+              [
+                12,
+                227,
+                128
+              ],
+              [
+                13,
+                128,
+                129
+              ],
+              [
+                14,
+                130,
+                229
+              ]
+            ],
+            [
+              [
+                0,
+                229,
+                143
+              ],
+              [
+                1,
+                186,
+                179
+              ],
+              [
+                2,
+                148,
+                231
+              ],
+              [
+                3,
+                233,
+                174
+              ],
+              [
+                4,
+                128,
+                177
+              ],
+              [
+                5,
+                129,
+                227
+              ],
+              [
+                6,
+                229,
+                128
+              ],
+              [
+                7,
+                183,
+                130
+              ],
+              [
+                8,
+                166,
+                229
+              ],
+              [
+                9,
+                231,
+                186
+              ],
+              [
+                10,
+                174,
+                229
+              ],
+              [
+                11,
+                177,
+                133
+              ],
+              [
+                12,
+                227,
+                239
+              ],
+              [
+                13,
+                128,
+                188
+              ],
+              [
+                14,
+                130,
+                154
+              ]
+            ]
+          ],
+          "every_consecutive_turn_differs": true,
+          "f_sha256_sequence": [
+            "864ce729ae59449d0860fc2439bbd15333e18565e88285e47e7ad4ea125309f5",
+            "29cb4235a8dc2af5370ceaac26aba83f73e4cedc26d24a9f0560fbc477217359",
+            "6168c862b30edb2fe41d5f471995464bc7a76e4ee56f4021c9bc78b752605e88",
+            "103c4127de7c9e9060a9d25f5fb377812dbe39b8ec81e674f1708b62e1ae5200",
+            "ec58769b5359a794e8c5225dfb648931c280e5cc4e93b6ce777b915a4b0cc6dc",
+            "068339af234ee8dfd40dc126d97c13e44cc540a17922fc0e8a95f0f190d764b6",
+            "bcdfc09037305374b920a57fd0bcbed203f3f15276dfd655d4b67aaa59262b32",
+            "fcab3307fa2ca9ddb8374369dc94d2dbf91e4fded4c05d866f4d2edea2312ccc",
+            "54882e2ace9940da6712bfc2a4f5da11a6800def9c7c5208ecaaaf2893eb028a",
+            "de91cf3d55bcf75e43e2023b2fa22db4d3d142d541833b2a7cfc9de73bfd3ba8",
+            "a5a9420c956ab2c765cd984275ed54027467ee40b1c64c2bf36094db8fe646b8",
+            "387f18b090106e29abccafcc54c61ad3e434f3fb35169f861c0bce3a4bf25caf",
+            "57bc8016f876054b373264ec371ecf5bd0a963e73470825b971f09d5fa95f03a",
+            "3eaf8d1304fba55f830f34184212a080ca367db5e3d893805a40cf75eb4b3f14",
+            "e70801e91003d04cdd076af67689c1939ed94f389a81c0879cf4441d360988cf",
+            "08a0c220992b8ffccfc7f4b39111892b006daa4d95e4d7885f3eb8c7b98f3aba",
+            "42f0bbc4cbc49a38065e6bce72687835527d175d1aac89550e2416dc28e3a53e"
+          ],
+          "pass": true
+        }
+      ],
+      "pass": true
+    },
+    "leverage": {
+      "probe_turn": 34,
+      "read_at_probe": {
+        "enabled": true,
+        "occupied": 28,
+        "valid": 28,
+        "blended": true,
+        "top_slot": 22,
+        "top_cosine": 0.9976629252533259,
+        "second_cosine": 0.9893101676354663,
+        "margin": 0.008352757617859585,
+        "weights": [
+          0.005787619104921733,
+          0.012293871109882682,
+          0.022506191468662763,
+          0.029207718460405423,
+          0.03669336078634307,
+          0.03264293361533923,
+          0.032214815955966036,
+          0.022506191468662763,
+          0.029207718460405423,
+          0.03669336078634307,
+          0.03264293361533923,
+          0.032214815955966036,
+          0.03855595333893757,
+          0.04488404710464792,
+          0.04413756610118443,
+          0.05680878487147995,
+          0.02759771368897615,
+          0.02325027942449145,
+          0.030400309429809553,
+          0.03814398626716849,
+          0.05197032186699892,
+          0.04339093261324404,
+          0.062261573755954445,
+          0.05727228736762476,
+          0.028117558911524333,
+          0.03151813404906655,
+          0.053006488999462385,
+          0.04407253142119163
+        ],
+        "retrieved_norm": 0.4460934345230629,
+        "fast_norm_before": 0.4423048670189874,
+        "fast_norm_after": 0.4441988335549004
+      },
+      "fast_norm": 0.4441988335549004,
+      "base_fast_sha256": "42f0bbc4cbc49a38065e6bce72687835527d175d1aac89550e2416dc28e3a53e",
+      "base": {
+        "loss": 12.59744105818504,
+        "decision_bits_correct": 0,
+        "full_bytes_correct": 0,
+        "bytes": [
+          143,
+          179,
+          231,
+          174,
+          177,
+          227,
+          128,
+          130,
+          229,
+          153,
+          229,
+          133,
+          239,
+          188,
+          154
+        ]
+      },
+      "tiers": [
+        {
+          "tier": "zero",
+          "loss": 12.597435803083531,
+          "delta_loss": -5.2551015095048115e-06,
+          "leverage": 4.1715626889878325e-07,
+          "byte_diff": 0,
+          "decision_bits_correct": 0,
+          "full_bytes_correct": 0
+        },
+        {
+          "tier": "half",
+          "loss": 12.597438444466848,
+          "delta_loss": -2.6137181929897224e-06,
+          "leverage": 2.074800890845597e-07,
+          "byte_diff": 0,
+          "decision_bits_correct": 0,
+          "full_bytes_correct": 0
+        },
+        {
+          "tier": "double",
+          "loss": 12.597446202115988,
+          "delta_loss": 5.143930946971409e-06,
+          "leverage": 4.0833141613543803e-07,
+          "byte_diff": 0,
+          "decision_bits_correct": 0,
+          "full_bytes_correct": 0
+        },
+        {
+          "tier": "quadruple",
+          "loss": 12.597456152396962,
+          "delta_loss": 1.5094211921251599e-05,
+          "leverage": 1.1981966695882503e-06,
+          "byte_diff": 0,
+          "decision_bits_correct": 0,
+          "full_bytes_correct": 0
+        },
+        {
+          "tier": "shuffle_same_norm",
+          "loss": 12.597331257701686,
+          "delta_loss": -0.00010980048335440529,
+          "leverage": 8.716094232730201e-06,
+          "byte_diff": 0,
+          "decision_bits_correct": 0,
+          "full_bytes_correct": 0
+        }
+      ],
+      "leverage_max": 8.716094232730201e-06,
+      "byte_diff_any": false,
+      "pass": false
+    },
+    "information": {
+      "primary": {
+        "features": [
+          22,
+          8192
+        ],
+        "metrics": {
+          "turns": 22,
+          "position_hits": 304,
+          "position_total": 330,
+          "position_accuracy": 0.9212121212121213,
+          "decision_bit_hits": 18,
+          "decision_bit_total": 44,
+          "decision_bit_accuracy": 0.4090909090909091,
+          "decisions_correct": 9,
+          "full_correct": 9,
+          "full_accuracy": 0.4090909090909091
+        },
+        "lambdas": {
+          "selected": [
+            0.0001,
+            0.01,
+            0.1,
+            1.0
+          ],
+          "per_fold": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0001,
+            1.0,
+            0.1,
+            1.0,
+            0.1,
+            1.0,
+            1.0,
+            1.0,
+            0.01,
+            1.0,
+            1.0,
+            1.0,
+            0.1,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "per_fold": [
+          {
+            "index": 0,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 1,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 2,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 3,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 4,
+            "lambda": 0.0001,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 5,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 6,
+            "lambda": 0.1,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 7,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 8,
+            "lambda": 0.1,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 9,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 10,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 11,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 12,
+            "lambda": 0.01,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 13,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 14,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 15,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 16,
+            "lambda": 0.1,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 17,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 18,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 19,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 20,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 21,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          }
+        ]
+      },
+      "wide_15_positions_3_classes": {
+        "features": [
+          22,
+          8192
+        ],
+        "metrics": {
+          "turns": 22,
+          "position_hits": 304,
+          "position_total": 330,
+          "position_accuracy": 0.9212121212121213,
+          "decision_bit_hits": 18,
+          "decision_bit_total": 44,
+          "decision_bit_accuracy": 0.4090909090909091,
+          "decisions_correct": 9,
+          "full_correct": 9,
+          "full_accuracy": 0.4090909090909091
+        },
+        "lambdas": {
+          "selected": [
+            0.0001,
+            0.01,
+            0.1,
+            1.0
+          ],
+          "per_fold": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0001,
+            1.0,
+            0.1,
+            1.0,
+            0.1,
+            1.0,
+            1.0,
+            1.0,
+            0.01,
+            1.0,
+            1.0,
+            1.0,
+            0.1,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "per_fold": [
+          {
+            "index": 0,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 1,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 2,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 3,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 4,
+            "lambda": 0.0001,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 5,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 6,
+            "lambda": 0.1,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 7,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 8,
+            "lambda": 0.1,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 9,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 10,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 11,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 12,
+            "lambda": 0.01,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 13,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 14,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 15,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 16,
+            "lambda": 0.1,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 17,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 18,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 19,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 20,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 21,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          }
+        ]
+      },
+      "controls": {
+        "label_permutation": {
+          "seeds": [
+            11,
+            23,
+            37,
+            59,
+            71
+          ],
+          "accuracy_mean": 0.5,
+          "accuracy_max": 0.5909090909090909,
+          "per_seed": [
+            {
+              "seed": 11,
+              "order": [
+                11,
+                2,
+                18,
+                8,
+                12,
+                17,
+                0,
+                9,
+                1,
+                21,
+                6,
+                19,
+                5,
+                3,
+                4,
+                15,
+                13,
+                20,
+                10,
+                7,
+                16,
+                14
+              ],
+              "decision_bit_accuracy": 0.36363636363636365,
+              "full_correct": 8
+            },
+            {
+              "seed": 23,
+              "order": [
+                1,
+                18,
+                14,
+                19,
+                13,
+                7,
+                3,
+                12,
+                11,
+                5,
+                21,
+                8,
+                6,
+                10,
+                2,
+                4,
+                9,
+                16,
+                0,
+                17,
+                15,
+                20
+              ],
+              "decision_bit_accuracy": 0.5,
+              "full_correct": 11
+            },
+            {
+              "seed": 37,
+              "order": [
+                7,
+                0,
+                20,
+                11,
+                1,
+                3,
+                17,
+                10,
+                19,
+                21,
+                14,
+                16,
+                8,
+                5,
+                6,
+                18,
+                9,
+                13,
+                12,
+                4,
+                2,
+                15
+              ],
+              "decision_bit_accuracy": 0.5454545454545454,
+              "full_correct": 12
+            },
+            {
+              "seed": 59,
+              "order": [
+                12,
+                5,
+                11,
+                10,
+                19,
+                6,
+                2,
+                4,
+                18,
+                9,
+                14,
+                0,
+                7,
+                21,
+                16,
+                1,
+                15,
+                3,
+                20,
+                13,
+                8,
+                17
+              ],
+              "decision_bit_accuracy": 0.5909090909090909,
+              "full_correct": 13
+            },
+            {
+              "seed": 71,
+              "order": [
+                9,
+                5,
+                7,
+                16,
+                1,
+                21,
+                10,
+                17,
+                8,
+                12,
+                2,
+                19,
+                14,
+                4,
+                15,
+                18,
+                13,
+                20,
+                11,
+                6,
+                0,
+                3
+              ],
+              "decision_bit_accuracy": 0.5,
+              "full_correct": 11
+            }
+          ]
+        },
+        "random_projection_same_dim_same_norm": {
+          "turns": 22,
+          "position_hits": 294,
+          "position_total": 330,
+          "position_accuracy": 0.8909090909090909,
+          "decision_bit_hits": 8,
+          "decision_bit_total": 44,
+          "decision_bit_accuracy": 0.18181818181818182,
+          "decisions_correct": 4,
+          "full_correct": 4,
+          "full_accuracy": 0.18181818181818182
+        },
+        "no_f_other_persistent_state": {
+          "turns": 22,
+          "position_hits": 308,
+          "position_total": 330,
+          "position_accuracy": 0.9333333333333333,
+          "decision_bit_hits": 22,
+          "decision_bit_total": 44,
+          "decision_bit_accuracy": 0.5,
+          "decisions_correct": 11,
+          "full_correct": 11,
+          "full_accuracy": 0.5
+        }
+      },
+      "strongest_control_accuracy": 0.5909090909090909,
+      "accuracy": 0.4090909090909091,
+      "margin": -0.18181818181818182,
+      "pass": false
+    },
+    "engineering": {
+      "reference_assemblies_untouched": true,
+      "parent_weights_unchanged": true,
+      "zero_training": true,
+      "zero_optimizer_steps": true,
+      "zero_backward_calls": true,
+      "zero_confirm_reads": true,
+      "zero_new_trainable_parameters": true,
+      "store_elements_cf1_266273": true,
+      "store_elements_b_eh_0": true,
+      "store_off_matches_beh_765_of_765": true,
+      "store_off_f_sequence_matches_beh": true,
+      "store_off_matches_head_bytes": true,
+      "save_restore_byte_identical": true,
+      "determinism_8_runs_identical": true,
+      "assembly_count_per_arm_at_most_1": true,
+      "report_written_before_format": true
+    }
+  },
+  "engineering_ready": true,
+  "failure_localization": {
+    "failed_gates": [
+      "leverage",
+      "information"
+    ],
+    "thresholds_unchanged": true,
+    "structural_fact": "22 distinct F vectors on the 22 surfaces; window released_lines=5: F=5 vs error directions=3; window released_lines=10: F=17 vs error directions=7",
+    "leverage_fact": {
+      "leverage_max": 8.716094232730201e-06,
+      "threshold": 0.01,
+      "byte_diff_any": false,
+      "fast_norm": 0.4441988335549004,
+      "read_at_probe": {
+        "enabled": true,
+        "occupied": 28,
+        "valid": 28,
+        "blended": true,
+        "top_slot": 22,
+        "top_cosine": 0.9976629252533259,
+        "second_cosine": 0.9893101676354663,
+        "margin": 0.008352757617859585,
+        "weights": [
+          0.005787619104921733,
+          0.012293871109882682,
+          0.022506191468662763,
+          0.029207718460405423,
+          0.03669336078634307,
+          0.03264293361533923,
+          0.032214815955966036,
+          0.022506191468662763,
+          0.029207718460405423,
+          0.03669336078634307,
+          0.03264293361533923,
+          0.032214815955966036,
+          0.03855595333893757,
+          0.04488404710464792,
+          0.04413756610118443,
+          0.05680878487147995,
+          0.02759771368897615,
+          0.02325027942449145,
+          0.030400309429809553,
+          0.03814398626716849,
+          0.05197032186699892,
+          0.04339093261324404,
+          0.062261573755954445,
+          0.05727228736762476,
+          0.028117558911524333,
+          0.03151813404906655,
+          0.053006488999462385,
+          0.04407253142119163
+        ],
+        "retrieved_norm": 0.4460934345230629,
+        "fast_norm_before": 0.4423048670189874,
+        "fast_norm_after": 0.4441988335549004
+      },
+      "all_tiers_byte_diff_zero": true
+    },
+    "information_fact": {
+      "accuracy": 0.4090909090909091,
+      "strongest_control": 0.5909090909090909,
+      "margin": -0.18181818181818182,
+      "permutation_max": 0.5909090909090909,
+      "random_projection": 0.18181818181818182,
+      "no_f_state": 0.5,
+      "primary_at_or_below_control": true
+    },
+    "stop_rule": "stopped on the failed gates only; no threshold change, no criterion change, no alternative option selected, no pricing, no 20.4, no training proposal"
+  },
+  "extras": {
+    "retrieval": {
+      "surface_reads": 22,
+      "read_events": 22,
+      "self_key_top1_rate": 0.0,
+      "self_key_cosine_min": 0.0,
+      "top1_cosine_min": 0.9545817683642566,
+      "top1_cosine_median": 0.985032825126818,
+      "top1_cosine_max": 0.9984610940866723,
+      "margin_min": 0.0,
+      "margin_median": 0.003173992259827507,
+      "margin_below_0_05": 22,
+      "exact_key_duplicates": 6,
+      "max_occupied_in_run": 29,
+      "real_evictions": 0,
+      "real_eviction_note": "sessions are cleared before 32 slots fill, so the real run never evicts; the FIFO branch is exercised by the synthetic probe",
+      "synthetic_eviction": {
+        "writes": 40,
+        "slots": 32,
+        "occupied": 32,
+        "count": 40,
+        "evictions": 8,
+        "age_min": 8,
+        "age_max": 39,
+        "ages_are_last_32_insertions": true,
+        "fifo_oldest_first": true
+      },
+      "per_surface": [
+        {
+          "turn": 6,
+          "slot": 10,
+          "self_cosine": 0.8946304090120661
+        },
+        {
+          "turn": 7,
+          "slot": 11,
+          "self_cosine": 0.9267895436839493
+        },
+        {
+          "turn": 8,
+          "slot": 12,
+          "self_cosine": 0.8688416159958758
+        },
+        {
+          "turn": 9,
+          "slot": 13,
+          "self_cosine": 0.8006400970053013
+        },
+        {
+          "turn": 10,
+          "slot": 14,
+          "self_cosine": 0.8907506295287598
+        },
+        {
+          "turn": 18,
+          "slot": 12,
+          "self_cosine": 0.82299749916908
+        },
+        {
+          "turn": 19,
+          "slot": 13,
+          "self_cosine": 0.704835304677628
+        },
+        {
+          "turn": 20,
+          "slot": 14,
+          "self_cosine": 0.8417134522746712
+        },
+        {
+          "turn": 21,
+          "slot": 15,
+          "self_cosine": 0.8294137704223483
+        },
+        {
+          "turn": 22,
+          "slot": 16,
+          "self_cosine": 0.9365649506568267
+        },
+        {
+          "turn": 23,
+          "slot": 17,
+          "self_cosine": 0.0
+        },
+        {
+          "turn": 24,
+          "slot": 18,
+          "self_cosine": 0.0
+        },
+        {
+          "turn": 25,
+          "slot": 19,
+          "self_cosine": 0.0
+        },
+        {
+          "turn": 26,
+          "slot": 20,
+          "self_cosine": 0.0
+        },
+        {
+          "turn": 27,
+          "slot": 21,
+          "self_cosine": 0.0
+        },
+        {
+          "turn": 28,
+          "slot": 22,
+          "self_cosine": 0.0
+        },
+        {
+          "turn": 29,
+          "slot": 23,
+          "self_cosine": 0.0
+        },
+        {
+          "turn": 30,
+          "slot": 24,
+          "self_cosine": 0.0
+        },
+        {
+          "turn": 31,
+          "slot": 25,
+          "self_cosine": 0.0
+        },
+        {
+          "turn": 32,
+          "slot": 26,
+          "self_cosine": 0.0
+        },
+        {
+          "turn": 33,
+          "slot": 27,
+          "self_cosine": 0.0
+        },
+        {
+          "turn": 34,
+          "slot": 28,
+          "self_cosine": 0.0
+        }
+      ],
+      "self_key_note": "self cosine is read on the final state; sessions 1-2 slots are zeroed at each session boundary and no correction surface exists in session 3, so 0.0 here is the clearing artifact, not a retrieval miss; the read-time margins below are the hit diagnostic",
+      "key_separation": {
+        "median_margin": 0.003173992259827507,
+        "fraction_below_0_05": 1.0,
+        "note": "the 22 query keys are nearly collinear, so a temperature of 0.1 still gives a flat softmax and the read is close to an average of all live slots"
+      }
+    },
+    "session_boundary": {
+      "state_fields": [
+        "coverage",
+        "fast",
+        "graph_revision",
+        "h",
+        "journal",
+        "keys",
+        "nu_ema",
+        "prior",
+        "revision",
+        "step",
+        "store_age",
+        "store_count",
+        "store_keys",
+        "store_values",
+        "subject_id"
+      ],
+      "restore_mismatch_fields": [],
+      "save_restore_byte_identical": true,
+      "state_digest_equal": true,
+      "store_count_at_session1_end": 15,
+      "session2_first_turn": 11,
+      "cleared_at_session_start": true,
+      "prior_occupied_reported": 15,
+      "read_valid_after_clear": 0,
+      "read_blended_after_clear": false,
+      "store_occupied_after_turn11": 1,
+      "store_count_after_turn11": 1,
+      "slot0_equals_turn11_key": true,
+      "f_unchanged_by_the_boundary_turn": true,
+      "pass": true
+    },
+    "determinism": {
+      "runs": 8,
+      "turns_per_run": 17,
+      "identical": true,
+      "signatures": [
+        {
+          "bytes_sha256": "06a20959f05be0821559cf04d0c8cf84c62bd792aa49c799964f6ac290b92aac",
+          "f_sha256": "fdc60dacf83886f2bd9b14ef63d2ad9bc6dfd3e339f43cf1b4dca6d13865689a",
+          "store_keys_sha256": "ac94a17038c257e102d9fc30d1cbb0b2dca82ae7cdae9353c619def5fc03b199",
+          "store_values_sha256": "ff4d790d59bee6aa439c495a2a6244680a10f4a0f3d2dd7519a20da3442500bf",
+          "store_age_sha256": "2bbfa453a6af9f21de5cd21c0315e915ef124ab529765267654e2bf0b03cb503",
+          "store_count": 12,
+          "digest": "236c0bf09b8720842406004d196bba96b7bc9866962a2c31f4a928c558086f91"
+        },
+        {
+          "bytes_sha256": "06a20959f05be0821559cf04d0c8cf84c62bd792aa49c799964f6ac290b92aac",
+          "f_sha256": "fdc60dacf83886f2bd9b14ef63d2ad9bc6dfd3e339f43cf1b4dca6d13865689a",
+          "store_keys_sha256": "ac94a17038c257e102d9fc30d1cbb0b2dca82ae7cdae9353c619def5fc03b199",
+          "store_values_sha256": "ff4d790d59bee6aa439c495a2a6244680a10f4a0f3d2dd7519a20da3442500bf",
+          "store_age_sha256": "2bbfa453a6af9f21de5cd21c0315e915ef124ab529765267654e2bf0b03cb503",
+          "store_count": 12,
+          "digest": "236c0bf09b8720842406004d196bba96b7bc9866962a2c31f4a928c558086f91"
+        },
+        {
+          "bytes_sha256": "06a20959f05be0821559cf04d0c8cf84c62bd792aa49c799964f6ac290b92aac",
+          "f_sha256": "fdc60dacf83886f2bd9b14ef63d2ad9bc6dfd3e339f43cf1b4dca6d13865689a",
+          "store_keys_sha256": "ac94a17038c257e102d9fc30d1cbb0b2dca82ae7cdae9353c619def5fc03b199",
+          "store_values_sha256": "ff4d790d59bee6aa439c495a2a6244680a10f4a0f3d2dd7519a20da3442500bf",
+          "store_age_sha256": "2bbfa453a6af9f21de5cd21c0315e915ef124ab529765267654e2bf0b03cb503",
+          "store_count": 12,
+          "digest": "236c0bf09b8720842406004d196bba96b7bc9866962a2c31f4a928c558086f91"
+        },
+        {
+          "bytes_sha256": "06a20959f05be0821559cf04d0c8cf84c62bd792aa49c799964f6ac290b92aac",
+          "f_sha256": "fdc60dacf83886f2bd9b14ef63d2ad9bc6dfd3e339f43cf1b4dca6d13865689a",
+          "store_keys_sha256": "ac94a17038c257e102d9fc30d1cbb0b2dca82ae7cdae9353c619def5fc03b199",
+          "store_values_sha256": "ff4d790d59bee6aa439c495a2a6244680a10f4a0f3d2dd7519a20da3442500bf",
+          "store_age_sha256": "2bbfa453a6af9f21de5cd21c0315e915ef124ab529765267654e2bf0b03cb503",
+          "store_count": 12,
+          "digest": "236c0bf09b8720842406004d196bba96b7bc9866962a2c31f4a928c558086f91"
+        },
+        {
+          "bytes_sha256": "06a20959f05be0821559cf04d0c8cf84c62bd792aa49c799964f6ac290b92aac",
+          "f_sha256": "fdc60dacf83886f2bd9b14ef63d2ad9bc6dfd3e339f43cf1b4dca6d13865689a",
+          "store_keys_sha256": "ac94a17038c257e102d9fc30d1cbb0b2dca82ae7cdae9353c619def5fc03b199",
+          "store_values_sha256": "ff4d790d59bee6aa439c495a2a6244680a10f4a0f3d2dd7519a20da3442500bf",
+          "store_age_sha256": "2bbfa453a6af9f21de5cd21c0315e915ef124ab529765267654e2bf0b03cb503",
+          "store_count": 12,
+          "digest": "236c0bf09b8720842406004d196bba96b7bc9866962a2c31f4a928c558086f91"
+        },
+        {
+          "bytes_sha256": "06a20959f05be0821559cf04d0c8cf84c62bd792aa49c799964f6ac290b92aac",
+          "f_sha256": "fdc60dacf83886f2bd9b14ef63d2ad9bc6dfd3e339f43cf1b4dca6d13865689a",
+          "store_keys_sha256": "ac94a17038c257e102d9fc30d1cbb0b2dca82ae7cdae9353c619def5fc03b199",
+          "store_values_sha256": "ff4d790d59bee6aa439c495a2a6244680a10f4a0f3d2dd7519a20da3442500bf",
+          "store_age_sha256": "2bbfa453a6af9f21de5cd21c0315e915ef124ab529765267654e2bf0b03cb503",
+          "store_count": 12,
+          "digest": "236c0bf09b8720842406004d196bba96b7bc9866962a2c31f4a928c558086f91"
+        },
+        {
+          "bytes_sha256": "06a20959f05be0821559cf04d0c8cf84c62bd792aa49c799964f6ac290b92aac",
+          "f_sha256": "fdc60dacf83886f2bd9b14ef63d2ad9bc6dfd3e339f43cf1b4dca6d13865689a",
+          "store_keys_sha256": "ac94a17038c257e102d9fc30d1cbb0b2dca82ae7cdae9353c619def5fc03b199",
+          "store_values_sha256": "ff4d790d59bee6aa439c495a2a6244680a10f4a0f3d2dd7519a20da3442500bf",
+          "store_age_sha256": "2bbfa453a6af9f21de5cd21c0315e915ef124ab529765267654e2bf0b03cb503",
+          "store_count": 12,
+          "digest": "236c0bf09b8720842406004d196bba96b7bc9866962a2c31f4a928c558086f91"
+        },
+        {
+          "bytes_sha256": "06a20959f05be0821559cf04d0c8cf84c62bd792aa49c799964f6ac290b92aac",
+          "f_sha256": "fdc60dacf83886f2bd9b14ef63d2ad9bc6dfd3e339f43cf1b4dca6d13865689a",
+          "store_keys_sha256": "ac94a17038c257e102d9fc30d1cbb0b2dca82ae7cdae9353c619def5fc03b199",
+          "store_values_sha256": "ff4d790d59bee6aa439c495a2a6244680a10f4a0f3d2dd7519a20da3442500bf",
+          "store_age_sha256": "2bbfa453a6af9f21de5cd21c0315e915ef124ab529765267654e2bf0b03cb503",
+          "store_count": 12,
+          "digest": "236c0bf09b8720842406004d196bba96b7bc9866962a2c31f4a928c558086f91"
+        }
+      ],
+      "pass": true
+    },
+    "b_eh_same_shape": {
+      "parameter_rows_cf1": 135,
+      "parameter_rows_b_eh": 135,
+      "parameter_diff": [],
+      "state_rows_cf1_without_store": 9,
+      "state_rows_b_eh": 9,
+      "state_diff": [],
+      "b_eh_store_enabled": false,
+      "b_eh_has_no_store": true,
+      "pass": true
+    },
+    "store_off_parity": {
+      "byte_positions": 765,
+      "byte_matches": 765,
+      "digest_sequence_equal": false,
+      "digest_note": "state_digest covers the journal, whose model_version field is the arm name; CF1 and B_EH therefore differ by construction, this predates 20.3a",
+      "fast_sequence_equal": true,
+      "pass": true
+    },
+    "store_off_head_equivalence": {
+      "head_net_sha256": "1bb8f7f216a2c4d95edec011c7448a2fa2f2a3405f370f316582dd89ffaa7abe",
+      "head_core_sha256": "a9496fc947953adfd01e6f728f1e437b1973c063b250be159210c100b50d2200",
+      "bytes_equal": true,
+      "digest_sequence_equal": true,
+      "state_dict_diff": [],
+      "sixteen_step_probabilities_equal": true,
+      "pass": true
+    }
+  },
+  "identity": {
+    "decode_rules": {
+      "answer_space": [
+        "应送左箱。",
+        "应送右箱。"
+      ],
+      "answer_bytes": 15,
+      "decision_positions": [
+        7,
+        8
+      ],
+      "decode": "greedy argmax over the 256 byte ids on the fixed 15-byte contract",
+      "feedback_release": "atomic five-line batches; only released lines enter E and F",
+      "fast_write": "CF1 writes F from released feedback only; B_EH never writes F",
+      "fast_window": "F edits happen inside the release call; query and self-generated bytes cannot write",
+      "session_freeze": "every parameter frozen inside a session; F state is the only inference-plastic tensor",
+      "truth_isolation": "rule id, signature, truth table and solver are scoring-only",
+      "answer_contract": "应送(左|右)箱。; decision bytes at positions 7..8",
+      "store_write": "addressed_store_enabled only: value = the turn's post-read F copy, written at every turn and at every released line; default off",
+      "store_read": "cosine similarity between the 128-d mean of BytePatchEncoder.context(query) and the stored keys; softmax temperature 0.1; F <- (1-a)F + a*sum p_i V_i, a=0.5",
+      "addressed_write": "addressed store writes are structural, never gradient driven",
+      "fifo": "32 slots, eviction of the lowest insertion age when full",
+      "cross_session_clear": "the store is zeroed at the first turn of a new session and is never restored across a session boundary"
+    },
+    "cf1_default_candidate_sha_v2": "58754e500992f684fef5668290038066cee6b0528f181721917e9d5d3fd0f333",
+    "cf1_addressed_store_candidate_sha_v2": "fdab07785f9722630784f55a43da61aadd12bdce01cc87b2a12dad285ae5fdd4",
+    "b_eh_default_candidate_sha_v2": "66efe05a9287482f38eac494971c8a23472e4acf4f3918beb3238c94ee418422",
+    "head_identity_sha256": "7c80c7d109c44b5eb7ee63643f11fcad5c006bdb15684192831d271cdbf642b4",
+    "head_cf1_candidate_sha_v2": "a8a1e169e1449f7ce6e65e7b82c1416530d8d66515cfb7a26dc6bafbf2b5409d",
+    "head_b_eh_candidate_sha_v2": "3e98f65d53820f38ba218fc309cc75b4293b528a31a74979c0dd914f86fbfde3"
+  },
+  "assemblies": [
+    {
+      "arm": "CF1",
+      "path": "output\\taiji_package20_3a_cf1_addressed_store_untrained.pt",
+      "sha256": "a98dd1aee8e3c47d2fe4fd3c9c86f9648d9a4eaf1d5180ce464b6ce18728cef6",
+      "label": "addressed_store_untrained",
+      "store_elements": 266273
+    },
+    {
+      "arm": "B_EH",
+      "path": "output\\taiji_package20_3a_b_eh_addressed_store_untrained.pt",
+      "sha256": "07563b90f0cdc721128be4c0b2d13b6e752a9039d16d0769da28575a05b9aceb",
+      "label": "addressed_store_untrained",
+      "store_elements": 0
+    }
+  ],
+  "state": {
+    "reference_assemblies": {
+      "cf1": {
+        "sha256": "b62d6fe6a0721fd82c7c43d575e600c48ffc8e31ff959bfdf14ef9ff07d0039e",
+        "label": "initialized_untrained"
+      },
+      "b_eh": {
+        "sha256": "64cb327e3a8442ef0c59e04b14445a08ab3dccbb8ac42cf6547e0efa4e6f7f46",
+        "label": "initialized_untrained"
+      },
+      "untouched": true
+    },
+    "parent_parameter_sha256": "c5ebe35b9bf9442383ba0f568f8b7825466ec97f31ee35625182270aee1934c6",
+    "parent_parameter_sha256_after": "c5ebe35b9bf9442383ba0f568f8b7825466ec97f31ee35625182270aee1934c6",
+    "parameter_tensors": 135
+  },
+  "boundary_of_the_claim": "failed gate facts only; no alternative option is selected here",
+  "cost": {
+    "cpu_seconds": 224.94,
+    "wall_seconds": 232.72,
+    "cpu_cap": 300.0,
+    "wall_cap": 2700.0,
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "backward_calls": 0,
+    "confirm_reads": 0,
+    "new_parameters": 0,
+    "worlds_forwarded": 1,
+    "stages": [
+      "setup",
+      "turn 1",
+      "turn 2",
+      "turn 3",
+      "turn 4",
+      "turn 5",
+      "turn 6",
+      "turn 7",
+      "turn 8",
+      "turn 9",
+      "turn 10",
+      "turn 11",
+      "turn 12",
+      "turn 13",
+      "turn 14",
+      "turn 15",
+      "turn 16",
+      "turn 17",
+      "turn 18",
+      "turn 19",
+      "turn 20",
+      "turn 21",
+      "turn 22",
+      "turn 23",
+      "turn 24",
+      "turn 25",
+      "turn 26",
+      "turn 27",
+      "turn 28",
+      "turn 29",
+      "turn 30",
+      "turn 31",
+      "turn 32",
+      "turn 33",
+      "turn 34",
+      "turn 35",
+      "turn 36",
+      "turn 37",
+      "turn 38",
+      "turn 39",
+      "turn 40",
+      "turn 41",
+      "turn 42",
+      "turn 43",
+      "turn 44",
+      "turn 45",
+      "turn 46",
+      "turn 47",
+      "turn 48",
+      "turn 49",
+      "turn 50",
+      "turn 51",
+      "leverage history turn 1",
+      "leverage history turn 2",
+      "leverage history turn 3",
+      "leverage history turn 4",
+      "leverage history turn 5",
+      "leverage history turn 6",
+      "leverage history turn 7",
+      "leverage history turn 8",
+      "leverage history turn 9",
+      "leverage history turn 10",
+      "leverage history turn 11",
+      "leverage history turn 12",
+      "leverage history turn 13",
+      "leverage history turn 14",
+      "leverage history turn 15",
+      "leverage history turn 16",
+      "leverage history turn 17",
+      "leverage history turn 18",
+      "leverage history turn 19",
+      "leverage history turn 20",
+      "leverage history turn 21",
+      "leverage history turn 22",
+      "leverage history turn 23",
+      "leverage history turn 24",
+      "leverage history turn 25",
+      "leverage history turn 26",
+      "leverage history turn 27",
+      "leverage history turn 28",
+      "leverage history turn 29",
+      "leverage history turn 30",
+      "leverage history turn 31",
+      "leverage history turn 32",
+      "leverage history turn 33",
+      "boundary turn 1",
+      "boundary turn 2",
+      "boundary turn 3",
+      "boundary turn 4",
+      "boundary turn 5",
+      "boundary turn 6",
+      "boundary turn 7",
+      "boundary turn 8",
+      "boundary turn 9",
+      "boundary turn 10",
+      "determinism run 0",
+      "determinism run 1",
+      "determinism run 2",
+      "determinism run 3",
+      "determinism run 4",
+      "determinism run 5",
+      "determinism run 6",
+      "determinism run 7",
+      "cf1_writes_off turn 1",
+      "cf1_writes_off turn 2",
+      "cf1_writes_off turn 3",
+      "cf1_writes_off turn 4",
+      "cf1_writes_off turn 5",
+      "cf1_writes_off turn 6",
+      "cf1_writes_off turn 7",
+      "cf1_writes_off turn 8",
+      "cf1_writes_off turn 9",
+      "cf1_writes_off turn 10",
+      "cf1_writes_off turn 11",
+      "cf1_writes_off turn 12",
+      "cf1_writes_off turn 13",
+      "cf1_writes_off turn 14",
+      "cf1_writes_off turn 15",
+      "cf1_writes_off turn 16",
+      "cf1_writes_off turn 17",
+      "cf1_writes_off turn 18",
+      "cf1_writes_off turn 19",
+      "cf1_writes_off turn 20",
+      "cf1_writes_off turn 21",
+      "cf1_writes_off turn 22",
+      "cf1_writes_off turn 23",
+      "cf1_writes_off turn 24",
+      "cf1_writes_off turn 25",
+      "cf1_writes_off turn 26",
+      "cf1_writes_off turn 27",
+      "cf1_writes_off turn 28",
+      "cf1_writes_off turn 29",
+      "cf1_writes_off turn 30",
+      "cf1_writes_off turn 31",
+      "cf1_writes_off turn 32",
+      "cf1_writes_off turn 33",
+      "cf1_writes_off turn 34",
+      "cf1_writes_off turn 35",
+      "cf1_writes_off turn 36",
+      "cf1_writes_off turn 37",
+      "cf1_writes_off turn 38",
+      "cf1_writes_off turn 39",
+      "cf1_writes_off turn 40",
+      "cf1_writes_off turn 41",
+      "cf1_writes_off turn 42",
+      "cf1_writes_off turn 43",
+      "cf1_writes_off turn 44",
+      "cf1_writes_off turn 45",
+      "cf1_writes_off turn 46",
+      "cf1_writes_off turn 47",
+      "cf1_writes_off turn 48",
+      "cf1_writes_off turn 49",
+      "cf1_writes_off turn 50",
+      "cf1_writes_off turn 51",
+      "b_eh turn 1",
+      "b_eh turn 2",
+      "b_eh turn 3",
+      "b_eh turn 4",
+      "b_eh turn 5",
+      "b_eh turn 6",
+      "b_eh turn 7",
+      "b_eh turn 8",
+      "b_eh turn 9",
+      "b_eh turn 10",
+      "b_eh turn 11",
+      "b_eh turn 12",
+      "b_eh turn 13",
+      "b_eh turn 14",
+      "b_eh turn 15",
+      "b_eh turn 16",
+      "b_eh turn 17",
+      "b_eh turn 18",
+      "b_eh turn 19",
+      "b_eh turn 20",
+      "b_eh turn 21",
+      "b_eh turn 22",
+      "b_eh turn 23",
+      "b_eh turn 24",
+      "b_eh turn 25",
+      "b_eh turn 26",
+      "b_eh turn 27",
+      "b_eh turn 28",
+      "b_eh turn 29",
+      "b_eh turn 30",
+      "b_eh turn 31",
+      "b_eh turn 32",
+      "b_eh turn 33",
+      "b_eh turn 34",
+      "b_eh turn 35",
+      "b_eh turn 36",
+      "b_eh turn 37",
+      "b_eh turn 38",
+      "b_eh turn 39",
+      "b_eh turn 40",
+      "b_eh turn 41",
+      "b_eh turn 42",
+      "b_eh turn 43",
+      "b_eh turn 44",
+      "b_eh turn 45",
+      "b_eh turn 46",
+      "b_eh turn 47",
+      "b_eh turn 48",
+      "b_eh turn 49",
+      "b_eh turn 50",
+      "b_eh turn 51",
+      "cf1_store_off turn 1",
+      "cf1_store_off turn 2",
+      "cf1_store_off turn 3",
+      "cf1_store_off turn 4",
+      "cf1_store_off turn 5",
+      "cf1_store_off turn 6",
+      "cf1_store_off turn 7",
+      "cf1_store_off turn 8",
+      "cf1_store_off turn 9",
+      "cf1_store_off turn 10",
+      "cf1_store_off turn 11",
+      "cf1_store_off turn 12",
+      "cf1_store_off turn 13",
+      "cf1_store_off turn 14",
+      "cf1_store_off turn 15",
+      "cf1_store_off turn 16",
+      "cf1_store_off turn 17",
+      "cf1_store_off turn 18",
+      "cf1_store_off turn 19",
+      "cf1_store_off turn 20",
+      "cf1_store_off turn 21",
+      "cf1_store_off turn 22",
+      "cf1_store_off turn 23",
+      "cf1_store_off turn 24",
+      "cf1_store_off turn 25",
+      "cf1_store_off turn 26",
+      "cf1_store_off turn 27",
+      "cf1_store_off turn 28",
+      "cf1_store_off turn 29",
+      "cf1_store_off turn 30",
+      "cf1_store_off turn 31",
+      "cf1_store_off turn 32",
+      "cf1_store_off turn 33",
+      "cf1_store_off turn 34",
+      "cf1_store_off turn 35",
+      "cf1_store_off turn 36",
+      "cf1_store_off turn 37",
+      "cf1_store_off turn 38",
+      "cf1_store_off turn 39",
+      "cf1_store_off turn 40",
+      "cf1_store_off turn 41",
+      "cf1_store_off turn 42",
+      "cf1_store_off turn 43",
+      "cf1_store_off turn 44",
+      "cf1_store_off turn 45",
+      "cf1_store_off turn 46",
+      "cf1_store_off turn 47",
+      "cf1_store_off turn 48",
+      "cf1_store_off turn 49",
+      "cf1_store_off turn 50",
+      "cf1_store_off turn 51",
+      "head equivalence turn 1",
+      "head equivalence turn 2",
+      "head equivalence turn 3",
+      "head equivalence turn 4",
+      "head equivalence turn 5",
+      "head equivalence turn 6",
+      "head equivalence turn 7",
+      "head equivalence turn 8",
+      "head equivalence turn 9",
+      "head equivalence turn 10",
+      "head equivalence turn 11",
+      "head equivalence turn 12",
+      "head equivalence turn 13",
+      "head equivalence turn 14",
+      "head equivalence turn 15",
+      "head equivalence turn 16",
+      "head equivalence turn 17",
+      "head equivalence turn 18",
+      "head equivalence turn 19",
+      "head equivalence turn 20",
+      "head equivalence turn 21",
+      "head equivalence turn 22",
+      "head equivalence turn 23",
+      "head equivalence turn 24",
+      "head equivalence turn 25",
+      "head equivalence turn 26",
+      "head equivalence turn 27",
+      "head equivalence turn 28",
+      "head equivalence turn 29",
+      "head equivalence turn 30",
+      "head equivalence turn 31",
+      "head equivalence turn 32",
+      "head equivalence turn 33",
+      "head equivalence turn 34",
+      "head equivalence turn 35",
+      "head equivalence turn 36",
+      "head equivalence turn 37",
+      "head equivalence turn 38",
+      "head equivalence turn 39",
+      "head equivalence turn 40",
+      "head equivalence turn 41",
+      "head equivalence turn 42",
+      "head equivalence turn 43",
+      "head equivalence turn 44",
+      "head equivalence turn 45",
+      "head equivalence turn 46",
+      "head equivalence turn 47",
+      "head equivalence turn 48",
+      "head equivalence turn 49",
+      "head equivalence turn 50",
+      "head equivalence turn 51"
+    ]
+  }
+}

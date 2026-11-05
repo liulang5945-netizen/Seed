@@ -15,6 +15,9 @@ from torch.nn import functional as F
 
 R021_SCHEMA = "taiji-living-core-r021-v1"
 EOS = 256
+ADDRESSED_SLOTS = 32
+ADDRESSED_TEMPERATURE = 0.1
+ADDRESSED_ALPHA = 0.5
 
 
 @dataclass(frozen=True)
@@ -85,6 +88,12 @@ class LivingState:
     keys: tuple[tuple[str, int], ...]
     coverage: torch.Tensor
     prior: torch.Tensor
+    # Content-addressed per-turn store (20.3a).  ``None`` for every 19.x and
+    # 20.1/20.2 assembly; only ``addressed_store_enabled`` allocates it.
+    store_keys: torch.Tensor | None = None
+    store_values: torch.Tensor | None = None
+    store_age: torch.Tensor | None = None
+    store_count: torch.Tensor | None = None
 
 
 @dataclass(frozen=True)
@@ -442,6 +451,106 @@ class LivingCoreReference(nn.Module):
             all_chi.append(chi.squeeze(-1))
             all_keys.append(key)
         return torch.stack(result), torch.stack(all_chi), torch.stack(all_keys)
+
+    # ---- content-addressed per-turn store (20.3a, default off) --------------
+    def empty_store(self, reference: torch.Tensor | None = None):
+        ref = self.W if reference is None else reference
+        c = self.config
+        return (
+            ref.new_zeros((ADDRESSED_SLOTS, c.width)),
+            ref.new_zeros((ADDRESSED_SLOTS, c.groups, c.fast_heads, c.key_width, c.value_width)),
+            torch.full((ADDRESSED_SLOTS,), -1, dtype=torch.long, device=ref.device),
+            torch.zeros((), dtype=torch.long, device=ref.device),
+        )
+
+    def attach_store(self, state: LivingState) -> LivingState:
+        if state.store_keys is not None:
+            return state
+        keys, values, age, count = self.empty_store()
+        return replace(
+            state, store_keys=keys, store_values=values, store_age=age, store_count=count
+        )
+
+    def clear_store(self, state: LivingState) -> LivingState:
+        if state.store_keys is None:
+            return state
+        keys, values, age, count = self.empty_store()
+        return replace(
+            state, store_keys=keys, store_values=values, store_age=age, store_count=count
+        )
+
+    def store_query_key(self, state: LivingState, raw: bytes) -> torch.Tensor:
+        context = self.encoder.context(raw)
+        if context.numel() == 0:
+            return state.fast.new_zeros(self.config.width)
+        return context.mean(0)
+
+    def addressed_read(self, state: LivingState, raw: bytes):
+        key = self.store_query_key(state, raw)
+        if state.store_keys is None:
+            return state, {"enabled": False, "blended": False, "key": key}
+        valid = torch.nonzero(state.store_age >= 0, as_tuple=False).flatten()
+        if valid.numel() == 0:
+            return state, {
+                "enabled": True,
+                "occupied": 0,
+                "valid": 0,
+                "blended": False,
+                "key": key,
+            }
+        keys = state.store_keys[valid]
+        cosine = (keys @ key) / torch.clamp(keys.norm(dim=-1) * key.norm(), min=1e-12)
+        weights = torch.softmax(cosine / ADDRESSED_TEMPERATURE, dim=0)
+        retrieved = torch.einsum("i,i...->...", weights, state.store_values[valid])
+        fast = (1 - ADDRESSED_ALPHA) * state.fast + ADDRESSED_ALPHA * retrieved
+        ordered = torch.sort(cosine.detach(), descending=True).values
+        top = int(torch.argmax(cosine.detach()))
+        margin = float(ordered[0] - ordered[1]) if ordered.numel() > 1 else None
+        info = {
+            "enabled": True,
+            "occupied": int(valid.numel()),
+            "valid": int(valid.numel()),
+            "blended": True,
+            "top_slot": int(valid[top]),
+            "top_cosine": float(cosine[top].detach()),
+            "second_cosine": float(ordered[1]) if ordered.numel() > 1 else None,
+            "margin": margin,
+            "weights": [float(value.detach()) for value in weights],
+            "retrieved_norm": float(retrieved.detach().norm()),
+            "fast_norm_before": float(state.fast.detach().norm()),
+            "fast_norm_after": float(fast.detach().norm()),
+            "key": key,
+        }
+        return replace(state, fast=fast), info
+
+    def addressed_write(self, state: LivingState, raw: bytes, key: torch.Tensor | None = None):
+        if state.store_keys is None:
+            state = self.attach_store(state)
+        if key is None:
+            key = self.store_query_key(state, raw)
+        slots = int(state.store_keys.shape[0])
+        occupied = int((state.store_age >= 0).sum())
+        evicted = occupied >= slots
+        slot = int(torch.argmin(state.store_age)) if evicted else occupied
+        keys = state.store_keys.clone()
+        values = state.store_values.clone()
+        age = state.store_age.clone()
+        replaced = int(age[slot])
+        keys[slot] = key
+        values[slot] = state.fast
+        age[slot] = int(state.store_count)
+        count = state.store_count + 1
+        info = {
+            "slot": slot,
+            "insertion_age": int(age[slot]),
+            "occupied_after": min(int(count), slots),
+            "evicted": bool(evicted),
+            "evicted_age": replaced,
+        }
+        return (
+            replace(state, store_keys=keys, store_values=values, store_age=age, store_count=count),
+            info,
+        )
 
     @staticmethod
     def align_positions(state: LivingState, keys):

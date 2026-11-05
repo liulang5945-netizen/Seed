@@ -1,0 +1,51 @@
+{
+  "package": "20.3a",
+  "date": "2026-11-05",
+  "verdict": "option2_failed",
+  "report": "reports\\taiji_package20_3a_addressed_store_20261105.json",
+  "report_sha256": "09817ddae98286c9982dfc60da65094b47e4f4c533e1573e9a40e66ef1d32928",
+  "runner": "scripts\\training\\probe_taiji_package20_3a_addressed_store.py",
+  "runner_sha256": "3e46c57ad87be6ca0a4d90c54973b16f403be2e8642efb7c8b93927581733052",
+  "fixture_digest": "feb19af1c1db46888a9ad679086958707b796986114ba657f8d7d7e8a80db49a",
+  "parent_bundle": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+  "parent_bundle_sha256": "fe04fbfb14aa0390877385a4429f2a851396a6fe6acb3107bae0a5e4e331dfca",
+  "parent_parameter_sha256": "c5ebe35b9bf9442383ba0f568f8b7825466ec97f31ee35625182270aee1934c6",
+  "reference_assemblies_untouched": true,
+  "training_admitted": false,
+  "saved_states": [
+    {
+      "arm": "CF1",
+      "path": "output\\taiji_package20_3a_cf1_addressed_store_untrained.pt",
+      "sha256": "a98dd1aee8e3c47d2fe4fd3c9c86f9648d9a4eaf1d5180ce464b6ce18728cef6",
+      "label": "addressed_store_untrained",
+      "store_elements": 266273
+    },
+    {
+      "arm": "B_EH",
+      "path": "output\\taiji_package20_3a_b_eh_addressed_store_untrained.pt",
+      "sha256": "07563b90f0cdc721128be4c0b2d13b6e752a9039d16d0769da28575a05b9aceb",
+      "label": "addressed_store_untrained",
+      "store_elements": 0
+    }
+  ],
+  "gates": {
+    "reference_assemblies_untouched": true,
+    "parent_weights_unchanged": true,
+    "zero_training": true,
+    "zero_optimizer_steps": true,
+    "zero_backward_calls": true,
+    "zero_confirm_reads": true,
+    "zero_new_trainable_parameters": true,
+    "store_elements_cf1_266273": true,
+    "store_elements_b_eh_0": true,
+    "store_off_matches_beh_765_of_765": true,
+    "store_off_f_sequence_matches_beh": true,
+    "store_off_matches_head_bytes": true,
+    "save_restore_byte_identical": true,
+    "determinism_8_runs_identical": true,
+    "assembly_count_per_arm_at_most_1": true,
+    "report_written_before_format": true
+  },
+  "cost_cpu_seconds": 224.94,
+  "submitted_runner_sha256": "6903857a86842c906ff7d71424ae66e6c79f137e6bc3914c9765aea79abd05d7"
+}

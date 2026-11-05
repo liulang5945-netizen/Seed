@@ -2564,3 +2564,25 @@ owner 裁定 19.2m 方向作废并立 **D16-19**（池外负样本不受理、�
 **D. 过门预注册（先写死）**：①结构：不同 F 向量 ≥ 窗口内不同误差方向数，且 >2，且窗口内逐轮变化；②杠杆：五档反事实 `leverage_max ≥ 0.01` 且至少一档 `byte_diff > 0`；③信息：闭式留一决策位 ≥0.60 且比三条对照最强者高 ≥0.20。任一不过即该选项失败，不调阈值。
 
 **E. 代价与边界**：状态 +2.03 MiB f64、32 槽 FIFO、会话内持久/跨会话清空；实施需改 4 个文件（`living_core.py`、`rule_learning_20_1_net.py`、`rule_learning_20_1_identity.py`、`state_migration.py`），`living_core.py` 与 19.x 共享 → 必须默认关闭＋字段带默认值，19.x 装配态文件不动。**未实施、未定价、未进 20.3**；三选项都不可行时退出说明写在备忘 §5（一句）。
+
+## 2026-11-05 20.3a 每轮内容寻址写实施与三闸判定（0 训练 / 224.94 CPU）
+
+> 按 owner 授权按 20.2t 选项 2 实施。脚本 [`probe_taiji_package20_3a_addressed_store.py`](../../../scripts/training/probe_taiji_package20_3a_addressed_store.py)（运行 sha `3e46c57a…`、提交 sha `6903857a…`，两列同存报告）；证据 [报告](../../../reports/taiji_package20_3a_addressed_store_20261105.json)＋[manifest](../../manifests/taiji_package20_3a_addressed_store_20261105.json)；进度 jsonl 逐行 append＋fsync；账本 §16.27／D16-32。**0 训练 / 0 优化器步 / 0 Adam / 0 confirm / 0 新可训练参数。**
+
+**A. 实施（严格照 DESIGN-20_2t，未扩范围）**：`living_core.py` 加 `ADDRESSED_SLOTS=32`／`ADDRESSED_TEMPERATURE=0.1`／`ADDRESSED_ALPHA=0.5` 与四个带默认 `None` 的 `LivingState` 字段（`store_keys`/`store_values`/`store_age`/`store_count`）＋ `empty_store`/`attach_store`/`clear_store`/`store_query_key`/`addressed_read`/`addressed_write`；`rule_learning_20_1_net.py` 加 `addressed_store_enabled=False`（B_EH 恒关）、`_with_store` 会话首轮清空、`run_turn` 读混合后 observe、`release` 逐行读混合后写 F 副本；`rule_learning_20_1_identity.py` 的 `DECODE_RULES_20` 加 `store_write`/`store_read`/`addressed_write`/`fifo`/`cross_session_clear` 五项；`state_migration.py` 仅 store 非空时存取 `bundle["store"]`。键＝当轮问句 128 维、值＝F 副本（8,192）、余弦＋softmax τ=0.1、α=0.5、32 槽 FIFO、会话内持久/跨会话清空；**+0 可训练参数、+266,273 状态元素**。身份：CF1 default `58754e50…`、CF1 addressed `fdab0778…`、B_EH default `66efe05a…`。
+
+**B. 三闸（阈值冻结）**
+
+| 闸 | 判据 | 实测 | 结果 |
+|---|---|---|---|
+| 结构 | 不同 F 向量 >2 且 ≥ 窗口内误差方向数；逐轮变化 | 22 个不同 F；窗口 5 vs 3、17 vs 7；逐轮 hash 全不同 | **过** |
+| 杠杆 | `leverage_max ≥ 0.01` 且至少一档 `byte_diff > 0` | **8.716e-6**；五档 `byte_diff` 全 0；基线 loss 12.597441 | **不过** |
+| 信息 | 留一 ≥0.60 且比最强对照高 ≥0.20 | **0.4091**；最强对照 **0.5909**；margin **−0.1818** | **不过** |
+
+杠杆五档明细（第 34 轮、历史到 33）：置零 Δ −5.255e-6（lev 4.172e-7）、×0.5 −2.614e-6（2.075e-7）、×2 +5.144e-6（4.083e-7）、×4 +1.509e-5（1.198e-6）、同范数乱序 −1.098e-4（**8.716e-6**），五档均 **byte_diff 0、0/22 答对**。信息三对照：标签打乱 5 seed 均值 0.5000／max **0.5909**、同维同范数随机 **0.1818**、无 F 其它持久态 **0.5000**。
+
+**C. 附带必测**：①检索读时 top-1 余弦中位 **0.9850**、top1–top2 边距中位 **0.00317（22/22 <0.05）** → 查询键近共线、softmax 近似平均（`self_key_top1_rate=0` 是会话 3 清空所致，报告中以 `self_key_note` 说明，非命中失败）；②真实运行最多占用 29 槽、**0 次真实淘汰**，合成 40 写淘汰 8、存活 age 8..39；③turn11 会话切换 `cleared=true`、prior_occupied 15、read valid 0、blended false、占用 1、F 不变（清空而非复用）；④save→restore 逐字节一致（`restore_mismatch_fields=[]`）；⑤确定性 8 次 ×17 轮签名全同；⑥与 B_EH 参数/状态（除 store）差异 **[]**，CF1 store-off 与 B_EH **765/765 字节**＋F 序列一致（摘要差异仅来自 journal 的 `model_version` 臂名，早于 20.3a）；⑦HEAD 模块等价：新旧 `living_core` `state_dict` 差异 **[]**、16 步概率逐字节一致、CF1 store-off 与 HEAD CF1 逐字节一致。
+
+**D. 判定**：`verdict=option2_failed`（任一门不过即失败；**阈值未改、判据未改、未换选项**）。定位：结构闸证明"F 逐轮不同"成立，但查询键近共线使检索权重近似均匀（边距中位 0.00317），混合后 F 对输出字节无权威（五档反事实 0 字节变化）；信息闸低于最强对照 → 该实现的 F 副本不携带可读的逐轮纠正。
+
+**E. 花费与记账**：`verdict=option2_failed`，工程门全 true；**224.94 CPU / 232.72 wall**（上限 300 / 2700 s）；两臂各 1 份 `addressed_store_untrained`（CF1 `a98dd1ae…`、B_EH `07563b90…`）、0 新参数、19.x 装配态未动；报告 write-then-rename、格式化在报告写完后执行并双列记录 sha；收尾只跑一次 in-process `black_check_gate.py`。**不定价、不进 20.4、不提训练方案**，结果由 owner 判断。

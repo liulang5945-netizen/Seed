@@ -293,6 +293,13 @@ def save_subject(
         "rng_state": torch.get_rng_state().clone(),
         "extra": extra or {},
     }
+    if state.store_keys is not None:
+        bundle["store"] = {
+            "keys": state.store_keys.detach().cpu().clone(),
+            "values": state.store_values.detach().cpu().clone(),
+            "age": state.store_age.detach().cpu().clone(),
+            "count": state.store_count.detach().cpu().clone(),
+        }
     torch.save(bundle, path)
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
@@ -325,6 +332,15 @@ def resume_subject(bundle: dict):
         model.load_state_dict(rest, strict=False)
     else:
         model.load_state_dict(parameters)
+    store = {}
+    blob = bundle.get("store")
+    if blob is not None:
+        store = {
+            "store_keys": blob["keys"],
+            "store_values": blob["values"],
+            "store_age": blob["age"].to(torch.long),
+            "store_count": blob["count"].to(torch.long),
+        }
     state = LivingState(
         subject_id=bundle["subject_id"],
         revision=bundle["revision"],
@@ -335,6 +351,7 @@ def resume_subject(bundle: dict):
         keys=tuple((source, position) for source, position in bundle["keys"]),
         coverage=bundle["coverage"],
         prior=bundle["prior"],
+        **store,
     )
     optimizer = None
     if bundle["optimizer_state"] is not None:
