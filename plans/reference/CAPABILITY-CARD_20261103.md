@@ -334,6 +334,14 @@ C10 把 17.5 的失败归因从“算子坏了”改成“任务前提允许背�
 - **恢复**：会话中点/跨会话/截断崩溃三路径都 **90/90 逐字节一致**；状态表 9 项全 serialized/restored/byte_identical。
 - **读数边界**：**本条目不是能力读数**——0 训练、0 优化器步、0 Adam；不签学习收益、纠正效果或学后保持。**20.3 定价未准入**，等 owner 判断。
 
+**20.2r 重放一致性＋F 杠杆闸（2026-11-05；0 训练 / 161.48 CPU；状态：工程就绪、未训练；[报告](../../reports/taiji_package20_2r_f_leverage_20261105.json)＋[manifest](../../plans/manifests/taiji_package20_2r_f_leverage_20261105.json)＋账本 §16.24／D16-29）**
+
+- **重放**：以提交字节（`cd23ce2e…`）重跑轮 18，loss / dL/dF / 份额 / 分头矩阵四项**相对误差 0.0**（门 1e-6）；F 关两图 **765/765**。
+- **杠杆**：22 个纠正面五档反事实，**leverage_max 7.953e-5（0.00795%）< 1%**、五档 **byte_diff 全 0** → 判 **`under_powered_f_channel`**。
+- **oracle 上限**（`oracle_diagnostic_only`）：Δloss **−0.607197（4.183%）** 但 **byte_diff 0、0/22 答对** → 读写结构问题，不是增益问题。
+- **修法参数增量估算（未实现、未定价）**：F 为 8,192 元素；"F→决策位 logits"低秩读出约 8,708·r 参数（r=4 ≈ 3.5 万、r=8 ≈ 7.0 万）。
+- **读数边界**：**本条目不是能力读数**——0 训练、0 优化器步、0 Adam、0 新参数；不签学习收益或纠正效果；**20.3 定价未准入**，等 owner 判断。
+
 **19.2r 字节匹配设计闸与 D16-22（2026-11-05；0 Adam / 0 训练前向 / 1.88 CPU；[报告](../../reports/taiji_package19_2r_byte_match_gate_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2r_byte_match_gate_20261105.json)＋[通路](../../taiji/byte_match_route.py)＋账本 §16.16）**
 
 - **唯一性**：384 起点上物件/地点描述串在 8 条 `raw` 中唯一出现 **384/384**（重复 0、未找到 0、跨类型 0）。
