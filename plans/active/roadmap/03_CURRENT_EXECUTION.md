@@ -2394,3 +2394,17 @@ owner 裁定 19.2m 方向作废并立 **D16-19**（池外负样本不受理、�
 **F. 判定与边界**：本包只交四项读数与三问答案，**不含提案、不给建议、不训练**；`19.2m/n/p` 归入 D16-21，该轴永久关闭（D16-22）。
 
 **G. 花费**：**1.875 CPU / 0.243 wall**（上限 120，1.6%）；0 Adam / 0 优化器步 / 0 训练前向 / 0 存包 / 0 confirm；4 次构造前向 ＋ 1 次反向；逐行 fsync；格式化收尾一次。
+
+## 2026-11-05 19.2t 端到端零训练装配评测（0 训练 / 130.05 CPU）＋ D16-24
+
+> owner 唯一实验：装配 ＋ 评测，不许训练。脚本 [`probe_taiji_package19_2t_zero_training_assembly.py`](../../../scripts/training/probe_taiji_package19_2t_zero_training_assembly.py)，通路 [`byte_match_route.py`](../../../taiji/byte_match_route.py)，身份 [`candidate_identity.py`](../../../taiji/candidate_identity.py)；证据 [报告](../../../reports/taiji_package19_2t_zero_training_assembly_20261105.json)＋[manifest](../../manifests/taiji_package19_2t_zero_training_assembly_20261105.json)；账本 §16.18。dev 192 例、confirm 0 读取。
+
+**A. 装配**：`byte_match_route` 注册进 `GRAPH_MODULES`（第 7 个模块）作为选择读出——物件描述与地点描述各跑一次自由搜索（同一组参数），8 条 `raw` 逐位匹配 → 起点 argmax；起点交给现有复制算子，`transport` / `span` 指针 / `score_rows` 保持原权重（父包 `28031-B_stop_lock-step300.pt`）。`candidate_sha_v2` 旧 `773dcec2…` → 新 **`95099768cc17a24c870e3b7d49cef0df022d5114f3312a4b3d5ede50179d0aa5`**（参数 3,563,859 不变、`byte_match` 65,807）；装配态 **265,853 字节**、sha256 `b2dc9f58…`，唯一一份、标注 `assembled_zero_training`。
+
+**B. 读数（γ=0 主读 / γ_floor=0.2 副读；total 192、旧/新各 96）**：选择物件/地点/两跳 **1.0000**；`start_hit` / `composite_start_hit` 物件/地点 **1.0000**；`conditional_byte` **1.0000**（`object_span_exact` / `place_span_exact` 同）；`provenance_rate` **1.0000**；`fabricated_bytes` **0**、`misbound` **0**、截断率 **0.0**、384 跨度全对齐；`wrong_route_right_content` **0**。整句完成 γ=0 **0.3854（74/192；旧 0.4479、新 0.3229）**、γ_floor **0.6302（121/192；旧 0.6250、新 0.6354）**。首差异分布 γ=0 `{template: 118, none: 74}`、γ_floor `{none: 121, template: 71}`，**失败全部在字节位 15**；截断/编造/串行/错名字 0。确定性重复 8/8 一致。
+
+**C. 两问**：1) 整句未到接近满分（0.3854 / 0.6302），但内容层已满分（选择/起点/conditional/provenance 全 1.000）→ "选对才写对"在同一次评测内被证实。2) 唯一主缺口＝**抄写停止边界**（模板位 15–20）：γ=0 时复制记忆越过名字末端继续抄记录终止符"。"；γ_floor 靠生成权重混入把失败 118→71，不能消除；现有复制算子无 span 末端/停止信号 → **结构性质**，训练只能压低频率。
+
+**D. 判定与边界**：**D16-24 已立**（匹配层为算法原语：零训练装配是零更新评测的正确形态）。本包不含提案、不含训练方案、不开启下一轮。
+
+**E. 花费**：**130.05 CPU / 136.32 wall**（上限 400 CPU / 60 min，32.5%）；0 训练 / 0 优化器步 / 0 Adam / 0 confirm / 1 装配态；逐行 append＋fsync；报告 write-then-rename；收尾 in-process `black_check_gate.py` 一次。

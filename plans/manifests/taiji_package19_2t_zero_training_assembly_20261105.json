@@ -1,0 +1,24 @@
+{
+  "step": "N19.2t",
+  "date": "2026-11-05",
+  "parent_bundle": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+  "candidate_sha_v2_new": "95099768cc17a24c870e3b7d49cef0df022d5114f3312a4b3d5ede50179d0aa5",
+  "candidate_sha_v2_old": "773dcec2e1131d1f3c8784153633d85a9144268a4d5167790740cdd488153aa1",
+  "byte_match_parameters": 65807,
+  "assembled_state": "output\\taiji_package19_2t_assembled_zero_training.pt",
+  "assembled_sha256": "b2dc9f58bd9fa1b2890d60eb2e233796145efb740656500f1ee81c7bddcbdcfa",
+  "examples": 192,
+  "gamma_0_completion": 0.3854166666666667,
+  "gamma_floor_completion": 0.6302083333333334,
+  "gamma_0_conditional_byte": 1.0,
+  "gamma_0_start_hit_object": 1.0,
+  "gamma_0_start_hit_place": 1.0,
+  "wrong_route_right_content": 0,
+  "cpu_seconds": 130.05,
+  "wall_seconds": 136.32,
+  "over_budget": false,
+  "determinism": {
+    "examples": 8,
+    "identical": true
+  }
+}

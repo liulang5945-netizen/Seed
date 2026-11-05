@@ -37,6 +37,7 @@ GRAPH_MODULES = (
     "taiji/record_relation_core.py",
     "taiji/living_core.py",
     "taiji/selection_routing_checkpoint.py",
+    "taiji/byte_match_route.py",
 )
 
 STAGE_PLAN = (

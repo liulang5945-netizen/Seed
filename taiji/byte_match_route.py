@@ -1,11 +1,11 @@
-"""19.2r design-gate pathway: parametric byte-level match route.
+"""Byte-level match route: selection readout for the zero-training assembly.
 
-The gate asks whether a *learnable* pathway can express "read a query span, find
+The gate asked whether a *learnable* pathway can express "read a query span, find
 where the same byte string occurs inside one of N record lines, and score that
-line".  This module is that pathway.  It is deliberately **not** registered in
-``candidate_identity.GRAPH_MODULES``: the design gate must not change
-``candidate_sha_v2``, so the file stays outside the production graph until an
-approved integration adds it.
+line".  This module is that pathway.  It is registered in
+``candidate_identity.GRAPH_MODULES`` as of package 19.2t (zero-training assembly);
+registration changes ``candidate_sha_v2`` by design, while the module's own
+parameters are initialised at identity and are never trained.
 
 Shape of the computation:
 
