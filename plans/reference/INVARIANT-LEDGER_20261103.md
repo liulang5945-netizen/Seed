@@ -825,6 +825,23 @@ owner 只批"停止边界＋消融"，仍然零训练；192 开发例（confirm 
 
 **纪律与花费**：**0 训练 / 0 优化器步 / 0 Adam / 0 confirm / 1 装配态**；**256.72 CPU / 268.55 wall**（上限 400 / 60 min，64.2%）；逐行 append＋fsync（D16-15）；报告 write-then-rename；收尾 in-process `black_check_gate.py` 一次（D16-18）。本包不含训练方案、不含新包、不开启下一阶段。
 
+### 16.20 19.2v 封存集独立确认（2026-11-05，0 训练 / 144.06 CPU）＋ **D16-26 封存集独立确认与结构实现的 L1 判据**
+
+owner 只批"封存集独立确认"，零训练、零调参；confirm **首次且唯一一次**读取（过去全程 0 读取）。证据 [报告](../../reports/taiji_package19_2v_confirm_holdout_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2v_confirm_holdout_20261105.json)＋[预注册](../../plans/manifests/taiji_package19_2v_preregistered_20261105.json)（sha256 `6c4c7502…`）；脚本 [probe](../../../scripts/training/probe_taiji_package19_2v_confirm_holdout.py)；装配态沿用 19.2u 唯一一份 `output/taiji_package19_2u_assembled_zero_training_stopfix.pt`（**未新增、未改写**）。
+
+- **预注册先行且只读**：装配态 sha256 `f5bd80e7…`（265,981 B）、`candidate_sha_v2` `1d69e945…`（参数 3,563,859、`byte_match` 65,807）、父包 sha256、`GRAPH_MODULES` 8 个、全部阈值与判定规则先落盘；运行端逐项比对，**任何漂移即拒跑**；预注册文件写后不再改写。
+- **读取纪律**：`confirm_reads=1`；progress 逐行 append＋fsync 留 `prereg`/`confirm_loaded`/逐例/`finish` 事件。**1 次恢复重跑**：首跑在 confirm 夹具物化前中止（`build_payload()` 不物化 confirm，返回 0 例、**0 前向**），按预注册恢复条款用同一配置重跑，报告标 `recovery_rerun=true` 并附 `recovery_note`——首次实际 confirm 前向发生在重跑里。
+- **答案长度实测**：192/192 答案 **27 字节**（模板 9＋物件名 12＋地名 6）；request 所述"57 字节"与冻结夹具不符，按实测登记（`answer_bytes={"27":192}`）。
+- **L1 机械不变量（confirm 192，100% 零容忍）→ 全过**：选择（物件/地点/两跳）**1.0000**；`start_hit` 物件/地点 **1.0000**；`composite_start_hit` **1.0000**；`conditional_byte` **1.0000**；`provenance_rate` **1.0000**；`fabricated_bytes` **0**、`misbound_bytes` **0**、`truncation_rate` **0.0**、`wrong_route_right_content` **0**；物件/地点跨度精确 **1.0000**、`cells` 384/384 aligned。confirm 模板形态另测：`fixed_length=true`、`terminator_always=true`、反例总数 **0**、记录行 1,536、物件名恒 12 / 地名恒 6。
+- **整句逐字节精确**：**188/192＝0.9792**（旧 **95/96＝0.9896**、新 **93/96＝0.9688**）；γ=0 主读与 γ_floor（0.2）副读**同值**，`byte_exact_rate` 同值。
+- **失败定位**：4 例**全部** `extra_bytes` @ **位 27**、`record_kind=template`——27 字节正文逐字节全对，末尾多写 1 个模板字节"到"；两跳选择、起点、跨度全 aligned；均出现于地名以"尾"结尾的例子（雾尾/瓮尾），旧描述 1 例、新描述 3 例。
+- **dev 并排（只并排、不合并统计）**：`completion`/`byte_exact_rate` dev **1.0000** vs confirm **0.9792**，Δ **−0.0208**；选择 3 项、`start_hit` 2 项、`composite_start_hit` 2 项、`conditional_byte`、`provenance`、`fabricated`/`misbound`/截断/`wrong_route_right_content`、两跨度 精确 **Δ＝0**。
+- **判定 `milestone_holds`**：整句 0.9792 ≥ 0.95；与 dev 差 −0.0208，**未达 −0.05**，不构成 `dev_overfit_of_structure`；L1 无失败项，不记 `structural_regression`。能力卡据此把"绑定复制＋选择"由"已证"升格，并注明**结构实现、训练权重贡献 0**。
+
+**D16-26（2026-11-05，owner 裁定，永久有效）：封存集独立确认与结构实现的 L1 判据。** ① 任何标为"封存/confirm"的确认，必须在读取前先把装配态 sha256、候选身份、参数计数、全部阈值与判定规则写成只读预注册快照，运行端逐项比对；**一次读取、不做基于结果的修改/重跑/调参**，中途崩溃只能按预注册恢复条款用同一配置重跑一次并在报告标明。② 确认报告必须把 L1 机械不变量（选择三类、双起点、复合起点、条件字节、来源率＝1.0000；编造/误绑/截断/错路由对内容＝0）与整句逐字节精确分别列出；**任一项 <1.000 即记 `structural_regression` 并定位失败字节位与记录类型**。③ dev→confirm Δ ≤ −0.05 判 **`dev_overfit_of_structure`**，须列出设计阶段吃进的 dev 特征；Δ 在 ±0.05 内且整句 ≥0.95 判**里程碑成立**，能力卡按"结构实现、训练权重贡献 0"登记。④ 本任务（绑定复制＋选择）此后**不得再以训练立项**；下一个能力必须带**非算法残余**。
+
+**纪律与花费**：**0 训练 / 0 优化器步 / 0 Adam / 0 参数新增 / 0 图结构变更 / 1 次 confirm 读取**；**144.06 CPU / 150.53 wall**（上限 400 / 60 min，36.0%，未超线）；逐行 append＋fsync（D16-15）；报告 write-then-rename；证据名 `19_2v` 前缀不复用；收尾 in-process `black_check_gate.py` 一次（D16-18）。**19.2 系列（19.2b–19.2v）在本条整体关闭**：只留结论与证据索引，不留待办。
+
 ## 17. E1–E11数学审查的主张边界
 
 14条前沿意见按[数学裁定](MATH-ADJUDICATION_CORE_GRAPH_20261104.md)收窄，11组[精确算术回执](../../reports/taiji_graph_review_math_20261104.json)只核对有限见证和恒等式，不代签模型或一般定理。后续不得将以下已被反例否定的推广作为硬前提：加性tanh全域rank≤2、缺独立W_Q'不能目标重排、重复字节使OP2核不可复制、取消eta上界零稳定性代价、软正则权重必须等于KKT乘子、初始出边梯度0必须特殊重置。

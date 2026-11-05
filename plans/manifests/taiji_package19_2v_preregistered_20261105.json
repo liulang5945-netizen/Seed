@@ -1,0 +1,98 @@
+{
+  "schema": "taiji-package19-2v-preregistration-v1",
+  "step": "N19.2v",
+  "date": "2026-11-05",
+  "purpose": "first and only confirm read of the structural binding-copy task",
+  "frozen": {
+    "assembled_state": "output\\taiji_package19_2u_assembled_zero_training_stopfix.pt",
+    "assembled_bytes": 265981,
+    "assembled_sha256": "f5bd80e780bf0cb48d18f7e27915549432c07932a28ae833290e8873d6959e88",
+    "parent_bundle": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+    "parent_bundle_sha256": "fe04fbfb14aa0390877385a4429f2a851396a6fe6acb3107bae0a5e4e331dfca",
+    "candidate_sha_v2": "1d69e945ac149d436cc39426de5717b8a3e2b82de5e8f35565354028c0a33728",
+    "candidate_parameters": 3563859,
+    "byte_match_parameters": 65807,
+    "copy_stop_module": "taiji/copy_stop_boundary.py",
+    "copy_stop_rule": "per-hop copy limit = name-field end from the record template delimiter + terminator; no sample-specific constant, no gamma, no generated weights",
+    "graph_modules": [
+      "taiji/selection_routing.py",
+      "taiji/binding_copy.py",
+      "taiji/binding_select.py",
+      "taiji/record_relation_core.py",
+      "taiji/living_core.py",
+      "taiji/selection_routing_checkpoint.py",
+      "taiji/byte_match_route.py",
+      "taiji/copy_stop_boundary.py"
+    ]
+  },
+  "split": {
+    "name": "confirm",
+    "examples_expected": 192,
+    "old_description": 96,
+    "new_description": 96,
+    "confirm_reads": 1,
+    "no_reread_after_decision": true
+  },
+  "configurations": {
+    "gamma_0_main": 0.0,
+    "gamma_floor_control": "model gamma_floor (read-only)",
+    "forward_per_configuration": 1
+  },
+  "readings": [
+    "selection_accuracy_object",
+    "selection_accuracy_place",
+    "selection_accuracy_both",
+    "start_hit_object",
+    "start_hit_place",
+    "composite_start_hit_object",
+    "composite_start_hit_place",
+    "conditional_byte",
+    "provenance_rate",
+    "fabricated_bytes",
+    "misbound_bytes",
+    "truncation_rate",
+    "wrong_route_right_content",
+    "first_difference",
+    "first_difference_positions",
+    "completion",
+    "byte_exact_rate",
+    "answer_bytes"
+  ],
+  "l1_mechanical_invariants": {
+    "selection_accuracy_object": 1.0,
+    "selection_accuracy_place": 1.0,
+    "selection_accuracy_both": 1.0,
+    "start_hit_object": 1.0,
+    "start_hit_place": 1.0,
+    "composite_start_hit_object": 1.0,
+    "composite_start_hit_place": 1.0,
+    "conditional_byte": 1.0,
+    "provenance_rate": 1.0,
+    "fabricated_bytes": 0.0,
+    "misbound_bytes": 0.0,
+    "truncation_rate": 0.0,
+    "wrong_route_right_content": 0.0
+  },
+  "l1_structural_invariants": {
+    "confirm_boundary_fixed_length": true,
+    "confirm_boundary_terminator_always": true,
+    "confirm_boundary_counterexample_total": 0
+  },
+  "thresholds": {
+    "milestone_completion": 0.95,
+    "dev_overfit_delta": -0.05
+  },
+  "decision_rules": [
+    "L1: every mechanical invariant must hit its target (1.0 or 0) and the confirm record template must be fixed-length, terminator-terminated and counterexample-free; any deviation -> structural_regression, with the failing byte position and record kind localised.",
+    "Milestone: confirm completion >= 0.95 -> milestone holds; the capability card upgrades 'binding copy + selection' with 'structural implementation, training-weight contribution 0'.",
+    "Overfit: confirm completion - dev completion <= -0.05 -> dev_overfit_of_structure, listing which design-split features were baked in (field lengths 12/6, template shapes style0/1/2, terminator).",
+    "Otherwise: milestone_not_met, report the gap and the failure positions.",
+    "Order: L1 first; a structural regression overrides every other branch."
+  ],
+  "immutability": "written once before the confirm read; never rewritten afterwards",
+  "cost_caps": {
+    "cpu_seconds": 400.0,
+    "wall_seconds": 3600.0
+  },
+  "no_change_policy": "0 training, 0 optimizer steps, 0 Adam, no parameter or graph change, no tuning, no re-run after seeing confirm"
+}

@@ -1,0 +1,23 @@
+{
+  "step": "N19.2v",
+  "date": "2026-11-05",
+  "preregistration": "plans\\manifests\\taiji_package19_2v_preregistered_20261105.json",
+  "preregistration_sha256": "6c4c7502df800f23216de04200674ce03ae50bf9331d15e2c9f44c0a2b068548",
+  "assembled_state": "output\\taiji_package19_2u_assembled_zero_training_stopfix.pt",
+  "assembled_state_sha256": "f5bd80e780bf0cb48d18f7e27915549432c07932a28ae833290e8873d6959e88",
+  "candidate_sha_v2": "1d69e945ac149d436cc39426de5717b8a3e2b82de5e8f35565354028c0a33728",
+  "examples": 192,
+  "confirm_reads": 1,
+  "recovery_rerun": true,
+  "verdict": "milestone_holds",
+  "confirm_completion": 0.9791666666666666,
+  "dev_completion": 1.0,
+  "completion_delta": -0.02083333333333337,
+  "l1_pass": true,
+  "fabricated_bytes": 0,
+  "misbound_bytes": 0,
+  "wrong_route_right_content": 0,
+  "cpu_seconds": 144.06,
+  "wall_seconds": 150.53,
+  "over_budget": false
+}

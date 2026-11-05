@@ -29,6 +29,7 @@
 | C9 | 新图精确复制控制720/720通过（旧文件701/720为改前基线，已`superseded`） | `reports/taiji_selection_routing_17_2_t3_supplement_20261103_v3.json` → `forced_gold_probability` | 通过范围为gold控制下f64及reader-f32，正常定位/完整主体另验 |
 | C10 | 当前词表（3物件×5地点）下，模型对**未见过的新名字**逐字节正确率 0.000，且删记录/换错记录/换位置四种条件下新名字从未逐字出现；γ≈0.92（生成权重），复制权重约 0.08 | `reports/taiji_memory_dominance_probe_20261104.json` → `pooled`、`verdict`、`cells[*].criterion` | 训练从未需要复制：15 种组合可背诵，输出在已背名字池内换，内容不来自记录 |
 | C11 | 方案 A 的**数据前提已构建但未训练**：物件/地点名字池各 220（≥200），按**名字串**三向互斥切 160/30/30，train/dev 的（物件×地点）组合交集 0，八项跨向名字出现计数全 0；参数增量 0（名字是记录字节，不是嵌入），容器仍 3,563,859 参数 | `plans/manifests/taiji_data_premise_18_0_manifest_20261104.json` → `vocabulary`、`proofs`、`capacity`；`plans/manifests/taiji_data_premise_18_0_prereg_20261104.json` → `gates`、`axes` | 只证明“考题不再可背”，**不证明模型已能抄新名字**；能力结论要等 18.1 结果 |
+| C12 | **绑定复制＋选择（本任务）由结构实现达成，训练权重贡献 0**：封存集 confirm 192 例（旧/新各 96）单次读取，**188/192＝0.9792** 整句逐字节精确（旧 95/96、新 93/96），L1 机械不变量全 **1.0000**（选择三类 / 双起点 / 复合起点 / 条件字节 / 来源率），编造、误绑、截断、`wrong_route_right_content` 全 **0**；与 dev 差 **−0.0208**（未达 −0.05）；4 例失败全为位 27 多写 1 个模板字节 | `reports/taiji_package19_2v_confirm_holdout_20261105.json` → `readings.gamma_0.total`、`decision`、`boundary_measurement_confirm`；账本 §16.20 / D16-26 | 现在这台模型**不靠训练**就能在这类题上做对：答案是逐字节从记录里抄出来的；训练只对模板字节发射有边际作用 |
 
 ## 2. 未证（还没有实验能支持，对外不得声称）
 
@@ -295,6 +296,16 @@ C10 把 17.5 的失败归因从“算子坏了”改成“任务前提允许背�
 - **D 消融**：transport/span_head/score_rows 固定种子 1902 随机初始化 → 整句 **0.9479（182/192，Δ -0.0521）**，**10 例失败全在模板字节位 1**，选择/抄写/来源仍 1.0000 → 训练权重对任务能力贡献为 0。
 - **D16-25（结构性事实）**：复制停止边界为结构原语；19.2t 的唯一缺口＝结构缺口而非训练缺口；不得再以"训练能修抄写边界/提升该任务"立项。
 - **花费**：256.72 CPU / 268.55 wall（上限 400，64.2%）；0 训练 / 0 Adam / 0 confirm / 1 装配态；确定性 8/8。
+
+**19.2v 封存集独立确认与 D16-26（2026-11-05；0 训练 / 144.06 CPU；[报告](../../reports/taiji_package19_2v_confirm_holdout_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2v_confirm_holdout_20261105.json)＋[预注册](../../plans/manifests/taiji_package19_2v_preregistered_20261105.json)＋账本 §16.20）**
+
+- **读取纪律**：confirm **首次且唯一一次**读取（过去全程 0）；读取前先把装配态 sha256、`candidate_sha_v2`、全部阈值与判定规则写成**只读预注册**（sha256 `6c4c7502…`），运行端逐项比对；`confirm_reads=1`；1 次恢复重跑（首跑在夹具物化前中止、0 例 0 前向，报告标 `recovery_rerun=true`）。
+- **答案长度**：实测 **27 字节**（模板 9＋物件名 12＋地名 6）；request 所述"57 字节"与冻结夹具不符，按实测登记。
+- **L1 机械不变量全过**：选择（物件/地点/两跳）、`start_hit`（物件/地点）、`composite_start_hit`、`conditional_byte`、`provenance_rate` 全 **1.0000**；`fabricated`/`misbound`/截断/`wrong_route_right_content` 全 **0**；confirm 模板 `fixed_length`、终止符恒 `。`、反例 **0**。
+- **整句**：**188/192＝0.9792**（旧 95/96＝0.9896、新 93/96＝0.9688）；γ=0 与 γ_floor 同值；4 例失败**全部位 27 多写 1 个模板字节"到"**（27 字节正文全对、选择/起点/跨度全 aligned）。
+- **与 dev 并排（不合并）**：dev 1.0000 vs confirm 0.9792，**Δ −0.0208**（未达 −0.05 过拟合阈值）；其余各项 Δ＝0 → 判定 **`milestone_holds`**。
+- **升格登记**：**"绑定复制＋选择"由"已证"升格为已达成里程碑，注明"结构实现、训练权重贡献 0"**；本任务此后不得再以训练立项（D16-26）；下一个能力必须带**非算法残余**。
+- **花费**：144.06 CPU / 150.53 wall（上限 400 / 60 min，36.0%）；0 训练 / 0 Adam / 0 参数新增 / 0 图变更 / 1 次 confirm 读取。
 
 **19.2r 字节匹配设计闸与 D16-22（2026-11-05；0 Adam / 0 训练前向 / 1.88 CPU；[报告](../../reports/taiji_package19_2r_byte_match_gate_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2r_byte_match_gate_20261105.json)＋[通路](../../taiji/byte_match_route.py)＋账本 §16.16）**
 
