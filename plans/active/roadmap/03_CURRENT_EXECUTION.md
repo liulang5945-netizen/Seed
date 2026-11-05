@@ -2668,6 +2668,6 @@ top-3 消耗者：**反向 > 解码 > observe**。profiler 的 top op 是 `slow_
 
 判定：**`pricing_still_over_budget`**。即使按等价档最优单价，仍超 2× 闸；**连只保留前向的图级下限（79,006.5）也在闸外**。三种取舍见报告 `options_for_owner`（O1 放松档 109,036.6／O2 图级批量化下限 79,006.5／O3 只重放 22 个纠正面 34,081.2），各自天花板与代价已写明，**不替 owner 挑**。
 
-**E. 花费与纪律**：本次复核 **56.297 CPU / 58.67 wall**；含首跑测量遍 **727.891 CPU**（10 个校准更新，读数已落 progress），合计 **784.188 CPU**，在上限 **800 CPU** 内。首跑在读数 A/B 前因取错键（`loss_tensor` 不在 `eval_world` 返回里）崩溃，本次复用首跑 10 个样本、只补 T3 A/B 与微 profiler。0 正式训练步、0 confirm、未改图、未写 freeze、阈值未改、`addressed_store=false` 按冻结值；进度逐行 append＋fsync、write-then-rename；收尾一次 in-process `black_check_gate.py`。
+**E. 花费与纪律**：本次复核 **56.297 CPU / 58.67 wall**；含首跑测量遍 **727.891 CPU**（10 个校准更新，读数已落 progress），合计 **784.188 CPU**，在上限 **800 CPU** 内。首跑在读数 A/B 前因取错键（`loss_tensor` 不在 `eval_world` 返回里）崩溃，本次复用首跑 10 个样本、只补 T3 A/B 与微 profiler。0 正式训练步、0 confirm、未改图、未写 freeze、阈值未改、`addressed_store=false` 按冻结值；进度逐行 append＋fsync、write-then-rename；收尾一次 in-process `black_check_gate.py`。双列 sha：`runner_sha256` `7b19298b…`（产生读数）／`submitted_runner_sha256` `20ebd303…`（入库）。
 
 **F. 下一步（唯一）**：由 owner 在 O1/O2/O3 中裁定一条（或另行给出更新数），再按新单价重新定价一次；未裁定前不写 freeze、不开正式对照。

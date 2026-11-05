@@ -291,7 +291,7 @@
   },
   "script": {
     "runner_sha256": "7b19298b14039800f47bcf89866b2d88b823b69f33665dbb44ee5378bbd6be99",
-    "submitted_runner_sha256": "7b19298b14039800f47bcf89866b2d88b823b69f33665dbb44ee5378bbd6be99"
+    "submitted_runner_sha256": "20ebd30355d2c0e37fdddfa99dbbcc12cb4e42da07f7e4dabfceadef1e6b522f"
   },
   "invariants": {
     "confirm_read": false,
