@@ -1,0 +1,16 @@
+{
+  "schema": "taiji-package-19-2s-perturbation-gate-manifest-v1",
+  "step": "19.2s_perturbation_gate_and_learnability_probe",
+  "date": "2026-11-05",
+  "report": "reports/taiji_package19_2s_perturbation_gate_20261105.json",
+  "dev_starts": 384,
+  "eps_min_selection": 1.0,
+  "sigma_min_selection": 1.0,
+  "collapse_eps": null,
+  "collapse_sigma": null,
+  "learnability_step0_dev": 1.0,
+  "learnability_final_dev": 1.0,
+  "adam_steps": 50,
+  "cpu_seconds": 182.453125,
+  "cpu_cap": 200
+}

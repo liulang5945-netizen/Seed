@@ -1,0 +1,609 @@
+{
+  "schema": "taiji-package-19-2s-perturbation-gate-v1",
+  "step": "19.2s_perturbation_gate_and_learnability_probe",
+  "date": "2026-11-05",
+  "purpose": "decide whether the byte match pathway is a real capability or an initialisation standing on the answer; perturbation ladder plus a short learnability probe, no candidate training, no proposals, no graph integration",
+  "data": {
+    "dev_worlds": 12,
+    "dev_starts": 384,
+    "train_examples": 640
+  },
+  "perturbation": {
+    "blend_rule": "E = (1 - eps) * I + eps * R, R fixed-seed Gaussian rows normalised to unit length, PAD row zeroed",
+    "eps_ladder": [
+      {
+        "epsilon": 0.0,
+        "object_correct": 192,
+        "place_correct": 192,
+        "starts": 384,
+        "selection_accuracy": 1.0,
+        "completion": 192,
+        "completion_rate": 1.0,
+        "offset_recovered": 384,
+        "offset_recovery_rate": 1.0,
+        "margin_median": 8.0,
+        "margin_min": 7.0,
+        "ties": 0,
+        "by_age": {
+          "old": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          },
+          "new": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          }
+        }
+      },
+      {
+        "epsilon": 0.05,
+        "object_correct": 192,
+        "place_correct": 192,
+        "starts": 384,
+        "selection_accuracy": 1.0,
+        "completion": 192,
+        "completion_rate": 1.0,
+        "offset_recovered": 384,
+        "offset_recovery_rate": 1.0,
+        "margin_median": 7.226006031036377,
+        "margin_min": 6.282345294952393,
+        "ties": 0,
+        "by_age": {
+          "old": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          },
+          "new": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          }
+        }
+      },
+      {
+        "epsilon": 0.1,
+        "object_correct": 192,
+        "place_correct": 192,
+        "starts": 384,
+        "selection_accuracy": 1.0,
+        "completion": 192,
+        "completion_rate": 1.0,
+        "offset_recovered": 384,
+        "offset_recovery_rate": 1.0,
+        "margin_median": 6.57626485824585,
+        "margin_min": 5.674259185791016,
+        "ties": 0,
+        "by_age": {
+          "old": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          },
+          "new": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          }
+        }
+      },
+      {
+        "epsilon": 0.2,
+        "object_correct": 192,
+        "place_correct": 192,
+        "starts": 384,
+        "selection_accuracy": 1.0,
+        "completion": 192,
+        "completion_rate": 1.0,
+        "offset_recovered": 384,
+        "offset_recovery_rate": 1.0,
+        "margin_median": 5.405569553375244,
+        "margin_min": 4.603156566619873,
+        "ties": 0,
+        "by_age": {
+          "old": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          },
+          "new": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          }
+        }
+      },
+      {
+        "epsilon": 0.3,
+        "object_correct": 192,
+        "place_correct": 192,
+        "starts": 384,
+        "selection_accuracy": 1.0,
+        "completion": 192,
+        "completion_rate": 1.0,
+        "offset_recovered": 384,
+        "offset_recovery_rate": 1.0,
+        "margin_median": 4.434952735900879,
+        "margin_min": 3.868952751159668,
+        "ties": 0,
+        "by_age": {
+          "old": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          },
+          "new": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          }
+        }
+      },
+      {
+        "epsilon": 0.5,
+        "object_correct": 192,
+        "place_correct": 192,
+        "starts": 384,
+        "selection_accuracy": 1.0,
+        "completion": 192,
+        "completion_rate": 1.0,
+        "offset_recovered": 384,
+        "offset_recovery_rate": 1.0,
+        "margin_median": 3.996781826019287,
+        "margin_min": 3.324846029281616,
+        "ties": 0,
+        "by_age": {
+          "old": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          },
+          "new": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          }
+        }
+      },
+      {
+        "epsilon": 0.8,
+        "object_correct": 192,
+        "place_correct": 192,
+        "starts": 384,
+        "selection_accuracy": 1.0,
+        "completion": 192,
+        "completion_rate": 1.0,
+        "offset_recovered": 384,
+        "offset_recovery_rate": 1.0,
+        "margin_median": 5.493327617645264,
+        "margin_min": 4.61009407043457,
+        "ties": 0,
+        "by_age": {
+          "old": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          },
+          "new": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          }
+        }
+      },
+      {
+        "epsilon": 1.0,
+        "object_correct": 192,
+        "place_correct": 192,
+        "starts": 384,
+        "selection_accuracy": 1.0,
+        "completion": 192,
+        "completion_rate": 1.0,
+        "offset_recovered": 384,
+        "offset_recovery_rate": 1.0,
+        "margin_median": 7.757109642028809,
+        "margin_min": 6.613053321838379,
+        "ties": 0,
+        "by_age": {
+          "old": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          },
+          "new": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          }
+        }
+      }
+    ],
+    "sigma_ladder": [
+      {
+        "sigma": 0.02,
+        "object_correct": 192,
+        "place_correct": 192,
+        "starts": 384,
+        "selection_accuracy": 1.0,
+        "completion": 192,
+        "completion_rate": 1.0,
+        "offset_recovered": 384,
+        "offset_recovery_rate": 1.0,
+        "margin_median": 8.83410358428955,
+        "margin_min": 7.4126691818237305,
+        "ties": 0,
+        "by_age": {
+          "old": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          },
+          "new": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          }
+        }
+      },
+      {
+        "sigma": 0.05,
+        "object_correct": 192,
+        "place_correct": 192,
+        "starts": 384,
+        "selection_accuracy": 1.0,
+        "completion": 192,
+        "completion_rate": 1.0,
+        "offset_recovered": 384,
+        "offset_recovery_rate": 1.0,
+        "margin_median": 12.844910621643066,
+        "margin_min": 11.021879196166992,
+        "ties": 0,
+        "by_age": {
+          "old": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          },
+          "new": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          }
+        }
+      },
+      {
+        "sigma": 0.1,
+        "object_correct": 192,
+        "place_correct": 192,
+        "starts": 384,
+        "selection_accuracy": 1.0,
+        "completion": 192,
+        "completion_rate": 1.0,
+        "offset_recovered": 384,
+        "offset_recovery_rate": 1.0,
+        "margin_median": 30.87154197692871,
+        "margin_min": 23.267793655395508,
+        "ties": 0,
+        "by_age": {
+          "old": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          },
+          "new": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          }
+        }
+      },
+      {
+        "sigma": 0.2,
+        "object_correct": 192,
+        "place_correct": 192,
+        "starts": 384,
+        "selection_accuracy": 1.0,
+        "completion": 192,
+        "completion_rate": 1.0,
+        "offset_recovered": 384,
+        "offset_recovery_rate": 1.0,
+        "margin_median": 85.76289367675781,
+        "margin_min": 72.35963439941406,
+        "ties": 0,
+        "by_age": {
+          "old": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          },
+          "new": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          }
+        }
+      },
+      {
+        "sigma": 0.5,
+        "object_correct": 192,
+        "place_correct": 192,
+        "starts": 384,
+        "selection_accuracy": 1.0,
+        "completion": 192,
+        "completion_rate": 1.0,
+        "offset_recovered": 384,
+        "offset_recovery_rate": 1.0,
+        "margin_median": 496.1382141113281,
+        "margin_min": 415.9761047363281,
+        "ties": 0,
+        "by_age": {
+          "old": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          },
+          "new": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          }
+        }
+      }
+    ],
+    "collapse_threshold": 0.9,
+    "collapse_eps": null,
+    "collapse_sigma": null,
+    "position_variants": [
+      {
+        "name": "constant_0_5",
+        "weights": [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        "object_correct": 192,
+        "place_correct": 192,
+        "starts": 384,
+        "selection_accuracy": 1.0,
+        "completion": 192,
+        "completion_rate": 1.0,
+        "offset_recovered": 384,
+        "offset_recovery_rate": 1.0,
+        "margin_median": 4.0,
+        "margin_min": 3.5,
+        "ties": 0,
+        "by_age": {
+          "old": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          },
+          "new": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          }
+        }
+      },
+      {
+        "name": "sine_0_5_plus_0_5",
+        "weights": [
+          0.5,
+          0.7033683061599731,
+          0.8715723752975464,
+          0.9755282402038574,
+          0.9972609281539917,
+          0.9330127239227295,
+          0.7938926219940186,
+          0.6039558053016663,
+          0.3960441052913666,
+          0.20610731840133667,
+          0.06698727607727051,
+          0.002739042043685913,
+          0.024471759796142578,
+          0.128427654504776,
+          0.29663175344467163
+        ],
+        "object_correct": 192,
+        "place_correct": 192,
+        "starts": 384,
+        "selection_accuracy": 1.0,
+        "completion": 192,
+        "completion_rate": 1.0,
+        "offset_recovered": 384,
+        "offset_recovery_rate": 1.0,
+        "margin_median": 4.281047821044922,
+        "margin_min": 3.244079113006592,
+        "ties": 0,
+        "by_age": {
+          "old": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          },
+          "new": {
+            "starts": 96,
+            "object_correct": 96,
+            "place_correct": 96,
+            "completion": 96
+          }
+        }
+      }
+    ],
+    "position_weight_baseline": {
+      "selection_accuracy": 1.0,
+      "note": "identity embedding, position_weight all ones"
+    }
+  },
+  "learnability": {
+    "label": "learnability probe - not a candidate arm, never enters a candidate comparison",
+    "initialisation": "Gaussian(0, 0.02), PAD row zeroed, no identity injected",
+    "objective": "cross-entropy over the eight line scores from the free offset argmax on the train split; no offset labels and no injected alignment",
+    "optimizer": "Adam lr 0.05",
+    "adam_cap": 80,
+    "steps_done": 50,
+    "stopped_for_budget": true,
+    "curve": [
+      {
+        "step": 0,
+        "dev_selection": 1.0,
+        "dev_completion": 1.0,
+        "dev_offset_recovery": 1.0,
+        "train_selection": 1.0
+      },
+      {
+        "step": 10,
+        "dev_selection": 1.0,
+        "dev_completion": 1.0,
+        "dev_offset_recovery": 1.0,
+        "train_selection": 1.0
+      },
+      {
+        "step": 20,
+        "dev_selection": 1.0,
+        "dev_completion": 1.0,
+        "dev_offset_recovery": 1.0,
+        "train_selection": 1.0
+      },
+      {
+        "step": 30,
+        "dev_selection": 1.0,
+        "dev_completion": 1.0,
+        "dev_offset_recovery": 1.0,
+        "train_selection": 1.0
+      },
+      {
+        "step": 40,
+        "dev_selection": 1.0,
+        "dev_completion": 1.0,
+        "dev_offset_recovery": 1.0,
+        "train_selection": 1.0
+      },
+      {
+        "step": 50,
+        "dev_selection": 1.0,
+        "dev_completion": 1.0,
+        "dev_offset_recovery": 1.0,
+        "train_selection": 1.0
+      }
+    ],
+    "final_dev": {
+      "object_correct": 192,
+      "place_correct": 192,
+      "starts": 384,
+      "selection_accuracy": 1.0,
+      "completion": 192,
+      "completion_rate": 1.0,
+      "offset_recovered": 384,
+      "offset_recovery_rate": 1.0,
+      "margin_median": 250.76834106445312,
+      "margin_min": 183.68856811523438,
+      "ties": 0,
+      "by_age": {
+        "old": {
+          "starts": 96,
+          "object_correct": 96,
+          "place_correct": 96,
+          "completion": 96
+        },
+        "new": {
+          "starts": 96,
+          "object_correct": 96,
+          "place_correct": 96,
+          "completion": 96
+        }
+      }
+    },
+    "final_train": {
+      "object_correct": 640,
+      "place_correct": 640,
+      "starts": 1280,
+      "selection_accuracy": 1.0,
+      "completion": 640,
+      "completion_rate": 1.0,
+      "offset_recovered": 1280,
+      "offset_recovery_rate": 1.0,
+      "margin_median": 310.0565490722656,
+      "margin_min": 185.3682861328125,
+      "ties": 0,
+      "by_age": {
+        "old": {
+          "starts": 640,
+          "object_correct": 640,
+          "place_correct": 640,
+          "completion": 640
+        },
+        "new": {
+          "starts": 0,
+          "object_correct": 0,
+          "place_correct": 0,
+          "completion": 0
+        }
+      }
+    }
+  },
+  "answers": {
+    "q1_pathway_survives": "成立：ε 阶梯最低选择准确率 1.000、σ 阶梯最低 1.000，两档阶梯均未出现崩塌（阈值 0.90），所以它不是站在单位矩阵上的手工正确解；但本轮阶梯里的随机单位向量与加性高斯嵌入同样能匹配，说明匹配由嵌入自相似性直接给出，仍支持 D16-22 的算法原语判定。",
+    "q2_learned_or_fit": "第 0 步 dev 选择准确率 1.000 已达标，训练到 50 步后 dev 1.000、训练侧 1.000；因此谈不上'学会'，匹配由内积自相似性直接给出，也没有只拟合训练起点的退化。",
+    "q3_position_weight": "不承担定位：constant_0_5 选择 1.000 / 完成 1.000 / 起点复原 1.000; sine_0_5_plus_0_5 选择 1.000 / 完成 1.000 / 起点复原 1.000；定位由逐位对齐本身给出，position_weight 只改变各槽增益，去掉或冻结为常数通路仍成立。"
+  },
+  "cost": {
+    "cpu_seconds": 182.453125,
+    "wall_seconds": 28.482434199890122,
+    "cpu_cap": 200,
+    "over_budget": false
+  },
+  "discipline": {
+    "candidate_training": false,
+    "confirm_reads": 0,
+    "candidate_bundles_saved": 0,
+    "probe_state_in_memory_only": true,
+    "fsync_per_line": true,
+    "report_write_then_rename": true,
+    "black_check_once": true
+  },
+  "progress": "reports/taiji_package19_2s_perturbation_gate_progress_20261105.jsonl"
+}
