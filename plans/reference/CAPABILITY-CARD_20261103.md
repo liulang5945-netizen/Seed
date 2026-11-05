@@ -317,6 +317,14 @@ C10 把 17.5 的失败归因从“算子坏了”改成“任务前提允许背�
 - **验证**：合成尾 64/64、对照 64/64、dev 192 全 L1 **1.0000**、11 个末字符类各 8 例全 0 外溢 → `fixed`。
 - **口径**：confirm 0.9792 **不改写、不在封存集复核**；要新封存读数须另立前置注册（D16-27）。`candidate_sha_v2` `1d69e945…`→**`0d6a5df3…`**，参数 3,563,859 不变。
 
+**20.1 规则学习夹具＋CF1/B_EH 参考图（2026-11-05；0 训练 / 159.53 CPU；状态：工程就绪、未训练；[报告](../../reports/taiji_package20_1_rule_learning_fixture_graph_20261105.json)＋[manifest](../../plans/manifests/taiji_package20_1_rule_learning_fixture_graph_20261105.json)＋账本 §16.22）**
+
+- **夹具**：4 world／51 应答轮（合计 204）、纠正面 **22/world**（S1 5＋S2 11＋S3 6，单列可独立统计）、会话 **3**（10/24/17）、反馈 2 批 40 行 1,560 B、反馈内反例 7、跨版本 changed_query 25（6.25/world）、规则 20 条；记录 390 B/world（E 4,096、view 512）。
+- **两图同形**：`RuleLearningGraph` 包同一 R021 subject；**3,323,547 参数 / 135 张量 / 新增 0**，名称/形状/dtype 逐项相同、差值 0；差异仅 F 是否可塑（CF1 写、B_EH 永不写）。`candidate_sha_v2` CF1 **`a8a1e169…`**、B_EH **`3e98f65d…`**；各自 1 份 `initialized_untrained`（16,645 B / 16,651 B）。
+- **信息边界（三条探针全过）**：静态扫描无夹具 import、无真值/求解器名；真值打乱后 **765/765 字节一致**、`max|Δlogits| 0.0`；约束解码反查 **690/690 落到已释放反馈**（truth 0、generate 0）。
+- **dry-forward**：102 轮、logits [15,257] 全有限；CF1 fast writes 20 / B_EH 0；会话恢复 4/4 精确；F 关闭时两图 **765/765** 一致。
+- **读数边界**：**本条目不是能力读数**——两图均未训练、未产生学习分数；不签反馈学习、纠正、跨会话保持或迁移收益。**20.2 信用与保存预检未准入**，等 owner 判断。
+
 **19.2r 字节匹配设计闸与 D16-22（2026-11-05；0 Adam / 0 训练前向 / 1.88 CPU；[报告](../../reports/taiji_package19_2r_byte_match_gate_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2r_byte_match_gate_20261105.json)＋[通路](../../taiji/byte_match_route.py)＋账本 §16.16）**
 
 - **唯一性**：384 起点上物件/地点描述串在 8 条 `raw` 中唯一出现 **384/384**（重复 0、未找到 0、跨类型 0）。

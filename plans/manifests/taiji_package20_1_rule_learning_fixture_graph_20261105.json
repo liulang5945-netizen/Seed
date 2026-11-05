@@ -1,0 +1,54 @@
+{
+  "package": "20_1",
+  "verdict": "ready",
+  "candidate_sha_v2": {
+    "cf1": "a8a1e169e1449f7ce6e65e7b82c1416530d8d66515cfb7a26dc6bafbf2b5409d",
+    "b_eh": "3e98f65d53820f38ba218fc309cc75b4293b528a31a74979c0dd914f86fbfde3"
+  },
+  "assemblies": {
+    "cf1": {
+      "path": "output\\taiji_package20_1_cf1_initialized_untrained.pt",
+      "sha256": "b62d6fe6a0721fd82c7c43d575e600c48ffc8e31ff959bfdf14ef9ff07d0039e",
+      "bytes": 16645,
+      "label": "initialized_untrained"
+    },
+    "b_eh": {
+      "path": "output\\taiji_package20_1_b_eh_initialized_untrained.pt",
+      "sha256": "64cb327e3a8442ef0c59e04b14445a08ab3dccbb8ac42cf6547e0efa4e6f7f46",
+      "bytes": 16651,
+      "label": "initialized_untrained"
+    }
+  },
+  "gates": {
+    "fixture_51_turns": true,
+    "fixture_22_correction": true,
+    "fixture_three_sessions": true,
+    "twenty_rules": true,
+    "counterexamples_at_least_one": true,
+    "changed_query_min_four": true,
+    "graphs_isomorphic": true,
+    "static_no_truth_or_solver": true,
+    "shuffle_byte_identical": true,
+    "shuffle_logits_identical": true,
+    "backtrace_no_truth": true,
+    "backtrace_all_legal": true,
+    "backtrace_every_byte": true,
+    "dry_forward_finite": true,
+    "dry_forward_shape_15x257": true,
+    "parity_fast_off_identical": true,
+    "session_restore_exact": true,
+    "zero_new_parameters": true,
+    "same_parameter_count": true
+  },
+  "cost": {
+    "cpu_seconds": 159.53,
+    "wall_seconds": 164.55,
+    "cpu_cap": 500.0,
+    "wall_cap": 4500.0,
+    "over_budget": false,
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "confirm_reads": 0,
+    "new_parameters": 0
+  }
+}

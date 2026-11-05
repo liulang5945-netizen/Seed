@@ -855,6 +855,17 @@ owner 在 19.2v 收下后授权对 4 例外溢做**冻结外复现与修复**；
 
 **D16-27（2026-11-05，owner 裁定，永久有效）：残差须在合成/开发侧复现并修复。** ① 封存集上出现的残差，**不得以封存集为调参或验证依据**；必须在冻结外（合成/开发侧）复现出同量级触发条件，复现失败须写明"生成器造不出该触发条件"并只给结构性共同点。② 修复必须 **0 参数、0 样例常数、禁止字符/样本特判**；判定证据须能排除相邻机制（本案用"外溢字节串在全部记录中 0 次出现"排除复制通路）。③ 修复完成后，**封存集既有读数原样保留、不因修复改写**；要新的封存读数必须另立前置注册。④ 修复需过三道门：合成复现集全对、dev 全量 L1 与整句不回归、末字符类别扩样全清零。
 
+### 16.22 20.1 规则学习夹具＋CF1/B_EH 参考图（2026-11-05，0 训练 / 159.53 CPU）
+
+owner 定稿并提交阶段 20 rev2（`bb3fbe6a6`）后，只执行 20.1 的四项交付。证据 [报告](../../reports/taiji_package20_1_rule_learning_fixture_graph_20261105.json)＋[manifest](../../plans/manifests/taiji_package20_1_rule_learning_fixture_graph_20261105.json)；夹具 [`rule_learning_20_1.py`](../../taiji/rule_learning_20_1.py)、应答图 [`rule_learning_20_1_net.py`](../../taiji/rule_learning_20_1_net.py)、身份 [`rule_learning_20_1_identity.py`](../../taiji/rule_learning_20_1_identity.py)、脚本 [probe](../../scripts/training/probe_taiji_package20_1_fixture_graph.py)；进度 jsonl 逐行 fsync。
+
+- **A 夹具规模**：4 world／**204 应答轮（51/world）**；纠正面 **22/world**（S1 5＋S2 11＋S3 6），另有 32 个首答/world 作全量登记；会话 **3**（10/24/17）；反馈 2 批、40 行 **1,560 字节**（v1 20 行 260 字 780 B、v2 同）；反馈内反例 **7**；跨版本 changed_query **25（6.25/world）**；规则族 `y = b xor xor_{i∈S} x_i`（1≤|S|≤2）共 **20** 条；记录 390 B/world（E 4,096、view 512）。
+- **B 两图同形**：均为 `RuleLearningGraph` 包同一 R021 subject（`GatedGrowthCore`，`growth_gates={"consensus":1.0}`）；**3,323,547 参数 / 135 张量 / 新增 0**，名称/形状/dtype 逐项相同、差值 0；差异仅 `arm`/`fast_enabled`（F 可塑归属）。`candidate_sha_v2`：CF1 **`a8a1e169…`**、B_EH **`3e98f65d…`**。装配态各 1 份、标注 `initialized_untrained`（CF1 16,645 B sha256 `b62d6fe6…`；B_EH 16,651 B sha256 `64cb327e…`）。
+- **C 冻结清单**：参数分块 W 458,752 / U 8,192 / V 57,344 / R 928,256 / P 132,608 / tau 4 / encoder 205,632 / nu 2,176 / message 212,992 / fast_read 164,608 / episodic 83,713 / xi 41,984 / readout 327,680 / expression 116,547 / write_heads 434,448 / world 148,611（`world` 冻结不使用）；状态分持久（h / fast / nu_ema / keys / coverage / prior / journal）与会话内（previous_byte / turn_cursor）；注册项 `GRAPH_MODULES_20`（net / living_core / record_relation_core）与 `DECODE_RULES_20`（answer_space / answer_bytes 15 / decision_positions (7,8) / decode / feedback_release / fast_write / fast_window / session_freeze / truth_isolation / answer_contract）；种子 **20261105**，初始化＝父 bundle 权重原样复制、无新张量初始化。
+- **D 泄漏探针（三条全过）**：(a) 静态 AST＋签名扫描——应答模块 imports 仅 `__future__/copy/dataclasses/hashlib/torch/typing/taiji.living_core`，无夹具 import、无 `truth/solver/labels/xor` 等名，`run_turn` 签名无真值参数；(b) 真值打乱后重跑——51 轮 **765/765 字节逐字节一致**、`max|Δlogits| = 0.0`、mismatch 0；(c) 约束解码反查——覆盖 46 轮×2 world，**690/690 字节全部落到已释放反馈**（decision 92/92 同），template 0、generate 0、**truth 0**。
+- **E dry-forward（不训练）**：2 world／102 轮，logits **[15, 257]** 全有限；CF1 fast writes 20、B_EH 0；CF1 journal 102、applied 20、released 20；会话边界 4 次存/恢复全部精确（4/4）；B_EH 与 CF1（F 关闭）**765/765 逐字节一致、`max|Δlogits| = 0.0`**。
+- **F 判定与边界**：`verdict=ready`，19 个门全 true；**0 训练 / 0 优化器步 / 0 Adam / 0 confirm 读取 / 0 替换 / 19.x 装配态未动**；两图各 1 份 `initialized_untrained`，其余 0 存包。**159.53 CPU / 164.55 wall**（上限 500 / 4500 s，31.9%）；逐行 append＋fsync；报告 write-then-rename。**20.2 信用与保存预检未准入**，等 owner 判断。
+
 ## 17. E1–E11数学审查的主张边界
 
 14条前沿意见按[数学裁定](MATH-ADJUDICATION_CORE_GRAPH_20261104.md)收窄，11组[精确算术回执](../../reports/taiji_graph_review_math_20261104.json)只核对有限见证和恒等式，不代签模型或一般定理。后续不得将以下已被反例否定的推广作为硬前提：加性tanh全域rank≤2、缺独立W_Q'不能目标重排、重复字节使OP2核不可复制、取消eta上界零稳定性代价、软正则权重必须等于KKT乘子、初始出边梯度0必须特殊重置。
