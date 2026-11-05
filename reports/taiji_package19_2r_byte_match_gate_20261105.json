@@ -1,0 +1,233 @@
+{
+  "schema": "taiji-package-19-2r-byte-match-gate-v1",
+  "step": "19.2r_byte_match_design_gate",
+  "date": "2026-11-05",
+  "purpose": "design gate only: uniqueness of the goal description inside the eight record lines, the deterministic solvability ceiling, whether a parametric byte-level pathway can express gold selection at 0 updates, and its cost",
+  "data": {
+    "split": "dev",
+    "worlds": 12,
+    "examples": 192,
+    "starts": 384,
+    "goal_offsets": {
+      "object": [
+        3
+      ],
+      "place": [
+        21
+      ]
+    },
+    "name_extraction": {
+      "records": 416,
+      "name_recovered": 416
+    }
+  },
+  "uniqueness": {
+    "object": {
+      "starts": 192,
+      "unique_occurrence": 192,
+      "duplicate_occurrence": 0,
+      "missing_occurrence": 0,
+      "cross_kind_occurrences": 0,
+      "lines_with_repeat_inside": 0,
+      "max_occurrences": 1,
+      "total_occurrences": 192,
+      "samples": []
+    },
+    "place": {
+      "starts": 192,
+      "unique_occurrence": 192,
+      "duplicate_occurrence": 0,
+      "missing_occurrence": 0,
+      "cross_kind_occurrences": 0,
+      "lines_with_repeat_inside": 0,
+      "max_occurrences": 1,
+      "total_occurrences": 192,
+      "samples": []
+    },
+    "starts_total": 384,
+    "unique_total": 384,
+    "goal_offsets": {
+      "object": [
+        3
+      ],
+      "place": [
+        21
+      ]
+    }
+  },
+  "ceiling": {
+    "examples": 192,
+    "selection_correct": 192,
+    "selection_missing": 0,
+    "selection_ambiguous": 0,
+    "completion_exact": 192,
+    "by_age": {
+      "old": {
+        "examples": 96,
+        "selection_correct": 96,
+        "completion_exact": 96,
+        "selection_accuracy": 1.0,
+        "completion_rate": 1.0
+      },
+      "new": {
+        "examples": 96,
+        "selection_correct": 96,
+        "completion_exact": 96,
+        "selection_accuracy": 1.0,
+        "completion_rate": 1.0
+      }
+    },
+    "strategy": "scan the eight lines for the goal's object description; the first line containing it is the selection; recover that line's name and the name of the line containing the place description; assemble '把{object_name}放到{place_name}' and compare byte-for-byte with the action",
+    "selection_accuracy": 1.0,
+    "completion_rate": 1.0
+  },
+  "expressibility": {
+    "initialisation": {
+      "updates": 0,
+      "byte_embed_max_abs_gap_from_identity": 0.0,
+      "position_weight_all_one": true,
+      "all_parameters_require_grad": true,
+      "parameter_count": 65807
+    },
+    "object_injected": {
+      "gold_selected": 192,
+      "examples": 192,
+      "tied_top_scores": 0,
+      "rows_with_finite_runner_up": 0,
+      "gold_score_min": 15.0,
+      "margin_min": 15.0,
+      "margin_median": 15.0
+    },
+    "place_injected": {
+      "matched_line_selected": 192,
+      "examples": 192
+    },
+    "object_free": {
+      "gold_selected": 192,
+      "gold_offset_recovered": 192,
+      "examples": 192
+    },
+    "note": "injected mode feeds the true alignment start per line (-1 = the line does not contain the span); the matching arithmetic is the module's own, and the free mode shows the pathway can also find the offset without injection",
+    "gradient_flow": {
+      "optimizer_steps": 0,
+      "parameters": {
+        "byte_embed": {
+          "finite": true,
+          "nonzero": true,
+          "abs_sum": 5760.0
+        },
+        "position_weight": {
+          "finite": true,
+          "nonzero": true,
+          "abs_sum": 2880.0
+        }
+      }
+    }
+  },
+  "cost_and_identity": {
+    "new_parameters": [
+      {
+        "name": "byte_embed",
+        "shape": [
+          257,
+          256
+        ],
+        "elements": 65792
+      },
+      {
+        "name": "position_weight",
+        "shape": [
+          15
+        ],
+        "elements": 15
+      }
+    ],
+    "new_parameter_count": 65807,
+    "candidate_sha_v2_current": "773dcec2e1131d1f3c8784153633d85a9144268a4d5167790740cdd488153aa1",
+    "candidate_sha_v2_change": "none: the module is not registered in candidate_identity.GRAPH_MODULES, so the semantic payload is unchanged; an approved integration would add this file to the module list and the two parameters above to the parameter list, which changes the digest by construction",
+    "second_hop": {
+      "shares_parameters": true,
+      "additional_parameter_count": 0,
+      "name_relative_to_description": {
+        "place|style1": {
+          "records": 70,
+          "name_chars": [
+            2
+          ],
+          "relative_offsets": {
+            "-4": 70
+          }
+        },
+        "object|style0": {
+          "records": 70,
+          "name_chars": [
+            4
+          ],
+          "relative_offsets": {
+            "6": 70
+          }
+        },
+        "place|style2": {
+          "records": 69,
+          "name_chars": [
+            2
+          ],
+          "relative_offsets": {
+            "6": 69
+          }
+        },
+        "object|style2": {
+          "records": 69,
+          "name_chars": [
+            4
+          ],
+          "relative_offsets": {
+            "7": 69
+          }
+        },
+        "object|style1": {
+          "records": 69,
+          "name_chars": [
+            4
+          ],
+          "relative_offsets": {
+            "-6": 69
+          }
+        },
+        "place|style0": {
+          "records": 69,
+          "name_chars": [
+            2
+          ],
+          "relative_offsets": {
+            "5": 69
+          }
+        }
+      },
+      "mechanism": "the same pathway is applied to the place description; the matched offset plus the connector bytes visible in the line give the adjacent name bytes, so no second matcher is needed"
+    }
+  },
+  "answers": {
+    "a_exact_match_reachable": "这一层本质是算法原语：纯字节扫描已达 100%，训练不会让它更准；把它做成参数化可训练通路的唯一理由是 M1 要求匹配与复制在同一主体内、信用不可结构性分离，若不接受这个理由，就应当承认这一层该由算法实现、而不是交给网络学。",
+    "b_two_hops_share": "可以共用：同一组参数对物件描述与地点描述各跑一次，第二跳额外只需要一条由连接词与模板决定的确定性读名偏移规则（实测表给出），不需要第二套通路。",
+    "c_conflict_with_m1": "不冲突：通路输出的匹配位置就是复制的读取位置，内容字节仍经同一状态影响η，∂η/∂α≠0 保留；只有当匹配被移出图外、只把索引传进来时才会违反 M1，本设计不属于那种情形，故不触发 veto_if_reliance。"
+  },
+  "cost": {
+    "cpu_seconds": 1.875,
+    "wall_seconds": 0.24293190008029342,
+    "cpu_cap": 120,
+    "over_budget": false
+  },
+  "discipline": {
+    "adam_updates": 0,
+    "optimizer_steps": 0,
+    "training_forwards": 0,
+    "constructive_forwards": 4,
+    "backward_passes": 1,
+    "bundles_saved": 0,
+    "confirm_reads": 0,
+    "read_only_data": true,
+    "fsync_per_line": true
+  },
+  "progress": "reports/taiji_package19_2r_byte_match_gate_progress_20261105.jsonl"
+}

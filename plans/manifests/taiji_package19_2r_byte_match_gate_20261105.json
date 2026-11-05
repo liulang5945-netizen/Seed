@@ -1,0 +1,20 @@
+{
+  "schema": "taiji-package-19-2r-byte-match-gate-manifest-v1",
+  "step": "19.2r_byte_match_design_gate",
+  "date": "2026-11-05",
+  "report": "reports/taiji_package19_2r_byte_match_gate_20261105.json",
+  "examples": 192,
+  "starts": 384,
+  "unique_object": 192,
+  "unique_place": 192,
+  "ceiling_selection": 1.0,
+  "ceiling_completion": 1.0,
+  "expressibility_gold": 192,
+  "expressibility_place": 192,
+  "new_parameters": 65807,
+  "candidate_sha_v2": "773dcec2e1131d1f3c8784153633d85a9144268a4d5167790740cdd488153aa1",
+  "cpu_seconds": 1.875,
+  "adam_updates": 0,
+  "bundles_saved": 0,
+  "confirm_reads": 0
+}
