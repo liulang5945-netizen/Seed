@@ -1,0 +1,32 @@
+{
+  "package": "20.2s",
+  "date": "2026-11-05",
+  "verdict": "inconclusive",
+  "report": "reports\\taiji_package20_2s_f_information_20261105.json",
+  "report_sha256": "f5fc7bc67fc707505640fbf42f9aaab9a113278da820242abb2cb764b1859958",
+  "runner": "scripts\\training\\probe_taiji_package20_2s_f_information.py",
+  "runner_sha256": "3a3c587b51abfe3eb3d40e4a761115c60c1f5fe6deb381018afd0148c8c96898",
+  "replayed_runner_sha256": "cd23ce2e06b4b6ad1455378f0d9df4f60bef98762893756f6302f3a709c04119",
+  "fixture_digest": "feb19af1c1db46888a9ad679086958707b796986114ba657f8d7d7e8a80db49a",
+  "parent_bundle": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+  "parent_bundle_sha256": "fe04fbfb14aa0390877385a4429f2a851396a6fe6acb3107bae0a5e4e331dfca",
+  "parent_parameter_sha256": "c5ebe35b9bf9442383ba0f568f8b7825466ec97f31ee35625182270aee1934c6",
+  "reference_assemblies_untouched": true,
+  "training_admitted": false,
+  "saved_states": [],
+  "gates": {
+    "p2_script_is_committed_bytes": true,
+    "correction_turns_22": true,
+    "reference_assemblies_untouched": true,
+    "parent_weights_unchanged": true,
+    "thresholds_written_before_reading": true,
+    "lambda_selected_on_training_side": true,
+    "three_controls_present": true,
+    "zero_training": true,
+    "zero_optimizer_steps": true,
+    "zero_backward_calls": true,
+    "zero_new_parameters": true,
+    "report_written_before_format": true
+  },
+  "cost_cpu_seconds": 119.67
+}

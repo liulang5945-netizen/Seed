@@ -1,0 +1,867 @@
+{
+  "package": "20.2s",
+  "date": "2026-11-05",
+  "verdict": "inconclusive",
+  "scope": "closed-form F information probe on the 22 correction surfaces; 0 training, 0 optimizer steps, 0 new parameters",
+  "thresholds": {
+    "primary_metric": "leave-one-out decision-bit accuracy: correct decision bytes at positions [7, 8] divided by 2 bits x 22 turns",
+    "pass_accuracy": 0.6,
+    "pass_margin": 0.2,
+    "fail_accuracy": 0.3,
+    "fail_margin": 0.1,
+    "ridge_lambda_grid": [
+      0.0001,
+      0.001,
+      0.01,
+      0.1,
+      1.0
+    ],
+    "ridge_lambda_selection": "per outer fold: inner leave-one-out over the 21 training rows only; highest inner decision-bit accuracy wins, tie-break larger lambda",
+    "controls": [
+      "label_permutation_5_seeds",
+      "random_vector_same_dim_same_norm",
+      "no_f_state_baseline"
+    ],
+    "margin_definition": "primary accuracy minus the strongest of the three control accuracies",
+    "decision_rule": ">= 0.60 and margin >= 0.20 -> f_carries_correction; <= 0.30 or margin < 0.10 -> f_write_is_empty; otherwise inconclusive",
+    "written_before_reading": true
+  },
+  "script": {
+    "runner_sha256": "3a3c587b51abfe3eb3d40e4a761115c60c1f5fe6deb381018afd0148c8c96898",
+    "p2_script_sha256": "cd23ce2e06b4b6ad1455378f0d9df4f60bef98762893756f6302f3a709c04119",
+    "p2_committed_sha256": "cd23ce2e06b4b6ad1455378f0d9df4f60bef98762893756f6302f3a709c04119",
+    "note": "report written before formatting; submitted_runner_sha256 is recorded after the commit that stores the formatted bytes"
+  },
+  "probe": {
+    "primary": {
+      "features": [
+        22,
+        8192
+      ],
+      "metrics": {
+        "turns": 22,
+        "position_hits": 316,
+        "position_total": 330,
+        "position_accuracy": 0.9575757575757575,
+        "decision_bit_hits": 30,
+        "decision_bit_total": 44,
+        "decision_bit_accuracy": 0.6818181818181818,
+        "decisions_correct": 15,
+        "full_correct": 15,
+        "full_accuracy": 0.6818181818181818
+      },
+      "lambdas": {
+        "selected": [
+          1.0
+        ],
+        "per_fold": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "per_fold": [
+        {
+          "index": 0,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送右箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 1,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送右箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 2,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送右箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 3,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送右箱。",
+          "decision_bits_correct": 0,
+          "bytes_correct": 13
+        },
+        {
+          "index": 4,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送右箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 5,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 6,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 0,
+          "bytes_correct": 13
+        },
+        {
+          "index": 7,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 8,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 9,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 0,
+          "bytes_correct": 13
+        },
+        {
+          "index": 10,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 11,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 12,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 0,
+          "bytes_correct": 13
+        },
+        {
+          "index": 13,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 0,
+          "bytes_correct": 13
+        },
+        {
+          "index": 14,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 15,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 16,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 0,
+          "bytes_correct": 13
+        },
+        {
+          "index": 17,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 18,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 19,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 20,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 0,
+          "bytes_correct": 13
+        },
+        {
+          "index": 21,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        }
+      ]
+    },
+    "wide_15_positions_3_classes": {
+      "features": [
+        22,
+        8192
+      ],
+      "metrics": {
+        "turns": 22,
+        "position_hits": 316,
+        "position_total": 330,
+        "position_accuracy": 0.9575757575757575,
+        "decision_bit_hits": 30,
+        "decision_bit_total": 44,
+        "decision_bit_accuracy": 0.6818181818181818,
+        "decisions_correct": 15,
+        "full_correct": 15,
+        "full_accuracy": 0.6818181818181818
+      },
+      "lambdas": {
+        "selected": [
+          1.0
+        ],
+        "per_fold": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "per_fold": [
+        {
+          "index": 0,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送右箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 1,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送右箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 2,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送右箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 3,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送右箱。",
+          "decision_bits_correct": 0,
+          "bytes_correct": 13
+        },
+        {
+          "index": 4,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送右箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 5,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 6,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 0,
+          "bytes_correct": 13
+        },
+        {
+          "index": 7,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 8,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 9,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 0,
+          "bytes_correct": 13
+        },
+        {
+          "index": 10,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 11,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 12,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 0,
+          "bytes_correct": 13
+        },
+        {
+          "index": 13,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 0,
+          "bytes_correct": 13
+        },
+        {
+          "index": 14,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 15,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 16,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 0,
+          "bytes_correct": 13
+        },
+        {
+          "index": 17,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 18,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 19,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        },
+        {
+          "index": 20,
+          "lambda": 1.0,
+          "gold": "应送右箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 0,
+          "bytes_correct": 13
+        },
+        {
+          "index": 21,
+          "lambda": 1.0,
+          "gold": "应送左箱。",
+          "predicted": "应送左箱。",
+          "decision_bits_correct": 2,
+          "bytes_correct": 15
+        }
+      ]
+    },
+    "label_contract": {
+      "decision_positions": [
+        7,
+        8
+      ],
+      "answer_bytes": 15,
+      "decode_rules_20_decision_positions": [
+        7,
+        8
+      ],
+      "wide_shape": [
+        15,
+        3
+      ],
+      "decision_shape": [
+        2,
+        2
+      ],
+      "note": "the third wide slot is a sentinel that no gold byte uses; template positions have slot0 == slot1 so only one class occurs"
+    },
+    "forward_prediction": {
+      "train_session1_test_session2": {
+        "train": 5,
+        "test": 17,
+        "lambda": 1.0,
+        "turns": 17,
+        "position_hits": 233,
+        "position_total": 255,
+        "position_accuracy": 0.9137254901960784,
+        "decision_bit_hits": 12,
+        "decision_bit_total": 34,
+        "decision_bit_accuracy": 0.35294117647058826,
+        "decisions_correct": 6,
+        "full_correct": 6,
+        "full_accuracy": 0.35294117647058826
+      },
+      "train_session2_test_session1": {
+        "train": 17,
+        "test": 5,
+        "lambda": 1.0,
+        "turns": 5,
+        "position_hits": 67,
+        "position_total": 75,
+        "position_accuracy": 0.8933333333333333,
+        "decision_bit_hits": 2,
+        "decision_bit_total": 10,
+        "decision_bit_accuracy": 0.2,
+        "decisions_correct": 1,
+        "full_correct": 1,
+        "full_accuracy": 0.2
+      }
+    },
+    "structural": {
+      "correction_turns": 22,
+      "distinct_f_vectors": 2,
+      "distinct_f_vectors_session1": 1,
+      "distinct_f_vectors_session2": 1,
+      "f_elements": 8192,
+      "f_norm_min": 0.9499950422503572,
+      "f_norm_max": 1.2915287568783882,
+      "f_window_max_abs_delta": 0.03182028988983364,
+      "f_written_lines": 10,
+      "release_states": [
+        {
+          "after_turn": 5,
+          "first_correction_turn": 6,
+          "written": 5,
+          "fast_identical": true,
+          "fast_sha256": "a4b4888731ac4b70bbb16d3a4c71bc28ebdd46e3de7bf219e97cc89d07c00a14"
+        },
+        {
+          "after_turn": 17,
+          "first_correction_turn": 18,
+          "written": 5,
+          "fast_identical": true,
+          "fast_sha256": "e972cad1cca0592af6b8ac47d6eef2d9ddfbb5091ad5012d5f9566a13de30fe7"
+        }
+      ],
+      "note": "F is written only inside a release call; correction turns cannot write it, so every correction surface inside one feedback window shares one F vector"
+    },
+    "baseline_model_readout": {
+      "turns": 22,
+      "position_hits": 17,
+      "position_total": 330,
+      "position_accuracy": 0.051515151515151514,
+      "decision_bit_hits": 0,
+      "decision_bit_total": 44,
+      "decision_bit_accuracy": 0.0,
+      "decisions_correct": 0,
+      "full_correct": 0,
+      "full_accuracy": 0.0
+    }
+  },
+  "controls": {
+    "label_permutation": {
+      "seeds": [
+        20261105,
+        20261106,
+        20261107,
+        20261108,
+        20261109
+      ],
+      "accuracy_mean": 0.509090909090909,
+      "accuracy_max": 0.7727272727272727,
+      "per_seed": [
+        {
+          "seed": 20261105,
+          "order": [
+            8,
+            5,
+            20,
+            11,
+            17,
+            3,
+            2,
+            10,
+            9,
+            16,
+            14,
+            12,
+            0,
+            6,
+            13,
+            1,
+            4,
+            15,
+            18,
+            7,
+            19,
+            21
+          ],
+          "decision_bit_accuracy": 0.18181818181818182,
+          "full_correct": 4
+        },
+        {
+          "seed": 20261106,
+          "order": [
+            1,
+            9,
+            12,
+            8,
+            20,
+            10,
+            13,
+            17,
+            7,
+            0,
+            14,
+            19,
+            6,
+            15,
+            11,
+            18,
+            2,
+            3,
+            5,
+            4,
+            21,
+            16
+          ],
+          "decision_bit_accuracy": 0.6818181818181818,
+          "full_correct": 15
+        },
+        {
+          "seed": 20261107,
+          "order": [
+            12,
+            13,
+            20,
+            16,
+            2,
+            5,
+            14,
+            8,
+            4,
+            1,
+            10,
+            6,
+            9,
+            21,
+            7,
+            0,
+            18,
+            19,
+            3,
+            17,
+            15,
+            11
+          ],
+          "decision_bit_accuracy": 0.7727272727272727,
+          "full_correct": 17
+        },
+        {
+          "seed": 20261108,
+          "order": [
+            12,
+            0,
+            10,
+            20,
+            17,
+            13,
+            6,
+            16,
+            2,
+            4,
+            8,
+            5,
+            19,
+            9,
+            15,
+            1,
+            14,
+            18,
+            11,
+            3,
+            21,
+            7
+          ],
+          "decision_bit_accuracy": 0.45454545454545453,
+          "full_correct": 10
+        },
+        {
+          "seed": 20261109,
+          "order": [
+            2,
+            17,
+            0,
+            3,
+            12,
+            19,
+            7,
+            18,
+            10,
+            8,
+            1,
+            9,
+            20,
+            6,
+            5,
+            13,
+            4,
+            11,
+            21,
+            16,
+            15,
+            14
+          ],
+          "decision_bit_accuracy": 0.45454545454545453,
+          "full_correct": 10
+        }
+      ]
+    },
+    "random_vector_same_dim_same_norm": {
+      "turns": 22,
+      "position_hits": 294,
+      "position_total": 330,
+      "position_accuracy": 0.8909090909090909,
+      "decision_bit_hits": 8,
+      "decision_bit_total": 44,
+      "decision_bit_accuracy": 0.18181818181818182,
+      "decisions_correct": 4,
+      "full_correct": 4,
+      "full_accuracy": 0.18181818181818182
+    },
+    "no_f_state_baseline": {
+      "turns": 22,
+      "position_hits": 308,
+      "position_total": 330,
+      "position_accuracy": 0.9333333333333333,
+      "decision_bit_hits": 22,
+      "decision_bit_total": 44,
+      "decision_bit_accuracy": 0.5,
+      "decisions_correct": 11,
+      "full_correct": 11,
+      "full_accuracy": 0.5
+    },
+    "window_identity_diagnostic": {
+      "turns": 22,
+      "position_hits": 316,
+      "position_total": 330,
+      "position_accuracy": 0.9575757575757575,
+      "decision_bit_hits": 30,
+      "decision_bit_total": 44,
+      "decision_bit_accuracy": 0.6818181818181818,
+      "decisions_correct": 15,
+      "full_correct": 15,
+      "full_accuracy": 0.6818181818181818
+    },
+    "note": "the window-identity diagnostic is not one of the three required controls; it shows how much of any F accuracy is explained by feedback-window identity"
+  },
+  "judgement": {
+    "primary_accuracy": 0.6818181818181818,
+    "strongest_control_accuracy": 0.509090909090909,
+    "margin": 0.17272727272727273,
+    "verdict": "inconclusive",
+    "no_f_baseline_higher_than_f": false,
+    "window_identity_matches_f": true
+  },
+  "robustness": [
+    {
+      "world": 1,
+      "correction_turns": 22,
+      "distinct_f_vectors": 2,
+      "decision_bit_accuracy": 0.5909090909090909,
+      "full_correct": 13,
+      "lambdas": [
+        1.0
+      ]
+    },
+    {
+      "world": 2,
+      "correction_turns": 22,
+      "distinct_f_vectors": 2,
+      "decision_bit_accuracy": 0.45454545454545453,
+      "full_correct": 10,
+      "lambdas": [
+        0.0001,
+        0.001,
+        1.0
+      ]
+    },
+    {
+      "world": 3,
+      "correction_turns": 22,
+      "distinct_f_vectors": 2,
+      "decision_bit_accuracy": 0.18181818181818182,
+      "full_correct": 4,
+      "lambdas": [
+        0.0001,
+        1.0
+      ]
+    }
+  ],
+  "state": {
+    "reference_assemblies": {
+      "cf1": {
+        "sha256": "b62d6fe6a0721fd82c7c43d575e600c48ffc8e31ff959bfdf14ef9ff07d0039e",
+        "label": "initialized_untrained"
+      },
+      "b_eh": {
+        "sha256": "64cb327e3a8442ef0c59e04b14445a08ab3dccbb8ac42cf6547e0efa4e6f7f46",
+        "label": "initialized_untrained"
+      },
+      "untouched": true
+    },
+    "parent_parameter_sha256": "c5ebe35b9bf9442383ba0f568f8b7825466ec97f31ee35625182270aee1934c6",
+    "parent_parameter_sha256_after": "c5ebe35b9bf9442383ba0f568f8b7825466ec97f31ee35625182270aee1934c6",
+    "parameter_tensors": 135
+  },
+  "gates": {
+    "p2_script_is_committed_bytes": true,
+    "correction_turns_22": true,
+    "reference_assemblies_untouched": true,
+    "parent_weights_unchanged": true,
+    "thresholds_written_before_reading": true,
+    "lambda_selected_on_training_side": true,
+    "three_controls_present": true,
+    "zero_training": true,
+    "zero_optimizer_steps": true,
+    "zero_backward_calls": true,
+    "zero_new_parameters": true,
+    "report_written_before_format": true
+  },
+  "engineering_ready": true,
+  "cost": {
+    "cpu_seconds": 119.67,
+    "wall_seconds": 124.34,
+    "cpu_cap": 200.0,
+    "wall_cap": 1800.0,
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "backward_calls": 0,
+    "confirm_reads": 0,
+    "new_parameters": 0,
+    "worlds_forwarded": 4,
+    "turns_forwarded": 204
+  },
+  "postprocess": {
+    "turns_forwarded_corrected_to": 204,
+    "reason": "the original expression counted every turn of the primary world but only correction surfaces of the three robustness worlds; replay count is 4 worlds x 51 turns; no reading changed"
+  }
+}
