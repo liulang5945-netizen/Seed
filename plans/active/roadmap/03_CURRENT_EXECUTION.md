@@ -2606,3 +2606,26 @@ owner 裁定 19.2m 方向作废并立 **D16-19**（池外负样本不受理、�
 **C. 判定**：**`authority_weak`**（有翻位但 9<11，中间态，不自行挑边）。所需增益 g=1e4 量级且方向仍错；F 携带可读的线性方向信息（0.682）但不足以翻到 11 面。
 
 **D. 花费与记账**：**56.92 CPU / 58.83 wall**（上限 150 / 1800 s）；失败尝试 2 次（ridge 维度错误、读出目标退化为同一常量致 W=0），其 CPU 因重跑前删除 progress 记 **missing**；0 训练/0 优化器步/0 Adam/0 confirm/0 新参数入库/未改图；报告双列 runner sha `380cdc13…`／submitted sha `af76a622…`；逐行 append＋fsync、write-then-rename、收尾只跑一次 in-process `black_check_gate.py`。**不修寻址、不改 τ/α、不进 20.4、不定价、不提训练方案**，结果由 owner 判断。
+
+## 20.4 定价与冻结（2026-11-05，owner 一次连跑；0 正式训练／freeze 未落盘）
+
+**定位**：20.3+20.4 连跑的第一段。先证明"存档→读档→续跑"能逐字节接上，再用真实图量一次外层更新的成本，最后按量级闸决定是否准入正式对照。
+
+**A. 存读验证（硬前置，通过）**：3 步真实更新 → 存 `preflight.pt`（cursor=6）→ 同图续跑 3 步（reference）→ 新建图 load 权重／Adam `load_state_dict`／`set_rng_state` → 从 checkpoint 的 `cursor` 续跑 3 步。逐 step 比对 **loss／权重／Adam 矩／RNG／每 world 读数／数据游标 6 项全 true**（3/3 step 全过）。checkpoint sha `d919749a…`。
+
+**B. 定价（按实际图，9 个样本，不外推）**：每步 batch=2 world、51 轮全场重放、可微 `run_turn`/`release` 镜像、Adam lr=1e-3、grad clip 1.0。实测 **167.50 CPU/更新**（样本 162.6–170.6，wall 比 1.069）；dev 单 world 评测 **28.02 CPU**。
+
+| 项 | 投影 CPU |
+|---|---|
+| 训练 200 更新 × 4 run | 134,002.8 |
+| dev 80 world × 4 run | 8,965.0 |
+| 早期停机探针 5×3 档 × 4 run | 1,680.9 |
+| **合计** | **144,648.7**（6.03× 冻结预算 24,000；3.01× 量级上限 48,000） |
+
+**C. 判定**：**`pricing_over_budget`** —— 超 2× 冻结预算的量级闸，**不跑正式对照、不写 freeze**（协议全文以 `proposed_protocol` 存报告）。阻塞点是**协议单位成本**（200×2 world×51 轮全重放），不是图、阈值或寻址的问题。
+
+**D. 定价附带读数（仅记录，不判定）**：训练前基线（step1 前态）决策位 **0.0/22**、模板位 0.0369、整句 0.0、F 写 10/10；6 步后首个 dev world 决策位 0.3409/22、模板 0.0045、整句 0.0。**模板位本身错、底座未训练的前提仍成立，不得据此判 CF1 成败。**
+
+**E. 花费与纪律**：**1,539.89 CPU / 1,644.89 wall**（轮上限 6,000／14,400 s，未触线）；0 confirm 读取、未改图、store=false 按冻结值、0 正式训练步；报告双列 runner sha **`307cf585…`**（产生读数）／submitted sha **`1100eb8f…`**（提交前修 lint B007 后的字节）；进度逐行 append＋fsync、write-then-rename；收尾 in-process `black_check_gate.py` 一次。
+
+**F. 下一步（唯一）**：由 owner 裁定定价闸。若同意，把每 seed 外层更新数从 **200 降到 50**（batch 2、2 臂×2 seed 不变），投影约 **44.1k CPU（1.84× 预算）** 可落回 2× 闸内（余量仅 8%，需重新定价一次，不得复用本次数字）。

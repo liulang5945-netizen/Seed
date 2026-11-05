@@ -1,0 +1,191 @@
+{
+  "schema": "taiji-rule-learning-20-4-pricing-v1",
+  "evidence": "20_4",
+  "verdict": "pricing_over_budget",
+  "detail": "projected 144649 CPU = 6.0x the frozen budget; the magnitude ceiling is 48000 CPU, so the bounded comparison is not started and the protocol is not frozen",
+  "preflight": {
+    "ok": true,
+    "sha": "d919749aafbd4d1ac9a2a7b2ed6120c3dff8ac181e2b20375f0765d5159b42e5",
+    "checks": [
+      {
+        "step": 4,
+        "loss_byte_identical": true,
+        "weights_byte_identical": true,
+        "optimizer_byte_identical": true,
+        "rng_byte_identical": true,
+        "worlds_byte_identical": true,
+        "cursor_byte_identical": true
+      },
+      {
+        "step": 5,
+        "loss_byte_identical": true,
+        "weights_byte_identical": true,
+        "optimizer_byte_identical": true,
+        "rng_byte_identical": true,
+        "worlds_byte_identical": true,
+        "cursor_byte_identical": true
+      },
+      {
+        "step": 6,
+        "loss_byte_identical": true,
+        "weights_byte_identical": true,
+        "optimizer_byte_identical": true,
+        "rng_byte_identical": true,
+        "worlds_byte_identical": true,
+        "cursor_byte_identical": true
+      }
+    ],
+    "saved_updates": 3,
+    "resumed_updates": 3,
+    "cursor_after_save": 6
+  },
+  "pricing": {
+    "runs": 4,
+    "updates_per_run": 200,
+    "train_cpu": 134002.8,
+    "dev_eval_cpu": 8965.0,
+    "early_stop_probe_cpu": 1680.9,
+    "total_cpu": 144648.7,
+    "total_wall": 154572.1,
+    "frozen_budget_cpu": 24000.0,
+    "magnitude_ceiling_cpu": 48000.0,
+    "round_cap_cpu": 6000.0,
+    "ratio_to_frozen_budget": 6.03,
+    "within_magnitude_ceiling": false,
+    "within_round_cap": false
+  },
+  "measured": {
+    "per_update_cpu": 167.503,
+    "per_update_cpu_samples": [
+      162.609,
+      170.578,
+      165.016,
+      168.078,
+      167.953,
+      166.172,
+      170.125,
+      167.328,
+      169.672
+    ],
+    "per_update_wall_samples": [
+      173.314,
+      184.242,
+      175.427,
+      180.284,
+      179.289,
+      178.175,
+      181.535,
+      178.018,
+      180.669
+    ],
+    "per_eval_world_cpu": 28.016,
+    "per_eval_world_wall": 28.661,
+    "wall_ratio": 1.069,
+    "updates_measured": 6,
+    "eval_worlds_measured": 1
+  },
+  "baseline_before_training": {
+    "decision_bit_accuracy": 0.0,
+    "template_bit_accuracy": 0.036953,
+    "full_byte_accuracy": 0.0,
+    "fast_writes_per_world": [
+      10,
+      10
+    ]
+  },
+  "eval_first_dev_world": {
+    "world": "w160",
+    "surfaces": 22,
+    "decision_bit_accuracy": 0.3409090909090909,
+    "template_bit_accuracy": 0.004524886877828055,
+    "full_byte_accuracy": 0.0,
+    "fast_writes": 10
+  },
+  "training_started": false,
+  "freeze": {
+    "written": false,
+    "path": "plans\\manifests\\taiji_package20_4_freeze_20261105.json",
+    "sha256": null
+  },
+  "proposed_protocol": {
+    "data": {
+      "train_worlds": [
+        0,
+        159
+      ],
+      "dev_worlds": [
+        160,
+        239
+      ],
+      "confirm_worlds_reserved": [
+        240,
+        319
+      ],
+      "confirm_read": false
+    },
+    "training": {
+      "arms": [
+        "CF1",
+        "B_EH"
+      ],
+      "seeds": [
+        20261105,
+        20261106
+      ],
+      "updates_per_seed": 200,
+      "batch_worlds": 2,
+      "learning_rate": 0.001,
+      "grad_clip": 1.0,
+      "addressed_store_enabled": false,
+      "checkpoint_every_updates": 100,
+      "reading_every_updates": 25
+    },
+    "early_stop": {
+      "steps": [
+        25,
+        50,
+        100
+      ],
+      "probe": "five counterfactual F arms, 0 optimizer steps",
+      "criterion": "two consecutive probes with leverage_max < 0.0001 and byte_diff == 0",
+      "verdict": "f_channel_dead_under_training"
+    },
+    "error_gates": {
+      "all_51_turns_kept": true,
+      "correction_surfaces": "22 separate",
+      "post_feedback_first_answer": "separate",
+      "per_arm_judgement": true,
+      "template_vs_content": "reported separately"
+    },
+    "pricing": {
+      "runs": 4,
+      "updates_per_run": 200,
+      "train_cpu": 134002.8,
+      "dev_eval_cpu": 8965.0,
+      "early_stop_probe_cpu": 1680.9,
+      "total_cpu": 144648.7,
+      "total_wall": 154572.1,
+      "frozen_budget_cpu": 24000.0,
+      "magnitude_ceiling_cpu": 48000.0,
+      "round_cap_cpu": 6000.0,
+      "ratio_to_frozen_budget": 6.03,
+      "within_magnitude_ceiling": false,
+      "within_round_cap": false
+    }
+  },
+  "cost": {
+    "cpu_seconds": 1539.891,
+    "wall_seconds": 1644.885
+  },
+  "script": {
+    "runner_sha256": "307cf585b4730d3826c3f6aed41c85b1c9b1a9fbd8fb47893f6db45ad28144ab",
+    "submitted_runner_sha256": "1100eb8f043928eb4e5c56cb964197fe9be6b47e854ef892c332c1d239c5b76f"
+  },
+  "invariants": {
+    "confirm_read": false,
+    "graph_modified": false,
+    "addressed_store_enabled": false,
+    "optimizer_steps_preflight_only": true,
+    "formal_training_steps": 0
+  }
+}
