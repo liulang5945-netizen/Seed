@@ -175,7 +175,8 @@
   },
   "cost": {
     "cpu_seconds": 1539.891,
-    "wall_seconds": 1644.885
+    "wall_seconds": 1644.885,
+    "round_total_cpu_seconds_estimate": 2159.891
   },
   "script": {
     "runner_sha256": "307cf585b4730d3826c3f6aed41c85b1c9b1a9fbd8fb47893f6db45ad28144ab",
@@ -187,5 +188,12 @@
     "addressed_store_enabled": false,
     "optimizer_steps_preflight_only": true,
     "formal_training_steps": 0
+  },
+  "pre_probe_calibration": {
+    "attempts": 3,
+    "updates": 3,
+    "eval_worlds": 3,
+    "cpu_seconds_estimate": 620.0,
+    "note": "engineering feasibility measurement before the formal probe (one output lost to backgrounding, one failed on a missing output directory, one succeeded); it is not part of the nine formal pricing samples and it is charged to the round budget"
   }
 }

@@ -3,7 +3,7 @@
   "evidence": "20_4",
   "verdict": "pricing_over_budget",
   "report_path": "reports\\taiji_package20_4_pricing_freeze_20261105.json",
-  "report_sha256": "b57bb6915b2818be95c576d251ed22933419f267fee2efb00cb050c4fc3f779e",
+  "report_sha256": "5601476640bde417b74b39e6ba2b9116dde9cecba957d32ecf98e746b8372fdb",
   "freeze_written": false,
   "freeze_path": "plans\\manifests\\taiji_package20_4_freeze_20261105.json",
   "freeze_sha256": null,
