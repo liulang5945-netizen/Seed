@@ -913,5 +913,15 @@
       "robustness_clean": true
     },
     "verdict": "fixed"
+  },
+  "disclosure": {
+    "official_confirm_number": {
+      "value": 0.9792,
+      "source": "reports/taiji_package19_2v_confirm_holdout_20261105.json",
+      "rewritten_by_this_package": false
+    },
+    "sealed_set_recheck": "not_performed",
+    "statement": "修复未在封存集上复核，若需新 confirm 读数须另立前置注册",
+    "ledger_rule": "D16-27"
   }
 }
