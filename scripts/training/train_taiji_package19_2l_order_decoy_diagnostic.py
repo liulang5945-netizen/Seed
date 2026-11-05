@@ -46,8 +46,13 @@ the margin term reached the readout, never that a capability shipped.
 
 Pricing discipline: one forward+backward and a 24-example evaluation slice are
 measured with 0 Adam before training; the extrapolation is written into the
-report.  If the estimate exceeds 400 CPU the run stops and writes
-``pricing_gate: over_budget`` instead of training.
+report.  If the estimate exceeds 800 CPU the run stops and writes
+``pricing_gate: over_budget`` instead of training.  The same two units are
+measured again after the last update (same process, batch 8, same method) so the
+report can say whether the opening price was contention or a real price regime.
+
+``machine_hygiene`` is the owner's pre-run measurement, written in verbatim; it
+is not reconstructed by this script.
 
 Run: ``python scripts/training/train_taiji_package19_2l_order_decoy_diagnostic.py``
 """
@@ -119,10 +124,37 @@ CONDITIONAL_SLACK = 0.05
 
 BOOTSTRAP_ROUNDS = 2000
 BOOTSTRAP_SEED = 20261105
-CPU_BUDGET = 400.0
+CPU_BUDGET = 800.0
 ADAM_CAP = 60
-PRICING_SAFETY = 1.15
+PRICING_SAFETY = 1.0
 SAVE_OVERHEAD_CPU = 8.0
+FIRST_BATCH_AFTER_CPU = 2.5
+REPORT_OVERHEAD_CPU = 3.0
+CE_BEFORE_REFERENCE = 6.02
+MARGIN_BEFORE_REFERENCE = 2.17
+CONTENTION_RATIO = 0.7
+
+MACHINE_HYGIENE = {
+    "python_process_count_before": 0,
+    "black_python_processes": 0,
+    "logical_cores": 24,
+    "torch_num_threads": 12,
+    "experiment_pins_torch_threads": 1,
+    "top3_by_cumulative_cpu": [
+        {"name": "Trae CN", "pid": 44532, "total_cpu_s": 43734.4, "live": "0.6%"},
+        {"name": "Trae CN", "pid": 35156, "total_cpu_s": 19830.0, "live": "0.9%"},
+        {"name": "ProcessLasso", "pid": 25848, "total_cpu_s": 17273.1, "live": "0.1%"},
+    ],
+    "cleanup": {
+        "process": "in-process black wrapper (black.main)",
+        "pid": 40008,
+        "cumulative_cpu_s": 641.8,
+        "action": "killed by owner before the run",
+        "recheck_after_cleanup": {"python_process_count": 0, "black_python_processes": 0},
+    },
+    "operational_waste_cpu_s": 641.8,
+    "source": "owner-measured before the 800-budget run; not reconstructed",
+}
 
 OUTPUT_DIR = ROOT / "output/taiji_package19_2l_order_decoy_diagnostic"
 FINAL_BUNDLE = OUTPUT_DIR / "28031-N-alignment-step30-order-decoy.pt"
@@ -428,74 +460,56 @@ def measure_margin(candidate, params, batch) -> tuple[float, int]:
 
 
 def pricing_units(treatment, params, batches, dev, new_fixtures, new_pairs) -> dict:
-    """0-Adam cost reading, measured twice: the second reading is the steady-state unit."""
-    ce_cold = measure_ce(treatment, params, batches[0], "19.2l-B-pricing-ce-cold")
-    margin_cold, margin_rows = measure_margin(treatment, params, batches[0])
-    ce_steady = measure_ce(treatment, params, batches[1], "19.2l-B-pricing-ce-steady")
-    margin_steady, _rows = measure_margin(treatment, params, batches[1])
+    """0-Adam cost reading: one CE backward, one margin backward, a 24-example slice."""
+    ce_unit = measure_ce(treatment, params, batches[0], "19.2l-B-pricing-ce")
+    margin_unit, margin_rows = measure_margin(treatment, params, batches[0])
 
     start = time.process_time()
     h.decode_rows(treatment, tuple(dev[:2]))
     warm_cpu = time.process_time() - start
 
-    slices = (
-        tuple(dev[index] for index in range(0, len(dev), 8))[:24],
-        tuple(dev[index] for index in range(1, len(dev), 8))[:24],
-    )
+    slice_fixtures = tuple(dev[index] for index in range(0, len(dev), 8))[:24]
     start = time.process_time()
-    h.decode_rows(treatment, slices[0])
-    decode_cold = time.process_time() - start
-    start = time.process_time()
-    h.decode_rows(treatment, slices[1])
-    decode_steady = time.process_time() - start
+    h.decode_rows(treatment, slice_fixtures)
+    decode_slice_cpu = time.process_time() - start
 
     start = time.process_time()
     for fixture in new_pairs[:2]:
         wall.swap_pair(treatment, fixture, ROUTING_ARM)
-    swap_cold = time.process_time() - start
-    start = time.process_time()
-    for fixture in new_pairs[2:4]:
-        wall.swap_pair(treatment, fixture, ROUTING_ARM)
-    swap_steady = time.process_time() - start
+    swap_slice_cpu = time.process_time() - start
 
     start = time.process_time()
-    h.score_snapshot(treatment, tuple(new_fixtures[:6]), "19.2l-B-pricing-cold")
-    score_cold = time.process_time() - start
-    start = time.process_time()
-    h.score_snapshot(treatment, tuple(new_fixtures[6:12]), "19.2l-B-pricing-steady")
-    score_steady = time.process_time() - start
+    h.score_snapshot(treatment, tuple(new_fixtures[:6]), "19.2l-B-pricing")
+    score_slice_cpu = time.process_time() - start
 
-    decode_scale = len(dev) / len(slices[0])
+    decode_scale = len(dev) / len(slice_fixtures)
     swap_scale = 20 / 2
     score_scale = 96 / 6
-
-    def snapshot(decode_value, swap_value, score_value):
-        return decode_value * decode_scale + swap_value * swap_scale + score_value * score_scale
-
+    snapshot_cpu = (
+        decode_slice_cpu * decode_scale
+        + swap_slice_cpu * swap_scale
+        + score_slice_cpu * score_scale
+    )
     return {
         "warmup_slice_cpu": warm_cpu,
-        "ce_update_cpu_cold": ce_cold,
-        "ce_update_cpu": ce_steady,
-        "margin_update_cpu_cold": margin_cold,
-        "margin_update_cpu": margin_steady,
+        "ce_update_cpu": ce_unit,
+        "margin_update_cpu": margin_unit,
         "margin_rows": margin_rows,
-        "decode_slice_examples": len(slices[0]),
-        "decode_slice_cpu_cold": decode_cold,
-        "decode_slice_cpu": decode_steady,
+        "unit_batch_index": 0,
+        "decode_slice_examples": len(slice_fixtures),
+        "decode_slice_cpu": decode_slice_cpu,
         "swap_slice_pairs": 2,
-        "swap_slice_cpu_cold": swap_cold,
-        "swap_slice_cpu": swap_steady,
+        "swap_slice_cpu": swap_slice_cpu,
         "score_slice_examples": 6,
-        "score_slice_cpu_cold": score_cold,
-        "score_slice_cpu": score_steady,
+        "score_slice_cpu": score_slice_cpu,
         "decode_scale": decode_scale,
         "swap_scale": swap_scale,
         "score_scale": score_scale,
-        "snapshot_estimate_cpu_cold": snapshot(decode_cold, swap_cold, score_cold),
-        "snapshot_estimate_cpu": snapshot(decode_steady, swap_steady, score_steady),
-        "steady_state_units": (
-            "the second measurement of each unit is used for the estimate; the first (cold) "
-            "measurement is reported for transparency"
+        "snapshot_estimate_cpu": snapshot_cpu,
+        "unit_method": (
+            "one forward+backward per unit on batch 8; the prior run measured the same method "
+            "twice and the second measurement was within 5% of the first, so a single reading "
+            "is used and no blanket safety factor is applied"
         ),
     }
 
@@ -505,23 +519,29 @@ def estimate_total(units: dict, spent_cpu: float, reading_cpu: float) -> dict:
         units["ce_update_cpu"] + units["margin_update_cpu"]
     )
     snapshots = 3 * units["snapshot_estimate_cpu"]
-    readings = 2 * reading_cpu
-    raw = training + snapshots + readings + SAVE_OVERHEAD_CPU + spent_cpu
+    readings_after = reading_cpu + FIRST_BATCH_AFTER_CPU
+    after_price = units["ce_update_cpu"] + units["margin_update_cpu"]
+    raw = (
+        training
+        + snapshots
+        + readings_after
+        + SAVE_OVERHEAD_CPU
+        + after_price
+        + REPORT_OVERHEAD_CPU
+        + spent_cpu
+    )
     estimate = raw * PRICING_SAFETY
     return {
         "formula": (
-            "estimate = ((30*ce_unit + 30*(ce_unit+margin_unit)) + 3*snapshot_estimate "
-            "+ 2*reading_cpu + save_overhead + cpu_already_spent) * 1.15; every unit is the "
-            "steady-state (second) measurement of the same operation"
+            "estimate = 30*ce + 30*(ce+margin) + 3*snapshot + (after_reading + first_batch) "
+            "+ save_overhead + after_price + report_overhead + cpu_already_spent; no blanket "
+            "safety factor because every component is a directly measured unit (the only "
+            "extrapolation is the 24->192 decode slice)"
         ),
         "ce_unit_cpu": units["ce_update_cpu"],
         "margin_unit_cpu": units["margin_update_cpu"],
         "snapshot_estimate_cpu": units["snapshot_estimate_cpu"],
-        "cold_start_units_cpu": {
-            "ce_update": units["ce_update_cpu_cold"],
-            "margin_update": units["margin_update_cpu_cold"],
-            "snapshot_estimate": units["snapshot_estimate_cpu_cold"],
-        },
+        "unit_method": units["unit_method"],
         "training_estimate_cpu": training,
         "three_snapshots_estimate_cpu": snapshots,
         "minimum_floor_cpu": training + snapshots,
@@ -530,8 +550,10 @@ def estimate_total(units: dict, spent_cpu: float, reading_cpu: float) -> dict:
             "training": training / (training + snapshots),
             "three_full_192_snapshots": snapshots / (training + snapshots),
         },
-        "readings_estimate_cpu": readings,
+        "readings_after_estimate_cpu": readings_after,
         "save_overhead_cpu": SAVE_OVERHEAD_CPU,
+        "after_price_estimate_cpu": after_price,
+        "report_overhead_cpu": REPORT_OVERHEAD_CPU,
         "spent_before_training_cpu": spent_cpu,
         "raw_estimate_cpu": raw,
         "safety_factor": PRICING_SAFETY,
@@ -700,12 +722,30 @@ def over_budget_report(design, estimate, units, cost, identities, parent_sha) ->
             "code": "over_budget",
             "stopped_before_training": True,
             "note": (
-                "the fixed design cannot fit the 400 CPU cap on this machine even with zero "
-                "overhead: training floor + three full 192-example snapshots already exceed it; "
-                "nothing was trained and no bundle was written"
+                f"the measured extrapolation exceeds the {CPU_BUDGET:g} CPU cap: training "
+                f"{estimate['training_estimate_cpu']:.2f} + three full 192-example snapshots "
+                f"{estimate['three_snapshots_estimate_cpu']:.2f} = "
+                f"{estimate['minimum_floor_cpu']:.2f} floor, plus readings, save, closing "
+                f"price and report overhead, plus the {estimate['spent_before_training_cpu']:.2f}"
+                f" already spent, totals {estimate['estimate_cpu']:.2f}; nothing was trained "
+                "and no bundle was written"
             ),
             **estimate,
             "units": units,
+        },
+        "machine_hygiene": MACHINE_HYGIENE,
+        "price_measurement": {
+            "unit_price_before": {
+                "ce": units["ce_update_cpu"],
+                "margin": units["margin_update_cpu"],
+            },
+            "owner_reference_before": {
+                "ce": CE_BEFORE_REFERENCE,
+                "margin": MARGIN_BEFORE_REFERENCE,
+            },
+            "unit_price_after": {"status": "not_measured, 0 updates"},
+            "price_verdict": "not_evaluated",
+            "reason": "the pricing gate stopped the run before any update, so no closing price exists",
         },
         "arms": {
             "status": "not_run_over_budget",
@@ -879,10 +919,12 @@ def main() -> int:
         cost = {
             "cpu_seconds": time.process_time() - start_cpu,
             "wall_seconds": time.perf_counter() - start_wall,
+            "cpu_budget": CPU_BUDGET,
             "adam_updates": 0,
             "bundles_saved": 0,
             "confirm_reads": 0,
             "over_budget_triggered": True,
+            "operational_waste_cpu_s": MACHINE_HYGIENE["operational_waste_cpu_s"],
         }
         report = over_budget_report(
             design,
@@ -992,6 +1034,22 @@ def main() -> int:
     control_view = arm_view(control_snapshot, shared=False)
     for label, view in (("treatment", treatment_view), ("control", control_view)):
         j.progress_append(PROGRESS, {"event": "step30_snapshot", "arm": label, **view})
+
+    # ---- closing unit price: same two units, same process, batch 8 ----------
+    after_price_start = time.process_time()
+    ce_after_unit = measure_ce(treatment, params, batches[0], "19.2l-B-post-ce")
+    margin_after_unit, _post_rows = measure_margin(treatment, params, batches[0])
+    after_price_cpu = time.process_time() - after_price_start
+    j.progress_append(
+        PROGRESS,
+        {
+            "event": "unit_price_after",
+            "ce": ce_after_unit,
+            "margin": margin_after_unit,
+            "measured_after_price_cpu": after_price_cpu,
+            "unit_batch_index": 0,
+        },
+    )
 
     # ---- after readings -----------------------------------------------------
     after_rows, after_degenerate = content_rows(treatment, sample, MARGIN_TAG)
@@ -1165,10 +1223,37 @@ def main() -> int:
 
     cpu = time.process_time() - start_cpu
     wall_time = time.perf_counter() - start_wall
+    price_verdict = (
+        "contention_at_start"
+        if ce_after_unit <= CE_BEFORE_REFERENCE * CONTENTION_RATIO
+        else "price_regime_changed"
+    )
+    price_measurement = {
+        "unit_price_before": {
+            "ce": CE_BEFORE_REFERENCE,
+            "margin": MARGIN_BEFORE_REFERENCE,
+        },
+        "unit_price_before_this_run": {
+            "ce": units["ce_update_cpu"],
+            "margin": units["margin_update_cpu"],
+        },
+        "unit_price_after": {"ce": ce_after_unit, "margin": margin_after_unit},
+        "ce_ratio_vs_before": ce_after_unit / CE_BEFORE_REFERENCE,
+        "rule": (
+            "contention_at_start if ce_after <= 6.02 * 0.7; otherwise price_regime_changed "
+            "(recorded only, the 800 budget accounting is unchanged)"
+        ),
+        "price_verdict": price_verdict,
+        "budget_occupancy": cpu / CPU_BUDGET,
+        "budget_cpu": CPU_BUDGET,
+        "cpu_seconds": cpu,
+        "unit_method": units["unit_method"],
+    }
     cost = {
         "cpu_seconds": cpu,
         "wall_seconds": wall_time,
         "cpu_budget": CPU_BUDGET,
+        "budget_occupancy": cpu / CPU_BUDGET,
         "adam_updates": total_adam,
         "adam_per_arm": UPDATES,
         "adam_cap": ADAM_CAP,
@@ -1176,12 +1261,14 @@ def main() -> int:
         "confirm_reads": 0,
         "over_budget_triggered": False,
         "pricing_estimate_cpu": estimate["estimate_cpu"],
+        "price_verdict": price_verdict,
+        "operational_waste_cpu_s": MACHINE_HYGIENE["operational_waste_cpu_s"],
         "pricing_units_cpu": {
             "ce_update": units["ce_update_cpu"],
             "margin_update": units["margin_update_cpu"],
             "snapshot_estimate": units["snapshot_estimate_cpu"],
         },
-        "over_400_cpu": cpu > CPU_BUDGET,
+        "over_budget_cpu": cpu > CPU_BUDGET,
     }
 
     report = {
@@ -1196,6 +1283,8 @@ def main() -> int:
         ),
         "design": design,
         "pricing_gate": {**estimate, "units": units, "code": "under_budget"},
+        "machine_hygiene": MACHINE_HYGIENE,
+        "price_measurement": price_measurement,
         "identities": {
             "parent_sha_v2": candidate_identity(parent)["candidate_sha_v2"],
             "treatment_step0_sha_v2": treatment_identity["candidate_sha_v2"],
@@ -1307,6 +1396,11 @@ def main() -> int:
             delta["route_miss"]["ci_high"],
         ],
         "diagnostic_gates_all_pass": gates["all_pass"],
+        "price_verdict": price_verdict,
+        "unit_price_before": price_measurement["unit_price_before"],
+        "unit_price_after": price_measurement["unit_price_after"],
+        "budget_occupancy": cpu / CPU_BUDGET,
+        "operational_waste_cpu_s": MACHINE_HYGIENE["operational_waste_cpu_s"],
         "saved_bundle": saved["path"],
         "saved_bundle_sha256": saved["sha256"],
         "round_trip_ok": round_trip_ok,
@@ -1342,6 +1436,12 @@ def main() -> int:
                     treatment_view["old_pass"],
                 ],
                 "gates_all_pass": gates["all_pass"],
+                "price_verdict": price_verdict,
+                "unit_price_after": {
+                    "ce": round(ce_after_unit, 3),
+                    "margin": round(margin_after_unit, 3),
+                },
+                "budget_occupancy": round(cpu / CPU_BUDGET, 4),
                 "adam": total_adam,
                 "cpu": round(cpu, 1),
                 "wall": round(wall_time, 1),

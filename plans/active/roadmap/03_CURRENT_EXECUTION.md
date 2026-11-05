@@ -2224,3 +2224,13 @@ owner 批准 B（设计照原文）并加了三项读数与一条互斥归因口
 **C. 为什么不是"再优化一下就能塞进 400"**：400 里 60% 是训练（60 次更新不可减，否则违反"同 30 更新"设计）、40% 是两臂 step30 快照（减掉就没有 Δ 与旧描述/conditional_byte 基线），三读还要额外 backward。任何"省"都等于改设计或砍判据，按 owner 纪律不许偷偷做。
 
 **D. 判定与唯一建议**：`pricing_gate_over_budget`，**设计未改、判据未改、归因口径未改、未训练**。唯一建议＝**把本轮 CPU 上限提到 ≥750 后原样开跑**（同一条命令：`python scripts/training/train_taiji_package19_2l_order_decoy_diagnostic.py`），等 owner 批准；本次 58.1 CPU、累计约 216 CPU（含定价校准）、0 Adam / 0 包 / 0 confirm。证据：[B 定价报告](../../../reports/taiji_package19_2l_order_decoy_diagnostic_20261105.json)＋[manifest](../../manifests/taiji_package19_2l_order_decoy_diagnostic_20261105.json)；脚本 [`train_taiji_package19_2l_order_decoy_diagnostic.py`](../../../scripts/training/train_taiji_package19_2l_order_decoy_diagnostic.py)。
+
+## 2026-11-05 19.2l-B 800 定价闸（再拦 / 0 Adam / 0 包）
+
+owner 把本轮上限从 400 提到 **800**（400 只是上一轮口径，不是 owner 约束），并要求开跑前做机器洁净检查、跑完复测收盘单价。设计、判据、三读、互斥口径**一字未改**。
+
+**A. 机器洁净检查（开跑前实测）**：python 进程 **0**、含 black 的 python **0**、逻辑核 **24**、`torch.get_num_threads()` **12**；累计 CPU 前三：`Trae CN 44532` 43734.4 s、`Trae CN 35156` 19830.0 s、`ProcessLasso 25848` 17273.1 s，3 秒实测增量 **0.44 / 0.64 / 0.05 s（0.6% / 0.9% / 0.1% 的 24 核）** → 全部 idle。**清理**：开跑前发现一个**空转的 in-process black** `PID 40008`（此前用 `black.main` 包装格式化留下，累计 **641.8 CPU s**），已 kill；复测 python=0 / black=0，记 `operational_waste_cpu_s: 641.8`（D16-13 的同类事故，本次是 Agent 侧误用）。
+
+**B. 定价（0 Adam，两次独立测量）**：本机当前稳态单价 CE 单步 **6.25 CPU**、边距项单步 **2.34 CPU**、192 例全量快照 **96.34 CPU**。外推拆分：训练 **445.3**（30×6.25 ＋ 30×8.59）＋ 三次 192 例快照 **289.0** ＋ 事后三读 19.3 ＋ 存包 8.0 ＋ 收工单价 8.6 ＋ 报告 3.0 ＋ 已花 38.9 = **812.1 CPU**；第二次独立复测 **813.6**。超 800 约 **1.5%** → `pricing_gate = over_budget`，**停训**：0 Adam、0 包、0 confirm、未训练、未存包。底板（训练＋三次快照）**734.3 本身没超 800**，超出的 78 全部来自 owner 要求的三读/存包/收工单价/报告。
+
+**C. 判定与唯一建议**：`price_verdict = not_evaluated`（无训练，收盘单价不测）；两次外推几乎一致 → **设计级价格、非测量抖动**。唯一建议＝**把 `CPU_BUDGET` 提到 850（设计、判据、三读一字不动；预计占用 95.5%）后原样开跑**，等 owner 裁定。证据：[B 定价报告](../../../reports/taiji_package19_2l_order_decoy_diagnostic_20261105.json)＋[manifest](../../manifests/taiji_package19_2l_order_decoy_diagnostic_20261105.json)。

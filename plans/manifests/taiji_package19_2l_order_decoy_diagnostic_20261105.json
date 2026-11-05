@@ -4,8 +4,8 @@
   "date": "2026-11-05",
   "report": "reports\\taiji_package19_2l_order_decoy_diagnostic_20261105.json",
   "pricing_gate": "over_budget",
-  "estimate_cpu": 929.7390624999999,
-  "minimum_floor_cpu": 708.375,
+  "estimate_cpu": 812.125,
+  "minimum_floor_cpu": 734.34375,
   "adam_updates": 0,
   "bundles_saved": 0,
   "confirm_reads": 0

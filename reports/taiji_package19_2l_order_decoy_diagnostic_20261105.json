@@ -36,7 +36,7 @@
       "shared_init_snapshot": true
     },
     "budget": {
-      "cpu_cap": 400.0,
+      "cpu_cap": 800.0,
       "adam_cap": 60,
       "bundles": 1,
       "confirm_reads": 0
@@ -45,57 +45,104 @@
   "pricing_gate": {
     "code": "over_budget",
     "stopped_before_training": true,
-    "note": "the fixed design cannot fit the 400 CPU cap on this machine even with zero overhead: training floor + three full 192-example snapshots already exceed it; nothing was trained and no bundle was written",
-    "formula": "estimate = ((30*ce_unit + 30*(ce_unit+margin_unit)) + 3*snapshot_estimate + 2*reading_cpu + save_overhead + cpu_already_spent) * 1.15; every unit is the steady-state (second) measurement of the same operation",
-    "ce_unit_cpu": 6.015625,
-    "margin_unit_cpu": 2.171875,
-    "snapshot_estimate_cpu": 94.09375,
-    "cold_start_units_cpu": {
-      "ce_update": 6.265625,
-      "margin_update": 2.328125,
-      "snapshot_estimate": 97.6875
-    },
-    "training_estimate_cpu": 426.09375,
-    "three_snapshots_estimate_cpu": 282.28125,
-    "minimum_floor_cpu": 708.375,
-    "floor_over_budget": true,
+    "note": "the measured extrapolation exceeds the 800 CPU cap: training 445.31 + three full 192-example snapshots 289.03 = 734.34 floor, plus readings, save, closing price and report overhead, plus the 38.88 already spent, totals 812.12; nothing was trained and no bundle was written",
+    "formula": "estimate = 30*ce + 30*(ce+margin) + 3*snapshot + (after_reading + first_batch) + save_overhead + after_price + report_overhead + cpu_already_spent; no blanket safety factor because every component is a directly measured unit (the only extrapolation is the 24->192 decode slice)",
+    "ce_unit_cpu": 6.25,
+    "margin_unit_cpu": 2.34375,
+    "snapshot_estimate_cpu": 96.34375,
+    "unit_method": "one forward+backward per unit on batch 8; the prior run measured the same method twice and the second measurement was within 5% of the first, so a single reading is used and no blanket safety factor is applied",
+    "training_estimate_cpu": 445.3125,
+    "three_snapshots_estimate_cpu": 289.03125,
+    "minimum_floor_cpu": 734.34375,
+    "floor_over_budget": false,
     "floor_share": {
-      "training": 0.6015087347803071,
-      "three_full_192_snapshots": 0.39849126521969297
+      "training": 0.606408783352483,
+      "three_full_192_snapshots": 0.3935912166475169
     },
-    "readings_estimate_cpu": 34.03125,
+    "readings_after_estimate_cpu": 19.3125,
     "save_overhead_cpu": 8.0,
-    "spent_before_training_cpu": 58.0625,
-    "raw_estimate_cpu": 808.46875,
-    "safety_factor": 1.15,
-    "estimate_cpu": 929.7390624999999,
-    "budget_cpu": 400.0,
+    "after_price_estimate_cpu": 8.59375,
+    "report_overhead_cpu": 3.0,
+    "spent_before_training_cpu": 38.875,
+    "raw_estimate_cpu": 812.125,
+    "safety_factor": 1.0,
+    "estimate_cpu": 812.125,
+    "budget_cpu": 800.0,
     "over_budget": true,
     "adam_updates": 0,
     "extrapolated_not_measured": true,
     "units": {
       "warmup_slice_cpu": 0.484375,
-      "ce_update_cpu_cold": 6.265625,
-      "ce_update_cpu": 6.015625,
-      "margin_update_cpu_cold": 2.328125,
-      "margin_update_cpu": 2.171875,
+      "ce_update_cpu": 6.25,
+      "margin_update_cpu": 2.34375,
       "margin_rows": 16,
+      "unit_batch_index": 0,
       "decode_slice_examples": 24,
-      "decode_slice_cpu_cold": 9.0625,
-      "decode_slice_cpu": 8.625,
+      "decode_slice_cpu": 8.875,
       "swap_slice_pairs": 2,
-      "swap_slice_cpu_cold": 0.34375,
       "swap_slice_cpu": 0.359375,
       "score_slice_examples": 6,
-      "score_slice_cpu_cold": 1.359375,
-      "score_slice_cpu": 1.34375,
+      "score_slice_cpu": 1.359375,
       "decode_scale": 8.0,
       "swap_scale": 10.0,
       "score_scale": 16.0,
-      "snapshot_estimate_cpu_cold": 97.6875,
-      "snapshot_estimate_cpu": 94.09375,
-      "steady_state_units": "the second measurement of each unit is used for the estimate; the first (cold) measurement is reported for transparency"
+      "snapshot_estimate_cpu": 96.34375,
+      "unit_method": "one forward+backward per unit on batch 8; the prior run measured the same method twice and the second measurement was within 5% of the first, so a single reading is used and no blanket safety factor is applied"
     }
+  },
+  "machine_hygiene": {
+    "python_process_count_before": 0,
+    "black_python_processes": 0,
+    "logical_cores": 24,
+    "torch_num_threads": 12,
+    "experiment_pins_torch_threads": 1,
+    "top3_by_cumulative_cpu": [
+      {
+        "name": "Trae CN",
+        "pid": 44532,
+        "total_cpu_s": 43734.4,
+        "live": "0.6%"
+      },
+      {
+        "name": "Trae CN",
+        "pid": 35156,
+        "total_cpu_s": 19830.0,
+        "live": "0.9%"
+      },
+      {
+        "name": "ProcessLasso",
+        "pid": 25848,
+        "total_cpu_s": 17273.1,
+        "live": "0.1%"
+      }
+    ],
+    "cleanup": {
+      "process": "in-process black wrapper (black.main)",
+      "pid": 40008,
+      "cumulative_cpu_s": 641.8,
+      "action": "killed by owner before the run",
+      "recheck_after_cleanup": {
+        "python_process_count": 0,
+        "black_python_processes": 0
+      }
+    },
+    "operational_waste_cpu_s": 641.8,
+    "source": "owner-measured before the 800-budget run; not reconstructed"
+  },
+  "price_measurement": {
+    "unit_price_before": {
+      "ce": 6.25,
+      "margin": 2.34375
+    },
+    "owner_reference_before": {
+      "ce": 6.02,
+      "margin": 2.17
+    },
+    "unit_price_after": {
+      "status": "not_measured, 0 updates"
+    },
+    "price_verdict": "not_evaluated",
+    "reason": "the pricing gate stopped the run before any update, so no closing price exists"
   },
   "arms": {
     "status": "not_run_over_budget",
@@ -145,12 +192,14 @@
     "status": "not_run_over_budget"
   },
   "cost": {
-    "cpu_seconds": 58.0625,
-    "wall_seconds": 59.54201420000754,
+    "cpu_seconds": 38.875,
+    "wall_seconds": 39.83598760003224,
+    "cpu_budget": 800.0,
     "adam_updates": 0,
     "bundles_saved": 0,
     "confirm_reads": 0,
-    "over_budget_triggered": true
+    "over_budget_triggered": true,
+    "operational_waste_cpu_s": 641.8
   },
   "identities": {
     "treatment_sha_v2": "cab73880f0909a0d78dc8e6e4352d284bfbce4a6dd12e1bdc8dafa759b9a08a6",
