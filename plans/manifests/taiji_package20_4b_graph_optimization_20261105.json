@@ -1,0 +1,15 @@
+{
+  "schema": "taiji-rule-learning-20-4b-manifest-v1",
+  "evidence": "20_4b",
+  "verdict": "pricing_still_over_budget",
+  "report_path": "reports\\taiji_package20_4b_graph_optimization_20261105.json",
+  "report_sha256": "f46dd1559932362681a87a890c17e6676f61d03983349929b8369e84fceebaca",
+  "runner_sha256": "3ee24ea5cb5ea07165125951a8766096d5075fd92dfefa728eb2183ece85cdfa",
+  "executor_sha256": "2eaaacb7093f2e2547bcb3471f7b517452bc0f5d55e37de7e7240d47148208c5",
+  "candidate_sha_v2": "58754e500992f684fef5668290038066cee6b0528f181721917e9d5d3fd0f333",
+  "optimized_unit_cpu": 56.906,
+  "projection_cpu": 48129.2,
+  "training_started": false,
+  "submitted_runner_sha256": "935591bef9421fdb2c04fa0e761e4238d1eee6cf67cd3e78d893a551913121f0",
+  "submitted_executor_sha256": "b01d700b6d107fde66838e76b0bc587e99a0efb8e65d5dab193081e131787fc4"
+}

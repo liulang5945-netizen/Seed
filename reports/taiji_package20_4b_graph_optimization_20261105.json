@@ -1,0 +1,865 @@
+{
+  "schema": "taiji-rule-learning-20-4b-graph-optimization-v1",
+  "evidence": "20_4b",
+  "verdict": "pricing_still_over_budget",
+  "detail": "batched unit is 56.9 CPU per batch-2 update (2.91x the 20.4a reference), projecting 48129.2 CPU (2.01x the frozen budget, 0.71-1.00x the 2x ceiling depending on host memory pressure); the submitted run misses the 48,000 ceiling by 129.2 CPU (0.27%)",
+  "setup": {
+    "threads": 1,
+    "dtype": "float64",
+    "deterministic": true,
+    "deterministic_mode": "torch.use_deterministic_algorithms(warn_only=True)",
+    "rng_state_sha256": "b22efc6de4f1b2821c585a54d89da68342eb67118ed7369df8f6cee41244d168",
+    "addressed_store_enabled": false,
+    "batch_worlds": 2,
+    "samples": 5,
+    "micro_samples": 5,
+    "worlds": [
+      "w000",
+      "w001"
+    ]
+  },
+  "identity": {
+    "candidate_sha_v2_before": "58754e500992f684fef5668290038066cee6b0528f181721917e9d5d3fd0f333",
+    "candidate_sha_v2_after": "58754e500992f684fef5668290038066cee6b0528f181721917e9d5d3fd0f333",
+    "unchanged": true,
+    "frozen_module_sha256": {
+      "taiji/rule_learning_20_1_net.py": "8b5e95ef8aa14aad4dac0cf45b64b4505e30e1aac22b8c1d8a492f4a114de4bb",
+      "taiji/living_core.py": "144a4760a1b7973d59d17f3edb59932e5e824289e63d570d50349dde1fbf8246",
+      "taiji/record_relation_core.py": "8318dde5c3d3b3ff42a2c94e528aec7552363d4f9aef2c11ee95b8e868ef64a2"
+    },
+    "execution_path": "taiji/living_core_batch.py",
+    "execution_path_sha256": "2eaaacb7093f2e2547bcb3471f7b517452bc0f5d55e37de7e7240d47148208c5",
+    "note": "candidate_sha_v2 hashes the graph contract and the declared parameter shapes, not source bytes; the optimized executor is additive and reuses the same parameters, so the identity must not move"
+  },
+  "equivalence": {
+    "tolerance": 1e-06,
+    "reference": "untouched R021 single-world step, two worlds sequential, one backward",
+    "candidate": "batched executor, one forward and one backward over both worlds",
+    "same_weights": true,
+    "same_data": [
+      "w000",
+      "w001"
+    ],
+    "loss_abs_diff": 0.0,
+    "gradient_max_abs_diff": 4.547473508864641e-13,
+    "gradients": [
+      {
+        "name": "W",
+        "max_abs_diff": 8.881784197001252e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "U",
+        "max_abs_diff": 4.6629367034256575e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "V",
+        "max_abs_diff": 4.119968255444917e-18,
+        "over_tolerance": false
+      },
+      {
+        "name": "R",
+        "max_abs_diff": 4.107825191113079e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "P",
+        "max_abs_diff": 7.105427357601002e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "tau_logit",
+        "max_abs_diff": 2.6645352591003757e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "encoder.embedding.weight",
+        "max_abs_diff": 2.1316282072803006e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "encoder.input.weight",
+        "max_abs_diff": 6.039613253960852e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "encoder.input.bias",
+        "max_abs_diff": 6.394884621840902e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "encoder.convolutions.0.weight",
+        "max_abs_diff": 2.2648549702353193e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "encoder.convolutions.0.bias",
+        "max_abs_diff": 3.2862601528904634e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "encoder.convolutions.1.weight",
+        "max_abs_diff": 2.2648549702353193e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "encoder.convolutions.1.bias",
+        "max_abs_diff": 1.687538997430238e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "encoder.convolutions.2.weight",
+        "max_abs_diff": 2.353672812205332e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "encoder.convolutions.2.bias",
+        "max_abs_diff": 2.3092638912203256e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "encoder.event.weight",
+        "max_abs_diff": 3.3306690738754696e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "encoder.event.bias",
+        "max_abs_diff": 2.4424906541753444e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "encoder.goal.weight",
+        "max_abs_diff": 8.881784197001252e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "encoder.goal.bias",
+        "max_abs_diff": 8.881784197001252e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "nu_projection.weight",
+        "max_abs_diff": 1.4654943925052066e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "nu_projection.bias",
+        "max_abs_diff": 1.4654943925052066e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "message_q.0.weight",
+        "max_abs_diff": 4.3021142204224816e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "message_q.1.weight",
+        "max_abs_diff": 5.828670879282072e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "message_q.2.weight",
+        "max_abs_diff": 1.3322676295501878e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "message_q.3.weight",
+        "max_abs_diff": 2.2898349882893854e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "message_k.0.weight",
+        "max_abs_diff": 1.1102230246251565e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "message_k.1.weight",
+        "max_abs_diff": 4.85722573273506e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "message_k.2.weight",
+        "max_abs_diff": 1.1102230246251565e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "message_k.3.weight",
+        "max_abs_diff": 3.191891195797325e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "message_v.0.weight",
+        "max_abs_diff": 1.6653345369377348e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "message_v.1.weight",
+        "max_abs_diff": 2.220446049250313e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "message_v.2.weight",
+        "max_abs_diff": 2.220446049250313e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "message_v.3.weight",
+        "max_abs_diff": 2.0539125955565396e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "message_goal.weight",
+        "max_abs_diff": 3.191891195797325e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_queries.0.weight",
+        "max_abs_diff": 2.6454533008646308e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_queries.0.bias",
+        "max_abs_diff": 1.1275702593849246e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_queries.1.weight",
+        "max_abs_diff": 8.673617379884035e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_queries.1.bias",
+        "max_abs_diff": 2.0816681711721685e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_queries.2.weight",
+        "max_abs_diff": 3.122502256758253e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_queries.2.bias",
+        "max_abs_diff": 6.938893903907228e-18,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_queries.3.weight",
+        "max_abs_diff": 2.7755575615628914e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_queries.3.bias",
+        "max_abs_diff": 1.3877787807814457e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_queries.4.weight",
+        "max_abs_diff": 4.683753385137379e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_queries.4.bias",
+        "max_abs_diff": 1.474514954580286e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_queries.5.weight",
+        "max_abs_diff": 3.8163916471489756e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_queries.5.bias",
+        "max_abs_diff": 1.7780915628762273e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_queries.6.weight",
+        "max_abs_diff": 6.5052130349130266e-18,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_queries.6.bias",
+        "max_abs_diff": 2.3852447794681098e-18,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_queries.7.weight",
+        "max_abs_diff": 1.2576745200831851e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_queries.7.bias",
+        "max_abs_diff": 1.463672932855431e-18,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_outputs.0.weight",
+        "max_abs_diff": 2.949029909160572e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_outputs.0.bias",
+        "max_abs_diff": 2.4424906541753444e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_outputs.1.weight",
+        "max_abs_diff": 9.540979117872439e-18,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_outputs.1.bias",
+        "max_abs_diff": 6.661338147750939e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_outputs.2.weight",
+        "max_abs_diff": 1.1796119636642288e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_outputs.2.bias",
+        "max_abs_diff": 2.886579864025407e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_outputs.3.weight",
+        "max_abs_diff": 5.854691731421724e-18,
+        "over_tolerance": false
+      },
+      {
+        "name": "fast_outputs.3.bias",
+        "max_abs_diff": 2.498001805406602e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "episodic.null_key",
+        "max_abs_diff": 1.3010426069826053e-18,
+        "over_tolerance": false
+      },
+      {
+        "name": "episodic.null_value",
+        "max_abs_diff": 1.249000902703301e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "episodic.a.weight",
+        "max_abs_diff": 1.887379141862766e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "episodic.h.weight",
+        "max_abs_diff": 3.608224830031759e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "episodic.g.weight",
+        "max_abs_diff": 1.3183898417423734e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "episodic.meta.weight",
+        "max_abs_diff": 1.1102230246251565e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "episodic.meta.bias",
+        "max_abs_diff": 1.942890293094024e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "episodic.second.weight",
+        "max_abs_diff": 1.4988010832439613e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "episodic.second.bias",
+        "max_abs_diff": 1.1102230246251565e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "episodic.score.weight",
+        "max_abs_diff": 4.440892098500626e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "episodic.score.bias",
+        "max_abs_diff": 1.8259088226799987e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "episodic.value.weight",
+        "max_abs_diff": 1.1546319456101628e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "episodic.value.bias",
+        "max_abs_diff": 1.0658141036401503e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "episodic.value_meta.weight",
+        "max_abs_diff": 1.1102230246251565e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "xi.weight",
+        "max_abs_diff": 2.6645352591003757e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "xi.bias",
+        "max_abs_diff": 1.4210854715202004e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.query.0.weight",
+        "max_abs_diff": 2.6645352591003757e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.query.1.weight",
+        "max_abs_diff": 1.1546319456101628e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.keys.0.weight",
+        "max_abs_diff": 8.326672684688674e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.keys.1.weight",
+        "max_abs_diff": 3.3306690738754696e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.keys.2.weight",
+        "max_abs_diff": 7.494005416219807e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.keys.3.weight",
+        "max_abs_diff": 5.273559366969494e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.keys.4.weight",
+        "max_abs_diff": 5.773159728050814e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.keys.5.weight",
+        "max_abs_diff": 2.220446049250313e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.keys.6.weight",
+        "max_abs_diff": 7.105427357601002e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.keys.7.weight",
+        "max_abs_diff": 4.579669976578771e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.values.0.weight",
+        "max_abs_diff": 1.27675647831893e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.values.1.weight",
+        "max_abs_diff": 1.5543122344752192e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.values.2.weight",
+        "max_abs_diff": 9.325873406851315e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.values.3.weight",
+        "max_abs_diff": 2.3314683517128287e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.values.4.weight",
+        "max_abs_diff": 3.774758283725532e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.values.5.weight",
+        "max_abs_diff": 8.881784197001252e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.values.6.weight",
+        "max_abs_diff": 7.549516567451064e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.values.7.weight",
+        "max_abs_diff": 3.469446951953614e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "readout.output.weight",
+        "max_abs_diff": 3.907985046680551e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "expression.coverage",
+        "max_abs_diff": 2.4424906541753444e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "expression.z.weight",
+        "max_abs_diff": 2.6645352591003757e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "expression.a.weight",
+        "max_abs_diff": 1.7763568394002505e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "expression.meta.weight",
+        "max_abs_diff": 2.3314683517128287e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "expression.position.weight",
+        "max_abs_diff": 8.881784197001252e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "expression.goal.weight",
+        "max_abs_diff": 9.43689570931383e-16,
+        "over_tolerance": false
+      },
+      {
+        "name": "expression.goal.bias",
+        "max_abs_diff": 1.9984014443252818e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "expression.score.weight",
+        "max_abs_diff": 7.815970093361102e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "expression.generate.weight",
+        "max_abs_diff": 2.1316282072803006e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "expression.generate.bias",
+        "max_abs_diff": 1.7763568394002505e-15,
+        "over_tolerance": false
+      },
+      {
+        "name": "expression.mix.weight",
+        "max_abs_diff": 2.2737367544323206e-13,
+        "over_tolerance": false
+      },
+      {
+        "name": "expression.mix.bias",
+        "max_abs_diff": 1.4210854715202004e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "expression.continuation.weight",
+        "max_abs_diff": 4.547473508864641e-13,
+        "over_tolerance": false
+      },
+      {
+        "name": "expression.continuation.bias",
+        "max_abs_diff": 5.684341886080802e-14,
+        "over_tolerance": false
+      },
+      {
+        "name": "write_heads.0.0.weight",
+        "max_abs_diff": 2.7755575615628914e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "write_heads.0.0.bias",
+        "max_abs_diff": 1.6479873021779667e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "write_heads.0.2.weight",
+        "max_abs_diff": 2.7755575615628914e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "write_heads.0.2.bias",
+        "max_abs_diff": 3.469446951953614e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "write_heads.1.0.weight",
+        "max_abs_diff": 1.734723475976807e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "write_heads.1.0.bias",
+        "max_abs_diff": 7.37257477290143e-18,
+        "over_tolerance": false
+      },
+      {
+        "name": "write_heads.1.2.weight",
+        "max_abs_diff": 1.0408340855860843e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "write_heads.1.2.bias",
+        "max_abs_diff": 1.5612511283791264e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "write_heads.2.0.weight",
+        "max_abs_diff": 3.122502256758253e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "write_heads.2.0.bias",
+        "max_abs_diff": 2.42861286636753e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "write_heads.2.2.weight",
+        "max_abs_diff": 3.469446951953614e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "write_heads.2.2.bias",
+        "max_abs_diff": 4.85722573273506e-17,
+        "over_tolerance": false
+      },
+      {
+        "name": "write_heads.3.0.weight",
+        "max_abs_diff": 2.6020852139652106e-18,
+        "over_tolerance": false
+      },
+      {
+        "name": "write_heads.3.0.bias",
+        "max_abs_diff": 1.5178830414797062e-18,
+        "over_tolerance": false
+      },
+      {
+        "name": "write_heads.3.2.weight",
+        "max_abs_diff": 1.951563910473908e-18,
+        "over_tolerance": false
+      },
+      {
+        "name": "write_heads.3.2.bias",
+        "max_abs_diff": 3.903127820947816e-18,
+        "over_tolerance": false
+      }
+    ],
+    "offenders": [],
+    "logits_max_abs_diff": 1.5543122344752192e-15,
+    "verdict": "equivalent"
+  },
+  "optimizations": [
+    {
+      "id": "T1_batched_worlds",
+      "status": "measured",
+      "samples": 5,
+      "reference_unit_cpu": 165.838,
+      "reference_source": "20.4a baseline (same path, 5 samples, single world x2)",
+      "batched_unit_cpu": 56.906,
+      "speedup": 2.914,
+      "sample_cpu": [
+        56.047,
+        51.5,
+        56.641,
+        55.406,
+        64.938
+      ],
+      "forward_cpu": 25.203,
+      "backward_cpu": 31.628
+    },
+    {
+      "id": "T2_vectorized_key_index",
+      "status": "measured",
+      "samples": 5,
+      "repeats_per_sample": 4000,
+      "align": {
+        "before_cpu_per_call": 0.00011,
+        "after_cpu_per_call": 3e-05,
+        "speedup": 3.279,
+        "ops_before": {
+          "aten::unsqueeze": 390,
+          "aten::as_strided": 391,
+          "label": "align_old"
+        },
+        "ops_after": {
+          "aten::unsqueeze": 4,
+          "aten::as_strided": 5,
+          "aten::gather": 2,
+          "label": "align_new"
+        }
+      },
+      "consume": {
+        "before_cpu_per_call": 0.00026,
+        "after_cpu_per_call": 5e-05,
+        "speedup": 5.254,
+        "ops_before": {
+          "aten::as_strided": 388,
+          "aten::select": 190,
+          "aten::unsqueeze": 195,
+          "label": "consume_old"
+        },
+        "ops_after": {
+          "aten::unsqueeze": 6,
+          "aten::as_strided": 8,
+          "aten::gather": 1,
+          "label": "consume_new"
+        }
+      },
+      "index_build_cpu_per_turn": 0.0,
+      "select_calls": {
+        "per_consume_call_before": 190,
+        "per_consume_call_after": 0,
+        "per_update_before_measured_20_4a": 93636,
+        "per_update_after": 0,
+        "upper_bound_at_full_key_count": 290700,
+        "note": "the whole-update figure is the 20.4a profile over a real 51-turn update, where the key count grows from 0 and consumes average far fewer than a full 195-key view; the upper bound applies the late-turn key count to every decode call. align contributes no aten::select on the reference side: its per-key Python indexing lands on as_strided/unsqueeze",
+        "formula": "consume selects per call x 15 decode bytes x 51 turns x 2 worlds"
+      }
+    },
+    {
+      "id": "T3_hoisted_encoder",
+      "status": "measured",
+      "samples": 5,
+      "before_cpu_per_turn": 0.1281,
+      "after_cpu_per_turn": 0.0094,
+      "speedup": 13.667,
+      "convolution_calls_before": {
+        "aten::conv1d": 405,
+        "aten::convolution": 405,
+        "aten::_convolution": 405,
+        "aten::thnn_conv2d": 135,
+        "aten::_slow_conv2d_forward": 135,
+        "aten::slow_conv_dilated2d": 270
+      },
+      "convolution_calls_after": {
+        "aten::conv1d": 12,
+        "aten::convolution": 12,
+        "aten::_convolution": 12,
+        "aten::thnn_conv2d": 4,
+        "aten::_slow_conv2d_forward": 4,
+        "aten::slow_conv_dilated2d": 8
+      },
+      "note": "the contract calls out 306 convolutions; the profiler counts 405 conv1d calls per turn because the encoder re-runs the same three kernels 135 times on the same raw bytes. they are batched into one context call per turn plus a 3-convolution patch table amortised over the update"
+    }
+  ],
+  "unit": {
+    "optimized_batch2_unit_cpu": 56.906,
+    "reference_batch2_unit_cpu": 165.838,
+    "speedup": 2.914,
+    "samples": 5,
+    "per_turn_cpu": 0.5579,
+    "per_world_cpu": 28.453
+  },
+  "evaluation": {
+    "samples": 5,
+    "per_turn_cpu": 0.1344,
+    "per_world_cpu": 6.853,
+    "mode": "inference_mode, batched turn with B=1"
+  },
+  "projection": {
+    "optimized": {
+      "unit_cpu": 56.906,
+      "train_cpu": 45525.0,
+      "dev_eval_cpu": 2193.0,
+      "early_stop_probe_cpu": 411.2,
+      "total_cpu": 48129.2,
+      "ratio_to_frozen_budget": 2.01,
+      "ratio_to_magnitude_ceiling": 1.0,
+      "within_ceiling": false
+    },
+    "reference_from_20_4a": {
+      "unit_cpu": 165.838,
+      "total_cpu": 141451.6,
+      "ratio_to_frozen_budget": 5.89
+    },
+    "frozen_budget_cpu": 24000.0,
+    "magnitude_ceiling_cpu": 48000.0,
+    "runs": 4,
+    "updates_per_run": 200,
+    "dev_worlds_per_run": 80,
+    "early_stop_probes_per_run": 15
+  },
+  "training_started": false,
+  "formal_training_steps": 0,
+  "confirm_read": false,
+  "freeze_written": false,
+  "calibration_updates": {
+    "executed": 6,
+    "note": "one untimed-equivalence reference update plus five timed batched updates; none of them enters any capability reading"
+  },
+  "cost": {
+    "cpu_seconds": 516.0,
+    "wall_seconds": 680.978,
+    "cap_cpu_seconds": 1200.0
+  },
+  "bottleneck": {
+    "name": "backward",
+    "backward_cpu_per_sample": 31.628,
+    "forward_cpu_per_sample": 25.203,
+    "backward_share": 0.556,
+    "inner_ops": "after the fixes the remaining forward is matmul-bound (bmm/mm over the 4x128 message pass and the 2x128 readout); the 20.4a backward profile was bmm/mm/convolution_backward/add_ (11,834 add_ calls). aten::select is now 0 per update and conv1d fell 405 -> 12 per turn, so neither is a bottleneck anymore",
+    "note": "per-op attribution of the optimized backward was not re-profiled (that would cost another full update); the split below is the measured phase split"
+  },
+  "measurement_variance": {
+    "note": "the same runner (modulo formatting) was measured twice with an identical equivalence gate; the host was memory-saturated during the second run (RSS 1.4-1.7 GB against ~0.13 GB free), and page-fault CPU is charged to the process",
+    "runs": [
+      {
+        "unit_cpu": 40.291,
+        "projection_cpu": 34231.1,
+        "verdict": "pricing_admissible_after_optimization",
+        "host_free_gb": 1.9,
+        "runner": "pre-format bytes"
+      },
+      {
+        "unit_cpu": 56.906,
+        "projection_cpu": 48129.2,
+        "verdict": "pricing_still_over_budget",
+        "host_free_gb": 0.13,
+        "runner": "submitted bytes"
+      }
+    ],
+    "interpretation": "the spread is +41% over the lower run, far wider than the 5-sample spread inside either run (56.047-64.938); the verdict below uses the later, conservative run, whose miss against the 48,000 ceiling is 0.27%. the owner has to decide whether a 0.27% miss under host pressure counts as admissible or as still over budget"
+  },
+  "options_for_owner": [
+    {
+      "id": "A_redefine_ceiling",
+      "ceiling_cost": "48,129.2 measured (miss by 129.2 CPU = 0.27%); the frozen ceiling would have to move from 48,000 to >=48,200",
+      "credits": "none: the tested object is untouched and the ladder is the shipped one",
+      "status": "needs owner ruling, not chosen here"
+    },
+    {
+      "id": "B_relaxed_bptt",
+      "ceiling_cost": "≈37,422 arithmetic scaling of the 20.4a relaxed unit (109,036.6 x 56.906/165.838); not measured in 20.4b",
+      "credits": "cut: per-turn detach severs cross-turn feedback credit, the very object of package 20 (gradient max diff 2.39), already rejected by the owner",
+      "status": "needs owner ruling, not chosen here"
+    },
+    {
+      "id": "C_shrink_ladder",
+      "ceiling_cost": "≈36,096 for 200 updates x 3 runs (arithmetic scaling), or ≈34,143 for 150 updates x 4 runs",
+      "credits": "cut: fewer runs or fewer updates weakens exactly the reading the owner refused to weaken",
+      "status": "needs owner ruling, not chosen here"
+    }
+  ],
+  "script": {
+    "runner_sha256": "3ee24ea5cb5ea07165125951a8766096d5075fd92dfefa728eb2183ece85cdfa",
+    "submitted_runner_sha256": "935591bef9421fdb2c04fa0e761e4238d1eee6cf67cd3e78d893a551913121f0",
+    "executor_sha256": "2eaaacb7093f2e2547bcb3471f7b517452bc0f5d55e37de7e7240d47148208c5",
+    "submitted_executor_sha256": "b01d700b6d107fde66838e76b0bc587e99a0efb8e65d5dab193081e131787fc4",
+    "sha_delta_note": "the two columns differ by dead code only: the lint hook rejected five unused bindings (probe: identity_index import, reference in batched_release, emitted_same; executor: length in episodic_batch, c in step_batch). none of them sit on a numeric path, and nothing was re-gated on the submitted bytes; the readings belong to runner_sha256/executor_sha256"
+  }
+}
