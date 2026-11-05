@@ -1,0 +1,14 @@
+{
+  "schema": "taiji-package19-2p-manifest-v1",
+  "step": "19.2p",
+  "date": "2026-11-05",
+  "report": "reports\\taiji_package19_2p_key_separability_20261105.json",
+  "verdict": "proposal_not_admissible",
+  "samples": 384,
+  "within_record_median": 0.6169298475639309,
+  "between_record_pairs": 0,
+  "cpu_seconds": 2.34375,
+  "adam_updates": 0,
+  "bundles_saved": 0,
+  "confirm_reads": 0
+}

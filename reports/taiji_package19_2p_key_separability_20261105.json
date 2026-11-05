@@ -1,0 +1,128 @@
+{
+  "schema": "taiji-package19-2p-key-separability-v1",
+  "step": "19.2p",
+  "date": "2026-11-05",
+  "gate": "key_separability_design_gate",
+  "proposal": {
+    "key": "whole record line (description + linking word + name)",
+    "role_markers": [
+      "D对应N。",
+      "D是N。",
+      "N又叫D。"
+    ],
+    "threshold": 0.5,
+    "threshold_reason": "19.2f measured a median order-induced score difference of 1.24; a key difference must clear the 8.88e-16 noise floor and be comparable with the score scale"
+  },
+  "baseline_duplicates": {
+    "starts": 384,
+    "role_swapped_in_pool_twins": 0,
+    "twin_count_histogram": {
+      "0": 384
+    },
+    "note": "19.2n measured the same quantity as 0/384; this row only rechecks it 0 Adam"
+  },
+  "key_separability": {
+    "within_record_role_swap": {
+      "count": 96,
+      "mean": 0.6395748629959436,
+      "median": 0.6169298475639309,
+      "p10": 0.452880894522688,
+      "p90": 0.8172617510264728,
+      "min": 0.32588077274232197,
+      "max": 1.0488771826287309,
+      "threshold": 0.5,
+      "above_threshold": 81,
+      "above_threshold_rate": 0.84375,
+      "records": 96,
+      "identical_key_count": 0,
+      "noise_floor": 8.88e-16,
+      "by_kind": {
+        "object": {
+          "count": 48,
+          "mean": 0.549656562649103,
+          "median": 0.5438182216588626,
+          "p10": 0.42878484169747,
+          "p90": 0.6779077815931599,
+          "min": 0.32588077274232197,
+          "max": 0.7997862327981903,
+          "threshold": 0.5,
+          "above_threshold": 33,
+          "above_threshold_rate": 0.6875
+        },
+        "place": {
+          "count": 48,
+          "mean": 0.7294931633427842,
+          "median": 0.7259524072537671,
+          "p10": 0.5798520463436502,
+          "p90": 0.9143712409799699,
+          "min": 0.5104730989595867,
+          "max": 1.0488771826287309,
+          "threshold": 0.5,
+          "above_threshold": 48,
+          "above_threshold_rate": 1.0
+        }
+      }
+    },
+    "between_record_role_swap": {
+      "count": 0,
+      "status": "empty_measurement_set",
+      "pairs": 0,
+      "source": "no such record pair exists"
+    },
+    "shared_token_pairs": 0,
+    "description_name_vocabulary_overlap": 0
+  },
+  "margin": {
+    "status": "empty_measurement_set",
+    "reason": "the role-swapped counterpart must be a real in-pool record (owner 1.3); no world contains one, so scoring would require a synthesised decoy, which is forbidden",
+    "bundles_loaded_for_scoring": 0,
+    "systems": [
+      "28031-B",
+      "28032-B"
+    ],
+    "required_quantity": "score_gold - score_role_swapped"
+  },
+  "admission": {
+    "item_1_baseline": {
+      "pass": true,
+      "value": 0
+    },
+    "item_2a_within_record": {
+      "pass": false,
+      "median": 0.6169298475639309,
+      "min": 0.32588077274232197,
+      "max": 1.0488771826287309,
+      "above_threshold_rate": 0.84375
+    },
+    "item_2b_between_record": {
+      "pass": null,
+      "value": 0,
+      "status": "empty_measurement_set"
+    },
+    "item_3_zero_adam_margin": {
+      "pass": false,
+      "status": "empty_measurement_set"
+    }
+  },
+  "verdict": {
+    "label": "proposal_not_admissible",
+    "reason": "two independent blockers: (i) reading 1.2(a) clears 0.5 on only 81/96 record lines (min 0.326), so the role marker is not a uniform separator; (ii) readings 1.2(b) and 1.3 both need a role-swapped *record* inside the pool, and the record vocabulary keeps descriptions and names disjoint, so no world contains such a pair (0/12) and the mandated numbers cannot be produced without synthesising a record, which the gate forbids",
+    "narrowing": "the key is not a bag: no swapped line shares the gold key (0/96 identical, min 0.326 >> 8.88e-16); the blockers are the 0.5 bar on part of the lines and the missing in-pool counterpart"
+  },
+  "boundary": "this gate only says whether a role-swapped opponent can exist inside the pool under the whole-line key; it says nothing about whether training can learn the distinction",
+  "cost": {
+    "estimate_cpu": 8,
+    "cpu_seconds": 2.34375,
+    "wall_seconds": 2.517970700049773,
+    "cpu_cap": 150,
+    "over_budget": false
+  },
+  "discipline": {
+    "adam_updates": 0,
+    "bundles_saved": 0,
+    "confirm_reads": 0,
+    "fsync_per_line": true,
+    "formatted_in_package": false
+  },
+  "progress": "reports\\taiji_package19_2p_key_separability_progress_20261105.jsonl"
+}
