@@ -866,6 +866,21 @@ owner 定稿并提交阶段 20 rev2（`bb3fbe6a6`）后，只执行 20.1 的四�
 - **E dry-forward（不训练）**：2 world／102 轮，logits **[15, 257]** 全有限；CF1 fast writes 20、B_EH 0；CF1 journal 102、applied 20、released 20；会话边界 4 次存/恢复全部精确（4/4）；B_EH 与 CF1（F 关闭）**765/765 逐字节一致、`max|Δlogits| = 0.0`**。
 - **F 判定与边界**：`verdict=ready`，19 个门全 true；**0 训练 / 0 优化器步 / 0 Adam / 0 confirm 读取 / 0 替换 / 19.x 装配态未动**；两图各 1 份 `initialized_untrained`，其余 0 存包。**159.53 CPU / 164.55 wall**（上限 500 / 4500 s，31.9%）；逐行 append＋fsync；报告 write-then-rename。**20.2 信用与保存预检未准入**，等 owner 判断。
 
+### 16.23 20.2 信用链＋负对照＋完整保存/独立恢复（2026-11-05，0 训练 / 153.08 CPU）
+
+owner 在 20.1 收下后按 PLAN-PACKAGE20 表授权只做 20.2；**不修改 20.1 三个模块**（`candidate_sha_v2` 不变），信用探针在新脚本内重建 grad-enabled 前向（镜像 `run_turn`），参数以声明式 `requires_grad_(False)` 表达会话冻结。证据 [报告](../../reports/taiji_package20_2_credit_recovery_20261105.json)＋[manifest](../../plans/manifests/taiji_package20_2_credit_recovery_20261105.json)；脚本 [probe](../../scripts/training/probe_taiji_package20_2_credit_recovery.py)；进度 jsonl 逐行 fsync。
+
+- **A1 误差可达 F**：探针轮 18（`current_v2`）loss **15.401160**、**dL/dF 0.068832**、按 (group, head) 分头 [[0.005480,0.005223],[0.037832,0.035744],[0.029793,0.032915],[0.000548,0.000610]]、**份额 0.004469** → 判 **`reachable`**（未触发 `credit_starvation`，故按 owner 授权继续后续）。
+- **A2 冻结真冻结**：同一次反向列出全部 **135 张量**梯度范数表，**0 个有梯度（全 None）**、`violations=[]` → Ψ/Θ 会话冻结成立，未触发 `session_freeze_violation`。
+- **A3 塑形只落在设计内**：设计冻结下 `design_freeze_share = 1.0`（F 是唯一梯度路径）；**解冻对照**仅作活性证据——**107/135 张量有梯度**、参数范数 **73.504**、F 份额 0.000936、**解冻前向与原前向差 0.0**、F 置零 loss 15.400374（Δ **0.000787**）→ 共同编码/读写/表达路径是**经由 F 输出**被塑形，而非自身收到梯度。
+- **A4 两跳/两次释放绑定**：**10/10** 反馈 query 与源轮逐字节匹配、且全部早于释放时刻；applied receipts **10**；release v1（after turn 5）引用 turns 1–5、后随纠正面 6–10；release v2（after turn 17）引用 13–17、后随 18–34；两次释放**全 8 个 (group,head) 段均变化**（`fast_max_delta` **0.076687** / **0.031820**）。
+- **B 负对照三条**：① B_EH **fast writes 0**、纠正面 0/22、dL/dF 0.068802、share_thaw 0.000935（与 CF1 同轴并排）；② 反馈置乱（同长度乱序字节）fast writes 10、share_thaw **0.000411（相对 −56.0%）**、方向 cosine **−0.028**、fast 最大差 0.0254、探针 loss 19.076，输出**未变好**（0/22 ≤ 0/22）；③ F 关闭时 CF1 与 B_EH **51 轮 765/765 字节逐字节一致**、`max|Δlogits| 0.0`（本包独立复核，未复用 20.1 读数）。
+- **C 完整保存与独立恢复（真跑）**：① 会话中点（turn 18）全量写入→新图载入→续 **6 轮 90/90 字节一致**（`state_restore_exact=true`、max|Δ| 0.0）；② 跨会话（turn 10 边界）**90/90**，fast 在边界前已写、载入后持久、journal 持久、`f_reset_at_boundary=false`（按设计 F 会话内不跨会话，本次证明是**持久保留**而非静默复用）；③ 崩溃式：截断包 29,407 B 被 `load_checkpoint` 以 OSError 拒绝、canonical sha 不变，恢复后 **90/90**。状态表 9 项（h/fast/nu_ema/keys/coverage/prior/journal 持久；previous_byte/turn_cursor 会话内 reset）**全 serialized/restored/byte_identical**。
+- **D 必带读数**：dry 前向 51 轮、logits **[15, 257]** 全有限；CF1 fast writes **10**、B_EH **0**；**反向 6 次**（全部不 step）；`turns_covered=224`（七个对照运行 222＋2 次信用探针；历史 17×3 重跑未计入）。
+- **E 判定与边界**：`verdict=ready`，14 门全 true；**0 训练 / 0 优化器步 / 0 Adam / 0 confirm / 0 新参数**；两图各 1 份 `initialized_untrained`，3 个恢复包标 `recovery_copy`×2＋`crash_artifact`×1（`output/` 不提交，仅记 sha）；19.x 装配态未动；**153.08 CPU / 159.04 wall**（上限 400 / 3600 s，38.3%）；逐行 append＋fsync；报告 write-then-rename；收尾 in-process `black_check_gate.py` 一次。**20.3 定价未准入**，等 owner 判断。
+
+**D16-28（2026-11-05，owner 授权下立，永久有效）：信用与恢复的判定口径。** ① 信用探针的**判定态**是"声明式会话冻结"（参数 `requires_grad_(False)`、只对 F 叶张量求导）；解冻对照**只作活性证据**，其份额读数不参与门，避免用解冻后的参数梯度掩盖设计态。② A1 读数必须同时给 **F 梯度范数**与**份额**；范数为 0 或数值不可辨识即判 `credit_starvation` 并**立即停**，不得用其它读数掩盖。③ 恢复验证必须**逐字节**比较续跑输出（不看指标近似）；恢复副本须标 `recovery_copy`／`crash_artifact` 并计入存包清单，`output/` 下的包只登记 sha 不入库。④ "会话内不跨会话"的项若设计保留，必须显式证明其**被清空**，不得静默复用。
+
 ## 17. E1–E11数学审查的主张边界
 
 14条前沿意见按[数学裁定](MATH-ADJUDICATION_CORE_GRAPH_20261104.md)收窄，11组[精确算术回执](../../reports/taiji_graph_review_math_20261104.json)只核对有限见证和恒等式，不代签模型或一般定理。后续不得将以下已被反例否定的推广作为硬前提：加性tanh全域rank≤2、缺独立W_Q'不能目标重排、重复字节使OP2核不可复制、取消eta上界零稳定性代价、软正则权重必须等于KKT乘子、初始出边梯度0必须特殊重置。
