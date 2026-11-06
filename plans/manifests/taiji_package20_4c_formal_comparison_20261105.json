@@ -1,0 +1,15 @@
+{
+  "schema": "taiji-rule-learning-20-4c-manifest-v1",
+  "evidence": "20_4c",
+  "verdict": "host_memory_insufficient",
+  "report_path": "reports\\taiji_package20_4c_formal_comparison_20261105.json",
+  "report_sha256": "c9870cd9b70aba73370bb3c8c6934dc88b1cf258b99ac267b4e1283e609295b6",
+  "runner_sha256": "716c73149a5d60905744c24d9e9b2a435b1402833876d4e12f6e95343e41497a",
+  "executor_sha256": "b01d700b6d107fde66838e76b0bc587e99a0efb8e65d5dab193081e131787fc4",
+  "freeze_path": "plans\\manifests\\taiji_package20_4c_freeze_20261105.json",
+  "freeze_sha256": "ff8499360eaf627d22fbb171b118e145a5d52e4d9106e3ad89e8af4683451779",
+  "candidate_sha_v2": "58754e500992f684fef5668290038066cee6b0528f181721917e9d5d3fd0f333",
+  "formal_training_steps": 25,
+  "completed_runs": 0,
+  "training_started": true
+}

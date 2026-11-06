@@ -1,0 +1,225 @@
+{
+  "schema": "taiji-rule-learning-20-4c-formal-comparison-v1",
+  "evidence": "20_4c",
+  "verdict": "host_memory_insufficient",
+  "detail": "only 757 MB available at CF1/20261105/update (floor 1024 MB)",
+  "runs": {
+    "CF1|20261105": {
+      "arm": "CF1",
+      "seed": 20261105,
+      "baseline": {
+        "stage": "baseline",
+        "arm": "CF1",
+        "seed": 20261105,
+        "worlds": [
+          "w000",
+          "w001"
+        ],
+        "decision_correct": 0,
+        "surfaces": 102,
+        "decision_accuracy": 0.0,
+        "template_bit_accuracy": 0.03695324283559578,
+        "content_bit_accuracy": 0.0,
+        "full_byte_accuracy": 0.0,
+        "fast_writes": 20,
+        "turns": 102,
+        "cpu": 17.031
+      },
+      "readings": [
+        {
+          "stage": "reading",
+          "arm": "CF1",
+          "seed": 20261105,
+          "step": 25,
+          "losses": [
+            638.608216,
+            377.537254,
+            312.531534,
+            390.866747,
+            271.168239,
+            194.88011,
+            166.943108,
+            140.805152,
+            129.552885,
+            129.217329,
+            127.094131,
+            125.376806,
+            126.52703,
+            129.570185,
+            126.133084,
+            125.8754,
+            122.8783,
+            124.706891,
+            127.943706,
+            127.197361,
+            115.826297,
+            121.793609,
+            130.198114,
+            120.345387,
+            117.685344
+          ],
+          "loss_mean": 184.850489,
+          "update_cpu_mean": 58.549,
+          "host_free_mb": 7210.4,
+          "decision_correct": 212,
+          "surfaces": 2550,
+          "decision_accuracy": 0.08313725490196078,
+          "template_bit_accuracy": 0.012850678733031674,
+          "content_bit_accuracy": 0.1596078431372549,
+          "full_byte_accuracy": 0.0,
+          "fast_writes": 500,
+          "turns": 2550,
+          "cpu": 1501.094
+        }
+      ],
+      "probes": [
+        {
+          "stage": "f_probe",
+          "arm": "CF1",
+          "seed": 20261105,
+          "step": 25,
+          "correction_turns": 22,
+          "baseline_loss": 2.8065478955020975,
+          "arms": {
+            "f_zero": {
+              "loss": 2.7845733520574756,
+              "delta_loss": -0.021974543444621908,
+              "leverage": 0.007829741113572057,
+              "byte_diff": 56
+            },
+            "f_half": {
+              "loss": 2.8296610542579446,
+              "delta_loss": 0.023113158755847074,
+              "leverage": 0.008235440696696922,
+              "byte_diff": 13
+            },
+            "f_double": {
+              "loss": 2.7739257617529987,
+              "delta_loss": -0.032622133749098836,
+              "leverage": 0.01162357991516217,
+              "byte_diff": 34
+            },
+            "f_quad": {
+              "loss": 2.734006301878676,
+              "delta_loss": -0.07254159362342127,
+              "leverage": 0.025847267292206117,
+              "byte_diff": 90
+            },
+            "f_permuted": {
+              "loss": 2.784487761746454,
+              "delta_loss": -0.02206013375564364,
+              "leverage": 0.007860237764336116,
+              "byte_diff": 56
+            }
+          },
+          "leverage_max": 0.025847267292206117,
+          "byte_diff_max": 90,
+          "probe_cpu": 36.141,
+          "cpu": 1537.234
+        }
+      ],
+      "checkpoints": [],
+      "dev_eval": null,
+      "completed": false,
+      "resumed": false
+    },
+    "CF1|20261106": {
+      "arm": "CF1",
+      "seed": 20261106,
+      "baseline": null,
+      "readings": [],
+      "probes": [],
+      "checkpoints": [],
+      "dev_eval": null,
+      "completed": false,
+      "resumed": false
+    },
+    "B_EH|20261105": {
+      "arm": "B_EH",
+      "seed": 20261105,
+      "baseline": null,
+      "readings": [],
+      "probes": [],
+      "checkpoints": [],
+      "dev_eval": null,
+      "completed": false,
+      "resumed": false
+    },
+    "B_EH|20261106": {
+      "arm": "B_EH",
+      "seed": 20261106,
+      "baseline": null,
+      "readings": [],
+      "probes": [],
+      "checkpoints": [],
+      "dev_eval": null,
+      "completed": false,
+      "resumed": false
+    }
+  },
+  "comparison": {
+    "CF1": {
+      "dev_runs": 0,
+      "decision_accuracy": 0.0,
+      "template_bit_accuracy": 0.0,
+      "content_bit_accuracy": 0.0,
+      "full_byte_accuracy": 0.0,
+      "decision_correct": 0,
+      "surfaces": 0,
+      "fast_writes": 0
+    },
+    "B_EH": {
+      "dev_runs": 0,
+      "decision_accuracy": 0.0,
+      "template_bit_accuracy": 0.0,
+      "content_bit_accuracy": 0.0,
+      "full_byte_accuracy": 0.0,
+      "decision_correct": 0,
+      "surfaces": 0,
+      "fast_writes": 0
+    }
+  },
+  "completed": false,
+  "interrupted_runs": [
+    "CF1|20261105",
+    "CF1|20261106"
+  ],
+  "freeze": "plans\\manifests\\taiji_package20_4c_freeze_20261105.json",
+  "freeze_sha256": "ff8499360eaf627d22fbb171b118e145a5d52e4d9106e3ad89e8af4683451779",
+  "identity": {
+    "candidate_sha_v2_before": "58754e500992f684fef5668290038066cee6b0528f181721917e9d5d3fd0f333",
+    "candidate_sha_v2_after": "58754e500992f684fef5668290038066cee6b0528f181721917e9d5d3fd0f333",
+    "unchanged": true
+  },
+  "resume": {
+    "stage": "resume_verified",
+    "note": "each run replays one update from its 100-step checkpoint",
+    "rows": []
+  },
+  "stop": {
+    "verdict": "host_memory_insufficient",
+    "detail": "only 757 MB available at CF1/20261105/update (floor 1024 MB)"
+  },
+  "host_memory": {
+    "start_mb": 3814.4,
+    "end_mb": 796.5
+  },
+  "recovery_rerun": false,
+  "formal_training_steps": 25,
+  "confirm_read": false,
+  "addressed_store_enabled": false,
+  "cost": {
+    "cpu_seconds": 2514.203,
+    "wall_seconds": 2990.28,
+    "cpu_cap": 52000.0
+  },
+  "script": {
+    "runner_sha256": "716c73149a5d60905744c24d9e9b2a435b1402833876d4e12f6e95343e41497a",
+    "submitted_runner_sha256": null,
+    "executor_sha256": "b01d700b6d107fde66838e76b0bc587e99a0efb8e65d5dab193081e131787fc4",
+    "frozen_module_sha256": {
+      "taiji/rule_learning_20_1_net.py": "8b5e95ef8aa14aad4dac0cf45b64b4505e30e1aac22b8c1d8a492f4a114de4bb",
+      "taiji/living_core.py": "144a4760a1b7973d59d17f3edb59932e5e824289e63d570d50349dde1fbf8246"
+    }
+  }
+}

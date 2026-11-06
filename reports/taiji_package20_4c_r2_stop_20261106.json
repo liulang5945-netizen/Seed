@@ -1,0 +1,36 @@
+{
+  "schema": "taiji-rule-learning-20-4c-r2-stop-evidence-v1",
+  "evidence": "20_4c_r2_stop",
+  "stop_reason": "user_reboot",
+  "run": {
+    "arm": "B_EH",
+    "seed": 20261105
+  },
+  "global_step": 75,
+  "cursor": 150,
+  "checkpoint": {
+    "path": "output\\taiji_package20_4c_r2_checkpoints\\B_EH_20261105_075.pt",
+    "sha256": "13e294f0e1df52be2c1ff2969e4bc66508bfd3256fa730700ea74a074202d101",
+    "recorded_sha256": "13e294f0e1df52be2c1ff2969e4bc66508bfd3256fa730700ea74a074202d101",
+    "sha_matches_recording": true
+  },
+  "reload_only": {
+    "no_forward": true,
+    "no_step": true,
+    "weights_digest": "92a3186d03086a45d6db6ed709e2d12e4f0ac7b43549445f47a6c0e585221737",
+    "weights_identical_across_loads": true,
+    "weights_identical_after_restore": true,
+    "optimizer_digest": "14231df6274e0f8e6825b77539d6154faf299ac522a9c05ff105e16f0a284c16",
+    "optimizer_identical_across_loads": true,
+    "optimizer_state_entries": 123,
+    "rng_digest": "b22efc6de4f1b2821c585a54d89da68342eb67118ed7369df8f6cee41244d168",
+    "rng_identical_across_loads": true,
+    "cursor_identical_across_loads": true,
+    "accum_identical_across_loads": true,
+    "state_dict_load": {
+      "missing_keys": [],
+      "unexpected_keys": []
+    }
+  },
+  "resume_verified": true
+}
