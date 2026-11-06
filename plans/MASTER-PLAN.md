@@ -67,6 +67,7 @@ Task1与执行20分别提供有限结构能力与待验证反馈适应，不能�
 | **S21 世界模型/主动活动** | 未调度 | 不以活动次数或空转签收益 | 20成立后执行21研究同任务主动求证 | 真实信息/效用/成本改善 | 系统计划§8 |
 | **S22 继承式规模生长** | 未调度 | 启动信用不等于成熟贡献 | 学习父＋可复现容量压力＋同容量对照 | 成熟功能增量/保持/成本 | 系统计划§9 |
 | **MGW1 多模态世界候选** | 设计交付（未准入训练，不占当前队列） | 规格闭合：四模态codec、K分支对象信念、动作prior、规范化似然、R轮纠正、FP1、belief规划、信用、恢复、生长；2026-11-06补编闭合槽生命周期（§3.1）与分支塌缩诊断（§5.1）。20组张量参考＋16组补编预审全过 | owner 2026-11-05/06要求直接补齐算法（设计授权，非训练授权） | 生产event controller、64字节生产发射、慢参数事务、生长准入按覆盖矩阵另行工程验收；须含无生命周期对照臂；不签任何物理能力 | [MGW1规格](reference/SPEC-TAIJI-MGW1_MULTIMODAL_WORLD_20261105.md)＋[核验](reference/VALIDATION-MGW1_REFERENCE_20261106.md)＋[补编预审](../reports/taiji_mgw1_lifecycle_supplement_20261106.json)＋[职责设计](reference/DESIGN-MULTIMODAL_PHYSICAL_WORLD_20261105.md) |
+| **U1 统一主体代数**（核心＋多模态一体化） | 推导交付（未准入训练，不占当前队列） | 三个seam闭合：状态统一（K分支+每分支记录游标，旧核心/MGW1为两个profile限制）、8d H+Read_R记录域（扩展中性：MGW1→U1函数保真路径）、统一表达（分支×复制的精确联合后验分解；M1/M2/M3承袭；γ_floor默认0）、FP1全域统一（同族定理+域序不变）、记录t_end因果门。7/7预审全过（2M MC后验分解、扩展中性逐位、FP1域序0.355伪效应消除） | owner 2026-11-07裁定多模态是算法内部系统的一部分（设计授权，非训练授权） | 参考张量核验包先行（扩展MGW1 20组到8d H+Read_R+统一表达）→定价→工程；旧核心→U1无函数保真迁移；0训练/0能力 | [U1规格](reference/SPEC-TAIJI-UNIFIED_CORE_U1_20261107.md)＋[预审](../reports/taiji_unified_u1_math_20261107.json)＋[主稿§39](reference/TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md) |
 
 ## 2. 依赖顺序
 
@@ -88,6 +89,7 @@ Task1与执行20分别提供有限结构能力与待验证反馈适应，不能�
 | OP2 形式化 | [OP2 规范](reference/SPEC-COPY_OPERATOR_OP2_MATH_20261104.md) | 一行指针 |
 | 系统能力责任轴（S18–S22） | [系统计划](reference/PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md) | 一行指针 |
 | 多模态/物理世界算法定义（MGW1候选，未准入训练） | [MGW1规格](reference/SPEC-TAIJI-MGW1_MULTIMODAL_WORLD_20261105.md)＋[职责设计](reference/DESIGN-MULTIMODAL_PHYSICAL_WORLD_20261105.md) | 一行指针 |
+| 统一主体代数（U1：核心＋多模态一体化，未准入训练） | [U1规格](reference/SPEC-TAIJI-UNIFIED_CORE_U1_20261107.md) | 一行指针 |
 | 工作包出口/失败回流细则 | [10](active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md) | 一行指针 |
 | 17 机制细则（已结案） | [17 设计](reference/DESIGN-POST-N16_SELECTION_ROUTING_20261103.md)＋[SPEC-N16-01](reference/SPEC-N16-01_SELECTION_LOCKED_BINDING_DRAFT_20261103.md) | 标 `historical` |
 | 数据前提定义 | `taiji/data_premise_18_0.py`＋18.0 定价报告 | 一行指针 |

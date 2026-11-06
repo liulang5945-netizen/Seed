@@ -1,0 +1,57 @@
+{
+  "schema": "taiji-unified-u1-math-precheck-v1",
+  "date": "2026-11-07",
+  "generated_at_utc": "2026-11-06T16:27:31.199853+00:00",
+  "source_sha256": "bdc50e2fb933291af7e54b1fbe53caadd947bfa3ce2689a865c10bfc2e760f44",
+  "basis_commit": "fef0291eab88417fcaa9bd0a533fd23b2324a3cb",
+  "status": "passed",
+  "passed": true,
+  "checks": [
+    {
+      "name": "U1 unified emission normalization (per-branch mixtures and eta mixture)",
+      "ok": true,
+      "detail": "max|sum-1| = 0.00e+00; per-branch sums = [1.0, 1.0]"
+    },
+    {
+      "name": "U2 posterior decomposition = exact joint Bayes over (branch, position)",
+      "ok": true,
+      "detail": "2M-sample MC: max|eta_MC - eta_formula| = 1.73e-05; max|r_MC - r_formula| = 6.72e-04; eta sums to 1 exactly; per-branch r sums <= 1 (gen responsibility is the complement)"
+    },
+    {
+      "name": "U3 extension neutrality: 8d H with zero-init Read_R == 7d H bit-exact; startup gradient nonzero",
+      "ok": true,
+      "detail": "h7 == h8(ReadR=0) bitwise: True; h8(ReadR!=0) differs: True; max|FD-analytic grad| = 4.0e-11; ||grad|| = 0.0076 > 0"
+    },
+    {
+      "name": "U4 M1 carries over: anchor-direct copy_mass has nonzero gradient w.r.t. record selection alpha",
+      "ok": true,
+      "detail": "d(copy_mass)/d(alpha) = [0.897015, 0.686108, 0.14012] (content fidelity and record selection are not structurally separable, M1 verbatim)"
+    },
+    {
+      "name": "U5 FP1 joint solve: exact, permutation/domain-order invariant; sequential per-domain is order-dependent",
+      "ok": true,
+      "detail": "joint FOC residual = 2.7e-15; max|X_perm - X_joint| = 2.9e-15; sequential obj-then-rec vs rec-then-obj differ by 0.355 (order artifact eliminated only by the joint solve)"
+    },
+    {
+      "name": "U6 8d leaky-tanh boundedness under unbounded input magnitudes",
+      "ok": true,
+      "detail": "max|h'| = 0.999999978331436 over 200k random steps with inputs up to 100 sigma"
+    },
+    {
+      "name": "U7 record-domain causal gating: t_end-gated records cannot enter past predictions",
+      "ok": true,
+      "detail": "readable at t=10: ['frame', 'rec1', 'rec2']; at t=12: ['frame', 'rec1', 'rec2', 'rec3-future']; future record excluded until its t_end"
+    }
+  ],
+  "accounting": {
+    "emission_samples": 2000000,
+    "h_steps_checked": 200000,
+    "fp1_solves": 4,
+    "production_imports": 0,
+    "checkpoints_loaded": 0,
+    "dataset_reads": 0,
+    "sealed_face_reads": 0
+  },
+  "cpu_seconds": 2.25,
+  "scope": "Algebra pre-checks for the U1 unified-subject seam-closure propositions only (emission normalization, joint posterior decomposition, extension neutrality, M1 carryover, FP1 domain-order invariance, 8d boundedness, record causal gating). Synthetic values; no production graph, weights, dataset or sealed face. Does not sign production engineering, cross-candidate weight transfer, or any capability."
+}
