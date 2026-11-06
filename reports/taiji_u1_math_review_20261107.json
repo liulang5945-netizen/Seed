@@ -1,0 +1,232 @@
+{
+  "schema": "taiji-u1-math-review-20261107-v1",
+  "date": "2026-11-07",
+  "generated_at_utc": "2026-11-06T17:38:33.658692+00:00",
+  "reviewed_spec": "plans/reference/SPEC-TAIJI-UNIFIED_CORE_U1_20261107.md",
+  "basis_commit": "5e64c0e1f933dfff004ae9be97c1b466c62323aa",
+  "source_sha256": "36f504a009c27e1dd643ed53bd623db2fce8db8ea089f7df60b1e2ff44e7a077",
+  "scope": "Independent algebra/numerical review of four U1 propositions. Synthetic float64 data only; 0 production graph, 0 checkpoint, 0 dataset, 0 training, 0 sealed-face access. Not a capability claim and not a production gate.",
+  "checks": {
+    "R1_beta_limit_under_sphere_constraint": {
+      "verdict": "theorem_5_1_beta_limit_refuted_under_active_constraint",
+      "red_refutes_claim": true,
+      "green_control_passes": true,
+      "arms": {
+        "green_constraint_inactive": {
+          "v_norm": 2.0,
+          "cap": 4.0,
+          "min_norm_solution_norm": 2.0,
+          "predicted_error_floor": 0.0,
+          "asymptotic_constrained_read_error": 1.99999799987971e-06,
+          "rows": [
+            {
+              "beta": 1.0,
+              "unconstrained_read_error": 1.0,
+              "constrained_read_error": 1.0,
+              "mu": 0.0,
+              "constraint_active": false,
+              "norm_unconstrained": 1.0,
+              "norm_constrained": 1.0
+            },
+            {
+              "beta": 10.0,
+              "unconstrained_read_error": 0.18181818181818166,
+              "constrained_read_error": 0.18181818181818166,
+              "mu": 0.0,
+              "constraint_active": false,
+              "norm_unconstrained": 1.8181818181818183,
+              "norm_constrained": 1.8181818181818183
+            },
+            {
+              "beta": 100.0,
+              "unconstrained_read_error": 0.01980198019801982,
+              "constrained_read_error": 0.01980198019801982,
+              "mu": 0.0,
+              "constraint_active": false,
+              "norm_unconstrained": 1.9801980198019802,
+              "norm_constrained": 1.9801980198019802
+            },
+            {
+              "beta": 1000.0,
+              "unconstrained_read_error": 0.0019980019980019303,
+              "constrained_read_error": 0.0019980019980019303,
+              "mu": 0.0,
+              "constraint_active": false,
+              "norm_unconstrained": 1.998001998001998,
+              "norm_constrained": 1.998001998001998
+            },
+            {
+              "beta": 1000000.0,
+              "unconstrained_read_error": 1.99999799987971e-06,
+              "constrained_read_error": 1.99999799987971e-06,
+              "mu": 0.0,
+              "constraint_active": false,
+              "norm_unconstrained": 1.9999980000020001,
+              "norm_constrained": 1.9999980000020001
+            }
+          ]
+        },
+        "red_constraint_active": {
+          "v_norm": 5.0,
+          "cap": 4.0,
+          "min_norm_solution_norm": 5.0,
+          "predicted_error_floor": 1.0,
+          "asymptotic_constrained_read_error": 1.0,
+          "rows": [
+            {
+              "beta": 1.0,
+              "unconstrained_read_error": 2.5,
+              "constrained_read_error": 2.5,
+              "mu": 0.0,
+              "constraint_active": false,
+              "norm_unconstrained": 2.5,
+              "norm_constrained": 2.5
+            },
+            {
+              "beta": 10.0,
+              "unconstrained_read_error": 0.45454545454545414,
+              "constrained_read_error": 1.0,
+              "mu": 1.4999999999999991,
+              "constraint_active": true,
+              "norm_unconstrained": 4.545454545454546,
+              "norm_constrained": 4.0
+            },
+            {
+              "beta": 100.0,
+              "unconstrained_read_error": 0.04950495049504955,
+              "constrained_read_error": 0.9999999999999991,
+              "mu": 23.99999999999998,
+              "constraint_active": true,
+              "norm_unconstrained": 4.9504950495049505,
+              "norm_constrained": 4.000000000000001
+            },
+            {
+              "beta": 1000.0,
+              "unconstrained_read_error": 0.004995004995005381,
+              "constrained_read_error": 1.0,
+              "mu": 248.9999999999999,
+              "constraint_active": true,
+              "norm_unconstrained": 4.995004995004995,
+              "norm_constrained": 4.0
+            },
+            {
+              "beta": 1000000.0,
+              "unconstrained_read_error": 4.9999949993662085e-06,
+              "constrained_read_error": 1.0,
+              "mu": 249998.99999999988,
+              "constraint_active": true,
+              "norm_unconstrained": 4.999995000005001,
+              "norm_constrained": 4.0
+            }
+          ]
+        }
+      },
+      "note": "With F0=0, ||k||=1, v=vnorm*e0, C_F=cap, the constrained solution reads X^T k = (||k||*C_F/||v||)*v, so the error tends to ||v||-C_F*||k|| > 0 whenever ||v||/||k|| > C_F. The unconstrained beta-limit does converge to v."
+    },
+    "R2_emission_normalization_premise": {
+      "verdict": "proposition_4_1_premise_not_closed_by_the_w_definition",
+      "alpha_null": 0.13341441767457396,
+      "lambda": 0.5,
+      "m_mass": 0.30000000000000004,
+      "sum_w_from_definition": 0.886597744976612,
+      "sum_w_1_minus_alpha_null_scaled": 0.8865977449766121,
+      "required_binding": "q_null == alpha_null * (1 - lambda * m_mass)",
+      "green_control": {
+        "q_null": 0.11340225502338787,
+        "required_q_null": 0.11340225502338787,
+        "sum_P": 0.9999999999999999
+      },
+      "red_counterexample": {
+        "q_null": 0.15,
+        "required_q_null": 0.11340225502338787,
+        "sum_P": 1.0256184214836284,
+        "deviation": 0.025618421483628362
+      },
+      "red_detects_break": true,
+      "green_control_passes": true,
+      "note": "U1 section 4 asserts sum_p w_p = 1 - q_null, but its own construction w = lambda*m + (1-lambda*m_mass)*anchor with anchor mass 1-alpha_null gives sum_p w_p = 1 - alpha_null*(1-lambda*m_mass). Without the binding, proposition 4.1's normalization premise fails. The upstream U1 precheck hard-codes w to satisfy the assertion, so it cannot detect this."
+    },
+    "R3_zero_init_startup_saddle": {
+      "verdict": "proposition_2_2_startup_credit_requires_nonzero_W_rR",
+      "green_control": {
+        "grad_W_out_norm": 0.3922133544199586,
+        "grad_W_rR_norm": 0.0,
+        "rR_norm": 0.0
+      },
+      "red_counterexample": {
+        "grad_W_out_norm": 0.0,
+        "grad_W_rR_norm": 0.0,
+        "rR_norm": 0.0
+      },
+      "red_detects_dead_saddle": true,
+      "green_control_passes": true,
+      "note": "With Read_R output layer zero, dL/dW_out = (W_rR^T g)*phi^T. If W_rR is also zero-initialized, both dL/dW_out and dL/dW_rR are exactly zero and the record path can never start. U1 proposition 2.2 states the gradient is 'generally nonzero' but does not register W_rR != 0 as a premise; upstream precheck U3 uses a random W8 (hence random W_rR) only."
+    },
+    "R4_causal_gate_inheritance": {
+      "verdict": "proposition_7_1_inherits_only_half_of_the_MGW1_causal_gate",
+      "packet": {
+        "t_end": 9.0,
+        "t_arrival": 12.5,
+        "source_legal": true
+      },
+      "now_physical_clock": 10.0,
+      "now_wall_clock": 12.0,
+      "u1_single_t_end_gate_readable": true,
+      "mgw1_t_end_and_t_arrival_gate_readable": false,
+      "disagreement": true,
+      "note": "MGW1 section 2 gates on t_end (environment physical clock) AND t_arrival (monotone wall clock) plus source legality, and explicitly forbids comparing the two clocks numerically. U1 section 7 states only 't_end <= now' and collapses both clocks into one 'now'. A packet with t_end <= now but t_arrival > now is future information under MGW1 yet readable under U1, so proposition 7.1's 'no future leakage' conclusion is not proven for this case. Upstream precheck U7 varies t_end only."
+    },
+    "R5_constrained_proximal_vs_euclidean_projection": {
+      "verdict": "constrained_proximal_solution_is_not_post_hoc_euclidean_projection",
+      "arms": {
+        "green_single_eigenspace": {
+          "constraint_active": true,
+          "gap_euclidean_projection_vs_constrained_proximal": 0.0
+        },
+        "red_multiple_eigenspaces": {
+          "constraint_active": true,
+          "gap_euclidean_projection_vs_constrained_proximal": 0.4119919173473178,
+          "norm_unconstrained": 3.414711153762651
+        }
+      },
+      "red_detects_mismatch": true,
+      "green_control_passes": true,
+      "note": "KKT gives X_mu=(A+mu I)^-1 B: each eigendirection of A is shrunk by alpha_i/(alpha_i+mu), which is non-uniform. The edit_fast Pi operator shrinks all entries by one scalar. The two coincide only when A is proportional to I or X_uc lies in one eigenspace (F0=0, single pair). So U1 theorem 5.1 silently compares three different maps."
+    },
+    "R6_conflict_pairs_vs_domain_order": {
+      "verdict": "domain_order_artifact_over_attributed_when_pairs_conflict",
+      "red_arm": {
+        "joint_read": [
+          1.499999250000375,
+          1.499999250000375,
+          0.0
+        ],
+        "beta_weighted_average": [
+          1.5,
+          1.5,
+          0.0
+        ],
+        "sequential_v1_then_v2_read": [
+          2.9999940000090005e-06,
+          2.9999970000030003,
+          0.0
+        ],
+        "sequential_v2_then_v1_read": [
+          2.9999970000030003,
+          2.9999940000090005e-06,
+          0.0
+        ],
+        "sequential_gap": 4.24263220185064,
+        "joint_read_residual": 4.242640687119816
+      },
+      "green_arm": {
+        "orthogonal_key_gap": 0.0
+      },
+      "red_detects_conflict": true,
+      "green_control_passes": true,
+      "note": "With beta1=beta2 and one key, the joint read tends to (v1+v2)/2 with irreducible residual, while sequential updates tend to the last-written value. That gap is conflict allocation, not a domain-order artifact; the joint solve removes only the order dependence. With orthogonal keys the two orders commute and both equal the joint solve (green control)."
+    }
+  },
+  "all_red_arms_detect_defect": true,
+  "all_green_controls_pass": true
+}
