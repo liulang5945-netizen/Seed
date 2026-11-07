@@ -1,0 +1,19 @@
+{
+  "schema": "taiji-rule-learning-20-6-package-close-manifest-v1",
+  "evidence": "20_6",
+  "verdict": "package20_closed_current_learning_candidate_not_established",
+  "verdict_label": "package20_closed",
+  "package": 20,
+  "package_state": "closed",
+  "report_path": "reports/taiji_package20_6_package_close_20261107.json",
+  "report_sha256": "4cda6462d28cf0178e770b4a5f3d38c8b724651e5f431df2286573824cc77263",
+  "runner_sha256": "d45c75460677c678d5b9582ae58272fb855769c77f6ba2a6bf3198a75f14a9cd",
+  "submitted_runner_sha256": null,
+  "cpu_seconds": 0.016,
+  "cpu_cap": 1500.0,
+  "training_steps": 0,
+  "adam_steps": 0,
+  "confirm_reads": 0,
+  "completed": true,
+  "plans_sync_status": "applied"
+}

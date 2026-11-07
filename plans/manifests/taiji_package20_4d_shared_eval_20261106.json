@@ -1,0 +1,23 @@
+{
+  "schema": "taiji-rule-learning-20-4d-shared-eval-manifest-v1",
+  "evidence": "20_4d",
+  "verdict": "shared_eval_completed",
+  "detail": "all cells scored",
+  "report_path": "reports\\taiji_package20_4d_shared_eval_20261106.json",
+  "report_sha256": "04067a9c8f258a7dbc40043f5c51270e6c4f1f3d7fc9bd5ee6132a3a66e20fa6",
+  "preregistration_path": "reports\\taiji_package20_4d_preregistration_20261106.json",
+  "preregistration_sha256": "80d6cebd070a79d5765f7ac3633dc074058ed9cd6560c53fe25b27b316db5491",
+  "runner_sha256": "672540f7989cb0b153f4b396ff9f0a68cc2def852099f3b7227c5ca1a2bb0378",
+  "submitted_runner_sha256": null,
+  "cpu_seconds": 4026.438,
+  "cpu_cap": 6000.0,
+  "completed": true,
+  "amendment": {
+    "evidence": "20_6",
+    "variance_correction": true,
+    "runner_sha256": "d45c75460677c678d5b9582ae58272fb855769c77f6ba2a6bf3198a75f14a9cd",
+    "report_sha256_before": "d3a258509e3c8e754f1276c8fa473d04155b45875ed47358eeae379ecb6ec7c0",
+    "criteria_unchanged": true,
+    "verdict_unchanged": true
+  }
+}

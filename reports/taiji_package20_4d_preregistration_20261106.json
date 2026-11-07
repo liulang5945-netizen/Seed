@@ -1,0 +1,33 @@
+{
+  "schema": "taiji-rule-learning-20-4d-preregistration-v1",
+  "evidence": "20_4d",
+  "written_before_first_world": true,
+  "primary_metric": "decision_accuracy",
+  "design": {
+    "checkerboard": "four 200-update checkpoints x two existing dev batches (seed 1105, 1106; indices 160-239)",
+    "shared_batch": {
+      "seed": 20261107,
+      "indices": [
+        320,
+        399
+      ],
+      "worlds": 80
+    },
+    "bootstrap": {
+      "rounds": 2000,
+      "seed": 20261105,
+      "resampling": "world level, paired"
+    },
+    "training": 0,
+    "optimizer_steps": 0,
+    "confirm_read": false,
+    "cpu_cap": 6000.0
+  },
+  "criteria": {
+    "arm_effective": "the paired CF1-B_EH delta on the shared batch has a bootstrap 95% CI that excludes 0, |delta| >= 0.02 for decision accuracy, and the sign agrees on both existing dev batches",
+    "arm_indistinguishable": "the CI contains 0, or the two existing dev batches disagree in sign",
+    "batch_dominant": "the cross-batch same-arm spread is materially larger than the same-batch arm gap; the ratio is reported and 'materially' means > 2.0x",
+    "metrics": "decision accuracy is the pre-registered primary metric; template bits, content bits and full-byte accuracy are reported separately and do not override the primary verdict",
+    "frozen": "criteria fixed before the first world is scored; the runner aborts if the pre-registration file differs from this block"
+  }
+}

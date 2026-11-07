@@ -87,10 +87,14 @@
   "pricing": {
     "unit_from_20_4b": 56.906,
     "total_from_20_4b": 48129.2,
-    "prior_cpu_seconds": 2514.203,
-    "prior_source": "reports/taiji_package20_4c_formal_comparison_20261105.json",
+    "prior_cpu_seconds": 18835.484,
+    "prior_breakdown": {
+      "20_4c_aborted": 2514.203,
+      "20_4c_r2_pre_restart": 16321.281
+    },
+    "prior_source": "reports/taiji_package20_4c_formal_comparison_20261105.json (25 updates) + reports/taiji_package20_4c_r2_formal_comparison_20261105_progress.jsonl (CF1|20261105 200 updates, B_EH|20261105 75 updates before the reboot)",
     "hard_cap": 52000.0,
-    "remaining_at_freeze": 49485.797
+    "remaining_at_freeze": 33164.516
   },
   "identity": {
     "candidate_sha_v2": "58754e500992f684fef5668290038066cee6b0528f181721917e9d5d3fd0f333",

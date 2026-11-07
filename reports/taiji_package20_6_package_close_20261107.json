@@ -1,0 +1,868 @@
+{
+  "schema": "taiji-rule-learning-20-6-package-close-v1",
+  "evidence": "20_6",
+  "date": "2026-11-07",
+  "status": "completed",
+  "verdict": "package20_closed_current_learning_candidate_not_established",
+  "verdict_label": "package20_closed",
+  "detail": "section 10 row 2 selected: both arms are far below a strong shortcut, the task-side information and credit gates passed, the current learning candidate is not successful, and the extra contribution of F is not established.  20.5 admission is void, 20.5 is not executed, confirm stays sealed",
+  "package_status": {
+    "package": 20,
+    "state": "closed",
+    "planned_steps_completed": [
+      "20.1",
+      "20.2",
+      "20.3",
+      "20.4",
+      "20.6"
+    ],
+    "planned_step_not_executed": [
+      "20.5"
+    ],
+    "reason_20_5": "20.4 did not select a single arm identity; the plan gates 20.5 on that selection, so 20.5 is not executed",
+    "confirm": {
+      "released": false,
+      "read_record": 0,
+      "indices": [
+        240,
+        319
+      ],
+      "materialised": false
+    },
+    "automatic_patch_chain": false
+  },
+  "discipline": {
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "new_probes": 0,
+    "evaluation_reruns": 0,
+    "confirm_reads": 0,
+    "checkpoints_written": 0,
+    "frozen_modules_touched": false,
+    "reads": [
+      "reports/taiji_package20_plan_review_20261105.json",
+      "reports/taiji_package20_1_rule_learning_fixture_graph_20261105.json",
+      "reports/taiji_package20_2_credit_recovery_20261105.json",
+      "reports/taiji_package20_2r_f_leverage_20261105.json",
+      "reports/taiji_package20_2s_f_information_20261105.json",
+      "reports/taiji_package20_3a_addressed_store_20261105.json",
+      "reports/taiji_package20_3b_f_authority_20261105.json",
+      "reports/taiji_package20_4_pricing_freeze_20261105.json",
+      "reports/taiji_package20_4a_unit_cost_20261105.json",
+      "reports/taiji_package20_4b_graph_optimization_20261105.json",
+      "reports/taiji_package20_4c_formal_comparison_20261105.json",
+      "reports/taiji_package20_4c_r2_formal_comparison_20261105.json",
+      "reports/taiji_package20_4d_shared_eval_20261106.json",
+      "reports/taiji_package20_4d_preregistration_20261106.json",
+      "plans/manifests/taiji_package20_2t_write_granularity_20261105.json"
+    ],
+    "write_then_rename": true,
+    "progress_append_fsync": true,
+    "cpu_cap": 1500.0,
+    "cpu_seconds_this_runner": 0.016,
+    "wall_seconds_this_runner": 0.031
+  },
+  "section10_branch_check": [
+    {
+      "branch": "A高于强捷径，A/B接近，纠正/保持/恢复成立",
+      "selected": false,
+      "evidence": "best cell decision accuracy is 0.240196 (CF1|20261106 on batch 20261105); all eight cells have full-byte accuracy 0.0; template bits are 0.0 except CF1|20261106 0.007541.  This is far below a strong shortcut, not close to it"
+    },
+    {
+      "branch": "A/B都低于强捷径，信息和信用门已过",
+      "selected": true,
+      "evidence": "both arms are far below the strong-shortcut reference; the task-side information gate (five anchors identify the rule uniquely, 20.1) and the credit gate (dL/dF norm 0.0688, share 0.00447, 20.2) passed; 20.3a's readout-information gate failure is itself representation evidence, not task information shortage"
+    },
+    {
+      "branch": "A明显优于独立B，cut/permute退化，保持与独立确认成立",
+      "selected": false,
+      "evidence": "the shared-batch paired delta reverses sign across seeds: -0.202206 for model seed 20261105 and +0.146078 for 20261106; pooled -0.028064 with CI [-0.064706, +0.010539]; no confirm was released"
+    },
+    {
+      "branch": "只有teacher-forcing好、持续轨迹差",
+      "selected": false,
+      "evidence": "20.3b replaced F with oracle F and still got 0/22 decisions and 0 byte difference; the teacher-forced face is not good either, so this branch does not describe the result"
+    },
+    {
+      "branch": "source/时间/反馈泄漏或保存不完整",
+      "selected": false,
+      "evidence": "20.1 static leak probe found 0 forbidden imports; 20.4c_r2 resume_verified ok for CF1 and B_EH at step 26, all checkpoint shas match, determinism 16/16"
+    },
+    {
+      "branch": "未完成工作即触价/时间/信息上限",
+      "selected": false,
+      "evidence": "20.4c_r2 completed all 800 formal updates within the authorized 52,000 CPU (42,831.453 charged); 20.4d completed 8/8 cells within 6,000 CPU.  The package total exceeding the 48,000 magnitude gate is a cost fact reported in the ledger, not a work-stopping budget stop"
+    }
+  ],
+  "closure_findings": {
+    "two_seed_arm_reversal": {
+      "seed_20261105_delta_CF1_minus_B_EH": -0.202206,
+      "seed_20261105_ci": [
+        -0.222304,
+        -0.182843
+      ],
+      "seed_20261106_delta_CF1_minus_B_EH": 0.146078,
+      "seed_20261106_ci": [
+        0.098775,
+        0.191176
+      ],
+      "pooled_delta": -0.028064,
+      "pooled_ci": [
+        -0.064706,
+        0.010539
+      ],
+      "sign_agreement": false,
+      "source": "reports/taiji_package20_4d_shared_eval_20261106.json -> paired_shared_batch"
+    },
+    "f_net_contribution_gate": {
+      "point_gap_threshold": 0.05,
+      "paired_lower_bound_threshold": 0.0,
+      "pooled_point_gap": 0.028064,
+      "pooled_lower_bound": -0.064706,
+      "established": false,
+      "why": "the pooled point gap is below 0.05 and the paired lower bound is below 0; per seed, 20261106 passes both clauses but 20261105 reverses, so sign agreement fails; cut and permute were diagnostics, not part of the formal 2x2"
+    },
+    "absolute_level": {
+      "best_decision_cell": 0.240196,
+      "all_eight_full_byte_accuracy": 0.0,
+      "template_bit_accuracy_range": [
+        0.0,
+        0.007541
+      ],
+      "strong_shortcut_reference": 0.636364,
+      "strong_shortcut_source": "7/11 label-multiset Bayes reference, plan section 3.3",
+      "caveat": "the 0.636364 reference is on the 22-query set while the decision cells cover all 51 turns; the directly comparable fact is that every cell has zero whole-sentence accuracy"
+    },
+    "correction_metrics": {
+      "cf1_20261105": {
+        "correction_accuracy": null,
+        "post_feedback_accuracy": null,
+        "status": "missing"
+      },
+      "cf1_20261106": {
+        "correction_accuracy": 0.264773,
+        "post_feedback_accuracy": 0.268519,
+        "status": "measured"
+      },
+      "b_eh_20261105": {
+        "correction_accuracy": 0.25,
+        "post_feedback_accuracy": 0.248148,
+        "status": "measured"
+      },
+      "b_eh_20261106": {
+        "correction_accuracy": 0.096591,
+        "post_feedback_accuracy": 0.080093,
+        "status": "measured"
+      }
+    },
+    "final_training_readings": {
+      "CF1|20261105": {
+        "decision_accuracy": 0.03558823529411765,
+        "template_bit_accuracy": 0.0025,
+        "content_bit_accuracy": 0.2118137254901961,
+        "correction_accuracy": null,
+        "post_feedback_accuracy": null
+      },
+      "CF1|20261106": {
+        "decision_accuracy": 0.08651960784313725,
+        "template_bit_accuracy": 0.011157616892911011,
+        "content_bit_accuracy": 0.3010539215686274,
+        "correction_accuracy": 0.08738636363636364,
+        "post_feedback_accuracy": 0.08972222222222222
+      },
+      "B_EH|20261105": {
+        "decision_accuracy": 0.09676470588235295,
+        "template_bit_accuracy": 0.007794117647058824,
+        "content_bit_accuracy": 0.30269607843137253,
+        "correction_accuracy": 0.16327272727272726,
+        "post_feedback_accuracy": 0.1637037037037037
+      },
+      "B_EH|20261106": {
+        "decision_accuracy": 0.050833333333333335,
+        "template_bit_accuracy": 0.002096530920060332,
+        "content_bit_accuracy": 0.23436274509803923,
+        "correction_accuracy": 0.053863636363636364,
+        "post_feedback_accuracy": 0.056018518518518516
+      }
+    },
+    "confirm": "sealed; 0 reads; not materialised"
+  },
+  "attribution": {
+    "representation": {
+      "established": [
+        "per-query correction is not represented at window level: 20.2s found only 2 distinct F vectors across 22 correction surfaces; 20.2t's write audit found writes only on release (10 rows), no per-turn write",
+        "the content-addressed store makes 22 distinct F vectors but its read keys are near-collinear: median top-1 cosine 0.9850, median top1-top2 margin 0.00317, 22/22 below 0.05; F leverage 8.7e-6 and byte diff 0 (20.3a)",
+        "the raw F state does carry window-level information: a closed-form readout reaches 15/22 (0.6818) on correction surfaces (20.2s), but the window-identity control also matches, so the information is not query-specific and the verdict there is inconclusive"
+      ],
+      "not_established": [
+        "whether a per-query separable write/read representation would gain authority (not tested)",
+        "whether a wider or differently factored F state would help (not tested)",
+        "that the representation cannot work (not proven; do not read the negative as impossibility)"
+      ]
+    },
+    "composition": {
+      "established": [
+        "credit reaches F: dL/dF norm 0.0688, share 0.00447, F influences loss; save/load and crash recovery pass (20.2)",
+        "the current composition writes only the 10 feedback rows at two releases, so 22 correction surfaces collapse to 2 F vectors (20.2s/20.2t)",
+        "the CF1-vs-B_EH switch has no consistent effect: pooled delta -0.028064, CI [-0.064706, +0.010539], sign reversal across seeds (20.4d)",
+        "even a perfect F replacement does not change the output: oracle F gives 0/22 decisions and 0 byte difference (20.3b)"
+      ],
+      "not_established": [
+        "whether per-turn or per-query composition would help (not tested)",
+        "whether the v1-to-v2 version correction is learnable with another write schedule (not tested)",
+        "that composition is the only bottleneck (not proven)"
+      ]
+    },
+    "optimization": {
+      "established": [
+        "200 updates x 4 runs completed; dev decision accuracy is 0.022304, 0.210539, 0.237500, 0.055392 against a 0.0 baseline; final cumulative training readings are 0.035588, 0.096765, 0.086520, 0.050833",
+        "F influence under training is unstable and seed-dependent: CF1|20261105 leverage 0.025847 -> 0.005852 -> 0.001595 -> 0.019882; CF1|20261106 0.024830 -> 0.001313 -> 3.39e-5 -> 1.49e-6 with byte diff 0 at step 200",
+        "full-byte accuracy is 0.0 in all eight cells; template bits are near 0",
+        "engineering discipline held: checkpoint integrity ok, resume_verified ok, post-restart calibration 35.849 s/update = 0.63x baseline, determinism 16/16"
+      ],
+      "not_established": [
+        "whether more updates would help (not tested; section 10 says stop dose escalation)",
+        "whether another optimizer, learning rate or clip would help (not tested)",
+        "that optimization cannot solve it (not proven)"
+      ]
+    },
+    "competing_explanations": [
+      {
+        "name": "seed and initialization dominance",
+        "status": "established",
+        "evidence": "corrected eight-cell decomposition: model seed 99.40% of total SS, arm 0.28%, evaluation batch 0.008%, interaction 0.32%; same model across batches moves at most 2.06pp; arm means 0.129106 vs 0.139338"
+      },
+      {
+        "name": "Task1 carried by structure, not by trained weights",
+        "status": "established within the tested scope",
+        "evidence": "20.1 shows the structural copy/selection path; 20.2 shows credit reaches F; 20.4d shows the F switch adds no consistent gain, and B_EH without F is not worse.  The structural task is not evidence of trained capability"
+      },
+      {
+        "name": "measurement environment rather than mechanism",
+        "status": "partly established for cost, not for accuracy",
+        "evidence": "unit price moved 0.61x-1.18x baseline with host memory pressure; determinism is 16/16 and all diagonal cells matched the reused weights digest, so accuracy differences are not explained by the environment"
+      },
+      {
+        "name": "pre-registered F gate failure",
+        "status": "established",
+        "evidence": "pooled point gap 0.028064 < 0.05 and paired lower bound -0.064706 < 0; per seed 20261106 passes the point and lower-bound clauses but 20261105 reverses, so sign agreement fails; cut/permute were diagnostics only, not part of the formal 2x2"
+      },
+      {
+        "name": "not proven is not refuted",
+        "status": "boundary statement",
+        "evidence": "the tested candidate failed; the architecture, other write schedules, other readouts and higher dose were not tested and are not declared impossible"
+      }
+    ]
+  },
+  "cost_ledger": {
+    "unit": "CPU seconds unless stated",
+    "rows": [
+      {
+        "stage": "20.0",
+        "kind": "planned",
+        "date": "2026-11-05",
+        "cpu_seconds": 0.03125,
+        "wall_seconds": null,
+        "updates": 0,
+        "adam_steps": 0,
+        "f_probe_evaluations": 0,
+        "verdict": "plan_review_passed",
+        "source": "reports/taiji_package20_plan_review_20261105.json",
+        "note": "static audit only; wall not recorded",
+        "estimate": false,
+        "cpu_seconds_lower_bound": null
+      },
+      {
+        "stage": "20.1",
+        "kind": "planned",
+        "date": "2026-11-05",
+        "cpu_seconds": 159.53,
+        "wall_seconds": 164.55,
+        "updates": 0,
+        "adam_steps": 0,
+        "f_probe_evaluations": 0,
+        "verdict": "ready",
+        "source": "reports/taiji_package20_1_rule_learning_fixture_graph_20261105.json",
+        "note": null,
+        "estimate": false,
+        "cpu_seconds_lower_bound": null
+      },
+      {
+        "stage": "20.2",
+        "kind": "planned",
+        "date": "2026-11-05",
+        "cpu_seconds": 153.08,
+        "wall_seconds": 159.04,
+        "updates": 0,
+        "adam_steps": 0,
+        "f_probe_evaluations": 0,
+        "verdict": "ready",
+        "source": "reports/taiji_package20_2_credit_recovery_20261105.json",
+        "note": "0 Adam steps; 6 backward calls",
+        "estimate": false,
+        "cpu_seconds_lower_bound": null
+      },
+      {
+        "stage": "20.2r",
+        "kind": "diagnostic",
+        "date": "2026-11-05",
+        "cpu_seconds": 161.48,
+        "wall_seconds": 168.64,
+        "updates": 0,
+        "adam_steps": 0,
+        "f_probe_evaluations": 110,
+        "verdict": "under_powered_f_channel",
+        "source": "reports/taiji_package20_2r_f_leverage_20261105.json",
+        "note": "22 correction turns x 5 counterfactual arms; 23 backward calls",
+        "estimate": false,
+        "cpu_seconds_lower_bound": null
+      },
+      {
+        "stage": "20.2s",
+        "kind": "diagnostic",
+        "date": "2026-11-05",
+        "cpu_seconds": 119.67,
+        "wall_seconds": 124.34,
+        "updates": 0,
+        "adam_steps": 0,
+        "f_probe_evaluations": 0,
+        "verdict": "inconclusive",
+        "source": "reports/taiji_package20_2s_f_information_20261105.json",
+        "note": "closed-form 22-fold readout; not a counterfactual F probe",
+        "estimate": false,
+        "cpu_seconds_lower_bound": null
+      },
+      {
+        "stage": "20.2s_failed_attempt",
+        "kind": "diagnostic",
+        "date": "2026-11-05",
+        "cpu_seconds": null,
+        "wall_seconds": null,
+        "updates": 0,
+        "adam_steps": 0,
+        "f_probe_evaluations": 0,
+        "verdict": "discarded",
+        "source": "reports/taiji_package20_2s_f_information_20261105.json",
+        "note": "exact CPU missing; the report records a lower bound of 25.75 CPU",
+        "estimate": false,
+        "cpu_seconds_lower_bound": 25.75
+      },
+      {
+        "stage": "20.2t",
+        "kind": "diagnostic",
+        "date": "2026-11-05",
+        "cpu_seconds": null,
+        "wall_seconds": null,
+        "updates": 0,
+        "adam_steps": 0,
+        "f_probe_evaluations": 0,
+        "verdict": "design_only",
+        "source": "plans/manifests/taiji_package20_2t_write_granularity_20261105.json",
+        "note": "manifest only; no report and no runner, so CPU is missing, not zero",
+        "estimate": false,
+        "cpu_seconds_lower_bound": null
+      },
+      {
+        "stage": "20.3a",
+        "kind": "diagnostic",
+        "date": "2026-11-05",
+        "cpu_seconds": 224.94,
+        "wall_seconds": 232.72,
+        "updates": 0,
+        "adam_steps": 0,
+        "f_probe_evaluations": 27,
+        "verdict": "option2_failed",
+        "source": "reports/taiji_package20_3a_addressed_store_20261105.json",
+        "note": "5 counterfactual arms on one turn plus a 22-turn leave-one-out information probe",
+        "estimate": false,
+        "cpu_seconds_lower_bound": null
+      },
+      {
+        "stage": "20.3b",
+        "kind": "diagnostic",
+        "date": "2026-11-05",
+        "cpu_seconds": 56.92,
+        "wall_seconds": 58.83,
+        "updates": 0,
+        "adam_steps": 0,
+        "f_probe_evaluations": 14,
+        "verdict": "authority_weak",
+        "source": "reports/taiji_package20_3b_f_authority_20261105.json",
+        "note": "5 gain levels + 4 ridge values + 4 rank settings + 1 oracle replacement",
+        "estimate": false,
+        "cpu_seconds_lower_bound": null
+      },
+      {
+        "stage": "20.3b_discarded_attempts",
+        "kind": "diagnostic",
+        "date": "2026-11-05",
+        "cpu_seconds": null,
+        "wall_seconds": null,
+        "updates": null,
+        "adam_steps": 0,
+        "f_probe_evaluations": 0,
+        "verdict": "discarded",
+        "source": "reports/taiji_package20_3b_f_authority_20261105.json",
+        "note": "two discarded attempts; their CPU is not recorded (missing, not zero)",
+        "estimate": false,
+        "cpu_seconds_lower_bound": null
+      },
+      {
+        "stage": "20.4",
+        "kind": "planned",
+        "date": "2026-11-05",
+        "cpu_seconds": 1539.891,
+        "wall_seconds": 1644.885,
+        "updates": 12,
+        "adam_steps": 12,
+        "f_probe_evaluations": 0,
+        "verdict": "pricing_over_budget",
+        "source": "reports/taiji_package20_4_pricing_freeze_20261105.json",
+        "note": "6 measured pricing updates + 3 preflight saved + 3 preflight resumed",
+        "estimate": false,
+        "cpu_seconds_lower_bound": null
+      },
+      {
+        "stage": "20.4_pre_probe_calibration",
+        "kind": "planned",
+        "date": "2026-11-05",
+        "cpu_seconds": 620.0,
+        "wall_seconds": null,
+        "updates": 3,
+        "adam_steps": 3,
+        "f_probe_evaluations": 0,
+        "verdict": "calibration",
+        "source": "reports/taiji_package20_4_pricing_freeze_20261105.json",
+        "note": "declared estimate, not a measured process cost; excluded from measured total",
+        "estimate": true,
+        "cpu_seconds_lower_bound": null
+      },
+      {
+        "stage": "20.4a",
+        "kind": "diagnostic",
+        "date": "2026-11-05",
+        "cpu_seconds": 784.188,
+        "wall_seconds": 58.671,
+        "updates": 20,
+        "adam_steps": 20,
+        "f_probe_evaluations": 0,
+        "verdict": "pricing_still_over_budget",
+        "source": "reports/taiji_package20_4a_unit_cost_20261105.json",
+        "note": "total 784.188 = 727.891 earlier pass + 56.297 this pass; earlier wall missing",
+        "estimate": false,
+        "cpu_seconds_lower_bound": null
+      },
+      {
+        "stage": "20.4b",
+        "kind": "diagnostic",
+        "date": "2026-11-05",
+        "cpu_seconds": 516.0,
+        "wall_seconds": 680.978,
+        "updates": 6,
+        "adam_steps": 6,
+        "f_probe_evaluations": 0,
+        "verdict": "pricing_still_over_budget",
+        "source": "reports/taiji_package20_4b_graph_optimization_20261105.json",
+        "note": "6 calibration updates (1 equivalence reference + 5 timed)",
+        "estimate": false,
+        "cpu_seconds_lower_bound": null
+      },
+      {
+        "stage": "20.4b_engineering_reruns",
+        "kind": "diagnostic",
+        "date": "2026-11-05",
+        "cpu_seconds": 1700.0,
+        "wall_seconds": null,
+        "updates": null,
+        "adam_steps": null,
+        "f_probe_evaluations": 0,
+        "verdict": "engineering_reruns",
+        "source": "plans/active/roadmap/03_CURRENT_EXECUTION.md",
+        "note": "about 1,700 CPU declared in the execution log; per-run exact values missing",
+        "estimate": true,
+        "cpu_seconds_lower_bound": null
+      },
+      {
+        "stage": "20.4c",
+        "kind": "formal",
+        "date": "2026-11-05",
+        "cpu_seconds": 2514.203,
+        "wall_seconds": 2990.28,
+        "updates": 25,
+        "adam_steps": 25,
+        "f_probe_evaluations": 5,
+        "verdict": "host_memory_insufficient",
+        "source": "reports/taiji_package20_4c_formal_comparison_20261105.json",
+        "note": "aborted on the absolute memory floor after 25 updates; readings kept as history",
+        "estimate": false,
+        "cpu_seconds_lower_bound": null
+      },
+      {
+        "stage": "20.4c_r2_pre_restart",
+        "kind": "formal",
+        "date": "2026-11-06",
+        "cpu_seconds": 16321.281,
+        "wall_seconds": null,
+        "updates": 275,
+        "adam_steps": 275,
+        "f_probe_evaluations": 0,
+        "verdict": "carried_forward",
+        "source": "reports/taiji_package20_4c_r2_formal_comparison_20261105.json",
+        "note": "CF1|20261105 complete + B_EH|20261105 at 75; wall missing",
+        "estimate": false,
+        "cpu_seconds_lower_bound": null
+      },
+      {
+        "stage": "20.4c_r2_post_restart",
+        "kind": "formal",
+        "date": "2026-11-06",
+        "cpu_seconds": 23995.969,
+        "wall_seconds": 24120.563,
+        "updates": 525,
+        "adam_steps": 525,
+        "f_probe_evaluations": 80,
+        "verdict": "comparison_completed",
+        "source": "reports/taiji_package20_4c_r2_formal_comparison_20261105.json",
+        "note": "B_EH|20261105 125 + CF1|20261106 200 + B_EH|20261106 200; 4 probe steps x 5 arms x 4 runs",
+        "estimate": false,
+        "cpu_seconds_lower_bound": null
+      },
+      {
+        "stage": "20.4d",
+        "kind": "diagnostic",
+        "date": "2026-11-06",
+        "cpu_seconds": 4026.438,
+        "wall_seconds": 4041.545,
+        "updates": 0,
+        "adam_steps": 0,
+        "f_probe_evaluations": 0,
+        "verdict": "shared_eval_completed",
+        "source": "reports/taiji_package20_4d_shared_eval_20261106.json",
+        "note": "8-cell cross evaluation, 0 training, 0 optimizer step",
+        "estimate": false,
+        "cpu_seconds_lower_bound": null
+      },
+      {
+        "stage": "20.6",
+        "kind": "close",
+        "date": "2026-11-07",
+        "cpu_seconds": 0.016,
+        "wall_seconds": 0.031,
+        "updates": 0,
+        "adam_steps": 0,
+        "f_probe_evaluations": 0,
+        "verdict": "package20_closed",
+        "source": "reports/taiji_package20_6_package_close_20261107.json",
+        "note": "this bookkeeping runner; measured at report build time",
+        "estimate": false,
+        "cpu_seconds_lower_bound": null
+      }
+    ],
+    "totals": {
+      "measured_cpu_seconds": 50573.637,
+      "declared_estimate_cpu_seconds": 2320.0,
+      "lower_bound_including_missing_lower_bounds": 50599.387,
+      "measured_plus_estimates": 52893.637,
+      "missing_cpu_stages": [
+        "20.2s_failed_attempt",
+        "20.2t",
+        "20.3b_discarded_attempts"
+      ],
+      "measured_wall_seconds": 34445.073,
+      "wall_missing_stages": [
+        "20.0",
+        "20.2s_failed_attempt",
+        "20.2t",
+        "20.3b_discarded_attempts",
+        "20.4_pre_probe_calibration",
+        "20.4b_engineering_reruns",
+        "20.4c_r2_pre_restart"
+      ],
+      "proposal_b_cpu_seconds": 24000.0,
+      "magnitude_gate_cpu_seconds": 48000.0,
+      "measured_vs_b": 2.1072,
+      "measured_vs_gate": 1.0536,
+      "measured_minus_gate": 2573.637,
+      "measured_plus_estimates_vs_gate": 1.102,
+      "measured_plus_estimates_minus_gate": 4893.637
+    },
+    "wasted_and_rerun": {
+      "fully_wasted": [
+        {
+          "stage": "20.4c",
+          "cpu_seconds": 2514.203,
+          "updates": 25,
+          "reason": "aborted on the old absolute memory floor; readings kept as history"
+        },
+        {
+          "stage": "20.2s_failed_attempt",
+          "cpu_seconds": null,
+          "lower_bound": 25.75,
+          "reason": "exact CPU missing; lower bound from partial progress"
+        },
+        {
+          "stage": "20.3b_discarded_attempts",
+          "cpu_seconds": null,
+          "reason": "two discarded attempts; CPU missing"
+        }
+      ],
+      "carried_forward_not_wasted": [
+        {
+          "stage": "20.4c_r2_pre_restart",
+          "cpu_seconds": 16321.281,
+          "updates": 275,
+          "reason": "CF1|20261105 complete and B_EH|20261105 at 75; resumed from checkpoint"
+        },
+        {
+          "stage": "20.4a_earlier_pass",
+          "cpu_seconds": 727.891,
+          "reason": "10 calibration samples reused by the delivered pass"
+        }
+      ],
+      "engineering_reruns_declared": [
+        {
+          "stage": "20.4b",
+          "cpu_seconds": 1700.0,
+          "exact": false,
+          "reason": "four engineering reruns declared in the execution log; per-run values missing"
+        }
+      ]
+    },
+    "missing_policy": "missing values stay null and are listed by stage; they are not replaced by 0.  The measured total is therefore a lower bound of the true spend"
+  },
+  "training_ledger": {
+    "formal_updates": 800,
+    "aborted_updates": 25,
+    "total_training_updates": 825,
+    "adam_steps": 825,
+    "formal_runs": 4,
+    "updates_per_run": 200,
+    "engineering_updates_known": {
+      "20_4": 12,
+      "20_4a": 20,
+      "20_4b": 6,
+      "note": "known optimizer updates outside the formal comparison; discarded or retried runs add an unrecorded amount, so the exact total is missing"
+    },
+    "calibration_observations": 15,
+    "f_probe_events": 17,
+    "f_probe_arm_evaluations": 85,
+    "f_probe_detail": {
+      "20_4c": 5,
+      "20_4c_r2": 80,
+      "rule": "five counterfactual levels per event, 0 optimizer steps"
+    }
+  },
+  "capability_ledger": {
+    "added": [
+      "a bounded 2 seed x 2 arm comparison harness with per-25-update checkpoints, restart calibration, resume verification and 16/16 determinism",
+      "a pre-registered negative result: the current F candidate is not established, the arms are indistinguishable (pooled delta -0.028064, CI contains 0), and the evaluation batch is not dominant (ratio 0.7336)",
+      "a corrected variance fact: model seed explains 99.40% of the eight-cell decision-accuracy sum of squares, arm 0.28%, batch 0.008%",
+      "a cost calibration: 56.906 CPU/update from 20.4b; the formal comparison charged 42,831.453 CPU for 800 updates; 20.4d added 4,026.438 CPU for 0 training"
+    ],
+    "not_established": [
+      "feedback-conditioned adaptation and version correction",
+      "a net extra contribution of F beyond the independent B_EH arm",
+      "post-learning retention on the Task1 face (not measured in package 20)",
+      "the confirm face (sealed; 0 reads in the whole package)",
+      "any claim that the architecture cannot learn this task, or that other mechanisms cannot"
+    ],
+    "explicit_parallel": {
+      "task1_structural": "Task1 is carried by the structure; within the tested scope the trained weights contribute 0 to the structural task.  This is an established statement about the tested candidate, not a claim that training is useless everywhere",
+      "feedback_learning": "feedback learning is not established.  This is a negative result for the current write/read/optimization candidate, not a proof of impossibility",
+      "do_not_merge": "the two statements must stay separate: the structural success of Task1 does not sign feedback learning, and the failure of feedback learning does not retract the structural Task1 result"
+    }
+  },
+  "known_defects": [
+    {
+      "item": "CF1|20261105 correction-surface and post-feedback first-answer readings",
+      "value": "missing",
+      "reason": "the run completed before the split keys existed and was reused under run_completed; its accumulator was computed by the old accuracy() and cannot be back-filled without rerunning the dev evaluation, which 20.6 forbids.  The missing cell is the diagonal CF1|20261105 on batch 20261105; the shared-batch paired delta is unaffected",
+      "source": "reports/taiji_package20_4c_r2_formal_comparison_20261105.json -> runs.CF1|20261105.dev_eval"
+    },
+    {
+      "item": "20.4d variance block",
+      "value": "amended",
+      "reason": "the original block used only the four diagonal cells and charged model-seed variance to the arm; the corrected eight-cell split is recorded in the 20.4d report under variance_correction.  Criteria and verdict are unchanged",
+      "source": "reports/taiji_package20_4d_shared_eval_20261106.json -> variance_correction"
+    },
+    {
+      "item": "20.2t",
+      "value": "missing",
+      "reason": "manifest only; no report and no runner, so cost and probe counts are missing, not zero",
+      "source": "plans/manifests/taiji_package20_2t_write_granularity_20261105.json"
+    },
+    {
+      "item": "20.3b discarded attempts",
+      "value": "missing",
+      "reason": "two discarded attempts have no recorded CPU",
+      "source": "reports/taiji_package20_3b_f_authority_20261105.json"
+    },
+    {
+      "item": "20.4b rejected first pricing measurement",
+      "value": "partly missing",
+      "reason": "the report keeps both unit readings (40.291 and 56.906) but not the exact cost of every engineering rerun; the execution log gives an aggregate of about 1,700 CPU, recorded as an estimate",
+      "source": "plans/active/roadmap/03_CURRENT_EXECUTION.md"
+    },
+    {
+      "item": "post-learning retention on the Task1 face",
+      "value": "missing",
+      "reason": "package 20 did not run the retention face; this is not a failed gate",
+      "source": "plan section 8, 20.4 post-evaluation controls"
+    }
+  ],
+  "diagnostic_chain": [
+    {
+      "id": "20.2r",
+      "role": "cut/permute leverage diagnostics",
+      "classification": "diagnostic_non_planned",
+      "conclusion": "merged_into_20_6"
+    },
+    {
+      "id": "20.2s",
+      "role": "window-level F information and closed-form readout",
+      "classification": "diagnostic_non_planned",
+      "conclusion": "merged_into_20_6"
+    },
+    {
+      "id": "20.2t",
+      "role": "write-granularity audit (manifest only)",
+      "classification": "diagnostic_non_planned",
+      "conclusion": "merged_into_20_6"
+    },
+    {
+      "id": "20.3a",
+      "role": "content-addressed store and read-key separability",
+      "classification": "diagnostic_non_planned",
+      "conclusion": "merged_into_20_6"
+    },
+    {
+      "id": "20.3b",
+      "role": "F authority and oracle replacement",
+      "classification": "diagnostic_non_planned",
+      "conclusion": "merged_into_20_6"
+    },
+    {
+      "id": "20.4a",
+      "role": "unit-cost decomposition",
+      "classification": "diagnostic_non_planned",
+      "conclusion": "merged_into_20_6"
+    },
+    {
+      "id": "20.4b",
+      "role": "graph-level executor optimization and equivalence",
+      "classification": "diagnostic_non_planned",
+      "conclusion": "merged_into_20_6"
+    },
+    {
+      "id": "20.4d",
+      "role": "shared-batch cross evaluation and variance separation",
+      "classification": "diagnostic_non_planned",
+      "conclusion": "merged_into_20_6"
+    }
+  ],
+  "plans_sync": {
+    "status": "applied",
+    "applied_at": "2026-11-07",
+    "targets": [
+      "plans/active/roadmap/03_CURRENT_EXECUTION.md",
+      "plans/MAINLINE.md",
+      "plans/MASTER-PLAN.md",
+      "plans/reference/ROADMAP-NEXT_20261104.md",
+      "plans/reference/INVARIANT-LEDGER_20261103.md",
+      "plans/reference/CAPABILITY-CARD_20261103.md"
+    ],
+    "sha256": {
+      "plans/active/roadmap/03_CURRENT_EXECUTION.md": "e43710d3b5b752b32d38ed03a21b8ab1814de3c98e7b587ea45d0222c8815e1f",
+      "plans/MAINLINE.md": "360ec02898b1c3f4cc64776deb8cce063b8c360128d3ac3a3be03d32b047592e",
+      "plans/MASTER-PLAN.md": "6471eab53919a03c7721705a012ec78f1ddd0f59d5d3b961dc02af49b47901bf",
+      "plans/reference/ROADMAP-NEXT_20261104.md": "94e1da6c97d29f79c2fa3ea6da9b56702e9b06ff74756909ef586bff6cda7053",
+      "plans/reference/INVARIANT-LEDGER_20261103.md": "6b8e7377544d5bb92ca921f17228e9d3e5a043a81622db4b1785a5c4ac930180",
+      "plans/reference/CAPABILITY-CARD_20261103.md": "83219dcdfc825bf91b1be793dc63fcd12ce3218d6cee2342441c92e1c1ed7253"
+    },
+    "diagnostic_chain_marked": true,
+    "diagnostic_chain": "20.2r/2s/2t, 20.3a/3b, 20.4a/b/d are diagnostic, non-planned; conclusions merged into 20.6",
+    "queue_head": "package 20 closed; single next question: whole-sentence decode/readout vs feedback write-read authority",
+    "confirm_reads": 0
+  },
+  "next_question": {
+    "question": "200 updates raised content bits from 0 to 0.25-0.46 while template bits stayed near 0 and whole-sentence accuracy stayed 0 in every cell: does this task fail first at whole-sentence decoding/readout, or at feedback write/read authority?",
+    "basis": [
+      "all eight cells have full-byte accuracy 0.0; template bits are 0.0 except 0.007541",
+      "content bits rise to 0.251470-0.453922 while decision bits stay 0.016422-0.240196",
+      "20.3b oracle F replacement changes 0 bytes and answers 0/22",
+      "20.4d arm effect 0.28% of SS versus model seed 99.40%"
+    ],
+    "not_a_training_plan": true,
+    "not_a_price": true,
+    "not_claiming_impossible": true,
+    "note": "this is the single queue-head question; it does not prescribe a training run, a budget or a package number, and it does not turn 'not proven' into 'impossible'"
+  },
+  "evidence_sha256": {
+    "20_0_plan_review": "05615f160fa35667285014909b1c23eccd2a325494dbd698d41a8264ff4caa80",
+    "20_1": "ac719ab462013d9fe80305eed3471935b05adb5e4e6334e61665dfc5921de3ae",
+    "20_2": "957af941449030e28b3d257580b317e7eb9444fcbfcba8b87858dc88dac49bdb",
+    "20_2r": "b6fcf57b9152d7a30cc9f9f349605326088e3b98758f762eaeb9e0fb7facfd54",
+    "20_2s": "0e7f0633f73056c51fef903c87ee9ce28df8e5e346d1143c48b39b1bad5fcd79",
+    "20_3a": "09817ddae98286c9982dfc60da65094b47e4f4c533e1573e9a40e66ef1d32928",
+    "20_3b": "0bb4a0cea25f66cc9c71a084335145a68d28d89c57692874c60ffeaa9d778066",
+    "20_4": "5601476640bde417b74b39e6ba2b9116dde9cecba957d32ecf98e746b8372fdb",
+    "20_4a": "dd101704e3e0507ffecca90d95f8b55af9b915fdcc475bdebd5697c8f1705483",
+    "20_4b": "f46dd1559932362681a87a890c17e6676f61d03983349929b8369e84fceebaca",
+    "20_4c": "c9870cd9b70aba73370bb3c8c6934dc88b1cf258b99ac267b4e1283e609295b6",
+    "20_4c_r2": "3162f295b2b74497c7fb939855584a461fc5266c548821d881ebbb46e3adb682",
+    "20_4d": "04067a9c8f258a7dbc40043f5c51270e6c4f1f3d7fc9bd5ee6132a3a66e20fa6",
+    "20_4d_preregistration": "80d6cebd070a79d5765f7ac3633dc074058ed9cd6560c53fe25b27b316db5491",
+    "20_2t_manifest": "59383d7517248c96087c24b0293f4d9441c46e9184f4325608b396210f27c528"
+  },
+  "variance_decomposition_used": {
+    "cells": 8,
+    "grand_mean": 0.134221814,
+    "arm_means": {
+      "B_EH": 0.139338235,
+      "CF1": 0.129105392
+    },
+    "model_means": {
+      "B_EH|20261105": 0.220833333,
+      "B_EH|20261106": 0.057843137,
+      "CF1|20261105": 0.019362745,
+      "CF1|20261106": 0.238848039
+    },
+    "batch_means": {
+      "20261105": 0.133333333,
+      "20261106": 0.135110294
+    },
+    "sum_of_squares": {
+      "total": 0.075193908,
+      "model_within_arm": 0.074739598,
+      "arm": 0.000209422,
+      "batch": 6.315e-06,
+      "interaction": 0.000238573
+    },
+    "share": {
+      "model_within_arm": 0.993958,
+      "arm": 0.002785,
+      "batch": 8.4e-05,
+      "interaction": 0.003173
+    }
+  },
+  "amendment_of_20_4d": {
+    "report_sha256_before": "d3a258509e3c8e754f1276c8fa473d04155b45875ed47358eeae379ecb6ec7c0",
+    "report_sha256_after": "04067a9c8f258a7dbc40043f5c51270e6c4f1f3d7fc9bd5ee6132a3a66e20fa6",
+    "criteria_unchanged": true,
+    "verdict_unchanged": true
+  },
+  "script": {
+    "runner_sha256": "d45c75460677c678d5b9582ae58272fb855769c77f6ba2a6bf3198a75f14a9cd",
+    "submitted_runner_sha256": null,
+    "frozen_module_sha256": {
+      "taiji/rule_learning_20_1_net.py": "8b5e95ef8aa14aad4dac0cf45b64b4505e30e1aac22b8c1d8a492f4a114de4bb",
+      "taiji/living_core.py": "144a4760a1b7973d59d17f3edb59932e5e824289e63d570d50349dde1fbf8246"
+    }
+  },
+  "cost": {
+    "cpu_seconds": 0.016,
+    "wall_seconds": 0.031,
+    "cpu_cap": 1500.0
+  }
+}

@@ -6,8 +6,10 @@ while the machine is perfectly healthy, and the thing the floor was meant to
 protect against is exactly one: paging inflating the CPU price.  So this run
 replaces the floor with a slowdown detector built on the measured unit price.
 
-* Calibration: the first three real updates of a fresh run must average
+* Calibration: the first three real updates of this process must average
   ``<= 1.10 x 56.906`` CPU seconds, otherwise ``cpu_inflation`` stops the run.
+  It is measured per process, not per run, so a restart re-calibrates the
+  machine it is actually running on (including a resumed run's first 3 updates).
 * Re-measurement: every reading block (25 updates) recomputes that block's mean
   update cost.  Above ``1.25 x`` the baseline the run stops on ``cpu_inflation``;
   between ``1.10 x`` and ``1.25 x`` it records a warning and continues.
@@ -95,7 +97,9 @@ CPU_CAP = 52000.0
 CPU_GUARD = 51500.0
 WALL_CAP = 90000.0
 MEM_HARD_FLOOR_MB = 200.0
-PRIOR_CPU_SECONDS = 2514.203
+PRIOR_20_4C_CPU_SECONDS = 2514.203
+PRIOR_R2_CPU_SECONDS = 16321.281
+PRIOR_CPU_SECONDS = PRIOR_20_4C_CPU_SECONDS + PRIOR_R2_CPU_SECONDS
 BASELINE_UNIT = 56.906
 CALIBRATION_UPDATES = 3
 CALIBRATION_RATIO = 1.10
@@ -199,7 +203,7 @@ def memory_sample() -> dict:
 
 
 def total_cpu() -> float:
-    """CPU seconds charged to the evidence, including the aborted 20_4c attempt."""
+    """CPU seconds charged to the evidence: the aborted 20_4c attempt plus this r2 segment."""
     return cost()[0] + PRIOR_CPU_SECONDS
 
 
@@ -332,6 +336,11 @@ def accumulator() -> dict:
         "full_bytes": 0,
         "turns": 0,
         "fast_writes": 0,
+        "correction_correct": 0,
+        "correction_surfaces": 0,
+        "post_feedback_correct": 0,
+        "post_feedback_first": 0,
+        "split_from_update": 0,
         "update_cpu": [],
     }
 
@@ -454,6 +463,10 @@ def run_pair(core, graph, worlds, const, parent, gates, table, train: bool):
         "full_bytes": 0,
         "turns": 0,
         "fast_writes": 0,
+        "correction_correct": 0,
+        "correction_surfaces": 0,
+        "post_feedback_correct": 0,
+        "post_feedback_first": 0,
     }
     for index in range(TOTAL_TURNS):
         turns = [response["turns"][index] for response in responses]
@@ -467,6 +480,12 @@ def run_pair(core, graph, worlds, const, parent, gates, table, train: bool):
             decision = all(row[p] == gold[p] for p in DECISION_POSITIONS)
             metrics["decision_correct"] += int(decision)
             metrics["surfaces"] += 1
+            if turns[world_index]["correction_surface"]:
+                metrics["correction_surfaces"] += 1
+                metrics["correction_correct"] += int(decision)
+            if turns[world_index]["first_answer"] and released[world_index]:
+                metrics["post_feedback_first"] += 1
+                metrics["post_feedback_correct"] += int(decision)
             metrics["template_bits"] += sum(int(row[p] == gold[p]) for p in TEMPLATE_POSITIONS)
             metrics["template_total"] += len(TEMPLATE_POSITIONS)
             metrics["content_bits"] += sum(int(row[p] == gold[p]) for p in DECISION_POSITIONS)
@@ -536,6 +555,10 @@ def merge(accum: dict, metrics: dict, loss: float, update_cpu: float) -> None:
         "full_bytes",
         "turns",
         "fast_writes",
+        "correction_correct",
+        "correction_surfaces",
+        "post_feedback_correct",
+        "post_feedback_first",
     ):
         accum[key] += metrics[key]
 
@@ -550,6 +573,12 @@ def accuracy(accum: dict) -> dict:
         "full_byte_accuracy": accum["full_bytes"] / max(accum["turns"], 1),
         "fast_writes": accum["fast_writes"],
         "turns": accum["turns"],
+        "correction_accuracy": accum["correction_correct"] / max(accum["correction_surfaces"], 1),
+        "correction_surfaces": accum["correction_surfaces"],
+        "post_feedback_accuracy": accum["post_feedback_correct"]
+        / max(accum["post_feedback_first"], 1),
+        "post_feedback_first": accum["post_feedback_first"],
+        "split_from_update": accum.get("split_from_update", 0),
     }
 
 
@@ -814,6 +843,7 @@ def run_one(arm: str, seed: int, candidate, gate, log: list[dict]) -> dict:
     accum = accumulator()
     resumed = False
     last_probe = None
+    process_cpu: list[float] = []
     if found is not None:
         path, loaded_step = found
         payload = load_checkpoint(path)
@@ -826,6 +856,17 @@ def run_one(arm: str, seed: int, candidate, gate, log: list[dict]) -> dict:
         torch.set_rng_state(payload["rng"])
         accum = copy.deepcopy(payload["accum"])
         resumed = accum["updates"] > 0
+        # The correction / post-feedback split was added after the first 75 updates of
+        # B_EH|20261105 were already checkpointed.  Those surfaces cannot be recovered
+        # from an accumulator, so the split starts at the resume point and says so.
+        for key in (
+            "correction_correct",
+            "correction_surfaces",
+            "post_feedback_correct",
+            "post_feedback_first",
+        ):
+            accum.setdefault(key, 0)
+        accum["split_from_update"] = accum["updates"]
         append_progress(
             {
                 "stage": "resume_loaded",
@@ -882,6 +923,10 @@ def run_one(arm: str, seed: int, candidate, gate, log: list[dict]) -> dict:
             "content_total",
             "full_bytes",
             "fast_writes",
+            "correction_correct",
+            "correction_surfaces",
+            "post_feedback_correct",
+            "post_feedback_first",
         ):
             base_accum[key] = metrics[key]
         append_progress(
@@ -924,8 +969,9 @@ def run_one(arm: str, seed: int, candidate, gate, log: list[dict]) -> dict:
             raise BudgetStop("numerical_instability", f"non-finite loss at {arm}/{seed}/{step}")
         merge(accum, metrics, value, update_cpu)
         del const, parent, gates, table, loss_value, metrics
-        if step == CALIBRATION_UPDATES and not resumed:
-            mean_cpu = sum(accum["update_cpu"][:CALIBRATION_UPDATES]) / CALIBRATION_UPDATES
+        process_cpu.append(update_cpu)
+        if len(process_cpu) == CALIBRATION_UPDATES:
+            mean_cpu = sum(process_cpu) / CALIBRATION_UPDATES
             ratio = mean_cpu / BASELINE_UNIT
             append_progress(
                 {
@@ -933,6 +979,8 @@ def run_one(arm: str, seed: int, candidate, gate, log: list[dict]) -> dict:
                     "arm": arm,
                     "seed": seed,
                     "updates": CALIBRATION_UPDATES,
+                    "process_updates": len(process_cpu),
+                    "resumed": resumed,
                     "cpu_mean": round(mean_cpu, 3),
                     "baseline_unit": BASELINE_UNIT,
                     "ratio": round(ratio, 4),
@@ -947,7 +995,7 @@ def run_one(arm: str, seed: int, candidate, gate, log: list[dict]) -> dict:
                     "cpu_inflation",
                     (
                         f"calibration cpu_mean {mean_cpu:.1f} s = {ratio:.2f}x "
-                        f"baseline at {arm}/{seed}/update {CALIBRATION_UPDATES}"
+                        f"baseline at {arm}/{seed}/update {step}"
                     ),
                 )
         if step == CHECKPOINT_EVERY + 1 and not resumed:
@@ -1150,6 +1198,10 @@ def run_one(arm: str, seed: int, candidate, gate, log: list[dict]) -> dict:
                 "content_total",
                 "full_bytes",
                 "fast_writes",
+                "correction_correct",
+                "correction_surfaces",
+                "post_feedback_correct",
+                "post_feedback_first",
             ):
                 eval_accum[key] += metrics[key]
     eval_cpu = time.process_time() - eval_started
@@ -1231,6 +1283,18 @@ def assemble(
             "decision_correct": sum(row["decision_correct"] for row in finals),
             "surfaces": sum(row["surfaces"] for row in finals),
             "fast_writes": sum(row["fast_writes"] for row in finals),
+            "correction_accuracy": round(
+                sum(row.get("correction_correct", 0) for row in finals)
+                / max(sum(row.get("correction_surfaces", 0) for row in finals), 1),
+                6,
+            ),
+            "correction_surfaces": sum(row.get("correction_surfaces", 0) for row in finals),
+            "post_feedback_accuracy": round(
+                sum(row.get("post_feedback_correct", 0) for row in finals)
+                / max(sum(row.get("post_feedback_first", 0) for row in finals), 1),
+                6,
+            ),
+            "post_feedback_first": sum(row.get("post_feedback_first", 0) for row in finals),
         }
     completed = all(run["completed"] for run in runs.values())
     dead = [key for key, run in runs.items() if run["arm"] == "CF1" and not run["completed"]]
@@ -1238,6 +1302,22 @@ def assemble(
     inflation = [
         row for row in log if row.get("stage") == "reading" and row.get("cpu_status") != "ok"
     ]
+    checkpoint_integrity = []
+    for row in log:
+        if row.get("stage") != "checkpoint":
+            continue
+        candidate_path = checkpoint_path(row["arm"], row["seed"], int(row["step"]))
+        actual = file_sha(candidate_path) if candidate_path.exists() else None
+        checkpoint_integrity.append(
+            {
+                "arm": row["arm"],
+                "seed": row["seed"],
+                "step": row["step"],
+                "recorded_sha256": row["sha256"],
+                "file_sha256": actual,
+                "byte_identical": actual == row["sha256"],
+            }
+        )
     cpu_vs_memory = [
         {
             "arm": row.get("arm"),
@@ -1271,15 +1351,44 @@ def assemble(
         "calibration": calibration,
         "inflation": inflation,
         "cpu_vs_memory": cpu_vs_memory,
+        "checkpoint_integrity": checkpoint_integrity,
+        "split_definition": {
+            "correction_accuracy": (
+                "decision-byte exactness over the 22 correction-surface turns per world "
+                "(5 query_v1 after v1 feedback + 11 current_v2 + 6 previous_v1)"
+            ),
+            "post_feedback_accuracy": (
+                "the same measure restricted to first answers produced after at least one "
+                "feedback release has been injected (blind anchors excluded)"
+            ),
+            "caveat": (
+                "B_EH|20261105 was checkpointed at update 75 before this split existed; "
+                "its accumulator could not be backfilled, so its split_from_update is 75 "
+                "and the split covers updates 76-200 only.  Its dev_eval (80 worlds) is "
+                "complete and is the comparable figure."
+            ),
+        },
         "wasted_prior_run": {
             "evidence": "20_4c",
             "report": "reports/taiji_package20_4c_formal_comparison_20261105.json",
             "run": "CF1|20261105",
             "updates_completed": 25,
-            "cpu_seconds": PRIOR_CPU_SECONDS,
+            "cpu_seconds": PRIOR_20_4C_CPU_SECONDS,
             "note": (
                 "aborted on the absolute memory floor; readings kept untouched as historical "
                 "evidence and the cost is charged against the same 52,000 CPU cap"
+            ),
+        },
+        "carried_forward_segment": {
+            "evidence": "20_4c_r2",
+            "cpu_seconds": PRIOR_R2_CPU_SECONDS,
+            "completed_runs_before_restart": ["CF1|20261105"],
+            "partial_run": {"arm": "B_EH", "seed": 20261105, "updates_completed": 75},
+            "note": (
+                "same evidence, real work already done in the pre-restart process (last "
+                "checkpoint row reported 16,241.813 s; the remainder is the stop and "
+                "load-only verification overhead); counted towards the cap and resumed "
+                "from the 75-update checkpoint"
             ),
         },
     }
@@ -1315,6 +1424,10 @@ def emit_report(payload: dict, verdict: str, detail: str) -> None:
         "cost": {
             "cpu_seconds": round(cost()[0], 3),
             "prior_cpu_seconds": PRIOR_CPU_SECONDS,
+            "prior_breakdown": {
+                "20_4c_aborted": PRIOR_20_4C_CPU_SECONDS,
+                "20_4c_r2_pre_restart": PRIOR_R2_CPU_SECONDS,
+            },
             "total_cpu_seconds": round(total_cpu(), 3),
             "remaining_cpu_seconds": round(CPU_CAP - total_cpu(), 3),
             "wall_seconds": round(cost()[1], 3),
@@ -1411,7 +1524,7 @@ def write_freeze(identity: dict) -> dict:
             "optimizer_steps_in_probe": 0,
             "threshold": EARLY_STOP_GAIN,
             "criterion": (
-                "two consecutive probes with leverage_max < 1e-4 and byte_diff == 0 " "on CF1"
+                "two consecutive probes with leverage_max < 1e-4 and byte_diff == 0 on CF1"
             ),
             "verdict": "f_channel_dead_under_training",
             "applies_to": "CF1 only; B_EH has no F writes and is recorded as a control",
@@ -1427,7 +1540,15 @@ def write_freeze(identity: dict) -> dict:
             "unit_from_20_4b": REFERENCE_UNIT_FROM_20_4B,
             "total_from_20_4b": REFERENCE_TOTAL_FROM_20_4B,
             "prior_cpu_seconds": PRIOR_CPU_SECONDS,
-            "prior_source": "reports/taiji_package20_4c_formal_comparison_20261105.json",
+            "prior_breakdown": {
+                "20_4c_aborted": PRIOR_20_4C_CPU_SECONDS,
+                "20_4c_r2_pre_restart": PRIOR_R2_CPU_SECONDS,
+            },
+            "prior_source": (
+                "reports/taiji_package20_4c_formal_comparison_20261105.json (25 updates) + "
+                "reports/taiji_package20_4c_r2_formal_comparison_20261105_progress.jsonl "
+                "(CF1|20261105 200 updates, B_EH|20261105 75 updates before the reboot)"
+            ),
             "hard_cap": CPU_CAP,
             "remaining_at_freeze": round(CPU_CAP - PRIOR_CPU_SECONDS, 3),
         },
