@@ -3,6 +3,8 @@
 > 状态 [数学复核·设计输入]。**只审公式，不审实现状态、工程配套、CI、队首**。对象：[U1 统一代数](SPEC-TAIJI-UNIFIED_CORE_U1_20261107.md)、[MGW1 规格](SPEC-TAIJI-MGW1_MULTIMODAL_WORLD_20261105.md)、[OP2 数学规格](SPEC-COPY_OPERATOR_OP2_MATH_20261104.md)、算法主稿 §38/§39、[11-04 前沿对照审查](TAIJI_ALGORITHM_FRONTIER_MATH_REVIEW_20261104.md)。取证基线 `5e64c0e1f`；本轮 0 训练、0 权重加载、0 数据集/密封面访问，未改任何冻结公式与预注册门。当前队首仍见 [MAINLINE](../MAINLINE.md)。
 >
 > **双产物口径（承 11-04 审查）**：U1/MGW1 是设计规格（产物 2），`taiji/` 源码是已实现本体（产物 1）。本件只裁产物 2 的公式自洽性，不把规格命题说成能力结论，也不把源码结构混入推导。
+>
+> **2026-11-08 状态条**：本件列出的 P1（定理 5.1 球约束）与 P2（`q_null` 绑定）已由 owner 批准的 [U1 勘误](U1-ERRATA_20261108.md) **并入正文**（规格 §3/§4/§5，删除台账见其 §11）；P3/P4 仍未修，本文的负结论保持有效。另：原预审 U1 的「归一性」检查是硬编码 `w` 的恒真检查，**证据无效**，见 [verify_taiji_unified_u1_math.py](../../scripts/training/verify_taiji_unified_u1_math.py) 顶部 `INVALID EVIDENCE` 注记。
 
 ## 0. 结论
 
