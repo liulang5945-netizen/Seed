@@ -22,13 +22,14 @@
 | 设计资产 | MGW1 + U1：**0 代码 / 0 参数 / 0 训练 / 不占队列** | U1 数学复核 P1–P8（2 硬伤）；主线已裁定「U1 修好 P1–P4 前不得作为实现依据」 | [U1 复核](TAIJI_U1_MATH_REVIEW_20261107.md)；MASTER-PLAN §1 U1 行；账本 §22 I22.3 / D16-39 |
 | 生效纪律 | 永久 | D16-8 活性门、D16-9 零干预对照、D16-10 零可识别性、D16-11 重复目标、D16-12 微调不判架构、D16-26/38/39/41；M1/M2/M3；L-U1…L-U4 | 账本 §16 / §12–13 / §20 / §22 |
 
-### 0.2 取证时点的五处不一致（必须先校准，见 P0）
+### 0.2 取证时点的六处不一致（必须先校准，见 P0）
 
 1. **队首与执行结果脱节**：MAINLINE / MASTER-PLAN / ROADMAP-NEXT 仍发布「队首＝21.1」，但工作区已有 21.1 的 U 分支完成回执。**该回执与其 manifest 均未入库**（`??`），按 `CI_CONTRACT_RULES.md` §2.3 不得当作冻结证据引用，也不得据此由本件改写队首。
 2. **world 口径漂移**：ROADMAP-NEXT §0 写 `dev 24 world`，而 21.1 回执 `worlds_per_cell=16`、包 21 计划 §1 与 manifest 均为 16（`160,165,…,235` 每 5 取 1）。**本轮已把 ROADMAP-NEXT 该处勘误为 16**，不动队首。
 3. **账本 §20 的 T-U1**：仍以正面命题登记「β→∞ 读出精确收敛」，未挂 P1 证伪指针；§22 I22.3 虽已登记硬伤，只读 §20 会误判定理成立。列为 P0 交付项（本件不代改判据唯一源）。
 4. **已闭合的一致性项（登记为完成，不再列为待办）**：能力卡 §7 与账本 §15.1 已标 `superseded`；能力卡 U14 设计资产行已新增；MASTER-PLAN 状态表 U1 行已挂 P1–P4 与复核指针；ROADMAP-NEXT §2b 已新增包 21。
 5. **工作区噪声**：71 条在途条目（`M` 3 条、`D` 1 条 `reports/taiji_n1_c2_state_flow_20261015_snapshots.json.gz`、约 50 个 10.x/14.x 旧脚本与测试未跟踪、21.1 在途回执与 manifest）。按 `CI_CONTRACT_RULES.md` §5.1 与仓库卫生纪律：**逐项判归属，不扫入本轮提交，不清理他人产物**。
+6. **既存 CI 红灯（本轮已修）**：`test_prereg_wording_corpus_ratchet_contract.py::test_no_new_invisible_docs_appear` 取证时点报红，隐形名单为两份既有文档 `PLAN-PACKAGE20_RULE_LEARNING_CORRECTION_20261105.md` 与 `PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md`（缺含「判据/出口/验收」的二级标题）。按 `CI_CONTRACT_RULES.md` §2.2 与白名单注释「修掉一份就从清单删掉，棘轮只许单向收紧」，本轮给两份各补一个**纯索引**二级标题，不改任何判据文字、门值、预算或队首；红→绿证据：修前 `1 failed, 2 passed`、修后 `3 passed in 1.91s`。**本件自身在措辞门审计中为 `status: ok`（`criterion_headings: 3`），红灯非本轮引入**。该修复随本轮第二个提交入库，P8 的「四门本机过」已有可复现回执。
 
 ### 0.3 边界（不做清单，全计划通用）
 
