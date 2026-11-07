@@ -1,0 +1,160 @@
+{
+  "schema": "taiji-package21-1-p0-closeout-v1",
+  "date": "2026-11-07",
+  "step": "P0",
+  "status": "completed",
+  "verdict": "p0_closeout_passed_pending_owner_decision",
+  "scope": "计划一致性校准与 21.1 结项写回；0 训练 / 0 前向 / 0 confirm / 0 评测重跑 / 0 数据重读；不改任何冻结判据、门值、预算或 21.1 读数",
+  "baseline_head": "0286ef3ed",
+  "authority": {
+    "plan": "plans/reference/PLAN-DEVELOPMENT_DETAIL_20261107.md",
+    "criteria_section": "P0 结项条件（§2 P0 / §3.2）",
+    "frozen_21_1_criteria": "plans/reference/PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md §2（判据先落盘、跑完未改）"
+  },
+  "evidence_chain": {
+    "report": "reports/taiji_package21_1_readout_decomposition_20261107.json",
+    "report_sha256_original_crlf_worktree": "c19a9e1c197de81023092ed11a4f9e6b30e4934a627dc72dd53d2fb1d76ac7f0",
+    "report_sha256_committed_lf": "e7666226c310fe5200a6ec3b7f7107267dbb3bc2034e1d6d8f79f52c2df00ac7",
+    "manifest": "plans/manifests/taiji_package21_1_readout_decomposition_20261107.json",
+    "eol_normalization": "报告/manifest 由 CRLF 规范化为仓库 eol=lf 口径；JSON 解析对象逐值不变（脚本断言 report values identical / manifest 仅 report_sha256 字段变化）；manifest.report_sha256 重绑为 LF 口径，前后 sha 均在本卡留账",
+    "report_sha_matches_manifest": true,
+    "report_blob_equals_worktree": true,
+    "blob_verification_method": "isolated GIT_INDEX_FILE + git cat-file blob 逐字节比对（提交前）；提交后另行复验",
+    "dual_runner_sha256": "35501bd4fd0acfd3eea661100a5314e55c4d54726159d42645ef9203a3cdfc5f",
+    "dual_runner_columns_equal": true,
+    "runner_head_blob_sha256_matches": true,
+    "runner": "scripts/training/probe_taiji_package21_1_readout_decomposition.py（已入库于 be1216161）",
+    "checkpoint_sha256_all_four_matched": true,
+    "checkpoint_sha256": {
+      "CF1_20261105_200.pt": "aa98db8a0d8b64530fb6b4bc80e5573a2a937f999f341a89f01b4bb4114ae3b2",
+      "CF1_20261106_200.pt": "61ad7b6200fce2c46d12b12ab0f474768d8f66578dbf5ae6276f5f3221403337",
+      "B_EH_20261105_200.pt": "0939658ede9805b716a2bc4b4de606970cd4fd1d5ccad58023ced57cf130b3d1",
+      "B_EH_20261106_200.pt": "eade77f2a3e8c0c79394323afce79f587458c18edd53d1826c6baacd3d8bfdda"
+    }
+  },
+  "readout_21_1": {
+    "verdict": "upstream_representation_is_first_wall",
+    "branch": "U",
+    "branch_counts": { "R": 0, "U": 4, "I": 0 },
+    "cpu_seconds": 1597.344,
+    "wall_seconds": 1610.581,
+    "cpu_cap": 4800.0,
+    "worlds_per_cell": 16,
+    "full_byte_accuracy": "12/12 cells all zero",
+    "content_gain_from_template": [-0.090686, -0.036152, -0.251226, -0.21201],
+    "confirm_reads": 0,
+    "checkpoints_written": 0,
+    "adam_steps": 0,
+    "criteria_frozen_before_run": true
+  },
+  "closeout_criteria": [
+    {
+      "id": "C1",
+      "criterion": "21.1 报告＋manifest 入库，且 report_sha256 / 双列 runner sha 逐字一致",
+      "pass": true,
+      "evidence": "EOL 规范化后重绑；工作区 sha == manifest.report_sha256 == 预测入库 blob；隔离 index 逐字节比对通过；双列 runner sha 与 HEAD blob 一致；4 个 checkpoint sha 全吻合。报告/manifest 与本卡同批入库，提交后复验"
+    },
+    {
+      "id": "C2",
+      "criterion": "MAINLINE / MASTER-PLAN / ROADMAP-NEXT 三处队首描述与 21.1 状态逐字一致",
+      "pass": true,
+      "evidence": "三处均含同一队首句（sha256 c05e9530d04b40561a457621123c00996ab37b3442757719d0676d942f3e86d7），各出现 1 次；同步页首状态、状态表、依赖顺序、包 21 计划 §0/§2 标题/§7、03 下一步"
+    },
+    {
+      "id": "C3",
+      "criterion": "ROADMAP-NEXT dev 16 world 已勘误",
+      "pass": true,
+      "evidence": "0eae2d1bd 已把 dev 24 world 勘误为 16；21.1 回执 worlds_per_cell=16"
+    },
+    {
+      "id": "C4",
+      "criterion": "账本 §20 T-U1 挂 P1 证伪指针",
+      "pass": true,
+      "evidence": "T-U1 状态列追加指向 U1 数学复核 P1 与 §22 I22.3 的缺陷指针（含误差下界与 β=1e6 读数）；原命题正文逐字未改"
+    },
+    {
+      "id": "C5",
+      "criterion": "包 21 计划 §6 退役项逐项有回执",
+      "pass": true,
+      "evidence": "见 retirement_checklist（7 项，全部有可入库证据指针）；旧 checkpoint 目录按账本 §98 另出旁挂声明"
+    },
+    {
+      "id": "C6",
+      "criterion": "git diff --cached --name-only 只含本轮文件",
+      "pass": true,
+      "evidence": "提交前暂存区为空；使用精确 pathspec 的 git add + git commit；提交后复核 diff --cached 为空"
+    }
+  ],
+  "all_criteria_pass": true,
+  "queue_head": {
+    "sentence_sha256": "c05e9530d04b40561a457621123c00996ab37b3442757719d0676d942f3e86d7",
+    "locations": [
+      "plans/MAINLINE.md:7",
+      "plans/MASTER-PLAN.md:11",
+      "plans/reference/ROADMAP-NEXT_20261104.md:10"
+    ],
+    "wording": "21.1 已结项判 U 分支；21.3 待裁定。U 分支只是准入条件，不是 21.3 完成，也不是里程碑关闭"
+  },
+  "retirement_checklist": [
+    {
+      "item": "output/_peek_20_4c_r2.py 删除",
+      "status": "verified_absent",
+      "evidence": "P0 文件系统核验 ABSENT；包 21 计划 §6 已登记"
+    },
+    {
+      "item": "20.3a 每轮内容寻址写（addressed_store_enabled）退役为机制",
+      "status": "verified_retired_default_off",
+      "evidence": "taiji/rule_learning_20_1_net.py:115 默认 False；账本 D16-41 与包 21 计划 §6 已登记；21.1 图构建显式 False"
+    },
+    {
+      "item": "20.2t 选项 3（批次写＋衰减累积）退役",
+      "status": "verified_retired",
+      "evidence": "账本 D16-41、包 21 计划 §6、ROADMAP-NEXT §2b 退役段均已登记，不再列为候选"
+    },
+    {
+      "item": "output/taiji_package20_4_checkpoints 标 superseded",
+      "status": "verified_superseded_with_sidecar",
+      "evidence": "plans/manifests/taiji_package20_4_checkpoints_superseded_20261107.json（含 preflight.pt 77535432 B / sha256 d919749a…）；目录仅 1 个文件，未参与任何评测"
+    },
+    {
+      "item": "能力卡 §7 数据前提三选项标 superseded",
+      "status": "verified_superseded",
+      "evidence": "plans/reference/CAPABILITY-CARD_20261103.md §7 标题已带 superseded 2026-11-07"
+    },
+    {
+      "item": "账本 §15.1 起点门读数对象待裁定标 superseded",
+      "status": "verified_superseded",
+      "evidence": "plans/reference/INVARIANT-LEDGER_20261103.md:302 已带 superseded 2026-11-07"
+    },
+    {
+      "item": "U1 / MGW1 冻结为设计资产",
+      "status": "verified_frozen",
+      "evidence": "MASTER-PLAN 状态表两行 + 包 21 计划 §6 + 账本 D16-39/I22.3；U1 修好 P1–P4 前不得作为实现依据"
+    }
+  ],
+  "discipline": {
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "model_forward_passes": 0,
+    "evaluation_reruns": 0,
+    "confirm_reads": 0,
+    "checkpoints_written": 0,
+    "frozen_criteria_changed": false,
+    "readout_values_changed": false,
+    "cpu_budget_cap": 30.0,
+    "cpu_measured": null,
+    "cpu_note": "本轮为文档编辑／哈希比对／文件系统核验，未启动任何实验进程，未做 CPU 计量；按纪律空指标写 null 不补 0"
+  },
+  "gate_recheck": {
+    "prereg_wording_corpus_ratchet": "3 passed in 2.77s（本机，提交前）",
+    "ledger_cited_reports_census": "取证时点 verdict=violated；failing_verdicts=[every_cited_report_is_tracked, every_cited_report_exists_on_disk]；not_tracked 9 条中 7 条为 2026-10/11 初既存历史引用且盘上不存在（非本轮引入），2 条为本轮新报告（盘上存在，与本卡同批入库后即从 not_tracked 消失）",
+    "disposition": "既存 7 条未处置：不清理他人产物、不加豁免白名单、不改既有引用；归 P8 横切治理，需 owner／归属会话裁定。提交后复验红项应回落到 7 条",
+    "introduced_by_p0": 0
+  },
+  "stop_line": {
+    "reached": true,
+    "meaning": "P0 完成即停在 owner 裁定节点：U 分支只是包 21.3 的准入条件，不等于 21.3 已批准或已执行；21.2/21.4 保持冻结，U1 不进队列",
+    "next_owner_decision": "是否准入包 21.3 表示可分性诊断（是／否）"
+  }
+}

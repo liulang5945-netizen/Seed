@@ -19,7 +19,7 @@
 > 当前进度：**20.4d 零训练共用评测已交付（`arm_indistinguishable`）**——8 格棋盘＋全新共用批次（seed 20261107、索引 320–399、world 级配对 bootstrap 2,000 次）：pooled Δ **−0.028064**（CI **−0.064706…+0.010539**）、`batch_over_arm_ratio` **0.7336**、`sign_agreement=false`、`arm_effective=false`。8 格两因素方差分解（20.6 修订）：**模型 seed 99.3958%／arm 0.2785%／batch 0.0084%／交互 0.3173%**；**4,026.438 CPU**。原 `variance` 块保留审计，`criteria` 与 `verdict` 未改。
 > 当前进度：**20.6 全局收束已交付并关包（`package20_closed_current_learning_candidate_not_established`）**——按 §10 第 2 行结案"当前学习候选未成功＋F 额外贡献未证"；20.5 准入不成立、**不执行**；confirm 封存、**record 保持 0 读取**；**无自动 20.x 补丁链**。measured **50,573.637 CPU**（B=24,000 的 **2.1072×**、48,000 闸的 **1.0536×**，超 **2,573.637**）；含声明估计 **52,893.637**（1.102× 闸）；正式 800 updates＋作废 25＝**825 updates / 825 Adam**；F 探针 **17 事件 / 85 臂评估**。
 > 诊断链标记：**20.2r／20.2s／20.2t／20.3a／20.3b／20.4a／20.4b／20.4d 均为"诊断、非计划步骤"，结论已并入 20.6**；不计入 §8 工作卡的正式步骤序列，脚本按既有归档惯例处理。
-> 下一步：**包 21.1 零训练读出分解（队首）**——在 20.4c_r2 4 个末步 checkpoint 上，`natural`／`template_forced`／`content_forced` 三臂、dev 16 world；一分二回答"整句恒 0 的第一次失败发生在发射/读出还是反馈写读权威"。CPU ≤4,800、0 Adam、0 训练、0 confirm；判据先落盘、跑完不改。未出读数前不开 21.2–21.4、不实现 U1、不定价。详见[包21计划](../../reference/PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md)。
+> 下一步：**21.1 已结项判 U 分支，唯一待裁定＝是否准入 21.3**（U 分支只是准入条件，不是 21.3 完成）——21.1 三臂 4/4 格判 U、`verdict=upstream_representation_is_first_wall`、整句 12/12 格恒 0、CPU 1597.344 / wall 1610.581、0 Adam / 0 confirm / 0 写 checkpoint；21.2（R）与 21.4 保持冻结，不预启动、不并行、不实现 U1、不定价。报告＋manifest 已由 P0 入库并写回三处队首，详见[包21计划](../../reference/PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md)与[P0 结项卡](../../../reports/taiji_package21_1_p0_closeout_20261107.json)。
 > 当前进度：**计划收敛（2026-11-04）**——唯一权威主线移到 [MASTER-PLAN](../../MASTER-PLAN.md)，[MAINLINE](../../MAINLINE.md) 只留单入口；推进轨道移到 [ROADMAP-NEXT](../../reference/ROADMAP-NEXT_20261104.md)（19/20/21 包）；状态表、依赖顺序、权威源、冲突消解与待裁定清单集中一处，本页只保留流水与证据回执。
 > 最后提交：`67d000b53`（20.6 关包哈希回填：报告 `submitted_runner_sha256`＋manifest＋plans）/ `eabc694f0`（**包 20 关包提交**：20.6 报告＋manifest＋plans 六处＋20.4c_r2/20.4d 报告与 manifest；0 训练 / 0 优化器步 / 0 Adam / 0 confirm；measured **50,573.637 CPU**、825 updates/825 Adam、探针 17 事件/85 评估）/ 此前 `f35910423`（20.2t 写入粒度设计闸）
 
@@ -2753,4 +2753,10 @@ T2 的整更新 `select` 计数：20.4a 实测 **93,636 → 0**（优化路径�
 **I. 花费与纪律**：交付run **516.0 CPU / 680.978 wall**（上限 1,200／2,400 s 内）；校准更新 **6 步**（1 次等价参考＋5 次计时），**0 正式训练步、0 confirm、未写 freeze、冻结文件与阈值未改**。工程重跑 4 次须一并声明：①首跑 `shift_index` 把单 world 键表当批表，unpack 崩溃；②次跑 5 样本累积保存 51 轮 logits，宿主内存不足 OOM；③三跑为补测量分辨率（Windows `process_time` 15.6 ms 刻度，微基准要 4000 次重复）主动停止；④格式化后重跑以让双列 sha 与文件一致。四次累计约 1,700 CPU，**超本合同 1,200 CPU 上限**，如实记账。双列 sha：`runner_sha256`（产生读数）＝**`3ee24ea5…`**，`submitted_runner_sha256`＝**`935591be…`**；执行路径 `executor_sha256`＝**`2eaaacb7…`**，提交执行器 `b01d700b…`。两列之差只是 5 处无用绑定（import、`reference`、`emitted_same`、`length`、`c`），全部不在数值路径上，且提交字节**未再跑等价门**——读数归属 `runner_sha256`／`executor_sha256`。
 
 **J. 下一步（唯一）**：owner 对“0.27% 超闸”给一句裁定——**抬闸到 ≥48,200 并批准正式对照**，或**指定 B/C 取舍**；未裁定前不训练、不写 freeze。
+
+---
+
+## 2026-11-07 P0 计划一致性校准与 21.1 结项写回（0 训练 / 0 前向 / 0 confirm / ≤30 CPU 预算）
+
+owner 批准 P0 为唯一队首后执行：**21.1 零训练读出分解已结项，判 U 分支**（`upstream_representation_is_first_wall`，4/4 格、CPU 1597.344 / wall 1610.581、0 Adam / 0 confirm / 0 写 checkpoint、整句 12/12 格恒 0）。报告＋manifest 入库：因仓库对 `reports/*.json` 设 `eol=lf` 而原回执为 CRLF，入库前做**内容逐值不变的 EOL 规范化**并重绑 `report_sha256`（原 `c19a9e1c…` → 入库口径 `e7666226…`），隔离 index 验证 blob == 工作区 == manifest；双列 runner sha 与已入库 runner blob 一致、4 个 checkpoint sha 全吻合。三处队首（MAINLINE / MASTER-PLAN / ROADMAP-NEXT）写回为逐字相同的同一句（sha256 `c05e9530…`），同步页首状态、状态表、依赖顺序、包 21 计划 §0/§2 标题/§7 与本页「下一步」；账本 §20 T-U1 追加 P1 证伪指针（原命题正文未改）；退役清单 7 项逐项有回执，旧 checkpoint 目录按账本 §98 出旁挂 `superseded` 声明。六项结项条件全过，机器回执见[P0 结项卡](../../../reports/taiji_package21_1_p0_closeout_20261107.json)。**U 分支只是 21.3 的准入条件，不是 21.3 完成，也不是里程碑关闭**；21.2/21.4 保持冻结、U1 不进队列。本段 0 训练 / 0 优化器步 / 0 前向 / 0 confirm / 0 评测重跑 / 0 数据重读，未改任何冻结判据、门值、预算或 21.1 读数；停在 owner 裁定节点（是否准入 21.3）。
 

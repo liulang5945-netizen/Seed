@@ -1,0 +1,20 @@
+{
+  "schema": "taiji-artifact-supersession-v1",
+  "step": "P0 / package21-section6-retirement",
+  "date": "2026-11-07",
+  "status": "superseded",
+  "target": "output/taiji_package20_4_checkpoints",
+  "superseded_by": "output/taiji_package20_4c_r2_checkpoints",
+  "superseded_at": "2026-11-07",
+  "reason": "20.4c 作废残留；按包 21 计划 §6 与账本 D16-41 标 superseded，不参与任何评测，不得作为 21.x 输入",
+  "policy": "账本 §98：旧产物状态由旁挂声明承载，不改原文件字节；本旁挂与清单共同构成可引用状态来源",
+  "entries": [
+    {
+      "path": "output/taiji_package20_4_checkpoints/preflight.pt",
+      "bytes": 77535432,
+      "sha256": "d919749aafbd4d1ac9a2a7b2ed6120c3dff8ac181e2b20375f0765d5159b42e5"
+    }
+  ],
+  "verified_by": "P0 closeout 2026-11-07",
+  "closeout": "reports/taiji_package21_1_p0_closeout_20261107.json"
+}

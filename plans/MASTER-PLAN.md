@@ -1,6 +1,6 @@
 # MASTER-PLAN（唯一权威主线）
 
-> 文档状态：[当前唯一权威主线·2026-11-07 包 21 启动]。本文件维护当前状态、父资产、依赖和唯一队首；判据见账本，能力解释见能力卡，流水见03。历史长段已[逐字节归档](archive/history/n19_to_n20_20261105/README.md)；本轮梳理见[2026-11-07 全局梳理](reference/SURVEY-PROJECT-STATE_20261107.md)。
+> 文档状态：[当前唯一权威主线·2026-11-07 21.1 结项判 U 分支；21.3 待裁定]。本文件维护当前状态、父资产、依赖和唯一队首；判据见账本，能力解释见能力卡，流水见03。历史长段已[逐字节归档](archive/history/n19_to_n20_20261105/README.md)；本轮梳理见[2026-11-07 全局梳理](reference/SURVEY-PROJECT-STATE_20261107.md)。
 
 ## 0. 一句话与队首
 
@@ -8,7 +8,11 @@
 
 **当前窗口**：包 20 已按计划 §10 第 2 行**关包**，判定 **`package20_closed_current_learning_candidate_not_established`**（“当前学习候选未成功＋F 额外贡献未证”）。20.1 夹具/同形图（`ready`，0 训练）、20.2 信用与恢复（`ready`，135 张量冻结、三路径 90/90）已交付；20.2r／20.2s／20.2t／20.3a／20.3b／20.4a／20.4b／20.4d 均为**诊断、非计划步骤**，结论并入 20.6；20.4c_r2 完成 2 seed × 2 臂 × 200 更新（checkpoint 每 25 步、`resume_verified`）；20.4d 完成零训练共用评测；**20.5 未执行**，confirm 封存、record **0 读取**；**无自动 20.x 补丁链**。
 **结案依据**：① 20.4c_r2 末步 dev 决策位在 1105 利 B_EH（0.0968 vs 0.0356）、在 1106 利 CF1（0.0865 vs 0.0508）——两 seed 方向相反，F 净贡献门槛（点差 ≥0.05 且配对下界 >0）**不成立**；② 20.4d 共用批次 pooled Δ **−0.028064**（CI −0.064706…+0.010539）、`arm_indistinguishable`、`sign_agreement=false`、`batch_over_arm_ratio=0.7336`；③ 绝对水平远低于强捷径（末步模板位 0.0021–0.0112、内容位 0.2118–0.3027、**整句恒 0**；标签多重集捷径 7/11、信息 Bayes 参考 1753/1938）。20.4d 方差两因素重算：模型 seed **99.3958%**、arm **0.2785%**、batch **0.0084%**、交互 0.3173%（原 `variance` 块保留审计，`criteria`/`verdict` 未改）。
-**队首（下一条要做的唯一事）**：**包 21.1 零训练读出分解**——在 20.4c_r2 的 4 个末步 checkpoint（`output/taiji_package20_4c_r2_checkpoints/*_200.pt`）上，把「句框」与「内容」分开强制（`natural`／`template_forced`／`content_forced` 三臂，dev 索引每 5 取 1 共 16 world），一分二回答唯一后继问题：整句恒 0 的第一次失败发生在**发射/读出**还是**反馈写读权威**。判据先落盘、跑完不改（[包21计划](reference/PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md)）；预算 CPU ≤4,800、wall ≤7,200、**0 训练 / 0 优化器步 / 0 Adam / 0 confirm / 0 写 checkpoint**。未出读数前不开 21.2–21.4、不实现 U1、不定价；不把“未证”写成“不可能”。包 20 成本 measured **50,573.637 CPU**（B=24,000 的 **2.1072×**、48,000 闸的 **1.0536×**，超 **2,573.637**；含估计 52,893.637＝1.102× 闸）；正式 800 updates＋作废 25＝**825 updates / 825 Adam**；F 探针 **17 事件 / 85 臂评估**。
+**队首（唯一）**：包 21.1 零训练读出分解已结项，判 U 分支（verdict=upstream_representation_is_first_wall，4/4 格、CPU 1597.344 / wall 1610.581、0 Adam / 0 confirm / 0 写 checkpoint）；U 分支只是包 21.3 表示可分性诊断的准入条件，21.3 尚未获批准、未执行，21.2（R 分支）与 21.4 保持冻结；当前唯一待裁定：是否准入 21.3，不预启动、不并行、不实现 U1、不定价。
+
+**21.1 结项与分支判据**：4 个 20.4c_r2 末步 checkpoint（`output/taiji_package20_4c_r2_checkpoints/*_200.pt`）、dev 16 world、`natural`／`template_forced`／`content_forced` 三臂；预注册 U 判据（≥3/4 格 `template_forced` 内容位 <0.40 且相对 `natural` 增益 <0.05）成立 4/4 格，实测增益 −0.090686／−0.036152／−0.251226／−0.212010，**整句逐字节率 12/12 格恒 0**。证据：[21.1 报告](../reports/taiji_package21_1_readout_decomposition_20261107.json)＋[manifest](manifests/taiji_package21_1_readout_decomposition_20261107.json)＋[P0 结项卡](../reports/taiji_package21_1_p0_closeout_20261107.json)；三臂与冻结判据见[包21计划](reference/PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md) §2，判据先落盘、跑完未改。**范围口径**：U 分支是 21.3 准入条件，不是 21.3 完成，也不是里程碑关闭；不把“未证”写成“不可能”。confirm 继续封存、record 0 读取。
+
+包 20 成本（保留）：measured **50,573.637 CPU**（B=24,000 的 **2.1072×**、48,000 闸的 **1.0536×**，超 **2,573.637**；含估计 52,893.637＝1.102× 闸）；正式 800 updates＋作废 25＝**825 updates / 825 Adam**；F 探针 **17 事件 / 85 臂评估**。
 
 ## 0a. 长期目标与阶段边界
 
@@ -65,7 +69,7 @@ Task1与执行20分别提供有限结构能力与待验证反馈适应，不能�
 | **S20 反馈塑形/保持/可塑扩容** | 长期责任，20先验反馈F学习 | 生长未启用 | 先有可核验学习父与残差 | 功能贡献/保持/费用 | 系统计划§7 |
 | **S21 世界模型/主动活动** | 未调度 | 不以活动次数或空转签收益 | 20成立后执行21研究同任务主动求证 | 真实信息/效用/成本改善 | 系统计划§8 |
 | **S22 继承式规模生长** | 未调度 | 启动信用不等于成熟贡献 | 学习父＋可复现容量压力＋同容量对照 | 成熟功能增量/保持/成本 | 系统计划§9 |
-| **包 21 读出/发射零训练分解** | **活（当前队首）** | 输入已冻结：20.4c_r2 4 个末步 checkpoint、dev 16 world（索引每 5 取 1）；三臂 `natural`／`template_forced`／`content_forced`；判据先落盘、跑完不改 | 包 20 关包（§10 第 2 行）＋20.3b oracle-F 零变化 | R 分支：`template_forced` 内容位 ≥0.60 且整句 ≥0.50（≥3/4 格）→ 21.2；U 分支：内容位 <0.40 且增益 <0.05 → 21.3；其余 → 21.4 单点诊断 | [包21计划](reference/PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md)＋[全局梳理](reference/SURVEY-PROJECT_STATE_20261107.md) |
+| **包 21 读出/发射零训练分解** | **21.1 已结项（U 分支）；21.3 待裁定** | 21.1 三臂在 4 个 20.4c_r2 末步 checkpoint、dev 16 world 上完成：4/4 格判 U（`upstream_representation_is_first_wall`）、整句 12/12 格恒 0、CPU 1597.344 / wall 1610.581、0 Adam / 0 confirm / 0 写 checkpoint；判据先落盘、跑完未改 | 包 20 关包（§10 第 2 行）＋20.3b oracle-F 零变化 | R 分支：`template_forced` 内容位 ≥0.60 且整句 ≥0.50（≥3/4 格）→ 21.2；U 分支：内容位 <0.40 且增益 <0.05 → 21.3；其余 → 21.4 单点诊断 | [包21计划](reference/PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md)＋[21.1 报告](../reports/taiji_package21_1_readout_decomposition_20261107.json)＋[P0 结项卡](../reports/taiji_package21_1_p0_closeout_20261107.json) |
 | **MGW1 多模态世界候选** | 设计交付（未准入训练，不占当前队列） | 规格闭合：四模态codec、K分支对象信念、动作prior、规范化似然、R轮纠正、FP1、belief规划、信用、恢复、生长；2026-11-06补编闭合槽生命周期（§3.1）与分支塌缩诊断（§5.1）。20组张量参考＋16组补编预审全过；**设计层，`taiji/` 0 代码、0 参数、0 能力** | owner 2026-11-05/06要求直接补齐算法（设计授权，非训练授权） | 生产event controller、64字节生产发射、慢参数事务、生长准入按覆盖矩阵另行工程验收；须含无生命周期对照臂；不签任何物理能力 | [MGW1规格](reference/SPEC-TAIJI-MGW1_MULTIMODAL_WORLD_20261105.md)＋[核验](reference/VALIDATION-MGW1_REFERENCE_20261106.md)＋[补编预审](../reports/taiji_mgw1_lifecycle_supplement_20261106.json)＋[职责设计](reference/DESIGN-MULTIMODAL_PHYSICAL_WORLD_20261105.md) |
 | **U1 统一主体代数**（核心＋多模态一体化） | 推导交付（未准入训练，不占当前队列；**2 硬伤未修**） | 三个seam闭合：状态统一（K分支+每分支记录游标，旧核心/MGW1为两个profile限制）、8d H+Read_R记录域、统一表达（分支×复制的精确联合后验分解；M1/M2/M3承袭）、FP1全域统一、记录t_end因果门。7/7预审全过；**但数学复核 P1（定理5.1 在 Frobenius 球约束下不成立）与 P2（命题4.1 归一前提 `q_null=α_null(1−λm_mass)` 未给）为硬伤，另有 P3/P4 未修**；`taiji/` 0 代码、0 参数 | owner 2026-11-07裁定多模态是算法内部系统的一部分（设计授权，非训练授权） | 先修 P1–P4 并出修订版 → 参考张量核验包（8d H+Read_R+统一表达）→定价→工程；旧核心→U1无函数保真迁移；0训练/0能力；**修好前不得作为实现依据** | [U1规格](reference/SPEC-TAIJI-UNIFIED_CORE_U1_20261107.md)＋[预审](../reports/taiji_unified_u1_math_20261107.json)＋[数学复核](reference/TAIJI_U1_MATH_REVIEW_20261107.md)＋[主稿§39](reference/TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md) |
 
@@ -76,7 +80,7 @@ Task1与执行20分别提供有限结构能力与待验证反馈适应，不能�
 3. 旧包20重复抽取/50步训练与旧21纯登记草案被20 rev2吸收，快照归档。Task1继续用作结构保持面，不再用其成绩证明学习收益。
 4. 20若成立，执行21才研究同任务中主动求证/重放选择；更大结构生长须有学习父、可复现残差及同最终容量对照。S19–S22是长期能力责任轴，不是执行编号或完成比例。
 5. M1/M2/M3按相应方程与控制域保留。Task1确认与r2修复身份不混用，20的F控制不冒用旧19同名臂的归因。仍缺的是学习后保持实测与新反馈图，不再是“没有任何可登记父能力”。
-6. 20关包后单一主线为包21：21.0冻结 → 21.1零训练读出分解（队首）→ 按 R/U/I 分支进 21.2/21.3/21.4；21.2–21.4 不预启动、不并行。U1/MGW1 为设计资产，不占队列；U1 修好 P1–P4 前不得作为实现依据。
+6. 20关包后单一主线为包21：21.0冻结 → 21.1零训练读出分解（已结项，判 U 分支）→ 按 R/U/I 分支进 21.2/21.3/21.4；当前 U 分支只构成 21.3 的准入条件，21.3 待 owner 裁定、未执行，21.2 与 21.4 保持冻结，三者不预启动、不并行。U1/MGW1 为设计资产，不占队列；U1 修好 P1–P4 前不得作为实现依据。
 
 ## 3. 单一权威源（每条事实只允许一处正文）
 

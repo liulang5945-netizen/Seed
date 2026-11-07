@@ -1,5 +1,7 @@
 # 后续开发详细计划：包 21 → U1 → 多模态 → 全局收束（2026-11-07）
 
+> **P0 执行结果（2026-11-07 11:40 后）**：本件 §0.1／§0.2 的「21.1 未入库／队首待写回」状态已由 P0 校准——报告＋manifest 入库、三处队首写回、账本 T-U1 挂证伪指针、退役清单逐项回执，见[P0 结项卡](../../reports/taiji_package21_1_p0_closeout_20261107.json)。P0 完成后停在 owner 裁定节点：**U 分支只是 21.3 准入条件，不是 21.3 完成**。P1–P8 计划内容不受本轮影响。
+>
 > 状态 [详细开发计划·受 MASTER-PLAN / ROADMAP-NEXT 统辖，**不发布队首**]。取证时点 2026-11-07 11:11，基线 `be1216161`。本件只做「项目梳理＋分节细化：可能出现的问题／替换方案／结项条件」，队首与状态仍由 [MAINLINE](../MAINLINE.md) / [MASTER-PLAN](../MASTER-PLAN.md) / [ROADMAP-NEXT](ROADMAP-NEXT_20261104.md) 发布，判据唯一源为[账本](INVARIANT-LEDGER_20261103.md)，能力解释唯一源为[能力卡](CAPABILITY-CARD_20261103.md)。0 训练 / 0 优化器步 / 0 confirm / 0 评测重跑。
 >
 > 目录合规：`plans/`＝B 类账本证据（`docs/FOLDER_STRUCTURE_RULES.md` §S2）；本件为 `PLAN-*.md`，判据段设 `## 3. 判据、出口与验收` 二级标题，满足 `docs/CI_CONTRACT_RULES.md` §2.2 措辞门。
@@ -16,24 +18,24 @@
 | 19 / 19.2 系列 | 死（19.5 判负）／19.2b–v 整体关闭 | 六格 overall 0.000–0.630（门 0.80）；**Task1 结构确认 188/192＝0.9792**；D16-26：本任务此后不得再以训练立项 | MASTER-PLAN §1；能力卡 C12 |
 | 19.2w 停止边修复 | 完成（合成/dev，封存集未复核） | 合成尾 64/64、dev 192/192、11 类末字符无外溢；identity `0d6a5df3…` | 03 流水；账本 D16-27 |
 | 包 20 | **已关包** `package20_closed_current_learning_candidate_not_established` | 20.4 两 seed 方向相反、F 净贡献门槛不成立；20.4d pooled Δ **−0.028064**（CI −0.064706…+0.010539）、整句恒 0；20.5 未执行；measured **50,573.637 CPU**（提案 2.1072×）；825 updates / 825 Adam | 20.6 关包报告；MAINLINE 一句话状态 |
-| **官方队首** | **包 21.1 零训练读出分解** | 三臂 `natural`／`template_forced`／`content_forced`，4 个 20.4c_r2 末步 checkpoint、dev 16 world；CPU ≤4,800 / 0 Adam / 0 confirm | MAINLINE §队首；[包 21 计划](PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md) |
-| **21.1 在途读数** | **已跑完、判 U 分支（工作区未入库）** | `verdict=upstream_representation_is_first_wall`、`branch_counts={R:0,U:4,I:0}`、CPU **1597.344**、wall 1610.581、0 confirm、0 写 checkpoint、`worlds_per_cell=16` | 工作区在途回执（见 §0.2 第 1 条，不作冻结证据） |
+| **官方队首（P0 写回后）** | **21.1 已结项判 U 分支；21.3 待裁定** | 三臂 `natural`／`template_forced`／`content_forced`，4 个 20.4c_r2 末步 checkpoint、dev 16 world；CPU 实测 **1597.344** / 0 Adam / 0 confirm | MAINLINE §队首；[包 21 计划](PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md)；[P0 结项卡](../../reports/taiji_package21_1_p0_closeout_20261107.json) |
+| **21.1 结项回执** | **已入库，可作冻结证据** | `verdict=upstream_representation_is_first_wall`、`branch_counts={R:0,U:4,I:0}`、CPU **1597.344**、wall 1610.581、0 confirm、0 写 checkpoint、`worlds_per_cell=16` | [报告](../../reports/taiji_package21_1_readout_decomposition_20261107.json)＋[manifest](../manifests/taiji_package21_1_readout_decomposition_20261107.json) |
 | 能力账 | C12 成立；**U6/U13 未立**；U14 设计层 0 增益 | 20.3b oracle-F 替换仍 0/22、0 字节变化；20.2r oracle 4.183% loss 但 0 字节 | 能力卡 §2 / U6 / U13 / U14 |
 | 设计资产 | MGW1 + U1：**0 代码 / 0 参数 / 0 训练 / 不占队列** | U1 数学复核 P1–P8（2 硬伤）；主线已裁定「U1 修好 P1–P4 前不得作为实现依据」 | [U1 复核](TAIJI_U1_MATH_REVIEW_20261107.md)；MASTER-PLAN §1 U1 行；账本 §22 I22.3 / D16-39 |
 | 生效纪律 | 永久 | D16-8 活性门、D16-9 零干预对照、D16-10 零可识别性、D16-11 重复目标、D16-12 微调不判架构、D16-26/38/39/41；M1/M2/M3；L-U1…L-U4 | 账本 §16 / §12–13 / §20 / §22 |
 
 ### 0.2 取证时点的六处不一致（必须先校准，见 P0）
 
-1. **队首与执行结果脱节**：MAINLINE / MASTER-PLAN / ROADMAP-NEXT 仍发布「队首＝21.1」，但工作区已有 21.1 的 U 分支完成回执。**该回执与其 manifest 均未入库**（`??`），按 `CI_CONTRACT_RULES.md` §2.3 不得当作冻结证据引用，也不得据此由本件改写队首。
+1. **队首与执行结果脱节（P0 已解决）**：取证时点 MAINLINE / MASTER-PLAN / ROADMAP-NEXT 仍发布「队首＝21.1」，而 U 分支完成回执与其 manifest 均未入库（`??`）。P0 已把两者入库（报告 sha 重绑至 LF blob 口径）、三处队首写回为逐字一致的「21.1 已结项判 U；21.3 待裁定」，并出结项卡。
 2. **world 口径漂移**：ROADMAP-NEXT §0 写 `dev 24 world`，而 21.1 回执 `worlds_per_cell=16`、包 21 计划 §1 与 manifest 均为 16（`160,165,…,235` 每 5 取 1）。**本轮已把 ROADMAP-NEXT 该处勘误为 16**，不动队首。
-3. **账本 §20 的 T-U1**：仍以正面命题登记「β→∞ 读出精确收敛」，未挂 P1 证伪指针；§22 I22.3 虽已登记硬伤，只读 §20 会误判定理成立。列为 P0 交付项（本件不代改判据唯一源）。
+3. **账本 §20 的 T-U1（P0 已解决）**：原以正面命题登记「β→∞ 读出精确收敛」，未挂 P1 证伪指针；P0 已在该行状态列追加指向 §22 I22.3 与[U1 数学复核](TAIJI_U1_MATH_REVIEW_20261107.md) P1 的缺陷指针，**原命题正文逐字未改**。
 4. **已闭合的一致性项（登记为完成，不再列为待办）**：能力卡 §7 与账本 §15.1 已标 `superseded`；能力卡 U14 设计资产行已新增；MASTER-PLAN 状态表 U1 行已挂 P1–P4 与复核指针；ROADMAP-NEXT §2b 已新增包 21。
-5. **工作区噪声**：71 条在途条目（`M` 3 条、`D` 1 条 `reports/taiji_n1_c2_state_flow_20261015_snapshots.json.gz`、约 50 个 10.x/14.x 旧脚本与测试未跟踪、21.1 在途回执与 manifest）。按 `CI_CONTRACT_RULES.md` §5.1 与仓库卫生纪律：**逐项判归属，不扫入本轮提交，不清理他人产物**。
+5. **工作区噪声（P0 部分解决）**：取证时点 71 条在途条目（`M` 3 条、`D` 1 条 `reports/taiji_n1_c2_state_flow_20261015_snapshots.json.gz`、约 50 个 10.x/14.x 旧脚本与测试未跟踪、21.1 回执与 manifest）；其中 21.1 两份已由 P0 入库，其余不动。按 `CI_CONTRACT_RULES.md` §5.1 与仓库卫生纪律：**逐项判归属，不扫入本轮提交，不清理他人产物**。
 6. **既存 CI 红灯（本轮已修）**：`test_prereg_wording_corpus_ratchet_contract.py::test_no_new_invisible_docs_appear` 取证时点报红，隐形名单为两份既有文档 `PLAN-PACKAGE20_RULE_LEARNING_CORRECTION_20261105.md` 与 `PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md`（缺含「判据/出口/验收」的二级标题）。按 `CI_CONTRACT_RULES.md` §2.2 与白名单注释「修掉一份就从清单删掉，棘轮只许单向收紧」，本轮给两份各补一个**纯索引**二级标题，不改任何判据文字、门值、预算或队首；红→绿证据：修前 `1 failed, 2 passed`、修后 `3 passed in 1.91s`。**本件自身在措辞门审计中为 `status: ok`（`criterion_headings: 3`），红灯非本轮引入**。该修复随本轮第二个提交入库，P8 的「四门本机过」已有可复现回执。
 
 ### 0.3 边界（不做清单，全计划通用）
 
-confirm 索引 240–319 全程封存、0 读取；不预启动 21.2/21.3/21.4；不实现 U1；不训练未定价；不改冻结门、不重开 20.x 补丁链、不复用旧 confirm；不把「设计层统一」写成「机制修复」或「能力成立」；不以新臂/新剂量续命已关的包 20；不把未入库在途回执写成冻结证据。
+confirm 索引 240–319 全程封存、0 读取；不预启动 21.2/21.3/21.4；不实现 U1；不训练未定价；不改冻结门、不重开 20.x 补丁链、不复用旧 confirm；不把「设计层统一」写成「机制修复」或「能力成立」；不以新臂/新剂量续命已关的包 20；P0 入库前不把在途回执写成冻结证据，P0 后一律引用入库版本。
 
 ---
 
@@ -335,4 +337,4 @@ confirm 索引 240–319 全程封存、0 读取；不预启动 21.2/21.3/21.4�
 
 ## 6. 交付边界
 
-本轮为规划层：新增本件、勘误 ROADMAP-NEXT 的 `dev 16 world`、在 MAINLINE 加一行导航；不改队首、不改状态表、不改任何冻结判据/预注册门/报告/预算、不实现 U1、不训练、0 confirm、0 数据重读。21.1 在途回执仅作时点状态描述，未入库、不作冻结证据。工作区 71 条在途条目按 §0.2 第 5 条处置，不清理、不捎带。提交只圈本轮文件，钩子按 P8 全过。
+本轮为规划层：新增本件、勘误 ROADMAP-NEXT 的 `dev 16 world`、在 MAINLINE 加一行导航；**规划层提交不改队首、不改状态表、不改任何冻结判据/预注册门/报告/预算**、不实现 U1、不训练、0 confirm、0 数据重读。其后的 P0 是 owner 批准的独立执行动作，按 P0 结项条件写回队首、入库回执、挂证伪指针、办退役清单，**同样不改任何冻结判据、不训练**。21.1 回执在 P0 前仅作时点状态描述；P0 后以[LF 口径入库版本](../../reports/taiji_package21_1_readout_decomposition_20261107.json)为唯一冻结证据。工作区其余在途条目按 §0.2 第 5 条处置，不清理、不捎带。提交只圈本轮文件，钩子按 P8 全过。

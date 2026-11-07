@@ -1,14 +1,16 @@
 # ROADMAP-NEXT（唯一推进轨道，2026-11-05）
 
-> 状态 [现行轨道·包 20 已关（`package20_closed_current_learning_candidate_not_established`），当前步＝包 21.1]。MASTER维护状态，本件维护执行顺序；包 21 细则见[包21计划](PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md)，包 20 细则仅作历史。旧19–21轨道已[逐字节归档](../archive/history/n19_to_n20_20261105/README.md)，原负结果与成本不改。
+> 状态 [现行轨道·包 20 已关（`package20_closed_current_learning_candidate_not_established`），21.1 已结项判 U 分支，21.3 待裁定]。MASTER维护状态，本件维护执行顺序；包 21 细则见[包21计划](PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md)，包 20 细则仅作历史。旧19–21轨道已[逐字节归档](../archive/history/n19_to_n20_20261105/README.md)，原负结果与成本不改。
 
 ## 0. 坐标系与当前步
 
 - 包19及19.2b–w整体关闭，不再追加19.2x。旧包20“再造抽取夹具/50步训练”与旧21“仅登记经验前提”提案退役，职责由20 rev2吸收。
 - 执行包20是可变规则学习、迁移与反例纠正；S19–S22是长期能力责任轴。20只检验其中有限子集，不因包号宣称整条能力轴完成。
 - **包 20 已关**——20.4c_r2 正式比较（2 seed × 2 臂 × 200 更新）与 20.4d 零训练共用评测均完成；按 §10 第 2 行结案“当前学习候选未成功＋F 额外贡献未证”；**20.5 准入不成立、不执行**；confirm 继续封存、record **0 读取**；**无自动 20.x 补丁链**。
-- **当前步（唯一）**：**包 21.1 零训练读出分解**——在 20.4c_r2 的 4 个末步 checkpoint 上，`natural`／`template_forced`／`content_forced` 三臂、dev 16 world（索引 160,165,…,235 每 5 取 1；21.1 回执 `worlds_per_cell=16`）；CPU ≤4,800、0 Adam、0 训练、0 confirm；判据先落盘、跑完不改。同步规则：本句须与 MAINLINE 及 MASTER-PLAN 的队首逐字相同。
-- **唯一后继问题**：整句恒 0 的第一次失败，发生在**发射/读出（句框与逐字节解码协议）**还是**反馈写读权威（F 的表示与功劳分配）**？该问题由 21.1 一分二；不出读数前不开 21.2–21.4、不实现 U1、不定价，也不把“未证”写成“不可能”。
+- **队首（唯一）**：包 21.1 零训练读出分解已结项，判 U 分支（verdict=upstream_representation_is_first_wall，4/4 格、CPU 1597.344 / wall 1610.581、0 Adam / 0 confirm / 0 写 checkpoint）；U 分支只是包 21.3 表示可分性诊断的准入条件，21.3 尚未获批准、未执行，21.2（R 分支）与 21.4 保持冻结；当前唯一待裁定：是否准入 21.3，不预启动、不并行、不实现 U1、不定价。
+- **同步规则**：上一行的队首句须与 MAINLINE 及 MASTER-PLAN 的队首逐字相同（由 [P0 结项卡](../../reports/taiji_package21_1_p0_closeout_20261107.json) 机器核验）。
+- **21.1 结项证据**：[报告](../../reports/taiji_package21_1_readout_decomposition_20261107.json)＋[manifest](../manifests/taiji_package21_1_readout_decomposition_20261107.json)（双列 runner sha 一致、4 个 checkpoint sha 逐一吻合）；三臂、dev 16 world（索引 160,165,…,235 每 5 取 1，`worlds_per_cell=16`）与冻结判据见[包21计划](PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md) §2，判据先落盘、跑完未改；预算 CPU ≤4,800 实际用 1597.344。
+- **唯一后继问题（已由 21.1 回答）**：整句恒 0 的第一次失败不在发射/读出侧，而在**上游表示/组合**（`template_forced` 把句框喂对后内容位反而下降、整句仍恒 0）；因此 21.2（R 分支）冻结、21.3（U 分支）为唯一可能的下一步，**待 owner 裁定准入，尚未执行**。不实现 U1、不定价，不把“未证”写成“不可能”。**范围口径**：U 分支是准入条件，不是 21.3 完成，也不是里程碑关闭。
 
 ## 1. 19窗口结案与父资产
 
@@ -53,7 +55,7 @@
 | 步骤 | 准入/做法 | 出口/预算 |
 |---|---|---|
 | 21.0 冻结（0 前向） | 20.4c_r2 4 个末步 checkpoint、dev 索引 160–239 每 5 取 1（16 world）、gold 字节、三臂与判据先落盘；确认 0 confirm；核 checkpoint 存在性 | 冻结 manifest 落盘；≤30 CPU；缺失即 `engineering_stop` |
-| **21.1 零训练读出分解（队首）** | 三臂：`natural`／`template_forced`（只在模板位回喂 gold）／`content_forced`（只在内容位回喂 gold）；同一 checkpoint/world/随机性；逐格出模板位、内容位、决策位、整句 | **R**：≥3/4 格 `template_forced` 内容位 ≥0.60 且整句 ≥0.50 → 21.2；**U**：≥3/4 格内容位 <0.40 且相对 natural 增益 <0.05 → 21.3；**I**：其余 → 21.4 单点诊断。CPU ≤4,800、wall ≤7,200、0 Adam、0 confirm |
+| **21.1 零训练读出分解（已结项，判 U 分支）** | 三臂：`natural`／`template_forced`（只在模板位回喂 gold）／`content_forced`（只在内容位回喂 gold）；同一 checkpoint/world/随机性；逐格出模板位、内容位、决策位、整句 | **R**：≥3/4 格 `template_forced` 内容位 ≥0.60 且整句 ≥0.50 → 21.2；**U**：≥3/4 格内容位 <0.40 且相对 natural 增益 <0.05 → 21.3；**I**：其余 → 21.4 单点诊断。CPU ≤4,800、wall ≤7,200、0 Adam、0 confirm |
 | 21.2 结构发射装配（仅 R） | 接 19.2r/19.2w 的结构原语（0 可训练参数、0 权重迁移），重跑三臂 | dev 整句 ≥0.80 且内容位不回退 → 结构可解，残差归“学习如何被结构引导”；否则进 21.3。CPU ≤6,000、0 Adam |
 | 21.3 表示可分性诊断（仅 U 或 21.2 未过） | 只读：F 键余弦/边距/秩、问句条件化闭式读出 vs 窗口身份＋标签打乱双对照、逐轮写 vs release 写的向量数 | 闭式 ≥0.60 且比最强对照高 ≥0.20 → 表示有权威，下一步定价“图上可学读出头”；否则 `representation_axis_closed_for_this_graph`，进 21.4。CPU ≤2,000、0 Adam |
 | 21.4 训练（最后手段，未准入） | 仅 I 分支或 21.3 证明有权威未落图；**先一次性定价并落盘**，写明 updates/seed/臂/停止条件 | 超闸即停报；不得先跑再补价；不得以新臂/新剂量续命包 20 |

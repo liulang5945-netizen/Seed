@@ -1,0 +1,15 @@
+{
+  "schema": "taiji-rule-learning-21-1-readout-decomposition-manifest-v1",
+  "date": "2026-11-07",
+  "report": "reports\\taiji_package21_1_readout_decomposition_20261107.json",
+  "report_sha256": "e7666226c310fe5200a6ec3b7f7107267dbb3bc2034e1d6d8f79f52c2df00ac7",
+  "runner": "scripts\\training\\probe_taiji_package21_1_readout_decomposition.py",
+  "submitted_runner_sha256": "35501bd4fd0acfd3eea661100a5314e55c4d54726159d42645ef9203a3cdfc5f",
+  "runner_sha256": "35501bd4fd0acfd3eea661100a5314e55c4d54726159d42645ef9203a3cdfc5f",
+  "verdict": "upstream_representation_is_first_wall",
+  "branch": "U",
+  "cpu_seconds": 1597.344,
+  "wall_seconds": 1610.581,
+  "confirm_reads": 0,
+  "checkpoints_written": 0
+}
