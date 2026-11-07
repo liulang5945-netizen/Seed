@@ -1,0 +1,146 @@
+{
+  "schema": "taiji-package21-3-representation-separability-prereg-v1",
+  "package": "21.3",
+  "date": "2026-11-07",
+  "status": "frozen_pending_execution_approval",
+  "note": "Pre-registration only. No reading has been produced. runner/feature_card/report hashes are null on purpose and must not be pre-filled. Admission is not execution approval and not milestone closure.",
+  "spec": "plans/reference/SPEC-PACKAGE21_3_REPRESENTATION_SEPARABILITY_PREREG_20261107.md",
+  "admission": {
+    "granted_by_owner": "2026-11-07",
+    "branch": "U",
+    "branch_counts": { "R": 0, "U": 4, "I": 0 },
+    "verdict_21_1": "upstream_representation_is_first_wall",
+    "evidence": [
+      "reports/taiji_package21_1_readout_decomposition_20261107.json",
+      "plans/manifests/taiji_package21_1_readout_decomposition_20261107.json",
+      "reports/taiji_package21_1_p0_closeout_20261107.json"
+    ],
+    "report_21_1_sha256": "e7666226c310fe5200a6ec3b7f7107267dbb3bc2034e1d6d8f79f52c2df00ac7"
+  },
+  "authority": {
+    "plan_section_4": "plans/reference/PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md",
+    "plan_P1": "plans/reference/PLAN-DEVELOPMENT_DETAIL_20261107.md",
+    "roadmap": "plans/reference/ROADMAP-NEXT_20261104.md",
+    "ledger": "plans/reference/INVARIANT-LEDGER_20261103.md"
+  },
+  "inputs": {
+    "checkpoints": {
+      "CF1_20261105_200.pt": "aa98db8a0d8b64530fb6b4bc80e5573a2a937f999f341a89f01b4bb4114ae3b2",
+      "CF1_20261106_200.pt": "61ad7b6200fce2c46d12b12ab0f474768d8f66578dbf5ae6276f5f3221403337",
+      "B_EH_20261105_200.pt": "0939658ede9805b716a2bc4b4de606970cd4fd1d5ccad58023ced57cf130b3d1",
+      "B_EH_20261106_200.pt": "eade77f2a3e8c0c79394323afce79f587458c18edd53d1826c6baacd3d8bfdda"
+    },
+    "graph_builder": "scripts/training/probe_taiji_package20_4c_r2_formal_comparison.py::build_graph",
+    "graph_builder_sha256": "112c76ae117255bb5da7d60a46312bf82382430fc3a99ab8d7ce6a1f173d4095",
+    "addressed_store_enabled": false,
+    "correction_surfaces": 22,
+    "confirm_indices": [240, 319],
+    "confirm_reads_allowed": 0
+  },
+  "known_prior": {
+    "20_2s": {
+      "report": "reports/taiji_package20_2s_f_information_20261105.json",
+      "verdict": "inconclusive",
+      "primary_accuracy": 0.6818181818181818,
+      "label_permutation_mean": 0.509090909090909,
+      "label_permutation_max": 0.7727272727272727,
+      "margin_under_mean_control": 0.17272727272727273,
+      "window_identity_matches_f": true,
+      "distinct_f_vectors_per_world": 2,
+      "reused_as_baseline": false
+    },
+    "20_3a": {
+      "report": "reports/taiji_package20_3a_addressed_store_20261105.json",
+      "verdict": "option2_failed",
+      "frozen_strongest_control": "max(permutation per-seed max, random same-norm, no-F state)",
+      "top1_top2_margin_median": 0.00317,
+      "leverage_max": 8.716094232730201e-06,
+      "distinct_f_vectors_structural_gate": "strictly greater than 2"
+    },
+    "20_3b": {
+      "report": "reports/taiji_package20_3b_f_authority_20261105.json",
+      "verdict": "authority_weak",
+      "oracle_f_zero_byte_change": true
+    }
+  },
+  "criteria": {
+    "primary_metric": "leave-one-out decision-bit accuracy on the 22 correction surfaces (decision positions [7,8], 2 bits x 22 turns)",
+    "pass_accuracy": 0.6,
+    "pass_margin": 0.2,
+    "fail_accuracy": 0.3,
+    "fail_margin": 0.1,
+    "ridge_lambda_grid": [0.0001, 0.001, 0.01, 0.1, 1.0],
+    "ridge_lambda_selection": "per outer LOO fold: inner LOO over the 21 training rows only; highest inner decision-bit accuracy wins; tie-break larger lambda",
+    "controls": [
+      "window_identity",
+      "label_permutation_5_seeds",
+      "random_projection_same_dim_same_norm",
+      "no_f_other_persistent_state"
+    ],
+    "control_statistic": {
+      "window_identity": "one fitted probe on 2-d feedback-window one-hot (20.2s window_features)",
+      "label_permutation_5_seeds": "per-seed MAX over seeds 20261105..20261109; mean is reported for sensitivity only",
+      "random_projection_same_dim_same_norm": "one fitted probe on a random vector of the same dimension and norm",
+      "no_f_other_persistent_state": "20.2s other_features(row) pipeline"
+    },
+    "label_permutation_seeds": [20261105, 20261106, 20261107, 20261108, 20261109],
+    "strongest_control": "max of the four frozen control statistics (20.3a frozen max-per-seed reading, not the 20.2s mean reading)",
+    "margin_definition": "primary_accuracy - strongest_control",
+    "sensitivity": "report both max-control (binding) and mean-control (20.2s legacy) margins and verdicts; the max-control verdict is binding and must not be switched after reading",
+    "checkpoint_aggregation": "all four 20.4c_r2 final checkpoints evaluated independently; the binding verdict uses the STRICTEST (minimum margin); disagreement across checkpoints implies inconclusive",
+    "effective_dof_gate": {
+      "unit": "distinct F vectors across the 22 correction surfaces",
+      "minimum": 3,
+      "source": "20.3a thresholds.structural.distinct_f_vectors_global_strictly_greater_than = 2",
+      "on_violation": "inconclusive; paired bootstrap must resample distinct F vectors, not the 22 rows"
+    },
+    "decision_rule": {
+      "representation_has_authority": "primary >= pass_accuracy AND margin >= pass_margin AND all four controls present AND effective_dof >= 3 AND all four checkpoints agree; produces a PRICING INPUT only, not pricing approval, not training admission, not a capability claim",
+      "representation_axis_closed_for_this_graph": "primary < fail_accuracy OR margin < fail_margin, with all controls below the pass gate; range-limited verdict, must not be upgraded to 'impossible'",
+      "inconclusive": "fail_margin <= margin < pass_margin OR checkpoint disagreement OR effective_dof < 3; report all control values and intervals; no dose change, no threshold change, no automatic training transition",
+      "engineering_stop": "any control missing / feature card not frozen before reading / checkpoint sha mismatch / criteria_sha256 mismatch / confirm touched / graph identity drift / runner dual hash mismatch",
+      "budget_stop": "cpu >= cpu_stop_threshold or wall >= wall_cap; do not shrink data and rerun"
+    },
+    "control_conflict_resolution": "20.2s used label-permutation MEAN as strongest control (margin 0.1727 -> inconclusive); 20.3a froze per-seed MAX. This pre-registration adopts the frozen 20.3a max reading as binding and records 20.2s as a historical sensitivity anchor. Gate values are unchanged.",
+    "transition_conflict_registration": "package 21 section 4 and plan P1 say a negative/inconclusive result transfers to 21.4/P3, but neither 21.4 nor P3 admits 'representation judged negative'. Therefore this package only records the verdict; no automatic training transition.",
+    "frozen_before_reading": true,
+    "budget": {
+      "cpu_cap": 2000.0,
+      "cpu_stop_threshold": 1800.0,
+      "wall_cap": 3000.0,
+      "wall_cap_derivation": "package 21 family CPU:wall = 1:1.5 (21.1 was 4800/7200); registered here, does not change the CPU gate"
+    }
+  },
+  "criteria_sha256": "02b727f958dbad8437a73c2914bf321a81263f5c85dc08183b3bd56f11d8c512",
+  "runner": "scripts/training/probe_taiji_package21_3_representation_separability.py",
+  "runner_sha256": null,
+  "submitted_runner_sha256": null,
+  "feature_card": null,
+  "feature_card_sha256": null,
+  "report": "reports/taiji_package21_3_representation_separability_20261107.json",
+  "report_sha256": null,
+  "expected_products": [
+    "per-surface readings for 22 correction surfaces x 4 checkpoints",
+    "four control values per checkpoint (raw, not aggregated away)",
+    "dual-statistic sensitivity (max-control binding, mean-control legacy)",
+    "paired bootstrap interval with distinct F vectors as resampling unit",
+    "effective degrees of freedom (distinct F vectors)",
+    "three-axis attribution without cross-signing (I22.2)",
+    "feature_card with its own sha256, frozen before any reading"
+  ],
+  "discipline": {
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "new_parameters": 0,
+    "checkpoints_written": 0,
+    "confirm_reads": 0,
+    "model_forward_passes": 0,
+    "readings_produced": 0
+  },
+  "stop_line": {
+    "reached": true,
+    "meaning": "pre-registration frozen; admission is not execution; 21.3 not executed, not completed; 21.2 and 21.4 remain frozen; U1 stays out of the queue",
+    "next_owner_decision": "whether to execute the 21.3 readings under this frozen contract (yes/no)"
+  }
+}

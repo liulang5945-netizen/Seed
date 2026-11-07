@@ -2760,3 +2760,13 @@ T2 的整更新 `select` 计数：20.4a 实测 **93,636 → 0**（优化路径�
 
 owner 批准 P0 为唯一队首后执行：**21.1 零训练读出分解已结项，判 U 分支**（`upstream_representation_is_first_wall`，4/4 格、CPU 1597.344 / wall 1610.581、0 Adam / 0 confirm / 0 写 checkpoint、整句 12/12 格恒 0）。报告＋manifest 入库：因仓库对 `reports/*.json` 设 `eol=lf` 而原回执为 CRLF，入库前做**内容逐值不变的 EOL 规范化**并重绑 `report_sha256`（原 `c19a9e1c…` → 入库口径 `e7666226…`），隔离 index 验证 blob == 工作区 == manifest；双列 runner sha 与已入库 runner blob 一致、4 个 checkpoint sha 全吻合。三处队首（MAINLINE / MASTER-PLAN / ROADMAP-NEXT）写回为逐字相同的同一句（sha256 `c05e9530…`），同步页首状态、状态表、依赖顺序、包 21 计划 §0/§2 标题/§7 与本页「下一步」；账本 §20 T-U1 追加 P1 证伪指针（原命题正文未改）；退役清单 7 项逐项有回执，旧 checkpoint 目录按账本 §98 出旁挂 `superseded` 声明。六项结项条件全过，机器回执见[P0 结项卡](../../../reports/taiji_package21_1_p0_closeout_20261107.json)。**U 分支只是 21.3 的准入条件，不是 21.3 完成，也不是里程碑关闭**；21.2/21.4 保持冻结、U1 不进队列。本段 0 训练 / 0 优化器步 / 0 前向 / 0 confirm / 0 评测重跑 / 0 数据重读，未改任何冻结判据、门值、预算或 21.1 读数；停在 owner 裁定节点（是否准入 21.3）。
 
+---
+
+## 2026-11-07 21.3 准入与预注册冻结（0 训练 / 0 前向 / 0 读数）
+
+owner 批准 21.3 准入后，按「判据先落盘、跑完不改」先冻结预注册合同：[规格](../../reference/SPEC-PACKAGE21_3_REPRESENTATION_SEPARABILITY_PREREG_20261107.md)＋[机读 manifest](../../manifests/taiji_package21_3_prereg_20261107.json)（`criteria_sha256=02b727f958dbad8437a73c2914bf321a81263f5c85dc08183b3bd56f11d8c512`，对 canonical JSON 自洽可重算）。**本段 0 读数、0 模型前向、0 训练、0 confirm**，21.3 未执行。
+
+取证发现一处会翻转结论的口径冲突：20.2s 把「最强对照」算成标签打乱 5 seeds 的 **mean**（0.5091 → margin 0.1727 → `inconclusive`），而 20.3a 的冻结条款写的是 **per-seed max**（历史 max 0.7727 > 主探针 0.6818 → margin 为负 → 直接判负）；P1 与包 21 §4 只写「最强对照」、未指定统计量。规格裁定采用 **20.3a 已冻结的 max** 为绑定口径（20.2s 的 `inconclusive` 不改写，只作历史敏感性锚；报告须双口径附报，不得读后切换），门值 0.60／0.20／0.30／0.10 与 CPU ≤2,000 **一字未改**。另取四条对照并集（窗口身份／标签打乱／随机同维同范数／无 F 其它持久态）、沿用 20.3a 的 `distinct_f_vectors>2` 有效自由度闸门、4 个 checkpoint 取最严且不挑最好；并登记「判负／不可判不自动转 21.4 或训练」的转段冲突（21.4／P3 的准入都不含「表示判负」）。特征卡须在读数前落盘，否则 `engineering_stop`；runner 双列 sha 与报告 sha 在 runner 未写前一律 `null`，不得预填。
+
+三处队首写回为逐字相同的「21.3 已准入、预注册冻结、待裁定执行读数」，同步状态表、依赖顺序、ROADMAP-NEXT §2b、包 21 计划 §4/§7、详细计划 P1 与本页。**准入 ≠ 执行 ≠ 里程碑关闭**：21.3 尚未执行、尚未完成；21.2／21.4 保持冻结，U1 不进队列。停在 owner 裁定节点（是否按合同执行读数）。
+
