@@ -47,7 +47,7 @@ from taiji.rule_learning_20_1_net import (  # noqa: E402
 )
 
 PREREG = ROOT / "plans/manifests/taiji_training_window_v2_prereg_20261108.json"
-PREREG_SHA256 = "fdb975a7515a77d5a1efc463f38a8a9196abb2dbefcbe87d56d43cceb6883d96"
+PREREG_SHA256 = "b2db40018e89bffdd9b443b3b413cab5d1b479229c2d21834ee99d01b2366d12"
 REPORT = ROOT / "reports/taiji_training_window_v2_run_20261108.json"
 EXEC_MANIFEST = ROOT / "plans/manifests/taiji_training_window_v2_run_execution_20261108.json"
 PROGRESS = ROOT / "reports/taiji_training_window_v2_run_20261108_progress.jsonl"
