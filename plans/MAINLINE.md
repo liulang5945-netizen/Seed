@@ -8,7 +8,7 @@
 
 **诊断链**：20.2r／20.2s／20.2t／20.3a／20.3b／20.4a／20.4b／20.4d 均为**诊断、非计划步骤**，结论已并入 20.6。
 
-**继续读**：[MASTER-PLAN](MASTER-PLAN.md)（唯一权威主线：状态表、依赖、权威源、冲突消解、盘点）。**当前包**：[包21 读出分解](reference/PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md)。**上一轮梳理**：[全局梳理 2026-11-07](reference/SURVEY-PROJECT-STATE_20261107.md)。
+**继续读**：[MASTER-PLAN](MASTER-PLAN.md)（唯一权威主线：状态表、依赖、权威源、冲突消解、盘点）。**当前包**：[包21 读出分解](reference/PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md)。**上一轮梳理**：[全局梳理 2026-11-07](reference/SURVEY-PROJECT-STATE_20261107.md)。**详细开发计划**：[后续开发详细计划 2026-11-07](reference/PLAN-DEVELOPMENT_DETAIL_20261107.md)（分节风险／替换方案／结项条件；不发布队首）。
 **轨道**：[ROADMAP-NEXT](reference/ROADMAP-NEXT_20261104.md)（19/20/21 包：步骤、判据、预算、分支）。
 **已裁定**：[MASTER-PLAN §5](MASTER-PLAN.md)（M2=①、逐字节门采纳、19 直推、任意切换降级）。
 **判据与定理**：[账本](reference/INVARIANT-LEDGER_20261103.md)。**读数边界**：[能力卡](reference/CAPABILITY-CARD_20261103.md)。**流水**：[03](active/roadmap/03_CURRENT_EXECUTION.md)。
