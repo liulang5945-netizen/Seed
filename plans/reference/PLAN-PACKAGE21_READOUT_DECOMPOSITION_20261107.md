@@ -4,7 +4,7 @@
 
 ## 0. 唯一队首与唯一后继问题
 
-**包 20 已关。21.1 零训练读出分解已结项，判 U 分支（2026-11-07）**——4/4 格 `template_forced` 内容位 <0.40 且相对 `natural` 增益 <0.05，`verdict=upstream_representation_is_first_wall`；CPU 1597.344 / wall 1610.581、0 Adam / 0 confirm / 0 写 checkpoint。报告＋manifest 已入库（[报告](../../reports/taiji_package21_1_readout_decomposition_20261107.json)、[manifest](../manifests/taiji_package21_1_readout_decomposition_20261107.json)），结项校准见[P0 结项卡](../../reports/taiji_package21_1_p0_closeout_20261107.json)。**21.3 已执行完毕并判 `representation_axis_closed_for_this_graph`（范围限定判负）；唯一待裁定：是否发布包 21 全局收束卡**，21.2/21.4 保持冻结、不自动转训练。本节状态标注不改 §2 任何冻结判据。详见[21.3 结项卡](../../reports/taiji_package21_3_closeout_20261107.json)。
+**包 20 已关。21.1 零训练读出分解已结项，判 U 分支（2026-11-07）**——4/4 格 `template_forced` 内容位 <0.40 且相对 `natural` 增益 <0.05，`verdict=upstream_representation_is_first_wall`；CPU 1597.344 / wall 1610.581、0 Adam / 0 confirm / 0 写 checkpoint。报告＋manifest 已入库（[报告](../../reports/taiji_package21_1_readout_decomposition_20261107.json)、[manifest](../manifests/taiji_package21_1_readout_decomposition_20261107.json)），结项校准见[P0 结项卡](../../reports/taiji_package21_1_p0_closeout_20261107.json)。**包 21 已全局收束**（[收束卡](CLOSEOUT-PACKAGE21_GLOBAL_20261107.md)＋[机器卡](../../reports/taiji_package21_global_closeout_20261107.json)，六件齐、8 项结项条件全过）；21.3 判 `representation_axis_closed_for_this_graph`（范围限定判负），21.2/21.4 保持冻结、不自动转训练。**当前唯一待裁定＝下一轮唯一核心问题**（F 的按问句／反馈事件可分可寻址表达能力，以及是否需架构级改造）。本节状态标注不改 §2 任何冻结判据。详见[21.3 结项卡](../../reports/taiji_package21_3_closeout_20261107.json)。
 
 **唯一后继问题（已由 21.1 回答，不自造第二问）**：整句恒 0 的第一次失败发生在**发射/读出**还是**反馈写读权威**？答案落在**上游表示/组合**——把句框喂对后内容位反而下降、整句仍恒 0，故 21.2（R 分支）冻结、21.3（U 分支）为唯一可能的下一步。
 
@@ -84,7 +84,7 @@
 
 ## 7. 顺序与单一建议
 
-`21.0 冻结 → 21.1（已结项，判 U）→ (U) 21.3（已结项，判负）/ (R) 21.2、(I) 21.4 冻结`。**只给一个下一步：由 owner 裁定是否发布包 21 全局收束卡。** 21.2–21.4 不预启动、不并行；准入 ≠ 执行 ≠ 里程碑关闭，判负不自动转训练，包 21 尚未整体关闭。
+`21.0 冻结 → 21.1（已结项，判 U）→ (U) 21.3（已结项，判负）/ (R) 21.2、(I) 21.4 冻结 → 包 21 全局收束（已完成）`。**只给一个下一步：由 owner 裁定收束卡给出的下一轮唯一核心问题。** 21.2–21.4 不预启动、不并行；准入 ≠ 执行 ≠ 里程碑关闭，判负不自动转训练；包 21 收束不等于 M 线关闭，未裁定前不新开包。
 
 ## 判据、出口与验收（索引）
 

@@ -1,18 +1,19 @@
 # ROADMAP-NEXT（唯一推进轨道，2026-11-05）
 
-> 状态 [现行轨道·包 20 已关（`package20_closed_current_learning_candidate_not_established`），21.1 已结项判 U 分支，21.3 已结项判 `representation_axis_closed_for_this_graph`；包 21 待全局收束]。MASTER维护状态，本件维护执行顺序；包 21 细则见[包21计划](PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md)，包 20 细则仅作历史。旧19–21轨道已[逐字节归档](../archive/history/n19_to_n20_20261105/README.md)，原负结果与成本不改。
+> 状态 [现行轨道·包 20 已关（`package20_closed_current_learning_candidate_not_established`），21.1 判 U、21.3 判 `representation_axis_closed_for_this_graph`，**包 21 已全局收束**；待裁定下一轮核心问题]。MASTER维护状态，本件维护执行顺序；包 21 细则见[包21计划](PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md)，包 20 细则仅作历史。旧19–21轨道已[逐字节归档](../archive/history/n19_to_n20_20261105/README.md)，原负结果与成本不改。
 
 ## 0. 坐标系与当前步
 
 - 包19及19.2b–w整体关闭，不再追加19.2x。旧包20“再造抽取夹具/50步训练”与旧21“仅登记经验前提”提案退役，职责由20 rev2吸收。
 - 执行包20是可变规则学习、迁移与反例纠正；S19–S22是长期能力责任轴。20只检验其中有限子集，不因包号宣称整条能力轴完成。
 - **包 20 已关**——20.4c_r2 正式比较（2 seed × 2 臂 × 200 更新）与 20.4d 零训练共用评测均完成；按 §10 第 2 行结案“当前学习候选未成功＋F 额外贡献未证”；**20.5 准入不成立、不执行**；confirm 继续封存、record **0 读取**；**无自动 20.x 补丁链**。
-- **队首（唯一）**：包 21.3 表示可分性诊断已结项，判 representation_axis_closed_for_this_graph（0 训练、4/4 checkpoint 读数一致、CPU 144.984）；窗口身份对照高于主探针、绑定口径 margin 为负、distinct_f_vectors=2，表示轴在当前图/数据上关闭。按预注册不自动转训练：当前唯一待裁定是是否发布包 21 全局收束卡；21.2 与 21.4 保持冻结，不训练、不并行、不实现 U1、不定价。
+- **队首（唯一）**：包 21 已全局收束（收束卡六件齐、8 项结项条件全过，0 训练），唯一可对外能力仍为 C12；这是包 21 收束，不是 M 线或里程碑关闭。当前唯一待裁定：下一轮唯一核心问题——当前图的快权重 F 是否具备按问句／反馈事件可分且可寻址的表达能力，若不具备是否需架构级改造。未裁定前不得再以训练剂量立项，21.2／21.4／U1 与各训练包保持冻结，不新开包。
+- **包 21 收束卡**：[人读卡](CLOSEOUT-PACKAGE21_GLOBAL_20261107.md)＋[机器卡](../../reports/taiji_package21_global_closeout_20261107.json)。六件齐、8 项结项条件全过；准入门＝路径结项＋累计成本越闸（包 20 2.1072× 提案）。覆盖按现行 23 条条款／CR-1..CR-10 口径（「L1–L14」为历史编号，不编造条目）；学后保持记「未覆盖」与重启条件，不填 0。**不自动推进 P1–P6、不新开包**。
 - **同步规则**：上一行的队首句须与 MAINLINE 及 MASTER-PLAN 的队首逐字相同（由本轮机器校验；P0 的旧队首句 sha 见 [P0 结项卡](../../reports/taiji_package21_1_p0_closeout_20261107.json)）。
 - **21.3 结项读数**：[报告](../../reports/taiji_package21_3_representation_separability_20261107.json)＋[执行 manifest](../manifests/taiji_package21_3_representation_separability_20261107.json)＋[结项卡](../../reports/taiji_package21_3_closeout_20261107.json)。主探针 0.6364、窗口身份对照 **0.6818**、绑定 margin **−0.0455** ⇒ 判负；遗留 mean 口径 margin +0.1182 会落 `inconclusive` 中间带，**按预注册不绑定、未事后切换**（口径冲突由实跑坐实）。F 余弦中位 ~1.0、秩 2、有效自由度 2、4 checkpoint 读数逐位相同；0 训练 / 0 confirm / CPU 144.984。
 - **21.3 预注册（冻结，读后未改）**：[冻结规格](SPEC-PACKAGE21_3_REPRESENTATION_SEPARABILITY_PREREG_20261107.md)＋[机读 manifest](../manifests/taiji_package21_3_prereg_20261107.json)（`criteria_sha256=02b727f9…`）＋[特征卡](../manifests/taiji_package21_3_feature_card_20261107.json)。口径裁定见规格 §3；门值与 CPU ≤2,000 未改，判负／不可判不自动转训练。
 - **21.1 结项证据**：[报告](../../reports/taiji_package21_1_readout_decomposition_20261107.json)＋[manifest](../manifests/taiji_package21_1_readout_decomposition_20261107.json)（双列 runner sha 一致、4 个 checkpoint sha 逐一吻合）；三臂、dev 16 world（索引 160,165,…,235 每 5 取 1，`worlds_per_cell=16`）与冻结判据见[包21计划](PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md) §2，判据先落盘、跑完未改；预算 CPU ≤4,800 实际用 1597.344。
-- **唯一后继问题（已由 21.1 回答）**：整句恒 0 的第一次失败不在发射/读出侧，而在**上游表示/组合**（`template_forced` 把句框喂对后内容位反而下降、整句仍恒 0）；因此 21.2（R 分支）冻结、21.3（U 分支）为唯一可能的下一步，**21.3 已执行完毕并判 `representation_axis_closed_for_this_graph`**（当前图/数据上的范围限定判负）。不实现 U1、不定价，不把“未证”写成“不可能”。**范围口径**：准入 ≠ 执行 ≠ 里程碑关闭；判负不自动转 21.4 或训练，包 21 尚未整体关闭。
+- **唯一后继问题（已由 21.1 回答）**：整句恒 0 的第一次失败不在发射/读出侧，而在**上游表示/组合**（`template_forced` 把句框喂对后内容位反而下降、整句仍恒 0）；因此 21.2（R 分支）冻结、21.3（U 分支）为唯一可能的下一步，**21.3 已执行完毕并判 `representation_axis_closed_for_this_graph`**（当前图/数据上的范围限定判负）。不实现 U1、不定价，不把“未证”写成“不可能”。**范围口径**：准入 ≠ 执行 ≠ 里程碑关闭；判负不自动转 21.4 或训练。包 21 现已全局收束，但 M 线未关闭；下一步须先裁定收束卡给出的唯一核心问题。
 
 ## 1. 19窗口结案与父资产
 
@@ -62,7 +63,7 @@
 | 21.3 表示可分性诊断（仅 U 或 21.2 未过；已结项，判 `representation_axis_closed_for_this_graph`） | 只读：F 键余弦/边距/秩、问句条件化闭式读出 vs 窗口身份＋标签打乱双对照、逐轮写 vs release 写的向量数 | 闭式 ≥0.60 且比最强对照高 ≥0.20 → 表示有权威，下一步定价“图上可学读出头”；否则 `representation_axis_closed_for_this_graph`，进 21.4。CPU ≤2,000、0 Adam |
 | 21.4 训练（最后手段，未准入） | 仅 I 分支或 21.3 证明有权威未落图；**先一次性定价并落盘**，写明 updates/seed/臂/停止条件 | 超闸即停报；不得先跑再补价；不得以新臂/新剂量续命包 20 |
 
-**21.3 预注册校准（2026-11-07）**：上表 21.3 行的门值、做法与预算**一字未改**，判据的机读冻结源为[21.3 预注册 manifest](../manifests/taiji_package21_3_prereg_20261107.json)（`criteria_sha256`），口径理由与已知先验见[冻结规格](SPEC-PACKAGE21_3_REPRESENTATION_SEPARABILITY_PREREG_20261107.md)。三处需要登记而非改写上位文字的差异：①「最强对照」按 20.3a 已冻结的 per-seed max 口径，20.2s 的 mean 只作敏感性锚；② 对照集合取窗口身份／标签打乱／随机同维同范数／无 F 其它持久态四条并集，满足 P1 的「三条缺一不可」；③ 上表出口列「否则进 21.4」与 21.4 自身的准入条件（仅 21.1 判 I 或 21.3 证明有权威）不相容，故本包判负／不可判**只登记 verdict，不自动转训练**，后续由 owner 另立合同。**执行结果（2026-11-07）**：按冻结合同跑完 4 个 checkpoint，判 `representation_axis_closed_for_this_graph`（主探针 0.6364、窗口身份对照 0.6818、绑定 margin −0.0455、`distinct_f_vectors=2`；20.2s 遗留 mean 口径 +0.1182 为 `inconclusive` 但不绑定），CPU 144.984、0 训练 / 0 confirm。见[21.3 结项卡](../../reports/taiji_package21_3_closeout_20261107.json)。**不自动转训练。**
+**21.3 预注册校准（2026-11-07）**：上表 21.3 行的门值、做法与预算**一字未改**，判据的机读冻结源为[21.3 预注册 manifest](../manifests/taiji_package21_3_prereg_20261107.json)（`criteria_sha256`），口径理由与已知先验见[冻结规格](SPEC-PACKAGE21_3_REPRESENTATION_SEPARABILITY_PREREG_20261107.md)。三处需要登记而非改写上位文字的差异：①「最强对照」按 20.3a 已冻结的 per-seed max 口径，20.2s 的 mean 只作敏感性锚；② 对照集合取窗口身份／标签打乱／随机同维同范数／无 F 其它持久态四条并集，满足 P1 的「三条缺一不可」；③ 上表出口列「否则进 21.4」与 21.4 自身的准入条件（仅 21.1 判 I 或 21.3 证明有权威）不相容，故本包判负／不可判**只登记 verdict，不自动转训练**，后续由 owner 另立合同。**执行结果（2026-11-07）**：按冻结合同跑完 4 个 checkpoint，判 `representation_axis_closed_for_this_graph`（主探针 0.6364、窗口身份对照 0.6818、绑定 margin −0.0455、`distinct_f_vectors=2`；20.2s 遗留 mean 口径 +0.1182 为 `inconclusive` 但不绑定），CPU 144.984、0 训练 / 0 confirm。见[21.3 结项卡](../../reports/taiji_package21_3_closeout_20261107.json)。**不自动转训练**；包 21 已由[全局收束卡](CLOSEOUT-PACKAGE21_GLOBAL_20261107.md)收束，当前待裁定下一轮唯一核心问题。
 
 **退役与清理（本次生效）**：20.3a 每轮内容寻址写退役为机制（三闸已败，默认关闭，后继不得直接启用）；20.2t 选项 3 退役；20.x 诊断脚本按既有归档惯例处理；删 `output/_peek_20_4c_r2.py`；`output/taiji_package20_4_checkpoints` 标 `superseded`；U1/MGW1 冻结为设计资产（U1 修好 P1–P4 前不得作为实现依据）；能力卡 §7 与账本 §15.1 的旧 `待裁定` 标 `superseded`。
 

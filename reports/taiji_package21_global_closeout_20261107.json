@@ -1,0 +1,463 @@
+{
+  "schema": "taiji-package21-global-closeout-v1",
+  "package": "21",
+  "date": "2026-11-07",
+  "status": "completed",
+  "verdict": "package21_closed_negative_pending_next_core_question",
+  "scope": "Global closeout of package 21 (and the package 20 -> 21 chain). Zero training, zero forwards, zero confirm reads, zero evaluation reruns. This is NOT an M-line or milestone closure and NOT a 'scope-exclusion approval'.",
+  "authorization": "owner approved publishing the global closeout card on 2026-11-07",
+  "authority": {
+    "plan": "plans/reference/PLAN-DEVELOPMENT_DETAIL_20261107.md",
+    "section": "P7 / section 3.2 closeout criteria",
+    "capability_card": "plans/reference/CAPABILITY-CARD_20261103.md",
+    "ledger": "plans/reference/INVARIANT-LEDGER_20261103.md",
+    "human_card": "plans/reference/CLOSEOUT-PACKAGE21_GLOBAL_20261107.md",
+    "closeout_doc_sha256_lf": "9344144a85e74fa04ac153b3f1de8368b84b4823b426e99c6b67a0b7d598483d"
+  },
+  "numbering_note": {
+    "issue": "P7 says 'root goals L1-L14', but the current authoritative coverage table is the 23-clause table in 03 (2026-11-02) and the root requirement text is CR-1..CR-10 in plans/active/TAIJI_CORE_REQUIREMENTS.md. L1-L14 is a historical numbering with no current clause list in the active documents.",
+    "disposition": "This card uses the current 23-clause / CR-1..CR-10 wording and does not invent L-numbered clauses. The numbering discrepancy is registered, not silently resolved.",
+    "current_coverage_table": "plans/active/roadmap/03_CURRENT_EXECUTION.md (2026-11-02 goal-clause x evidence table)"
+  },
+  "admission": {
+    "path_closed": "21.1 judged U (4/4 cells); 21.3 executed under frozen pre-registration and judged representation_axis_closed_for_this_graph (4/4 checkpoints identical); 21.2 (R) and 21.4 (training) never admitted and remain frozen",
+    "cost_gate": "package 20 measured 50573.637 CPU = 2.1072x proposal B (24000) and 1.0536x the 48000-order gate; measured is explicitly a lower bound because missing stages stay null",
+    "p7_rule": "either a P1-P3 path closes OR cumulative cost crosses the gate; both hold; P7 fallback says stop and issue the closeout card before opening any new package"
+  },
+  "artifacts": {
+    "count": 10,
+    "items": [
+      {
+        "path": "reports/taiji_package20_6_package_close_20261107.json",
+        "sha256_worktree": "025b8405fbd2b59b84e2f793315007686a87c2cd141e210250b513c68d5338e6",
+        "sha256_head_blob": "025b8405fbd2b59b84e2f793315007686a87c2cd141e210250b513c68d5338e6",
+        "blob_equals_worktree": true
+      },
+      {
+        "path": "reports/taiji_package21_1_p0_closeout_20261107.json",
+        "sha256_worktree": "3430a762de556a0f7574b39d22487f3458decf6d5f9340a8a0fa09dd37f37ee6",
+        "sha256_head_blob": "3430a762de556a0f7574b39d22487f3458decf6d5f9340a8a0fa09dd37f37ee6",
+        "blob_equals_worktree": true
+      },
+      {
+        "path": "reports/taiji_package21_1_readout_decomposition_20261107.json",
+        "sha256_worktree": "e7666226c310fe5200a6ec3b7f7107267dbb3bc2034e1d6d8f79f52c2df00ac7",
+        "sha256_head_blob": "e7666226c310fe5200a6ec3b7f7107267dbb3bc2034e1d6d8f79f52c2df00ac7",
+        "blob_equals_worktree": true
+      },
+      {
+        "path": "plans/manifests/taiji_package21_1_readout_decomposition_20261107.json",
+        "sha256_worktree": "5403076e9692a0ee7ba9731d2d69409aea85751c8b6ba9195919b5c0215f9fba",
+        "sha256_head_blob": "5403076e9692a0ee7ba9731d2d69409aea85751c8b6ba9195919b5c0215f9fba",
+        "blob_equals_worktree": true
+      },
+      {
+        "path": "plans/manifests/taiji_package21_3_prereg_20261107.json",
+        "sha256_worktree": "0346377d827092315ec1cd5daa7ea2543ad52b6f5e78371fa75a12ef6971abaa",
+        "sha256_head_blob": "0346377d827092315ec1cd5daa7ea2543ad52b6f5e78371fa75a12ef6971abaa",
+        "blob_equals_worktree": true
+      },
+      {
+        "path": "plans/manifests/taiji_package21_3_feature_card_20261107.json",
+        "sha256_worktree": "b4e3a5cc61bf36544534bdb4eb9b4595acb2033298db64bbe4c7f28f9500447b",
+        "sha256_head_blob": "b4e3a5cc61bf36544534bdb4eb9b4595acb2033298db64bbe4c7f28f9500447b",
+        "blob_equals_worktree": true
+      },
+      {
+        "path": "scripts/training/probe_taiji_package21_3_representation_separability.py",
+        "sha256_worktree": "714adb6c794fd6684670bb97e7c8ad48d1a640fdb3f5e944b103aa35c1f4cffc",
+        "sha256_head_blob": "714adb6c794fd6684670bb97e7c8ad48d1a640fdb3f5e944b103aa35c1f4cffc",
+        "blob_equals_worktree": true
+      },
+      {
+        "path": "reports/taiji_package21_3_representation_separability_20261107.json",
+        "sha256_worktree": "f95e285d6154f8caa482b51eb98eef2bdfbceda0ef1736080ab20a938f4a2374",
+        "sha256_head_blob": "f95e285d6154f8caa482b51eb98eef2bdfbceda0ef1736080ab20a938f4a2374",
+        "blob_equals_worktree": true
+      },
+      {
+        "path": "plans/manifests/taiji_package21_3_representation_separability_20261107.json",
+        "sha256_worktree": "c5a36b43d44a58895a9992077e4aed122082fd340c37ca47a45667ce54770a58",
+        "sha256_head_blob": "c5a36b43d44a58895a9992077e4aed122082fd340c37ca47a45667ce54770a58",
+        "blob_equals_worktree": true
+      },
+      {
+        "path": "reports/taiji_package21_3_closeout_20261107.json",
+        "sha256_worktree": "fafbb2b01dfb6733054ed7a5dec55dcc7024d1cc7bdb03fd45ebd2ba830572fc",
+        "sha256_head_blob": "fafbb2b01dfb6733054ed7a5dec55dcc7024d1cc7bdb03fd45ebd2ba830572fc",
+        "blob_equals_worktree": true
+      }
+    ]
+  },
+  "capability": {
+    "only_proven_capability": {
+      "id": "C12",
+      "level": "[已证]",
+      "statement": "bounded Task1 selection / binding / verbatim-copy structural milestone: 19.2v full-sentence 188/192 = 0.9792, selection / dual starts / conditional bytes / source all 1, four cases of trailing template overflow",
+      "evidence": "reports/taiji_package19_2v_confirm_holdout_20261105.json",
+      "boundary": "not general Chinese understanding, not a learning gain"
+    },
+    "not_established": [
+      {
+        "id": "U6",
+        "level": "[未证]",
+        "statement": "cross-session feedback learning and version correction; package 20 measured and did not establish it"
+      },
+      {
+        "id": "U13",
+        "level": "[未证]",
+        "statement": "net extra contribution of the F feedback memory; 20.4 two seeds reverse, 20.4d pooled delta contains 0"
+      },
+      {
+        "id": "U5",
+        "level": "[未证]",
+        "statement": "post-learning retention of old capability; only a stability drift gate exists, no learned-parent retention measurement"
+      },
+      {
+        "id": "U1/U2/U3/U4/U7..U12",
+        "level": "[未证]",
+        "statement": "learning net gain, open generalisation, transferable neural selection, free unseen-name copy, routing gains, general Chinese / open QA, autonomous choice"
+      }
+    ],
+    "design_only": [
+      {
+        "id": "U14",
+        "level": "[设计层]",
+        "statement": "MGW1 slot lifecycle + U1 unified algebra bring 0 signable capability gain; taiji/ has 0 code, 0 parameters, 0 training; U1 math review P1/P2 are hard defects"
+      },
+      {
+        "id": "U1",
+        "level": "[设计层]",
+        "statement": "unified algebra design asset; must not be used as an implementation basis until P1-P8 are fixed"
+      },
+      {
+        "id": "MGW1",
+        "level": "[设计层]",
+        "statement": "multimodal physical-world design; 0 capability measurement, no lifecycle control arm yet"
+      }
+    ],
+    "not_in_code": [
+      {
+        "id": "U1 implementation",
+        "level": "[未落代码]",
+        "statement": "8d H + Read_R, unified emission, FP1 full-domain, dual-clock causal gate, per-record cursor"
+      }
+    ],
+    "added_by_package_21": "no new capability; three mutually independent readout-level negative results (21.1 U, 21.3 closed representation axis, 20.3b oracle-F zero change) with frozen pre-registration and dual runner hashes"
+  },
+  "goal_coverage": {
+    "basis": "03 2026-11-02 23-clause table; conclusion then was 'goal not met, the only blocker is clause 5 (own mechanism actually carries the decision), which also blocks 6/7/8/9/10/13'",
+    "still_holds_after_packages_20_21": true,
+    "clauses": [
+      {
+        "clause": 5,
+        "name": "own mechanism actually carries the decision",
+        "then": "✗",
+        "now": "✗",
+        "level": "[未证]",
+        "new_evidence": "package 20 closed negative; 20.3b oracle-F 0 byte change; 21.1 U; 21.3 representation axis closed with rank-2 F"
+      },
+      {
+        "clause": 9,
+        "name": "improve the responsible mechanism from experience and feedback",
+        "then": "✗",
+        "now": "✗",
+        "level": "[未证]",
+        "new_evidence": "package20_closed_current_learning_candidate_not_established; 21.3 effective DOF 2"
+      },
+      {
+        "clause": 10,
+        "name": "learn new capability and retain old",
+        "then": "◐",
+        "now": "◐",
+        "level": "[未证]",
+        "new_evidence": "stability drift gate only; no post-learning retention measurement. Stability must not be written as retention passed"
+      },
+      {
+        "clause": 14,
+        "name": "pre-declared scope / budget / exits",
+        "then": "✓",
+        "now": "✓",
+        "level": "[已证]",
+        "new_evidence": "21.3 pre-registration, feature card frozen before reading, dual runner sha, guard red/green drills"
+      },
+      {
+        "clause": 23,
+        "name": "whole-process resource cost",
+        "then": "✓",
+        "now": "✓",
+        "level": "[已证]",
+        "new_evidence": "20.6 cost_ledger with wasted/rerun and null-missing policy; package 21 cost listed separately"
+      },
+      {
+        "clause": 6,
+        "name": "reliable continuous natural-Chinese tasks",
+        "then": "✗",
+        "now": "✗",
+        "level": "[未证]",
+        "new_evidence": "none this round"
+      },
+      {
+        "clause": 7,
+        "name": "cross-session experience accumulation",
+        "then": "✗",
+        "now": "✗",
+        "level": "[未证]",
+        "new_evidence": "none this round"
+      },
+      {
+        "clause": 8,
+        "name": "verify and correct beliefs",
+        "then": "✗",
+        "now": "✗",
+        "level": "[未证]",
+        "new_evidence": "none this round"
+      },
+      {
+        "clause": 13,
+        "name": "unprompted autonomous choice",
+        "then": "✗",
+        "now": "✗",
+        "level": "[未证]",
+        "new_evidence": "none this round"
+      }
+    ],
+    "rule": "uncovered clauses are recorded as uncovered with restart conditions, never filled with 0 or written as passed"
+  },
+  "cost": {
+    "unit": "CPU seconds",
+    "package_20": {
+      "measured_cpu_seconds": 50573.637,
+      "declared_estimate_cpu_seconds": 2320.0,
+      "measured_plus_estimates": 52893.637,
+      "lower_bound_including_missing_lower_bounds": 50599.387,
+      "proposal_b_cpu_seconds": 24000.0,
+      "ratio_to_proposal_b": 2.1072,
+      "ratio_to_48000_gate": 1.0536,
+      "measured_wall_seconds": 34445.073,
+      "training_updates": 825,
+      "adam_steps": 825,
+      "source": "reports/taiji_package20_6_package_close_20261107.json -> cost_ledger.totals / training_ledger",
+      "note": "already includes 20.4c_r2 (42831.453), 20.4d (4026.438), all 20.2x/20.3x diagnostics and the 20.6 closeout action (0.016). Do NOT add its sub-stages again."
+    },
+    "package_21": {
+      "21_1_cpu_seconds": 1597.344,
+      "21_1_wall_seconds": 1610.581,
+      "21_3_cpu_seconds": 144.984,
+      "21_3_wall_seconds": 145.319,
+      "sum_cpu_seconds": 1742.328,
+      "training_steps": 0,
+      "confirm_reads": 0,
+      "checkpoints_written": 0,
+      "sources": [
+        "reports/taiji_package21_1_readout_decomposition_20261107.json",
+        "reports/taiji_package21_3_representation_separability_20261107.json"
+      ]
+    },
+    "p0_and_closeout_card": {
+      "cpu_seconds": null,
+      "note": "document/evidence-chain work only, no metering done; null by policy, not 0"
+    },
+    "no_double_counting": "package 20 total and package 21 sum are disjoint accounting views; this card deliberately does not manufacture a third 'grand total' by adding summaries that already include sub-stages",
+    "budget_discipline": "21.1 used 1597.344 of a 4800 cap; 21.3 used 144.984 of a 2000 cap (7.25%); package 20 remains the 2.1072x over-proposal precedent"
+  },
+  "recovery_retention": {
+    "recovery_evidence": [
+      {
+        "level": "[已证]",
+        "item": "20.2 three recovery paths 90/90 (mid-session, cross-session, crash-style), 9 state fields byte-identical",
+        "source": "reports/taiji_package20_2_credit_recovery_20261105.json"
+      },
+      {
+        "level": "[已证]",
+        "item": "20.4c_r2 resume_verified: 6 items (loss, weights, Adam moments, RNG, per-world readings, cursor) byte-identical step by step",
+        "source": "reports/taiji_package20_4c_r2_formal_comparison_20261105.json -> resume"
+      },
+      {
+        "level": "[已证]",
+        "item": "20.4c_r2 16/16 determinism; checkpoints every 25 updates",
+        "source": "20.4c_r2 formal comparison report"
+      },
+      {
+        "level": "[已证]",
+        "item": "21.1 / 21.3 wrote 0 checkpoints and read 0 confirm worlds",
+        "source": "both package 21 reports -> discipline"
+      }
+    ],
+    "retention_gap": {
+      "level": "[未证]",
+      "statement": "post-learning retention of old capability has not been measured; the existing drift gate is a symmetric stability check, not a signed forgetting/retention result (capability card U5, ledger section 10)",
+      "restart_condition": "a qualified learned parent plus a separate retention contract"
+    }
+  },
+  "negative_results": [
+    {
+      "id": "14-18 windows",
+      "verdict": "closed negative",
+      "reading": "old dose arms all failed the task gate",
+      "rewritten": false
+    },
+    {
+      "id": "19 / 19.2 series",
+      "verdict": "19.5 judged negative; 19.2b-w closed overall",
+      "reading": "six-cell overall 0.000-0.630 against a 0.80 gate; Task1 structural confirmation 188/192 stands separately",
+      "rewritten": false
+    },
+    {
+      "id": "package 20",
+      "verdict": "package20_closed_current_learning_candidate_not_established",
+      "reading": "20.4d pooled delta -0.028064 (CI -0.064706..+0.010539), whole sentence always 0, arm effect 0.2785% of SS vs model seed 99.3958%",
+      "rewritten": false
+    },
+    {
+      "id": "20.2s",
+      "verdict": "inconclusive",
+      "reading": "primary 0.6818 vs mean control 0.5091 -> margin 0.1727; only 2 distinct F vectors",
+      "rewritten": false
+    },
+    {
+      "id": "20.3a",
+      "verdict": "option2_failed",
+      "reading": "top1-top2 median 0.00317, leverage 8.7e-6, byte diff 0",
+      "rewritten": false
+    },
+    {
+      "id": "20.3b",
+      "verdict": "authority_weak",
+      "reading": "oracle F replacement 0/22 and 0 byte changes",
+      "rewritten": false
+    },
+    {
+      "id": "21.1",
+      "verdict": "upstream_representation_is_first_wall",
+      "reading": "4/4 U cells, whole-sentence 12/12 cells always 0",
+      "rewritten": false
+    },
+    {
+      "id": "21.3",
+      "verdict": "representation_axis_closed_for_this_graph",
+      "reading": "primary 0.6364, window-identity control 0.6818, binding margin -0.0455, distinct F vectors 2, rank 2, four checkpoints bit-identical",
+      "rewritten": false
+    },
+    {
+      "id": "U1 math review P1-P8",
+      "verdict": "design defects (not an experiment)",
+      "reading": "P1 theorem 5.1 fails under the Frobenius ball constraint; P2 normalisation premise missing; P3/P4 also open",
+      "rewritten": false
+    }
+  ],
+  "uncovered_scope": [
+    {
+      "face": "confirm indices 240-319",
+      "status": "sealed, 0 reads",
+      "restart_condition": "separate owner release; old confirm must not be reused"
+    },
+    {
+      "face": "21.2 (R branch)",
+      "status": "frozen",
+      "restart_condition": "a future pre-registered branch=R reading, none exists"
+    },
+    {
+      "face": "21.4 / any training",
+      "status": "not admitted",
+      "restart_condition": "separate owner approval + one-off pricing + checkpoint save preflight; D16-26 forbids re-opening this task as a training project; a negative verdict does NOT auto-transition"
+    },
+    {
+      "face": "U1 / MGW1",
+      "status": "design asset, 0 code",
+      "restart_condition": "U1.1 fixes P1-P8 + explicit owner authorisation + coverage matrix; MGW1 additionally needs an independent data/price/environment contract"
+    },
+    {
+      "face": "post-learning retention",
+      "status": "not measured",
+      "restart_condition": "qualified learned parent + retention contract"
+    },
+    {
+      "face": "general Chinese / open QA / autonomous choice",
+      "status": "not proven",
+      "restart_condition": "each needs its own scope and gate"
+    }
+  ],
+  "next_core_question": {
+    "count": 1,
+    "question": "Keeping the Task1 structural parent (C12) and the current graph identity unchanged, does the current fast-weight F have the expressive capacity to be separable and addressable per query / per feedback event? If not, is an architecture-level change required to introduce it, or should this function class be judged not to contain the capability and a different subject be established?",
+    "must_first_be_settled_by": "a zero-training expressibility criterion, yes/no; before that decision no training-dose project may be opened (D16-26; 21.4 not admitted)",
+    "evidence_for_the_question": [
+      "21.3: F rank 2, 2 distinct vectors across 22 surfaces, window-identity shortcut 0.6818 beats the 0.6364 primary, four independently trained checkpoints bit-identical",
+      "20.3a: content-addressed write failed three gates, read keys near-collinear",
+      "20.3b: oracle F replacement changes 0 bytes"
+    ],
+    "is_not": [
+      "a training plan",
+      "a price",
+      "a new package number",
+      "a capability claim",
+      "a claim of impossibility"
+    ]
+  },
+  "boundaries": {
+    "confirm_reads": 0,
+    "negative_verdict_scope": "current graph / current probe face / current data only; not 'representation can never have authority'",
+    "training_attribution": "not applicable (0 training steps); D16-12",
+    "historical_readings": "20.2s / 20.3a / 20.3b / package 20 verdicts untouched",
+    "no_automatic_training_transition": "pre-registration section 3.6: neither 21.4 nor P3 admits 'representation judged negative'",
+    "not_milestone_closure": "package 21 is closed out; the M-line is not closed and scope-exclusion approval is not milestone closure",
+    "history_archives": "not deleted"
+  },
+  "discipline": {
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "model_forward_passes": 0,
+    "confirm_reads": 0,
+    "evaluation_reruns": 0,
+    "data_rereads": 0,
+    "frozen_criteria_changed": false,
+    "historical_reports_rewritten": false,
+    "cpu_measured": null,
+    "cpu_note": "document/evidence-chain work only; null by policy, not 0"
+  },
+  "exit_criteria": [
+    {
+      "id": "P7-1",
+      "criterion": "product inventory complete with paths and hashes",
+      "pass": true
+    },
+    {
+      "id": "P7-2",
+      "criterion": "capability card with evidence levels",
+      "pass": true
+    },
+    {
+      "id": "P7-3",
+      "criterion": "cost ledger complete with the 2.1072x precedent and no double counting",
+      "pass": true
+    },
+    {
+      "id": "P7-4",
+      "criterion": "recovery / retention evidence with the retention gap recorded as uncovered",
+      "pass": true
+    },
+    {
+      "id": "P7-5",
+      "criterion": "negative-result table with no rewriting or deletion",
+      "pass": true
+    },
+    {
+      "id": "P7-6",
+      "criterion": "exactly one next core question with restart conditions",
+      "pass": true
+    },
+    {
+      "id": "P7-7",
+      "criterion": "status / navigation documents updated per conclusion",
+      "pass": true,
+      "note": "verified after the closeout commit"
+    },
+    {
+      "id": "P7-8",
+      "criterion": "history archives not deleted; scope-exclusion approval not written as milestone closure",
+      "pass": true
+    }
+  ],
+  "all_exit_criteria_pass": true
+}
