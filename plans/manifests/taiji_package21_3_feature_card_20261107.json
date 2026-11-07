@@ -1,0 +1,94 @@
+{
+  "schema": "taiji-package21-3-feature-card-v1",
+  "package": "21.3",
+  "date": "2026-11-07",
+  "status": "frozen_before_any_reading",
+  "prereg_manifest": "plans/manifests/taiji_package21_3_prereg_20261107.json",
+  "criteria_sha256": "02b727f958dbad8437a73c2914bf321a81263f5c85dc08183b3bd56f11d8c512",
+  "note": "Frozen before any model forward pass or reading. The runner verifies the sha256 of this file against its own constant and stops on mismatch. No post-reading change is permitted; a different feature construction requires a new pre-registration version.",
+  "probe_face": {
+    "fixture": "taiji.rule_learning_20_1",
+    "seed": 20261105,
+    "world_index": 0,
+    "turns": 51,
+    "surface_filter": "row['correction_surface'] and row['released_lines'] > 0",
+    "expected_surfaces": 22,
+    "same_face_for_all_checkpoints": true,
+    "rationale": "The 22 correction surfaces are 20.2s' primary probe face. Keeping ONE face for all four checkpoints makes the four readings comparable; using each checkpoint's own training seed would confound weights with probe content. No dev world and no confirm index 240-319 are used.",
+    "confirm_reads": 0
+  },
+  "graph": {
+    "builder": "probe_taiji_package20_4c_r2_formal_comparison.build_graph(candidate, gate, arm)",
+    "builder_sha256": "112c76ae117255bb5da7d60a46312bf82382430fc3a99ab8d7ce6a1f173d4095",
+    "weights": "graph.subject.load_state_dict(load_checkpoint(path)['subject']); graph.subject.eval()",
+    "addressed_store_enabled": false,
+    "checkpoints": {
+      "CF1_20261105_200.pt": "aa98db8a0d8b64530fb6b4bc80e5573a2a937f999f341a89f01b4bb4114ae3b2",
+      "CF1_20261106_200.pt": "61ad7b6200fce2c46d12b12ab0f474768d8f66578dbf5ae6276f5f3221403337",
+      "B_EH_20261105_200.pt": "0939658ede9805b716a2bc4b4de606970cd4fd1d5ccad58023ced57cf130b3d1",
+      "B_EH_20261106_200.pt": "eade77f2a3e8c0c79394323afce79f587458c18edd53d1826c6baacd3d8bfdda"
+    }
+  },
+  "feature": {
+    "f_vector": "state.living.fast after run_turn of the surface turn, flattened to 8192 float64; collected with write_enabled=True",
+    "query_key": "128-d parameter-free deterministic encoding of turn['query'].encode('utf-8'): for each byte b, key[b % 128] += 1; then divide by max(L2 norm, 1e-12)",
+    "primary_x": "np.concatenate([f_vector, query_key]) -> 8320 float64 columns",
+    "no_new_parameters": true,
+    "deviation_from_20_3a": "20.3a's mechanism.key was mean(BytePatchEncoder.context) used as a store retrieval key. This card instead uses a parameter-free byte-count key of the question. It is registered here BEFORE reading and is a deliberate, auditable deviation, not a post-hoc choice: it keeps the full F vector intact (comparable with 20.2s) while conditioning on the question without introducing any new parameter or learned projection.",
+    "not_a_rerun_of_20_2s": "20.2s used F alone (8192 columns) on a 19_compare parent graph. 21.3 uses F+question key (8320 columns) on four 20.4c_r2 trained checkpoints, four controls, the max-per-seed binding statistic and a strictest-of-four aggregation."
+  },
+  "readout": {
+    "reused_module": "scripts/training/probe_taiji_package20_2s_f_information.py",
+    "reused_functions": ["probe", "ridge_predict", "loo_with_selection", "select_lambda", "encode_labels", "decode_decision", "score_bytes", "other_features", "surface_rows"],
+    "collect_world": "re-implemented line-for-line from 20.2s collect_world with ONLY the budget guard replaced by the 21.3 guard (20.2s guard trips at 190 CPU, below this package's 1800 stop)",
+    "lambda_grid": [0.0001, 0.001, 0.01, 0.1, 1.0],
+    "lambda_selection": "per outer LOO fold: inner LOO over the 21 training rows only; highest inner decision-bit accuracy wins; tie-break larger lambda",
+    "target": "decision-bit one-hot at positions [7,8], 4 columns",
+    "metric": "decision_bit_accuracy"
+  },
+  "controls": {
+    "window_identity": "2-d one-hot on row['session'] (1 or 2), same probe pipeline",
+    "label_permutation_5_seeds": "np.random.default_rng(seed).permutation(22) applied to gold, seeds 20261105..20261109; same x and same pipeline; report mean and per-seed values",
+    "random_projection_same_dim_same_norm": "np.random.default_rng(20261105).normal(size=x.shape), each row rescaled to the L2 norm of the corresponding primary row",
+    "no_f_other_persistent_state": "20.2s other_features(row): h, nu_ema, coverage/prior summaries and scalar state counters; no F"
+  },
+  "statistics": {
+    "binding_strongest_control": "max(label_permutation per-seed MAX, random_projection, no_f_other, window_identity)",
+    "legacy_strongest_control": "max(label_permutation MEAN, random_projection, no_f_other) [20.2s reading; sensitivity only, never binding]",
+    "margin": "primary decision_bit_accuracy minus strongest_control",
+    "dual_reporting": "both binding and legacy margins and verdicts are written to the report; only the binding verdict is used",
+    "bootstrap": {
+      "resamples": 2000,
+      "seed": 20261107,
+      "resampling_unit": "distinct F vectors (groups of rows sharing one F vector), not the 22 rows",
+      "statistic": "paired difference between primary and binding strongest control accuracy on the resampled rows",
+      "interval": "percentile 2.5 / 97.5",
+      "degenerate_case": "if distinct F vectors < 3, the interval is reported as degenerate with an explicit note and cannot support a pass"
+    }
+  },
+  "diagnostics": {
+    "A_key_separability": "pairwise cosine distribution of the 22 F vectors, per-surface top1-top2 cosine margin, np.linalg.matrix_rank of the 22 x 8192 matrix",
+    "B_write_timing": "distinct F vectors (np.unique axis=0), release write count, distinct F vectors per session, distinct F vectors vs number of release writes"
+  },
+  "aggregation": {
+    "per_checkpoint": "each of the four checkpoints yields its own primary, four controls, margins, effective dof and verdict",
+    "binding": "the checkpoint with the MINIMUM binding margin; no cherry-picking of the best checkpoint",
+    "disagreement": "if the four per-checkpoint verdicts are not all equal, the package verdict is inconclusive"
+  },
+  "discipline": {
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "new_parameters": 0,
+    "backward_calls": 0,
+    "checkpoints_written": 0,
+    "confirm_reads": 0,
+    "evaluation_reruns": 0,
+    "torch_no_grad": true
+  },
+  "budget": {
+    "cpu_cap": 2000.0,
+    "cpu_stop_threshold": 1800.0,
+    "wall_cap": 3000.0
+  }
+}
