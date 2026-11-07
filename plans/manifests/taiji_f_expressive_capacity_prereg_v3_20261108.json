@@ -1,0 +1,87 @@
+{
+  "schema": "taiji-fec1-prereg-v3",
+  "package": "FEC-1",
+  "date": "2026-11-08",
+  "status": "frozen_pending_execution_approval",
+  "supersedes": "plans/manifests/taiji_f_expressive_capacity_prereg_v2_20261108.json",
+  "supersedes_criteria_sha256": "aa3a8aefbe932247c3fcb8eed711f6dfc062698b146ff3485939bec1e0a10877",
+  "authority": "owner ruling 2026-11-08 option 2 (prereg v3 with a face-snapshot retrieval control); ledger I26/R-D16-44",
+  "note": "Pre-registration version 3. The W-v2 retest passed EVERY structural gate under forced write (pairwise 0.974, rank 7, alignment 0.9997, value rank 7, capacity 256) yet the closed-form readout on the frozen M_final protocol scored event-id 0.0 / decision-bit 0.5909 (gate 0.6, short by 0.009). Attribution: M_final is the end-of-replay matrix after ~460 forced writes, so the 22 face-event writes are drowned by non-event interference - a property of the forced protocol's write SCHEDULE, not of the architecture's capacity to store and address per-event values. v3 revises ONLY the closed_form binding definition: the binding readout becomes the FACE-ISOLATED reconstruction (exactly the tied-key theorem's existence condition: with the architecture's captured keys and written values, does exact per-event retrieval exist), and M_final is retained as a separately-reported persistence-under-deployed-schedule diagnostic. Every gate value, the decision rule structure, the verdict precedence, the margin definition, the controls and the budget are carried over UNCHANGED from v2. The v2 criteria block is preserved verbatim in its own file (audit per D16-38).",
+  "inputs": {
+    "checkpoints": "unchanged from v2 (the four 20.4c_r2 final checkpoints enumerated in the 21.1 report; the evaluated population follows the active feature card)",
+    "worlds": "probe face per the W-v2 feature card (seed 20261105, world index 0, 22 correction surfaces)",
+    "distinct_query_texts": 22,
+    "distinct_bits": 11
+  },
+  "criteria": {
+    "question": "Under the evaluated graph, does the fast weight F carry a function class that can separate and address per-question / per-feedback-event values?",
+    "primary_metric": "forced-write key-space separability (effective rank, pairwise cosine separability, condition number, key norm) plus the closed-form tied-key readout accuracy in BOTH protocols: face-isolated (binding) and M_final (persistence diagnostic)",
+    "forced_write_definition": "the ONLY intervention is the per-group/per-head boolean write-permission mask passed as allowed=torch.ones((groups, fast_heads), dtype=bool); architecture-branch fixes may change the graph between feature-card versions, each pinned by its own card",
+    "gates": {
+      "timing_coverage_min": 0.8,
+      "key_effective_rank_min": 3,
+      "key_pairwise_separable_fraction_min": 0.95,
+      "key_cosine_threshold": 0.95,
+      "key_norm_median_min": 0.001,
+      "condition_number_max": 100.0,
+      "query_alignment_cosine_median_min": 0.5,
+      "query_effective_rank_min": 3,
+      "value_effective_rank_min": 3,
+      "capacity_min": 22,
+      "probe_accuracy_min": 0.6,
+      "probe_margin_min": 0.2,
+      "effective_dof_min": 3
+    },
+    "definitions": {
+      "timing_coverage": "written_turns / correction_turns; binding = MIN over evaluated instances",
+      "effective_rank": "number of singular values s_i of the stacked key matrix K with s_i / s_max >= 1e-2",
+      "pairwise_separable_fraction": "fraction of unordered pairs (i,j) with |cos(k_i, k_j)| <= key_cosine_threshold; binding = MIN over the 8 (group, head) stacks",
+      "key_norm_median": "median L2 norm of the write keys; near-zero keys are a hard failure",
+      "condition_number": "s_max / s_min over non-degenerate singular values; best stack, global diagnostic",
+      "query_alignment": "median cosine between the deployed read query and the deployed write key from the same context",
+      "capacity": "sum over (group, head) of min(32, tau_decay), tau_decay = 1/(1-decay)",
+      "closed_form_readout_face_isolated_BINDING": "M_face = sum_j v_j k_j^T reconstructed from ONLY the captured face-event write keys and written values (no replay matrix, no interference); V_hat = M_face K (G + eps I)^{-1} with G = K^T K, eps = 1e-6; NN decode from V_hat to the event id. This is the existence condition of exact per-event retrieval given the architecture's keys and values: under pairwise-separable keys it approaches exact recovery iff the written values are pairwise distinguishable. It is the function-class instrument.",
+      "closed_form_readout_m_final_DIAGNOSTIC": "the v1/v2 protocol: V_hat = M_final K (G + eps I)^{-1} with M_final the end-of-replay F. Retained for continuity with the v1/v2 readings; under the forced protocol it measures persistence under the fixture's ~460-write interference schedule, which conflates the function class with a schedule artifact. Reported per stack, never binding.",
+      "effective_dof": "number of distinct F vectors under forced write across the correction surfaces; below 3 no PASS verdict is valid"
+    },
+    "controls": ["window_identity", "label_permutation_5_seeds", "random_projection_same_dim_same_norm", "no_f_other_persistent_state"],
+    "control_statistic": "unchanged from v2: every fitted control on a 32-dim seeded random projection (capacity cap); window_identity as-is; permutation per-seed MAX over 20261105..20261109",
+    "label_permutation_seeds": [20261105, 20261106, 20261107, 20261108, 20261109],
+    "strongest_control": "max of the four frozen control statistics",
+    "margin_definition": "binding_closed_form_accuracy - strongest_control",
+    "checkpoint_aggregation": "all evaluated instances independently; binding = STRICTEST (minimum margin); disagreement implies inconclusive",
+    "forced_write_primacy": "the binding verdict is computed under forced write; the actual-timing reading is a separate named verdict and never promoted",
+    "question_axis_rule": "text-level PASS with content-level FAIL is text_level_only and does not satisfy the question axis",
+    "decision_rule": {
+      "expressive_capacity_present": "forced-write key gates all pass (rank >= 3, pairwise >= 0.95, norm >= 1e-3, cond <= 100) AND query_alignment >= 0.5 AND value_effective_rank >= 3 AND capacity >= 22 AND BINDING closed_form_accuracy (face-isolated) >= 0.6 AND margin >= 0.2 AND effective_dof >= 3 AND all instances agree; produces an ARCHITECTURE-REQUIREMENT INPUT only, not training admission, not pricing, not a capability claim",
+      "key_space_collapsed_structurally": "under forced write, key_effective_rank < 3 OR pairwise_separable_fraction < 0.95 OR key_norm_median < 1e-3 OR condition_number > 100; range-limited to the evaluated graph and lineage",
+      "key_space_collapsed_under_actual_timing": "under forced write the key gates pass, but under the actual sparse write they fail; an engineering change, not an architecture change; does not license training",
+      "query_key_misaligned": "key gates pass but query_alignment < 0.5 or query_effective_rank < 3",
+      "value_space_collapsed": "value_effective_rank < 3; OR the binding face-isolated closed-form accuracy < 0.3 while all key gates and alignment pass (the keys separate but the written values are not pairwise distinguishable even without interference)",
+      "capacity_below_event_count": "capacity < 22",
+      "inconclusive": "effective_dof < 3 OR instance disagreement OR fewer than 22 assessable surfaces OR any gate exactly on its boundary",
+      "engineering_stop": "any integrity mismatch (sha/identity/criteria/feature card/confirm/dual hash/unauthorized mutation)"
+    },
+    "verdict_precedence": [
+      "engineering_stop",
+      "capacity_below_event_count",
+      "key_space_collapsed_structurally",
+      "query_key_misaligned",
+      "value_space_collapsed",
+      "key_space_collapsed_under_actual_timing",
+      "expressive_capacity_present",
+      "inconclusive"
+    ],
+    "budget": {
+      "cpu_soft_cap": 1200,
+      "cpu_stop_threshold": 1500,
+      "wall_cap": 2250
+    }
+  },
+  "original_criteria_v2": "PRESERVED VERBATIM IN plans/manifests/taiji_f_expressive_capacity_prereg_v2_20261108.json (criteria_sha256 aa3a8aefbe932247c3fcb8eed711f6dfc062698b146ff3485939bec1e0a10877); the v2 readings (W-v2 structural gates all pass, M_final closed_form 0.5909, verdict key_space_collapsed_under_actual_timing) remain binding under v2 and are not re-interpreted under v3.",
+  "audit": {
+    "change_scope": "definitions.closed_form binding protocol (face-isolated added as binding, M_final demoted to diagnostic) and one value_space_collapsed extension clause; everything else verbatim from v2",
+    "unchanged": ["gates", "verdict_precedence", "margin_definition", "controls", "control_statistic", "budget", "forced_write_primacy", "question_axis_rule"],
+    "rationale_for_the_value_clause": "the face-isolated protocol makes value indistinguishability directly observable (retrieval fails without interference); the extended clause names that outcome instead of forcing it into inconclusive"
+  }
+}

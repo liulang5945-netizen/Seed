@@ -1094,3 +1094,11 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 |---|---|---|
 | I26 | **W-v2 首轮复测读数（新图 init 双臂，v2 判据）** | 三部件（内容写键＋读写全 tied＋值条件化）在 forced 下**全部结构门通过**：pairwise 0.974、秩 7、键范数 0.63、cond 41、**读写对齐 0.9997**（round-2 的 0.110 被全 tied 解决——共享寻址函数在同一事件上下文下近乎重合）、值秩 7、容量 256、dof=22。未过：closed_form **0.5909**（门 0.6，差 0.009）与 margin −0.0909（门 0.2），且 actual 稀疏写键门败（coverage 0.0、CF1 written 10/51）⇒ verdict=`key_space_collapsed_under_actual_timing` 2/2 一致（manifest 语义：工程改动、非架构、不构成训练理由）。**架构需求输入三部件全部被证实可修且已入库**（living_core/growth_credit/rule_learning_20_1_net，default-off，parity 逐位过）。135.55 CPU / 0 训练 / 0 confirm |
 | R-D16-44 | **队首** | owner 三选一：①接受架构成立、FEC-1 线结案；②立 v3 预注册（检索口径加 face-snapshot 对照——face 时刻成分无干扰，数学上应≈精确恢复，一次分辨"检索失败=干扰冲刷 vs 值仍不可分"）重测 closed_form/margin；③转写入时机工程线（W3，注意不改善 forced 口径的 present 门） |
+
+## 25. FEC-1 v3 复测与函数类坐实（2026-11-08）
+
+| 编号 | 登记 | 内容 |
+|---|---|---|
+| I27 | **v3 复测读数（face-isolated binding）** | **face-isolated 检索＝1.0 精确恢复**：双臂 8 栈 event-id 全 1.0、decision-bit 1.0、binding margin **0.3182≥0.2**——forced 侧全部条件满足（键门 7/0.974/0.63/41、对齐 0.9997、值秩 7、容量 256、dof 22）。M_final 诊断 0.5909/event-id 0.1364 坐实「函数类成立、持久性受 ~460 次干扰写日程冲刷」的分层。verdict=`key_space_collapsed_under_actual_timing`（frozen precedence＋v1「方向二」：实际稀疏写键门败是唯一阻塞，forced 通过不得追认当前图能力）。128.0 CPU / 0 训练 / 0 confirm / v3 判据 sha（875a55b9）读后未改 |
+| I28 | **判据谱系定论** | 四版判据弧线闭合：v1（M_final binding，PASS 算术不可达 D16-42）→ v2（对照容量封顶，PASS 恢复可达）→ v3（face-isolated binding＝tied-key 存在性条件，M_final 降为持久性诊断；value_space 扩展条款备而未触发）。v1/v2 读数按各自版本保留；v3 下函数类问题已有肯定答案——剩余唯一阻塞＝写入时机（工程） |
+| R-D16-45 | **队首** | owner 裁定是否启动 W3 写入时机工程线：allowed 掩码策略改每纠正面写（0 参数 / 0 结构 / ~150 CPU）→ actual 口径复测 → 键门过则 present 达成（forced 侧已全绿），FEC-1 产出完整架构需求输入、可为有界训练窗定价；W3 不构成训练理由（manifest 语义） |

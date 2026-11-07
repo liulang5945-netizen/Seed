@@ -1,0 +1,18 @@
+{
+  "schema": "taiji-fec1-v3-retest-execution-manifest-v1",
+  "package": "FEC-1/v3",
+  "date": "2026-11-08",
+  "card": "plans/manifests/taiji_fec1_v3_retest_feature_card_20261108.json",
+  "card_sha256": "baf962977a66562aaaf68c135de8383235327d068ec1c378d9162e9fba9952d4",
+  "criteria_v3_sha256": "875a55b9ee4e75ffc17a43aab4ff6498be8f0966fb696af3986902cb4d77ed3f",
+  "report": "reports/taiji_fec1_v3_retest_20261108.json",
+  "report_sha256": "5e1f8dbf949de3cc34466e54b6c30eaef7630e4d068afd7d42c7f857773bf5d6",
+  "runner": "scripts/training/probe_taiji_fec1_v3_retest_20261108.py",
+  "runner_sha256": "b50032d1766704d182ebca867db441b100c43a315c637b4f0ee84864642413b3",
+  "submitted_runner_sha256": "b50032d1766704d182ebca867db441b100c43a315c637b4f0ee84864642413b3",
+  "verdict": "key_space_collapsed_under_actual_timing",
+  "cost": {
+    "cpu_seconds": 128.0,
+    "wall_seconds": 128.211
+  }
+}

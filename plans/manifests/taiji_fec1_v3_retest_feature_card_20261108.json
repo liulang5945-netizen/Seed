@@ -1,0 +1,30 @@
+{
+  "schema": "taiji-fec1-v3-retest-feature-card-v1",
+  "package": "FEC-1/v3-retest",
+  "date": "2026-11-08",
+  "status": "frozen_before_any_reading",
+  "parent_prereg_v3": "plans/manifests/taiji_f_expressive_capacity_prereg_v3_20261108.json",
+  "criteria_v3_sha256": "875a55b9ee4e75ffc17a43aab4ff6498be8f0966fb696af3986902cb4d77ed3f",
+  "graph_card": "plans/manifests/taiji_fec1_wv2_retest_feature_card_20261108.json",
+  "graph_card_sha256": "9110e7a1487c6f4a557d2056516da0d125d820d7213746215630547850a58819",
+  "note": "v3 retest card. The GRAPH, POPULATION, CAPTURE and all conventions are UNCHANGED from the W-v2 card (referenced above, sha-pinned): same redesigned write path (content keys + tied reads + content-conditioned values) at initialization, both arms, same probe face, same parity gate, same v2-aware capture with bitwise cross-checks. This card pins only the ANALYSIS delta required by prereg v3: the closed-form readout is computed in BOTH protocols (face-isolated = binding, M_final = diagnostic) from the same captured keys and written values.",
+  "analysis": {
+    "face_isolated_binding": "per (group, head) stack: M_face = values.T @ keys (sum of the 22 rank-one face writes), V_hat = M_face K (G + 1e-6 I)^{-1}, G = K^T K; NN decode of V_hat columns to the captured written values; binding closed_form_accuracy = MAX over the 8 stacks of the DECISION-BIT accuracy of the decoded event's gold answer (same scorer and aggregation conventions as rounds 1-2); event-id accuracy reported alongside",
+    "m_final_diagnostic": "identical computation with M_final (end-of-replay F) instead of M_face; reported per stack, never binding; continuity with the v1/v2 readings",
+    "controls": "v2 capacity-capped definitions, unchanged; computed on the forced F matrix as in rounds 1-2",
+    "margin": "binding face-isolated closed_form_accuracy - strongest_control",
+    "verdict": "v3 decision rule and precedence via the committed fec1.checkpoint_verdict with the binding closed_form fed as extras['closed_form_accuracy']; the value_space_collapsed extension clause (face-isolated < 0.3 with key gates and alignment passing) is evaluated explicitly in the runner"
+  },
+  "probe_face": {
+    "fixture": "taiji.rule_learning_20_1",
+    "seed": 20261105,
+    "world_index": 0,
+    "expected_surfaces": 22,
+    "confirm_reads": 0
+  },
+  "budget": {
+    "proposal_cap": 2000.0,
+    "expected": "about 150-250 CPU (same instrument as the W-v2 retest)",
+    "discipline": "0 training / 0 optimizer steps / 0 confirm / criteria sha (v3) verified in-runner and unchanged after reading"
+  }
+}
