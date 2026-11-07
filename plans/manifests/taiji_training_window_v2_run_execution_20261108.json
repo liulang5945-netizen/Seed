@@ -1,0 +1,17 @@
+{
+  "schema": "taiji-training-window-v2-run-execution-manifest-v1",
+  "package": "training-window-v2",
+  "date": "2026-11-08",
+  "prereg": "plans/manifests/taiji_training_window_v2_prereg_20261108.json",
+  "prereg_sha256": "b2db40018e89bffdd9b443b3b413cab5d1b479229c2d21834ee99d01b2366d12",
+  "report": "reports/taiji_training_window_v2_run_20261108.json",
+  "report_sha256": "34df4d24898a400217382d6978dd9df21dfbecda64a4fe9a966eee935a97fc43",
+  "runner": "scripts/training/run_taiji_training_window_v2_20261108.py",
+  "runner_sha256": "f71014bfeb3a4dbe7cb111172f68c144b0d3a4f29d9e36ff50f0fe518555d3e5",
+  "submitted_runner_sha256": "f71014bfeb3a4dbe7cb111172f68c144b0d3a4f29d9e36ff50f0fe518555d3e5",
+  "verdict": "inconclusive",
+  "cost": {
+    "cpu_seconds": 33957.0,
+    "wall_seconds": 34122.036
+  }
+}
