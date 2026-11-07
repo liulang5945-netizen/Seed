@@ -15,7 +15,7 @@
 | 项 | 冻结值 |
 |---|---|
 | 检查点 | `output/taiji_package20_4c_r2_checkpoints/{CF1,B_EH}_{20261105,20261106}_200.pt`（4 个，每个 0.072 GB；全目录 32 个均在） |
-| 评测数据 | `taiji.rule_learning_20_1` dev world，索引 160–239；21.1 取固定 24 个索引（`160,163,166,…,229`，每 3 取 1），4 个 checkpoint 用同一集合 |
+| 评测数据 | `taiji.rule_learning_20_1` dev world，索引 160–239；21.1 取固定 16 个索引（`160,165,170,…,235`，每 5 取 1），4 个 checkpoint 用同一集合 |
 | 禁止面 | confirm 索引 240–319；Train1 训练索引 0–159 不用于本包读数 |
 | 图构建 | `probe_taiji_package20_4c_r2_formal_comparison.build_graph(candidate, gate, arm)`，`addressed_store_enabled=False` |
 | 身份 | 不改参数、不改图、不改 `DECODE_RULES`、不写 checkpoint；只读 `subject.state_dict()` |

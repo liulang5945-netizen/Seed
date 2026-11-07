@@ -52,7 +52,7 @@
 
 | 步骤 | 准入/做法 | 出口/预算 |
 |---|---|---|
-| 21.0 冻结（0 前向） | 20.4c_r2 4 个末步 checkpoint、dev 索引 160–239 每 3 取 1（24 world）、gold 字节、三臂与判据先落盘；确认 0 confirm；核 checkpoint 存在性 | 冻结 manifest 落盘；≤30 CPU；缺失即 `engineering_stop` |
+| 21.0 冻结（0 前向） | 20.4c_r2 4 个末步 checkpoint、dev 索引 160–239 每 5 取 1（16 world）、gold 字节、三臂与判据先落盘；确认 0 confirm；核 checkpoint 存在性 | 冻结 manifest 落盘；≤30 CPU；缺失即 `engineering_stop` |
 | **21.1 零训练读出分解（队首）** | 三臂：`natural`／`template_forced`（只在模板位回喂 gold）／`content_forced`（只在内容位回喂 gold）；同一 checkpoint/world/随机性；逐格出模板位、内容位、决策位、整句 | **R**：≥3/4 格 `template_forced` 内容位 ≥0.60 且整句 ≥0.50 → 21.2；**U**：≥3/4 格内容位 <0.40 且相对 natural 增益 <0.05 → 21.3；**I**：其余 → 21.4 单点诊断。CPU ≤4,800、wall ≤7,200、0 Adam、0 confirm |
 | 21.2 结构发射装配（仅 R） | 接 19.2r/19.2w 的结构原语（0 可训练参数、0 权重迁移），重跑三臂 | dev 整句 ≥0.80 且内容位不回退 → 结构可解，残差归“学习如何被结构引导”；否则进 21.3。CPU ≤6,000、0 Adam |
 | 21.3 表示可分性诊断（仅 U 或 21.2 未过） | 只读：F 键余弦/边距/秩、问句条件化闭式读出 vs 窗口身份＋标签打乱双对照、逐轮写 vs release 写的向量数 | 闭式 ≥0.60 且比最强对照高 ≥0.20 → 表示有权威，下一步定价“图上可学读出头”；否则 `representation_axis_closed_for_this_graph`，进 21.4。CPU ≤2,000、0 Adam |
