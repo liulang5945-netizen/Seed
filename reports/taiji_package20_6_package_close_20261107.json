@@ -773,7 +773,7 @@
       "plans/reference/CAPABILITY-CARD_20261103.md"
     ],
     "sha256": {
-      "plans/active/roadmap/03_CURRENT_EXECUTION.md": "e43710d3b5b752b32d38ed03a21b8ab1814de3c98e7b587ea45d0222c8815e1f",
+      "plans/active/roadmap/03_CURRENT_EXECUTION.md": "7e22608cc6062f530d61b45eff952d2fe661401f684b5b7f321852ae956eb3e2",
       "plans/MAINLINE.md": "360ec02898b1c3f4cc64776deb8cce063b8c360128d3ac3a3be03d32b047592e",
       "plans/MASTER-PLAN.md": "6471eab53919a03c7721705a012ec78f1ddd0f59d5d3b961dc02af49b47901bf",
       "plans/reference/ROADMAP-NEXT_20261104.md": "94e1da6c97d29f79c2fa3ea6da9b56702e9b06ff74756909ef586bff6cda7053",
@@ -783,7 +783,8 @@
     "diagnostic_chain_marked": true,
     "diagnostic_chain": "20.2r/2s/2t, 20.3a/3b, 20.4a/b/d are diagnostic, non-planned; conclusions merged into 20.6",
     "queue_head": "package 20 closed; single next question: whole-sentence decode/readout vs feedback write-read authority",
-    "confirm_reads": 0
+    "confirm_reads": 0,
+    "backfill_commit": "eabc694f0"
   },
   "next_question": {
     "question": "200 updates raised content bits from 0 to 0.25-0.46 while template bits stayed near 0 and whole-sentence accuracy stayed 0 in every cell: does this task fail first at whole-sentence decoding/readout, or at feedback write/read authority?",

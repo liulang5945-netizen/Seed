@@ -8,7 +8,7 @@
   "preregistration_path": "reports\\taiji_package20_4d_preregistration_20261106.json",
   "preregistration_sha256": "80d6cebd070a79d5765f7ac3633dc074058ed9cd6560c53fe25b27b316db5491",
   "runner_sha256": "672540f7989cb0b153f4b396ff9f0a68cc2def852099f3b7227c5ca1a2bb0378",
-  "submitted_runner_sha256": null,
+  "submitted_runner_sha256": "bd49430ced65e42e83bd122ea55a73b3b2199e42cfc5858c5ae60796c1ba1785",
   "cpu_seconds": 4026.438,
   "cpu_cap": 6000.0,
   "completed": true,

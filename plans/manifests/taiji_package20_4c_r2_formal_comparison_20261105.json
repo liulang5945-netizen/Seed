@@ -5,7 +5,7 @@
   "report_path": "reports\\taiji_package20_4c_r2_formal_comparison_20261105.json",
   "report_sha256": "3162f295b2b74497c7fb939855584a461fc5266c548821d881ebbb46e3adb682",
   "runner_sha256": "112c76ae117255bb5da7d60a46312bf82382430fc3a99ab8d7ce6a1f173d4095",
-  "submitted_runner_sha256": null,
+  "submitted_runner_sha256": "112c76ae117255bb5da7d60a46312bf82382430fc3a99ab8d7ce6a1f173d4095",
   "executor_sha256": "b01d700b6d107fde66838e76b0bc587e99a0efb8e65d5dab193081e131787fc4",
   "freeze_path": "plans\\manifests\\taiji_package20_4c_r2_freeze_20261105.json",
   "freeze_sha256": "b7d940f7669b1adbea12ed8b940ee719f284eb050268ca32730eeebd40ec1998",

@@ -6,14 +6,15 @@
   "package": 20,
   "package_state": "closed",
   "report_path": "reports/taiji_package20_6_package_close_20261107.json",
-  "report_sha256": "4cda6462d28cf0178e770b4a5f3d38c8b724651e5f431df2286573824cc77263",
+  "report_sha256": "025b8405fbd2b59b84e2f793315007686a87c2cd141e210250b513c68d5338e6",
   "runner_sha256": "d45c75460677c678d5b9582ae58272fb855769c77f6ba2a6bf3198a75f14a9cd",
-  "submitted_runner_sha256": null,
+  "submitted_runner_sha256": "d45c75460677c678d5b9582ae58272fb855769c77f6ba2a6bf3198a75f14a9cd",
   "cpu_seconds": 0.016,
   "cpu_cap": 1500.0,
   "training_steps": 0,
   "adam_steps": 0,
   "confirm_reads": 0,
   "completed": true,
-  "plans_sync_status": "applied"
+  "plans_sync_status": "applied",
+  "backfill_commit": "eabc694f0"
 }
