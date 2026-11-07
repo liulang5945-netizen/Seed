@@ -252,7 +252,10 @@ def run_training(graph, optimizer, seed: int, run_name: str, centroid) -> dict:
             # mid-run resume verification once, at step 100: a fresh graph
             # loaded from the checkpoint must reproduce the next update's loss
             if update == 100:
-                fresh = r2.build_graph(candidate_ref[0], candidate_ref[1], graph.arm)
+                # the fresh graph must carry the SAME architecture flags as the
+                # training graph, otherwise the checkpoint's state_dict keys
+                # (key_content_proj) will not load
+                fresh = build_v2_graph(candidate_ref[0], candidate_ref[1], graph.arm, centroid)
                 r2.unfreeze_outer(fresh.subject)
                 fresh.subject.load_state_dict(reloaded["subject"])
                 fresh_optimizer = torch.optim.Adam(r2.trainer_params(fresh), lr=r2.LEARNING_RATE)
@@ -472,6 +475,28 @@ def main() -> int:
             },
         )
         print(json.dumps({"verdict": "engineering_stop", "reason": str(error)}))
+        return 0
+    except Exception as error:  # unexpected crash => still report engineering_stop
+        import traceback
+
+        append_progress({"stage": "unexpected_crash", "reason": str(error)})
+        write_json(
+            REPORT,
+            {
+                "package": "training-window-v2",
+                "status": "engineering_stop",
+                "verdict": "engineering_stop",
+                "reason": f"{type(error).__name__}: {error}",
+                "traceback": traceback.format_exc().splitlines()[-6:],
+                "runner_sha256": runner_sha,
+                "runs": runs,
+            },
+        )
+        print(
+            json.dumps(
+                {"verdict": "engineering_stop", "reason": f"{type(error).__name__}: {error}"}
+            )
+        )
         return 0
 
     # ---- aggregation: pooled paired delta (CF1_v2 - B_EH_v2) over 16 worlds,
