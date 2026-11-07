@@ -4,7 +4,7 @@
 
 ## 0. 唯一队首与唯一后继问题
 
-**包 20 已关。21.1 零训练读出分解已结项，判 U 分支（2026-11-07）**——4/4 格 `template_forced` 内容位 <0.40 且相对 `natural` 增益 <0.05，`verdict=upstream_representation_is_first_wall`；CPU 1597.344 / wall 1610.581、0 Adam / 0 confirm / 0 写 checkpoint。报告＋manifest 已入库（[报告](../../reports/taiji_package21_1_readout_decomposition_20261107.json)、[manifest](../manifests/taiji_package21_1_readout_decomposition_20261107.json)），结项校准见[P0 结项卡](../../reports/taiji_package21_1_p0_closeout_20261107.json)。**21.3 已由 owner 批准准入、预注册合同已冻结；当前唯一待裁定：是否按合同执行读数**；21.3 尚未执行、尚未完成，21.2/21.4 保持冻结。本节状态标注不改 §2 任何冻结判据。
+**包 20 已关。21.1 零训练读出分解已结项，判 U 分支（2026-11-07）**——4/4 格 `template_forced` 内容位 <0.40 且相对 `natural` 增益 <0.05，`verdict=upstream_representation_is_first_wall`；CPU 1597.344 / wall 1610.581、0 Adam / 0 confirm / 0 写 checkpoint。报告＋manifest 已入库（[报告](../../reports/taiji_package21_1_readout_decomposition_20261107.json)、[manifest](../manifests/taiji_package21_1_readout_decomposition_20261107.json)），结项校准见[P0 结项卡](../../reports/taiji_package21_1_p0_closeout_20261107.json)。**21.3 已执行完毕并判 `representation_axis_closed_for_this_graph`（范围限定判负）；唯一待裁定：是否发布包 21 全局收束卡**，21.2/21.4 保持冻结、不自动转训练。本节状态标注不改 §2 任何冻结判据。详见[21.3 结项卡](../../reports/taiji_package21_3_closeout_20261107.json)。
 
 **唯一后继问题（已由 21.1 回答，不自造第二问）**：整句恒 0 的第一次失败发生在**发射/读出**还是**反馈写读权威**？答案落在**上游表示/组合**——把句框喂对后内容位反而下降、整句仍恒 0，故 21.2（R 分支）冻结、21.3（U 分支）为唯一可能的下一步。
 
@@ -61,7 +61,7 @@
 - **做法（全部零训练）**：① 测 22 个纠正面 F 的逐询问键可分性（余弦分布、top1–top2 边距、秩）；② 用问句条件化键做闭式读出，与「窗口身份」和「标签打乱」两条最强对照比；③ 测逐轮写入与按 release 写入的 F 向量数差异。**不实现新图、不训练、不定价。**
 - **出口**：闭式读出在纠正面 ≥0.60 且比最强对照高 ≥0.20 → 表示有权威，下一步是「把闭式读出变成图上可学读出头」的**定价**；否则表示轴在当前图/数据上判负（登记 `representation_axis_closed_for_this_graph`），转 21.4。
 - **上限**：CPU ≤ 2,000、0 Adam。
-- **预注册（2026-11-07 冻结，准入后但未执行）**：[冻结规格](SPEC-PACKAGE21_3_REPRESENTATION_SEPARABILITY_PREREG_20261107.md)＋[机读 manifest](../manifests/taiji_package21_3_prereg_20261107.json)（判据唯一机读源，附 `criteria_sha256`）。本节的门值、做法与预算**一字未改**；规格只裁定口径歧义（「最强对照」取 20.3a 已冻结的 per-seed max）、补四条对照并集与有效自由度闸门、钉死 4 checkpoint 最严判定，并登记「判负／不可判不自动转 21.4／训练」的转段冲突（见规格 §3.6）。判据先落盘、跑完不改；读数未产生。
+- **预注册（2026-11-07 冻结，准入后但未执行）**：[冻结规格](SPEC-PACKAGE21_3_REPRESENTATION_SEPARABILITY_PREREG_20261107.md)＋[机读 manifest](../manifests/taiji_package21_3_prereg_20261107.json)（判据唯一机读源，附 `criteria_sha256`）。本节的门值、做法与预算**一字未改**；规格只裁定口径歧义（「最强对照」取 20.3a 已冻结的 per-seed max）、补四条对照并集与有效自由度闸门、钉死 4 checkpoint 最严判定，并登记「判负／不可判不自动转 21.4／训练」的转段冲突（见规格 §3.6）。判据先落盘、跑完未改；读数已按合同执行完毕，判 `representation_axis_closed_for_this_graph`（见[报告](../../reports/taiji_package21_3_representation_separability_20261107.json)与[结项卡](../../reports/taiji_package21_3_closeout_20261107.json)），不自动转 21.4 或训练。
 
 ## 5. 包 21.4：训练（最后手段，未准入）
 
@@ -84,8 +84,8 @@
 
 ## 7. 顺序与单一建议
 
-`21.0 冻结 → 21.1（已结项，判 U）→ (U) 21.3 已准入、预注册冻结、读数待裁定 / (R) 21.2、(I) 21.4 冻结`。**只给一个下一步：由 owner 裁定是否按冻结合同执行 21.3 读数。** 21.2–21.4 不预启动、不并行；准入 ≠ 执行 ≠ 里程碑关闭，U 分支也不是 21.3 完成。
+`21.0 冻结 → 21.1（已结项，判 U）→ (U) 21.3（已结项，判负）/ (R) 21.2、(I) 21.4 冻结`。**只给一个下一步：由 owner 裁定是否发布包 21 全局收束卡。** 21.2–21.4 不预启动、不并行；准入 ≠ 执行 ≠ 里程碑关闭，判负不自动转训练，包 21 尚未整体关闭。
 
 ## 判据、出口与验收（索引）
 
-本计划的冻结判据与出口集中在 §2（21.1 三臂的 R/U/I 预注册判定、预算与停止条件、产物规范）、§3（21.2 出口）、§4（21.3 出口）、§5（21.4 准入与禁止）、§6（退役与清理）。判据先落盘、跑完不改；改动须新报告并保留原块审计（D16-38）。五类有限出口：通过／判负／不可判／工程失败／预算停止，具名 `verdict` 写入机器报告。**本节只作索引，不改上述任何判据文字、门值或预算**（§0／§7 的 21.1 结项状态标注与 §2 标题括注属状态同步，不触及判据正文）；21.1 报告＋manifest 已于 2026-11-07 由 P0 结项校准入库（[P0 结项卡](../../reports/taiji_package21_1_p0_closeout_20261107.json)），可作冻结证据引用，此前「在途回执不得当冻结证据」的限定同时失效。21.3 的预注册判据另见[冻结规格](SPEC-PACKAGE21_3_REPRESENTATION_SEPARABILITY_PREREG_20261107.md)与[机读 manifest](../manifests/taiji_package21_3_prereg_20261107.json)；本节 §4 的冻结门值、做法与预算未因该预注册改动。
+本计划的冻结判据与出口集中在 §2（21.1 三臂的 R/U/I 预注册判定、预算与停止条件、产物规范）、§3（21.2 出口）、§4（21.3 出口）、§5（21.4 准入与禁止）、§6（退役与清理）。判据先落盘、跑完不改；改动须新报告并保留原块审计（D16-38）。五类有限出口：通过／判负／不可判／工程失败／预算停止，具名 `verdict` 写入机器报告。**本节只作索引，不改上述任何判据文字、门值或预算**（§0／§7 的 21.1 结项状态标注与 §2 标题括注属状态同步，不触及判据正文）；21.1 报告＋manifest 已于 2026-11-07 由 P0 结项校准入库（[P0 结项卡](../../reports/taiji_package21_1_p0_closeout_20261107.json)），可作冻结证据引用，此前「在途回执不得当冻结证据」的限定同时失效。21.3 的预注册判据另见[冻结规格](SPEC-PACKAGE21_3_REPRESENTATION_SEPARABILITY_PREREG_20261107.md)与[机读 manifest](../manifests/taiji_package21_3_prereg_20261107.json)；本节 §4 的冻结门值、做法与预算未因该预注册改动；21.3 的[结项卡](../../reports/taiji_package21_3_closeout_20261107.json)记录执行读数与判负出口。

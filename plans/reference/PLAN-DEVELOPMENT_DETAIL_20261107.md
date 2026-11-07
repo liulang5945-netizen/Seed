@@ -2,7 +2,7 @@
 
 > **P0 执行结果（2026-11-07 11:40 后，提交 `6e9e68e33`）**：本件 §0.1／§0.2 的「21.1 未入库／队首待写回」状态已由 P0 校准——报告＋manifest 入库、三处队首写回、账本 T-U1 挂证伪指针、退役清单逐项回执，见[P0 结项卡](../../reports/taiji_package21_1_p0_closeout_20261107.json)。
 >
-> **21.3 准入与预注册（2026-11-07 12:02 后）**：owner 已批准 21.3 准入，**P1 的预注册合同已冻结**（[规格](SPEC-PACKAGE21_3_REPRESENTATION_SEPARABILITY_PREREG_20261107.md)＋[机读 manifest](../manifests/taiji_package21_3_prereg_20261107.json)），本件 §5 的原「建议 P0 为队首」与末尾 P0 是非题均已 `superseded`。**准入 ≠ 执行 ≠ 里程碑关闭**：21.3 读数未跑，当前唯一待裁定是是否按合同执行。P1–P8 的计划内容（判据、替换方案、结项条件）未因本轮改动。
+> **21.3 准入、预注册与执行（2026-11-07 12:18 后）**：owner 分两次批准准入与执行，**P1 已按冻结合同跑完并判 `representation_axis_closed_for_this_graph`**（[报告](../../reports/taiji_package21_3_representation_separability_20261107.json)＋[结项卡](../../reports/taiji_package21_3_closeout_20261107.json)）。主探针 0.6364、窗口身份对照 0.6818、绑定 margin −0.0455、`distinct_f_vectors=2`；20.2s 遗留 mean 口径会给 `inconclusive` 但不绑定。0 训练 / 0 confirm / CPU 144.984。本件 §5 的原「建议 P0 为队首」与末尾 P0 是非题均已 `superseded`。**准入 ≠ 执行 ≠ 里程碑关闭**：判负不自动转训练，当前唯一待裁定是是否发布包 21 全局收束卡。P1–P8 的计划内容（判据、替换方案、结项条件）未因本轮改动。
 >
 > 状态 [详细开发计划·受 MASTER-PLAN / ROADMAP-NEXT 统辖，**不发布队首**]。取证时点 2026-11-07 11:11，基线 `be1216161`。本件只做「项目梳理＋分节细化：可能出现的问题／替换方案／结项条件」，队首与状态仍由 [MAINLINE](../MAINLINE.md) / [MASTER-PLAN](../MASTER-PLAN.md) / [ROADMAP-NEXT](ROADMAP-NEXT_20261104.md) 发布，判据唯一源为[账本](INVARIANT-LEDGER_20261103.md)，能力解释唯一源为[能力卡](CAPABILITY-CARD_20261103.md)。0 训练 / 0 优化器步 / 0 confirm / 0 评测重跑。
 >
@@ -20,7 +20,7 @@
 | 19 / 19.2 系列 | 死（19.5 判负）／19.2b–v 整体关闭 | 六格 overall 0.000–0.630（门 0.80）；**Task1 结构确认 188/192＝0.9792**；D16-26：本任务此后不得再以训练立项 | MASTER-PLAN §1；能力卡 C12 |
 | 19.2w 停止边修复 | 完成（合成/dev，封存集未复核） | 合成尾 64/64、dev 192/192、11 类末字符无外溢；identity `0d6a5df3…` | 03 流水；账本 D16-27 |
 | 包 20 | **已关包** `package20_closed_current_learning_candidate_not_established` | 20.4 两 seed 方向相反、F 净贡献门槛不成立；20.4d pooled Δ **−0.028064**（CI −0.064706…+0.010539）、整句恒 0；20.5 未执行；measured **50,573.637 CPU**（提案 2.1072×）；825 updates / 825 Adam | 20.6 关包报告；MAINLINE 一句话状态 |
-| **官方队首（21.3 准入后）** | **21.3 已准入、预注册冻结；待裁定执行读数** | 三臂 `natural`／`template_forced`／`content_forced`，4 个 20.4c_r2 末步 checkpoint、dev 16 world；CPU 实测 **1597.344** / 0 Adam / 0 confirm | MAINLINE §队首；[包 21 计划](PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md)；[P0 结项卡](../../reports/taiji_package21_1_p0_closeout_20261107.json) |
+| **官方队首（21.3 结项后）** | **21.3 已结项判负；待裁定全局收束** | 三臂 `natural`／`template_forced`／`content_forced`，4 个 20.4c_r2 末步 checkpoint、dev 16 world；CPU 实测 **1597.344** / 0 Adam / 0 confirm | MAINLINE §队首；[包 21 计划](PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md)；[P0 结项卡](../../reports/taiji_package21_1_p0_closeout_20261107.json) |
 | **21.1 结项回执** | **已入库，可作冻结证据** | `verdict=upstream_representation_is_first_wall`、`branch_counts={R:0,U:4,I:0}`、CPU **1597.344**、wall 1610.581、0 confirm、0 写 checkpoint、`worlds_per_cell=16` | [报告](../../reports/taiji_package21_1_readout_decomposition_20261107.json)＋[manifest](../manifests/taiji_package21_1_readout_decomposition_20261107.json) |
 | 能力账 | C12 成立；**U6/U13 未立**；U14 设计层 0 增益 | 20.3b oracle-F 替换仍 0/22、0 字节变化；20.2r oracle 4.183% loss 但 0 字节 | 能力卡 §2 / U6 / U13 / U14 |
 | 设计资产 | MGW1 + U1：**0 代码 / 0 参数 / 0 训练 / 不占队列** | U1 数学复核 P1–P8（2 硬伤）；主线已裁定「U1 修好 P1–P4 前不得作为实现依据」 | [U1 复核](TAIJI_U1_MATH_REVIEW_20261107.md)；MASTER-PLAN §1 U1 行；账本 §22 I22.3 / D16-39 |
@@ -90,7 +90,7 @@ confirm 索引 240–319 全程封存、0 读取；不预启动 21.2/21.3/21.4�
 
 ### P1 包 21.3 表示可分性诊断（U 分支，0 训练）
 
-> **状态（2026-11-07 12:02）**：owner 已批准准入，**预注册已冻结、读数未执行**。判据唯一机读源＝[21.3 预注册 manifest](../manifests/taiji_package21_3_prereg_20261107.json)（`criteria_sha256`）；口径裁定（最强对照取 20.3a 已冻结的 per-seed max、四条对照并集、`distinct_f_vectors>2` 有效性闸门、4 checkpoint 最严判定、判负不自动转训练）见[冻结规格](SPEC-PACKAGE21_3_REPRESENTATION_SEPARABILITY_PREREG_20261107.md) §3。下面本节的门值、替换方案与结项条件**一字未改**，规格只是把 P1 已列的三条「可能出现的问题」落成可机器核验的守卫。P1 现停在「是否按合同执行读数」的裁定节点。
+> **状态（2026-11-07 12:18，已结项）**：owner 批准准入与执行后，按冻结合同跑完 4 个 checkpoint，判 **`representation_axis_closed_for_this_graph`**（范围限定判负）。判据唯一机读源＝[21.3 预注册 manifest](../manifests/taiji_package21_3_prereg_20261107.json)（`criteria_sha256` 读后未改）；[特征卡](../manifests/taiji_package21_3_feature_card_20261107.json)在首个读数前落盘；口径裁定见[冻结规格](SPEC-PACKAGE21_3_REPRESENTATION_SEPARABILITY_PREREG_20261107.md) §3。执行证据与九项结项条件见[结项卡](../../reports/taiji_package21_3_closeout_20261107.json)。下面本节的门值、替换方案与结项条件**一字未改**。**P1 出口为判负，按预注册不自动转 21.4／P3**；P2（21.2）与 P3（训练）继续保持未准入。
 
 | 项 | 内容 |
 |---|---|
@@ -329,11 +329,11 @@ confirm 索引 240–319 全程封存、0 读取；不预启动 21.2/21.3/21.4�
 
 ## 5. 依赖顺序、唯一队首与停止线
 
-**顺序**：`P0（已完成，6e9e68e33）→ P1 21.3 已准入、预注册冻结 →（待裁定执行读数）P1 执行 →（条件）P2 →（最后手段）P3 → P7`；`P4` 为 U1 实现前置门，**不占执行队列、需 owner 批准后并行推进**；`P5 → P6` 在 P4 通过且显式授权后另立版本；`P8` 横切全计划。21.2–21.4 不预启动、不并行；U1 在 P1–P4 修好前不得作为实现依据。
+**顺序**：`P0（已完成，6e9e68e33）→ P1 21.3 预注册冻结 → P1 执行（已结项，判负）→ P7 全局收束（待裁定）→（条件）P2 →（最后手段）P3`；`P4` 为 U1 实现前置门，**不占执行队列、需 owner 批准后并行推进**；`P5 → P6` 在 P4 通过且显式授权后另立版本；`P8` 横切全计划。21.2–21.4 不预启动、不并行；U1 在 P1–P4 修好前不得作为实现依据。
 
-**唯一队首（现行；以 MAINLINE / MASTER-PLAN / ROADMAP-NEXT 为准）**：**21.3 预注册已冻结，唯一待裁定＝是否按合同执行读数**。P0 已结项（`6e9e68e33`）、21.3 准入已获 owner 批准；本段原「建议 P0 为唯一队首」与下方原 P0 是非题均为 2026-11-07 11:11 取证时点的历史提案，已 `superseded`，**不再构成待决点**。理由：判据必须先落盘、跑完不改；在 21.3 的口径歧义（20.2s mean vs 20.3a per-seed max）与转段冲突钉死前跑读数，会让同一批数据得出相反结论、并把错误前提固化成下游「已验证」。
+**唯一队首（现行；以 MAINLINE / MASTER-PLAN / ROADMAP-NEXT 为准）**：**21.3 已结项判 `representation_axis_closed_for_this_graph`，唯一待裁定＝是否发布包 21 全局收束卡（P7）**。P0 已结项（`6e9e68e33`）、21.3 预注册（`c9ace6f49`）与执行（`ae84ab2bd` 起）均已完成；本段原「建议 P0 为唯一队首」与下方原 P0 是非题均为历史提案，已 `superseded`。理由：21.1（发射/读出）与 21.3（表示可分性）两条零训练路径已给出一致的负结果，且 4 个独立训练 checkpoint 的 F 读数逐位相同、F 秩 2、20.3b oracle-F 零变化，三条独立证据同指**架构级**缺口；继续在当前图加剂量或补诊断都是低上限，先收束才能把「下一轮唯一核心问题」定准。判负不自动转训练（P3 仍未准入）。
 
-**停止线**：预注册冻结后停在 **owner 裁定节点**——准入 ≠ 执行 ≠ 里程碑关闭；21.3 读数 0 条、判据 `criteria_sha256` 已钉死，读后不得改。不自动推进 P2/P3，判负／不可判也不自动转训练。
+**停止线**：21.3 执行结项后停在 **owner 裁定节点**——准入 ≠ 执行 ≠ 里程碑关闭；判据 `criteria_sha256` 读后未改，负结果按范围结案、不升格为「不可能」。不自动推进 P2/P3，判负也不自动转训练；包 21 尚未整体关闭。
 
 **历史是非题（已答「是」，superseded）**：原 P0 是非题「是否批准把 P0 作为唯一队首执行…之后再按 U 分支单独裁定 21.3 准入」已于 2026-11-07 由 owner 分两次答「是」并执行完毕；此处只留审计痕迹，不得再当作待裁问题。当前待裁问题见各主线队首句：是否按冻结合同执行 21.3 读数。
 
@@ -341,4 +341,4 @@ confirm 索引 240–319 全程封存、0 读取；不预启动 21.2/21.3/21.4�
 
 ## 6. 交付边界
 
-本轮为规划层：新增本件、勘误 ROADMAP-NEXT 的 `dev 16 world`、在 MAINLINE 加一行导航；**规划层提交不改队首、不改状态表、不改任何冻结判据/预注册门/报告/预算**、不实现 U1、不训练、0 confirm、0 数据重读。其后的 P0 是 owner 批准的独立执行动作，按 P0 结项条件写回队首、入库回执、挂证伪指针、办退役清单，**同样不改任何冻结判据、不训练**。21.1 回执在 P0 前仅作时点状态描述；P0 后以[LF 口径入库版本](../../reports/taiji_package21_1_readout_decomposition_20261107.json)为唯一冻结证据。工作区其余在途条目按 §0.2 第 5 条处置，不清理、不捎带。其后的 21.3 准入是 owner 批准的独立动作，本轮只**冻结预注册合同**（规格＋机读 manifest，判据 `criteria_sha256` 自洽可重算），0 读数 / 0 前向 / 0 训练 / 0 confirm，不改 P1 的门值、替换方案或结项条件，也不改任何已冻结报告。提交只圈本轮文件，钩子按 P8 全过。
+本轮为规划层：新增本件、勘误 ROADMAP-NEXT 的 `dev 16 world`、在 MAINLINE 加一行导航；**规划层提交不改队首、不改状态表、不改任何冻结判据/预注册门/报告/预算**、不实现 U1、不训练、0 confirm、0 数据重读。其后的 P0 是 owner 批准的独立执行动作，按 P0 结项条件写回队首、入库回执、挂证伪指针、办退役清单，**同样不改任何冻结判据、不训练**。21.1 回执在 P0 前仅作时点状态描述；P0 后以[LF 口径入库版本](../../reports/taiji_package21_1_readout_decomposition_20261107.json)为唯一冻结证据。工作区其余在途条目按 §0.2 第 5 条处置，不清理、不捎带。其后的 21.3 准入、预注册冻结与执行均为 owner 分批批准的独立动作：预注册阶段 0 读数；执行阶段按冻结合同跑出 4 个 checkpoint 的读数（0 训练 / 0 confirm / CPU 144.984），判 `representation_axis_closed_for_this_graph`，不改 P1 的门值、替换方案或结项条件，也不改任何已冻结报告。提交只圈本轮文件，钩子按 P8 全过。

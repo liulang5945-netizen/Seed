@@ -1,0 +1,1187 @@
+{
+  "schema": "taiji-package21-3-representation-separability-v1",
+  "package": "21.3",
+  "date": "2026-11-07",
+  "status": "completed",
+  "verdict": "representation_axis_closed_for_this_graph",
+  "stop_reason": null,
+  "criteria_sha256": "02b727f958dbad8437a73c2914bf321a81263f5c85dc08183b3bd56f11d8c512",
+  "prereg_manifest_sha256": "0346377d827092315ec1cd5daa7ea2543ad52b6f5e78371fa75a12ef6971abaa",
+  "feature_card_sha256": "b4e3a5cc61bf36544534bdb4eb9b4595acb2033298db64bbe4c7f28f9500447b",
+  "runner_sha256": "714adb6c794fd6684670bb97e7c8ad48d1a640fdb3f5e944b103aa35c1f4cffc",
+  "probe_face": {
+    "seed": 20261105,
+    "world_index": 0,
+    "surfaces": 22,
+    "confirm_reads": 0
+  },
+  "criteria": {
+    "primary_metric": "leave-one-out decision-bit accuracy on the 22 correction surfaces (decision positions [7,8], 2 bits x 22 turns)",
+    "pass_accuracy": 0.6,
+    "pass_margin": 0.2,
+    "fail_accuracy": 0.3,
+    "fail_margin": 0.1,
+    "ridge_lambda_grid": [
+      0.0001,
+      0.001,
+      0.01,
+      0.1,
+      1.0
+    ],
+    "ridge_lambda_selection": "per outer LOO fold: inner LOO over the 21 training rows only; highest inner decision-bit accuracy wins; tie-break larger lambda",
+    "controls": [
+      "window_identity",
+      "label_permutation_5_seeds",
+      "random_projection_same_dim_same_norm",
+      "no_f_other_persistent_state"
+    ],
+    "control_statistic": {
+      "window_identity": "one fitted probe on 2-d feedback-window one-hot (20.2s window_features)",
+      "label_permutation_5_seeds": "per-seed MAX over seeds 20261105..20261109; mean is reported for sensitivity only",
+      "random_projection_same_dim_same_norm": "one fitted probe on a random vector of the same dimension and norm",
+      "no_f_other_persistent_state": "20.2s other_features(row) pipeline"
+    },
+    "label_permutation_seeds": [
+      20261105,
+      20261106,
+      20261107,
+      20261108,
+      20261109
+    ],
+    "strongest_control": "max of the four frozen control statistics (20.3a frozen max-per-seed reading, not the 20.2s mean reading)",
+    "margin_definition": "primary_accuracy - strongest_control",
+    "sensitivity": "report both max-control (binding) and mean-control (20.2s legacy) margins and verdicts; the max-control verdict is binding and must not be switched after reading",
+    "checkpoint_aggregation": "all four 20.4c_r2 final checkpoints evaluated independently; the binding verdict uses the STRICTEST (minimum margin); disagreement across checkpoints implies inconclusive",
+    "effective_dof_gate": {
+      "unit": "distinct F vectors across the 22 correction surfaces",
+      "minimum": 3,
+      "source": "20.3a thresholds.structural.distinct_f_vectors_global_strictly_greater_than = 2",
+      "on_violation": "inconclusive; paired bootstrap must resample distinct F vectors, not the 22 rows"
+    },
+    "decision_rule": {
+      "representation_has_authority": "primary >= pass_accuracy AND margin >= pass_margin AND all four controls present AND effective_dof >= 3 AND all four checkpoints agree; produces a PRICING INPUT only, not pricing approval, not training admission, not a capability claim",
+      "representation_axis_closed_for_this_graph": "primary < fail_accuracy OR margin < fail_margin, with all controls below the pass gate; range-limited verdict, must not be upgraded to 'impossible'",
+      "inconclusive": "fail_margin <= margin < pass_margin OR checkpoint disagreement OR effective_dof < 3; report all control values and intervals; no dose change, no threshold change, no automatic training transition",
+      "engineering_stop": "any control missing / feature card not frozen before reading / checkpoint sha mismatch / criteria_sha256 mismatch / confirm touched / graph identity drift / runner dual hash mismatch",
+      "budget_stop": "cpu >= cpu_stop_threshold or wall >= wall_cap; do not shrink data and rerun"
+    },
+    "control_conflict_resolution": "20.2s used label-permutation MEAN as strongest control (margin 0.1727 -> inconclusive); 20.3a froze per-seed MAX. This pre-registration adopts the frozen 20.3a max reading as binding and records 20.2s as a historical sensitivity anchor. Gate values are unchanged.",
+    "transition_conflict_registration": "package 21 section 4 and plan P1 say a negative/inconclusive result transfers to 21.4/P3, but neither 21.4 nor P3 admits 'representation judged negative'. Therefore this package only records the verdict; no automatic training transition.",
+    "frozen_before_reading": true,
+    "budget": {
+      "cpu_cap": 2000.0,
+      "cpu_stop_threshold": 1800.0,
+      "wall_cap": 3000.0,
+      "wall_cap_derivation": "package 21 family CPU:wall = 1:1.5 (21.1 was 4800/7200); registered here, does not change the CPU gate"
+    }
+  },
+  "checkpoints": [
+    "CF1_20261105_200.pt",
+    "CF1_20261106_200.pt",
+    "B_EH_20261105_200.pt",
+    "B_EH_20261106_200.pt"
+  ],
+  "per_checkpoint": [
+    {
+      "surfaces": 22,
+      "feature_shape": [
+        22,
+        8320
+      ],
+      "primary": {
+        "decision_bit_accuracy": 0.6363636363636364,
+        "metrics": {
+          "turns": 22,
+          "position_hits": 314,
+          "position_total": 330,
+          "position_accuracy": 0.9515151515151515,
+          "decision_bit_hits": 28,
+          "decision_bit_total": 44,
+          "decision_bit_accuracy": 0.6363636363636364,
+          "decisions_correct": 14,
+          "full_correct": 14,
+          "full_accuracy": 0.6363636363636364
+        },
+        "lambdas": [
+          0.01,
+          1.0
+        ],
+        "per_fold": [
+          {
+            "index": 0,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 1,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 2,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 3,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 4,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 5,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 6,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 7,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 8,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 9,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 10,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 11,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 12,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 13,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 14,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 15,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 16,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 17,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 18,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 19,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 20,
+            "lambda": 0.01,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 21,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          }
+        ]
+      },
+      "controls": {
+        "window_identity": 0.6818181818181818,
+        "label_permutation": {
+          "per_seed": [
+            0.45454545454545453,
+            0.5909090909090909,
+            0.5909090909090909,
+            0.5,
+            0.45454545454545453
+          ],
+          "mean": 0.5181818181818182,
+          "max": 0.5909090909090909,
+          "best_seed": 20261106
+        },
+        "random_projection_same_dim_same_norm": 0.36363636363636365,
+        "no_f_other_persistent_state": 0.45454545454545453,
+        "all_four_present": true
+      },
+      "dual_statistic": {
+        "binding_strongest_control": 0.6818181818181818,
+        "binding_margin": -0.045454545454545414,
+        "binding_verdict": "representation_axis_closed_for_this_graph",
+        "legacy_strongest_control": 0.5181818181818182,
+        "legacy_margin": 0.11818181818181817,
+        "legacy_verdict_sensitivity_only": "inconclusive",
+        "note": "legacy uses label-permutation MEAN (20.2s reading) and is never binding"
+      },
+      "effective_dof": {
+        "distinct_f_vectors": 2,
+        "minimum": 3,
+        "gate_pass": false
+      },
+      "diagnostics": {
+        "A_key_separability": {
+          "pairwise_cosine_min": 0.9747238374180477,
+          "pairwise_cosine_median": 0.9999999999999997,
+          "pairwise_cosine_max": 1.0,
+          "top1_minus_top2_median": 0.0,
+          "top1_minus_top2_min": 0.0,
+          "matrix_rank": 2
+        },
+        "B_write_timing": {
+          "distinct_f_vectors": 2,
+          "release_writes": 10,
+          "distinct_f_per_session": {
+            "1": 1,
+            "2": 1
+          }
+        }
+      },
+      "paired_bootstrap": {
+        "degenerate": true,
+        "reason": "fewer than 3 distinct F vectors; group resampling cannot support an interval",
+        "distinct_groups": 2,
+        "differences_recorded": 2000,
+        "note": "resamples already-computed per-fold decision bits and groups rows by distinct F vector; the strongest control's per-fold bits are relative to that control's own labels (permuted labels for the permutation control), matching the 20.2s control definition"
+      },
+      "verdict": "representation_axis_closed_for_this_graph",
+      "checkpoint": "CF1_20261105_200.pt",
+      "arm": "CF1",
+      "seed": 20261105,
+      "checkpoint_sha256": "aa98db8a0d8b64530fb6b4bc80e5573a2a937f999f341a89f01b4bb4114ae3b2"
+    },
+    {
+      "surfaces": 22,
+      "feature_shape": [
+        22,
+        8320
+      ],
+      "primary": {
+        "decision_bit_accuracy": 0.6363636363636364,
+        "metrics": {
+          "turns": 22,
+          "position_hits": 314,
+          "position_total": 330,
+          "position_accuracy": 0.9515151515151515,
+          "decision_bit_hits": 28,
+          "decision_bit_total": 44,
+          "decision_bit_accuracy": 0.6363636363636364,
+          "decisions_correct": 14,
+          "full_correct": 14,
+          "full_accuracy": 0.6363636363636364
+        },
+        "lambdas": [
+          0.01,
+          1.0
+        ],
+        "per_fold": [
+          {
+            "index": 0,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 1,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 2,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 3,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 4,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 5,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 6,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 7,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 8,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 9,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 10,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 11,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 12,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 13,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 14,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 15,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 16,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 17,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 18,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 19,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 20,
+            "lambda": 0.01,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 21,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          }
+        ]
+      },
+      "controls": {
+        "window_identity": 0.6818181818181818,
+        "label_permutation": {
+          "per_seed": [
+            0.45454545454545453,
+            0.5909090909090909,
+            0.5909090909090909,
+            0.5,
+            0.45454545454545453
+          ],
+          "mean": 0.5181818181818182,
+          "max": 0.5909090909090909,
+          "best_seed": 20261106
+        },
+        "random_projection_same_dim_same_norm": 0.36363636363636365,
+        "no_f_other_persistent_state": 0.5,
+        "all_four_present": true
+      },
+      "dual_statistic": {
+        "binding_strongest_control": 0.6818181818181818,
+        "binding_margin": -0.045454545454545414,
+        "binding_verdict": "representation_axis_closed_for_this_graph",
+        "legacy_strongest_control": 0.5181818181818182,
+        "legacy_margin": 0.11818181818181817,
+        "legacy_verdict_sensitivity_only": "inconclusive",
+        "note": "legacy uses label-permutation MEAN (20.2s reading) and is never binding"
+      },
+      "effective_dof": {
+        "distinct_f_vectors": 2,
+        "minimum": 3,
+        "gate_pass": false
+      },
+      "diagnostics": {
+        "A_key_separability": {
+          "pairwise_cosine_min": 0.9902655166367781,
+          "pairwise_cosine_median": 0.9999999999999999,
+          "pairwise_cosine_max": 1.0,
+          "top1_minus_top2_median": 0.0,
+          "top1_minus_top2_min": 0.0,
+          "matrix_rank": 2
+        },
+        "B_write_timing": {
+          "distinct_f_vectors": 2,
+          "release_writes": 10,
+          "distinct_f_per_session": {
+            "1": 1,
+            "2": 1
+          }
+        }
+      },
+      "paired_bootstrap": {
+        "degenerate": true,
+        "reason": "fewer than 3 distinct F vectors; group resampling cannot support an interval",
+        "distinct_groups": 2,
+        "differences_recorded": 2000,
+        "note": "resamples already-computed per-fold decision bits and groups rows by distinct F vector; the strongest control's per-fold bits are relative to that control's own labels (permuted labels for the permutation control), matching the 20.2s control definition"
+      },
+      "verdict": "representation_axis_closed_for_this_graph",
+      "checkpoint": "CF1_20261106_200.pt",
+      "arm": "CF1",
+      "seed": 20261106,
+      "checkpoint_sha256": "61ad7b6200fce2c46d12b12ab0f474768d8f66578dbf5ae6276f5f3221403337"
+    },
+    {
+      "surfaces": 22,
+      "feature_shape": [
+        22,
+        8320
+      ],
+      "primary": {
+        "decision_bit_accuracy": 0.6363636363636364,
+        "metrics": {
+          "turns": 22,
+          "position_hits": 314,
+          "position_total": 330,
+          "position_accuracy": 0.9515151515151515,
+          "decision_bit_hits": 28,
+          "decision_bit_total": 44,
+          "decision_bit_accuracy": 0.6363636363636364,
+          "decisions_correct": 14,
+          "full_correct": 14,
+          "full_accuracy": 0.6363636363636364
+        },
+        "lambdas": [
+          0.01,
+          1.0
+        ],
+        "per_fold": [
+          {
+            "index": 0,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 1,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 2,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 3,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 4,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 5,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 6,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 7,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 8,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 9,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 10,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 11,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 12,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 13,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 14,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 15,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 16,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 17,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 18,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 19,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 20,
+            "lambda": 0.01,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 21,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          }
+        ]
+      },
+      "controls": {
+        "window_identity": 0.6818181818181818,
+        "label_permutation": {
+          "per_seed": [
+            0.45454545454545453,
+            0.5909090909090909,
+            0.5909090909090909,
+            0.5,
+            0.45454545454545453
+          ],
+          "mean": 0.5181818181818182,
+          "max": 0.5909090909090909,
+          "best_seed": 20261106
+        },
+        "random_projection_same_dim_same_norm": 0.3181818181818182,
+        "no_f_other_persistent_state": 0.6363636363636364,
+        "all_four_present": true
+      },
+      "dual_statistic": {
+        "binding_strongest_control": 0.6818181818181818,
+        "binding_margin": -0.045454545454545414,
+        "binding_verdict": "representation_axis_closed_for_this_graph",
+        "legacy_strongest_control": 0.6363636363636364,
+        "legacy_margin": 0.0,
+        "legacy_verdict_sensitivity_only": "representation_axis_closed_for_this_graph",
+        "note": "legacy uses label-permutation MEAN (20.2s reading) and is never binding"
+      },
+      "effective_dof": {
+        "distinct_f_vectors": 2,
+        "minimum": 3,
+        "gate_pass": false
+      },
+      "diagnostics": {
+        "A_key_separability": {
+          "pairwise_cosine_min": 0.9845109007704513,
+          "pairwise_cosine_median": 1.0,
+          "pairwise_cosine_max": 1.0000000000000002,
+          "top1_minus_top2_median": 0.0,
+          "top1_minus_top2_min": 0.0,
+          "matrix_rank": 2
+        },
+        "B_write_timing": {
+          "distinct_f_vectors": 2,
+          "release_writes": 10,
+          "distinct_f_per_session": {
+            "1": 1,
+            "2": 1
+          }
+        }
+      },
+      "paired_bootstrap": {
+        "degenerate": true,
+        "reason": "fewer than 3 distinct F vectors; group resampling cannot support an interval",
+        "distinct_groups": 2,
+        "differences_recorded": 2000,
+        "note": "resamples already-computed per-fold decision bits and groups rows by distinct F vector; the strongest control's per-fold bits are relative to that control's own labels (permuted labels for the permutation control), matching the 20.2s control definition"
+      },
+      "verdict": "representation_axis_closed_for_this_graph",
+      "checkpoint": "B_EH_20261105_200.pt",
+      "arm": "B_EH",
+      "seed": 20261105,
+      "checkpoint_sha256": "0939658ede9805b716a2bc4b4de606970cd4fd1d5ccad58023ced57cf130b3d1"
+    },
+    {
+      "surfaces": 22,
+      "feature_shape": [
+        22,
+        8320
+      ],
+      "primary": {
+        "decision_bit_accuracy": 0.6363636363636364,
+        "metrics": {
+          "turns": 22,
+          "position_hits": 314,
+          "position_total": 330,
+          "position_accuracy": 0.9515151515151515,
+          "decision_bit_hits": 28,
+          "decision_bit_total": 44,
+          "decision_bit_accuracy": 0.6363636363636364,
+          "decisions_correct": 14,
+          "full_correct": 14,
+          "full_accuracy": 0.6363636363636364
+        },
+        "lambdas": [
+          0.01,
+          1.0
+        ],
+        "per_fold": [
+          {
+            "index": 0,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 1,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 2,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 3,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 4,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 5,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 6,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 7,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 8,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 9,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 10,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 11,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 12,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 13,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 14,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 15,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 16,
+            "lambda": 1.0,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 17,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 18,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          },
+          {
+            "index": 19,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送右箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 20,
+            "lambda": 0.01,
+            "gold": "应送右箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 0,
+            "bytes_correct": 13
+          },
+          {
+            "index": 21,
+            "lambda": 1.0,
+            "gold": "应送左箱。",
+            "predicted": "应送左箱。",
+            "decision_bits_correct": 2,
+            "bytes_correct": 15
+          }
+        ]
+      },
+      "controls": {
+        "window_identity": 0.6818181818181818,
+        "label_permutation": {
+          "per_seed": [
+            0.45454545454545453,
+            0.5909090909090909,
+            0.5909090909090909,
+            0.5,
+            0.45454545454545453
+          ],
+          "mean": 0.5181818181818182,
+          "max": 0.5909090909090909,
+          "best_seed": 20261106
+        },
+        "random_projection_same_dim_same_norm": 0.3181818181818182,
+        "no_f_other_persistent_state": 0.5,
+        "all_four_present": true
+      },
+      "dual_statistic": {
+        "binding_strongest_control": 0.6818181818181818,
+        "binding_margin": -0.045454545454545414,
+        "binding_verdict": "representation_axis_closed_for_this_graph",
+        "legacy_strongest_control": 0.5181818181818182,
+        "legacy_margin": 0.11818181818181817,
+        "legacy_verdict_sensitivity_only": "inconclusive",
+        "note": "legacy uses label-permutation MEAN (20.2s reading) and is never binding"
+      },
+      "effective_dof": {
+        "distinct_f_vectors": 2,
+        "minimum": 3,
+        "gate_pass": false
+      },
+      "diagnostics": {
+        "A_key_separability": {
+          "pairwise_cosine_min": 0.9764282772207865,
+          "pairwise_cosine_median": 1.0,
+          "pairwise_cosine_max": 1.0000000000000002,
+          "top1_minus_top2_median": 0.0,
+          "top1_minus_top2_min": 0.0,
+          "matrix_rank": 2
+        },
+        "B_write_timing": {
+          "distinct_f_vectors": 2,
+          "release_writes": 10,
+          "distinct_f_per_session": {
+            "1": 1,
+            "2": 1
+          }
+        }
+      },
+      "paired_bootstrap": {
+        "degenerate": true,
+        "reason": "fewer than 3 distinct F vectors; group resampling cannot support an interval",
+        "distinct_groups": 2,
+        "differences_recorded": 2000,
+        "note": "resamples already-computed per-fold decision bits and groups rows by distinct F vector; the strongest control's per-fold bits are relative to that control's own labels (permuted labels for the permutation control), matching the 20.2s control definition"
+      },
+      "verdict": "representation_axis_closed_for_this_graph",
+      "checkpoint": "B_EH_20261106_200.pt",
+      "arm": "B_EH",
+      "seed": 20261106,
+      "checkpoint_sha256": "eade77f2a3e8c0c79394323afce79f587458c18edd53d1826c6baacd3d8bfdda"
+    }
+  ],
+  "aggregation": {
+    "binding_checkpoint": "CF1_20261105_200.pt",
+    "binding_margin": -0.045454545454545414,
+    "per_checkpoint_verdicts": [
+      "representation_axis_closed_for_this_graph",
+      "representation_axis_closed_for_this_graph",
+      "representation_axis_closed_for_this_graph",
+      "representation_axis_closed_for_this_graph"
+    ],
+    "disagreement": false,
+    "verdict": "representation_axis_closed_for_this_graph",
+    "verdict_basis": "strictest (minimum binding margin) of four checkpoints; disagreement forces inconclusive"
+  },
+  "attribution": {
+    "axis_1_representation_separability": "measured by this package",
+    "axis_2_write_timing": "diagnostic B only (distinct F vectors vs release writes); not signed by axis 1",
+    "axis_3_emission_readout": "21.1 U branch; not signed by this package",
+    "rule": "three axes must not cross-sign each other (ledger I22.2)"
+  },
+  "discipline": {
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "backward_calls": 0,
+    "new_parameters": 0,
+    "checkpoints_written": 0,
+    "confirm_reads": 0,
+    "evaluation_reruns": 0,
+    "addressed_store_enabled": false
+  },
+  "cost": {
+    "cpu_seconds": 144.984,
+    "wall_seconds": 145.319,
+    "cpu_cap": 2000.0,
+    "cpu_stop_threshold": 1800.0,
+    "wall_cap": 3000.0
+  }
+}

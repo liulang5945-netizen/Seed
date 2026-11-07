@@ -1,0 +1,131 @@
+{
+  "schema": "taiji-package21-3-closeout-v1",
+  "package": "21.3",
+  "date": "2026-11-07",
+  "status": "completed",
+  "verdict": "representation_axis_closed_for_this_graph",
+  "verdict_scope": "current graph / current probe face / current data only; NOT a claim that representation can never carry authority",
+  "execution_authorization": "owner approved execution of the frozen pre-registration on 2026-11-07",
+  "frozen_evidence": {
+    "prereg_manifest": "plans/manifests/taiji_package21_3_prereg_20261107.json",
+    "criteria_sha256": "02b727f958dbad8437a73c2914bf321a81263f5c85dc08183b3bd56f11d8c512",
+    "feature_card": "plans/manifests/taiji_package21_3_feature_card_20261107.json",
+    "feature_card_sha256": "b4e3a5cc61bf36544534bdb4eb9b4595acb2033298db64bbe4c7f28f9500447b",
+    "runner": "scripts/training/probe_taiji_package21_3_representation_separability.py",
+    "runner_sha256": "714adb6c794fd6684670bb97e7c8ad48d1a640fdb3f5e944b103aa35c1f4cffc",
+    "submitted_runner_sha256": "714adb6c794fd6684670bb97e7c8ad48d1a640fdb3f5e944b103aa35c1f4cffc",
+    "dual_runner_sha_equal": true,
+    "runner_blob_equals_worktree": true,
+    "report": "reports/taiji_package21_3_representation_separability_20261107.json",
+    "report_sha256_verified": true,
+    "criteria_unchanged_after_reading": true,
+    "feature_card_frozen_before_first_reading": true
+  },
+  "readout": {
+    "probe_face": "one 22-correction-surface world (fixture SEED 20261105, world 0), shared by all four checkpoints",
+    "primary_decision_bit_accuracy": 0.6363636363636364,
+    "controls": {
+      "window_identity": 0.6818181818181818,
+      "label_permutation_per_seed": [0.45454545454545453, 0.5909090909090909, 0.5909090909090909, 0.5, 0.45454545454545453],
+      "label_permutation_mean": 0.5181818181818182,
+      "label_permutation_max": 0.5909090909090909,
+      "random_projection_same_dim_same_norm": 0.36363636363636365,
+      "no_f_other_persistent_state": 0.45454545454545453,
+      "all_four_present": true
+    },
+    "binding": {
+      "strongest_control": 0.6818181818181818,
+      "source": "window_identity",
+      "margin": -0.045454545454545414,
+      "verdict": "representation_axis_closed_for_this_graph"
+    },
+    "legacy_sensitivity_only": {
+      "strongest_control": 0.5181818181818182,
+      "source": "label_permutation_mean (20.2s reading)",
+      "margin": 0.11818181818181817,
+      "verdict": "inconclusive",
+      "binding": false
+    },
+    "conflict_confirmed": "The same readings produce a negative verdict under the frozen max/window-identity statistic and an inconclusive verdict under 20.2s' mean statistic (margin lands in the 0.10-0.20 middle band). This is the exact conflict the pre-registration was written to resolve; no post-hoc switch was made.",
+    "effective_dof": {
+      "distinct_f_vectors": 2,
+      "minimum": 3,
+      "gate_pass": false,
+      "paired_bootstrap": "degenerate; reported as degenerate rather than fabricating an interval"
+    },
+    "diagnostics_A_key_separability": {
+      "pairwise_cosine_min": 0.9747238374180477,
+      "pairwise_cosine_median": 0.9999999999999997,
+      "top1_minus_top2_median": 0.0,
+      "matrix_rank": 2
+    },
+    "diagnostics_B_write_timing": {
+      "distinct_f_vectors": 2,
+      "release_writes": 10,
+      "distinct_f_per_session": { "1": 1, "2": 1 }
+    },
+    "four_checkpoints": {
+      "names": ["CF1_20261105_200.pt", "CF1_20261106_200.pt", "B_EH_20261105_200.pt", "B_EH_20261106_200.pt"],
+      "primary_identical": true,
+      "binding_margin_identical": true,
+      "verdicts_identical": true,
+      "disagreement": false,
+      "strictest_checkpoint": "CF1_20261105_200.pt",
+      "note": "four independently trained checkpoints give bit-identical probe readings; training 200 updates did not differentiate F across correction surfaces"
+    }
+  },
+  "findings": [
+    "The primary probe clears the absolute accuracy gate (0.6364 >= 0.60) but is beaten by the window-identity control (0.6818): a two-value session flag already explains the decision bits better than the full F+question feature.",
+    "F vectors are effectively collinear (cosine median ~1.0, rank 2, top1-top2 margin 0), matching 20.3a's near-collinearity and 20.2s' distinct_f_vectors=2.",
+    "F is written only at release (10 writes) and each session has exactly one distinct F vector, so the 22 surfaces are not 22 independent samples; the effective-DOF gate correctly blocks any pass and the paired bootstrap is reported as degenerate.",
+    "No training was involved: 21.3 is a zero-training readout, so the negative verdict is a readout/representation fact on this graph, not evidence about training dose (D16-12)."
+  ],
+  "attribution": {
+    "axis_1_representation_separability": "closed on this graph/face (this package)",
+    "axis_2_write_timing": "diagnostic only: F written per release, one distinct F per session; not signed by axis 1",
+    "axis_3_emission_readout": "21.1 U branch; not signed by this package",
+    "rule": "three axes must not cross-sign each other (ledger I22.2); 20.3b oracle-F zero-change and 20.3a three-gate failure remain separate evidence",
+    "training_attribution": "not applicable, 0 training steps"
+  },
+  "guard_red_green": {
+    "budget_red": "exhausted budget raises BudgetStop",
+    "budget_green": "frozen cap does not stop",
+    "preflight_red": "tampered criteria sha rejected with EngineeringStop",
+    "preflight_green": "all frozen hashes and four checkpoint sha match",
+    "verdict_boundary": "four boundary cases (pass / fail / inconclusive / dof-gate override) all return the frozen verdict names",
+    "all_passed": true
+  },
+  "exit_criteria": [
+    { "id": "E1", "criterion": "criteria frozen before reading and unchanged afterwards", "pass": true },
+    { "id": "E2", "criterion": "feature card frozen before first reading with sha registered", "pass": true },
+    { "id": "E3", "criterion": "four controls present with raw values reported", "pass": true },
+    { "id": "E4", "criterion": "dual control statistics reported, binding verdict used", "pass": true },
+    { "id": "E5", "criterion": "per-surface readings, paired bootstrap and effective DOF reported", "pass": true, "note": "bootstrap degenerate and reported as such, not filled with 0" },
+    { "id": "E6", "criterion": "strictest-of-four aggregation, no cherry-picking", "pass": true },
+    { "id": "E7", "criterion": "three-axis attribution without cross-signing", "pass": true },
+    { "id": "E8", "criterion": "report + manifest with dual runner sha, hashes self-consistent", "pass": true },
+    { "id": "E9", "criterion": "0 training / 0 confirm / 0 checkpoint writes / within budget", "pass": true }
+  ],
+  "all_exit_criteria_pass": true,
+  "discipline": {
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "backward_calls": 0,
+    "new_parameters": 0,
+    "checkpoints_written": 0,
+    "confirm_reads": 0,
+    "evaluation_reruns": 0,
+    "cpu_seconds": 144.984,
+    "wall_seconds": 145.319,
+    "cpu_cap": 2000.0,
+    "cpu_utilization": 0.072492
+  },
+  "boundary": {
+    "no_automatic_training_transition": "per pre-registration section 3.6, neither 21.4 nor P3 admits 'representation judged negative'; this closeout only records the verdict",
+    "no_dose_or_threshold_change": "no third arm, no extra training, no threshold change (D16-10 / D16-12)",
+    "historical_readings_untouched": "20.2s inconclusive, 20.3a option2_failed and 20.3b authority_weak are not rewritten",
+    "not_milestone_closure": "U-branch execution of 21.3 is complete; the package 21 line and the M-line are not thereby closed"
+  },
+  "next_owner_decision": "whether to issue a global closeout card for package 21 / package 20 (P7) and set the single next core question, instead of opening a training package"
+}
