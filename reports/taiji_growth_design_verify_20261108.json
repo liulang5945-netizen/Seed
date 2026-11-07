@@ -1,0 +1,229 @@
+{
+  "format": "taiji-growth-design-verify-v1",
+  "generated_at": "2026-11-07T22:11:33",
+  "script_sha256": "fe3df0efd2e255a430cd5ccdff9fc5a24c47d2230b9bbc050d6bfbef04652827",
+  "thresholds": {
+    "top_cos": 0.95,
+    "margin": 0.02,
+    "entropy": 0.35,
+    "top_share_raw": 0.9,
+    "top_share_centered": 0.5,
+    "effective_rank_fraction": 0.9,
+    "struct_epsilon": 1e-06
+  },
+  "cases": [
+    {
+      "name": "A_shared_offset_collapse_d128",
+      "purpose": "known collapse: one shared direction dominates the key space",
+      "decision": "representation_repair",
+      "diagnosis": "collapsed_shared_offset",
+      "expected": {
+        "collapse_detected": true,
+        "decision": "representation_repair"
+      },
+      "checks": {
+        "collapse_detected": true,
+        "decision": true
+      },
+      "passed": true,
+      "readings": {
+        "spectrum": {
+          "occupied": 32.0,
+          "width": 128.0,
+          "mean_abs_cos": 0.9991016886127952,
+          "top_share": 0.9991297610646257,
+          "effective_rank": 1.0017427223955895,
+          "top_share_centered": 0.062343737380526745,
+          "effective_rank_centered": 25.27999359864559,
+          "effective_rank_fraction": 0.03130446007486217
+        },
+        "margins": {
+          "p95_top_cos": 0.9993133904138717,
+          "median_top_cos": 0.999258613215646,
+          "median_margin": 3.3967654048838725e-05,
+          "p95_margin": 8.363266201109609e-05,
+          "median_entropy": 0.9999999152401486
+        }
+      }
+    },
+    {
+      "name": "B_separable_d128",
+      "purpose": "known sufficient case: random near-orthogonal keys",
+      "decision": "no_growth",
+      "diagnosis": "separable_no_growth",
+      "expected": {
+        "collapse_detected": false,
+        "decision": "no_growth"
+      },
+      "checks": {
+        "collapse_detected": true,
+        "decision": true
+      },
+      "passed": true,
+      "readings": {
+        "spectrum": {
+          "occupied": 32.0,
+          "width": 128.0,
+          "mean_abs_cos": 0.07004497632191432,
+          "top_share": 0.06813238432617806,
+          "effective_rank": 25.877295609315354,
+          "top_share_centered": 0.06963535223649975,
+          "effective_rank_centered": 25.247355547227468,
+          "effective_rank_fraction": 0.8086654877911048
+        },
+        "margins": {
+          "p95_top_cos": 0.24965850167608386,
+          "median_top_cos": 0.1699088002704402,
+          "median_margin": 0.032244176345578884,
+          "p95_margin": 0.07606090843274753,
+          "median_entropy": 0.9088252145030433
+        }
+      }
+    },
+    {
+      "name": "F_same_collapse_d512",
+      "purpose": "dimension growth does not change an angular collapse",
+      "decision": "representation_repair",
+      "diagnosis": "collapsed_shared_offset",
+      "expected": {
+        "collapse_detected": true,
+        "decision": "representation_repair"
+      },
+      "checks": {
+        "collapse_detected": true,
+        "decision": true
+      },
+      "passed": true,
+      "readings": {
+        "spectrum": {
+          "occupied": 32.0,
+          "width": 512.0,
+          "mean_abs_cos": 0.9990994302911174,
+          "top_share": 0.9991275731265866,
+          "effective_rank": 1.0017471135255476,
+          "top_share_centered": 0.048824442943190084,
+          "effective_rank_centered": 29.078788753005185,
+          "effective_rank_fraction": 0.03130459729767336
+        },
+        "margins": {
+          "p95_top_cos": 0.9992482403831826,
+          "median_top_cos": 0.9991897079523318,
+          "median_margin": 2.00157225038744e-05,
+          "p95_margin": 7.674072758578342e-05,
+          "median_entropy": 0.9999999764063726
+        }
+      }
+    },
+    {
+      "name": "G_replay_20_3a_recorded_reading",
+      "purpose": "recorded 20.3a aggregate: collapse detected, attribution withheld",
+      "decision": "no_growth",
+      "diagnosis": "collapsed_unattributed",
+      "expected": {
+        "collapse_detected": true,
+        "decision": "no_growth"
+      },
+      "checks": {
+        "collapse_detected": true,
+        "decision": true
+      },
+      "passed": true,
+      "readings": {
+        "spectrum": null,
+        "margins": {
+          "p95_top_cos": 0.9976629252533259,
+          "median_margin": 0.008352757617859585
+        }
+      }
+    },
+    {
+      "name": "C_capacity_short_consistent",
+      "purpose": "consistent target, ball too small",
+      "decision": "capacity_growth",
+      "diagnosis": "delta_cap_positive",
+      "expected": {
+        "decision": "capacity_growth"
+      },
+      "checks": {
+        "decision": true
+      },
+      "passed": true,
+      "readings": {
+        "rho": 6.0,
+        "c_f": 4.0,
+        "delta_cap": 2.0,
+        "delta_comp": 4.644303237356704e-14,
+        "sigma_plus": 5.6666713452674715,
+        "readout_lower_bound": 11.333342690534943,
+        "rank_K": 4,
+        "rank_consistent": true
+      }
+    },
+    {
+      "name": "D_structurally_inseparable",
+      "purpose": "target outside the key row space: growth cannot help",
+      "decision": "structural_repair",
+      "diagnosis": "delta_comp_positive",
+      "expected": {
+        "decision": "structural_repair"
+      },
+      "checks": {
+        "decision": true
+      },
+      "passed": true,
+      "readings": {
+        "rho": 6.0,
+        "c_f": 4.0,
+        "delta_cap": 2.0,
+        "delta_comp": 0.49999999999999756,
+        "sigma_plus": 5.6666713452674715,
+        "readout_lower_bound": 11.333342690534943,
+        "rank_K": 4,
+        "rank_consistent": false
+      }
+    },
+    {
+      "name": "E_capacity_sufficient",
+      "purpose": "same target, ball large enough",
+      "decision": "no_growth",
+      "diagnosis": "operational_sufficient",
+      "expected": {
+        "decision": "no_growth"
+      },
+      "checks": {
+        "decision": true
+      },
+      "passed": true,
+      "readings": {
+        "rho": 6.0,
+        "c_f": 10.0,
+        "delta_cap": 0.0,
+        "delta_comp": 4.644303237356704e-14,
+        "sigma_plus": 5.6666713452674715,
+        "readout_lower_bound": 0.0,
+        "rank_K": 4,
+        "rank_consistent": true
+      }
+    },
+    {
+      "name": "H_allocation_not_even",
+      "purpose": "max-min allocation never splits units evenly by default",
+      "decision": "{\"object\": 1, \"record\": 3}",
+      "diagnosis": null,
+      "expected": {},
+      "checks": {},
+      "passed": true,
+      "readings": {
+        "allocation": {
+          "object": 1,
+          "record": 3
+        }
+      }
+    }
+  ],
+  "all_expected_met": true,
+  "slot_growth_bytes_32_to_64": 1065216,
+  "cpu_seconds": 0.031,
+  "wall_seconds": 0.036,
+  "boundary": "synthetic fixtures only; the 20.3a replay uses its recorded aggregate cosine/margin, not a replayed key tensor, so attribution stays withheld"
+}

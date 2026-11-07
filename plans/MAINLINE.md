@@ -45,3 +45,11 @@
 - **根目标覆盖与研究准入边界** → [核心需求 L1–L14](active/TAIJI_CORE_REQUIREMENTS.md)
 
 原正文（405 行）逐字节归档：[archive/20261104_plan_consolidation/MAINLINE_FULL_HISTORY_20261104.md](archive/20261104_plan_consolidation/MAINLINE_FULL_HISTORY_20261104.md)。
+
+## 2026-11-08（设计层授权）：禁改清单 / U1 勘误 / 生长设计 / 预审
+
+- **禁改清单**：[FROZEN-READSET_20261108.md](reference/FROZEN-READSET_20261108.md)：在跑训练窗读取集 **25 个文件**逐个 sha256（runner、4 个探针、18 个 taiji 模块、预注册、20.4c r2 冻结清单、父检查点）；本次对这些文件 **0 字节改动**。
+- **U1 勘误**：[U1-ERRATA_20261108.md](reference/U1-ERRATA_20261108.md)：E1 定理 5.1 收窄——β→∞ 只在约束未激活时成立，激活时读出误差下界 `σ₊(K)(ρ−C_F)` 且与 β 无关；E2 null 绑定——`q_null ≡ α_null(1−λm_mass)`，归一由前提变恒等式。P4 状态：`未动` → **`勘误稿已出，正文未改，待裁`**；P5/P6 前置仍是 P4 通过。
+- **生长设计**：[SPEC-TAIJI-GROWTH_DESIGN_20261108.md](reference/SPEC-TAIJI-GROWTH_DESIGN_20261108.md) + `taiji/growth_design.py`（纯 numpy，不被 runner 引用）：键谱 / 读余量 / 容量证书三信号；store 与 FP1 两机制分开决策；四类生长对象与代价；整数 max-min 分配；失败出口；6 条不变量。
+- **预审读数**：`reports/taiji_growth_design_verify_20261108.json`，**8/8 通过**（塌缩案例触发、可分案例不触发、容量不足 vs 结构不可分可分、d=128→512 判据不变），CPU 0.047 s。
+- **未做**：0 训练 / 0 优化器步 / 0 Adam / 0 confirm；未改冻结文件；未重启、未打断训练窗。
