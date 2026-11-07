@@ -1,0 +1,308 @@
+{
+  "format": "taiji-20-3a-key-attribution-v2",
+  "generated_at": "2026-11-07T22:39:48",
+  "replay_runner_sha256": "1ae2ae80f33e2b736b7473c345ce2cf49459b86e424f5f03bb4899ab281a4b49",
+  "source_runner_sha256": "6903857a86842c906ff7d71424ae66e6c79f137e6bc3914c9765aea79abd05d7",
+  "parent_sha256": "c5ebe35b9bf9442383ba0f568f8b7825466ec97f31ee35625182270aee1934c6",
+  "world": {
+    "seed": 20261105,
+    "index": 0,
+    "turns": 51,
+    "reads_turn": 51,
+    "reads_all": 61
+  },
+  "thresholds": {
+    "margin_min": 0.02,
+    "separable_top_share_max": 0.5,
+    "low_rank_fraction": 0.5,
+    "ceiling_delta": 0.05,
+    "recovery_delta_unused": 0.3
+  },
+  "store": {
+    "occupied": 17,
+    "slots": 32,
+    "unique_query_identities": 11,
+    "duplicate_identities": 6,
+    "clears": 2,
+    "turn_writes": 51,
+    "release_writes": 10,
+    "evictions": 0
+  },
+  "reproduction": {
+    "recorded_20_3a_probe_read": {
+      "occupied": 28,
+      "top_cosine": 0.9976629252533259,
+      "second_cosine": 0.9893101676354663,
+      "margin": 0.008352757617859585
+    },
+    "replayed_probe_read": {
+      "occupied": 28,
+      "top_cosine": 0.9976629252533261,
+      "second_cosine": 0.989310167635466,
+      "margin": 0.00835275761786014
+    },
+    "match": {
+      "delta_top_cosine": 2.220446049250313e-16,
+      "delta_margin": 5.551115123125783e-16,
+      "tolerance": 0.0001,
+      "reproduced": true
+    },
+    "replay_row_read_at_probe": {
+      "enabled": true,
+      "occupied": 28,
+      "valid": 28,
+      "blended": true,
+      "top_slot": 22,
+      "top_cosine": 0.9976629252533259,
+      "second_cosine": 0.9893101676354663,
+      "margin": 0.008352757617859585,
+      "weights": [
+        0.005787619104921733,
+        0.012293871109882682,
+        0.022506191468662763,
+        0.029207718460405423,
+        0.03669336078634307,
+        0.03264293361533923,
+        0.032214815955966036,
+        0.022506191468662763,
+        0.029207718460405423,
+        0.03669336078634307,
+        0.03264293361533923,
+        0.032214815955966036,
+        0.03855595333893757,
+        0.04488404710464792,
+        0.04413756610118443,
+        0.05680878487147995,
+        0.02759771368897615,
+        0.02325027942449145,
+        0.030400309429809553,
+        0.03814398626716849,
+        0.05197032186699892,
+        0.04339093261324404,
+        0.062261573755954445,
+        0.05727228736762476,
+        0.028117558911524333,
+        0.03151813404906655,
+        0.053006488999462385,
+        0.04407253142119163
+      ],
+      "retrieved_norm": 0.4460934345230629,
+      "fast_norm_before": 0.4423048670189874,
+      "fast_norm_after": 0.4441988335549004
+    }
+  },
+  "transforms": {
+    "rank": 7,
+    "singular_raw": [
+      11.987884156286986,
+      1.9133889048556114,
+      1.270257134685236,
+      0.9937469851703764,
+      0.4753738196475036,
+      0.03392502024886054,
+      0.01777227018727744,
+      0.01208616315663262,
+      1.1111325668569982e-15,
+      3.418093017268907e-16,
+      2.3026425667676146e-16,
+      1.6642898779368647e-16,
+      1.4007428100783962e-16,
+      3.9265972518075933e-17,
+      3.2638834750856987e-17,
+      2.0333675305863982e-17,
+      6.518249002056392e-19
+    ],
+    "singular_centered": [
+      1.9679143553868392,
+      1.3005481317325263,
+      1.0022711379719573,
+      0.4757194902892955,
+      0.03408707247430258,
+      0.017795738499603243,
+      0.012167314383821173,
+      1.5500878932163793e-15,
+      3.859787418192701e-16,
+      3.5852934165985944e-16,
+      1.7469926129181445e-16,
+      1.2131203183858615e-16,
+      6.325917202889432e-17,
+      2.4398449573597848e-17,
+      2.187751292920226e-18,
+      6.251680292026526e-19,
+      5.964283198037638e-32
+    ],
+    "whitening_floor_ratio": 0.001,
+    "fitted_on": "final occupied store keys"
+  },
+  "read_margins": {
+    "raw": {
+      "turn": {
+        "reads": 48,
+        "median_top_cosine": 0.9835657230559954,
+        "p95_top_cosine": 1.0,
+        "median_margin": 0.008551778771523133,
+        "p95_margin": 0.06163508089143127
+      },
+      "all": {
+        "reads": 58,
+        "median_top_cosine": 0.989694862865927,
+        "p95_top_cosine": 1.0000000000000002,
+        "median_margin": 0.010848214657283917,
+        "p95_margin": 0.06917918486620854
+      }
+    },
+    "mean_removed": {
+      "turn": {
+        "reads": 48,
+        "median_top_cosine": 0.8940528353202601,
+        "p95_top_cosine": 1.0,
+        "median_margin": 0.07947217212559832,
+        "p95_margin": 0.6559166102558943
+      },
+      "all": {
+        "reads": 58,
+        "median_top_cosine": 0.9150031234317515,
+        "p95_top_cosine": 1.0000000000000002,
+        "median_margin": 0.12608100279219336,
+        "p95_margin": 0.5623056245687783
+      }
+    },
+    "top_direction_removed": {
+      "turn": {
+        "reads": 48,
+        "median_top_cosine": 0.8921223931790118,
+        "p95_top_cosine": 1.0,
+        "median_margin": 0.07752183037838767,
+        "p95_margin": 0.6679374190466056
+      },
+      "all": {
+        "reads": 58,
+        "median_top_cosine": 0.9158700691886963,
+        "p95_top_cosine": 1.0000000000000002,
+        "median_margin": 0.13241379609121284,
+        "p95_margin": 0.5799725186589801
+      }
+    },
+    "pca_whitened": {
+      "turn": {
+        "reads": 48,
+        "median_top_cosine": 0.9691917952995565,
+        "p95_top_cosine": 1.0,
+        "median_margin": 0.026555438981127735,
+        "p95_margin": 0.6558641975308641
+      },
+      "all": {
+        "reads": 58,
+        "median_top_cosine": 0.9786582988644852,
+        "p95_top_cosine": 1.0,
+        "median_margin": 0.026750508755771563,
+        "p95_margin": 0.655864197530864
+      }
+    }
+  },
+  "final_geometry": {
+    "raw": {
+      "top_share": 0.9563294452820666,
+      "top_share_centered": 0.5717698546469763,
+      "effective_rank": 1.0924810720150595,
+      "effective_rank_centered": 2.442745925841069,
+      "mean_abs_cos": 0.9535169506634288,
+      "p95_top_cos": 1.0000000000000004,
+      "median_margin": 0.0065779968606094474
+    },
+    "mean_removed": {
+      "top_share": 0.49943853625985013,
+      "top_share_centered": 0.49790558728145584,
+      "effective_rank": 2.8219603676115286,
+      "effective_rank_centered": 2.829188979839051,
+      "mean_abs_cos": 0.4892786214020067,
+      "p95_top_cos": 1.0000000000000002,
+      "median_margin": 0.12608100279219392
+    },
+    "top_direction_removed": {
+      "top_share": 0.4870243505987729,
+      "top_share_centered": 0.4872366306264809,
+      "effective_rank": 2.884057661620039,
+      "effective_rank_centered": 2.8850159826866646,
+      "mean_abs_cos": 0.47936999403675234,
+      "p95_top_cos": 1.0000000000000004,
+      "median_margin": 0.13147635069553532
+    },
+    "pca_whitened": {
+      "top_share": 0.21747162686551308,
+      "top_share_centered": 0.21874581315218036,
+      "effective_rank": 5.806777577756122,
+      "effective_rank_centered": 5.7763314212873045,
+      "mean_abs_cos": 0.26200045537647293,
+      "p95_top_cos": 1.0000000000000002,
+      "median_margin": 0.5741597250763408
+    }
+  },
+  "decision": {
+    "attribution": "shared_offset",
+    "raw_margin": 0.008551778771523133,
+    "centered_margin": 0.07947217212559832,
+    "whitened_margin": 0.026555438981127735,
+    "best_margin": 0.07947217212559832,
+    "gain": 0.07092039335407518,
+    "centered_top_share": 0.49790558728145584,
+    "centered_effective_rank": 2.829188979839051,
+    "centered_rank_fraction": 0.1768243112399407,
+    "capacity_saturated": false,
+    "occupied_high_water": 28,
+    "limitation": "margin is geometric discriminability (top-1 vs top-2 cosine), not task utility; a larger margin does not by itself prove the 20.3a store would improve the rule task"
+  },
+  "cases": {
+    "capacity_shortage": {
+      "pass": false,
+      "decidable": false,
+      "criterion": "raw margin >= MARGIN_MIN and occupied == slots and evictions > 0",
+      "evidence": {
+        "raw_margin": 0.008551778771523133,
+        "occupied_final": 17,
+        "slots": 32,
+        "occupied_high_water": 28,
+        "evictions": 0
+      },
+      "missing_if_undecidable": "slot capacity never binds in this world (high water 28/32, 0 evictions), so slot shortage and key-dimension insufficiency cannot be exercised; needs a load-saturated replay or a controlled key-width ablation"
+    },
+    "shared_offset": {
+      "pass": true,
+      "criterion": "raw margin < MARGIN_MIN and centred margin >= MARGIN_MIN and centred top_share <= SEPARABLE_TOP_SHARE_MAX",
+      "evidence": {
+        "raw_margin": 0.008551778771523133,
+        "centered_margin": 0.07947217212559832,
+        "centered_top_share": 0.49790558728145584
+      },
+      "missing_if_undecidable": null
+    },
+    "intrinsic_low_rank": {
+      "pass": false,
+      "criterion": "centred margin < MARGIN_MIN and whitened margin >= MARGIN_MIN and centred effective_rank_fraction <= LOW_RANK_FRACTION",
+      "evidence": {
+        "centered_margin": 0.07947217212559832,
+        "whitened_margin": 0.026555438981127735,
+        "centered_rank": 2.829188979839051,
+        "centered_rank_fraction": 0.1768243112399407,
+        "rank_dims": 16
+      },
+      "missing_if_undecidable": null
+    },
+    "structure_ceiling": {
+      "pass": false,
+      "criterion": "best margin < MARGIN_MIN and best margin gain < CEILING_DELTA",
+      "evidence": {
+        "best_margin": 0.07947217212559832,
+        "gain": 0.07092039335407518
+      },
+      "missing_if_undecidable": null
+    },
+    "undecidable": {
+      "pass": false,
+      "reason": null,
+      "evidence": null
+    }
+  },
+  "cpu_seconds": 31.234,
+  "wall_seconds": 31.562
+}

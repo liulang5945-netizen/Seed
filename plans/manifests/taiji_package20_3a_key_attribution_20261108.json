@@ -1,0 +1,9 @@
+{
+  "report": "reports/taiji_package20_3a_key_attribution_20261108.json",
+  "report_sha256": "49cdd05f8c24086dc6740a1c5c965c1251ffa27bee5cc6ebf71483bf1eaf8890",
+  "replay_runner_sha256": "1ae2ae80f33e2b736b7473c345ce2cf49459b86e424f5f03bb4899ab281a4b49",
+  "source_runner_sha256": "6903857a86842c906ff7d71424ae66e6c79f137e6bc3914c9765aea79abd05d7",
+  "attribution": "shared_offset",
+  "cpu_seconds": 31.234,
+  "wall_seconds": 31.562
+}
