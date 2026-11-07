@@ -1111,3 +1111,11 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 |---|---|---|
 | I29 | **W3 读数（owner 准入后执行）** | 策略旗 `write_timing_per_turn`（0 参数 0 结构，default-off；run_turn 两处掩码改策略感知，parity＋策略部署等价逐位过——后者首跑失败为参照循环采样点错误非策略分歧）。binding CF1：**W3 策略下 actual 提交写键门全过（22/22 face 提交写、pairwise 0.974、秩 7、coverage 1.0）＋forced 侧全绿 ⇒ verdict=`expressive_capacity_present`**。B_EH 控制臂落在 `key_space_collapsed_under_actual_timing`（臂门关闭→0 提交写→败＝正确控制语义）。**幻影键修正**：trace write_keys 在 allowed=False 时也返回已计算未提交键——face 事件键必须过滤到 F 实际变化的面，否则控制臂会在幻影键上假通过。161.28 CPU / 0 训练 / 0 confirm / v3 判据 sha（875a55b9）读后未改 |
 | R-D16-47 | **FEC-1 全弧线闭合与队首** | v1 键塌缩 0.0（架构固有）→ W1 特征/对齐逐层修复（两轮 cap 触发强制收束）→ W-v2 三部件 forced 结构门全过（对齐 0.9997）→ v3 face-isolated 1.0（函数类坐实，M_final=干扰冲刷诊断）→ W3 时机修复 ⇒ **expressive_capacity_present 达成＝架构需求输入完整**。队首＝owner 裁定有界训练窗（一次性定价＋准入，另案）；W3 不构成训练理由；能力账不变（C12 唯一） |
+
+## 27. 有界训练窗定价与预注册（2026-11-08）
+
+| 编号 | 登记 | 内容 |
+|---|---|---|
+| I30 | **定价＋checkpoint 预检** | 真实 v2 图实测 31.5/31.6 CPU/更新（与优化后 20.4c_r2 实际 ~30 一致）；全窗 base 26,852 CPU、proposed cap **34,816**（25% 缓冲）。checkpoint 预检（用户常设规则＋P3 硬门）：往返逐位 0.0、二次重存张量级 0.0、截断拒绝、磁盘余量足。预检修正一处自设过严：文件字节级确定性不是项目要求（r2 谱系 resume_verified 为 loss/weights 相等），改为二次张量级往返。定价脚本 420.41 CPU（pilot 更新为成本探针，正式训练从父 checkpoint 重启） |
+| I31 | **训练预注册冻结（待准入）** | [manifest](taiji_training_window_v2_prereg_20261108.json)（sha fdb975a7）：问句=「重设计 F 写路径是否把反馈变成净任务学习贡献」；臂=CF1_v2 vs B_EH_v2（同父/同种子序/同剂量 2×2×200，仅 F 通路异）；门=包 20 冻结贡献门（pooled Δ≥0.05＋配对 bootstrap 下界>0）＋两 seed 同向＋UTF-8/NaN/confirm 0；cap 硬停不升剂量（D16-10/12）；confirm 封存。实施缺口修复：key_content_proj 参数组声明（GROUP_PREFIXES 新组——正式训练必撞）、质心定义在 160 训练 world 输入侧分布 |
+| R-D16-48 | **队首** | owner 按价准入正式训练（cap 34,816 CPU，判据先冻结）；或调整剂量/搁置。准入后按 manifest 一次跑完，不逐级再批 |

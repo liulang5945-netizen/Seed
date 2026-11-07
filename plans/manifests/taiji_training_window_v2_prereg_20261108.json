@@ -1,0 +1,33 @@
+{
+  "schema": "taiji-training-window-v2-prereg-v1",
+  "package": "training-window-v2",
+  "date": "2026-11-08",
+  "status": "priced_pending_owner_admission",
+  "authority": "owner 2026-11-08 admitted establishing the bounded training window; pricing completed the same day",
+  "pricing_report": "reports/taiji_training_window_v2_pricing_20261108.json",
+  "note": "Frozen after pricing, before the training run. The run starts ONLY on owner admission of this manifest with its priced cap.",
+  "question": "Does the redesigned F write path (content keys + tied reads + content-conditioned values + per-turn write timing) turn F feedback into a NET task-learning contribution on the rule-learning fixture - the question package 20 answered negatively on the old graph?",
+  "arms": {
+    "CF1_v2": "build_graph(candidate, gate, 'CF1') + enable_content_path_v2(seed 20261031, centroid=training distribution) + enable_write_timing_per_turn; F trainable",
+    "B_EH_v2": "identical build with arm 'B_EH' (fast_enabled=False: the F feedback path is off by arm definition); same everything else",
+    "fairness": "same parent checkpoint (28031-B), same init, same data order per seed, same dose, same optimizer/lr/clip; arms differ ONLY in the F feedback path (D16-9/D16-12 compliant)"
+  },
+  "dose": {"seeds": [20261105, 20261106], "arms": ["CF1_v2", "B_EH_v2"], "updates_per_run": 200, "batch": 2, "checkpoint_every": 25, "dev_worlds": 16, "dev_points": ["step0", "step200"]},
+  "gates_frozen": {
+    "primary": "F net contribution: pooled decision-bit delta (CF1_v2 - B_EH_v2) >= 0.05 with paired world-level bootstrap lower bound > 0 (the package-20 frozen contribution gates, reused verbatim)",
+    "consistency": "both seeds same direction (package 20 failed on opposite seed directions)",
+    "safety": "UTF-8 legality 100%, no NaN, confirm reads 0",
+    "discipline_gates": "D16-8 activity gate (trigger fraction + gradient norms reported), D16-9 zero-intervention control arm = B_EH_v2 itself, D16-10 zero-identifiability (delta [0,0] => inconclusive, no dose escalation), D16-11 duplicate-target check done (this window's loss = the 20.4c_r2 loss family on the new graph - the graph differs, the loss object is the same family, registered here), D16-12 (architecture attribution from the FEC-1 line already established; this window tests LEARNING GAIN, not architecture)"
+  },
+  "budget": {
+    "measured_cpu_per_update": {"CF1_v2": 31.5, "B_EH_v2": 31.578},
+    "components": {"train": 25231.0, "dev": 644.9, "checkpoint": 305.8, "resume_overhead": 670.6},
+    "base_total_cpu": 26852.3,
+    "proposed_cap_cpu": 34816.3,
+    "cap_rule": "hard stop at the cap, budget_stop exit, no dose escalation (D16-10/12); comparison: package 20 proposal 24,000 / measured 50,573.637",
+    "checkpoint_preflight": {"CF1": "pass (roundtrip 0.0, truncation rejected)", "B_EH": "pass", "note": "user standing rule satisfied; resave check is tensor-level (file-byte determinism is not a project requirement)"}
+  },
+  "exits": ["pass (primary + consistency + safety)", "negative (range-limited to this graph/dose)", "inconclusive (delta in middle band or seeds disagree)", "engineering_stop", "budget_stop"],
+  "confirm": {"reads": 0, "sealed": "indices 240-319 untouched"},
+  "not_claimed": "a pass here is a LEARNING-GAIN input on the fixture under the redesigned path; it is not a capability claim, not P2/L3, and does not by itself admit deployment"
+}

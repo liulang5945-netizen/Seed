@@ -56,6 +56,7 @@ GROUP_PREFIXES: dict[str, tuple[str, ...]] = {
     "readout": ("readout.",),
     "expression": ("expression.",),
     "write_heads": ("write_heads.",),
+    "key_content_proj": ("key_content_proj",),
     "world": ("world.",),
 }
 FROZEN_UNUSED_GROUPS = ("world",)

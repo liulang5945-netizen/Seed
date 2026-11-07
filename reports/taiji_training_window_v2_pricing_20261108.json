@@ -1,0 +1,100 @@
+{
+  "schema": "taiji-training-window-v2-pricing-v1",
+  "package": "training-window-v2",
+  "date": "2026-11-08",
+  "status": "completed",
+  "preflight": {
+    "CF1": {
+      "saved_bytes": 77573067,
+      "roundtrip_max_abs_diff": 0.0,
+      "roundtrip_mismatched_tensors": [],
+      "resave_roundtrip_max_abs_diff": 0.0,
+      "resave_sha_equal": true,
+      "truncated_rejected": true,
+      "disk_free_mb": 440052.4,
+      "ok": true
+    },
+    "B_EH": {
+      "saved_bytes": 77573579,
+      "roundtrip_max_abs_diff": 0.0,
+      "roundtrip_mismatched_tensors": [],
+      "resave_roundtrip_max_abs_diff": 0.0,
+      "resave_sha_equal": true,
+      "truncated_rejected": true,
+      "disk_free_mb": 440052.4,
+      "ok": true
+    }
+  },
+  "pilot": {
+    "updates_per_arm": 5,
+    "per_update": {
+      "CF1": {
+        "per_update_cpu": [
+          31.391,
+          31.688,
+          31.312,
+          31.781,
+          31.5
+        ],
+        "median": 31.5,
+        "mean": 31.534
+      },
+      "B_EH": {
+        "per_update_cpu": [
+          31.672,
+          31.656,
+          31.359,
+          31.578,
+          31.547
+        ],
+        "median": 31.578,
+        "mean": 31.562
+      }
+    },
+    "losses_observed": {
+      "CF1": [
+        638.608216,
+        377.537254,
+        312.531534,
+        390.866747,
+        271.168239
+      ],
+      "B_EH": [
+        638.591972,
+        377.406617,
+        316.348203,
+        330.292407,
+        236.455859
+      ]
+    }
+  },
+  "dev_cpu_per_replay": [
+    19.734,
+    19.844
+  ],
+  "checkpoint_save_load_cpu": 0.078,
+  "projection": {
+    "updates_total": 800,
+    "train_cpu": 25238.4,
+    "dev_cpu": 2533.0,
+    "checkpoint_cpu": 2.5,
+    "resume_overhead_cpu": 79.2,
+    "base_total_cpu": 27853.0,
+    "buffer_25pct": 6963.3,
+    "proposed_cap_cpu": 34816.3,
+    "comparisons": {
+      "package20_proposal": 24000.0,
+      "package20_measured": 50573.637
+    }
+  },
+  "discipline": {
+    "training_run_updates": 0,
+    "pilot_updates": 10,
+    "confirm_reads": 0,
+    "note": "pilot updates are cost probes on disposable graph copies; the training run restarts from the parent checkpoint under its own frozen prereg"
+  },
+  "cost": {
+    "cpu_seconds": 420.406,
+    "wall_seconds": 422.233
+  }
+}
