@@ -1,0 +1,100 @@
+{
+  "schema": "taiji-fec1-prereg-v2",
+  "package": "FEC-1",
+  "date": "2026-11-08",
+  "status": "frozen_pending_execution_approval",
+  "supersedes": "plans/manifests/taiji_f_expressive_capacity_prereg_20261108.json",
+  "supersedes_criteria_sha256": "1e0dde222d557b4ea97eee528b9f73a2aec3068a2c462e927465e415fa3b6142",
+  "note": "Pre-registration version 2, created per ledger D16-42: the v1 PASS branch was arithmetically unreachable because the per-seed-MAX label-permutation control overfits to 0.8182 on 22 samples x 8320 ridge features, making margin >= 0.2 require primary >= 1.0182 > 1.0. v2 revises ONLY the fitted-control capacity; every gate value, the decision rule, the verdict precedence, the margin definition and the budget are carried over UNCHANGED. The v1 criteria block is preserved verbatim inside this manifest under original_criteria_v1 for audit (D16-38: new version + retained original block).",
+  "inputs": {
+    "checkpoints": "the four 20.4c_r2 final checkpoints (2 seeds x 2 arms, step 200) enumerated in reports/taiji_package21_1_readout_decomposition_20261107.json cells[*].checkpoint and cells[*].checkpoint_sha256; each sha256 must be recomputed before any reading",
+    "checkpoint_count": 4,
+    "worlds": "20.1 rule_learning_20_1.build_world(seed, index); probe face follows the 21.3 feature card (seed 20261105, world index 0)",
+    "correction_surfaces_per_world": 22,
+    "session_split": {"session_1": 5, "session_2": 17},
+    "distinct_query_texts": 22,
+    "distinct_bits": 11
+  },
+  "criteria": {
+    "question": "Under the unchanged C12 structural parent and the evaluated graph, does the fast weight F carry a function class that can separate and address per-question / per-feedback-event values?",
+    "primary_metric": "forced-write key-space separability: effective rank, pairwise cosine separability and condition number of the write keys, plus the closed-form tied-key readout accuracy",
+    "forced_write_definition": "the ONLY intervention is the per-group/per-head boolean write-permission mask passed as allowed=torch.ones((groups, fast_heads), dtype=bool). No parameter changes, no optimizer step, no graph edit, no checkpoint write, no data change (architecture-branch fixes may change the graph itself between versions; each such change is pinned by its own feature card and retested from scratch)",
+    "gates": {
+      "timing_coverage_min": 0.8,
+      "key_effective_rank_min": 3,
+      "key_pairwise_separable_fraction_min": 0.95,
+      "key_cosine_threshold": 0.95,
+      "key_norm_median_min": 0.001,
+      "condition_number_max": 100.0,
+      "query_alignment_cosine_median_min": 0.5,
+      "query_effective_rank_min": 3,
+      "value_effective_rank_min": 3,
+      "capacity_min": 22,
+      "probe_accuracy_min": 0.6,
+      "probe_margin_min": 0.2,
+      "effective_dof_min": 3
+    },
+    "definitions": {
+      "timing_coverage": "written_turns / correction_turns, where written is the fast-write flag reported per turn; binding value is the MINIMUM over the evaluated instances",
+      "effective_rank": "number of singular values s_i of the stacked key matrix K with s_i / s_max >= 1e-2",
+      "pairwise_separable_fraction": "fraction of unordered pairs (i,j) with |cos(k_i, k_j)| <= key_cosine_threshold; binding value is the MINIMUM over the 8 (group, head) key stacks",
+      "key_norm_median": "median L2 norm of the write keys; a near-zero key makes the outer product vanish and the readout identically zero, so it is a hard failure not a degenerate pass",
+      "condition_number": "s_max / s_min over the non-degenerate singular values of K; reported for the best (group, head) stack only, as a global ill-conditioning diagnostic",
+      "query_alignment": "median cosine between the read query q_i and the write key k_i produced from the same context; a small value means the two independent pathways occupy different subspaces and no tied readout can work",
+      "capacity": "sum over (group, head) of min(32, tau_decay) where tau_decay = 1 / (1 - decay) from the decay head; an upper bound on how many events one matrix can carry before exponential forgetting erases the earliest",
+      "closed_form_readout": "V_hat = M_final K (G + eps I)^{-1} with G = K^T K, eps = 1e-6; leave-one-event-out nearest-neighbour decode from V_hat to the event id",
+      "effective_dof": "number of distinct F vectors observed under forced write across the correction surfaces; below 3 no PASS verdict is valid"
+    },
+    "controls": [
+      "window_identity",
+      "label_permutation_5_seeds",
+      "random_projection_same_dim_same_norm",
+      "no_f_other_persistent_state"
+    ],
+    "control_statistic": {
+      "capacity_cap": "EVERY fitted control probe operates on features reduced to a fixed 32-dimensional random projection (seeded, entries N(0,1)/sqrt(input_dim), one projection per control, norm-preserving row rescale). Rationale: the closed-form primary consumes 22 keys of 32 dimensions; a fitted control with thousands of free dimensions measures the probe's memorization ceiling (v1 measured 0.8182 for PERMUTED labels), not an alternative explanation. Capping the control capacity at the primary's key dimensionality restores the margin's meaning: PASS requires the algebraic retrieval to beat an equally-capacity fitted alternative.",
+      "window_identity": "one fitted ridge probe (20.2s pipeline) on the 2-d feedback-window one-hot; the 2-d feature is already below the cap and is used as-is",
+      "label_permutation_5_seeds": "per-seed MAX over seeds 20261105..20261109 of the ridge probe on the 32-dim random projection of x=[F_forced, query_key], labels permuted; mean reported for sensitivity only, never binding",
+      "random_projection_same_dim_same_norm": "one fitted ridge probe on a 32-dim random projection of x (distinct seed), labels intact",
+      "no_f_other_persistent_state": "one fitted ridge probe on the 32-dim random projection of the 20.2s other_features(row) matrix"
+    },
+    "label_permutation_seeds": [20261105, 20261106, 20261107, 20261108, 20261109],
+    "strongest_control": "max of the four frozen control statistics",
+    "margin_definition": "primary_accuracy - strongest_control",
+    "checkpoint_aggregation": "all evaluated instances (per the active feature card's population) evaluated independently; the binding verdict uses the STRICTEST (minimum margin); any disagreement across instances implies inconclusive",
+    "forced_write_primacy": "the binding verdict is computed under forced write, not under the actual sparse write. The actual-timing reading is reported as a separate named verdict and must never be promoted to the structural verdict, and the structural verdict must never be excused by the timing reading",
+    "question_axis_rule": "per-question separability is assessed on the 22 distinct query texts; per-feedback-event separability on the 22 correction surfaces; the 11 distinct bit patterns are the semantic upper bound of independent content, so a PASS on texts with FAIL on bits is reported as text-level-only separability and does not satisfy the question axis",
+    "decision_rule": {
+      "expressive_capacity_present": "forced-write key_effective_rank >= 3 AND pairwise_separable_fraction >= 0.95 AND key_norm_median >= 1e-3 AND condition_number <= 100 AND query_alignment >= 0.5 AND value_effective_rank >= 3 AND capacity >= 22 AND closed_form_accuracy >= 0.6 AND margin >= 0.2 AND effective_dof >= 3 AND all instances agree; produces an ARCHITECTURE-REQUIREMENT INPUT only, not training admission, not pricing, not a capability claim",
+      "key_space_collapsed_structurally": "under forced write, key_effective_rank < 3 OR pairwise_separable_fraction < 0.95 OR key_norm_median < 1e-3 OR condition_number > 100; this is a function-class verdict, independent of write timing and of training dose; range-limited to the evaluated graph and checkpoint lineage",
+      "key_space_collapsed_under_actual_timing": "under forced write the key gates pass, but under the actual sparse write they fail; this attributes the collapse to write timing, which is an engineering change, not an architecture change, and does not license training",
+      "query_key_misaligned": "key gates pass but query_alignment < 0.5 or query_effective_rank < 3; the smallest sufficient fix is weight tying or a shared projection between write key and read query, not a new subject",
+      "value_space_collapsed": "value_effective_rank < 3; the key space separates but the written values do not",
+      "capacity_below_event_count": "capacity < 22; exponential forgetting bounds the matrix below the event count regardless of key quality",
+      "inconclusive": "effective_dof < 3 OR instance disagreement OR fewer than 22 assessable surfaces OR any gate exactly on its boundary; report every raw value and interval; no threshold change, no dose change, no automatic training transition",
+      "engineering_stop": "any checkpoint sha mismatch / graph identity drift / criteria sha mismatch / feature card not frozen before reading / confirm touched / runner dual hash mismatch / any parameter or optimizer mutation outside the declared architecture branch"
+    },
+    "verdict_precedence": [
+      "engineering_stop",
+      "capacity_below_event_count",
+      "key_space_collapsed_structurally",
+      "query_key_misaligned",
+      "value_space_collapsed",
+      "key_space_collapsed_under_actual_timing",
+      "expressive_capacity_present",
+      "inconclusive"
+    ],
+    "budget": {
+      "cpu_soft_cap": 1200,
+      "cpu_stop_threshold": 1500,
+      "wall_cap": 2250,
+      "note": "no training, no optimizer step; the only compute is forward replay of the evaluated population plus controls"
+    }
+  },
+  "original_criteria_v1": "PRESERVED VERBATIM IN plans/manifests/taiji_f_expressive_capacity_prereg_20261108.json (criteria_sha256 1e0dde222d557b4ea97eee528b9f73a2aec3068a2c462e927465e415fa3b6142); v1 readings (old-graph 4/4 structural collapse, W1(a) round-1 2/2 negative) remain binding under v1 and are not re-interpreted under v2.",
+  "audit": {
+    "change_scope": "control_statistic.capacity_cap and the four control definitions only",
+    "unchanged": ["gates", "decision_rule", "verdict_precedence", "margin_definition", "budget", "forced_write_primacy", "question_axis_rule"],
+    "authority": "ledger D16-42; owner ruling 2026-11-08 option 2"
+  }
+}

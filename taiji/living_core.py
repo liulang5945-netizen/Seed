@@ -40,6 +40,7 @@ class LivingCoreConfig:
     # parameter exists only when enabled (registered post construction).
     content_keys_enabled: bool = False
     content_gain: float = 1.0
+    content_centered: bool = False
 
     def __post_init__(self) -> None:
         if not 1 <= self.groups <= 4 or self.width < 2 or self.width % 2:
@@ -383,11 +384,17 @@ class LivingCoreReference(nn.Module):
         attention = torch.softmax(q @ k.T / math.sqrt(self.config.width), dim=-1)
         return attention @ v, attention, q, k, v
 
-    def read_fast(self, h, memory, event, goal, nu):
+    def read_fast(self, h, memory, event, goal, nu, content_feature=None):
         c = self.config
         inputs = torch.cat(
             [state_normalize(h), event.expand_as(h), goal.expand_as(h), nu.expand_as(h)], dim=-1
         )
+        content_boost = None
+        if content_feature is not None:
+            projection = getattr(self, "key_content_proj", None)
+            if projection is None:
+                raise ValueError("Content-conditioned keys require the registered projection")
+            content_boost = unit_ball(projection @ content_feature)
         queries, values, merged = [], [], []
         for group in range(c.groups):
             q = torch.stack(
@@ -396,6 +403,8 @@ class LivingCoreReference(nn.Module):
                     for head in range(c.fast_heads)
                 ]
             )
+            if content_boost is not None:
+                q = unit_ball(q + c.content_gain * content_boost)
             value = torch.einsum("hkv,hk->hv", memory[group], q)
             queries.append(q)
             values.append(value)
@@ -637,12 +646,15 @@ class LivingCoreReference(nn.Module):
             else allowed
         )
         goal_vector = self.encoder.goal_vector(goal)
+        content_feature = (
+            self.content_feature(goal) if getattr(c, "content_keys_enabled", False) else None
+        )
         ema, nu, nu_features = self.update_nu(state, raw_nu, known_nu)
         view = self.source_view(records, owner, scope, now)
         coverage, prior = self.align_positions(state, view.keys)
         message, message_weights, mq, mk, mv = self.messages(state.h, goal_vector)
         fast, fast_queries, fast_values = self.read_fast(
-            state.h, state.fast, event, goal_vector, nu
+            state.h, state.fast, event, goal_vector, nu, content_feature=content_feature
         )
         recalled, episodic_weights = self.episodic(state.h, goal_vector, view)
         x = torch.cat(
@@ -675,9 +687,6 @@ class LivingCoreReference(nn.Module):
         )
         action = ref.new_zeros(c.width) if action is None else action
         predictions = torch.stack([head(torch.cat([z, action])) for head in self.world])
-        content_feature = (
-            self.content_feature(goal) if getattr(c, "content_keys_enabled", False) else None
-        )
         memory, chi, write_keys = self.write_fast(
             h,
             state.fast,
@@ -732,15 +741,23 @@ class LivingCoreReference(nn.Module):
             child, probabilities, copied, view, predictions[:, :-1], predictions[:, -1], trace
         )
 
-    @staticmethod
-    def content_feature(goal) -> torch.Tensor:
-        """L2-normalized 128-dim byte-count vector of the goal text (W1(a))."""
+    def content_feature(self, goal) -> torch.Tensor:
+        """Content feature of the goal text (W1(a)); centered mode subtracts the
+        registered centroid (W1 round 2) so the feature carries the text's
+        distinct bytes rather than the shared template mass."""
         if isinstance(goal, str):
             goal = goal.encode("utf-8")
         raw = goal if isinstance(goal, (bytes, bytearray)) else bytes(goal)
         feature = torch.zeros(128, dtype=torch.float64)
         for value in raw:
             feature[int(value) % 128] += 1.0
+        if getattr(self.config, "content_centered", False):
+            centroid = getattr(self, "content_centroid", None)
+            if centroid is not None:
+                delta = feature - centroid
+                norm = float(torch.linalg.vector_norm(delta))
+                if norm > 0:
+                    return delta / norm
         norm = float(torch.linalg.vector_norm(feature))
         return feature / norm if norm > 0 else feature
 

@@ -87,8 +87,13 @@ class GatedGrowthCore(LivingCoreReference):
         )
         coverage, prior = self.align_positions(state, view.keys)
         message, message_weights, mq, mk, mv = self.messages(state.h, goal_vector)
+        content_feature = (
+            self.content_feature(kwargs.get("goal", b""))
+            if getattr(c, "content_keys_enabled", False)
+            else None
+        )
         fast, fast_queries, fast_values = self.read_fast(
-            state.h, state.fast, event, goal_vector, nu
+            state.h, state.fast, event, goal_vector, nu, content_feature=content_feature
         )
         recalled, episodic_weights = self.episodic(state.h, goal_vector, view)
         x = torch.cat(
@@ -143,11 +148,6 @@ class GatedGrowthCore(LivingCoreReference):
         )
         action = ref.new_zeros(c.width) if kwargs.get("action") is None else kwargs["action"]
         predictions = torch.stack([head(torch.cat([z, action])) for head in self.world])
-        content_feature = (
-            self.content_feature(kwargs.get("goal", b""))
-            if getattr(c, "content_keys_enabled", False)
-            else None
-        )
         memory, chi, write_keys = self.write_fast(
             h,
             state.fast,

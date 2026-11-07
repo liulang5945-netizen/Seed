@@ -556,12 +556,17 @@ def copy_subject(subject: nn.Module) -> nn.Module:
     return clone
 
 
-def enable_content_keys(graph: RuleLearningGraph, seed: int = 20261031) -> None:
-    """W1(a): turn on content-conditioned write keys on this graph's subject.
+def enable_content_keys(
+    graph: RuleLearningGraph,
+    seed: int = 20261031,
+    centroid: torch.Tensor | None = None,
+    centered: bool = False,
+) -> None:
+    """W1(a)/round 2: turn on content-conditioned write and read pathways.
 
-    Registers the shared 32x128 projection (seeded init) and swaps the frozen
-    config for one with the flag on.  The subject must be a living-core graph
-    subject; calling twice re-initializes the projection deterministically."""
+    Registers the shared 32x128 projection (seeded init) and, in centered mode,
+    the input-side centroid buffer; swaps the frozen config via
+    dataclasses.replace.  Calling twice re-initializes deterministically."""
     subject = graph.subject
     config = getattr(subject, "config", None)
     if config is None or not hasattr(config, "content_keys_enabled"):
@@ -573,6 +578,15 @@ def enable_content_keys(graph: RuleLearningGraph, seed: int = 20261031) -> None:
         key_width, 128, generator=generator, dtype=reference.dtype, device=reference.device
     ) / (128**0.5)
     subject.key_content_proj = nn.Parameter(projection)
+    if centered:
+        if centroid is None:
+            raise ValueError("centered content keys require the input-side centroid")
+        subject.content_centroid = (
+            centroid.detach().clone().to(dtype=reference.dtype, device=reference.device)
+        )
     subject.config = replace(
-        config, content_keys_enabled=True, content_gain=float(config.content_gain)
+        config,
+        content_keys_enabled=True,
+        content_gain=float(config.content_gain),
+        content_centered=bool(centered),
     )

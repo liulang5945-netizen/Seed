@@ -1,0 +1,53 @@
+{
+  "schema": "taiji-fec1-w1r2-retest-feature-card-v1",
+  "package": "FEC-1/W1-round2",
+  "date": "2026-11-08",
+  "status": "frozen_before_any_reading",
+  "parent_prereg_v2": "plans/manifests/taiji_f_expressive_capacity_prereg_v2_20261108.json",
+  "parent_criteria_v2_sha256": "aa3a8aefbe932247c3fcb8eed711f6dfc062698b146ff3485939bec1e0a10877",
+  "round1_report": "reports/taiji_fec1_w1a_retest_20261108.json",
+  "note": "Round-2 retest card, frozen before any model forward pass of the round-2 graph. Authority: owner ruling 2026-11-08 option 2 (revise the control statistic under a new pre-registration, then run W1 round 2). Round 1's layered attribution (rank/value fixed; pairwise blocked by content-feature discriminability; alignment blocked by the untied read query) directly motivates the two design changes below; both failure layers are fixed in ONE round per the cap-higher mainline policy.",
+  "design": {
+    "inherits_round1": "the round-1 content pathway is retained verbatim: k = unit_ball(unit_ball(raw_key) + gain * unit_ball(P c)), P = shared 32x128 projection (seed 20261031), gain = 1.0",
+    "change_1_centered_content_feature": "the content feature becomes c = normalize(bc(q) - centroid), where bc(q) is the 128-dim byte-count vector of the step's goal text and centroid = the mean of bc over the 22 probe-face query texts (INPUT-SIDE statistics only; no gold, no answers, no scoring data are touched). Rationale: round 1 measured that template sharing across the 22 questions drowns the slot-value discrimination of the raw byte-count feature (pairwise separable fraction 0.1039). Centering removes the common mode so the feature carries each question's DISTINCT bytes. Fallback: if the centered vector has zero norm for some input (a query identical to the centroid), the plain normalized byte-count is used for that input. Deployment note, pinned honestly: the centroid is a fixture-level input-side statistic for this zero-training function-class test; a running-input centroid estimator is a deployment concern outside this window.",
+    "change_2_tied_read_query": "the read query gets the SAME content boost with the SAME projection and gain: q = unit_ball(unit_ball(raw_query) + gain * unit_ball(P c)). Rationale: round 1 measured query_alignment -0.139 (write and read subspaces near-orthogonal); the shared content component ties the two pathways, which is exactly the 'smallest sufficient fix' the manifest names for query_key_misaligned. The trace's fast_queries become post-injection; the query_alignment statistic therefore measures the tied pathways as deployed.",
+    "projection": "the SAME P instance serves write keys and read queries (weight tying at the content pathway); P remains trainable for any subsequent bounded training window"
+  },
+  "graph": {
+    "base_builder": "probe_taiji_package20_4c_r2_formal_comparison.build_graph(candidate, gate, arm) (sha 112c76ae...), NO checkpoint load - round 2, like round 1, evaluates the modified graph at initialization (the parent attribution showed collapse already at init, so init is the correct function-class state)",
+    "enable": "taiji.rule_learning_20_1_net.enable_content_keys(graph, seed=20261031, centroid=<mean byte-count of the 22 probe-face queries>): registers P, swaps the frozen config via dataclasses.replace(content_keys_enabled=True, content_centered=True, content_gain=1.0), registers the centroid as a non-trainable buffer",
+    "population": [
+      {"arm": "CF1", "state": "init, content keys enabled (centered feature + tied read)"},
+      {"arm": "B_EH", "state": "init, content keys enabled (centered feature + tied read)"}
+    ],
+    "agreement": "2/2 required, else inconclusive"
+  },
+  "probe_face": {
+    "fixture": "taiji.rule_learning_20_1",
+    "seed": 20261105,
+    "world_index": 0,
+    "surface_filter": "row['correction_surface'] and row['released_lines'] > 0",
+    "expected_surfaces": 22,
+    "same_face_as_round1": true,
+    "confirm_reads": 0
+  },
+  "conditions": {
+    "forced": "allowed=torch.ones((groups, fast_heads)) on every subject call (binding verdict)",
+    "actual": "graph semantics as-is, reported separately, never promoted",
+    "parity_gate": "BEFORE any round-2 reading: the DISABLED graph must reproduce graph.run_turn bit-identically (same gate as round 1)"
+  },
+  "capture_conventions": {
+    "inherit": "all round-1 capture conventions inherited: hooks for value/decay, keys AND queries from the trace (both post-injection now), recomputed-boost bitwise cross-check for keys, face event = final observe step, M_final = end-of-replay F, effective rank 1e-2 relative, eps=1e-6, NN decode, capacity, timing coverage",
+    "controls": "computed under the v2 prereg capacity-capped definitions: every fitted control on a 32-dim seeded random projection; window_identity as-is (2-d); permutation per-seed MAX over 20261105..20261109"
+  },
+  "verdict_semantics": {
+    "rule": "v2 decision rule and precedence, evaluated per instance, 2/2 agreement required",
+    "success_semantics": "expressive_capacity_present under v2 is an architecture-requirement input for a subsequent bounded training window (one-time pricing + full training hard gates); NOT training admission, NOT a capability claim",
+    "failure_semantics": "round 2 is the LAST round of the W1 fix-retest loop (two-round cap); any negative or inconclusive verdict here closes the loop and forces the global closeout card plus owner ruling"
+  },
+  "budget": {
+    "proposal_cap": 2000.0,
+    "expected": "about 150-250 CPU",
+    "discipline": "0 training / 0 optimizer steps / 0 confirm / criteria sha (v2) verified in-runner and unchanged after reading"
+  }
+}

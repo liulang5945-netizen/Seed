@@ -1,0 +1,18 @@
+{
+  "schema": "taiji-fec1-w1r2-retest-execution-manifest-v1",
+  "package": "FEC-1/W1-round2",
+  "date": "2026-11-08",
+  "round2_card": "plans/manifests/taiji_fec1_w1r2_retest_feature_card_20261108.json",
+  "round2_card_sha256": "4855e43e793578aef27f3e3742c9f1f49da6bf5fc5449246d781c445b409b89e",
+  "criteria_v2_sha256": "aa3a8aefbe932247c3fcb8eed711f6dfc062698b146ff3485939bec1e0a10877",
+  "report": "reports/taiji_fec1_w1r2_retest_20261108.json",
+  "report_sha256": "5e439771ddebc4f850f5235b5ebac99f248a31565529cba7f4b1f70fed9d0ac6",
+  "runner": "scripts/training/probe_taiji_fec1_w1r2_retest_20261108.py",
+  "runner_sha256": "e5db7121fdeac4f442ed6adaab345bb2ca8c15a4afa35e7f9ef6b3a7780c03d8",
+  "submitted_runner_sha256": "e5db7121fdeac4f442ed6adaab345bb2ca8c15a4afa35e7f9ef6b3a7780c03d8",
+  "verdict": "query_key_misaligned",
+  "cost": {
+    "cpu_seconds": 126.312,
+    "wall_seconds": 126.61
+  }
+}
