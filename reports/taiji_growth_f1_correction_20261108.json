@@ -1,0 +1,1113 @@
+{
+  "format": "taiji-growth-f1-correction-v1",
+  "generated_at": "2026-11-07T23:57:26",
+  "criteria_written_before_reading": {
+    "C0_fixture_answerable": "control (no correction) returns the old entry as top-1 for every question on the repaired encoder at both rungs; otherwise the fixture is not answerable and no correction verdict is issued",
+    "C1_correction_written": "the correction commits 1/1, drops nothing, evicts nothing, and the stored payload equals v' byte for byte",
+    "C2_self_readable": "the exact phrasing that wrote the correction returns the correction as top-1 (self@1 == 1.0) and the read value residual against v' stays below 0.5",
+    "C3_synonym_generalises": "synonym correction@1 >= 0.75 at the low rung and strictly above the control correction@1 at both rungs",
+    "verdict_rule": "C1 fails -> correction_not_written; C2 fails -> geometry_holds_but_unreadable; C3 fails -> self_readable_synonym_fails; else correction_readable",
+    "no_soft_language": "if treatment correction@1 equals the control, the verdict is geometry_holds_but_unreadable; no 'close to significant' wording is allowed",
+    "unchanged": "no threshold, rung, fixture or question is retuned after the first reading"
+  },
+  "fixture": {
+    "dimension": 128,
+    "context_length": 8,
+    "sentences": 64,
+    "amplitude": 0.35,
+    "value_shape": [
+      4,
+      2,
+      32,
+      32
+    ],
+    "temperature": 0.1,
+    "rule_index": 0,
+    "correction_position": 5,
+    "synonym_positions": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "wording_analogue": "same distinctive value token at a different position, i.e. the same content in a different word order; the mean encoder is blind to it by construction, the localized encoder is the part that sees it",
+    "rungs": [
+      {
+        "name": "low",
+        "generation": 1,
+        "occupied": 8,
+        "slots": 16
+      },
+      {
+        "name": "gen4",
+        "generation": 4,
+        "occupied": 64,
+        "slots": 128
+      }
+    ],
+    "model_identity_source": "reports/taiji_growth_zero_perturbation_20261108.json (same-day sealed reading); no parameter row changes and neither module imports torch"
+  },
+  "f3_cross_check": {
+    "available": true,
+    "rows": {
+      "low": {
+        "f3_generation": 1,
+        "f3_median_margin": 0.06863129215207675,
+        "this_median_margin": 0.06863129215207675,
+        "abs_delta": 0.0,
+        "matches": true
+      },
+      "gen4": {
+        "f3_generation": 4,
+        "f3_median_margin": 0.019988498399807736,
+        "this_median_margin": 0.019988498399807736,
+        "abs_delta": 0.0,
+        "matches": true
+      }
+    },
+    "all_match": true
+  },
+  "repaired_path": [
+    {
+      "path": "repaired",
+      "rung": "low",
+      "generation": 1,
+      "occupied": 8,
+      "slots": 16,
+      "encoder": "localized_centered-v1",
+      "pre_correction": {
+        "keys": 8,
+        "spectrum": {
+          "occupied": 8.0,
+          "width": 128.0,
+          "mean_abs_cos": 0.09370298870318537,
+          "top_share": 0.19307790162752816,
+          "effective_rank": 7.290792856152214,
+          "top_share_centered": 0.20806330509543058,
+          "effective_rank_centered": 6.62476524404437,
+          "effective_rank_fraction": 0.9113491070190267
+        },
+        "margins": {
+          "p95_top_cos": 0.16254367950747145,
+          "median_top_cos": 0.1010056056773948,
+          "median_margin": 0.06863129215207675,
+          "p95_margin": 0.15222532351523005,
+          "median_entropy": 0.7888478536159196
+        },
+        "diagnosis": "separable_no_growth",
+        "decision": "no_growth"
+      },
+      "post_correction": {
+        "keys": 9,
+        "spectrum": {
+          "occupied": 9.0,
+          "width": 128.0,
+          "mean_abs_cos": 0.12671057840050662,
+          "top_share": 0.24919261288076372,
+          "effective_rank": 6.7599816267812205,
+          "top_share_centered": 0.26065576486722053,
+          "effective_rank_centered": 6.192434287579429,
+          "effective_rank_fraction": 0.7511090696423578
+        },
+        "margins": {
+          "p95_top_cos": 0.9605453856664937,
+          "median_top_cos": 0.14286372053498356,
+          "median_margin": 0.09249028681998388,
+          "p95_margin": 0.9046088923859499,
+          "median_entropy": 0.7994280736253304
+        },
+        "diagnosis": "separable_no_growth",
+        "decision": "no_growth"
+      },
+      "write": {
+        "headroom_before_plan": {
+          "occupied": 8,
+          "slots": 16,
+          "pending": 1,
+          "free": 8,
+          "remaining": 7,
+          "h_slots": 0.4375,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "plan": {
+          "action": "write_now",
+          "slots": 16,
+          "reason": "headroom_ok"
+        },
+        "headroom_authorising": {
+          "occupied": 8,
+          "slots": 16,
+          "pending": 1,
+          "free": 8,
+          "remaining": 7,
+          "h_slots": 0.4375,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "committed": 1,
+        "dropped_writes": 0,
+        "evictions": 0,
+        "appended": true,
+        "value_matches": true,
+        "reason": "committed"
+      },
+      "control": {
+        "correction_at_1": 0.0,
+        "old_slot_at_1": 1.0,
+        "value_at_1": 0.0,
+        "self_at_1": 0.0,
+        "median_weight_on_correction": 0.0,
+        "median_residual_to_correction": 1.4257906056707266,
+        "synonym_margins": [
+          0.8987449839124055,
+          0.8982137232760663,
+          0.8986807860841787,
+          0.8991464729581601
+        ],
+        "synonym_weight_on_correction": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rows": {
+          "self": {
+            "top_slot": 0,
+            "margin": 0.9067495574121244,
+            "top_cos": 0.9605453856664934,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.9997294257085767,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.9997308962216034
+          },
+          "synonym_1": {
+            "top_slot": 0,
+            "margin": 0.8987449839124055,
+            "top_cos": 0.9606641878581635,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.9996678162285402,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.9996700296117015
+          },
+          "synonym_2": {
+            "top_slot": 0,
+            "margin": 0.8982137232760663,
+            "top_cos": 0.9599594619877125,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.9996650957713755,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.9996673165928409
+          },
+          "synonym_3": {
+            "top_slot": 0,
+            "margin": 0.8986807860841787,
+            "top_cos": 0.9605315668699904,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.9996673730887898,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.9996695844372888
+          },
+          "synonym_4": {
+            "top_slot": 0,
+            "margin": 0.8991464729581601,
+            "top_cos": 0.9607653271292138,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.9996682203540327,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.9996704233417991
+          }
+        }
+      },
+      "treatment": {
+        "correction_at_1": 1.0,
+        "old_slot_at_1": 0.0,
+        "value_at_1": 1.0,
+        "self_at_1": 1.0,
+        "median_weight_on_correction": 0.5104833100251581,
+        "median_residual_to_correction": 0.6979473397888241,
+        "synonym_margins": [
+          0.004288782091211973,
+          0.004227434664906715,
+          0.004139282081897511,
+          0.004138248832014413
+        ],
+        "synonym_weight_on_correction": [
+          0.510637290212818,
+          0.5104833100251581,
+          0.5102635927051441,
+          0.5102612224660631
+        ],
+        "rows": {
+          "self": {
+            "top_slot": 8,
+            "margin": 0.03945461433350683,
+            "top_cos": 1.0000000000000002,
+            "is_old": false,
+            "is_correction": true,
+            "weight_on_old": 0.4025795212546584,
+            "weight_on_correction": 0.5973115215956329,
+            "cos_to_old_value": 0.3925586764070335
+          },
+          "synonym_1": {
+            "top_slot": 8,
+            "margin": 0.004288782091211973,
+            "top_cos": 0.9649529699493755,
+            "is_old": false,
+            "is_correction": true,
+            "weight_on_old": 0.4892001514366332,
+            "weight_on_correction": 0.510637290212818,
+            "cos_to_old_value": 0.480633980727311
+          },
+          "synonym_2": {
+            "top_slot": 8,
+            "margin": 0.004227434664906715,
+            "top_cos": 0.9641868966526193,
+            "is_old": false,
+            "is_correction": true,
+            "weight_on_old": 0.48935274876538726,
+            "weight_on_correction": 0.5104833100251581,
+            "cos_to_old_value": 0.48078916545172756
+          },
+          "synonym_3": {
+            "top_slot": 8,
+            "margin": 0.004139282081897511,
+            "top_cos": 0.9646708489518879,
+            "is_old": false,
+            "is_correction": true,
+            "weight_on_old": 0.4895735077863903,
+            "weight_on_correction": 0.5102635927051441,
+            "cos_to_old_value": 0.4810136066445634
+          },
+          "synonym_4": {
+            "top_slot": 8,
+            "margin": 0.004138248832014413,
+            "top_cos": 0.9649035759612282,
+            "is_old": false,
+            "is_correction": true,
+            "weight_on_old": 0.4895762921757102,
+            "weight_on_correction": 0.5102612224660631,
+            "cos_to_old_value": 0.48101642671140643
+          }
+        }
+      },
+      "overwrite_diagnostic": {
+        "correction_at_1": 1.0,
+        "top1_is_the_rule_entry": 1.0
+      },
+      "correction_direction_band": {
+        "overlap": 0.9630576953127767,
+        "separation": 0.03945461433350661,
+        "nearest_cos": 0.9605453856664934,
+        "verdict": "growth_is_copy"
+      },
+      "mechanism": {
+        "slot_retrieved_rate": 1.0,
+        "blend_weight_on_correction": 0.5104833100251581,
+        "value_residual_to_correction": 0.6979473397888241,
+        "value_fidelity": "blended_near_half_half",
+        "correction_verdict": "growth_is_copy",
+        "in_place_overwrite_reads_clean": true
+      },
+      "verdict": "geometry_holds_but_unreadable",
+      "verdict_zh": "槽位能检索到，但读回的值是新旧各一半（纠正没有取代旧值）"
+    },
+    {
+      "path": "repaired",
+      "rung": "gen4",
+      "generation": 4,
+      "occupied": 64,
+      "slots": 128,
+      "encoder": "localized_centered-v1",
+      "pre_correction": {
+        "keys": 64,
+        "spectrum": {
+          "occupied": 64.0,
+          "width": 128.0,
+          "mean_abs_cos": 0.07831852673872047,
+          "top_share": 0.05683073705447572,
+          "effective_rank": 40.182564669728045,
+          "top_share_centered": 0.043152007921332024,
+          "effective_rank_centered": 41.39555232437162,
+          "effective_rank_fraction": 0.6278525729645007
+        },
+        "margins": {
+          "p95_top_cos": 0.2841313240413071,
+          "median_top_cos": 0.2245058488866857,
+          "median_margin": 0.019988498399807736,
+          "p95_margin": 0.07940978876255725,
+          "median_entropy": 0.9091938162276415
+        },
+        "diagnosis": "separable_no_growth",
+        "decision": "no_growth"
+      },
+      "post_correction": {
+        "keys": 65,
+        "spectrum": {
+          "occupied": 65.0,
+          "width": 128.0,
+          "mean_abs_cos": 0.07888142023032216,
+          "top_share": 0.05667999221763371,
+          "effective_rank": 39.81459206858274,
+          "top_share_centered": 0.04654875194104842,
+          "effective_rank_centered": 40.91062658233628,
+          "effective_rank_fraction": 0.6125321856705037
+        },
+        "margins": {
+          "p95_top_cos": 0.2880550436120853,
+          "median_top_cos": 0.2259357530617439,
+          "median_margin": 0.020900127594929097,
+          "p95_margin": 0.09121221782492388,
+          "median_entropy": 0.9093695348743863
+        },
+        "diagnosis": "separable_no_growth",
+        "decision": "no_growth"
+      },
+      "write": {
+        "headroom_before_plan": {
+          "occupied": 64,
+          "slots": 128,
+          "pending": 1,
+          "free": 64,
+          "remaining": 63,
+          "h_slots": 0.4921875,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "plan": {
+          "action": "write_now",
+          "slots": 128,
+          "reason": "headroom_ok"
+        },
+        "headroom_authorising": {
+          "occupied": 64,
+          "slots": 128,
+          "pending": 1,
+          "free": 64,
+          "remaining": 63,
+          "h_slots": 0.4921875,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "committed": 1,
+        "dropped_writes": 0,
+        "evictions": 0,
+        "appended": true,
+        "value_matches": true,
+        "reason": "committed"
+      },
+      "control": {
+        "correction_at_1": 0.0,
+        "old_slot_at_1": 1.0,
+        "value_at_1": 0.0,
+        "self_at_1": 0.0,
+        "median_weight_on_correction": 0.0,
+        "median_residual_to_correction": 1.4232540536236695,
+        "synonym_margins": [
+          0.8354982738627731,
+          0.8354165735664827,
+          0.835088218838036,
+          0.8361022688215175
+        ],
+        "synonym_weight_on_correction": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rows": {
+          "self": {
+            "top_slot": 0,
+            "margin": 0.8351837452818193,
+            "top_cos": 0.9605453856664934,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.9961902274071166,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.996198920736006
+          },
+          "synonym_1": {
+            "top_slot": 0,
+            "margin": 0.8354982738627731,
+            "top_cos": 0.9606641878581635,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.99609262284189,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.9961039596279513
+          },
+          "synonym_2": {
+            "top_slot": 0,
+            "margin": 0.8354165735664827,
+            "top_cos": 0.9599594619877125,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.9960671424536359,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.9960785455361462
+          },
+          "synonym_3": {
+            "top_slot": 0,
+            "margin": 0.835088218838036,
+            "top_cos": 0.9605315668699904,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.9960909302927666,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.9961022622788288
+          },
+          "synonym_4": {
+            "top_slot": 0,
+            "margin": 0.8361022688215175,
+            "top_cos": 0.9607653271292138,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.996098458892412,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.9961097703048903
+          }
+        }
+      },
+      "treatment": {
+        "correction_at_1": 1.0,
+        "old_slot_at_1": 0.0,
+        "value_at_1": 1.0,
+        "self_at_1": 1.0,
+        "median_weight_on_correction": 0.5095822603912368,
+        "median_residual_to_correction": 0.6979801940709698,
+        "synonym_margins": [
+          0.004288782091211973,
+          0.004227434664906715,
+          0.004139282081897511,
+          0.004138248832014413
+        ],
+        "synonym_weight_on_correction": [
+          0.5097419644626299,
+          0.5095822603912368,
+          0.5093679263034612,
+          0.5093672329513093
+        ],
+        "rows": {
+          "self": {
+            "top_slot": 64,
+            "margin": 0.03945461433350683,
+            "top_cos": 1.0000000000000002,
+            "is_old": false,
+            "is_correction": true,
+            "weight_on_old": 0.40200439575220837,
+            "weight_on_correction": 0.5964582017647925,
+            "cos_to_old_value": 0.39200078350232725
+          },
+          "synonym_1": {
+            "top_slot": 64,
+            "margin": 0.004288782091211973,
+            "top_cos": 0.9649529699493755,
+            "is_old": false,
+            "is_correction": true,
+            "weight_on_old": 0.4883424124877316,
+            "weight_on_correction": 0.5097419644626299,
+            "cos_to_old_value": 0.47979573797384834
+          },
+          "synonym_2": {
+            "top_slot": 64,
+            "margin": 0.004227434664906715,
+            "top_cos": 0.9641868966526193,
+            "is_old": false,
+            "is_correction": true,
+            "weight_on_old": 0.48848899650067223,
+            "weight_on_correction": 0.5095822603912368,
+            "cos_to_old_value": 0.4799450357568167
+          },
+          "synonym_3": {
+            "top_slot": 64,
+            "margin": 0.004139282081897511,
+            "top_cos": 0.9646708489518879,
+            "is_old": false,
+            "is_correction": true,
+            "weight_on_old": 0.48871415871985463,
+            "weight_on_correction": 0.5093679263034612,
+            "cos_to_old_value": 0.48017376154344105
+          },
+          "synonym_4": {
+            "top_slot": 64,
+            "margin": 0.004138248832014413,
+            "top_cos": 0.9649035759612282,
+            "is_old": false,
+            "is_correction": true,
+            "weight_on_old": 0.4887185431393207,
+            "weight_on_correction": 0.5093672329513093,
+            "cos_to_old_value": 0.48017814750945537
+          }
+        }
+      },
+      "overwrite_diagnostic": {
+        "correction_at_1": 1.0,
+        "top1_is_the_rule_entry": 1.0
+      },
+      "correction_direction_band": {
+        "overlap": 0.9775522262037125,
+        "separation": 0.03945461433350661,
+        "nearest_cos": 0.9605453856664934,
+        "verdict": "growth_is_copy"
+      },
+      "mechanism": {
+        "slot_retrieved_rate": 1.0,
+        "blend_weight_on_correction": 0.5095822603912368,
+        "value_residual_to_correction": 0.6979801940709698,
+        "value_fidelity": "blended_near_half_half",
+        "correction_verdict": "growth_is_copy",
+        "in_place_overwrite_reads_clean": true
+      },
+      "verdict": "geometry_holds_but_unreadable",
+      "verdict_zh": "槽位能检索到，但读回的值是新旧各一半（纠正没有取代旧值）"
+    }
+  ],
+  "control_legacy_path": [
+    {
+      "path": "control_legacy",
+      "rung": "low",
+      "generation": 1,
+      "occupied": 8,
+      "slots": 16,
+      "encoder": "mean-v1",
+      "pre_correction": {
+        "keys": 8,
+        "spectrum": {
+          "occupied": 8.0,
+          "width": 128.0,
+          "mean_abs_cos": 0.9981070324040281,
+          "top_share": 0.9983436549179341,
+          "effective_rank": 1.0033205234337017,
+          "top_share_centered": 0.2041604455367169,
+          "effective_rank_centered": 6.648653020121799,
+          "effective_rank_fraction": 0.1254150654292127
+        },
+        "margins": {
+          "p95_top_cos": 0.9984731521917768,
+          "median_top_cos": 0.998359657123959,
+          "median_margin": 0.00011122987965034303,
+          "p95_margin": 0.00016088475062016048,
+          "median_entropy": 0.9999993641107161
+        },
+        "diagnosis": "collapsed_shared_offset",
+        "decision": "representation_repair"
+      },
+      "post_correction": {
+        "keys": 9,
+        "spectrum": {
+          "occupied": 9.0,
+          "width": 128.0,
+          "mean_abs_cos": 0.9981489799567336,
+          "top_share": 0.9983546548629394,
+          "effective_rank": 1.0032983898187176,
+          "top_share_centered": 0.2571599944585134,
+          "effective_rank_centered": 6.196221145220126,
+          "effective_rank_fraction": 0.11147759886874639
+        },
+        "margins": {
+          "p95_top_cos": 1.0000000000000004,
+          "median_top_cos": 0.9983596785034062,
+          "median_margin": 0.00012776555208138252,
+          "p95_margin": 0.0016818601778088027,
+          "median_entropy": 0.9999991753056107
+        },
+        "diagnosis": "collapsed_shared_offset",
+        "decision": "representation_repair"
+      },
+      "write": {
+        "headroom_before_plan": {
+          "occupied": 8,
+          "slots": 16,
+          "pending": 1,
+          "free": 8,
+          "remaining": 7,
+          "h_slots": 0.4375,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "plan": {
+          "action": "write_now",
+          "slots": 16,
+          "reason": "headroom_ok"
+        },
+        "headroom_authorising": {
+          "occupied": 8,
+          "slots": 16,
+          "pending": 1,
+          "free": 8,
+          "remaining": 7,
+          "h_slots": 0.4375,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "committed": 1,
+        "dropped_writes": 0,
+        "evictions": 0,
+        "appended": true,
+        "value_matches": true,
+        "reason": "committed"
+      },
+      "control": {
+        "correction_at_1": 0.0,
+        "old_slot_at_1": 1.0,
+        "value_at_1": 0.0,
+        "self_at_1": 0.0,
+        "median_weight_on_correction": 0.0,
+        "median_residual_to_correction": 1.063363442009381,
+        "synonym_margins": [
+          0.0016818601778082476,
+          0.0016818601778082476,
+          0.0016818601778082476,
+          0.0016818601778082476
+        ],
+        "synonym_weight_on_correction": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rows": {
+          "self": {
+            "top_slot": 0,
+            "margin": 0.0016818601778082476,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.12714572298321805,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.12866991504033864
+          },
+          "synonym_1": {
+            "top_slot": 0,
+            "margin": 0.0016818601778082476,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.12714572298321805,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.12866991504033864
+          },
+          "synonym_2": {
+            "top_slot": 0,
+            "margin": 0.0016818601778082476,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.1271457229832181,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.12866991504033873
+          },
+          "synonym_3": {
+            "top_slot": 0,
+            "margin": 0.0016818601778082476,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.12714572298321805,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.12866991504033864
+          },
+          "synonym_4": {
+            "top_slot": 0,
+            "margin": 0.0016818601778082476,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.12714572298321805,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.12866991504033864
+          }
+        }
+      },
+      "treatment": {
+        "correction_at_1": 0.0,
+        "old_slot_at_1": 1.0,
+        "value_at_1": 0.0,
+        "self_at_1": 0.0,
+        "median_weight_on_correction": 0.11280326970207659,
+        "median_residual_to_correction": 0.9434125688690681,
+        "synonym_margins": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "synonym_weight_on_correction": [
+          0.11280326970207659,
+          0.11280326970207663,
+          0.11280326970207659,
+          0.11280326970207659
+        ],
+        "rows": {
+          "self": {
+            "top_slot": 0,
+            "margin": 0.0,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.11280326970207659,
+            "weight_on_correction": 0.11280326970207659,
+            "cos_to_old_value": 0.11226296294238358
+          },
+          "synonym_1": {
+            "top_slot": 0,
+            "margin": 0.0,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.11280326970207659,
+            "weight_on_correction": 0.11280326970207659,
+            "cos_to_old_value": 0.11226296294238358
+          },
+          "synonym_2": {
+            "top_slot": 0,
+            "margin": 0.0,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.11280326970207663,
+            "weight_on_correction": 0.11280326970207663,
+            "cos_to_old_value": 0.11226296294238361
+          },
+          "synonym_3": {
+            "top_slot": 0,
+            "margin": 0.0,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.11280326970207659,
+            "weight_on_correction": 0.11280326970207659,
+            "cos_to_old_value": 0.11226296294238358
+          },
+          "synonym_4": {
+            "top_slot": 0,
+            "margin": 0.0,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.11280326970207659,
+            "weight_on_correction": 0.11280326970207659,
+            "cos_to_old_value": 0.11226296294238358
+          }
+        }
+      },
+      "overwrite_diagnostic": {
+        "correction_at_1": 1.0,
+        "top1_is_the_rule_entry": 1.0
+      },
+      "correction_direction_band": {
+        "overlap": 1.0,
+        "separation": 0.0,
+        "nearest_cos": 1.0,
+        "verdict": "growth_is_copy"
+      },
+      "mechanism": {
+        "slot_retrieved_rate": 0.0,
+        "blend_weight_on_correction": 0.11280326970207659,
+        "value_residual_to_correction": 0.9434125688690681,
+        "value_fidelity": "blended_near_half_half",
+        "correction_verdict": "growth_is_copy",
+        "in_place_overwrite_reads_clean": true
+      },
+      "verdict": "geometry_holds_but_unreadable",
+      "verdict_zh": "槽位能检索到，但读回的值是新旧各一半（纠正没有取代旧值）"
+    },
+    {
+      "path": "control_legacy",
+      "rung": "gen4",
+      "generation": 4,
+      "occupied": 64,
+      "slots": 128,
+      "encoder": "mean-v1",
+      "pre_correction": {
+        "keys": 64,
+        "spectrum": {
+          "occupied": 64.0,
+          "width": 128.0,
+          "mean_abs_cos": 0.998101379289141,
+          "top_share": 0.9981310456634965,
+          "effective_rank": 1.0037483283921187,
+          "top_share_centered": 0.04319541876114278,
+          "effective_rank_centered": 41.19622472089751,
+          "effective_rank_fraction": 0.015683567631126855
+        },
+        "margins": {
+          "p95_top_cos": 0.998638503304426,
+          "median_top_cos": 0.9984863631793945,
+          "median_margin": 3.36196318569959e-05,
+          "p95_margin": 0.00014626130979155104,
+          "median_entropy": 0.999999638224031
+        },
+        "diagnosis": "collapsed_shared_offset",
+        "decision": "representation_repair"
+      },
+      "post_correction": {
+        "keys": 65,
+        "spectrum": {
+          "occupied": 65.0,
+          "width": 128.0,
+          "mean_abs_cos": 0.9981018872370343,
+          "top_share": 0.998131089377553,
+          "effective_rank": 1.0037482397580018,
+          "top_share_centered": 0.044715917616334123,
+          "effective_rank_centered": 40.85285068104939,
+          "effective_rank_fraction": 0.015442280611661566
+        },
+        "margins": {
+          "p95_top_cos": 0.9986999307243115,
+          "median_top_cos": 0.9984928826113902,
+          "median_margin": 3.761390632217587e-05,
+          "p95_margin": 0.0001896477224663906,
+          "median_entropy": 0.9999996367662775
+        },
+        "diagnosis": "collapsed_shared_offset",
+        "decision": "representation_repair"
+      },
+      "write": {
+        "headroom_before_plan": {
+          "occupied": 64,
+          "slots": 128,
+          "pending": 1,
+          "free": 64,
+          "remaining": 63,
+          "h_slots": 0.4921875,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "plan": {
+          "action": "write_now",
+          "slots": 128,
+          "reason": "headroom_ok"
+        },
+        "headroom_authorising": {
+          "occupied": 64,
+          "slots": 128,
+          "pending": 1,
+          "free": 64,
+          "remaining": 63,
+          "h_slots": 0.4921875,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "committed": 1,
+        "dropped_writes": 0,
+        "evictions": 0,
+        "appended": true,
+        "value_matches": true,
+        "reason": "committed"
+      },
+      "control": {
+        "correction_at_1": 0.0,
+        "old_slot_at_1": 1.0,
+        "value_at_1": 0.0,
+        "self_at_1": 0.0,
+        "median_weight_on_correction": 0.0,
+        "median_residual_to_correction": 1.010471904970737,
+        "synonym_margins": [
+          0.0015667407877058004,
+          0.0015667407877058004,
+          0.0015667407877058004,
+          0.0015667407877058004
+        ],
+        "synonym_weight_on_correction": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rows": {
+          "self": {
+            "top_slot": 0,
+            "margin": 0.0015667407877058004,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.015921800274320854,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.01683129733407488
+          },
+          "synonym_1": {
+            "top_slot": 0,
+            "margin": 0.0015667407877058004,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.015921800274320854,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.01683129733407488
+          },
+          "synonym_2": {
+            "top_slot": 0,
+            "margin": 0.0015667407877058004,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.015921800274320858,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.01683129733407488
+          },
+          "synonym_3": {
+            "top_slot": 0,
+            "margin": 0.0015667407877058004,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.015921800274320854,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.01683129733407488
+          },
+          "synonym_4": {
+            "top_slot": 0,
+            "margin": 0.0015667407877058004,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.015921800274320854,
+            "weight_on_correction": 0.0,
+            "cos_to_old_value": 0.016831297334074884
+          }
+        }
+      },
+      "treatment": {
+        "correction_at_1": 0.0,
+        "old_slot_at_1": 1.0,
+        "value_at_1": 0.0,
+        "self_at_1": 0.0,
+        "median_weight_on_correction": 0.015672269529034246,
+        "median_residual_to_correction": 0.9946355169245188,
+        "synonym_margins": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "synonym_weight_on_correction": [
+          0.015672269529034246,
+          0.01567226952903425,
+          0.015672269529034246,
+          0.015672269529034246
+        ],
+        "rows": {
+          "self": {
+            "top_slot": 0,
+            "margin": 0.0,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.015672269529034246,
+            "weight_on_correction": 0.015672269529034246,
+            "cos_to_old_value": 0.016304570076714736
+          },
+          "synonym_1": {
+            "top_slot": 0,
+            "margin": 0.0,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.015672269529034246,
+            "weight_on_correction": 0.015672269529034246,
+            "cos_to_old_value": 0.016304570076714733
+          },
+          "synonym_2": {
+            "top_slot": 0,
+            "margin": 0.0,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.01567226952903425,
+            "weight_on_correction": 0.01567226952903425,
+            "cos_to_old_value": 0.016304570076714736
+          },
+          "synonym_3": {
+            "top_slot": 0,
+            "margin": 0.0,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.015672269529034246,
+            "weight_on_correction": 0.015672269529034246,
+            "cos_to_old_value": 0.016304570076714733
+          },
+          "synonym_4": {
+            "top_slot": 0,
+            "margin": 0.0,
+            "top_cos": 1.0,
+            "is_old": true,
+            "is_correction": false,
+            "weight_on_old": 0.015672269529034246,
+            "weight_on_correction": 0.015672269529034246,
+            "cos_to_old_value": 0.016304570076714736
+          }
+        }
+      },
+      "overwrite_diagnostic": {
+        "correction_at_1": 1.0,
+        "top1_is_the_rule_entry": 1.0
+      },
+      "correction_direction_band": {
+        "overlap": 1.0,
+        "separation": 0.0,
+        "nearest_cos": 1.0,
+        "verdict": "growth_is_copy"
+      },
+      "mechanism": {
+        "slot_retrieved_rate": 0.0,
+        "blend_weight_on_correction": 0.015672269529034246,
+        "value_residual_to_correction": 0.9946355169245188,
+        "value_fidelity": "blended_near_half_half",
+        "correction_verdict": "growth_is_copy",
+        "in_place_overwrite_reads_clean": true
+      },
+      "verdict": "geometry_holds_but_unreadable",
+      "verdict_zh": "槽位能检索到，但读回的值是新旧各一半（纠正没有取代旧值）"
+    }
+  ],
+  "reading_notes": {
+    "margin_is_not_the_limiter": "the blend weight on the correction is 0.5105 at margin 0.06863 and 0.5096 at margin 0.01999: a 3.4x change of the store's read margin moves the blend by less than 0.002, so the failure is not a margin shortfall",
+    "why_half_half": "the correction and the old entry share one address: their keys differ only by word order, cos = nearest_cos in correction_direction_band (~0.96), and the cosine softmax at temperature 0.1 turns that same-address gap into a near tie; the read value is 0.51 * v' + 0.49 * v_old, residual 0.698 = 0.49 * sqrt(2)",
+    "value_at_1_is_a_tie_break": "value_at_1 is 1.0 on both rungs only because 0.511 > 0.489; it must not be read as 'the corrected value was returned'. The honest measure is the residual",
+    "address_contract": "taiji/living_core.py addressed_write always takes a free slot and only evicts the oldest when the store is full; a near-identical key never supersedes the entry it duplicates, so a correction accumulates instead of replacing",
+    "in_place_overwrite": "the overwrite diagnostic writes v' into the existing slot and reads clean (correction@1 = 1.0, top-1 is the rule entry) at both rungs: the geometry is sufficient, what is missing is a supersede rule, not more capacity",
+    "legacy_encoder": "mean pooling is blind to word order, so the correction key is an exact copy (overlap 1.0, separation 0.0) and its softmax weight is the uniform share 1/(N+1): 0.113 at 9 entries, 0.016 at 65 entries"
+  },
+  "decision": "fail_geometry_holds_but_unreadable|geometry_holds_but_unreadable",
+  "what_this_means": "correction@1 is the fraction of re-worded questions that retrieve the slot the correction was written to; value@1 is the fraction whose read value is closer to the corrected value than to the old one. They are reported apart because a content-addressed store can return the right slot and still hand back a blend of old and new when two entries share one address",
+  "what_this_does_not_mean": [
+    "no training, no optimizer step and no model forward ran; nothing here says the correction survives training",
+    "the fixture is synthetic: a minority of real corrections are re-wordings of the same question, this probe measures exactly that case and nothing else",
+    "value payloads are random unit vectors in the 20.3a payload shape; the readout is a cosine test, not a language-level judgement of the corrected answer",
+    "the overlap/band reading is a geometric verdict on one key, not a calibrated threshold for real stores",
+    "one session, one seed, no persistence across checkpoints"
+  ],
+  "isolation": {
+    "runner_sha256": "6f0018398207b9b142be881f9e3181b84815decf2560bf67b337dd138228802a",
+    "growth_design_sha256": "9976ab69b9c7b0abfc46b3b4131c6048f9bf26313edc84cab83c593971b85388",
+    "growth_runtime_sha256": "2125b1fb80da3f08d63353920bd83bbf88ba7839fcf482a24a2d06a13340ccd6",
+    "growth_modules_import_torch": false,
+    "f3_report": "reports/taiji_growth_f3_multigen_20261108.json",
+    "f3_report_sha256": "609fc176bcd9a52bcf406d644322d97b2046e3bb442361d4be2328fcac4b8986"
+  },
+  "cost": {
+    "cpu_seconds": 0.141,
+    "wall_seconds": 0.178,
+    "cpu_cap": 200.0,
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "model_forwards": 0
+  }
+}

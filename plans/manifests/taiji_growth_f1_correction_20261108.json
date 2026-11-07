@@ -1,0 +1,10 @@
+{
+  "format": "taiji-growth-f1-correction-manifest-v1",
+  "report": "reports/taiji_growth_f1_correction_20261108.json",
+  "report_sha256": "32313a54910a610c739f03f1440cd5a883a1fa356d04b08545b8bf0b54a4e4ee",
+  "runner": "scripts/training/probe_taiji_growth_f1_correction_20261108.py",
+  "runner_sha256": "6f0018398207b9b142be881f9e3181b84815decf2560bf67b337dd138228802a",
+  "growth_design_sha256": "9976ab69b9c7b0abfc46b3b4131c6048f9bf26313edc84cab83c593971b85388",
+  "growth_runtime_sha256": "2125b1fb80da3f08d63353920bd83bbf88ba7839fcf482a24a2d06a13340ccd6",
+  "decision": "fail_geometry_holds_but_unreadable|geometry_holds_but_unreadable"
+}
