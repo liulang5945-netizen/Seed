@@ -1,0 +1,10 @@
+{
+  "step": "growth-zero-perturbation",
+  "report": "reports/taiji_growth_zero_perturbation_20261108.json",
+  "report_sha256": "ae399e541d4ca766ea1a15cbe919b231208ab60ac528b9b77056a9a229629c7d",
+  "probe_runner_sha256": "59dc26e0fb56cffbc3d1ce1930e43cef6436cd6703b9d22553e98febf206d0fb",
+  "source_runner_sha256": "6903857a86842c906ff7d71424ae66e6c79f137e6bc3914c9765aea79abd05d7",
+  "decision": "zero_perturbation",
+  "cpu_seconds": 61.78125,
+  "wall_seconds": 63.82750368118286
+}

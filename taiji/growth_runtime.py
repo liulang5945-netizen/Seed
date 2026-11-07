@@ -70,12 +70,24 @@ def encode_read_key(
     ``localized_centered``: per-dimension variance-weighted pooling plus a
     top-k position residual, then optional centroid subtraction, then L2.
     """
-    context = np.asarray(context, dtype=np.float64)
-    if context.ndim == 1:
-        context = context[None, :]
     if cfg.mode == "mean":
+        # Legacy path: literally the same operator, in the same framework, dtype
+        # and reduction order as the frozen construction.  Do not coerce to numpy
+        # first: numpy float32 mean and torch float32 mean differ in the last bits
+        # for T >= 18 (max 1.2e-7), which would perturb the key bytes.
+        if context.ndim == 1:
+            context = context[None, :]
         key = context.mean(axis=0)
-    elif cfg.mode == "localized_centered":
+        if cfg.center and centroid is not None:
+            if hasattr(key, "new_tensor"):
+                key = key - key.new_tensor(centroid)
+            else:
+                key = key - np.asarray(centroid, dtype=key.dtype)
+        return key
+    if cfg.mode == "localized_centered":
+        context = np.asarray(context, dtype=np.float64)
+        if context.ndim == 1:
+            context = context[None, :]
         mu = context.mean(axis=0)
         deviation = np.abs(context - mu)
         logits = deviation / max(cfg.tau, 1e-6)

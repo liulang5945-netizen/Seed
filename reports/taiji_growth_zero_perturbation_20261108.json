@@ -1,0 +1,98 @@
+{
+  "format": "taiji-growth-zero-perturbation-v1",
+  "date": "2026-11-08",
+  "decision": "zero_perturbation",
+  "passed": true,
+  "failed": [],
+  "criteria": {
+    "bit_identity": true,
+    "task1_not_degraded": true,
+    "default_zero_overhead": true,
+    "mismatch_rule": "no tuning, no threshold relaxation; a designed change is reported separately"
+  },
+  "bit_identity": {
+    "checks": {
+      "encoder_contexts_nonzero": true,
+      "encoder_bytes_identical": true,
+      "contexts_identical_across_replays": true,
+      "empty_contexts_bypass_encoder": true,
+      "row_hash_equal": true,
+      "state_digest_equal": true,
+      "store_hash_equal": true,
+      "row_count_equal": true
+    },
+    "encoder_contexts": 61,
+    "encoder_bytes_equal": 61,
+    "contexts_equal": 61,
+    "empty_contexts": 0,
+    "max_abs_diff": 0.0,
+    "allowed_diff": 1e-12,
+    "row_hash_before": "05a089463c76c1f7dfe693f083fa56ea01b81ea43bd97b9313a72a44954a3bb9",
+    "row_hash_after": "05a089463c76c1f7dfe693f083fa56ea01b81ea43bd97b9313a72a44954a3bb9",
+    "state_digest_before": "f525befe405a6f6c7c728ed262496101000448802905500116ffbead0541edbf",
+    "state_digest_after": "f525befe405a6f6c7c728ed262496101000448802905500116ffbead0541edbf",
+    "store_hash_before": "977e3d77f055cf5b8dd3ff91b658f8136808c1ab79b1cdb4a25dfe6e6360c5a6",
+    "store_hash_after": "977e3d77f055cf5b8dd3ff91b658f8136808c1ab79b1cdb4a25dfe6e6360c5a6",
+    "note": "the default encoder calls the same operator in the same framework, dtype and reduction order as the frozen construction (context.mean(0)), so the key bytes are identical and the diff is exactly 0; numpy float32 mean differs from torch float32 mean in the last bits for T>=18 (max 1.2e-7), which is why the mean path is not coerced to numpy"
+  },
+  "default_zero_overhead": {
+    "checks": {
+      "parameter_count_equal": true,
+      "identity_sha_equal": true,
+      "identity_dict_equal": true,
+      "store_bytes_equal": true,
+      "rng_torch_untouched": true,
+      "rng_numpy_untouched": true,
+      "rng_python_untouched": true,
+      "modules_were_not_preloaded": true
+    },
+    "parameter_count": 3323547,
+    "state_bytes": 2130184,
+    "identity_sha_before": "235bc6e7e978711071811fe0e0fc0faf41733b6874ff18d6fb696e034c18bc71",
+    "identity_sha_after": "235bc6e7e978711071811fe0e0fc0faf41733b6874ff18d6fb696e034c18bc71",
+    "rng": {
+      "torch": true,
+      "numpy": true,
+      "python": true
+    },
+    "growth_modules": [
+      "taiji.growth_design",
+      "taiji.growth_runtime"
+    ]
+  },
+  "task1_not_degraded": {
+    "checks": {
+      "train_digest_equal": true,
+      "dev_digest_equal": true,
+      "sealed_digest_agrees": true,
+      "train_worlds_24": true,
+      "dev_worlds_12": true
+    },
+    "recomputed_train_digest": "ffe721a6b5fef8c4a86765ba0f83e064ec97111590fbc8c0aa16b85ede37e5f4",
+    "recomputed_dev_digest": "84dc10d78b798577335c30dee59a4d3b348a90b951f867a14d89da87200fb9c3",
+    "sealed_train_digest": "ffe721a6b5fef8c4a86765ba0f83e064ec97111590fbc8c0aa16b85ede37e5f4",
+    "sealed_dev_digest": "84dc10d78b798577335c30dee59a4d3b348a90b951f867a14d89da87200fb9c3",
+    "train_worlds": 24,
+    "dev_worlds": 12,
+    "sealed_completed_readings": [
+      0.0,
+      0.145833,
+      0.5625
+    ],
+    "note": "no confirm read and no model forward: trained accuracy is quoted from the sealed 15.1 closeout and cannot be changed because the graph bytes are identical (bit_identity)"
+  },
+  "designed_differences": [],
+  "isolation": {
+    "frozen_files_scanned": 25,
+    "growth_modules_in_frozen_set": 0,
+    "source_runner": "scripts/training/probe_taiji_package20_3a_addressed_store.py",
+    "source_runner_sha256": "6903857a86842c906ff7d71424ae66e6c79f137e6bc3914c9765aea79abd05d7",
+    "probe_runner_sha256": "59dc26e0fb56cffbc3d1ce1930e43cef6436cd6703b9d22553e98febf206d0fb",
+    "parent_bundle_sha256": "fe04fbfb14aa0390877385a4429f2a851396a6fe6acb3107bae0a5e4e331dfca"
+  },
+  "cost": {
+    "cpu_seconds": 61.78125,
+    "wall_seconds": 63.82750368118286,
+    "adam_calls": 0
+  }
+}
