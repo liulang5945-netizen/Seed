@@ -1,0 +1,53 @@
+{
+  "schema": "taiji-fec1-wv2-retest-feature-card-v1",
+  "package": "FEC-1/W-v2-redesign",
+  "date": "2026-11-08",
+  "status": "frozen_before_any_reading",
+  "parent_prereg_v2": "plans/manifests/taiji_f_expressive_capacity_prereg_v2_20261108.json",
+  "parent_criteria_v2_sha256": "aa3a8aefbe932247c3fcb8eed711f6dfc062698b146ff3485939bec1e0a10877",
+  "closeout_card": "plans/reference/CLOSEOUT-FEC1-WINDOW_20261108.md",
+  "note": "First retest card of the NEW window authorized by the owner on 2026-11-08 ('立 F 写入通路重设计 v2 新窗口'). The window implements the three-component architecture-requirement input distilled by the FEC-1 closeout; components ② and ③ are implemented here, component ① was landed in the W1 line and is inherited. Frozen before any model forward pass of the v2 graph.",
+  "design": {
+    "component_1_content_write_keys": "inherited verbatim from W1 round 2: content feature c = normalize(byte_count(goal) - centroid) (centroid = input-side mean byte-count of the 22 probe-face queries, seed-pinned), write key k = unit_ball(unit_ball(raw_key) + gain * unit_ball(P c)), P = shared 32x128 projection (seed 20261031), gain = 1.0",
+    "component_2_full_read_write_tying": "the read pathway STOPS using its independent fast_queries MLP and instead reuses the write-addressing function: the read query's MLP component is the write-head key segment computed at the READ's own context (pre-update h, the same event/goal/nu/past_error/error_missing/mode that read_fast already receives; the +9 write-context tail uses the step's actual past_error/error_missing/mode values). One addressing function, used by both read and write - the classic tied-key associative-memory commitment. The deployed write key remains computed at the post-update h as before; the alignment gate therefore measures the shared function under the within-step h delta, which is the honest deployed pair. Gate semantics unchanged. The independent fast_queries parameters stay registered but are unused while the flag is on.",
+    "component_3_value_path_content_conditioning": "the written value becomes v = sigmoid(write_gate) * unit_ball(tanh(value_raw) + gain * unit_ball(P c)) - the SAME projection P and the SAME centered content basis as the keys, so written values are content-discriminative by construction (round 2 measured the 22 written values spanning only rank 5, which starved the closed-form retrieval). Decay/erase/write-gate/chi segments untouched.",
+    "flags": "one new config flag content_path_v2 (default False) turns on components 2 and 3 on top of content_keys_enabled; with every flag off the subject is bit-identical to the pre-change graph (parity gate as before)"
+  },
+  "graph": {
+    "base_builder": "probe_taiji_package20_4c_r2_formal_comparison.build_graph(candidate, gate, arm) (sha 112c76ae...), NO checkpoint load - same function-class rationale as rounds 1-2 (the parent attribution showed collapse at init)",
+    "enable": "taiji.rule_learning_20_1_net.enable_content_path_v2(graph, seed=20261031, centroid=<input-side centroid>): enables content keys (centered) AND content_path_v2, registers P and the centroid buffer",
+    "population": [
+      {"arm": "CF1", "state": "init, v2 write path enabled"},
+      {"arm": "B_EH", "state": "init, v2 write path enabled"}
+    ],
+    "agreement": "2/2 required, else inconclusive"
+  },
+  "probe_face": {
+    "fixture": "taiji.rule_learning_20_1",
+    "seed": 20261105,
+    "world_index": 0,
+    "surface_filter": "row['correction_surface'] and row['released_lines'] > 0",
+    "expected_surfaces": 22,
+    "same_face_as_rounds_1_2": true,
+    "confirm_reads": 0
+  },
+  "conditions": {
+    "forced": "allowed=torch.ones((groups, fast_heads)) on every subject call (binding verdict)",
+    "actual": "graph semantics as-is, reported separately, never promoted",
+    "parity_gate": "BEFORE any v2 reading: the DISABLED graph must reproduce graph.run_turn bit-identically"
+  },
+  "capture_conventions": {
+    "inherit": "hooks for raw write output; keys and queries from the trace (post-injection, post-tying); recomputed bitwise cross-check extended to the v2 value: expected_written_value = sigmoid(write_gate) * unit_ball(tanh(value_raw) + gain * unit_ball(P c)) recomputed from the hook raw, the step's goal bytes and the registered projection; face event = final observe step; M_final = end-of-replay F; analysis conventions inherited from the round-1/2 cards",
+    "controls": "v2 capacity-capped controls (32-dim seeded random projections; window as-is; permutation per-seed MAX 20261105..20261109)"
+  },
+  "verdict_semantics": {
+    "rule": "v2 decision rule and precedence, 2/2 instance agreement",
+    "success_semantics": "expressive_capacity_present under v2 = architecture-requirement input; the next step is one-time pricing of a bounded training window (owner decision), NOT automatic training",
+    "failure_semantics": "this is the first retest of a NEW window (the two-round cap applied to the W1 loop inside the previous window, which was force-closed); a negative verdict here goes back to the owner with the updated layered attribution"
+  },
+  "budget": {
+    "proposal_cap": 2000.0,
+    "expected": "about 150-250 CPU",
+    "discipline": "0 training / 0 optimizer steps / 0 confirm / criteria sha (v2) verified in-runner and unchanged after reading"
+  }
+}

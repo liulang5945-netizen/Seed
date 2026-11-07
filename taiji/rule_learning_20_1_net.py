@@ -590,3 +590,18 @@ def enable_content_keys(
         content_gain=float(config.content_gain),
         content_centered=bool(centered),
     )
+
+
+def enable_content_path_v2(
+    graph: RuleLearningGraph,
+    seed: int = 20261031,
+    centroid: torch.Tensor | None = None,
+) -> None:
+    """FEC-1/W-v2 window: enable the full redesigned write path.
+
+    Component 1 (content write keys, centered) + component 2 (tied reads via
+    the write-addressing function) + component 3 (content-conditioned values),
+    sharing one projection P and one content basis."""
+    enable_content_keys(graph, seed=seed, centroid=centroid, centered=True)
+    subject = graph.subject
+    subject.config = replace(subject.config, content_path_v2=True)

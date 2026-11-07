@@ -92,8 +92,27 @@ class GatedGrowthCore(LivingCoreReference):
             if getattr(c, "content_keys_enabled", False)
             else None
         )
+        read_override = (
+            self.tied_read_keys(
+                state.h,
+                event,
+                goal_vector,
+                nu,
+                ref.new_tensor(kwargs.get("past_error", 0.0)),
+                kwargs.get("error_missing", True),
+                F.one_hot(torch.tensor(kwargs.get("mode", 0), device=ref.device), 7).to(ref.dtype),
+            )
+            if getattr(c, "content_path_v2", False)
+            else None
+        )
         fast, fast_queries, fast_values = self.read_fast(
-            state.h, state.fast, event, goal_vector, nu, content_feature=content_feature
+            state.h,
+            state.fast,
+            event,
+            goal_vector,
+            nu,
+            content_feature=content_feature,
+            query_override=read_override,
         )
         recalled, episodic_weights = self.episodic(state.h, goal_vector, view)
         x = torch.cat(

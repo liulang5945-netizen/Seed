@@ -41,6 +41,7 @@ class LivingCoreConfig:
     content_keys_enabled: bool = False
     content_gain: float = 1.0
     content_centered: bool = False
+    content_path_v2: bool = False
 
     def __post_init__(self) -> None:
         if not 1 <= self.groups <= 4 or self.width < 2 or self.width % 2:
@@ -384,7 +385,29 @@ class LivingCoreReference(nn.Module):
         attention = torch.softmax(q @ k.T / math.sqrt(self.config.width), dim=-1)
         return attention @ v, attention, q, k, v
 
-    def read_fast(self, h, memory, event, goal, nu, content_feature=None):
+    def tied_read_keys(self, h, event, goal, nu, past_error, error_missing, mode):
+        """Component 2 (v2 window): the read query reuses the write-addressing
+        function - the write-head key segment evaluated at the read's own
+        context.  Returns (groups, fast_heads, key_width), boost NOT applied."""
+        c = self.config
+        keys = []
+        for group, network in enumerate(self.write_heads):
+            context = torch.cat(
+                [
+                    state_normalize(h[group]),
+                    event,
+                    goal,
+                    nu,
+                    past_error.reshape(1),
+                    event.new_tensor([error_missing]),
+                    mode,
+                ]
+            )
+            raw = network(context).view(c.fast_heads, -1)
+            keys.append(unit_ball(raw[:, : c.key_width]))
+        return torch.stack(keys)
+
+    def read_fast(self, h, memory, event, goal, nu, content_feature=None, query_override=None):
         c = self.config
         inputs = torch.cat(
             [state_normalize(h), event.expand_as(h), goal.expand_as(h), nu.expand_as(h)], dim=-1
@@ -397,12 +420,15 @@ class LivingCoreReference(nn.Module):
             content_boost = unit_ball(projection @ content_feature)
         queries, values, merged = [], [], []
         for group in range(c.groups):
-            q = torch.stack(
-                [
-                    unit_ball(self.fast_queries[group * c.fast_heads + head](inputs[group]))
-                    for head in range(c.fast_heads)
-                ]
-            )
+            if query_override is not None:
+                q = query_override[group]
+            else:
+                q = torch.stack(
+                    [
+                        unit_ball(self.fast_queries[group * c.fast_heads + head](inputs[group]))
+                        for head in range(c.fast_heads)
+                    ]
+                )
             if content_boost is not None:
                 q = unit_ball(q + c.content_gain * content_boost)
             value = torch.einsum("hkv,hk->hv", memory[group], q)
@@ -466,6 +492,8 @@ class LivingCoreReference(nn.Module):
             key, value, chi = unit_ball(key), unit_ball(torch.tanh(value)), torch.sigmoid(chi)
             if content_boost is not None:
                 key = unit_ball(key + c.content_gain * content_boost)
+                if getattr(c, "content_path_v2", False):
+                    value = unit_ball(value + c.content_gain * content_boost)
             heads = [
                 self.edit_fast(
                     memory[group, head],
@@ -653,8 +681,27 @@ class LivingCoreReference(nn.Module):
         view = self.source_view(records, owner, scope, now)
         coverage, prior = self.align_positions(state, view.keys)
         message, message_weights, mq, mk, mv = self.messages(state.h, goal_vector)
+        read_override = (
+            self.tied_read_keys(
+                state.h,
+                event,
+                goal_vector,
+                nu,
+                past_error,
+                error_missing,
+                F.one_hot(torch.tensor(mode, device=ref.device), 7).to(ref.dtype),
+            )
+            if getattr(c, "content_path_v2", False)
+            else None
+        )
         fast, fast_queries, fast_values = self.read_fast(
-            state.h, state.fast, event, goal_vector, nu, content_feature=content_feature
+            state.h,
+            state.fast,
+            event,
+            goal_vector,
+            nu,
+            content_feature=content_feature,
+            query_override=read_override,
         )
         recalled, episodic_weights = self.episodic(state.h, goal_vector, view)
         x = torch.cat(
