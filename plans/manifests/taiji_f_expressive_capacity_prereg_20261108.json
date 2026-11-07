@@ -1,0 +1,186 @@
+{
+  "schema": "taiji-f-expressive-capacity-prereg-v1",
+  "package": "FEC-1",
+  "date": "2026-11-08",
+  "status": "frozen_pending_execution_approval",
+  "note": "Pre-registration only. No forward pass, no checkpoint read, no reading has been produced by this file. runner/report hashes are null on purpose and must not be prefilled. criteria is the single machine-readable source of every gate; criteria_sha256 is its SHA-256 over canonical JSON (sort_keys, ensure_ascii=False, separators comma/colon) and must be recomputable byte-for-byte.",
+  "spec": "plans/reference/SPEC-F_EXPRESSIVE_CAPACITY_PREREG_20261108.md",
+  "authority": {
+    "owner_decision": "owner 2026-11-08 approved opening the zero-training expressiveness criterion special topic in answer to CLOSEOUT-PACKAGE21_GLOBAL_20261107 section 5",
+    "upstream_question": "plans/reference/CLOSEOUT-PACKAGE21_GLOBAL_20261107.md section 5",
+    "parent_identity": "C12 structural parent, candidate 1d69e945..., unchanged",
+    "graph_identity": "20.4c_r2 build_graph(candidate, gate, arm) with addressed_store_enabled=False, unchanged",
+    "scope_boundary": "This topic answers ONLY whether the current graph function class can express per-question/per-feedback-event separability and addressability. It is not training, not pricing, not a package number, not a capability claim, and not a milestone close."
+  },
+  "inputs": {
+    "checkpoints": "the four 20.4c_r2 final checkpoints (2 seeds x 2 arms, step 200) enumerated in reports/taiji_package21_1_readout_decomposition_20261107.json cells[*].checkpoint and cells[*].checkpoint_sha256; each sha256 must be recomputed before any reading",
+    "checkpoint_count": 4,
+    "worlds": "20.1 rule_learning_20_1.build_world(seed, index); dev indices follow 21.1 (index 160,165,...,235 every 5, worlds_per_cell=16)",
+    "correction_surfaces_per_world": 22,
+    "session_split": {
+      "session_1": 5,
+      "session_2": 17
+    },
+    "distinct_query_texts": 22,
+    "distinct_bits": 11,
+    "random_init_control": "build_graph with config seed 20261031, zero training, same graph and same replay schedule; used only to separate architecture-inherent collapse from training-induced collapse"
+  },
+  "known_prior": {
+    "f_shape": "F is state.living.fast with shape (groups=4, fast_heads=2, key_width=32, value_width=32) = 8192 elements",
+    "write_operator": "edit_fast: M' = (1-chi) M + chi * ( (I - beta * d d^T) (decay * M) + k (write * v)^T ), d = erase * k, beta = eta ||d||^2 / (1 + eta ||d||^2) in (0,1), eta = 16 sigmoid(strength); the erase step is the (I + eta e e^T)^{-1} proximal form and is non-expansive for every e and eta >= 0",
+    "read_operator": "read_fast: value_h = M_h q_h, q_h = unit_ball(fast_queries[g*heads+h]([state_normalize(h_g), event, goal, nu])); write key k comes from a DIFFERENT MLP (write_heads) over [state_normalize(h_g), event, goal, nu, past_error, missing, mode]; there is no weight tying between k and q",
+    "second_pathway": "addressed_store (20.3a) uses key = mean of BytePatchEncoder.context over the turn query bytes (128-d) and value = the then-current F; addressed_store_enabled=False for the whole 20.4c_r2 / 21.1 / 21.3 lineage and for this topic",
+    "prior_20_2s": {
+      "distinct_f_vectors": 2,
+      "distinct_f_vectors_session1": 1,
+      "distinct_f_vectors_session2": 1,
+      "f_elements": 8192,
+      "f_norm_min": 0.9499950422503572,
+      "f_norm_max": 1.2915287568783882,
+      "f_written_lines": 10,
+      "turns_per_world": 51,
+      "primary_probe_decision_bit_accuracy": 0.6818,
+      "window_identity_matches_f": true
+    },
+    "prior_20_3a": {
+      "key_separation_median_margin": 0.003173992259827507,
+      "key_separation_fraction_below_0_05": 1.0,
+      "note": "the 22 query keys of the second pathway are nearly collinear; this is a reading about the encoder-mean key, not about write_heads keys"
+    },
+    "prior_20_3b": "oracle F substitution changed 0/22 and 0 bytes",
+    "prior_21_3": {
+      "verdict": "representation_axis_closed_for_this_graph",
+      "primary_probe": 0.6364,
+      "window_identity_control": 0.6818,
+      "binding_margin": -0.0455,
+      "legacy_mean_margin": 0.1182,
+      "f_cosine_median": "approximately 1.0",
+      "rank": 2,
+      "distinct_f_vectors": 2,
+      "checkpoints_bitwise_identical": true
+    }
+  },
+  "criteria": {
+    "question": "Under the unchanged C12 structural parent and the unchanged current graph, does the fast weight F carry a function class that can separate and address per-question / per-feedback-event values?",
+    "primary_metric": "forced-write key-space separability: effective rank, pairwise cosine separability and condition number of the write keys emitted by write_heads under an allowed=all-True replay, plus the closed-form tied-key readout accuracy",
+    "forced_write_definition": "the ONLY intervention is the per-group/per-head boolean write-permission mask passed as allowed=torch.ones((groups, fast_heads), dtype=bool). No parameter changes, no optimizer step, no graph edit, no checkpoint write, no data change",
+    "gates": {
+      "timing_coverage_min": 0.8,
+      "key_effective_rank_min": 3,
+      "key_pairwise_separable_fraction_min": 0.95,
+      "key_cosine_threshold": 0.95,
+      "key_norm_median_min": 0.001,
+      "condition_number_max": 100.0,
+      "query_alignment_cosine_median_min": 0.5,
+      "query_effective_rank_min": 3,
+      "value_effective_rank_min": 3,
+      "capacity_min": 22,
+      "probe_accuracy_min": 0.6,
+      "probe_margin_min": 0.2,
+      "effective_dof_min": 3
+    },
+    "definitions": {
+      "timing_coverage": "written_turns / correction_turns, where written is the fast-write flag reported per turn; binding value is the MINIMUM over the four checkpoints",
+      "effective_rank": "number of singular values s_i of the stacked key matrix K with s_i / s_max >= 1e-2",
+      "pairwise_separable_fraction": "fraction of unordered pairs (i,j) with |cos(k_i, k_j)| <= key_cosine_threshold; binding value is the MINIMUM over the 8 (group, head) key stacks",
+      "key_norm_median": "median L2 norm of the write keys; a near-zero key makes the outer product vanish and the readout identically zero, so it is a hard failure not a degenerate pass",
+      "condition_number": "s_max / s_min over the non-degenerate singular values of K; reported for the best (group, head) stack only, as a global ill-conditioning diagnostic",
+      "query_alignment": "median cosine between the read query q_i and the write key k_i produced from the same context; a small value means the two independent MLPs occupy different subspaces and no tied readout can work",
+      "capacity": "sum over (group, head) of min(32, tau_decay) where tau_decay = 1 / (1 - decay) from the decay head; an upper bound on how many events one matrix can carry before exponential forgetting erases the earliest",
+      "closed_form_readout": "V_hat = M_final K (G + eps I)^{-1} with G = K^T K, eps = 1e-6; leave-one-event-out nearest-neighbour decode from V_hat to the event id",
+      "effective_dof": "number of distinct F vectors observed under forced write across the correction surfaces; below 3 no PASS verdict is valid"
+    },
+    "controls": [
+      "window_identity",
+      "label_permutation_5_seeds",
+      "random_projection_same_dim_same_norm",
+      "no_f_other_persistent_state"
+    ],
+    "control_statistic": {
+      "window_identity": "one fitted probe on the 2-d feedback-window one-hot of 20.2s",
+      "label_permutation_5_seeds": "per-seed MAX over seeds 20261105..20261109, the 20.3a frozen statistic; mean is reported for sensitivity only and is never binding",
+      "random_projection_same_dim_same_norm": "one fitted probe on a random tensor of the same shape and norm as F",
+      "no_f_other_persistent_state": "the 20.2s other_features(row) pipeline"
+    },
+    "label_permutation_seeds": [
+      20261105,
+      20261106,
+      20261107,
+      20261108,
+      20261109
+    ],
+    "strongest_control": "max of the four frozen control statistics",
+    "margin_definition": "primary_accuracy - strongest_control",
+    "checkpoint_aggregation": "all four 20.4c_r2 final checkpoints evaluated independently; the binding verdict uses the STRICTEST (minimum margin); any disagreement across checkpoints implies inconclusive",
+    "forced_write_primacy": "the binding verdict is computed under forced write, not under the actual sparse write. The actual-timing reading is reported as a separate named verdict and must never be promoted to the structural verdict, and the structural verdict must never be excused by the timing reading",
+    "question_axis_rule": "per-question separability is assessed on the 22 distinct query texts; per-feedback-event separability on the 22 correction surfaces; the 11 distinct bit patterns are the semantic upper bound of independent content, so a PASS on texts with FAIL on bits is reported as text-level-only separability and does not satisfy the question axis",
+    "decision_rule": {
+      "expressive_capacity_present": "forced-write key_effective_rank >= 3 AND pairwise_separable_fraction >= 0.95 AND key_norm_median >= 1e-3 AND condition_number <= 100 AND query_alignment >= 0.5 AND value_effective_rank >= 3 AND capacity >= 22 AND closed_form_accuracy >= 0.6 AND margin >= 0.2 AND effective_dof >= 3 AND all four checkpoints agree; produces an ARCHITECTURE-REQUIREMENT INPUT only, not training admission, not pricing, not a capability claim",
+      "key_space_collapsed_structurally": "under forced write, key_effective_rank < 3 OR pairwise_separable_fraction < 0.95 OR key_norm_median < 1e-3 OR condition_number > 100; this is a function-class verdict, independent of write timing and of training dose; range-limited to the current graph and the current checkpoint lineage",
+      "key_space_collapsed_under_actual_timing": "under forced write the key gates pass, but under the actual sparse write they fail; this attributes the collapse to write timing, which is an engineering change, not an architecture change, and does not license training",
+      "query_key_misaligned": "key gates pass but query_alignment < 0.5 or query_effective_rank < 3; the smallest sufficient fix is weight tying or a shared projection between write key and read query, not a new subject",
+      "value_space_collapsed": "value_effective_rank < 3; the key space separates but the written values do not",
+      "capacity_below_event_count": "capacity < 22; exponential forgetting bounds the matrix below the event count regardless of key quality",
+      "inconclusive": "effective_dof < 3 OR checkpoint disagreement OR fewer than 22 assessable surfaces OR any gate exactly on its boundary; report every raw value and interval; no threshold change, no dose change, no automatic training transition",
+      "engineering_stop": "any checkpoint sha mismatch / graph identity drift / criteria_sha256 mismatch / feature card not frozen before reading / confirm touched / runner dual hash mismatch / any parameter or optimizer mutation"
+    },
+    "verdict_precedence": [
+      "engineering_stop",
+      "capacity_below_event_count",
+      "key_space_collapsed_structurally",
+      "query_key_misaligned",
+      "value_space_collapsed",
+      "key_space_collapsed_under_actual_timing",
+      "expressive_capacity_present",
+      "inconclusive"
+    ],
+    "budget": {
+      "cpu_soft_cap": 1200,
+      "cpu_stop_threshold": 1500,
+      "wall_cap": 2250,
+      "note": "no training, no optimizer step; the only compute is forward replay of 4 checkpoints x 16 worlds x 3 write conditions plus the random-init control"
+    }
+  },
+  "criteria_sha256": "1e0dde222d557b4ea97eee528b9f73a2aec3068a2c462e927465e415fa3b6142",
+  "runner": "scripts/training/probe_taiji_f_expressive_capacity.py",
+  "runner_sha256": null,
+  "submitted_runner_sha256": null,
+  "feature_card": null,
+  "feature_card_sha256": null,
+  "report": "reports/taiji_f_expressive_capacity_20261108.json",
+  "report_sha256": null,
+  "expected_products": [
+    "reports/taiji_f_expressive_capacity_20261108.json",
+    "plans/manifests/taiji_f_expressive_capacity_20261108.json",
+    "reports/taiji_f_expressive_capacity_20261108_progress.jsonl",
+    "per-surface readings: 22 surfaces x 4 checkpoints x 3 write conditions",
+    "four control raw values",
+    "dual-statistic sensitivity: max-control binding, mean-control legacy reported only",
+    "forced-write vs actual-write verdict pair, reported separately and never merged"
+  ],
+  "discipline": {
+    "training": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "new_parameters": 0,
+    "checkpoint_writes": 0,
+    "graph_edits": 0,
+    "confirm_indices_touched": 0,
+    "pricing": 0,
+    "new_package_number": 0,
+    "criteria_frozen_before_any_reading": true,
+    "no_threshold_change_after_reading": true,
+    "no_automatic_training_transition": true
+  },
+  "stop_line": {
+    "state": "frozen_pending_execution_approval",
+    "question_to_owner": "Whether to execute the FEC-1 readings under this frozen contract (0 training, CPU <= 1500).",
+    "not_authorized_by_this_file": [
+      "executing any reading",
+      "changing any gate value",
+      "opening a training package",
+      "claiming a capability",
+      "closing a milestone"
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "schema": "taiji-fec-1-prereg-guard-v1",
+  "date": "2026-11-08",
+  "manifest": "plans/manifests/taiji_f_expressive_capacity_prereg_20261108.json",
+  "guards": {
+    "criteria_sha_green": true,
+    "criteria_sha_red": true,
+    "headline_green": true,
+    "headline_red": true,
+    "spec_no_gate_literal_green": true,
+    "spec_no_gate_literal_red": true
+  },
+  "passed": true,
+  "detail": {
+    "criteria": {
+      "declared": "1e0dde222d557b4ea97eee528b9f73a2aec3068a2c462e927465e415fa3b6142",
+      "recomputed": "1e0dde222d557b4ea97eee528b9f73a2aec3068a2c462e927465e415fa3b6142",
+      "green_agrees": true,
+      "red_mutation_changes_sha": true,
+      "mutated_sha": "ad924d56fa0a533023375a7e5c47766f1a74c0980fc08bd99cd411e3fe703fd6"
+    },
+    "headline": {
+      "green_all_identical": true,
+      "red_mutation_detected": true,
+      "comparator": "all_identical(texts) == len(set(texts)) == 1, shared by both directions",
+      "lengths": {
+        "MAINLINE.md": 163,
+        "MASTER-PLAN.md": 163,
+        "ROADMAP-NEXT_20261104.md": 163
+      },
+      "sha256": {
+        "MAINLINE.md": "d61a79fe6f5fe8440b0d0861d80f4bbc7bcc3a36a93bd12b2838ba5e3eab1c0b",
+        "MASTER-PLAN.md": "d61a79fe6f5fe8440b0d0861d80f4bbc7bcc3a36a93bd12b2838ba5e3eab1c0b",
+        "ROADMAP-NEXT_20261104.md": "d61a79fe6f5fe8440b0d0861d80f4bbc7bcc3a36a93bd12b2838ba5e3eab1c0b"
+      },
+      "headline": "包 21 已全局收束，唯一可对外能力仍为 C12；这是包 21 收束，不是 M 线或里程碑关闭。收束卡 §5 的下一轮唯一核心问题已由 owner 裁定为「先立零训练可表达性判据专项」，FEC-1 判据已冻结、待 owner 单独裁定执行；未裁决前不得再以训练剂量立项，21.2／21.4／U1 与各训练包保持冻结，不新开包。"
+    },
+    "spec": {
+      "green_spec_has_no_gate_literal": true,
+      "red_planted_literal_detected": true,
+      "offenders": []
+    }
+  },
+  "note": "document-and-hash guard only; 0 graph loads, 0 checkpoint reads, 0 forward passes"
+}
