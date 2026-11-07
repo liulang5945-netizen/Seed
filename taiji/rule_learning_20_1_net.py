@@ -113,6 +113,7 @@ class RuleLearningGraph(nn.Module):
         arm: str,
         growth_gates: dict[str, float] | None = None,
         addressed_store_enabled: bool = False,
+        write_timing_per_turn: bool = False,
     ) -> None:
         super().__init__()
         if arm not in ARMS:
@@ -120,6 +121,7 @@ class RuleLearningGraph(nn.Module):
         self.subject = subject
         self.arm = arm
         self.fast_enabled = arm == FAST_ARM
+        self.write_timing_per_turn = bool(write_timing_per_turn)
         self.addressed_store_enabled = bool(addressed_store_enabled)
         self.store_enabled = bool(self.addressed_store_enabled and self.fast_enabled)
         grown = getattr(subject, "growth_parent_units", None) is not None
@@ -399,12 +401,15 @@ class RuleLearningGraph(nn.Module):
             living, read_info = self.subject.addressed_read(base.living, query)
             base = RuleState(living, base.journal, base.revision)
         records = self._records(released, now)
+        # W3 write-timing policy: per-turn permission when enabled (arm-gated),
+        # else the release-only default (bit-identical to pre-change).
+        turn_write = self.fast_enabled if self.write_timing_per_turn else False
         living = self.subject.observe(
             base.living,
             query,
             goal=query,
             records=records,
-            allowed=self._allowed(False),
+            allowed=self._allowed(turn_write),
             now=now,
             **self.step_kwargs,
         )
@@ -423,7 +428,7 @@ class RuleLearningGraph(nn.Module):
                 goal=query,
                 records=records,
                 previous_byte=previous,
-                allowed=self._allowed(False),
+                allowed=self._allowed(turn_write),
                 now=now,
                 **self.step_kwargs,
             )
@@ -605,3 +610,11 @@ def enable_content_path_v2(
     enable_content_keys(graph, seed=seed, centroid=centroid, centered=True)
     subject = graph.subject
     subject.config = replace(subject.config, content_path_v2=True)
+
+
+def enable_write_timing_per_turn(graph: RuleLearningGraph) -> None:
+    """W3: switch the deployed write schedule from release-only to per-turn.
+
+    0 parameters, 0 structure; the flag is arm-gated (fast_enabled), so B_EH
+    keeps its empty deployed write schedule by definition."""
+    graph.write_timing_per_turn = True

@@ -1,0 +1,41 @@
+{
+  "schema": "taiji-w3-write-timing-feature-card-v1",
+  "package": "W3-write-timing",
+  "date": "2026-11-08",
+  "status": "frozen_before_any_reading",
+  "parent_prereg_v3": "plans/manifests/taiji_f_expressive_capacity_prereg_v3_20261108.json",
+  "criteria_v3_sha256": "875a55b9ee4e75ffc17a43aab4ff6498be8f0966fb696af3986902cb4d77ed3f",
+  "write_path_card": "plans/manifests/taiji_fec1_wv2_retest_feature_card_20261108.json",
+  "line_closeout": "plans/reference/CLOSEOUT-FEC1-WINDOW_20261108.md",
+  "note": "W3 engineering package (owner admission 2026-11-08), separated from the closed FEC-1 line per R-D16-46. The v3 retest established the function class (face-isolated 1.0, all forced-side gates green); the ONLY blocker for expressive_capacity_present is the deployed write schedule: run_turn hardcodes allowed=False so correction faces structurally cannot write (measured coverage 0.0, written 10/51). W3 changes the write-PERMISSION POLICY only - 0 parameters, 0 structure, 0 training.",
+  "policy_change": {
+    "definition": "new graph flag write_timing_per_turn (default False): when on, EVERY processed turn (correction faces and ordinary turns alike) writes F during its whole processing window - observe patches and answer-loop steps - with allowed = fast_enabled (arm semantics respected: B_EH never writes in deployed behavior); release writes unchanged",
+    "rationale": "'per feedback event' addressing requires the event's own write; the release-only schedule structurally excludes correction faces. Per-turn is the simplest policy that lets every face write; finer schedules (write-only-at-faces) are a later refinement if per-turn passes",
+    "implementation": "RuleLearningGraph gains write_timing_per_turn=False; run_turn's two hardcoded _allowed(False) become _allowed(fast_enabled if write_timing_per_turn else False); enable_write_timing_per_turn(graph) helper; with the flag off the graph is BIT-IDENTICAL to pre-change (parity gate)",
+    "what_it_is_not": "not a parameter change, not a structure change, not a training admission; W3 does not license training and its task-gain question (if any) is a separate window per the W1 branch plan"
+  },
+  "evaluation": {
+    "graph": "the W-v2 redesigned write path (content keys + tied reads + content-conditioned values, enable_content_path_v2) + the W3 policy flag, at initialization, same probe face (seed 20261105, world index 0, 22 surfaces)",
+    "binding_instance": "CF1 - the timing question only exists for arms whose semantics include an F feedback path; B_EH's empty deployed write schedule is its ARM DEFINITION, not a timing defect, so it is reported as the arm-definition control and is not binding for the timing verdict",
+    "deviation_note": "the v2/v3 cards used two-instance agreement; W3 scopes the binding instance to the feedback-capable arm and pins that here before readings - a single-instance binding with the other arm as control",
+    "conditions": {
+      "forced": "allowed=all-True replay, unchanged from v3 (expected: all forced-side gates stay green - the policy flag does not touch the forced path)",
+      "actual_w3": "the deployed semantics UNDER THE W3 POLICY: turn-phase allowed = fast_enabled, release-phase allowed = fast_enabled (release semantics unchanged)"
+    }
+  },
+  "capture_and_analysis": {
+    "inherit": "all capture/analysis conventions inherited from the W-v2 card and prereg v3: hooks + bitwise cross-checks, face event = final observe step, M_final diagnostic, face-isolated binding closed-form, v2 capacity-capped controls, effective rank 1e-2, eps=1e-6, NN decode",
+    "verdict": "v3 decision rule and precedence via the committed fec1.checkpoint_verdict, with actual_key_result from the W3-policy actual replay; if actual key gates pass, the timing verdict no longer fires and expressive_capacity_present is judged on the forced-side gates (already green) - full gate table reported either way",
+    "increment_accounting": "W3 exit requires: parameter count delta = 0, structure delta = 0, journal-length distribution unchanged vs the old policy (writes are not journaled), state bundle size unchanged"
+  },
+  "exit_conditions": {
+    "pass": "W3-policy actual key gates pass (binding rank >= 3, pairwise >= 0.95, norm >= 1e-3, cond <= 100) AND timing coverage = 1.0 AND all forced-side gates green AND increments zero => expressive_capacity_present (architecture-requirement input; the bounded training window then requires one-time pricing and owner admission as its own case)",
+    "fail": "actual key gates still fail under per-turn writing => the timing fix is insufficient; STOP, report the layered attribution to the owner; no second policy iteration inside this package (anti-rabbit-holing: one policy, one retest)",
+    "accounting": "verdict + coverage reading + increment ledger + 0-parameter/0-structure verification + 0 confirm declaration"
+  },
+  "budget": {
+    "proposal_cap": 2000.0,
+    "expected": "about 150-250 CPU",
+    "discipline": "0 training / 0 optimizer steps / 0 confirm / criteria sha (v3) verified in-runner and unchanged after reading"
+  }
+}

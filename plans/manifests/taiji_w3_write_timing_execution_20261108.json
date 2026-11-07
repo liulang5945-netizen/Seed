@@ -1,0 +1,18 @@
+{
+  "schema": "taiji-w3-write-timing-execution-manifest-v1",
+  "package": "W3",
+  "date": "2026-11-08",
+  "card": "plans/manifests/taiji_w3_write_timing_feature_card_20261108.json",
+  "card_sha256": "89368c853609be2dfcd35c83772958882b0b1cb9b6d32dd3863f0f265a80b185",
+  "criteria_v3_sha256": "875a55b9ee4e75ffc17a43aab4ff6498be8f0966fb696af3986902cb4d77ed3f",
+  "report": "reports/taiji_w3_write_timing_20261108.json",
+  "report_sha256": "a546dfd8ce17594227f9cf24c5b7905f513dbb7e8852b8da278cc34ad639292f",
+  "runner": "scripts/training/probe_taiji_w3_write_timing_20261108.py",
+  "runner_sha256": "28e30593b7c49c245ac6a674c748c28bb856d6d2c696c97c4f37251e155bb8d9",
+  "submitted_runner_sha256": "28e30593b7c49c245ac6a674c748c28bb856d6d2c696c97c4f37251e155bb8d9",
+  "verdict": "expressive_capacity_present",
+  "cost": {
+    "cpu_seconds": 161.281,
+    "wall_seconds": 161.599
+  }
+}

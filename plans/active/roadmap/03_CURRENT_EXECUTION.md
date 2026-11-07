@@ -2850,3 +2850,9 @@ v3 预注册（[manifest](../../plans/manifests/taiji_f_expressive_capacity_prer
 ## 2026-11-08（FEC-1 线结案）：owner 质询「是否结项后推」后终局收口——线 CLOSED，W3/训练窗立为独立新范围
 
 owner 指出连续多轮队首都以「剩余阻塞＋下一步」收尾，读感如无限延期。核账结论：**不是后推**——本线唯一问题（v1 规格 §1 函数类问题）已答完：原图判负（终局）＋重设计图成立（face-isolated 1.0、forced 全结构门过、verdict 终局读数自身语义「工程改动非架构」）；但队首写法确实把「下一个阻塞」写成了本线的延续。修正：[收束卡](CLOSEOUT-FEC1-WINDOW_20261108.md)改终局版（线 CLOSED）、三处队首改为「FEC-1 线已结案＋W3 为独立新范围待准入」、账本 R-D16-46 登记「结项先问问题答完了吗」纪律。窗口终账 727.92 CPU（322.69＋150.92＋126.31＋135.55→含 v3 128.0 共 863.47？以各报告为准逐笔可查）、0 训练、0 confirm、四版判据谱系闭合。
+
+## 2026-11-08（W3 执行）：owner 裁定启动后实施时机策略并复测，binding CF1 判 `expressive_capacity_present`——FEC-1 全弧线闭合
+
+实现（[card](../../plans/manifests/taiji_w3_write_timing_feature_card_20261108.json) `89368c85…` 读数前冻结）：`write_timing_per_turn` 旗（0 参数 0 结构，default-off；run_turn 两处 `_allowed(False)` 改策略感知 `_allowed(fast_enabled if flag else False)`，臂门 respected——B_EH 部署语义保持空写）＋`enable_write_timing_per_turn`。验证三道：default-off parity 逐位过；**策略部署等价**（flag on 的 run_turn vs driver W3 actual 重放，逐轮 F 张量逐位——首跑失败为参照循环采样点错误〔release 轮 F 在 release 前采集〕非策略分歧，修正后逐位）；oracle 12/12、全门绿。runner `probe_taiji_w3_write_timing_20261108.py`：binding=CF1（时机问题只对有 F 反馈通路臂存在，card 读数前钉死）、B_EH=臂定义控制。**幻影键修正**：face 事件键过滤到 F 实际变化的面（trace write_keys 在 allowed=False 时也返回已计算未提交键——否则 B_EH 控制臂会在幻影键上假通过）；修正后 B_EH 正确落在 timing 判负（0/22 提交写）。
+
+读数（[报告](../../reports/taiji_w3_write_timing_20261108.json)；**161.28 CPU** / 0 训练 / 0 confirm / v3 判据 sha 读后未改）：**binding CF1 verdict=`expressive_capacity_present`**——W3 策略下 actual 提交写键门全过（22/22、pairwise 0.974、秩 7、coverage 1.0）＋forced 侧全绿（对齐 0.9997、margin 0.3182、face-isolated 1.0）。**FEC-1 全弧线闭合**（R-D16-47）：v1 塌缩 0.0 → 特征/对齐修复 → 三部件 forced 全过 → face-isolated 1.0 → 时机修复 ⇒ 架构需求输入完整。队首写回三处逐字一致；**下一步＝owner 裁定有界训练窗（一次性定价＋准入，另案；W3 不构成训练理由）**；能力账不变。

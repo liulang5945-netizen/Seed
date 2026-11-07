@@ -1104,3 +1104,10 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | R-D16-45 | **队首** | owner 裁定是否启动 W3 写入时机工程线：allowed 掩码策略改每纠正面写（0 参数 / 0 结构 / ~150 CPU）→ actual 口径复测 → 键门过则 present 达成（forced 侧已全绿），FEC-1 产出完整架构需求输入、可为有界训练窗定价；W3 不构成训练理由（manifest 语义） |
 
 | R-D16-46 | **FEC-1 线结案（CLOSED，2026-11-08 owner 确认结项口径后终局）** | 本线唯一问题（F 函数类）已有终局答案：原图判负（终局，范围限定）＋重设计图成立（face-isolated 1.0＋全结构门过，架构需求输入非能力声称）；verdict 终局读数 `key_space_collapsed_under_actual_timing` 自身语义「工程改动、非架构」。**W3 写入时机与有界训练窗是独立新范围（原分支设计切分），不是本线未完项**：W3 独立包待 owner 准入（0 参数 0 结构）；训练窗须定价＋owner 准入。防「结项后推」纪律：窗口结案先问「问题答完了吗」，修不完的部件列入新范围而非本线余项；线内两轮 cap 已在 W1 循环触发过一次强制收束 |
+
+## 26. W3 写入时机工程包与 FEC-1 全弧线闭合（2026-11-08）
+
+| 编号 | 登记 | 内容 |
+|---|---|---|
+| I29 | **W3 读数（owner 准入后执行）** | 策略旗 `write_timing_per_turn`（0 参数 0 结构，default-off；run_turn 两处掩码改策略感知，parity＋策略部署等价逐位过——后者首跑失败为参照循环采样点错误非策略分歧）。binding CF1：**W3 策略下 actual 提交写键门全过（22/22 face 提交写、pairwise 0.974、秩 7、coverage 1.0）＋forced 侧全绿 ⇒ verdict=`expressive_capacity_present`**。B_EH 控制臂落在 `key_space_collapsed_under_actual_timing`（臂门关闭→0 提交写→败＝正确控制语义）。**幻影键修正**：trace write_keys 在 allowed=False 时也返回已计算未提交键——face 事件键必须过滤到 F 实际变化的面，否则控制臂会在幻影键上假通过。161.28 CPU / 0 训练 / 0 confirm / v3 判据 sha（875a55b9）读后未改 |
+| R-D16-47 | **FEC-1 全弧线闭合与队首** | v1 键塌缩 0.0（架构固有）→ W1 特征/对齐逐层修复（两轮 cap 触发强制收束）→ W-v2 三部件 forced 结构门全过（对齐 0.9997）→ v3 face-isolated 1.0（函数类坐实，M_final=干扰冲刷诊断）→ W3 时机修复 ⇒ **expressive_capacity_present 达成＝架构需求输入完整**。队首＝owner 裁定有界训练窗（一次性定价＋准入，另案）；W3 不构成训练理由；能力账不变（C12 唯一） |
