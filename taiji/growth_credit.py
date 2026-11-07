@@ -143,6 +143,11 @@ class GatedGrowthCore(LivingCoreReference):
         )
         action = ref.new_zeros(c.width) if kwargs.get("action") is None else kwargs["action"]
         predictions = torch.stack([head(torch.cat([z, action])) for head in self.world])
+        content_feature = (
+            self.content_feature(kwargs.get("goal", b""))
+            if getattr(c, "content_keys_enabled", False)
+            else None
+        )
         memory, chi, write_keys = self.write_fast(
             h,
             state.fast,
@@ -153,6 +158,7 @@ class GatedGrowthCore(LivingCoreReference):
             ref.new_tensor(kwargs.get("past_error", 0.0)),
             kwargs.get("error_missing", True),
             allowed,
+            content_feature=content_feature,
         )
         child_state = replace(
             state,

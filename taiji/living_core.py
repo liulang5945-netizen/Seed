@@ -35,6 +35,11 @@ class LivingCoreConfig:
     max_source_bytes: int = 512
     max_target_bytes: int = 128
     seed: int = 20261031
+    # Content-conditioned write keys (FEC-1/W1(a), default off).  With the flag
+    # off the reference is bit-identical to the pre-change graph; the projection
+    # parameter exists only when enabled (registered post construction).
+    content_keys_enabled: bool = False
+    content_gain: float = 1.0
 
     def __post_init__(self) -> None:
         if not 1 <= self.groups <= 4 or self.width < 2 or self.width % 2:
@@ -411,10 +416,28 @@ class LivingCoreReference(nn.Module):
         norm = torch.linalg.vector_norm(candidate)
         return candidate if bool(norm <= limit) else candidate * (limit / norm)
 
-    def write_fast(self, h, memory, event, goal, nu, mode, past_error, error_missing, allowed):
+    def write_fast(
+        self,
+        h,
+        memory,
+        event,
+        goal,
+        nu,
+        mode,
+        past_error,
+        error_missing,
+        allowed,
+        content_feature=None,
+    ):
         c = self.config
         if allowed.shape != (c.groups, c.fast_heads) or allowed.dtype != torch.bool:
             raise ValueError("Fast write permissions require a per-group/per-head boolean mask")
+        content_boost = None
+        if content_feature is not None:
+            projection = getattr(self, "key_content_proj", None)
+            if projection is None:
+                raise ValueError("Content-conditioned keys require the registered projection")
+            content_boost = unit_ball(projection @ content_feature)
         result, all_chi, all_keys = [], [], []
         for group, network in enumerate(self.write_heads):
             context = torch.cat(
@@ -432,6 +455,8 @@ class LivingCoreReference(nn.Module):
             splits = (c.key_width, c.value_width, c.key_width, c.key_width, c.value_width, 1, 1)
             key, value, decay, erase, write, strength, chi = raw.split(splits, dim=-1)
             key, value, chi = unit_ball(key), unit_ball(torch.tanh(value)), torch.sigmoid(chi)
+            if content_boost is not None:
+                key = unit_ball(key + c.content_gain * content_boost)
             heads = [
                 self.edit_fast(
                     memory[group, head],
@@ -650,6 +675,9 @@ class LivingCoreReference(nn.Module):
         )
         action = ref.new_zeros(c.width) if action is None else action
         predictions = torch.stack([head(torch.cat([z, action])) for head in self.world])
+        content_feature = (
+            self.content_feature(goal) if getattr(c, "content_keys_enabled", False) else None
+        )
         memory, chi, write_keys = self.write_fast(
             h,
             state.fast,
@@ -660,6 +688,7 @@ class LivingCoreReference(nn.Module):
             ref.new_tensor(past_error),
             error_missing,
             allowed,
+            content_feature=content_feature,
         )
         child = replace(
             state,
@@ -702,6 +731,18 @@ class LivingCoreReference(nn.Module):
         return LivingStep(
             child, probabilities, copied, view, predictions[:, :-1], predictions[:, -1], trace
         )
+
+    @staticmethod
+    def content_feature(goal) -> torch.Tensor:
+        """L2-normalized 128-dim byte-count vector of the goal text (W1(a))."""
+        if isinstance(goal, str):
+            goal = goal.encode("utf-8")
+        raw = goal if isinstance(goal, (bytes, bytearray)) else bytes(goal)
+        feature = torch.zeros(128, dtype=torch.float64)
+        for value in raw:
+            feature[int(value) % 128] += 1.0
+        norm = float(torch.linalg.vector_norm(feature))
+        return feature / norm if norm > 0 else feature
 
     @staticmethod
     def consume_output(output: LivingStep, byte: int) -> LivingState:

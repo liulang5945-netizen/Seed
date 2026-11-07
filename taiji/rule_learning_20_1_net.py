@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import copy
 import hashlib
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any
 
 import torch
@@ -554,3 +554,25 @@ def copy_subject(subject: nn.Module) -> nn.Module:
     clone = copy.deepcopy(subject)
     clone.eval()
     return clone
+
+
+def enable_content_keys(graph: RuleLearningGraph, seed: int = 20261031) -> None:
+    """W1(a): turn on content-conditioned write keys on this graph's subject.
+
+    Registers the shared 32x128 projection (seeded init) and swaps the frozen
+    config for one with the flag on.  The subject must be a living-core graph
+    subject; calling twice re-initializes the projection deterministically."""
+    subject = graph.subject
+    config = getattr(subject, "config", None)
+    if config is None or not hasattr(config, "content_keys_enabled"):
+        raise ValueError("content-conditioned keys require a living-core subject config")
+    key_width = int(config.key_width)
+    generator = torch.Generator().manual_seed(seed)
+    reference = subject.W
+    projection = torch.randn(
+        key_width, 128, generator=generator, dtype=reference.dtype, device=reference.device
+    ) / (128**0.5)
+    subject.key_content_proj = nn.Parameter(projection)
+    subject.config = replace(
+        config, content_keys_enabled=True, content_gain=float(config.content_gain)
+    )

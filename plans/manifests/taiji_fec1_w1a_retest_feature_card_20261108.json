@@ -1,0 +1,57 @@
+{
+  "schema": "taiji-fec1-w1a-retest-feature-card-v1",
+  "package": "FEC-1/W1(a)-retest",
+  "date": "2026-11-08",
+  "status": "frozen_before_any_reading",
+  "parent_prereg": "plans/manifests/taiji_f_expressive_capacity_prereg_20261108.json",
+  "parent_criteria_sha256": "1e0dde222d557b4ea97eee528b9f73a2aec3068a2c462e927465e415fa3b6142",
+  "parent_report": "reports/taiji_f_expressive_capacity_20261108.json",
+  "note": "Retest feature card for W1 option (a), frozen before any model forward pass of the NEW graph. The criteria (gates, decision rule, verdict precedence) are UNCHANGED from the parent prereg; this card pins only the NEW evaluated graph, its construction, and the population deviation. Any criteria change would require a new pre-registration version, not this card.",
+  "design": {
+    "branch": "W1 option (a): write-key generator input directly conditioned on per-turn question content",
+    "mechanism": "content feature c = L2-normalized 128-dim byte-count vector of the step's goal bytes (the question text; parameter-free, the 21.3 query_key convention); a trainable projection P (32x128, seeded init, shared across all groups and heads) maps c to the key width; the write key becomes k = unit_ball(unit_ball(raw_key) + gain * unit_ball(P c)) with gain FIXED at 1.0 (hyperparameter, not learned); value/decay/erase/write-gate/chi segments are untouched",
+    "rationale": "FEC-1 (parent report) showed the collapse is architecture-inherent: write keys are near-collinear (pairwise separable fraction 0.0) for every input context, at random init as well as after training, while the write machinery itself responds to content (dof=22). Option (a) treats the cause: the key gets a dedicated content-driven additive direction, so distinct questions force distinct key directions by construction. The additive form keeps the learned key MLP intact and leaves the closed-form tied-key readout semantics unchanged.",
+    "default_off": "content_keys_enabled defaults to False; with the flag off the subject's behavior is bit-identical to the pre-change graph (verified by the driver-equivalence gate in the retest runner before any new-graph reading); the new parameter and config fields exist only when enabled"
+  },
+  "graph": {
+    "base_builder": "probe_taiji_package20_4c_r2_formal_comparison.build_graph(candidate, gate, arm) (sha 112c76ae...), NO checkpoint load - the retest evaluates the NEW graph at initialization, inheriting the Task1 structural parent weights for all unchanged modules",
+    "enable": "taiji.rule_learning_20_1_net.enable_content_keys(graph, seed=20261031): replaces the frozen config via dataclasses.replace(content_keys_enabled=True, content_gain=1.0) and registers key_content_proj (32x128, torch.Generator(seed) normal init std=1/sqrt(128))",
+    "identity": "the enabled graph's candidate identity differs from the 20.x lineage by construction (one new trainable parameter 4096 elements + config fields); both identities are recorded in the report; the disabled graph must reproduce the OLD identity",
+    "population": {
+      "instances": [
+        {"arm": "CF1", "state": "init (no checkpoint load), content keys enabled"},
+        {"arm": "B_EH", "state": "init (no checkpoint load), content keys enabled"}
+      ],
+      "deviation_from_parent_manifest": "the parent manifest binds four 20.4c_r2 trained checkpoints; those weights cannot load into the new graph (write_heads first-layer input shape is unchanged - the content pathway is additive outside the MLP - so the checkpoints CAN load, but loading them would measure the OLD trained MLP plus a random new pathway, conflating the two architectures). The retest population is therefore the new graph at initialization, both arms, 2/2 agreement required; the four-checkpoint binding remains attached to the parent (old-graph) verdict and is not re-interpreted.",
+      "rationale": "FEC-1 is a function-class question; the parent attribution showed collapse already at random init, so init is the correct state to test whether the new architecture has the capacity, before any training decision."
+    }
+  },
+  "probe_face": {
+    "fixture": "taiji.rule_learning_20_1",
+    "seed": 20261105,
+    "world_index": 0,
+    "surface_filter": "row['correction_surface'] and row['released_lines'] > 0",
+    "expected_surfaces": 22,
+    "same_face_as_parent": true,
+    "confirm_reads": 0
+  },
+  "conditions": {
+    "forced": "allowed=torch.ones((groups, fast_heads)) on every subject call (binding verdict)",
+    "actual": "graph semantics as-is, reported separately, never promoted to the structural verdict",
+    "parity_gate": "BEFORE any new-graph reading: build the DISABLED graph for CF1, run the FEC-1 driver equivalence (bit-identical to graph.run_turn), proving the additive change is inert when off"
+  },
+  "capture_conventions": {
+    "inherit": "all capture and analysis conventions of the parent feature card (taiji_f_expressive_capacity_feature_card_20261108.json) are inherited verbatim: hooks + trace cross-check, face event = final observe step, M_final = end-of-replay F, effective rank 1e-2 relative, eps=1e-6, NN decode, controls, capacity, timing coverage",
+    "cross_check_adjustment": "with content keys enabled the trace's write_keys are POST-injection; the retest runner recomputes the expected post-injection key from the hook raw, the goal bytes, and the registered projection, and requires bitwise equality"
+  },
+  "verdict_semantics": {
+    "rule": "identical decision rule and verdict precedence as the parent prereg manifest, evaluated per instance (2 instances); binding = both instances agree, else inconclusive",
+    "success_semantics": "expressive_capacity_present on the NEW graph produces an architecture-requirement input for the subsequent bounded training window (which requires one-time pricing and the full training hard gates); it is NOT training admission, NOT a capability claim",
+    "failure_semantics": "round 1 of the W1 fix-retest loop; on failure the remaining option-tree entries (b) tied-key+whitening, (c) orthogonal codebook, (d) content-addressed key-source redesign may be tried once each per the two-round cap in the W1 branch plan"
+  },
+  "budget": {
+    "proposal_cap": 2000.0,
+    "expected": "about 150-250 CPU (4 new-graph replays + 1 parity replay + analysis)",
+    "discipline": "0 training / 0 optimizer steps / 0 confirm / no checkpoint writes / criteria sha unchanged"
+  }
+}
