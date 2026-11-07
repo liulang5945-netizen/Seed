@@ -1,5 +1,15 @@
 """Independent algebra pre-checks for the unified-subject algebra U1 (2026-11-07).
 
+INVALID EVIDENCE (annotated 2026-11-08, owner-approved U1 errata):
+  The U1 normalization check below (``check_u1``, lines ~64-68) builds ``w`` by
+  hard-coding rows that already sum to ``1 - q_null``.  That makes the assertion
+  a tautology on hand-satisfied input; it is NOT evidence that U1 emission is
+  normalized.  The mathematical statement is now an identity under the bound
+  null definition (SPEC-TAIJI-UNIFIED_CORE_U1_20261107.md §3 定义 3.1 / §4
+  命题 4.1) and must be re-tested with ``w`` generated from (alpha, beta, lambda,
+  m_mass) per the construction, not with a pre-normalized ``w``.  See
+  U1-ERRATA_20261108.md §2.2 and the spec's §4 evidence-invalid banner.
+
 Verifies the seam-closure propositions of SPEC-TAIJI-UNIFIED_CORE_U1:
   U1  unified emission normalization (K-branch x per-branch gen/copy mixture)
   U2  posterior decomposition = exact joint Bayes over (branch, record position)
