@@ -1,0 +1,685 @@
+{
+  "format": "taiji-growth-gate-p1b-v1",
+  "generated_at": "2026-11-08T00:41:08",
+  "criteria_written_before_reading": {
+    "R1_exit_decoupled_from_trigger": "commit_rejected_no_direction exists as its own exit; it is appended only when the direction band says growth_is_copy and the policy claims a direction; no rank number can add a failure code",
+    "R2_rank_has_no_threshold": "taiji/growth_gate.py has no GATE_G2_MAX_RANK_DROP; effective rank is reported as a reading (detail.rank_is_reading_only is true) and blocks nothing",
+    "R3_two_hit_definitions_reported": "every arm reports H-slot (top1 == written_slot) and H-value (residual <= 0.5); the gate pass test is H-value; H-slot is a reading; both verdicts are listed, neither is picked after the reading",
+    "R4_copy_is_refused": "append with the same correction key: not published, exit commit_rejected_no_direction",
+    "R5_replace_is_admitted": "replace with the same key: published, exit commit_accepted, bytes delta 0, retention unchanged, H-value true and read value equals v'",
+    "R6_new_entry_is_admitted": "append with a rule that is not in the store: published, exit commit_accepted, band growth_new_direction, Delta eff_rank recorded (reading, no threshold)",
+    "R7_no_collateral_damage": "for every admitted arm each untouched slot keeps itself as top-1 and residual < 0.05",
+    "unchanged": "no threshold, rung, battery or question is retuned after the first reading"
+  },
+  "question": "after removing the rank clause from G2 and defining both hit definitions, does the gate refuse the copy, admit the supersede and admit the new entry?",
+  "previous_run": {
+    "decision": "p1b_falsified_R1_R4",
+    "checks": {
+      "R1": false,
+      "R2": true,
+      "R3": true,
+      "R4": false,
+      "R5": true,
+      "R6": true,
+      "R7": true
+    },
+    "arms": {
+      "append_copy": {
+        "band": "growth_is_copy",
+        "published": false,
+        "exit_code": "commit_rejected_no_gain",
+        "failed": [
+          "commit_rejected_no_gain",
+          "commit_rejected_no_direction"
+        ],
+        "H_slot": true,
+        "H_value": false,
+        "residual": 1.425834
+      },
+      "replace_same_key": {
+        "band": "growth_is_copy",
+        "published": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "H_slot": true,
+        "H_value": true,
+        "residual": 0.000207
+      },
+      "append_new_entry": {
+        "band": "growth_new_direction",
+        "published": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "H_slot": true,
+        "H_value": true,
+        "residual": 0.000633
+      }
+    },
+    "generated_at": "2026-11-08T00:39:57",
+    "gate_sha256": "3bb3c45dac92419a28267d42f7d054be13c616f96c921345532c3dbca06a758e",
+    "runner_sha256": "e38889b9c5c73163ab223e34e880c6ec34ef67c26b3ef394f75f9a4148c8f172",
+    "superseded_because": "implementation did not match the registered exit order for a copy, and H-value was read on the restored state instead of the judged shadow state; criteria unchanged"
+  },
+  "implementation_corrections": {
+    "criteria_changed": false,
+    "thresholds_changed": false,
+    "items": [
+      {
+        "what": "the direction clause now sits before G4 in the failure order",
+        "why": "R4 fixed the exit for a copy at commit_rejected_no_direction; the first attempt appended the direction failure after G4, so a copy exited as commit_rejected_no_gain",
+        "kind": "implementation aligned to the registered exit, not a criterion change"
+      },
+      {
+        "what": "H-slot and H-value are read on the shadow state the gate judged",
+        "why": "the first attempt read them on the restored state, which answers 'what is stored now' instead of 'would this write have fixed its own case'",
+        "kind": "measurement aligned to the written definition"
+      }
+    ],
+    "first_run_kept_in": "previous_run"
+  },
+  "pre_run_defect": {
+    "found": "P1/P2's evaluate() set written_slot = top1, so 'top1 != written_slot' could never be true and G4's hit clause was a tautology",
+    "fixed_before_this_run": "run_gate now passes the slot from apply_receipt; G4 decides on value fidelity and the slot hit is a reported reading",
+    "effect_on_earlier_reports": "P1 and P2 are not restated; their rejections were caused by the rank clause and the blend residual, neither of which this defect touches"
+  },
+  "scope_decision": {
+    "primary": "direction clause applies to policies that claim a direction (append); replace is exempt",
+    "reason": "the band answers 'did this write grow a new direction'; replace makes a different claim (this address now returns v'). Registered before the run, not selected from the readings.",
+    "alternative": {
+      "reading": "direction clause applies to every policy, replace included",
+      "replace_band": "growth_is_copy",
+      "predicted_exit_for_replace": "commit_rejected_no_direction",
+      "derived_from": "recorded band verdict plus the arm's other four conditions, all green",
+      "status": "reported, not the primary verdict"
+    }
+  },
+  "thresholds": {
+    "g1_max_retention_drop": 0,
+    "g2_max_margin_drop": 0.002,
+    "g3_max_state_bytes": 33280,
+    "g3_min_slot_headroom": 0.125,
+    "g4_max_value_residual": 0.5,
+    "direction_min_overlap": 0.15,
+    "direction_max_overlap": 0.85,
+    "direction_min_separation": 0.3,
+    "direction_exempt_policies": [
+      "replace"
+    ],
+    "eff_rank_threshold": null,
+    "temperature": 0.1
+  },
+  "checks": {
+    "R1": true,
+    "R2": true,
+    "R3": true,
+    "R4": true,
+    "R5": true,
+    "R6": true,
+    "R7": true
+  },
+  "arms": {
+    "append_copy": {
+      "arm": "append_copy",
+      "encoder": "localized_centered-v1",
+      "policy": "append",
+      "family": "rule_0",
+      "direction_band": {
+        "overlap": 0.963058,
+        "separation": 0.039455,
+        "nearest_cos": 0.960545,
+        "verdict": "growth_is_copy",
+        "gate_internal_verdict": "growth_is_copy"
+      },
+      "gate": {
+        "passed": false,
+        "exit_code": "commit_rejected_no_direction",
+        "exit_zh": "这条写入只复制了既有方向（声称长格子，实际没有新方向）",
+        "failed": [
+          "commit_rejected_no_direction",
+          "commit_rejected_no_gain"
+        ],
+        "g1_retention_before": 7,
+        "g1_retention_after": 7,
+        "g2_margin_before": 0.8571362794650165,
+        "g2_margin_after": 0.8571362794650165,
+        "g2_rank_before": 7.29079285615221,
+        "g2_rank_after": 6.75998162678122,
+        "g3_floats_before": 66560,
+        "g3_floats_after": 74880,
+        "g3_bytes_delta": 33280,
+        "g3_headroom_after": 0.4375,
+        "g4_top1_slot": 8,
+        "g4_value_residual": 0.5741670410216763,
+        "g4_slot_hit": true,
+        "g4_value_hit": false,
+        "written_slot": 8,
+        "direction_overlap": 0.9630576953127767,
+        "direction_separation": 0.03945461433350661,
+        "direction_verdict": "growth_is_copy",
+        "detail": {
+          "write_slot": 8,
+          "write_policy": "append",
+          "claims_direction": true,
+          "write_family": "rule_0",
+          "battery_size": 7,
+          "battery_families": [
+            "rule_1",
+            "rule_2",
+            "rule_3",
+            "rule_4",
+            "rule_5",
+            "rule_6",
+            "rule_7"
+          ],
+          "effective_rank_delta": -0.5308112293709906,
+          "rank_is_reading_only": true,
+          "thresholds": {
+            "g1_max_retention_drop": 0,
+            "g2_max_margin_drop": 0.002,
+            "g3_max_state_bytes": 33280,
+            "g3_min_slot_headroom": 0.125,
+            "g4_max_value_residual": 0.5,
+            "direction_min_overlap": 0.15,
+            "direction_max_overlap": 0.85,
+            "direction_min_separation": 0.3,
+            "direction_exempt_policies": [
+              "replace"
+            ],
+            "float_bytes": 4,
+            "temperature": 0.1
+          }
+        }
+      },
+      "delta_effective_rank": -0.530811,
+      "hit_definitions": {
+        "measured_on": "shadow (the state the gate judged)",
+        "H_slot": {
+          "definition": "top1 == written_slot",
+          "top1": 8,
+          "written_slot": 8,
+          "hit": true
+        },
+        "H_value": {
+          "definition": "residual(read_value, v') <= 0.5",
+          "residual": 0.574167,
+          "hit": false,
+          "read_value_equals_v_prime_strict": false
+        }
+      },
+      "post_commit_read": {
+        "measured_on": "committed state (unchanged when the write was refused)",
+        "top1": 0,
+        "residual": 1.425834
+      },
+      "commit": {
+        "published": false,
+        "exit_code": "commit_rejected_no_direction",
+        "sha_before": "44b25129cc8d700ac7f9bde43ee1c8b3efe69723eaed55e9d38581205f155d9c",
+        "sha_after": "44b25129cc8d700ac7f9bde43ee1c8b3efe69723eaed55e9d38581205f155d9c",
+        "bit_identical": true,
+        "evictions": 0,
+        "quarantine_id": "q-0001",
+        "quarantine_rows": 1
+      },
+      "apply": {
+        "policy": "append",
+        "applied": true,
+        "slot": 8,
+        "evictions": 0,
+        "dropped": 0,
+        "reason": "free_slot"
+      },
+      "written_slot_contribution": {
+        "weight_on_written_slot": 0.597312,
+        "value_residual_to_written": 0.574167
+      },
+      "old_values_kept": [
+        {
+          "slot": 0,
+          "top1": 0,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.99979,
+          "value_residual": 0.000238
+        },
+        {
+          "slot": 1,
+          "top1": 1,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999817,
+          "value_residual": 0.0002
+        },
+        {
+          "slot": 2,
+          "top1": 2,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999701,
+          "value_residual": 0.000358
+        },
+        {
+          "slot": 3,
+          "top1": 3,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999847,
+          "value_residual": 0.000171
+        },
+        {
+          "slot": 4,
+          "top1": 4,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999508,
+          "value_residual": 0.000556
+        },
+        {
+          "slot": 5,
+          "top1": 5,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999537,
+          "value_residual": 0.000524
+        },
+        {
+          "slot": 6,
+          "top1": 6,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999545,
+          "value_residual": 0.000509
+        },
+        {
+          "slot": 7,
+          "top1": 7,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999776,
+          "value_residual": 0.000243
+        }
+      ],
+      "superseded_slot": null
+    },
+    "replace_same_key": {
+      "arm": "replace_same_key",
+      "encoder": "localized_centered-v1",
+      "policy": "replace",
+      "family": "rule_0",
+      "direction_band": {
+        "overlap": 0.963058,
+        "separation": 0.039455,
+        "nearest_cos": 0.960545,
+        "verdict": "growth_is_copy",
+        "gate_internal_verdict": "growth_is_copy"
+      },
+      "gate": {
+        "passed": true,
+        "exit_code": "commit_accepted",
+        "exit_zh": "准入",
+        "failed": [],
+        "g1_retention_before": 7,
+        "g1_retention_after": 7,
+        "g2_margin_before": 0.8571362794650165,
+        "g2_margin_after": 0.8571362794650165,
+        "g2_rank_before": 7.29079285615221,
+        "g2_rank_after": 7.258282451911417,
+        "g3_floats_before": 66560,
+        "g3_floats_after": 66560,
+        "g3_bytes_delta": 0,
+        "g3_headroom_after": 0.5,
+        "g4_top1_slot": 0,
+        "g4_value_residual": 0.00020738061658853724,
+        "g4_slot_hit": true,
+        "g4_value_hit": true,
+        "written_slot": 0,
+        "direction_overlap": 0.9630576953127767,
+        "direction_separation": 0.03945461433350661,
+        "direction_verdict": "growth_is_copy",
+        "detail": {
+          "write_slot": 0,
+          "write_policy": "replace",
+          "claims_direction": false,
+          "write_family": "rule_0",
+          "battery_size": 7,
+          "battery_families": [
+            "rule_1",
+            "rule_2",
+            "rule_3",
+            "rule_4",
+            "rule_5",
+            "rule_6",
+            "rule_7"
+          ],
+          "effective_rank_delta": -0.0325104042407931,
+          "rank_is_reading_only": true,
+          "thresholds": {
+            "g1_max_retention_drop": 0,
+            "g2_max_margin_drop": 0.002,
+            "g3_max_state_bytes": 33280,
+            "g3_min_slot_headroom": 0.125,
+            "g4_max_value_residual": 0.5,
+            "direction_min_overlap": 0.15,
+            "direction_max_overlap": 0.85,
+            "direction_min_separation": 0.3,
+            "direction_exempt_policies": [
+              "replace"
+            ],
+            "float_bytes": 4,
+            "temperature": 0.1
+          }
+        }
+      },
+      "delta_effective_rank": -0.03251,
+      "hit_definitions": {
+        "measured_on": "shadow (the state the gate judged)",
+        "H_slot": {
+          "definition": "top1 == written_slot",
+          "top1": 0,
+          "written_slot": 0,
+          "hit": true
+        },
+        "H_value": {
+          "definition": "residual(read_value, v') <= 0.5",
+          "residual": 0.000207,
+          "hit": true,
+          "read_value_equals_v_prime_strict": true
+        }
+      },
+      "post_commit_read": {
+        "measured_on": "committed state (unchanged when the write was refused)",
+        "top1": 0,
+        "residual": 0.000207
+      },
+      "commit": {
+        "published": true,
+        "exit_code": "commit_accepted",
+        "sha_before": "44b25129cc8d700ac7f9bde43ee1c8b3efe69723eaed55e9d38581205f155d9c",
+        "sha_after": "bdd787b7faf93cb820b8f2c8ef55b05b7d0dfa265ab597ebf0af0011e0353c87",
+        "bit_identical": false,
+        "evictions": 0,
+        "quarantine_id": null,
+        "quarantine_rows": 0
+      },
+      "apply": {
+        "policy": "replace",
+        "applied": true,
+        "slot": 0,
+        "evictions": 0,
+        "dropped": 0,
+        "reason": "same_key_superseded",
+        "replaced_slot_cosine": 0.9605453856664934
+      },
+      "written_slot_contribution": {
+        "weight_on_written_slot": 0.999818,
+        "value_residual_to_written": 0.000207
+      },
+      "old_values_kept": [
+        {
+          "slot": 1,
+          "top1": 1,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999818,
+          "value_residual": 0.0002
+        },
+        {
+          "slot": 2,
+          "top1": 2,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999703,
+          "value_residual": 0.000357
+        },
+        {
+          "slot": 3,
+          "top1": 3,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999847,
+          "value_residual": 0.000171
+        },
+        {
+          "slot": 4,
+          "top1": 4,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999513,
+          "value_residual": 0.00055
+        },
+        {
+          "slot": 5,
+          "top1": 5,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.99955,
+          "value_residual": 0.000512
+        },
+        {
+          "slot": 6,
+          "top1": 6,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999546,
+          "value_residual": 0.000509
+        },
+        {
+          "slot": 7,
+          "top1": 7,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999784,
+          "value_residual": 0.000235
+        }
+      ],
+      "superseded_slot": {
+        "slot": 0,
+        "value_residual_to_new_value": 0.000207
+      }
+    },
+    "append_new_entry": {
+      "arm": "append_new_entry",
+      "encoder": "localized_centered-v1",
+      "policy": "append",
+      "family": "new_direction",
+      "direction_band": {
+        "overlap": 0.283081,
+        "separation": 0.818028,
+        "nearest_cos": 0.181972,
+        "verdict": "growth_new_direction",
+        "gate_internal_verdict": "growth_new_direction"
+      },
+      "gate": {
+        "passed": true,
+        "exit_code": "commit_accepted",
+        "exit_zh": "准入",
+        "failed": [],
+        "g1_retention_before": 7,
+        "g1_retention_after": 7,
+        "g2_margin_before": 0.8571362794650165,
+        "g2_margin_after": 0.8571362794650165,
+        "g2_rank_before": 7.29079285615221,
+        "g2_rank_after": 8.153257256430999,
+        "g3_floats_before": 66560,
+        "g3_floats_after": 74880,
+        "g3_bytes_delta": 33280,
+        "g3_headroom_after": 0.4375,
+        "g4_top1_slot": 8,
+        "g4_value_residual": 0.0006330497154848337,
+        "g4_slot_hit": true,
+        "g4_value_hit": true,
+        "written_slot": 8,
+        "direction_overlap": 0.28308130939830733,
+        "direction_separation": 0.8300016292667247,
+        "direction_verdict": "growth_new_direction",
+        "detail": {
+          "write_slot": 8,
+          "write_policy": "append",
+          "claims_direction": true,
+          "write_family": "new_direction",
+          "battery_size": 7,
+          "battery_families": [
+            "rule_1",
+            "rule_2",
+            "rule_3",
+            "rule_4",
+            "rule_5",
+            "rule_6",
+            "rule_7"
+          ],
+          "effective_rank_delta": 0.8624644002787889,
+          "rank_is_reading_only": true,
+          "thresholds": {
+            "g1_max_retention_drop": 0,
+            "g2_max_margin_drop": 0.002,
+            "g3_max_state_bytes": 33280,
+            "g3_min_slot_headroom": 0.125,
+            "g4_max_value_residual": 0.5,
+            "direction_min_overlap": 0.15,
+            "direction_max_overlap": 0.85,
+            "direction_min_separation": 0.3,
+            "direction_exempt_policies": [
+              "replace"
+            ],
+            "float_bytes": 4,
+            "temperature": 0.1
+          }
+        }
+      },
+      "delta_effective_rank": 0.862464,
+      "hit_definitions": {
+        "measured_on": "shadow (the state the gate judged)",
+        "H_slot": {
+          "definition": "top1 == written_slot",
+          "top1": 8,
+          "written_slot": 8,
+          "hit": true
+        },
+        "H_value": {
+          "definition": "residual(read_value, v') <= 0.5",
+          "residual": 0.000633,
+          "hit": true,
+          "read_value_equals_v_prime_strict": true
+        }
+      },
+      "post_commit_read": {
+        "measured_on": "committed state (unchanged when the write was refused)",
+        "top1": 8,
+        "residual": 0.000633
+      },
+      "commit": {
+        "published": true,
+        "exit_code": "commit_accepted",
+        "sha_before": "44b25129cc8d700ac7f9bde43ee1c8b3efe69723eaed55e9d38581205f155d9c",
+        "sha_after": "07c7a74ea4ebb1f4e42ca0aedbe70d1c7019d99fcd59f6114f8254a790455f7b",
+        "bit_identical": false,
+        "evictions": 0,
+        "quarantine_id": null,
+        "quarantine_rows": 0
+      },
+      "apply": {
+        "policy": "append",
+        "applied": true,
+        "slot": 8,
+        "evictions": 0,
+        "dropped": 0,
+        "reason": "free_slot"
+      },
+      "written_slot_contribution": {
+        "weight_on_written_slot": 0.999429,
+        "value_residual_to_written": 0.000633
+      },
+      "old_values_kept": [
+        {
+          "slot": 0,
+          "top1": 0,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999762,
+          "value_residual": 0.000265
+        },
+        {
+          "slot": 1,
+          "top1": 1,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999795,
+          "value_residual": 0.000222
+        },
+        {
+          "slot": 2,
+          "top1": 2,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999652,
+          "value_residual": 0.000402
+        },
+        {
+          "slot": 3,
+          "top1": 3,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999839,
+          "value_residual": 0.000178
+        },
+        {
+          "slot": 4,
+          "top1": 4,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.99926,
+          "value_residual": 0.000819
+        },
+        {
+          "slot": 5,
+          "top1": 5,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999479,
+          "value_residual": 0.000578
+        },
+        {
+          "slot": 6,
+          "top1": 6,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999433,
+          "value_residual": 0.000621
+        },
+        {
+          "slot": 7,
+          "top1": 7,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.999729,
+          "value_residual": 0.000291
+        }
+      ],
+      "superseded_slot": null
+    }
+  },
+  "readings": {
+    "copy": {
+      "published": false,
+      "exit_code": "commit_rejected_no_direction",
+      "failed": [
+        "commit_rejected_no_direction",
+        "commit_rejected_no_gain"
+      ],
+      "reasons_zh": [
+        "这条写入只复制了既有方向（声称长格子，实际没有新方向）",
+        "定向收益不成立（写入没有真正修好它自己那一问）"
+      ]
+    },
+    "replace": {
+      "published": true,
+      "exit_code": "commit_accepted",
+      "read_value_equals_v_prime": true,
+      "residual": 0.000207
+    },
+    "new_entry": {
+      "published": true,
+      "exit_code": "commit_accepted",
+      "delta_effective_rank_reading": 0.862464,
+      "delta_positive_observation": true
+    }
+  },
+  "decision": "p1b_passed",
+  "decision_zh": "三臂均符合预注册：复制被拒（commit_rejected_no_direction），取代被准，新条目被准",
+  "isolation": {
+    "runner_sha256": "999e9851f7ce1db2bd04d233a8d4818313c3dd2633597ea73940f3cf1c4069fb",
+    "gate_sha256": "2ed8b0dd3ed63af20e925155a48b2825b9664fe9f22a37b102b25f9cb89ba6de",
+    "runtime_sha256": "2125b1fb80da3f08d63353920bd83bbf88ba7839fcf482a24a2d06a13340ccd6",
+    "design_sha256": "9976ab69b9c7b0abfc46b3b4131c6048f9bf26313edc84cab83c593971b85388",
+    "p2_report_sha256": "d80ec114d9a4045027a46c695674dcbb9dee6260b2c8e634a7b63bfae150b957",
+    "gate_imports_torch": false,
+    "frozen_files_touched": 0,
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_steps": 0,
+    "model_forward": 0
+  },
+  "cost": {
+    "cpu_seconds": 0.09375,
+    "wall_seconds": 0.145523,
+    "cpu_cap": 150.0
+  }
+}

@@ -16,10 +16,18 @@ forward, no gradient):
 
 ===========  ==================================================  ==================
 G1           retention battery correct count must not drop        integer, no tol
-G2           read margin and effective rank must not drop        0.002 / 0
+G2           read margin must not drop                           0.002
 G3           state must not grow beyond one slot, headroom >= h 33280 B / 0.125
 G4           the write must actually fix its own case            residual <= 0.5
 ===========  ==================================================  ==================
+
+A fifth, separate exit refuses a write that claims a new cell but only
+duplicates an existing direction (``commit_rejected_no_direction``).  It is
+triggered by the direction band, never by the effective-rank number: P1 showed
+that ``eff_rank`` is a real-valued participation ratio which necessarily falls
+whenever a near-collinear key is appended, so using it as a threshold made the
+gate refuse every append, copy or not.  ``eff_rank`` is still measured and
+reported, as a reading only.
 
 Every threshold below is a module-level constant and the single source of
 truth; ``evaluate`` reads them and nothing else hard-codes a number.
@@ -45,12 +53,18 @@ import numpy as np
 # --- thresholds: single source of truth -------------------------------------
 GATE_G1_MAX_RETENTION_DROP = 0  # absolute count; must stay zero
 GATE_G2_MAX_MARGIN_DROP = 0.002  # read margin tolerance
-GATE_G2_MAX_RANK_DROP = 0  # effective rank tolerance
 GATE_MAX_STATE_BYTES = 33_280  # one slot, accounted at the deployment dtype
 GATE_MIN_SLOT_HEADROOM = 0.125  # capacity-first reserve, from the growth spec
 GATE_MAX_VALUE_RESIDUAL = 0.5  # value fidelity of the write it claims to fix
 GATE_FLOAT_BYTES = 4  # deployment dtype is torch float32; the fixture is float64
 GATE_TEMPERATURE = 0.1  # ADDRESSED_TEMPERATURE, unchanged
+# direction band (spec §4.2); a copy claim is refused, an isolated direction is
+# only reported -- it does not make the gate refuse, per the P1b registration
+GATE_DIRECTION_MIN_OVERLAP = 0.15
+GATE_DIRECTION_MAX_OVERLAP = 0.85
+GATE_DIRECTION_MIN_SEPARATION = 0.30
+# policies that make no direction claim, so the direction band does not apply
+GATE_DIRECTION_EXEMPT_POLICIES = ("replace",)
 
 # --- exit codes: one per failing condition ----------------------------------
 EXIT_ACCEPTED = "commit_accepted"
@@ -59,6 +73,7 @@ EXIT_SEPARABILITY = "commit_rejected_separability"
 EXIT_INFLATION = "commit_rejected_inflation"
 EXIT_NO_CAPACITY = "commit_rejected_no_capacity"
 EXIT_NO_GAIN = "commit_rejected_no_gain"
+EXIT_NO_DIRECTION = "commit_rejected_no_direction"
 EXIT_CODES = (
     EXIT_ACCEPTED,
     EXIT_RETENTION,
@@ -66,6 +81,7 @@ EXIT_CODES = (
     EXIT_INFLATION,
     EXIT_NO_CAPACITY,
     EXIT_NO_GAIN,
+    EXIT_NO_DIRECTION,
 )
 EXIT_ZH = {
     EXIT_ACCEPTED: "准入",
@@ -74,6 +90,7 @@ EXIT_ZH = {
     EXIT_INFLATION: "状态膨胀超限",
     EXIT_NO_CAPACITY: "可写余量不足",
     EXIT_NO_GAIN: "定向收益不成立（写入没有真正修好它自己那一问）",
+    EXIT_NO_DIRECTION: "这条写入只复制了既有方向（声称长格子，实际没有新方向）",
 }
 
 # --- data -------------------------------------------------------------------
@@ -136,6 +153,12 @@ class GateCertificate:
     g3_headroom_after: float
     g4_top1_slot: int | None
     g4_value_residual: float | None
+    g4_slot_hit: bool | None
+    g4_value_hit: bool | None
+    written_slot: int | None
+    direction_overlap: float
+    direction_separation: float
+    direction_verdict: str
     detail: dict[str, Any] = field(default_factory=dict)
 
     def as_dict(self) -> dict[str, Any]:
@@ -156,6 +179,12 @@ class GateCertificate:
             "g3_headroom_after": self.g3_headroom_after,
             "g4_top1_slot": self.g4_top1_slot,
             "g4_value_residual": self.g4_value_residual,
+            "g4_slot_hit": self.g4_slot_hit,
+            "g4_value_hit": self.g4_value_hit,
+            "written_slot": self.written_slot,
+            "direction_overlap": self.direction_overlap,
+            "direction_separation": self.direction_separation,
+            "direction_verdict": self.direction_verdict,
             "detail": self.detail,
         }
 
@@ -333,13 +362,51 @@ def shadow_apply(state: GateState, write: WriteCell) -> tuple[GateState, dict[st
     return shadow, receipt
 
 
+def _direction_band(state: GateState, key: np.ndarray) -> tuple[float, float, str]:
+    """Overlap with the span of existing directions, and separation from the nearest one.
+
+    ``overlap`` is the norm of the candidate's projection onto the row space of
+    the occupied keys, i.e. how much of it is already expressible.  ``separation``
+    is ``1 - max cosine``.  The verdict names match ``growth_design.direction_band``
+    so the two readings are comparable.
+    """
+    keys, _ = _active(state)
+    unit = key / max(float(np.linalg.norm(key)), 1e-12)
+    if keys.shape[0] == 0:
+        return 0.0, 1.0, "growth_new_direction"
+    normalized = _normalize(keys)
+    basis = np.linalg.svd(normalized, full_matrices=False)[2]
+    rank = int(np.linalg.matrix_rank(normalized))
+    basis = basis[: max(rank, 1)]
+    overlap = min(float(np.linalg.norm(basis @ unit)), 1.0)
+    separation = 1.0 - float(np.max(normalized @ unit))
+    if overlap > GATE_DIRECTION_MAX_OVERLAP or separation < GATE_DIRECTION_MIN_SEPARATION:
+        verdict = "growth_is_copy"
+    elif overlap < GATE_DIRECTION_MIN_OVERLAP:
+        verdict = "growth_isolated"
+    else:
+        verdict = "growth_new_direction"
+    return overlap, separation, verdict
+
+
 def evaluate(
     before: GateState,
     after: GateState,
     battery: list[BatteryQuery],
     write: WriteCell,
+    written_slot: int | None = None,
 ) -> GateCertificate:
-    """Run G1-G4 on the shadow state.  Pure: no randomness, no time, no globals."""
+    """Run G1-G4 plus the direction clause on the shadow state.
+
+    ``written_slot`` is the slot the write actually landed in (append: the free
+    slot; replace: the superseded slot).  It is passed in rather than inferred
+    from the read, because inferring it (``written_slot = top1``) makes the slot
+    hit a tautology and hides whether the write landed where it claimed.
+
+    G4 decides on **value fidelity** (``residual <= 0.5``): ``top1`` may legitimately
+    be the superseded slot rather than a new one, so the slot number cannot be the
+    pass test.  The slot hit is still computed and reported.
+    """
     if not battery:
         raise ValueError("battery is empty: a gate without a retention set is not a gate")
     contaminated = [row.name for row in battery if row.family == write.family]
@@ -363,25 +430,32 @@ def evaluate(
     bytes_delta = (floats_after - floats_before) * GATE_FLOAT_BYTES
     headroom_after = (int(after.slots) - int(after.occupied)) / max(int(after.slots), 1)
 
+    overlap, separation, verdict = _direction_band(before, write.key)
     top1, _, read_value = _read(after, write.key)
-    written_slot = top1
     residual = _residual(read_value, write.value)
+    slot_hit = written_slot is not None and top1 == int(written_slot)
+    value_hit = residual <= GATE_MAX_VALUE_RESIDUAL
 
     failed: list[str] = []
     if correct_before - correct_after > GATE_G1_MAX_RETENTION_DROP:
         failed.append(EXIT_RETENTION)
     if margin_after < margin_before - GATE_G2_MAX_MARGIN_DROP:
         failed.append(EXIT_SEPARABILITY)
-    if rank_after < rank_before - GATE_G2_MAX_RANK_DROP:
-        failed.append(EXIT_SEPARABILITY)
     if bytes_delta > GATE_MAX_STATE_BYTES:
         failed.append(EXIT_INFLATION)
     if headroom_after < GATE_MIN_SLOT_HEADROOM:
         failed.append(EXIT_NO_CAPACITY)
-    if top1 != written_slot or residual > GATE_MAX_VALUE_RESIDUAL:
+    # direction is a precondition, not a fifth symptom: a copy's blend residual is
+    # the consequence of the copy, so the copy is reported as the reason and the
+    # residual is reported after it.  The P1b registration fixed the exit code for
+    # a copy at commit_rejected_no_direction; this order is what makes that true.
+    claims_direction = write.policy not in GATE_DIRECTION_EXEMPT_POLICIES
+    if claims_direction and verdict == "growth_is_copy":
+        failed.append(EXIT_NO_DIRECTION)
+    if not value_hit:
         failed.append(EXIT_NO_GAIN)
 
-    # de-duplicate while keeping the G1 -> G4 order
+    # de-duplicate while keeping the G1 -> direction -> G4 order
     ordered: list[str] = []
     for code in failed:
         if code not in ordered:
@@ -405,18 +479,31 @@ def evaluate(
         g3_headroom_after=headroom_after,
         g4_top1_slot=top1,
         g4_value_residual=residual,
+        g4_slot_hit=slot_hit,
+        g4_value_hit=value_hit,
+        written_slot=written_slot,
+        direction_overlap=overlap,
+        direction_separation=separation,
+        direction_verdict=verdict,
         detail={
             "write_slot": written_slot,
+            "write_policy": write.policy,
+            "claims_direction": claims_direction,
             "write_family": write.family,
             "battery_size": len(battery),
             "battery_families": sorted({row.family for row in battery}),
+            "effective_rank_delta": rank_after - rank_before,
+            "rank_is_reading_only": True,
             "thresholds": {
                 "g1_max_retention_drop": GATE_G1_MAX_RETENTION_DROP,
                 "g2_max_margin_drop": GATE_G2_MAX_MARGIN_DROP,
-                "g2_max_rank_drop": GATE_G2_MAX_RANK_DROP,
                 "g3_max_state_bytes": GATE_MAX_STATE_BYTES,
                 "g3_min_slot_headroom": GATE_MIN_SLOT_HEADROOM,
                 "g4_max_value_residual": GATE_MAX_VALUE_RESIDUAL,
+                "direction_min_overlap": GATE_DIRECTION_MIN_OVERLAP,
+                "direction_max_overlap": GATE_DIRECTION_MAX_OVERLAP,
+                "direction_min_separation": GATE_DIRECTION_MIN_SEPARATION,
+                "direction_exempt_policies": list(GATE_DIRECTION_EXEMPT_POLICIES),
                 "float_bytes": GATE_FLOAT_BYTES,
                 "temperature": GATE_TEMPERATURE,
             },
@@ -559,7 +646,7 @@ def run_gate(
     """snapshot -> shadow -> evaluate -> commit, in that order, on one write."""
     before_snapshot = snapshot(state)
     shadow, apply_receipt = shadow_apply(state, write)
-    certificate = evaluate(state, shadow, battery, write)
+    certificate = evaluate(state, shadow, battery, write, written_slot=apply_receipt.get("slot"))
     run = GateRun(
         before_snapshot=before_snapshot,
         before=state,

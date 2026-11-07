@@ -1,0 +1,19 @@
+{
+  "format": "taiji-growth-gate-p1b-manifest-v1",
+  "generated_at": "2026-11-08T00:41:08",
+  "report": "reports/taiji_growth_gate_p1b_20261108.json",
+  "report_sha256": "e46deb978abd534d3369cfa78670e4b96449ceb11fb796583bf592cb1309c284",
+  "runner": "scripts/training/probe_taiji_growth_gate_p1b_20261108.py",
+  "runner_sha256": "999e9851f7ce1db2bd04d233a8d4818313c3dd2633597ea73940f3cf1c4069fb",
+  "gate_sha256": "2ed8b0dd3ed63af20e925155a48b2825b9664fe9f22a37b102b25f9cb89ba6de",
+  "decision": "p1b_passed",
+  "checks": {
+    "R1": true,
+    "R2": true,
+    "R3": true,
+    "R4": true,
+    "R5": true,
+    "R6": true,
+    "R7": true
+  }
+}
