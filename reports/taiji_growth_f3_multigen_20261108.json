@@ -1,0 +1,1082 @@
+{
+  "format": "taiji-growth-f3-multigen-v1",
+  "generated_at": "2026-11-07T23:40:08",
+  "criteria_written_before_reading": {
+    "1_headroom": "the authorising certificate has h_slots >= 0.125",
+    "2_no_drop_no_evict": "dropped_writes == 0 and evictions == 0",
+    "3_direction_band": "every new key is growth_new_direction (o in [0.15,0.85], s >= 0.30)",
+    "4_discriminability": "per-generation spectrum/margin/delta_comp beside A(d128) and F(d512)",
+    "stop_rule": "stop at the first failing generation; never skip, never retune"
+  },
+  "fixture": {
+    "dimension": 128,
+    "context_length": 8,
+    "sentences": 64,
+    "amplitude": 0.35,
+    "generator": "growth pre-review case J sentence_contexts, count 64",
+    "initial_slots": 8,
+    "initial_entries": 4,
+    "reserve_ratio": 0.125,
+    "schedule": [
+      [
+        8,
+        16,
+        4
+      ],
+      [
+        16,
+        32,
+        8
+      ],
+      [
+        32,
+        64,
+        16
+      ],
+      [
+        64,
+        128,
+        32
+      ]
+    ],
+    "model_identity_source": "reports/taiji_growth_zero_perturbation_20261108.json (same-day sealed reading); growth adds no parameter rows and neither module imports torch, so the model parameter table and its identity digest cannot move"
+  },
+  "baseline_pre_review": {
+    "A_collapsed_d128": {
+      "diagnosis": "collapsed_shared_offset",
+      "top_share": 0.9991297610646257,
+      "top_share_centered": 0.062343737380526745,
+      "median_margin": 3.3967654048838725e-05,
+      "p95_top_cos": 0.9993133904138717,
+      "delta_comp": 3.32288494709131e-14
+    },
+    "F_collapsed_d512": {
+      "diagnosis": "collapsed_shared_offset",
+      "top_share": 0.9991275731265866,
+      "top_share_centered": 0.048824442943190084,
+      "median_margin": 2.00157225038744e-05,
+      "p95_top_cos": 0.9992482403831826,
+      "delta_comp": 2.9000897675243616e-14
+    }
+  },
+  "repaired_path": {
+    "path": "repaired",
+    "encoder": "localized_centered-v1",
+    "centroid_frozen": true,
+    "initial": {
+      "slots": 8,
+      "occupied": 4,
+      "headroom": {
+        "occupied": 4,
+        "slots": 8,
+        "pending": 0,
+        "free": 4,
+        "remaining": 4,
+        "h_slots": 0.5,
+        "h_min_slots": 0.125,
+        "sufficient": true,
+        "spills": false
+      },
+      "digest": "89af2458a5015832dde6c8598bcb23d52195f299fa1abcd362be69b61551d725"
+    },
+    "generations": [
+      {
+        "path": "repaired",
+        "generation": 1,
+        "slots_before": 8,
+        "slots_after": 16,
+        "added_slots": 8,
+        "pending": 4,
+        "headroom_before_plan": {
+          "occupied": 4,
+          "slots": 8,
+          "pending": 4,
+          "free": 4,
+          "remaining": 0,
+          "h_slots": 0.0,
+          "h_min_slots": 0.125,
+          "sufficient": false,
+          "spills": false
+        },
+        "plan": {
+          "action": "grow_then_write",
+          "slots": 16,
+          "added": 8,
+          "reason": "headroom_short",
+          "needed": 8
+        },
+        "headroom_authorising": {
+          "occupied": 4,
+          "slots": 16,
+          "pending": 4,
+          "free": 12,
+          "remaining": 8,
+          "h_slots": 0.5,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "headroom_after_write": {
+          "occupied": 8,
+          "slots": 16,
+          "pending": 0,
+          "free": 8,
+          "remaining": 8,
+          "h_slots": 0.5,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "committed": 4,
+        "dropped_writes": 0,
+        "evictions": 0,
+        "parent_rows_unchanged": true,
+        "band": {
+          "min_overlap": 0.19213599662780934,
+          "max_overlap": 0.2796283604966509,
+          "min_separation": 0.740465318275353,
+          "min_nearest_cos": 0.259534681724647,
+          "verdicts": {
+            "growth_new_direction": 4
+          },
+          "all_new_direction": true
+        },
+        "readings": {
+          "keys": 8,
+          "spectrum": {
+            "occupied": 8.0,
+            "width": 128.0,
+            "mean_abs_cos": 0.09370298870318537,
+            "top_share": 0.19307790162752816,
+            "effective_rank": 7.290792856152214,
+            "top_share_centered": 0.20806330509543058,
+            "effective_rank_centered": 6.62476524404437,
+            "effective_rank_fraction": 0.9113491070190267
+          },
+          "margins": {
+            "p95_top_cos": 0.16254367950747145,
+            "median_top_cos": 0.1010056056773948,
+            "median_margin": 0.06863129215207675,
+            "p95_margin": 0.15222532351523005,
+            "median_entropy": 0.7888478536159196
+          },
+          "certificate": {
+            "rho": 2.9978162842399034,
+            "c_f": 1.0,
+            "delta_cap": 1.9978162842399034,
+            "delta_comp": 2.312062980925372e-15,
+            "sigma_plus": 0.6872104774399485,
+            "readout_lower_bound": 1.372920282529808,
+            "rank_K": 8,
+            "rank_consistent": true
+          },
+          "diagnosis": "separable_no_growth",
+          "decision": "no_growth"
+        },
+        "cost": {
+          "trainable_params_added": 0,
+          "model_params": 3323547,
+          "model_identity_sha": "235bc6e7e978711071811fe0e0fc0faf41733b6874ff18d6fb696e034c18bc71",
+          "growth_state_digest": "35f35d489c18b1840046d8263687faced84fa8810d4026afa3cc05bdc5ee4baa",
+          "state_elements": 133137,
+          "state_bytes": 532548,
+          "state_bytes_delta": 266272
+        }
+      },
+      {
+        "path": "repaired",
+        "generation": 2,
+        "slots_before": 16,
+        "slots_after": 32,
+        "added_slots": 16,
+        "pending": 8,
+        "headroom_before_plan": {
+          "occupied": 8,
+          "slots": 16,
+          "pending": 8,
+          "free": 8,
+          "remaining": 0,
+          "h_slots": 0.0,
+          "h_min_slots": 0.125,
+          "sufficient": false,
+          "spills": false
+        },
+        "plan": {
+          "action": "grow_then_write",
+          "slots": 32,
+          "added": 16,
+          "reason": "headroom_short",
+          "needed": 16
+        },
+        "headroom_authorising": {
+          "occupied": 8,
+          "slots": 32,
+          "pending": 8,
+          "free": 24,
+          "remaining": 16,
+          "h_slots": 0.5,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "headroom_after_write": {
+          "occupied": 16,
+          "slots": 32,
+          "pending": 0,
+          "free": 16,
+          "remaining": 16,
+          "h_slots": 0.5,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "committed": 8,
+        "dropped_writes": 0,
+        "evictions": 0,
+        "parent_rows_unchanged": true,
+        "band": {
+          "min_overlap": 0.25588681912615735,
+          "max_overlap": 0.3692164815212742,
+          "min_separation": 0.737900931295409,
+          "min_nearest_cos": 0.26209906870459093,
+          "verdicts": {
+            "growth_new_direction": 8
+          },
+          "all_new_direction": true
+        },
+        "readings": {
+          "keys": 16,
+          "spectrum": {
+            "occupied": 16.0,
+            "width": 128.0,
+            "mean_abs_cos": 0.0906301255544404,
+            "top_share": 0.11718380775285635,
+            "effective_rank": 13.472278011292465,
+            "top_share_centered": 0.11761841009721236,
+            "effective_rank_centered": 13.050109819785288,
+            "effective_rank_fraction": 0.8420173757057791
+          },
+          "margins": {
+            "p95_top_cos": 0.2546750889930779,
+            "median_top_cos": 0.18130587120807437,
+            "median_margin": 0.05838789060739855,
+            "p95_margin": 0.09881629159678576,
+            "median_entropy": 0.846382357366082
+          },
+          "certificate": {
+            "rho": 4.44052972021883,
+            "c_f": 1.0,
+            "delta_cap": 3.44052972021883,
+            "delta_comp": 4.389212751340544e-15,
+            "sigma_plus": 0.6032271177634768,
+            "readout_lower_bound": 2.075420826707186,
+            "rank_K": 16,
+            "rank_consistent": true
+          },
+          "diagnosis": "separable_no_growth",
+          "decision": "no_growth"
+        },
+        "cost": {
+          "trainable_params_added": 0,
+          "model_params": 3323547,
+          "model_identity_sha": "235bc6e7e978711071811fe0e0fc0faf41733b6874ff18d6fb696e034c18bc71",
+          "growth_state_digest": "5d96e33a3130f33cbfa99495232a9225637111529543d61379482fd36b0cbbd3",
+          "state_elements": 266273,
+          "state_bytes": 1065092,
+          "state_bytes_delta": 532544
+        }
+      },
+      {
+        "path": "repaired",
+        "generation": 3,
+        "slots_before": 32,
+        "slots_after": 64,
+        "added_slots": 32,
+        "pending": 16,
+        "headroom_before_plan": {
+          "occupied": 16,
+          "slots": 32,
+          "pending": 16,
+          "free": 16,
+          "remaining": 0,
+          "h_slots": 0.0,
+          "h_min_slots": 0.125,
+          "sufficient": false,
+          "spills": false
+        },
+        "plan": {
+          "action": "grow_then_write",
+          "slots": 64,
+          "added": 32,
+          "reason": "headroom_short",
+          "needed": 32
+        },
+        "headroom_authorising": {
+          "occupied": 16,
+          "slots": 64,
+          "pending": 16,
+          "free": 48,
+          "remaining": 32,
+          "h_slots": 0.5,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "headroom_after_write": {
+          "occupied": 32,
+          "slots": 64,
+          "pending": 0,
+          "free": 32,
+          "remaining": 32,
+          "h_slots": 0.5,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "committed": 16,
+        "dropped_writes": 0,
+        "evictions": 0,
+        "parent_rows_unchanged": true,
+        "band": {
+          "min_overlap": 0.32127701324651414,
+          "max_overlap": 0.4678559171230678,
+          "min_separation": 0.765418617106289,
+          "min_nearest_cos": 0.23458138289371103,
+          "verdicts": {
+            "growth_new_direction": 16
+          },
+          "all_new_direction": true
+        },
+        "readings": {
+          "keys": 32,
+          "spectrum": {
+            "occupied": 32.0,
+            "width": 128.0,
+            "mean_abs_cos": 0.0806721241142222,
+            "top_share": 0.080642108678811,
+            "effective_rank": 24.48679368029857,
+            "top_share_centered": 0.06653541997166676,
+            "effective_rank_centered": 24.79044747501439,
+            "effective_rank_fraction": 0.7652123025093304
+          },
+          "margins": {
+            "p95_top_cos": 0.2486757056111681,
+            "median_top_cos": 0.19778937274063776,
+            "median_margin": 0.030282665861467058,
+            "p95_margin": 0.07562256159400924,
+            "median_entropy": 0.8932407564812155
+          },
+          "certificate": {
+            "rho": 6.69826150837281,
+            "c_f": 1.0,
+            "delta_cap": 5.69826150837281,
+            "delta_comp": 8.224584835165657e-15,
+            "sigma_plus": 0.4845345421289334,
+            "readout_lower_bound": 2.761004530890345,
+            "rank_K": 32,
+            "rank_consistent": true
+          },
+          "diagnosis": "separable_no_growth",
+          "decision": "no_growth"
+        },
+        "cost": {
+          "trainable_params_added": 0,
+          "model_params": 3323547,
+          "model_identity_sha": "235bc6e7e978711071811fe0e0fc0faf41733b6874ff18d6fb696e034c18bc71",
+          "growth_state_digest": "72f1b464d6f40ee3f5ab16ec365d47fb7e88d4281ea79ab077d923101189b2ff",
+          "state_elements": 532545,
+          "state_bytes": 2130180,
+          "state_bytes_delta": 1065088
+        }
+      },
+      {
+        "path": "repaired",
+        "generation": 4,
+        "slots_before": 64,
+        "slots_after": 128,
+        "added_slots": 64,
+        "pending": 32,
+        "headroom_before_plan": {
+          "occupied": 32,
+          "slots": 64,
+          "pending": 32,
+          "free": 32,
+          "remaining": 0,
+          "h_slots": 0.0,
+          "h_min_slots": 0.125,
+          "sufficient": false,
+          "spills": false
+        },
+        "plan": {
+          "action": "grow_then_write",
+          "slots": 128,
+          "added": 64,
+          "reason": "headroom_short",
+          "needed": 64
+        },
+        "headroom_authorising": {
+          "occupied": 32,
+          "slots": 128,
+          "pending": 32,
+          "free": 96,
+          "remaining": 64,
+          "h_slots": 0.5,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "headroom_after_write": {
+          "occupied": 64,
+          "slots": 128,
+          "pending": 0,
+          "free": 64,
+          "remaining": 64,
+          "h_slots": 0.5,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "committed": 32,
+        "dropped_writes": 0,
+        "evictions": 0,
+        "parent_rows_unchanged": true,
+        "band": {
+          "min_overlap": 0.42341809925033747,
+          "max_overlap": 0.6217661480327759,
+          "min_separation": 0.7098796100627386,
+          "min_nearest_cos": 0.2901203899372614,
+          "verdicts": {
+            "growth_new_direction": 32
+          },
+          "all_new_direction": true
+        },
+        "readings": {
+          "keys": 64,
+          "spectrum": {
+            "occupied": 64.0,
+            "width": 128.0,
+            "mean_abs_cos": 0.07831852673872047,
+            "top_share": 0.05683073705447572,
+            "effective_rank": 40.182564669728045,
+            "top_share_centered": 0.043152007921332024,
+            "effective_rank_centered": 41.39555232437162,
+            "effective_rank_fraction": 0.6278525729645007
+          },
+          "margins": {
+            "p95_top_cos": 0.2841313240413071,
+            "median_top_cos": 0.2245058488866857,
+            "median_margin": 0.019988498399807736,
+            "p95_margin": 0.07940978876255725,
+            "median_entropy": 0.9091938162276415
+          },
+          "certificate": {
+            "rho": 11.718682295023546,
+            "c_f": 1.0,
+            "delta_cap": 10.718682295023546,
+            "delta_comp": 1.6656022528913552e-14,
+            "sigma_plus": 0.30131365592213377,
+            "readout_lower_bound": 3.229685348981392,
+            "rank_K": 64,
+            "rank_consistent": true
+          },
+          "diagnosis": "separable_no_growth",
+          "decision": "no_growth"
+        },
+        "cost": {
+          "trainable_params_added": 0,
+          "model_params": 3323547,
+          "model_identity_sha": "235bc6e7e978711071811fe0e0fc0faf41733b6874ff18d6fb696e034c18bc71",
+          "growth_state_digest": "cc7676cf6778062aaf4ba1cc5d4fe651ce4574c6c0188582287989a5abb599a9",
+          "state_elements": 1065089,
+          "state_bytes": 4260356,
+          "state_bytes_delta": 2130176
+        }
+      }
+    ]
+  },
+  "control_legacy_path": {
+    "path": "control_legacy",
+    "encoder": "mean-v1",
+    "centroid_frozen": false,
+    "initial": {
+      "slots": 8,
+      "occupied": 4,
+      "headroom": {
+        "occupied": 4,
+        "slots": 8,
+        "pending": 0,
+        "free": 4,
+        "remaining": 4,
+        "h_slots": 0.5,
+        "h_min_slots": 0.125,
+        "sufficient": true,
+        "spills": false
+      },
+      "digest": "68227f8d46f77764f8dd3234413379e45a1217280a54c2e267d46d510a1ad22d"
+    },
+    "generations": [
+      {
+        "path": "control_legacy",
+        "generation": 1,
+        "slots_before": 8,
+        "slots_after": 16,
+        "added_slots": 8,
+        "pending": 4,
+        "headroom_before_plan": {
+          "occupied": 4,
+          "slots": 8,
+          "pending": 4,
+          "free": 4,
+          "remaining": 0,
+          "h_slots": 0.0,
+          "h_min_slots": 0.125,
+          "sufficient": false,
+          "spills": false
+        },
+        "plan": {
+          "action": "grow_then_write",
+          "slots": 16,
+          "added": 8,
+          "reason": "headroom_short",
+          "needed": 8
+        },
+        "headroom_authorising": {
+          "occupied": 4,
+          "slots": 16,
+          "pending": 4,
+          "free": 12,
+          "remaining": 8,
+          "h_slots": 0.5,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "headroom_after_write": {
+          "occupied": 8,
+          "slots": 16,
+          "pending": 0,
+          "free": 8,
+          "remaining": 8,
+          "h_slots": 0.5,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "committed": 4,
+        "dropped_writes": 0,
+        "evictions": 0,
+        "parent_rows_unchanged": true,
+        "band": {
+          "min_overlap": 0.9987745492436289,
+          "max_overlap": 0.9989487345804025,
+          "min_separation": 0.0015268478082236525,
+          "min_nearest_cos": 0.9984731521917763,
+          "verdicts": {
+            "growth_is_copy": 4
+          },
+          "all_new_direction": false
+        },
+        "readings": {
+          "keys": 8,
+          "spectrum": {
+            "occupied": 8.0,
+            "width": 128.0,
+            "mean_abs_cos": 0.9981070324040281,
+            "top_share": 0.9983436549179341,
+            "effective_rank": 1.0033205234337017,
+            "top_share_centered": 0.2041604455367169,
+            "effective_rank_centered": 6.648653020121799,
+            "effective_rank_fraction": 0.1254150654292127
+          },
+          "margins": {
+            "p95_top_cos": 0.9984731521917768,
+            "median_top_cos": 0.998359657123959,
+            "median_margin": 0.00011122987965034303,
+            "p95_margin": 0.00016088475062016048,
+            "median_entropy": 0.9999993641107161
+          },
+          "certificate": {
+            "rho": 62.104683534651265,
+            "c_f": 1.0,
+            "delta_cap": 61.104683534651265,
+            "delta_comp": 7.34275313537993e-15,
+            "sigma_plus": 0.03810856413240624,
+            "readout_lower_bound": 2.3286117512706457,
+            "rank_K": 8,
+            "rank_consistent": true
+          },
+          "diagnosis": "collapsed_shared_offset",
+          "decision": "representation_repair"
+        },
+        "cost": {
+          "trainable_params_added": 0,
+          "model_params": 3323547,
+          "model_identity_sha": "235bc6e7e978711071811fe0e0fc0faf41733b6874ff18d6fb696e034c18bc71",
+          "growth_state_digest": "8b84889b3b3742d117f77c734743209a857a613778fd9fc38b2eb1c9cb249217",
+          "state_elements": 133137,
+          "state_bytes": 532548,
+          "state_bytes_delta": 266272
+        }
+      },
+      {
+        "path": "control_legacy",
+        "generation": 2,
+        "slots_before": 16,
+        "slots_after": 32,
+        "added_slots": 16,
+        "pending": 8,
+        "headroom_before_plan": {
+          "occupied": 8,
+          "slots": 16,
+          "pending": 8,
+          "free": 8,
+          "remaining": 0,
+          "h_slots": 0.0,
+          "h_min_slots": 0.125,
+          "sufficient": false,
+          "spills": false
+        },
+        "plan": {
+          "action": "grow_then_write",
+          "slots": 32,
+          "added": 16,
+          "reason": "headroom_short",
+          "needed": 16
+        },
+        "headroom_authorising": {
+          "occupied": 8,
+          "slots": 32,
+          "pending": 8,
+          "free": 24,
+          "remaining": 16,
+          "h_slots": 0.5,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "headroom_after_write": {
+          "occupied": 16,
+          "slots": 32,
+          "pending": 0,
+          "free": 16,
+          "remaining": 16,
+          "h_slots": 0.5,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "committed": 8,
+        "dropped_writes": 0,
+        "evictions": 0,
+        "parent_rows_unchanged": true,
+        "band": {
+          "min_overlap": 0.9988567107968792,
+          "max_overlap": 0.999125526589517,
+          "min_separation": 0.0014856485981391554,
+          "min_nearest_cos": 0.9985143514018608,
+          "verdicts": {
+            "growth_is_copy": 8
+          },
+          "all_new_direction": false
+        },
+        "readings": {
+          "keys": 16,
+          "spectrum": {
+            "occupied": 16.0,
+            "width": 128.0,
+            "mean_abs_cos": 0.9980955980154121,
+            "top_share": 0.9982146242593309,
+            "effective_rank": 1.0035800922065543,
+            "top_share_centered": 0.11541533623407038,
+            "effective_rank_centered": 13.115082323894038,
+            "effective_rank_fraction": 0.06272375576290964
+          },
+          "margins": {
+            "p95_top_cos": 0.9985143514018608,
+            "median_top_cos": 0.998445887931137,
+            "median_margin": 9.076347550701636e-05,
+            "p95_margin": 0.00021984502199454137,
+            "median_entropy": 0.9999993543397097
+          },
+          "certificate": {
+            "rho": 95.23506947695934,
+            "c_f": 1.0,
+            "delta_cap": 94.23506947695934,
+            "delta_comp": 9.887882423087711e-15,
+            "sigma_plus": 0.02945370228636096,
+            "readout_lower_bound": 2.775571681308901,
+            "rank_K": 16,
+            "rank_consistent": true
+          },
+          "diagnosis": "collapsed_shared_offset",
+          "decision": "representation_repair"
+        },
+        "cost": {
+          "trainable_params_added": 0,
+          "model_params": 3323547,
+          "model_identity_sha": "235bc6e7e978711071811fe0e0fc0faf41733b6874ff18d6fb696e034c18bc71",
+          "growth_state_digest": "d9a8dcfcbefc28adf95e328a43ecdd86e911fc93a9cf4864a6a38b589b2e26e3",
+          "state_elements": 266273,
+          "state_bytes": 1065092,
+          "state_bytes_delta": 532544
+        }
+      },
+      {
+        "path": "control_legacy",
+        "generation": 3,
+        "slots_before": 32,
+        "slots_after": 64,
+        "added_slots": 32,
+        "pending": 16,
+        "headroom_before_plan": {
+          "occupied": 16,
+          "slots": 32,
+          "pending": 16,
+          "free": 16,
+          "remaining": 0,
+          "h_slots": 0.0,
+          "h_min_slots": 0.125,
+          "sufficient": false,
+          "spills": false
+        },
+        "plan": {
+          "action": "grow_then_write",
+          "slots": 64,
+          "added": 32,
+          "reason": "headroom_short",
+          "needed": 32
+        },
+        "headroom_authorising": {
+          "occupied": 16,
+          "slots": 64,
+          "pending": 16,
+          "free": 48,
+          "remaining": 32,
+          "h_slots": 0.5,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "headroom_after_write": {
+          "occupied": 32,
+          "slots": 64,
+          "pending": 0,
+          "free": 32,
+          "remaining": 32,
+          "h_slots": 0.5,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "committed": 16,
+        "dropped_writes": 0,
+        "evictions": 0,
+        "parent_rows_unchanged": true,
+        "band": {
+          "min_overlap": 0.999029339959073,
+          "max_overlap": 0.9992188517870776,
+          "min_separation": 0.0014731666131191368,
+          "min_nearest_cos": 0.9985268333868809,
+          "verdicts": {
+            "growth_is_copy": 16
+          },
+          "all_new_direction": false
+        },
+        "readings": {
+          "keys": 32,
+          "spectrum": {
+            "occupied": 32.0,
+            "width": 128.0,
+            "mean_abs_cos": 0.9980960219138452,
+            "top_share": 0.9981555220687116,
+            "effective_rank": 1.003699049449293,
+            "top_share_centered": 0.06818872707617189,
+            "effective_rank_centered": 24.859360417993866,
+            "effective_rank_fraction": 0.031365595295290406
+          },
+          "margins": {
+            "p95_top_cos": 0.99851996829512,
+            "median_top_cos": 0.9984278141854153,
+            "median_margin": 3.851594791837165e-05,
+            "p95_margin": 0.00013629662464368364,
+            "median_entropy": 0.9999995893528848
+          },
+          "certificate": {
+            "rho": 146.1312520555336,
+            "c_f": 1.0,
+            "delta_cap": 145.1312520555336,
+            "delta_comp": 2.7673366754091814e-14,
+            "sigma_plus": 0.023219008300328716,
+            "readout_lower_bound": 3.3698037461145334,
+            "rank_K": 32,
+            "rank_consistent": true
+          },
+          "diagnosis": "collapsed_shared_offset",
+          "decision": "representation_repair"
+        },
+        "cost": {
+          "trainable_params_added": 0,
+          "model_params": 3323547,
+          "model_identity_sha": "235bc6e7e978711071811fe0e0fc0faf41733b6874ff18d6fb696e034c18bc71",
+          "growth_state_digest": "08942ea8e1b953dcc23c677cbf7c8fa98d3782c0e8bf4b96f9e34341c9234e51",
+          "state_elements": 532545,
+          "state_bytes": 2130180,
+          "state_bytes_delta": 1065088
+        }
+      },
+      {
+        "path": "control_legacy",
+        "generation": 4,
+        "slots_before": 64,
+        "slots_after": 128,
+        "added_slots": 64,
+        "pending": 32,
+        "headroom_before_plan": {
+          "occupied": 32,
+          "slots": 64,
+          "pending": 32,
+          "free": 32,
+          "remaining": 0,
+          "h_slots": 0.0,
+          "h_min_slots": 0.125,
+          "sufficient": false,
+          "spills": false
+        },
+        "plan": {
+          "action": "grow_then_write",
+          "slots": 128,
+          "added": 64,
+          "reason": "headroom_short",
+          "needed": 64
+        },
+        "headroom_authorising": {
+          "occupied": 32,
+          "slots": 128,
+          "pending": 32,
+          "free": 96,
+          "remaining": 64,
+          "h_slots": 0.5,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "headroom_after_write": {
+          "occupied": 64,
+          "slots": 128,
+          "pending": 0,
+          "free": 64,
+          "remaining": 64,
+          "h_slots": 0.5,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "committed": 32,
+        "dropped_writes": 0,
+        "evictions": 0,
+        "parent_rows_unchanged": true,
+        "band": {
+          "min_overlap": 0.999158220795638,
+          "max_overlap": 0.9994127676866368,
+          "min_separation": 0.0013912429093864143,
+          "min_nearest_cos": 0.9986087570906136,
+          "verdicts": {
+            "growth_is_copy": 32
+          },
+          "all_new_direction": false
+        },
+        "readings": {
+          "keys": 64,
+          "spectrum": {
+            "occupied": 64.0,
+            "width": 128.0,
+            "mean_abs_cos": 0.998101379289141,
+            "top_share": 0.9981310456634965,
+            "effective_rank": 1.0037483283921187,
+            "top_share_centered": 0.04319541876114278,
+            "effective_rank_centered": 41.19622472089751,
+            "effective_rank_fraction": 0.015683567631126855
+          },
+          "margins": {
+            "p95_top_cos": 0.998638503304426,
+            "median_top_cos": 0.9984863631793945,
+            "median_margin": 3.36196318569959e-05,
+            "p95_margin": 0.00014626130979155104,
+            "median_entropy": 0.999999638224031
+          },
+          "certificate": {
+            "rho": 261.3256096968316,
+            "c_f": 1.0,
+            "delta_cap": 260.3256096968316,
+            "delta_comp": 7.564534843666057e-14,
+            "sigma_plus": 0.013830936023538916,
+            "readout_lower_bound": 3.6005468530056395,
+            "rank_K": 64,
+            "rank_consistent": true
+          },
+          "diagnosis": "collapsed_shared_offset",
+          "decision": "representation_repair"
+        },
+        "cost": {
+          "trainable_params_added": 0,
+          "model_params": 3323547,
+          "model_identity_sha": "235bc6e7e978711071811fe0e0fc0faf41733b6874ff18d6fb696e034c18bc71",
+          "growth_state_digest": "fd43f71560e17a81bd028b82ed29acb7c17c5ef0412eddb1ea518780d7b78980",
+          "state_elements": 1065089,
+          "state_bytes": 4260356,
+          "state_bytes_delta": 2130176
+        }
+      }
+    ]
+  },
+  "per_generation_answer": [
+    {
+      "generation": 1,
+      "repaired": {
+        "diagnosis": "separable_no_growth",
+        "top_share": 0.19307790162752816,
+        "top_share_centered": 0.20806330509543058,
+        "median_margin": 0.06863129215207675,
+        "delta_comp": 2.312062980925372e-15,
+        "band": {
+          "min_overlap": 0.19213599662780934,
+          "max_overlap": 0.2796283604966509,
+          "min_separation": 0.740465318275353,
+          "min_nearest_cos": 0.259534681724647,
+          "verdicts": {
+            "growth_new_direction": 4
+          },
+          "all_new_direction": true
+        }
+      },
+      "control_legacy": {
+        "diagnosis": "collapsed_shared_offset",
+        "top_share": 0.9983436549179341,
+        "median_margin": 0.00011122987965034303,
+        "delta_comp": 7.34275313537993e-15,
+        "band_verdicts": {
+          "growth_is_copy": 4
+        }
+      }
+    },
+    {
+      "generation": 2,
+      "repaired": {
+        "diagnosis": "separable_no_growth",
+        "top_share": 0.11718380775285635,
+        "top_share_centered": 0.11761841009721236,
+        "median_margin": 0.05838789060739855,
+        "delta_comp": 4.389212751340544e-15,
+        "band": {
+          "min_overlap": 0.25588681912615735,
+          "max_overlap": 0.3692164815212742,
+          "min_separation": 0.737900931295409,
+          "min_nearest_cos": 0.26209906870459093,
+          "verdicts": {
+            "growth_new_direction": 8
+          },
+          "all_new_direction": true
+        }
+      },
+      "control_legacy": {
+        "diagnosis": "collapsed_shared_offset",
+        "top_share": 0.9982146242593309,
+        "median_margin": 9.076347550701636e-05,
+        "delta_comp": 9.887882423087711e-15,
+        "band_verdicts": {
+          "growth_is_copy": 8
+        }
+      }
+    },
+    {
+      "generation": 3,
+      "repaired": {
+        "diagnosis": "separable_no_growth",
+        "top_share": 0.080642108678811,
+        "top_share_centered": 0.06653541997166676,
+        "median_margin": 0.030282665861467058,
+        "delta_comp": 8.224584835165657e-15,
+        "band": {
+          "min_overlap": 0.32127701324651414,
+          "max_overlap": 0.4678559171230678,
+          "min_separation": 0.765418617106289,
+          "min_nearest_cos": 0.23458138289371103,
+          "verdicts": {
+            "growth_new_direction": 16
+          },
+          "all_new_direction": true
+        }
+      },
+      "control_legacy": {
+        "diagnosis": "collapsed_shared_offset",
+        "top_share": 0.9981555220687116,
+        "median_margin": 3.851594791837165e-05,
+        "delta_comp": 2.7673366754091814e-14,
+        "band_verdicts": {
+          "growth_is_copy": 16
+        }
+      }
+    },
+    {
+      "generation": 4,
+      "repaired": {
+        "diagnosis": "separable_no_growth",
+        "top_share": 0.05683073705447572,
+        "top_share_centered": 0.043152007921332024,
+        "median_margin": 0.019988498399807736,
+        "delta_comp": 1.6656022528913552e-14,
+        "band": {
+          "min_overlap": 0.42341809925033747,
+          "max_overlap": 0.6217661480327759,
+          "min_separation": 0.7098796100627386,
+          "min_nearest_cos": 0.2901203899372614,
+          "verdicts": {
+            "growth_new_direction": 32
+          },
+          "all_new_direction": true
+        }
+      },
+      "control_legacy": {
+        "diagnosis": "collapsed_shared_offset",
+        "top_share": 0.9981310456634965,
+        "median_margin": 3.36196318569959e-05,
+        "delta_comp": 7.564534843666057e-14,
+        "band_verdicts": {
+          "growth_is_copy": 32
+        }
+      }
+    }
+  ],
+  "reading_notes": {
+    "delta_comp": "delta_comp is 0 on both paths at every generation: with m <= d the key columns stay numerically independent even when they are 0.999 aligned, so pinv(K)K = I and the residual vanishes. It is the wrong discriminator when the store is wider than it is occupied; the key spectrum (top_share, effective_rank) and the read margin are the discriminators here. This is a reading, not a pass",
+    "margin_decay": "repaired median margin decays 0.0686 -> 0.0584 -> 0.0303 -> 0.0200 while occupancy goes 8 -> 16 -> 32 -> 64 in d=128; it reaches the 0.02 growth threshold at generation 4, so growth adds directions but each added key buys less separation as occupancy approaches d/2"
+  },
+  "decision": "pass",
+  "failure": null,
+  "what_pass_means": "on this synthetic fixture, capacity can be doubled four times while keeping the reserve, without dropping or evicting a single write, and every newly written key sits in the relatedness band relative to the subspace already present",
+  "what_pass_does_not_mean": [
+    "does not prove the store stays usable after training (no optimizer step was taken)",
+    "does not prove any task accuracy improves; no model forward and no scoring ran",
+    "does not prove the frozen centroid is the right one for real data; it is frozen from four synthetic parent keys",
+    "does not prove the legacy control is a fair stand-in for 20.3a; it is the same generator at 128 dimensions",
+    "does not prove multi-session persistence: everything here is one numpy session"
+  ],
+  "isolation": {
+    "runner_sha256": "16c7a9dd052f90c8694d48cd712dd72ce1c57f407769a1365a34cb9e6c5a8286",
+    "growth_design_sha256": "9976ab69b9c7b0abfc46b3b4131c6048f9bf26313edc84cab83c593971b85388",
+    "growth_runtime_sha256": "2125b1fb80da3f08d63353920bd83bbf88ba7839fcf482a24a2d06a13340ccd6",
+    "growth_modules_import_torch": false,
+    "pre_review_report": "reports/taiji_growth_design_verify_20261108.json",
+    "pre_review_report_sha256": "c54948933202cd944d22546b97475109f5b72165d85fdfd7c98f95b97cf67677"
+  },
+  "cost": {
+    "cpu_seconds": 0.094,
+    "wall_seconds": 0.176,
+    "cpu_cap": 200.0,
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "model_forwards": 0
+  }
+}

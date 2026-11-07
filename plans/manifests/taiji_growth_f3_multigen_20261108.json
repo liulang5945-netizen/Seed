@@ -1,0 +1,10 @@
+{
+  "format": "taiji-growth-f3-multigen-manifest-v1",
+  "report": "reports/taiji_growth_f3_multigen_20261108.json",
+  "report_sha256": "609fc176bcd9a52bcf406d644322d97b2046e3bb442361d4be2328fcac4b8986",
+  "runner": "scripts/training/probe_taiji_growth_f3_multigen_20261108.py",
+  "runner_sha256": "16c7a9dd052f90c8694d48cd712dd72ce1c57f407769a1365a34cb9e6c5a8286",
+  "growth_design_sha256": "9976ab69b9c7b0abfc46b3b4131c6048f9bf26313edc84cab83c593971b85388",
+  "growth_runtime_sha256": "2125b1fb80da3f08d63353920bd83bbf88ba7839fcf482a24a2d06a13340ccd6",
+  "decision": "pass"
+}
