@@ -1,13 +1,13 @@
 # ROADMAP-NEXT（唯一推进轨道，2026-11-05）
 
-> 状态 [现行轨道·包 20 已关（`package20_closed_current_learning_candidate_not_established`），21.1 判 U、21.3 判 `representation_axis_closed_for_this_graph`，**包 21 已全局收束**；FEC-1 可表达性判据已冻结、待裁定执行]。MASTER维护状态，本件维护执行顺序；包 21 细则见[包21计划](PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md)，包 20 细则仅作历史。旧19–21轨道已[逐字节归档](../archive/history/n19_to_n20_20261105/README.md)，原负结果与成本不改。
+> 状态 [现行轨道·包 20 已关、包 21 已全局收束；**FEC-1 已执行判 `key_space_collapsed_structurally`（4/4 一致）**；队首＝W1 架构改造分支待 owner 裁定]。MASTER维护状态，本件维护执行顺序；包 21 细则见[包21计划](PLAN-PACKAGE21_READOUT_DECOMPOSITION_20261107.md)，包 20 细则仅作历史。旧19–21轨道已[逐字节归档](../archive/history/n19_to_n20_20261105/README.md)，原负结果与成本不改。FEC-1 执行证据：[报告](../../reports/taiji_f_expressive_capacity_20261108.json)＋[执行 manifest](../manifests/taiji_f_expressive_capacity_execution_20261108.json)＋[feature card](../manifests/taiji_f_expressive_capacity_feature_card_20261108.json)；分支计划见 [W 分支计划](PLAN-FEC1_ADJUDICATION_WINDOW_20261107.md)。
 
 ## 0. 坐标系与当前步
 
 - 包19及19.2b–w整体关闭，不再追加19.2x。旧包20“再造抽取夹具/50步训练”与旧21“仅登记经验前提”提案退役，职责由20 rev2吸收。
 - 执行包20是可变规则学习、迁移与反例纠正；S19–S22是长期能力责任轴。20只检验其中有限子集，不因包号宣称整条能力轴完成。
 - **包 20 已关**——20.4c_r2 正式比较（2 seed × 2 臂 × 200 更新）与 20.4d 零训练共用评测均完成；按 §10 第 2 行结案“当前学习候选未成功＋F 额外贡献未证”；**20.5 准入不成立、不执行**；confirm 继续封存、record **0 读取**；**无自动 20.x 补丁链**。
-- **队首（唯一）**：包 21 已全局收束，唯一可对外能力仍为 C12；这是包 21 收束，不是 M 线或里程碑关闭。收束卡 §5 的下一轮唯一核心问题已由 owner 裁定为「先立零训练可表达性判据专项」，FEC-1 判据已冻结、待 owner 单独裁定执行；未裁决前不得再以训练剂量立项，21.2／21.4／U1 与各训练包保持冻结，不新开包。
+- **队首（唯一）**：**FEC-1 已执行并判 `key_space_collapsed_structurally`（4/4 checkpoint 一致，无分歧）；队首＝owner 裁定架构级改造分支（W1），等 owner 裁定后准入**。强制每轮写下，写键空间仍结构性塌缩：8 个 (group,head) 栈 binding 秩 2/2/2/3（门 ≥3）、逐对可分率 4×0.0（全部键对 |cos|>0.95 近共线）、键范数 0.83–0.97 健康（非零键失败）、条件数 14.9–58.9（≤100）；写键与读键近正交（query_alignment 中位 −0.147）；容量 256≥22（不是遗忘容量问题）；tied-key 闭式读出 event-id 0.0455≈1/22 chance（检索失败；decision-bit 0.59–0.68 是窗口身份味道的噪声，controls strongest 0.8182、四 checkpoint margin 全负）。归因：random_init 对照在 forced 下同样塌缩（pairwise 0.0）→ **架构固有**，非训练压塌、非写入时机、非读出对齐可修。forced 写本身有效（51/51 轮写入、22 面 F 全不同 dof=22——写机制响应内容但键不张成）。实际写入对照单列：timing coverage 0.0、written 10/51。成本 322.69 CPU / 0 训练 / 0 confirm / 判据 sha 读后未改 / driver 与 graph.run_turn 逐位等价验证（2 checkpoint）。本 verdict 是函数类判负（范围限定当前图与 checkpoint 谱系），不构成训练理由；21.2／21.4／U1 冻结维持，不新开包。
 - **FEC-1 判据（冻结，未执行）**：[冻结规格](SPEC-F_EXPRESSIVE_CAPACITY_PREREG_20261108.md)＋[机读 manifest](../manifests/taiji_f_expressive_capacity_prereg_20261108.json)（`criteria_sha256=1e0dde22…`）。判据对「按问句／按反馈事件可分且可寻址」分轴判定：问句轴按 22 个不同问句文本算、内容轴按 **11 个不同 bits 组合**算，**文本级通过而内容级不通过判 `text_level_only`、不满足问句轴**。强制写回放只改 `allowed` 掩码（0 参数 / 0 优化器步 / 0 改图）；结构性 verdict 只由强制写产生，实际稀疏写（20.2s 实测 **10/51**）单列为具名 verdict，两个方向都不得互相替签。0 训练 / 0 前向 / 0 confirm；**准入 ≠ 执行 ≠ 里程碑关闭**。
 - **包 21 收束卡**：[人读卡](CLOSEOUT-PACKAGE21_GLOBAL_20261107.md)＋[机器卡](../../reports/taiji_package21_global_closeout_20261107.json)。六件齐、8 项结项条件全过；准入门＝路径结项＋累计成本越闸（包 20 2.1072× 提案）。覆盖按现行 23 条条款／CR-1..CR-10 口径（「L1–L14」为历史编号，不编造条目）；学后保持记「未覆盖」与重启条件，不填 0。**不自动推进 P1–P6、不新开包**。
 - **同步规则**：上一行的队首句须与 MAINLINE 及 MASTER-PLAN 的队首逐字相同（由本轮机器校验；P0 的旧队首句 sha 见 [P0 结项卡](../../reports/taiji_package21_1_p0_closeout_20261107.json)）。

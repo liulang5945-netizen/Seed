@@ -1,0 +1,19 @@
+{
+  "schema": "taiji-fec-1-execution-manifest-v1",
+  "package": "FEC-1",
+  "date": "2026-11-08",
+  "prereg_manifest": "plans/manifests/taiji_f_expressive_capacity_prereg_20261108.json",
+  "criteria_sha256": "1e0dde222d557b4ea97eee528b9f73a2aec3068a2c462e927465e415fa3b6142",
+  "feature_card": "plans/manifests/taiji_f_expressive_capacity_feature_card_20261108.json",
+  "feature_card_sha256": "e91252dd6a0d6e9cafdd6c9fc9a8fe25f34ba5a370c8b8ace061c2b8a85ef7c3",
+  "report": "reports/taiji_f_expressive_capacity_20261108.json",
+  "report_sha256": "7ef2df494e24386821caef98f7645b3ef20f29ada8aa725ffa66e9a57ad6120a",
+  "runner": "scripts/training/probe_taiji_f_expressive_capacity_20261108.py",
+  "runner_sha256": "3fb27e49df20b3061b43a25a051034fe43df957a9a481089caa1bbf710f819fb",
+  "submitted_runner_sha256": "3fb27e49df20b3061b43a25a051034fe43df957a9a481089caa1bbf710f819fb",
+  "verdict": "key_space_collapsed_structurally",
+  "cost": {
+    "cpu_seconds": 322.688,
+    "wall_seconds": 323.854
+  }
+}

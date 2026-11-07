@@ -2812,3 +2812,11 @@ owner 已裁定「先立零训练可表达性判据专项」以回答上段遗�
 
 三处队首写回逐字相同的「包 21 已全局收束；收束卡 §5 的唯一核心问题已由 owner 裁定为先立零训练可表达性判据专项，FEC-1 判据已冻结、待裁定执行」，同步状态行与 ROADMAP-NEXT 执行顺序。**立专项 ≠ 执行 ≠ 里程碑关闭 ≠ 范围排除批准**：FEC-1 尚未执行、尚未产出任何读数；21.2／21.4／U1 与各训练包保持冻结，不新开包。
 
+
+## 2026-11-08（FEC-1 执行）：owner 裁定执行后按冻结合同跑完，判 `key_space_collapsed_structurally`（4/4 checkpoint 一致，无分歧）
+
+执行前硬门六项全过：prereg manifest 入库且 runner 常量 `CRITERIA_SHA256=1e0dde22…` 逐字一致；feature card（`e91252dd…`）在**读任何读数之前**落盘（写键截取=write_heads 前向钩子＋trace 逐位交叉核对、事件约定=纠正面 observe 末步、allowed 掩码构造、M_final=全程重放终态、有效秩 1e-2 相对阈值、Tikhonov eps=1e-6、留一解码=欧氏 NN 到事件 id、seed 与 bootstrap=2000 次/20261107）；4 个 checkpoint sha 与 21.1 报告逐一重算吻合；`build_graph` 供给脚本 sha=112c76ae… 吻合；random_init 图 weights_digest 与 20.1 报告 shared_init `c5ebe35b…` 一致；0 训练 / 0 confirm 声明落盘。**仪器有效性**：driver 与 graph.run_turn/graph.release 在 actual 掩码下逐位等价（2 个 checkpoint：每轮发射字节、终态 F max|Δ|=0.0、release written 计数全同）；forced 条件的**唯一**干预=allowed 全 True。工程重跑 3 次（钩子 raw 需 reshape、纠正面二次 take 空缓冲、trace 需 detach），均在 preflight/早期崩溃、费用可忽略，progress jsonl 如实留痕。
+
+读数（报告 `taiji_f_expressive_capacity_20261108.json`＋执行 manifest＋progress jsonl；成本 **322.69 CPU** / 1,500 停 / 0 训练 / 0 Adam / 0 新参数 / 0 写 checkpoint / 0 confirm）：**verdict=`key_space_collapsed_structurally`，4/4 checkpoint 一致**。forced 写有效——51/51 轮全部写入、22 面 F 向量全不同（dof=22，session {1:5, 2:17}）——**写机制响应内容，但写键空间不张成**：8 个 (group,head) 栈 binding 秩 2/2/2/3（门 ≥3）、逐对可分率 **4×0.0**（门 ≥0.95；全部键对 |cos|>0.95 近共线）、键范数中位 0.83–0.97（健康，非零键失败）、条件数 14.9–58.9（≤100）。query_alignment 中位 **−0.147**（写键与读键近正交，两套独立 MLP 无 tying）；query 秩 min 2、值面秩 min 1；容量 **256≥22**（衰减不是瓶颈）。tied-key 闭式读出（上界探针）：event-id 检索 **0.0455≈1/22 chance**——精确检索失败；decision-bit 0.5909–0.6818 是窗口身份味道的噪声（四对照 strongest **0.8182**，四 checkpoint margin 全负 −0.0455…−0.1818）。实际写入对照单列（不进结构性 verdict）：timing coverage **0.0**（纠正面结构性不写）、written 10/51、80 个 release 写事件键集同样塌缩。**归因（attribution 字段）**：random_init 对照在 forced 下同样塌缩（pairwise 0.0、键范数 0.706 健康）→ **架构固有**；训练压塌/写入时机/读出对齐三个竞争解释全部排除。判据 sha 读后未改；verdict 范围限定当前图与 checkpoint 谱系。第二次完整重跑（runner 修 zip strict 计 1 处后）读数逐位复现、runner sha 双列与提交字节一致。
+
+队首写回三处（MAINLINE / MASTER-PLAN / ROADMAP-NEXT）逐字相同；**下一步＝W1 架构级改造分支**（π 输入加内容可分特征／tied-key＋键白化／正交码本／内容寻址键源重设计，见 PLAN-FEC1_ADJUDICATION_WINDOW_20261107.md），等 owner 裁定后准入；不构成训练理由，21.2／21.4／U1 冻结维持。

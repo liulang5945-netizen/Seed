@@ -1,0 +1,100 @@
+{
+  "schema": "taiji-fec1-feature-card-v1",
+  "package": "FEC-1",
+  "date": "2026-11-08",
+  "status": "frozen_before_any_reading",
+  "written_at_utc": "2026-11-08T00:00:00Z",
+  "prereg_manifest": "plans/manifests/taiji_f_expressive_capacity_prereg_20261108.json",
+  "criteria_sha256": "1e0dde222d557b4ea97eee528b9f73a2aec3068a2c462e927465e415fa3b6142",
+  "note": "Frozen before any model forward pass or reading. The runner verifies the sha256 of this file against its own constant and stops on mismatch (engineering_stop). No post-reading change is permitted; a different feature construction requires a new pre-registration version.",
+  "probe_face": {
+    "fixture": "taiji.rule_learning_20_1",
+    "seed": 20261105,
+    "world_index": 0,
+    "turns": 51,
+    "surface_filter": "row['correction_surface'] and row['released_lines'] > 0",
+    "expected_surfaces": 22,
+    "same_face_for_all_checkpoints_and_conditions": true,
+    "rationale": "Identical to the 21.3 probe face (plans/manifests/taiji_package21_3_feature_card_20261107.json): ONE face for all four checkpoints makes readings comparable; no dev world beyond the probe face and no confirm index 240-319 are used. The budget note '16 worlds' in the prereg manifest is a compute envelope, not the analysis unit; the manifest's '22 assessable surfaces' binds.",
+    "confirm_reads": 0
+  },
+  "graph": {
+    "builder": "probe_taiji_package20_4c_r2_formal_comparison.build_graph(candidate, gate, arm)",
+    "builder_sha256": "112c76ae117255bb5da7d60a46312bf82382430fc3a99ab8d7ce6a1f173d4095",
+    "weights": "graph.subject.load_state_dict(load_checkpoint(path)['subject']); graph.subject.eval()",
+    "addressed_store_enabled": false,
+    "checkpoints": {
+      "CF1_20261105_200.pt": "aa98db8a0d8b64530fb6b4bc80e5573a2a937f999f341a89f01b4bb4114ae3b2",
+      "CF1_20261106_200.pt": "61ad7b6200fce2c46d12b12ab0f474768d8f66578dbf5ae6276f5f3221403337",
+      "B_EH_20261105_200.pt": "0939658ede9805b716a2bc4b4de606970cd4fd1d5ccad58023ced57cf130b3d1",
+      "B_EH_20261106_200.pt": "eade77f2a3e8c0c79394323afce79f587458c18edd53d1826c6baacd3d8bfdda"
+    },
+    "random_init_graph": {
+      "construction": "r2.build_graph(candidate, gate, 'CF1') with NO checkpoint load; subject.eval()",
+      "identity_check": "weights_digest(subject) must equal the 20.1 report identity.shared_init_sha256 = c5ebe35b9bf9442383ba0f568f8b7825466ec97f31ee35625182270aee1934c6",
+      "rationale": "The 20.1 initialized graph is copy_subject(candidate.subject) from the same 28031-B parent bundle (probe_taiji_package20_1_fixture_graph.py L328-332); building the same graph without a 20.4c_r2 checkpoint load reproduces it exactly. 'Random init' means zero package-20 training, per the 20.1 initialized_untrained semantics; F carries the parent-bundle inheritance and the subject weights are the Task1 structural parent."
+    }
+  },
+  "write_capture": {
+    "instrument": "forward hooks on subject.write_heads[g] (g=0..3) capturing each write_fast call's raw output (fast_heads, -1); every subject-level write event is captured; no parameter or structure is modified",
+    "split_layout_per_head": "[0:32]=key, [32:64]=value_raw, [64:96]=decay, [96:128]=erase, [128:160]=write_gate, [160]=strength, [161]=chi (matches living_core.write_fast splits)",
+    "key": "unit_ball(raw[:, 0:32]) per head",
+    "value": "sigmoid(raw[:, 128:160]) * unit_ball(torch.tanh(raw[:, 32:64])) per head - the exact second factor of the outer product that enters F",
+    "decay_channels": "sigmoid(raw[:, 64:96]) per head (32 channels)",
+    "cross_check": "hook keys must equal the step trace's write_keys bitwise (trace['write_keys'] is unit_ball of the same raw key segment); any mismatch is engineering_stop",
+    "no_hook_fallback": "if hooks were unavailable the reading would be engineering_stop, not approximated"
+  },
+  "write_event_conventions": {
+    "face_write_event": "at each correction-surface turn, the driver replicates graph.run_turn's observe phase patch-by-patch (subject.encoder.patches(query), one subject.step per patch) and takes the FINAL observe step as the face's write event: keys/values/decay from that step's hook captures, read query from the SAME step's trace['fast_queries'] (exact same context, satisfying the manifest's query_alignment definition)",
+    "release_write_event": "at each release line, the final observe step of that line's feedback; used only for the actual-timing key set",
+    "m_final": "state.living.fast after the full 51-turn replay (all turns and all releases processed)",
+    "face_f_vector": "state.living.fast flattened to 8192 float64 immediately after the face turn's answer loop (the 20.2s/21.3 row convention)"
+  },
+  "allowed_mask_construction": {
+    "forced": "torch.ones((4, 2), dtype=torch.bool) passed as allowed to EVERY subject.observe / subject.step call in the driver, including release lines; graph.run_turn / graph.release are NOT used in the forced condition (their internal masks are hardcoded); the driver first proves bit-identity with graph.run_turn under the actual mask (emitted bytes per turn, final F, release written counts), so the ONLY delta in forced is the mask, matching the manifest's forced_write_definition",
+    "actual": "graph semantics as-is: turn-phase allowed=zeros (run_turn hardcodes False), release-phase allowed=fast_enabled (write_enabled=True passed to graph.release); implemented in the same driver with mask constants that reproduce graph.release bit-identically (verified by the same equivalence check)",
+    "random_init_actual": "actual masks on the random_init graph (the frozen condition definition)",
+    "random_init_forced_supplement": "forced masks on the random_init graph, reported ONLY inside the attribution field as the like-for-like basis for 'architecture-inherent vs training-collapse' (the frozen condition is actual-masked; the structural verdict is forced-based, so the attribution comparison is forced-vs-forced). Not a gate."
+  },
+  "driver": {
+    "turn_phase": "replicate run_turn: records = graph._records(released, now); observe query patch-by-patch; answer loop ANSWER_BYTES steps with event=patch(prev_byte), choice=argmax(probabilities[:256]), living=consume_output; capture face F after the loop",
+    "release_phase": "replicate graph.release without store: per item, observe(feedback, goal=item query) with the condition's release mask; written flag = F changed across the item",
+    "journal": "prediction entries appended as in run_turn (prediction_id, turn, session, version, query_sha256, model_version, output hex, released/applied flags); revision incremented per release; journal and revision do not enter any FEC-1 statistic but are kept for equivalence",
+    "equivalence_gate": "for CF1_20261105 and B_EH_20261105: driver(actual) vs graph.run_turn/graph.release must give bit-identical per-turn emitted bytes, identical final F (max abs diff 0.0) and identical release written counts; any mismatch is engineering_stop"
+  },
+  "analysis_conventions": {
+    "effective_rank": "count of singular values s_i of the stacked key matrix K (events x 32) with s_i / s_max >= 1e-2 (manifest definition restated); per (group, head) stack; binding value = MIN over the 8 stacks",
+    "pairwise_separable_fraction": "fraction of unordered pairs with |cos(k_i, k_j)| <= 0.95; per stack over the 22 face keys; binding = MIN over 8 stacks",
+    "key_norm_median": "median L2 norm of the 22 face keys; per stack; binding = MIN over 8 stacks; the pooled median is also reported",
+    "condition_number": "s_max / s_min over singular values with s >= 1e-2 * s_max, per stack; statistic = MIN over 8 stacks (best stack, global ill-conditioning diagnostic per manifest)",
+    "query_alignment": "cosine(q_face, k_face) per (face, group, head) from the same observe-final step; statistic = median over all 22x8 = 176 pairs (literal manifest reading); per-stack medians reported as sensitivity",
+    "query_effective_rank": "effective rank of the 22 face read queries per stack (same 1e-2 rule); binding = MIN over 8 stacks",
+    "value_effective_rank": "effective rank of the 22 face written values per stack; binding = MIN over 8 stacks",
+    "capacity": "per (group, head): decay_scalar = median of sigmoid(decay channels) over the 22 face events x 32 channels; tau_decay = 1 / (1 - decay_scalar); head_capacity = min(32, tau_decay); capacity = sum over 8 heads; per-head tau reported",
+    "closed_form_readout": "per stack: K = 22 face keys as columns (32 x 22), G = K^T K (22 x 22), V_hat = M_final K (G + 1e-6 I)^{-1}; decode(j) = argmin_l ||V_hat[:, j] - v_l||_2 over the 22 true values of the same stack; correct iff argmin == j",
+    "closed_form_accuracy_binding": "MAX over the 8 (group, head) stacks of the DECISION-BIT accuracy obtained by mapping each face's decoded event id to that event's gold answer and scoring with the 20.2s decision-bit scorer (p2s scoring, DECISION_POSITIONS); the event-id retrieval accuracy is reported alongside per stack. Rationale: the manifest's margin compares against fitted-probe controls that are all decision-bit accuracies on the same 22-face label space; scoring the retrieved-event answer on the same metric makes the margin well-defined and keeps the frozen gate values meaningful. The tied-key readout remains an upper-bound probe, hence MAX over stacks.",
+    "effective_dof": "number of distinct F vectors (8192-dim float64, np.unique axis=0 bitwise) across the 22 faces under forced write; gate >= 3",
+    "controls": "the four manifest controls are computed once per checkpoint under FORCED write, on the same 22-face label space and the same decision-bit scorer: window_identity = fitted ridge probe (p2s.probe) on the 2-d session one-hot; label_permutation_5_seeds = per-seed MAX over seeds 20261105..20261109 of the probe on x = [F_forced, query_key]; random_projection_same_dim_same_norm = probe on a random matrix with x's shape, each row rescaled to x's row norm; no_f_other_persistent_state = probe on p2s.other_features(rows). strongest_control = max of the four; margin = closed_form_accuracy_binding - strongest_control",
+    "actual_timing_key_set": "under the actual condition, the write events are the final-observe steps of all release lines (keys/values from hooks); the same key gates and closed-form readout are computed on this event set against M_final(actual); the written-line subset is reported separately; this feeds only the key_space_collapsed_under_actual_timing verdict",
+    "timing_coverage": "per checkpoint under actual: a correction-face turn counts as written iff F changed at any point during that turn's processing window (turn phase + trailing release if any); timing_coverage = written_faces / 22, binding = MIN over 4 checkpoints; below the manifest gate the timing_insufficient flag is set and the forced replay proceeds regardless (it always runs)",
+    "bootstrap": "paired bootstrap over the 22 faces, 2000 resamples, seed 20261107, resampling faces (the 21.3 convention adapted: distinct-F-vector grouping is used only when dof >= 3, else the degenerate branch reports raw per-face bits); CI is sensitivity only - the frozen decision rule uses point values"
+  },
+  "seeds": {
+    "label_permutation": [20261105, 20261106, 20261107, 20261108, 20261109],
+    "random_projection": 20261105,
+    "bootstrap": 20261107
+  },
+  "budget_envelope_estimate": {
+    "replays": "4 checkpoints x (actual + forced) + random_init x (actual + forced) + 2 equivalence replays = 12 single-world 51-turn replays",
+    "expected_cpu": "about 250-400 CPU seconds based on 21.1/21.3 per-replay costs; budget caps are the frozen manifest values (soft 1200 / stop 1500 / wall 2250)"
+  },
+  "discipline": {
+    "zero_training": true,
+    "zero_optimizer_steps": true,
+    "zero_new_parameters": true,
+    "zero_checkpoint_writes": true,
+    "zero_confirm_reads": true,
+    "no_graph_edit": "the only intervention is the allowed mask; hooks are read-only instrumentation; the driver is validated bit-identical to graph.run_turn under the actual mask",
+    "criteria_immutable": "criteria_sha256 verified at runner start; any mismatch is engineering_stop"
+  }
+}
