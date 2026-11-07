@@ -19,14 +19,22 @@
     "report": "reports/taiji_package21_3_representation_separability_20261107.json",
     "report_sha256_verified": true,
     "criteria_unchanged_after_reading": true,
-    "feature_card_frozen_before_first_reading": true
+    "feature_card_frozen_before_first_reading": true,
+    "report_sha256_lf_blob": "f95e285d6154f8caa482b51eb98eef2bdfbceda0ef1736080ab20a938f4a2374",
+    "eol_normalization": "report CRLF->LF normalised with all values and readings unchanged; manifest.report_sha256 rebound (see eol_normalization in execution manifest)"
   },
   "readout": {
     "probe_face": "one 22-correction-surface world (fixture SEED 20261105, world 0), shared by all four checkpoints",
     "primary_decision_bit_accuracy": 0.6363636363636364,
     "controls": {
       "window_identity": 0.6818181818181818,
-      "label_permutation_per_seed": [0.45454545454545453, 0.5909090909090909, 0.5909090909090909, 0.5, 0.45454545454545453],
+      "label_permutation_per_seed": [
+        0.45454545454545453,
+        0.5909090909090909,
+        0.5909090909090909,
+        0.5,
+        0.45454545454545453
+      ],
       "label_permutation_mean": 0.5181818181818182,
       "label_permutation_max": 0.5909090909090909,
       "random_projection_same_dim_same_norm": 0.36363636363636365,
@@ -62,10 +70,18 @@
     "diagnostics_B_write_timing": {
       "distinct_f_vectors": 2,
       "release_writes": 10,
-      "distinct_f_per_session": { "1": 1, "2": 1 }
+      "distinct_f_per_session": {
+        "1": 1,
+        "2": 1
+      }
     },
     "four_checkpoints": {
-      "names": ["CF1_20261105_200.pt", "CF1_20261106_200.pt", "B_EH_20261105_200.pt", "B_EH_20261106_200.pt"],
+      "names": [
+        "CF1_20261105_200.pt",
+        "CF1_20261106_200.pt",
+        "B_EH_20261105_200.pt",
+        "B_EH_20261106_200.pt"
+      ],
       "primary_identical": true,
       "binding_margin_identical": true,
       "verdicts_identical": true,
@@ -96,15 +112,52 @@
     "all_passed": true
   },
   "exit_criteria": [
-    { "id": "E1", "criterion": "criteria frozen before reading and unchanged afterwards", "pass": true },
-    { "id": "E2", "criterion": "feature card frozen before first reading with sha registered", "pass": true },
-    { "id": "E3", "criterion": "four controls present with raw values reported", "pass": true },
-    { "id": "E4", "criterion": "dual control statistics reported, binding verdict used", "pass": true },
-    { "id": "E5", "criterion": "per-surface readings, paired bootstrap and effective DOF reported", "pass": true, "note": "bootstrap degenerate and reported as such, not filled with 0" },
-    { "id": "E6", "criterion": "strictest-of-four aggregation, no cherry-picking", "pass": true },
-    { "id": "E7", "criterion": "three-axis attribution without cross-signing", "pass": true },
-    { "id": "E8", "criterion": "report + manifest with dual runner sha, hashes self-consistent", "pass": true },
-    { "id": "E9", "criterion": "0 training / 0 confirm / 0 checkpoint writes / within budget", "pass": true }
+    {
+      "id": "E1",
+      "criterion": "criteria frozen before reading and unchanged afterwards",
+      "pass": true
+    },
+    {
+      "id": "E2",
+      "criterion": "feature card frozen before first reading with sha registered",
+      "pass": true
+    },
+    {
+      "id": "E3",
+      "criterion": "four controls present with raw values reported",
+      "pass": true
+    },
+    {
+      "id": "E4",
+      "criterion": "dual control statistics reported, binding verdict used",
+      "pass": true
+    },
+    {
+      "id": "E5",
+      "criterion": "per-surface readings, paired bootstrap and effective DOF reported",
+      "pass": true,
+      "note": "bootstrap degenerate and reported as such, not filled with 0"
+    },
+    {
+      "id": "E6",
+      "criterion": "strictest-of-four aggregation, no cherry-picking",
+      "pass": true
+    },
+    {
+      "id": "E7",
+      "criterion": "three-axis attribution without cross-signing",
+      "pass": true
+    },
+    {
+      "id": "E8",
+      "criterion": "report + manifest with dual runner sha, hashes self-consistent",
+      "pass": true
+    },
+    {
+      "id": "E9",
+      "criterion": "0 training / 0 confirm / 0 checkpoint writes / within budget",
+      "pass": true
+    }
   ],
   "all_exit_criteria_pass": true,
   "discipline": {

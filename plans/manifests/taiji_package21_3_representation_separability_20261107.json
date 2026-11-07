@@ -11,7 +11,7 @@
   "feature_card": "plans\\manifests\\taiji_package21_3_feature_card_20261107.json",
   "feature_card_sha256": "b4e3a5cc61bf36544534bdb4eb9b4595acb2033298db64bbe4c7f28f9500447b",
   "report": "reports\\taiji_package21_3_representation_separability_20261107.json",
-  "report_sha256": "670e4cfb81272c3fc543c2e7378679ce0137e89567e7b0b83c6568f11972597d",
+  "report_sha256": "f95e285d6154f8caa482b51eb98eef2bdfbceda0ef1736080ab20a938f4a2374",
   "runner": "scripts/training/probe_taiji_package21_3_representation_separability.py",
   "runner_sha256": "714adb6c794fd6684670bb97e7c8ad48d1a640fdb3f5e944b103aa35c1f4cffc",
   "submitted_runner_sha256": "714adb6c794fd6684670bb97e7c8ad48d1a640fdb3f5e944b103aa35c1f4cffc",
@@ -21,5 +21,13 @@
   "confirm_reads": 0,
   "checkpoints_written": 0,
   "training_steps": 0,
-  "readings_produced": 4
+  "readings_produced": 4,
+  "eol_normalization": {
+    "reason": "runner wrote the report in Windows text mode (CRLF) while reports/*.json is eol=lf in git; the committed blob is LF",
+    "content_values_identical": true,
+    "report_sha256_crlf_worktree": "670e4cfb81272c3fc543c2e7378679ce0137e89567e7b0b83c6568f11972597d",
+    "report_sha256_lf_blob": "f95e285d6154f8caa482b51eb98eef2bdfbceda0ef1736080ab20a938f4a2374",
+    "action": "report normalised to LF with all JSON values unchanged; manifest.report_sha256 rebound to the LF/blob hash",
+    "readings_unchanged": true
+  }
 }
