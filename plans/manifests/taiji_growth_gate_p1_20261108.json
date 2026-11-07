@@ -1,0 +1,12 @@
+{
+  "format": "taiji-growth-gate-p1-manifest-v1",
+  "report": "reports/taiji_growth_gate_p1_20261108.json",
+  "report_sha256": "a072898e2d2b01f13f0a49fef69a6b213b2782d3fd27811865ce936cec198737",
+  "report_sha256_note": "sha after the post-reading corrections block was appended; the block is additive, criteria, thresholds and gate code are unchanged",
+  "runner": "scripts/training/probe_taiji_growth_gate_p1_20261108.py",
+  "runner_sha256": "f101752eabb0097bdb8c8e5e39ff9200b2c02d3746af449f2a8916fcff3c6b7b",
+  "gate": "taiji/growth_gate.py",
+  "gate_sha256": "3347a8d83fde7acadb56fe44ea1a5a2cdd377c914dbd4a02600f723cfd63d571",
+  "decision": "p1_falsified_C2_C4",
+  "exit_code": "commit_rejected_separability"
+}

@@ -1,0 +1,180 @@
+{
+  "format": "taiji-growth-gate-p1-v1",
+  "generated_at": "2026-11-08T00:19:44",
+  "criteria_written_before_reading": {
+    "C0_battery_answerable": "at least 6 of the 7 held-out rules are top-1 correct before the write",
+    "C1_write_is_copy": "direction band verdict is growth_is_copy (o >= 0.85)",
+    "C2_exit_is_no_gain": "gate exit code is exactly commit_rejected_no_gain",
+    "C3_refusal_is_total": "published false, sha_after == sha_before bit for bit, evictions 0, exactly one quarantine row",
+    "C4_g4_catches_the_blend": "value residual within 0.05 of 0.6930",
+    "gate_not_wired": "if the write is published the verdict is gate_not_wired and the run stops",
+    "unchanged": "no threshold, rung, battery or question is retuned after the first reading"
+  },
+  "question": "can the gate refuse a local write at all, and does it refuse the F1 correction for the reason F1 identified?",
+  "fixture": {
+    "source": "scripts/training/probe_taiji_growth_f1_correction_20261108.py",
+    "source_sha256": "6f0018398207b9b142be881f9e3181b84815decf2560bf67b337dd138228802a",
+    "rung": {
+      "name": "low",
+      "generation": 1,
+      "occupied": 8,
+      "slots": 16
+    },
+    "encoder": "localized_centered-v1",
+    "temperature": 0.1,
+    "write_policy": "append",
+    "battery_size": 7,
+    "battery_families": [
+      "rule_1",
+      "rule_2",
+      "rule_3",
+      "rule_4",
+      "rule_5",
+      "rule_6",
+      "rule_7"
+    ],
+    "battery_hygiene": "the battery holds held-out rules 1..7; the write targets rule 0, and a battery row from the write's own family raises before any threshold is read"
+  },
+  "checks": {
+    "C0": true,
+    "C1": true,
+    "C2": false,
+    "C3": true,
+    "C4": false
+  },
+  "gate": {
+    "passed": false,
+    "exit_code": "commit_rejected_separability",
+    "exit_zh": "可分性下降",
+    "failed": [
+      "commit_rejected_separability",
+      "commit_rejected_no_gain"
+    ],
+    "g1_retention_before": 7,
+    "g1_retention_after": 7,
+    "g2_margin_before": 0.8571362794650165,
+    "g2_margin_after": 0.8571362794650165,
+    "g2_rank_before": 7.29079285615221,
+    "g2_rank_after": 6.75998162678122,
+    "g3_floats_before": 66560,
+    "g3_floats_after": 74880,
+    "g3_bytes_delta": 33280,
+    "g3_headroom_after": 0.4375,
+    "g4_top1_slot": 8,
+    "g4_value_residual": 0.5741670410216763,
+    "detail": {
+      "write_slot": 8,
+      "write_family": "rule_0",
+      "battery_size": 7,
+      "battery_families": [
+        "rule_1",
+        "rule_2",
+        "rule_3",
+        "rule_4",
+        "rule_5",
+        "rule_6",
+        "rule_7"
+      ],
+      "thresholds": {
+        "g1_max_retention_drop": 0,
+        "g2_max_margin_drop": 0.002,
+        "g2_max_rank_drop": 0,
+        "g3_max_state_bytes": 33280,
+        "g3_min_slot_headroom": 0.125,
+        "g4_max_value_residual": 0.5,
+        "float_bytes": 4,
+        "temperature": 0.1
+      }
+    }
+  },
+  "commit": {
+    "published": false,
+    "exit_code": "commit_rejected_separability",
+    "sha_before": "44b25129cc8d700ac7f9bde43ee1c8b3efe69723eaed55e9d38581205f155d9c",
+    "sha_after": "44b25129cc8d700ac7f9bde43ee1c8b3efe69723eaed55e9d38581205f155d9c",
+    "bit_identical": true,
+    "evictions": 0,
+    "quarantine_id": "q-0001",
+    "quarantine_rows": 1
+  },
+  "apply": {
+    "policy": "append",
+    "applied": true,
+    "slot": 8,
+    "evictions": 0,
+    "dropped": 0,
+    "reason": "free_slot"
+  },
+  "direction_band": {
+    "overlap": 0.9630576953127767,
+    "separation": 0.03945461433350661,
+    "nearest_cos": 0.9605453856664934,
+    "verdict": "growth_is_copy"
+  },
+  "g4_vs_f1": {
+    "gate_residual": 0.5741670410216763,
+    "f1_median_residual": 0.6979473397888241,
+    "predicted_half_half": 0.6929646455628166,
+    "abs_delta_to_prediction": 0.1187976045411403,
+    "interpretation": "the gate's G4 reads the same blend F1 measured: the slot is retrieved, but the value handed back is 0.51*v' + 0.49*v_old, so residual ~= 0.693"
+  },
+  "state_accounting": {
+    "floats_before": 66560,
+    "floats_after": 74880,
+    "bytes_delta_at_deployment_dtype": 33280,
+    "float_bytes_used": 4,
+    "note": "the fixture runs float64; the gate accounts at the deployment dtype (torch float32), which is what 33,280 B per slot means in the design"
+  },
+  "decision": "p1_falsified_C2_C4",
+  "decision_zh": "P1 判负：C2, C4 未通过",
+  "what_this_means": "a local write can be refused, and the refusal happens before publication: the store is restored bit for bit, nothing is evicted, and the refused write is kept in the quarantine journal instead of being dropped",
+  "what_this_does_not_mean": [
+    "no training, no optimizer step and no model forward ran",
+    "acceptance is not tested here: P1 only shows the gate can refuse; whether a corrected write is admitted is P2",
+    "the write policy under test is append, which mirrors the frozen addressed_write; the replace policy exists in the gate but is not what the graph runs",
+    "one fixture, one rung, one write"
+  ],
+  "post_reading_corrections": {
+    "written_after_the_first_reading": true,
+    "criteria_unchanged": true,
+    "thresholds_unchanged": true,
+    "gate_code_unchanged": true,
+    "why_this_block_exists": "C2 and C4 were written before the reading and stay failed above. This block does not retract them; it records why they failed and what the correct derivation is, so the same two mistakes are not repeated in the next pre-registration. Nothing in taiji/growth_gate.py was edited: changing the object under test after reading it would destroy the reading.",
+    "C2": {
+      "registered": "exit code is exactly commit_rejected_no_gain",
+      "observed_exit": "commit_rejected_separability",
+      "cause": "the G2 effective-rank clause fired before G4. The gate reports the first failing unit in G1->G4 order; failed = [commit_rejected_separability, commit_rejected_no_gain], so both conditions really did fail.",
+      "eff_rank_before": 7.29079285615221,
+      "eff_rank_after": 6.75998162678122,
+      "diagnosis": "eff_rank = (sum lambda)^2 / sum lambda^2 is a real-valued participation ratio, not an integer as the spec claimed. Appending a key 0.963 collinear with an existing key concentrates the spectrum, so the value necessarily falls. The clause therefore does not encode 'separability must not drop' -- that is the margin clause, and the margin did not move (0.85714 -> 0.85714). It encodes 'every write must add a new direction', which is the growth band of SPEC-TAIJI-WHOLE-LOCAL section 4.2. The behaviour it produces is the wanted behaviour (the copy is refused), but it is filed under the wrong exit and justified with a false premise. Whether it also refuses legitimate new directions is the open question P2 answers.",
+      "status": "classification and justification defect recorded only; deliberately NOT applied to taiji/growth_gate.py in this commit, because editing the object under test after the reading would destroy the reading"
+    },
+    "C4": {
+      "registered": "value residual within 0.05 of 0.6930",
+      "observed_residual": 0.5741670410216763,
+      "cause": "0.6930 was the median over F1's four synonym queries (weights 0.5106 / 0.5105 / 0.5103 / 0.5103). P1's G4 reads the write's own self query, whose weight on the new slot is 0.59731; for that query the half-and-half prediction is sqrt(2) * (1 - 0.59731) = 0.5695, not 0.6930.",
+      "corrected_prediction": 0.5694875,
+      "abs_delta_to_corrected_prediction": 0.0046795,
+      "diagnosis": "G4 caught the right thing. The measured residual matches the blend model for the query that was actually asked, and both that query and F1's synonym queries sit above the 0.5 gate."
+    }
+  },
+  "isolation": {
+    "runner_sha256": "f101752eabb0097bdb8c8e5e39ff9200b2c02d3746af449f2a8916fcff3c6b7b",
+    "gate_sha256": "3347a8d83fde7acadb56fe44ea1a5a2cdd377c914dbd4a02600f723cfd63d571",
+    "runtime_sha256": "2125b1fb80da3f08d63353920bd83bbf88ba7839fcf482a24a2d06a13340ccd6",
+    "design_sha256": "9976ab69b9c7b0abfc46b3b4131c6048f9bf26313edc84cab83c593971b85388",
+    "gate_imports_torch": false,
+    "frozen_files_touched": 0,
+    "f1_report": "reports/taiji_growth_f1_correction_20261108.json"
+  },
+  "cost": {
+    "cpu_seconds": 0.094,
+    "wall_seconds": 0.101,
+    "cpu_cap": 200.0,
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "model_forwards": 0
+  }
+}
