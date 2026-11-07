@@ -1,0 +1,654 @@
+{
+  "format": "taiji-growth-gate-p2-v1",
+  "generated_at": "2026-11-08T00:32:28",
+  "criteria_written_before_reading": {
+    "C0_battery_answerable": "at least 6 of the 7 held-out rules are top-1 correct before the write",
+    "C1_write_is_new_direction": "direction band verdict is growth_new_direction (o <= 0.85, s >= 0.3)",
+    "C2_gate_admits": "published is true and passed is true",
+    "C3_four_conditions_green": "G1, G2, G3 and G4 each pass, reported one by one",
+    "C4_no_collateral_damage": "every held-out rule keeps its own slot as top-1 and its value residual stays below 0.05",
+    "C5_grows_a_direction": "eff_rank rises by at least 1.0",
+    "unchanged": "no threshold, rung, battery or question is retuned after the first reading"
+  },
+  "question": "does the gate admit a write at all, and does it distinguish a copy from a new direction rather than refusing everything?",
+  "premise_check": {
+    "p1_store_encoder": "localized_centered-v1",
+    "p2_store_encoder": "localized_centered-v1",
+    "same_encoder": true,
+    "note": "P1's report records fixture.encoder = localized_centered-v1, so P1 was not an old-encoding run and P2 cannot be its new-encoding counterpart. The legacy arm is run here as a diagnostic instead."
+  },
+  "protocol_deviation_p1": {
+    "spec_said": "SPEC-TAIJI-WHOLE-LOCAL section 5 P1 lists the fixture as mode = \"mean\"",
+    "p1_runner_did": "localized_centered + center, centroid built from the legacy mean parents",
+    "detected_by": "this probe compares the P1 report field fixture.encoder with its own encoder",
+    "effect_on_p1_verdict": "no P1 check turns on the encoder: C0 and C3 are encoder-free, C1 needs o >= 0.85 and both encoders clear that (0.963 localized, 0.938 mean), C2 and C4 are properties of the blend read, which this probe reproduces",
+    "status": "recorded as a pre-registration drift; P1 is not re-run and its decision is not restated"
+  },
+  "probe_notes": [
+    "the legacy arm must encode its write key with the same encoder that built the store; the first draft mixed key spaces (mean store, localized query) and produced a meaningless legacy reading. Fixed before any number left this probe.",
+    "each arm gets its own quarantine journal so 'quarantine rows' counts one refusal, not the accumulation across arms",
+    "the replace arm supersedes the same key instead of appending; its byte delta is 0 by construction, which is why G3 passes for a different reason than in the append arms"
+  ],
+  "checks": {
+    "C0": true,
+    "C1": false,
+    "C2": false,
+    "C3": false,
+    "C4": true,
+    "C5": false
+  },
+  "primary": {
+    "arm": "primary_localized_append",
+    "encoder": "localized_centered-v1",
+    "policy": "append",
+    "family": "rule_0",
+    "direction_band": {
+      "overlap": 0.963058,
+      "separation": 0.039455,
+      "nearest_cos": 0.960545,
+      "verdict": "growth_is_copy"
+    },
+    "gate": {
+      "passed": false,
+      "exit_code": "commit_rejected_separability",
+      "exit_zh": "可分性下降",
+      "failed": [
+        "commit_rejected_separability",
+        "commit_rejected_no_gain"
+      ],
+      "g1_retention_before": 7,
+      "g1_retention_after": 7,
+      "g2_margin_before": 0.8571362794650165,
+      "g2_margin_after": 0.8571362794650165,
+      "g2_rank_before": 7.29079285615221,
+      "g2_rank_after": 6.75998162678122,
+      "g3_floats_before": 66560,
+      "g3_floats_after": 74880,
+      "g3_bytes_delta": 33280,
+      "g3_headroom_after": 0.4375,
+      "g4_top1_slot": 8,
+      "g4_value_residual": 0.5741670410216763,
+      "detail": {
+        "write_slot": 8,
+        "write_family": "rule_0",
+        "battery_size": 7,
+        "battery_families": [
+          "rule_1",
+          "rule_2",
+          "rule_3",
+          "rule_4",
+          "rule_5",
+          "rule_6",
+          "rule_7"
+        ],
+        "thresholds": {
+          "g1_max_retention_drop": 0,
+          "g2_max_margin_drop": 0.002,
+          "g2_max_rank_drop": 0,
+          "g3_max_state_bytes": 33280,
+          "g3_min_slot_headroom": 0.125,
+          "g4_max_value_residual": 0.5,
+          "float_bytes": 4,
+          "temperature": 0.1
+        }
+      }
+    },
+    "delta_effective_rank": -0.530811,
+    "commit": {
+      "published": false,
+      "exit_code": "commit_rejected_separability",
+      "sha_before": "44b25129cc8d700ac7f9bde43ee1c8b3efe69723eaed55e9d38581205f155d9c",
+      "sha_after": "44b25129cc8d700ac7f9bde43ee1c8b3efe69723eaed55e9d38581205f155d9c",
+      "bit_identical": true,
+      "evictions": 0,
+      "quarantine_id": "q-0001",
+      "quarantine_rows": 1
+    },
+    "apply": {
+      "policy": "append",
+      "applied": true,
+      "slot": 8,
+      "evictions": 0,
+      "dropped": 0,
+      "reason": "free_slot"
+    },
+    "written_slot_contribution": {
+      "top1_after": 0,
+      "weight_on_written_slot": 0.0,
+      "value_residual_to_written": 1.425834
+    },
+    "old_values_kept": [
+      {
+        "slot": 0,
+        "top1": 0,
+        "kept_slot": true,
+        "weight_on_own_slot": 0.9997896089356427,
+        "value_residual": 0.000238
+      },
+      {
+        "slot": 1,
+        "top1": 1,
+        "kept_slot": true,
+        "weight_on_own_slot": 0.9998172833400517,
+        "value_residual": 0.0002
+      },
+      {
+        "slot": 2,
+        "top1": 2,
+        "kept_slot": true,
+        "weight_on_own_slot": 0.9997009139620794,
+        "value_residual": 0.000358
+      },
+      {
+        "slot": 3,
+        "top1": 3,
+        "kept_slot": true,
+        "weight_on_own_slot": 0.9998467470854259,
+        "value_residual": 0.000171
+      },
+      {
+        "slot": 4,
+        "top1": 4,
+        "kept_slot": true,
+        "weight_on_own_slot": 0.9995084548931548,
+        "value_residual": 0.000556
+      },
+      {
+        "slot": 5,
+        "top1": 5,
+        "kept_slot": true,
+        "weight_on_own_slot": 0.9995371148174943,
+        "value_residual": 0.000524
+      },
+      {
+        "slot": 6,
+        "top1": 6,
+        "kept_slot": true,
+        "weight_on_own_slot": 0.9995451147520805,
+        "value_residual": 0.000509
+      },
+      {
+        "slot": 7,
+        "top1": 7,
+        "kept_slot": true,
+        "weight_on_own_slot": 0.9997762450931177,
+        "value_residual": 0.000243
+      }
+    ]
+  },
+  "contrast": {
+    "legacy_append": {
+      "encoder": "mean-v1",
+      "band": "growth_is_copy",
+      "overlap": 1.0,
+      "published": false,
+      "exit_code": "commit_rejected_separability"
+    },
+    "localized_append": {
+      "encoder": "localized_centered-v1",
+      "band": "growth_is_copy",
+      "overlap": 0.963058,
+      "published": false,
+      "exit_code": "commit_rejected_separability"
+    },
+    "localized_replace": {
+      "encoder": "localized_centered-v1",
+      "band": "growth_is_copy",
+      "overlap": 0.963058,
+      "published": false,
+      "exit_code": "commit_rejected_separability"
+    },
+    "new_direction_append": {
+      "encoder": "localized_centered-v1",
+      "band": "growth_new_direction",
+      "overlap": 0.283081,
+      "published": true,
+      "exit_code": "commit_accepted"
+    }
+  },
+  "diagnostics": {
+    "legacy_append": {
+      "arm": "diagnostic_legacy_append",
+      "encoder": "mean-v1",
+      "policy": "append",
+      "family": "rule_0",
+      "direction_band": {
+        "overlap": 1.0,
+        "separation": 0.0,
+        "nearest_cos": 1.0,
+        "verdict": "growth_is_copy"
+      },
+      "gate": {
+        "passed": false,
+        "exit_code": "commit_rejected_separability",
+        "exit_zh": "可分性下降",
+        "failed": [
+          "commit_rejected_separability",
+          "commit_rejected_no_gain"
+        ],
+        "g1_retention_before": 7,
+        "g1_retention_after": 7,
+        "g2_margin_before": 0.036324178504704444,
+        "g2_margin_after": 0.036324178504704444,
+        "g2_rank_before": 1.0033205234337017,
+        "g2_rank_after": 1.003298389818717,
+        "g3_floats_before": 66560,
+        "g3_floats_after": 74880,
+        "g3_bytes_delta": 33280,
+        "g3_headroom_after": 0.4375,
+        "g4_top1_slot": 0,
+        "g4_value_residual": 0.9434125688690681,
+        "detail": {
+          "write_slot": 0,
+          "write_family": "rule_0",
+          "battery_size": 7,
+          "battery_families": [
+            "rule_1",
+            "rule_2",
+            "rule_3",
+            "rule_4",
+            "rule_5",
+            "rule_6",
+            "rule_7"
+          ],
+          "thresholds": {
+            "g1_max_retention_drop": 0,
+            "g2_max_margin_drop": 0.002,
+            "g2_max_rank_drop": 0,
+            "g3_max_state_bytes": 33280,
+            "g3_min_slot_headroom": 0.125,
+            "g4_max_value_residual": 0.5,
+            "float_bytes": 4,
+            "temperature": 0.1
+          }
+        }
+      },
+      "delta_effective_rank": -2.2e-05,
+      "commit": {
+        "published": false,
+        "exit_code": "commit_rejected_separability",
+        "sha_before": "e4f6bfd5da8aa0cbf8e0b542aa577e07c529426565a65da198ba50ba7f8fa690",
+        "sha_after": "e4f6bfd5da8aa0cbf8e0b542aa577e07c529426565a65da198ba50ba7f8fa690",
+        "bit_identical": true,
+        "evictions": 0,
+        "quarantine_id": "q-0001",
+        "quarantine_rows": 1
+      },
+      "apply": {
+        "policy": "append",
+        "applied": true,
+        "slot": 8,
+        "evictions": 0,
+        "dropped": 0,
+        "reason": "free_slot"
+      },
+      "written_slot_contribution": {
+        "top1_after": 0,
+        "weight_on_written_slot": 0.0,
+        "value_residual_to_written": 1.063363
+      },
+      "old_values_kept": [
+        {
+          "slot": 0,
+          "top1": 0,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.12714572298321805,
+          "value_residual": 0.931622
+        },
+        {
+          "slot": 1,
+          "top1": 1,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.1270645379710491,
+          "value_residual": 0.935251
+        },
+        {
+          "slot": 2,
+          "top1": 2,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.12705889260792538,
+          "value_residual": 0.936993
+        },
+        {
+          "slot": 3,
+          "top1": 3,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.12707303304592954,
+          "value_residual": 0.92892
+        },
+        {
+          "slot": 4,
+          "top1": 4,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.12703223079695736,
+          "value_residual": 0.934465
+        },
+        {
+          "slot": 5,
+          "top1": 5,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.12709099317178707,
+          "value_residual": 0.926248
+        },
+        {
+          "slot": 6,
+          "top1": 6,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.12703213316614378,
+          "value_residual": 0.935393
+        },
+        {
+          "slot": 7,
+          "top1": 7,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.1271827886837813,
+          "value_residual": 0.935466
+        }
+      ]
+    },
+    "localized_replace": {
+      "arm": "diagnostic_replace",
+      "encoder": "localized_centered-v1",
+      "policy": "replace",
+      "family": "rule_0",
+      "direction_band": {
+        "overlap": 0.963058,
+        "separation": 0.039455,
+        "nearest_cos": 0.960545,
+        "verdict": "growth_is_copy"
+      },
+      "gate": {
+        "passed": false,
+        "exit_code": "commit_rejected_separability",
+        "exit_zh": "可分性下降",
+        "failed": [
+          "commit_rejected_separability"
+        ],
+        "g1_retention_before": 7,
+        "g1_retention_after": 7,
+        "g2_margin_before": 0.8571362794650165,
+        "g2_margin_after": 0.8571362794650165,
+        "g2_rank_before": 7.29079285615221,
+        "g2_rank_after": 7.258282451911417,
+        "g3_floats_before": 66560,
+        "g3_floats_after": 66560,
+        "g3_bytes_delta": 0,
+        "g3_headroom_after": 0.5,
+        "g4_top1_slot": 0,
+        "g4_value_residual": 0.00020738061658853724,
+        "detail": {
+          "write_slot": 0,
+          "write_family": "rule_0",
+          "battery_size": 7,
+          "battery_families": [
+            "rule_1",
+            "rule_2",
+            "rule_3",
+            "rule_4",
+            "rule_5",
+            "rule_6",
+            "rule_7"
+          ],
+          "thresholds": {
+            "g1_max_retention_drop": 0,
+            "g2_max_margin_drop": 0.002,
+            "g2_max_rank_drop": 0,
+            "g3_max_state_bytes": 33280,
+            "g3_min_slot_headroom": 0.125,
+            "g4_max_value_residual": 0.5,
+            "float_bytes": 4,
+            "temperature": 0.1
+          }
+        }
+      },
+      "delta_effective_rank": -0.03251,
+      "commit": {
+        "published": false,
+        "exit_code": "commit_rejected_separability",
+        "sha_before": "44b25129cc8d700ac7f9bde43ee1c8b3efe69723eaed55e9d38581205f155d9c",
+        "sha_after": "44b25129cc8d700ac7f9bde43ee1c8b3efe69723eaed55e9d38581205f155d9c",
+        "bit_identical": true,
+        "evictions": 0,
+        "quarantine_id": "q-0001",
+        "quarantine_rows": 1
+      },
+      "apply": {
+        "policy": "replace",
+        "applied": true,
+        "slot": 0,
+        "evictions": 0,
+        "dropped": 0,
+        "reason": "same_key_superseded",
+        "replaced_slot_cosine": 0.9605453856664934
+      },
+      "written_slot_contribution": {
+        "top1_after": 0,
+        "weight_on_written_slot": 0.0,
+        "value_residual_to_written": 1.425834
+      },
+      "old_values_kept": [
+        {
+          "slot": 0,
+          "top1": 0,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.9997896089356427,
+          "value_residual": 0.000238
+        },
+        {
+          "slot": 1,
+          "top1": 1,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.9998172833400517,
+          "value_residual": 0.0002
+        },
+        {
+          "slot": 2,
+          "top1": 2,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.9997009139620794,
+          "value_residual": 0.000358
+        },
+        {
+          "slot": 3,
+          "top1": 3,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.9998467470854259,
+          "value_residual": 0.000171
+        },
+        {
+          "slot": 4,
+          "top1": 4,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.9995084548931548,
+          "value_residual": 0.000556
+        },
+        {
+          "slot": 5,
+          "top1": 5,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.9995371148174943,
+          "value_residual": 0.000524
+        },
+        {
+          "slot": 6,
+          "top1": 6,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.9995451147520805,
+          "value_residual": 0.000509
+        },
+        {
+          "slot": 7,
+          "top1": 7,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.9997762450931177,
+          "value_residual": 0.000243
+        }
+      ]
+    },
+    "new_direction_append": {
+      "arm": "diagnostic_new_direction",
+      "encoder": "localized_centered-v1",
+      "policy": "append",
+      "family": "new_direction",
+      "direction_band": {
+        "overlap": 0.283081,
+        "separation": 0.818028,
+        "nearest_cos": 0.181972,
+        "verdict": "growth_new_direction"
+      },
+      "gate": {
+        "passed": true,
+        "exit_code": "commit_accepted",
+        "exit_zh": "准入",
+        "failed": [],
+        "g1_retention_before": 7,
+        "g1_retention_after": 7,
+        "g2_margin_before": 0.8571362794650165,
+        "g2_margin_after": 0.8571362794650165,
+        "g2_rank_before": 7.29079285615221,
+        "g2_rank_after": 8.153257256430999,
+        "g3_floats_before": 66560,
+        "g3_floats_after": 74880,
+        "g3_bytes_delta": 33280,
+        "g3_headroom_after": 0.4375,
+        "g4_top1_slot": 8,
+        "g4_value_residual": 0.0006330497154848337,
+        "detail": {
+          "write_slot": 8,
+          "write_family": "new_direction",
+          "battery_size": 7,
+          "battery_families": [
+            "rule_1",
+            "rule_2",
+            "rule_3",
+            "rule_4",
+            "rule_5",
+            "rule_6",
+            "rule_7"
+          ],
+          "thresholds": {
+            "g1_max_retention_drop": 0,
+            "g2_max_margin_drop": 0.002,
+            "g2_max_rank_drop": 0,
+            "g3_max_state_bytes": 33280,
+            "g3_min_slot_headroom": 0.125,
+            "g4_max_value_residual": 0.5,
+            "float_bytes": 4,
+            "temperature": 0.1
+          }
+        }
+      },
+      "delta_effective_rank": 0.862464,
+      "commit": {
+        "published": true,
+        "exit_code": "commit_accepted",
+        "sha_before": "44b25129cc8d700ac7f9bde43ee1c8b3efe69723eaed55e9d38581205f155d9c",
+        "sha_after": "07c7a74ea4ebb1f4e42ca0aedbe70d1c7019d99fcd59f6114f8254a790455f7b",
+        "bit_identical": false,
+        "evictions": 0,
+        "quarantine_id": null,
+        "quarantine_rows": 0
+      },
+      "apply": {
+        "policy": "append",
+        "applied": true,
+        "slot": 8,
+        "evictions": 0,
+        "dropped": 0,
+        "reason": "free_slot"
+      },
+      "written_slot_contribution": {
+        "top1_after": 8,
+        "weight_on_written_slot": 0.999429,
+        "value_residual_to_written": 0.000633
+      },
+      "old_values_kept": [
+        {
+          "slot": 0,
+          "top1": 0,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.9997616792661111,
+          "value_residual": 0.000265
+        },
+        {
+          "slot": 1,
+          "top1": 1,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.9997949922460917,
+          "value_residual": 0.000222
+        },
+        {
+          "slot": 2,
+          "top1": 2,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.9996524985670011,
+          "value_residual": 0.000402
+        },
+        {
+          "slot": 3,
+          "top1": 3,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.9998393913639948,
+          "value_residual": 0.000178
+        },
+        {
+          "slot": 4,
+          "top1": 4,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.9992602480177116,
+          "value_residual": 0.000819
+        },
+        {
+          "slot": 5,
+          "top1": 5,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.9994793777345253,
+          "value_residual": 0.000578
+        },
+        {
+          "slot": 6,
+          "top1": 6,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.9994330454978115,
+          "value_residual": 0.000621
+        },
+        {
+          "slot": 7,
+          "top1": 7,
+          "kept_slot": true,
+          "weight_on_own_slot": 0.9997293507550102,
+          "value_residual": 0.000291
+        }
+      ]
+    }
+  },
+  "self_check": {
+    "S1_condition_uses_a_necessarily_falling_quantity": false,
+    "S1_note": "C1/C4/C5 are read on the candidate, not used as a pass condition; the gate's own G2 rank clause is unchanged from P1 and is still what decides the exit code when a near-collinear key is appended",
+    "S2_write_was_already_a_copy_under_this_encoder": true,
+    "S2_measured_overlap": 0.963058,
+    "S3_p1_already_ran_this_encoder": true,
+    "S3_p1_encoder": "localized_centered-v1"
+  },
+  "decision": "p2_falsified_premise_C1_C2_C3_C5",
+  "decision_zh": "P2 判负：C1, C2, C3, C5 未通过",
+  "isolation": {
+    "runner_sha256": "6d97f0cc2e12da43aa02c8f0fd5b1f9e1b642254e7fb4cf50c9839e594cdc4b8",
+    "gate_sha256": "3347a8d83fde7acadb56fe44ea1a5a2cdd377c914dbd4a02600f723cfd63d571",
+    "runtime_sha256": "2125b1fb80da3f08d63353920bd83bbf88ba7839fcf482a24a2d06a13340ccd6",
+    "design_sha256": "9976ab69b9c7b0abfc46b3b4131c6048f9bf26313edc84cab83c593971b85388",
+    "p1_report_sha256": "a072898e2d2b01f13f0a49fef69a6b213b2782d3fd27811865ce936cec198737",
+    "gate_imports_torch": false,
+    "frozen_files_touched": 0
+  },
+  "cost": {
+    "cpu_seconds": 0.141,
+    "wall_seconds": 0.139,
+    "cpu_cap": 200.0,
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "model_forwards": 0
+  }
+}

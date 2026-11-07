@@ -1,0 +1,11 @@
+{
+  "format": "taiji-growth-gate-p2-manifest-v1",
+  "report": "reports/taiji_growth_gate_p2_20261108.json",
+  "report_sha256": "d80ec114d9a4045027a46c695674dcbb9dee6260b2c8e634a7b63bfae150b957",
+  "runner": "scripts/training/probe_taiji_growth_gate_p2_20261108.py",
+  "runner_sha256": "6d97f0cc2e12da43aa02c8f0fd5b1f9e1b642254e7fb4cf50c9839e594cdc4b8",
+  "gate": "taiji/growth_gate.py",
+  "gate_sha256": "3347a8d83fde7acadb56fe44ea1a5a2cdd377c914dbd4a02600f723cfd63d571",
+  "decision": "p2_falsified_premise_C1_C2_C3_C5",
+  "primary_exit_code": "commit_rejected_separability"
+}
