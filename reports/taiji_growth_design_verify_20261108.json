@@ -1,7 +1,7 @@
 {
-  "format": "taiji-growth-design-verify-v1",
-  "generated_at": "2026-11-07T22:11:33",
-  "script_sha256": "fe3df0efd2e255a430cd5ccdff9fc5a24c47d2230b9bbc050d6bfbef04652827",
+  "format": "taiji-growth-design-verify-v2",
+  "generated_at": "2026-11-07T22:48:09",
+  "script_sha256": "4de0065481b42cd95bf0d39e67e9cdea377910824b34f3bc5ac6cbc2f85be25d",
   "thresholds": {
     "top_cos": 0.95,
     "margin": 0.02,
@@ -219,11 +219,191 @@
           "record": 3
         }
       }
+    },
+    {
+      "name": "J_encoder_localized_centered",
+      "purpose": "the encoder keeps per-sentence differences instead of averaging them",
+      "decision": "encoding_repair",
+      "diagnosis": "localized_centered",
+      "expected": {},
+      "checks": {
+        "mean_legacy_collapsed": true,
+        "localized_centered_separates": true,
+        "localized_centered_beats_legacy": true
+      },
+      "passed": true,
+      "readings": {
+        "mean_legacy": {
+          "median_margin": 3.8515947918482674e-05,
+          "p95_top_cos": 0.99851996829512,
+          "top_share": 0.9981555220687116,
+          "top_share_centered": 0.06818872707617185
+        },
+        "mean_centered": {
+          "median_margin": 0.023878311535280965,
+          "p95_top_cos": 0.18510009181221299,
+          "top_share": 0.06704388287455698,
+          "top_share_centered": 0.06706407661588112
+        },
+        "localized": {
+          "median_margin": 0.00047614877474111417,
+          "p95_top_cos": 0.9871634702459204,
+          "top_share": 0.9830989236306236,
+          "top_share_centered": 0.06803614542500996
+        },
+        "localized_centered": {
+          "median_margin": 0.031085654192647617,
+          "p95_top_cos": 0.2043955736848017,
+          "top_share": 0.06595330901389225,
+          "top_share_centered": 0.06623750203541971
+        }
+      }
+    },
+    {
+      "name": "I_direction_band",
+      "purpose": "partly overlapping but distinguishable: copy and isolated both rejected",
+      "decision": "band_ok",
+      "diagnosis": [
+        "growth_is_copy",
+        "growth_isolated",
+        "growth_new_direction"
+      ],
+      "expected": {},
+      "checks": {
+        "copy_verdict": true,
+        "isolated_verdict": true,
+        "new_verdict": true,
+        "copy_not_capacity": true,
+        "isolated_not_capacity": true
+      },
+      "passed": true,
+      "readings": {
+        "copy": {
+          "overlap": 0.9999999999999998,
+          "novelty": 2.1073424255447017e-08,
+          "separation": 0.0,
+          "nearest_cos": 1.0,
+          "o_min": 0.15,
+          "o_max": 0.85,
+          "s_min": 0.3,
+          "r_min": 0.526782687642637,
+          "verdict": "growth_is_copy",
+          "counts_as_capacity": false
+        },
+        "isolated": {
+          "overlap": 3.32492688751746e-16,
+          "novelty": 1.0,
+          "separation": 0.9999999999999998,
+          "nearest_cos": 2.0469737016526324e-16,
+          "o_min": 0.15,
+          "o_max": 0.85,
+          "s_min": 0.3,
+          "r_min": 0.526782687642637,
+          "verdict": "growth_isolated",
+          "counts_as_capacity": false
+        },
+        "new": {
+          "overlap": 0.5500000000000002,
+          "novelty": 0.8351646544245032,
+          "separation": 0.7294035095881255,
+          "nearest_cos": 0.2705964904118745,
+          "o_min": 0.15,
+          "o_max": 0.85,
+          "s_min": 0.3,
+          "r_min": 0.526782687642637,
+          "verdict": "growth_new_direction",
+          "counts_as_capacity": true
+        }
+      }
+    },
+    {
+      "name": "K_capacity_first_protocol",
+      "purpose": "grow before writing; a capped or overfull batch writes nothing",
+      "decision": "capacity_first_ok",
+      "diagnosis": [
+        "grow_then_write",
+        "write_now",
+        "reject_write"
+      ],
+      "expected": {},
+      "checks": {
+        "short_grows_first": true,
+        "short_write_commits": true,
+        "ok_writes_now": true,
+        "capped_rejects": true,
+        "rollback_keeps_store": true
+      },
+      "passed": true,
+      "readings": {
+        "headroom_short": {
+          "occupied": 30,
+          "slots": 32,
+          "pending": 3,
+          "free": 2,
+          "remaining": -1,
+          "h_slots": -0.03125,
+          "h_min_slots": 0.125,
+          "sufficient": false,
+          "spills": true
+        },
+        "plan_short": {
+          "action": "grow_then_write",
+          "slots": 64,
+          "added": 32,
+          "reason": "headroom_short",
+          "needed": 33
+        },
+        "headroom_ok": {
+          "occupied": 10,
+          "slots": 32,
+          "pending": 2,
+          "free": 22,
+          "remaining": 20,
+          "h_slots": 0.625,
+          "h_min_slots": 0.125,
+          "sufficient": true,
+          "spills": false
+        },
+        "capped": {
+          "action": "reject_write",
+          "slots": 32,
+          "reason": "growth_capped",
+          "needed": 33,
+          "required_reserve": 0.125
+        },
+        "rollback": {
+          "committed": [],
+          "reason": "grown_capacity_still_short",
+          "rolled_back": true
+        }
+      }
+    },
+    {
+      "name": "L_import_isolation",
+      "purpose": "the new modules stay outside the running window's import closure",
+      "decision": "isolated",
+      "diagnosis": [
+        25,
+        [],
+        []
+      ],
+      "expected": {},
+      "checks": {
+        "frozen_set_has_25": true,
+        "no_frozen_file_imports_it": true,
+        "runner_does_not_import_it": true
+      },
+      "passed": true,
+      "readings": {
+        "frozen_files": 25,
+        "mentions": [],
+        "runner_mentions": []
+      }
     }
   ],
   "all_expected_met": true,
   "slot_growth_bytes_32_to_64": 1065216,
-  "cpu_seconds": 0.031,
-  "wall_seconds": 0.036,
+  "cpu_seconds": 0.078,
+  "wall_seconds": 0.07,
   "boundary": "synthetic fixtures only; the 20.3a replay uses its recorded aggregate cosine/margin, not a replayed key tensor, so attribution stays withheld"
 }

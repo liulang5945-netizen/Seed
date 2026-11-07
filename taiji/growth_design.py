@@ -26,6 +26,10 @@ import numpy as np
 R_MAX = 8
 ENUMERATION_CAP = 6561
 
+# Relatedness band for a new growth direction (spec §4A).  Starting values from
+# the constructive pre-review; recalibrated per domain after the first report.
+BAND = {"o_min": 0.15, "o_max": 0.85, "s_min": 0.30}
+
 # Nominal, uncalibrated thresholds.  The capacity branch is algebraic and does
 # not use them; the key-space branch stays ``no_growth`` until calibrated.
 THRESHOLDS = {
@@ -96,6 +100,53 @@ def read_margin_stats(keys: np.ndarray, temperature: float = 0.1) -> dict[str, f
         "median_margin": float(np.median(margins)),
         "p95_margin": float(np.percentile(margins, 95)),
         "median_entropy": float(np.median(entropy)),
+    }
+
+
+def direction_band(
+    existing: np.ndarray,
+    candidate: np.ndarray,
+    *,
+    band: dict[str, float] | None = None,
+) -> dict[str, Any]:
+    """Relatedness band for a new unit direction (spec §4A).
+
+    ``existing`` is ``(n, d)`` unit directions already in the subject,
+    ``candidate`` is ``(d,)``.  Returns ``o/r/s/t`` plus one of
+    ``growth_new_direction`` / ``growth_is_copy`` / ``growth_isolated``.
+    Only ``growth_new_direction`` may be counted as a capacity gain.
+    """
+    tau = {**BAND, **(band or {})}
+    old = unit_rows(np.asarray(existing, dtype=np.float64))
+    new = unit_rows(np.asarray(candidate, dtype=np.float64).reshape(1, -1))[0]
+    if old.shape[0] == 0:
+        overlap, nearest = 0.0, 0.0
+    else:
+        _, _, basis = np.linalg.svd(old, full_matrices=False)
+        rank = int(np.linalg.matrix_rank(old))
+        basis = basis[: max(rank, 1)]
+        overlap = float(np.linalg.norm(basis @ new))
+        nearest = float(np.abs(old @ new).max())
+    overlap = min(overlap, 1.0)
+    novelty = float(np.sqrt(max(1.0 - overlap**2, 0.0)))
+    separation = 1.0 - nearest
+    if overlap > tau["o_max"] or separation < tau["s_min"]:
+        verdict = "growth_is_copy"
+    elif overlap < tau["o_min"]:
+        verdict = "growth_isolated"
+    else:
+        verdict = "growth_new_direction"
+    return {
+        "overlap": overlap,
+        "novelty": novelty,
+        "separation": separation,
+        "nearest_cos": nearest,
+        "o_min": tau["o_min"],
+        "o_max": tau["o_max"],
+        "s_min": tau["s_min"],
+        "r_min": float(np.sqrt(max(1.0 - tau["o_max"] ** 2, 0.0))),
+        "verdict": verdict,
+        "counts_as_capacity": verdict == "growth_new_direction",
     }
 
 
