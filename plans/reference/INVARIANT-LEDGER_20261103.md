@@ -1232,7 +1232,19 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 
   **五、纪律与更正**：0 训练／0 优化器步／0 Adam／0 confirm；`evictions=0`、`dropped_writes=0`、被拒逐位不变、隔离行 0/1 精确、watchdog 未触发、无 `python -m black`。两处 `implementation_corrections`（简化 pass 的谓词写反、简化块缺"拒绝原因"）只影响"只算不写"那一列；臂 A/B 四次运行逐行一致，`criteria/thresholds/constants/verdict_rule` 全未改，三次被取代运行的回执 sha 留档在 `superseded_runs`。
 
-  **六、下一步唯一**：把门裁到"容量＋复制"两条（G1/G2/G4 摘出、只作读数），在同一 22 纠正面口径上重测；容量不足时按生长协议先扩槽再写。此前不动任何阈值、不接线。
+  **六、下一步（已执行）**：见 D16-67。
+
+- **D16-67 G2e：门只剩"容量＋复制"、容量不足先扩槽——与"不设门"完全打平，且门一次都没拦（2026-11-08，0 训练）**：`verdict = simplified_holds_at_parity`，[读数](../../reports/taiji_gate_simplified_20261108.json)，[预注册 manifest](../manifests/taiji_gate_simplified_20261108.json)（sha `ed1f3dd3…`，先落盘再读第一个数），CPU 0.22 s／墙钟 0.76 s。
+
+  **一、判定路径只剩两条**：`commit_rejected_no_direction`（方向带判为复制）与 `commit_rejected_no_capacity`（算术余量不足）。G1/G2/G4 仍由 `evaluate` 计算，但拒绝集合与这两条求交，被摘掉的三条逐条写进每行的 `dropped_clause_failures`，可审计（本次只有 `face_07`/`face_08` 会因 `separability` 被拒）。
+
+  **二、扩槽先于拒绝**：第 21 条写入（`face_20`）前 `write_headroom(28, 32, 1)` 得 `h=0.09375<0.125`，`plan_growth` 把 32 槽翻到 64 槽，占用不变、扩容后 `h=0.546875` 复检通过，写入继续；全程 **1 次扩容、共 32 槽**，**0 条拒写**，因此没有"扩容失败才拒"的分支被触发。
+
+  **三、两臂读数与上限**：简化门 **22/22** 纠正面、保留集 **7/7**；不设门的上限同为 **22/22、7/7**；逐面损失 **0 条**（`loss_faces` 为空）。**打平的原因不是门拦对了，而是门什么都没拦**——22 条写入方向判定全是 `growth_new_direction`，复制条款零触发；上限臂占用 30/32、不扩槽。
+
+  **四、纪律与代价**：0 训练／0 优化器步／0 Adam／0 confirm／0 checkpoint；`evictions=0`、`dropped_writes=0`、watchdog 未触发、单实例锁正常、runner sha 前后一致、write-then-rename。扩槽后读余量 **0.036538**，高于塌缩线 0.02，按预注册只记录、不进判定。
+
+  **五、下一步唯一**：在同一口径加一条**真复制**写入（已存条目的键／值原样再写），确认 `no_direction` 会拒且其余 22 面不受影响；在此之前不把门接进真实写路径，也不恢复任何被摘掉的条款。
 
 ## 29. 有界训练窗执行与判定（2026-11-08）
 

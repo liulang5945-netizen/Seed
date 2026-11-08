@@ -1,0 +1,99 @@
+{
+  "format": "taiji-gate-simplified-preregistration-v1",
+  "date": "2026-11-08",
+  "question": "does a gate that keeps only capacity and copy reach parity with no gate on the 22-face task, after growing the store instead of refusing?",
+  "written_before_any_arm_reading": true,
+  "written_before_any_case_verdict": true,
+  "sequence": [
+    "phase 0 baseline geometry (read only, no verdict)",
+    "this manifest is written and hashed",
+    "arm U: no gate at all (ceiling)",
+    "arm S: simplified gate, capacity + copy only, growth before refusal",
+    "verdict from the registered rule"
+  ],
+  "mapping": {
+    "task_shape": "package 20: 22 correction surfaces per world on a content-addressed store that starts at 32 slots (living_core.ADDRESSED_SLOTS) and may grow",
+    "store": "existing F1/F3 fixture unchanged: same encoder (localized_centered, legacy centroid), 128-d keys, 8192-d values, ADDRESSED_TEMPERATURE 0.1",
+    "why_not_the_model": "the gate is a numpy store check; inserting it into the torch graph would change the frozen read path. This probe measures it where it acts, on store writes",
+    "initial_occupancy": 8,
+    "initial_slots": 32,
+    "face_count": 22,
+    "face_definition": "face i writes a correction whose value token is the i-th new token at position 5, and is read with the same token at a different position; a face is correct iff the read's top-1 slot is the slot it was written to",
+    "no_eviction": "append only; a full store is refused, never evicted"
+  },
+  "retained_clauses": [
+    "commit_rejected_no_capacity",
+    "commit_rejected_no_direction"
+  ],
+  "dropped_clauses": [
+    "commit_rejected_retention",
+    "commit_rejected_separability",
+    "commit_rejected_inflation",
+    "commit_rejected_no_gain"
+  ],
+  "dropped_clauses_are_readings_only": true,
+  "growth_protocol": {
+    "trigger": "growth_runtime.write_headroom(...).sufficient is false for the next write",
+    "step": "growth_runtime.plan_growth doubles until (slots - needed)/slots >= 0.125",
+    "recheck": "the reserve is re-checked on the grown store before the write",
+    "on_failure": "refuse with commit_rejected_no_capacity, roll back bit-identically",
+    "slot_cap": null
+  },
+  "constants": {
+    "base_occupied": 8,
+    "initial_slots": 32,
+    "face_count": 22,
+    "correction_position": 5,
+    "synonym_positions": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "collapse_line": 0.02,
+    "gate_thresholds": {
+      "g1_max_retention_drop": 0,
+      "g2_max_margin_drop": 0.002,
+      "g3_max_state_bytes": 33280,
+      "g3_min_slot_headroom": 0.125,
+      "g4_max_value_residual": 0.5,
+      "direction": [
+        0.15,
+        0.85,
+        0.3
+      ]
+    }
+  },
+  "baseline_readings": {
+    "occupied": 8,
+    "slots": 32,
+    "headroom": 0.75,
+    "spec_margin": 0.068631,
+    "retention_correct": 7,
+    "retention_total": 7
+  },
+  "criteria": {
+    "S1_corrections": "the simplified gate must reach 22/22: face i writes its correction at position 5 and is read with the same token at another position; correct iff the final store's top-1 slot for that read is the slot the face was written to",
+    "S2_retention": "the 7 held-out exact keys of the 8-row baseline must still read back to their own slots; integer count out of 7",
+    "S3_no_loss": "no eviction and no dropped write may occur; either one fails the run",
+    "S4_failure_attribution": "if a face is not correct, it is classified as refused (owns no slot), written_but_read_wrong (its slot still holds its value but the synonym reads another slot) or slot_value_corrupted (its own slot no longer holds its value)",
+    "S5_ceiling": "the same 22 faces are appended with no gate and no refusal; that reading is the ceiling, and the simplified gate's loss is reported face by face with its cause",
+    "S6_growth": "before any capacity refusal the store doubles per growth_runtime.plan_growth and the reserve h >= 0.125 is re-checked on the grown store; a failed growth is the only capacity refusal and it rolls back bit-identically without evicting",
+    "S7_collapse_line": "if the post-growth read margin falls below 0.02 it is recorded and marked as not used by the verdict; the capacity/precision trade-off is the owner's call",
+    "judge_rule": "22/22 + 7/7 + 0 evictions + 0 dropped -> simplified_holds_at_parity; corrections < 22 -> simplified_below_parity with per-face causes; any eviction or dropped write -> simplified_failed",
+    "no_soft_language": "a face that the gate loses is reported as lost, never as 'close'; a run with no refusals may not be described as evidence that refusals are safe",
+    "unchanged": "no threshold, fixture, face or battery is retuned after the first reading"
+  },
+  "retention_caveat": "the 7/7 battery is exact stored keys, so an append can never lower it (a key's cosine to its own slot is 1.0). It is reported as the registered convention; the paraphrase retention is a labelled diagnostic and is not used by the verdict",
+  "discipline": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "black_invoked": false,
+    "cpu_cap_seconds": 200.0,
+    "watchdog_seconds": 60.0,
+    "evictions": 0,
+    "dropped_writes": 0
+  }
+}

@@ -1,0 +1,1509 @@
+{
+  "probe": "taiji_gate_simplified",
+  "date": "2026-11-08",
+  "question": "does a gate that keeps only capacity and copy reach parity with no gate on the 22-face task, after growing the store instead of refusing?",
+  "verdict": "simplified_holds_at_parity",
+  "verdict_detail": {
+    "rule": "22/22 + 7/7 + 0 evictions + 0 dropped -> simplified_holds_at_parity; corrections < 22 -> simplified_below_parity with per-face causes; any eviction or dropped write -> simplified_failed",
+    "simplified": {
+      "corrections_correct": 22,
+      "corrections_total": 22,
+      "retention_correct": 7,
+      "retention_total": 7,
+      "rejected_writes": 0,
+      "grown_slots": 32
+    },
+    "ceiling_no_gate": {
+      "corrections_correct": 22,
+      "corrections_total": 22,
+      "retention_correct": 7,
+      "retention_total": 7
+    },
+    "delta_corrections_vs_ceiling": 0,
+    "delta_retention_vs_ceiling": 0,
+    "loss_faces": [],
+    "evictions": 0,
+    "dropped_writes": 0,
+    "collapse_line": {
+      "value": 0.02,
+      "min_margin_after_growth": 0.036538,
+      "below_collapse_line": false,
+      "used_by_verdict": false
+    }
+  },
+  "three_required_readings": {
+    "1_ceiling_no_gate": {
+      "corrections_correct": 22,
+      "corrections_total": 22,
+      "retention_correct": 7,
+      "retention_total": 7
+    },
+    "2_simplified_loss_vs_ceiling": {
+      "count": 0,
+      "faces": []
+    },
+    "3_growth_and_refusals": {
+      "grown_slots_total": 32,
+      "growth_events": [
+        {
+          "tag": "face_20",
+          "slots_from": 32,
+          "slots_to": 64,
+          "grown_slots": 32,
+          "occupancy": 28,
+          "headroom_before_growth": 0.09375,
+          "headroom_after_growth": 0.546875,
+          "reserve_rechecked": true,
+          "margin_before_growth": 0.036538
+        }
+      ],
+      "refused_total": 0,
+      "refused_tags": []
+    }
+  },
+  "preregistration": {
+    "manifest": "plans/manifests/taiji_gate_simplified_20261108.json",
+    "manifest_sha256": "ed1f3dd344074a133c04a124fb3493003a87cf22951362c2b526ce5909868e0f",
+    "written_before_any_arm_reading": true,
+    "criteria": {
+      "S1_corrections": "the simplified gate must reach 22/22: face i writes its correction at position 5 and is read with the same token at another position; correct iff the final store's top-1 slot for that read is the slot the face was written to",
+      "S2_retention": "the 7 held-out exact keys of the 8-row baseline must still read back to their own slots; integer count out of 7",
+      "S3_no_loss": "no eviction and no dropped write may occur; either one fails the run",
+      "S4_failure_attribution": "if a face is not correct, it is classified as refused (owns no slot), written_but_read_wrong (its slot still holds its value but the synonym reads another slot) or slot_value_corrupted (its own slot no longer holds its value)",
+      "S5_ceiling": "the same 22 faces are appended with no gate and no refusal; that reading is the ceiling, and the simplified gate's loss is reported face by face with its cause",
+      "S6_growth": "before any capacity refusal the store doubles per growth_runtime.plan_growth and the reserve h >= 0.125 is re-checked on the grown store; a failed growth is the only capacity refusal and it rolls back bit-identically without evicting",
+      "S7_collapse_line": "if the post-growth read margin falls below 0.02 it is recorded and marked as not used by the verdict; the capacity/precision trade-off is the owner's call",
+      "judge_rule": "22/22 + 7/7 + 0 evictions + 0 dropped -> simplified_holds_at_parity; corrections < 22 -> simplified_below_parity with per-face causes; any eviction or dropped write -> simplified_failed",
+      "no_soft_language": "a face that the gate loses is reported as lost, never as 'close'; a run with no refusals may not be described as evidence that refusals are safe",
+      "unchanged": "no threshold, fixture, face or battery is retuned after the first reading"
+    },
+    "mapping": {
+      "task_shape": "package 20: 22 correction surfaces per world on a content-addressed store that starts at 32 slots (living_core.ADDRESSED_SLOTS) and may grow",
+      "store": "existing F1/F3 fixture unchanged: same encoder (localized_centered, legacy centroid), 128-d keys, 8192-d values, ADDRESSED_TEMPERATURE 0.1",
+      "why_not_the_model": "the gate is a numpy store check; inserting it into the torch graph would change the frozen read path. This probe measures it where it acts, on store writes",
+      "initial_occupancy": 8,
+      "initial_slots": 32,
+      "face_count": 22,
+      "face_definition": "face i writes a correction whose value token is the i-th new token at position 5, and is read with the same token at a different position; a face is correct iff the read's top-1 slot is the slot it was written to",
+      "no_eviction": "append only; a full store is refused, never evicted"
+    },
+    "growth_protocol": {
+      "trigger": "growth_runtime.write_headroom(...).sufficient is false for the next write",
+      "step": "growth_runtime.plan_growth doubles until (slots - needed)/slots >= 0.125",
+      "recheck": "the reserve is re-checked on the grown store before the write",
+      "on_failure": "refuse with commit_rejected_no_capacity, roll back bit-identically",
+      "slot_cap": null
+    },
+    "retained_clauses": [
+      "commit_rejected_no_capacity",
+      "commit_rejected_no_direction"
+    ],
+    "dropped_clauses": [
+      "commit_rejected_retention",
+      "commit_rejected_separability",
+      "commit_rejected_inflation",
+      "commit_rejected_no_gain"
+    ],
+    "retention_caveat": "the 7/7 battery is exact stored keys, so an append can never lower it (a key's cosine to its own slot is 1.0). It is reported as the registered convention; the paraphrase retention is a labelled diagnostic and is not used by the verdict"
+  },
+  "fixture": {
+    "source": "scripts/training/probe_taiji_growth_f1_correction_20261108.py",
+    "encoder": "localized_centered (legacy 4-parent mean centroid)",
+    "dim": 128,
+    "value_shape": [
+      4,
+      2,
+      32,
+      32
+    ],
+    "temperature": 0.1,
+    "initial_occupancy": 8,
+    "initial_slots": 32,
+    "face_count": 22,
+    "baseline": {
+      "occupied": 8,
+      "slots": 32,
+      "headroom": 0.75,
+      "spec_margin": 0.068631,
+      "retention_correct": 7,
+      "retention_total": 7
+    }
+  },
+  "arms": {
+    "U_no_gate": {
+      "arm": "U_no_gate",
+      "occupied_final": 30,
+      "slots_final": 32,
+      "headroom_final": 0.0625,
+      "spec_margin_final": 0.038073,
+      "retention_correct": 7,
+      "retention_total": 7,
+      "corrections_correct": 22,
+      "corrections_total": 22,
+      "rejected_writes": 0,
+      "evictions_total": 0,
+      "dropped_writes_total": 0,
+      "outcome_counts": {
+        "correct": 22
+      },
+      "paraphrase_retention_correct": 7,
+      "paraphrase_retention_total": 7,
+      "faces": [
+        {
+          "tag": "face_00",
+          "token": 20,
+          "read_position": 1,
+          "written_slot": 8,
+          "read_top_slot": 8,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.004568
+        },
+        {
+          "tag": "face_01",
+          "token": 22,
+          "read_position": 2,
+          "written_slot": 9,
+          "read_top_slot": 9,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.003929
+        },
+        {
+          "tag": "face_02",
+          "token": 23,
+          "read_position": 3,
+          "written_slot": 10,
+          "read_top_slot": 10,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.002909
+        },
+        {
+          "tag": "face_03",
+          "token": 24,
+          "read_position": 4,
+          "written_slot": 11,
+          "read_top_slot": 11,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.003462
+        },
+        {
+          "tag": "face_04",
+          "token": 25,
+          "read_position": 2,
+          "written_slot": 12,
+          "read_top_slot": 12,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.003243
+        },
+        {
+          "tag": "face_05",
+          "token": 26,
+          "read_position": 3,
+          "written_slot": 13,
+          "read_top_slot": 13,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.002987
+        },
+        {
+          "tag": "face_06",
+          "token": 27,
+          "read_position": 4,
+          "written_slot": 14,
+          "read_top_slot": 14,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.003185
+        },
+        {
+          "tag": "face_07",
+          "token": 28,
+          "read_position": 1,
+          "written_slot": 15,
+          "read_top_slot": 15,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.002067
+        },
+        {
+          "tag": "face_08",
+          "token": 30,
+          "read_position": 1,
+          "written_slot": 16,
+          "read_top_slot": 16,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.0044
+        },
+        {
+          "tag": "face_09",
+          "token": 31,
+          "read_position": 2,
+          "written_slot": 17,
+          "read_top_slot": 17,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.005087
+        },
+        {
+          "tag": "face_10",
+          "token": 32,
+          "read_position": 3,
+          "written_slot": 18,
+          "read_top_slot": 18,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.003801
+        },
+        {
+          "tag": "face_11",
+          "token": 33,
+          "read_position": 4,
+          "written_slot": 19,
+          "read_top_slot": 19,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.002767
+        },
+        {
+          "tag": "face_12",
+          "token": 34,
+          "read_position": 1,
+          "written_slot": 20,
+          "read_top_slot": 20,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.00313
+        },
+        {
+          "tag": "face_13",
+          "token": 35,
+          "read_position": 2,
+          "written_slot": 21,
+          "read_top_slot": 21,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.004986
+        },
+        {
+          "tag": "face_14",
+          "token": 36,
+          "read_position": 3,
+          "written_slot": 22,
+          "read_top_slot": 22,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.001979
+        },
+        {
+          "tag": "face_15",
+          "token": 38,
+          "read_position": 4,
+          "written_slot": 23,
+          "read_top_slot": 23,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.003672
+        },
+        {
+          "tag": "face_16",
+          "token": 39,
+          "read_position": 1,
+          "written_slot": 24,
+          "read_top_slot": 24,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.006114
+        },
+        {
+          "tag": "face_17",
+          "token": 40,
+          "read_position": 2,
+          "written_slot": 25,
+          "read_top_slot": 25,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.002257
+        },
+        {
+          "tag": "face_18",
+          "token": 41,
+          "read_position": 3,
+          "written_slot": 26,
+          "read_top_slot": 26,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.003291
+        },
+        {
+          "tag": "face_19",
+          "token": 42,
+          "read_position": 4,
+          "written_slot": 27,
+          "read_top_slot": 27,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.003406
+        },
+        {
+          "tag": "face_20",
+          "token": 43,
+          "read_position": 1,
+          "written_slot": 28,
+          "read_top_slot": 28,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.002602
+        },
+        {
+          "tag": "face_21",
+          "token": 44,
+          "read_position": 2,
+          "written_slot": 29,
+          "read_top_slot": 29,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.002908
+        }
+      ],
+      "writes": [
+        {
+          "arm": "U_no_gate",
+          "tag": "face_00",
+          "occupancy_before": 8,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 8,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_01",
+          "occupancy_before": 9,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 9,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_02",
+          "occupancy_before": 10,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 10,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_03",
+          "occupancy_before": 11,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 11,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_04",
+          "occupancy_before": 12,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 12,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_05",
+          "occupancy_before": 13,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 13,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_06",
+          "occupancy_before": 14,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 14,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_07",
+          "occupancy_before": 15,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 15,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_08",
+          "occupancy_before": 16,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 16,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_09",
+          "occupancy_before": 17,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 17,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_10",
+          "occupancy_before": 18,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 18,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_11",
+          "occupancy_before": 19,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 19,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_12",
+          "occupancy_before": 20,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 20,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_13",
+          "occupancy_before": 21,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 21,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_14",
+          "occupancy_before": 22,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 22,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_15",
+          "occupancy_before": 23,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 23,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_16",
+          "occupancy_before": 24,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 24,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_17",
+          "occupancy_before": 25,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 25,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_18",
+          "occupancy_before": 26,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 26,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_19",
+          "occupancy_before": 27,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 27,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_20",
+          "occupancy_before": 28,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 28,
+          "evictions": 0,
+          "dropped": 0
+        },
+        {
+          "arm": "U_no_gate",
+          "tag": "face_21",
+          "occupancy_before": 29,
+          "slots_after": 32,
+          "accepted": true,
+          "exit_code": "not_evaluated_no_gate",
+          "failed": [],
+          "written_slot": 29,
+          "evictions": 0,
+          "dropped": 0
+        }
+      ]
+    },
+    "S_capacity_copy": {
+      "arm": "S_capacity_copy",
+      "occupied_final": 30,
+      "slots_final": 64,
+      "headroom_final": 0.53125,
+      "spec_margin_final": 0.038073,
+      "retention_correct": 7,
+      "retention_total": 7,
+      "corrections_correct": 22,
+      "corrections_total": 22,
+      "rejected_writes": 0,
+      "evictions_total": 0,
+      "dropped_writes_total": 0,
+      "outcome_counts": {
+        "correct": 22
+      },
+      "paraphrase_retention_correct": 7,
+      "paraphrase_retention_total": 7,
+      "faces": [
+        {
+          "tag": "face_00",
+          "token": 20,
+          "read_position": 1,
+          "written_slot": 8,
+          "read_top_slot": 8,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.004568
+        },
+        {
+          "tag": "face_01",
+          "token": 22,
+          "read_position": 2,
+          "written_slot": 9,
+          "read_top_slot": 9,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.003929
+        },
+        {
+          "tag": "face_02",
+          "token": 23,
+          "read_position": 3,
+          "written_slot": 10,
+          "read_top_slot": 10,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.002909
+        },
+        {
+          "tag": "face_03",
+          "token": 24,
+          "read_position": 4,
+          "written_slot": 11,
+          "read_top_slot": 11,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.003462
+        },
+        {
+          "tag": "face_04",
+          "token": 25,
+          "read_position": 2,
+          "written_slot": 12,
+          "read_top_slot": 12,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.003243
+        },
+        {
+          "tag": "face_05",
+          "token": 26,
+          "read_position": 3,
+          "written_slot": 13,
+          "read_top_slot": 13,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.002987
+        },
+        {
+          "tag": "face_06",
+          "token": 27,
+          "read_position": 4,
+          "written_slot": 14,
+          "read_top_slot": 14,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.003185
+        },
+        {
+          "tag": "face_07",
+          "token": 28,
+          "read_position": 1,
+          "written_slot": 15,
+          "read_top_slot": 15,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.002067
+        },
+        {
+          "tag": "face_08",
+          "token": 30,
+          "read_position": 1,
+          "written_slot": 16,
+          "read_top_slot": 16,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.0044
+        },
+        {
+          "tag": "face_09",
+          "token": 31,
+          "read_position": 2,
+          "written_slot": 17,
+          "read_top_slot": 17,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.005087
+        },
+        {
+          "tag": "face_10",
+          "token": 32,
+          "read_position": 3,
+          "written_slot": 18,
+          "read_top_slot": 18,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.003801
+        },
+        {
+          "tag": "face_11",
+          "token": 33,
+          "read_position": 4,
+          "written_slot": 19,
+          "read_top_slot": 19,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.002767
+        },
+        {
+          "tag": "face_12",
+          "token": 34,
+          "read_position": 1,
+          "written_slot": 20,
+          "read_top_slot": 20,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.00313
+        },
+        {
+          "tag": "face_13",
+          "token": 35,
+          "read_position": 2,
+          "written_slot": 21,
+          "read_top_slot": 21,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.004986
+        },
+        {
+          "tag": "face_14",
+          "token": 36,
+          "read_position": 3,
+          "written_slot": 22,
+          "read_top_slot": 22,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.001979
+        },
+        {
+          "tag": "face_15",
+          "token": 38,
+          "read_position": 4,
+          "written_slot": 23,
+          "read_top_slot": 23,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.003672
+        },
+        {
+          "tag": "face_16",
+          "token": 39,
+          "read_position": 1,
+          "written_slot": 24,
+          "read_top_slot": 24,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.006114
+        },
+        {
+          "tag": "face_17",
+          "token": 40,
+          "read_position": 2,
+          "written_slot": 25,
+          "read_top_slot": 25,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.002257
+        },
+        {
+          "tag": "face_18",
+          "token": 41,
+          "read_position": 3,
+          "written_slot": 26,
+          "read_top_slot": 26,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.003291
+        },
+        {
+          "tag": "face_19",
+          "token": 42,
+          "read_position": 4,
+          "written_slot": 27,
+          "read_top_slot": 27,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.003406
+        },
+        {
+          "tag": "face_20",
+          "token": 43,
+          "read_position": 1,
+          "written_slot": 28,
+          "read_top_slot": 28,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.002602
+        },
+        {
+          "tag": "face_21",
+          "token": 44,
+          "read_position": 2,
+          "written_slot": 29,
+          "read_top_slot": 29,
+          "correct": true,
+          "outcome": "correct",
+          "value_residual": 0.002908
+        }
+      ],
+      "writes": [
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_00",
+          "occupancy_before": 8,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 8,
+          "headroom_after_write": 0.71875,
+          "margin_after": 0.857136,
+          "value_residual": 0.000637,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_01",
+          "occupancy_before": 9,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 9,
+          "headroom_after_write": 0.6875,
+          "margin_after": 0.857136,
+          "value_residual": 0.00077,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_02",
+          "occupancy_before": 10,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 10,
+          "headroom_after_write": 0.65625,
+          "margin_after": 0.857136,
+          "value_residual": 0.000331,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_03",
+          "occupancy_before": 11,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 11,
+          "headroom_after_write": 0.625,
+          "margin_after": 0.857136,
+          "value_residual": 0.00075,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_04",
+          "occupancy_before": 12,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 12,
+          "headroom_after_write": 0.59375,
+          "margin_after": 0.857136,
+          "value_residual": 0.001395,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_05",
+          "occupancy_before": 13,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 13,
+          "headroom_after_write": 0.5625,
+          "margin_after": 0.857136,
+          "value_residual": 0.001023,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_06",
+          "occupancy_before": 14,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 14,
+          "headroom_after_write": 0.53125,
+          "margin_after": 0.857136,
+          "value_residual": 0.00133,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_07",
+          "occupancy_before": 15,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_rejected_separability",
+          "failed": [
+            "commit_rejected_separability"
+          ],
+          "blocking": [],
+          "dropped_clause_failures": [
+            "commit_rejected_separability"
+          ],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 15,
+          "headroom_after_write": 0.5,
+          "margin_after": 0.849435,
+          "value_residual": 0.001252,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_08",
+          "occupancy_before": 16,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_rejected_separability",
+          "failed": [
+            "commit_rejected_separability"
+          ],
+          "blocking": [],
+          "dropped_clause_failures": [
+            "commit_rejected_separability"
+          ],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 16,
+          "headroom_after_write": 0.46875,
+          "margin_after": 0.830002,
+          "value_residual": 0.002144,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_09",
+          "occupancy_before": 17,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 17,
+          "headroom_after_write": 0.4375,
+          "margin_after": 0.830002,
+          "value_residual": 0.002347,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_10",
+          "occupancy_before": 18,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 18,
+          "headroom_after_write": 0.40625,
+          "margin_after": 0.830002,
+          "value_residual": 0.002394,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_11",
+          "occupancy_before": 19,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 19,
+          "headroom_after_write": 0.375,
+          "margin_after": 0.830002,
+          "value_residual": 0.001343,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_12",
+          "occupancy_before": 20,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 20,
+          "headroom_after_write": 0.34375,
+          "margin_after": 0.830002,
+          "value_residual": 0.001791,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_13",
+          "occupancy_before": 21,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 21,
+          "headroom_after_write": 0.3125,
+          "margin_after": 0.830002,
+          "value_residual": 0.00247,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_14",
+          "occupancy_before": 22,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 22,
+          "headroom_after_write": 0.28125,
+          "margin_after": 0.830002,
+          "value_residual": 0.000937,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_15",
+          "occupancy_before": 23,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 23,
+          "headroom_after_write": 0.25,
+          "margin_after": 0.830002,
+          "value_residual": 0.002749,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_16",
+          "occupancy_before": 24,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 24,
+          "headroom_after_write": 0.21875,
+          "margin_after": 0.830002,
+          "value_residual": 0.004421,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_17",
+          "occupancy_before": 25,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 25,
+          "headroom_after_write": 0.1875,
+          "margin_after": 0.830002,
+          "value_residual": 0.001578,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_18",
+          "occupancy_before": 26,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 26,
+          "headroom_after_write": 0.15625,
+          "margin_after": 0.830002,
+          "value_residual": 0.002595,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_19",
+          "occupancy_before": 27,
+          "slots_before": 32,
+          "slots_after": 32,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 32
+          },
+          "written_slot": 27,
+          "headroom_after_write": 0.125,
+          "margin_after": 0.830002,
+          "value_residual": 0.0024,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_20",
+          "occupancy_before": 28,
+          "slots_before": 32,
+          "slots_after": 64,
+          "grown_slots": 32,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 64
+          },
+          "written_slot": 28,
+          "headroom_after_write": 0.546875,
+          "margin_after": 0.830002,
+          "value_residual": 0.002077,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        },
+        {
+          "arm": "S_capacity_copy",
+          "tag": "face_21",
+          "occupancy_before": 29,
+          "slots_before": 64,
+          "slots_after": 64,
+          "grown_slots": 0,
+          "accepted": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "blocking": [],
+          "dropped_clause_failures": [],
+          "growth_plan": {
+            "action": "write_now",
+            "slots": 64
+          },
+          "written_slot": 29,
+          "headroom_after_write": 0.53125,
+          "margin_after": 0.830002,
+          "value_residual": 0.002029,
+          "direction_verdict": "growth_new_direction",
+          "evictions": 0,
+          "dropped": 0,
+          "bit_identical": null
+        }
+      ]
+    }
+  },
+  "refusals": {
+    "count": 0,
+    "by_exit_code": {
+      "commit_accepted": 0,
+      "commit_rejected_retention": 0,
+      "commit_rejected_separability": 0,
+      "commit_rejected_inflation": 0,
+      "commit_rejected_no_capacity": 0,
+      "commit_rejected_no_gain": 0,
+      "commit_rejected_no_direction": 0
+    },
+    "quarantine_rows": 0,
+    "all_bit_identical": true
+  },
+  "retention_diagnostic_paraphrase": {
+    "simplified": {
+      "correct": 7,
+      "total": 7
+    },
+    "ceiling": {
+      "correct": 7,
+      "total": 7
+    },
+    "used_by_verdict": false
+  },
+  "discipline": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "checkpoints_written": 0,
+    "black_invoked": false,
+    "black_gate": "in-process only",
+    "evictions": 0,
+    "dropped_writes": 0,
+    "store_full_refusals": 0
+  },
+  "isolation": {
+    "runner_sha256_start": "cf2cfc01f832170d222f1194b3f640c1de852f79881d7b977737317c91f004dd",
+    "runner_sha256_end": "cf2cfc01f832170d222f1194b3f640c1de852f79881d7b977737317c91f004dd",
+    "runner_sha_stable": true,
+    "gate_sha256": "2ed8b0dd3ed63af20e925155a48b2825b9664fe9f22a37b102b25f9cb89ba6de",
+    "runtime_sha256": "2125b1fb80da3f08d63353920bd83bbf88ba7839fcf482a24a2d06a13340ccd6",
+    "f1_runner_sha256": "6f0018398207b9b142be881f9e3181b84815decf2560bf67b337dd138228802a",
+    "manifest_sha256": "ed1f3dd344074a133c04a124fb3493003a87cf22951362c2b526ce5909868e0f",
+    "process_guard": {
+      "checked": "-m black",
+      "found": 0
+    },
+    "single_instance_lock": "taiji_gate_simplified_20261108.lock",
+    "watchdog": {
+      "seconds": 60.0,
+      "fired": false,
+      "marker_exists": false
+    },
+    "write_then_rename": true
+  },
+  "cost": {
+    "cpu_seconds": 0.219,
+    "wall_seconds": 0.762,
+    "cpu_cap_seconds": 200.0
+  },
+  "prior_run": {
+    "report": "reports/taiji_gate_task_value_20261108.json",
+    "verdict": "gate_hurts",
+    "recalled": "the four-clause gate refused face_07 and face_08 on separability, kept the retention set at 7/7 and lost two correction faces; this run takes only the two clauses that survived that verdict"
+  }
+}
