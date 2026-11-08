@@ -1,0 +1,112 @@
+{
+  "format": "taiji-gate-negative-control-preregistration-v1",
+  "date": "2026-11-08",
+  "question": "when a query has no stored answer, does the store return a slot and a confidence as if it did, or does it have an abstention branch?",
+  "written_before_any_class_reading": true,
+  "written_before_any_verdict": true,
+  "sequence": [
+    "phase 0 baseline geometry (read only, no verdict)",
+    "this manifest is written and hashed",
+    "simplified gate writes the 22 faces (same arm as G2e/G2f)",
+    "written group (22) and unwritten group (66) re-read in this run",
+    "three negative classes (22 each) constructed on the scoring side",
+    "per-item readings and the registered verdict"
+  ],
+  "classes": {
+    "new_token": "22 fixture tokens that never entered the store (outside the first eight baseline sentences and outside the 22 face tokens), each placed at a face's registered read position; report top_slot / top_cos / second_cos / margin / top_weight",
+    "new_pairing": "each face token placed at another face's registered read position; the token is seen, the token/position pair was never written and never used as a registered read; the same readings are reported",
+    "no_value": "the unit midpoint of two stored keys: a structurally legal 128-d key that corresponds to no stored value; no correct slot exists and the 'no answer' annotation lives only on the scoring side"
+  },
+  "counts": {
+    "per_class": 22,
+    "classes": 3,
+    "written_control": 22,
+    "unwritten_control": 66
+  },
+  "constants": {
+    "base_occupied": 8,
+    "initial_slots": 32,
+    "face_count": 22,
+    "correction_position": 5,
+    "synonym_positions": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "unwritten_per_rule": 3,
+    "familiar_cos": 0.95,
+    "tight_margin": 0.05,
+    "familiar_share": 0.8,
+    "separation_gap": 0.1,
+    "separation_coverage": 0.8,
+    "separation_margin": 0.02,
+    "gate_temperature": 0.1,
+    "value_float_bytes": 4
+  },
+  "criteria": {
+    "N1_new_token": "22 fixture tokens that never entered the store (outside the first eight baseline sentences and outside the 22 face tokens), each placed at a face's registered read position; report top_slot / top_cos / second_cos / margin / top_weight",
+    "N2_new_pairing": "each face token placed at another face's registered read position; the token is seen, the token/position pair was never written and never used as a registered read; the same readings are reported",
+    "N3_no_value": "the unit midpoint of two stored keys: a structurally legal 128-d key that corresponds to no stored value; no correct slot exists and the 'no answer' annotation lives only on the scoring side",
+    "N4_forced_answer_bytes": "for every item, compute the float32 payload a consumer would receive if it treated the returned value as the answer (4 * 8192 bytes), whether that payload is bit-identical to a stored payload, and the softmax weight / effective support behind it",
+    "N5_abstention_exit": "audit the read path for an explicit 'no match / low confidence' exit and report what is actually implemented; no threshold and no exit is added by the probe",
+    "N6_controls": "re-read the written group (22 registered reads) and the unwritten group (66 never-written phrasings) in the same run with the same metrics, so every contrast is against a measured positive control, not against a remembered number",
+    "verdict_rule": "any class with < 16 items -> not_assessable_construction_short; any class with share(top_cos >= 0.95) >= 0.8 and median(margin) < 0.05 -> always_answers_no_abstention; else if median(written.top_cos) - median(new_token.top_cos) >= 0.10 and share(new_token.top_cos < min(written.top_cos)) >= 0.8 and median(new_token.margin) >= 0.02 -> has_abstention_signal; otherwise -> inconclusive",
+    "threshold_source": "the abstention threshold is the written group's minimum top cosine, taken from the positive control only; it is not fitted to the negative labels and no threshold is moved after the first reading",
+    "no_soft_language": "a high cosine on a query with no answer is not called a good match; it is reported as a nearest-neighbour floor, and the forced-answer payload is reported next to it",
+    "unchanged": "no threshold, fixture, face, position or class is retuned after the first reading"
+  },
+  "read_path_audit": {
+    "read_path": "taiji/living_core.py::addressed_read",
+    "lines": "550-586",
+    "returns_for_any_non_empty_store": [
+      "enabled",
+      "occupied",
+      "valid",
+      "blended",
+      "top_slot",
+      "top_cosine",
+      "second_cosine",
+      "margin",
+      "weights",
+      "retrieved_norm",
+      "fast_norm_before",
+      "fast_norm_after",
+      "key"
+    ],
+    "abstention_exit_present": false,
+    "threshold_on_top_cosine_or_margin": false,
+    "returns_empty_store_diagnostic": true,
+    "empty_store_note": "the only non-answer branch is occupied == 0, which reports the empty store; it does not decide that a query has no match",
+    "term_scan": {
+      "abstain": 0,
+      "no_match": 0,
+      "no match": 0,
+      "low_confidence": 0,
+      "not_found": 0
+    },
+    "term_scan_any_hit": false,
+    "write_gate_is_not_a_read_gate": "growth_gate.evaluate refuses writes; it is never consulted on a read"
+  },
+  "baseline_readings": {
+    "occupied": 8,
+    "slots": 32,
+    "headroom": 0.75,
+    "retention_correct": 7,
+    "retention_total": 7,
+    "face_count": 22,
+    "unwritten_queries": 66
+  },
+  "discipline": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "black_invoked": false,
+    "cpu_cap_seconds": 200.0,
+    "watchdog_seconds": 60.0,
+    "evictions": 0,
+    "dropped_writes": 0,
+    "rule_truth_in_answer_chain": false
+  }
+}
