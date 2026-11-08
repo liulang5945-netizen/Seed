@@ -1,0 +1,82 @@
+{
+  "format": "taiji-gate-task-value-preregistration-v1",
+  "date": "2026-11-08",
+  "question": "does the consensus gate have task value, measured with one switch?",
+  "written_before_any_arm_reading": true,
+  "written_before_any_case_verdict": true,
+  "sequence": [
+    "phase 0 baseline geometry (read only, no verdict)",
+    "this manifest is written and hashed",
+    "arm A: store enabled + gate on",
+    "arm B: store enabled + gate off",
+    "compute-only simplification pass (capacity + copy only)",
+    "verdict from the registered rule"
+  ],
+  "mapping": {
+    "task_shape": "package 20: 22 correction surfaces per world on a content-addressed store of 32 slots (living_core.ADDRESSED_SLOTS)",
+    "store": "existing F1/F3 fixture unchanged: same encoder (localized_centered, legacy centroid), 128-d keys, 8192-d values, ADDRESSED_TEMPERATURE 0.1",
+    "why_not_the_model": "the judge is a numpy store gate; inserting it into the torch graph would change the frozen read path. This probe keeps the judge out of the model and measures it where it actually acts, on store writes",
+    "initial_occupancy": 8,
+    "slots": 32,
+    "face_count": 22,
+    "face_definition": "face i writes a correction whose value token is the i-th new token at position 5, and is read with the same token at a different position; a face is correct iff the read's top-1 slot is the slot it was written to",
+    "no_eviction": "append only; shadow_apply refuses a full store instead of evicting"
+  },
+  "constants": {
+    "base_occupied": 8,
+    "slots": 32,
+    "face_count": 22,
+    "correction_position": 5,
+    "synonym_positions": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "gate_thresholds": {
+      "g1_max_retention_drop": 0,
+      "g2_max_margin_drop": 0.002,
+      "g3_max_state_bytes": 33280,
+      "g3_min_slot_headroom": 0.125,
+      "g4_max_value_residual": 0.5,
+      "direction": [
+        0.15,
+        0.85,
+        0.3
+      ]
+    }
+  },
+  "baseline_readings": {
+    "occupied": 8,
+    "slots": 32,
+    "headroom": 0.75,
+    "spec_margin": 0.068631,
+    "retention_correct": 7,
+    "retention_total": 7,
+    "paraphrase_retention_correct": 7,
+    "paraphrase_retention_total": 7
+  },
+  "criteria": {
+    "T1_retention": "per arm, the 7 held-out exact keys of the 8-row baseline are read back and the top-1 slot must equal the expected slot; report the integer count out of 7",
+    "T2_corrections": "per arm, each of the 22 correction faces is read with a synonym (the same value token at a different position); a face is correct iff the final store's top-1 slot for that synonym is the slot that face was written to.  A refused write owns no slot and therefore cannot be correct",
+    "T3_rejections": "per refused write, the first failing clause (exit code) and the full failed list are reported; the distribution is by exit code",
+    "T4_counterfactual": "for every refused write, the write is applied to the store as it stood at that moment (copy-on-write, never published) and the retention count is re-read; 'would break retention' means that count is lower than the count just before",
+    "T5_simplification": "compute-only third pass: a gate that keeps only capacity (G3 headroom) and copy (direction) admits a write iff it was applied to a free slot and its failed list contains neither commit_rejected_no_capacity nor commit_rejected_no_direction -- a dropped clause may not refuse; report which writes it admits, which are still refused and by which clause, which admitted writes the full gate refused, and the resulting retention and correction counts",
+    "verdict_rule": "both equal + 0 refusals -> unable_to_assess_no_rejections; both equal + refusals>0 -> gate_has_no_task_value; A better on (retention, corrections) lexicographic -> gate_has_task_value with the share of refused writes that would break retention; A worse -> gate_hurts, stop criterion tuning and report the reason",
+    "no_soft_language": "a refusal that protects nothing may not be described as harmless; if the arms tie the verdict is no task value, never 'close'",
+    "unchanged": "no threshold, fixture, face or battery is retuned after the first reading"
+  },
+  "verdict_rule_lexicographic": "compare retention count first, correction count second; 'better' means higher",
+  "retention_caveat": "the 7/7 battery is exact stored keys, so an append can never lower it (a key's cosine to its own slot is 1.0 and no other row can exceed it). It is reported as the registered convention; the paraphrase retention is a labelled diagnostic and is not used by the verdict",
+  "discipline": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "black_invoked": false,
+    "cpu_cap_seconds": 200.0,
+    "watchdog_seconds": 60.0,
+    "evictions": 0,
+    "dropped_writes": 0
+  }
+}
