@@ -154,5 +154,39 @@
   },
   "freeze_revision": 4,
   "freeze_note": "harness-only revision: fixture classification and the unknown-gate definition changed; address layer, corpus, ranking and thresholds unchanged. Runner reformatted in-process (black Mode line_length=100, py312; formatting only) and readings re-taken under the same criteria.",
-  "criteria_changed_revision": 4
+  "criteria_changed_revision": 4,
+  "post_reading_corrections": [
+    {
+      "id": "D-20261109-01",
+      "recorded_at": "2026-11-09",
+      "type": "frozen_record_correction",
+      "criteria_changed": false,
+      "corpus_changed": false,
+      "fields": [
+        {
+          "field": "runner_sha256",
+          "before": "3aca50ce…（完整摘要未保留：该字节版本从未入库，其报告已被覆盖）",
+          "after": "b804a5d460fb71ebb0187c89c872a661f120e0d4352f2e6d5bb9609b9f118da3"
+        },
+        {
+          "field": "freeze_note",
+          "before": "harness-only revision: fixture classification and the unknown-gate definition changed; address layer, corpus, ranking and thresholds unchanged",
+          "after": "harness-only revision: fixture classification and the unknown-gate definition changed; address layer, corpus, ranking and thresholds unchanged. Runner reformatted in-process (black Mode line_length=100, py312; formatting only) and readings re-taken under the same criteria."
+        }
+      ],
+      "reason": "runner 在提交时未通过 in-process black 闸；仅格式规范化改动了文件摘要，冻结的 runner 摘要不再描述已提交文件；格式化后按同一判据整跑复测",
+      "readings_identical": true,
+      "readings_compared": {
+        "write_admitted": "542/550",
+        "short_entry_rate": "121/129=0.937984",
+        "unknown_anchored_old": "1/550",
+        "unknown_false_anchor_new": "0/550",
+        "fallback_n": 9,
+        "independent_violations": 0,
+        "verdict": "continuity_restored"
+      },
+      "freeze_revision_retained": 4,
+      "rollback": "git revert cf030848a 可回到 4262da689（rev 3、runner 3089e1fb…）；rev 4 格式化前字节不可恢复"
+    }
+  ]
 }
