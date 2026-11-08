@@ -1,0 +1,29 @@
+{
+  "schema": "taiji-contig-fallback-scores-v1",
+  "date": "2026-11-09",
+  "denominator": "written + union (queries that have an answering record in the store)",
+  "n": 9,
+  "method": "census: the answerable denominator has 9 unanchored rows, fewer than the 20-row sample, so every row is scored. Each row prints record 0's first sentence ('书不规寻找分成除你的因为“密分布。'), whose window overlap with the query is 0.0; the printed sentence neither answers the query nor shares its topic in any of the 9 cases.",
+  "rows": [
+    {"group": "written", "position": 53, "query": "## Results", "score": "irrelevant", "why": "generic heading; printed boilerplate is unrelated text"},
+    {"group": "written", "position": 72, "query": "## 生效方式", "score": "irrelevant", "why": "short heading below 16 B; printed boilerplate is unrelated text"},
+    {"group": "written", "position": 237, "query": "\\quad", "score": "irrelevant", "why": "LaTeX spacing token; no topic at all"},
+    {"group": "written", "position": 267, "query": "## 回流记录", "score": "irrelevant", "why": "short heading below 16 B; printed boilerplate is unrelated text"},
+    {"group": "written", "position": 277, "query": "### R4 CUDA", "score": "irrelevant", "why": "short heading below 16 B; printed boilerplate is unrelated text"},
+    {"group": "written", "position": 424, "query": "## 固定读数", "score": "irrelevant", "why": "short heading below 16 B; printed boilerplate is unrelated text"},
+    {"group": "written", "position": 485, "query": "{", "score": "irrelevant", "why": "single character; no topic at all"},
+    {"group": "written", "position": 497, "query": "E --> C", "score": "irrelevant", "why": "diagram edge label; printed boilerplate is unrelated text"},
+    {"group": "union", "position": 485, "query": "{\n## 生效方式", "score": "irrelevant", "why": "both sources below 16 B, no_match; printed boilerplate is unrelated text"}
+  ],
+  "scores": [
+    "irrelevant",
+    "irrelevant",
+    "irrelevant",
+    "irrelevant",
+    "irrelevant",
+    "irrelevant",
+    "irrelevant",
+    "irrelevant",
+    "irrelevant"
+  ]
+}

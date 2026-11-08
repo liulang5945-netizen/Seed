@@ -1,0 +1,157 @@
+{
+ "schema": "taiji-contig-v1",
+ "date": "2026-11-09",
+ "frozen_at": "2026-11-09T00:16:13",
+ "runner_sha256": "3089e1fbefaa3c68ae24e2e64d4b8f0bd7aab1fdc2b79ba2064b4a25b9b77954",
+ "corpus_sha256": "350eef77b06cd0d51d1b0605a9f3565318916e5d5112a3c051eaea8e6a2e55de",
+ "corpus_path": "plans\\manifests\\taiji_scale_corpus_20261108.json",
+ "question": "with the anchor restored to a contiguous occurrence of the ordered 16-byte window sequence, and the fallback relevance denominator corrected to queries that have an answering record, does the same 550-entry corpus keep L1/L2, reach zero false anchors on the unknown group and admit short entries?",
+ "scale": {
+  "written": 550,
+  "unknown": 550,
+  "unrelated": 550,
+  "union": 550,
+  "form_floor": 20,
+  "union_stride": 137
+ },
+ "buckets": [
+  {
+   "name": "<32",
+   "low": 0,
+   "high": 32
+  },
+  {
+   "name": "32-64",
+   "low": 32,
+   "high": 64
+  },
+  {
+   "name": "64-128",
+   "low": 64,
+   "high": 128
+  },
+  {
+   "name": "128-256",
+   "low": 128,
+   "high": 256
+  },
+  {
+   "name": ">256",
+   "low": 256,
+   "high": null
+  }
+ ],
+ "lines": {
+  "short_entry_rate": 0.9,
+  "fallback_sample": 20,
+  "unknown_false_anchor": 0
+ },
+ "fallback_rubric": {
+  "relevant": "the printed sentence answers the query's question or states its point",
+  "marginal": "same document/topic but does not answer the question",
+  "irrelevant": "different topic or generic boilerplate",
+  "mapping": {
+   "relevant": 1.0,
+   "marginal": 0.5,
+   "irrelevant": 0.0
+  },
+  "denominator": "only queries that have an answering record in the store: written self-reads and the union group. Unknown/unrelated rows are unanswerable by construction and are reported as output shape and mis-anchor count only.",
+  "sample_rule": "unanchored rows of the answerable denominator in report order, every ceil(total/20)-th row, first 20; when the denominator is smaller than 20 every row is scored and the census is disclosed"
+ },
+ "verdict": {
+  "rules": [
+   "closed not neutral -> hard_failure_closed_not_neutral (stop)",
+   "any anchored unknown row -> false_anchor_remains (diagnostics only)",
+   "admission rate for entries < 64 bytes < 0.9 -> window_identity_gapped",
+   "any L1 line fails -> output_fabricates",
+   "otherwise -> continuity_restored"
+  ]
+ },
+ "definition": {
+  "identity": "I(r) = [ sha256(r[i:i+16])[:16].hex() : 0 <= i <= len(r)-16 ], an ordered tuple, one token per offset; multiplicity is carried by the sequence itself. A record shorter than 16 bytes has an empty identity and is rejected alone: () is a prefix of every query and would anchor every record.",
+  "anchor": "anchored iff I(r) occurs inside W(q) as a contiguous subsequence: exists j with W(q)[j:j+len(I(r))] == I(r), and I(r) non-empty. 0 anchors -> fallback but still one output (labelled no_anchor); 1 -> matched; >=2 -> ambiguous_multiple_anchors, still top-1 and annotated. Anchors are readings, not exits.",
+  "continuity_theorem": "W(q)[j+i] == H(r[i:i+16]) for every i iff q[j:j+len(r)] == r (modulo a 64-bit fingerprint collision), because each fingerprint is taken over the window bytes themselves. Hence a contiguous identity match is exactly a verbatim occurrence of r in q, and vice versa: if r occurs at j its windows occur at j, j+1, ...",
+  "protection_band": "none. Every identity window lies fully inside the record, so any prefix/suffix moves it to offset |p|+i with identical bytes. The old PROTECT=6 band belonged to a cut predicate; a sliding window reads only its own bytes.",
+  "shortest_addressable_length": "MIN_ADDRESSABLE = WINDOW_BYTES = 16 bytes; necessary and sufficient (length alone decides whether the identity is non-empty).",
+  "fallback": "unanchored reads are ranked by |set(I(r)) & set(W(q))| / |set(I(r))| descending, then address index ascending; fallback_basis = window_overlap when a window is shared, address_order otherwise; no pass/reject threshold. The ranking is untouched this round.",
+  "fallback_denominator": "relevance is scored only on rows whose group has an answer in the store: written self-reads and the union group. Unknown/unrelated rows have no answering record by construction; they are reported as output shape and mis-anchor count only and never enter the relevance median.",
+  "output_unit": "anchored reads print the whole record (unit = record); unanchored reads print the chosen record's sentence with the highest window overlap (unit = sentence, ties by sentence order); spans come from sentences() and always sit on UTF-8 character boundaries at a terminator/newline or the record end.",
+  "write": "append-only; a record is rejected alone only when its identity is empty (length < 16). Identity containment is not a rejection reason: under a window identity a heading or a table row is legitimately a substring of a longer record, and rejecting containment would filter exactly the short entries this definition exists to admit.",
+  "impersonation_cost": "Under contiguity an anchor forces q to contain r byte for byte, verbatim, at some offset; there is no reassembly escape (q = r[0:16] + r[1:17] + ... no longer anchors). For a 16-byte record the identity is one token, so one exact 16-byte occurrence anywhere buys the anchor: the evidence floor is 16 bytes, and that lower bound is reported, not hidden. It does not prove q is only r, nor that a paraphrase is excluded.",
+  "failure_constructions": [
+   "empty identity kept: () is a prefix of every query, so every sub-16-byte record anchors.",
+   "set/multiset coverage instead of contiguity: order is lost and the reassembly q = r[0:16] + r[1:17] + ... anchors without containing r.",
+   "low-entropy windows: a record that is 16 spaces is anchored by any query containing those 16 spaces; under contiguity that is a true substring match, so the limit is specificity, not correctness.",
+   "non-overlapping block grid instead of a sliding window: an r crossing a block boundary produces no matching block.",
+   "fingerprint collision: two different 16-byte blocks with one 64-bit fingerprint would break the equivalence; measured on the corpus and reported."
+  ]
+ },
+ "criteria": {
+  "C1_closed_state_neutral": "the 176-case battery of the frozen output-unit gate replays bit for bit: max|delta| = 0, parameters/state/identity/store signature unchanged, table not allocated, no half-open branch.",
+  "C2_L1": "fabricated bytes = 0, illegal spans = 0, UTF-8 decodable = 100%, boundary legal = 100%.",
+  "C3_L2": "every output slice hashes to the stored record bytes it claims (faithful).",
+  "C4_L3": "per group: usable_and_correct / usable_but_wrong / usable_fallback / unusable; the anchored count of the unknown group is reported separately as a theorem gate.",
+  "C5_short": "admission rate for entries < 64 bytes >= 0.90.",
+  "C6_unknown_false_anchor": "anchored (decision != no_match) rows in the unknown group must be exactly 0; this is a theorem gate, not a statistic.",
+  "C7_union_ambiguous": "a union row whose two components are both addressable must be decided ambiguous_multiple_anchors; every violation is listed with its anchors.",
+  "C8_fallback": "relevance is scored on the answerable denominator only (written self-reads + union), with that denominator size reported; unknown/unrelated rows are reported as output shape and mis-anchor count only. No threshold is applied this round.",
+  "V_hard": "closed state not neutral -> hard_failure_closed_not_neutral.",
+  "V_false_anchor": "any anchored unknown row -> false_anchor_remains: the theorem did not hold; diagnostics only, stop adding to the address layer.",
+  "V_gap": "admission rate for entries < 64 bytes < 0.90 -> window_identity_gapped: write the length limit down, stop adding to the address layer, go to the representation layer.",
+  "V_fabricates": "any L1 line fails -> output_fabricates, samples only.",
+  "V_holds": "all lines met -> continuity_restored."
+ },
+ "cost_estimate": {
+  "written_windows": 98032,
+  "queries": 2200,
+  "address_set_intersections": 1210000,
+  "closed_battery_cpu_measured_previous_round": 44.234,
+  "estimate_cpu_seconds": 60.0,
+  "estimate_note": "closed battery replays the frozen 176-case run (~44 CPU measured last round); the open pass does 2,200 query x 550 record set intersections (~1.2M) plus one sentence scan per fallback. Estimated well below the 200 CPU cap."
+ },
+ "address_module": {
+  "sha256": "b370850e8f392eb0bfcdf26fd062a4dddd385297284823cad21f5f83681b37b7",
+  "constant_inventory": {
+   "WINDOW_BYTES": 16,
+   "MIN_ADDRESSABLE": 16,
+   "FINGERPRINT_HEX": 16,
+   "START_CAPACITY": 2
+  },
+  "read_path_literals": {
+   "windows": [
+    1.0
+   ],
+   "identity": [],
+   "contains_contiguous": [
+    0.0
+   ],
+   "window_overlap": [
+    0.0
+   ],
+   "read": [
+    0.0,
+    1.0,
+    9.0
+   ]
+  },
+  "protection": {
+   "band_present": false,
+   "MIN_ADDRESSABLE_matches_definition": true,
+   "MIN_ADDRESSABLE": 16,
+   "WINDOW_BYTES": 16
+  },
+  "change_vs_previous_round": {
+   "previous": "plans\\manifests\\taiji_window_20261108.json",
+   "previous_module": "taiji/sc_sfk.py",
+   "current_module": "taiji\\sc_windows.py",
+   "previous_sha256": "5ffb2935020719dedfe540faf0150f54c904c7f7fc49c7b1387f30ed1c5e23e1",
+   "current_sha256": "b370850e8f392eb0bfcdf26fd062a4dddd385297284823cad21f5f83681b37b7",
+   "new_constants": [],
+   "removed_constants": [],
+   "changed_constants": {},
+   "old_module_untouched": true
+  }
+ },
+ "freeze_revision": 3,
+ "freeze_note": "revision 3: semantics-preserving lint fix in the address module (contains_contiguous loop -> any(...), same early exit, no new constant, read-path literals unchanged) and the readings were retaken; criteria, corpus and thresholds unchanged"
+}

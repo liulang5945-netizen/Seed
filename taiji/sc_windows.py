@@ -1,22 +1,23 @@
-"""Window-set addressing: identity is the set of every 16-byte window of a record.
+"""Window-sequence addressing: identity is every 16-byte window of a record, in order.
 
 Definition
 ----------
-For a record ``r`` let ``W(r) = { H(r[i:i+WINDOW_BYTES]) : 0 <= i <= len(r) - WINDOW_BYTES }``
-with ``H(block) = sha256(block).hexdigest()[:16]``.  ``identity(r)`` returns those
-fingerprints **with multiplicity** (one token per offset); equality/merge uses the
-full ordered tuple, coverage uses the multiset of tokens.
+For a record ``r`` let ``W(r) = [ H(r[i:i+WINDOW_BYTES]) : 0 <= i <= len(r) - WINDOW_BYTES ]``
+with ``H(block) = sha256(block).hexdigest()[:16]``.  ``identity(r)`` is exactly that
+tuple: one token per offset, in offset order, multiplicity carried by the sequence
+itself.  Identity equality and merge use the full ordered tuple.
 
-A query ``q`` is turned into the same multiset ``W(q)``.  A record is anchored iff
-its multiset is **covered** by the query's multiset with multiplicity::
+A query ``q`` is turned into the same sequence ``W(q)``.  A record is anchored iff
+its identity occurs inside ``W(q)`` as a **contiguous subsequence** -- same order,
+offsets differing by exactly one::
 
-    for every token t: count_q(t) >= count_r(t)      (and identity(r) is not empty)
+    exists j: W(q)[j : j + len(I(r))] == I(r)        (and I(r) is not empty)
 
-Multiplicity was chosen over set inclusion, and it is frozen here.  Reason: set
-inclusion lets one occurrence in the query pay for a window that occurs twice in
-the record (repeated table rows, repeated separators), which is a strictly weaker
-promise for the same cost -- counting is one extra dict lookup and adds no numeric
-constant.  Multiset coverage implies set inclusion, never the other way.
+Contiguity is frozen here, and it restores what a window *set* gives away.  Since
+``H`` hashes the window bytes themselves, ``W(q)[j + i] == H(r[i:i+16])`` for every
+``i`` means ``q[j : j + len(r)] == r`` (up to a fingerprint collision), and the
+converse is immediate: if ``r`` occurs at ``j`` then its windows occur at
+``j, j+1, ...``.  Order is therefore no longer lost.
 
 No protection band
 ------------------
@@ -33,7 +34,7 @@ Shortest addressable length
 ---------------------------
 ``MIN_ADDRESSABLE = WINDOW_BYTES = 16`` bytes, exactly: a 16-byte record has one
 window; a 15-byte record has none and is rejected alone.  An empty identity is
-**not** addressable, because ``identity(r) = {}`` is covered by every query and
+**not** addressable, because ``identity(r) = ()`` is a prefix of every query and
 would anchor every record (the same counterexample the old one-block floor
 forbade).  The bound is necessary **and sufficient**: length alone decides whether
 the identity is non-empty (content decides nothing here).
@@ -48,30 +49,35 @@ fallback decides *who* is printed, never *whether*.
 
 Impersonation cost (what this definition does and does not buy)
 --------------------------------------------------------------
-If ``identity(r)`` is covered by ``W(q)`` then ``q`` must contain every 16-byte
-window of ``r`` **as a substring, with the record's multiplicity**.  That does
-**not** imply that ``q`` contains ``r`` contiguously, and it does not imply that
-``q`` must reproduce ``r`` almost verbatim.  Counterexample (order loss): let
-``q = r[0:16] + r[1:17] + r[2:18] + ...``; every window of ``r`` occurs in ``q``
-at least as often as in ``r``, so the anchor fires, while ``q`` is a reassembly
-(roughly 16x longer) that never contains ``r`` as a contiguous run.  The honest
-statement is therefore: the identity forces *window coverage*, not *verbatim
-contiguity*; the claim "almost verbatim reproduction is required" cannot be
-derived from this definition.
+Contiguity makes the promise checkable in one line: to anchor ``r``, a query must
+contain ``r`` **byte for byte, verbatim, at some offset**.  There is no reassembly
+escape: the set definition's order-loss counterexample
+(``q = r[0:16] + r[1:17] + ...``) no longer anchors, because window ``i+1`` does
+not follow window ``i``.  For a 16-byte record the identity is one token, so a
+single exact 16-byte occurrence anywhere in ``q`` buys the anchor: the evidence
+floor is **16 bytes**, and a one-window record is anchored by any query that
+quotes those 16 bytes.  That lower bound is reported, not hidden.  What the
+definition does **not** buy: it cannot tell a quotation from a paraphrase, and it
+does not require ``q`` to be *only* ``r`` -- a query may quote ``r`` inside
+arbitrary text.
 
 Failure constructions (each checks one design choice)
 -----------------------------------------------------
-* Empty identity kept: ``identity(r) = {}`` is covered by every query, so every
+* Empty identity kept: ``identity(r) = ()`` is a prefix of every query, so every
   query anchors a sub-16-byte record.  Rejected at write time, floor one window.
-* Set inclusion instead of multiplicity: an entry with a repeated window (two
-  identical table rows) is anchored by a query that carries that window once.
-* Order kept in the comparison (contiguous sequence): a prefix/suffix can move
-  cuts, which is exactly the failure the old chunk definition had to bandage with
-  ``PROTECT``; windows need no such repair.
-* Low-entropy windows: a record whose identity is one 16-byte run of spaces is
-  covered by any query containing that run, so it is anchored by unrelated
-  queries.  This is a real specificity limit of any fixed-window identity and is
-  reported per group, not hidden.
+* Set/multiset coverage instead of contiguity: order is lost, and
+  ``q = r[0:16] + r[1:17] + ...`` anchors without ever containing ``r``.
+* Low-entropy windows: a record that *is* 16 spaces is anchored by any query
+  containing those 16 spaces.  Under contiguity that is a **true** substring
+  match, not a false anchor; the limit is specificity (many queries quote it),
+  not correctness.
+* ``r`` occurring across a window boundary: impossible by construction.  Windows
+  are offset by one byte, so if ``r`` occurs at ``j`` then its windows occur at
+  ``j, j+1, ...``; a non-overlapping 16-byte block grid would miss exactly this
+  case, which is why the grid is sliding, not blocked.
+* Fingerprint collision: two different 16-byte blocks sharing a 64-bit
+  fingerprint would break the equivalence above.  It is measured on the corpus
+  and reported, not waved away.
 
 Write policy
 ------------
@@ -108,27 +114,24 @@ def windows(raw: bytes) -> list[tuple[int, str]]:
 
 
 def identity(raw: bytes) -> tuple[str, ...]:
-    """Multiset of window fingerprints, in offset order."""
+    """Ordered tuple of window fingerprints, one per offset."""
     return tuple(fingerprint for _offset, fingerprint in windows(raw))
 
 
 def features(raw: bytes) -> tuple[str, ...]:
-    """Query key: the same multiset of window fingerprints."""
+    """Query key: the same ordered tuple of window fingerprints."""
     return identity(raw)
 
 
-def counts_of(tokens: tuple[str, ...]) -> dict[str, int]:
-    counts: dict[str, int] = {}
-    for token in tokens:
-        counts[token] = counts.get(token, 0) + 1
-    return counts
-
-
-def covers(record_counts: dict[str, int], query_counts: dict[str, int]) -> bool:
-    """Multiset coverage: every window of the record appears in the query."""
-    if not record_counts:
+def contains_contiguous(
+    record: tuple[str, ...], query: tuple[str, ...], where: dict[str, list[int]]
+) -> bool:
+    """True iff ``record`` occurs inside ``query`` as a contiguous run (step 1)."""
+    size = len(record)
+    if size == 0 or size > len(query):
         return False
-    return all(query_counts.get(token, 0) >= need for token, need in record_counts.items())
+    first = record[0]
+    return any(query[start : start + size] == record for start in where.get(first, ()))
 
 
 def window_overlap(record_set: frozenset[str], query_set: frozenset[str]) -> float:
@@ -159,7 +162,7 @@ def window_address_audit() -> dict[str, Any]:
         if isinstance(globals().get(name), (int, float))
         and not isinstance(globals().get(name), bool)
     }
-    scope = ("read", "covers", "window_overlap", "identity", "windows")
+    scope = ("read", "contains_contiguous", "window_overlap", "identity", "windows")
     literals: dict[str, list[float]] = {}
     for node in ast.walk(tree):
         if isinstance(node, ast.FunctionDef) and node.name in scope:
@@ -277,7 +280,6 @@ class WindowAddressTable:
             self.addresses.append(
                 {
                     "identity": ident,
-                    "identity_counts": counts_of(ident),
                     "identity_set": frozenset(ident),
                     "raw": raw,
                     "values": [value],
@@ -304,16 +306,16 @@ class WindowAddressTable:
 
     def read(self, raw: bytes) -> dict[str, Any]:
         query = features(raw)
-        query_counts = counts_of(query)
         query_set = frozenset(query)
+        where: dict[str, list[int]] = {}
+        for offset, token in enumerate(query):
+            where.setdefault(token, []).append(offset)
         ranked: list[dict[str, Any]] = []
         for index, address in enumerate(self.addresses):
             ident_set = address["identity_set"]
             shared = len(ident_set & query_set)
             ratio = (shared / len(ident_set)) if ident_set else 0.0
-            contained = shared == len(ident_set) and covers(
-                address["identity_counts"], query_counts
-            )
+            contained = contains_contiguous(address["identity"], query, where)
             ranked.append(
                 {
                     "index": index,
