@@ -1,6 +1,8 @@
 # 生长机制设计规格（2026-11-08）：何时该长、长什么、长多少、何时放弃
 
 > 状态 [设计规格·未实现进训练图]。0 训练 / 0 优化器步 / 0 Adam / 0 confirm。
+>
+> **2026-11-08 编码读数回填**：本规格 §3A 的 `localized_centered` 编码已在真实读路径上同口径零训练复测，判 **`encoder_also_insufficient`**（已写组 floor 0.9648→0.7656、三类空档全负且更远、22 面落回自身 1/22、有效秩 2.557→5.393、`top_share` 0.970→0.868）——[回执](../../reports/taiji_gate_localized_20261108.json)、[账本 D16-73](INVARIANT-LEDGER_20261103.md)。**含义**：本规格里的编码是生长接线的必要件，但不是"让内容寻址可用"的充分件；**内容寻址写＋读门槛线已结案，不得再迭代编码/几何/阈值**。生长规格据此只保留"扩容/接线"部分，编码作为默认关闭的既定件随线接入。
 > 代码事实基线：`growth_gates` 只是**已生长**主体的分支贡献门（[growth_credit.py](../../taiji/growth_credit.py#L42-L55)），真生长算子是 `birth()`（[growth_credit.py](../../taiji/growth_credit.py#L459-L525)），只被测试与离线验证脚本调用（`tests/taiji_native/*`、`scripts/training/verify_taiji_birth_*`、`scripts/training/diagnose_*`），当前训练窗只**读**门（[runner](../../scripts/training/run_taiji_training_window_v2_20261108.py#L212-L213)）。本文补的是缺失的那一层：**触发判据与分配规则**。
 > 新模块 [taiji/growth_design.py](../../taiji/growth_design.py) 不被 runner 及其 import 闭包引用（见 [禁改清单](FROZEN-READSET_20261108.md)），纯 numpy，无 torch。
 

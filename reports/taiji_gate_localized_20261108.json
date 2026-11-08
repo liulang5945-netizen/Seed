@@ -1,0 +1,478 @@
+{
+  "probe": "taiji_gate_localized_centered",
+  "date": "2026-11-08",
+  "question": "does replacing the averaged-pooled read key with the growth design's localized+centered encoding let the written faces keep their carrier while the three negative classes fall behind a single shared threshold?",
+  "preregistration": {
+    "manifest": "plans\\manifests\\taiji_gate_localized_20261108.json",
+    "sha256": "b434c1df0eef07c1f5f6e7b5c6af01475c1c003f94610c2999b70e004b29b458",
+    "written_before_any_reading": true
+  },
+  "criteria": {
+    "C1_control_identity": "for each arm the runner's own cosine read reproduces the real addressed_read with the same injected key on all 154 queries: identical fast sha, identical top slot, max|delta| = 0",
+    "C2_one_encoding": "write and read use the same encoder in an arm; arm B never reuses an arm-A key; the encoding changes only when the store is rebuilt at the session boundary",
+    "C3_centroid_rule": "the centroid is the mean of the occupied keys of that same arm-B store, fit once before any reading; tau=0.5 and top_k=4 come from the growth spec, not from a search",
+    "C4_values_unchanged": "store values, ages and count are byte-identical between arm A and arm B: only the address changes, so any difference is attributable to the encoder",
+    "C5_threshold_source": "the gate threshold is the minimum top cosine of the written group in that same arm; no negative label enters the value",
+    "C6_pass": "pass = written floor >= 0.90 AND at least two of the three gaps > 0 AND the count of the 22 written faces found by their own read wording is not lower than arm A",
+    "V1_pass": "if C6 holds the verdict is localized_centered_enables_gate with the threshold interval",
+    "V2_fail": "otherwise the verdict is encoder_also_insufficient: this content-addressed write + read gate line is closed, no further encoding, geometry or threshold tuning",
+    "unchanged": "no fixture, face, position, class, tau, top_k or anchor is retuned after first reading"
+  },
+  "arms": {
+    "real_forward": {
+      "arm_a": {
+        "arm": "A_mean",
+        "encoder": {
+          "mode": "mean",
+          "schema": "mean-v1"
+        },
+        "control": {
+          "queries": 154,
+          "fast_sha_identical": 154,
+          "top_slot_identical": 154,
+          "max_abs_delta": 0.0
+        },
+        "store_immutable": true,
+        "store_before": {
+          "keys": "f586df56ef1c87ea6b3e765e214869e4421d34733668c8f00b04c9b0369f43aa",
+          "values": "d71173d6e590b587987753856c982b58bd753ad4f8777fc4c7fa0c91646deac4",
+          "age": "c48abcc4c2311df66c40d3a255a0d62f919f6f3e29788076911ebedb050e9787",
+          "count": 30
+        },
+        "store_after": {
+          "keys": "f586df56ef1c87ea6b3e765e214869e4421d34733668c8f00b04c9b0369f43aa",
+          "values": "d71173d6e590b587987753856c982b58bd753ad4f8777fc4c7fa0c91646deac4",
+          "age": "c48abcc4c2311df66c40d3a255a0d62f919f6f3e29788076911ebedb050e9787",
+          "count": 30
+        },
+        "floor": 0.964818299,
+        "gaps": {
+          "new_token": -0.019750237,
+          "new_pairing": -0.034598946,
+          "no_value": -0.031098485
+        },
+        "separable": [],
+        "m_spec_written": {
+          "count": 22,
+          "min": 0.0,
+          "p25": 0.000125051,
+          "median": 0.002752274,
+          "p75": 0.004986376,
+          "max": 0.009966016
+        },
+        "m_spec_all": {
+          "count": 154,
+          "min": 0.0,
+          "p25": 0.0,
+          "median": 0.001297414,
+          "p75": 0.00486964,
+          "max": 0.013705909
+        },
+        "group_top": {
+          "written": {
+            "count": 22,
+            "min": 0.964818299,
+            "p25": 0.973414689,
+            "median": 0.975504726,
+            "p75": 0.981791481,
+            "max": 0.985345304
+          },
+          "unwritten": {
+            "count": 66,
+            "min": 0.95992589,
+            "p25": 0.973098397,
+            "median": 0.975982696,
+            "p75": 0.980564848,
+            "max": 0.998247981
+          },
+          "new_token": {
+            "count": 22,
+            "min": 0.944770873,
+            "p25": 0.963285327,
+            "median": 0.97011438,
+            "p75": 0.97796461,
+            "max": 0.984568536
+          },
+          "new_pairing": {
+            "count": 22,
+            "min": 0.964018047,
+            "p25": 0.972095847,
+            "median": 0.976973057,
+            "p75": 0.98138465,
+            "max": 0.999417245
+          },
+          "no_value": {
+            "count": 22,
+            "min": 0.987972021,
+            "p25": 0.990905151,
+            "median": 0.992993355,
+            "p75": 0.994366959,
+            "max": 0.995916784
+          }
+        },
+        "unwritten": {
+          "count": 66,
+          "correct": 35,
+          "correct_rate": 0.530303,
+          "misses": [
+            "unwritten_face_00_0",
+            "unwritten_face_00_1",
+            "unwritten_face_00_2",
+            "unwritten_face_01_0",
+            "unwritten_face_01_1",
+            "unwritten_face_08_0",
+            "unwritten_face_08_1",
+            "unwritten_face_08_2",
+            "unwritten_face_09_1",
+            "unwritten_face_09_2",
+            "unwritten_face_10_0",
+            "unwritten_face_10_1",
+            "unwritten_face_10_2",
+            "unwritten_face_11_2",
+            "unwritten_face_12_0",
+            "unwritten_face_12_1",
+            "unwritten_face_12_2",
+            "unwritten_face_13_1",
+            "unwritten_face_13_2",
+            "unwritten_face_16_0",
+            "unwritten_face_16_1",
+            "unwritten_face_16_2",
+            "unwritten_face_17_0",
+            "unwritten_face_18_0",
+            "unwritten_face_19_1",
+            "unwritten_face_20_0",
+            "unwritten_face_20_1",
+            "unwritten_face_20_2",
+            "unwritten_face_21_0",
+            "unwritten_face_21_1",
+            "unwritten_face_21_2"
+          ]
+        },
+        "written_correct": 8,
+        "written_total": 22,
+        "written_misses": [
+          "face_01",
+          "face_02",
+          "face_03",
+          "face_04",
+          "face_05",
+          "face_06",
+          "face_07",
+          "face_10",
+          "face_14",
+          "face_15",
+          "face_17",
+          "face_18",
+          "face_19",
+          "face_21"
+        ],
+        "key_spectrum": {
+          "count": 30,
+          "rank": 23,
+          "effective_rank": 2.55747,
+          "top_share": 0.970386
+        },
+        "gate": {
+          "threshold": 0.964818299,
+          "groups": {
+            "written": {
+              "matched": 22,
+              "total": 22,
+              "refused": 0,
+              "refusal_rate": 0.0
+            },
+            "unwritten": {
+              "matched": 64,
+              "total": 66,
+              "refused": 2,
+              "refusal_rate": 0.030303
+            },
+            "new_token": {
+              "matched": 16,
+              "total": 22,
+              "refused": 6,
+              "refusal_rate": 0.272727
+            },
+            "new_pairing": {
+              "matched": 21,
+              "total": 22,
+              "refused": 1,
+              "refusal_rate": 0.045455
+            },
+            "no_value": {
+              "matched": 22,
+              "total": 22,
+              "refused": 0,
+              "refusal_rate": 0.0
+            }
+          },
+          "written_false_refusals": 0,
+          "unwritten_false_refusals": 2
+        },
+        "cost_cpu_seconds": 6.953
+      },
+      "arm_b": {
+        "arm": "B_localized_centered",
+        "encoder": {
+          "mode": "localized_centered",
+          "schema": "localized_centered-v1",
+          "tau": 0.5,
+          "top_k": 4,
+          "center": true,
+          "centroid": "mean of the 30 encoded keys of this store, fit once at the session boundary",
+          "centroid_norm": 0.939618497
+        },
+        "control": {
+          "queries": 154,
+          "fast_sha_identical": 154,
+          "top_slot_identical": 154,
+          "max_abs_delta": 0.0
+        },
+        "store_immutable": true,
+        "store_before": {
+          "keys": "568bcd8139a17b11bba05bfb0758e6bb5ec056af0133b9e3f0aa18289c8ae3b4",
+          "values": "d71173d6e590b587987753856c982b58bd753ad4f8777fc4c7fa0c91646deac4",
+          "age": "c48abcc4c2311df66c40d3a255a0d62f919f6f3e29788076911ebedb050e9787",
+          "count": 30
+        },
+        "store_after": {
+          "keys": "568bcd8139a17b11bba05bfb0758e6bb5ec056af0133b9e3f0aa18289c8ae3b4",
+          "values": "d71173d6e590b587987753856c982b58bd753ad4f8777fc4c7fa0c91646deac4",
+          "age": "c48abcc4c2311df66c40d3a255a0d62f919f6f3e29788076911ebedb050e9787",
+          "count": 30
+        },
+        "floor": 0.765557766,
+        "gaps": {
+          "new_token": -0.179572523,
+          "new_pairing": -0.197649181,
+          "no_value": -0.215692282
+        },
+        "separable": [],
+        "m_spec_written": {
+          "count": 22,
+          "min": 0.0,
+          "p25": 0.0,
+          "median": 9.6619e-05,
+          "p75": 0.003893882,
+          "max": 0.014017582
+        },
+        "m_spec_all": {
+          "count": 154,
+          "min": 0.0,
+          "p25": 0.0,
+          "median": 6e-08,
+          "p75": 0.003819093,
+          "max": 0.055326223
+        },
+        "group_top": {
+          "written": {
+            "count": 22,
+            "min": 0.765557766,
+            "p25": 0.802411795,
+            "median": 0.837946415,
+            "p75": 0.881181866,
+            "max": 0.957902312
+          },
+          "unwritten": {
+            "count": 66,
+            "min": 0.703765392,
+            "p25": 0.810608894,
+            "median": 0.841811657,
+            "p75": 0.939745918,
+            "max": 0.988554716
+          },
+          "new_token": {
+            "count": 22,
+            "min": 0.759452581,
+            "p25": 0.806075126,
+            "median": 0.825285882,
+            "p75": 0.866810068,
+            "max": 0.945130289
+          },
+          "new_pairing": {
+            "count": 22,
+            "min": 0.734544635,
+            "p25": 0.812398627,
+            "median": 0.847687304,
+            "p75": 0.904259205,
+            "max": 0.963206947
+          },
+          "no_value": {
+            "count": 22,
+            "min": 0.947344422,
+            "p25": 0.955801681,
+            "median": 0.967350841,
+            "p75": 0.970872134,
+            "max": 0.981250048
+          }
+        },
+        "unwritten": {
+          "count": 66,
+          "correct": 42,
+          "correct_rate": 0.636364,
+          "misses": [
+            "unwritten_face_05_2",
+            "unwritten_face_07_0",
+            "unwritten_face_07_1",
+            "unwritten_face_07_2",
+            "unwritten_face_08_2",
+            "unwritten_face_09_0",
+            "unwritten_face_10_1",
+            "unwritten_face_12_0",
+            "unwritten_face_13_0",
+            "unwritten_face_13_1",
+            "unwritten_face_13_2",
+            "unwritten_face_14_1",
+            "unwritten_face_15_0",
+            "unwritten_face_15_1",
+            "unwritten_face_16_1",
+            "unwritten_face_16_2",
+            "unwritten_face_17_2",
+            "unwritten_face_18_1",
+            "unwritten_face_19_0",
+            "unwritten_face_19_1",
+            "unwritten_face_20_0",
+            "unwritten_face_20_2",
+            "unwritten_face_21_1",
+            "unwritten_face_21_2"
+          ]
+        },
+        "written_correct": 1,
+        "written_total": 22,
+        "written_misses": [
+          "face_00",
+          "face_01",
+          "face_02",
+          "face_03",
+          "face_04",
+          "face_05",
+          "face_06",
+          "face_07",
+          "face_08",
+          "face_09",
+          "face_10",
+          "face_12",
+          "face_13",
+          "face_14",
+          "face_15",
+          "face_16",
+          "face_17",
+          "face_18",
+          "face_19",
+          "face_20",
+          "face_21"
+        ],
+        "key_spectrum": {
+          "count": 30,
+          "rank": 23,
+          "effective_rank": 5.393419,
+          "top_share": 0.868404
+        },
+        "gate": {
+          "threshold": 0.765557766,
+          "groups": {
+            "written": {
+              "matched": 22,
+              "total": 22,
+              "refused": 0,
+              "refusal_rate": 0.0
+            },
+            "unwritten": {
+              "matched": 63,
+              "total": 66,
+              "refused": 3,
+              "refusal_rate": 0.045455
+            },
+            "new_token": {
+              "matched": 21,
+              "total": 22,
+              "refused": 1,
+              "refusal_rate": 0.045455
+            },
+            "new_pairing": {
+              "matched": 19,
+              "total": 22,
+              "refused": 3,
+              "refusal_rate": 0.136364
+            },
+            "no_value": {
+              "matched": 22,
+              "total": 22,
+              "refused": 0,
+              "refusal_rate": 0.0
+            }
+          },
+          "written_false_refusals": 0,
+          "unwritten_false_refusals": 3
+        },
+        "cost_cpu_seconds": 8.078
+      }
+    }
+  },
+  "store_identity": {
+    "values_identical": true,
+    "age_identical": true,
+    "count_identical": true,
+    "keys_differ": true
+  },
+  "cost_of_encoding": {
+    "trainable_parameters": 3311259,
+    "parameters_added": 0,
+    "graph_state_added_bytes": 0,
+    "runner_side_centroid": {
+      "floats": 128,
+      "bytes_float64": 1024,
+      "per_growth_spec": "centroid (128,) + centroid_age (1,) = 129 floats"
+    },
+    "reason": "the encoder is a pure function; the centroid is a store-level statistic, not a parameter, and the frozen graph is untouched"
+  },
+  "verdict": {
+    "floor_gate": 0.9,
+    "floor_ok": false,
+    "gaps_positive": [],
+    "gap_ok": false,
+    "written_correct_a": 8,
+    "written_correct_b": 1,
+    "written_not_worse": false,
+    "verdict": "encoder_also_insufficient",
+    "reason": "the localized centered encoder does not meet the pre-written pass rule; the content-addressed write + read gate line is closed"
+  },
+  "plain_language": {
+    "summary": "ON THIS MODEL AND THESE 154 QUESTIONS the content-addressed write plus read-gate line is now closed. Swapping how a record's address is computed -- from averaging the model's own byte-level context vectors to encoding each position separately, weighting the strongest positions, and subtracting one common offset -- did not buy the two things that must hold together: the 22 written records' own read wordings dropped to 0.77 similarity at the worst (the pass line is 0.90) and only 1 of the 22 landed on its own record, while the three classes of questions that were never written ended up CLOSER to the records than before (gaps -0.18, -0.20, -0.22, all negative). What this shows is not that the threshold, the offset or the particular linear transform was wrong, but that the raw material an address is built from -- the context vectors this model produces for Chinese byte text -- does not yet keep 'same content, different wording' stable while keeping 'never written' apart. No further encoding, geometry or threshold tuning is planned on this line. What it does NOT show: that content addressing cannot work in principle, that the model cannot learn, or that growing the memory would not help. It shows only that on the frozen graph of today, this mechanism has no usable margin.",
+    "can_prove": "if the pass rule holds: on this model and these 154 questions, a memory that finds a record by how similar the question is can keep recognising its own paraphrases (every one of the 22 written wordings lands on its own record, with similarity at least 0.90) while three kinds of questions that were never answered -- a word that was never written, a pairing that was never written, and a point between two records -- all stay below the same line. That would make a single 'only answer if similar enough' rule usable on this line.",
+    "cannot_prove": "it cannot show that the model has become smarter, learned anything, or kept any old ability: nothing was trained and no answer quality is measured here. It cannot show that the memory still works with longer text, many more records, or across sessions. And it cannot show that growing the memory (more slots) would help; a usable address only means growth would have something to grow for, not that growth pays.",
+    "if_failed": "if the pass rule does not hold: on the byte representation this model currently produces, exchanging the way a record's address is computed still cannot separate 'recognise my own wording' from 'know that this was never written', so the content-addressed write + read gate line is closed here. It does not show that content addressing is impossible in principle, because the raw material of an address -- the model's own context vectors -- was not changed in this round."
+  },
+  "isolation": {
+    "runner_sha256_start": "112330dd2d7484cfd403815025503f2020875e92e4404083cc0baaf0c9c6a841",
+    "runner_sha256_end": "112330dd2d7484cfd403815025503f2020875e92e4404083cc0baaf0c9c6a841",
+    "living_core_sha256": "df7942806de9352418bea6e195f920c416b38a1be48236e05b36981b83527f7b",
+    "growth_runtime_sha256": "2125b1fb80da3f08d63353920bd83bbf88ba7839fcf482a24a2d06a13340ccd6",
+    "process_guard": {
+      "checked": "-m black",
+      "found": 0
+    },
+    "single_instance_lock": "taiji_gate_localized_20261108.lock",
+    "watchdog": {
+      "seconds": 60.0,
+      "fired": false,
+      "marker_exists": false
+    },
+    "write_then_rename": true
+  },
+  "discipline": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "checkpoints_written": 0,
+    "black_invoked": false,
+    "cpu_cap_seconds": 200.0,
+    "watchdog_seconds": 60.0
+  },
+  "cost": {
+    "cpu_seconds": 8.078,
+    "wall_seconds": 1.24,
+    "cpu_cap_seconds": 200.0
+  }
+}

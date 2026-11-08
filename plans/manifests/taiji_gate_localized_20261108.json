@@ -1,0 +1,47 @@
+{
+  "format": "taiji-localized-encoder-preregistration-v1",
+  "date": "2026-11-08",
+  "question": "does replacing the averaged-pooled read key with the growth design's localized+centered encoding let the written faces keep their carrier while the three negative classes fall behind a single shared threshold?",
+  "written_before_any_reading": true,
+  "sequence": [
+    "build the real-forward store with today's mean-pooled keys (arm A)",
+    "rebuild the same store's addresses with localized_centered, centroid fit once from its own 30 keys (arm B); values/ages/count are reused byte-identically",
+    "154 queries per arm: 22 written read wordings, 66 unwritten wordings, 22 new_token, 22 new_pairing, 22 no_value midpoints of that arm's stored keys",
+    "gate anchored on each arm's own written floor; pass rule C6 evaluated once"
+  ],
+  "criteria": {
+    "C1_control_identity": "for each arm the runner's own cosine read reproduces the real addressed_read with the same injected key on all 154 queries: identical fast sha, identical top slot, max|delta| = 0",
+    "C2_one_encoding": "write and read use the same encoder in an arm; arm B never reuses an arm-A key; the encoding changes only when the store is rebuilt at the session boundary",
+    "C3_centroid_rule": "the centroid is the mean of the occupied keys of that same arm-B store, fit once before any reading; tau=0.5 and top_k=4 come from the growth spec, not from a search",
+    "C4_values_unchanged": "store values, ages and count are byte-identical between arm A and arm B: only the address changes, so any difference is attributable to the encoder",
+    "C5_threshold_source": "the gate threshold is the minimum top cosine of the written group in that same arm; no negative label enters the value",
+    "C6_pass": "pass = written floor >= 0.90 AND at least two of the three gaps > 0 AND the count of the 22 written faces found by their own read wording is not lower than arm A",
+    "V1_pass": "if C6 holds the verdict is localized_centered_enables_gate with the threshold interval",
+    "V2_fail": "otherwise the verdict is encoder_also_insufficient: this content-addressed write + read gate line is closed, no further encoding, geometry or threshold tuning",
+    "unchanged": "no fixture, face, position, class, tau, top_k or anchor is retuned after first reading"
+  },
+  "constants": {
+    "faces": 22,
+    "base_occupied": 8,
+    "slots": 32,
+    "negative_per_class": 22,
+    "unwritten_per_rule": 3,
+    "temperature": 0.1,
+    "alpha": 0.5,
+    "tau": 0.5,
+    "top_k": 4,
+    "floor_gate": 0.9,
+    "required_positive_gaps": 2,
+    "query_count": 154
+  },
+  "discipline": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "checkpoints_written": 0,
+    "black_invoked": false,
+    "cpu_cap_seconds": 200.0,
+    "watchdog_seconds": 60.0
+  }
+}
