@@ -79,22 +79,35 @@ Failure constructions (each one is a counterexample to a wrong constant):
   ``C(Q)``, so every query anchors every such record -- the exact mis-point the
   one-block floor forbids.  This is why the floor is 1, not 0.
 
-Reads, anchors and the fallback
-------------------------------
+Reads, anchors, the fallback and the output unit
+-----------------------------------------------
 Zero, one and several anchors are recorded as readings (``no_anchor`` /
 ``matched`` / ``ambiguous_candidates``); a read always returns the top-1 record
-and a legal slice of its stored bytes.
+and a legal, **complete text unit** of its stored bytes.
 
 * Anchored: choose among the anchors by covered blocks descending, coverage ratio
-  descending, address index ascending.
+  descending, address index ascending; the output is the **whole record**
+  (``unit = record``).
 * Not anchored (``no_anchor`` label, printed in the result): rank **every** record
   by block-level overlap -- ``shared / (|S(r)| + |C(Q)| - shared)``, the multiset
   Jaccard index between the query's chunks and the record's identity chunks --
-  then by address index ascending.  ``fallback_reason`` is ``no_anchor`` when some
-  block is shared and ``no_overlap`` when none is.  The fallback decides **who**
-  is printed, never **whether** anything is printed, and it introduces no
-  pass/reject threshold: an anchored record always outranks the fallback, and
-  anchoring itself is exact (coverage ratio 1.0), not a line.
+  then by address index ascending (``fallback_basis`` is ``record_overlap`` when
+  some block is shared, else ``address_order``).  ``fallback_reason`` is
+  ``no_anchor`` when some block is shared and ``no_overlap`` when none is.  The
+  fallback decides **who** is printed, never **whether** anything is printed, and
+  it introduces no pass/reject threshold: an anchored record always outranks the
+  fallback, and anchoring itself is exact (coverage ratio 1.0), not a line.
+* The printed unit is always a **complete record or a complete sentence**
+  (``sentences()``): boundaries sit only at a sentence terminator, a newline or
+  the record end, and every boundary is a character boundary of the stored UTF-8
+  text.  Within the chosen record the sentence is the one with the highest
+  block-level overlap with the query, ties broken by sentence order.  A fragment
+  that cuts a character, a word or a sentence is never produced -- a fallback
+  shows the most likely **whole sentence** instead of debris.
+* Every output carries its boundary provenance: ``unit`` (``record`` /
+  ``sentence``), ``start`` / ``end`` byte offsets, ``fallback`` plus
+  ``fallback_reason`` and ``fallback_basis``.  These are readings; they do not
+  change whether an output is produced.
 
 Nothing outside the chunk sequence can manufacture an anchor: an anchor requires
 the whole ``S(r)`` to be present, in order, contiguously.  The one thing a short
@@ -133,6 +146,7 @@ PROTECT = WINDOW
 MIN_ADDRESSABLE = MIN_CHUNK + PROTECT + 1
 MASK64 = 0xFFFFFFFFFFFFFFFF
 GEAR_SALT = b"taiji-gear-v1"
+SENTENCE_TERMINATORS = frozenset("。！？；…\n")
 
 
 def _gear_table() -> tuple[int, ...]:
@@ -251,14 +265,44 @@ def block_overlap(ident: tuple[str, ...], query: tuple[str, ...]) -> tuple[int, 
     return shared, union, (shared / union) if union else 0.0
 
 
+def sentences(raw: bytes) -> list[tuple[int, int]]:
+    """Byte spans of the complete sentences of ``raw``.
+
+    A sentence ends after a terminator in ``SENTENCE_TERMINATORS`` (a newline
+    counts) or at the end of the record.  Terminators are whole characters of the
+    stored UTF-8 text, so every span boundary is also a character boundary; the
+    leading whitespace of a span is skipped, never the trailing one.  A record
+    with no terminator is one sentence covering the whole record.  No numeric
+    threshold is involved: membership in a fixed character set decides a
+    boundary, and the set is categorical, not a tolerance.
+    """
+    spans: list[tuple[int, int]] = []
+    start = 0
+    offset = 0
+    for char in raw.decode("utf-8"):
+        offset += len(char.encode("utf-8"))
+        if char in SENTENCE_TERMINATORS:
+            spans.append((start, offset))
+            start = offset
+    if start < len(raw):
+        spans.append((start, len(raw)))
+    cleaned: list[tuple[int, int]] = []
+    for begin, end in spans:
+        while begin < end and raw[begin : begin + 1] in b" \t\r\n":
+            begin += 1
+        if end > begin:
+            cleaned.append((begin, end))
+    return cleaned or [(0, len(raw))]
+
+
 def chunk_address_audit() -> dict[str, Any]:
     """Numeric surface of the address rule, for the freeze/run tolerance audit.
 
     Returns every upper-case module constant that is an ``int``/``float`` and
     every numeric literal that appears inside the read path (``read``,
-    ``block_overlap``, ``identity_blocks``, ``_output_span``).  A new constant or
-    a new literal is a *visible* change; the runner compares this dict with the
-    frozen copy, so no tolerance can be added silently.
+    ``block_overlap``, ``identity_blocks``, ``sentences``, ``_sentence_span``).  A
+    new constant or a new literal is a *visible* change; the runner compares this
+    dict with the frozen copy, so no tolerance can be added silently.
     """
     import ast
     from pathlib import Path
@@ -279,7 +323,13 @@ def chunk_address_audit() -> dict[str, Any]:
         if isinstance(globals().get(name), (int, float))
         and not isinstance(globals().get(name), bool)
     }
-    scope = ("read", "block_overlap", "identity_blocks", "_output_span")
+    scope = (
+        "read",
+        "block_overlap",
+        "identity_blocks",
+        "sentences",
+        "_sentence_span",
+    )
     literals: dict[str, list[float]] = {}
     for node in ast.walk(tree):
         if isinstance(node, ast.FunctionDef) and node.name in scope:
@@ -479,9 +529,15 @@ class AddressTable:
                 fallback_reason = "no_overlap"
         output: dict[str, Any] | None = None
         value = None
+        unit = "none"
         if top is not None:
             address = self.addresses[top["index"]]
-            start, end = self._output_span(top, address)
+            if anchors:
+                start, end = 0, len(address["raw"])
+                unit_index = 0
+            else:
+                start, end, unit_index = self._sentence_span(address["raw"], query)
+            unit = "record" if start == 0 and end == len(address["raw"]) else "sentence"
             slice_bytes = address["raw"][start:end]
             output = {
                 "record": top["index"],
@@ -490,8 +546,16 @@ class AddressTable:
                 "length": end - start,
                 "sha256": hashlib.sha256(slice_bytes).hexdigest(),
                 "full_record": start == 0 and end == len(address["raw"]),
+                "unit": unit,
+                "unit_index": unit_index,
             }
             value = self.value_at(top["index"])
+        if anchors:
+            fallback_basis = "none"
+        elif top is not None and top["shared"] > 0:
+            fallback_basis = "record_overlap"
+        else:
+            fallback_basis = "address_order"
         top1 = float(top["overlap"] if fallback else top["ratio"]) if top is not None else 0.0
         top2 = float(pool[1]["overlap"] if fallback else pool[1]["ratio"]) if len(pool) > 1 else 0.0
         return {
@@ -503,6 +567,8 @@ class AddressTable:
             "no_anchor": not anchors,
             "fallback": fallback,
             "fallback_reason": fallback_reason,
+            "fallback_basis": fallback_basis,
+            "unit": unit,
             "covered_blocks": top["covered"] if top is not None else 0,
             "coverage_ratio": round(float(top["ratio"]) if top is not None else 0.0, 9),
             "shared_blocks": top["shared"] if top is not None else 0,
@@ -517,15 +583,24 @@ class AddressTable:
             "unknown_features": 0,
         }
 
-    def _output_span(self, top: dict[str, Any], address: dict[str, Any]) -> tuple[int, int]:
-        """Full record on containment, else the byte span of the best run."""
-        raw = address["raw"]
-        if top["contained"] or top["covered"] == 0:
-            return 0, len(raw)
-        blocks = identity_blocks(raw)
-        first = top["needle_start"]
-        last = first + top["covered"] - 1
-        return blocks[first][0], blocks[last][1]
+    def _sentence_span(self, raw: bytes, query: tuple[str, ...]) -> tuple[int, int, int]:
+        """Span of the whole sentence with the highest block overlap with the query.
+
+        Ties go to the earlier sentence.  A record with a single sentence returns
+        its whole span, so callers label it ``record``.  The span always comes
+        from ``sentences()``: no character, word or sentence is ever cut.
+        """
+        spans = sentences(raw)
+        if len(spans) == 1:
+            return 0, len(raw), 0
+        best: tuple[tuple[float, int, int], int, int, int] | None = None
+        for index, (start, end) in enumerate(spans):
+            shared, _union, ratio = block_overlap(features(raw[start:end]), query)
+            key = (-ratio, -shared, index)
+            if best is None or key < best[0]:
+                best = (key, start, end, index)
+        assert best is not None
+        return best[1], best[2], best[3]
 
     def target_of(self, raw: bytes) -> tuple[int | None, float]:
         query = features(raw)

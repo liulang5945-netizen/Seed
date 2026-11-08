@@ -1,0 +1,1608 @@
+{
+  "schema": "taiji-output-unit-v1",
+  "date": "2026-11-08",
+  "question": "is every printed answer a complete, decodable text unit -- the whole record when a record anchors, otherwise one whole sentence of the chosen record -- and does the judged column (usable_and_correct / usable_but_wrong / unusable) clear 110/120 with zero unusable outputs, without adding any numeric tolerance?",
+  "verdict": "output_unit_fixed",
+  "manifest": "plans\\manifests\\taiji_output_unit_20261108.json",
+  "manifest_sha256": "4c46fc9184ac739e4802959233469a5d119608f22307e4726cd7089d77823558",
+  "corpus_snapshot_sha256": "8af046b218e8a20ec5ab285df77bcbc34230060901b203e03718ebcd8c15979d",
+  "runner_sha_start": "2ecd8d1c9dc72b2220955964cbc5e72454a60089b85215bf1e6d3b2dd8cf4994",
+  "runner_sha_end": "2ecd8d1c9dc72b2220955964cbc5e72454a60089b85215bf1e6d3b2dd8cf4994",
+  "closed": {
+    "report": "reports\\taiji_output_unit_20261108_closed.json",
+    "verdict": "output_unit_closed_neutral",
+    "readings": 176,
+    "fast_max_abs_delta": 0.0,
+    "probability_max_abs_delta": 0.0,
+    "table_not_allocated": true,
+    "living_core_sha256": "df7942806de9352418bea6e195f920c416b38a1be48236e05b36981b83527f7b"
+  },
+  "write": {
+    "batches": [
+      {
+        "batch": 0,
+        "items": 10,
+        "accepted": 10,
+        "rejected": 0,
+        "slots_before": 0,
+        "slots_after": 10
+      },
+      {
+        "batch": 1,
+        "items": 10,
+        "accepted": 10,
+        "rejected": 0,
+        "slots_before": 10,
+        "slots_after": 20
+      },
+      {
+        "batch": 2,
+        "items": 10,
+        "accepted": 10,
+        "rejected": 0,
+        "slots_before": 20,
+        "slots_after": 30
+      },
+      {
+        "batch": 3,
+        "items": 10,
+        "accepted": 10,
+        "rejected": 0,
+        "slots_before": 30,
+        "slots_after": 40
+      },
+      {
+        "batch": 4,
+        "items": 10,
+        "accepted": 10,
+        "rejected": 0,
+        "slots_before": 40,
+        "slots_after": 50
+      },
+      {
+        "batch": 5,
+        "items": 8,
+        "accepted": 8,
+        "rejected": 0,
+        "slots_before": 50,
+        "slots_after": 58
+      }
+    ],
+    "addresses": 58,
+    "admitted_records": 58,
+    "appended": 58,
+    "merged": 0,
+    "rejected_records": 0,
+    "rejected_reasons": {},
+    "rollbacks": 0,
+    "evictions": 0,
+    "silent_overwrites": 0,
+    "rejected_batches": 0,
+    "nbytes": 1928954,
+    "identity_blocks": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      5,
+      5,
+      5,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      7,
+      7,
+      7,
+      8,
+      8,
+      9,
+      9,
+      11,
+      11,
+      11,
+      12,
+      17
+    ],
+    "detail": [
+      {
+        "record": 0,
+        "length": 806,
+        "identity_blocks": 11,
+        "action": "appended",
+        "address": 0
+      },
+      {
+        "record": 1,
+        "length": 277,
+        "identity_blocks": 3,
+        "action": "appended",
+        "address": 1
+      },
+      {
+        "record": 2,
+        "length": 379,
+        "identity_blocks": 4,
+        "action": "appended",
+        "address": 2
+      },
+      {
+        "record": 3,
+        "length": 876,
+        "identity_blocks": 11,
+        "action": "appended",
+        "address": 3
+      },
+      {
+        "record": 4,
+        "length": 861,
+        "identity_blocks": 9,
+        "action": "appended",
+        "address": 4
+      },
+      {
+        "record": 5,
+        "length": 1072,
+        "identity_blocks": 11,
+        "action": "appended",
+        "address": 5
+      },
+      {
+        "record": 6,
+        "length": 815,
+        "identity_blocks": 6,
+        "action": "appended",
+        "address": 6
+      },
+      {
+        "record": 7,
+        "length": 409,
+        "identity_blocks": 7,
+        "action": "appended",
+        "address": 7
+      },
+      {
+        "record": 8,
+        "length": 535,
+        "identity_blocks": 3,
+        "action": "appended",
+        "address": 8
+      },
+      {
+        "record": 9,
+        "length": 374,
+        "identity_blocks": 3,
+        "action": "appended",
+        "address": 9
+      },
+      {
+        "record": 10,
+        "length": 450,
+        "identity_blocks": 7,
+        "action": "appended",
+        "address": 10
+      },
+      {
+        "record": 11,
+        "length": 355,
+        "identity_blocks": 5,
+        "action": "appended",
+        "address": 11
+      },
+      {
+        "record": 12,
+        "length": 314,
+        "identity_blocks": 6,
+        "action": "appended",
+        "address": 12
+      },
+      {
+        "record": 13,
+        "length": 304,
+        "identity_blocks": 6,
+        "action": "appended",
+        "address": 13
+      },
+      {
+        "record": 14,
+        "length": 453,
+        "identity_blocks": 5,
+        "action": "appended",
+        "address": 14
+      },
+      {
+        "record": 15,
+        "length": 780,
+        "identity_blocks": 12,
+        "action": "appended",
+        "address": 15
+      },
+      {
+        "record": 16,
+        "length": 981,
+        "identity_blocks": 8,
+        "action": "appended",
+        "address": 16
+      },
+      {
+        "record": 17,
+        "length": 368,
+        "identity_blocks": 2,
+        "action": "appended",
+        "address": 17
+      },
+      {
+        "record": 18,
+        "length": 310,
+        "identity_blocks": 5,
+        "action": "appended",
+        "address": 18
+      },
+      {
+        "record": 19,
+        "length": 256,
+        "identity_blocks": 1,
+        "action": "appended",
+        "address": 19
+      },
+      {
+        "record": 20,
+        "length": 559,
+        "identity_blocks": 3,
+        "action": "appended",
+        "address": 20
+      },
+      {
+        "record": 21,
+        "length": 527,
+        "identity_blocks": 6,
+        "action": "appended",
+        "address": 21
+      },
+      {
+        "record": 22,
+        "length": 361,
+        "identity_blocks": 3,
+        "action": "appended",
+        "address": 22
+      },
+      {
+        "record": 23,
+        "length": 386,
+        "identity_blocks": 4,
+        "action": "appended",
+        "address": 23
+      },
+      {
+        "record": 24,
+        "length": 211,
+        "identity_blocks": 1,
+        "action": "appended",
+        "address": 24
+      },
+      {
+        "record": 25,
+        "length": 304,
+        "identity_blocks": 4,
+        "action": "appended",
+        "address": 25
+      },
+      {
+        "record": 26,
+        "length": 475,
+        "identity_blocks": 4,
+        "action": "appended",
+        "address": 26
+      },
+      {
+        "record": 27,
+        "length": 354,
+        "identity_blocks": 6,
+        "action": "appended",
+        "address": 27
+      },
+      {
+        "record": 28,
+        "length": 253,
+        "identity_blocks": 1,
+        "action": "appended",
+        "address": 28
+      },
+      {
+        "record": 29,
+        "length": 185,
+        "identity_blocks": 1,
+        "action": "appended",
+        "address": 29
+      },
+      {
+        "record": 30,
+        "length": 165,
+        "identity_blocks": 2,
+        "action": "appended",
+        "address": 30
+      },
+      {
+        "record": 31,
+        "length": 175,
+        "identity_blocks": 2,
+        "action": "appended",
+        "address": 31
+      },
+      {
+        "record": 32,
+        "length": 183,
+        "identity_blocks": 1,
+        "action": "appended",
+        "address": 32
+      },
+      {
+        "record": 33,
+        "length": 156,
+        "identity_blocks": 2,
+        "action": "appended",
+        "address": 33
+      },
+      {
+        "record": 34,
+        "length": 169,
+        "identity_blocks": 2,
+        "action": "appended",
+        "address": 34
+      },
+      {
+        "record": 35,
+        "length": 226,
+        "identity_blocks": 3,
+        "action": "appended",
+        "address": 35
+      },
+      {
+        "record": 36,
+        "length": 263,
+        "identity_blocks": 3,
+        "action": "appended",
+        "address": 36
+      },
+      {
+        "record": 37,
+        "length": 298,
+        "identity_blocks": 2,
+        "action": "appended",
+        "address": 37
+      },
+      {
+        "record": 38,
+        "length": 274,
+        "identity_blocks": 2,
+        "action": "appended",
+        "address": 38
+      },
+      {
+        "record": 39,
+        "length": 281,
+        "identity_blocks": 4,
+        "action": "appended",
+        "address": 39
+      },
+      {
+        "record": 40,
+        "length": 284,
+        "identity_blocks": 1,
+        "action": "appended",
+        "address": 40
+      },
+      {
+        "record": 41,
+        "length": 342,
+        "identity_blocks": 6,
+        "action": "appended",
+        "address": 41
+      },
+      {
+        "record": 42,
+        "length": 306,
+        "identity_blocks": 3,
+        "action": "appended",
+        "address": 42
+      },
+      {
+        "record": 43,
+        "length": 323,
+        "identity_blocks": 4,
+        "action": "appended",
+        "address": 43
+      },
+      {
+        "record": 44,
+        "length": 309,
+        "identity_blocks": 4,
+        "action": "appended",
+        "address": 44
+      },
+      {
+        "record": 45,
+        "length": 291,
+        "identity_blocks": 1,
+        "action": "appended",
+        "address": 45
+      },
+      {
+        "record": 46,
+        "length": 854,
+        "identity_blocks": 9,
+        "action": "appended",
+        "address": 46
+      },
+      {
+        "record": 47,
+        "length": 294,
+        "identity_blocks": 2,
+        "action": "appended",
+        "address": 47
+      },
+      {
+        "record": 48,
+        "length": 306,
+        "identity_blocks": 4,
+        "action": "appended",
+        "address": 48
+      },
+      {
+        "record": 49,
+        "length": 325,
+        "identity_blocks": 3,
+        "action": "appended",
+        "address": 49
+      },
+      {
+        "record": 50,
+        "length": 315,
+        "identity_blocks": 2,
+        "action": "appended",
+        "address": 50
+      },
+      {
+        "record": 51,
+        "length": 295,
+        "identity_blocks": 4,
+        "action": "appended",
+        "address": 51
+      },
+      {
+        "record": 52,
+        "length": 338,
+        "identity_blocks": 3,
+        "action": "appended",
+        "address": 52
+      },
+      {
+        "record": 53,
+        "length": 497,
+        "identity_blocks": 8,
+        "action": "appended",
+        "address": 53
+      },
+      {
+        "record": 54,
+        "length": 286,
+        "identity_blocks": 4,
+        "action": "appended",
+        "address": 54
+      },
+      {
+        "record": 55,
+        "length": 556,
+        "identity_blocks": 7,
+        "action": "appended",
+        "address": 55
+      },
+      {
+        "record": 56,
+        "length": 537,
+        "identity_blocks": 6,
+        "action": "appended",
+        "address": 56
+      },
+      {
+        "record": 57,
+        "length": 868,
+        "identity_blocks": 17,
+        "action": "appended",
+        "address": 57
+      }
+    ]
+  },
+  "shortest_addressable_length": {
+    "definition_bytes": 23,
+    "formula": "MIN_CHUNK + PROTECT + 1 = 16 + 6 + 1",
+    "necessary_not_sufficient": true,
+    "ceiling": 64,
+    "observed": {
+      "rows": [
+        {
+          "record": 0,
+          "length": 806,
+          "identity_blocks": 11,
+          "addressable": true,
+          "first_cut": 48,
+          "last_block_end": 576
+        },
+        {
+          "record": 1,
+          "length": 277,
+          "identity_blocks": 3,
+          "addressable": true,
+          "first_cut": 158,
+          "last_block_end": 237
+        },
+        {
+          "record": 2,
+          "length": 379,
+          "identity_blocks": 4,
+          "addressable": true,
+          "first_cut": 93,
+          "last_block_end": 334
+        },
+        {
+          "record": 3,
+          "length": 876,
+          "identity_blocks": 11,
+          "addressable": true,
+          "first_cut": 119,
+          "last_block_end": 874
+        },
+        {
+          "record": 4,
+          "length": 861,
+          "identity_blocks": 9,
+          "addressable": true,
+          "first_cut": 96,
+          "last_block_end": 809
+        },
+        {
+          "record": 5,
+          "length": 1072,
+          "identity_blocks": 11,
+          "addressable": true,
+          "first_cut": 43,
+          "last_block_end": 1066
+        },
+        {
+          "record": 6,
+          "length": 815,
+          "identity_blocks": 6,
+          "addressable": true,
+          "first_cut": 174,
+          "last_block_end": 657
+        },
+        {
+          "record": 7,
+          "length": 409,
+          "identity_blocks": 7,
+          "addressable": true,
+          "first_cut": 50,
+          "last_block_end": 355
+        },
+        {
+          "record": 8,
+          "length": 535,
+          "identity_blocks": 3,
+          "addressable": true,
+          "first_cut": 99,
+          "last_block_end": 353
+        },
+        {
+          "record": 9,
+          "length": 374,
+          "identity_blocks": 3,
+          "addressable": true,
+          "first_cut": 60,
+          "last_block_end": 277
+        },
+        {
+          "record": 10,
+          "length": 450,
+          "identity_blocks": 7,
+          "addressable": true,
+          "first_cut": 72,
+          "last_block_end": 420
+        },
+        {
+          "record": 11,
+          "length": 355,
+          "identity_blocks": 5,
+          "addressable": true,
+          "first_cut": 56,
+          "last_block_end": 320
+        },
+        {
+          "record": 12,
+          "length": 314,
+          "identity_blocks": 6,
+          "addressable": true,
+          "first_cut": 13,
+          "last_block_end": 258
+        },
+        {
+          "record": 13,
+          "length": 304,
+          "identity_blocks": 6,
+          "addressable": true,
+          "first_cut": 9,
+          "last_block_end": 284
+        },
+        {
+          "record": 14,
+          "length": 453,
+          "identity_blocks": 5,
+          "addressable": true,
+          "first_cut": 134,
+          "last_block_end": 448
+        },
+        {
+          "record": 15,
+          "length": 780,
+          "identity_blocks": 12,
+          "addressable": true,
+          "first_cut": 41,
+          "last_block_end": 736
+        },
+        {
+          "record": 16,
+          "length": 981,
+          "identity_blocks": 8,
+          "addressable": true,
+          "first_cut": 138,
+          "last_block_end": 927
+        },
+        {
+          "record": 17,
+          "length": 368,
+          "identity_blocks": 2,
+          "addressable": true,
+          "first_cut": 179,
+          "last_block_end": 363
+        },
+        {
+          "record": 18,
+          "length": 310,
+          "identity_blocks": 5,
+          "addressable": true,
+          "first_cut": 28,
+          "last_block_end": 279
+        },
+        {
+          "record": 19,
+          "length": 256,
+          "identity_blocks": 1,
+          "addressable": true,
+          "first_cut": 66,
+          "last_block_end": 100
+        },
+        {
+          "record": 20,
+          "length": 559,
+          "identity_blocks": 3,
+          "addressable": true,
+          "first_cut": 58,
+          "last_block_end": 333
+        },
+        {
+          "record": 21,
+          "length": 527,
+          "identity_blocks": 6,
+          "addressable": true,
+          "first_cut": 7,
+          "last_block_end": 261
+        },
+        {
+          "record": 22,
+          "length": 361,
+          "identity_blocks": 3,
+          "addressable": true,
+          "first_cut": 36,
+          "last_block_end": 328
+        },
+        {
+          "record": 23,
+          "length": 386,
+          "identity_blocks": 4,
+          "addressable": true,
+          "first_cut": 31,
+          "last_block_end": 365
+        },
+        {
+          "record": 24,
+          "length": 211,
+          "identity_blocks": 1,
+          "addressable": true,
+          "first_cut": 85,
+          "last_block_end": 204
+        },
+        {
+          "record": 25,
+          "length": 304,
+          "identity_blocks": 4,
+          "addressable": true,
+          "first_cut": 55,
+          "last_block_end": 288
+        },
+        {
+          "record": 26,
+          "length": 475,
+          "identity_blocks": 4,
+          "addressable": true,
+          "first_cut": 9,
+          "last_block_end": 366
+        },
+        {
+          "record": 27,
+          "length": 354,
+          "identity_blocks": 6,
+          "addressable": true,
+          "first_cut": 64,
+          "last_block_end": 336
+        },
+        {
+          "record": 28,
+          "length": 253,
+          "identity_blocks": 1,
+          "addressable": true,
+          "first_cut": 69,
+          "last_block_end": 108
+        },
+        {
+          "record": 29,
+          "length": 185,
+          "identity_blocks": 1,
+          "addressable": true,
+          "first_cut": 149,
+          "last_block_end": 167
+        },
+        {
+          "record": 30,
+          "length": 165,
+          "identity_blocks": 2,
+          "addressable": true,
+          "first_cut": 37,
+          "last_block_end": 120
+        },
+        {
+          "record": 31,
+          "length": 175,
+          "identity_blocks": 2,
+          "addressable": true,
+          "first_cut": 30,
+          "last_block_end": 133
+        },
+        {
+          "record": 32,
+          "length": 183,
+          "identity_blocks": 1,
+          "addressable": true,
+          "first_cut": 70,
+          "last_block_end": 138
+        },
+        {
+          "record": 33,
+          "length": 156,
+          "identity_blocks": 2,
+          "addressable": true,
+          "first_cut": 21,
+          "last_block_end": 102
+        },
+        {
+          "record": 34,
+          "length": 169,
+          "identity_blocks": 2,
+          "addressable": true,
+          "first_cut": 44,
+          "last_block_end": 151
+        },
+        {
+          "record": 35,
+          "length": 226,
+          "identity_blocks": 3,
+          "addressable": true,
+          "first_cut": 83,
+          "last_block_end": 195
+        },
+        {
+          "record": 36,
+          "length": 263,
+          "identity_blocks": 3,
+          "addressable": true,
+          "first_cut": 19,
+          "last_block_end": 259
+        },
+        {
+          "record": 37,
+          "length": 298,
+          "identity_blocks": 2,
+          "addressable": true,
+          "first_cut": 165,
+          "last_block_end": 294
+        },
+        {
+          "record": 38,
+          "length": 274,
+          "identity_blocks": 2,
+          "addressable": true,
+          "first_cut": 86,
+          "last_block_end": 214
+        },
+        {
+          "record": 39,
+          "length": 281,
+          "identity_blocks": 4,
+          "addressable": true,
+          "first_cut": 124,
+          "last_block_end": 280
+        },
+        {
+          "record": 40,
+          "length": 284,
+          "identity_blocks": 1,
+          "addressable": true,
+          "first_cut": 127,
+          "last_block_end": 219
+        },
+        {
+          "record": 41,
+          "length": 342,
+          "identity_blocks": 6,
+          "addressable": true,
+          "first_cut": 115,
+          "last_block_end": 341
+        },
+        {
+          "record": 42,
+          "length": 306,
+          "identity_blocks": 3,
+          "addressable": true,
+          "first_cut": 30,
+          "last_block_end": 208
+        },
+        {
+          "record": 43,
+          "length": 323,
+          "identity_blocks": 4,
+          "addressable": true,
+          "first_cut": 7,
+          "last_block_end": 291
+        },
+        {
+          "record": 44,
+          "length": 309,
+          "identity_blocks": 4,
+          "addressable": true,
+          "first_cut": 86,
+          "last_block_end": 277
+        },
+        {
+          "record": 45,
+          "length": 291,
+          "identity_blocks": 1,
+          "addressable": true,
+          "first_cut": 149,
+          "last_block_end": 229
+        },
+        {
+          "record": 46,
+          "length": 854,
+          "identity_blocks": 9,
+          "addressable": true,
+          "first_cut": 26,
+          "last_block_end": 800
+        },
+        {
+          "record": 47,
+          "length": 294,
+          "identity_blocks": 2,
+          "addressable": true,
+          "first_cut": 10,
+          "last_block_end": 229
+        },
+        {
+          "record": 48,
+          "length": 306,
+          "identity_blocks": 4,
+          "addressable": true,
+          "first_cut": 74,
+          "last_block_end": 265
+        },
+        {
+          "record": 49,
+          "length": 325,
+          "identity_blocks": 3,
+          "addressable": true,
+          "first_cut": 103,
+          "last_block_end": 324
+        },
+        {
+          "record": 50,
+          "length": 315,
+          "identity_blocks": 2,
+          "addressable": true,
+          "first_cut": 76,
+          "last_block_end": 213
+        },
+        {
+          "record": 51,
+          "length": 295,
+          "identity_blocks": 4,
+          "addressable": true,
+          "first_cut": 73,
+          "last_block_end": 263
+        },
+        {
+          "record": 52,
+          "length": 338,
+          "identity_blocks": 3,
+          "addressable": true,
+          "first_cut": 193,
+          "last_block_end": 306
+        },
+        {
+          "record": 53,
+          "length": 497,
+          "identity_blocks": 8,
+          "addressable": true,
+          "first_cut": 6,
+          "last_block_end": 468
+        },
+        {
+          "record": 54,
+          "length": 286,
+          "identity_blocks": 4,
+          "addressable": true,
+          "first_cut": 45,
+          "last_block_end": 239
+        },
+        {
+          "record": 55,
+          "length": 556,
+          "identity_blocks": 7,
+          "addressable": true,
+          "first_cut": 116,
+          "last_block_end": 527
+        },
+        {
+          "record": 56,
+          "length": 537,
+          "identity_blocks": 6,
+          "addressable": true,
+          "first_cut": 54,
+          "last_block_end": 526
+        },
+        {
+          "record": 57,
+          "length": 868,
+          "identity_blocks": 17,
+          "addressable": true,
+          "first_cut": 19,
+          "last_block_end": 838
+        }
+      ],
+      "min_record_length": 156,
+      "max_record_length": 1072,
+      "shortest_addressable_length_observed": 156,
+      "unaddressable_records": [],
+      "identity_blocks_histogram": {
+        "1": 7,
+        "2": 9,
+        "3": 10,
+        "4": 10,
+        "5": 3,
+        "6": 7,
+        "7": 3,
+        "8": 2,
+        "9": 2,
+        "11": 3,
+        "12": 1,
+        "17": 1
+      },
+      "structurally_unaddressable_below": [],
+      "definition": {
+        "MIN_CHUNK": 16,
+        "PROTECT": 6,
+        "WINDOW": 6,
+        "MIN_ADDRESSABLE": 23
+      }
+    }
+  },
+  "shift_invariance": {
+    "checks": 1102,
+    "failures": [],
+    "identity_empty_records": [],
+    "records_keeping_first_chunk": [],
+    "records_keeping_final_chunk": [],
+    "ok": true
+  },
+  "soundness": {
+    "empty_identities": [],
+    "containment_clashes": [],
+    "anchored_negatives": [],
+    "band_equals_predicate_width": true,
+    "min_addressable_matches_definition": true,
+    "ok": true
+  },
+  "tolerance_audit": {
+    "frozen_constants": {
+      "START_CAPACITY": 2,
+      "WINDOW": 6,
+      "MIN_CHUNK": 16,
+      "MASK": 63,
+      "PROTECT": 6,
+      "MIN_ADDRESSABLE": 23,
+      "MASK64": 18446744073709551615
+    },
+    "live_constants": {
+      "START_CAPACITY": 2,
+      "WINDOW": 6,
+      "MIN_CHUNK": 16,
+      "MASK": 63,
+      "PROTECT": 6,
+      "MIN_ADDRESSABLE": 23,
+      "MASK64": 18446744073709551615
+    },
+    "frozen_read_path_literals": {
+      "identity_blocks": [
+        0.0,
+        1.0
+      ],
+      "block_overlap": [
+        0.0,
+        1.0
+      ],
+      "sentences": [
+        0.0,
+        1.0
+      ],
+      "read": [
+        0.0,
+        1.0,
+        9.0
+      ],
+      "_sentence_span": [
+        0.0,
+        1.0,
+        2.0,
+        3.0
+      ]
+    },
+    "live_read_path_literals": {
+      "identity_blocks": [
+        0.0,
+        1.0
+      ],
+      "block_overlap": [
+        0.0,
+        1.0
+      ],
+      "sentences": [
+        0.0,
+        1.0
+      ],
+      "read": [
+        0.0,
+        1.0,
+        9.0
+      ],
+      "_sentence_span": [
+        0.0,
+        1.0,
+        2.0,
+        3.0
+      ]
+    },
+    "new_constants": [],
+    "changed_constants": [],
+    "new_literals": [],
+    "changed_literals": [],
+    "previous_manifest": "plans\\manifests\\taiji_shorts_20261108.json",
+    "new_constants_vs_previous": [],
+    "changed_constants_vs_previous": [],
+    "new_read_path_scopes_vs_previous": [
+      "_sentence_span",
+      "sentences"
+    ],
+    "structural_literal_note": "the numeric literals in sentences()/_sentence_span are 0, 1, 2, 3 used only as span indices, list offsets and tuple positions; the terminator set is a categorical character set. None is a threshold or a tolerance.",
+    "protection": {
+      "PROTECT_equals_WINDOW": true,
+      "MIN_ADDRESSABLE_matches_definition": true,
+      "MIN_ADDRESSABLE": 23
+    },
+    "ok": true
+  },
+  "regression": {
+    "previous_report": "reports\\taiji_shorts_20261108.json",
+    "previous_outputs": "reports\\taiji_shorts_20261108_outputs.jsonl",
+    "previous_rows": 116,
+    "compared": 116,
+    "ok": true,
+    "regressions": []
+  },
+  "output_samples": [
+    {
+      "label": "anchored_record",
+      "kind": "self",
+      "variant": "exact",
+      "decision": "matched",
+      "expected": 0,
+      "record": 0,
+      "anchors": 1,
+      "fallback": false,
+      "fallback_reason": "none",
+      "fallback_basis": "none",
+      "unit": "record",
+      "unit_index": 0,
+      "start": 0,
+      "end": 806,
+      "output_len": 806,
+      "boundary_before": "",
+      "boundary_after": "",
+      "boundary_ok": true,
+      "decodable": true,
+      "output_class": "usable_and_correct",
+      "query_text": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注册 manifest](manifests/taiji_growth_wire_20261108.json)（读数前落盘）＋新模块 [growth_wire.py](../taiji/growth_wire.py)（默认关闭、0 参数；`session_boundary`／`session_write`／`session_read`／`session_step` 四个入口，关闭态逐字委托冻结图）。判定 **`growth_wired_default_off`**：零扰动 Z1–Z5 全过、跨会话冒烟过；22 面 8/22 与不生长臂相同（容量生长无可测任务收益），复制门 22/22 拒（overlap 0.939–0.988）⇒ 复制门暂不可用。首次读数因“自己槽位”判据对 8 条同文基础句无效而返工，两次修订均只改度量、未改机制，run1/run2 原样留档于报告 `amendments`。",
+      "output_text": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注册 manifest](manifests/taiji_growth_wire_20261108.json)（读数前落盘）＋新模块 [growth_wire.py](../taiji/growth_wire.py)（默认关闭、0 参数；`session_boundary`／`session_write`／`session_read`／`session_step` 四个入口，关闭态逐字委托冻结图）。判定 **`growth_wired_default_off`**：零扰动 Z1–Z5 全过、跨会话冒烟过；22 面 8/22 与不生长臂相同（容量生长无可测任务收益），复制门 22/22 拒（overlap 0.939–0.988）⇒ 复制门暂不可用。首次读数因“自己槽位”判据对 8 条同文基础句无效而返工，两次修订均只改度量、未改机制，run1/run2 原样留档于报告 `amendments`。",
+      "output_sha256": "5b75805f7d8d82e7901a2a08d2ee44544f238bd5fa5f2ee25b374a0e1573e0b9"
+    },
+    {
+      "label": "anchored_record_lead_in",
+      "kind": "lead_in",
+      "variant": "prefix_suffix",
+      "decision": "matched",
+      "expected": 0,
+      "record": 0,
+      "anchors": 1,
+      "fallback": false,
+      "fallback_reason": "none",
+      "fallback_basis": "none",
+      "unit": "record",
+      "unit_index": 0,
+      "start": 0,
+      "end": 806,
+      "output_len": 806,
+      "boundary_before": "",
+      "boundary_after": "",
+      "boundary_ok": true,
+      "decodable": true,
+      "output_class": "usable_and_correct",
+      "query_text": "总的来说，**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注册 manifest](manifests/taiji_growth_wire_20261108.json)（读数前落盘）＋新模块 [growth_wire.py](../taiji/growth_wire.py)（默认关闭、0 参数；`session_boundary`／`session_write`／`session_read`／`session_step` 四个入口，关闭态逐字委托冻结图）。判定 **`growth_wired_default_off`**：零扰动 Z1–Z5 全过、跨会话冒烟过；22 面 8/22 与不生长臂相同（容量生长无可测任务收益），复制门 22/22 拒（overlap 0.939–0.988）⇒ 复制门暂不可用。首次读数因“自己槽位”判据对 8 条同文基础句无效而返工，两次修订均只改度量、未改机制，run1/run2 原样留档于报告 `amendments`。。",
+      "output_text": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注册 manifest](manifests/taiji_growth_wire_20261108.json)（读数前落盘）＋新模块 [growth_wire.py](../taiji/growth_wire.py)（默认关闭、0 参数；`session_boundary`／`session_write`／`session_read`／`session_step` 四个入口，关闭态逐字委托冻结图）。判定 **`growth_wired_default_off`**：零扰动 Z1–Z5 全过、跨会话冒烟过；22 面 8/22 与不生长臂相同（容量生长无可测任务收益），复制门 22/22 拒（overlap 0.939–0.988）⇒ 复制门暂不可用。首次读数因“自己槽位”判据对 8 条同文基础句无效而返工，两次修订均只改度量、未改机制，run1/run2 原样留档于报告 `amendments`。",
+      "output_sha256": "5b75805f7d8d82e7901a2a08d2ee44544f238bd5fa5f2ee25b374a0e1573e0b9"
+    },
+    {
+      "label": "fallback_sentence_record_overlap",
+      "kind": "synonym",
+      "variant": "global_table",
+      "decision": "no_match",
+      "expected": 5,
+      "record": 5,
+      "anchors": 0,
+      "fallback": true,
+      "fallback_reason": "no_anchor",
+      "fallback_basis": "record_overlap",
+      "unit": "sentence",
+      "unit_index": 0,
+      "start": 0,
+      "end": 160,
+      "output_len": 160,
+      "boundary_before": "",
+      "boundary_after": "三种",
+      "boundary_ok": true,
+      "decodable": true,
+      "output_class": "usable_and_correct",
+      "query_text": "**不是①表示层**：FEC-1 round-2 已证明写键可在**图内**修好（pairwise 0.0→**0.974**、秩 2→7、全过门），不须要重训编码器；三种编码改造（居中／白化／`localized_centered`）已把“编码函数”这条路走尽。缺的不是特征，而是“哪两个查询算同一个地址”的判定规则。**不是③读出门**：真实键三类空档 **−0.0198／−0.0346／−0.0311**（全负）——门槛没有可站的空档是因为地址本身没有空档；且 `gate_hurts` 与 `simplified_holds_at_parity` 表明门在现有地址上无正价值。门只能读出地址的可分性，不能制造它。**不是④容量与生长**：F3 四代扩容全过、扩容零扰动、占用 30/32 未触顶，`no_capacity` 只在 112/128 如实命中；生长在 22 面口径上没有可测收益，是因为新写入到不了可区分的地址，而不是容量不可用。F1 的“缺取代”同样下游于地址：当所有纠正落到同一个地址时，方向带只能判“复制”，取代对象无法被识别。",
+      "output_text": "**不是①表示层**：FEC-1 round-2 已证明写键可在**图内**修好（pairwise 0.0→**0.974**、秩 2→7、全过门），不需要重训编码器；",
+      "output_sha256": "116205095270e710a577efd7daef31caaffa735489573738ea65a090a5f03aed"
+    },
+    {
+      "label": "fallback_sentence_address_order",
+      "kind": "unknown",
+      "variant": "held_out",
+      "decision": "no_match",
+      "expected": null,
+      "record": 0,
+      "anchors": 0,
+      "fallback": true,
+      "fallback_reason": "no_overlap",
+      "fallback_basis": "address_order",
+      "unit": "sentence",
+      "unit_index": 0,
+      "start": 0,
+      "end": 274,
+      "output_len": 274,
+      "boundary_before": "",
+      "boundary_after": "`sessi",
+      "boundary_ok": true,
+      "decodable": true,
+      "output_class": "usable_fallback",
+      "query_text": "原生字节、主体状态、来源/权限、负责模块信用、继承式生长、旧能力保持和内源活动继续作为长期责任。17当时聚焦episode内有序内容消费；当前19.2结构Task1已收束，包20转向反馈条件适应与纠正。已有09的状态、快权重、生长与恢复工程资产按原证据使用，跨session经验写入和长期能力仍需同候选任务检验。",
+      "output_text": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注册 manifest](manifests/taiji_growth_wire_20261108.json)（读数前落盘）＋新模块 [growth_wire.py](../taiji/growth_wire.py)（默认关闭、0 参数；",
+      "output_sha256": "fd2e09f883d3071ef061c6d98e16f89c4a9a78b8bdb648af2c409813c837af64"
+    },
+    {
+      "label": "unusable_or_wrong_else_ambiguous",
+      "kind": "ambiguous",
+      "variant": "union_text",
+      "decision": "ambiguous_multiple_anchors",
+      "expected": "ambiguous",
+      "record": 0,
+      "anchors": 2,
+      "fallback": false,
+      "fallback_reason": "none",
+      "fallback_basis": "none",
+      "unit": "record",
+      "unit_index": 0,
+      "start": 0,
+      "end": 806,
+      "output_len": 806,
+      "boundary_before": "",
+      "boundary_after": "",
+      "boundary_ok": true,
+      "decodable": true,
+      "output_class": "usable_fallback",
+      "query_text": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注册 manifest](manifests/taiji_growth_wire_20261108.json)（读数前落盘）＋新模块 [growth_wire.py](../taiji/growth_wire.py)（默认关闭、0 参数；`session_boundary`／`session_write`／`session_read`／`session_step` 四个入口，关闭态逐字委托冻结图）。判定 **`growth_wired_default_off`**：零扰动 Z1–Z5 全过、跨会话冒烟过；22 面 8/22 与不生长臂相同（容量生长无可测任务收益），复制门 22/22 拒（overlap 0.939–0.988）⇒ 复制门暂不可用。首次读数因“自己槽位”判据对 8 条同文基础句无效而返工，两次修订均只改度量、未改机制，run1/run2 原样留档于报告 `amendments`。\n\n**19.2e 口径对账 + 强制覆盖探针（2026-11-04，0 更新；证据见 [19.2e 报告](../../reports/taiji_package19_2e_pointer_override_20261104.json)）**：",
+      "output_text": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注册 manifest](manifests/taiji_growth_wire_20261108.json)（读数前落盘）＋新模块 [growth_wire.py](../taiji/growth_wire.py)（默认关闭、0 参数；`session_boundary`／`session_write`／`session_read`／`session_step` 四个入口，关闭态逐字委托冻结图）。判定 **`growth_wired_default_off`**：零扰动 Z1–Z5 全过、跨会话冒烟过；22 面 8/22 与不生长臂相同（容量生长无可测任务收益），复制门 22/22 拒（overlap 0.939–0.988）⇒ 复制门暂不可用。首次读数因“自己槽位”判据对 8 条同文基础句无效而返工，两次修订均只改度量、未改机制，run1/run2 原样留档于报告 `amendments`。",
+      "output_sha256": "5b75805f7d8d82e7901a2a08d2ee44544f238bd5fa5f2ee25b374a0e1573e0b9"
+    }
+  ],
+  "output_samples_note": "the unusable and usable_but_wrong classes are empty in this run, so the fifth slot shows the closest non-answer case available: an ambiguous query, where two records are anchored and the printed unit is one of them.",
+  "boundary_source": {
+    "unit_distribution": {
+      "record": 137,
+      "sentence": 43,
+      "none": 0
+    },
+    "fallback_basis_distribution": {
+      "none": 137,
+      "record_overlap": 4,
+      "address_order": 39
+    },
+    "fallback_outputs": 43,
+    "note": "unit = record means the whole stored record was printed; unit = sentence means one span returned by sentences() for the claimed record. fallback = true on every unanchored read, with basis record_overlap or address_order."
+  },
+  "denominators": {
+    "should_anchor": 120,
+    "should_unknown": 20,
+    "should_ambiguous": 20,
+    "unrelated": 20,
+    "queries": 180
+  },
+  "layers": {
+    "L1": {
+      "fabricated_bytes": 0,
+      "illegal_spans": 0,
+      "utf8_valid": 180,
+      "utf8_invalid": 0,
+      "utf8_decodable_rate": 1.0,
+      "boundary_legal": 180,
+      "boundary_illegal": 0,
+      "boundary_legal_rate": 1.0,
+      "samples": []
+    },
+    "L2": {
+      "faithful": 180,
+      "faithful_rate": 1.0,
+      "denominator": 180
+    },
+    "L3": {
+      "usable_and_correct": 120,
+      "usable_but_wrong": 0,
+      "unusable": 0,
+      "denominator": 120,
+      "blocked_by_l1": 0,
+      "blocked_samples": []
+    }
+  },
+  "readings": {
+    "counts": {
+      "ambiguous": 20,
+      "lead_in": 58,
+      "self": 58,
+      "synonym": 4,
+      "unknown": 20,
+      "unrelated": 20
+    },
+    "should_anchor": {
+      "n": 120,
+      "usable_and_correct": 120,
+      "usable_but_wrong": 0,
+      "unusable": 0,
+      "usable_and_correct_anchored": 117,
+      "usable_and_correct_fallback": 3,
+      "usable_rate": 1.0,
+      "no_anchor_reading": 3,
+      "ambiguous_reading": 0
+    },
+    "negatives": {
+      "n": 60,
+      "usable_units": 60,
+      "unusable_units": 0,
+      "fallback_labelled": 40,
+      "matched": 0,
+      "no_anchor": 40,
+      "ambiguous": 20,
+      "note": "no correct record exists here; a complete unit printed under fallback is labelled no_anchor, not counted as an answer. matched > 0 would mean a wrong pointer on a query that should not anchor."
+    },
+    "by_kind": {
+      "self": {
+        "n": 58,
+        "usable_and_correct": 58,
+        "usable_but_wrong": 0,
+        "unusable": 0,
+        "usable_fallback": 0,
+        "matched": 58,
+        "no_anchor": 0,
+        "ambiguous": 0,
+        "record_units": 58,
+        "sentence_units": 0,
+        "fallback_outputs": 0
+      },
+      "lead_in": {
+        "n": 58,
+        "usable_and_correct": 58,
+        "usable_but_wrong": 0,
+        "unusable": 0,
+        "usable_fallback": 0,
+        "matched": 58,
+        "no_anchor": 0,
+        "ambiguous": 0,
+        "record_units": 58,
+        "sentence_units": 0,
+        "fallback_outputs": 0
+      },
+      "synonym": {
+        "n": 4,
+        "usable_and_correct": 4,
+        "usable_but_wrong": 0,
+        "unusable": 0,
+        "usable_fallback": 0,
+        "matched": 1,
+        "no_anchor": 3,
+        "ambiguous": 0,
+        "record_units": 1,
+        "sentence_units": 3,
+        "fallback_outputs": 3
+      },
+      "unknown": {
+        "n": 20,
+        "usable_and_correct": 0,
+        "usable_but_wrong": 0,
+        "unusable": 0,
+        "usable_fallback": 20,
+        "matched": 0,
+        "no_anchor": 20,
+        "ambiguous": 0,
+        "record_units": 0,
+        "sentence_units": 20,
+        "fallback_outputs": 20
+      },
+      "ambiguous": {
+        "n": 20,
+        "usable_and_correct": 0,
+        "usable_but_wrong": 0,
+        "unusable": 0,
+        "usable_fallback": 20,
+        "matched": 0,
+        "no_anchor": 0,
+        "ambiguous": 20,
+        "record_units": 20,
+        "sentence_units": 0,
+        "fallback_outputs": 0
+      },
+      "unrelated": {
+        "n": 20,
+        "usable_and_correct": 0,
+        "usable_but_wrong": 0,
+        "unusable": 0,
+        "usable_fallback": 20,
+        "matched": 0,
+        "no_anchor": 20,
+        "ambiguous": 0,
+        "record_units": 0,
+        "sentence_units": 20,
+        "fallback_outputs": 20
+      }
+    },
+    "unit_distribution": {
+      "record": 137,
+      "sentence": 43,
+      "none": 0
+    },
+    "fallback_basis_distribution": {
+      "none": 137,
+      "record_overlap": 4,
+      "address_order": 39
+    },
+    "coverage_ratio_distribution": {
+      "1.0": 137,
+      "[0.75,1)": 1,
+      "[0.5,0.75)": 2,
+      "[0.25,0.5)": 1,
+      "(0,0.25)": 0,
+      "0.0": 39
+    },
+    "anchor_count_histogram": {
+      "1": 117,
+      "0": 43,
+      "2": 20
+    },
+    "failures": []
+  },
+  "legacy_control": {
+    "should_anchor": {
+      "n": 120,
+      "correct": 61,
+      "wrong_person": 0,
+      "no_match": 59,
+      "ambiguous": 0,
+      "usable_ratio": 0.508333
+    },
+    "by_kind": {
+      "self": {
+        "n": 58,
+        "correct": 58,
+        "matched": 58,
+        "no_match": 0,
+        "ambiguous": 0
+      },
+      "lead_in": {
+        "n": 58,
+        "correct": 0,
+        "matched": 0,
+        "no_match": 58,
+        "ambiguous": 0
+      },
+      "synonym": {
+        "n": 4,
+        "correct": 3,
+        "matched": 3,
+        "no_match": 1,
+        "ambiguous": 0
+      },
+      "unknown": {
+        "n": 20,
+        "correct": 0,
+        "matched": 0,
+        "no_match": 20,
+        "ambiguous": 0
+      },
+      "ambiguous": {
+        "n": 20,
+        "correct": 0,
+        "matched": 0,
+        "no_match": 20,
+        "ambiguous": 0
+      },
+      "unrelated": {
+        "n": 20,
+        "correct": 0,
+        "matched": 0,
+        "no_match": 20,
+        "ambiguous": 0
+      }
+    },
+    "note": "control column only; it never enters the verdict"
+  },
+  "previous_round": {
+    "commit": "506cdd802",
+    "report": "reports\\taiji_shorts_20261108.json",
+    "verdict": "short_entries_addressable",
+    "layers": {
+      "L1": {
+        "fabricated_bytes": 0,
+        "illegal_spans": 0,
+        "samples": []
+      },
+      "L2": {
+        "faithful": 180,
+        "faithful_rate": 1.0,
+        "denominator": 180
+      },
+      "L3": {
+        "correct": 120,
+        "wrong_person": 0,
+        "fabrication": 0,
+        "empty": 0,
+        "denominator": 120
+      },
+      "utf8_slices": {
+        "valid": 176,
+        "invalid": 4,
+        "invalid_scored": 3,
+        "note": "legality is defined on the byte span, not on text decoding"
+      }
+    },
+    "should_anchor": {
+      "n": 120,
+      "correct": 120,
+      "wrong_person": 0,
+      "fabrication": 0,
+      "empty": 0,
+      "usable_ratio": 1.0,
+      "no_anchor_reading": 3,
+      "ambiguous_reading": 0
+    },
+    "write": {
+      "addresses": 58,
+      "appended": 58,
+      "merged": 0,
+      "rejected_records": 0,
+      "rejected_reasons": {}
+    }
+  },
+  "cost": {
+    "cpu_seconds": 49.906,
+    "wall_seconds": 4.799,
+    "closed_wall_seconds": 4.356
+  },
+  "criteria": {
+    "C1_closed_state_neutral": "with sc_sfk_enabled=False the 176-case battery reproduces the stored baseline arrays bit for bit (max|delta| = 0), parameters / state bytes / candidate sha / store signature unchanged, and no table allocated, with no half-open branch.",
+    "C2_short_entries_admitted": "at least 57 of the 58 records must enter the table; every rejection is reported one by one with its reason. The 10 records rejected before the short-entry gate must all be admitted.",
+    "C3_no_tolerance": "no new numeric constant and no new numeric literal inside the read path; the frozen constant inventory and the frozen read-path literal set are compared with the running module. Any difference -> output_unit_needs_tolerance, stop.",
+    "L1_mechanical": "fabricated bytes = 0; illegal slices = 0; UTF-8 decodable = 100%; legal boundary = 100% (the span is the whole record or exactly one span returned by sentences() for the claimed record, and length matches the span).",
+    "L2_content": "output == claimed record's bytes[start:end], faithful rate >= 0.95.",
+    "L3_usable": "over the 120 should-anchor queries, three separate columns: usable_and_correct (L1 clean, complete unit, claimed == expected), usable_but_wrong (L1 clean, complete unit, claimed != expected), unusable (L1 blocked: fragment, illegal span, undecodable or empty). The count blocked by L1 is reported with samples.",
+    "C7_no_regression": "the 96 self + lead-in readings of the 48 records admitted before the short-entry gate are compared row by row (same query text); none may stop being correct, anchored, or byte-identical.",
+    "C8_boundary_sources_reported": "report the unit distribution (record / sentence), the fallback count, the reasons and bases, and the start/end offsets of every output.",
+    "errors": "usable_and_correct = complete decodable unit pointing at the expected record; usable_but_wrong = complete decodable unit pointing elsewhere; unusable = fragment, cross-boundary, undecodable or empty.",
+    "V_hard_failure": "closed not neutral -> hard_failure_closed_not_neutral, stop.",
+    "V_output_unit_needs_tolerance": "a new/changed numeric constant or read-path literal (i.e. aligning boundaries would need a numeric tolerance) -> output_unit_needs_tolerance: stop, do not implement, report the conflict.",
+    "V_output_unit_leaks": "L1 all clean but unusable > 0 -> output_unit_leaks: samples and reasons only, no loosening of any tolerance.",
+    "V_output_unit_fixed": "closed neutral AND L1 all clean AND usable_and_correct >= 110/120 AND unusable = 0 -> output_unit_fixed.",
+    "V_inconclusive": "anything else."
+  },
+  "disclosures": [
+    "the output is a slice of the record the table selected; the runner records the span and re-checks it byte by byte, so L1/L2 measure the printed unit, not the intent.",
+    "the printed unit is the whole record when a record anchors and one whole sentence of the chosen record otherwise. A sentence span starts at the record start or right after a terminator/newline and ends after a terminator/newline or at the record end, so a slice can never cut a character, a word or a sentence. There is no byte-offset fragment path left in read().",
+    "sentence choice on fallback reuses the existing block-overlap ranking; the terminator set is categorical. No numeric threshold, band or tolerance was added anywhere, and the frozen constant / read-path literal comparison is reported.",
+    "abstention is a reading: no_anchor, ambiguous_candidates and overlap never gate the output and never enter the verdict.",
+    "the synonym rewrites change bytes in the middle of the record, which breaks contiguous containment by definition; they fall back and are scored on the printed unit without substring credit, remaining in the denominator.",
+    "chunks shorter than 16 bytes are dropped after the cut set is fixed, so their bytes are invisible to the address; the rule never moves a cut point.",
+    "the band is six bytes, the predicate's own dependency width, and only the final chunk is dropped; both are the smallest correct choice, not tuned values.",
+    "a one-block identity certifies at least 16 verbatim interior bytes, not the whole record: that is the specificity a short record can offer, and it is reported, not hidden. An empty identity would anchor every query and is rejected.",
+    "the fallback label (fallback / fallback_reason / fallback_basis) is a reading; it never decides whether an output is produced, and it adds no threshold.",
+    "the legacy column is a frozen copy of the old stride-2 / DF=1 / DF=0-guard read rule and never enters the verdict.",
+    "the corpus snapshot is what the run reads, so later plan edits cannot move the acceptance set."
+  ]
+}
