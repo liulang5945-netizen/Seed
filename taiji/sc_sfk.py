@@ -1,11 +1,15 @@
-"""Content-defined chunk addressing (definition A); pure Python, no tensors.
+"""Content-defined chunk addressing (local-predicate chunking); pure Python.
 
 Identity definition
 -------------------
-A record's bytes are cut by a **gear hash** whose cut points depend only on the
-content: window ``W = 16`` (the low six bits of the rolling hash see exactly the
-last six bytes), mask ``0x3F``, shortest chunk 16 bytes, longest 128 bytes.  A
-chunk's fingerprint is ``sha256(chunk)[:16].hex()``.
+A record's bytes are cut at every position where a **local** gear-hash predicate
+fires: mask ``0x3F`` on the rolling hash, whose low six bits are a function of the
+last six bytes only.  The rolling hash is never reset and there is no
+"distance from the previous cut" rule (no minimum length, no maximum length), so
+the cut set is a function of the bytes alone.  Chunks shorter than
+``MIN_CHUNK = 16`` bytes are dropped on emission; they are never merged or
+extended, because length is looked at only after the cut set is fixed.  A chunk's
+fingerprint is ``sha256(chunk)[:16].hex()``.
 
 The record identity ``S(r)`` is the **ordered fingerprint sequence** of the chunks
 that remain after dropping every chunk that overlaps the first 16 bytes or the
@@ -48,7 +52,6 @@ from typing import Any
 START_CAPACITY = 2
 WINDOW = 16
 MIN_CHUNK = 16
-MAX_CHUNK = 128
 MASK = 0x3F
 PROTECT = 16
 MASK64 = 0xFFFFFFFFFFFFFFFF
@@ -69,24 +72,28 @@ GEAR = _gear_table()
 def chunks(raw: bytes) -> list[tuple[int, int, str]]:
     """Content-defined chunks as ``(start, end, fingerprint)`` in order.
 
-    Cut when ``(h & MASK) == 0`` after at least ``MIN_CHUNK`` bytes, or at
-    ``MAX_CHUNK`` unconditionally.  The condition reads only the low six bits of
-    the rolling hash, i.e. the last six bytes, so a cut after a prefix insertion
-    lands exactly shifted by the insertion length and the chunk *contents* after
-    the junction are unchanged.
+    The cut set is ``{i : (h_i & MASK) == 0}`` where ``h_i`` is the rolling hash
+    over ``raw[:i]``.  ``MASK`` reads the low six bits, which depend only on the
+    six bytes ending at ``i``; the hash is never reset, so the cut set is a
+    function of the bytes alone -- a prefix moves every interior cut by exactly
+    the prefix length and a suffix moves none of them.
+
+    Chunks shorter than ``MIN_CHUNK`` are dropped at emission (their bytes stay
+    invisible to the address).  Length is examined only *after* the cut set is
+    fixed, so a short chunk can never move a cut point.
     """
-    blocks: list[tuple[int, int, str]] = []
-    start = 0
+    cuts: list[int] = []
     rolling = 0
     for index, value in enumerate(raw):
         rolling = ((rolling << 1) + GEAR[value]) & MASK64
-        size = index - start + 1
-        if size >= MIN_CHUNK and ((rolling & MASK) == 0 or size >= MAX_CHUNK):
-            blocks.append((start, index + 1, _fingerprint(raw[start : index + 1])))
-            start = index + 1
-            rolling = 0
-    if start < len(raw):
-        blocks.append((start, len(raw), _fingerprint(raw[start:])))
+        if (rolling & MASK) == 0:
+            cuts.append(index + 1)
+    blocks: list[tuple[int, int, str]] = []
+    start = 0
+    for end in cuts + [len(raw)]:
+        if end - start >= MIN_CHUNK:
+            blocks.append((start, end, _fingerprint(raw[start:end])))
+        start = end
     return blocks
 
 

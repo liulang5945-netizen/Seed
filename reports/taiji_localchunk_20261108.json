@@ -1,0 +1,925 @@
+{
+  "schema": "taiji-localchunk-v1",
+  "date": "2026-11-08",
+  "question": "with a purely local cut predicate (no distance-from-previous-cut, no min/max length; short chunks dropped after the cut set is fixed), does every read's top-1 output select the right record, and does that output ever fabricate bytes?",
+  "verdict": "chain_not_the_cause",
+  "manifest": "plans\\manifests\\taiji_localchunk_20261108.json",
+  "manifest_sha256": "c72e89c2b4760e9c828867d12d2c0fcdda3dae941c9ad290324dde7c7e8ef5b5",
+  "corpus_snapshot_sha256": "8af046b218e8a20ec5ab285df77bcbc34230060901b203e03718ebcd8c15979d",
+  "runner_sha_start": "96c8c2ed9d04c65e3afa8125facee0f5030cddc9d4ae235ed78b7a9983a0929e",
+  "runner_sha_end": "96c8c2ed9d04c65e3afa8125facee0f5030cddc9d4ae235ed78b7a9983a0929e",
+  "closed": {
+    "report": "reports\\taiji_localchunk_20261108_closed.json",
+    "verdict": "local_chunking_closed_neutral",
+    "readings": 176,
+    "fast_max_abs_delta": 0.0,
+    "probability_max_abs_delta": 0.0,
+    "table_not_allocated": true,
+    "living_core_sha256": "df7942806de9352418bea6e195f920c416b38a1be48236e05b36981b83527f7b"
+  },
+  "write": {
+    "batches": [
+      {
+        "batch": 0,
+        "items": 10,
+        "accepted": 10,
+        "rejected": 0,
+        "slots_before": 0,
+        "slots_after": 10
+      },
+      {
+        "batch": 1,
+        "items": 10,
+        "accepted": 8,
+        "rejected": 2,
+        "slots_before": 10,
+        "slots_after": 18
+      },
+      {
+        "batch": 2,
+        "items": 10,
+        "accepted": 7,
+        "rejected": 3,
+        "slots_before": 18,
+        "slots_after": 25
+      },
+      {
+        "batch": 3,
+        "items": 10,
+        "accepted": 8,
+        "rejected": 2,
+        "slots_before": 25,
+        "slots_after": 33
+      },
+      {
+        "batch": 4,
+        "items": 10,
+        "accepted": 7,
+        "rejected": 3,
+        "slots_before": 33,
+        "slots_after": 40
+      },
+      {
+        "batch": 5,
+        "items": 8,
+        "accepted": 8,
+        "rejected": 0,
+        "slots_before": 40,
+        "slots_after": 48
+      }
+    ],
+    "addresses": 48,
+    "appended": 48,
+    "merged": 0,
+    "rejected_records": 10,
+    "rejected_reasons": {
+      "identity_too_short": 10
+    },
+    "rollbacks": 0,
+    "evictions": 0,
+    "silent_overwrites": 0,
+    "rejected_batches": 0,
+    "nbytes": 1598219,
+    "identity_blocks": [
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      6,
+      6,
+      7,
+      7,
+      7,
+      7,
+      8,
+      9,
+      9,
+      10,
+      10,
+      11,
+      12,
+      17
+    ]
+  },
+  "denominators": {
+    "should_anchor": 120,
+    "should_unknown": 20,
+    "should_ambiguous": 14,
+    "unrelated": 20,
+    "queries": 174
+  },
+  "layers": {
+    "L1": {
+      "fabricated_bytes": 0,
+      "illegal_spans": 0,
+      "samples": []
+    },
+    "L2": {
+      "faithful": 174,
+      "faithful_rate": 1.0,
+      "denominator": 174
+    },
+    "L3": {
+      "correct": 100,
+      "wrong_person": 20,
+      "fabrication": 0,
+      "empty": 0,
+      "denominator": 120
+    }
+  },
+  "readings": {
+    "counts": {
+      "ambiguous": 14,
+      "lead_in": 58,
+      "self": 58,
+      "synonym": 4,
+      "unknown": 20,
+      "unrelated": 20
+    },
+    "should_anchor": {
+      "n": 120,
+      "correct": 100,
+      "wrong_person": 20,
+      "fabrication": 0,
+      "empty": 0,
+      "usable_ratio": 0.833333,
+      "no_anchor_reading": 23,
+      "ambiguous_reading": 0
+    },
+    "by_kind": {
+      "self": {
+        "n": 58,
+        "correct": 48,
+        "matched": 48,
+        "no_anchor": 10,
+        "ambiguous": 0
+      },
+      "lead_in": {
+        "n": 58,
+        "correct": 48,
+        "matched": 48,
+        "no_anchor": 10,
+        "ambiguous": 0
+      },
+      "synonym": {
+        "n": 4,
+        "correct": 4,
+        "matched": 1,
+        "no_anchor": 3,
+        "ambiguous": 0
+      },
+      "unknown": {
+        "n": 20,
+        "correct": 0,
+        "matched": 0,
+        "no_anchor": 20,
+        "ambiguous": 0
+      },
+      "ambiguous": {
+        "n": 14,
+        "correct": 0,
+        "matched": 0,
+        "no_anchor": 0,
+        "ambiguous": 14
+      },
+      "unrelated": {
+        "n": 20,
+        "correct": 0,
+        "matched": 0,
+        "no_anchor": 20,
+        "ambiguous": 0
+      }
+    },
+    "coverage_ratio_distribution": {
+      "1.0": 111,
+      "[0.75,1)": 1,
+      "[0.5,0.75)": 1,
+      "[0.25,0.5)": 2,
+      "(0,0.25)": 0,
+      "0.0": 59
+    },
+    "anchor_count_histogram": {
+      "1": 97,
+      "0": 63,
+      "2": 14
+    },
+    "failures": [
+      {
+        "kind": "self",
+        "variant": "exact",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "`README.md` / `README.zh-CN.md`：第 2 节能力清单只保留 C1–C7，明确写出 U1–U8 未证、N8 不存在。`plans/M",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "self",
+        "variant": "exact",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "后续[系统计划](PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md)覆盖17–22，远期能力均为目标和待",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "self",
+        "variant": "exact",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "证据：[探针报告](../../reports/taiji_gate_sweep_18_1_20261104.json)＋[逐字节门预注册](../manife",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "self",
+        "variant": "exact",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "**18.2 更新（2026-11-04，验证达标；未定价、未训练）**：证据 `reports/taiji_cursor_utf8_18_2_20261104",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "self",
+        "variant": "exact",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "**19.2b 更新（2026-11-04，前段完成、D16-5 修正后停在六格前；证据见 [D16-5 复合仪器](../../reports/taiji_p",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "self",
+        "variant": "exact",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "**19.2h 序列表面对齐（2026-11-04，60 Adam / 2 轨迹 / 1 存包 / 0 confirm；证据见 [19.2h 报告](../..",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "self",
+        "variant": "exact",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "**19.2o 三层验收落点：provenance 零更新补算已完成（2026-11-05；0 Adam / 0 包 / 0 confirm；证据见 [报告](",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "self",
+        "variant": "exact",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "**19.2u 停止边界＋训练权重消融与 D16-25（2026-11-05；0 训练 / 256.72 CPU；[报告](../../reports/taij",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "self",
+        "variant": "exact",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "**20.2r 重放一致性＋F 杠杆闸（2026-11-05；0 训练 / 161.48 CPU；状态：工程就绪、未训练；[报告](../../reports/",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "self",
+        "variant": "exact",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "**20.2s F 信息含量闭式探针（2026-11-05；0 训练 / 119.67 CPU；状态：工程就绪、未训练；[报告](../../reports/t",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "lead_in",
+        "variant": "prefix_suffix",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "总的来说，`README.md` / `README.zh-CN.md`：第 2 节能力清单只保留 C1–C7，明确写出 U1–U8 未证、N8 不存在。`pl",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "lead_in",
+        "variant": "prefix_suffix",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "总的来说，后续[系统计划](PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md)覆盖17–22，远期能力均",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "lead_in",
+        "variant": "prefix_suffix",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "总的来说，证据：[探针报告](../../reports/taiji_gate_sweep_18_1_20261104.json)＋[逐字节门预注册](../m",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "lead_in",
+        "variant": "prefix_suffix",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "总的来说，**18.2 更新（2026-11-04，验证达标；未定价、未训练）**：证据 `reports/taiji_cursor_utf8_18_2_202",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "lead_in",
+        "variant": "prefix_suffix",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "总的来说，**19.2b 更新（2026-11-04，前段完成、D16-5 修正后停在六格前；证据见 [D16-5 复合仪器](../../reports/ta",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "lead_in",
+        "variant": "prefix_suffix",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "总的来说，**19.2h 序列表面对齐（2026-11-04，60 Adam / 2 轨迹 / 1 存包 / 0 confirm；证据见 [19.2h 报告](",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "lead_in",
+        "variant": "prefix_suffix",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "总的来说，**19.2o 三层验收落点：provenance 零更新补算已完成（2026-11-05；0 Adam / 0 包 / 0 confirm；证据见 ",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "lead_in",
+        "variant": "prefix_suffix",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "总的来说，**19.2u 停止边界＋训练权重消融与 D16-25（2026-11-05；0 训练 / 256.72 CPU；[报告](../../reports",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "lead_in",
+        "variant": "prefix_suffix",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "总的来说，**20.2r 重放一致性＋F 杠杆闸（2026-11-05；0 训练 / 161.48 CPU；状态：工程就绪、未训练；[报告](../../rep",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      },
+      {
+        "kind": "lead_in",
+        "variant": "prefix_suffix",
+        "expected": null,
+        "record": 0,
+        "anchors": 0,
+        "coverage_ratio": 0.0,
+        "decision": "no_match",
+        "error_class": "wrong_person",
+        "query": "总的来说，**20.2s F 信息含量闭式探针（2026-11-05；0 训练 / 119.67 CPU；状态：工程就绪、未训练；[报告](../../repo",
+        "output": "**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json)＋[预注"
+      }
+    ]
+  },
+  "wrong_person_samples": [
+    {
+      "kind": "self",
+      "variant": "exact",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "`README.md` / `README.zh-CN.md`：第 2 节能力清单只保留 C1–C7，明确写出 U1–U8 未证、N8 不存在。`plans/M"
+    },
+    {
+      "kind": "self",
+      "variant": "exact",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "后续[系统计划](PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md)覆盖17–22，远期能力均为目标和待"
+    },
+    {
+      "kind": "self",
+      "variant": "exact",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "证据：[探针报告](../../reports/taiji_gate_sweep_18_1_20261104.json)＋[逐字节门预注册](../manife"
+    },
+    {
+      "kind": "self",
+      "variant": "exact",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "**18.2 更新（2026-11-04，验证达标；未定价、未训练）**：证据 `reports/taiji_cursor_utf8_18_2_20261104"
+    },
+    {
+      "kind": "self",
+      "variant": "exact",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "**19.2b 更新（2026-11-04，前段完成、D16-5 修正后停在六格前；证据见 [D16-5 复合仪器](../../reports/taiji_p"
+    },
+    {
+      "kind": "self",
+      "variant": "exact",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "**19.2h 序列表面对齐（2026-11-04，60 Adam / 2 轨迹 / 1 存包 / 0 confirm；证据见 [19.2h 报告](../.."
+    },
+    {
+      "kind": "self",
+      "variant": "exact",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "**19.2o 三层验收落点：provenance 零更新补算已完成（2026-11-05；0 Adam / 0 包 / 0 confirm；证据见 [报告]("
+    },
+    {
+      "kind": "self",
+      "variant": "exact",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "**19.2u 停止边界＋训练权重消融与 D16-25（2026-11-05；0 训练 / 256.72 CPU；[报告](../../reports/taij"
+    },
+    {
+      "kind": "self",
+      "variant": "exact",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "**20.2r 重放一致性＋F 杠杆闸（2026-11-05；0 训练 / 161.48 CPU；状态：工程就绪、未训练；[报告](../../reports/"
+    },
+    {
+      "kind": "self",
+      "variant": "exact",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "**20.2s F 信息含量闭式探针（2026-11-05；0 训练 / 119.67 CPU；状态：工程就绪、未训练；[报告](../../reports/t"
+    },
+    {
+      "kind": "lead_in",
+      "variant": "prefix_suffix",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "总的来说，`README.md` / `README.zh-CN.md`：第 2 节能力清单只保留 C1–C7，明确写出 U1–U8 未证、N8 不存在。`pl"
+    },
+    {
+      "kind": "lead_in",
+      "variant": "prefix_suffix",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "总的来说，后续[系统计划](PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md)覆盖17–22，远期能力均"
+    },
+    {
+      "kind": "lead_in",
+      "variant": "prefix_suffix",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "总的来说，证据：[探针报告](../../reports/taiji_gate_sweep_18_1_20261104.json)＋[逐字节门预注册](../m"
+    },
+    {
+      "kind": "lead_in",
+      "variant": "prefix_suffix",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "总的来说，**18.2 更新（2026-11-04，验证达标；未定价、未训练）**：证据 `reports/taiji_cursor_utf8_18_2_202"
+    },
+    {
+      "kind": "lead_in",
+      "variant": "prefix_suffix",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "总的来说，**19.2b 更新（2026-11-04，前段完成、D16-5 修正后停在六格前；证据见 [D16-5 复合仪器](../../reports/ta"
+    },
+    {
+      "kind": "lead_in",
+      "variant": "prefix_suffix",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "总的来说，**19.2h 序列表面对齐（2026-11-04，60 Adam / 2 轨迹 / 1 存包 / 0 confirm；证据见 [19.2h 报告]("
+    },
+    {
+      "kind": "lead_in",
+      "variant": "prefix_suffix",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "总的来说，**19.2o 三层验收落点：provenance 零更新补算已完成（2026-11-05；0 Adam / 0 包 / 0 confirm；证据见 "
+    },
+    {
+      "kind": "lead_in",
+      "variant": "prefix_suffix",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "总的来说，**19.2u 停止边界＋训练权重消融与 D16-25（2026-11-05；0 训练 / 256.72 CPU；[报告](../../reports"
+    },
+    {
+      "kind": "lead_in",
+      "variant": "prefix_suffix",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "总的来说，**20.2r 重放一致性＋F 杠杆闸（2026-11-05；0 训练 / 161.48 CPU；状态：工程就绪、未训练；[报告](../../rep"
+    },
+    {
+      "kind": "lead_in",
+      "variant": "prefix_suffix",
+      "expected": null,
+      "record": 0,
+      "decision": "no_match",
+      "anchors": 0,
+      "covered_blocks": 0,
+      "coverage_ratio": 0.0,
+      "span": [
+        0,
+        806
+      ],
+      "output_len": 806,
+      "query_text": "总的来说，**20.2s F 信息含量闭式探针（2026-11-05；0 训练 / 119.67 CPU；状态：工程就绪、未训练；[报告](../../repo"
+    }
+  ],
+  "legacy_control": {
+    "should_anchor": {
+      "n": 120,
+      "correct": 19,
+      "wrong_person": 42,
+      "no_match": 59,
+      "ambiguous": 0,
+      "usable_ratio": 0.158333
+    },
+    "by_kind": {
+      "self": {
+        "n": 58,
+        "correct": 17,
+        "matched": 58,
+        "no_match": 0,
+        "ambiguous": 0
+      },
+      "lead_in": {
+        "n": 58,
+        "correct": 0,
+        "matched": 0,
+        "no_match": 58,
+        "ambiguous": 0
+      },
+      "synonym": {
+        "n": 4,
+        "correct": 2,
+        "matched": 3,
+        "no_match": 1,
+        "ambiguous": 0
+      },
+      "unknown": {
+        "n": 20,
+        "correct": 0,
+        "matched": 0,
+        "no_match": 20,
+        "ambiguous": 0
+      },
+      "ambiguous": {
+        "n": 14,
+        "correct": 0,
+        "matched": 0,
+        "no_match": 14,
+        "ambiguous": 0
+      },
+      "unrelated": {
+        "n": 20,
+        "correct": 0,
+        "matched": 0,
+        "no_match": 20,
+        "ambiguous": 0
+      }
+    },
+    "note": "control column only; it never enters the verdict"
+  },
+  "previous_round": {
+    "commit": "8c1b373b5",
+    "report": "reports\\taiji_identityA_20261108.json",
+    "verdict": "inconclusive",
+    "layers": {
+      "L1": {
+        "fabricated_bytes": 0,
+        "illegal_spans": 0,
+        "samples": []
+      },
+      "L2": {
+        "faithful": 178,
+        "faithful_rate": 1.0,
+        "denominator": 178
+      },
+      "L3": {
+        "correct": 112,
+        "wrong_person": 8,
+        "fabrication": 0,
+        "empty": 0,
+        "denominator": 120
+      }
+    },
+    "should_anchor": {
+      "n": 120,
+      "correct": 112,
+      "wrong_person": 8,
+      "fabrication": 0,
+      "empty": 0,
+      "usable_ratio": 0.933333,
+      "no_anchor_reading": 27,
+      "ambiguous_reading": 0
+    },
+    "write": {
+      "addresses": 55,
+      "appended": 55,
+      "merged": 0,
+      "rejected_records": 3,
+      "rejected_reasons": {
+        "identity_too_short": 3
+      }
+    }
+  },
+  "cost": {
+    "cpu_seconds": 47.906,
+    "wall_seconds": 4.514,
+    "closed_wall_seconds": 4.179
+  },
+  "criteria": {
+    "C1_closed_state_neutral": "with sc_sfk_enabled=False the 176-case battery reproduces the stored baseline arrays bit for bit (max|delta| = 0), parameters / state bytes / candidate sha / store signature unchanged, and no table allocated.",
+    "C2_same_implementation": "the table under test is the AddressTable allocated by LivingCoreConfig(sc_sfk_enabled=True) through attach_store; writes go through write_batch_checked, reads through table.read. Zero new parameters.",
+    "C3_no_tuning": "no threshold is tuned, the corpus and denominators do not move, and the verdict is recomputed with the frozen rules. Synonym rewrites stay in the denominator.",
+    "L1_mechanical": "fabricated bytes = bytes of the output that differ from the claimed record's slice; a span outside the record or a length mismatch is illegal. Target 0.",
+    "L2_content": "output == claimed record's bytes[start:end], counted over every query.",
+    "L3_selection": "claimed address == the record the query was written from (120).",
+    "errors": "wrong person = faithful but wrong address; fabrication = not faithful; empty output = zero bytes.",
+    "V_output_fabricates": "fabricated bytes > 0 -> stop; representation layer, no address patch.",
+    "V_chain_not_the_cause": "wrong person > 1 -> chain_not_the_cause: stop fixing chunking; readings only, hand the problem to the representation layer.",
+    "V_local_chunking_holds": "closed neutral AND L3 >= 100/120 AND wrong <= 1 AND fabricated = 0 AND faithful >= 0.95 -> local_chunking_holds.",
+    "V_inconclusive": "anything else."
+  },
+  "disclosures": [
+    "the output is a slice of the record the table selected; the runner records the span and re-checks it byte by byte, so L1/L2 measure the slice, not the intent.",
+    "abstention is a reading: no_anchor, ambiguous_candidates and coverage never gate the output and never enter the verdict.",
+    "the four synonym rewrites change bytes in the middle of the record, which breaks contiguous containment by definition; they remain in the denominator.",
+    "chunks shorter than 16 bytes are dropped after the cut set is fixed, so their bytes are invisible to the address; the rule never moves a cut point.",
+    "the legacy column is a frozen copy of the old stride-2 / DF=1 / DF=0-guard read rule and never enters the verdict.",
+    "the corpus snapshot is what the run reads, so later plan edits cannot move the acceptance set."
+  ]
+}
