@@ -27,6 +27,34 @@
 
 **头条状态（2026-11-04，语义身份）：** 身份从“字节绑定”改为“语义哈希”：组成项是图名/契约、配置常量、模块清单、`routing_rule_version`、解码与路由规则、输入白名单、参数名/形状/dtype、声明可塑归属；`source_sha` 与 `weights_sha256` 只记录不决定身份。black-100 合并后 v1 字节摘要从 964a8c68… 漂到 1af63213…，但 `candidate_sha_v2` 恒为 773dcec2…。零更新等价探针（[报告](../../../reports/taiji_selection_routing_17_2r_format_equivalence_20261104.json)）全部逐位一致，60.80 CPU / 62.80 wall、0 优化器步、0 训练更新、0 confirm 读取；四份 2026-11-03 证据维持原字节与有效性（T3 v3 720/720、17.4 v2、新价、17.2R），身份登记见[注册报告](../../../reports/taiji_selection_routing_17_2r_identity_20261104.json)。17.5 的 checkpoint 保存/恢复复验已通过，六格跑完并结案为负结果（见下条 17.7）。本页是按时间追加的流水，旧条目里的“唯一阻塞/唯一下一步”均已被最新条目覆盖。
 
+## 2026-11-08 居中当唯一变量的零训练复测（0 训练 / 0 优化器步 / 0 Adam / 0 confirm）
+
+**产物**：[回执](../../../reports/taiji_gate_centering_20261108.json)、[预注册 manifest](../../manifests/taiji_gate_centering_20261108.json)（文件 sha `22a8a180…`，读数前落盘）、runner [probe_taiji_gate_centering_20261108.py](../../../scripts/training/probe_taiji_gate_centering_20261108.py)（sha 前后 `e7317066…`）、进度 `reports/taiji_gate_centering_20261108_progress.jsonl`。两臂只差一件事：臂 B 在读时把已占槽键的均值从"存储键"和"查询键"里一起减掉；编码器、写入协议、门槛形式与锚定（只用已写组最低相似度）全同。存储零字节改动（`store_immutable=true`）。
+
+**控制（先过）**：`center=None` 必须复现真实 `addressed_read`——两臂各 **154/154** `fast` 字节相同、top slot **154/154** 相同、`max|Δ|=0`。
+
+**读数（真实臂 / 夹具臂）**：
+
+| 量 | 真实臂 A（现状） | 真实臂 B（居中） | 夹具臂 A | 夹具臂 B |
+|---|---|---|---|---|
+| 已写组最低相似度（门槛锚） | 0.964818 | **0.449371** | 0.959857 | 0.960345 |
+| m_spec 中位（写面最近−次近） | 0.002752 | **0.106488** | 0.762590 | 0.801770 |
+| 全新 token 空档 | −0.019750 | **−0.282208** | +0.684080 | +0.701054 |
+| 新搭配空档 | −0.034599 | **−0.519487** | −0.040124 | −0.039635 |
+| 无对应值空档 | −0.031098 | **−0.067982** | +0.211560 | +0.233954 |
+| 键有效秩（30 键） | 2.557 | **12.148** | 27.749 | 27.214 |
+| `top_share` | 0.970 | **0.545** | 0.089 | 0.067 |
+| 中点相对质心余弦中位 | 0.992425 | — | 0.407760 | — |
+| 已存键相对质心余弦中位 | 0.985707 | — | 0.240272 | — |
+
+**门槛开启（阈值＝本臂已写组最低相似度）**：真实臂已写 **22/22** 匹配，但读出的 `fast` 字节 **0/22** 与臂 A 相同（top slot **21/22**），未写措辞误拒 **10/66**，三类负对照被拒 **9／3／0**；夹具臂已写 22/22、字节 **0/22**（槽位 22/22）、未写误拒 **9/66**、负对照 **22／6／22**。
+
+**判定（写死，按 manifest 顺序）**：V1（写面读出字节有任何变化）先触发 ⇒ **`centering_changes_written_bytes`**，直接失败并停止、不再调门槛；同时真实臂三类空档仍全负 ⇒ **`centering_insufficient` 亦成立**。夹具臂同样 V1 触发。
+
+**归因**：居中确实修好了键塌缩（有效秩 2.557→12.148、`top_share` 0.970→0.545，复现 20.3a 的 0.956→0.498），但把"同义读键贴住自己写入键"所依赖的公共分量一起减掉了——已写组最低相似度从 0.965 掉到 0.449。**塌缩与可分性不是同一个病**：共享偏移既是塌缩的来源，也是匹配的载体。中点"更靠公共方向"在居中后依然成立（0.9924 > 0.9857），说明它不是偏移造成的，而是距离集中效应。
+
+**纪律**：CPU **14.281 s**（cap 200）、wall 1.693 s；0 训练／0 优化器步／0 Adam／0 confirm／0 checkpoint；`process_guard` 通过、单实例锁、60 s watchdog 未触发、读数即落盘 write-then-rename、无 `python -m black`（仅 in-process 闸）。**下一步唯一**：同一 154 条口径，把"去均值"换成"保留均值、只做带收缩的协方差白化"（30 键 × 128 维，必须收缩防秩亏），看能否在不砸掉已写组绝对水平的前提下压平 `top_share`。
+
 ## 2026-11-08 读门槛接线真实 `addressed_read`（0 训练 / 0 优化器步 / 0 Adam / 0 confirm）
 
 **两件产物**：零扰动证明 [taiji_gate_read_gate_zero_20261108.json](../../../reports/taiji_gate_read_gate_zero_20261108.json)＋开启后读数 [taiji_gate_read_gate_enabled_20261108.json](../../../reports/taiji_gate_read_gate_enabled_20261108.json)；预注册 [manifest](../../manifests/taiji_gate_read_gate_20261108.json)（sha `8b4c25b6…`，在第一个分类读数前落盘）；runner [probe_taiji_gate_read_gate_20261108.py](../../../scripts/training/probe_taiji_gate_read_gate_20261108.py)。两条臂：`real_forward`（原生 float32、真实 `observe`＋`addressed_write` 建 store）与 `fixture_continuity`（G2g 夹具键/值经诊断 `key=` 入口注入真实函数，float64）。

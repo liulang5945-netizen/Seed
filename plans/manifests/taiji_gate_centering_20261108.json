@@ -1,0 +1,45 @@
+{
+  "format": "taiji-centering-preregistration-v1",
+  "date": "2026-11-08",
+  "question": "with centering as the only variable, do the three negative classes separate from the written faces on the real read keys?",
+  "written_before_any_reading": true,
+  "sequence": [
+    "build the real-forward store and the continuity store",
+    "arm A: uncentered scores, gate anchored on the written floor",
+    "arm B: center = mean of occupied store keys subtracted from keys and query",
+    "control: center=None must reproduce the real addressed_read on all 154 queries",
+    "verdict per the pre-written V1..V5 ordering (V1 dominant)"
+  ],
+  "criteria": {
+    "C1_control_identity": "with center=None the runner's own read reproduces the real addressed_read on all 154 queries of both arms: identical fast sha, top slot, top/second cosine and margin",
+    "C2_store_immutable": "centering is read-time only: store_keys/store_values/store_age hashes are identical before and after every arm-B pass",
+    "C3_threshold_source": "the gate threshold is the minimum top cosine of the written group in that same arm and centering; no negative label enters the value",
+    "C4_gap_sign": "gap = written_floor - class_max_top_cosine per negative class, sign reported as measured; a non-positive gap is called 'not separable by this read gate'",
+    "V1_written_bytes": "if centering changes the returned fast sha of any of the 22 written faces against arm A, the verdict is centering_changes_written_bytes and no gate is proposed (dominant rule)",
+    "V2_insufficient": "otherwise, if all three gaps are <= 0 the verdict is centering_insufficient: the separability problem is not in the offset layer",
+    "V3_enables": "otherwise, if at least two gaps are > 0 and unwritten false refusals are <= 1/66, the verdict is centering_enables_gate and a threshold interval (lower, upper] is reported",
+    "V4_interval_empty": "if the V3 conditions hold but lower >= upper the verdict is centering_no_usable_interval",
+    "V5_partial": "anything else is centering_partial with per-class signs reported",
+    "unchanged": "no fixture, face, position, class or anchor is retuned after the first reading"
+  },
+  "constants": {
+    "faces": 22,
+    "base_occupied": 8,
+    "slots": 32,
+    "negative_per_class": 22,
+    "unwritten_per_rule": 3,
+    "temperature": 0.1,
+    "alpha": 0.5,
+    "query_count": 154
+  },
+  "discipline": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "checkpoints_written": 0,
+    "black_invoked": false,
+    "cpu_cap_seconds": 200.0,
+    "watchdog_seconds": 60.0
+  }
+}
