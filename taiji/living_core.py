@@ -14,7 +14,6 @@ from torch import nn
 from torch.nn import functional as F
 
 from taiji.sc_sfk import AddressTable
-from taiji.sc_sfk import features as sc_sfk_features
 
 R021_SCHEMA = "taiji-living-core-r021-v1"
 EOS = 256
@@ -720,7 +719,7 @@ class LivingCoreReference(nn.Module):
                 "top1": 0.0,
                 "margin": 0.0,
             }
-        result = table.read(sc_sfk_features(raw))
+        result = table.read(raw)
         info = {
             "enabled": True,
             "blended": False,
@@ -759,10 +758,9 @@ class LivingCoreReference(nn.Module):
         if state.sc_sfk is None:
             state = self.attach_store(state)
         table = state.sc_sfk
-        feats = sc_sfk_features(raw)
         value = _pack_fast(state.fast)
-        result = table.write_batch_checked([(feats, value)])
-        address = table.target_of(feats)[0]
+        result = table.write_batch_checked([(raw, value)])
+        address = table.target_of(raw)[0]
         return state, {
             "slot": address,
             "address": address,
