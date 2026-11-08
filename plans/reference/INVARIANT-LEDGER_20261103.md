@@ -1403,3 +1403,22 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-15 | 本仓 runner 侧 `AddressTable` 的**批规划与 df 口径**（attempt 2/3 的实现读数） | SC-SFK 最终实现（顺序规划、记录级 df） | 两次均只修实现，判定阈值／类别／夹具未变；报告 `disclosures` 原样留档 |
 | S-16 | 收束时“下一动作＝做首轮零训练验证” | R-D16-58 | 首轮验证已完成，动作前移为接线 |
 
+## 35. 地址层接线（2026-11-08，0 训练）
+
+**规则**：本节登记 SC-SFK 从 runner 侧落到 `taiji/` 真实 store 地址层之后的读数与取代关系；**不删除任何旧读数**。数字取自 `reports/taiji_store_wire_20261108_closed.json`、`reports/taiji_store_wire_20261108_open.json` 与基线 `reports/taiji_store_wire_20261108_baseline.json`（预注册 `plans/manifests/taiji_store_wire_20261108.json`，判据在首个读数前写入）。
+
+**35.1 登记**
+
+| 编号 | 登记 | 内容 |
+|---|---|---|
+| R-D16-60 | **关闭态零扰动（verdict=`store_addressing_wire_neutral`）** | `LivingCoreConfig.sc_sfk_enabled=False`（默认）、`table_not_allocated=true`；176 条读数 `fast_max_abs_delta=0.0`、`probability_max_abs_delta=0.0`、fast 与概率摘要、字段、tag 176/176 全等；参数 **135 张量／3,311,259 元素／sha `5779908c…`**、`state_bytes=1,100,064`、`candidate_sha_v2=ff60ac25…`、store 签名（keys/values/age sha＋count=30）全不变；`living_core_changed=true`（源哈希按预期变化，证明代码确被编辑）。关闭态**逐字委托旧路径**：`attach_store`／`clear_store`／`addressed_read`／`addressed_write` 各只有一处 flag 早退，不分配 `AddressTable`、无半开分支。成本 **33.719 CPU／3.273 wall**（关闭态整跑 176 条含逐条概率前向）；0 训练／0 优化器步／0 Adam／0 confirm。 |
+| R-D16-61 | **开启态复现（verdict=`store_addressing_wired`）** | 同一 154 条口径：22 已写面按存储键自读 **22/22**（top1 1.0）、换措辞 **22/22**（0.761257423）、未写 **66/66**（0.761257423）、新词 **22/22 `no_match`**、无值 **22/22 `ambiguous_multiple_anchors`**（0.524–0.665）、新搭配 **22/22** alias。写入侧：容量 **2→32**（4 次扩容）、23 地址／23 个互异特征集、appended 23、merged 7、replaced 0、rejected 1、**evictions／silent_overwrites／rollbacks 全 0**、`global_checks=31`／0 失败；批内异值抢址**整批拒绝**（`rejected_batch_address_collision`、地址 23→23、`table_untouched=true`）；幂等重写 `merged_duplicate`（探针在 snapshot 内完成并 `restore`）；读不改 `fast`。成本 **3.734 CPU／0.764 wall**；写 30 次 **0.0625 CPU s**、高分辨率 `write_wall` **6.853 ms**／`mean_write_wall_ms` **0.2284**、最终表全局复检 **0.4523 ms**（上限 200）。并排：读侧六类与 runner 侧 delta 全 0；表侧唯一差异 `replaced` 22 vs 0——runner 侧取代来自显式 revision 标记，wired 值＝记录自身字节、重复写按合并，属值语义差异、非退化（报告 `disclosures`）。 |
+| R-D16-62 | **队首（唯一）＝把地址命中的值接进读路径** | 默认关闭、0 新参数、0 训练；先证关闭态零扰动，再看值是否真的被读出。**含义**：地址层已能寻址，缺件再收窄为“命中后的值没接进读路径”；**这不等于地址能被训练塑形**（闭式统计、0 参数、梯度到不了它）。 |
+
+**35.2 superseded 登记（不删原读数）**
+
+| 编号 | 被取代对象（原读数保留） | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-17 | R-D16-58“队首＝SC-SFK 落到 `taiji/` 的 store 地址层” | R-D16-62 | 接线已完成（R-D16-60/61），队首前移为值通路；旧登记保留为历史 |
+
+

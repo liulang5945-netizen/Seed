@@ -1,0 +1,96 @@
+{
+  "format": "taiji-store-wire-closed-v1",
+  "phase": "closed",
+  "date": "2026-11-08",
+  "question": "is the flagged path inert while the flag is at its default?",
+  "verdict": {
+    "decision": "store_addressing_wire_neutral",
+    "reason": "closed state reproduces the pre-edit forward bit for bit",
+    "stops_run": false
+  },
+  "checks": {
+    "default_off": true,
+    "table_not_allocated": true,
+    "readings_total": 176,
+    "fast_max_abs_delta": 0.0,
+    "probability_max_abs_delta": 0.0,
+    "fast_digests_equal": 176,
+    "probability_digests_equal": 176,
+    "fields_equal": 176,
+    "tags_equal": true,
+    "parameter_tensors_equal": true,
+    "parameter_elements_equal": true,
+    "parameter_sha_equal": true,
+    "state_bytes_equal": true,
+    "candidate_sha_v2_equal": true,
+    "store_signature_equal": true,
+    "living_core_changed": true
+  },
+  "baseline": {
+    "report": "taiji_store_wire_20261108_baseline.json",
+    "living_core_sha256": "df7942806de9352418bea6e195f920c416b38a1be48236e05b36981b83527f7b",
+    "candidate_sha_v2": "ff60ac2578f09f346f4bad9cf3d0fd0986633bd49e4e82c7ac76573dd87389ea"
+  },
+  "current": {
+    "living_core_sha256": "fce28fb445d72c728addcaa851d67338b05ceab815a486473fc8828d079d8847",
+    "candidate_sha_v2": "ff60ac2578f09f346f4bad9cf3d0fd0986633bd49e4e82c7ac76573dd87389ea",
+    "parameters": {
+      "tensors": 135,
+      "elements": 3311259,
+      "sha256": "5779908cc3250c66480416c64716600d2ac6e2ecfc9a321f072de86ea7a5b5e4",
+      "table_sha256": "d9866e6d0d2b563e1ff59cf5b987e0dd1a432b21ebe138de52dbc936fa07aea4"
+    },
+    "state_bytes": 1100064,
+    "store": {
+      "occupied": 30,
+      "keys_sha": "d4693020d8a9fa738ff74c455d8e2d8a067f9ba65149c2ecc4f20845de1ac016",
+      "values_sha": "2045109c81eea12cb27295237b4a12afee8a5c7f75271cc345edab76d9a956e9",
+      "age_sha": "394a42f05d4ef71e6c3270cc4fb38075f42683eb24255ab033cbf89ecccf5143",
+      "count": 30
+    }
+  },
+  "disclosures": [
+    "candidate_sha_v2 covers the graph contract, the declared parameter shapes and the decode-rule table; source file hashes are recorded but are not part of it, so the edited living_core.py necessarily changes its own source hash while the identity hash must not move.",
+    "the baseline arrays were captured before taiji/ was edited; the comparison is against those bytes, not against a second run of the same edited code."
+  ],
+  "criteria": {
+    "C1_default_off": "LivingCoreConfig() reports sc_sfk_enabled is False and no code path other than the single flag branch at the entry of attach_store/clear_store/addressed_read/addressed_write can be taken; there is no half-open branch mixing the two paths.",
+    "C2_closed_bit_identical": "with the flag off, the returned fast bytes and the post-read probabilities of all 176 readings, the store signature, the parameter table digest, state_bytes and candidate_sha_v2 are identical to the pre-change baseline: max|delta| = 0 exactly.",
+    "C3_zero_new_parameters": "parameter tensor count, parameter element count and the full state_dict digest are unchanged; the address table is pure Python and holds no tensor.",
+    "C4_open_self_read": "after the wired write path, each of the 22 written faces resolves, read back from its own store key (the raw bytes), to the address it was written at.",
+    "C5_open_reproduces_runner_side": "paraphrase >= 20/22 AND unwritten >= 60/66 AND new_token no_match >= 20/22 AND no_value ambiguous >= 20/22",
+    "C6_open_write_side": "growth starts at 2, expands at least three times, reaches >= 16; 23 distinct addresses; evictions = 0, silent overwrites = 0, rollbacks = 0; the conflicting two-item batch is rejected whole and the table is unchanged afterwards.",
+    "V_wire_not_neutral": "any closed-state bit, parameter, state-bytes, identity or store-signature difference: hard failure, report store_addressing_wire_not_neutral and stop.",
+    "V_wired": "closed passes and C4/C5/C6 hold: store_addressing_wired.",
+    "V_wired_regression": "closed passes but at least one measurable open-state class is below its threshold or a write-side counter degrades: store_addressing_wired_regression with the degraded facet and its cause listed per class. The words 'basically the same' are not a verdict.",
+    "V_inconclusive": "closed passes but the open-state reading cannot be compared (missing runner-side reference or an empty class): inconclusive, distribution only.",
+    "unchanged": "no fixture, class, span, position or threshold is retuned after the first reading"
+  },
+  "manifest_sha256": "a78f57d522d0473757e11b276b446e3bc33991f78a7f2d490e9ed5f7b73f2142",
+  "runner_sha256_start": "dd4b69408e7fe7b249a8c134bf31fbe242628246d15fd837df53881867af0cd8",
+  "runner_sha256_end": "dd4b69408e7fe7b249a8c134bf31fbe242628246d15fd837df53881867af0cd8",
+  "cost": {
+    "cpu_seconds": 33.719,
+    "wall_seconds": 3.273
+  },
+  "discipline": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "checkpoints_written": 0,
+    "training_window_added": false,
+    "gate_wired_into_training_runner": false,
+    "black_invoked": false,
+    "black_gate": "in-process only",
+    "process_guard": {
+      "checked": "-m black",
+      "found": 0
+    },
+    "single_instance_lock": "taiji_store_wire_20261108.lock",
+    "watchdog_seconds": 60.0,
+    "watchdog_fired": false,
+    "cpu_cap_seconds": 200.0,
+    "write_then_rename": true
+  }
+}

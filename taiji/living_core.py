@@ -13,6 +13,9 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
+from taiji.sc_sfk import AddressTable
+from taiji.sc_sfk import features as sc_sfk_features
+
 R021_SCHEMA = "taiji-living-core-r021-v1"
 EOS = 256
 ADDRESSED_SLOTS = 32
@@ -49,6 +52,12 @@ class LivingCoreConfig:
     # ``fast`` untouched.  The value must be anchored on the positive control
     # (the lowest cosine of an already-written read), never on negative labels.
     read_gate_cosine: float | None = None
+    # Shared-carrier sparse-feature addressing (SC-SFK, default off).  With the flag
+    # off, ``attach_store``/``clear_store``/``addressed_read``/``addressed_write``
+    # take the legacy path verbatim and no table is allocated.  With it on, the
+    # address layer is the pure-Python ``AddressTable`` (no tensor, no parameter);
+    # the FEC-1 value path is not blended into ``fast`` in this round.
+    sc_sfk_enabled: bool = False
 
     def __post_init__(self) -> None:
         if not 1 <= self.groups <= 4 or self.width < 2 or self.width % 2:
@@ -112,6 +121,9 @@ class LivingState:
     store_values: torch.Tensor | None = None
     store_age: torch.Tensor | None = None
     store_count: torch.Tensor | None = None
+    # SC-SFK address table (pure Python, no tensor).  Only
+    # ``sc_sfk_enabled`` allocates it; every other assembly keeps ``None``.
+    sc_sfk: object | None = None
 
 
 @dataclass(frozen=True)
@@ -537,6 +549,10 @@ class LivingCoreReference(nn.Module):
         )
 
     def attach_store(self, state: LivingState) -> LivingState:
+        if self.config.sc_sfk_enabled:
+            if state.sc_sfk is None:
+                return replace(state, sc_sfk=AddressTable())
+            return state
         if state.store_keys is not None:
             return state
         keys, values, age, count = self.empty_store()
@@ -545,6 +561,10 @@ class LivingCoreReference(nn.Module):
         )
 
     def clear_store(self, state: LivingState) -> LivingState:
+        if self.config.sc_sfk_enabled:
+            if state.sc_sfk is None:
+                return state
+            return replace(state, sc_sfk=AddressTable())
         if state.store_keys is None:
             return state
         keys, values, age, count = self.empty_store()
@@ -571,6 +591,8 @@ class LivingCoreReference(nn.Module):
         below ``read_gate_cosine`` returns ``matched=False``, no ``top_slot``
         and the *unmodified* state -- the explicit "no match" exit.
         """
+        if self.config.sc_sfk_enabled:
+            return self._sc_sfk_read(state, raw)
         key = self.store_query_key(state, raw) if key is None else key
         gate = self.config.read_gate_cosine
         gate_info = {} if gate is None else {"gate_threshold": float(gate)}
@@ -635,6 +657,8 @@ class LivingCoreReference(nn.Module):
         return replace(state, fast=fast), info
 
     def addressed_write(self, state: LivingState, raw: bytes, key: torch.Tensor | None = None):
+        if self.config.sc_sfk_enabled:
+            return self._sc_sfk_write(state, raw)
         if state.store_keys is None:
             state = self.attach_store(state)
         if key is None:
@@ -662,6 +686,45 @@ class LivingCoreReference(nn.Module):
             replace(state, store_keys=keys, store_values=values, store_age=age, store_count=count),
             info,
         )
+
+    def _sc_sfk_read(self, state: LivingState, raw: bytes):
+        """SC-SFK read: the address decides, the value path is not blended."""
+        table = state.sc_sfk
+        if table is None:
+            return state, {
+                "enabled": False,
+                "blended": False,
+                "matched": False,
+                "decision": "no_match",
+                "address": None,
+                "reason": "no_store",
+                "top1": 0.0,
+                "margin": 0.0,
+            }
+        result = table.read(sc_sfk_features(raw))
+        return state, {
+            "enabled": True,
+            "blended": False,
+            "matched": result["decision"] == "matched",
+            **result,
+        }
+
+    def _sc_sfk_write(self, state: LivingState, raw: bytes):
+        """SC-SFK write: one record, structural, no gradient and no eviction."""
+        if state.sc_sfk is None:
+            state = self.attach_store(state)
+        table = state.sc_sfk
+        feats = sc_sfk_features(raw)
+        result = table.write_batch_checked([(feats, raw.hex())])
+        address = table.target_of(feats)[0]
+        return state, {
+            "slot": address,
+            "address": address,
+            "action": result["action"],
+            "occupied_after": len(table.addresses),
+            "evicted": False,
+            "global_check": result.get("global_check"),
+        }
 
     @staticmethod
     def align_positions(state: LivingState, keys):

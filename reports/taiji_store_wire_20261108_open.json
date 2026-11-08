@@ -1,0 +1,311 @@
+{
+  "format": "taiji-store-wire-open-v1",
+  "phase": "open",
+  "date": "2026-11-08",
+  "question": "with the SC-SFK addressing live in the real store, does the same 154-question battery reproduce the runner-side reading, and is anything lost in the move?",
+  "verdict": {
+    "decision": "store_addressing_wired",
+    "reason": "all pre-written conditions met"
+  },
+  "checks": {
+    "self_read": 22,
+    "paraphrase": 22,
+    "unwritten": 66,
+    "new_token": 22,
+    "no_value": 22,
+    "new_pairing": 22,
+    "growth_from_small": true,
+    "clean_writes": true,
+    "conflict_rejected_whole": true,
+    "fast_untouched_by_read": true
+  },
+  "readings": {
+    "written_writeback": {
+      "count": 22,
+      "correct": 22,
+      "decisions": {
+        "matched": 22
+      },
+      "top1": {
+        "count": 22,
+        "min": 1.0,
+        "median": 1.0,
+        "max": 1.0
+      },
+      "margin": {
+        "count": 22,
+        "min": 0.472191519,
+        "median": 0.472191519,
+        "max": 0.472191519
+      }
+    },
+    "written_paraphrase": {
+      "count": 22,
+      "correct": 22,
+      "decisions": {
+        "matched": 22
+      },
+      "top1": {
+        "count": 22,
+        "min": 0.761257423,
+        "median": 0.761257423,
+        "max": 0.761257423
+      },
+      "margin": {
+        "count": 22,
+        "min": 0.145508788,
+        "median": 0.145508788,
+        "max": 0.145508788
+      }
+    },
+    "unwritten": {
+      "count": 66,
+      "correct": 66,
+      "decisions": {
+        "matched": 66
+      },
+      "top1": {
+        "count": 66,
+        "min": 0.761257423,
+        "median": 0.761257423,
+        "max": 0.761257423
+      },
+      "margin": {
+        "count": 66,
+        "min": 0.145508788,
+        "median": 0.145508788,
+        "max": 0.145508788
+      }
+    },
+    "new_token": {
+      "count": 22,
+      "correct": 22,
+      "decisions": {
+        "no_match": 22
+      },
+      "top1": {
+        "count": 22,
+        "min": 0.0,
+        "median": 0.0,
+        "max": 0.0
+      },
+      "margin": {
+        "count": 22,
+        "min": 0.0,
+        "median": 0.0,
+        "max": 0.0
+      }
+    },
+    "new_pairing": {
+      "count": 22,
+      "correct": 22,
+      "decisions": {
+        "matched": 22
+      },
+      "top1": {
+        "count": 22,
+        "min": 0.761257423,
+        "median": 0.761257423,
+        "max": 0.761257423
+      },
+      "margin": {
+        "count": 22,
+        "min": 0.145508788,
+        "median": 0.145508788,
+        "max": 0.145508788
+      }
+    },
+    "no_value": {
+      "count": 22,
+      "correct": 22,
+      "decisions": {
+        "ambiguous_multiple_anchors": 22
+      },
+      "top1": {
+        "count": 22,
+        "min": 0.524014311,
+        "median": 0.524014311,
+        "max": 0.664558344
+      },
+      "margin": {
+        "count": 22,
+        "min": 0.0,
+        "median": 0.0,
+        "max": 0.0
+      }
+    }
+  },
+  "write_side": {
+    "capacity": 32,
+    "peak_capacity": 32,
+    "expansions": 4,
+    "addresses": 23,
+    "distinct_feature_sets": 23,
+    "appended": 23,
+    "merged_duplicates": 7,
+    "replaced": 0,
+    "rejected_batches": 1,
+    "evictions": 0,
+    "silent_overwrites": 0,
+    "rollbacks": 0,
+    "global_checks": 31,
+    "global_failures": 0,
+    "base_actions": [
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted"
+    ]
+  },
+  "conflict_batch": {
+    "action": "rejected_batch_address_collision",
+    "rejected_whole": true,
+    "addresses_before": 23,
+    "addresses_after": 23,
+    "table_untouched": true,
+    "route": "table-level batch API; the wired per-record path cannot form an intra-batch collision by construction"
+  },
+  "idempotent_probe": {
+    "action": "accepted",
+    "item_action": "merged_duplicate",
+    "addresses_before": 23,
+    "addresses_after": 23,
+    "capacity_unchanged": true,
+    "document_frequency_note": "repeating a record counts as a second observation and raises its word's df; the probe therefore restores the snapshot before the readings are used"
+  },
+  "side_by_side": {
+    "verdict_runner_side": "sc_address_holds",
+    "readings": {
+      "written_writeback": {
+        "runner_side": 22,
+        "wired": 22,
+        "count": 22,
+        "delta": 0
+      },
+      "written_paraphrase": {
+        "runner_side": 22,
+        "wired": 22,
+        "count": 22,
+        "delta": 0
+      },
+      "unwritten": {
+        "runner_side": 66,
+        "wired": 66,
+        "count": 66,
+        "delta": 0
+      },
+      "new_token": {
+        "runner_side": 22,
+        "wired": 22,
+        "count": 22,
+        "delta": 0
+      },
+      "new_pairing": {
+        "runner_side": 22,
+        "wired": 22,
+        "count": 22,
+        "delta": 0
+      },
+      "no_value": {
+        "runner_side": 22,
+        "wired": 22,
+        "count": 22,
+        "delta": 0
+      }
+    },
+    "table": {
+      "runner_side": {
+        "start_capacity": 2,
+        "final_capacity": 32,
+        "expansions": 4,
+        "slots": 23,
+        "appended": 23,
+        "merged_duplicates": 7,
+        "replaced": 22,
+        "rejected_batches": 1,
+        "evictions": 0,
+        "silent_overwrites": 0,
+        "rollbacks": 0
+      },
+      "wired": {
+        "start_capacity": 2,
+        "final_capacity": 32,
+        "expansions": 4,
+        "slots": 23,
+        "distinct_feature_sets": 23,
+        "appended": 23,
+        "merged_duplicates": 7,
+        "replaced": 0,
+        "rejected_batches": 1,
+        "evictions": 0,
+        "silent_overwrites": 0,
+        "rollbacks": 0
+      }
+    }
+  },
+  "cost": {
+    "cpu_seconds": 3.734,
+    "wall_seconds": 0.764,
+    "writes": 30,
+    "write_cpu_seconds": 0.0625,
+    "write_cpu_resolution_note": "30 accepted writes stay below the 15.6 ms Windows process-time tick, so the per-write figure is measured on the high-resolution wall clock",
+    "write_wall_seconds": 0.006853,
+    "mean_write_wall_ms": 0.2284,
+    "global_recheck_ms_on_final_table": 0.4523,
+    "global_checks": 31
+  },
+  "scope": {
+    "value_path_wired": false,
+    "note": "the address decides; fast is not blended and is asserted untouched by every read"
+  },
+  "disclosures": [
+    "the wired value is the record's own bytes: re-writing a stored record merges, and a different record that shares its feature set cannot be produced by this fixture, so the wired run has replaced = 0.  The runner-side 'replaced 22' came from an explicit revision tag, not from a property the wired path lost.",
+    "the conflicting batch is exercised through the table batch API because the per-record wired path cannot produce an intra-batch collision; the table is restored to its pre-test state and that restoration is checked.",
+    "closed-state parity is reported by the closed phase; this phase only records that the flag is on and that no read moves fast."
+  ],
+  "plain_language": {
+    "what_this_proves": "the address really was a missing part of the algorithm: with the flag on, the same record battery that the dense mean-key store could not tie (8/22 paraphrases, 14/66 unwritten) now resolves through one structural rule, and switching the flag off changes not one bit of the old forward.",
+    "what_this_does_not_prove": "nothing here shows the address can be shaped by training; the primitive is closed-form statistics with zero parameters, so no gradient reaches it.",
+    "what_this_still_depends_on": "every record in this fixture carries its own rare word, which is exactly what the unique-anchor rule needs. That is a property of the fixture, not a general conclusion about natural text."
+  },
+  "criteria": {
+    "C1_default_off": "LivingCoreConfig() reports sc_sfk_enabled is False and no code path other than the single flag branch at the entry of attach_store/clear_store/addressed_read/addressed_write can be taken; there is no half-open branch mixing the two paths.",
+    "C2_closed_bit_identical": "with the flag off, the returned fast bytes and the post-read probabilities of all 176 readings, the store signature, the parameter table digest, state_bytes and candidate_sha_v2 are identical to the pre-change baseline: max|delta| = 0 exactly.",
+    "C3_zero_new_parameters": "parameter tensor count, parameter element count and the full state_dict digest are unchanged; the address table is pure Python and holds no tensor.",
+    "C4_open_self_read": "after the wired write path, each of the 22 written faces resolves, read back from its own store key (the raw bytes), to the address it was written at.",
+    "C5_open_reproduces_runner_side": "paraphrase >= 20/22 AND unwritten >= 60/66 AND new_token no_match >= 20/22 AND no_value ambiguous >= 20/22",
+    "C6_open_write_side": "growth starts at 2, expands at least three times, reaches >= 16; 23 distinct addresses; evictions = 0, silent overwrites = 0, rollbacks = 0; the conflicting two-item batch is rejected whole and the table is unchanged afterwards.",
+    "V_wire_not_neutral": "any closed-state bit, parameter, state-bytes, identity or store-signature difference: hard failure, report store_addressing_wire_not_neutral and stop.",
+    "V_wired": "closed passes and C4/C5/C6 hold: store_addressing_wired.",
+    "V_wired_regression": "closed passes but at least one measurable open-state class is below its threshold or a write-side counter degrades: store_addressing_wired_regression with the degraded facet and its cause listed per class. The words 'basically the same' are not a verdict.",
+    "V_inconclusive": "closed passes but the open-state reading cannot be compared (missing runner-side reference or an empty class): inconclusive, distribution only.",
+    "unchanged": "no fixture, class, span, position or threshold is retuned after the first reading"
+  },
+  "manifest_sha256": "a78f57d522d0473757e11b276b446e3bc33991f78a7f2d490e9ed5f7b73f2142",
+  "runner_sha256_start": "dd4b69408e7fe7b249a8c134bf31fbe242628246d15fd837df53881867af0cd8",
+  "runner_sha256_end": "dd4b69408e7fe7b249a8c134bf31fbe242628246d15fd837df53881867af0cd8",
+  "discipline": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "checkpoints_written": 0,
+    "training_window_added": false,
+    "gate_wired_into_training_runner": false,
+    "black_invoked": false,
+    "black_gate": "in-process only",
+    "process_guard": {
+      "checked": "-m black",
+      "found": 0
+    },
+    "single_instance_lock": "taiji_store_wire_20261108.lock",
+    "watchdog_seconds": 60.0,
+    "watchdog_fired": false,
+    "cpu_cap_seconds": 200.0,
+    "write_then_rename": true
+  }
+}

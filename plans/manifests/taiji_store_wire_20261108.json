@@ -1,0 +1,62 @@
+{
+  "format": "taiji-store-wire-preregistration-v1",
+  "date": "2026-11-08",
+  "question": "does wiring the SC-SFK address primitive into the real store addressing layer leave the default (closed) forward bit-identical, add no parameters, and reproduce the runner-side address reading when switched on?",
+  "written_before_any_reading": true,
+  "sequence": [
+    "write criteria and constants here",
+    "baseline: capture the unchanged forward on the 154 battery + 22 faces",
+    "edit taiji/: add taiji/sc_sfk.py, one config flag, one state field, whole-path delegation at attach_store/clear_store/addressed_read/addressed_write",
+    "closed: compare against the baseline bit for bit; stop on any difference",
+    "open: rebuild the store through the wired path and read the same battery",
+    "apply the pre-written verdict once"
+  ],
+  "criteria": {
+    "C1_default_off": "LivingCoreConfig() reports sc_sfk_enabled is False and no code path other than the single flag branch at the entry of attach_store/clear_store/addressed_read/addressed_write can be taken; there is no half-open branch mixing the two paths.",
+    "C2_closed_bit_identical": "with the flag off, the returned fast bytes and the post-read probabilities of all 176 readings, the store signature, the parameter table digest, state_bytes and candidate_sha_v2 are identical to the pre-change baseline: max|delta| = 0 exactly.",
+    "C3_zero_new_parameters": "parameter tensor count, parameter element count and the full state_dict digest are unchanged; the address table is pure Python and holds no tensor.",
+    "C4_open_self_read": "after the wired write path, each of the 22 written faces resolves, read back from its own store key (the raw bytes), to the address it was written at.",
+    "C5_open_reproduces_runner_side": "paraphrase >= 20/22 AND unwritten >= 60/66 AND new_token no_match >= 20/22 AND no_value ambiguous >= 20/22",
+    "C6_open_write_side": "growth starts at 2, expands at least three times, reaches >= 16; 23 distinct addresses; evictions = 0, silent overwrites = 0, rollbacks = 0; the conflicting two-item batch is rejected whole and the table is unchanged afterwards.",
+    "V_wire_not_neutral": "any closed-state bit, parameter, state-bytes, identity or store-signature difference: hard failure, report store_addressing_wire_not_neutral and stop.",
+    "V_wired": "closed passes and C4/C5/C6 hold: store_addressing_wired.",
+    "V_wired_regression": "closed passes but at least one measurable open-state class is below its threshold or a write-side counter degrades: store_addressing_wired_regression with the degraded facet and its cause listed per class. The words 'basically the same' are not a verdict.",
+    "V_inconclusive": "closed passes but the open-state reading cannot be compared (missing runner-side reference or an empty class): inconclusive, distribution only.",
+    "unchanged": "no fixture, class, span, position or threshold is retuned after the first reading"
+  },
+  "constants": {
+    "faces": 22,
+    "base_occupied": 8,
+    "battery": 154,
+    "need_paraphrase": 20,
+    "need_unwritten": 60,
+    "need_abstain": 20,
+    "start_capacity": 2,
+    "new_params": 0,
+    "training_updates": 0
+  },
+  "scope": {
+    "value_path_wired": false,
+    "note": "the address decides; the FEC-1 5-dimensional value path is not blended into fast in this round. The open phase therefore asserts fast is untouched by every read."
+  },
+  "discipline": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "checkpoints_written": 0,
+    "training_window_added": false,
+    "gate_wired_into_training_runner": false,
+    "black_invoked": false,
+    "black_gate": "in-process only",
+    "process_guard": {
+      "checked": "-m black",
+      "found": 0
+    },
+    "single_instance_lock": "taiji_store_wire_20261108.lock",
+    "watchdog_seconds": 60.0,
+    "watchdog_fired": false,
+    "cpu_cap_seconds": 200.0,
+    "write_then_rename": true
+  }
+}
