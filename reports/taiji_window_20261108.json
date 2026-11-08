@@ -1,0 +1,1172 @@
+{
+ "schema": "taiji-window-v1",
+ "date": "2026-11-08",
+ "verdict": "fallback_still_irrelevant",
+ "commit_base": "84cb5cee8",
+ "runner_sha_start": "35603da8ecc3fb842b80d835f95d1f9689f5b96989babb6c697acb4bd5267439",
+ "runner_sha_end": "35603da8ecc3fb842b80d835f95d1f9689f5b96989babb6c697acb4bd5267439",
+ "address_module_sha256": "5ffb2935020719dedfe540faf0150f54c904c7f7fc49c7b1387f30ed1c5e23e1",
+ "corpus_sha256": "350eef77b06cd0d51d1b0605a9f3565318916e5d5112a3c051eaea8e6a2e55de",
+ "manifest": "plans\\manifests\\taiji_window_20261108.json",
+ "manifest_freeze_revision": 4,
+ "definition": {
+  "identity": "I(r) = multiset { sha256(r[i:i+16])[:16].hex() : 0 <= i <= len(r)-16 }; one token per offset, so repeated windows keep their multiplicity. A record shorter than 16 bytes has an empty identity and is rejected alone. An empty identity is never addressable: it would be covered by every query.",
+  "multiplicity_choice": "multiset coverage, frozen before the run: count_q(t) >= count_r(t) for every distinct window t. Reason: set inclusion lets one query occurrence pay for a window that occurs twice in the record (repeated table rows/separators); counting is one dict lookup and adds no numeric constant. Multiset coverage implies set inclusion, never the reverse.",
+  "protection_band": "none, and none is kept. Every identity window lies fully inside the record, so any prefix/suffix leaves every window at offset |p|+i equal to r[i:i+16]. The old PROTECT=6 band belonged to a cut predicate that read bytes before the cut; a fixed window reads only its own bytes.",
+  "shortest_addressable_length": "MIN_ADDRESSABLE = WINDOW_BYTES = 16 bytes; necessary and sufficient (length alone decides whether the identity is non-empty).",
+  "anchor": "anchored iff identity(r) is covered by W(q) with multiplicity; 0 anchors -> fallback but still one output; 1 -> matched; >=2 -> ambiguous_multiple_anchors, still top-1 and annotated. Anchors are readings, not exits.",
+  "fallback": "unanchored reads are ranked by |set(I(r)) & set(W(q))| / |set(I(r))| descending, then address index ascending; fallback_basis = window_overlap when a window is shared, address_order otherwise; no pass/reject threshold.",
+  "output_unit": "anchored reads print the whole record (unit = record); unanchored reads print the chosen record's sentence with the highest window overlap (unit = sentence, ties by sentence order); spans come from sentences() and always sit on UTF-8 character boundaries at a terminator/newline or the record end.",
+  "write": "append-only; a record is rejected alone only when its identity is empty (length < 16). Identity containment is not a rejection reason: under a window identity a heading or a table row is legitimately a substring of a longer record, and rejecting containment would filter exactly the short entries this definition exists to admit.",
+  "impersonation_cost": "If identity(r) is covered by W(q), q must contain every 16-byte window of r as a substring with the record's multiplicity. This does NOT imply q contains r contiguously and does not imply near-verbatim reproduction; the order is lost. Construction: q = r[0:16] + r[1:17] + ... covers every window while never containing r as a contiguous run. Verdict: 'almost verbatim reproduction is required' cannot be derived.",
+  "failure_constructions": [
+   "empty identity kept: covered by every query, anchors every sub-16-byte record; floor one.",
+   "set inclusion instead of multiplicity: a repeated window is paid by one query occurrence.",
+   "low-entropy windows: a 16-byte run of spaces is shared by any query containing it, so an unrelated query can anchor that record; reported per group, not hidden.",
+   "order loss: window coverage is not contiguity (see impersonation_cost)."
+  ]
+ },
+ "criteria": {
+  "C1_closed_state_neutral": "the 176-case battery of the frozen output-unit gate replays bit for bit: max|delta| = 0, parameters/state/identity/store signature unchanged, table not allocated, no half-open branch.",
+  "C2_L1": "fabricated bytes = 0, illegal spans = 0, UTF-8 decodable = 100%, boundary legal = 100%.",
+  "C3_L2": "every output slice hashes to the stored record bytes it claims (faithful).",
+  "C4_L3": "per group: usable_and_correct / usable_but_wrong / usable_fallback / unusable.",
+  "C5_short": "admission rate for entries < 64 bytes >= 0.90.",
+  "C6_fallback": "20 fallback rows sampled mechanically; each printed sentence is scored relevant / marginal / irrelevant against its query; median >= 0.5. The denominator is frozen as **all unanchored rows** (same rule as the previous round); the written-group subset (queries that do have a record in the store) is reported separately as a diagnostic, because unknown/unrelated queries have no answering record by construction.",
+  "V_hard": "closed state not neutral -> hard_failure_closed_not_neutral.",
+  "V_fabricates": "any L1 line fails -> output_fabricates, samples only.",
+  "V_gap": "admission rate for entries < 64 bytes < 0.90 -> window_set_still_gapped: write the length limit down, stop adding to the address layer, go to the representation layer.",
+  "V_fallback": "fallback relevance median < 0.5 -> fallback_still_irrelevant.",
+  "V_holds": "all lines met -> window_set_identity_holds."
+ },
+ "cost_estimate": {
+  "written_windows": 98032,
+  "queries": 2200,
+  "address_set_intersections": 1210000,
+  "closed_battery_cpu_measured_previous_round": 44.234,
+  "estimate_cpu_seconds": 60.0,
+  "estimate_note": "closed battery replays the frozen 176-case run (~44 CPU measured last round); the open pass does 2,200 query x 550 record set intersections (~1.2M) plus one sentence scan per fallback. Estimated well below the 200 CPU cap."
+ },
+ "closed": {
+  "schema": "taiji-output-unit-closed-v1",
+  "date": "2026-11-08",
+  "question": "after the output-unit edit (whole record when anchored, whole sentence on fallback), is the address module still inert while the switch is off?",
+  "verdict": "output_unit_closed_neutral",
+  "checks": {
+   "default_off": true,
+   "table_not_allocated": true,
+   "readings_total": 176,
+   "fast_max_abs_delta": 0.0,
+   "probability_max_abs_delta": 0.0,
+   "fast_digests_equal": 176,
+   "probability_digests_equal": 176,
+   "fields_equal": 176,
+   "tags_equal": true,
+   "parameter_tensors_equal": true,
+   "parameter_elements_equal": true,
+   "parameter_sha_equal": true,
+   "state_bytes_equal": true,
+   "candidate_sha_v2_equal": true,
+   "store_signature_equal": true
+  },
+  "baseline": {
+   "report": "taiji_store_wire_20261108_baseline.json",
+   "living_core_sha256": "df7942806de9352418bea6e195f920c416b38a1be48236e05b36981b83527f7b",
+   "candidate_sha_v2": "ff60ac2578f09f346f4bad9cf3d0fd0986633bd49e4e82c7ac76573dd87389ea"
+  },
+  "current": {
+   "candidate_sha_v2": "ff60ac2578f09f346f4bad9cf3d0fd0986633bd49e4e82c7ac76573dd87389ea",
+   "state_bytes": 1100064
+  },
+  "disclosures": [
+   "the edit added sentences() and _sentence_span and changed the printed span inside AddressTable.read(); while the flag is off no table is allocated and no edited line is reached. The battery is replayed because the claim is re-proved, not inferred.",
+   "the comparison is against baseline arrays captured before taiji/ was edited."
+  ],
+  "runner_sha256_start": "2ecd8d1c9dc72b2220955964cbc5e72454a60089b85215bf1e6d3b2dd8cf4994",
+  "runner_sha256_end": "2ecd8d1c9dc72b2220955964cbc5e72454a60089b85215bf1e6d3b2dd8cf4994",
+  "cost": {
+   "cpu_seconds": 45.156,
+   "wall_seconds": 4.259
+  }
+ },
+ "write": {
+  "attempted": 550,
+  "addresses": 542,
+  "appended": 542,
+  "merged": 0,
+  "rejected_records": 8,
+  "rejected_reasons": {
+   "window_identity_empty": 8
+  },
+  "rejected": [
+   {
+    "position": 53,
+    "length": 10,
+    "reason": "window_identity_empty",
+    "identity_blocks": 0,
+    "text": "## Results"
+   },
+   {
+    "position": 72,
+    "length": 15,
+    "reason": "window_identity_empty",
+    "identity_blocks": 0,
+    "text": "## 生效方式"
+   },
+   {
+    "position": 237,
+    "length": 5,
+    "reason": "window_identity_empty",
+    "identity_blocks": 0,
+    "text": "\\quad"
+   },
+   {
+    "position": 267,
+    "length": 15,
+    "reason": "window_identity_empty",
+    "identity_blocks": 0,
+    "text": "## 回流记录"
+   },
+   {
+    "position": 277,
+    "length": 11,
+    "reason": "window_identity_empty",
+    "identity_blocks": 0,
+    "text": "### R4 CUDA"
+   },
+   {
+    "position": 424,
+    "length": 15,
+    "reason": "window_identity_empty",
+    "identity_blocks": 0,
+    "text": "## 固定读数"
+   },
+   {
+    "position": 485,
+    "length": 1,
+    "reason": "window_identity_empty",
+    "identity_blocks": 0,
+    "text": "{"
+   },
+   {
+    "position": 497,
+    "length": 7,
+    "reason": "window_identity_empty",
+    "identity_blocks": 0,
+    "text": "E --> C"
+   }
+  ],
+  "rollbacks": 0,
+  "evictions": 0,
+  "silent_overwrites": 0,
+  "write_seconds": 0.112
+ },
+ "layers": {
+  "L1": {
+   "fabricated_bytes": 0,
+   "illegal_spans": 0,
+   "utf8_decodable": 2200,
+   "utf8_invalid": 0,
+   "utf8_rate": 1.0,
+   "boundary_legal": 2200,
+   "boundary_illegal": 0,
+   "boundary_rate": 1.0,
+   "blocked_samples": []
+  },
+  "L2": {
+   "faithful": 2200,
+   "faithful_rate": 1.0,
+   "denominator": 2200
+  },
+  "L3": {
+   "written": {
+    "n": 550,
+    "usable_and_correct": 542,
+    "usable_but_wrong": 8,
+    "unusable": 0,
+    "usable_fallback": 0,
+    "anchored": 542,
+    "fallback": 8,
+    "unit_record": 550,
+    "unit_sentence": 0,
+    "decisions": {
+     "matched": 542,
+     "no_match": 8,
+     "ambiguous_multiple_anchors": 0
+    }
+   },
+   "unknown": {
+    "n": 550,
+    "usable_and_correct": 0,
+    "usable_but_wrong": 1,
+    "unusable": 0,
+    "usable_fallback": 549,
+    "anchored": 1,
+    "fallback": 549,
+    "unit_record": 482,
+    "unit_sentence": 68,
+    "decisions": {
+     "matched": 1,
+     "no_match": 549,
+     "ambiguous_multiple_anchors": 0
+    }
+   },
+   "unrelated": {
+    "n": 550,
+    "usable_and_correct": 0,
+    "usable_but_wrong": 0,
+    "unusable": 0,
+    "usable_fallback": 550,
+    "anchored": 0,
+    "fallback": 550,
+    "unit_record": 550,
+    "unit_sentence": 0,
+    "decisions": {
+     "matched": 0,
+     "no_match": 550,
+     "ambiguous_multiple_anchors": 0
+    }
+   },
+   "union": {
+    "n": 550,
+    "usable_and_correct": 549,
+    "usable_but_wrong": 1,
+    "unusable": 0,
+    "usable_fallback": 0,
+    "anchored": 549,
+    "fallback": 1,
+    "unit_record": 550,
+    "unit_sentence": 0,
+    "decisions": {
+     "matched": 14,
+     "no_match": 1,
+     "ambiguous_multiple_anchors": 535
+    }
+   }
+  }
+ },
+ "debate": {
+  "queries": 2200,
+  "fallback": 1108,
+  "blocked": 0,
+  "decisions": {
+   "matched": 557,
+   "no_match": 1108,
+   "ambiguous_multiple_anchors": 535
+  },
+  "units": {
+   "record": 2132,
+   "sentence": 68,
+   "none": 0
+  },
+  "fallback_basis": {
+   "none": 1092,
+   "window_overlap": 120,
+   "address_order": 988
+  }
+ },
+ "groups": {
+  "written": {
+   "n": 550,
+   "usable_and_correct": 542,
+   "usable_but_wrong": 8,
+   "unusable": 0,
+   "usable_fallback": 0,
+   "anchored": 542,
+   "fallback": 8,
+   "unit_record": 550,
+   "unit_sentence": 0,
+   "decisions": {
+    "matched": 542,
+    "no_match": 8,
+    "ambiguous_multiple_anchors": 0
+   }
+  },
+  "unknown": {
+   "n": 550,
+   "usable_and_correct": 0,
+   "usable_but_wrong": 1,
+   "unusable": 0,
+   "usable_fallback": 549,
+   "anchored": 1,
+   "fallback": 549,
+   "unit_record": 482,
+   "unit_sentence": 68,
+   "decisions": {
+    "matched": 1,
+    "no_match": 549,
+    "ambiguous_multiple_anchors": 0
+   }
+  },
+  "unrelated": {
+   "n": 550,
+   "usable_and_correct": 0,
+   "usable_but_wrong": 0,
+   "unusable": 0,
+   "usable_fallback": 550,
+   "anchored": 0,
+   "fallback": 550,
+   "unit_record": 550,
+   "unit_sentence": 0,
+   "decisions": {
+    "matched": 0,
+    "no_match": 550,
+    "ambiguous_multiple_anchors": 0
+   }
+  },
+  "union": {
+   "n": 550,
+   "usable_and_correct": 549,
+   "usable_but_wrong": 1,
+   "unusable": 0,
+   "usable_fallback": 0,
+   "anchored": 549,
+   "fallback": 1,
+   "unit_record": 550,
+   "unit_sentence": 0,
+   "decisions": {
+    "matched": 14,
+    "no_match": 1,
+    "ambiguous_multiple_anchors": 535
+   }
+  }
+ },
+ "failures": [
+  {
+   "group": "written",
+   "position": 53,
+   "query": "## Results",
+   "query_len": 10,
+   "expected": null,
+   "actual_record": 0,
+   "anchors": 0,
+   "anchor_ids": [],
+   "no_anchor": true,
+   "decision": "no_match",
+   "covered_blocks": 0,
+   "coverage_ratio": 0.0,
+   "shared_blocks": 0,
+   "overlap_ratio": 0.0,
+   "unit": "record",
+   "span": [
+    0,
+    51
+   ],
+   "output": "书不规寻找分成除你的因为“密分布。",
+   "output_class": "usable_but_wrong"
+  },
+  {
+   "group": "written",
+   "position": 72,
+   "query": "## 生效方式",
+   "query_len": 15,
+   "expected": null,
+   "actual_record": 0,
+   "anchors": 0,
+   "anchor_ids": [],
+   "no_anchor": true,
+   "decision": "no_match",
+   "covered_blocks": 0,
+   "coverage_ratio": 0.0,
+   "shared_blocks": 0,
+   "overlap_ratio": 0.0,
+   "unit": "record",
+   "span": [
+    0,
+    51
+   ],
+   "output": "书不规寻找分成除你的因为“密分布。",
+   "output_class": "usable_but_wrong"
+  },
+  {
+   "group": "written",
+   "position": 237,
+   "query": "\\quad",
+   "query_len": 5,
+   "expected": null,
+   "actual_record": 0,
+   "anchors": 0,
+   "anchor_ids": [],
+   "no_anchor": true,
+   "decision": "no_match",
+   "covered_blocks": 0,
+   "coverage_ratio": 0.0,
+   "shared_blocks": 0,
+   "overlap_ratio": 0.0,
+   "unit": "record",
+   "span": [
+    0,
+    51
+   ],
+   "output": "书不规寻找分成除你的因为“密分布。",
+   "output_class": "usable_but_wrong"
+  },
+  {
+   "group": "written",
+   "position": 267,
+   "query": "## 回流记录",
+   "query_len": 15,
+   "expected": null,
+   "actual_record": 0,
+   "anchors": 0,
+   "anchor_ids": [],
+   "no_anchor": true,
+   "decision": "no_match",
+   "covered_blocks": 0,
+   "coverage_ratio": 0.0,
+   "shared_blocks": 0,
+   "overlap_ratio": 0.0,
+   "unit": "record",
+   "span": [
+    0,
+    51
+   ],
+   "output": "书不规寻找分成除你的因为“密分布。",
+   "output_class": "usable_but_wrong"
+  },
+  {
+   "group": "written",
+   "position": 277,
+   "query": "### R4 CUDA",
+   "query_len": 11,
+   "expected": null,
+   "actual_record": 0,
+   "anchors": 0,
+   "anchor_ids": [],
+   "no_anchor": true,
+   "decision": "no_match",
+   "covered_blocks": 0,
+   "coverage_ratio": 0.0,
+   "shared_blocks": 0,
+   "overlap_ratio": 0.0,
+   "unit": "record",
+   "span": [
+    0,
+    51
+   ],
+   "output": "书不规寻找分成除你的因为“密分布。",
+   "output_class": "usable_but_wrong"
+  },
+  {
+   "group": "written",
+   "position": 424,
+   "query": "## 固定读数",
+   "query_len": 15,
+   "expected": null,
+   "actual_record": 0,
+   "anchors": 0,
+   "anchor_ids": [],
+   "no_anchor": true,
+   "decision": "no_match",
+   "covered_blocks": 0,
+   "coverage_ratio": 0.0,
+   "shared_blocks": 0,
+   "overlap_ratio": 0.0,
+   "unit": "record",
+   "span": [
+    0,
+    51
+   ],
+   "output": "书不规寻找分成除你的因为“密分布。",
+   "output_class": "usable_but_wrong"
+  },
+  {
+   "group": "written",
+   "position": 485,
+   "query": "{",
+   "query_len": 1,
+   "expected": null,
+   "actual_record": 0,
+   "anchors": 0,
+   "anchor_ids": [],
+   "no_anchor": true,
+   "decision": "no_match",
+   "covered_blocks": 0,
+   "coverage_ratio": 0.0,
+   "shared_blocks": 0,
+   "overlap_ratio": 0.0,
+   "unit": "record",
+   "span": [
+    0,
+    51
+   ],
+   "output": "书不规寻找分成除你的因为“密分布。",
+   "output_class": "usable_but_wrong"
+  },
+  {
+   "group": "written",
+   "position": 497,
+   "query": "E --> C",
+   "query_len": 7,
+   "expected": null,
+   "actual_record": 0,
+   "anchors": 0,
+   "anchor_ids": [],
+   "no_anchor": true,
+   "decision": "no_match",
+   "covered_blocks": 0,
+   "coverage_ratio": 0.0,
+   "shared_blocks": 0,
+   "overlap_ratio": 0.0,
+   "unit": "record",
+   "span": [
+    0,
+    51
+   ],
+   "output": "书不规寻找分成除你的因为“密分布。",
+   "output_class": "usable_but_wrong"
+  },
+  {
+   "group": "unknown",
+   "position": 145,
+   "query": "- `taiji/adapter.py` 新增 `schedule_structural_candidate_batch_from_workbench_evidence()`，规范化多区域请求，依次消费各区域新 sealed windows，再把新 candidate 交给既有 arbitration；",
+   "query_len": 210,
+   "expected": null,
+   "actual_record": 40,
+   "anchors": 1,
+   "anchor_ids": [
+    40
+   ],
+   "no_anchor": false,
+   "decision": "matched",
+   "covered_blocks": 5,
+   "coverage_ratio": 1.0,
+   "shared_blocks": 5,
+   "overlap_ratio": 1.0,
+   "unit": "record",
+   "span": [
+    0,
+    20
+   ],
+   "output": "- `taiji/adapter.py`",
+   "output_class": "usable_but_wrong"
+  },
+  {
+   "group": "union",
+   "position": 485,
+   "query": "{\n## 生效方式",
+   "query_len": 17,
+   "expected": null,
+   "actual_record": 0,
+   "anchors": 0,
+   "anchor_ids": [],
+   "no_anchor": true,
+   "decision": "no_match",
+   "covered_blocks": 0,
+   "coverage_ratio": 0.0,
+   "shared_blocks": 0,
+   "overlap_ratio": 0.0,
+   "unit": "record",
+   "span": [
+    0,
+    51
+   ],
+   "output": "书不规寻找分成除你的因为“密分布。",
+   "output_class": "usable_but_wrong"
+  }
+ ],
+ "definition_change_vs_previous_round": {
+  "previous": "plans\\manifests\\taiji_scale_20261108.json",
+  "previous_module": "taiji/sc_sfk.py",
+  "current_module": "taiji\\sc_windows.py",
+  "previous_sha256": "476eb5f430f065a37ddf7cba7ae60f0d581a415ae2dc6ebbba6249361d85db9f",
+  "current_sha256": "5ffb2935020719dedfe540faf0150f54c904c7f7fc49c7b1387f30ed1c5e23e1",
+  "new_constants": [
+   "FINGERPRINT_HEX",
+   "WINDOW_BYTES"
+  ],
+  "removed_constants": [
+   "MASK",
+   "MASK64",
+   "MIN_CHUNK",
+   "PROTECT",
+   "WINDOW"
+  ],
+  "changed_constants": {
+   "MIN_ADDRESSABLE": [
+    23,
+    16
+   ]
+  },
+  "old_module_untouched": true
+ },
+ "entry_curve": {
+  "buckets": {
+   "<32": {
+    "n": 30,
+    "admitted": 22,
+    "rate": 0.733333
+   },
+   "32-64": {
+    "n": 99,
+    "admitted": 99,
+    "rate": 1.0
+   },
+   "64-128": {
+    "n": 165,
+    "admitted": 165,
+    "rate": 1.0
+   },
+   "128-256": {
+    "n": 136,
+    "admitted": 136,
+    "rate": 1.0
+   },
+   ">256": {
+    "n": 120,
+    "admitted": 120,
+    "rate": 1.0
+   }
+  },
+  "short_entries": {
+   "n": 129,
+   "admitted": 121,
+   "rate": 0.937984
+  },
+  "shortest_admitted_length": 16,
+  "shortest_unaddressable_length": 1,
+  "long_unaddressable": [],
+  "unaddressable_count": 8,
+  "min_addressable_constant": 16,
+  "window_bytes": 16
+ },
+ "fallback_relevance": {
+  "n": 1108,
+  "overlap_quartiles": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "overlap_median": 0.0,
+  "overlap_mean": 0.008986,
+  "review": [
+   {
+    "group": "written",
+    "position": 53,
+    "query": "## Results",
+    "query_len": 10,
+    "record": 0,
+    "span": [
+     0,
+     51
+    ],
+    "unit": "record",
+    "overlap_ratio": 0.0,
+    "shared_blocks": 0,
+    "output": "书不规寻找分成除你的因为“密分布。",
+    "score": "irrelevant"
+   },
+   {
+    "group": "unknown",
+    "position": 47,
+    "query": "## 3. 预注册判据（能翻）",
+    "query_len": 33,
+    "record": 0,
+    "span": [
+     0,
+     51
+    ],
+    "unit": "record",
+    "overlap_ratio": 0.0,
+    "shared_blocks": 0,
+    "output": "书不规寻找分成除你的因为“密分布。",
+    "score": "irrelevant"
+   },
+   {
+    "group": "unknown",
+    "position": 102,
+    "query": "- [P4.4 保持身份与结构校准](../../../../reports/taiji_m5_k_p4_4_retention_identity_calibration_20260911.json)：validation-only 从 P3.6 提取结构摘要，在 2 个新 project、4 条新 path 的 si",
+    "query_len": 634,
+    "record": 106,
+    "span": [
+     0,
+     157
+    ],
+    "unit": "record",
+    "overlap_ratio": 0.135416667,
+    "shared_blocks": 13,
+    "output": "- 报告：[taiji_w7_r5c_s24_structural_lineage_maintenance_20260831.json](../../../../reports/taiji_w7_r5c_s24_structural_lineage_maintenance_20260831.json)",
+    "score": "irrelevant"
+   },
+   {
+    "group": "unknown",
+    "position": 158,
+    "query": "- Phase 7最终P2审查通过: 启动双CPU采样/8GiB门及失败账本、final同目录fsync/write-once rename已落实；独立runner18/18通过，P0/P1仍0。可放行三arm真实zero准备验证；正式训练前仍核对预算reserve充分性。未真实prepare/execute/dev。",
+    "query_len": 282,
+    "record": 138,
+    "span": [
+     204,
+     247
+    ],
+    "unit": "sentence",
+    "overlap_ratio": 0.007462687,
+    "shared_blocks": 2,
+    "output": "可进入真实zero准备与恢复验证；",
+    "score": "relevant"
+   },
+   {
+    "group": "unknown",
+    "position": 213,
+    "query": "有效连接为 `slow_weight + gate * fast_delta`。旧 checkpoint 迁移时令 `slow_weight=旧权重`、`fast_delta=0`，第一步输出必须逐位等价；因此改架构不等于重新训练。",
+    "query_len": 198,
+    "record": 0,
+    "span": [
+     0,
+     51
+    ],
+    "unit": "record",
+    "overlap_ratio": 0.0,
+    "shared_blocks": 0,
+    "output": "书不规寻找分成除你的因为“密分布。",
+    "score": "irrelevant"
+   },
+   {
+    "group": "unknown",
+    "position": 268,
+    "query": "| E 简单指令与推理 | 0/20 = 0.0 | **3/20 = 0.15** | 同上 |",
+    "query_len": 67,
+    "record": 0,
+    "span": [
+     0,
+     51
+    ],
+    "unit": "record",
+    "overlap_ratio": 0.0,
+    "shared_blocks": 0,
+    "output": "书不规寻找分成除你的因为“密分布。",
+    "score": "irrelevant"
+   },
+   {
+    "group": "unknown",
+    "position": 323,
+    "query": "**遗留欠账（前端路由级冒烟门禁，尚未落地）。** 本轮白屏能连着两轮逃过 185 个用例，是因为\"整棵 `router-view` 被销毁\"这一失败态没有任何自动化断言——`blinkDom.js` 只堵住了已知的 `createElement` 这一种触发方式，换个渠道（异步组件解析失败、`defineAsyncC",
+    "query_len": 1026,
+    "record": 371,
+    "span": [
+     0,
+     313
+    ],
+    "unit": "sentence",
+    "overlap_ratio": 0.016713092,
+    "shared_blocks": 6,
+    "output": "**当前唯一下一步**：P5.1c 预注册（成对对比训练：家族辨别力 Gate）——用内化学习器既有 `pairwise_margin`/ranking 更新机制在家族间成对对比（family-A 正例 vs family-B 负例），先探针实测辨别力数值（A/B 改写查询值差），再冻结 margin 与门；",
+    "score": "irrelevant"
+   },
+   {
+    "group": "unknown",
+    "position": 378,
+    "query": "- Reuse the same 15 decodable confirm items from each consumed v13/v14 face and the same six N1-120 position/cut endpoints: 180 full-context binding evaluations",
+    "query_len": 209,
+    "record": 508,
+    "span": [
+     0,
+     94
+    ],
+    "unit": "record",
+    "overlap_ratio": 0.012658228,
+    "shared_blocks": 1,
+    "output": "| N1-120 position父档，三seed合计 | 24/24 | 9/24 | 10/24 | 17/24 | 8/24 | 9/24 | 16/24 |",
+    "score": "marginal"
+   },
+   {
+    "group": "unknown",
+    "position": 433,
+    "query": "# 态极神经元架构全面计划",
+    "query_len": 35,
+    "record": 0,
+    "span": [
+     0,
+     51
+    ],
+    "unit": "record",
+    "overlap_ratio": 0.0,
+    "shared_blocks": 0,
+    "output": "书不规寻找分成除你的因为“密分布。",
+    "score": "irrelevant"
+   },
+   {
+    "group": "unknown",
+    "position": 488,
+    "query": "用户拍板 (a)。**C 阶段 formal v2 预注册已冻结并执行完毕：[M4V2_C_STAGE_FORMAL_V2_PREREGISTRATION_20260910.md](../../../reference/M4V2_C_STAGE_FORMAL_V2_PREREGISTRATION_20260910.md",
+    "query_len": 1324,
+    "record": 506,
+    "span": [
+     0,
+     59
+    ],
+    "unit": "record",
+    "overlap_ratio": 0.204545455,
+    "shared_blocks": 9,
+    "output": "- M5_P5_1F_REAL_CORPUS_SAME_BUDGET_PREREGISTRATION_20260912",
+    "score": "marginal"
+   },
+   {
+    "group": "unknown",
+    "position": 543,
+    "query": "两枚件就是 N4 面仪器 `measure_taiji_n4_addressing_surface.py` 的直接输入——**真值不再由我合成，",
+    "query_len": 120,
+    "record": 0,
+    "span": [
+     0,
+     51
+    ],
+    "unit": "record",
+    "overlap_ratio": 0.0,
+    "shared_blocks": 0,
+    "output": "书不规寻找分成除你的因为“密分布。",
+    "score": "irrelevant"
+   },
+   {
+    "group": "unrelated",
+    "position": 48,
+    "query": "two same-shape K1 replicas plus two same-shape K2 replicas with arithmetic mean readout",
+    "query_len": 87,
+    "record": 0,
+    "span": [
+     0,
+     51
+    ],
+    "unit": "record",
+    "overlap_ratio": 0.0,
+    "shared_blocks": 0,
+    "output": "书不规寻找分成除你的因为“密分布。",
+    "score": "irrelevant"
+   },
+   {
+    "group": "unrelated",
+    "position": 103,
+    "query": "wawrhjefbb faces north.",
+    "query_len": 23,
+    "record": 0,
+    "span": [
+     0,
+     51
+    ],
+    "unit": "record",
+    "overlap_ratio": 0.0,
+    "shared_blocks": 0,
+    "output": "书不规寻找分成除你的因为“密分布。",
+    "score": "irrelevant"
+   },
+   {
+    "group": "unrelated",
+    "position": 158,
+    "query": "sgoikrrrby",
+    "query_len": 10,
+    "record": 0,
+    "span": [
+     0,
+     51
+    ],
+    "unit": "record",
+    "overlap_ratio": 0.0,
+    "shared_blocks": 0,
+    "output": "书不规寻找分成除你的因为“密分布。",
+    "score": "irrelevant"
+   },
+   {
+    "group": "unrelated",
+    "position": 213,
+    "query": "rlqboshcom uses wuqpgrx.",
+    "query_len": 24,
+    "record": 0,
+    "span": [
+     0,
+     51
+    ],
+    "unit": "record",
+    "overlap_ratio": 0.0,
+    "shared_blocks": 0,
+    "output": "书不规寻找分成除你的因为“密分布。",
+    "score": "irrelevant"
+   },
+   {
+    "group": "unrelated",
+    "position": 268,
+    "query": "我的编号是多少？（若无法得知请说明）",
+    "query_len": 54,
+    "record": 0,
+    "span": [
+     0,
+     51
+    ],
+    "unit": "record",
+    "overlap_ratio": 0.0,
+    "shared_blocks": 0,
+    "output": "书不规寻找分成除你的因为“密分布。",
+    "score": "irrelevant"
+   },
+   {
+    "group": "unrelated",
+    "position": 323,
+    "query": "v3-108",
+    "query_len": 6,
+    "record": 0,
+    "span": [
+     0,
+     51
+    ],
+    "unit": "record",
+    "overlap_ratio": 0.0,
+    "shared_blocks": 0,
+    "output": "书不规寻找分成除你的因为“密分布。",
+    "score": "irrelevant"
+   },
+   {
+    "group": "unrelated",
+    "position": 378,
+    "query": "started",
+    "query_len": 7,
+    "record": 0,
+    "span": [
+     0,
+     51
+    ],
+    "unit": "record",
+    "overlap_ratio": 0.0,
+    "shared_blocks": 0,
+    "output": "书不规寻找分成除你的因为“密分布。",
+    "score": "irrelevant"
+   },
+   {
+    "group": "unrelated",
+    "position": 433,
+    "query": "rnopkjcgor",
+    "query_len": 10,
+    "record": 0,
+    "span": [
+     0,
+     51
+    ],
+    "unit": "record",
+    "overlap_ratio": 0.0,
+    "shared_blocks": 0,
+    "output": "书不规寻找分成除你的因为“密分布。",
+    "score": "irrelevant"
+   },
+   {
+    "group": "unrelated",
+    "position": 488,
+    "query": "pbnhyxwuhv",
+    "query_len": 10,
+    "record": 0,
+    "span": [
+     0,
+     51
+    ],
+    "unit": "record",
+    "overlap_ratio": 0.0,
+    "shared_blocks": 0,
+    "output": "书不规寻找分成除你的因为“密分布。",
+    "score": "irrelevant"
+   }
+  ],
+  "written_subset": {
+   "n": 8,
+   "overlap_median": 0.0,
+   "note": "queries that do have a record in the store but were not anchored; the verdict-binding denominator stays all unanchored rows as frozen"
+  },
+  "line": 0.5,
+  "rubric": {
+   "relevant": "the printed sentence answers the query's question or states its point",
+   "marginal": "same document/topic but does not answer the question",
+   "irrelevant": "different topic or generic boilerplate",
+   "mapping": {
+    "relevant": 1.0,
+    "marginal": 0.5,
+    "irrelevant": 0.0
+   },
+   "denominator": "all unanchored rows (frozen); the written-group subset is reported separately",
+   "sample_rule": "unanchored rows in report order, every ceil(total/20)-th row, first 20"
+  },
+  "score_median": 0.0,
+  "score_counts": {
+   "relevant": 1,
+   "marginal": 2,
+   "irrelevant": 17
+  }
+ },
+ "previous_round": {
+  "commit": "84cb5cee8",
+  "report": "reports\\taiji_scale_20261108.json",
+  "verdict": "scale_recheck_short_entries_gap",
+  "corpus": {
+   "written": 550,
+   "unknown": 550,
+   "unrelated": 550,
+   "union": 550
+  },
+  "L1": {
+   "fabricated_bytes": 0,
+   "illegal_spans": 0,
+   "utf8_decodable": 2200,
+   "utf8_invalid": 0,
+   "utf8_rate": 1.0,
+   "boundary_legal": 2200,
+   "boundary_illegal": 0,
+   "boundary_rate": 1.0,
+   "blocked_samples": []
+  },
+  "L2": {
+   "faithful": 2200,
+   "faithful_rate": 1.0,
+   "denominator": 2200
+  },
+  "L3": {
+   "written": {
+    "n": 550,
+    "usable_and_correct": 279,
+    "usable_but_wrong": 271,
+    "unusable": 0,
+    "usable_fallback": 0,
+    "anchored": 279,
+    "fallback": 271,
+    "unit_record": 279,
+    "unit_sentence": 271,
+    "decisions": {
+     "matched": 279,
+     "no_match": 271,
+     "ambiguous_multiple_anchors": 0
+    }
+   },
+   "unknown": {
+    "n": 550,
+    "usable_and_correct": 0,
+    "usable_but_wrong": 0,
+    "unusable": 0,
+    "usable_fallback": 550,
+    "anchored": 0,
+    "fallback": 550,
+    "unit_record": 0,
+    "unit_sentence": 550,
+    "decisions": {
+     "matched": 0,
+     "no_match": 550,
+     "ambiguous_multiple_anchors": 0
+    }
+   },
+   "unrelated": {
+    "n": 550,
+    "usable_and_correct": 0,
+    "usable_but_wrong": 0,
+    "unusable": 0,
+    "usable_fallback": 550,
+    "anchored": 0,
+    "fallback": 550,
+    "unit_record": 0,
+    "unit_sentence": 550,
+    "decisions": {
+     "matched": 0,
+     "no_match": 550,
+     "ambiguous_multiple_anchors": 0
+    }
+   },
+   "union": {
+    "n": 550,
+    "usable_and_correct": 418,
+    "usable_but_wrong": 132,
+    "unusable": 0,
+    "usable_fallback": 0,
+    "anchored": 418,
+    "fallback": 132,
+    "unit_record": 418,
+    "unit_sentence": 132,
+    "decisions": {
+     "matched": 278,
+     "no_match": 132,
+     "ambiguous_multiple_anchors": 140
+    }
+   }
+  },
+  "short_entries": {
+   "n": 129,
+   "admitted": 5,
+   "rate": 0.03876
+  },
+  "buckets": {
+   "<32": {
+    "n": 30,
+    "admitted": 0,
+    "rate": 0.0
+   },
+   "32-64": {
+    "n": 99,
+    "admitted": 5,
+    "rate": 0.050505
+   },
+   "64-128": {
+    "n": 165,
+    "admitted": 53,
+    "rate": 0.321212
+   },
+   "128-256": {
+    "n": 136,
+    "admitted": 104,
+    "rate": 0.764706
+   },
+   ">256": {
+    "n": 120,
+    "admitted": 117,
+    "rate": 0.975
+   }
+  }
+ },
+ "denominators": {
+  "written": 550,
+  "unknown": 550,
+  "unrelated": 550,
+  "union": 550
+ },
+ "form_counts": {
+  "written": {
+   "heading": 65,
+   "list_item": 144,
+   "table_row": 104,
+   "prose": 217,
+   "code_comment": 20
+  },
+  "unknown": {
+   "heading": 72,
+   "list_item": 155,
+   "table_row": 116,
+   "prose": 207,
+   "code_comment": 0
+  },
+  "unrelated": {
+   "heading": 0,
+   "list_item": 0,
+   "table_row": 0,
+   "prose": 0,
+   "code_comment": 0,
+   "json_string": 550
+  }
+ },
+ "length_buckets": {
+  "<32": 30,
+  "32-64": 99,
+  "64-128": 165,
+  "128-256": 136,
+  ">256": 120
+ },
+ "disclosures": [
+  "the corpus is the frozen 550-entry natural sample of the previous round (sha 350eef77...), byte-identical; nothing was resampled or filtered.",
+  "taiji/sc_sfk.py is untouched; the address layer under test is the new taiji/sc_windows.py, whose sha and numeric surface are frozen in the manifest.",
+  "a written entry shorter than 16 bytes has an empty identity and is rejected alone; it is listed one by one, not hidden in the rate.",
+  "unknown and unrelated queries usually have no answering record by construction; their outputs are classed usable_fallback, never usable_and_correct. A spurious anchor on a low-entropy window is classed usable_but_wrong and counted.",
+  "the union group joins two entries with a newline; pointing at either source record counts as correct, pointing elsewhere does not.",
+  "the fallback review scores are supplied after the run through --score; the rubric and the pass line were frozen in the manifest before the first reading."
+ ],
+ "cost": {
+  "cpu_seconds": 2.203,
+  "wall_seconds": 2.672,
+  "cpu_cap": 200.0,
+  "score_pass_cpu_seconds": 0.016,
+  "score_pass_wall_seconds": 0.441,
+  "open_pass_cpu_seconds": 2.203,
+  "open_pass_wall_seconds": 2.672,
+  "closed_battery_cpu_seconds": 45.156,
+  "closed_battery_wall_seconds": 4.259,
+  "total_cpu_seconds": 47.359,
+  "total_wall_seconds": 6.931
+ }
+}

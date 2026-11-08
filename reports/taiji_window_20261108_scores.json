@@ -1,0 +1,30 @@
+{
+ "method": "20 fallback rows sampled mechanically (unanchored rows in report order, every ceil(n/20)-th row, first 20); each printed sentence scored against its query with the rubric frozen in plans/manifests/taiji_window_20261108.json before the first reading.",
+ "scores": [
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "relevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "marginal",
+  "irrelevant",
+  "marginal",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant"
+ ],
+ "notes": {
+  "relevant": "#3 (unknown/158): query reports Phase 7 P2 approval and asks whether real-zero prep can proceed; the printed sentence '可进入真实zero准备与恢复验证；' answers exactly that.",
+  "marginal": "#7 (unknown/378): same N1-120 experiment family, prints a position-bucket row, does not answer the binding-endpoint question. #9 (unknown/488): same preregistration topic family, names a different prereg document.",
+  "irrelevant": "the remaining 17: 8 unrelated random/alien sentences with no answering record, 1 written entry shorter than 16 bytes whose identity is empty, and 8 unknown queries answered by the constant record-0 sentence."
+ }
+}

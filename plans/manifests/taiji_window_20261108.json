@@ -1,0 +1,167 @@
+{
+ "schema": "taiji-window-v1",
+ "date": "2026-11-08",
+ "frozen_at": "2026-11-08T23:39:01",
+ "runner_sha256": "35603da8ecc3fb842b80d835f95d1f9689f5b96989babb6c697acb4bd5267439",
+ "corpus_sha256": "350eef77b06cd0d51d1b0605a9f3565318916e5d5112a3c051eaea8e6a2e55de",
+ "corpus_path": "plans\\manifests\\taiji_scale_corpus_20261108.json",
+ "question": "does replacing the identity with the multiset of all 16-byte windows (no band, minimum 16 bytes) admit short entries and keep L1/L2 and fallback quality on the same 550-entry natural corpus?",
+ "scale": {
+  "written": 550,
+  "unknown": 550,
+  "unrelated": 550,
+  "union": 550,
+  "form_floor": 20,
+  "union_stride": 137
+ },
+ "buckets": [
+  {
+   "name": "<32",
+   "low": 0,
+   "high": 32
+  },
+  {
+   "name": "32-64",
+   "low": 32,
+   "high": 64
+  },
+  {
+   "name": "64-128",
+   "low": 64,
+   "high": 128
+  },
+  {
+   "name": "128-256",
+   "low": 128,
+   "high": 256
+  },
+  {
+   "name": ">256",
+   "low": 256,
+   "high": null
+  }
+ ],
+ "lines": {
+  "short_entry_rate": 0.9,
+  "fallback_median": 0.5,
+  "fallback_sample": 20
+ },
+ "fallback_rubric": {
+  "relevant": "the printed sentence answers the query's question or states its point",
+  "marginal": "same document/topic but does not answer the question",
+  "irrelevant": "different topic or generic boilerplate",
+  "mapping": {
+   "relevant": 1.0,
+   "marginal": 0.5,
+   "irrelevant": 0.0
+  },
+  "denominator": "all unanchored rows (frozen); the written-group subset is reported separately",
+  "sample_rule": "unanchored rows in report order, every ceil(total/20)-th row, first 20"
+ },
+ "verdict": {
+  "rules": [
+   "closed not neutral -> hard_failure_closed_not_neutral (stop)",
+   "any L1 line fails -> output_fabricates",
+   "admission rate for entries < 64 bytes < 0.9 -> window_set_still_gapped",
+   "fallback relevance median < 0.5 -> fallback_still_irrelevant",
+   "otherwise -> window_set_identity_holds"
+  ]
+ },
+ "definition": {
+  "identity": "I(r) = multiset { sha256(r[i:i+16])[:16].hex() : 0 <= i <= len(r)-16 }; one token per offset, so repeated windows keep their multiplicity. A record shorter than 16 bytes has an empty identity and is rejected alone. An empty identity is never addressable: it would be covered by every query.",
+  "multiplicity_choice": "multiset coverage, frozen before the run: count_q(t) >= count_r(t) for every distinct window t. Reason: set inclusion lets one query occurrence pay for a window that occurs twice in the record (repeated table rows/separators); counting is one dict lookup and adds no numeric constant. Multiset coverage implies set inclusion, never the reverse.",
+  "protection_band": "none, and none is kept. Every identity window lies fully inside the record, so any prefix/suffix leaves every window at offset |p|+i equal to r[i:i+16]. The old PROTECT=6 band belonged to a cut predicate that read bytes before the cut; a fixed window reads only its own bytes.",
+  "shortest_addressable_length": "MIN_ADDRESSABLE = WINDOW_BYTES = 16 bytes; necessary and sufficient (length alone decides whether the identity is non-empty).",
+  "anchor": "anchored iff identity(r) is covered by W(q) with multiplicity; 0 anchors -> fallback but still one output; 1 -> matched; >=2 -> ambiguous_multiple_anchors, still top-1 and annotated. Anchors are readings, not exits.",
+  "fallback": "unanchored reads are ranked by |set(I(r)) & set(W(q))| / |set(I(r))| descending, then address index ascending; fallback_basis = window_overlap when a window is shared, address_order otherwise; no pass/reject threshold.",
+  "output_unit": "anchored reads print the whole record (unit = record); unanchored reads print the chosen record's sentence with the highest window overlap (unit = sentence, ties by sentence order); spans come from sentences() and always sit on UTF-8 character boundaries at a terminator/newline or the record end.",
+  "write": "append-only; a record is rejected alone only when its identity is empty (length < 16). Identity containment is not a rejection reason: under a window identity a heading or a table row is legitimately a substring of a longer record, and rejecting containment would filter exactly the short entries this definition exists to admit.",
+  "impersonation_cost": "If identity(r) is covered by W(q), q must contain every 16-byte window of r as a substring with the record's multiplicity. This does NOT imply q contains r contiguously and does not imply near-verbatim reproduction; the order is lost. Construction: q = r[0:16] + r[1:17] + ... covers every window while never containing r as a contiguous run. Verdict: 'almost verbatim reproduction is required' cannot be derived.",
+  "failure_constructions": [
+   "empty identity kept: covered by every query, anchors every sub-16-byte record; floor one.",
+   "set inclusion instead of multiplicity: a repeated window is paid by one query occurrence.",
+   "low-entropy windows: a 16-byte run of spaces is shared by any query containing it, so an unrelated query can anchor that record; reported per group, not hidden.",
+   "order loss: window coverage is not contiguity (see impersonation_cost)."
+  ]
+ },
+ "criteria": {
+  "C1_closed_state_neutral": "the 176-case battery of the frozen output-unit gate replays bit for bit: max|delta| = 0, parameters/state/identity/store signature unchanged, table not allocated, no half-open branch.",
+  "C2_L1": "fabricated bytes = 0, illegal spans = 0, UTF-8 decodable = 100%, boundary legal = 100%.",
+  "C3_L2": "every output slice hashes to the stored record bytes it claims (faithful).",
+  "C4_L3": "per group: usable_and_correct / usable_but_wrong / usable_fallback / unusable.",
+  "C5_short": "admission rate for entries < 64 bytes >= 0.90.",
+  "C6_fallback": "20 fallback rows sampled mechanically; each printed sentence is scored relevant / marginal / irrelevant against its query; median >= 0.5. The denominator is frozen as **all unanchored rows** (same rule as the previous round); the written-group subset (queries that do have a record in the store) is reported separately as a diagnostic, because unknown/unrelated queries have no answering record by construction.",
+  "V_hard": "closed state not neutral -> hard_failure_closed_not_neutral.",
+  "V_fabricates": "any L1 line fails -> output_fabricates, samples only.",
+  "V_gap": "admission rate for entries < 64 bytes < 0.90 -> window_set_still_gapped: write the length limit down, stop adding to the address layer, go to the representation layer.",
+  "V_fallback": "fallback relevance median < 0.5 -> fallback_still_irrelevant.",
+  "V_holds": "all lines met -> window_set_identity_holds."
+ },
+ "cost_estimate": {
+  "written_windows": 98032,
+  "queries": 2200,
+  "address_set_intersections": 1210000,
+  "closed_battery_cpu_measured_previous_round": 44.234,
+  "estimate_cpu_seconds": 60.0,
+  "estimate_note": "closed battery replays the frozen 176-case run (~44 CPU measured last round); the open pass does 2,200 query x 550 record set intersections (~1.2M) plus one sentence scan per fallback. Estimated well below the 200 CPU cap."
+ },
+ "address_module": {
+  "sha256": "5ffb2935020719dedfe540faf0150f54c904c7f7fc49c7b1387f30ed1c5e23e1",
+  "constant_inventory": {
+   "WINDOW_BYTES": 16,
+   "MIN_ADDRESSABLE": 16,
+   "FINGERPRINT_HEX": 16,
+   "START_CAPACITY": 2
+  },
+  "read_path_literals": {
+   "windows": [
+    1.0
+   ],
+   "identity": [],
+   "covers": [
+    0.0
+   ],
+   "window_overlap": [
+    0.0
+   ],
+   "read": [
+    0.0,
+    1.0,
+    9.0
+   ]
+  },
+  "protection": {
+   "band_present": false,
+   "MIN_ADDRESSABLE_matches_definition": true,
+   "MIN_ADDRESSABLE": 16,
+   "WINDOW_BYTES": 16
+  },
+  "change_vs_previous_round": {
+   "previous": "plans\\manifests\\taiji_scale_20261108.json",
+   "previous_module": "taiji/sc_sfk.py",
+   "current_module": "taiji\\sc_windows.py",
+   "previous_sha256": "476eb5f430f065a37ddf7cba7ae60f0d581a415ae2dc6ebbba6249361d85db9f",
+   "current_sha256": "5ffb2935020719dedfe540faf0150f54c904c7f7fc49c7b1387f30ed1c5e23e1",
+   "new_constants": [
+    "FINGERPRINT_HEX",
+    "WINDOW_BYTES"
+   ],
+   "removed_constants": [
+    "MASK",
+    "MASK64",
+    "MIN_CHUNK",
+    "PROTECT",
+    "WINDOW"
+   ],
+   "changed_constants": {
+    "MIN_ADDRESSABLE": [
+     23,
+     16
+    ]
+   },
+   "old_module_untouched": true
+  }
+ },
+ "freeze_revision": 4,
+ "freeze_note": "harness-only revision: criteria and corpus unchanged"
+}
