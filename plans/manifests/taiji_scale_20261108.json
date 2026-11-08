@@ -1,0 +1,150 @@
+{
+ "schema": "taiji-scale-v1",
+ "date": "2026-11-08",
+ "frozen_at": "2026-11-08T23:16:04",
+ "runner_sha256": "a8e7d225d14391fc5b04a7be356614cfaa542636da98ba31fc994354eefa3c5a",
+ "corpus_sha256": "350eef77b06cd0d51d1b0605a9f3565318916e5d5112a3c051eaea8e6a2e55de",
+ "corpus_path": "plans\\manifests\\taiji_scale_corpus_20261108.json",
+ "question": "on a mechanically sampled natural corpus at least 10x the fixture: do the frozen address/output definitions hold, how does admission vary with length, and are fallback sentences relevant to the query?",
+ "scale": {
+  "written": 550,
+  "unknown": 550,
+  "unrelated": 550,
+  "union": 550,
+  "fixture_ratio": 9.483,
+  "form_floor": 20,
+  "union_stride": 137
+ },
+ "buckets": [
+  {
+   "name": "<32",
+   "low": 0,
+   "high": 32
+  },
+  {
+   "name": "32-64",
+   "low": 32,
+   "high": 64
+  },
+  {
+   "name": "64-128",
+   "low": 64,
+   "high": 128
+  },
+  {
+   "name": "128-256",
+   "low": 128,
+   "high": 256
+  },
+  {
+   "name": ">256",
+   "low": 256,
+   "high": null
+  }
+ ],
+ "lines": {
+  "short_entry_rate": 0.9,
+  "fallback_median": 0.5,
+  "fallback_sample": 20
+ },
+ "fallback_rubric": {
+  "relevant": "the printed sentence answers the query's question or states its point",
+  "marginal": "same document/topic but does not answer the question",
+  "irrelevant": "different topic or generic boilerplate",
+  "mapping": {
+   "relevant": 1.0,
+   "marginal": 0.5,
+   "irrelevant": 0.0
+  },
+  "sample_rule": "unanchored rows in report order, every ceil(total/20)-th row, first 20"
+ },
+ "verdict": {
+  "rules": [
+   "closed not neutral -> hard_failure_closed_not_neutral (stop)",
+   "any L1 line fails -> scale_recheck_unusable",
+   "admission rate for entries < 64 bytes < 0.9 -> scale_recheck_short_entries_gap",
+   "fallback relevance median < 0.5 -> fallback_irrelevant",
+   "otherwise -> scale_recheck_holds"
+  ]
+ },
+ "definition": {
+  "chunking": "gear hash, rolling = ((rolling << 1) + gear[byte]) & 0xFFFFFFFFFFFFFFFF; cut at every position where (rolling & 0x3F) == 0; no minimum length, no maximum length, no distance rule; chunks shorter than 16 bytes are dropped at emission; fingerprint = sha256(chunk)[:16].hex().",
+  "identity": "S(r) = ordered fingerprints of every chunk [a, b) with a >= PROTECT = 6 and b < len(r); an empty S(r) is rejected alone. A record with no such chunk has no identity and cannot be addressed, however long it is.",
+  "shortest_addressable_length": "MIN_CHUNK + PROTECT + 1 = 16 + 6 + 1 = 23 bytes; necessary, not sufficient.",
+  "anchor": "anchored iff S(r) is a contiguous subsequence of C(Q), the ordered fingerprints of all query chunks; floor one block. Anchors are readings, not exits.",
+  "output_unit": "anchored reads print the whole record (unit = record); unanchored reads print the chosen record's sentence with the highest block overlap (unit = sentence, ties by sentence order); spans come from sentences() and always sit on UTF-8 character boundaries at a terminator/newline or the record end.",
+  "fallback": "unanchored reads are labelled fallback = true and ranked by multiset Jaccard (shared / (|S(r)| + |C(Q)| - shared)) descending, then address order; fallback_basis = record_overlap when a block is shared, address_order otherwise; no pass/reject threshold.",
+  "write": "append-only; a record is rejected alone when it has no identity chunk, when an equal identity holds a different value, or when its identity and an existing identity are contiguous subsequences of one another."
+ },
+ "criteria": {
+  "C1_closed_state_neutral": "the 176-case battery of the frozen output-unit gate replays bit for bit: max|delta| = 0 in both the fast and the probability layer, parameters / state / identity / store signature unchanged, no table allocated, no half-open branch.",
+  "C2_corpus": ">= 500 written entries, >= 10x the 58-record fixture; forms and length buckets reported before the run; nothing filtered by cut point or addressability.",
+  "C3_no_tolerance": "no code change at all this round: the frozen constant inventory and read-path literal set must equal the running module, otherwise scale_recheck_unusable.",
+  "L1_mechanical": "fabricated bytes = 0; illegal slices = 0; UTF-8 decodable = 100%; boundary legal = 100% (span is the whole record or exactly one span returned by sentences()).",
+  "L2_content": "output == claimed record's bytes[start:end] on every scored row.",
+  "L3_selection": "three columns per group: usable_and_correct (complete, decodable, claimed record == expected), usable_but_wrong (complete and decodable but wrong record; a written query whose own record was never admitted is always wrong), unusable (L1 blocked).",
+  "Q1_length_curve": "admission rate per frozen length bucket; shortest admitted entry; shortest observed unaddressable entry; every entry >= 64 bytes with no identity chunk listed with its length and reason.",
+  "Q2_fallback_relevance": "for unanchored outputs: block-overlap quartiles; 20 sampled outputs scored relevant / marginal / irrelevant against the query by reading the printed sentence. Pass line: median >= 0.5.",
+  "V_hard_failure": "closed state not neutral -> stop.",
+  "V_unusable": "any L1 line fails -> scale_recheck_unusable, samples only, no loosening.",
+  "V_short_gap": "admission rate for entries shorter than 64 bytes < 0.90 -> scale_recheck_short_entries_gap: write the length/address limit down, stop adding to the address layer, go to the representation layer.",
+  "V_fallback": "fallback relevance median < 0.5 -> fallback_irrelevant, reported as measured.",
+  "V_holds": "all lines met -> scale_recheck_holds, with the verified corpus size and tail."
+ },
+ "address_module": {
+  "sha256": "476eb5f430f065a37ddf7cba7ae60f0d581a415ae2dc6ebbba6249361d85db9f",
+  "constant_inventory": {
+   "START_CAPACITY": 2,
+   "WINDOW": 6,
+   "MIN_CHUNK": 16,
+   "MASK": 63,
+   "PROTECT": 6,
+   "MIN_ADDRESSABLE": 23,
+   "MASK64": 18446744073709551615
+  },
+  "read_path_literals": {
+   "identity_blocks": [
+    0.0,
+    1.0
+   ],
+   "block_overlap": [
+    0.0,
+    1.0
+   ],
+   "sentences": [
+    0.0,
+    1.0
+   ],
+   "read": [
+    0.0,
+    1.0,
+    9.0
+   ],
+   "_sentence_span": [
+    0.0,
+    1.0,
+    2.0,
+    3.0
+   ]
+  },
+  "protection": {
+   "PROTECT_equals_WINDOW": true,
+   "MIN_ADDRESSABLE_matches_definition": true,
+   "MIN_ADDRESSABLE": 23
+  },
+  "drift_vs_previous_round": {
+   "previous": "plans\\manifests\\taiji_output_unit_20261108.json",
+   "address_sha256_previous": "476eb5f430f065a37ddf7cba7ae60f0d581a415ae2dc6ebbba6249361d85db9f",
+   "address_sha256_current": "476eb5f430f065a37ddf7cba7ae60f0d581a415ae2dc6ebbba6249361d85db9f",
+   "new_constants": [],
+   "removed_constants": [],
+   "changed_constants": {},
+   "new_literals": [],
+   "removed_literals": [],
+   "changed_literals": {},
+   "clean": true
+  }
+ },
+ "freeze_revision": 3,
+ "freeze_note": "harness-only revision: criteria and corpus unchanged"
+}

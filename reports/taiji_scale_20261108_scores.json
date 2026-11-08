@@ -1,0 +1,33 @@
+{
+ "schema": "taiji-scale-fallback-scores-v1",
+ "date": "2026-11-08",
+ "rubric_frozen_in": "plans/manifests/taiji_scale_20261108.json -> fallback_rubric",
+ "method": "read each printed sentence against its query; relevant = the sentence answers the question or states its point; marginal = same document/topic but does not answer it; irrelevant = different topic or boilerplate. Document test applied mechanically before the judgement: for every sample the query's source file and the printed record's source file were resolved from the frozen pool; 0 of 20 share a file.",
+ "scores": [
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant",
+  "irrelevant"
+ ],
+ "notes": [
+  "all 20 fallbacks were ranked by address order (zero shared blocks); every one printed the first sentence of the same record 0, so the sample is a single output string repeated 20 times",
+  "the 20 queries span written-unadmitted, unknown, unrelated and union rows; none asks about the LifeStatusView split the sentence reports",
+  "the one fallback with a shared block (fallback_basis = record_overlap) was not sampled because the stride skipped it; it is reported in the aggregate distribution"
+ ]
+}
