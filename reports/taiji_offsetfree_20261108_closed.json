@@ -1,0 +1,42 @@
+{
+  "schema": "taiji-offsetfree-closed-v1",
+  "date": "2026-11-08",
+  "question": "is the offset-free extraction inert while the switch is at its default?",
+  "verdict": "offset_free_closed_neutral",
+  "checks": {
+    "default_off": true,
+    "table_not_allocated": true,
+    "readings_total": 176,
+    "fast_max_abs_delta": 0.0,
+    "probability_max_abs_delta": 0.0,
+    "fast_digests_equal": 176,
+    "probability_digests_equal": 176,
+    "fields_equal": 176,
+    "tags_equal": true,
+    "parameter_tensors_equal": true,
+    "parameter_elements_equal": true,
+    "parameter_sha_equal": true,
+    "state_bytes_equal": true,
+    "candidate_sha_v2_equal": true,
+    "store_signature_equal": true
+  },
+  "baseline": {
+    "report": "taiji_store_wire_20261108_baseline.json",
+    "living_core_sha256": "df7942806de9352418bea6e195f920c416b38a1be48236e05b36981b83527f7b",
+    "candidate_sha_v2": "ff60ac2578f09f346f4bad9cf3d0fd0986633bd49e4e82c7ac76573dd87389ea"
+  },
+  "current": {
+    "candidate_sha_v2": "ff60ac2578f09f346f4bad9cf3d0fd0986633bd49e4e82c7ac76573dd87389ea",
+    "state_bytes": 1100064
+  },
+  "disclosures": [
+    "the edit is confined to features(), which the store cannot reach while the flag is off (table_not_allocated); the battery is replayed anyway because the closed-state claim is re-proved, not inferred.",
+    "the comparison is against baseline arrays captured before taiji/ was edited."
+  ],
+  "runner_sha256_start": "302778fb1a8093011749681734b285e7aff3fa8809e5719c31c8538d03660d3b",
+  "runner_sha256_end": "302778fb1a8093011749681734b285e7aff3fa8809e5719c31c8538d03660d3b",
+  "cost": {
+    "cpu_seconds": 42.469,
+    "wall_seconds": 3.986
+  }
+}
