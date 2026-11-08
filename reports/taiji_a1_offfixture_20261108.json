@@ -1,0 +1,1501 @@
+{
+  "schema": "taiji-a1-offfixture-v1",
+  "verdict": "address_not_usable_off_fixture",
+  "manifest": "plans\\manifests\\taiji_a1_offfixture_20261108.json",
+  "manifest_sha256": "80fede1f2e21826cda12e67b908f787ede7b9eeafc5ce000b548ac0e954d0c6a",
+  "runner_sha_start": "459c43a524a65e1c91f84f9f60fbbd013b92b4711cb76d418f7281faf647431e",
+  "runner_sha_end": "459c43a524a65e1c91f84f9f60fbbd013b92b4711cb76d418f7281faf647431e",
+  "switch": {
+    "sc_sfk_enabled": true,
+    "table_allocated_by_switch": true,
+    "new_parameters": 0,
+    "tensors_in_table": false,
+    "join": "8 self-reads compared between table.read and addressed_read",
+    "join_rows": [
+      {
+        "record": 0,
+        "direct_decision": "matched",
+        "direct_address": 0,
+        "switch_decision": "matched",
+        "switch_address": 0,
+        "agree": true
+      },
+      {
+        "record": 1,
+        "direct_decision": "matched",
+        "direct_address": 1,
+        "switch_decision": "matched",
+        "switch_address": 1,
+        "agree": true
+      },
+      {
+        "record": 2,
+        "direct_decision": "matched",
+        "direct_address": 2,
+        "switch_decision": "matched",
+        "switch_address": 2,
+        "agree": true
+      },
+      {
+        "record": 3,
+        "direct_decision": "matched",
+        "direct_address": 3,
+        "switch_decision": "matched",
+        "switch_address": 3,
+        "agree": true
+      },
+      {
+        "record": 4,
+        "direct_decision": "matched",
+        "direct_address": 4,
+        "switch_decision": "matched",
+        "switch_address": 4,
+        "agree": true
+      },
+      {
+        "record": 5,
+        "direct_decision": "matched",
+        "direct_address": 5,
+        "switch_decision": "matched",
+        "switch_address": 5,
+        "agree": true
+      },
+      {
+        "record": 6,
+        "direct_decision": "matched",
+        "direct_address": 6,
+        "switch_decision": "matched",
+        "switch_address": 6,
+        "agree": true
+      },
+      {
+        "record": 7,
+        "direct_decision": "matched",
+        "direct_address": 7,
+        "switch_decision": "matched",
+        "switch_address": 7,
+        "agree": true
+      }
+    ],
+    "join_agreement": 8
+  },
+  "table": {
+    "addresses": 58,
+    "capacity": 64,
+    "peak_capacity": 64,
+    "generation": 5,
+    "appended": 58,
+    "merged": 0,
+    "replaced": 0,
+    "rejected_batches": 0,
+    "rollbacks": 0,
+    "evictions": 0,
+    "silent_overwrites": 0,
+    "global_checks": 6,
+    "global_failures": 0,
+    "addressable": 58,
+    "unique_features": 744,
+    "duplicate_records": 0,
+    "nbytes": 1937436
+  },
+  "denominators": {
+    "should_anchor": 120,
+    "should_unknown": 20,
+    "should_ambiguous": 20,
+    "uniquely_anchorable": 101,
+    "paraphrase_zero_replacements": 54
+  },
+  "readings": {
+    "counts": {
+      "self": 58,
+      "paraphrase": 62,
+      "unknown": 20,
+      "ambiguous": 20
+    },
+    "should_anchor": {
+      "n": 120,
+      "matched_correct": 61,
+      "wrong_pointer": 0,
+      "no_match": 59,
+      "ambiguous": 0,
+      "usable_ratio": 0.508333,
+      "uniquely_anchorable": 101,
+      "uniquely_anchorable_ratio": 0.841667
+    },
+    "by_kind": {
+      "self": {
+        "n": 58,
+        "matched_correct": 58,
+        "wrong_pointer": 0,
+        "no_match": 0,
+        "ambiguous": 0
+      },
+      "paraphrase": {
+        "n": 62,
+        "matched_correct": 3,
+        "wrong_pointer": 0,
+        "no_match": 59,
+        "ambiguous": 0
+      }
+    },
+    "by_variant": {
+      "self:exact": {
+        "n": 58,
+        "matched": 58,
+        "no_match": 0,
+        "ambiguous": 0,
+        "wrong": 0
+      },
+      "paraphrase:lead_in": {
+        "n": 58,
+        "matched": 0,
+        "no_match": 58,
+        "ambiguous": 0,
+        "wrong": 0
+      },
+      "paraphrase:synonym": {
+        "n": 4,
+        "matched": 3,
+        "no_match": 1,
+        "ambiguous": 0,
+        "wrong": 0
+      },
+      "unknown:held_out": {
+        "n": 20,
+        "matched": 0,
+        "no_match": 20,
+        "ambiguous": 0,
+        "wrong": 0
+      },
+      "ambiguous:union": {
+        "n": 20,
+        "matched": 0,
+        "no_match": 0,
+        "ambiguous": 20,
+        "wrong": 0
+      }
+    },
+    "should_unknown": {
+      "n": 20,
+      "no_match": 20,
+      "matched_false_positive": 0,
+      "ambiguous": 0
+    },
+    "should_ambiguous": {
+      "n": 20,
+      "ambiguous": 20,
+      "no_match": 0,
+      "matched": 0
+    },
+    "failures": [
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 0,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 20,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2685,
+        "sample": "总的来说，**生长接线回执（2026-11-08，0 训练）**：[报告](../reports/taiji_growth_wire_20261108.json",
+        "df_histogram": {
+          "df=0": 20,
+          "df=1": 23,
+          "df=2-3": 58,
+          "df>=4": 194
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 1,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 20,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2409,
+        "sample": "总的来说，包 20 成本（保留）：measured **50,573.637 CPU**（B=24,000 的 **2.1072×**、48,000 闸的 **",
+        "df_histogram": {
+          "df=0": 20,
+          "df=1": 17,
+          "df=2-3": 14,
+          "df>=4": 60
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 2,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 12,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2362,
+        "sample": "总的来说，范围：把 19.2 之后到字节地址闸为止的全部探针（门 P1/P2/P1b/P3 与门价值对照、读门槛、居中／白化／`localized_center",
+        "df_histogram": {
+          "df=0": 12,
+          "df=1": 10,
+          "df=2-3": 29,
+          "df>=4": 115
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 3,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 33,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.3153,
+        "sample": "总的来说，**复制／选择结构原语**：19.2v 封存确认 **188/192＝0.9792**，L1 机械不变量全 1.000；19.2w 末端停止边为 0 ",
+        "df_histogram": {
+          "df=0": 33,
+          "df=1": 28,
+          "df=2-3": 57,
+          "df>=4": 199
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 4,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 41,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.3109,
+        "sample": "总的来说，**读写地址之间没有 tie**：FEC-1 round-2 的 `query_alignment` **0.110 < 0.5**，两套读写 MLP",
+        "df_histogram": {
+          "df=0": 41,
+          "df=1": 41,
+          "df=2-3": 45,
+          "df>=4": 170
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 5,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 25,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2768,
+        "sample": "总的来说，**不是①表示层**：FEC-1 round-2 已证明写键可在**图内**修好（pairwise 0.0→**0.974**、秩 2→7、全过门），",
+        "df_histogram": {
+          "df=0": 25,
+          "df=1": 34,
+          "df=2-3": 71,
+          "df>=4": 216
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 6,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 35,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2497,
+        "sample": "总的来说，D 的层级归属不变（瓶颈在②地址层），但**缺件的内容变了**：不再是“没有可用的键形成原语”，而是“原语还没落到真实 store”。首轮验证在 ru",
+        "df_histogram": {
+          "df=0": 35,
+          "df=1": 29,
+          "df=2-3": 45,
+          "df>=4": 186
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "synonym",
+        "expected": 7,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 8,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.251,
+        "sample": "**范围口径**：该结论只覆盖“地址能否把同一内容的不同说法并到一处、能否对没写过的内容说不”，与“容量能否从 2 长起来且不驱逐”；**不含**整句生成、值与",
+        "df_histogram": {
+          "df=0": 8,
+          "df=1": 7,
+          "df=2-3": 26,
+          "df>=4": 113
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 7,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 4,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2398,
+        "sample": "总的来说，**范围口径**：该结论只覆盖“地址能否把同一内容的不同说法并到一处、能否对没写过的内容说不”，与“容量能否从 2 长起来且不驱逐”；**不含**整句",
+        "df_histogram": {
+          "df=0": 4,
+          "df=1": 6,
+          "df=2-3": 30,
+          "df>=4": 122
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 8,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 16,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2682,
+        "sample": "总的来说，沿N主线，发展由态极自身可学习、可恢复的认知机制参与决策与表达的原生认知模型，使其以自然中文可靠完成连续任务，跨会话积累和纠正经验，从可核验经验与反馈",
+        "df_histogram": {
+          "df=0": 16,
+          "df=1": 17,
+          "df=2-3": 50,
+          "df>=4": 127
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 9,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 14,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2439,
+        "sample": "总的来说，统计（2026-11-04 收敛后实测）：`plans/` 共 **1,063** 个文件（827 md + 232 json + 4 其他）；其中 ",
+        "df_histogram": {
+          "df=0": 14,
+          "df=1": 17,
+          "df=2-3": 31,
+          "df>=4": 92
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 10,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 19,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2408,
+        "sample": "总的来说，[14项意见的后续裁定](reference/MATH-ADJUDICATION_CORE_GRAPH_20261104.md)已纠正全域rank≤2",
+        "df_histogram": {
+          "df=0": 19,
+          "df=1": 23,
+          "df=2-3": 40,
+          "df>=4": 115
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 11,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 20,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2362,
+        "sample": "总的来说，设计后继M-GRAPH-1在[系统计划§17](reference/PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_",
+        "df_histogram": {
+          "df=0": 20,
+          "df=1": 17,
+          "df=2-3": 24,
+          "df>=4": 101
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 12,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 16,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2344,
+        "sample": "总的来说，后续旧field/fabric附件按[数学裁定§9](reference/MATH-ADJUDICATION_CORE_GRAPH_20261104.",
+        "df_histogram": {
+          "df=0": 16,
+          "df=1": 13,
+          "df=2-3": 24,
+          "df>=4": 90
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 13,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 15,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2367,
+        "sample": "总的来说，Task1能力与父身份以能力卡C12/包20§2为准；19.2v官方确认188/192，r2只挂工程修复证据。父资产必须包含根bundle、65,80",
+        "df_histogram": {
+          "df=0": 15,
+          "df=1": 9,
+          "df=2-3": 27,
+          "df>=4": 86
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 14,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 20,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2422,
+        "sample": "总的来说，包20的任务、CF1反馈写入与独立无F基线、51轮分母/22首答、错误与纠正预算见[详细计划](reference/PLAN-PACKAGE20_RU",
+        "df_histogram": {
+          "df=0": 20,
+          "df=1": 18,
+          "df=2-3": 28,
+          "df>=4": 122
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 15,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 28,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2896,
+        "sample": "总的来说，文档状态：[当前·能力表述权威]。日期2026-11-08，Asia/Shanghai。当前范围见C12与§2；旧候选数字按历史身份保留，不能覆盖后继",
+        "df_histogram": {
+          "df=0": 28,
+          "df=1": 24,
+          "df=2-3": 60,
+          "df>=4": 198
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 16,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 37,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2577,
+        "sample": "总的来说，**主体（subject）**：同一个模型实例带着自己的状态、记忆继续做事，不是每道题重新开一个模型。**原生字节**：模型直接读写原始 UTF-8 ",
+        "df_histogram": {
+          "df=0": 37,
+          "df=1": 39,
+          "df=2-3": 52,
+          "df>=4": 204
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 17,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 21,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2376,
+        "sample": "总的来说，`README.md` / `README.zh-CN.md`：第 2 节能力清单只保留 C1–C7，明确写出 U1–U8 未证、N8 不存在。`pl",
+        "df_histogram": {
+          "df=0": 21,
+          "df=1": 10,
+          "df=2-3": 29,
+          "df>=4": 93
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 18,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 19,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.236,
+        "sample": "总的来说，本轮撤回N3把16负增量当ST信用否证、N4把位置监督未证当证否、N9把旧前置锚点测试当最终Q架构失败的表述，分别纳入U9–U11。工作树新T3按C9",
+        "df_histogram": {
+          "df=0": 19,
+          "df=1": 10,
+          "df=2-3": 17,
+          "df>=4": 94
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 19,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 23,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2584,
+        "sample": "总的来说，后续[系统计划](PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md)覆盖17–22，远期能力均",
+        "df_histogram": {
+          "df=0": 23,
+          "df=1": 13,
+          "df=2-3": 16,
+          "df>=4": 73
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 20,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 22,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2382,
+        "sample": "总的来说，**18.0 落地（2026-11-04，仍待 owner 批准）**：A 的非训练部分已完成——数据前提（C11）、定价（六格裸价 9,109.4 ",
+        "df_histogram": {
+          "df=0": 22,
+          "df=1": 16,
+          "df=2-3": 38,
+          "df>=4": 152
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 21,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 21,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2546,
+        "sample": "总的来说，**18.1 预检（2026-11-04，通过，0 训练）**：六格 × 3 工程 Adam + 1 次失败注入（19 Adam / 200.8 CP",
+        "df_histogram": {
+          "df=0": 21,
+          "df=1": 14,
+          "df=2-3": 27,
+          "df>=4": 150
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 22,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 11,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2412,
+        "sample": "总的来说，三条结构事实（下表按 18.1 时点记录；**18.2 已改两处**：`prefix_cursor` 现在是真实递推的 count，pointer 在",
+        "df_histogram": {
+          "df=0": 11,
+          "df=1": 12,
+          "df=2-3": 26,
+          "df>=4": 110
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 23,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 16,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2378,
+        "sample": "总的来说，复制是否承重看任务门与 `new_name_copied`（独立门 ≥0.60），不看单步 `m`。验证出处：18.1 预检六格真实状态探针（`pre",
+        "df_histogram": {
+          "df=0": 16,
+          "df=1": 9,
+          "df=2-3": 30,
+          "df>=4": 108
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 24,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 4,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2361,
+        "sample": "总的来说，证据：[探针报告](../../reports/taiji_gate_sweep_18_1_20261104.json)＋[逐字节门预注册](../m",
+        "df_histogram": {
+          "df=0": 4,
+          "df=1": 5,
+          "df=2-3": 11,
+          "df>=4": 82
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 25,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 12,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2356,
+        "sample": "总的来说，**架构层结论（18.1 时点，可引用）**：`decode_endpoint` 是纯 `argmax`，没有 UTF-8 掩码或修复，**字节空间不",
+        "df_histogram": {
+          "df=0": 12,
+          "df=1": 5,
+          "df=2-3": 28,
+          "df>=4": 89
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 26,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 17,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2435,
+        "sample": "总的来说，**逐字节门（新包预注册，不追溯 18.1）**：物件 ≥0.95、地点 ≥0.95、`new_name_copied` ≥0.60、整句 0.80 ",
+        "df_histogram": {
+          "df=0": 17,
+          "df=1": 14,
+          "df=2-3": 34,
+          "df>=4": 119
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 27,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 7,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2368,
+        "sample": "总的来说，**该修哪一层（18.1 时点结论，18.2 已按此修复）**：门不是主杠杆（整句仍 0；且按 M3 不能由 γ 推断训练信用）；**主杠杆是前向的 ",
+        "df_histogram": {
+          "df=0": 7,
+          "df=1": 12,
+          "df=2-3": 25,
+          "df>=4": 108
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 28,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 6,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2331,
+        "sample": "总的来说，**18.2 更新（2026-11-04，验证达标；未定价、未训练）**：证据 `reports/taiji_cursor_utf8_18_2_202",
+        "df_histogram": {
+          "df=0": 6,
+          "df=1": 7,
+          "df=2-3": 12,
+          "df>=4": 88
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 29,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 5,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2508,
+        "sample": "总的来说，**19.2b 更新（2026-11-04，前段完成、D16-5 修正后停在六格前；证据见 [D16-5 复合仪器](../../reports/ta",
+        "df_histogram": {
+          "df=0": 5,
+          "df=1": 4,
+          "df=2-3": 6,
+          "df>=4": 74
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 30,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 3,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2358,
+        "sample": "总的来说，**19.2e 口径对账 + 强制覆盖探针（2026-11-04，0 更新；证据见 [19.2e 报告](../../reports/taiji_pa",
+        "df_histogram": {
+          "df=0": 3,
+          "df=1": 1,
+          "df=2-3": 9,
+          "df>=4": 73
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 31,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 4,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2374,
+        "sample": "总的来说，**19.2g 记录匹配对比边距（2026-11-04，30 Adam / 1 存包 / 0 confirm；证据见 [19.2g 报告](../..",
+        "df_histogram": {
+          "df=0": 4,
+          "df=1": 1,
+          "df=2-3": 12,
+          "df>=4": 70
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 32,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 5,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2331,
+        "sample": "总的来说，**19.2h 序列表面对齐（2026-11-04，60 Adam / 2 轨迹 / 1 存包 / 0 confirm；证据见 [19.2h 报告](",
+        "df_histogram": {
+          "df=0": 5,
+          "df=1": 6,
+          "df=2-3": 5,
+          "df>=4": 75
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 33,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 2,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2344,
+        "sample": "总的来说，**19.2j 从零选择段 A/B（2026-11-05 收口；证据见 [19.2j 报告](../../reports/taiji_package1",
+        "df_histogram": {
+          "df=0": 2,
+          "df=1": 6,
+          "df=2-3": 5,
+          "df>=4": 69
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 34,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 6,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.255,
+        "sample": "总的来说，**19.2l 顺序专用干扰负样本 · ② 活性闸（2026-11-05；证据见 [19.2l 报告](../../reports/taiji_pac",
+        "df_histogram": {
+          "df=0": 6,
+          "df=1": 2,
+          "df=2-3": 11,
+          "df>=4": 68
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 35,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 3,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2322,
+        "sample": "总的来说，**19.2l-B 已完成（2026-11-05；证据见 [B 报告](../../reports/taiji_package19_2l_order_",
+        "df_histogram": {
+          "df=0": 3,
+          "df=1": 0,
+          "df=2-3": 6,
+          "df>=4": 71
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 36,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 2,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2381,
+        "sample": "总的来说，**19.2n 同池孪生设计闸已完成（2026-11-05；0 Adam / 0 包 / 0 confirm；证据见 [报告](../../repor",
+        "df_histogram": {
+          "df=0": 2,
+          "df=1": 2,
+          "df=2-3": 13,
+          "df>=4": 104
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 37,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 1,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2363,
+        "sample": "总的来说，**19.2o 三层验收落点：provenance 零更新补算已完成（2026-11-05；0 Adam / 0 包 / 0 confirm；证据见 ",
+        "df_histogram": {
+          "df=0": 1,
+          "df=1": 3,
+          "df=2-3": 12,
+          "df>=4": 100
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 38,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 1,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2371,
+        "sample": "总的来说，**19.2s 扰动闸＋可学性探针与 D16-23（2026-11-05；0 候选训练 / 182.45 CPU；[报告](../../reports",
+        "df_histogram": {
+          "df=0": 1,
+          "df=1": 2,
+          "df=2-3": 10,
+          "df>=4": 112
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 39,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 4,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.235,
+        "sample": "总的来说，**19.2t 端到端零训练装配评测与 D16-24（2026-11-05；0 训练 / 130.05 CPU；[报告](../../reports/",
+        "df_histogram": {
+          "df=0": 4,
+          "df=1": 4,
+          "df=2-3": 11,
+          "df>=4": 78
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 40,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 5,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2315,
+        "sample": "总的来说，**19.2u 停止边界＋训练权重消融与 D16-25（2026-11-05；0 训练 / 256.72 CPU；[报告](../../reports",
+        "df_histogram": {
+          "df=0": 5,
+          "df=1": 3,
+          "df=2-3": 10,
+          "df>=4": 82
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 41,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 3,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2341,
+        "sample": "总的来说，**19.2v 封存集独立确认与 D16-26（2026-11-05；0 训练 / 144.06 CPU；[报告](../../reports/tai",
+        "df_histogram": {
+          "df=0": 3,
+          "df=1": 8,
+          "df=2-3": 11,
+          "df>=4": 106
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 42,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 4,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2353,
+        "sample": "总的来说，**19.2w 边界残差复现与修复与 D16-27（2026-11-05；0 训练 / 290.51 CPU；[报告](../../reports/t",
+        "df_histogram": {
+          "df=0": 4,
+          "df=1": 8,
+          "df=2-3": 14,
+          "df>=4": 116
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 43,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 8,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2365,
+        "sample": "总的来说，**20.1 规则学习夹具＋CF1/B_EH 参考图（2026-11-05；0 训练 / 159.53 CPU；状态：工程就绪、未训练；[报告](..",
+        "df_histogram": {
+          "df=0": 8,
+          "df=1": 6,
+          "df=2-3": 14,
+          "df>=4": 91
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 44,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 3,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2375,
+        "sample": "总的来说，**20.2 信用链＋负对照＋完整保存/独立恢复（2026-11-05；0 训练 / 153.08 CPU；状态：工程就绪、未训练；[报告](../.",
+        "df_histogram": {
+          "df=0": 3,
+          "df=1": 2,
+          "df=2-3": 13,
+          "df>=4": 99
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 45,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 3,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.237,
+        "sample": "总的来说，**20.2r 重放一致性＋F 杠杆闸（2026-11-05；0 训练 / 161.48 CPU；状态：工程就绪、未训练；[报告](../../rep",
+        "df_histogram": {
+          "df=0": 3,
+          "df=1": 2,
+          "df=2-3": 12,
+          "df>=4": 93
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 46,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 50,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2475,
+        "sample": "总的来说，**重放**：以提交字节（`cd23ce2e…`）重跑轮 18，loss / dL/dF / 份额 / 分头矩阵四项**相对误差 0.0**（门 1e",
+        "df_histogram": {
+          "df=0": 50,
+          "df=1": 27,
+          "df=2-3": 54,
+          "df>=4": 181
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 47,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 2,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2383,
+        "sample": "总的来说，**20.2s F 信息含量闭式探针（2026-11-05；0 训练 / 119.67 CPU；状态：工程就绪、未训练；[报告](../../repo",
+        "df_histogram": {
+          "df=0": 2,
+          "df=1": 3,
+          "df=2-3": 14,
+          "df>=4": 118
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 48,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 10,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2738,
+        "sample": "总的来说，**20.2t 写入粒度设计闸（2026-11-05；0 训练 / 0 参数 / 0 代码；状态：设计产物、未实施；[备忘](../../plans/",
+        "df_histogram": {
+          "df=0": 10,
+          "df=1": 4,
+          "df=2-3": 16,
+          "df>=4": 106
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 49,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 3,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2425,
+        "sample": "总的来说，**20.3a 每轮内容寻址写实施与三闸判定（2026-11-05；0 训练 / 224.94 CPU；状态：实施完成、判 `option2_fail",
+        "df_histogram": {
+          "df=0": 3,
+          "df=1": 6,
+          "df=2-3": 13,
+          "df>=4": 119
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 50,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 2,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2395,
+        "sample": "总的来说，**19.2r 字节匹配设计闸与 D16-22（2026-11-05；0 Adam / 0 训练前向 / 1.88 CPU；[报告](../../re",
+        "df_histogram": {
+          "df=0": 2,
+          "df=1": 3,
+          "df=2-3": 12,
+          "df>=4": 120
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 51,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 7,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2339,
+        "sample": "总的来说，**任务语义契约与 D16-21（2026-11-05；0 Adam / 0 前向 / 0.141 CPU；[契约页](TASK-SEMANTIC-C",
+        "df_histogram": {
+          "df=0": 7,
+          "df=1": 6,
+          "df=2-3": 16,
+          "df>=4": 105
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 52,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 3,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.236,
+        "sample": "总的来说，**19.2p 候选池口径提案设计闸：判定 `proposal_not_admissible`，不进入定价（2026-11-05；0 Adam / 0",
+        "df_histogram": {
+          "df=0": 3,
+          "df=1": 5,
+          "df=2-3": 18,
+          "df>=4": 108
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 53,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 21,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2591,
+        "sample": "总的来说，**能力声明修订（2026-11-04，owner 裁定）**：**“任意记录切换”永久放弃为能力声明**，降级为**上限研究方向**（可作为未来设计",
+        "df_histogram": {
+          "df=0": 21,
+          "df=1": 9,
+          "df=2-3": 31,
+          "df>=4": 133
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 54,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 4,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2407,
+        "sample": "总的来说，执行20的规则学习与反例纠正只完成规划及公共规则静态预审。F更新、独立无F模型、反馈后新查询、合法历史保持、三会话恢复都尚未实测。具体范围和误差预算见",
+        "df_histogram": {
+          "df=0": 4,
+          "df=1": 13,
+          "df=2-3": 34,
+          "df>=4": 81
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 55,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 15,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2471,
+        "sample": "总的来说，**2026-11-08（设计层，未证）**：禁改清单、U1 勘误、生长设计落盘，预审 8/8；U1 勘误 E1/E2 **已并入正文**（P4 状态",
+        "df_histogram": {
+          "df=0": 15,
+          "df=1": 23,
+          "df=2-3": 31,
+          "df>=4": 146
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 56,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 7,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2464,
+        "sample": "总的来说，**2026-11-08（生长接线，0 训练）**：容量生长已落到真实图但**默认关闭**，判 `growth_wired_default_off`—",
+        "df_histogram": {
+          "df=0": 7,
+          "df=1": 12,
+          "df=2-3": 38,
+          "df>=4": 147
+        }
+      },
+      {
+        "kind": "paraphrase",
+        "variant": "lead_in",
+        "expected": 57,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 25,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2461,
+        "sample": "总的来说，**2026-11-08（字节地址，0 训练）**：把 store 的地址生成从 128 维均值换成 19.2r 已验证的 `ByteMatchRou",
+        "df_histogram": {
+          "df=0": 25,
+          "df=1": 35,
+          "df=2-3": 50,
+          "df>=4": 202
+        }
+      }
+    ]
+  },
+  "write_costs": [
+    {
+      "batch": 0,
+      "items": 10,
+      "action": "accepted",
+      "global_ms": 19.6988,
+      "ok": true
+    },
+    {
+      "batch": 1,
+      "items": 10,
+      "action": "accepted",
+      "global_ms": 45.1303,
+      "ok": true
+    },
+    {
+      "batch": 2,
+      "items": 10,
+      "action": "accepted",
+      "global_ms": 86.249,
+      "ok": true
+    },
+    {
+      "batch": 3,
+      "items": 10,
+      "action": "accepted",
+      "global_ms": 89.6051,
+      "ok": true
+    },
+    {
+      "batch": 4,
+      "items": 10,
+      "action": "accepted",
+      "global_ms": 114.3532,
+      "ok": true
+    },
+    {
+      "batch": 5,
+      "items": 8,
+      "action": "accepted",
+      "global_ms": 146.1553,
+      "ok": true
+    }
+  ],
+  "cost": {
+    "cpu_seconds": 3.109,
+    "wall_seconds": 1.32,
+    "mean_global_ms": 83.5319,
+    "max_global_ms": 146.1553,
+    "mean_read_ms": 1.5245
+  },
+  "criteria": {
+    "A1_fixture_assumption": "the whole address system assumes each stored record carries at least one word whose document frequency is 1, so that a query can be anchored to exactly one address.  This fixture property was never tested on text that was not authored to satisfy it.",
+    "C1_corpus_frozen_before_run": "the manifest is written before the first reading and records the source file sha256, the paragraph sha256 list, the paraphrase table, the counts and the verdict thresholds.  The run aborts if any source file hash moved.",
+    "C2_same_implementation_same_switch": "the table under test is the AddressTable allocated by LivingCoreConfig(sc_sfk_enabled=True) through attach_store; writes use write_batch_checked and reads use table.read, the exact methods the store calls.  Zero new parameters, zero tensors.",
+    "C3_no_threshold_tuning": "no numeric threshold on the read path, no leading margin, no retry with another address definition.  The usable line is fixed in the manifest before the run.",
+    "V_wrong_pointer": "a should-anchor query answered 'matched' to an address other than its own record",
+    "V_a1_required": "wrong_pointer > 0: the no-wrong-answer property depends on A1; go back to the address definition, never add a threshold or a leading margin.",
+    "V_address_not_usable_off_fixture": "wrong_pointer = 0 AND usable_ratio < 0.6: the address definition does not carry enough unique anchors on natural prose.",
+    "V_address_holds_off_fixture": "wrong_pointer = 0 AND usable_ratio >= 0.6: still has no trainable degree of freedom; 0 parameters, 0 gradients.",
+    "V_inconclusive": "distribution only: neither branch reaches its threshold cleanly."
+  },
+  "disclosures": [
+    "the query set is frozen in the manifest before the run; the usable line was fixed at 0.60 before the first reading",
+    "the address layer is exercised through the AddressTable the switch allocates; values are 16-hex-character record tags, not fast snapshots, because A1 is a property of the address layer and the value bytes cannot influence it",
+    "held-out paragraphs come from a file that is never written; a 'matched' answer on one of them is reported separately as a false positive (unknown-side), and is not folded into wrong_pointer",
+    "the paraphrase is lexical only (a fixed synonym table); clause reordering is not used because the address is position-free and a reorder would keep the feature set identical",
+    "similarity columns are diagnostics; no exit reads them"
+  ]
+}

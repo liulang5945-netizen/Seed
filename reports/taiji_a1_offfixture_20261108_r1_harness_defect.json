@@ -1,0 +1,245 @@
+{
+  "schema": "taiji-a1-offfixture-v1",
+  "verdict": "address_holds_off_fixture",
+  "manifest": "plans\\manifests\\taiji_a1_offfixture_20261108.json",
+  "manifest_sha256": "1885af925b25524724272278b535b6e3b36f24fd00d3306ab903eb7c4db1fbc6",
+  "runner_sha_start": "784ff242460b08ddec4a78d7d1011d2e681d75e51f2d3f23514862b80febb61f",
+  "runner_sha_end": "784ff242460b08ddec4a78d7d1011d2e681d75e51f2d3f23514862b80febb61f",
+  "switch": {
+    "sc_sfk_enabled": true,
+    "table_allocated_by_switch": true,
+    "new_parameters": 0,
+    "tensors_in_table": false,
+    "join": "8 self-reads compared between table.read and addressed_read",
+    "join_rows": [
+      {
+        "record": 0,
+        "direct_decision": "matched",
+        "direct_address": 0,
+        "switch_decision": "matched",
+        "switch_address": 0,
+        "agree": true
+      },
+      {
+        "record": 1,
+        "direct_decision": "matched",
+        "direct_address": 1,
+        "switch_decision": "matched",
+        "switch_address": 1,
+        "agree": true
+      },
+      {
+        "record": 2,
+        "direct_decision": "matched",
+        "direct_address": 2,
+        "switch_decision": "matched",
+        "switch_address": 2,
+        "agree": true
+      },
+      {
+        "record": 3,
+        "direct_decision": "matched",
+        "direct_address": 3,
+        "switch_decision": "matched",
+        "switch_address": 3,
+        "agree": true
+      },
+      {
+        "record": 4,
+        "direct_decision": "matched",
+        "direct_address": 4,
+        "switch_decision": "matched",
+        "switch_address": 4,
+        "agree": true
+      },
+      {
+        "record": 5,
+        "direct_decision": "matched",
+        "direct_address": 5,
+        "switch_decision": "matched",
+        "switch_address": 5,
+        "agree": true
+      },
+      {
+        "record": 6,
+        "direct_decision": "matched",
+        "direct_address": 6,
+        "switch_decision": "matched",
+        "switch_address": 6,
+        "agree": true
+      },
+      {
+        "record": 7,
+        "direct_decision": "matched",
+        "direct_address": 7,
+        "switch_decision": "matched",
+        "switch_address": 7,
+        "agree": true
+      }
+    ],
+    "join_agreement": 8
+  },
+  "table": {
+    "addresses": 58,
+    "capacity": 64,
+    "peak_capacity": 64,
+    "generation": 5,
+    "appended": 58,
+    "merged": 0,
+    "replaced": 0,
+    "rejected_batches": 0,
+    "rollbacks": 0,
+    "evictions": 0,
+    "silent_overwrites": 0,
+    "global_checks": 6,
+    "global_failures": 0,
+    "addressable": 58,
+    "unique_features": 744,
+    "duplicate_records": 0,
+    "nbytes": 1937436
+  },
+  "denominators": {
+    "should_anchor": 62,
+    "should_unknown": 20,
+    "should_ambiguous": 20,
+    "uniquely_anchorable": 62,
+    "paraphrase_zero_replacements": 54
+  },
+  "readings": {
+    "counts": {
+      "self": 58,
+      "paraphrase": 4,
+      "unknown": 20,
+      "ambiguous": 20
+    },
+    "should_anchor": {
+      "n": 62,
+      "matched_correct": 61,
+      "wrong_pointer": 0,
+      "no_match": 1,
+      "ambiguous": 0,
+      "usable_ratio": 0.983871,
+      "uniquely_anchorable": 62,
+      "uniquely_anchorable_ratio": 1.0
+    },
+    "by_kind": {
+      "self": {
+        "n": 58,
+        "matched_correct": 58,
+        "wrong_pointer": 0,
+        "no_match": 0,
+        "ambiguous": 0
+      },
+      "paraphrase": {
+        "n": 4,
+        "matched_correct": 3,
+        "wrong_pointer": 0,
+        "no_match": 1,
+        "ambiguous": 0
+      }
+    },
+    "should_unknown": {
+      "n": 20,
+      "no_match": 20,
+      "matched_false_positive": 0,
+      "ambiguous": 0
+    },
+    "should_ambiguous": {
+      "n": 20,
+      "ambiguous": 0,
+      "no_match": 20,
+      "matched": 0
+    },
+    "failures": [
+      {
+        "kind": "paraphrase",
+        "expected": 7,
+        "decision": "no_match",
+        "address": null,
+        "anchors": 0,
+        "unique_in_query": 0,
+        "unknown_features": 8,
+        "top1": 0.0,
+        "top2": 0.0,
+        "margin": 0.0,
+        "read_ms": 0.2676,
+        "sample": "**范围口径**：该结论只覆盖“地址能否把同一内容的不同说法并到一处、能否对没写过的内容说不”，与“容量能否从 2 长起来且不驱逐”；**不含**整句生成、值与",
+        "df_histogram": {
+          "df=0": 8,
+          "df=1": 7,
+          "df=2-3": 26,
+          "df>=4": 113
+        }
+      }
+    ]
+  },
+  "write_costs": [
+    {
+      "batch": 0,
+      "items": 10,
+      "action": "accepted",
+      "global_ms": 20.0044,
+      "ok": true
+    },
+    {
+      "batch": 1,
+      "items": 10,
+      "action": "accepted",
+      "global_ms": 50.665,
+      "ok": true
+    },
+    {
+      "batch": 2,
+      "items": 10,
+      "action": "accepted",
+      "global_ms": 76.8084,
+      "ok": true
+    },
+    {
+      "batch": 3,
+      "items": 10,
+      "action": "accepted",
+      "global_ms": 93.1003,
+      "ok": true
+    },
+    {
+      "batch": 4,
+      "items": 10,
+      "action": "accepted",
+      "global_ms": 115.8175,
+      "ok": true
+    },
+    {
+      "batch": 5,
+      "items": 8,
+      "action": "accepted",
+      "global_ms": 157.0329,
+      "ok": true
+    }
+  ],
+  "cost": {
+    "cpu_seconds": 3.047,
+    "wall_seconds": 1.239,
+    "mean_global_ms": 85.5714,
+    "max_global_ms": 157.0329,
+    "mean_read_ms": 1.6397
+  },
+  "criteria": {
+    "A1_fixture_assumption": "the whole address system assumes each stored record carries at least one word whose document frequency is 1, so that a query can be anchored to exactly one address.  This fixture property was never tested on text that was not authored to satisfy it.",
+    "C1_corpus_frozen_before_run": "the manifest is written before the first reading and records the source file sha256, the paragraph sha256 list, the paraphrase table, the counts and the verdict thresholds.  The run aborts if any source file hash moved.",
+    "C2_same_implementation_same_switch": "the table under test is the AddressTable allocated by LivingCoreConfig(sc_sfk_enabled=True) through attach_store; writes use write_batch_checked and reads use table.read, the exact methods the store calls.  Zero new parameters, zero tensors.",
+    "C3_no_threshold_tuning": "no numeric threshold on the read path, no leading margin, no retry with another address definition.  The usable line is fixed in the manifest before the run.",
+    "V_wrong_pointer": "a should-anchor query answered 'matched' to an address other than its own record",
+    "V_a1_required": "wrong_pointer > 0: the no-wrong-answer property depends on A1; go back to the address definition, never add a threshold or a leading margin.",
+    "V_address_not_usable_off_fixture": "wrong_pointer = 0 AND usable_ratio < 0.6: the address definition does not carry enough unique anchors on natural prose.",
+    "V_address_holds_off_fixture": "wrong_pointer = 0 AND usable_ratio >= 0.6: still has no trainable degree of freedom; 0 parameters, 0 gradients.",
+    "V_inconclusive": "distribution only: neither branch reaches its threshold cleanly."
+  },
+  "disclosures": [
+    "the query set is frozen in the manifest before the run; the usable line was fixed at 0.60 before the first reading",
+    "the address layer is exercised through the AddressTable the switch allocates; values are 16-hex-character record tags, not fast snapshots, because A1 is a property of the address layer and the value bytes cannot influence it",
+    "held-out paragraphs come from a file that is never written; a 'matched' answer on one of them is reported separately as a false positive (unknown-side), and is not folded into wrong_pointer",
+    "the paraphrase is lexical only (a fixed synonym table); clause reordering is not used because the address is position-free and a reorder would keep the feature set identical",
+    "similarity columns are diagnostics; no exit reads them"
+  ]
+}
