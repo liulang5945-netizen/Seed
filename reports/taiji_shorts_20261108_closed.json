@@ -1,0 +1,42 @@
+{
+  "schema": "taiji-shorts-closed-v1",
+  "date": "2026-11-08",
+  "question": "after the short-entry edit (band 6, final chunk dropped, one-block floor, overlap fallback), is the address module still inert while the switch is off?",
+  "verdict": "shorts_closed_neutral",
+  "checks": {
+    "default_off": true,
+    "table_not_allocated": true,
+    "readings_total": 176,
+    "fast_max_abs_delta": 0.0,
+    "probability_max_abs_delta": 0.0,
+    "fast_digests_equal": 176,
+    "probability_digests_equal": 176,
+    "fields_equal": 176,
+    "tags_equal": true,
+    "parameter_tensors_equal": true,
+    "parameter_elements_equal": true,
+    "parameter_sha_equal": true,
+    "state_bytes_equal": true,
+    "candidate_sha_v2_equal": true,
+    "store_signature_equal": true
+  },
+  "baseline": {
+    "report": "taiji_store_wire_20261108_baseline.json",
+    "living_core_sha256": "df7942806de9352418bea6e195f920c416b38a1be48236e05b36981b83527f7b",
+    "candidate_sha_v2": "ff60ac2578f09f346f4bad9cf3d0fd0986633bd49e4e82c7ac76573dd87389ea"
+  },
+  "current": {
+    "candidate_sha_v2": "ff60ac2578f09f346f4bad9cf3d0fd0986633bd49e4e82c7ac76573dd87389ea",
+    "state_bytes": 1100064
+  },
+  "disclosures": [
+    "the edit rewrote taiji/sc_sfk.py and the two SC-SFK call sites in living_core; while the flag is off no table is allocated and no edited line is reached. The battery is replayed because the claim is re-proved, not inferred.",
+    "the comparison is against baseline arrays captured before taiji/ was edited."
+  ],
+  "runner_sha256_start": "ddc69a1ac2c00e96161b73a8c9e206e4aa2b5506de4f415d726085fb079f12e7",
+  "runner_sha256_end": "ddc69a1ac2c00e96161b73a8c9e206e4aa2b5506de4f415d726085fb079f12e7",
+  "cost": {
+    "cpu_seconds": 45.891,
+    "wall_seconds": 4.31
+  }
+}

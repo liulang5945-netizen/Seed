@@ -11,29 +11,105 @@ the cut set is a function of the bytes alone.  Chunks shorter than
 extended, because length is looked at only after the cut set is fixed.  A chunk's
 fingerprint is ``sha256(chunk)[:16].hex()``.
 
-The record identity ``S(r)`` is the **ordered fingerprint sequence** of the chunks
-that remain after dropping every chunk that overlaps the first 16 bytes or the
-last 16 bytes of the record (the protection band).  The band is what makes the
-identity a function of the interior only: any prefix or suffix appended to a
-query changes at most the first / last chunk of the chunking, both of which lie
-outside ``S(r)``.
+The record identity ``S(r)`` is the **ordered fingerprint sequence** of every
+chunk ``[a, b)`` with ``a >= PROTECT`` and ``b < len(r)``:
+
+* ``PROTECT = WINDOW = 6`` is the true dependency width of the predicate -- six
+  bytes, no more.  A cut at offset ``a`` reads ``r[a-6:a]``, so a prefix can only
+  disturb cuts at offsets ``a < 6``.  That is exactly the band, and it is the
+  smallest band for which the shift theorem below holds.
+* ``b < len(r)`` drops only the **final** chunk, the one whose right edge is the
+  buffer end.  Any suffix rewrites that chunk's bytes, so it can never be part of
+  the identity; every other chunk ends at a real cut and is untouched by a suffix.
+
+Because only whole chunks are kept, ``S(r)`` is a contiguous run of the record's
+own chunk list (the dropped chunks sit at the two ends only).
 
 A query's key ``C(Q)`` is the fingerprint sequence of **all** its chunks; the
 query is not banded.  A record is anchored iff ``S(r)`` appears as a **contiguous
-subsequence** of ``C(Q)``.  Zero, one and several anchors are recorded as
-readings (``no_anchor`` / ``matched`` / ``ambiguous_candidates``); a read always
-returns the top-1 record, ranked by covered blocks descending, coverage ratio
-descending, address index ascending.  Nothing outside the chunk sequence can
-manufacture an anchor: an anchor requires the whole interior of the target record
-to be present, in order, contiguously.
+subsequence** of ``C(Q)``.
+
+Shortest addressable length
+---------------------------
+``MIN_ADDRESSABLE = MIN_CHUNK + PROTECT + 1 = 16 + 6 + 1 = 23`` bytes.  One
+identity chunk needs ``a >= 6``, ``b - a >= 16`` and ``b <= len(r) - 1``, hence
+``len(r) >= 23``.  The bound is **necessary, not sufficient**: whether cuts at
+``a`` and ``b`` actually exist is content-dependent, so a record of 23 bytes or
+more can still be unaddressable.  A record shorter than 23 bytes has no identity
+at all and is rejected alone.
+
+Shift invariance (theorem, checkable line by line)
+--------------------------------------------------
+Premise: the cut predicate at offset ``i`` is ``pred(r, i) = ((h_i & 0x3F) == 0)``
+with ``h_i = sum_{k<i} G[r[k]] * 2^{i-1-k} mod 2^64``; modulo 64 only the last
+six terms survive, so ``pred(r, i)`` depends on ``r[i-6:i]`` alone.  Identity
+keeps every chunk ``[a, b)`` with ``a >= 6``, ``b - a >= 16``, ``b < len(r)``.
+
+Equality: for any prefix ``p`` and suffix ``s``, ``S(r)`` is a contiguous
+subsequence of ``C(p + r + s)``.
+
+* Prefix: for every offset ``i`` with ``6 <= i <= len(r)``,
+  ``pred(p + r, |p| + i) = pred(r, i)`` because the six bytes ending at
+  ``|p| + i`` are ``r[i-6:i]``.  Hence every chunk ``[a, b)`` of ``r`` with
+  ``a >= 6`` is the chunk ``[a + |p|, b + |p|)`` of ``p + r`` with identical
+  bytes and the same fingerprint.
+* Suffix: for every offset ``i <= len(r)``, ``pred(r + s, i) = pred(r, i)``
+  because the window still ends inside ``r``.  Hence every chunk ``[a, b)`` with
+  ``b <= len(r) - 1`` survives byte-identically; only the final chunk (whose
+  right edge is the buffer end) changes.
+* Both: the retained chunks of ``r`` keep their order and their fingerprints,
+  nothing is inserted between them, and the two ends of ``p + r + s`` can only
+  contribute chunks outside ``S(r)``.  Therefore ``S(r)`` occurs contiguously.
+
+Failure constructions (each one is a counterexample to a wrong constant):
+
+* ``PROTECT < 6``: take ``r`` with a cut at offset ``a = 4`` and a chunk
+  ``[4, 20)``; prepend one byte.  The window ending at 4 becomes ``p + r[0:4]``,
+  the cut can vanish, ``[4, 20)`` merges into the first chunk and its fingerprint
+  disappears.  Six is the smallest band that rules this out.
+* No final-chunk drop: append one byte to ``r``.  The final chunk becomes
+  ``[last_cut, len(r)+1)`` with a new fingerprint, so an identity that contained
+  it loses its anchor.
+* No ``MIN_CHUNK`` drop (short chunks merged instead of discarded): merging
+  changes the start of the next chunk, so its bytes -- and every fingerprint
+  after it -- become prefix-dependent again.
+* Keep the first chunk (``a >= 0``): a 15-byte lead-in makes that chunk absorb
+  the prefix, so its fingerprint differs and no record with that chunk anchors.
+* Allow an **empty** identity: ``S(r) = ()`` is a contiguous subsequence of every
+  ``C(Q)``, so every query anchors every such record -- the exact mis-point the
+  one-block floor forbids.  This is why the floor is 1, not 0.
+
+Reads, anchors and the fallback
+------------------------------
+Zero, one and several anchors are recorded as readings (``no_anchor`` /
+``matched`` / ``ambiguous_candidates``); a read always returns the top-1 record
+and a legal slice of its stored bytes.
+
+* Anchored: choose among the anchors by covered blocks descending, coverage ratio
+  descending, address index ascending.
+* Not anchored (``no_anchor`` label, printed in the result): rank **every** record
+  by block-level overlap -- ``shared / (|S(r)| + |C(Q)| - shared)``, the multiset
+  Jaccard index between the query's chunks and the record's identity chunks --
+  then by address index ascending.  ``fallback_reason`` is ``no_anchor`` when some
+  block is shared and ``no_overlap`` when none is.  The fallback decides **who**
+  is printed, never **whether** anything is printed, and it introduces no
+  pass/reject threshold: an anchored record always outranks the fallback, and
+  anchoring itself is exact (coverage ratio 1.0), not a line.
+
+Nothing outside the chunk sequence can manufacture an anchor: an anchor requires
+the whole ``S(r)`` to be present, in order, contiguously.  The one thing a short
+record gives up is *specificity*, not the rule: a single-block identity certifies
+at least ``MIN_CHUNK = 16`` verbatim interior bytes (plus the cut-context
+condition), where a long record certifies many such blocks.  An empty identity
+would anchor every query -- that is why the floor is one block, not zero.
 
 Write policy
 ------------
 Never a batch rollback, never an eviction, never a silent overwrite.  Each record
 is admitted or rejected **alone**:
 
-* rejected if fewer than two identity chunks remain (record too short to have an
-  interior);
+* rejected if **no** identity chunk remains (record shorter than 23 bytes, or no
+  cut pair inside the addressable band);
 * rejected if an address with the same identity already holds a different value;
 * rejected if its identity is a contiguous subsequence of an existing identity or
   an existing identity is a contiguous subsequence of it (containment clash);
@@ -50,10 +126,11 @@ import hashlib
 from typing import Any
 
 START_CAPACITY = 2
-WINDOW = 16
+WINDOW = 6
 MIN_CHUNK = 16
 MASK = 0x3F
-PROTECT = 16
+PROTECT = WINDOW
+MIN_ADDRESSABLE = MIN_CHUNK + PROTECT + 1
 MASK64 = 0xFFFFFFFFFFFFFFFF
 GEAR_SALT = b"taiji-gear-v1"
 
@@ -102,10 +179,14 @@ def _fingerprint(block: bytes) -> str:
 
 
 def identity_blocks(raw: bytes) -> list[tuple[int, int, str]]:
-    """Chunks outside the head/tail protection band, in order."""
+    """Chunks that start past the prefix band and end before the buffer end.
+
+    ``block[0] >= PROTECT`` keeps only cuts whose six-byte window lies inside the
+    record; ``block[1] < len(raw)`` drops the final chunk, whose right edge moves
+    with any suffix.
+    """
     blocks = chunks(raw)
-    end = len(raw) - PROTECT
-    return [block for block in blocks if block[0] >= PROTECT and block[1] <= end]
+    return [block for block in blocks if block[0] >= PROTECT and block[1] < len(raw)]
 
 
 def identity(raw: bytes) -> tuple[str, ...]:
@@ -148,6 +229,79 @@ def is_subsequence(short: tuple[str, ...], long: tuple[str, ...]) -> bool:
     if not short or len(short) > len(long):
         return False
     return longest_contiguous_run(short, long)[0] == len(short)
+
+
+def block_overlap(ident: tuple[str, ...], query: tuple[str, ...]) -> tuple[int, int, float]:
+    """Multiset block overlap: ``(shared, union, shared / union)``.
+
+    ``shared`` counts each fingerprint as often as it occurs in both sequences,
+    so a block repeated twice in the record and once in the query is shared once.
+    The ratio is the Jaccard index; it is a *ranking* signal for the fallback,
+    never a pass/reject line.
+    """
+    counts: dict[str, int] = {}
+    for token in query:
+        counts[token] = counts.get(token, 0) + 1
+    shared = 0
+    for token in ident:
+        if counts.get(token, 0) > 0:
+            counts[token] -= 1
+            shared += 1
+    union = len(ident) + len(query) - shared
+    return shared, union, (shared / union) if union else 0.0
+
+
+def chunk_address_audit() -> dict[str, Any]:
+    """Numeric surface of the address rule, for the freeze/run tolerance audit.
+
+    Returns every upper-case module constant that is an ``int``/``float`` and
+    every numeric literal that appears inside the read path (``read``,
+    ``block_overlap``, ``identity_blocks``, ``_output_span``).  A new constant or
+    a new literal is a *visible* change; the runner compares this dict with the
+    frozen copy, so no tolerance can be added silently.
+    """
+    import ast
+    from pathlib import Path
+
+    tree = ast.parse(Path(__file__).read_text(encoding="utf-8"))
+    names: list[str] = []
+    for node in tree.body:
+        if (
+            isinstance(node, ast.Assign)
+            and len(node.targets) == 1
+            and isinstance(node.targets[0], ast.Name)
+            and node.targets[0].id.isupper()
+        ):
+            names.append(node.targets[0].id)
+    constants = {
+        name: globals()[name]
+        for name in names
+        if isinstance(globals().get(name), (int, float))
+        and not isinstance(globals().get(name), bool)
+    }
+    scope = ("read", "block_overlap", "identity_blocks", "_output_span")
+    literals: dict[str, list[float]] = {}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.FunctionDef) and node.name in scope:
+            values = sorted(
+                {
+                    float(item.value)
+                    for item in ast.walk(node)
+                    if isinstance(item, ast.Constant)
+                    and isinstance(item.value, (int, float))
+                    and not isinstance(item.value, bool)
+                }
+            )
+            literals[node.name] = values
+    return {
+        "constants": constants,
+        "read_path_literals": literals,
+        "protection": {
+            "PROTECT_equals_WINDOW": bool(PROTECT == WINDOW),
+            "MIN_ADDRESSABLE_matches_definition": bool(MIN_ADDRESSABLE == MIN_CHUNK + PROTECT + 1),
+            "MIN_ADDRESSABLE": MIN_ADDRESSABLE,
+        },
+    }
 
 
 def _payload_bytes(value: Any) -> int:
@@ -208,7 +362,7 @@ class AddressTable:
         return values[-1] if values else None
 
     def _admission(self, ident: tuple[str, ...], value: Any) -> str | None:
-        if len(ident) < 2:
+        if not ident:
             return "identity_too_short"
         existing = self.find(ident)
         if existing is not None:
@@ -273,13 +427,19 @@ class AddressTable:
 
     # -- read ---------------------------------------------------------------
     def read(self, raw: bytes) -> dict[str, Any]:
-        """Always return a top-1 record and a legal slice of its stored bytes."""
+        """Always return a top-1 record and a legal slice of its stored bytes.
+
+        Anchored reads choose among the anchors; an unanchored read is labelled
+        (``fallback`` / ``fallback_reason``) and ranked by block overlap.  The
+        label is a reading: it never changes whether an output is produced.
+        """
         query = features(raw)
         ranked: list[dict[str, Any]] = []
         for index, address in enumerate(self.addresses):
             ident = address["identity"]
             run, needle_start, haystack_start = longest_contiguous_run(ident, query)
             contained = run == len(ident) and needle_start == 0
+            shared, union, overlap = block_overlap(ident, query)
             ranked.append(
                 {
                     "index": index,
@@ -288,17 +448,35 @@ class AddressTable:
                     "contained": contained,
                     "needle_start": needle_start,
                     "haystack_start": haystack_start,
+                    "shared": shared,
+                    "union": union,
+                    "overlap": overlap,
                 }
             )
-        ranked.sort(key=lambda row: (-row["covered"], -row["ratio"], row["index"]))
-        anchors = [row["index"] for row in ranked if row["contained"]]
+        anchors = [row for row in ranked if row["contained"]]
+        anchors.sort(key=lambda row: (-row["covered"], -row["ratio"], row["index"]))
         if len(anchors) == 1:
             decision = "matched"
         elif len(anchors) > 1:
             decision = "ambiguous_multiple_anchors"
         else:
             decision = "no_match"
-        top = ranked[0] if ranked else None
+        if anchors:
+            pool = anchors
+            top = pool[0]
+            fallback = False
+            fallback_reason = "none"
+        else:
+            ranked.sort(key=lambda row: (-row["overlap"], row["index"]))
+            pool = ranked
+            top = pool[0] if pool else None
+            fallback = top is not None
+            if top is None:
+                fallback_reason = "empty_table"
+            elif top["shared"] > 0:
+                fallback_reason = "no_anchor"
+            else:
+                fallback_reason = "no_overlap"
         output: dict[str, Any] | None = None
         value = None
         if top is not None:
@@ -314,17 +492,21 @@ class AddressTable:
                 "full_record": start == 0 and end == len(address["raw"]),
             }
             value = self.value_at(top["index"])
-        top1 = float(top["ratio"]) if top is not None else 0.0
-        top2 = float(ranked[1]["ratio"]) if len(ranked) > 1 else 0.0
+        top1 = float(top["overlap"] if fallback else top["ratio"]) if top is not None else 0.0
+        top2 = float(pool[1]["overlap"] if fallback else pool[1]["ratio"]) if len(pool) > 1 else 0.0
         return {
             "decision": decision,
             "address": top["index"] if top is not None else None,
             "value": value,
-            "anchors": anchors,
+            "anchors": [row["index"] for row in anchors],
             "ambiguous_candidates": len(anchors),
             "no_anchor": not anchors,
+            "fallback": fallback,
+            "fallback_reason": fallback_reason,
             "covered_blocks": top["covered"] if top is not None else 0,
-            "coverage_ratio": round(top1, 9),
+            "coverage_ratio": round(float(top["ratio"]) if top is not None else 0.0, 9),
+            "shared_blocks": top["shared"] if top is not None else 0,
+            "overlap_ratio": round(float(top["overlap"]) if top is not None else 0.0, 9),
             "contained": bool(top["contained"]) if top is not None else False,
             "output": output,
             "query_blocks": len(query),
