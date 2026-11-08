@@ -1,0 +1,24 @@
+{
+  "format": "taiji-growth-gate-p3-manifest-v1",
+  "generated_at": "2026-11-08T12:34:02",
+  "report": "reports/taiji_growth_gate_p3_20261108.json",
+  "report_sha256": "12bcc26928866af941d34bdc88de11a97a2718b63b444702bbda093ff5d4ea2b",
+  "runner": "scripts/training/probe_taiji_growth_gate_p3_20261108.py",
+  "runner_sha256": "f2cc28282782589deeb98511ec3dcfc6506c3482161f04b5f9c715a6b9e9eb51",
+  "gate_sha256": "2ed8b0dd3ed63af20e925155a48b2825b9664fe9f22a37b102b25f9cb89ba6de",
+  "decision": "p3_falsified_A1",
+  "checks": {
+    "A1": false,
+    "A2": true,
+    "A3": true,
+    "B1": true,
+    "B2": false,
+    "B3": false,
+    "C1": true,
+    "D1": true,
+    "D2": true,
+    "E": true
+  },
+  "criteria_sha256": "53079fda6610559423b8eed3ff12651e7886bf560b5d84c371b5b3ef932cbdd5",
+  "cpu_seconds": 0.5625
+}

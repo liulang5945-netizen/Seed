@@ -605,6 +605,16 @@ route_miss 37/96 **全在物件侧**；地点侧的失败是饱和吞顺序，�
 - **待证关联（不并入结论）。** 19.2c 期间“续跑变慢 2.2×”（7.48 CPU/更新，首跑 7.08）当时归因为**外部争用**；空转 black 进程池是候选原因之一，但**未证实**，列为“待证”，不得写进任何结构结论或预算口径。
 - **第一号实例的另一半（19.2j 崩溃）。** 中途闸改造把 `train_run` 的返回从 2 元组改为 3 元组，但只同步了轨迹循环、漏了计价段调用点 → `ValueError: too many values to unpack (expected 2)`，**0/1,200 更新**。该次崩溃的工程成本单列，不从 13,000 实验预算中扣除。**状态：已修复并进入 D16-13 常驻纪律。**
 
+#### 16.6.1 D16-13 复发增补（2026-11-08，owner 指令，立即生效）
+
+**第二号实例。** 2026-11-08 12:25 实测本机仍有 **13 个** `python -m black` 主进程在空转（最早启动 **2026-11-07T22:08:06**，单进程 16,000–24,000 CPU 秒），连 spawn 子进程共终止 **25 个**，累计 **236,931.5 CPU 秒**（≈65.8 CPU 小时）；清理后 `black_count_after = 0`，空闲内存 34,162.9 → 35,082.1 MB。**该批开销属工程浪费，不进任何实验预算，只在成本段披露。** 证据（PID/PPID/启动时间/命令行/CPU 秒/工作集逐条）：[taiji_growth_gate_p3_black_hang_cleanup_20261108.json](../../reports/taiji_growth_gate_p3_black_hang_cleanup_20261108.json)。
+
+**规则一加严（唯一允许的格式化路径）。** 规则一原写"禁止写模式与 `--check`"，现明确：**禁止任何 `python -m black`**，包括写文件、`--check`、以及"跑完顺手格式化"。**唯一允许**的是 in-process 的 [black_check_gate.py](../../scripts/training/black_check_gate.py)；若它不可用，就**不格式化**并在报告中写"格式门未执行"，不得退回子进程。
+
+**规则五（新增：启动前进程预检）。** 每次启动 runner **之前**必须调用 [process_guard.assert_no_black_processes](../../taiji/process_guard.py)：若仍存在任何 `-m black` 进程，**拒绝启动并报错**，不允许新任务在已被污染的后台继续堆积。预检结果必须写进报告（P3 报告 `isolation.process_guard = {"checked": "-m black", "found": 0}`）。
+
+**归因更正（回答"P3 是不是卡在它自己的 black 上"）。** P3 runner **自身从不调用** black（报告 `isolation.banned_formatter_invoked_by_this_runner = false`）；卡死的是**启动命令把 `python -m black ...` 放在探针之前**，第一段永不返回，探针根本没被启动。故"P3 跑不出来"是启动编排问题 + D16-13 环境缺陷，不是探针逻辑问题。
+
 ### 16.7 D16-14 登记（2026-11-05 owner 裁定，只读对账）
 
 **D16-14（计量侧）：历史单价的"空转污染"标记，三档状态，不得重算或重跑。**
@@ -1151,6 +1161,15 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 
   四条件全项：primary G1 `7→7`、G2 余量 `0.85714→0.85714`、G2 秩 `7.29079→6.75998`（唯一失败）、G3 `+33,280 B`／`h=0.4375`、G4 残差 `0.5742`／`top1=8`；legacy 同上但 G4 残差 `0.9434`／`top1=0`（读不干净）；replace G4 残差 **`0.000207`**、G3 字节 **`+0`**、G1/余量全不变，**只**被 G2 秩子句 `7.29079→7.25828` 挡下（P1b 更正：当时写"`top1=0 ≠ slot_written`"不准确——真实情况是 `evaluate` 把 `written_slot` 取成 `top1`，命中判定恒真；实际 `top1=0` 与落点槽 0 一致，见 D16-62）；new_direction 四条件全绿、`Δeff_rank=+0.862`、G4 残差 `0.000633`、写入槽权重 `0.99943`、8 个旧槽全保留（残差 <0.001）。**三条结论**：①门**不是"什么都不放行"**——真新条目被签收；②**"旧编码拒/新编码准"的并排对照不存在**：P1 报告 `fixture.encoder` 已是 `localized_centered-v1`（§5 预注册写 `mean` 属漂移，不改变 P1 任何判据，已记录），故本轮重建的对照是"同一条纠正 vs 真新条目"；③**最关键的负结果**：F1 说的"缺取代"在门内已经可用（残差 0.000207、0 字节），卡它的正是 **P1 已证伪的那条 rank 子句**。另记：§4.2 的 `Δeff_rank ≥ 1` 源自 F3 四次翻倍整体读数，对单次写入过严（实测 `+0.862`），P1b 须按单次重推。**未改阈值、未改 `growth_gate.py`、未重跑**；`decision = p2_falsified_premise_C1_C2_C3_C5` 原样落盘，退出码 1。CPU 0 s 级／0 前向／0 Adam／0 confirm。下一步唯一：**G2 更正（P1b 预注册）**。回执：[taiji_growth_gate_p2_20261108.json](../../reports/taiji_growth_gate_p2_20261108.json)。
 - **D16-62 拆开闸口：复制被拒、取代被准、新条目被准（P1b，2026-11-08，离线夹具，0 训练）**：`decision = p1b_passed`，[读数](../../reports/taiji_growth_gate_p1b_20261108.json)。三件预注册（跑前落盘、跑后未改）：**①出口与触发解耦**——新增 `commit_rejected_no_direction`，**只由方向带 `growth_is_copy` 触发**，且只对声明方向的策略（`append`）生效（`replace` 豁免，因为它的主张是"这个地址现在返回 `v'`"，不是"长了新方向"）；G2 只留"读余量不降"（`0.002` 不变）；`eff_rank` 从判据降为读数（`detail.rank_is_reading_only`），不再产生失败码。**②单次写入不设 `Δeff_rank` 门槛**——`≥1` 源自 F3 四次翻倍（每代 +6..+16），P2 实测单次真新条目仅 `+0.862`；选择"仅作读数"而非"重设下限"，理由：单臂 n=1 无分布可标定，且该量与方向带同向（近共线必降），作为门槛只是给同一件事加第二个拒绝理由。**③两种命中口径同时列出、各自判定**——`H-slot`（`top1 == written_slot`）与 `H-value`（`residual ≤ 0.5`）；门按 **H-value** 判，`H-slot` 作读数；替代读法（方向子句对所有策略生效）也一并报出，不事后挑选。**同时修掉一处旧缺陷**：`evaluate` 曾把 `written_slot` 取成 `top1`，使 G4 的"`top1 != written_slot`"恒为假（命中判定是空的）；现由 `run_gate` 从 `apply_receipt["slot"]` 传入落点。三臂读数：**复制**（`append` 同键，`o=0.9631`）**被拒**——`commit_rejected_no_direction`、值残差 `0.5742`、H-value false／H-slot true；**取代**（`replace` 同键）**被准**——`commit_accepted`、字节增量 **0**、G1 `7→7`、中位余量不变、值残差 **`0.000207`**、旧 7 槽 top-1 与残差全保持；**新条目**（`append` 新键，`o=0.2831`）**被准**——`commit_accepted`、rank `7.29079→8.15326`（仅读数）、值残差 `0.000633`、写入槽权重 `0.99943`。**如实留档**：首跑两处实现与预注册不一致（方向子句排在 G4 之后 → 复制臂出口成了 `no_gain`；H-value 测在回滚态而非被判决的 shadow 态），已在报告 `implementation_corrections` 写明（`criteria_changed=false`、`thresholds_changed=false`），首跑读数完整保留在 `previous_run`；**判据与阈值零改动**。CPU <1 s／0 前向／0 Adam／0 confirm／冻结清单触碰 0。下一步唯一：**P3**（两档夹具、门生效后多代占用：余量不跌破、第 4 代应主动拒写）。回执：[taiji_growth_gate_p1b_20261108.json](../../reports/taiji_growth_gate_p1b_20261108.json)。
+- **D16-63 P3：门在低档守不住读余量，高档的拒写也不是因为容量（2026-11-08，离线夹具，0 训练）**：`decision = p3_falsified_A1`，[读数](../../reports/taiji_growth_gate_p3_20261108.json)。单实例锁下干净重跑，墙钟 1.0 s、CPU 0.55 s、8 条读数即落盘，无卡死。**两条余量口径必须分开看**：`m_spec`＝占用键 Gram 的（最近−次近）中位，是 §5 的 0.06863 所属量；`m_gate`＝保留集查询的（1−最近）中位＝`growth_gate._margin`，同一 8 键状态约 0.857。A1 判在 `m_spec`（拿 0.857 比 0.06663 会"因错误理由通过"）。
+
+  | 档 | 基线 `m_spec` | 结果 | `m_gate` |
+  |---|---|---|---|
+  | 8/16 六次写入 | 0.068631（＝F1） | 六次全准入、方向带全 `growth_new_direction`、`m_spec` → 0.052401／0.047397／0.042394／0.038957／0.033074／0.034297 | 0.857136 不变（末次 0.847296） |
+  | 64/128 一次写入 | 0.019988 | **被拒**，出口 `commit_rejected_no_direction`（`band=growth_is_copy`、`o=0.983151`），非 `no_capacity` | 0.774064 不变 |
+  | 112/128 一次写入 | — | **被拒**，出口 `commit_rejected_no_capacity`（`h=0.117188<0.125`） | 不变 |
+
+  **三件事**：①**A1 判负，且是架构缺口不是实现 bug**——首次写入即把 `m_spec` 从 0.06863 打到 0.05240（−0.01623，是 `ε_m=0.002` 的 8 倍），而 G2 的 `m_gate` 纹丝不动：**门测的量看不见 §5 说的拥挤度**，`0.002` 的相对阈在 0.857 这个量级上几乎不可能被触发。②**高档确实拒写（B1 过），但理由是指令未要求的 `no_direction`**；强制写只让 `m_spec` +0.000757（<0.002），故 SPEC §5 P3-B 的前提**未触发**，B3 记"未证实"而非通过；B2（要求 `no_capacity`）在 64/128 上算术不可能成立（`h=0.5`），记"未证实"，另立 112/128 臂在容量真正不允许处验证，`no_capacity` 如实命中（C1 过）。③纪律全绿：`evictions=0`、`dropped_writes=0`、`capacity_sufficient_at_fill=false`、被拒写入各 1 行隔离（`q` 行数 0/0/…/1/1）、`sha_before==sha_after` 逐位不变、8/8 条"若强制写会怎样"对照只算不写。两处实现更正（payload 表尺寸；单实例锁——上一轮 D1 判负是两次并发运行共用隔离日志的假象）已在报告 `implementation_corrections` 写明，`criteria_changed=false`、`thresholds_changed=false`。**未改门、未改阈值、未改判据、未重跑冒充通过。** 成本：本探针 CPU 0.55 s；同轮工程浪费 **236,931.5 CPU 秒**（D16-13 复发，不进实验预算）。下一步唯一：**把 G2 换成能看见 `m_spec` 的绝对下限**（相对 `0.002` 在 0.857 量级上不可触发），再谈把门接到真实 `addressed_write`。
 
 ## 29. 有界训练窗执行与判定（2026-11-08）
 
