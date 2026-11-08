@@ -1,0 +1,322 @@
+{
+  "format": "taiji-gate-g2c-preregistration-v1",
+  "written_at": "2026-11-08T12:49:14",
+  "written_before_any_case_verdict": true,
+  "sequence": "phase 1 curve (read-only) -> this manifest -> phase 3 case verdicts",
+  "question": "is the decay of m_spec with occupancy a shape that can be written as one normalised floor across all five rungs, and does that floor keep replace/append admitted and copy refused?",
+  "curve": [
+    {
+      "rung": "r8",
+      "occupied": 8,
+      "slots": 16,
+      "width": 128,
+      "median_margin": 0.068631,
+      "min_margin": 0.010227,
+      "p10_margin": 0.012201,
+      "argmin_key": 7,
+      "effective_rank": 7.290793,
+      "effective_rank_over_occupied": 0.911349,
+      "mean_abs_cos": 0.093703,
+      "top_share": 0.193078,
+      "random_baseline_median": 0.057203,
+      "unique_contexts": 8,
+      "unique_keys": 8,
+      "duplicate_keys": 0,
+      "rows_with_margin_above_half": 0,
+      "measurable": true
+    },
+    {
+      "rung": "r16",
+      "occupied": 16,
+      "slots": 32,
+      "width": 128,
+      "median_margin": 0.058388,
+      "min_margin": 0.013048,
+      "p10_margin": 0.022943,
+      "argmin_key": 0,
+      "effective_rank": 13.472278,
+      "effective_rank_over_occupied": 0.842017,
+      "mean_abs_cos": 0.09063,
+      "top_share": 0.117184,
+      "random_baseline_median": 0.035446,
+      "unique_contexts": 16,
+      "unique_keys": 16,
+      "duplicate_keys": 0,
+      "rows_with_margin_above_half": 0,
+      "measurable": true
+    },
+    {
+      "rung": "r32",
+      "occupied": 32,
+      "slots": 64,
+      "width": 128,
+      "median_margin": 0.030283,
+      "min_margin": 5e-06,
+      "p10_margin": 0.009473,
+      "argmin_key": 10,
+      "effective_rank": 24.486794,
+      "effective_rank_over_occupied": 0.765212,
+      "mean_abs_cos": 0.080672,
+      "top_share": 0.080642,
+      "random_baseline_median": 0.030235,
+      "unique_contexts": 32,
+      "unique_keys": 32,
+      "duplicate_keys": 0,
+      "rows_with_margin_above_half": 0,
+      "measurable": true
+    },
+    {
+      "rung": "r64",
+      "occupied": 64,
+      "slots": 128,
+      "width": 128,
+      "median_margin": 0.019988,
+      "min_margin": 9.3e-05,
+      "p10_margin": 0.003346,
+      "argmin_key": 47,
+      "effective_rank": 40.182565,
+      "effective_rank_over_occupied": 0.627853,
+      "mean_abs_cos": 0.078319,
+      "top_share": 0.056831,
+      "random_baseline_median": 0.022324,
+      "unique_contexts": 64,
+      "unique_keys": 64,
+      "duplicate_keys": 0,
+      "rows_with_margin_above_half": 0,
+      "measurable": true
+    },
+    {
+      "rung": "r112",
+      "occupied": 112,
+      "slots": 128,
+      "width": 128,
+      "median_margin": 0.742992,
+      "min_margin": 0.0,
+      "p10_margin": 0.031674,
+      "argmin_key": 48,
+      "effective_rank": 39.263677,
+      "effective_rank_over_occupied": 0.350569,
+      "mean_abs_cos": 0.085526,
+      "top_share": 0.058661,
+      "random_baseline_median": 0.025387,
+      "unique_contexts": 106,
+      "unique_keys": 106,
+      "duplicate_keys": 6,
+      "rows_with_margin_above_half": 96,
+      "measurable": false
+    }
+  ],
+  "curve_validity": {
+    "rule": "a rung is measurable only if the fixture supplies `occupied` distinct contexts and no two occupied keys are byte-identical; the rule is mechanical and was not tuned to any margin value",
+    "all_rungs_measurable": false,
+    "invalid_rungs": [
+      "r112"
+    ],
+    "mechanism_at_112": "the fixture holds 64 sentences; build_contexts extends beyond 64 by reusing tokens 0..47 at a fixed position, which yields 6 exactly duplicate contexts and 48 same-token-different-position near twins.  96 of 112 rows then have nearest ~0.96-1.0 and second ~0.22, so the median (0.742992) describes twin pairing, not crowding.  This rung was inherited from the P3 fill arm, which only ever tested capacity and never read a margin.",
+    "consequence": "the registered five-rung fit test cannot be completed on this fixture; the fallback applies, and the next measurement needs a fixture with at least 112 distinct sentences"
+  },
+  "published_points": {
+    "published_8_key": 0.068631,
+    "measured_8_key": 0.068631,
+    "published_64_key": 0.019988,
+    "measured_64_key": 0.019988,
+    "delta_8": 0.0,
+    "delta_64": 0.0
+  },
+  "curve_vs_path": {
+    "g2b_first_append_after_8": 0.052401,
+    "curve_median_at_16": 0.058388,
+    "delta": 0.005987,
+    "reading": "if the equilibrium 16-key margin is well above the post-append 9-key margin, the curve describes states, not the path, and no occupancy floor covers both"
+  },
+  "forms": [
+    {
+      "name": "A_occupancy_sqrt",
+      "formula": "median_margin >= c / sqrt(m)",
+      "theory": "occupancy only: each appended key adds (m-1) pairwise constraints, and the leading correction for a cloud that is isotropic inside its own span is m^-1/2.  If the measured decay is far steeper than this, the exponent is the thing that is wrong, not the constant.",
+      "constant": 0.159904,
+      "constant_source": "anchor: the published 64-key reading 0.019988 (F1/F3), scaled by sqrt(64); no phase-1 or case reading enters the constant",
+      "residuals": [
+        {
+          "occupied": 8,
+          "observed": 0.068631,
+          "predicted": 0.056535,
+          "relative_residual": 0.176253
+        },
+        {
+          "occupied": 16,
+          "observed": 0.058388,
+          "predicted": 0.039976,
+          "relative_residual": 0.315339
+        },
+        {
+          "occupied": 32,
+          "observed": 0.030283,
+          "predicted": 0.028267,
+          "relative_residual": 0.066562
+        },
+        {
+          "occupied": 64,
+          "observed": 0.019988,
+          "predicted": 0.019988,
+          "relative_residual": 0.0
+        },
+        {
+          "occupied": 112,
+          "observed": 0.742992,
+          "predicted": 0.01511,
+          "relative_residual": 0.979664
+        }
+      ],
+      "max_relative_residual": 0.979664,
+      "fits": false
+    },
+    {
+      "name": "B_effective_rank",
+      "formula": "median_margin >= c / effective_rank(shadow)",
+      "theory": "rank instead of rows: if the binding quantity is the number of directions the store actually spans, the gap should track the participation ratio.  B equals A whenever effective_rank == m; they separate exactly where the store stops gaining dimensions.",
+      "constant": 0.8031691092199998,
+      "constant_source": "anchor: 0.019988 x the phase-1 effective rank of the 64-key state; the state is a pure-geometry measurement, no case reading enters it",
+      "residuals": [
+        {
+          "occupied": 8,
+          "observed": 0.068631,
+          "predicted": 0.110162,
+          "relative_residual": 0.605136
+        },
+        {
+          "occupied": 16,
+          "observed": 0.058388,
+          "predicted": 0.059616,
+          "relative_residual": 0.021039
+        },
+        {
+          "occupied": 32,
+          "observed": 0.030283,
+          "predicted": 0.0328,
+          "relative_residual": 0.083119
+        },
+        {
+          "occupied": 64,
+          "observed": 0.019988,
+          "predicted": 0.019988,
+          "relative_residual": 0.0
+        },
+        {
+          "occupied": 112,
+          "observed": 0.742992,
+          "predicted": 0.020456,
+          "relative_residual": 0.972468
+        }
+      ],
+      "max_relative_residual": 0.972468,
+      "fits": false
+    },
+    {
+      "name": "C_random_baseline",
+      "formula": "median_margin >= c * random_baseline_median(m)",
+      "theory": "same-size isotropic control: divide out how crowded m random unit keys in this width would already be, so the criterion asks whether the store is worse than an unstructured cloud of the same size rather than setting a raw level.  The control is seeded and deterministic.",
+      "constant": 0.8953592546138684,
+      "constant_source": "anchor: 0.019988 / the phase-1 isotropic baseline median at 64 keys; the baseline is a seeded random draw, no case reading enters it",
+      "residuals": [
+        {
+          "occupied": 8,
+          "observed": 0.068631,
+          "predicted": 0.051217,
+          "relative_residual": 0.25373
+        },
+        {
+          "occupied": 16,
+          "observed": 0.058388,
+          "predicted": 0.031737,
+          "relative_residual": 0.456448
+        },
+        {
+          "occupied": 32,
+          "observed": 0.030283,
+          "predicted": 0.027071,
+          "relative_residual": 0.10606
+        },
+        {
+          "occupied": 64,
+          "observed": 0.019988,
+          "predicted": 0.019988,
+          "relative_residual": 0.0
+        },
+        {
+          "occupied": 112,
+          "observed": 0.742992,
+          "predicted": 0.02273,
+          "relative_residual": 0.969407
+        }
+      ],
+      "max_relative_residual": 0.969407,
+      "fits": false
+    },
+    {
+      "name": "D_fitted_power_law",
+      "formula": "median_margin >= c * m ** -alpha",
+      "theory": "one global power law over all five rungs.  A fixes alpha = 0.5 without evidence; D measures it.  A single exponent is a shape claim, not a piecewise fit: if the five points are not one line in log-log, D must fail its residual test rather than be segmented.",
+      "constant": 0.01251037909317941,
+      "exponent": -0.504762,
+      "constant_source": "least squares over the five phase-1 points, log-log",
+      "residuals": [
+        {
+          "occupied": 8,
+          "observed": 0.068631,
+          "predicted": 0.035737,
+          "relative_residual": 0.47929
+        },
+        {
+          "occupied": 16,
+          "observed": 0.058388,
+          "predicted": 0.050707,
+          "relative_residual": 0.131558
+        },
+        {
+          "occupied": 32,
+          "observed": 0.030283,
+          "predicted": 0.071947,
+          "relative_residual": 1.375823
+        },
+        {
+          "occupied": 64,
+          "observed": 0.019988,
+          "predicted": 0.102085,
+          "relative_residual": 4.107309
+        },
+        {
+          "occupied": 112,
+          "observed": 0.742992,
+          "predicted": 0.135406,
+          "relative_residual": 0.817756
+        }
+      ],
+      "max_relative_residual": 4.107309,
+      "fits": false
+    }
+  ],
+  "fit_rule": {
+    "fits_when": "max relative residual over all five rungs <= 0.2",
+    "five_rung_test_completed": false,
+    "no_piecewise_fit": "a form is tested once over all five rungs; if it fails, it fails.  Segmenting the curve, or picking the least bad form, is not allowed.",
+    "fallback": "if no form fits, the criterion's shape is undetermined and the only permitted next step is to measure more rungs"
+  },
+  "case_rule": {
+    "rung": "8/16, same encoder and fixture",
+    "S1_replace": "policy=replace on an occupied slot must remain published",
+    "S2_new": "append of a key not already stored must remain published",
+    "S3_copy": "append of a byte-identical key must remain refused",
+    "any_inversion": "that form is unusable, whatever its residual"
+  },
+  "discipline": {
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_steps": 0,
+    "banned_formatter": "python -m black (process_guard at entry)",
+    "single_instance_lock": true,
+    "watchdog": "abort after 60 s without a new reading",
+    "cpu_cap_seconds": 100.0
+  }
+}

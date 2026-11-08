@@ -1,0 +1,824 @@
+{
+  "format": "taiji-gate-g2c-v1",
+  "generated_at": "2026-11-08T12:49:14",
+  "manifest": "plans/manifests/taiji_gate_g2c_20261108.json",
+  "manifest_sha256": "98dda8d500f1f6eca735a734c163af2e0f5a4f759dc2221b95f216ea239f753e",
+  "question": "what shape does m_spec follow with occupancy, and can one normalised floor across all five rungs replace the absolute floor without inverting the legacy verdicts?",
+  "phase_order": [
+    "phase 1 curve (read-only, five rungs)",
+    "phase 2 forms and constants -> manifest (sha above)",
+    "phase 3 legacy re-check per form"
+  ],
+  "curve": [
+    {
+      "rung": "r8",
+      "occupied": 8,
+      "slots": 16,
+      "width": 128,
+      "median_margin": 0.068631,
+      "min_margin": 0.010227,
+      "p10_margin": 0.012201,
+      "argmin_key": 7,
+      "effective_rank": 7.290793,
+      "effective_rank_over_occupied": 0.911349,
+      "mean_abs_cos": 0.093703,
+      "top_share": 0.193078,
+      "random_baseline_median": 0.057203,
+      "unique_contexts": 8,
+      "unique_keys": 8,
+      "duplicate_keys": 0,
+      "rows_with_margin_above_half": 0,
+      "measurable": true
+    },
+    {
+      "rung": "r16",
+      "occupied": 16,
+      "slots": 32,
+      "width": 128,
+      "median_margin": 0.058388,
+      "min_margin": 0.013048,
+      "p10_margin": 0.022943,
+      "argmin_key": 0,
+      "effective_rank": 13.472278,
+      "effective_rank_over_occupied": 0.842017,
+      "mean_abs_cos": 0.09063,
+      "top_share": 0.117184,
+      "random_baseline_median": 0.035446,
+      "unique_contexts": 16,
+      "unique_keys": 16,
+      "duplicate_keys": 0,
+      "rows_with_margin_above_half": 0,
+      "measurable": true
+    },
+    {
+      "rung": "r32",
+      "occupied": 32,
+      "slots": 64,
+      "width": 128,
+      "median_margin": 0.030283,
+      "min_margin": 5e-06,
+      "p10_margin": 0.009473,
+      "argmin_key": 10,
+      "effective_rank": 24.486794,
+      "effective_rank_over_occupied": 0.765212,
+      "mean_abs_cos": 0.080672,
+      "top_share": 0.080642,
+      "random_baseline_median": 0.030235,
+      "unique_contexts": 32,
+      "unique_keys": 32,
+      "duplicate_keys": 0,
+      "rows_with_margin_above_half": 0,
+      "measurable": true
+    },
+    {
+      "rung": "r64",
+      "occupied": 64,
+      "slots": 128,
+      "width": 128,
+      "median_margin": 0.019988,
+      "min_margin": 9.3e-05,
+      "p10_margin": 0.003346,
+      "argmin_key": 47,
+      "effective_rank": 40.182565,
+      "effective_rank_over_occupied": 0.627853,
+      "mean_abs_cos": 0.078319,
+      "top_share": 0.056831,
+      "random_baseline_median": 0.022324,
+      "unique_contexts": 64,
+      "unique_keys": 64,
+      "duplicate_keys": 0,
+      "rows_with_margin_above_half": 0,
+      "measurable": true
+    },
+    {
+      "rung": "r112",
+      "occupied": 112,
+      "slots": 128,
+      "width": 128,
+      "median_margin": 0.742992,
+      "min_margin": 0.0,
+      "p10_margin": 0.031674,
+      "argmin_key": 48,
+      "effective_rank": 39.263677,
+      "effective_rank_over_occupied": 0.350569,
+      "mean_abs_cos": 0.085526,
+      "top_share": 0.058661,
+      "random_baseline_median": 0.025387,
+      "unique_contexts": 106,
+      "unique_keys": 106,
+      "duplicate_keys": 6,
+      "rows_with_margin_above_half": 96,
+      "measurable": false
+    }
+  ],
+  "curve_validity": {
+    "rule": "a rung is measurable only if the fixture supplies `occupied` distinct contexts and no two occupied keys are byte-identical; the rule is mechanical and was not tuned to any margin value",
+    "all_rungs_measurable": false,
+    "invalid_rungs": [
+      "r112"
+    ],
+    "mechanism_at_112": "the fixture holds 64 sentences; build_contexts extends beyond 64 by reusing tokens 0..47 at a fixed position, which yields 6 exactly duplicate contexts and 48 same-token-different-position near twins.  96 of 112 rows then have nearest ~0.96-1.0 and second ~0.22, so the median (0.742992) describes twin pairing, not crowding.  This rung was inherited from the P3 fill arm, which only ever tested capacity and never read a margin.",
+    "consequence": "the registered five-rung fit test cannot be completed on this fixture; the fallback applies, and the next measurement needs a fixture with at least 112 distinct sentences"
+  },
+  "published_points": {
+    "published_8_key": 0.068631,
+    "measured_8_key": 0.068631,
+    "published_64_key": 0.019988,
+    "measured_64_key": 0.019988,
+    "delta_8": 0.0,
+    "delta_64": 0.0
+  },
+  "curve_vs_path": {
+    "g2b_first_append_after_8": 0.052401,
+    "curve_median_at_16": 0.058388,
+    "delta": 0.005987,
+    "reading": "if the equilibrium 16-key margin is well above the post-append 9-key margin, the curve describes states, not the path, and no occupancy floor covers both"
+  },
+  "attribution": {
+    "width": "width is 128 at every rung (the encoder is fixed), so width cannot explain the decay inside this fixture; it is a constant, not a variable here",
+    "occupancy_vs_rank": "effective_rank / occupied is reported per rung.  Where that ratio stays near 1, rank and occupancy are the same variable and A vs B cannot be separated; where it falls, the store stops gaining dimensions and the two forms must diverge",
+    "loglog_slope_occupancy": [
+      {
+        "left_occupied": 8,
+        "right_occupied": 16,
+        "slope": -0.233188,
+        "note": "slope -0.5 means the sqrt form; -1 means inverse occupancy"
+      },
+      {
+        "left_occupied": 16,
+        "right_occupied": 32,
+        "slope": -0.947164,
+        "note": "slope -0.5 means the sqrt form; -1 means inverse occupancy"
+      },
+      {
+        "left_occupied": 32,
+        "right_occupied": 64,
+        "slope": -0.599374,
+        "note": "slope -0.5 means the sqrt form; -1 means inverse occupancy"
+      },
+      {
+        "left_occupied": 64,
+        "right_occupied": 112,
+        "slope": 6.460778,
+        "note": "slope -0.5 means the sqrt form; -1 means inverse occupancy"
+      }
+    ]
+  },
+  "forms": [
+    {
+      "name": "A_occupancy_sqrt",
+      "formula": "median_margin >= c / sqrt(m)",
+      "theory": "occupancy only: each appended key adds (m-1) pairwise constraints, and the leading correction for a cloud that is isotropic inside its own span is m^-1/2.  If the measured decay is far steeper than this, the exponent is the thing that is wrong, not the constant.",
+      "constant": 0.159904,
+      "constant_source": "anchor: the published 64-key reading 0.019988 (F1/F3), scaled by sqrt(64); no phase-1 or case reading enters the constant",
+      "residuals": [
+        {
+          "occupied": 8,
+          "observed": 0.068631,
+          "predicted": 0.056535,
+          "relative_residual": 0.176253
+        },
+        {
+          "occupied": 16,
+          "observed": 0.058388,
+          "predicted": 0.039976,
+          "relative_residual": 0.315339
+        },
+        {
+          "occupied": 32,
+          "observed": 0.030283,
+          "predicted": 0.028267,
+          "relative_residual": 0.066562
+        },
+        {
+          "occupied": 64,
+          "observed": 0.019988,
+          "predicted": 0.019988,
+          "relative_residual": 0.0
+        },
+        {
+          "occupied": 112,
+          "observed": 0.742992,
+          "predicted": 0.01511,
+          "relative_residual": 0.979664
+        }
+      ],
+      "max_relative_residual": 0.979664,
+      "fits": false,
+      "cases": {
+        "S1_replace": {
+          "published": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "floor": 0.056535,
+          "spec_margin_before": 0.068631,
+          "spec_margin_after_forced": 0.068631,
+          "floor_failed": false,
+          "band_verdict": "growth_is_copy",
+          "direction_overlap": 1.0,
+          "value_residual": 0.000171,
+          "evictions": 0,
+          "quarantine_rows": 0,
+          "bit_identical": false,
+          "expected_published": true,
+          "direction_ok": true
+        },
+        "S2_new": {
+          "published": false,
+          "exit_code": "commit_rejected_separability",
+          "failed": [
+            "commit_rejected_separability"
+          ],
+          "floor": 0.053301,
+          "spec_margin_before": 0.068631,
+          "spec_margin_after_forced": 0.052401,
+          "floor_failed": true,
+          "band_verdict": "growth_new_direction",
+          "direction_overlap": 0.283081,
+          "value_residual": 0.000639,
+          "evictions": 0,
+          "quarantine_rows": 1,
+          "bit_identical": true,
+          "expected_published": true,
+          "direction_ok": false
+        },
+        "S3_copy": {
+          "published": false,
+          "exit_code": "commit_rejected_retention",
+          "failed": [
+            "commit_rejected_retention",
+            "commit_rejected_no_direction"
+          ],
+          "floor": 0.053301,
+          "spec_margin_before": 0.068631,
+          "spec_margin_after_forced": 0.09249,
+          "floor_failed": false,
+          "band_verdict": "growth_is_copy",
+          "direction_overlap": 1.0,
+          "value_residual": 8.6e-05,
+          "evictions": 0,
+          "quarantine_rows": 1,
+          "bit_identical": true,
+          "expected_published": false,
+          "direction_ok": true
+        }
+      },
+      "case_directions_ok": false,
+      "adoptable": false,
+      "diagnostic_measurable_rungs": {
+        "max_relative_residual": 0.315339,
+        "source": "diagnostic only: the registered constant is reused without refitting and rung 112 is excluded because it is not measurable on this fixture; this does not change the five-rung verdict"
+      }
+    },
+    {
+      "name": "B_effective_rank",
+      "formula": "median_margin >= c / effective_rank(shadow)",
+      "theory": "rank instead of rows: if the binding quantity is the number of directions the store actually spans, the gap should track the participation ratio.  B equals A whenever effective_rank == m; they separate exactly where the store stops gaining dimensions.",
+      "constant": 0.8031691092199998,
+      "constant_source": "anchor: 0.019988 x the phase-1 effective rank of the 64-key state; the state is a pure-geometry measurement, no case reading enters it",
+      "residuals": [
+        {
+          "occupied": 8,
+          "observed": 0.068631,
+          "predicted": 0.110162,
+          "relative_residual": 0.605136
+        },
+        {
+          "occupied": 16,
+          "observed": 0.058388,
+          "predicted": 0.059616,
+          "relative_residual": 0.021039
+        },
+        {
+          "occupied": 32,
+          "observed": 0.030283,
+          "predicted": 0.0328,
+          "relative_residual": 0.083119
+        },
+        {
+          "occupied": 64,
+          "observed": 0.019988,
+          "predicted": 0.019988,
+          "relative_residual": 0.0
+        },
+        {
+          "occupied": 112,
+          "observed": 0.742992,
+          "predicted": 0.020456,
+          "relative_residual": 0.972468
+        }
+      ],
+      "max_relative_residual": 0.972468,
+      "fits": false,
+      "cases": {
+        "S1_replace": {
+          "published": false,
+          "exit_code": "commit_rejected_separability",
+          "failed": [
+            "commit_rejected_separability"
+          ],
+          "floor": 0.110162,
+          "spec_margin_before": 0.068631,
+          "spec_margin_after_forced": 0.068631,
+          "floor_failed": true,
+          "band_verdict": "growth_is_copy",
+          "direction_overlap": 1.0,
+          "value_residual": 0.000171,
+          "evictions": 0,
+          "quarantine_rows": 1,
+          "bit_identical": true,
+          "expected_published": true,
+          "direction_ok": false
+        },
+        "S2_new": {
+          "published": false,
+          "exit_code": "commit_rejected_separability",
+          "failed": [
+            "commit_rejected_separability"
+          ],
+          "floor": 0.098509,
+          "spec_margin_before": 0.068631,
+          "spec_margin_after_forced": 0.052401,
+          "floor_failed": true,
+          "band_verdict": "growth_new_direction",
+          "direction_overlap": 0.283081,
+          "value_residual": 0.000639,
+          "evictions": 0,
+          "quarantine_rows": 1,
+          "bit_identical": true,
+          "expected_published": true,
+          "direction_ok": false
+        },
+        "S3_copy": {
+          "published": false,
+          "exit_code": "commit_rejected_retention",
+          "failed": [
+            "commit_rejected_retention",
+            "commit_rejected_separability",
+            "commit_rejected_no_direction"
+          ],
+          "floor": 0.120046,
+          "spec_margin_before": 0.068631,
+          "spec_margin_after_forced": 0.09249,
+          "floor_failed": true,
+          "band_verdict": "growth_is_copy",
+          "direction_overlap": 1.0,
+          "value_residual": 8.6e-05,
+          "evictions": 0,
+          "quarantine_rows": 1,
+          "bit_identical": true,
+          "expected_published": false,
+          "direction_ok": true
+        }
+      },
+      "case_directions_ok": false,
+      "adoptable": false,
+      "diagnostic_measurable_rungs": {
+        "max_relative_residual": 0.605136,
+        "source": "diagnostic only: the registered constant is reused without refitting and rung 112 is excluded because it is not measurable on this fixture; this does not change the five-rung verdict"
+      }
+    },
+    {
+      "name": "C_random_baseline",
+      "formula": "median_margin >= c * random_baseline_median(m)",
+      "theory": "same-size isotropic control: divide out how crowded m random unit keys in this width would already be, so the criterion asks whether the store is worse than an unstructured cloud of the same size rather than setting a raw level.  The control is seeded and deterministic.",
+      "constant": 0.8953592546138684,
+      "constant_source": "anchor: 0.019988 / the phase-1 isotropic baseline median at 64 keys; the baseline is a seeded random draw, no case reading enters it",
+      "residuals": [
+        {
+          "occupied": 8,
+          "observed": 0.068631,
+          "predicted": 0.051217,
+          "relative_residual": 0.25373
+        },
+        {
+          "occupied": 16,
+          "observed": 0.058388,
+          "predicted": 0.031737,
+          "relative_residual": 0.456448
+        },
+        {
+          "occupied": 32,
+          "observed": 0.030283,
+          "predicted": 0.027071,
+          "relative_residual": 0.10606
+        },
+        {
+          "occupied": 64,
+          "observed": 0.019988,
+          "predicted": 0.019988,
+          "relative_residual": 0.0
+        },
+        {
+          "occupied": 112,
+          "observed": 0.742992,
+          "predicted": 0.02273,
+          "relative_residual": 0.969407
+        }
+      ],
+      "max_relative_residual": 0.969407,
+      "fits": false,
+      "cases": {
+        "S1_replace": {
+          "published": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "floor": 0.051217,
+          "spec_margin_before": 0.068631,
+          "spec_margin_after_forced": 0.068631,
+          "floor_failed": false,
+          "band_verdict": "growth_is_copy",
+          "direction_overlap": 1.0,
+          "value_residual": 0.000171,
+          "evictions": 0,
+          "quarantine_rows": 0,
+          "bit_identical": false,
+          "expected_published": true,
+          "direction_ok": true
+        },
+        "S2_new": {
+          "published": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "floor": 0.03862,
+          "spec_margin_before": 0.068631,
+          "spec_margin_after_forced": 0.052401,
+          "floor_failed": false,
+          "band_verdict": "growth_new_direction",
+          "direction_overlap": 0.283081,
+          "value_residual": 0.000639,
+          "evictions": 0,
+          "quarantine_rows": 0,
+          "bit_identical": false,
+          "expected_published": true,
+          "direction_ok": true
+        },
+        "S3_copy": {
+          "published": false,
+          "exit_code": "commit_rejected_retention",
+          "failed": [
+            "commit_rejected_retention",
+            "commit_rejected_no_direction"
+          ],
+          "floor": 0.03862,
+          "spec_margin_before": 0.068631,
+          "spec_margin_after_forced": 0.09249,
+          "floor_failed": false,
+          "band_verdict": "growth_is_copy",
+          "direction_overlap": 1.0,
+          "value_residual": 8.6e-05,
+          "evictions": 0,
+          "quarantine_rows": 1,
+          "bit_identical": true,
+          "expected_published": false,
+          "direction_ok": true
+        }
+      },
+      "case_directions_ok": true,
+      "adoptable": false,
+      "diagnostic_measurable_rungs": {
+        "max_relative_residual": 0.456448,
+        "source": "diagnostic only: the registered constant is reused without refitting and rung 112 is excluded because it is not measurable on this fixture; this does not change the five-rung verdict"
+      }
+    },
+    {
+      "name": "D_fitted_power_law",
+      "formula": "median_margin >= c * m ** -alpha",
+      "theory": "one global power law over all five rungs.  A fixes alpha = 0.5 without evidence; D measures it.  A single exponent is a shape claim, not a piecewise fit: if the five points are not one line in log-log, D must fail its residual test rather than be segmented.",
+      "constant": 0.01251037909317941,
+      "exponent": -0.504762,
+      "constant_source": "least squares over the five phase-1 points, log-log",
+      "residuals": [
+        {
+          "occupied": 8,
+          "observed": 0.068631,
+          "predicted": 0.035737,
+          "relative_residual": 0.47929
+        },
+        {
+          "occupied": 16,
+          "observed": 0.058388,
+          "predicted": 0.050707,
+          "relative_residual": 0.131558
+        },
+        {
+          "occupied": 32,
+          "observed": 0.030283,
+          "predicted": 0.071947,
+          "relative_residual": 1.375823
+        },
+        {
+          "occupied": 64,
+          "observed": 0.019988,
+          "predicted": 0.102085,
+          "relative_residual": 4.107309
+        },
+        {
+          "occupied": 112,
+          "observed": 0.742992,
+          "predicted": 0.135406,
+          "relative_residual": 0.817756
+        }
+      ],
+      "max_relative_residual": 4.107309,
+      "fits": false,
+      "cases": {
+        "S1_replace": {
+          "published": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "floor": 0.035737,
+          "spec_margin_before": 0.068631,
+          "spec_margin_after_forced": 0.068631,
+          "floor_failed": false,
+          "band_verdict": "growth_is_copy",
+          "direction_overlap": 1.0,
+          "value_residual": 0.000171,
+          "evictions": 0,
+          "quarantine_rows": 0,
+          "bit_identical": false,
+          "expected_published": true,
+          "direction_ok": true
+        },
+        "S2_new": {
+          "published": true,
+          "exit_code": "commit_accepted",
+          "failed": [],
+          "floor": 0.037926,
+          "spec_margin_before": 0.068631,
+          "spec_margin_after_forced": 0.052401,
+          "floor_failed": false,
+          "band_verdict": "growth_new_direction",
+          "direction_overlap": 0.283081,
+          "value_residual": 0.000639,
+          "evictions": 0,
+          "quarantine_rows": 0,
+          "bit_identical": false,
+          "expected_published": true,
+          "direction_ok": true
+        },
+        "S3_copy": {
+          "published": false,
+          "exit_code": "commit_rejected_retention",
+          "failed": [
+            "commit_rejected_retention",
+            "commit_rejected_no_direction"
+          ],
+          "floor": 0.037926,
+          "spec_margin_before": 0.068631,
+          "spec_margin_after_forced": 0.09249,
+          "floor_failed": false,
+          "band_verdict": "growth_is_copy",
+          "direction_overlap": 1.0,
+          "value_residual": 8.6e-05,
+          "evictions": 0,
+          "quarantine_rows": 1,
+          "bit_identical": true,
+          "expected_published": false,
+          "direction_ok": true
+        }
+      },
+      "case_directions_ok": true,
+      "adoptable": false,
+      "diagnostic_measurable_rungs": {
+        "max_relative_residual": 4.107309,
+        "source": "diagnostic only: the registered constant is reused without refitting and rung 112 is excluded because it is not measurable on this fixture; this does not change the five-rung verdict"
+      }
+    }
+  ],
+  "divergence": [
+    {
+      "left": "A_occupancy_sqrt",
+      "right": "B_effective_rank",
+      "max_relative_gap": 0.948563,
+      "at_occupied": 8,
+      "gaps": [
+        {
+          "occupied": 8,
+          "relative_gap": 0.948563
+        },
+        {
+          "occupied": 16,
+          "relative_gap": 0.491295
+        },
+        {
+          "occupied": 32,
+          "relative_gap": 0.160364
+        },
+        {
+          "occupied": 64,
+          "relative_gap": 0.0
+        },
+        {
+          "occupied": 112,
+          "relative_gap": 0.353805
+        }
+      ]
+    },
+    {
+      "left": "A_occupancy_sqrt",
+      "right": "C_random_baseline",
+      "max_relative_gap": 0.504302,
+      "at_occupied": 112,
+      "gaps": [
+        {
+          "occupied": 8,
+          "relative_gap": 0.103833
+        },
+        {
+          "occupied": 16,
+          "relative_gap": 0.259602
+        },
+        {
+          "occupied": 32,
+          "relative_gap": 0.04418
+        },
+        {
+          "occupied": 64,
+          "relative_gap": 0.0
+        },
+        {
+          "occupied": 112,
+          "relative_gap": 0.504302
+        }
+      ]
+    },
+    {
+      "left": "A_occupancy_sqrt",
+      "right": "D_fitted_power_law",
+      "max_relative_gap": 7.96135,
+      "at_occupied": 112,
+      "gaps": [
+        {
+          "occupied": 8,
+          "relative_gap": 0.581974
+        },
+        {
+          "occupied": 16,
+          "relative_gap": 0.268436
+        },
+        {
+          "occupied": 32,
+          "relative_gap": 1.545265
+        },
+        {
+          "occupied": 64,
+          "relative_gap": 4.107314
+        },
+        {
+          "occupied": 112,
+          "relative_gap": 7.96135
+        }
+      ]
+    },
+    {
+      "left": "B_effective_rank",
+      "right": "C_random_baseline",
+      "max_relative_gap": 1.150887,
+      "at_occupied": 8,
+      "gaps": [
+        {
+          "occupied": 8,
+          "relative_gap": 1.150887
+        },
+        {
+          "occupied": 16,
+          "relative_gap": 0.878438
+        },
+        {
+          "occupied": 32,
+          "relative_gap": 0.211629
+        },
+        {
+          "occupied": 64,
+          "relative_gap": 0.0
+        },
+        {
+          "occupied": 112,
+          "relative_gap": 0.111165
+        }
+      ]
+    },
+    {
+      "left": "B_effective_rank",
+      "right": "D_fitted_power_law",
+      "max_relative_gap": 5.619378,
+      "at_occupied": 112,
+      "gaps": [
+        {
+          "occupied": 8,
+          "relative_gap": 2.082575
+        },
+        {
+          "occupied": 16,
+          "relative_gap": 0.175696
+        },
+        {
+          "occupied": 32,
+          "relative_gap": 1.193506
+        },
+        {
+          "occupied": 64,
+          "relative_gap": 4.107314
+        },
+        {
+          "occupied": 112,
+          "relative_gap": 5.619378
+        }
+      ]
+    },
+    {
+      "left": "C_random_baseline",
+      "right": "D_fitted_power_law",
+      "max_relative_gap": 4.957149,
+      "at_occupied": 112,
+      "gaps": [
+        {
+          "occupied": 8,
+          "relative_gap": 0.433165
+        },
+        {
+          "occupied": 16,
+          "relative_gap": 0.597725
+        },
+        {
+          "occupied": 32,
+          "relative_gap": 1.657715
+        },
+        {
+          "occupied": 64,
+          "relative_gap": 4.107314
+        },
+        {
+          "occupied": 112,
+          "relative_gap": 4.957149
+        }
+      ]
+    }
+  ],
+  "fit_forms": [],
+  "case_ok_forms": [
+    "C_random_baseline",
+    "D_fitted_power_law"
+  ],
+  "adoptable_forms": [],
+  "decision": "g2c_shape_undetermined:measure_more_rungs",
+  "decision_reason": "the registered five-rung fit test cannot be completed: rung 112 is not measurable on this fixture (only 64 distinct sentences).  On the four measurable rungs the worst registered residuals are {'A_occupancy_sqrt': 0.315339, 'B_effective_rank': 0.605136, 'C_random_baseline': 0.456448, 'D_fitted_power_law': 4.107309}, so dropping the invalid rung does not rescue any form either.  The next measurement needs a fixture that can supply 112 distinct sentences; no form is adopted.",
+  "decision_zh": "五档测试没能完成（第 5 档 112 在本夹具上不可测），且四个可测档上没有任何单一形式能进 20% 残差带；判据形状未定，按预注册只能去测更多档并换更宽的夹具，不得分段硬拟合、也不得挑最接近的一个",
+  "superseded_run": {
+    "report_sha256": "5e5502a223babc05e7a4cfbc17aed428882743ee7e377397fd194bd05592c6a4",
+    "manifest_sha256": "339f56892f882624a1356d920d8e1b5af0dc3c3aa624567d72861136879ecb25",
+    "decision": "g2c_shape_undetermined:measure_more_rungs",
+    "why": "first run landed the same five readings, forms, constants and decision, but had no per-rung validity instrumentation, so the 112 rung's twin-pair artefact was not on the record; this run adds the validity check only"
+  },
+  "implementation_corrections": [
+    {
+      "what": "`os.fsync` on a read-only handle fails on Windows (EBADF) in the first run",
+      "when": "phase 2 manifest write, before any case verdict and before the report",
+      "effect_on_judgement": "none; the manifest is now fsynced on an r+b handle"
+    },
+    {
+      "what": "rung 112 was used as a curve point without a validity check; its contexts are not 112 distinct sentences",
+      "when": "discovered after the first run's phase 1, before this run's cases",
+      "criteria_changed": false,
+      "thresholds_changed": false,
+      "forms_changed": false,
+      "constants_changed": false,
+      "decision_changed": false,
+      "effect_on_judgement": "the verdict stays `shape_undetermined:measure_more_rungs`; the reason becomes explicit: the five-rung test cannot be completed on this fixture"
+    }
+  ],
+  "discipline": {
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_steps": 0,
+    "model_forward": 0,
+    "writes_in_phase_1": 0,
+    "gate_commits_in_phase_1": 0,
+    "case_writes_attempted": 12,
+    "case_writes_published": 5,
+    "frozen_files_touched": 0
+  },
+  "isolation": {
+    "runner_sha256_at_start": "b1406400acbc30db4ef40d77ff7a271d8c8414fdb69eb41d5a3c3ed522266d96",
+    "runner_sha256_at_end": "b1406400acbc30db4ef40d77ff7a271d8c8414fdb69eb41d5a3c3ed522266d96",
+    "manifest_sha256": "98dda8d500f1f6eca735a734c163af2e0f5a4f759dc2221b95f216ea239f753e",
+    "gate_sha256": "2ed8b0dd3ed63af20e925155a48b2825b9664fe9f22a37b102b25f9cb89ba6de",
+    "runtime_sha256": "2125b1fb80da3f08d63353920bd83bbf88ba7839fcf482a24a2d06a13340ccd6",
+    "process_guard": {
+      "checked": "-m black",
+      "found": 0
+    },
+    "formatter_path": "scripts/training/black_check_gate.py (in-process); python -m black banned",
+    "banned_formatter_invoked_by_this_runner": false,
+    "single_instance_lock": "taiji_gate_g2c_20261108.lock",
+    "watchdog_fired": false
+  },
+  "cost": {
+    "cpu_seconds": 0.1875,
+    "wall_seconds": 0.70909,
+    "cpu_cap": 100.0,
+    "readings_written": 18
+  }
+}
