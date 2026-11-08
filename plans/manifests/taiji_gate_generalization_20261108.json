@@ -1,0 +1,120 @@
+{
+  "format": "taiji-gate-generalization-preregistration-v1",
+  "date": "2026-11-08",
+  "question": "on the same fixture and simplified gate, does the 22/22 correction reading survive on phrasings that were never written, or is it memorised lookup?",
+  "written_before_any_arm_reading": true,
+  "written_before_any_case_verdict": true,
+  "sequence": [
+    "phase 0 baseline geometry (read only, no verdict)",
+    "this manifest is written and hashed",
+    "simplified gate writes the 22 faces (capacity + copy, growth before refusal)",
+    "written group: the 22 registered synonym reads",
+    "unwritten group: 3 never-written phrasings per face, built on the scoring side",
+    "copy check: same value at a never-written phrasing of an occupied face",
+    "verdict from the registered rules"
+  ],
+  "mapping": {
+    "task_shape": "package 20: 22 correction surfaces per world on a content-addressed store that starts at 32 slots and may grow",
+    "store": "existing F1/F3 fixture unchanged: same encoder (localized_centered, legacy centroid), 128-d keys, 8192-d values, ADDRESSED_TEMPERATURE 0.1",
+    "why_not_the_model": "the question is about what the store can answer, not about a torch forward; the probe measures the store where it acts and runs no model step",
+    "initial_occupancy": 8,
+    "initial_slots": 32,
+    "face_count": 22,
+    "face_definition": "face i writes a correction whose value token is the i-th new token at position 5, and is read with the same token at a registered other position",
+    "unwritten_definition": "for face i, the same value token at positions outside {5, registered read position, token % 8}; the first three such positions, sorted, are used",
+    "expected_answer": "the slot the face was written to, taken from the store write bookkeeping; no rule truth, solver or fixture label enters the answer chain",
+    "no_eviction": "append only; a full store is refused, never evicted"
+  },
+  "counts": {
+    "written_queries": 22,
+    "unwritten_queries": 66,
+    "unwritten_per_rule": 3,
+    "copy_attempts": 1
+  },
+  "retained_clauses": [
+    "commit_rejected_no_capacity",
+    "commit_rejected_no_direction"
+  ],
+  "dropped_clauses": [
+    "commit_rejected_retention",
+    "commit_rejected_separability",
+    "commit_rejected_inflation",
+    "commit_rejected_no_gain"
+  ],
+  "dropped_clauses_are_readings_only": true,
+  "growth_protocol": {
+    "trigger": "growth_runtime.write_headroom(...).sufficient is false for the next write",
+    "step": "growth_runtime.plan_growth doubles until (slots - needed)/slots >= 0.125",
+    "recheck": "the reserve is re-checked on the grown store before the write",
+    "on_failure": "refuse with commit_rejected_no_capacity, roll back bit-identically",
+    "slot_cap": null
+  },
+  "copy_check": {
+    "face": "face_00",
+    "position": 0,
+    "value": "the same value the face was written with",
+    "expected": "commit_rejected_no_direction, bit-identical rollback, 0 evictions"
+  },
+  "constants": {
+    "base_occupied": 8,
+    "initial_slots": 32,
+    "face_count": 22,
+    "correction_position": 5,
+    "synonym_positions": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "unwritten_per_rule": 3,
+    "copy_face_tag": "face_00",
+    "collapse_line": 0.02,
+    "gate_thresholds": {
+      "g1_max_retention_drop": 0,
+      "g2_max_margin_drop": 0.002,
+      "g3_max_state_bytes": 33280,
+      "g3_min_slot_headroom": 0.125,
+      "g4_max_value_residual": 0.5,
+      "direction": [
+        0.15,
+        0.85,
+        0.3
+      ]
+    }
+  },
+  "baseline_readings": {
+    "occupied": 8,
+    "slots": 32,
+    "headroom": 0.75,
+    "spec_margin": 0.068631,
+    "retention_correct": 7,
+    "retention_total": 7,
+    "unwritten_queries": 66,
+    "unwritten_rules": 22,
+    "copy_face": "face_00",
+    "copy_position": 0
+  },
+  "criteria": {
+    "P1_written_group": "the 22 faces are written by the simplified gate and read with their registered synonym; a face is correct iff the final store's top-1 slot for that read is the slot the face was written to; report the integer count out of 22",
+    "P2_unwritten_group": "for every face, three phrasings of the same content at positions that are neither the write position (5), the registered read position, nor the fixture's canonical position (token % 8); none of these keys is written or read anywhere else. A phrasing is correct iff the final store's top-1 slot is the slot of its own face",
+    "P3_construction": "the unwritten phrasings are built only from fixture arrays (base, the face's value token, a position) on the scoring side; the expected slot is the store write bookkeeping of that face, never a rule truth or solver output. If any face yields fewer than two phrasings the run is not assessable, not a pass",
+    "P4_similarity": "for every unwritten key, report its cosine to the nearest occupied key and to its own face key; report min / p25 / median / p75 / max of the nearest-key cosine and the count whose nearest key is the own face key",
+    "P5_copy_refusal": "after the 22 writes, rewrite one already occupied face with the same value at a never-written phrasing; the simplified gate must refuse it with commit_rejected_no_direction, the attempt must evict and drop nothing",
+    "P6_copy_isolation": "the refused copy write must leave the state bit-identical (sha256 before == after) and every one of the 22 registered face readings unchanged face by face",
+    "verdict_rule": "any rule with < 2 constructed phrasings -> not_assessable; unwritten >= 0.8 -> rule_generalized (0.8 belongs here); unwritten <= 0.2 with written >= 0.9 -> memorized_lookup_only (0.2 belongs here); unwritten <= 0.2 with written < 0.9 -> inconclusive_both_low; otherwise -> partially_generalized",
+    "copy_verdict_rule": "refused with no_direction + bit-identical + 0 evictions + 0 dropped + all face readings unchanged -> copy_refused_no_direction_intact; refused by another retained clause -> copy_refused_other_clause; admitted -> copy_admitted",
+    "no_soft_language": "an unwritten rate that is high because every phrasing lands on the face's own key may not be described as learning a rule; the similarity distribution is reported next to the count for exactly that reason",
+    "unchanged": "no threshold, fixture, face, position or battery is retuned after the first reading"
+  },
+  "discipline": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "black_invoked": false,
+    "cpu_cap_seconds": 200.0,
+    "watchdog_seconds": 60.0,
+    "evictions": 0,
+    "dropped_writes": 0
+  }
+}

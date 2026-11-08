@@ -1,0 +1,2532 @@
+{
+  "probe": "taiji_gate_generalization",
+  "date": "2026-11-08",
+  "question": "on the same fixture and simplified gate, does the 22/22 correction reading survive on phrasings that were never written, or is it memorised lookup?",
+  "verdict": "rule_generalized",
+  "verdict_detail": {
+    "rule": "any rule with < 2 constructed phrasings -> not_assessable; unwritten >= 0.8 -> rule_generalized (0.8 belongs here); unwritten <= 0.2 with written >= 0.9 -> memorized_lookup_only (0.2 belongs here); unwritten <= 0.2 with written < 0.9 -> inconclusive_both_low; otherwise -> partially_generalized",
+    "written_group": {
+      "correct": 22,
+      "total": 22,
+      "rate": 1.0,
+      "definition": "the 22 faces are written by the simplified gate and read with their registered synonym; a face is correct iff the final store's top-1 slot for that read is the slot the face was written to; report the integer count out of 22"
+    },
+    "unwritten_group": {
+      "correct": 66,
+      "total": 66,
+      "rate": 1.0,
+      "definition": "for every face, three phrasings of the same content at positions that are neither the write position (5), the registered read position, nor the fixture's canonical position (token % 8); none of these keys is written or read anywhere else. A phrasing is correct iff the final store's top-1 slot is the slot of its own face",
+      "per_rule": {
+        "face_00": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_01": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_02": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_03": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_04": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_05": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_06": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_07": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_08": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_09": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_10": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_11": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_12": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_13": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_14": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_15": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_16": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_17": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_18": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_19": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_20": {
+          "correct": 3,
+          "total": 3
+        },
+        "face_21": {
+          "correct": 3,
+          "total": 3
+        }
+      }
+    },
+    "construction": {
+      "per_rule": {
+        "face_00": 3,
+        "face_01": 3,
+        "face_02": 3,
+        "face_03": 3,
+        "face_04": 3,
+        "face_05": 3,
+        "face_06": 3,
+        "face_07": 3,
+        "face_08": 3,
+        "face_09": 3,
+        "face_10": 3,
+        "face_11": 3,
+        "face_12": 3,
+        "face_13": 3,
+        "face_14": 3,
+        "face_15": 3,
+        "face_16": 3,
+        "face_17": 3,
+        "face_18": 3,
+        "face_19": 3,
+        "face_20": 3,
+        "face_21": 3
+      },
+      "rules_with_fewer_than_two": {},
+      "sufficient": true,
+      "positions_per_rule": 3
+    },
+    "similarity": {
+      "nearest_key_cosine": {
+        "count": 66,
+        "min": 0.959927,
+        "p25": 0.964725,
+        "median": 0.96649,
+        "p75": 0.970541,
+        "max": 0.999987
+      },
+      "own_face_key_cosine": {
+        "count": 66,
+        "min": 0.959927,
+        "p25": 0.964725,
+        "median": 0.96649,
+        "p75": 0.970541,
+        "max": 0.999987
+      },
+      "nearest_is_own_count": 66,
+      "nearest_is_own_total": 66,
+      "used_by_verdict": false
+    },
+    "copy_check": {
+      "verdict": "copy_refused_no_direction_intact",
+      "rule": "refused with no_direction + bit-identical + 0 evictions + 0 dropped + all face readings unchanged -> copy_refused_no_direction_intact; refused by another retained clause -> copy_refused_other_clause; admitted -> copy_admitted",
+      "no_direction_hit": true,
+      "isolation": {
+        "changed": [],
+        "unchanged_all": true,
+        "compared": 22
+      }
+    },
+    "evictions": 0,
+    "dropped_writes": 0
+  },
+  "written_group": {
+    "faces": [
+      {
+        "tag": "face_00",
+        "token": 20,
+        "read_position": 1,
+        "written_slot": 8,
+        "read_top_slot": 8,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.004568
+      },
+      {
+        "tag": "face_01",
+        "token": 22,
+        "read_position": 2,
+        "written_slot": 9,
+        "read_top_slot": 9,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.003929
+      },
+      {
+        "tag": "face_02",
+        "token": 23,
+        "read_position": 3,
+        "written_slot": 10,
+        "read_top_slot": 10,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.002909
+      },
+      {
+        "tag": "face_03",
+        "token": 24,
+        "read_position": 4,
+        "written_slot": 11,
+        "read_top_slot": 11,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.003462
+      },
+      {
+        "tag": "face_04",
+        "token": 25,
+        "read_position": 2,
+        "written_slot": 12,
+        "read_top_slot": 12,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.003243
+      },
+      {
+        "tag": "face_05",
+        "token": 26,
+        "read_position": 3,
+        "written_slot": 13,
+        "read_top_slot": 13,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.002987
+      },
+      {
+        "tag": "face_06",
+        "token": 27,
+        "read_position": 4,
+        "written_slot": 14,
+        "read_top_slot": 14,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.003185
+      },
+      {
+        "tag": "face_07",
+        "token": 28,
+        "read_position": 1,
+        "written_slot": 15,
+        "read_top_slot": 15,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.002067
+      },
+      {
+        "tag": "face_08",
+        "token": 30,
+        "read_position": 1,
+        "written_slot": 16,
+        "read_top_slot": 16,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.0044
+      },
+      {
+        "tag": "face_09",
+        "token": 31,
+        "read_position": 2,
+        "written_slot": 17,
+        "read_top_slot": 17,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.005087
+      },
+      {
+        "tag": "face_10",
+        "token": 32,
+        "read_position": 3,
+        "written_slot": 18,
+        "read_top_slot": 18,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.003801
+      },
+      {
+        "tag": "face_11",
+        "token": 33,
+        "read_position": 4,
+        "written_slot": 19,
+        "read_top_slot": 19,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.002767
+      },
+      {
+        "tag": "face_12",
+        "token": 34,
+        "read_position": 1,
+        "written_slot": 20,
+        "read_top_slot": 20,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.00313
+      },
+      {
+        "tag": "face_13",
+        "token": 35,
+        "read_position": 2,
+        "written_slot": 21,
+        "read_top_slot": 21,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.004986
+      },
+      {
+        "tag": "face_14",
+        "token": 36,
+        "read_position": 3,
+        "written_slot": 22,
+        "read_top_slot": 22,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.001979
+      },
+      {
+        "tag": "face_15",
+        "token": 38,
+        "read_position": 4,
+        "written_slot": 23,
+        "read_top_slot": 23,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.003672
+      },
+      {
+        "tag": "face_16",
+        "token": 39,
+        "read_position": 1,
+        "written_slot": 24,
+        "read_top_slot": 24,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.006114
+      },
+      {
+        "tag": "face_17",
+        "token": 40,
+        "read_position": 2,
+        "written_slot": 25,
+        "read_top_slot": 25,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.002257
+      },
+      {
+        "tag": "face_18",
+        "token": 41,
+        "read_position": 3,
+        "written_slot": 26,
+        "read_top_slot": 26,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.003291
+      },
+      {
+        "tag": "face_19",
+        "token": 42,
+        "read_position": 4,
+        "written_slot": 27,
+        "read_top_slot": 27,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.003406
+      },
+      {
+        "tag": "face_20",
+        "token": 43,
+        "read_position": 1,
+        "written_slot": 28,
+        "read_top_slot": 28,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.002602
+      },
+      {
+        "tag": "face_21",
+        "token": 44,
+        "read_position": 2,
+        "written_slot": 29,
+        "read_top_slot": 29,
+        "correct": true,
+        "outcome": "correct",
+        "value_residual": 0.002908
+      }
+    ],
+    "self_read_diagnostic": {
+      "correct": 22,
+      "total": 22
+    }
+  },
+  "unwritten_group": {
+    "rows": [
+      {
+        "tag": "face_00",
+        "token": 20,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 8,
+        "read_top_slot": 8,
+        "correct": true
+      },
+      {
+        "tag": "face_00",
+        "token": 20,
+        "position": 2,
+        "rank": 1,
+        "expected_slot": 8,
+        "read_top_slot": 8,
+        "correct": true
+      },
+      {
+        "tag": "face_00",
+        "token": 20,
+        "position": 3,
+        "rank": 2,
+        "expected_slot": 8,
+        "read_top_slot": 8,
+        "correct": true
+      },
+      {
+        "tag": "face_01",
+        "token": 22,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 9,
+        "read_top_slot": 9,
+        "correct": true
+      },
+      {
+        "tag": "face_01",
+        "token": 22,
+        "position": 1,
+        "rank": 1,
+        "expected_slot": 9,
+        "read_top_slot": 9,
+        "correct": true
+      },
+      {
+        "tag": "face_01",
+        "token": 22,
+        "position": 3,
+        "rank": 2,
+        "expected_slot": 9,
+        "read_top_slot": 9,
+        "correct": true
+      },
+      {
+        "tag": "face_02",
+        "token": 23,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 10,
+        "read_top_slot": 10,
+        "correct": true
+      },
+      {
+        "tag": "face_02",
+        "token": 23,
+        "position": 1,
+        "rank": 1,
+        "expected_slot": 10,
+        "read_top_slot": 10,
+        "correct": true
+      },
+      {
+        "tag": "face_02",
+        "token": 23,
+        "position": 2,
+        "rank": 2,
+        "expected_slot": 10,
+        "read_top_slot": 10,
+        "correct": true
+      },
+      {
+        "tag": "face_03",
+        "token": 24,
+        "position": 1,
+        "rank": 0,
+        "expected_slot": 11,
+        "read_top_slot": 11,
+        "correct": true
+      },
+      {
+        "tag": "face_03",
+        "token": 24,
+        "position": 2,
+        "rank": 1,
+        "expected_slot": 11,
+        "read_top_slot": 11,
+        "correct": true
+      },
+      {
+        "tag": "face_03",
+        "token": 24,
+        "position": 3,
+        "rank": 2,
+        "expected_slot": 11,
+        "read_top_slot": 11,
+        "correct": true
+      },
+      {
+        "tag": "face_04",
+        "token": 25,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 12,
+        "read_top_slot": 12,
+        "correct": true
+      },
+      {
+        "tag": "face_04",
+        "token": 25,
+        "position": 3,
+        "rank": 1,
+        "expected_slot": 12,
+        "read_top_slot": 12,
+        "correct": true
+      },
+      {
+        "tag": "face_04",
+        "token": 25,
+        "position": 4,
+        "rank": 2,
+        "expected_slot": 12,
+        "read_top_slot": 12,
+        "correct": true
+      },
+      {
+        "tag": "face_05",
+        "token": 26,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 13,
+        "read_top_slot": 13,
+        "correct": true
+      },
+      {
+        "tag": "face_05",
+        "token": 26,
+        "position": 1,
+        "rank": 1,
+        "expected_slot": 13,
+        "read_top_slot": 13,
+        "correct": true
+      },
+      {
+        "tag": "face_05",
+        "token": 26,
+        "position": 4,
+        "rank": 2,
+        "expected_slot": 13,
+        "read_top_slot": 13,
+        "correct": true
+      },
+      {
+        "tag": "face_06",
+        "token": 27,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 14,
+        "read_top_slot": 14,
+        "correct": true
+      },
+      {
+        "tag": "face_06",
+        "token": 27,
+        "position": 1,
+        "rank": 1,
+        "expected_slot": 14,
+        "read_top_slot": 14,
+        "correct": true
+      },
+      {
+        "tag": "face_06",
+        "token": 27,
+        "position": 2,
+        "rank": 2,
+        "expected_slot": 14,
+        "read_top_slot": 14,
+        "correct": true
+      },
+      {
+        "tag": "face_07",
+        "token": 28,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 15,
+        "read_top_slot": 15,
+        "correct": true
+      },
+      {
+        "tag": "face_07",
+        "token": 28,
+        "position": 2,
+        "rank": 1,
+        "expected_slot": 15,
+        "read_top_slot": 15,
+        "correct": true
+      },
+      {
+        "tag": "face_07",
+        "token": 28,
+        "position": 3,
+        "rank": 2,
+        "expected_slot": 15,
+        "read_top_slot": 15,
+        "correct": true
+      },
+      {
+        "tag": "face_08",
+        "token": 30,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 16,
+        "read_top_slot": 16,
+        "correct": true
+      },
+      {
+        "tag": "face_08",
+        "token": 30,
+        "position": 2,
+        "rank": 1,
+        "expected_slot": 16,
+        "read_top_slot": 16,
+        "correct": true
+      },
+      {
+        "tag": "face_08",
+        "token": 30,
+        "position": 3,
+        "rank": 2,
+        "expected_slot": 16,
+        "read_top_slot": 16,
+        "correct": true
+      },
+      {
+        "tag": "face_09",
+        "token": 31,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 17,
+        "read_top_slot": 17,
+        "correct": true
+      },
+      {
+        "tag": "face_09",
+        "token": 31,
+        "position": 1,
+        "rank": 1,
+        "expected_slot": 17,
+        "read_top_slot": 17,
+        "correct": true
+      },
+      {
+        "tag": "face_09",
+        "token": 31,
+        "position": 3,
+        "rank": 2,
+        "expected_slot": 17,
+        "read_top_slot": 17,
+        "correct": true
+      },
+      {
+        "tag": "face_10",
+        "token": 32,
+        "position": 1,
+        "rank": 0,
+        "expected_slot": 18,
+        "read_top_slot": 18,
+        "correct": true
+      },
+      {
+        "tag": "face_10",
+        "token": 32,
+        "position": 2,
+        "rank": 1,
+        "expected_slot": 18,
+        "read_top_slot": 18,
+        "correct": true
+      },
+      {
+        "tag": "face_10",
+        "token": 32,
+        "position": 4,
+        "rank": 2,
+        "expected_slot": 18,
+        "read_top_slot": 18,
+        "correct": true
+      },
+      {
+        "tag": "face_11",
+        "token": 33,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 19,
+        "read_top_slot": 19,
+        "correct": true
+      },
+      {
+        "tag": "face_11",
+        "token": 33,
+        "position": 2,
+        "rank": 1,
+        "expected_slot": 19,
+        "read_top_slot": 19,
+        "correct": true
+      },
+      {
+        "tag": "face_11",
+        "token": 33,
+        "position": 3,
+        "rank": 2,
+        "expected_slot": 19,
+        "read_top_slot": 19,
+        "correct": true
+      },
+      {
+        "tag": "face_12",
+        "token": 34,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 20,
+        "read_top_slot": 20,
+        "correct": true
+      },
+      {
+        "tag": "face_12",
+        "token": 34,
+        "position": 3,
+        "rank": 1,
+        "expected_slot": 20,
+        "read_top_slot": 20,
+        "correct": true
+      },
+      {
+        "tag": "face_12",
+        "token": 34,
+        "position": 4,
+        "rank": 2,
+        "expected_slot": 20,
+        "read_top_slot": 20,
+        "correct": true
+      },
+      {
+        "tag": "face_13",
+        "token": 35,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 21,
+        "read_top_slot": 21,
+        "correct": true
+      },
+      {
+        "tag": "face_13",
+        "token": 35,
+        "position": 1,
+        "rank": 1,
+        "expected_slot": 21,
+        "read_top_slot": 21,
+        "correct": true
+      },
+      {
+        "tag": "face_13",
+        "token": 35,
+        "position": 4,
+        "rank": 2,
+        "expected_slot": 21,
+        "read_top_slot": 21,
+        "correct": true
+      },
+      {
+        "tag": "face_14",
+        "token": 36,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 22,
+        "read_top_slot": 22,
+        "correct": true
+      },
+      {
+        "tag": "face_14",
+        "token": 36,
+        "position": 1,
+        "rank": 1,
+        "expected_slot": 22,
+        "read_top_slot": 22,
+        "correct": true
+      },
+      {
+        "tag": "face_14",
+        "token": 36,
+        "position": 2,
+        "rank": 2,
+        "expected_slot": 22,
+        "read_top_slot": 22,
+        "correct": true
+      },
+      {
+        "tag": "face_15",
+        "token": 38,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 23,
+        "read_top_slot": 23,
+        "correct": true
+      },
+      {
+        "tag": "face_15",
+        "token": 38,
+        "position": 1,
+        "rank": 1,
+        "expected_slot": 23,
+        "read_top_slot": 23,
+        "correct": true
+      },
+      {
+        "tag": "face_15",
+        "token": 38,
+        "position": 2,
+        "rank": 2,
+        "expected_slot": 23,
+        "read_top_slot": 23,
+        "correct": true
+      },
+      {
+        "tag": "face_16",
+        "token": 39,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 24,
+        "read_top_slot": 24,
+        "correct": true
+      },
+      {
+        "tag": "face_16",
+        "token": 39,
+        "position": 2,
+        "rank": 1,
+        "expected_slot": 24,
+        "read_top_slot": 24,
+        "correct": true
+      },
+      {
+        "tag": "face_16",
+        "token": 39,
+        "position": 3,
+        "rank": 2,
+        "expected_slot": 24,
+        "read_top_slot": 24,
+        "correct": true
+      },
+      {
+        "tag": "face_17",
+        "token": 40,
+        "position": 1,
+        "rank": 0,
+        "expected_slot": 25,
+        "read_top_slot": 25,
+        "correct": true
+      },
+      {
+        "tag": "face_17",
+        "token": 40,
+        "position": 3,
+        "rank": 1,
+        "expected_slot": 25,
+        "read_top_slot": 25,
+        "correct": true
+      },
+      {
+        "tag": "face_17",
+        "token": 40,
+        "position": 4,
+        "rank": 2,
+        "expected_slot": 25,
+        "read_top_slot": 25,
+        "correct": true
+      },
+      {
+        "tag": "face_18",
+        "token": 41,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 26,
+        "read_top_slot": 26,
+        "correct": true
+      },
+      {
+        "tag": "face_18",
+        "token": 41,
+        "position": 2,
+        "rank": 1,
+        "expected_slot": 26,
+        "read_top_slot": 26,
+        "correct": true
+      },
+      {
+        "tag": "face_18",
+        "token": 41,
+        "position": 4,
+        "rank": 2,
+        "expected_slot": 26,
+        "read_top_slot": 26,
+        "correct": true
+      },
+      {
+        "tag": "face_19",
+        "token": 42,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 27,
+        "read_top_slot": 27,
+        "correct": true
+      },
+      {
+        "tag": "face_19",
+        "token": 42,
+        "position": 1,
+        "rank": 1,
+        "expected_slot": 27,
+        "read_top_slot": 27,
+        "correct": true
+      },
+      {
+        "tag": "face_19",
+        "token": 42,
+        "position": 3,
+        "rank": 2,
+        "expected_slot": 27,
+        "read_top_slot": 27,
+        "correct": true
+      },
+      {
+        "tag": "face_20",
+        "token": 43,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 28,
+        "read_top_slot": 28,
+        "correct": true
+      },
+      {
+        "tag": "face_20",
+        "token": 43,
+        "position": 2,
+        "rank": 1,
+        "expected_slot": 28,
+        "read_top_slot": 28,
+        "correct": true
+      },
+      {
+        "tag": "face_20",
+        "token": 43,
+        "position": 4,
+        "rank": 2,
+        "expected_slot": 28,
+        "read_top_slot": 28,
+        "correct": true
+      },
+      {
+        "tag": "face_21",
+        "token": 44,
+        "position": 0,
+        "rank": 0,
+        "expected_slot": 29,
+        "read_top_slot": 29,
+        "correct": true
+      },
+      {
+        "tag": "face_21",
+        "token": 44,
+        "position": 1,
+        "rank": 1,
+        "expected_slot": 29,
+        "read_top_slot": 29,
+        "correct": true
+      },
+      {
+        "tag": "face_21",
+        "token": 44,
+        "position": 3,
+        "rank": 2,
+        "expected_slot": 29,
+        "read_top_slot": 29,
+        "correct": true
+      }
+    ],
+    "per_rule": {
+      "face_00": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_01": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_02": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_03": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_04": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_05": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_06": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_07": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_08": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_09": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_10": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_11": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_12": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_13": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_14": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_15": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_16": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_17": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_18": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_19": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_20": {
+        "correct": 3,
+        "total": 3
+      },
+      "face_21": {
+        "correct": 3,
+        "total": 3
+      }
+    }
+  },
+  "similarity": {
+    "summary": {
+      "nearest_key_cosine": {
+        "count": 66,
+        "min": 0.959927,
+        "p25": 0.964725,
+        "median": 0.96649,
+        "p75": 0.970541,
+        "max": 0.999987
+      },
+      "own_face_key_cosine": {
+        "count": 66,
+        "min": 0.959927,
+        "p25": 0.964725,
+        "median": 0.96649,
+        "p75": 0.970541,
+        "max": 0.999987
+      },
+      "nearest_is_own_count": 66,
+      "nearest_is_own_total": 66,
+      "used_by_verdict": false
+    },
+    "rows": [
+      {
+        "tag": "face_00",
+        "position": 0,
+        "nearest_slot": 8,
+        "nearest_cos": 0.966211,
+        "second_cos": 0.186921,
+        "own_slot": 8,
+        "own_cos": 0.966211,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_00",
+        "position": 2,
+        "nearest_slot": 8,
+        "nearest_cos": 0.969858,
+        "second_cos": 0.192365,
+        "own_slot": 8,
+        "own_cos": 0.969858,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_00",
+        "position": 3,
+        "nearest_slot": 8,
+        "nearest_cos": 0.96675,
+        "second_cos": 0.186026,
+        "own_slot": 8,
+        "own_cos": 0.96675,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_01",
+        "position": 0,
+        "nearest_slot": 9,
+        "nearest_cos": 0.962029,
+        "second_cos": 0.225041,
+        "own_slot": 9,
+        "own_cos": 0.962029,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_01",
+        "position": 1,
+        "nearest_slot": 9,
+        "nearest_cos": 0.965589,
+        "second_cos": 0.203215,
+        "own_slot": 9,
+        "own_cos": 0.965589,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_01",
+        "position": 3,
+        "nearest_slot": 9,
+        "nearest_cos": 0.961481,
+        "second_cos": 0.224622,
+        "own_slot": 9,
+        "own_cos": 0.961481,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_02",
+        "position": 0,
+        "nearest_slot": 10,
+        "nearest_cos": 0.999982,
+        "second_cos": 0.241044,
+        "own_slot": 10,
+        "own_cos": 0.999982,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_02",
+        "position": 1,
+        "nearest_slot": 10,
+        "nearest_cos": 0.999983,
+        "second_cos": 0.242198,
+        "own_slot": 10,
+        "own_cos": 0.999983,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_02",
+        "position": 2,
+        "nearest_slot": 10,
+        "nearest_cos": 0.968708,
+        "second_cos": 0.195814,
+        "own_slot": 10,
+        "own_cos": 0.968708,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_03",
+        "position": 1,
+        "nearest_slot": 11,
+        "nearest_cos": 0.96511,
+        "second_cos": 0.219805,
+        "own_slot": 11,
+        "own_cos": 0.96511,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_03",
+        "position": 2,
+        "nearest_slot": 11,
+        "nearest_cos": 0.962348,
+        "second_cos": 0.195464,
+        "own_slot": 11,
+        "own_cos": 0.962348,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_03",
+        "position": 3,
+        "nearest_slot": 11,
+        "nearest_cos": 0.961847,
+        "second_cos": 0.195219,
+        "own_slot": 11,
+        "own_cos": 0.961847,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_04",
+        "position": 0,
+        "nearest_slot": 12,
+        "nearest_cos": 0.964612,
+        "second_cos": 0.170436,
+        "own_slot": 12,
+        "own_cos": 0.964612,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_04",
+        "position": 3,
+        "nearest_slot": 12,
+        "nearest_cos": 0.959927,
+        "second_cos": 0.157877,
+        "own_slot": 12,
+        "own_cos": 0.959927,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_04",
+        "position": 4,
+        "nearest_slot": 12,
+        "nearest_cos": 0.999978,
+        "second_cos": 0.203622,
+        "own_slot": 12,
+        "own_cos": 0.999978,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_05",
+        "position": 0,
+        "nearest_slot": 13,
+        "nearest_cos": 0.999985,
+        "second_cos": 0.20311,
+        "own_slot": 13,
+        "own_cos": 0.999985,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_05",
+        "position": 1,
+        "nearest_slot": 13,
+        "nearest_cos": 0.999985,
+        "second_cos": 0.203291,
+        "own_slot": 13,
+        "own_cos": 0.999985,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_05",
+        "position": 4,
+        "nearest_slot": 13,
+        "nearest_cos": 0.999982,
+        "second_cos": 0.203265,
+        "own_slot": 13,
+        "own_cos": 0.999982,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_06",
+        "position": 0,
+        "nearest_slot": 14,
+        "nearest_cos": 0.966497,
+        "second_cos": 0.202534,
+        "own_slot": 14,
+        "own_cos": 0.966497,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_06",
+        "position": 1,
+        "nearest_slot": 14,
+        "nearest_cos": 0.999987,
+        "second_cos": 0.21578,
+        "own_slot": 14,
+        "own_cos": 0.999987,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_06",
+        "position": 2,
+        "nearest_slot": 14,
+        "nearest_cos": 0.999983,
+        "second_cos": 0.215712,
+        "own_slot": 14,
+        "own_cos": 0.999983,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_07",
+        "position": 0,
+        "nearest_slot": 15,
+        "nearest_cos": 0.96358,
+        "second_cos": 0.230998,
+        "own_slot": 15,
+        "own_cos": 0.96358,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_07",
+        "position": 2,
+        "nearest_slot": 15,
+        "nearest_cos": 0.963105,
+        "second_cos": 0.233783,
+        "own_slot": 15,
+        "own_cos": 0.963105,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_07",
+        "position": 3,
+        "nearest_slot": 15,
+        "nearest_cos": 0.999975,
+        "second_cos": 0.204526,
+        "own_slot": 15,
+        "own_cos": 0.999975,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_08",
+        "position": 0,
+        "nearest_slot": 16,
+        "nearest_cos": 0.967266,
+        "second_cos": 0.23512,
+        "own_slot": 16,
+        "own_cos": 0.967266,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_08",
+        "position": 2,
+        "nearest_slot": 16,
+        "nearest_cos": 0.967239,
+        "second_cos": 0.235301,
+        "own_slot": 16,
+        "own_cos": 0.967239,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_08",
+        "position": 3,
+        "nearest_slot": 16,
+        "nearest_cos": 0.963983,
+        "second_cos": 0.219596,
+        "own_slot": 16,
+        "own_cos": 0.963983,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_09",
+        "position": 0,
+        "nearest_slot": 17,
+        "nearest_cos": 0.966042,
+        "second_cos": 0.266309,
+        "own_slot": 17,
+        "own_cos": 0.966042,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_09",
+        "position": 1,
+        "nearest_slot": 17,
+        "nearest_cos": 0.964546,
+        "second_cos": 0.243297,
+        "own_slot": 17,
+        "own_cos": 0.964546,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_09",
+        "position": 3,
+        "nearest_slot": 17,
+        "nearest_cos": 0.965899,
+        "second_cos": 0.266287,
+        "own_slot": 17,
+        "own_cos": 0.965899,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_10",
+        "position": 1,
+        "nearest_slot": 18,
+        "nearest_cos": 0.965268,
+        "second_cos": 0.24941,
+        "own_slot": 18,
+        "own_cos": 0.965268,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_10",
+        "position": 2,
+        "nearest_slot": 18,
+        "nearest_cos": 0.966098,
+        "second_cos": 0.256283,
+        "own_slot": 18,
+        "own_cos": 0.966098,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_10",
+        "position": 4,
+        "nearest_slot": 18,
+        "nearest_cos": 0.966214,
+        "second_cos": 0.255518,
+        "own_slot": 18,
+        "own_cos": 0.966214,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_11",
+        "position": 0,
+        "nearest_slot": 19,
+        "nearest_cos": 0.967699,
+        "second_cos": 0.247313,
+        "own_slot": 19,
+        "own_cos": 0.967699,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_11",
+        "position": 2,
+        "nearest_slot": 19,
+        "nearest_cos": 0.966939,
+        "second_cos": 0.246569,
+        "own_slot": 19,
+        "own_cos": 0.966939,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_11",
+        "position": 3,
+        "nearest_slot": 19,
+        "nearest_cos": 0.967613,
+        "second_cos": 0.246828,
+        "own_slot": 19,
+        "own_cos": 0.967613,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_12",
+        "position": 0,
+        "nearest_slot": 20,
+        "nearest_cos": 0.999986,
+        "second_cos": 0.222025,
+        "own_slot": 20,
+        "own_cos": 0.999986,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_12",
+        "position": 3,
+        "nearest_slot": 20,
+        "nearest_cos": 0.965624,
+        "second_cos": 0.228218,
+        "own_slot": 20,
+        "own_cos": 0.965624,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_12",
+        "position": 4,
+        "nearest_slot": 20,
+        "nearest_cos": 0.964666,
+        "second_cos": 0.226481,
+        "own_slot": 20,
+        "own_cos": 0.964666,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_13",
+        "position": 0,
+        "nearest_slot": 21,
+        "nearest_cos": 0.966483,
+        "second_cos": 0.27811,
+        "own_slot": 21,
+        "own_cos": 0.966483,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_13",
+        "position": 1,
+        "nearest_slot": 21,
+        "nearest_cos": 0.999986,
+        "second_cos": 0.328256,
+        "own_slot": 21,
+        "own_cos": 0.999986,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_13",
+        "position": 4,
+        "nearest_slot": 21,
+        "nearest_cos": 0.999984,
+        "second_cos": 0.327672,
+        "own_slot": 21,
+        "own_cos": 0.999984,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_14",
+        "position": 0,
+        "nearest_slot": 22,
+        "nearest_cos": 0.964304,
+        "second_cos": 0.139628,
+        "own_slot": 22,
+        "own_cos": 0.964304,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_14",
+        "position": 1,
+        "nearest_slot": 22,
+        "nearest_cos": 0.964902,
+        "second_cos": 0.142481,
+        "own_slot": 22,
+        "own_cos": 0.964902,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_14",
+        "position": 2,
+        "nearest_slot": 22,
+        "nearest_cos": 0.964983,
+        "second_cos": 0.142662,
+        "own_slot": 22,
+        "own_cos": 0.964983,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_15",
+        "position": 0,
+        "nearest_slot": 23,
+        "nearest_cos": 0.966353,
+        "second_cos": 0.239023,
+        "own_slot": 23,
+        "own_cos": 0.966353,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_15",
+        "position": 1,
+        "nearest_slot": 23,
+        "nearest_cos": 0.97035,
+        "second_cos": 0.217822,
+        "own_slot": 23,
+        "own_cos": 0.97035,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_15",
+        "position": 2,
+        "nearest_slot": 23,
+        "nearest_cos": 0.969616,
+        "second_cos": 0.217148,
+        "own_slot": 23,
+        "own_cos": 0.969616,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_16",
+        "position": 0,
+        "nearest_slot": 24,
+        "nearest_cos": 0.969521,
+        "second_cos": 0.332597,
+        "own_slot": 24,
+        "own_cos": 0.969521,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_16",
+        "position": 2,
+        "nearest_slot": 24,
+        "nearest_cos": 0.971399,
+        "second_cos": 0.312404,
+        "own_slot": 24,
+        "own_cos": 0.971399,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_16",
+        "position": 3,
+        "nearest_slot": 24,
+        "nearest_cos": 0.964523,
+        "second_cos": 0.340492,
+        "own_slot": 24,
+        "own_cos": 0.964523,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_17",
+        "position": 1,
+        "nearest_slot": 25,
+        "nearest_cos": 0.961201,
+        "second_cos": 0.144457,
+        "own_slot": 25,
+        "own_cos": 0.961201,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_17",
+        "position": 3,
+        "nearest_slot": 25,
+        "nearest_cos": 0.961072,
+        "second_cos": 0.144489,
+        "own_slot": 25,
+        "own_cos": 0.961072,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_17",
+        "position": 4,
+        "nearest_slot": 25,
+        "nearest_cos": 0.960374,
+        "second_cos": 0.144469,
+        "own_slot": 25,
+        "own_cos": 0.960374,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_18",
+        "position": 0,
+        "nearest_slot": 26,
+        "nearest_cos": 0.966296,
+        "second_cos": 0.222118,
+        "own_slot": 26,
+        "own_cos": 0.966296,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_18",
+        "position": 2,
+        "nearest_slot": 26,
+        "nearest_cos": 0.970604,
+        "second_cos": 0.208157,
+        "own_slot": 26,
+        "own_cos": 0.970604,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_18",
+        "position": 4,
+        "nearest_slot": 26,
+        "nearest_cos": 0.967155,
+        "second_cos": 0.230526,
+        "own_slot": 26,
+        "own_cos": 0.967155,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_19",
+        "position": 0,
+        "nearest_slot": 27,
+        "nearest_cos": 0.999979,
+        "second_cos": 0.209495,
+        "own_slot": 27,
+        "own_cos": 0.999979,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_19",
+        "position": 1,
+        "nearest_slot": 27,
+        "nearest_cos": 0.999981,
+        "second_cos": 0.209573,
+        "own_slot": 27,
+        "own_cos": 0.999981,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_19",
+        "position": 3,
+        "nearest_slot": 27,
+        "nearest_cos": 0.962425,
+        "second_cos": 0.205749,
+        "own_slot": 27,
+        "own_cos": 0.962425,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_20",
+        "position": 0,
+        "nearest_slot": 28,
+        "nearest_cos": 0.967467,
+        "second_cos": 0.180398,
+        "own_slot": 28,
+        "own_cos": 0.967467,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_20",
+        "position": 2,
+        "nearest_slot": 28,
+        "nearest_cos": 0.966102,
+        "second_cos": 0.19141,
+        "own_slot": 28,
+        "own_cos": 0.966102,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_20",
+        "position": 4,
+        "nearest_slot": 28,
+        "nearest_cos": 0.969017,
+        "second_cos": 0.185188,
+        "own_slot": 28,
+        "own_cos": 0.969017,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_21",
+        "position": 0,
+        "nearest_slot": 29,
+        "nearest_cos": 0.999985,
+        "second_cos": 0.167819,
+        "own_slot": 29,
+        "own_cos": 0.999985,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_21",
+        "position": 1,
+        "nearest_slot": 29,
+        "nearest_cos": 0.965433,
+        "second_cos": 0.178188,
+        "own_slot": 29,
+        "own_cos": 0.965433,
+        "nearest_is_own": true
+      },
+      {
+        "tag": "face_21",
+        "position": 3,
+        "nearest_slot": 29,
+        "nearest_cos": 0.966661,
+        "second_cos": 0.172997,
+        "own_slot": 29,
+        "own_cos": 0.966661,
+        "nearest_is_own": true
+      }
+    ]
+  },
+  "copy_check": {
+    "face": "face_00",
+    "token": 20,
+    "copy_position": 0,
+    "same_value": true,
+    "write_policy": "append",
+    "occupancy_before": 30,
+    "slots_before": 64,
+    "slots_after_attempt": 64,
+    "grown_slots": 0,
+    "headroom_before": 0.515625,
+    "headroom_after_growth": 0.515625,
+    "shadow_slot": 30,
+    "applied_to_shadow": true,
+    "admitted": false,
+    "exit_code": "commit_rejected_separability",
+    "failed": [
+      "commit_rejected_separability",
+      "commit_rejected_no_direction"
+    ],
+    "blocking": [
+      "commit_rejected_no_direction"
+    ],
+    "direction_overlap": 0.97411,
+    "direction_separation": 0.033789,
+    "direction_verdict": "growth_is_copy",
+    "value_residual_on_shadow": 0.00192,
+    "evictions": 0,
+    "dropped": 0,
+    "sha_before": "109a5ab09b3c425345615671c4a2b8ca22efcac7e9111cb36cfd7ab73bc94f83",
+    "sha_after": "109a5ab09b3c425345615671c4a2b8ca22efcac7e9111cb36cfd7ab73bc94f83",
+    "bit_identical": true
+  },
+  "preregistration": {
+    "manifest": "plans/manifests/taiji_gate_generalization_20261108.json",
+    "manifest_sha256": "51db620e8bf2257cf977919c3667721152972dc2e38ea2baad9f314b26903cd7",
+    "written_before_any_arm_reading": true,
+    "criteria": {
+      "P1_written_group": "the 22 faces are written by the simplified gate and read with their registered synonym; a face is correct iff the final store's top-1 slot for that read is the slot the face was written to; report the integer count out of 22",
+      "P2_unwritten_group": "for every face, three phrasings of the same content at positions that are neither the write position (5), the registered read position, nor the fixture's canonical position (token % 8); none of these keys is written or read anywhere else. A phrasing is correct iff the final store's top-1 slot is the slot of its own face",
+      "P3_construction": "the unwritten phrasings are built only from fixture arrays (base, the face's value token, a position) on the scoring side; the expected slot is the store write bookkeeping of that face, never a rule truth or solver output. If any face yields fewer than two phrasings the run is not assessable, not a pass",
+      "P4_similarity": "for every unwritten key, report its cosine to the nearest occupied key and to its own face key; report min / p25 / median / p75 / max of the nearest-key cosine and the count whose nearest key is the own face key",
+      "P5_copy_refusal": "after the 22 writes, rewrite one already occupied face with the same value at a never-written phrasing; the simplified gate must refuse it with commit_rejected_no_direction, the attempt must evict and drop nothing",
+      "P6_copy_isolation": "the refused copy write must leave the state bit-identical (sha256 before == after) and every one of the 22 registered face readings unchanged face by face",
+      "verdict_rule": "any rule with < 2 constructed phrasings -> not_assessable; unwritten >= 0.8 -> rule_generalized (0.8 belongs here); unwritten <= 0.2 with written >= 0.9 -> memorized_lookup_only (0.2 belongs here); unwritten <= 0.2 with written < 0.9 -> inconclusive_both_low; otherwise -> partially_generalized",
+      "copy_verdict_rule": "refused with no_direction + bit-identical + 0 evictions + 0 dropped + all face readings unchanged -> copy_refused_no_direction_intact; refused by another retained clause -> copy_refused_other_clause; admitted -> copy_admitted",
+      "no_soft_language": "an unwritten rate that is high because every phrasing lands on the face's own key may not be described as learning a rule; the similarity distribution is reported next to the count for exactly that reason",
+      "unchanged": "no threshold, fixture, face, position or battery is retuned after the first reading"
+    },
+    "mapping": {
+      "task_shape": "package 20: 22 correction surfaces per world on a content-addressed store that starts at 32 slots and may grow",
+      "store": "existing F1/F3 fixture unchanged: same encoder (localized_centered, legacy centroid), 128-d keys, 8192-d values, ADDRESSED_TEMPERATURE 0.1",
+      "why_not_the_model": "the question is about what the store can answer, not about a torch forward; the probe measures the store where it acts and runs no model step",
+      "initial_occupancy": 8,
+      "initial_slots": 32,
+      "face_count": 22,
+      "face_definition": "face i writes a correction whose value token is the i-th new token at position 5, and is read with the same token at a registered other position",
+      "unwritten_definition": "for face i, the same value token at positions outside {5, registered read position, token % 8}; the first three such positions, sorted, are used",
+      "expected_answer": "the slot the face was written to, taken from the store write bookkeeping; no rule truth, solver or fixture label enters the answer chain",
+      "no_eviction": "append only; a full store is refused, never evicted"
+    },
+    "counts": {
+      "written_queries": 22,
+      "unwritten_queries": 66,
+      "unwritten_per_rule": 3,
+      "copy_attempts": 1
+    },
+    "growth_protocol": {
+      "trigger": "growth_runtime.write_headroom(...).sufficient is false for the next write",
+      "step": "growth_runtime.plan_growth doubles until (slots - needed)/slots >= 0.125",
+      "recheck": "the reserve is re-checked on the grown store before the write",
+      "on_failure": "refuse with commit_rejected_no_capacity, roll back bit-identically",
+      "slot_cap": null
+    },
+    "retained_clauses": [
+      "commit_rejected_no_capacity",
+      "commit_rejected_no_direction"
+    ],
+    "dropped_clauses": [
+      "commit_rejected_retention",
+      "commit_rejected_separability",
+      "commit_rejected_inflation",
+      "commit_rejected_no_gain"
+    ]
+  },
+  "fixture": {
+    "source": "scripts/training/probe_taiji_growth_f1_correction_20261108.py",
+    "encoder": "localized_centered (legacy 4-parent mean centroid)",
+    "dim": 128,
+    "value_shape": [
+      4,
+      2,
+      32,
+      32
+    ],
+    "temperature": 0.1,
+    "initial_occupancy": 8,
+    "initial_slots": 32,
+    "face_count": 22,
+    "baseline": {
+      "occupied": 8,
+      "slots": 32,
+      "headroom": 0.75,
+      "spec_margin": 0.068631,
+      "retention_correct": 7,
+      "retention_total": 7,
+      "unwritten_queries": 66,
+      "unwritten_rules": 22,
+      "copy_face": "face_00",
+      "copy_position": 0
+    }
+  },
+  "arm": {
+    "name": "S_capacity_copy",
+    "accepted": 22,
+    "refused": 0,
+    "occupied_final": 30,
+    "slots_final": 64,
+    "headroom_final": 0.53125,
+    "spec_margin_final": 0.038073,
+    "retention_correct": 7,
+    "retention_total": 7,
+    "grown_slots": 32,
+    "growth_events": [
+      {
+        "tag": "face_20",
+        "slots_from": 32,
+        "slots_to": 64,
+        "grown_slots": 32,
+        "occupancy": 28,
+        "headroom_before_growth": 0.09375,
+        "headroom_after_growth": 0.546875,
+        "reserve_rechecked": true,
+        "margin_before_growth": 0.036538
+      }
+    ],
+    "writes": [
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_00",
+        "occupancy_before": 8,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 8,
+        "headroom_after_write": 0.71875,
+        "margin_after": 0.857136,
+        "value_residual": 0.000637,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_01",
+        "occupancy_before": 9,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 9,
+        "headroom_after_write": 0.6875,
+        "margin_after": 0.857136,
+        "value_residual": 0.00077,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_02",
+        "occupancy_before": 10,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 10,
+        "headroom_after_write": 0.65625,
+        "margin_after": 0.857136,
+        "value_residual": 0.000331,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_03",
+        "occupancy_before": 11,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 11,
+        "headroom_after_write": 0.625,
+        "margin_after": 0.857136,
+        "value_residual": 0.00075,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_04",
+        "occupancy_before": 12,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 12,
+        "headroom_after_write": 0.59375,
+        "margin_after": 0.857136,
+        "value_residual": 0.001395,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_05",
+        "occupancy_before": 13,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 13,
+        "headroom_after_write": 0.5625,
+        "margin_after": 0.857136,
+        "value_residual": 0.001023,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_06",
+        "occupancy_before": 14,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 14,
+        "headroom_after_write": 0.53125,
+        "margin_after": 0.857136,
+        "value_residual": 0.00133,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_07",
+        "occupancy_before": 15,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_rejected_separability",
+        "failed": [
+          "commit_rejected_separability"
+        ],
+        "blocking": [],
+        "dropped_clause_failures": [
+          "commit_rejected_separability"
+        ],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 15,
+        "headroom_after_write": 0.5,
+        "margin_after": 0.849435,
+        "value_residual": 0.001252,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_08",
+        "occupancy_before": 16,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_rejected_separability",
+        "failed": [
+          "commit_rejected_separability"
+        ],
+        "blocking": [],
+        "dropped_clause_failures": [
+          "commit_rejected_separability"
+        ],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 16,
+        "headroom_after_write": 0.46875,
+        "margin_after": 0.830002,
+        "value_residual": 0.002144,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_09",
+        "occupancy_before": 17,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 17,
+        "headroom_after_write": 0.4375,
+        "margin_after": 0.830002,
+        "value_residual": 0.002347,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_10",
+        "occupancy_before": 18,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 18,
+        "headroom_after_write": 0.40625,
+        "margin_after": 0.830002,
+        "value_residual": 0.002394,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_11",
+        "occupancy_before": 19,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 19,
+        "headroom_after_write": 0.375,
+        "margin_after": 0.830002,
+        "value_residual": 0.001343,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_12",
+        "occupancy_before": 20,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 20,
+        "headroom_after_write": 0.34375,
+        "margin_after": 0.830002,
+        "value_residual": 0.001791,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_13",
+        "occupancy_before": 21,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 21,
+        "headroom_after_write": 0.3125,
+        "margin_after": 0.830002,
+        "value_residual": 0.00247,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_14",
+        "occupancy_before": 22,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 22,
+        "headroom_after_write": 0.28125,
+        "margin_after": 0.830002,
+        "value_residual": 0.000937,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_15",
+        "occupancy_before": 23,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 23,
+        "headroom_after_write": 0.25,
+        "margin_after": 0.830002,
+        "value_residual": 0.002749,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_16",
+        "occupancy_before": 24,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 24,
+        "headroom_after_write": 0.21875,
+        "margin_after": 0.830002,
+        "value_residual": 0.004421,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_17",
+        "occupancy_before": 25,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 25,
+        "headroom_after_write": 0.1875,
+        "margin_after": 0.830002,
+        "value_residual": 0.001578,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_18",
+        "occupancy_before": 26,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 26,
+        "headroom_after_write": 0.15625,
+        "margin_after": 0.830002,
+        "value_residual": 0.002595,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_19",
+        "occupancy_before": 27,
+        "slots_before": 32,
+        "slots_after": 32,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 32
+        },
+        "written_slot": 27,
+        "headroom_after_write": 0.125,
+        "margin_after": 0.830002,
+        "value_residual": 0.0024,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_20",
+        "occupancy_before": 28,
+        "slots_before": 32,
+        "slots_after": 64,
+        "grown_slots": 32,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 64
+        },
+        "written_slot": 28,
+        "headroom_after_write": 0.546875,
+        "margin_after": 0.830002,
+        "value_residual": 0.002077,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      },
+      {
+        "arm": "S_capacity_copy",
+        "tag": "face_21",
+        "occupancy_before": 29,
+        "slots_before": 64,
+        "slots_after": 64,
+        "grown_slots": 0,
+        "accepted": true,
+        "exit_code": "commit_accepted",
+        "failed": [],
+        "blocking": [],
+        "dropped_clause_failures": [],
+        "growth_plan": {
+          "action": "write_now",
+          "slots": 64
+        },
+        "written_slot": 29,
+        "headroom_after_write": 0.53125,
+        "margin_after": 0.830002,
+        "value_residual": 0.002029,
+        "direction_verdict": "growth_new_direction",
+        "evictions": 0,
+        "dropped": 0,
+        "bit_identical": null
+      }
+    ]
+  },
+  "collapse_line": {
+    "value": 0.02,
+    "min_margin_after_growth": 0.038073,
+    "below_collapse_line": false,
+    "used_by_verdict": false
+  },
+  "discipline": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "checkpoints_written": 0,
+    "black_invoked": false,
+    "black_gate": "in-process only",
+    "evictions": 0,
+    "dropped_writes": 0,
+    "store_full_refusals": 0
+  },
+  "isolation": {
+    "runner_sha256_start": "99b692020e4a699032d5e8467fc6ffebbc956fb9f8097de43d87354969868d28",
+    "runner_sha256_end": "99b692020e4a699032d5e8467fc6ffebbc956fb9f8097de43d87354969868d28",
+    "runner_sha_stable": true,
+    "gate_sha256": "2ed8b0dd3ed63af20e925155a48b2825b9664fe9f22a37b102b25f9cb89ba6de",
+    "runtime_sha256": "2125b1fb80da3f08d63353920bd83bbf88ba7839fcf482a24a2d06a13340ccd6",
+    "f1_runner_sha256": "6f0018398207b9b142be881f9e3181b84815decf2560bf67b337dd138228802a",
+    "manifest_sha256": "51db620e8bf2257cf977919c3667721152972dc2e38ea2baad9f314b26903cd7",
+    "process_guard": {
+      "checked": "-m black",
+      "found": 0
+    },
+    "single_instance_lock": "taiji_gate_generalization_20261108.lock",
+    "watchdog": {
+      "seconds": 60.0,
+      "fired": false,
+      "marker_exists": false
+    },
+    "write_then_rename": true
+  },
+  "cost": {
+    "cpu_seconds": 0.219,
+    "wall_seconds": 0.826,
+    "cpu_cap_seconds": 200.0
+  },
+  "prior_run": {
+    "report": "reports/taiji_gate_simplified_20261108.json",
+    "verdict": "simplified_holds_at_parity",
+    "recalled": "22/22 with 0 refusals, but every read used a phrasing the probe chose; this run asks whether that count survives never-written phrasings"
+  },
+  "implementation_corrections": [
+    {
+      "what": "the first execution raised TypeError while serialising the report: the copy attempt dict carried its GateState",
+      "fix": "the state object is excluded from the published dict; every reading had already been taken and written to progress before serialisation",
+      "effect_on_readings": "none"
+    }
+  ],
+  "what_this_does_not_mean": [
+    "no training, no optimizer step and no model forward ran; nothing here says the correction survives training",
+    "the unwritten phrasings are the same value token at new positions; a high count means the correction transfers to new word orders, which is neighbour retrieval of one content token, not abstraction of a symbolic rule",
+    "the fixture is synthetic and the expected slot is store bookkeeping; no language-level correctness is claimed",
+    "one session, one seed, no persistence across checkpoints"
+  ]
+}
