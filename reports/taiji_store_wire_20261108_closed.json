@@ -32,7 +32,7 @@
     "candidate_sha_v2": "ff60ac2578f09f346f4bad9cf3d0fd0986633bd49e4e82c7ac76573dd87389ea"
   },
   "current": {
-    "living_core_sha256": "fce28fb445d72c728addcaa851d67338b05ceab815a486473fc8828d079d8847",
+    "living_core_sha256": "e10d205df96b3c04c476109c2cc0008a98e3d36cc478f3aef39055f7a6644d7e",
     "candidate_sha_v2": "ff60ac2578f09f346f4bad9cf3d0fd0986633bd49e4e82c7ac76573dd87389ea",
     "parameters": {
       "tensors": 135,
@@ -54,24 +54,20 @@
     "the baseline arrays were captured before taiji/ was edited; the comparison is against those bytes, not against a second run of the same edited code."
   ],
   "criteria": {
-    "C1_default_off": "LivingCoreConfig() reports sc_sfk_enabled is False and no code path other than the single flag branch at the entry of attach_store/clear_store/addressed_read/addressed_write can be taken; there is no half-open branch mixing the two paths.",
-    "C2_closed_bit_identical": "with the flag off, the returned fast bytes and the post-read probabilities of all 176 readings, the store signature, the parameter table digest, state_bytes and candidate_sha_v2 are identical to the pre-change baseline: max|delta| = 0 exactly.",
-    "C3_zero_new_parameters": "parameter tensor count, parameter element count and the full state_dict digest are unchanged; the address table is pure Python and holds no tensor.",
-    "C4_open_self_read": "after the wired write path, each of the 22 written faces resolves, read back from its own store key (the raw bytes), to the address it was written at.",
-    "C5_open_reproduces_runner_side": "paraphrase >= 20/22 AND unwritten >= 60/66 AND new_token no_match >= 20/22 AND no_value ambiguous >= 20/22",
-    "C6_open_write_side": "growth starts at 2, expands at least three times, reaches >= 16; 23 distinct addresses; evictions = 0, silent overwrites = 0, rollbacks = 0; the conflicting two-item batch is rejected whole and the table is unchanged afterwards.",
-    "V_wire_not_neutral": "any closed-state bit, parameter, state-bytes, identity or store-signature difference: hard failure, report store_addressing_wire_not_neutral and stop.",
-    "V_wired": "closed passes and C4/C5/C6 hold: store_addressing_wired.",
-    "V_wired_regression": "closed passes but at least one measurable open-state class is below its threshold or a write-side counter degrades: store_addressing_wired_regression with the degraded facet and its cause listed per class. The words 'basically the same' are not a verdict.",
-    "V_inconclusive": "closed passes but the open-state reading cannot be compared (missing runner-side reference or an empty class): inconclusive, distribution only.",
-    "unchanged": "no fixture, class, span, position or threshold is retuned after the first reading"
+    "C1_default_off": "LivingCoreConfig() reports sc_sfk_enabled False; no table is allocated; no half-open branch mixes the two paths.",
+    "C2_closed_bit_identical": "176 readings, parameter table, state_bytes, candidate_sha_v2 and store signature are identical to the pre-edit baseline.",
+    "C3_address_only": "with the flag on, the address layer allocates no tensor and no parameter.",
+    "C4_open_address_reads": "self-read 22/22, paraphrase >= 20/22, unwritten >= 60/66, new token no_match >= 20/22, no-value composite ambiguous >= 20/22.",
+    "C5_open_reproduces_runner_side": "the open reading keeps the runner-side classes.",
+    "C6_open_write_side": "growth 2 -> >=16 with >=3 expansions; 23 distinct addresses; 0 evictions, 0 silent overwrites, 0 rollbacks; equal-set different-value batch rejected whole with the table unchanged.",
+    "C7_open_value_path": "matched reads move fast, abstain reads do not, and all 22 stored values hash to the write-time fast snapshot."
   },
-  "manifest_sha256": "a78f57d522d0473757e11b276b446e3bc33991f78a7f2d490e9ed5f7b73f2142",
-  "runner_sha256_start": "dd4b69408e7fe7b249a8c134bf31fbe242628246d15fd837df53881867af0cd8",
-  "runner_sha256_end": "dd4b69408e7fe7b249a8c134bf31fbe242628246d15fd837df53881867af0cd8",
+  "manifest_sha256": "6015c6289d4a824ca11506a35f2d9dc4577c3407fa93f0213f6f972fcec9d255",
+  "runner_sha256_start": "b46c387249231f68de8951a8566d801b4d5ee7428857ad0734c8a1b107e54902",
+  "runner_sha256_end": "b46c387249231f68de8951a8566d801b4d5ee7428857ad0734c8a1b107e54902",
   "cost": {
-    "cpu_seconds": 33.719,
-    "wall_seconds": 3.273
+    "cpu_seconds": 34.109,
+    "wall_seconds": 3.308
   },
   "discipline": {
     "training_updates": 0,

@@ -2,6 +2,14 @@
 
 Zero training, zero optimizer steps, zero Adam, zero confirm reads.
 
+SUPERSEDED (2026-11-08, store-wire round)
+----------------------------------------
+This script used to carry its own copy of the address primitive.  That copy is
+retired: the one implementation now lives in ``taiji/sc_sfk.py`` and this file
+imports it.  The JSON artefact written by the historical run is unchanged and
+must not be regenerated as if it were new evidence; ``main`` refuses to run
+unless ``TAIJI_ALLOW_SUPERSEDED_RUNNER=1`` is set explicitly.
+
 The single algorithm revision under test
 ----------------------------------------
 Replace the address definition "sentence mean-pooled dense vector + cosine" with a
@@ -34,7 +42,6 @@ import errno
 import hashlib
 import importlib.util
 import json
-import math
 import os
 import sys
 import threading
@@ -231,268 +238,9 @@ def load_base():
 
 
 # ---------------------------------------------------------------------------
-# The primitive.
+# The primitive: one implementation, imported from taiji/sc_sfk.py.
 # ---------------------------------------------------------------------------
-def features(raw: bytes) -> tuple[str, ...]:
-    """Position-independent feature set: 2-byte word units, deduplicated."""
-    words = []
-    for index in range(0, len(raw) - 1, 2):
-        words.append(raw[index : index + 2].hex())
-    return tuple(sorted(set(words)))
-
-
-def document_frequency(addresses: list[dict[str, Any]]) -> Counter:
-    """Document frequency over *records*, not over collapsed addresses.
-
-    Byte-identical records that were merged into one address still count as separate
-    observations: they are the evidence that a word belongs to the shared carrier.
-    A value replacement does not add an observation.
-    """
-    counter: Counter = Counter()
-    for address in addresses:
-        for _ in range(int(address.get("count", 1))):
-            counter.update(address["features"])
-    return counter
-
-
-def idf_table(addresses: list[dict[str, Any]]) -> dict[str, float]:
-    n = max(sum(int(address.get("count", 1)) for address in addresses), 1)
-    df = document_frequency(addresses)
-    table = {feature: math.log(1.0 + n / (1.0 + count)) for feature, count in df.items()}
-    # A feature never seen in the table is the rarest possible feature: weight it at df=0.
-    table["__unseen__"] = math.log(1.0 + n)
-    return table
-
-
-def similarity(left: tuple[str, ...], right: tuple[str, ...], idf: dict[str, float]) -> float:
-    left_set, right_set = set(left), set(right)
-    if not left_set or not right_set:
-        return 0.0
-    default = idf.get("__unseen__", 0.0)
-    numerator = 0.0
-    for feature in left_set & right_set:
-        numerator += idf.get(feature, default)
-    denominator = 0.0
-    for feature in left_set | right_set:
-        denominator += idf.get(feature, default)
-    if denominator <= 0.0:
-        return 0.0
-    return numerator / denominator
-
-
-class AddressTable:
-    """Shared-carrier sparse feature address table with growth-before-write."""
-
-    def __init__(self, start_capacity: int = START_CAPACITY) -> None:
-        self.capacity = int(start_capacity)
-        self.peak_capacity = int(start_capacity)
-        self.addresses: list[dict[str, Any]] = []
-        self.expansions = 0
-        self.merged = 0
-        self.replaced = 0
-        self.appended = 0
-        self.rejected_batches = 0
-        self.evictions = 0
-        self.silent_overwrites = 0
-        self.rollbacks = 0
-        self.global_checks = 0
-        self.global_failures = 0
-        self.history: list[dict[str, Any]] = []
-
-    # -- statistics ---------------------------------------------------------
-    def idf(self) -> dict[str, float]:
-        return idf_table(self.addresses)
-
-    def unique_features(self) -> set[str]:
-        df = document_frequency(self.addresses)
-        return {feature for feature, count in df.items() if count == 1}
-
-    # -- batch API ----------------------------------------------------------
-    def snapshot(self) -> dict[str, Any]:
-        return {
-            "addresses": [
-                {
-                    "features": address["features"],
-                    "values": list(address["values"]),
-                    "history": list(address["history"]),
-                    "count": int(address["count"]),
-                }
-                for address in self.addresses
-            ],
-            "capacity": self.capacity,
-            "peak_capacity": self.peak_capacity,
-            "expansions": self.expansions,
-            "merged": self.merged,
-            "replaced": self.replaced,
-            "appended": self.appended,
-        }
-
-    def restore(self, snapshot: dict[str, Any]) -> None:
-        self.addresses = snapshot["addresses"]
-        self.capacity = snapshot["capacity"]
-        self.peak_capacity = snapshot["peak_capacity"]
-        self.expansions = snapshot["expansions"]
-        self.merged = snapshot["merged"]
-        self.replaced = snapshot["replaced"]
-        self.appended = snapshot["appended"]
-
-    def target_of(self, feats: tuple[str, ...]) -> tuple[int | None, float]:
-        idf = self.idf()
-        best_index, best_score = None, -1.0
-        for index, address in enumerate(self.addresses):
-            score = similarity(feats, address["features"], idf)
-            if score > best_score:
-                best_index, best_score = index, score
-        if best_score >= COPY_OVERLAP:
-            return best_index, best_score
-        return None, best_score
-
-    def write_batch(self, items: list[tuple[tuple[str, ...], Any]]) -> dict[str, Any]:
-        def value_key(value: Any) -> str:
-            return value if isinstance(value, str) else repr(value)
-
-        snapshot = self.snapshot()
-        before = len(self.addresses)
-        claims: dict[int, str] = {}
-        actions: list[str] = []
-        for feats, value in items:
-            target, _ = self.target_of(feats)
-            if target is not None:
-                key = value_key(value)
-                if target in claims and claims[target] != key:
-                    self.restore(snapshot)
-                    self.rejected_batches += 1
-                    return {
-                        "action": "rejected_batch_address_collision",
-                        "items": len(items),
-                        "conflicts": [{"address": target, "values": [claims[target], key]}],
-                        "slots_before": before,
-                        "slots_after": before,
-                    }
-                claims[target] = key
-            actions.append(self._write_one(feats, value, target))
-        return {
-            "action": "accepted",
-            "items": len(items),
-            "slots_before": before,
-            "slots_after": len(self.addresses),
-            "actions": actions,
-        }
-
-    def _write_one(self, feats: tuple[str, ...], value: Any, target: int | None) -> str:
-        if target is not None:
-            address = self.addresses[target]
-            if value in address["values"]:
-                # Identical content and identical value: merge the reference, keep both.
-                address["values"].append(value)
-                address["count"] = int(address["count"]) + 1
-                self.merged += 1
-                return "merged_duplicate"
-            address["history"].append({"values": list(address["values"]), "reason": "replace"})
-            address["values"].append(value)
-            self.replaced += 1
-            return "replaced_at_same_address"
-        # Growth before content: make room first, then append.
-        while len(self.addresses) >= self.capacity:
-            self.capacity *= 2
-            self.expansions += 1
-            self.peak_capacity = max(self.peak_capacity, self.capacity)
-        self.addresses.append({"features": feats, "values": [value], "history": [], "count": 1})
-        self.appended += 1
-        return "appended_after_growth"
-
-    # -- global (local -> whole) consistency ---------------------------------
-    def check_global(self) -> dict[str, Any]:
-        self.global_checks += 1
-        idf = self.idf()
-        self_read = all(
-            similarity(address["features"], address["features"], idf) >= 1.0 - 1e-12
-            for address in self.addresses
-        )
-        collisions = []
-        for left in range(len(self.addresses)):
-            for right in range(left + 1, len(self.addresses)):
-                score = similarity(
-                    self.addresses[left]["features"], self.addresses[right]["features"], idf
-                )
-                if score >= COPY_OVERLAP:
-                    collisions.append({"left": left, "right": right, "score": score})
-        ok = bool(self_read) and not collisions
-        if not ok:
-            self.global_failures += 1
-        return {"ok": ok, "self_read": bool(self_read), "collisions": collisions}
-
-    def write_batch_checked(self, items, *, rollback_on_failure: bool = True) -> dict[str, Any]:
-        snapshot = self.snapshot()
-        result = self.write_batch(items)
-        if result["action"] != "accepted":
-            return result
-        check = self.check_global()
-        result["global_check"] = check
-        if not check["ok"] and rollback_on_failure:
-            self.restore(snapshot)
-            self.rollbacks += 1
-            result["action"] = "rolled_back_global_check_failed"
-        return result
-
-    # -- read ---------------------------------------------------------------
-    def read(self, feats: tuple[str, ...]) -> dict[str, Any]:
-        df = document_frequency(self.addresses)
-        if any(df.get(feature, 0) == 0 for feature in feats):
-            # A word that was never written cannot be answered from the store.
-            return {
-                "decision": "no_match",
-                "address": None,
-                "anchors": [],
-                "unique_features_in_query": 0,
-                "unknown_features": sum(1 for feature in feats if df.get(feature, 0) == 0),
-                "top1": 0.0,
-                "top2": 0.0,
-                "margin": 0.0,
-            }
-        unique = {feature for feature, count in df.items() if count == 1}
-        query_unique = [feature for feature in feats if feature in unique]
-        anchors = [
-            index
-            for index, address in enumerate(self.addresses)
-            if any(feature in address["features"] for feature in query_unique)
-        ]
-        idf = self.idf()
-        scores = [
-            (index, similarity(feats, address["features"], idf))
-            for index, address in enumerate(self.addresses)
-        ]
-        scores.sort(key=lambda item: item[1], reverse=True)
-        top1_index, top1 = scores[0] if scores else (None, 0.0)
-        top2 = scores[1][1] if len(scores) > 1 else 0.0
-        anchor_scores = sorted(
-            ((index, dict(scores)[index]) for index in anchors),
-            key=lambda item: item[1],
-            reverse=True,
-        )
-        anchor_margin = (
-            anchor_scores[0][1] - anchor_scores[1][1]
-            if len(anchor_scores) > 1
-            else anchor_scores[0][1] if anchor_scores else 0.0
-        )
-        if not query_unique:
-            decision = "no_match"
-        elif len(anchors) == 1 or anchor_margin >= ANCHOR_MARGIN:
-            decision = "matched"
-        else:
-            decision = "ambiguous_multiple_anchors"
-        chosen = anchor_scores[0][0] if decision == "matched" else None
-        return {
-            "decision": decision,
-            "address": chosen,
-            "anchors": anchors,
-            "unique_features_in_query": len(query_unique),
-            "unknown_features": 0,
-            "top1": round(top1, 9),
-            "top2": round(top2, 9),
-            "margin": round(top1 - top2, 9),
-            "anchor_margin": round(anchor_margin, 9),
-        }
+from taiji.sc_sfk import AddressTable, features  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
@@ -668,6 +416,12 @@ def store_signature(state) -> dict[str, Any]:
 
 
 def main() -> int:
+    if os.environ.get("TAIJI_ALLOW_SUPERSEDED_RUNNER") != "1":
+        raise SystemExit(
+            "SUPERSEDED: the address primitive lives in taiji/sc_sfk.py; this runner now "
+            "imports it instead of carrying a second copy.  Set "
+            "TAIJI_ALLOW_SUPERSEDED_RUNNER=1 only to inspect the historical artefact."
+        )
     if time.process_time() - START_CPU > CPU_GUARD:
         raise SystemExit("cpu guard tripped before start")
 

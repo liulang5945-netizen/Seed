@@ -48,16 +48,22 @@ class GrowthWireConfig:
 
 
 def store_capacity(state: LivingState) -> int:
+    if state.sc_sfk is not None:
+        return int(state.sc_sfk.capacity)
     return 0 if state.store_keys is None else int(state.store_keys.shape[0])
 
 
 def store_occupied(state: LivingState) -> int:
+    if state.sc_sfk is not None:
+        return len(state.sc_sfk.addresses)
     if state.store_age is None:
         return 0
     return int((state.store_age >= 0).sum())
 
 
 def store_bytes(state: LivingState) -> int:
+    if state.sc_sfk is not None:
+        return int(state.sc_sfk.nbytes())
     total = 0
     for tensor in (state.store_keys, state.store_values, state.store_age):
         if tensor is not None:
@@ -140,6 +146,19 @@ def session_boundary(
         "occupied": store_occupied(state),
         "pending": int(pending),
     }
+    if state.sc_sfk is not None:
+        if config.enabled:
+            raise ValueError("two capacity authorities: state.sc_sfk and GrowthWireConfig.enabled")
+        record.update(
+            {
+                "action": "table_owns_capacity",
+                "reason": "sc_sfk_capacity",
+                "generation": int(state.sc_sfk.generation),
+                "state_same_object": True,
+                "bytes_added": 0,
+            }
+        )
+        return state, record
     if not config.enabled:
         record.update({"action": "legacy_path", "state_same_object": True, "bytes_added": 0})
         return state, record
@@ -192,6 +211,20 @@ def session_write(
     key: torch.Tensor | None = None,
 ) -> tuple[LivingState, dict[str, Any]]:
     """One store write.  Disabled: the frozen ``addressed_write`` verbatim."""
+    if getattr(subject.config, "sc_sfk_enabled", False) or state.sc_sfk is not None:
+        if config.enabled:
+            raise ValueError("two store authorities: sc_sfk_enabled and GrowthWireConfig.enabled")
+        out, info = subject.addressed_write(state, raw)
+        table = out.sc_sfk
+        info.update(
+            {
+                "dropped": False,
+                "capacity": table.capacity,
+                "occupied": len(table.addresses),
+                "generation": table.generation,
+            }
+        )
+        return out, info
     if not config.enabled:
         return subject.addressed_write(state, raw)
     if state.store_keys is None:
@@ -237,6 +270,10 @@ def session_read(
     key: torch.Tensor | None = None,
 ):
     """The read path is growth-free; this entry exists so the wire is whole."""
+    if (getattr(subject.config, "sc_sfk_enabled", False) or state.sc_sfk is not None) and (
+        config.enabled
+    ):
+        raise ValueError("two store authorities: sc_sfk_enabled and GrowthWireConfig.enabled")
     return subject.addressed_read(state, raw, key=key)
 
 

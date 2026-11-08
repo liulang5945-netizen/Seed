@@ -1,30 +1,30 @@
 """Shared-carrier sparse feature key (SC-SFK) address table.
 
 The address layer of the store, as a structural primitive: pure Python statistics,
-no tensors, no parameters, no training.  The primitive is the one verified in
-``scripts/training/probe_taiji_sc_address_20261108.py``; this module is the same
-code moved to where the store can use it, with the constants left as module
-defaults so the wired reading stays comparable to the runner-side reading.
+no tensors, no parameters, no training.
 
 Address definition
 ------------------
 * a record's address is the *set* of its 2-byte word features (position free);
-* a feature's weight is its smoothed inverse document frequency over the current
-  table, so common carrier words weigh almost nothing and content words carry the
-  identity;
-* similarity is weighted Jaccard over those weights;
-* a query is addressable only when it owns at least one feature that occurs in
-  exactly one stored address.  Zero anchors -> ``no_match``; more than one ->
-  ``ambiguous_multiple_anchors``.  The exit is derived from store statistics, not
-  from a tuned threshold.
+* two records share an address iff their feature sets are equal -- there is no
+  numeric similarity threshold on the write path and no exit depends on one;
+* a word is unique when its document frequency is 1, and a query's anchors are
+  the addresses that own one of its unique words;
+* read exits: zero anchors -> ``no_match`` (the explicit "do not know"), more
+  than one -> ``ambiguous_multiple_anchors`` (the explicit "cannot tell"), exactly
+  one -> ``matched``.  All three are set conditions.
 
 Write policy: make room before content (the table starts at 2 slots and doubles on
-demand), merge identical values, replace a same-address different value while
+demand), merge an equal value, replace a same-address different value while
 keeping the previous value in history, reject a batch whole when two of its items
-claim one address with different values.  No eviction and no silent overwrite.
-Every accepted write recomputes IDF over the whole table and then re-checks that
-each address reads back to itself and that no two addresses reach
-``COPY_OVERLAP``; a failed re-check rolls the write back.
+claim the same feature set with different values.  No eviction and no silent
+overwrite.  Every accepted write recomputes DF over the whole table and then
+checks three structural properties: no record is mis-addressed (G-A), no write
+removes the anchor of an address it did not touch (G-B), and no two addresses
+share a feature set (G-C).  A failed check rolls the whole batch back.
+
+The weighted Jaccard similarity and its IDF table are kept as *readings* only:
+they are reported as ``top1``/``top2``/``margin`` and never decide an exit.
 """
 
 from __future__ import annotations
@@ -34,8 +34,6 @@ from collections import Counter
 from typing import Any
 
 START_CAPACITY = 2
-COPY_OVERLAP = 0.85
-ANCHOR_MARGIN = 0.02
 UNSEEN = "__unseen__"
 
 
@@ -88,6 +86,33 @@ def similarity(left: tuple[str, ...], right: tuple[str, ...], idf: dict[str, flo
     return numerator / denominator
 
 
+def _value_key(value: Any) -> str:
+    return value if isinstance(value, str) else repr(value)
+
+
+def _payload_bytes(value: Any) -> int:
+    if isinstance(value, (bytes, bytearray)):
+        return len(value)
+    if isinstance(value, str):
+        return len(value.encode("utf-8"))
+    return 8
+
+
+def unique_features(addresses: list[dict[str, Any]]) -> set[str]:
+    df = document_frequency(addresses)
+    return {feature for feature, count in df.items() if count == 1}
+
+
+def addressable(addresses: list[dict[str, Any]]) -> set[int]:
+    """Indices whose feature set contains at least one table-unique word."""
+    unique = unique_features(addresses)
+    return {
+        index
+        for index, address in enumerate(addresses)
+        if any(feature in unique for feature in address["features"])
+    }
+
+
 class AddressTable:
     """Shared-carrier sparse feature address table with growth-before-write."""
 
@@ -100,20 +125,40 @@ class AddressTable:
         self.replaced = 0
         self.appended = 0
         self.rejected_batches = 0
+        # Structural zeros, not counters: the table has no eviction and no silent
+        # overwrite path at all.  ``write_batch_checked`` asserts they stay 0.
         self.evictions = 0
         self.silent_overwrites = 0
         self.rollbacks = 0
         self.global_checks = 0
         self.global_failures = 0
-        self.history: list[dict[str, Any]] = []
 
     # -- statistics ---------------------------------------------------------
+    @property
+    def generation(self) -> int:
+        """Capacity generation; the same number the session layer reports."""
+        return self.expansions
+
     def idf(self) -> dict[str, float]:
         return idf_table(self.addresses)
 
     def unique_features(self) -> set[str]:
-        df = document_frequency(self.addresses)
-        return {feature for feature, count in df.items() if count == 1}
+        return unique_features(self.addresses)
+
+    def nbytes(self) -> int:
+        """Payload bytes of the table (features, current values, history values).
+
+        Python object overhead is excluded; every payload is a bytes/str object, so
+        this is the number that should be added to ``state_bytes`` when the table
+        is live.
+        """
+        total = 0
+        for address in self.addresses:
+            total += sum(len(feature) for feature in address["features"])
+            total += sum(_payload_bytes(value) for value in address["values"])
+            for entry in address["history"]:
+                total += _payload_bytes(entry.get("value"))
+        return total
 
     # -- batch API ----------------------------------------------------------
     def snapshot(self) -> dict[str, Any]:
@@ -122,7 +167,7 @@ class AddressTable:
                 {
                     "features": address["features"],
                     "values": list(address["values"]),
-                    "history": list(address["history"]),
+                    "history": [dict(entry) for entry in address["history"]],
                     "count": int(address["count"]),
                 }
                 for address in self.addresses
@@ -144,40 +189,53 @@ class AddressTable:
         self.replaced = snapshot["replaced"]
         self.appended = snapshot["appended"]
 
+    def find(self, feats: tuple[str, ...]) -> int | None:
+        """Exact-set address lookup; the only write-side identity rule."""
+        for index, address in enumerate(self.addresses):
+            if address["features"] == feats:
+                return index
+        return None
+
+    def value_at(self, index: int) -> Any:
+        values = self.addresses[index]["values"]
+        return values[-1] if values else None
+
     def target_of(self, feats: tuple[str, ...]) -> tuple[int | None, float]:
+        """Exact match, else the best diagnostic similarity (never an exit)."""
+        index = self.find(feats)
+        if index is not None:
+            return index, 1.0
         idf = self.idf()
         best_index, best_score = None, -1.0
-        for index, address in enumerate(self.addresses):
+        for candidate, address in enumerate(self.addresses):
             score = similarity(feats, address["features"], idf)
             if score > best_score:
-                best_index, best_score = index, score
-        if best_score >= COPY_OVERLAP:
-            return best_index, best_score
-        return None, best_score
+                best_index, best_score = candidate, score
+        return best_index, best_score
 
     def write_batch(self, items: list[tuple[tuple[str, ...], Any]]) -> dict[str, Any]:
-        def value_key(value: Any) -> str:
-            return value if isinstance(value, str) else repr(value)
-
         snapshot = self.snapshot()
         before = len(self.addresses)
-        claims: dict[int, str] = {}
+        addressable_before = addressable(self.addresses)
+        claims: dict[tuple[str, ...], str] = {}
+        touched: set[int] = set()
         actions: list[str] = []
         for feats, value in items:
-            target, _ = self.target_of(feats)
+            key = _value_key(value)
+            if feats in claims and claims[feats] != key:
+                self.restore(snapshot)
+                self.rejected_batches += 1
+                return {
+                    "action": "rejected_batch_address_collision",
+                    "items": len(items),
+                    "conflicts": [{"features": list(feats), "values": [claims[feats], key]}],
+                    "slots_before": before,
+                    "slots_after": before,
+                }
+            claims[feats] = key
+            target = self.find(feats)
             if target is not None:
-                key = value_key(value)
-                if target in claims and claims[target] != key:
-                    self.restore(snapshot)
-                    self.rejected_batches += 1
-                    return {
-                        "action": "rejected_batch_address_collision",
-                        "items": len(items),
-                        "conflicts": [{"address": target, "values": [claims[target], key]}],
-                        "slots_before": before,
-                        "slots_after": before,
-                    }
-                claims[target] = key
+                touched.add(target)
             actions.append(self._write_one(feats, value, target))
         return {
             "action": "accepted",
@@ -185,18 +243,25 @@ class AddressTable:
             "slots_before": before,
             "slots_after": len(self.addresses),
             "actions": actions,
+            "addressable_before": addressable_before,
+            "touched": touched,
         }
 
     def _write_one(self, feats: tuple[str, ...], value: Any, target: int | None) -> str:
         if target is not None:
             address = self.addresses[target]
-            if value in address["values"]:
-                address["values"].append(value)
-                address["count"] = int(address["count"]) + 1
+            # ``count`` is the number of observations of this record, not the
+            # number of byte-identical merges: a re-observation whose fast snapshot
+            # moved is still an observation and still raises the carrier frequency.
+            address["count"] = int(address["count"]) + 1
+            if value == address["values"][-1]:
                 self.merged += 1
                 return "merged_duplicate"
-            address["history"].append({"values": list(address["values"]), "reason": "replace"})
-            address["values"].append(value)
+            # Only the displaced current value is kept: old values are exactly the
+            # history entries, in order, so memory stays O(observations) and no old
+            # value is ever dropped.
+            address["history"].append({"value": address["values"][-1], "reason": "replace"})
+            address["values"][-1] = value
             self.replaced += 1
             return "replaced_at_same_address"
         while len(self.addresses) >= self.capacity:
@@ -208,32 +273,57 @@ class AddressTable:
         return "appended_after_growth"
 
     # -- global (local -> whole) consistency --------------------------------
-    def check_global(self) -> dict[str, Any]:
+    def check_global(
+        self,
+        *,
+        before_addressable: set[int] | None = None,
+        touched: set[int] | None = None,
+    ) -> dict[str, Any]:
+        """Structural whole-table check G-A / G-B / G-C.
+
+        G-A  no record is mis-addressed: reading a record's own features returns
+             either that record or an explicit abstention, never another address;
+        G-B  no collateral loss: an address that was addressable before the batch
+             and was not touched by it is still addressable afterwards;
+        G-C  identity uniqueness: no two addresses share a feature set.
+        """
         self.global_checks += 1
-        idf = self.idf()
-        self_read = all(
-            similarity(address["features"], address["features"], idf) >= 1.0 - 1e-12
-            for address in self.addresses
-        )
-        collisions = []
-        for left in range(len(self.addresses)):
-            for right in range(left + 1, len(self.addresses)):
-                score = similarity(
-                    self.addresses[left]["features"], self.addresses[right]["features"], idf
-                )
-                if score >= COPY_OVERLAP:
-                    collisions.append({"left": left, "right": right, "score": score})
-        ok = bool(self_read) and not collisions
+        sets = [address["features"] for address in self.addresses]
+        distinct = len(set(sets)) == len(sets)
+        misaddressed = []
+        for index, feats in enumerate(sets):
+            result = self.read(feats)
+            if result["address"] not in (None, index):
+                misaddressed.append({"record": index, "read_as": result["address"]})
+        after = addressable(self.addresses)
+        collateral: list[int] = []
+        if before_addressable is not None:
+            touched = set(touched or ())
+            collateral = sorted(before_addressable - touched - after)
+        ok = bool(distinct) and not misaddressed and not collateral
         if not ok:
             self.global_failures += 1
-        return {"ok": ok, "self_read": bool(self_read), "collisions": collisions}
+        return {
+            "ok": ok,
+            "distinct": bool(distinct),
+            "missing_g1": misaddressed,
+            "collateral_loss": collateral,
+            "addressable_before": (
+                len(before_addressable) if before_addressable is not None else None
+            ),
+            "addressable_after": len(after),
+        }
 
     def write_batch_checked(self, items, *, rollback_on_failure: bool = True) -> dict[str, Any]:
+        assert self.evictions == 0 and self.silent_overwrites == 0
         snapshot = self.snapshot()
         result = self.write_batch(items)
         if result["action"] != "accepted":
             return result
-        check = self.check_global()
+        check = self.check_global(
+            before_addressable=result["addressable_before"],
+            touched=result["touched"],
+        )
         result["global_check"] = check
         if not check["ok"] and rollback_on_failure:
             self.restore(snapshot)
@@ -248,6 +338,7 @@ class AddressTable:
             return {
                 "decision": "no_match",
                 "address": None,
+                "value": None,
                 "anchors": [],
                 "unique_features_in_query": 0,
                 "unknown_features": sum(1 for feature in feats if df.get(feature, 0) == 0),
@@ -283,14 +374,15 @@ class AddressTable:
         )
         if not query_unique:
             decision = "no_match"
-        elif len(anchors) == 1 or anchor_margin >= ANCHOR_MARGIN:
+        elif len(anchors) == 1:
             decision = "matched"
         else:
             decision = "ambiguous_multiple_anchors"
-        chosen = anchor_scores[0][0] if decision == "matched" else None
+        chosen = anchors[0] if decision == "matched" else None
         return {
             "decision": decision,
             "address": chosen,
+            "value": self.value_at(chosen) if chosen is not None else None,
             "anchors": anchors,
             "unique_features_in_query": len(query_unique),
             "unknown_features": 0,

@@ -1,0 +1,103 @@
+{
+  "format": "taiji-address-system-preregistration-v2",
+  "date": "2026-11-08",
+  "written_before_any_reading": true,
+  "supersedes": "plans/manifests/taiji_store_wire_20261108.json",
+  "question": "after the address system is closed into one loop (exact-set identity, anchor-only exits, structural global check, fast snapshot as value), does the default-off forward stay bit-identical and does the open state keep the 154-question reading while the value path becomes live?",
+  "sequence": ["closed", "open"],
+  "criteria": {
+    "C1_default_off": "LivingCoreConfig() reports sc_sfk_enabled False; no table is allocated; no half-open branch mixes the two paths.",
+    "C2_closed_bit_identical": "176 readings, parameter table, state_bytes, candidate_sha_v2 and store signature are identical to the pre-edit baseline.",
+    "C3_address_only": "with the flag on, the address layer allocates no tensor and no parameter.",
+    "C4_open_address_reads": "self-read 22/22, paraphrase >= 20/22, unwritten >= 60/66, new token no_match >= 20/22, no-value composite ambiguous >= 20/22.",
+    "C5_open_reproduces_runner_side": "the open reading keeps the runner-side classes.",
+    "C6_open_write_side": "growth 2 -> >=16 with >=3 expansions; 23 distinct addresses; 0 evictions, 0 silent overwrites, 0 rollbacks; equal-set different-value batch rejected whole with the table unchanged.",
+    "C7_open_value_path": "matched reads move fast, abstain reads do not, and all 22 stored values hash to the write-time fast snapshot."
+  },
+  "baseline": {
+    "report": "reports/taiji_store_wire_20261108_baseline.json",
+    "arrays": "reports/taiji_store_wire_20261108_baseline_arrays.npz",
+    "note": "captured before the first store-wire edit; never regenerated"
+  },
+  "closed_gate": {
+    "readings": 176,
+    "fast_max_abs_delta": 0.0,
+    "probability_max_abs_delta": 0.0,
+    "fast_digests_equal": 176,
+    "probability_digests_equal": 176,
+    "fields_equal": 176,
+    "parameter_tensors_equal": true,
+    "parameter_elements_equal": true,
+    "parameter_sha_equal": true,
+    "state_bytes_equal": true,
+    "candidate_sha_v2_equal": true,
+    "store_signature_equal": true,
+    "table_not_allocated": true,
+    "living_core_changed": true,
+    "verdict_pass": "store_addressing_wire_neutral",
+    "verdict_fail": "store_addressing_wire_not_neutral"
+  },
+  "open_gate": {
+    "self_read": 22,
+    "paraphrase_min": 20,
+    "unwritten_min": 60,
+    "new_token_min": 20,
+    "no_value_min": 20,
+    "new_pairing_min": 20,
+    "distinct_feature_sets": 23,
+    "capacity_at_least": 16,
+    "expansions_at_least": 3,
+    "evictions": 0,
+    "silent_overwrites": 0,
+    "rollbacks": 0,
+    "conflict_rejected_whole": true,
+    "value_roundtrip": 22,
+    "fast_moved_on_matched": ">0",
+    "fast_moved_on_abstain": 0,
+    "verdict_pass": "store_addressing_wired",
+    "verdict_regression": "store_addressing_wired_regression",
+    "verdict_inconclusive": "inconclusive"
+  },
+  "address_rules": {
+    "identity": "two records share an address iff their 2-byte feature sets are equal",
+    "anchor": "a query anchors on every address that owns one of its document-frequency-1 features",
+    "exits": {
+      "no_match": "an unseen feature OR no unique feature in the query",
+      "matched": "exactly one anchor",
+      "ambiguous_multiple_anchors": "two or more anchors"
+    },
+    "write": "grow-before-append; equal value merges; different value replaces and keeps the displaced snapshot in history; one batch with equal feature sets and different values is rejected whole",
+    "global_check": {
+      "G-A": "every stored record reads back to itself or abstains, never to another address",
+      "G-B": "a write cannot remove the anchor of an address it did not touch",
+      "G-C": "no two addresses share a feature set"
+    },
+    "value": "the write stores the current fast snapshot; a matched read blends it with alpha=0.5; an abstention returns the same state object",
+    "no_thresholds_on_exits": true,
+    "retired": ["COPY_OVERLAP", "ANCHOR_MARGIN", "table-level self.history", "runner-side duplicate AddressTable"]
+  },
+  "fixture": {
+    "base_observations": 8,
+    "faces": 22,
+    "unwritten_per_face": 3,
+    "paraphrase_positions": 4,
+    "new_token": 22,
+    "new_pairing": 22,
+    "no_value_composites": 22,
+    "disclosure": "every face carries its own rare token; this is a fixture property, not a general text claim"
+  },
+  "discipline": {
+    "training": 0,
+    "optimizer_steps": 0,
+    "adam": 0,
+    "confirm": 0,
+    "black_module": false,
+    "in_process_gate_only": true,
+    "process_guard": true,
+    "single_instance_lock": true,
+    "watchdog_seconds": 60,
+    "cpu_cap_seconds": 200,
+    "write_then_rename": true,
+    "dual_runner_sha": true
+  }
+}

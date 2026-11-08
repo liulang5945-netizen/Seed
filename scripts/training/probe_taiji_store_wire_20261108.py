@@ -17,17 +17,19 @@ Three hard constraints, fixed before any reading: **default off / 0 new paramete
     (``store_addressing_wire_not_neutral``) and the run stops there.
 
 ``open``      (``sc_sfk_enabled=True``)
-    Build the store through the wired write path (8 base records, 22 faces, 22
-    paraphrase revisions, one conflicting batch), then read the same 154-question
-    battery.  Reported: self-read by store key, paraphrase, unwritten, the two classes
-    that must be refused, write-side counters, cost, and a side-by-side against the
-    runner-side SC-SFK reading (``reports/taiji_sc_address_20261108.json``).
+    Build the store through the wired write path (8 base observations, 22 faces, one
+    conflicting batch), then read the same 154-question battery.  Reported: self-read
+    by store key, paraphrase, unwritten, the two classes that must be refused, the
+    value path (a matched read blends the stored fast snapshot into ``fast``), write
+    counters, cost, and a side-by-side against the runner-side SC-SFK reading
+    (``reports/taiji_sc_address_20261108.json``).
 
-Scope statement, fixed in advance: the value path (the FEC-1 5-dimensional fast copy)
-is *not* wired in this round.  With the flag on, the address decides and the value is
-not blended into ``fast``; a consumer that needs values must not enable the flag yet.
-That is why the open phase checks ``fast`` before/after every read instead of pretending
-to measure a value path.
+Scope statement, fixed in advance: the value path is wired.  The write stores the
+current ``fast`` snapshot; a ``matched`` read blends it with ``alpha = 0.5``; a
+``no_match`` or ``ambiguous`` read returns the same state object, so an abstention is
+bit-identical to not reading.  The store value is a fast snapshot, not the record
+bytes, so re-observing the same record with a moved fast state is a replace whose
+displaced snapshot is kept in the address history.
 
 Discipline: zero training, zero optimizer steps, zero Adam, zero confirm reads, no new
 training window, no gate wired into a training runner, no ``python -m black`` (only the
@@ -65,7 +67,7 @@ from taiji.rule_learning_20_1_net import RuleLearningGraph  # noqa: E402
 
 BASE_RUNNER = ROOT / "scripts/training/probe_taiji_gate_read_gate_20261108.py"
 RUNNER_SIDE = ROOT / "reports/taiji_sc_address_20261108.json"
-MANIFEST = ROOT / "plans/manifests/taiji_store_wire_20261108.json"
+MANIFEST = ROOT / "plans/manifests/taiji_address_system_20261108.json"
 BASELINE_JSON = ROOT / "reports/taiji_store_wire_20261108_baseline.json"
 BASELINE_NPZ = ROOT / "reports/taiji_store_wire_20261108_baseline_arrays.npz"
 CLOSED_JSON = ROOT / "reports/taiji_store_wire_20261108_closed.json"
@@ -118,7 +120,14 @@ CRITERIA = {
     "C6_open_write_side": (
         "growth starts at 2, expands at least three times, reaches >= 16; 23 distinct "
         "addresses; evictions = 0, silent overwrites = 0, rollbacks = 0; the conflicting "
-        "two-item batch is rejected whole and the table is unchanged afterwards."
+        "two-item batch (equal feature set, different values) is rejected whole and the "
+        "table is unchanged afterwards."
+    ),
+    "C7_open_value_path": (
+        "a matched read blends the stored fast snapshot into fast (moved_on_matched > 0), "
+        "a no_match or ambiguous read returns the same state object (moved_on_abstain = 0), "
+        "and the value read back from each of the 22 written addresses hashes to the fast "
+        "snapshot taken at write time (22/22)."
     ),
     "V_wire_not_neutral": (
         "any closed-state bit, parameter, state-bytes, identity or store-signature difference: "
@@ -684,7 +693,8 @@ def phase_open(base, process_guard: dict, lock_name: str) -> int:
     closed = json.loads(CLOSED_JSON.read_text(encoding="utf-8"))
     if closed["verdict"]["decision"] != "store_addressing_wire_neutral":
         raise SystemExit("closed-state gate did not pass; the open phase refuses to run")
-    from taiji.sc_sfk import features  # imported only here: the module exists after the edit
+    # Imported only here: the module is the post-edit implementation.
+    from taiji.sc_sfk import addressable, features
 
     subject = LivingCoreReference(LivingCoreConfig(sc_sfk_enabled=True))
     state = subject.attach_store(subject.initial_state("store-wire-open"))
@@ -699,6 +709,9 @@ def phase_open(base, process_guard: dict, lock_name: str) -> int:
         started_cpu = time.process_time()
         started_wall = time.perf_counter()
         state, info = subject.addressed_write(state, text)
+        info["value_sha"] = hashlib.sha256(
+            state.fast.detach().cpu().contiguous().numpy().tobytes()
+        ).hexdigest()
         write_cpu[0] += time.process_time() - started_cpu
         write_wall[0] += time.perf_counter() - started_wall
         writes[0] += 1
@@ -721,6 +734,7 @@ def phase_open(base, process_guard: dict, lock_name: str) -> int:
                 "token": int(token),
                 "read_position": int(read_position),
                 "address": int(info["slot"]),
+                "value_sha": info["value_sha"],
                 "write_text": write_text,
                 "read_text": base.sentence(token, read_position),
             }
@@ -753,19 +767,25 @@ def phase_open(base, process_guard: dict, lock_name: str) -> int:
         "rollbacks": table.rollbacks,
         "global_checks": table.global_checks,
         "global_failures": table.global_failures,
+        "generation": table.generation,
+        "nbytes": table.nbytes(),
+        "addressable": len(addressable(table.addresses)),
         "base_actions": [info.get("action") for info in base_infos],
     }
     append_progress({"phase": "open_store_built", "addresses": stats["addresses"]})
 
-    conflict_one = list(base.BASE_WORDS)
-    conflict_one[0] = base.BASE_WORDS[1]
-    conflict_two = list(base.BASE_WORDS)
-    conflict_two[2] = base.BASE_WORDS[3]
+    # The conflict class is structural: two items with the same feature set and two
+    # different values.  A 2-byte rotation keeps the word set identical and changes
+    # the bytes, so the collision is a property of the address rule, not of the fixture.
+    conflict_text = faces[0]["write_text"]
+    conflict_perm = conflict_text[2:] + conflict_text[:2]
+    if features(conflict_perm) != features(conflict_text):
+        raise SystemExit("conflict fixture no longer shares a feature set")
     before = [(tuple(row["features"]), list(row["values"])) for row in table.addresses]
     conflict = table.write_batch_checked(
         [
-            (features(b"".join(conflict_one)), "conflict:one"),
-            (features(b"".join(conflict_two)), "conflict:two"),
+            (features(conflict_text), b"conflict:one"),
+            (features(conflict_perm), b"conflict:two"),
         ]
     )
     untouched = before == [(tuple(row["features"]), list(row["values"])) for row in table.addresses]
@@ -775,8 +795,7 @@ def phase_open(base, process_guard: dict, lock_name: str) -> int:
         "addresses_before": len(before),
         "addresses_after": len(table.addresses),
         "table_untouched": bool(untouched),
-        "route": "table-level batch API; the wired per-record path cannot form an intra-batch "
-        "collision by construction",
+        "route": "table-level batch API: two items with equal feature sets and different values",
     }
     append_progress({"phase": "open_conflict", "action": conflict["action"]})
 
@@ -784,9 +803,8 @@ def phase_open(base, process_guard: dict, lock_name: str) -> int:
     # perturbed, because a repeated occurrence of a record raises that record's word
     # document frequency and would erase the very anchor this fixture relies on.
     probe_snapshot = table.snapshot()
-    idem = table.write_batch_checked(
-        [(features(faces[0]["write_text"]), faces[0]["write_text"].hex())]
-    )
+    stored_value = table.value_at(faces[0]["address"])
+    idem = table.write_batch_checked([(features(faces[0]["write_text"]), stored_value)])
     idempotent_probe = {
         "action": idem["action"],
         "item_action": (idem.get("actions") or [None])[0],
@@ -800,6 +818,11 @@ def phase_open(base, process_guard: dict, lock_name: str) -> int:
     }
     table.restore(probe_snapshot)
     append_progress({"phase": "open_idempotent", "action": idem["action"]})
+
+    value_roundtrip = sum(
+        int(hashlib.sha256(table.value_at(face["address"])).hexdigest() == face["value_sha"])
+        for face in faces
+    )
 
     stats["rejected_batches"] = table.rejected_batches
     stats["global_checks"] = table.global_checks
@@ -834,6 +857,7 @@ def phase_open(base, process_guard: dict, lock_name: str) -> int:
         summary[klass] = {
             "count": len(rows),
             "correct": correct,
+            "moved": sum(int(row["fast_moved"]) for row in rows),
             "decisions": dict(Counter(row["fields"].get("decision") for row in rows)),
             "top1": describe([row["fields"].get("top1", 0.0) for row in rows]),
             "margin": describe([row["fields"].get("margin", 0.0) for row in rows]),
@@ -870,6 +894,10 @@ def phase_open(base, process_guard: dict, lock_name: str) -> int:
             },
         }
 
+    matched_rows = [row for row in readings if row["fields"].get("decision") == "matched"]
+    abstain_rows = [row for row in readings if row["fields"].get("decision") != "matched"]
+    fast_moved_on_matched = sum(row["fast_moved"] for row in matched_rows)
+    fast_moved_on_abstain = sum(row["fast_moved"] for row in abstain_rows)
     checks = {
         "self_read": self_read,
         "paraphrase": summary["written_paraphrase"]["correct"],
@@ -883,7 +911,9 @@ def phase_open(base, process_guard: dict, lock_name: str) -> int:
         ),
         "conflict_rejected_whole": conflict_summary["rejected_whole"]
         and conflict_summary["table_untouched"],
-        "fast_untouched_by_read": all(not row["fast_moved"] for row in readings),
+        "fast_moved_on_matched": int(fast_moved_on_matched),
+        "fast_abstain_untouched": int(fast_moved_on_abstain) == 0,
+        "value_roundtrip": int(value_roundtrip),
     }
     measurable = bool(runner_side) and all(summary[klass]["count"] > 0 for klass in summary)
     reproduced = (
@@ -897,6 +927,9 @@ def phase_open(base, process_guard: dict, lock_name: str) -> int:
         and checks["clean_writes"]
         and stats["distinct_feature_sets"] == 23
         and checks["conflict_rejected_whole"]
+        and checks["fast_abstain_untouched"]
+        and checks["fast_moved_on_matched"] > 0
+        and checks["value_roundtrip"] == FACE_COUNT
     )
     if not measurable:
         verdict = {
@@ -933,6 +966,20 @@ def phase_open(base, process_guard: dict, lock_name: str) -> int:
             degraded.append({"facet": "write_side", "stats": stats})
         if not checks["conflict_rejected_whole"]:
             degraded.append({"facet": "conflict_batch", **conflict_summary})
+        if not checks["fast_abstain_untouched"] or checks["fast_moved_on_matched"] == 0:
+            degraded.append(
+                {
+                    "facet": "value_path",
+                    "fast_moved_on_matched": int(fast_moved_on_matched),
+                    "fast_moved_on_abstain": int(fast_moved_on_abstain),
+                    "matched": len(matched_rows),
+                    "abstain": len(abstain_rows),
+                }
+            )
+        if checks["value_roundtrip"] != FACE_COUNT:
+            degraded.append(
+                {"facet": "value_roundtrip", "correct": int(value_roundtrip), "need": FACE_COUNT}
+            )
         verdict = {
             "decision": "store_addressing_wired_regression",
             "reason": "the wired store falls below the runner-side reading",
@@ -996,6 +1043,15 @@ def phase_open(base, process_guard: dict, lock_name: str) -> int:
         "write_side": stats,
         "conflict_batch": conflict_summary,
         "idempotent_probe": idempotent_probe,
+        "value_path": {
+            "moved_on_matched": int(fast_moved_on_matched),
+            "moved_on_abstain": int(fast_moved_on_abstain),
+            "matched": len(matched_rows),
+            "abstain": len(abstain_rows),
+            "roundtrip": int(value_roundtrip),
+            "roundtrip_need": FACE_COUNT,
+            "alpha": 0.5,
+        },
         "side_by_side": side_by_side,
         "cost": {
             "cpu_seconds": round(time.process_time() - START_CPU, 3),
@@ -1012,21 +1068,24 @@ def phase_open(base, process_guard: dict, lock_name: str) -> int:
             "global_checks": stats["global_checks"],
         },
         "scope": {
-            "value_path_wired": False,
+            "value_path_wired": True,
             "note": (
-                "the address decides; fast is not blended and is asserted untouched by every read"
+                "the write stores the current fast snapshot; a matched read blends it into fast "
+                "with alpha = 0.5; no_match and ambiguous leave fast bit-identical"
             ),
         },
         "disclosures": [
-            "the wired value is the record's own bytes: re-writing a stored record merges, and a "
-            "different record that shares its feature set cannot be produced by this fixture, so "
-            "the wired run has replaced = 0.  The runner-side 'replaced 22' came from an explicit "
-            "revision tag, not from a property the wired path lost.",
-            "the conflicting batch is exercised through the table batch API because the per-record "
-            "wired path cannot produce an intra-batch collision; the table is restored to its "
-            "pre-test state and that restoration is checked.",
+            "the store value is the fast snapshot, so re-observing the same record with a moved "
+            "fast state is a replace (the displaced snapshot is kept in the address history), not "
+            "a merge.  The 8 base observations therefore show replaced = 7 and merged = 0; the "
+            "observation count, the carrier frequency and the address are unchanged by that.",
+            "the conflicting batch is exercised through the table batch API: two items with equal "
+            "feature sets and different values, which the per-record wired path cannot form in one "
+            "call.  Rejection is whole-batch and the table is compared before/after.",
+            "a read that returns no_match or ambiguous returns the same state object; the value "
+            "path is exercised only by the matched class and is reported separately.",
             "closed-state parity is reported by the closed phase; this phase only records that the "
-            "flag is on and that no read moves fast.",
+            "flag is on.",
         ],
         "plain_language": {
             "what_this_proves": (

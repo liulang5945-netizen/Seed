@@ -23,6 +23,20 @@ ADDRESSED_TEMPERATURE = 0.1
 ADDRESSED_ALPHA = 0.5
 
 
+def _pack_fast(fast: torch.Tensor) -> bytes:
+    """Byte-exact snapshot of ``fast``; the SC-SFK store's value payload."""
+    return fast.detach().to("cpu").contiguous().numpy().tobytes()
+
+
+def _unpack_fast(blob: bytes, reference: torch.Tensor) -> torch.Tensor:
+    """Rebuild a ``fast`` snapshot and reject a shape/dtype mismatch explicitly."""
+    expected = reference.numel() * reference.element_size()
+    if len(blob) != expected:
+        raise ValueError(f"SC-SFK value carries {len(blob)} bytes, the live fast needs {expected}")
+    flat = torch.frombuffer(bytearray(blob), dtype=reference.dtype)
+    return flat.view(reference.shape).to(reference.device)
+
+
 @dataclass(frozen=True)
 class LivingCoreConfig:
     groups: int = 4
@@ -688,7 +702,12 @@ class LivingCoreReference(nn.Module):
         )
 
     def _sc_sfk_read(self, state: LivingState, raw: bytes):
-        """SC-SFK read: the address decides, the value path is not blended."""
+        """SC-SFK read: the address decides, the stored value is blended on a hit.
+
+        ``matched`` is the only branch that touches ``fast``; ``no_match`` and
+        ``ambiguous_multiple_anchors`` return the *same* state object, so an
+        abstention is bit-identical to not having read at all.
+        """
         table = state.sc_sfk
         if table is None:
             return state, {
@@ -702,26 +721,56 @@ class LivingCoreReference(nn.Module):
                 "margin": 0.0,
             }
         result = table.read(sc_sfk_features(raw))
-        return state, {
+        info = {
             "enabled": True,
             "blended": False,
             "matched": result["decision"] == "matched",
+            "value_bytes": 0,
+            "retrieved_norm": None,
+            "fast_norm_before": float(state.fast.detach().norm()),
+            "fast_norm_after": None,
             **result,
         }
+        if result["decision"] != "matched":
+            return state, info
+        value = result["value"]
+        if not isinstance(value, (bytes, bytearray)):
+            raise ValueError("SC-SFK store value is not a packed fast snapshot")
+        retrieved = _unpack_fast(bytes(value), state.fast)
+        fast = (1 - ADDRESSED_ALPHA) * state.fast + ADDRESSED_ALPHA * retrieved
+        info.update(
+            {
+                "blended": True,
+                "value_bytes": len(value),
+                "retrieved_norm": float(retrieved.detach().norm()),
+                "fast_norm_after": float(fast.detach().norm()),
+            }
+        )
+        return replace(state, fast=fast), info
 
     def _sc_sfk_write(self, state: LivingState, raw: bytes):
-        """SC-SFK write: one record, structural, no gradient and no eviction."""
+        """SC-SFK write: one record, structural, no gradient and no eviction.
+
+        The stored value is the *current fast snapshot*, not the record bytes: that
+        is what makes the read path able to feed the next step.  A re-observation
+        of the same record with a different fast state is a replace (the old value
+        moves into the address history); an identical value is a merge.
+        """
         if state.sc_sfk is None:
             state = self.attach_store(state)
         table = state.sc_sfk
         feats = sc_sfk_features(raw)
-        result = table.write_batch_checked([(feats, raw.hex())])
+        value = _pack_fast(state.fast)
+        result = table.write_batch_checked([(feats, value)])
         address = table.target_of(feats)[0]
         return state, {
             "slot": address,
             "address": address,
             "action": result["action"],
             "occupied_after": len(table.addresses),
+            "capacity": table.capacity,
+            "generation": table.generation,
+            "value_bytes": len(value),
             "evicted": False,
             "global_check": result.get("global_check"),
         }
