@@ -1,0 +1,58 @@
+{
+  "format": "taiji-sc-address-preregistration-v1",
+  "date": "2026-11-08",
+  "question": "with the address defined as a shared-carrier sparse feature set (IDF-weighted 2-byte word set, weighted Jaccard, unique-anchor addressability) and with zero training, does the store tie paraphrases, separate different contents, refuse unknown content, and grow from a very small table without eviction?",
+  "written_before_any_reading": true,
+  "sequence": [
+    "write the criteria and constants to this manifest",
+    "build the frozen mean-key store with the unchanged write path (30 sentences, 32 slots)",
+    "build the sparse table from raw bytes only: 8 base writes, 22 face writes, 22 revisions",
+    "run the conflicting 2-item batch and require whole-batch rejection",
+    "read the same 154 queries through the sparse primitive with the three named exits",
+    "read the same 154 queries through the frozen mean-key comparator",
+    "apply the pre-written verdict once"
+  ],
+  "criteria": {
+    "A1_single_variable": "the only changed quantity is the address definition: record address = 2-byte word feature set with store-level smoothed IDF weights, similarity = weighted Jaccard, addressability = unique-anchor rule. The graph, store values, thresholds of every existing gate and the fixture are untouched.",
+    "A2_position_independent_by_construction": "features are a set of 2-byte words; word order and word position do not enter the address. Consequence fixed before any reading: the new_pairing class is not a negative control under this primitive (same token, different position == a paraphrase); it is reported as an alias and must resolve to its own address.",
+    "A3_capacity_before_content": "the address table starts at 2 slots and doubles on demand; a write is only performed after a free slot exists; when expansion is impossible because two items of the same batch claim one address with different values, the whole batch is rejected. No eviction, no silent overwrite.",
+    "A4_global_local_coupling": "every accepted write recomputes IDF over the whole table (local write -> global re-weighting) and then re-checks that (a) every stored address still resolves to itself and (b) no two stored addresses reach COPY_OVERLAP. A failed re-check rolls the write back.",
+    "A5_abstention_exits": "each query must produce exactly one of: matched(address), no_match, ambiguous_multiple_anchors. A query that contains a word never written (df==0) is no_match: the store cannot answer it. Otherwise the candidate set is the addresses that own a df==1 query feature; one candidate -> matched, several -> matched only if the weighted-Jaccard margin between the best and the second candidate is >= 0.02, else ambiguous. No threshold is fitted on negative classes.",
+    "V1_sc_address_holds": "paraphrase own-address >= 20/22 AND unwritten own-address >= 60/66 AND new_token no_match >= 20/22 AND no_value ambiguous >= 20/22 AND new_pairing alias-to-own >= 20/22 AND distinct addresses == 23 (1 base + 22 faces) AND growth started at 2 and reached >= 16 with evictions=0, silent_overwrites=0, rollbacks=0 AND all 22 revisions replaced in place AND the conflicting 2-item batch was rejected whole",
+    "V2_sc_ties_but_not_separable": "paraphrase >= 20/22 AND unwritten >= 60/66 but at least one valid negative class does not abstain (new_token no_match < 20 or no_value ambiguous < 20)",
+    "V3_sc_not_tied": "paraphrase < 20/22: the address does not tie paraphrases",
+    "V4_sc_no_growth_from_small": "the table did not start at 2, did not expand at least three times, or any eviction / silent overwrite / rollback occurred",
+    "V5_sc_position_independence_inconsistent": "paraphrase ties but new_pairing (same features by construction) does not: implementation contradicts the primitive",
+    "V6_sc_control_invalid": "store signature changed, candidate_sha_v2 changed, the mean-key comparator could not be reproduced, or the zero-training discipline counters are non-zero",
+    "unchanged": "no fixture, face, position, class, span or threshold is retuned after the first reading"
+  },
+  "constants": {
+    "start_capacity": 2,
+    "copy_overlap": 0.85,
+    "anchor_margin": 0.02,
+    "need_paraphrase": 20,
+    "need_unwritten": 60,
+    "need_abstain": 20,
+    "faces": 22,
+    "base_occupied": 8,
+    "unwritten_per_rule": 3,
+    "negative_per_class": 22,
+    "battery": 154,
+    "feature_unit": "2-byte word, position independent, deduplicated",
+    "idf": "log(1 + N/(1+df)) over current table",
+    "similarity": "weighted Jaccard",
+    "anchor_rule": "addressable iff exactly one stored address owns a df==1 query feature",
+    "new_params": 0,
+    "training_updates": 0
+  },
+  "discipline": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "checkpoints_written": 0,
+    "black_invoked": false,
+    "cpu_cap_seconds": 200.0,
+    "watchdog_seconds": 60.0
+  }
+}
