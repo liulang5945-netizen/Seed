@@ -1,0 +1,49 @@
+{
+  "format": "taiji-whitening-preregistration-v1",
+  "date": "2026-11-08",
+  "question": "does shrinkage whitening repair the key collapse while keeping the carrier that lets a synonym wording reach its own written key?",
+  "written_before_any_reading": true,
+  "sequence": [
+    "build the real-forward store and the continuity store",
+    "arm A: identity read, gate anchored on the written floor",
+    "arm B: ridge whitening lambda = trace(Sigma)/d applied to keys and query at read time",
+    "arm C: centering, reused from the previous report (not recomputed)",
+    "verdict per the pre-written V1..V3 ordering (V1 dominant)"
+  ],
+  "criteria": {
+    "C1_control_identity": "with the raw transform the runner's own read reproduces the real addressed_read on all 154 queries: identical fast sha, top slot and max|delta| = 0",
+    "C2_store_immutable": "whitening is read-time only: store_keys/store_values/store_age hashes are identical before and after every whitening pass",
+    "C3_transform_scope": "the same W is applied to the occupied stored keys and to the query key; the store keeps the raw keys and the encoder is untouched",
+    "C4_shrinkage_rule": "the ridge is lambda = trace(Sigma)/d with Sigma the covariance of the occupied store keys about their mean; the value is fixed by this rule before any reading and is not searched",
+    "C5_threshold_source": "the gate threshold is the minimum top cosine of the written group in that same arm; no negative label enters the value",
+    "C6_collapse_fixed": "collapse_fixed = whitened effective rank >= 2x the raw effective rank, or whitened top_share <= 0.75 (thresholds fixed before the reading)",
+    "C7_carrier_kept": "carrier_kept = written-group minimum top cosine >= 0.90",
+    "V1_written_bytes": "if whitening changes the returned fast sha of any of the 22 written faces against arm A, the verdict is whitening_changes_written_bytes (hard failure, dominant rule)",
+    "V2_enables": "otherwise, if at least two gaps are > 0 and the unwritten correct count does not drop, the verdict is whitening_enables_gate with the threshold interval (lower, upper]",
+    "V3_ceiling": "otherwise, if whitening either fixes the collapse or keeps the carrier but not both, the verdict is encoding_is_the_ceiling: the averaged-pooling byte encoding ties the two together, so neither the gate nor the offset nor another linear form can separate them",
+    "unchanged": "no fixture, face, position, class, ridge or anchor is retuned after first reading"
+  },
+  "constants": {
+    "faces": 22,
+    "base_occupied": 8,
+    "slots": 32,
+    "negative_per_class": 22,
+    "unwritten_per_rule": 3,
+    "temperature": 0.1,
+    "alpha": 0.5,
+    "collapse_rank_factor": 2.0,
+    "collapse_top_share": 0.75,
+    "carrier_floor": 0.9,
+    "query_count": 154
+  },
+  "discipline": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "checkpoints_written": 0,
+    "black_invoked": false,
+    "cpu_cap_seconds": 200.0,
+    "watchdog_seconds": 60.0
+  }
+}
