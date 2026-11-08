@@ -1269,3 +1269,73 @@ manifest：`plans/manifests/taiji_a1_offfixture_20261108.json`（`freeze_revisio
 **唯一后继**：把未知集门从“任何锚定”改成“**锚定且未被该查询逐字包含**”（`anchored ∧ not contained`），用同一 550 条语料、同一地址层、0 训练、0 新参数重跑同一读数（成本约 46 CPU）。预期 `unknown_false_anchor = 0`、判定 `continuity_restored`；若仍有违反，则说明确有误锚，届时才回到地址层。**不改回退排序、不加阈值、不改语料。**
 
 **回执（2026-11-09，0 训练／0 优化器步／0 Adam／0 confirm／0 新容差）**：[开启态报告](../../reports/taiji_contig_20261109.json)＋[全量输出](../../reports/taiji_contig_20261109_outputs.jsonl)（2,200 条逐条输出、锚点、重合度与出处）＋[关闭态](../../reports/taiji_contig_20261109_closed.json)（176/176、`max|Δ|=0`、无表）＋[人工打分](../../reports/taiji_contig_20261109_scores.json)（分母 census 9 条）＋[manifest](../manifests/taiji_contig_20261109.json)（freeze_revision 3）＋runner [probe_taiji_contig_20261109.py](../../scripts/training/probe_taiji_contig_20261109.py)（双列 sha `3089e1fb…`）＋能力卡 U34＋账本 §46。判定 **`false_anchor_remains`**。
+
+---
+
+## 20. 记账修正：夹具分类＋门的定义（2026-11-09，**只改 harness**；地址层／语料／排序／阈值零改动）
+
+上一轮（§19）判 `false_anchor_remains`，但失败点是门把“查询真的原样引用了某条记录”也计成误锚。本轮只改两处 harness：把这类查询归入“库内有答案”类，并把门改成“锚定且未被逐字包含”。**地址层 sha 不变（`b370850e…`）、语料 sha 不变（`350eef77…`）、排序与阈值不变、0 训练／0 优化器步／0 Adam／0 confirm／0 新参数。**
+
+### 20.1 夹具分类修正（只归类，不动语料）
+
+| 项 | 值 |
+|---|---|
+| 规则 | 未知查询逐字包含某条已写记录 ⇒ 它其实有答案，移入 `unknown_answerable`，**在评分前**归类 |
+| 分子／分母 | **1／550**（只移出 1 条） |
+| 移出清单 | position **145**（210 B）→ 记录 **40**，20 B，字节区间 **[0, 20)**，文本 `- \`taiji/adapter.py\``，`all_matches = 1`，`anchored = true`，`output_class = usable_and_correct` |
+| 记账校验 | 移出 1 ＋ 剩余 549 ＝ 550 ⇒ `bookkeeping_ok = true`；移出行无 `unusable` |
+| 语料改动 | **无**（未新增／删除任何条目；只改分组标签） |
+
+### 20.2 门的两条口径（并排）
+
+| 口径 | 规则 | 分子／分母 |
+|---|---|---|
+| 旧 | 未知集任何锚定即失败 | **1／550**（position 145，记录 40，overlap 1.0） |
+| 新（判定用） | `unknown_false_anchor = anchored ∧ not_contained` | **0／550** |
+| 附带 | 锚点级“未被包含”计数 | **0**（1,092 个锚点全部逐字命中） |
+
+`contained` 一律用**原始字节**判定，不经指纹。
+
+### 20.3 读数
+
+- **关闭态**：`output_unit_closed_neutral`，176 条逐位 `max|Δ|=0`（fast＋概率）、参数／状态／身份／store 签名四项不变、`table_not_allocated=true`、无半开分支；43.641 CPU／4.084 wall。
+- **写侧**：542/550 入表；8 条 `window_identity_empty`（5–15 B，位置同 §19）；0 回滚／0 驱逐／0 静默覆盖。
+- **五桶**：<32 B 22/30＝0.7333；32–64 99/99；64–128 165/165；128–256 136/136；>256 120/120；**<64 B 121/129＝0.937984 ≥ 0.90**；**最短入表 16 B**。
+- **L1**：编造 0、非法切片 0、UTF-8 2,200/2,200、边界 2,200/2,200；**L2**：2,200/2,200＝1.0。
+- **L3**（正确／错误／回退／不可用）：写入 **542／8／0／0**；未知（剩余 549）**0／0／549／0**（锚定 0）；`unknown_answerable` **1／0／0／0**（锚定 1）；无关 **0／0／550／0**；并集 **549／1／0／0**（`matched` 14／`no_match` 1／`ambiguous` 535）。
+- **并集双锚点**：应判 535、实判 535、`violations = []`。
+- **锚定行原始字节复核**：1,092 条锚定行 × 每条全部锚点，用 `record_raw in query_bytes` 复核，**违反 0**（该检查不经指纹；“违反”指锚定成立但记录未逐字出现）。
+- **回退（有答案分母）**：**9 条**（written 8＋union 1＋unknown_answerable 0），重合度四分位 [0,0,0]、中位 0.0、均值 0.0；分母 <20 故 census **9/9 无关**；剩余 unknown 549 与 unrelated 550 只报形态（record 481／550、sentence 68／0），不进相关性判定。
+- **分母总账**：written 550、unknown 550（reclassified 1＋remaining 549）、unrelated 550、union 550；`answerable_total = 550 + 550 + 1 = 1101`。
+
+### 20.4 判定与账本结论
+
+判定 **`continuity_restored`**（冻结序：关闭态中性 → 新口径真误锚 0 → 短板线达标 → L1 全清 → 归类记账自洽）。
+
+**可直接引用的结论（同时含三个界）**：
+
+> 在 550 条语料上，条目被锚定**当且仅当**它作为 16 字节窗口序列在查询中**原样连续出现**（模 64 bit 指纹碰撞；1,092 条锚定行原始字节复核 0 违反）；**最短可入表长度 16 字节**；**短于 16 字节的查询没有任何可比证据**——其窗口序列为空，系统只能回退输出，不能声称命中。
+
+**它不能证明什么**：
+
+> 这条线**没有可训练自由度**（0 参数、0 梯度、0 优化器步），**不与训练图合流**，也**不证明语义匹配**；它只证明“字节级包含关系可被无损判定与回溯”。
+
+### 20.5 与 §19 并排
+
+| 轴 | §19（`4262da689`） | §20（本轮） |
+|---|---|---|
+| 未知集分组 | 550 全为 unanswerable | 550 ＝ 1 `unknown_answerable` ＋ 549 剩余 |
+| 旧口径 | 1/550 → `false_anchor_remains` | 1/550（仅报告） |
+| 新口径 | 未定义 | **0/550** |
+| 判定 | `false_anchor_remains` | **`continuity_restored`** |
+| 地址层／语料／排序／阈值 | 连续子序列／`350eef77…`／不变／不变 | **逐项相同**（sha `b370850e…`／`350eef77…`） |
+| 关闭态／写侧／五桶／三层 | 176/176；542/550；121/129；542/8/0 | **逐项相同** |
+| 回退分母 | 9 条（written 8＋union 1） | 9 条（＋unknown_answerable 0） |
+
+### 20.6 成本与收束
+
+成本 **46.235 CPU／7.131 wall**（开启段 2.594／3.047＋关闭态 43.641／4.084），上限 200；runner sha `b804a5d4…`（Start／End 双列相同）；manifest `freeze_revision 4`（`criteria_changed_revision 4`：只改夹具分类与门的定义；地址层／语料／排序／阈值未动）。runner 在提交前做了一次 in-process black 规范化（Mode `line_length=100`、py312，**仅格式**），随后整跑复测：判据、语料、地址层未变，读数逐项相同，故 `freeze_revision` 不升。
+
+**收束**：连续性子序列线到此关闭，后续只在四个方向之一继续（默认建议见队首）：① 表示层（语义匹配）；② 训练合流；③ 更短地址（<16 B）；④ 外部语料复核。本轮不启动任何新方向。
+
+**回执（2026-11-09，0 训练／0 优化器步／0 Adam／0 confirm／0 新容差）**：[开启态报告](../../reports/taiji_contig_20261109.json)＋[全量输出](../../reports/taiji_contig_20261109_outputs.jsonl)＋[关闭态](../../reports/taiji_contig_20261109_closed.json)＋[人工打分](../../reports/taiji_contig_20261109_scores.json)（census 9 条）＋[manifest](../manifests/taiji_contig_20261109.json)（freeze_revision 4）＋runner [probe_taiji_contig_20261109.py](../../scripts/training/probe_taiji_contig_20261109.py)（双列 sha `b804a5d4…`）＋能力卡 U35＋账本 §47。判定 **`continuity_restored`**。

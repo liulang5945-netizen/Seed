@@ -36,7 +36,7 @@
   "runner_sha256_start": "2ecd8d1c9dc72b2220955964cbc5e72454a60089b85215bf1e6d3b2dd8cf4994",
   "runner_sha256_end": "2ecd8d1c9dc72b2220955964cbc5e72454a60089b85215bf1e6d3b2dd8cf4994",
   "cost": {
-    "cpu_seconds": 47.062,
-    "wall_seconds": 4.592
+    "cpu_seconds": 43.641,
+    "wall_seconds": 4.084
   }
 }

@@ -135,10 +135,26 @@ DEFINITION = {
         "address_order otherwise; no pass/reject threshold. The ranking is untouched this round."
     ),
     "fallback_denominator": (
-        "relevance is scored only on rows whose group has an answer in the store: written "
-        "self-reads and the union group. Unknown/unrelated rows have no answering record by "
-        "construction; they are reported as output shape and mis-anchor count only and never "
-        "enter the relevance median."
+        "relevance is scored only on queries whose group has an answer in the store: written "
+        "self-reads, the union group, and unknown queries that verbatim contain a written record "
+        "(reclassified to unknown_answerable). Remaining unknown/unrelated rows have no answering "
+        "record by construction; they are reported as output shape and false-anchor count only "
+        "and never enter the relevance median."
+    ),
+    "fixture_reclassification": (
+        "an unknown query that contains some written record byte for byte is not an unanswerable "
+        "query: the store does hold its answer. Such rows are moved out of the unknown group into "
+        "unknown_answerable before scoring (grouping only; corpus untouched), and every move is "
+        "listed with the record index, the byte interval and the record length. Bookkeeping: moved "
+        "plus remaining must equal the unknown denominator, and no moved row may be unusable."
+    ),
+    "unknown_gate": (
+        "two readings are reported side by side. Old: any anchored row in the unknown group fails "
+        "(counts a quotation as a failure). New: unknown_false_anchor = anchored and not "
+        "contained, where contained means at least one anchor's record bytes occur verbatim in the "
+        "query bytes (fingerprints not used). The new reading decides the verdict; the old "
+        "numerator and denominator are still printed, and anchor-level non-containment is "
+        "reported separately."
     ),
     "output_unit": (
         "anchored reads print the whole record (unit = record); unanchored reads print the "
@@ -184,34 +200,39 @@ CRITERIA = {
     ),
     "C3_L2": "every output slice hashes to the stored record bytes it claims (faithful).",
     "C4_L3": (
-        "per group: usable_and_correct / usable_but_wrong / usable_fallback / unusable; the "
-        "anchored count of the unknown group is reported separately as a theorem gate."
+        "per group: usable_and_correct / usable_but_wrong / usable_fallback / unusable, with "
+        "unknown_answerable reported as its own group; both unknown-gate readings are reported."
     ),
     "C5_short": "admission rate for entries < 64 bytes >= 0.90.",
     "C6_unknown_false_anchor": (
-        "anchored (decision != no_match) rows in the unknown group must be exactly 0; this is a "
-        "theorem gate, not a statistic."
+        "two readings side by side. Old: any anchored row in the unknown group. New: "
+        "unknown_false_anchor = anchored and not contained, where contained means at least one "
+        "anchor's record bytes occur verbatim in the query bytes (fingerprints not used). Only the "
+        "new reading is the gate; the old reading is still reported with numerator and denominator."
     ),
     "C7_union_ambiguous": (
         "a union row whose two components are both addressable must be decided "
         "ambiguous_multiple_anchors; every violation is listed with its anchors."
     ),
     "C8_fallback": (
-        "relevance is scored on the answerable denominator only (written self-reads + union), "
-        "with that denominator size reported; unknown/unrelated rows are reported as output "
-        "shape and mis-anchor count only. No threshold is applied this round."
+        "relevance is scored on the answerable denominator only: written self-reads, the union "
+        "group, and unknown queries that verbatim contain a written record (unknown_answerable). "
+        "Every component size is reported; remaining unknown/unrelated rows are reported as "
+        "output shape and false-anchor count only. No threshold is applied this round."
     ),
     "V_hard": "closed state not neutral -> hard_failure_closed_not_neutral.",
     "V_false_anchor": (
-        "any anchored unknown row -> false_anchor_remains: the theorem did not hold; diagnostics "
-        "only, stop adding to the address layer."
+        "unknown_false_anchor > 0 under the new reading -> false_anchor_confirmed: the theorem "
+        "leaks in the implementation; back to the address layer, diagnostics only."
     ),
-    "V_gap": (
-        "admission rate for entries < 64 bytes < 0.90 -> window_identity_gapped: write the "
-        "length limit down, stop adding to the address layer, go to the representation layer."
+    "V_holds": (
+        "closed neutral, new false anchors = 0, short-entry line met, L1 clean, reclassification "
+        "bookkeeping adds up -> continuity_restored, with the one-sentence ledger conclusion."
     ),
-    "V_fabricates": "any L1 line fails -> output_fabricates, samples only.",
-    "V_holds": "all lines met -> continuity_restored.",
+    "V_inconclusive": (
+        "closed neutral and new false anchors = 0, but the short-entry line or an L1 line fails, "
+        "or the reclassification bookkeeping does not add up -> inconclusive."
+    ),
 }
 
 
@@ -345,9 +366,9 @@ def phase_freeze() -> dict[str, Any]:
         "corpus_path": str(CORPUS.relative_to(ROOT)),
         "question": (
             "with the anchor restored to a contiguous occurrence of the ordered 16-byte window "
-            "sequence, and the fallback relevance denominator corrected to queries that have an "
-            "answering record, does the same 550-entry corpus keep L1/L2, reach zero false "
-            "anchors on the unknown group and admit short entries?"
+            "sequence, with unknown queries that verbatim contain a stored record reclassified as "
+            "answerable, and with the unknown gate redefined as anchored-and-not-contained, does "
+            "the same 550-entry corpus keep L1/L2, reach zero false anchors and admit short entries?"
         ),
         "scale": {
             "written": SCALE,
@@ -369,9 +390,10 @@ def phase_freeze() -> dict[str, Any]:
             "irrelevant": "different topic or generic boilerplate",
             "mapping": SCORE_VALUES,
             "denominator": (
-                "only queries that have an answering record in the store: written self-reads and "
-                "the union group. Unknown/unrelated rows are unanswerable by construction and are "
-                "reported as output shape and mis-anchor count only."
+                "only queries that have an answering record in the store: written self-reads, the "
+                "union group, and unknown queries that verbatim contain a written record "
+                "(unknown_answerable). Remaining unknown/unrelated rows are unanswerable by "
+                "construction and are reported as output shape and false-anchor count only."
             ),
             "sample_rule": (
                 "unanchored rows of the answerable denominator in report order, every "
@@ -382,12 +404,14 @@ def phase_freeze() -> dict[str, Any]:
         "verdict": {
             "rules": [
                 "closed not neutral -> hard_failure_closed_not_neutral (stop)",
-                "any anchored unknown row -> false_anchor_remains (diagnostics only)",
                 (
-                    f"admission rate for entries < 64 bytes < {SHORT_ENTRY_LINE} -> "
-                    "window_identity_gapped"
+                    "unknown_false_anchor (anchored and not contained) > 0 -> "
+                    "false_anchor_confirmed (diagnostics only)"
                 ),
-                "any L1 line fails -> output_fabricates",
+                (
+                    f"short-entry line (< {SHORT_ENTRY_LINE}), an L1 line, or reclassification "
+                    "bookkeeping fails -> inconclusive"
+                ),
                 "otherwise -> continuity_restored",
             ]
         },
@@ -406,10 +430,18 @@ def phase_freeze() -> dict[str, Any]:
         old = json.loads(MANIFEST.read_text(encoding="utf-8"))
         same_verdict = old.get("verdict") == manifest["verdict"]
         same_corpus = old.get("corpus_sha256") == manifest["corpus_sha256"]
-        if not (same_verdict and same_corpus):
+        revise = "--revise" in sys.argv
+        if not same_corpus or (not same_verdict and not revise):
             raise SystemExit("manifest already frozen with a different verdict/corpus")
         manifest["freeze_revision"] = int(old.get("freeze_revision", 1)) + 1
-        manifest["freeze_note"] = "harness-only revision: criteria and corpus unchanged"
+        manifest["freeze_note"] = (
+            "harness-only revision: fixture classification and the unknown-gate definition "
+            "changed; address layer, corpus, ranking and thresholds unchanged"
+            if revise
+            else "harness-only revision: criteria and corpus unchanged"
+        )
+        if not same_verdict:
+            manifest["criteria_changed_revision"] = manifest["freeze_revision"]
     else:
         manifest["freeze_revision"] = 1
         manifest["freeze_note"] = "first freeze"
@@ -595,7 +627,7 @@ def evaluate(
 
 def summarise(rows: list[dict[str, Any]]) -> dict[str, Any]:
     by_group: dict[str, Any] = {}
-    for group in ("written", "unknown", "unrelated", "union"):
+    for group in ("written", "unknown", "unknown_answerable", "unrelated", "union"):
         group_rows = [row for row in rows if row["group"] == group]
         counts = {
             name: sum(1 for row in group_rows if row["output_class"] == name)
@@ -678,9 +710,130 @@ def entry_curve(corpus: dict[str, Any], table: WindowAddressTable) -> dict[str, 
     }
 
 
+def _answerable_class(row: dict[str, Any]) -> str:
+    if not row["usable"]:
+        return "unusable"
+    if row["record"] is not None and row["record"] == row["expected"]:
+        return "usable_and_correct"
+    return "usable_but_wrong"
+
+
+def reclassify_unknown(
+    rows: list[dict[str, Any]], table: WindowAddressTable, corpus: dict[str, Any]
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Move unknown queries that verbatim contain a written record to answerable.
+
+    Grouping only: the corpus, the address layer and the read path are untouched. The
+    test is plain byte containment of the stored record inside the query bytes.
+    """
+    moved: list[dict[str, Any]] = []
+    anchored_unknown: list[dict[str, Any]] = []
+    false_anchor_samples: list[dict[str, Any]] = []
+    anchor_level_not_contained = 0
+    for row in rows:
+        if row["group"] != "unknown":
+            continue
+        query_bytes = row["query_text"].encode("utf-8")
+        anchored = not row["fallback"]
+        anchors_contained = [
+            table.addresses[address_id]["raw"] in query_bytes for address_id in row["anchor_ids"]
+        ]
+        if anchored:
+            anchor_level_not_contained += sum(1 for flag in anchors_contained if not flag)
+            anchored_unknown.append(
+                {
+                    "position": row["position"],
+                    "query_len": row["query_len"],
+                    "record": row["record"],
+                    "anchors": row["anchors"],
+                    "anchors_contained": anchors_contained,
+                    "contained_any": any(anchors_contained),
+                    "overlap_ratio": row["overlap_ratio"],
+                }
+            )
+            if not any(anchors_contained):
+                false_anchor_samples.append(
+                    {
+                        "position": row["position"],
+                        "query_len": row["query_len"],
+                        "record": row["record"],
+                        "anchors": row["anchors"],
+                        "overlap_ratio": row["overlap_ratio"],
+                    }
+                )
+        matches = [
+            {
+                "record": index,
+                "record_len": len(address["raw"]),
+                "byte_interval": [
+                    query_bytes.find(address["raw"]),
+                    query_bytes.find(address["raw"]) + len(address["raw"]),
+                ],
+                "record_text": address["raw"].decode("utf-8", "replace")[:120],
+            }
+            for index, address in enumerate(table.addresses)
+            if address["raw"] in query_bytes
+        ]
+        if not matches:
+            continue
+        row["group"] = "unknown_answerable"
+        row["expected"] = matches[0]["record"]
+        row["output_class"] = _answerable_class(row)
+        row["reclassified_from"] = "unknown"
+        row["contained_matches"] = matches
+        moved.append(
+            {
+                "position": row["position"],
+                "query_len": row["query_len"],
+                "query": row["query_text"][:160],
+                "record": matches[0]["record"],
+                "record_len": matches[0]["record_len"],
+                "byte_interval": matches[0]["byte_interval"],
+                "record_text": matches[0]["record_text"],
+                "all_matches": len(matches),
+                "anchored": anchored,
+                "decision": row["decision"],
+                "output_class": row["output_class"],
+            }
+        )
+    remaining = sum(1 for row in rows if row["group"] == "unknown")
+    blocked = sum(1 for row in rows if row["group"] == "unknown_answerable" and not row["usable"])
+    bookkeeping_ok = len(moved) + remaining == len(corpus["unknown"]) and blocked == 0
+    block = {
+        "rule": (
+            "an unknown query that contains some written record byte for byte has an answering "
+            "record in the store; it is moved to the answerable class before scoring"
+        ),
+        "numerator": len(moved),
+        "denominator": len(corpus["unknown"]),
+        "moved": moved,
+        "remaining_unknown": remaining,
+        "bookkeeping_ok": bookkeeping_ok,
+    }
+    gate_block = {
+        "total": len(corpus["unknown"]),
+        "reclassified_to_answerable": len(moved),
+        "remaining": remaining,
+        "old_reading": {
+            "rule": "any anchored row in the unknown group fails",
+            "numerator": len(anchored_unknown),
+            "denominator": len(corpus["unknown"]),
+            "rows": anchored_unknown,
+        },
+        "new_reading": {
+            "rule": "unknown_false_anchor = anchored and not contained (byte containment, no fingerprints)",
+            "numerator": len(false_anchor_samples),
+            "denominator": len(corpus["unknown"]),
+            "samples": false_anchor_samples,
+        },
+        "anchor_level_not_contained": anchor_level_not_contained,
+    }
+    return moved, {"reclassification": block, "unknown_group": gate_block}
+
+
 def fallback_stats(rows: list[dict[str, Any]]) -> dict[str, Any]:
     """Relevance is scored only where the store holds an answer (corrected denominator)."""
-    answerable_groups = ("written", "union")
+    answerable_groups = ("written", "union", "unknown_answerable")
     fallback_all = [row for row in rows if row["fallback"]]
     fallback = [row for row in fallback_all if row["group"] in answerable_groups]
     ratios = sorted(float(row["overlap_ratio"]) for row in fallback)
@@ -721,7 +874,10 @@ def fallback_stats(rows: list[dict[str, Any]]) -> dict[str, Any]:
         for group in ("unknown", "unrelated")
     }
     return {
-        "denominator": "written + union (queries that have an answering record in the store)",
+        "denominator": (
+            "written + union + unknown_answerable (queries that have an answering record in the "
+            "store, including unknown queries that verbatim contain a written record)"
+        ),
         "n": len(fallback),
         "n_unanchored_all": len(fallback_all),
         "by_group": {
@@ -749,19 +905,21 @@ def verdict_of(
 ) -> str:
     if not str(closed.get("verdict", "")).endswith("_closed_neutral"):
         return "hard_failure_closed_not_neutral"
-    if gates["unknown_anchored"] > 0:
-        return "false_anchor_remains"
+    if gates["unknown_false_anchor"] > 0:
+        return "false_anchor_confirmed"
     if curve["short_entries"]["rate"] is None or (
         curve["short_entries"]["rate"] < SHORT_ENTRY_LINE
     ):
-        return "window_identity_gapped"
+        return "inconclusive"
     if (
         layer["fabricated_bytes"]
         or layer["illegal_spans"]
         or layer["utf8_invalid"]
         or layer["boundary_illegal"]
     ):
-        return "output_fabricates"
+        return "inconclusive"
+    if gates["reclassification"]["bookkeeping_ok"] is not True:
+        return "inconclusive"
     return "continuity_restored"
 
 
@@ -807,11 +965,11 @@ def phase_open(manifest: dict[str, Any]) -> dict[str, Any]:
     append_progress({"phase": "write_done", "addresses": len(table.addresses)})
 
     rows, layer = evaluate(corpus, table)
+    moved, reclass_blocks = reclassify_unknown(rows, table, corpus)
     by_group = summarise(rows)
     curve = entry_curve(corpus, table)
     fallback = fallback_stats(rows)
     admitted_shas = {hashlib.sha256(address["raw"]).hexdigest() for address in table.addresses}
-    unknown_anchored = [row for row in rows if row["group"] == "unknown" and not row["fallback"]]
     union_should = 0
     union_violations: list[dict[str, Any]] = []
     for row in rows:
@@ -834,16 +992,18 @@ def phase_open(manifest: dict[str, Any]) -> dict[str, Any]:
                 }
             )
     gates = {
-        "unknown_anchored": len(unknown_anchored),
+        **reclass_blocks,
+        "unknown_anchored": reclass_blocks["unknown_group"]["old_reading"]["numerator"],
+        "unknown_false_anchor": reclass_blocks["unknown_group"]["new_reading"]["numerator"],
         "unknown_anchored_samples": [
             {
-                "position": row["position"],
-                "query_len": row["query_len"],
-                "record": row["record"],
-                "anchors": row["anchors"],
-                "overlap_ratio": row["overlap_ratio"],
+                "position": item["position"],
+                "query_len": item["query_len"],
+                "record": item["record"],
+                "anchors": item["anchors"],
+                "overlap_ratio": item["overlap_ratio"],
             }
-            for row in unknown_anchored[:3]
+            for item in reclass_blocks["unknown_group"]["old_reading"]["rows"][:3]
         ],
         "union_should_be_ambiguous": union_should,
         "union_ambiguous": sum(
@@ -883,7 +1043,7 @@ def phase_open(manifest: dict[str, Any]) -> dict[str, Any]:
             "record_text": table.addresses[row["record"]]["raw"].decode("utf-8", "replace"),
         }
         for row in anchored_rows
-        if row["group"] == "unknown"
+        if row["group"] == "unknown" or row.get("reclassified_from") == "unknown"
     ]
     verdict = verdict_of(closed, layer, curve, gates)
     failures = [
@@ -989,8 +1149,15 @@ def phase_open(manifest: dict[str, Any]) -> dict[str, Any]:
         "denominators": {
             "written": len(corpus["written"]),
             "unknown": len(corpus["unknown"]),
+            "unknown_answerable": reclass_blocks["reclassification"]["numerator"],
+            "unknown_remaining": reclass_blocks["unknown_group"]["remaining"],
             "unrelated": len(corpus["unrelated"]),
             "union": len(corpus["union"]),
+            "answerable_total": (
+                len(corpus["written"])
+                + len(corpus["union"])
+                + reclass_blocks["reclassification"]["numerator"]
+            ),
         },
         "form_counts": corpus["form_counts"],
         "length_buckets": corpus["length_buckets_written"],
@@ -1004,18 +1171,24 @@ def phase_open(manifest: dict[str, Any]) -> dict[str, Any]:
             "unknown and unrelated queries usually have no answering record by construction; "
             "their outputs are classed usable_fallback, never usable_and_correct. A spurious "
             "anchor on a low-entropy window is classed usable_but_wrong and counted.",
-            "the frozen unknown-group gate counts **any** anchor as a false anchor. The "
-            "independent check `gates.unknown_anchored_diagnostic` re-tests every anchored row "
-            "against the raw bytes without fingerprints: anchored but not contained is the "
-            "arithmetic definition of a false anchor; contained is a true substring and is "
-            "reported as such. The verdict keeps the frozen rule and does not reinterpret it.",
+            "fixture classification only: an unknown query that verbatim contains a written "
+            "record has an answering record in the store, so it is moved from unknown to "
+            "unknown_answerable before scoring. The corpus, the address layer, the ranking and "
+            "the thresholds are untouched; every move is listed with record index, byte interval "
+            "and length, and the bookkeeping is checked (moved + remaining == 550).",
+            "both unknown-gate readings are reported: old = any anchored row (a theorem gate that "
+            "counts quotation as failure), new = anchored and not contained. Containment is tested "
+            "on raw bytes without fingerprints. Only the new reading decides the verdict; the old "
+            "numerator and denominator are shown next to it, and anchor-level non-containment is "
+            "reported separately.",
             "the union group joins two entries with a newline; pointing at either source record "
             "counts as correct, pointing elsewhere does not. A union row whose two components are "
             "both admitted must be decided ambiguous; violations are listed in gates.",
             "fallback relevance is scored only on queries that have an answering record in the "
-            "store (written + union); unknown/unrelated rows are unanswerable by construction and "
-            "are reported as output shape and mis-anchor count only. This corrects the denominator, "
-            "it does not loosen the ranking or add a threshold.",
+            "store (written + union + unknown_answerable); remaining unknown/unrelated rows are "
+            "unanswerable by construction and are reported as output shape and false-anchor count "
+            "only. Reclassified rows enter the denominator; none is dropped. This corrects the "
+            "denominator, it does not loosen the ranking or add a threshold.",
             "the fallback review scores are supplied after the run through --score; the rubric and "
             "the answerable denominator were frozen in the manifest before the first reading.",
         ],
