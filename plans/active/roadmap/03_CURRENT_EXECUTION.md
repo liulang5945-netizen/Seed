@@ -2884,3 +2884,7 @@ owner 指出连续多轮队首都以「剩余阻塞＋下一步」收尾，读�
 ## 2026-11-08（有界训练窗完成）：admitted run 按冻结预注册聚合，判 `inconclusive`——包 20 失败签名在新图重现，回 owner 三选一
 
 训练完成（attempt 2 一次跑完；attempt 1 工程失败 ~3.2k CPU 已记账）：四跑（2 seed×2 臂×200 更新）全绿工程面——resume 验证 4/4 逐位、checkpoint 往返 32/32 逐位 0.0、无 NaN、**33,957 CPU**（cap 34,816 内，含 attempt 1 记账）。聚合（[报告](../../reports/taiji_training_window_v2_run_20261108.json)＋执行 manifest）：**verdict=`inconclusive`**——pooled Δ −0.0717（门 ≥0.05）、bootstrap [−0.233,+0.0895]、两 seed 反向（1105 利 B_EH／1106 利 CF1）＝包 20 失败签名在新图重现。新信息：双臂都从 ~0 学到 0.26–0.49（旧图恒 0）；B_EH_1105 损失 64.0≪CF1 123.1。仪器缺口 I33（utf8 门原始 argmax 口径读 0.0，约束口径未测）不影响主判定。按冻结出口：无阈值修改、无剂量升级、无自动过渡；队首写回三处逐字一致，owner 三选一（收案／诊断包／搁置回 P4）。
+
+## 2026-11-08（F 学习线收案）：owner 裁定①，三线终局归档——队首空置待下一窗口指定
+
+[归档卡](CLOSEOUT-F-LEARNING-LINE_20261108.md)：三条独立线判定表（包 20 旧图／20.4c_r2／本训练窗 inconclusive，seed 反向签名跨两代图重现）、资产清单（expressive_capacity_present 函数类在库、架构实现 default-off、判据谱系、机制悬案证据）、重开条件三条（新夹具+机制假设／按事件寻址为任务必要／U1 解冻自走）、不宣称边界。队首写回三处逐字一致：**F 学习线 CLOSED，队首空置至 owner 指定下一窗口**；待裁项（P4 U1.1／保持另测／P5 P6／Mimosa 分诊）无一自动启动。confirm 继续封存；能力账不变（C12 唯一对外能力）。
