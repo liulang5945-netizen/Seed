@@ -1,0 +1,289 @@
+{
+  "schema": "taiji-anchorcount-v1",
+  "frozen_at": "2026-11-08T20:56:38",
+  "runner_sha256": "4a8606bcc05e486194ecacac08aa5b258bd023181011c26f16729858f6fc7a32",
+  "question": "does the read exit survive when it is decided by the anchor count alone, on natural prose, with the same corpus, denominators and usable line?",
+  "corpus": {
+    "snapshot": "plans\\manifests\\taiji_anchorcount_corpus_20261108.json",
+    "snapshot_sha256": "d6be7156c75decf5c68173572fe9c8e78eb06812685f50e2845ecb2ddd1c8ae3",
+    "write_count": 58,
+    "unknown_count": 20,
+    "unrelated_count": 20,
+    "written_sha256": [
+      "5b75805f7d8d82e7901a2a08d2ee44544f238bd5fa5f2ee25b374a0e1573e0b9",
+      "b15fa924bbb34b3e65a102d4da9327ce970937808aaae5757416b2ab8a61a28c",
+      "7999a3f8538fe130127776fa9a1c5481a8874055236b25b0c13e375761744d99",
+      "7f8789194f2311d0bb53ddd2aa75e9b0889a04e3538f5036dc3ce6c083e01dd5",
+      "c6ec88b496e7779f33db6379a843225f816cd7628c2c18e50bb7e026a0338ce0",
+      "4dae63864d1562bdbc1fdd3be2033295c0a7d38d6bc1a5b19dd183e5da783f9b",
+      "1f964132f8e511bbf65ec89ebdefde1c832f3e4107203b3fb59e1d095846fd02",
+      "de4ceeab48443913fce57cd5b6fd6efb543bf5f8bd244e01ef4d3ae905a8b0a6",
+      "032691be5e920e79cbda3ec7972e846ba6e04b0d011965420a9cfeea103a31f5",
+      "f7d2966be123c5f0f57d3373be48a875cae4822971465e3eb364a641132df40c",
+      "7470e46286b19e7b761b99bef5fd69e9261028175dc6ce3f22a4adf557a0d2b9",
+      "04e74904b9d326bc9dfc25afa62d69b8a0cf158007164843b41d9738acca9ae6",
+      "97a26887a11e27aad32c27af480f7def48ddaff0fc2051a631cb49106a9c2694",
+      "8b63ef30ce8582749f4e9c112414f353a3814a67d08f62524e6f0d82a2d74270",
+      "a8aa701d46a660f1eeafd8d90e6685871dab3685b740c9254f1b610d2431c7d9",
+      "e60affb06c3200cd5744e5b29d4a3fa589d8a03902d36f7953c2aeb7004a0d6d",
+      "4237c83793035edf59c0f45665e383d83c38a5e5baa18244caf6310934fbc2ad",
+      "83175b480ebb0c3c95e7617e618d35a8e7b99e5da2ea2a9a047c9059d9b893d6",
+      "fef5b19137041933b2e520516d1eb82da3e2abd02752050c96865d0b27e78e65",
+      "a45f3ec5bd1d22c2d28092133de645273cd207a104e710a360555e1d9531298e",
+      "e10b67787193ec4fe095b28a5b28f41952a91de134223684458adf1206c7f1de",
+      "4f4b8e9e37d8cf06b9311fe1ffa3c53e7f28c5156c5ea31bc4d6c47929758f2a",
+      "297aebc86c97aa8ded5e08a3b34c68534149cd5e2deaf70d73569d75bad7b900",
+      "5043ca8dc038ba8458ac6422230b7397c905cc6fd48c0e110f3cc672a48747d0",
+      "1cd6315cb918af2ab4dc0bd39d36e2610fea7354695ff0fc5cc23480527c7edf",
+      "fe1dd4d62c95ab5ebb46a43285c0549619dbf9c3b0aec60b13de371c214869b3",
+      "7c78b89cd76df8c19091b3227637598ac514872fb5b44b6a35cf9c148a789d10",
+      "af4186a4c9d66f76f127e356858442c6ff3ab9f4459067160b035b614fd7250b",
+      "2b7bd9729d834f7b64d1ab2b2ac28d84b20bb8ec270e3d67308002d17e877ff9",
+      "e99699427ea684218cf6a7eee1925a7fa01b1e39d44ae58d9bd0c76facfc6ea5",
+      "46f6bfe7063494bb13dea6ee416ba35dd87292ecb540e7c2e6bf8fba4b27b801",
+      "1b1deb10282ee35ba93a29ad195f6677af8071eef3bbcdd64584e5200ab2e761",
+      "9ce29e20ebb0fef7876cc285a6b5f95480e5efb4638c87a1f96ad1f6b2138bc7",
+      "03652972ba1ec686b5ff9eb53afc170ebf9cbf6199546e6e25ad40237528a9fd",
+      "7c1593b30cb737751011503fae94088bbc89b392ef46aa2082632927ebd968de",
+      "46ef9fbe63138dc3a9252fcb71a7c6f9dad23a3267143c88d5150a53c20ee33c",
+      "f629c022f28f20c7a235ead614fb62219c3fe909012897395e9357055e80528e",
+      "dcd3c377b7867705826e6db89da1019f08540e4064ff4d61d61b35c7fdbd84bb",
+      "c2fd80c367648fb69b45f1208eb1ad6d34e993df196dce86f5fadcca529a630d",
+      "0de5d149db9b57d03336931b365f33f9d76dbd88da57b5747b35f1e917e9f852",
+      "81371bb2c6df2760870a3235baf41f0e5b2ebe8cc1e330959fde1a92ba2d8bf5",
+      "230e18675a1b0ac4c718ad59dce3c4c5aaa3edfc45324b2a0b0d04b19ff73d14",
+      "6fae1179090fe1829f5993fcf1d9fbee059aea10bc3e8da26f36dd3d82998ffe",
+      "6eaa85dbd1574e2648c072d70f04667effe20ff1ecdaba1c28365f9ae71a5630",
+      "195ac73c5d5cc0961c1a549e26898a7f15a786373a8e8086ae441ac0d15337ad",
+      "bdbcf33e4ee3b38acb730790cf62be1048b01f14adbb2d579d5369d88e2bd8f0",
+      "137072c527af33c309fc2e13026262ae3cbf50a7cb761e9a4b1c93f9977a6975",
+      "c80fda08b7cb93a4175a9ce582fe31ea0b9cbab8dcf76081a4f3c241c1141358",
+      "f8faa58883518e7abb697b418c2918e3f99200c5ed57c1c7ce9bfe2a4c9c2f6c",
+      "073ba9c3dfc0e71cac44c9fd4ac6794001d2e089da85b39173f1eac4a882e4b0",
+      "e84e79b75bf7028589de1bdf2864b30125a24cf64fda2bd710249c51dd856ee6",
+      "be91830e37dece6f24314b7bb662a002c01b9b4300a7d429d24da04e0a842cec",
+      "223e73c9417adf01555a2a6a668fe9fd1d871fd9c6d0b59fbac9b3a54eb6b9b5",
+      "8c743a3e61df83774a49064205747791b815e2702f9a3e89399b70b1881f19b4",
+      "42409b9f4e2fadaa7c869c00f11885279615f06960afd1908d4823245ba262b4",
+      "7af5d0a2ea1859d484c6472e1c58ef58029e509c34e91d7b6d8c62f21af49e30",
+      "77af2297a26b8d5a495eb07dc9b07de51c80632befbde786883043d3d13bf165",
+      "5caf5a997741ca9714692a43381c7fc0f5045b33267f0e0ad31bda15916c5a4a"
+    ],
+    "unknown_sha256": [
+      "8fc474d889e8ea6791aacce75b6783a401b4d76a9e9150e2cb801af397c4045a",
+      "2bc852c3ddc73fca928f42ebd5adc585aba26ed43a0635af69f8d0c6740520ed",
+      "538409321d4b854b0be7841b35099d0e8a418f46ce98062b178bc23d2367483d",
+      "d4325947102e8e9624dd71480ffadae0311641bce795270dc316b5187fc9a38e",
+      "3b6a8c32c2019a46fe85d8c3f3d1c29a98360a5f1e66906b6f4d0f81c277451e",
+      "728773bc557b85a8c3d673f4262c1db7e6e4528c12af80b63baebbd2070a750a",
+      "3d87dd8b1dc559a4b4874f7c15de4b4d4787271b8473a96535895a85e2e43bc2",
+      "4cd55d150d2c95e3469b801bee7b59edbb4d4021d072734432959ab443a2e666",
+      "d7b176d9b49e8984a9ba9af5dc57b2ccba5d219370beab8bd0bc17ea309ab283",
+      "1db83ff47f724d23ea0b6c6e4ef92e74471e32678bdbd637feae04874711b467",
+      "ea0f8f7ee66345b14a839c29f360507a59f193adab0fca2531daacd0c217df59",
+      "3e4b208a141105f79a59bd85dc8d4715841cf69a6671179c92b380bcff2ed7dd",
+      "39ad8b4169ae6259e2fe5085f2b33cb309b2fc811d26b43deada9558ed2f2197",
+      "bc578f74aafb9ce13e3a43b3bdaf9dd36e209d523b81fc1fe0e0ad1df9e96a6d",
+      "d5d3b0c231f9fd665ea17574db119fc29b1ac752c102ee380e947e2f62442729",
+      "7f7ecd439b46c1284667c9db3e193f7364af54353dddabaa9444781a96e8e1be",
+      "3ae3ebec8d69202e3417065a1d6748e7c268ebb717b78d7ea2310b8ad52882e9",
+      "4dbff7f03fb54ff331402912216b73e641708a96104d1604593106ab90842ef4",
+      "48b52d327e2d2aeca8be1b5938d6b30648e3da839301e02db3d9fe9e7c3fd0bf",
+      "e8c0ee8d07ad3d968630c5763ce7334afda5e73591c84768b8a97cbdc9979941"
+    ],
+    "unrelated_sha256": [
+      "4286de604517fcc356e7ce8ad6c1cc90b6b21825cbadd494028f8398f25d1a57",
+      "d0d05ee6fe5356f57537bfd02d8be909f90b446ea2d5bcf03d4e4ae75d247737",
+      "5f138554585c9dbae784badd673d1c7417bded98457f6dce73769e745d1d9482",
+      "0f0c4e12ed6a8445f674a50703ac9cffa703b4c4ccd0d2abf3f9a8c3127740df",
+      "714452220601bd308cdd867e8a785fe459dc4c5f945f1d5551f4309242f4ce83",
+      "1caef4bb110aefee5bdf6751bd0f83ea9cd065581f2bf0a745b57c0eb3853ec5",
+      "769c0092fb6719f4481e23f00b5c8b0f35903e49ff51101fc865720f45a674ae",
+      "e7ba70caa7d20fa2956fb609355196935c59e3cf0c765ad2b3d6f47a6f3a6c01",
+      "aa0e4499f7bd94d1529b162d8d35cd80a6ed26ab78bc2902561b912ed14fc880",
+      "b077e39d153a4a1f7c4ddb8cc9549503480fd563ca964421223547b227c3953f",
+      "45a8ab8b5a886cb411493f240086513a657f63a6ee676b08ee4a19e6de6d7f33",
+      "49e5e24ea6a57501271af8ff2c3703c92df3e17c0930c11a9db430f26e1aabca",
+      "89da2d46da724364d01e8096ca6ed45d32710dad70db75d8abf5ca27d2ef1868",
+      "5141c207de8aa65c4614eebdba2b27a1f66c684c0fa66eee238dbfbf189726b4",
+      "91b38c2ab5e15a735b9ad7d80592d7b65e6514c25b0f37164223e2349842f08b",
+      "bd878894aee22ecb9a12f70dea4614af1831e3a4009869aead43b214d15d7d51",
+      "af0cb265efe3ecd1b55ea276829b0e7dd1efb53a5defea8aeb9e0742ed1a951c",
+      "46b662608135cdb8230248497c336eb84769be4ba854c3f74e00965fb4110ff6",
+      "f4aa143ce48cdda7853e48fb081a9c690e46aa77ecaf433e2b53d342121075b2",
+      "8f91b030b12f44d7af0baa04802d3c4cc911b03c88d5899f388da18b7529431a"
+    ],
+    "written_sha256_aggregate": "59983c19026b420ebe5bf36fa803182750ff54757033961922571aa37e5d1c5d",
+    "unknown_sha256_aggregate": "1a798c86711137754eb3e795b90502e865d0d90c406a999bbd39662ab5f35319",
+    "drift_from_previous": {
+      "previous_manifest": "plans\\manifests\\taiji_a1_offfixture_20261108.json",
+      "previous_freeze_revision": 3,
+      "shared_written": 58,
+      "shared_unknown": 20,
+      "note": "the plan files are themselves the corpus, and they were edited by the previous round's own receipt; the extraction rule and the file list are identical, the overlap is reported instead of hidden"
+    }
+  },
+  "paraphrase": {
+    "rule": "fixed global synonym table applied uniformly, in this order",
+    "table": [
+      [
+        "因此",
+        "所以"
+      ],
+      [
+        "但是",
+        "不过"
+      ],
+      [
+        "而且",
+        "并且"
+      ],
+      [
+        "如果",
+        "假如"
+      ],
+      [
+        "可以",
+        "能够"
+      ],
+      [
+        "已经",
+        "已"
+      ],
+      [
+        "目前",
+        "当前"
+      ],
+      [
+        "需要",
+        "须要"
+      ],
+      [
+        "以及",
+        "与"
+      ],
+      [
+        "进行",
+        "做"
+      ]
+    ],
+    "records_with_zero_replacements": 54
+  },
+  "queries": {
+    "should_anchor": "58 self-reads + one or two paraphrase variants per record: V1 = the fixed synonym table (kept only when it changes the text), V2 = '总的来说，' + V1 + '。' (always applied).",
+    "should_unknown": "20 held-out paragraphs from a file that is never written; ground truth is 'no_match'",
+    "should_ambiguous": "20 two-record queries built as the union of the two feature sets (paragraph k and k+30), counted only when both records are addressable",
+    "unrelated": "20 paragraphs from a file that is neither written nor in the synonym table.  Recorded as a reading: how many are hard-answered ('matched') because the anchor happens to be unique.  Never a criterion.",
+    "pairs": [
+      [
+        0,
+        30
+      ],
+      [
+        1,
+        31
+      ],
+      [
+        2,
+        32
+      ],
+      [
+        3,
+        33
+      ],
+      [
+        4,
+        34
+      ],
+      [
+        5,
+        35
+      ],
+      [
+        6,
+        36
+      ],
+      [
+        7,
+        37
+      ],
+      [
+        8,
+        38
+      ],
+      [
+        9,
+        39
+      ],
+      [
+        10,
+        40
+      ],
+      [
+        11,
+        41
+      ],
+      [
+        12,
+        42
+      ],
+      [
+        13,
+        43
+      ],
+      [
+        14,
+        44
+      ],
+      [
+        15,
+        45
+      ],
+      [
+        16,
+        46
+      ],
+      [
+        17,
+        47
+      ],
+      [
+        18,
+        48
+      ],
+      [
+        19,
+        49
+      ]
+    ]
+  },
+  "denominators": {
+    "should_anchor_upper_bound": 120,
+    "should_unknown": 20,
+    "should_ambiguous_upper_bound": 20,
+    "unrelated_reading": 20,
+    "uniquely_anchorable_definition": "queries whose own record has a table-unique word present in the query: A_i ∩ Q ∩ U(T) ≠ ∅, a denominator, never a criterion"
+  },
+  "verdict": {
+    "usable_ratio_definition": "should-anchor queries answered 'matched' to their own address, divided by all should-anchor queries (self + paraphrase).  Abstentions and ambiguous answers count as unusable; they are reported, not hidden.",
+    "usable_line": 0.6,
+    "rules": [
+      "wrong_pointer > 0 -> anchor_count_unsafe",
+      "wrong_pointer = 0 and usable_ratio >= 0.60 and unknown 20/20 no_match and ambiguous 20/20 ambiguous_multiple_anchors -> anchor_count_holds",
+      "wrong_pointer = 0 and usable_ratio < 0.60 -> anchor_count_insufficient",
+      "otherwise -> inconclusive"
+    ]
+  },
+  "discipline": {
+    "training": 0,
+    "optimizer_steps": 0,
+    "adam": 0,
+    "confirm_reads": 0,
+    "new_parameters": 0,
+    "cpu_cap_seconds": 200.0,
+    "watchdog_seconds": 60.0,
+    "black": "in-process gate only; python -m black forbidden"
+  },
+  "freeze_revision": 1,
+  "freeze_note": "initial freeze"
+}

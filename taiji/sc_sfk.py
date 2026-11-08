@@ -13,6 +13,12 @@ Address definition
 * read exits: zero anchors -> ``no_match`` (the explicit "do not know"), more
   than one -> ``ambiguous_multiple_anchors`` (the explicit "cannot tell"), exactly
   one -> ``matched``.  All three are set conditions.
+* a query feature absent from the table (``DF = 0``) is rejected before the anchors
+  are counted.  This guard is load-bearing: with it removed, a query whose byte
+  parity shifted (any paraphrase that changes byte length) keeps only its junction
+  features and can be anchored to a *different* record (see the 2026-11-08
+  anchor-count gate: 1 wrong pointer, 53/62 paraphrases ambiguous, held-out set
+  20/20 ambiguous).
 
 Write policy: make room before content (the table starts at 2 slots and doubles on
 demand), merge an equal value, replace a same-address different value while

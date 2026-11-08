@@ -524,4 +524,62 @@ manifest：`plans/manifests/taiji_a1_offfixture_20261108.json`（`freeze_revisio
 - **sha 口径**：报告里的 `runner_sha_start/end=459c43a5…` 指**读数时**的 runner 字节；提交后的 runner sha256 为 `ed4bb9bd…`。
 - **不重跑**：语料源文件即 plans，本轮已随结论更新；`phase_freeze`/`phase_run` 会拒绝在移动过的语料上重跑（这正是预注册闸的作用）。读数保持首跑原样，不重算、不改写。
 
+## 11. 锚点计数闸（2026-11-08，0 训练）——判 `anchor_count_unsafe`，已回滚
+
+假设：A2（“查询含任一 `DF=0` 特征即 `no_match`”）不是安全性来源，只是过度拒绝；只要出口只看锚点计数即可在自然文本上可用。
+
+### 11.1 改动与预注册
+
+- 代码：`AddressTable.read` 删除 `DF=0` 提前返回，出口只由 `|Anchors_T(q)|` 决定；未见特征只作为读数（`unknown_features`）返回。
+- manifest：[`taiji_anchorcount_20261108.json`](../manifests/taiji_anchorcount_20261108.json)，`freeze_revision=1`；语料文本单独冻结为 [`taiji_anchorcount_corpus_20261108.json`](../manifests/taiji_anchorcount_corpus_20261108.json)，段落 sha 逐条登记。
+- **语料未换**：与 A1 闸实测重叠 `shared_written=58/58`、`shared_unknown=20/20`（drift 记录在 manifest 内，未隐藏）。
+- 分母未换：`should_anchor=120`／`should_unknown=20`／`should_ambiguous=20`；可用线仍是 **0.60**。
+- 新增读数类：`unrelated` 20 段（`README.zh-CN.md`、`TAIJI_CODE_WIKI.md`、`INTERFACE_REFERENCE.md`，从未写入、不在同义表内），**只记录、不判定**。
+
+### 11.2 关闭态（重证零扰动）
+
+[`taiji_anchorcount_20261108_closed.json`](../../reports/taiji_anchorcount_20261108_closed.json)：`anchor_count_closed_neutral`。同一 176 条口径：字节/概率 `max|Δ| = 0.0`，176/176 摘要相等，参数张量/元素/sha、`state_bytes`、`candidate_sha_v2`、store 签名全部相等，`table_not_allocated=true`。成本 4.166 wall（进程 CPU 44.609，含 torch 导入与多线程计费）。
+
+### 11.3 开启态读数
+
+[`taiji_anchorcount_20261108.json`](../../reports/taiji_anchorcount_20261108.json)
+
+| 类 | n | matched 正确 | **错指** | `no_match` | `ambiguous` |
+|---|---|---|---|---|---|
+| 自读 | 58 | 58 | 0 | 0 | 0 |
+| 近义改写 | 62 | 7 | **1** | 1 | 53 |
+| 未知（未写） | 20 | — | — | **0** | **20** |
+| 两记录并集 | 20 | — | — | 0 | **20** |
+| 无关新句（读数） | 20 | — | — | 0 | 20 |
+
+- **错指 1/120**（`as designed` 判 `anchor_count_unsafe`）；可用 **65/120 = 0.5417 < 0.60**（即使不看错指也不达标）。
+- 未知集从 A1 的 20/20 `no_match` 退化为 **20/20 `ambiguous`**：没有“见生词即拒”，也没有“零锚点”，而是被别的记录的唯一词拖成多锚点。
+- 表：58 地址、容量 64、5 次倍增、744 唯一特征、0 合并/取代/驱逐/回滚、6 次全局自检 0 失败；开关一致性 8/8；成本 5.382 wall、`mean_global_ms=84.84`、`max_global_ms=155.47`、`mean_read_ms=2.70`。
+
+**唯一错指**：`lead_in` 改写、预期地址 30，命中地址 **46**，锚点 1、未见特征 3、DF 分布 `{df=0:3, df=1:1, df=2–3:9, df≥4:73}`。
+
+### 11.4 归因：不是“A2 在承担安全”，是特征抽取对字节偏移敏感
+
+`features()` 是 **步长 2** 的字节对（`range(0, len-1, 2)`），因此词表依赖字节偏移的奇偶。两条实测：
+
+1. 引导语 `"总的来说，"` 是 **15 字节（奇数）**，前缀一加，整段特征错位：记录 30 自身 77 个特征，查询 86 个特征，**只剩 17 个重合**（且都是接缝附近）；
+2. 同义替换里 `已经→已`（−3 字节）、`进行→做`（−3 字节）同样翻转奇偶，替换点之后的特征全部换位。
+
+于是改写查询只剩接缝上的少数特征，其中恰好 1 个是表内唯一词且属于另一条记录 → 硬答到 46。这不是阈值问题，也不是锚点计数本身的问题，而是**地址定义的第三个假设**：
+
+> **A3（新增，显式）**：特征抽取对字节偏移不敏感（同一内容在任何前缀/等长替换下产生同一特征集）。
+
+当前实现违反 A3，所以两条读法都不可用：A2 版本靠“见生词即拒”把所有改写整体弃答（可用 0.5083），锚点计数版本把接缝噪声当锚点（错指 1，可用 0.5417）。
+
+### 11.5 判定与处置
+
+- 判定 **`anchor_count_unsafe`**（跑前写死：错指 > 0 即不安全）。
+- **已回滚** `AddressTable.read` 到 `DF=0` 守卫版本；runner 标记 `SUPERSEDED` 并加环境闸，只作证据保留。
+- 披露：首跑后仅改 runner 的关机路径（补 `try/finally`、`stop.set()` 与退出 progress，消除未用变量告警），再做 in-process black 格式化（按 `pyproject.toml` 的 `line-length=100`／`py312`）；两次修改后各**整跑复测**一次——判据、语料、分母、`read` 实现均未改，四次读数逐项相同（仅逐条 `read_ms` 计时不同）。入库 runner 双列 sha `f19ed96d…`，与报告 `runner_sha_start`／`runner_sha_end` 及 `runner_sha256_start`／`end` 一致。
+- 不调阈值、不加领先线、不换语料、不降线。下一个唯一动作见 §11.6。
+
+### 11.6 唯一后继（尚未执行）
+
+改**特征抽取**而不是判决：让特征集对偏移不敏感（例如同时取偶数位与奇数位两套字节对，或改用滑窗全偏移并对齐），使 A3 成立；先用同一 58+20+20 语料、同一 0.60 线重跑 A1 闸，确认可用比例与错指，再谈是否恢复“锚点计数”出口。0 训练、0 新参数。
+
 

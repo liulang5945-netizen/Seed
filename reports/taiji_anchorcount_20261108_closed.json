@@ -1,0 +1,43 @@
+{
+  "schema": "taiji-anchorcount-closed-v1",
+  "date": "2026-11-08",
+  "question": "is the edited read path inert while the flag is at its default?",
+  "verdict": "anchor_count_closed_neutral",
+  "checks": {
+    "default_off": true,
+    "table_not_allocated": true,
+    "readings_total": 176,
+    "fast_max_abs_delta": 0.0,
+    "probability_max_abs_delta": 0.0,
+    "fast_digests_equal": 176,
+    "probability_digests_equal": 176,
+    "fields_equal": 176,
+    "tags_equal": true,
+    "parameter_tensors_equal": true,
+    "parameter_elements_equal": true,
+    "parameter_sha_equal": true,
+    "state_bytes_equal": true,
+    "candidate_sha_v2_equal": true,
+    "store_signature_equal": true
+  },
+  "baseline": {
+    "report": "taiji_store_wire_20261108_baseline.json",
+    "living_core_sha256": "df7942806de9352418bea6e195f920c416b38a1be48236e05b36981b83527f7b",
+    "candidate_sha_v2": "ff60ac2578f09f346f4bad9cf3d0fd0986633bd49e4e82c7ac76573dd87389ea"
+  },
+  "current": {
+    "living_core_sha256": "eebfe2f9e43161a3f34e98f56b95518723db5cbebdc34789a2eea43f6ced861e",
+    "candidate_sha_v2": "ff60ac2578f09f346f4bad9cf3d0fd0986633bd49e4e82c7ac76573dd87389ea",
+    "state_bytes": 1100064
+  },
+  "disclosures": [
+    "the edit is confined to AddressTable.read, which cannot be reached while the flag is off (table_not_allocated); the battery is replayed anyway because the closed-state claim is re-proved, not inferred.",
+    "the comparison is against baseline arrays captured before taiji/ was edited, not against a second run of the edited code."
+  ],
+  "runner_sha256_start": "f19ed96de1491b09283262f70ae91116986b7aa46708955077278e9382ab8c1f",
+  "runner_sha256_end": "f19ed96de1491b09283262f70ae91116986b7aa46708955077278e9382ab8c1f",
+  "cost": {
+    "cpu_seconds": 44.609,
+    "wall_seconds": 4.166
+  }
+}
