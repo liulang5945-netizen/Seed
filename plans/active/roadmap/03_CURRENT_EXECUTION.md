@@ -27,6 +27,33 @@
 
 **头条状态（2026-11-04，语义身份）：** 身份从“字节绑定”改为“语义哈希”：组成项是图名/契约、配置常量、模块清单、`routing_rule_version`、解码与路由规则、输入白名单、参数名/形状/dtype、声明可塑归属；`source_sha` 与 `weights_sha256` 只记录不决定身份。black-100 合并后 v1 字节摘要从 964a8c68… 漂到 1af63213…，但 `candidate_sha_v2` 恒为 773dcec2…。零更新等价探针（[报告](../../../reports/taiji_selection_routing_17_2r_format_equivalence_20261104.json)）全部逐位一致，60.80 CPU / 62.80 wall、0 优化器步、0 训练更新、0 confirm 读取；四份 2026-11-03 证据维持原字节与有效性（T3 v3 720/720、17.4 v2、新价、17.2R），身份登记见[注册报告](../../../reports/taiji_selection_routing_17_2r_identity_20261104.json)。17.5 的 checkpoint 保存/恢复复验已通过，六格跑完并结案为负结果（见下条 17.7）。本页是按时间追加的流水，旧条目里的“唯一阻塞/唯一下一步”均已被最新条目覆盖。
 
+## 2026-11-08 读门槛接线真实 `addressed_read`（0 训练 / 0 优化器步 / 0 Adam / 0 confirm）
+
+**两件产物**：零扰动证明 [taiji_gate_read_gate_zero_20261108.json](../../../reports/taiji_gate_read_gate_zero_20261108.json)＋开启后读数 [taiji_gate_read_gate_enabled_20261108.json](../../../reports/taiji_gate_read_gate_enabled_20261108.json)；预注册 [manifest](../../manifests/taiji_gate_read_gate_20261108.json)（sha `8b4c25b6…`，在第一个分类读数前落盘）；runner [probe_taiji_gate_read_gate_20261108.py](../../../scripts/training/probe_taiji_gate_read_gate_20261108.py)。两条臂：`real_forward`（原生 float32、真实 `observe`＋`addressed_write` 建 store）与 `fixture_continuity`（G2g 夹具键/值经诊断 `key=` 入口注入真实函数，float64）。
+
+**接口（默认关闭）**：`LivingCoreConfig.read_gate_cosine`，默认 `None`。关闭态 `addressed_read` 在每个分支都返回 `matched=True`，info 只多一个键、字节与改前完全相同；开启后 top 余弦低于门槛时返回 `matched=False`／`abstained=True`／`reason="below_gate"`，**不返回 `top_slot`、不混进 `fast`**。`key=` 参数只作诊断入口，生产调用不传。
+
+**零扰动（必须先过，已过）**：两臂各 **154** 条查询（22 已写＋66 未写＋3×22 负对照）逐条比较改前读法的逐字副本——`fast` 字节 **154/154** 相同、`max|Δ|=0`、info 字段全等、`key` 全等、`matched` **154/154** 为 true、额外键仅 `["matched"]`；22 个真实 `score_targets` 前向概率字节 **22/22** 相同、`max|Δ|=0`；同一读数跑两次，状态哈希全同。⇒ **开关关闭时不改变任何字节**。
+
+**门槛（只用正对照＝已写组最低余弦，未用负标签反推）**：夹具臂 floor **0.959857**、真实臂 floor **0.964818**。gap 一律相对该臂已写组最低余弦计：夹具臂 `new_token` **+0.68408**、`new_pairing` **−0.04012**、`no_value` **+0.21156**；真实臂 **−0.01975／−0.03460／−0.03110**。候选形式只改接受数，不改 gap：
+
+| 候选 | 夹具臂接受（已写／未写／nt／np／nv） | 真实臂接受（同序） | 结论 |
+|---|---|---|---|
+| `cos_floor`（选中阈值） | 22/22／66/66／0／22／0 | 22/22／**64/66**／16／21／22 | 夹具 `partial_separation`；真实 `no_separation_on_real_keys` |
+| `cos_floor−0.005` | 22/22／66/66／0／22／0 | 22/22／66/66／18／22／22 | 同型，未改善 |
+| `cos_floor−0.01` | 22/22／66/66／0／22／0 | 22/22／66/66／21／22／22 | 同型，未改善 |
+| `margin_floor`（已写组最低 margin） | 22/22／**65/66**／0／**21**／0 | 22/22／66/66／22／22／22（阈值 0.0） | 夹具误杀 1 条未写；真实**全放行** |
+
+（nt＝`new_token`、np＝`new_pairing`、nv＝`no_value`；夹具 `margin_floor` 值为 0.636384。）
+
+**"见过字的新搭配"明确无法用读门槛区分**：夹具臂 `new_pairing` 余弦高于已写组下限（gap −0.040），真实臂三类 gap 全负；`no_value`（两条已存键中点）在真实臂中位余弦 **0.99299**，反而**高于**已写组 0.97550——与 20.3a 的 `shared_offset` 归因一致：真实 `store_query_key` 未居中，所有键共享偏移，中点更靠公共方向。**0.960 是居中/局部化键的性质，不是真实读键的性质**。
+
+**开启后零训练读数**（阈值＝各臂 floor）：夹具臂已写 22/22、**0 误杀**、匹配面字节 22/22 与关闭态相同；`new_token` 拒 22/22、`no_value` 拒 22/22、**`new_pairing` 拒 0/22**；未写 66/66。真实臂已写 22/22、**0 误杀**；`new_token` 拒 6/22（27.27%）、`new_pairing` 1/22（4.55%）、`no_value` 0/22；**未写措辞误拒 2/66（3.03%）**。强制作答（把关闭态答案硬交给消费者）：夹具 44 条 × 65,536 B＝**2,883,584 B**、真实 7 条 × 32,768 B＝**229,376 B**，**0 条**与任何已存载荷逐位相同。
+
+**归因（架构级）**：门槛本身没问题，问题在键几何。夹具（居中/局部化）能分开两类负对照，真实 `store_query_key` 不能——与 20.3a 同一根因。**结论：门槛默认保持关闭，不启用。**
+
+**纪律**：CPU **34.953 s**（cap 200）、wall 3.437 s；0 训练／0 优化器步／0 Adam／0 confirm／0 checkpoint；`process_guard` 通过、单实例锁、60 s watchdog 未触发、读数即落盘 write-then-rename、runner sha 前后 `f3994477…` 一致、无 `python -m black`（仅 in-process 闸）。runner 首跑后被项目格式闸（in-process 检查）判"would reformat"，按闸重排后**原样重跑**：floor、各 gap、拒绝数、强制作答字节**逐项相同**（`zero_disturbance` 仍成立），以下读数取重跑版。**下一步唯一**：做真实 `store_query_key` 共享偏移/居中的独立零训练实验（同 154 条口径），再用同一 runner 复测。
+
 ## 2026-11-07 全局梳理与包 21 计划（0 训练 / 0 优化器步 / 0 confirm）
 
 **梳理（只读）**：回答四问——① owner 的算法优化（`fef0291ea` MGW1＋`91b8c8351` U1＋`a2d580f32` 复核）全部为**设计层**，`taiji/` 0 改动、0 参数、0 能力，身份（参数清单/`candidate_sha_v2`/`DECODE_RULES`/冻结语义）未变；② 与包 20 负结论的关系是**代数/表述统一＋一处新读出机制（`Read_R`）**，未重设写入时机、F 键可分性与发射/读出协议。**2026-11-08 更新：U1 的 E1/E2 已按 owner 批准的勘误并入正文（定理 5.1 拆为 5.1a/5.1b/推论 5.1c，命题 4.1 改为恒等式）；P3/P4 未修，仍不得写成"已修好"**；③ 项目状态：Task1 结构 188/192＝0.9792（19.2w 未封存复核）、训练权重贡献 0（限 19.2u 消融）、包 20 关闭、confirm 0 读取、20.4c_r2 32 个 checkpoint 全在、19.2v 父 bundle 在；未结项为 D16-20 绝对阈值、D16-13 续跑变慢归因，另有两处旧"待裁定"文字需标 `superseded`；④ 六处计划在包 20 结论上一致，但存在 4 项残留（能力卡 §7、账本 §15.1、MGW1/U1 行缺缺陷指针、ROADMAP §2 现在时）。详见[全局梳理](../../reference/SURVEY-PROJECT-STATE_20261107.md)。

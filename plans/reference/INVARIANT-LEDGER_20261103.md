@@ -1268,7 +1268,19 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 
   **四、强制答案字节与纪律**：强制把返回值当答案时，66 条负对照全部产出 **32,768 字节** float32 载荷，**0 条**与已存载荷逐位相同（插值/近复制，非逐位照抄）。诚实边界：新搭配最低 0.960411 仅高于阈值 0.000554，属"内容上其实有答案"，不能读作弃答能力。0 训练／0 优化器步／0 Adam／0 confirm／0 checkpoint；`evictions=0`、`dropped_writes=0`、22 准／0 拒、保留 7/7、扩 32 槽（`face_20`，0.09375→0.546875 复检通过）、watchdog 未触发、单实例锁正常、runner sha 前后一致、write-then-rename、无 `python -m black`。
 
-  **五、下一步唯一**：把"读门槛＋`matched` 出口"接进真实 `addressed_read`（默认关闭、先证零扰动），零训练地在真实前向上测 22 面与三类负对照的字节/概率变化。
+  **五、下一步唯一**：把"读门槛＋`matched` 出口"接进真实 `addressed_read`（默认关闭、先证零扰动），零训练地在真实前向上测 22 面与三类负对照的字节/概率变化。（已执行，见 D16-70。）
+
+- **D16-70 读门槛接进真实 `addressed_read`：零扰动过，门槛在真实键上无空档（2026-11-08，0 训练）**：[零扰动读数](../../reports/taiji_gate_read_gate_zero_20261108.json)（`verdict=zero_disturbance`）＋[开启后读数](../../reports/taiji_gate_read_gate_enabled_20261108.json)，[预注册 manifest](../manifests/taiji_gate_read_gate_20261108.json)（文件 sha `8b4c25b6…`，在第一个读数前落盘，`written_before_any_reading=true`），CPU 34.953 s／墙钟 3.437 s。
+
+  **一、接口（默认关闭）**：`LivingCoreConfig.read_gate_cosine: float | None = None`（校验为 [-1,1] 内有限值）。关闭态 `addressed_read` 每个分支返回 `matched=True`，info 仅多这一个键、**不改变任何字节**；开启后 top 余弦低于门槛时进入明确"无匹配"分支（`matched=False`、`abstained=True`、`reason="below_gate"`），**不返回 `top_slot`、不混入 `fast`**。新增 `key=` 参数仅作诊断入口（把 G2g 夹具键与 `no_value` 中点键送进真实函数），生产调用不传。
+
+  **二、零扰动（先证后测，已过）**：`real_forward`（原生 float32，真实 `observe`＋`addressed_write` 建 store）与 `fixture_continuity`（G2g 夹具，float64）两臂各 **154** 条查询（22 已写＋66 未写＋3×22 负对照），对"改前读法"的逐字副本比较：`fast` 字节 **154/154** 相同、`max|Δ|` **0.0**、info 字段 **154/154** 全等、`key` **154/154** 全等、`matched` **154/154** 为 true、额外键唯一为 `["matched"]`；22 个真实 `score_targets` 前向概率字节 **22/22** 相同、`max|Δ|=0`；同一读数两次运行状态哈希全同（`deterministic=true`）。⇒ **关闭态与今日逐位一致，`matched` 恒为匹配且不产生字节差异**。
+
+  **三、门槛来源与空档（只用正对照）**：阈值锚定"已写组最低 top 余弦"——夹具 **0.9598570106**、真实 **0.9648182988**，负对照标签只用于事后分类、不进阈值。gap＝已写组下限−该类最大值：夹具臂 `new_token` **+0.68408**、`no_value` **+0.21156**（可分开），**`new_pairing` −0.04012（这一类无法用读门槛区分）** → `partial_separation`；真实臂 **`new_token` −0.01975、`new_pairing` −0.03460、`no_value` −0.03110 全负** → `no_separation_on_real_keys`。四种候选（`cos_floor`、`−0.005`、`−0.01`、`margin_floor`）都不改变 gap，只改接受数；`margin_floor` 在夹具臂误杀 1/66 未写、在真实臂阈值为 0.0 等于全放行。**根因是键几何不是阈值**：真实 `store_query_key` 未居中，键共享偏移，两条已存键的中点（`no_value`）中位余弦 **0.99299** 反而高于已写组 **0.97550**——与 D16-69 之前 20.3a 的 `shared_offset`（余量 0.00855→0.07947、`top_share` 0.956→0.498）同一归因。**0.960 是居中/局部化键的性质，不是原生读键的性质**。
+
+  **四、开启后读数与代价**（阈值＝各臂 floor）：夹具臂已写 **22/22**、误杀 **0**、匹配面字节 **22/22** 与关闭态相同；`new_token` 拒 **22/22**、`no_value` 拒 **22/22**、**`new_pairing` 拒 0/22**；未写 **66/66**。真实臂已写 **22/22**、误杀 **0**；`new_token` 仅拒 **6/22（27.27%）**、`new_pairing` **1/22（4.55%）**、`no_value` **0/22**；**未写措辞误拒 2/66（3.03%）**——这就是门槛在真实键上的真实代价。强制作答字节：夹具 44 条 × 65,536 B＝**2,883,584 B**、真实 7 条 × 32,768 B＝**229,376 B**，**0 条**与任何已存载荷逐位相同（是插值/近复制，不是照抄）。纪律：0 训练／0 优化器步／0 Adam／0 confirm／0 checkpoint；`process_guard` 通过、单实例锁、60 s watchdog 未触发、读数即落盘 write-then-rename、runner sha 前后 `f3994477…`、无 `python -m black`（仅 in-process 闸）。
+
+  **五、下一步唯一**：**不启用该门槛**；先做真实 `store_query_key` 共享偏移/居中的独立零训练实验（同 154 条查询口径），再用同一 runner 复测——不是调阈值。此条与 D16-69 合读的含义是："有几何分界"在夹具上成立、在真实读键上不成立，故"会弃答"仍无载体。
 
 ## 29. 有界训练窗执行与判定（2026-11-08）
 

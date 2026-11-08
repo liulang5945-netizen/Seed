@@ -1,0 +1,54 @@
+{
+  "format": "taiji-read-gate-preregistration-v1",
+  "date": "2026-11-08",
+  "question": "can the real addressed_read refuse a query with no stored answer, and is the gate provably inert when it is off?",
+  "written_before_any_reading": true,
+  "sequence": [
+    "build the real-forward store (30 byte sentences) and the continuity store",
+    "zero-disturbance pass on both arms (must pass before the enabled pass)",
+    "gate candidates from the written group only",
+    "enabled readings at the positive-control floor"
+  ],
+  "criteria": {
+    "Z1_state_bytes": "gate off vs the verbatim pre-change read, same store and same query: the returned fast tensor has identical sha256 and max|delta| = 0 over every one of the 154 queries",
+    "Z2_info_fields": "every info field the pre-change read returned has the same value; the only added key is matched=True and it changes no byte",
+    "Z3_post_read_forward": "for each written face, a real score_targets forward from the gate-off read state has identical probability bytes and max|delta| = 0 against the legacy read state",
+    "Z4_determinism": "the gate-off read is run twice; every returned-state hash is identical across the two passes",
+    "C1_threshold_source": "every candidate threshold is derived from the written group only (its minimum top cosine or minimum margin); no negative label enters the value",
+    "C2_separation": "per candidate and per group: accept rate, written false-abstain count, and the gap written_floor - class_max; a non-positive gap is reported as 'not separable by this read gate', never repaired by moving the threshold",
+    "E1_enabled_bytes": "with the gate at the written floor, each written face either returns bytes identical to the gate-off read (matched) or is counted once as a false abstention",
+    "E2_negative_refusal": "per negative class: matched=False share and the size/hash of the payload a consumer would receive if it forced the gate-off answer",
+    "unchanged": "no fixture, face, position, class or threshold is retuned after the first reading"
+  },
+  "constants": {
+    "base_occupied": 8,
+    "slots": 32,
+    "face_count": 22,
+    "correction_position": 5,
+    "synonym_positions": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "unwritten_per_rule": 3,
+    "negative_per_class": 22,
+    "candidate_steps": [
+      0.005,
+      0.01
+    ],
+    "temperature": 0.1,
+    "alpha": 0.5,
+    "value_float_bytes": 4
+  },
+  "discipline": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "black_invoked": false,
+    "cpu_cap_seconds": 200.0,
+    "watchdog_seconds": 60.0,
+    "rule_truth_in_answer_chain": false
+  }
+}

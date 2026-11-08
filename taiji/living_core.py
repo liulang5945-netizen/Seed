@@ -42,6 +42,13 @@ class LivingCoreConfig:
     content_gain: float = 1.0
     content_centered: bool = False
     content_path_v2: bool = False
+    # Read gate (default off).  ``None`` keeps ``addressed_read`` bit-identical
+    # to the pre-change graph: every occupied store returns its top slot and is
+    # blended into ``fast``.  A float enables the explicit abstention branch --
+    # a query whose top cosine is below the gate returns no slot and leaves
+    # ``fast`` untouched.  The value must be anchored on the positive control
+    # (the lowest cosine of an already-written read), never on negative labels.
+    read_gate_cosine: float | None = None
 
     def __post_init__(self) -> None:
         if not 1 <= self.groups <= 4 or self.width < 2 or self.width % 2:
@@ -62,6 +69,10 @@ class LivingCoreConfig:
             or self.fast_limit <= 0
         ):
             raise ValueError("R021 dimensions and bounds must be positive")
+        if self.read_gate_cosine is not None and not (
+            math.isfinite(self.read_gate_cosine) and -1.0 <= self.read_gate_cosine <= 1.0
+        ):
+            raise ValueError("read gate must be a finite cosine in [-1, 1]")
 
 
 @dataclass(frozen=True)
@@ -547,26 +558,50 @@ class LivingCoreReference(nn.Module):
             return state.fast.new_zeros(self.config.width)
         return context.mean(0)
 
-    def addressed_read(self, state: LivingState, raw: bytes):
-        key = self.store_query_key(state, raw)
+    def addressed_read(self, state: LivingState, raw: bytes, key: torch.Tensor | None = None):
+        """Read the content-addressed store.
+
+        ``key`` is a diagnostic entry only: an already-encoded query key may be
+        handed in instead of being derived from ``raw``.  Production callers
+        never pass it, so the two-argument call is unchanged.
+
+        ``matched`` is always present.  With the gate off (``None``) it is
+        ``True`` in every branch and the returned state is bit-identical to the
+        pre-gate graph.  With the gate on, an occupied store whose top cosine is
+        below ``read_gate_cosine`` returns ``matched=False``, no ``top_slot``
+        and the *unmodified* state -- the explicit "no match" exit.
+        """
+        key = self.store_query_key(state, raw) if key is None else key
+        gate = self.config.read_gate_cosine
+        gate_info = {} if gate is None else {"gate_threshold": float(gate)}
         if state.store_keys is None:
-            return state, {"enabled": False, "blended": False, "key": key}
+            return state, {
+                "enabled": False,
+                "blended": False,
+                "key": key,
+                "matched": True,
+                **gate_info,
+            }
         valid = torch.nonzero(state.store_age >= 0, as_tuple=False).flatten()
         if valid.numel() == 0:
-            return state, {
+            info = {
                 "enabled": True,
                 "occupied": 0,
                 "valid": 0,
                 "blended": False,
                 "key": key,
+                "matched": gate is None,
+                **gate_info,
             }
+            if gate is not None:
+                info.update({"abstained": True, "reason": "empty_store"})
+            return state, info
         keys = state.store_keys[valid]
         cosine = (keys @ key) / torch.clamp(keys.norm(dim=-1) * key.norm(), min=1e-12)
         weights = torch.softmax(cosine / ADDRESSED_TEMPERATURE, dim=0)
-        retrieved = torch.einsum("i,i...->...", weights, state.store_values[valid])
-        fast = (1 - ADDRESSED_ALPHA) * state.fast + ADDRESSED_ALPHA * retrieved
         ordered = torch.sort(cosine.detach(), descending=True).values
         top = int(torch.argmax(cosine.detach()))
+        top_cosine = float(cosine[top].detach())
         margin = float(ordered[0] - ordered[1]) if ordered.numel() > 1 else None
         info = {
             "enabled": True,
@@ -574,15 +609,29 @@ class LivingCoreReference(nn.Module):
             "valid": int(valid.numel()),
             "blended": True,
             "top_slot": int(valid[top]),
-            "top_cosine": float(cosine[top].detach()),
+            "top_cosine": top_cosine,
             "second_cosine": float(ordered[1]) if ordered.numel() > 1 else None,
             "margin": margin,
             "weights": [float(value.detach()) for value in weights],
-            "retrieved_norm": float(retrieved.detach().norm()),
+            "retrieved_norm": None,
             "fast_norm_before": float(state.fast.detach().norm()),
-            "fast_norm_after": float(fast.detach().norm()),
+            "fast_norm_after": None,
             "key": key,
+            "matched": True,
+            **gate_info,
         }
+        if gate is not None and top_cosine < gate:
+            info.pop("top_slot")
+            for field in ("retrieved_norm", "fast_norm_after"):
+                info.pop(field)
+            info.update(
+                {"blended": False, "matched": False, "abstained": True, "reason": "below_gate"}
+            )
+            return state, info
+        retrieved = torch.einsum("i,i...->...", weights, state.store_values[valid])
+        fast = (1 - ADDRESSED_ALPHA) * state.fast + ADDRESSED_ALPHA * retrieved
+        info["retrieved_norm"] = float(retrieved.detach().norm())
+        info["fast_norm_after"] = float(fast.detach().norm())
         return replace(state, fast=fast), info
 
     def addressed_write(self, state: LivingState, raw: bytes, key: torch.Tensor | None = None):
