@@ -1,0 +1,52 @@
+{
+  "format": "taiji-gate-g2b-preregistration-v1",
+  "written_at": "2026-11-08T12:38:42",
+  "written_before_reading": true,
+  "question": "if G2's judging quantity becomes m_spec with an absolute floor, does the gate refuse the write that crowds the store while keeping the three P1b legacy verdicts (replace admit, new admit, copy refuse) intact?",
+  "criterion_change": "G2: median(1 - nearest) must not drop by more than 0.002  ->  m_spec (occupied-key nearest - second, self excluded) must stay >= floor",
+  "floors": {
+    "F0_spec_floor_as_absolute": {
+      "value": 0.06663,
+      "source": "SPEC §5 P3-A: 0.06863 - 0.002, reused as an absolute floor",
+      "expectation": "unusable: the baseline itself is 0.06863, so any new direction lands below it"
+    },
+    "F1_collapse_line": {
+      "value": 0.02,
+      "source": "growth design S-B collapse line (existing constant, independent of P3)",
+      "expectation": "no crossing on 8/16 (min 0.033074); 64/128 baseline 0.019988 is already below it"
+    },
+    "F2_half_baseline": {
+      "value": 0.03432,
+      "source": "0.5 x F1 baseline 0.06863, rule 'the read margin may be halved, not quartered'",
+      "expectation": "crossed by the 5th P3 append (0.033074); disclosed coincidence, not the basis of the verdict"
+    }
+  },
+  "sanity_cases_required_per_floor": {
+    "S1_replace_admitted": "policy=replace on an occupied slot must be published",
+    "S2_new_admitted": "append of a key not in the store must be published",
+    "S3_copy_refused": "append of a byte-identical key must be refused"
+  },
+  "rungs": {
+    "low_8_16": "six sequential appends; report m_spec trajectory and the first crossing",
+    "high_64_128": "one append; report whether the exit changes vs P3's no_direction",
+    "fill_112_128": "one append; no_capacity must still win (h = 0.117188 < 0.125)"
+  },
+  "untouched": [
+    "G1 retention",
+    "G3 inflation and capacity",
+    "G4 value residual",
+    "direction band",
+    "every threshold except the G2 quantity itself",
+    "fixture, rungs, battery"
+  ],
+  "discipline": {
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_steps": 0,
+    "banned_formatter": "python -m black (process_guard at entry)",
+    "single_instance_lock": true,
+    "watchdog": "abort after 60 s without a new reading (launcher)",
+    "cpu_cap_seconds": 100.0
+  }
+}
